@@ -1,0 +1,92 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+     <parent>
+        <groupId>com.photon.phresco.framework</groupId>
+        <artifactId>phresco-framework-root</artifactId>
+        <version>2.0.0.10001-SNAPSHOT</version>
+        <relativePath>../</relativePath>
+    </parent>
+    
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.photon.phresco.framework</groupId>
+    <artifactId>phresco-framework-runner</artifactId>
+    <packaging>pom</packaging>
+    <name>Framework Runner</name>
+    <description>Module for creating archive which will be delivered</description>
+    <url>http://www.phresco.org</url>
+  
+    <distributionManagement>
+        <site>
+            <id>phresco.framework.runner</id>
+            <name>Phresco Framework Runner</name>
+            <url>${siteBaseUrl}/framework/phresco-framework-runner/</url>
+        </site>
+    </distributionManagement>
+    
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.2-beta-5</version>
+                <!-- <configuration>
+                    <descriptors>
+                        <descriptor>assembly/config.xml</descriptor>
+                    </descriptors>
+                </configuration> -->
+            
+                <executions>
+                    <execution>
+						<id>phresco-release</id>
+							<phase>package</phase>
+							<goals>
+								<goal>single</goal>
+							</goals>
+							<configuration>
+								<finalName>release</finalName>
+								<descriptors>
+									<descriptor>assembly/config.xml</descriptor>
+								</descriptors>
+							</configuration>
+					</execution>
+					
+					<execution>
+						<id>phresco-update</id>
+							<phase>package</phase>
+							<goals>
+								<goal>single</goal>
+							</goals>
+							<configuration>
+								<finalName>update</finalName>
+								<descriptors>
+									<descriptor>assembly/release-config.xml</descriptor>
+								</descriptors>
+							</configuration>
+					</execution>
+					
+                </executions>
+            </plugin>   
+
+			<plugin>
+				<groupId>com.atlassian.maven.plugins</groupId>
+				<artifactId>maven-upload-plugin</artifactId>
+				<version>1.1</version>
+				<executions>
+					<execution>
+						<id>dependency</id>
+						<phase>deploy</phase>
+						<goals>
+							<goal>upload</goal>
+						</goals>
+						<configuration>
+							<resourceSrc>${project.build.directory}/update.zip</resourceSrc>
+							<resourceDest>com/photon/phresco/framework/release/${project.version}</resourceDest>
+							<serverId>${releases.repo.id}</serverId>
+							<url>${releases.repo.url}</url>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+        </plugins>
+    </build>
+</project>

@@ -1,0 +1,33 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <parent>
+        <groupId>com.photon.phresco</groupId>
+        <artifactId>phresco-parent</artifactId>
+        <version>2.0.0.10001-SNAPSHOT</version>
+        <relativePath>../</relativePath>
+    </parent>
+    
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.photon.phresco.framework</groupId>
+    <artifactId>phresco-framework-root</artifactId>
+    <packaging>pom</packaging>
+    <name>Phresco Framework Root</name>
+    <url>http://www.phresco.org</url>
+    <description>phresco-framework-root</description>  
+     <distributionManagement>
+        <site>
+            <id>phresco.framework</id>
+            <name>Phresco Framework</name>
+            <url>${siteBaseUrl}/framework/</url>
+        </site>
+    </distributionManagement>
+
+    <modules>
+        <module>phresco-framework</module>
+        <module>phresco-framework-impl</module>
+        <module>phresco-framework-web</module>
+        <module>phresco-framework-runner</module>
+    </modules>
+
+</project>
