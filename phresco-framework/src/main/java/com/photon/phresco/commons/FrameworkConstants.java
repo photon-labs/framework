@@ -1229,5 +1229,12 @@ public interface FrameworkConstants {
    String REQ_RMT_DEP_FILE_BROWSE_FROM = "fileBrowseFrom";
    String CONFIGURATION = "configuration";
    String FILE_TYPE_CRT = "crt";
+   
+   /* Constants for server url  construction */ 
+   String PROTOCOL = "protocol";
+   String PORT = "port";
+   String CONTEXT = "context";
+   String HOST = "host";
+   String ENVIRONMENT = "SERVER_ENVIRONMENT";
 }
 

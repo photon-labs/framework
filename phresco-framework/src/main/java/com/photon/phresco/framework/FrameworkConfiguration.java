@@ -21,13 +21,16 @@ package com.photon.phresco.framework;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Properties;
 
 import com.photon.phresco.commons.FrameworkConstants;
+import com.photon.phresco.configuration.ConfigReader;
+import com.photon.phresco.configuration.Configuration;
 import com.photon.phresco.exception.PhrescoException;
 
 public class FrameworkConfiguration implements FrameworkConstants {
-
+	private String configFilePath =  "phresco-env-config.xml";
     private Properties frameworkConfig;
 
     public FrameworkConfiguration(String fileName) throws PhrescoException {
@@ -46,9 +49,29 @@ public class FrameworkConfiguration implements FrameworkConstants {
         }
     }
 
-    public String getServerPath() {
-        return frameworkConfig.getProperty(PHRESCO_SERVER_URL);
-    }
+    public String getServerPath() throws PhrescoException{
+   	 String phrescoServerUrl = "";
+   	try {
+   		InputStream stream = null;
+   		stream = this.getClass().getClassLoader().getResourceAsStream(configFilePath);
+   		ConfigReader configReader = new ConfigReader(stream);
+   		String environment = System.getProperty(ENVIRONMENT);
+   		if (environment == null || environment.isEmpty() ) {
+   			environment = configReader.getDefaultEnvName();
+   		}
+   		List<Configuration> configurations = configReader.getConfigurations(environment, WEBSERVICE);
+   		for (Configuration configuration : configurations) {
+   			String protocol = configuration.getProperties().getProperty(PROTOCOL);
+   			String host = configuration.getProperties().getProperty(HOST);
+   			String port = configuration.getProperties().getProperty(PORT);
+   			String context = configuration.getProperties().getProperty(CONTEXT);
+   			phrescoServerUrl = protocol + PROTOCOL_POSTFIX + host + COLON +  port + FORWARD_SLASH + context;
+   		}
+   	} catch (Exception e) {
+   		throw new PhrescoException(e);
+   	}
+   	return phrescoServerUrl;
+   }
 
     public String getCodePrefix() {
         return frameworkConfig.getProperty(PHRESCO_CODE_PREFIX);

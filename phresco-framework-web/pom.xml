@@ -210,6 +210,8 @@
     </dependencies>
     
     <build>
+	  <directory>do_not_checkin/target</directory>
+	   <finalName>framework</finalName>
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -233,19 +235,18 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
-                    <webXml>target/jspweb.xml</webXml>
+                    <webXml>do_not_checkin/target/jspweb.xml</webXml>
                     <warSourceExcludes>**/*.jsp</warSourceExcludes>
                 </configuration>
             </plugin> 
             
-            <plugin>
+          <plugin>
                 <groupId>org.codehaus.mojo</groupId>
-                <artifactId>tomcat-maven-plugin</artifactId> 
-                <version>1.1</version>           
+                <artifactId>tomcat-maven-plugin</artifactId>
+                <version>1.1</version>
                 <configuration>
-                <path>/phresco</path>
-                <server>dev-server</server>
-                <port>2468</port>
+                    <port>${server.port}</port>
+					<server>dev-server</server>
                 </configuration>
             </plugin>
             
