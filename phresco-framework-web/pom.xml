@@ -246,6 +246,7 @@
                 <version>1.1</version>
                 <configuration>
                     <port>${server.port}</port>
+					<path>/${project.build.finalName}</path>
 					<server>dev-server</server>
                 </configuration>
             </plugin>
