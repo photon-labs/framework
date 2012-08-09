@@ -60,9 +60,6 @@ public class FrameworkConfiguration implements FrameworkConstants {
    			environment = configReader.getDefaultEnvName();
    		}
    		List<Configuration> configurations = configReader.getConfigurations(environment, WEBSERVICE);
-   		if (configurations != null && configurations.isEmpty() ) {
-   			return frameworkConfig.getProperty(PHRESCO_SERVER_URL);
-   		}
    		for (Configuration configuration : configurations) {
    			String protocol = configuration.getProperties().getProperty(PROTOCOL);
    			String host = configuration.getProperties().getProperty(HOST);
