@@ -24,18 +24,6 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
         </site>
     </distributionManagement>
 
-	 <build>
-        <directory>do_not_checkin/target</directory>
-        <finalName>framework</finalName>
-        <plugins>
-            <plugin>
-                <groupId>com.photon.phresco.plugins</groupId>
-                <artifactId>java-maven-plugin</artifactId>
-                <version>${project.version}</version>
-            </plugin>
-        </plugins>
-    </build>
-	
     <modules>
         <module>phresco-framework</module>
         <module>phresco-framework-impl</module>
