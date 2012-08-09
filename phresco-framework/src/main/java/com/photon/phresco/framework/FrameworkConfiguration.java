@@ -65,7 +65,8 @@ public class FrameworkConfiguration implements FrameworkConstants {
    			String host = configuration.getProperties().getProperty(HOST);
    			String port = configuration.getProperties().getProperty(PORT);
    			String context = configuration.getProperties().getProperty(CONTEXT);
-   			phrescoServerUrl = protocol + PROTOCOL_POSTFIX + host + COLON +  port + FORWARD_SLASH + context;
+			String additionalContext = configuration.getProperties().getProperty("additional_context");
+   			phrescoServerUrl = protocol + PROTOCOL_POSTFIX + host + COLON +  port + FORWARD_SLASH + context + additionalContext ;
    		}
    	} catch (Exception e) {
    		throw new PhrescoException(e);
