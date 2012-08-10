@@ -1535,7 +1535,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 S_LOGGER.debug("getAllModules() TechnologyName = "+techId);
 		 
 		 try {
-			 List<ModuleGroup> modules = getServiceManager().getModules(techId, customerId);
+			 List<ModuleGroup> modules = getServiceManager().getModules(customerId);
 
 			 return modules;
 		 } catch (Exception e) {
