@@ -1,10 +1,11 @@
 <environments>
     <environment default="true" name="Production">
         <WebService name="webservice">
-            <port>80</port>
+            <port>8080</port>
             <password/>
-            <context>service-testing</context>
-            <host>172.16.18.178</host>
+            <context>service</context>
+			<additional_context>/rest/api</additional_context>
+            <host>localhost</host>
             <protocol>http</protocol>
             <username/>
         </WebService>
