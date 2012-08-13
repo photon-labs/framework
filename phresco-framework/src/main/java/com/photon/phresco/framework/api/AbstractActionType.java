@@ -26,6 +26,7 @@ public abstract class AbstractActionType implements ActionType {
 	public boolean skipTest = false;
     public boolean showDebug = false;
     public String profileId = "";
+    public String moduleId = "";
     
     public String getWorkingDirectory() {
         return workingDirectory;
@@ -73,5 +74,13 @@ public abstract class AbstractActionType implements ActionType {
 
 	public void setProfileId(String profileId) {
 		this.profileId = profileId;
+	}
+
+	public String getModuleId() {
+		return moduleId;
+	}
+
+	public void setModuleId(String moduleId) {
+		this.moduleId = moduleId;
 	}
 }

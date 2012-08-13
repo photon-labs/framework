@@ -300,7 +300,9 @@
 		params = params.concat(from);
 		params = params.concat("&buildNumber=");
 		params = params.concat(buildNumber);
-       	popup('generateBuild', params, $('#popup_div'));
+		params = params.concat("&projectCode=");
+		params = params.concat('<%= projectCode %>');
+       	popupParams('generateBuild', params, $('#popup_div'));
         escPopup();
     }
     
@@ -371,7 +373,7 @@
  	}
 	
 	function successEvent(pageUrl, data) {
-    	if(pageUrl == "restartNodeJSServer") {
+		if(pageUrl == "restartNodeJSServer") {
     		runAgainstSrcServerRunning();
     	} else if(pageUrl == "stopNodeJSServer") {
     		runAgainstSrcServerDown();

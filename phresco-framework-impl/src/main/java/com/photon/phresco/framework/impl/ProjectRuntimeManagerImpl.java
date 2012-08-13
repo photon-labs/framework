@@ -192,6 +192,7 @@ public class ProjectRuntimeManagerImpl implements ProjectRuntimeManager {
     	if (action instanceof MobileCommand || action instanceof AndroidPerfCommand || action instanceof Sonar || action instanceof IphoneIpa || action instanceof IPhoneFunctionalCommand || action instanceof IphoneBuildAndUnitTest  || action instanceof IphoneCodeValidate) {
     		command.append(" " + buildMavenArgCommand(action, paramsMap));
     	}
+    	
     	return executeMavenCommand(project, action, command);
     }
 
@@ -267,6 +268,13 @@ public class ProjectRuntimeManagerImpl implements ProjectRuntimeManager {
         if (StringUtils.isNotEmpty(actionType.getProfileId())) {
             builder.append("-P");
             builder.append(actionType.getProfileId());
+            builder.append(Constants.SPACE);
+        }
+        
+        if (StringUtils.isNotEmpty(actionType.getModuleId())) {
+            builder.append("-pl");
+            builder.append(Constants.SPACE);
+            builder.append(actionType.getModuleId());
             builder.append(Constants.SPACE);
         }
         

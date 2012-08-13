@@ -71,13 +71,13 @@ function fillData(element, data) {
 /** To check whether the selected environment has the appropriate configurations **/
 function checkForConfig() {
 	var envs = getSelectedEnvs();
-	var params = "";
-	if (!isBlank($('form').serialize())) {
-		params = $('form').serialize() + "&";
-	}
-	params = params.concat("environments=");
+	var params = "environments=";
 	params = params.concat(envs);
-	performAction('checkForConfiguration', params, '', true);
+	params = params.concat("&from=");
+	params = params.concat($("#from").val());
+	params = params.concat("&projectCode=");
+	params = params.concat($("#projectCode").val());
+	performActionParams('checkForConfiguration', params, '', true);
 }
 
 /** To check whether the selected environment has the appropriate configuration based on type **/

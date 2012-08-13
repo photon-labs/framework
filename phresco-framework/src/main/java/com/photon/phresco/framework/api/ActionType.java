@@ -68,7 +68,7 @@ public interface ActionType {
     StringBuilder getCommand();
     
     String getName();
-    
+       
     String getType();   
     void setType(String type);
     
@@ -89,4 +89,7 @@ public interface ActionType {
     
     String getProfileId();
     void setProfileId(String profileId);
+    
+    String getModuleId();
+    void setModuleId(String moduleId);
 }

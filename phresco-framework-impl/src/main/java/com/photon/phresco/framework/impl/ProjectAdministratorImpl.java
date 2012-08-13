@@ -1535,7 +1535,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 S_LOGGER.debug("getAllModules() TechnologyName = "+techId);
 		 
 		 try {
-			 List<ModuleGroup> modules = getServiceManager().getModules(techId, customerId);
+			 List<ModuleGroup> modules = getServiceManager().getModules(customerId);
 
 			 return modules;
 		 } catch (Exception e) {
@@ -1553,7 +1553,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 			 List<ModuleGroup> coreModules = new ArrayList<ModuleGroup>();
 			 if (CollectionUtils.isNotEmpty(modules)) {
 				 for (ModuleGroup module : modules) {
-					 if (module.isCore()) {
+					 if (module.isCore() && module.getTechId().equals(techId)) {
 						 coreModules.add(module);
 					 }
 				 }
@@ -1575,7 +1575,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 			 List<ModuleGroup> customModules = new ArrayList<ModuleGroup>();
 			 if (CollectionUtils.isNotEmpty(modules)) {
 				 for (ModuleGroup module : modules) {
-					 if (!module.isCore()) {
+					 if (!module.isCore() && module.getTechId().equals(techId)) {
 						 customModules.add(module);
 					 }
 				 }
@@ -2289,11 +2289,20 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 	 }
 	 
 	 public List<ProjectInfo> getPilots(String techId, String customerId) throws PhrescoException {
-		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.getPilots()");
+		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.getPilots(String techId, String customerId)");
 		 
 		 try {
-			 List<ProjectInfo> pilots = getServiceManager().getPilots(techId, customerId);
-			 return pilots;
+			 List<ProjectInfo> allPilots = getServiceManager().getPilotProjects(customerId);
+			 List<ProjectInfo> pilotProjects = new ArrayList<ProjectInfo>();
+			 if (CollectionUtils.isNotEmpty(allPilots)) {
+				 for (ProjectInfo pilot : allPilots) {
+					if (pilot.getTechId().equals(techId)) {
+						pilotProjects.add(pilot);
+					}
+				}
+			 }
+			 
+			 return pilotProjects;
 		 } catch (Exception e) {
 			 throw new PhrescoException(e);
 		 }
@@ -2301,6 +2310,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 	 
 	 public BuildInfo getCIBuildInfo(CIJob job, int buildNumber) throws PhrescoException {
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.getCIBuildInfo(CIJob job, int buildNumber)");
+		 
 		 BuildInfo buildInfo = null;
 		 try {
 			 CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
@@ -2308,18 +2318,30 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 } catch (Exception e) {
 			 throw new PhrescoException(e);
 		 }
+		 
 		 return buildInfo;
 	 }
 	 
 	 public List<ModuleGroup> getJSLibs(String techId, String customerId) throws PhrescoException {
-		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.getPilots()");
+		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.getJSLibs(String techId, String customerId)");
 		 
 		 try {
-			 return getServiceManager().getJSLibs(techId, customerId);
+			 List<ModuleGroup> allJsLibs = getServiceManager().getJsLibs(customerId);
+			 List<ModuleGroup> jsLibs = new ArrayList<ModuleGroup>();
+			 if (CollectionUtils.isNotEmpty(allJsLibs)) {
+				 for (ModuleGroup jslib : allJsLibs) {
+					if (jslib.getTechId().equals(techId)) {
+						jsLibs.add(jslib);
+					}
+				}
+			 }
+
+			 return jsLibs;
 		 } catch (Exception e) {
 			 throw new PhrescoException(e);
 		 }
 	 }
+	 
 	 public List<CertificateInfo> getCertificate(String host, int port) throws PhrescoException {
 			List<CertificateInfo> certificates = new ArrayList<CertificateInfo>();
 			CertificateInfo info;

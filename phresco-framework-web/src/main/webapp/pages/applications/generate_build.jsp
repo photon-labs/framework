@@ -24,7 +24,7 @@
 <%@ page import="java.util.Map"%>
 <%@ page import="java.util.Set"%>
 <%@ page import="java.util.Iterator"%>
-<%@page import="java.util.HashMap"%>
+<%@ page import="java.util.HashMap"%>
 
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.model.SettingsInfo"%>
@@ -39,6 +39,7 @@
 <%@ page import="org.apache.commons.lang.StringUtils" %>
 <%@ page import="org.apache.commons.collections.CollectionUtils" %>
 <%@ page import="com.photon.phresco.commons.BuildInfo"%>
+
 
 <script src="js/reader.js" ></script>
 <script src="js/select-envs.js"></script>
@@ -68,6 +69,7 @@
    	//js minification
    	Map<String, String> jsMap = (Map<String, String>) request.getAttribute(FrameworkConstants.REQ_MINIFY_MAP);
    	String fileLoc = (String) request.getAttribute(FrameworkConstants.REQ_FILE_LOC);
+   	List<String> serverTypes = (List<String>) request.getAttribute(FrameworkConstants.REQ_SELECTED_SERVERTYPE);
 %>
 
 <form action="build" method="post" autocomplete="off" class="build_form" id="generateBuildForm">
@@ -90,7 +92,7 @@
 	<!-- For build alone ends -->
 			
 	<div class="modal-body">
-		<% if (CollectionUtils.isNotEmpty(projectModules) && from.equals("generateBuild")) {  %>
+		<% if (CollectionUtils.isNotEmpty(projectModules) && from.equals("generateBuild") || from.equals("runAgnSrc")) {  %>
             <div id="agnBrowser" class="build server">
 				<!-- Modules -->
 				<div class="clearfix">
@@ -266,10 +268,42 @@
 			</div>
 		<% } %>	
 		
-		<fieldset class="popup-fieldset fieldset_center_align">
+        <!--  show port -->
+           
+<!-- 			<div class="clearfix"> -->
+<%-- 				<label for="xlInput" class="xlInput popup-label"><s:text name="label.port"/></label> --%>
+<!-- 				<div class="input"> -->
+<!-- 					<input type="text" class="xlarge"/> -->
+<!-- 				</div> -->
+<!-- 			</div> -->
+        
+        <!--  show context -->
+            
+		<div class="clearfix">
+<%-- 			<label for="xlInput" class="xlInput popup-label"><s:text name="label.context"/></label> --%>
+<!-- 			<div class="input"> -->
+<!-- 				<input type="text" class="xlarge"/> -->
+<!-- 			</div> -->
+<!-- 		</div> -->
+				
+		  <!--  server Type -->
+<!-- 			<div class="clearfix"> -->
+<%-- 				<label for="xlInput" class="xlInput popup-label"><s:text name="label.servertype"/></label> --%>
+<!-- 				<div class="input"> -->
+<%-- 					<select id="serverType" name="serverType" class="xlarge" > --%>
+<%-- 					<%  --%>
+<!-- 						if (CollectionUtils.isNotEmpty(serverTypes)) -->
+<!-- 							for(String servertype : serverTypes) { -->
+<!-- 					%> -->
+<%-- 								<option value="<%= servertype %>"><%= servertype %></option> --%>
+<%-- 					<% } %> --%>
+<%-- 					</select> --%>
+<!-- 				</div> -->
+<!-- 			</div>	 -->
+		
 			<!-- Show Settings -->
 			<div class="clearfix">
-				<div class="xlInput">
+				<div class="xlInput" style="margin-left: 210px;">
 					<ul class="inputs-list">
 						<li class="popup-li">
 							<% if (!from.equals(FrameworkConstants.DEPLOY)) { %>
@@ -313,7 +347,6 @@
 					</ul>
 				</div>	
 			</div>
-		</fieldset>
 		
 		<!-- sql execution starts  -->
 		<fieldset class="popup-fieldset fieldset_center_align" id="sqlExecutionContain" style="display: none;">
@@ -436,7 +469,7 @@
 													}
 												} else {
 											%>
-											<div class = "browseJs">
+												<div class = "browseJs">
 													<div class="clearfix">
 														<label for="xlInput" class="xlInput popup-label minifyLbl"><s:text name="build.js.minification"/></label>
 														<div class="input">
@@ -449,7 +482,7 @@
 													</div>
 													<input type="hidden" tempName="getJsFiles1" name="getJsFiles1" value="" id="selectedJs">
 												</div>
-										<% } %>		
+											<% } %>		
 										</fieldset>
 									</div>
 									<input type="hidden" name="fileLocation" value="<%= StringUtils.isNotEmpty(fileLoc) ? fileLoc : "" %>"/>
@@ -485,6 +518,9 @@
 		</div>
 	</div>
 </div>
+
+<!-- HiddenFields -->
+<input type="hidden" id="projectCode" value="<%= projectCode %>"/>
 </form> 
 
 <script type="text/javascript">
@@ -752,7 +788,7 @@
 		    params = params.concat($("#environments").val());
 		    params = params.concat("&projectCode=");
 		    params = params.concat('<%= projectCode %>');
-			performAction("getSqlDatabases", params, '', true);
+			performActionParams("getSqlDatabases", params, '', true);
 		}
 	}
 	
@@ -818,8 +854,8 @@
 	}
 	
 	function performUrlActions(url, testType) {
-		var params = "";
-		params = params.concat("&environments=");
+		console.info("performUrlActions url::" + url + "::testType::" + testType);
+		var params = "&environments=";
 		params = params.concat(getSelectedEnvs());
 		params = params.concat("&DbWithSqlFiles=");
 		params = params.concat($('#DbWithSqlFiles').val());
