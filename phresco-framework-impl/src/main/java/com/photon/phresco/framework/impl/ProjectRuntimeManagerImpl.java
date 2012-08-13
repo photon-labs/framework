@@ -203,19 +203,15 @@ public class ProjectRuntimeManagerImpl implements ProjectRuntimeManager {
     		S_LOGGER.debug("executeMavenCommand() ActionType Name = " + action.getName());
     		S_LOGGER.debug("executeMavenCommand() ActionType Working directory = " + action.getWorkingDirectory());
 		}
-		Commandline cl = new Commandline(command.toString());
+		
+		String currentWorkingDir = null; 
         String workingDirectory = action.getWorkingDirectory();
         if (StringUtils.isNotEmpty(workingDirectory)) {
-            cl.setWorkingDirectory(workingDirectory);
+        	currentWorkingDir = workingDirectory;
         } else {
-            cl.setWorkingDirectory(Utility.getProjectHome() + project.getProjectInfo().getCode());
+        	currentWorkingDir = Utility.getProjectHome() + project.getProjectInfo().getCode();
         }
-        try {
-            Process process = cl.execute();
-            return new BufferedReader(new InputStreamReader(process.getInputStream()));
-        } catch (CommandLineException e) {
-            throw new PhrescoException(e);
-        }
+		return  Utility.executeCommand(command.toString(), currentWorkingDir);
     }
 
     public StringBuilder buildMavenCommand(Project project, ActionType actionType, Map<String, String> paramsMap) {
@@ -355,8 +351,8 @@ public class ProjectRuntimeManagerImpl implements ProjectRuntimeManager {
         }
     }
     
-    public static void main(String[] args) {
-        ProjectRuntimeManagerImpl manager = new ProjectRuntimeManagerImpl();
-        manager.executeMavenCommand();
-    }
+//    public static void main(String[] args) {
+//       ProjectRuntimeManagerImpl manager = new ProjectRuntimeManagerImpl();
+//        manager.executeMavenCommand();
+//    }
 }
