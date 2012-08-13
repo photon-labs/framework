@@ -136,6 +136,7 @@ public interface FrameworkConstants {
     String TEMP_FOLDER ="temp";
     String NODEJS_RUN_AGAINST = "nodeJS_runAgnSrc";
     String JAVA_RUN_AGAINST = "runAgnSrc";
+    String PROJECT_CODE = "projectCode";
 	
     String JAVA_STAND_ALONE = "tech-java-standalone";
     String JAVA_STANDALONE = "Javastandalone";
@@ -334,6 +335,7 @@ public interface FrameworkConstants {
     String REQ_PROJECT_LOCATION = "projectLocation";
     String REQ_SELECTED_TAB = "selectedTab";
     String REQ_SELECTED_MENU = "selectedHeader";
+    String REQ_SELECTED_SERVERTYPE = "selectedServerType";
     String REQ_PROJECTS = "Projects";
     String REQ_TOTAL_THROUGHPUT = "totalThroughput";
     String REQ_TOTAL_STD_DEV = "totalStdDev";

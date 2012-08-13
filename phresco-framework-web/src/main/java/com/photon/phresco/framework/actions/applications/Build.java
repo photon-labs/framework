@@ -330,11 +330,16 @@ public class Build extends FrameworkBaseAction {
 				builder.append(File.separatorChar);
 				builder.append(POM_XML);
 				File pomPath = new File(builder.toString());
-				PomProcessor processor = new PomProcessor(pomPath);
-				com.phresco.pom.model.Plugin.Configuration pluginConfig = processor.getPlugin(MINIFY_PLUGIN_GROUPID,MINIFY_PLUGIN_ARTFACTID).getConfiguration();
-				List<Element> elements = pluginConfig.getAny();
-				for (Element element : elements) {
-					includesFiles(element);
+				if (pomPath.exists()) {
+					PomProcessor processor = new PomProcessor(pomPath);
+					Plugin plugin = processor.getPlugin(MINIFY_PLUGIN_GROUPID, MINIFY_PLUGIN_ARTFACTID);
+					if (plugin != null) {
+						com.phresco.pom.model.Plugin.Configuration pluginConfig = plugin.getConfiguration();
+						List<Element> elements = pluginConfig.getAny();
+						for (Element element : elements) {
+							includesFiles(element);
+						}
+					}
 				}
 			}
 
@@ -345,7 +350,12 @@ public class Build extends FrameworkBaseAction {
 		if (CollectionUtils.isNotEmpty(projectModules)) {
 			getHttpRequest().setAttribute(REQ_PROJECT_MODULES, projectModules);
 		}
-
+		List<String> serverType = new ArrayList<String>();
+		serverType.add("Apache Tomcat");
+		serverType.add("Jboss");
+		serverType.add("Jetty");
+		
+		getHttpRequest().setAttribute(REQ_SELECTED_SERVERTYPE, serverType);
 		getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
 		getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
 		getHttpRequest().setAttribute(REQ_PROJECT, project);
@@ -1177,7 +1187,9 @@ public class Build extends FrameworkBaseAction {
 				deleteLogFile();
 				javaMap.put(ENVIRONMENT_NAME, environments);
 				javaMap.put(IMPORT_SQL, importSQL);
+				javaMap.put(PROJECT_CODE, projectCode);
 				ActionType serverStart = ActionType.START_SERVER;
+				serverStart.setModuleId(projectModule);
 				BufferedReader reader = runtimeManager.performAction(project, serverStart, javaMap, null);
 				getHttpSession().setAttribute(projectCode + REQ_JAVA_START, reader);
 			}
@@ -1200,7 +1212,7 @@ public class Build extends FrameworkBaseAction {
 		}
 	}
 
-	private BufferedReader compileProject() {
+	private void compileProject() {
 		BufferedReader reader = null;
 		try {
 			Commandline cl = new Commandline("mvn clean compile");
@@ -1216,7 +1228,6 @@ public class Build extends FrameworkBaseAction {
 			}
 			new LogErrorReport(e, "Java run against source");
 		}
-		return reader;
 	}
 
 	private void writeLog(BufferedReader in) {
@@ -1325,7 +1336,9 @@ public class Build extends FrameworkBaseAction {
 			}
 			Map<String, String> javaMap = new HashMap<String, String>(2);
 			javaMap.put(ENVIRONMENT_NAME, environments);
+			javaMap.put(PROJECT_CODE, projectCode);
 			ActionType serverStop = ActionType.STOP_SERVER;
+			serverStop.setModuleId(projectModule);
 			BufferedReader reader = runtimeManager.performAction(project, serverStop, javaMap, null);
 			if (readData) {
 				String line = null;

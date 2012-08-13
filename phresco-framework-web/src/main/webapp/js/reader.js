@@ -61,7 +61,7 @@ function readerHandler(data, projectCode, testType, pageUrl) {
 	});
 }
 
-function asyncHandler(projectCode, testType) {
+function asyncHandler(projectCode, testType, pageUrl) {
    $.ajax({
         url : 'pages/applications/reader.jsp',
         type : "POST",
