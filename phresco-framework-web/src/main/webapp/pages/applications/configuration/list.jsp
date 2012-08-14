@@ -17,25 +17,27 @@
   limitations under the License.
   ###
   --%>
-<%@ taglib uri="/struts-tags" prefix="s"%>
 
-<%@ include file="../errorReport.jsp" %>
+<%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.util.List"%>
 <%@ page import="org.apache.commons.lang.StringUtils"%>
-<%@ page import="java.util.ArrayList"%>
-<%@ page import="java.util.Collection"%>
+<%@ page import="org.apache.commons.collections.CollectionUtils"%>
 <%@ page import="java.util.HashMap"%>
-<%@ page import="java.util.Iterator"%>
 <%@ page import="java.util.Map"%>
 <%@ page import="java.util.Iterator"%>
 <%@ page import="java.util.regex.*"%>
-<%@ page import="com.photon.phresco.model.*"%>
+
+<%@ page import="com.photon.phresco.model.ProjectInfo"%>
+<%@ page import="com.photon.phresco.model.SettingsInfo"%>
+<%@ page import="com.photon.phresco.model.PropertyInfo"%>
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.util.Constants"%>
 <%@ page import="com.photon.phresco.framework.api.Project" %>
 <%@ page import="com.photon.phresco.configuration.Environment" %>
+
 <%@ include file="../../userInfoDetails.jsp" %>
+<%@ include file="../errorReport.jsp" %>
 
 <script type="text/javascript" src="js/delete.js" ></script>
 <script type="text/javascript" src="js/confirm-dialog.js" ></script>
@@ -62,16 +64,15 @@
     Project project = (Project)request.getAttribute(FrameworkConstants.REQ_PROJECT);
     ProjectInfo selectedInfo = null;
     String projectCode = null;
-    if(project != null) {
+    if (project != null) {
         selectedInfo = project.getProjectInfo();
         projectCode = selectedInfo.getCode();
     }
 	List<Environment> envInfoValues = (List<Environment>) request.getAttribute(FrameworkConstants.ENVIRONMENTS);
 %>    
 
-<form action="deleteConfigurations" name="configurations" method="post" id="deleteObjects" class="configurations_list_form">
+<form class="configurations_list_form" id="formConfigList" name="listForm">
     <div class="operation">
-        <%-- <a href="<s:url action='addConfiguration'/>" class="btn primary">Add</a> --%>
         <a href="#" class="btn primary" id="addConfiguration"><s:text name="label.add"/></a>
         <input id="deleteButton" type="button" value="Delete" class="btn disabled" disabled="disabled"/>
         <input id="environmentButton" type="button" value="Environments" class="btn primary" />
@@ -86,7 +87,7 @@
     <%
         List<SettingsInfo> configurations = (List<SettingsInfo>)request.getAttribute("configuration");
     	Map<String, String> urls = new HashMap<String, String>();
-        if (configurations == null || configurations.size() == 0) {
+        if (CollectionUtils.isEmpty(configurations)) {
     %>
         <div class="alert-message block-message warning">
             <center><s:label key="configuration.error.message" cssClass="errorMsgLabel"/></center>
@@ -94,141 +95,113 @@
     <%
         } else {
     %>
-    		<div class="settingsList_table_div">
-	    		<div class="fixed-table-container">
-		      		<div class="header-background"> </div>
-		      		<div class="fixed-table-container-inner">
-				        <table cellspacing="0" class="zebra-striped">
-				          	<thead>
-					            <tr>
-									<th class="first">
-					                	<div class="th-inner-head ">
-					                		<input type="checkbox" value="" id="checkAllAuto" name="checkAllAuto">
-					                	</div>
-					              	</th>
-					              	<th class="second">
-					                	<div class="th-inner-head "><s:text name="label.name"/></div>
-					              	</th>
-					              	<th class="third">
-					                	<div class="th-inner-head "><s:text name="label.description"/></div>
-					              	</th>
-					              	<th class="third">
-					                	<div class="th-inner-head "><s:text name="label.type"/></div>
-					              	</th>
-					              	<th class="third">
-                                        <div class="th-inner-head "><s:text name="label.environment"/></div>
-                                    </th>
-					              	<th class="third">
-					                	<div class="th-inner-head "><s:text name="label.status"/></div>
-					              	</th>
-					            </tr>
-				          	</thead>
-				
-				          	<tbody>
-				          	
-				          	<%
-				          		for (SettingsInfo configuration : configurations) {
-				          			 for(Environment enves : envInfoValues) { 
-				              		     if(configuration.getEnvName().equals(enves.getName()))	{
-							%>
-								<tr>
-				              		<td class="checkbox_list">
-				              			<input type="checkbox" class="check" name="check" value="<%=configuration.getEnvName() + "," + configuration.getName() %>">
-				              		</td>
-				              		<td>
-				              			<a href="#" class="editConfiguration" id="<%= configuration.getName() %>" onclick="editConfiguration('<%= configuration.getName()%>', '<%= configuration.getEnvName() %>')"><%= configuration.getName() %></a>
-				              		</td>
-				              		<td style="width: 25%;"><%= configuration.getDescription() %></td>
-				              		<td><%= configuration.getType() %></td>
-				              		<td style="width: 25%;" title="<%= enves.getDesc() %>"><%= configuration.getEnvName() %></td>
-				              		<td>
-					              		<%	
-			                            	String protocol = null;
-			                            	String host = null;
-			                            	int port = 0;
-			                   				List<PropertyInfo> propertyInfos = configuration.getPropertyInfos();
-			                           		String url = "";
-			                           		for (PropertyInfo propertyInfo : propertyInfos) {
-			                   					if (propertyInfo.getKey().equals(Constants.SERVER_PROTOCOL)) {
-			                   						protocol = propertyInfo.getValue();
-			                   					}
-			                   					if (propertyInfo.getKey().equals(Constants.SERVER_HOST)) {
-			                   						host = propertyInfo.getValue();
-			                   					}
-			                   					if (propertyInfo.getKey().equals(Constants.SERVER_PORT)) {
-			                   						port = Integer.parseInt(propertyInfo.getValue());
-			                   					}
-			                           		}
-			                           		if (StringUtils.isEmpty(protocol)) {
-			                           			protocol = Constants.DB_PROTOCOL;
-			                           		}
-			                           		String configName = configuration.getName() + configuration.getEnvName();
-			                           		Pattern pattern = Pattern.compile("\\s+");
-			                           		Matcher matcher = pattern.matcher(configName);
-			                           		boolean check = matcher.find();
-			                           		String configNameForId = matcher.replaceAll("");
-			                           		urls.put(configNameForId, protocol +","+ host + "," + port);
-			                           	%>
-		                           		<img src="images/icons/inprogress.png" alt="status-up" title="Loading" id="isAlive<%= configNameForId %>">
-	       	  						</td>
-				            	</tr>
-				              <%
-				          			}
-				          		  }
+   		<div class="settingsList_table_div">
+    		<div class="fixed-table-container">
+	      		<div class="header-background"> </div>
+	      		<div class="fixed-table-container-inner">
+			        <table cellspacing="0" class="zebra-striped">
+			          	<thead>
+				            <tr>
+								<th class="first">
+				                	<div class="th-inner-head ">
+				                		<input type="checkbox" value="" id="checkAllAuto" name="checkAllAuto">
+				                	</div>
+				              	</th>
+				              	<th class="second">
+				                	<div class="th-inner-head "><s:text name="label.name"/></div>
+				              	</th>
+				              	<th class="third">
+				                	<div class="th-inner-head "><s:text name="label.description"/></div>
+				              	</th>
+				              	<th class="third">
+				                	<div class="th-inner-head "><s:text name="label.type"/></div>
+				              	</th>
+				              	<th class="third">
+                                       <div class="th-inner-head "><s:text name="label.environment"/></div>
+                                   </th>
+				              	<th class="third">
+				                	<div class="th-inner-head "><s:text name="label.status"/></div>
+				              	</th>
+				            </tr>
+			          	</thead>
+			
+			          	<tbody>
+			          	
+			          	<%
+							for (SettingsInfo configuration : configurations) {
+								for (Environment enves : envInfoValues) { 
+									if (configuration.getEnvName().equals(enves.getName())) {
+						%>
+									<tr>
+					              		<td class="checkbox_list">
+					              			<input type="checkbox" class="check" name="check" value="<%=configuration.getEnvName() + "," + configuration.getName() %>">
+					              		</td>
+					              		<td>
+					              			<a href="#" class="editConfiguration" id="<%= configuration.getName() %>" onclick="editConfiguration('<%= configuration.getName()%>', '<%= configuration.getEnvName() %>')"><%= configuration.getName() %></a>
+					              		</td>
+					              		<td style="width: 25%;"><%= configuration.getDescription() %></td>
+					              		<td><%= configuration.getType() %></td>
+					              		<td style="width: 25%;" title="<%= enves.getDesc() %>"><%= configuration.getEnvName() %></td>
+					              		<td>
+						              		<%	
+				                            	String protocol = null;
+				                            	String host = null;
+				                            	int port = 0;
+				                   				List<PropertyInfo> propertyInfos = configuration.getPropertyInfos();
+				                           		String url = "";
+				                           		for (PropertyInfo propertyInfo : propertyInfos) {
+				                   					if (propertyInfo.getKey().equals(Constants.SERVER_PROTOCOL)) {
+				                   						protocol = propertyInfo.getValue();
+				                   					}
+				                   					if (propertyInfo.getKey().equals(Constants.SERVER_HOST)) {
+				                   						host = propertyInfo.getValue();
+				                   					}
+				                   					if (propertyInfo.getKey().equals(Constants.SERVER_PORT)) {
+				                   						port = Integer.parseInt(propertyInfo.getValue());
+				                   					}
+				                           		}
+				                           		if (StringUtils.isEmpty(protocol)) {
+				                           			protocol = Constants.DB_PROTOCOL;
+				                           		}
+				                           		String configName = configuration.getName() + configuration.getEnvName();
+				                           		Pattern pattern = Pattern.compile("\\s+");
+				                           		Matcher matcher = pattern.matcher(configName);
+				                           		boolean check = matcher.find();
+				                           		String configNameForId = matcher.replaceAll("");
+				                           		urls.put(configNameForId, protocol +","+ host + "," + port);
+				                           	%>
+			                           		<img src="images/icons/inprogress.png" alt="status-up" title="Loading" id="isAlive<%= configNameForId %>">
+		       	  						</td>
+					            	</tr>
+						<%
+									}
 								}
-							%>	
-				          	</tbody>
-				        </table>
-		      		</div>
-	    		</div>
+							}
+						%>	
+			          	</tbody>
+			        </table>
+	      		</div>
     		</div>
+   		</div>
     <%
         }
     %>
+    
+    <!-- Hidden Fields -->
+	<input type="hidden" name="projectCode" value="<%= projectCode %>">
 </form>
-<!-- <div class="popup_div" id="environment">
-
-</div> -->
 
 <script type="text/javascript">
-	/* To check whether the divice is ipad or not */
-	if(!isiPad()){
-		/* JQuery scroll bar */
+//To check whether the device is ipad or not and then apply jquery scrollbar
+	if (!isiPad()) {
 		$(".fixed-table-container-inner").scrollbars();
 	}
-	
-    function isConnectionAlive(url, id) {
-        $.ajax({
-        	url : 'connectionAliveCheck',
-        	data : {
-        		'url' : url,
-        	},
-        	type : "get",
-        	datatype : "json",
-        	success : function(data) {
-        		if($.trim(data) == 'true') {
-        			$('#isAlive' + id).attr("src","images/icons/status-up.png");
-        			$('#isAlive' + id).attr("title","Alive");
-        		}
-				if($.trim(data) == 'false') {
-					$('#isAlive' + id).attr("src","images/icons/status-down.png");
-					$('#isAlive' + id).attr("title","Down");
-        		}
-        	}
-        });
-    }
-    
-    function openEnvironmentPopup() {
-    	$("#popup_div").empty();
-        showPopup();
-		popup('openEnvironmentPopup', '', $('#popup_div'));
-     }
-    
+
     $(document).ready(function() {
     	enableScreen();
     	
     	<% 
-			if(urls != null) {
+			if (urls != null) {
 		    	Iterator iterator = urls.keySet().iterator();  
 		    	while (iterator.hasNext()) { 
 		    	   String id = iterator.next().toString();  
@@ -243,12 +216,7 @@
 		$("#addConfiguration").click(function() {
 			disableScreen();
 			showLoadingIcon($("#loadingIconDiv"));
-			
-			var params = "";
-	    	if (!isBlank($('form').serialize())) {
-	    		params = $('form').serialize() + "&";
-	    	}
-			performAction("addConfiguration", params, $('#tabDiv'));
+			performAction("addConfiguration", $("#formConfigList"), $('#tabDiv'));
 		});
 		
 		$('#deleteButton').click(function() {
@@ -271,6 +239,33 @@
 	        return false;
 	    });
     });
+    
+    function isConnectionAlive(url, id) {
+        $.ajax({
+        	url : 'connectionAliveCheck',
+        	data : {
+        		'url' : url,
+        	},
+        	type : "get",
+        	datatype : "json",
+        	success : function(data) {
+        		if ($.trim(data) == 'true') {
+        			$('#isAlive' + id).attr("src","images/icons/status-up.png");
+        			$('#isAlive' + id).attr("title","Alive");
+        		}
+				if ($.trim(data) == 'false') {
+					$('#isAlive' + id).attr("src","images/icons/status-down.png");
+					$('#isAlive' + id).attr("title","Down");
+        		}
+        	}
+        });
+    }
+    
+    function openEnvironmentPopup() {
+    	$("#popup_div").empty();
+        showPopup();
+		popup('openEnvironmentPopup', $("#formConfigList"), $('#popup_div'));
+     }
     
     function editConfiguration(configName, envName) {
     	disableScreen();

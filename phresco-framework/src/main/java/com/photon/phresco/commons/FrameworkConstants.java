@@ -328,6 +328,7 @@ public interface FrameworkConstants {
      */
     String REQ_PROJECT_INFO	= "projectInfo";
 	String REQ_TITLE_ADD_APPLICATION = "Add ApPlication";
+	String REQ_APPLICATION_TYPES = "ApplicationTypes";
     String REQ_BUILD_FROM = "from";
     String REQ_NODEJS_SERVER_LOG = "NodeJsServerLog";
     String REQ_PROJECT = "project";

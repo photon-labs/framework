@@ -20,9 +20,6 @@
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.util.List"%>
-<%@ page import="java.util.ArrayList"%>
-<%@ page import="java.util.Collection"%>
-<%@ page import="java.util.Iterator"%>
 <%@ page import="com.photon.phresco.configuration.Environment" %>
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 
@@ -32,63 +29,69 @@
    	List<Environment> envInfoValues = (List<Environment>) request.getAttribute(FrameworkConstants.ENVIRONMENTS);
 %>
 
-<div class="popup_Modal" style="top: 40%;">
-	<div class="modal-header">
-		<h3 id="generateBuildTitle">
-			<s:text name="label.environment"/>
-		</h3>
-		<a class="close" href="#" id="close">&times;</a>
-	</div>
-
-	<div class="modal-body" style="height: 230px;">
-		<div class="clearfix">
-			<label for="xlInput" class="xlInput popup-label" ><span class="red">*</span> <s:text name="label.name"/></label>
-			<div class="input">
-				<input type="text" id="envName" name="envName" tabindex=1 class="xlarge" maxlength="30" title="30 Characters only">	
-			</div>
+<form autocomplete="off" id="formEnvironment">
+	<div class="popup_Modal" style="top: 40%;">
+		<div class="modal-header">
+			<h3 id="generateBuildTitle">
+				<s:text name="label.environment"/>
+			</h3>
+			<a class="close" href="#" id="close">&times;</a>
 		</div>
-		<div class="clearfix">
-			<label for="xlInput" class="xlInput popup-label"><s:text name="label.description"/></label>
-			<div class="input">
-				<textarea id="envDesc" class="xlarge env-desc" tabindex=2 maxlength="150" title="150 Characters only"></textarea>
-				<input type="button" value="Add" tabindex=3 id="Add" class="primary btn" style="margin-top: 36px;">
+	
+		<div class="modal-body" style="height: 230px;">
+			<div class="clearfix">
+				<label for="xlInput" class="xlInput popup-label" ><span class="red">*</span> <s:text name="label.name"/></label>
+				<div class="input">
+					<input type="text" id="envName" name="envName" tabindex=1 class="xlarge" maxlength="30" title="30 Characters only">	
+				</div>
 			</div>
-		</div>
-		<form id="environment" method="post" autocomplete="off">
+			
+			<div class="clearfix">
+				<label for="xlInput" class="xlInput popup-label"><s:text name="label.description"/></label>
+				<div class="input">
+					<textarea id="envDesc" class="xlarge env-desc" tabindex=2 maxlength="150" title="150 Characters only"></textarea>
+					<input type="button" value="Add" tabindex=3 id="Add" class="primary btn" style="margin-top: 36px;">
+				</div>
+			</div>
+			
 			<fieldset class="popup-fieldset" style="height: 115px;">
 				<legend class="fieldSetLegend" ><s:text name="label.added.environment"/></legend>
 				<select name="selectedEvn" id="selectedEvn" tabindex=4 class="xlarge" multiple="multiple" style="height: 88px; width: 300px; float: left; margin-left: 100px;" >
 					<%
-						 for(Environment env : envInfoValues ) {
+						for(Environment env : envInfoValues ) {
 					%>
 	                	   <option value="<%= env.getName() %>" title="<%= env.getDesc() %>" <%= env.isDefaultEnv() ? "disabled" : ""%> id="created"><%= env.getName() %></option>
 		            <% 
-				       }
+						}
 		            %>
 				</select>
+				
 				<div style="float: left; margin-left: 5px;">
 					<img src="images/icons/top_arrow.png" title="Move up" id="up" style="cursor: pointer;"><br>
 					<img src="images/icons/delete(1).png" title="Remove" id="remove" style="cursor: pointer; margin-top: 20px;"><br>
 					<img src="images/icons/btm_arrow.png" title="Move down" id="down" style="cursor: pointer; margin-top: 16px;" >
 				</div>
 			</fieldset>
-		</form>
-	</div>
-	
-	<div class="modal-footer">
-		<div class="action popup-action">
-			<div id="errMsg" class="envErrMsg"></div>
-<!-- 			error and success message -->
-			<div class="popup alert-message success" id="popupSuccessMsg"></div>
-			<div class="popup alert-message error" id="popupErrorMsg"></div>
-			<input type="button" class="btn primary" value="<s:text name="label.cancel"/>" id="cancel" tabindex=6>
-			<input type="button" class="btn primary" value="<s:text name="label.save"/>" id="save" tabindex=5>
+		</div>
+		
+		<div class="modal-footer">
+			<div class="action popup-action">
+				<div id="errMsg" class="envErrMsg"></div>
+				<!-- error and success message -->
+				<div class="popup alert-message success" id="popupSuccessMsg"></div>
+				<div class="popup alert-message error" id="popupErrorMsg"></div>
+				<input type="button" class="btn primary" value="<s:text name="label.cancel"/>" id="cancel" tabindex=6>
+				<input type="button" class="btn primary" value="<s:text name="label.save"/>" id="save" tabindex=5>
+			</div>
 		</div>
 	</div>
-</div>
-<!-- selectedEnvs hidden field will be updated with the newly added environments after clicking the Add button -->
-<input type="hidden" id="selectedEnvs" name="selectedEnvs" value="">
-<input type="hidden" id="deletableItems" name="deletableItems" value="">
+	
+	<!-- Hidden Fields -->
+	<!-- selectedEnvs hidden field will be updated with the newly added environments after clicking the Add button -->
+	<input type="hidden" id="selectedEnvs" name="selectedEnvs" value="">
+	<input type="hidden" id="deletableItems" name="deletableItems" value="">
+</form>
+
 <script type="text/javascript">
 	escPopup();
 	
@@ -108,7 +111,7 @@
 			var returnVal = true;
 			name =($.trim($("#envName").val()));
 			desc = $("#envDesc").val();
-			if(name == "") {
+			if (name == "") {
 				$("#errMsg").html("Enter Environment Name");
 				$("#envName").focus();
 				$("#envName").val("");
@@ -186,7 +189,7 @@
 			var envs = $("#selectedEnvs").val();
 			var deletableData = $('#deletableItems').val();
            	if(deletableData == "" ) {
-           		if(envs == "") {
+           		if (envs == "") {
 	                $("#errMsg").html("Add Environments");
 	            } else {
 	            	generateXML(envs, deletableData);
@@ -196,7 +199,7 @@
            	}
         });
 		
-		$("#envName").bind('input propertychange',function(e){ 	//envName validation
+		$("#envName").bind('input propertychange',function(e) { //envName validation
 	     	var name = $(this).val();
 	     	name = checkForSplChr(name);
 	     	$(this).val(name);
@@ -206,7 +209,7 @@
 	function generateXML(envs, deletableData) {
 		var url = "";
 		var conatiner = "";
-		if(<%= "settings".equals(fromTab) %>) {
+		if (<%= "settings".equals(fromTab) %>) {
 			url = "createSettingsEnvironment";
 			conatiner = $("#container");
 		}
@@ -215,41 +218,33 @@
 			conatiner = $("#tabDiv");
 		}
         showParentPage();
-       	var params = "";
-		if (!isBlank($('form').serialize())) {
-			params = $('form').serialize() + "&";
-		}
+    	var params = "projectCode=";
+		params = params.concat("<%= projectCode %>");
 		if (envs != undefined  && envs != "") {
-			params = params.concat("envs=");
+			params = params.concat("&envs=");
 			params = params.concat(envs);			
 		}
 		if (deletableData != undefined && deletableData != "") {
-			if (envs != undefined  && envs != "") {
-				params = params.concat("&deletableEnvs=");
-			} else {
-				params = params.concat("deletableEnvs=");
-			}
+			params = params.concat("&deletableEnvs=");
 			params = params.concat(deletableData);
 		}
-		performAction(url, params, conatiner);
+		performActionParams(url, params, conatiner);
     }
 	
 	function validateEnv(envs, desc) {
-       	var params = "";
-		if (!isBlank($('form').serialize())) {
-			params = $('form').serialize() + "&";
-		}
-		params = params.concat("envs=");
+		var params = "envs=";
 		params = params.concat(envs);
-		if(<%= "settings".equals(fromTab) %>) {
-		    performAction('checkDuplicateEnvSettings', params, '', true);
+		params = params.concat("&projectCode=");
+		params = params.concat("<%= projectCode %>");
+		if (<%= "settings".equals(fromTab) %>) {
+		    performActionParams('checkDuplicateEnvSettings', params, '', true);
 		} else {
-			performAction('checkDuplicateEnv', params, '', true);	
+			performActionParams('checkDuplicateEnv', params, '', true);	
 		}
 	}
 	
 	function successValidateEnv(data) {
-    	if(data.envError == undefined) {
+    	if (data.envError == undefined) {
     		$("#errMsg").empty();
     		var hiddenFieldVal = $("#selectedEnvs").val();
 			hiddenFieldVal = hiddenFieldVal + name + "#DSEP#" + desc + "#SEP#";
@@ -265,7 +260,9 @@
 	function emptyEnvVal(evt) {
 		var evt = (evt) ? evt : ((event) ? event : null);
 		var node = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null);
-		if ((evt.keyCode == 13) && (node.type=="text"))  {return false;}
+		if ((evt.keyCode == 13) && (node.type=="text")) {
+			return false;
+		}
 	}
 
 	document.onkeypress = emptyEnvVal; 
@@ -281,7 +278,7 @@
 			} else {
 				$("#errMsg").html("");
 				var availDeletableItems = $("#deletableItems").val();
-				if(availDeletableItems == ""){
+				if (availDeletableItems == ""){
 					availDeletableItems = availDeletableItems + deletableItems;
 				} else {
 					availDeletableItems = availDeletableItems + "," + deletableItems;
@@ -299,16 +296,14 @@
 	}
 	
 	function validateRemove(deletableItems) {
-       	var params = "";
-		if (!isBlank($('form').serialize())) {
-			params = $('form').serialize() + "&";
-		}
-		params = params.concat("deletableEnvs=");
+		var params = "deletableEnvs=";
 		params = params.concat(deletableItems);
-		if(<%= "settings".equals(fromTab) %>) {
-		    performAction('checkForRemoveSettings', params, '', true);
+		params = params.concat("&projectCode=");
+		params = params.concat("<%= projectCode %>");
+		if (<%= "settings".equals(fromTab) %>) {
+		    performActionParams('checkForRemoveSettings', params, '', true);
 		} else {
-			performAction('checkForRemove', params, '', true);	
+			performActionParams('checkForRemove', params, '', true);	
 		}
 	}
 </script>

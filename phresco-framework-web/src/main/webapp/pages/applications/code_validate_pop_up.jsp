@@ -20,8 +20,6 @@
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.util.List"%>
-<%@ page import="java.util.Map"%>
-<%@ page import="java.util.Set"%>
 
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.framework.api.Project" %>
@@ -38,7 +36,8 @@
 	//xcode targets
    	List<PBXNativeTarget> xcodeConfigs = (List<PBXNativeTarget>) request.getAttribute(FrameworkConstants.REQ_XCODE_CONFIGS);
 %>
-<form action="code" method="post" autocomplete="off" class="build_form" id="generateBuildForm">
+
+<form autocomplete="off" id="formCodeValidate">
 <div class="popup_Modal">
 	<div class="modal-header">
 		<h3 id="generateBuildTitle">
@@ -50,7 +49,6 @@
 	<div class="modal-body">
 		
 		<% if (TechnologyTypes.IPHONES.contains(technology)) { %>
-
 			<!-- TARGET -->
 			<div class="clearfix">
 				<label for="xlInput" class="xlInput popup-label"><s:text name="label.target"/></label>
@@ -58,15 +56,17 @@
 					<select id="target" name="target" class="xlarge" >
 					<% if (xcodeConfigs != null) { 
 							for (PBXNativeTarget xcodeConfig : xcodeConfigs) {
-						%>
+					%>
 							<option value="<%= xcodeConfig.getName() %>"><%= xcodeConfig.getName() %></option>
-						<% } 
-					} %>	
+					<% 
+							} 
+					   } 
+					%>	
 			       </select>
 				</div>
 			</div>
+			
 		<% }  else { %>
-		
 		<fieldset class="popup-fieldset">
 			<legend class="fieldSetLegend" style="font-weight:normal"><s:text name="label.select.validate.against"/></legend>
 
@@ -91,10 +91,11 @@
 			</div>
 
 
-			<% if (TechnologyTypes.HTML5_WIDGET.equals(technology) || TechnologyTypes.HTML5_MOBILE_WIDGET.equals(technology) 
-				|| TechnologyTypes.HTML5.equals(technology) || TechnologyTypes.HTML5_JQUERY_MOBILE_WIDGET.equals(technology) 
-				|| TechnologyTypes.HTML5_MULTICHANNEL_JQUERY_WIDGET.equals(technology) || TechnologyTypes.JAVA_WEBSERVICE.equals(technology)) { %>	
-
+			<% 
+				if (TechnologyTypes.HTML5_WIDGET.equals(technology) || TechnologyTypes.HTML5_MOBILE_WIDGET.equals(technology) 
+					|| TechnologyTypes.HTML5.equals(technology) || TechnologyTypes.HTML5_JQUERY_MOBILE_WIDGET.equals(technology) 
+					|| TechnologyTypes.HTML5_MULTICHANNEL_JQUERY_WIDGET.equals(technology) || TechnologyTypes.JAVA_WEBSERVICE.equals(technology)) { 
+			%>	
 				<div class="clearfix" id="techDiv">
 					<div class="xlInput">
 						<ul class="inputs-list">
@@ -109,7 +110,6 @@
 						</ul>
 					</div>	
 				</div>
-
 			<% } %>
 
 		</fieldset>
@@ -125,12 +125,14 @@
 		</div>
 	</div>
 </div>
+
+<!-- Hidden Fields -->
+<input type="hidden" name="projectCode" value="<%= projectCode %>">
+	
 </form>
 
 <script type="text/javascript">
-
 	$(document).ready(function() {
-		
 		$('#close, #cancel').click(function() {
 			showParentPage();
 		});
@@ -162,5 +164,4 @@
 			}
 		}); 
 	});
-	
 </script>

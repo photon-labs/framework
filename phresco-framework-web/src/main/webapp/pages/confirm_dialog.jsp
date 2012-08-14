@@ -18,6 +18,7 @@
   ###
   --%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
+
 <!-- Confirmation dialog starts -->	
 <div id="confirm" class="modal confirm">
 	<div class="modal-header">

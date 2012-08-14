@@ -34,7 +34,7 @@
    <% } else { 
 		sonarPath = (String) request.getAttribute(FrameworkConstants.REQ_SONAR_PATH);
    %>
-		 <iframe src="" frameBorder="0" class="iframe_container"></iframe>
+		 <iframe src="" frameBorder="0" class="iframe_container" id="codeValidateIframe"></iframe>
 		
 	<% } %>
 	
@@ -65,10 +65,10 @@
 	    	} 
 	    %>
 	    
-	    $("iframe").attr({
+	    $("#codeValidateIframe").attr({
 	        src: source
 	    });
-	    $('iframe').load(function() {
+	    $('#codeValidateIframe').load(function() {
 	        $(".loadingIcon").hide();
 	    });
 	}

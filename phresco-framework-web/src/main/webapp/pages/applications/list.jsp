@@ -71,7 +71,7 @@
 	</div>
 </div>
 
-<form name="delete" action="delete" method="post" autocomplete="off" id="formAppList" class="app_list_form">
+<form autocomplete="off" id="formAppList" class="app_list_form" name="listForm">
 	<div class="operation">
 		<input id="add" type="button" value="<s:text name="label.addappln"/>" class="btn primary"/>
 		<a href="#" class="btn primary" id="import"><s:text name="label.import.from.svn"/></a>
@@ -163,14 +163,13 @@
 </form>
 
 <script type="text/javascript">
-	/* To check whether the device is ipad or not */
-	if(!isiPad()){
-		/* JQuery scroll bar */
+	//To check whether the device is ipad or not and then apply jquery scrollbar
+	if (!isiPad()) {
 		$(".fixed-table-container-inner").scrollbars();  
 	}
 
 	$(document).ready(function() {
-		if(refreshIntervalId != undefined) {
+		if (refreshIntervalId != undefined) {
 			clearInterval(refreshIntervalId);			
 		}
 		enableScreen(); // for some popups like svn_import and CI , it should stay till the completion of the process
@@ -206,13 +205,9 @@
 	        performAction('applicationDetails', $('#formAppList'), $('#container'));
 	    });
 		
-		$('form').submit(function() {
+		$('form[name=listForm]').submit(function() {
             showProgessBar("Deleting Project (s)", 100);
-            var params = "";
-	    	if (!isBlank($('form').serialize())) {
-	    		params = $('form').serialize() + "&";
-	    	}
-			performAction('delete', params, $('#container'));
+			performAction('delete', $('#formAppList'), $('#container'));
 	        return false;
 	    });
 		
@@ -243,7 +238,7 @@
 	function importFromSvn() {
 		showPopup();
 		$('#popup_div').empty();
-		popup('importFromSvn', '', $('#popup_div'));
+		popupParams('importFromSvn', '', $('#popup_div'));
 	    escPopup();
 	}
 	

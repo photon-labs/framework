@@ -206,7 +206,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 
 		// Creating configuration file, after successfull creation of project
 		try {
-//			createConfigurationXml(info.getCode());
+			createConfigurationXml(info.getCode());
 		} catch (Exception e) {
 			S_LOGGER.error("Entered into the catch block of Configuration creation failed Exception" + e.getLocalizedMessage());
 			throw new PhrescoException("Configuration creation failed");
@@ -2056,7 +2056,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 
 	 public List<Environment> getEnvFromService() throws PhrescoException {
 		 try {
-			 return PhrescoFrameworkFactory.getServiceManager().getEnvInfoFromService();
+			 return getServiceManager().getDefaultEnvFromServer();
 		 } catch (ClientHandlerException ex) {
 			 S_LOGGER.error(ex.getLocalizedMessage());
 			 throw new PhrescoException(ex);

@@ -321,8 +321,7 @@ public class Applications extends FrameworkBaseAction {
 		S_LOGGER.debug("Entered previous()");
 
 		try {
-			HttpServletRequest request = getHttpRequest();
-			getHttpRequest().setAttribute("projectCode", projectCode);
+			getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
 
 			ProjectInfo projectInfo = null;
 			if (projectCode != null) {
@@ -344,22 +343,22 @@ public class Applications extends FrameworkBaseAction {
 						REQ_SELECTED_JSLIBS);
 				if (jsLibs != null && jsLibs.length > 0) {
 					Map<String, String> mapJsLib = ApplicationsUtil
-							.getIdAndVersionAsMap(request, jsLibs);
+							.getIdAndVersionAsMap(getHttpRequest(), jsLibs);
 					getHttpRequest().setAttribute(REQ_TEMP_SELECTED_JSLIBS,
 							mapJsLib);
 				}
 			}
 			getHttpSession().setAttribute(projectCode, projectInfo);
 			FrameworkUtil.setAppInfoDependents(getHttpRequest(), customerId);
+			getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
+			getHttpRequest().setAttribute(REQ_CONFIG_SERVER_NAMES, configServerNames);
+			getHttpRequest().setAttribute(REQ_CONFIG_DB_NAMES, configDbNames);
+			getHttpRequest().setAttribute(REQ_CUSTOMER_ID, customerId);
 		} catch (Exception e) {
 			S_LOGGER.error("Entered into catch block of  Applications.previous()"
 					+ FrameworkUtil.getStackTraceAsString(e));
 			new LogErrorReport(e, "When previous button is clicked");
 		}
-		getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
-		getHttpRequest().setAttribute(REQ_CONFIG_SERVER_NAMES,
-				configServerNames);
-		getHttpRequest().setAttribute(REQ_CONFIG_DB_NAMES, configDbNames);
 
 		return APP_APPINFO;
 	}
@@ -653,6 +652,7 @@ public class Applications extends FrameworkBaseAction {
 	}
 
 	public String importFromSvn() {
+		
 		return APP_IMPORT_FROM_SVN;
 	}
 
