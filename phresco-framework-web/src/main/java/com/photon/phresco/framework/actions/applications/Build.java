@@ -1363,20 +1363,11 @@ public class Build extends FrameworkBaseAction {
 		String logMsg = "";
 		BufferedReader input = null;
 		try {
-			File logFile = null;
-			File dir = new File(javaLogFileDir());
-			if (dir.isDirectory()) {
-				for (File child : dir.listFiles()) {
-					if (child.getName().startsWith(CATALINA_FILE_START_NAME)) {
-						logFile = child;
-						input = new BufferedReader(new FileReader(logFile));
+						input = new BufferedReader(new FileReader(getLogFilePath()));
 						String line = null;
 						while ((line = input.readLine()) != null) {
 							logMsg = logMsg + line + "<br/>";
 						}
-					}
-				}
-			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -1392,50 +1383,6 @@ public class Build extends FrameworkBaseAction {
 			}
 		}
 		return logMsg;
-	}
-
-	public String javaLogFileDir() {
-		StringBuilder builder = null;
-		try {
-			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-			builder = new StringBuilder(Utility.getProjectHome());
-			Project project = administrator.getProject(projectCode);
-			builder.append(project.getProjectInfo().getCode());
-			builder.append(File.separator);
-			builder.append(DO_NOT_CHECKIN_DIR);
-			builder.append(File.separator);
-			builder.append(TARGET_DIR);
-			builder.append(File.separator);
-			builder.append(TOMCAT_DIR);
-			builder.append(File.separator);
-			builder.append(TOMCAT_LOGS_DIR);
-			builder.append(File.separator);
-		} catch (Exception e) {
-			if (debugEnabled) {
-				S_LOGGER.error("Entered into catch block of Build.javaLogFileDir()"
-						+ FrameworkUtil.getStackTraceAsString(e));
-			}
-		}
-		return builder.toString();
-	}
-
-	public File getLogFile(File dir) {
-		waitForTime(1);
-		File javaReadLogFile = null;
-		for (File child : dir.listFiles()) {
-			if (child.getName().startsWith(CATALINA_FILE_START_NAME)) {
-				waitForTime(5);
-				javaReadLogFile = child;
-			}
-		}
-		return javaReadLogFile;
-	}
-
-	public void deleteLogFile(File dir) {
-		for (File child : dir.listFiles()) {
-			child.delete();
-		}
-		dir.delete();
 	}
 
 	public void waitForTime(int waitSec) {
@@ -1802,9 +1749,11 @@ public class Build extends FrameworkBaseAction {
 					dbversion = databasedetail.getPropertyInfo(Constants.DB_VERSION).getValue();
 					File[] dbSqlFiles = new File(Utility.getProjectHome() + projectCode + sqlPath + selectedDb + File.separator + dbversion).listFiles();
 					for (int i = 0; i < dbSqlFiles.length; i++) {
-						 sqlFileName = dbSqlFiles[i].getName();
-						path = sqlPath + selectedDb + FILE_SEPARATOR +  dbversion + "#SEP#" +  sqlFileName ;
-						sqlFiles.add(path);
+						if (!dbSqlFiles[i].isDirectory()) {
+						sqlFileName = dbSqlFiles[i].getName();
+							path = sqlPath + selectedDb + FILE_SEPARATOR + dbversion + "#SEP#" + sqlFileName;
+							sqlFiles.add(path);
+						}
 					}
 				}
 			}
