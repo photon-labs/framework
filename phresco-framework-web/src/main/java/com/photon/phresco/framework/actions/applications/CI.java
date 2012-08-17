@@ -135,8 +135,15 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
     	S_LOGGER.debug("Entering Method CI.ci()");
     	try {
     		boolean jenkinsAlive = false;
+    		// Other methods like build() will call this after triggered build, it will set trigger_from_ui=true, we need to set value when this variable is empty
     		//UI didnt trigger anybuild from here
-    		getHttpRequest().setAttribute(CI_BUILD_TRIGGERED_FROM_UI, FALSE);
+    		String buildTriggeredVal = (String)getHttpRequest().getAttribute(CI_BUILD_TRIGGERED_FROM_UI);
+    		S_LOGGER.debug("buildTriggeredVal " + buildTriggeredVal);
+    		if (StringUtils.isEmpty(buildTriggeredVal)) {
+    			S_LOGGER.debug("Build triggered set to false ");
+    			getHttpRequest().setAttribute(CI_BUILD_TRIGGERED_FROM_UI, FALSE);
+    		}
+    		S_LOGGER.debug("buildTriggeredVal in Ci " + getHttpRequest().getAttribute(CI_BUILD_TRIGGERED_FROM_UI));
             ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
             Project project = (Project) administrator.getProject(projectCode);
             getHttpRequest().setAttribute(REQ_PROJECT, project);
@@ -303,6 +310,7 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
 				settingsInfoMap.put(IPHONE_SDK, sdk);
 				settingsInfoMap.put(IPHONE_CONFIGURATION, mode);
 				settingsInfoMap.put(IPHONE_TARGET_NAME, target);
+//				settingsInfoMap.put(TRIGGER_SIMULATOR, FALSE);
 				if (TechnologyTypes.IPHONE_HYBRID.equals(technology)) {
 					settingsInfoMap.put(IPHONE_PLISTFILE, XCodeConstants.HYBRID_PLIST);
 					settingsInfoMap.put(ENCRYPT, FALSE);

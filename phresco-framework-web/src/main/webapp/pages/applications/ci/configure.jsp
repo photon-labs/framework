@@ -485,7 +485,7 @@
 			<div class="clearfix">
 				<label for="xlInput" class="xlInput popup-label"><s:text name="label.enable.build.release"/></label>
 				
-				<div class="input" style="padding-top: 10px;">
+				<div class="input">
 					<div class="multipleFields quartsRadioWidth">
 						<div><input type="radio" name="enableBuildRelease" value="true" checked />&nbsp; <s:text name="label.yes"/></div>
 					</div>
@@ -501,22 +501,22 @@
 				
 				<div id="CollabNetConfig">
 					<div class="clearfix">
-						<label for="xlInput" class="xlInput popup-label ciTwoLineLbl"><span class="red">* </span><s:text name="label.build.release.url"/></label>
-						<div class="input ciTwoLineTxtBox">
+						<label for="xlInput" class="xlInput popup-label"><span class="red">* </span><s:text name="label.build.release.url"/></label>
+						<div class="input">
 							<input type="text" id="collabNetURL" class="ciSvnUrlWidth" name="collabNetURL" value="<%= existingJob == null ? "" : existingJob.getCollabNetURL() %>">
 						</div>
 					</div>
 		
 					<div class="clearfix">
-						<label for="xlInput" class="xlInput popup-label ciTwoLineLbl"><span class="red">* </span><s:text name="label.build.release.username"/></label>
-						<div class="input ciTwoLineTxtBox">
+						<label for="xlInput" class="xlInput popup-label"><span class="red">* </span><s:text name="label.build.release.username"/></label>
+						<div class="input">
 							<input type="text" id="collabNetusername" name="collabNetusername" maxlength="63" title="63 Characters only" value="<%= existingJob == null ? "" : existingJob.getCollabNetusername() %>">
 						</div>
 					</div>
 					
 					<div class="clearfix">
-						<label for="xlInput" class="xlInput popup-label ciTwoLineLbl"><span class="red">* </span><s:text name="label.build.release.password"/></label>
-						<div class="input ciTwoLineTxtBox">
+						<label for="xlInput" class="xlInput popup-label"><span class="red">* </span><s:text name="label.build.release.password"/></label>
+						<div class="input">
 							<input type="password" id="collabNetpassword" name="collabNetpassword" maxlength="63" title="63 Characters only" value="<%= existingJob == null ? "" : existingJob.getCollabNetpassword() %>">
 						</div>
 					</div>
@@ -545,7 +545,7 @@
 					<div class="clearfix">
 						<label for="xlInput" class="xlInput popup-label"><s:text name="label.build.release.overwrite"/></label>
 						
-						<div class="input" style="padding-top: 10px;">
+						<div class="input">
 							<div class="multipleFields quartsRadioWidth">
 								<div><input type="radio" name="overwriteFiles" value="true" checked />&nbsp; <s:text name="label.yes"/></div>
 							</div>
