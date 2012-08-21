@@ -27,7 +27,8 @@ public interface FrameworkConstants {
     /*
      * Common constants
      */
-	String FEATURES = "features"; 
+	String APP_INFO = "appInfo";
+	String FEATURES = "features";
     int JOB_STATUS_NOTOK = -1;
     String FOLDER_DOT_PHRESCO = ".phresco";
     String PHRESCO_HOME = "PHRESCO_HOME";
@@ -165,7 +166,7 @@ public interface FrameworkConstants {
     String TEST_PARAM_VALUE = "AllTest";
     String ALL_TEST_SUITES = "All";
     String KEY_QUOTES = "\"";
-    String FROM_PAGE = "edit";
+    String FROM_PAGE_EDIT = "edit";
     String DEPLOY_BUILD_NAME = "buildName";
     String IPHONE_BUILD_NAME = "application.path";
     String IPHONE_SIMULATOR_VERSION = "simulator.version";
@@ -404,6 +405,7 @@ public interface FrameworkConstants {
     String REQ_SETTINGS_INFO = "settingsInfo";
     String REQ_CURRENT_SETTINGS_TEMPLATE = "CurrentTemplate";
     String REQ_ALL_TECHNOLOGIES = "allTechnologies";
+    String REQ_APPTYPE_TECHNOLOGIES = "appTypeTechnologies";
     String REQ_SETTINGS_NAME = "settingName";
     String REQ_CODE_PREFIX = "codePrefix";
     String REQ_FROM_PAGE = "fromPage";

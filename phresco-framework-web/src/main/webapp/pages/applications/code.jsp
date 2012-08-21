@@ -26,7 +26,7 @@
 <%@ page import="com.photon.phresco.framework.api.Project" %>
 <%@ page import="com.photon.phresco.util.TechnologyTypes" %>
 
-<script src="js/reader.js" ></script>
+<script src="js/reader.js"></script>
 
 <%
 	String projectCode = (String) request.getAttribute(FrameworkConstants.REQ_PROJECT_CODE);

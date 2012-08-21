@@ -82,7 +82,6 @@
 <form id="formApplication"> 
 	<input type="hidden" id="fromPage" value="<%= fromPage %>" name="fromPage"/>
 	<input type="hidden" id="projectCode" value="<%= projectCode %>" name="projectCode"/>
-	<input type="hidden" name="customerId" value="<%= customerId %>"/>
 </form>
 <!--  Heading Ends-->
 
@@ -118,8 +117,7 @@
 		
         var selectedTab = "appinfo";
         $("#validationDiv").hide();	
-        
-		performAction(selectedTab, $('#formApplication'), $("#tabDiv"));
+		performAction(selectedTab, $('#formApplication'), $("#tabDiv"), '', getCustomerIdAsParam());
 		
         $("a[name='appTabs']").click(function() {
         	var selectedTab = $(this).attr("id");
@@ -136,7 +134,7 @@
 					disableScreen();
 					showLoadingIcon($("#loadingIconDiv"));
 				}
-        		if(selectedTab == "features"){
+        		if (selectedTab == "features") {
         			performAction(selectedTab, $('#formAppInfo'), $("#tabDiv"));
     			} else {
     				performAction(selectedTab, $('#formApplication'), $("#tabDiv"));    				
@@ -174,5 +172,10 @@
 		$('#popup_div').show().css("display", "block"); 
 		disableScreen();		
 		popup('showProjectValidationResult', '', $('#popup_div')); // there was xtra param here
+	}
+    
+	// To reload the appinfo page based on the customer when the customer is changed
+	function reloadCurrentPage() {
+		performAction('appinfo', $('#formApplication'), $("#tabDiv"), '', getCustomerIdAsParam());
 	}
 </script>

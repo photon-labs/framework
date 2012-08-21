@@ -152,7 +152,7 @@
 			enableSvnFormDet();
 			$('.popupLoadingIcon').show();
 			getCurrentCSS();
-            performAction('importcredentialdetails', $('#formSvnImport'), '', true);
+            performAction('importCredentialDetails', $('#formSvnImport'), '', true);
 		});
 		
  		$('#credentials').click(function() {

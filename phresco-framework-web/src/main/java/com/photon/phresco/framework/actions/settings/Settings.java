@@ -122,7 +122,7 @@ public class Settings extends FrameworkBaseAction {
 		}
 		try {
 			ProjectAdministrator administrator = getProjectAdministrator();
-			List<SettingsTemplate> settingsTemplates = administrator.getSettingsTemplates();
+			List<SettingsTemplate> settingsTemplates = administrator.getSettingsTemplates("");
 			getHttpRequest().setAttribute(SESSION_SETTINGS_TEMPLATES, settingsTemplates);
 			getHttpRequest().setAttribute(REQ_SELECTED_MENU, SETTINGS);
 			getHttpSession().removeAttribute(REQ_CONFIG_INFO);
@@ -149,7 +149,7 @@ public class Settings extends FrameworkBaseAction {
 
 		try {
 			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-			SettingsTemplate selectedSettingTemplate = administrator.getSettingsTemplate(settingsType);
+			SettingsTemplate selectedSettingTemplate = administrator.getSettingsTemplate(settingsType, "");
 			List<PropertyInfo> propertyInfoList = new ArrayList<PropertyInfo>();
 			List<PropertyTemplate> propertyTemplates = selectedSettingTemplate.getProperties();
 			String key = null;
@@ -221,7 +221,7 @@ public class Settings extends FrameworkBaseAction {
                 environments.append(envs);
             }
             
-	        List<SettingsTemplate> settingsTemplates = administrator.getSettingsTemplates();
+	        List<SettingsTemplate> settingsTemplates = administrator.getSettingsTemplates("");
 			administrator.createSetting(settingsInfo, environments.toString());
 			if (SERVER.equals(settingsType)){
 				addActionMessage(getText(SUCCESS_SERVER, Collections.singletonList(settingsName)));
@@ -321,7 +321,7 @@ public class Settings extends FrameworkBaseAction {
 		}
 		
 		boolean serverTypeValidation = false;
-		SettingsTemplate selectedSettingTemplate = administrator.getSettingsTemplate(settingsType);
+		SettingsTemplate selectedSettingTemplate = administrator.getSettingsTemplate(settingsType, "");
 		for (PropertyTemplate propertyTemplate : selectedSettingTemplate.getProperties()) {
 			String key = null;
 			String value = null;
@@ -401,11 +401,11 @@ public class Settings extends FrameworkBaseAction {
 			SettingsInfo settingsInfo = administrator.getSettingsInfo(oldName, getEnvName());
             getHttpSession().setAttribute(oldName, settingsInfo);
 			getHttpRequest().setAttribute(SESSION_OLD_NAME, oldName);
-            List<SettingsTemplate> settingsTemplates = administrator.getSettingsTemplates();
+            List<SettingsTemplate> settingsTemplates = administrator.getSettingsTemplates("");
             getHttpRequest().setAttribute(SESSION_SETTINGS_TEMPLATES, settingsTemplates);
             List<Environment> environments = administrator.getEnvironments();
             getHttpRequest().setAttribute(ENVIRONMENTS, environments);
-			getHttpRequest().setAttribute(REQ_FROM_PAGE, FROM_PAGE);
+			getHttpRequest().setAttribute(REQ_FROM_PAGE, FROM_PAGE_EDIT);
 			getHttpRequest().setAttribute(REQ_SELECTED_MENU, SETTINGS);
 			getHttpSession().removeAttribute(ERROR_SETTINGS);
 			getHttpSession().removeAttribute(SETTINGS_PARAMS);
@@ -428,7 +428,7 @@ public class Settings extends FrameworkBaseAction {
 			ProjectAdministrator administrator = PhrescoFrameworkFactory
 					.getProjectAdministrator();
 			SettingsTemplate selectedSettingTemplate = administrator
-					.getSettingsTemplate(settingsType);
+					.getSettingsTemplate(settingsType, "");
 			List<PropertyInfo> propertyInfoList = new ArrayList<PropertyInfo>();
 			List<PropertyTemplate> propertyTemplates = selectedSettingTemplate.getProperties();
 
@@ -481,11 +481,11 @@ public class Settings extends FrameworkBaseAction {
 	            }
 			
 			getHttpSession().setAttribute(oldName, newSettingsInfo);
-			if (!validate(administrator, FROM_PAGE)) {
+			if (!validate(administrator, FROM_PAGE_EDIT)) {
 				isValidated = true;
-			    List<SettingsTemplate> settingsTemplates = administrator.getSettingsTemplates();
+			    List<SettingsTemplate> settingsTemplates = administrator.getSettingsTemplates("");
 	            getHttpRequest().setAttribute(SESSION_SETTINGS_TEMPLATES, settingsTemplates);
-				request.setAttribute(REQ_FROM_PAGE, FROM_PAGE);
+				request.setAttribute(REQ_FROM_PAGE, FROM_PAGE_EDIT);
 				request.setAttribute(REQ_OLD_NAME, oldName);
 				return Action.SUCCESS;
 			}
@@ -567,7 +567,7 @@ public class Settings extends FrameworkBaseAction {
 			    settingsInfo = administrator.getSettingsInfo(oldName, getEnvName());
 			    getHttpRequest().setAttribute(REQ_OLD_NAME, oldName);
 			}
-			SettingsTemplate settingsTemplate = administrator.getSettingsTemplate(settingsType);
+			SettingsTemplate settingsTemplate = administrator.getSettingsTemplate(settingsType, "");
 			if (debugEnabled) {
 				S_LOGGER.debug("Setting Template object value " + settingsTemplate.toString());
 			}

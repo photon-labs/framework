@@ -121,6 +121,7 @@ public class Applications extends FrameworkBaseAction {
 	public String list() {
 		long start = System.currentTimeMillis();
 		S_LOGGER.debug("Entering Method  Applications.list()");
+		
 		try {
 			Map<String, Object> sessionMap = ActionContext.getContext().getSession();
 			sessionMap.remove(SESSION_SELECTED_INFO);
@@ -140,32 +141,25 @@ public class Applications extends FrameworkBaseAction {
 	}
 
 	public String applicationDetails() {
-		S_LOGGER.debug("Entering Method  Applications.addApplication()");
+		S_LOGGER.debug("Entering Method  Applications.applicationDetails()");
 
-		getHttpRequest().setAttribute(REQ_FROM_PAGE, fromPage);
-		getHttpRequest().setAttribute(REQ_CUSTOMER_ID, customerId);
-		if (projectCode != null && !StringUtils.isEmpty(projectCode)) {
-			try {
-				getHttpSession().removeAttribute(projectCode);
-				ProjectAdministrator administrator = PhrescoFrameworkFactory
-						.getProjectAdministrator();
-				if (projectCode != null) {
-					ProjectInfo projectInfo = administrator.getProject(
-							projectCode).getProjectInfo();
-					S_LOGGER.debug("project info value"
-							+ projectInfo.toString());
-					getHttpRequest()
-							.setAttribute(REQ_PROJECT_INFO, projectInfo);
-				}
-				if (StringUtils.isNotEmpty(fromPage)) {
-					getHttpRequest().setAttribute(REQ_FROM_PAGE, fromPage);
-				}
-			} catch (Exception e) {
-				S_LOGGER.error("Entered into catch block of Applications.addApplication()"
-						+ FrameworkUtil.getStackTraceAsString(e));
-				new LogErrorReport(e, REQ_TITLE_ADD_APPLICATION);
+		try {
+			getHttpSession().removeAttribute(projectCode);
+			ProjectAdministrator administrator = PhrescoFrameworkFactory
+					.getProjectAdministrator();
+			if (StringUtils.isNotEmpty(projectCode)) {
+				ProjectInfo projectInfo = administrator.getProject(
+						projectCode).getProjectInfo();
+				S_LOGGER.debug("project info value" + projectInfo.toString());
+				getHttpRequest().setAttribute(REQ_PROJECT_INFO, projectInfo);
 			}
+			getHttpRequest().setAttribute(REQ_FROM_PAGE, fromPage);
+		} catch (Exception e) {
+			S_LOGGER.error("Entered into catch block of Applications.addApplication()"
+					+ FrameworkUtil.getStackTraceAsString(e));
+			new LogErrorReport(e, REQ_TITLE_ADD_APPLICATION);
 		}
+		
 		return APP_APPLICATION_DETAILS;
 	}
 
@@ -182,12 +176,10 @@ public class Applications extends FrameworkBaseAction {
 					.getProjectAdministrator();
 			ProjectInfo projectInfo = null;
 			if (FEATURES.equals(fromTab)) {
-				projectInfo = (ProjectInfo) getHttpSession().getAttribute(
-						projectCode);
+				projectInfo = (ProjectInfo) getHttpSession().getAttribute(projectCode);
 			}
 			if (StringUtils.isNotEmpty(fromPage) && projectInfo == null) {
-				projectInfo = administrator.getProject(projectCode)
-						.getProjectInfo();
+				projectInfo = administrator.getProject(projectCode).getProjectInfo();
 				getHttpSession().setAttribute(projectCode, projectInfo);
 			}
 
@@ -198,17 +190,14 @@ public class Applications extends FrameworkBaseAction {
 			if (modules != null && modules.length > 0) {
 				Map<String, String> mapModules = ApplicationsUtil
 						.getIdAndVersionAsMap(getHttpRequest(), modules);
-				getHttpRequest().setAttribute(REQ_TEMP_SELECTEDMODULES,
-						mapModules);
+				getHttpRequest().setAttribute(REQ_TEMP_SELECTEDMODULES, mapModules);
 			}
 
-			String[] jsLibs = getHttpRequest().getParameterValues(
-					REQ_SELECTED_JSLIBS);
+			String[] jsLibs = getHttpRequest().getParameterValues(REQ_SELECTED_JSLIBS);
 			if (jsLibs != null && jsLibs.length > 0) {
 				Map<String, String> mapJsLib = ApplicationsUtil
 						.getIdAndVersionAsMap(getHttpRequest(), jsLibs);
-				getHttpRequest().setAttribute(REQ_TEMP_SELECTED_JSLIBS,
-						mapJsLib);
+				getHttpRequest().setAttribute(REQ_TEMP_SELECTED_JSLIBS, mapJsLib);
 			}
 		} catch (ClientHandlerException e) {
 			S_LOGGER.error("Entered into catch block of Applications.appInfo()"
@@ -231,20 +220,17 @@ public class Applications extends FrameworkBaseAction {
 		S_LOGGER.debug("Entering Method  Applications.applicationType()");
 		
 		try {
-			ApplicationType applicationType = ApplicationsUtil
-					.getApplicationType(getHttpRequest(), application, customerId);
-			getHttpRequest().setAttribute(REQ_APPLICATION_TYPE,
-					applicationType);
 			ProjectAdministrator administrator = PhrescoFrameworkFactory
 					.getProjectAdministrator();
 			Project project = null;
 			if (StringUtils.isNotEmpty(projectCode)) {
 				project = administrator.getProject(projectCode);
-			}
-			if (project != null) {
 				ProjectInfo projectInfo = project.getProjectInfo();
 				getHttpRequest().setAttribute(REQ_PROJECT_INFO, projectInfo);
+				application = projectInfo.getApplication();
 			}
+			List<Technology> technologies = administrator.getTechnologies(application, customerId);
+			getHttpRequest().setAttribute(REQ_APPTYPE_TECHNOLOGIES, technologies);
 			getHttpRequest().setAttribute(REQ_SELECTED_JSLIBS,
 					getHttpRequest().getParameter(REQ_SELECTED_JSLIBS));
 			getHttpRequest().setAttribute(REQ_FROM_PAGE, fromPage);
@@ -266,15 +252,13 @@ public class Applications extends FrameworkBaseAction {
 			Project project = null;
 			if (StringUtils.isNotEmpty(projectCode)) {
 				project = administrator.getProject(projectCode);
-			}
-			if (project != null) {
 				ProjectInfo projectInfo = project.getProjectInfo();
 				S_LOGGER.debug("project info value" + projectInfo.toString());
 				getHttpRequest().setAttribute(REQ_PROJECT_INFO, projectInfo);
+				application = projectInfo.getApplication();
+				selectedTechnology = projectInfo.getTechId();
 			}
-			ApplicationType applicationType = ApplicationsUtil
-					.getApplicationType(getHttpRequest(), application, customerId);
-			Technology techonology = applicationType.getTechonology(selectedTechnology);
+			Technology techonology = administrator.getTechnology(application, selectedTechnology, customerId);
 			List<Server> servers = administrator.getServers(selectedTechnology, customerId);
 			List<Database> databases = administrator.getDatabases(selectedTechnology, customerId);
 			List<WebService> webServices = administrator
@@ -301,12 +285,9 @@ public class Applications extends FrameworkBaseAction {
 
 	public String techVersions() {
 		try {
-			String selectedTechnology = getHttpRequest().getParameter(
-					REQ_TECHNOLOGY);
-			ApplicationType applicationType = ApplicationsUtil
-					.getApplicationType(getHttpRequest(), application, customerId);
-			Technology techonology = applicationType
-					.getTechonology(selectedTechnology);
+			String selectedTechnology = getHttpRequest().getParameter(REQ_TECHNOLOGY);
+			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
+			Technology techonology = administrator.getTechnology(application, selectedTechnology, customerId);
 			techVersions = techonology.getVersions();
 		} catch (Exception e) {
 			S_LOGGER.error("Entered into catch block of  Applications.techVersions()"
@@ -322,7 +303,6 @@ public class Applications extends FrameworkBaseAction {
 
 		try {
 			getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
-
 			ProjectInfo projectInfo = null;
 			if (projectCode != null) {
 				projectInfo = (ProjectInfo) getHttpSession().getAttribute(
@@ -330,8 +310,7 @@ public class Applications extends FrameworkBaseAction {
 
 				getHttpRequest().setAttribute(REQ_TEMP_SELECTED_PILOT_PROJ,
 						getHttpRequest().getParameter(REQ_SELECTED_PILOT_PROJ));
-				String[] modules = getHttpRequest().getParameterValues(
-						REQ_SELECTEDMODULES);
+				String[] modules = getHttpRequest().getParameterValues(REQ_SELECTEDMODULES);
 				if (modules != null && modules.length > 0) {
 					Map<String, String> mapModules = ApplicationsUtil
 							.getIdAndVersionAsMap(getHttpRequest(), modules);
@@ -354,6 +333,7 @@ public class Applications extends FrameworkBaseAction {
 			getHttpRequest().setAttribute(REQ_CONFIG_SERVER_NAMES, configServerNames);
 			getHttpRequest().setAttribute(REQ_CONFIG_DB_NAMES, configDbNames);
 			getHttpRequest().setAttribute(REQ_CUSTOMER_ID, customerId);
+			getHttpRequest().setAttribute(REQ_FROM_PAGE, fromPage);
 		} catch (Exception e) {
 			S_LOGGER.error("Entered into catch block of  Applications.previous()"
 					+ FrameworkUtil.getStackTraceAsString(e));
@@ -366,16 +346,13 @@ public class Applications extends FrameworkBaseAction {
 	public String save() throws PhrescoException {
 		S_LOGGER.debug("Entering Method Applications.save()");
 
-		ProjectInfo projectInfo = (ProjectInfo) getHttpSession().getAttribute(
-				projectCode);
+		ProjectInfo projectInfo = (ProjectInfo) getHttpSession().getAttribute(projectCode);
 		try {
-			ProjectAdministrator administrator = PhrescoFrameworkFactory
-					.getProjectAdministrator();
+			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
 			setFeatures(administrator, projectInfo);
 			S_LOGGER.debug("Going to create project, Project info values "
 					+ projectInfo.toString());
-			User userInfo = (User) getHttpSession().getAttribute(
-					REQ_USER_INFO);
+			User userInfo = (User) getHttpSession().getAttribute(REQ_USER_INFO);
 			administrator.createProject(projectInfo, null, userInfo);
 			addActionMessage(getText(SUCCESS_PROJECT,
 					Collections.singletonList(projectInfo.getName())));
@@ -558,7 +535,7 @@ public class Applications extends FrameworkBaseAction {
 					}
 				}
 			}
-			getHttpRequest().setAttribute(REQ_FROM_PAGE, FROM_PAGE);
+			getHttpRequest().setAttribute(REQ_FROM_PAGE, FROM_PAGE_EDIT);
 			getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
 		} catch (Exception e) {
 			S_LOGGER.error("Entered into catch block of  Applications.edit()"
@@ -786,7 +763,6 @@ public class Applications extends FrameworkBaseAction {
 			S_LOGGER.error("Entered into catch block of Applications.discover()"
 					+ FrameworkUtil.getStackTraceAsString(e));
 			new LogErrorReport(e, "Discovering projects");
-			// return APP_LIST;
 		}
 		getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
 
@@ -980,7 +956,7 @@ public class Applications extends FrameworkBaseAction {
 					+ FrameworkUtil.getStackTraceAsString(e));
 			new LogErrorReport(e, "Getting server and database");
 		}
-
+		
 		return "openAttrPopup";
 	}
 
@@ -995,17 +971,21 @@ public class Applications extends FrameworkBaseAction {
 
 			if (Constants.SETTINGS_TEMPLATE_SERVER.equals(type)) {
 				List<Server> servers = administrator.getServers(techId, customerId);
-				for (Server server : servers) {
-					if (server.getId().equals(selectedId)) {
-						versions = server.getVersions();
+				if (CollectionUtils.isNotEmpty(servers)) {
+					for (Server server : servers) {
+						if (server.getId().equals(selectedId)) {
+							versions = server.getVersions();
+						}
 					}
 				}
 			}
 			if (Constants.SETTINGS_TEMPLATE_DB.equals(type)) {
 				List<Database> databases = administrator.getDatabases(techId, customerId);
-				for (Database database : databases) {
-					if (database.getId().equals(selectedId)) {
-						versions.addAll(database.getVersions());
+				if (CollectionUtils.isNotEmpty(databases)) {
+					for (Database database : databases) {
+						if (database.getId().equals(selectedId)) {
+							versions.addAll(database.getVersions());
+						}
 					}
 				}
 			}
@@ -1077,10 +1057,7 @@ public class Applications extends FrameworkBaseAction {
 	private void removeConfiguration() throws PhrescoException {
 		try {
 			if (StringUtils.isNotEmpty(configServerNames)) {
-				deleteConfigurations(
-						"Server",
-						configServerNames.substring(0,
-								configServerNames.length() - 1));
+				deleteConfigurations("Server", configServerNames.substring(0, configServerNames.length() - 1));
 			}
 			if (StringUtils.isNotEmpty(configDbNames)) {
 				deleteConfigurations("Database",

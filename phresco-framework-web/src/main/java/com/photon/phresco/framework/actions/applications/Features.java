@@ -40,6 +40,7 @@ import com.photon.phresco.framework.api.ProjectAdministrator;
 import com.photon.phresco.framework.commons.ApplicationsUtil;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.commons.LogErrorReport;
+import com.photon.phresco.model.ApplicationType;
 import com.photon.phresco.model.Database;
 import com.photon.phresco.model.Module;
 import com.photon.phresco.model.ModuleGroup;
@@ -95,17 +96,14 @@ public class Features extends FrameworkBaseAction {
 
 		try {
 			ProjectInfo projectInfo = null;
-			ProjectAdministrator administrator = PhrescoFrameworkFactory
-					.getProjectAdministrator();
-			if (validate(administrator) && StringUtils.isEmpty(fromPage)) {
+			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
+			if (StringUtils.isEmpty(fromPage) && validate(administrator)) {
 				setValidated(true);
 				return SUCCESS;
 			}
 			if (StringUtils.isEmpty(fromPage)
-					&& StringUtils.isNotEmpty(projectCode)) { // previous button
-																// clicked
-				projectInfo = (ProjectInfo) getHttpSession().getAttribute(
-						projectCode);
+					&& StringUtils.isNotEmpty(projectCode)) { // previous button clicked
+				projectInfo = (ProjectInfo) getHttpSession().getAttribute(projectCode);
 			} else if (StringUtils.isNotEmpty(fromPage)) { // For edit project
 				projectInfo = administrator.getProject(projectCode)
 						.getProjectInfo();
@@ -124,10 +122,8 @@ public class Features extends FrameworkBaseAction {
 				if (artifactId != null) {
 					projectInfo.setArtifactId(artifactId);
 				}
-					
 				application = projectInfo.getApplication();
 				technology = projectInfo.getTechnology().getId();
-
 				setTechnology(projectInfo, administrator);
 			} else { // For creating new project
 				projectInfo = new ProjectInfo();
@@ -234,30 +230,21 @@ public class Features extends FrameworkBaseAction {
 
 	private void setTechnology(ProjectInfo projectInfo, ProjectAdministrator administrator) throws PhrescoException {
 		try {
-			ProjectInfo tempprojectInfo = null;
-			Technology selectedTechnology = administrator.getApplicationType(application, customerId).getTechonology(technology);
-			Technology technology = new Technology();
-
-			technology.setId(selectedTechnology.getId());
-			technology.setName(selectedTechnology.getName());
+			Technology newTechnology = new Technology();
 			if (StringUtils.isEmpty(fromPage)) {
-				technology.setVersions(techVersion);
+				ApplicationType applicationType = administrator.getApplicationType(application, customerId);
+				Technology selectedTechnology = applicationType.getTechonology(technology);
+				newTechnology.setId(selectedTechnology.getId());
+				newTechnology.setName(selectedTechnology.getName());
+				newTechnology.setVersions(techVersion);
 			} else {
-				tempprojectInfo = administrator.getProject(projectCode).getProjectInfo();
-				List<String> projectInfoTechVersions = new ArrayList<String>();
-				List<String> tempPrjtInfoTechVersions = tempprojectInfo.getTechnology().getVersions();
-				if (tempPrjtInfoTechVersions != null && CollectionUtils.isNotEmpty(tempPrjtInfoTechVersions)) {
-					projectInfoTechVersions.addAll(tempprojectInfo.getTechnology().getVersions());
-					technology.setVersions(projectInfoTechVersions);
-				}
+				newTechnology.setId(projectInfo.getTechId());
+				newTechnology.setName(projectInfo.getTechnology().getName());
+				newTechnology.setVersions(projectInfo.getTechnology().getVersions());
+				newTechnology.setJsLibraries(projectInfo.getTechnology().getJsLibraries());
+				newTechnology.setModules(projectInfo.getTechnology().getModules());
 			}
 			
-			if (StringUtils.isNotEmpty(fromPage)) {// For project edit
-				technology.setJsLibraries(projectInfo.getTechnology()
-						.getJsLibraries());
-				technology.setModules(projectInfo.getTechnology().getModules());
-			}
-
 			List<Server> servers = administrator.getServers(getTechnology(), customerId);
 			List<Database> databases = administrator.getDatabases(getTechnology(), customerId);
 			List<WebService> webservices = administrator.getWebServices(getTechnology(), customerId);
@@ -266,15 +253,14 @@ public class Features extends FrameworkBaseAction {
 			String selectedDatabases = getHttpRequest().getParameter(REQ_SELECTED_DBS);
 			String[] selectedWebservices = getHttpRequest().getParameterValues(REQ_WEBSERVICES);
 			boolean isEmailSupported = false;
-			
-			if (StringUtils.isNotEmpty(fromTab)) {
+			if (APP_INFO.equals(fromTab)) {
 				if (StringUtils.isNotEmpty(selectedServers)) {
 					List<String> listTempSelectedServers = null;
 					if (StringUtils.isNotEmpty(selectedServers)) {
 						listTempSelectedServers = new ArrayList<String>(
 								Arrays.asList(selectedServers.split("#SEP#")));
 					}
-					technology.setServers(ApplicationsUtil.getSelectedServers(servers,
+					newTechnology.setServers(ApplicationsUtil.getSelectedServers(servers,
 							listTempSelectedServers));
 				}
 				
@@ -284,31 +270,30 @@ public class Features extends FrameworkBaseAction {
 						listTempSelectedDatabases = new ArrayList<String>(
 								Arrays.asList(selectedDatabases.split("#SEP#")));
 					}
-					technology.setDatabases(ApplicationsUtil.getSelectedDatabases(
+					newTechnology.setDatabases(ApplicationsUtil.getSelectedDatabases(
 							databases, listTempSelectedDatabases));
 				}
 				
 				if (!ArrayUtils.isEmpty(selectedWebservices)) {
-					technology.setWebservices(ApplicationsUtil.getSelectedWebservices(
+					newTechnology.setWebservices(ApplicationsUtil.getSelectedWebservices(
 							webservices, ApplicationsUtil.getArrayListFromStrArr(selectedWebservices)));
 				}
 				
 				if (getHttpRequest().getParameter(REQ_EMAIL_SUPPORTED) != null) {
 					isEmailSupported = Boolean.parseBoolean(getHttpRequest().getParameter(REQ_EMAIL_SUPPORTED));
 				}
-				technology.setEmailSupported(isEmailSupported);
-
+				newTechnology.setEmailSupported(isEmailSupported);
 			} else {
-				if (tempprojectInfo != null) {
-					technology.setServers(tempprojectInfo.getTechnology().getServers());
-					technology.setDatabases(tempprojectInfo.getTechnology().getDatabases());
-					technology.setWebservices(tempprojectInfo.getTechnology().getWebservices());
-					technology.setEmailSupported(tempprojectInfo.getTechnology().isEmailSupported());
+				if (projectInfo != null && projectInfo.getTechnology() != null) {
+					newTechnology.setServers(projectInfo.getTechnology().getServers());
+					newTechnology.setDatabases(projectInfo.getTechnology().getDatabases());
+					newTechnology.setWebservices(projectInfo.getTechnology().getWebservices());
+					newTechnology.setEmailSupported(projectInfo.getTechnology().isEmailSupported());
 				}
 			}
-			
-			projectInfo.setTechnology(technology);
+			projectInfo.setTechnology(newTechnology);
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new PhrescoException(e);
 		}
 	}

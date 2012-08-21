@@ -19,55 +19,46 @@
   --%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
-<%@ include file="../errorReport.jsp" %>
-
-<%@ page import="java.util.Collection"%>
-<%@ page import="java.util.Collections"%>
-<%@ page import="java.util.Arrays"%>
 <%@ page import="java.util.List"%>
-<%@ page import="java.util.regex.*"%>
 <%@ page import="java.util.Map"%>
-
-<%@ page import="org.apache.commons.collections.MapUtils"%>
 <%@ page import="org.apache.commons.collections.CollectionUtils"%>
-<%@ page import="org.apache.commons.collections.MapUtils" %>
 <%@ page import="org.apache.commons.lang.StringUtils" %>
 
 <%@ page import="com.photon.phresco.model.SettingsInfo"%>
 <%@ page import="com.photon.phresco.model.SettingsTemplate"%>
 <%@ page import="com.photon.phresco.model.PropertyTemplate"%>
-<%@ page import="com.photon.phresco.model.PropertyInfo"%>
-<%@ page import="com.photon.phresco.model.Technology"%>
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.model.I18NString"%>
-<%@ page import="com.photon.phresco.framework.api.Project" %>
 <%@ page import="com.photon.phresco.model.Server" %>
 <%@ page import="com.photon.phresco.model.Database"%>
-<%@ page import="com.photon.phresco.util.Constants" %>
 <%@ page import="com.photon.phresco.util.TechnologyTypes"%>
+<%@ page import="com.photon.phresco.model.ProjectInfo"%>
+<%@ page import="com.photon.phresco.model.Technology"%>
+<%@ page import="com.photon.phresco.util.Constants"%>
+
+<%@ include file="../errorReport.jsp" %>
 
 <%
     String value = "";
 	String selectedValue = "";
 	String selectedVersion = "";
 	String disableStr = "";
-    String fromPage = (String) request.getParameter(FrameworkConstants.REQ_FROM_PAGE);
     String oldName = (String) request.getParameter(FrameworkConstants.REQ_OLD_NAME);
-    SettingsInfo settingsInfo = null;
-    if (StringUtils.isNotEmpty(oldName)) {
-    	settingsInfo = (SettingsInfo) request.getAttribute(FrameworkConstants.REQ_CONFIG_INFO);
-    }
-    Project project = (Project)request.getAttribute(FrameworkConstants.REQ_PROJECT);
-    String projectCode = project.getProjectInfo().getCode();
-    String techId = project.getProjectInfo().getTechnology().getId();
-    SettingsTemplate settingsTemplate = (SettingsTemplate)request.getAttribute(FrameworkConstants.REQ_CURRENT_SETTINGS_TEMPLATE);
-    Map<String, Technology> technologies = (Map<String, Technology>)request.getAttribute(FrameworkConstants.REQ_ALL_TECHNOLOGIES);
-    Map<String, String> errorMap = (Map<String, String>) session.getAttribute(FrameworkConstants.ERROR_SETTINGS);
+    SettingsInfo settingsInfo = (SettingsInfo) request.getAttribute(FrameworkConstants.REQ_CONFIG_INFO);
+    
+    ProjectInfo projectInfo = (ProjectInfo)request.getAttribute(FrameworkConstants.REQ_PROJECT_INFO);
+    String projectCode = "";
     List<Server> projectInfoServers = null;
     List<Database> projectInfoDatabases = null;
+    if (projectInfo != null) {
+    	projectCode = projectInfo.getCode();
+    	Technology technology = projectInfo.getTechnology();
+		projectInfoServers = technology.getServers();
+		projectInfoDatabases = technology.getDatabases();
+    }
+    
+    SettingsTemplate settingsTemplate = (SettingsTemplate)request.getAttribute(FrameworkConstants.REQ_CURRENT_SETTINGS_TEMPLATE);
     if (settingsTemplate != null) {
-    	projectInfoServers = (List<Server>) request.getAttribute(FrameworkConstants.REQ_PROJECT_INFO_SERVERS);
-    	projectInfoDatabases = (List<Database>) request.getAttribute(FrameworkConstants.REQ_PROJECT_INFO_DATABASES);
 	    List<PropertyTemplate> propertyTemplates = settingsTemplate.getProperties();
 	    for (PropertyTemplate propertyTemplate : propertyTemplates) {
 	    	String masterKey = "";
@@ -85,7 +76,7 @@
 	        	desc = descStr.get("en-US").getValue();
 			}
 	        
-	        if (key.equals("Server") || key.equals("Database")) {
+	        if (key.equals(Constants.SETTINGS_TEMPLATE_SERVER) || key.equals(Constants.SETTINGS_TEMPLATE_DB)) {
         		List<PropertyTemplate> comPropertyTemplates = propertyTemplate.getpropertyTemplates();
         		for (PropertyTemplate comPropertyTemplate : comPropertyTemplates) {
         			if (comPropertyTemplate.getKey().equals("type") && settingsInfo != null) {
@@ -102,19 +93,10 @@
 	        }
 %>
 	
-	<% 
-			String errDisplay = "";
-			if (MapUtils.isNotEmpty(errorMap) && StringUtils.isNotEmpty(errorMap.get(key))) {
-	  			if (StringUtils.isNotEmpty(errorMap.get(key))) {
-	  				errDisplay = "configSettingError";
-	  			}
-	    	}
-	%>
-                    
     <div class="clearfix" id="<%= key %>">
     	
         <label for="<%= key %>" class="new-xlInput">
-        	<% if(isRequired == true) { %>
+        	<% if (isRequired == true) { %>
         		<span class="red">*</span> 
         	<% } %>
         	
@@ -128,7 +110,7 @@
 		        %>
 						<input class="xlarge" id="<%= label %>" name="<%= key %>" type="password"  value ="<%= value %>" placeholder="<%= desc %>"/>
 		        <%  
-		        	} else if ((key.equals("Server") || key.equals("Database")) && possibleValues == null) {
+		        	} else if ((key.equals(Constants.SETTINGS_TEMPLATE_SERVER) || key.equals(Constants.SETTINGS_TEMPLATE_DB)) && possibleValues == null) {
 		        		masterKey = key;
 		        		List<PropertyTemplate> compPropertyTemplates = propertyTemplate.getpropertyTemplates();
 		        		for (PropertyTemplate compPropertyTemplate : compPropertyTemplates) {
@@ -184,14 +166,13 @@
 	        </div>
 	        
 			<div>		
-			
 				<div class="lblDesc configSettingHelp-block" id="<%= key %>ErrorDiv">
 					
 				</div>
        		</div>
        		
         </div>
-    </div> <!-- /clearfix -->
+    </div>
 <%
     	}
     }
@@ -206,74 +187,69 @@
 		enableScreen();
 		
 		/** To display projectInfo servers starts **/
-		<%
-			String serverName = null; 
-			if (CollectionUtils.isNotEmpty(projectInfoServers) && projectInfoServers != null) {
-		%>
-				$('#type').find('option').remove();
-				<%
-					for(Server projectInfoServer : projectInfoServers) {
-						 serverName = projectInfoServer.getName();
-				%>
-						
-						  $('#type').append($("<option></option>").attr("value", '<%= serverName %>').text('<%= serverName %>'));
-		<%
-             }
-		%>
-				getCurrentVersions('');
-				
-				var server = $('#type').val();
-				if( server.trim() == "Apache Tomcat" || server.trim() == "JBoss" || server.trim() == "WebLogic"){
-					 $('#remoteDeployment').show(); 
-			     } else {
-			    	  hideRemoteDeply(); 
-			     }
-				
-				$("#type").change(function() {
-					 var server = $('#type').val();
-					 if( server.trim() == "Apache Tomcat" || server.trim() == "JBoss" || server.trim() == "WebLogic"){
-						 $('#remoteDeployment').show();	 
-				     } else {
-				    	  hideRemoteDeply(); 
-				     }
-					 remoteDeplyChecked();
-					 if( $(this).val() != "Apache Tomcat" || $(this).val() != "JBoss" || $(this).val() != "WebLogic"){	
-						 $("input[name='remoteDeployment']").attr("checked",false);
-						 $("#admin_username label").html('Admin Username');
-						 $("#admin_password label").html('Admin Password'); 
-					 }
-					 // based on technology hide remote deployment
-					 technologyBasedRemoteDeploy();
-			});
-		<%
-			}
-		%>
+		<% if (CollectionUtils.isNotEmpty(projectInfoServers)) { %>
+				if ($('#configType').val() == "Server") {
+					$('#type').find('option').remove();
+					<%
+						for (Server projectInfoServer : projectInfoServers) {
+							String serverName = projectInfoServer.getName();
+					%>
+							$('#type').append($("<option></option>").attr("value", '<%= serverName %>').text('<%= serverName %>'));
+					<% } %>
+				}
+		<% } %>
 		/** To display projectInfo servers ends **/
 		
 		/** To display projectInfo databases starts **/
-		<%
-			if (CollectionUtils.isNotEmpty(projectInfoDatabases) && projectInfoDatabases != null) {
-		%>
-				$('#type').find('option').remove();
-				<%
-					for(Database projectInfoDatabase : projectInfoDatabases) {
-						String databaseName = projectInfoDatabase.getName();
-				%>
-						$('#type').append($("<option></option>").attr("value", '<%= databaseName %>').text('<%= databaseName %>'));
-		<%
-					}
-		%>
-				getCurrentVersions('');
-		<%
-			}
-		%>
+		<% if (CollectionUtils.isNotEmpty(projectInfoDatabases)) { %>
+				if ($('#configType').val() == "Database") {
+					$('#type').find('option').remove();
+					<%
+						for (Database projectInfoDatabase : projectInfoDatabases) {
+							String databaseName = projectInfoDatabase.getName();
+					%>
+							$('#type').append($("<option></option>").attr("value", '<%= databaseName %>').text('<%= databaseName %>'));
+					<% } %>
+				}
+		<% } %>
 		/** To display projectInfo databases ends **/
+		
+		getCurrentVersions(''); // To get the projectInfo servers/databases versions of the selected server/database
+		
+		var server = $('#type').val();
+		if ((server != undefined && !isBlank(server)) &&
+				(server.trim() == "Apache Tomcat" || server.trim() == "JBoss" || server.trim() == "WebLogic")) {
+			$('#remoteDeployment').show(); 
+		} else {
+			hideRemoteDeply(); 
+		}
+		
+		$("#type").change(function() {
+			var server = $('#type').val();
+			if ((server != undefined && !isBlank(server)) &&
+					(server.trim() == "Apache Tomcat" || server.trim() == "JBoss" || server.trim() == "WebLogic")) {
+				$('#remoteDeployment').show();	 
+			} else {
+				hideRemoteDeply(); 
+			}
+			
+			remoteDeplyChecked();
+			
+			if ($(this).val() != "Apache Tomcat" || $(this).val() != "JBoss" || $(this).val() != "WebLogic") {	
+				$("input[name='remoteDeployment']").attr("checked",false);
+				$("#admin_username label").html('Admin Username');
+				$("#admin_password label").html('Admin Password'); 
+			}
+			
+			// based on technology hide remote deployment
+			technologyBasedRemoteDeploy();
+		});
 		
 		// based on technology hide remote deploy directory
 		technologyBasedRemoteDeploy();
 		
 		// Hide deploy dir if NodeJs server is created
-		if($("#type option:selected").val() == "NodeJS") {
+		if ($("#type option:selected").val() == "NodeJS") {
 			hideDeployDir();
 		}
 		
@@ -295,9 +271,10 @@
 		/** to display corressponding versions **/
 		$("#type").change(function() {
 			$('#deploy_dir').show();
-			if($(this).val() == "NodeJS") {
+			if ($(this).val() == "NodeJS") {
 				hideDeployDir();
 			}
+			
 			getCurrentVersions('onChange');
 			
 			technologyBasedRemoteDeploy();
@@ -315,13 +292,13 @@
         	enableOrDisabAuthBtn();
 		});
         
-        $("#xlInput").live('input propertychange',function(e){ 	//Name validation
+        $("#xlInput").live('input propertychange',function(e) { 	//Name validation
         	var name = $(this).val();
         	name = checkForSplChr(name);
         	$(this).val(name);
         });
         
-        $("input[name='dbname']").live('input propertychange',function(e){ //Database Name validation
+        $("input[name='dbname']").live('input propertychange',function(e) { //Database Name validation
         	var name = $(this).val();
         	name = checkForSplChr(name);
         	name = removeSpace(name);
@@ -334,7 +311,7 @@
         	$(this).val(portNo);
         });
         
-        $("input[name='context']").live('input propertychange',function(e){	//Root Context validation
+        $("input[name='context']").live('input propertychange',function(e) {	//Root Context validation
         	var name = $(this).val();
         	name = checkForContext(name);
         	$(this).val(name);
@@ -370,13 +347,12 @@
 			if ('<%= selectedValue %>' == "NodeJS") {
 				 $('#deploy_dir').hide(); 
 			}
-			if( '<%= selectedValue %>' == "Apache Tomcat" || '<%= selectedValue %>' == "JBoss" || '<%= selectedValue %>' == "WebLogic"){
+			if ('<%= selectedValue %>' == "Apache Tomcat" || '<%= selectedValue %>' == "JBoss" || '<%= selectedValue %>' == "WebLogic") {
 				 $('#remoteDeployment').show(); 
 		    } else {
 		    	 hideRemoteDeply(); 
 		    }
 			remoteDeplyChecked();
-			
 		});
 	}
 	
@@ -398,8 +374,7 @@
 	}
 
 	function remoteDeplyChecked() {
-		var isRemoteChecked = $("input[name='remoteDeployment']")
-				.is(":checked");
+		var isRemoteChecked = $("input[name='remoteDeployment']").is(":checked");
 		if (isRemoteChecked) {
 			hideDeployDir();
 			$("#admin_username label").html('<span class="red">* </span>Admin Username');
@@ -411,10 +386,10 @@
 	
 	function technologyBasedRemoteDeploy() {
 		<% 
-			if (TechnologyTypes.ANDROIDS.contains(techId)) {
+			if (TechnologyTypes.ANDROIDS.contains(projectInfo.getTechnology().getId())) {
 		%>
-			hideDeployDir();
-			hideRemoteDeply();
+				hideDeployDir();
+				hideRemoteDeply();
 		<%
 			}
 		%>

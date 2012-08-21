@@ -20,6 +20,7 @@
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.util.List"%>
+<%@ page import="org.apache.commons.collections.CollectionUtils"%>
 
 <%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
 <%@ page import="com.photon.phresco.framework.api.Project" %>
@@ -83,7 +84,7 @@
 			List<Project> projects = (List<Project>)request.getAttribute("Projects");
 			String customerId = (String) request.getAttribute("customerId");
 		%>
-		
+
 		<s:if test="hasActionMessages()">
 			<div class="alert-message success"  id="successmsg">
 				<s:actionmessage />
@@ -91,7 +92,7 @@
 		</s:if>
 		
 		<%
-			if(projects == null || projects.size()== 0) {
+			if(CollectionUtils.isEmpty(projects)) {
 		%>
 			<div class="alert-message block-message warning" >
 				<center><s:label key="error.message" cssClass="errorMsgLabel"/></center>
@@ -157,9 +158,6 @@
 			}
 		%>
 	</div>
-	
-	<!-- Hidden Fields -->
-	<input type="hidden" id="customerId" name="customerId" value="<%= customerId %>"/>
 </form>
 
 <script type="text/javascript">
@@ -202,7 +200,7 @@
 		$('#add').click(function() {
 			disableScreen();
 			showLoadingIcon($("#loadingIconDiv"));
-	        performAction('applicationDetails', $('#formAppList'), $('#container'));
+	        performAction('applicationDetails', $('#customersForm'), $('#container'));
 	    });
 		
 		$('form[name=listForm]').submit(function() {
@@ -214,14 +212,12 @@
 		$("a[name='edit']").click(function() {
 			disableScreen();
 			showLoadingIcon($("#loadingIconDiv"));
-	        var projectCode = $(this).attr("id");
 			var params = "projectCode=";
-			params = params.concat(projectCode);
+			params = params.concat($(this).attr("id"));
 			params = params.concat("&fromPage=");
 			params = params.concat("edit");
-			params = params.concat("&customerId=");
-	    	params = params.concat($("#customerId").val());
-	        performActionParams('applicationDetails', params, $('#container'));
+			params = params.concat("&" + getCustomerIdAsParam());
+	        performAction('applicationDetails', '', $('#container'), '', params);
 	    });
 		
         $('.pdfCreation').click(function() {
@@ -230,7 +226,7 @@
     		var params = "";
     		params = params.concat("projectCode=");
 			params = params.concat($(this).attr("id"));
-    		popup('printAsPdfPopup', params, $('#popup_div'));
+    		popup('printAsPdfPopup', '', $('#popup_div'), '', '', params);
     	    escPopup();
 	    });
 	});
@@ -238,7 +234,7 @@
 	function importFromSvn() {
 		showPopup();
 		$('#popup_div').empty();
-		popupParams('importFromSvn', '', $('#popup_div'));
+		popup('importFromSvn', '', $('#popup_div'));
 	    escPopup();
 	}
 	
@@ -247,5 +243,10 @@
 		showPopup();
 		$('#popup_div').empty();
 		popup('showFrameworkValidationResult', '', $('#popup_div'));
+	}
+	
+	// To reload the projects based on the customer when the customer is changed
+	function reloadCurrentPage() {
+		performAction('applications', $('#customersForm'), $("#container"));
 	}
 </script>

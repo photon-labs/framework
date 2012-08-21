@@ -575,6 +575,43 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		}
 	}
 
+	public List<Technology> getTechnologies(String appType, String customerId) throws PhrescoException {
+		try {
+			List<Technology> technologies = new ArrayList<Technology>();
+			List<Technology> allTechnologies = getServiceManager().getArcheTypes(customerId);
+			if (CollectionUtils.isNotEmpty(allTechnologies)) {
+				for (Technology technology : allTechnologies) {
+					if (technology.getAppTypeId().equals(appType)) {
+						technologies.add(technology);
+					}
+				}
+			}
+			
+			return technologies;
+		} catch (ClientHandlerException ex) {
+			S_LOGGER.error(ex.getLocalizedMessage());
+			throw new PhrescoException(ex);
+		}
+	}
+	
+	public Technology getTechnology(String appType, String techId, String customerId) throws PhrescoException {
+		try {
+			List<Technology> technologies = getTechnologies(appType, customerId);
+			if (CollectionUtils.isNotEmpty(technologies)) {
+				for (Technology technology : technologies) {
+					if (technology.getId().equals(techId)) {
+						return technology;
+					}
+				}
+			}
+		} catch (ClientHandlerException ex) {
+			S_LOGGER.error(ex.getLocalizedMessage());
+			throw new PhrescoException(ex);
+		}
+		
+		return null;
+	}
+	
 	/**
 	 * Delete projects based on the given project codes
 	 */
@@ -774,12 +811,12 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 	 }
 	 
 	 /**
-	  * This method is to fetch the settings template through REST service
+	  * This method is to fetch the settings template for the customer through REST service
 	  * @return List of settings template stored in the server [Database, Server and Email]
 	  */
-	 public List<SettingsTemplate> getSettingsTemplates() throws PhrescoException {
+	 public List<SettingsTemplate> getSettingsTemplates(String customerId) throws PhrescoException {
 		 try {
-			 return PhrescoFrameworkFactory.getServiceManager().getSettingsTemplates();
+			 return getServiceManager().getconfigTemplates(customerId);
 		 } catch (ClientHandlerException ex) {
 			 S_LOGGER.error(ex.getLocalizedMessage());
 			 throw new PhrescoException(ex);
@@ -790,11 +827,11 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 	  * Returns Settings template which matches the given type
 	  * @return Settings template object
 	  */
-	 public SettingsTemplate getSettingsTemplate(String type) throws PhrescoException {
+	 public SettingsTemplate getSettingsTemplate(String type, String customerId) throws PhrescoException {
 
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.getSettingsTemplate(String type)");
 
-		 List<SettingsTemplate> settingsTemplates = getSettingsTemplates();
+		 List<SettingsTemplate> settingsTemplates = getSettingsTemplates(customerId);
 		 for (SettingsTemplate settingsTemplate : settingsTemplates) {
 			 if (settingsTemplate.getType().equals(type)) {
 				 return settingsTemplate;
