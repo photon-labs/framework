@@ -50,6 +50,7 @@ import com.photon.phresco.model.SettingsTemplate;
 import com.photon.phresco.model.Technology;
 import com.photon.phresco.model.VideoInfo;
 import com.photon.phresco.util.Constants;
+import com.photon.phresco.util.ServiceConstants;
 import com.photon.phresco.util.Utility;
 
 public class ProjectAdministratorTest implements FrameworkConstants {
@@ -124,7 +125,7 @@ public class ProjectAdministratorTest implements FrameworkConstants {
         	initialSize = settingsInfos.size();
     	}
     	
-    	SettingsTemplate selectedSettingTemplate = administrator.getSettingsTemplate("Server");
+    	SettingsTemplate selectedSettingTemplate = administrator.getSettingsTemplate("Server", ServiceConstants.DEFAULT_CUSTOMER_NAME);
 	    SettingsInfo settingsInfo = new SettingsInfo("TestServer", "serverCreation", "Server");
     	List<PropertyInfo> propertyInfoList = new ArrayList<PropertyInfo>(10);
         List<PropertyTemplate> propertyTemplates = selectedSettingTemplate.getProperties();
@@ -147,7 +148,7 @@ public class ProjectAdministratorTest implements FrameworkConstants {
     
     @Test
     public void updateSetting() throws PhrescoException {
-        SettingsTemplate selectedSettingTemplate = administrator.getSettingsTemplate("Server");
+        SettingsTemplate selectedSettingTemplate = administrator.getSettingsTemplate("Server", ServiceConstants.DEFAULT_CUSTOMER_NAME);
         SettingsInfo settingsInfo = new SettingsInfo("SampleServer", "serverCreation", "Server");
     	List<PropertyInfo> propertyInfoList = new ArrayList<PropertyInfo>(10);
         List<PropertyTemplate> propertyTemplates = selectedSettingTemplate.getProperties();
@@ -173,7 +174,8 @@ public class ProjectAdministratorTest implements FrameworkConstants {
 
 	//@Test
 	public void testSettingsTemplate() throws PhrescoException {
-	    List<SettingsTemplate> templates = administrator.getSettingsTemplates();
+	    List<SettingsTemplate> templates = administrator.getSettingsTemplates(ServiceConstants.DEFAULT_CUSTOMER_NAME);
+	    
 	    assertNotNull("Settings Template list is empty", templates);
 	}
 
