@@ -92,18 +92,20 @@
 	<!-- For build alone ends -->
 			
 	<div class="modal-body">
-		<% if (CollectionUtils.isNotEmpty(projectModules) && from.equals("generateBuild") || from.equals("runAgnSrc")) {  %>
+		<% if (CollectionUtils.isNotEmpty(projectModules) && (from.equals("generateBuild") || from.equals("runAgnSrc"))) {  %>
             <div id="agnBrowser" class="build server">
 				<!-- Modules -->
 				<div class="clearfix">
 					<label for="xlInput" class="xlInput popup-label"><s:text name="label.modules"/></label>
 					<div class="input">
 						<select id="projectModule" name="projectModule" class="xlarge" >
-						 <%
-						       for(String projectModule : projectModules) {
-						 %>
-								<option value="<%= projectModule%>"> <%= projectModule %></option>
-						 <% } %>
+						<%
+							for(String projectModule : projectModules) {
+						%>
+							<option value="<%= projectModule%>"> <%= projectModule %></option>
+						<% 
+							}
+						%>
 						</select>
 					</div>
 				</div>
@@ -268,39 +270,24 @@
 			</div>
 		<% } %>	
 		
-        <!--  show port -->
-           
-<!-- 			<div class="clearfix"> -->
-<%-- 				<label for="xlInput" class="xlInput popup-label"><s:text name="label.port"/></label> --%>
-<!-- 				<div class="input"> -->
-<!-- 					<input type="text" class="xlarge"/> -->
-<!-- 				</div> -->
-<!-- 			</div> -->
-        
-        <!--  show context -->
-            
-		<div class="clearfix">
-<%-- 			<label for="xlInput" class="xlInput popup-label"><s:text name="label.context"/></label> --%>
-<!-- 			<div class="input"> -->
-<!-- 				<input type="text" class="xlarge"/> -->
-<!-- 			</div> -->
-<!-- 		</div> -->
+		<% if (from.equals("runAgnSrc")) { %>
+	        <!--  show port -->
+			<div class="clearfix">
+				<label for="xlInput" class="xlInput popup-label"><span class="red">*</span> <s:text name="label.port"/></label>
+				<div class="input">
+					<input id="port" type="text" name="port" class="xlarge" maxLength="5" title="Port number must be between 1 and 65535"/>
+				</div>
+			</div>
+	        
+	        <!--  show context -->
+			<div class="clearfix">
+				<label for="xlInput" class="xlInput popup-label"><span class="red">*</span> <s:text name="label.context"/></label>
+				<div class="input">
+					<input type="text" id="context" name="context" class="xlarge"/>
+				</div>
+			</div>
+		<% } %>
 				
-		  <!--  server Type -->
-<!-- 			<div class="clearfix"> -->
-<%-- 				<label for="xlInput" class="xlInput popup-label"><s:text name="label.servertype"/></label> --%>
-<!-- 				<div class="input"> -->
-<%-- 					<select id="serverType" name="serverType" class="xlarge" > --%>
-<%-- 					<%  --%>
-<!-- 						if (CollectionUtils.isNotEmpty(serverTypes)) -->
-<!-- 							for(String servertype : serverTypes) { -->
-<!-- 					%> -->
-<%-- 								<option value="<%= servertype %>"><%= servertype %></option> --%>
-<%-- 					<% } %> --%>
-<%-- 					</select> --%>
-<!-- 				</div> -->
-<!-- 			</div>	 -->
-		
 			<!-- Show Settings -->
 			<div class="clearfix">
 				<div class="xlInput" style="margin-left: 210px;">
@@ -623,8 +610,23 @@
 				$("#errMsg").html('<%= FrameworkConstants.SELECT_DB %>');
 				return false;
 			}
+			if (isBlank($("#port").val())) {
+				$("#errMsg").html('Enter Port Number');
+				return false;
+			}
+			
+			if (isBlank($("#context").val())) {
+				$("#errMsg").html('Enter context Name');
+				return false;
+			}
 			buildValidateSuccess('runAgainstSource', '<%= FrameworkConstants.REQ_JAVA_START %>');
 		});
+		
+		$("#port").live('input propertychange', function (e) { //Port validation
+        	var portNo = $(this).val();
+        	portNo = checkForNumber(portNo);
+        	$(this).val(portNo);
+        });
 		
 		$('#importSql').click(function() {
 			var isChecked = $('#importSql').is(":checked");
@@ -788,7 +790,7 @@
 		    params = params.concat($("#environments").val());
 		    params = params.concat("&projectCode=");
 		    params = params.concat('<%= projectCode %>');
-			performActionParams("getSqlDatabases", params, '', true);
+			performAction("getSqlDatabases", '', '', true, params);
 		}
 	}
 	
@@ -854,7 +856,6 @@
 	}
 	
 	function performUrlActions(url, testType) {
-		console.info("performUrlActions url::" + url + "::testType::" + testType);
 		var params = "&environments=";
 		params = params.concat(getSelectedEnvs());
 		params = params.concat("&DbWithSqlFiles=");

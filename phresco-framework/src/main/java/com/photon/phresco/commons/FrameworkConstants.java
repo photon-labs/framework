@@ -138,6 +138,7 @@ public interface FrameworkConstants {
     String NODEJS_RUN_AGAINST = "nodeJS_runAgnSrc";
     String JAVA_RUN_AGAINST = "runAgnSrc";
     String PROJECT_CODE = "projectCode";
+    String PROJECT_MODULE= "projectModule";
 	
     String JAVA_STAND_ALONE = "tech-java-standalone";
     String JAVA_STANDALONE = "Javastandalone";
@@ -322,6 +323,7 @@ public interface FrameworkConstants {
     String SESSION_JAVA_SERVER_PORT_VALUE ="JavaServerPort";
     String SESSION_JAVA_SERVER_HOST_VALUE ="JavaServerHost";
     String SESSION_JAVA_SERVER_PROTOCOL_VALUE ="JavaServerProtocol";
+    String SESSION_JAVA_SERVER_CONTEXT_VALUE = "JavaContext";
     String SESSION_ENV_NAME = "environment";
     /*
      * Request Constants

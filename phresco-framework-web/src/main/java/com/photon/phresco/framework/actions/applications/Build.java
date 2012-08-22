@@ -63,6 +63,7 @@ import com.photon.phresco.commons.AndroidConstants;
 import com.photon.phresco.commons.BuildInfo;
 import com.photon.phresco.commons.PluginProperties;
 import com.photon.phresco.commons.XCodeConstants;
+import com.photon.phresco.commons.configurationInfo;
 import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
@@ -147,6 +148,10 @@ public class Build extends FrameworkBaseAction {
 	private String browseLocation = null;
 	private String fileLocation = null;
 	
+	//java runagainst source
+	private String port = null;
+	private String context = null;
+	
 	private static Map<String, String> sqlFolderPathMap = new HashMap<String, String>();
 
 	// DbWithSqlFiles
@@ -178,7 +183,7 @@ public class Build extends FrameworkBaseAction {
 				String serverPortStr = (String) getHttpSession().getAttribute(
 						projectCode + SESSION_NODEJS_SERVER_PORT_VALUE);
 				if (serverProtocol == null && serverHost == null && serverPortStr == null) {
-					String runAgainstInfoEnv = readRunAgainstInfo(projectCode);
+					String runAgainstInfoEnv = readRunAgainstNodeJsInfo(projectCode);
 					if (runAgainstInfoEnv != null && !runAgainstInfoEnv.isEmpty()) {
 						List<SettingsInfo> settingsInfos = administrator.getSettingsInfos(
 								Constants.SETTINGS_TEMPLATE_SERVER, projectCode, runAgainstInfoEnv);
@@ -188,7 +193,6 @@ public class Build extends FrameworkBaseAction {
 								serverHost = settingsInfo.getPropertyInfo(Constants.SERVER_HOST).getValue();
 								serverPortStr = settingsInfo.getPropertyInfo(Constants.SERVER_PORT).getValue();
 								readLogFile = "";
-
 							}
 						}
 					}
@@ -218,22 +222,16 @@ public class Build extends FrameworkBaseAction {
 				String serverPortStr = (String) getHttpSession().getAttribute(
 						projectCode + SESSION_JAVA_SERVER_PORT_VALUE);
 				if (serverProtocol == null && serverHost == null && serverPortStr == null) {
-					String runAgainstInfoEnv = readRunAgainstInfo(projectCode);
-					if (runAgainstInfoEnv != null && !runAgainstInfoEnv.isEmpty()) {
-						List<SettingsInfo> settingsInfos = administrator.getSettingsInfos(
-								Constants.SETTINGS_TEMPLATE_SERVER, projectCode, runAgainstInfoEnv);
-						if (settingsInfos != null && CollectionUtils.isNotEmpty(settingsInfos)) {
-							for (SettingsInfo settingsInfo : settingsInfos) {
-								serverProtocol = settingsInfo.getPropertyInfo(Constants.SERVER_PROTOCOL).getValue();
-								serverHost = settingsInfo.getPropertyInfo(Constants.SERVER_HOST).getValue();
-								serverPortStr = settingsInfo.getPropertyInfo(Constants.SERVER_PORT).getValue();
-								readLogFile = "";
-
-							}
-						}
+					configurationInfo info = readRunAgainstInfo(projectCode);
+					String environment = info.getEnvironment();
+					if (environment!= null && !environment.isEmpty()) {
+						serverProtocol = HTTP_PROTOCOL;
+						serverHost = LOCALHOST;
+						serverPortStr = info.getServerPort();
+						readLogFile = "";
 					}
 				}
-				if (serverPortStr != null) {
+				if (serverPortStr != null && !serverPortStr.isEmpty()) {
 					serverPort = Integer.parseInt(serverPortStr);
 				}
 				if (serverProtocol != null && serverHost != null && serverPort != 0) {
@@ -744,6 +742,7 @@ public class Build extends FrameworkBaseAction {
 			actionType.setShowError(Boolean.parseBoolean(showError));
 			actionType.setShowDebug(Boolean.parseBoolean(showDebug));
 			actionType.setSkipTest(Boolean.parseBoolean(skipTest));
+			valuesMap.put(PROJECT_CODE, projectCode);
 			BufferedReader reader = runtimeManager.performAction(project, actionType, valuesMap, null);
 			getHttpSession().setAttribute(projectCode + REQ_FROM_TAB_DEPLOY, reader);
 			getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
@@ -1146,9 +1145,6 @@ public class Build extends FrameworkBaseAction {
 	}
 
 	private void handleRunAgainstSrc(String environments, String importSQL) {
-		String serverHost = "";
-		String serverProtocol = "";
-		int serverPort = 0;
 		BufferedReader fileReader = null;
 		String line = "";
 		try {
@@ -1157,15 +1153,6 @@ public class Build extends FrameworkBaseAction {
 			Project project = administrator.getProject(projectCode);
 			getHttpSession().setAttribute(projectCode + IMPORT_SQL, importSQL);
 			Map<String, String> javaMap = new HashMap<String, String>(2);
-			List<SettingsInfo> serverDetails = administrator.getSettingsInfos(Constants.SETTINGS_TEMPLATE_SERVER,
-					projectCode, environments);
-			for (SettingsInfo settingsInfo : serverDetails) {
-				serverHost = settingsInfo.getPropertyInfo(Constants.SERVER_HOST).getValue();
-				serverProtocol = settingsInfo.getPropertyInfo(Constants.SERVER_PROTOCOL).getValue();
-				serverPort = Integer.parseInt(settingsInfo.getPropertyInfo(Constants.SERVER_PORT).getValue());
-				break;
-			}
-
 			try {
 				compileProject();
 				fileReader = new BufferedReader(new FileReader(getLogFilePath()));
@@ -1185,18 +1172,27 @@ public class Build extends FrameworkBaseAction {
 			} else {
 				// TODO: delete the server.log and create empty server.log file
 				deleteLogFile();
+				if (port == null || context == null || projectModule == null) {
+					configurationInfo info = readRunAgainstInfo(projectCode);
+					port = info.getServerPort();
+					context = info.getContext();
+					projectModule = info.getModuleName();
+				}
 				javaMap.put(ENVIRONMENT_NAME, environments);
 				javaMap.put(IMPORT_SQL, importSQL);
 				javaMap.put(PROJECT_CODE, projectCode);
+				javaMap.put(PORT, port);
+				javaMap.put(CONTEXT, context);
+				javaMap.put(PROJECT_MODULE, projectModule);
 				ActionType serverStart = ActionType.START_SERVER;
 				serverStart.setModuleId(projectModule);
 				BufferedReader reader = runtimeManager.performAction(project, serverStart, javaMap, null);
 				getHttpSession().setAttribute(projectCode + REQ_JAVA_START, reader);
 			}
-			boolean connectionAlive = DiagnoseUtil.isConnectionAlive(serverProtocol, serverHost, serverPort);
-			getHttpSession().setAttribute(projectCode + SESSION_JAVA_SERVER_PROTOCOL_VALUE, serverProtocol);
-			getHttpSession().setAttribute(projectCode + SESSION_JAVA_SERVER_HOST_VALUE, serverHost);
-			getHttpSession().setAttribute(projectCode + SESSION_JAVA_SERVER_PORT_VALUE,new Integer(serverPort).toString());
+			boolean connectionAlive = DiagnoseUtil.isConnectionAlive(HTTP_PROTOCOL, LOCALHOST, Integer.parseInt(port));
+			getHttpSession().setAttribute(projectCode + SESSION_JAVA_SERVER_PROTOCOL_VALUE, HTTP_PROTOCOL);
+			getHttpSession().setAttribute(projectCode + SESSION_JAVA_SERVER_HOST_VALUE, LOCALHOST);
+			getHttpSession().setAttribute(projectCode + SESSION_JAVA_SERVER_PORT_VALUE, port);
 			getHttpSession().setAttribute(projectCode + SESSION_JAVA_SERVER_STATUS, connectionAlive);
 			getHttpSession().setAttribute(projectCode + SESSION_ENV_NAME, environments);
 			getHttpSession().setAttribute(projectCode + IMPORT_SQL, importSQL);
@@ -1294,7 +1290,6 @@ public class Build extends FrameworkBaseAction {
 		if (debugEnabled)
 			S_LOGGER.debug("Entering Method Build.restartServer()");
 		stopServer();
-		waitForTime(10);
 		startServer();
 		return APP_ENVIRONMENT_READER;
 	}
@@ -1304,7 +1299,12 @@ public class Build extends FrameworkBaseAction {
 			S_LOGGER.debug("Entering Method Build.startNodeJSServer()");
 		}
 		try {
+			configurationInfo info = new configurationInfo();
 			environments = (String) getHttpSession().getAttribute(projectCode + SESSION_ENV_NAME);
+			if (environments == null) {
+				info = readRunAgainstInfo(projectCode);
+				environments = info.getEnvironment();
+			}
 			String importSql = (String) getHttpSession().getAttribute(projectCode + IMPORT_SQL);
 			handleRunAgainstSrc(environments, importSql);
 		} catch (Exception e) {
@@ -1327,12 +1327,15 @@ public class Build extends FrameworkBaseAction {
 		if (debugEnabled)
 			S_LOGGER.debug("Entering Method Build.javaStopServer()");
 		try {
+			configurationInfo info = new configurationInfo();
 			ProjectRuntimeManager runtimeManager = PhrescoFrameworkFactory.getProjectRuntimeManager();
 			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
 			Project project = administrator.getProject(projectCode);
 			environments = (String) getHttpSession().getAttribute(projectCode + SESSION_ENV_NAME);
-			if (environments == null) {
-				environments = readRunAgainstInfo(projectCode);
+			if (environments == null || projectModule == null) {
+				info = readRunAgainstInfo(projectCode);
+				environments = info.getEnvironment();
+				projectModule = info.getModuleName();
 			}
 			Map<String, String> javaMap = new HashMap<String, String>(2);
 			javaMap.put(ENVIRONMENT_NAME, environments);
@@ -1394,7 +1397,7 @@ public class Build extends FrameworkBaseAction {
 		}
 	}
 
-	private String readRunAgainstInfo(String projectCode) throws PhrescoException {
+	private String readRunAgainstNodeJsInfo(String projectCode) throws PhrescoException {
 		String env = null;
 		BufferedReader reader = null;
 		try {
@@ -1422,6 +1425,36 @@ public class Build extends FrameworkBaseAction {
 		}
 
 		return env;
+	}
+	
+	private configurationInfo readRunAgainstInfo(String projectCode) throws PhrescoException {
+		Gson gson = new Gson();
+		BufferedReader reader = null;
+		configurationInfo configJson = new configurationInfo();
+		try {
+			StringBuilder builder = new StringBuilder(Utility.getProjectHome());
+			builder.append(projectCode);
+			builder.append(File.separator);
+			builder.append(FOLDER_DOT_PHRESCO);
+			builder.append(File.separator);
+			builder.append(RUN_AGS_ENV_FILE);
+			File envFile = new File(builder.toString());
+			if (envFile.exists()) {
+				reader = new BufferedReader(new FileReader(builder.toString()));
+				configJson = gson.fromJson(reader, configurationInfo.class);
+			}
+		} catch (IOException e) {
+			throw new PhrescoException(e);
+		} finally {
+			try {
+				if (reader != null) {
+					reader.close();
+				}
+			} catch (IOException e) {
+				throw new PhrescoException(e);
+			}
+		}
+		return configJson;
 	}
 
 	private void deleteNodejsLogFile(String projectcode) {
@@ -2159,5 +2192,21 @@ public class Build extends FrameworkBaseAction {
 
 	public String getFileLocation() {
 		return fileLocation;
+	}
+	
+	public String getPort() {
+		return port;
+	}
+
+	public void setPort(String port) {
+		this.port = port;
+	}
+
+	public String getContext() {
+		return context;
+	}
+
+	public void setContext(String context) {
+		this.context = context;
 	}
 }

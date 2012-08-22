@@ -302,7 +302,7 @@
 		params = params.concat(buildNumber);
 		params = params.concat("&projectCode=");
 		params = params.concat('<%= projectCode %>');
-       	popupParams('generateBuild', params, $('#popup_div'));
+       	popup('generateBuild', '', $('#popup_div'), '', '', params);
         escPopup();
     }
     
