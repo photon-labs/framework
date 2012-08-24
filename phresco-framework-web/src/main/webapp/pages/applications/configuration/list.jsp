@@ -185,7 +185,7 @@
 </form>
 
 <script type="text/javascript">
-//To check whether the device is ipad or not and then apply jquery scrollbar
+	//To check whether the device is ipad or not and then apply jquery scrollbar
 	if (!isiPad()) {
 		$(".fixed-table-container-inner").scrollbars();
 	}
@@ -224,11 +224,7 @@
 		    
 		$('form[name=listForm]').submit(function() {
 			showProgessBar("Deleting Configuration (s)", 100);
-			var params = "";
-	    	if (!isBlank($('form').serialize())) {
-	    		params = $('form').serialize() + "&";
-	    	}
-            performAction("deleteConfigurations", params, $('#tabDiv'));
+            performAction("deleteConfigurations", $("#formConfigList"), $('#tabDiv'));
 	        return false;
 	    });
     });

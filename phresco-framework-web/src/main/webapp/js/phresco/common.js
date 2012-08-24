@@ -171,17 +171,11 @@
 		return params;
     }    
     // This method is for popup submit
-    function readerHandlerSubmit(pageUrl, projectCode, testType, params, callSuccessEvent) {
-    	var param = "";
-    	if (!isBlank($('form').serialize())) {
-    		param = "&";
-    	}
-    	if (params != undefined && !isBlank(params)) {
-            param = param + params;
-        }
+    function readerHandlerSubmit(pageUrl, projectCode, testType, form, callSuccessEvent, additionalParams) {
+    	var params = getParameters(form, additionalParams);
         $.ajax({
             url : pageUrl,
-            data : $('form').serialize() + param,
+            data : params,
             type : "POST",
             success : function(data) {
             	$("#build-output").empty();

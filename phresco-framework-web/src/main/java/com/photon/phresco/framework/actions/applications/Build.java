@@ -170,7 +170,7 @@ public class Build extends FrameworkBaseAction {
 			List<BuildInfo> builds = administrator.getBuildInfos(project);
 			getHttpRequest().setAttribute(REQ_SELECTED_APP_TYPE, project.getProjectInfo().getTechnology().getId());
 			getHttpRequest().setAttribute(REQ_BUILD, builds);
-			getHttpRequest().setAttribute(REQ_PROJECT, project);
+			getHttpRequest().setAttribute(REQ_PROJECT_INFO, project.getProjectInfo());
 			String techId = project.getProjectInfo().getTechnology().getId();
 			String readLogFile = "";
 			boolean tempConnectionAlive = false;
@@ -356,7 +356,7 @@ public class Build extends FrameworkBaseAction {
 		getHttpRequest().setAttribute(REQ_SELECTED_SERVERTYPE, serverType);
 		getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
 		getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
-		getHttpRequest().setAttribute(REQ_PROJECT, project);
+		getHttpRequest().setAttribute(REQ_PROJECT_INFO, project.getProjectInfo());
 		getHttpRequest().setAttribute(REQ_BUILD_FROM, from);
 		getHttpRequest().setAttribute(REQ_TECHNOLOGY, technology);
 		getHttpRequest().setAttribute(REQ_DEPLOY_BUILD_NUMBER, buildNumber);
@@ -409,7 +409,7 @@ public class Build extends FrameworkBaseAction {
 			Project project = administrator.getProject(projectCode);
 			List<BuildInfo> builds = administrator.getBuildInfos(project);
 			getHttpRequest().setAttribute(REQ_BUILD, builds);
-			getHttpRequest().setAttribute(REQ_PROJECT, project);
+			getHttpRequest().setAttribute(REQ_PROJECT_INFO, project.getProjectInfo());
 
 			sessionMap.remove(SESSION_PROPERTY_INFO_LIST);
 		} catch (Exception e) {

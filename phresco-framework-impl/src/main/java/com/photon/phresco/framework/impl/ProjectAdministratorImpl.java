@@ -676,6 +676,64 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 Collections.sort(projects, new ProjectComparator());
 		 return projects;
 	 }
+	 
+	 /**
+	  * This will search the given path and return list of projects for the given customer
+	  *
+	  * @return List of projects which compliance with the framework
+	  */
+	 public List<Project> discover(List<File> paths, String customerId) throws PhrescoException {
+
+		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.discover(List<File> paths, String customerId)");
+
+		 //Use the FileNameFilter for filtering .phresco directories
+		 //Read the .project file and construct the Project object.
+
+		 S_LOGGER.debug("discover()  paths = "+paths);
+
+		 if (CollectionUtils.isEmpty(paths)) {
+			 throw new PhrescoException(MSG_FILE_PATH_EMPTY);
+		 }
+
+		 List<Project> projects = new ArrayList<Project>();
+
+		 for (File path : paths) {
+			 File[] childFiles = path.listFiles();
+			 for (File childFile : childFiles) {
+				 File[] dotPhrescoFolders = childFile.listFiles(new PhrescoFileNameFilter(FOLDER_DOT_PHRESCO));
+				 if(ArrayUtils.isEmpty(dotPhrescoFolders)) {
+					 continue;
+				 }
+
+				 for (File dotPhrescoFolder : dotPhrescoFolders) {
+					 File[] dotProjectFiles = dotPhrescoFolder.listFiles(new PhrescoFileNameFilter(PROJECT_INFO_FILE));
+					 fillProjects(dotProjectFiles, projects);
+				 }
+			 }
+		 }
+		 projects = filterCustomerProjects(projects, customerId);
+		 Collections.sort(projects, new ProjectComparator());
+		 
+		 return projects;
+	 }
+	 
+	 private List<Project> filterCustomerProjects(List<Project> projects, String customerId) throws PhrescoException {
+		 List<Project> customerProjects = new ArrayList<Project>();
+		 try {
+			 if (CollectionUtils.isNotEmpty(projects)) {
+				 for (Project project : projects) {
+					 ProjectInfo projectInfo = project.getProjectInfo();
+					 if (projectInfo.getCustomerId().equals(customerId)) {
+						 customerProjects.add(project);
+					 }
+				 }
+			 }
+		 } catch (Exception e) {
+			 throw new PhrescoException(e);
+		 }
+		 
+		 return customerProjects;
+	 }
 
 	 public User doLogin(Credentials credentials) throws PhrescoException {
 

@@ -140,6 +140,14 @@ public interface ProjectAdministrator {
      * @throws PhrescoException
      */
     List<Project> discover(List<File> paths) throws PhrescoException;
+    
+    /**
+     * Returns list of project of the customer in the given paths
+     * @param paths and customerId
+     * @return
+     * @throws PhrescoException
+     */
+    List<Project> discover(List<File> paths, String customerId) throws PhrescoException;
 
     /**
      * Returns all the settings template available in the service repository
