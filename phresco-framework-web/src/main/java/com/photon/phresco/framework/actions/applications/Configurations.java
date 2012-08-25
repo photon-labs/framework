@@ -158,7 +158,7 @@ public class Configurations extends FrameworkBaseAction {
             String value = null;
             for (PropertyTemplate propertyTemplate : propertyTemplates) {
             	if (propertyTemplate.getKey().equals(Constants.SETTINGS_TEMPLATE_SERVER) || propertyTemplate.getKey().equals(Constants.SETTINGS_TEMPLATE_DB)) {
-            		List<PropertyTemplate> compPropertyTemplates = propertyTemplate.getpropertyTemplates();
+            		List<PropertyTemplate> compPropertyTemplates = propertyTemplate.getPropertyTemplates();
             		for (PropertyTemplate compPropertyTemplate : compPropertyTemplates) {
             			key = compPropertyTemplate.getKey();
             			value = getHttpRequest().getParameter(key);
@@ -433,7 +433,7 @@ public class Configurations extends FrameworkBaseAction {
     		String key = null;
     		String value = null;
     		if (Constants.SETTINGS_TEMPLATE_SERVER.equals(propertyTemplate.getKey()) || Constants.SETTINGS_TEMPLATE_DB.equals(propertyTemplate.getKey())) {
-        		List<PropertyTemplate> compPropertyTemplates = propertyTemplate.getpropertyTemplates();
+        		List<PropertyTemplate> compPropertyTemplates = propertyTemplate.getPropertyTemplates();
         		for (PropertyTemplate compPropertyTemplate : compPropertyTemplates) {
         			key = compPropertyTemplate.getKey();
         			value = getHttpRequest().getParameter(key);
@@ -543,7 +543,7 @@ public class Configurations extends FrameworkBaseAction {
             String value = null;
             for (PropertyTemplate propertyTemplate : propertyTemplates) {
             	if (propertyTemplate.getKey().equals(Constants.SETTINGS_TEMPLATE_SERVER) || propertyTemplate.getKey().equals(Constants.SETTINGS_TEMPLATE_DB)) {
-            		List<PropertyTemplate> compPropertyTemplates = propertyTemplate.getpropertyTemplates();
+            		List<PropertyTemplate> compPropertyTemplates = propertyTemplate.getPropertyTemplates();
             		for (PropertyTemplate compPropertyTemplate : compPropertyTemplates) {
             			key = compPropertyTemplate.getKey();
             			value = getHttpRequest().getParameter(key);

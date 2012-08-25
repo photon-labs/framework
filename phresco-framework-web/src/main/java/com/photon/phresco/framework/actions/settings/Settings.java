@@ -156,7 +156,7 @@ public class Settings extends FrameworkBaseAction {
             String value = null;
             for (PropertyTemplate propertyTemplate : propertyTemplates) {
             	if (propertyTemplate.getKey().equals(Constants.SETTINGS_TEMPLATE_SERVER) || propertyTemplate.getKey().equals(Constants.SETTINGS_TEMPLATE_DB)) {
-            		List<PropertyTemplate> compPropertyTemplates = propertyTemplate.getpropertyTemplates();
+            		List<PropertyTemplate> compPropertyTemplates = propertyTemplate.getPropertyTemplates();
             		for (PropertyTemplate compPropertyTemplate : compPropertyTemplates) {
             			key = compPropertyTemplate.getKey();
             			value = getHttpRequest().getParameter(key);
@@ -327,7 +327,7 @@ public class Settings extends FrameworkBaseAction {
 			String value = null;
 			boolean isRequired = propertyTemplate.isRequired();
     		if (propertyTemplate.getKey().equals("Server") || propertyTemplate.getKey().equals("Database")) {
-        		List<PropertyTemplate> compPropertyTemplates = propertyTemplate.getpropertyTemplates();
+        		List<PropertyTemplate> compPropertyTemplates = propertyTemplate.getPropertyTemplates();
         		for (PropertyTemplate compPropertyTemplate : compPropertyTemplates) {
         			key = compPropertyTemplate.getKey();
         			value = getHttpRequest().getParameter(key);
@@ -440,7 +440,7 @@ public class Settings extends FrameworkBaseAction {
             String value = null;
 			 for (PropertyTemplate propertyTemplate : propertyTemplates) {
 	            	if (propertyTemplate.getKey().equals(Constants.SETTINGS_TEMPLATE_SERVER) || propertyTemplate.getKey().equals(Constants.SETTINGS_TEMPLATE_DB)) {
-	            		List<PropertyTemplate> compPropertyTemplates = propertyTemplate.getpropertyTemplates();
+	            		List<PropertyTemplate> compPropertyTemplates = propertyTemplate.getPropertyTemplates();
 	            		for (PropertyTemplate compPropertyTemplate : compPropertyTemplates) {
 	            			key = compPropertyTemplate.getKey();
 	            			value = getHttpRequest().getParameter(key);

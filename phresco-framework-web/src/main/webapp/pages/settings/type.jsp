@@ -84,7 +84,7 @@
 			}
 			
 			if (key.equals("Server") || key.equals("Database")) {
-        		List<PropertyTemplate> comPropertyTemplates = propertyTemplate.getpropertyTemplates();
+        		List<PropertyTemplate> comPropertyTemplates = propertyTemplate.getPropertyTemplates();
         		for (PropertyTemplate comPropertyTemplate : comPropertyTemplates) {
         			if (comPropertyTemplate.getKey().equals("type") && settingsInfo != null) {
         				selectedValue = settingsInfo.getPropertyInfo(comPropertyTemplate.getKey()).getValue();
