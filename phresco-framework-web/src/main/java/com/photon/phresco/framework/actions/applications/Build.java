@@ -63,7 +63,7 @@ import com.photon.phresco.commons.AndroidConstants;
 import com.photon.phresco.commons.BuildInfo;
 import com.photon.phresco.commons.PluginProperties;
 import com.photon.phresco.commons.XCodeConstants;
-import com.photon.phresco.commons.configurationInfo;
+import com.photon.phresco.configuration.ConfigurationInfo;
 import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
@@ -222,7 +222,7 @@ public class Build extends FrameworkBaseAction {
 				String serverPortStr = (String) getHttpSession().getAttribute(
 						projectCode + SESSION_JAVA_SERVER_PORT_VALUE);
 				if (serverProtocol == null && serverHost == null && serverPortStr == null) {
-					configurationInfo info = readRunAgainstInfo(projectCode);
+					ConfigurationInfo info = readRunAgainstInfo(projectCode);
 					String environment = info.getEnvironment();
 					if (environment!= null && !environment.isEmpty()) {
 						serverProtocol = HTTP_PROTOCOL;
@@ -1173,7 +1173,7 @@ public class Build extends FrameworkBaseAction {
 				// TODO: delete the server.log and create empty server.log file
 				deleteLogFile();
 				if (port == null || context == null || projectModule == null) {
-					configurationInfo info = readRunAgainstInfo(projectCode);
+					ConfigurationInfo info = readRunAgainstInfo(projectCode);
 					port = info.getServerPort();
 					context = info.getContext();
 					projectModule = info.getModuleName();
@@ -1299,7 +1299,7 @@ public class Build extends FrameworkBaseAction {
 			S_LOGGER.debug("Entering Method Build.startNodeJSServer()");
 		}
 		try {
-			configurationInfo info = new configurationInfo();
+			ConfigurationInfo info = new ConfigurationInfo();
 			environments = (String) getHttpSession().getAttribute(projectCode + SESSION_ENV_NAME);
 			if (environments == null) {
 				info = readRunAgainstInfo(projectCode);
@@ -1327,7 +1327,7 @@ public class Build extends FrameworkBaseAction {
 		if (debugEnabled)
 			S_LOGGER.debug("Entering Method Build.javaStopServer()");
 		try {
-			configurationInfo info = new configurationInfo();
+			ConfigurationInfo info = new ConfigurationInfo();
 			ProjectRuntimeManager runtimeManager = PhrescoFrameworkFactory.getProjectRuntimeManager();
 			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
 			Project project = administrator.getProject(projectCode);
@@ -1427,10 +1427,10 @@ public class Build extends FrameworkBaseAction {
 		return env;
 	}
 	
-	private configurationInfo readRunAgainstInfo(String projectCode) throws PhrescoException {
+	private ConfigurationInfo readRunAgainstInfo(String projectCode) throws PhrescoException {
 		Gson gson = new Gson();
 		BufferedReader reader = null;
-		configurationInfo configJson = new configurationInfo();
+		ConfigurationInfo configJson = new ConfigurationInfo();
 		try {
 			StringBuilder builder = new StringBuilder(Utility.getProjectHome());
 			builder.append(projectCode);
@@ -1441,7 +1441,7 @@ public class Build extends FrameworkBaseAction {
 			File envFile = new File(builder.toString());
 			if (envFile.exists()) {
 				reader = new BufferedReader(new FileReader(builder.toString()));
-				configJson = gson.fromJson(reader, configurationInfo.class);
+				configJson = gson.fromJson(reader, ConfigurationInfo.class);
 			}
 		} catch (IOException e) {
 			throw new PhrescoException(e);
