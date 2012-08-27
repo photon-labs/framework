@@ -59,12 +59,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.Namespace;
-import org.jdom.input.SAXBuilder;
-import org.jdom.output.Format;
-import org.jdom.output.XMLOutputter;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -405,66 +399,40 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 	 * Exclude the Code Validation for core Module 
 	 * @param info
 	 * @throws PhrescoException
+	 * @throws IOException 
+	 * @throws JAXBException 
+	 * @throws ParserConfigurationException 
 	 */
-	private  void excludeModule(ProjectInfo info) throws PhrescoException {
+	
+	private static void excludeModule(ProjectInfo info) throws PhrescoException {
 		try {
-			File projectPath = new File(Utility.getProjectHome(), info.getCode() + File.separator + POM_FILE);
-			SAXBuilder builder = new SAXBuilder();
-			Document doc = (Document) builder.build(projectPath);
-			Element rootNode = doc.getRootElement();
-			Element properties = rootNode.getChild("properties",rootNode.getNamespace());
-			Namespace ns = rootNode.getNamespace();
+			File projectPath = new File(Utility.getProjectHome()+ File.separator + info.getCode() + File.separator + POM_FILE);
+			PomProcessor processor = new PomProcessor(projectPath);
+			StringBuilder exclusionStringBuff = new StringBuilder();
 			List<ModuleGroup> modules = info.getTechnology().getModules();
-			if(CollectionUtils.isEmpty(modules)) {
+			if (CollectionUtils.isEmpty(modules)) {
 				return;
 			}
-			Element sonarExclusion = properties.getChild("sonar.exclusions",ns);
-			StringBuffer exclusionStringBuff = new StringBuffer();
-			if(sonarExclusion != null) {
-				exclusionStringBuff.append(',');
-			}
-			if(sonarExclusion == null) {
-				sonarExclusion = new Element("sonar.exclusions", ns);
-				properties.addContent(sonarExclusion);
-			}
-			for (ModuleGroup moduleGroup : modules) {
-				if(moduleGroup.isCore()) {
+			for (ModuleGroup moduleGroups : modules) {
+				if (moduleGroups.isCore()) {
 					exclusionStringBuff.append("**/");
-					exclusionStringBuff.append(moduleGroup.getName().toLowerCase());
+					exclusionStringBuff.append(moduleGroups.getName().toLowerCase());
 					exclusionStringBuff.append("/**");
 					exclusionStringBuff.append(",");
 				}
 			}
 			String exclusionValue = exclusionStringBuff.toString();
-			if(exclusionValue.lastIndexOf(',') > -1) {
-				exclusionValue = exclusionValue.substring(0,exclusionValue.lastIndexOf(','));
+			if (exclusionValue.lastIndexOf(',') != -1) {
+				exclusionValue = exclusionValue.substring(0, exclusionValue.lastIndexOf(','));
 			}
-			sonarExclusion.addContent(exclusionValue);
-			saveFile(projectPath, doc);
-		} catch (Exception e) {
+			processor.setProperty("sonar.exclusions", exclusionValue);
+			processor.save();
+		} catch (JAXBException e) {
 			throw new PhrescoException(e);
-		}
-	}
-
-	/**
-	 * Exclude the core Module for Code Validation 
-	 * @param projectPath
-	 * @param doc
-	 * @throws IOException
-	 */
-	public void saveFile(File projectPath, Document doc) throws IOException {
-		FileWriter writer = null;
-		try {
-			writer = new FileWriter(projectPath);
-			if (projectPath.exists()) {
-				XMLOutputter xmlOutput = new XMLOutputter();
-				xmlOutput.setFormat(Format.getPrettyFormat());
-				xmlOutput.output(doc, writer);
-			}
-		} finally {
-			if (writer != null) {
-				writer.close();
-			}
+		} catch (IOException e) {
+			throw new PhrescoException(e);
+		} catch (ParserConfigurationException e) {
+			throw new PhrescoException(e);
 		}
 	}
 
@@ -2496,7 +2464,38 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 				Utility.closeStream(outputKeyStore);
 			}
 		}
-	}
+		
+		/**
+		 * This method is to fetch the settings template through REST service
+		 * @return List of settings template stored in the server [Database, Server and Email]
+		 */
+		public List<SettingsTemplate> getSettingsTemplates() throws PhrescoException {
+			 try {
+				 return PhrescoFrameworkFactory.getServiceManager().getSettingsTemplates();
+			 } catch (ClientHandlerException ex) {
+				 S_LOGGER.error(ex.getLocalizedMessage());
+				 throw new PhrescoException(ex);
+			 }
+		}
+		
+		/**
+		 * Returns Settings template which matches the given type
+		 * @return Settings template object
+		 */
+		public SettingsTemplate getSettingsTemplate(String type) throws PhrescoException {
+		
+			 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.getSettingsTemplate(String type)");
+		
+			 List<SettingsTemplate> settingsTemplates = getSettingsTemplates();
+			 for (SettingsTemplate settingsTemplate : settingsTemplates) {
+				 if (settingsTemplate.getType().equals(type)) {
+					 return settingsTemplate;
+				 }
+			 }
+		
+			 return null;
+		}
+ }
 
 	class SavingTrustManager implements X509TrustManager {
 
