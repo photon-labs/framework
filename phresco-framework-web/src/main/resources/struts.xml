@@ -76,7 +76,7 @@
             <result name="importFromSvn">/pages/applications/svn_import.jsp</result>
         </action>
         
-        <action name="importcredentialdetails" method="importApplication" class="com.photon.phresco.framework.actions.applications.Applications">
+        <action name="importCredentialDetails" method="importApplication" class="com.photon.phresco.framework.actions.applications.Applications">
             <result type="json"/>
         </action>
         

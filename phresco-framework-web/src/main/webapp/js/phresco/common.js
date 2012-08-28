@@ -64,7 +64,8 @@
     function showLoadingIcon(tagControl) {
 		var src = "themes/photon/images/loading_blue.gif";
     	var theme =localStorage["color"];
-        if(theme == undefined || theme == null || theme == "null" || theme == "" || theme == "undefined" || theme == "themes/photon/css/red.css") {
+        if (theme == undefined || theme == null || theme == "null" || theme == "" || 
+        		theme == "undefined" || theme == "themes/photon/css/red.css") {
         	src = "themes/photon/images/loading_red.gif";
         }
      	tagControl.empty();
@@ -100,119 +101,81 @@
         $('#build-outputOuter').show().css("display",prop);
     }
     
-    //Form submit
-    function performAction(pageUrl, form, tagControl, callSuccessEvent) {
+    //Form submit by serializing the given form
+    function performAction(pageUrl, form, tagControl, callSuccessEvent, additionalParams) {
+    	var params = getParameters(form, additionalParams);
+    	$.ajax({
+            url : pageUrl,
+            data : params,
+            type : 'POST',
+            cache: false,
+            success : function(data) {
+            	if (callSuccessEvent != undefined && !isBlank(callSuccessEvent)) {
+            		successEvent(pageUrl, data);
+            	} else if (data.validated) {
+            		validationError(data);
+            	} else if (tagControl != undefined && !isBlank(tagControl)) {
+            		if (pageUrl == "applications" || pageUrl == "settings" || pageUrl == "forum") {
+            			$(".intro_container").hide();
+            	    	$(".errorOverlay").show().css("display", "none");
+            		}
+            		if ((pageUrl == "save" || pageUrl == "update" || pageUrl == "delete" || pageUrl == "deleteConfigurations" 
+            				|| pageUrl == "deleteSettings" || pageUrl == "deleteBuild" || pageUrl == "CIBuildDelete")) {
+            			hideProgessBar();
+            		}
+            		
+	                tagControl.empty();
+	                tagControl.html(data);
+	           	}
+            }
+        }); 
+    }
+    
+ 	// This method is for popup form submit and Dynamic small subpage page load
+    // is secondpopup avail can be used to display two popup's in a single popup div
+    function popup(pageUrl, form, tagControl, callSuccessEvent, isSecondPopupAvail, additionalParams) {
+    	var params = getParameters(form, additionalParams);
+        $.ajax({
+            url : pageUrl,
+            data : params,
+            type : 'POST',
+            cache : false,
+            success : function(data) {
+            	if (tagControl != undefined && !isBlank(tagControl) && (isSecondPopupAvail == undefined || isBlank(isSecondPopupAvail))) {
+            		tagControl.empty();
+                	tagControl.html(data);
+                }
+            	if (tagControl != undefined && !isBlank(tagControl) && isSecondPopupAvail != undefined && !isBlank(isSecondPopupAvail)) {
+            		tagControl.append(data);
+            	}
+             	if (callSuccessEvent != undefined && !isBlank(callSuccessEvent)) {
+             		successEvent(pageUrl, data);
+            	}
+            }
+        });
+    }
+    
+    // To get the parameters based on the availability
+    function getParameters(form, additionalParams) {
     	var params = "";
     	if (form != undefined && form != "" && !isBlank(form.serialize())) {
     		params = form.serialize();
+    		if (!isBlank(additionalParams)) {
+    			params = params.concat("&");
+    			params = params.concat(additionalParams);
+    		}
+    	} else {
+    		params = additionalParams;
     	}
-    	$.ajax({
-            url : pageUrl,
-            data : params,
-            type : "POST",
-            success : function(data) {
-            	if(callSuccessEvent != undefined && !isBlank(callSuccessEvent)) {
-            		successEvent(pageUrl, data);
-            	} else if(data.validated) {
-            		validationError(data);
-            	} else if(tagControl != undefined && !isBlank(tagControl)) {
-            		if (pageUrl == "applications" || pageUrl == "settings" || pageUrl == "forum") {
-            			$(".intro_container").hide();
-            	    	$(".errorOverlay").show().css("display", "none");
-            		}
-            		if((pageUrl == "save" || pageUrl == "update" || pageUrl == "delete" || pageUrl == "deleteConfigurations" || pageUrl == "deleteSettings" || pageUrl == "deleteBuild" || pageUrl == "CIBuildDelete")) {
-            			hideProgessBar();
-            		} 
-            		
-	                tagControl.empty();
-	                tagControl.html(data);
-	           	}
-            }
-        }); 
-    }
-    
-    function performActionParams(pageUrl, params, tagControl, callSuccessEvent) {
-    	$.ajax({
-            url : pageUrl,
-            data : params,
-            type : "POST",
-            success : function(data) {
-            	if(callSuccessEvent != undefined && !isBlank(callSuccessEvent)) {
-            		successEvent(pageUrl, data);
-            	} else if(data.validated == true) {
-            		validationError(data);
-            	} else if(tagControl != undefined && !isBlank(tagControl)) {
-            		if (pageUrl == "applications" || pageUrl == "settings" || pageUrl == "forum") {
-            			$(".intro_container").hide();
-            	    	$(".errorOverlay").show().css("display", "none");
-            		}
-            		if((pageUrl == "save" || pageUrl == "update" || pageUrl == "delete" || pageUrl == "deleteConfigurations" || pageUrl == "deleteSettings" || pageUrl == "deleteBuild" || pageUrl == "CIBuildDelete")) {
-            			hideProgessBar();
-            		} 
-            		
-	                tagControl.empty();
-	                tagControl.html(data);
-	           	}
-            }
-        }); 
-    }
-    
-    // This method is for popup form submit and Dynamic small subpage page load
-    // is secondpopup avail can be used to display two popup's in a single popup div
-    function popup(pageUrl, form, tagControl, callSuccessEvent, isSecondPopupAvail) {
-    	var params = "";
-    	if (form != undefined && !isBlank(form.serialize())) {
-    		params = form.serialize();
-    	}
-        $.ajax({
-            url : pageUrl,
-            data : params,
-            success : function(data) {
-            	if(tagControl != undefined && !isBlank(tagControl) && isSecondPopupAvail == undefined && isBlank(isSecondPopupAvail)) {
-                	tagControl.empty();
-                	tagControl.html(data);
-                }
-            	if (tagControl != undefined && !isBlank(tagControl) && isSecondPopupAvail != undefined && !isBlank(isSecondPopupAvail)) {
-            		tagControl.append(data);
-            	}
-             	if(callSuccessEvent != undefined && !isBlank(callSuccessEvent)) {
-             		successEvent(pageUrl, data);
-            	}
-            }
-        });
-    }
-    
-    function popupParams(pageUrl, params, tagControl, callSuccessEvent, isSecondPopupAvail) {
-        $.ajax({
-            url : pageUrl,
-            data : params,
-            success : function(data) {
-            	if(tagControl != undefined && !isBlank(tagControl) && isSecondPopupAvail == undefined && isBlank(isSecondPopupAvail)) {
-                	tagControl.empty();
-                	tagControl.html(data);
-                }
-            	if (tagControl != undefined && !isBlank(tagControl) && isSecondPopupAvail != undefined && !isBlank(isSecondPopupAvail)) {
-            		tagControl.append(data);
-            	}
-             	if(callSuccessEvent != undefined && !isBlank(callSuccessEvent)) {
-             		successEvent(pageUrl, data);
-            	}
-            }
-        });
-    }
-    
+    	
+		return params;
+    }    
     // This method is for popup submit
-    function readerHandlerSubmit(pageUrl, projectCode, testType, params, callSuccessEvent) {
-    	var param = "";
-    	if (!isBlank($('form').serialize())) {
-    		param = "&";
-    	}
-    	if (params != undefined && !isBlank(params)) {
-            param = param + params;
-        }
+    function readerHandlerSubmit(pageUrl, projectCode, testType, form, callSuccessEvent, additionalParams) {
+    	var params = getParameters(form, additionalParams);
         $.ajax({
             url : pageUrl,
-            data : $('form').serialize() + param,
+            data : params,
             type : "POST",
             success : function(data) {
             	$("#build-output").empty();
@@ -244,6 +207,7 @@
                 'projectCode' : projectCode,
             },
             type : "POST",
+            cache : false,
             success : function(data) {
             	var status = data.globalValidationStatus;
             	if (status == "ERROR") {
@@ -283,7 +247,7 @@
     		return false;
     	}
     	return true;
-    } 
+    }
     
     function checkForContext(name) {
     	newName = name.replace(/[^a-zA-Z 0-9\-\_/.]+/g, '');
@@ -370,6 +334,7 @@
 					$('#' + element).append($("<option></option>").attr("value", data[i]).text(data[i]));
 				}
     		}
+    		
 			return true;
 		}
 	}
@@ -381,6 +346,7 @@
 				var list = '<li class="list_style"><input type="checkbox" name="'+ element +'" value="' + data[i] + '">' + '&nbsp;' + data[i] + '</li>';
 				$('#' + element).append(list);
 			}
+			
 			return true;
 		}
 	}
@@ -389,27 +355,27 @@
     function showHidePopupMsg(tagControl, msg) {
     	tagControl.html(msg);
     	tagControl.show();
-    	setTimeout(function(){
+    	setTimeout(function() {
     		tagControl.fadeOut("slow", function () {
-    		tagControl.hide();
-    		      });	 
-    		}, 2000);
+    			tagControl.hide();
+    		});	 
+    	}, 2000);
     }
     
     // To check whether the url is valid or not
 	function isValidUrl(url) {
-	    if(/^(http|https|ftp):\/\/[a-z0-9]+([-.]{1}[a-z0-9]+)*.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/i.test(url)) {
+	    if (/^(http|https|ftp):\/\/[a-z0-9]+([-.]{1}[a-z0-9]+)*.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/i.test(url)) {
 	      return false;
 	    } else {
 	      return true;
 	    }   
 	}
+	
 	// To check whether the given string contains empty space or not
 	function isContainSpace(name) {
 		newName = name.replace(/[^a-zA-Z 0-9\_]+/g, '');
 		return newName;
     }
-			 
 	
 	function accordion() {
 	    var showContent = 0;
@@ -423,24 +389,24 @@
 	    //$('.mfbox').eq(showContent).css('display','block')
 	    <!--show hide-->
 	    
-	    $('.siteaccordion').bind('click',function(e){
+	    $('.siteaccordion').bind('click',function(e) {
 	        var _tempIndex = $('.siteaccordion').index(this);
 	            $('.siteaccordion').removeClass('openreg').addClass('closereg');
-	            $('.mfbox').each(function(e){
-	                if($(this).css('display')=='block'){
+	            $('.mfbox').each(function(e) {
+	                if ($(this).css('display')=='block') {
 	                    $(this).find('.scrollpanel').slideUp('300');
 	                    $(this).slideUp('300');
 	                }
 	            })
-	        if($('.mfbox').eq(_tempIndex).css('display')=='none'){
+	        if ($('.mfbox').eq(_tempIndex).css('display')=='none') {
 	            $(this).removeClass('closereg').addClass('openreg');
-	            $('.mfbox').eq(_tempIndex).slideDown(300,function(){
+	            $('.mfbox').eq(_tempIndex).slideDown(300,function() {
 	                $('.mfbox').eq(_tempIndex).find('.scrollpanel').slideDown('300');
 	            });
 	        }
 	    });
 	    
-	    $('.siteaccordion').click(function(){ 
+	    $('.siteaccordion').click(function() { 
 	    	$('#siteaccordion_active').attr("id", "");   	
 	    });
 	}
@@ -459,4 +425,10 @@
 		} else {
 			return false;
 		}
+	}
+	
+	function getCustomerIdAsParam() {
+		var params = "customerId=";
+		params = params.concat($('#customerId').val());
+		return params;
 	}

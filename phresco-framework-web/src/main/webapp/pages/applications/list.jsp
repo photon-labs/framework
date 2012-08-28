@@ -20,6 +20,7 @@
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.util.List"%>
+<%@ page import="org.apache.commons.collections.CollectionUtils"%>
 
 <%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
 <%@ page import="com.photon.phresco.framework.api.Project" %>
@@ -71,106 +72,98 @@
 	</div>
 </div>
 
-<form name="delete" action="delete" method="post" autocomplete="off" id="formAppList" class="app_list_form">
+<form autocomplete="off" id="formAppList" class="app_list_form" name="listForm">
 	<div class="operation">
 		<input id="add" type="button" value="<s:text name="label.addappln"/>" class="btn primary"/>
 		<a href="#" class="btn primary" id="import"><s:text name="label.import.from.svn"/></a>
 		<input id="deleteButton" type="button" value="<s:text name="label.delete"/>" class="btn disabled" disabled="disabled"/>
 	</div>
-	
+	<%
+		List<Project> projects = (List<Project>)request.getAttribute(FrameworkConstants.REQ_PROJECTS);
+		String customerId = (String) request.getAttribute("customerId");
+		if (CollectionUtils.isEmpty(projects)) {
+	%>
+		<div class="alert-message block-message warning" >
+			<center><s:label key="error.message" cssClass="errorMsgLabel"/></center>
+		</div>
+	<%
+		} else {
+	%>
 	<div class="table_div">
-		<%
-			List<Project> projects = (List<Project>)request.getAttribute("Projects");
-			String customerId = (String) request.getAttribute("customerId");
-		%>
-		
 		<s:if test="hasActionMessages()">
 			<div class="alert-message success"  id="successmsg">
 				<s:actionmessage />
 			</div>
 		</s:if>
 		
-		<%
-			if(projects == null || projects.size()== 0) {
-		%>
-			<div class="alert-message block-message warning" >
-				<center><s:label key="error.message" cssClass="errorMsgLabel"/></center>
-			</div>
-		<%
-			} else {
-		%>
-			<div class="fixed-table-container">
-	      		<div class="header-background"> </div>
-	      		<div class="fixed-table-container-inner">
-			        <table cellspacing="0" class="zebra-striped">
-			          	<thead>
-				            <tr>
-								<th class="first">
-				                	<div class="th-inner">
-				                		<input type="checkbox" value="" id="checkAllAuto" name="checkAllAuto">
-				                	</div>
-				              	</th>
-				              	<th class="second">
-				                	<div class="th-inner"><s:text name="label.name"/></div>
-				              	</th>
-				              	<th class="third">
-				                	<div class="th-inner"><s:text name="label.description"/></div>
-				              	</th>
-				              	<th class="third">
-				                	<div class="th-inner"><s:text name="label.technology"/></div>
-				              	</th>
-				              	<th class="third">
-				                	<div class="th-inner"><s:text name="label.print"/></div>
-				              	</th>
-				            </tr>
-			          	</thead>
-			
-			          	<tbody>
-			          	<%
-							for (Project project : projects) {
-								ProjectInfo projectInfo = project.getProjectInfo();
-						%>
-			            	<tr>
-			              		<td class="checkbox_list">
-			              			<input type="checkbox" class="check" name="selectedProjects" value="<%= projectInfo.getCode() %>">
-			              		</td>
-			              		<td>
-			              			<a href="#" name="edit" id="<%= projectInfo.getCode() %>" ><%= projectInfo.getName() %></a>
-			              		</td>
-			              		<td style="width: 40%;"><%= projectInfo.getDescription() %></td>
-			              		<td><%= projectInfo.getTechnology().getName() %></td>
-			              		<td class="printIconAlign">
-			              			<a href="#" id="pdfPopup">
-			              				<img id="<%= projectInfo.getCode() %>" class="pdfCreation" src="images/icons/print_pdf.png" 
-			              					title="generate pdf" style="height: 20px; width: 20px;"/>
-			              			</a>
-			              		</td>
-			            	</tr>
-			            <%
-							}
-						%>	
-			          	</tbody>
-			        </table>
-	      		</div>
-    		</div>
+		<div class="fixed-table-container">
+      		<div class="header-background"> </div>
+      		<div class="fixed-table-container-inner">
+		        <table cellspacing="0" class="zebra-striped">
+		          	<thead>
+			            <tr>
+							<th class="first">
+			                	<div class="th-inner">
+			                		<input type="checkbox" value="" id="checkAllAuto" name="checkAllAuto">
+			                	</div>
+			              	</th>
+			              	<th class="second">
+			                	<div class="th-inner"><s:text name="label.name"/></div>
+			              	</th>
+			              	<th class="third">
+			                	<div class="th-inner"><s:text name="label.description"/></div>
+			              	</th>
+			              	<th class="third">
+			                	<div class="th-inner"><s:text name="label.technology"/></div>
+			              	</th>
+			              	<th class="third">
+			                	<div class="th-inner"><s:text name="label.print"/></div>
+			              	</th>
+			            </tr>
+		          	</thead>
+		
+		          	<tbody>
+		          	<%
+						for (Project project : projects) {
+							ProjectInfo projectInfo = project.getProjectInfo();
+					%>
+		            	<tr>
+		              		<td class="checkbox_list">
+		              			<input type="checkbox" class="check" name="selectedProjects" value="<%= projectInfo.getCode() %>">
+		              		</td>
+		              		<td>
+		              			<a href="#" name="edit" id="<%= projectInfo.getCode() %>" ><%= projectInfo.getName() %></a>
+		              		</td>
+		              		<td style="width: 40%;"><%= projectInfo.getDescription() %></td>
+		              		<td><%= projectInfo.getTechnology().getName() %></td>
+		              		<td class="printIconAlign">
+		              			<a href="#" id="pdfPopup">
+		              				<img id="<%= projectInfo.getCode() %>" class="pdfCreation" src="images/icons/print_pdf.png" 
+		              					title="generate pdf" style="height: 20px; width: 20px;"/>
+		              			</a>
+		              		</td>
+		            	</tr>
+		            <%
+						}
+					%>	
+		          	</tbody>
+		        </table>
+      		</div>
+   		</div>
 		<%
 			}
 		%>
 	</div>
-	
-	<!-- Hidden Fields -->
-	<input type="hidden" id="customerId" name="customerId" value="<%= customerId %>"/>
 </form>
 
 <script type="text/javascript">
-	/* To check whether the device is ipad or not */
-	if(!isiPad()){
-		/* JQuery scroll bar */
+	//To check whether the device is ipad or not and then apply jquery scrollbar
+	if (!isiPad()) {
 		$(".fixed-table-container-inner").scrollbars();  
 	}
 
 	$(document).ready(function() {
-		if(refreshIntervalId != undefined) {
+		if (refreshIntervalId != undefined) {
 			clearInterval(refreshIntervalId);			
 		}
 		enableScreen(); // for some popups like svn_import and CI , it should stay till the completion of the process
@@ -203,30 +196,24 @@
 		$('#add').click(function() {
 			disableScreen();
 			showLoadingIcon($("#loadingIconDiv"));
-	        performAction('applicationDetails', $('#formAppList'), $('#container'));
+	        performAction('applicationDetails', $('#customersForm'), $('#container'));
 	    });
 		
-		$('form').submit(function() {
+		$('form[name=listForm]').submit(function() {
             showProgessBar("Deleting Project (s)", 100);
-            var params = "";
-	    	if (!isBlank($('form').serialize())) {
-	    		params = $('form').serialize() + "&";
-	    	}
-			performAction('delete', params, $('#container'));
+			performAction('delete', $('#formAppList'), $('#container'));
 	        return false;
 	    });
 		
 		$("a[name='edit']").click(function() {
 			disableScreen();
 			showLoadingIcon($("#loadingIconDiv"));
-	        var projectCode = $(this).attr("id");
 			var params = "projectCode=";
-			params = params.concat(projectCode);
+			params = params.concat($(this).attr("id"));
 			params = params.concat("&fromPage=");
 			params = params.concat("edit");
-			params = params.concat("&customerId=");
-	    	params = params.concat($("#customerId").val());
-	        performActionParams('applicationDetails', params, $('#container'));
+			params = params.concat("&" + getCustomerIdAsParam());
+	        performAction('applicationDetails', '', $('#container'), '', params);
 	    });
 		
         $('.pdfCreation').click(function() {
@@ -235,7 +222,7 @@
     		var params = "";
     		params = params.concat("projectCode=");
 			params = params.concat($(this).attr("id"));
-    		popup('printAsPdfPopup', params, $('#popup_div'));
+    		popup('printAsPdfPopup', '', $('#popup_div'), '', '', params);
     	    escPopup();
 	    });
 	});
@@ -252,5 +239,10 @@
 		showPopup();
 		$('#popup_div').empty();
 		popup('showFrameworkValidationResult', '', $('#popup_div'));
+	}
+	
+	// To reload the projects based on the customer when the customer is changed
+	function reloadCurrentPage() {
+		performAction('applications', $('#customersForm'), $("#container"));
 	}
 </script>

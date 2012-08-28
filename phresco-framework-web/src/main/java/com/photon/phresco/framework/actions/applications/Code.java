@@ -269,13 +269,12 @@ public class Code extends FrameworkBaseAction {
 	}
 	
 	public String showCodeValidatePopUp(){
-		String technology = null;
-		Project project = null;
 		S_LOGGER.debug("Entering Method  Code.progressValidate()");
+		
         try {
         	ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-        	project = administrator.getProject(projectCode);
-			technology = project.getProjectInfo().getTechnology().getId();
+        	Project project = administrator.getProject(projectCode);
+        	String technology = project.getProjectInfo().getTechnology().getId();
             getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
             getHttpRequest().setAttribute(APPLICATION_PROJECT, project);
             if (TechnologyTypes.IPHONES.contains(technology)) {
@@ -285,6 +284,7 @@ public class Code extends FrameworkBaseAction {
         } catch (Exception e) {
         	S_LOGGER.error("Entered into catch block of Code.progressValidate()"+ FrameworkUtil.getStackTraceAsString(e));
         }
+        
     	return APP_SHOW_CODE_VALIDATE_POPUP;
     }
 	

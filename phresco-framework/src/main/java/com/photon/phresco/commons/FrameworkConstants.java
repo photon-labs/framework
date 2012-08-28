@@ -27,7 +27,8 @@ public interface FrameworkConstants {
     /*
      * Common constants
      */
-	String FEATURES = "features"; 
+	String APP_INFO = "appInfo";
+	String FEATURES = "features";
     int JOB_STATUS_NOTOK = -1;
     String FOLDER_DOT_PHRESCO = ".phresco";
     String PHRESCO_HOME = "PHRESCO_HOME";
@@ -137,6 +138,7 @@ public interface FrameworkConstants {
     String NODEJS_RUN_AGAINST = "nodeJS_runAgnSrc";
     String JAVA_RUN_AGAINST = "runAgnSrc";
     String PROJECT_CODE = "projectCode";
+    String PROJECT_MODULE= "projectModule";
 	
     String JAVA_STAND_ALONE = "tech-java-standalone";
     String JAVA_STANDALONE = "Javastandalone";
@@ -165,7 +167,7 @@ public interface FrameworkConstants {
     String TEST_PARAM_VALUE = "AllTest";
     String ALL_TEST_SUITES = "All";
     String KEY_QUOTES = "\"";
-    String FROM_PAGE = "edit";
+    String FROM_PAGE_EDIT = "edit";
     String DEPLOY_BUILD_NAME = "buildName";
     String IPHONE_BUILD_NAME = "application.path";
     String IPHONE_SIMULATOR_VERSION = "simulator.version";
@@ -321,6 +323,7 @@ public interface FrameworkConstants {
     String SESSION_JAVA_SERVER_PORT_VALUE ="JavaServerPort";
     String SESSION_JAVA_SERVER_HOST_VALUE ="JavaServerHost";
     String SESSION_JAVA_SERVER_PROTOCOL_VALUE ="JavaServerProtocol";
+    String SESSION_JAVA_SERVER_CONTEXT_VALUE = "JavaContext";
     String SESSION_ENV_NAME = "environment";
     /*
      * Request Constants
@@ -328,6 +331,7 @@ public interface FrameworkConstants {
      */
     String REQ_PROJECT_INFO	= "projectInfo";
 	String REQ_TITLE_ADD_APPLICATION = "Add ApPlication";
+	String REQ_APPLICATION_TYPES = "ApplicationTypes";
     String REQ_BUILD_FROM = "from";
     String REQ_NODEJS_SERVER_LOG = "NodeJsServerLog";
     String REQ_PROJECT = "project";
@@ -403,6 +407,7 @@ public interface FrameworkConstants {
     String REQ_SETTINGS_INFO = "settingsInfo";
     String REQ_CURRENT_SETTINGS_TEMPLATE = "CurrentTemplate";
     String REQ_ALL_TECHNOLOGIES = "allTechnologies";
+    String REQ_APPTYPE_TECHNOLOGIES = "appTypeTechnologies";
     String REQ_SETTINGS_NAME = "settingName";
     String REQ_CODE_PREFIX = "codePrefix";
     String REQ_FROM_PAGE = "fromPage";

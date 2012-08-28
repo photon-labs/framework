@@ -17,7 +17,7 @@
  * limitations under the License.
  * ###
  */
-$(document).ready(function(){
+$(document).ready(function() {
 	$('#cancel').click(function() {
 	    dialog('none');
 	});
@@ -25,17 +25,11 @@ $(document).ready(function(){
 	$('#close').click(function() {
 	    dialog('none');
 	});
-	
-	/*$('#ok').click(function() {
-		alert("ok clicked...");
-		dialog('none');
-		$('#deleteObjects').submit();
-	});*/
 });
 
 function onOk() {
 	dialog('none');
-	$('#deleteObjects').submit();
+	$('form[name=listForm]').submit();
 }
 
 function dialog(enableProp) {

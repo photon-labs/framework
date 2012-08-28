@@ -26,7 +26,6 @@
 <%@ page import="org.apache.commons.collections.MapUtils" %>
 
 <%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
-<%@ page import="com.photon.phresco.framework.api.Project" %>
 <%@ page import="com.photon.phresco.model.ProjectInfo" %>
 <%@ page import="com.photon.phresco.model.ApplicationType" %>
 
@@ -146,7 +145,7 @@
 		        <ul class="inputs-list">
 		            <li> 
 		            <%
-		                List<ApplicationType> appTypes = (List<ApplicationType>) request.getAttribute(FrameworkConstants.SESSION_APPLICATION_TYPES);
+		                List<ApplicationType> appTypes = (List<ApplicationType>) request.getAttribute(FrameworkConstants.REQ_APPLICATION_TYPES);
 		                String checkedStr = "";
 		                if (CollectionUtils.isNotEmpty(appTypes)) {
 			                for(ApplicationType applicationType : appTypes) {
@@ -224,7 +223,6 @@
 		$('form').submit(function() {
 			disableScreen();
 			showLoadingIcon($("#loadingIconDiv"));
-			$("*").attr("disabled", false);
 			performAction('features', $('#formAppInfo'), $("#tabDiv"));
 			return false;
 		});
@@ -251,7 +249,6 @@
 
 	//This function is to handle the change event for application radio
 	function changeApplication() {
-		$("input[name='application']").prop("disabled", false);
 		performAction('applicationType', $('#formAppInfo'), $('#AjaxContainer'));
 	}
 

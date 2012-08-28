@@ -140,6 +140,7 @@ public class ApplicationsUtil implements FrameworkConstants {
 		}
         try {
         	ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
+        	
             return administrator.getPilots(technologyId, customerId);
         } catch (ClientHandlerException e) {
             if (debugEnabled) {
@@ -152,6 +153,7 @@ public class ApplicationsUtil implements FrameworkConstants {
             }
             new LogErrorReport(e, "Getting pilot projects");
         }
+        
         return null;
     }
     
@@ -236,19 +238,14 @@ public class ApplicationsUtil implements FrameworkConstants {
     }
     
     public static ProjectInfo getPilotProjectInfo(String technologyId, String customerId) {
-    	List<ProjectInfo> pilots = mapPilotProjectInfos.get(technologyId);
     	ProjectInfo pilotProjectInfo = null;
-    	if (pilots != null) {
+    	List<ProjectInfo> pilots = getPilots(technologyId, customerId);
+    	if (CollectionUtils.isNotEmpty(pilots)) {
     		for (ProjectInfo projectInfo : pilots) {
-    			pilotProjectInfo = projectInfo;
-			}
-    		return pilotProjectInfo;
+        		pilotProjectInfo = projectInfo;
+        	}
     	}
-    	pilots = getPilots(technologyId, customerId);
-    	mapPilotProjectInfos.put(technologyId, pilots);
-    	for (ProjectInfo projectInfo : pilots) {
-    		pilotProjectInfo = projectInfo;
-    	}
+    	
     	return pilotProjectInfo;
     }
     
@@ -357,7 +354,7 @@ public class ApplicationsUtil implements FrameworkConstants {
 		List list = new ArrayList();
 		if (strArr != null && strArr.length > 0) {
 			for (int i = 0; i < strArr.length; i++) {
-				list.add(Integer.parseInt(strArr[i]));
+				list.add(strArr[i]);
 			}
 		}
 		return list;

@@ -19,13 +19,7 @@
   --%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
-<%@page import="java.util.Iterator"%>
-<%@page import="com.photon.phresco.commons.FrameworkConstants"%>
-<%@ page import="java.util.List" %>
-<%@ page import="com.photon.phresco.model.VideoInfo" %>
-<%@ page import="com.photon.phresco.model.VideoType" %>
-<%@ page import="java.util.ArrayList"%>
-
+<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 
 <% 
     String showWelcome = (String)request.getAttribute(FrameworkConstants.REQ_SHOW_WELCOME);
@@ -35,14 +29,11 @@
 %>
 
 <div class="intro_container">
-	<!-- Phresco js -->
-	<script type="text/javascript" src="../../js/phresco/common.js"></script>
-	
 	<script type="text/javascript">
 		if (localStorage["welcome"]) {
 			$(".errorOverlay").show().css("display","none");
 			$(".intro_container").show().css("display","none");
-		} else if (localStorage.menuSelected == 'video'){ // To hide the welcome overlay page.
+		} else if (localStorage.menuSelected == 'video') { // To hide the welcome overlay page.
 			$(".errorOverlay").show().css("display","none");
 			$(".intro_container").show().css("display","none"); 
 		} else {
@@ -86,7 +77,7 @@
     </div>
 <%
 	String selectedNav = "home";
-	if(request.getAttribute(FrameworkConstants.REQ_SELECTED_MENU) != null) {
+	if (request.getAttribute(FrameworkConstants.REQ_SELECTED_MENU) != null) {
 		 selectedNav = (String) request.getAttribute(FrameworkConstants.REQ_SELECTED_MENU);
 	}
 %>
@@ -135,14 +126,18 @@
 <script type="text/javascript">
 $(document).ready(function() {
 	bacgroundValidate("validateFramework", '');
+	
 	performAction('home', $("#formHome"), $("#container"));
+	
 	$(".mycube_slides").show().css("border","none");
+	
     // for navigation to page
-    $("a[id='<%= selectedNav%>']").attr("class", "active"); 
+    $("a[id='<%= selectedNav %>']").attr("class", "active"); 
 
     $("#dontShowCheck").click(function() { 
-         if ($(this).is(":checked"))
-        	 localStorage.welcome = true;
+         if ($(this).is(":checked")) {
+        	 localStorage.welcome = true;        	 
+         }
     });
  
     $(".homegostart").click(function () {

@@ -17,13 +17,11 @@
   limitations under the License.
   ###
   --%>
-<%@page import="java.util.ArrayList"%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="org.apache.commons.collections.CollectionUtils"%>
 <%@ page import="org.apache.commons.lang.StringUtils"%>
 <%@ page import="java.util.List" %>
-<%@ page import="java.util.ArrayList"%>
 
 <%@ page import="com.photon.phresco.model.Technology"%>
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>

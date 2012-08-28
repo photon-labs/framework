@@ -477,7 +477,7 @@ public class FrameworkUtil implements FrameworkConstants {
     public static void setAppInfoDependents(HttpServletRequest request, String customerId) throws PhrescoException {
         FrameworkConfiguration configuration = PhrescoFrameworkFactory.getFrameworkConfig();
         ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-        request.setAttribute(SESSION_APPLICATION_TYPES, administrator.getApplicationTypes(customerId));
+        request.setAttribute(REQ_APPLICATION_TYPES, administrator.getApplicationTypes(customerId));
         request.setAttribute(REQ_CODE_PREFIX, configuration.getCodePrefix());
     }
     

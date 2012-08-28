@@ -32,7 +32,7 @@
 
 <%
     ProjectInfo selectedInfo = (ProjectInfo) request.getAttribute(FrameworkConstants.REQ_PROJECT_INFO);
-    ApplicationType selectedAppType = (ApplicationType) request.getAttribute(FrameworkConstants.REQ_APPLICATION_TYPE);
+	List<Technology> technologies = (List<Technology>) request.getAttribute(FrameworkConstants.REQ_APPTYPE_TECHNOLOGIES);
     String fromPage = (String) request.getAttribute(FrameworkConstants.REQ_FROM_PAGE);
     String disabled = "disabled";
     if (StringUtils.isEmpty(fromPage)) {
@@ -48,7 +48,7 @@
     }
     
     List<String> selectedVersions = null;
-	if(selectedInfo != null) {
+	if (selectedInfo != null) {
 		selectedVersions = selectedInfo.getTechnology().getVersions();
 	}
 %>
@@ -58,12 +58,6 @@
     
     <!--  Technologies are loaded here starts-->
     <div class="input new-input">
-        <%
-        	List<Technology> technologies = null;
-			if (selectedAppType != null) {
-				technologies = selectedAppType.getTechnologies();
-			}
-		%>
 		<div class="app_type_float_left">
 			<select id="technology" name="technology" class="xlarge" <%= disabled %> >
 			<%
@@ -121,7 +115,6 @@
 	    
 	function techDependencies() {
 		$("#alreadyConstructed").val("");
-		$("select[name='technology']").prop("disabled", false);
 		popup('technology', $("#formAppInfo"), $('#techDependency'), true);
 	}
 	
@@ -137,10 +130,10 @@
 		<% if (selectedVersions != null) { %>
 			$("#techVersion option").each(function() {
 				<% for (String selectedVersion : selectedVersions) { %>
-				if ($(this).val().trim() == '<%= selectedVersion %>') {
-					$(this).prop("selected", "selected");
-				}
-			<% } %>
+					if ($(this).val().trim() == '<%= selectedVersion %>') {
+						$(this).prop("selected", "selected");
+					}
+				<% } %>
 			});
 		<% } %>
 		

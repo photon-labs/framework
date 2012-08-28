@@ -1,9 +1,9 @@
 <environments>
     <environment default="true" name="Production">
         <WebService name="webservice">
-            <port>80</port>
+            <port>2020</port>
             <password/>
-            <context>service2.0-testing</context>
+            <context>service-testing</context>
 			<additional_context>/rest/api</additional_context>
             <host>172.16.18.178</host>
             <protocol>http</protocol>

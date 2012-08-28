@@ -19,22 +19,14 @@
   --%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
+<%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
+<%@ page import="com.photon.phresco.framework.api.Project" %>
+<%@ page import="com.photon.phresco.util.TechnologyTypes" %>
+
 <%@ include file="progress.jsp" %>
 <%@ include file="errorReport.jsp" %>
 
-<%@ page import="java.util.List"%>
-<%@ page import="java.util.ArrayList"%>
-<%@ page import="java.util.Collection"%>
-<%@ page import="java.util.Iterator"%>
-<%@ page import="com.photon.phresco.model.*"%>
-<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
-<%@ page import="com.photon.phresco.framework.api.Project" %>
-<%@ page import="com.photon.phresco.framework.api.ValidationResult" %>
-<%@ page import="com.photon.phresco.util.TechnologyTypes" %>
-
-<script src="js/reader.js" ></script>
-<script type="text/javascript" src="js/home-header.js" ></script>
-<script type="text/javascript" src="js/phresco/common.js"></script>
+<script src="js/reader.js"></script>
 
 <%
 	String projectCode = (String) request.getAttribute(FrameworkConstants.REQ_PROJECT_CODE);
@@ -46,14 +38,16 @@
 		disabledStr = "disabled";
 	}
 %>
-<form action="check" id="check">
+<form id="formCode">
 	<div class="operation">
 	    <input id="validate" type="button" value="Validate" class="btn primary" <%= disabledStr %>>
 		&nbsp;&nbsp;<strong id="lblType" class="noTestAvail"><s:text name="label.sonar.report"/></strong>&nbsp;
 		<select id="report" name="report">
-		<% if (TechnologyTypes.HTML5_WIDGET.equals(technology) || TechnologyTypes.HTML5_MOBILE_WIDGET.equals(technology) 
+		<% 
+			if (TechnologyTypes.HTML5_WIDGET.equals(technology) || TechnologyTypes.HTML5_MOBILE_WIDGET.equals(technology) 
 				|| TechnologyTypes.HTML5.equals(technology) || TechnologyTypes.HTML5_JQUERY_MOBILE_WIDGET.equals(technology) 
-				|| TechnologyTypes.HTML5_MULTICHANNEL_JQUERY_WIDGET.equals(technology) || TechnologyTypes.JAVA_WEBSERVICE.equals(technology)) { %>	
+				|| TechnologyTypes.HTML5_MULTICHANNEL_JQUERY_WIDGET.equals(technology) || TechnologyTypes.JAVA_WEBSERVICE.equals(technology)) {
+		%>	
 			<option value="java" ><s:text name="label.tech.java"/></option>
 			<option value="js" ><s:text name="label.tech.javascript"/></option>
 			<option value="web" ><s:text name="label.tech.jsp"/></option>
@@ -63,11 +57,16 @@
 			<option value="functional" ><s:text name="label.funtional"/></option>
 		</select>
 	</div>
+	
 	<% if (!TechnologyTypes.IPHONES.contains(technology) && StringUtils.isNotEmpty(sonarError)) { %>
 		<div class="alert-message warning sonar">
 			<s:label cssClass="sonarLabelWarn" key="sonar.not.started" />
 		</div>
 	<% } %>
+	
+	<!-- Hidden Fields -->
+	<input type="hidden" name="projectCode" value="<%= projectCode %>">
+	
 </form> 
 <div id="sonar_report" class="sonar_report">
 
@@ -83,7 +82,7 @@
     			$("#validate").addClass("disabled");
     	<% } else { %>
     			$("#validate").addClass("primary");	
-				  $("#validate").removeClass("disabled");
+				$("#validate").removeClass("disabled");
     	<% } %>
 
     	changeStyle("code");
@@ -106,14 +105,13 @@
     });
     
     function progress() {
-    	
     	getCurrentCSS();
     	$('#loadingDiv').show();
     	$('#build-output').empty();
     	$('#build-output').html("Validating code...");
 		$('#build-outputOuter').show().css("display","block");
 		$(".wel_come").show().css("display","block");
-		readerHandlerSubmit('progressValidate', '<%= projectCode %>', '<%= FrameworkConstants.REQ_SONAR_PATH %>');
+		readerHandlerSubmit('progressValidate', '<%= projectCode %>', '<%= FrameworkConstants.REQ_SONAR_PATH %>', $("#formCodeValidate"));
 	}
     
     function sonarReport() {
@@ -124,11 +122,11 @@
     function getCodeValidatePopUp() {
     	$('#popup_div').empty();
 		showPopup();
-      	popup('getCodeValidatePopUp', '', $('#popup_div'));
+      	popup('getCodeValidatePopUp', $("#formCode"), $('#popup_div'));
     }
     
 	function checkObj(obj) {
-		if(obj == "null" || obj == undefined) {
+		if (obj == "null" || obj == undefined) {
 			return "";
 		} else {
 			return obj;
@@ -136,7 +134,7 @@
 	}
 	
 	/* Resize sonar iframe while resize the window */
-	function resizeWindow(e) { 
+	function resizeWindow(e) {
 		var SonarTabheight = $("#tabDiv").height();
         $(".sonar_report").css("height", SonarTabheight - 40);
 	}

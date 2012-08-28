@@ -77,7 +77,6 @@
 	#coremodule_accordion_container {
 		height:84%;
 	}
-	
 </style>
 
 <script type="text/javascript" src="js/loading.js"></script>
@@ -130,15 +129,10 @@
     if (StringUtils.isEmpty(fromPage)) {
     	fromPage = "";
     	disabled = "";
+    }
 %>
     
-    <form id="createProjectForm" action="save" method="post" autocomplete="off" class="app_features_form">
-<% 
-	} else {
-%>
-    <form action="#" method="post" autocomplete="off" class="app_features_form">
-<% } %>
-
+<form class="app_features_form" id="formFeatures" autocomplete="off">
 	<div class="clearfix" style="margin: 5px 0 0 5px;">
 	    <label for="xlInput" style="width: auto;"><s:text name="label.select.pilot.project"/></label>
 	
@@ -319,14 +313,17 @@
 			<input id="finish" type="button" value="<s:text name="label.finish"/>" class="primary btn createProject_btn">
 		<% } %>
 		<input type="button" id="cancel" value="<s:text name="label.cancel"/>" class="primary btn">
-		<input type="hidden" id="technology" name="techId" value="<%= techId %>">
-		<input type="hidden" id="configServerNames" name="configServerNames" value="<%= configServerNames %>">
-		<input type="hidden" id="configDbNames" name="configDbNames" value="<%= configDbNames %>">
-		<input type="hidden" name="fromTab" value="features">
-		<input type="hidden" id="customerId" name="customerId" value="<%= customerId %>">
-		<input type="hidden" name="fromPage" value="<%= fromPage %>">
 	</div>
-    </form>
+	
+	<!-- Hidden Fields -->
+	<input type="hidden" id="technology" name="techId" value="<%= techId %>">
+	<input type="hidden" id="configServerNames" name="configServerNames" value="<%= configServerNames %>">
+	<input type="hidden" id="configDbNames" name="configDbNames" value="<%= configDbNames %>">
+	<input type="hidden" name="fromTab" value="features">
+	<input type="hidden" id="customerId" name="customerId" value="<%= customerId %>">
+	<input type="hidden" name="fromPage" value="<%= fromPage %>">
+	
+</form>
     
 <!-- Tool tip div -->
 <div class="twipsy bootstrap-right" id="toolTipDiv" style="display: none;">

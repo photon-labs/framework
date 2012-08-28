@@ -52,7 +52,7 @@
     });
 
 	/* To check whether the divice is ipad or not and apply JQuery scroll bar */
-	if(!isiPad()){
+	if (!isiPad()){
 		$(".jsLib_accordion_container").scrollbars();
 		$("#coremodule_accordion_container").scrollbars();
 	}
@@ -60,10 +60,12 @@
 	$(document).ready(function() {
 		enableScreen();
 		
+		changeStyle("features");
+		
 		/** To check the pilot project modules during next/previous actions **/
 		var fromPage = $('#fromPage').val();
 		if (fromPage == "") {
-			if($("#selectedPilotProject").val() != "None") {
+			if ($("#selectedPilotProject").val() != "None") {
 				isPilotSelected = true;
 			} else {
 				isPilotSelected = false;
@@ -81,26 +83,23 @@
 		/** Accordian starts **/
 		var showContent = 0;
 	    
-	    $('.siteaccordion').bind('click',function(e){
+	    $('.siteaccordion').bind('click',function(e) {
 	        var _tempIndex = $('.siteaccordion').index(this);
 	            $('.siteaccordion').removeClass('openreg').addClass('closereg');
 	            $('.mfbox').each(function(e){
-	                if($(this).css('display')=='block'){
+	                if ($(this).css('display')=='block') {
 	                    $(this).find('.scrollpanel').slideUp('300');
 	                    $(this).slideUp('300');
 	                }
 	            })
-	        if($('.mfbox').eq(_tempIndex).css('display')=='none'){
+	        if ($('.mfbox').eq(_tempIndex).css('display')=='none') {
 	            $(this).removeClass('closereg').addClass('openreg');
-	            $('.mfbox').eq(_tempIndex).slideDown(300,function(){
+	            $('.mfbox').eq(_tempIndex).slideDown(300,function() {
 	                $('.mfbox').eq(_tempIndex).find('.scrollpanel').slideDown('300');
 	            });
-	            
 	        }
 	    });
 	    /** Accordian ends **/
-		
-		changeStyle("features");
 		
 		$('#finish').click(function() {
 			showProgessBar("Creating project...", 100);
@@ -115,19 +114,11 @@
 		});
 	         
 		$('#previous').click(function() {
-		    $("input[type=checkbox]:disabled").each ( function() {
+			$("input[type=checkbox]:disabled").each ( function() {
 		        $(this).attr('disabled', false)
 		    });
-//		   	var params = "";
-//	    	if (!isBlank($('form').serialize())) {
-//	    		params = $('form').serialize() + "&";
-//	    	}
-//			params = params.concat("fromPage=");
-//			params = params.concat($('#fromPage').val());
-//			params = params.concat("&customerId=");
-//	    	params = params.concat($("#customerId").val());
 			showLoadingIcon($("#tabDiv")); // Loading Icon
-			performAction('previous', $('#createProjectForm'), $('#tabDiv'));
+			performAction('previous', '', $('#tabDiv'), '', getParams('previous'));
 		});
 	
 		// Description popup js codes
@@ -176,22 +167,26 @@
 	});
 	
 	function featureUpdate(url){
+		performAction(url, '', $('#container'), '', getParams(url));
+	}
+	
+	function getParams(url) {
 		var doGetDisableItems = false;
-		if(url == 'save'){
+		if (url == 'save' || url == 'previous') {
 			doGetDisableItems = true;
 		}
 		var allModuleVals = "";
 		var allJsVals = "";
 		$('input:checkbox[name=selectedModules]:checked').each(function() {
 			var isDisabled = $(this).prop("disabled");
-			if(doGetDisableItems || !isDisabled) {
+			if (doGetDisableItems || !isDisabled) {
 				allModuleVals = allModuleVals + $(this).val() + ",";
 			}
 		});
 
 		$('input:checkbox[name=selectedJsLibs]:checked').each(function() {
 			var isJsDisabled = $(this).prop("disabled");
-			if(doGetDisableItems || !isJsDisabled) {
+			if (doGetDisableItems || !isJsDisabled) {
 				allJsVals = allJsVals + $(this).val() + ","; 
 			}
 		}); 
@@ -209,21 +204,24 @@
 		params = params.concat(allJsVals);
 		params = params.concat("&techId=");
 		params = params.concat(techId);
-		params = params.concat("&fromPage=");
-		params = params.concat("edit");
+		if (url == 'update' || url == 'previous') {
+			params = params.concat("&fromPage=");
+			params = params.concat("edit");
+		}
 		params = params.concat("&configServerNames=");
 		params = params.concat($("#configServerNames").val());
 		params = params.concat("&configDbNames=");
 		params = params.concat($("#configDbNames").val());
 		params = params.concat("&customerId=");
     	params = params.concat($("#customerId").val());
-		performActionParams(url, params, $('#container'));
+    	
+    	return params;
 	}
 	
 	function getPilotProjectModules(isPilotSelected) {
         var params = "technology=";
 		params = params.concat($("#technology").val());
-		performActionParams('getPilotProjectModules', params, '', true);
+		performAction('getPilotProjectModules', '', '', true, params);
 	}
 	
 	function chkUnchkPilotModules(pilotModules, isCheck) {
@@ -238,7 +236,7 @@
    			$("input:checkbox[value='" + pilotModules[i] + "']").attr('checked', isCheck);
    			$("input:checkbox[value='" + pilotModules[i] + "']").attr('disabled', isCheck);
 			
-			if(isCheck) {
+			if (isCheck) {
 				var version = $("input:radio[name='" + pilotModules[i] + "']").val();
 				$("p[id='" +  pilotModules[i] + "version']").html(version);
 			} else {
@@ -251,7 +249,7 @@
 	function getDefaultModules() {
 		var params = "technology=";
 		params = params.concat($("#technology").val());
-		performActionParams('fetchDefaultModules', params, '', true);
+		performAction('fetchDefaultModules', '', '', true, params);
 	}
 	
 	function enableModuleDesc(enableProp) {
@@ -307,11 +305,11 @@
 		params = params.concat(moduleType);
 		params = params.concat("&techId=");
 		params = params.concat($("#technology").val());
-		if(preVersion != undefined) {
+		if (preVersion != undefined) {
 			params = params.concat("&preVersion=");
 			params = params.concat(preVersion);
 		}
-		performActionParams('checkDependency', params, '', true);
+		performAction('checkDependency', '', '', true, params);
 	}
 	
 	function successDependencyCall(data) {
@@ -327,11 +325,11 @@
 	}
 		
 	function successEvent(pageUrl, data) {
-		if(pageUrl == "getPilotProjectModules") {
+		if (pageUrl == "getPilotProjectModules") {
 			chkUnchkPilotModules(data.pilotModules, isPilotSelected);
-		} else if(pageUrl == "checkDependency") {
+		} else if (pageUrl == "checkDependency") {
 			successDependencyCall(data);
-		} else if(pageUrl == "fetchDefaultModules") {
+		} else if (pageUrl == "fetchDefaultModules") {
 			chkDefaultModules(data.defaultModules);
 		}
 	}
@@ -353,7 +351,7 @@
 	/** Select all features starts **/
 	function selectAllChkBoxClk(moduleType, crrentElement) {
 		var isChecked = $(crrentElement).prop("checked");
-		if(isChecked) {
+		if (isChecked) {
 			selectAll(moduleType);
 		} else {
 			unSelectAll(moduleType);
@@ -370,7 +368,7 @@
 		});
 	}
 
-	function unSelectAll(moduleType){
+	function unSelectAll(moduleType) {
 		$("."+moduleType).each(function() {
 			if (!$(this).is(':disabled')) {
 				$(this).prop("checked", false);

@@ -103,7 +103,7 @@
         	if (CollectionUtils.isNotEmpty(pilotProjectNames)) {
 				for (String pilotProjectName : pilotProjectNames) {
 					if (pilotProjectName.equals(selectedPilotProj) || 
-							(StringUtils.isNotEmpty(fromPage) && pilotProjectName.equals(selectedInfo.getPilotProjectName()))){
+							(StringUtils.isNotEmpty(fromPage) && pilotProjectName.equals(selectedInfo.getPilotProjectName()))) {
 						selectedStr = "selected";
 					}
 				}
@@ -217,12 +217,12 @@
 <div class="clearfix">
 	<s:label for="email" key="label.web.email" theme="simple" cssClass="new-xlInput"/>
 		<div class="input new-input">
-				<%
-					if (isEmailSupportSelected) {
-						selectedStr = "checked";
-					}
-				%>
-				<input type="checkbox" style="margin-top: 8px;" name="emailSupported" value="true" <%= selectedStr %>>
+			<%
+				if (isEmailSupportSelected) {
+					selectedStr = "checked";
+				}
+			%>
+			<input type="checkbox" style="margin-top: 8px;" name="emailSupported" value="true" <%= selectedStr %>>
 		</div>	
 </div>
 <!-- Email ends -->
@@ -383,15 +383,13 @@
 		params = params.concat(type);
 		params = params.concat("&selectedParamName=");
 		params = params.concat(name);
-		params = params.concat("&projectCode=");
-		params = params.concat('<%= projectCode %>');
 		
 		/* 
 			To check for the Corresponding configuration of the item to be removed.
 			If it has configuration then the confirmation will be asked from the user regarding the deletion of the configuration 
 		*/
 		if (<%= StringUtils.isNotEmpty(fromPage) %>) {
-			performAction('checkForRespectiveConfig', params, '', true);
+			performAction('checkForRespectiveConfig', $('#formAppInfo'), '', true, params);
 		} else {
 			removeDiv();
 		}
@@ -588,7 +586,7 @@
 		params = params.concat('<%= fromPage %>');
 		params = params.concat("&customerId=");
 		params = params.concat($("input[name=customerId]").val());
-		popupParams('openAttrPopup', params, $('#popup_div'));
+		popup('openAttrPopup', '', $('#popup_div'), '', '', params);
 	}
 	
 	/** To get the versions onChange of the select box option **/
@@ -606,7 +604,7 @@
 		params = params.concat(selectedId);
 		params = params.concat("&customerId=");
 		params = params.concat($("input[name=customerId]").val());
-		popupParams('getAllVersions', params, '', true);
+		popup('getAllVersions', '', '', true, '', params);
 	}
 
 	/** To update the master hidden fields **/

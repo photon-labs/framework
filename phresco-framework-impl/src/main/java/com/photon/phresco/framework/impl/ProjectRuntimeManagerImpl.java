@@ -192,7 +192,6 @@ public class ProjectRuntimeManagerImpl implements ProjectRuntimeManager {
     	if (action instanceof MobileCommand || action instanceof AndroidPerfCommand || action instanceof Sonar || action instanceof IphoneIpa || action instanceof IPhoneFunctionalCommand || action instanceof IphoneBuildAndUnitTest  || action instanceof IphoneCodeValidate) {
     		command.append(" " + buildMavenArgCommand(action, paramsMap));
     	}
-    	
     	return executeMavenCommand(project, action, command);
     }
 
@@ -339,12 +338,7 @@ public class ProjectRuntimeManagerImpl implements ProjectRuntimeManager {
         String line = null;
         while ((line = in.readLine()) != null) {
             System.out.println(line);
-//            if (line.contains("Starting Tomcat")) {
-//                System.out.println("Process stopped");
-//                process.destroy();
-//            }
         }
-        
         in.close();
     }
 
@@ -358,9 +352,4 @@ public class ProjectRuntimeManagerImpl implements ProjectRuntimeManager {
             throw new PhrescoException(e);
         }
     }
-    
-//    public static void main(String[] args) {
-//       ProjectRuntimeManagerImpl manager = new ProjectRuntimeManagerImpl();
-//        manager.executeMavenCommand();
-//    }
 }

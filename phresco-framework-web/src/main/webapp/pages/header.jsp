@@ -28,22 +28,19 @@
 	String validationStatus = (String)session.getAttribute("validationStatus");
 	String displayName = "";
 	User userInfo = (User)session.getAttribute(FrameworkConstants.REQ_USER_INFO);
-	if(userInfo == null || userInfo.getDisplayName() == null){
-	request.setAttribute(FrameworkConstants.REQ_LOGIN_ERROR, "Invalid Username or Password");
+	if (userInfo == null || userInfo.getDisplayName() == null) {
+		request.setAttribute(FrameworkConstants.REQ_LOGIN_ERROR, "Invalid Username or Password");
 %>
-
-	 <script type="text/javascript"> 
-	     $.ajax({
-	         url : 'logout',
-	         success : function(data) {
-	             $("html").empty();
-	             $("html").addClass('lgnBg');
-	             $("html").html(data);
-	         }
-	     }); 
-     
-	 </script>
-	
+	<script type="text/javascript"> 
+		$.ajax({
+			url : 'logout',
+			success : function(data) {
+				$("html").empty();
+				$("html").addClass('lgnBg');
+				$("html").html(data);
+			}
+		}); 
+	</script>
 <%
 	} else {
 		displayName = userInfo.getDisplayName();
@@ -98,7 +95,6 @@
 		<div class="userInfo"><a href="<s:url action='logout'/>" id="signOut"><s:text name="label.signout"/></a></div>
       </li>
 </div>
-
 <!-- Sign out ends -->	
 
 <%
@@ -126,8 +122,6 @@
             performAction(selectedMenu, $('#customersForm'), $("#container"));
         });
         
-      
-        
         $("#goToHome").click(function() {
         	$("a[name='headerMenu']").attr("class", "inactive");
 			$("#home").attr("class", "active");
@@ -137,7 +131,7 @@
         });
         
         //This function is to handle the click event of about click(Version update)
-        $(".abtPopUp").click(function(){
+        $(".abtPopUp").click(function() {
         	disableScreen();
         	$("#aboutDialog").css("display", 'block');
         	$("#loadingIcon").show();
@@ -167,16 +161,15 @@
     	});
 		
 		// to show user info on mouse over
-        $('#signOut li').mouseenter(function(){
-        	
+        $('#signOut li').mouseenter(function() {
          	$("div li.usersettings div").hide(0);
          	$(this).children("div li.usersettings div").show(0);
-     	}).mouseleave(function(){
+     	}).mouseleave(function() {
          	$("div li.usersettings div").hide(0);
      	});
 		
      	// shows preloader until page loads
-        $("#forum").click(function(){
+        $("#forum").click(function() {
         	$(".loadingIcon").show();
         	getCurrentCSS();
         })
@@ -193,5 +186,4 @@
     	disableControl($("#startJenkins"), "btn disabled");
     	disableControl($("#stopJenkins"), "btn disabled");
     }
-    
 </script>
