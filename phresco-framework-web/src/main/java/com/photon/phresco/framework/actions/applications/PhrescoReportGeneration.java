@@ -533,9 +533,14 @@ public class PhrescoReportGeneration  implements FrameworkConstants {
 		List<String> testResultFiles = getTestResultFiles(reportFilePath);
 		ArrayList<TestSuite> testSuiteWithTestCase  = null;
 		ArrayList<AllTestSuite> allTestSuiteDetails = null;
+		// detailed information object
+		testSuiteWithTestCase = new ArrayList<TestSuite>();
+		// crisp information of the test
+		allTestSuiteDetails =  new ArrayList<AllTestSuite>();
+		
+		// Iterate over each file
 		for (String resultFile : testResultFiles) {
-			testSuiteWithTestCase = new ArrayList<TestSuite>();
-			allTestSuiteDetails =  new ArrayList<AllTestSuite>();
+			
 			Document doc = getDocumentOfFile(reportFilePath, resultFile);
 			List<TestSuite> testSuites = getTestSuite(doc);
 			
@@ -594,9 +599,18 @@ public class PhrescoReportGeneration  implements FrameworkConstants {
 		}
 		// detailed info
 		sureFireReport.setTestSuites(testSuiteWithTestCase);
+//		printDetailedObj(testSuiteWithTestCase);
 		//crisp info
 		sureFireReport.setAllTestSuites(allTestSuiteDetails);
 		return sureFireReport;
+	}
+	
+	//detailed object info
+	private void printDetailedObj(ArrayList<TestSuite> testSuiteWithTestCase) {
+		S_LOGGER.debug("printing required values!!!!!");
+		for (TestSuite testSuite : testSuiteWithTestCase) {
+			S_LOGGER.debug("getName " + testSuite.getName() + " tests " + testSuite.getTests() + " Failure " + testSuite.getFailures() + " Error" + testSuite.getErrors() + " testcases size " + testSuite.getTestCases().size());
+		}
 	}
 	
     private List<TestSuite> getTestSuite(Document doc) throws TransformerException, PhrescoException {
