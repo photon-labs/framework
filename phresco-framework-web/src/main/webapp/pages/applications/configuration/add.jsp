@@ -127,7 +127,7 @@ h1 {margin-bottom: 0;}
 	<!--  Action Messages display ends -->
 	 
 	<!--  Form starts -->
-	<form autocomplete="off" class="configurations_add_form" id="formConfigAdd">
+	<form class="configurations_add_form" id="formConfigAdd" autocomplete="off">
 	<div class="config_div">
 	    <!--  Name starts -->
 		<div class="clearfix" id="nameErrDiv">
@@ -275,9 +275,8 @@ h1 {margin-bottom: 0;}
 	    });
 	    
 	    $("#cancelConfiguration").click(function() {
-			showLoadingIcon($("#tabDiv")); // Loading Icon
-			console.info("$('#formConfigAdd').serialize()...." + $('#formConfigAdd').serialize());
 	    	performAction("configuration", $('#formConfigAdd'), $('#tabDiv'));
+	    	showLoadingIcon($("#tabDiv")); // Loading Icon
 	    });
 		
 		$('#save').click(function() {
@@ -305,6 +304,7 @@ h1 {margin-bottom: 0;}
             $("#Protocol").focus();     	
         }
 	}
+	
 	function validationError(data) {
 		$(".clearfix").removeClass("error");
 		$(".lblDesc").text("");

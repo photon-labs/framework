@@ -78,82 +78,78 @@
 		<a href="#" class="btn primary" id="import"><s:text name="label.import.from.svn"/></a>
 		<input id="deleteButton" type="button" value="<s:text name="label.delete"/>" class="btn disabled" disabled="disabled"/>
 	</div>
-	
+	<%
+		List<Project> projects = (List<Project>)request.getAttribute(FrameworkConstants.REQ_PROJECTS);
+		String customerId = (String) request.getAttribute("customerId");
+		if (CollectionUtils.isEmpty(projects)) {
+	%>
+		<div class="alert-message block-message warning" >
+			<center><s:label key="error.message" cssClass="errorMsgLabel"/></center>
+		</div>
+	<%
+		} else {
+	%>
 	<div class="table_div">
-		<%
-			List<Project> projects = (List<Project>)request.getAttribute("Projects");
-			String customerId = (String) request.getAttribute("customerId");
-		%>
-
 		<s:if test="hasActionMessages()">
 			<div class="alert-message success"  id="successmsg">
 				<s:actionmessage />
 			</div>
 		</s:if>
 		
-		<%
-			if(CollectionUtils.isEmpty(projects)) {
-		%>
-			<div class="alert-message block-message warning" >
-				<center><s:label key="error.message" cssClass="errorMsgLabel"/></center>
-			</div>
-		<%
-			} else {
-		%>
-			<div class="fixed-table-container">
-	      		<div class="header-background"> </div>
-	      		<div class="fixed-table-container-inner">
-			        <table cellspacing="0" class="zebra-striped">
-			          	<thead>
-				            <tr>
-								<th class="first">
-				                	<div class="th-inner">
-				                		<input type="checkbox" value="" id="checkAllAuto" name="checkAllAuto">
-				                	</div>
-				              	</th>
-				              	<th class="second">
-				                	<div class="th-inner"><s:text name="label.name"/></div>
-				              	</th>
-				              	<th class="third">
-				                	<div class="th-inner"><s:text name="label.description"/></div>
-				              	</th>
-				              	<th class="third">
-				                	<div class="th-inner"><s:text name="label.technology"/></div>
-				              	</th>
-				              	<th class="third">
-				                	<div class="th-inner"><s:text name="label.print"/></div>
-				              	</th>
-				            </tr>
-			          	</thead>
-			
-			          	<tbody>
-			          	<%
-							for (Project project : projects) {
-								ProjectInfo projectInfo = project.getProjectInfo();
-						%>
-			            	<tr>
-			              		<td class="checkbox_list">
-			              			<input type="checkbox" class="check" name="selectedProjects" value="<%= projectInfo.getCode() %>">
-			              		</td>
-			              		<td>
-			              			<a href="#" name="edit" id="<%= projectInfo.getCode() %>" ><%= projectInfo.getName() %></a>
-			              		</td>
-			              		<td style="width: 40%;"><%= projectInfo.getDescription() %></td>
-			              		<td><%= projectInfo.getTechnology().getName() %></td>
-			              		<td class="printIconAlign">
-			              			<a href="#" id="pdfPopup">
-			              				<img id="<%= projectInfo.getCode() %>" class="pdfCreation" src="images/icons/print_pdf.png" 
-			              					title="generate pdf" style="height: 20px; width: 20px;"/>
-			              			</a>
-			              		</td>
-			            	</tr>
-			            <%
-							}
-						%>	
-			          	</tbody>
-			        </table>
-	      		</div>
-    		</div>
+		<div class="fixed-table-container">
+      		<div class="header-background"> </div>
+      		<div class="fixed-table-container-inner">
+		        <table cellspacing="0" class="zebra-striped">
+		          	<thead>
+			            <tr>
+							<th class="first">
+			                	<div class="th-inner">
+			                		<input type="checkbox" value="" id="checkAllAuto" name="checkAllAuto">
+			                	</div>
+			              	</th>
+			              	<th class="second">
+			                	<div class="th-inner"><s:text name="label.name"/></div>
+			              	</th>
+			              	<th class="third">
+			                	<div class="th-inner"><s:text name="label.description"/></div>
+			              	</th>
+			              	<th class="third">
+			                	<div class="th-inner"><s:text name="label.technology"/></div>
+			              	</th>
+			              	<th class="third">
+			                	<div class="th-inner"><s:text name="label.print"/></div>
+			              	</th>
+			            </tr>
+		          	</thead>
+		
+		          	<tbody>
+		          	<%
+						for (Project project : projects) {
+							ProjectInfo projectInfo = project.getProjectInfo();
+					%>
+		            	<tr>
+		              		<td class="checkbox_list">
+		              			<input type="checkbox" class="check" name="selectedProjects" value="<%= projectInfo.getCode() %>">
+		              		</td>
+		              		<td>
+		              			<a href="#" name="edit" id="<%= projectInfo.getCode() %>" ><%= projectInfo.getName() %></a>
+		              		</td>
+		              		<td style="width: 40%;"><%= projectInfo.getDescription() %></td>
+		              		<td><%= projectInfo.getTechnology().getName() %></td>
+		              		<td class="printIconAlign">
+		              			<a href="#" id="pdfPopup">
+		              				<img id="<%= projectInfo.getCode() %>" class="pdfCreation" src="images/icons/print_pdf.png" 
+		              					title="generate pdf" style="height: 20px; width: 20px;"/>
+		              			</a>
+		              		</td>
+		            	</tr>
+		            <%
+						}
+					%>	
+		          	</tbody>
+		        </table>
+      		</div>
+   		</div>
 		<%
 			}
 		%>

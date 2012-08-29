@@ -209,19 +209,20 @@ public class Features extends FrameworkBaseAction {
 		HttpServletRequest request = getHttpRequest();
 		projectInfo.setName(name);
 		projectInfo.setCode(code);
-		if (externalCode != null) {
+		if (StringUtils.isNotEmpty(externalCode)) {
 			projectInfo.setProjectCode(externalCode);
 		}
-		if (groupId != null) {
+		if (StringUtils.isNotEmpty(groupId)) {
 			projectInfo.setGroupId(groupId);
 		}
-		if (artifactId != null) {
+		if (StringUtils.isNotEmpty(artifactId)) {
 			projectInfo.setArtifactId(artifactId);
 		}
 		projectInfo.setVersion(projectVersion);
 		projectInfo.setDescription(description);
 		projectInfo.setApplication(application);
 		projectInfo.setTechId(technology);
+		projectInfo.setCustomerId(customerId);
 		String pilotProjectName = getHttpRequest().getParameter(REQ_SELECTED_PILOT_PROJ);
 		projectInfo.setPilotProjectName(pilotProjectName);
 		setTechnology(projectInfo, administrator);

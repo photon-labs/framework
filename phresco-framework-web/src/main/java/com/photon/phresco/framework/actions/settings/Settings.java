@@ -66,6 +66,8 @@ import com.photon.phresco.util.Utility;
 public class Settings extends FrameworkBaseAction {
 	private static final long serialVersionUID = -1748241910381035152L;
 
+	private Map<String, String> dbDriverMap = new HashMap<String, String>(8);
+	
 	private static final Logger S_LOGGER = Logger.getLogger(Settings.class);
 	private static Boolean debugEnabled = S_LOGGER.isDebugEnabled();
 	private String settingsName = null;
@@ -148,6 +150,7 @@ public class Settings extends FrameworkBaseAction {
 		}
 
 		try {
+			initDriverMap();
 			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
 			SettingsTemplate selectedSettingTemplate = administrator.getSettingsTemplate(settingsType, "");
 			List<PropertyInfo> propertyInfoList = new ArrayList<PropertyInfo>();
@@ -156,13 +159,15 @@ public class Settings extends FrameworkBaseAction {
             String value = null;
             for (PropertyTemplate propertyTemplate : propertyTemplates) {
             	if (propertyTemplate.getKey().equals(Constants.SETTINGS_TEMPLATE_SERVER) || propertyTemplate.getKey().equals(Constants.SETTINGS_TEMPLATE_DB)) {
-            		List<PropertyTemplate> compPropertyTemplates = propertyTemplate.getpropertyTemplates();
+            		List<PropertyTemplate> compPropertyTemplates = propertyTemplate.getPropertyTemplates();
             		for (PropertyTemplate compPropertyTemplate : compPropertyTemplates) {
             			key = compPropertyTemplate.getKey();
             			value = getHttpRequest().getParameter(key);
             			if (propertyTemplate.getKey().equals(Constants.SETTINGS_TEMPLATE_DB) && key.equals("type")) {
             				value = value.trim().toLowerCase();
             				propertyInfoList.add(new PropertyInfo(key, value.trim()));
+            				String dbDriver = getDbDriver(value);
+            				propertyInfoList.add(new PropertyInfo(Constants.DB_DRIVER, dbDriver.trim()));
             			} else {
             				propertyInfoList.add(new PropertyInfo(key, value.trim()));
             			}
@@ -247,6 +252,19 @@ public class Settings extends FrameworkBaseAction {
 		return list();
 	}
 	
+	private String getDbDriver(String dbtype) {
+		return dbDriverMap.get(dbtype);
+	}
+    
+    private void initDriverMap() {
+		dbDriverMap.put("mysql", "com.mysql.jdbc.Driver");
+		dbDriverMap.put("oracle", "oracle.jdbc.OracleDriver");
+		dbDriverMap.put("hsql", "org.hsql.jdbcDriver");
+		dbDriverMap.put("mssql", "com.microsoft.sqlserver.jdbc.SQLServerDriver");
+		dbDriverMap.put("db2", "com.ibm.db2.jcc.DB2Driver");
+		dbDriverMap.put("mongodb", "com.mongodb.jdbc.MongoDriver");
+	}
+	
 	private void saveCertificateFile(String path) throws PhrescoException {
     	try {
     		String host = (String)getHttpRequest().getParameter(SERVER_HOST);
@@ -327,7 +345,7 @@ public class Settings extends FrameworkBaseAction {
 			String value = null;
 			boolean isRequired = propertyTemplate.isRequired();
     		if (propertyTemplate.getKey().equals("Server") || propertyTemplate.getKey().equals("Database")) {
-        		List<PropertyTemplate> compPropertyTemplates = propertyTemplate.getpropertyTemplates();
+        		List<PropertyTemplate> compPropertyTemplates = propertyTemplate.getPropertyTemplates();
         		for (PropertyTemplate compPropertyTemplate : compPropertyTemplates) {
         			key = compPropertyTemplate.getKey();
         			value = getHttpRequest().getParameter(key);
@@ -424,6 +442,7 @@ public class Settings extends FrameworkBaseAction {
 		S_LOGGER.debug("Entering Method  Settings.update()");
 
 		try {
+			initDriverMap();
 			HttpServletRequest request = getHttpRequest();
 			ProjectAdministrator administrator = PhrescoFrameworkFactory
 					.getProjectAdministrator();
@@ -440,13 +459,15 @@ public class Settings extends FrameworkBaseAction {
             String value = null;
 			 for (PropertyTemplate propertyTemplate : propertyTemplates) {
 	            	if (propertyTemplate.getKey().equals(Constants.SETTINGS_TEMPLATE_SERVER) || propertyTemplate.getKey().equals(Constants.SETTINGS_TEMPLATE_DB)) {
-	            		List<PropertyTemplate> compPropertyTemplates = propertyTemplate.getpropertyTemplates();
+	            		List<PropertyTemplate> compPropertyTemplates = propertyTemplate.getPropertyTemplates();
 	            		for (PropertyTemplate compPropertyTemplate : compPropertyTemplates) {
 	            			key = compPropertyTemplate.getKey();
 	            			value = getHttpRequest().getParameter(key);
 	            			if (propertyTemplate.getKey().equals(Constants.SETTINGS_TEMPLATE_DB) && key.equals("type")) {
 	            				value = value.trim().toLowerCase();
 	            				propertyInfoList.add(new PropertyInfo(key, value.trim()));
+	            				String dbDriver = getDbDriver(value);
+	            				propertyInfoList.add(new PropertyInfo(Constants.DB_DRIVER, dbDriver.trim()));
 	            			} else {
 	            				propertyInfoList.add(new PropertyInfo(key, value.trim()));
 	            			}

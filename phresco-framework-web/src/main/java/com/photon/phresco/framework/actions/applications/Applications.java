@@ -123,9 +123,6 @@ public class Applications extends FrameworkBaseAction {
 		S_LOGGER.debug("Entering Method  Applications.list()");
 		
 		try {
-			Map<String, Object> sessionMap = ActionContext.getContext().getSession();
-			sessionMap.remove(SESSION_SELECTED_INFO);
-			sessionMap.remove(SESSION_SELECTED_MODULES);
 			getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
 			getHttpSession().removeAttribute(projectCode);
 		} catch (Exception e) {
@@ -751,14 +748,8 @@ public class Applications extends FrameworkBaseAction {
 			ProjectAdministrator administrator = PhrescoFrameworkFactory
 					.getProjectAdministrator();
 			List<Project> projects = administrator.discover(Collections
-					.singletonList(new File(Utility.getProjectHome())));
-			HttpServletRequest request = (HttpServletRequest) ActionContext
-					.getContext().get(ServletActionContext.HTTP_REQUEST);
-			request.setAttribute(REQ_PROJECTS, projects);
-			// add session
-			Map<String, Object> sessionMap = ActionContext.getContext()
-					.getSession();
-			sessionMap.put(REQ_PROJECTS, projects);
+					.singletonList(new File(Utility.getProjectHome())), customerId);
+			getHttpRequest().setAttribute(REQ_PROJECTS, projects);
 		} catch (Exception e) {
 			S_LOGGER.error("Entered into catch block of Applications.discover()"
 					+ FrameworkUtil.getStackTraceAsString(e));

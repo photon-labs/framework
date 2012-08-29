@@ -77,7 +77,7 @@
 			}
 	        
 	        if (key.equals(Constants.SETTINGS_TEMPLATE_SERVER) || key.equals(Constants.SETTINGS_TEMPLATE_DB)) {
-        		List<PropertyTemplate> comPropertyTemplates = propertyTemplate.getpropertyTemplates();
+        		List<PropertyTemplate> comPropertyTemplates = propertyTemplate.getPropertyTemplates();
         		for (PropertyTemplate comPropertyTemplate : comPropertyTemplates) {
         			if (comPropertyTemplate.getKey().equals("type") && settingsInfo != null) {
         				selectedValue = settingsInfo.getPropertyInfo(comPropertyTemplate.getKey()).getValue();
@@ -112,7 +112,7 @@
 		        <%  
 		        	} else if ((key.equals(Constants.SETTINGS_TEMPLATE_SERVER) || key.equals(Constants.SETTINGS_TEMPLATE_DB)) && possibleValues == null) {
 		        		masterKey = key;
-		        		List<PropertyTemplate> compPropertyTemplates = propertyTemplate.getpropertyTemplates();
+		        		List<PropertyTemplate> compPropertyTemplates = propertyTemplate.getPropertyTemplates();
 		        		for (PropertyTemplate compPropertyTemplate : compPropertyTemplates) {
 		        			i18NString = propertyTemplate.getName();
 		        	        label = i18NString.get("en-US").getValue();

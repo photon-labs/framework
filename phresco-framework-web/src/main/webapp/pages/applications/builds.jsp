@@ -20,14 +20,14 @@
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.util.List"%>
+<%@ page import="org.apache.commons.collections.MapUtils" %>
+
 <%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
-<%@ page import="com.photon.phresco.util.Utility" %>
-<%@ page import="com.photon.phresco.framework.api.Project" %>
 <%@ page import="com.photon.phresco.util.TechnologyTypes" %>
 <%@ page import="com.photon.phresco.model.ProjectInfo" %>
 <%@ page import="com.photon.phresco.commons.BuildInfo" %>
-<%@ page import="com.photon.phresco.framework.commons.NodeJSUtil" %>
-<%@ page import="org.apache.commons.collections.MapUtils" %>
+
+<script type="text/javascript" src="js/delete.js" ></script>
 
 <style type="text/css">
    	table th {
@@ -46,18 +46,10 @@
 </style>
 
 <%
-	String technology = null;
-	Boolean popup = Boolean.FALSE;
-	
     List<BuildInfo> buildInfos = (List<BuildInfo>) request.getAttribute(FrameworkConstants.REQ_BUILD);
-    Project project = (Project)request.getAttribute(FrameworkConstants.REQ_PROJECT);
-    String projectCode = project.getProjectInfo().getCode();
-	ProjectInfo selectedInfo = project.getProjectInfo();
-	technology =selectedInfo.getTechnology().getId();
-	
-	if (TechnologyTypes.ANDROIDS.contains(project.getProjectInfo().getTechnology().getId())) {
-		popup = Boolean.TRUE;
-	}
+    ProjectInfo projectInfo = (ProjectInfo) request.getAttribute(FrameworkConstants.REQ_PROJECT_INFO);
+    String projectCode = projectInfo.getCode();
+    String technology = projectInfo.getTechnology().getId();
 %>
 
 <% if (buildInfos == null || buildInfos.size() == 0) { %>
@@ -97,26 +89,24 @@
 			          	</thead>
 			
 			          	<tbody>
-			          	<%
-			          		for (BuildInfo buildInfo : buildInfos) {
-						%>
+			          	<% for (BuildInfo buildInfo : buildInfos) { %>
 			            	<tr>
 			              		<td class="checkbox_list">
 			              			<input type="checkbox" class="check" name="build-number" value="<%= buildInfo.getBuildNo() %>">
 			              		</td>
 			              		<td><%= buildInfo.getBuildNo() %></td>
 			              		<td style="width: 40%;">
-			              				<% if (TechnologyTypes.JAVA_STANDALONE.contains(technology)) { %>
-			              					<label class="bldLable"><%= buildInfo.getTimeStamp() %></label>
-			              				<% } else { %>
-			              					<label class="bldLable" title="Configured with <%= buildInfo.getEnvironments() %>"><%= buildInfo.getTimeStamp() %></label>
-			              				<% } %>	
+		              				<% if (TechnologyTypes.JAVA_STANDALONE.contains(technology)) { %>
+		              					<label class="bldLable"><%= buildInfo.getTimeStamp() %></label>
+		              				<% } else { %>
+		              					<label class="bldLable" title="Configured with <%= buildInfo.getEnvironments() %>"><%= buildInfo.getTimeStamp() %></label>
+		              				<% } %>	
 			              		</td>
 			              		<td>
 			              			<a href="<s:url action='downloadBuild'>
-					          		     <s:param name="buildNumber"><%= buildInfo.getBuildNo() %></s:param>
-					          		     <s:param name="projectCode"><%= projectCode %></s:param>
-					          		     </s:url>"><img src="images/icons/download.png" title="<%= buildInfo.getBuildName()%>"/>
+										<s:param name="buildNumber"><%= buildInfo.getBuildNo() %></s:param>
+										<s:param name="projectCode"><%= projectCode %></s:param></s:url>">
+										<img src="images/icons/download.png" title="<%= buildInfo.getBuildName()%>"/>
 		                            </a>
 		                            
 		                            <% 
@@ -127,30 +117,28 @@
 		                            		deviceDeploy = MapUtils.getBooleanValue(buildInfo.getOptions(), "deviceDeploy");
 		                            		if (createIpa && deviceDeploy)  {
 		                            %>
-		                                <a href="<s:url action='downloadBuildIpa'> 
-		                                  <s:param name="buildNumber"><%= buildInfo.getBuildNo() %></s:param>
-                                          <s:param name="projectCode"><%= projectCode %></s:param>
-                                          </s:url>"><img src="images/icons/downloadipa.jpg" title="ipa Download"/>
-                                    </a>
-                                    <% 		} 
+				                                <a href="<s:url action='downloadBuildIpa'> 
+													<s:param name="buildNumber"><%= buildInfo.getBuildNo() %></s:param>
+													<s:param name="projectCode"><%= projectCode %></s:param>
+													</s:url>"><img src="images/icons/downloadipa.jpg" title="ipa Download"/>
+		                                    	</a>
+                                    <% 		
+                                    		} 
 		                            	}
 		                            %>     
 			              		</td>
 			              		<td>
-			              			<% if (TechnologyTypes.NODE_JS_WEBSERVICE.equals(technology)) { %>
-										<!-- By default disable all Run buttons under builds -->
-				       	  				<!-- <input type="button" value="Run" id="<%= buildInfo.getBuildNo() %>" name="<%= buildInfo.getBuildNo() %>" class="btn disabled" disabled="disabled" onClick="startNodeJS(this);"> -->
-				       	  			<% } else if (TechnologyTypes.ANDROIDS.contains(technology)) { %>
+			              			<% if (TechnologyTypes.ANDROIDS.contains(technology)) { %>
 		                                <a id="buildNumberHref#<%= buildInfo.getBuildNo() %>" href="#" value="<%= buildInfo.getBuildNo() %>" onClick="deployAndroid(this);">
 		                                    <img src="images/icons/deploy.png" />
 		                                </a>
 		                            <% } else if (TechnologyTypes.IPHONES.contains(technology) && createIpa && deviceDeploy) { %>
 		                                <a id="buildNumberHref#<%= buildInfo.getBuildNo() %>" href="#" value="<%= buildInfo.getBuildNo() %>" onClick="deploy(this);">
-		                                 <img src="images/icons/deploy.png" />  
+											<img src="images/icons/deploy.png" />  
 		                                </a>    
 		                            <% } else if (TechnologyTypes.IPHONES.contains(technology)) { %>
 		                                <a id="buildNumberHref#<%= buildInfo.getBuildNo() %>" href="#" value="<%= buildInfo.getBuildNo() %>" onClick="deployIphone(this);">
-		                                 <img src="images/icons/deploy.png" />  
+		                                 	<img src="images/icons/deploy.png" />  
 		                                </a>   
 		                            <% } else if (!TechnologyTypes.JAVA_STANDALONE.contains(technology)) { %>
 				       	  				<a id="buildNumberHref#<%= buildInfo.getBuildNo() %>" href="#" value="<%= buildInfo.getBuildNo() %>" onClick="generateBuild('<%= projectCode %>', 'deploy', this);">			       	  				
@@ -168,12 +156,10 @@
     		</div>
 		</div>
 	<% } %> 
-<script src="js/delete.js" ></script>
 
 <script type="text/javascript">
-	/* To check whether the divice is ipad or not */
-	if(!isiPad()){
-		/* JQuery scroll bar */
+	//To check whether the device is ipad or not and then apply jquery scrollbar
+	if (!isiPad()) {
 		$(".fixed-table-container-inner").scrollbars();
 	}
 	
@@ -208,5 +194,4 @@
        	$("#restartbtn").attr("class", "btn disabled");
         readerHandlerSubmit('restartNodeJSServer', '<%= projectCode %>', '<%= FrameworkConstants.REQ_READ_LOG_FILE %>', '', true);
     } 
-
 </script>

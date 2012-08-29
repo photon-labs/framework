@@ -46,14 +46,19 @@
 	</div>
 </s:if>
 
-<div class="operation">
-    <input id="generate" type="button" value="<s:text name="label.site.report.generate"/>" class="primary btn" <%= disabledStr %>>
-    <input id="configure" type="button" value="<s:text name="label.site.report.configure"/>" class="primary btn">
-</div>
- 
-<div id="site_report" style="height: 92%;">
+<form id="formSiteReport">
+	<div class="operation">
+	    <input id="generate" type="button" value="<s:text name="label.site.report.generate"/>" class="primary btn" <%= disabledStr %>>
+	    <input id="configure" type="button" value="<s:text name="label.site.report.configure"/>" class="primary btn">
+	</div>
+	 
+	<div id="site_report" style="height: 92%;">
+		
+	</div>
 	
-</div>
+	 <!-- Hidden Fields -->
+	<input type="hidden" name="projectCode" value="<%= projectCode %>">
+</form>
 
 <script>
 	/** To enable/disable the Generate button based on the site configured **/
@@ -96,12 +101,12 @@
     
     function checkForSiteReport() {
     	$("#site_report").empty();
-        popup('checkForSiteReport', '', $('#site_report'));
+        popup('checkForSiteReport', $('#formSiteReport'), $('#site_report'));
     }
     
     function openConfigurePopup() {
     	$('#popup_div').empty();
     	showPopup();
-    	popup('siteConfigure', '', $('#popup_div'));
+    	popup('siteConfigure', $('#formSiteReport'), $('#popup_div'));
     }
 </script>
