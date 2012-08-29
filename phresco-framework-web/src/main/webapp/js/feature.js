@@ -60,6 +60,8 @@
 	$(document).ready(function() {
 		enableScreen();
 		
+		changeStyle("features");
+		
 		/** To check the pilot project modules during next/previous actions **/
 		var fromPage = $('#fromPage').val();
 		if (fromPage == "") {
@@ -99,8 +101,6 @@
 	    });
 	    /** Accordian ends **/
 		
-		changeStyle("features");
-		
 		$('#finish').click(function() {
 			showProgessBar("Creating project...", 100);
 			featureUpdate('save');
@@ -118,7 +118,7 @@
 		        $(this).attr('disabled', false)
 		    });
 			showLoadingIcon($("#tabDiv")); // Loading Icon
-			performActionParams('previous', getParams('previous'), $('#tabDiv'));
+			performAction('previous', '', $('#tabDiv'), '', getParams('previous'));
 		});
 	
 		// Description popup js codes
@@ -167,7 +167,7 @@
 	});
 	
 	function featureUpdate(url){
-		performActionParams(url, getParams(url), $('#container'));
+		performAction(url, '', $('#container'), '', getParams(url));
 	}
 	
 	function getParams(url) {
@@ -204,7 +204,7 @@
 		params = params.concat(allJsVals);
 		params = params.concat("&techId=");
 		params = params.concat(techId);
-		if (url == 'update') {
+		if (url == 'update' || url == 'previous') {
 			params = params.concat("&fromPage=");
 			params = params.concat("edit");
 		}
@@ -221,7 +221,7 @@
 	function getPilotProjectModules(isPilotSelected) {
         var params = "technology=";
 		params = params.concat($("#technology").val());
-		performActionParams('getPilotProjectModules', params, '', true);
+		performAction('getPilotProjectModules', '', '', true, params);
 	}
 	
 	function chkUnchkPilotModules(pilotModules, isCheck) {
@@ -249,7 +249,7 @@
 	function getDefaultModules() {
 		var params = "technology=";
 		params = params.concat($("#technology").val());
-		performActionParams('fetchDefaultModules', params, '', true);
+		performAction('fetchDefaultModules', '', '', true, params);
 	}
 	
 	function enableModuleDesc(enableProp) {
@@ -309,7 +309,7 @@
 			params = params.concat("&preVersion=");
 			params = params.concat(preVersion);
 		}
-		performActionParams('checkDependency', params, '', true);
+		performAction('checkDependency', '', '', true, params);
 	}
 	
 	function successDependencyCall(data) {

@@ -28,12 +28,10 @@
 <%@ page import="java.util.Iterator"%>
 <%@ page import="java.util.regex.*"%>
 
-<%@ page import="com.photon.phresco.model.ProjectInfo"%>
 <%@ page import="com.photon.phresco.model.SettingsInfo"%>
 <%@ page import="com.photon.phresco.model.PropertyInfo"%>
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.util.Constants"%>
-<%@ page import="com.photon.phresco.framework.api.Project" %>
 <%@ page import="com.photon.phresco.configuration.Environment" %>
 
 <%@ include file="../../userInfoDetails.jsp" %>
@@ -61,13 +59,7 @@
 </style>
 
 <% 
-    Project project = (Project)request.getAttribute(FrameworkConstants.REQ_PROJECT);
-    ProjectInfo selectedInfo = null;
-    String projectCode = null;
-    if (project != null) {
-        selectedInfo = project.getProjectInfo();
-        projectCode = selectedInfo.getCode();
-    }
+    String projectCode = (String)request.getAttribute(FrameworkConstants.REQ_PROJECT_CODE);
 	List<Environment> envInfoValues = (List<Environment>) request.getAttribute(FrameworkConstants.ENVIRONMENTS);
 %>    
 
@@ -137,7 +129,8 @@
 					              			<input type="checkbox" class="check" name="check" value="<%=configuration.getEnvName() + "," + configuration.getName() %>">
 					              		</td>
 					              		<td>
-					              			<a href="#" class="editConfiguration" id="<%= configuration.getName() %>" onclick="editConfiguration('<%= configuration.getName()%>', '<%= configuration.getEnvName() %>')"><%= configuration.getName() %></a>
+					              			<a href="#" class="editConfiguration" id="<%= configuration.getName() %>"
+					              				onclick="editConfiguration('<%= configuration.getName()%>', '<%= configuration.getEnvName() %>')"><%= configuration.getName() %></a>
 					              		</td>
 					              		<td style="width: 25%;"><%= configuration.getDescription() %></td>
 					              		<td><%= configuration.getType() %></td>
@@ -192,7 +185,7 @@
 </form>
 
 <script type="text/javascript">
-//To check whether the device is ipad or not and then apply jquery scrollbar
+	//To check whether the device is ipad or not and then apply jquery scrollbar
 	if (!isiPad()) {
 		$(".fixed-table-container-inner").scrollbars();
 	}
@@ -202,12 +195,12 @@
     	
     	<% 
 			if (urls != null) {
-		    	Iterator iterator = urls.keySet().iterator();  
-		    	while (iterator.hasNext()) { 
-		    	   String id = iterator.next().toString();  
-		    	   String url = urls.get(id).toString();  
+				Iterator iterator = urls.keySet().iterator();  
+		    	while (iterator.hasNext()) {
+					String id = iterator.next().toString();  
+					String url = urls.get(id).toString();  
 	 	%>
-				isConnectionAlive('<%= url%>', '<%= id%>');
+					isConnectionAlive('<%= url %>', '<%= id %>');
 		<%
 		    	}
 			}
@@ -229,13 +222,9 @@
 			openEnvironmentPopup();
 		});
 		    
-		$('form').submit(function() {
+		$('form[name=listForm]').submit(function() {
 			showProgessBar("Deleting Configuration (s)", 100);
-			var params = "";
-	    	if (!isBlank($('form').serialize())) {
-	    		params = $('form').serialize() + "&";
-	    	}
-            performAction("deleteConfigurations", params, $('#tabDiv'));
+            performAction("deleteConfigurations", $("#formConfigList"), $('#tabDiv'));
 	        return false;
 	    });
     });
@@ -271,14 +260,10 @@
     	disableScreen();
     	showLoadingIcon($("#loadingIconDiv"));
     	
-    	var params = "";
-    	if (!isBlank($('form').serialize())) {
-    		params = $('form').serialize() + "&";
-    	}
-    	params = params.concat("oldName=");
+    	var params = "oldName=";
     	params = params.concat(configName);
     	params = params.concat("&envName=");
     	params = params.concat(envName);
-    	performAction("editConfiguration", params, $('#tabDiv'));
+    	performAction("editConfiguration", $("#formConfigList"), $('#tabDiv'), '', params);
     }
 </script>

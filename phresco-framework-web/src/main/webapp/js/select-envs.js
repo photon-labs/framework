@@ -77,7 +77,7 @@ function checkForConfig() {
 	params = params.concat($("#from").val());
 	params = params.concat("&projectCode=");
 	params = params.concat($("#projectCode").val());
-	performActionParams('checkForConfiguration', params, '', true);
+	performAction('checkForConfiguration', '', '', true, params);
 }
 
 /** To check whether the selected environment has the appropriate configuration based on type **/

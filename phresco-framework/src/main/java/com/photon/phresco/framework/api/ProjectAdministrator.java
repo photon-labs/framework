@@ -111,6 +111,20 @@ public interface ProjectAdministrator {
      * @throws PhrescoException
      */
     Technology getTechnology(String techId) throws PhrescoException;
+    
+    /**
+     * Returns list of Technology for the given appType Id
+     * @return List<Technology>
+     * @throws PhrescoException
+     */
+    List<Technology> getTechnologies(String appType, String customerId) throws PhrescoException;
+    
+    /**
+     * Returns Technology for the given appTypeId and techId
+     * @return Technology
+     * @throws PhrescoException
+     */
+    Technology getTechnology(String appType, String techId, String customerId) throws PhrescoException;
 
     /**
      * Deletes list of projects for the given project codes
@@ -126,13 +140,21 @@ public interface ProjectAdministrator {
      * @throws PhrescoException
      */
     List<Project> discover(List<File> paths) throws PhrescoException;
+    
+    /**
+     * Returns list of project of the customer in the given paths
+     * @param paths and customerId
+     * @return
+     * @throws PhrescoException
+     */
+    List<Project> discover(List<File> paths, String customerId) throws PhrescoException;
 
     /**
      * Returns all the settings template available in the service repository
      * @return
      * @throws PhrescoException
      */
-    List<SettingsTemplate> getSettingsTemplates() throws PhrescoException;
+    List<SettingsTemplate> getSettingsTemplates(String customerId) throws PhrescoException;
 
     /**
      * Returns the settings template which matched to the given type
@@ -140,7 +162,7 @@ public interface ProjectAdministrator {
      * @return
      * @throws PhrescoException
      */
-    SettingsTemplate getSettingsTemplate(String type) throws PhrescoException;
+    SettingsTemplate getSettingsTemplate(String type, String customerId) throws PhrescoException;
 
     /**
      * Creates settings.info object under the projects location

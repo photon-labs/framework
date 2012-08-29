@@ -56,11 +56,13 @@
 			
 			<fieldset class="popup-fieldset" style="height: 115px;">
 				<legend class="fieldSetLegend" ><s:text name="label.added.environment"/></legend>
-				<select name="selectedEvn" id="selectedEvn" tabindex=4 class="xlarge" multiple="multiple" style="height: 88px; width: 300px; float: left; margin-left: 100px;" >
+				<select name="selectedEvn" id="selectedEvn" tabindex=4 class="xlarge" multiple="multiple" 
+					style="height: 88px; width: 300px; float: left; margin-left: 100px;" >
 					<%
 						for(Environment env : envInfoValues ) {
 					%>
-	                	   <option value="<%= env.getName() %>" title="<%= env.getDesc() %>" <%= env.isDefaultEnv() ? "disabled" : ""%> id="created"><%= env.getName() %></option>
+							<option value="<%= env.getName() %>" title="<%= env.getDesc() %>" 
+								<%= env.isDefaultEnv() ? "disabled" : ""%> id="created"><%= env.getName() %></option>
 		            <% 
 						}
 		            %>
@@ -228,7 +230,7 @@
 			params = params.concat("&deletableEnvs=");
 			params = params.concat(deletableData);
 		}
-		performActionParams(url, params, conatiner);
+		performAction(url, '', conatiner, '', params);
     }
 	
 	function validateEnv(envs, desc) {
@@ -237,9 +239,9 @@
 		params = params.concat("&projectCode=");
 		params = params.concat("<%= projectCode %>");
 		if (<%= "settings".equals(fromTab) %>) {
-		    performActionParams('checkDuplicateEnvSettings', params, '', true);
+		    performAction('checkDuplicateEnvSettings', '', '', true, '');
 		} else {
-			performActionParams('checkDuplicateEnv', params, '', true);	
+			performAction('checkDuplicateEnv', '', '', true, params);	
 		}
 	}
 	
@@ -301,9 +303,9 @@
 		params = params.concat("&projectCode=");
 		params = params.concat("<%= projectCode %>");
 		if (<%= "settings".equals(fromTab) %>) {
-		    performActionParams('checkForRemoveSettings', params, '', true);
+		    performAction('checkForRemoveSettings', '', '', true, '');
 		} else {
-			performActionParams('checkForRemove', params, '', true);	
+			performAction('checkForRemove', '', '', true, params);	
 		}
 	}
 </script>

@@ -102,11 +102,8 @@
     }
     
     //Form submit by serializing the given form
-    function performAction(pageUrl, form, tagControl, callSuccessEvent) {
-    	var params = "";
-    	if (form != undefined && form != "" && !isBlank(form.serialize())) {
-    		params = form.serialize();
-    	}
+    function performAction(pageUrl, form, tagControl, callSuccessEvent, additionalParams) {
+    	var params = getParameters(form, additionalParams);
     	$.ajax({
             url : pageUrl,
             data : params,
@@ -134,50 +131,18 @@
         }); 
     }
     
-  //Form submit by with the given params
-    function performActionParams(pageUrl, params, tagControl, callSuccessEvent) {
-    	$.ajax({
-            url : pageUrl,
-            data : params,
-            type : 'POST',
-            cache : false,
-            success : function(data) {
-            	if (callSuccessEvent != undefined && !isBlank(callSuccessEvent)) {
-            		successEvent(pageUrl, data);
-            	} else if (data.validated == true) {
-            		validationError(data);
-            	} else if (tagControl != undefined && !isBlank(tagControl)) {
-            		if (pageUrl == "applications" || pageUrl == "settings" || pageUrl == "forum") {
-            			$(".intro_container").hide();
-            	    	$(".errorOverlay").show().css("display", "none");
-            		}
-            		if ((pageUrl == "save" || pageUrl == "update" || pageUrl == "delete" || pageUrl == "deleteConfigurations" 
-            				|| pageUrl == "deleteSettings" || pageUrl == "deleteBuild" || pageUrl == "CIBuildDelete")) {
-            			hideProgessBar();
-            		}
-            		
-	                tagControl.empty();
-	                tagControl.html(data);
-	           	}
-            }
-        }); 
-    }
-    
-    // This method is for popup form submit and Dynamic small subpage page load
+ 	// This method is for popup form submit and Dynamic small subpage page load
     // is secondpopup avail can be used to display two popup's in a single popup div
-    function popup(pageUrl, form, tagControl, callSuccessEvent, isSecondPopupAvail) {
-    	var params = "";
-    	if (form != undefined && form != "" && !isBlank(form.serialize())) {
-    		params = form.serialize();
-    	}
+    function popup(pageUrl, form, tagControl, callSuccessEvent, isSecondPopupAvail, additionalParams) {
+    	var params = getParameters(form, additionalParams);
         $.ajax({
             url : pageUrl,
             data : params,
             type : 'POST',
             cache : false,
             success : function(data) {
-            	if (tagControl != undefined && !isBlank(tagControl) && isSecondPopupAvail == undefined && isBlank(isSecondPopupAvail)) {
-                	tagControl.empty();
+            	if (tagControl != undefined && !isBlank(tagControl) && (isSecondPopupAvail == undefined || isBlank(isSecondPopupAvail))) {
+            		tagControl.empty();
                 	tagControl.html(data);
                 }
             	if (tagControl != undefined && !isBlank(tagControl) && isSecondPopupAvail != undefined && !isBlank(isSecondPopupAvail)) {
@@ -190,38 +155,28 @@
         });
     }
     
-    function popupParams(pageUrl, params, tagControl, callSuccessEvent, isSecondPopupAvail) {
-        $.ajax({
-            url : pageUrl,
-            data : params,
-            type : 'POST',
-            cache : false,
-            success : function(data) {
-            	if(tagControl != undefined && !isBlank(tagControl) && isSecondPopupAvail == undefined && isBlank(isSecondPopupAvail)) {
-                	tagControl.empty();
-                	tagControl.html(data);
-                }
-            	if (tagControl != undefined && !isBlank(tagControl) && isSecondPopupAvail != undefined && !isBlank(isSecondPopupAvail)) {
-            		tagControl.append(data);
-            	}
-             	if(callSuccessEvent != undefined && !isBlank(callSuccessEvent)) {
-             		successEvent(pageUrl, data);
-            	}
-            }
-        });
-    }
-    
-    // This method is for popup submit
-    function readerHandlerSubmit(pageUrl, projectCode, testType, form, callSuccessEvent) {
+    // To get the parameters based on the availability
+    function getParameters(form, additionalParams) {
     	var params = "";
     	if (form != undefined && form != "" && !isBlank(form.serialize())) {
     		params = form.serialize();
+    		if (!isBlank(additionalParams)) {
+    			params = params.concat("&");
+    			params = params.concat(additionalParams);
+    		}
+    	} else {
+    		params = additionalParams;
     	}
+    	
+		return params;
+    }    
+    // This method is for popup submit
+    function readerHandlerSubmit(pageUrl, projectCode, testType, form, callSuccessEvent, additionalParams) {
+    	var params = getParameters(form, additionalParams);
         $.ajax({
             url : pageUrl,
             data : params,
             type : "POST",
-            cache : false,
             success : function(data) {
             	$("#build-output").empty();
             	readerHandler(data, projectCode, testType, pageUrl);
@@ -252,6 +207,7 @@
                 'projectCode' : projectCode,
             },
             type : "POST",
+            cache : false,
             success : function(data) {
             	var status = data.globalValidationStatus;
             	if (status == "ERROR") {
@@ -291,7 +247,7 @@
     		return false;
     	}
     	return true;
-    } 
+    }
     
     function checkForContext(name) {
     	newName = name.replace(/[^a-zA-Z 0-9\-\_/.]+/g, '');
@@ -469,4 +425,10 @@
 		} else {
 			return false;
 		}
+	}
+	
+	function getCustomerIdAsParam() {
+		var params = "customerId=";
+		params = params.concat($('#customerId').val());
+		return params;
 	}

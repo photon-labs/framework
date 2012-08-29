@@ -223,7 +223,6 @@
 		$('form').submit(function() {
 			disableScreen();
 			showLoadingIcon($("#loadingIconDiv"));
-			$("*").attr("disabled", false);
 			performAction('features', $('#formAppInfo'), $("#tabDiv"));
 			return false;
 		});
@@ -250,7 +249,6 @@
 
 	//This function is to handle the change event for application radio
 	function changeApplication() {
-		$("input[name='application']").prop("disabled", false);
 		performAction('applicationType', $('#formAppInfo'), $('#AjaxContainer'));
 	}
 

@@ -66,6 +66,8 @@ import com.photon.phresco.util.Utility;
 public class Settings extends FrameworkBaseAction {
 	private static final long serialVersionUID = -1748241910381035152L;
 
+	private Map<String, String> dbDriverMap = new HashMap<String, String>(8);
+	
 	private static final Logger S_LOGGER = Logger.getLogger(Settings.class);
 	private static Boolean debugEnabled = S_LOGGER.isDebugEnabled();
 	private String settingsName = null;
@@ -122,7 +124,7 @@ public class Settings extends FrameworkBaseAction {
 		}
 		try {
 			ProjectAdministrator administrator = getProjectAdministrator();
-			List<SettingsTemplate> settingsTemplates = administrator.getSettingsTemplates();
+			List<SettingsTemplate> settingsTemplates = administrator.getSettingsTemplates("");
 			getHttpRequest().setAttribute(SESSION_SETTINGS_TEMPLATES, settingsTemplates);
 			getHttpRequest().setAttribute(REQ_SELECTED_MENU, SETTINGS);
 			getHttpSession().removeAttribute(REQ_CONFIG_INFO);
@@ -148,21 +150,24 @@ public class Settings extends FrameworkBaseAction {
 		}
 
 		try {
+			initDriverMap();
 			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-			SettingsTemplate selectedSettingTemplate = administrator.getSettingsTemplate(settingsType);
+			SettingsTemplate selectedSettingTemplate = administrator.getSettingsTemplate(settingsType, "");
 			List<PropertyInfo> propertyInfoList = new ArrayList<PropertyInfo>();
 			List<PropertyTemplate> propertyTemplates = selectedSettingTemplate.getProperties();
 			String key = null;
             String value = null;
             for (PropertyTemplate propertyTemplate : propertyTemplates) {
             	if (propertyTemplate.getKey().equals(Constants.SETTINGS_TEMPLATE_SERVER) || propertyTemplate.getKey().equals(Constants.SETTINGS_TEMPLATE_DB)) {
-            		List<PropertyTemplate> compPropertyTemplates = propertyTemplate.getpropertyTemplates();
+            		List<PropertyTemplate> compPropertyTemplates = propertyTemplate.getPropertyTemplates();
             		for (PropertyTemplate compPropertyTemplate : compPropertyTemplates) {
             			key = compPropertyTemplate.getKey();
             			value = getHttpRequest().getParameter(key);
             			if (propertyTemplate.getKey().equals(Constants.SETTINGS_TEMPLATE_DB) && key.equals("type")) {
             				value = value.trim().toLowerCase();
             				propertyInfoList.add(new PropertyInfo(key, value.trim()));
+            				String dbDriver = getDbDriver(value);
+            				propertyInfoList.add(new PropertyInfo(Constants.DB_DRIVER, dbDriver.trim()));
             			} else {
             				propertyInfoList.add(new PropertyInfo(key, value.trim()));
             			}
@@ -221,7 +226,7 @@ public class Settings extends FrameworkBaseAction {
                 environments.append(envs);
             }
             
-	        List<SettingsTemplate> settingsTemplates = administrator.getSettingsTemplates();
+	        List<SettingsTemplate> settingsTemplates = administrator.getSettingsTemplates("");
 			administrator.createSetting(settingsInfo, environments.toString());
 			if (SERVER.equals(settingsType)){
 				addActionMessage(getText(SUCCESS_SERVER, Collections.singletonList(settingsName)));
@@ -245,6 +250,19 @@ public class Settings extends FrameworkBaseAction {
         	new LogErrorReport(e, "Settings save");
 		}
 		return list();
+	}
+	
+	private String getDbDriver(String dbtype) {
+		return dbDriverMap.get(dbtype);
+	}
+    
+    private void initDriverMap() {
+		dbDriverMap.put("mysql", "com.mysql.jdbc.Driver");
+		dbDriverMap.put("oracle", "oracle.jdbc.OracleDriver");
+		dbDriverMap.put("hsql", "org.hsql.jdbcDriver");
+		dbDriverMap.put("mssql", "com.microsoft.sqlserver.jdbc.SQLServerDriver");
+		dbDriverMap.put("db2", "com.ibm.db2.jcc.DB2Driver");
+		dbDriverMap.put("mongodb", "com.mongodb.jdbc.MongoDriver");
 	}
 	
 	private void saveCertificateFile(String path) throws PhrescoException {
@@ -321,13 +339,13 @@ public class Settings extends FrameworkBaseAction {
 		}
 		
 		boolean serverTypeValidation = false;
-		SettingsTemplate selectedSettingTemplate = administrator.getSettingsTemplate(settingsType);
+		SettingsTemplate selectedSettingTemplate = administrator.getSettingsTemplate(settingsType, "");
 		for (PropertyTemplate propertyTemplate : selectedSettingTemplate.getProperties()) {
 			String key = null;
 			String value = null;
 			boolean isRequired = propertyTemplate.isRequired();
     		if (propertyTemplate.getKey().equals("Server") || propertyTemplate.getKey().equals("Database")) {
-        		List<PropertyTemplate> compPropertyTemplates = propertyTemplate.getpropertyTemplates();
+        		List<PropertyTemplate> compPropertyTemplates = propertyTemplate.getPropertyTemplates();
         		for (PropertyTemplate compPropertyTemplate : compPropertyTemplates) {
         			key = compPropertyTemplate.getKey();
         			value = getHttpRequest().getParameter(key);
@@ -401,11 +419,11 @@ public class Settings extends FrameworkBaseAction {
 			SettingsInfo settingsInfo = administrator.getSettingsInfo(oldName, getEnvName());
             getHttpSession().setAttribute(oldName, settingsInfo);
 			getHttpRequest().setAttribute(SESSION_OLD_NAME, oldName);
-            List<SettingsTemplate> settingsTemplates = administrator.getSettingsTemplates();
+            List<SettingsTemplate> settingsTemplates = administrator.getSettingsTemplates("");
             getHttpRequest().setAttribute(SESSION_SETTINGS_TEMPLATES, settingsTemplates);
             List<Environment> environments = administrator.getEnvironments();
             getHttpRequest().setAttribute(ENVIRONMENTS, environments);
-			getHttpRequest().setAttribute(REQ_FROM_PAGE, FROM_PAGE);
+			getHttpRequest().setAttribute(REQ_FROM_PAGE, FROM_PAGE_EDIT);
 			getHttpRequest().setAttribute(REQ_SELECTED_MENU, SETTINGS);
 			getHttpSession().removeAttribute(ERROR_SETTINGS);
 			getHttpSession().removeAttribute(SETTINGS_PARAMS);
@@ -424,11 +442,12 @@ public class Settings extends FrameworkBaseAction {
 		S_LOGGER.debug("Entering Method  Settings.update()");
 
 		try {
+			initDriverMap();
 			HttpServletRequest request = getHttpRequest();
 			ProjectAdministrator administrator = PhrescoFrameworkFactory
 					.getProjectAdministrator();
 			SettingsTemplate selectedSettingTemplate = administrator
-					.getSettingsTemplate(settingsType);
+					.getSettingsTemplate(settingsType, "");
 			List<PropertyInfo> propertyInfoList = new ArrayList<PropertyInfo>();
 			List<PropertyTemplate> propertyTemplates = selectedSettingTemplate.getProperties();
 
@@ -440,13 +459,15 @@ public class Settings extends FrameworkBaseAction {
             String value = null;
 			 for (PropertyTemplate propertyTemplate : propertyTemplates) {
 	            	if (propertyTemplate.getKey().equals(Constants.SETTINGS_TEMPLATE_SERVER) || propertyTemplate.getKey().equals(Constants.SETTINGS_TEMPLATE_DB)) {
-	            		List<PropertyTemplate> compPropertyTemplates = propertyTemplate.getpropertyTemplates();
+	            		List<PropertyTemplate> compPropertyTemplates = propertyTemplate.getPropertyTemplates();
 	            		for (PropertyTemplate compPropertyTemplate : compPropertyTemplates) {
 	            			key = compPropertyTemplate.getKey();
 	            			value = getHttpRequest().getParameter(key);
 	            			if (propertyTemplate.getKey().equals(Constants.SETTINGS_TEMPLATE_DB) && key.equals("type")) {
 	            				value = value.trim().toLowerCase();
 	            				propertyInfoList.add(new PropertyInfo(key, value.trim()));
+	            				String dbDriver = getDbDriver(value);
+	            				propertyInfoList.add(new PropertyInfo(Constants.DB_DRIVER, dbDriver.trim()));
 	            			} else {
 	            				propertyInfoList.add(new PropertyInfo(key, value.trim()));
 	            			}
@@ -481,11 +502,11 @@ public class Settings extends FrameworkBaseAction {
 	            }
 			
 			getHttpSession().setAttribute(oldName, newSettingsInfo);
-			if (!validate(administrator, FROM_PAGE)) {
+			if (!validate(administrator, FROM_PAGE_EDIT)) {
 				isValidated = true;
-			    List<SettingsTemplate> settingsTemplates = administrator.getSettingsTemplates();
+			    List<SettingsTemplate> settingsTemplates = administrator.getSettingsTemplates("");
 	            getHttpRequest().setAttribute(SESSION_SETTINGS_TEMPLATES, settingsTemplates);
-				request.setAttribute(REQ_FROM_PAGE, FROM_PAGE);
+				request.setAttribute(REQ_FROM_PAGE, FROM_PAGE_EDIT);
 				request.setAttribute(REQ_OLD_NAME, oldName);
 				return Action.SUCCESS;
 			}
@@ -567,7 +588,7 @@ public class Settings extends FrameworkBaseAction {
 			    settingsInfo = administrator.getSettingsInfo(oldName, getEnvName());
 			    getHttpRequest().setAttribute(REQ_OLD_NAME, oldName);
 			}
-			SettingsTemplate settingsTemplate = administrator.getSettingsTemplate(settingsType);
+			SettingsTemplate settingsTemplate = administrator.getSettingsTemplate(settingsType, "");
 			if (debugEnabled) {
 				S_LOGGER.debug("Setting Template object value " + settingsTemplate.toString());
 			}

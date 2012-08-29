@@ -23,7 +23,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import com.photon.phresco.commons.model.User;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.FrameworkConfiguration;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
@@ -42,7 +41,7 @@ public class Home extends FrameworkBaseAction implements FrameworkActions {
         return HOME_WELCOME;
     }
 	
-	public String view() {
+	public String view() throws PhrescoException {
 		if (DebugEnabled) {
 			S_LOGGER.debug("Entering Method  Home.view()");
 		}
@@ -54,13 +53,13 @@ public class Home extends FrameworkBaseAction implements FrameworkActions {
 			getHttpRequest().setAttribute(REQ_SERVER_URL, configuration.getServerPath());
 			getHttpRequest().setAttribute(REQ_VIDEO_INFOS, videoInfos);
 		} catch (PhrescoException e) {
-			e.printStackTrace();
+			throw new PhrescoException(e);
 		}
 	    
 		return HOME_VIEW;
 	}
 
-	public String video() {
+	public String video() throws PhrescoException {
 		if (DebugEnabled) {
 			S_LOGGER.debug("Entering Method  Home.video()");
 		}
@@ -73,7 +72,7 @@ public class Home extends FrameworkBaseAction implements FrameworkActions {
 			getHttpRequest().setAttribute(REQ_SERVER_URL, configuration.getServerPath());
 			getHttpRequest().setAttribute(REQ_VIDEO_TYPES, videoTypes);
 		} catch (PhrescoException e) {
-			e.printStackTrace();
+			throw new PhrescoException(e);
 		}
 
 		return HOME_VIDEO;

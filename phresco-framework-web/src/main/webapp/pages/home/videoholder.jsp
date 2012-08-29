@@ -19,19 +19,18 @@
   --%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
-<%@page import="java.util.Iterator"%>
-<%@page import="com.photon.phresco.commons.FrameworkConstants"%>
-<%@ page import="java.util.List" %>
-<%@ page import="com.photon.phresco.model.VideoInfo" %>
-<%@ page import="com.photon.phresco.model.VideoType" %>
 <%@ page import="java.util.ArrayList"%>
+<%@ page import="java.util.List" %>
+
+<%@ page import="com.photon.phresco.model.VideoInfo" %>
+<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
+
 
 <%
     List<VideoInfo> videoInfos = (List<VideoInfo>) request.getAttribute(FrameworkConstants.REQ_VIDEO_INFOS);
     String serverUrl = (String) request.getAttribute(FrameworkConstants.REQ_SERVER_URL);
 %>
-<!-- <script type="text/javascript" src="js/windowResizer.js">
-</script> -->
+
 <div class="video_height">
 	 <div class='holder'>
 	 		<div class="video-title">
@@ -44,6 +43,7 @@
 	            <!-- Download links provided for devices that can't play video in the browser. -->
 	        </div>
 	        <!-- End VideoJS -->
+	        
 	        <div id='video-list-holder' class="video-list-holder">
 	            <div class="listviews">
 	            <%
@@ -57,17 +57,17 @@
 	                        videoDesc = videoDetail.getDescription();
 	                        videoName = videoDetail.getName();
 	            %>
-	            
 	                    <a href="#" title="<%= videoName %>" oncontextmenu="localStorage.menuSelected = 'video';localStorage.index = <%= i %>;localStorage.videoname = '<%= videoName %>'">
 		                    <div class="listindex" id="listindex<%= i %>">
-		                        <div class="imgblock" id="<%= videoName %>" ><img src="<%=imageUrl%>"></div>
+		                        <div class="imgblock" id="<%= videoName %>" ><img src="<%= imageUrl %>"></div>
 		                        <div class="vidcontent">
-		                            <div class="vidcontent-title"><%= videoName%></div>
-		                                <input type="hidden" name="videoName" value="<%= videoName%>"> 
+		                            <div class="vidcontent-title"><%= videoName %></div>
+	                                <input type="hidden" name="videoName" value="<%= videoName %>"> 
 		                        </div>
 		                    </div>
 	                    </a>
-	                    <% i++;
+                 <% 
+                 			i++;
 	                    }
 	                } else { %>
 	                    Services temporarily unavailable
@@ -78,39 +78,39 @@
     </div>
 
 <script type="text/javascript">
-	/* To check whether the device is ipad or not */
-	if(!isiPad()){
-		/* JQuery scroll bar */
+	//To check whether the device is ipad or not and then apply jquery scrollbar
+	if (!isiPad()) {
 		$("#video-list-holder").scrollbars();
 	}
 	
 	<% if (videoInfos != null) { %>
-    $(document).ready(function() {
-    	if (localStorage.index) {
-    		$("div[id='listindex"+localStorage.index+"']").attr("class", "listindex-active"); //Highlight which video is selected.
-    		changeVideo(localStorage.videoname); //To play the selected video.
-    	} else {
-    		$("div[id='listindex0']").attr("class", "listindex-active"); // To higlight intro video when you login after sign out.
-    		changeVideo("<%= videoInfos.get(0).getName() %>");
-    	}
-        
-        
-
-        <%  int j = 0;
-            for(VideoInfo videoDetail : videoInfos) {
-        %>      
-                $("a[title='<%= videoDetail.getName() %>']").click(function() {
-                	$(".listindex-active").removeClass('listindex-active').addClass("listindex");
-					<%-- $("div[title='<%= videoDetail.getName() %>']").attr("class", "listindex"); --%>
-                    changeVideo('<%= videoDetail.getName() %>');
-                    var selectedList = '#listindex' + '<%= j %>';
-                    $(selectedList).attr("class", "listindex-active");
-                });
-        <% j++;
-        } %>
-    });
-	<% } %>
+	    $(document).ready(function() {
+	    	if (localStorage.index) {
+	    		$("div[id='listindex"+localStorage.index+"']").attr("class", "listindex-active"); //Highlight which video is selected.
+	    		changeVideo(localStorage.videoname); //To play the selected video.
+	    	} else {
+	    		$("div[id='listindex0']").attr("class", "listindex-active"); // To higlight intro video when you login after sign out.
+	    		changeVideo("<%= videoInfos.get(0).getName() %>");
+	    	}
 	
+	        <%  
+	        	int j = 0;
+	            for(VideoInfo videoDetail : videoInfos) {
+	        %>      
+	                $("a[title='<%= videoDetail.getName() %>']").click(function() {
+	                	$(".listindex-active").removeClass('listindex-active').addClass("listindex");
+						<%-- $("div[title='<%= videoDetail.getName() %>']").attr("class", "listindex"); --%>
+	                    changeVideo('<%= videoDetail.getName() %>');
+	                    var selectedList = '#listindex' + '<%= j %>';
+	                    $(selectedList).attr("class", "listindex-active");
+	                });
+	        <% 
+	        		j++;
+	        	}
+	        %>
+		});
+	<% } %>
+
 	function changeVideo(videoId) {
         $.ajax({
             url : 'video',
@@ -123,6 +123,4 @@
             }
         });
     }
-	
-	
 </script>
