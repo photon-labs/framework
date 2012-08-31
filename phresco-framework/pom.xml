@@ -65,6 +65,7 @@
     </dependencies>
 	
     <build>
+		<sourceDirectory>${phresco.source.directory}</sourceDirectory>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

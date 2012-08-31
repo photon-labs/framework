@@ -230,6 +230,7 @@
     </dependencies>
     
     <build>
+		<sourceDirectory>${phresco.source.directory}</sourceDirectory>
         <directory>do_not_checkin/target</directory>
 	   <finalName>framework</finalName>
         <plugins>
