@@ -1272,45 +1272,46 @@ public interface FrameworkConstants {
    
    
    /* Constants for Sonar properties */ 
-	   String SONAR_LANGUAGE = "sonar.language";
-	   String SONAR_PHPPMD_SKIP = "sonar.phpPmd.skip";
-	   String SONAR_DYNAMIC_ANALYSIS = "sonar.dynamicAnalysis";
-	   String SONAR_PHPPMD_SHOULD_RUN = "sonar.phpPmd.shouldRun";
-	   String SONAR_PHPCODESNIFFER_SHOULD_RUN = "sonar.phpCodesniffer.shouldRun";
-	   String SONAR_PHPCODESNIFFER_SKIP = "sonar.phpCodesniffer.skip";
-	   String SONAR_PHPDEPEND_SHOULD_RUN = "sonar.phpDepend.shouldRun";
-	   String SONAR_PHPUNIT_COVERAGE_SHOULD_RUN = "sonar.phpUnit.coverage.shouldRun";
-	   String SONAR_PHPUNIT_SHOULD_RUN = "sonar.phpUnit.shouldRun";
-	   String SONAR_PHPCPD_SHOULD_RUN = "sonar.phpcpd.excludes";
-	   String SONAR_PHPCPD_EXCLUDES_SQL = "sonar.phpcpd.excludes";
-	   String SONAR_PHPCPD_EXCLUDES_HTML = "sonar.phpcpd.excludes";
-	   String SONAR_PHPDEPEND_TIMEOUT = "sonar.phpDepend.timeout";
-	   String SONAR_PHPPMD_TIMEOUT = "sonar.phpPmd.timeout";
-	   String SONAR_PHPCODESNIFFER_TIMEOUT = "sonar.phpCodesniffer.timeout";
-	   String DRUPAL_STANDARD = "sonar.phpCodesniffer.standardArgument";
-	   String WORDPRESS_STANDARD = "sonar.phpCodesniffer.standardArgument";
-	   String DRUPAL = "Drupal";
-	   String DRUPAL_STANDAD_VERSION = "7.8";
-	   String WORDPRESS = "WordPress";	    
-	   String SONAR_PHASE = "sonar.phase";
-	   String LANGUAGE = "php";
-	   String PHASE = "validate";
-	   String SQL_EXCLUDES = "source/sql";
-	   String HTML_EXCLUDES = "source/public_html";
-	   String TEST = "test";
-	  
-	   
-	   /* Constants for plugin properties */ 
-	   String SKIP = "skip";
-	   String GROUPID = "net.alchim31.maven";
-	   String ARTIFACTID = "yuicompressor-maven-plugin";
-	   String PLUGIN_VERSION = "1.3.0";
-	   String EXECUTIONID = "yuicompressor-default";	   
-	   String GOAL = "compress";
+   String SONAR_LANGUAGE = "sonar.language";
+   String SONAR_PHPPMD_SKIP = "sonar.phpPmd.skip";
+   String SONAR_DYNAMIC_ANALYSIS = "sonar.dynamicAnalysis";
+   String SONAR_PHPPMD_SHOULD_RUN = "sonar.phpPmd.shouldRun";
+   String SONAR_PHPCODESNIFFER_SHOULD_RUN = "sonar.phpCodesniffer.shouldRun";
+   String SONAR_PHPCODESNIFFER_SKIP = "sonar.phpCodesniffer.skip";
+   String SONAR_PHPDEPEND_SHOULD_RUN = "sonar.phpDepend.shouldRun";
+   String SONAR_PHPUNIT_COVERAGE_SHOULD_RUN = "sonar.phpUnit.coverage.shouldRun";
+   String SONAR_PHPUNIT_SHOULD_RUN = "sonar.phpUnit.shouldRun";
+   String SONAR_PHPCPD_SHOULD_RUN = "sonar.phpcpd.excludes";
+   String SONAR_PHPCPD_EXCLUDES_SQL = "sonar.phpcpd.excludes";
+   String SONAR_PHPCPD_EXCLUDES_HTML = "sonar.phpcpd.excludes";
+   String SONAR_PHPDEPEND_TIMEOUT = "sonar.phpDepend.timeout";
+   String SONAR_PHPPMD_TIMEOUT = "sonar.phpPmd.timeout";
+   String SONAR_PHPCODESNIFFER_TIMEOUT = "sonar.phpCodesniffer.timeout";
+   String DRUPAL_STANDARD = "sonar.phpCodesniffer.standardArgument";
+   String WORDPRESS_STANDARD = "sonar.phpCodesniffer.standardArgument";
+   String DRUPAL = "Drupal";
+   String DRUPAL_STANDAD_VERSION = "7.8";
+   String WORDPRESS = "WordPress";	    
+   String SONAR_PHASE = "sonar.phase";
+   String LANGUAGE = "php";
+   String PHASE = "validate";
+   String SQL_EXCLUDES = "source/sql";
+   String HTML_EXCLUDES = "source/public_html";
+   String TEST = "test";
+  
+   
+   /* Constants for plugin properties */ 
+   String SKIP = "skip";
+   String GROUPID = "net.alchim31.maven";
+   String ARTIFACTID = "yuicompressor-maven-plugin";
+   String PLUGIN_VERSION = "1.3.0";
+   String EXECUTIONID = "yuicompressor-default";	   
+   String GOAL = "compress";
 
-	   /* Remote Deployment Server Authentication */
-	   String REQ_RMT_DEP_IS_CERT_AVAIL = "isCertAvailable";
-	   String REQ_RMT_DEP_FILE_BROWSE_FROM = "fileBrowseFrom";
-	   String CONFIGURATION = "configuration";
-	   String FILE_TYPE_CRT = "crt";
+	/* Constants for server url  construction */ 
+   String PROTOCOL = "protocol";
+   String PORT = "port";
+   String CONTEXT = "context";
+   String HOST = "host";
+   String ENVIRONMENT = "SERVER_ENVIRONMENT";
 }
