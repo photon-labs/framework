@@ -436,6 +436,15 @@ public interface FrameworkConstants {
     String REQ_PROJECT_MODULES = "projectModules";
     String REQ_TEST_FUNCTIONAL = "functional";
     String REQ_TEST_PERFORMANCE = "performance";
+    String PERFORMANCE_TEST_REPORTS = "performanceTestReports";
+	String PERFORMANCE_SPECIAL_HANDLE = "performanceSpecialHandle";
+	String LOAD_TEST_RESULTS = "loadTestResults";
+	String LOAD_TEST_REPORTS = "loadTestReports";
+	String FUNCTIONAL_TEST_REPORTS = "functionalTestReports";
+	String UNIT_TEST_REPORTS = "unitTestReports";
+	String FUNCTIONAL_SURE_FIRE_REPORTS = "functionalSureFireReports";
+	String JMETER_TEST_RESULTS_FOR_ANDROID = "jmeterTestResultsForAndroid";
+	String JMETER_TEST_RESULTS = "jmeterTestResults";
     String REQ_TEST_LOAD = "load";
     String REQ_SHOW_SETTINGS = "showSettings";
     String REQ_TEST_BUILD_INFOS = "buildInfos";
@@ -509,6 +518,9 @@ public interface FrameworkConstants {
     String REQ_SERVER_LOG = "serverLog";
     String REQ_REPORT_CRISP="crisp";
     String REQ_REPORT_DETAILED="detail";
+    String REQ_REPORTS_DATA_TYPE = "reportsDataType";
+	String REQ_TECH_NAME = "techName";
+	String REQ_PROJECT_NAME = "projectName";
     
     String REQ_EXISTING_JOB = "existingJob";
     String REQ_EXISTING_JOBS = "existingJobs";
@@ -1173,6 +1185,8 @@ public interface FrameworkConstants {
    String REQ_SITE_REPORTS = "reports";
    String REQ_SITE_SLECTD_REPORTS = "selectedReports";
    String REQ_SITE_SLECTD_REPORTSCATEGORIES = "maven-project-info-reports-plugin";
+   String REQ_SONAR_REPORT = "sonarReport";
+   
    
    /* Site report success message */
    String SUCCESS_SITE_CONFIGURE = "configured.site.success";
@@ -1237,11 +1251,67 @@ public interface FrameworkConstants {
    String CONFIGURATION = "configuration";
    String FILE_TYPE_CRT = "crt";
    
-   /* Constants for server url  construction */ 
+   /* Constants For Profile update */
+   
+   String SONAR_LANGUAGE_PROFILE = "sonar.language";
+   String SONAR_BRANCH   = "sonar.branch";
+   String SONAR_SOURCE = "source"; 
+   String REPORT_ELEMENT_JS_WEB = "reportElementJsWeb";
+   String REPORT_ELEMENT_SRC_FUNC = "reportElementSrcFunc";
+   String REPORT_ELEMENT_JAVA_FUNC = "reportElementJavaFunc";
+   String PHRESCO_SOURCE_DIRECTORY = "phresco.source.directory";
+   String SONAR_DYNAMIC_ANALYSIS_PROFILE = "sonar.dynamicAnalysis";
+   String SONAR_EXCLUSION = "sonar.exclusions";
+   String JS_PATH = "src/main/js";
+   String WEBAPP_PATH = "src/main/webapp";
+   String JAVA_PATH = "src/main/java";
+   String LIB = "**/lib/**";
+   String JAVA = "java";
+   String WEB = "web";
+   String JS = "js";
+   
+   
+   /* Constants for Sonar properties */ 
+   String SONAR_LANGUAGE = "sonar.language";
+   String SONAR_PHPPMD_SKIP = "sonar.phpPmd.skip";
+   String SONAR_DYNAMIC_ANALYSIS = "sonar.dynamicAnalysis";
+   String SONAR_PHPPMD_SHOULD_RUN = "sonar.phpPmd.shouldRun";
+   String SONAR_PHPCODESNIFFER_SHOULD_RUN = "sonar.phpCodesniffer.shouldRun";
+   String SONAR_PHPCODESNIFFER_SKIP = "sonar.phpCodesniffer.skip";
+   String SONAR_PHPDEPEND_SHOULD_RUN = "sonar.phpDepend.shouldRun";
+   String SONAR_PHPUNIT_COVERAGE_SHOULD_RUN = "sonar.phpUnit.coverage.shouldRun";
+   String SONAR_PHPUNIT_SHOULD_RUN = "sonar.phpUnit.shouldRun";
+   String SONAR_PHPCPD_SHOULD_RUN = "sonar.phpcpd.excludes";
+   String SONAR_PHPCPD_EXCLUDES_SQL = "sonar.phpcpd.excludes";
+   String SONAR_PHPCPD_EXCLUDES_HTML = "sonar.phpcpd.excludes";
+   String SONAR_PHPDEPEND_TIMEOUT = "sonar.phpDepend.timeout";
+   String SONAR_PHPPMD_TIMEOUT = "sonar.phpPmd.timeout";
+   String SONAR_PHPCODESNIFFER_TIMEOUT = "sonar.phpCodesniffer.timeout";
+   String DRUPAL_STANDARD = "sonar.phpCodesniffer.standardArgument";
+   String WORDPRESS_STANDARD = "sonar.phpCodesniffer.standardArgument";
+   String DRUPAL = "Drupal";
+   String DRUPAL_STANDAD_VERSION = "7.8";
+   String WORDPRESS = "WordPress";	    
+   String SONAR_PHASE = "sonar.phase";
+   String LANGUAGE = "php";
+   String PHASE = "validate";
+   String SQL_EXCLUDES = "source/sql";
+   String HTML_EXCLUDES = "source/public_html";
+   String TEST = "test";
+  
+   
+   /* Constants for plugin properties */ 
+   String SKIP = "skip";
+   String GROUPID = "net.alchim31.maven";
+   String ARTIFACTID = "yuicompressor-maven-plugin";
+   String PLUGIN_VERSION = "1.3.0";
+   String EXECUTIONID = "yuicompressor-default";	   
+   String GOAL = "compress";
+
+	/* Constants for server url  construction */ 
    String PROTOCOL = "protocol";
    String PORT = "port";
    String CONTEXT = "context";
    String HOST = "host";
    String ENVIRONMENT = "SERVER_ENVIRONMENT";
 }
-

@@ -4,14 +4,14 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
     <!-- <parent>
         <groupId>com.photon.phresco</groupId>
         <artifactId>phresco-parent</artifactId>
-        <version>2.0.0.11001-SNAPSHOT</version>
+        <version>2.0.0.13001-SNAPSHOT</version>
         <relativePath>../</relativePath>
     </parent> -->
     
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.photon.phresco.framework</groupId>
     <artifactId>phresco-framework-root</artifactId>
-	 <version>2.0.0.11001-SNAPSHOT</version>
+	 <version>2.0.0.13001-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Phresco Framework Root</name>
     <url>http://www.phresco.org</url>
@@ -38,6 +38,42 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
         <module>phresco-framework-web</module>
         <module>phresco-framework-runner</module>
     </modules>
+	
+	<profiles>
+		<profile>   
+			<id>js</id>			
+	         <properties>
+				<sonar.branch>js</sonar.branch>
+				<sonar.language>js</sonar.language>
+				<phresco.source.directory>src/main/webapp/js</phresco.source.directory>
+				<sonar.exclusions>**/lib/**</sonar.exclusions>
+				<sonar.exclusions>excanvas.compressed.js</sonar.exclusions>
+			 </properties> 
+		</profile>
+		
+		<profile>   
+			<id>java</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			 </activation>
+			<properties>
+				<sonar.branch>java</sonar.branch>
+				<sonar.language>java</sonar.language>
+				<phresco.source.directory>src/main/java</phresco.source.directory>
+				</properties> 
+		</profile>
+		
+		<profile>   
+			<id>web</id>
+			<properties>
+				<sonar.branch>web</sonar.branch>
+				<sonar.language>web</sonar.language>
+				<sonar.dynamicAnalysis>false</sonar.dynamicAnalysis>
+				<phresco.source.directory>src/main/webapp</phresco.source.directory>
+				</properties> 
+		</profile>
+	</profiles>
+	
 	
 	<properties>
 		<siteBaseUrl>file://C:/apache-tomcat-7.0.26/webapps/ROOT/phresco-site/</siteBaseUrl>
