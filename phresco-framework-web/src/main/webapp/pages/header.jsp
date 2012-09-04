@@ -28,23 +28,7 @@
 	String validationStatus = (String)session.getAttribute("validationStatus");
 	String displayName = "";
 	User userInfo = (User)session.getAttribute(FrameworkConstants.REQ_USER_INFO);
-	if (userInfo == null || userInfo.getDisplayName() == null) {
-		request.setAttribute(FrameworkConstants.REQ_LOGIN_ERROR, "Invalid Username or Password");
-%>
-	<script type="text/javascript"> 
-		$.ajax({
-			url : 'logout',
-			success : function(data) {
-				$("html").empty();
-				$("html").addClass('lgnBg');
-				$("html").html(data);
-			}
-		}); 
-	</script>
-<%
-	} else {
-		displayName = userInfo.getDisplayName();
-	}
+	displayName = userInfo.getDisplayName();
 %>
 
 <div class="header">

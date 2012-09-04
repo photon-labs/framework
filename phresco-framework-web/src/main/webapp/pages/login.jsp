@@ -1,5 +1,7 @@
 <!doctype html>
 
+<%@ page import="org.apache.commons.lang.StringUtils"%>
+
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 
 <html>
@@ -73,7 +75,7 @@
 				<%
 				     String loginError = (String)request.getAttribute(FrameworkConstants.REQ_LOGIN_ERROR);
 				%>
-				&nbsp;&nbsp;&nbsp;<div id="logimErrMesg" class="lgnError"><%= loginError == null?"":loginError %></div>  
+				&nbsp;&nbsp;&nbsp;<div id="logimErrMesg" class="lgnError"><%= StringUtils.isNotEmpty(loginError) ? loginError : "" %></div>  
 	            <form name="login" action="login" method="post" class="marginBottomZero">
 					<!--  UserName starts -->
 					<div class="clearfix" >

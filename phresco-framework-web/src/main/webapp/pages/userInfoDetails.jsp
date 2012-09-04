@@ -26,17 +26,7 @@
 	boolean disableCI = false;
 	if (userInfo == null || userInfo.getDisplayName() == null) {
 	request.setAttribute(FrameworkConstants.REQ_LOGIN_ERROR, "Session expired");
-%>
-	 <script type="text/javascript"> 
-	    $.ajax({
-	  			url : 'logout',
-	  			success : function(data) {
-	  			   $("html").html(data);
-	             }
-	  			
-	   	}); 
-	 </script>
-<%
+
 	} else {
 		if (userInfo.getRoles() != null) {
 			for (Role role : userInfo.getRoles()) {
