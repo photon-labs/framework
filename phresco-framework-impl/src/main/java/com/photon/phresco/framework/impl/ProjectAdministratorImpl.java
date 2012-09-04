@@ -50,6 +50,8 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 import javax.xml.bind.JAXBException;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.codec.binary.Base64;
@@ -59,6 +61,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -123,6 +127,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 	private static Map<String, String> sqlFolderPathMap = new HashMap<String, String>();
 	private static  Map<String, List<Reports>> siteReportMap = new HashMap<String, List<Reports>>(15);
 	private Map<String, List<DownloadInfo>> downloadInfosMap = Collections.synchronizedMap(new HashMap<String, List<DownloadInfo>>(64));
+	private static Map<String, String> sourcePathMap = new HashMap<String, String>(8);
 	
 	private static ServiceManager serviceManager = null;
     
@@ -142,6 +147,19 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		sqlFolderPathMap.put(TechnologyTypes.JAVA_WEBSERVICE, "/src/sql/");
 		sqlFolderPathMap.put(TechnologyTypes.WORDPRESS, "/source/sql/");
 	}
+	
+	private static void initializeProjectPathMap() {
+		sourcePathMap.put(TechnologyTypes.PHP, "/source/");
+		sourcePathMap.put(TechnologyTypes.PHP_DRUPAL6, "/source/sites/all/modules");
+		sourcePathMap.put(TechnologyTypes.PHP_DRUPAL7, "/source/sites/all/modules");
+		sourcePathMap.put(TechnologyTypes.NODE_JS_WEBSERVICE, "/source/node_modules");
+		sourcePathMap.put(TechnologyTypes.WORDPRESS, "/source/wordpress/wp-content");
+		sourcePathMap.put(TechnologyTypes.SHAREPOINT, "/source");
+		sourcePathMap.put(TechnologyTypes.ANDROID_HYBRID, "/source/lib");
+		sourcePathMap.put(TechnologyTypes.ANDROID_NATIVE, "/source/lib");
+		sourcePathMap.put(TechnologyTypes.IPHONE_NATIVE, "/source/ThirdParty");
+	}
+
 
 	/**
 	 * Creates a project based on the given project information
@@ -164,13 +182,28 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		S_LOGGER.debug("createProject response code " + response.getStatus());
 
 		if (response.getStatus() == 200) {
+			BufferedReader breader = null;
 			try {
 				extractArchive(response, info);
 				updateProjectPOM(info);
+				StringBuilder sb = new StringBuilder();
+				sb.append("mvn");
+				sb.append(" ");
+				sb.append("validate");
+				breader = Utility.executeCommand(sb.toString(), projectPath.getPath());
+				String line = null;
+				while ((line = breader.readLine()) != null) {
+					if (line.startsWith("[ERROR]")) {
+						System.out.println(line); // do not use getLog() here as this line already contains the log type.
+					}
+				}
+				
 			} catch (FileNotFoundException e) {
 				throw new PhrescoException(e); 
 			} catch (IOException e) {
 				throw new PhrescoException(e);
+			} finally {
+				Utility.closeStream(breader);
 			}
 		 }  else if(response.getStatus() == 401){
 			 throw new PhrescoException("Session Expired ! Please Relogin.");
@@ -244,6 +277,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		}
 
 		ClientResponse response = null;
+		File pomPath = new File(Utility.getProjectHome() + File.separator + projectInfo.getCode() + File.separator + POM_FILE);
 		String techId = delta.getTechnology().getId();
 		if(techId.equals(TechnologyTypes.PHP_DRUPAL6)|| techId.equals(TechnologyTypes.PHP_DRUPAL7)) {
 			excludeModule(delta);
@@ -266,6 +300,29 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		try {
 			if (flag) {
 				extractArchive(response, delta);
+				updatePOMWithModules(pomPath, projectInfo.getTechnology().getModules(), techId);
+				updatePOMWithPluginArtifact(pomPath, projectInfo.getTechnology().getModules(), techId);
+			}
+			
+			BufferedReader bfreader = null;
+			if (response.getStatus() == 200) {
+				try {
+					StringBuilder sb = new StringBuilder();
+					sb.append("mvn");
+					sb.append(" ");
+					sb.append("validate");
+					bfreader = Utility.executeCommand(sb.toString(), pomPath.getParent());
+					String line = null;
+					while ((line = bfreader.readLine()) != null) {
+						if (line.startsWith("[ERROR]")) {
+						System.out.println(line); // do not use getLog() here as this line already contains the log type.
+						}
+					}
+				} catch (IOException e) {
+					throw new PhrescoException(e);
+				} finally {
+					Utility.closeStream(bfreader);
+				}
 			}
 			ProjectUtils.updateProjectInfo(projectInfo, path);
 			updateProjectPOM(projectInfo);
@@ -275,6 +332,112 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 			throw new PhrescoException(e);
 		}
 		return new ProjectImpl(delta);
+	}
+	
+	/**
+	 * Update pom with modules.
+	 *
+	 * @param pomFile the pom file
+	 * @param modules the modules
+	 * @param id the id
+	 * @throws PhrescoException the phresco exception
+	 */
+	protected void updatePOMWithModules(File pomFile, List<com.photon.phresco.model.ModuleGroup> modules, String id) throws PhrescoException {
+		if(CollectionUtils.isEmpty(modules)) {
+			return;
+		}
+		try {
+				PomProcessor processor = new PomProcessor(pomFile);
+				for (com.photon.phresco.model.ModuleGroup module : modules) {
+					if (module != null) {
+						String groupId ="modules." + id + ".files";
+						processor.addDependency(groupId, module.getId(), module.getVersions()
+								.get(0).getVersion(), "" ,"Zip" , "");
+					}
+				}
+				processor.save();
+		} catch (IOException e) {
+			throw new PhrescoException(e);
+		} catch (JAXBException e) {
+			throw new PhrescoException(e);
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
+		}
+	}
+	
+	/**
+	 * Update pom with pluginArtifact.
+	 *
+	 * @param pomFile the pom file
+	 * @param modules the modules
+	 * @param techId the tech id
+	 * @throws PhrescoException the phresco exception
+	 */
+	protected void updatePOMWithPluginArtifact(File pomFile, List<com.photon.phresco.model.ModuleGroup> modules, String techId) throws PhrescoException {
+		try {
+			if(CollectionUtils.isEmpty(modules)) {
+				return;
+			}
+			initializeProjectPathMap();
+			 List<Element> configList = new ArrayList<Element>();
+				PomProcessor processor = new PomProcessor(pomFile);
+				DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
+				DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
+				Document doc = docBuilder.newDocument();
+				for (com.photon.phresco.model.ModuleGroup module : modules) {
+					if (module != null) {
+						String groupId ="modules." + techId + ".files";
+						String artifactId = module.getId();
+						String version = module.getVersions().get(0).getVersion();
+						configList = configList(pomFile, groupId, artifactId, version, doc, techId);
+					 processor.addExecutionConfiguration("org.apache.maven.plugins", "maven-dependency-plugin", "unpack-module", "validate", "unpack", configList, false, doc);
+					}
+				}
+				processor.save();
+		} catch (JAXBException e) {
+			throw new PhrescoException(e);
+		} catch (IOException e) {
+			throw new PhrescoException(e);
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
+		} catch (ParserConfigurationException e) {
+			throw new PhrescoException(e);
+		}
+	}
+
+	/**
+	 * Config list.
+	 *
+	 * @param pomFile the pom file
+	 * @param moduleGroupId the module group id
+	 * @param moduleArtifactId the module artifact id
+	 * @param moduleVersion the module version
+	 * @param doc the doc
+	 * @param techId the tech id
+	 * @return the list
+	 * @throws PhrescoException the phresco exception
+	 */
+	protected List<Element> configList(File pomFile,String moduleGroupId, String moduleArtifactId, String moduleVersion, Document doc, String techId) throws PhrescoException {
+		List<Element> configList = new ArrayList<Element>();
+		Element groupId = doc.createElement("groupId");
+		groupId.setTextContent(moduleGroupId);
+		Element artifactId = doc.createElement("artifactId");
+		artifactId.setTextContent(moduleArtifactId);
+		Element version = doc.createElement("version");
+		version.setTextContent(moduleVersion);
+		Element type = doc.createElement("type");
+		type.setTextContent("zip");
+		Element overWrite = doc.createElement("overWrite");
+		overWrite.setTextContent("false");
+		Element outputDirectory = doc.createElement("outputDirectory");
+		outputDirectory.setTextContent("${project.basedir}" + sourcePathMap.get(techId));	
+		configList.add(groupId);
+		configList.add(artifactId);
+		configList.add(version);
+		configList.add(type);
+		configList.add(overWrite);
+		configList.add(outputDirectory);
+		return configList;
 	}
 
 	/**
