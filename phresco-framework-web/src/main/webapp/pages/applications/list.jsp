@@ -19,6 +19,8 @@
   --%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
+<%@include file="progress.jsp" %>
+
 <%@ page import="java.util.List"%>
 <%@ page import="org.apache.commons.collections.CollectionUtils"%>
 
@@ -119,6 +121,9 @@
 			              	<th class="third">
 			                	<div class="th-inner"><s:text name="label.print"/></div>
 			              	</th>
+			              	<th class="third">
+				                	<div class="th-inner"><s:text name="label.update"/></div>
+				            </th>
 			            </tr>
 		          	</thead>
 		
@@ -136,12 +141,14 @@
 		              		</td>
 		              		<td style="width: 40%;"><%= projectInfo.getDescription() %></td>
 		              		<td><%= projectInfo.getTechnology().getName() %></td>
-		              		<td class="printIconAlign">
-		              			<a href="#" id="pdfPopup">
-		              				<img id="<%= projectInfo.getCode() %>" class="pdfCreation" src="images/icons/print_pdf.png" 
-		              					title="generate pdf" style="height: 20px; width: 20px;"/>
+		              		<td class="iconsTd">
+		              			<a href="#" id="pdfPopup" class="iconsCenterAlign">
+		              				<img id="<%= projectInfo.getCode() %>" class="pdfCreation" src="images/icons/print_pdf.png" title="generate pdf" class="iconSizeinList"/>
 		              			</a>
 		              		</td>
+		              		<td class="iconsTd">
+			              			<a href="#" id="projectUpdate" class="iconsCenterAlign"><img id="<%= projectInfo.getCode() %>" class="projectUpdate" src="images/icons/refresh.png" title="Update" class="iconSizeinList"/></a>
+			              	</td>
 		            	</tr>
 		            <%
 						}
@@ -223,6 +230,16 @@
     		params = params.concat("projectCode=");
 			params = params.concat($(this).attr("id"));
     		popup('printAsPdfPopup', '', $('#popup_div'), '', '', params);
+    	    escPopup();
+	    });
+        
+        $('.projectUpdate').click(function() {
+    		showPopup();
+    		$('#popup_div').empty();
+    		var params = "";
+    		params = params.concat("projectCode=");
+			params = params.concat($(this).attr("id"));
+    		popup('updateProjectPopup', '', $('#popup_div'), '', '', params);
     	    escPopup();
 	    });
 	});

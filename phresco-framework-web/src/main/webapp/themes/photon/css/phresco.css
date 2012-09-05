@@ -4940,3 +4940,26 @@ a[id='androidSigning']:hover {
     padding-top: 6px !important;
     vertical-align: middle !important;
 }
+
+.ciBuildReleaseURL {
+	width: 324px !important;
+}
+
+.progressClipboard {
+	margin-right: 25px !important;
+	margin-top: -5px !important;
+}
+
+/* project list */
+.iconsTd {
+	width: 8% !important;
+}
+
+.iconsCenterAlign {
+	padding-left: 19% !important;
+}
+
+.iconSizeinList {
+	height: 20px !important; 
+	width: 20px !important;
+}

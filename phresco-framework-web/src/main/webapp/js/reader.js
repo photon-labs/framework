@@ -59,6 +59,13 @@ function readerHandler(data, projectCode, testType, pageUrl) {
 		   asyncHandler(projectCode, testType, pageUrl);
 		}
 	});
+	
+	// if apps tab is not present proceed async handler
+	if($("a[name='appTabs']").length == 0) {
+		  $("#build-output").append(data + '<br>');
+		  $('#build-output').prop('scrollTop', $('#build-output').prop('scrollHeight')); 
+		  asyncHandler(projectCode, testType, pageUrl);
+	}
 }
 
 function asyncHandler(projectCode, testType, pageUrl) {

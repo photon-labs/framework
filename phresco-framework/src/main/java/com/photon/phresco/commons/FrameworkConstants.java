@@ -87,6 +87,7 @@ public interface FrameworkConstants {
     String SCM = "scm";
     String SVN = "svn";
     String GIT = "git";
+    String REPO_URL = "repoUrl";
     String REPO_TYPE = "repoType";
     String SVN_TYPE = "svnType";
     String GITHUB_SCM = "hudson.plugins.git.GitSCM";
@@ -181,6 +182,7 @@ public interface FrameworkConstants {
     String ANDROID_LOWER_VER = "2.2";
     String DEVICE_DEPLOY = "device.deploy";
     String UNIT_TEST = "unittest";
+    String PROJECT_UPDATE = "projectUpdate";
     String TRUE = "true";
     String FALSE = "false";
     String NODE_JS_ID = "tech-nodejs-webservice";
@@ -259,6 +261,10 @@ public interface FrameworkConstants {
     String ELEMENT_TARGET = "do_not_checkin/target/*.apk";
     String ELEMENT_VERBOS = "verbose";
     String ELEMENT_VERIFY = "verify";
+    
+    String CONNECTION_URL = "connectionUrl";
+	String USER_NAME = "username";
+	String SCM_SVN = "scm:svn:";
     
     /*
      *  File Types for Browse in Functional
@@ -692,6 +698,7 @@ public interface FrameworkConstants {
     String MSG_REPORT_OVERALL = "Overall";
     String MSG_REPORT_DETAIL = "Detailed";
     String MSG_REPORT = "Atleast one test result is necessary";
+    String EMPTY_PROJECT_CODE = "project.code.empty";
     
     /*
      * CI Message keys
@@ -723,6 +730,7 @@ public interface FrameworkConstants {
      */
     String IMPORT_PROJECT_FAIL ="import.project.fail";
     String INVALID_CREDENTIALS = "import.invalid.credential";
+    String INVALID_CUSTOMER_PROJECT = "import.invalid.customer.project";
     String INVALID_FOLDER = "import.invalid.folder";
     String PROJECT_ALREADY = "import.project.already";
     String SVN_FAILED ="failed";
