@@ -26,12 +26,12 @@
     <constant name="struts.custom.i18n.resources" value="framework" />
     <constant name="struts.ui.theme" value="simple" />
     
-    <package name="default" extends="struts-default,json-default">
-        <result-types>
+    <package name="login" extends="struts-default, json-default">
+    	<result-types>
             <result-type name="tiles" class="org.apache.struts2.views.tiles.TilesResult" />
         </result-types>
         
-        <!--  Login Page Action -->
+		<!--  Login Page Action -->
         <action name="login" method="login" class="com.photon.phresco.framework.actions.Login">
             <result name="success" type="tiles">home</result>
             <result name="failure">/pages/login.jsp</result>
@@ -45,7 +45,28 @@
        	<action name="logout" method="logout" class="com.photon.phresco.framework.actions.Login">
             <result name="success">/pages/login.jsp</result>
         </action>
-
+	</package>
+	
+    <package name="framework" extends="struts-default,json-default">
+        <result-types>
+            <result-type name="tiles" class="org.apache.struts2.views.tiles.TilesResult" />
+        </result-types>
+        
+        <interceptors>
+			<interceptor name="sessionValidatorInterceptor" class="com.photon.phresco.framework.interceptors.SessionValidatorInterceptor">
+			</interceptor>
+			<interceptor-stack name="interceptorStack">
+				<interceptor-ref name="sessionValidatorInterceptor" />
+				<interceptor-ref name="defaultStack" />
+			</interceptor-stack>
+		</interceptors>
+        
+        <default-interceptor-ref name="interceptorStack"/>
+  
+  		<global-results>  
+			<result name="success">/pages/login.jsp</result>
+		</global-results>
+		
         <!--  Home Actions -->
         <action name="home" method="view" class="com.photon.phresco.framework.actions.home.Home">
             <result name="home">/pages/home/videoholder.jsp</result>
@@ -692,10 +713,10 @@
         <action name="jsToMinify" method="selectJsFilesToMinify" class="com.photon.phresco.framework.actions.applications.Build">
         	<result type="json" />
         </action>
+        
 		<!-- minification ends -->
 		<action name="localJenkinsAliveCheck" method="localJenkinsLocalAlive" class="com.photon.phresco.framework.actions.applications.CI">
         	<result type="json"><param name="root">localJenkinsAlive</param></result>
         </action>
-		
     </package>
 </struts>

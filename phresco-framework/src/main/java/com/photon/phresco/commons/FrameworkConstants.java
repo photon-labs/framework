@@ -820,6 +820,8 @@ public interface FrameworkConstants {
      * login keys
      */
     String WELCOME_SHOW = "welcome.show";
+    String SESSION_USER_INFO = "userInfo";
+    String SESSION_EXPIRED= "login.error.session";
 
 
     /*
