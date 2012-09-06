@@ -19,13 +19,9 @@
   --%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
-<%@ page import="java.util.List"%>
-<%@ page import="java.util.Map"%>
-<%@ page import="java.util.Set"%>
 <%@ page import="java.util.ArrayList"%>
-<%@ page import="org.apache.commons.collections.CollectionUtils" %>
+
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
-<%@ page import="com.photon.phresco.model.SettingsInfo"%>
 
 <%@ include file="..\progress.jsp" %>
 
@@ -46,7 +42,7 @@
 %>
 
 <div class="popup_Modal" id="performance-popup">
-	<form action="perTest">
+	<form id="formJmeterPerformAndroid">
 		<div class="modal-header">
 			<h3><s:text name="label.performance.test"/></h3>
 			<a class="close" href="#" id="close">&times;</a>
@@ -109,6 +105,9 @@
 				<input type="button" id="actionBtn" class="btn disabled" value="<s:text name="label.test"/>" disabled="disabled">
 			</div>
 		</div>
+		
+		<!-- Hidden Fields -->
+		<input type="hidden" name="projectCode" value="<%= projectCode %>" />
 	</form>
 </div>
 
@@ -127,13 +126,13 @@
 	    // if all checkbox are selected, check the selectAll checkbox
 	    // and viceversa
 	    $(".check").click(function() {
-			if($(".check").length == $(".check:checked").length) {
+			if ($(".check").length == $(".check:checked").length) {
 	            $("#selectAll").attr("checked", "checked");
 	        } else {
 	            $("#selectAll").removeAttr("checked");
 	        }
 			
-			if($('.check').is(':checked')) {
+			if ($('.check').is(':checked')) {
 				enableTestBtn();
 			} else {
 				disableTestBtn();
@@ -151,7 +150,7 @@
 			$('#performance-popup').hide();
 			disableScreen();
 			$('#build-outputOuter').show();
-			readerHandlerSubmit('perTest', '<%= projectCode %>', '<%= FrameworkConstants.PERFORMACE %>');
+			readerHandlerSubmit('perTest', '<%= projectCode %>', '<%= FrameworkConstants.PERFORMACE %>', $('#formJmeterPerformAndroid'));
 		});
 	});
 	

@@ -261,6 +261,7 @@ public interface FrameworkConstants {
     String ELEMENT_TARGET = "do_not_checkin/target/*.apk";
     String ELEMENT_VERBOS = "verbose";
     String ELEMENT_VERIFY = "verify";
+    String REQ_SELECTED_TEST_NAME = "selectedTestName";
     
     String CONNECTION_URL = "connectionUrl";
 	String USER_NAME = "username";
@@ -444,6 +445,7 @@ public interface FrameworkConstants {
     String REQ_PROJECT_MODULES = "projectModules";
     String REQ_TEST_FUNCTIONAL = "functional";
     String REQ_TEST_PERFORMANCE = "performance";
+    String REQ_JMETER_TEST_AGAINST = "jmeterTestAgainst";
     String PERFORMANCE_TEST_REPORTS = "performanceTestReports";
 	String PERFORMANCE_SPECIAL_HANDLE = "performanceSpecialHandle";
 	String LOAD_TEST_RESULTS = "loadTestResults";
@@ -582,6 +584,7 @@ public interface FrameworkConstants {
 	String REQ_FEATURES_MODULE_CAT = "moduleCat";
 	String REQ_FEATURES_MODULES = "modules";
 	String REQ_ENVIRONMENTS = "environments";
+	String REQ_ENVIRONMENT = "environment";
     String REQ_LOG_REPORT = "logReport";
     String REQ_PROJECT_INFO_SERVERS = "projectInfoServers";
     String REQ_PROJECT_INFO_DATABASES = "projectInfoDatabases";

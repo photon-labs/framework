@@ -83,15 +83,13 @@ function checkForConfig() {
 /** To check whether the selected environment has the appropriate configuration based on type **/
 function checkForConfigType(type) {
 	var envs = getSelectedEnvs();
-	var params = "";
-	if (!isBlank($('form').serialize())) {
-		params = $('form').serialize() + "&";
-	}
-	params = params.concat("environments=");
+	var params = "environments=";
 	params = params.concat(envs);
 	params = params.concat("&type=");
 	params = params.concat(type);
-	performAction('checkForConfigType', params, '', true);
+	params = params.concat("&projectCode=");
+	params = params.concat($("#projectCode").val());
+	performAction('checkForConfigType', '', '', true, params);
 }
 
 /** To get the selected environments as comma delimited string **/
@@ -109,7 +107,6 @@ function getSelectedEnvs() {
 	}
 	return envs = envs.substring(0, envs.length - 1);
 }
-
 
 function showError(data) {
 	$("#errMsg").html(data.envError);

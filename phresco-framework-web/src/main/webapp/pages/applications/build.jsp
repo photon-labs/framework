@@ -386,4 +386,5 @@
 			updateHiddenField(data.jsFinalName, data.selectedJs, data.browseLocation);
     	}
     }
+	
 </script>

@@ -19,32 +19,22 @@
   --%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
+<%@ page import="java.util.List"%>
+
+<%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
+<%@ page import="com.photon.phresco.model.SettingsInfo"%>
+<%@ page import="com.photon.phresco.model.ProjectInfo"%>
+<%@ page import="com.photon.phresco.util.TechnologyTypes"%>
+
 <%@ include file="../errorReport.jsp" %>
 <%@ include file="../../userInfoDetails.jsp" %>
-
-<%@ page import="java.util.List"%>
-<%@ page import="java.util.ArrayList"%>
-<%@ page import="java.util.Collection"%>
-<%@ page import="java.util.Iterator"%>
-<%@ page import="java.io.BufferedReader"%>
-<%@ page import="java.io.IOException"%>
-<%@ page import="com.photon.phresco.exception.PhrescoException"%>
-<%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
-<%@ page import="com.photon.phresco.framework.api.Project" %>
-<%@ page import="com.photon.phresco.model.*"%>
-<%@ page import="com.photon.phresco.util.TechnologyTypes"%>
 
 <%
     List<SettingsInfo> serverSettings = (List<SettingsInfo>)request.getAttribute(FrameworkConstants.REQ_ENV_SERVER_SETTINGS);
 	String testTypeSelected = (String)request.getAttribute(FrameworkConstants.REQ_TEST_TYPE_SELECTED);
-   	Project project = (Project)request.getAttribute(FrameworkConstants.REQ_PROJECT);
-    ProjectInfo selectedInfo = null; 
-    String projectCode = null;
-    if(project != null) {
-        selectedInfo = project.getProjectInfo();
-        projectCode = selectedInfo.getCode();
-        
-    }
+	ProjectInfo projectInfo = (ProjectInfo)request.getAttribute(FrameworkConstants.REQ_PROJECT_INFO);
+    String projectCode = projectInfo.getCode();
+    String technology = projectInfo.getTechnology().getId();
 %>
 
 <s:if test="hasActionMessages()">
@@ -53,38 +43,41 @@
     </div>
 </s:if>
 
-<div id="subTabcontent">
-	<div id="navigation">
-		<ul>
-			<li><a href="#" class="unselected" name="quality" id="unit"><s:text name="label.unit"/></a></li>
-			<li><a href="#" class="unselected" name="quality" id="functional"><s:text name="label.funtional"/></a></li>
-			<%
-				if (!TechnologyTypes.IPHONES.contains(selectedInfo.getTechnology().getId())) {
-			%>
-					<li><a href="#" class="unselected" name="quality" id="performance"><s:text name="label.performance"/></a></li>
-			<%
-				}
-				if (!(TechnologyTypes.ANDROIDS.contains(selectedInfo.getTechnology().getId()) || TechnologyTypes.IPHONES.contains(selectedInfo.getTechnology().getId()))) {
-			%>
-					<li><a href="#" class="unselected" name="quality" id="load"><s:text name="label.load"/></a></li>
-			<%
-				}
-			%>
-		</ul>
+<form id="formQuality">
+	<div id="subTabcontent">
+		<div id="navigation">
+			<ul>
+				<li><a href="#" class="unselected" name="quality" id="unit"><s:text name="label.unit"/></a></li>
+				<li><a href="#" class="unselected" name="quality" id="functional"><s:text name="label.funtional"/></a></li>
+				<%
+					if (!TechnologyTypes.IPHONES.contains(technology)) {
+				%>
+						<li><a href="#" class="unselected" name="quality" id="performance"><s:text name="label.performance"/></a></li>
+				<%
+					}
+					if (!(TechnologyTypes.ANDROIDS.contains(technology) || TechnologyTypes.IPHONES.contains(technology))) {
+				%>
+						<li><a href="#" class="unselected" name="quality" id="load"><s:text name="label.load"/></a></li>
+				<%
+					}
+				%>
+			</ul>
+		</div>
+		
+		<div id="subTabcontainer">
+	
+		</div>
 	</div>
-	<div id="subTabcontainer">
-
-	</div>
-</div>
-
-<!-- <div class="popup_div_per" id="generateJmeter">
-</div>  -->
+	
+	<!-- Hidden Fields -->
+	<input type="hidden" name="projectCode" value="<%= projectCode %>" />
+</form>
 
 <script type="text/javascript">
     $(document).ready(function() {
 		var testType = "<%= testTypeSelected%>"
 		
-		if(testType == "null"){
+		if (testType == "null") {
 			testType = "unit";
 			$("a[id='unit']").attr("class", "selected");	
 		} else {
@@ -107,20 +100,13 @@
 	//This function is to handle the change event for testing
 	function changeTesting(testingType, fromPage) {
 		$("#subTabcontainer").empty(); 
-     	//$("#subTabcontainer").html("<div><img class='popupLoadingIcon' style='display: block'></div>");
-     	//getCurrentCSS();
- 		var params = "";
-    	if (!isBlank($('form').serialize())) {
-    		params = $('form').serialize() + "&";
-    	}
-		params = params.concat("testType=");
+		var params = "testType=";
 		params = params.concat(testingType);
         if (fromPage != undefined) {
             params = params.concat("&fromPage=");
             params = params.concat(fromPage);
         }
-		performAction('testType', params, $('#subTabcontainer'));
-		//$("#subTabcontainer").css("display","block");
+		performAction('testType', $('#formQuality'), $('#subTabcontainer'), '', params);
 	}
 	
 	function getConfigNames() {
@@ -135,7 +121,7 @@
             },
             type: "POST",
             success : function(data) {
-                if(data.configName != "") {
+                if (data.configName != "") {
                     fillSelectData(type, data.configName);
                 } else {
                     $('#' + type).find('option').remove();
@@ -148,7 +134,7 @@
     
     /** This method is to fill data in the appropriate controls **/
     function fillSelectData(type, data) {
-    	if(type == "Server") {
+    	if (type == "Server") {
     		$('#' + type).val(data);
     	} else {
 	    	$('#' + type).find('option').remove();

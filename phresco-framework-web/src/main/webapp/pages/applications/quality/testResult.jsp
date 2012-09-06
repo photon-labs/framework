@@ -19,87 +19,372 @@
   --%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
-<%@page import="java.util.List"%>
-<%@page import="java.util.ArrayList"%>
-<%@page import="java.util.Collection"%>
-<%@page import="java.util.Iterator"%>
-<%@page import="com.photon.phresco.framework.model.TestResult"%>
-<%@page import="com.photon.phresco.commons.FrameworkConstants"%>
-<%@page import="com.photon.phresco.model.SettingsInfo"%>
+<%@ page import="java.util.List"%>
+<%@ page import="org.apache.commons.lang.StringUtils"%>
 
-    <% 
-        String testError = (String) request.getAttribute(FrameworkConstants.REQ_ERROR_TESTSUITE);
-        if(testError != null) {
-    %>
-        <div class="alert-message block-message warning" >
-            <center><%= testError %></center>
-        </div>
-    <%
-        } else {
-            List<TestResult> testResults = (List<TestResult>) request.getAttribute(FrameworkConstants.REQ_TEST_RESULT);
-    %>
-            <div class="columns columnStyle">
-                <div class="columnStyle">
-	                <div class="table_div">
-	                    <div class="tblheader">
-	                        <table class="zebra-striped">
-	                            <tr>
-	                                <th class="tstRst_th1"><s:text name="label.thread.name"/></th>
-	                                <th class="tstRst_th2"><s:text name="label.date"/></th>
-	                                <th class="tstRst_th3"><s:text name="label.elapsed.time"/></th>
-	                                <th class="tstRst_img"><s:text name="label.status"/></th>
-	                            </tr>
-	                        </table>
-	                    </div>
-	                    <div class="jmtable_data_div">
-	                        <table class="zebra-striped">
-	                            <%
-	                                for (TestResult testResult : testResults) {
-	                            %>
-	                            <tr>
-                                    <td class="tstRst_th1"><%= testResult.getThreadName() %></td>
-	                                <td class="tstRst_th2"><%= testResult.getTimeStamp() %></td>
-	                                <td class="tstRst_th3"><%= testResult.getTime() %></td>
-	                                
-	                                <td class="tstRst_img">
-	                                    <% if (!testResult.isSuccess()) { %>
-	                                        <img src="images/icons/failure.png" title="Failure">
-	                                    <% } else { %>
-	                                        <img src="images/icons/success.png" title="Success">
-	                                    <% } %>                                
-	                                </td>
-	                                
-	                            </tr>
-	                            <% 
-	                                } 
-	                            %>
-	                        </table>
-	                    </div>
-	                </div><!-- End column 1 -->
+<%@ page import="com.photon.phresco.framework.model.TestCaseFailure"%>
+<%@ page import="com.photon.phresco.framework.model.TestCaseError"%>
+<%@ page import="com.photon.phresco.framework.model.TestCase"%>
+<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
+
+<%@ include file="../errorReport.jsp" %>
+<%@ include file="../../userInfoDetails.jsp" %>
+
+<style type="text/css">
+   	table th {
+		padding: 0 0 0 9px;  
+	}
+	   	
+	td {
+	 	padding: 5px;
+	 	text-align: left;
+	}
+	  
+	th {
+	 	padding: 0 5px;
+	 	text-align: left;
+	}
+</style>
+
+<% 
+	List<TestCase> testCases = (List<TestCase>) request.getAttribute(FrameworkConstants.REQ_TESTCASES);
+	String testSuiteName = (String) request.getAttribute(FrameworkConstants.REQ_TESTSUITE_NAME);
+	float failures = Float.parseFloat((String) request.getAttribute(FrameworkConstants.REQ_TESTSUITE_FAILURES));
+	float errors  = Float.parseFloat((String) request.getAttribute(FrameworkConstants.REQ_TESTSUITE_ERRORS));
+	float tests  = Float.parseFloat((String) request.getAttribute(FrameworkConstants.REQ_TESTSUITE_TESTS)); 
+	String testError = (String) request.getAttribute(FrameworkConstants.REQ_ERROR_TESTSUITE);
+	String testType = (String) request.getAttribute(FrameworkConstants.REQ_TEST_TYPE); 
+	if (StringUtils.isNotEmpty(testError)) {
+%>
+	<div class="alert-message block-message warning" >
+	    <center><label class="errorMsgLabel"><%= testError %></label></center>
+	</div>
+<%
+	} else {
+	    float success = 0;
 	    
-	                <div class="graph_div">
-	                    <div class="jm_canvas_div">
-	                        <iframe src="<%= request.getContextPath() %>/pages/applications/quality/jmeter_graph.jsp"  frameborder="0" width="100%" height="100%"></iframe>
-	                    </div>
-	                </div>
-	            </div>
-	        </div>
-    <%         
-        }
-    %>
-
-<script type="text/javascript">
-/* To check whether the divice is ipad or not */
-if(!isiPad()){
-	/* JQuery scroll bar */
-	$(".jmtable_data_div").scrollbars();
-}
-
-$(document).ready(function() {
-	$(".styles").click(function() {
-		 $("iframe").attr({
-             src: $("iframe").attr("src")
-         });
-	});
-});
-</script>
+	    if (failures != 0 && errors == 0) {
+	        if (failures > tests) {
+	            success = failures - tests;
+	        } else {
+	            success = tests - failures;
+	        }
+	    } else if (failures == 0 && errors != 0) {
+	        if (errors > tests) {
+	            success = errors - tests;
+	        } else {
+	            success = tests - errors;
+	        }
+	    } else if (failures != 0 && errors != 0) {
+	        float failTotal = (failures + errors);
+	        if (failTotal > tests) {
+	            success = failTotal - tests;
+	        } else {
+	            success = tests - failTotal;
+	        }
+	    } else {
+	    	success = tests;
+	    }
+	
+	    float total = tests;
+	
+	    int failurePercentage = (int) (Math.round((failures / total) * 100));
+	    int errorsPercentage = (int) (Math.round((errors / total) * 100));
+	    int successPercentage = (int) (Math.round((success / total) * 100));
+%>
+		<div class="table_div_unit qtyTable_view" id="tabularView">
+			<div class="fixed-table-container responsiveFixedTableContainer qtyFixedTblContainer">
+   				<div class="header-background"></div>
+	      		<div class="fixed-table-container-inner">
+		      		<div style="overflow: auto;">
+				        <table cellspacing="0" class="zebra-striped">
+				          	<thead>
+					            <tr>
+									<th class="first">
+					                	<div id="th-first" class="th-inner-test"><s:text name="label.name"/></div>
+					              	</th>
+					              	<th class="second">
+					                	<div id="th-second" class="th-inner-test"><s:text name="label.class"/></div>
+					              	</th>
+					              	<th class="third">
+					                	<div id="th-third" class="th-inner-test"><s:text name="label.time"/></div>
+					              	</th>
+					              	<th class="third">
+					                	<div id="th-fourth" class="th-inner-test"><s:text name="label.status"/></div>
+					              	</th>
+					              	<th class="third">
+					                	<div id="th-fivth" class="th-inner-test"><s:text name="label.log"/></div>
+					              	</th>
+					              	<% if (FrameworkConstants.FUNCTIONAL.equals(testType)) { %>
+						              	<th class="width-ten-percent">
+						                	<div class="th-inner-test"><s:text name="label.screenshot"/></div>
+						              	</th>
+					              	<% } %>
+					            </tr>
+				          	</thead>
+				
+				          	<tbody>
+				          	<%
+					          	for (TestCase testCase : testCases) {
+									TestCaseFailure failure = testCase.getTestCaseFailure();
+									TestCaseError error = testCase.getTestCaseError();
+									String testClass = "";
+									String time = "";
+									if (StringUtils.isNotEmpty(testCase.getTestClass())) {
+										testClass = testCase.getTestClass();
+									}
+									if (StringUtils.isNotEmpty(testCase.getTime())) {
+										time = testCase.getTime();
+									}
+							%>
+					            	<tr>
+					              		<td id="tstRst_td1" class="width-twenty-five-percent"><%= testCase.getName() %></td>
+					              		<td id="tstRst_td2" class="width-twenty-five-percent"><%= testClass %></td>
+					              		<td class="width-fifteen-percent"><%= time %></td>
+					              		<td class="width-fifteen-percent">
+					              			<% if (failure != null) { %>
+												<img src="images/icons/failure.png" title="Failure">
+											<% } else if (error != null) { %>
+												<img src="images/icons/error.png" title="Error">
+											<% } else { %>
+												<img src="images/icons/success.png" title="Success">
+											<% } %>  
+					              		</td>
+					              		<td class="width-ten-percent">
+					              			<% if (failure != null) { %>
+												<input type="hidden" name="<%= testCase.getName() %>" value="<%= failure.getFailureType()%>,<%= failure.getDescription()%>" id="<%= testCase.getName() %>">
+												<a class="testCaseFailOrErr" name="<%= testCase.getName() %>" href="#"><img src="images/icons/log.png" alt="logo"> </a>
+											<% } else if (error != null) { %>
+												<input type="hidden" name="<%= testCase.getName() %>" value="<%= error.getErrorType()%>,<%= error.getDescription()%>" id="<%= testCase.getName() %>">
+												<a class="testCaseFailOrErr" name="<%= testCase.getName() %>" href="#"><img src="images/icons/log.png" alt="logo"> </a>
+											<% } else { %>
+												&nbsp;
+											<% } %>
+					              		</td>
+					             		<% if (FrameworkConstants.FUNCTIONAL.equals(testType)) { %>
+						            		<td class="width-ten-percent">
+						            			<% 
+						            				if ((failure != null && failure.isHasFailureImg()) || (error != null && error.isHasErrorImg()))  { 
+						            			%>
+						            				<a class="testCaseScreenShot" name="<%= testCase.getName() %>" href="#"><img src="images/icons/screenshot.png" alt="logo"> </a>
+						            			<% 
+						            				}
+						            			%>
+						              		</td>
+					             		<% } %>
+					            	</tr>
+				            <%
+								}
+							%>	
+				          	</tbody>
+				        </table>
+				       </div>
+				    <div>
+						
+					</div>
+	      		</div>
+			</div>
+		</div>
+	
+		<div class="canvas_div canvasDiv" id="graphicalView">
+			<canvas id="pie2" width="620" height="335">[No canvas support]</canvas>
+        </div>
+    
+	    <!-- Test case error or Test case failure starts -->	
+		<div id="testCaseErrOrFail" class="modal confirm">
+			<div class="modal-header">
+				<div class="TestType" style="word-wrap: break-word;"></div><a id="closeTestCasePopup" href="#" class="close">&times;</a>
+			</div>
+			<div class="abt_div">
+				<div id="testCaseDesc" class="testCaseDesc">
+						
+				</div>
+			</div>
+			
+			<div class="modal-footer">
+				<div class="action abt_action">
+					<input type="button" class="btn primary" value="<s:text name="label.close"/>" id="closeDialog">
+				</div>
+			</div>
+		</div>
+		<!-- Test case error or Test case failure starts -->
+	
+		<!-- Screen shot pop-up starts -->
+		<div id="testCaseScreenShotPopUp" class="modal screenShotDialog">
+			<div class="modal-header">
+				<div class="screenShotTCName"></div><a id="closeTCScreenShotPopup" href="#" class="close">&times;</a>
+			</div>
+			<div class="abt_div">
+				<div id="testCaseDesc" class="testCaseImg">
+						<div id="imgNotFoundErr" style="hideContenthideContenthideContenthideContenthideContenthideContenthideContent"><b>Screenshot is not available</b></div>
+						<img class="testCaseImg" id="screenShotImgSrc" src="" title="screenShot"  height= "100px" width= "100px"></img>
+				</div>
+			</div>
+			
+			<div class="modal-footer">
+				<div class="action abt_action">
+					<input type="button" class="btn primary" value="<s:text name="label.close"/>" id="closeTCScreenShotPopupDlg">
+				</div>
+			</div>
+		</div>
+		<!-- Screen shot pop-up ends -->
+	
+		<script type="text/javascript">
+		//To check whether the device is ipad or not and then apply jquery scrollbar
+		if (!isiPad()) {
+			$(".fixed-table-container-inner").scrollbars();
+			$("#graphicalView").scrollbars();
+		}
+		
+	    $(document).ready(function() {
+	    	canvasInit();
+	    	changeView();
+	    	escPopup();
+	    	
+	    	if ($('#label').hasClass('techLabel')){
+	            $("#th-first").removeClass("th-inner-test").addClass("th-inner-testtech");
+	            $("#th-second").removeClass("th-inner-test").addClass("th-inner-testtech");
+	            $("#th-third").removeClass("th-inner-test").addClass("th-inner-testtech");
+	            $("#th-fourth").removeClass("th-inner-test").addClass("th-inner-testtech");
+	            $("#th-fivth").removeClass("th-inner-test").addClass("th-inner-testtech");
+	        }
+	    	
+	    	if ($.browser.safari) {
+	            $(".th-inner-test").css("top","231px");  
+	            $(".th-inner-testtech").css("top","266px"); 
+	        }
+	    	
+	    	var OSName="Unknown OS";
+	        if (navigator.appVersion.indexOf("Mac")!=-1) {
+		       	  OSName="MacOS";
+		    }
+	        
+	        if (OSName == "MacOS") {
+	        	if ($('#label').hasClass('techLabel')){
+	        		$(".th-inner-test").css("top","250px");
+	            } else {
+		            $(".th-inner-test").css("top","225px");  
+		            $(".th-inner-testtech").css("top","225px");
+	            }
+	        	if ($.browser.safari) {
+	                $(".th-inner-testtech").css("top","255px"); 
+	            }
+	        }
+	    	
+	        $("td[id = 'tstRst_td1']").text(function(index) {
+	            return textTrim($(this));
+	        });
+	        
+	        $("td[id = 'tstRst_td2']").text(function(index) {
+	            return textTrim($(this));
+	        });
+	        
+	    	$(".testCaseFailOrErr").click(function() {
+	    	   	var name = $(this).attr('name');
+	            var errValue = window.document.getElementById(name).value;
+	    	   	var testCaseErrAndFail = errValue;
+	    	   	var results = testCaseErrAndFail.split(",");
+	    	   	var testCaseErrorOrFailName = results[0];
+	    	   	var testCaseErrorOrFailDesc = results[1];
+	    	   	$('.TestType').html(testCaseErrorOrFailName);
+	    	   	$('.testCaseDesc').html(testCaseErrorOrFailDesc);
+	    	   	funcPopUp('block', 'testCaseErrOrFail');
+	    	});
+	        
+	    	$('#closeTestCasePopup').click(function() {
+	    		funcPopUp('none', 'testCaseErrOrFail');
+	    	});
+	    	
+	    	$('#closeDialog').click(function() {
+	    		$(".wel_come").show().css("display", "none");
+	    		$("#testCaseErrOrFail").show().css("display", "none");
+	    	});
+	    	
+	    	$(".testCaseScreenShot").click(function() {
+	    		// Before screen shot loading , have to hide No Screenshot available message
+	    		$("#screenShotImgSrc").attr("src", "");
+	    		hideImageIsNotLoaded();
+	    		
+	    		// This code loads image
+	    		var testCaseName = $(this).attr('name');
+				$('.screenShotTCName').html(testCaseName);
+				$("#screenShotImgSrc").attr("src", "<%= request.getContextPath()%>/getScreenshot.action?projectCode=<%= (String) request.getAttribute(FrameworkConstants.REQ_PROJECT_CODE)%>&testCaseName=" + testCaseName);
+				funcPopUp('block', 'testCaseScreenShotPopUp');
+				
+				// Based on screenshot loading , have to call methods
+				$(".testCaseImg").load(function() { hideImageIsNotLoaded(); })
+			    .error(function() { showImageIsNotLoaded(); });
+	
+	    	});
+	    	
+	    	$('#closeTCScreenShotPopup, #closeTCScreenShotPopupDlg').click(function() {
+	    		funcPopUp('none', 'testCaseScreenShotPopUp');
+	    	});
+	    	
+	    	// table resizing
+			var tblheight = (($("#subTabcontainer").height() - $("#formUnit").height()));
+			$('.responsiveTableDisplay').css("height", parseInt((tblheight/($("#subTabcontainer").height()))*100) +'%');
+			
+			var fixedTblheight = ((($('#tabularView').height() - 30) / $('#tabularView').height()) * 100);
+			$('.responsiveFixedTableContainer').css("height", fixedTblheight+'%');
+			 
+			// jquery affects pie chart responsive
+			window.setTimeout(function () { $(".scroll-content").css("width", "100%"); }, 350);
+	    });
+	    
+	    function showImageIsNotLoaded() {
+	    	$("#imgNotFoundErr").css("display", "block");
+	    }
+	    
+	    function hideImageIsNotLoaded() {
+	    	$("#imgNotFoundErr").css("display", "none");	
+	    }
+	    
+	    function funcPopUp(enableProp, popup) {
+	    	$(".wel_come").show().css("display", enableProp);
+	    	$("#" + popup).show().css("display", enableProp);
+	    }
+	    
+	    function textTrim(obj) {
+	        var val = $(obj).text();
+	        $(obj).attr("title", val);
+	        var len = val.length;
+	        if(len > 10) {
+	            val = val.substr(0, 30) + "...";
+	            return val;
+	        }
+	        return val;
+	    }
+	    
+	    function canvasInit() {
+	        var failurePercent = '<%= failurePercentage %>';
+	        var errorsPercent = '<%= errorsPercentage %>';
+	        var successPercent = '<%= successPercentage %>';
+	
+	        var pie2 = new RGraph.Pie('pie2', [ parseInt(failurePercent), parseInt(errorsPercent), parseInt(successPercent)]); // Create the pie object
+	
+	        pie2.Set('chart.gutter.left', 45);
+	        pie2.Set('chart.colors', ['orange', 'red', '#6f6']);
+	        pie2.Set('chart.key', ['Failures (<%= failurePercentage %>%)[<%= (int) failures %>]', 'Errors (<%= errorsPercentage %>%)[<%= (int) errors %>]', 'Success (<%= successPercentage %>%)[<%= (int) success %>]', 'Total (' + parseInt(<%= total %>) + ' Tests)']);
+	        pie2.Set('chart.key.background', 'white');
+	        pie2.Set('chart.strokestyle', 'white');
+	        pie2.Set('chart.linewidth', 3);
+	        pie2.Set('chart.title', '<%= testSuiteName %> Report');
+	        pie2.Set('chart.title.size',10);
+	        pie2.Set('chart.title.color', '#8A8A8A');
+	        pie2.Set('chart.exploded', [5,5,0]);
+	        pie2.Set('chart.shadow', true);
+	        pie2.Set('chart.shadow.offsetx', 0);
+	        pie2.Set('chart.shadow.offsety', 0);
+	        pie2.Set('chart.shadow.blur', 25);
+	        pie2.Set('chart.radius', 100);
+	        pie2.Set('chart.background.grid.autofit',true);
+			/* console.info(pie2); */
+	        if (RGraph.isIE8()) {
+	            pie2.Draw();
+	        } else {
+	            RGraph.Effects.Pie.RoundRobin(pie2);
+	        }
+	    }
+		</script>
+<% } %>

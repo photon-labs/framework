@@ -22,13 +22,13 @@ package com.photon.phresco.framework.actions.applications;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.Writer;
@@ -45,7 +45,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -59,6 +58,7 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
@@ -71,6 +71,7 @@ import org.xml.sax.SAXParseException;
 import com.google.gson.Gson;
 import com.photon.phresco.commons.BuildInfo;
 import com.photon.phresco.commons.FrameworkConstants;
+import com.photon.phresco.commons.PerformanceDetails;
 import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
@@ -95,13 +96,12 @@ import com.photon.phresco.model.PropertyInfo;
 import com.photon.phresco.model.SettingsInfo;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.IosSdkUtil;
+import com.photon.phresco.util.IosSdkUtil.MacSdkType;
 import com.photon.phresco.util.TechnologyTypes;
 import com.photon.phresco.util.Utility;
-import com.photon.phresco.util.IosSdkUtil.MacSdkType;
 import com.phresco.pom.exception.PhrescoPomException;
-import com.phresco.pom.model.Model.Modules;
 import com.phresco.pom.util.PomProcessor;
-import com.photon.phresco.commons.PerformanceDetails;
+import com.phresco.pom.model.Model.Modules;
 
 public class Quality extends FrameworkBaseAction implements FrameworkConstants {
 
@@ -198,13 +198,11 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
 	private String reportFileName = null;
 	
 	private static Map<String, Map<String, NodeList>> testSuiteMap = Collections.synchronizedMap(new HashMap<String, Map<String, NodeList>>(8));
-
     
     public String unit() {
     	S_LOGGER.debug("Entering Method Quality.unit()");
 
-        getHttpRequest().setAttribute(REQ_TEST_TYPE_SELECTED, REQ_TEST_UNIT);
-        try{
+        try {
         	ActionType actionType = null;
             ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
             Project project = administrator.getProject(projectCode);
@@ -262,12 +260,14 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
             new LogErrorReport(e, "Quality Unit test");
         }
         getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
+        getHttpRequest().setAttribute(REQ_TEST_TYPE_SELECTED, REQ_TEST_UNIT);
+        
         return APP_ENVIRONMENT_READER;
     }
 
     public String functional() {
-           S_LOGGER.debug("Entering Method Quality.functional()");
-        getHttpRequest().setAttribute(REQ_TEST_TYPE_SELECTED, REQ_TEST_FUNCTIONAL);
+    	S_LOGGER.debug("Entering Method Quality.functional()");
+        
         try {
         	ActionType actionType = null;
             String envs = getHttpRequest().getParameter(ENVIRONMENT_VALUES);
@@ -275,11 +275,11 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
             ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
             Project project = administrator.getProject(projectCode);
             String techId = project.getProjectInfo().getTechnology().getId();
-            getHttpRequest().setAttribute(REQ_PROJECT, project);          
+            getHttpRequest().setAttribute(REQ_PROJECT_INFO, project.getProjectInfo());  
             Map<String, String> settingsInfoMap = new HashMap<String, String>(2);
             if (TechnologyTypes.ANDROIDS.contains(techId)) {
                 String device = getHttpRequest().getParameter(REQ_ANDROID_DEVICE);
-				if(device.equals(SERIAL_NUMBER)) {
+				if (device.equals(SERIAL_NUMBER)) {
 					device = serialNumber;
 				}
                    S_LOGGER.debug("Android device name " + device);
@@ -307,9 +307,7 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
             if (StringUtils.isEmpty(testModule) && !TechnologyTypes.ANDROIDS.contains(technologyId) && !TechnologyTypes.IPHONES.contains(technologyId) && 
             		!TechnologyTypes.BLACKBERRY.equals(technologyId) && !TechnologyTypes.SHAREPOINT.equals(technologyId) && !TechnologyTypes.DOT_NET.equals(technologyId) && !TechnologyTypes.JAVA_STANDALONE.equals(technologyId)) {
                 FunctionalUtil.adaptTestConfig(project, envs, browser);
-            } /*else {
-            	actionType = ActionType.INSTALL;
-            }*/
+            }
             FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
             StringBuilder builder = new StringBuilder(Utility.getProjectHome());
             builder.append(project.getProjectInfo().getCode());
@@ -321,12 +319,12 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
             String funcitonalTestDir = frameworkUtil.getFuncitonalTestDir(project.getProjectInfo().getTechnology().getId());
             builder.append(funcitonalTestDir);
             actionType.setWorkingDirectory(builder.toString());
-
+            
             S_LOGGER.debug("Functional test directory " + builder.toString());
             S_LOGGER.debug("Functional test Setting Info map value " + settingsInfoMap);
             
-          //java stand alone - run against jar
-            if( TechnologyTypes.JAVA_STANDALONE.equals(techId) && (testAgainst.trim().equalsIgnoreCase("jar"))){
+            //java stand alone - run against jar
+            if (TechnologyTypes.JAVA_STANDALONE.equals(techId) && (testAgainst.trim().equalsIgnoreCase("jar"))) {
             	systemPath = new File(builder.toString() + File.separator + POM_FILE);
 	        	PomProcessor pomprocessor = new PomProcessor(systemPath);
 	        	pomprocessor.addDependency(JAVA_STANDALONE, JAVA_STANDALONE, DEPENDENCY_VERSION, SYSTEM, null, jarLocation);
@@ -334,7 +332,7 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
             }
             
             // java stand alone - run against build
-            if( TechnologyTypes.JAVA_STANDALONE.equals(techId) && (testAgainst.trim().equalsIgnoreCase("build"))){
+            if (TechnologyTypes.JAVA_STANDALONE.equals(techId) && (testAgainst.trim().equalsIgnoreCase("build"))) {
             	builder = new StringBuilder(Utility.getProjectHome());             // Getting Name of Jar From POM Processor
         		builder.append(project.getProjectInfo().getCode());
         		systemPath = new File(builder.toString() + File.separator + POM_FILE);
@@ -360,10 +358,12 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
             
             ProjectRuntimeManager runtimeManager = PhrescoFrameworkFactory.getProjectRuntimeManager();
             BufferedReader reader = runtimeManager.performAction(project, actionType, settingsInfoMap, null);
+            
             getHttpSession().setAttribute(projectCode + FUNCTIONAL, reader);
             getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
             getHttpRequest().setAttribute(REQ_TEST_TYPE, FUNCTIONAL);
-            
+            getHttpRequest().setAttribute(REQ_TEST_TYPE_SELECTED, REQ_TEST_FUNCTIONAL);
+            getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
         } catch (Exception e) {
         	if (e instanceof FileNotFoundException) {
                 getHttpRequest().setAttribute(REQ_ERROR_TESTSUITE, getText(ERROR_FUNCTIONAL_TEST));
@@ -372,7 +372,6 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
             new LogErrorReport(e, "Quality Functional test");
         }
         
-        getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
         return APP_ENVIRONMENT_READER;
     }
 
@@ -411,7 +410,6 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
         	} else {
         		sb.append(frameworkUtil.getUnitReportDir(project.getProjectInfo().getTechnology().getId()));
         	}
-            
         } else if (LOAD.equals(testType)) {
             sb.append(frameworkUtil.getLoadReportDir(project.getProjectInfo().getTechnology().getId()));
             sb.append(File.separator);
@@ -428,7 +426,6 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
             sb.append(testResultFile);
         }
 
-//        return getDocument(getTestResultFile(sb.toString()));
         return sb.toString();
     }
 
@@ -437,7 +434,6 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
         DocumentBuilder builder = null;
         try {
         	S_LOGGER.debug("Report path" + resultFile.getAbsolutePath());
-//            fis = new FileInputStream(getTestResultFile(sb.toString()));
         	fis = new FileInputStream(resultFile);
             DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
             domFactory.setNamespaceAware(false);
@@ -474,22 +470,7 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
         	Project project = administrator.getProject(projectCode);
         	Map<String, NodeList> mapTestResultName = null;
         	mapTestResultName = testSuiteMap.get(projectCode + testType + projectModule + techReport);
-        	
-//        	String resultPath = "";
-        	
     		String testResultPath = getTestResultPath(project, null);
-            /*if (StringUtils.isNotEmpty(projectModule)) {
-                StringBuilder sb = new StringBuilder();
-                sb.append(Utility.getProjectHome());
-                sb.append(project.getProjectInfo().getCode());
-                sb.append(File.separatorChar);
-                sb.append(projectModule);
-				sb.append(resultPath);
-                testResultPath = sb.toString();
-            } else {
-            	testResultPath = getTestResultPath(project, null);
-            }*/
-            
         	if (MapUtils.isEmpty(mapTestResultName) || StringUtils.isNotEmpty(fromPage)) {
         		File[] resultFiles = getTestResultFiles(testResultPath);
         		if (resultFiles != null) {
@@ -497,37 +478,39 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
         			updateCache(resultFiles);
         		} else {
         			setValidated(true);
-        			if(UNIT.equals(testType)) {
+        			if (UNIT.equals(testType)) {
         				setShowError(getText(ERROR_UNIT_TEST));
         			} else {
         				setShowError(getText(ERROR_FUNCTIONAL_TEST));
         			}
+        			
         			return SUCCESS;
         		}
-
             	String testSuitesMapKey = projectCode + testType + projectModule + techReport;
             	mapTestResultName = testSuiteMap.get(testSuitesMapKey);
         	} 
-        	
         	
         	List<String> resultFileNames = new ArrayList<String>(mapTestResultName.keySet());
         	if (CollectionUtils.isEmpty(resultFileNames)) {
         		setValidated(true);
     			setShowError(getText(ERROR_UNIT_TEST));
+    			
     			return SUCCESS;
         	}
-        	
         	setTestType(testType);
         	setTestResultFiles(resultFileNames);
+        	
         	return SUCCESS;
         } catch (PhrescoException e) {
         	S_LOGGER.error("Entered into catch block of Quality.getTestSuites()"+ e);
         }
+        
 		return null;
     }
 	
 	public String fillTestSuites() {
 		S_LOGGER.debug("Entering Method Quality.fillTestSuites");
+		
 		try {
 			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
 	    	Project project = administrator.getProject(projectCode);
@@ -542,14 +525,14 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
 	    			updateCache(resultFiles);
 	    		} else {
 	    			setValidated(true);
-	    			if(UNIT.equals(testType)) {
+	    			if (UNIT.equals(testType)) {
 	    				setShowError(getText(ERROR_UNIT_TEST));
 	    			} else {
 	    				setShowError(getText(ERROR_FUNCTIONAL_TEST));
 	    			}
+
 	    			return SUCCESS;
 	    		}
-	
 	        	String testSuitesMapKey = projectCode + testType + projectModule + techReport;
 	        	mapTestResultName = testSuiteMap.get(testSuitesMapKey);
 	    	} 
@@ -558,22 +541,23 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
 	    	List<String> resultTestSuiteNames = new ArrayList<String>(mapTestResultName.keySet());
 	    	if (CollectionUtils.isEmpty(resultTestSuiteNames)) {
 	    		setValidated(true);
-	    		if(UNIT.equals(testType)){
+	    		if (UNIT.equals(testType)){
 	    			setShowError(getText(ERROR_UNIT_TEST));
 	    		} else {
 	    			setShowError(getText(ERROR_FUNCTIONAL_TEST));
 	    		}
+	    		
 				return SUCCESS;
 	    	}
-	    	
 	    	setTestType(testType);
 	    	setTestSuiteNames(resultTestSuiteNames);
-		}  catch(SAXParseException e) {
+		} catch (SAXParseException e) {
     		setValidated(true);
 			setShowError(getText(ERROR_PARSE_EXCEPTION));
 		} catch (Exception e) {
 			S_LOGGER.error("Entered into catch block of Quality.fillTestSuites()");
 		}
+		
 		return SUCCESS;
 	}
     
@@ -596,7 +580,7 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
 			
 			}
 		}
-    	String testSuitesKey = projectCode + testType + projectModule + techReport;
+	    String testSuitesKey = projectCode + testType + projectModule + techReport;
 		testSuiteMap.put(testSuitesKey, mapTestSuites);
     }
     
@@ -617,6 +601,7 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
     	XPath xpath = XPathFactory.newInstance().newXPath();
 		XPathExpression xPathExpression = xpath.compile(testSuitePath);
 		NodeList testSuiteNode = (NodeList) xPathExpression.evaluate(doc, XPathConstants.NODESET);
+		
 		return testSuiteNode;
     }
 
@@ -625,7 +610,6 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
 
     	List<TestSuite> testSuites = new ArrayList<TestSuite>(2);
 		TestSuite testSuite = null;
-
 		for (int i = 0; i < nodelist.getLength(); i++) {
 		    testSuite =  new TestSuite();
 		    Node node = nodelist.item(i);
@@ -635,7 +619,6 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
 		        Node attribute = nameNodeMap.item(k);
 		        String attributeName = attribute.getNodeName();
 		        String attributeValue = attribute.getNodeValue();
-
 		        if (ATTR_ASSERTIONS.equals(attributeName)) {
 		            testSuite.setAssertions(attributeValue);
 		        } else if (ATTR_ERRORS.equals(attributeName)) {
@@ -654,6 +637,7 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
 		    }
 		    testSuites.add(testSuite);
 		}
+		
 		return testSuites;
     }
 
@@ -680,7 +664,6 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
             S_LOGGER.debug("Test suite path " + testCasePath);
             
             StringBuilder sb = new StringBuilder(); //testsuites/testsuite[@name='yyy']/testcase
-            //sb.append(XPATH_SINGLE_TESTSUITE);
             sb.append(testSuitePath);
             sb.append(NAME_FILTER_PREFIX);
             sb.append(testSuite);
@@ -717,36 +700,21 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
             int failureTestCases = 0;
             int errorTestCases = 0;
 
+        	StringBuilder screenShotDir = new StringBuilder();
+        	screenShotDir.append(Utility.getProjectHome());
+        	screenShotDir.append(project.getProjectInfo().getCode());
+        	screenShotDir.append(frameworkUtil.getFunctionalReportDir(project.getProjectInfo().getTechnology().getId()));
+        	screenShotDir.append(File.separator);
+        	screenShotDir.append(SCREENSHOT_DIR);
+        	screenShotDir.append(File.separator);
+        	
             for (int i = 0; i < nodelist.getLength(); i++) {
                 Node node = nodelist.item(i);
                 NodeList childNodes = node.getChildNodes();
                 NamedNodeMap nameNodeMap = node.getAttributes();
                 TestCase testCase = new TestCase();
 
-                if (childNodes != null && childNodes.getLength() > 0) {
-
-                    for (int j = 0; j < childNodes.getLength(); j++) {
-                        Node childNode = childNodes.item(j);
-
-                        if (ELEMENT_FAILURE.equals(childNode.getNodeName())) {
-                        	failureTestCases++;
-                            TestCaseFailure failure = getFailure(childNode);
-                            if (failure != null) {
-                                testCase.setTestCaseFailure(failure);
-                            } 
-                        }
-
-                        if (ELEMENT_ERROR.equals(childNode.getNodeName())) {
-                        	errorTestCases++;
-                            TestCaseError error = getError(childNode);
-                            if (error != null) {
-                                testCase.setTestCaseError(error);
-                            }
-                        }
-                    }
-                }
-
-                for (int k = 0; k < nameNodeMap.getLength(); k++){
+                for (int k = 0; k < nameNodeMap.getLength(); k++) {
                     Node attribute = nameNodeMap.item(k);
                     String attributeName = attribute.getNodeName();
                     String attributeValue = attribute.getNodeValue();
@@ -762,15 +730,47 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
                         testCase.setAssertions(Float.parseFloat(attributeValue));
                     } else if (ATTR_TIME.equals(attributeName)) {
                         testCase.setTime(attributeValue);
-                    } 
+                    }
+                }
+                
+                if (childNodes != null && childNodes.getLength() > 0) {
+
+                    for (int j = 0; j < childNodes.getLength(); j++) {
+                        Node childNode = childNodes.item(j);
+
+                        if (ELEMENT_FAILURE.equals(childNode.getNodeName())) {
+                        	failureTestCases++;
+                            TestCaseFailure failure = getFailure(childNode);
+                            if (failure != null) {
+                            	File file = new File(screenShotDir.toString() + testCase.getName() + DOT + IMG_PNG_TYPE);
+                            	if (file.exists()) {
+                            		failure.setHasFailureImg(true);
+                            	}
+                                testCase.setTestCaseFailure(failure);
+                            } 
+                        }
+
+                        if (ELEMENT_ERROR.equals(childNode.getNodeName())) {
+                        	errorTestCases++;
+                            TestCaseError error = getError(childNode);
+                            if (error != null) {
+                            	File file = new File(screenShotDir.toString() + testCase.getName() + DOT + IMG_PNG_TYPE);
+                            	if (file.exists()) {
+                            		error.setHasErrorImg(true);
+                            	}
+                                testCase.setTestCaseError(error);
+                            }
+                        }
+                    }
                 }
                 testCases.add(testCase);
             }
 
-                getHttpRequest().setAttribute(REQ_TESTSUITE_FAILURES, failureTestCases + "");
-                getHttpRequest().setAttribute(REQ_TESTSUITE_ERRORS, errorTestCases + "");
-                getHttpRequest().setAttribute(REQ_TESTSUITE_TESTS, nodelist.getLength() + "");
-				getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
+            getHttpRequest().setAttribute(REQ_TESTSUITE_FAILURES, failureTestCases + "");
+            getHttpRequest().setAttribute(REQ_TESTSUITE_ERRORS, errorTestCases + "");
+            getHttpRequest().setAttribute(REQ_TESTSUITE_TESTS, nodelist.getLength() + "");
+			getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
+			
             return testCases;
         } catch (PhrescoException e) {
         	S_LOGGER.error("Entered into catch block of Quality.getTestCases()"+ e);
@@ -782,10 +782,10 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
     }
     
     private static TestCaseFailure getFailure(Node failureNode) throws TransformerException {
-           S_LOGGER.debug("Entering Method Quality.getFailure(Node failureNode)");
-           S_LOGGER.debug("getFailure() NodeName = "+failureNode.getNodeName());
-        TestCaseFailure failure = new TestCaseFailure();
-
+    	S_LOGGER.debug("Entering Method Quality.getFailure(Node failureNode)");
+    	S_LOGGER.debug("getFailure() NodeName = "+failureNode.getNodeName());
+        
+    	TestCaseFailure failure = new TestCaseFailure();
         try {
             failure.setDescription(failureNode.getTextContent());
             failure.setFailureType(REQ_TITLE_EXCEPTION);
@@ -796,7 +796,6 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
                     Node attribute = nameNodeMap.item(k);
                     String attributeName = attribute.getNodeName();
                     String attributeValue = attribute.getNodeValue();
-
                     if (ATTR_TYPE.equals(attributeName)) {
                         failure.setFailureType(attributeValue);
                     }
@@ -805,14 +804,15 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
         } catch (Exception e) {
                S_LOGGER.error("Entered into catch block of Quality.getFailure()"+ e);
         }
+        
         return failure;
     }
 
     private static TestCaseError getError(Node errorNode) throws TransformerException {
-           S_LOGGER.debug("Entering Method Quality.getError(Node errorNode)");
-           S_LOGGER.debug("getError() Node = "+errorNode.getNodeName());
-        TestCaseError tcError = new TestCaseError();
-
+    	S_LOGGER.debug("Entering Method Quality.getError(Node errorNode)");
+		S_LOGGER.debug("getError() Node = "+errorNode.getNodeName());
+        
+		TestCaseError tcError = new TestCaseError();
         try {
             tcError.setDescription(errorNode.getTextContent());
             tcError.setErrorType(REQ_TITLE_ERROR);
@@ -832,14 +832,16 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
         } catch (Exception e) {
                S_LOGGER.error("Entered into catch block of Quality.getError()"+ e);
         }
+        
         return tcError;
     }
 
     private List<TestResult> getLoadTestResult(Project project, String testResultFile) throws TransformerException, PhrescoException, ParserConfigurationException, SAXException, IOException {
-           S_LOGGER.debug("Entering Method Quality.getLoadTestResult(Project project, String testResultFile)");
-           S_LOGGER.debug("getTestResult() ProjectInfo = " + project.getProjectInfo());
-           S_LOGGER.debug("getTestResult() TestResultFile = " + testResultFile);
-        List<TestResult> testResults = new ArrayList<TestResult>(2);
+    	S_LOGGER.debug("Entering Method Quality.getLoadTestResult(Project project, String testResultFile)");
+    	S_LOGGER.debug("getTestResult() ProjectInfo = " + project.getProjectInfo());
+    	S_LOGGER.debug("getTestResult() TestResultFile = " + testResultFile);
+        
+    	List<TestResult> testResults = new ArrayList<TestResult>(2);
         try {
         	String testResultPath = getTestResultPath(project, testResultFile);
             Document doc = getDocument(new File(testResultPath)); 
@@ -857,7 +859,6 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
                     Node attribute = nameNodeMap.item(k);
                     String attributeName = attribute.getNodeName();
                     String attributeValue = attribute.getNodeValue();
-
                     if (ATTR_JM_TIME.equals(attributeName)) {
                         testResult.setTime(Integer.parseInt(attributeValue));
                     } else if (ATTR_JM_LATENCY_TIME.equals(attributeName)) {
@@ -880,6 +881,7 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
         } catch (Exception e) {
                S_LOGGER.error("Entered into catch block of Quality.getLoadTestResult()"+ e);
         }
+        
         return testResults;
     }
 
@@ -887,7 +889,6 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
     	S_LOGGER.debug("Entering Method Quality.testType()");
         
     	try {
-
             ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
             Project project = administrator.getProject(projectCode);
             String testType = getHttpRequest().getParameter(REQ_TEST_TYPE);
@@ -921,7 +922,6 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
                         getHttpRequest().setAttribute(PATH, 
                                 frameworkUtil.getFuncitonalTestDir(project.getProjectInfo().getTechnology().getId()));
                     }
-
                     getHttpRequest().setAttribute(REQ_FROM_PAGE, fromPage);
                     List<String> projectModules = getProjectModules(projectCode);
                     if (CollectionUtils.isNotEmpty(projectModules)) {
@@ -931,11 +931,12 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
                 } catch (Exception e) {
                     getHttpRequest().setAttribute(REQ_ERROR_TESTSUITE, getText(ERROR_FUNCTIONAL_TEST));
                 }
-                getHttpRequest().setAttribute(REQ_PROJECT, project);
+                getHttpRequest().setAttribute(REQ_PROJECT_INFO, project.getProjectInfo());
                 getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
                 getHttpRequest().setAttribute(REQ_TEST_TYPE, testType);
                 List<String> projectModules = getProjectModules();
                 getHttpRequest().setAttribute(REQ_PROJECT_MODULES, projectModules);
+                
                 return testType;
             }
 
@@ -951,15 +952,16 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
                 File file = new File(sb.toString());
                 File[] children = file.listFiles(new XmlNameFileFilter(FILE_EXTENSION_XML));
                 
-                if(children != null) {
+                if (children != null) {
                 	QualityUtil.sortResultFile(children);
                     getHttpRequest().setAttribute(REQ_JMETER_REPORT_FILES, children);
                 } else {
                     getHttpRequest().setAttribute(REQ_ERROR_TESTSUITE, getText(ERROR_LOAD_TEST));
                 }
                 getHttpRequest().setAttribute(REQ_TEST_TYPE, testType);
-                getHttpRequest().setAttribute(REQ_PROJECT, project);
+                getHttpRequest().setAttribute(REQ_PROJECT_INFO, project.getProjectInfo());
                 getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
+                
                 return testType;
             }
 
@@ -968,11 +970,11 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
                 FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
                 getHttpRequest().setAttribute(PATH,	frameworkUtil.getPerformanceTestDir(project.getProjectInfo().getTechnology().getId()));
                 getHttpRequest().setAttribute(REQ_TEST_TYPE, testType);
-                getHttpRequest().setAttribute(REQ_PROJECT, project);
+                getHttpRequest().setAttribute(REQ_PROJECT_INFO, project.getProjectInfo());
                 getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
+                
                 return testType;
             }
-
         } catch (Exception e) {
                S_LOGGER.error("Entered into catch block of Quality.testType()"+ e);
             getHttpRequest().setAttribute(REQ_ERROR_TESTSUITE, ERROR_TEST_SUITE);
@@ -982,19 +984,30 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
     }
 
     public String performanceTest() {
+    	S_LOGGER.debug("Entering Method Quality.performance()");
         
-           S_LOGGER.debug("Entering Method Quality.performance()");
-        
-        String environment = getHttpRequest().getParameter(REQ_ENVIRONMENTS);
+        String environment = getHttpRequest().getParameter(REQ_ENVIRONMENT);
         getHttpRequest().setAttribute(REQ_TEST_TYPE_SELECTED, REQ_TEST_PERFORMANCE);
         BufferedReader reader = null;
         Writer writer = null;
-        try{
+        try {
         	ActionType actionType = null;
-            String jmeterTestAgainst = getHttpRequest().getParameter("jmeterTestAgainst");
             ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
             Project project = administrator.getProject(projectCode);
             SettingsInfo selectedSettings = null;
+            String requestHeaders = getHttpRequest().getParameter("requestHeaders");
+            //To add the request header to the jmx
+            Map<String, String> headersMap = new HashMap<String, String>(2);
+            if (StringUtils.isNotEmpty(requestHeaders)) {
+            	String[] headers = requestHeaders.split("#SEP#");
+            	if (!ArrayUtils.isEmpty(headers)) {
+            		for (String header : headers) {
+						String[] nameAndValue = header.split("#VSEP#");
+						headersMap.put(nameAndValue[0], nameAndValue[1]);
+					}
+            	}
+            }
+            
             Map<String, String> settingsInfoMap = new HashMap<String, String>(2);
             if (TechnologyTypes.ANDROIDS.contains(project.getProjectInfo().getTechnology().getId())) {
                 String[] connectedDevices = getHttpRequest().getParameterValues(ANDROID_DEVICE);
@@ -1013,15 +1026,14 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
             		actionType.setHideLog(false);
             	}
                 
-				if (SHOW_DEBUG.equals(showDebug)) {
+                if (SHOW_DEBUG.equals(showDebug)) {
                 	actionType.setShowDebug(true);
             	} else {
             		actionType.setShowDebug(false);
             	}
-               
-                   S_LOGGER.debug("Load method ANDROIDS type settingsInfoMap value " + settingsInfoMap);
-                   S_LOGGER.debug("Performance test method ANDROIDS type settingsInfoMap value " + settingsInfoMap);
-               
+                
+                S_LOGGER.debug("Load method ANDROIDS type settingsInfoMap value " + settingsInfoMap);
+                S_LOGGER.debug("Performance test method ANDROIDS type settingsInfoMap value " + settingsInfoMap);
             } else {
             	actionType = ActionType.TEST;
                 if (Constants.SETTINGS_TEMPLATE_SERVER.equals(jmeterTestAgainst)) {
@@ -1052,27 +1064,25 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
                    schema = dbname.getValue();
                    uname = username.getValue();
 
-                   if(dbType.contains("mysql")){
-                    	dbUrl = "jdbc:mysql://" +hostValue +":" +portNo+"/"+schema;
-                    	driver = "com.mysql.jdbc.Driver";
-                    }
-                    if(dbType.contains("oracle")){
-                    	dbUrl = "jdbc:oracle:thin:@"+hostValue +":" +portNo+":"+schema;
-                    	driver = "oracle.jdbc.driver.OracleDriver";
-                    }
-                    if(dbType.contains("mssql")){
-                    	dbUrl = "jdbc:sqlserver://"+hostValue +":" +portNo+";databaseName="+schema;
-                    	driver = "com.microsoft.jdbc.sqlserver.SQLServerDriver";
-                    }
-                    if(dbType.contains("db2")){
-                    	dbUrl = "jdbc:db2://"+hostValue +":" +portNo+"/"+schema;
-                    	driver = "com.ibm.db2.jcc.DB2Driver";
-                    }
-                    
-                    
+                   if (dbType.contains("mysql")) {
+                	   dbUrl = "jdbc:mysql://" + hostValue + ":" + portNo + "/" + schema;
+                	   driver = "com.mysql.jdbc.Driver";
+                   }
+                   if (dbType.contains("oracle")) {
+                	   dbUrl = "jdbc:oracle:thin:@" + hostValue + ":" + portNo + ":" + schema;
+                	   driver = "oracle.jdbc.driver.OracleDriver";
+                   }
+                   if (dbType.contains("mssql")) {
+                	   dbUrl = "jdbc:sqlserver://" + hostValue + ":" + portNo + ";databaseName=" + schema;
+                	   driver = "com.microsoft.jdbc.sqlserver.SQLServerDriver";
+                   }
+                   if (dbType.contains("db2")) {
+                	   dbUrl = "jdbc:db2://" + hostValue + ":" + portNo + "/" + schema;
+                	   driver = "com.ibm.db2.jcc.DB2Driver";
+                   }
                 }
                 settingsInfoMap.put(TEST_PARAM, TEST_PARAM_VALUE);
-                   S_LOGGER.debug("Performance test method settingsInfoMap value " + settingsInfoMap);
+                S_LOGGER.debug("Performance test method settingsInfoMap value " + settingsInfoMap);
             }
 
             FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
@@ -1080,10 +1090,9 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
             builder.append(project.getProjectInfo().getCode());
             String performanceTestDir = frameworkUtil.getPerformanceTestDir(project.getProjectInfo().getTechnology().getId());
             
-               S_LOGGER.debug("Performance test directory path from framework util " + frameworkUtil.getPerformanceTestDir(project.getProjectInfo().getTechnology().getId()));
-               builder.append(performanceTestDir);
-               S_LOGGER.debug("Performance test directory path " + builder.toString());
-            
+            S_LOGGER.debug("Performance test directory path from framework util " + frameworkUtil.getPerformanceTestDir(project.getProjectInfo().getTechnology().getId()));
+            builder.append(performanceTestDir);
+            S_LOGGER.debug("Performance test directory path " + builder.toString());
             if (!TechnologyTypes.ANDROIDS.contains(project.getProjectInfo().getTechnology().getId())) {
             	if ("WebService".equals(jmeterTestAgainst)) {
             		jmeterTestAgainst = "webservices";
@@ -1091,10 +1100,12 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
 	            builder.append(jmeterTestAgainst.toLowerCase());
 	            QualityUtil.changeTestName(builder.toString(), testName);
 	            QualityUtil.adaptTestConfig(builder.toString(), selectedSettings);
-	            if (!Constants.SETTINGS_TEMPLATE_DB.equals(jmeterTestAgainst)) {
-	            QualityUtil.adaptPerformanceJmx(builder.toString(), name, context, contextType, contextPostData, encodingType, Integer.parseInt(noOfUsers), Integer.parseInt(rampUpPeriod), Integer.parseInt(loopCount));
+	            if (Constants.SETTINGS_TEMPLATE_DB.equals(jmeterTestAgainst)) {
+	            	QualityUtil.adaptDBPerformanceJmx(builder.toString(), dbPerName, Database, queryType, query, Integer.parseInt(noOfUsers), Integer.parseInt(rampUpPeriod), Integer.parseInt(loopCount), dbUrl, driver, uname, pwd);
+	            } else {
+	            	QualityUtil.adaptPerformanceJmx(builder.toString(), name, context, contextType, contextPostData, encodingType, Integer.parseInt(noOfUsers), Integer.parseInt(rampUpPeriod), Integer.parseInt(loopCount), headersMap);
 	            }
-	            QualityUtil.adaptDBPerformanceJmx(builder.toString(), dbPerName, Database, queryType, query, Integer.parseInt(noOfUsers), Integer.parseInt(rampUpPeriod), Integer.parseInt(loopCount), dbUrl, driver, uname, pwd);
+	            
 	            String filepath = builder.toString() + File.separator + testName + ".json";
 	            PerformanceDetails perform = new PerformanceDetails(jmeterTestAgainst, showSettings, setting, testName, name, context, contextType, contextPostData,  encodingType,dbPerName,queryType, query,Integer.parseInt(noOfUsers),Integer.parseInt(rampUpPeriod), Integer.parseInt(loopCount));
 	            Gson gson = new Gson();
@@ -1108,7 +1119,6 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
             getHttpSession().setAttribute(projectCode + PERFORMACE, reader);
             getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
             getHttpRequest().setAttribute(REQ_TEST_TYPE,PERFORMACE );
-
         } catch(Exception e) {
             if (e instanceof FileNotFoundException) {
                 getHttpRequest().setAttribute(REQ_ERROR_TESTSUITE, getText(ERROR_PERFORMANCE_TEST));
@@ -1129,51 +1139,61 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
             new LogErrorReport(e, "Quality Performance test");
         }
         getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
+        
         return APP_ENVIRONMENT_READER;
     }
 
     public String load() {
-        
-           S_LOGGER.debug("Entering Method Quality.load()");
+    	S_LOGGER.debug("Entering Method Quality.load()");
         
         getHttpRequest().setAttribute(REQ_TEST_TYPE_SELECTED, REQ_TEST_LOAD);
-        try{
+        try {
         	ActionType actionType = null;
             ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
             Project project = administrator.getProject(projectCode);
             List<SettingsInfo> serverSettings = null;
+            String requestHeaders = getHttpRequest().getParameter("requestHeaders");
+            //To add the request header to the jmx
+            Map<String, String> headersMap = new HashMap<String, String>(2);
+            if (StringUtils.isNotEmpty(requestHeaders)) {
+            	String[] headers = requestHeaders.split("#SEP#");
+            	if (!ArrayUtils.isEmpty(headers)) {
+            		for (String header : headers) {
+						String[] nameAndValue = header.split("#VSEP#");
+						headersMap.put(nameAndValue[0], nameAndValue[1]);
+					}
+            	}
+            }
+            
             Map<String, String> settingsInfoMap = new HashMap<String, String>(2);
             if (TechnologyTypes.ANDROIDS.contains(project.getProjectInfo().getTechnology().getId())) {
                 String device = getHttpRequest().getParameter(REQ_ANDROID_DEVICE);
                 settingsInfoMap.put(DEPLOY_ANDROID_DEVICE_MODE, device); //TODO: Need to be changed
                 settingsInfoMap.put(DEPLOY_ANDROID_EMULATOR_AVD, REQ_ANDROID_DEFAULT);
                 actionType = ActionType.MOBILE_COMMON_COMMAND;
-                
-                   S_LOGGER.debug("Load method ANDROIDS type settingsInfoMap value " + settingsInfoMap);
-                
+                S_LOGGER.debug("Load method ANDROIDS type settingsInfoMap value " + settingsInfoMap);
             } else {
             	actionType = ActionType.TEST;
-            	String environment = getHttpRequest().getParameter(REQ_ENVIRONMENTS);
-            	String type = getHttpRequest().getParameter("jmeterTestAgainst");
-                if(serverSettings == null) {
+            	String environment = getHttpRequest().getParameter(REQ_ENVIRONMENT);
+            	String type = getHttpRequest().getParameter(REQ_JMETER_TEST_AGAINST);
+                if (serverSettings == null) {
                     serverSettings = administrator.getSettingsInfos(type, projectCode, environment);
                 }
                 settingsInfoMap.put(TEST_PARAM, TEST_PARAM_VALUE);
-                   S_LOGGER.debug("Load method settingsInfoMap value " + settingsInfoMap);
+                S_LOGGER.debug("Load method settingsInfoMap value " + settingsInfoMap);
             }
 
             FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
             StringBuilder builder = new StringBuilder(Utility.getProjectHome());
             builder.append(project.getProjectInfo().getCode());
             String loadTestDirPath = frameworkUtil.getLoadTestDir(project.getProjectInfo().getTechnology().getId());
-               S_LOGGER.debug("Load test directory path " + loadTestDirPath + "Test Name " + testName);
-            
+            S_LOGGER.debug("Load test directory path " + loadTestDirPath + "Test Name " + testName);
             builder.append(loadTestDirPath);
             QualityUtil.changeTestName(builder.toString(), testName);
             for (SettingsInfo serverSetting : serverSettings) {
             	QualityUtil.adaptTestConfig(builder.toString(), serverSetting);
 			}
-            QualityUtil.adaptLoadJmx(builder.toString(), Integer.parseInt(noOfUsers), Integer.parseInt(rampUpPeriod), Integer.parseInt(loopCount));
+            QualityUtil.adaptLoadJmx(builder.toString(), Integer.parseInt(noOfUsers), Integer.parseInt(rampUpPeriod), Integer.parseInt(loopCount), headersMap);
             actionType.setWorkingDirectory(builder.toString());
             ProjectRuntimeManager runtimeManager = PhrescoFrameworkFactory.getProjectRuntimeManager();
             BufferedReader reader = runtimeManager.performAction(project, actionType, settingsInfoMap, null);
@@ -1181,22 +1201,20 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
             getHttpSession().setAttribute(projectCode + LOAD, reader);
             getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
             getHttpRequest().setAttribute(REQ_TEST_TYPE, LOAD);
-
         } catch(Exception e) {
             if (e instanceof FileNotFoundException) {
                 getHttpRequest().setAttribute(REQ_ERROR_TESTSUITE, getText(ERROR_LOAD_TEST));
             }
-               S_LOGGER.error("Entered into catch block of Quality.load()"+ e);
-            
+            S_LOGGER.error("Entered into catch block of Quality.load()"+ e);
             new LogErrorReport(e, "Quality Load test");
         }
         getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
+        
         return APP_ENVIRONMENT_READER;
     }
 
     public String loadTestResult() {
-        
-           S_LOGGER.debug("Entering Method Quality.loadTestResult()");
+    	S_LOGGER.debug("Entering Method Quality.loadTestResult()");
         
         try {
             String testResultFile = getHttpRequest().getParameter(REQ_TEST_RESULT_FILE);
@@ -1216,7 +1234,7 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
                 data.append(COMMA);
                 data.append(testResult.getTime());
                 data.append(SQUARE_CLOSE);
-                if(testResults.indexOf(testResult) < testResults.size() - 1) {
+                if (testResults.indexOf(testResult) < testResults.size() - 1) {
                     jSon.append(COMMA);
                     data.append(COMMA);
                 }
@@ -1234,26 +1252,20 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
             script.append(data.toString());
             script.append(GRAPH_SUMMARY_DATA);
             script.append(data.toString());
-            //script.append("var flagData = [[3, 'Login as u1']];");
             script.append("var flagData = '';");
             script.append(SCRIPT_END);
-            
-               S_LOGGER.debug("Test result java script constructed for load test" + script.toString());
-            
+            S_LOGGER.debug("Test result java script constructed for load test" + script.toString());
             getHttpSession().setAttribute(SESSION_GRAPH_SCRIPT, script.toString());
-
         } catch (Exception e) {
                S_LOGGER.error("Entered into catch block of Quality.loadTestResult()"+ e);
         }
-
         getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
+
         return "loadTestResult";
     }
 
-    @SuppressWarnings("static-access")
 	public String performanceTestResultFiles() {
-        
-           S_LOGGER.debug("Entering Method Quality.performanceTestResultFiles()");
+		S_LOGGER.debug("Entering Method Quality.performanceTestResultFiles()");
         
         try {
             ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
@@ -1263,23 +1275,18 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
             sb.append(Utility.getProjectHome());
             sb.append(project.getProjectInfo().getCode());
             String performanceReportDir = frameworkUtil.getPerformanceReportDir(project.getProjectInfo().getTechnology().getId());
-            
-               S_LOGGER.debug("test type performance test Report directory " + performanceReportDir);
-                       
+            S_LOGGER.debug("test type performance test Report directory " + performanceReportDir);
             if (StringUtils.isNotEmpty(performanceReportDir) && StringUtils.isNotEmpty(testResultsType)) {
                 Pattern p = Pattern.compile("dir_type");
                 Matcher matcher = p.matcher(performanceReportDir);
                 performanceReportDir = matcher.replaceAll(testResultsType);
                 sb.append(performanceReportDir);
             }
-            
-               S_LOGGER.debug("test type performance test Report directory & Type " + sb.toString() + " Type " + testResultsType);
-            
-            
+            S_LOGGER.debug("test type performance test Report directory & Type " + sb.toString() + " Type " + testResultsType);
             File file = new File(sb.toString());
             File[] children = file.listFiles(new XmlNameFileFilter(FILE_EXTENSION_XML));
             QualityUtil util = new QualityUtil();
-            if(children != null) {
+            if (children != null) {
             	util.sortResultFile(children);
                 getHttpRequest().setAttribute(REQ_JMETER_REPORT_FILES, children);
             } else {
@@ -1292,14 +1299,15 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
                 }
             }
         } catch(Exception e) {
-            
-               S_LOGGER.error("Entered into catch block of Quality.performanceTestResultFiles()"+ FrameworkUtil.getStackTraceAsString(e));
+        	S_LOGGER.error("Entered into catch block of Quality.performanceTestResultFiles()"+ FrameworkUtil.getStackTraceAsString(e));
         }
-        return "success";
+        
+        return SUCCESS;
     }
     
 	public String performanceTestResultAvail() {
-           S_LOGGER.debug("Entering Method Quality.performanceTestResultAvail()");
+		S_LOGGER.debug("Entering Method Quality.performanceTestResultAvail()");
+           
         try {
             ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
             Project project = administrator.getProject(projectCode);
@@ -1322,30 +1330,28 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
 	            }
 	            File file = new File(sb.toString());
 	            File[] children = file.listFiles(new XmlNameFileFilter(FILE_EXTENSION_XML));
-	            if(children != null && children.length > 0) {
+	            if (children != null && children.length > 0) {
 	            	isAtleastOneFileAvail = true;
 	            	break;
 	            }
             }
-            
         } catch(Exception e) {
                S_LOGGER.error("Entered into catch block of Quality.performanceTestResultAvail()"+ FrameworkUtil.getStackTraceAsString(e));
         }
-        return "success";
+        
+        return SUCCESS;
     }
 	
     public String performanceTestResult() {
-           S_LOGGER.debug("Entering Method Quality.performanceTestResult()");
+    	S_LOGGER.debug("Entering Method Quality.performanceTestResult()");
         
         try {
             String testResultFile = getHttpRequest().getParameter(REQ_TEST_RESULT_FILE);
             String showGraphFor = getHttpRequest().getParameter("showGraphFor");
             ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
             Project project = administrator.getProject(projectCode);
-//            String deviceId = getHttpRequest().getParameter("deviceId"); // android device id for display
             String techId = project.getProjectInfo().getTechnology().getId();
-               S_LOGGER.debug("Performance test file name " + testResultFile);
-            
+            S_LOGGER.debug("Performance test file name " + testResultFile);
             if (!testResultFile.equals("null")) {
             	String testResultPath = getTestResultPath(project, testResultFile);
                 Document document = getDocument(new File(testResultPath)); 
@@ -1393,111 +1399,121 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
                 getHttpRequest().setAttribute(FrameworkConstants.REQ_GRAPH_LABEL, label.toString());
                 getHttpRequest().setAttribute(FrameworkConstants.REQ_GRAPH_ALL_DATA, allMin +", "+ allAvg +", "+ allMax);
                 getHttpRequest().setAttribute(FrameworkConstants.REQ_SHOW_GRAPH, showGraphFor);
-                getHttpRequest().setAttribute(REQ_PROJECT, project);
+                getHttpRequest().setAttribute(REQ_PROJECT_INFO, project.getProjectInfo());
             } else {
                 getHttpRequest().setAttribute(REQ_ERROR_TESTSUITE, ERROR_TEST_SUITE);
             }
         } catch (Exception e) {
         	getHttpRequest().setAttribute(REQ_ERROR_DATA, ERROR_ANDROID_DATA);
-               S_LOGGER.error("Entered into catch block of Quality.performanceTestResult()"+ e);
+        	S_LOGGER.error("Entered into catch block of Quality.performanceTestResult()"+ e);
         }
-
         getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
+        
         return "performanceTestResult";
     }
 
     public String quality() {
-        getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
         try {
             ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
             Project project = administrator.getProject(projectCode);
-            getHttpRequest().setAttribute(REQ_PROJECT, project);
+            getHttpRequest().setAttribute(REQ_PROJECT_INFO, project.getProjectInfo());
         } catch (Exception e) {
                S_LOGGER.error("Entered into catch block of Quality.quality()"+ e);
             new LogErrorReport(e, "Quality");
         }
+        getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
+        
         return APP_QUALITY;
     }
 
     public String generateFunctionalTest() {
     	S_LOGGER.debug("Entering Method Quality.generateTest()");
         
-    	List<Environment> environments = null;
         try {
             ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
             Project project = administrator.getProject(projectCode);
             String technology = project.getProjectInfo().getTechnology().getId();
-            getHttpRequest().setAttribute(REQ_PROJECT, project);
+            getHttpRequest().setAttribute(REQ_PROJECT_INFO, project.getProjectInfo());
             List<BuildInfo> buildInfos = administrator.getBuildInfos(project);
-            environments = administrator.getEnvironments(project);
+            List<Environment> environments = administrator.getEnvironments(project);
 
-            String osType = getOsName();
-            if (WINDOWS.equals(osType)) {
-                Map<String, String> windowsBrowsersMap = new HashMap<String, String>();
-                if (TechnologyTypes.PHP.equals(technology) || TechnologyTypes.PHP_DRUPAL6.equals(technology) || TechnologyTypes.PHP_DRUPAL7.equals(technology) || TechnologyTypes.WORDPRESS.equals(technology)) {
-                	windowsBrowsersMap.put(WIN_BROWSER_FIREFOX_KEY, BROWSER_FIREFOX_VALUE);
-                	windowsBrowsersMap.put(WIN_BROWSER_OPERA_KEY, BROWSER_OPERA_VALUE);
-                    windowsBrowsersMap.put(WIN_BROWSER_WEB_DRIVER_INTERNET_EXPLORER_KEY, BROWSER_INTERNET_EXPLORER_VALUE);
-                } else if (!TechnologyTypes.SHAREPOINT.equals(technology) && !TechnologyTypes.DOT_NET.equals(technology)) {
-                    windowsBrowsersMap.put(WIN_BROWSER_FIREFOX_KEY, BROWSER_FIREFOX_VALUE);
-                    windowsBrowsersMap.put(WIN_BROWSER_CHROME_KEY, BROWSER_CHROME_VALUE);
-                    windowsBrowsersMap.put(WIN_BROWSER_OPERA_KEY, BROWSER_OPERA_VALUE);
-                    windowsBrowsersMap.put(WIN_BROWSER_INTERNET_EXPLORER_KEY, BROWSER_INTERNET_EXPLORER_VALUE);
-                   /* windowsBrowsersMap.put(WIN_BROWSER_SAFARI_KEY, BROWSER_SAFARI);*/
-                } else { 
-                	windowsBrowsersMap.put(WIN_BROWSER_OPERA_KEY, BROWSER_OPERA_VALUE);
-                    windowsBrowsersMap.put(WIN_BROWSER_INTERNET_EXPLORER_KEY, BROWSER_INTERNET_EXPLORER_VALUE);   
-                }
-                S_LOGGER.debug("Windows machine browsers list " + windowsBrowsersMap);
-                getHttpRequest().setAttribute(REQ_TEST_BROWSERS, windowsBrowsersMap);
-            }
-
-            if (MAC.equals(osType)) {
-                Map<String, String> macBrowsersMap = new HashMap<String, String>();
-                if (TechnologyTypes.PHP.equals(technology) || TechnologyTypes.PHP_DRUPAL6.equals(technology) || TechnologyTypes.PHP_DRUPAL7.equals(technology) || TechnologyTypes.WORDPRESS.equals(technology)) {
-                	macBrowsersMap.put(MAC_BROWSER_FIREFOX_KEY, BROWSER_FIREFOX_VALUE);
-                	macBrowsersMap.put(MAC_BROWSER_OPERA_KEY, BROWSER_OPERA_VALUE);
-                } else if (!TechnologyTypes.SHAREPOINT.equals(technology) && !TechnologyTypes.DOT_NET.equals(technology)) {
-                    macBrowsersMap.put(MAC_BROWSER_FIREFOX_KEY, BROWSER_FIREFOX_VALUE);
-                    macBrowsersMap.put(MAC_BROWSER_CHROME_KEY, BROWSER_CHROME_VALUE);
-                    macBrowsersMap.put(MAC_BROWSER_OPERA_KEY, BROWSER_OPERA_VALUE);
-                   /* macBrowsersMap.put(MAC_BROWSER_SAFARI_KEY, BROWSER_SAFARI);*/
-                } else {
-                    macBrowsersMap.put(WIN_BROWSER_INTERNET_EXPLORER_KEY, BROWSER_INTERNET_EXPLORER_VALUE);
-                }
-                S_LOGGER.debug("Mac machine browsers list " + macBrowsersMap);
-                getHttpRequest().setAttribute(REQ_TEST_BROWSERS, macBrowsersMap);
-            }
-
-            if (LINUX.equals(osType)) {
-                Map<String, String> linuxBrowsersMap = new HashMap<String, String>();
-                if (TechnologyTypes.PHP.equals(technology) || TechnologyTypes.PHP_DRUPAL6.equals(technology) || TechnologyTypes.PHP_DRUPAL7.equals(technology) || TechnologyTypes.WORDPRESS.equals(technology)) {
-                	linuxBrowsersMap.put(LINUX_BROWSER_FIREFOX_KEY, BROWSER_FIREFOX_VALUE);
-                	linuxBrowsersMap.put(LINUX_BROWSER_OPERA_KEY, BROWSER_OPERA_VALUE);
-                } else if (!TechnologyTypes.SHAREPOINT.equals(technology) && !TechnologyTypes.DOT_NET.equals(technology)) {
-                    linuxBrowsersMap.put(LINUX_BROWSER_FIREFOX_KEY, BROWSER_FIREFOX_VALUE);
-                    linuxBrowsersMap.put(LINUX_BROWSER_CHROME_KEY,BROWSER_CHROME_VALUE);
-                    linuxBrowsersMap.put(WIN_BROWSER_OPERA_KEY, BROWSER_OPERA_VALUE);
-                    /*linuxBrowsersMap.put(LINUX_BROWSER_SAFARI_KEY, BROWSER_SAFARI);*/
-                } else {
-                    linuxBrowsersMap.put(WIN_BROWSER_INTERNET_EXPLORER_KEY, BROWSER_INTERNET_EXPLORER_VALUE);
-                }
-                
-                S_LOGGER.debug("Linux machine browsers list " + linuxBrowsersMap);
-                getHttpRequest().setAttribute(REQ_TEST_BROWSERS, linuxBrowsersMap);
-            }
+            getFunctionalTestBrowsers(technology);
 
             getHttpRequest().setAttribute(REQ_TEST_BUILD_INFOS, buildInfos);
+            List<String> projectModules = getProjectModules(projectCode);
+            getHttpRequest().setAttribute(REQ_PROJECT_MODULES, projectModules);
+            getHttpRequest().setAttribute(REQ_ENVIRONMENTS, environments);
+            getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
         } catch (Exception e) {
         	S_LOGGER.error("Entered into catch block of Quality.generateTest()"+ e);
         }
         
-        List<String> projectModules = getProjectModules(projectCode);
-        getHttpRequest().setAttribute(REQ_PROJECT_MODULES, projectModules);
-        getHttpRequest().setAttribute(REQ_ENVIRONMENTS, environments);
-        getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
         return APP_GENERATE_TEST;
     }
+
+	public void getFunctionalTestBrowsers(String technology) {
+		String osType = getOsName();
+		if (WINDOWS.equals(osType)) {
+		    Map<String, String> windowsBrowsersMap = new HashMap<String, String>();
+		    if (TechnologyTypes.PHP.equals(technology) || TechnologyTypes.PHP_DRUPAL6.equals(technology) || TechnologyTypes.PHP_DRUPAL7.equals(technology) || TechnologyTypes.WORDPRESS.equals(technology)) {
+		    	windowsBrowsersMap.put(WIN_BROWSER_FIREFOX_KEY, BROWSER_FIREFOX_VALUE);
+		    	windowsBrowsersMap.put(WIN_BROWSER_OPERA_KEY, BROWSER_OPERA_VALUE);
+		        windowsBrowsersMap.put(WIN_BROWSER_WEB_DRIVER_INTERNET_EXPLORER_KEY, BROWSER_INTERNET_EXPLORER_VALUE);
+		        windowsBrowsersMap.put(WIN_BROWSER_SAFARI_KEY, BROWSER_SAFARI_VALUE);
+		    } else if (!TechnologyTypes.SHAREPOINT.equals(technology) && !TechnologyTypes.DOT_NET.equals(technology)) {
+		        windowsBrowsersMap.put(WIN_BROWSER_FIREFOX_KEY, BROWSER_FIREFOX_VALUE);
+		        windowsBrowsersMap.put(WIN_BROWSER_CHROME_KEY, BROWSER_CHROME_VALUE);
+		        windowsBrowsersMap.put(WIN_BROWSER_OPERA_KEY, BROWSER_OPERA_VALUE);
+		        windowsBrowsersMap.put(WIN_BROWSER_INTERNET_EXPLORER_KEY, BROWSER_INTERNET_EXPLORER_VALUE);
+		        windowsBrowsersMap.put(WIN_BROWSER_SAFARI_KEY, BROWSER_SAFARI_VALUE);
+		    } else {
+		    	windowsBrowsersMap.put(WIN_BROWSER_OPERA_KEY, BROWSER_OPERA_VALUE);
+		        windowsBrowsersMap.put(WIN_BROWSER_INTERNET_EXPLORER_KEY, BROWSER_INTERNET_EXPLORER_VALUE);
+		        windowsBrowsersMap.put(WIN_BROWSER_SAFARI_KEY, BROWSER_SAFARI_VALUE);
+		    }
+		    S_LOGGER.debug("Windows machine browsers list " + windowsBrowsersMap);
+		    getHttpRequest().setAttribute(REQ_TEST_BROWSERS, windowsBrowsersMap);
+		}
+
+		if (MAC.equals(osType)) {
+		    Map<String, String> macBrowsersMap = new HashMap<String, String>();
+		    if (TechnologyTypes.PHP.equals(technology) || TechnologyTypes.PHP_DRUPAL6.equals(technology) || TechnologyTypes.PHP_DRUPAL7.equals(technology) || TechnologyTypes.WORDPRESS.equals(technology)) {
+		    	macBrowsersMap.put(MAC_BROWSER_FIREFOX_KEY, BROWSER_FIREFOX_VALUE);
+		    	macBrowsersMap.put(MAC_BROWSER_OPERA_KEY, BROWSER_OPERA_VALUE);
+		    	macBrowsersMap.put(MAC_BROWSER_SAFARI_KEY, BROWSER_SAFARI_VALUE);
+		    } else if (!TechnologyTypes.SHAREPOINT.equals(technology) && !TechnologyTypes.DOT_NET.equals(technology)) {
+		        macBrowsersMap.put(MAC_BROWSER_FIREFOX_KEY, BROWSER_FIREFOX_VALUE);
+		        macBrowsersMap.put(MAC_BROWSER_CHROME_KEY, BROWSER_CHROME_VALUE);
+		        macBrowsersMap.put(MAC_BROWSER_OPERA_KEY, BROWSER_OPERA_VALUE);
+		        macBrowsersMap.put(MAC_BROWSER_SAFARI_KEY, BROWSER_SAFARI_VALUE);
+		    } else {
+		        macBrowsersMap.put(WIN_BROWSER_INTERNET_EXPLORER_KEY, BROWSER_INTERNET_EXPLORER_VALUE);
+		        macBrowsersMap.put(MAC_BROWSER_SAFARI_KEY, BROWSER_SAFARI_VALUE);
+		    }
+		    S_LOGGER.debug("Mac machine browsers list " + macBrowsersMap);
+		    getHttpRequest().setAttribute(REQ_TEST_BROWSERS, macBrowsersMap);
+		}
+
+		if (LINUX.equals(osType)) {
+		    Map<String, String> linuxBrowsersMap = new HashMap<String, String>();
+		    if (TechnologyTypes.PHP.equals(technology) || TechnologyTypes.PHP_DRUPAL6.equals(technology) || TechnologyTypes.PHP_DRUPAL7.equals(technology) || TechnologyTypes.WORDPRESS.equals(technology)) {
+		    	linuxBrowsersMap.put(LINUX_BROWSER_FIREFOX_KEY, BROWSER_FIREFOX_VALUE);
+		    	linuxBrowsersMap.put(LINUX_BROWSER_OPERA_KEY, BROWSER_OPERA_VALUE);
+		    	linuxBrowsersMap.put(LINUX_BROWSER_SAFARI_KEY, BROWSER_SAFARI_VALUE);
+		    } else if (!TechnologyTypes.SHAREPOINT.equals(technology) && !TechnologyTypes.DOT_NET.equals(technology)) {
+		        linuxBrowsersMap.put(LINUX_BROWSER_FIREFOX_KEY, BROWSER_FIREFOX_VALUE);
+		        linuxBrowsersMap.put(LINUX_BROWSER_CHROME_KEY,BROWSER_CHROME_VALUE);
+		        linuxBrowsersMap.put(WIN_BROWSER_OPERA_KEY, BROWSER_OPERA_VALUE);
+		        linuxBrowsersMap.put(LINUX_BROWSER_SAFARI_KEY, BROWSER_SAFARI_VALUE);
+		    } else {
+		        linuxBrowsersMap.put(WIN_BROWSER_INTERNET_EXPLORER_KEY, BROWSER_INTERNET_EXPLORER_VALUE);
+		        linuxBrowsersMap.put(LINUX_BROWSER_SAFARI_KEY, BROWSER_SAFARI_VALUE);
+		    }
+		    
+		    S_LOGGER.debug("Linux machine browsers list " + linuxBrowsersMap);
+		    getHttpRequest().setAttribute(REQ_TEST_BROWSERS, linuxBrowsersMap);
+		}
+	}
     
     public String generateUnitTest() {
     	S_LOGGER.debug("Entering Method Quality.generateUnitTest()");
@@ -1505,13 +1521,14 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
         try {
             ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
             Project project = administrator.getProject(projectCode);
-            getHttpRequest().setAttribute(REQ_PROJECT, project);
+            getHttpRequest().setAttribute(REQ_PROJECT_INFO, project.getProjectInfo());
             List<String> projectModules = getProjectModules();
             getHttpRequest().setAttribute(REQ_PROJECT_MODULES, projectModules);
             getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
         } catch (Exception e) {
         	S_LOGGER.error("Entered into catch block of Quality.generateTest()"+ e);
         }
+        
         return APP_GENERATE_UNIT_TEST;
     }
     
@@ -1534,6 +1551,7 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
     	} catch (PhrescoPomException e) {
     		e.printStackTrace();
     	}
+    	
     	return null;
     }
 
@@ -1558,12 +1576,11 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
 
     public String testReport() {
     	S_LOGGER.debug("Entering Method Quality.testReport()");
+    	
     	try {
     		String testSuitesMapKey = projectCode + testType + projectModule + techReport;
         	Map<String, NodeList> testResultNameMap = testSuiteMap.get(testSuitesMapKey);
-//            NodeList testSuites = testResultNameMap.get(testResultFile); //testSuite
             NodeList testSuites = testResultNameMap.get(testSuite);
-    		
     		if (ALL_TEST_SUITES.equals(testSuite)) {
     			Map<String, String> testSuitesResultMap = new HashMap<String, String>();
     			float totalTestSuites = 0;
@@ -1579,7 +1596,7 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
     		    			for (TestSuite tstSuite : allTestSuites) {
     		    				//testsuite values are set before calling getTestCases value
     							testSuite = tstSuite.getName();
-    				            List<TestCase> testCases = getTestCases(allTestResultNodeList);
+    				            getTestCases(allTestResultNodeList);
     				            float tests = 0;
     				            float failures = 0;
     				            float errors = 0;
@@ -1623,6 +1640,7 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
 				}
     			getHttpRequest().setAttribute(REQ_ALL_TESTSUITE_MAP, testSuitesResultMap);
 				getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
+				
     			return APP_ALL_TEST_REPORT; 
     		} else {
 	            if (testSuites.getLength() > 0 ) {
@@ -1637,34 +1655,29 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
         } catch (Exception e) {
         	S_LOGGER.error("Entered into catch block of Quality.testSuite()"+ e);
         }
-
         getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
-		return APP_TEST_REPORT; //APP_QUALITY_TESTSUITE;
+
+        return APP_TEST_REPORT;
     }
     
     public String testAndroid(){
-        HttpServletRequest request = getHttpRequest();
-        String testType = request.getParameter("testType");
-        request.setAttribute(REQ_FROM_TAB, REQ_FROM_TAB_TEST);
-        request.setAttribute("testType", testType);
+        getHttpRequest().setAttribute(REQ_FROM_TAB, REQ_FROM_TAB_TEST);
+        getHttpRequest().setAttribute(REQ_TEST_TYPE, testType);
+        
         return APP_TEST_ANDROID;
     }
 
     public String generateJmeter() {
-           S_LOGGER.debug("Entering Method Quality.generateJmeter()");
+    	S_LOGGER.debug("Entering Method Quality.generateJmeter()");
 
-        String technology = null;
         try {
             ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
             Project project = administrator.getProject(projectCode);
-            technology = project.getProjectInfo().getTechnology().getId();
+            String technology = project.getProjectInfo().getTechnology().getId();
             List<Environment> environments = administrator.getEnvironments(project);
-			
             getHttpRequest().setAttribute(REQ_ENVIRONMENTS, environments);
 	        getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
-	        getHttpRequest().setAttribute("jmeterTestAgainst", jmeterTestAgainst);
 	        getHttpRequest().setAttribute(REQ_TEST_TYPE_SELECTED, testType);
-	        getHttpRequest().setAttribute("technology", technology);
 	        if (TechnologyTypes.ANDROIDS.contains(technology) && testType.equals(REQ_TEST_PERFORMANCE)) {
 	        	QualityUtil util = new QualityUtil();
 	        	try {
@@ -1678,45 +1691,50 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
         } catch (PhrescoException e) {
                S_LOGGER.error("Entered into catch block of Quality.generateJmeter()"+ e);
         }
+        
         return testType;
     }
     
     public String fetchPerfTestJSONData() {
-		 if (debugEnabled) {
-		       S_LOGGER.debug("Entering Method Quality.fetchPerfTestJSONData()");
-		 }
-		 Reader read = null;
-		 try {
-			 ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-	         Project project = administrator.getProject(projectCode);
-	         FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-	         StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-	         builder.append(project.getProjectInfo().getCode());
-	         String performanceTestDir = frameworkUtil.getPerformanceTestDir(project.getProjectInfo().getTechnology().getId());
-			 builder.append(performanceTestDir);
-			 if(WEBSERVICE.equals(jmeterTestAgainst)) {
-				 builder.append(WEBSERVICES_DIR);
-			 } else {
-				 builder.append(jmeterTestAgainst);
-			 }
-			 builder.append(File.separator);
-			 builder.append(testName);
-			 builder.append(".json");
-			 Gson gson = new Gson();
-		     read = new InputStreamReader(new FileInputStream(builder.toString()));
-		     performanceDetails = gson.fromJson(read, PerformanceDetails.class);
-		 } catch(Exception e){
-			 S_LOGGER.error("Entered into catch block of Quality.fetchPerfTestJSONData()"+ e);
-		 } finally {
-			 if (read != null) {
-				 try {
+    	if (debugEnabled) {
+    		S_LOGGER.debug("Entering Method Quality.fetchPerfTestJSONData()");
+    	}
+		 
+    	Reader read = null;
+    	try {
+    		String selectedTestName = getHttpRequest().getParameter(REQ_SELECTED_TEST_NAME);
+    		ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
+    		Project project = administrator.getProject(projectCode);
+    		FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+    		StringBuilder builder = new StringBuilder(Utility.getProjectHome());
+    		builder.append(project.getProjectInfo().getCode());
+    		String performanceTestDir = frameworkUtil.getPerformanceTestDir(project.getProjectInfo().getTechnology().getId());
+    		builder.append(performanceTestDir);
+    		if (WEBSERVICE.equals(jmeterTestAgainst)) {
+    			builder.append(WEBSERVICES_DIR);
+    		} else {
+    			builder.append(jmeterTestAgainst);
+    		}
+    		builder.append(File.separator);
+    		builder.append(selectedTestName);
+    		builder.append(".json");
+    		Gson gson = new Gson();
+    		read = new InputStreamReader(new FileInputStream(builder.toString()));
+    		performanceDetails = gson.fromJson(read, PerformanceDetails.class);
+    	} catch(Exception e) {
+    		e.printStackTrace();
+    		S_LOGGER.error("Entered into catch block of Quality.fetchPerfTestJSONData()"+ e);
+    	} finally {
+    		if (read != null) {
+    			try {
 					read.close();
 				} catch (IOException e) {
 					S_LOGGER.error("Entered into catch block of Quality.fetchPerfTestJSONData() finally"+ e);
 				}
-			 }
-		 }
-	 	 return SUCCESS;
+    		}
+    	}
+
+    	return SUCCESS;
     }
     
     public class XmlNameFileFilter implements FilenameFilter {
@@ -1742,22 +1760,22 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
             return name.endsWith(filter_) && name.startsWith(startWith_);
         }
     }
-    
-    public String getSettingCaption() {
-           S_LOGGER.debug("Entering Method Quality.getSettingCaption()");
-        try {
 
+    public String getSettingCaption() {
+    	S_LOGGER.debug("Entering Method Quality.getSettingCaption()");
+        
+    	try {
             ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
             Project project = administrator.getProject(projectCode);
             String envs = getHttpRequest().getParameter(REQ_ENVIRONMENTS);
-            getHttpRequest().setAttribute(REQ_PROJECT, project); 
+            getHttpRequest().setAttribute(REQ_PROJECT_INFO, project.getProjectInfo()); 
             SettingsInfo Settings = null;
             List<PropertyInfo> propertyInfos = null;
             String protocol = "";
             String host = "";
             String port = "";
             String context = "";
-            if(StringUtils.isNotEmpty(settingType) && StringUtils.isNotEmpty(settingName)) {
+            if (StringUtils.isNotEmpty(settingType) && StringUtils.isNotEmpty(settingName)) {
 	            if (settingType.equals("server")) {
 	            	Settings = administrator.getSettingsInfo(settingName, Constants.SETTINGS_TEMPLATE_SERVER, projectCode, envs);
 	                propertyInfos = Settings.getPropertyInfos();
@@ -1799,7 +1817,6 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
 	            	propertyInfos = Settings.getPropertyInfos();
 	            	for (PropertyInfo propertyInfo : propertyInfos) { 
 	            		if (propertyInfo.getKey().equals(Constants.DB_PROTOCOL)) {
-	            			//protocol =propertyInfo.getValue();
 	            			protocol = Constants.DB_PROTOCOL;
 	            		}
 	            		if (propertyInfo.getKey().equals(Constants.DB_HOST)) {
@@ -1813,7 +1830,6 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
 	            		}
 	            	}
 	            }
-	            
             }
 
             if (StringUtils.isNotEmpty(port)) {
@@ -1826,16 +1842,17 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
             caption = protocol + "://" + host + port + "" + context + "/";
             
         } catch (Exception e) {
-               S_LOGGER.error("Entered into catch block of Quality.getSettingCaption()"+ FrameworkUtil.getStackTraceAsString(e));
+        	S_LOGGER.error("Entered into catch block of Quality.getSettingCaption()"+ FrameworkUtil.getStackTraceAsString(e));
         }
+        
         return SUCCESS;
     }
    
 	public String tstResultFiles() {
-           S_LOGGER.debug("Entering Method Quality.perTstResultFiles()");
+		S_LOGGER.debug("Entering Method Quality.perTstResultFiles()");
         
         try {
-        	String testDirPath = null;
+        	String testDirPath = "";
         	testResultFiles =  new ArrayList<String>();
             ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
             Project project = administrator.getProject(projectCode);
@@ -1843,18 +1860,18 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
             StringBuilder sb = new StringBuilder();
             sb.append(Utility.getProjectHome());
             sb.append(project.getProjectInfo().getCode());
-            if(StringUtils.isEmpty(settingType)) {
+            if (StringUtils.isEmpty(jmeterTestAgainst)) {
             	testDirPath = frameworkUtil.getLoadReportDir(project.getProjectInfo().getTechnology().getId());
             	sb.append(testDirPath);
             } else {
                 testDirPath = frameworkUtil.getPerformanceReportDir(project.getProjectInfo().getTechnology().getId());
-                if (StringUtils.isNotEmpty(testDirPath) && StringUtils.isNotEmpty(settingType)) {
+                if (StringUtils.isNotEmpty(testDirPath) && StringUtils.isNotEmpty(jmeterTestAgainst)) {
                     Pattern p = Pattern.compile("dir_type");
                     Matcher matcher = p.matcher(testDirPath);
-                    if(WEBSERVICE.equals(settingType)) {
+                    if (WEBSERVICE.equals(jmeterTestAgainst)) {
                     	testDirPath = matcher.replaceAll(WEBSERVICES_DIR);
                     } else {
-                    	testDirPath = matcher.replaceAll(settingType);
+                    	testDirPath = matcher.replaceAll(jmeterTestAgainst);
                     }
                     sb.append(testDirPath);
                 }
@@ -1862,23 +1879,23 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
 
             File file = new File(sb.toString());
             File[] children = file.listFiles(new XmlNameFileFilter(FILE_EXTENSION_XML));
-            if(children != null && children.length > 0) {
+            if (children != null && children.length > 0) {
                 for (File resultFile : children) {
                     if (resultFile.isFile()) {
                         testResultFiles.add(resultFile.getName());
                     }
                 }
-
             }
-            
         } catch(Exception e) {
-               S_LOGGER.error("Entered into catch block of Quality.perTstResultFiles"+ FrameworkUtil.getStackTraceAsString(e));
+        	S_LOGGER.error("Entered into catch block of Quality.perTstResultFiles"+ FrameworkUtil.getStackTraceAsString(e));
         }
-        return "success";
+        
+        return SUCCESS;
     }
 	
 	public String devices() {
 		S_LOGGER.debug("Entering Method Quality.devices()");
+		
         try {
             ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
             Project project = administrator.getProject(projectCode);
@@ -1891,23 +1908,24 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
         } catch(Exception e) {
         	S_LOGGER.error("Entered into catch block of Quality.devices()"+ FrameworkUtil.getStackTraceAsString(e));
         }
+        
         return SUCCESS;
 	}
 	
     public String testIphone() {
            S_LOGGER.debug("Entering Method Quality.testIPhone()");
+           
         try {
             ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
             Project project = administrator.getProject(projectCode);
-            String testType = getHttpRequest().getParameter(REQ_TEST_TYPE);
-            getHttpRequest().setAttribute(REQ_PROJECT, project);
+            getHttpRequest().setAttribute(REQ_PROJECT_INFO, project.getProjectInfo());
             getHttpRequest().setAttribute(REQ_FROM_TAB, REQ_FROM_TAB_TEST); // test
             getHttpRequest().setAttribute(REQ_TEST_TYPE, testType);
-            if(FUNCTIONAL.equals(testType)) {
+            if (FUNCTIONAL.equals(testType)) {
                 List<BuildInfo> buildInfos = administrator.getBuildInfos(project);
                 getHttpRequest().setAttribute(REQ_TEST_BUILD_INFOS, buildInfos);
             }
-            if(UNIT.equals(testType)) {
+            if (UNIT.equals(testType)) {
 				// Get xcode targets
 				List<PBXNativeTarget> xcodeConfigs = ApplicationsUtil.getXcodeConfiguration(projectCode);
 				getHttpRequest().setAttribute(REQ_XCODE_CONFIGS, xcodeConfigs);
@@ -1920,6 +1938,7 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
         } catch (Exception e) {
                S_LOGGER.error("Entered into catch block of Quality.testIPhone()"+ e);
         }
+        
         return SUCCESS;
     }
     
@@ -1937,23 +1956,26 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
     	} catch(Exception e) {
     		throw new PhrescoException(e);
     	}
+    	
     	return SUCCESS;
     }
     
-    public String fetchBuildInfoEnvs() {
+    public String fetchBuildInfoEnvs() throws PhrescoException {
     	try {
 	    	ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
 	    	Project project = administrator.getProject(projectCode);
 	    	String buildNumber = getHttpRequest().getParameter(REQ_TEST_BUILD_ID);
 	    	buildInfoEnvs = administrator.getBuildInfo(project, Integer.parseInt(buildNumber)).getEnvironments();
     	} catch (PhrescoException e) {
-			// TODO: handle exception
+			throw new PhrescoException();
 		}
+    	
     	return SUCCESS;
     }
     
     public String printAsPdfPopup () {
         S_LOGGER.debug("Entering Method Quality.printAsPdfPopup()");
+        
         try {
         	boolean XmlResultsAvailable = false;
         	ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
@@ -1963,34 +1985,34 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
             sb.append(Utility.getProjectHome());
             sb.append(project.getProjectInfo().getCode());
             String technology = project.getProjectInfo().getTechnology().getId();
-          //check unit and functional are executed already or not
-            if(!XmlResultsAvailable) {
+            //check unit and functional are executed already or not
+            if (!XmlResultsAvailable) {
 	            File file = new File(sb.toString() + frameworkUtil.getUnitReportDir(technology));
 	            File[] children = file.listFiles(new XmlNameFileFilter(FILE_EXTENSION_XML));
-	            if(children != null) {
+	            if (children != null) {
 	            	XmlResultsAvailable = true;
 	            }
             }
             
-            if(!XmlResultsAvailable) {
+            if (!XmlResultsAvailable) {
 	            File file = new File(sb.toString() + frameworkUtil.getFunctionalReportDir(technology));
 	            File[] children = file.listFiles(new XmlNameFileFilter(FILE_EXTENSION_XML));
-	            if(children != null) {
+	            if (children != null) {
 	            	XmlResultsAvailable = true;
 	            }
             }
             
-            if(!XmlResultsAvailable) {
+            if (!XmlResultsAvailable) {
 	            performanceTestResultAvail();
-	        	if(isAtleastOneFileAvail()) {
+	        	if (isAtleastOneFileAvail()) {
 	        		XmlResultsAvailable = true;
 	        	}
             }
             
-            if(!XmlResultsAvailable) {
+            if (!XmlResultsAvailable) {
 	            File file = new File(sb.toString() + frameworkUtil.getLoadReportDir(technology));
 	            File[] children = file.listFiles(new XmlNameFileFilter(FILE_EXTENSION_XML));
-	            if(children != null) {
+	            if (children != null) {
 	            	XmlResultsAvailable = true;
 	            }
             }
@@ -2008,10 +2030,10 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
         		fileFilterName = testType;
         	}
             File pdfFileDir = new File(pdfDirLoc);
-            if(pdfFileDir.isDirectory()) {
+            if (pdfFileDir.isDirectory()) {
                 File[] children = pdfFileDir.listFiles(new FileNameFileFilter(DOT + PDF, fileFilterName));
                 QualityUtil util = new QualityUtil();
-                if(children != null) {
+                if (children != null) {
                 	util.sortResultFile(children);
                 }
             	for (File child : children) {
@@ -2021,7 +2043,7 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
     			}
             }
             
-            if(pdfFiles != null) {
+            if (pdfFiles != null) {
                 getHttpRequest().setAttribute(REQ_PDF_REPORT_FILES, pdfFiles);
             }
         } catch (Exception e) {
@@ -2029,11 +2051,13 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
         }
         getHttpRequest().setAttribute(REQ_TEST_TYPE, testType);
         getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
+        
         return SUCCESS;
     }
     
     public String printAsPdf () {
         S_LOGGER.debug("Entering Method Quality.printAsPdf()");
+        
         try {
             ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
             Project project = administrator.getProject(projectCode);
@@ -2044,11 +2068,13 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
         	getHttpRequest().setAttribute(REQ_REPORT_STATUS, getText(ERROR_REPORT_STATUS));
             S_LOGGER.error("Entered into catch block of Quality.printAsPdf()"+ e);
         }
+        
         return printAsPdfPopup();
     }
-    
+
     public void reportGeneration(Project project, String testType) {
     	S_LOGGER.debug("Entering Method Quality.reportGeneration()");
+    	
     	try {
     		PhrescoReportGeneration prg = new PhrescoReportGeneration();
             if (StringUtils.isEmpty(testType)) { 
@@ -2059,11 +2085,11 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
 		} catch (Exception e) {
 			S_LOGGER.error("Entered into catch block of Quality.reportGeneration()" + e);
 		}
-
     }
     
     public String downloadReport() {
         S_LOGGER.debug("Entering Method Quality.downloadReport()");
+        
         try {
         	String testType = getHttpRequest().getParameter(REQ_TEST_TYPE);
         	String pdfLOC = "";
@@ -2080,11 +2106,13 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
         } catch (Exception e) {
             S_LOGGER.error("Entered into catch block of Quality.downloadReport()" + e);
         }
+        
         return SUCCESS;
     }
     
     public String deleteReport() {
         S_LOGGER.debug("Entering Method Quality.deleteReport()");
+        
         try {
         	String testType = getHttpRequest().getParameter(REQ_TEST_TYPE);
         	String pdfLOC = "";
@@ -2097,7 +2125,7 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
             if (pdfFile.isFile()) {
             	boolean reportDeleted = pdfFile.delete();
             	S_LOGGER.info("Report deleted " + reportDeleted);
-            	if(reportDeleted) {
+            	if (reportDeleted) {
             		getHttpRequest().setAttribute(REQ_REPORT_DELETE_STATUS, getText(SUCCESS_REPORT_DELETE_STATUS));
             	} else {
             		getHttpRequest().setAttribute(REQ_REPORT_DELETE_STATUS, getText(ERROR_REPORT_DELETE_STATUS));
@@ -2477,6 +2505,7 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
 	public void setTestSuiteNames(List<String> testSuiteNames) {
 		this.testSuiteNames = testSuiteNames;
 	}
+	
 	public String getShowDebug() {
 		return showDebug;
 	}
