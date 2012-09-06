@@ -20,19 +20,19 @@
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.io.File"%>
-<%@ page import="com.photon.phresco.framework.api.Project"%>
+
+<%@ page import="com.photon.phresco.model.ProjectInfo"%>
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.util.TechnologyTypes" %>
 
 <%@include file="../progress.jsp" %>
 
-<% 
-	Project project = (Project) request.getAttribute(FrameworkConstants.REQ_PROJECT);
-	String projectCode = (String) request.getAttribute(FrameworkConstants. REQ_PROJECT_CODE); 
+<%
+	ProjectInfo projectInfo = (ProjectInfo) request.getAttribute(FrameworkConstants.REQ_PROJECT_INFO);
+	String projectCode = projectInfo.getCode();
+	String techId = projectInfo.getTechnology().getId();
    	String testType = (String) request.getAttribute(FrameworkConstants.REQ_TEST_TYPE);
-   	String testError = (String) request.getAttribute(FrameworkConstants.REQ_ERROR_TESTSUITE);
 	String path = (String) request.getAttribute(FrameworkConstants.PATH);
-	String techId = project.getProjectInfo().getTechnology().getId();
 %>
 
 <style>
@@ -52,17 +52,13 @@
 }
 </style>
 	
-<form action="" method="post" autocomplete="off" style="margin-bottom: 0px; height: 100%;">
+<form autocomplete="off" id="formPerformance" style="margin-bottom: 0px; height: 100%;">
 	<div class="operation">
-        <%
-        	if ((Boolean)request.getAttribute(FrameworkConstants.REQ_BUILD_WARNING)) {
-        %>
+        <% if ((Boolean)request.getAttribute(FrameworkConstants.REQ_BUILD_WARNING)) { %>
 			<div class="alert-message warning display_msg" >
 				<s:label cssClass="labelWarn" key="build.required.message"/>
 	   		</div>
-   		<%
-           	}
-		%>
+   		<% } %>
 	    <input id="testbtn" type="button" value="<s:text name="label.test"/>" class="primary btn env_btn">
 	    <div class="perOpenAndCopyPath">
 	    	<a href="#" id="pdfPopup" style="display: none;"><img id="pdfCreation" src="images/icons/print_pdf.png" title="generate pdf" style="height: 20px; width: 20px;"/></a>
@@ -80,19 +76,15 @@
     	<strong class="noTestAvail" id="testResultFileTitle"><s:text name="label.test.results"/></strong> 
         <select  class="noTestAvail" id="testResultFile" name="testResultFile">
         </select>
-        <%
-        	if(TechnologyTypes.ANDROIDS.contains(techId)) {
-        %>
+        
+        <% if (TechnologyTypes.ANDROIDS.contains(techId)) { %>
 	        <strong class="noTestAvail" id="testResultDeviceName"><s:text name="label.device"/></strong> 
 	        <select  class="noTestAvail" id="testResultDeviceId" name="testResultDeviceId" style="width :100px;">
 	        </select>
-        <%
-        	}
-        %>
+        <% } %>
 	</div>
 		
 	<div class="noTestAvail perTabularView" id="dropdownDiv">
-
 		<div class="resultView" style="float: left;">
 		<strong class="noTestAvail" id="dropdownDiv"><s:text name="label.test.result.view"/></strong> 
 			<select id="resultView" name="resultView232"> 
@@ -119,22 +111,24 @@
     <div id="testResultDisplay" class="testSuiteDisplay">
     </div>
 	    
-    <input type="hidden" id="testType" name="testType" value="<%= testType%>">
-	    
 	<div class="perErrorDis" id="noFiles">
 		<div class="alert-message block-message warning" style="margin: 5px 0px 0;">
 			<label Class="errorMsgLabel"><s:text name="performancetest.not.executed"/></label>
 		</div>
 	</div>
+	
+	<!-- Hidden Fields -->
+	<input type="hidden" name="projectCode" value="<%= projectCode %>" />
+	<input type="hidden" id="testType" name="testType" value="<%= testType %>">
 </form>
 
 <script type="text/javascript">
     $(document).ready(function() {
-    	
     	isResultFileAvailbale();
     	
 		$(".noTestAvail").hide();// When there is no result table, it hides everything except test button
 		$("#graphBasedOn").hide();
+		
 		// This specifies the recent test type , runned by user
 		// make the seelct option selected which is selected in performance pop-up(When user close popup it is hidded)
 		var selectJmeterTest = $('input:radio[name=jmeterTestAgainst]:checked').val();
@@ -147,17 +141,11 @@
 		});
 		
 		$('#testResultFile').change(function() {
-			<%
-				if(TechnologyTypes.ANDROIDS.contains(techId)) {
-			%>
+			<% if (TechnologyTypes.ANDROIDS.contains(techId)) { %>
 				getDevicesName();
-			<%
-				} else {
-			%>
+			<% } else { %>
 				performanceTestResults($("#testResultsType").val());
-			<%
-				}
-			%>
+			<% } %>
 		});
 		
 		$('#testResultDeviceId').change(function() {
@@ -189,49 +177,27 @@
         	$('#popup_div').css("display","none");
     		$('#popup_div').empty();
     	});
-        
     });
    
     var testResultsType = "";
     
 	function generateJmeter(testType) {
-		 $('#popup_div').empty();
-		var params = "";
-    	if (!isBlank($('form').serialize())) {
-    		params = $('form').serialize() + "&";
-    	}
+		$('#popup_div').empty();
     	getCurrentCSS();
     	showPopup();
-		performAction('generateJmeter', params, $('#popup_div'));
-  		$(document).keydown(function(e) {
-			// ESCAPE key pressed
-          	if (e.keyCode == 27) {
-              	$(".wel_come").show().css("display","none");
-              	$('.popup_div').show().css("display","none");
-            }
-      	});
+		performAction('generateJmeter', $('#formPerformance'), $('#popup_div'));
+  		
 		return false;
-        
 	}
        
 	function performanceTestResults(testResultsType) {
-		var params = "";
-    	if (!isBlank($('form').serialize())) {
-    		params = $('form').serialize() + "&";
-    	}
-		performAction('performanceTestResult', params, $('#testResultDisplay'));
+		performAction('performanceTestResult', $('#formPerformance'), $('#testResultDisplay'));
 		//show print as pdf icon
 		$('#pdfPopup').show();
     }
 	
     function isResultFileAvailbale() {
-       	var params = "";
-    	if (!isBlank($('form').serialize())) {
-    		params = $('form').serialize() + "&";
-    	}
-    	params = params.concat('<%= FrameworkConstants.REQ_TEST_TYPE %>' + "=");
-		params = params.concat('<%= testType%>');
-    	performAction('performanceTestResultAvail', params, '', true);
+    	performAction('performanceTestResultAvail', $('#formPerformance'), '', true);
     }
     
     function successIsResultFileAvailable(data) {
@@ -246,14 +212,7 @@
     }
     
     function performanceTestResultsFiles() {
-        testResultsType = $("#testResultsType").val();
-        var params = "";
-    	if (!isBlank($('form').serialize())) {
-    		params = $('form').serialize() + "&";
-    	}
-    	params = params.concat('<%= FrameworkConstants.REQ_TEST_TYPE %>' + "=");
-		params = params.concat('<%= testType%>');
-    	performAction('performanceTestResultFiles', params, '', true);
+    	performAction('performanceTestResultFiles', $('#formPerformance'), '', true);
     }
     
     function successPerfTestResultsFiles(data) {
@@ -265,18 +224,12 @@
             }
             $("#noFiles").hide(); // hides no result found error message when there is test result file
             $("#testResultDisplay").show();
-			<%
-				if(TechnologyTypes.ANDROIDS.contains(techId)) {
-			%>
+			<% if (TechnologyTypes.ANDROIDS.contains(techId)) { %>
 				getDevicesName();
 				disableType();
-			<%
-				} else {
-			%>
+			<% } else { %>
 				performanceTestResults(testResultsType);
-			<%
-				}
-			%>
+			<% } %>
        	} else {
        		$("#noFiles").show();       		
        		$('.errorMsgLabel').empty();
@@ -301,11 +254,7 @@
     }
 	
 	function getDevicesName() {
-		var params = "";
-    	if (!isBlank($('form').serialize())) {
-    		params = $('form').serialize() + "&";
-    	}
-    	performAction('getDevices', params, '', true);
+    	performAction('getDevices', $('#formPerformance'), '', true);
 	}
 	
 	function successGetDeviceName(data) {
@@ -331,19 +280,18 @@
 	}
 	
 	function successEvent(pageUrl, data) {
-		if(pageUrl == "performanceTestResultAvail") {
+		if (pageUrl == "performanceTestResultAvail") {
 			successIsResultFileAvailable(data);
-		} else if(pageUrl == "performanceTestResultFiles") {
+		} else if (pageUrl == "performanceTestResultFiles") {
 			successPerfTestResultsFiles(data);
-		} else if(pageUrl == "getDevices") {
+		} else if (pageUrl == "getDevices") {
 			successGetDeviceName(data);
-		} else if(pageUrl == "tstResultFiles") {
+		} else if (pageUrl == "tstResultFiles") {
 			successLoadTestFiles(data);
-		} else if(pageUrl == "checkForConfigType") {
+		} else if (pageUrl == "checkForConfigType") {
 			successEnvValidation(data);
-		} else if(pageUrl == "getPerfTestJSONData") {
+		} else if (pageUrl == "getPerfTestJSONData") {
 			fillJSONData(data);
 		}
 	}
-	
 </script>

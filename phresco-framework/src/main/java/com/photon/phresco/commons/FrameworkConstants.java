@@ -39,6 +39,7 @@ public interface FrameworkConstants {
     String CONFIGURATION_INFO_FILE_NAME = "phresco-env-config.xml";
     String BUILD_INFO_FILE_NAME = "build.info";
     String PROJECT_INFO = "project.info";
+    String GIT_IMPORT_TEMP_DIR = "gitImportTemp";
     String SAFARI_WARNING_MSG = "Safari browser is only supported for SeleniumRC";
     
     String DO_NOT_CHECKIN_DIR = "do_not_checkin";
@@ -86,6 +87,7 @@ public interface FrameworkConstants {
     String SCM = "scm";
     String SVN = "svn";
     String GIT = "git";
+    String REPO_URL = "repoUrl";
     String REPO_TYPE = "repoType";
     String SVN_TYPE = "svnType";
     String GITHUB_SCM = "hudson.plugins.git.GitSCM";
@@ -180,6 +182,7 @@ public interface FrameworkConstants {
     String ANDROID_LOWER_VER = "2.2";
     String DEVICE_DEPLOY = "device.deploy";
     String UNIT_TEST = "unittest";
+    String PROJECT_UPDATE = "projectUpdate";
     String TRUE = "true";
     String FALSE = "false";
     String NODE_JS_ID = "tech-nodejs-webservice";
@@ -209,6 +212,7 @@ public interface FrameworkConstants {
 	String MVN_ANDROID_PERF_COMMAND = "mvn install ";
     String MVN_SELENIUM_STOP_COMMAND = "mvn selenium:stop-server";
     String MVN_SONAR_COMMAND = "mvn sonar:sonar";
+    String MVN_PROJECT_UPDATE_COMMAND = "mvn scm:update";
     String MVN_JENKINS_START = "mvn t7:run-forked";
     String MVN_JENKINS_STOP = "mvn t7:stop-forked";
     String MVN_IPHONE_IPA_COMMAND = "mvn xcode:ipaBuilder";
@@ -257,6 +261,11 @@ public interface FrameworkConstants {
     String ELEMENT_TARGET = "do_not_checkin/target/*.apk";
     String ELEMENT_VERBOS = "verbose";
     String ELEMENT_VERIFY = "verify";
+    String REQ_SELECTED_TEST_NAME = "selectedTestName";
+    
+    String CONNECTION_URL = "connectionUrl";
+	String USER_NAME = "username";
+	String SCM_SVN = "scm:svn:";
     
     /*
      *  File Types for Browse in Functional
@@ -436,6 +445,7 @@ public interface FrameworkConstants {
     String REQ_PROJECT_MODULES = "projectModules";
     String REQ_TEST_FUNCTIONAL = "functional";
     String REQ_TEST_PERFORMANCE = "performance";
+    String REQ_JMETER_TEST_AGAINST = "jmeterTestAgainst";
     String PERFORMANCE_TEST_REPORTS = "performanceTestReports";
 	String PERFORMANCE_SPECIAL_HANDLE = "performanceSpecialHandle";
 	String LOAD_TEST_RESULTS = "loadTestResults";
@@ -574,6 +584,7 @@ public interface FrameworkConstants {
 	String REQ_FEATURES_MODULE_CAT = "moduleCat";
 	String REQ_FEATURES_MODULES = "modules";
 	String REQ_ENVIRONMENTS = "environments";
+	String REQ_ENVIRONMENT = "environment";
     String REQ_LOG_REPORT = "logReport";
     String REQ_PROJECT_INFO_SERVERS = "projectInfoServers";
     String REQ_PROJECT_INFO_DATABASES = "projectInfoDatabases";
@@ -690,6 +701,7 @@ public interface FrameworkConstants {
     String MSG_REPORT_OVERALL = "Overall";
     String MSG_REPORT_DETAIL = "Detailed";
     String MSG_REPORT = "Atleast one test result is necessary";
+    String EMPTY_PROJECT_CODE = "project.code.empty";
     
     /*
      * CI Message keys
@@ -721,6 +733,7 @@ public interface FrameworkConstants {
      */
     String IMPORT_PROJECT_FAIL ="import.project.fail";
     String INVALID_CREDENTIALS = "import.invalid.credential";
+    String INVALID_CUSTOMER_PROJECT = "import.invalid.customer.project";
     String INVALID_FOLDER = "import.invalid.folder";
     String PROJECT_ALREADY = "import.project.already";
     String SVN_FAILED ="failed";
@@ -810,6 +823,8 @@ public interface FrameworkConstants {
      * login keys
      */
     String WELCOME_SHOW = "welcome.show";
+    String SESSION_USER_INFO = "userInfo";
+    String SESSION_EXPIRED= "login.error.session";
 
 
     /*

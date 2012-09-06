@@ -26,6 +26,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -678,7 +679,7 @@ public class Build extends FrameworkBaseAction {
 			Map<String, String> valuesMap = new HashMap<String, String>(2);
 			String techId = project.getProjectInfo().getTechnology().getId();
 			if (TechnologyTypes.IPHONES.contains(techId)) {
-				valuesMap.put(IPHONE_BUILD_NAME, buildInfo.getBuildName());
+				valuesMap.put(BUILD_NUMBER, buildNumber);
 				// if deploy to device is selected we have to pass device deploy
 				// param as additional param
 				if (StringUtils.isNotEmpty(deployTo) && deployTo.equals(REQ_IPHONE_SIMULATOR)) {
@@ -1780,7 +1781,7 @@ public class Build extends FrameworkBaseAction {
 				dbtype = databasedetail.getPropertyInfo(Constants.DB_TYPE).getValue();
 				if (selectedDb.equals(dbtype)) { 
 					dbversion = databasedetail.getPropertyInfo(Constants.DB_VERSION).getValue();
-					File[] dbSqlFiles = new File(Utility.getProjectHome() + projectCode + sqlPath + selectedDb + File.separator + dbversion).listFiles();
+					File[] dbSqlFiles = new File(Utility.getProjectHome() + projectCode + sqlPath + selectedDb + File.separator + dbversion).listFiles(new DumpFileNameFilter());
 					for (int i = 0; i < dbSqlFiles.length; i++) {
 						if (!dbSqlFiles[i].isDirectory()) {
 						sqlFileName = dbSqlFiles[i].getName();
@@ -1796,6 +1797,13 @@ public class Build extends FrameworkBaseAction {
 		return SUCCESS;
 	}
 
+	class DumpFileNameFilter implements FilenameFilter {
+
+		public boolean accept(File dir, String name) {
+			return !(name.startsWith("."));
+		}
+	}
+	
 	private static void initDbPathMap() {
 		sqlFolderPathMap.put(TechnologyTypes.PHP, "/source/sql/");
 		sqlFolderPathMap.put(TechnologyTypes.PHP_DRUPAL6, "/source/sql/");

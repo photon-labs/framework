@@ -110,23 +110,25 @@
             type : 'POST',
             cache: false,
             success : function(data) {
-            	if (callSuccessEvent != undefined && !isBlank(callSuccessEvent)) {
-            		successEvent(pageUrl, data);
-            	} else if (data.validated) {
-            		validationError(data);
-            	} else if (tagControl != undefined && !isBlank(tagControl)) {
-            		if (pageUrl == "applications" || pageUrl == "settings" || pageUrl == "forum") {
-            			$(".intro_container").hide();
-            	    	$(".errorOverlay").show().css("display", "none");
-            		}
-            		if ((pageUrl == "save" || pageUrl == "update" || pageUrl == "delete" || pageUrl == "deleteConfigurations" 
-            				|| pageUrl == "deleteSettings" || pageUrl == "deleteBuild" || pageUrl == "CIBuildDelete")) {
-            			hideProgessBar();
-            		}
-            		
-	                tagControl.empty();
-	                tagControl.html(data);
-	           	}
+            	if (checkForUserSession(data)) {
+	            	if (callSuccessEvent != undefined && !isBlank(callSuccessEvent)) {
+	            		successEvent(pageUrl, data);
+	            	} else if (data.validated) {
+	            		validationError(data);
+	            	} else if (tagControl != undefined && !isBlank(tagControl)) {
+	            		if (pageUrl == "applications" || pageUrl == "settings" || pageUrl == "forum") {
+	            			$(".intro_container").hide();
+	            	    	$(".errorOverlay").show().css("display", "none");
+	            		}
+	            		if ((pageUrl == "save" || pageUrl == "update" || pageUrl == "delete" || pageUrl == "deleteConfigurations" 
+	            				|| pageUrl == "deleteSettings" || pageUrl == "deleteBuild" || pageUrl == "CIBuildDelete")) {
+	            			hideProgessBar();
+	            		}
+	            		
+		                tagControl.empty();
+		                tagControl.html(data);
+		           	}
+            	}
             }
         }); 
     }
@@ -141,15 +143,17 @@
             type : 'POST',
             cache : false,
             success : function(data) {
-            	if (tagControl != undefined && !isBlank(tagControl) && (isSecondPopupAvail == undefined || isBlank(isSecondPopupAvail))) {
-            		tagControl.empty();
-                	tagControl.html(data);
-                }
-            	if (tagControl != undefined && !isBlank(tagControl) && isSecondPopupAvail != undefined && !isBlank(isSecondPopupAvail)) {
-            		tagControl.append(data);
-            	}
-             	if (callSuccessEvent != undefined && !isBlank(callSuccessEvent)) {
-             		successEvent(pageUrl, data);
+            	if (checkForUserSession(data)) {
+	            	if (tagControl != undefined && !isBlank(tagControl) && (isSecondPopupAvail == undefined || isBlank(isSecondPopupAvail))) {
+	            		tagControl.empty();
+	                	tagControl.html(data);
+	                }
+	            	if (tagControl != undefined && !isBlank(tagControl) && isSecondPopupAvail != undefined && !isBlank(isSecondPopupAvail)) {
+	            		tagControl.append(data);
+	            	}
+	             	if (callSuccessEvent != undefined && !isBlank(callSuccessEvent)) {
+	             		successEvent(pageUrl, data);
+	            	}
             	}
             }
         });
@@ -178,10 +182,12 @@
             data : params,
             type : "POST",
             success : function(data) {
-            	$("#build-output").empty();
-            	readerHandler(data, projectCode, testType, pageUrl);
-            	if(callSuccessEvent != undefined && !isBlank(callSuccessEvent)) {
-            		successEvent(pageUrl, data);
+            	if (checkForUserSession(data)) {
+	            	$("#build-output").empty();
+	            	readerHandler(data, projectCode, testType, pageUrl);
+	            	if (callSuccessEvent != undefined && !isBlank(callSuccessEvent)) {
+	            		successEvent(pageUrl, data);
+	            	}
             	}
             }
         });
@@ -209,13 +215,15 @@
             type : "POST",
             cache : false,
             success : function(data) {
-            	var status = data.globalValidationStatus;
-            	if (status == "ERROR") {
-            		$("#validationSuccess_"+validateURL).css("display", "none");
-            		$("#validationErr_"+validateURL).show();
-            	} else {
-            		$("#validationErr_"+validateURL).hide();
-            		$("#validationSuccess_"+validateURL).css("display", "block");
+            	if (checkForUserSession(data)) {
+	            	var status = data.globalValidationStatus;
+	            	if (status == "ERROR") {
+	            		$("#validationSuccess_"+validateURL).css("display", "none");
+	            		$("#validationErr_"+validateURL).show();
+	            	} else {
+	            		$("#validationErr_"+validateURL).hide();
+	            		$("#validationSuccess_"+validateURL).css("display", "block");
+	            	}
             	}
             }
         });
@@ -364,7 +372,7 @@
     
     // To check whether the url is valid or not
 	function isValidUrl(url) {
-	    if (/^(http|https|ftp):\/\/[a-z0-9]+([-.]{1}[a-z0-9]+)*.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/i.test(url)) {
+	    if (/^(http|https|ftp|git):\/\/[a-z0-9]+([-.]{1}[a-z0-9]+)*.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/i.test(url)) {
 	      return false;
 	    } else {
 	      return true;
@@ -432,3 +440,11 @@
 		params = params.concat($('#customerId').val());
 		return params;
 	}
+	
+	function checkForUserSession (data) {
+    	if (data != undefined && !isBlank(data) && data.indexOf("Remember me") >= 0) { //To load the login page if the user session is not available
+    		window.location.href = "logout.action";
+    		return false;
+    	}
+    	return true;
+    }
