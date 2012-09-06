@@ -37,14 +37,14 @@ public interface CIManager {
      * @return
      * @throws PhrescoException
      */
-    CIJobStatus createJob(CIJob job) throws PhrescoException;
+    CIJobStatus createJob(CIJob job, String customerId) throws PhrescoException;
     
     /**
      * Updates jobs in Jenkins.
      * @return
      * @throws PhrescoException
      */
-    CIJobStatus updateJob(CIJob job) throws PhrescoException;
+    CIJobStatus updateJob(CIJob job, String customerId) throws PhrescoException;
     
     /**
      * builds job in Jenkins.
@@ -65,21 +65,21 @@ public interface CIManager {
      * @return
      * @throws PhrescoException
      */
-    void getJdkHomeXml() throws PhrescoException;
+    void getJdkHomeXml(String customerId) throws PhrescoException;
 
     /**
      * Get the maven home xml file from the server and store in jenkins_home.
      * @return
      * @throws PhrescoException
      */
-    void getMavenHomeXml() throws PhrescoException;
+    void getMavenHomeXml(String customerId) throws PhrescoException;
     
     /**
      * Get the credential xml file from the server when job is created.
      * @return
      * @throws PhrescoException
      */
-    void setMailCredential(CIJob job) throws PhrescoException;
+    void setMailCredential(CIJob job, String customerId) throws PhrescoException;
     
     /**
      * Returns total number of builds in progress.
@@ -107,7 +107,7 @@ public interface CIManager {
      * @return
      * @throws PhrescoException
      */
-	void getEmailExtPlugin() throws PhrescoException;
+	void getEmailExtPlugin(String customerId) throws PhrescoException;
 	
     /**
      * Delete already existing builds inside do_not_checkin folder.

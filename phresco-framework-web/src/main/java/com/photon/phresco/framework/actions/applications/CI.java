@@ -246,10 +246,10 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
     		}
         	
         	// Here we have to place two files in jenkins_home environment variable location
-        	administrator.getJdkHomeXml();
-        	administrator.getMavenHomeXml(); 
+        	administrator.getJdkHomeXml(project.getProjectInfo().getCustomerId());
+        	administrator.getMavenHomeXml(project.getProjectInfo().getCustomerId()); 
         	// place email ext plugin in plugin folder
-        	administrator.getEmailExtPlugin();
+        	administrator.getEmailExtPlugin(project.getProjectInfo().getCustomerId());
             BufferedReader reader = runtimeManager.performAction(project, actionType, null, null);
             getHttpSession().setAttribute(projectCode + CI_SETUP, reader);
             getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
