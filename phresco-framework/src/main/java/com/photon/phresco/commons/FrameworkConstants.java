@@ -1329,4 +1329,5 @@ public interface FrameworkConstants {
    String CONTEXT = "context";
    String HOST = "host";
    String ENVIRONMENT = "SERVER_ENVIRONMENT";
+   String SESSION_PASSWORD = "SESSION_PASSWORD";
 }
