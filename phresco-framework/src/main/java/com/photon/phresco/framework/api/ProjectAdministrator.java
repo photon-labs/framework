@@ -646,6 +646,13 @@ public interface ProjectAdministrator {
 	 * @throws PhrescoException
 	 */
 	
+	/**
+	 * Get the default environment from the specified project
+	 * @param projectCode
+	 * @return
+	 */
+	String getDefaultEnvName(String projectCode);
+	
 	
 	/**
 	 * add server details for functional test configuration.xml file

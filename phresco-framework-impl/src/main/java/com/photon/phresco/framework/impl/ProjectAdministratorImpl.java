@@ -2373,6 +2373,11 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 			 throw new PhrescoException(e);
 		 }
 	 }
+	 
+	 @Override
+	 public String getDefaultEnvName(String projectCode) {
+		 return "Production";
+	 }
 
 	 @Override
 	 public void updateTestConfiguration(Project project, String selectedEnvs, String browser, String resultConfigXml) throws PhrescoException {

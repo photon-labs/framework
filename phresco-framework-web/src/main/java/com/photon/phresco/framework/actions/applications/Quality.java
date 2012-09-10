@@ -216,7 +216,7 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
 				S_LOGGER.debug("Android device name " + device);
                 settingsInfoMap.put(DEPLOY_ANDROID_DEVICE_MODE, device); //TODO: Need to be changed
                 settingsInfoMap.put(DEPLOY_ANDROID_EMULATOR_AVD, REQ_ANDROID_DEFAULT);
-                actionType = ActionType.MOBILE_COMMON_COMMAND;
+                actionType = ActionType.ANDROID_TEST_COMMAND;
               
             } else if (TechnologyTypes.IPHONE_NATIVE.equals(techId)) {
             	      actionType = ActionType.IPHONE_BUILD_UNIT_TEST;
@@ -285,7 +285,7 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
                    S_LOGGER.debug("Android device name " + device);
                 settingsInfoMap.put(DEPLOY_ANDROID_DEVICE_MODE, device); //TODO: Need to be changed
                 settingsInfoMap.put(DEPLOY_ANDROID_EMULATOR_AVD, REQ_ANDROID_DEFAULT);
-                actionType = ActionType.MOBILE_COMMON_COMMAND;
+                actionType = ActionType.ANDROID_TEST_COMMAND;
             } else if (TechnologyTypes.IPHONE_NATIVE.equals(techId)) {
             	String buildNumber = getHttpRequest().getParameter(REQ_TEST_BUILD_ID);
             	settingsInfoMap.put(BUILD_NUMBER, buildNumber);
@@ -1013,7 +1013,7 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
                 String[] connectedDevices = getHttpRequest().getParameterValues(ANDROID_DEVICE);
                 String devices = FrameworkUtil.convertToCommaDelimited(connectedDevices);
                 settingsInfoMap.put(ANDROID_DEVICE_LIST, devices);
-                actionType = ActionType.ANDROID_PERF_COMMAND;
+                actionType = ActionType.ANDROID_TEST_COMMAND;
                 if (SHOW_ERROR.equals(showError)) {
                 	actionType.setShowError(true);
             	} else {
@@ -1170,7 +1170,7 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
                 String device = getHttpRequest().getParameter(REQ_ANDROID_DEVICE);
                 settingsInfoMap.put(DEPLOY_ANDROID_DEVICE_MODE, device); //TODO: Need to be changed
                 settingsInfoMap.put(DEPLOY_ANDROID_EMULATOR_AVD, REQ_ANDROID_DEFAULT);
-                actionType = ActionType.MOBILE_COMMON_COMMAND;
+                actionType = ActionType.ANDROID_TEST_COMMAND;
                 S_LOGGER.debug("Load method ANDROIDS type settingsInfoMap value " + settingsInfoMap);
             } else {
             	actionType = ActionType.TEST;
