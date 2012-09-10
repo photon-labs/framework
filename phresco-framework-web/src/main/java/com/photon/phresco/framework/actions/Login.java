@@ -99,6 +99,7 @@ public class Login extends FrameworkBaseAction {
 	            	getHttpRequest().setAttribute(REQ_LOGIN_ERROR, getText(ERROR_LOGIN_ACCESS_DENIED));
 	                return LOGIN_FAILURE;
 	            } else {
+	            	getHttpSession().setAttribute(SESSION_PASSWORD, password);
 	            	loginSuccess(userInfo);
 	                return LOGIN_SUCCESS;
 	            }

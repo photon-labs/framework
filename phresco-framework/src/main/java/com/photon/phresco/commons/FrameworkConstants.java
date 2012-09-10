@@ -209,7 +209,7 @@ public interface FrameworkConstants {
     String MVN_SHAREPOINT_NUNIT_TEST_COMMAND = "mvn sharepoint:test";
     String MVN_INSTALL_COMMAND = "mvn install -DskipTests=true";
     String MVN_MOBILE_INSTALL_COMMAND = "mvn install ";
-	String MVN_ANDROID_PERF_COMMAND = "mvn install ";
+	String MVN_ANDROID_TEST_COMMAND = "mvn clean install ";
     String MVN_SELENIUM_STOP_COMMAND = "mvn selenium:stop-server";
     String MVN_SONAR_COMMAND = "mvn sonar:sonar";
     String MVN_PROJECT_UPDATE_COMMAND = "mvn scm:update";
@@ -1329,4 +1329,5 @@ public interface FrameworkConstants {
    String CONTEXT = "context";
    String HOST = "host";
    String ENVIRONMENT = "SERVER_ENVIRONMENT";
+   String SESSION_PASSWORD = "SESSION_PASSWORD";
 }
