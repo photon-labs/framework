@@ -153,6 +153,9 @@ public class Build extends FrameworkBaseAction {
 	private String port = null;
 	private String context = null;
 	
+	//iphone family
+	private String family = ""; 
+	
 	private static Map<String, String> sqlFolderPathMap = new HashMap<String, String>();
 
 	// DbWithSqlFiles
@@ -684,6 +687,7 @@ public class Build extends FrameworkBaseAction {
 				// param as additional param
 				if (StringUtils.isNotEmpty(deployTo) && deployTo.equals(REQ_IPHONE_SIMULATOR)) {
 					valuesMap.put(IPHONE_SIMULATOR_VERSION, simulatorVersion);
+					valuesMap.put(DEVICE_TO_USE, family);
 				} else {
 					valuesMap.put(DEVICE_DEPLOY, TRUE);
 				}
@@ -2216,5 +2220,13 @@ public class Build extends FrameworkBaseAction {
 
 	public void setContext(String context) {
 		this.context = context;
+	}
+
+	public String getFamily() {
+		return family;
+	}
+
+	public void setFamily(String family) {
+		this.family = family;
 	}
 }
