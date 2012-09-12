@@ -83,6 +83,7 @@ import com.photon.phresco.framework.api.Project;
 import com.photon.phresco.framework.api.ProjectAdministrator;
 import com.photon.phresco.framework.api.ValidationResult;
 import com.photon.phresco.framework.api.Validator;
+import com.photon.phresco.framework.win8.util.ItemGroupUpdater;
 import com.photon.phresco.model.AdminConfigInfo;
 import com.photon.phresco.model.ApplicationType;
 import com.photon.phresco.model.CertificateInfo;
@@ -186,6 +187,9 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 			BufferedReader breader = null;
 			try {
 				extractArchive(response, info);
+				if (TechnologyTypes.WIN_METRO.equalsIgnoreCase(techId)) {
+//					ItemGroupUpdater.update(info, projectPath);
+				}
 				updateProjectPOM(info);
 				StringBuilder sb = new StringBuilder();
 				sb.append("mvn");
@@ -303,6 +307,10 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 				extractArchive(response, delta);
 				updatePOMWithModules(pomPath, projectInfo.getTechnology().getModules(), techId);
 				updatePOMWithPluginArtifact(pomPath, projectInfo.getTechnology().getModules(), techId);
+			}
+			File projectPath = new File(Utility.getProjectHome() + delta.getCode() + File.separator);
+			if (TechnologyTypes.WIN_METRO.equalsIgnoreCase(techId)) {
+//				ItemGroupUpdater.update(projectInfo, projectPath);
 			}
 			
 			BufferedReader bfreader = null;
