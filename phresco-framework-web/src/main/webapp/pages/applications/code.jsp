@@ -24,7 +24,6 @@
 <%@ page import="com.photon.phresco.util.TechnologyTypes" %>
 
 <%@ include file="progress.jsp" %>
-<%@ include file="errorReport.jsp" %>
 
 <script src="js/reader.js"></script>
 

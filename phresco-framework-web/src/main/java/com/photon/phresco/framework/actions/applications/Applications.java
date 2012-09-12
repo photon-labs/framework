@@ -143,6 +143,8 @@ public class Applications extends FrameworkBaseAction {
 			S_LOGGER.error("Entered into catch block of Applications.list()"
 					+ FrameworkUtil.getStackTraceAsString(e));
 			new LogErrorReport(e, "Listing projects");
+			
+			return LOG_ERROR;
 		}
 		String discover = discover();
 		long end = System.currentTimeMillis();
@@ -169,6 +171,8 @@ public class Applications extends FrameworkBaseAction {
 			S_LOGGER.error("Entered into catch block of Applications.addApplication()"
 					+ FrameworkUtil.getStackTraceAsString(e));
 			new LogErrorReport(e, REQ_TITLE_ADD_APPLICATION);
+			
+			return LOG_ERROR;
 		}
 		
 		return APP_APPLICATION_DETAILS;
@@ -214,11 +218,16 @@ public class Applications extends FrameworkBaseAction {
 			S_LOGGER.error("Entered into catch block of Applications.appInfo()"
 					+ FrameworkUtil.getStackTraceAsString(e));
 			new LogErrorReport(e, REQ_TITLE_ADD_APPLICATION);
+			
+			return LOG_ERROR;
+			
 		} catch (Exception e) {
 			S_LOGGER.error("Entered into catch block of Applications.appInfo()"
 					+ FrameworkUtil.getStackTraceAsString(e));
 			addActionError(e.getLocalizedMessage());
 			new LogErrorReport(e, REQ_TITLE_ADD_APPLICATION);
+			
+			return LOG_ERROR;
 		}
 		getHttpRequest().setAttribute(REQ_CONFIG_SERVER_NAMES,
 				configServerNames);
@@ -249,6 +258,8 @@ public class Applications extends FrameworkBaseAction {
 			S_LOGGER.error("Entered into catch block of Applications.applicationType()"
 					+ FrameworkUtil.getStackTraceAsString(e));
 			new LogErrorReport(e, "Getting Application Type");
+			
+			return LOG_ERROR;
 		}
 		
 		return APP_TYPE;
@@ -270,8 +281,8 @@ public class Applications extends FrameworkBaseAction {
 				selectedTechnology = projectInfo.getTechId();
 			}
 			Technology techonology = administrator.getTechnology(application, selectedTechnology, customerId);
-			List<Server> servers = administrator.getServers(selectedTechnology, customerId);
-			List<Database> databases = administrator.getDatabases(selectedTechnology, customerId);
+			List<Server> servers = administrator.getServersByTech(selectedTechnology, customerId);
+			List<Database> databases = administrator.getDatabasesByTech(selectedTechnology, customerId);
 			List<WebService> webServices = administrator
 					.getWebServices(selectedTechnology, customerId);
 			S_LOGGER.debug("Selected technology" + techonology.toString());
@@ -289,6 +300,8 @@ public class Applications extends FrameworkBaseAction {
 			S_LOGGER.error("Entered into catch block of  Applications.technology()"
 					+ FrameworkUtil.getStackTraceAsString(e));
 			new LogErrorReport(e, "Getting technology");
+			
+			return LOG_ERROR;
 		}
 
 		return APP_TECHNOLOGY;
@@ -304,6 +317,8 @@ public class Applications extends FrameworkBaseAction {
 			S_LOGGER.error("Entered into catch block of  Applications.techVersions()"
 					+ FrameworkUtil.getStackTraceAsString(e));
 			new LogErrorReport(e, "Getting technology versions");
+			
+			return LOG_ERROR;
 		}
 
 		return SUCCESS;
@@ -349,6 +364,8 @@ public class Applications extends FrameworkBaseAction {
 			S_LOGGER.error("Entered into catch block of  Applications.previous()"
 					+ FrameworkUtil.getStackTraceAsString(e));
 			new LogErrorReport(e, "When previous button is clicked");
+			
+			return LOG_ERROR;
 		}
 
 		return APP_APPINFO;
@@ -371,6 +388,8 @@ public class Applications extends FrameworkBaseAction {
 			S_LOGGER.error("Entered into catch block of  Applications.save()"
 					+ FrameworkUtil.getStackTraceAsString(e));
 			new LogErrorReport(e, "Save Project");
+			
+			return LOG_ERROR;
 		}
 		getHttpSession().removeAttribute(projectCode);
 		getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
@@ -473,6 +492,8 @@ public class Applications extends FrameworkBaseAction {
 			S_LOGGER.error("Entered into catch block of  Applications.update()"
 					+ FrameworkUtil.getStackTraceAsString(e));
 			new LogErrorReport(e, "Update Project");
+			
+			return LOG_ERROR;
 		} finally {
 			try {
 				reader.close();
@@ -552,6 +573,8 @@ public class Applications extends FrameworkBaseAction {
 			S_LOGGER.error("Entered into catch block of  Applications.edit()"
 					+ FrameworkUtil.getStackTraceAsString(e));
 			new LogErrorReport(e, "Project edit");
+			
+			return LOG_ERROR;
 		}
 
 		return APP_APPLICATION;
@@ -581,6 +604,8 @@ public class Applications extends FrameworkBaseAction {
 			S_LOGGER.error("Entered into catch block of Applications.delete()"
 					+ FrameworkUtil.getStackTraceAsString(e));
 			new LogErrorReport(e, "Project delete");
+			
+			return LOG_ERROR;
 		}
 
 		return list();
@@ -713,6 +738,8 @@ public class Applications extends FrameworkBaseAction {
 		} catch (Exception e) {
 			S_LOGGER.error("Entered into catch block of Applications.updateProjectPopup()" + FrameworkUtil.getStackTraceAsString(e));
 			new LogErrorReport(e, "Updating project popup");
+			
+			return LOG_ERROR;
 		}
 		return APP_IMPORT_FROM_SVN;
 	}
@@ -745,6 +772,8 @@ public class Applications extends FrameworkBaseAction {
 		} catch (Exception e) {
 			S_LOGGER.error("Entered into catch block of Applications.updateProject()" + FrameworkUtil.getStackTraceAsString(e));
 			new LogErrorReport(e, "Updating project");
+			
+			return LOG_ERROR;
 		}
 		return APP_ENVIRONMENT_READER;
 	}
@@ -787,6 +816,8 @@ public class Applications extends FrameworkBaseAction {
 			S_LOGGER.error("Entered into catch block of Applications.validateFramework()"
 					+ FrameworkUtil.getStackTraceAsString(e));
 			new LogErrorReport(e, "Validating framework");
+			
+			return LOG_ERROR;
 		}
 
 		return APP_VALIDATE_FRAMEWORK;
@@ -846,6 +877,8 @@ public class Applications extends FrameworkBaseAction {
 			S_LOGGER.error("Entered into catch block of Applications.validateProject()"
 					+ FrameworkUtil.getStackTraceAsString(e));
 			new LogErrorReport(e, "Validating project");
+			
+			return LOG_ERROR;
 		}
 
 		return APP_VALIDATE_PROJECT;
@@ -873,6 +906,8 @@ public class Applications extends FrameworkBaseAction {
 			S_LOGGER.error("Entered into catch block of Applications.discover()"
 					+ FrameworkUtil.getStackTraceAsString(e));
 			new LogErrorReport(e, "Discovering projects");
+			
+			return LOG_ERROR;
 		}
 		getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
 
@@ -928,7 +963,7 @@ public class Applications extends FrameworkBaseAction {
 			String attrName = null;
 			if (Constants.SETTINGS_TEMPLATE_SERVER.equals(type)) {
 				List<String> listSelectedServerIds = null;
-				List<Server> servers = administrator.getServers(techId, customerId);
+				List<Server> servers = administrator.getServersByTech(techId, customerId);
 				if (StringUtils.isEmpty(from)) {
 					List<String> listSelectedServers = null;
 					List<String> listSelectedServerNames = null;
@@ -978,7 +1013,7 @@ public class Applications extends FrameworkBaseAction {
 			}
 			if (Constants.SETTINGS_TEMPLATE_DB.equals(type)) {
 				List<String> listSelectedDatabaseIds = null;
-				List<Database> databases = administrator.getDatabases(techId, customerId);
+				List<Database> databases = administrator.getDatabasesByTech(techId, customerId);
 				if (StringUtils.isEmpty(from)) {
 					List<String> listSelectedDbs = null;
 					List<String> listSelectedDbNames = null;
@@ -1065,6 +1100,8 @@ public class Applications extends FrameworkBaseAction {
 			S_LOGGER.error("Entered into catch block of Applications.openAttrPopup()"
 					+ FrameworkUtil.getStackTraceAsString(e));
 			new LogErrorReport(e, "Getting server and database");
+			
+			return LOG_ERROR;
 		}
 		
 		return "openAttrPopup";
@@ -1080,7 +1117,7 @@ public class Applications extends FrameworkBaseAction {
 			String selectedId = getHttpRequest().getParameter("selectedId");
 
 			if (Constants.SETTINGS_TEMPLATE_SERVER.equals(type)) {
-				List<Server> servers = administrator.getServers(techId, customerId);
+				List<Server> servers = administrator.getServersByTech(techId, customerId);
 				if (CollectionUtils.isNotEmpty(servers)) {
 					for (Server server : servers) {
 						if (server.getId().equals(selectedId)) {
@@ -1090,7 +1127,7 @@ public class Applications extends FrameworkBaseAction {
 				}
 			}
 			if (Constants.SETTINGS_TEMPLATE_DB.equals(type)) {
-				List<Database> databases = administrator.getDatabases(techId, customerId);
+				List<Database> databases = administrator.getDatabasesByTech(techId, customerId);
 				if (CollectionUtils.isNotEmpty(databases)) {
 					for (Database database : databases) {
 						if (database.getId().equals(selectedId)) {
@@ -1338,6 +1375,8 @@ public class Applications extends FrameworkBaseAction {
 		} catch (Exception e) {
 			S_LOGGER.error("Entered into catch block of  Applications.browse()"	+ FrameworkUtil.getStackTraceAsString(e));
 			new LogErrorReport(e, "File Browse");
+			
+			return LOG_ERROR;
 		}
 		return SUCCESS;
 	}

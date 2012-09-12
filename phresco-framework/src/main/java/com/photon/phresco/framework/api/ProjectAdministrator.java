@@ -107,6 +107,8 @@ public interface ProjectAdministrator {
      * @throws PhrescoException
      */
     Map<String, Technology> getAllTechnologies() throws PhrescoException;
+    
+    List<Technology> getTechnologies() throws PhrescoException;
 
     /**
      * Returns Technology for the given technolgoy Id
@@ -683,7 +685,9 @@ public interface ProjectAdministrator {
 	 * @return serverList
 	 * @throws PhrescoException
 	 */
-	List<Server> getServers(String techId, String customerId) throws PhrescoException;
+	List<Server> getServers(String customerId) throws PhrescoException;
+	
+	List<Server> getServersByTech(String techId, String customerId) throws PhrescoException;
 	
 	/**
 	 * get databases from service
@@ -691,7 +695,9 @@ public interface ProjectAdministrator {
 	 * @return dbList
 	 * @throws PhrescoException
 	 */
-	List<Database> getDatabases(String techId, String customerId) throws PhrescoException;
+	List<Database> getDatabases(String customerId) throws PhrescoException;
+	
+	List<Database> getDatabasesByTech(String techId, String customerId) throws PhrescoException;
 	
 	/**
 	 * get webservices from service

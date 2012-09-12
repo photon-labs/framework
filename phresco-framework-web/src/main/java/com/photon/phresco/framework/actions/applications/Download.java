@@ -54,6 +54,8 @@ public class Download extends FrameworkBaseAction {
 			getHttpRequest().setAttribute(REQ_OTHERS_DOWNLOAD_INFO, administrator.getOtherDownloadInfo(downloadPropertyInfo));
 		} catch (PhrescoException e) {
 			new LogErrorReport(e, "Listing downloads");
+			
+			return LOG_ERROR;
 		}
     	
         return APP_DOWNLOAD;

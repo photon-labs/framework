@@ -586,9 +586,10 @@ public interface FrameworkConstants {
 	String REQ_FEATURES_MODULES = "modules";
 	String REQ_ENVIRONMENTS = "environments";
 	String REQ_ENVIRONMENT = "environment";
-    String REQ_LOG_REPORT = "logReport";
     String REQ_PROJECT_INFO_SERVERS = "projectInfoServers";
     String REQ_PROJECT_INFO_DATABASES = "projectInfoDatabases";
+    String REQ_ALL_SERVERS = "allServers";
+    String REQ_ALL_DATABASES = "allDatabases";
 	
 	String REQ_TESTCASE_NAME = "testCaseName";
 	String SCREENSHOT_DIR = "screenshots";
@@ -1331,4 +1332,33 @@ public interface FrameworkConstants {
    String HOST = "host";
    String ENVIRONMENT = "SERVER_ENVIRONMENT";
    String SESSION_PASSWORD = "SESSION_PASSWORD";
+ 
+   /* For Error Report  */ 
+   String REQ_LOG_REPORT = "logReport";
+   String LOG_ERROR = "logError";
+   
+   
+   /* WINDOWS CONSTANT */
+	  String HELLOWORD_PROJECT_FILE = "HelloWorld.csproj"; 
+	  String HELLOWORLD = "HelloWorld";
+	  String HELLOWORD_SOLUTIONFILE = "HelloWorld.sln";
+	  String PROPERTYGROUP = "PropertyGroup";
+	  String ITEMGROUP = "ItemGroup";
+	  String ROOTNAMESPACE = "RootNamespace";
+	  String ASSEMBLY_NAME = "AssemblyName";
+	  String CERTIFACTE_KEY = "PackageCertificateKeyFile";
+	  String TEMPORARY_KEY = "_TemporaryKey.pfx";
+	  String NONE = "None";
+	  String NEWLINE = "\n";
+	  String INCLUDE = "Include";
+	  String REFERENCE = "Reference";
+	  String PROJECT = "Project";
+	  String LIBS = "Lib\\";
+	  String DLL = ".dll";
+	  String HINTPATH = "HintPath";
+	  String PROJECT_FILE = ".csproj";
+	  String CONTENT = "Content";
+	  String COMMON = "\\Common";
+	  String DOUBLE_DOT  = "..";
+   
 }
