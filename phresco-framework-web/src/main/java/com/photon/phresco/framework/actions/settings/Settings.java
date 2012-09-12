@@ -114,6 +114,8 @@ public class Settings extends FrameworkBaseAction {
                 S_LOGGER.error("Entered into catch block of Settings.list()"+ FrameworkUtil.getStackTraceAsString(e));
     		}
         	new LogErrorReport(e, "Settings list");
+        	
+        	return LOG_ERROR;
 		}
 		return SETTINGS_LIST;
 	}
@@ -139,6 +141,8 @@ public class Settings extends FrameworkBaseAction {
                 S_LOGGER.error("Entered into catch block of Settings.list()"+ FrameworkUtil.getStackTraceAsString(e));
     		}
         	new LogErrorReport(e, "Settings add");
+        	
+        	return LOG_ERROR;
 		}
 
 		return SETTINGS_ADD;
@@ -248,6 +252,8 @@ public class Settings extends FrameworkBaseAction {
                 S_LOGGER.error("Entered into catch block of Settings.save()"+ FrameworkUtil.getStackTraceAsString(e));
     		}
         	new LogErrorReport(e, "Settings save");
+        	
+        	return LOG_ERROR;
 		}
 		return list();
 	}
@@ -433,6 +439,8 @@ public class Settings extends FrameworkBaseAction {
                 S_LOGGER.error("Entered into catch block of Settings.edit()"+ FrameworkUtil.getStackTraceAsString(e));
     		}
         	new LogErrorReport(e, "Settings edit");
+        	
+        	return LOG_ERROR;
 		}
 
 		return SETTINGS_EDIT;
@@ -530,6 +538,8 @@ public class Settings extends FrameworkBaseAction {
 		} catch (Exception e) {
 			S_LOGGER.error("Entered into catch block of Settings.update()"+ FrameworkUtil.getStackTraceAsString(e));
         	new LogErrorReport(e, "Settings update");
+        	
+        	return LOG_ERROR;
 		}
 
 		return list();
@@ -571,6 +581,8 @@ public class Settings extends FrameworkBaseAction {
                 S_LOGGER.error("Entered into catch block of Settings.delete()"+ FrameworkUtil.getStackTraceAsString(e));
     		}
         	new LogErrorReport(e, "Settings delete");
+        	
+        	return LOG_ERROR;
 		}
 
 		return list();
@@ -609,6 +621,8 @@ public class Settings extends FrameworkBaseAction {
                 S_LOGGER.error("Entered into catch block of Settings.settingsType()"+ FrameworkUtil.getStackTraceAsString(e));
     		}
         	new LogErrorReport(e, "Settings type");
+        	
+        	return LOG_ERROR;
 		}
 		return SETTINGS_TYPE;
 	}
@@ -649,6 +663,8 @@ public class Settings extends FrameworkBaseAction {
                 S_LOGGER.error("Entered into catch block of Configurations.createEnvironment()" + FrameworkUtil.getStackTraceAsString(e));
             }
             new LogErrorReport(e, "open popup Settings"); 
+            
+            return LOG_ERROR;
         }
 		
     	return APP_ENVIRONMENT;
@@ -770,6 +786,8 @@ public class Settings extends FrameworkBaseAction {
 	            S_LOGGER.error("Entered into catch block of Configurations.createEnvironment()" + FrameworkUtil.getStackTraceAsString(e));
 	        }
 	        new LogErrorReport(e, "create environment");
+	        
+	        return LOG_ERROR;
 	    }
 	    return SUCCESS;
 	}

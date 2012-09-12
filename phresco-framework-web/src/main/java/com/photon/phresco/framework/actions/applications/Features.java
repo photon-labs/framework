@@ -200,6 +200,8 @@ public class Features extends FrameworkBaseAction {
 						+ FrameworkUtil.getStackTraceAsString(e));
 			}
 			new LogErrorReport(e, "Feature list");
+			
+			return LOG_ERROR;
 		}
 		
 		return returnPage;
@@ -428,6 +430,8 @@ public class Features extends FrameworkBaseAction {
 						+ FrameworkUtil.getStackTraceAsString(e));
 			}
 			new LogErrorReport(e, "Feature fetchDefaultModules");
+			
+			return LOG_ERROR;
 		}
 		
 		return SUCCESS;
@@ -461,6 +465,8 @@ public class Features extends FrameworkBaseAction {
 						+ FrameworkUtil.getStackTraceAsString(e));
 			}
 			new LogErrorReport(e, "Feature Select Dependency");
+			
+			return LOG_ERROR;
 		}
 		
 		return SUCCESS;

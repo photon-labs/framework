@@ -29,7 +29,6 @@
 <%@ page import="com.photon.phresco.model.ProjectInfo" %>
 
 <%@ include file="../userInfoDetails.jsp" %>
-<%@ include file="errorReport.jsp" %>
 
 <script type="text/javascript" src="js/delete.js" ></script>
 <script type="text/javascript" src="js/confirm-dialog.js" ></script>

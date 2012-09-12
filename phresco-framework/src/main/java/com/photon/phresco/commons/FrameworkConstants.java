@@ -586,7 +586,6 @@ public interface FrameworkConstants {
 	String REQ_FEATURES_MODULES = "modules";
 	String REQ_ENVIRONMENTS = "environments";
 	String REQ_ENVIRONMENT = "environment";
-    String REQ_LOG_REPORT = "logReport";
     String REQ_PROJECT_INFO_SERVERS = "projectInfoServers";
     String REQ_PROJECT_INFO_DATABASES = "projectInfoDatabases";
 	
@@ -1331,4 +1330,8 @@ public interface FrameworkConstants {
    String HOST = "host";
    String ENVIRONMENT = "SERVER_ENVIRONMENT";
    String SESSION_PASSWORD = "SESSION_PASSWORD";
+ 
+   /* For Error Report  */ 
+   String REQ_LOG_REPORT = "logReport";
+   String LOG_ERROR = "logError";
 }

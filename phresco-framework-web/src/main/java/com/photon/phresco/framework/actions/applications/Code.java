@@ -88,6 +88,8 @@ public class Code extends FrameworkBaseAction {
     	} catch (Exception e) {
     		S_LOGGER.error("Entered into catch block of Code.view()"+ FrameworkUtil.getStackTraceAsString(e));
     		new LogErrorReport(e, "Code view");
+    		
+    		return LOG_ERROR;
         }
     	return APP_CODE;
     }
@@ -234,6 +236,8 @@ public class Code extends FrameworkBaseAction {
         } catch (Exception e) {
         	S_LOGGER.error("Entered into catch block of Code.progressValidate()"+ FrameworkUtil.getStackTraceAsString(e));
         	new LogErrorReport(e, "Code progressValidate");
+        	
+        	return LOG_ERROR;
         }
         
         return APP_ENVIRONMENT_READER;

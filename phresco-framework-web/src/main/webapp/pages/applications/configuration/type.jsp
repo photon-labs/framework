@@ -36,8 +36,6 @@
 <%@ page import="com.photon.phresco.model.Technology"%>
 <%@ page import="com.photon.phresco.util.Constants"%>
 
-<%@ include file="../errorReport.jsp" %>
-
 <%
     String value = "";
 	String selectedValue = "";
