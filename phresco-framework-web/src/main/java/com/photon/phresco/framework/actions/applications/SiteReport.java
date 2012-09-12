@@ -63,6 +63,8 @@ public class SiteReport extends FrameworkBaseAction {
 			S_LOGGER.error("Entered into catch block of SiteReport.viewSiteReport()"
 					+ FrameworkUtil.getStackTraceAsString(e));
 			new LogErrorReport(e, "View site report");
+			
+			return LOG_ERROR;
 		}
 		
 		return APP_SITE_REPORT_VIEW;
@@ -103,6 +105,8 @@ public class SiteReport extends FrameworkBaseAction {
 			S_LOGGER.error("Entered into catch block of SiteReport.checkForSiteReport()"
 					+ FrameworkUtil.getStackTraceAsString(e));
 			new LogErrorReport(e, "Getting site report");
+			
+			return LOG_ERROR;
 		}
 		
 		return APP_SITE_REPORT_VIEW;
@@ -126,6 +130,8 @@ public class SiteReport extends FrameworkBaseAction {
 			S_LOGGER.error("Entered into catch block of SiteReport.generateSiteReport()"
 					+ FrameworkUtil.getStackTraceAsString(e));
 			new LogErrorReport(e, "Generating site report");
+			
+			return LOG_ERROR;
 		}
 		
 		return APP_ENVIRONMENT_READER;
@@ -146,6 +152,8 @@ public class SiteReport extends FrameworkBaseAction {
 			S_LOGGER.error("Entered into catch block of SiteReport.configure()"
 					+ FrameworkUtil.getStackTraceAsString(e));
 			new LogErrorReport(e, "Getting type of reports");
+			
+			return LOG_ERROR;
 		}
 		
 		return APP_SITE_REPORT_CONFIGURE;
@@ -193,6 +201,8 @@ public class SiteReport extends FrameworkBaseAction {
 			S_LOGGER.error("Entered into catch block of SiteReport.createReportConfig()"
 					+ FrameworkUtil.getStackTraceAsString(e));
 			new LogErrorReport(e, "Configuring site report");
+			
+			return LOG_ERROR;
 		}
 		
 		return viewSiteReport();

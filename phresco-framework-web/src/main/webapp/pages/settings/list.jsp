@@ -19,6 +19,8 @@
   --%>
 <%@ taglib uri="/struts-tags" prefix="s" %>
 
+<%@ page import="java.util.Collection"%>
+
 <%@ page import="java.util.HashMap"%>
 <%@ page import="java.util.Iterator"%>
 <%@ page import="java.util.List"%>

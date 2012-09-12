@@ -19,6 +19,8 @@
   --%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
+<%@ page import="freemarker.template.utility.StringUtil"%>
+
 <%@ page import="org.apache.commons.collections.CollectionUtils"%>
 <%@ page import="org.apache.commons.collections.MapUtils" %>
 <%@ page import="org.apache.commons.lang.StringUtils" %>

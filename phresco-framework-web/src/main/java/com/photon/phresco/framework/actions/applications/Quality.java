@@ -216,7 +216,7 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
 				S_LOGGER.debug("Android device name " + device);
                 settingsInfoMap.put(DEPLOY_ANDROID_DEVICE_MODE, device); //TODO: Need to be changed
                 settingsInfoMap.put(DEPLOY_ANDROID_EMULATOR_AVD, REQ_ANDROID_DEFAULT);
-                actionType = ActionType.MOBILE_COMMON_COMMAND;
+                actionType = ActionType.ANDROID_TEST_COMMAND;
               
             } else if (TechnologyTypes.IPHONE_NATIVE.equals(techId)) {
             	      actionType = ActionType.IPHONE_BUILD_UNIT_TEST;
@@ -258,6 +258,8 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
             }
             S_LOGGER.error("Entered into catch block of Quality.unit()"+ e);
             new LogErrorReport(e, "Quality Unit test");
+            
+            return LOG_ERROR;
         }
         getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
         getHttpRequest().setAttribute(REQ_TEST_TYPE_SELECTED, REQ_TEST_UNIT);
@@ -285,7 +287,7 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
                    S_LOGGER.debug("Android device name " + device);
                 settingsInfoMap.put(DEPLOY_ANDROID_DEVICE_MODE, device); //TODO: Need to be changed
                 settingsInfoMap.put(DEPLOY_ANDROID_EMULATOR_AVD, REQ_ANDROID_DEFAULT);
-                actionType = ActionType.MOBILE_COMMON_COMMAND;
+                actionType = ActionType.ANDROID_TEST_COMMAND;
             } else if (TechnologyTypes.IPHONE_NATIVE.equals(techId)) {
             	String buildNumber = getHttpRequest().getParameter(REQ_TEST_BUILD_ID);
             	settingsInfoMap.put(BUILD_NUMBER, buildNumber);
@@ -370,6 +372,8 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
             }
                S_LOGGER.error("Entered into catch block of Quality.functional()"+ e);
             new LogErrorReport(e, "Quality Functional test");
+            
+            return LOG_ERROR;
         }
         
         return APP_ENVIRONMENT_READER;
@@ -1013,7 +1017,7 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
                 String[] connectedDevices = getHttpRequest().getParameterValues(ANDROID_DEVICE);
                 String devices = FrameworkUtil.convertToCommaDelimited(connectedDevices);
                 settingsInfoMap.put(ANDROID_DEVICE_LIST, devices);
-                actionType = ActionType.ANDROID_PERF_COMMAND;
+                actionType = ActionType.ANDROID_TEST_COMMAND;
                 if (SHOW_ERROR.equals(showError)) {
                 	actionType.setShowError(true);
             	} else {
@@ -1137,6 +1141,8 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
 				}
             }
             new LogErrorReport(e, "Quality Performance test");
+            
+            return LOG_ERROR;
         }
         getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
         
@@ -1170,7 +1176,7 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
                 String device = getHttpRequest().getParameter(REQ_ANDROID_DEVICE);
                 settingsInfoMap.put(DEPLOY_ANDROID_DEVICE_MODE, device); //TODO: Need to be changed
                 settingsInfoMap.put(DEPLOY_ANDROID_EMULATOR_AVD, REQ_ANDROID_DEFAULT);
-                actionType = ActionType.MOBILE_COMMON_COMMAND;
+                actionType = ActionType.ANDROID_TEST_COMMAND;
                 S_LOGGER.debug("Load method ANDROIDS type settingsInfoMap value " + settingsInfoMap);
             } else {
             	actionType = ActionType.TEST;
@@ -1207,6 +1213,8 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
             }
             S_LOGGER.error("Entered into catch block of Quality.load()"+ e);
             new LogErrorReport(e, "Quality Load test");
+            
+            return LOG_ERROR;
         }
         getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
         
@@ -1420,6 +1428,8 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
         } catch (Exception e) {
                S_LOGGER.error("Entered into catch block of Quality.quality()"+ e);
             new LogErrorReport(e, "Quality");
+            
+            return LOG_ERROR;
         }
         getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
         

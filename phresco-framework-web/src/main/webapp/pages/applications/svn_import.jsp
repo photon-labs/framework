@@ -9,6 +9,7 @@
 	String repoUrl = (String)request.getAttribute(FrameworkConstants.REPO_URL);
 	String fromTab = (String)request.getAttribute(FrameworkConstants.REQ_FROM_TAB);
 	String projectCode = (String)request.getAttribute(FrameworkConstants.REQ_PROJECT_CODE);
+	String password = (String)session.getAttribute(FrameworkConstants.SESSION_PASSWORD);
 %>
 
 <div class="popup_Modal topFifty" id="repoDet">
@@ -288,7 +289,7 @@
 	 		localStorage["svnImport"] = "credentials";
 	 	} else {
  			$("#userName").val('<%= userInfo.getLoginId() %>');
-<%--  			$("#password").val('<%= userInfo.getCredentials().getPassword() %>'); --%>
+			$("#password").val('<%= password %>');
  			disableSvnFormDet();
  			localStorage["svnImport"] = "";
 	 	}

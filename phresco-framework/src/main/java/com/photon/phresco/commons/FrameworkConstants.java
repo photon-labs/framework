@@ -173,6 +173,7 @@ public interface FrameworkConstants {
     String DEPLOY_BUILD_NAME = "buildName";
     String IPHONE_BUILD_NAME = "application.path";
     String IPHONE_SIMULATOR_VERSION = "simulator.version";
+    String DEVICE_TO_USE = "family";
     String IPHONE_SCHEMA_PARAM = "scheme";
     String DEPLOY_LOCATION = "deployLocation";
     String DEPLOY_CONTEXT = "context";
@@ -209,7 +210,7 @@ public interface FrameworkConstants {
     String MVN_SHAREPOINT_NUNIT_TEST_COMMAND = "mvn sharepoint:test";
     String MVN_INSTALL_COMMAND = "mvn install -DskipTests=true";
     String MVN_MOBILE_INSTALL_COMMAND = "mvn install ";
-	String MVN_ANDROID_PERF_COMMAND = "mvn install ";
+	String MVN_ANDROID_TEST_COMMAND = "mvn clean install ";
     String MVN_SELENIUM_STOP_COMMAND = "mvn selenium:stop-server";
     String MVN_SONAR_COMMAND = "mvn sonar:sonar";
     String MVN_PROJECT_UPDATE_COMMAND = "mvn scm:update";
@@ -585,7 +586,6 @@ public interface FrameworkConstants {
 	String REQ_FEATURES_MODULES = "modules";
 	String REQ_ENVIRONMENTS = "environments";
 	String REQ_ENVIRONMENT = "environment";
-    String REQ_LOG_REPORT = "logReport";
     String REQ_PROJECT_INFO_SERVERS = "projectInfoServers";
     String REQ_PROJECT_INFO_DATABASES = "projectInfoDatabases";
     String REQ_ALL_SERVERS = "allServers";
@@ -1331,4 +1331,9 @@ public interface FrameworkConstants {
    String CONTEXT = "context";
    String HOST = "host";
    String ENVIRONMENT = "SERVER_ENVIRONMENT";
+   String SESSION_PASSWORD = "SESSION_PASSWORD";
+ 
+   /* For Error Report  */ 
+   String REQ_LOG_REPORT = "logReport";
+   String LOG_ERROR = "logError";
 }

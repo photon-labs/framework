@@ -153,6 +153,9 @@ public class Build extends FrameworkBaseAction {
 	private String port = null;
 	private String context = null;
 	
+	//iphone family
+	private String family = ""; 
+	
 	private static Map<String, String> sqlFolderPathMap = new HashMap<String, String>();
 
 	// DbWithSqlFiles
@@ -252,6 +255,8 @@ public class Build extends FrameworkBaseAction {
 				S_LOGGER.error("Entered into catch block of Build.view()" + FrameworkUtil.getStackTraceAsString(e));
 			}
 			new LogErrorReport(e, "Build view");
+			
+			return LOG_ERROR;
 		}
 
 		getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
@@ -418,6 +423,8 @@ public class Build extends FrameworkBaseAction {
 				S_LOGGER.error("Entered into catch block of Build.builds()" + FrameworkUtil.getStackTraceAsString(e));
 			}
 			new LogErrorReport(e, "Getting builds info");
+			
+			return LOG_ERROR;
 		}
 
 		getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
@@ -522,6 +529,8 @@ public class Build extends FrameworkBaseAction {
 		} catch (Exception e) {
 			S_LOGGER.error("Entered into catch block of Build.build()" + FrameworkUtil.getStackTraceAsString(e));
 			new LogErrorReport(e, "Building ");
+			
+			return LOG_ERROR;
 		}
 
 		getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
@@ -655,6 +664,8 @@ public class Build extends FrameworkBaseAction {
 				S_LOGGER.error("Entered into catch block of Build.delete()" + FrameworkUtil.getStackTraceAsString(e));
 			}
 			new LogErrorReport(e, "Deleting build");
+			
+			return LOG_ERROR;
 		}
 
 		getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
@@ -684,6 +695,7 @@ public class Build extends FrameworkBaseAction {
 				// param as additional param
 				if (StringUtils.isNotEmpty(deployTo) && deployTo.equals(REQ_IPHONE_SIMULATOR)) {
 					valuesMap.put(IPHONE_SIMULATOR_VERSION, simulatorVersion);
+					valuesMap.put(DEVICE_TO_USE, family);
 				} else {
 					valuesMap.put(DEVICE_DEPLOY, TRUE);
 				}
@@ -760,6 +772,8 @@ public class Build extends FrameworkBaseAction {
 				S_LOGGER.error("Entered into catch block of Build.deploy()" + FrameworkUtil.getStackTraceAsString(e));
 			}
 			new LogErrorReport(e, "Deploying");
+			
+			return LOG_ERROR;
 		}
 
 		getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
@@ -784,6 +798,8 @@ public class Build extends FrameworkBaseAction {
 						+ FrameworkUtil.getStackTraceAsString(e));
 			}
 			new LogErrorReport(e, "Deploying android");
+			
+			return LOG_ERROR;
 		}
 		return APP_DEPLOY_ANDROID;
 	}
@@ -817,6 +833,8 @@ public class Build extends FrameworkBaseAction {
 				S_LOGGER.error("Entered into catch block of Build.Iphone()" + FrameworkUtil.getStackTraceAsString(e));
 			}
 			new LogErrorReport(e, "Deploying Iphone");
+			
+			return LOG_ERROR;
 		}
 		return APP_DEPLOY_IPHONE;
 	}
@@ -859,6 +877,8 @@ public class Build extends FrameworkBaseAction {
 				S_LOGGER.error("Entered into catch block of Build.download()" + e);
 			}
 			new LogErrorReport(e, "Download builds");
+			
+			return LOG_ERROR;
 
 		} catch (Exception e1) {
 			if (debugEnabled) {
@@ -909,6 +929,8 @@ public class Build extends FrameworkBaseAction {
 				S_LOGGER.error("Entered into catch block of Build.download()" + e);
 			}
 			new LogErrorReport(e, "Download builds");
+			
+			return LOG_ERROR;
 
 		} catch (Exception e1) {
 			if (debugEnabled) {
@@ -976,6 +998,8 @@ public class Build extends FrameworkBaseAction {
 						+ FrameworkUtil.getStackTraceAsString(e));
 			}
 			new LogErrorReport(new PhrescoException("Server Startup Failed"), "NodeJS run against source");
+			
+			return LOG_ERROR;
 		}
 		return APP_ENVIRONMENT_READER;
 	}
@@ -1020,6 +1044,8 @@ public class Build extends FrameworkBaseAction {
 						+ FrameworkUtil.getStackTraceAsString(e));
 			}
 			new LogErrorReport(e, "Start nodejs server");
+			
+			return LOG_ERROR;
 		}
 		getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
 		return APP_ENVIRONMENT_READER;
@@ -1062,6 +1088,8 @@ public class Build extends FrameworkBaseAction {
 						+ FrameworkUtil.getStackTraceAsString(e));
 			}
 			new LogErrorReport(e, "Stop nodejs server");
+			
+			return LOG_ERROR;
 		}
 		getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
 		return APP_ENVIRONMENT_READER;
@@ -1141,6 +1169,8 @@ public class Build extends FrameworkBaseAction {
 						+ FrameworkUtil.getStackTraceAsString(e));
 			}
 			new LogErrorReport(e, "Java run against source");
+			
+			return LOG_ERROR;
 		}
 		return APP_ENVIRONMENT_READER;
 	}
@@ -1314,6 +1344,8 @@ public class Build extends FrameworkBaseAction {
 						+ FrameworkUtil.getStackTraceAsString(e));
 			}
 			new LogErrorReport(e, "Java start server");
+			
+			return LOG_ERROR;
 		}
 		getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
 		return APP_ENVIRONMENT_READER;
@@ -2216,5 +2248,13 @@ public class Build extends FrameworkBaseAction {
 
 	public void setContext(String context) {
 		this.context = context;
+	}
+
+	public String getFamily() {
+		return family;
+	}
+
+	public void setFamily(String family) {
+		this.family = family;
 	}
 }

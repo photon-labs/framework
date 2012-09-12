@@ -109,6 +109,8 @@ public class Configurations extends FrameworkBaseAction {
                S_LOGGER.error("Entered into catch block of Configurations.list()" + FrameworkUtil.getStackTraceAsString(e));
     		}
         	new LogErrorReport(e, "Configurations list");
+        	
+        	return LOG_ERROR;
         }
         
         return APP_LIST;
@@ -134,6 +136,8 @@ public class Configurations extends FrameworkBaseAction {
                S_LOGGER.error("Entered into catch block of Configurations.add()" + FrameworkUtil.getStackTraceAsString(e));
     		}
         	new LogErrorReport(e, "Configurations add");
+        	
+        	return LOG_ERROR;
         }
         
         getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
@@ -238,6 +242,8 @@ public class Configurations extends FrameworkBaseAction {
                S_LOGGER.error("Entered into catch block of Configurations.save()" + FrameworkUtil.getStackTraceAsString(e));
     		}
         	new LogErrorReport(e, "Configurations save");
+        	
+        	return LOG_ERROR;
         }
        
         return list();
@@ -540,6 +546,8 @@ public class Configurations extends FrameworkBaseAction {
                S_LOGGER.error("Entered into catch block of Configurations.edit()" + FrameworkUtil.getStackTraceAsString(e));
     		}
         	new LogErrorReport(e, "Configurations edit");
+        	
+        	return LOG_ERROR;
         }
         
         return APP_CONFIG_EDIT;
@@ -621,6 +629,8 @@ public class Configurations extends FrameworkBaseAction {
                S_LOGGER.error("Entered into catch block of Configurations.update()" + FrameworkUtil.getStackTraceAsString(e));
     		}
         	new LogErrorReport(e, "Configurations update");
+        	
+        	return LOG_ERROR;
         }
 
         return list();
@@ -655,6 +665,8 @@ public class Configurations extends FrameworkBaseAction {
                S_LOGGER.error("Entered into catch block of Configurations.delete()" + FrameworkUtil.getStackTraceAsString(e));
     		}
         	new LogErrorReport(e, "Configurations delete");
+        	
+        	return LOG_ERROR;
         }
         
         return list();
@@ -686,6 +698,8 @@ public class Configurations extends FrameworkBaseAction {
                S_LOGGER.error("Entered into catch block of Configurations.configurationsType()" + FrameworkUtil.getStackTraceAsString(e));
     		}
         	new LogErrorReport(e, "Configurations type");
+        	
+        	return LOG_ERROR;
 		}
 		
 		return SETTINGS_TYPE;
