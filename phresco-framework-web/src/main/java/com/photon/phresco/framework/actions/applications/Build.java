@@ -255,6 +255,8 @@ public class Build extends FrameworkBaseAction {
 				S_LOGGER.error("Entered into catch block of Build.view()" + FrameworkUtil.getStackTraceAsString(e));
 			}
 			new LogErrorReport(e, "Build view");
+			
+			return LOG_ERROR;
 		}
 
 		getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
