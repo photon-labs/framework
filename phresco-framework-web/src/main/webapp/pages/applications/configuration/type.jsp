@@ -334,7 +334,7 @@
 			params = params.concat($("input[name='port']").val());
 			params = params.concat("&projectCode=");
 			params = params.concat('<%= projectCode %>');
-			performAction('authenticateServer', params, $('#popup_div'));
+			performAction('authenticateServer', '', $('#popup_div'), '', params);
 		});
 	});
 	

@@ -588,6 +588,8 @@ public interface FrameworkConstants {
     String REQ_LOG_REPORT = "logReport";
     String REQ_PROJECT_INFO_SERVERS = "projectInfoServers";
     String REQ_PROJECT_INFO_DATABASES = "projectInfoDatabases";
+    String REQ_ALL_SERVERS = "allServers";
+    String REQ_ALL_DATABASES = "allDatabases";
 	
 	String REQ_TESTCASE_NAME = "testCaseName";
 	String SCREENSHOT_DIR = "screenshots";

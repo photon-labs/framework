@@ -689,6 +689,16 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		}
 		return null;
 	}
+	
+	@Override
+	public List<Technology> getTechnologies() throws PhrescoException {
+		try {
+			return getServiceManager().getArcheTypes(ServiceConstants.DEFAULT_CUSTOMER_NAME);
+		} catch (ClientHandlerException ex) {
+			S_LOGGER.error(ex.getLocalizedMessage());
+			throw new PhrescoException(ex);
+		}
+	}
 
 	@Override
 	public Map<String, Technology> getAllTechnologies() throws PhrescoException {
@@ -2518,9 +2528,9 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 	}
 	
 	@Override
-	public List<Server> getServers(String techId, String customerId) throws PhrescoException {
+	public List<Server> getServers(String customerId) throws PhrescoException {
 		try {
-			List<Server> servers = getServiceManager().getServers(techId, customerId);
+			List<Server> servers = getServiceManager().getServers(customerId);
 			return servers;
 		} catch (PhrescoException e) {
 			throw new PhrescoException();
@@ -2528,10 +2538,48 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 	}
 	
 	@Override
-	public List<Database> getDatabases(String techId, String customerId) throws PhrescoException {
+	public List<Server> getServersByTech(String techId, String customerId) throws PhrescoException {
 		try {
-			List<Database> databases = getServiceManager().getDatabases(techId, customerId);
+			List<Server> servers = getServers(customerId);
+			List<Server> serversByTechId = new ArrayList<Server>();
+	        if (CollectionUtils.isNotEmpty(servers)) {
+	        	for (Server server : servers) {
+					if (server.getTechnologies().contains(techId)) {
+						serversByTechId.add(server);
+					}
+				}
+	        }
+	        
+			return serversByTechId;
+		} catch (PhrescoException e) {
+			throw new PhrescoException();
+		}
+	}
+	
+	@Override
+	public List<Database> getDatabases(String customerId) throws PhrescoException {
+		try {
+			List<Database> databases = getServiceManager().getDatabases(customerId);
 			return databases;
+		} catch (PhrescoException e) {
+			throw new PhrescoException();
+		}
+	}
+	
+	@Override
+	public List<Database> getDatabasesByTech(String techId, String customerId) throws PhrescoException {
+		try {
+			List<Database> databases = getDatabases(customerId);
+			List<Database> dbsByTechId = new ArrayList<Database>();
+	        if (CollectionUtils.isNotEmpty(databases)) {
+	        	for (Database database : databases) {
+					if (database.getTechnologies().contains(techId)) {
+						dbsByTechId.add(database);
+					}
+				}
+	        }
+	        
+			return dbsByTechId;
 		} catch (PhrescoException e) {
 			throw new PhrescoException();
 		}

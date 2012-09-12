@@ -270,8 +270,8 @@ public class Applications extends FrameworkBaseAction {
 				selectedTechnology = projectInfo.getTechId();
 			}
 			Technology techonology = administrator.getTechnology(application, selectedTechnology, customerId);
-			List<Server> servers = administrator.getServers(selectedTechnology, customerId);
-			List<Database> databases = administrator.getDatabases(selectedTechnology, customerId);
+			List<Server> servers = administrator.getServersByTech(selectedTechnology, customerId);
+			List<Database> databases = administrator.getDatabasesByTech(selectedTechnology, customerId);
 			List<WebService> webServices = administrator
 					.getWebServices(selectedTechnology, customerId);
 			S_LOGGER.debug("Selected technology" + techonology.toString());
@@ -928,7 +928,7 @@ public class Applications extends FrameworkBaseAction {
 			String attrName = null;
 			if (Constants.SETTINGS_TEMPLATE_SERVER.equals(type)) {
 				List<String> listSelectedServerIds = null;
-				List<Server> servers = administrator.getServers(techId, customerId);
+				List<Server> servers = administrator.getServersByTech(techId, customerId);
 				if (StringUtils.isEmpty(from)) {
 					List<String> listSelectedServers = null;
 					List<String> listSelectedServerNames = null;
@@ -978,7 +978,7 @@ public class Applications extends FrameworkBaseAction {
 			}
 			if (Constants.SETTINGS_TEMPLATE_DB.equals(type)) {
 				List<String> listSelectedDatabaseIds = null;
-				List<Database> databases = administrator.getDatabases(techId, customerId);
+				List<Database> databases = administrator.getDatabasesByTech(techId, customerId);
 				if (StringUtils.isEmpty(from)) {
 					List<String> listSelectedDbs = null;
 					List<String> listSelectedDbNames = null;
@@ -1080,7 +1080,7 @@ public class Applications extends FrameworkBaseAction {
 			String selectedId = getHttpRequest().getParameter("selectedId");
 
 			if (Constants.SETTINGS_TEMPLATE_SERVER.equals(type)) {
-				List<Server> servers = administrator.getServers(techId, customerId);
+				List<Server> servers = administrator.getServersByTech(techId, customerId);
 				if (CollectionUtils.isNotEmpty(servers)) {
 					for (Server server : servers) {
 						if (server.getId().equals(selectedId)) {
@@ -1090,7 +1090,7 @@ public class Applications extends FrameworkBaseAction {
 				}
 			}
 			if (Constants.SETTINGS_TEMPLATE_DB.equals(type)) {
-				List<Database> databases = administrator.getDatabases(techId, customerId);
+				List<Database> databases = administrator.getDatabasesByTech(techId, customerId);
 				if (CollectionUtils.isNotEmpty(databases)) {
 					for (Database database : databases) {
 						if (database.getId().equals(selectedId)) {

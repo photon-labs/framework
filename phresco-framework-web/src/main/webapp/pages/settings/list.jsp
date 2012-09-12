@@ -19,30 +19,30 @@
   --%>
 <%@ taglib uri="/struts-tags" prefix="s" %>
 
-<%@ include file="../applications/errorReport.jsp" %>
-<%@ include file="../userInfoDetails.jsp" %>
-
-<%@ page import="java.util.Collection"%>
 <%@ page import="java.util.HashMap"%>
 <%@ page import="java.util.Iterator"%>
 <%@ page import="java.util.List"%>
 <%@ page import="org.apache.commons.lang.StringUtils"%>
 <%@ page import="java.util.Map"%>
-
 <%@ page import="java.util.regex.*"%>
+
 <%@ page import="com.photon.phresco.model.SettingsInfo"%>
 <%@ page import="com.photon.phresco.model.PropertyInfo"%>
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.util.Constants"%>
 <%@ page import="com.photon.phresco.configuration.Environment" %>
 
+<%@ include file="../userInfoDetails.jsp" %>
+
 <script type="text/javascript" src="js/delete.js" ></script>
 <script type="text/javascript" src="js/confirm-dialog.js" ></script>
 <script type="text/javascript" src="js/loading.js"></script>
 <script type="text/javascript" src="js/home-header.js" ></script>
+
 <%
-List<Environment> envs = (List<Environment>) request.getAttribute(FrameworkConstants.ENVIRONMENTS);
+	List<Environment> envs = (List<Environment>) request.getAttribute(FrameworkConstants.ENVIRONMENTS);
 %>
+
 <style type="text/css">
     .btn.success, .alert-message.success {
         margin-top: 2px;
@@ -69,35 +69,31 @@ List<Environment> envs = (List<Environment>) request.getAttribute(FrameworkConst
     </h1>
 </div>
     
-<form action="deleteSettings" name="myform" method="post" id="deleteObjects" class="settings_list_form" >
-    <div class="operation">
-        <input id="addButton" type="button" value="<s:text name="label.add"/>" class="btn primary"/>
+<form id="formSettings" class="settings_list_form" name="listForm">
+	<div class="operation">
+		<input id="addButton" type="button" value="<s:text name="label.add"/>" class="btn primary"/>
         <input id="deleteButton" type="button" value="<s:text name="label.delete"/>" class="btn disabled" disabled="disabled"/>
         <input id="environmentButton" type="button" value="<s:text name="label.environment"/>" class="btn primary" />
         <s:if test="hasActionMessages()">
             <span class="alert-message success"  id="successmsg">
-                <s:actionmessage />
+				<s:actionmessage />
             </span>
         </s:if>
     </div>
+    
     <div class="settings_container settings_settings_container">
-        <%
+		<%
             List<SettingsInfo> settings = (List<SettingsInfo>)request.getAttribute("settings");
-        %>
-
-        <%
-        	Map<String, String> urls = new HashMap<String, String>();
+           	Map<String, String> urls = new HashMap<String, String>();
             if (settings == null || settings.size() == 0) {
         %>
-            <div class="alert-message block-message warning" >
+			<div class="alert-message block-message warning" >
                 <center><s:label key="settings.error.message" cssClass="errorMsgLabel"/></center>
             </div>
-        <%
-            } else {
-        %>
-        		<div class="settingsList_table_div">
-		    		<div class="fixed-table-container">
-			      		<div class="header-background"> </div>
+        <% } else { %>
+			<div class="settingsList_table_div">
+	    		<div class="fixed-table-container">
+					<div class="header-background"> </div>
 			      		<div class="fixed-table-container-inner">
 					        <table cellspacing="0" class="zebra-striped">
 					          	<thead>
@@ -126,59 +122,60 @@ List<Environment> envs = (List<Environment>) request.getAttribute(FrameworkConst
 					          	</thead>
 					
 					          	<tbody>
-							<%
-								for (SettingsInfo setting : settings) {
-										   for(Environment enves : envs) { 
-										       if(setting.getEnvName().equals(enves.getName())) {
-							%>
-							<tr>
-					              		<td class="checkbox_list">
-					              			<input type="checkbox" class="check" name="check" value="<%=setting.getEnvName() + "," +setting.getName() %>">
-					              		</td>
-					              		<td>
-					              			<a href="#" name="edit" id="<%= setting.getName() %>" onclick="editSetting('<%= setting.getName()%>', '<%= setting.getEnvName() %>')"><%= setting.getName() %></a>
-					              		</td>
-					              		<td style="width: 25%;"><%= setting.getDescription() %></td>
-					              		<td><%= setting.getType() %></td>
-					              		<td style="width: 25%;" title="<%= enves.getDesc()%>" ><%= setting.getEnvName() %></td>
-					              		<td>
-						              		<%	
-				                            	String protocol = null;
-				                            	String host = null;
-				                            	int port = 0;
-			                    				List<PropertyInfo> propertyInfos = setting.getPropertyInfos();
-			                            		String url = "";
-			                            		for (PropertyInfo propertyInfo : propertyInfos) {
-			                    					if (propertyInfo.getKey().equals(Constants.SERVER_PROTOCOL)) {
-			                    						protocol = propertyInfo.getValue();
-			                    					}
-			                    					if (propertyInfo.getKey().equals(Constants.SERVER_HOST)) {
-			                    						host = propertyInfo.getValue();
-			                    					}
-			                    					if (propertyInfo.getKey().equals(Constants.SERVER_PORT)) {
-			                    						port = Integer.parseInt(propertyInfo.getValue());
-			                    					}
-			                            		}
-				                           		if (StringUtils.isEmpty(protocol)) {
-				                           			protocol = Constants.DB_PROTOCOL;
-				                           		}
-			                               		String settingName = setting.getName();
-			                               		Pattern pattern = Pattern.compile("\\s+");
-			                               		Matcher matcher = pattern.matcher(settingName);
-			                               		boolean check = matcher.find();
-			                               		String settingNameForId = matcher.replaceAll("");
-			                            		urls.put(settingNameForId, protocol +","+ host + "," + port);
-			                            	%>	
-			                            		<img src="images/icons/inprogress.png" alt="status-up" title="Loading" id="isAlive<%= settingNameForId %>">
-			                           	</td>
-					            	</tr>
-					            <%
-								 	 }
-					          	   } 
-					          	 }		
-								%>	
+									<%
+										for (SettingsInfo setting : settings) {
+											for (Environment enves : envs) { 
+												if (setting.getEnvName().equals(enves.getName())) {
+									%>
+												<tr>
+								              		<td class="checkbox_list">
+								              			<input type="checkbox" class="check" name="check" value="<%=setting.getEnvName() + "," +setting.getName() %>">
+								              		</td>
+								              		<td>
+								              			<a href="#" name="edit" id="<%= setting.getName() %>" onclick="editSetting('<%= setting.getName()%>', 
+								              			'<%= setting.getEnvName() %>')"><%= setting.getName() %></a>
+								              		</td>
+								              		<td style="width: 25%;"><%= setting.getDescription() %></td>
+								              		<td><%= setting.getType() %></td>
+								              		<td style="width: 25%;" title="<%= enves.getDesc()%>" ><%= setting.getEnvName() %></td>
+								              		<td>
+									              		<%	
+							                            	String protocol = null;
+							                            	String host = null;
+							                            	int port = 0;
+						                    				List<PropertyInfo> propertyInfos = setting.getPropertyInfos();
+						                            		String url = "";
+						                            		for (PropertyInfo propertyInfo : propertyInfos) {
+						                    					if (propertyInfo.getKey().equals(Constants.SERVER_PROTOCOL)) {
+						                    						protocol = propertyInfo.getValue();
+						                    					}
+						                    					if (propertyInfo.getKey().equals(Constants.SERVER_HOST)) {
+						                    						host = propertyInfo.getValue();
+						                    					}
+						                    					if (propertyInfo.getKey().equals(Constants.SERVER_PORT)) {
+						                    						port = Integer.parseInt(propertyInfo.getValue());
+						                    					}
+						                            		}
+							                           		if (StringUtils.isEmpty(protocol)) {
+							                           			protocol = Constants.DB_PROTOCOL;
+							                           		}
+						                               		String settingName = setting.getName();
+						                               		Pattern pattern = Pattern.compile("\\s+");
+						                               		Matcher matcher = pattern.matcher(settingName);
+						                               		boolean check = matcher.find();
+						                               		String settingNameForId = matcher.replaceAll("");
+						                            		urls.put(settingNameForId, protocol +","+ host + "," + port);
+						                            	%>	
+						                            		<img src="images/icons/inprogress.png" alt="status-up" title="Loading" id="isAlive<%= settingNameForId %>">
+						                           	</td>
+								            	</tr>
+						            <%
+												}
+											} 
+										}		
+									%>	
 					          	</tbody>
-					        </table>
+							</table>
 			      		</div>
 		    		</div>
     			</div>
@@ -186,35 +183,34 @@ List<Environment> envs = (List<Environment>) request.getAttribute(FrameworkConst
         <%
             }
         %>
+        
+        <!-- Hidden Fields -->
+       	<input type="hidden" name="fromTab" value="settings">
 </form>
-
-<!-- <div class="popup_div" id="environment">
-
-</div> -->
 
 <script type="text/javascript">
     $("#settings").attr("class", "active");
     $("#home").attr("class", "inactive");
    
-    /* To check whether the divice is ipad or not */
-	if(!isiPad()){
-	    /* JQuery scroll bar */
+  	//To check whether the device is ipad or not and then apply jquery scrollbar
+	if (!isiPad()) {
 		$(".fixed-table-container-inner").scrollbars();
 	}
+    
     function isConnectionAlive(url, id) {
         $.ajax({
         	url : 'connectionAliveCheck',
         	data : {
-        		'url' : url,
+				'url' : url,
         	},
         	type : "get",
         	datatype : "json",
         	success : function(data) {
-        		if($.trim(data) == 'true') {
+        		if ($.trim(data) == 'true') {
         			$('#isAlive' + id).attr("src","images/icons/status-up.png");
         			$('#isAlive' + id).attr("title","Alive");
         		}
-				if($.trim(data) == 'false') {
+				if ($.trim(data) == 'false') {
 					$('#isAlive' + id).attr("src","images/icons/status-down.png");
 					$('#isAlive' + id).attr("title","Down");
         		}
@@ -225,20 +221,18 @@ List<Environment> envs = (List<Environment>) request.getAttribute(FrameworkConst
     function openEnvironmentPopup() {
     	showPopup();
     	$('#popup_div').empty();
-        var params = "fromTab=";
-		params = params.concat("settings");
-		popup('openSettingsEnvPopup', params, $('#popup_div'));
+		popup('openSettingsEnvPopup', $('#formSettings'), $('#popup_div'));
      }
     
     $(document).ready(function() {
     	<% 
-			if(urls != null) {
-		    	Iterator iterator = urls.keySet().iterator();  
+			if (urls != null) {
+				Iterator iterator = urls.keySet().iterator();  
 		    	while (iterator.hasNext()) { 
-		    	   String id = iterator.next().toString();  
-		    	   String url = urls.get(id).toString();   
+					String id = iterator.next().toString();  
+		    	   	String url = urls.get(id).toString();   
 	 	%>
-		 		isConnectionAlive('<%= url%>', '<%= id%>');
+					isConnectionAlive('<%= url%>', '<%= id%>');
 		<%
 		    	}
 			}
@@ -253,21 +247,12 @@ List<Environment> envs = (List<Environment>) request.getAttribute(FrameworkConst
 		$('#addButton').click(function() {
 			disableScreen();
 			showLoadingIcon($("#loadingIconDiv"));
-			
-			var params = "";
-	    	if (!isBlank($('form').serialize())) {
-	    		params = $('form').serialize() + "&";
-	    	}
-            performAction("addSettings", params, $('#container'));
+            performAction("addSettings", '', $('#container'));
         });
 		
-		$('form').submit(function() {
+		$('form[name=listForm]').submit(function() {
 			showProgessBar("Deleting Setting (s)", 100);
-			var params = "";
-	    	if (!isBlank($('form').serialize())) {
-	    		params = $('form').serialize() + "&";
-	    	}
-            performAction("deleteSettings", params, $('#container'));
+            performAction("deleteSettings", $('#formSettings'), $('#container'));
             return false;
         });
 		
@@ -280,13 +265,10 @@ List<Environment> envs = (List<Environment>) request.getAttribute(FrameworkConst
     	disableScreen();
 		showLoadingIcon($("#loadingIconDiv"));
     	var params = "";
-    	if (!isBlank($('form').serialize())) {
-    		params = $('form').serialize() + "&";
-    	}
     	params = params.concat("oldName=");
     	params = params.concat(configName);
     	params = params.concat("&envName=");
     	params = params.concat(envName);
-    	performAction("editSetting", params, $('#container'));
+    	performAction("editSetting", $("#formSettings"), $('#container'), '', params);
     }
 </script>
