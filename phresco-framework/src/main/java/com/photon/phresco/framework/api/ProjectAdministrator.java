@@ -429,7 +429,8 @@ public interface ProjectAdministrator {
      * @throws PhrescoException
      */
     List<DownloadInfo> getOtherDownloadInfo(DownloadPropertyInfo downloadPropertyInfo) throws PhrescoException;
-    String getJforumPath() throws PhrescoException;
+    
+    String getJforumPath(String customerId) throws PhrescoException;
 
     void createJob(Project project, CIJob job) throws PhrescoException;
 
