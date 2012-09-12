@@ -36,8 +36,6 @@
 <%@ page import="com.photon.phresco.model.Technology"%>
 <%@ page import="com.photon.phresco.util.Constants"%>
 
-<%@ include file="../errorReport.jsp" %>
-
 <%
     String value = "";
 	String selectedValue = "";
@@ -334,7 +332,7 @@
 			params = params.concat($("input[name='port']").val());
 			params = params.concat("&projectCode=");
 			params = params.concat('<%= projectCode %>');
-			performAction('authenticateServer', params, $('#popup_div'));
+			performAction('authenticateServer', '', $('#popup_div'), '', params);
 		});
 	});
 	

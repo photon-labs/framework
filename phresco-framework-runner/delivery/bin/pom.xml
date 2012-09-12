@@ -88,6 +88,16 @@
 		<version>${phantomjs.version}</version>
 		<type>zip</type>
 	  </dependency>
+      
+     
+      
+      <dependency>
+          <groupId>softwares.iphone.files</groupId>
+          <artifactId>Waxsim</artifactId>
+          <version>1.0</version>
+          <type>zip</type>
+      </dependency>
+	
 
 	</dependencies>
 	
@@ -169,6 +179,17 @@
 									<overWrite>false</overWrite>
 									<outputDirectory>../workspace/tools/chief</outputDirectory>
 								</artifactItem>
+                                
+                                   <!-- extracting waxsim zip file -->
+								<artifactItem>
+									<groupId>softwares.iphone.files</groupId>
+                                    <artifactId>Waxsim</artifactId>
+                                    <version>1.0</version>
+                                    <type>zip</type>
+									<overWrite>false</overWrite>
+									<outputDirectory>../workspace/tools</outputDirectory>
+								</artifactItem>
+                                
 								
 								<!-- extracting JMeter zip file -->
 								<artifactItem>

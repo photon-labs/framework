@@ -83,6 +83,7 @@ import com.photon.phresco.framework.api.Project;
 import com.photon.phresco.framework.api.ProjectAdministrator;
 import com.photon.phresco.framework.api.ValidationResult;
 import com.photon.phresco.framework.api.Validator;
+import com.photon.phresco.framework.win8.util.ItemGroupUpdater;
 import com.photon.phresco.model.AdminConfigInfo;
 import com.photon.phresco.model.ApplicationType;
 import com.photon.phresco.model.CertificateInfo;
@@ -186,6 +187,9 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 			BufferedReader breader = null;
 			try {
 				extractArchive(response, info);
+				if (TechnologyTypes.WIN_METRO.equalsIgnoreCase(techId)) {
+//					ItemGroupUpdater.update(info, projectPath);
+				}
 				updateProjectPOM(info);
 				StringBuilder sb = new StringBuilder();
 				sb.append("mvn");
@@ -303,6 +307,10 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 				extractArchive(response, delta);
 				updatePOMWithModules(pomPath, projectInfo.getTechnology().getModules(), techId);
 				updatePOMWithPluginArtifact(pomPath, projectInfo.getTechnology().getModules(), techId);
+			}
+			File projectPath = new File(Utility.getProjectHome() + delta.getCode() + File.separator);
+			if (TechnologyTypes.WIN_METRO.equalsIgnoreCase(techId)) {
+//				ItemGroupUpdater.update(projectInfo, projectPath);
 			}
 			
 			BufferedReader bfreader = null;
@@ -688,6 +696,16 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 			throw new PhrescoException(ex);
 		}
 		return null;
+	}
+	
+	@Override
+	public List<Technology> getTechnologies() throws PhrescoException {
+		try {
+			return getServiceManager().getArcheTypes(ServiceConstants.DEFAULT_CUSTOMER_NAME);
+		} catch (ClientHandlerException ex) {
+			S_LOGGER.error(ex.getLocalizedMessage());
+			throw new PhrescoException(ex);
+		}
 	}
 
 	@Override
@@ -2518,9 +2536,9 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 	}
 	
 	@Override
-	public List<Server> getServers(String techId, String customerId) throws PhrescoException {
+	public List<Server> getServers(String customerId) throws PhrescoException {
 		try {
-			List<Server> servers = getServiceManager().getServers(techId, customerId);
+			List<Server> servers = getServiceManager().getServers(customerId);
 			return servers;
 		} catch (PhrescoException e) {
 			throw new PhrescoException();
@@ -2528,10 +2546,48 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 	}
 	
 	@Override
-	public List<Database> getDatabases(String techId, String customerId) throws PhrescoException {
+	public List<Server> getServersByTech(String techId, String customerId) throws PhrescoException {
 		try {
-			List<Database> databases = getServiceManager().getDatabases(techId, customerId);
+			List<Server> servers = getServers(customerId);
+			List<Server> serversByTechId = new ArrayList<Server>();
+	        if (CollectionUtils.isNotEmpty(servers)) {
+	        	for (Server server : servers) {
+					if (server.getTechnologies().contains(techId)) {
+						serversByTechId.add(server);
+					}
+				}
+	        }
+	        
+			return serversByTechId;
+		} catch (PhrescoException e) {
+			throw new PhrescoException();
+		}
+	}
+	
+	@Override
+	public List<Database> getDatabases(String customerId) throws PhrescoException {
+		try {
+			List<Database> databases = getServiceManager().getDatabases(customerId);
 			return databases;
+		} catch (PhrescoException e) {
+			throw new PhrescoException();
+		}
+	}
+	
+	@Override
+	public List<Database> getDatabasesByTech(String techId, String customerId) throws PhrescoException {
+		try {
+			List<Database> databases = getDatabases(customerId);
+			List<Database> dbsByTechId = new ArrayList<Database>();
+	        if (CollectionUtils.isNotEmpty(databases)) {
+	        	for (Database database : databases) {
+					if (database.getTechnologies().contains(techId)) {
+						dbsByTechId.add(database);
+					}
+				}
+	        }
+	        
+			return dbsByTechId;
 		} catch (PhrescoException e) {
 			throw new PhrescoException();
 		}

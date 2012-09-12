@@ -48,6 +48,14 @@
 			  <version>2.6.1</version>
 			  <type>hpi</type>
 		</dependency>
+        
+        <dependency>
+			  <groupId>jenkins.sonar.plugin</groupId>
+			  <artifactId>sonar</artifactId>
+			  <version>1.8</version>
+			  <type>hpi</type>
+		</dependency>
+        
 
 	</dependencies>
 	

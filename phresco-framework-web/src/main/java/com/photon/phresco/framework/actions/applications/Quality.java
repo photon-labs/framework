@@ -258,6 +258,8 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
             }
             S_LOGGER.error("Entered into catch block of Quality.unit()"+ e);
             new LogErrorReport(e, "Quality Unit test");
+            
+            return LOG_ERROR;
         }
         getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
         getHttpRequest().setAttribute(REQ_TEST_TYPE_SELECTED, REQ_TEST_UNIT);
@@ -370,6 +372,8 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
             }
                S_LOGGER.error("Entered into catch block of Quality.functional()"+ e);
             new LogErrorReport(e, "Quality Functional test");
+            
+            return LOG_ERROR;
         }
         
         return APP_ENVIRONMENT_READER;
@@ -1137,6 +1141,8 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
 				}
             }
             new LogErrorReport(e, "Quality Performance test");
+            
+            return LOG_ERROR;
         }
         getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
         
@@ -1207,6 +1213,8 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
             }
             S_LOGGER.error("Entered into catch block of Quality.load()"+ e);
             new LogErrorReport(e, "Quality Load test");
+            
+            return LOG_ERROR;
         }
         getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
         
@@ -1420,6 +1428,8 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
         } catch (Exception e) {
                S_LOGGER.error("Entered into catch block of Quality.quality()"+ e);
             new LogErrorReport(e, "Quality");
+            
+            return LOG_ERROR;
         }
         getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
         
