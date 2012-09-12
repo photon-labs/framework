@@ -262,6 +262,7 @@ public interface FrameworkConstants {
     String ELEMENT_TARGET = "do_not_checkin/target/*.apk";
     String ELEMENT_VERBOS = "verbose";
     String ELEMENT_VERIFY = "verify";
+    String HEAD_REVISION = "HEAD";
     String REQ_SELECTED_TEST_NAME = "selectedTestName";
     
     String CONNECTION_URL = "connectionUrl";
@@ -728,6 +729,8 @@ public interface FrameworkConstants {
      * Delete Project keys
      */
     String SUCCESS_PROJECT_DELETE = "Projects deleted successfully";
+    String SUCCESS_PROJECT_UPDATE = "update.project.success";
+    String FAILURE_PROJECT_UPDATE = "update.project.fail";
     String FAILURE_PROJECT_DELETE = "Projects deletion failed";
     /*
      * Project Import keys
