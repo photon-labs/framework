@@ -26,7 +26,6 @@
 <%@ page import="com.photon.phresco.model.ProjectInfo"%>
 <%@ page import="com.photon.phresco.util.TechnologyTypes"%>
 
-<%@ include file="../errorReport.jsp" %>
 <%@ include file="../../userInfoDetails.jsp" %>
 
 <%

@@ -225,6 +225,8 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
     	} catch (Exception e) {
         	S_LOGGER.error("Entered into catch block of CI.configure()" + FrameworkUtil.getStackTraceAsString(e));
         	new LogErrorReport(e, "CI configuration clicked");
+        	
+        	return LOG_ERROR;
     	}
     	
         return APP_CI_CONFIGURE;
@@ -482,6 +484,8 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
         } catch (Exception e) {
             S_LOGGER.error("Entered into catch block of CI.deleteCIBuild()" + FrameworkUtil.getStackTraceAsString(e));
         	new LogErrorReport(e, "Build delete");
+        	
+        	return LOG_ERROR;
         }
         getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
         
@@ -508,6 +512,8 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
         } catch (Exception e) {
             S_LOGGER.error("Entered into catch block of CI.deleteCIJob()" + FrameworkUtil.getStackTraceAsString(e));
         	new LogErrorReport(e, "Job delete");
+        	
+        	return LOG_ERROR;
         }
         getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
         

@@ -30,7 +30,6 @@
 <%@ page import="com.photon.phresco.commons.CIBuild"%>
 
 <%@ include file="../progress.jsp" %>
-<%@ include file="../errorReport.jsp" %>
 <%@ include file="../../userInfoDetails.jsp" %>
 
 <script type="text/javascript" src="js/reader.js" ></script>

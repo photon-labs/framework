@@ -200,6 +200,8 @@ public class Features extends FrameworkBaseAction {
 						+ FrameworkUtil.getStackTraceAsString(e));
 			}
 			new LogErrorReport(e, "Feature list");
+			
+			return LOG_ERROR;
 		}
 		
 		return returnPage;
@@ -246,8 +248,8 @@ public class Features extends FrameworkBaseAction {
 				newTechnology.setModules(projectInfo.getTechnology().getModules());
 			}
 			
-			List<Server> servers = administrator.getServers(getTechnology(), customerId);
-			List<Database> databases = administrator.getDatabases(getTechnology(), customerId);
+			List<Server> servers = administrator.getServersByTech(getTechnology(), customerId);
+			List<Database> databases = administrator.getDatabasesByTech(getTechnology(), customerId);
 			List<WebService> webservices = administrator.getWebServices(getTechnology(), customerId);
 			
 			String selectedServers = getHttpRequest().getParameter(REQ_SELECTED_SERVERS);
@@ -428,6 +430,8 @@ public class Features extends FrameworkBaseAction {
 						+ FrameworkUtil.getStackTraceAsString(e));
 			}
 			new LogErrorReport(e, "Feature fetchDefaultModules");
+			
+			return LOG_ERROR;
 		}
 		
 		return SUCCESS;
@@ -461,6 +465,8 @@ public class Features extends FrameworkBaseAction {
 						+ FrameworkUtil.getStackTraceAsString(e));
 			}
 			new LogErrorReport(e, "Feature Select Dependency");
+			
+			return LOG_ERROR;
 		}
 		
 		return SUCCESS;

@@ -290,7 +290,7 @@
 				
 		<!-- Show Settings -->
 		<div class="clearfix">
-			<div class="xlInput" style="margin-left: 210px;">
+			<div class="xlInput" style="margin-left: 70px;">
 				<ul class="inputs-list">
 					<li class="popup-li">
 						<% if (!from.equals(FrameworkConstants.DEPLOY)) { %>

@@ -61,6 +61,7 @@ import com.photon.phresco.model.Server;
 import com.photon.phresco.model.SettingsInfo;
 import com.photon.phresco.model.SettingsTemplate;
 import com.photon.phresco.util.Constants;
+import com.photon.phresco.util.ServiceConstants;
 import com.photon.phresco.util.Utility;
 
 public class Settings extends FrameworkBaseAction {
@@ -114,6 +115,8 @@ public class Settings extends FrameworkBaseAction {
                 S_LOGGER.error("Entered into catch block of Settings.list()"+ FrameworkUtil.getStackTraceAsString(e));
     		}
         	new LogErrorReport(e, "Settings list");
+        	
+        	return LOG_ERROR;
 		}
 		return SETTINGS_LIST;
 	}
@@ -124,13 +127,9 @@ public class Settings extends FrameworkBaseAction {
 		}
 		try {
 			ProjectAdministrator administrator = getProjectAdministrator();
-			List<SettingsTemplate> settingsTemplates = administrator.getSettingsTemplates("");
-			getHttpRequest().setAttribute(SESSION_SETTINGS_TEMPLATES, settingsTemplates);
+			List<SettingsTemplate> settingsTemplates = administrator.getSettingsTemplates(ServiceConstants.DEFAULT_CUSTOMER_NAME);
+			getHttpRequest().setAttribute(REQ_SETTINGS_TEMPLATES, settingsTemplates);
 			getHttpRequest().setAttribute(REQ_SELECTED_MENU, SETTINGS);
-			getHttpSession().removeAttribute(REQ_CONFIG_INFO);
-			getHttpSession().removeAttribute(ERROR_SETTINGS);
-			getHttpSession().removeAttribute(SETTINGS_PARAMS);
-			
 			List<Environment> envs = administrator.getEnvironments();
             getHttpRequest().setAttribute(ENVIRONMENTS, envs);
             Collections.sort(envs, new EnvironmentComparator());
@@ -139,6 +138,8 @@ public class Settings extends FrameworkBaseAction {
                 S_LOGGER.error("Entered into catch block of Settings.list()"+ FrameworkUtil.getStackTraceAsString(e));
     		}
         	new LogErrorReport(e, "Settings add");
+        	
+        	return LOG_ERROR;
 		}
 
 		return SETTINGS_ADD;
@@ -152,7 +153,11 @@ public class Settings extends FrameworkBaseAction {
 		try {
 			initDriverMap();
 			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-			SettingsTemplate selectedSettingTemplate = administrator.getSettingsTemplate(settingsType, "");
+			if (!validate(administrator, null)) {
+            	isValidated = true;
+				return Action.SUCCESS;
+			}
+			SettingsTemplate selectedSettingTemplate = administrator.getSettingsTemplate(settingsType, ServiceConstants.DEFAULT_CUSTOMER_NAME);
 			List<PropertyInfo> propertyInfoList = new ArrayList<PropertyInfo>();
 			List<PropertyTemplate> propertyTemplates = selectedSettingTemplate.getProperties();
 			String key = null;
@@ -214,11 +219,6 @@ public class Settings extends FrameworkBaseAction {
             	S_LOGGER.debug("Settings Info object value " + settingsInfo);
             }
             
-            if (!validate(administrator, null)) {
-            	isValidated = true;
-				return Action.SUCCESS;
-			}
-            
             String[] selectedEnvs = getHttpRequest().getParameterValues(ENVIRONMENTS);
             StringBuilder environments = new StringBuilder();
             for (String envs : selectedEnvs) { 
@@ -248,6 +248,8 @@ public class Settings extends FrameworkBaseAction {
                 S_LOGGER.error("Entered into catch block of Settings.save()"+ FrameworkUtil.getStackTraceAsString(e));
     		}
         	new LogErrorReport(e, "Settings save");
+        	
+        	return LOG_ERROR;
 		}
 		return list();
 	}
@@ -419,7 +421,7 @@ public class Settings extends FrameworkBaseAction {
 			SettingsInfo settingsInfo = administrator.getSettingsInfo(oldName, getEnvName());
             getHttpSession().setAttribute(oldName, settingsInfo);
 			getHttpRequest().setAttribute(SESSION_OLD_NAME, oldName);
-            List<SettingsTemplate> settingsTemplates = administrator.getSettingsTemplates("");
+            List<SettingsTemplate> settingsTemplates = administrator.getSettingsTemplates(ServiceConstants.DEFAULT_CUSTOMER_NAME);
             getHttpRequest().setAttribute(SESSION_SETTINGS_TEMPLATES, settingsTemplates);
             List<Environment> environments = administrator.getEnvironments();
             getHttpRequest().setAttribute(ENVIRONMENTS, environments);
@@ -433,6 +435,8 @@ public class Settings extends FrameworkBaseAction {
                 S_LOGGER.error("Entered into catch block of Settings.edit()"+ FrameworkUtil.getStackTraceAsString(e));
     		}
         	new LogErrorReport(e, "Settings edit");
+        	
+        	return LOG_ERROR;
 		}
 
 		return SETTINGS_EDIT;
@@ -530,6 +534,8 @@ public class Settings extends FrameworkBaseAction {
 		} catch (Exception e) {
 			S_LOGGER.error("Entered into catch block of Settings.update()"+ FrameworkUtil.getStackTraceAsString(e));
         	new LogErrorReport(e, "Settings update");
+        	
+        	return LOG_ERROR;
 		}
 
 		return list();
@@ -571,6 +577,8 @@ public class Settings extends FrameworkBaseAction {
                 S_LOGGER.error("Entered into catch block of Settings.delete()"+ FrameworkUtil.getStackTraceAsString(e));
     		}
         	new LogErrorReport(e, "Settings delete");
+        	
+        	return LOG_ERROR;
 		}
 
 		return list();
@@ -588,27 +596,29 @@ public class Settings extends FrameworkBaseAction {
 			    settingsInfo = administrator.getSettingsInfo(oldName, getEnvName());
 			    getHttpRequest().setAttribute(REQ_OLD_NAME, oldName);
 			}
-			SettingsTemplate settingsTemplate = administrator.getSettingsTemplate(settingsType, "");
+			SettingsTemplate settingsTemplate = administrator.getSettingsTemplate(settingsType, ServiceConstants.DEFAULT_CUSTOMER_NAME);
 			if (debugEnabled) {
 				S_LOGGER.debug("Setting Template object value " + settingsTemplate.toString());
 			}
 			if(SERVER.equals(settingsType)) {
-				List<Server> servers = administrator.getServers();
-				getHttpRequest().setAttribute(REQ_TEST_SERVERS, servers);
+				List<Server> servers = administrator.getServers(ServiceConstants.DEFAULT_CUSTOMER_NAME);
+				getHttpRequest().setAttribute(REQ_ALL_SERVERS, servers);
 			}
 			
 			if(Constants.SETTINGS_TEMPLATE_DB.equals(settingsType)) {
-				List<Database> databases = administrator.getDatabases();
-				getHttpRequest().setAttribute(REQ_PROJECT_INFO_DATABASES, databases);
+				List<Database> databases = administrator.getDatabases(ServiceConstants.DEFAULT_CUSTOMER_NAME);
+				getHttpRequest().setAttribute(REQ_ALL_DATABASES, databases);
 			}
 			
 			getHttpRequest().setAttribute(REQ_CURRENT_SETTINGS_TEMPLATE, settingsTemplate);
-			getHttpRequest().setAttribute(REQ_ALL_TECHNOLOGIES, administrator.getAllTechnologies());
+			getHttpRequest().setAttribute(REQ_ALL_TECHNOLOGIES, administrator.getTechnologies());
 		} catch (Exception e) {
         	if (debugEnabled) {
                 S_LOGGER.error("Entered into catch block of Settings.settingsType()"+ FrameworkUtil.getStackTraceAsString(e));
     		}
         	new LogErrorReport(e, "Settings type");
+        	
+        	return LOG_ERROR;
 		}
 		return SETTINGS_TYPE;
 	}
@@ -649,6 +659,8 @@ public class Settings extends FrameworkBaseAction {
                 S_LOGGER.error("Entered into catch block of Configurations.createEnvironment()" + FrameworkUtil.getStackTraceAsString(e));
             }
             new LogErrorReport(e, "open popup Settings"); 
+            
+            return LOG_ERROR;
         }
 		
     	return APP_ENVIRONMENT;
@@ -770,18 +782,19 @@ public class Settings extends FrameworkBaseAction {
 	            S_LOGGER.error("Entered into catch block of Configurations.createEnvironment()" + FrameworkUtil.getStackTraceAsString(e));
 	        }
 	        new LogErrorReport(e, "create environment");
+	        
+	        return LOG_ERROR;
 	    }
 	    return SUCCESS;
 	}
 	
 	public String fetchSettingProjectInfoVersions() {
     	try {
-	    	String settingType = getHttpRequest().getParameter("settingsType");
-	    	String name = getHttpRequest().getParameter("name");
+	    	String name = getHttpRequest().getParameter(REQ_TYPE);
 	    	ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
 	    	//Technology technology = project.getProjectInfo().getTechnology();
-	    	if ("Server".equals(settingType)) {
-	    		List<Server> servers = administrator.getServers();
+	    	if ("Server".equals(settingsType)) {
+	    		List<Server> servers = administrator.getServers(ServiceConstants.DEFAULT_CUSTOMER_NAME);
 	    		if (servers != null && CollectionUtils.isNotEmpty(servers)) {
 	    			for (Server server : servers) {
 						if (server.getName().equals(name)) {
@@ -790,8 +803,8 @@ public class Settings extends FrameworkBaseAction {
 					}
 	    		}
 	    	}
-	    	if ("Database".equals(settingType)) {
-	    		List<Database> databases = administrator.getDatabases();
+	    	if ("Database".equals(settingsType)) {
+	    		List<Database> databases = administrator.getDatabases(ServiceConstants.DEFAULT_CUSTOMER_NAME);
 	    		if (databases != null && CollectionUtils.isNotEmpty(databases)) {
 	    			for (Database database : databases) {
 						if (database.getName().equals(name)) {
