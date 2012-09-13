@@ -468,6 +468,9 @@
 </div>
 
 <script type="text/javascript">
+	//To disable the customer select box
+	$('select[name=customerId]').attr("disabled", "disabled");
+
 	$('#projectCode').val('<%= projectCode %>'); //this is for changing the sub-tab.
 	$('#fromPage').val('<%= fromPage %>'); //this is for changing the sub-tab.
 </script>

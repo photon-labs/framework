@@ -203,6 +203,13 @@
 		$(".appInfoScrollDiv").scrollbars();
 	}
 	
+	// To disable and enable the customer select box
+	<% if (StringUtils.isNotEmpty(fromPage)) { %>
+		$('select[name=customerId]').attr("disabled", "disabled");
+	<% } else { %>
+		$('select[name=customerId]').removeAttr("disabled", "disabled");
+	<% } %>
+	
     $(document).ready(function() {
 		$("#name").focus();
     	escPopup();

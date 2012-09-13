@@ -171,6 +171,9 @@
 		$(".fixed-table-container-inner").scrollbars();  
 	}
 
+	// To enable the customer select box
+	$('select[name=customerId]').removeAttr("disabled", "disabled");
+	
 	$(document).ready(function() {
 		if (refreshIntervalId != undefined) {
 			clearInterval(refreshIntervalId);			
