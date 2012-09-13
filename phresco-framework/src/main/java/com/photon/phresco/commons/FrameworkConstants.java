@@ -1335,8 +1335,6 @@ public interface FrameworkConstants {
  
    /* For Error Report  */ 
    String REQ_LOG_REPORT = "logReport";
-   String LOG_ERROR = "logError";
-   
    
    /* WINDOWS CONSTANT */
 	  String HELLOWORD_PROJECT_FILE = "HelloWorld.csproj"; 
