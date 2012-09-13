@@ -1361,4 +1361,8 @@ public interface FrameworkConstants {
 	  String COMMON = "\\Common";
 	  String DOUBLE_DOT  = "..";
    
+ //SettingsTemplate keys for IIS server
+		  String SETTINGS_TEMP_KEY_APP_NAME = "applicationName";
+		  String SETTINGS_TEMP_KEY_SITE_NAME = "siteName";
+
 }

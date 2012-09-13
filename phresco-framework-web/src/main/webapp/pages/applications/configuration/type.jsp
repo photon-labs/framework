@@ -176,6 +176,49 @@
     }
 %>
 
+<div id="IISServerDiv" class="hideContent">
+	 <div class="clearfix" id="siteNameErrDiv">
+		<label class="new-xlInput"><span class="red">*</span> <s:text name="label.site.name"/> </label>
+		<div class="input new-input">
+			<div class="typeFields">
+				<%
+					String siteName = "";
+					if (settingsInfo != null && settingsInfo.getPropertyInfo(FrameworkConstants.SETTINGS_TEMP_KEY_SITE_NAME) != null) {
+						siteName = settingsInfo.getPropertyInfo(FrameworkConstants.SETTINGS_TEMP_KEY_SITE_NAME).getValue();							
+					}
+				%>
+				<input class="xlarge settings_text" id="nameOfSite" name="nameOfSite" type="text" placeholder="<s:text name="placeholder.site.name"/>" 
+					value="<%= siteName %>"/>
+			</div>
+			<div>
+				<div class="lblDesc configSettingHelp-block" id="siteNameErrMsg">
+				    
+				</div>
+			</div>
+		</div>
+    </div>
+	<div class="clearfix" id="appNameErrDiv">
+		<label class="new-xlInput"><span class="red">*</span> <s:text name="label.app.name"/> </label>
+		<div class="input new-input">
+			<div class="typeFields">
+				<%
+					String appName = "";
+					if (settingsInfo != null && settingsInfo.getPropertyInfo(FrameworkConstants.SETTINGS_TEMP_KEY_APP_NAME) != null) {
+						appName = settingsInfo.getPropertyInfo(FrameworkConstants.SETTINGS_TEMP_KEY_APP_NAME).getValue();							
+					}
+				%>
+				<input class="xlarge settings_text" id="appName" name="appName" type="text" placeholder="<s:text name="placeholder.app.name"/>"
+					value="<%= appName %>"/>
+			</div>
+			<div>
+				<div class="lblDesc configSettingHelp-block" id="appNameErrMsg">
+				    
+				</div>
+			</div>
+		</div>
+    </div>
+</div>
+
 <script type="text/javascript">
 	$("div#certificate").hide();
 	
@@ -221,6 +264,10 @@
 		} else {
 			hideRemoteDeply(); 
 		}
+		if (server.trim() == "IIS") {
+			configForIIS("none");
+			$('#IISServerDiv').css("display", "block");
+		}
 		
 		$("#type").change(function() {
 			var server = $('#type').val();
@@ -238,6 +285,13 @@
 				$("#admin_username label").html('Admin Username');
 				$("#admin_password label").html('Admin Password'); 
 			}
+			 if ($(this).val() == "IIS") {
+				 configForIIS("none");
+				 $('#IISServerDiv').css("display", "block");
+			 } else {
+				 configForIIS("block");
+				 $('#IISServerDiv').css("display", "none");
+			 }
 			
 			// based on technology hide remote deployment
 			technologyBasedRemoteDeploy();
@@ -403,5 +457,9 @@
 		} else {
 			$("#authenticate").addClass("hideContent");
 		}
+	}
+	function configForIIS(prop) {
+		$('#context').css("display", prop);
+		$('#additional_context').css("display", prop);
 	}
 </script>

@@ -97,6 +97,12 @@ public class Settings extends FrameworkBaseAction {
     private boolean isEnvDeleteSuceess = true;
     private String envDeleteMsg = null;
     
+    //For IIS server
+    private String appName = "";
+	private String nameOfSite = "";
+    private String appNameError = null;
+    private String siteNameError = null;
+    
 	public String list() {
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method  Settings.list()");
@@ -159,6 +165,7 @@ public class Settings extends FrameworkBaseAction {
 			}
 			SettingsTemplate selectedSettingTemplate = administrator.getSettingsTemplate(settingsType, ServiceConstants.DEFAULT_CUSTOMER_NAME);
 			List<PropertyInfo> propertyInfoList = new ArrayList<PropertyInfo>();
+			boolean isIISServer = false;
 			List<PropertyTemplate> propertyTemplates = selectedSettingTemplate.getProperties();
 			String key = null;
             String value = null;
@@ -176,6 +183,9 @@ public class Settings extends FrameworkBaseAction {
             			} else {
             				propertyInfoList.add(new PropertyInfo(key, value.trim()));
             			}
+            			if ("type".equals(key) && "IIS".equals(value)) {
+                        	isIISServer = true;
+                        }
 					}
             	} else {
             		key = propertyTemplate.getKey();
@@ -211,7 +221,12 @@ public class Settings extends FrameworkBaseAction {
                 	S_LOGGER.debug("Configuration.save() key " + propertyTemplate.getKey() + "and Value is " + value);
                 }
             }
-
+            
+            if (isIISServer) {
+            	propertyInfoList.add(new PropertyInfo(SETTINGS_TEMP_KEY_APP_NAME, appName));
+                propertyInfoList.add(new PropertyInfo(SETTINGS_TEMP_KEY_SITE_NAME, nameOfSite));
+            }
+            
 			SettingsInfo settingsInfo = new SettingsInfo(settingsName, description, settingsType);
 			settingsInfo.setAppliesTo(appliesto != null ? Arrays.asList(appliesto) : null);
 			settingsInfo.setPropertyInfos(propertyInfoList);
@@ -341,6 +356,7 @@ public class Settings extends FrameworkBaseAction {
 		}
 		
 		boolean serverTypeValidation = false;
+		boolean isIISServer = false;
 		SettingsTemplate selectedSettingTemplate = administrator.getSettingsTemplate(settingsType, "");
 		for (PropertyTemplate propertyTemplate : selectedSettingTemplate.getProperties()) {
 			String key = null;
@@ -355,6 +371,9 @@ public class Settings extends FrameworkBaseAction {
                     if ("type".equals(key) && "NodeJS".equals(value)) {
                     	serverTypeValidation = true;
                     }
+                    if ("type".equals(key) && "IIS".equals(value)) {
+                    	isIISServer = true;
+                    }
 				}
         	} else {
         		key = propertyTemplate.getKey();
@@ -363,6 +382,9 @@ public class Settings extends FrameworkBaseAction {
 			value = getHttpRequest().getParameter(key);
 			
 			if (serverTypeValidation && "deploy_dir".equals(key)) {
+            	isRequired = false;
+            }
+			if (isIISServer && ("context".equals(key))) {
             	isRequired = false;
             }
 			
@@ -389,6 +411,17 @@ public class Settings extends FrameworkBaseAction {
 	        setDynamicError(dynamicError);
 	        validate = false;
 	   	}
+		
+		if (isIISServer) {
+        	if (StringUtils.isEmpty(appName)) {
+        		setAppNameError("App Name is missing");
+        		validate = false;
+        	}
+        	if (StringUtils.isEmpty(nameOfSite)) {
+        		setSiteNameError("Site Name is missing");
+        		validate = false;
+        	}
+        }
 		
 		if (StringUtils.isNotEmpty(getHttpRequest().getParameter("port"))) {
 		   	int value = Integer.parseInt(getHttpRequest().getParameter("port"));
@@ -454,7 +487,7 @@ public class Settings extends FrameworkBaseAction {
 					.getSettingsTemplate(settingsType, "");
 			List<PropertyInfo> propertyInfoList = new ArrayList<PropertyInfo>();
 			List<PropertyTemplate> propertyTemplates = selectedSettingTemplate.getProperties();
-
+			boolean isIISServer = false;
 			SettingsInfo newSettingsInfo = new SettingsInfo(settingsName, description, settingsType);
 			newSettingsInfo.setPropertyInfos(propertyInfoList);
 			newSettingsInfo.setAppliesTo(appliesto != null ? Arrays
@@ -475,6 +508,9 @@ public class Settings extends FrameworkBaseAction {
 	            			} else {
 	            				propertyInfoList.add(new PropertyInfo(key, value.trim()));
 	            			}
+	            			if ("type".equals(key) && "IIS".equals(value)) {
+	                        	isIISServer = true;
+	                        }
 						}
 	            	} else {
 	            		key = propertyTemplate.getKey();
@@ -502,6 +538,10 @@ public class Settings extends FrameworkBaseAction {
 	            	}
 	                if (S_LOGGER.isDebugEnabled()) {
 	                	S_LOGGER.debug("Configuration.save() key " + propertyTemplate.getKey() + "and Value is " + value);
+	                }
+	                if (isIISServer) {
+		            	propertyInfoList.add(new PropertyInfo(SETTINGS_TEMP_KEY_APP_NAME, appName));
+		                propertyInfoList.add(new PropertyInfo(SETTINGS_TEMP_KEY_SITE_NAME, nameOfSite));
 	                }
 	            }
 			
@@ -978,5 +1018,38 @@ public class Settings extends FrameworkBaseAction {
 
 	public void setEmailError(String emailError) {
 		this.emailError = emailError;
+	}
+	
+	
+	public String getAppName() {
+		return appName;
+	}
+
+	public void setAppName(String appName) {
+		this.appName = appName;
+	}
+
+	public String getAppNameError() {
+		return appNameError;
+	}
+
+	public void setAppNameError(String appNameError) {
+		this.appNameError = appNameError;
+	}
+
+	public String getSiteNameError() {
+		return siteNameError;
+	}
+
+	public void setSiteNameError(String siteNameError) {
+		this.siteNameError = siteNameError;
+	}
+
+	public String getNameOfSite() {
+		return nameOfSite;
+	}
+
+	public void setNameOfSite(String nameOfSite) {
+		this.nameOfSite = nameOfSite;
 	}
 }
