@@ -263,6 +263,7 @@ public interface FrameworkConstants {
     String ELEMENT_VERBOS = "verbose";
     String ELEMENT_VERIFY = "verify";
     String REQ_SELECTED_TEST_NAME = "selectedTestName";
+	String REPORTS_JASPER = "reports/jasper/";
     
     String CONNECTION_URL = "connectionUrl";
 	String USER_NAME = "username";
