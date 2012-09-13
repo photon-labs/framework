@@ -83,7 +83,6 @@ import com.photon.phresco.framework.api.Project;
 import com.photon.phresco.framework.api.ProjectAdministrator;
 import com.photon.phresco.framework.api.ValidationResult;
 import com.photon.phresco.framework.api.Validator;
-import com.photon.phresco.framework.win8.util.ItemGroupUpdater;
 import com.photon.phresco.model.AdminConfigInfo;
 import com.photon.phresco.model.ApplicationType;
 import com.photon.phresco.model.CertificateInfo;
