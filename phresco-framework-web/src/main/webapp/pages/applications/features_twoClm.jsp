@@ -120,12 +120,11 @@
     String leftModuleHdr = (String)request.getAttribute(FrameworkConstants.REQ_FEATURES_FIRST_MDL_CAT);
     String rightModuleHdr = (String)request.getAttribute(FrameworkConstants.REQ_FEATURES_SECOND_MDL_CAT);
     
-    Map<String, String> pilotModules = (Map<String, String>) request.getAttribute(FrameworkConstants.REQ_PILOTS_IDS);
-    Map<String, String> alreadySelectedModules = (Map<String, String>) request.getAttribute(FrameworkConstants.REQ_ALREADY_SELECTED_MODULES);
-
-    Map<String, String> pilotJsLibs = (Map<String, String>) request.getAttribute(FrameworkConstants.REQ_PILOT_JSLIBS);
-    Map<String, String> alreadySelectedJsLibs = (Map<String, String>) request.getAttribute(FrameworkConstants.REQ_ALREADY_SELECTED_JSLIBS);
+    //For project edit
+    Map<String, String> projectInfoModules = (Map<String, String>) request.getAttribute(FrameworkConstants.REQ_PROJECT_INFO_MODULES);
+    Map<String, String> projectInfoJsLibs = (Map<String, String>) request.getAttribute(FrameworkConstants.REQ_PROJECT_INFO_JSLIBS);
     
+    //For previous action
     Map<String, String> selectedModules = (Map<String, String>) request.getAttribute(FrameworkConstants.REQ_TEMP_SELECTEDMODULES);
     Map<String, String> selectedJsLibs = (Map<String, String>) request.getAttribute(FrameworkConstants.REQ_TEMP_SELECTED_JSLIBS);
 
@@ -216,13 +215,8 @@
 									checkedStr = "";
 									
 									String pilotVersion = "";
-									if (MapUtils.isNotEmpty(alreadySelectedModules) && StringUtils.isNotEmpty(alreadySelectedModules.get(leftModule.getId()))) {
-										pilotVersion = alreadySelectedModules.get(leftModule.getId());
-										checkedStr = "checked";
-										disabledStr = "disabled";
-									}
-									if (MapUtils.isNotEmpty(pilotModules) && StringUtils.isNotEmpty(pilotModules.get(leftModule.getId()))) {
-										pilotVersion = pilotModules.get(leftModule.getId());
+									if (MapUtils.isNotEmpty(projectInfoModules) && StringUtils.isNotEmpty(projectInfoModules.get(leftModule.getId()))) {
+										pilotVersion = projectInfoModules.get(leftModule.getId());
 										checkedStr = "checked";
 										disabledStr = "disabled";
 									}
@@ -232,7 +226,7 @@
 							%>
 								<span class="siteaccordion closereg">
 									<span>
-										<input type="checkbox" class="<%= moduleType %>" name="<%= FrameworkConstants.REQ_SELECTEDMODULES %>" 
+										<input type="checkbox" class="<%= moduleType %>" name="<%= FrameworkConstants.REQ_FEATURES_MODULES %>" 
 											id="<%= leftModule.getId()%>checkBox" value="<%= leftModule.getId()%>" <%=disabledStr %> <%= checkedStr %>>
 										&nbsp;&nbsp;<%= leftModule.getName() %> &nbsp;&nbsp;
 										<p id="<%= leftModule.getId()%>version" class="version versionDisplay_CoreModule"></p>
@@ -329,8 +323,8 @@
 
 									String pilotVersion = "";
 									if (rightModuleHdr.equals(FrameworkConstants.REQ_JS_LIBS)) {
-										if (MapUtils.isNotEmpty(alreadySelectedJsLibs) && StringUtils.isNotEmpty(alreadySelectedJsLibs.get(rightModule.getId()))) {
-											pilotVersion = alreadySelectedJsLibs.get(rightModule.getId());
+										if (MapUtils.isNotEmpty(projectInfoJsLibs) && StringUtils.isNotEmpty(projectInfoJsLibs.get(rightModule.getId()))) {
+											pilotVersion = projectInfoJsLibs.get(rightModule.getId());
 											checkedStr = "checked";
 											disabledStr = "disabled";
 										}
@@ -338,8 +332,8 @@
 											checkedStr = "checked";
 										}
 									} else {
-										if (MapUtils.isNotEmpty(alreadySelectedModules) && StringUtils.isNotEmpty(alreadySelectedModules.get(rightModule.getId()))) {
-											pilotVersion = alreadySelectedModules.get(rightModule.getId());
+										if (MapUtils.isNotEmpty(projectInfoModules) && StringUtils.isNotEmpty(projectInfoModules.get(rightModule.getId()))) {
+											pilotVersion = projectInfoModules.get(rightModule.getId());
 											checkedStr = "checked";
 											disabledStr = "disabled";
 										}
@@ -352,10 +346,10 @@
 				                	<span>
 					                	<% if (rightModuleHdr.equals(FrameworkConstants.REQ_JS_LIBS)) { %>
 					                		<input type="checkbox" class="<%= FrameworkConstants.REQ_JSLIB_MODULE %>" 
-					                			name="<%= FrameworkConstants.REQ_SELECTED_JSLIBS %>" value="<%= rightModule.getId()%>" <%=disabledStr %> 
+					                			name="<%= FrameworkConstants.REQ_FEATURES_JSLIBS %>" value="<%= rightModule.getId()%>" <%=disabledStr %> 
 						                		<%= checkedStr %> id="<%= rightModule.getId()%>checkBox">
 					                	<% } else { %>
-					                		<input type="checkbox" class="<%= FrameworkConstants.REQ_CUSTOM_MODULE %>" name="<%= FrameworkConstants.REQ_SELECTEDMODULES %>" 
+					                		<input type="checkbox" class="<%= FrameworkConstants.REQ_CUSTOM_MODULE %>" name="<%= FrameworkConstants.REQ_FEATURES_MODULES %>" 
 						                		value="<%= rightModule.getId()%>" <%=disabledStr %> <%= checkedStr %> id="<%= rightModule.getId()%>checkBox">
 					                	<% } %>
 				                		&nbsp;&nbsp;<%= rightModule.getName() %>&nbsp;&nbsp;
@@ -457,12 +451,13 @@
 	</div>
 	
 	<!-- Hidden Fields -->
-	<input type="hidden" id="technology" name="techId" value="<%= techId %>">
-	<input type="hidden" id="configServerNames" name="configServerNames" value="<%= configServerNames %>">
-	<input type="hidden" id="configDbNames" name="configDbNames" value="<%= configDbNames %>">
+	<input type="hidden" name="techId" value="<%= techId %>">
+	<input type="hidden" name="configServerNames" value="<%= configServerNames %>">
+	<input type="hidden" name="configDbNames" value="<%= configDbNames %>">
 	<input type="hidden" name="fromTab" value="features">
-	<input type="hidden" id="customerId" name="customerId" value="<%= customerId %>">
+	<input type="hidden" name="customerId" value="<%= customerId %>">
 	<input type="hidden" name="fromPage" value="<%= fromPage %>">
+	<input type="hidden" name="projectCode" value="<%= projectCode %>">
 	
 </form>
     

@@ -374,8 +374,8 @@ public interface FrameworkConstants {
     String REQ_TEMP_SELECTEDMODULES = "selectedFeatures";
     String REQ_TEMP_SELECTED_PILOT_PROJ = "selectedPilotProj";
     String REQ_PILOTS_IDS = "pilotsIds";
-    String REQ_ALREADY_SELECTED_MODULES = "alreadySelectedModules";
-    String REQ_ALREADY_SELECTED_JSLIBS = "alreadySelectedJsLibs";
+    String REQ_PROJECT_INFO_MODULES = "projectInfoModules";
+    String REQ_PROJECT_INFO_JSLIBS = "projectInfoJsLibs";
     String REQ_ALL_JS_LIBS = "allJsLibs";
     String REQ_PILOTS_NAMES = "pilotsNames";
     String REQ_PILOT_PROJECT_INFO = "pilotProjectInfo";
@@ -584,6 +584,7 @@ public interface FrameworkConstants {
 	String REQ_FEATURES_RIGHT_MODULES = "rightModules";
 	String REQ_FEATURES_MODULE_CAT = "moduleCat";
 	String REQ_FEATURES_MODULES = "modules";
+	String REQ_FEATURES_JSLIBS = "jsLibs";
 	String REQ_ENVIRONMENTS = "environments";
 	String REQ_ENVIRONMENT = "environment";
     String REQ_PROJECT_INFO_SERVERS = "projectInfoServers";

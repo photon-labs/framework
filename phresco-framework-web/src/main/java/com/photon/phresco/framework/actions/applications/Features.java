@@ -208,7 +208,6 @@ public class Features extends FrameworkBaseAction {
 	}
 
 	private void setAppInfos(ProjectInfo projectInfo, ProjectAdministrator administrator) throws PhrescoException {
-		HttpServletRequest request = getHttpRequest();
 		projectInfo.setName(name);
 		projectInfo.setCode(code);
 		if (StringUtils.isNotEmpty(externalCode)) {
@@ -228,7 +227,7 @@ public class Features extends FrameworkBaseAction {
 		String pilotProjectName = getHttpRequest().getParameter(REQ_SELECTED_PILOT_PROJ);
 		projectInfo.setPilotProjectName(pilotProjectName);
 		setTechnology(projectInfo, administrator);
-		FrameworkUtil.setAppInfoDependents(request, customerId);
+		FrameworkUtil.setAppInfoDependents(getHttpRequest(), customerId);
 	}
 
 	private void setTechnology(ProjectInfo projectInfo, ProjectAdministrator administrator) throws PhrescoException {
@@ -342,21 +341,20 @@ public class Features extends FrameworkBaseAction {
 			if (CollectionUtils.isNotEmpty(jsLibs)) {
 				getHttpRequest().setAttribute(REQ_ALL_JS_LIBS, jsLibs);
 			}
+			
+			if (CollectionUtils.isNotEmpty(selectedTechnology.getModules())) {
+	            getHttpRequest().setAttribute(REQ_PROJECT_INFO_MODULES,
+	                    ApplicationsUtil.getMapFromModuleGroups(selectedTechnology.getModules()));
+	        }
+
+	        if (CollectionUtils.isNotEmpty(selectedTechnology.getJsLibraries())) {
+	            getHttpRequest().setAttribute(REQ_PROJECT_INFO_JSLIBS,
+	                    ApplicationsUtil.getMapFromModuleGroups(selectedTechnology.getJsLibraries()));
+	        }
 
 			// This attribute for Pilot Project combo box
 			getHttpRequest().setAttribute(REQ_PILOTS_NAMES,
 					ApplicationsUtil.getPilotNames(selectedTechnology.getId(), customerId));
-			if (CollectionUtils.isNotEmpty(selectedTechnology.getModules())) {
-				// pilotModules.putAll(ApplicationsUtil.getMapFromModuleGroups(selectedTechnology.getModules()));
-				getHttpRequest().setAttribute(REQ_ALREADY_SELECTED_MODULES,
-						ApplicationsUtil.getMapFromModuleGroups(selectedTechnology.getModules()));
-			}
-
-			if (CollectionUtils.isNotEmpty(selectedTechnology.getJsLibraries())) {
-				getHttpRequest().setAttribute(REQ_ALREADY_SELECTED_JSLIBS,
-						ApplicationsUtil.getMapFromModuleGroups(selectedTechnology.getJsLibraries()));
-				// pilotJsLibs.putAll(ApplicationsUtil.getMapFromModuleGroups(selectedTechnology.getJsLibraries()));
-			}
 
 			getHttpRequest().setAttribute(REQ_FROM_PAGE, fromPage);
 			getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
