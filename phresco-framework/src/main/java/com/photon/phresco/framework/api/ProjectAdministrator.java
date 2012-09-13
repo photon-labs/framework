@@ -47,12 +47,15 @@ import com.photon.phresco.model.Technology;
 import com.photon.phresco.model.VideoInfo;
 import com.photon.phresco.model.VideoType;
 import com.photon.phresco.model.WebService;
+import com.photon.phresco.service.client.api.ServiceManager;
 import com.photon.phresco.util.Credentials;
 import com.phresco.pom.site.ReportCategories;
 import com.phresco.pom.site.Reports;
 
 public interface ProjectAdministrator {
 
+	ServiceManager getServiceManager();
+	
     /**
      * Create a project with the given project information
      * and the project will be downloaded in the given path
@@ -104,6 +107,8 @@ public interface ProjectAdministrator {
      * @throws PhrescoException
      */
     Map<String, Technology> getAllTechnologies() throws PhrescoException;
+    
+    List<Technology> getTechnologies() throws PhrescoException;
 
     /**
      * Returns Technology for the given technolgoy Id
@@ -426,7 +431,8 @@ public interface ProjectAdministrator {
      * @throws PhrescoException
      */
     List<DownloadInfo> getOtherDownloadInfo(DownloadPropertyInfo downloadPropertyInfo) throws PhrescoException;
-    String getJforumPath() throws PhrescoException;
+    
+    String getJforumPath(String customerId) throws PhrescoException;
 
     void createJob(Project project, CIJob job) throws PhrescoException;
 
@@ -502,13 +508,13 @@ public interface ProjectAdministrator {
      * Stores jdk home spcified xml file in jenkins home location
      * @throws PhrescoException
      */
-	void getJdkHomeXml() throws PhrescoException;
+	void getJdkHomeXml(String customerId) throws PhrescoException;
 	
     /**
      * Stores maven home spcified xml file in jenkins home location
      * @throws PhrescoException
      */
-	void getMavenHomeXml() throws PhrescoException;
+	void getMavenHomeXml(String customerId) throws PhrescoException;
 	
 
 	List<ValidationResult> validate() throws PhrescoException;
@@ -553,7 +559,7 @@ public interface ProjectAdministrator {
      * gets exmail ext plugin from nexus and stores it in jenkins plugin dir
      * @throws PhrescoException
      */
-	void getEmailExtPlugin() throws PhrescoException;
+	void getEmailExtPlugin(String customerId) throws PhrescoException;
 	
     /**
      * Delete existing builds in do_not_checkin folder
@@ -643,18 +649,18 @@ public interface ProjectAdministrator {
 	 * @throws PhrescoException
 	 */
 	
-	
-	/**
-	 * add server details for functional test configuration.xml file
-	 */
-	void updateTestConfiguration(Project project, String selectedEnvs, String browser, String resultConfigXml) throws PhrescoException;
-	
 	/**
 	 * Get the default environment from the specified project
 	 * @param projectCode
 	 * @return
 	 */
 	String getDefaultEnvName(String projectCode);
+	
+	
+	/**
+	 * add server details for functional test configuration.xml file
+	 */
+	void updateTestConfiguration(Project project, String selectedEnvs, String browser, String resultConfigXml) throws PhrescoException;
 	
 	/**
 	 * get configurations by environment name
@@ -673,16 +679,15 @@ public interface ProjectAdministrator {
 	 */
 	List<SettingsInfo> configurationsByEnvName(String envName) throws PhrescoException;
 	
-	//TODO: Remove the below method once the plugins are adapted for configuration.xml
-	SettingsInfo getSettingsInfo(String name, String type, String projectCode) throws PhrescoException;
-	
 	/**
 	 * get servers from service
 	 * @param techId
 	 * @return serverList
 	 * @throws PhrescoException
 	 */
-	List<Server> getServers(String techId, String customerId) throws PhrescoException;
+	List<Server> getServers(String customerId) throws PhrescoException;
+	
+	List<Server> getServersByTech(String techId, String customerId) throws PhrescoException;
 	
 	/**
 	 * get databases from service
@@ -690,7 +695,9 @@ public interface ProjectAdministrator {
 	 * @return dbList
 	 * @throws PhrescoException
 	 */
-	List<Database> getDatabases(String techId, String customerId) throws PhrescoException;
+	List<Database> getDatabases(String customerId) throws PhrescoException;
+	
+	List<Database> getDatabasesByTech(String techId, String customerId) throws PhrescoException;
 	
 	/**
 	 * get webservices from service

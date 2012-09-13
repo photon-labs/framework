@@ -24,7 +24,6 @@
 <%@ page import="com.photon.phresco.util.TechnologyTypes" %>
 
 <%@ include file="progress.jsp" %>
-<%@ include file="errorReport.jsp" %>
 
 <script src="js/reader.js"></script>
 
@@ -116,7 +115,7 @@
     
     function sonarReport() {
         $("#sonar_report").empty();
-        popup('check', '', $('#sonar_report'));
+        popup('check', $('#formCode'), $('#sonar_report'));
     }
     
     function getCodeValidatePopUp() {

@@ -20,6 +20,7 @@
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
+<%@ page import="com.photon.phresco.framework.commons.FrameworkActions" %>
 <%@ page import="com.photon.phresco.model.LogInfo" %>
 
 	<%-- <style type="text/css">

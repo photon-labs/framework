@@ -108,4 +108,7 @@ public interface FrameworkActions {
     String ABOUT = "about";
     String HELP = "forumindex";
     
+    /* For Error Report  */ 
+    String LOG_ERROR = "logError";
+    
 }

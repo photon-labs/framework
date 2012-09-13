@@ -4,11 +4,11 @@
 	<groupId>com.photon.phresco.framework</groupId>
 	<artifactId>PhrescoFrameworkRuntime</artifactId>
 	<packaging>pom</packaging>
-	<version>2.0.0.13001-SNAPSHOT</version>
+	<version>2.0.0.14001-SNAPSHOT</version>
 	<name>Phresco Framework Web Application</name>
 
     <properties>
-		<phresco.framework.version>2.0.0.13001-SNAPSHOT</phresco.framework.version>		
+		<phresco.framework.version>2.0.0.14001-SNAPSHOT</phresco.framework.version>		
 		<tomcat.version>7.0.21</tomcat.version>
 		<sonar.version>3.1.1</sonar.version>
 		<jmeter.version>2.5.1</jmeter.version>
@@ -88,6 +88,16 @@
 		<version>${phantomjs.version}</version>
 		<type>zip</type>
 	  </dependency>
+      
+     
+      
+      <dependency>
+          <groupId>softwares.iphone.files</groupId>
+          <artifactId>Waxsim</artifactId>
+          <version>1.0</version>
+          <type>zip</type>
+      </dependency>
+	
 
 	</dependencies>
 	
@@ -169,6 +179,17 @@
 									<overWrite>false</overWrite>
 									<outputDirectory>../workspace/tools/chief</outputDirectory>
 								</artifactItem>
+                                
+                                   <!-- extracting waxsim zip file -->
+								<artifactItem>
+									<groupId>softwares.iphone.files</groupId>
+                                    <artifactId>Waxsim</artifactId>
+                                    <version>1.0</version>
+                                    <type>zip</type>
+									<overWrite>false</overWrite>
+									<outputDirectory>../workspace/tools</outputDirectory>
+								</artifactItem>
+                                
 								
 								<!-- extracting JMeter zip file -->
 								<artifactItem>

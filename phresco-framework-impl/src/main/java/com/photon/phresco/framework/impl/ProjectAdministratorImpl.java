@@ -83,6 +83,7 @@ import com.photon.phresco.framework.api.Project;
 import com.photon.phresco.framework.api.ProjectAdministrator;
 import com.photon.phresco.framework.api.ValidationResult;
 import com.photon.phresco.framework.api.Validator;
+import com.photon.phresco.framework.win8.util.ItemGroupUpdater;
 import com.photon.phresco.model.AdminConfigInfo;
 import com.photon.phresco.model.ApplicationType;
 import com.photon.phresco.model.CertificateInfo;
@@ -123,7 +124,6 @@ import com.sun.jersey.api.client.ClientResponse;
 public class ProjectAdministratorImpl implements ProjectAdministrator, FrameworkConstants, Constants, ServiceClientConstant, ServiceConstants {
 
 	private static final Logger S_LOGGER= Logger.getLogger(ProjectAdministratorImpl.class);
-	private List<AdminConfigInfo> adminConfigInfos = Collections.synchronizedList(new ArrayList<AdminConfigInfo>(5));
 	private static Map<String, String> sqlFolderPathMap = new HashMap<String, String>();
 	private static  Map<String, List<Reports>> siteReportMap = new HashMap<String, List<Reports>>(15);
 	private Map<String, List<DownloadInfo>> downloadInfosMap = Collections.synchronizedMap(new HashMap<String, List<DownloadInfo>>(64));
@@ -166,6 +166,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 	 *
 	 * @return Project based on the given information
 	 */
+	@Override
 	public Project createProject(ProjectInfo info, File path, User userInfo) throws PhrescoException {
 
 		S_LOGGER.debug("Entering Method ProjectAdministratorImpl.createProject(ProjectInfo info, File path)");
@@ -185,6 +186,9 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 			BufferedReader breader = null;
 			try {
 				extractArchive(response, info);
+				if (TechnologyTypes.WIN_METRO.equalsIgnoreCase(techId)) {
+//					ItemGroupUpdater.update(info, projectPath);
+				}
 				updateProjectPOM(info);
 				StringBuilder sb = new StringBuilder();
 				sb.append("mvn");
@@ -266,7 +270,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 	 *
 	 * @return Project based on the given information
 	 */
-
+	@Override
 	public Project updateProject(ProjectInfo delta, ProjectInfo projectInfo, File path, User userInfo) throws PhrescoException {
 
 		S_LOGGER.debug("Entering Method ProjectAdministratorImpl.updateProject(ProjectInfo info, File path)");
@@ -302,6 +306,10 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 				extractArchive(response, delta);
 				updatePOMWithModules(pomPath, projectInfo.getTechnology().getModules(), techId);
 				updatePOMWithPluginArtifact(pomPath, projectInfo.getTechnology().getModules(), techId);
+			}
+			File projectPath = new File(Utility.getProjectHome() + delta.getCode() + File.separator);
+			if (TechnologyTypes.WIN_METRO.equalsIgnoreCase(techId)) {
+//				ItemGroupUpdater.update(projectInfo, projectPath);
 			}
 			
 			BufferedReader bfreader = null;
@@ -463,6 +471,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		}
 	}
 	
+	@Override
 	public Project getProjectByWorkspace(File baseDir) throws PhrescoException {
 
 		S_LOGGER.debug("Entering Method ProjectAdministratorImpl. getTechId(File baseDir)");
@@ -566,7 +575,6 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 	 * @throws JAXBException 
 	 * @throws ParserConfigurationException 
 	 */
-	
 	private static void excludeModule(ProjectInfo info) throws PhrescoException {
 		try {
 			File projectPath = new File(Utility.getProjectHome()+ File.separator + info.getCode() + File.separator + POM_FILE);
@@ -615,6 +623,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		processor.save();
 	}
 
+	@Override
 	public Project getProject(String projectCode) throws PhrescoException {
 
 		S_LOGGER.debug("Entering Method ProjectAdministratorImpl.getProject(String projectCode)");
@@ -640,7 +649,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		return null;
 	}
 
-	public  static void updatePomProject(ProjectInfo projectInfo) throws PhrescoException, PhrescoPomException {
+	private static void updatePomProject(ProjectInfo projectInfo) throws PhrescoException, PhrescoPomException {
 		File path = new File(Utility.getProjectHome() + File.separator + projectInfo.getCode() + File.separator + POM_FILE);
 		try {
 			PomProcessor pomProcessor = new PomProcessor(path);
@@ -687,7 +696,18 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		}
 		return null;
 	}
+	
+	@Override
+	public List<Technology> getTechnologies() throws PhrescoException {
+		try {
+			return getServiceManager().getArcheTypes(ServiceConstants.DEFAULT_CUSTOMER_NAME);
+		} catch (ClientHandlerException ex) {
+			S_LOGGER.error(ex.getLocalizedMessage());
+			throw new PhrescoException(ex);
+		}
+	}
 
+	@Override
 	public Map<String, Technology> getAllTechnologies() throws PhrescoException {
 		try {
 			return PhrescoFrameworkFactory.getServiceManager().getAllTechnologies();
@@ -697,6 +717,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		}
 	}
 
+	@Override
 	public Technology getTechnology(String techId) throws PhrescoException {
 		try {
 			return getAllTechnologies().get(techId);
@@ -706,6 +727,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		}
 	}
 
+	@Override
 	public List<Technology> getTechnologies(String appType, String customerId) throws PhrescoException {
 		try {
 			List<Technology> technologies = new ArrayList<Technology>();
@@ -725,6 +747,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		}
 	}
 	
+	@Override
 	public Technology getTechnology(String appType, String techId, String customerId) throws PhrescoException {
 		try {
 			List<Technology> technologies = getTechnologies(appType, customerId);
@@ -746,66 +769,68 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 	/**
 	 * Delete projects based on the given project codes
 	 */
-	 public void deleteProject(List<String> projectCodes) throws PhrescoException {
-		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.deleteProject(List<String> projectCodes)");
-		 S_LOGGER.debug("deleteProject() projectCodes = "+projectCodes);
+	@Override
+	public void deleteProject(List<String> projectCodes) throws PhrescoException {
+		S_LOGGER.debug("Entering Method ProjectAdministratorImpl.deleteProject(List<String> projectCodes)");
+		S_LOGGER.debug("deleteProject() projectCodes = "+projectCodes);
 
-		 if (CollectionUtils.isEmpty(projectCodes)) {
-			 throw new PhrescoException(FrameworkImplConstants.ERROR_PROJECT_CODES_EMPTY);
-		 }
+		if (CollectionUtils.isEmpty(projectCodes)) {
+			throw new PhrescoException(FrameworkImplConstants.ERROR_PROJECT_CODES_EMPTY);
+		}
 
-		 File zipFile = null;
+		File zipFile = null;
 
-		 String projectHome = Utility.getProjectHome();
-		 for (String projectCode : projectCodes) {
-			 try {
-				 FileUtils.deleteDirectory(new File(projectHome + projectCode));
-				 zipFile = new File(Utility.getArchiveHome() + projectCode + ".zip");
-				 zipFile.delete();
-			 } catch (IOException e) {
-				 S_LOGGER.error("deleteProject() error happened : " + e.getMessage());
-				 throw new PhrescoException(e);
-			 }
-		 }
-	 }
+		String projectHome = Utility.getProjectHome();
+		for (String projectCode : projectCodes) {
+			try {
+				FileUtils.deleteDirectory(new File(projectHome + projectCode));
+				zipFile = new File(Utility.getArchiveHome() + projectCode + ".zip");
+				zipFile.delete();
+			} catch (IOException e) {
+				S_LOGGER.error("deleteProject() error happened : " + e.getMessage());
+				throw new PhrescoException(e);
+			}
+		}
+	}
 
 	 /**
 	  * This will search the given path and return list of projects
 	  *
 	  * @return List of projects which compliance with the framework
 	  */
-	 public List<Project> discover(List<File> paths) throws PhrescoException {
+	@Override
+	public List<Project> discover(List<File> paths) throws PhrescoException {
+		S_LOGGER.debug("Entering Method ProjectAdministratorImpl.discover(List<File> paths)");
 
-		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.discover(List<File> paths)");
+		//Use the FileNameFilter for filtering .phresco directories
+		//Read the .project file and construct the Project object.
 
-		 //Use the FileNameFilter for filtering .phresco directories
-		 //Read the .project file and construct the Project object.
+		S_LOGGER.debug("discover( )  paths = "+paths);
 
-		 S_LOGGER.debug("discover( )  paths = "+paths);
+		if(CollectionUtils.isEmpty(paths)) {
+			throw new PhrescoException(MSG_FILE_PATH_EMPTY);
+		}
 
-		 if(CollectionUtils.isEmpty(paths)) {
-			 throw new PhrescoException(MSG_FILE_PATH_EMPTY);
-		 }
+		List<Project> projects = new ArrayList<Project>();
 
-		 List<Project> projects = new ArrayList<Project>();
+		for (File path : paths) {
+			File[] childFiles = path.listFiles();
+			for (File childFile : childFiles) {
+				File[] dotPhrescoFolders = childFile.listFiles(new PhrescoFileNameFilter(FOLDER_DOT_PHRESCO));
+				if (ArrayUtils.isEmpty(dotPhrescoFolders)) {
+					continue;
+				}
 
-		 for (File path : paths) {
-			 File[] childFiles = path.listFiles();
-			 for (File childFile : childFiles) {
-				 File[] dotPhrescoFolders = childFile.listFiles(new PhrescoFileNameFilter(FOLDER_DOT_PHRESCO));
-				 if(ArrayUtils.isEmpty(dotPhrescoFolders)) {
-					 continue;
-				 }
+				for (File dotPhrescoFolder : dotPhrescoFolders) {
+					File[] dotProjectFiles = dotPhrescoFolder.listFiles(new PhrescoFileNameFilter(PROJECT_INFO_FILE));
+					fillProjects(dotProjectFiles, projects);
+				}
+			}
+		}
 
-				 for (File dotPhrescoFolder : dotPhrescoFolders) {
-					 File[] dotProjectFiles = dotPhrescoFolder.listFiles(new PhrescoFileNameFilter(PROJECT_INFO_FILE));
-					 fillProjects(dotProjectFiles, projects);
-				 }
-			 }
-		 }
-
-		 Collections.sort(projects, new ProjectComparator());
-		 return projects;
+		Collections.sort(projects, new ProjectComparator());
+		
+		return projects;
 	 }
 	 
 	 /**
@@ -813,39 +838,39 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 	  *
 	  * @return List of projects which compliance with the framework
 	  */
-	 public List<Project> discover(List<File> paths, String customerId) throws PhrescoException {
+	@Override
+	public List<Project> discover(List<File> paths, String customerId) throws PhrescoException {
+		S_LOGGER.debug("Entering Method ProjectAdministratorImpl.discover(List<File> paths, String customerId)");
 
-		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.discover(List<File> paths, String customerId)");
+		//Use the FileNameFilter for filtering .phresco directories
+		//Read the .project file and construct the Project object.
 
-		 //Use the FileNameFilter for filtering .phresco directories
-		 //Read the .project file and construct the Project object.
+		S_LOGGER.debug("discover()  paths = "+paths);
 
-		 S_LOGGER.debug("discover()  paths = "+paths);
+		if (CollectionUtils.isEmpty(paths)) {
+			throw new PhrescoException(MSG_FILE_PATH_EMPTY);
+		}
 
-		 if (CollectionUtils.isEmpty(paths)) {
-			 throw new PhrescoException(MSG_FILE_PATH_EMPTY);
-		 }
+		List<Project> projects = new ArrayList<Project>();
 
-		 List<Project> projects = new ArrayList<Project>();
+		for (File path : paths) {
+			File[] childFiles = path.listFiles();
+			for (File childFile : childFiles) {
+				File[] dotPhrescoFolders = childFile.listFiles(new PhrescoFileNameFilter(FOLDER_DOT_PHRESCO));
+				if(ArrayUtils.isEmpty(dotPhrescoFolders)) {
+					continue;
+				}
 
-		 for (File path : paths) {
-			 File[] childFiles = path.listFiles();
-			 for (File childFile : childFiles) {
-				 File[] dotPhrescoFolders = childFile.listFiles(new PhrescoFileNameFilter(FOLDER_DOT_PHRESCO));
-				 if(ArrayUtils.isEmpty(dotPhrescoFolders)) {
-					 continue;
-				 }
-
-				 for (File dotPhrescoFolder : dotPhrescoFolders) {
-					 File[] dotProjectFiles = dotPhrescoFolder.listFiles(new PhrescoFileNameFilter(PROJECT_INFO_FILE));
-					 fillProjects(dotProjectFiles, projects);
-				 }
-			 }
-		 }
-		 projects = filterCustomerProjects(projects, customerId);
-		 Collections.sort(projects, new ProjectComparator());
+				for (File dotPhrescoFolder : dotPhrescoFolders) {
+					File[] dotProjectFiles = dotPhrescoFolder.listFiles(new PhrescoFileNameFilter(PROJECT_INFO_FILE));
+					fillProjects(dotProjectFiles, projects);
+				}
+			}
+		}
+		projects = filterCustomerProjects(projects, customerId);
+		Collections.sort(projects, new ProjectComparator());
 		 
-		 return projects;
+		return projects;
 	 }
 	 
 	 private List<Project> filterCustomerProjects(List<Project> projects, String customerId) throws PhrescoException {
@@ -866,8 +891,8 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 return customerProjects;
 	 }
 
+	 @Override
 	 public User doLogin(Credentials credentials) throws PhrescoException {
-
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.doLogin(Credentials credentials)");
 
 		 try {
@@ -978,7 +1003,6 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 return toolsDownloadInfos;
 	 }
 	 
-	 
 	 @Override
 	 public List<DownloadInfo> getOtherDownloadInfo(DownloadPropertyInfo downloadPropertyInfo) throws PhrescoException {
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.getOtherDownloadInfo()");
@@ -1003,6 +1027,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 	  * This method is to fetch the settings template for the customer through REST service
 	  * @return List of settings template stored in the server [Database, Server and Email]
 	  */
+	 @Override
 	 public List<SettingsTemplate> getSettingsTemplates(String customerId) throws PhrescoException {
 		 try {
 			 return getServiceManager().getconfigTemplates(customerId);
@@ -1016,6 +1041,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 	  * Returns Settings template which matches the given type
 	  * @return Settings template object
 	  */
+	 @Override
 	 public SettingsTemplate getSettingsTemplate(String type, String customerId) throws PhrescoException {
 
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.getSettingsTemplate(String type)");
@@ -1030,6 +1056,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 return null;
 	 }
 
+	 @Override
 	 public void createSetting(SettingsInfo info, String selectedEnvNames) throws PhrescoException {
 
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.createSetting(SettingsInfo info, String selectedEnvNames)");
@@ -1046,12 +1073,14 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 }
 	 }
 
+	 @Override
 	 public void updateSetting(String envName, String oldConfigName, SettingsInfo settingsInfo) throws PhrescoException {
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.updateSetting(String name, SettingsInfo info)");
 		 File configFile = new File(Utility.getProjectHome() + SETTINGS_INFO_FILE_NAME);
 		 updateConfiguration(envName, oldConfigName, settingsInfo, configFile);
 	 }
 
+	 @Override
 	 public SettingsInfo getSettingsInfo(String name, String envName) throws PhrescoException {
 
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.getSettingsInfo(String name)");
@@ -1072,6 +1101,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 return null;
 	 }
 
+	 @Override
 	 public List<SettingsInfo> getSettingsInfos(String envName) throws PhrescoException {
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.getSettingsInfos()");
 
@@ -1089,6 +1119,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 }
 	 }
 
+	 @Override
 	 public List<SettingsInfo> getSettingsInfos(String type, String projectCode, String envName) throws PhrescoException {
 
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.getSettingsInfos(String type, String projectCode, String envName)");
@@ -1110,6 +1141,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 return filterConfigurations(settingsInfos, type);
 	 }
 
+	 @Override
 	 public List<SettingsInfo> getSettingsInfos(String envName, String type, List<String> appliesTo, String settingsName) throws PhrescoException {
 
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.getSettingsInfos(String type, String projectCode, String envName)");
@@ -1129,14 +1161,12 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 return settingsInfos;
 	 }
 
-
+	 @Override
 	 public SettingsInfo getSettingsInfo(String name, String type, String projectCode, String envName) throws PhrescoException {
-
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.getSettingsInfo(String name, String type, String projectCode)");
 		 S_LOGGER.debug("getSettingsInfo() Name = " + name);
 		 S_LOGGER.debug("getSettingsInfo() Type = " + type);
 		 S_LOGGER.debug("getSettingsInfo() ProjectCode = " + projectCode);
-
 
 		 if (StringUtils.isEmpty(name) || StringUtils.isEmpty(type)) {
 			 throw new PhrescoException("Settings/Configuration name or type is empty");
@@ -1161,8 +1191,8 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 return null;
 	 }
 
+	 @Override
 	 public List<SettingsInfo> getSettingsInfos() throws PhrescoException {
-
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.configurations(Project project)");
 
 		 File settingsFile = new File(Utility.getProjectHome() + SETTINGS_INFO_FILE_NAME);
@@ -1173,11 +1203,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 return new ArrayList<SettingsInfo>(1);
 	 }
 
-	 //TODO: Remove the below method once the plugins are adapted for configuration.xml
-	 public SettingsInfo getSettingsInfo(String name, String type, String projectCode) throws PhrescoException {
-		 return null;
-	 }
-
+	 @Override
 	 public void deleteSettingsInfos(Map<String, List<String>> selectedConfigs) throws PhrescoException {
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.deleteSettingsInfos(List<String> names)");
 		 S_LOGGER.debug("deleteSettingsInfos() Names = "+selectedConfigs);
@@ -1189,6 +1215,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 deleteConfigurations(selectedConfigs, configFile);
 	 }
 
+	 @Override
 	 public List<SettingsInfo> configurations(Project project) throws PhrescoException {
 
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.configurations(Project project)");
@@ -1197,7 +1224,6 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 File createdConfigurationXml = createConfigurationXml(project.getProjectInfo().getCode());
 		 return getAllSettingsInfos(createdConfigurationXml);
 	 }
-
 
 	 private File createConfigurationXml (String projectCode)  throws PhrescoException {
 		 File configFile = new File(getConfigurationPath(projectCode).toString());
@@ -1209,7 +1235,6 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 	 }
 
 	 private List<SettingsInfo> getAllSettingsInfos(File configFile) throws PhrescoException {
-
 		 try {
 			 ConfigurationReader configReader = new ConfigurationReader(configFile);
 			 return getAsSettingsInfo(configReader.getConfigurations());
@@ -1226,7 +1251,6 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 }
 		 return settingsInfos;
 	 }
-
 
 	 private List<SettingsInfo> getAllSettingsInfos(File configFile, String configName) throws PhrescoException {
 
@@ -1246,9 +1270,11 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 				 settingsInfos.add(settingsInfo);
 			 }
 		 }
+		 
 		 return settingsInfos;
 	 }
 
+	 @Override
 	 public SettingsInfo configuration(String name, String envName, Project project) throws PhrescoException {
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.configuration(String name, Project project)");
 		 S_LOGGER.debug("configuration()  Name = "+ name);
@@ -1273,6 +1299,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 return null;
 	 }
 
+	 @Override
 	 public List<SettingsInfo> configurations(Project project, String envName, String type, String configName) throws PhrescoException {
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.configuration(String name, Project project)");
 
@@ -1288,7 +1315,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 }
 	 }
 
-
+	 @Override
 	 public List<SettingsInfo> configurationsByEnvName(String envName, Project project) throws PhrescoException {
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.configurations(String type, Project project)");
 
@@ -1301,9 +1328,10 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 }
 	 }
 
+	 @Override
 	 public List<SettingsInfo> configurationsByEnvName(String envName) throws PhrescoException {
-
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.configurations(String type, Project project)");
+		 
 		 try {
 			 String configPath = Utility.getProjectHome() + SETTINGS_INFO_FILE_NAME;
 			 ConfigurationReader configReader = new ConfigurationReader(new File (configPath));
@@ -1313,8 +1341,8 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 }
 	 }
 
+	 @Override
 	 public List<SettingsInfo> configurations(String type, Project project) throws PhrescoException {
-
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.configurations(String type, Project project)");
 
 		 List<SettingsInfo> configurations = configurations(project);
@@ -1337,7 +1365,8 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 
 	 public void createConfiguration(SettingsInfo info, String selectedEnvNames, Project project) throws PhrescoException {
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.createConfiguration(SettingsInfo info, Project project)");
-		 if(info == null) throw new PhrescoException("Settings info should not be null or empty");
+		 
+		 if (info == null) throw new PhrescoException("Settings info should not be null or empty");
 		 S_LOGGER.debug("createConfiguration()  Name = "+ info.getName());
 
 		 try {
@@ -1348,6 +1377,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 }
 	 }
 
+	 @Override
 	 public void updateConfiguration(String envName, String oldConfigName, SettingsInfo settingsInfo, Project project) throws PhrescoException {
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.updateConfiguration(SettingsInfo info, Project project, String name)");
 		 S_LOGGER.debug("updateConfiguration() ProjectInfo = "+ project.getProjectInfo());
@@ -1368,6 +1398,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 }
 	 }
 
+	 @Override
 	 public void deleteConfigurations(Map<String, List<String>> selectedConfigs, Project project) throws PhrescoException {
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.deleteConfigurations(List<String> names, Project project)");
 		 S_LOGGER.debug("deleteConfigurations()  Names = "+ selectedConfigs);
@@ -1392,10 +1423,9 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 	 }
 
 	 private void fillProjects(File[] dotProjectFiles, List<Project> projects) throws PhrescoException {
-
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.fillProjects(File[] dotProjectFiles, List<Project> projects)");
 
-		 if(ArrayUtils.isEmpty(dotProjectFiles)) {
+		 if (ArrayUtils.isEmpty(dotProjectFiles)) {
 			 return;
 		 }
 
@@ -1416,7 +1446,6 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 	 }
 
 	 private void createSettingsInfo(SettingsInfo settingsInfo, String selectedEnvNames, File path) throws PhrescoException {
-
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.createSettingsInfo(SettingsInfo info, File path)");
 		 S_LOGGER.debug("fillProjects() File Path= " +path.getPath());
 
@@ -1432,6 +1461,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 
 	 }
 
+	 @Override
 	 public void createEnvironments(Project project, List<Environment> selectedEnvs, boolean isNewFile) throws PhrescoException {
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.createEnvironments(List<String> envNames)");
 
@@ -1439,6 +1469,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 createEnvironments(new File(configPath), selectedEnvs, isNewFile);
 	 }
 
+	 @Override
 	 public void createEnvironments(List<Environment> selectedEnvs) throws PhrescoException {
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.createEnvironments(List<String> envNames, Project project)");
 
@@ -1457,14 +1488,18 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 }
 	 }
 
+	 @Override
 	 public void deleteEnvironments(List<String> envNames) throws PhrescoException {
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.deleteEnvironments(List<String> envNames)");
+		 
 		 File configXml = new File(Utility.getProjectHome() + SETTINGS_INFO_FILE_NAME);
 		 deleteEnvironments(envNames, configXml);    	
 	 }
 
+	 @Override
 	 public void deleteEnvironments(List<String> envNames, Project project) throws PhrescoException {
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.deleteEnvironments(List<String> envNames, Project project)");
+		 
 		 File configXml = new File(getConfigurationPath(project.getProjectInfo().getCode()).toString());
 		 deleteEnvironments(envNames, configXml);
 	 }
@@ -1480,9 +1515,11 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 }
 	 }
 
+	 @Override
 	 public List<SettingsInfo> readSettingsInfo(File path) throws IOException {
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.readSettingsInfo(File path)");
 		 S_LOGGER.debug("readSettingsInfo() File path = "+path.getPath());
+		 
 		 if (!path.exists()) {
 			 S_LOGGER.error("readSettingsInfo() > " + FrameworkImplConstants.ERROR_FILE_PATH_INCORRECT + path);
 			 return new ArrayList<SettingsInfo>(1);
@@ -1498,9 +1535,10 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 return settingsInfos;
 	 }
 
+	 @Override
 	 public List<BuildInfo> getBuildInfos(Project project) throws PhrescoException {
-
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.getBuildInfos(Project project)");
+		 
 		 try {
 			 return readBuildInfo(new File(Utility.getProjectHome() + project.getProjectInfo().getCode() + File.separator + BUILD_DIR + File.separator + BUILD_INFO_FILE_NAME));
 		 } catch (IOException e) {
@@ -1508,6 +1546,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 }
 	 }
 
+	 @Override
 	 public List<BuildInfo> readBuildInfo(File path) throws IOException {
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.readBuildInfo(File path)");
 		 S_LOGGER.debug("getBuildInfos() File Path = "+path.getPath());
@@ -1534,7 +1573,6 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.getConfigurationPath(Project project)");
 		 S_LOGGER.debug("removeSettingsInfos() ProjectCode = " + projectCode);
 
-
 		 StringBuilder builder = new StringBuilder(Utility.getProjectHome());
 		 builder.append(projectCode);
 		 builder.append(File.separator);
@@ -1545,9 +1583,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 return builder;
 	 }
 
-
 	 private List<SettingsInfo> filterSettingsInfo(List<SettingsInfo> infos, String type, String technolgoyType) {
-
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.filterSettingsInfo(List<SettingsInfo> infos, String type)");
 		 S_LOGGER.debug("filterSettingsInfo() Type = "+type);
 
@@ -1591,7 +1627,6 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 
 	 @Override
 	 public List<BuildInfo> getBuildInfos(Project project, int[] buildNumbers) throws PhrescoException {
-
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.getBuildInfos(Project project, int[] buildNumbers)");
 		 S_LOGGER.debug("getBuildInfos() Project Information = "+project.getProjectInfo() );
 
@@ -1661,6 +1696,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 
 	 private void deleteBuildArchive(Project project, List<BuildInfo> selectedInfos) throws IOException {
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.deleteBuildArchive(Project project, List<BuildInfo> selectedInfos)");
+		 
 		 File file = null;
 		 String delFilename = null;
 		 for (BuildInfo selectedInfo : selectedInfos) {
@@ -1746,6 +1782,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 	 @Override
 	 public List<VideoType> getVideoTypes(String name) throws PhrescoException {
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.getVideoTypes(String name)");
+		 
 		 List<VideoInfo> videoInfos = getVideoInfos();
 		 for (VideoInfo videoInfo : videoInfos) {
 			 S_LOGGER.debug("getVideoTypes() Name = "+name);
@@ -1756,6 +1793,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 return null;
 	 }
 	 
+	 @Override
 	 public List<ModuleGroup> getAllModules(String techId, String customerId) throws PhrescoException {
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.getAllModules(String techId, String customerId)");
 		 S_LOGGER.debug("getAllModules() TechnologyName = "+techId);
@@ -1816,10 +1854,11 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 	 @Override
 	 public void createJob(Project project, CIJob job) throws PhrescoException {
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.createJob(Project project, CIJob job)");
+		 
 		 FileWriter writer = null;
 		 try {
 			 CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
-			 CIJobStatus jobStatus = ciManager.createJob(job);
+			 CIJobStatus jobStatus = ciManager.createJob(job, project.getProjectInfo().getCustomerId());
 			 if (jobStatus.getCode() == -1) {
 				 throw new PhrescoException(jobStatus.getMessage());
 			 }
@@ -1843,10 +1882,11 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 	 @Override
 	 public void updateJob(Project project, CIJob job) throws PhrescoException {
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.updateJob(Project project, CIJob job)");
+		 
 		 FileWriter writer = null;
 		 try {
 			 CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
-			 CIJobStatus jobStatus = ciManager.updateJob(job);
+			 CIJobStatus jobStatus = ciManager.updateJob(job, project.getProjectInfo().getCustomerId());
 			 if (jobStatus.getCode() == -1) {
 				 throw new PhrescoException(jobStatus.getMessage());
 			 }
@@ -1882,13 +1922,13 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 }
 	 }
 
-	 public boolean adaptExistingJobs(Project project) {
+	 private boolean adaptExistingJobs(Project project) {
 		try {
 			 CIJob existJob = getJob(project);
 			 S_LOGGER.debug("Going to get existing jobs to relocate!!!!!");
 			 if(existJob != null) {
 				 S_LOGGER.debug("Existing job found " + existJob.getName());
-				 boolean deleteExistJob = deleteCI(project);
+				 deleteCI(project);
 				 Gson gson = new Gson();
 				 List<CIJob> existingJobs = new ArrayList<CIJob>();
 				 existingJobs.addAll(Arrays.asList(existJob));
@@ -1906,7 +1946,6 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		}
 		return false;
 	 }
-	 
 
 	 @Override
 	 public List<CIJob> getJobs(Project project) throws PhrescoException {
@@ -1973,7 +2012,6 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 			 if (CollectionUtils.isEmpty(selectedJobs)) {
 				 return;
 			 }
-			 Gson gson = new Gson();
 			 List<CIJob> jobs = getJobs(project);
 			 if (CollectionUtils.isEmpty(jobs)) {
 				 return;
@@ -1998,7 +2036,6 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 	 
 	 @Override
 	 public void updateJsonJob(Project project, CIJob job) throws PhrescoException {
-		 Gson gson = new Gson();
 		 try {
 			 deleteJsonJobs(project, Arrays.asList(job));
 			 writeJsonJobs(project, Arrays.asList(job), CI_APPEND_JOBS);
@@ -2098,40 +2135,30 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 			 throw new PhrescoException(e);
 		 }
 	 }
-
-	 public void getJdkHomeXml() throws PhrescoException {
+	 
+	 @Override
+	 public void getJdkHomeXml(String customerId) throws PhrescoException {
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.getJdkHomeXml");
 
 		 CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
-		 ciManager.getJdkHomeXml();
+		 ciManager.getJdkHomeXml(customerId);
 	 }
 
-	 public void getMavenHomeXml() throws PhrescoException {
+	 @Override
+	 public void getMavenHomeXml(String customerId) throws PhrescoException {
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.getMavenHomeXml");
 		 CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
-		 ciManager.getMavenHomeXml();
+		 ciManager.getMavenHomeXml(customerId);
 	 }
 
+	 @Override
+	 public String getJforumPath(String customerId) throws PhrescoException {
+		 AdminConfigInfo adminConfigInfo = getServiceManager().getForumPath(customerId);
 
-	 private void setAdminConfigInfosFrmService() throws PhrescoException {
-		 if (CollectionUtils.isEmpty(adminConfigInfos)) {
-			 adminConfigInfos = PhrescoFrameworkFactory.getServiceManager().getAdminConfig();
-		 }
+		 return adminConfigInfo.getValue();
 	 }
 
-	 public String getJforumPath() throws PhrescoException {
-		 if (CollectionUtils.isEmpty(adminConfigInfos)) {
-			 setAdminConfigInfosFrmService();
-		 }
-
-		 for (AdminConfigInfo adminConfigInfo : adminConfigInfos) {
-			 if (ADMIN_CONFIG_JFORUM_PATH.equals(adminConfigInfo.getKey())) {
-				 return adminConfigInfo.getValue();
-			 }
-		 }
-		 return null;
-	 }
-
+	 @Override
 	 public List<ValidationResult> validate() throws PhrescoException {
 		 //1.Check for phresco directory structure validation
 		 //2.Check for Environment settings like Android Home, Node JS Home
@@ -2144,6 +2171,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 return results;
 	 }
 
+	 @Override
 	 public List<ValidationResult> validate(Project project) throws PhrescoException {
 		 //1.Validate the directory structure based on the archetypes
 		 //2.Validate for changes in the list of modules in projects
@@ -2160,6 +2188,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 return results;
 	 }
 
+	 @Override
 	 public CIJobStatus deleteCI(Project project, List<String> builds) throws PhrescoException {
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.deleteCI()");
 		 try {
@@ -2185,6 +2214,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 }
 	 }
 
+	 @Override
 	 public CIJobStatus deleteCIBuild(Project project,  Map<String, List<String>> builds) throws PhrescoException {
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.deleteCI()");
 		 	try {
@@ -2206,6 +2236,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 }
 	 }
 
+	 @Override
 	 public CIJobStatus deleteCIJobs(Project project,  List<String> jobNames) throws PhrescoException {
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.deleteCI()");
 		 try {
@@ -2226,20 +2257,23 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 }
 	 }
 	 
-		// When already existing adapted project is created , need to move to new adapted project -kalees
-		public boolean deleteCI(Project project) throws PhrescoException {
-			S_LOGGER.debug("Entering Method ProjectAdministratorImpl.deleteCI()");
-			try {
-		    	File ciJobInfo = new File(getCIJobPath(project));
-		    	return ciJobInfo.delete();
-			} catch (ClientHandlerException ex) {
-		    	S_LOGGER.error("Entered into catch block of ProjectAdministratorImpl.deleteCI()" + ex.getLocalizedMessage());
-				throw new PhrescoException(ex);
-			}
-		}
+	 // When already existing adapted project is created , need to move to new adapted project -kalees
+	 private boolean deleteCI(Project project) throws PhrescoException {
+		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.deleteCI()");
+		 
+		 try {
+			 File ciJobInfo = new File(getCIJobPath(project));
+			 return ciJobInfo.delete();
+		 } catch (ClientHandlerException ex) {
+			 S_LOGGER.error("Entered into catch block of ProjectAdministratorImpl.deleteCI()" + ex.getLocalizedMessage());
+			 throw new PhrescoException(ex);
+		 }
+	 }
 		
+	 @Override
 	 public int getProgressInBuild(Project project) throws PhrescoException {
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.isBuilding()");
+		 
 		 try {
 			 CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
 			 CIJob ciJob = getJob(project);
@@ -2251,8 +2285,10 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 }
 	 }
 	 
+	 @Override
 	 public boolean isJobCreatingBuild(CIJob ciJob) throws PhrescoException {
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.isBuilding()");
+		 
 		 try {
 			 CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
 			 int isBuilding = ciManager.getProgressInBuild(ciJob);
@@ -2266,12 +2302,15 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 }
 	 }
 
-	 public void getEmailExtPlugin() throws PhrescoException {
+	 @Override
+	 public void getEmailExtPlugin(String customerId) throws PhrescoException {
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.getEmailExtPlugin");
+		 
 		 CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
-		 ciManager.getEmailExtPlugin();
+		 ciManager.getEmailExtPlugin(customerId);
 	 }
 
+	 @Override
 	 public void deleteDoNotCheckin(Project project) throws PhrescoException {
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.deleteDoNotCheckin");
 
@@ -2280,6 +2319,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 ciManager.deleteDoNotCheckin(ciJob);
 	 }
 
+	 @Override
 	 public List<Environment> getEnvFromService() throws PhrescoException {
 		 try {
 			 return getServiceManager().getDefaultEnvFromServer();
@@ -2289,14 +2329,18 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 }
 	 }
 
+	 @Override
 	 public List<Environment> getEnvironments(Project project) throws PhrescoException {
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.getEnvironments(Project project)");
+		 
 		 String configPath = getConfigurationPath(project.getProjectInfo().getCode()).toString();
 		 return getEnvironments(new File(configPath));
 	 }
 
+	 @Override
 	 public List<Environment> getEnvironments() throws PhrescoException {
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.getEnvironments()");
+		 
 		 return getEnvironments(new File(Utility.getProjectHome() + SETTINGS_INFO_FILE_NAME));
 	 }
 
@@ -2319,8 +2363,10 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 return getEnvNames(new File (configPath));
 	 }
 
+	 @Override
 	 public Collection<String> getEnvNames() throws PhrescoException {
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.getEnvNames()");
+		 
 		 return getEnvNames(new File(Utility.getProjectHome() + SETTINGS_INFO_FILE_NAME));
 	 }
 
@@ -2332,7 +2378,13 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 			 throw new PhrescoException(e);
 		 }
 	 }
+	 
+	 @Override
+	 public String getDefaultEnvName(String projectCode) {
+		 return "Production";
+	 }
 
+	 @Override
 	 public void updateTestConfiguration(Project project, String selectedEnvs, String browser, String resultConfigXml) throws PhrescoException {
 		 try {
 			 String projectCode = project.getProjectInfo().getCode();
@@ -2348,11 +2400,6 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 } catch (Exception e) {
 			 throw new PhrescoException(e);
 		 }
-	 }
-
-	 @Override
-	 public String getDefaultEnvName(String projectCode) {
-		 return "Production";
 	 }
 
 	 private void updateProjectPOM(ProjectInfo projectInfo) throws PhrescoException {
@@ -2376,8 +2423,9 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 	 }
 
 	 /**
-	/* Delete the Sql Folder 
+	  * Delete the Sql Folder 
 	  */
+	 @Override
 	 public void deleteSqlFolder(List<String> dbList , ProjectInfo projectInfo) throws PhrescoException {
 		 initializeSqlMap();
 		 try {
@@ -2396,45 +2444,47 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 	 }
 	 
 	 protected void createSqlFolder(ProjectInfo info, File path) throws PhrescoException {
-			String databaseType = "";
-			try {
-				String parentFile = path.getParentFile().getParent();
-				List<Database> databaseList = info.getTechnology().getDatabases();
-				String techId = info.getTechnology().getId();
-				if (databaseList == null || databaseList.size() == 0) {
-					return;
-				}
-				File mysqlFolder = new File(parentFile, sqlFolderPathMap.get(techId) + Constants.DB_MYSQL);
-				File mysqlVersionFolder = getMysqlVersionFolder(mysqlFolder);
-				for (Database db : databaseList) {
-					databaseType = db.getName().toLowerCase();
-					List<String> versions = db.getVersions();
-					for (String version : versions) {
-						String sqlPath = databaseType + File.separator + version.trim();
-						File sqlFolder = new File(parentFile, sqlFolderPathMap.get(techId) + sqlPath);
-						sqlFolder.mkdirs();
-						if (databaseType.equals(Constants.DB_MYSQL) && mysqlVersionFolder != null
-								&& !(mysqlVersionFolder.getPath().equals(sqlFolder.getPath()))) {						
-							FileUtils.copyDirectory(mysqlVersionFolder, sqlFolder);
-						} else {
-							File sqlFile = new File(sqlFolder, Constants.SITE_SQL);
-							sqlFile.createNewFile();
-						}
-					}
-				}
-			} catch (IOException e) {
-				throw new PhrescoException(e);
-			}
-		}
+		 String databaseType = "";
+		 try {
+			 String parentFile = path.getParentFile().getParent();
+			 List<Database> databaseList = info.getTechnology().getDatabases();
+			 String techId = info.getTechnology().getId();
+			 if (databaseList == null || databaseList.size() == 0) {
+				 return;
+			 }
+			 File mysqlFolder = new File(parentFile, sqlFolderPathMap.get(techId) + Constants.DB_MYSQL);
+			 File mysqlVersionFolder = getMysqlVersionFolder(mysqlFolder);
+			 for (Database db : databaseList) {
+				 databaseType = db.getName().toLowerCase();
+				 List<String> versions = db.getVersions();
+				 for (String version : versions) {
+					 String sqlPath = databaseType + File.separator + version.trim();
+					 File sqlFolder = new File(parentFile, sqlFolderPathMap.get(techId) + sqlPath);
+					 sqlFolder.mkdirs();
+					 if (databaseType.equals(Constants.DB_MYSQL) && mysqlVersionFolder != null
+							 && !(mysqlVersionFolder.getPath().equals(sqlFolder.getPath()))) {						
+						 FileUtils.copyDirectory(mysqlVersionFolder, sqlFolder);
+					 } else {
+						 File sqlFile = new File(sqlFolder, Constants.SITE_SQL);
+						 sqlFile.createNewFile();
+					 }
+				 }
+			 }
+		 } catch (IOException e) {
+			 throw new PhrescoException(e);
+		 }
 	 
-		private File getMysqlVersionFolder(File mysqlFolder) {
-			File[] mysqlFolderFiles = mysqlFolder.listFiles();
-			if (mysqlFolderFiles != null && mysqlFolderFiles.length > 0) {
-				return mysqlFolderFiles[0];
-			}
-			return null;
+	 }
+	 
+	private File getMysqlVersionFolder(File mysqlFolder) {
+		File[] mysqlFolderFiles = mysqlFolder.listFiles();
+		if (mysqlFolderFiles != null && mysqlFolderFiles.length > 0) {
+			return mysqlFolderFiles[0];
 		}
+		return null;
+	}
 
+	@Override
 	public List<Reports> getReports(ProjectInfo projectInfo) throws PhrescoException {
 		try {
 			List<Reports> reports = siteReportMap.get(projectInfo.getTechnology().getId());
@@ -2449,6 +2499,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		}
 	}
 	
+	@Override
 	public List<Reports> getPomReports(ProjectInfo projectInfo) throws PhrescoException {
 		try {
 			SiteConfigurator configurator = new SiteConfigurator();
@@ -2460,6 +2511,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		}
 	}
 	
+	@Override
 	public void updateRptPluginInPOM(ProjectInfo projectInfo, List<Reports> reports, List<ReportCategories> reportCategories) throws PhrescoException {
 		try {
 			SiteConfigurator configurator = new SiteConfigurator();
@@ -2470,24 +2522,65 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		}
 	}
 	
-	public List<Server> getServers(String techId, String customerId) throws PhrescoException {
+	@Override
+	public List<Server> getServers(String customerId) throws PhrescoException {
 		try {
-			List<Server> servers = getServiceManager().getServers(techId, customerId);
+			List<Server> servers = getServiceManager().getServers(customerId);
 			return servers;
 		} catch (PhrescoException e) {
 			throw new PhrescoException();
 		}
 	}
 	
-	public List<Database> getDatabases(String techId, String customerId) throws PhrescoException {
+	@Override
+	public List<Server> getServersByTech(String techId, String customerId) throws PhrescoException {
 		try {
-			List<Database> databases = getServiceManager().getDatabases(techId, customerId);
+			List<Server> servers = getServers(customerId);
+			List<Server> serversByTechId = new ArrayList<Server>();
+	        if (CollectionUtils.isNotEmpty(servers)) {
+	        	for (Server server : servers) {
+					if (server.getTechnologies().contains(techId)) {
+						serversByTechId.add(server);
+					}
+				}
+	        }
+	        
+			return serversByTechId;
+		} catch (PhrescoException e) {
+			throw new PhrescoException();
+		}
+	}
+	
+	@Override
+	public List<Database> getDatabases(String customerId) throws PhrescoException {
+		try {
+			List<Database> databases = getServiceManager().getDatabases(customerId);
 			return databases;
 		} catch (PhrescoException e) {
 			throw new PhrescoException();
 		}
 	}
 	
+	@Override
+	public List<Database> getDatabasesByTech(String techId, String customerId) throws PhrescoException {
+		try {
+			List<Database> databases = getDatabases(customerId);
+			List<Database> dbsByTechId = new ArrayList<Database>();
+	        if (CollectionUtils.isNotEmpty(databases)) {
+	        	for (Database database : databases) {
+					if (database.getTechnologies().contains(techId)) {
+						dbsByTechId.add(database);
+					}
+				}
+	        }
+	        
+			return dbsByTechId;
+		} catch (PhrescoException e) {
+			throw new PhrescoException();
+		}
+	}
+	
+	@Override
 	public List<WebService> getWebServices(String techId, String customerId) throws PhrescoException {
 		try {
 			List<WebService> webServices =  getServiceManager().getWebServices(techId, customerId);
@@ -2497,6 +2590,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		}
 	}
 	
+	@Override
 	public List<Database> getDatabases() throws PhrescoException {
 		 try {
 
@@ -2506,179 +2600,185 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 }
 	 }
 
-	 public List<Server> getServers() throws PhrescoException {
-		 try {
-			 return PhrescoFrameworkFactory.getServiceManager().getServers();
-		 } catch (Exception ex) {
-			 throw new PhrescoException(ex);
-		 }
-	 }
-	 
-	 public List<ProjectInfo> getPilots(String techId, String customerId) throws PhrescoException {
-		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.getPilots(String techId, String customerId)");
+	@Override
+	public List<Server> getServers() throws PhrescoException {
+	    try {
+	        return PhrescoFrameworkFactory.getServiceManager().getServers();
+	    } catch (Exception ex) {
+	        throw new PhrescoException(ex);
+	    }
+	}
+	
+	@Override 
+	public List<ProjectInfo> getPilots(String techId, String customerId) throws PhrescoException {
+	    S_LOGGER.debug("Entering Method ProjectAdministratorImpl.getPilots(String techId, String customerId)");
 		 
-		 try {
-			 List<ProjectInfo> allPilots = getServiceManager().getPilotProjects(customerId);
-			 List<ProjectInfo> pilotProjects = new ArrayList<ProjectInfo>();
-			 if (CollectionUtils.isNotEmpty(allPilots)) {
-				 for (ProjectInfo pilot : allPilots) {
-					if (pilot.getTechId().equals(techId)) {
+	    try {
+	        List<ProjectInfo> allPilots = getServiceManager().getPilotProjects(customerId);
+	        List<ProjectInfo> pilotProjects = new ArrayList<ProjectInfo>();
+	        if (CollectionUtils.isNotEmpty(allPilots)) {
+	            for (ProjectInfo pilot : allPilots) {
+	                if (pilot.getTechId().equals(techId)) {
 						pilotProjects.add(pilot);
 					}
 				}
-			 }
+	        }
 			 
-			 return pilotProjects;
-		 } catch (Exception e) {
-			 throw new PhrescoException(e);
-		 }
+	        return pilotProjects;
+	    } catch (Exception e) {
+	        throw new PhrescoException(e);
+	    }
 	 }
 	 
-	 public BuildInfo getCIBuildInfo(CIJob job, int buildNumber) throws PhrescoException {
-		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.getCIBuildInfo(CIJob job, int buildNumber)");
+	@Override
+	public BuildInfo getCIBuildInfo(CIJob job, int buildNumber) throws PhrescoException {
+	    S_LOGGER.debug("Entering Method ProjectAdministratorImpl.getCIBuildInfo(CIJob job, int buildNumber)");
 		 
-		 BuildInfo buildInfo = null;
-		 try {
-			 CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
-			 buildInfo = ciManager.getBuildInfo(job,buildNumber);
-		 } catch (Exception e) {
-			 throw new PhrescoException(e);
-		 }
+	    BuildInfo buildInfo = null;
+	    try {
+	        CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
+	        buildInfo = ciManager.getBuildInfo(job,buildNumber);
+	    } catch (Exception e) {
+	        throw new PhrescoException(e);
+	    }
 		 
-		 return buildInfo;
-	 }
+	    return buildInfo;
+	}
 	 
-	 public List<ModuleGroup> getJSLibs(String techId, String customerId) throws PhrescoException {
-		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.getJSLibs(String techId, String customerId)");
+	@Override
+	public List<ModuleGroup> getJSLibs(String techId, String customerId) throws PhrescoException {
+	    S_LOGGER.debug("Entering Method ProjectAdministratorImpl.getJSLibs(String techId, String customerId)");
 		 
-		 try {
-			 List<ModuleGroup> allJsLibs = getServiceManager().getJsLibs(customerId);
-			 List<ModuleGroup> jsLibs = new ArrayList<ModuleGroup>();
-			 if (CollectionUtils.isNotEmpty(allJsLibs)) {
-				 for (ModuleGroup jslib : allJsLibs) {
+	    try {
+	        List<ModuleGroup> allJsLibs = getServiceManager().getJsLibs(customerId);
+	        List<ModuleGroup> jsLibs = new ArrayList<ModuleGroup>();
+	        if (CollectionUtils.isNotEmpty(allJsLibs)) {
+	            for (ModuleGroup jslib : allJsLibs) {
 					if (jslib.getTechId().equals(techId)) {
 						jsLibs.add(jslib);
 					}
 				}
-			 }
+	        }
 
-			 return jsLibs;
-		 } catch (Exception e) {
-			 throw new PhrescoException(e);
-		 }
-	 }
+	        return jsLibs;
+	    } catch (Exception e) {
+	        throw new PhrescoException(e);
+	    }
+	}
 	 
-	 public List<CertificateInfo> getCertificate(String host, int port) throws PhrescoException {
-			List<CertificateInfo> certificates = new ArrayList<CertificateInfo>();
-			CertificateInfo info;
+	@Override
+	public List<CertificateInfo> getCertificate(String host, int port) throws PhrescoException {
+	    List<CertificateInfo> certificates = new ArrayList<CertificateInfo>();
+	    CertificateInfo info;
+	    try {
+	        KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
+			SSLContext context = SSLContext.getInstance("TLS");
+			TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+			tmf.init(ks);
+			X509TrustManager defaultTrustManager = (X509TrustManager) tmf.getTrustManagers()[0];
+			SavingTrustManager tm = new SavingTrustManager(defaultTrustManager);
+			context.init(null, new TrustManager[]{tm}, null);
+			SSLSocketFactory factory = context.getSocketFactory();
+			SSLSocket socket = (SSLSocket) factory.createSocket(host, port);
+			socket.setSoTimeout(10000);
 			try {
-				KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
-				SSLContext context = SSLContext.getInstance("TLS");
-				TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-				tmf.init(ks);
-				X509TrustManager defaultTrustManager = (X509TrustManager) tmf.getTrustManagers()[0];
-				SavingTrustManager tm = new SavingTrustManager(defaultTrustManager);
-				context.init(null, new TrustManager[]{tm}, null);
-				SSLSocketFactory factory = context.getSocketFactory();
-				SSLSocket socket = (SSLSocket) factory.createSocket(host, port);
-				socket.setSoTimeout(10000);
-				try {
-					socket.startHandshake();
-					socket.close();
-				} catch (SSLException e) {
-					
-				}
-				X509Certificate[] chain = tm.chain;
-				for (int i = 0; i < chain.length; i++) {
-					X509Certificate x509Certificate = chain[i];
-					String subjectDN = x509Certificate.getSubjectDN().getName();
-					String[] split = subjectDN.split(",");
-					info = new CertificateInfo();
-					info.setSubjectDN(subjectDN);
-					info.setDisplayName(split[0]);
-					info.setCertificate(x509Certificate);
-					certificates.add(info);
-				}
-			} catch (Exception e) {
-				throw new PhrescoException();
+				socket.startHandshake();
+				socket.close();
+			} catch (SSLException e) {
+				
 			}
+			X509Certificate[] chain = tm.chain;
+			for (int i = 0; i < chain.length; i++) {
+				X509Certificate x509Certificate = chain[i];
+				String subjectDN = x509Certificate.getSubjectDN().getName();
+				String[] split = subjectDN.split(",");
+				info = new CertificateInfo();
+				info.setSubjectDN(subjectDN);
+				info.setDisplayName(split[0]);
+				info.setCertificate(x509Certificate);
+				certificates.add(info);
+			}
+	    } catch (Exception e) {
+			throw new PhrescoException();
+		}
 		
 			return certificates;
-		}
-
-		public void addCertificate(CertificateInfo info, File file) throws PhrescoException {
-			char[] passphrase = "changeit".toCharArray();
-			InputStream inputKeyStore = null;
-			OutputStream outputKeyStore = null;
-			try {
-				KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-				keyStore.load(null);
-				keyStore.setCertificateEntry(info.getDisplayName(), info.getCertificate());
-				if (!file.exists()) {
-					file.getParentFile().mkdirs();
-					file.createNewFile();
-				}
-				outputKeyStore = new FileOutputStream(file);
-				keyStore.store(outputKeyStore, passphrase);
-			} catch (Exception e) {
-				throw new PhrescoException(e);
-			} finally {
-				Utility.closeStream(inputKeyStore);
-				Utility.closeStream(outputKeyStore);
+	}
+	
+	@Override
+	public void addCertificate(CertificateInfo info, File file) throws PhrescoException {
+		char[] passphrase = "changeit".toCharArray();
+		InputStream inputKeyStore = null;
+		OutputStream outputKeyStore = null;
+		try {
+			KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+			keyStore.load(null);
+			keyStore.setCertificateEntry(info.getDisplayName(), info.getCertificate());
+			if (!file.exists()) {
+				file.getParentFile().mkdirs();
+				file.createNewFile();
 			}
-		}
-		
-		/**
-		 * This method is to fetch the settings template through REST service
-		 * @return List of settings template stored in the server [Database, Server and Email]
-		 */
-		public List<SettingsTemplate> getSettingsTemplates() throws PhrescoException {
-			 try {
-				 return PhrescoFrameworkFactory.getServiceManager().getSettingsTemplates();
-			 } catch (ClientHandlerException ex) {
-				 S_LOGGER.error(ex.getLocalizedMessage());
-				 throw new PhrescoException(ex);
-			 }
-		}
-		
-		/**
-		 * Returns Settings template which matches the given type
-		 * @return Settings template object
-		 */
-		public SettingsTemplate getSettingsTemplate(String type) throws PhrescoException {
-		
-			 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.getSettingsTemplate(String type)");
-		
-			 List<SettingsTemplate> settingsTemplates = getSettingsTemplates();
-			 for (SettingsTemplate settingsTemplate : settingsTemplates) {
-				 if (settingsTemplate.getType().equals(type)) {
-					 return settingsTemplate;
-				 }
-			 }
-		
-			 return null;
-		}
- }
-
-	class SavingTrustManager implements X509TrustManager {
-
-		private final X509TrustManager tm;
-		X509Certificate[] chain;
-
-		SavingTrustManager(X509TrustManager tm) {
-			this.tm = tm;
-		}
-
-		public X509Certificate[] getAcceptedIssuers() {
-			throw new UnsupportedOperationException();
-		}
-
-		public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-			throw new UnsupportedOperationException();
-		}
-
-		public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-			this.chain = chain;
-			tm.checkServerTrusted(chain, authType);
+			outputKeyStore = new FileOutputStream(file);
+			keyStore.store(outputKeyStore, passphrase);
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		} finally {
+			Utility.closeStream(inputKeyStore);
+			Utility.closeStream(outputKeyStore);
 		}
 	}
+		
+	/**
+	 * This method is to fetch the settings template through REST service
+	 * @return List of settings template stored in the server [Database, Server and Email]
+	 */
+	public List<SettingsTemplate> getSettingsTemplates() throws PhrescoException {
+		 try {
+			 return PhrescoFrameworkFactory.getServiceManager().getSettingsTemplates();
+		 } catch (ClientHandlerException ex) {
+			 S_LOGGER.error(ex.getLocalizedMessage());
+			 throw new PhrescoException(ex);
+		 }
+	}
+		
+	/**
+	 * Returns Settings template which matches the given type
+	 * @return Settings template object
+	 */
+	public SettingsTemplate getSettingsTemplate(String type) throws PhrescoException {
+	
+		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.getSettingsTemplate(String type)");
+	
+		 List<SettingsTemplate> settingsTemplates = getSettingsTemplates();
+		 for (SettingsTemplate settingsTemplate : settingsTemplates) {
+			 if (settingsTemplate.getType().equals(type)) {
+				 return settingsTemplate;
+			 }
+		 }
+	
+		 return null;
+	}
+}
+
+class SavingTrustManager implements X509TrustManager {
+    
+	private final X509TrustManager tm;
+	X509Certificate[] chain;
+
+	SavingTrustManager(X509TrustManager tm) {
+		this.tm = tm;
+	}
+
+	public X509Certificate[] getAcceptedIssuers() {
+		throw new UnsupportedOperationException();
+	}
+
+	public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+		throw new UnsupportedOperationException();
+	}
+
+	public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+		this.chain = chain;
+		tm.checkServerTrusted(chain, authType);
+	}
+}

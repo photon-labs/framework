@@ -442,7 +442,8 @@
 	}
 	
 	function checkForUserSession (data) {
-    	if (data != undefined && !isBlank(data) && data.indexOf("Remember me") >= 0) { //To load the login page if the user session is not available
+		//To load the login page if the user session is not available
+    	if (data != undefined && data != "[object Object]" && !isBlank(data) && data.indexOf("Remember me") >= 0) {
     		window.location.href = "logout.action";
     		return false;
     	}

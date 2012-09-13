@@ -103,13 +103,13 @@
 		
 		$('#finish').click(function() {
 			showProgessBar("Creating project...", 100);
-			featureUpdate('save');
+			featureUpdate('save', $('#container'));
 			return true;
 		});
 
 		$('#update').click(function() {
 			showProgessBar("Updating project...", 100);
-			featureUpdate('update');
+			featureUpdate('update', $('#container'));
 			return true;
 		});
 	         
@@ -117,8 +117,8 @@
 			$("input[type=checkbox]:disabled").each ( function() {
 		        $(this).attr('disabled', false)
 		    });
-			showLoadingIcon($("#tabDiv")); // Loading Icon
-			performAction('previous', '', $('#tabDiv'), '', getParams('previous'));
+//			showLoadingIcon($("#tabDiv")); // TODO : need to handle this
+			featureUpdate('previous', $('#tabDiv'));
 		});
 	
 		// Description popup js codes
@@ -161,13 +161,13 @@
 		});
 		
 		$('#cancel').click(function() {
-			showLoadingIcon($("#container")); // Loading Icon
-			performAction('applications', $('#formAppInfo'), $('#container'));
+//			showLoadingIcon($("#container")); // TODO : need to handle this
+			performAction('applications', $('#formFeatures'), $('#container'));
 		});
 	});
 	
-	function featureUpdate(url){
-		performAction(url, '', $('#container'), '', getParams(url));
+	function featureUpdate(url, tag) {
+		performAction(url, $('#formFeatures'), tag, '', getParams(url));
 	}
 	
 	function getParams(url) {
@@ -177,44 +177,25 @@
 		}
 		var allModuleVals = "";
 		var allJsVals = "";
-		$('input:checkbox[name=selectedModules]:checked').each(function() {
+		$('input:checkbox[name=modules]:checked').each(function() {
 			var isDisabled = $(this).prop("disabled");
 			if (doGetDisableItems || !isDisabled) {
 				allModuleVals = allModuleVals + $(this).val() + ",";
 			}
 		});
-
-		$('input:checkbox[name=selectedJsLibs]:checked').each(function() {
+		allModuleVals = allModuleVals.substring(0, allModuleVals.length-1);
+		$('input:checkbox[name=jsLibs]:checked').each(function() {
 			var isJsDisabled = $(this).prop("disabled");
 			if (doGetDisableItems || !isJsDisabled) {
-				allJsVals = allJsVals + $(this).val() + ","; 
+				allJsVals = allJsVals + $(this).val() + ",";
 			}
-		}); 
-		allModuleVals = allModuleVals.substring(0, allModuleVals.length-1);
+		});
 		allJsVals = allJsVals.substring(0, allJsVals.length-1);
-
 		var params = "";
-		var projectCode = $('#projectCode').val();
-		var techId = $('#technology').val(); 
-		params = params.concat("projectCode=")
-		params = params.concat(projectCode);
 		params = params.concat("&selectedModules=");
 		params = params.concat(allModuleVals);
 		params = params.concat("&selectedJsLibs=");
 		params = params.concat(allJsVals);
-		params = params.concat("&techId=");
-		params = params.concat(techId);
-		if (url == 'update' || url == 'previous') {
-			params = params.concat("&fromPage=");
-			params = params.concat("edit");
-		}
-		params = params.concat("&configServerNames=");
-		params = params.concat($("#configServerNames").val());
-		params = params.concat("&configDbNames=");
-		params = params.concat($("#configDbNames").val());
-		params = params.concat("&customerId=");
-    	params = params.concat($("#customerId").val());
-    	
     	return params;
 	}
 	

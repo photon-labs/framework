@@ -63,40 +63,44 @@ import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.api.CIManager;
 import com.photon.phresco.framework.api.ProjectAdministrator;
+import com.photon.phresco.service.client.api.ServiceManager;
 import com.photon.phresco.util.Utility;
 import com.sun.jersey.api.client.ClientResponse;
 
 public class CIManagerImpl implements CIManager, FrameworkConstants {
     private static final Logger S_LOGGER = Logger.getLogger(CIManagerImpl.class);
 	private static Boolean debugEnabled = S_LOGGER.isDebugEnabled();
-    private static final String JENKINS_URL = "http://localhost:3579/ci";
     
     private CLI cli = null;
 
     @Override
-    public CIJobStatus createJob(CIJob job) throws PhrescoException {
+    public CIJobStatus createJob(CIJob job, String customerId) throws PhrescoException {
     	if (debugEnabled) {
     		S_LOGGER.debug("Entering Method CIManagerImpl.createJob(CIJob job)");
     	}
-    	return doJob(job, FrameworkConstants.CI_CREATE_JOB_COMMAND);
+    	
+    	return doJob(job, FrameworkConstants.CI_CREATE_JOB_COMMAND, customerId);
     }
     
     @Override
-    public CIJobStatus updateJob(CIJob job) throws PhrescoException {
+    public CIJobStatus updateJob(CIJob job, String customerId) throws PhrescoException {
     	if (debugEnabled) {
     		S_LOGGER.debug("Entering Method CIManagerImpl.createJob(CIJob job)");
 		}
-    	return doJob(job, FrameworkConstants.CI_UPDATE_JOB_COMMAND);
+    	
+    	return doJob(job, FrameworkConstants.CI_UPDATE_JOB_COMMAND, customerId);
     }
     
-    private CIJobStatus doJob(CIJob job, String jobType) throws PhrescoException {
+    private CIJobStatus doJob(CIJob job, String jobType, String customerId) throws PhrescoException {
     	S_LOGGER.debug("Entering Method CIManagerImpl.createJob(CIJob job)");
+    	
     	try {
             cli = getCLI(job);
             List<String> argList = new ArrayList<String>();
             argList.add(jobType);
             argList.add(job.getName());
-            String configPath = PhrescoFrameworkFactory.getServiceManager().getCiConfigPath(job.getRepoType());
+            ServiceManager serviceManager = PhrescoFrameworkFactory.getProjectAdministrator().getServiceManager();
+            String configPath = serviceManager.getCiConfigPath(job.getRepoType(), customerId);
             ConfigProcessor processor = new ConfigProcessor(new URL(configPath));
             customizeNodes(processor, job);
             
@@ -113,10 +117,10 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
             S_LOGGER.debug("message " + message);
             //when svn is selected credential value has to set
             if(SVN.equals(job.getRepoType())) {
-            	setSvnCredential(job);
+            	setSvnCredential(job, customerId);
             }
             
-            setMailCredential(job);
+            setMailCredential(job, customerId);
             return new CIJobStatus(result, message);
         } catch (IOException e) {
             throw new PhrescoException(e);
@@ -139,10 +143,12 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
         }
     }
     
-    private void setSvnCredential(CIJob job) throws JDOMException, IOException {
+    private void setSvnCredential(CIJob job, String customerId) throws JDOMException, IOException {
        	S_LOGGER.debug("Entering Method CIManagerImpl.setSvnCredential");
+       	
         try {
-            InputStream credentialXml = PhrescoFrameworkFactory.getServiceManager().getCredentialXml();
+        	ServiceManager serviceManager = PhrescoFrameworkFactory.getProjectAdministrator().getServiceManager();
+        	InputStream credentialXml = serviceManager.getCredentialXml(customerId);
             SvnProcessor processor = new SvnProcessor(credentialXml);
 			DataInputStream in = new DataInputStream(credentialXml);
 			while (in.available() != 0) {
@@ -166,10 +172,13 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		}
     }
     
-    public void setMailCredential(CIJob job) {
+    @Override
+    public void setMailCredential(CIJob job, String customerId) {
        	S_LOGGER.debug("Entering Method CIManagerImpl.setMailCredential");
+       	
         try {
-            InputStream credentialXml = PhrescoFrameworkFactory.getServiceManager().getMailerXml();
+        	ServiceManager serviceManager = PhrescoFrameworkFactory.getProjectAdministrator().getServiceManager();
+        	InputStream credentialXml = serviceManager.getMailerXml(customerId);
             SvnProcessor processor = new SvnProcessor(credentialXml);
 			DataInputStream in = new DataInputStream(credentialXml);
 			while (in.available() != 0) {
@@ -195,10 +204,13 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		}
     }
     
-    public void getJdkHomeXml() throws PhrescoException {
+    @Override
+    public void getJdkHomeXml(String customerId) throws PhrescoException {
        	S_LOGGER.debug("Entering Method CIManagerImpl.getJdkHomeXml");
+       	
         try {
-			InputStream JDKHomeXmlStream = PhrescoFrameworkFactory.getServiceManager().getJdkHomeXml();
+        	ServiceManager serviceManager = PhrescoFrameworkFactory.getProjectAdministrator().getServiceManager();
+        	InputStream JDKHomeXmlStream = serviceManager.getJdkHomeXml(customerId);
 			String jenkinsJobHome = System.getenv(JENKINS_HOME);
             StringBuilder builder = new StringBuilder(jenkinsJobHome);
             builder.append(File.separator);
@@ -210,7 +222,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		}
     }
     
-    public void streamToFile(File dest, InputStream ip) {
+    private void streamToFile(File dest, InputStream ip) {
 		OutputStream out;
 		try {
 			out = new FileOutputStream(dest);
@@ -226,12 +238,15 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		}
     }
     
-    public void getMavenHomeXml() throws PhrescoException {
+    @Override
+    public void getMavenHomeXml(String customerId) throws PhrescoException {
         if (debugEnabled) {
         	S_LOGGER.debug("Entering Method CIManagerImpl.getMavenHomeXml");
         }
+
         try {
-            InputStream MAVENHomeXmlStream = PhrescoFrameworkFactory.getServiceManager().getMavenHomeXml();
+        	ServiceManager serviceManager = PhrescoFrameworkFactory.getProjectAdministrator().getServiceManager();
+        	InputStream MAVENHomeXmlStream = serviceManager.getMavenHomeXml(customerId);
             String jenkinsJobHome = System.getenv(JENKINS_HOME);
             StringBuilder builder = new StringBuilder(jenkinsJobHome);
             builder.append(File.separator);
@@ -378,7 +393,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
     
     private CLI getCLI(CIJob job) throws PhrescoException {
    		S_LOGGER.debug("Entering Method CIManagerImpl.getCLI()");
-//        FrameworkConfiguration frameworkConfig = PhrescoFrameworkFactory.getFrameworkConfig();
+   		
         String jenkinsUrl = "http://" + job.getJenkinsUrl() + ":" + job.getJenkinsPort() + "/ci/";
         try {
             return new CLI(new URL(jenkinsUrl));
@@ -391,7 +406,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
         }
     }
     
-    public void customizeNodes(ConfigProcessor processor, CIJob job) throws JDOMException, PhrescoException {
+    private void customizeNodes(ConfigProcessor processor, CIJob job) throws JDOMException, PhrescoException {
         //SVN url customization
     	if (SVN.equals(job.getRepoType())) {
             processor.changeNodeValue("scm/locations//remote", job.getSvnUrl());
@@ -424,7 +439,6 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
         if (job.isEnableBuildRelease()) {
         	processor.enableCollabNetBuildReleasePlugin(job);
         }
-
     }
     
     public static void main(String[] args)  {
@@ -500,6 +514,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
         }
     }
     
+    @Override
     public CIJobStatus deleteCI(CIJob job, List<String> builds) throws PhrescoException {
    		S_LOGGER.debug("Entering Method CIManagerImpl.deleteCI(CIJob job)");
    		S_LOGGER.debug("Job name " + job.getName());
@@ -558,8 +573,10 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
         }
     }
     
+    @Override
     public int getProgressInBuild(CIJob job) throws PhrescoException {
    		S_LOGGER.debug("Entering Method CIManagerImpl.isBuilding(CIJob job)");
+   		
     	String jenkinsUrl = "http://" + job.getJenkinsUrl() + ":" + job.getJenkinsPort() + "/ci/";
     	String isBuildingUrlUrl = "computer/api/xml?xpath=/computerSet/busyExecutors/text()";
         String jsonResponse = getJsonResponse(jenkinsUrl + isBuildingUrlUrl);
@@ -568,10 +585,13 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
     	return buidInProgress;
     }
     
-    public void getEmailExtPlugin() throws PhrescoException {
+    @Override
+    public void getEmailExtPlugin(String customerId) throws PhrescoException {
         S_LOGGER.debug("Entering Method CIManagerImpl.getEmailExtPlugin");
+        
         try {
-        	ClientResponse response = PhrescoFrameworkFactory.getServiceManager().getEmailExtPlugin();
+        	ServiceManager serviceManager = PhrescoFrameworkFactory.getProjectAdministrator().getServiceManager();
+        	ClientResponse response = serviceManager.getEmailExtPlugin(customerId);
    			S_LOGGER.debug("createProject response code " + response.getStatus());
             InputStream pluginStream = response.getEntityInputStream();
             String pluginDir = Utility.getJenkinsHomePluginDir();
@@ -582,8 +602,10 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		}
     }
     
+    @Override
     public void deleteDoNotCheckin(CIJob job) throws PhrescoException {
         S_LOGGER.debug("Entering Method CIManagerImpl.deleteBuilds");
+        
         try {
         	String jenkinsDataHome = System.getenv(JENKINS_HOME);
             StringBuilder builder = new StringBuilder(jenkinsDataHome);
@@ -595,7 +617,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
             builder.append(CHECKIN_DIR);
             builder.append(File.separator);
             builder.append(BUILD_PATH);
-            boolean deleteDir = deleteDir(new File(builder.toString()));
+            deleteDir(new File(builder.toString()));
 		} catch (Exception e) {
    			S_LOGGER.error("Entered into the catch block of CIManagerImpl.deleteBuilds" + e.getLocalizedMessage());
 		}
@@ -604,6 +626,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
     @Override
     public List<BuildInfo> getBuildInfos(CIJob job) throws PhrescoException {
         S_LOGGER.debug("Entering Method CIManagerImpl.getBuildInfos");
+        
         List<BuildInfo> buildInfo = null;
         try {
         	ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
@@ -621,6 +644,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		} catch (Exception e) {
    			S_LOGGER.error("Entered into the catch block of CIManagerImpl.getBuildInfos" + e.getLocalizedMessage());
 		}
+		
         return buildInfo;
     }
     
@@ -653,5 +677,4 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
         // The directory is now empty so delete it
         return dir.delete();
     } 
-    
 }

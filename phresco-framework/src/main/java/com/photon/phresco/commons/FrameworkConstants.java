@@ -173,6 +173,7 @@ public interface FrameworkConstants {
     String DEPLOY_BUILD_NAME = "buildName";
     String IPHONE_BUILD_NAME = "application.path";
     String IPHONE_SIMULATOR_VERSION = "simulator.version";
+    String DEVICE_TO_USE = "family";
     String IPHONE_SCHEMA_PARAM = "scheme";
     String DEPLOY_LOCATION = "deployLocation";
     String DEPLOY_CONTEXT = "context";
@@ -209,7 +210,7 @@ public interface FrameworkConstants {
     String MVN_SHAREPOINT_NUNIT_TEST_COMMAND = "mvn sharepoint:test";
     String MVN_INSTALL_COMMAND = "mvn install -DskipTests=true";
     String MVN_MOBILE_INSTALL_COMMAND = "mvn install ";
-	String MVN_ANDROID_PERF_COMMAND = "mvn install ";
+	String MVN_ANDROID_TEST_COMMAND = "mvn clean install ";
     String MVN_SELENIUM_STOP_COMMAND = "mvn selenium:stop-server";
     String MVN_SONAR_COMMAND = "mvn sonar:sonar";
     String MVN_PROJECT_UPDATE_COMMAND = "mvn scm:update";
@@ -261,6 +262,7 @@ public interface FrameworkConstants {
     String ELEMENT_TARGET = "do_not_checkin/target/*.apk";
     String ELEMENT_VERBOS = "verbose";
     String ELEMENT_VERIFY = "verify";
+    String REQ_SELECTED_TEST_NAME = "selectedTestName";
     
     String CONNECTION_URL = "connectionUrl";
 	String USER_NAME = "username";
@@ -372,8 +374,8 @@ public interface FrameworkConstants {
     String REQ_TEMP_SELECTEDMODULES = "selectedFeatures";
     String REQ_TEMP_SELECTED_PILOT_PROJ = "selectedPilotProj";
     String REQ_PILOTS_IDS = "pilotsIds";
-    String REQ_ALREADY_SELECTED_MODULES = "alreadySelectedModules";
-    String REQ_ALREADY_SELECTED_JSLIBS = "alreadySelectedJsLibs";
+    String REQ_PROJECT_INFO_MODULES = "projectInfoModules";
+    String REQ_PROJECT_INFO_JSLIBS = "projectInfoJsLibs";
     String REQ_ALL_JS_LIBS = "allJsLibs";
     String REQ_PILOTS_NAMES = "pilotsNames";
     String REQ_PILOT_PROJECT_INFO = "pilotProjectInfo";
@@ -444,6 +446,7 @@ public interface FrameworkConstants {
     String REQ_PROJECT_MODULES = "projectModules";
     String REQ_TEST_FUNCTIONAL = "functional";
     String REQ_TEST_PERFORMANCE = "performance";
+    String REQ_JMETER_TEST_AGAINST = "jmeterTestAgainst";
     String PERFORMANCE_TEST_REPORTS = "performanceTestReports";
 	String PERFORMANCE_SPECIAL_HANDLE = "performanceSpecialHandle";
 	String LOAD_TEST_RESULTS = "loadTestResults";
@@ -581,10 +584,13 @@ public interface FrameworkConstants {
 	String REQ_FEATURES_RIGHT_MODULES = "rightModules";
 	String REQ_FEATURES_MODULE_CAT = "moduleCat";
 	String REQ_FEATURES_MODULES = "modules";
+	String REQ_FEATURES_JSLIBS = "jsLibs";
 	String REQ_ENVIRONMENTS = "environments";
-    String REQ_LOG_REPORT = "logReport";
+	String REQ_ENVIRONMENT = "environment";
     String REQ_PROJECT_INFO_SERVERS = "projectInfoServers";
     String REQ_PROJECT_INFO_DATABASES = "projectInfoDatabases";
+    String REQ_ALL_SERVERS = "allServers";
+    String REQ_ALL_DATABASES = "allDatabases";
 	
 	String REQ_TESTCASE_NAME = "testCaseName";
 	String SCREENSHOT_DIR = "screenshots";
@@ -1326,4 +1332,32 @@ public interface FrameworkConstants {
    String CONTEXT = "context";
    String HOST = "host";
    String ENVIRONMENT = "SERVER_ENVIRONMENT";
+   String SESSION_PASSWORD = "SESSION_PASSWORD";
+ 
+   /* For Error Report  */ 
+   String REQ_LOG_REPORT = "logReport";
+   
+   /* WINDOWS CONSTANT */
+	  String HELLOWORD_PROJECT_FILE = "HelloWorld.csproj"; 
+	  String HELLOWORLD = "HelloWorld";
+	  String HELLOWORD_SOLUTIONFILE = "HelloWorld.sln";
+	  String PROPERTYGROUP = "PropertyGroup";
+	  String ITEMGROUP = "ItemGroup";
+	  String ROOTNAMESPACE = "RootNamespace";
+	  String ASSEMBLY_NAME = "AssemblyName";
+	  String CERTIFACTE_KEY = "PackageCertificateKeyFile";
+	  String TEMPORARY_KEY = "_TemporaryKey.pfx";
+	  String NONE = "None";
+	  String NEWLINE = "\n";
+	  String INCLUDE = "Include";
+	  String REFERENCE = "Reference";
+	  String PROJECT = "Project";
+	  String LIBS = "Lib\\";
+	  String DLL = ".dll";
+	  String HINTPATH = "HintPath";
+	  String PROJECT_FILE = ".csproj";
+	  String CONTENT = "Content";
+	  String COMMON = "\\Common";
+	  String DOUBLE_DOT  = "..";
+   
 }

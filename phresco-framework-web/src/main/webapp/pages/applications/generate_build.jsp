@@ -290,7 +290,7 @@
 				
 		<!-- Show Settings -->
 		<div class="clearfix">
-			<div class="xlInput" style="margin-left: 210px;">
+			<div class="xlInput" style="margin-left: 70px;">
 				<ul class="inputs-list">
 					<li class="popup-li">
 						<% if (!from.equals(FrameworkConstants.DEPLOY)) { %>
@@ -380,7 +380,7 @@
 	            	</tr>
 	        	</tbody>
 			</table>
-			<input id="DbWithSqlFiles" value="" type="hidden">
+			<input type="hidden" id="DbWithSqlFiles" name="DbWithSqlFiles" value="">
 			<div style="text-align: left;padding-left: 2%; padding-bottom: 5px; font-weight: bold;">
 				<input type="checkbox" id="rollBack" name="rollBack" /> &nbsp;
 				<span class="textarea_span popup-span"><s:text name="label.rollback"/></span>
@@ -804,7 +804,7 @@
 	
 	function getDatabases() {
 		if (!isBlank($("#environments").val())) {
-			performAction("getSqlDatabases", $('#generateBuildForm'), '', true, params);
+			performAction("getSqlDatabases", $('#generateBuildForm'), '', true);
 		}
 	}
 	

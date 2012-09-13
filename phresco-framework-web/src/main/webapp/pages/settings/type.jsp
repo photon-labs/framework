@@ -19,30 +19,22 @@
   --%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
-<%@ include file="../applications/errorReport.jsp" %>
-
 <%@ page import="freemarker.template.utility.StringUtil"%>
-<%@ page import="org.apache.commons.collections.MapUtils"%>
-<%@ page import="org.apache.commons.collections.CollectionUtils"%>
-<%@ page import="java.util.Collection"%>
-<%@ page import="java.util.Collections"%>
 
-<%@ page import="java.util.Arrays"%>
-<%@ page import="java.util.List"%>
-<%@ page import="java.util.regex.*"%>
-<%@ page import="java.util.Map"%>
+<%@ page import="org.apache.commons.collections.CollectionUtils"%>
 <%@ page import="org.apache.commons.collections.MapUtils" %>
 <%@ page import="org.apache.commons.lang.StringUtils" %>
+<%@ page import="java.util.List"%>
+<%@ page import="java.util.Map"%>
+
 <%@ page import="com.photon.phresco.model.SettingsInfo"%>
 <%@ page import="com.photon.phresco.model.SettingsTemplate"%>
 <%@ page import="com.photon.phresco.model.PropertyTemplate"%>
-<%@ page import="com.photon.phresco.model.PropertyInfo"%>
 <%@ page import="com.photon.phresco.model.Technology"%>
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.model.I18NString"%>
 <%@ page import="com.photon.phresco.model.Server" %>
 <%@ page import="com.photon.phresco.model.Database" %>
-<%@ page import="com.photon.phresco.framework.api.Project" %>
 
 <%
     String value = "";
@@ -51,21 +43,20 @@
 	String disableStr = "";
     String fromPage = (String) request.getParameter(FrameworkConstants.REQ_FROM_PAGE);
     String oldName = (String) request.getParameter(FrameworkConstants.REQ_OLD_NAME);
-    List<Server> projectInfoServers = null;
-    List<Database> projectInfoDatabases = null;
+    List<Server> allServers = null;
+    List<Database> allDatabases = null;
     SettingsInfo settingsInfo = null;
     if (StringUtils.isNotEmpty(oldName)) {
         settingsInfo = (SettingsInfo) session.getAttribute(oldName);
     }
     SettingsTemplate settingsTemplate = (SettingsTemplate)request.getAttribute(
             FrameworkConstants.REQ_CURRENT_SETTINGS_TEMPLATE);
-    Map<String, Technology> technologies = (Map<String, Technology>)request.getAttribute(
+    List<Technology> technologies = (List<Technology>)request.getAttribute(
             FrameworkConstants.REQ_ALL_TECHNOLOGIES);
     
-    Map<String, String> errorMap = (Map<String, String>) session.getAttribute(FrameworkConstants.ERROR_SETTINGS);
     if (settingsTemplate != null) {
-    	projectInfoServers = (List<Server>) request.getAttribute(FrameworkConstants.REQ_TEST_SERVERS);
-    	projectInfoDatabases = (List<Database>) request.getAttribute(FrameworkConstants.REQ_PROJECT_INFO_DATABASES);
+    	allServers = (List<Server>) request.getAttribute(FrameworkConstants.REQ_ALL_SERVERS);
+    	allDatabases = (List<Database>) request.getAttribute(FrameworkConstants.REQ_ALL_DATABASES);
     	List<PropertyTemplate> propertyTemplates = settingsTemplate.getProperties();
 	    for (PropertyTemplate propertyTemplate : propertyTemplates) {
 	    	String masterKey = "";
@@ -95,116 +86,92 @@
         		}
         	}
 			
-	        
 	        if (settingsInfo != null && settingsInfo.getPropertyInfo(key) != null) {
 	        	value = settingsInfo.getPropertyInfo(key).getValue();
 	        }
 %>
-	
-	<% 
-			String errDisplay = "";
-			if (MapUtils.isNotEmpty(errorMap) && StringUtils.isNotEmpty(errorMap.get(key))) {
-	  			if(StringUtils.isNotEmpty(errorMap.get(key))){
-	  				errDisplay = "configSettingError";
-	  			}
-	    	}
-	%>
-                    
-    <div class="clearfix" id="<%= key %>">
-    	
-        <label for="<%= key %>" class="new-xlInput">
-        	<% if(isRequired == true) { %>
-        		<span class="red">*</span> 
-        	<% } %>
-        	
-        	<%= label %>
-        </label>
-       
-        <div class="input new-input">
-	        <div class="typeFields">
-		        <% 
-		        	if (key.equals(FrameworkConstants.ADMIN_FIELD_PASSWORD) || key.equals(FrameworkConstants.PASSWORD)) {
-		        %>
-		        		<input class="xlarge" id="<%= label %>" name="<%= key %>" type="password"  value ="<%= value %>" placeholder="<%= desc %>"/>
-		       	<%  
-		        	} else if ((key.equals("Server") || key.equals("Database")) && possibleValues == null) {
-		        		masterKey = key;
-		        %>
-                       <select id="type" name="type" class="selectEqualWidth  server_db_Width">
-	                	
-	                	</select>
-	        			
-	        			<div class="versionDiv">
-							<label id="versionsLbl" class="versionsLbl"><s:text name="label.version"/></label>&nbsp;&nbsp;&nbsp;
-	                		<select id="version" name="version" class="app_type_version_select">
-	                		
-	                		</select>		                		
-                		</div>
-                 <%
-		        	} else if ("remoteDeployment".equals(key)) {
-		        		 boolean remoteDeply = Boolean.parseBoolean(value);
-		        		 String checkedStr = "";
-		        		 if (remoteDeply) {
-		        			 checkedStr = "checked";
-		        		 }
-		        %>		
-		        		<input type="checkbox" id="<%= label %>" name="<%= key %>" value="true" <%= checkedStr %> style = "margin-top: 8px;">
-		        		&nbsp;&nbsp;&nbsp;&nbsp;
-		        		<input type="button" value="<s:text name="label.authenticate"/>" id="authenticate" class="primary btn hideContent"/>
-		        <%	
-		        	} else if (possibleValues == null) {
-		        %>
-		        		<input class="xlarge" id="<%= label %>" name="<%= key %>" type="text" value ="<%= value %>" placeholder="<%= desc %>"/>
-		        <% 	} else { %>
-		        			<select id="<%= label %>" name="<%= key %>" class="selectEqualWidth">
-		        				<option disabled="disabled" selected="selected" value="" style="color: #BFBFBF;"><%= desc %></option>
-		        				<% 
-		        					String selectedStr = "";
-		        					List<String> selectedType = null;
-		        					for(String possibleValue : possibleValues) {
-		    								if (possibleValue.equals(value) ) {
-		    									selectedStr = "selected";
-		    								} else {
-		    									selectedStr = "";
-		    								}
-		        				%>
-		        					<option value="<%= possibleValue %>" <%= selectedStr %> > <%= possibleValue %></option>
-		        				<%	
-		        					}
-		        				%>
-		                	</select>
-		        <% } %>
-	        </div>
-	        
-			<div>		
-				<div class="lblDesc configSettingHelp-block" id="<%= key %>ErrorDiv">
-
-				</div>
-       		</div>
-       		
-        </div>
-    </div> <!-- /clearfix -->
-
+			<div class="clearfix" id="<%= key %>">
+				<label for="<%= key %>" class="new-xlInput">
+					<% if (isRequired == true) { %>
+						<span class="red">*</span> 
+					<% } %>
+					
+					<%= label %>
+				</label>
+		       
+				<div class="input new-input">
+			        <div class="typeFields">
+						<% 
+				        	if (key.equals(FrameworkConstants.ADMIN_FIELD_PASSWORD) || key.equals(FrameworkConstants.PASSWORD)) {
+				        %>
+				        	<input class="xlarge" id="<%= label %>" name="<%= key %>" type="password"  value ="<%= value %>" placeholder="<%= desc %>"/>
+				       	<%  
+				        	} else if ((key.equals("Server") || key.equals("Database")) && possibleValues == null) {
+								masterKey = key;
+				        %>
+		                       	<select id="type" name="type" class="selectEqualWidth  server_db_Width">
+			                	
+			                	</select>
+			        			
+			        			<div class="versionDiv">
+									<label id="versionsLbl" class="versionsLbl"><s:text name="label.version"/></label>&nbsp;&nbsp;&nbsp;
+			                		<select id="version" name="version" class="app_type_version_select">
+			                		
+			                		</select>		                		
+		                		</div>
+		                 <%
+							} else if ("remoteDeployment".equals(key)) {
+								boolean remoteDeply = Boolean.parseBoolean(value);
+								String checkedStr = "";
+								if (remoteDeply) {
+									checkedStr = "checked";
+								}
+				        %>		
+				        		<input type="checkbox" id="<%= label %>" name="<%= key %>" value="true" <%= checkedStr %> style = "margin-top: 8px;">
+				        		&nbsp;&nbsp;&nbsp;&nbsp;
+				        		<input type="button" value="<s:text name="label.authenticate"/>" id="authenticate" class="primary btn hideContent"/>
+				        <%	
+				        	} else if (possibleValues == null) {
+				        %>
+				        		<input class="xlarge" id="<%= label %>" name="<%= key %>" type="text" value ="<%= value %>" placeholder="<%= desc %>"/>
+				        <% 	} else { %>
+								<select id="<%= label %>" name="<%= key %>" class="selectEqualWidth">
+				        			<option disabled="disabled" selected="selected" value="" style="color: #BFBFBF;"><%= desc %></option>
+			        				<% 
+										String selectedStr = "";
+			        					List<String> selectedType = null;
+			        					for (String possibleValue : possibleValues) {
+			    							if (possibleValue.equals(value) ) {
+			    								selectedStr = "selected";
+			    							} else {
+			    								selectedStr = "";
+			    							}
+			        				%>
+			        						<option value="<%= possibleValue %>" <%= selectedStr %> > <%= possibleValue %></option>
+			        				<%	
+			        					}
+			        				%>
+			                	</select>
+						<% } %>
+			        </div>
+			        
+					<div>		
+						<div class="lblDesc configSettingHelp-block" id="<%= key %>ErrorDiv">
+		
+						</div>
+		       		</div>
+		        </div>
+			</div>
 <%
     	}
     }	
 %>
 
 	<!-- applies to starts -->
-    <% 
-    	String errAppliesTo = "";
-    	String errAppliesToStyle = "";
-    	if (MapUtils.isNotEmpty(errorMap) && StringUtils.isNotEmpty(errorMap.get("appliesto"))) {
-  			errAppliesTo =  errorMap.get("appliesto");
-  			if(StringUtils.isNotEmpty(errAppliesTo)){
-  				errAppliesToStyle = "configSettingError";
-  			}		
-    	} 
-    %>
 	<% 	
 		if ( settingsTemplate != null) {
 			List<String> appliesTos = settingsTemplate.getAppliesTo();
-			if(appliesTos != null) {
+			if (appliesTos != null) {
 	%>
 	
 	<div class="clearfix" id="appliesToErrDiv">
@@ -220,29 +187,27 @@
 			            	List<String> selectedAppliesTos = null;
 							if (settingsInfo != null) {
 								selectedAppliesTos = settingsInfo.getAppliesTo();
-							} else {
-								Project project = (Project)session.getAttribute(FrameworkConstants.APPLICATION_PROJECT);
-								if (project != null){
-									selectedAppliesTos = Arrays.asList(project.getProjectInfo().getTechnology().getId());
-									disableStr = "disabled";
-								}
 							}
 			            	for (String appliesTo : appliesTos) {
 								if (selectedAppliesTos != null ) {
-									
 									if (selectedAppliesTos.contains(appliesTo) ) {
 										checkedStr = "checked";
-										
 									} else {
 										checkedStr = "";
 									}
-									
 								}
-								if (technologies.get(appliesTo) != null) {
+								String technologyName = "";
+								if (CollectionUtils.isNotEmpty(technologies)) {
+									for (Technology technology : technologies) {
+										if (technology.getId().equals(appliesTo)) {
+											technologyName = technology.getName();
+											break;
+										}
+									}
 			            %>
 						<li>
-						<input type="checkbox" name="appliesto" id="appliesto" value="<%= appliesTo %>"  <%= checkedStr %> <%= disableStr %>
-							class="check"> <%= technologies.get(appliesTo).getName() %>
+							<input type="checkbox" name="appliesto" id="appliesto" value="<%= appliesTo %>"  <%= checkedStr %> <%= disableStr %>
+								class="check"><%= technologyName %>
 						</li>
 						<%        
 								}
@@ -270,72 +235,65 @@
 	
 	enableOrDisabAuthBtn();
 	
-	if(!isiPad()){
-		/* JQuery scroll bar */
+	//To check whether the device is ipad or not and then apply jquery scrollbar
+	if (!isiPad()) {
 		$("#multilist-scroller").scrollbars();
 	}
 	
 	$(document).ready(function() {
 		enableScreen();
 		
-		<%
-			if (CollectionUtils.isNotEmpty(projectInfoServers) && projectInfoServers != null) {
-		%>
-			$('#type').find('option').remove();
-			<%
-				for(Server projectInfoServer : projectInfoServers) {
-					String serverName = projectInfoServer.getName();
-			%>
-						$('#type').append($("<option></option>").attr("value", '<%= serverName %>').text('<%= serverName %>'));
-			<%
+		/** To display projectInfo servers starts **/
+		<% if (CollectionUtils.isNotEmpty(allServers)) { %>
+				if ($('#settingsType').val() == "Server") {
+					$('#type').find('option').remove();
+					<%
+						for (Server projectInfoServer : allServers) {
+							String serverName = projectInfoServer.getName();
+					%>
+							$('#type').append($("<option></option>").attr("value", '<%= serverName %>').text('<%= serverName %>'));
+					<% } %>
 				}
-			%>
-			getCurrentVersions('');
-			$("#type").change(function() {
-				 var server = $('#type').val();
-				 if( server.trim() == "Apache Tomcat" || server.trim() == "JBoss" || server.trim() == "WebLogic"){
-					 $('#remoteDeployment').show();
-			     } else {
-			    	 hideRemoteDeply();
-			     }
-				 remoteDeplyChecked();
-				 if( $(this).val() != "Apache Tomcat" || $(this).val() != "JBoss" || $(this).val() != "WebLogic"){	
-					 $("input[name='remoteDeployment']").attr("checked",false);
-					 $("#admin_username label").html('Admin Username');
-					 $("#admin_password label").html('Admin Password'); 
-				 } 
-				
-			});   
-	<%
-		}
-	%>
-	
-	/** To display projectInfo databases starts **/
-	<%
-		if (CollectionUtils.isNotEmpty(projectInfoDatabases) && projectInfoDatabases != null) {
-	%>
-			$('#type').find('option').remove();
-			<%
-				for(Database projectInfoDatabase : projectInfoDatabases) {
-					String databaseName = projectInfoDatabase.getName();
-			%>
-						$('#type').append($("<option></option>").attr("value", '<%= databaseName %>').text('<%= databaseName %>'));
-			<%
+		<% } %>
+		/** To display projectInfo servers ends **/
+		
+		/** To display projectInfo databases starts **/
+		<% if (CollectionUtils.isNotEmpty(allDatabases)) { %>
+				if ($('#settingsType').val() == "Database") {
+					$('#type').find('option').remove();
+					<%
+						for (Database projectInfoDatabase : allDatabases) {
+							String databaseName = projectInfoDatabase.getName();
+					%>
+							$('#type').append($("<option></option>").attr("value", '<%= databaseName %>').text('<%= databaseName %>'));
+					<% } %>
 				}
-			%>
-			getCurrentVersions('');
-	<%
-		}
-	%>
+		<% } %>
+		/** To display projectInfo databases ends **/
+		
+		getCurrentVersions(''); // To get the projectInfo servers/databases versions of the selected server/database
 	
-	var server = $('#type').val();
-	if (server.trim() == "Apache Tomcat" || server.trim() == "JBoss" || server.trim() == "WebLogic") {
-		$('#remoteDeployment').show();	
-    } else {
-    	hideRemoteDeply();
-    }
+		var server = $('#type').val();
+		if (server.trim() == "Apache Tomcat" || server.trim() == "JBoss" || server.trim() == "WebLogic") {
+			$('#remoteDeployment').show();	
+	    } else {
+	    	hideRemoteDeply();
+	    }
 	
-	/** To display projectInfo databases ends **/
+		$("#type").change(function() {
+			 var server = $('#type').val();
+			 if ( server.trim() == "Apache Tomcat" || server.trim() == "JBoss" || server.trim() == "WebLogic") {
+				 $('#remoteDeployment').show();
+		     } else {
+		    	 hideRemoteDeply();
+		     }
+			 remoteDeplyChecked();
+			 if ( $(this).val() != "Apache Tomcat" || $(this).val() != "JBoss" || $(this).val() != "WebLogic") {	
+				 $("input[name='remoteDeployment']").attr("checked",false);
+				 $("#admin_username label").html('Admin Username');
+				 $("#admin_password label").html('Admin Password'); 
+			 } 
+		});   
 	
 		// hide deploy dir if remote Deployment selected
 		$("input[name='remoteDeployment']").change(function() {
@@ -354,7 +312,7 @@
 	 
 	    $("#type").change(function() {
 	    	$('#deploy_dir').show();
-			if($(this).val() == "NodeJS") {
+			if ($(this).val() == "NodeJS") {
 				hideDeployDir();
 			}
 		    getCurrentVersions('onChange');
@@ -378,7 +336,7 @@
         	$(this).val(name);
         });
 		
-		$("input[name='dbname']").live('input propertychange',function(e){ 	//DB_Name validation
+		$("input[name='dbname']").live('input propertychange',function(e) { 	//DB_Name validation
         	var name = $(this).val();
         	name = checkForSplChr(name);
         	name = removeSpace(name);
@@ -391,7 +349,7 @@
         	$(this).val(portNo);
         });
         
-		$("input[name='context']").live('input propertychange',function(e){ 	//Context validation
+		$("input[name='context']").live('input propertychange',function(e) { 	//Context validation
 			var name = $(this).val();
         	name = checkForContext(name);
         	$(this).val(name);
@@ -412,7 +370,7 @@
 	    	params = params.concat($("input[name='host']").val());
 			params = params.concat("&port=");
 			params = params.concat($("input[name='port']").val());
-			performAction('authenticateServer', params, $('#popup_div'));
+			performAction('authenticateServer', '', $('#popup_div'), '', params);
 		});
 	});
 	

@@ -29,7 +29,6 @@
 <%@ page import="com.photon.phresco.model.ProjectInfo" %>
 
 <%@ include file="../userInfoDetails.jsp" %>
-<%@ include file="errorReport.jsp" %>
 
 <script type="text/javascript" src="js/delete.js" ></script>
 <script type="text/javascript" src="js/confirm-dialog.js" ></script>
@@ -82,7 +81,7 @@
 	</div>
 	<%
 		List<Project> projects = (List<Project>)request.getAttribute(FrameworkConstants.REQ_PROJECTS);
-		String customerId = (String) request.getAttribute("customerId");
+		String customerId = (String) request.getAttribute(FrameworkConstants.REQ_CUSTOMER_ID);
 		if (CollectionUtils.isEmpty(projects)) {
 	%>
 		<div class="alert-message block-message warning" >
@@ -147,7 +146,7 @@
 		              			</a>
 		              		</td>
 		              		<td class="iconsTd">
-			              			<a href="#" id="projectUpdate" class="iconsCenterAlign"><img id="<%= projectInfo.getCode() %>" class="projectUpdate" src="images/icons/refresh.png" title="Update" class="iconSizeinList"/></a>
+		              			<a href="#" id="projectUpdate" class="iconsCenterAlign"><img id="<%= projectInfo.getCode() %>" class="projectUpdate" src="images/icons/refresh.png" title="Update" class="iconSizeinList"/></a>
 			              	</td>
 		            	</tr>
 		            <%
@@ -161,6 +160,9 @@
 			}
 		%>
 	</div>
+	
+	<!-- Hidden Fields -->
+	<input type="hidden" name="customerId" value="<%= customerId %>">
 </form>
 
 <script type="text/javascript">

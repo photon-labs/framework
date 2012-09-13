@@ -75,5 +75,10 @@
 				$(".loadingIcon").hide();
 		});
 	}
+	
+	// To reload the forum based on the customer when the customer is changed
+	function reloadCurrentPage() {
+		performAction('forum', $('#customersForm'), $("#container"));
+	}
 
 </script>

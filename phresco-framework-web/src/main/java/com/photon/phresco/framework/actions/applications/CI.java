@@ -133,6 +133,7 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
     
     public String ci() {
     	S_LOGGER.debug("Entering Method CI.ci()");
+    	
     	try {
     		boolean jenkinsAlive = false;
     		// Other methods like build() will call this after triggered build, it will set trigger_from_ui=true, we need to set value when this variable is empty
@@ -146,7 +147,7 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
     		S_LOGGER.debug("buildTriggeredVal in Ci " + getHttpRequest().getAttribute(CI_BUILD_TRIGGERED_FROM_UI));
             ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
             Project project = (Project) administrator.getProject(projectCode);
-            getHttpRequest().setAttribute(REQ_PROJECT, project);
+            getHttpRequest().setAttribute(REQ_PROJECT_INFO, project.getProjectInfo());
             getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
             getHttpRequest().setAttribute(CI_JENKINS_ALIVE, jenkinsAlive);
             
@@ -156,7 +157,7 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
             
             List<CIJob> existingJobs = administrator.getJobs(project);
             Map<String, List<CIBuild>> ciJobsAndBuilds = new HashMap<String, List<CIBuild>>();
-			if(existingJobs != null) {
+			if (existingJobs != null) {
 				for (CIJob ciJob : existingJobs) {
 		    		boolean buildJenkinsAlive = false;
 		    		boolean isJobCreatingBuild = false;
@@ -170,7 +171,7 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
 					S_LOGGER.debug("ciJob.getName() isJobCreatingBuild  ====> " + isJobCreatingBuild);
 					getHttpRequest().setAttribute(CI_BUILD_JENKINS_ALIVE + ciJob.getName(), buildJenkinsAlive);
 					getHttpRequest().setAttribute(CI_BUILD_IS_IN_PROGRESS + ciJob.getName(), isJobCreatingBuild);
-					if(buildJenkinsAlive == true) {
+					if (buildJenkinsAlive == true) {
 						builds = administrator.getBuilds(ciJob);
 					}
 					S_LOGGER.debug("ciJob.getName() builds ====> " + builds);
@@ -184,11 +185,13 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
 		} catch (Exception e) {
         	S_LOGGER.error("Entered into catch block of CI.ci()" + FrameworkUtil.getStackTraceAsString(e));
         }
+		
         return APP_CI;
     }
     
     public String configure() {
     	S_LOGGER.debug("Entering Method  CI.configure()");
+    	
     	try {
             String[] selectedJobsName = getHttpRequest().getParameterValues(REQ_SELECTED_JOBS_LIST);
             String jobName = "";
@@ -202,7 +205,7 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
             // Get environment info
 			List<Environment> environments = administrator.getEnvironments(project);
 			getHttpRequest().setAttribute(REQ_ENVIRONMENTS, environments);
-            getHttpRequest().setAttribute(REQ_PROJECT, project);
+            getHttpRequest().setAttribute(REQ_PROJECT_INFO, project.getProjectInfo());
 			// Get xcode targets
             String technology = project.getProjectInfo().getTechnology().getId();
 			if (TechnologyTypes.IPHONES.contains(technology)) {
@@ -222,7 +225,10 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
     	} catch (Exception e) {
         	S_LOGGER.error("Entered into catch block of CI.configure()" + FrameworkUtil.getStackTraceAsString(e));
         	new LogErrorReport(e, "CI configuration clicked");
+        	
+        	return LOG_ERROR;
     	}
+    	
         return APP_CI_CONFIGURE;
     }
     
@@ -230,6 +236,7 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
     	if (debugEnabled) {
     		S_LOGGER.debug("Entering Method  CI.setup()");
 		}
+    	
     	try {
     		ProjectRuntimeManager runtimeManager = PhrescoFrameworkFactory.getProjectRuntimeManager();
     		ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
@@ -241,10 +248,10 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
     		}
         	
         	// Here we have to place two files in jenkins_home environment variable location
-        	administrator.getJdkHomeXml();
-        	administrator.getMavenHomeXml(); 
+        	administrator.getJdkHomeXml(project.getProjectInfo().getCustomerId());
+        	administrator.getMavenHomeXml(project.getProjectInfo().getCustomerId()); 
         	// place email ext plugin in plugin folder
-        	administrator.getEmailExtPlugin();
+        	administrator.getEmailExtPlugin(project.getProjectInfo().getCustomerId());
             BufferedReader reader = runtimeManager.performAction(project, actionType, null, null);
             getHttpSession().setAttribute(projectCode + CI_SETUP, reader);
             getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
@@ -254,30 +261,34 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
         		S_LOGGER.error("Entered into catch block of CI.setup()" + FrameworkUtil.getStackTraceAsString(e));
     		}
     	}
+    	
         return APP_ENVIRONMENT_READER;
     }
     
     public String save() {
     	S_LOGGER.debug("Entering Method  CI.save()");
+    	
     	return doUpdateSave(CI_CREATE_JOB_COMMAND);
     }
 
     public String update() {
     	S_LOGGER.debug("Entering Method  CI.update()");
+    	
         return doUpdateSave(CI_UPDATE_JOB_COMMAND);
     }
     
     public String doUpdateSave(String jobType) {
    		S_LOGGER.debug("Entering Method  CI.doUpdateSave()");
+   		
     	try {
     	    ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
             Project project = administrator.getProject(projectCode);
             String technology = project.getProjectInfo().getTechnology().getId();
             CIJob existJob = null;
-            if(StringUtils.isNotEmpty(oldJobName)) {
+            if (StringUtils.isNotEmpty(oldJobName)) {
             	existJob = administrator.getJob(project, oldJobName);
             }
-            if(existJob == null) {
+            if (existJob == null) {
             	existJob = new CIJob();
             }
             InetAddress thisIp =InetAddress.getLocalHost();
@@ -296,7 +307,7 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
 			ActionType actionType = null;
 			
 			//For web technologies
-			if(StringUtils.isNotEmpty(environment)) {
+			if (StringUtils.isNotEmpty(environment)) {
 				settingsInfoMap.put(ENVIRONMENT_NAME, environment);
 			}
 			
@@ -310,7 +321,6 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
 				settingsInfoMap.put(IPHONE_SDK, sdk);
 				settingsInfoMap.put(IPHONE_CONFIGURATION, mode);
 				settingsInfoMap.put(IPHONE_TARGET_NAME, target);
-//				settingsInfoMap.put(TRIGGER_SIMULATOR, FALSE);
 				if (TechnologyTypes.IPHONE_HYBRID.equals(technology)) {
 					settingsInfoMap.put(IPHONE_PLISTFILE, XCodeConstants.HYBRID_PLIST);
 					settingsInfoMap.put(ENCRYPT, FALSE);
@@ -368,10 +378,10 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
     		existJob.setCollabNetRelease(collabNetRelease);
     		existJob.setCollabNetoverWriteFiles(collabNetoverWriteFiles);
 
-    		if(CI_CREATE_JOB_COMMAND.equals(jobType)) {
+    		if (CI_CREATE_JOB_COMMAND.equals(jobType)) {
     			administrator.createJob(project, existJob);
         		addActionMessage(getText(SUCCESS_JOB));
-    		} else if(CI_UPDATE_JOB_COMMAND.equals(jobType)) {
+    		} else if (CI_UPDATE_JOB_COMMAND.equals(jobType)) {
         		administrator.updateJob(project, existJob);
         		addActionMessage(getText(SUCCESS_UPDATE));
     		}
@@ -385,18 +395,18 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
     	}
     	
     	return ci();
-    	
     }
     
     public String build() {
     	S_LOGGER.debug("Entering Method  CI.build()");
+    	
     	try {
     	    ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
             Project project = administrator.getProject(projectCode);
             String[] selectedJobs = getHttpRequest().getParameterValues(REQ_SELECTED_JOBS_LIST);
             
     		CIJobStatus ciJobStatus = administrator.buildJobs(project, Arrays.asList(selectedJobs));
-    		if(ciJobStatus.getCode() == JOB_STATUS_NOTOK) {
+    		if (ciJobStatus.getCode() == JOB_STATUS_NOTOK) {
             	S_LOGGER.debug("Jenkins build job status code " + ciJobStatus.getCode());
     			addActionError(getText(ciJobStatus.getMessage()));
     		} else {
@@ -410,6 +420,7 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
        		S_LOGGER.error("Entered into catch block of CI.build()" + FrameworkUtil.getStackTraceAsString(e));
         	addActionMessage(getText(CI_BUILD_FAILED, e.getLocalizedMessage()));        	
     	}
+    	
     	return ci();
     }
     
@@ -417,6 +428,7 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
     	if (debugEnabled) {
     		S_LOGGER.debug("Entering Method  CI.getTotalBuilds()");
 		}
+    	
     	try {
     		ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
             Project project = administrator.getProject(projectCode);
@@ -424,12 +436,14 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
     	} catch (Exception e) {
     		totalBuildSize = -1;
     	}
-    	return "success";
+    	
+    	return SUCCESS;
     }
     
     
     public String deleteCIBuild(){
 		S_LOGGER.debug("Entering Method  CI.deleteCIBuild()");
+		
         String[] selectedBuilds = getHttpRequest().getParameterValues(REQ_SELECTED_BUILDS_LIST);
         S_LOGGER.debug("selectedBuilds " + selectedBuilds.toString());
 		// job name and builds
@@ -439,7 +453,7 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
 			String[] split = build.split(",");
 			S_LOGGER.debug("split " + split[0]);
 			List<String> buildNumbers = new ArrayList<String>();
-			if(buildsTobeDeleted.containsKey(split[0])) {
+			if (buildsTobeDeleted.containsKey(split[0])) {
 				List<String> listBuildNos = buildsTobeDeleted.get(split[0]);
 				listBuildNos.add(split[1]);
 				buildsTobeDeleted.put(split[0], listBuildNos);
@@ -447,7 +461,6 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
 				buildNumbers.add(split[1]);
 				buildsTobeDeleted.put(split[0], buildNumbers);
 			}
-			
 		}
 		
 		Iterator iterator = buildsTobeDeleted.keySet().iterator();  
@@ -460,7 +473,7 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
             ProjectAdministrator administrator = getProjectAdministrator();
             Project project = administrator.getProject(projectCode);
             CIJobStatus ciJobStatus = administrator.deleteCIBuild(project, buildsTobeDeleted);
-    		if(ciJobStatus.getCode() == JOB_STATUS_NOTOK) {
+    		if (ciJobStatus.getCode() == JOB_STATUS_NOTOK) {
         		S_LOGGER.debug("Jenkins delete build status code " + ciJobStatus.getCode());
     			addActionError(getText(ciJobStatus.getMessage()));
     		} else {
@@ -471,20 +484,24 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
         } catch (Exception e) {
             S_LOGGER.error("Entered into catch block of CI.deleteCIBuild()" + FrameworkUtil.getStackTraceAsString(e));
         	new LogErrorReport(e, "Build delete");
+        	
+        	return LOG_ERROR;
         }
         getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
+        
         return ci();
     }
     
-    public String deleteCIJob(){
+    public String deleteCIJob() {
 		S_LOGGER.debug("Entering Method  CI.deleteCIJob()");
+		
         String[] selectedJobs = getHttpRequest().getParameterValues(REQ_SELECTED_JOBS_LIST);
         S_LOGGER.debug("delete selectedJobs " + selectedJobs);
         try {
             ProjectAdministrator administrator = getProjectAdministrator();
             Project project = administrator.getProject(projectCode);
             CIJobStatus ciJobStatus = administrator.deleteCIJobs(project, Arrays.asList(selectedJobs));
-    		if(ciJobStatus.getCode() == JOB_STATUS_NOTOK) {
+    		if (ciJobStatus.getCode() == JOB_STATUS_NOTOK) {
         		S_LOGGER.debug("Jenkins delete job status code " + ciJobStatus.getCode());
     			addActionError(getText(ciJobStatus.getMessage()));
     		} else {
@@ -495,13 +512,17 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
         } catch (Exception e) {
             S_LOGGER.error("Entered into catch block of CI.deleteCIJob()" + FrameworkUtil.getStackTraceAsString(e));
         	new LogErrorReport(e, "Job delete");
+        	
+        	return LOG_ERROR;
         }
         getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
+        
         return ci();
     }
     
     public String startJenkins() {
     	S_LOGGER.debug("Entering Method  CI.startJenkins()");
+    	
     	try {
     		ProjectRuntimeManager runtimeManager = PhrescoFrameworkFactory.getProjectRuntimeManager();
     		ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
@@ -517,11 +538,13 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
     	} catch (Exception e) {
         	S_LOGGER.error("Entered into catch block of CI.startJenkins()" + FrameworkUtil.getStackTraceAsString(e));
     	}
+    	
     	return APP_ENVIRONMENT_READER;
     }
 
     public String stopJenkins() {
     	S_LOGGER.debug("Entering Method  CI.stopJenkins()");
+    	
     	try {
     		ProjectRuntimeManager runtimeManager = PhrescoFrameworkFactory.getProjectRuntimeManager();
     		ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
@@ -537,11 +560,13 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
     	} catch (Exception e) {
         	S_LOGGER.error("Entered into catch block of CI.stopJenkins()" + FrameworkUtil.getStackTraceAsString(e));
     	}
+    	
     	return APP_ENVIRONMENT_READER;
     }
     
     public String restartJenkins() {
     	S_LOGGER.debug("Entering Method  CI.restartJenkins()");
+    	
 		try {
     	stopJenkins();
     	S_LOGGER.debug("stopJenkins method called");
@@ -583,6 +608,7 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
     
     public void waitForTime(int waitSec) {
     	S_LOGGER.debug("waitForTime : " + waitSec);
+    	
 		long startTime = 0;
 		startTime = new Date().getTime();
 		while (new Date().getTime() < startTime + waitSec * 1000) {
@@ -593,6 +619,7 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
     
     public String cronValidation() {
     	S_LOGGER.debug("Entering Method  CI.cronValidation()");
+    	
     	try {
     		HttpServletRequest request = getHttpRequest();
     		String cronBy = request.getParameter(REQ_CRON_BY);
@@ -604,7 +631,6 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
                 String hours = request.getParameter(REQ_HOURS);
                 String minutes = request.getParameter(REQ_MINUTES);
                 String every = request.getParameter(REQ_SCHEDULE_EVERY);
-
                 if ("false".equals(every)) {
                     if ("*".equals(hours) && "*".equals(minutes)) {
                         cronExpression = "0 * * * * ?";
@@ -627,7 +653,6 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
                     }
                 }
                 dates = testCronExpression(cronExpression); 
-
             } else if (REQ_CRON_BY_WEEKLY.equals(cronBy)) {
                 String hours = request.getParameter(REQ_HOURS);
                 String minutes = request.getParameter(REQ_MINUTES);
@@ -636,7 +661,6 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
                 minutes = ("*".equals(minutes)) ? "0" : minutes;
                 cronExpression = "0 " + minutes + " " + hours + " ? * " + week;
                 dates = testCronExpression(cronExpression);
-
             } else if (REQ_CRON_BY_MONTHLY.equals(cronBy)) {
                 String hours = request.getParameter(REQ_HOURS);
                 String minutes = request.getParameter(REQ_MINUTES);
@@ -647,7 +671,6 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
                 cronExpression = "0 " + minutes + " " + hours + " " + day + " " + month + " ?";
                 dates = testCronExpression(cronExpression);
             }
-            
             if (dates != null) {
         		cronExpression = cronExpression.replace('?', '*');
         		cronExpression = cronExpression.substring(2);
@@ -661,8 +684,8 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
         	if (debugEnabled) {
         		S_LOGGER.error("Entered into catch block of CI.cronValidation()" + FrameworkUtil.getStackTraceAsString(e));
     		}
-//    		addActionError(getText("Cron Expression failed to validate"));
     	}
+    	
     	return "cronValidation";
     }
     
@@ -680,11 +703,13 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
 	    } catch (Exception e) {
         	S_LOGGER.error("Entered into catch block of CI.testCronExpression()" + FrameworkUtil.getStackTraceAsString(e));
 	    }
+	    
 	    return dates;
     }
     
 	public static String getPortNo(String path)  throws Exception {
 		S_LOGGER.debug("Entering Method CI.getPortNo()");
+		
 		String portNo = "";
 		try {
 			Document document = ApplicationsUtil.getDocument(new File(path + File.separator +"pom.xml"));
@@ -694,11 +719,13 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
 		} catch (Exception e) {
         	S_LOGGER.error("Entered into catch block of CI.getPortNo()" + FrameworkUtil.getStackTraceAsString(e));
 		}
+		
 		return portNo;
 	}
 	
     public String CIBuildDownload() {
         S_LOGGER.debug("Entering Method CI.CIBuildDownload()");
+        
     	try {
     		ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
     		Project project = administrator.getProject(projectCode);
@@ -712,11 +739,13 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
 		} catch (Exception e) {
             S_LOGGER.error("Entered into catch block of CI.CIBuildDownload()" + FrameworkUtil.getStackTraceAsString(e));
 		}
+		
 		return SUCCESS;
     }
     
     public String buildProgress() {
     	S_LOGGER.debug("Entering Method CI.buildProgress()");
+    	
     	try {
     		buildInProgress = false;
             String[] selectedJobs = getHttpRequest().getParameterValues(REQ_SELECTED_JOBS_LIST);
@@ -724,7 +753,7 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
     		ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
     		Project project = administrator.getProject(projectCode);
             CIJob existJob = administrator.getJob(project);
-    		if(existJob != null) {
+    		if (existJob != null) {
     			boolean buildJenkinsAlive = false;
     			buildJenkinsAlive = DiagnoseUtil.isConnectionAlive("http", existJob.getJenkinsUrl(), Integer.parseInt(existJob.getJenkinsPort()));
     			S_LOGGER.debug("Build jenkins alive " + buildJenkinsAlive);
@@ -735,20 +764,22 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
 		} catch (Exception e) {
             S_LOGGER.error("Entered into catch block of CI.buildProgress()" + FrameworkUtil.getStackTraceAsString(e));
 		}
+		
 		return SUCCESS;
     }
     
     public String numberOfJobsIsInProgress() {
     	S_LOGGER.debug("Entering Method CI.numberOfJobsIsInProgress()");
+    	
     	try {
     		S_LOGGER.debug("numberOfJobsIsInProgress jobs monitoring");
     		ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
     		Project project = administrator.getProject(projectCode);
             List<CIJob> jobs = administrator.getJobs(project);
-    		if(CollectionUtils.isNotEmpty(jobs)) {
+    		if (CollectionUtils.isNotEmpty(jobs)) {
     			for (CIJob ciJob : jobs) {
     				boolean jobCreatingBuild = administrator.isJobCreatingBuild(ciJob);
-    				if(jobCreatingBuild) {
+    				if (jobCreatingBuild) {
     					numberOfJobsInProgress++;
     				}
 				}
@@ -756,11 +787,13 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
 		} catch (Exception e) {
             S_LOGGER.error("Entered into catch block of CI.buildProgress()" + FrameworkUtil.getStackTraceAsString(e));
 		}
+		
 		return SUCCESS;
     }
     
     public String localJenkinsLocalAlive() {
     	S_LOGGER.debug("Entering Method CI.localJenkinsLocalAlive()");
+    	
 		try {
 			URL url = new URL (HTTP_PROTOCOL + PROTOCOL_POSTFIX + LOCALHOST + COLON + Integer.parseInt(getPortNo(Utility.getJenkinsHome())) + FORWARD_SLASH + CI);
 			URLConnection connection = url.openConnection();
@@ -775,6 +808,7 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
 			localJenkinsAlive = "404";
 			S_LOGGER.debug("localJenkinsAlive => " + localJenkinsAlive);
 		}
+		
 		return SUCCESS;
     }
     

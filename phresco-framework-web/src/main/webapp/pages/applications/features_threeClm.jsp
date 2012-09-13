@@ -19,7 +19,6 @@
   --%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
-<%@ include file="errorReport.jsp" %>
 <%@ include file="description_dialog.jsp" %>
 
 <%@ page import="java.util.List" %>
@@ -118,12 +117,11 @@
     List<ModuleGroup> customModules = (List<ModuleGroup>) request.getAttribute(FrameworkConstants.REQ_CUSTOM_MODULES);
     List<ModuleGroup> allJsLibs = (List<ModuleGroup>) request.getAttribute(FrameworkConstants.REQ_ALL_JS_LIBS);
     
-    Map<String, String> pilotModules = (Map<String, String>) request.getAttribute(FrameworkConstants.REQ_PILOTS_IDS);
-    Map<String, String> alreadySelectedModules = (Map<String, String>) request.getAttribute(FrameworkConstants.REQ_ALREADY_SELECTED_MODULES);
-
-    Map<String, String> pilotJsLibs = (Map<String, String>) request.getAttribute(FrameworkConstants.REQ_PILOT_JSLIBS);
-    Map<String, String> alreadySelectedJsLibs = (Map<String, String>) request.getAttribute(FrameworkConstants.REQ_ALREADY_SELECTED_JSLIBS);
+  	//For project edit
+    Map<String, String> projectInfoModules = (Map<String, String>) request.getAttribute(FrameworkConstants.REQ_PROJECT_INFO_MODULES);
+    Map<String, String> projectInfoJsLibs = (Map<String, String>) request.getAttribute(FrameworkConstants.REQ_PROJECT_INFO_JSLIBS);
     
+    //For previous action
     Map<String, String> selectedModules = (Map<String, String>) request.getAttribute(FrameworkConstants.REQ_TEMP_SELECTEDMODULES);
     Map<String, String> selectedJsLibs = (Map<String, String>) request.getAttribute(FrameworkConstants.REQ_TEMP_SELECTED_JSLIBS);
 
@@ -198,8 +196,8 @@
 										checkedStr = "";
 									    
 									    String pilotVersion = "";
-										if (MapUtils.isNotEmpty(alreadySelectedModules) && StringUtils.isNotEmpty(alreadySelectedModules.get(coreModule.getId()))) {
-											pilotVersion = alreadySelectedModules.get(coreModule.getId());
+										if (MapUtils.isNotEmpty(projectInfoModules) && StringUtils.isNotEmpty(projectInfoModules.get(coreModule.getId()))) {
+											pilotVersion = projectInfoModules.get(coreModule.getId());
 											checkedStr = "checked";
 											disabledStr = "disabled";
 										}
@@ -209,7 +207,7 @@
 								%>
 					                <span class="siteaccordion closereg">
 					                	<span>
-					                		<input type="checkbox" class="<%= FrameworkConstants.REQ_CORE_MODULE %>" name="<%= FrameworkConstants.REQ_SELECTEDMODULES %>" 
+					                		<input type="checkbox" class="<%= FrameworkConstants.REQ_CORE_MODULE %>" name="<%= FrameworkConstants.REQ_FEATURES_MODULES %>" 
 					                			id="<%= coreModule.getId()%>checkBox" value="<%= coreModule.getId()%>" <%=disabledStr %> <%= checkedStr %>>
 					                		&nbsp;&nbsp;<%= coreModule.getName() %> &nbsp;&nbsp;
 					                		<p id="<%= coreModule.getId()%>version" class="version versionDisplay_CoreModule"></p>
@@ -314,8 +312,8 @@
 											checkedStr = "";
 	
 											String pilotVersion = "";
-											if (MapUtils.isNotEmpty(alreadySelectedJsLibs) && StringUtils.isNotEmpty(alreadySelectedJsLibs.get(jslibrary.getId()))) {
-												pilotVersion = alreadySelectedJsLibs.get(jslibrary.getId());
+											if (MapUtils.isNotEmpty(projectInfoJsLibs) && StringUtils.isNotEmpty(projectInfoJsLibs.get(jslibrary.getId()))) {
+												pilotVersion = projectInfoJsLibs.get(jslibrary.getId());
 												checkedStr = "checked";
 												disabledStr = "disabled";
 											}
@@ -325,7 +323,7 @@
 									%>
 						                <span class="siteaccordion closereg">
 						                	<span>
-						                		<input type="checkbox" class="<%= FrameworkConstants.REQ_JSLIB_MODULE %>" name="<%= FrameworkConstants.REQ_SELECTED_JSLIBS %>" value="<%= jslibrary.getId()%>" <%=disabledStr %> 
+						                		<input type="checkbox" class="<%= FrameworkConstants.REQ_JSLIB_MODULE %>" name="<%= FrameworkConstants.REQ_FEATURES_JSLIBS %>" value="<%= jslibrary.getId()%>" <%=disabledStr %> 
 						                		<%= checkedStr %> id="<%= jslibrary.getId()%>checkBox">
 						                		&nbsp;&nbsp;<%= jslibrary.getName() %>&nbsp;&nbsp;
 						                		<p id="<%= jslibrary.getId()%>version" class="version versionDisplay_JSLib"></p>
@@ -431,8 +429,8 @@
 											checkedStr = "";
 										    
 										    String pilotVersion = "";
-											if (MapUtils.isNotEmpty(alreadySelectedModules) && StringUtils.isNotEmpty(alreadySelectedModules.get(customModule.getId()))) {
-												pilotVersion = alreadySelectedModules.get(customModule.getId());
+											if (MapUtils.isNotEmpty(projectInfoModules) && StringUtils.isNotEmpty(projectInfoModules.get(customModule.getId()))) {
+												pilotVersion = projectInfoModules.get(customModule.getId());
 												checkedStr = "checked";
 												disabledStr = "disabled";
 											}
@@ -443,7 +441,7 @@
 									%>
 						                <span class="siteaccordion closereg">
 						                	<span>
-						                		<input type="checkbox" class="<%= FrameworkConstants.REQ_CUSTOM_MODULE %>" name="<%= FrameworkConstants.REQ_SELECTEDMODULES %>" 
+						                		<input type="checkbox" class="<%= FrameworkConstants.REQ_CUSTOM_MODULE %>" name="<%= FrameworkConstants.REQ_FEATURES_MODULES %>" 
 						                		value="<%= customModule.getId()%>" <%=disabledStr %> <%= checkedStr %> id="<%= customModule.getId()%>checkBox">
 						                		&nbsp;&nbsp;<%= customModule.getName() %>&nbsp;&nbsp;
 						                		<p id="<%= customModule.getId()%>version" class="version versionDisplay_CustomModule"></p>
@@ -541,12 +539,13 @@
 	</div>
 	
 	<!-- Hidden Fields -->
-	<input type="hidden" id="technology" name="techId" value="<%= techId %>">
-	<input type="hidden" id="configServerNames" name="configServerNames" value="<%= configServerNames %>">
-	<input type="hidden" id="configDbNames" name="configDbNames" value="<%= configDbNames %>">
+	<input type="hidden" name="techId" value="<%= techId %>">
+	<input type="hidden" name="configServerNames" value="<%= configServerNames %>">
+	<input type="hidden" name="configDbNames" value="<%= configDbNames %>">
 	<input type="hidden" name="fromTab" value="features">
-	<input type="hidden" id="customerId" name="customerId" value="<%= customerId %>">
+	<input type="hidden" name="customerId" value="<%= customerId %>">
 	<input type="hidden" name="fromPage" value="<%= fromPage %>">
+	<input type="hidden" name="projectCode" value="<%= projectCode %>">
 	
 </form>
     

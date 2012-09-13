@@ -44,7 +44,7 @@ import com.photon.phresco.framework.actions.IphoneCodeValidate;
 import com.photon.phresco.framework.actions.MobileCommand;
 import com.photon.phresco.framework.actions.SCMUpdate;
 import com.photon.phresco.framework.actions.Sonar;
-import com.photon.phresco.framework.actions.AndroidPerfCommand;
+import com.photon.phresco.framework.actions.AndroidTestCommand;
 import com.photon.phresco.framework.actions.IphoneIpa;
 import com.photon.phresco.framework.api.ActionType;
 import com.photon.phresco.framework.api.CallBack;
@@ -76,7 +76,7 @@ public class ProjectRuntimeManagerImpl implements ProjectRuntimeManager {
 	    pluginMap.put(TechnologyTypes.SHAREPOINT,Constants.MVN_PLUGIN_SHAREPOINT_ID);
 	    pluginMap.put(TechnologyTypes.IPHONE_NATIVE,Constants.MVN_PLUGIN_IPHONE_ID);
 	    pluginMap.put(TechnologyTypes.IPHONE_HYBRID,Constants.MVN_PLUGIN_IPHONE_ID);
-	    pluginMap.put(TechnologyTypes.DOT_NET, Constants.MVN_PLUGIN_SHAREPOINT_ID);
+	    pluginMap.put(TechnologyTypes.DOT_NET, Constants.MVN_PLUGIN_DOTNET_ID);
 	    pluginMap.put(TechnologyTypes.WORDPRESS, Constants.MVN_PLUGIN_WORDPRESS_ID);
 	    pluginMap.put(TechnologyTypes.JAVA_STANDALONE, Constants.MVN_PLUGIN_JAVA_ID);
 	}
@@ -190,7 +190,7 @@ public class ProjectRuntimeManagerImpl implements ProjectRuntimeManager {
     		command = buildMavenCommand(project, action, paramsMap);
     	}
     	
-    	if (action instanceof MobileCommand || action instanceof AndroidPerfCommand || action instanceof Sonar || action instanceof IphoneIpa || action instanceof IPhoneFunctionalCommand || action instanceof IphoneBuildAndUnitTest  || action instanceof IphoneCodeValidate || action instanceof SCMUpdate) {
+    	if (action instanceof MobileCommand || action instanceof AndroidTestCommand || action instanceof Sonar || action instanceof IphoneIpa || action instanceof IPhoneFunctionalCommand || action instanceof IphoneBuildAndUnitTest  || action instanceof IphoneCodeValidate || action instanceof SCMUpdate) {
     		command.append(" " + buildMavenArgCommand(action, paramsMap));
     	}
     	return executeMavenCommand(project, action, command);

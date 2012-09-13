@@ -20,40 +20,36 @@
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.util.ArrayList"%>
-<%@ page import="java.util.HashMap"%>
 <%@ page import="java.util.Iterator"%>
 <%@ page import="java.util.List"%>
 <%@ page import="java.util.Map"%>
+<%@ page import="org.apache.commons.collections.CollectionUtils" %>
+
+<%@ page import="com.photon.phresco.model.ProjectInfo"%>
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.commons.BuildInfo"%>
-<%@ page import="com.photon.phresco.model.SettingsInfo"%>
-<%@ page import="com.photon.phresco.framework.api.Project" %>
 <%@ page import="com.photon.phresco.util.Constants"%>
 <%@ page import="com.photon.phresco.configuration.Environment"%>
-<%@ page import="org.apache.commons.collections.CollectionUtils" %>
 <%@ page import="com.photon.phresco.util.TechnologyTypes" %>
-<%@ page import="com.photon.phresco.model.Technology" %>
 
 <script src="js/reader.js" ></script>
 <script src="js/select-envs.js"></script>
 
 <%
-	Project project = (Project) request.getAttribute(FrameworkConstants.REQ_PROJECT);
-	String projectCode = (String)project.getProjectInfo().getCode();
+	ProjectInfo projectInfo = (ProjectInfo) request.getAttribute(FrameworkConstants.REQ_PROJECT_INFO);
+	String projectCode = projectInfo.getCode();
 	String testType = (String) request.getAttribute(FrameworkConstants.REQ_TEST_TYPE);
-	String technology =  project.getProjectInfo().getTechnology().getName();
-    String techId = project.getProjectInfo().getTechnology().getId();
+    String techId = projectInfo.getTechnology().getId();
     List<BuildInfo> buildInfos = (List<BuildInfo>) request.getAttribute(FrameworkConstants.REQ_TEST_BUILD_INFOS);
-    if(buildInfos == null) {
+    if (CollectionUtils.isNotEmpty(buildInfos)) {
         buildInfos = new ArrayList<BuildInfo>();
     }
-
     List<String> projectModules = (List<String>) request.getAttribute(FrameworkConstants.REQ_PROJECT_MODULES);
     Map<String, String> browserMap = (Map<String, String>)request.getAttribute(FrameworkConstants.REQ_TEST_BROWSERS);
     List<Environment> environments = (List<Environment>) request.getAttribute(FrameworkConstants.REQ_ENVIRONMENTS);
 %>
-<div id="tests" style="display:block">
-<form action="functional" method="post" autocomplete="off" class="build_form">
+<div id="tests" class="showContent">
+<form autocomplete="off" class="build_form" id="formGenerateTest">
 	<div class="popup_Modal" id="generateTest">
 		<div class="modal-header">
 			<h3><s:text name="label.functional.test"/></h3>
@@ -81,7 +77,7 @@
                 </div>
             </fieldset>
             
-            <div id="agnJarRelease"  class="JarRelease" style="display:none;">
+            <div id="agnJarRelease"  class="JarRelease hideContent">
 				<div class="clearfix">
 					<label for="xlInput" class="xlInput popup-label"><s:text name="label.jar.location"/></label>
 					<div class="input">
@@ -97,12 +93,9 @@
 					<label for="xlInput" class="xlInput popup-label"><s:text name="label.build.number"/></label>
 					<div class="input">
 						<select id="buildId" name="<%= FrameworkConstants.REQ_TEST_BUILD_ID %>" class="xlarge">
-						   <%
-						       for(BuildInfo buildInfo : buildInfos) {
-						   %>
+							<% for (BuildInfo buildInfo : buildInfos) { %>
 								<option value="<%= buildInfo.getBuildNo()%>"> <%= buildInfo.getBuildNo() %></option>
-						   <% } %>
-							  
+						   	<% } %>
 						</select>
 					</div>
 				</div>
@@ -131,36 +124,37 @@
             </div>
             
             <div>
-            	<div class="clearfix" id="agnBuild" style="display: none;">
-				    <label for="xlInput" class="xlInput popup-label"><span class="red">*</span> <s:text name="label.environment"/></label>
+            	<div class="clearfix hideContent" id="agnBuild">
+				    <label for="xlInput" class="xlInput popup-label" id="environmentlabel"><span class="red">*</span><s:text name="label.environment"/></label>
 				    <div class="input">
-				        <select id="environments" name="environment" id="environmentlabel" class="xlarge agnBuildEnv">
+				        <select id="environments" name="envs" class="xlarge agnBuildEnv">
 				        
 				        </select>
 					</div>
 				</div>
             </div>
             
-            <div id="agnServer" class="server" style="display: none;">
+            <div id="agnServer" class="server hideContent">
 	            <div class="clearfix">
 				    <label for="xlInput" class="xlInput popup-label"><span class="red">*</span> <s:text name="label.environment"/></label>
 				    <div class="input">
-				        <select id="environments" name="environment" class="xlarge agnServerEnv">
+				        <select id="environments" name="envs" class="xlarge agnServerEnv">
 				        	<optgroup label="Configurations" class="optgrplbl">
 							<%
 								String defaultEnv = "";
 								String selectedStr = "";
-								if(environments != null) {
+								if (CollectionUtils.isNotEmpty(environments)) {
 									for (Environment environment : environments) {
-										if(environment.isDefaultEnv()) {
+										if (environment.isDefaultEnv()) {
 											defaultEnv = environment.getName();
 											selectedStr = "selected";
 										} else {
 											selectedStr = "";
 										}
 							%>
-									<option value="<%= environment.getName() %>" <%= selectedStr %>><%= environment.getName() %></option>
-							<% 		} 
+										<option value="<%= environment.getName() %>" <%= selectedStr %>><%= environment.getName() %></option>
+							<% 		
+									} 
 								}
 							%>
 							</optgroup>
@@ -180,23 +174,22 @@
             </div>
 
             <% if (CollectionUtils.isNotEmpty(projectModules)) {  %>
-            <div id="agnBrowser" class="build server">
-				<!-- Modules -->
-				<div class="clearfix">
-					<label for="xlInput" class="xlInput popup-label"><s:text name="label.modules"/></label>
-					<div class="input">
-						<select id="testModule" name="testModule" class="xlarge" >
-						 <%
-						       for(String projectModule : projectModules) {
-						 %>
-								<option value="<%= projectModule%>"> <%= projectModule %></option>
-						 <% } %>
-						</select>
+	            <div id="agnBrowser" class="build server">
+					<!-- Modules -->
+					<div class="clearfix">
+						<label for="xlInput" class="xlInput popup-label"><s:text name="label.modules"/></label>
+						<div class="input">
+							<select id="testModule" name="testModule" class="xlarge" >
+							 <%
+							       for(String projectModule : projectModules) {
+							 %>
+									<option value="<%= projectModule%>"> <%= projectModule %></option>
+							 <% } %>
+							</select>
+						</div>
 					</div>
-				</div>
-            </div>
+	            </div>
             <% } %>
-
 		</div>
 		
 		<div class="modal-footer">
@@ -207,39 +200,42 @@
 	        </div>
 		</div>
 	</div>
+	
+	<!-- Hidden Fields -->
+	<input type="hidden" name="projectCode" value="<%= projectCode %>" />
 </form>
 </div>
 
 <script type="text/javascript">
 	$(document).ready(function() {
-		 <%
-			if(TechnologyTypes.JAVA_STANDALONE.equals(techId)) {
-		 %>
-			hideOtherTechnologyDiv();
-			if ($('#buildId').val() == null){
-				$('#showBuild').attr('disabled', 'disabled');
-				if($('input:radio[name=testAgainst]:checked').val() == "jar") {
-					$("#agnJarRelease").show();
-				}
-			} else {
-				$('#showBuild').prop('checked', true);
-				if($('input:radio[name=testAgainst]:checked').val() == "build"){
-					$("#agnJarRelease").hide();
-					$('#agnBuildid').show();
+		<% if (TechnologyTypes.JAVA_STANDALONE.equals(techId)) { %>
+				hideOtherTechnologyDiv();
+				if ($('#buildId').val() == null) {
+					$('#showBuild').attr('disabled', 'disabled');
+					if ($('input:radio[name=testAgainst]:checked').val() == "jar") {
+						$("#agnJarRelease").show();
+					}
 				} else {
-					$("#agnJarRelease").show();
-					$('#agnBuildid').hide();
+					$('#showBuild').prop('checked', true);
+					if ($('input:radio[name=testAgainst]:checked').val() == "build") {
+						$("#agnJarRelease").hide();
+						$('#agnBuildid').show();
+					} else {
+						$("#agnJarRelease").show();
+						$('#agnBuildid').hide();
+					}
 				}
-			}
 		<% } else { %>	
-			showOtherTechologyDiv();
-		<%
-			}
-		%>
-		if ($('#buildId').val() == null){
+				showOtherTechologyDiv();
+		<% } %>
+		
+		if ($('#buildId').val() == null) {
 			$('#showBuild').attr('disabled', 'disabled');
-			$('#showServer').prop('checked', true);
-			$('#showjarrelease').prop('checked', true);
+			<% if (TechnologyTypes.JAVA_STANDALONE.equals(techId)) { %>
+				$('#showjarrelease').prop('checked', true);
+			<% } else { %>
+				$('#showServer').prop('checked', true);
+			<% } %>
 			$(".agnServerEnv").prop("id", "environments");
 			$(".agnBuildEnv").prop("id", "");
 			hideAll();
@@ -254,13 +250,13 @@
 			$('#agnServer').hide();
 			showBuildEnvs();
 		}
-	
-		$('.browseFileLocation').click(function(){
+		
+		$('.browseFileLocation').click(function() {
 			$('#browseLocation').remove();
 			$('.build_form').hide();
 			var params = "fileType=jar";
 			params = params.concat("&fileorfolder=File");
-			popup('browse', params, $('#popup_div'), '', true);
+			popup('browse', $('#formGenerateTest'), $('#popup_div'), '', true, params);
 		});
 		
 		$('#close, #cancel').click(function() {
@@ -270,11 +266,11 @@
 		$(('input:radio[name=testAgainst]')).click(function() {
 			hideAll();
 			$('.'+ $(this).val()).show();
-		    if($(this).val() == "release") {
+		    if ($(this).val() == "release") {
 		    	hideAll();
             }
 		    
-		    if($(this).val() == "build") {
+		    if ($(this).val() == "build") {
 		    	$("#agnJarRelease").hide();
 		    	$(".agnServerEnv").prop("id", "");
 				$(".agnBuildEnv").prop("id", "environments");
@@ -283,21 +279,20 @@
 		    	showBuildEnvs();
             }
 		    
-		    if($(this).val() == "server") {
+		    if ($(this).val() == "server") {
 		    	$(".agnServerEnv").prop("id", "environments");
 				$(".agnBuildEnv").prop("id", "");
 		    	$('#agnBuild').hide();
 				$('#agnServer').show();
             }
-		    
-		    if($(this).val() == "jar") {
+		    if ($(this).val() == "jar") {
 		    	$("#agnJarRelease").show();
             }
 	    });
 		
-		$("#browser").change(function(){
-			if($("#browser").val() == "safari"){
-				$("#errMsg").html('<%= FrameworkConstants.SAFARI_WARNING_MSG %>')
+		$("#browser").change(function() {
+			if ($("#browser").val() == "safari") {
+				$("#errMsg").html('<%= FrameworkConstants.SAFARI_WARNING_MSG %>');
 			} else {
 				$("#errMsg").html('');
 			}
@@ -308,57 +303,49 @@
 		});
 
 		$('#test').click(function() {
-			<%
-				if(TechnologyTypes.JAVA_STANDALONE.equals(techId)) {
-			%>
+			<% if (TechnologyTypes.JAVA_STANDALONE.equals(techId)) { %>
 					var selectedval = $('input:radio[name=testAgainst]:checked').val();
-					if(selectedval == "jar"){
-					    if($('#jarlocation').val() == null || $('#jarlocation').val() == "") {
-					        showErrorMsg('errMsg', "Select JAR");
+					if (selectedval == "jar") {
+						if ($('#jarlocation').val() == null || $('#jarlocation').val() == "") {
+							showErrorMsg('errMsg', "Select JAR");
 						    $("#jarlocation").val("");
 						   	$("#jarlocation").focus();
 							return false;
 						}
 					}
-			<%
-				}
-			%>
-				checkForConfigType('<%= Constants.SETTINGS_TEMPLATE_SERVER %>');
-			});
-			showPopup();
-	  });
+			<% } %>
+			checkForConfigType('<%= Constants.SETTINGS_TEMPLATE_SERVER %>');
+		});
 		
+		showPopup();
+	});
+
 	function showBuildEnvs() {
-    	var params = "projectCode=";
-    	params = params.concat('<%= projectCode %>');
-    	params = params.concat("&buildId=");
-    	params = params.concat($('#buildId').val());
-    	performAction("fetchBuildInfoEnvs", params, '', true);
+    	performAction("fetchBuildInfoEnvs", $('#formGenerateTest'), '', true);
     }
 
 	function successEnvValidation(data) {
-		<%
-			if(!TechnologyTypes.JAVA_STANDALONE.equals(techId)) {
-		%>
-			if(data.hasError == true) {
+		<% if (!TechnologyTypes.JAVA_STANDALONE.equals(techId)) { %>
+			if (data.hasError == true) {
 				showError(data);
 			} else {
 				functionalTestExecution();
 			}
-		<% 
-			} else {
-		%>
+		<% } else { %>
 			functionalTestExecution();
-		<% 
-			}
-		%>
+		<% } %>
 	}
 	
 	function functionalTestExecution() {
-		 $('#tests').show().css("display","none");
-		 $('#build-outputOuter').show().css("display","block");
-		 getCurrentCSS();
-		 functional();
+		$('#tests').show().css("display","none");
+		$('#build-outputOuter').show().css("display","block");
+		getCurrentCSS();
+		functional();
+	}
+	
+	function showErrorMsg(elementId, msg) {
+		$('#'+elementId).empty();
+		$('#'+elementId).html(msg);
 	}
 
 	function hideAll() {
@@ -366,7 +353,7 @@
         $('.browser').hide();
         $('.server').hide();
 	}
-
+    
 	function hideOtherTechnologyDiv() {
 		$("#showServer, #showrelease, #server, #release, #showSetting, #environments, #agnBrowser .clearfix, #agnServer .clearfix, #environmentlabel, #agnBuild, .agnBuildEnv, #agnBuildid").hide();  
 		$("#agnJarRelease").show();
@@ -380,13 +367,11 @@
 	}
 	
     function functional(envs) {
-        var params = "envs=";
-        params = params.concat(getSelectedEnvs());
-        readerHandlerSubmit('functional', '<%= projectCode %>', '<%= FrameworkConstants.FUNCTIONAL %>', params);
+        readerHandlerSubmit('functional', '<%= projectCode %>', '<%= FrameworkConstants.FUNCTIONAL %>', $('#formGenerateTest'));
 	}
 
     function checkObj(obj) {
-		if(obj == "null" || obj == undefined) {
+		if (obj == "null" || obj == undefined) {
 			return "";
 		} else {
 			return obj;
