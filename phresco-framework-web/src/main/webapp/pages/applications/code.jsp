@@ -115,7 +115,7 @@
     
     function sonarReport() {
         $("#sonar_report").empty();
-        popup('check', '', $('#sonar_report'));
+        popup('check', $('#formCode'), $('#sonar_report'));
     }
     
     function getCodeValidatePopUp() {

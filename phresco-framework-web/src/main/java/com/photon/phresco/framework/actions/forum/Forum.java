@@ -37,6 +37,7 @@ public class Forum extends FrameworkBaseAction {
 	
 	private static final Logger S_LOGGER 	= Logger.getLogger(Forum.class);
 	private static Boolean debugEnabled  = S_LOGGER.isDebugEnabled();
+	private String customerId = null;
 	
 	public String forum() {
 		if (S_LOGGER.isDebugEnabled())S_LOGGER.debug("entered forumIndex()");
@@ -48,17 +49,17 @@ public class Forum extends FrameworkBaseAction {
 		try {
 			
 			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-			String serviceUrl= administrator.getJforumPath();
+			String serviceUrl = administrator.getJforumPath(customerId);
 			
-			User sessionUserInfo = (User)getHttpSession().getAttribute(REQ_USER_INFO);
-//			Credentials credentials = sessionUserInfo.getCredentials();
-			Credentials credentials = null;
+			User user = (User)getHttpSession().getAttribute(REQ_USER_INFO);
 			
-			String username = credentials.getUsername();
+			String username = user.getLoginId();
+			String password = (String) getHttpSession().getAttribute(SESSION_PASSWORD);
+			
 			byte[] usernameEncode = Base64.encodeBase64(username.getBytes());
 			String encodedUsername = new String(usernameEncode);
-			
-			String password = credentials.getPassword();
+			byte[] pwdEncode = Base64.encodeBase64(password.getBytes());
+			String encodedPwd = new String(pwdEncode);
 			
 			getHttpRequest().setAttribute(REQ_USER_NAME, encodedUsername);
 			getHttpRequest().setAttribute(REQ_PASSWORD, password);
@@ -77,7 +78,7 @@ public class Forum extends FrameworkBaseAction {
 			sb.append(JFORUM_USERNAME);
 			sb.append(encodedUsername);
 			sb.append(JFORUM_PASSWORD);
-			sb.append(password);
+			sb.append(encodedPwd);
 			
 			getHttpRequest().setAttribute(REQ_JFORUM_URL, sb.toString());
 			
@@ -87,5 +88,13 @@ public class Forum extends FrameworkBaseAction {
     		}
 		} 
 		return HELP;
+	}
+	
+	public String getCustomerId() {
+		return customerId;
+	}
+
+	public void setCustomerId(String customerId) {
+		this.customerId = customerId;
 	}
 }

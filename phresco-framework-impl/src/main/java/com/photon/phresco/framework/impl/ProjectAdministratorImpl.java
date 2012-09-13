@@ -124,7 +124,6 @@ import com.sun.jersey.api.client.ClientResponse;
 public class ProjectAdministratorImpl implements ProjectAdministrator, FrameworkConstants, Constants, ServiceClientConstant, ServiceConstants {
 
 	private static final Logger S_LOGGER= Logger.getLogger(ProjectAdministratorImpl.class);
-	private List<AdminConfigInfo> adminConfigInfos = Collections.synchronizedList(new ArrayList<AdminConfigInfo>(5));
 	private static Map<String, String> sqlFolderPathMap = new HashMap<String, String>();
 	private static  Map<String, List<Reports>> siteReportMap = new HashMap<String, List<Reports>>(15);
 	private Map<String, List<DownloadInfo>> downloadInfosMap = Collections.synchronizedMap(new HashMap<String, List<DownloadInfo>>(64));
@@ -2152,23 +2151,11 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 ciManager.getMavenHomeXml(customerId);
 	 }
 
-	 private void setAdminConfigInfosFrmService() throws PhrescoException {
-		 if (CollectionUtils.isEmpty(adminConfigInfos)) {
-			 adminConfigInfos = PhrescoFrameworkFactory.getServiceManager().getAdminConfig();
-		 }
-	 }
+	 @Override
+	 public String getJforumPath(String customerId) throws PhrescoException {
+		 AdminConfigInfo adminConfigInfo = getServiceManager().getForumPath(customerId);
 
-	 public String getJforumPath() throws PhrescoException {
-		 if (CollectionUtils.isEmpty(adminConfigInfos)) {
-			 setAdminConfigInfosFrmService();
-		 }
-
-		 for (AdminConfigInfo adminConfigInfo : adminConfigInfos) {
-			 if (ADMIN_CONFIG_JFORUM_PATH.equals(adminConfigInfo.getKey())) {
-				 return adminConfigInfo.getValue();
-			 }
-		 }
-		 return null;
+		 return adminConfigInfo.getValue();
 	 }
 
 	 @Override
