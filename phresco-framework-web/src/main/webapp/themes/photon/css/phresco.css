@@ -4963,3 +4963,8 @@ a[id='androidSigning']:hover {
 	height: 20px !important; 
 	width: 20px !important;
 }
+
+.progressClipboard {
+	margin-right: 25px !important;
+	margin-top: -5px !important;
+}

@@ -148,24 +148,6 @@
         $("a[id='" + selectedTab + "']").attr("class", "selected");
     }
     
-    function openFolder(path) {
-		var params = "path=";
-		params = params.concat(path);
-		performActionParams('openFolder', params, '');
-    }
-    
-    function copyPath(path) {
-		var params = "path=";
-		params = params.concat(path);
-		performActionParams('copyPath', params, '');
-	}
-    
-    function copyToClipboard(data) {
-        var params = "copyToClipboard=";
-        params = params.concat(data);
-        performActionParams('copyToClipboard', params, '');
-	}
-    
     /* To show the validation result */
 	function showProjectValidationResult() {
     	$("#popup_div").empty();

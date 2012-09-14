@@ -24,7 +24,7 @@
 
 <%@ page import="com.photon.phresco.framework.model.TestCaseFailure"%>
 <%@ page import="com.photon.phresco.framework.model.TestCaseError"%>
-<%@ page import="com.photon.phresco.framework.model.TestCase"%>
+<%@ page import="com.photon.phresco.framework.model.TestCaseResult"%>
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 
 <%@ include file="../../userInfoDetails.jsp" %>
@@ -45,8 +45,8 @@
 	}
 </style>
 
-<% 
-	List<TestCase> testCases = (List<TestCase>) request.getAttribute(FrameworkConstants.REQ_TESTCASES);
+<%
+    List<TestCaseResult> testCases = (List<TestCaseResult>) request.getAttribute(FrameworkConstants.REQ_TESTCASES);
 	String testSuiteName = (String) request.getAttribute(FrameworkConstants.REQ_TESTSUITE_NAME);
 	float failures = Float.parseFloat((String) request.getAttribute(FrameworkConstants.REQ_TESTSUITE_FAILURES));
 	float errors  = Float.parseFloat((String) request.getAttribute(FrameworkConstants.REQ_TESTSUITE_ERRORS));
@@ -59,7 +59,7 @@
 	    <center><label class="errorMsgLabel"><%= testError %></label></center>
 	</div>
 <%
-	} else {
+    } else {
 	    float success = 0;
 	    
 	    if (failures != 0 && errors == 0) {
@@ -114,17 +114,21 @@
 					              	<th class="third">
 					                	<div id="th-fivth" class="th-inner-test"><s:text name="label.log"/></div>
 					              	</th>
-					              	<% if (FrameworkConstants.FUNCTIONAL.equals(testType)) { %>
+					              	<%
+					              	    if (FrameworkConstants.FUNCTIONAL.equals(testType)) {
+					              	%>
 						              	<th class="width-ten-percent">
 						                	<div class="th-inner-test"><s:text name="label.screenshot"/></div>
 						              	</th>
-					              	<% } %>
+					              	<%
+					              	    }
+					              	%>
 					            </tr>
 				          	</thead>
 				
 				          	<tbody>
 				          	<%
-					          	for (TestCase testCase : testCases) {
+				          	    for (TestCaseResult testCase : testCases) {
 									TestCaseFailure failure = testCase.getTestCaseFailure();
 									TestCaseError error = testCase.getTestCaseError();
 									String testClass = "";
@@ -135,7 +139,7 @@
 									if (StringUtils.isNotEmpty(testCase.getTime())) {
 										time = testCase.getTime();
 									}
-							%>
+				          	%>
 					            	<tr>
 					              		<td id="tstRst_td1" class="width-twenty-five-percent"><%= testCase.getName() %></td>
 					              		<td id="tstRst_td2" class="width-twenty-five-percent"><%= testClass %></td>
@@ -240,7 +244,7 @@
 	    	changeView();
 	    	escPopup();
 	    	
-	    	if ($('#label').hasClass('techLabel')){
+	    	if ($('#label').hasClass('techLabel')) {
 	            $("#th-first").removeClass("th-inner-test").addClass("th-inner-testtech");
 	            $("#th-second").removeClass("th-inner-test").addClass("th-inner-testtech");
 	            $("#th-third").removeClass("th-inner-test").addClass("th-inner-testtech");

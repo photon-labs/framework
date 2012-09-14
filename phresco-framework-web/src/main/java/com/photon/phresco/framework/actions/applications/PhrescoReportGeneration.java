@@ -3,9 +3,11 @@ package com.photon.phresco.framework.actions.applications;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -18,6 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,8 +40,13 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.util.JRLoader;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.htmlcleaner.CleanerProperties;
+import org.htmlcleaner.HtmlCleaner;
+import org.htmlcleaner.PrettyXmlSerializer;
+import org.htmlcleaner.TagNode;
 import org.sonar.wsclient.Host;
 import org.sonar.wsclient.Sonar;
 import org.sonar.wsclient.connectors.HttpClient4Connector;
@@ -50,6 +58,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.tool.xml.XMLWorkerHelper;
+import com.lowagie.text.pdf.PdfContentByte;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
@@ -64,11 +75,11 @@ import com.photon.phresco.framework.commons.SonarReport;
 import com.photon.phresco.framework.commons.SureFireReport;
 import com.photon.phresco.framework.commons.XmlReport;
 import com.photon.phresco.framework.model.PerformanceTestResult;
-import com.photon.phresco.framework.model.TestCase;
+import com.photon.phresco.framework.model.TestCaseResult;
 import com.photon.phresco.framework.model.TestCaseError;
 import com.photon.phresco.framework.model.TestCaseFailure;
 import com.photon.phresco.framework.model.TestResult;
-import com.photon.phresco.framework.model.TestSuite;
+import com.photon.phresco.framework.model.TestSuiteResult;
 import com.photon.phresco.util.TechnologyTypes;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.model.Profile;
@@ -106,7 +117,7 @@ public class PhrescoReportGeneration extends FrameworkBaseAction implements Fram
         final DateFormat yymmdd = new SimpleDateFormat("MMM dd yyyy HH.mm");
         this.fileName = yymmdd.format(today);
     }
-     
+    
 	public void generatePdfReport(Project proj, String tstType, String reportDataType)  throws PhrescoException {
 		S_LOGGER.debug("Entering Method PhrescoReportGeneration.generatePdfReport()");
 		try {
@@ -258,11 +269,27 @@ public class PhrescoReportGeneration extends FrameworkBaseAction implements Fram
 		S_LOGGER.debug("Entering Method PhrescoReportGeneration.generateCumulativeTestReport()");
 		InputStream reportStream = null;
 		BufferedInputStream bufferedInputStream = null;
+		String uuid = UUID.randomUUID().toString();
+		String outFileNamePDF = "";
+		String outFileNameIphoneSonarPDF = "";
+		String outFileNameXHTML = "";
 		try {
-			String outFileNamePDF = Utility.getProjectHome() + projectCode + File.separator + DO_NOT_CHECKIN_DIR + File.separator + ARCHIVES + File.separator + CUMULATIVE + File.separator + projectCode + UNDERSCORE + reportDatasType + UNDERSCORE + fileName + DOT + PDF;
+			if (TechnologyTypes.IPHONE_NATIVE.equals(techId) || TechnologyTypes.IPHONE_HYBRID.equals(techId)) {
+				S_LOGGER.debug("generateCumulativeTestReport for iphone technology ");
+				outFileNamePDF = Utility.getPhrescoTemp() + uuid + File.separator + projectCode + UNDERSCORE + reportDatasType + UNDERSCORE + fileName + DOT + PDF;
+				outFileNameIphoneSonarPDF = Utility.getPhrescoTemp() + uuid + File.separator + projectCode + UNDERSCORE + fileName + DOT + PDF;
+				outFileNameXHTML = Utility.getPhrescoTemp() + uuid + File.separator + projectCode + UNDERSCORE + "index" + DOT + "xhtml";
+				new File(outFileNameIphoneSonarPDF).getParentFile().mkdirs();
+				new File(outFileNameXHTML).getParentFile().mkdirs();
+			} else {
+				S_LOGGER.debug("generateCumulativeTestReport for except mobile technology " + techId);
+				outFileNamePDF = Utility.getProjectHome() + File.separator + projectCode + File.separator + DO_NOT_CHECKIN_DIR + File.separator + ARCHIVES + File.separator + CUMULATIVE + File.separator + projectCode + UNDERSCORE + reportDatasType + UNDERSCORE + fileName + DOT + PDF;
+			}
+			
+			S_LOGGER.debug("outFileNamePDF... " + outFileNamePDF);
 			new File(outFileNamePDF).getParentFile().mkdirs();
 			String jasperFile = "PhrescoCumulativeReport.jasper";
-			reportStream = this.getClass().getClassLoader().getResourceAsStream("reports/jasper/" + jasperFile);
+			reportStream = this.getClass().getClassLoader().getResourceAsStream(REPORTS_JASPER + jasperFile);
 	        
 			bufferedInputStream = new BufferedInputStream(reportStream);
 			JREmptyDataSource  dataSource = new JREmptyDataSource();
@@ -273,6 +300,24 @@ public class PhrescoReportGeneration extends FrameworkBaseAction implements Fram
 			exporter.setParameter(JRExporterParameter.OUTPUT_FILE_NAME, outFileNamePDF);
 			exporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
 			exporter.exportReport();
+			
+			if (TechnologyTypes.IPHONE_NATIVE.equals(techId) || TechnologyTypes.IPHONE_HYBRID.equals(techId)) {
+				S_LOGGER.debug("going to generate html and concatinate files  " + techId);
+				iphoneSonarHtmlToPdf(outFileNameIphoneSonarPDF, outFileNameXHTML);
+				String outFinalFileNamePDF = Utility.getProjectHome() + File.separator + projectCode + File.separator + DO_NOT_CHECKIN_DIR + File.separator + ARCHIVES + File.separator + CUMULATIVE + File.separator + projectCode + UNDERSCORE + reportDatasType + UNDERSCORE + fileName + DOT + PDF;
+				new File(outFinalFileNamePDF).getParentFile().mkdirs();
+				
+	            List<String> pdfs = new ArrayList<String>();
+	            pdfs.add(outFileNamePDF);
+	            pdfs.add(outFileNameIphoneSonarPDF);
+	            concatPDFs(pdfs, outFinalFileNamePDF, true);
+			}
+			try {
+				S_LOGGER.debug("going to delete directory ");
+				FileUtils.deleteDirectory(new File(Utility.getPhrescoTemp() + uuid));
+			} catch (Exception e) {
+				S_LOGGER.error("Delete directory failed");
+			}
 			S_LOGGER.debug("Cumulative Report generation completed" + outFileNamePDF);
 		} catch(Exception e) {
 			S_LOGGER.error("Entering into catch block of PhrescoReportGeneration.generateCumulativeTestReport()" + FrameworkUtil.getStackTraceAsString(e));
@@ -295,6 +340,132 @@ public class PhrescoReportGeneration extends FrameworkBaseAction implements Fram
 			}
 		}
 		
+	}
+	
+	//Merge the PDF's
+	public static void concatPDFs(List<String> PDFFiles,  String outputPDFFile, boolean paginate) {
+		S_LOGGER.debug("Entering Method PhrescoReportGeneration.concatPDFs()");
+        OutputStream outputStream = null;
+		com.lowagie.text.Document document = null;
+        try {
+    		List<InputStream> pdfs = new ArrayList<InputStream>();
+    		for (String PDFFile : PDFFiles) {
+    	        pdfs.add(new FileInputStream(new File(PDFFile)));
+    		}
+    		
+    		outputStream = new FileOutputStream(outputPDFFile);
+    		document = new com.lowagie.text.Document();
+    		
+            List<com.lowagie.text.pdf.PdfReader> readers = new ArrayList<com.lowagie.text.pdf.PdfReader>();
+            int totalPages = 0;
+            Iterator<InputStream> iteratorPDFs = pdfs.iterator();
+ 
+            // Create Readers for the pdfs.
+            while (iteratorPDFs.hasNext()) {
+                InputStream pdf = iteratorPDFs.next();
+                com.lowagie.text.pdf.PdfReader pdfReader = new com.lowagie.text.pdf.PdfReader(pdf);
+                readers.add(pdfReader);
+                totalPages += pdfReader.getNumberOfPages();
+            }
+            // Create a writer for the outputstream
+            com.lowagie.text.pdf.PdfWriter writer = com.lowagie.text.pdf.PdfWriter.getInstance(document, outputStream);
+ 
+            document.open();
+            com.lowagie.text.pdf.BaseFont bf = com.lowagie.text.pdf.BaseFont.createFont(com.lowagie.text.pdf.BaseFont.HELVETICA,
+            		com.lowagie.text.pdf.BaseFont.CP1252, com.lowagie.text.pdf.BaseFont.NOT_EMBEDDED);
+            com.lowagie.text.pdf.PdfContentByte cb = writer.getDirectContent(); // Holds the PDF
+            // data
+ 
+            com.lowagie.text.pdf.PdfImportedPage page;
+            int currentPageNumber = 0;
+            int pageOfCurrentReaderPDF = 0;
+            Iterator<com.lowagie.text.pdf.PdfReader> iteratorPDFReader = readers.iterator();
+ 
+            // Loop through the PDF files and add to the output.
+            while (iteratorPDFReader.hasNext()) {
+            	com.lowagie.text.pdf.PdfReader pdfReader = iteratorPDFReader.next();
+ 
+                // Create a new page in the target for each source page.
+                while (pageOfCurrentReaderPDF < pdfReader.getNumberOfPages()) {
+                    document.newPage();
+                    pageOfCurrentReaderPDF++;
+                    currentPageNumber++;
+                    page = writer.getImportedPage(pdfReader,  pageOfCurrentReaderPDF);
+                    cb.addTemplate(page, 0, 0);
+ 
+                    // Code for pagination.
+                    if (paginate) {
+                        cb.beginText();
+                        cb.setFontAndSize(bf, 9);
+                        cb.showTextAligned(PdfContentByte.ALIGN_CENTER, ""
+                                + currentPageNumber + " of " + totalPages, 520,
+                                5, 0);
+                        cb.endText();
+                    }
+                }
+                pageOfCurrentReaderPDF = 0;
+            }
+            outputStream.flush();
+            document.close();
+            outputStream.close();
+        } catch (Exception e) {
+        	S_LOGGER.error("Entering Method PhrescoReportGeneration.concatPDFs()" + FrameworkUtil.getStackTraceAsString(e));
+        } finally {
+            if (document.isOpen())
+                document.close();
+            try {
+                if (outputStream != null)
+                    outputStream.close();
+            } catch (IOException ioe) {
+            	S_LOGGER.error("Entering Method ioe PhrescoReportGeneration.concatPDFs()" + FrameworkUtil.getStackTraceAsString(ioe));
+            }
+        }
+    }
+	
+	//Conversion of Html to Pdf
+	public void iphoneSonarHtmlToPdf(String outFileNameIphoneSonarPDF, String outFileNameXHTML) throws PhrescoException {
+		S_LOGGER.debug("Entering Method  PhrescoReportGeneration.iphoneSonarHtmlToPdf()");
+		try {
+	        CleanerProperties props = new CleanerProperties();
+	        props.setTranslateSpecialEntities(true);
+	        props.setTransResCharsToNCR(true);
+	        props.setOmitComments(true);
+	        File staticAnalysisReport = null;
+	        
+	    	StringBuilder codeValidatePath = new StringBuilder(Utility.getProjectHome());
+	    	codeValidatePath.append(projectCode);
+	    	codeValidatePath.append(File.separatorChar);
+	    	codeValidatePath.append(DO_NOT_CHECKIN_DIR);
+	    	codeValidatePath.append(File.separatorChar);
+	    	codeValidatePath.append(STATIC_ANALYSIS_REPORT);
+	    	codeValidatePath.append(File.separatorChar);
+	    	codeValidatePath.append(INDEX_HTML);
+	    	staticAnalysisReport = new File(codeValidatePath.toString());
+	    	S_LOGGER.debug("staticAnalysisReport " + staticAnalysisReport);
+	        if(!staticAnalysisReport.exists()) {
+	        	System.out.println("Index file is not available!!!!!!!!!");
+	        	throw new PhrescoException("static analysis report is not available!!!");
+	        }
+	        
+	        //checking of starting and ending tags are in proper
+	        TagNode tagNode = new HtmlCleaner(props).clean(staticAnalysisReport);
+	        new PrettyXmlSerializer(props).writeToFile(tagNode, outFileNameXHTML, "utf-8");
+	        
+	        File xhtmlpath = new File(outFileNameXHTML);
+	        File pdfPath = new File(outFileNameIphoneSonarPDF);
+	        com.itextpdf.text.Document pdfDocument = null;
+	        PdfWriter pdfWriter = null;
+	        pdfDocument = new com.itextpdf.text.Document();
+	        pdfWriter = PdfWriter.getInstance(pdfDocument, new FileOutputStream(pdfPath));
+	        pdfDocument.open();
+	        
+	        XMLWorkerHelper.getInstance().parseXHtml(pdfWriter, (com.itextpdf.text.Document) pdfDocument,
+	                new FileInputStream(xhtmlpath), null);
+	        pdfDocument.close();
+		} catch (Exception e) {
+			S_LOGGER.error("Entering Method PhrescoReportGeneration.iphoneSonarHtmlToPdf()" + FrameworkUtil.getStackTraceAsString(e));
+			throw new PhrescoException(e);
+		}
 	}
 	
 	 public SonarReport generateSonarReport(String report, String techId) throws PhrescoException {
@@ -417,7 +588,7 @@ public class PhrescoReportGeneration extends FrameworkBaseAction implements Fram
 			String outFileNamePDF = Utility.getProjectHome() + projectCode + File.separator + DO_NOT_CHECKIN_DIR + File.separator + ARCHIVES + File.separator + testType + File.separator + testType  + UNDERSCORE + reportDatasType + UNDERSCORE + fileName + DOT + PDF;
 			new File(outFileNamePDF).getParentFile().mkdirs();
 			String containerJasperFile = "PhrescoSureFireReport.jasper";
-			reportStream = this.getClass().getClassLoader().getResourceAsStream("reports/jasper/" + containerJasperFile);
+			reportStream = this.getClass().getClassLoader().getResourceAsStream(REPORTS_JASPER + containerJasperFile);
 			bufferedInputStream = new BufferedInputStream(reportStream);
 			Map<String, Object> parameters = new HashMap<String,Object>();
 			parameters.put(REQ_PROJECT_CODE, projectCode);
@@ -525,7 +696,7 @@ public class PhrescoReportGeneration extends FrameworkBaseAction implements Fram
 		BufferedInputStream bufferedInputStream = null;
 		try {
 			new File(outFileNamePDF).getParentFile().mkdirs();
-			reportStream = this.getClass().getClassLoader().getResourceAsStream("reports/jasper/"+ jasperFile);
+			reportStream = this.getClass().getClassLoader().getResourceAsStream(REPORTS_JASPER + jasperFile);
 			bufferedInputStream = new BufferedInputStream(reportStream);
 			JasperReport jasperReport = (JasperReport) JRLoader.loadObject(bufferedInputStream);
 			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
@@ -677,11 +848,11 @@ public class PhrescoReportGeneration extends FrameworkBaseAction implements Fram
 		for (String resultFile : testResultFiles) {
 			XmlReport xmlReport = new XmlReport();
 			xmlReport.setFileName(resultFile);
-			ArrayList<TestSuite> testSuiteWithTestCase = new ArrayList<TestSuite>();
+			ArrayList<TestSuiteResult> testSuiteWithTestCase = new ArrayList<TestSuiteResult>();
 			Document doc = getDocumentOfFile(reportFilePath, resultFile);
-			List<TestSuite> testSuites = getTestSuite(doc);
-			for (TestSuite testSuite : testSuites) {	// test suite ll have graph details
-				List<TestCase> testCases = getTestCases(doc, testSuite.getName());
+			List<TestSuiteResult> testSuites = getTestSuite(doc);
+			for (TestSuiteResult testSuite : testSuites) {	// test suite ll have graph details
+				List<TestCaseResult> testCases = getTestCases(doc, testSuite.getName());
 				testSuite.setTestCases(testCases);
 				testSuiteWithTestCase.add(testSuite);
 			}
@@ -703,10 +874,10 @@ public class PhrescoReportGeneration extends FrameworkBaseAction implements Fram
 		}
 		S_LOGGER.debug("reportFilePath " + reportFilePath);
 		List<String> testResultFiles = getTestResultFiles(reportFilePath);
-		ArrayList<TestSuite> testSuiteWithTestCase  = null;
+		ArrayList<TestSuiteResult> testSuiteWithTestCase  = null;
 		ArrayList<AllTestSuite> allTestSuiteDetails = null;
 		// detailed information object
-		testSuiteWithTestCase = new ArrayList<TestSuite>();
+		testSuiteWithTestCase = new ArrayList<TestSuiteResult>();
 		// crisp information of the test
 		allTestSuiteDetails =  new ArrayList<AllTestSuite>();
 		
@@ -714,7 +885,7 @@ public class PhrescoReportGeneration extends FrameworkBaseAction implements Fram
 		for (String resultFile : testResultFiles) {
 
 			Document doc = getDocumentOfFile(reportFilePath, resultFile);
-			List<TestSuite> testSuites = getTestSuite(doc);
+			List<TestSuiteResult> testSuites = getTestSuite(doc);
 			
 			//crisp info
 			float totalTestSuites = 0;
@@ -722,8 +893,8 @@ public class PhrescoReportGeneration extends FrameworkBaseAction implements Fram
 			float failureTestSuites = 0;
 			float errorTestSuites = 0;
 
-			for (TestSuite testSuite : testSuites) {	// test suite ll have graph details
-				List<TestCase> testCases = getTestCases(doc, testSuite.getName());
+			for (TestSuiteResult testSuite : testSuites) {	// test suite ll have graph details
+				List<TestCaseResult> testCases = getTestCases(doc, testSuite.getName());
 				
 				float tests = 0;
 		        float failures = 0;
@@ -778,14 +949,14 @@ public class PhrescoReportGeneration extends FrameworkBaseAction implements Fram
 	}
 	
 	//detailed object info
-	private void printDetailedObj(ArrayList<TestSuite> testSuiteWithTestCase) {
+	private void printDetailedObj(ArrayList<TestSuiteResult> testSuiteWithTestCase) {
 		S_LOGGER.debug("printing required values!!!!!");
-		for (TestSuite testSuite : testSuiteWithTestCase) {
+		for (TestSuiteResult testSuite : testSuiteWithTestCase) {
 			S_LOGGER.debug("getName " + testSuite.getName() + " tests " + testSuite.getTests() + " Failure " + testSuite.getFailures() + " Error" + testSuite.getErrors() + " testcases size " + testSuite.getTestCases().size());
 		}
 	}
 	
-    private List<TestSuite> getTestSuite(Document doc) throws TransformerException, PhrescoException {
+    private List<TestSuiteResult> getTestSuite(Document doc) throws TransformerException, PhrescoException {
         try {
             String testSuitePath = null;
     		if (UNIT.equals(testType)) {
@@ -799,11 +970,11 @@ public class PhrescoReportGeneration extends FrameworkBaseAction implements Fram
                 nodelist = org.apache.xpath.XPathAPI.selectNodeList(doc, testSuitePath);
             }
 
-            List<TestSuite> testSuites = new ArrayList<TestSuite>(2);
-            TestSuite testSuite = null;
+            List<TestSuiteResult> testSuites = new ArrayList<TestSuiteResult>(2);
+            TestSuiteResult testSuite = null;
 
             for (int i = 0; i < nodelist.getLength(); i++) {
-                testSuite =  new TestSuite();
+                testSuite =  new TestSuiteResult();
                 Node node = nodelist.item(i);
                 NamedNodeMap nameNodeMap = node.getAttributes();
 
@@ -836,7 +1007,7 @@ public class PhrescoReportGeneration extends FrameworkBaseAction implements Fram
         }
     }
 
-    private List<TestCase> getTestCases(Document doc, String testSuiteName) throws TransformerException, PhrescoException {
+    private List<TestCaseResult> getTestCases(Document doc, String testSuiteName) throws TransformerException, PhrescoException {
         try {
             String testCasePath = null;
             String testSuitePath = null;
@@ -882,7 +1053,7 @@ public class PhrescoReportGeneration extends FrameworkBaseAction implements Fram
                 nodelist = org.apache.xpath.XPathAPI.selectNodeList(doc, sbMulti.toString());
             }
 
-            List<TestCase> testCases = new ArrayList<TestCase>();
+            List<TestCaseResult> testCases = new ArrayList<TestCaseResult>();
 
             int failureTestCases = 0;
             int errorTestCases = 0;
@@ -891,7 +1062,7 @@ public class PhrescoReportGeneration extends FrameworkBaseAction implements Fram
                 Node node = nodelist.item(i);
                 NodeList childNodes = node.getChildNodes();
                 NamedNodeMap nameNodeMap = node.getAttributes();
-                TestCase testCase = new TestCase();
+                TestCaseResult testCase = new TestCaseResult();
 
                 if (childNodes != null && childNodes.getLength() > 0) {
 
