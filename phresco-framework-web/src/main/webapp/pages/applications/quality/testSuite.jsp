@@ -21,16 +21,16 @@
 
 <%@ include file="../../userInfoDetails.jsp" %>
 
-<%@page import="java.util.List"%>
-<%@page import="java.util.ArrayList"%>
-<%@page import="java.util.Collection"%>
-<%@page import="java.util.Iterator"%>
-<%@page import="com.photon.phresco.framework.model.TestCaseFailure"%>
-<%@page import="com.photon.phresco.framework.model.TestCaseError"%>
-<%@page import="com.photon.phresco.framework.model.TestSuite"%>
-<%@page import="com.photon.phresco.framework.model.TestCase"%>
-<%@page import="com.photon.phresco.commons.FrameworkConstants"%>
-<%@page import="com.photon.phresco.model.SettingsInfo"%>
+<%@ page import="java.util.List"%>
+<%@ page import="java.util.ArrayList"%>
+<%@ page import="java.util.Collection"%>
+<%@ page import="java.util.Iterator"%>
+<%@ page import="com.photon.phresco.framework.model.TestCaseFailure"%>
+<%@ page import="com.photon.phresco.framework.model.TestCaseError"%>
+<%@ page import="com.photon.phresco.framework.model.TestSuiteResult"%>
+<%@ page import="com.photon.phresco.framework.model.TestCaseResult"%>
+<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
+<%@ page import="com.photon.phresco.model.SettingsInfo"%>
 
 <style type="text/css">
    	table th {
@@ -48,53 +48,52 @@
 	}
 </style>
 
-	<% 
-		List<TestCase> testCases = (List<TestCase>) request.getAttribute(FrameworkConstants.REQ_TESTCASES);
+	<%
+	    List<TestCaseResult> testCases = (List<TestCaseResult>) request.getAttribute(FrameworkConstants.REQ_TESTCASES);
 		String testSuiteName = (String) request.getAttribute(FrameworkConstants.REQ_TESTSUITE_NAME);
 		float failures = Float.parseFloat((String) request.getAttribute(FrameworkConstants.REQ_TESTSUITE_FAILURES));
 		float errors  = Float.parseFloat((String) request.getAttribute(FrameworkConstants.REQ_TESTSUITE_ERRORS));
 		float tests  = Float.parseFloat((String) request.getAttribute(FrameworkConstants.REQ_TESTSUITE_TESTS)); 
         String testError = (String) request.getAttribute(FrameworkConstants.REQ_ERROR_TESTSUITE);
         String testType = (String) request.getAttribute(FrameworkConstants.REQ_TEST_TYPE); 
-        if(testError != null) {
+        if (testError != null) {
 	%>
         <div class="alert-message block-message warning" >
             <center><label class="errorMsgLabel"><%= testError %></label></center>
         </div>
     <%
         } else {
-			
-            float success = 0;
-            
-            if (failures != 0 && errors == 0) {
-                if (failures > tests) {
-                    success = failures - tests;
-                } else {
-                    success = tests - failures;
-                }
-            } else if (failures == 0 && errors != 0) {
-                if (errors > tests) {
-                    success = errors - tests;
-                } else {
-                    success = tests - errors;
-                }
-            } else if (failures != 0 && errors != 0) {
-                float failTotal = (failures + errors);
-                if (failTotal > tests) {
-                    success = failTotal - tests;
-                } else {
-                    success = tests - failTotal;
-                }
+    			
+        float success = 0;
+        
+        if (failures != 0 && errors == 0) {
+            if (failures > tests) {
+                success = failures - tests;
             } else {
-            	success = tests;
+                success = tests - failures;
             }
+        } else if (failures == 0 && errors != 0) {
+            if (errors > tests) {
+                success = errors - tests;
+            } else {
+                success = tests - errors;
+            }
+        } else if (failures != 0 && errors != 0) {
+            float failTotal = (failures + errors);
+            if (failTotal > tests) {
+                success = failTotal - tests;
+            } else {
+                success = tests - failTotal;
+            }
+        } else {
+        	success = tests;
+        }
 
-            float total = tests;
+        float total = tests;
 
-            int failurePercentage = (int) (Math.round((failures / total) * 100));
-            int errorsPercentage = (int) (Math.round((errors / total) * 100));
-            int successPercentage = (int) (Math.round((success / total) * 100));
-
+        int failurePercentage = (int) (Math.round((failures / total) * 100));
+        int errorsPercentage = (int) (Math.round((errors / total) * 100));
+        int successPercentage = (int) (Math.round((success / total) * 100));
     %>
 
     <script>
@@ -103,20 +102,20 @@
 		});
 	
         function canvasInit() {
-            var failurePercent = '<%= failurePercentage %>';
-            var errorsPercent = '<%= errorsPercentage %>';
-            var successPercent = '<%= successPercentage %>';
+            var failurePercent = '<%=failurePercentage%>';
+            var errorsPercent = '<%=errorsPercentage%>';
+            var successPercent = '<%=successPercentage%>';
 
             var pie2 = new RGraph.Pie('pie2', [ parseInt(failurePercent), parseInt(errorsPercent), parseInt(successPercent)]); // Create the pie object
             //var pie2 = new RGraph.Pie('pie2', [60,0,40]); // Create the pie object
 
             pie2.Set('chart.gutter.left', 45);
             pie2.Set('chart.colors', ['orange', 'red', '#6f6']);
-            pie2.Set('chart.key', ['Failures (<%= failurePercentage %>%)[<%= (int) failures %>]', 'Errors (<%= errorsPercentage %>%)[<%= (int) errors %>]', 'Success (<%= successPercentage %>%)[<%= (int) success %>]', 'Total (' + parseInt(<%= total %>) + ' Tests)']);
+            pie2.Set('chart.key', ['Failures (<%=failurePercentage%>%)[<%=(int) failures%>]', 'Errors (<%=errorsPercentage%>%)[<%=(int) errors%>]', 'Success (<%=successPercentage%>%)[<%=(int) success%>]', 'Total (' + parseInt(<%=total%>) + ' Tests)']);
             pie2.Set('chart.key.background', 'white');
             pie2.Set('chart.strokestyle', 'white');
             pie2.Set('chart.linewidth', 3);
-            pie2.Set('chart.title', '<%= testSuiteName %> Report');
+            pie2.Set('chart.title', '<%=testSuiteName%> Report');
             pie2.Set('chart.title.size',10);
             pie2.Set('chart.title.color', '#8A8A8A');
             pie2.Set('chart.exploded', [5,5,0]);
@@ -135,107 +134,100 @@
         }
     </script>
 	
-				<div class="table_div_unit qtyTable_view" id="tabularView">
-	                <div class="fixed-table-container responsiveFixedTableContainer qtyFixedTblContainer">
-	      				<div class="header-background"> </div>
-			      		<div class="fixed-table-container-inner">
-			      		<div style="overflow: auto;">
-					        <table cellspacing="0" class="zebra-striped">
-					          	<thead>
-						            <tr>
-										<th class="first">
-						                	<div id="th-first" class="th-inner-test"><s:text name="label.name"/></div>
-						              	</th>
-						              	<th class="second">
-						                	<div id="th-second" class="th-inner-test"><s:text name="label.class"/></div>
-						              	</th>
-						              	<th class="third">
-						                	<div id="th-third" class="th-inner-test"><s:text name="label.time"/></div>
-						              	</th>
-						              	<th class="third">
-						                	<div id="th-fourth" class="th-inner-test"><s:text name="label.status"/></div>
-						              	</th>
-						              	<th class="third">
-						                	<div id="th-fivth" class="th-inner-test"><s:text name="label.log"/></div>
-						              	</th>
-						              	<% 
-						              		if(FrameworkConstants.FUNCTIONAL.equals(testType)) { 
-						              	%>
-						              	<th class="width-ten-percent">
-						                	<div class="th-inner-test"><s:text name="label.screenshot"/></div>
-						              	</th>
-						              	<% 
-						              		} 
-						              	%>
-						            </tr>
-					          	</thead>
-					
-					          	<tbody>
-					          	<%
-						          	for (TestCase testCase : testCases) {
-										TestCaseFailure failure = testCase.getTestCaseFailure();
-										TestCaseError error = testCase.getTestCaseError(); 	
-								%>
-					            	<tr>
-					              		<td id="tstRst_td1" class="width-twenty-five-percent"><%= testCase.getName() %></td>
-					              		<td id="tstRst_td2" class="width-twenty-five-percent"><%= testCase.getTestClass() == null ? "" : testCase.getTestClass() %></td>
-					              		<td class="width-fifteen-percent"><%= testCase.getTime() == null ? "" : testCase.getTime() %></td>
-					              		<td class="width-fifteen-percent">
-					              			<% if (testCase.getTestCaseFailure() != null) { %>
-												<img src="images/icons/failure.png" title="Failure">
-											<% } else if (testCase.getTestCaseError() != null) { %>
-												<img src="images/icons/error.png" title="Error">
-											<% } else { %>
-												<img src="images/icons/success.png" title="Success">
-											<% } %>  
-					              		</td>
-					              		<td class="width-ten-percent">
-					              			<% if (testCase.getTestCaseFailure() != null) { %>
-												<input type="hidden" name="<%= testCase.getName() %>" value="<%= testCase.getTestCaseFailure().getFailureType()%>,<%= testCase.getTestCaseFailure().getDescription()%>" id="<%= testCase.getName() %>">
-												<a class="testCaseFailOrErr" name="<%= testCase.getName() %>" href="#"><img src="images/icons/log.png" alt="logo"> </a>
-											<% } else if (testCase.getTestCaseError() != null) { %>
-												<input type="hidden" name="<%= testCase.getName() %>" value="<%= testCase.getTestCaseError().getErrorType()%>,<%= testCase.getTestCaseError().getDescription()%>" id="<%= testCase.getName() %>">
-												<a class="testCaseFailOrErr" name="<%= testCase.getName() %>" href="#"><img src="images/icons/log.png" alt="logo"> </a>
-											<% } else { %>
-												&nbsp;
-											<% } %>
-					              		</td>
-					             		<% 
-						              		if(FrameworkConstants.FUNCTIONAL.equals(testType)) { 
-						              	%>
-					            		<td class="width-ten-percent">
-					            			<% 
-					            				if(testCase.getTestCaseFailure() != null || testCase.getTestCaseError() != null)  { 
-					            			%>
-					            				<a class="testCaseScreenShot" name="<%= testCase.getName() %>" href="#"><img src="images/icons/screenshot.png" alt="logo"> </a>
-<%-- 					            				<a name="<%= testCase.getName() %>" href="<%= request.getContextPath()%>/getScreenShotImage.action?projectCode=<%= (String) request.getAttribute("projectCode")%>&testCaseName=<%= testCase.getName() %>"><img src="images/icons/log.png" alt="screenshot"> </a> --%>
-					            			<% 
-					            				}
-					            			%>
-					              		</td>
-					             		<% 
-						              		} 
-						              	%>
-					            	</tr>
-					            <%
-									}
-								%>	
-					          	</tbody>
-					        </table>
-					       
-					       </div>
-					    <div>
-							
-						</div>
-			      		</div>
-    				</div>
-	            </div>
-	
-                <div class="canvas_div canvasDiv" id="graphicalView">
-                    <canvas id="pie2" width="620" height="335">[No canvas support]</canvas>
-                </div>
-			</div>
-    	</div>
+	<div class="table_div_unit qtyTable_view" id="tabularView">
+		<div class="fixed-table-container responsiveFixedTableContainer qtyFixedTblContainer">
+			<div class="header-background"> </div>
+	   		<div class="fixed-table-container-inner">
+	     		<div style="overflow: auto;">
+			        <table cellspacing="0" class="zebra-striped">
+			          	<thead>
+				            <tr>
+								<th class="first">
+				                	<div id="th-first" class="th-inner-test"><s:text name="label.name"/></div>
+				              	</th>
+				              	<th class="second">
+				                	<div id="th-second" class="th-inner-test"><s:text name="label.class"/></div>
+				              	</th>
+				              	<th class="third">
+				                	<div id="th-third" class="th-inner-test"><s:text name="label.time"/></div>
+				              	</th>
+				              	<th class="third">
+				                	<div id="th-fourth" class="th-inner-test"><s:text name="label.status"/></div>
+				              	</th>
+				              	<th class="third">
+				                	<div id="th-fivth" class="th-inner-test"><s:text name="label.log"/></div>
+				              	</th>
+				              	<%
+				              	    if (FrameworkConstants.FUNCTIONAL.equals(testType)) {
+				              	%>
+				              	<th class="width-ten-percent">
+				                	<div class="th-inner-test"><s:text name="label.screenshot"/></div>
+				              	</th>
+				              	<%
+				              	    }
+				              	%>
+				            </tr>
+			          	</thead>
+				
+			          	<tbody>
+			          	<%
+			          	    for (TestCaseResult testCase : testCases) {
+								TestCaseFailure failure = testCase.getTestCaseFailure();
+								TestCaseError error = testCase.getTestCaseError();
+			          	%>
+			            	<tr>
+			              		<td id="tstRst_td1" class="width-twenty-five-percent"><%= testCase.getName() %></td>
+			              		<td id="tstRst_td2" class="width-twenty-five-percent"><%= testCase.getTestClass() == null ? "" : testCase.getTestClass() %></td>
+			              		<td class="width-fifteen-percent"><%= testCase.getTime() == null ? "" : testCase.getTime() %></td>
+			              		<td class="width-fifteen-percent">
+			              			<% if (testCase.getTestCaseFailure() != null) { %>
+										<img src="images/icons/failure.png" title="Failure">
+									<% } else if (testCase.getTestCaseError() != null) { %>
+										<img src="images/icons/error.png" title="Error">
+									<% } else { %>
+										<img src="images/icons/success.png" title="Success">
+									<% } %>  
+			              		</td>
+			              		<td class="width-ten-percent">
+			              			<% if (testCase.getTestCaseFailure() != null) { %>
+										<input type="hidden" name="<%= testCase.getName() %>" value="<%= testCase.getTestCaseFailure().getFailureType()%>,<%= testCase.getTestCaseFailure().getDescription()%>" id="<%= testCase.getName() %>">
+										<a class="testCaseFailOrErr" name="<%= testCase.getName() %>" href="#"><img src="images/icons/log.png" alt="logo"> </a>
+									<% } else if (testCase.getTestCaseError() != null) { %>
+										<input type="hidden" name="<%= testCase.getName() %>" value="<%= testCase.getTestCaseError().getErrorType()%>,<%= testCase.getTestCaseError().getDescription()%>" id="<%= testCase.getName() %>">
+										<a class="testCaseFailOrErr" name="<%= testCase.getName() %>" href="#"><img src="images/icons/log.png" alt="logo"> </a>
+									<% } else { %>
+										&nbsp;
+									<% } %>
+			              		</td>
+			             		<% 
+				              		if (FrameworkConstants.FUNCTIONAL.equals(testType)) { 
+				              	%>
+			            		<td class="width-ten-percent">
+			            			<% 
+			            				if (testCase.getTestCaseFailure() != null || testCase.getTestCaseError() != null) { 
+			            			%>
+			            				<a class="testCaseScreenShot" name="<%= testCase.getName() %>" href="#"><img src="images/icons/screenshot.png" alt="logo"> </a>
+			            			<% 
+			            				}
+			            			%>
+			              		</td>
+			             		<% 
+				              		} 
+				              	%>
+			            	</tr>
+			            <%
+							}
+						%>	
+			          	</tbody>
+			        </table>
+				</div>
+	   		</div>
+		</div>
+	</div>
+
+	<div class="canvas_div canvasDiv" id="graphicalView">
+		<canvas id="pie2" width="620" height="335">[No canvas support]</canvas>
+	</div>
     
     <!-- Test case error or Test case failure starts -->	
 	<div id="testCaseErrOrFail" class="modal confirm">
@@ -243,9 +235,6 @@
 			<div class="TestType" style="word-wrap: break-word;"></div><a id="closeTestCasePopup" href="#" class="close">&times;</a>
 		</div>
 		<div class="abt_div">
-<!-- 			<div id="testCaseType" class="testCaseType"> -->
-					
-<!-- 			</div> -->
 			<div id="testCaseDesc" class="testCaseDesc">
 					
 			</div>
@@ -259,9 +248,7 @@
 	</div>
 	<!-- Test case error or Test case failure starts -->
 	
-	<!-- 
-		Screen shot pop-up starts
-	 -->
+	<!-- Screen shot pop-up starts -->
 	<div id="testCaseScreenShotPopUp" class="modal screenShotDialog">
 		<div class="modal-header">
 			<div class="screenShotTCName"></div><a id="closeTCScreenShotPopup" href="#" class="close">&times;</a>
@@ -283,14 +270,13 @@
 	
 	<script type="text/javascript">
 	/* To check whether the divice is ipad or not */
-	if(!isiPad()) {
+	if (!isiPad()) {
 		/* JQuery scroll bar */
 		$(".fixed-table-container-inner").scrollbars();
 		$("#graphicalView").scrollbars();
 	}
 	
     $(document).ready(function() {
-    	
     	if ($('#label').hasClass('techLabel')){
             $("#th-first").removeClass("th-inner-test").addClass("th-inner-testtech");
             $("#th-second").removeClass("th-inner-test").addClass("th-inner-testtech");
@@ -383,7 +369,6 @@
 		 
 		// jquery affects pie chart responsive
 		window.setTimeout(function () { $(".scroll-content").css("width", "100%"); }, 350);
-	    	
     });
     
     function showImageIsNotLoaded() {

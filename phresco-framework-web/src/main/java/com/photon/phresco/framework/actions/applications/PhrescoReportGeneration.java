@@ -75,11 +75,11 @@ import com.photon.phresco.framework.commons.SonarReport;
 import com.photon.phresco.framework.commons.SureFireReport;
 import com.photon.phresco.framework.commons.XmlReport;
 import com.photon.phresco.framework.model.PerformanceTestResult;
-import com.photon.phresco.framework.model.TestCase;
+import com.photon.phresco.framework.model.TestCaseResult;
 import com.photon.phresco.framework.model.TestCaseError;
 import com.photon.phresco.framework.model.TestCaseFailure;
 import com.photon.phresco.framework.model.TestResult;
-import com.photon.phresco.framework.model.TestSuite;
+import com.photon.phresco.framework.model.TestSuiteResult;
 import com.photon.phresco.util.TechnologyTypes;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.model.Profile;
@@ -848,11 +848,11 @@ public class PhrescoReportGeneration extends FrameworkBaseAction implements Fram
 		for (String resultFile : testResultFiles) {
 			XmlReport xmlReport = new XmlReport();
 			xmlReport.setFileName(resultFile);
-			ArrayList<TestSuite> testSuiteWithTestCase = new ArrayList<TestSuite>();
+			ArrayList<TestSuiteResult> testSuiteWithTestCase = new ArrayList<TestSuiteResult>();
 			Document doc = getDocumentOfFile(reportFilePath, resultFile);
-			List<TestSuite> testSuites = getTestSuite(doc);
-			for (TestSuite testSuite : testSuites) {	// test suite ll have graph details
-				List<TestCase> testCases = getTestCases(doc, testSuite.getName());
+			List<TestSuiteResult> testSuites = getTestSuite(doc);
+			for (TestSuiteResult testSuite : testSuites) {	// test suite ll have graph details
+				List<TestCaseResult> testCases = getTestCases(doc, testSuite.getName());
 				testSuite.setTestCases(testCases);
 				testSuiteWithTestCase.add(testSuite);
 			}
@@ -874,10 +874,10 @@ public class PhrescoReportGeneration extends FrameworkBaseAction implements Fram
 		}
 		S_LOGGER.debug("reportFilePath " + reportFilePath);
 		List<String> testResultFiles = getTestResultFiles(reportFilePath);
-		ArrayList<TestSuite> testSuiteWithTestCase  = null;
+		ArrayList<TestSuiteResult> testSuiteWithTestCase  = null;
 		ArrayList<AllTestSuite> allTestSuiteDetails = null;
 		// detailed information object
-		testSuiteWithTestCase = new ArrayList<TestSuite>();
+		testSuiteWithTestCase = new ArrayList<TestSuiteResult>();
 		// crisp information of the test
 		allTestSuiteDetails =  new ArrayList<AllTestSuite>();
 		
@@ -885,7 +885,7 @@ public class PhrescoReportGeneration extends FrameworkBaseAction implements Fram
 		for (String resultFile : testResultFiles) {
 
 			Document doc = getDocumentOfFile(reportFilePath, resultFile);
-			List<TestSuite> testSuites = getTestSuite(doc);
+			List<TestSuiteResult> testSuites = getTestSuite(doc);
 			
 			//crisp info
 			float totalTestSuites = 0;
@@ -893,8 +893,8 @@ public class PhrescoReportGeneration extends FrameworkBaseAction implements Fram
 			float failureTestSuites = 0;
 			float errorTestSuites = 0;
 
-			for (TestSuite testSuite : testSuites) {	// test suite ll have graph details
-				List<TestCase> testCases = getTestCases(doc, testSuite.getName());
+			for (TestSuiteResult testSuite : testSuites) {	// test suite ll have graph details
+				List<TestCaseResult> testCases = getTestCases(doc, testSuite.getName());
 				
 				float tests = 0;
 		        float failures = 0;
@@ -949,14 +949,14 @@ public class PhrescoReportGeneration extends FrameworkBaseAction implements Fram
 	}
 	
 	//detailed object info
-	private void printDetailedObj(ArrayList<TestSuite> testSuiteWithTestCase) {
+	private void printDetailedObj(ArrayList<TestSuiteResult> testSuiteWithTestCase) {
 		S_LOGGER.debug("printing required values!!!!!");
-		for (TestSuite testSuite : testSuiteWithTestCase) {
+		for (TestSuiteResult testSuite : testSuiteWithTestCase) {
 			S_LOGGER.debug("getName " + testSuite.getName() + " tests " + testSuite.getTests() + " Failure " + testSuite.getFailures() + " Error" + testSuite.getErrors() + " testcases size " + testSuite.getTestCases().size());
 		}
 	}
 	
-    private List<TestSuite> getTestSuite(Document doc) throws TransformerException, PhrescoException {
+    private List<TestSuiteResult> getTestSuite(Document doc) throws TransformerException, PhrescoException {
         try {
             String testSuitePath = null;
     		if (UNIT.equals(testType)) {
@@ -970,11 +970,11 @@ public class PhrescoReportGeneration extends FrameworkBaseAction implements Fram
                 nodelist = org.apache.xpath.XPathAPI.selectNodeList(doc, testSuitePath);
             }
 
-            List<TestSuite> testSuites = new ArrayList<TestSuite>(2);
-            TestSuite testSuite = null;
+            List<TestSuiteResult> testSuites = new ArrayList<TestSuiteResult>(2);
+            TestSuiteResult testSuite = null;
 
             for (int i = 0; i < nodelist.getLength(); i++) {
-                testSuite =  new TestSuite();
+                testSuite =  new TestSuiteResult();
                 Node node = nodelist.item(i);
                 NamedNodeMap nameNodeMap = node.getAttributes();
 
@@ -1007,7 +1007,7 @@ public class PhrescoReportGeneration extends FrameworkBaseAction implements Fram
         }
     }
 
-    private List<TestCase> getTestCases(Document doc, String testSuiteName) throws TransformerException, PhrescoException {
+    private List<TestCaseResult> getTestCases(Document doc, String testSuiteName) throws TransformerException, PhrescoException {
         try {
             String testCasePath = null;
             String testSuitePath = null;
@@ -1053,7 +1053,7 @@ public class PhrescoReportGeneration extends FrameworkBaseAction implements Fram
                 nodelist = org.apache.xpath.XPathAPI.selectNodeList(doc, sbMulti.toString());
             }
 
-            List<TestCase> testCases = new ArrayList<TestCase>();
+            List<TestCaseResult> testCases = new ArrayList<TestCaseResult>();
 
             int failureTestCases = 0;
             int errorTestCases = 0;
@@ -1062,7 +1062,7 @@ public class PhrescoReportGeneration extends FrameworkBaseAction implements Fram
                 Node node = nodelist.item(i);
                 NodeList childNodes = node.getChildNodes();
                 NamedNodeMap nameNodeMap = node.getAttributes();
-                TestCase testCase = new TestCase();
+                TestCaseResult testCase = new TestCaseResult();
 
                 if (childNodes != null && childNodes.getLength() > 0) {
 

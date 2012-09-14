@@ -87,11 +87,11 @@ import com.photon.phresco.framework.commons.PBXNativeTarget;
 import com.photon.phresco.framework.commons.QualityUtil;
 import com.photon.phresco.framework.commons.filter.FileListFilter;
 import com.photon.phresco.framework.model.PerformanceTestResult;
-import com.photon.phresco.framework.model.TestCase;
+import com.photon.phresco.framework.model.TestCaseResult;
 import com.photon.phresco.framework.model.TestCaseError;
 import com.photon.phresco.framework.model.TestCaseFailure;
 import com.photon.phresco.framework.model.TestResult;
-import com.photon.phresco.framework.model.TestSuite;
+import com.photon.phresco.framework.model.TestSuiteResult;
 import com.photon.phresco.model.PropertyInfo;
 import com.photon.phresco.model.SettingsInfo;
 import com.photon.phresco.util.Constants;
@@ -136,7 +136,7 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
     private String settingName = null;
     private String caption = null;
     private List<String> testResultFiles = null;
-    private List<TestSuite> testSuites = null;
+    private List<TestSuiteResult> testSuites = null;
     private List<String> testSuiteNames = null;
     private boolean validated = false;
 	private String testResultsType = null;
@@ -572,8 +572,8 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
 				Document doc = getDocument(resultFile);
 				NodeList testSuiteNodeList = evaluateTestSuite(doc);
 				if (testSuiteNodeList.getLength() > 0) {
-					List<TestSuite> testSuites = getTestSuite(testSuiteNodeList);
-					for (TestSuite testSuite : testSuites) {
+					List<TestSuiteResult> testSuites = getTestSuite(testSuiteNodeList);
+					for (TestSuiteResult testSuite : testSuites) {
 						mapTestSuites.put(testSuite.getName(), testSuiteNodeList);
 					}
 				}
@@ -609,13 +609,13 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
 		return testSuiteNode;
     }
 
-    private List<TestSuite> getTestSuite(NodeList nodelist) throws TransformerException, PhrescoException {
+    private List<TestSuiteResult> getTestSuite(NodeList nodelist) throws TransformerException, PhrescoException {
     	S_LOGGER.debug("Entering Method Quality.getTestSuite(NodeList nodelist)");
 
-    	List<TestSuite> testSuites = new ArrayList<TestSuite>(2);
-		TestSuite testSuite = null;
+    	List<TestSuiteResult> testSuites = new ArrayList<TestSuiteResult>(2);
+		TestSuiteResult testSuite = null;
 		for (int i = 0; i < nodelist.getLength(); i++) {
-		    testSuite =  new TestSuite();
+		    testSuite =  new TestSuiteResult();
 		    Node node = nodelist.item(i);
 		    NamedNodeMap nameNodeMap = node.getAttributes();
 
@@ -645,7 +645,7 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
 		return testSuites;
     }
 
-    private List<TestCase> getTestCases(NodeList testSuites) throws TransformerException, PhrescoException {
+    private List<TestCaseResult> getTestCases(NodeList testSuites) throws TransformerException, PhrescoException {
     	S_LOGGER.debug("Entering Method Quality.getTestCases(Document doc, String testSuiteName)");
         
     	try {
@@ -699,7 +699,7 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
                 nodelist = (NodeList) xpath.evaluate(sbMulti.toString(), testSuites.item(0).getParentNode(), XPathConstants.NODESET);
             }
 
-            List<TestCase> testCases = new ArrayList<TestCase>();
+            List<TestCaseResult> testCases = new ArrayList<TestCaseResult>();
 
             int failureTestCases = 0;
             int errorTestCases = 0;
@@ -716,7 +716,7 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
                 Node node = nodelist.item(i);
                 NodeList childNodes = node.getChildNodes();
                 NamedNodeMap nameNodeMap = node.getAttributes();
-                TestCase testCase = new TestCase();
+                TestCaseResult testCase = new TestCaseResult();
 
                 for (int k = 0; k < nameNodeMap.getLength(); k++) {
                     Node attribute = nameNodeMap.item(k);
@@ -1601,9 +1601,9 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
     			Collection<NodeList> allTestResultNodeLists = testResultNameMap.values();
     			for (NodeList allTestResultNodeList : allTestResultNodeLists) {
         			if (allTestResultNodeList.getLength() > 0 ) {
-    	    			List<TestSuite> allTestSuites = getTestSuite(allTestResultNodeList);
+    	    			List<TestSuiteResult> allTestSuites = getTestSuite(allTestResultNodeList);
     	    			if (CollectionUtils.isNotEmpty(allTestSuites)) {
-    		    			for (TestSuite tstSuite : allTestSuites) {
+    		    			for (TestSuiteResult tstSuite : allTestSuites) {
     		    				//testsuite values are set before calling getTestCases value
     							testSuite = tstSuite.getName();
     				            getTestCases(allTestResultNodeList);
@@ -1654,7 +1654,7 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
     			return APP_ALL_TEST_REPORT; 
     		} else {
 	            if (testSuites.getLength() > 0 ) {
-	            	List<TestCase> testCases = getTestCases(testSuites);
+	            	List<TestCaseResult> testCases = getTestCases(testSuites);
 	            	if (CollectionUtils.isEmpty(testCases)) {
 	            		getHttpRequest().setAttribute(REQ_ERROR_TESTSUITE, ERROR_TEST_CASE);
 	            	} else {
@@ -2468,11 +2468,11 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
 		this.projectModule = projectModule;
 	}
 	
-	public List<TestSuite> getTestSuites() {
+	public List<TestSuiteResult> getTestSuites() {
 		return testSuites;
 	}
 
-	public void setTestSuites(List<TestSuite> testSuites) {
+	public void setTestSuites(List<TestSuiteResult> testSuites) {
 		this.testSuites = testSuites;
 	}
 	
