@@ -117,7 +117,7 @@
    
 </div>
 
-<img class="loadingIcon">
+<!-- <img class="loadingIcon"> --> 
 
 <form id="formHome">
 	<input type="hidden" name="fromPage" value="home">

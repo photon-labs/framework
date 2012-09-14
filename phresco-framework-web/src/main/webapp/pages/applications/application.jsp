@@ -131,8 +131,7 @@
         			if(selectedTab != "features"){
         				changeStyle(selectedTab);        				
         			}
-					disableScreen();
-					showLoadingIcon($("#loadingIconDiv"));
+					showLoadingIcon();
 				}
         		if (selectedTab == "features") {
         			performAction(selectedTab, $('#formAppInfo'), $("#tabDiv"));

@@ -276,7 +276,7 @@ h1 {margin-bottom: 0;}
 	    
 	    $("#cancelConfiguration").click(function() {
 	    	performAction("configuration", $('#formConfigAdd'), $('#tabDiv'));
-	    	showLoadingIcon($("#tabDiv")); // Loading Icon
+	    	showLoadingIcon(); // Loading Icon
 	    });
 		
 		$('#save').click(function() {

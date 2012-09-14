@@ -206,8 +206,7 @@
 		});
 		
 		$('#add').click(function() {
-			disableScreen();
-			showLoadingIcon($("#loadingIconDiv"));
+			showLoadingIcon();
 	        performAction('applicationDetails', $('#customersForm'), $('#container'));
 	    });
 		
@@ -218,8 +217,7 @@
 	    });
 		
 		$("a[name='edit']").click(function() {
-			disableScreen();
-			showLoadingIcon($("#loadingIconDiv"));
+			showLoadingIcon();
 			var params = "projectCode=";
 			params = params.concat($(this).attr("id"));
 			params = params.concat("&fromPage=");

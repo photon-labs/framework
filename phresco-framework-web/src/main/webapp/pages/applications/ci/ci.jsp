@@ -376,7 +376,7 @@
 		//data can be zero when no build is in progress, can be int value for each running job
 		// noOfJobsIsinProgress also can be zero  when no jobs in in progress
 		if (data < <%= noOfJobsIsinProgress %> || data > <%= noOfJobsIsinProgress %>) { // When build is increased or decreased on a job refresh the page , refresh the page
-	    	showLoadingIcon($("#tabDiv")); // Loading Icon
+	    	showLoadingIcon(); // Loading Icon
 	    	console.log("build succeeded going to load builds.....");
 			performAction('ci', $('#formCi'), $("#tabDiv"));
 		} else {
@@ -415,7 +415,7 @@
 	
 	function reloadCI() {
 		if ($("a[name='appTabs'][class='selected']").attr("id") == "ci" && $(".wel_come").css("display") == "none"){
-	    	showLoadingIcon($("#tabDiv")); // Loading Icon
+	    	showLoadingIcon(); // Loading Icon
 	    	console.log("Server startup completed ..." + isCiRefresh);
 	    	var params = "projectCode=";
 	    	params = params.concat('<%= projectCode %>');
