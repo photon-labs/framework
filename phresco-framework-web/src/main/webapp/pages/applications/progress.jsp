@@ -19,13 +19,15 @@
   --%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
-<%@page import="org.apache.commons.lang.StringUtils"%>
-<%@page import="com.photon.phresco.commons.FrameworkConstants"%>
+<%@ page import="org.apache.commons.lang.StringUtils"%>
+<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 
 <div class="popup_Modal testCmdLine" id="build-outputOuter">
 	<form name="testSuiteCall" action="functional" method="post" id="testSuiteCall" class="marginBottomZero">
 		<div class="modal-header repo_modal_header">
 		    <h3><s:text name="label.progress"/></h3>
+		    <img src="images/icons/clipboard-copy.png" alt="clipboard" id="clipboard" 
+		    	class="close progressClipboard" title="Copy to clipboard"/>
 		    <a class="close" href="#" id="closeGenerateTest">&times;</a>
 		</div>
 	</form>
@@ -49,6 +51,7 @@
 	var popupHeight = -(($(".popup_Modal").height()/2)-4);
 	$(".popup_Modal").css("margin-top", popupHeight +"px");
 	escPopup();
+	
 	function closePopup() {
 		$(".wel_come").show().css("display","none");
 	   	$("#build-outputOuter").hide();
@@ -56,4 +59,7 @@
 	
 	$('#performance-popup').css("margin-top", "-300px");
 
+	$('#clipboard').click(function() {
+		copyToClipboard($('#build-output').text());
+	});
 </script>

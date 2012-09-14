@@ -79,6 +79,7 @@ public class ProjectRuntimeManagerImpl implements ProjectRuntimeManager {
 	    pluginMap.put(TechnologyTypes.DOT_NET, Constants.MVN_PLUGIN_DOTNET_ID);
 	    pluginMap.put(TechnologyTypes.WORDPRESS, Constants.MVN_PLUGIN_WORDPRESS_ID);
 	    pluginMap.put(TechnologyTypes.JAVA_STANDALONE, Constants.MVN_PLUGIN_JAVA_ID);
+	    pluginMap.put(TechnologyTypes.ANDROID_LIBRARY, Constants.MVN_PLUGIN_ANDROID_ID);
 	}
 	
 	/**

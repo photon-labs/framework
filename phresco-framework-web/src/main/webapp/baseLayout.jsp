@@ -110,7 +110,10 @@
 	<body>
 		<div class="wel_come"></div>
 		<div class="errorOverlay"></div>
-		<div id="loadingIconDiv"></div>
+		
+		<div id="loadingIconDiv" class="hideContent"> 
+			<img class="loadingIcon" id="loadingIconImg" src="" />
+		</div>
 		
 		<!-- In Progress starts -->
 		<div id="progressbar" class="progressPosition">

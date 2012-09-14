@@ -4020,7 +4020,6 @@ form div.error {
 	position: absolute; 
 	left: 48%; 
 	top: 40%; 
-	display: none;
 }
 
 /** preloader gif starts **/
@@ -4962,4 +4961,9 @@ a[id='androidSigning']:hover {
 .iconSizeinList {
 	height: 20px !important; 
 	width: 20px !important;
+}
+
+.progressClipboard {
+	margin-right: 25px !important;
+	margin-top: -5px !important;
 }

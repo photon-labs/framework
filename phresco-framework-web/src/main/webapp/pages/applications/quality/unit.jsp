@@ -24,7 +24,7 @@
 <%@ page import="org.apache.commons.collections.CollectionUtils" %>
 
 <%@ page import="com.photon.phresco.model.ProjectInfo"%>
-<%@ page import="com.photon.phresco.framework.model.TestSuite"%>
+<%@ page import="com.photon.phresco.framework.model.TestSuiteResult"%>
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.util.TechnologyTypes" %>
 
@@ -33,7 +33,7 @@
 <script src="js/reader.js" ></script>
 
 <%
-	Boolean popup = Boolean.FALSE;
+    Boolean popup = Boolean.FALSE;
 	ProjectInfo projectInfo = (ProjectInfo)request.getAttribute(FrameworkConstants.REQ_PROJECT_INFO);
 	String testType = (String) request.getAttribute(FrameworkConstants.REQ_TEST_TYPE);
 	String projectCode = projectInfo.getCode();
@@ -46,14 +46,14 @@
 <form autocomplete="off" class="marginBottomZero" id="formUnit">
 	<div class="operation">
 		<%
-			Boolean showWarning = (Boolean) request.getAttribute(FrameworkConstants.REQ_BUILD_WARNING);
-			if (showWarning) {
+		    Boolean showWarning = (Boolean) request.getAttribute(FrameworkConstants.REQ_BUILD_WARNING);
+				if (showWarning) {
 		%>
 			<div class="alert-message warning display_msg" >
 				<s:label cssClass="labelWarn" key="build.required.message"/>
 			</div>
 		<%
-			}
+		    }
 		%>
 	
 		<div class="icon_fun_div printAsPdf">
@@ -72,8 +72,8 @@
 			<li id="first">
 				<input id="testbtn" type="button" value="<s:text name="label.test"/>" class="primary btn env_btn">
 			</li>
-			<% 
-				List<TestSuite> testSuites = (List<TestSuite>) request.getAttribute(FrameworkConstants.REQ_TEST_SUITE);
+			<%
+			    List<TestSuiteResult> testSuites = (List<TestSuiteResult>) request.getAttribute(FrameworkConstants.REQ_TEST_SUITE);
 				Set<String> testResultFiles = (Set<String>) request.getAttribute(FrameworkConstants.REQ_TEST_RESULT_FILE_NAMES);
 				String selectedTestResultFile = (String) request.getAttribute(FrameworkConstants.REQ_SELECTED_TEST_RESULT_FILE);
 				boolean buttonRow = false;
@@ -85,13 +85,17 @@
 					</li>
 					<li>
 						<select id="projectModule" name="projectModule"> 
-						<% for(String projectModule : projectModules) { %>
-							<option value="<%= projectModule %>" id="<%= projectModule %>" ><%= projectModule %> </option>
-						<% } %>
+						<%
+ 						    for (String projectModule : projectModules) {
+ 						%>
+							<option value="<%=projectModule%>" id="<%=projectModule%>" ><%=projectModule%> </option>
+						<%
+						    }
+						%>
 						</select>
 					</li>
-			<%  
-				}
+			<%
+			    }
 				if (TechnologyTypes.HTML5_MULTICHANNEL_JQUERY_WIDGET.contains(techId) || TechnologyTypes.HTML5_WIDGET.contains(techId) || 
 					TechnologyTypes.HTML5_MOBILE_WIDGET.contains(techId) || TechnologyTypes.JAVA_WEBSERVICE.contains(techId)) {
 					buttonRow = true;
@@ -105,30 +109,36 @@
 							<option value="javascript" id="javascript" >Java Script</option>
 						</select>
 					</li>
-			<% 	
-				}
+			<%
+			    }
 				if (buttonRow) {
 			%>
-		</ul>
-			<% } %>
+				</ul>
+			<%
+			    }
+			%>
 	
 		<div class="alert-message block-message warning hideCtrl" id="errorDiv" style="margin: 5px 0 0 0;">
 			<center><label class="errorMsgLabel"></label></center>
 		</div>
 	
-		<% if (buttonRow) { %>
+		<%
+		    if (buttonRow) {
+		%>
 			<ul id="display-inline-block-example">
 				<li id="first"></li>
-		<% } %>
+		<%
+		    }
+		%>
 			<li id="label">
 				&nbsp;<strong class="hideCtrl" id="testResultLbl"><s:text name="label.test.suite"/></strong> 
 			</li>
 			<li>
 				<select id="testSuite" name="testSuite" class="hideContent"> <!-- class="techList" --> 
 					<option value="All">All</option>
-				<% 
-					if (CollectionUtils.isNotEmpty(testSuites)) {
-						for(TestSuite testSuiteDisplay : testSuites) {
+				<%
+				    if (CollectionUtils.isNotEmpty(testSuites)) {
+						for (TestSuiteResult testSuiteDisplay : testSuites) {
 				%>
 						<option value="<%= testSuiteDisplay.getName() %>" 
 							id="<%= testSuiteDisplay.getFailures() %>,<%= testSuiteDisplay.getErrors() %>,<%= testSuiteDisplay.getTests() %>,<%= selectedTestResultFile %>">

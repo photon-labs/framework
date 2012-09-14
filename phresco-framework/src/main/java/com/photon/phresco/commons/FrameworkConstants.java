@@ -263,6 +263,7 @@ public interface FrameworkConstants {
     String ELEMENT_VERBOS = "verbose";
     String ELEMENT_VERIFY = "verify";
     String REQ_SELECTED_TEST_NAME = "selectedTestName";
+	String REPORTS_JASPER = "reports/jasper/";
     
     String CONNECTION_URL = "connectionUrl";
 	String USER_NAME = "username";
@@ -374,8 +375,8 @@ public interface FrameworkConstants {
     String REQ_TEMP_SELECTEDMODULES = "selectedFeatures";
     String REQ_TEMP_SELECTED_PILOT_PROJ = "selectedPilotProj";
     String REQ_PILOTS_IDS = "pilotsIds";
-    String REQ_ALREADY_SELECTED_MODULES = "alreadySelectedModules";
-    String REQ_ALREADY_SELECTED_JSLIBS = "alreadySelectedJsLibs";
+    String REQ_PROJECT_INFO_MODULES = "projectInfoModules";
+    String REQ_PROJECT_INFO_JSLIBS = "projectInfoJsLibs";
     String REQ_ALL_JS_LIBS = "allJsLibs";
     String REQ_PILOTS_NAMES = "pilotsNames";
     String REQ_PILOT_PROJECT_INFO = "pilotProjectInfo";
@@ -584,6 +585,7 @@ public interface FrameworkConstants {
 	String REQ_FEATURES_RIGHT_MODULES = "rightModules";
 	String REQ_FEATURES_MODULE_CAT = "moduleCat";
 	String REQ_FEATURES_MODULES = "modules";
+	String REQ_FEATURES_JSLIBS = "jsLibs";
 	String REQ_ENVIRONMENTS = "environments";
 	String REQ_ENVIRONMENT = "environment";
     String REQ_PROJECT_INFO_SERVERS = "projectInfoServers";
@@ -1335,8 +1337,6 @@ public interface FrameworkConstants {
  
    /* For Error Report  */ 
    String REQ_LOG_REPORT = "logReport";
-   String LOG_ERROR = "logError";
-   
    
    /* WINDOWS CONSTANT */
 	  String HELLOWORD_PROJECT_FILE = "HelloWorld.csproj"; 
@@ -1361,4 +1361,8 @@ public interface FrameworkConstants {
 	  String COMMON = "\\Common";
 	  String DOUBLE_DOT  = "..";
    
+ //SettingsTemplate keys for IIS server
+		  String SETTINGS_TEMP_KEY_APP_NAME = "applicationName";
+		  String SETTINGS_TEMP_KEY_SITE_NAME = "siteName";
+
 }

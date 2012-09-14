@@ -293,8 +293,9 @@ public class ApplicationsUtil implements FrameworkConstants {
         return null;
     }
     
-    public static Map<String, String> getIdAndVersionAsMap(HttpServletRequest request, String[] ids) {
+    public static Map<String, String> getIdAndVersionAsMap(HttpServletRequest request, String strIds) {
     	Map<String, String> map = new HashMap<String, String>(15);
+    	String[] ids = strIds.split(",");
     	for (String id : ids) {
     		map.put(id, request.getParameter(id));
     	}

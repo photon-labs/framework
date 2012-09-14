@@ -40,9 +40,10 @@
     String projectCode = (String) request.getAttribute(FrameworkConstants.REQ_PROJECT_CODE);
     if (StringUtils.isEmpty(projectCode)) {
     	projectCode = "";
-    } 
-    Map<String, String> selectedFeatures = (Map<String, String>) request.getAttribute(FrameworkConstants.REQ_TEMP_SELECTEDMODULES);
-    Map<String, String> selectedJsLibs = (Map<String, String>) request.getAttribute(FrameworkConstants.REQ_TEMP_SELECTED_JSLIBS);
+    }
+    Map<String, String> tempSelectedFeatures = (Map<String, String>) request.getAttribute(FrameworkConstants.REQ_TEMP_SELECTEDMODULES);
+    Map<String, String> tempSelectedJsLibs = (Map<String, String>) request.getAttribute(FrameworkConstants.REQ_TEMP_SELECTED_JSLIBS);
+    
     String selectedPilotProj = (String) request.getAttribute(FrameworkConstants.REQ_TEMP_SELECTED_PILOT_PROJ);
     ProjectInfo selectedInfo = (ProjectInfo) session.getAttribute(projectCode);
     
@@ -183,11 +184,11 @@
 	<input type="hidden" id="configDbNames" name="configDbNames" value="<%= configDbNames == null ? "" : configDbNames %>">
 	<input type="hidden" id="selectedPilotProj" name="selectedPilotProj" value="<%= selectedPilotProj %>">
     <input type="hidden" name="fromTab" value="appInfo">
-    <% if (MapUtils.isNotEmpty(selectedFeatures)) { %>
-   		<input type="hidden" id="selectedFeatures" name="selectedFeatures" value="<%= selectedFeatures %>">
-   	<% } 	
-   	   if (MapUtils.isNotEmpty(selectedJsLibs)) { %>
-   		<input type="hidden" id="selectedJsLibs" name="selectedJsLibs" value="<%= selectedJsLibs %>">
+    <% if (MapUtils.isNotEmpty(tempSelectedFeatures)) { %>
+   		<input type="hidden" id="selectedFeatures" name="selectedFeatures" value="<%= tempSelectedFeatures %>">
+   	<% }	
+		if (MapUtils.isNotEmpty(tempSelectedJsLibs)) { %>
+   		<input type="hidden" id="selectedJsLibs" name="selectedJsLibs" value="<%= tempSelectedJsLibs %>">
    	<% } %>
    	<input type="hidden" name="customerId" value="<%= customerId %>">
    	<input type="hidden" name="fromPage" value="<%= fromPage %>">
@@ -201,6 +202,13 @@
 	if (!isiPad()) {
 		$(".appInfoScrollDiv").scrollbars();
 	}
+	
+	// To disable and enable the customer select box
+	<% if (StringUtils.isNotEmpty(fromPage)) { %>
+		$('select[name=customerId]').attr("disabled", "disabled");
+	<% } else { %>
+		$('select[name=customerId]').removeAttr("disabled", "disabled");
+	<% } %>
 	
     $(document).ready(function() {
 		$("#name").focus();
@@ -222,13 +230,13 @@
         
 		$('form').submit(function() {
 			disableScreen();
-			showLoadingIcon($("#loadingIconDiv"));
+// 			showLoadingIcon($("#loadingIconDiv")); // TODO : need to handle this
 			performAction('features', $('#formAppInfo'), $("#tabDiv"));
 			return false;
 		});
 		
 		$('#cancel').click(function() {
-	    	showLoadingIcon($("#tabDiv")); // Loading Icon
+// 	    	showLoadingIcon($("#tabDiv")); // TODO : need to handle this
 			performAction('applications', $('#formAppInfo'), $('#container'));
 		});
 		

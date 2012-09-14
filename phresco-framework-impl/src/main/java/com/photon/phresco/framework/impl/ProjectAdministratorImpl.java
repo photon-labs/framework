@@ -83,7 +83,6 @@ import com.photon.phresco.framework.api.Project;
 import com.photon.phresco.framework.api.ProjectAdministrator;
 import com.photon.phresco.framework.api.ValidationResult;
 import com.photon.phresco.framework.api.Validator;
-import com.photon.phresco.framework.win8.util.ItemGroupUpdater;
 import com.photon.phresco.model.AdminConfigInfo;
 import com.photon.phresco.model.ApplicationType;
 import com.photon.phresco.model.CertificateInfo;
@@ -124,7 +123,6 @@ import com.sun.jersey.api.client.ClientResponse;
 public class ProjectAdministratorImpl implements ProjectAdministrator, FrameworkConstants, Constants, ServiceClientConstant, ServiceConstants {
 
 	private static final Logger S_LOGGER= Logger.getLogger(ProjectAdministratorImpl.class);
-	private List<AdminConfigInfo> adminConfigInfos = Collections.synchronizedList(new ArrayList<AdminConfigInfo>(5));
 	private static Map<String, String> sqlFolderPathMap = new HashMap<String, String>();
 	private static  Map<String, List<Reports>> siteReportMap = new HashMap<String, List<Reports>>(15);
 	private Map<String, List<DownloadInfo>> downloadInfosMap = Collections.synchronizedMap(new HashMap<String, List<DownloadInfo>>(64));
@@ -273,7 +271,6 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 	 */
 	@Override
 	public Project updateProject(ProjectInfo delta, ProjectInfo projectInfo, File path, User userInfo) throws PhrescoException {
-
 		S_LOGGER.debug("Entering Method ProjectAdministratorImpl.updateProject(ProjectInfo info, File path)");
 		S_LOGGER.debug("updateProject() > info name : " + delta.getName());
 
@@ -284,16 +281,16 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		ClientResponse response = null;
 		File pomPath = new File(Utility.getProjectHome() + File.separator + projectInfo.getCode() + File.separator + POM_FILE);
 		String techId = delta.getTechnology().getId();
-		if(techId.equals(TechnologyTypes.PHP_DRUPAL6)|| techId.equals(TechnologyTypes.PHP_DRUPAL7)) {
+		if (techId.equals(TechnologyTypes.PHP_DRUPAL6)|| techId.equals(TechnologyTypes.PHP_DRUPAL7)) {
 			excludeModule(delta);
 		}
 		boolean flag = !techId.equals(TechnologyTypes.JAVA_WEBSERVICE) && !techId.equals(TechnologyTypes.JAVA_STANDALONE) && !techId.equals(TechnologyTypes.ANDROID_NATIVE);
 		updateDocument(delta, path);
-		response = PhrescoFrameworkFactory.getServiceManager().updateProject(projectInfo,userInfo);
-		 if(response.getStatus() == 401){
-			 throw new PhrescoException("Session Expired ! Please Relogin.");
-		 }
-		 else if (flag) {
+		response = getServiceManager().updateProject(projectInfo);
+		if (response.getStatus() == 401){
+		    throw new PhrescoException("Session Expired ! Please Relogin.");
+		}
+		else if (flag) {
 			if (response.getStatus() != 200) {
 				throw new PhrescoException("Project updation failed");
 			}
@@ -460,7 +457,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		List<ModuleGroup> jsLibraries = projectInfo.getTechnology().getJsLibraries();
 		if(modules != null || jsLibraries != null) {
 			ProjectInfo selectecdModule = SelectecdModule(projectInfo,path);
-			ClientResponse updateDocumentResponse = PhrescoFrameworkFactory.getServiceManager().updateDocumentProject(selectecdModule);
+			ClientResponse updateDocumentResponse = getServiceManager().updateDocumentProject(selectecdModule);
 			if (updateDocumentResponse.getStatus() != 200) {
 				throw new PhrescoException("Project updation failed");
 			}
@@ -2152,23 +2149,11 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 ciManager.getMavenHomeXml(customerId);
 	 }
 
-	 private void setAdminConfigInfosFrmService() throws PhrescoException {
-		 if (CollectionUtils.isEmpty(adminConfigInfos)) {
-			 adminConfigInfos = PhrescoFrameworkFactory.getServiceManager().getAdminConfig();
-		 }
-	 }
+	 @Override
+	 public String getJforumPath(String customerId) throws PhrescoException {
+		 AdminConfigInfo adminConfigInfo = getServiceManager().getForumPath(customerId);
 
-	 public String getJforumPath() throws PhrescoException {
-		 if (CollectionUtils.isEmpty(adminConfigInfos)) {
-			 setAdminConfigInfosFrmService();
-		 }
-
-		 for (AdminConfigInfo adminConfigInfo : adminConfigInfos) {
-			 if (ADMIN_CONFIG_JFORUM_PATH.equals(adminConfigInfo.getKey())) {
-				 return adminConfigInfo.getValue();
-			 }
-		 }
-		 return null;
+		 return adminConfigInfo.getValue();
 	 }
 
 	 @Override
