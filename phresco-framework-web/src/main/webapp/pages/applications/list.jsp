@@ -76,7 +76,7 @@
 <form autocomplete="off" id="formAppList" class="app_list_form" name="listForm">
 	<div class="operation">
 		<input id="add" type="button" value="<s:text name="label.addappln"/>" class="btn primary"/>
-		<a href="#" class="btn primary" id="import"><s:text name="label.import.project"/></a>
+		<a href="#" class="btn primary" id="import"><s:text name="label.import.application"/></a>
 		<input id="deleteButton" type="button" value="<s:text name="label.delete"/>" class="btn disabled" disabled="disabled"/>
 	</div>
 	<%
