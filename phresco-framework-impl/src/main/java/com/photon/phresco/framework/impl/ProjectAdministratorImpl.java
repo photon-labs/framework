@@ -582,11 +582,12 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 			if (CollectionUtils.isEmpty(modules)) {
 				return;
 			}
-			for (ModuleGroup moduleGroups : modules) {
-				if (moduleGroups.isCore()) {
-					exclusionStringBuff.append("**/");
-					exclusionStringBuff.append(moduleGroups.getName().toLowerCase());
-					exclusionStringBuff.append("/**");
+			for (ModuleGroup moduleGroup : modules) {
+				if (moduleGroup.isCore()) {
+					exclusionStringBuff.append("**\\");
+					exclusionStringBuff.append(moduleGroup.getName().toLowerCase());
+					exclusionStringBuff.append("\\**");
+					exclusionStringBuff.append("\\*.*");
 					exclusionStringBuff.append(",");
 				}
 			}
