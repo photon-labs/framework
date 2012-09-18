@@ -1460,7 +1460,20 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 } 
 
 	 }
-
+	 
+	 public void setAsDefaultEnv(String env, Project project) throws PhrescoException {
+		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.createSettingsInfo(SettingsInfo info, File path)");
+		 try {
+			 String path = getConfigurationPath(project.getProjectInfo().getCode()).toString();
+			 ConfigurationReader configReader = new ConfigurationReader(new File(path));
+			 ConfigurationWriter configWriter = new ConfigurationWriter(configReader, false);
+			 configWriter.setDefaultEnvironment(env);
+			 configWriter.saveXml(new File(path));
+		 } catch (Exception e) {
+			 throw new PhrescoException(e);
+		 } 
+	 }
+	 
 	 @Override
 	 public void createEnvironments(Project project, List<Environment> selectedEnvs, boolean isNewFile) throws PhrescoException {
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.createEnvironments(List<String> envNames)");
