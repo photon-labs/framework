@@ -2,7 +2,7 @@ package com.photon.phresco.framework.commons;
 
 import java.util.List;
 
-import com.photon.phresco.framework.model.TestSuite;
+import com.photon.phresco.framework.model.TestSuiteResult;
 
 public class AndroidPerfReport {
 	private String fileName;

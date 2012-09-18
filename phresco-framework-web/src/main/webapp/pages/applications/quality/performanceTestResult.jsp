@@ -241,7 +241,7 @@
 	});
 	
 	function changeGraph(showGraphFor) {
-		showLoadingIcon($("#testResultDisplay")); // Loading Icon
+		showLoadingIcon(); // Loading Icon
 		performAction('performanceTestResult', $('#formPerformance'), $('#testResultDisplay'));
 		$("#graphicalView").show();
 	}

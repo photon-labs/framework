@@ -89,8 +89,7 @@
 			$("a[name='quality']").attr("class", "unselected");
 			$(this).attr("class", "selected");
 			var testingType = $(this).attr("id");
-			disableScreen();
-			showLoadingIcon($("#loadingIconDiv"));
+			showLoadingIcon();
 			changeTesting(testingType);
 		});
 

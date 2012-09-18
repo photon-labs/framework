@@ -131,8 +131,7 @@
         			if(selectedTab != "features"){
         				changeStyle(selectedTab);        				
         			}
-					disableScreen();
-					showLoadingIcon($("#loadingIconDiv"));
+					showLoadingIcon();
 				}
         		if (selectedTab == "features") {
         			performAction(selectedTab, $('#formAppInfo'), $("#tabDiv"));
@@ -147,24 +146,6 @@
         $("a[name='appTabs']").attr("class", "unselected");
         $("a[id='" + selectedTab + "']").attr("class", "selected");
     }
-    
-    function openFolder(path) {
-		var params = "path=";
-		params = params.concat(path);
-		performActionParams('openFolder', params, '');
-    }
-    
-    function copyPath(path) {
-		var params = "path=";
-		params = params.concat(path);
-		performActionParams('copyPath', params, '');
-	}
-    
-    function copyToClipboard(data) {
-        var params = "copyToClipboard=";
-        params = params.concat(data);
-        performActionParams('copyToClipboard', params, '');
-	}
     
     /* To show the validation result */
 	function showProjectValidationResult() {

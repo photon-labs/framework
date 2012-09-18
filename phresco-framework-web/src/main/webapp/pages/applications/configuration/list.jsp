@@ -206,8 +206,7 @@
 		%>
 		
 		$("#addConfiguration").click(function() {
-			disableScreen();
-			showLoadingIcon($("#loadingIconDiv"));
+			showLoadingIcon();
 			performAction("addConfiguration", $("#formConfigList"), $('#tabDiv'));
 		});
 		
@@ -256,8 +255,7 @@
      }
     
     function editConfiguration(configName, envName) {
-    	disableScreen();
-    	showLoadingIcon($("#loadingIconDiv"));
+    	showLoadingIcon();
     	
     	var params = "oldName=";
     	params = params.concat(configName);

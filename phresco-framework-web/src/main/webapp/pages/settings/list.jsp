@@ -247,8 +247,7 @@
 		});
 		
 		$('#addButton').click(function() {
-			disableScreen();
-			showLoadingIcon($("#loadingIconDiv"));
+			showLoadingIcon();
             performAction("addSettings", '', $('#container'));
         });
 		
@@ -264,8 +263,7 @@
     });
     
     function editSetting(configName, envName) {
-    	disableScreen();
-		showLoadingIcon($("#loadingIconDiv"));
+		showLoadingIcon();
     	var params = "";
     	params = params.concat("oldName=");
     	params = params.concat(configName);

@@ -19,7 +19,7 @@
  */
 package com.photon.phresco.framework.model;
 
-public class TestCase {
+public class TestCaseResult {
 
 	private String name;
 	private String testClass;
@@ -30,11 +30,11 @@ public class TestCase {
 	private TestCaseFailure testCaseFailure;
 	private TestCaseError testCaseError;
 
-	public TestCase() {
+	public TestCaseResult() {
 
 	}
 
-	public TestCase(String name, String testClass, String file, float line,
+	public TestCaseResult(String name, String testClass, String file, float line,
 			float assertions, String time) {
 		this.name = name;
 		this.testClass = testClass;

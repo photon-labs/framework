@@ -21,7 +21,7 @@ package com.photon.phresco.framework.model;
 
 import java.util.List;
 
-public class TestSuite {
+public class TestSuiteResult {
 
 	private String name;
 	private String file;
@@ -30,12 +30,12 @@ public class TestSuite {
 	private float failures;
 	private float errors;
 	private String time;
-	private List<TestCase> testCases;
+	private List<TestCaseResult> testCases;
 
-	public TestSuite() {
+	public TestSuiteResult() {
 	}
 
-	public TestSuite(String name, String file, String assertions, float tests,
+	public TestSuiteResult(String name, String file, String assertions, float tests,
 			float failures, float errors, String time) {
 		this.name = name;
 		this.file = file;
@@ -102,11 +102,11 @@ public class TestSuite {
 		this.time = time;
 	}
 
-	public List<TestCase> getTestCases() {
+	public List<TestCaseResult> getTestCases() {
 		return testCases;
 	}
 
-	public void setTestCases(List<TestCase> testCases) {
+	public void setTestCases(List<TestCaseResult> testCases) {
 		this.testCases = testCases;
 	}
 

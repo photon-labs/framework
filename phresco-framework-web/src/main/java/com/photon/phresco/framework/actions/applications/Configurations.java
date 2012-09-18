@@ -90,9 +90,17 @@ public class Configurations extends FrameworkBaseAction {
     private String envDeleteMsg = null;
     private List<String> projectInfoVersions = null;
     
+
     //set as default envs
     private String setAsDefaultEnv = "";
     private boolean flag = false;
+
+    // For IIS server
+    private String appName = "";
+	private String nameOfSite = "";
+    private String appNameError = null;
+    private String siteNameError = null;
+
     
 	public String list() {
         if (S_LOGGER.isDebugEnabled()) {
@@ -165,6 +173,7 @@ public class Configurations extends FrameworkBaseAction {
             SettingsTemplate selectedSettingTemplate = administrator.getSettingsTemplate(configType, projectInfo.getCustomerId());
             List<PropertyInfo> propertyInfoList = new ArrayList<PropertyInfo>();
             List<PropertyTemplate> propertyTemplates = selectedSettingTemplate.getProperties();
+            boolean isIISServer = false;
             String key = null;
             String value = null;
             for (PropertyTemplate propertyTemplate : propertyTemplates) {
@@ -181,6 +190,9 @@ public class Configurations extends FrameworkBaseAction {
             			} else {
             				propertyInfoList.add(new PropertyInfo(key, value.trim()));
             			}
+            			if ("type".equals(key) && "IIS".equals(value)) {
+                        	isIISServer = true;
+                        }
 					}
             	} else {
             		key = propertyTemplate.getKey();
@@ -213,6 +225,10 @@ public class Configurations extends FrameworkBaseAction {
             	}
                 if (S_LOGGER.isDebugEnabled()) {
                 	S_LOGGER.debug("Configuration.save() key " + propertyTemplate.getKey() + "and Value is " + value);
+                }
+                if (isIISServer) {
+	            	propertyInfoList.add(new PropertyInfo(SETTINGS_TEMP_KEY_APP_NAME, appName));
+	                propertyInfoList.add(new PropertyInfo(SETTINGS_TEMP_KEY_SITE_NAME, nameOfSite));
                 }
             }
             SettingsInfo settingsInfo = new SettingsInfo(configName, description, configType);
@@ -457,6 +473,7 @@ public class Configurations extends FrameworkBaseAction {
     	SettingsTemplate selectedSettingTemplate = administrator.getSettingsTemplate(configType, projectInfo.getCustomerId());
     	
     	boolean serverTypeValidation = false;
+    	boolean isIISServer = false;
     	for (PropertyTemplate propertyTemplate : selectedSettingTemplate.getProperties()) {
     		String key = null;
     		String value = null;
@@ -469,6 +486,9 @@ public class Configurations extends FrameworkBaseAction {
                     if ("type".equals(key) && "NodeJS".equals(value)) {
                     	serverTypeValidation = true;
                     }
+                    if ("type".equals(key) && "IIS".equals(value)) {
+                    	isIISServer = true;
+                    }
 				}
         	} else {
         		key = propertyTemplate.getKey();
@@ -478,6 +498,9 @@ public class Configurations extends FrameworkBaseAction {
             String techId = project.getProjectInfo().getTechnology().getId();
             if ((serverTypeValidation && "deploy_dir".equals(key)) || TechnologyTypes.ANDROIDS.contains(techId)) {
            		isRequired = false;
+            }
+            if (isIISServer && ("context".equals(key))) {
+            	isRequired = false;
             }
             // validation for UserName & Password for RemoteDeployment
             boolean remoteDeply = Boolean.parseBoolean(remoteDeployment);
@@ -502,6 +525,17 @@ public class Configurations extends FrameworkBaseAction {
 	        setDynamicError(dynamicError);
 	        validate = false;
 	   	}
+	   	
+		if (isIISServer) {
+        	if (StringUtils.isEmpty(appName)) {
+        		setAppNameError("App Name is missing");
+        		validate = false;
+        	}
+        	if (StringUtils.isEmpty(nameOfSite)) {
+        		setSiteNameError("Site Name is missing");
+        		validate = false;
+        	}
+        }
 	   	
 	   	if (StringUtils.isNotEmpty(getHttpRequest().getParameter("port"))) {
 		   	int value = Integer.parseInt(getHttpRequest().getParameter("port"));
@@ -570,6 +604,7 @@ public class Configurations extends FrameworkBaseAction {
             SettingsTemplate selectedSettingTemplate = administrator.getSettingsTemplate(configType, projectInfo.getCustomerId());
             List<PropertyInfo> propertyInfoList = new ArrayList<PropertyInfo>();
             List<PropertyTemplate> propertyTemplates = selectedSettingTemplate.getProperties();
+            boolean isIISServer = false;
             String key = null;
             String value = null;
             for (PropertyTemplate propertyTemplate : propertyTemplates) {
@@ -586,6 +621,9 @@ public class Configurations extends FrameworkBaseAction {
             			} else {
             				propertyInfoList.add(new PropertyInfo(key, value.trim()));
             			}
+            			if ("type".equals(key) && "IIS".equals(value)) {
+                        	isIISServer = true;
+                        }	
 					}
             	} else {
 	                value = getHttpRequest().getParameter(propertyTemplate.getKey());
@@ -609,6 +647,10 @@ public class Configurations extends FrameworkBaseAction {
 	                value = value.trim();
 	                propertyInfoList.add(new PropertyInfo(propertyTemplate.getKey(), value));
             	}
+            }
+            if (isIISServer) {
+                propertyInfoList.add(new PropertyInfo(SETTINGS_TEMP_KEY_APP_NAME, appName));
+                propertyInfoList.add(new PropertyInfo(SETTINGS_TEMP_KEY_SITE_NAME, nameOfSite));
             }
             SettingsInfo settingsInfo = new SettingsInfo(configName, description, configType);
             settingsInfo.setPropertyInfos(propertyInfoList);
@@ -945,6 +987,7 @@ public class Configurations extends FrameworkBaseAction {
 		this.emailError = emailError;
 	}
 	
+
 	public String getSetAsDefaultEnv() {
 		return setAsDefaultEnv;
 	}
@@ -959,5 +1002,37 @@ public class Configurations extends FrameworkBaseAction {
 
 	public void setFlag(boolean flag) {
 		this.flag = flag;
+
+	public String getAppName() {
+		return appName;
+	}
+
+	public void setAppName(String appName) {
+		this.appName = appName;
+	}
+
+	public String getAppNameError() {
+		return appNameError;
+	}
+
+	public void setAppNameError(String appNameError) {
+		this.appNameError = appNameError;
+	}
+
+	public String getSiteNameError() {
+		return siteNameError;
+	}
+
+	public void setSiteNameError(String siteNameError) {
+		this.siteNameError = siteNameError;
+	}
+
+	public String getNameOfSite() {
+		return nameOfSite;
+	}
+
+	public void setNameOfSite(String nameOfSite) {
+		this.nameOfSite = nameOfSite;
+
 	}
 }

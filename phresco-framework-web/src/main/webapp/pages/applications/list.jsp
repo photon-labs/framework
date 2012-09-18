@@ -76,7 +76,7 @@
 <form autocomplete="off" id="formAppList" class="app_list_form" name="listForm">
 	<div class="operation">
 		<input id="add" type="button" value="<s:text name="label.addappln"/>" class="btn primary"/>
-		<a href="#" class="btn primary" id="import"><s:text name="label.import.project"/></a>
+		<a href="#" class="btn primary" id="import"><s:text name="label.import.application"/></a>
 		<input id="deleteButton" type="button" value="<s:text name="label.delete"/>" class="btn disabled" disabled="disabled"/>
 	</div>
 	<%
@@ -132,8 +132,10 @@
 							ProjectInfo projectInfo = project.getProjectInfo();
 					%>
 		            	<tr>
-		              		<td class="checkbox_list">
-		              			<input type="checkbox" class="check" name="selectedProjects" value="<%= projectInfo.getCode() %>">
+		            		<td>
+			              		<div class="checkbox_list">
+			              			<input type="checkbox" class="check" name="selectedProjects" value="<%= projectInfo.getCode() %>">
+			              		</div>
 		              		</td>
 		              		<td>
 		              			<a href="#" name="edit" id="<%= projectInfo.getCode() %>" ><%= projectInfo.getName() %></a>
@@ -206,8 +208,7 @@
 		});
 		
 		$('#add').click(function() {
-			disableScreen();
-			showLoadingIcon($("#loadingIconDiv"));
+			showLoadingIcon();
 	        performAction('applicationDetails', $('#customersForm'), $('#container'));
 	    });
 		
@@ -218,8 +219,7 @@
 	    });
 		
 		$("a[name='edit']").click(function() {
-			disableScreen();
-			showLoadingIcon($("#loadingIconDiv"));
+			showLoadingIcon();
 			var params = "projectCode=";
 			params = params.concat($(this).attr("id"));
 			params = params.concat("&fromPage=");
