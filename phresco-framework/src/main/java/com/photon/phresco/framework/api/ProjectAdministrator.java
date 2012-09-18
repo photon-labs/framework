@@ -740,4 +740,6 @@ public interface ProjectAdministrator {
 	 List<CertificateInfo> getCertificate(String host, int port) throws PhrescoException;
 	 
 	 void addCertificate(CertificateInfo info, File file) throws PhrescoException;
+	 
+	 void setAsDefaultEnv(String env, Project project) throws PhrescoException;
 }
