@@ -90,6 +90,7 @@ import com.photon.phresco.model.Database;
 import com.photon.phresco.model.DownloadInfo;
 import com.photon.phresco.model.DownloadPropertyInfo;
 import com.photon.phresco.model.LogInfo;
+import com.photon.phresco.model.Module;
 import com.photon.phresco.model.ModuleGroup;
 import com.photon.phresco.model.ProjectInfo;
 import com.photon.phresco.model.Server;
@@ -657,7 +658,12 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 				return;
 			}
 			for (ModuleGroup moduleGroup : modules) {
-				pomProcessor.addDependency(moduleGroup.getGroupId(), moduleGroup.getArtifactId(), moduleGroup.getVersions().get(0).getVersion());
+			    List<Module> versions = moduleGroup.getVersions();
+			    if (CollectionUtils.isNotEmpty(versions)) {
+			        for (Module module : versions) {
+			            pomProcessor.addDependency(module.getGroupId(), module.getArtifactId(), module.getVersion());
+                    }
+			    }
 				pomProcessor.save();
 			}
 			} catch (JAXBException e) {
@@ -666,7 +672,6 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 				throw new PhrescoException(e);
 		}
 	}
-
 
 	@Override
 	public List<ApplicationType> getApplicationTypes(String customerId) throws PhrescoException {
