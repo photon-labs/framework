@@ -27,9 +27,9 @@
 <%@ page import="org.apache.commons.collections.CollectionUtils" %>
 <%@ page import="org.apache.commons.collections.MapUtils" %>
 
-<%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
-<%@ page import="com.photon.phresco.model.ProjectInfo" %>
-<%@ page import="com.photon.phresco.model.Technology" %>
+<%@ page import="com.photon.phresco.framework.model.FrameworkConstants" %>
+<%@ page import="com.photon.phresco.commons.model.ProjectInfo" %>
+<%@ page import="com.photon.phresco.commons.model.Technology" %>
 <%@ page import="com.photon.phresco.model.ModuleGroup" %>
 <%@ page import="com.photon.phresco.model.Module" %>
 <%@ page import="com.photon.phresco.model.Documentation.DocumentationType"%>
@@ -238,11 +238,6 @@
 											<table class="download_tbl">
 												<tbody>
 												<% 
-												String descContent = "";
-					                            if (leftModule.getDoc(DocumentationType.DESCRIPTION) != null) {
-												  	descContent = leftModule.getDoc(DocumentationType.DESCRIPTION).getContent();
-												}
-					                            
 					                            String serverUrl = (String) request.getAttribute(FrameworkConstants.REQ_SERVER_URL);
 												String url = "";
 												String featureUrl = "";
@@ -253,14 +248,19 @@
 													url = serverUrl + "/" + featureUrl;
 												}
 												  
-												String helpTextContent = "";
-												if (leftModule.getDoc(DocumentationType.HELP_TEXT) != null) {
-												  	helpTextContent = leftModule.getDoc(DocumentationType.HELP_TEXT).getContent();
-												}
-												
 												List<Module> modules = leftModule.getVersions();
 												if (CollectionUtils.isNotEmpty(modules)) {
 													for (Module module : modules) {
+													    String descContent = "";
+							                            if (module.getDoc(DocumentationType.DESCRIPTION) != null) {
+														  	descContent = module.getDoc(DocumentationType.DESCRIPTION).getContent();
+														}
+							                            
+							                            String helpTextContent = "";
+														if (module.getDoc(DocumentationType.HELP_TEXT) != null) {
+														  	helpTextContent = module.getDoc(DocumentationType.HELP_TEXT).getContent();
+														}
+							                            
 														checkedStr = "";
 														if (MapUtils.isNotEmpty(selectedModules)) {
 															String selectedVersion = selectedModules.get(leftModule.getId());
@@ -362,11 +362,6 @@
 				                        	<table class="download_tbl">
 					                            <tbody>
 					                            <% 
-						                            String descContent = "";
-													if (rightModule.getDoc(DocumentationType.DESCRIPTION) != null) { 
-													  	descContent = rightModule.getDoc(DocumentationType.DESCRIPTION).getContent();
-													}
-													
 													String serverUrl = (String) request.getAttribute(FrameworkConstants.REQ_SERVER_URL);
 													String url = "";
 													String featureUrl = "";
@@ -377,14 +372,19 @@
 														url = serverUrl + "/" + featureUrl;
 													}
 													  
-													String helpTextContent = "";
-													if (rightModule.getDoc(DocumentationType.HELP_TEXT) != null) { 
-													  	helpTextContent = rightModule.getDoc(DocumentationType.HELP_TEXT).getContent();
-													}
-													
 											    	List<Module> versions = rightModule.getVersions();
 											    	if (CollectionUtils.isNotEmpty(versions)) {
 														for (Module moduleVersion : versions) {
+														    String descContent = "";
+															if (moduleVersion.getDoc(DocumentationType.DESCRIPTION) != null) { 
+															  	descContent = moduleVersion.getDoc(DocumentationType.DESCRIPTION).getContent();
+															}
+															
+															String helpTextContent = "";
+															if (moduleVersion.getDoc(DocumentationType.HELP_TEXT) != null) { 
+															  	helpTextContent = moduleVersion.getDoc(DocumentationType.HELP_TEXT).getContent();
+															}
+															
 															checkedStr = "";
 															if (rightModuleHdr.equals(FrameworkConstants.REQ_JS_LIBS)) {
 																if (MapUtils.isNotEmpty(selectedJsLibs)) {

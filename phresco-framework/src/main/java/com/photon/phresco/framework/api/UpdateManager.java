@@ -19,8 +19,8 @@
  */
 package com.photon.phresco.framework.api;
 
+import com.photon.phresco.commons.model.VersionInfo;
 import com.photon.phresco.exception.PhrescoException;
-import com.photon.phresco.model.VersionInfo;
 
 public interface UpdateManager {
 

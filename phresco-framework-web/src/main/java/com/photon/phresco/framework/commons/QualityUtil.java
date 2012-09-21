@@ -51,11 +51,11 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.commons.filter.FileListFilter;
+import com.photon.phresco.framework.model.FrameworkConstants;
 import com.photon.phresco.framework.model.PerformanceTestResult;
-import com.photon.phresco.model.SettingsInfo;
+import com.photon.phresco.framework.model.SettingsInfo;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.TechnologyTypes;
 

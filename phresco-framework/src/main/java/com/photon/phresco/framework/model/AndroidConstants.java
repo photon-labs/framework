@@ -1,6 +1,6 @@
 /*
  * ###
- * Phresco Framework
+ * Phresco Commons
  * 
  * Copyright (C) 1999 - 2012 Photon Infotech Inc.
  * 
@@ -17,35 +17,17 @@
  * limitations under the License.
  * ###
  */
-package com.photon.phresco.commons;
+package com.photon.phresco.framework.model;
 
-public class CIJobStatus {
-    int code;
-    String message;
-    
-    public CIJobStatus() {
-        super();
-    }
-    
-    public CIJobStatus(int code, String message) {
-        super();
-        this.code = code;
-        this.message = message;
-    }
+public interface AndroidConstants {
 
-    public int getCode() {
-        return code;
-    }
-
-    public void setCode(int code) {
-        this.code = code;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
+	String ANDROID_22="2.2";
+	
+	String ANDROID_233="2.3.3";
+	
+	String ANDROID_401="4.0.3";
+	
+	String SUPPORTED_SDKS[] = new String[]{ ANDROID_22, ANDROID_233, ANDROID_401};
+	
+	String ANDROID_VERSION_MVN_PARAM="android.version";
 }

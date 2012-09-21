@@ -63,6 +63,11 @@ import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.api.CIManager;
 import com.photon.phresco.framework.api.ProjectAdministrator;
+import com.photon.phresco.framework.model.BuildInfo;
+import com.photon.phresco.framework.model.CIBuild;
+import com.photon.phresco.framework.model.CIJob;
+import com.photon.phresco.framework.model.CIJobStatus;
+import com.photon.phresco.framework.model.FrameworkConstants;
 import com.photon.phresco.service.client.api.ServiceManager;
 import com.photon.phresco.util.Utility;
 import com.sun.jersey.api.client.ClientResponse;
@@ -361,7 +366,11 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
         	ciBuild.setStatus(resultJson.getAsString());
         	//download path
         	for (JsonElement jsonArtElement : asJsonArray) {
-            	ciBuild.setDownload(jsonArtElement.getAsJsonObject().get(FrameworkConstants.CI_JOB_BUILD_DOWNLOAD_PATH).toString());
+        		String buildDownloadZip = jsonArtElement.getAsJsonObject().get(FrameworkConstants.CI_JOB_BUILD_DOWNLOAD_PATH).toString();
+        		if (buildDownloadZip.endsWith(FrameworkConstants.CI_ZIP)) {
+        			S_LOGGER.debug("download artifact " + buildDownloadZip);
+        			ciBuild.setDownload(buildDownloadZip);
+        		}
     		}
         }
 

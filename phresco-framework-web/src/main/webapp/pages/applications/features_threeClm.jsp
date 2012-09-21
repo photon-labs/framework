@@ -27,9 +27,9 @@
 <%@ page import="org.apache.commons.collections.CollectionUtils" %>
 <%@ page import="org.apache.commons.collections.MapUtils" %>
 
-<%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
-<%@ page import="com.photon.phresco.model.ProjectInfo" %>
-<%@ page import="com.photon.phresco.model.Technology" %>
+<%@ page import="com.photon.phresco.framework.model.FrameworkConstants" %>
+<%@ page import="com.photon.phresco.commons.model.ProjectInfo" %>
+<%@ page import="com.photon.phresco.commons.model.Technology" %>
 <%@ page import="com.photon.phresco.model.ModuleGroup" %>
 <%@ page import="com.photon.phresco.model.Module" %>
 <%@ page import="com.photon.phresco.model.Documentation.DocumentationType"%>
@@ -226,10 +226,7 @@
 						                            </thead> -->
 						                            <tbody>
 													<% 
-													String descContent = "";
-													if (coreModule.getDoc(DocumentationType.DESCRIPTION) != null) { 
-													  	descContent = coreModule.getDoc(DocumentationType.DESCRIPTION).getContent();
-													}
+													
 													
 													String serverUrl = (String) request.getAttribute(FrameworkConstants.REQ_SERVER_URL);
 													String url = "";
@@ -241,14 +238,19 @@
 														url = serverUrl + "/" + featureUrl;
 													}
 													
-													String helpTextContent = "";
-													if (coreModule.getDoc(DocumentationType.HELP_TEXT) != null) { 
-													  	helpTextContent = coreModule.getDoc(DocumentationType.HELP_TEXT).getContent();
-													}
-													
 													List<Module> versions = coreModule.getVersions();
 											    	if (CollectionUtils.isNotEmpty(versions)) {
 														for (Module moduleVersion : versions) {
+														    String descContent = "";
+															if (moduleVersion.getDoc(DocumentationType.DESCRIPTION) != null) { 
+															  	descContent = moduleVersion.getDoc(DocumentationType.DESCRIPTION).getContent();
+															}
+															
+															String helpTextContent = "";
+															if (moduleVersion.getDoc(DocumentationType.HELP_TEXT) != null) { 
+															  	helpTextContent = moduleVersion.getDoc(DocumentationType.HELP_TEXT).getContent();
+															}
+															
 															checkedStr = "";
 															if (MapUtils.isNotEmpty(selectedModules)) {
 																String selectedVersion = selectedModules.get(coreModule.getId());
@@ -342,11 +344,6 @@
 							                            </thead> -->
 							                            <tbody>
 							                            <%
-							                            String descContent = "";
-														if (jslibrary.getDoc(DocumentationType.DESCRIPTION) != null) { 
-														  	descContent = jslibrary.getDoc(DocumentationType.DESCRIPTION).getContent();
-														}
-														
 														String serverUrl = (String) request.getAttribute(FrameworkConstants.REQ_SERVER_URL);
 														String url = "";
 														String featureUrl = "";
@@ -356,15 +353,20 @@
 														} else {
 															url = serverUrl + "/" + featureUrl;
 														}
-		 												
-														String helpTextContent = "";
-														if (jslibrary.getDoc(DocumentationType.HELP_TEXT) != null) { 
-														  	helpTextContent = jslibrary.getDoc(DocumentationType.HELP_TEXT).getContent();
-														}
 														
 												    	List<Module> versions = jslibrary.getVersions();
 												    	if (CollectionUtils.isNotEmpty(versions)) {
 															for (Module moduleVersion : versions) {
+															    String descContent = "";
+																if (moduleVersion.getDoc(DocumentationType.DESCRIPTION) != null) { 
+																  	descContent = moduleVersion.getDoc(DocumentationType.DESCRIPTION).getContent();
+																}
+																
+																String helpTextContent = "";
+																if (moduleVersion.getDoc(DocumentationType.HELP_TEXT) != null) { 
+																  	helpTextContent = moduleVersion.getDoc(DocumentationType.HELP_TEXT).getContent();
+																}
+																
 																checkedStr = "";
 																if (MapUtils.isNotEmpty(selectedJsLibs)) {
 																	String selectedVersion = selectedJsLibs.get(jslibrary.getId());
@@ -460,11 +462,6 @@
 							                            </thead> -->
 							                            <tbody>
 														<%
-														String descContent = "";
-														if (customModule.getDoc(DocumentationType.DESCRIPTION) != null) { 
-															descContent = customModule.getDoc(DocumentationType.DESCRIPTION).getContent();
-														}
-														
 														String serverUrl = (String) request.getAttribute(FrameworkConstants.REQ_SERVER_URL);
 														String url = "";
 														String featureUrl = "";
@@ -475,14 +472,19 @@
 															url = serverUrl + "/" + featureUrl;
 														}
 														  
-														String helpTextContent = "";
-														if (customModule.getDoc(DocumentationType.HELP_TEXT) != null) { 
-														  	helpTextContent = customModule.getDoc(DocumentationType.HELP_TEXT).getContent();
-														}
-														
 														List<Module> versions = customModule.getVersions();
 												    	if (CollectionUtils.isNotEmpty(versions)) {
 															for (Module moduleVersion : versions) {
+															    String descContent = "";
+																if (moduleVersion.getDoc(DocumentationType.DESCRIPTION) != null) { 
+																	descContent = moduleVersion.getDoc(DocumentationType.DESCRIPTION).getContent();
+																}
+																
+																String helpTextContent = "";
+																if (moduleVersion.getDoc(DocumentationType.HELP_TEXT) != null) { 
+																  	helpTextContent = moduleVersion.getDoc(DocumentationType.HELP_TEXT).getContent();
+																}
+																
 																checkedStr = "";
 																if (MapUtils.isNotEmpty(selectedModules)) {
 																	String selectedVersion = selectedModules.get(customModule.getId());

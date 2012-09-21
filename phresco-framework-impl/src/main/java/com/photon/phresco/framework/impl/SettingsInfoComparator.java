@@ -21,7 +21,7 @@ package com.photon.phresco.framework.impl;
 
 import java.util.Comparator;
 
-import com.photon.phresco.model.SettingsInfo;
+import com.photon.phresco.framework.model.SettingsInfo;
 
 public class SettingsInfoComparator implements Comparator<SettingsInfo> {
 

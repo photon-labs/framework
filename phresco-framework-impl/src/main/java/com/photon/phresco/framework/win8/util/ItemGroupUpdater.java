@@ -21,10 +21,10 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.photon.phresco.commons.FrameworkConstants;
+import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.exception.PhrescoException;
+import com.photon.phresco.framework.model.FrameworkConstants;
 import com.photon.phresco.model.ModuleGroup;
-import com.photon.phresco.model.ProjectInfo;
 
 
 public class ItemGroupUpdater implements FrameworkConstants {

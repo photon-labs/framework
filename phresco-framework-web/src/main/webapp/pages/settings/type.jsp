@@ -27,11 +27,11 @@
 <%@ page import="java.util.List"%>
 <%@ page import="java.util.Map"%>
 
-<%@ page import="com.photon.phresco.model.SettingsInfo"%>
-<%@ page import="com.photon.phresco.model.SettingsTemplate"%>
-<%@ page import="com.photon.phresco.model.PropertyTemplate"%>
-<%@ page import="com.photon.phresco.model.Technology"%>
-<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
+<%@ page import="com.photon.phresco.framework.model.SettingsInfo"%>
+<%@ page import="com.photon.phresco.commons.model.SettingsTemplate"%>
+<%@ page import="com.photon.phresco.commons.model.PropertyTemplate"%>
+<%@ page import="com.photon.phresco.commons.model.Technology"%>
+<%@ page import="com.photon.phresco.framework.model.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.model.I18NString"%>
 <%@ page import="com.photon.phresco.model.Server" %>
 <%@ page import="com.photon.phresco.model.Database" %>
@@ -168,10 +168,10 @@
 %>
 
 	<!-- applies to starts -->
-	<% 	
-		if ( settingsTemplate != null) {
-			List<String> appliesTos = settingsTemplate.getAppliesTo();
-			if (appliesTos != null) {
+	<%
+	    if ( settingsTemplate != null) {
+				List<String> appliesTos = settingsTemplate.getAppliesToTechs();
+				if (appliesTos != null) {
 	%>
 	
 	<div class="clearfix" id="appliesToErrDiv">

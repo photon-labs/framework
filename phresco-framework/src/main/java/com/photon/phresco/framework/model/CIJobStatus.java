@@ -1,6 +1,6 @@
 /*
  * ###
- * Phresco Commons
+ * Phresco Framework
  * 
  * Copyright (C) 1999 - 2012 Photon Infotech Inc.
  * 
@@ -17,22 +17,35 @@
  * limitations under the License.
  * ###
  */
-package com.photon.phresco.commons;
+package com.photon.phresco.framework.model;
 
-/**
- * Download Type Constants
- * @author bharatkumarradha
- *
- */
-public interface DownloadTypes {
+public class CIJobStatus {
+    int code;
+    String message;
+    
+    public CIJobStatus() {
+        super();
+    }
+    
+    public CIJobStatus(int code, String message) {
+        super();
+        this.code = code;
+        this.message = message;
+    }
 
-	String SERVER = "Server";
+    public int getCode() {
+        return code;
+    }
 
-	String DATABASE = "Database";
-	
-	String EDITOR = "Editor";
-	
-	String TOOLS = "Tools";
-	
-	String OTHERS = "Others";
+    public void setCode(int code) {
+        this.code = code;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
 }

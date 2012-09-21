@@ -17,7 +17,7 @@
  * limitations under the License.
  * ###
  */
-package com.photon.phresco.commons;
+package com.photon.phresco.framework.model;
 
 import java.io.File;
 
@@ -60,7 +60,6 @@ public interface FrameworkConstants {
 	String PATH_SUREFIRE_REPORTS = "/target/surefire-reports";
     
     String JENKINS_HOME = "JENKINS_HOME";
-    String CI_BUILD_NAME = "PHR_ci_build";
     String CI_JOB_INFO_NAME = "cijob.info";
     String CI_JOB_JSON_BUILDS = "builds";
     String CI_JOB_BUILD_RESULT = "result";
@@ -83,40 +82,13 @@ public interface FrameworkConstants {
     String CI_NO_OF_JOBS_IN_PROGRESS = "noOfJobsIsInProgress";
     String CI_BUILD_TRIGGERED_FROM_UI = "buildTriggeredFromUI";
     String CI_PROFILE = "-Pci clean ";
-    String CI_FUNCTIONAL_ADAPT = "-Pci ci:adapt ";
-    String CI_ZIP = ".zip\"";
     String TIMER_TRIGGER = "TimerTrigger";
     String CLASS = "class";
     String SCM = "scm";
     String SVN = "svn";
     String GIT = "git";
     String REPO_URL = "repoUrl";
-    String PROJECT_UPDATE_POPUP = "projectUpdatePopup";
-    String CLONED_WORKSPACE = "clonedWorkspace";
-	String CI_SCM = "scm";
-	String CLONE_WORKSPACE_SCM = "hudson.plugins.cloneworkspace.CloneWorkspaceSCM";
-	String CI_CLASS = "class";
-	String PARENT_JOB_NAME = "parentJobName";
-	String CI_CRITERIA = "criteria";
-	String ZERO = "0";
-	String PUBLISHERS_NODE = "publishers";
-	String ALL_FILES = "**/*";
-	String SUCCESSFUL = "Successful";
-	String TAR = "TAR";
-	String WORKSPACE_GLOB = "workspaceGlob";
-	String ARCHIVE_METHOD = "archiveMethod";
-	String BLUE = "BLUE";
-	String COLOR = "color";
-	String ORDINAL = "ordinal";
-	String CI_SUCCESS_FLAG = "SUCCESS";
-	String NAME = "name";
-	String CHILD_PROJECTS = "childProjects";
-	String THRESHOLD = "threshold";
-	String ROOT_POM = "rootPOM";
-	String XPATH_ROOT_NODE = "xpathRootNode";
-	String ANY = "Any";
     String REPO_TYPE = "repoType";
-    String UPDATE_SVN_PROJECT = "updateProject";
     String SVN_TYPE = "svnType";
     String GITHUB_SCM = "hudson.plugins.git.GitSCM";
     String SVN_SCM = "hudson.scm.SubversionSCM";
@@ -134,14 +106,6 @@ public interface FrameworkConstants {
     String CI_FILE_RELEASE_FILE_PATTERN="file__patterns";
     String CI_FILE_RELEASE_FILE_PATTERN_NODE ="hudson.plugins.collabnet.documentuploader.FilePattern";
     String CI_BUILD_EXT = "do_not_checkin/build/*.zip";
-	String HUDSON_TASKS_BUILD_TRIGGER_NODE = "hudson.tasks.BuildTrigger";
-	String MAVEN_HOME_ENV = "MAVEN_HOME";
-	String USE_PRIVATE_REPOSITORY_NODE = "usePrivateRepository";
-	String POM_NODE = "pom";
-	String MAVEN_NAME_NODE = "mavenName";
-	String TARGETS_NODE = "targets";
-	String HUDSON_TASKS_MAVEN_NODE = "hudson.tasks.Maven";
-	String POST_BUILDERS_NODE = "postbuilders";
     String CI_FILE_RELEASE_PUBLISHER_NODE="publishers";
     String COLON = ":";
     String HTTP_PROTOCOL = "http";
@@ -194,7 +158,6 @@ public interface FrameworkConstants {
     String HIDE_LOG = "hidelog";
 	String SHOW_DEBUG = "showdebug";
     String SKIP_TEST = "skiptest";
-	String FUNCTIONAL_TEST = "functionalTest";
     String DEPLOY = "deploy";
     String BUILD_INFO_ENVS = "buildInfoEnvs";
     String DEPLOY_IMPORT_SQL = "importSql";
@@ -1321,12 +1284,9 @@ public interface FrameworkConstants {
    String SONAR_LANGUAGE_PROFILE = "sonar.language";
    String SONAR_BRANCH   = "sonar.branch";
    String SONAR_SOURCE = "source"; 
-   String FUNCTIONALTEST = "functional";
-   String REPORT_ELEMENT_NODE_JS = "ReportElementNodeJs";
    String REPORT_ELEMENT_JS_WEB = "reportElementJsWeb";
    String REPORT_ELEMENT_SRC_FUNC = "reportElementSrcFunc";
    String REPORT_ELEMENT_JAVA_FUNC = "reportElementJavaFunc";
-   String REPORT_ELEMENT_SHAREPOINT_SRC_FUNC = "reportElementSharepointSrcFunc";
    String PHRESCO_SOURCE_DIRECTORY = "phresco.source.directory";
    String SONAR_DYNAMIC_ANALYSIS_PROFILE = "sonar.dynamicAnalysis";
    String SONAR_EXCLUSION = "sonar.exclusions";

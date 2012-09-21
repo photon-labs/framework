@@ -36,10 +36,10 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.api.ValidationResult;
 import com.photon.phresco.framework.api.Validator;
+import com.photon.phresco.framework.model.FrameworkConstants;
 import com.photon.phresco.util.Utility;
 
 public class ArchetypeValidator implements Validator, FrameworkConstants {

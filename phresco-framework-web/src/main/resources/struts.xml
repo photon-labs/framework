@@ -98,8 +98,12 @@
             <result name="importFromSvn">/pages/applications/svn_import.jsp</result>
         </action>
         
-        <action name="updateProject" method="updateProject" class="com.photon.phresco.framework.actions.applications.Applications">
-            <result name="reader">/pages/applications/reader.jsp</result>
+        <action name="updateSVNProject" method="updateSVNProject" class="com.photon.phresco.framework.actions.applications.Applications">
+            <result type="json"/>
+        </action>
+        
+        <action name="updateGITProject" method="updateGitProject" class="com.photon.phresco.framework.actions.applications.Applications">
+            <result type="json"/>
         </action>
         
         <action name="updateProjectPopup" method="updateProjectPopup" class="com.photon.phresco.framework.actions.applications.Applications">
@@ -390,6 +394,10 @@
         
         <action name="openEnvironmentPopup" method="openEnvironmentPopup" class="com.photon.phresco.framework.actions.applications.Configurations">
             <result name="environment">/pages/applications/configuration/environment.jsp</result>
+        </action>
+        
+        <action name="setAsDefault" method="setAsDefault" class="com.photon.phresco.framework.actions.applications.Configurations">
+            <result type="json" />
         </action>
         
         <action name="openSettingsEnvPopup" method="openSettingsEnvPopup" class="com.photon.phresco.framework.actions.settings.Settings">

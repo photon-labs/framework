@@ -19,7 +19,7 @@
   --%>
 <%@page import="java.io.BufferedReader"%>
 <%@page import="java.io.IOException"%>
-<%@page import="com.photon.phresco.commons.FrameworkConstants"%>
+<%@page import="com.photon.phresco.framework.model.FrameworkConstants"%>
 
 <%
     String projectCode = (String) request.getAttribute(FrameworkConstants.REQ_PROJECT_CODE);

@@ -26,8 +26,8 @@
 <%@ page import="java.util.Iterator"%>
 
 <%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
-<%@ page import="com.photon.phresco.model.ProjectInfo"%>
-<%@ page import="com.photon.phresco.commons.CIBuild"%>
+<%@ page import="com.photon.phresco.commons.model.ProjectInfo"%>
+<%@ page import="com.photon.phresco.framework.model.CIBuild"%>
 
 <%@ include file="../progress.jsp" %>
 <%@ include file="../../userInfoDetails.jsp" %>
@@ -146,7 +146,10 @@
 								                                <img src="images/icons/inprogress.png" title="In progress"/>
 										              		<% 
 								                                } else if (build.getStatus().equals("SUCCESS")) {
-								                                	String downloadUrl = build.getUrl() + FrameworkConstants.CI_JOB_BUILD_ARTIFACT + FrameworkConstants.FORWARD_SLASH + build.getDownload().replaceAll("\"",""); 
+								                                	String downloadUrl = build.getUrl()+ FrameworkConstants.CI_JOB_BUILD_ARTIFACT;
+								                                	if (StringUtils.isNotEmpty(build.getDownload())) {
+								                                		downloadUrl = downloadUrl + FrameworkConstants.FORWARD_SLASH + build.getDownload().replaceAll("\"","");								                                		
+								                                	} 
 								                            %>
 										                		<a href="<s:url action='CIBuildDownload'>
 												          		     <s:param name="buildDownloadUrl"><%= downloadUrl %></s:param>

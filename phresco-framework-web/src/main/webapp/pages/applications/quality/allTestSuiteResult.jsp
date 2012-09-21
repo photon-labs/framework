@@ -8,7 +8,7 @@
 <%@ page import="java.util.Collection"%>
 <%@ page import="java.util.Iterator"%>
 <%@ page import="com.photon.phresco.framework.api.Project"%>
-<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
+<%@ page import="com.photon.phresco.framework.model.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.framework.commons.FrameworkUtil"%>
 <%@ page import="com.photon.phresco.util.TechnologyTypes" %>
 <%@ page import="org.apache.commons.lang.StringUtils;" %>

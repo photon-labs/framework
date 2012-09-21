@@ -21,9 +21,17 @@ package com.photon.phresco.framework.impl;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -34,12 +42,14 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.commons.collections.CollectionUtils;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import com.photon.phresco.configuration.ConfigWriter;
 import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.PhrescoException;
-import com.photon.phresco.model.PropertyInfo;
-import com.photon.phresco.model.SettingsInfo;
+import com.photon.phresco.framework.model.PropertyInfo;
+import com.photon.phresco.framework.model.SettingsInfo;
 
 public class ConfigurationWriter extends ConfigWriter {
 
@@ -247,6 +257,26 @@ public class ConfigurationWriter extends ConfigWriter {
 			Element propNode = getDocument().createElement(key);
 			propNode.setTextContent(value);
 			configNode.appendChild(propNode);
+		}
+	}
+	
+	public void setDefaultEnvironment(String environmentName) throws PhrescoException {
+		try {
+			NodeList environmentList = getDocument().getElementsByTagName("environment");
+			for (int i = 0; i < environmentList.getLength(); i++) {
+				Element environment = (Element) environmentList.item(i);
+				String envName = environment.getAttribute("name");
+				String[] envs = environmentName.split(",");
+				for (String envsName : envs) {
+					if (envsName.equals(envName)) {
+						environment.setAttribute("default", "true");
+					} else {
+						environment.setAttribute("default", "false");
+					}
+				}
+			}
+		} catch (Exception e) {
+			throw new PhrescoException(e);
 		}
 	}
 	

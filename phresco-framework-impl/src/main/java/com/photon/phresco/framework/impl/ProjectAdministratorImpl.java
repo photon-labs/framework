@@ -66,13 +66,17 @@ import org.w3c.dom.Element;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.photon.phresco.commons.BuildInfo;
-import com.photon.phresco.commons.CIBuild;
-import com.photon.phresco.commons.CIJob;
-import com.photon.phresco.commons.CIJobStatus;
-import com.photon.phresco.commons.DownloadTypes;
-import com.photon.phresco.commons.FrameworkConstants;
+import com.photon.phresco.commons.model.ApplicationType;
+import com.photon.phresco.commons.model.DownloadInfo;
+import com.photon.phresco.commons.model.LogInfo;
+import com.photon.phresco.commons.model.ProjectInfo;
+import com.photon.phresco.commons.model.Property;
+import com.photon.phresco.commons.model.SettingsTemplate;
+import com.photon.phresco.commons.model.Technology;
 import com.photon.phresco.commons.model.User;
+import com.photon.phresco.commons.model.VideoInfo;
+import com.photon.phresco.commons.model.VideoType;
+import com.photon.phresco.commons.model.WebService;
 import com.photon.phresco.configuration.Configuration;
 import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.PhrescoException;
@@ -83,22 +87,19 @@ import com.photon.phresco.framework.api.Project;
 import com.photon.phresco.framework.api.ProjectAdministrator;
 import com.photon.phresco.framework.api.ValidationResult;
 import com.photon.phresco.framework.api.Validator;
-import com.photon.phresco.model.AdminConfigInfo;
-import com.photon.phresco.model.ApplicationType;
-import com.photon.phresco.model.CertificateInfo;
+import com.photon.phresco.framework.model.BuildInfo;
+import com.photon.phresco.framework.model.CIBuild;
+import com.photon.phresco.framework.model.CIJob;
+import com.photon.phresco.framework.model.CIJobStatus;
+import com.photon.phresco.framework.model.CertificateInfo;
+import com.photon.phresco.framework.model.DownloadTypes;
+import com.photon.phresco.framework.model.FrameworkConstants;
+import com.photon.phresco.framework.model.SettingsInfo;
 import com.photon.phresco.model.Database;
-import com.photon.phresco.model.DownloadInfo;
 import com.photon.phresco.model.DownloadPropertyInfo;
-import com.photon.phresco.model.LogInfo;
+import com.photon.phresco.model.Module;
 import com.photon.phresco.model.ModuleGroup;
-import com.photon.phresco.model.ProjectInfo;
 import com.photon.phresco.model.Server;
-import com.photon.phresco.model.SettingsInfo;
-import com.photon.phresco.model.SettingsTemplate;
-import com.photon.phresco.model.Technology;
-import com.photon.phresco.model.VideoInfo;
-import com.photon.phresco.model.VideoType;
-import com.photon.phresco.model.WebService;
 import com.photon.phresco.service.client.api.ServiceClientConstant;
 import com.photon.phresco.service.client.api.ServiceContext;
 import com.photon.phresco.service.client.api.ServiceManager;
@@ -582,11 +583,12 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 			if (CollectionUtils.isEmpty(modules)) {
 				return;
 			}
-			for (ModuleGroup moduleGroups : modules) {
-				if (moduleGroups.isCore()) {
-					exclusionStringBuff.append("**/");
-					exclusionStringBuff.append(moduleGroups.getName().toLowerCase());
-					exclusionStringBuff.append("/**");
+			for (ModuleGroup moduleGroup : modules) {
+				if (moduleGroup.isCore()) {
+					exclusionStringBuff.append("**\\");
+					exclusionStringBuff.append(moduleGroup.getName().toLowerCase());
+					exclusionStringBuff.append("\\**");
+					exclusionStringBuff.append("\\*.*");
 					exclusionStringBuff.append(",");
 				}
 			}
@@ -656,7 +658,12 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 				return;
 			}
 			for (ModuleGroup moduleGroup : modules) {
-				pomProcessor.addDependency(moduleGroup.getGroupId(), moduleGroup.getArtifactId(), moduleGroup.getVersions().get(0).getVersion());
+			    List<Module> versions = moduleGroup.getVersions();
+			    if (CollectionUtils.isNotEmpty(versions)) {
+			        for (Module module : versions) {
+			            pomProcessor.addDependency(module.getGroupId(), module.getArtifactId(), module.getVersion());
+                    }
+			    }
 				pomProcessor.save();
 			}
 			} catch (JAXBException e) {
@@ -665,7 +672,6 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 				throw new PhrescoException(e);
 		}
 	}
-
 
 	@Override
 	public List<ApplicationType> getApplicationTypes(String customerId) throws PhrescoException {
@@ -1458,7 +1464,20 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 } 
 
 	 }
-
+	 
+	 public void setAsDefaultEnv(String env, Project project) throws PhrescoException {
+		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.createSettingsInfo(SettingsInfo info, File path)");
+		 try {
+			 String path = getConfigurationPath(project.getProjectInfo().getCode()).toString();
+			 ConfigurationReader configReader = new ConfigurationReader(new File(path));
+			 ConfigurationWriter configWriter = new ConfigurationWriter(configReader, false);
+			 configWriter.setDefaultEnvironment(env);
+			 configWriter.saveXml(new File(path));
+		 } catch (Exception e) {
+			 throw new PhrescoException(e);
+		 } 
+	 }
+	 
 	 @Override
 	 public void createEnvironments(Project project, List<Environment> selectedEnvs, boolean isNewFile) throws PhrescoException {
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.createEnvironments(List<String> envNames)");
@@ -2151,7 +2170,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 
 	 @Override
 	 public String getJforumPath(String customerId) throws PhrescoException {
-		 AdminConfigInfo adminConfigInfo = getServiceManager().getForumPath(customerId);
+		 Property adminConfigInfo = getServiceManager().getForumPath(customerId);
 
 		 return adminConfigInfo.getValue();
 	 }

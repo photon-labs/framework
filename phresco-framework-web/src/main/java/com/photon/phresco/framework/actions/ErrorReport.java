@@ -21,10 +21,10 @@ package com.photon.phresco.framework.actions;
 
 import org.apache.log4j.Logger;
 
+import com.photon.phresco.commons.model.LogInfo;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.api.ProjectAdministrator;
 import com.photon.phresco.framework.commons.FrameworkUtil;
-import com.photon.phresco.model.LogInfo;
 
 public class ErrorReport extends FrameworkBaseAction {
 	private static final long serialVersionUID = 1L;

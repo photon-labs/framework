@@ -24,9 +24,9 @@
 <%@ page import="java.util.List"%>
 <%@ page import="org.apache.commons.collections.CollectionUtils"%>
 
-<%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
+<%@ page import="com.photon.phresco.framework.model.FrameworkConstants" %>
 <%@ page import="com.photon.phresco.framework.api.Project" %>
-<%@ page import="com.photon.phresco.model.ProjectInfo" %>
+<%@ page import="com.photon.phresco.commons.model.ProjectInfo" %>
 
 <%@ include file="../userInfoDetails.jsp" %>
 
@@ -76,7 +76,7 @@
 <form autocomplete="off" id="formAppList" class="app_list_form" name="listForm">
 	<div class="operation">
 		<input id="add" type="button" value="<s:text name="label.addappln"/>" class="btn primary"/>
-		<a href="#" class="btn primary" id="import"><s:text name="label.import.project"/></a>
+		<a href="#" class="btn primary" id="import"><s:text name="label.import.application"/></a>
 		<input id="deleteButton" type="button" value="<s:text name="label.delete"/>" class="btn disabled" disabled="disabled"/>
 	</div>
 	<%
@@ -132,8 +132,10 @@
 							ProjectInfo projectInfo = project.getProjectInfo();
 					%>
 		            	<tr>
-		              		<td class="checkbox_list">
-		              			<input type="checkbox" class="check" name="selectedProjects" value="<%= projectInfo.getCode() %>">
+		            		<td>
+			              		<div class="checkbox_list">
+			              			<input type="checkbox" class="check" name="selectedProjects" value="<%= projectInfo.getCode() %>">
+			              		</div>
 		              		</td>
 		              		<td>
 		              			<a href="#" name="edit" id="<%= projectInfo.getCode() %>" ><%= projectInfo.getName() %></a>

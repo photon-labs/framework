@@ -25,7 +25,7 @@
 <%@ page import="com.photon.phresco.framework.model.TestCaseFailure"%>
 <%@ page import="com.photon.phresco.framework.model.TestCaseError"%>
 <%@ page import="com.photon.phresco.framework.model.TestCaseResult"%>
-<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
+<%@ page import="com.photon.phresco.framework.model.FrameworkConstants"%>
 
 <%@ include file="../../userInfoDetails.jsp" %>
 

@@ -19,8 +19,8 @@
   --%>
 <%@ page import="java.util.List" %>
 
-<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
-<%@ page import="com.photon.phresco.model.VideoType" %>
+<%@ page import="com.photon.phresco.framework.model.FrameworkConstants"%>
+<%@ page import="com.photon.phresco.commons.model.VideoType" %>
 
 <script type="text/javascript">
 	$(document).ready(function() {

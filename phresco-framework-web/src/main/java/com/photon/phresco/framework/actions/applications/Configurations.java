@@ -38,6 +38,10 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.opensymphony.xwork2.Action;
+import com.photon.phresco.commons.model.ProjectInfo;
+import com.photon.phresco.commons.model.PropertyTemplate;
+import com.photon.phresco.commons.model.SettingsTemplate;
+import com.photon.phresco.commons.model.Technology;
 import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
@@ -47,16 +51,12 @@ import com.photon.phresco.framework.api.ProjectAdministrator;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.commons.LogErrorReport;
 import com.photon.phresco.framework.impl.EnvironmentComparator;
-import com.photon.phresco.model.CertificateInfo;
+import com.photon.phresco.framework.model.CertificateInfo;
+import com.photon.phresco.framework.model.PropertyInfo;
+import com.photon.phresco.framework.model.SettingsInfo;
 import com.photon.phresco.model.Database;
 import com.photon.phresco.model.I18NString;
-import com.photon.phresco.model.ProjectInfo;
-import com.photon.phresco.model.PropertyInfo;
-import com.photon.phresco.model.PropertyTemplate;
 import com.photon.phresco.model.Server;
-import com.photon.phresco.model.SettingsInfo;
-import com.photon.phresco.model.SettingsTemplate;
-import com.photon.phresco.model.Technology;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.TechnologyTypes;
 import com.photon.phresco.util.Utility;
@@ -90,11 +90,17 @@ public class Configurations extends FrameworkBaseAction {
     private String envDeleteMsg = null;
     private List<String> projectInfoVersions = null;
     
+
+    //set as default envs
+    private String setAsDefaultEnv = "";
+    private boolean flag = false;
+
     // For IIS server
     private String appName = "";
 	private String nameOfSite = "";
     private String appNameError = null;
     private String siteNameError = null;
+
     
 	public String list() {
         if (S_LOGGER.isDebugEnabled()) {
@@ -226,7 +232,7 @@ public class Configurations extends FrameworkBaseAction {
                 }
             }
             SettingsInfo settingsInfo = new SettingsInfo(configName, description, configType);
-            settingsInfo.setAppliesTo(Arrays.asList(project.getProjectInfo().getTechnology().getId()));
+            settingsInfo.setAppliesToTechs(Arrays.asList(project.getProjectInfo().getTechnology().getId()));
             settingsInfo.setPropertyInfos(propertyInfoList);
             getHttpRequest().setAttribute(REQ_CONFIG_INFO, settingsInfo);
             getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
@@ -758,6 +764,43 @@ public class Configurations extends FrameworkBaseAction {
     	return APP_ENVIRONMENT;
     }
     
+    public String setAsDefault() {
+    	S_LOGGER.debug("Entering Method  Configurations.setAsDefault()");
+    	S_LOGGER.debug("SetAsdefault" + setAsDefaultEnv);
+		try {
+    		ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
+    		Project project = administrator.getProject(projectCode);
+    		
+    		if (StringUtils.isEmpty(setAsDefaultEnv)) {
+    			setEnvError(getText(SELECT_ENV_TO_SET_AS_DEFAULT));
+    			S_LOGGER.debug("Env value is empty");
+    		}
+    		
+    		List<Environment> enviroments = administrator.getEnvironments(project);
+    		boolean envAvailable = false;
+    		for (Environment environment : enviroments) {
+				if(environment.getName().equals(setAsDefaultEnv)) {
+					envAvailable = true;
+				}
+			}
+    		
+    		if(!envAvailable) {
+    			setEnvError(getText(ENV_NOT_VALID));
+    			S_LOGGER.debug("unable to find configuration in xml");
+    			return SUCCESS;
+    		}
+	    	administrator.setAsDefaultEnv(setAsDefaultEnv, project);
+	    	setEnvError(getText(ENV_SET_AS_DEFAULT_SUCCESS, Collections.singletonList(setAsDefaultEnv)));
+	    	// set flag value to indicate , successfully env set as default
+	    	flag = true;
+	    	S_LOGGER.debug("successfully updated the config xml");
+    	} catch(Exception e) {
+    		setEnvError(getText(ENV_SET_AS_DEFAULT_ERROR));
+            S_LOGGER.error("Entered into catch block of Configurations.setAsDefault()" + FrameworkUtil.getStackTraceAsString(e));
+    	}
+		return SUCCESS;
+    }
+    
     public String fetchProjectInfoVersions() {
     	try {
 	    	String name = getHttpRequest().getParameter(REQ_TYPE);
@@ -944,6 +987,23 @@ public class Configurations extends FrameworkBaseAction {
 		this.emailError = emailError;
 	}
 	
+
+	public String getSetAsDefaultEnv() {
+		return setAsDefaultEnv;
+	}
+
+	public void setSetAsDefaultEnv(String setAsDefaultEnv) {
+		this.setAsDefaultEnv = setAsDefaultEnv;
+	}
+	
+	public boolean isFlag() {
+		return flag;
+	}
+
+	public void setFlag(boolean flag) {
+		this.flag = flag;
+	}
+
 	public String getAppName() {
 		return appName;
 	}
@@ -974,5 +1034,6 @@ public class Configurations extends FrameworkBaseAction {
 
 	public void setNameOfSite(String nameOfSite) {
 		this.nameOfSite = nameOfSite;
+
 	}
 }

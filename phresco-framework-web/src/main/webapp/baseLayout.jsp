@@ -26,7 +26,7 @@
 
 <%@ page import="com.photon.phresco.commons.model.User"%>
 <%@ page import="com.photon.phresco.commons.model.Customer"%>
-<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
+<%@ page import="com.photon.phresco.framework.model.FrameworkConstants"%>
 
 <html>
 	<head>

@@ -22,9 +22,9 @@ package com.photon.phresco.framework.commons;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import com.photon.phresco.commons.model.LogInfo;
 import com.photon.phresco.commons.model.User;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
-import com.photon.phresco.model.LogInfo;
 
 public class LogErrorReport extends FrameworkBaseAction {
 	/**

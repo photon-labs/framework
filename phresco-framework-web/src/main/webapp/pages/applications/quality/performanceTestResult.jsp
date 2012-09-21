@@ -23,10 +23,10 @@
 <%@ page import="java.util.Set"%>
 
 <%@ page import="com.photon.phresco.framework.model.PerformanceTestResult"%>
-<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
+<%@ page import="com.photon.phresco.framework.model.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.framework.commons.FrameworkUtil"%>
 <%@ page import="com.photon.phresco.util.TechnologyTypes" %>
-<%@ page import="com.photon.phresco.model.ProjectInfo"%>
+<%@ page import="com.photon.phresco.commons.model.ProjectInfo"%>
 
 <style type="text/css">
 	.btn.success, .alert-message.success {

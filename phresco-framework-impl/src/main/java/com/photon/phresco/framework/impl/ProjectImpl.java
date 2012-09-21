@@ -21,8 +21,8 @@ package com.photon.phresco.framework.impl;
 
 import java.io.Serializable;
 
+import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.framework.api.Project;
-import com.photon.phresco.model.ProjectInfo;
 
 class ProjectImpl implements Project, Serializable {
 	
