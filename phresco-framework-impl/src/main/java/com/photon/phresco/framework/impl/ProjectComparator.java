@@ -27,6 +27,6 @@ public class ProjectComparator implements Comparator<Project> {
 
     @Override
     public int compare(Project project1, Project project2) {
-        return project1.getProjectInfo().getName().compareToIgnoreCase(project2.getProjectInfo().getName());
+        return project1.getApplicationInfo().getName().compareToIgnoreCase(project2.getApplicationInfo().getName());
     }
 }

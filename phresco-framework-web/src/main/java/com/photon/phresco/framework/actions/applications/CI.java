@@ -147,7 +147,7 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
     		S_LOGGER.debug("buildTriggeredVal in Ci " + getHttpRequest().getAttribute(CI_BUILD_TRIGGERED_FROM_UI));
             ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
             Project project = (Project) administrator.getProject(projectCode);
-            getHttpRequest().setAttribute(REQ_PROJECT_INFO, project.getProjectInfo());
+            getHttpRequest().setAttribute(REQ_PROJECT_INFO, project.getApplicationInfo());
             getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
             getHttpRequest().setAttribute(CI_JENKINS_ALIVE, jenkinsAlive);
             
@@ -205,9 +205,9 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
             // Get environment info
 			List<Environment> environments = administrator.getEnvironments(project);
 			getHttpRequest().setAttribute(REQ_ENVIRONMENTS, environments);
-            getHttpRequest().setAttribute(REQ_PROJECT_INFO, project.getProjectInfo());
+            getHttpRequest().setAttribute(REQ_PROJECT_INFO, project.getApplicationInfo());
 			// Get xcode targets
-            String technology = project.getProjectInfo().getTechnology().getId();
+            String technology = project.getApplicationInfo().getTechnology().getId();
 			if (TechnologyTypes.IPHONES.contains(technology)) {
 				List<PBXNativeTarget> xcodeConfigs = ApplicationsUtil.getXcodeConfiguration(projectCode);
 				getHttpRequest().setAttribute(REQ_XCODE_CONFIGS, xcodeConfigs);
@@ -248,10 +248,10 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
     		}
         	
         	// Here we have to place two files in jenkins_home environment variable location
-        	administrator.getJdkHomeXml(project.getProjectInfo().getCustomerId());
-        	administrator.getMavenHomeXml(project.getProjectInfo().getCustomerId()); 
+        	administrator.getJdkHomeXml(project.getApplicationInfo().getCustomerId());
+        	administrator.getMavenHomeXml(project.getApplicationInfo().getCustomerId()); 
         	// place email ext plugin in plugin folder
-        	administrator.getEmailExtPlugin(project.getProjectInfo().getCustomerId());
+        	administrator.getEmailExtPlugin(project.getApplicationInfo().getCustomerId());
             BufferedReader reader = runtimeManager.performAction(project, actionType, null, null);
             getHttpSession().setAttribute(projectCode + CI_SETUP, reader);
             getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
@@ -283,7 +283,7 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
     	try {
     	    ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
             Project project = administrator.getProject(projectCode);
-            String technology = project.getProjectInfo().getTechnology().getId();
+            String technology = project.getApplicationInfo().getTechnology().getId();
             CIJob existJob = null;
             if (StringUtils.isNotEmpty(oldJobName)) {
             	existJob = administrator.getJob(project, oldJobName);

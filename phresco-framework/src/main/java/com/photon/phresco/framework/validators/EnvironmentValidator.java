@@ -33,7 +33,7 @@ import org.codehaus.plexus.util.DirectoryWalkListener;
 import org.codehaus.plexus.util.DirectoryWalker;
 
 import com.google.gson.Gson;
-import com.photon.phresco.commons.model.ProjectInfo;
+import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.api.ValidationResult;
 import com.photon.phresco.framework.api.Validator;
@@ -83,9 +83,9 @@ public List<String> invalidProjects = new ArrayList<String>();
 			if (file.getName().equals("project.info")) {
 				reader = new BufferedReader(new FileReader(file));
 				String content = reader.readLine();
-				ProjectInfo projInfo = gson.fromJson(content,
-						ProjectInfo.class);
-				String code = projInfo.getCode();
+				ApplicationInfo appInfo = gson.fromJson(content,
+				        ApplicationInfo.class);
+				String code = appInfo.getCode();
 				if (!code.equals(file.getParentFile().getParentFile().getName())) {
 					invalidProjects.add(code);					
 				}

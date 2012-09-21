@@ -806,7 +806,7 @@ public class Settings extends FrameworkBaseAction {
 	            Collection<String> envNames = administrator.getEnvNames(project);
 	            for (String envName : envNames) {
 	            	if (envName.equalsIgnoreCase(envs)) {
-		                setEnvError(getText(ERROR_DUPLICATE_NAME_IN_CONFIGURATIONS, Collections.singletonList(project.getProjectInfo().getName())));
+		                setEnvError(getText(ERROR_DUPLICATE_NAME_IN_CONFIGURATIONS, Collections.singletonList(project.getApplicationInfo().getName())));
 		            }
 				}
 	        }

@@ -160,7 +160,7 @@ public class Applications extends FrameworkBaseAction {
 					.getProjectAdministrator();
 			if (StringUtils.isNotEmpty(projectCode)) {
 				ProjectInfo projectInfo = administrator.getProject(
-						projectCode).getProjectInfo();
+						projectCode).getApplicationInfo();
 				S_LOGGER.debug("project info value" + projectInfo.toString());
 				getHttpRequest().setAttribute(REQ_PROJECT_INFO, projectInfo);
 			}
@@ -191,7 +191,7 @@ public class Applications extends FrameworkBaseAction {
 				projectInfo = (ProjectInfo) getHttpSession().getAttribute(projectCode);
 			}
 			if (FROM_PAGE_EDIT.equals(fromPage) && projectInfo == null) {
-				projectInfo = administrator.getProject(projectCode).getProjectInfo();
+				projectInfo = administrator.getProject(projectCode).getApplicationInfo();
 				customerId = projectInfo.getCustomerId();
 				getHttpSession().setAttribute(projectCode, projectInfo);
 			}
@@ -241,7 +241,7 @@ public class Applications extends FrameworkBaseAction {
 			Project project = null;
 			if (StringUtils.isNotEmpty(projectCode) && FROM_PAGE_EDIT.equals(fromPage)) {
 				project = administrator.getProject(projectCode);
-				ProjectInfo projectInfo = project.getProjectInfo();
+				ProjectInfo projectInfo = project.getApplicationInfo();
 				getHttpRequest().setAttribute(REQ_PROJECT_INFO, projectInfo);
 				application = projectInfo.getApplication();
 			}
@@ -270,7 +270,7 @@ public class Applications extends FrameworkBaseAction {
 			Project project = null;
 			if (StringUtils.isNotEmpty(projectCode) && FROM_PAGE_EDIT.equals(fromPage)) {
 				project = administrator.getProject(projectCode);
-				ProjectInfo projectInfo = project.getProjectInfo();
+				ProjectInfo projectInfo = project.getApplicationInfo();
 				S_LOGGER.debug("project info value" + projectInfo.toString());
 				getHttpRequest().setAttribute(REQ_PROJECT_INFO, projectInfo);
 				application = projectInfo.getApplication();
@@ -421,7 +421,7 @@ public class Applications extends FrameworkBaseAction {
 			}
 			try {
 				ProjectInfo tempprojectInfo = administrator.getProject(
-						projectCode).getProjectInfo();
+						projectCode).getApplicationInfo();
 				List<Database> newDatabases = projectInfo.getTechnology()
 						.getDatabases();
 				List<String> newDbNames = new ArrayList<String>();
@@ -1090,7 +1090,7 @@ public class Applications extends FrameworkBaseAction {
 					if (StringUtils.isNotEmpty(projectCode)) {
 						Project project = administrator.getProject(projectCode);
 						if (project != null) {
-							ProjectInfo projectInfo = project.getProjectInfo();
+							ProjectInfo projectInfo = project.getApplicationInfo();
 							List<Database> projectInfoDbs = projectInfo
 									.getTechnology().getDatabases();
 							List<String> projectInfoDbVersions = new ArrayList<String>();
@@ -1301,7 +1301,7 @@ public class Applications extends FrameworkBaseAction {
 			ProjectAdministrator administrator = PhrescoFrameworkFactory
 					.getProjectAdministrator();
 			Project project = administrator.getProject(projectCode);
-			Technology technology = project.getProjectInfo().getTechnology();
+			Technology technology = project.getApplicationInfo().getTechnology();
 
 			List<Server> servers = technology.getServers();
 			List<Database> databases = technology.getDatabases();

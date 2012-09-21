@@ -42,13 +42,13 @@ public class FunctionalUtil {
 			S_LOGGER.debug("Entering Method DrupalFunctionalUtil.adaptTestConfig(Project project, SettingsInfo serverDetails, String browser)");
 		}
     	if (debugEnabled) {
-			S_LOGGER.debug("adaptTestConfig() ProjectInfo = "+project.getProjectInfo());
+			S_LOGGER.debug("adaptTestConfig() ProjectInfo = "+project.getApplicationInfo());
 		}
         InputStream is = null;
         OutputStream os = null;
         StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-        builder.append(project.getProjectInfo().getCode());
-        builder.append(FrameworkUtil.getInstance().getFuncitonalAdaptDir(project.getProjectInfo().getTechnology().getId()));
+        builder.append(project.getApplicationInfo().getCode());
+        builder.append(FrameworkUtil.getInstance().getFuncitonalAdaptDir(project.getApplicationInfo().getTechnology().getId()));
      
         try {
 		    File file = new File(builder.toString());

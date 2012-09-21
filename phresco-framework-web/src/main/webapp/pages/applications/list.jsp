@@ -128,9 +128,9 @@
 		
 		          	<tbody>
 		          	<%
-						for (Project project : projects) {
-							ProjectInfo projectInfo = project.getProjectInfo();
-					%>
+		          	    for (Project project : projects) {
+		          								ProjectInfo projectInfo = project.getApplicationInfo();
+		          	%>
 		            	<tr>
 		            		<td>
 			              		<div class="checkbox_list">

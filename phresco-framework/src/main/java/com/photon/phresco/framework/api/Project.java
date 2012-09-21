@@ -19,11 +19,11 @@
  */
 package com.photon.phresco.framework.api;
 
-import com.photon.phresco.commons.model.ProjectInfo;
+import com.photon.phresco.commons.model.ApplicationInfo;
 
 public interface Project {
 	
-	ProjectInfo getProjectInfo();
+	ApplicationInfo getApplicationInfo();
 	
 //	QualityInfo getQualityInfo();
 //	

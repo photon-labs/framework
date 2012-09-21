@@ -21,10 +21,10 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.photon.phresco.commons.model.ProjectInfo;
+import com.photon.phresco.commons.model.ApplicationInfo;
+import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.model.FrameworkConstants;
-import com.photon.phresco.model.ModuleGroup;
 
 
 public class ItemGroupUpdater implements FrameworkConstants {
@@ -34,10 +34,11 @@ public class ItemGroupUpdater implements FrameworkConstants {
 	 * @param args
 	 * @throws PhrescoException 
 	 */
-	public static void update(ProjectInfo info, File path) throws PhrescoException {
+	public static void update(ApplicationInfo info, File path) throws PhrescoException {
 		try {
-			path = new File(path + File.separator + SOURCE_DIR + File.separator + info.getName() + File.separator + info.getName()+ PROJECT_FILE);
-			List<ModuleGroup> modules = info.getTechnology().getModules();
+			path = new File(path + File.separator + SOURCE_DIR + File.separator + info.getName() 
+			                + File.separator + info.getName()+ PROJECT_FILE);
+			List<ArtifactGroup> modules = info.getSelectedModules();
 			if(!path.exists() && modules == null) {
 				return;
 			}
@@ -71,12 +72,12 @@ public class ItemGroupUpdater implements FrameworkConstants {
 		} 
 	}
 
-	private static void createNewItemGroup(Document doc, List<ModuleGroup> modules) {
+	private static void createNewItemGroup(Document doc, List<ArtifactGroup> modules) {
 		NodeList projects = doc.getElementsByTagName(PROJECT);
 		Element itemGroup = doc.createElement(ITEMGROUP);
 		for (int i = 0; i < projects.getLength(); i++) {
 			Element project = (Element) projects.item(i);
-			for (ModuleGroup module : modules) {
+			for (ArtifactGroup module : modules) {
 				Element reference = doc.createElement(REFERENCE);
 				reference.setAttribute(INCLUDE , module.getName());
 				Element hintPath = doc.createElement(HINTPATH);
@@ -88,19 +89,19 @@ public class ItemGroupUpdater implements FrameworkConstants {
 		}
 	}
 	
-	private static void updateItemGroups(Document doc, List<ModuleGroup> module) {
+	private static void updateItemGroups(Document doc, List<ArtifactGroup> module) {
 	   List<Node> itemGroup = getItemGroup(doc);
 	   updateContent(doc, module, itemGroup, REFERENCE);
 	}
 
-	private static void updateContent(Document doc, List<ModuleGroup> modules,	List<Node> itemGroup, String elementName) {
+	private static void updateContent(Document doc, List<ArtifactGroup> modules,	List<Node> itemGroup, String elementName) {
 		for (Node node : itemGroup) {
 			NodeList childNodes = node.getChildNodes();
 			for (int j = 0; j < childNodes.getLength(); j++) {
 				Node item = childNodes.item(j);
 				if (item.getNodeName().equals(elementName)) {
 					Node parentNode = item.getParentNode();
-					for (ModuleGroup module : modules) {
+					for (ArtifactGroup module : modules) {
 						Element content = doc.createElement(elementName);
 						if (elementName.equalsIgnoreCase(REFERENCE)) {
 							content.setAttribute(INCLUDE, LIBS + module.getName()+ DLL);

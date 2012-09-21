@@ -28,7 +28,6 @@ import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.api.CIManager;
 import com.photon.phresco.framework.api.ProjectAdministrator;
 import com.photon.phresco.framework.api.ProjectRuntimeManager;
-import com.photon.phresco.framework.api.ServiceManager;
 import com.photon.phresco.framework.api.UpdateManager;
 import com.photon.phresco.framework.api.Validator;
 import com.photon.phresco.framework.validators.AndroidValidator;
@@ -55,7 +54,6 @@ public class PhrescoFrameworkFactory {
     private static FrameworkConfiguration frameworkConfig = null;
     private static ProjectAdministrator administrator = null;
     private static ProjectRuntimeManager runtimeManager = null;
-    private static ServiceManager serviceManager = null;
     private static CIManager ciManager = null;
     private static UpdateManager updateManager = null;
 
@@ -99,14 +97,6 @@ public class PhrescoFrameworkFactory {
 
         return runtimeManager;
 
-    }
-
-    public static ServiceManager getServiceManager() throws PhrescoException {
-        if (serviceManager == null) {
-            serviceManager = (ServiceManager) constructClass(SERVICE_MANAGER_IMPL);
-        }
-
-        return serviceManager;
     }
 
     public static CIManager getCIManager() throws PhrescoException {

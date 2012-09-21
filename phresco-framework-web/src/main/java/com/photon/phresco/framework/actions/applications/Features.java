@@ -106,7 +106,7 @@ public class Features extends FrameworkBaseAction {
 				projectInfo = (ProjectInfo) getHttpSession().getAttribute(projectCode);
 			} else if (StringUtils.isNotEmpty(fromPage)) { // For edit project
 				projectInfo = administrator.getProject(projectCode)
-						.getProjectInfo();
+						.getApplicationInfo();
 				if (description != null) {
 					projectInfo.setDescription(description);
 				}

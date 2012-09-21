@@ -55,7 +55,7 @@ public class SiteReport extends FrameworkBaseAction {
 		
 		try {
 		    ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-		    ProjectInfo projectInfo = administrator.getProject(projectCode).getProjectInfo();
+		    ProjectInfo projectInfo = administrator.getProject(projectCode).getApplicationInfo();
 		    List<Reports> selectedReports = administrator.getPomReports(projectInfo);
             getHttpRequest().setAttribute(REQ_SITE_SLECTD_REPORTS, selectedReports);
 			getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
@@ -142,7 +142,7 @@ public class SiteReport extends FrameworkBaseAction {
 		
 		try {
 			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-			ProjectInfo projectInfo = administrator.getProject(projectCode).getProjectInfo();
+			ProjectInfo projectInfo = administrator.getProject(projectCode).getApplicationInfo();
 			List<Reports> reports = administrator.getReports(projectInfo);
 			List<Reports> selectedReports = administrator.getPomReports(projectInfo);
 			getHttpRequest().setAttribute(REQ_SITE_REPORTS, reports);
@@ -164,7 +164,7 @@ public class SiteReport extends FrameworkBaseAction {
 		
 		try {
 			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-			ProjectInfo projectInfo = administrator.getProject(projectCode).getProjectInfo();
+			ProjectInfo projectInfo = administrator.getProject(projectCode).getApplicationInfo();
 			
 			//To get the selected reports from the UI
 			String[] arraySelectedReports = getHttpRequest().getParameterValues(REQ_SITE_REPORTS);

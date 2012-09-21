@@ -106,7 +106,7 @@ public class Code extends FrameworkBaseAction {
             FrameworkConfiguration frameworkConfig = PhrescoFrameworkFactory.getFrameworkConfig();
             ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
         	Project project = administrator.getProject(projectCode);
-			technology = project.getProjectInfo().getTechnology().getId();
+			technology = project.getApplicationInfo().getTechnology().getId();
             if (TechnologyTypes.IPHONES.contains(technology)) {
             	StringBuilder codeValidatePath = new StringBuilder(Utility.getProjectHome());
             	codeValidatePath.append(projectCode);
@@ -153,7 +153,7 @@ public class Code extends FrameworkBaseAction {
 	        	builder.append(projectCode);
                 if (StringUtils.isNotEmpty(report) && FUNCTIONALTEST.equals(report)) {
                     FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-                    builder.append(frameworkUtil.getFuncitonalTestDir(project.getProjectInfo().getTechnology().getId()));
+                    builder.append(frameworkUtil.getFuncitonalTestDir(project.getApplicationInfo().getTechnology().getId()));
                 }
                 builder.append(File.separatorChar);
 	        	builder.append(POM_XML);
@@ -206,7 +206,7 @@ public class Code extends FrameworkBaseAction {
         	ProjectRuntimeManager runtimeManager;
         	ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
         	Project project = administrator.getProject(projectCode);
-        	String technology = project.getProjectInfo().getTechnology().getId();
+        	String technology = project.getApplicationInfo().getTechnology().getId();
             runtimeManager = PhrescoFrameworkFactory.getProjectRuntimeManager();
             Map<String, String> codeValidateMap = new HashMap<String, String>(1);
             ActionType actionType = null;
@@ -267,7 +267,7 @@ public class Code extends FrameworkBaseAction {
         try {
         	ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
         	project = administrator.getProject(projectCode);
-			technology = project.getProjectInfo().getTechnology().getId();
+			technology = project.getApplicationInfo().getTechnology().getId();
             getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
             getHttpRequest().setAttribute(APPLICATION_PROJECT, project);
             if (TechnologyTypes.IPHONES.contains(technology)) {

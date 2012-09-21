@@ -142,7 +142,7 @@ public class ProjectRuntimeManagerImpl implements ProjectRuntimeManager {
 			S_LOGGER.debug("deploy() Builder Information = " +builder.toString());
 		}
 		Commandline cl = new Commandline(builder.toString());
-		cl.setWorkingDirectory(Utility.getProjectHome() + project.getProjectInfo().getCode());
+		cl.setWorkingDirectory(Utility.getProjectHome() + project.getApplicationInfo().getCode());
 		if (DebugEnabled) {
 				S_LOGGER.debug("deploy() Working Directiory = " +cl.getWorkingDirectory());
 		}
@@ -184,7 +184,7 @@ public class ProjectRuntimeManagerImpl implements ProjectRuntimeManager {
     	if (DebugEnabled) {
 			S_LOGGER.debug("Entering Method ProjectRuntimeManagerImpl.performAction(" +
 					"Project project, ActionType action, Map<String, String> paramsMap,CallBack callBack)");
-			S_LOGGER.debug("performAction() ProjectInformation = "+project.getProjectInfo());
+			S_LOGGER.debug("performAction() ProjectInformation = "+project.getApplicationInfo());
 		}
     	StringBuilder command = action.getCommand();
     	if (action.getCommand() == null) {
@@ -200,7 +200,7 @@ public class ProjectRuntimeManagerImpl implements ProjectRuntimeManager {
     private BufferedReader executeMavenCommand(Project project, ActionType action, StringBuilder command) throws PhrescoException {
     	if (DebugEnabled) {
     		S_LOGGER.debug("Entering Method ProjectRuntimeManagerImpl.executeMavenCommand(Project project, ActionType action, StringBuilder command)");
-    		S_LOGGER.debug("executeMavenCommand() Project Code = " + project.getProjectInfo().getCode());
+    		S_LOGGER.debug("executeMavenCommand() Project Code = " + project.getApplicationInfo().getCode());
     		S_LOGGER.debug("executeMavenCommand() Command = " + command.toString());
     		S_LOGGER.debug("executeMavenCommand() ActionType Name = " + action.getName());
     		S_LOGGER.debug("executeMavenCommand() ActionType Working directory = " + action.getWorkingDirectory());
@@ -211,7 +211,7 @@ public class ProjectRuntimeManagerImpl implements ProjectRuntimeManager {
         if (StringUtils.isNotEmpty(workingDirectory)) {
         	currentWorkingDir = workingDirectory;
         } else {
-        	currentWorkingDir = Utility.getProjectHome() + project.getProjectInfo().getCode();
+        	currentWorkingDir = Utility.getProjectHome() + project.getApplicationInfo().getCode();
         }
 		return  Utility.executeCommand(command.toString(), currentWorkingDir);
     }
@@ -223,9 +223,9 @@ public class ProjectRuntimeManagerImpl implements ProjectRuntimeManager {
         StringBuilder builder = new StringBuilder(Constants.MVN_COMMAND);
         builder.append(Constants.SPACE);
     	if (DebugEnabled) {
-    		S_LOGGER.debug("buildMavenCommand() Project Code = " + project.getProjectInfo().getCode());
+    		S_LOGGER.debug("buildMavenCommand() Project Code = " + project.getApplicationInfo().getCode());
 		}
-        String techId = pluginMap.get(project.getProjectInfo().getTechnology().getId());
+        String techId = pluginMap.get(project.getApplicationInfo().getTechnology().getId());
         if (StringUtils.isNotEmpty(techId)) {
             builder.append(techId);
         }

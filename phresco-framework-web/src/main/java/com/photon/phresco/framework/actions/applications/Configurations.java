@@ -136,7 +136,7 @@ public class Configurations extends FrameworkBaseAction {
         try {
             ProjectAdministrator administrator = getProjectAdministrator();
             Project project = administrator.getProject(projectCode);
-            ProjectInfo projectInfo = project.getProjectInfo();
+            ProjectInfo projectInfo = project.getApplicationInfo();
             List<SettingsTemplate> settingsTemplates = administrator.getSettingsTemplates(projectInfo.getCustomerId());
             getHttpRequest().setAttribute(REQ_SETTINGS_TEMPLATES, settingsTemplates);
             List<Environment> environments = administrator.getEnvironments(project);
@@ -165,7 +165,7 @@ public class Configurations extends FrameworkBaseAction {
         	initDriverMap();
             ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
             Project project = administrator.getProject(projectCode);
-            ProjectInfo projectInfo = project.getProjectInfo();
+            ProjectInfo projectInfo = project.getApplicationInfo();
             if (!validate(administrator, null)) {
                 isValidated = true;
                 return Action.SUCCESS;
@@ -232,7 +232,7 @@ public class Configurations extends FrameworkBaseAction {
                 }
             }
             SettingsInfo settingsInfo = new SettingsInfo(configName, description, configType);
-            settingsInfo.setAppliesToTechs(Arrays.asList(project.getProjectInfo().getTechnology().getId()));
+            settingsInfo.setAppliesToTechs(Arrays.asList(project.getApplicationInfo().getTechnology().getId()));
             settingsInfo.setPropertyInfos(propertyInfoList);
             getHttpRequest().setAttribute(REQ_CONFIG_INFO, settingsInfo);
             getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
@@ -446,7 +446,7 @@ public class Configurations extends FrameworkBaseAction {
 	   	}
     	
     	Project project = administrator.getProject(projectCode);
-    	ProjectInfo projectInfo = project.getProjectInfo();
+    	ProjectInfo projectInfo = project.getApplicationInfo();
     	if (StringUtils.isNotEmpty(configName) && !configName.equals(oldName)) {
     		for (String environment : environments) {
     			List<SettingsInfo> configurations = administrator.configurationsByEnvName(environment, project);
@@ -495,7 +495,7 @@ public class Configurations extends FrameworkBaseAction {
         	}
     	    value = getHttpRequest().getParameter(key);
             boolean isRequired = propertyTemplate.isRequired();
-            String techId = project.getProjectInfo().getTechnology().getId();
+            String techId = project.getApplicationInfo().getTechnology().getId();
             if ((serverTypeValidation && "deploy_dir".equals(key)) || TechnologyTypes.ANDROIDS.contains(techId)) {
            		isRequired = false;
             }
@@ -567,7 +567,7 @@ public class Configurations extends FrameworkBaseAction {
         try {
             ProjectAdministrator administrator = getProjectAdministrator();
             Project project = administrator.getProject(projectCode);
-            ProjectInfo projectInfo = project.getProjectInfo();
+            ProjectInfo projectInfo = project.getApplicationInfo();
             SettingsInfo configInfo = administrator.configuration(oldName, envName, project);
         	List<Environment> environments = administrator.getEnvironments(project);
         	List<SettingsTemplate> settingsTemplates = administrator.getSettingsTemplates(projectInfo.getCustomerId());
@@ -600,7 +600,7 @@ public class Configurations extends FrameworkBaseAction {
         	initDriverMap();
             ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
             Project project = administrator.getProject(projectCode);
-            ProjectInfo projectInfo = project.getProjectInfo();
+            ProjectInfo projectInfo = project.getApplicationInfo();
             SettingsTemplate selectedSettingTemplate = administrator.getSettingsTemplate(configType, projectInfo.getCustomerId());
             List<PropertyInfo> propertyInfoList = new ArrayList<PropertyInfo>();
             List<PropertyTemplate> propertyTemplates = selectedSettingTemplate.getProperties();
@@ -727,7 +727,7 @@ public class Configurations extends FrameworkBaseAction {
 			String env = getHttpRequest().getParameter(ENVIRONMENTS);
 			ProjectAdministrator administrator = getProjectAdministrator();
 			Project project = administrator.getProject(projectCode);
-			ProjectInfo projectInfo = project.getProjectInfo();
+			ProjectInfo projectInfo = project.getApplicationInfo();
 			SettingsTemplate settingsTemplate = administrator.getSettingsTemplate(configType, projectInfo.getCustomerId());
 			SettingsInfo selectedConfigInfo = null;
 			if (StringUtils.isNotEmpty(oldName)) {
@@ -806,7 +806,7 @@ public class Configurations extends FrameworkBaseAction {
 	    	String name = getHttpRequest().getParameter(REQ_TYPE);
 	    	ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
 	    	Project project = administrator.getProject(projectCode);
-	    	Technology technology = project.getProjectInfo().getTechnology();
+	    	Technology technology = project.getApplicationInfo().getTechnology();
 	    	if (Constants.SETTINGS_TEMPLATE_SERVER.equals(configType)) {
 	    		List<Server> servers = technology.getServers();
 	    		if (servers != null && CollectionUtils.isNotEmpty(servers)) {

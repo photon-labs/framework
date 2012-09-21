@@ -172,10 +172,10 @@ public class Build extends FrameworkBaseAction {
 			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
 			Project project = administrator.getProject(projectCode);
 			List<BuildInfo> builds = administrator.getBuildInfos(project);
-			getHttpRequest().setAttribute(REQ_SELECTED_APP_TYPE, project.getProjectInfo().getTechnology().getId());
+			getHttpRequest().setAttribute(REQ_SELECTED_APP_TYPE, project.getApplicationInfo().getTechnology().getId());
 			getHttpRequest().setAttribute(REQ_BUILD, builds);
-			getHttpRequest().setAttribute(REQ_PROJECT_INFO, project.getProjectInfo());
-			String techId = project.getProjectInfo().getTechnology().getId();
+			getHttpRequest().setAttribute(REQ_PROJECT_INFO, project.getApplicationInfo());
+			String techId = project.getApplicationInfo().getTechnology().getId();
 			String readLogFile = "";
 			boolean tempConnectionAlive = false;
 			int serverPort = 0;
@@ -274,7 +274,7 @@ public class Build extends FrameworkBaseAction {
 		try {
 			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
 			project = administrator.getProject(projectCode);
-			technology = project.getProjectInfo().getTechnology().getId();
+			technology = project.getApplicationInfo().getTechnology().getId();
 			from = getHttpRequest().getParameter(REQ_BUILD_FROM);
 			importSqlFlag(project);
 			buildNumber = getHttpRequest().getParameter(REQ_DEPLOY_BUILD_NUMBER);
@@ -362,7 +362,7 @@ public class Build extends FrameworkBaseAction {
 		getHttpRequest().setAttribute(REQ_SELECTED_SERVERTYPE, serverType);
 		getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
 		getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
-		getHttpRequest().setAttribute(REQ_PROJECT_INFO, project.getProjectInfo());
+		getHttpRequest().setAttribute(REQ_PROJECT_INFO, project.getApplicationInfo());
 		getHttpRequest().setAttribute(REQ_BUILD_FROM, from);
 		getHttpRequest().setAttribute(REQ_TECHNOLOGY, technology);
 		getHttpRequest().setAttribute(REQ_DEPLOY_BUILD_NUMBER, buildNumber);
@@ -415,7 +415,7 @@ public class Build extends FrameworkBaseAction {
 			Project project = administrator.getProject(projectCode);
 			List<BuildInfo> builds = administrator.getBuildInfos(project);
 			getHttpRequest().setAttribute(REQ_BUILD, builds);
-			getHttpRequest().setAttribute(REQ_PROJECT_INFO, project.getProjectInfo());
+			getHttpRequest().setAttribute(REQ_PROJECT_INFO, project.getApplicationInfo());
 
 			sessionMap.remove(SESSION_PROPERTY_INFO_LIST);
 		} catch (Exception e) {
@@ -438,7 +438,7 @@ public class Build extends FrameworkBaseAction {
 			ProjectRuntimeManager runtimeManager = PhrescoFrameworkFactory.getProjectRuntimeManager();
 			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
 			Project project = administrator.getProject(projectCode);
-			String technology = project.getProjectInfo().getTechnology().getId();
+			String technology = project.getApplicationInfo().getTechnology().getId();
 
 			Map<String, String> settingsInfoMap = new HashMap<String, String>(2);
 			
@@ -513,7 +513,7 @@ public class Build extends FrameworkBaseAction {
 
 			if (StringUtils.isNotEmpty(projectModule)) {
 				settingsInfoMap.put(MODULE_NAME, projectModule);
-				actionType.setWorkingDirectory(Utility.getProjectHome() + project.getProjectInfo().getCode()
+				actionType.setWorkingDirectory(Utility.getProjectHome() + project.getApplicationInfo().getCode()
 						+ File.separatorChar + projectModule);
 			} else {
 				actionType.setWorkingDirectory(null);
@@ -540,7 +540,7 @@ public class Build extends FrameworkBaseAction {
 
 	private File isFileExists(Project project) throws IOException {
 		StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-		builder.append(project.getProjectInfo().getCode());
+		builder.append(project.getApplicationInfo().getCode());
 		builder.append(File.separator);
 		builder.append("do_not_checkin");
 		builder.append(File.separator);
@@ -564,7 +564,7 @@ public class Build extends FrameworkBaseAction {
 			S_LOGGER.debug("Entering Method Build.checkImportsqlConfig(Project project)");
 		}
 		if (debugEnabled) {
-			S_LOGGER.debug("adaptImportsqlConfig ProjectInfo = " + project.getProjectInfo());
+			S_LOGGER.debug("adaptImportsqlConfig ProjectInfo = " + project.getApplicationInfo());
 		}
 		InputStream is = null;
 		FileWriter fw = null;
@@ -596,13 +596,13 @@ public class Build extends FrameworkBaseAction {
 	}
 
 	private void importSqlFlag(Project project) throws PhrescoException {
-		String technology = project.getProjectInfo().getTechnology().getId();
+		String technology = project.getApplicationInfo().getTechnology().getId();
 		InputStream is = null;
 		String importSqlElement;
 		try {
 
 			StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-			builder.append(project.getProjectInfo().getCode());
+			builder.append(project.getApplicationInfo().getCode());
 			builder.append(File.separator);
 			builder.append(DO_NOT_CHECKIN_DIR);
 			builder.append(File.separator);
@@ -688,7 +688,7 @@ public class Build extends FrameworkBaseAction {
 			BuildInfo buildInfo = administrator.getBuildInfo(project, Integer.parseInt(buildNumber));
 			ProjectRuntimeManager runtimeManager = PhrescoFrameworkFactory.getProjectRuntimeManager();
 			Map<String, String> valuesMap = new HashMap<String, String>(2);
-			String techId = project.getProjectInfo().getTechnology().getId();
+			String techId = project.getApplicationInfo().getTechnology().getId();
 			if (TechnologyTypes.IPHONES.contains(techId)) {
 				valuesMap.put(BUILD_NUMBER, buildNumber);
 				// if deploy to device is selected we have to pass device deploy
@@ -713,7 +713,7 @@ public class Build extends FrameworkBaseAction {
 				valuesMap.put(ENVIRONMENT_NAME, environments);
 			}
 
-			if (TechnologyTypes.SHAREPOINT.equals(project.getProjectInfo().getTechnology().getId())) {
+			if (TechnologyTypes.SHAREPOINT.equals(project.getApplicationInfo().getTechnology().getId())) {
 				valuesMap.put(DEPLOY_SERVERNAME, buildInfo.getServerName());
 			}
 
@@ -722,7 +722,7 @@ public class Build extends FrameworkBaseAction {
 				S_LOGGER.debug("To be deployed build location" + buildInfo.getDeployLocation());
 				S_LOGGER.debug("To be deployed build context" + buildInfo.getContext());
 			}
-			Technology technology = project.getProjectInfo().getTechnology();
+			Technology technology = project.getApplicationInfo().getTechnology();
 			if (TechnologyTypes.ANDROIDS.contains(technology.getId())) {
 				String device = getHttpRequest().getParameter(REQ_ANDROID_DEVICE);
 				if (device.equals(SERIAL_NUMBER)) {
@@ -745,7 +745,7 @@ public class Build extends FrameworkBaseAction {
 			}
 
 			StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-			builder.append(project.getProjectInfo().getCode());
+			builder.append(project.getApplicationInfo().getCode());
 			if (StringUtils.isNotEmpty(buildInfo.getModuleName())) {
 				builder.append(File.separator);
 				builder.append(buildInfo.getModuleName());
@@ -849,7 +849,7 @@ public class Build extends FrameworkBaseAction {
 			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
 			Project project = administrator.getProject(projectCode);
 			StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-			builder.append(project.getProjectInfo().getCode());
+			builder.append(project.getApplicationInfo().getCode());
 			builder.append(File.separator);
 			String moduleName = administrator.getBuildInfo(project, Integer.parseInt(buildNumber)).getModuleName();
 			if (StringUtils.isNotEmpty(moduleName)) {
@@ -862,7 +862,7 @@ public class Build extends FrameworkBaseAction {
 			if (debugEnabled) {
 				S_LOGGER.debug("Download build number " + buildNumber + " Download location " + builder.toString());
 			}
-			if (TechnologyTypes.IPHONES.contains(project.getProjectInfo().getTechnology().getId())) {
+			if (TechnologyTypes.IPHONES.contains(project.getApplicationInfo().getTechnology().getId())) {
 				String path = administrator.getBuildInfo(project, Integer.parseInt(buildNumber)).getDeliverables();
 				fileInputStream = new FileInputStream(new File(path));
 				fileName = administrator.getBuildInfo(project, Integer.parseInt(buildNumber)).getBuildName();
@@ -901,7 +901,7 @@ public class Build extends FrameworkBaseAction {
 			ProjectRuntimeManager runtimeManager = PhrescoFrameworkFactory.getProjectRuntimeManager();
 			Project project = administrator.getProject(projectCode);
 			StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-			builder.append(project.getProjectInfo().getCode());
+			builder.append(project.getApplicationInfo().getCode());
 			builder.append(File.separator);
 			builder.append(BUILD_DIR);
 			builder.append(File.separator);
@@ -956,7 +956,7 @@ public class Build extends FrameworkBaseAction {
 			}
 			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
 			Project project = administrator.getProject(projectCode);
-			String projectCode = project.getProjectInfo().getCode();
+			String projectCode = project.getApplicationInfo().getCode();
 			String importSQL = (String) getHttpRequest().getParameter(IMPORT_SQL);
 			getHttpSession().setAttribute(projectCode + SESSION_NODEJS_IMPORTSQL_VALUE, importSQL);
 			ProjectRuntimeManager runtimeManager = PhrescoFrameworkFactory.getProjectRuntimeManager();
@@ -1022,7 +1022,7 @@ public class Build extends FrameworkBaseAction {
 			Project project = administrator.getProject(projectCode);
 			String importSql = (String) getHttpSession().getAttribute(projectCode + SESSION_NODEJS_IMPORTSQL_VALUE);
 			environments = (String) getHttpSession()
-					.getAttribute(project.getProjectInfo().getCode() + SESSION_ENV_NAME);
+					.getAttribute(project.getApplicationInfo().getCode() + SESSION_ENV_NAME);
 			if (debugEnabled) {
 				S_LOGGER.debug("startNodeJSServer Environment name " + environments);
 			}
@@ -1077,8 +1077,8 @@ public class Build extends FrameworkBaseAction {
 			if (envFile.exists()) {
 				envFile.delete();
 			}
-			getHttpSession().removeAttribute(project.getProjectInfo().getCode() + SESSION_NODEJS_SERVER_STATUS);
-			getHttpSession().removeAttribute(project.getProjectInfo().getCode() + SESSION_NODEJS_IMPORTSQL_VALUE);
+			getHttpSession().removeAttribute(project.getApplicationInfo().getCode() + SESSION_NODEJS_SERVER_STATUS);
+			getHttpSession().removeAttribute(project.getApplicationInfo().getCode() + SESSION_NODEJS_IMPORTSQL_VALUE);
 			getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
 			getHttpRequest().setAttribute(REQ_PROJECT, project);
 
@@ -1099,7 +1099,7 @@ public class Build extends FrameworkBaseAction {
 	// to view method
 	public String readLogFile(Project project, String fromNodejs) {
 		StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-		builder.append(project.getProjectInfo().getCode());
+		builder.append(project.getApplicationInfo().getCode());
 		builder.append(File.separator);
 		builder.append(DO_NOT_CHECKIN_DIR);
 		builder.append(File.separator);
@@ -1381,8 +1381,8 @@ public class Build extends FrameworkBaseAction {
 				while ((line = reader.readLine()) != null) {
 				}
 			}
-			getHttpSession().removeAttribute(project.getProjectInfo().getCode() + SESSION_JAVA_SERVER_STATUS);
-			getHttpSession().removeAttribute(project.getProjectInfo().getCode() + IMPORT_SQL);
+			getHttpSession().removeAttribute(project.getApplicationInfo().getCode() + SESSION_JAVA_SERVER_STATUS);
+			getHttpSession().removeAttribute(project.getApplicationInfo().getCode() + IMPORT_SQL);
 			getHttpSession().setAttribute(projectCode + REQ_JAVA_STOP, reader);
 			getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
 			getHttpRequest().setAttribute(REQ_TEST_TYPE, REQ_JAVA_STOP);
@@ -1543,7 +1543,7 @@ public class Build extends FrameworkBaseAction {
 		try {
 			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
 	        Project project = administrator.getProject(projectCode);
-	        String technology = project.getProjectInfo().getTechnology().getId();
+	        String technology = project.getApplicationInfo().getTechnology().getId();
 	        getHttpRequest().setAttribute(REQ_TECHNOLOGY, technology);
 			getHttpRequest().setAttribute(FILE_TYPES, fileType);
 			getHttpRequest().setAttribute(FILE_BROWSE, fileorfolder);
@@ -1572,9 +1572,9 @@ public class Build extends FrameworkBaseAction {
 
 			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
 	        Project project = administrator.getProject(projectCode);
-	        String techId = project.getProjectInfo().getTechnology().getId();
+	        String techId = project.getApplicationInfo().getTechnology().getId();
 	        StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-	        builder.append(project.getProjectInfo().getCode());
+	        builder.append(project.getApplicationInfo().getCode());
 	        getHttpRequest().setAttribute(REQ_BUILD_FROM, getHttpRequest().getParameter(REQ_BUILD_FROM));
 	        getHttpRequest().setAttribute(REQ_TECHNOLOGY, techId);
 	        setSelectedJs(sb.toString());
@@ -1591,7 +1591,7 @@ public class Build extends FrameworkBaseAction {
 				Project project = administrator.getProject(projectCode);
 				
 				StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-		        builder.append(project.getProjectInfo().getCode());
+		        builder.append(project.getApplicationInfo().getCode());
 		        File systemPath = new File(builder.toString() + File.separator + POM_FILE);
 		        
 		        PomProcessor processor = new PomProcessor(systemPath);
@@ -1804,7 +1804,7 @@ public class Build extends FrameworkBaseAction {
 			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
 			Project project = administrator.getProject(projectCode);
 			sqlFiles = new ArrayList<String>();
-			String techId = project.getProjectInfo().getTechnology().getId();
+			String techId = project.getApplicationInfo().getTechnology().getId();
 			String selectedDb = getHttpRequest().getParameter("selectedDb");
 			String sqlPath = sqlFolderPathMap.get(techId);
 			List<SettingsInfo> databaseDetails = administrator.getSettingsInfos( Constants.SETTINGS_TEMPLATE_DB,

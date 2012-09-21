@@ -45,7 +45,7 @@ public class Download extends FrameworkBaseAction {
     	
     	try {
 			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-			ProjectInfo projectInfo = administrator.getProject(projectCode).getProjectInfo();
+			ProjectInfo projectInfo = administrator.getProject(projectCode).getApplicationInfo();
 			DownloadPropertyInfo downloadPropertyInfo = new DownloadPropertyInfo(FrameworkUtil.findOS(), projectInfo.getTechnology().getId());
 			getHttpRequest().setAttribute(REQ_SERVER_DOWNLOAD_INFO, administrator.getServerDownloadInfo(downloadPropertyInfo));
 			getHttpRequest().setAttribute(REQ_DB_DOWNLOAD_INFO, administrator.getDbDownloadInfo(downloadPropertyInfo));

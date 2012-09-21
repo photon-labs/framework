@@ -29,9 +29,9 @@
 <script src="js/reader.js" ></script>
 
 <%
-   	String projectCode = (String)request.getAttribute(FrameworkConstants.REQ_PROJECT_CODE);
+    String projectCode = (String)request.getAttribute(FrameworkConstants.REQ_PROJECT_CODE);
 	Project project = (Project)request.getAttribute(FrameworkConstants.REQ_PROJECT);
-	String technology = (String)project.getProjectInfo().getTechnology().getId();
+	String technology = (String)project.getApplicationInfo().getTechnology().getId();
 	
 	//xcode targets
    	List<PBXNativeTarget> xcodeConfigs = (List<PBXNativeTarget>) request.getAttribute(FrameworkConstants.REQ_XCODE_CONFIGS);

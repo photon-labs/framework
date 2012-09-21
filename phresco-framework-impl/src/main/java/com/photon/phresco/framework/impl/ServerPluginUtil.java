@@ -33,24 +33,25 @@ import org.apache.commons.collections.CollectionUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.photon.phresco.commons.model.ProjectInfo;
+import com.photon.phresco.commons.model.ApplicationInfo;
+import com.photon.phresco.commons.model.ArtifactInfo;
+import com.photon.phresco.commons.model.DownloadInfo;
 import com.photon.phresco.exception.PhrescoException;
-import com.photon.phresco.model.Server;
 import com.photon.phresco.util.Constants;
 import com.phresco.pom.exception.PhrescoPomException;
 import com.phresco.pom.util.PomProcessor;
 
 public class ServerPluginUtil {
 
-	protected void addServerPlugin(ProjectInfo info, File path) throws PhrescoException {
-		List<Server> servers = info.getTechnology().getServers();
+	protected void addServerPlugin(ApplicationInfo info, File path) throws PhrescoException {
+		List<DownloadInfo> servers = info.getSelectedServers();
 		if (CollectionUtils.isEmpty(servers)) {
 			return;
 		}
 
-		for (Server server : servers) {
-			List<String> versions = server.getVersions();
-			for (String version : versions) {
+		for (DownloadInfo server : servers) {
+			List<ArtifactInfo> versions = server.getVersions();
+			for (ArtifactInfo version : versions) {
 				if (server.getName().contains(Constants.TYPE_WEBLOGIC)) {
 					String pluginVersion = "";
 					if (version.equals(Constants.WEBLOGIC_12c)) {

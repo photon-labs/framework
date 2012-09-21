@@ -32,8 +32,8 @@
 <script src="js/reader.js" ></script>
 
 <%
-	Project project = (Project) request.getAttribute(FrameworkConstants.REQ_PROJECT);
-	String projectCode = (String)project.getProjectInfo().getCode();
+    Project project = (Project) request.getAttribute(FrameworkConstants.REQ_PROJECT);
+	String projectCode = (String)project.getApplicationInfo().getCode();
 	String testType = (String) request.getAttribute(FrameworkConstants.REQ_TEST_TYPE);
 	List<String> projectModules = (List<String>) request.getAttribute(FrameworkConstants.REQ_PROJECT_MODULES);
 %>

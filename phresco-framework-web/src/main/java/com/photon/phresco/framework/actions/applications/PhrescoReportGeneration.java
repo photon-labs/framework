@@ -124,10 +124,10 @@ public class PhrescoReportGeneration extends FrameworkBaseAction implements Fram
 			reportPaths = FrameworkUtil.getInstance();
 			project = proj;
 			testType = tstType;
-			techId = project.getProjectInfo().getTechnology().getId();
-			projectCode = project.getProjectInfo().getCode();
-			projectName = project.getProjectInfo().getName();
-			techName = project.getProjectInfo().getTechnology().getName();
+			techId = project.getApplicationInfo().getTechnology().getId();
+			projectCode = project.getApplicationInfo().getCode();
+			projectName = project.getApplicationInfo().getName();
+			techName = project.getApplicationInfo().getTechnology().getName();
 			reportDatasType = reportDataType;
 			// Report generation for unit and functional
 			if (UNIT.equals(testType) || FUNCTIONAL.equals(testType)) {
@@ -162,10 +162,10 @@ public class PhrescoReportGeneration extends FrameworkBaseAction implements Fram
 			reportPaths = FrameworkUtil.getInstance();
 			project = proj;
 			testType = tstType;
-			techId = project.getProjectInfo().getTechnology().getId();
-			techName = project.getProjectInfo().getTechnology().getName();
-			projectCode = project.getProjectInfo().getCode();
-			projectName = project.getProjectInfo().getName();
+			techId = project.getApplicationInfo().getTechnology().getId();
+			techName = project.getApplicationInfo().getTechnology().getName();
+			projectCode = project.getApplicationInfo().getCode();
+			projectName = project.getApplicationInfo().getName();
 			reportDatasType = reportDataType;
 			cumalitiveTestReport();
 		} catch(Exception e) {
@@ -756,8 +756,8 @@ public class PhrescoReportGeneration extends FrameworkBaseAction implements Fram
         for(String perType: testResultsTypes) {
             StringBuilder sb = new StringBuilder();
             sb.append(Utility.getProjectHome());
-            sb.append(project.getProjectInfo().getCode());
-            String performanceReportDir = reportPaths.getPerformanceReportDir(project.getProjectInfo().getTechnology().getId());
+            sb.append(project.getApplicationInfo().getCode());
+            String performanceReportDir = reportPaths.getPerformanceReportDir(project.getApplicationInfo().getTechnology().getId());
             
             if (StringUtils.isNotEmpty(performanceReportDir) && StringUtils.isNotEmpty(perType)) {
                 Pattern p = Pattern.compile("dir_type");
@@ -796,8 +796,8 @@ public class PhrescoReportGeneration extends FrameworkBaseAction implements Fram
         // List of performance test types
         StringBuilder sb = new StringBuilder();
         sb.append(Utility.getProjectHome());
-        sb.append(project.getProjectInfo().getCode());
-        String performanceReportDir = reportPaths.getPerformanceReportDir(project.getProjectInfo().getTechnology().getId());
+        sb.append(project.getApplicationInfo().getCode());
+        String performanceReportDir = reportPaths.getPerformanceReportDir(project.getApplicationInfo().getTechnology().getId());
         if (StringUtils.isNotEmpty(performanceReportDir)) {
             sb.append(performanceReportDir); 
         }

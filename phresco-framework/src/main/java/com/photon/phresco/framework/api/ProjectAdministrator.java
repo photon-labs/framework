@@ -25,7 +25,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ApplicationType;
+import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.DownloadInfo;
 import com.photon.phresco.commons.model.LogInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
@@ -43,10 +45,6 @@ import com.photon.phresco.framework.model.CIJob;
 import com.photon.phresco.framework.model.CIJobStatus;
 import com.photon.phresco.framework.model.CertificateInfo;
 import com.photon.phresco.framework.model.SettingsInfo;
-import com.photon.phresco.model.Database;
-import com.photon.phresco.model.DownloadPropertyInfo;
-import com.photon.phresco.model.ModuleGroup;
-import com.photon.phresco.model.Server;
 import com.photon.phresco.service.client.api.ServiceManager;
 import com.photon.phresco.util.Credentials;
 import com.phresco.pom.site.ReportCategories;
@@ -64,7 +62,7 @@ public interface ProjectAdministrator {
      * @return
      * @throws PhrescoException
      */
-    Project createProject(ProjectInfo info, File path, User userInfo) throws PhrescoException;
+    Project createProject(ApplicationInfo info, File path, User userInfo) throws PhrescoException;
 
     /**
      * Update the project with the given project information
@@ -76,7 +74,7 @@ public interface ProjectAdministrator {
      * @throws PhrescoException
      * 
      */
-    Project updateProject(ProjectInfo delta,ProjectInfo projectInfo,File path, User userInfo) throws PhrescoException;
+    Project updateProject(ApplicationInfo delta, ApplicationInfo appInfo,File path, User userInfo) throws PhrescoException;
 
     /**
      * Returns the project for the specified project code
@@ -368,21 +366,21 @@ public interface ProjectAdministrator {
      * @param techId
      * @return list of modules
      */
-    List<ModuleGroup> getAllModules(String techId, String customerId) throws PhrescoException;
+    List<ArtifactGroup> getAllModules(String techId, String customerId) throws PhrescoException;
     
     /**
      * Returns the core modules specified under the given technology
      * @param techId
      * @return list of core modules
      */
-    List<ModuleGroup> getCoreModules(String techId, String customerId) throws PhrescoException;
+    List<ArtifactGroup> getCoreModules(String techId, String customerId) throws PhrescoException;
 
     /**
      * Returns the custom modules specified under the given technology
      * @param technology
      * @return list of custom modules
      */
-    List<ModuleGroup> getCustomModules(String techId, String customerId) throws PhrescoException;
+    List<ArtifactGroup> getCustomModules(String techId, String customerId) throws PhrescoException;
 
     /**
      * Authenticates the user credentials and returns the user information
@@ -397,28 +395,28 @@ public interface ProjectAdministrator {
      * @return
      * @throws PhrescoException
      */
-    List<DownloadInfo> getServerDownloadInfo(DownloadPropertyInfo downloadPropertyInfo) throws PhrescoException;
+    List<DownloadInfo> getServerDownloadInfo(String techId, String customerId) throws PhrescoException;
 
     /**
      * Returns Database DownloadInfo from the service
      * @return
      * @throws PhrescoException
      */
-    List<DownloadInfo> getDbDownloadInfo(DownloadPropertyInfo downloadPropertyInfo) throws PhrescoException;
+    List<DownloadInfo> getDbDownloadInfo(String techId, String customerId) throws PhrescoException;
 
     /**
      * Returns editor DownloadInfo from the service
      * @return
      * @throws PhrescoException
      */
-    List<DownloadInfo> getEditorDownloadInfo(DownloadPropertyInfo downloadPropertyInfo) throws PhrescoException;
+    List<DownloadInfo> getEditorDownloadInfo(String techId, String customerId) throws PhrescoException;
 
 	/**
      * Returns tools DownloadInfo from the service
      * @return
      * @throws PhrescoException
      */
-    List<DownloadInfo> getToolsDownloadInfo(DownloadPropertyInfo downloadPropertyInfo) throws PhrescoException;
+    List<DownloadInfo> getToolsDownloadInfo(String techId, String customerId) throws PhrescoException;
     /**
      * Returns the jForum path from the service
      * @return
@@ -430,7 +428,7 @@ public interface ProjectAdministrator {
      * @return
      * @throws PhrescoException
      */
-    List<DownloadInfo> getOtherDownloadInfo(DownloadPropertyInfo downloadPropertyInfo) throws PhrescoException;
+    List<DownloadInfo> getOtherDownloadInfo(String techId, String customerId) throws PhrescoException;
     
     String getJforumPath(String customerId) throws PhrescoException;
 
@@ -685,9 +683,9 @@ public interface ProjectAdministrator {
 	 * @return serverList
 	 * @throws PhrescoException
 	 */
-	List<Server> getServers(String customerId) throws PhrescoException;
+	List<DownloadInfo> getServers(String customerId) throws PhrescoException;
 	
-	List<Server> getServersByTech(String techId, String customerId) throws PhrescoException;
+	List<DownloadInfo> getServersByTech(String techId, String customerId) throws PhrescoException;
 	
 	/**
 	 * get databases from service
@@ -695,9 +693,9 @@ public interface ProjectAdministrator {
 	 * @return dbList
 	 * @throws PhrescoException
 	 */
-	List<Database> getDatabases(String customerId) throws PhrescoException;
+	List<DownloadInfo> getDatabases(String customerId) throws PhrescoException;
 	
-	List<Database> getDatabasesByTech(String techId, String customerId) throws PhrescoException;
+	List<DownloadInfo> getDatabasesByTech(String techId, String customerId) throws PhrescoException;
 	
 	/**
 	 * get webservices from service
@@ -713,7 +711,7 @@ public interface ProjectAdministrator {
 	 * @return 
 	 * @throws PhrescoException
 	 */
-	 void deleteSqlFolder(List<String> dbList, ProjectInfo projectInfo) throws PhrescoException;
+	 void deleteSqlFolder(List<String> dbList, ApplicationInfo appInfo) throws PhrescoException;
 
 	 List<Reports> getReports(ProjectInfo projectInfo) throws PhrescoException;
 	
@@ -721,13 +719,13 @@ public interface ProjectAdministrator {
 
 	 void updateRptPluginInPOM(ProjectInfo projectInfo, List<Reports> reports, List<ReportCategories> reportCategories) throws PhrescoException;
 	 
-	 List<Database> getDatabases() throws PhrescoException;
+	 List<DownloadInfo> getDatabases() throws PhrescoException;
 	 
-	 List<Server> getServers() throws PhrescoException;
+	 List<DownloadInfo> getServers() throws PhrescoException;
 	 
 	 List<ProjectInfo> getPilots(String technologyId, String customerId) throws PhrescoException;
 	 
-	List<ModuleGroup> getJSLibs(String technologyId, String customerId) throws PhrescoException;
+	List<ArtifactGroup> getJSLibs(String technologyId, String customerId) throws PhrescoException;
 
 	/**
 	 * Returns CI build object for build number

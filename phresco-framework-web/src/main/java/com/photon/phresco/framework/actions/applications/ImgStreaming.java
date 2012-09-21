@@ -98,8 +98,8 @@ public class ImgStreaming extends FrameworkBaseAction implements FrameworkConsta
         Project project = administrator.getProject(projectCode);
     	StringBuilder sbuilder = new StringBuilder();
     	sbuilder.append(Utility.getProjectHome());
-    	sbuilder.append(project.getProjectInfo().getCode());
-    	sbuilder.append(frameworkUtil.getFunctionalReportDir(project.getProjectInfo().getTechnology().getId()));
+    	sbuilder.append(project.getApplicationInfo().getCode());
+    	sbuilder.append(frameworkUtil.getFunctionalReportDir(project.getApplicationInfo().getTechnology().getId()));
     	sbuilder.append(File.separator);
     	sbuilder.append(SCREENSHOT_DIR);
     	sbuilder.append(File.separator);

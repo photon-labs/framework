@@ -86,7 +86,7 @@ public class NodeJSUtil {
 			String[] args1 = {NODE_SERVER_FILE};
 			cl.addArguments(args1); 
 			String projLocation = Utility.getProjectHome() + File.separator +
-					project.getProjectInfo().getCode() + File.separator + SOURCE_DIR;
+					project.getApplicationInfo().getCode() + File.separator + SOURCE_DIR;
 			cl.setWorkingDirectory(projLocation); 
 			Process proc = cl.execute(); 
 			BufferedReader input = new BufferedReader(new InputStreamReader(proc.getInputStream()));
@@ -108,7 +108,7 @@ public class NodeJSUtil {
 		Connection con = null;
 		try {
 			String projectHome = Utility.getProjectHome();
-			File file = new File(projectHome + project.getProjectInfo().getCode() + DB_CONFIG_PATH);
+			File file = new File(projectHome + project.getApplicationInfo().getCode() + DB_CONFIG_PATH);
 			if (!file.exists()) {
 				return;
 			}
@@ -189,7 +189,7 @@ public class NodeJSUtil {
 		try {
 			String projectHome = Utility.getProjectHome();
 			FileReader sqlFile = new FileReader(projectHome
-					+ project.getProjectInfo().getCode() + SQL_FILE_PATH);
+					+ project.getApplicationInfo().getCode() + SQL_FILE_PATH);
 			br = new BufferedReader(sqlFile);
 			while ((lines = br.readLine()) != null) {
 				builder.append(lines);
@@ -271,12 +271,12 @@ public class NodeJSUtil {
 	}
 	
 	public String getNodeJSServerStatus(HttpSession session) throws PhrescoException {
-    	String projectCode = project.getProjectInfo().getCode();
+    	String projectCode = project.getApplicationInfo().getCode();
 		String status = (String)session.getAttribute(projectCode + "_NodeJSServerStatus");
     	try {
 			if (status == null || status.isEmpty()) {
 				File serverConfigFile = new File(Utility.getProjectHome() + File.separator +
-						project.getProjectInfo().getCode() + File.separator + SERVER_CONFIG_FILE);
+						project.getApplicationInfo().getCode() + File.separator + SERVER_CONFIG_FILE);
 				Gson gson = new Gson();
 				InputStreamReader serverInStream = new InputStreamReader(new FileInputStream(
 						serverConfigFile));
@@ -311,9 +311,9 @@ public class NodeJSUtil {
 		BufferedWriter databaseWriter = null;
 		try {
 			File serverConfigFile = new File(Utility.getProjectHome() + File.separator +
-					project.getProjectInfo().getCode() + File.separator + SERVER_CONFIG_FILE);
+					project.getApplicationInfo().getCode() + File.separator + SERVER_CONFIG_FILE);
 			File databaseconfigfile = new File(Utility.getProjectHome() +  File.separator +
-					project.getProjectInfo().getCode() + File.separator + DATABASE_CONFIG_FILE);
+					project.getApplicationInfo().getCode() + File.separator + DATABASE_CONFIG_FILE);
 
 			Gson gson = new Gson();
 			databaseInStream = new InputStreamReader(new FileInputStream(
@@ -366,10 +366,10 @@ public class NodeJSUtil {
 			serverInfo.setPassword(serveradminpassword.getValue());
 
 			serverWriter = new BufferedWriter(new FileWriter(Utility.getProjectHome()+ File.separator +
-					project.getProjectInfo().getCode() + File.separator 
+					project.getApplicationInfo().getCode() + File.separator 
 					+ SERVER_CONFIG_FILE));
 			databaseWriter = new BufferedWriter(new FileWriter(Utility.getProjectHome() +  File.separator +
-					project.getProjectInfo().getCode() + File.separator 
+					project.getApplicationInfo().getCode() + File.separator 
 					+ DATABASE_CONFIG_FILE));
 
 			String serverJson = gson.toJson(serverInfo);
@@ -407,7 +407,7 @@ public class NodeJSUtil {
 		// cl.addArguments(args1);
 		Commandline cl = new Commandline(WIN_PROCESS_KILL_CMD
 				+ " /F /IM node.exe");
-		cl.setWorkingDirectory(project.getProjectInfo().getCode()
+		cl.setWorkingDirectory(project.getApplicationInfo().getCode()
 				+ File.separator + SOURCE_DIR);
 		System.out.println("command === " + cl.toString());
 		Process execute = cl.execute();
@@ -425,7 +425,7 @@ public class NodeJSUtil {
 		Commandline cl = new Commandline(UNIX_PROCESS_KILL_CMD);
 		String[] args1 = { "node" };
 		cl.addArguments(args1);
-		cl.setWorkingDirectory(project.getProjectInfo().getCode()
+		cl.setWorkingDirectory(project.getApplicationInfo().getCode()
 				+ File.separator + SOURCE_DIR);
 		Process execute = cl.execute();
 		BufferedReader in = new BufferedReader(new InputStreamReader(
