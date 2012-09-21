@@ -1357,6 +1357,8 @@ public interface FrameworkConstants {
    String SONAR_PHPCODESNIFFER_TIMEOUT = "sonar.phpCodesniffer.timeout";
    String DRUPAL_STANDARD = "sonar.phpCodesniffer.standardArgument";
    String WORDPRESS_STANDARD = "sonar.phpCodesniffer.standardArgument";
+   String SONAR_PHPPDEPEND_ARGUMENTLINE = "sonar.phpDepend.argumentLine";
+   String SONAR_PHPPMD_ARGUMENTLINE  = "sonar.phpPmd.argumentLine";
    String DRUPAL = "Drupal";
    String DRUPAL_STANDAD_VERSION = "7.8";
    String WORDPRESS = "WordPress";	    
@@ -1366,6 +1368,10 @@ public interface FrameworkConstants {
    String SQL_EXCLUDES = "source/sql";
    String HTML_EXCLUDES = "source/public_html";
    String TEST = "test";
+   String IGNORE = "--ignore=";
+   String EXCLUDE = "--exclude ";
+   String BACK_EXCLUDE = "**\\";
+   String FORWARD_EXCLUDE = "\\**";
   
    
    /* Constants for plugin properties */ 

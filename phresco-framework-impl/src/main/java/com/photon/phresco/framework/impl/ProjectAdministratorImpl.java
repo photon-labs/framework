@@ -574,29 +574,57 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 	 * @throws JAXBException 
 	 * @throws ParserConfigurationException 
 	 */
-	private static void excludeModule(ProjectInfo info) throws PhrescoException {
+	private void excludeModule(ProjectInfo info) throws PhrescoException {
 		try {
 			File projectPath = new File(Utility.getProjectHome()+ File.separator + info.getCode() + File.separator + POM_FILE);
 			PomProcessor processor = new PomProcessor(projectPath);
 			StringBuilder exclusionStringBuff = new StringBuilder();
+			StringBuilder exclusionValueBuff = new StringBuilder();
 			List<ModuleGroup> modules = info.getTechnology().getModules();
 			if (CollectionUtils.isEmpty(modules)) {
 				return;
 			}
 			for (ModuleGroup moduleGroup : modules) {
 				if (moduleGroup.isCore()) {
-					exclusionStringBuff.append("**\\");
+					exclusionValueBuff.append(moduleGroup.getName().toLowerCase());
+					exclusionValueBuff.append(FrameworkConstants.COMMA);
+					exclusionStringBuff.append(BACK_EXCLUDE);
 					exclusionStringBuff.append(moduleGroup.getName().toLowerCase());
-					exclusionStringBuff.append("\\**");
-					exclusionStringBuff.append("\\*.*");
-					exclusionStringBuff.append(",");
+					exclusionStringBuff.append(FORWARD_EXCLUDE);
+					exclusionStringBuff.append(FrameworkConstants.COMMA);
 				}
 			}
 			String exclusionValue = exclusionStringBuff.toString();
-			if (exclusionValue.lastIndexOf(',') != -1) {
+			if (exclusionValue.lastIndexOf(FrameworkConstants.COMMA) != -1) {
 				exclusionValue = exclusionValue.substring(0, exclusionValue.lastIndexOf(','));
 			}
-			processor.setProperty("sonar.exclusions", exclusionValue);
+			
+			String exclusiontoolValue = exclusionValueBuff.toString();
+			if (exclusiontoolValue.lastIndexOf(FrameworkConstants.COMMA) != -1) {
+				exclusiontoolValue = exclusiontoolValue.substring(0, exclusiontoolValue.lastIndexOf(','));
+			}
+			
+			String pomExclusionValue = processor.getProperty(FrameworkConstants.SONAR_EXCLUSION);
+			if (!pomExclusionValue.equals(FrameworkConstants.KEY_QUOTES)) {
+				processor.setProperty(FrameworkConstants.SONAR_EXCLUSION, pomExclusionValue + FrameworkConstants.COMMA + exclusionValue);
+			} else if(pomExclusionValue.equals(FrameworkConstants.KEY_QUOTES)) {
+				processor.setProperty(FrameworkConstants.SONAR_EXCLUSION, exclusionValue);
+			}
+			
+			String pdependExcludeValue = processor.getProperty(FrameworkConstants.SONAR_PHPPDEPEND_ARGUMENTLINE);
+			if (!pdependExcludeValue.equals(FrameworkConstants.KEY_QUOTES)) {
+				processor.setProperty(FrameworkConstants.SONAR_PHPPDEPEND_ARGUMENTLINE, pdependExcludeValue + FrameworkConstants.COMMA + exclusiontoolValue);
+			} else 	if (pdependExcludeValue.equals(FrameworkConstants.KEY_QUOTES)) {
+				processor.setProperty(FrameworkConstants.SONAR_PHPPDEPEND_ARGUMENTLINE, FrameworkConstants.IGNORE + exclusiontoolValue);
+			}
+			
+			String pmdExcludeValue = processor.getProperty(FrameworkConstants.SONAR_PHPPMD_ARGUMENTLINE);
+			if (!pmdExcludeValue.equals(FrameworkConstants.KEY_QUOTES)) {
+				processor.setProperty(FrameworkConstants.SONAR_PHPPMD_ARGUMENTLINE, pmdExcludeValue + FrameworkConstants.COMMA + exclusiontoolValue);
+			} else 	if (pmdExcludeValue.equals(FrameworkConstants.KEY_QUOTES)) {
+				processor.setProperty(FrameworkConstants.SONAR_PHPPMD_ARGUMENTLINE, FrameworkConstants.EXCLUDE + exclusiontoolValue);
+			}
+			
 			processor.save();
 		} catch (JAXBException e) {
 			throw new PhrescoException(e);
@@ -604,8 +632,11 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 			throw new PhrescoException(e);
 		} catch (ParserConfigurationException e) {
 			throw new PhrescoException(e);
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
 		}
 	}
+
 
 	/**
 	 * @param path
