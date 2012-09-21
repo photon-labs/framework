@@ -35,8 +35,8 @@ import org.tmatesoft.svn.core.wc.SVNRevision;
 import org.tmatesoft.svn.core.wc.SVNUpdateClient;
 
 import com.google.gson.Gson;
+import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.exception.PhrescoException;
-import com.photon.phresco.model.ProjectInfo;
 import com.photon.phresco.util.FileUtil;
 import com.photon.phresco.util.Utility;
 

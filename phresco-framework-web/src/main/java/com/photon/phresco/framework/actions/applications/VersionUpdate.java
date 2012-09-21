@@ -23,11 +23,11 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 
+import com.photon.phresco.commons.model.VersionInfo;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
 import com.photon.phresco.framework.api.UpdateManager;
 import com.photon.phresco.framework.commons.FrameworkUtil;
-import com.photon.phresco.model.VersionInfo;
 
 public class VersionUpdate extends FrameworkBaseAction {
 	private static final long serialVersionUID = 1L;
@@ -58,7 +58,7 @@ public class VersionUpdate extends FrameworkBaseAction {
 			currentVersion = updateManager.getCurrentVersion();
 			versionInfo = updateManager.checkForUpdate(currentVersion);
 			message = versionInfo.getMessage();
-			latestVersion = versionInfo.getFrameworkversion();
+			latestVersion = versionInfo.getFrameworkVersion();
 			isUpdateAvail = versionInfo.isUpdateAvailable();
 		} catch (Exception e) {
 			if (debugEnabled) {

@@ -25,10 +25,10 @@
 <%@ page import="org.apache.commons.collections.CollectionUtils" %>
 <%@ page import="org.apache.commons.lang.StringUtils" %>
 
-<%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
-<%@ page import="com.photon.phresco.model.ProjectInfo" %>
-<%@ page import="com.photon.phresco.model.Technology" %>
-<%@ page import="com.photon.phresco.model.WebService"%>
+<%@ page import="com.photon.phresco.framework.model.FrameworkConstants" %>
+<%@ page import="com.photon.phresco.commons.model.ProjectInfo" %>
+<%@ page import="com.photon.phresco.commons.model.Technology" %>
+<%@ page import="com.photon.phresco.commons.model.WebService"%>
 <%@ page import="com.photon.phresco.model.Server"%>
 <%@ page import="com.photon.phresco.model.Database"%>
 <%@ page import="com.photon.phresco.util.TechnologyTypes"%>

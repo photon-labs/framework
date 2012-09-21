@@ -19,8 +19,8 @@
  */
 package com.photon.phresco.framework.actions;
 
-import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.framework.api.AbstractActionType;
+import com.photon.phresco.framework.model.FrameworkConstants;
 
 public class SharepointNUnitTest extends AbstractActionType {
     

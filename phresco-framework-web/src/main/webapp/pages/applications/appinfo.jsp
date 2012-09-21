@@ -25,9 +25,9 @@
 <%@ page import="org.apache.commons.collections.CollectionUtils" %>
 <%@ page import="org.apache.commons.collections.MapUtils" %>
 
-<%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
-<%@ page import="com.photon.phresco.model.ProjectInfo" %>
-<%@ page import="com.photon.phresco.model.ApplicationType" %>
+<%@ page import="com.photon.phresco.framework.model.FrameworkConstants" %>
+<%@ page import="com.photon.phresco.commons.model.ProjectInfo" %>
+<%@ page import="com.photon.phresco.commons.model.ApplicationType" %>
 
 <%
     String codePrefix = (String) request.getAttribute(FrameworkConstants.REQ_CODE_PREFIX);

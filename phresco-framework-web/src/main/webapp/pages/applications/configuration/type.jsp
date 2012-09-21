@@ -24,16 +24,16 @@
 <%@ page import="org.apache.commons.collections.CollectionUtils"%>
 <%@ page import="org.apache.commons.lang.StringUtils" %>
 
-<%@ page import="com.photon.phresco.model.SettingsInfo"%>
-<%@ page import="com.photon.phresco.model.SettingsTemplate"%>
-<%@ page import="com.photon.phresco.model.PropertyTemplate"%>
-<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
+<%@ page import="com.photon.phresco.framework.model.SettingsInfo"%>
+<%@ page import="com.photon.phresco.commons.model.SettingsTemplate"%>
+<%@ page import="com.photon.phresco.commons.model.PropertyTemplate"%>
+<%@ page import="com.photon.phresco.framework.model.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.model.I18NString"%>
 <%@ page import="com.photon.phresco.model.Server" %>
 <%@ page import="com.photon.phresco.model.Database"%>
 <%@ page import="com.photon.phresco.util.TechnologyTypes"%>
-<%@ page import="com.photon.phresco.model.ProjectInfo"%>
-<%@ page import="com.photon.phresco.model.Technology"%>
+<%@ page import="com.photon.phresco.commons.model.ProjectInfo"%>
+<%@ page import="com.photon.phresco.commons.model.Technology"%>
 <%@ page import="com.photon.phresco.util.Constants"%>
 
 <%

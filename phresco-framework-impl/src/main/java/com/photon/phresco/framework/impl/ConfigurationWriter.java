@@ -48,8 +48,8 @@ import org.xml.sax.SAXException;
 import com.photon.phresco.configuration.ConfigWriter;
 import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.PhrescoException;
-import com.photon.phresco.model.PropertyInfo;
-import com.photon.phresco.model.SettingsInfo;
+import com.photon.phresco.framework.model.PropertyInfo;
+import com.photon.phresco.framework.model.SettingsInfo;
 
 public class ConfigurationWriter extends ConfigWriter {
 

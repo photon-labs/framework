@@ -26,8 +26,8 @@
 <%@ page import="java.util.Iterator"%>
 
 <%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
-<%@ page import="com.photon.phresco.model.ProjectInfo"%>
-<%@ page import="com.photon.phresco.commons.CIBuild"%>
+<%@ page import="com.photon.phresco.commons.model.ProjectInfo"%>
+<%@ page import="com.photon.phresco.framework.model.CIBuild"%>
 
 <%@ include file="../progress.jsp" %>
 <%@ include file="../../userInfoDetails.jsp" %>

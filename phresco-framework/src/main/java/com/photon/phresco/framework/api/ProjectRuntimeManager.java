@@ -22,8 +22,8 @@ package com.photon.phresco.framework.api;
 import java.io.BufferedReader;
 import java.util.Map;
 
-import com.photon.phresco.commons.EnvironmentInfo;
 import com.photon.phresco.exception.PhrescoException;
+import com.photon.phresco.framework.model.EnvironmentInfo;
 
 
 public interface ProjectRuntimeManager {

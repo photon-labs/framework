@@ -17,11 +17,10 @@
  * limitations under the License.
  * ###
  */
-package com.photon.phresco.commons;
+package com.photon.phresco.framework.model;
 
 import java.util.List;
 
-import com.photon.phresco.model.SettingsInfo;
 
 public class EnvironmentInfo {
     private List<SettingsInfo> settingsInfos;

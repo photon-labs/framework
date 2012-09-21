@@ -27,11 +27,11 @@
 <%@ page import="org.apache.commons.lang.StringUtils" %>
 <%@ page import="org.apache.commons.collections.CollectionUtils" %>
 
-<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
-<%@ page import="com.photon.phresco.commons.XCodeConstants"%>
-<%@ page import="com.photon.phresco.commons.AndroidConstants"%>
+<%@ page import="com.photon.phresco.framework.model.FrameworkConstants"%>
+<%@ page import="com.photon.phresco.framework.model.XCodeConstants"%>
+<%@ page import="com.photon.phresco.framework.model.AndroidConstants"%>
 <%@ page import="com.photon.phresco.util.TechnologyTypes" %>
-<%@ page import="com.photon.phresco.model.ProjectInfo" %>
+<%@ page import="com.photon.phresco.commons.model.ProjectInfo" %>
 <%@ page import="com.photon.phresco.framework.commons.PBXNativeTarget"%>
 <%@ page import="com.photon.phresco.configuration.Environment"%>
 

@@ -23,14 +23,14 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import com.photon.phresco.commons.model.VideoInfo;
+import com.photon.phresco.commons.model.VideoType;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.FrameworkConfiguration;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
 import com.photon.phresco.framework.api.ProjectAdministrator;
 import com.photon.phresco.framework.commons.FrameworkActions;
-import com.photon.phresco.model.VideoInfo;
-import com.photon.phresco.model.VideoType;
 
 public class Home extends FrameworkBaseAction implements FrameworkActions {
 	private static final long serialVersionUID = -9002492813622189809L;

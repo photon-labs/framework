@@ -20,7 +20,7 @@
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="org.apache.commons.lang.StringUtils"%>
-<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
+<%@ page import="com.photon.phresco.framework.model.FrameworkConstants"%>
 
 <div class="popup_Modal testCmdLine" id="build-outputOuter">
 	<form name="testSuiteCall" action="functional" method="post" id="testSuiteCall" class="marginBottomZero">

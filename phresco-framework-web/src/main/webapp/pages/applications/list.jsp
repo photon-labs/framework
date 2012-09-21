@@ -24,9 +24,9 @@
 <%@ page import="java.util.List"%>
 <%@ page import="org.apache.commons.collections.CollectionUtils"%>
 
-<%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
+<%@ page import="com.photon.phresco.framework.model.FrameworkConstants" %>
 <%@ page import="com.photon.phresco.framework.api.Project" %>
-<%@ page import="com.photon.phresco.model.ProjectInfo" %>
+<%@ page import="com.photon.phresco.commons.model.ProjectInfo" %>
 
 <%@ include file="../userInfoDetails.jsp" %>
 

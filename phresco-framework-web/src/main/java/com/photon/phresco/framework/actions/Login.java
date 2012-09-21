@@ -46,12 +46,12 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.photon.phresco.commons.model.User;
+import com.photon.phresco.commons.model.VideoInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.FrameworkConfiguration;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.api.ProjectAdministrator;
 import com.photon.phresco.framework.commons.FrameworkUtil;
-import com.photon.phresco.model.VideoInfo;
 import com.photon.phresco.util.Credentials;
 
 public class Login extends FrameworkBaseAction {

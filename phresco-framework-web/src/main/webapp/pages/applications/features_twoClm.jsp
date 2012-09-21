@@ -27,9 +27,9 @@
 <%@ page import="org.apache.commons.collections.CollectionUtils" %>
 <%@ page import="org.apache.commons.collections.MapUtils" %>
 
-<%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
-<%@ page import="com.photon.phresco.model.ProjectInfo" %>
-<%@ page import="com.photon.phresco.model.Technology" %>
+<%@ page import="com.photon.phresco.framework.model.FrameworkConstants" %>
+<%@ page import="com.photon.phresco.commons.model.ProjectInfo" %>
+<%@ page import="com.photon.phresco.commons.model.Technology" %>
 <%@ page import="com.photon.phresco.model.ModuleGroup" %>
 <%@ page import="com.photon.phresco.model.Module" %>
 <%@ page import="com.photon.phresco.model.Documentation.DocumentationType"%>

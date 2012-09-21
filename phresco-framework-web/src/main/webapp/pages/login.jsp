@@ -2,7 +2,7 @@
 
 <%@ page import="org.apache.commons.lang.StringUtils"%>
 
-<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
+<%@ page import="com.photon.phresco.framework.model.FrameworkConstants"%>
 
 <html>
 	<head>

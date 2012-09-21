@@ -23,20 +23,20 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
+import com.photon.phresco.commons.model.ApplicationType;
+import com.photon.phresco.commons.model.DownloadInfo;
+import com.photon.phresco.commons.model.LogInfo;
+import com.photon.phresco.commons.model.ProjectInfo;
+import com.photon.phresco.commons.model.Property;
+import com.photon.phresco.commons.model.SettingsTemplate;
+import com.photon.phresco.commons.model.Technology;
 import com.photon.phresco.commons.model.User;
+import com.photon.phresco.commons.model.VideoInfo;
 import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.PhrescoException;
-import com.photon.phresco.model.AdminConfigInfo;
-import com.photon.phresco.model.ApplicationType;
 import com.photon.phresco.model.Database;
-import com.photon.phresco.model.DownloadInfo;
 import com.photon.phresco.model.DownloadPropertyInfo;
-import com.photon.phresco.model.LogInfo;
-import com.photon.phresco.model.ProjectInfo;
 import com.photon.phresco.model.Server;
-import com.photon.phresco.model.SettingsTemplate;
-import com.photon.phresco.model.Technology;
-import com.photon.phresco.model.VideoInfo;
 import com.photon.phresco.util.Credentials;
 import com.phresco.pom.site.Reports;
 import com.sun.jersey.api.client.ClientResponse;
@@ -134,7 +134,7 @@ public interface ServiceManager {
      * @return
      * @throws PhrescoException
      */
-    List<AdminConfigInfo> getAdminConfig() throws PhrescoException;
+    List<Property> getAdminConfig() throws PhrescoException;
     
     /**
      * Get the job configuration xml file from the server and return as InputStream.

@@ -22,8 +22,8 @@
 <%@ page import="java.util.ArrayList"%>
 <%@ page import="java.util.List" %>
 
-<%@ page import="com.photon.phresco.model.VideoInfo" %>
-<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
+<%@ page import="com.photon.phresco.commons.model.VideoInfo" %>
+<%@ page import="com.photon.phresco.framework.model.FrameworkConstants"%>
 
 
 <%

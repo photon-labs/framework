@@ -28,9 +28,9 @@
 <%@ page import="java.util.Iterator"%>
 <%@ page import="java.util.regex.*"%>
 
-<%@ page import="com.photon.phresco.model.SettingsInfo"%>
-<%@ page import="com.photon.phresco.model.PropertyInfo"%>
-<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
+<%@ page import="com.photon.phresco.framework.model.SettingsInfo"%>
+<%@ page import="com.photon.phresco.framework.model.PropertyInfo"%>
+<%@ page import="com.photon.phresco.framework.model.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.util.Constants"%>
 <%@ page import="com.photon.phresco.configuration.Environment" %>
 

@@ -37,24 +37,24 @@ import org.apache.log4j.Logger;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.photon.phresco.commons.FrameworkConstants;
+import com.photon.phresco.commons.model.ApplicationType;
+import com.photon.phresco.commons.model.DownloadInfo;
+import com.photon.phresco.commons.model.LogInfo;
+import com.photon.phresco.commons.model.ProjectInfo;
+import com.photon.phresco.commons.model.Property;
+import com.photon.phresco.commons.model.SettingsTemplate;
+import com.photon.phresco.commons.model.Technology;
 import com.photon.phresco.commons.model.User;
+import com.photon.phresco.commons.model.VideoInfo;
 import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.FrameworkConfiguration;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.api.ServiceManager;
-import com.photon.phresco.model.AdminConfigInfo;
-import com.photon.phresco.model.ApplicationType;
+import com.photon.phresco.framework.model.FrameworkConstants;
 import com.photon.phresco.model.Database;
-import com.photon.phresco.model.DownloadInfo;
 import com.photon.phresco.model.DownloadPropertyInfo;
-import com.photon.phresco.model.LogInfo;
-import com.photon.phresco.model.ProjectInfo;
 import com.photon.phresco.model.Server;
-import com.photon.phresco.model.SettingsTemplate;
-import com.photon.phresco.model.Technology;
-import com.photon.phresco.model.VideoInfo;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.Credentials;
 import com.photon.phresco.util.Utility;
@@ -441,7 +441,7 @@ public class ServiceManagerImpl implements ServiceManager, FrameworkConstants {
     }
     
     @Override
-    public List<AdminConfigInfo> getAdminConfig() throws PhrescoException {
+    public List<Property> getAdminConfig() throws PhrescoException {
     	if (debugEnabled) {
 			S_LOGGER.debug("Entering Method ServiceManagerImpl.getAdminConfig()");
 		}
@@ -450,7 +450,7 @@ public class ServiceManagerImpl implements ServiceManager, FrameworkConstants {
         WebResource resource = client.resource(configuration.getServerPath() + FrameworkConstants.REST_ADMIN_CONFIG_PATH);
         resource.accept(MediaType.APPLICATION_JSON_TYPE);
         ClientResponse clientResponse = resource.type(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
-        GenericType<List<AdminConfigInfo>> genericType = new GenericType<List<AdminConfigInfo>>() {};
+        GenericType<List<Property>> genericType = new GenericType<List<Property>>() {};
         return clientResponse.getEntity(genericType);
     }
     

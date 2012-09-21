@@ -21,6 +21,7 @@ package com.photon.phresco.framework.actions.applications;
 
 import org.apache.log4j.Logger;
 
+import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
@@ -28,7 +29,6 @@ import com.photon.phresco.framework.api.ProjectAdministrator;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.commons.LogErrorReport;
 import com.photon.phresco.model.DownloadPropertyInfo;
-import com.photon.phresco.model.ProjectInfo;
 
 public class Download extends FrameworkBaseAction {
 

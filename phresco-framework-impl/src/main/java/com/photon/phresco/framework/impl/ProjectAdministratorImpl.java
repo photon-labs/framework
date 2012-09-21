@@ -66,13 +66,17 @@ import org.w3c.dom.Element;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.photon.phresco.commons.BuildInfo;
-import com.photon.phresco.commons.CIBuild;
-import com.photon.phresco.commons.CIJob;
-import com.photon.phresco.commons.CIJobStatus;
-import com.photon.phresco.commons.DownloadTypes;
-import com.photon.phresco.commons.FrameworkConstants;
+import com.photon.phresco.commons.model.ApplicationType;
+import com.photon.phresco.commons.model.DownloadInfo;
+import com.photon.phresco.commons.model.LogInfo;
+import com.photon.phresco.commons.model.ProjectInfo;
+import com.photon.phresco.commons.model.Property;
+import com.photon.phresco.commons.model.SettingsTemplate;
+import com.photon.phresco.commons.model.Technology;
 import com.photon.phresco.commons.model.User;
+import com.photon.phresco.commons.model.VideoInfo;
+import com.photon.phresco.commons.model.VideoType;
+import com.photon.phresco.commons.model.WebService;
 import com.photon.phresco.configuration.Configuration;
 import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.PhrescoException;
@@ -83,23 +87,19 @@ import com.photon.phresco.framework.api.Project;
 import com.photon.phresco.framework.api.ProjectAdministrator;
 import com.photon.phresco.framework.api.ValidationResult;
 import com.photon.phresco.framework.api.Validator;
-import com.photon.phresco.model.AdminConfigInfo;
-import com.photon.phresco.model.ApplicationType;
-import com.photon.phresco.model.CertificateInfo;
+import com.photon.phresco.framework.model.BuildInfo;
+import com.photon.phresco.framework.model.CIBuild;
+import com.photon.phresco.framework.model.CIJob;
+import com.photon.phresco.framework.model.CIJobStatus;
+import com.photon.phresco.framework.model.CertificateInfo;
+import com.photon.phresco.framework.model.DownloadTypes;
+import com.photon.phresco.framework.model.FrameworkConstants;
+import com.photon.phresco.framework.model.SettingsInfo;
 import com.photon.phresco.model.Database;
-import com.photon.phresco.model.DownloadInfo;
 import com.photon.phresco.model.DownloadPropertyInfo;
-import com.photon.phresco.model.LogInfo;
 import com.photon.phresco.model.Module;
 import com.photon.phresco.model.ModuleGroup;
-import com.photon.phresco.model.ProjectInfo;
 import com.photon.phresco.model.Server;
-import com.photon.phresco.model.SettingsInfo;
-import com.photon.phresco.model.SettingsTemplate;
-import com.photon.phresco.model.Technology;
-import com.photon.phresco.model.VideoInfo;
-import com.photon.phresco.model.VideoType;
-import com.photon.phresco.model.WebService;
 import com.photon.phresco.service.client.api.ServiceClientConstant;
 import com.photon.phresco.service.client.api.ServiceContext;
 import com.photon.phresco.service.client.api.ServiceManager;
@@ -2170,7 +2170,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 
 	 @Override
 	 public String getJforumPath(String customerId) throws PhrescoException {
-		 AdminConfigInfo adminConfigInfo = getServiceManager().getForumPath(customerId);
+		 Property adminConfigInfo = getServiceManager().getForumPath(customerId);
 
 		 return adminConfigInfo.getValue();
 	 }

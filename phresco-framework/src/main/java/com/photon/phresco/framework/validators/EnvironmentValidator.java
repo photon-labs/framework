@@ -33,10 +33,10 @@ import org.codehaus.plexus.util.DirectoryWalkListener;
 import org.codehaus.plexus.util.DirectoryWalker;
 
 import com.google.gson.Gson;
+import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.api.ValidationResult;
 import com.photon.phresco.framework.api.Validator;
-import com.photon.phresco.model.ProjectInfo;
 import com.photon.phresco.util.Utility;
 
 public class EnvironmentValidator implements Validator, DirectoryWalkListener {

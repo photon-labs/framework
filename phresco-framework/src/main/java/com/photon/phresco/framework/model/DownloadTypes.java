@@ -17,17 +17,22 @@
  * limitations under the License.
  * ###
  */
-package com.photon.phresco.commons;
+package com.photon.phresco.framework.model;
 
-public interface AndroidConstants {
+/**
+ * Download Type Constants
+ * @author bharatkumarradha
+ *
+ */
+public interface DownloadTypes {
 
-	String ANDROID_22="2.2";
+	String SERVER = "Server";
+
+	String DATABASE = "Database";
 	
-	String ANDROID_233="2.3.3";
+	String EDITOR = "Editor";
 	
-	String ANDROID_401="4.0.3";
+	String TOOLS = "Tools";
 	
-	String SUPPORTED_SDKS[] = new String[]{ ANDROID_22, ANDROID_233, ANDROID_401};
-	
-	String ANDROID_VERSION_MVN_PARAM="android.version";
+	String OTHERS = "Others";
 }

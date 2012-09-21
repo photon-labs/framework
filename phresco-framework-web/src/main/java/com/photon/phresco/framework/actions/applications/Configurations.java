@@ -38,6 +38,10 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.opensymphony.xwork2.Action;
+import com.photon.phresco.commons.model.ProjectInfo;
+import com.photon.phresco.commons.model.PropertyTemplate;
+import com.photon.phresco.commons.model.SettingsTemplate;
+import com.photon.phresco.commons.model.Technology;
 import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
@@ -47,16 +51,12 @@ import com.photon.phresco.framework.api.ProjectAdministrator;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.commons.LogErrorReport;
 import com.photon.phresco.framework.impl.EnvironmentComparator;
-import com.photon.phresco.model.CertificateInfo;
+import com.photon.phresco.framework.model.CertificateInfo;
+import com.photon.phresco.framework.model.PropertyInfo;
+import com.photon.phresco.framework.model.SettingsInfo;
 import com.photon.phresco.model.Database;
 import com.photon.phresco.model.I18NString;
-import com.photon.phresco.model.ProjectInfo;
-import com.photon.phresco.model.PropertyInfo;
-import com.photon.phresco.model.PropertyTemplate;
 import com.photon.phresco.model.Server;
-import com.photon.phresco.model.SettingsInfo;
-import com.photon.phresco.model.SettingsTemplate;
-import com.photon.phresco.model.Technology;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.TechnologyTypes;
 import com.photon.phresco.util.Utility;
@@ -232,7 +232,7 @@ public class Configurations extends FrameworkBaseAction {
                 }
             }
             SettingsInfo settingsInfo = new SettingsInfo(configName, description, configType);
-            settingsInfo.setAppliesTo(Arrays.asList(project.getProjectInfo().getTechnology().getId()));
+            settingsInfo.setAppliesToTechs(Arrays.asList(project.getProjectInfo().getTechnology().getId()));
             settingsInfo.setPropertyInfos(propertyInfoList);
             getHttpRequest().setAttribute(REQ_CONFIG_INFO, settingsInfo);
             getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);

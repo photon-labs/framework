@@ -29,8 +29,8 @@
 <%@ page import="com.photon.phresco.framework.model.TestCaseError"%>
 <%@ page import="com.photon.phresco.framework.model.TestSuiteResult"%>
 <%@ page import="com.photon.phresco.framework.model.TestCaseResult"%>
-<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
-<%@ page import="com.photon.phresco.model.SettingsInfo"%>
+<%@ page import="com.photon.phresco.framework.model.FrameworkConstants"%>
+<%@ page import="com.photon.phresco.framework.model.SettingsInfo"%>
 
 <style type="text/css">
    	table th {
