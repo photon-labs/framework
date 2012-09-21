@@ -53,6 +53,7 @@ import org.sonar.wsclient.connectors.HttpClient4Connector;
 import org.sonar.wsclient.services.Resource;
 import org.sonar.wsclient.services.ResourceQuery;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -61,6 +62,7 @@ import org.xml.sax.SAXException;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.tool.xml.XMLWorkerHelper;
 import com.lowagie.text.pdf.PdfContentByte;
+import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
 import com.photon.phresco.framework.api.Project;
@@ -104,7 +106,6 @@ public class PhrescoReportGeneration extends FrameworkBaseAction implements Fram
     private String report = null;
     private String validateAgainst = null;
 	private String target = null;
-	private static String FUNCTIONALTEST = "functional";
 
     //test suite details
 	private float noOfTstSuiteTests = 0;
@@ -239,7 +240,15 @@ public class PhrescoReportGeneration extends FrameworkBaseAction implements Fram
         	
 			for (Profile profile : profiles) {
 	    		if (profile.getProperties() != null) {
-	    			sonarTechReports.add(profile.getId());
+	    			List<Element> any = profile.getProperties().getAny();
+	    			int size = any.size();
+	    			
+	    			for (int i = 0; i < size; ++i) {
+	    				boolean tagExist = 	any.get(i).getTagName().equals(SONAR_LANGUAGE);
+	    				if (tagExist != false){
+	    					sonarTechReports.add(profile.getId());
+						}
+	    			}
 	    		}
 	    	}
     		
@@ -321,21 +330,21 @@ public class PhrescoReportGeneration extends FrameworkBaseAction implements Fram
 			S_LOGGER.debug("Cumulative Report generation completed" + outFileNamePDF);
 		} catch(Exception e) {
 			S_LOGGER.error("Entering into catch block of PhrescoReportGeneration.generateCumulativeTestReport()" + FrameworkUtil.getStackTraceAsString(e));
-			S_LOGGER.error("Report generation errorr ");
+			S_LOGGER.error("Report generation error ");
 			throw new PhrescoException(e);
 		} finally {
 			if (reportStream != null) {
 				try {
 					reportStream.close();
 				} catch (IOException e) {
-					S_LOGGER.error("Report generation errorr ");
+					S_LOGGER.error("Report generation error ");
 				}
 			}
 			if (bufferedInputStream != null) {
 				try {
 					bufferedInputStream.close();
 				} catch (IOException e) {
-					S_LOGGER.error("Report generation errorr ");
+					S_LOGGER.error("Report generation error ");
 				}
 			}
 		}
@@ -512,29 +521,29 @@ public class PhrescoReportGeneration extends FrameworkBaseAction implements Fram
 					"critical_violations", "major_violations", "minor_violations", "info_violations", "weighted_violations",
 					"classes", "functions",
 					"statements","packages", "accessors", "public_documented_api_density", "public_undocumented_api","package_tangle_index","package_cycles", "package_feedback_edges", "package_tangles", "lcom4", "rfc",
-					"directories", "class_complexity", "comment_blank_lines"};
+					"directories", "class_complexity", "comment_blank_lines", "coverage", "uncovered_lines"};
 			
 			Resource resrc = sonar.find(ResourceQuery.createForMetrics(artifact, metrickey));
-			sonarReport.setNonCommentLinesOfCode(resrc.getMeasure(metrickey[0]).getFormattedValue());
-			sonarReport.setLines(resrc.getMeasure(metrickey[1]).getFormattedValue());
-			sonarReport.setFiles(resrc.getMeasure(metrickey[2]).getFormattedValue());
-			sonarReport.setCommentLinesDensity(resrc.getMeasure(metrickey[3]).getFormattedValue());
-			sonarReport.setCommentLines(resrc.getMeasure(metrickey[4]).getFormattedValue());
-			sonarReport.setDuplicatedLinesDensity(resrc.getMeasure(metrickey[5]).getFormattedValue());
-			sonarReport.setDuplicatedLines(resrc.getMeasure(metrickey[6]).getFormattedValue());
-			sonarReport.setDuplicatedBlocks(resrc.getMeasure(metrickey[7]).getFormattedValue());
-			sonarReport.setDuplicatedFiles(resrc.getMeasure(metrickey[8]).getFormattedValue());
+				sonarReport.setNonCommentLinesOfCode(resrc.getMeasure(metrickey[0]).getFormattedValue());
+				sonarReport.setLines(resrc.getMeasure(metrickey[1]).getFormattedValue());
+				sonarReport.setFiles(resrc.getMeasure(metrickey[2]).getFormattedValue());
+				sonarReport.setCommentLinesDensity(resrc.getMeasure(metrickey[3]).getFormattedValue());
+				sonarReport.setCommentLines(resrc.getMeasure(metrickey[4]).getFormattedValue());
+				sonarReport.setDuplicatedLinesDensity(resrc.getMeasure(metrickey[5]).getFormattedValue());
+				sonarReport.setDuplicatedLines(resrc.getMeasure(metrickey[6]).getFormattedValue());
+				sonarReport.setDuplicatedBlocks(resrc.getMeasure(metrickey[7]).getFormattedValue());
+				sonarReport.setDuplicatedFiles(resrc.getMeasure(metrickey[8]).getFormattedValue());
 			if (!WEB.equals(report)) { 
 				sonarReport.setFunctionComplexity(resrc.getMeasure(metrickey[9]).getFormattedValue());
 			}
-			sonarReport.setFileComplexity(resrc.getMeasure(metrickey[10]).getFormattedValue());
-			sonarReport.setViolationsDensity(resrc.getMeasure(metrickey[11]).getFormattedValue());
-			sonarReport.setBlockerViolations(resrc.getMeasure(metrickey[12]).getFormattedValue());
-			sonarReport.setCriticalViolations(resrc.getMeasure(metrickey[13]).getFormattedValue());
-			sonarReport.setMajorViolations(resrc.getMeasure(metrickey[14]).getFormattedValue());
-			sonarReport.setMinorViolations(resrc.getMeasure(metrickey[15]).getFormattedValue());
-			sonarReport.setInfoViolations(resrc.getMeasure(metrickey[16]).getFormattedValue());
-			sonarReport.setWeightedViolations(resrc.getMeasure(metrickey[17]).getFormattedValue());
+				sonarReport.setFileComplexity(resrc.getMeasure(metrickey[10]).getFormattedValue());
+				sonarReport.setViolationsDensity(resrc.getMeasure(metrickey[11]).getFormattedValue());
+				sonarReport.setBlockerViolations(resrc.getMeasure(metrickey[12]).getFormattedValue());
+				sonarReport.setCriticalViolations(resrc.getMeasure(metrickey[13]).getFormattedValue());
+				sonarReport.setMajorViolations(resrc.getMeasure(metrickey[14]).getFormattedValue());
+				sonarReport.setMinorViolations(resrc.getMeasure(metrickey[15]).getFormattedValue());
+				sonarReport.setInfoViolations(resrc.getMeasure(metrickey[16]).getFormattedValue());
+				sonarReport.setWeightedViolations(resrc.getMeasure(metrickey[17]).getFormattedValue());
 			
 			if ((TechnologyTypes.HTML5_WIDGET.equals(techId) || TechnologyTypes.HTML5_MOBILE_WIDGET.equals(techId) 
 					|| TechnologyTypes.HTML5.equals(techId) || TechnologyTypes.HTML5_JQUERY_MOBILE_WIDGET.equals(techId) 
@@ -557,6 +566,18 @@ public class PhrescoReportGeneration extends FrameworkBaseAction implements Fram
 				sonarReport.setClassComplexity(resrc.getMeasure(metrickey[32]).getFormattedValue());
 				sonarReport.setShowDivElement(REPORT_ELEMENT_JAVA_FUNC);
 				
+			} else if ((TechnologyTypes.SHAREPOINT.equals(techId)) && (SONAR_SOURCE.equals(report) || FUNCTIONAL.equals(report))) {
+				
+				sonarReport.setClasses(resrc.getMeasure(metrickey[18]).getFormattedValue());
+				sonarReport.setFunctions(resrc.getMeasure(metrickey[19]).getFormattedValue());
+				sonarReport.setStatements(resrc.getMeasure(metrickey[20]).getFormattedValue());
+				sonarReport.setAccessors(resrc.getMeasure(metrickey[22]).getFormattedValue());
+				sonarReport.setPublicDocumentedApiDensity((resrc.getMeasure(metrickey[23]).getFormattedValue()));
+				sonarReport.setPublicUndocumentedApi(resrc.getMeasure(metrickey[24]).getFormattedValue());
+				sonarReport.setCoverage(resrc.getMeasure(metrickey[34]).getFormattedValue());
+				sonarReport.setUncoveredLines(resrc.getMeasure(metrickey[35]).getFormattedValue());
+				sonarReport.setShowDivElement(REPORT_ELEMENT_SHAREPOINT_SRC_FUNC);
+				
 			} else if ((SONAR_SOURCE.equals(report) || FUNCTIONAL.equals(report)) && !TechnologyTypes.NODE_JS_WEBSERVICE.equals(techId)) {
 				sonarReport.setClasses(resrc.getMeasure(metrickey[18]).getFormattedValue());
 				sonarReport.setFunctions(resrc.getMeasure(metrickey[19]).getFormattedValue());
@@ -565,9 +586,9 @@ public class PhrescoReportGeneration extends FrameworkBaseAction implements Fram
 				sonarReport.setDirectories(resrc.getMeasure(metrickey[31]).getFormattedValue());
 				sonarReport.setShowDivElement(REPORT_ELEMENT_JS_WEB);
 				
-			} else if (TechnologyTypes.NODE_JS_WEBSERVICE.equals(techId) && ("source".equals(report))) {
+			} else if (TechnologyTypes.NODE_JS_WEBSERVICE.equals(techId) && (SONAR_SOURCE.equals(report))) {
 				sonarReport.setCommentBlankLines(resrc.getMeasure(metrickey[33]).getFormattedValue());
-				sonarReport.setShowDivElement("ReportElementNodeJs");
+				sonarReport.setShowDivElement(REPORT_ELEMENT_NODE_JS);
 			}
 			
 			sonarReport.setReportType(report);

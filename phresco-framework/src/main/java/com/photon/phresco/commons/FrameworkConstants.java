@@ -194,6 +194,7 @@ public interface FrameworkConstants {
     String HIDE_LOG = "hidelog";
 	String SHOW_DEBUG = "showdebug";
     String SKIP_TEST = "skiptest";
+	String FUNCTIONAL_TEST = "functionalTest";
     String DEPLOY = "deploy";
     String BUILD_INFO_ENVS = "buildInfoEnvs";
     String DEPLOY_IMPORT_SQL = "importSql";
@@ -1320,9 +1321,12 @@ public interface FrameworkConstants {
    String SONAR_LANGUAGE_PROFILE = "sonar.language";
    String SONAR_BRANCH   = "sonar.branch";
    String SONAR_SOURCE = "source"; 
+   String FUNCTIONALTEST = "functional";
+   String REPORT_ELEMENT_NODE_JS = "ReportElementNodeJs";
    String REPORT_ELEMENT_JS_WEB = "reportElementJsWeb";
    String REPORT_ELEMENT_SRC_FUNC = "reportElementSrcFunc";
    String REPORT_ELEMENT_JAVA_FUNC = "reportElementJavaFunc";
+   String REPORT_ELEMENT_SHAREPOINT_SRC_FUNC = "reportElementSharepointSrcFunc";
    String PHRESCO_SOURCE_DIRECTORY = "phresco.source.directory";
    String SONAR_DYNAMIC_ANALYSIS_PROFILE = "sonar.dynamicAnalysis";
    String SONAR_EXCLUSION = "sonar.exclusions";
