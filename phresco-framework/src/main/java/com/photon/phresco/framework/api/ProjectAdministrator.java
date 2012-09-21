@@ -30,7 +30,6 @@ import com.photon.phresco.commons.model.ApplicationType;
 import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.DownloadInfo;
 import com.photon.phresco.commons.model.LogInfo;
-import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.SettingsTemplate;
 import com.photon.phresco.commons.model.Technology;
 import com.photon.phresco.commons.model.User;
@@ -104,7 +103,7 @@ public interface ProjectAdministrator {
      * @return
      * @throws PhrescoException
      */
-    Map<String, Technology> getAllTechnologies() throws PhrescoException;
+    List<Technology> getAllTechnologies(String customerId) throws PhrescoException;
     
     List<Technology> getTechnologies() throws PhrescoException;
 
@@ -113,7 +112,7 @@ public interface ProjectAdministrator {
      * @return Technology
      * @throws PhrescoException
      */
-    Technology getTechnology(String techId) throws PhrescoException;
+    Technology getTechnology(String techId, String customerId) throws PhrescoException;
     
     /**
      * Returns list of Technology for the given appType Id
@@ -242,8 +241,6 @@ public interface ProjectAdministrator {
      */
     SettingsInfo getSettingsInfo(String name, String type, String projectCode, String envName) throws PhrescoException;
     
-    
-
     /**
      * Deletes all the settings information for the given names
      * @param names
@@ -713,19 +710,15 @@ public interface ProjectAdministrator {
 	 */
 	 void deleteSqlFolder(List<String> dbList, ApplicationInfo appInfo) throws PhrescoException;
 
-	 List<Reports> getReports(ProjectInfo projectInfo) throws PhrescoException;
+	 List<Reports> getReports(ApplicationInfo appInfo) throws PhrescoException;
 	
-	 List<Reports> getPomReports(ProjectInfo projectInfo) throws PhrescoException;	 
+	 List<Reports> getPomReports(ApplicationInfo appInfo) throws PhrescoException;	 
 
-	 void updateRptPluginInPOM(ProjectInfo projectInfo, List<Reports> reports, List<ReportCategories> reportCategories) throws PhrescoException;
+	 void updateRptPluginInPOM(ApplicationInfo appInfo, List<Reports> reports, List<ReportCategories> reportCategories) throws PhrescoException;
 	 
-	 List<DownloadInfo> getDatabases() throws PhrescoException;
+	 List<ApplicationInfo> getPilots(String technologyId, String customerId) throws PhrescoException;
 	 
-	 List<DownloadInfo> getServers() throws PhrescoException;
-	 
-	 List<ProjectInfo> getPilots(String technologyId, String customerId) throws PhrescoException;
-	 
-	List<ArtifactGroup> getJSLibs(String technologyId, String customerId) throws PhrescoException;
+	 List<ArtifactGroup> getJSLibs(String technologyId, String customerId) throws PhrescoException;
 
 	/**
 	 * Returns CI build object for build number
