@@ -11,6 +11,7 @@
 	<property name="phresco.upgrade.file" value="${phresco.home}/workspace/temp/upgrade.properties"/>
 	<property name="phresco.file.server.home" value="${phresco.home}/workspace/projects"/>
 	<property name="phresco.file.server" value="PhrescoFileServer"/>
+    <property file = "${phresco.home}/conf/service.properties"/>
 	<property name="phresco.url" value="http://localhost:2468/phresco"/>
 	
 	<target name="init">
@@ -143,6 +144,7 @@
 			<sysproperty key="PHRESCO_HOME" value="${phresco.home}"/>
 			<sysproperty key="SONAR_HOME" value="${sonar.home}"/>
 			<sysproperty key="JENKINS_HOME" value="${jenkins.home}"/>
+            <sysproperty key="SERVER_ENVIRONMENT" value="${phresco.server.environment}"/>
 		</java>
 	</target>
 
