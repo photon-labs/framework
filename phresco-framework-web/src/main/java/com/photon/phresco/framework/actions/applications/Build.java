@@ -60,7 +60,6 @@ import org.xml.sax.SAXException;
 
 import com.google.gson.Gson;
 import com.opensymphony.xwork2.ActionContext;
-import com.photon.phresco.commons.model.Technology;
 import com.photon.phresco.configuration.ConfigurationInfo;
 import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.PhrescoException;
@@ -172,10 +171,9 @@ public class Build extends FrameworkBaseAction {
 			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
 			Project project = administrator.getProject(projectCode);
 			List<BuildInfo> builds = administrator.getBuildInfos(project);
-			getHttpRequest().setAttribute(REQ_SELECTED_APP_TYPE, project.getApplicationInfo().getTechnology().getId());
 			getHttpRequest().setAttribute(REQ_BUILD, builds);
-			getHttpRequest().setAttribute(REQ_PROJECT_INFO, project.getApplicationInfo());
-			String techId = project.getApplicationInfo().getTechnology().getId();
+			getHttpRequest().setAttribute(REQ_APPINFO, project.getApplicationInfo());
+			String techId = project.getApplicationInfo().getTechInfo().getVersion();
 			String readLogFile = "";
 			boolean tempConnectionAlive = false;
 			int serverPort = 0;
@@ -274,7 +272,7 @@ public class Build extends FrameworkBaseAction {
 		try {
 			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
 			project = administrator.getProject(projectCode);
-			technology = project.getApplicationInfo().getTechnology().getId();
+			technology = project.getApplicationInfo().getTechInfo().getVersion();
 			from = getHttpRequest().getParameter(REQ_BUILD_FROM);
 			importSqlFlag(project);
 			buildNumber = getHttpRequest().getParameter(REQ_DEPLOY_BUILD_NUMBER);
@@ -346,26 +344,25 @@ public class Build extends FrameworkBaseAction {
 					}
 				}
 			}
-
+			if (CollectionUtils.isNotEmpty(projectModules)) {
+	            getHttpRequest().setAttribute(REQ_PROJECT_MODULES, projectModules);
+	        }
+	        List<String> serverType = new ArrayList<String>();
+	        serverType.add("Apache Tomcat");
+	        serverType.add("Jboss");
+	        serverType.add("Jetty");
+	        
+	        getHttpRequest().setAttribute(REQ_SELECTED_SERVERTYPE, serverType);
+	        getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
+	        getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
+	        getHttpRequest().setAttribute(REQ_APPINFO, project.getApplicationInfo());
+	        getHttpRequest().setAttribute(REQ_BUILD_FROM, from);
+	        getHttpRequest().setAttribute(REQ_TECHNOLOGY, technology);
+	        getHttpRequest().setAttribute(REQ_DEPLOY_BUILD_NUMBER, buildNumber);
 		} catch (Exception e) {
 			S_LOGGER.error("Entered into catch block of Build.generateBuild()" + FrameworkUtil.getStackTraceAsString(e));
 		}
 
-		if (CollectionUtils.isNotEmpty(projectModules)) {
-			getHttpRequest().setAttribute(REQ_PROJECT_MODULES, projectModules);
-		}
-		List<String> serverType = new ArrayList<String>();
-		serverType.add("Apache Tomcat");
-		serverType.add("Jboss");
-		serverType.add("Jetty");
-		
-		getHttpRequest().setAttribute(REQ_SELECTED_SERVERTYPE, serverType);
-		getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
-		getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
-		getHttpRequest().setAttribute(REQ_PROJECT_INFO, project.getApplicationInfo());
-		getHttpRequest().setAttribute(REQ_BUILD_FROM, from);
-		getHttpRequest().setAttribute(REQ_TECHNOLOGY, technology);
-		getHttpRequest().setAttribute(REQ_DEPLOY_BUILD_NUMBER, buildNumber);
 		return APP_GENERATE_BUILD;
 	}
 	
@@ -415,7 +412,7 @@ public class Build extends FrameworkBaseAction {
 			Project project = administrator.getProject(projectCode);
 			List<BuildInfo> builds = administrator.getBuildInfos(project);
 			getHttpRequest().setAttribute(REQ_BUILD, builds);
-			getHttpRequest().setAttribute(REQ_PROJECT_INFO, project.getApplicationInfo());
+			getHttpRequest().setAttribute(REQ_APPINFO, project.getApplicationInfo());
 
 			sessionMap.remove(SESSION_PROPERTY_INFO_LIST);
 		} catch (Exception e) {
@@ -438,10 +435,8 @@ public class Build extends FrameworkBaseAction {
 			ProjectRuntimeManager runtimeManager = PhrescoFrameworkFactory.getProjectRuntimeManager();
 			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
 			Project project = administrator.getProject(projectCode);
-			String technology = project.getApplicationInfo().getTechnology().getId();
+			String technology = project.getApplicationInfo().getTechInfo().getVersion();
 
-			Map<String, String> settingsInfoMap = new HashMap<String, String>(2);
-			
 			if(TechnologyTypes.HTML5_MULTICHANNEL_JQUERY_WIDGET.equals(technology) || 
 					TechnologyTypes.HTML5_JQUERY_MOBILE_WIDGET.equals(technology) ||
 					TechnologyTypes.HTML5_MOBILE_WIDGET.equals(technology) ||
@@ -449,6 +444,7 @@ public class Build extends FrameworkBaseAction {
 				minification();
 			}
 			
+			Map<String, String> settingsInfoMap = new HashMap<String, String>(2);
 			if (StringUtils.isNotEmpty(environments)) {
 				settingsInfoMap.put(ENVIRONMENT_NAME, environments);
 			}
@@ -596,11 +592,8 @@ public class Build extends FrameworkBaseAction {
 	}
 
 	private void importSqlFlag(Project project) throws PhrescoException {
-		String technology = project.getApplicationInfo().getTechnology().getId();
-		InputStream is = null;
-		String importSqlElement;
 		try {
-
+		    String technology = project.getApplicationInfo().getTechInfo().getVersion();
 			StringBuilder builder = new StringBuilder(Utility.getProjectHome());
 			builder.append(project.getApplicationInfo().getCode());
 			builder.append(File.separator);
@@ -616,21 +609,20 @@ public class Build extends FrameworkBaseAction {
 			}
 
 			if (configFile.exists()) {
-				is = new FileInputStream(configFile);
+			    InputStream is = new FileInputStream(configFile);
 				PluginProperties configProps = new PluginProperties();
 				configProps.load(is);
 				@SuppressWarnings("rawtypes")
 				Enumeration enumProps = configProps.keys();
 
 				while (enumProps.hasMoreElements()) {
-					importSqlElement = (String) enumProps.nextElement();
+				    String importSqlElement = (String) enumProps.nextElement();
 					String importSqlProps = (String) configProps.get(importSqlElement);
 					getHttpRequest().setAttribute(REQ_IMPORT_SQL, importSqlProps);
 				}
 			}
-
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new PhrescoException(e);
 		}
 
 	}
@@ -676,9 +668,10 @@ public class Build extends FrameworkBaseAction {
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method  Build.deploy()");
 		}
-		String buildNumber = getHttpRequest().getParameter(REQ_DEPLOY_BUILD_NUMBER);
-		String simulatorVersion = getHttpRequest().getParameter(REQ_DEPLOY_IPHONE_SIMULATOR_VERSION);
+		
 		try {
+		    String buildNumber = getHttpRequest().getParameter(REQ_DEPLOY_BUILD_NUMBER);
+	        String simulatorVersion = getHttpRequest().getParameter(REQ_DEPLOY_IPHONE_SIMULATOR_VERSION);
 			if (StringUtils.isNotEmpty(importSql)) {
 				configureSqlExecution();
 			}
@@ -688,8 +681,8 @@ public class Build extends FrameworkBaseAction {
 			BuildInfo buildInfo = administrator.getBuildInfo(project, Integer.parseInt(buildNumber));
 			ProjectRuntimeManager runtimeManager = PhrescoFrameworkFactory.getProjectRuntimeManager();
 			Map<String, String> valuesMap = new HashMap<String, String>(2);
-			String techId = project.getApplicationInfo().getTechnology().getId();
-			if (TechnologyTypes.IPHONES.contains(techId)) {
+			String technology = project.getApplicationInfo().getTechInfo().getVersion();
+			if (TechnologyTypes.IPHONES.contains(technology)) {
 				valuesMap.put(BUILD_NUMBER, buildNumber);
 				// if deploy to device is selected we have to pass device deploy
 				// param as additional param
@@ -703,8 +696,8 @@ public class Build extends FrameworkBaseAction {
 				valuesMap.put(DEPLOY_BUILD_NAME, buildInfo.getBuildName());
 			}
 
-			if (!(TechnologyTypes.IPHONES.contains(techId) || TechnologyTypes.ANDROIDS.contains(techId) || TechnologyTypes.SHAREPOINT
-					.equals(techId))
+			if (!(TechnologyTypes.IPHONES.contains(technology) || TechnologyTypes.ANDROIDS.contains(technology) || TechnologyTypes.SHAREPOINT
+					.equals(technology))
 					&& StringUtils.isNotEmpty(importSql)) {
 				valuesMap.put(DEPLOY_IMPORT_SQL, importSql);
 			}
@@ -713,7 +706,7 @@ public class Build extends FrameworkBaseAction {
 				valuesMap.put(ENVIRONMENT_NAME, environments);
 			}
 
-			if (TechnologyTypes.SHAREPOINT.equals(project.getApplicationInfo().getTechnology().getId())) {
+			if (TechnologyTypes.SHAREPOINT.equals(technology)) {
 				valuesMap.put(DEPLOY_SERVERNAME, buildInfo.getServerName());
 			}
 
@@ -722,8 +715,7 @@ public class Build extends FrameworkBaseAction {
 				S_LOGGER.debug("To be deployed build location" + buildInfo.getDeployLocation());
 				S_LOGGER.debug("To be deployed build context" + buildInfo.getContext());
 			}
-			Technology technology = project.getApplicationInfo().getTechnology();
-			if (TechnologyTypes.ANDROIDS.contains(technology.getId())) {
+			if (TechnologyTypes.ANDROIDS.contains(technology)) {
 				String device = getHttpRequest().getParameter(REQ_ANDROID_DEVICE);
 				if (device.equals(SERIAL_NUMBER)) {
 					device = serialNumber;
@@ -840,12 +832,12 @@ public class Build extends FrameworkBaseAction {
 	}
 
 	public String download() {
-
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method Build.download()");
 		}
-		String buildNumber = getHttpRequest().getParameter(REQ_DEPLOY_BUILD_NUMBER);
+		
 		try {
+		    String buildNumber = getHttpRequest().getParameter(REQ_DEPLOY_BUILD_NUMBER);
 			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
 			Project project = administrator.getProject(projectCode);
 			StringBuilder builder = new StringBuilder(Utility.getProjectHome());
@@ -862,7 +854,7 @@ public class Build extends FrameworkBaseAction {
 			if (debugEnabled) {
 				S_LOGGER.debug("Download build number " + buildNumber + " Download location " + builder.toString());
 			}
-			if (TechnologyTypes.IPHONES.contains(project.getApplicationInfo().getTechnology().getId())) {
+			if (TechnologyTypes.IPHONES.contains(project.getApplicationInfo().getTechInfo().getVersion())) {
 				String path = administrator.getBuildInfo(project, Integer.parseInt(buildNumber)).getDeliverables();
 				fileInputStream = new FileInputStream(new File(path));
 				fileName = administrator.getBuildInfo(project, Integer.parseInt(buildNumber)).getBuildName();
@@ -871,7 +863,6 @@ public class Build extends FrameworkBaseAction {
 				fileInputStream = new FileInputStream(new File(builder.toString()));
 				fileName = administrator.getBuildInfo(project, Integer.parseInt(buildNumber)).getBuildName();
 			}
-			return SUCCESS;
 		} catch (FileNotFoundException e) {
 			if (debugEnabled) {
 				S_LOGGER.error("Entered into catch block of Build.download()" + e);
@@ -879,14 +870,16 @@ public class Build extends FrameworkBaseAction {
 			new LogErrorReport(e, "Download builds");
 			
 			return LOG_ERROR;
-
 		} catch (Exception e1) {
 			if (debugEnabled) {
 				S_LOGGER.error("Entered into catch block of Build.download()" + FrameworkUtil.getStackTraceAsString(e1));
 			}
 			new LogErrorReport(e1, "Download builds");
+			
+			return LOG_ERROR;
 		}
-		return view();
+		
+		return SUCCESS;
 	}
 
 	public String downloadIpa() {
@@ -1526,7 +1519,6 @@ public class Build extends FrameworkBaseAction {
 			}
 			getHttpRequest().setAttribute(FINAL_NAME, finalName);
 			getHttpRequest().setAttribute(MAIN_CLASS_VALUE, mainClassValue);
-
 		} catch (JAXBException e) {
 			throw new PhrescoException(e);
 		} catch (IOException e) {
@@ -1543,7 +1535,7 @@ public class Build extends FrameworkBaseAction {
 		try {
 			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
 	        Project project = administrator.getProject(projectCode);
-	        String technology = project.getApplicationInfo().getTechnology().getId();
+	        String technology = project.getApplicationInfo().getTechInfo().getVersion();
 	        getHttpRequest().setAttribute(REQ_TECHNOLOGY, technology);
 			getHttpRequest().setAttribute(FILE_TYPES, fileType);
 			getHttpRequest().setAttribute(FILE_BROWSE, fileorfolder);
@@ -1556,6 +1548,7 @@ public class Build extends FrameworkBaseAction {
 		} catch (Exception e){
 			S_LOGGER.error("Entered into catch block of  Build.jsFileBrowser()"	+ FrameworkUtil.getStackTraceAsString(e));
 		}
+		
 		return SUCCESS;
 	}
 	
@@ -1569,14 +1562,13 @@ public class Build extends FrameworkBaseAction {
 				sb.append(jsFile);
 			    sep = ",";
 			}
-
 			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
 	        Project project = administrator.getProject(projectCode);
-	        String techId = project.getApplicationInfo().getTechnology().getId();
+	        String technology = project.getApplicationInfo().getTechInfo().getVersion();
 	        StringBuilder builder = new StringBuilder(Utility.getProjectHome());
 	        builder.append(project.getApplicationInfo().getCode());
 	        getHttpRequest().setAttribute(REQ_BUILD_FROM, getHttpRequest().getParameter(REQ_BUILD_FROM));
-	        getHttpRequest().setAttribute(REQ_TECHNOLOGY, techId);
+	        getHttpRequest().setAttribute(REQ_TECHNOLOGY, technology);
 	        setSelectedJs(sb.toString());
 		} catch (Exception e){
 			S_LOGGER.error("Entered into catch block of  Build.selectJsFilesToMinify()"	+ FrameworkUtil.getStackTraceAsString(e));
@@ -1586,65 +1578,60 @@ public class Build extends FrameworkBaseAction {
 	}
 	
 	private void minification(){
-			try {
-				ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-				Project project = administrator.getProject(projectCode);
+		try {
+			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
+			Project project = administrator.getProject(projectCode);
+			
+			StringBuilder builder = new StringBuilder(Utility.getProjectHome());
+	        builder.append(project.getApplicationInfo().getCode());
+	        File systemPath = new File(builder.toString() + File.separator + POM_FILE);
+	        PomProcessor processor = new PomProcessor(systemPath);
+	        DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
+			DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
+			Document doc = docBuilder.newDocument();
+			List<Element> configList = new ArrayList<Element>();
+			
+			String[] jsFileNames = getHttpRequest().getParameterValues(REQ_SELECTED_FILE_NAMES);
+			if(!ArrayUtils.isEmpty(jsFileNames)) {
+				configList.add(createElement(doc, POM_SOURCEDIR, POM_SOURCE_DIRECTORY));
+				configList.add(createElement(doc, POM_OUTPUTDIR, POM_OUTPUT_DIRECTORY));
+				configList.add(createElement(doc, POM_FORCE, POM_VALUE_TRUE));
+				configList.add(createElement(doc, POM_JS_WARN, POM_VALUE_FALSE));
+				configList.add(createElement(doc, POM_NO_SUFFIX, POM_VALUE_TRUE));
 				
-				StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-		        builder.append(project.getApplicationInfo().getCode());
-		        File systemPath = new File(builder.toString() + File.separator + POM_FILE);
-		        
-		        PomProcessor processor = new PomProcessor(systemPath);
-		        DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
-				DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
-				Document doc = docBuilder.newDocument();
-				List<Element> configList = new ArrayList<Element>();
+				Element excludesElement = doc.createElement(POM_EXCLUDES);
+				appendChildElement(doc, excludesElement, POM_EXCLUDE, POM_EXCLUDE_CSS);
+				appendChildElement(doc, excludesElement, POM_EXCLUDE, POM_EXCLUDE_JS);
+				configList.add(excludesElement);
 				
-				String[] jsFileNames = getHttpRequest().getParameterValues(REQ_SELECTED_FILE_NAMES);
-
-				if(!ArrayUtils.isEmpty(jsFileNames)) {
-					configList.add(createElement(doc, POM_SOURCEDIR, POM_SOURCE_DIRECTORY));
-					configList.add(createElement(doc, POM_OUTPUTDIR, POM_OUTPUT_DIRECTORY));
-					configList.add(createElement(doc, POM_FORCE, POM_VALUE_TRUE));
-					configList.add(createElement(doc, POM_JS_WARN, POM_VALUE_FALSE));
-					configList.add(createElement(doc, POM_NO_SUFFIX, POM_VALUE_TRUE));
-					
-					Element excludesElement = doc.createElement(POM_EXCLUDES);
-					appendChildElement(doc, excludesElement, POM_EXCLUDE, POM_EXCLUDE_CSS);
-					appendChildElement(doc, excludesElement, POM_EXCLUDE, POM_EXCLUDE_JS);
-					configList.add(excludesElement);
-					
-					Element aggregationsElement = doc.createElement(POM_AGGREGATIONS);
-					
-					for (String jsFileName : jsFileNames) {
-						String csvJsFile = getHttpRequest().getParameter(jsFileName);
-						List<String> jsFiles = Arrays.asList(csvJsFile.split("\\s*,\\s*"));
-					
-						Element agrigationElement = appendChildElement(doc, aggregationsElement, POM_AGGREGATION, null);
-						appendChildElement(doc, agrigationElement, POM_INPUTDIR, POM_INPUT_DIRECTORY);
-						Element includesElement = doc.createElement(POM_INCLUDES);
-						for (String jsFile : jsFiles) {
-							appendChildElement(doc, includesElement, POM_INCLUDE, "**/" + jsFile);
-							agrigationElement.appendChild(includesElement);
-						}
-						String[] splitted = fileLocation.split(projectCode);
-						String minificationDir = "";
-						minificationDir = splitted[1];
-						appendChildElement(doc, agrigationElement, POM_OUTPUT, MINIFY_OUTPUT_DIRECTORY + minificationDir + jsFileName + MINIFY_FILE_EXT);
+				Element aggregationsElement = doc.createElement(POM_AGGREGATIONS);
+				for (String jsFileName : jsFileNames) {
+					String csvJsFile = getHttpRequest().getParameter(jsFileName);
+					List<String> jsFiles = Arrays.asList(csvJsFile.split("\\s*,\\s*"));
+					Element agrigationElement = appendChildElement(doc, aggregationsElement, POM_AGGREGATION, null);
+					appendChildElement(doc, agrigationElement, POM_INPUTDIR, POM_INPUT_DIRECTORY);
+					Element includesElement = doc.createElement(POM_INCLUDES);
+					for (String jsFile : jsFiles) {
+						appendChildElement(doc, includesElement, POM_INCLUDE, "**/" + jsFile);
+						agrigationElement.appendChild(includesElement);
 					}
-					configList.add(aggregationsElement);
-			        
-				} else {
-					configList.add(createElement(doc, POM_SKIP, POM_VALUE_TRUE));
+					String[] splitted = fileLocation.split(projectCode);
+					String minificationDir = "";
+					minificationDir = splitted[1];
+					appendChildElement(doc, agrigationElement, POM_OUTPUT, MINIFY_OUTPUT_DIRECTORY + minificationDir + jsFileName + MINIFY_FILE_EXT);
 				}
-				processor.addConfiguration(MINIFY_PLUGIN_GROUPID, MINIFY_PLUGIN_ARTFACTID, configList);
-				processor.save();
-				
-			} catch (Exception e) {
-				S_LOGGER.error("Entered into catch block of Build.minification()"
-						+ FrameworkUtil.getStackTraceAsString(e));
-				new LogErrorReport(e, "Building ");
+				configList.add(aggregationsElement);
+		        
+			} else {
+				configList.add(createElement(doc, POM_SKIP, POM_VALUE_TRUE));
 			}
+			processor.addConfiguration(MINIFY_PLUGIN_GROUPID, MINIFY_PLUGIN_ARTFACTID, configList);
+			processor.save();
+		} catch (Exception e) {
+			S_LOGGER.error("Entered into catch block of Build.minification()"
+					+ FrameworkUtil.getStackTraceAsString(e));
+			new LogErrorReport(e, "Building ");
+		}
 	}
 	
 	private Element createElement(Document doc, String elementName, String textContent) {
@@ -1664,7 +1651,7 @@ public class Build extends FrameworkBaseAction {
 	
 	public String advancedBuildSettings() {
 		S_LOGGER.debug("Entering Method Build.advancedBuildSettings()");
-		AndroidProfile androidProfile = null;
+		
 		try {
 			StringBuilder builder = new StringBuilder(Utility.getProjectHome());
 			builder.append(projectCode);
@@ -1672,22 +1659,25 @@ public class Build extends FrameworkBaseAction {
 			builder.append(POM_XML);
 			File pomPath = new File(builder.toString());
 			AndroidPomProcessor processor = new AndroidPomProcessor(pomPath);
+			AndroidProfile androidProfile = null;
 			if (pomPath.exists() && processor.hasSigning()) {
 				String signingProfileid = processor.getSigningProfile();
 				androidProfile = processor.getProfileElement(signingProfileid);
 			}
+			getHttpRequest().setAttribute("projectCode", projectCode);
+	        getHttpRequest().setAttribute(REQ_ANDROID_PROFILE_DET, androidProfile);
+	        getHttpRequest().setAttribute(REQ_FROM_TAB, REQ_FROM_TAB_DEPLOY);
 		} catch (Exception e) {
 			S_LOGGER.error("Entered into catch block of  Build.advancedBuildSettings()"
 					+ FrameworkUtil.getStackTraceAsString(e));
 		}
-		getHttpRequest().setAttribute("projectCode", projectCode);
-		getHttpRequest().setAttribute(REQ_ANDROID_PROFILE_DET, androidProfile);
-		getHttpRequest().setAttribute(REQ_FROM_TAB, REQ_FROM_TAB_DEPLOY);
+		
 		return SUCCESS;
 	}
 
 	public String createAndroidProfile() throws IOException {
 		S_LOGGER.debug("Entering Method Build.createAndroidProfile()");
+		
 		boolean hasSigning = false;
 		try {
 			StringBuilder builder = new StringBuilder(Utility.getProjectHome());
@@ -1771,11 +1761,11 @@ public class Build extends FrameworkBaseAction {
 				profileCreationMessage = getText(PROFILE_CREATE_ERROR);
 			}
 		}
+		
 		return SUCCESS;
 	}
 
 	public String getSqlDatabases() {
-		String dbtype = "";
 		try {
 			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
 			databases = new ArrayList<String>();
@@ -1783,7 +1773,7 @@ public class Build extends FrameworkBaseAction {
 					projectCode, environments);
 			if (CollectionUtils.isNotEmpty(databaseDetails)) {
 				for (SettingsInfo databasedetail : databaseDetails) {
-					dbtype = databasedetail.getPropertyInfo(Constants.DB_TYPE).getValue();
+				    String dbtype = databasedetail.getPropertyInfo(Constants.DB_TYPE).getValue();
 					if (!databases.contains(dbtype)) {
 						databases.add(dbtype);
 					}
@@ -1792,32 +1782,29 @@ public class Build extends FrameworkBaseAction {
 		} catch (PhrescoException e) {
 			S_LOGGER.error("Entered into catch block of  Build.configSQL()" + FrameworkUtil.getStackTraceAsString(e));
 		}
+		
 		return SUCCESS;
 	}
 
 	public String fetchSQLFiles() {
-		String dbtype = null;
-		String dbversion = null;
-		String path = null;
-		String sqlFileName = null;
 		try {
 			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
 			Project project = administrator.getProject(projectCode);
 			sqlFiles = new ArrayList<String>();
-			String techId = project.getApplicationInfo().getTechnology().getId();
+			String techId = project.getApplicationInfo().getTechInfo().getVersion();
 			String selectedDb = getHttpRequest().getParameter("selectedDb");
 			String sqlPath = sqlFolderPathMap.get(techId);
 			List<SettingsInfo> databaseDetails = administrator.getSettingsInfos( Constants.SETTINGS_TEMPLATE_DB,
 					projectCode, environments);
 			for (SettingsInfo databasedetail : databaseDetails) {
-				dbtype = databasedetail.getPropertyInfo(Constants.DB_TYPE).getValue();
+			    String dbtype = databasedetail.getPropertyInfo(Constants.DB_TYPE).getValue();
 				if (selectedDb.equals(dbtype)) { 
-					dbversion = databasedetail.getPropertyInfo(Constants.DB_VERSION).getValue();
+				    String dbversion = databasedetail.getPropertyInfo(Constants.DB_VERSION).getValue();
 					File[] dbSqlFiles = new File(Utility.getProjectHome() + projectCode + sqlPath + selectedDb + File.separator + dbversion).listFiles(new DumpFileNameFilter());
 					for (int i = 0; i < dbSqlFiles.length; i++) {
 						if (!dbSqlFiles[i].isDirectory()) {
-						sqlFileName = dbSqlFiles[i].getName();
-							path = sqlPath + selectedDb + FILE_SEPARATOR + dbversion + "#SEP#" + sqlFileName;
+						    String sqlFileName = dbSqlFiles[i].getName();
+    						String path = sqlPath + selectedDb + FILE_SEPARATOR + dbversion + "#SEP#" + sqlFileName;
 							sqlFiles.add(path);
 						}
 					}
@@ -1826,6 +1813,7 @@ public class Build extends FrameworkBaseAction {
 		} catch (PhrescoException e) {
 			S_LOGGER.error("Entered into catch block of  Build.getSQLFiles()" + FrameworkUtil.getStackTraceAsString(e));
 		}
+		
 		return SUCCESS;
 	}
 

@@ -21,14 +21,12 @@ package com.photon.phresco.framework.actions.applications;
 
 import org.apache.log4j.Logger;
 
-import com.photon.phresco.commons.model.ProjectInfo;
+import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
 import com.photon.phresco.framework.api.ProjectAdministrator;
-import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.commons.LogErrorReport;
-import com.photon.phresco.model.DownloadPropertyInfo;
 
 public class Download extends FrameworkBaseAction {
 
@@ -45,13 +43,14 @@ public class Download extends FrameworkBaseAction {
     	
     	try {
 			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-			ProjectInfo projectInfo = administrator.getProject(projectCode).getApplicationInfo();
-			DownloadPropertyInfo downloadPropertyInfo = new DownloadPropertyInfo(FrameworkUtil.findOS(), projectInfo.getTechnology().getId());
+			ApplicationInfo appInfo = administrator.getProject(projectCode).getApplicationInfo();
+			// TODO:Lohes
+			/*DownloadPropertyInfo downloadPropertyInfo = new DownloadPropertyInfo(FrameworkUtil.findOS(), appInfo.getTechInfo().getVersion());
 			getHttpRequest().setAttribute(REQ_SERVER_DOWNLOAD_INFO, administrator.getServerDownloadInfo(downloadPropertyInfo));
 			getHttpRequest().setAttribute(REQ_DB_DOWNLOAD_INFO, administrator.getDbDownloadInfo(downloadPropertyInfo));
 			getHttpRequest().setAttribute(REQ_EDITOR_DOWNLOAD_INFO, administrator.getEditorDownloadInfo(downloadPropertyInfo));
 			getHttpRequest().setAttribute(REQ_TOOLS_DOWNLOAD_INFO, administrator.getToolsDownloadInfo(downloadPropertyInfo));
-			getHttpRequest().setAttribute(REQ_OTHERS_DOWNLOAD_INFO, administrator.getOtherDownloadInfo(downloadPropertyInfo));
+			getHttpRequest().setAttribute(REQ_OTHERS_DOWNLOAD_INFO, administrator.getOtherDownloadInfo(downloadPropertyInfo));*/
 		} catch (PhrescoException e) {
 			new LogErrorReport(e, "Listing downloads");
 			

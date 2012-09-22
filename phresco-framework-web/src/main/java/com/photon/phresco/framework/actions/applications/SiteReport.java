@@ -31,7 +31,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
-import com.photon.phresco.commons.model.ProjectInfo;
+import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
 import com.photon.phresco.framework.api.ActionType;
@@ -55,8 +55,8 @@ public class SiteReport extends FrameworkBaseAction {
 		
 		try {
 		    ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-		    ProjectInfo projectInfo = administrator.getProject(projectCode).getApplicationInfo();
-		    List<Reports> selectedReports = administrator.getPomReports(projectInfo);
+		    ApplicationInfo appInfo = administrator.getProject(projectCode).getApplicationInfo();
+		    List<Reports> selectedReports = administrator.getPomReports(appInfo);
             getHttpRequest().setAttribute(REQ_SITE_SLECTD_REPORTS, selectedReports);
 			getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
 		} catch (Exception e) {
@@ -142,9 +142,9 @@ public class SiteReport extends FrameworkBaseAction {
 		
 		try {
 			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-			ProjectInfo projectInfo = administrator.getProject(projectCode).getApplicationInfo();
-			List<Reports> reports = administrator.getReports(projectInfo);
-			List<Reports> selectedReports = administrator.getPomReports(projectInfo);
+			ApplicationInfo appInfo = administrator.getProject(projectCode).getApplicationInfo();
+			List<Reports> reports = administrator.getReports(appInfo);
+			List<Reports> selectedReports = administrator.getPomReports(appInfo);
 			getHttpRequest().setAttribute(REQ_SITE_REPORTS, reports);
 			getHttpRequest().setAttribute(REQ_SITE_SLECTD_REPORTS, selectedReports);
 			getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
@@ -164,7 +164,7 @@ public class SiteReport extends FrameworkBaseAction {
 		
 		try {
 			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-			ProjectInfo projectInfo = administrator.getProject(projectCode).getApplicationInfo();
+			ApplicationInfo appInfo = administrator.getProject(projectCode).getApplicationInfo();
 			
 			//To get the selected reports from the UI
 			String[] arraySelectedReports = getHttpRequest().getParameterValues(REQ_SITE_REPORTS);
@@ -185,7 +185,7 @@ public class SiteReport extends FrameworkBaseAction {
 			}
 			
 			// To get the list of Reports to be added
-			List<Reports> allReports = administrator.getReports(projectInfo);
+			List<Reports> allReports = administrator.getReports(appInfo);
 			List<Reports> reportsToBeAdded = new ArrayList<Reports>();
 			if (CollectionUtils.isNotEmpty(selectedReports) && CollectionUtils.isNotEmpty(allReports)) {
 				for (Reports report : allReports) {
@@ -195,7 +195,7 @@ public class SiteReport extends FrameworkBaseAction {
 				}
 			}
 			
-			administrator.updateRptPluginInPOM(projectInfo, reportsToBeAdded, selectedReportCategories);
+			administrator.updateRptPluginInPOM(appInfo, reportsToBeAdded, selectedReportCategories);
 			addActionMessage(getText(SUCCESS_SITE_CONFIGURE));
 		} catch (Exception e) {
 			S_LOGGER.error("Entered into catch block of SiteReport.createReportConfig()"

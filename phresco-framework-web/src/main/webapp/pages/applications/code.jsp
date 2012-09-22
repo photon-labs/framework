@@ -19,8 +19,8 @@
   --%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
-<%@ page import="com.photon.phresco.framework.model.FrameworkConstants" %>
-<%@ page import="com.photon.phresco.framework.api.Project" %>
+<%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
+<%@ page import="com.photon.phresco.commons.model.ApplicationInfo" %>
 <%@ page import="com.photon.phresco.util.TechnologyTypes" %>
 
 <%@ include file="progress.jsp" %>
@@ -29,8 +29,8 @@
 
 <%
     String projectCode = (String) request.getAttribute(FrameworkConstants.REQ_PROJECT_CODE);
-	Project project = (Project)request.getAttribute(FrameworkConstants.REQ_PROJECT);
-	String technology = (String)project.getApplicationInfo().getTechnology().getId();
+	ApplicationInfo appInfo = (ApplicationInfo)request.getAttribute(FrameworkConstants.REQ_APPINFO);
+	String technology = appInfo.getTechInfo().getVersion();
 	String sonarError = (String)request.getAttribute(FrameworkConstants.REQ_ERROR);
 	String disabledStr = "";
 	if (!TechnologyTypes.IPHONES.contains(technology) && StringUtils.isNotEmpty(sonarError)) {

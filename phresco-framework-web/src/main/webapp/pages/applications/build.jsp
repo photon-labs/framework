@@ -57,7 +57,6 @@
 	String technology = projectInfo.getTechnology().getId();
 	
 	List<BuildInfo> buildInfos = (List<BuildInfo>) request.getAttribute(FrameworkConstants.REQ_BUILD);
-    String selectedAppType = (String) request.getAttribute(FrameworkConstants.REQ_SELECTED_APP_TYPE);
     String testType = (String) request.getAttribute(FrameworkConstants.REQ_TEST_TYPE);
     
   	StringBuilder sbBuildPath = new StringBuilder();

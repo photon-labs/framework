@@ -21,12 +21,9 @@ package com.photon.phresco.framework;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 
-import org.tmatesoft.svn.core.SVNAuthenticationException;
 import org.tmatesoft.svn.core.SVNDepth;
-import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNURL;
 import org.tmatesoft.svn.core.internal.io.dav.DAVRepositoryFactory;
 import org.tmatesoft.svn.core.internal.wc.DefaultSVNOptions;
@@ -35,7 +32,7 @@ import org.tmatesoft.svn.core.wc.SVNRevision;
 import org.tmatesoft.svn.core.wc.SVNUpdateClient;
 
 import com.google.gson.Gson;
-import com.photon.phresco.commons.model.ProjectInfo;
+import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.util.FileUtil;
 import com.photon.phresco.util.Utility;
@@ -56,7 +53,7 @@ public class SVNAccessor {
             this.cm = SVNClientManager.newInstance(options, username, password);
     }
 
-    public ProjectInfo getProjectInfo(String revision) throws Exception {
+    public ApplicationInfo getApplicationInfo(String revision) throws Exception {
         BufferedReader reader = null;
         File tempDir = new File(Utility.getSystemTemp(), SVN_CHECKOUT_TEMP);
         System.out.println("temp dir : SVNAccessor " +tempDir );
@@ -72,7 +69,7 @@ public class SVNAccessor {
             }
 
             reader = new BufferedReader(new FileReader(dotProjectFile));
-            return new Gson().fromJson(reader, ProjectInfo.class);
+            return new Gson().fromJson(reader, ApplicationInfo.class);
         } finally {
             Utility.closeStream(reader);
 

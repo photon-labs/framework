@@ -34,6 +34,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.FrameworkConfiguration;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
@@ -68,9 +69,9 @@ public class Code extends FrameworkBaseAction {
     	try {
         	getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
         	ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-        	Project project = administrator.getProject(projectCode); 
+        	ApplicationInfo appInfo = administrator.getProject(projectCode).getApplicationInfo();
             getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
-            getHttpRequest().setAttribute(APPLICATION_PROJECT, project);
+            getHttpRequest().setAttribute(REQ_APPINFO, appInfo);
       		FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
 			serverUrl = frameworkUtil.getSonarURL();
     	    
@@ -97,7 +98,6 @@ public class Code extends FrameworkBaseAction {
     public String check() {
     	S_LOGGER.debug("Entering Method Code.check()");
     	StringBuilder sb = new StringBuilder();
-    	String technology = null;
     	try {
 	        Properties sysProps = System.getProperties();
 	        S_LOGGER.debug( "Phresco FileServer Value of " + PHRESCO_FILE_SERVER_PORT_NO + " is " + sysProps.getProperty(PHRESCO_FILE_SERVER_PORT_NO) );
@@ -105,8 +105,8 @@ public class Code extends FrameworkBaseAction {
 	        
             FrameworkConfiguration frameworkConfig = PhrescoFrameworkFactory.getFrameworkConfig();
             ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-        	Project project = administrator.getProject(projectCode);
-			technology = project.getApplicationInfo().getTechnology().getId();
+            ApplicationInfo appInfo = administrator.getProject(projectCode).getApplicationInfo();
+        	String technology = appInfo.getTechInfo().getVersion();
             if (TechnologyTypes.IPHONES.contains(technology)) {
             	StringBuilder codeValidatePath = new StringBuilder(Utility.getProjectHome());
             	codeValidatePath.append(projectCode);
@@ -153,7 +153,7 @@ public class Code extends FrameworkBaseAction {
 	        	builder.append(projectCode);
                 if (StringUtils.isNotEmpty(report) && FUNCTIONALTEST.equals(report)) {
                     FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-                    builder.append(frameworkUtil.getFuncitonalTestDir(project.getApplicationInfo().getTechnology().getId()));
+                    builder.append(frameworkUtil.getFuncitonalTestDir(technology));
                 }
                 builder.append(File.separatorChar);
 	        	builder.append(POM_XML);
@@ -191,12 +191,13 @@ public class Code extends FrameworkBaseAction {
 					return APP_CODE;
 				}
         	}
+            getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
+            getHttpRequest().setAttribute(REQ_TECHNOLOGY, technology);
+            getHttpRequest().setAttribute(REQ_SONAR_PATH, sb.toString());
     	} catch (Exception e) {
 			S_LOGGER.error("Entered into catch block of Code.check()"+ FrameworkUtil.getStackTraceAsString(e));
     	}
-        getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
-        getHttpRequest().setAttribute(REQ_TECHNOLOGY, technology);
-        getHttpRequest().setAttribute(REQ_SONAR_PATH, sb.toString());
+        
         return APP_CODE;
     }
     
@@ -206,7 +207,7 @@ public class Code extends FrameworkBaseAction {
         	ProjectRuntimeManager runtimeManager;
         	ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
         	Project project = administrator.getProject(projectCode);
-        	String technology = project.getApplicationInfo().getTechnology().getId();
+        	String technology = project.getApplicationInfo().getTechInfo().getVersion();
             runtimeManager = PhrescoFrameworkFactory.getProjectRuntimeManager();
             Map<String, String> codeValidateMap = new HashMap<String, String>(1);
             ActionType actionType = null;
@@ -261,15 +262,13 @@ public class Code extends FrameworkBaseAction {
 	}
 	
 	public String showCodeValidatePopUp(){
-		String technology = null;
-		Project project = null;
 		S_LOGGER.debug("Entering Method  Code.progressValidate()");
         try {
         	ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-        	project = administrator.getProject(projectCode);
-			technology = project.getApplicationInfo().getTechnology().getId();
+        	Project project = administrator.getProject(projectCode);
+			String technology = project.getApplicationInfo().getTechInfo().getVersion();
             getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
-            getHttpRequest().setAttribute(APPLICATION_PROJECT, project);
+            getHttpRequest().setAttribute(REQ_APPINFO, project.getApplicationInfo());
             if (TechnologyTypes.IPHONES.contains(technology)) {
 				List<PBXNativeTarget> xcodeConfigs = ApplicationsUtil.getXcodeConfiguration(projectCode);
 				getHttpRequest().setAttribute(REQ_XCODE_CONFIGS, xcodeConfigs);

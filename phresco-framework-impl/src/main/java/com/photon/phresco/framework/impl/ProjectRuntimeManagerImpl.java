@@ -36,14 +36,14 @@ import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.Commandline;
 
 import com.photon.phresco.exception.PhrescoException;
+import com.photon.phresco.framework.actions.AndroidTestCommand;
 import com.photon.phresco.framework.actions.IPhoneFunctionalCommand;
 import com.photon.phresco.framework.actions.IphoneBuildAndUnitTest;
 import com.photon.phresco.framework.actions.IphoneCodeValidate;
+import com.photon.phresco.framework.actions.IphoneIpa;
 import com.photon.phresco.framework.actions.MobileCommand;
 import com.photon.phresco.framework.actions.SCMUpdate;
 import com.photon.phresco.framework.actions.Sonar;
-import com.photon.phresco.framework.actions.AndroidTestCommand;
-import com.photon.phresco.framework.actions.IphoneIpa;
 import com.photon.phresco.framework.api.ActionType;
 import com.photon.phresco.framework.api.CallBack;
 import com.photon.phresco.framework.api.Project;
@@ -225,7 +225,7 @@ public class ProjectRuntimeManagerImpl implements ProjectRuntimeManager {
     	if (DebugEnabled) {
     		S_LOGGER.debug("buildMavenCommand() Project Code = " + project.getApplicationInfo().getCode());
 		}
-        String techId = pluginMap.get(project.getApplicationInfo().getTechnology().getId());
+        String techId = pluginMap.get(project.getApplicationInfo().getPilotContent().getId());
         if (StringUtils.isNotEmpty(techId)) {
             builder.append(techId);
         }

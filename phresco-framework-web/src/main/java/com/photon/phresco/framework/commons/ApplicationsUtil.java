@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -49,8 +48,11 @@ import org.xml.sax.SAXException;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ApplicationType;
-import com.photon.phresco.commons.model.ProjectInfo;
+import com.photon.phresco.commons.model.ArtifactGroup;
+import com.photon.phresco.commons.model.ArtifactInfo;
+import com.photon.phresco.commons.model.DownloadInfo;
 import com.photon.phresco.commons.model.WebService;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
@@ -58,10 +60,6 @@ import com.photon.phresco.framework.actions.applications.Applications;
 import com.photon.phresco.framework.api.ProjectAdministrator;
 import com.photon.phresco.framework.commons.filter.FileListFilter;
 import com.photon.phresco.framework.model.FrameworkConstants;
-import com.photon.phresco.model.Database;
-import com.photon.phresco.model.Module;
-import com.photon.phresco.model.ModuleGroup;
-import com.photon.phresco.model.Server;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.exception.PhrescoPomException;
 import com.phresco.pom.site.Reports;
@@ -72,30 +70,34 @@ public class ApplicationsUtil implements FrameworkConstants {
 
 	private static final Logger S_LOGGER = Logger.getLogger(Applications.class);
     private static Boolean debugEnabled  = S_LOGGER.isDebugEnabled();
-    private static Map<String, List<ProjectInfo>> mapPilotProjectInfos = new HashMap<String, List<ProjectInfo>>(15);
+    private static Map<String, List<ApplicationInfo>> mapPilotProjectInfos = new HashMap<String, List<ApplicationInfo>>(15);
 	private static Map<String, Collection<String>> mapPilotNames = new HashMap<String, Collection<String>>(15);
 	private static Map<String, List<String>> mapPilotModuleIds = new HashMap<String, List<String>>(15);
 	private static Map<String, List<String>> mapPilotJsLibs = new HashMap<String, List<String>>(15);
 	
-    public static ModuleGroup getSelectedTuple(List<ModuleGroup> moduleGroups, String moduleId, String selectedVersion) {
+    public static ArtifactGroup getSelectedTuple(List<ArtifactGroup> moduleGroups, String moduleGroupId, String selectedVersion) {
     	if (debugEnabled) {
 			S_LOGGER.debug("Entering Method ApplicationsUtil.getSelectedTuple(List<TupleBean> tupleBeans, String tupleBeanId)");
-			S_LOGGER.debug("getSelectedTuple() TupleBeanId = " + moduleId);
+			S_LOGGER.debug("getSelectedTuple() TupleBeanId = " + moduleGroupId);
 		}
+    	
     	try {
-            if (CollectionUtils.isEmpty(moduleGroups)) {
-                return null;
-            }
-
-            for (ModuleGroup moduleGroup : moduleGroups) {
-                if (moduleGroup.getId().equals(moduleId)) {
-                	Module selectedModuleVer = moduleGroup.getVersion(selectedVersion);
-                	if (selectedModuleVer != null) {
-	                	List<Module> moduleVersions = new ArrayList<Module>(15);
-	                	moduleVersions.add(selectedModuleVer);
-	                	moduleGroup.setVersions(moduleVersions);
-                	}
-                	return moduleGroup;
+            if (CollectionUtils.isNotEmpty(moduleGroups)) {
+                for (ArtifactGroup moduleGroup : moduleGroups) {
+                    if (moduleGroup.getId().equals(moduleGroupId)) {
+                        List<ArtifactInfo> versions = moduleGroup.getVersions();
+                        if (CollectionUtils.isNotEmpty(versions)) {
+                            for (ArtifactInfo version : versions) {
+                                if (version.getId().equals(selectedVersion)) {
+                                    List<ArtifactInfo> moduleVersions = new ArrayList<ArtifactInfo>(15);
+                                    moduleVersions.add(version);
+                                    moduleGroup.setVersions(moduleVersions);
+                                }
+                            }
+                        }
+                        
+                        return moduleGroup;
+                    }
                 }
             }
     	} catch (Exception e) {
@@ -107,18 +109,19 @@ public class ApplicationsUtil implements FrameworkConstants {
         return null;
     }
     
-    public static List<ModuleGroup> getSelectedTuples(HttpServletRequest request, List<ModuleGroup> moduleGroups, String moduleIds[]) {
+    public static List<ArtifactGroup> getSelectedTuples(HttpServletRequest request, List<ArtifactGroup> moduleGroups, String moduleGroupIds[]) {
     	if (debugEnabled) {
 			S_LOGGER.debug("Entering Method ApplicationsUtil.getSelectedTuples(List<TupleBean> tupleBeans, String typleBeanIds[])");
 		}
+    	
     	try {
-            if (CollectionUtils.isEmpty(moduleGroups) || moduleIds == null) {
+            if (CollectionUtils.isEmpty(moduleGroups) || moduleGroupIds == null) {
                 return Collections.emptyList();
             }
-            List<ModuleGroup> selectedBeans = new ArrayList<ModuleGroup>(moduleGroups.size());
-            for (String moduleId : moduleIds) {
-            	String selectedVersion = request.getParameter(moduleId);
-            	ModuleGroup moduleGroup = getSelectedTuple(moduleGroups, moduleId, selectedVersion);
+            List<ArtifactGroup> selectedBeans = new ArrayList<ArtifactGroup>(moduleGroups.size());
+            for (String moduleGroupId : moduleGroupIds) {
+            	String selectedVersion = request.getParameter(moduleGroupId);
+            	ArtifactGroup moduleGroup = getSelectedTuple(moduleGroups, moduleGroupId, selectedVersion);
             	if (moduleGroup != null) {
             		selectedBeans.add(moduleGroup);
             	}
@@ -133,7 +136,7 @@ public class ApplicationsUtil implements FrameworkConstants {
         return null;
     }
     
-    private static List<ProjectInfo> getPilots(String technologyId, String customerId) {
+    private static List<ApplicationInfo> getPilots(String technologyId, String customerId) {
     	if (debugEnabled) {
 			S_LOGGER.debug("Entering Method ApplicationsUtil.getPilots(String technologyId)");
 			S_LOGGER.debug("getPilots() TechnologyId = "+technologyId);
@@ -158,7 +161,7 @@ public class ApplicationsUtil implements FrameworkConstants {
     }
     
     public static Collection<String> getPilotNames(String technologyId, String customerId) {
-    	List<ProjectInfo> pilots = mapPilotProjectInfos.get(technologyId);
+    	List<ApplicationInfo> pilots = mapPilotProjectInfos.get(technologyId);
     	Collection<String> pilotNames = mapPilotNames.get(technologyId);
     	if (pilotNames != null) {
     		return pilotNames;
@@ -170,83 +173,85 @@ public class ApplicationsUtil implements FrameworkConstants {
     	
     	pilotNames = new ArrayList<String>(15);
     	if (CollectionUtils.isNotEmpty(pilots)) {
-    		for (ProjectInfo projectInfo : pilots) {
-    			pilotNames.add(projectInfo.getName());
+    		for (ApplicationInfo appInfo : pilots) {
+    			pilotNames.add(appInfo.getName());
     		}
     		mapPilotNames.put(technologyId, pilotNames);
     	}
     	return pilotNames;
     }
     
-    public static List<String> getPilotModuleIds(String technologyId, String customerId) {
-    	List<String> listPilotModules = mapPilotModuleIds.get(technologyId);
-    	if (CollectionUtils.isNotEmpty(listPilotModules)) {
-    		return listPilotModules;
-    	}
-    	List<ProjectInfo> pilots = mapPilotProjectInfos.get(technologyId);
-    	if (CollectionUtils.isEmpty(pilots)) {
-    		pilots = getPilots(technologyId, customerId);
-    	}
+    public static List<String> getPilotModuleIds(String technologyId, String customerId) {// TODO:Lohes
+    	List<String> pilotModuleIds = mapPilotModuleIds.get(technologyId);
+//    	if (CollectionUtils.isNotEmpty(pilotModuleIds)) {
+//    		return pilotModuleIds;
+//    	}
+//    	List<ApplicationInfo> pilots = mapPilotProjectInfos.get(technologyId);
+//    	if (CollectionUtils.isEmpty(pilots)) {
+//    		pilots = getPilots(technologyId, customerId);
+//    	}
+//    	
+//    	pilotModuleIds = new ArrayList<String>();
+//    	if (CollectionUtils.isNotEmpty(pilots)) {
+//    		for (ApplicationInfo appInfo : pilots) {
+//    			List<ArtifactGroup> pilotModuleGroups = appInfo.getSelectedModules();
+//    			if (CollectionUtils.isNotEmpty(pilotModuleGroups)) {
+//    				for (ArtifactGroup pilotModuleGroup : pilotModuleGroups) {
+//    					List<ArtifactInfo> pilotModules = pilotModuleGroup.getVersions();
+//    					if (CollectionUtils.isNotEmpty(pilotModules)) {
+//    						for (ArtifactInfo pilotModule : pilotModules) {
+//    							pilotModuleIds.add(pilotModule.getId());
+//							}
+//    					}
+//    				}
+//    			}
+//    		}
+//    	}
+//    	mapPilotModuleIds.put(technologyId, pilotModuleIds);
     	
-    	listPilotModules = new ArrayList<String>();
-    	if (CollectionUtils.isNotEmpty(pilots)) {
-    		for (ProjectInfo projectInfo : pilots) {
-    			List<ModuleGroup> pilotModules = projectInfo.getTechnology().getModules();
-    			if (CollectionUtils.isNotEmpty(pilotModules)) {
-    				for (ModuleGroup pilotModule : pilotModules) {
-    					List<Module> pilotMods = pilotModule.getVersions();
-    					if (CollectionUtils.isNotEmpty(pilotMods)) {
-    						for (Module pilotMod : pilotMods) {
-    							listPilotModules.add(pilotMod.getId());
-							}
-    					}
-    				}
-    			}
-    		}
-    	}
-    	mapPilotModuleIds.put(technologyId, listPilotModules);
-    	return listPilotModules;
+    	return pilotModuleIds;
     }
     
-    public static List<String> getPilotJsLibIds(String technologyId, String customerId) {
-    	List<String> listPilotJsLibs = mapPilotJsLibs.get(technologyId);
-    	if (CollectionUtils.isNotEmpty(listPilotJsLibs)) {
-    		return listPilotJsLibs;
-    	}
-    	List<ProjectInfo> pilots = mapPilotProjectInfos.get(technologyId);
-    	if (CollectionUtils.isEmpty(pilots)) {
-    		pilots = getPilots(technologyId, customerId);
-    	}
-    	listPilotJsLibs = new ArrayList<String>();
-    	if (CollectionUtils.isNotEmpty(pilots)) {
-    		for (ProjectInfo projectInfo : pilots) {
-    			List<ModuleGroup> pilotModules = projectInfo.getTechnology().getJsLibraries();
-    			if (CollectionUtils.isNotEmpty(pilotModules)) {
-    				for (ModuleGroup pilotModule : pilotModules) {
-    					List<Module> pilotmods = pilotModule.getVersions();
-    					if (CollectionUtils.isNotEmpty(pilotmods)) {
-    						for (Module pilotmod : pilotmods) {
-    							listPilotJsLibs.add(pilotmod.getId());
-							}
-    					}
-    				}
-    			}
-    		}
-    	}
-    	mapPilotJsLibs.put(technologyId, listPilotJsLibs);
-    	return listPilotJsLibs;
+    public static List<String> getPilotJsLibIds(String technologyId, String customerId) {// TODO:Lohes
+    	List<String> listPilotJsLibIds = mapPilotJsLibs.get(technologyId);
+//    	if (CollectionUtils.isNotEmpty(listPilotJsLibIds)) {
+//    		return listPilotJsLibIds;
+//    	}
+//    	List<ApplicationInfo> pilots = mapPilotProjectInfos.get(technologyId);
+//    	if (CollectionUtils.isEmpty(pilots)) {
+//    		pilots = getPilots(technologyId, customerId);
+//    	}
+//    	listPilotJsLibIds = new ArrayList<String>();
+//    	if (CollectionUtils.isNotEmpty(pilots)) {
+//    		for (ApplicationInfo appInfo : pilots) {
+//    			List<ArtifactGroup> pilotJSLibGroups = appInfo.getSelectedJSLibs();
+//    			if (CollectionUtils.isNotEmpty(pilotJSLibGroups)) {
+//    				for (ArtifactGroup pilotJSLibGroup : pilotJSLibGroups) {
+//    					List<ArtifactInfo> pilotJSLibs = pilotJSLibGroup.getVersions();
+//    					if (CollectionUtils.isNotEmpty(pilotJSLibs)) {
+//    						for (ArtifactInfo pilotJSLib : pilotJSLibs) {
+//    							listPilotJsLibIds.add(pilotJSLib.getId());
+//							}
+//    					}
+//    				}
+//    			}
+//    		}
+//    	}
+//    	mapPilotJsLibs.put(technologyId, listPilotJsLibIds);
+    	
+    	return listPilotJsLibIds;
     }
     
-    public static ProjectInfo getPilotProjectInfo(String technologyId, String customerId) {
-    	ProjectInfo pilotProjectInfo = null;
-    	List<ProjectInfo> pilots = getPilots(technologyId, customerId);
+    public static ApplicationInfo getPilotProjectInfo(String technologyId, String customerId) {
+        ApplicationInfo pilotAppInfo = null;
+    	List<ApplicationInfo> pilots = getPilots(technologyId, customerId);
     	if (CollectionUtils.isNotEmpty(pilots)) {
-    		for (ProjectInfo projectInfo : pilots) {
-        		pilotProjectInfo = projectInfo;
+    		for (ApplicationInfo appInfo : pilots) {
+        		pilotAppInfo = appInfo;
         	}
     	}
     	
-    	return pilotProjectInfo;
+    	return pilotAppInfo;
     }
     
     public static ApplicationType getApplicationType(HttpServletRequest request, String appType, String customerId) throws PhrescoException {
@@ -272,12 +277,13 @@ public class ApplicationsUtil implements FrameworkConstants {
     	return dependentVersions;
     }
     
-    public static Collection<String> getIds(List<ModuleGroup> tupleBeans) {
+    public static Collection<String> getIds(List<ArtifactGroup> tupleBeans) {
         if (S_LOGGER.isDebugEnabled()) S_LOGGER.debug("Entered getIds");
+        
         try {
             Collection<String> ids = new ArrayList<String>(10);
             if(tupleBeans != null) {
-                for (ModuleGroup tupleBean : tupleBeans) {
+                for (ArtifactGroup tupleBean : tupleBeans) {
                     ids.add(tupleBean.getId());
                     dependentVersions.add(tupleBean.getVersions().get(0).getVersion());
                 }
@@ -290,6 +296,7 @@ public class ApplicationsUtil implements FrameworkConstants {
     		}
         	new LogErrorReport(e, "Getting Ids");
     	}
+        
         return null;
     }
     
@@ -299,6 +306,7 @@ public class ApplicationsUtil implements FrameworkConstants {
     	for (String id : ids) {
     		map.put(id, request.getParameter(id));
     	}
+    	
     	return map;
     }
     
@@ -310,14 +318,16 @@ public class ApplicationsUtil implements FrameworkConstants {
 			String[] keyValue = item.split("=");
 			map.put(keyValue[0], keyValue[1]);
 		}
+		
 		return map;
     }
     
-    public static Map<String, String> getMapFromModuleGroups(List<ModuleGroup> moduleGroups) {
+    public static Map<String, String> getMapFromModuleGroups(List<ArtifactGroup> moduleGroups) {
     	Map<String, String> map = new HashMap<String, String>(15);
-    	for (ModuleGroup moduleGroup : moduleGroups) {
+    	for (ArtifactGroup moduleGroup : moduleGroups) {
 			map.put(moduleGroup.getId(), moduleGroup.getVersions().get(0).getVersion());
 		}
+    	
     	return map;
     }
     
@@ -329,7 +339,8 @@ public class ApplicationsUtil implements FrameworkConstants {
     	for (String id : selectedIds) {
 			csv = csv + id + ",";
 		}
-    	csv = csv.substring(0, csv.length() - 1); 
+    	csv = csv.substring(0, csv.length() - 1);
+    	
     	return csv;
     }
     
@@ -342,8 +353,8 @@ public class ApplicationsUtil implements FrameworkConstants {
             domFactory.setNamespaceAware(false);
             builder = domFactory.newDocumentBuilder();
             Document doc = builder.parse(fis);
-            return doc;
             
+            return doc;
         } finally {
         	if(fis != null) {
         		fis.close();
@@ -358,98 +369,99 @@ public class ApplicationsUtil implements FrameworkConstants {
 				list.add(strArr[i]);
 			}
 		}
+		
 		return list;
 	}
 
-	public static List<Server> getSelectedServers(List<Server> servers, List<String> selectedServer) {
+	public static List<String> getSelectedServers(List<DownloadInfo> servers, List<String> selectedServerIds) {// TODO:Lohes
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method ApplicationsUtil.getSelectedServers(List<Server> servers, List<String> selectedServerIds[])");
 		}
-		try {
-			if (CollectionUtils.isEmpty(servers) || selectedServer == null) {
-				return Collections.emptyList();
-			}
-			List<Server> selectedServers = new ArrayList<Server>(servers.size());
-			for (String tempServer : selectedServer) {
-				String[] split = tempServer.split("#VSEP#");
-				List<String> versions = new ArrayList<String>(Arrays.asList(split[1].split(",")));
-				String name = split[0].trim();
-				for (Server server : servers) {
-					if(name.equals(server.getName())) {
-						Server newServer = new Server();
-						newServer.setId(server.getId());
-						newServer.setName(server.getName());
-						newServer.setDescription(server.getDescription());
-						newServer.setVersions(versions);
-						selectedServers.add(newServer);
-					}
-				}
-			}
-			return selectedServers;
-		} catch (Exception e) {
-			if (debugEnabled) {
-				S_LOGGER.error("Entered into catch block of ApplicationsUtil.getSelectedServers()" + e);
-			}
-			new LogErrorReport(e, "Getting servers");
-		}
+//		try {
+//			if (CollectionUtils.isEmpty(servers) || selectedServerIds == null) {
+//				return Collections.emptyList();
+//			}
+//			List<DownloadInfo> selectedServers = new ArrayList<DownloadInfo>(servers.size());
+//			for (String selectedServerId : selectedServerIds) {
+//				String[] split = selectedServerId.split("#VSEP#");
+//				List<String> versions = new ArrayList<String>(Arrays.asList(split[1].split(",")));
+//				String name = split[0].trim();
+//				for (DownloadInfo server : servers) {
+//					if(name.equals(server.getName())) {
+//					    DownloadInfo newServer = new DownloadInfo();
+//						newServer.setId(server.getId());
+//						newServer.setName(server.getName());
+//						newServer.setDescription(server.getDescription());
+//						newServer.set
+//						selectedServers.add(newServer);
+//					}
+//				}
+//			}
+//			return selectedServers;
+//		} catch (Exception e) {
+//			if (debugEnabled) {
+//				S_LOGGER.error("Entered into catch block of ApplicationsUtil.getSelectedServers()" + e);
+//			}
+//			new LogErrorReport(e, "Getting servers");
+//		}
 		return null;
 	}
 
-	public static List<Database> getSelectedDatabases(List<Database> databases, List<String> selectedDatabase) {
+	public static List<String> getSelectedDatabases(List<DownloadInfo> databases, List<String> selectedDatabase) {// TODO:Lohes
 		if (debugEnabled) {
 		S_LOGGER.debug("Entering Method ApplicationsUtil.getSelectedDatabases(List<Database> databases, List<Integer> selectedDatabaseIds)");
 		}
-		try {
-			if (CollectionUtils.isEmpty(databases) || selectedDatabase == null) {
-				return Collections.emptyList();
-			}
-			List<Database> selectedDatabases = new ArrayList<Database>(databases.size());
-			for (String tempDatabase : selectedDatabase) {
-				String[] split = tempDatabase.split("#VSEP#");
-				List<String> versions = new ArrayList<String>(Arrays.asList(split[1].split(",")));
-				String name = split[0].trim();
-				for (Database database : databases) {
-					if(name.equals(database.getName())) {
-						Database newDatabase = new Database();
-						newDatabase.setId(database.getId());
-						newDatabase.setName(database.getName());
-						newDatabase.setDescription(database.getDescription());
-						newDatabase.setVersions(versions);
-						selectedDatabases.add(newDatabase);
-					}
-				}
-			}
-			return selectedDatabases;
-		} catch (Exception e) {
-			if (debugEnabled) {
-				S_LOGGER.error("Entered into catch block of ApplicationsUtil.getSelectedDatabases()" + e);
-			}
-			new LogErrorReport(e, "Getting databases");
-		}
+//		try {
+//			if (CollectionUtils.isEmpty(databases) || selectedDatabase == null) {
+//				return Collections.emptyList();
+//			}
+//			List<DownloadInfo> selectedDatabases = new ArrayList<DownloadInfo>(databases.size());
+//			for (String tempDatabase : selectedDatabase) {
+//				String[] split = tempDatabase.split("#VSEP#");
+//				List<String> versions = new ArrayList<String>(Arrays.asList(split[1].split(",")));
+//				String name = split[0].trim();
+//				for (DownloadInfo database : databases) {
+//					if(name.equals(database.getName())) {
+//					    DownloadInfo newDatabase = new DownloadInfo();
+//						newDatabase.setId(database.getId());
+//						newDatabase.setName(database.getName());
+//						newDatabase.setDescription(database.getDescription());
+//						newDatabase.setVersions(versions);
+//						selectedDatabases.add(newDatabase);
+//					}
+//				}
+//			}
+//			return selectedDatabases;
+//		} catch (Exception e) {
+//			if (debugEnabled) {
+//				S_LOGGER.error("Entered into catch block of ApplicationsUtil.getSelectedDatabases()" + e);
+//			}
+//			new LogErrorReport(e, "Getting databases");
+//		}
 		return null;
 	}
 	
-	public static List<WebService> getSelectedWebservices(List<WebService> webservices, List<String> selectedWebserviceIds) {
+	public static List<String> getSelectedWebservices(List<WebService> webservices, List<String> selectedWebserviceIds) {// TODO:Lohes
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method ApplicationsUtil.getSelectedWebservices(List<WebService> webservices, List<Integer> selectedWebserviceIds)");
 		}
-		try {
-			if (CollectionUtils.isEmpty(webservices) || selectedWebserviceIds == null) {
-				return Collections.emptyList();
-			}
-			List<WebService> selectedWebservices = new ArrayList<WebService>(webservices.size());
-			for (WebService webservice : webservices) {
-				if (selectedWebserviceIds.contains(webservice.getId())) {
-					selectedWebservices.add(webservice);
-				}
-			}
-			return selectedWebservices;
-		} catch (Exception e) {
-			if (debugEnabled) {
-				S_LOGGER.error("Entered into catch block of  ApplicationsUtil.getSelectedWebservices()" + e);
-			}
-			new LogErrorReport(e, "Getting webservices");
-		}
+//		try {
+//			if (CollectionUtils.isEmpty(webservices) || selectedWebserviceIds == null) {
+//				return Collections.emptyList();
+//			}
+//			List<WebService> selectedWebservices = new ArrayList<WebService>(webservices.size());
+//			for (WebService webservice : webservices) {
+//				if (selectedWebserviceIds.contains(webservice.getId())) {
+//					selectedWebservices.add(webservice);
+//				}
+//			}
+//			return selectedWebservices;
+//		} catch (Exception e) {
+//			if (debugEnabled) {
+//				S_LOGGER.error("Entered into catch block of  ApplicationsUtil.getSelectedWebservices()" + e);
+//			}
+//			new LogErrorReport(e, "Getting webservices");
+//		}
 		return null;
 	}
 	

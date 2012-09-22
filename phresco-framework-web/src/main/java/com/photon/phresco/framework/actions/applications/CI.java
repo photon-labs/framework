@@ -63,14 +63,13 @@ import com.photon.phresco.framework.model.CIBuild;
 import com.photon.phresco.framework.model.CIJob;
 import com.photon.phresco.framework.model.CIJobStatus;
 import com.photon.phresco.framework.model.CIPasswordScrambler;
-import com.photon.phresco.framework.model.FrameworkConstants;
 import com.photon.phresco.framework.model.XCodeConstants;
 import com.photon.phresco.util.IosSdkUtil;
 import com.photon.phresco.util.IosSdkUtil.MacSdkType;
 import com.photon.phresco.util.TechnologyTypes;
 import com.photon.phresco.util.Utility;
 
-public class CI extends FrameworkBaseAction implements FrameworkConstants {
+public class CI extends FrameworkBaseAction {
 
 	private static final long serialVersionUID = -2040671011555139339L;
     private static final Logger S_LOGGER= Logger.getLogger(CI.class);
@@ -147,7 +146,7 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
     		S_LOGGER.debug("buildTriggeredVal in Ci " + getHttpRequest().getAttribute(CI_BUILD_TRIGGERED_FROM_UI));
             ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
             Project project = (Project) administrator.getProject(projectCode);
-            getHttpRequest().setAttribute(REQ_PROJECT_INFO, project.getApplicationInfo());
+            getHttpRequest().setAttribute(REQ_APPINFO, project.getApplicationInfo());
             getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
             getHttpRequest().setAttribute(CI_JENKINS_ALIVE, jenkinsAlive);
             
@@ -205,9 +204,9 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
             // Get environment info
 			List<Environment> environments = administrator.getEnvironments(project);
 			getHttpRequest().setAttribute(REQ_ENVIRONMENTS, environments);
-            getHttpRequest().setAttribute(REQ_PROJECT_INFO, project.getApplicationInfo());
+            getHttpRequest().setAttribute(REQ_APPINFO, project.getApplicationInfo());
 			// Get xcode targets
-            String technology = project.getApplicationInfo().getTechnology().getId();
+            String technology = project.getApplicationInfo().getTechInfo().getVersion();
 			if (TechnologyTypes.IPHONES.contains(technology)) {
 				List<PBXNativeTarget> xcodeConfigs = ApplicationsUtil.getXcodeConfiguration(projectCode);
 				getHttpRequest().setAttribute(REQ_XCODE_CONFIGS, xcodeConfigs);
@@ -241,6 +240,7 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
     		ProjectRuntimeManager runtimeManager = PhrescoFrameworkFactory.getProjectRuntimeManager();
     		ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
     		Project project = administrator.getProject(projectCode);
+    		String customerId = project.getApplicationInfo().getPilotContent().getCustomerIds().get(0);
     		ActionType actionType = ActionType.JENKINS_SETUP;
     		actionType.setWorkingDirectory(Utility.getJenkinsHome());
         	if (debugEnabled) {
@@ -248,10 +248,10 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
     		}
         	
         	// Here we have to place two files in jenkins_home environment variable location
-        	administrator.getJdkHomeXml(project.getApplicationInfo().getCustomerId());
-        	administrator.getMavenHomeXml(project.getApplicationInfo().getCustomerId()); 
+        	administrator.getJdkHomeXml(customerId);
+        	administrator.getMavenHomeXml(customerId); 
         	// place email ext plugin in plugin folder
-        	administrator.getEmailExtPlugin(project.getApplicationInfo().getCustomerId());
+        	administrator.getEmailExtPlugin(customerId);
             BufferedReader reader = runtimeManager.performAction(project, actionType, null, null);
             getHttpSession().setAttribute(projectCode + CI_SETUP, reader);
             getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
@@ -283,7 +283,7 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
     	try {
     	    ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
             Project project = administrator.getProject(projectCode);
-            String technology = project.getApplicationInfo().getTechnology().getId();
+            String technology = project.getApplicationInfo().getTechInfo().getVersion();
             CIJob existJob = null;
             if (StringUtils.isNotEmpty(oldJobName)) {
             	existJob = administrator.getJob(project, oldJobName);

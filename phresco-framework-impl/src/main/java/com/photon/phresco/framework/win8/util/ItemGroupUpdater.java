@@ -22,7 +22,6 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import com.photon.phresco.commons.model.ApplicationInfo;
-import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.model.FrameworkConstants;
 
@@ -38,7 +37,7 @@ public class ItemGroupUpdater implements FrameworkConstants {
 		try {
 			path = new File(path + File.separator + SOURCE_DIR + File.separator + info.getName() 
 			                + File.separator + info.getName()+ PROJECT_FILE);
-			List<ArtifactGroup> modules = info.getSelectedModules();
+			List<String> modules = info.getSelectedModules();
 			if(!path.exists() && modules == null) {
 				return;
 			}
@@ -72,45 +71,45 @@ public class ItemGroupUpdater implements FrameworkConstants {
 		} 
 	}
 
-	private static void createNewItemGroup(Document doc, List<ArtifactGroup> modules) {
+	private static void createNewItemGroup(Document doc, List<String> modules) {
 		NodeList projects = doc.getElementsByTagName(PROJECT);
 		Element itemGroup = doc.createElement(ITEMGROUP);
 		for (int i = 0; i < projects.getLength(); i++) {
 			Element project = (Element) projects.item(i);
-			for (ArtifactGroup module : modules) {
+			for (String module : modules) {
 				Element reference = doc.createElement(REFERENCE);
-				reference.setAttribute(INCLUDE , module.getName());
-				Element hintPath = doc.createElement(HINTPATH);
-				hintPath.setTextContent(LIBS + module.getName()+ DLL);
-				reference.appendChild(hintPath);
+//				reference.setAttribute(INCLUDE , module.getName());// TODO:Lohes
+//				Element hintPath = doc.createElement(HINTPATH);
+//				hintPath.setTextContent(LIBS + module.getName()+ DLL);
+//				reference.appendChild(hintPath);
 				itemGroup.appendChild(reference);
 			}
 			project.appendChild(itemGroup);
 		}
 	}
 	
-	private static void updateItemGroups(Document doc, List<ArtifactGroup> module) {
+	private static void updateItemGroups(Document doc, List<String> module) {
 	   List<Node> itemGroup = getItemGroup(doc);
 	   updateContent(doc, module, itemGroup, REFERENCE);
 	}
 
-	private static void updateContent(Document doc, List<ArtifactGroup> modules,	List<Node> itemGroup, String elementName) {
+	private static void updateContent(Document doc, List<String> modules,	List<Node> itemGroup, String elementName) {
 		for (Node node : itemGroup) {
 			NodeList childNodes = node.getChildNodes();
 			for (int j = 0; j < childNodes.getLength(); j++) {
 				Node item = childNodes.item(j);
 				if (item.getNodeName().equals(elementName)) {
 					Node parentNode = item.getParentNode();
-					for (ArtifactGroup module : modules) {
+					for (String module : modules) {
 						Element content = doc.createElement(elementName);
-						if (elementName.equalsIgnoreCase(REFERENCE)) {
-							content.setAttribute(INCLUDE, LIBS + module.getName()+ DLL);
-							Element hintPath = doc.createElement(HINTPATH);
-							hintPath.setTextContent(LIBS + module.getName()+ DLL);
-							content.appendChild(hintPath);
-						} else {
-							content.setAttribute(INCLUDE, LIBS + module.getName()+ DLL);
-						}
+//						if (elementName.equalsIgnoreCase(REFERENCE)) {// TODO:Lohes
+//							content.setAttribute(INCLUDE, LIBS + module.getName()+ DLL);
+//							Element hintPath = doc.createElement(HINTPATH);
+//							hintPath.setTextContent(LIBS + module.getName()+ DLL);
+//							content.appendChild(hintPath);
+//						} else {
+//							content.setAttribute(INCLUDE, LIBS + module.getName()+ DLL);
+//						}
 						parentNode.appendChild(content);
 					}
 					break;

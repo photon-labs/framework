@@ -69,7 +69,6 @@ import com.google.gson.reflect.TypeToken;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ApplicationType;
 import com.photon.phresco.commons.model.ArtifactGroup;
-import com.photon.phresco.commons.model.ArtifactInfo;
 import com.photon.phresco.commons.model.CoreOption;
 import com.photon.phresco.commons.model.DownloadInfo;
 import com.photon.phresco.commons.model.LogInfo;
@@ -97,6 +96,7 @@ import com.photon.phresco.framework.model.CIJobStatus;
 import com.photon.phresco.framework.model.CertificateInfo;
 import com.photon.phresco.framework.model.FrameworkConstants;
 import com.photon.phresco.framework.model.SettingsInfo;
+import com.photon.phresco.framework.win8.util.ItemGroupUpdater;
 import com.photon.phresco.service.client.api.ServiceClientConstant;
 import com.photon.phresco.service.client.api.ServiceContext;
 import com.photon.phresco.service.client.api.ServiceManager;
@@ -300,12 +300,12 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		try {
 			if (flag) {
 				extractArchive(response, delta);
-				updatePOMWithModules(pomPath, appInfo.getSelectedModules(), techId);
-				updatePOMWithPluginArtifact(pomPath, appInfo.getSelectedModules(), techId);
+//				updatePOMWithModules(pomPath, appInfo.getSelectedModules(), techId);// TODO:Lohes
+//				updatePOMWithPluginArtifact(pomPath, appInfo.getSelectedModules(), techId);// TODO:Lohes
 			}
 			File projectPath = new File(Utility.getProjectHome() + delta.getCode() + File.separator);
 			if (TechnologyTypes.WIN_METRO.equalsIgnoreCase(techId)) {
-//				ItemGroupUpdater.update(projectInfo, projectPath);
+				ItemGroupUpdater.update(appInfo, projectPath);
 			}
 			
 			BufferedReader bfreader = null;
@@ -450,21 +450,21 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 	 * @param path
 	 * @throws PhrescoException
 	 */
-	private void updateDocument(ApplicationInfo appInfo, File path) throws PhrescoException {
-		List<ArtifactGroup> modules = appInfo.getSelectedModules();
-		List<ArtifactGroup> jsLibraries = appInfo.getSelectedJSLibs();
-		if(CollectionUtils.isNotEmpty(modules) || CollectionUtils.isNotEmpty(jsLibraries)) {
-			ApplicationInfo selectecdModule = selectecdModule(appInfo, path);
-			ClientResponse updateDocumentResponse = getServiceManager().updateDocumentProject(selectecdModule);
-			if (updateDocumentResponse.getStatus() != 200) {
-				throw new PhrescoException("Project updation failed");
-			}
-			try {
-				extractArchive(updateDocumentResponse, appInfo);
-			} catch (IOException e) {
-				throw new PhrescoException(e);
-			}
-		}
+	private void updateDocument(ApplicationInfo appInfo, File path) throws PhrescoException {// TODO:Lohes
+//		List<ArtifactGroup> modules = appInfo.getSelectedModules();
+//		List<ArtifactGroup> jsLibraries = appInfo.getSelectedJSLibs();
+//		if(CollectionUtils.isNotEmpty(modules) || CollectionUtils.isNotEmpty(jsLibraries)) {
+//			ApplicationInfo selectecdModule = selectecdModule(appInfo, path);
+//			ClientResponse updateDocumentResponse = getServiceManager().updateDocumentProject(selectecdModule);
+//			if (updateDocumentResponse.getStatus() != 200) {
+//				throw new PhrescoException("Project updation failed");
+//			}
+//			try {
+//				extractArchive(updateDocumentResponse, appInfo);
+//			} catch (IOException e) {
+//				throw new PhrescoException(e);
+//			}
+//		}
 	}
 	
 	@Override
@@ -523,32 +523,32 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 	 * @return
 	 * @throws PhrescoException
 	 */
-	private ApplicationInfo selectecdModule(ApplicationInfo appInfo, File path) throws PhrescoException {
+	private ApplicationInfo selectecdModule(ApplicationInfo appInfo, File path) throws PhrescoException {// TODO:Lohes
 		BufferedReader reader = null;
 		try {
-			reader = new BufferedReader(new FileReader(path));
-			Gson gson = new Gson();
-			ApplicationInfo info = gson.fromJson(reader, ApplicationInfo.class);
-			List<ArtifactGroup> appInfoModules = info.getSelectedModules();
-			List<ArtifactGroup> appInfoJSLibraries = info.getSelectedJSLibs();
-
-			List<ArtifactGroup> selectedInfoModules = appInfo.getSelectedModules();
-			List<ArtifactGroup> selectedInfoJSLibraries = appInfo.getSelectedJSLibs();
-
-			if(appInfoModules != null && !appInfoModules.isEmpty() && selectedInfoModules != null) {
-				selectedInfoModules.addAll(appInfoModules);	
-				appInfo.setSelectedModules(selectedInfoModules);
-			}
-			if(appInfoJSLibraries != null && !appInfoJSLibraries.isEmpty() && selectedInfoJSLibraries != null) {
-				selectedInfoJSLibraries.addAll(appInfoJSLibraries); 
-				appInfo.setSelectedJSLibs(selectedInfoJSLibraries);
-			}
-			if(selectedInfoModules == null && appInfoModules != null && !appInfoModules.isEmpty()) {
-				appInfo.setSelectedModules(appInfoModules);
-			}
-			if(selectedInfoJSLibraries == null && appInfoJSLibraries != null && !appInfoJSLibraries.isEmpty() ) {
-				appInfo.setSelectedJSLibs(appInfoJSLibraries);
-			}
+//			reader = new BufferedReader(new FileReader(path));
+//			Gson gson = new Gson();
+//			ApplicationInfo info = gson.fromJson(reader, ApplicationInfo.class);
+//			List<ArtifactGroup> appInfoModules = info.getSelectedModules();
+//			List<ArtifactGroup> appInfoJSLibraries = info.getSelectedJSLibs();
+//
+//			List<ArtifactGroup> selectedInfoModules = appInfo.getSelectedModules();
+//			List<ArtifactGroup> selectedInfoJSLibraries = appInfo.getSelectedJSLibs();
+//
+//			if(appInfoModules != null && !appInfoModules.isEmpty() && selectedInfoModules != null) {
+//				selectedInfoModules.addAll(appInfoModules);	
+//				appInfo.setSelectedModules(selectedInfoModules);
+//			}
+//			if(appInfoJSLibraries != null && !appInfoJSLibraries.isEmpty() && selectedInfoJSLibraries != null) {
+//				selectedInfoJSLibraries.addAll(appInfoJSLibraries); 
+//				appInfo.setSelectedJSLibs(selectedInfoJSLibraries);
+//			}
+//			if(selectedInfoModules == null && appInfoModules != null && !appInfoModules.isEmpty()) {
+//				appInfo.setSelectedModules(appInfoModules);
+//			}
+//			if(selectedInfoJSLibraries == null && appInfoJSLibraries != null && !appInfoJSLibraries.isEmpty() ) {
+//				appInfo.setSelectedJSLibs(appInfoJSLibraries);
+//			}
 		} 
 		catch (Exception e) {
 			throw  new PhrescoException(e);
@@ -571,42 +571,42 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 	 * @throws JAXBException 
 	 * @throws ParserConfigurationException 
 	 */
-	private static void excludeModule(ApplicationInfo info) throws PhrescoException {
-		try {
-			File projectPath = new File(Utility.getProjectHome()+ File.separator + info.getCode() + File.separator + POM_FILE);
-			PomProcessor processor = new PomProcessor(projectPath);
-			StringBuilder exclusionStringBuff = new StringBuilder();
-			List<ArtifactGroup> modules = info.getSelectedModules();
-			if (CollectionUtils.isEmpty(modules)) {
-				return;
-			}
-			for (ArtifactGroup moduleGroup : modules) {
-			    List<CoreOption> coreOptions = moduleGroup.getAppliesTo();
-			    if (CollectionUtils.isNotEmpty(coreOptions)) {
-			        for (CoreOption coreOption : coreOptions) {
-			            if (coreOption.getTechId().equals(info.getPilotContent().getId()) && coreOption.isCore()) {
-	                        exclusionStringBuff.append("**\\");
-	                        exclusionStringBuff.append(moduleGroup.getName().toLowerCase());
-	                        exclusionStringBuff.append("\\**");
-	                        exclusionStringBuff.append("\\*.*");
-	                        exclusionStringBuff.append(",");
-	                    }
-                    }
-			    }
-			}
-			String exclusionValue = exclusionStringBuff.toString();
-			if (exclusionValue.lastIndexOf(',') != -1) {
-				exclusionValue = exclusionValue.substring(0, exclusionValue.lastIndexOf(','));
-			}
-			processor.setProperty("sonar.exclusions", exclusionValue);
-			processor.save();
-		} catch (JAXBException e) {
-			throw new PhrescoException(e);
-		} catch (IOException e) {
-			throw new PhrescoException(e);
-		} catch (ParserConfigurationException e) {
-			throw new PhrescoException(e);
-		}
+	private static void excludeModule(ApplicationInfo info) throws PhrescoException {// TODO:Lohes
+//		try {
+//			File projectPath = new File(Utility.getProjectHome()+ File.separator + info.getCode() + File.separator + POM_FILE);
+//			PomProcessor processor = new PomProcessor(projectPath);
+//			StringBuilder exclusionStringBuff = new StringBuilder();
+//			List<ArtifactGroup> modules = info.getSelectedModules();
+//			if (CollectionUtils.isEmpty(modules)) {
+//				return;
+//			}
+//			for (ArtifactGroup moduleGroup : modules) {
+//			    List<CoreOption> coreOptions = moduleGroup.getAppliesTo();
+//			    if (CollectionUtils.isNotEmpty(coreOptions)) {
+//			        for (CoreOption coreOption : coreOptions) {
+//			            if (coreOption.getTechId().equals(info.getPilotContent().getId()) && coreOption.isCore()) {
+//	                        exclusionStringBuff.append("**\\");
+//	                        exclusionStringBuff.append(moduleGroup.getName().toLowerCase());
+//	                        exclusionStringBuff.append("\\**");
+//	                        exclusionStringBuff.append("\\*.*");
+//	                        exclusionStringBuff.append(",");
+//	                    }
+//                    }
+//			    }
+//			}
+//			String exclusionValue = exclusionStringBuff.toString();
+//			if (exclusionValue.lastIndexOf(',') != -1) {
+//				exclusionValue = exclusionValue.substring(0, exclusionValue.lastIndexOf(','));
+//			}
+//			processor.setProperty("sonar.exclusions", exclusionValue);
+//			processor.save();
+//		} catch (JAXBException e) {
+//			throw new PhrescoException(e);
+//		} catch (IOException e) {
+//			throw new PhrescoException(e);
+//		} catch (ParserConfigurationException e) {
+//			throw new PhrescoException(e);
+//		}
 	}
 
 	/**
@@ -649,28 +649,28 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		return null;
 	}
 
-	private static void updatePomProject(ApplicationInfo appInfo) throws PhrescoException, PhrescoPomException {
-		File path = new File(Utility.getProjectHome() + File.separator + appInfo.getCode() + File.separator + POM_FILE);
-		try {
-			PomProcessor pomProcessor = new PomProcessor(path);
-			List<ArtifactGroup> modules = appInfo.getSelectedModules();
-			if(CollectionUtils.isEmpty(modules)){
-				return;
-			}
-			for (ArtifactGroup moduleGroup : modules) {
-			    List<ArtifactInfo> versions = moduleGroup.getVersions();
-			    if (CollectionUtils.isNotEmpty(versions)) {
-			        for (ArtifactInfo module : versions) {
-			            pomProcessor.addDependency(moduleGroup.getGroupId(), moduleGroup.getArtifactId(), module.getVersion());
-                    }
-			    }
-				pomProcessor.save();
-			}
-			} catch (JAXBException e) {
-				throw new PhrescoException(e);
-			} catch (IOException e) {
-				throw new PhrescoException(e);
-		}
+	private static void updatePomProject(ApplicationInfo appInfo) throws PhrescoException, PhrescoPomException {// TODO:Lohes
+//		File path = new File(Utility.getProjectHome() + File.separator + appInfo.getCode() + File.separator + POM_FILE);
+//		try {
+//			PomProcessor pomProcessor = new PomProcessor(path);
+//			List<ArtifactGroup> modules = appInfo.getSelectedModules();
+//			if(CollectionUtils.isEmpty(modules)){
+//				return;
+//			}
+//			for (ArtifactGroup moduleGroup : modules) {
+//			    List<ArtifactInfo> versions = moduleGroup.getVersions();
+//			    if (CollectionUtils.isNotEmpty(versions)) {
+//			        for (ArtifactInfo module : versions) {
+//			            pomProcessor.addDependency(moduleGroup.getGroupId(), moduleGroup.getArtifactId(), module.getVersion());
+//                    }
+//			    }
+//				pomProcessor.save();
+//			}
+//			} catch (JAXBException e) {
+//				throw new PhrescoException(e);
+//			} catch (IOException e) {
+//				throw new PhrescoException(e);
+//		}
 	}
 
 	@Override
@@ -2375,37 +2375,36 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 }
 	 }
 	 
-	 protected void createSqlFolder(ApplicationInfo info, File path) throws PhrescoException {
-		 String databaseType = "";
-		 try {
-			 String parentFile = path.getParentFile().getParent();
-			 List<DownloadInfo> databaseList = info.getSelectedDatabases();
-			 String techId = info.getTechInfo().getId();
-			 if (CollectionUtils.isEmpty(databaseList)) {
-				 return;
-			 }
-			 File mysqlFolder = new File(parentFile, sqlFolderPathMap.get(techId) + Constants.DB_MYSQL);
-			 File mysqlVersionFolder = getMysqlVersionFolder(mysqlFolder);
-			 for (DownloadInfo db : databaseList) {
-				 databaseType = db.getName().toLowerCase();
-				 List<ArtifactInfo> versions = db.getVersions();
-				 for (ArtifactInfo version : versions) {
-					 String sqlPath = databaseType + File.separator + version.getVersion().trim();
-					 File sqlFolder = new File(parentFile, sqlFolderPathMap.get(techId) + sqlPath);
-					 sqlFolder.mkdirs();
-					 if (databaseType.equals(Constants.DB_MYSQL) && mysqlVersionFolder != null
-							 && !(mysqlVersionFolder.getPath().equals(sqlFolder.getPath()))) {						
-						 FileUtils.copyDirectory(mysqlVersionFolder, sqlFolder);
-					 } else {
-						 File sqlFile = new File(sqlFolder, Constants.SITE_SQL);
-						 sqlFile.createNewFile();
-					 }
-				 }
-			 }
-		 } catch (IOException e) {
-			 throw new PhrescoException(e);
-		 }
-	 
+	 protected void createSqlFolder(ApplicationInfo info, File path) throws PhrescoException {// TODO:Lohes
+//		 String databaseType = "";
+//		 try {
+//			 String parentFile = path.getParentFile().getParent();
+//			 List<DownloadInfo> databaseList = info.getSelectedDatabases();
+//			 String techId = info.getTechInfo().getId();
+//			 if (CollectionUtils.isEmpty(databaseList)) {
+//				 return;
+//			 }
+//			 File mysqlFolder = new File(parentFile, sqlFolderPathMap.get(techId) + Constants.DB_MYSQL);
+//			 File mysqlVersionFolder = getMysqlVersionFolder(mysqlFolder);
+//			 for (DownloadInfo db : databaseList) {
+//				 databaseType = db.getName().toLowerCase();
+//				 List<ArtifactInfo> versions = db.getVersions();
+//				 for (ArtifactInfo version : versions) {
+//					 String sqlPath = databaseType + File.separator + version.getVersion().trim();
+//					 File sqlFolder = new File(parentFile, sqlFolderPathMap.get(techId) + sqlPath);
+//					 sqlFolder.mkdirs();
+//					 if (databaseType.equals(Constants.DB_MYSQL) && mysqlVersionFolder != null
+//							 && !(mysqlVersionFolder.getPath().equals(sqlFolder.getPath()))) {						
+//						 FileUtils.copyDirectory(mysqlVersionFolder, sqlFolder);
+//					 } else {
+//						 File sqlFile = new File(sqlFolder, Constants.SITE_SQL);
+//						 sqlFile.createNewFile();
+//					 }
+//				 }
+//			 }
+//		 } catch (IOException e) {
+//			 throw new PhrescoException(e);
+//		 }
 	 }
 	 
 	private File getMysqlVersionFolder(File mysqlFolder) {

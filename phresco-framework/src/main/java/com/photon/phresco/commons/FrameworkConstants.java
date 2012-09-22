@@ -27,7 +27,7 @@ public interface FrameworkConstants {
     /*
      * Common constants
      */
-	String APP_INFO = "appInfo";
+	String REQ_APPINFO = "appInfo";
 	String FEATURES = "features";
     int JOB_STATUS_NOTOK = -1;
     String FOLDER_DOT_PHRESCO = ".phresco";
@@ -378,7 +378,7 @@ public interface FrameworkConstants {
      * Request Constants
      * Ex: REQ_XXX
      */
-    String REQ_PROJECT_INFO	= "projectInfo";
+    String REQ_APP_INFO	= "appInfo";
 	String REQ_TITLE_ADD_APPLICATION = "Add ApPlication";
 	String REQ_APPLICATION_TYPES = "ApplicationTypes";
     String REQ_BUILD_FROM = "from";
