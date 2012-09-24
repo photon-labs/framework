@@ -19,10 +19,10 @@
  */
 package com.photon.phresco.framework.actions;
 
+import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.framework.api.AbstractActionType;
-import com.photon.phresco.framework.model.FrameworkConstants;
 
-public class SCMUpdate extends AbstractActionType {
+public class SCMUpdate extends AbstractActionType implements FrameworkConstants {
     
     private static final String NAME = "scm";
     private String type;
@@ -32,7 +32,7 @@ public class SCMUpdate extends AbstractActionType {
     }
     
     public StringBuilder getCommand() {
-    	return new StringBuilder(FrameworkConstants.MVN_PROJECT_UPDATE_COMMAND);
+    	return new StringBuilder(MVN_PROJECT_UPDATE_COMMAND);
     }
 
     public String getType() {

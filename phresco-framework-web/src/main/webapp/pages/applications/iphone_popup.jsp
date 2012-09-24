@@ -22,7 +22,7 @@
 <%@ page import="java.util.List"%>
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.framework.model.BuildInfo"%>
-<%@ page import="com.photon.phresco.framework.model.XCodeConstants" %>
+<%@ page import="com.photon.phresco.commons.XCodeConstants" %>
 <%@ page import="com.photon.phresco.framework.commons.ApplicationsUtil"%>
 <%@ page import="com.photon.phresco.framework.commons.PBXNativeTarget"%>
 <%@ include file="progress.jsp" %>

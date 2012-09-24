@@ -21,8 +21,8 @@
 
 <%@ page import="org.apache.commons.lang.StringUtils" %>
 
-<%@ page import="com.photon.phresco.framework.model.FrameworkConstants" %>
-<%@ page import="com.photon.phresco.commons.model.ProjectInfo" %>
+<%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
+<%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 
 <%@ include file="../userInfoDetails.jsp" %>
 
@@ -33,16 +33,16 @@
     if (StringUtils.isEmpty(fromPage)) {
         fromPage = "";
     }
-    ProjectInfo selectedInfo = (ProjectInfo) request.getAttribute(FrameworkConstants.REQ_PROJECT_INFO); 
+    ApplicationInfo selectedAppInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_APPINFO); 
     String projectCode = "";
-    if(selectedInfo != null) {
-        projectCode = selectedInfo.getCode();
+    if (selectedAppInfo != null) {
+        projectCode = selectedAppInfo.getCode();
     }
     String disabled = "disabled";
     if (StringUtils.isNotEmpty(fromPage)) {
 %>
         <div class="page-header">
-        	<h1 style="float: left;"><s:text name="label.editappln"/> - <%= selectedInfo.getName() %></h1>
+        	<h1 style="float: left;"><s:text name="label.editappln"/> - <%= selectedAppInfo.getName() %></h1>
         	<div class="icon_div">
 				<a href="#" onclick="showProjectValidationResult();" title="Validate project">
 					<img src="images/icons/validate_failure_icon.png" id="validationErr_validateProject" style="display: none;">

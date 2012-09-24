@@ -48,6 +48,7 @@ import org.xml.sax.SAXException;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ApplicationType;
 import com.photon.phresco.commons.model.ArtifactGroup;
@@ -59,7 +60,6 @@ import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.applications.Applications;
 import com.photon.phresco.framework.api.ProjectAdministrator;
 import com.photon.phresco.framework.commons.filter.FileListFilter;
-import com.photon.phresco.framework.model.FrameworkConstants;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.exception.PhrescoPomException;
 import com.phresco.pom.site.Reports;

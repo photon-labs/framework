@@ -19,10 +19,10 @@
  */
 package com.photon.phresco.framework.actions;
 
+import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.framework.api.AbstractActionType;
-import com.photon.phresco.framework.model.FrameworkConstants;
 
-public class JenkinsStart extends AbstractActionType {
+public class JenkinsStart extends AbstractActionType implements FrameworkConstants {
     
     private static final String NAME = "jenkins-start";
     private String type;
@@ -32,7 +32,7 @@ public class JenkinsStart extends AbstractActionType {
     }
     
     public StringBuilder getCommand() {
-    	return new StringBuilder(FrameworkConstants.MVN_JENKINS_START);
+    	return new StringBuilder(MVN_JENKINS_START);
 	}
 
     public String getType() {

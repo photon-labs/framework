@@ -20,10 +20,10 @@
 
 package com.photon.phresco.framework.actions;
 
+import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.framework.api.AbstractActionType;
-import com.photon.phresco.framework.model.FrameworkConstants;
 
-public class IphoneCodeValidate extends AbstractActionType{
+public class IphoneCodeValidate extends AbstractActionType implements FrameworkConstants {
     private static final String NAME = "XcodeCodeValidate";
     private String type;
     
@@ -32,7 +32,7 @@ public class IphoneCodeValidate extends AbstractActionType{
     }
     
     public StringBuilder getCommand() {
-        return new StringBuilder(FrameworkConstants.MVN_IPHONE_CODE_VALIDATE);
+        return new StringBuilder(MVN_IPHONE_CODE_VALIDATE);
     }
     
     public String getType() {

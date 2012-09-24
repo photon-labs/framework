@@ -19,10 +19,10 @@
  */
 package com.photon.phresco.framework.actions;
 
+import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.framework.api.AbstractActionType;
-import com.photon.phresco.framework.model.FrameworkConstants;
 
-public class IPhoneFunctionalCommand extends AbstractActionType{
+public class IPhoneFunctionalCommand extends AbstractActionType implements FrameworkConstants {
     private static final String NAME = "iphone";
     private String type;
     
@@ -31,7 +31,7 @@ public class IPhoneFunctionalCommand extends AbstractActionType{
     }
     
     public StringBuilder getCommand() {
-        return new StringBuilder(FrameworkConstants.MVN_IPHONE_FUNCTIONAL_COMMAND);
+        return new StringBuilder(MVN_IPHONE_FUNCTIONAL_COMMAND);
     }
     
     public String getType() {

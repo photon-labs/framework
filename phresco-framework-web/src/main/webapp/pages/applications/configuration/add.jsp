@@ -259,9 +259,8 @@ h1 {margin-bottom: 0;}
 		$('#environments').empty().append($("<option></option>").attr("value",'<%= currentEnv %>').attr("selected", "selected").text('<%= currentEnv %>'));
 	}
 
-	/* To check whether the divice is ipad or not */
+	//To check whether the device is ipad or not and then apply jquery scrollbar
 	if (!isiPad()) {
-		/* JQuery scroll bar */
 		$(".config_div").scrollbars();
 	}
 	

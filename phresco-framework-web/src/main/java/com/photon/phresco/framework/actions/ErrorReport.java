@@ -43,7 +43,11 @@ public class ErrorReport extends FrameworkBaseAction {
 			S_LOGGER.debug("Entering Method  ErrorReport.sendReport() message" + message + " action" + action + " userid" + userid );
 		}
         try {
-        	LogInfo loginfo = new LogInfo(message, trace, action, userid);
+            LogInfo loginfo = new LogInfo();
+            loginfo.setMessage(message);
+            loginfo.setTrace(trace);
+            loginfo.setAction(action);
+            loginfo.setUserId(userid);
             ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
         	if (debugEnabled) {
         		S_LOGGER.debug("Going to send error report to service ");

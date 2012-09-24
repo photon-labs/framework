@@ -24,9 +24,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.net.URL;
 import java.util.List;
 
 import javax.crypto.Cipher;
@@ -40,10 +40,11 @@ import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
 import org.jdom.xpath.XPath;
+
+import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.model.CIJob;
 import com.photon.phresco.framework.model.CIPasswordScrambler;
-import com.photon.phresco.framework.model.FrameworkConstants;
 import com.trilead.ssh2.crypto.Base64;
 
 public class ConfigProcessor implements FrameworkConstants {

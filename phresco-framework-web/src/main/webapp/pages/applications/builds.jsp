@@ -21,10 +21,11 @@
 
 <%@ page import="java.util.List"%>
 <%@ page import="org.apache.commons.collections.MapUtils" %>
+<%@ page import="org.apache.commons.collections.CollectionUtils"%>
 
-<%@ page import="com.photon.phresco.framework.model.FrameworkConstants" %>
+<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.util.TechnologyTypes" %>
-<%@ page import="com.photon.phresco.commons.model.ProjectInfo" %>
+<%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 <%@ page import="com.photon.phresco.framework.model.BuildInfo" %>
 
 <script type="text/javascript" src="js/delete.js" ></script>
@@ -47,12 +48,12 @@
 
 <%
     List<BuildInfo> buildInfos = (List<BuildInfo>) request.getAttribute(FrameworkConstants.REQ_BUILD);
-    ProjectInfo projectInfo = (ProjectInfo) request.getAttribute(FrameworkConstants.REQ_PROJECT_INFO);
-    String projectCode = projectInfo.getCode();
-    String technology = projectInfo.getTechnology().getId();
+	ApplicationInfo appInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_APPINFO);
+    String projectCode = appInfo.getCode();
+    String technology = appInfo.getTechInfo().getVersion();
 %>
 
-<% if (buildInfos == null || buildInfos.size() == 0) { %>
+<% if (CollectionUtils.isEmpty(buildInfos)) { %>
 	<div class="alert-message block-message warning" style="margin-top: 5px">
 	    <center><s:label key="configuration.info.message" cssClass="errorMsgLabel"/></center>
 	</div>

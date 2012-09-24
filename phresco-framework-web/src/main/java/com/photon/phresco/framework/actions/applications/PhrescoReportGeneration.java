@@ -75,11 +75,10 @@ import com.photon.phresco.framework.commons.LoadTestReport;
 import com.photon.phresco.framework.commons.SonarReport;
 import com.photon.phresco.framework.commons.SureFireReport;
 import com.photon.phresco.framework.commons.XmlReport;
-import com.photon.phresco.framework.model.FrameworkConstants;
 import com.photon.phresco.framework.model.PerformanceTestResult;
-import com.photon.phresco.framework.model.TestCaseResult;
 import com.photon.phresco.framework.model.TestCaseError;
 import com.photon.phresco.framework.model.TestCaseFailure;
+import com.photon.phresco.framework.model.TestCaseResult;
 import com.photon.phresco.framework.model.TestResult;
 import com.photon.phresco.framework.model.TestSuiteResult;
 import com.photon.phresco.util.TechnologyTypes;
@@ -125,10 +124,11 @@ public class PhrescoReportGeneration extends FrameworkBaseAction implements Fram
 			reportPaths = FrameworkUtil.getInstance();
 			project = proj;
 			testType = tstType;
-			techId = project.getApplicationInfo().getTechnology().getId();
+			techId = project.getApplicationInfo().getTechInfo().getVersion();
 			projectCode = project.getApplicationInfo().getCode();
 			projectName = project.getApplicationInfo().getName();
-			techName = project.getApplicationInfo().getTechnology().getName();
+			// TODO:Lohes
+//			techName = project.getApplicationInfo().getTechnology().getName();
 			reportDatasType = reportDataType;
 			// Report generation for unit and functional
 			if (UNIT.equals(testType) || FUNCTIONAL.equals(testType)) {
@@ -163,8 +163,9 @@ public class PhrescoReportGeneration extends FrameworkBaseAction implements Fram
 			reportPaths = FrameworkUtil.getInstance();
 			project = proj;
 			testType = tstType;
-			techId = project.getApplicationInfo().getTechnology().getId();
-			techName = project.getApplicationInfo().getTechnology().getName();
+			techId = project.getApplicationInfo().getTechInfo().getVersion();
+			// TODO:Lohes
+//			techName = project.getApplicationInfo().getTechnology().getName();
 			projectCode = project.getApplicationInfo().getCode();
 			projectName = project.getApplicationInfo().getName();
 			reportDatasType = reportDataType;
@@ -778,7 +779,7 @@ public class PhrescoReportGeneration extends FrameworkBaseAction implements Fram
             StringBuilder sb = new StringBuilder();
             sb.append(Utility.getProjectHome());
             sb.append(project.getApplicationInfo().getCode());
-            String performanceReportDir = reportPaths.getPerformanceReportDir(project.getApplicationInfo().getTechnology().getId());
+            String performanceReportDir = reportPaths.getPerformanceReportDir(project.getApplicationInfo().getTechInfo().getVersion());
             
             if (StringUtils.isNotEmpty(performanceReportDir) && StringUtils.isNotEmpty(perType)) {
                 Pattern p = Pattern.compile("dir_type");
@@ -818,7 +819,7 @@ public class PhrescoReportGeneration extends FrameworkBaseAction implements Fram
         StringBuilder sb = new StringBuilder();
         sb.append(Utility.getProjectHome());
         sb.append(project.getApplicationInfo().getCode());
-        String performanceReportDir = reportPaths.getPerformanceReportDir(project.getApplicationInfo().getTechnology().getId());
+        String performanceReportDir = reportPaths.getPerformanceReportDir(project.getApplicationInfo().getTechInfo().getVersion());
         if (StringUtils.isNotEmpty(performanceReportDir)) {
             sb.append(performanceReportDir); 
         }

@@ -24,10 +24,10 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Properties;
 
+import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.configuration.ConfigReader;
 import com.photon.phresco.configuration.Configuration;
 import com.photon.phresco.exception.PhrescoException;
-import com.photon.phresco.framework.model.FrameworkConstants;
 
 public class FrameworkConfiguration implements FrameworkConstants {
 	private String configFilePath =  "phresco-env-config.xml";

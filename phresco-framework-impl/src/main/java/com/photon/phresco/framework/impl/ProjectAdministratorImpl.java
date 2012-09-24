@@ -66,6 +66,7 @@ import org.w3c.dom.Element;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ApplicationType;
 import com.photon.phresco.commons.model.ArtifactGroup;
@@ -94,7 +95,6 @@ import com.photon.phresco.framework.model.CIBuild;
 import com.photon.phresco.framework.model.CIJob;
 import com.photon.phresco.framework.model.CIJobStatus;
 import com.photon.phresco.framework.model.CertificateInfo;
-import com.photon.phresco.framework.model.FrameworkConstants;
 import com.photon.phresco.framework.model.SettingsInfo;
 import com.photon.phresco.framework.win8.util.ItemGroupUpdater;
 import com.photon.phresco.service.client.api.ServiceClientConstant;
@@ -170,7 +170,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		S_LOGGER.debug("createProject() > info name : " + info.getName());
 
 		File projectPath = new File(Utility.getProjectHome()+ File.separator+ info.getCode());
-		String techId = info.getTechInfo().getId();
+		String techId = info.getTechInfo().getVersion();
 		if (StringUtils.isEmpty(info.getVersion())) {
 			info.setVersion(PROJECT_VERSION); // TODO: Needs to be fixed
 		}
@@ -278,7 +278,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 
 		ClientResponse response = null;
 		File pomPath = new File(Utility.getProjectHome() + File.separator + appInfo.getCode() + File.separator + POM_FILE);
-		String techId = delta.getTechInfo().getId();
+		String techId = delta.getTechInfo().getVersion();
 		if (techId.equals(TechnologyTypes.PHP_DRUPAL6)|| techId.equals(TechnologyTypes.PHP_DRUPAL7)) {
 			excludeModule(delta);
 		}
@@ -499,7 +499,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 	 * @throws PhrescoException
 	 */
 	private void updatePomProject(ApplicationInfo delta,  ApplicationInfo appInfoClone) throws PhrescoException {
-		String techId = delta.getTechInfo().getId();
+		String techId = delta.getTechInfo().getVersion();
 		File path = new File(Utility.getProjectHome() + File.separator + delta.getCode() + File.separator + POM_FILE);
 		boolean flag1 = techId.equals(TechnologyTypes.JAVA_WEBSERVICE) || techId.equals(TechnologyTypes.JAVA_STANDALONE) || techId.equals(TechnologyTypes.HTML5_WIDGET) || 
 		techId.equals(TechnologyTypes.HTML5_MOBILE_WIDGET)|| techId.equals(TechnologyTypes.HTML5_MULTICHANNEL_JQUERY_WIDGET) || techId.equals(TechnologyTypes.ANDROID_NATIVE)||
@@ -2111,7 +2111,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 //2.Validate for changes in the list of modules in projects
 		 //	info and the actual list of modules present in the directory
 		 List<ValidationResult> results = new ArrayList<ValidationResult>(64);
-		 String techId = project.getApplicationInfo().getTechInfo().getId();
+		 String techId = project.getApplicationInfo().getTechInfo().getVersion();
 		 List<Validator> validators = PhrescoFrameworkFactory.getValidators(techId);
 		 for (Validator validator : validators) {
 			 results.addAll(validator.validate(project.getApplicationInfo().getCode()));
@@ -2363,7 +2363,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 try {
 			 File sqlPath = new File(Utility.getProjectHome() + File.separator
 					 + appInfo.getCode() + File.separator
-					 + sqlFolderPathMap.get(appInfo.getTechInfo().getId()));
+					 + sqlFolderPathMap.get(appInfo.getTechInfo().getVersion()));
 			 if (CollectionUtils.isNotEmpty(dbList)) {
 				 for (String dbVersion : dbList) {
 					 File dbVersionFolder = new File(sqlPath, dbVersion.toLowerCase());

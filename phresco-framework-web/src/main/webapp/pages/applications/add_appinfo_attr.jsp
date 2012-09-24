@@ -24,14 +24,13 @@
 <%@ page import="java.util.List" %>
 
 <%@ page import="com.photon.phresco.commons.model.Technology"%>
-<%@ page import="com.photon.phresco.framework.model.FrameworkConstants"%>
-<%@ page import="com.photon.phresco.model.Server"%>
-<%@ page import="com.photon.phresco.model.Database"%>
+<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
+<%@ page import="com.photon.phresco.commons.model.DownloadInfo"%>
 
 <%
 	String fromPage = (String) request.getAttribute(FrameworkConstants.REQ_FROM_PAGE);
-	List<Server> servers = (List<Server>) request.getAttribute(FrameworkConstants.REQ_SERVERS);
-	List<Database> databases = (List<Database>) request.getAttribute(FrameworkConstants.REQ_DATABASES);
+	List<DownloadInfo> servers = (List<DownloadInfo>) request.getAttribute(FrameworkConstants.REQ_SERVERS);
+	List<DownloadInfo> databases = (List<DownloadInfo>) request.getAttribute(FrameworkConstants.REQ_DATABASES);
 	
 	List<String> listSelectedServerIds = (List<String>) request.getAttribute(FrameworkConstants.REQ_LISTSELECTED_SERVERIDS);
 	List<String> listSelectedDatabaseIds = (List<String>) request.getAttribute(FrameworkConstants.REQ_LISTSELECTED_DATABASEIDS);
@@ -72,8 +71,8 @@
 					<% if ("Server".equals(header)) { %>
 						<select id="allServers" name="servers" class="xlarge">
 							<%
-								if(servers != null) {
-									for(Server server : servers) {
+								if (CollectionUtils.isNotEmpty(servers)) {
+									for (DownloadInfo server : servers) {
 							%>
 										<option value="<%= server.getId() %>"> <%= server.getName() %> </option>
 							<%
@@ -84,8 +83,8 @@
 					<% } else { %>
 						<select id="allDatabases" name="databases" class="xlarge">
 							<%
-								if(databases != null) {
-									for(Database database : databases) {
+								if (CollectionUtils.isNotEmpty(databases)) {
+									for (DownloadInfo database : databases) {
 							%>
 										<option value="<%= database.getId() %>"> <%= database.getName() %> </option>
 							<%
@@ -136,9 +135,8 @@
 
 <script type="text/javascript">
 $(document).ready(function() {
-	
-	if(!isiPad()){
-		/* JQuery scroll bar */
+	//To check whether the device is ipad or not and then apply jquery scrollbar
+	if (!isiPad()) {
 		$("#type_field").scrollbars();
 	}
 	
@@ -146,8 +144,9 @@ $(document).ready(function() {
 	
 	/** To remove the already added options from the select box **/
 	/** For add **/
-	<% if(listSelectedServerIds != null && StringUtils.isEmpty(from)) {
-			for(String listSelectedServerId : listSelectedServerIds) {
+	<% 
+		if (CollectionUtils.isNotEmpty(listSelectedServerIds) && StringUtils.isEmpty(from)) {
+			for (String listSelectedServerId : listSelectedServerIds) {
 	%>
 				$("#allServers option[value='<%= listSelectedServerId %>']").remove();
 	<% 		
@@ -156,24 +155,24 @@ $(document).ready(function() {
 	%>
 	
 	/** For edit **/
-	<% if(listSelectedServerIds != null && StringUtils.isNotEmpty(from)) { %>
-			<% for(Server server : servers) {
-					for(String listSelectedServerId : listSelectedServerIds) {
-						if(!server.getId().equals(listSelectedServerId)) {
-			%>
-							$("#allServers option[value='<%= server.getId() %>']").remove();
-			<%	
-						}
+	<% 
+		if (CollectionUtils.isNotEmpty(listSelectedServerIds) && StringUtils.isNotEmpty(from)) {
+			for (DownloadInfo server : servers) {
+				for (String listSelectedServerId : listSelectedServerIds) {
+					if (!server.getId().equals(listSelectedServerId)) {
+	%>
+						$("#allServers option[value='<%= server.getId() %>']").remove();
+	<%	
 					}
-			%>
-	<% 		
+				}
 			}
 		}
 	%>
 	
 	/** For add **/
-	<% if(listSelectedDatabaseIds != null && StringUtils.isEmpty(from)) {
-			for(String listSelectedDatabaseId : listSelectedDatabaseIds) {
+	<% 
+		if (CollectionUtils.isNotEmpty(listSelectedDatabaseIds) && StringUtils.isEmpty(from)) {
+			for (String listSelectedDatabaseId : listSelectedDatabaseIds) {
 	%>
 				$("#allDatabases option[value='<%= listSelectedDatabaseId %>']").remove();
 	<% 		
@@ -182,28 +181,27 @@ $(document).ready(function() {
 	%>
 
 	/** For edit **/
-	<% if(listSelectedDatabaseIds != null && StringUtils.isNotEmpty(from)) { %>
-		<% for(Database database : databases) {
-				for(String listSelectedDatabaseId : listSelectedDatabaseIds) {
-					if(!database.getId().equals(listSelectedDatabaseId)) {
-		%>
+	<% 
+		if (CollectionUtils.isNotEmpty(listSelectedDatabaseIds) && StringUtils.isNotEmpty(from)) {
+			for (DownloadInfo database : databases) {
+				for (String listSelectedDatabaseId : listSelectedDatabaseIds) {
+					if (!database.getId().equals(listSelectedDatabaseId)) {
+	%>
 						$("#allDatabases option[value='<%= database.getId() %>']").remove();
-		<%	
+	<%	
 					}
 				}
-		%>
-	<% 		
+			}
 		}
-	}
 	%>
 	
 	/** To get the versions of the default option **/
 	var serverSelectBox = $("#allServers").val();
 	var databaseSelectBox = $("#allDatabases").val();
 	
-	if(serverSelectBox != undefined || serverSelectBox == "") {
+	if (serverSelectBox != undefined || serverSelectBox == "") {
 		getAllVersions("Server", serverSelectBox);
-	} else if(databaseSelectBox != undefined || serverSelectBox == "") {
+	} else if (databaseSelectBox != undefined || serverSelectBox == "") {
 		getAllVersions("Database", databaseSelectBox);
 	}
 	
@@ -233,7 +231,7 @@ $(document).ready(function() {
 		$('input[name=databaseVersion]:checkbox:checked').each(function(index) {
 			databaseVersion.push($(this).val());
 		});
-		if(serverVersion == undefined && databaseVersion == "") {
+		if (serverVersion == undefined && databaseVersion == "") {
 			$("#errMsg").html("Select version");
 			return false;
 		} else {
@@ -242,7 +240,7 @@ $(document).ready(function() {
 				var projInfoDbVersions = $("#projInfoDbVersions").val();
 				var arrayProjInfoDbVersions = new Array();
 				arrayProjInfoDbVersions = projInfoDbVersions.split(",");
-				for(var i=0; i < arrayProjInfoDbVersions.length; i++) {
+				for (var i=0; i < arrayProjInfoDbVersions.length; i++) {
 					var availableSelectedVersion = false;
 					for (var j=0; j < databaseVersion.length; j++) {
 						if (jQuery.trim(databaseVersion[j]) == jQuery.trim(arrayProjInfoDbVersions[i])) {
@@ -279,13 +277,13 @@ $(document).ready(function() {
 function continueAdd() {
 	var paramName = "";
 	
-	if(<%= "Server".equals(header) %>) {
+	if (<%= "Server".equals(header) %>) {
 		paramName = $("#allServers option:selected").text();
 	} else {
 		paramName = $("#allDatabases option:selected").text();
 	}
 	
-	if(<%= from.equals("edit") %>) {
+	if (<%= from.equals("edit") %>) {
 		var param = "&type=" + '<%= header %>' + "&paramName=" + paramName + "&divTobeUpdated=" + '<%= divTobeUpdated %>';
 	} else {
 		var param = "&type=" + '<%= header %>' + "&paramName=" + paramName;
@@ -299,11 +297,11 @@ function continueAdd() {
 			var	eleAttr = (data.selectedParamName).replace(/\s+/g, '');
 			showParentPage();
         	var type = '<%= header %>';
-        	if(<%= from.equals("edit") %>) {
+        	if (<%= from.equals("edit") %>) {
         		$("." + data.divTobeUpdated).html(data.selectedParamName + " [ " + data.selectedVersions + " ] ");
         		$("." + eleAttr).prop("id", data.selectedVersions);
         	} else {
-            	if(data.selectedAttrType == "Server") {
+            	if (data.selectedAttrType == "Server") {
             		$("#Server").css("margin-left", "320px");
             		$("#dispServer").append('<div id="'+eleAttr+'" style="background-color: #bbbbbb; width: 40%; margin-bottom:2px; height: auto; border-radius: 6px; padding: 5px 0 0 10px; position: relative"><a name="' + type + '" class="deleteThis" href="#" id="' 
 											+ eleAttr +'" style="text-decoration: none; margin-right: 10px; color: #000000; margin-left: 95%;" title="'+ data.selectedParamName +'" onclick="deleteEle(this);">&times;</a><div id="'+data.selectedVersions+'" class="'+eleAttr+'" title="'+type+'" onclick="openAttrPopup(this);" style="cursor: pointer; color: #000000; height: auto; position: relative; width: 90%; line-height: 17px; margin-top: -14px; padding: 0 0 6px 1px;">' 
@@ -321,7 +319,7 @@ function continueAdd() {
 }
 
 function makeVersionsSelected() {
-	<% if(listSelectedVersions != null && CollectionUtils.isNotEmpty(listSelectedVersions)) { %>
+	<% if (CollectionUtils.isNotEmpty(listSelectedVersions)) { %>
 			$("input[name='serverVersion']").each(function() {
 				<% 
 					for (String listSelectedVersion : listSelectedVersions) { 

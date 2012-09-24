@@ -17,7 +17,7 @@
  * limitations under the License.
  * ###
  */
-package com.photon.phresco.framework.model;
+package com.photon.phresco.commons;
 
 /**
  * XCode constants

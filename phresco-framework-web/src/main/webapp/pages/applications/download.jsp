@@ -17,6 +17,7 @@
   limitations under the License.
   ###
   --%>
+<%@page import="org.apache.commons.collections.CollectionUtils"%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="com.photon.phresco.util.PlatformTypes"%>
@@ -24,7 +25,7 @@
 <%@ page import="java.util.Arrays"%>
 <%@ page import="com.photon.phresco.commons.model.DownloadInfo"%>
 <%@ page import="com.photon.phresco.framework.model.DownloadTypes"%>
-<%@ page import="com.photon.phresco.framework.model.FrameworkConstants" %>
+<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 
 <style>
 
@@ -51,7 +52,7 @@
         <div class="accordion_panel_inner">
             <section class="lft_menus_container">
             	<% 
-            		if(serverDownloadInfos != null && serverDownloadInfos.size() > 0) {
+            		if (CollectionUtils.isNotEmpty(serverDownloadInfos)) {
             	%>
                 <span class="siteaccordion" id="siteaccordion_active"><span><s:text name="label.servers"/></span></span>
                 <div class="mfbox siteinnertooltiptxt">
@@ -73,7 +74,7 @@
 		                    	%>
 		                    		<tr>
 		                    			<td><%= serverDownloadInfo.getName() %></td>
-		                    			<td><%= serverDownloadInfo.getVersion() %></td>
+		                    			<td><%= serverDownloadInfo.getVersions() %></td>
 		                    			<td><%= serverDownloadInfo.getFileSize() %></td>
 		                    			<td class="label_center">
 		                    				<a href="<%= serverDownloadInfo.getDownloadURL() %>">

@@ -48,7 +48,7 @@ public class FunctionalUtil {
         OutputStream os = null;
         StringBuilder builder = new StringBuilder(Utility.getProjectHome());
         builder.append(project.getApplicationInfo().getCode());
-        builder.append(FrameworkUtil.getInstance().getFuncitonalAdaptDir(project.getApplicationInfo().getTechnology().getId()));
+        builder.append(FrameworkUtil.getInstance().getFuncitonalAdaptDir(project.getApplicationInfo().getTechInfo().getVersion()));
      
         try {
 		    File file = new File(builder.toString());

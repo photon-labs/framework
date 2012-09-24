@@ -19,10 +19,10 @@
  */
 package com.photon.phresco.framework.actions;
 
+import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.framework.api.AbstractActionType;
-import com.photon.phresco.framework.model.FrameworkConstants;
 
-public class SharepointNUnitTest extends AbstractActionType {
+public class SharepointNUnitTest extends AbstractActionType implements FrameworkConstants {
     
     private static final String NAME = "nUnitTest";
     private String type;
@@ -32,7 +32,7 @@ public class SharepointNUnitTest extends AbstractActionType {
     }
     
     public StringBuilder getCommand() {
-		return new StringBuilder(FrameworkConstants.MVN_SHAREPOINT_NUNIT_TEST_COMMAND);
+		return new StringBuilder(MVN_SHAREPOINT_NUNIT_TEST_COMMAND);
 	}
     
     public String getType() {

@@ -37,10 +37,9 @@ import com.photon.phresco.framework.actions.FrameworkBaseAction;
 import com.photon.phresco.framework.api.Project;
 import com.photon.phresco.framework.api.ProjectAdministrator;
 import com.photon.phresco.framework.commons.FrameworkUtil;
-import com.photon.phresco.framework.model.FrameworkConstants;
 import com.photon.phresco.util.Utility;
 
-public class ImgStreaming extends FrameworkBaseAction implements FrameworkConstants {
+public class ImgStreaming extends FrameworkBaseAction {
 	
 	private static final Logger S_LOGGER = Logger.getLogger(ImgStreaming.class);
     private static Boolean debugEnabled  =S_LOGGER.isDebugEnabled();
@@ -99,7 +98,7 @@ public class ImgStreaming extends FrameworkBaseAction implements FrameworkConsta
     	StringBuilder sbuilder = new StringBuilder();
     	sbuilder.append(Utility.getProjectHome());
     	sbuilder.append(project.getApplicationInfo().getCode());
-    	sbuilder.append(frameworkUtil.getFunctionalReportDir(project.getApplicationInfo().getTechnology().getId()));
+    	sbuilder.append(frameworkUtil.getFunctionalReportDir(project.getApplicationInfo().getTechInfo().getVersion()));
     	sbuilder.append(File.separator);
     	sbuilder.append(SCREENSHOT_DIR);
     	sbuilder.append(File.separator);

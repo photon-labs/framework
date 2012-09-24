@@ -19,10 +19,10 @@
  */
 package com.photon.phresco.framework.actions;
 
+import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.framework.api.AbstractActionType;
-import com.photon.phresco.framework.model.FrameworkConstants;
 
-public class StopSeleniumServer extends AbstractActionType {
+public class StopSeleniumServer extends AbstractActionType implements FrameworkConstants {
     
     private static final String NAME = "stopSeleniumServer";
     private String type;
@@ -32,7 +32,7 @@ public class StopSeleniumServer extends AbstractActionType {
     }
     
     public StringBuilder getCommand() {
-		return new StringBuilder(FrameworkConstants.MVN_SELENIUM_STOP_COMMAND);
+		return new StringBuilder(MVN_SELENIUM_STOP_COMMAND);
 	}
     
     public String getType() {

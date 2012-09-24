@@ -20,9 +20,9 @@
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <!-- Description dialog starts -->	
-   	<div id="descriptionDialog" class="modal about" style="display:none;">
+   	<div id="descriptionDialog" class="modal about hideContent">
 		<!-- Description dialog starts -->	
-		<div id="descDialog" class="modal descPopUP" style="display:none">
+		<div id="descDialog" class="modal descPopUP hideContent">
 			<div class="modal-header">
 				<h3><s:text name="label.description"/></h3>
 				<a id="close" href="#" class="close">&times;</a>
@@ -38,7 +38,6 @@
 			</div>
 			
 			<div class="modal-footer">
-<!-- 				<input id="cancel" type="button" value="Cancel" class="btn primary"/> -->
 				<input type="button" value="<s:text name="label.ok"/>" class="btn primary" id="closeDesc"/>
 			</div>
 		</div>
@@ -48,7 +47,8 @@
 
 
 <script type="text/javascript">
-if(!isiPad()){
+	//To check whether the device is ipad or not and then apply jquery scrollbar
+	if (!isiPad()) {
 		$(".desc_text").scrollbars();
 	}
 </script>

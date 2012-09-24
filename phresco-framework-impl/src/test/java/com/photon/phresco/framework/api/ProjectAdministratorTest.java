@@ -23,7 +23,6 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -36,20 +35,17 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.photon.phresco.commons.model.ProjectInfo;
+import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.PropertyTemplate;
 import com.photon.phresco.commons.model.SettingsTemplate;
-import com.photon.phresco.commons.model.Technology;
 import com.photon.phresco.commons.model.VideoInfo;
 import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.FrameworkConfiguration;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.model.BuildInfo;
-import com.photon.phresco.framework.model.FrameworkConstants;
 import com.photon.phresco.framework.model.PropertyInfo;
 import com.photon.phresco.framework.model.SettingsInfo;
-import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.ServiceConstants;
 import com.photon.phresco.util.Utility;
 
@@ -224,7 +220,8 @@ public class ProjectAdministratorTest implements FrameworkConstants {
         return (projects != null) ? projects.size() : 0;
     }
 
-    private ProjectInfo createProjectInfo() {
+	// TODO:Lohes
+    /*private ProjectInfo createProjectInfo() {
         ProjectInfo info = new ProjectInfo();
         info.setName("TestProject");
         info.setDescription("Test Project using Junit");
@@ -240,7 +237,7 @@ public class ProjectAdministratorTest implements FrameworkConstants {
         info.setTechnology(technology);
 
         return info;
-    }
+    }*/
 
     //@Test
     public void testDeleteBuildInfos() throws PhrescoException {

@@ -19,10 +19,10 @@
  */
 package com.photon.phresco.framework.actions;
 
+import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.framework.api.AbstractActionType;
-import com.photon.phresco.framework.model.FrameworkConstants;
 
-public class MobileCommand extends AbstractActionType {
+public class MobileCommand extends AbstractActionType implements FrameworkConstants {
     
     private static final String NAME = "install";
     private String type;
@@ -32,7 +32,7 @@ public class MobileCommand extends AbstractActionType {
     }
     
     public StringBuilder getCommand() {
-    	return new StringBuilder(FrameworkConstants.MVN_MOBILE_INSTALL_COMMAND);
+    	return new StringBuilder(MVN_MOBILE_INSTALL_COMMAND);
 	}
     
     public String getType() {

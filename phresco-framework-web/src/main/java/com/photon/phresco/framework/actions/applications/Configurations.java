@@ -38,10 +38,9 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.opensymphony.xwork2.Action;
-import com.photon.phresco.commons.model.ProjectInfo;
+import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.PropertyTemplate;
 import com.photon.phresco.commons.model.SettingsTemplate;
-import com.photon.phresco.commons.model.Technology;
 import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
@@ -54,9 +53,6 @@ import com.photon.phresco.framework.impl.EnvironmentComparator;
 import com.photon.phresco.framework.model.CertificateInfo;
 import com.photon.phresco.framework.model.PropertyInfo;
 import com.photon.phresco.framework.model.SettingsInfo;
-import com.photon.phresco.model.Database;
-import com.photon.phresco.model.I18NString;
-import com.photon.phresco.model.Server;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.TechnologyTypes;
 import com.photon.phresco.util.Utility;
@@ -136,13 +132,14 @@ public class Configurations extends FrameworkBaseAction {
         try {
             ProjectAdministrator administrator = getProjectAdministrator();
             Project project = administrator.getProject(projectCode);
-            ProjectInfo projectInfo = project.getApplicationInfo();
-            List<SettingsTemplate> settingsTemplates = administrator.getSettingsTemplates(projectInfo.getCustomerId());
+            ApplicationInfo appInfo = project.getApplicationInfo();
+            String customerId = appInfo.getPilotContent().getCustomerIds().get(0);
+            List<SettingsTemplate> settingsTemplates = administrator.getSettingsTemplates(customerId);
             getHttpRequest().setAttribute(REQ_SETTINGS_TEMPLATES, settingsTemplates);
             List<Environment> environments = administrator.getEnvironments(project);
             getHttpRequest().setAttribute(ENVIRONMENTS, environments);
             Collections.sort(environments, new EnvironmentComparator());
-            getHttpRequest().setAttribute(REQ_PROJECT_INFO, projectInfo);
+            getHttpRequest().setAttribute(REQ_APPINFO, appInfo);
         } catch (Exception e) {
         	if (debugEnabled) {
                S_LOGGER.error("Entered into catch block of Configurations.add()" + FrameworkUtil.getStackTraceAsString(e));
@@ -165,12 +162,13 @@ public class Configurations extends FrameworkBaseAction {
         	initDriverMap();
             ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
             Project project = administrator.getProject(projectCode);
-            ProjectInfo projectInfo = project.getApplicationInfo();
+            ApplicationInfo appInfo = project.getApplicationInfo();
             if (!validate(administrator, null)) {
                 isValidated = true;
                 return Action.SUCCESS;
             }
-            SettingsTemplate selectedSettingTemplate = administrator.getSettingsTemplate(configType, projectInfo.getCustomerId());
+            String customerId = appInfo.getPilotContent().getCustomerIds().get(0);
+            SettingsTemplate selectedSettingTemplate = administrator.getSettingsTemplate(configType, customerId);
             List<PropertyInfo> propertyInfoList = new ArrayList<PropertyInfo>();
             List<PropertyTemplate> propertyTemplates = selectedSettingTemplate.getProperties();
             boolean isIISServer = false;
@@ -232,7 +230,7 @@ public class Configurations extends FrameworkBaseAction {
                 }
             }
             SettingsInfo settingsInfo = new SettingsInfo(configName, description, configType);
-            settingsInfo.setAppliesToTechs(Arrays.asList(project.getApplicationInfo().getTechnology().getId()));
+            settingsInfo.setAppliesTo(Arrays.asList(project.getApplicationInfo().getTechInfo().getVersion()));
             settingsInfo.setPropertyInfos(propertyInfoList);
             getHttpRequest().setAttribute(REQ_CONFIG_INFO, settingsInfo);
             getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
@@ -446,7 +444,7 @@ public class Configurations extends FrameworkBaseAction {
 	   	}
     	
     	Project project = administrator.getProject(projectCode);
-    	ProjectInfo projectInfo = project.getApplicationInfo();
+    	ApplicationInfo appInfo = project.getApplicationInfo();
     	if (StringUtils.isNotEmpty(configName) && !configName.equals(oldName)) {
     		for (String environment : environments) {
     			List<SettingsInfo> configurations = administrator.configurationsByEnvName(environment, project);
@@ -470,7 +468,8 @@ public class Configurations extends FrameworkBaseAction {
 		        }
 	    	}
     	}
-    	SettingsTemplate selectedSettingTemplate = administrator.getSettingsTemplate(configType, projectInfo.getCustomerId());
+    	String customerId = appInfo.getPilotContent().getCustomerIds().get(0);
+    	SettingsTemplate selectedSettingTemplate = administrator.getSettingsTemplate(configType, customerId);
     	
     	boolean serverTypeValidation = false;
     	boolean isIISServer = false;
@@ -495,7 +494,7 @@ public class Configurations extends FrameworkBaseAction {
         	}
     	    value = getHttpRequest().getParameter(key);
             boolean isRequired = propertyTemplate.isRequired();
-            String techId = project.getApplicationInfo().getTechnology().getId();
+            String techId = project.getApplicationInfo().getTechInfo().getVersion();
             if ((serverTypeValidation && "deploy_dir".equals(key)) || TechnologyTypes.ANDROIDS.contains(techId)) {
            		isRequired = false;
             }
@@ -514,8 +513,7 @@ public class Configurations extends FrameworkBaseAction {
             }
             
             if (isRequired == true && StringUtils.isEmpty(value.trim())) {
-            	I18NString i18NString = propertyTemplate.getName();
-                String field = i18NString.get("en-US").getValue();
+                String field = propertyTemplate.getName();
                 dynamicError += propertyTemplate.getKey() + ":" + field + " is empty" + ",";
             }
         }
@@ -567,16 +565,17 @@ public class Configurations extends FrameworkBaseAction {
         try {
             ProjectAdministrator administrator = getProjectAdministrator();
             Project project = administrator.getProject(projectCode);
-            ProjectInfo projectInfo = project.getApplicationInfo();
+            ApplicationInfo appInfo = project.getApplicationInfo();
             SettingsInfo configInfo = administrator.configuration(oldName, envName, project);
         	List<Environment> environments = administrator.getEnvironments(project);
-        	List<SettingsTemplate> settingsTemplates = administrator.getSettingsTemplates(projectInfo.getCustomerId());
+        	String customerId = appInfo.getPilotContent().getCustomerIds().get(0);
+        	List<SettingsTemplate> settingsTemplates = administrator.getSettingsTemplates(customerId);
         	
             getHttpRequest().setAttribute(REQ_SETTINGS_TEMPLATES, settingsTemplates);
             getHttpRequest().setAttribute(ENVIRONMENTS, environments);
             getHttpRequest().setAttribute(REQ_CONFIG_INFO, configInfo);
             getHttpRequest().setAttribute(REQ_FROM_PAGE, FROM_PAGE_EDIT);
-            getHttpRequest().setAttribute(REQ_PROJECT_INFO, projectInfo);
+            getHttpRequest().setAttribute(REQ_APPINFO, appInfo);
             getHttpRequest().setAttribute("currentEnv", envName);
             getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
         } catch (Exception e) {
@@ -600,8 +599,9 @@ public class Configurations extends FrameworkBaseAction {
         	initDriverMap();
             ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
             Project project = administrator.getProject(projectCode);
-            ProjectInfo projectInfo = project.getApplicationInfo();
-            SettingsTemplate selectedSettingTemplate = administrator.getSettingsTemplate(configType, projectInfo.getCustomerId());
+            ApplicationInfo appInfo = project.getApplicationInfo();
+            String customerId = appInfo.getPilotContent().getCustomerIds().get(0);
+            SettingsTemplate selectedSettingTemplate = administrator.getSettingsTemplate(configType, customerId);
             List<PropertyInfo> propertyInfoList = new ArrayList<PropertyInfo>();
             List<PropertyTemplate> propertyTemplates = selectedSettingTemplate.getProperties();
             boolean isIISServer = false;
@@ -727,15 +727,16 @@ public class Configurations extends FrameworkBaseAction {
 			String env = getHttpRequest().getParameter(ENVIRONMENTS);
 			ProjectAdministrator administrator = getProjectAdministrator();
 			Project project = administrator.getProject(projectCode);
-			ProjectInfo projectInfo = project.getApplicationInfo();
-			SettingsTemplate settingsTemplate = administrator.getSettingsTemplate(configType, projectInfo.getCustomerId());
+			ApplicationInfo appInfo = project.getApplicationInfo();
+			String customerId = appInfo.getPilotContent().getCustomerIds().get(0);
+			SettingsTemplate settingsTemplate = administrator.getSettingsTemplate(configType, customerId);
 			SettingsInfo selectedConfigInfo = null;
 			if (StringUtils.isNotEmpty(oldName)) {
 				selectedConfigInfo = administrator.configuration(oldName, env, project);
 			} else {
 				selectedConfigInfo = (SettingsInfo)getHttpRequest().getAttribute(REQ_CONFIG_INFO);
 			}
-			getHttpRequest().setAttribute(REQ_PROJECT_INFO, projectInfo);
+			getHttpRequest().setAttribute(REQ_APPINFO, appInfo);
 			getHttpRequest().setAttribute(REQ_CURRENT_SETTINGS_TEMPLATE, settingsTemplate);
             getHttpRequest().setAttribute(REQ_OLD_NAME, oldName);
             getHttpRequest().setAttribute(REQ_CONFIG_INFO, selectedConfigInfo);
@@ -803,28 +804,18 @@ public class Configurations extends FrameworkBaseAction {
     
     public String fetchProjectInfoVersions() {
     	try {
-	    	String name = getHttpRequest().getParameter(REQ_TYPE);
 	    	ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-	    	Project project = administrator.getProject(projectCode);
-	    	Technology technology = project.getApplicationInfo().getTechnology();
+	    	ApplicationInfo appInfo = administrator.getProject(projectCode).getApplicationInfo();
 	    	if (Constants.SETTINGS_TEMPLATE_SERVER.equals(configType)) {
-	    		List<Server> servers = technology.getServers();
-	    		if (servers != null && CollectionUtils.isNotEmpty(servers)) {
-	    			for (Server server : servers) {
-						if (server.getName().equals(name)) {
-							setProjectInfoVersions(server.getVersions());
-						}
-					}
+	    		List<String> servers = appInfo.getSelectedServers();
+	    		if (CollectionUtils.isNotEmpty(servers)) {
+	    		    setProjectInfoVersions(servers);
 	    		}
 	    	}
 	    	if (Constants.SETTINGS_TEMPLATE_DB.equals(configType)) {
-	    		List<Database> databases = technology.getDatabases();
-	    		if (databases != null && CollectionUtils.isNotEmpty(databases)) {
-	    			for (Database database : databases) {
-						if (database.getName().equals(name)) {
-							setProjectInfoVersions(database.getVersions());
-						}
-					}
+	    		List<String> databases = appInfo.getSelectedDatabases();
+	    		if (CollectionUtils.isNotEmpty(databases)) {
+	    		    setProjectInfoVersions(databases);
 	    		}
 	    	}
     	} catch (Exception e) {

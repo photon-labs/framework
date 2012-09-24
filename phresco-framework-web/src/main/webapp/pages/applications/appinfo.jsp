@@ -25,8 +25,8 @@
 <%@ page import="org.apache.commons.collections.CollectionUtils" %>
 <%@ page import="org.apache.commons.collections.MapUtils" %>
 
-<%@ page import="com.photon.phresco.framework.model.FrameworkConstants" %>
-<%@ page import="com.photon.phresco.commons.model.ProjectInfo" %>
+<%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
+<%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 <%@ page import="com.photon.phresco.commons.model.ApplicationType" %>
 
 <%
@@ -45,7 +45,7 @@
     Map<String, String> tempSelectedJsLibs = (Map<String, String>) request.getAttribute(FrameworkConstants.REQ_TEMP_SELECTED_JSLIBS);
     
     String selectedPilotProj = (String) request.getAttribute(FrameworkConstants.REQ_TEMP_SELECTED_PILOT_PROJ);
-    ProjectInfo selectedInfo = (ProjectInfo) session.getAttribute(projectCode);
+    ApplicationInfo selectedAppInfo = (ApplicationInfo) session.getAttribute(projectCode);
     
     String configServerNames = (String) request.getAttribute(FrameworkConstants.REQ_CONFIG_SERVER_NAMES);
     String configDbNames = (String) request.getAttribute(FrameworkConstants.REQ_CONFIG_DB_NAMES);
@@ -54,11 +54,12 @@
     String projectVersion = "";
     String groupId = "";
     String artifactId = "";
-    if (selectedInfo != null) {
-    	if (selectedInfo.getProjectCode() != null) {
-    		externalCode = selectedInfo.getProjectCode();
+    if (selectedAppInfo != null) {
+    	if (selectedAppInfo.getCode() != null) {
+    		externalCode = selectedAppInfo.getCode();
     	}
-    	if (selectedInfo.getVersion() != null) {
+    	// TODO: Lohes
+    	/* if (selectedInfo.getVersion() != null) {
     		projectVersion = selectedInfo.getVersion();
     	}
     	if (selectedInfo.getGroupId() != null) {
@@ -66,7 +67,7 @@
     	}
     	if (selectedInfo.getArtifactId() != null) {
     		artifactId = selectedInfo.getArtifactId();
-    	}
+    	} */
     }
     
     String customerId = (String) request.getAttribute(FrameworkConstants.REQ_CUSTOMER_ID);
@@ -80,7 +81,7 @@
 		    <label for="xlInput" class="xlInput new-xlInput"><span class="red">*</span> <s:text name="label.name"/></label>
 		    <div class="input new-input">
 		        <input class="xlarge" id="name" name="name" maxlength="30" title="30 Characters only"
-		            type="text"  value ="<%= selectedInfo == null ? "" : selectedInfo.getName() %>" 
+		            type="text"  value ="<%= selectedAppInfo == null ? "" : selectedAppInfo.getName() %>" 
 		            autofocus="autofocus" placeholder="<s:text name="label.name.placeholder"/>" <%= disabled %> />
 		        <span class="help-inline" id="nameErrMsg"></span>
 		    </div>
@@ -91,7 +92,7 @@
 		<div class="clearfix">
 		    <label for="xlInput" class="xlInput new-xlInput"><s:text name="label.code"/></label>
 		    <div class="input new-input">
-		        <input type="hidden" id="code" name="code" value="<%= selectedInfo == null ? codePrefix : selectedInfo.getCode() %>" />
+		        <input type="hidden" id="code" name="code" value="<%= selectedAppInfo == null ? codePrefix : selectedAppInfo.getCode() %>" />
 		        <%-- <input class="xlarge" id="internalCode" name="internalCode"
 		            type="text"  value ="<%= selectedInfo == null ? codePrefix : selectedInfo.getCode() %>" disabled /> --%>
 				<input class="xlarge" id="externalCode" name="externalCode"
@@ -106,8 +107,8 @@
 		    <s:label for="description" key="label.description" theme="simple" cssClass="new-xlInput"/>
 		    <div class="input new-input">
 		        <textarea class="appinfo-desc xxlarge" maxlength="150" title="150 Characters only" class="xxlarge" id="textarea" 
-		        	name="description" placeholder="<s:text name="label.description.placeholder"/>"><%= selectedInfo == null 
-		        	? "" : selectedInfo.getDescription() %></textarea>
+		        	name="description" placeholder="<s:text name="label.description.placeholder"/>"><%= selectedAppInfo == null 
+		        	? "" : selectedAppInfo.getDescription() %></textarea>
 		    </div>
 		</div>
 		<!--  Description Ends -->
@@ -149,11 +150,11 @@
 		                List<ApplicationType> appTypes = (List<ApplicationType>) request.getAttribute(FrameworkConstants.REQ_APPLICATION_TYPES);
 		                String checkedStr = "";
 		                if (CollectionUtils.isNotEmpty(appTypes)) {
-			                for(ApplicationType applicationType : appTypes) {
+			                for (ApplicationType applicationType : appTypes) {
 			                    String name = applicationType.getName();
 			                    String id =applicationType.getId();
-			                    if(selectedInfo != null) {
-			                        checkedStr = name.equals(selectedInfo.getApplication()) ? "checked" : "";
+			                    if (selectedAppInfo != null) {
+			                        checkedStr = name.equals(selectedAppInfo.getTechInfo().getAppTypeId()) ? "checked" : "";
 			                    }
 		            %>
 				                <input type="radio" name="application" id="<%= id %>" value="<%= id %>" <%= checkedStr %> <%= disabled %>/> 
@@ -186,7 +187,8 @@
     <input type="hidden" name="fromTab" value="appInfo">
     <% if (MapUtils.isNotEmpty(tempSelectedFeatures)) { %>
    		<input type="hidden" id="selectedFeatures" name="selectedFeatures" value="<%= tempSelectedFeatures %>">
-   	<% }	
+   	<% 
+   		}	
 		if (MapUtils.isNotEmpty(tempSelectedJsLibs)) { %>
    		<input type="hidden" id="selectedJsLibs" name="selectedJsLibs" value="<%= tempSelectedJsLibs %>">
    	<% } %>

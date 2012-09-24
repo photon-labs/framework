@@ -42,6 +42,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.opensymphony.xwork2.Action;
+import com.photon.phresco.commons.model.DownloadInfo;
 import com.photon.phresco.commons.model.PropertyTemplate;
 import com.photon.phresco.commons.model.SettingsTemplate;
 import com.photon.phresco.configuration.Environment;
@@ -57,9 +58,6 @@ import com.photon.phresco.framework.impl.EnvironmentComparator;
 import com.photon.phresco.framework.model.CertificateInfo;
 import com.photon.phresco.framework.model.PropertyInfo;
 import com.photon.phresco.framework.model.SettingsInfo;
-import com.photon.phresco.model.Database;
-import com.photon.phresco.model.I18NString;
-import com.photon.phresco.model.Server;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.ServiceConstants;
 import com.photon.phresco.util.Utility;
@@ -400,8 +398,7 @@ public class Settings extends FrameworkBaseAction {
 			}
 			
 			if (isRequired == true && StringUtils.isEmpty(value.trim())) {
-				I18NString i18NString = propertyTemplate.getName();
-				String field = i18NString.get("en-US").getValue();
+				String field = propertyTemplate.getName();
 				dynamicError += propertyTemplate.getKey() + ":" + field + " is empty" + ",";
 			}
 		}
@@ -641,12 +638,12 @@ public class Settings extends FrameworkBaseAction {
 				S_LOGGER.debug("Setting Template object value " + settingsTemplate.toString());
 			}
 			if(SERVER.equals(settingsType)) {
-				List<Server> servers = administrator.getServers(ServiceConstants.DEFAULT_CUSTOMER_NAME);
+				List<DownloadInfo> servers = administrator.getServers(ServiceConstants.DEFAULT_CUSTOMER_NAME);
 				getHttpRequest().setAttribute(REQ_ALL_SERVERS, servers);
 			}
 			
 			if(Constants.SETTINGS_TEMPLATE_DB.equals(settingsType)) {
-				List<Database> databases = administrator.getDatabases(ServiceConstants.DEFAULT_CUSTOMER_NAME);
+				List<DownloadInfo> databases = administrator.getDatabases(ServiceConstants.DEFAULT_CUSTOMER_NAME);
 				getHttpRequest().setAttribute(REQ_ALL_DATABASES, databases);
 			}
 			
@@ -832,11 +829,11 @@ public class Settings extends FrameworkBaseAction {
     	try {
 	    	String name = getHttpRequest().getParameter(REQ_TYPE);
 	    	ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-	    	//Technology technology = project.getProjectInfo().getTechnology();
-	    	if ("Server".equals(settingsType)) {
-	    		List<Server> servers = administrator.getServers(ServiceConstants.DEFAULT_CUSTOMER_NAME);
+	    	// TODO:Lohes
+	    	/*if ("Server".equals(settingsType)) {
+	    		List<DownloadInfo> servers = administrator.getServers(ServiceConstants.DEFAULT_CUSTOMER_NAME);
 	    		if (servers != null && CollectionUtils.isNotEmpty(servers)) {
-	    			for (Server server : servers) {
+	    			for (DownloadInfo server : servers) {
 						if (server.getName().equals(name)) {
 							setProjectInfoVersions(server.getVersions());
 						}
@@ -844,15 +841,15 @@ public class Settings extends FrameworkBaseAction {
 	    		}
 	    	}
 	    	if ("Database".equals(settingsType)) {
-	    		List<Database> databases = administrator.getDatabases(ServiceConstants.DEFAULT_CUSTOMER_NAME);
+	    		List<DownloadInfo> databases = administrator.getDatabases(ServiceConstants.DEFAULT_CUSTOMER_NAME);
 	    		if (databases != null && CollectionUtils.isNotEmpty(databases)) {
-	    			for (Database database : databases) {
+	    			for (DownloadInfo database : databases) {
 						if (database.getName().equals(name)) {
 							setProjectInfoVersions(database.getVersions());
 						}
 					}
 	    		}
-	    	}
+	    	}*/
     	} catch (Exception e) {
     		
     	}

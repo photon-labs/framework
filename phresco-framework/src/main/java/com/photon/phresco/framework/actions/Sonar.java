@@ -19,10 +19,10 @@
  */
 package com.photon.phresco.framework.actions;
 
+import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.framework.api.AbstractActionType;
-import com.photon.phresco.framework.model.FrameworkConstants;
 
-public class Sonar extends AbstractActionType {
+public class Sonar extends AbstractActionType implements FrameworkConstants {
     
     private static final String NAME = "sonar";
     private String type;
@@ -32,7 +32,7 @@ public class Sonar extends AbstractActionType {
     }
     
     public StringBuilder getCommand() {
-    	return new StringBuilder(FrameworkConstants.MVN_SONAR_COMMAND);
+    	return new StringBuilder(MVN_SONAR_COMMAND);
     }
 
     public String getType() {

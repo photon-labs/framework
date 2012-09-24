@@ -35,6 +35,7 @@ import org.apache.log4j.Logger;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.Commandline;
 
+import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.actions.AndroidTestCommand;
 import com.photon.phresco.framework.actions.IPhoneFunctionalCommand;
@@ -49,7 +50,6 @@ import com.photon.phresco.framework.api.CallBack;
 import com.photon.phresco.framework.api.Project;
 import com.photon.phresco.framework.api.ProjectRuntimeManager;
 import com.photon.phresco.framework.model.EnvironmentInfo;
-import com.photon.phresco.framework.model.FrameworkConstants;
 import com.photon.phresco.framework.model.SettingsInfo;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.TechnologyTypes;

@@ -17,21 +17,20 @@
   limitations under the License.
   ###
   --%>
-
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.util.List" %>
 <%@ page import="org.apache.commons.lang.StringUtils" %>
 <%@ page import="org.apache.commons.collections.CollectionUtils"%>
 
-<%@ page import="com.photon.phresco.framework.model.FrameworkConstants" %>
+<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.commons.model.ApplicationType" %>
-<%@ page import="com.photon.phresco.commons.model.ProjectInfo" %>
+<%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 <%@ page import="com.photon.phresco.commons.model.Technology" %>
 <%@ page import="com.photon.phresco.util.TechnologyTypes"%>
 
 <%
-    ProjectInfo selectedInfo = (ProjectInfo) request.getAttribute(FrameworkConstants.REQ_PROJECT_INFO);
+    ApplicationInfo selectedAppInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_APPINFO);
 	List<Technology> technologies = (List<Technology>) request.getAttribute(FrameworkConstants.REQ_APPTYPE_TECHNOLOGIES);
     String fromPage = (String) request.getAttribute(FrameworkConstants.REQ_FROM_PAGE);
     String disabled = "disabled";
@@ -40,16 +39,16 @@
         fromPage = "";
     } 
     String projectCode = "";
-    if (selectedInfo != null) {
-        projectCode = selectedInfo.getCode();
+    if (selectedAppInfo != null) {
+        projectCode = selectedAppInfo.getCode();
     } else {
         projectCode = (String) request.getAttribute(FrameworkConstants.REQ_PROJECT_CODE);
-        selectedInfo = (ProjectInfo) session.getAttribute(projectCode);
+        selectedAppInfo = (ApplicationInfo) session.getAttribute(projectCode);
     }
     
-    List<String> selectedVersions = null;
-	if (selectedInfo != null) {
-		selectedVersions = selectedInfo.getTechnology().getVersions();
+    String selectedTechVersion = null;
+	if (selectedAppInfo != null) {
+	    selectedTechVersion = selectedAppInfo.getTechInfo().getVersion();
 	}
 %>
 
@@ -61,21 +60,23 @@
 		<div class="app_type_float_left">
 			<select id="technology" name="technology" class="xlarge" <%= disabled %> >
 			<%
-				Technology selectedTech = null;
+				// TODO:lohes
+				/* Technology selectedTech = null;
 				if (selectedInfo != null) {
 					selectedTech = selectedInfo.getTechnology();
-				}
+				} */
 				
 				String selectedStr = "";
 				if (CollectionUtils.isNotEmpty(technologies)) {
 					for (Technology technology : technologies) {
 						String id = technology.getId();
 						String name = technology.getName();
-						if (selectedTech != null && selectedTech.getId().equals(id)) {
+						// TODO:lohes
+						/* if (selectedTech != null && selectedTech.getId().equals(id)) {
 							selectedStr = "selected";
 						} else {
 							selectedStr = "";
-						}
+						} */
 			%>
 					<option value="<%= id %>" <%= selectedStr %> > <%= name %> </option>
 			<%
@@ -127,13 +128,11 @@
 	}
 	
 	function showPrjtInfoTechVersion() {
-		<% if (selectedVersions != null) { %>
+		<% if (StringUtils.isNotEmpty(selectedTechVersion)) { %>
 			$("#techVersion option").each(function() {
-				<% for (String selectedVersion : selectedVersions) { %>
-					if ($(this).val().trim() == '<%= selectedVersion %>') {
-						$(this).prop("selected", "selected");
-					}
-				<% } %>
+				if ($(this).val().trim() == '<%= selectedTechVersion %>') {
+					$(this).prop("selected", "selected");
+				}
 			});
 		<% } %>
 		

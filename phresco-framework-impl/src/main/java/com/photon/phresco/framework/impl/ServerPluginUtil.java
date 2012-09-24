@@ -29,22 +29,19 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.photon.phresco.commons.model.ApplicationInfo;
-import com.photon.phresco.commons.model.ArtifactInfo;
-import com.photon.phresco.commons.model.DownloadInfo;
 import com.photon.phresco.exception.PhrescoException;
-import com.photon.phresco.util.Constants;
 import com.phresco.pom.exception.PhrescoPomException;
 import com.phresco.pom.util.PomProcessor;
 
 public class ServerPluginUtil {
 
 	protected void addServerPlugin(ApplicationInfo info, File path) throws PhrescoException {
-		List<DownloadInfo> servers = info.getSelectedServers();
+		// TODO:Lohes
+	    /*List<DownloadInfo> servers = info.getSelectedServers();
 		if (CollectionUtils.isEmpty(servers)) {
 			return;
 		}
@@ -62,7 +59,7 @@ public class ServerPluginUtil {
 					addWebLogicPlugin(path, pluginVersion);
 				}
 			}
-		}
+		}*/
 	}
 
 	private void addWebLogicPlugin(File pomFile, String pluginVersion) throws PhrescoException {

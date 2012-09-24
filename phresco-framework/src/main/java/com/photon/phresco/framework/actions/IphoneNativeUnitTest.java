@@ -20,10 +20,10 @@
 
 package com.photon.phresco.framework.actions;
 
+import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.framework.api.AbstractActionType;
-import com.photon.phresco.framework.model.FrameworkConstants;
 
-public class IphoneNativeUnitTest extends AbstractActionType{
+public class IphoneNativeUnitTest extends AbstractActionType implements FrameworkConstants {
     private static final String NAME = "iphone";
     private String type;
     
@@ -32,7 +32,7 @@ public class IphoneNativeUnitTest extends AbstractActionType{
     }
     
     public StringBuilder getCommand() {
-        return new StringBuilder(FrameworkConstants.MVN_IPHONE_NATIVE_UNITTEST);
+        return new StringBuilder(MVN_IPHONE_NATIVE_UNITTEST);
     }
     
     public String getType() {

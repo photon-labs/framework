@@ -6,8 +6,8 @@
 <%@ page import="com.photon.phresco.framework.model.CIJob" %>
 <%@ page import="com.photon.phresco.framework.model.FrameworkConstants" %>
 <%@ page import="com.photon.phresco.framework.model.SettingsInfo"%>
-<%@ page import="com.photon.phresco.framework.model.XCodeConstants"%>
-<%@ page import="com.photon.phresco.framework.model.AndroidConstants"%>
+<%@ page import="com.photon.phresco.commons.XCodeConstants"%>
+<%@ page import="com.photon.phresco.commons.AndroidConstants"%>
 <%@ page import="com.photon.phresco.util.TechnologyTypes" %>
 <%@ page import="com.photon.phresco.framework.commons.PBXNativeTarget"%>
 <%@ page import="com.photon.phresco.configuration.Environment"%>

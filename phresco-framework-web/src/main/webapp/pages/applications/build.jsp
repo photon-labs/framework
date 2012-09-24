@@ -21,9 +21,9 @@
 
 <%@ page import="java.util.List"%>
 
-<%@ page import="com.photon.phresco.framework.model.FrameworkConstants" %>
+<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.util.TechnologyTypes" %>
-<%@ page import="com.photon.phresco.commons.model.ProjectInfo" %>
+<%@ page import="com.photon.phresco.commons.model.ApplicationInfo" %>
 <%@ page import="com.photon.phresco.framework.model.BuildInfo" %>
 
 <script type="text/javascript" src="js/delete.js" ></script>
@@ -52,9 +52,9 @@
 </style>
 
 <%
-	ProjectInfo projectInfo = (ProjectInfo) request.getAttribute(FrameworkConstants.REQ_PROJECT_INFO);
-	String projectCode = projectInfo.getCode();
-	String technology = projectInfo.getTechnology().getId();
+	ApplicationInfo appInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_APPINFO);
+	String projectCode = appInfo.getCode();
+	String technology = appInfo.getTechInfo().getVersion();
 	
 	List<BuildInfo> buildInfos = (List<BuildInfo>) request.getAttribute(FrameworkConstants.REQ_BUILD);
     String testType = (String) request.getAttribute(FrameworkConstants.REQ_TEST_TYPE);

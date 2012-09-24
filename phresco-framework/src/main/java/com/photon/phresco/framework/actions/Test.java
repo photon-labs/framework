@@ -19,10 +19,10 @@
  */
 package com.photon.phresco.framework.actions;
 
+import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.framework.api.AbstractActionType;
-import com.photon.phresco.framework.model.FrameworkConstants;
 
-public class Test extends AbstractActionType {
+public class Test extends AbstractActionType implements FrameworkConstants {
     
     private static final String NAME = "test";
     private String type;
@@ -32,7 +32,7 @@ public class Test extends AbstractActionType {
     }
     
     public StringBuilder getCommand() {
-    	return new StringBuilder(FrameworkConstants.MVN_TEST_COMMAND);
+    	return new StringBuilder(MVN_TEST_COMMAND);
 	}
     
     public String getType() {
