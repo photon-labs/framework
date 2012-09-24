@@ -23,7 +23,7 @@
 <%@ page import="java.util.Map"%>
 <%@ page import="java.util.Set"%>
 
-<%@ page import="com.photon.phresco.framework.model.FrameworkConstants"%>
+<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.util.TechnologyTypes" %>
 <%@ page import="com.photon.phresco.framework.api.Project" %>
 <%@ page import="com.photon.phresco.commons.model.ProjectInfo" %>

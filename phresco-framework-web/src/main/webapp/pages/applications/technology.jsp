@@ -25,13 +25,12 @@
 <%@ page import="org.apache.commons.collections.CollectionUtils" %>
 <%@ page import="org.apache.commons.lang.StringUtils" %>
 
-<%@ page import="com.photon.phresco.framework.model.FrameworkConstants" %>
-<%@ page import="com.photon.phresco.commons.model.ProjectInfo" %>
+<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.commons.model.Technology" %>
 <%@ page import="com.photon.phresco.commons.model.WebService"%>
-<%@ page import="com.photon.phresco.model.Server"%>
-<%@ page import="com.photon.phresco.model.Database"%>
 <%@ page import="com.photon.phresco.util.TechnologyTypes"%>
+<%@ page import="com.photon.phresco.commons.model.DownloadInfo"%>
+<%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 
 <script type="text/javascript" src="js/confirm-dialog.js" ></script>
 
@@ -41,54 +40,57 @@
 	String projectCode = ""; 
 	String appType = (String)request.getAttribute(FrameworkConstants.REQ_APPLICATION_TYPE);
 	Technology selectedTechnology = (Technology) request.getAttribute(FrameworkConstants.REQ_SELECTED_TECHNOLOGY);
-    ProjectInfo selectedInfo = (ProjectInfo) session.getAttribute((String) request.getAttribute(FrameworkConstants.REQ_PROJECT_CODE));
+    ApplicationInfo appInfo = (ApplicationInfo) session.getAttribute((String) request.getAttribute(FrameworkConstants.REQ_PROJECT_CODE));
 	String fromPage = (String) request.getAttribute(FrameworkConstants.REQ_FROM_PAGE);
 	String disabled = "disabled";
     if (StringUtils.isEmpty(fromPage)) {
         disabled = "";
     }
     
-    if (selectedInfo == null) {
-    	selectedInfo = (ProjectInfo) request.getAttribute(FrameworkConstants.REQ_PROJECT_INFO);
+    if (appInfo == null) {
+        appInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_APPINFO);
     }
-    List<Server> selectedServers = null;
-    List<Database> selectedDatabases = null;
-    List<WebService> selectedWebServices = null;
+    List<String> selectedServers = null;
+    List<String> selectedDatabases = null;
+    List<String> selectedWebServices = null;
     boolean isEmailSupportSelected = false;
     String selectedPilotProj = null;
     String projectInfoDbNames = "";
-	if(selectedInfo != null && appType.equals(selectedInfo.getApplication()) && selectedTechnology.getId().equals(selectedInfo.getTechnology().getId())) {
-		projectCode = selectedInfo.getCode();
-		selectedServers =  selectedInfo.getTechnology().getServers();
-		selectedDatabases =  selectedInfo.getTechnology().getDatabases();
-		selectedWebServices =  selectedInfo.getTechnology().getWebservices();
-		isEmailSupportSelected = selectedInfo.getTechnology().isEmailSupported();
-		selectedPilotProj = selectedInfo.getPilotProjectName();
-		if (CollectionUtils.isNotEmpty(selectedDatabases)) {
-			for (Database selectedDatabase : selectedDatabases) {
+	if(appInfo != null && appType.equals(appInfo.getTechInfo().getAppTypeId()) 
+		&& selectedTechnology.getId().equals(appInfo.getTechInfo().getVersion())) {
+		projectCode = appInfo.getCode();
+		selectedServers =  appInfo.getSelectedServers();
+		selectedDatabases =  appInfo.getSelectedDatabases();
+		selectedWebServices =  appInfo.getSelectedWebservices();
+		isEmailSupportSelected = appInfo.isEmailSupported();
+		selectedPilotProj = appInfo.getPilotInfo().getName();
+		// TODO:Lohes
+		/* if (CollectionUtils.isNotEmpty(selectedDatabases)) {
+			for (String selectedDatabase : selectedDatabases) {
 				projectInfoDbNames = projectInfoDbNames + selectedDatabase.getName() + ",";
 			}
 			projectInfoDbNames = projectInfoDbNames.substring(0, projectInfoDbNames.length() - 1);
-		}
+		} */
 	}
 	
 	Collection<String> pilotProjectNames = (Collection<String>) request.getAttribute(FrameworkConstants.REQ_PILOTS_NAMES);
-	ProjectInfo pilotProjectInfo = (ProjectInfo) request.getAttribute(FrameworkConstants.REQ_PILOT_PROJECT_INFO);
-	List<Server> pilotProjectServers = null;
-	List<Database> pilotProjectDbs = null;
-	List<WebService> pilotProjectWebServices = null;
+	ApplicationInfo pilotAppInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_PILOT_PROJECT_INFO);
+	List<String> pilotProjectServers = null;
+	List<String> pilotProjectDbs = null;
+	List<String> pilotProjectWebServices = null;
 	boolean isPilotEmailSupported = false;
 	List<String> pilotTechVersions = null;
-	if (pilotProjectInfo != null) {
-		pilotProjectServers = pilotProjectInfo.getTechnology().getServers();
-		pilotProjectDbs = pilotProjectInfo.getTechnology().getDatabases();
-		pilotProjectWebServices = pilotProjectInfo.getTechnology().getWebservices();
-		isPilotEmailSupported = pilotProjectInfo.getTechnology().isEmailSupported();
-		pilotTechVersions = pilotProjectInfo.getTechnology().getVersions();
+	if (pilotAppInfo != null) {
+		pilotProjectServers = pilotAppInfo.getSelectedServers();
+		pilotProjectDbs = pilotAppInfo.getSelectedDatabases();
+		pilotProjectWebServices = pilotAppInfo.getSelectedWebservices();
+		isPilotEmailSupported = pilotAppInfo.isEmailSupported();
+		// TODO:Lohes
+// 		pilotTechVersions = pilotAppInfo.getTechnology().getVersions();
 	}
 	
-	List<Server> servers = (List<Server>) request.getAttribute(FrameworkConstants.REQ_SERVERS);
-	List<Database> databases = (List<Database>) request.getAttribute( FrameworkConstants.REQ_DATABASES);
+	List<DownloadInfo> servers = (List<DownloadInfo>) request.getAttribute(FrameworkConstants.REQ_SERVERS);
+	List<DownloadInfo> databases = (List<DownloadInfo>) request.getAttribute( FrameworkConstants.REQ_DATABASES);
 	List<WebService> webservices = (List<WebService>) request.getAttribute( FrameworkConstants.REQ_WEBSERVICES);
 %>
 
@@ -101,7 +103,7 @@
         	if (CollectionUtils.isNotEmpty(pilotProjectNames)) {
 				for (String pilotProjectName : pilotProjectNames) {
 					if (pilotProjectName.equals(selectedPilotProj) || 
-							(StringUtils.isNotEmpty(fromPage) && pilotProjectName.equals(selectedInfo.getPilotProjectName()))) {
+							(StringUtils.isNotEmpty(fromPage) && pilotProjectName.equals(appInfo.getPilotInfo().getName()))) {
 						selectedStr = "selected";
 					}
 				}
@@ -184,8 +186,8 @@
 							checkedStr = "";
 							for(WebService webservice : webservices) {
 								if(selectedWebServices != null && CollectionUtils.isNotEmpty(selectedWebServices)) {
-									for(WebService selectedWebService : selectedWebServices) {
-										if(selectedWebService.getId() == webservice.getId()){
+									for(String selectedWebService : selectedWebServices) {
+										if(selectedWebService.equals(webservice.getId())){
 											checkedStr = "checked";
 											break;
 										} else {
@@ -236,12 +238,13 @@
 	$(document).ready(function() {
 		enableScreen();
 		
+		// TODO:Lohes
 		/** To construct the div during the project edit **/
-		<%
+		<%-- <%
 			String name = null;
 			List<String> versions = new ArrayList<String>(2);
-			if (selectedServers != null) {
-				for (Server server : selectedServers) {
+			if (CollectionUtils.isNotEmpty(selectedServers)) {
+				for (String server : selectedServers) {
 					String csvVersion = "";
 					name = server.getName();
 					for (String version : server.getVersions()) {
@@ -276,7 +279,7 @@
 		<%
 				}
 			}
-		%>
+		%> --%>
 		
 		$("#Server").click(function() {
 			openAttrPopup("", "Server");
@@ -668,11 +671,11 @@
 		var size = 0;
 		var nameSep = new Array();
 		if(type == "Server") {
-			<% if(servers != null) { %>
+			<% if(CollectionUtils.isNotEmpty(servers)) { %>
 				size = '<%= servers.size() %>';
 			<% } %>
 		} else if(type == "Database") {
-			<% if(databases != null) { %>
+			<% if(CollectionUtils.isNotEmpty(databases)) { %>
 				size = '<%= databases.size() %>';
 			<% } %>
 		}
@@ -699,8 +702,9 @@
 		return false;
 	}
 	
+	// TODO:Lohes
 	/** To show/hide the pilot project configurations when the pilot project is selected **/
-	function showPilotProjectConfigs(obj) {
+	<%-- function showPilotProjectConfigs(obj) {
 		var currentTechnology = $("#technology").val();
 		if ('<%= TechnologyTypes.ANDROID_NATIVE %>' == currentTechnology) {
 			removeLowerTechVersions();
@@ -851,7 +855,7 @@
 				techVersions();
 			}
 		}
-	}
+	} --%>
 	
  	/**
     * To remove the lower technology version based on the pilot project projectInfo

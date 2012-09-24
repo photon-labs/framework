@@ -17,15 +17,15 @@
   limitations under the License.
   ###
   --%>
-<%@page import="org.apache.commons.collections.CollectionUtils"%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
-<%@ page import="com.photon.phresco.util.PlatformTypes"%>
 <%@ page import="java.util.List"%>
 <%@ page import="java.util.Arrays"%>
+<%@ page import="org.apache.commons.collections.CollectionUtils"%>
+
 <%@ page import="com.photon.phresco.commons.model.DownloadInfo"%>
-<%@ page import="com.photon.phresco.framework.model.DownloadTypes"%>
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
+<%@ page import="com.photon.phresco.commons.model.ArtifactInfo"%>
 
 <style>
 
@@ -71,25 +71,33 @@
 	                        	<tbody>
 		                    	<%
 		                    		for (DownloadInfo serverDownloadInfo : serverDownloadInfos) {
+		                    		    List<ArtifactInfo> versions = serverDownloadInfo.getVersions();
+		                    		    if (CollectionUtils.isNotEmpty(versions)) {
+		                    		        for (ArtifactInfo version : versions) {
 		                    	%>
-		                    		<tr>
-		                    			<td><%= serverDownloadInfo.getName() %></td>
-		                    			<td><%= serverDownloadInfo.getVersions() %></td>
-		                    			<td><%= serverDownloadInfo.getFileSize() %></td>
-		                    			<td class="label_center">
-		                    				<a href="<%= serverDownloadInfo.getDownloadURL() %>">
-		                    					<img src="images/icons/download.png" title="<%= serverDownloadInfo.getName() %>" />
-		                    				</a>
-		                    			</td>
-		                    		</tr>
-	                    		<%	} %>
+			                    			<tr>
+				                    			<td><%= serverDownloadInfo.getName() %></td>
+				                    			<td><%= version.getVersion() %></td>
+				                    			<td><%= version.getFileSize() %></td>
+				                    			<td class="label_center">
+				                    				<!-- TODO:Lohes -->
+				                    				<%-- <a href="<%= serverDownloadInfo.getDownloadURL() %>">
+				                    					<img src="images/icons/download.png" title="<%= serverDownloadInfo.getName() %>" />
+				                    				</a> --%>
+				                    			</td>
+				                    		</tr>
+	                    		<%		
+		                    		        }
+	                    				}
+									} 
+								%>
 	                    		</tbody>
                         	</table>
                         </section>
                     </div>
                 </div>
                 <% 
-                	} if(dbDownloadInfos != null && dbDownloadInfos.size() > 0) { 
+                	} if (CollectionUtils.isNotEmpty(dbDownloadInfos)) { 
                 %>
                 <span class="siteaccordion"><span><s:text name="label.database"/></span></span>
                 <div class="mfbox siteinnertooltiptxt">
@@ -108,25 +116,33 @@
 	                        	<tbody>
 		                    	<%
 		                    		for (DownloadInfo dbDownloadInfo : dbDownloadInfos) {
+		                    		    List<ArtifactInfo> versions = dbDownloadInfo.getVersions();
+		                    		    if (CollectionUtils.isNotEmpty(versions)) {
+		                    		        for (ArtifactInfo version : versions) {
 		                    	%>
-		                    		<tr>
-		                    			<td><%= dbDownloadInfo.getName() %></td>
-		                    			<td><%= dbDownloadInfo.getVersion() %></td>
-		                    			<td><%= dbDownloadInfo.getFileSize() %></td>
-		                    			<td class="label_center">
-		                    				<a href="<%= dbDownloadInfo.getDownloadURL() %>">
-		                    					<img src="images/icons/download.png" title="<%= dbDownloadInfo.getName() %>"/>
-		                    				</a>
-		                    			</td>
-		                    		</tr>
-	                    		<%	} %>
+				                    		<tr>
+				                    			<td><%= dbDownloadInfo.getName() %></td>
+				                    			<td><%= version.getVersion() %></td>
+				                    			<td><%= version.getFileSize() %></td>
+				                    			<td class="label_center">
+				                    				<!-- TODO:Lohes -->
+				                    				<%-- <a href="<%= dbDownloadInfo.getDownloadURL() %>">
+				                    					<img src="images/icons/download.png" title="<%= dbDownloadInfo.getName() %>"/>
+				                    				</a> --%>
+				                    			</td>
+				                    		</tr>
+	                    		<%	
+		                    		        }
+		                    		    }
+	                    			} 
+	                    		%>
 	                    		</tbody>
                         	</table>
                         </section>
                     </div>
                 </div>
                 <% 
-                	}  if(editorDownloadInfos != null && editorDownloadInfos.size() > 0) { 
+                	}  if(CollectionUtils.isNotEmpty(editorDownloadInfos)) { 
                 %>
                 <span class="siteaccordion"><span><s:text name="label.editors"/></span></span>
                 <div class="mfbox siteinnertooltiptxt">
@@ -145,18 +161,26 @@
 	                        	<tbody>
 		                    	<%
 		                    		for (DownloadInfo editorDownloadInfo : editorDownloadInfos) {
+		                    		    List<ArtifactInfo> versions = editorDownloadInfo.getVersions();
+		                    		    if (CollectionUtils.isNotEmpty(versions)) {
+		                    		        for (ArtifactInfo version : versions) {
 		                    	%>
-		                    		<tr>
-		                    			<td><%= editorDownloadInfo.getName() %></td>
-		                    			<td><%= editorDownloadInfo.getVersion() %></td>
-		                    			<td><%= editorDownloadInfo.getFileSize() %></td>
-		                    			<td class="label_center">
-		                    				<a href="<%= editorDownloadInfo.getDownloadURL() %>">
-		                    					<img src="images/icons/download.png" title="<%= editorDownloadInfo.getName() %>"/>
-		                    				</a>
-		                    			</td>
-		                    		</tr>
-	                    		<%	} %>
+				                    		<tr>
+				                    			<td><%= editorDownloadInfo.getName() %></td>
+				                    			<td><%= version.getVersion() %></td>
+				                    			<td><%= version.getFileSize() %></td>
+				                    			<td class="label_center">
+				                    				<!-- TODO:Lohes -->
+				                    				<%-- <a href="<%= editorDownloadInfo.getDownloadURL() %>">
+				                    					<img src="images/icons/download.png" title="<%= editorDownloadInfo.getName() %>"/>
+				                    				</a> --%>
+				                    			</td>
+				                    		</tr>
+	                    		<%
+		                    		        }
+		                    		    }
+	                    			} 
+	                    		%>
 	                    		</tbody>
                         	</table>
                         </section>
@@ -184,18 +208,26 @@
 	                        	<tbody>
 		                    	<%
 		                    		for (DownloadInfo toolsDownloadInfo : toolsDownloadInfos) {
+		                    		    List<ArtifactInfo> versions = toolsDownloadInfo.getVersions();
+		                    		    if (CollectionUtils.isNotEmpty(versions)) {
+		                    		        for (ArtifactInfo version : versions) {
 		                    	%>
-		                    		<tr>
-		                    			<td><%= toolsDownloadInfo.getName() %></td>
-		                    			<td><%= toolsDownloadInfo.getVersion() %></td>
-		                    			<td><%= toolsDownloadInfo.getFileSize() %></td>
-		                    			<td class="label_center">
-		                    				<a href="<%= toolsDownloadInfo.getDownloadURL() %>">
-		                    					<img src="images/icons/download.png" title="<%= toolsDownloadInfo.getName() %>"/>
-		                    				</a>
-		                    			</td>
-		                    		</tr>
-	                    		<%	} %>
+				                    		<tr>
+				                    			<td><%= toolsDownloadInfo.getName() %></td>
+				                    			<td><%= version.getVersion() %></td>
+				                    			<td><%= version.getFileSize() %></td>
+				                    			<td class="label_center">
+				                    				<!-- TODO:Lohes -->
+				                    				<%-- <a href="<%= toolsDownloadInfo.getDownloadURL() %>">
+				                    					<img src="images/icons/download.png" title="<%= toolsDownloadInfo.getName() %>"/>
+				                    				</a> --%>
+				                    			</td>
+				                    		</tr>
+	                    		<%
+		                    		        }
+		                    		    }
+	                    			}
+                    			%>
 	                    		</tbody>
                         	</table>
                         </section>
@@ -222,18 +254,26 @@
 	                        	<tbody>
 		                    	<%
 		                    		for (DownloadInfo otherDownloadInfos : othersDownloadInfos) {
+		                    		    List<ArtifactInfo> versions = otherDownloadInfos.getVersions();
+		                    		    if (CollectionUtils.isNotEmpty(versions)) {
+		                    		        for (ArtifactInfo version : versions) {
 		                    	%>
-		                    		<tr>
-		                    			<td><%= otherDownloadInfos.getName() %></td>
-		                    			<td><%= otherDownloadInfos.getVersion() %></td>
-		                    			<td><%= otherDownloadInfos.getFileSize() %></td>
-		                    			<td class="label_center">
-		                    				<a href="<%= otherDownloadInfos.getDownloadURL() %>">
-		                    					<img src="images/icons/download.png" title="<%= otherDownloadInfos.getName() %>"/>
-		                    				</a>
-		                    			</td>
-		                    		</tr>
-	                    		<%	} %>
+				                    		<tr>
+				                    			<td><%= otherDownloadInfos.getName() %></td>
+				                    			<td><%= version.getVersion() %></td>
+				                    			<td><%= version.getFileSize() %></td>
+				                    			<td class="label_center">
+				                    				<!-- TODO:Lohes -->
+				                    				<%-- <a href="<%= otherDownloadInfos.getDownloadURL() %>">
+				                    					<img src="images/icons/download.png" title="<%= otherDownloadInfos.getName() %>"/>
+				                    				</a> --%>
+				                    			</td>
+				                    		</tr>
+	                    		<%
+		                    		        }
+		                    		    }
+	                    			} 
+	                    		%>
 	                    		</tbody>
                         	</table>
                         </section>

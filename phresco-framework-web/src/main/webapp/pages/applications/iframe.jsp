@@ -17,7 +17,7 @@
   limitations under the License.
   ###
   --%>
-<%@ page import="com.photon.phresco.framework.model.FrameworkConstants"%>
+<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.util.TechnologyTypes" %>
 
 <%

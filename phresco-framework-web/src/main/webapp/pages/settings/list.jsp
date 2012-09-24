@@ -24,15 +24,15 @@
 <%@ page import="java.util.HashMap"%>
 <%@ page import="java.util.Iterator"%>
 <%@ page import="java.util.List"%>
-<%@ page import="org.apache.commons.lang.StringUtils"%>
 <%@ page import="java.util.Map"%>
 <%@ page import="java.util.regex.*"%>
+<%@ page import="org.apache.commons.lang.StringUtils"%>
 
 <%@ page import="com.photon.phresco.framework.model.SettingsInfo"%>
 <%@ page import="com.photon.phresco.framework.model.PropertyInfo"%>
-<%@ page import="com.photon.phresco.framework.model.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.util.Constants"%>
 <%@ page import="com.photon.phresco.configuration.Environment" %>
+<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 
 <%@ include file="../userInfoDetails.jsp" %>
 

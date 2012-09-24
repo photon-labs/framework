@@ -19,6 +19,8 @@
   --%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
+<%@ page import="org.apache.commons.lang.StringUtils" %>
+
 <%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo" %>
 <%@ page import="com.photon.phresco.util.TechnologyTypes" %>

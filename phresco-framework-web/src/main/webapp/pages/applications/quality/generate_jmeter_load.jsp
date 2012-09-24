@@ -23,7 +23,7 @@
 <%@ page import="org.apache.commons.collections.CollectionUtils" %>
 
 <%@ page import="com.photon.phresco.util.TechnologyTypes" %>
-<%@ page import="com.photon.phresco.framework.model.FrameworkConstants"%>
+<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.util.Constants"%>
 <%@ page import="com.photon.phresco.configuration.Environment"%>
 

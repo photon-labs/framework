@@ -27,14 +27,12 @@
 <%@ page import="com.photon.phresco.framework.model.SettingsInfo"%>
 <%@ page import="com.photon.phresco.commons.model.SettingsTemplate"%>
 <%@ page import="com.photon.phresco.commons.model.PropertyTemplate"%>
-<%@ page import="com.photon.phresco.framework.model.FrameworkConstants"%>
-<%@ page import="com.photon.phresco.model.I18NString"%>
-<%@ page import="com.photon.phresco.model.Server" %>
-<%@ page import="com.photon.phresco.model.Database"%>
+<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.util.TechnologyTypes"%>
 <%@ page import="com.photon.phresco.commons.model.ProjectInfo"%>
 <%@ page import="com.photon.phresco.commons.model.Technology"%>
 <%@ page import="com.photon.phresco.util.Constants"%>
+<%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 
 <%
     String value = "";
@@ -44,15 +42,14 @@
     String oldName = (String) request.getParameter(FrameworkConstants.REQ_OLD_NAME);
     SettingsInfo settingsInfo = (SettingsInfo) request.getAttribute(FrameworkConstants.REQ_CONFIG_INFO);
     
-    ProjectInfo projectInfo = (ProjectInfo)request.getAttribute(FrameworkConstants.REQ_PROJECT_INFO);
+    ApplicationInfo appInfo = (ApplicationInfo)request.getAttribute(FrameworkConstants.REQ_APPINFO);
     String projectCode = "";
-    List<Server> projectInfoServers = null;
-    List<Database> projectInfoDatabases = null;
-    if (projectInfo != null) {
-    	projectCode = projectInfo.getCode();
-    	Technology technology = projectInfo.getTechnology();
-		projectInfoServers = technology.getServers();
-		projectInfoDatabases = technology.getDatabases();
+    List<String> appInfoServers = null;
+    List<String> appInfoDatabases = null;
+    if (appInfo != null) {
+    	projectCode = appInfo.getCode();
+		appInfoServers = appInfo.getSelectedServers();
+		appInfoDatabases = appInfo.getSelectedDatabases();
     }
     
     SettingsTemplate settingsTemplate = (SettingsTemplate)request.getAttribute(FrameworkConstants.REQ_CURRENT_SETTINGS_TEMPLATE);
@@ -65,13 +62,10 @@
 	        List<String> possibleValues = propertyTemplate.getPossibleValues();
 	        boolean isRequired = propertyTemplate.isRequired();
 	        
-			I18NString i18NString = propertyTemplate.getName();
-	        String label = i18NString.get("en-US").getValue();
-			
-			I18NString descStr = propertyTemplate.getDescription();
+	        String label = propertyTemplate.getName();
 			String desc = "";
-			if (descStr != null) {
-	        	desc = descStr.get("en-US").getValue();
+			if (StringUtils.isNotEmpty(propertyTemplate.getDescription())) {
+	        	desc = propertyTemplate.getDescription();
 			}
 	        
 	        if (key.equals(Constants.SETTINGS_TEMPLATE_SERVER) || key.equals(Constants.SETTINGS_TEMPLATE_DB)) {
@@ -112,8 +106,7 @@
 		        		masterKey = key;
 		        		List<PropertyTemplate> compPropertyTemplates = propertyTemplate.getPropertyTemplates();
 		        		for (PropertyTemplate compPropertyTemplate : compPropertyTemplates) {
-		        			i18NString = propertyTemplate.getName();
-		        	        label = i18NString.get("en-US").getValue();
+		        	        label = propertyTemplate.getName();
 		        			key = compPropertyTemplate.getKey();
 		        		}
 		        %>
@@ -227,12 +220,13 @@
 	$(document).ready(function() {
 		enableScreen();
 		
-		/** To display projectInfo servers starts **/
-		<% if (CollectionUtils.isNotEmpty(projectInfoServers)) { %>
+		// TODO:Lohes
+		<%-- /** To display projectInfo servers starts **/
+		<% if (CollectionUtils.isNotEmpty(appInfoServers)) { %>
 				if ($('#configType').val() == "Server") {
 					$('#type').find('option').remove();
 					<%
-						for (Server projectInfoServer : projectInfoServers) {
+						for (String appInfoServer : appInfoServers) {
 							String serverName = projectInfoServer.getName();
 					%>
 							$('#type').append($("<option></option>").attr("value", '<%= serverName %>').text('<%= serverName %>'));
@@ -255,7 +249,7 @@
 		<% } %>
 		/** To display projectInfo databases ends **/
 		
-		getCurrentVersions(''); // To get the projectInfo servers/databases versions of the selected server/database
+		getCurrentVersions(''); // To get the projectInfo servers/databases versions of the selected server/database --%>
 		
 		var server = $('#type').val();
 		if ((server != undefined && !isBlank(server)) &&
@@ -438,7 +432,7 @@
 	
 	function technologyBasedRemoteDeploy() {
 		<% 
-			if (TechnologyTypes.ANDROIDS.contains(projectInfo.getTechnology().getId())) {
+			if (TechnologyTypes.ANDROIDS.contains(appInfo.getTechInfo().getVersion())) {
 		%>
 				hideDeployDir();
 				hideRemoteDeply();

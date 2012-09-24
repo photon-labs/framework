@@ -1,8 +1,28 @@
+<%--
+  ###
+  Framework Web Archive
+  
+  Copyright (C) 1999 - 2012 Photon Infotech Inc.
+  
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+       http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  ###
+  --%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
-<%@ page import="com.photon.phresco.commons.model.User" %>
-<%@ page import="com.photon.phresco.framework.model.FrameworkConstants" %>
 <%@ page import="org.apache.commons.lang.StringUtils"%>
+
+<%@ page import="com.photon.phresco.commons.model.User" %>
+<%@	page import="com.photon.phresco.commons.FrameworkConstants"%>
 
 <% 
 	User userInfo = (User)session.getAttribute(FrameworkConstants.REQ_USER_INFO); 
@@ -245,7 +265,6 @@
 	}
 	
 	//base on the repo type credential info need to be displayed
-	
 	function extraInfoDisplay() {
 		$("#errMsg").html("");
 		if ($("[name=repoType]").val() == 'svn') {
@@ -264,7 +283,7 @@
 		if (data.svnImport) { // Import Project Success
 			$("#errMsg").empty();
 			$('.popupLoadingIcon').hide();
-			if(data.svnImportMsg == "<%= FrameworkConstants.IMPORT_SUCCESS_PROJECT%>") {
+			if (data.svnImportMsg == "<%= FrameworkConstants.IMPORT_SUCCESS_PROJECT %>") {
 				$("#reportMsg").html(data.svnImportMsg);
 			} else {
 				$("#errMsg").html(data.svnImportMsg);
@@ -281,7 +300,8 @@
 	}
 	
 	function successEvent(pageUrl, data){
-		if (pageUrl == "importSVNProject" || pageUrl == "importGITProject" || pageUrl == "updateSVNProject" || pageUrl == "updateGITProject"){
+		if (pageUrl == "importSVNProject" || pageUrl == "importGITProject" 
+			|| pageUrl == "updateSVNProject" || pageUrl == "updateGITProject"){
 			fetchJSONData(data);
 		}
 	}

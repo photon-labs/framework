@@ -24,10 +24,11 @@
 <%@ page import="java.util.List"%>
 <%@ page import="java.util.Map"%>
 <%@ page import="java.util.Iterator"%>
+<%@ page import="org.apache.commons.lang.StringUtils"%>
 
 <%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
-<%@ page import="com.photon.phresco.commons.model.ProjectInfo"%>
 <%@ page import="com.photon.phresco.framework.model.CIBuild"%>
+<%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 
 <%@ include file="../progress.jsp" %>
 <%@ include file="../../userInfoDetails.jsp" %>
@@ -51,8 +52,8 @@
 </style>
 
 <%
-    ProjectInfo projectInfo = (ProjectInfo)request.getAttribute(FrameworkConstants.REQ_PROJECT_INFO);
-    String projectCode = projectInfo.getCode();
+    ApplicationInfo appInfo = (ApplicationInfo)request.getAttribute(FrameworkConstants.REQ_APPINFO);
+    String projectCode = appInfo.getCode();
     String jenkinsAlive = request.getAttribute(FrameworkConstants.CI_JENKINS_ALIVE).toString();
     boolean isAtleastOneJobIsInProgress = false;
     String isBuildTriggeredFromUI = request.getAttribute(FrameworkConstants.CI_BUILD_TRIGGERED_FROM_UI).toString();
@@ -73,11 +74,15 @@
     	<div class="ciOperationEleme">
 	        <input id="setup" type="button" value="<s:text name="label.setup"/>" class="primary btn">
 	        <input id="startJenkins" type="button" value="<s:text name="label.start"/>" class="primary btn">
-	        <input id="stopJenkins" type="button" value="<s:text name="label.stop"/>" class="btn disabled" disabled="disabled">
+	        <input id="stopJenkins" type="button" value="<s:text name="label.stop"/>" 
+	        	class="btn disabled" disabled="disabled">
 	        <input id="configure" type="button" value="<s:text name="label.configure"/>" class="primary btn">
-	        <input id="build" type="button" value="<s:text name="label.build"/>" class="btn disabled" disabled="disabled" onclick="buildCI();">
-	        <input id="deleteButton" type="button" value="<s:text name="label.deletebuild"/>" class="btn disabled" disabled="disabled">
-	        <input id="deleteJob" type="button" value="<s:text name="label.deletejob"/>" class="btn disabled" disabled="disabled" onclick="deleteCIJob();">
+	        <input id="build" type="button" value="<s:text name="label.build"/>" 
+	        	class="btn disabled" disabled="disabled" onclick="buildCI();">
+	        <input id="deleteButton" type="button" value="<s:text name="label.deletebuild"/>" 
+	        	class="btn disabled" disabled="disabled">
+	        <input id="deleteJob" type="button" value="<s:text name="label.deletejob"/>" 
+	        	class="btn disabled" disabled="disabled" onclick="deleteCIJob();">
         </div>
     </div>
     
@@ -103,7 +108,7 @@
 					    	while (iterator.hasNext()) {
 					    	   String jobName = iterator.next().toString();  
 					    	   List<CIBuild> builds = existingJobs.get(jobName);
-					    	   if(new Boolean(request.getAttribute(FrameworkConstants.CI_BUILD_IS_IN_PROGRESS + jobName).toString()).booleanValue()) {
+					    	   if (new Boolean(request.getAttribute(FrameworkConstants.CI_BUILD_IS_IN_PROGRESS + jobName).toString()).booleanValue()) {
 					    		   isAtleastOneJobIsInProgress = true;
 					    	   }
 			        	%>

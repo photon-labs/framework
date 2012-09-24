@@ -1,17 +1,31 @@
+<%--
+  ###
+  Framework Web Archive
+  
+  Copyright (C) 1999 - 2012 Photon Infotech Inc.
+  
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+       http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  ###
+  --%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
-<%@ page import="java.util.List"%>
 <%@ page import="java.util.Map"%>
 <%@ page import="java.util.Set"%>
 <%@ page import="java.util.ArrayList"%>
-<%@ page import="java.util.Arrays"%>
 <%@ page import="java.util.Collection"%>
-<%@ page import="java.util.Iterator"%>
-<%@ page import="com.photon.phresco.framework.api.Project"%>
-<%@ page import="com.photon.phresco.framework.model.FrameworkConstants"%>
-<%@ page import="com.photon.phresco.framework.commons.FrameworkUtil"%>
-<%@ page import="com.photon.phresco.util.TechnologyTypes" %>
-<%@ page import="org.apache.commons.lang.StringUtils;" %>
+<%@ page import="org.apache.commons.lang.StringUtils" %>
+
+<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 
 <style type="text/css">
 	.btn.success, .alert-message.success {
@@ -34,10 +48,9 @@
 </style>
 
     <% 
-		Project project = (Project) request.getAttribute(FrameworkConstants.REQ_PROJECT);
 		String projectCode = (String) request.getAttribute(FrameworkConstants.REQ_PROJECT_CODE); 
-        String NoData = (String) request.getAttribute(FrameworkConstants.REQ_ERROR_DATA);
-        if (NoData != null) {
+        String noData = (String) request.getAttribute(FrameworkConstants.REQ_ERROR_DATA);
+        if (StringUtils.isNotEmpty(noData)) {
     %>
     	<div class="alert-message block-message warning">
             <center class="noDataForAndroid"><%= FrameworkConstants.ERROR_ANDROID_DATA %></center>

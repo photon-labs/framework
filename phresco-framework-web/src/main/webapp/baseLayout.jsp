@@ -18,6 +18,7 @@
   ###
   --%>
 <!doctype html>
+
 <%@ taglib uri="/struts-tags" prefix="s"%>
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
 
@@ -26,7 +27,7 @@
 
 <%@ page import="com.photon.phresco.commons.model.User"%>
 <%@ page import="com.photon.phresco.commons.model.Customer"%>
-<%@ page import="com.photon.phresco.framework.model.FrameworkConstants"%>
+<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 
 <html>
 	<head>

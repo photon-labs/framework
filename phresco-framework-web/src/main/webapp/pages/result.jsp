@@ -18,6 +18,7 @@
   ###
   --%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
+
 <%
     String sonarPath = request.getParameter("sonarPath");
 %>
@@ -43,5 +44,4 @@
             showParentPage();
         });
     });
-    
 </script>

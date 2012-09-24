@@ -23,7 +23,7 @@
 <%@ page import="java.util.List" %>
 
 <%@ page import="com.photon.phresco.commons.model.VideoInfo" %>
-<%@ page import="com.photon.phresco.framework.model.FrameworkConstants"%>
+<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 
 
 <%

@@ -27,12 +27,10 @@
 <%@ page import="org.apache.commons.collections.CollectionUtils" %>
 <%@ page import="org.apache.commons.collections.MapUtils" %>
 
-<%@ page import="com.photon.phresco.framework.model.FrameworkConstants" %>
-<%@ page import="com.photon.phresco.commons.model.ProjectInfo" %>
-<%@ page import="com.photon.phresco.commons.model.Technology" %>
-<%@ page import="com.photon.phresco.model.ModuleGroup" %>
-<%@ page import="com.photon.phresco.model.Module" %>
-<%@ page import="com.photon.phresco.model.Documentation.DocumentationType"%>
+<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
+<%@ page import="com.photon.phresco.commons.model.ArtifactGroup"%>
+<%@ page import="com.photon.phresco.commons.model.ArtifactInfo"%>
+<%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 
 <style type="text/css">
 	.twipsy {
@@ -113,26 +111,26 @@
 	
 	String customerId = (String) request.getAttribute(FrameworkConstants.REQ_CUSTOMER_ID);
 	
-    List<ModuleGroup> coreModules = (List<ModuleGroup>) request.getAttribute(FrameworkConstants.REQ_CORE_MODULES);
-    List<ModuleGroup> customModules = (List<ModuleGroup>) request.getAttribute(FrameworkConstants.REQ_CUSTOM_MODULES);
-    List<ModuleGroup> allJsLibs = (List<ModuleGroup>) request.getAttribute(FrameworkConstants.REQ_ALL_JS_LIBS);
+    List<ArtifactGroup> coreModules = (List<ArtifactGroup>) request.getAttribute(FrameworkConstants.REQ_CORE_MODULES);
+    List<ArtifactGroup> customModules = (List<ArtifactGroup>) request.getAttribute(FrameworkConstants.REQ_CUSTOM_MODULES);
+    List<ArtifactGroup> allJsLibs = (List<ArtifactGroup>) request.getAttribute(FrameworkConstants.REQ_ALL_JS_LIBS);
     
   	//For project edit
-    Map<String, String> projectInfoModules = (Map<String, String>) request.getAttribute(FrameworkConstants.REQ_PROJECT_INFO_MODULES);
-    Map<String, String> projectInfoJsLibs = (Map<String, String>) request.getAttribute(FrameworkConstants.REQ_PROJECT_INFO_JSLIBS);
+    Map<String, String> appInfoModules = (Map<String, String>) request.getAttribute(FrameworkConstants.REQ_PROJECT_INFO_MODULES);
+    Map<String, String> appInfoJsLibs = (Map<String, String>) request.getAttribute(FrameworkConstants.REQ_PROJECT_INFO_JSLIBS);
     
     //For previous action
     Map<String, String> selectedModules = (Map<String, String>) request.getAttribute(FrameworkConstants.REQ_TEMP_SELECTEDMODULES);
     Map<String, String> selectedJsLibs = (Map<String, String>) request.getAttribute(FrameworkConstants.REQ_TEMP_SELECTED_JSLIBS);
 
     String fromPage = (String) request.getAttribute(FrameworkConstants.REQ_FROM_PAGE);
-    ProjectInfo projectInfo = (ProjectInfo) request.getAttribute(FrameworkConstants.REQ_PROJECT_INFO);
+    ApplicationInfo appInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_APPINFO);
     String projectCode = "";
     String techId = "";
-    if (projectInfo != null) {
-        techId = projectInfo.getTechnology().getId();
-        session.setAttribute(projectInfo.getCode(), projectInfo);
-        projectCode = projectInfo.getCode();
+    if (appInfo != null) {
+        techId = appInfo.getTechInfo().getVersion();
+        session.setAttribute(appInfo.getCode(), appInfo);
+        projectCode = appInfo.getCode();
     }
     
     String configServerNames = (String) request.getAttribute(FrameworkConstants.REQ_CONFIG_SERVER_NAMES);
@@ -151,12 +149,13 @@
 	    <!--  Pilot projects are loaded here starts-->
 	    <div class="input">
 	    	<%
-	    		String pilotProject = "None";
-	    		if(StringUtils.isNotEmpty(projectInfo.getPilotProjectName())) {
-	    			pilotProject = projectInfo.getPilotProjectName();
+		    	String pilotProject = "None";
+	    		if (StringUtils.isNotEmpty(appInfo.getPilotInfo().getName())) {
+	    			pilotProject = appInfo.getPilotInfo().getName();
 	    		}
 	    	%>
-	    	<input type="text" class="medium" id="selectedPilotProject" name="selectedPilotProject" disabled="disabled" value="<%= pilotProject %>">
+	    	<input type="text" class="medium" id="selectedPilotProject" name="selectedPilotProject" 
+	    		disabled="disabled" value="<%= pilotProject %>">
 	    </div>
 	    <!--  Pilot projects are loaded here ends -->
 	</div>
@@ -180,7 +179,8 @@
 						<table class="zebra-striped">
 							<tr>
 								<th class="editFeatures_th1">
-									<input type="checkbox" value="AllCoreModules" id="checkAllCoreModule" name="core" onchange="selectAllChkBoxClk('core', this)">
+									<input type="checkbox" value="AllCoreModules" id="checkAllCoreModule"
+										name="core" onchange="selectAllChkBoxClk('core', this)">
 								</th>
 								<th class="editFeatures_th2"><s:text name="label.external.feature"/></th>
 							</tr>
@@ -191,13 +191,13 @@
 					        <div class="accordion_panel_inner">
 					            <section class="lft_menus_container">
 					            <%
-									for (ModuleGroup coreModule : coreModules) {
+									for (ArtifactGroup coreModule : coreModules) {
 										disabledStr = "";
 										checkedStr = "";
 									    
 									    String pilotVersion = "";
-										if (MapUtils.isNotEmpty(projectInfoModules) && StringUtils.isNotEmpty(projectInfoModules.get(coreModule.getId()))) {
-											pilotVersion = projectInfoModules.get(coreModule.getId());
+										if (MapUtils.isNotEmpty(appInfoModules) && StringUtils.isNotEmpty(appInfoModules.get(coreModule.getId()))) {
+											pilotVersion = appInfoModules.get(coreModule.getId());
 											checkedStr = "checked";
 											disabledStr = "disabled";
 										}
@@ -238,17 +238,17 @@
 														url = serverUrl + "/" + featureUrl;
 													}
 													
-													List<Module> versions = coreModule.getVersions();
+													List<ArtifactInfo> versions = coreModule.getVersions();
 											    	if (CollectionUtils.isNotEmpty(versions)) {
-														for (Module moduleVersion : versions) {
+														for (ArtifactInfo moduleVersion : versions) {
 														    String descContent = "";
-															if (moduleVersion.getDoc(DocumentationType.DESCRIPTION) != null) { 
-															  	descContent = moduleVersion.getDoc(DocumentationType.DESCRIPTION).getContent();
+															if (StringUtils.isNotEmpty(moduleVersion.getDescription())) { 
+															  	descContent = moduleVersion.getDescription();
 															}
 															
 															String helpTextContent = "";
-															if (moduleVersion.getDoc(DocumentationType.HELP_TEXT) != null) { 
-															  	helpTextContent = moduleVersion.getDoc(DocumentationType.HELP_TEXT).getContent();
+															if (StringUtils.isNotEmpty(moduleVersion.getHelpText())) { 
+															  	helpTextContent = moduleVersion.getHelpText();
 															}
 															
 															checkedStr = "";
@@ -309,13 +309,13 @@
 						        <div class="accordion_panel_inner">
 						            <section class="lft_menus_container">
 						            <%
-										for (ModuleGroup jslibrary : allJsLibs) {
+										for (ArtifactGroup jslibrary : allJsLibs) {
 											disabledStr = "";
 											checkedStr = "";
 	
 											String pilotVersion = "";
-											if (MapUtils.isNotEmpty(projectInfoJsLibs) && StringUtils.isNotEmpty(projectInfoJsLibs.get(jslibrary.getId()))) {
-												pilotVersion = projectInfoJsLibs.get(jslibrary.getId());
+											if (MapUtils.isNotEmpty(appInfoJsLibs) && StringUtils.isNotEmpty(appInfoJsLibs.get(jslibrary.getId()))) {
+												pilotVersion = appInfoJsLibs.get(jslibrary.getId());
 												checkedStr = "checked";
 												disabledStr = "disabled";
 											}
@@ -354,17 +354,17 @@
 															url = serverUrl + "/" + featureUrl;
 														}
 														
-												    	List<Module> versions = jslibrary.getVersions();
+												    	List<ArtifactInfo> versions = jslibrary.getVersions();
 												    	if (CollectionUtils.isNotEmpty(versions)) {
-															for (Module moduleVersion : versions) {
+															for (ArtifactInfo moduleVersion : versions) {
 															    String descContent = "";
-																if (moduleVersion.getDoc(DocumentationType.DESCRIPTION) != null) { 
-																  	descContent = moduleVersion.getDoc(DocumentationType.DESCRIPTION).getContent();
+																if (StringUtils.isNotEmpty(moduleVersion.getDescription())) { 
+																  	descContent = moduleVersion.getDescription();
 																}
 																
 																String helpTextContent = "";
-																if (moduleVersion.getDoc(DocumentationType.HELP_TEXT) != null) { 
-																  	helpTextContent = moduleVersion.getDoc(DocumentationType.HELP_TEXT).getContent();
+																if (StringUtils.isNotEmpty(moduleVersion.getHelpText())) { 
+																  	helpTextContent = moduleVersion.getHelpText();
 																}
 																
 																checkedStr = "";
@@ -426,13 +426,13 @@
 						        <div class="accordion_panel_inner">
 						            <section class="lft_menus_container">
 						            <%
-										for (ModuleGroup customModule : customModules) {
+										for (ArtifactGroup customModule : customModules) {
 											disabledStr = "";
 											checkedStr = "";
 										    
 										    String pilotVersion = "";
-											if (MapUtils.isNotEmpty(projectInfoModules) && StringUtils.isNotEmpty(projectInfoModules.get(customModule.getId()))) {
-												pilotVersion = projectInfoModules.get(customModule.getId());
+											if (MapUtils.isNotEmpty(appInfoModules) && StringUtils.isNotEmpty(appInfoModules.get(customModule.getId()))) {
+												pilotVersion = appInfoModules.get(customModule.getId());
 												checkedStr = "checked";
 												disabledStr = "disabled";
 											}
@@ -472,17 +472,17 @@
 															url = serverUrl + "/" + featureUrl;
 														}
 														  
-														List<Module> versions = customModule.getVersions();
+														List<ArtifactInfo> versions = customModule.getVersions();
 												    	if (CollectionUtils.isNotEmpty(versions)) {
-															for (Module moduleVersion : versions) {
+															for (ArtifactInfo moduleVersion : versions) {
 															    String descContent = "";
-																if (moduleVersion.getDoc(DocumentationType.DESCRIPTION) != null) { 
-																	descContent = moduleVersion.getDoc(DocumentationType.DESCRIPTION).getContent();
+																if (StringUtils.isNotEmpty(moduleVersion.getDescription())) { 
+																  	descContent = moduleVersion.getDescription();
 																}
 																
 																String helpTextContent = "";
-																if (moduleVersion.getDoc(DocumentationType.HELP_TEXT) != null) { 
-																  	helpTextContent = moduleVersion.getDoc(DocumentationType.HELP_TEXT).getContent();
+																if (StringUtils.isNotEmpty(moduleVersion.getHelpText())) { 
+																  	helpTextContent = moduleVersion.getHelpText();
 																}
 																
 																checkedStr = "";

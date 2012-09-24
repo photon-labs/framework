@@ -22,11 +22,12 @@
 <%@ page import="java.util.List"%>
 <%@ page import="java.util.Set"%>
 <%@ page import="org.apache.commons.collections.CollectionUtils" %>
+<%@ page import="org.apache.commons.lang.StringUtils"%>
 
-<%@ page import="com.photon.phresco.commons.model.ProjectInfo"%>
 <%@ page import="com.photon.phresco.framework.model.TestSuiteResult"%>
-<%@ page import="com.photon.phresco.framework.model.FrameworkConstants"%>
+<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.util.TechnologyTypes" %>
+<%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 
 <%@ include file="../progress.jsp" %>
 
@@ -34,10 +35,10 @@
 
 <%
     Boolean popup = Boolean.FALSE;
-	ProjectInfo projectInfo = (ProjectInfo)request.getAttribute(FrameworkConstants.REQ_PROJECT_INFO);
+	ApplicationInfo appInfo = (ApplicationInfo)request.getAttribute(FrameworkConstants.REQ_APPINFO);
 	String testType = (String) request.getAttribute(FrameworkConstants.REQ_TEST_TYPE);
-	String projectCode = projectInfo.getCode();
-	String techId = projectInfo.getTechnology().getId();
+	String projectCode = appInfo.getCode();
+	String techId = appInfo.getTechInfo().getVersion();
 	String path = (String) request.getAttribute(FrameworkConstants.PATH);
 	String fromPage = (String) request.getAttribute(FrameworkConstants.REQ_FROM_PAGE);
 	List<String> projectModules = (List<String>) request.getAttribute(FrameworkConstants.REQ_PROJECT_MODULES);

@@ -17,6 +17,7 @@
   limitations under the License.
   ###
   --%>
+<%@page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@include file="progress.jsp" %>
@@ -24,7 +25,7 @@
 <%@ page import="java.util.List"%>
 <%@ page import="org.apache.commons.collections.CollectionUtils"%>
 
-<%@ page import="com.photon.phresco.framework.model.FrameworkConstants" %>
+<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.framework.api.Project" %>
 <%@ page import="com.photon.phresco.commons.model.ProjectInfo" %>
 
@@ -129,26 +130,29 @@
 		          	<tbody>
 		          	<%
 		          	    for (Project project : projects) {
-		          								ProjectInfo projectInfo = project.getApplicationInfo();
+							ApplicationInfo appInfo = project.getApplicationInfo();
 		          	%>
 		            	<tr>
 		            		<td>
 			              		<div class="checkbox_list">
-			              			<input type="checkbox" class="check" name="selectedProjects" value="<%= projectInfo.getCode() %>">
+			              			<input type="checkbox" class="check" name="selectedProjects" value="<%= appInfo.getCode() %>">
 			              		</div>
 		              		</td>
 		              		<td>
-		              			<a href="#" name="edit" id="<%= projectInfo.getCode() %>" ><%= projectInfo.getName() %></a>
+		              			<a href="#" name="edit" id="<%= appInfo.getCode() %>" ><%= appInfo.getName() %></a>
 		              		</td>
-		              		<td style="width: 40%;"><%= projectInfo.getDescription() %></td>
-		              		<td><%= projectInfo.getTechnology().getName() %></td>
+		              		<td style="width: 40%;"><%= appInfo.getDescription() %></td>
+		              		<!-- TODO:Lohes -->
+		              		<%-- <td><%= appInfo.getTechnology().getName() %></td> --%>
 		              		<td class="iconsTd">
 		              			<a href="#" id="pdfPopup" class="iconsCenterAlign">
-		              				<img id="<%= projectInfo.getCode() %>" class="pdfCreation" src="images/icons/print_pdf.png" title="generate pdf" class="iconSizeinList"/>
+		              				<img id="<%= appInfo.getCode() %>" class="pdfCreation" src="images/icons/print_pdf.png" 
+		              					title="generate pdf" class="iconSizeinList"/>
 		              			</a>
 		              		</td>
 		              		<td class="iconsTd">
-		              			<a href="#" id="projectUpdate" class="iconsCenterAlign"><img id="<%= projectInfo.getCode() %>" class="projectUpdate" src="images/icons/refresh.png" title="Update" class="iconSizeinList"/></a>
+		              			<a href="#" id="projectUpdate" class="iconsCenterAlign"><img id="<%= appInfo.getCode() %>" 
+		              				class="projectUpdate" src="images/icons/refresh.png" title="Update" class="iconSizeinList"/></a>
 			              	</td>
 		            	</tr>
 		            <%

@@ -1,17 +1,36 @@
+<%--
+  ###
+  Framework Web Archive
+  
+  Copyright (C) 1999 - 2012 Photon Infotech Inc.
+  
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+       http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  ###
+  --%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@	page import="org.apache.commons.lang.StringUtils"%>
 <%@ page import="java.util.List"%>
 
 <%@ page import="com.photon.phresco.framework.model.CIJob" %>
-<%@ page import="com.photon.phresco.framework.model.FrameworkConstants" %>
+<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.framework.model.SettingsInfo"%>
 <%@ page import="com.photon.phresco.commons.XCodeConstants"%>
 <%@ page import="com.photon.phresco.commons.AndroidConstants"%>
 <%@ page import="com.photon.phresco.util.TechnologyTypes" %>
 <%@ page import="com.photon.phresco.framework.commons.PBXNativeTarget"%>
 <%@ page import="com.photon.phresco.configuration.Environment"%>
-<%@ page import="com.photon.phresco.commons.model.ProjectInfo"%>
+<%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 
 <script src="js/select-envs.js"></script>
 
@@ -31,9 +50,9 @@
 
 	CIJob existingJob =  (CIJob) request.getAttribute(FrameworkConstants.REQ_EXISTING_JOB);
 	String disableStr = existingJob == null ? "" : "disabled";
-	ProjectInfo projectInfo = (ProjectInfo)request.getAttribute(FrameworkConstants.REQ_PROJECT_INFO);
-	String projectCode = projectInfo.getCode();
-	String technology = projectInfo.getTechnology().getId();
+	ApplicationInfo appInfo = (ApplicationInfo)request.getAttribute(FrameworkConstants.REQ_APPINFO);
+	String projectCode = appInfo.getCode();
+	String technology = appInfo.getTechInfo().getVersion();
     String actionStr = "saveJob";
     actionStr = (existingJob == null || StringUtils.isEmpty(existingJob.getSvnUrl())) ? "saveJob" : "updateJob";
     existingJob = (existingJob == null || StringUtils.isEmpty(existingJob.getSvnUrl())) ? null : existingJob; // when we setup it ll have only jenkins url and port in that case we have to check svnUrl and make null
@@ -43,6 +62,7 @@
    	// mac sdks
    	List<String> macSdks = (List<String>) request.getAttribute(FrameworkConstants.REQ_IPHONE_SDKS);
 %>
+
 <div class="popup_Modal configurePopUp" id="ciDetails">
     <form name="ciDetails" action="<%= actionStr %>" method="post" autocomplete="off" class="ci_form" id="ciForm">
         <div class="modal-header">

@@ -17,12 +17,14 @@
   limitations under the License.
   ###
   --%>
+
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
-<%@page import="com.photon.phresco.framework.model.FrameworkConstants"%>
+<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.commons.AndroidConstants"%>
 
 <%@include file="progress.jsp" %>
+
 <%
 	String buildNumber = (String) request.getAttribute(FrameworkConstants.REQ_DEPLOY_BUILD_NUMBER);
 	String fromTab = (String) request.getAttribute(FrameworkConstants.REQ_FROM_TAB);
@@ -92,22 +94,22 @@
 			$("#build-output").empty();
 			$('#tests').show().css("display","none");
 			$('#build-outputOuter').show().css("display","block");
-			if($('#actionBtn').val() == "Test"){
+			if ($('#actionBtn').val() == "Test") {
 				getCurrentCSS();
 				test();
 				//showParentPage();
-			}else if($('#actionBtn').val() == "Deploy"){
+			} else if ($('#actionBtn').val() == "Deploy") {
 				deploy();
 				showParentPage();
 			}
 		});
 		
-		$('#showSettings').click(function(){
+		$('#showSettings').click(function() {
             showSettings();
         });
 		
 		$('#device').change(function() {
-			if($('#device').val() == "serialNumber"){
+			if($('#device').val() == "serialNumber") {
 				$('#serialNo_div').show();
 			}else{
 				$('#serialNo_div').hide();
@@ -137,7 +139,7 @@
 		
 		function test() {
 			var deviceType = $('#device').val();
-			if($('#device').val() == "serialNumber") {
+			if ($('#device').val() == "serialNumber") {
 				deviceType = $('#serialNum').val();
 			}
 			$.ajax({

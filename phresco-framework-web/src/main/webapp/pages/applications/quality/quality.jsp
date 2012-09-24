@@ -21,19 +21,20 @@
 
 <%@ page import="java.util.List"%>
 
-<%@ page import="com.photon.phresco.framework.model.FrameworkConstants" %>
+<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.framework.model.SettingsInfo"%>
 <%@ page import="com.photon.phresco.commons.model.ProjectInfo"%>
 <%@ page import="com.photon.phresco.util.TechnologyTypes"%>
+<%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 
 <%@ include file="../../userInfoDetails.jsp" %>
 
 <%
     List<SettingsInfo> serverSettings = (List<SettingsInfo>)request.getAttribute(FrameworkConstants.REQ_ENV_SERVER_SETTINGS);
 	String testTypeSelected = (String)request.getAttribute(FrameworkConstants.REQ_TEST_TYPE_SELECTED);
-	ProjectInfo projectInfo = (ProjectInfo)request.getAttribute(FrameworkConstants.REQ_PROJECT_INFO);
-    String projectCode = projectInfo.getCode();
-    String technology = projectInfo.getTechnology().getId();
+	ApplicationInfo appInfo = (ApplicationInfo)request.getAttribute(FrameworkConstants.REQ_APPINFO);
+    String projectCode = appInfo.getCode();
+    String technology = appInfo.getTechInfo().getVersion();
 %>
 
 <s:if test="hasActionMessages()">

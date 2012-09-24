@@ -19,18 +19,15 @@
   --%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
-<%@ include file="../../userInfoDetails.jsp" %>
-
 <%@ page import="java.util.List"%>
-<%@ page import="java.util.ArrayList"%>
-<%@ page import="java.util.Collection"%>
-<%@ page import="java.util.Iterator"%>
+
 <%@ page import="com.photon.phresco.framework.model.TestCaseFailure"%>
 <%@ page import="com.photon.phresco.framework.model.TestCaseError"%>
 <%@ page import="com.photon.phresco.framework.model.TestSuiteResult"%>
 <%@ page import="com.photon.phresco.framework.model.TestCaseResult"%>
-<%@ page import="com.photon.phresco.framework.model.FrameworkConstants"%>
-<%@ page import="com.photon.phresco.framework.model.SettingsInfo"%>
+<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
+
+<%@ include file="../../userInfoDetails.jsp" %>
 
 <style type="text/css">
    	table th {

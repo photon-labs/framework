@@ -22,8 +22,9 @@
 <%@ page import="java.io.File"%>
 
 <%@ page import="com.photon.phresco.commons.model.ProjectInfo"%>
-<%@ page import="com.photon.phresco.framework.model.FrameworkConstants"%>
+<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.util.TechnologyTypes" %>
+<%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 
 <%@include file="../progress.jsp" %>
 
@@ -54,11 +55,11 @@
 	<!-- load test button ends -->
 	<% 
 		Boolean popup = Boolean.FALSE;
-		ProjectInfo projectInfo = (ProjectInfo)request.getAttribute(FrameworkConstants.REQ_PROJECT_INFO);
-		String projectCode = projectInfo.getCode();
+		ApplicationInfo appInfo = (ApplicationInfo)request.getAttribute(FrameworkConstants.REQ_APPINFO);
+		String projectCode = appInfo.getCode();
 		String testType = (String) request.getAttribute(FrameworkConstants.REQ_TEST_TYPE);
 	   	String testError = (String) request.getAttribute(FrameworkConstants.REQ_ERROR_TESTSUITE);
-	    String technology =  projectInfo.getTechnology().getId();
+	    String technology =  appInfo.getTechInfo().getVersion();
 		if (TechnologyTypes.ANDROIDS.contains(technology)) {
 			popup = Boolean.TRUE;
 		}

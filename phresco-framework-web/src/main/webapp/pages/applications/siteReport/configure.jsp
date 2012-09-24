@@ -17,13 +17,13 @@
   limitations under the License.
   ###
   --%>
-
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.util.List" %>
+
 <%@ page import="org.apache.commons.collections.CollectionUtils"%>
 <%@ page import="com.phresco.pom.site.Reports"%>
-<%@ page import="com.photon.phresco.framework.model.FrameworkConstants" %>
+<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.phresco.pom.site.ReportCategories"%>
 
 <script type="text/javascript" src="js/delete.js" ></script>

@@ -24,7 +24,7 @@
 
 <%@ page import="org.apache.commons.collections.CollectionUtils" %>
 <%@ page import="com.photon.phresco.framework.api.ValidationResult" %>
-<%@ page import="com.photon.phresco.framework.model.FrameworkConstants" %>
+<%@	page import="com.photon.phresco.commons.FrameworkConstants"%>
 <style>
 	.zebra-striped tbody tr:hover td {
 	    background-color: transparent;

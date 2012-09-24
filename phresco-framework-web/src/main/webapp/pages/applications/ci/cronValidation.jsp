@@ -21,7 +21,7 @@
 
 <%@ page import="java.util.Date"%>
 
-<%@ page import="com.photon.phresco.framework.model.FrameworkConstants" %>
+<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.framework.model.CIJob" %>
 
 <input type="text" id="cronExpression" name="cronExpression" 

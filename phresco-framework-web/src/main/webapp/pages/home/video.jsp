@@ -19,7 +19,7 @@
   --%>
 <%@ page import="java.util.List" %>
 
-<%@ page import="com.photon.phresco.framework.model.FrameworkConstants"%>
+<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.commons.model.VideoType" %>
 
 <script type="text/javascript">
@@ -41,7 +41,6 @@
 		for(VideoType videoType : videoTypes) {
 			url = serverUrl + videoType.getUrl();
 			vType = videoType.getType();
-			codecs = videoType.getCodecs();
 	%>
 	
 			<source id="video" type='video/<%= vType %>' src="<%= url %>"></source>

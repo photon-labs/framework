@@ -23,10 +23,11 @@
 <%@ page import="java.util.Set"%>
 
 <%@ page import="com.photon.phresco.framework.model.PerformanceTestResult"%>
-<%@ page import="com.photon.phresco.framework.model.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.framework.commons.FrameworkUtil"%>
 <%@ page import="com.photon.phresco.util.TechnologyTypes" %>
 <%@ page import="com.photon.phresco.commons.model.ProjectInfo"%>
+<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
+<%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 
 <style type="text/css">
 	.btn.success, .alert-message.success {
@@ -49,7 +50,7 @@
 </style>
 
 <% 
-	ProjectInfo projectInfo = (ProjectInfo) request.getAttribute(FrameworkConstants.REQ_PROJECT_INFO);
+	ApplicationInfo appInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_APPINFO);
 	String projectCode = (String) request.getAttribute(FrameworkConstants.REQ_PROJECT_CODE); 
 	String errorDeviceData = (String) request.getAttribute(FrameworkConstants.REQ_ERROR_DATA);
 	if (errorDeviceData != null) {
@@ -73,7 +74,7 @@
     		$(".noTestAvail").show();
 			$("#graphBasedOn").show();
 			$("#noFiles").hide();
-			<% if (TechnologyTypes.ANDROIDS.contains(projectInfo.getTechnology().getId())) { %>
+			<% if (TechnologyTypes.ANDROIDS.contains(appInfo.getTechInfo().getVersion())) { %>
 				disableType();
 			<% } %>
 		</script>

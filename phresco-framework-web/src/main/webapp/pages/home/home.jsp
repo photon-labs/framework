@@ -19,7 +19,7 @@
   --%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
-<%@ page import="com.photon.phresco.framework.model.FrameworkConstants"%>
+<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 
 <% 
     String showWelcome = (String)request.getAttribute(FrameworkConstants.REQ_SHOW_WELCOME);

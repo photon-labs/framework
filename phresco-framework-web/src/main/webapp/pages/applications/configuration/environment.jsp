@@ -20,8 +20,9 @@
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.util.List"%>
-<%@ page import="com.photon.phresco.configuration.Environment" %>
-<%@ page import="com.photon.phresco.framework.model.FrameworkConstants"%>
+
+<%@ page import="com.photon.phresco.configuration.Environment"%>
+<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 
 <% 
 	String projectCode = (String)request.getAttribute(FrameworkConstants.REQ_PROJECT_CODE);

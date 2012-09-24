@@ -19,22 +19,66 @@
   --%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
-<%@ page import="com.photon.phresco.framework.model.FrameworkConstants" %>
-<%@ page import="com.photon.phresco.framework.commons.FrameworkActions" %>
+<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.commons.model.LogInfo" %>
 
-	<%-- <style type="text/css">
-		.errorMessage li{ 
-			list-style: none;
-			color:#000000;
-			text-align: left;
-		}
-	</style> --%>
-
-	<% 
-		LogInfo log = (LogInfo)request.getAttribute(FrameworkConstants.REQ_LOG_REPORT); 
-		if (log != null) {
-	%>
+<% 
+	LogInfo log = (LogInfo)request.getAttribute(FrameworkConstants.REQ_LOG_REPORT); 
+	if (log != null) {
+%>
+	<!-- Error dialog starts -->	
+	<div id="errorDialog" class="modal exceptionErrors">
+		<% if (log != null) { %>
+			<script type="text/javascript">
+				errorReportEnable('block');
+			</script>
+		<% } %>
+		
+		<div id="versionInfo">
+			<div class="modal-header">
+				<h3><s:text name="label.phresco.alert"/><span id="version"></span></h3>
+				<a id="closeAboutDialog" class="close" href="#" id="close">&times;</a>
+			</div>
+			
+			<div class="modal-body abt_modal-body errorReportContainer">
+				<div class="abt_logo errLogo">
+					<img src="images/crashReport.png" alt="logo" class="abt_err_img">
+				</div>
+				<div class="abt_content errorMsgDisplay">
+					<%= log.getMessage() %>
+				</div>
+				<div class="clipboard" style="position:absolute; right:10px; top:35px;">
+                    <img src="images/icons/clipboard-copy.png" alt="clipboard" id="clipboard" 
+                    	style="height:25px; width:25px; cursor:pointer;" title="Copy to clipboard"> 
+				</div>
+				<div id="errorOrigin hideContent">
+					<s:if test="hasActionErrors()">
+						<s:actionerror />
+					</s:if>
+				</div>
+				<div style="display:none;" id="message">
+						<%= log.getMessage() %>
+				</div>
+				<div style="display:none;" id="trace">
+						<%= log.getTrace() %>
+				</div>
+			</div>
+			
+			<div class="modal-body abt_modal-body errorReportTrace" style="color: #000000;">
+				<div id="trackTrace"><%= log.getTrace() %></div>
+			</div>
+			
+			<div class="modal-footer">
+				<div class="errMsg" id="reportMsg"></div>
+				<div class="action abt_action">
+					<input type="button" class="btn primary" value="<s:text name="label.sent.report"/>" id="submitReport">
+					<input type="button" class="btn primary" value="<s:text name="label.cancel"/>" id="submitReportCancel">
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- Error dialog ends -->
+<% } %>
 	
 <script>
 	$(".exceptionErrors").css("top", "44%");
@@ -82,8 +126,6 @@
 // 			$("#errorReportTrace").next().slideToggle();
 // 			$("#trackTrace").next().animate({height: 'toggle'});
 // 		});
-		
-		
 	});
 
 	function errorReportEnable(prop) {
@@ -97,58 +139,3 @@
 		$('#warningmsg').css("display", "none");
 	}
 </script>
-
-	<!-- Error dialog starts -->	
-	<div id="errorDialog" class="modal exceptionErrors">
-		<% if (log != null) { %>
-			<script type="text/javascript">
-				errorReportEnable('block');
-			</script>
-		<% } %>
-		
-		<div id="versionInfo">
-			<div class="modal-header">
-				<h3><s:text name="label.phresco.alert"/><span id="version"></span></h3>
-				<a id="closeAboutDialog" class="close" href="#" id="close">&times;</a>
-			</div>
-			
-			<div class="modal-body abt_modal-body errorReportContainer">
-				<div class="abt_logo errLogo">
-					<img src="images/crashReport.png" alt="logo" class="abt_err_img">
-				</div>
-				<div class="abt_content errorMsgDisplay">
-<%-- 					<a id="trackTraceDisplay" style="color:#000000;"><%= log.getErrorMessage() %></a> --%>
-					<%= log.getErrorMessage() %>
-				</div>
-				<div class="clipboard" style="position:absolute; right:10px; top:35px;">
-                    <img src="images/icons/clipboard-copy.png" alt="clipboard" id="clipboard" style= "height:25px; width:25px; cursor:pointer;" title="Copy to clipboard"> 
-				</div>
-				<div style="display:none;" id="errorOrigin">
-					<s:if test="hasActionErrors()">
-							<s:actionerror />
-					</s:if>
-				</div>
-				<div style="display:none;" id="message">
-						<%= log.getMessage() %>
-				</div>
-				<div style="display:none;" id="trace">
-						<%= log.getTrace() %>
-				</div>
-			</div>
-			
-			<div class="modal-body abt_modal-body errorReportTrace" style="color: #000000;">
-				<div id="trackTrace"><%= log.getTrace() %></div>
-			</div>
-			
-			<div class="modal-footer">
-				<div class="errMsg" id="reportMsg"></div>
-				<div class="action abt_action">
-					<input type="button" class="btn primary" value="<s:text name="label.sent.report"/>" id="submitReport">
-					<input type="button" class="btn primary" value="<s:text name="label.cancel"/>" id="submitReportCancel">
-				</div>
-			</div>
-		</div>
-	</div>
-	<!-- Error dialog ends -->
-	
-	<% } %>

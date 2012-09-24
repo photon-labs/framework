@@ -18,17 +18,16 @@
   limitations under the License.
   ###
   --%>
-
-<%@page import="org.apache.commons.collections.CollectionUtils"%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.util.List"%>
 <%@ page import="org.apache.commons.lang.StringUtils" %>
+<%@ page import="org.apache.commons.collections.CollectionUtils"%>
 
-<%@ page import="com.photon.phresco.framework.model.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.configuration.Environment"%>
 <%@ page import="com.photon.phresco.framework.model.SettingsInfo"%>
 <%@ page import="com.photon.phresco.commons.model.SettingsTemplate"%>
+<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 
 <%@ include file="../userInfoDetails.jsp" %>
 

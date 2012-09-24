@@ -20,7 +20,8 @@
 <%@ taglib uri="/struts-tags" prefix="s"%>
   
 <%@ page import="org.apache.commons.lang.StringUtils"%>
-<%@ page import="com.photon.phresco.framework.model.FrameworkConstants"%>
+
+<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 
 <%
 	String siteReportPath = (String)request.getAttribute(FrameworkConstants.REQ_SITE_REPORT_PATH);

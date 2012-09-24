@@ -17,7 +17,6 @@
   limitations under the License.
   ###
   --%>
-
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.util.List"%>
@@ -27,21 +26,21 @@
 <%@ page import="org.apache.commons.lang.StringUtils" %>
 <%@ page import="org.apache.commons.collections.CollectionUtils" %>
 
-<%@ page import="com.photon.phresco.framework.model.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.commons.XCodeConstants"%>
 <%@ page import="com.photon.phresco.commons.AndroidConstants"%>
 <%@ page import="com.photon.phresco.util.TechnologyTypes" %>
-<%@ page import="com.photon.phresco.commons.model.ProjectInfo" %>
+<%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 <%@ page import="com.photon.phresco.framework.commons.PBXNativeTarget"%>
 <%@ page import="com.photon.phresco.configuration.Environment"%>
+<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 
 <script src="js/reader.js"></script>
 <script src="js/select-envs.js"></script>
 
 <%
 	String defaultEnv = "";
-	ProjectInfo projectInfo = (ProjectInfo) request.getAttribute(FrameworkConstants.REQ_PROJECT_INFO);
-   	String projectCode = projectInfo.getCode();
+	ApplicationInfo appInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_APPINFO);
+   	String projectCode = appInfo.getCode();
    	String from = (String) request.getAttribute(FrameworkConstants.REQ_BUILD_FROM);
    	String technology = (String)request.getAttribute(FrameworkConstants.REQ_TECHNOLOGY);
    	String testType = (String) request.getAttribute(FrameworkConstants.REQ_TEST_TYPE);
@@ -70,7 +69,7 @@
 <div class="popup_Modal topFouty" id="generateBuild_Modal">
 	<div class="modal-header">
 		<h3 id="generateBuildTitle">
-		<%if (from.equals("nodeJS_runAgnSrc") || from.equals("runAgnSrc")) {%>
+		<%if (from.equals("nodeJS_runAgnSrc") || from.equals("runAgnSrc")) { %>
 			<s:text name="label.runagainsrc"/>
 		<% } else if (from.equals(FrameworkConstants.DEPLOY)) {%>
 			<s:text name="label.deploy"/>
@@ -203,7 +202,7 @@
 
 		<% 
 			if (TechnologyTypes.ANDROIDS.contains(technology)) { 
-				String pilotProjectName = projectInfo.getPilotProjectName();
+				String pilotProjectName = appInfo.getPilotInfo().getName();
 		%>
 			<!-- Android Version -->
 			<div class="clearfix">
@@ -321,7 +320,7 @@
 							<span class="textarea_span popup-span"><s:text name="label.show.debug"/></span>
 						<% } %>
 						
-						<% if (!from.equals("generateBuild") && CollectionUtils.isNotEmpty(projectInfo.getTechnology().getDatabases())) {%>
+						<% if (!from.equals("generateBuild") && CollectionUtils.isNotEmpty(appInfo.getSelectedDatabases())) {%>
 							<input type="checkbox" id="importSql" name="importSql" value="true" <%= checkImportSql%> >
 							<span class="textarea_span popup-span"><s:text name="label.import.sql"/></span>
 						<% } %>

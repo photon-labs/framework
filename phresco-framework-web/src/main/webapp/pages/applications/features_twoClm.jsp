@@ -21,18 +21,18 @@
 
 <%@ include file="description_dialog.jsp" %>
 
+<%@ include file="description_dialog.jsp" %>
+
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Map" %>
 <%@ page import="org.apache.commons.lang.StringUtils" %>
 <%@ page import="org.apache.commons.collections.CollectionUtils" %>
 <%@ page import="org.apache.commons.collections.MapUtils" %>
 
-<%@ page import="com.photon.phresco.framework.model.FrameworkConstants" %>
-<%@ page import="com.photon.phresco.commons.model.ProjectInfo" %>
-<%@ page import="com.photon.phresco.commons.model.Technology" %>
-<%@ page import="com.photon.phresco.model.ModuleGroup" %>
-<%@ page import="com.photon.phresco.model.Module" %>
-<%@ page import="com.photon.phresco.model.Documentation.DocumentationType"%>
+<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
+<%@ page import="com.photon.phresco.commons.model.ArtifactGroup"%>
+<%@ page import="com.photon.phresco.commons.model.ArtifactInfo"%>
+<%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 
 <style>
 	.twipsy {
@@ -114,15 +114,15 @@
 
 	String customerId = (String) request.getAttribute(FrameworkConstants.REQ_CUSTOMER_ID);
 	
-	List<ModuleGroup> leftModules = (List<ModuleGroup>) request.getAttribute(FrameworkConstants.REQ_FEATURES_LEFT_MODULES);
-    List<ModuleGroup> rightModules = (List<ModuleGroup>) request.getAttribute(FrameworkConstants.REQ_FEATURES_RIGHT_MODULES);
+	List<ArtifactGroup> leftModules = (List<ArtifactGroup>) request.getAttribute(FrameworkConstants.REQ_FEATURES_LEFT_MODULES);
+    List<ArtifactGroup> rightModules = (List<ArtifactGroup>) request.getAttribute(FrameworkConstants.REQ_FEATURES_RIGHT_MODULES);
     
     String leftModuleHdr = (String)request.getAttribute(FrameworkConstants.REQ_FEATURES_FIRST_MDL_CAT);
     String rightModuleHdr = (String)request.getAttribute(FrameworkConstants.REQ_FEATURES_SECOND_MDL_CAT);
     
     //For project edit
-    Map<String, String> projectInfoModules = (Map<String, String>) request.getAttribute(FrameworkConstants.REQ_PROJECT_INFO_MODULES);
-    Map<String, String> projectInfoJsLibs = (Map<String, String>) request.getAttribute(FrameworkConstants.REQ_PROJECT_INFO_JSLIBS);
+    Map<String, String> appInfoModules = (Map<String, String>) request.getAttribute(FrameworkConstants.REQ_PROJECT_INFO_MODULES);
+    Map<String, String> appInfoJsLibs = (Map<String, String>) request.getAttribute(FrameworkConstants.REQ_PROJECT_INFO_JSLIBS);
     
     //For previous action
     Map<String, String> selectedModules = (Map<String, String>) request.getAttribute(FrameworkConstants.REQ_TEMP_SELECTEDMODULES);
@@ -148,13 +148,13 @@
     }
 
     String fromPage = (String) request.getAttribute(FrameworkConstants.REQ_FROM_PAGE);
-    ProjectInfo projectInfo = (ProjectInfo) request.getAttribute(FrameworkConstants.REQ_PROJECT_INFO);
+    ApplicationInfo appInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_APPINFO);
     String projectCode = "";
     String techId = "";
-    if (projectInfo != null) {
-        techId = projectInfo.getTechnology().getId();
-        session.setAttribute(projectInfo.getCode(), projectInfo);
-        projectCode = projectInfo.getCode(); 
+    if (appInfo != null) {
+        techId = appInfo.getTechInfo().getVersion();
+        session.setAttribute(appInfo.getCode(), appInfo);
+        projectCode = appInfo.getCode();
     }
     
     String configServerNames = (String) request.getAttribute(FrameworkConstants.REQ_CONFIG_SERVER_NAMES);
@@ -172,12 +172,13 @@
 	    <!--  Pilot projects are loaded here starts-->
 	    <div class="input">
 	    	<%
-	    		String pilotProject = "None";
-	    		if(StringUtils.isNotEmpty(projectInfo.getPilotProjectName())) {
-	    			pilotProject = projectInfo.getPilotProjectName();
+		    	String pilotProject = "None";
+	    		if (StringUtils.isNotEmpty(appInfo.getPilotInfo().getName())) {
+	    			pilotProject = appInfo.getPilotInfo().getName();
 	    		}
 	    	%>
-	    	<input type="text" class="medium" id="selectedPilotProject" name="selectedPilotProject" disabled="disabled" value="<%= pilotProject %>">
+	    	<input type="text" class="medium" id="selectedPilotProject" name="selectedPilotProject" 
+	    		disabled="disabled" value="<%= pilotProject %>">
 	    </div>
 	    <!--  Pilot projects are loaded here ends -->
 	</div>
@@ -193,13 +194,13 @@
 			</div>
 			
 		<% } else { %>
-		
 			<div class="custom_features_wrapper">
 				<div class="tblheader">
 					<table class="zebra-striped">
 						<tr>
 							<th class="editFeatures_th1">
-								<input type="checkbox" value="AllCoreModules" id="checkAllCoreModule" name="<%= moduleType %>" onchange="selectAllChkBoxClk('<%= moduleType %>', this)">
+								<input type="checkbox" value="AllCoreModules" id="checkAllCoreModule" 
+									name="<%= moduleType %>" onchange="selectAllChkBoxClk('<%= moduleType %>', this)">
 							</th>
 							<th class="editFeatures_th2"><%= leftModuleHdr %></th>
 						</tr>
@@ -210,13 +211,13 @@
 						<div class="accordion_panel_inner">
 							<section class="lft_menus_container">
 							<%
-								for (ModuleGroup leftModule : leftModules) {
+								for (ArtifactGroup leftModule : leftModules) {
 									disabledStr = "";
 									checkedStr = "";
 									
 									String pilotVersion = "";
-									if (MapUtils.isNotEmpty(projectInfoModules) && StringUtils.isNotEmpty(projectInfoModules.get(leftModule.getId()))) {
-										pilotVersion = projectInfoModules.get(leftModule.getId());
+									if (MapUtils.isNotEmpty(appInfoModules) && StringUtils.isNotEmpty(appInfoModules.get(leftModule.getId()))) {
+										pilotVersion = appInfoModules.get(leftModule.getId());
 										checkedStr = "checked";
 										disabledStr = "disabled";
 									}
@@ -248,42 +249,42 @@
 													url = serverUrl + "/" + featureUrl;
 												}
 												  
-												List<Module> modules = leftModule.getVersions();
-												if (CollectionUtils.isNotEmpty(modules)) {
-													for (Module module : modules) {
+												List<ArtifactInfo> moduleVersions = leftModule.getVersions();
+												if (CollectionUtils.isNotEmpty(moduleVersions)) {
+													for (ArtifactInfo moduleVersion : moduleVersions) {
 													    String descContent = "";
-							                            if (module.getDoc(DocumentationType.DESCRIPTION) != null) {
-														  	descContent = module.getDoc(DocumentationType.DESCRIPTION).getContent();
+														if (StringUtils.isNotEmpty(moduleVersion.getDescription())) { 
+														  	descContent = moduleVersion.getDescription();
 														}
-							                            
-							                            String helpTextContent = "";
-														if (module.getDoc(DocumentationType.HELP_TEXT) != null) {
-														  	helpTextContent = module.getDoc(DocumentationType.HELP_TEXT).getContent();
+														
+														String helpTextContent = "";
+														if (StringUtils.isNotEmpty(moduleVersion.getHelpText())) { 
+														  	helpTextContent = moduleVersion.getHelpText();
 														}
 							                            
 														checkedStr = "";
 														if (MapUtils.isNotEmpty(selectedModules)) {
 															String selectedVersion = selectedModules.get(leftModule.getId());
-															if (StringUtils.isNotEmpty(selectedVersion) && module.getVersion().equals(selectedVersion)) {
+															if (StringUtils.isNotEmpty(selectedVersion) && moduleVersion.getVersion().equals(selectedVersion)) {
 																checkedStr = "checked";
 															} 
 														}
-														if (StringUtils.isNotEmpty(pilotVersion) && module.getVersion().equals(pilotVersion)) {
+														if (StringUtils.isNotEmpty(pilotVersion) && moduleVersion.getVersion().equals(pilotVersion)) {
 															checkedStr = "checked";
 														}	
 												%>
 													<tr>
 														<td class="editFeatures_td1">
 															<input type="radio" name="<%= leftModule.getId()%>" 
-																value="<%= module.getVersion() %>" <%=disabledStr %> <%= checkedStr %> 
+																value="<%= moduleVersion.getVersion() %>" <%=disabledStr %> <%= checkedStr %> 
 																onclick="selectCheckBox('<%= leftModule.getId()%>', '<%= moduleType %>', this);">
 														</td>
 														<td class="editFeatures_td2">
 															<% descContent = descContent.replaceAll("\"","&quot;"); %>
 															<a href="#" name="ModuleDesc" descImage="<%= url %>" descrContent="<%= descContent %>" 
-																class="<%= leftModule.getId()%>" id="<%= helpTextContent %>" ><%= module.getName() %></a>
+																class="<%= leftModule.getId()%>" id="<%= helpTextContent %>" ><%= moduleVersion.getName() %></a>
 														</td>
-														<td class="editFeatures_td4"><%= module.getVersion() %></td>
+														<td class="editFeatures_td4"><%= moduleVersion.getVersion() %></td>
 													</tr>
 													<%	} %>
 												<% } %>
@@ -317,14 +318,14 @@
 				        <div class="accordion_panel_inner">
 				            <section class="lft_menus_container">
 				            <%
-								for (ModuleGroup rightModule : rightModules) {
+								for (ArtifactGroup rightModule : rightModules) {
 									disabledStr = "";
 									checkedStr = "";
 
 									String pilotVersion = "";
 									if (rightModuleHdr.equals(FrameworkConstants.REQ_JS_LIBS)) {
-										if (MapUtils.isNotEmpty(projectInfoJsLibs) && StringUtils.isNotEmpty(projectInfoJsLibs.get(rightModule.getId()))) {
-											pilotVersion = projectInfoJsLibs.get(rightModule.getId());
+										if (MapUtils.isNotEmpty(appInfoJsLibs) && StringUtils.isNotEmpty(appInfoJsLibs.get(rightModule.getId()))) {
+											pilotVersion = appInfoJsLibs.get(rightModule.getId());
 											checkedStr = "checked";
 											disabledStr = "disabled";
 										}
@@ -332,8 +333,8 @@
 											checkedStr = "checked";
 										}
 									} else {
-										if (MapUtils.isNotEmpty(projectInfoModules) && StringUtils.isNotEmpty(projectInfoModules.get(rightModule.getId()))) {
-											pilotVersion = projectInfoModules.get(rightModule.getId());
+										if (MapUtils.isNotEmpty(appInfoModules) && StringUtils.isNotEmpty(appInfoModules.get(rightModule.getId()))) {
+											pilotVersion = appInfoModules.get(rightModule.getId());
 											checkedStr = "checked";
 											disabledStr = "disabled";
 										}
@@ -372,17 +373,17 @@
 														url = serverUrl + "/" + featureUrl;
 													}
 													  
-											    	List<Module> versions = rightModule.getVersions();
+											    	List<ArtifactInfo> versions = rightModule.getVersions();
 											    	if (CollectionUtils.isNotEmpty(versions)) {
-														for (Module moduleVersion : versions) {
+														for (ArtifactInfo moduleVersion : versions) {
 														    String descContent = "";
-															if (moduleVersion.getDoc(DocumentationType.DESCRIPTION) != null) { 
-															  	descContent = moduleVersion.getDoc(DocumentationType.DESCRIPTION).getContent();
+															if (StringUtils.isNotEmpty(moduleVersion.getDescription())) {
+															  	descContent = moduleVersion.getDescription();
 															}
 															
 															String helpTextContent = "";
-															if (moduleVersion.getDoc(DocumentationType.HELP_TEXT) != null) { 
-															  	helpTextContent = moduleVersion.getDoc(DocumentationType.HELP_TEXT).getContent();
+															if (StringUtils.isNotEmpty(moduleVersion.getHelpText())) {
+															  	helpTextContent = moduleVersion.getHelpText();
 															}
 															
 															checkedStr = "";

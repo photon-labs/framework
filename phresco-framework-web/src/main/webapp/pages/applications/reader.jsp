@@ -17,9 +17,10 @@
   limitations under the License.
   ###
   --%>
-<%@page import="java.io.BufferedReader"%>
-<%@page import="java.io.IOException"%>
-<%@page import="com.photon.phresco.framework.model.FrameworkConstants"%>
+<%@ page import="java.io.BufferedReader"%>
+<%@ page import="java.io.IOException"%>
+
+<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 
 <%
     String projectCode = (String) request.getAttribute(FrameworkConstants.REQ_PROJECT_CODE);

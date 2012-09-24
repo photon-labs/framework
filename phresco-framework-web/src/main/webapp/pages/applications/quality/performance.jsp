@@ -22,15 +22,16 @@
 <%@ page import="java.io.File"%>
 
 <%@ page import="com.photon.phresco.commons.model.ProjectInfo"%>
-<%@ page import="com.photon.phresco.framework.model.FrameworkConstants"%>
+<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.util.TechnologyTypes" %>
+<%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 
 <%@include file="../progress.jsp" %>
 
 <%
-	ProjectInfo projectInfo = (ProjectInfo) request.getAttribute(FrameworkConstants.REQ_PROJECT_INFO);
-	String projectCode = projectInfo.getCode();
-	String techId = projectInfo.getTechnology().getId();
+	ApplicationInfo appInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_APPINFO);
+	String projectCode = appInfo.getCode();
+	String techId = appInfo.getTechInfo().getVersion();
    	String testType = (String) request.getAttribute(FrameworkConstants.REQ_TEST_TYPE);
 	String path = (String) request.getAttribute(FrameworkConstants.PATH);
 %>

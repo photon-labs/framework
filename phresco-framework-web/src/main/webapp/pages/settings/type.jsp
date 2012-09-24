@@ -31,10 +31,9 @@
 <%@ page import="com.photon.phresco.commons.model.SettingsTemplate"%>
 <%@ page import="com.photon.phresco.commons.model.PropertyTemplate"%>
 <%@ page import="com.photon.phresco.commons.model.Technology"%>
-<%@ page import="com.photon.phresco.framework.model.FrameworkConstants"%>
-<%@ page import="com.photon.phresco.model.I18NString"%>
-<%@ page import="com.photon.phresco.model.Server" %>
-<%@ page import="com.photon.phresco.model.Database" %>
+<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
+<%@ page import="com.photon.phresco.commons.model.DownloadInfo"%>
+<%@ page import="com.photon.phresco.commons.model.Element"%>
 
 <%
     String value = "";
@@ -43,8 +42,8 @@
 	String disableStr = "";
     String fromPage = (String) request.getParameter(FrameworkConstants.REQ_FROM_PAGE);
     String oldName = (String) request.getParameter(FrameworkConstants.REQ_OLD_NAME);
-    List<Server> allServers = null;
-    List<Database> allDatabases = null;
+    List<DownloadInfo> allServers = null;
+    List<DownloadInfo> allDatabases = null;
     SettingsInfo settingsInfo = null;
     if (StringUtils.isNotEmpty(oldName)) {
         settingsInfo = (SettingsInfo) session.getAttribute(oldName);
@@ -55,8 +54,8 @@
             FrameworkConstants.REQ_ALL_TECHNOLOGIES);
     
     if (settingsTemplate != null) {
-    	allServers = (List<Server>) request.getAttribute(FrameworkConstants.REQ_ALL_SERVERS);
-    	allDatabases = (List<Database>) request.getAttribute(FrameworkConstants.REQ_ALL_DATABASES);
+    	allServers = (List<DownloadInfo>) request.getAttribute(FrameworkConstants.REQ_ALL_SERVERS);
+    	allDatabases = (List<DownloadInfo>) request.getAttribute(FrameworkConstants.REQ_ALL_DATABASES);
     	List<PropertyTemplate> propertyTemplates = settingsTemplate.getProperties();
 	    for (PropertyTemplate propertyTemplate : propertyTemplates) {
 	    	String masterKey = "";
@@ -65,13 +64,11 @@
 	        List<String> possibleValues = propertyTemplate.getPossibleValues();
 	        boolean isRequired = propertyTemplate.isRequired();
 	        
-			I18NString i18NString = propertyTemplate.getName();
-	        String label = i18NString.get("en-US").getValue();
+	        String label = propertyTemplate.getName();
 			
-			I18NString descStr = propertyTemplate.getDescription();
 			String desc = "";
-			if (descStr != null) {
-	        	desc = descStr.get("en-US").getValue();
+			if (StringUtils.isNotEmpty(propertyTemplate.getDescription())) {
+	        	desc = propertyTemplate.getDescription();
 			}
 			
 			if (key.equals("Server") || key.equals("Database")) {
@@ -169,9 +166,10 @@
 
 	<!-- applies to starts -->
 	<%
-	    if ( settingsTemplate != null) {
-				List<String> appliesTos = settingsTemplate.getAppliesToTechs();
-				if (appliesTos != null) {
+	    if (settingsTemplate != null) {
+	        settingsTemplate.getAppliesToTechs();
+	        List<Element> appliesTos = settingsTemplate.getAppliesToTechs();
+			if (appliesTos != null) {
 	%>
 	
 	<div class="clearfix" id="appliesToErrDiv">
@@ -182,37 +180,37 @@
 			<div class="typeFields" id="typefield">
 				<div id="multilist-scroller">
 					<ul>
-						<% 	
-							String checkedStr = "";
-			            	List<String> selectedAppliesTos = null;
-							if (settingsInfo != null) {
-								selectedAppliesTos = settingsInfo.getAppliesTo();
-							}
-			            	for (String appliesTo : appliesTos) {
-								if (selectedAppliesTos != null ) {
-									if (selectedAppliesTos.contains(appliesTo) ) {
-										checkedStr = "checked";
-									} else {
-										checkedStr = "";
-									}
-								}
-								String technologyName = "";
-								if (CollectionUtils.isNotEmpty(technologies)) {
-									for (Technology technology : technologies) {
-										if (technology.getId().equals(appliesTo)) {
-											technologyName = technology.getName();
-											break;
-										}
-									}
-			            %>
-						<li>
-							<input type="checkbox" name="appliesto" id="appliesto" value="<%= appliesTo %>"  <%= checkedStr %> <%= disableStr %>
-								class="check"><%= technologyName %>
-						</li>
-						<%        
+					<% 	
+						String checkedStr = "";
+		            	List<String> selectedAppliesTos = null;
+						if (settingsInfo != null) {
+							selectedAppliesTos = settingsInfo.getAppliesTo();
+						}
+		            	for (Element appliesTo : appliesTos) {
+							if (selectedAppliesTos != null ) {
+								if (selectedAppliesTos.contains(appliesTo) ) {
+									checkedStr = "checked";
+								} else {
+									checkedStr = "";
 								}
 							}
-						%>
+							String technologyName = "";
+							if (CollectionUtils.isNotEmpty(technologies)) {
+								for (Technology technology : technologies) {
+									if (technology.getId().equals(appliesTo)) {
+										technologyName = technology.getName();
+										break;
+									}
+								}
+		            %>
+								<li>
+									<input type="checkbox" name="appliesto" id="appliesto" value="<%= appliesTo %>"  
+										<%= checkedStr %> <%= disableStr %> class="check"><%= technologyName %>
+								</li>
+					<%        
+							}
+						}
+					%>
 					</ul>
 				</div>
 			</div>
@@ -291,7 +289,7 @@
 				if ($('#settingsType').val() == "Server") {
 					$('#type').find('option').remove();
 					<%
-						for (Server projectInfoServer : allServers) {
+						for (DownloadInfo projectInfoServer : allServers) {
 							String serverName = projectInfoServer.getName();
 					%>
 							$('#type').append($("<option></option>").attr("value", '<%= serverName %>').text('<%= serverName %>'));
@@ -305,7 +303,7 @@
 				if ($('#settingsType').val() == "Database") {
 					$('#type').find('option').remove();
 					<%
-						for (Database projectInfoDatabase : allDatabases) {
+						for (DownloadInfo projectInfoDatabase : allDatabases) {
 							String databaseName = projectInfoDatabase.getName();
 					%>
 							$('#type').append($("<option></option>").attr("value", '<%= databaseName %>').text('<%= databaseName %>'));

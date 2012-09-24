@@ -19,21 +19,18 @@
   --%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
-<%@ page import="java.util.ArrayList"%>
-<%@ page import="java.util.HashMap"%>
-<%@ page import="java.util.Iterator"%>
 <%@ page import="java.util.List"%>
-<%@ page import="java.util.Map"%>
-<%@ page import="com.photon.phresco.framework.model.FrameworkConstants"%>
-<%@ page import="com.photon.phresco.framework.api.Project" %>
-<%@ page import="com.photon.phresco.util.Constants"%>
 <%@ page import="org.apache.commons.collections.CollectionUtils" %>
+
+<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
+<%@ page import="com.photon.phresco.util.Constants"%>
+<%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 
 <script src="js/reader.js" ></script>
 
 <%
-    Project project = (Project) request.getAttribute(FrameworkConstants.REQ_PROJECT);
-	String projectCode = (String)project.getApplicationInfo().getCode();
+    ApplicationInfo appInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_APPINFO);
+	String projectCode = appInfo.getCode();
 	String testType = (String) request.getAttribute(FrameworkConstants.REQ_TEST_TYPE);
 	List<String> projectModules = (List<String>) request.getAttribute(FrameworkConstants.REQ_PROJECT_MODULES);
 %>

@@ -21,7 +21,7 @@
 
 <%@ include file="../progress.jsp" %>
 
-<%@ page import="com.photon.phresco.framework.model.FrameworkConstants"%>
+<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="java.util.List" %>
 <%@ page import="org.apache.commons.collections.CollectionUtils"%>
 <%@ page import="com.phresco.pom.site.Reports"%>

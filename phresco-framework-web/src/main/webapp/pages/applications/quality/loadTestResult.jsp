@@ -22,7 +22,7 @@
 <%@ page import="java.util.List"%>
 
 <%@ page import="com.photon.phresco.framework.model.TestResult"%>
-<%@ page import="com.photon.phresco.framework.model.FrameworkConstants"%>
+<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 
 <style type="text/css">
 	.btn.success, .alert-message.success {

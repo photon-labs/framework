@@ -22,18 +22,20 @@
 <%@ page import="java.util.List"%>
 <%@ page import="java.util.Set"%>
 <%@ page import="org.apache.commons.collections.CollectionUtils" %>
+<%@ page import="org.apache.commons.lang.StringUtils"%>
 
 <%@ page import="com.photon.phresco.framework.model.TestSuiteResult"%>
-<%@ page import="com.photon.phresco.framework.model.FrameworkConstants"%>
+<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.commons.model.ProjectInfo"%>
 <%@ page import="com.photon.phresco.util.TechnologyTypes" %>
+<%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 
 <%@ include file="../progress.jsp" %>
 
 <%
-    ProjectInfo projectInfo = (ProjectInfo)request.getAttribute(FrameworkConstants.REQ_PROJECT_INFO);
-    String projectCode = projectInfo.getCode();
-    String techId = projectInfo.getTechnology().getId();
+    ApplicationInfo appInfo = (ApplicationInfo)request.getAttribute(FrameworkConstants.REQ_APPINFO);
+    String projectCode = appInfo.getCode();
+    String techId = appInfo.getTechInfo().getVersion();
 	String path = (String) request.getAttribute(FrameworkConstants.PATH);
 	String fromPage = (String) request.getAttribute(FrameworkConstants.REQ_FROM_PAGE);
 %>
@@ -112,33 +114,34 @@
 			<%
 			    }
 			%>
-					<li id="label">
-						&nbsp;<strong class="hideCtrl" id="testResultLbl"><s:text name="label.test.suite"/></strong> 
-					</li>
-					<li>
-						<select id="testSuite" name="testSuite"> <!--  class="funcList" -->
-							<option value="All">All</option>
-							<%
-							    if (CollectionUtils.isNotEmpty(testSuites)) {
-									for (TestSuiteResult testSuiteDisplay : testSuites) {
-							%>
-									<option value="<%= testSuiteDisplay.getName() %>" id="<%= testSuiteDisplay.getFailures() %>,<%= testSuiteDisplay.getErrors() %>,<%= testSuiteDisplay.getTests() %>,<%= selectedTestResultFile %>" ><%= testSuiteDisplay.getName() %> </option>
-							<% 
-						        	}
-								}
-							%>
-						</select>
-					</li>
-					<li id="label">
-						&nbsp;<strong id="view" class="hideCtrl"><s:text name="label.test.result.view"/></strong> 
-					</li>
-					<li>
-						<select id="resultView" name="resultView" class="techList selectDefaultWidth"> 
-							<option value="tabular" >Tabular View</option>
-							<option value="graphical" >Graphical View</option>
-						</select>
-					</li>
-				</ul>
+			
+			<li id="label">
+				&nbsp;<strong class="hideCtrl" id="testResultLbl"><s:text name="label.test.suite"/></strong> 
+			</li>
+			<li>
+				<select id="testSuite" name="testSuite"> <!--  class="funcList" -->
+					<option value="All">All</option>
+					<%
+					    if (CollectionUtils.isNotEmpty(testSuites)) {
+							for (TestSuiteResult testSuiteDisplay : testSuites) {
+					%>
+							<option value="<%= testSuiteDisplay.getName() %>" id="<%= testSuiteDisplay.getFailures() %>,<%= testSuiteDisplay.getErrors() %>,<%= testSuiteDisplay.getTests() %>,<%= selectedTestResultFile %>" ><%= testSuiteDisplay.getName() %> </option>
+					<% 
+				        	}
+						}
+					%>
+				</select>
+			</li>
+			<li id="label">
+				&nbsp;<strong id="view" class="hideCtrl"><s:text name="label.test.result.view"/></strong> 
+			</li>
+			<li>
+				<select id="resultView" name="resultView" class="techList selectDefaultWidth"> 
+					<option value="tabular" >Tabular View</option>
+					<option value="graphical" >Graphical View</option>
+				</select>
+			</li>
+		</ul>
 	</div>
 	
 	<!-- Hidden Fields -->

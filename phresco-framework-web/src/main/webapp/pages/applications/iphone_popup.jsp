@@ -20,12 +20,15 @@
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.util.List"%>
+
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.framework.model.BuildInfo"%>
 <%@ page import="com.photon.phresco.commons.XCodeConstants" %>
 <%@ page import="com.photon.phresco.framework.commons.ApplicationsUtil"%>
 <%@ page import="com.photon.phresco.framework.commons.PBXNativeTarget"%>
+
 <%@ include file="progress.jsp" %>
+
 <%
 	// For deploy
     String buildNumber = (String) request.getAttribute(FrameworkConstants.REQ_DEPLOY_BUILD_NUMBER);

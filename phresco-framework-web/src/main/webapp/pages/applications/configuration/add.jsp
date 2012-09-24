@@ -17,23 +17,18 @@
   limitations under the License.
   ###
   --%>
-
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.util.List"%>
 <%@ page import="org.apache.commons.lang.StringUtils" %>
 <%@ page import="org.apache.commons.collections.CollectionUtils"%>
 
-<%@ page import="com.photon.phresco.framework.model.FrameworkConstants"%>
-<%@ page import="com.photon.phresco.commons.model.ProjectInfo"%>
+<%@	page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.framework.model.SettingsInfo"%>
 <%@ page import="com.photon.phresco.commons.model.SettingsTemplate"%>
 <%@ page import="com.photon.phresco.util.Constants"%>
 <%@ page import="com.photon.phresco.configuration.Environment" %>
-<%@ page import="com.photon.phresco.model.Server" %>
-<%@ page import="com.photon.phresco.model.Database"%>
-<%@ page import="com.photon.phresco.commons.model.WebService"%>
-<%@ page import="com.photon.phresco.commons.model.Technology"%>
+<%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 
 <%@ include file="../../userInfoDetails.jsp" %>
 
@@ -70,19 +65,19 @@
 		fromPage = (String) request.getAttribute(FrameworkConstants.REQ_FROM_PAGE);
 	}
 		
-	ProjectInfo projectInfo = (ProjectInfo)request.getAttribute(FrameworkConstants.REQ_PROJECT_INFO);
+	ApplicationInfo appInfo = (ApplicationInfo)request.getAttribute(FrameworkConstants.REQ_APPINFO);
 	String projectCode = "";
-	List<Server> projectInfoServers = null;
-	List<Database> projectInfoDbs = null;
-	List<WebService> projectInfoWebServices = null;
+	List<String> projectInfoServers = null;
+	List<String> projectInfoDbs = null;
+	List<String> projectInfoWebServices = null;
 	boolean isEmailSuppoterd = false;
-	if (projectInfo != null) {
-		projectCode = projectInfo.getCode();
-		Technology technology = projectInfo.getTechnology();
-		projectInfoServers = technology.getServers();
-		projectInfoDbs = technology.getDatabases();
-		projectInfoWebServices = technology.getWebservices();
-		isEmailSuppoterd = technology.isEmailSupported();
+	if (appInfo != null) {
+		projectCode = appInfo.getCode();
+		String technology = appInfo.getTechInfo().getVersion();
+		projectInfoServers = appInfo.getSelectedServers();
+		projectInfoDbs = appInfo.getSelectedDatabases();
+		projectInfoWebServices = appInfo.getSelectedWebservices();
+		isEmailSuppoterd = appInfo.isEmailSupported();
 	}
 	List<Environment> envs = (List<Environment>) request.getAttribute(FrameworkConstants.ENVIRONMENTS);
 	List<SettingsTemplate> settingsTemplates = (List<SettingsTemplate>)request.getAttribute(FrameworkConstants.REQ_SETTINGS_TEMPLATES);

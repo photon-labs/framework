@@ -25,21 +25,21 @@
 <%@ page import="java.util.Map"%>
 <%@ page import="org.apache.commons.collections.CollectionUtils" %>
 
-<%@ page import="com.photon.phresco.commons.model.ProjectInfo"%>
-<%@ page import="com.photon.phresco.framework.model.FrameworkConstants"%>
+<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.framework.model.BuildInfo"%>
 <%@ page import="com.photon.phresco.util.Constants"%>
 <%@ page import="com.photon.phresco.configuration.Environment"%>
 <%@ page import="com.photon.phresco.util.TechnologyTypes" %>
+<%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 
 <script src="js/reader.js" ></script>
 <script src="js/select-envs.js"></script>
 
 <%
-	ProjectInfo projectInfo = (ProjectInfo) request.getAttribute(FrameworkConstants.REQ_PROJECT_INFO);
-	String projectCode = projectInfo.getCode();
+	ApplicationInfo appInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_APPINFO);
+	String projectCode = appInfo.getCode();
 	String testType = (String) request.getAttribute(FrameworkConstants.REQ_TEST_TYPE);
-    String techId = projectInfo.getTechnology().getId();
+    String techId = appInfo.getTechInfo().getVersion();
     List<BuildInfo> buildInfos = (List<BuildInfo>) request.getAttribute(FrameworkConstants.REQ_TEST_BUILD_INFOS);
     if (CollectionUtils.isNotEmpty(buildInfos)) {
         buildInfos = new ArrayList<BuildInfo>();
