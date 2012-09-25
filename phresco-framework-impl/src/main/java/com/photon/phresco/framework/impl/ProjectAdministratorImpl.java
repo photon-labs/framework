@@ -164,7 +164,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 	 * @return Project based on the given information
 	 */
 	@Override
-	public Project createProject(ApplicationInfo info, File path, User userInfo) throws PhrescoException {
+	public Project createProject(ApplicationInfo info, File path) throws PhrescoException {
 
 		S_LOGGER.debug("Entering Method ProjectAdministratorImpl.createProject(ProjectInfo info, File path)");
 		S_LOGGER.debug("createProject() > info name : " + info.getName());
@@ -268,7 +268,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 	 * @return Project based on the given information
 	 */
 	@Override
-	public Project updateProject(ApplicationInfo delta, ApplicationInfo appInfo, File path, User userInfo) throws PhrescoException {
+	public Project updateProject(ApplicationInfo delta, ApplicationInfo appInfo, File path) throws PhrescoException {
 		S_LOGGER.debug("Entering Method ProjectAdministratorImpl.updateProject(ProjectInfo info, File path)");
 		S_LOGGER.debug("updateProject() > info name : " + delta.getName());
 
@@ -702,16 +702,6 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 	}
 	
 	@Override
-	public List<Technology> getTechnologies() throws PhrescoException {
-		try {
-			return getServiceManager().getArcheTypes(ServiceConstants.DEFAULT_CUSTOMER_NAME);
-		} catch (ClientHandlerException ex) {
-			S_LOGGER.error(ex.getLocalizedMessage());
-			throw new PhrescoException(ex);
-		}
-	}
-
-	@Override
 	public List<Technology> getAllTechnologies(String customerId) throws PhrescoException {
 		try {
 			return getServiceManager().getArcheTypes(customerId);
@@ -1035,7 +1025,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 if (project == null) {
 			 throw new PhrescoException("Project code should not be valid");
 		 }
-		 String techId = project.getApplicationInfo().getPilotContent().getId();
+		 String techId = project.getApplicationInfo().getTechInfo().getVersion();
 		 List<SettingsInfo> settingsInfos = filterSettingsInfo(getSettingsInfos(envName), type, techId);
 		 if (CollectionUtils.isNotEmpty(settingsInfos)) {
 			 return settingsInfos;
@@ -1718,9 +1708,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 S_LOGGER.debug("getAllModules() TechnologyName = "+techId);
 		 
 		 try {
-			 List<ArtifactGroup> modules = getServiceManager().getModules(customerId);
-
-			 return modules;
+			 return getServiceManager().getModules(customerId, techId, REST_QUERY_TYPE_MODULE);
 		 } catch (Exception e) {
 			 throw new PhrescoException(e);
 		 }
@@ -1739,7 +1727,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 				     List<CoreOption> coreOptions = module.getAppliesTo();
 				     if (CollectionUtils.isNotEmpty(coreOptions)) {
 				         for (CoreOption coreOption : coreOptions) {
-				             if (coreOption.isCore() && coreOption.getTechId().equals(techId)) {
+				             if (coreOption.isCore()) {
 		                         coreModules.add(module);
 		                     }
 				         }
@@ -1766,7 +1754,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 				     List<CoreOption> coreOptions = module.getAppliesTo();
                      if (CollectionUtils.isNotEmpty(coreOptions)) {
                          for (CoreOption coreOption : coreOptions) {
-                             if (!coreOption.isCore() && coreOption.getTechId().equals(techId)) {
+                             if (!coreOption.isCore()) {
                                  customModules.add(module);
                              }
                          }
@@ -2566,22 +2554,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 	    S_LOGGER.debug("Entering Method ProjectAdministratorImpl.getJSLibs(String techId, String customerId)");
 		 
 	    try {
-	        List<ArtifactGroup> allJsLibs = getServiceManager().getJsLibs(customerId);
-	        List<ArtifactGroup> jsLibs = new ArrayList<ArtifactGroup>();
-	        if (CollectionUtils.isNotEmpty(allJsLibs)) {
-	            for (ArtifactGroup jslib : allJsLibs) {
-	                List<CoreOption> coreOptions = jslib.getAppliesTo();
-	                if (CollectionUtils.isNotEmpty(coreOptions)) {
-	                    for (CoreOption coreOption : coreOptions) {
-                            if (coreOption.getTechId().equals(techId)) {
-                                jsLibs.add(jslib);
-                            }
-                        }
-	                }
-				}
-	        }
-
-	        return jsLibs;
+	        return getServiceManager().getModules(customerId, techId, REST_QUERY_TYPE_JS);
 	    } catch (Exception e) {
 	        throw new PhrescoException(e);
 	    }

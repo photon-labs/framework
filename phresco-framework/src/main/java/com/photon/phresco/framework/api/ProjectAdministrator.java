@@ -61,7 +61,7 @@ public interface ProjectAdministrator {
      * @return
      * @throws PhrescoException
      */
-    Project createProject(ApplicationInfo info, File path, User userInfo) throws PhrescoException;
+    Project createProject(ApplicationInfo info, File path) throws PhrescoException;
 
     /**
      * Update the project with the given project information
@@ -73,7 +73,7 @@ public interface ProjectAdministrator {
      * @throws PhrescoException
      * 
      */
-    Project updateProject(ApplicationInfo delta, ApplicationInfo appInfo,File path, User userInfo) throws PhrescoException;
+    Project updateProject(ApplicationInfo delta, ApplicationInfo appInfo, File path) throws PhrescoException;
 
     /**
      * Returns the project for the specified project code
@@ -84,52 +84,57 @@ public interface ProjectAdministrator {
     Project getProject(String projectCode) throws PhrescoException;
 
     /**
-     * Returns all application types
+     * Returns all application types for the specified customer
+     * @param customerId
      * @return
      * @throws PhrescoException
      */
     List<ApplicationType> getApplicationTypes(String customerId) throws PhrescoException;
 
     /**
-     * Returns Application type object for the given name
+     * Returns Application type object for the specified applicationType and the customer
      * @param name of the application type [Web, Mobile or Webservice]
+     * @param customerId
      * @return Application Type
      * @throws PhrescoException
      */
     ApplicationType getApplicationType(String appTypeId, String customerId) throws PhrescoException;
 
     /**
-     * Returns all application types
+     * Returns all technologies of the specified customer
+     * @param customerId
      * @return
      * @throws PhrescoException
      */
     List<Technology> getAllTechnologies(String customerId) throws PhrescoException;
     
-    List<Technology> getTechnologies() throws PhrescoException;
-
     /**
-     * Returns Technology for the given technolgoy Id
+     * Returns Technology for the specified technology Id and the customer
+     * @param techId
+     * @param customerId
      * @return Technology
      * @throws PhrescoException
      */
     Technology getTechnology(String techId, String customerId) throws PhrescoException;
     
     /**
-     * Returns list of Technology for the given appType Id
+     * Returns list of Technology for the specified appType Id and the customer
+     * @param appType
+     * @param customerId
      * @return List<Technology>
      * @throws PhrescoException
      */
     List<Technology> getTechnologies(String appType, String customerId) throws PhrescoException;
     
     /**
-     * Returns Technology for the given appTypeId and techId
+     * Returns Technology for the specified appTypeId, techId and the customer
      * @return Technology
      * @throws PhrescoException
      */
     Technology getTechnology(String appType, String techId, String customerId) throws PhrescoException;
 
     /**
-     * Deletes list of projects for the given project codes
+     * Deletes list of projects for the specified project codes
      * @param projectCodes
      * @throws PhrescoException
      */
@@ -152,14 +157,14 @@ public interface ProjectAdministrator {
     List<Project> discover(List<File> paths, String customerId) throws PhrescoException;
 
     /**
-     * Returns all the settings template available in the service repository
+     * Returns all the settings template of the specified customer
      * @return
      * @throws PhrescoException
      */
     List<SettingsTemplate> getSettingsTemplates(String customerId) throws PhrescoException;
 
     /**
-     * Returns the settings template which matched to the given type
+     * Returns the settings template of the specified customer which matched to the given type
      * @param type
      * @return
      * @throws PhrescoException
@@ -167,7 +172,7 @@ public interface ProjectAdministrator {
     SettingsTemplate getSettingsTemplate(String type, String customerId) throws PhrescoException;
 
     /**
-     * Creates settings.info object under the projects location
+     * Creates settings.xml object under the projects location
      * @param info
      * @param envName
      * @throws PhrescoException
@@ -207,7 +212,6 @@ public interface ProjectAdministrator {
      */
     List<SettingsInfo> getSettingsInfos(String envName) throws PhrescoException;
 
-
     /**
      * Returns list of setting informations based on the technology id and type specified for each setting
      * For example, Server, Database or Email related settings will be returned
@@ -218,7 +222,6 @@ public interface ProjectAdministrator {
      * @throws PhrescoException
      */
     List<SettingsInfo> getSettingsInfos(String type, String projectCode, String envName) throws PhrescoException;
-    
 
     /**
      * Returns list of setting informations based on the type selected

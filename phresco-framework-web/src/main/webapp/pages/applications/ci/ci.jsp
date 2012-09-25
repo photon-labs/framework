@@ -290,10 +290,11 @@
 	    	disableControl($("#configure"), "btn disabled");
 	    }
 	    
-	//     RBACK implemented
-	    if ('<%= disableCI %>' == 'true') {
+		//RBACK implemented
+		/* TODO:Lohes */
+	    <%-- if ('<%= disableCI %>' == 'true') {
 	    	disableCI();	//Restrict CI
-	    }
+	    } --%>
 	    
 	    // delete ci builds
 	    $('#deleteButton').click(function() {

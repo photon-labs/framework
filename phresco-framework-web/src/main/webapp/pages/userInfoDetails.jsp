@@ -21,15 +21,15 @@
 <%@ page import="com.photon.phresco.commons.model.User" %>
 <%@ page import="com.photon.phresco.commons.model.Role" %>
 
-<%
+<!-- TODO:Lohes -->
+<%-- <%
 	User userInfo = (User)session.getAttribute(FrameworkConstants.REQ_USER_INFO);
 	boolean disableCI = false;
-	if (userInfo == null || userInfo.getDisplayName() == null) {
-	request.setAttribute(FrameworkConstants.REQ_LOGIN_ERROR, "Session expired");
-
+	if (userInfo == null) {
+		request.setAttribute(FrameworkConstants.REQ_LOGIN_ERROR, "Session expired");
 	} else {
-		if (userInfo.getRoles() != null) {
-			for (Role role : userInfo.getRoles()) {
+		if (userInfo.getRoleIds() != null) {
+			for (String role : userInfo.getRoleIds()) {
 				if (role.getName().equals(FrameworkConstants.ENGINEER)) {
 				 	disableCI = true;	// Restrict CI
 %>
@@ -48,4 +48,4 @@
 			}
 		}
 	}
-%>
+%> --%>

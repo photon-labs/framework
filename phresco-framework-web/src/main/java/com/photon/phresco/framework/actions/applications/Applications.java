@@ -366,8 +366,7 @@ public class Applications extends FrameworkBaseAction {
 			setFeatures(administrator, appInfo);
 			S_LOGGER.debug("Going to create project, Project info values "
 					+ appInfo.toString());
-			User userInfo = (User) getHttpSession().getAttribute(REQ_USER_INFO);
-			administrator.createProject(appInfo, null, userInfo);
+			administrator.createProject(appInfo, null);
 			addActionMessage(getText(SUCCESS_PROJECT,
 					Collections.singletonList(appInfo.getName())));
 		} catch (Exception e) {

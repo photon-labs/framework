@@ -648,7 +648,8 @@ public class Settings extends FrameworkBaseAction {
 			}
 			
 			getHttpRequest().setAttribute(REQ_CURRENT_SETTINGS_TEMPLATE, settingsTemplate);
-			getHttpRequest().setAttribute(REQ_ALL_TECHNOLOGIES, administrator.getTechnologies());
+			// TODO:Lohes
+			getHttpRequest().setAttribute(REQ_ALL_TECHNOLOGIES, administrator.getAllTechnologies("photon"));
 		} catch (Exception e) {
         	if (debugEnabled) {
                 S_LOGGER.error("Entered into catch block of Settings.settingsType()"+ FrameworkUtil.getStackTraceAsString(e));

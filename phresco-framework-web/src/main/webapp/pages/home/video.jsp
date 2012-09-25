@@ -21,6 +21,7 @@
 
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.commons.model.VideoType" %>
+<%@ page import="com.photon.phresco.commons.model.ArtifactGroup"%>
 
 <script type="text/javascript">
 	$(document).ready(function() {
@@ -36,7 +37,7 @@
 <video id="video" controls preload="none" class="video-js" width="440" height="315">
 	<%
 		String url = "";
-		String vType = "";
+		ArtifactGroup.Type vType = null;
 		String codecs = "";
 		for(VideoType videoType : videoTypes) {
 			url = serverUrl + videoType.getUrl();
