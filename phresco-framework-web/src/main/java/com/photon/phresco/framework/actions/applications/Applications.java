@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
@@ -49,9 +48,7 @@ import org.tmatesoft.svn.core.SVNException;
 import com.google.gson.Gson;
 import com.opensymphony.xwork2.Action;
 import com.opensymphony.xwork2.ActionContext;
-import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
-import com.photon.phresco.commons.model.ApplicationType;
 import com.photon.phresco.commons.model.DownloadInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.Technology;
@@ -59,7 +56,6 @@ import com.photon.phresco.commons.model.User;
 import com.photon.phresco.commons.model.WebService;
 import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.PhrescoException;
-import com.photon.phresco.framework.FrameworkConfiguration;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.SVNAccessor;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
@@ -70,7 +66,6 @@ import com.photon.phresco.framework.commons.ApplicationsUtil;
 import com.photon.phresco.framework.commons.DiagnoseUtil;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.commons.LogErrorReport;
-import com.photon.phresco.framework.impl.ClientHelper;
 import com.photon.phresco.framework.model.CertificateInfo;
 import com.photon.phresco.framework.model.PropertyInfo;
 import com.photon.phresco.framework.model.SettingsInfo;
@@ -78,56 +73,63 @@ import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.model.Scm;
 import com.phresco.pom.util.PomProcessor;
-import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientHandlerException;
-import com.sun.jersey.api.client.GenericType;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.WebResource.Builder;
 
 public class Applications extends FrameworkBaseAction {
+    
 	private static final long serialVersionUID = -4282767788002019870L;
 
 	private static final Logger S_LOGGER = Logger.getLogger(Applications.class);
-	private String projectCode = null;
-	private String fromPage = null;
-	private String repositoryUrl = null;
-	private String userName = null;
-	private String password = null;
-	private String revision = null;
-	private String revisionVal = null;
-	private String globalValidationStatus = null;
-	private List<String> pilotModules = null;
-	private List<String> pilotJSLibs = null;
-	private String showSettings = null;
+	private static Boolean isDebugEnabled = S_LOGGER.isDebugEnabled();
+	
+	private String projectCode = "";
+	
+	private String globalValidationStatus = "";
+	
+	private String showSettings = "";
 	private List<String> settingsEnv = null;
+	
 	private List<String> versions = null;
-	private String selectedVersions = null;
-	private String selectedAttrType = null;
-	private String selectedParamName = null;
-	private String hiddenFieldValue = null;
-	private String divTobeUpdated = null;
-	boolean hasError = false;
-	private String envError = "";
+	private String selectedVersions = "";
+	private String selectedAttrType = "";
+	private String selectedParamName = "";
+	private String divTobeUpdated = "";
+	
 	private List<String> techVersions = null;
 	private boolean hasConfiguration = false;
-	private String configServerNames = null;
-	private String configDbNames = null;
-	private boolean svnImport = false;
-	private String svnImportMsg = null;
+	private String configServerNames = "";
+	private String configDbNames = "";
+	
 	List<String> deletableDbs = new ArrayList<String>();
-	private String fromTab = null;
-	private String fileType = null;
-	private String fileorfolder = null;
+	private String fileType = "";
+	private String fileorfolder = "";
+	
 	//svn info
-	private String credential = null;
-	private String customerId = null;
-	private String application = null;
+	private String repositoryUrl = "";
+	private String credential = "";
+	private String customerId = "";
+	private String application = "";
+	private String userName = "";
+    private String password = "";
+    private String revision = "";
+    private String revisionVal = "";
+    private boolean svnImport = false;
+    private String svnImportMsg = "";
+    
 	// import from git
 	private String repoType = "";
+	
+	private String fromPage = "";
+	private String fromTab = "";
+	
+	boolean hasError = false;
+    private String envError = "";
 
 	public String list() {
 		long start = System.currentTimeMillis();
-		S_LOGGER.debug("Entering Method  Applications.list()");
+		if (isDebugEnabled) {
+		    S_LOGGER.debug("Entering Method  Applications.list()");
+		}
 		
 		try {
 			getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
@@ -147,7 +149,9 @@ public class Applications extends FrameworkBaseAction {
 	}
 
 	public String applicationDetails() {
-		S_LOGGER.debug("Entering Method  Applications.applicationDetails()");
+	    if (isDebugEnabled) {
+	        S_LOGGER.debug("Entering Method  Applications.applicationDetails()");
+	    }
 
 		try {
 			getHttpSession().removeAttribute(projectCode);
@@ -172,7 +176,9 @@ public class Applications extends FrameworkBaseAction {
 	}
 
 	public String appInfo() {
-		S_LOGGER.debug("Entering Method  Applications.add()");
+	    if (isDebugEnabled) {
+	        S_LOGGER.debug("Entering Method  Applications.add()");
+	    }
 
 		try {
 			if (StringUtils.isNotEmpty(fromPage)) {
@@ -212,7 +218,6 @@ public class Applications extends FrameworkBaseAction {
 			new LogErrorReport(e, REQ_TITLE_ADD_APPLICATION);
 			
 			return LOG_ERROR;
-			
 		} catch (Exception e) {
 			S_LOGGER.error("Entered into catch block of Applications.appInfo()"
 					+ FrameworkUtil.getStackTraceAsString(e));
@@ -228,7 +233,9 @@ public class Applications extends FrameworkBaseAction {
 	}
 
 	public String applicationType() {
-		S_LOGGER.debug("Entering Method  Applications.applicationType()");
+	    if (isDebugEnabled) {
+	        S_LOGGER.debug("Entering Method  Applications.applicationType()");
+	    }
 		
 		try {
 			ProjectAdministrator administrator = PhrescoFrameworkFactory
@@ -257,7 +264,9 @@ public class Applications extends FrameworkBaseAction {
 	}
 
 	public String technology() {
-		S_LOGGER.debug("Entering Method  Applications.technology()");
+	    if (isDebugEnabled) {
+	        S_LOGGER.debug("Entering Method  Applications.technology()");
+	    }
 		
 		try {
 			String selectedTechnology = getHttpRequest().getParameter(REQ_TECHNOLOGY);
@@ -299,6 +308,10 @@ public class Applications extends FrameworkBaseAction {
 	}
 
 	public String techVersions() {
+	    if (isDebugEnabled) {
+	        S_LOGGER.debug("Entering Method  Applications.techVersions()");
+	    }
+	    
 		try {
 			String selectedTechnology = getHttpRequest().getParameter(REQ_TECHNOLOGY);
 			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
@@ -316,12 +329,14 @@ public class Applications extends FrameworkBaseAction {
 	}
 
 	public String previous() throws PhrescoException {
-		S_LOGGER.debug("Entered previous()");
+	    if (isDebugEnabled) {
+	        S_LOGGER.debug("Entering Method  Applications.previous()");
+	    }
 
 		try {
 			getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
 			ProjectInfo projectInfo = null;
-			if (projectCode != null) {
+			if (StringUtils.isNotEmpty(projectCode)) {
 				projectInfo = (ProjectInfo) getHttpSession().getAttribute(projectCode);
 				getHttpRequest().setAttribute(REQ_TEMP_SELECTED_PILOT_PROJ,
 						getHttpRequest().getParameter(REQ_SELECTED_PILOT_PROJ));
@@ -358,10 +373,12 @@ public class Applications extends FrameworkBaseAction {
 	}
 
 	public String save() throws PhrescoException {
-		S_LOGGER.debug("Entering Method Applications.save()");
+	    if (isDebugEnabled) {
+	        S_LOGGER.debug("Entering Method Applications.save()");
+	    }
 
-		ApplicationInfo appInfo = (ApplicationInfo) getHttpSession().getAttribute(projectCode);
 		try {
+		    ApplicationInfo appInfo = (ApplicationInfo) getHttpSession().getAttribute(projectCode);
 			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
 			setFeatures(administrator, appInfo);
 			S_LOGGER.debug("Going to create project, Project info values "
@@ -383,7 +400,9 @@ public class Applications extends FrameworkBaseAction {
 	}
 
 	public String update() throws PhrescoException, CloneNotSupportedException {
-		S_LOGGER.debug("Entering Method  Applications.update()");
+	    if (isDebugEnabled) {
+	        S_LOGGER.debug("Entering Method  Applications.update()");
+	    }
 
 		BufferedReader reader = null;
 		ApplicationInfo appInfo = (ApplicationInfo) getHttpSession().getAttribute(
@@ -392,6 +411,7 @@ public class Applications extends FrameworkBaseAction {
 			ProjectAdministrator administrator = PhrescoFrameworkFactory
 					.getProjectAdministrator();
 			setFeatures(administrator, appInfo);
+			// TODO:Lohes
 //			ApplicationInfo originalAppInfo = appInfo.clone();
 			File projectPath = new File(Utility.getProjectHome(),
 					appInfo.getCode() + File.separator + FOLDER_DOT_PHRESCO
@@ -404,11 +424,11 @@ public class Applications extends FrameworkBaseAction {
 			}
 			List<String> modules = appInfo.getSelectedModules();
 			List<String> jsLibraries = appInfo.getSelectedJSLibs();
-			if (modules == null) {
+			if (CollectionUtils.isEmpty(modules)) {
 				appInfo.setSelectedModules(null);
 			}
 
-			if (jsLibraries == null) {
+			if (CollectionUtils.isEmpty(jsLibraries)) {
 				appInfo.setSelectedJSLibs(null);
 			}
 			try {
@@ -483,20 +503,27 @@ public class Applications extends FrameworkBaseAction {
 		return discover();
 	}
 
-	private void compareVersions(String dbName,
-			List<String> projectInfoDbVersions, List<String> newDbVersions) {
-		for (String projectInfoDbVersion : projectInfoDbVersions) {
-			if (newDbVersions.contains(projectInfoDbVersion)) {
+	private void compareVersions(String dbName, List<String> projectInfoDbVersions, List<String> newDbVersions) throws PhrescoException {
+	    if (isDebugEnabled) {
+	        S_LOGGER.debug("Entering Method  Applications.compareVersions()");
+	    }
+		try {
+            for (String projectInfoDbVersion : projectInfoDbVersions) {
+            	if (newDbVersions.contains(projectInfoDbVersion)) {
 
-			} else {
-				deletableDbs.add(dbName + "/" + projectInfoDbVersion.trim());
-			}
-		}
+            	} else {
+            		deletableDbs.add(dbName + "/" + projectInfoDbVersion.trim());
+            	}
+            }
+        } catch (Exception e) {
+            throw new PhrescoException(e);
+        }
 	}
 
-	private void setFeatures(ProjectAdministrator administrator,
-			ApplicationInfo appInfo) throws PhrescoException {
-		S_LOGGER.debug("Entering Method  Applications.setFeatures()");
+	private void setFeatures(ProjectAdministrator administrator, ApplicationInfo appInfo) throws PhrescoException {
+	    if (isDebugEnabled) {
+	        S_LOGGER.debug("Entering Method  Applications.setFeatures()");
+	    }
 		
 		try {
 			String module = getHttpRequest().getParameter(REQ_SELECTEDMODULES);
@@ -522,43 +549,10 @@ public class Applications extends FrameworkBaseAction {
 		}
 	}
 
-	public String edit() {
-		S_LOGGER.debug("Entering Method  Applications.edit()");
-
-		try {
-			FrameworkConfiguration configuration = null;
-			configuration = PhrescoFrameworkFactory.getFrameworkConfig();
-			Client client = ClientHelper.createClient();
-			WebResource resource = client.resource(configuration
-					.getServerPath() + FrameworkConstants.REST_APPS_PATH);
-			Builder builder = resource.accept(MediaType.APPLICATION_JSON_TYPE);
-			GenericType<List<ApplicationType>> genericType = new GenericType<List<ApplicationType>>() {
-			};
-			List<ApplicationType> applicationTypes = builder.get(genericType);
-			if (S_LOGGER.isDebugEnabled()) {
-				S_LOGGER.debug("Application Types received from rest service");
-				if (applicationTypes != null) {
-					for (ApplicationType applicationType : applicationTypes) {
-						S_LOGGER.debug("Application Type value"
-								+ applicationType.toString());
-					}
-				}
-			}
-			getHttpRequest().setAttribute(REQ_FROM_PAGE, FROM_PAGE_EDIT);
-			getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
-		} catch (Exception e) {
-			S_LOGGER.error("Entered into catch block of  Applications.edit()"
-					+ FrameworkUtil.getStackTraceAsString(e));
-			new LogErrorReport(e, "Project edit");
-			
-			return LOG_ERROR;
-		}
-
-		return APP_APPLICATION;
-	}
-
 	public String delete() {
-		S_LOGGER.debug("Entering Method  Applications.delete()");
+	    if (isDebugEnabled) {
+	        S_LOGGER.debug("Entering Method  Applications.delete()");
+	    }
 
 		try {
 			HttpServletRequest request = (HttpServletRequest) ActionContext
@@ -589,9 +583,11 @@ public class Applications extends FrameworkBaseAction {
 	}
 
 	public String importSVNApplication() {
-		S_LOGGER.debug("Entering Method  Applications.importApplication()");
-		S_LOGGER.debug("repoType " + repoType);
-		S_LOGGER.debug("repositoryUrl " + repositoryUrl);
+	    if (isDebugEnabled) {
+	        S_LOGGER.debug("Entering Method  Applications.importApplication()");
+		    S_LOGGER.debug("repoType " + repoType);
+		    S_LOGGER.debug("repositoryUrl " + repositoryUrl);
+	    }
 		
 		try {
 			File checkOutDir = new File(Utility.getProjectHome());
@@ -650,10 +646,13 @@ public class Applications extends FrameworkBaseAction {
 	}
 	
 	public String importGITApplication() {
-		S_LOGGER.debug("Entering Method  Applications.importApplication()");
-		S_LOGGER.debug("repoType " + repoType);
-		S_LOGGER.debug("repositoryUrl " + repositoryUrl);
-		S_LOGGER.debug("Entering Method  Applications.importFromGit()");
+	    if (isDebugEnabled) {
+    		S_LOGGER.debug("Entering Method  Applications.importApplication()");
+    		S_LOGGER.debug("repoType " + repoType);
+    		S_LOGGER.debug("repositoryUrl " + repositoryUrl);
+    		S_LOGGER.debug("Entering Method  Applications.importFromGit()");
+	    }
+	    
 		try {
 			File gitImportTemp = new File(Utility.getPhrescoTemp(), GIT_IMPORT_TEMP_DIR);
 			S_LOGGER.debug("gitImportTemp " + gitImportTemp);
@@ -696,11 +695,17 @@ public class Applications extends FrameworkBaseAction {
 	}
 
 	public String importFromSvn() {
+	    if (isDebugEnabled) {
+	        S_LOGGER.debug("Entering Method  Applications.importFromSvn()");
+	    }
+	    
 		return APP_IMPORT_FROM_SVN;
 	}
 	
 	public String updateProjectPopup() {
-		S_LOGGER.debug("Entering Method  Applications.updateProjectPopup()");
+	    if (isDebugEnabled) {
+	        S_LOGGER.debug("Entering Method  Applications.updateProjectPopup()");
+	    }
 		
 		try {
 			String connectionUrl = "";
@@ -726,7 +731,10 @@ public class Applications extends FrameworkBaseAction {
 	}
 	
 	public String updateGitProject() {
-		S_LOGGER.debug("Entering Method  Applications.updateGitProject()");
+	    if (isDebugEnabled) {
+	        S_LOGGER.debug("Entering Method  Applications.updateGitProject()");
+	    }
+	    
 		try {
 			S_LOGGER.debug("update SCM Connection " + repositoryUrl);
 			S_LOGGER.debug("userName " + userName);
@@ -741,19 +749,19 @@ public class Applications extends FrameworkBaseAction {
 			
 			svnImport = true;
 			svnImportMsg = getText(SUCCESS_PROJECT_UPDATE);
-		} catch(org.apache.commons.io.FileExistsException e) { // Destination '/Users/kaleeswaran/projects/PHR_Phpblog' already exists
+		} catch (org.apache.commons.io.FileExistsException e) { // Destination '/Users/kaleeswaran/projects/PHR_Phpblog' already exists
 			S_LOGGER.error("Entered into catch block of Applications.importFromGit()" + getText(FAILURE_PROJECT_UPDATE) + FrameworkUtil.getStackTraceAsString(e));
 			svnImport = false;
 			svnImportMsg = getText(FAILURE_PROJECT_UPDATE);
-		} catch(org.eclipse.jgit.api.errors.TransportException e) { //Invalid remote: origin (URL)
+		} catch (org.eclipse.jgit.api.errors.TransportException e) { //Invalid remote: origin (URL)
 			S_LOGGER.error("Entered into catch block of Applications.importFromGit()" + getText(FAILURE_PROJECT_UPDATE) + FrameworkUtil.getStackTraceAsString(e));
 			svnImport = false;
 			svnImportMsg = getText(INVALID_URL);
-		} catch(org.eclipse.jgit.api.errors.InvalidRemoteException e) { //Invalid remote: origin (URL)
+		} catch (org.eclipse.jgit.api.errors.InvalidRemoteException e) { //Invalid remote: origin (URL)
 			S_LOGGER.error("Entered into catch block of Applications.importFromGit()" + getText(FAILURE_PROJECT_UPDATE) + FrameworkUtil.getStackTraceAsString(e));
 			svnImport = false;
 			svnImportMsg = getText(INVALID_URL);
-		}  catch(PhrescoException e) {
+		}  catch (PhrescoException e) {
 	    	S_LOGGER.error("Entered into catch block of Applications.importFromGit()" + getText(FAILURE_PROJECT_UPDATE) + FrameworkUtil.getStackTraceAsString(e));
 	    	svnImport = false;
 	    	svnImportMsg = getText(INVALID_FOLDER);
@@ -762,11 +770,14 @@ public class Applications extends FrameworkBaseAction {
 			svnImport = false;
 			svnImportMsg = getText(FAILURE_PROJECT_UPDATE);
 		}
+	    
 		return SUCCESS;
 	}
 	
 	public String updateSVNProject() {
-		S_LOGGER.debug("Entering Method  Applications.updateSVNProject()");
+	    if (isDebugEnabled) {
+	        S_LOGGER.debug("Entering Method  Applications.updateSVNProject()");
+	    }
 		try {
 			S_LOGGER.debug("update SCM Connection " + repositoryUrl);
 			S_LOGGER.debug("userName " + userName);
@@ -783,21 +794,21 @@ public class Applications extends FrameworkBaseAction {
 			
 			svnImport = true;
 			svnImportMsg = getText(SUCCESS_PROJECT_UPDATE);
-		} catch(SVNAuthenticationException e) {
+		} catch (SVNAuthenticationException e) {
 	         S_LOGGER.error("Entered into catch block of Applications.importApplication()" + getText(INVALID_CREDENTIALS) + FrameworkUtil.getStackTraceAsString(e));
 	         svnImport = false;
 	         svnImportMsg = getText(INVALID_CREDENTIALS);
 	    } catch(SVNException e) {
 	    	S_LOGGER.error("Entered into catch block of Applications.importApplication()" + FrameworkUtil.getStackTraceAsString(e)); 
 	    	svnImport = false;
-	    	if(e.getMessage().indexOf(SVN_FAILED) != -1) {
+	    	if (e.getMessage().indexOf(SVN_FAILED) != -1) {
 	    		svnImportMsg = getText(INVALID_URL);
-	    	} else if(e.getMessage().indexOf(SVN_INTERNAL) != -1) {
+	    	} else if (e.getMessage().indexOf(SVN_INTERNAL) != -1) {
 	    		svnImportMsg = getText(INVALID_REVISION);
 	    	} else {
 	    		svnImportMsg = getText(INVALID_FOLDER);
 	    	}
-	    } catch(PhrescoException e) {
+	    } catch (PhrescoException e) {
 	    	S_LOGGER.error("Entered into catch block of Applications.importApplication()" + getText(FAILURE_PROJECT_UPDATE) + FrameworkUtil.getStackTraceAsString(e));
 	    	svnImport = false;
 	    	svnImportMsg = getText(FAILURE_PROJECT_UPDATE);
@@ -806,11 +817,14 @@ public class Applications extends FrameworkBaseAction {
 			svnImport = false;
 			svnImportMsg = getText(FAILURE_PROJECT_UPDATE);
 		}
+	    
 		return SUCCESS;
 	}
 	
 	public String validateFramework() {
-		S_LOGGER.debug("Entering Method  Applications.validateFramework()");
+	    if (isDebugEnabled) {
+	        S_LOGGER.debug("Entering Method  Applications.validateFramework()");
+	    }
 
 		try {
 			getHttpRequest().setAttribute(VALIDATE_FROM, VALIDATE_FRAMEWORK);
@@ -855,14 +869,19 @@ public class Applications extends FrameworkBaseAction {
 	}
 
 	public String showFrameworkValidationResult() {
-		S_LOGGER.debug("Entering Method  Applications.showFrameworkValidationResult()");
+	    if (isDebugEnabled) {
+	        S_LOGGER.debug("Entering Method  Applications.showFrameworkValidationResult()");
+	    }
+	    
 		getHttpRequest().setAttribute(VALIDATE_FROM, VALIDATE_FRAMEWORK);
 
 		return APP_SHOW_FRAMEWORK_VLDT_RSLT;
 	}
 
 	public String validateProject() {
-		S_LOGGER.debug("Entering Method  Applications.validateProject()");
+	    if (isDebugEnabled) {
+	        S_LOGGER.debug("Entering Method  Applications.validateProject()");
+	    }
 
 		try {
 			getHttpRequest().setAttribute(VALIDATE_FROM, VALIDATE_PROJECT);
@@ -916,7 +935,9 @@ public class Applications extends FrameworkBaseAction {
 	}
 
 	public String showProjectValidationResult() {
-		S_LOGGER.debug("Entering Method  Applications.showProjectValidationResult()");
+	    if (isDebugEnabled) {
+	        S_LOGGER.debug("Entering Method  Applications.showProjectValidationResult()");
+	    }
 
 		getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
 		getHttpRequest().setAttribute(VALIDATE_FROM, VALIDATE_PROJECT);
@@ -925,7 +946,9 @@ public class Applications extends FrameworkBaseAction {
 	}
 
 	public String discover() {
-		S_LOGGER.debug("Entering Method  Applications.discover()");
+	    if (isDebugEnabled) {
+	        S_LOGGER.debug("Entering Method  Applications.discover()");
+	    }
 
 		try {
 			ProjectAdministrator administrator = PhrescoFrameworkFactory
@@ -947,7 +970,9 @@ public class Applications extends FrameworkBaseAction {
 	}
 
 	public String showSettings() {
-		S_LOGGER.debug("entered Applications.showSettings()");
+	    if (isDebugEnabled) {
+	        S_LOGGER.debug("entered Applications.showSettings()");
+	    }
 		
 		try {
 			if (showSettings != null && Boolean.valueOf(showSettings)) {
@@ -985,6 +1010,10 @@ public class Applications extends FrameworkBaseAction {
 	}
 
 	public String openAttrPopup() throws PhrescoException {
+	    if (isDebugEnabled) {
+	        S_LOGGER.debug("entered Applications.openAttrPopup()");
+	    }
+	    
 		try {
 			String techId = getHttpRequest().getParameter("techId");
 			String type = getHttpRequest().getParameter(ATTR_TYPE);
@@ -1140,6 +1169,10 @@ public class Applications extends FrameworkBaseAction {
 	}
 
 	public String allVersions() throws PhrescoException {
+	    if (isDebugEnabled) {
+            S_LOGGER.debug("entered Applications.allVersions()");
+        }
+	    
 		try {
 			ProjectAdministrator administrator = PhrescoFrameworkFactory
 					.getProjectAdministrator();
@@ -1178,6 +1211,10 @@ public class Applications extends FrameworkBaseAction {
 	}
 
 	public String addDetails() throws PhrescoException {
+	    if (isDebugEnabled) {
+            S_LOGGER.debug("entered Applications.addDetails()");
+        }
+	    
 		String type = getHttpRequest().getParameter("type");
 		setSelectedParamName(getHttpRequest().getParameter("paramName"));
 		divTobeUpdated = getHttpRequest().getParameter("divTobeUpdated");
@@ -1195,7 +1232,7 @@ public class Applications extends FrameworkBaseAction {
 		return SUCCESS;
 	}
 
-	public static String convertToCommaDelimited(String[] list) {
+	private static String convertToCommaDelimited(String[] list) {
 		StringBuffer retString = new StringBuffer("");
 		for (int i = 0; list != null && i < list.length; i++) {
 			retString.append(list[i]);
@@ -1208,6 +1245,10 @@ public class Applications extends FrameworkBaseAction {
 	}
 
 	public String checkForRespectiveConfig() throws PhrescoException {
+	    if (isDebugEnabled) {
+            S_LOGGER.debug("entered Applications.checkForRespectiveConfig()");
+        }
+	    
 		try {
 			ProjectAdministrator administrator = PhrescoFrameworkFactory
 					.getProjectAdministrator();
@@ -1284,6 +1325,10 @@ public class Applications extends FrameworkBaseAction {
 	}
 
 	public String checkForConfiguration() throws PhrescoException {
+	    if (isDebugEnabled) {
+            S_LOGGER.debug("entered Applications.checkForConfiguration()");
+        }
+	    
 		try {
 			boolean isError = false;
 			ProjectAdministrator administrator = PhrescoFrameworkFactory
@@ -1375,6 +1420,10 @@ public class Applications extends FrameworkBaseAction {
 	}
 
 	public String checkForConfigType() throws PhrescoException {
+	    if (isDebugEnabled) {
+            S_LOGGER.debug("entered Applications.checkForConfigType()");
+        }
+	    
 		try {
 			String envs = getHttpRequest().getParameter(ENVIRONMENTS);
 			if (StringUtils.isEmpty(envs)) {
@@ -1398,7 +1447,10 @@ public class Applications extends FrameworkBaseAction {
 	}
 	
 	public String browse() {
-		S_LOGGER.debug("Entering Method  Applications.browse()");
+	    if (isDebugEnabled) {
+	        S_LOGGER.debug("Entering Method  Applications.browse()");
+	    }
+	    
 		try {
 			getHttpRequest().setAttribute(FILE_TYPES, fileType);
 			getHttpRequest().setAttribute(FILE_BROWSE, fileorfolder);
@@ -1415,6 +1467,10 @@ public class Applications extends FrameworkBaseAction {
 	}
 
 	public String authenticateServer() throws PhrescoException {
+	    if (isDebugEnabled) {
+            S_LOGGER.debug("Entering Method  Applications.authenticateServer()");
+        }
+	    
 		try {
 			String host = (String)getHttpRequest().getParameter(SERVER_HOST);
 			int port = Integer.parseInt(getHttpRequest().getParameter(SERVER_PORT));
@@ -1447,17 +1503,23 @@ public class Applications extends FrameworkBaseAction {
 	}
 
 	public boolean importFromGit(String url,File directory) throws Exception {
-		S_LOGGER.debug("Entering Method  Applications.importFromGit()");
-		S_LOGGER.debug("importing git " + url);
+	    if (isDebugEnabled) {
+    		S_LOGGER.debug("Entering Method  Applications.importFromGit()");
+    		S_LOGGER.debug("importing git " + url);
+	    }
 	    Git repo1 = Git.cloneRepository().setURI(url).setDirectory(directory).call();
 	    for (Ref b : repo1.branchList().setListMode(ListMode.ALL).call()) {
 	    	S_LOGGER.debug("(standard): cloned branch " + b.getName());
 	    }
+	    
 	    return true;
 	}
 	
 	public ApplicationInfo getApplicationInfo(File directory) throws Exception {
-		S_LOGGER.debug("Entering Method  Applications.getProjectInfo()");
+	    if (isDebugEnabled) {
+	        S_LOGGER.debug("Entering Method  Applications.getProjectInfo()");
+	    }
+	    
 		BufferedReader reader = null;
 		try {
 		    File dotProjectFile = new File(directory, FOLDER_DOT_PHRESCO + File.separator + PROJECT_INFO);
@@ -1473,7 +1535,10 @@ public class Applications extends FrameworkBaseAction {
 	}
 	
 	private void importToWorkspace(File gitImportTemp, String phrescoHomeDirectory, String projectCode) throws Exception {
-		S_LOGGER.debug("Entering Method  Applications.importToWorkspace()");
+	    if (isDebugEnabled) {
+	        S_LOGGER.debug("Entering Method  Applications.importToWorkspace()");
+	    }
+	    
 		File workspaceProjectDir = new File(phrescoHomeDirectory + projectCode);
 		S_LOGGER.debug("workspaceProjectDir "+ workspaceProjectDir);
 		if (workspaceProjectDir.exists()) {
@@ -1486,7 +1551,10 @@ public class Applications extends FrameworkBaseAction {
 	}
 	
 	private void updateSCMConnection(String projCode, String repoUrl) throws Exception {
-		S_LOGGER.debug("Entering Method  Applications.updateSCMConnection()");
+	    if (isDebugEnabled) {
+	        S_LOGGER.debug("Entering Method  Applications.updateSCMConnection()");
+	    }
+	    
 		FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
 		PomProcessor processor = frameworkUtil.getPomProcessor(projCode);
 		if (processor.getSCM() == null) {
@@ -1568,22 +1636,6 @@ public class Applications extends FrameworkBaseAction {
 		this.globalValidationStatus = globalValidationStatus;
 	}
 	
-	public List<String> getPilotModules() {
-		return pilotModules;
-	}
-
-	public void setPilotModules(List<String> pilotModules) {
-		this.pilotModules = pilotModules;
-	}
-	
-	public List<String> getPilotJSLibs() {
-		return pilotJSLibs;
-	}
-
-	public void setPilotJSLibs(List<String> pilotJSLibs) {
-		this.pilotJSLibs = pilotJSLibs;
-	}
-	
 	public List<String> getVersions() {
 		return versions;
 	}
@@ -1614,14 +1666,6 @@ public class Applications extends FrameworkBaseAction {
 
 	public void setSelectedParamName(String selectedParamName) {
 		this.selectedParamName = selectedParamName;
-	}
-	
-	public String getHiddenFieldValue() {
-		return hiddenFieldValue;
-	}
-
-	public void setHiddenFieldValue(String hiddenFieldValue) {
-		this.hiddenFieldValue = hiddenFieldValue;
 	}
 	
 	public String getDivTobeUpdated() {
