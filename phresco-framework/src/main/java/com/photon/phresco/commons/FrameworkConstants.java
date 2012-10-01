@@ -40,6 +40,7 @@ public interface FrameworkConstants {
     String BUILD_INFO_FILE_NAME = "build.info";
     String PROJECT_INFO = "project.info";
     String GIT_IMPORT_TEMP_DIR = "gitImportTemp";
+    String SONAR = "sonar";
     String SAFARI_WARNING_MSG = "Safari browser is only supported for SeleniumRC";
     
     String DO_NOT_CHECKIN_DIR = "do_not_checkin";
@@ -273,6 +274,7 @@ public interface FrameworkConstants {
     String SCRIPT_START = "<script>";
     String GRAPH_JSON = "var jsonData = [";
     String IPHONE_SDK = "sdk";
+    String IOS_TEST_TYPE = "applicationTest";
     String IPHONE_CONFIGURATION = "configuration";
     String IPHONE_TARGET_NAME = "targetName";
     String IPHONE_PLISTFILE = "plistfile";
@@ -738,6 +740,8 @@ public interface FrameworkConstants {
     String MSG_FILE_PATH_EMPTY = "File path should not be empty";
     String SUCCESS_REPORT_STATUS = "label.report.success";
     String ERROR_REPORT_STATUS = "label.report.failure";
+    String ERROR_REPORT_MISSISNG_FONT = "label.report.failure.missing.font";
+    String ERROR_REPORT_MISSISNG_FONT_MSG = "label.report.failure.missiong.font.msg";
     String SUCCESS_REPORT_DELETE_STATUS = "label.report.delete.success";
     String ERROR_REPORT_DELETE_STATUS = "label.report.delete.failure";
     String MSG_REPORT_OVERALL = "Overall";
