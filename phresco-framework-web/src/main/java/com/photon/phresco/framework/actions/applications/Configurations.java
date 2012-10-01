@@ -94,8 +94,10 @@ public class Configurations extends FrameworkBaseAction {
     // For IIS server
     private String appName = "";
 	private String nameOfSite = "";
+	private String siteCoreInstPath = "";
     private String appNameError = null;
     private String siteNameError = null;
+    private String siteCoreInstPathError = null;
 
     
 	public String list() {
@@ -224,6 +226,9 @@ public class Configurations extends FrameworkBaseAction {
                 if (S_LOGGER.isDebugEnabled()) {
                 	S_LOGGER.debug("Configuration.save() key " + propertyTemplate.getKey() + "and Value is " + value);
                 }
+                if(TechnologyTypes.SITE_CORE.equals(project.getProjectInfo().getTechnology().getId())) { 
+	            	propertyInfoList.add(new PropertyInfo(SETTINGS_TEMP_SITECORE_INST_PATH, siteCoreInstPath));
+	            }
                 if (isIISServer) {
 	            	propertyInfoList.add(new PropertyInfo(SETTINGS_TEMP_KEY_APP_NAME, appName));
 	                propertyInfoList.add(new PropertyInfo(SETTINGS_TEMP_KEY_SITE_NAME, nameOfSite));
@@ -512,6 +517,10 @@ public class Configurations extends FrameworkBaseAction {
                 }
             }
             
+            if (TechnologyTypes.SITE_CORE.equals(techId) && "deploy_dir".equals(key)) {
+            	isRequired = false;
+            }
+            
             if (isRequired == true && StringUtils.isEmpty(value.trim())) {
                 String field = propertyTemplate.getName();
                 dynamicError += propertyTemplate.getKey() + ":" + field + " is empty" + ",";
@@ -552,6 +561,10 @@ public class Configurations extends FrameworkBaseAction {
 	   			setEmailError(ERROR_EMAIL);
 	   			validate = false;
 	   		}
+	   		if (TechnologyTypes.SITE_CORE.equals(techId) && StringUtils.isEmpty(siteCoreInstPath)) {
+        		setSiteCoreInstPathError("SiteCore Installation path Location is missing");
+        		validate = false;
+        	}
 	   	}
 
 	   	return validate;
@@ -647,6 +660,9 @@ public class Configurations extends FrameworkBaseAction {
 	                value = value.trim();
 	                propertyInfoList.add(new PropertyInfo(propertyTemplate.getKey(), value));
             	}
+            }
+            if(TechnologyTypes.SITE_CORE.equals(project.getProjectInfo().getTechnology().getId())) { 
+            	propertyInfoList.add(new PropertyInfo(SETTINGS_TEMP_SITECORE_INST_PATH, siteCoreInstPath));
             }
             if (isIISServer) {
                 propertyInfoList.add(new PropertyInfo(SETTINGS_TEMP_KEY_APP_NAME, appName));
@@ -1027,4 +1043,21 @@ public class Configurations extends FrameworkBaseAction {
 		this.nameOfSite = nameOfSite;
 
 	}
+	
+	public String getSiteCoreInstPath() {
+		return siteCoreInstPath;
+	}
+
+	public void setSiteCoreInstPath(String siteCoreInstPath) {
+		this.siteCoreInstPath = siteCoreInstPath;
+	}
+
+	public String getSiteCoreInstPathError() {
+		return siteCoreInstPathError;
+	}
+
+	public void setSiteCoreInstPathError(String siteCoreInstPathError) {
+		this.siteCoreInstPathError = siteCoreInstPathError;
+	}
+
 }
