@@ -31,6 +31,7 @@
 <%@ page import="com.photon.phresco.framework.model.PropertyInfo"%>
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.util.Constants"%>
+<%@ page import="com.photon.phresco.framework.api.Project" %>
 <%@ page import="com.photon.phresco.configuration.Environment" %>
 
 <%@ include file="../../userInfoDetails.jsp" %>
@@ -58,6 +59,12 @@
 
 <% 
     String projectCode = (String)request.getAttribute(FrameworkConstants.REQ_PROJECT_CODE);
+	ProjectInfo selectedInfo = null;
+    String projectCode = null;
+    if(project != null) {
+        selectedInfo = project.getProjectInfo();
+        projectCode = selectedInfo.getCode();
+    }
 	List<Environment> envInfoValues = (List<Environment>) request.getAttribute(FrameworkConstants.ENVIRONMENTS);
 %>    
 
@@ -112,6 +119,9 @@
 				              	<th class="third">
 				                	<div class="th-inner-head "><s:text name="label.status"/></div>
 				              	</th>
+								<th class="third">
+                                    <div class="th-inner-head "><s:text name="label.clone" /></div>
+                                </th>
 				            </tr>
 			          	</thead>
 			
@@ -162,6 +172,9 @@
 				                           		urls.put(configNameForId, protocol +","+ host + "," + port);
 				                           	%>
 			                           		<img src="images/icons/inprogress.png" alt="status-up" title="Loading" id="isAlive<%= configNameForId %>">
+		       	  						</td>
+										<td>
+		       	  						   <a href="#" title="<%= configuration.getName() %>" id="cloneEnvId" onclick="cloneConfiguration('<%= configuration.getName()%>', '<%= configuration.getEnvName() %>', '<%= configuration.getType() %>')" ><img src="images/clone.png" alt="Clone"  title="clone configuration"></a>
 		       	  						</td>
 					            	</tr>
 						<%
@@ -261,5 +274,18 @@
     	params = params.concat("&envName=");
     	params = params.concat(envName);
     	performAction("editConfiguration", $("#formConfigList"), $('#tabDiv'), '', params);
+    }
+	
+	function cloneConfiguration(configName, envName, configType) {
+    	$('#popup_div').empty();
+        showPopup();
+        var params = "";
+        params = params.concat("configName=");
+        params = params.concat(configName);
+        params = params.concat("&envName=");
+        params = params.concat(envName);
+        params = params.concat("&configType=");
+        params = params.concat(configType);
+        popup('cloneConfigPopup', params, $('#popup_div'));
     }
 </script>
