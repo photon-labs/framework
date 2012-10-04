@@ -41,7 +41,8 @@
 		String codecs = "";
 		for(VideoType videoType : videoTypes) {
 			url = serverUrl + videoType.getUrl();
-			vType = videoType.getType();
+			//TODO:Lohes
+// 			vType = videoType.getType();
 	%>
 	
 			<source id="video" type='video/<%= vType %>' src="<%= url %>"></source>

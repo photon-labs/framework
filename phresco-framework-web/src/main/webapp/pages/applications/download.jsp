@@ -71,7 +71,7 @@
 	                        	<tbody>
 		                    	<%
 		                    		for (DownloadInfo serverDownloadInfo : serverDownloadInfos) {
-		                    		    List<ArtifactInfo> versions = serverDownloadInfo.getVersions();
+		                    		    List<ArtifactInfo> versions = serverDownloadInfo.getArtifactGroup().getVersions();
 		                    		    if (CollectionUtils.isNotEmpty(versions)) {
 		                    		        for (ArtifactInfo version : versions) {
 		                    	%>
@@ -116,7 +116,7 @@
 	                        	<tbody>
 		                    	<%
 		                    		for (DownloadInfo dbDownloadInfo : dbDownloadInfos) {
-		                    		    List<ArtifactInfo> versions = dbDownloadInfo.getVersions();
+		                    		    List<ArtifactInfo> versions = dbDownloadInfo.getArtifactGroup().getVersions();
 		                    		    if (CollectionUtils.isNotEmpty(versions)) {
 		                    		        for (ArtifactInfo version : versions) {
 		                    	%>
@@ -161,7 +161,7 @@
 	                        	<tbody>
 		                    	<%
 		                    		for (DownloadInfo editorDownloadInfo : editorDownloadInfos) {
-		                    		    List<ArtifactInfo> versions = editorDownloadInfo.getVersions();
+		                    		    List<ArtifactInfo> versions = editorDownloadInfo.getArtifactGroup().getVersions();
 		                    		    if (CollectionUtils.isNotEmpty(versions)) {
 		                    		        for (ArtifactInfo version : versions) {
 		                    	%>
@@ -208,7 +208,7 @@
 	                        	<tbody>
 		                    	<%
 		                    		for (DownloadInfo toolsDownloadInfo : toolsDownloadInfos) {
-		                    		    List<ArtifactInfo> versions = toolsDownloadInfo.getVersions();
+		                    		    List<ArtifactInfo> versions = toolsDownloadInfo.getArtifactGroup().getVersions();
 		                    		    if (CollectionUtils.isNotEmpty(versions)) {
 		                    		        for (ArtifactInfo version : versions) {
 		                    	%>
@@ -254,7 +254,7 @@
 	                        	<tbody>
 		                    	<%
 		                    		for (DownloadInfo otherDownloadInfos : othersDownloadInfos) {
-		                    		    List<ArtifactInfo> versions = otherDownloadInfos.getVersions();
+		                    		    List<ArtifactInfo> versions = otherDownloadInfos.getArtifactGroup().getVersions();
 		                    		    if (CollectionUtils.isNotEmpty(versions)) {
 		                    		        for (ArtifactInfo version : versions) {
 		                    	%>

@@ -212,7 +212,7 @@
     </div>
 </div>
 
-<% if (TechnologyTypes.SITE_CORE.equals(appInfo.getTechInfo().getVersion())) && settingsTemplate.getType().equals("Server")) { %>
+<% if (TechnologyTypes.SITE_CORE.equals(appInfo.getTechInfo().getVersion()) && settingsTemplate.getType().equals("Server")) { %>
  <div class="clearfix" id="siteCoreInstPathErrDiv">
 	<label class="new-xlInput"><span class="red">*</span> <s:text name="label.sitecore.inst.path"/> </label>
 	<div class="input new-input">

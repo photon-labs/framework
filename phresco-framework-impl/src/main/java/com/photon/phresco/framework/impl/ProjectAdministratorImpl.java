@@ -1708,7 +1708,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 S_LOGGER.debug("getAllModules() TechnologyName = "+techId);
 		 
 		 try {
-			 return getServiceManager().getModules(customerId, techId, REST_QUERY_TYPE_MODULE);
+			 return getServiceManager().getFeatures(customerId, techId, REST_QUERY_TYPE_MODULE);
 		 } catch (Exception e) {
 			 throw new PhrescoException(e);
 		 }
@@ -2101,8 +2101,10 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 List<ValidationResult> results = new ArrayList<ValidationResult>(64);
 		 String techId = project.getApplicationInfo().getTechInfo().getVersion();
 		 List<Validator> validators = PhrescoFrameworkFactory.getValidators(techId);
-		 for (Validator validator : validators) {
-			 results.addAll(validator.validate(project.getApplicationInfo().getCode()));
+		 if (CollectionUtils.isNotEmpty(validators)) {
+    		 for (Validator validator : validators) {
+    			 results.addAll(validator.validate(project.getApplicationInfo().getCode()));
+    		 }
 		 }
 
 		 return results;
@@ -2458,13 +2460,14 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		try {
 			List<DownloadInfo> servers = getServers(customerId);
 			List<DownloadInfo> serversByTechId = new ArrayList<DownloadInfo>();
-	        if (CollectionUtils.isNotEmpty(servers)) {
+			//TODO: Lohes
+			/*if (CollectionUtils.isNotEmpty(servers)) {
 	        	for (DownloadInfo server : servers) {
 					if (server.getAppliesToTechs().contains(techId)) {
 						serversByTechId.add(server);
 					}
 				}
-	        }
+	        }*/
 	        
 			return serversByTechId;
 		} catch (PhrescoException e) {
@@ -2488,13 +2491,14 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		try {
 			List<DownloadInfo> databases = getDatabases(customerId);
 			List<DownloadInfo> dbsByTechId = new ArrayList<DownloadInfo>();
-	        if (CollectionUtils.isNotEmpty(databases)) {
+			//TODO: Lohes
+	        /*if (CollectionUtils.isNotEmpty(databases)) {
 	        	for (DownloadInfo database : databases) {
 					if (database.getAppliesToTechs().contains(techId)) {
 						dbsByTechId.add(database);
 					}
 				}
-	        }
+	        }*/
 	        
 			return dbsByTechId;
 		} catch (PhrescoException e) {
@@ -2554,7 +2558,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 	    S_LOGGER.debug("Entering Method ProjectAdministratorImpl.getJSLibs(String techId, String customerId)");
 		 
 	    try {
-	        return getServiceManager().getModules(customerId, techId, REST_QUERY_TYPE_JS);
+	        return getServiceManager().getFeatures(customerId, techId, REST_QUERY_TYPE_JS);
 	    } catch (Exception e) {
 	        throw new PhrescoException(e);
 	    }
