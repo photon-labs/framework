@@ -136,11 +136,12 @@ public class ConfigurationWriter extends ConfigWriter {
 		environment.replaceChild(configElement, oldConfigNode);
 	}
 	
-	public void updateTestConfiguration(SettingsInfo settingsInfo, String browser, String resultConfigXml) throws PhrescoException {
+	public void updateTestConfiguration(SettingsInfo settingsInfo, String browser, String resultConfigXml, String resolution) throws PhrescoException {
 	    try {
 	        Node configNode = getNode("environment");
 	        Node node = getNode("environment/" + settingsInfo.getType());
 	        Node browserNode = getNode("environment/Browser" );
+			Node resolutionNode = getNode("environment/Resolution");
 	        if (node != null) {
 	            configNode.removeChild(node);
 	        }
@@ -152,6 +153,17 @@ public class ConfigurationWriter extends ConfigWriter {
 	        	browserEle.setTextContent(browser);
 	        	configNode.appendChild(browserEle);
 	        }
+			
+			if (resolution != null) {
+		        if (resolutionNode !=  null ) {
+		        	resolutionNode.setTextContent(resolution);
+		        } else {
+		        	Element resolutiontag = getDocument().createElement("Resolution");
+		        	resolutiontag.setTextContent(resolution);
+		        	configNode.appendChild(resolutiontag);
+		        }
+	        }
+			
 	        configNode.appendChild(createConfigElement(settingsInfo));
         } catch (Exception e) {
             throw new PhrescoException("Configuration not found to delete");

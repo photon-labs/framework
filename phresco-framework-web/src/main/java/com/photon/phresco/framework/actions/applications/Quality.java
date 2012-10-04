@@ -132,6 +132,7 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
     private String testAgainst = null;
     private String jarName = null;
     private File systemPath = null;
+	private String resolution = null;
     
 	private List<String> configName = null;
 	private List<String> buildInfoEnvs = null;
@@ -319,7 +320,7 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
             if (StringUtils.isEmpty(testModule) && !TechnologyTypes.ANDROIDS.contains(technology) && !TechnologyTypes.IPHONES.contains(technology) 
                     && !TechnologyTypes.BLACKBERRY.equals(technology) && !TechnologyTypes.SHAREPOINT.equals(technology) 
             		&& !TechnologyTypes.DOT_NET.equals(technology) && !TechnologyTypes.JAVA_STANDALONE.equals(technology)) {
-                FunctionalUtil.adaptTestConfig(project, envs, browser);
+                FunctionalUtil.adaptTestConfig(project, envs, browser, resolution);
             }
             FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
             StringBuilder builder = new StringBuilder(Utility.getProjectHome());
@@ -2752,6 +2753,14 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
 
 	public void setReportFileName(String reportFileName) {
 		this.reportFileName = reportFileName;
+	}
+	
+	public String getResolution() {
+		return resolution;
+	}
+
+	public void setResolution(String resolution) {
+		this.resolution = resolution;
 	}
 	
 }
