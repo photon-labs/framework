@@ -69,7 +69,8 @@ public class Code extends FrameworkBaseAction {
     	try {
         	getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
         	ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-        	ApplicationInfo appInfo = administrator.getProject(projectCode).getApplicationInfo();
+        	Project project = administrator.getProject(projectCode);
+        	ApplicationInfo appInfo = project.getApplicationInfo();
             getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
             getHttpRequest().setAttribute(REQ_APPINFO, appInfo);
       		FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
@@ -86,6 +87,13 @@ public class Code extends FrameworkBaseAction {
     	    } catch(Exception e) {
     	    	getHttpRequest().setAttribute(REQ_ERROR, getText(SONAR_NOT_STARTED));
     	    }
+			if (TechnologyTypes.IPHONES.contains(project.getApplicationInfo().getTechInfo().getVersion())) {
+				List<PBXNativeTarget> xcodeConfigs = ApplicationsUtil.getXcodeConfiguration(projectCode);
+				for (PBXNativeTarget xcodeConfig : xcodeConfigs) {
+					S_LOGGER.debug("Iphone technology terget name" + xcodeConfig.getName());
+				}
+				getHttpRequest().setAttribute(REQ_XCODE_CONFIGS, xcodeConfigs);
+			}
     	} catch (Exception e) {
     		S_LOGGER.error("Entered into catch block of Code.view()"+ FrameworkUtil.getStackTraceAsString(e));
     		new LogErrorReport(e, "Code view");
@@ -115,8 +123,12 @@ public class Code extends FrameworkBaseAction {
             	codeValidatePath.append(File.separatorChar);
             	codeValidatePath.append(STATIC_ANALYSIS_REPORT);
             	codeValidatePath.append(File.separatorChar);
+            	S_LOGGER.debug("Selected target for dispaly ... " + report);
+            	codeValidatePath.append(report);
+            	codeValidatePath.append(File.separatorChar);
             	codeValidatePath.append(INDEX_HTML);
                 File indexPath = new File(codeValidatePath.toString());
+                S_LOGGER.debug("indexPath ..... " + indexPath);
              	if (indexPath.isFile() && StringUtils.isNotEmpty(phrescoFileServerNumber)) {
                 	sb.append(HTTP_PROTOCOL);
                 	sb.append(PROTOCOL_POSTFIX);
@@ -125,13 +137,8 @@ public class Code extends FrameworkBaseAction {
                 	sb.append(COLON);
                 	sb.append(phrescoFileServerNumber);
                 	sb.append(FORWARD_SLASH);
-                	sb.append(projectCode);
-                	sb.append(FORWARD_SLASH);
-                	sb.append(DO_NOT_CHECKIN_DIR);
-                	sb.append(FORWARD_SLASH);
-                	sb.append(STATIC_ANALYSIS_REPORT);
-                	sb.append(FORWARD_SLASH);
-                	sb.append(INDEX_HTML);
+                	sb.append(codeValidatePath.toString().replace(File.separator, FORWARD_SLASH));
+                	S_LOGGER.debug("File server path " + sb.toString());
              	} else {
              		getHttpRequest().setAttribute(REQ_ERROR, getText(FAILURE_CODE_REVIEW));
              	}
@@ -214,6 +221,7 @@ public class Code extends FrameworkBaseAction {
             Map<String, String> codeValidateMap = new HashMap<String, String>(1);
             ActionType actionType = null;
             if (TechnologyTypes.IPHONES.contains(technology)) {
+            	S_LOGGER.debug("Selected target .... " + target);
             	codeValidateMap.put(IPHONE_SCHEMA_PARAM, target);
             	actionType = ActionType.IPHONE_CODE_VALIDATE;
             } else {

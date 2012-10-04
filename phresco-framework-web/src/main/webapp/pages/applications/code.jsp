@@ -20,10 +20,13 @@
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="org.apache.commons.lang.StringUtils" %>
-
+<%@ page import="java.util.List"%>
 <%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo" %>
 <%@ page import="com.photon.phresco.util.TechnologyTypes" %>
+<%@ page import="com.photon.phresco.commons.XCodeConstants" %>
+<%@ page import="com.photon.phresco.framework.commons.ApplicationsUtil"%>
+<%@ page import="com.photon.phresco.framework.commons.PBXNativeTarget"%>
 
 <%@ include file="progress.jsp" %>
 
@@ -34,9 +37,15 @@
 	ApplicationInfo appInfo = (ApplicationInfo)request.getAttribute(FrameworkConstants.REQ_APPINFO);
 	String technology = appInfo.getTechInfo().getVersion();
 	String sonarError = (String)request.getAttribute(FrameworkConstants.REQ_ERROR);
+   	//xcode targets
+   	List<PBXNativeTarget> xcodeConfigs = (List<PBXNativeTarget>) request.getAttribute(FrameworkConstants.REQ_XCODE_CONFIGS);
 	String disabledStr = "";
+	boolean isIphoneTech = false;
 	if (!TechnologyTypes.IPHONES.contains(technology) && StringUtils.isNotEmpty(sonarError)) {
 		disabledStr = "disabled";
+	}
+	if (TechnologyTypes.IPHONES.contains(technology)) {
+		isIphoneTech = true;
 	}
 %>
 <form id="formCode">
@@ -52,7 +61,17 @@
 			<option value="java" ><s:text name="label.tech.java"/></option>
 			<option value="js" ><s:text name="label.tech.javascript"/></option>
 			<option value="web" ><s:text name="label.tech.jsp"/></option>
-		<% } else { %>
+		<% 
+			} else if (isIphoneTech) {
+				if (xcodeConfigs != null) {
+					for (PBXNativeTarget xcodeConfig : xcodeConfigs) {
+		%>
+				<option value="<%= xcodeConfig.getName() %>"><%= xcodeConfig.getName() %></option>
+		<%
+					}
+				}
+			} else { 
+		%>
 			<option value="source" ><s:text name="label.validateAgainst.source"/></option>
 		<% } %>
 			<option value="functional" ><s:text name="label.funtional"/></option>

@@ -405,6 +405,8 @@ public interface FrameworkConstants {
     String REQ_EDIT_APPLICATION = "addApplication";
     String REQ_FRAMEWORK = "framework";
     String REQ_PLATFORM = "platform";
+    String POM_LINE_BREAK = "linebreakpos";
+    String POM_LINE_MAX_COL_COUNT = "10000";
     String REQ_APPLICATIONSERVER = "applicationserver";
     String REQ_DATABASE = "database";
     String REQ_EDITOR = "editor";
