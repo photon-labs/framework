@@ -31,7 +31,6 @@
 <%@ page import="com.photon.phresco.framework.model.PropertyInfo"%>
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.util.Constants"%>
-<%@ page import="com.photon.phresco.framework.api.Project" %>
 <%@ page import="com.photon.phresco.configuration.Environment" %>
 
 <%@ include file="../../userInfoDetails.jsp" %>
@@ -59,12 +58,6 @@
 
 <% 
     String projectCode = (String)request.getAttribute(FrameworkConstants.REQ_PROJECT_CODE);
-	ProjectInfo selectedInfo = null;
-    String projectCode = null;
-    if(project != null) {
-        selectedInfo = project.getProjectInfo();
-        projectCode = selectedInfo.getCode();
-    }
 	List<Environment> envInfoValues = (List<Environment>) request.getAttribute(FrameworkConstants.ENVIRONMENTS);
 %>    
 

@@ -230,7 +230,7 @@ public class Configurations extends FrameworkBaseAction {
                 if (S_LOGGER.isDebugEnabled()) {
                 	S_LOGGER.debug("Configuration.save() key " + propertyTemplate.getKey() + "and Value is " + value);
                 }
-                if(TechnologyTypes.SITE_CORE.equals(project.getProjectInfo().getTechnology().getId())) { 
+                if (TechnologyTypes.SITE_CORE.equals(appInfo.getTechInfo().getVersion())) { 
 	            	propertyInfoList.add(new PropertyInfo(SETTINGS_TEMP_SITECORE_INST_PATH, siteCoreInstPath));
 	            }
                 if (isIISServer) {
@@ -454,6 +454,7 @@ public class Configurations extends FrameworkBaseAction {
     	
     	Project project = administrator.getProject(projectCode);
     	ApplicationInfo appInfo = project.getApplicationInfo();
+    	String techId = project.getApplicationInfo().getTechInfo().getVersion();
     	if (StringUtils.isNotEmpty(configName) && !configName.equals(oldName)) {
     		for (String environment : environments) {
     			List<SettingsInfo> configurations = administrator.configurationsByEnvName(environment, project);
@@ -503,7 +504,6 @@ public class Configurations extends FrameworkBaseAction {
         	}
     	    value = getHttpRequest().getParameter(key);
             boolean isRequired = propertyTemplate.isRequired();
-            String techId = project.getApplicationInfo().getTechInfo().getVersion();
             if ((serverTypeValidation && "deploy_dir".equals(key)) || TechnologyTypes.ANDROIDS.contains(techId)) {
            		isRequired = false;
             }
@@ -665,7 +665,7 @@ public class Configurations extends FrameworkBaseAction {
 	                propertyInfoList.add(new PropertyInfo(propertyTemplate.getKey(), value));
             	}
             }
-            if(TechnologyTypes.SITE_CORE.equals(project.getProjectInfo().getTechnology().getId())) { 
+            if(TechnologyTypes.SITE_CORE.equals(appInfo.getTechInfo().getVersion())) { 
             	propertyInfoList.add(new PropertyInfo(SETTINGS_TEMP_SITECORE_INST_PATH, siteCoreInstPath));
             }
             if (isIISServer) {
