@@ -25,8 +25,8 @@
 	<loginpage>
 		<userNameXpath>//input[@id='xlInput']</userNameXpath>
 		<passwordXpath>//div[2]/input</passwordXpath>
-		<userName>srividya_su</userName>
-		<password>Alliswell95</password>
+		<userName></userName>
+		<password></password>
 		<rememberCheck>//input[@name='rememberme']</rememberCheck>		
 		<loginButton>//input[@id='Login']</loginButton>
 		<signOutLink>link=Sign out</signOutLink>
