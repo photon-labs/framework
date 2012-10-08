@@ -35,6 +35,7 @@ import com.photon.phresco.commons.model.Technology;
 import com.photon.phresco.commons.model.User;
 import com.photon.phresco.commons.model.VideoInfo;
 import com.photon.phresco.commons.model.VideoType;
+import com.photon.phresco.commons.model.WebService;
 import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.model.BuildInfo;
@@ -48,6 +49,10 @@ import com.photon.phresco.util.Credentials;
 import com.phresco.pom.site.ReportCategories;
 import com.phresco.pom.site.Reports;
 
+/**
+ * @author loheswaran_g
+ *
+ */
 public interface ProjectAdministrator {
 
     ServiceManager getServiceManager();
@@ -351,39 +356,43 @@ public interface ProjectAdministrator {
     User doLogin(Credentials credentials) throws PhrescoException;
 
     /**
-     * Returns Server DownloadInfo from the service
+     * To get the server download infos for the given customer and the techid
+     * @param customerId
+     * @param techId
      * @return
      * @throws PhrescoException
      */
-    List<DownloadInfo> getServerDownloadInfo() throws PhrescoException;
+    List<DownloadInfo> getServerDownloadInfos(String customerId, String techId) throws PhrescoException;
 
     /**
-     * Returns Database DownloadInfo from the service
+     * To get the database download infos for the given customer and the techid
+     * @param customerId
+     * @param techId
      * @return
      * @throws PhrescoException
      */
-    List<DownloadInfo> getDbDownloadInfo() throws PhrescoException;
+    List<DownloadInfo> getDbDownloadInfos(String customerId, String techId) throws PhrescoException;
 
     /**
      * Returns editor DownloadInfo from the service
      * @return
      * @throws PhrescoException
      */
-    List<DownloadInfo> getEditorDownloadInfo() throws PhrescoException;
+    List<DownloadInfo> getEditorDownloadInfos(String customerId, String techId) throws PhrescoException;
     
     /**
      * Returns tools DownloadInfo from the service
      * @return
      * @throws PhrescoException
      */
-    List<DownloadInfo> getToolsDownloadInfo() throws PhrescoException;
+    List<DownloadInfo> getToolsDownloadInfos(String customerId, String techId) throws PhrescoException;
     
     /**
      * Returns others DownloadInfo from the service
      * @return
      * @throws PhrescoException
      */
-    List<DownloadInfo> getOtherDownloadInfo() throws PhrescoException;
+    List<DownloadInfo> getOtherDownloadInfos(String customerId, String techId) throws PhrescoException;
     
     /**
      * Returns the jForum path from the service
@@ -647,7 +656,41 @@ public interface ProjectAdministrator {
 	 */
 	List<DownloadInfo> getServers() throws PhrescoException;
 	
+	/**
+	 * To get the servers based on the given customer and techId
+	 * @param customerId
+	 * @param techId
+	 * @return
+	 * @throws PhrescoException
+	 */
+	List<DownloadInfo> getServers(String customerId, String techId) throws PhrescoException;
+	
 	List<DownloadInfo> getDatabases() throws PhrescoException;
+	
+	/**
+     * To get the databases based on the given customer and techId
+     * @param customerId
+     * @param techId
+     * @return
+     * @throws PhrescoException
+     */
+    List<DownloadInfo> getDatabases(String customerId, String techId) throws PhrescoException;
+    
+    /**
+     * To get the webservices
+     * @return
+     * @throws PhrescoException
+     */
+    List<WebService> getWebservices() throws PhrescoException;
+    
+    /**
+     * To get the pilot projects based on the given customer and the techId
+     * @param customerId
+     * @param techId
+     * @return
+     * @throws PhrescoException
+     */
+    List<ApplicationInfo> getPilotProjects(String customerId, String techId) throws PhrescoException;
 	
 	/**
 	 * Delete the sql Folder

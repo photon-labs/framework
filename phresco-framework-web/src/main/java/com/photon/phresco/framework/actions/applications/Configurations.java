@@ -599,7 +599,7 @@ public class Configurations extends FrameworkBaseAction {
             getHttpRequest().setAttribute(ENVIRONMENTS, environments);
             getHttpRequest().setAttribute(SESSION_OLD_NAME, oldName);
             getHttpRequest().setAttribute(REQ_CONFIG_INFO, selectedConfigInfo);
-            getHttpRequest().setAttribute(REQ_FROM_PAGE, FROM_PAGE);
+            getHttpRequest().setAttribute(REQ_FROM_PAGE, FROM_PAGE_EDIT);
             getHttpRequest().setAttribute(REQ_PROJECT, project);
             getHttpSession().removeAttribute(ERROR_SETTINGS);
             getHttpRequest().setAttribute("currentEnv", envName);
@@ -695,9 +695,9 @@ public class Configurations extends FrameworkBaseAction {
         	}
             getHttpRequest().setAttribute(REQ_CONFIG_INFO, settingsInfo);
             getHttpRequest().setAttribute(REQ_PROJECT, project);
-            if(!validate(administrator, FROM_PAGE)) {
+            if(!validate(administrator, FROM_PAGE_EDIT)) {
             	isValidated = true;
-            	getHttpRequest().setAttribute(REQ_FROM_PAGE, FROM_PAGE);
+            	getHttpRequest().setAttribute(REQ_FROM_PAGE, FROM_PAGE_EDIT);
             	getHttpRequest().setAttribute(REQ_OLD_NAME, oldName);
             	return Action.SUCCESS;
             }
@@ -785,7 +785,7 @@ public class Configurations extends FrameworkBaseAction {
 //			getHttpRequest().setAttribute(REQ_ALL_TECHNOLOGIES, administrator.getAllTechnologies());//TODO:Need to handle
             getHttpRequest().setAttribute(SESSION_OLD_NAME, oldName);
             getHttpRequest().setAttribute(REQ_CONFIG_INFO, selectedConfigInfo);
-            getHttpRequest().setAttribute(REQ_FROM_PAGE, FROM_PAGE);
+            getHttpRequest().setAttribute(REQ_FROM_PAGE, FROM_PAGE_EDIT);
 		} catch (Exception e) {
         	if (debugEnabled) {
                S_LOGGER.error("Entered into catch block of Configurations.configurationsType()" + FrameworkUtil.getStackTraceAsString(e));

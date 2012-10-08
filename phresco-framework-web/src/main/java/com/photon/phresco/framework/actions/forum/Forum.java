@@ -49,7 +49,7 @@ public class Forum extends FrameworkBaseAction {
 			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
 			String serviceUrl= administrator.getJforumPath();
 			
-			User user = (User)getHttpSession().getAttribute(REQ_USER_INFO);
+			User user = (User)getHttpSession().getAttribute(SESSION_USER_INFO);
 			
 			byte[] userNameEncode = Base64.encodeBase64(user.getLoginId().getBytes());
 			String encodedUsername = new String(userNameEncode);

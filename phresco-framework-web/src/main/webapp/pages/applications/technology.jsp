@@ -19,8 +19,6 @@
   --%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
-<%@ include file="errorReport.jsp" %>
-
 <%@ page import="java.util.Arrays" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.util.List" %>
@@ -28,12 +26,15 @@
 <%@ page import="org.apache.commons.collections.CollectionUtils" %>
 <%@ page import="org.apache.commons.lang.StringUtils" %>
 <%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
+
 <%@ page import="com.photon.phresco.framework.api.Project" %>
 <%@ page import="com.photon.phresco.util.TechnologyTypes"%>
 <%@ page import="com.photon.phresco.commons.model.WebService"%>
 <%@ page import="com.photon.phresco.commons.model.DownloadInfo"%>
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 <%@ page import="com.photon.phresco.commons.model.Technology"%>
+
+<%@ include file="errorReport.jsp" %>
 
 <script type="text/javascript" src="js/confirm-dialog.js" ></script>
 
@@ -42,7 +43,7 @@
 	String checkedStr = "";
 	String projectCode = ""; 
 	String appType = (String)request.getAttribute(FrameworkConstants.REQ_APPLICATION_TYPE);
-	Technology selectedTechnology = (Technology) request.getAttribute(FrameworkConstants.SESSION_SELECTED_TECHNOLOGY);
+// 	Technology selectedTechnology = (Technology) request.getAttribute(FrameworkConstants.REQ_SELECTED_TECHNOLOGY);
 	ApplicationInfo selectedInfo = (ApplicationInfo) session.getAttribute((String) request.getAttribute(FrameworkConstants.REQ_PROJECT_CODE));
 	String fromPage = (String) request.getAttribute(FrameworkConstants.REQ_FROM_PAGE);
 	String disabled = "disabled";
@@ -51,7 +52,7 @@
     }
     
     if (selectedInfo == null) {
-    	selectedInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_PROJECT_INFO);
+    	selectedInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_APPINFO);
     }
     
     List<DownloadInfo> selectedServers = null;
@@ -60,9 +61,9 @@
     boolean isEmailSupportSelected = false;
     String selectedPilotProj = null;
     String projectInfoDbNames = "";
-   	if(selectedInfo != null && appType.equals(selectedInfo.getTechInfo().getAppTypeId()) 
-   	        && selectedTechnology.getId().equals(selectedInfo.getTechInfo().getVersion())) {
-		projectCode = selectedInfo.getCode();
+//    	if(selectedInfo != null && appType.equals(selectedInfo.getTechInfo().getAppTypeId()) 
+//    	        && selectedTechnology.getId().equals(selectedInfo.getTechInfo().getVersion())) {
+// 		projectCode = selectedInfo.getCode();
 		//TODO:Need to handle
 		/* selectedServers =  selectedInfo.getTechnology().getServers();
 		selectedDatabases =  selectedInfo.getTechnology().getDatabases();
@@ -75,23 +76,22 @@
 			}
 			projectInfoDbNames = projectInfoDbNames.substring(0, projectInfoDbNames.length() - 1);
 		}
-	}
+// 	}
 	
-	Collection<String> pilotProjectNames = (Collection<String>) request.getAttribute(FrameworkConstants.REQ_PILOTS_NAMES);
-	ApplicationInfo pilotProjectInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_PILOT_PROJECT_INFO);
+	List<ApplicationInfo> pilotProjectInfos = (List<ApplicationInfo>) request.getAttribute(FrameworkConstants.REQ_PILOT_PROJECT_INFO);
 	List<DownloadInfo> pilotProjectServers = null;
 	List<DownloadInfo> pilotProjectDbs = null;
 	List<WebService> pilotProjectWebServices = null;
 	boolean isPilotEmailSupported = false;
 	List<String> pilotTechVersions = null;
-	if (pilotProjectInfo != null) {
+// 	if (pilotProjectInfos != null) {
 	    //TODO:Need to handle
 		/* pilotProjectServers = pilotProjectInfo.getTechnology().getServers();
 		pilotProjectDbs = pilotProjectInfo.getTechnology().getDatabases();
 		pilotProjectWebServices = pilotProjectInfo.getTechnology().getWebservices();
 		isPilotEmailSupported = pilotProjectInfo.getTechnology().isEmailSupported();
 		pilotTechVersions = pilotProjectInfo.getTechnology().getVersions(); */
-	}
+// 	}
 	
 	List<DownloadInfo> servers = (List<DownloadInfo>) request.getAttribute(FrameworkConstants.REQ_TEST_SERVERS);
 	List<DownloadInfo> databases = (List<DownloadInfo>) request.getAttribute( FrameworkConstants.REQ_DATABASES);
@@ -103,23 +103,23 @@
     <!--  Pilot projects are loaded here starts-->
     <div class="input new-input">
 		<%
-        	if (CollectionUtils.isNotEmpty(pilotProjectNames)) {
-				for (String pilotProjectName : pilotProjectNames) {
+//         	if (CollectionUtils.isNotEmpty(pilotProjectNames)) {
+// 				for (String pilotProjectName : pilotProjectNames) {
 				    //TODO:Need to handle
 					/* if (pilotProjectName.equals(selectedPilotProj) || 
 							(StringUtils.isNotEmpty(fromPage) && pilotProjectName.equals(selectedInfo.getPilotProjectName()))){
 						selectedStr = "selected";
 					} */
-				}
-        	}
+// 				}
+//         	}
        	%>
            <select class="xlarge" id="pilotProjects" name="pilotProject" <%= disabled %> onchange="showPilotProjectConfigs(this);">
 			<option value="">None</option>
 			<%
-				if (CollectionUtils.isNotEmpty(pilotProjectNames)) {
-					for (String pilotProjectName : pilotProjectNames) {
+				if (CollectionUtils.isNotEmpty(pilotProjectInfos)) {
+					for (ApplicationInfo pilotProjectInfo : pilotProjectInfos) {
 			%>
-						<option value="<%= pilotProjectName %>" <%= selectedStr %> ><%= pilotProjectName %></option>
+						<option value="<%= pilotProjectInfo.getId() %>" <%= selectedStr %> ><%= pilotProjectInfo.getName() %></option>
 			<%		
 					}
 				} 
@@ -555,8 +555,8 @@
 		params = params.concat('<%= appType %>');
 		params = params.concat("&type=");
 		params = params.concat(type);
-		params = params.concat("&techId=");
-		params = params.concat('<%= selectedTechnology.getId() %>');
+// 		params = params.concat("&techId=");
+<%-- 		params = params.concat('<%= selectedTechnology.getId() %>'); --%>
 		params = params.concat("&attrName=");
 		params = params.concat(attrName);
 		params = params.concat("&selectedVersions=");
@@ -577,8 +577,8 @@
 		}
 		var params = "applicationType=";
 		params = params.concat('<%= appType %>');
-		params = params.concat("&techId=");
-		params = params.concat('<%= selectedTechnology.getId() %>');
+// 		params = params.concat("&techId=");
+<%-- 		params = params.concat('<%= selectedTechnology.getId() %>'); --%>
 		params = params.concat("&type=");
 		params = params.concat(type);
 		params = params.concat("&selectedId=");

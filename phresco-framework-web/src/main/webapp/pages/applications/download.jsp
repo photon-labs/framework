@@ -23,7 +23,6 @@
 <%@ page import="java.util.Arrays"%>
 
 <%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
-<%@ page import="com.photon.phresco.util.PlatformTypes"%>
 <%@ page import="com.photon.phresco.commons.model.DownloadInfo"%>
 
 <style>

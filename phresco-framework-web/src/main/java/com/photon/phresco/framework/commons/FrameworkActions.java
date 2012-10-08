@@ -20,6 +20,9 @@
 package com.photon.phresco.framework.commons;
 
 public interface FrameworkActions {
+    
+    String LOG_ERROR = "logError";
+    
     /*****************************
      * Home Action path
      * String HOME_XXX

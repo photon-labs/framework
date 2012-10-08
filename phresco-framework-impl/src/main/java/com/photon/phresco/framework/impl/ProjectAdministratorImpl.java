@@ -52,7 +52,6 @@ import javax.net.ssl.X509TrustManager;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.FileUtils;
@@ -73,6 +72,7 @@ import com.photon.phresco.commons.model.Technology;
 import com.photon.phresco.commons.model.User;
 import com.photon.phresco.commons.model.VideoInfo;
 import com.photon.phresco.commons.model.VideoType;
+import com.photon.phresco.commons.model.WebService;
 import com.photon.phresco.configuration.Configuration;
 import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.PhrescoException;
@@ -88,7 +88,6 @@ import com.photon.phresco.framework.model.CIBuild;
 import com.photon.phresco.framework.model.CIJob;
 import com.photon.phresco.framework.model.CIJobStatus;
 import com.photon.phresco.framework.model.CertificateInfo;
-import com.photon.phresco.framework.model.DownloadTypes;
 import com.photon.phresco.framework.model.SettingsInfo;
 import com.photon.phresco.framework.win8.util.ItemGroupUpdater;
 import com.photon.phresco.service.client.api.ServiceClientConstant;
@@ -117,12 +116,6 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 	private static final Logger S_LOGGER= Logger.getLogger(ProjectAdministratorImpl.class);
 	private Map<String, List<ArtifactGroup>> coreModulesMap = Collections.synchronizedMap(new HashMap<String, List<ArtifactGroup>>(8));
 	private Map<String, List<ArtifactGroup>> customModulesMap = Collections.synchronizedMap(new HashMap<String, List<ArtifactGroup>>(8));
-	private List<DownloadInfo> downloadInfos = Collections.synchronizedList(new ArrayList<DownloadInfo>(64));
-	private List<DownloadInfo> serverDownloadInfos = Collections.synchronizedList(new ArrayList<DownloadInfo>(64));
-	private List<DownloadInfo> dbDownloadInfos = Collections.synchronizedList(new ArrayList<DownloadInfo>(64));
-	private List<DownloadInfo> editorDownloadInfos = Collections.synchronizedList(new ArrayList<DownloadInfo>(64));
-	private List<DownloadInfo> toolsDownloadInfos = Collections.synchronizedList(new ArrayList<DownloadInfo>(64));
-	private List<DownloadInfo> othersDownloadInfos = Collections.synchronizedList(new ArrayList<DownloadInfo>(64));
 	private static Map<String, String> sqlFolderPathMap = new HashMap<String, String>();
 	private static  Map<String, List<Reports>> siteReportMap = new HashMap<String, List<Reports>>(15);
 	private boolean adaptFunctionalConfig = false;
@@ -621,6 +614,20 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 Collections.sort(projects, new ProjectComparator());
 		 return projects;
 	 }
+	
+	private List<Project> filterCustomerProjects(List<Project> projects, String customerId) throws PhrescoException {
+        List<Project> customerProjects = new ArrayList<Project>();
+        if (CollectionUtils.isNotEmpty(projects)) {
+            for (Project project : projects) {
+                ApplicationInfo applicationInfo = project.getApplicationInfo();
+                if (applicationInfo.getCustomerIds().contains(customerId)) {
+                    customerProjects.add(project);
+                }
+            }
+        }
+        
+        return customerProjects;
+    }
 
 	 @Override
      public User doLogin(Credentials credentials) throws PhrescoException {
@@ -629,13 +636,11 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
          try {
              String userName = credentials.getUsername();
              String password = credentials.getPassword();
-             byte[] encodeBase64 = Base64.encodeBase64(password.getBytes());
-             String encodedPassword = new String(encodeBase64);
              ServiceContext context = new ServiceContext();
              FrameworkConfiguration configuration = PhrescoFrameworkFactory.getFrameworkConfig();
              context.put(SERVICE_URL, configuration.getServerPath());
              context.put(SERVICE_USERNAME, userName);
-             context.put(SERVICE_PASSWORD, encodedPassword);
+             context.put(SERVICE_PASSWORD, password);
              serviceManager = ServiceClientFactory.getServiceManager(context);
          } catch (Exception ex) {
              S_LOGGER.error(ex.getLocalizedMessage());
@@ -644,113 +649,64 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
          return serviceManager.getUserInfo();
      }
 
-	 private void setDownloadInfoFromService(String customerId) throws PhrescoException {
-		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.getDownloadInfo()");
-
-		 if (CollectionUtils.isEmpty(downloadInfos)) {
-			 downloadInfos = getServiceManager().getDownloads(customerId);
-		 }
-	 }
-
 	 @Override
-	 public List<DownloadInfo> getServerDownloadInfo() throws PhrescoException {
+	 public List<DownloadInfo> getServerDownloadInfos(String customerId, String techId) throws PhrescoException {
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.getServerDownloadInfo()");
 		 
-		 //TODO:Need to handle the 
-		/* if (CollectionUtils.isEmpty(downloadInfos)) {
-			 setDownloadInfoFromService();
-		 }*/
-		 if (CollectionUtils.isNotEmpty(serverDownloadInfos)) {
-			 return serverDownloadInfos;
-		 }
-		 for (DownloadInfo downloadInfo : downloadInfos) {
-			 if (DownloadTypes.SERVER.equals(downloadInfo.getCategory())){
-				 serverDownloadInfos.add(downloadInfo);
-			 }
-		 }
+		 List<DownloadInfo> serverDownloadInfos = filterDownloadInfos(customerId, techId, DownloadInfo.Category.SERVER.name());
+		 
 		 return serverDownloadInfos;
 	 }
 
-	 @Override
-	 public List<DownloadInfo> getDbDownloadInfo() throws PhrescoException {
+	 private List<DownloadInfo> filterDownloadInfos(String customerId, String techId, String category) throws PhrescoException {
+	     List<DownloadInfo> allDownloadInfos = getServiceManager().getDownloads(customerId, techId);
+	     List<DownloadInfo> downloadInfos = new ArrayList<DownloadInfo>(); 
+		 if (CollectionUtils.isNotEmpty(allDownloadInfos)) {
+		     for (DownloadInfo downloadInfo : allDownloadInfos) {
+		         if (downloadInfo.getCategory().equals(category)) {
+		             downloadInfos.add(downloadInfo);
+		         }
+	         }
+		 }
+		 
+		 return downloadInfos;
+    }
 
+	 @Override
+	 public List<DownloadInfo> getDbDownloadInfos(String customerId, String techId) throws PhrescoException {
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.getDbDownloadInfo()");
 
-		 if (CollectionUtils.isEmpty(downloadInfos)) {
-		     //TODO:need to handle
-//			 setDownloadInfoFromService();
-		 }
-		 if (CollectionUtils.isNotEmpty(dbDownloadInfos)) {
-			 return dbDownloadInfos;
-		 }
-		 for (DownloadInfo downloadInfo : downloadInfos) {
-		   //TODO:need to handle
-//			 if (DownloadTypes.DATABASE.equals(downloadInfo.getType())){
-//				 dbDownloadInfos.add(downloadInfo);
-//			 }
-		 }
+		 List<DownloadInfo> dbDownloadInfos = filterDownloadInfos(customerId, techId, DownloadInfo.Category.DATABASE.name());
+         
 		 return dbDownloadInfos;
 	 }
 
 	 @Override
-	 public List<DownloadInfo> getEditorDownloadInfo() throws PhrescoException {
+	 public List<DownloadInfo> getEditorDownloadInfos(String customerId, String techId) throws PhrescoException {
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.getEditorDownloadInfo()");
-		//TODO:need to handle
-//		 setDownloadInfoFromService();
-//
-//		 if (CollectionUtils.isEmpty(downloadInfos)) {
-//			 downloadInfos = PhrescoFrameworkFactory.getServiceManager().getDownloadsFromService();
-//		 }
-//		 if (CollectionUtils.isNotEmpty(editorDownloadInfos)) {
-//			 return editorDownloadInfos;
-//		 }
-//		 for (DownloadInfo downloadInfo : downloadInfos) {
-//			 if (DownloadTypes.EDITOR.equals(downloadInfo.getType())){
-//				 editorDownloadInfos.add(downloadInfo);
-//			 }
-//		 }
+		 
+		 List<DownloadInfo> editorDownloadInfos = filterDownloadInfos(customerId, techId, DownloadInfo.Category.EDITOR.name());
+         
 		 return editorDownloadInfos;
 	 }
 	 
 	 @Override
-	 public List<DownloadInfo> getToolsDownloadInfo() throws PhrescoException {
+	 public List<DownloadInfo> getToolsDownloadInfos(String customerId, String techId) throws PhrescoException {
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.getToolsDownloadInfo()");
-		//TODO:need to handle
-//		 setDownloadInfoFromService();
-//
-//		 if (CollectionUtils.isEmpty(downloadInfos)) {
-//			 downloadInfos = PhrescoFrameworkFactory.getServiceManager().getDownloadsFromService();
-//		 }
-//		 if (CollectionUtils.isNotEmpty(toolsDownloadInfos)) {
-//			 return toolsDownloadInfos;
-//		 }
-//		 for (DownloadInfo downloadInfo : downloadInfos) {
-//			 if (DownloadTypes.TOOLS.equals(downloadInfo.getType())){
-//				 toolsDownloadInfos.add(downloadInfo);
-//			 }
-//		 }
+		 
+		 List<DownloadInfo> toolsDownloadInfos = filterDownloadInfos(customerId, techId, DownloadInfo.Category.TOOLS.name());
+		 
 		 return toolsDownloadInfos;
 	 }
 	 
 	 @Override
-		public List<DownloadInfo> getOtherDownloadInfo() throws PhrescoException {
-			 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.getEditorDownloadInfo()");
-			//TODO:need to handle
-//			 setDownloadInfoFromService();
-//
-//			 if (CollectionUtils.isEmpty(downloadInfos)) {
-//				 downloadInfos = PhrescoFrameworkFactory.getServiceManager().getDownloadsFromService();
-//			 }
-//			 if (CollectionUtils.isNotEmpty(othersDownloadInfos)) {
-//				 return othersDownloadInfos;
-//			 }
-//			 for (DownloadInfo downloadInfo : downloadInfos) {
-//				 if (DownloadTypes.OTHERS.equals(downloadInfo.getType())){
-//					 othersDownloadInfos.add(downloadInfo);
-//				 }
-//			 }
-			 return othersDownloadInfos;
-		}
+	 public List<DownloadInfo> getOtherDownloadInfos(String customerId, String techId) throws PhrescoException {
+	     S_LOGGER.debug("Entering Method ProjectAdministratorImpl.getEditorDownloadInfo()");
+
+	     List<DownloadInfo> othersDownloadInfos = filterDownloadInfos(customerId, techId, DownloadInfo.Category.OTHERS.name());
+			 
+	     return othersDownloadInfos;
+	 }
 	 
 	 /**
 	  * This method is to fetch the settings template through REST service
@@ -2126,6 +2082,14 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 }
 		 return null;
 	 }
+	 
+	 public List<DownloadInfo> getDatabases(String customerId, String techId) throws PhrescoException {
+         try {
+             return getServiceManager().getDatabases(customerId, techId);
+         } catch (Exception ex) {
+             throw new PhrescoException(ex);
+         }
+     }
 
 	 public List<DownloadInfo> getServers() throws PhrescoException {
 		 try {
@@ -2136,6 +2100,30 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 }
 		 return null;
 	 }
+	 
+	 public List<DownloadInfo> getServers(String customerId, String techId) throws PhrescoException {
+         try {
+             return getServiceManager().getServers(customerId, techId);
+         } catch (Exception ex) {
+             throw new PhrescoException(ex);
+         }
+     }
+	 
+	 public List<WebService> getWebservices() throws PhrescoException {
+         try {
+             return getServiceManager().getWebServices();
+         } catch (Exception ex) {
+             throw new PhrescoException(ex);
+         }
+     }
+	 
+	 public List<ApplicationInfo> getPilotProjects(String customerId, String techId) throws PhrescoException {
+         try {
+             return getServiceManager().getPilotProjects(customerId, techId);
+         } catch (Exception ex) {
+             throw new PhrescoException(ex);
+         }
+     }
 
 	 private void updateProjectPOM(ApplicationInfo appInfo) throws PhrescoException {
 		 try {

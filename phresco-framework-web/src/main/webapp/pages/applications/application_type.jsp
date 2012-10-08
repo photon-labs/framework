@@ -17,6 +17,7 @@
   limitations under the License.
   ###
   --%>
+<%@page import="org.apache.commons.collections.CollectionUtils"%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.util.List" %>
@@ -29,8 +30,8 @@
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 
 <%
-    ApplicationInfo selectedInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_PROJECT_INFO);
-    ApplicationType selectedAppType = (ApplicationType) request.getAttribute(FrameworkConstants.SESSION_APPLICATION_TYPE);
+    ApplicationInfo selectedInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_APPINFO);
+    List<Technology> technologies = (List<Technology>) request.getAttribute(FrameworkConstants.REQ_APPTYPE_TECHNOLOGIES);
     String fromPage = (String) request.getAttribute(FrameworkConstants.REQ_FROM_PAGE);
     String disabled = "disabled";
     if (StringUtils.isEmpty(fromPage)) {
@@ -46,7 +47,7 @@
     }
     
     List<String> selectedVersions = null;
-	if(selectedInfo != null) {
+	if (selectedInfo != null) {
 	    //TODO:Need to handle
 // 		selectedVersions = selectedInfo.getTechnology().getVersions();
 	}
@@ -58,11 +59,6 @@
     
     <!--  Technologies are loaded here starts-->
     <div class="input new-input">
-        <%
-        //TODO:Need to handle
-        List<Technology> technologies = null;
-//             List<Technology> technologies = selectedAppType.getTechnologies();
-        %>
 		<div class="app_type_float_left">
 			<select id="technology" name="technology" class="xlarge" <%= disabled %> >
 				<%
@@ -73,19 +69,17 @@
 					}
 					
 					String selectedStr = "";
-					if (technologies != null && technologies.size() > 0) {
-						
+					if (CollectionUtils.isNotEmpty(technologies)) {
 						for(Technology technology : technologies) {
 							String id = technology.getId();
 							String name = technology.getName();
-							
-							if(selectedTech != null && selectedTech.getId().equals(id)) {
+							if (selectedTech != null && selectedTech.getId().equals(id)) {
 								selectedStr = "selected";
 							} else {
 								selectedStr = "";
 							}
 				%>
-					<option value="<%= id %>" <%= selectedStr %> > <%= name %> </option>
+					<option value="<%= id %>" <%= selectedStr %> ><%= name %></option>
 				<%
 						}
 					}
@@ -93,7 +87,7 @@
 			</select>
 		</div>
 		
-		<div id="technologyVersionDiv" style="display: none;">
+		<div id="technologyVersionDiv" class="hideContent">
 			<div class="app_type_version">
 				<s:text name="label.versions"/>
 			</div>
@@ -124,19 +118,10 @@
 	    
 	function techDependencies() {
 		$("#alreadyConstructed").val("");
-	    var technology = $("#technology").val();
-	    var params = '<%= FrameworkConstants.REQ_APPLICATION_TYPE %>';
-	    params = params.concat("=");
-	    params = params.concat('<%= selectedAppType.getName() %>');
-	    params = params.concat("&technology=");
-	    params = params.concat(technology);
-	    params = params.concat("&" + '<%= FrameworkConstants.REQ_FROM_PAGE %>' + "=");
-	    params = params.concat('<%= fromPage %>');
-	    /* jQuery.ajaxSetup({async:false}); */
-	    popup('technology', params, $('#techDependency'), true);
+	    popup('technology', $('#formAppInfo'), $('#techDependency'), true);
 	}
 	
-	function techVersions() {
+	<%-- function techVersions() {
 		var technology = $("#technology").val();
 		var params = '<%= FrameworkConstants.REQ_APPLICATION_TYPE %>';
 	    params = params.concat("=");
@@ -145,7 +130,7 @@
 		params = params.concat(technology);
 		/* jQuery.ajaxSetup({async:true}); */
 		performAction("techVersions", params, '', true);
-	}
+	} --%>
 	
 	function showPrjtInfoTechVersion() {
 		<% if (selectedVersions != null) { %>

@@ -55,7 +55,10 @@ import com.opensymphony.xwork2.ActionContext;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ApplicationType;
+import com.photon.phresco.commons.model.DownloadInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
+import com.photon.phresco.commons.model.Technology;
+import com.photon.phresco.commons.model.WebService;
 import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.FrameworkConfiguration;
@@ -78,7 +81,6 @@ import com.photon.phresco.util.Utility;
 import com.phresco.pom.model.Scm;
 import com.phresco.pom.util.PomProcessor;
 import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.GenericType;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.WebResource.Builder;
@@ -88,179 +90,168 @@ public class Applications extends FrameworkBaseAction {
 	private static final long serialVersionUID = -4282767788002019870L;
 
 	private static final Logger S_LOGGER = Logger.getLogger(Applications.class);
-	private String projectCode = null;
-	private String fromPage = null;
-	private String repositoryUrl = null;
-	private String userName = null;
-	private String password = null;
-	private String revision = null;
-	private String revisionVal = null;
-	private String globalValidationStatus = null;
+	private static Boolean s_debugEnabled = S_LOGGER.isDebugEnabled();
+	
+	private String projectCode = "";
+	private String fromPage = "";
+	private String repositoryUrl = "";
+	private String userName = "";
+	private String password = "";
+	private String revision = "";
+	private String revisionVal = "";
+	private String globalValidationStatus = "";
 	private List<String> pilotModules = null;
 	private List<String> pilotJSLibs = null;
-	private String showSettings = null;
+	private String showSettings = "";
 	private List<String> settingsEnv = null;
 	private List<String> versions = null;
-	private String selectedVersions = null;
-	private String selectedAttrType = null;
-	private String selectedParamName = null;
-	private String hiddenFieldValue = null;
-	private String divTobeUpdated = null;
+	private String selectedVersions = "";
+	private String selectedAttrType = "";
+	private String selectedParamName = "";
+	private String hiddenFieldValue = "";
+	private String divTobeUpdated = "";
 	boolean hasError = false;
 	private String envError = "";
 	private List<String> techVersions = null;
 	private boolean hasConfiguration = false;
-	private String configServerNames = null;
-	private String configDbNames = null;
+	private String configServerNames = "";
+	private String configDbNames = "";
 	private boolean svnImport = false;
-	private String svnImportMsg = null;
+	private String svnImportMsg = "";
 	List<String> deletableDbs = new ArrayList<String>();
-	private String fromTab = null;
-	private String fileType = null;
+	private String fromTab = "";
+	private String fileType = "";
 	private String fileorfolder = null;
 	//svn info
-	private String credential = null;
+	private String credential = "";
 	// import from git
 	private String repoType = "";
 	
-	public String list() {
-		long start = System.currentTimeMillis();
-		S_LOGGER.debug("Entering Method  Applications.list()");
+	private String customerId = "";
+	
+	private String applicationType = "";
+	private String technology = "";
+	
+    public String list() {
+		if (s_debugEnabled) {
+		    S_LOGGER.debug("Entering Method  Applications.list()");
+		}
+		
 		try {
-			Map<String, Object> sessionMap = ActionContext.getContext()
-					.getSession();
-			sessionMap.remove(SESSION_SELECTED_INFO);
-			sessionMap.remove(SESSION_SELECTED_MODULES);
-			getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
-			getHttpSession().removeAttribute(projectCode);
+			setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
+			removeSessionAttribute(projectCode);
 		} catch (Exception e) {
 			S_LOGGER.error("Entered into catch block of Applications.list()"
 					+ FrameworkUtil.getStackTraceAsString(e));
 			new LogErrorReport(e, "Listing projects");
 		}
-		String discover = discover();
-		long end = System.currentTimeMillis();
-		S_LOGGER.debug("Total Time : " + (end - start));
-		return discover;
+		
+		return discover();
 	}
 
 	public String applicationDetails() {
-		S_LOGGER.debug("Entering Method  Applications.addApplication()");
+	    if (s_debugEnabled) {
+	        S_LOGGER.debug("Entering Method  Applications.applicationDetails()");
+	    }
 
-		getHttpRequest().setAttribute(REQ_FROM_PAGE,
-				getHttpRequest().getParameter(REQ_FROM_PAGE));
-		if (projectCode != null && !StringUtils.isEmpty(projectCode)) {
-			try {
-				getHttpSession().removeAttribute(projectCode);
-				ProjectAdministrator administrator = PhrescoFrameworkFactory
-						.getProjectAdministrator();
-				if (projectCode != null) {
-				    ApplicationInfo appInfo = administrator.getProject(
-							projectCode).getApplicationInfo();
-					S_LOGGER.debug("project info value"+ appInfo.toString());
-					getHttpRequest().setAttribute(REQ_PROJECT_INFO, appInfo);
-				}
-				if (StringUtils.isNotEmpty(fromPage)) {
-					getHttpRequest().setAttribute(REQ_FROM_PAGE, fromPage);
-				}
-			} catch (Exception e) {
-				S_LOGGER.error("Entered into catch block of Applications.addApplication()"
-						+ FrameworkUtil.getStackTraceAsString(e));
-				new LogErrorReport(e, REQ_TITLE_ADD_APPLICATION);
-			}
+		try {
+		    setReqAttribute(REQ_FROM_PAGE, getHttpRequest().getParameter(REQ_FROM_PAGE));
+	        if (StringUtils.isNotEmpty(projectCode)) {
+    			removeSessionAttribute(projectCode);
+    			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
+			    ApplicationInfo appInfo = administrator.getProject(projectCode).getApplicationInfo();
+				setReqAttribute(REQ_APPINFO, appInfo);
+				setReqAttribute(REQ_FROM_PAGE, fromPage);
+            }
+		} catch (Exception e) {
+			S_LOGGER.error("Entered into catch block of Applications.addApplication()"
+					+ FrameworkUtil.getStackTraceAsString(e));
+			new LogErrorReport(e, REQ_TITLE_ADD_APPLICATION);
 		}
+		
 		return APP_APPLICATION_DETAILS;
 	}
 
 	public String appInfo() {
-		S_LOGGER.debug("Entering Method  Applications.add()");
-
+	    if (s_debugEnabled) {
+	        S_LOGGER.debug("Entering Method  Applications.appInfo()");
+	    }
+	    
 		try {
-			if (StringUtils.isNotEmpty(fromPage)) {
-				getHttpRequest().setAttribute(REQ_FROM_PAGE, fromPage);
-			}
- 			FrameworkUtil.setAppInfoDependents(getHttpRequest());
-			getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
-			ProjectAdministrator administrator = PhrescoFrameworkFactory
-					.getProjectAdministrator();
+			setReqAttribute(REQ_FROM_PAGE, fromPage);
+			HttpServletRequest request = getHttpRequest();
+ 			FrameworkUtil.setAppInfoDependents(request, getCustomerId());
+			setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
+			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
 			ApplicationInfo appInfo = null;
 			if (FEATURES.equals(fromTab)) {
-				appInfo = (ApplicationInfo) getHttpSession().getAttribute(projectCode);
+				appInfo = (ApplicationInfo) getSessionAttribute(projectCode);
 			}
 			if (StringUtils.isNotEmpty(fromPage) && appInfo == null) {
 				appInfo = administrator.getProject(projectCode).getApplicationInfo();
-				getHttpSession().setAttribute(projectCode, appInfo);
+				setSessionAttribute(projectCode, appInfo);
 			}
 			
-			getHttpRequest().setAttribute(REQ_TEMP_SELECTED_PILOT_PROJ, getHttpRequest().getParameter(REQ_SELECTED_PILOT_PROJ));
+			setReqAttribute(REQ_TEMP_SELECTED_PILOT_PROJ, getHttpRequest().getParameter(REQ_SELECTED_PILOT_PROJ));
 			String[] modules = getHttpRequest().getParameterValues(REQ_SELECTEDMODULES);
-			if (modules != null && modules.length > 0) {
-				Map<String, String> mapModules = ApplicationsUtil
-						.getIdAndVersionAsMap(getHttpRequest(), modules);
-				getHttpRequest().setAttribute(REQ_TEMP_SELECTEDMODULES,
-						mapModules);
+			if (!ArrayUtils.isEmpty(modules)) {
+				Map<String, String> mapModules = ApplicationsUtil.getIdAndVersionAsMap(getHttpRequest(), modules);
+				setReqAttribute(REQ_TEMP_SELECTEDMODULES, mapModules);
 			}
 
-			String[] jsLibs = getHttpRequest().getParameterValues(
-					REQ_SELECTED_JSLIBS);
-			if (jsLibs != null && jsLibs.length > 0) {
+			String[] jsLibs = getHttpRequest().getParameterValues(REQ_SELECTED_JSLIBS);
+			if (!ArrayUtils.isEmpty(jsLibs)) {
 				Map<String, String> mapJsLib = ApplicationsUtil
 						.getIdAndVersionAsMap(getHttpRequest(), jsLibs);
-				getHttpRequest().setAttribute(REQ_TEMP_SELECTED_JSLIBS,
-						mapJsLib);
+				setReqAttribute(REQ_TEMP_SELECTED_JSLIBS, mapJsLib);
 			}
-		} catch (ClientHandlerException e) {
-			S_LOGGER.error("Entered into catch block of Applications.appInfo()"
-						+ FrameworkUtil.getStackTraceAsString(e));
-			new LogErrorReport(e, REQ_TITLE_ADD_APPLICATION);
+			setReqAttribute(REQ_CONFIG_SERVER_NAMES, configServerNames);
+	        setReqAttribute(REQ_CONFIG_DB_NAMES, configDbNames);
 		} catch (Exception e) {
 			S_LOGGER.error("Entered into catch block of Applications.appInfo()"
 						+ FrameworkUtil.getStackTraceAsString(e));
-			addActionError(e.getLocalizedMessage());
 			new LogErrorReport(e, REQ_TITLE_ADD_APPLICATION);
 		}
-		getHttpRequest().setAttribute(REQ_CONFIG_SERVER_NAMES, configServerNames);
-        getHttpRequest().setAttribute(REQ_CONFIG_DB_NAMES, configDbNames);
         
 		return APP_APPINFO;
 	}
 
 	public String applicationType() {
-		
-		S_LOGGER.debug("Entering Method  Applications.applicationType()");
-		String appType = getHttpRequest().getParameter(REQ_APPLICATION_TYPE);
+	    if (s_debugEnabled) {
+	        S_LOGGER.debug("Entering Method  Applications.applicationType()");
+	    }
+	    
 		try {
-			ApplicationType applicationType = ApplicationsUtil
-					.getApplicationType(getHttpRequest(), appType);
-			getHttpRequest().setAttribute(SESSION_APPLICATION_TYPE,
-					applicationType);
-			ProjectAdministrator administrator = PhrescoFrameworkFactory
-					.getProjectAdministrator();
-			Project project = null;
-			if (StringUtils.isNotEmpty(projectCode)) {
-				project = administrator.getProject(projectCode);
-			}
-			if (project != null) {
-				ApplicationInfo appInfo = project.getApplicationInfo();
-				getHttpRequest().setAttribute(REQ_PROJECT_INFO, appInfo);
-			}
-			getHttpRequest().setAttribute(REQ_SELECTED_JSLIBS,
-					getHttpRequest().getParameter(REQ_SELECTED_JSLIBS));
-			getHttpRequest().setAttribute(REQ_FROM_PAGE, fromPage);
+		    ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
+            Project project = null;
+            if (StringUtils.isNotEmpty(projectCode) && FROM_PAGE_EDIT.equals(fromPage)) {
+                project = administrator.getProject(projectCode);
+                ApplicationInfo appInfo = project.getApplicationInfo();
+                setReqAttribute(REQ_APPINFO, appInfo);
+                setApplicationType(appInfo.getTechInfo().getAppTypeId());
+            }
+            System.out.println("getApplicationType():::" + getApplicationType());
+            System.out.println("getCustomerId():::" + getCustomerId());
+            List<Technology> technologies = administrator.getAppTypeTechnologies(getCustomerId(), getApplicationType());
+            getHttpRequest().setAttribute(REQ_APPTYPE_TECHNOLOGIES, technologies);
+            getHttpRequest().setAttribute(REQ_SELECTED_JSLIBS,
+                    getHttpRequest().getParameter(REQ_SELECTED_JSLIBS));
+            getHttpRequest().setAttribute(REQ_FROM_PAGE, fromPage);
 		} catch (Exception e) {
 			S_LOGGER.error("Entered into catch block of Applications.applicationType()"
 						+ FrameworkUtil.getStackTraceAsString(e));
 			new LogErrorReport(e, "Getting Application Type");
 		}
+		
 		return APP_TYPE;
 	}
 
 	public String technology() {
-		
-		S_LOGGER.debug("Entering Method  Applications.technology()");
+	    if (s_debugEnabled) {
+	        S_LOGGER.debug("Entering Method  Applications.technology()");
+	    }
+	    
 		try {
-			String selectedTechnology = getHttpRequest().getParameter(REQ_TECHNOLOGY);
-			String appType = getHttpRequest().getParameter(REQ_APPLICATION_TYPE);
 			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
 			Project project = null;
 			if (StringUtils.isNotEmpty(projectCode)) {
@@ -269,21 +260,27 @@ public class Applications extends FrameworkBaseAction {
 			if (project != null) {
 				ApplicationInfo appInfo = project.getApplicationInfo();
 				S_LOGGER.debug("project info value"	+ appInfo.toString());
-				getHttpRequest().setAttribute(REQ_PROJECT_INFO, appInfo);
+				setReqAttribute(REQ_APPINFO, appInfo);
 			}
-			ApplicationType applicationType = ApplicationsUtil.getApplicationType(getHttpRequest(), appType);
-			//TODO:Need to handle
-//			List<DownloadInfo> servers = techonology.getServers();
-//			List<DownloadInfo> databases = techonology.getDatabases();
-//			S_LOGGER.debug("Selected technology" + techonology.toString());
-			//This attribute for Pilot Project combo box
-//	    	getHttpRequest().setAttribute(REQ_PILOTS_NAMES, ApplicationsUtil.getPilotNames(techonology.getId()));
-//	    	getHttpRequest().setAttribute(REQ_PILOT_PROJECT_INFO, ApplicationsUtil.getPilotProjectInfo(techonology.getId()));
-//			getHttpRequest().setAttribute(SESSION_SELECTED_TECHNOLOGY, techonology);
-			getHttpRequest().setAttribute(REQ_APPLICATION_TYPE, appType);
-			getHttpRequest().setAttribute(REQ_FROM_PAGE, fromPage);
-//			getHttpRequest().setAttribute("servers", servers);
-//			getHttpRequest().setAttribute("databases", databases);
+			//To get the servers
+//			List<DownloadInfo> servers = administrator.getServers(getCustomerId(), getTechnology());
+//			setReqAttribute(REQ_SERVERS, servers);
+			
+			//To get the databases
+//			List<DownloadInfo> databases = administrator.getDatabases(getCustomerId(), getTechnology());
+//			setReqAttribute(REQ_DATABASE, databases);
+			
+			//To get the webservices
+			List<WebService> webservices = administrator.getWebservices();
+			setReqAttribute(REQ_WEBSERVICES, webservices);
+			
+			//To get the pilot projects
+			List<ApplicationInfo> pilotProjects = administrator.getPilotProjects(getCustomerId(), getTechnology());
+			setReqAttribute(REQ_PILOT_PROJECT_INFO, pilotProjects);
+			
+			setReqAttribute(REQ_FROM_PAGE, fromPage);
+			setReqAttribute(REQ_APPTYPE, getApplicationType());
+			setReqAttribute(REQ_SELECTED_TECHNOLOGY, getTechnology());
 		} catch (Exception e) {
 			S_LOGGER.error("Entered into catch block of  Applications.technology()"	+ FrameworkUtil.getStackTraceAsString(e));
 			new LogErrorReport(e, "Getting technology");
@@ -293,6 +290,10 @@ public class Applications extends FrameworkBaseAction {
 	}
 	
 	public String techVersions() {
+	    if (s_debugEnabled) {
+	        S_LOGGER.debug("Entering Method  Applications.techVersions()");
+	    }
+	    
 		try {
 			String appType = getHttpRequest().getParameter(REQ_APPLICATION_TYPE);
 			String selectedTechnology = getHttpRequest().getParameter(REQ_TECHNOLOGY);
@@ -310,103 +311,95 @@ public class Applications extends FrameworkBaseAction {
 	}
 
 	public String previous() throws PhrescoException {
-		S_LOGGER.debug("Entered previous()");
+	    if (s_debugEnabled) {
+	        S_LOGGER.debug("Entered previous()");
+	    }
 
 		try {
-			HttpServletRequest request = getHttpRequest();
-			getHttpRequest().setAttribute("projectCode", projectCode);
-
+			setReqAttribute(REQ_PROJECT_CODE, projectCode);
 			ProjectInfo projectInfo = null;
 			if (projectCode != null) {
 				projectInfo = (ProjectInfo) getHttpSession().getAttribute(
 						projectCode);
 
-				getHttpRequest().setAttribute(REQ_TEMP_SELECTED_PILOT_PROJ, getHttpRequest().getParameter(REQ_SELECTED_PILOT_PROJ));
-				String[] modules = getHttpRequest().getParameterValues(
-						REQ_SELECTEDMODULES);
-				if (modules != null && modules.length > 0) {
+				setReqAttribute(REQ_TEMP_SELECTED_PILOT_PROJ, getHttpRequest().getParameter(REQ_SELECTED_PILOT_PROJ));
+				String[] modules = getHttpRequest().getParameterValues(REQ_SELECTEDMODULES);
+				if (!ArrayUtils.isEmpty(modules)) {
 					Map<String, String> mapModules = ApplicationsUtil
 							.getIdAndVersionAsMap(getHttpRequest(), modules);
 					getHttpRequest().setAttribute(REQ_TEMP_SELECTEDMODULES,
 							mapModules);
 				}
 
-				String[] jsLibs = getHttpRequest().getParameterValues(
-						REQ_SELECTED_JSLIBS);
-				if (jsLibs != null && jsLibs.length > 0) {
-					Map<String, String> mapJsLib = ApplicationsUtil
-							.getIdAndVersionAsMap(request, jsLibs);
-					getHttpRequest().setAttribute(REQ_TEMP_SELECTED_JSLIBS,
-							mapJsLib);
+				String[] jsLibs = getHttpRequest().getParameterValues(REQ_SELECTED_JSLIBS);
+				if (!ArrayUtils.isEmpty(jsLibs)) {
+					Map<String, String> mapJsLib = ApplicationsUtil.getIdAndVersionAsMap(getHttpRequest(), jsLibs);
+					setReqAttribute(REQ_TEMP_SELECTED_JSLIBS, mapJsLib);
 				}
 			}
-			getHttpSession().setAttribute(projectCode, projectInfo);
-			FrameworkUtil.setAppInfoDependents(getHttpRequest());
+			setSessionAttribute(projectCode, projectInfo);
+			HttpServletRequest request = getHttpRequest();
+			FrameworkUtil.setAppInfoDependents(request, getCustomerId());
+			setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
+	        setReqAttribute(REQ_CONFIG_SERVER_NAMES, configServerNames);
+	        setReqAttribute(REQ_CONFIG_DB_NAMES, configDbNames);
 		} catch (Exception e) {
 			S_LOGGER.error("Entered into catch block of  Applications.previous()"
 						+ FrameworkUtil.getStackTraceAsString(e));
 			new LogErrorReport(e, "When previous button is clicked");
 		}
-		getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
-		getHttpRequest().setAttribute(REQ_CONFIG_SERVER_NAMES, configServerNames);
-        getHttpRequest().setAttribute(REQ_CONFIG_DB_NAMES, configDbNames);
 
         return APP_APPINFO;
 	}
 
 	public String save() throws PhrescoException {
-		S_LOGGER.debug("Entering Method Applications.save()");
+	    if (s_debugEnabled) {
+	        S_LOGGER.debug("Entering Method Applications.save()");
+	    }
 
-		ApplicationInfo appInfo = (ApplicationInfo) getHttpSession().getAttribute(projectCode);
 		try {
-			ProjectAdministrator administrator = PhrescoFrameworkFactory
-					.getProjectAdministrator();
+		    ApplicationInfo appInfo = (ApplicationInfo) getHttpSession().getAttribute(projectCode);
+			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
 			setFeatures(administrator, appInfo);
-			S_LOGGER.debug("Going to create project, Project info values "
-						+ appInfo.toString());
-			UserInfo userInfo = (UserInfo) getHttpSession().getAttribute(REQ_USER_INFO);
 			administrator.createProject(appInfo, null);
-			addActionMessage(getText(SUCCESS_PROJECT,
-					Collections.singletonList(appInfo.getName())));
+			addActionMessage(getText(SUCCESS_PROJECT, Collections.singletonList(appInfo.getName())));
+			removeSessionAttribute(projectCode);
+	        setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
 		} catch (Exception e) {
 			S_LOGGER.error("Entered into catch block of  Applications.save()"
 					+ FrameworkUtil.getStackTraceAsString(e));
-			if ("Session expired".equalsIgnoreCase(e.getMessage())) {
-				getHttpSession().removeAttribute(REQ_USER_INFO);
-			}
 		}
-		getHttpSession().removeAttribute(projectCode);
-		getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
 		
 		return discover();
 	}
 
 	public String update() throws PhrescoException {
-		S_LOGGER.debug("Entering Method  Applications.update()");
+	    if (s_debugEnabled) {
+	        S_LOGGER.debug("Entering Method  Applications.update()");
+	    }
 		
 		BufferedReader reader = null;
-		ApplicationInfo appInfo = (ApplicationInfo) getHttpSession().getAttribute(projectCode);
 		try {
+		    ApplicationInfo appInfo = (ApplicationInfo) getHttpSession().getAttribute(projectCode);
 			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
 			setFeatures(administrator, appInfo);
 			//TODO:Need to handle
 //			ApplicationInfo originalinfo = appInfo.clone();
-			File projectPath = new File(Utility.getProjectHome(), appInfo.getCode() + File.separator + FOLDER_DOT_PHRESCO + File.separator
-					+ PROJECT_INFO);
+			File projectPath = new File(Utility.getProjectHome(), appInfo.getCode() + File.separator 
+			                    + FOLDER_DOT_PHRESCO + File.separator + PROJECT_INFO);
 			try {
 				reader = new BufferedReader(new FileReader(projectPath));
 			} catch (FileNotFoundException e) {
 				throw new PhrescoException(e);
-
 			}
 			//TODO:Need to handle
 //			List<ModuleGroup> modules = appInfo.getTechnology().getModules();
 //			List<ModuleGroup> jsLibraries = appInfo.getTechnology().getJsLibraries();
-//			if (modules == null) {
+//			if (CollectionUtils.isNotEmpty(modules)) {
 //				appInfo.getTechnology().setModules(null);
 //			}
 //		
-//			if (jsLibraries == null) {
+//			if (CollectionUtils.isNotEmpty(jsLibraries)) {
 //				appInfo.getTechnology().setJsLibraries(null);
 //			}
 			try {
@@ -449,17 +442,14 @@ public class Applications extends FrameworkBaseAction {
 				}
 				
 				administrator.deleteSqlFolder(deletableDbs, appInfo);
-				UserInfo userInfo = (UserInfo) getHttpSession().getAttribute(REQ_USER_INFO);
+				UserInfo userInfo = (UserInfo) getHttpSession().getAttribute(SESSION_USER_INFO);
 				//TODO:Need to handle
 //				administrator.updateProject(appInfo, originalinfo, projectPath,userInfo);
 				removeConfiguration();
 				addActionMessage(getText(UPDATE_PROJECT,Collections.singletonList(appInfo.getName())));
 			} catch (Exception e) {
-				if ("Session expired".equalsIgnoreCase(e.getMessage())) {
-					getHttpSession().removeAttribute(REQ_USER_INFO);
-				}
-			}
 
+			}
 		} catch (PhrescoException e) {
 			S_LOGGER.error("Entered into catch block of  Applications.update()" + FrameworkUtil.getStackTraceAsString(e));
 			new LogErrorReport(e, "Update Project");
@@ -470,8 +460,8 @@ public class Applications extends FrameworkBaseAction {
 				throw new PhrescoException(e);
 			}
 		}
-		getHttpSession().removeAttribute(projectCode);
-		getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
+		removeSessionAttribute(projectCode);
+		setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
 		
 		return discover();
 	}
@@ -543,7 +533,7 @@ public class Applications extends FrameworkBaseAction {
 					}
 				}
 			}
-			getHttpRequest().setAttribute(REQ_FROM_PAGE, FROM_PAGE);
+			getHttpRequest().setAttribute(REQ_FROM_PAGE, FROM_PAGE_EDIT);
 			getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
 		} catch (Exception e) {
 			S_LOGGER.error("Entered into catch block of  Applications.edit()"
@@ -887,17 +877,9 @@ public class Applications extends FrameworkBaseAction {
 		S_LOGGER.debug("Entering Method  Applications.discover()");
 		
 		try {
-			ProjectAdministrator administrator = PhrescoFrameworkFactory
-					.getProjectAdministrator();
-			List<Project> projects = administrator.discover(Collections
-					.singletonList(new File(Utility.getProjectHome())));
-			HttpServletRequest request = (HttpServletRequest) ActionContext
-					.getContext().get(ServletActionContext.HTTP_REQUEST);
-			request.setAttribute(REQ_PROJECTS, projects);
-			// add session
-			Map<String, Object> sessionMap = ActionContext.getContext()
-					.getSession();
-			sessionMap.put(REQ_PROJECTS, projects);
+			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
+			List<Project> projects = administrator.discover(Collections.singletonList(new File(Utility.getProjectHome())));
+			setReqAttribute(REQ_PROJECTS, projects);
 		} catch (Exception e) {
 			S_LOGGER.error("Entered into catch block of Applications.discover()"
 						+ FrameworkUtil.getStackTraceAsString(e));
@@ -1659,4 +1641,28 @@ public class Applications extends FrameworkBaseAction {
 	public void setRepoType(String repoType) {
 		this.repoType = repoType;
 	}
+	
+	public String getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(String customerId) {
+        this.customerId = customerId;
+    }
+    
+    public String getApplicationType() {
+        return applicationType;
+    }
+
+    public void setApplicationType(String applicationType) {
+        this.applicationType = applicationType;
+    }
+    
+    public String getTechnology() {
+        return technology;
+    }
+
+    public void setTechnology(String technology) {
+        this.technology = technology;
+    }
 }

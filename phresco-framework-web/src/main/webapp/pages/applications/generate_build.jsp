@@ -24,14 +24,13 @@
 <%@ page import="java.util.Set"%>
 <%@ page import="java.util.Iterator"%>
 <%@ page import="java.util.HashMap"%>
+<%@ page import="org.apache.commons.lang.StringUtils" %>
+<%@ page import="com.photon.phresco.configuration.Environment"%>
 
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.util.TechnologyTypes" %>
-<%@ page import="com.photon.phresco.framework.api.Project" %>
 <%@ page import="com.photon.phresco.framework.commons.ApplicationsUtil"%>
 <%@ page import="com.photon.phresco.framework.commons.PBXNativeTarget"%>
-<%@ page import="com.photon.phresco.configuration.Environment"%>
-<%@ page import="org.apache.commons.lang.StringUtils" %>
 <%@ page import="org.apache.commons.collections.CollectionUtils" %>
 <%@ page import="com.photon.phresco.commons.XCodeConstants"%>
 <%@ page import="com.photon.phresco.commons.AndroidConstants"%>
@@ -41,8 +40,7 @@
 
 <%
     String defaultEnv = "";
-	Project project = (Project) request.getAttribute(FrameworkConstants.REQ_PROJECT);
-   	String projectCode = (String)project.getApplicationInfo().getCode();
+   	String projectCode = (String) request.getAttribute(FrameworkConstants.REQ_PROJECT_CODE);
    	String from = (String) request.getAttribute(FrameworkConstants.REQ_BUILD_FROM);
    	String technology = (String)request.getAttribute(FrameworkConstants.REQ_TECHNOLOGY);
    	String testType = (String) request.getAttribute(FrameworkConstants.REQ_TEST_TYPE);
@@ -72,11 +70,11 @@
 	<div class="modal-header">
 		<h3 id="generateBuildTitle">
 		<%
-		    if (from.equals("nodeJS_runAgnSrc") || from.equals("runAgnSrc")) {
+		    if ("nodeJS_runAgnSrc".equals(from) || "runAgnSrc".equals(from)) {
 		%>
 				<s:text name="label.runagainsrc"/>
 			<%
-			    } else if (from.equals(FrameworkConstants.DEPLOY)) {
+			    } else if (FrameworkConstants.DEPLOY.equals(from)) {
 			%>
 				<s:text name="label.deploy"/>
 			<%
@@ -97,7 +95,7 @@
 	<div class="modal-body">
 
 		<%
-		    if (CollectionUtils.isNotEmpty(projectModules) && from.equals("generateBuild")) {
+		    if (CollectionUtils.isNotEmpty(projectModules) && "generateBuild".equals(from)) {
 		%>
             <div id="agnBrowser" class="build server">
 				<!-- Modules -->
@@ -122,7 +120,7 @@
         
 
         <%
-                    if (from.equals("generateBuild")) {
+                    if ("generateBuild".equals(from)) {
                 %>
 		        <div class="clearfix">
 				    <label for="xlInput" class="xlInput popup-label"><s:text name="label.build.name"/></label>
@@ -208,7 +206,7 @@
 		    <label for="xlInput" class="xlInput popup-label"><span class="red">*</span> <s:text name="label.environment"/></label>
 		    <div class="input">
 		    	<%
-		    	    if (from.equals("generateBuild") && !TechnologyTypes.MOBILES.contains(technology)) {
+		    	    if ("generateBuild".equals(from) && !TechnologyTypes.MOBILES.contains(technology)) {
 		    	%>
 		    		<div class="generate_build">
 			        	<ul id="environments" name="environment" class="xlarge">
@@ -240,7 +238,7 @@
 		        %>
 		        	<select id="environments" name="environment" class="xlarge">
 		        		<%
-		        		    if (from.equals(FrameworkConstants.DEPLOY) && buildInfoEnvs != null && CollectionUtils.isNotEmpty(buildInfoEnvs)) {
+		        		    if (FrameworkConstants.DEPLOY.equals(from) && buildInfoEnvs != null && CollectionUtils.isNotEmpty(buildInfoEnvs)) {
 		        				        				for (String env : buildInfoEnvs) {
 		        		%>
 		        				<option value="<%=env%>"><%=env%></option>
@@ -363,7 +361,7 @@
 					<ul class="inputs-list">
 						<li class="popup-li">
 							<%
-							    if (!from.equals(FrameworkConstants.DEPLOY)) {
+							    if (!FrameworkConstants.DEPLOY.equals(from)) {
 							%>
 								<input type="checkbox" id="showSettings" name="showSettings" value="showsettings">
 								<span class="textarea_span popup-span"><s:text name="label.show.setting"/></span>
@@ -390,7 +388,7 @@
 							    }
 							%>
 							<%
-							    if (from.equals("generateBuild") || from.equals(FrameworkConstants.DEPLOY)) {
+							    if ("generateBuild".equals(from) || FrameworkConstants.DEPLOY.equals(from)) {
 							%>
 								<input type="checkbox" id="showError" name="showError" value="true">
 								<span class="textarea_span popup-span"><s:text name="label.show.error"/></span>
@@ -463,7 +461,7 @@
 		<!-- sql execution ends  -->
 		
 <!-- 		advanced settingd -->
-		<% if (from.equals("generateBuild") && TechnologyTypes.ANDROIDS.contains(technology)) { %>
+		<% if ("generateBuild".equals(from) && TechnologyTypes.ANDROIDS.contains(technology)) { %>
 			<div class="theme_accordion_container clearfix" style="float: none;">
 			    <section class="accordion_panel_wid">
 			        <div class="accordion_panel_inner adv-settings-accoridan-inner">
@@ -500,7 +498,7 @@
 <!-- 		advanced settings end -->
 
 <!-- minifier setting starts -->
-		<% if (from.equals("generateBuild") && (TechnologyTypes.HTML5_MULTICHANNEL_JQUERY_WIDGET.equals(technology) || 
+		<% if ("generateBuild".equals(from) && (TechnologyTypes.HTML5_MULTICHANNEL_JQUERY_WIDGET.equals(technology) || 
 				TechnologyTypes.HTML5_JQUERY_MOBILE_WIDGET.equals(technology) || 
 				TechnologyTypes.HTML5_MOBILE_WIDGET.equals(technology) ||
 				TechnologyTypes.HTML5_WIDGET.equals(technology))) { %>
@@ -575,11 +573,11 @@
 			<div style="float: right;">
 				<input type="hidden" name="from" value="<%= from %>" id="from">
 				<input type="button" class="btn primary" value="<s:text name="label.cancel"/>" id="cancel">
-				<% if (from.equals("nodeJS_runAgnSrc")) {%>
+				<% if ("nodeJS_runAgnSrc".equals(from)) {%>
 					<input type="button" id="runAgainstSrc" class="btn primary" value="<s:text name="label.run"/>">
-				<% } else if (from.equals("runAgnSrc")) {%>
+				<% } else if ("runAgnSrc".equals(from)) {%>
 					<input type="button" id="javaRunAgainstSrc" class="btn primary" value="<s:text name="label.run"/>">
-				<% } else if (from.equals(FrameworkConstants.DEPLOY)) {%>	
+				<% } else if (FrameworkConstants.DEPLOY.equals(from)) {%>	
 					<input type="button" id="deploy" class="btn primary" value="<s:text name="label.deploy"/>">
 				<% } else { %>
 					<input type="button" id="build" class="btn primary" value="<s:text name="label.build"/>">

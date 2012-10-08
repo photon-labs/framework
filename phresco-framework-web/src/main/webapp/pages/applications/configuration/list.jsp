@@ -38,8 +38,6 @@
 <%@ page import="com.photon.phresco.framework.model.SettingsInfo"%>
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 
-<%@ include file="../../userInfoDetails.jsp" %>
-
 <script type="text/javascript" src="js/delete.js" ></script>
 <script type="text/javascript" src="js/confirm-dialog.js" ></script>
 <script type="text/javascript" src="js/loading.js" ></script>
@@ -310,15 +308,10 @@
     function editConfiguration(configName, envName) {
     	disableScreen();
     	showLoadingIcon($("#loadingIconDiv"));
-    	
-    	var params = "";
-    	if (!isBlank($('form').serialize())) {
-    		params = $('form').serialize() + "&";
-    	}
-    	params = params.concat("oldName=");
+    	var params = "oldName=";
     	params = params.concat(configName);
     	params = params.concat("&envName=");
     	params = params.concat(envName);
-    	performAction("editConfiguration", params, $('#tabDiv'));
+    	performAction("editConfiguration", '', $('#tabDiv'), '', params);
     }
 </script>

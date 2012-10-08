@@ -41,6 +41,9 @@ public interface FrameworkConstants {
     String PROJECT_INFO = "project.info";
     String GIT_IMPORT_TEMP_DIR = "gitImportTemp";
     String SONAR = "sonar";
+    String FROM_PAGE_LOGIN = "login";
+    
+    String REQ_CUSTOMER_ID = "customerId";
    
     String DO_NOT_CHECKIN_DIR = "do_not_checkin";
     String ARCHIVES = "archives";
@@ -204,7 +207,7 @@ public interface FrameworkConstants {
     String TEST_PARAM_VALUE = "AllTest";
     String ALL_TEST_SUITES = "All";
     String KEY_QUOTES = "\"";
-    String FROM_PAGE = "edit";
+    String FROM_PAGE_EDIT = "edit";
     String DEPLOY_BUILD_NAME = "buildName";
     String IPHONE_BUILD_NAME = "application.path";
     String IPHONE_SIMULATOR_VERSION = "simulator.version";
@@ -363,9 +366,8 @@ public interface FrameworkConstants {
      */
     String SESSION_SELECTED_INFO = "selectedInfo";
     String SESSION_SELECTED_MODULES = "selectedModules";
-    String SESSION_APPLICATION_TYPES = "ApplicationTypes";
+    String REQ_APPLICATION_TYPES = "ApplicationTypes";
     String SESSION_APPLICATION_TYPE = "ApplicationType";
-    String SESSION_SELECTED_TECHNOLOGY = "SelectedTechnology";
     String SESSION_PROJECT = "project";
     String SESSION_TECHNOLOGY_MODULES = "technologyModules";
     String SESSION_PROPERTY_INFO_LIST = "propertyInfoList";
@@ -389,7 +391,7 @@ public interface FrameworkConstants {
      * Request Constants
      * Ex: REQ_XXX
      */
-    String REQ_PROJECT_INFO	= "projectInfo";
+    String REQ_APPINFO	= "appInfo";
 	String REQ_TITLE_ADD_APPLICATION = "Add ApPlication";
     String REQ_BUILD_FROM = "from";
     String REQ_NODEJS_SERVER_LOG = "NodeJsServerLog";
@@ -402,11 +404,13 @@ public interface FrameworkConstants {
     String REQ_TOTAL_THROUGHPUT = "totalThroughput";
     String REQ_TOTAL_STD_DEV = "totalStdDev";
     String REQ_TECHNOLOGY = "technology";
+    String REQ_SELECTED_TECHNOLOGY = "SelectedTechnology";
     String REQ_NAME = "name";
     String REQ_CODE = "code";
     String REQ_TYPE = "type";
     String REQ_DESCRIPTION = "description";
     String REQ_APPLICATION = "application";
+    String REQ_APPTYPE_TECHNOLOGIES = "appTypeTechnologies";
     String REQ_ADD_APPLICATION = "addApplication";
     String REQ_EDIT_APPLICATION = "addApplication";
     String REQ_FRAMEWORK = "framework";
@@ -554,7 +558,7 @@ public interface FrameworkConstants {
     String REQ_ENV_WEBSERVICE_SETTINGS = "webServiceSettings";
     String REQ_APPLIES_TO = "appliesto";
     String REQ_SHOW_WELCOME = "showWelcome";
-    String REQ_USER_INFO = "userInfo";
+    String SESSION_USER_INFO = "userInfo";
     String SESSION_USER_PASSWORD = "password";
     String REQ_TEST_RESULT_FILE = "testResultFile";
 	String REQ_TOTAL_BUILDS_SIZE = "totalBuildsSize";
@@ -874,7 +878,8 @@ public interface FrameworkConstants {
      * login keys
      */
     String ERROR_LOGIN = "login.error.message";
-    String ERROR_LOGIN_INVALID = "login.error.invalid";
+    String ERROR_LOGIN_INVALID_USERNAME = "login.error.username";
+    String ERROR_LOGIN_INVALID_PASSWORD = "login.error.password";
     String ERROR_LOGIN_ACCESS_DENIED = "login.error.access.denied.message";
     String ERROR_EXCEPTION = "login.exception.message";
     String SUCCESS_LOGOUT = "logout.success.message";

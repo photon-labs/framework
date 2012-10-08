@@ -40,15 +40,11 @@
 
 package com.photon.phresco.framework.actions;
 
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.photon.phresco.commons.model.User;
-import com.photon.phresco.commons.model.VideoInfo;
 import com.photon.phresco.exception.PhrescoException;
-import com.photon.phresco.framework.FrameworkConfiguration;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.api.ProjectAdministrator;
 import com.photon.phresco.framework.commons.FrameworkUtil;
@@ -56,122 +52,99 @@ import com.photon.phresco.util.Credentials;
 
 public class Login extends FrameworkBaseAction {
 
-	private static final long serialVersionUID = 1L;
-	
-	private static final Logger S_LOGGER = Logger.getLogger(Login.class);
-	private static Boolean debugEnabled  = S_LOGGER.isDebugEnabled();
-	private String username = null;
-	private String password = null;
-	private String fromPage = "";
-
-	public String login() {
-		if (debugEnabled) {
-			S_LOGGER.debug("Entering Method  Login.login()");
-		}
-
-		User user = null;
-		User sessionUserInfo = (User)getHttpSession().getAttribute(REQ_USER_INFO);
-		if (sessionUserInfo != null) {
-			loginSuccess(sessionUserInfo);
-			return LOGIN_SUCCESS;
-		}
-		
-		// When the user hits login button it ll come here
-		if (fromPage.equals("login")) {
-	        if (isInvalid(getUsername())) {
-	        	getHttpRequest().setAttribute(REQ_LOGIN_ERROR, getText(ERROR_LOGIN_INVALID));
-	        	return LOGIN_FAILURE;
-	        }
-	
-	        if (isInvalid(getPassword())) {
-	        	getHttpRequest().setAttribute(REQ_LOGIN_ERROR, getText(ERROR_LOGIN_INVALID));
-	        	return LOGIN_FAILURE;
-	        }
-	        try {
-	            ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-	            Credentials credentials = new Credentials(username, password);
-	            user = administrator.doLogin(credentials);
-	            
-	            if (user == null) {
-                    getHttpRequest().setAttribute(REQ_LOGIN_ERROR, getText(ERROR_LOGIN));
-                    return LOGIN_FAILURE;
-                }
-	            
-	            if (!user.isValidLogin()) {
-	            	getHttpRequest().setAttribute(REQ_LOGIN_ERROR, getText(ERROR_LOGIN));
-	                return LOGIN_FAILURE;
-	            }
-	            if (!user.isPhrescoEnabled()) {
-	            	getHttpRequest().setAttribute(REQ_LOGIN_ERROR, getText(ERROR_LOGIN_ACCESS_DENIED));
-	                return LOGIN_FAILURE;
-	            } else {
-	            	loginSuccess(user);
-	            	getHttpSession().setAttribute(SESSION_USER_PASSWORD, password);
-	                return LOGIN_SUCCESS;
-	            }
-	            
-	        } catch (Exception e) {
-	        	if (debugEnabled) {
-	                S_LOGGER.error("Entered into catch block of Login.login()"+ FrameworkUtil.getStackTraceAsString(e));
-	    		}
-	        	getHttpRequest().setAttribute(REQ_LOGIN_ERROR, getText(ERROR_EXCEPTION));
-	//        	getHttpRequest().setAttribute(REQ_LOGIN_ERROR, e.getLocalizedMessage());
-	            return LOGIN_FAILURE;
-	        }
-		} else {
-			// When the user enters the phresco url it ll come here
-			getHttpRequest().setAttribute(REQ_LOGIN_ERROR, "");
-			return LOGIN_FAILURE;
-		}
+    private static final long serialVersionUID = -1858839078372821734L;
+    private static final Logger S_LOGGER = Logger.getLogger(Login.class);
+    private static Boolean isDebugEnabled = S_LOGGER.isDebugEnabled();
+    private static Boolean debugEnabled  = S_LOGGER.isDebugEnabled();
+    
+    private String username = null;
+    private String password = null;
+    private boolean loginFirst = true;
+    
+    public String login() {
+        if (isDebugEnabled) {
+            S_LOGGER.debug("Entering Method  Login.login()");
+        }
+        
+        User user = (User) getSessionAttribute(SESSION_USER_INFO);
+        if (user != null) {
+            return SUCCESS;
+        }
+        if (loginFirst) {
+            setReqAttribute(REQ_LOGIN_ERROR, "");
+            return LOGIN_FAILURE;   
+        }
+        if (validateLogin()) {
+            return authenticate();
+        }
+        
+        return LOGIN_FAILURE;
     }
-	
-	public String logout() {
-		if (debugEnabled) {
-			S_LOGGER.debug("Entering Method  Login.logout()");
-		}
-		getHttpSession().removeAttribute(REQ_USER_INFO);
-
-		String errorTxt = (String) getHttpSession().getAttribute(REQ_LOGIN_ERROR);
-		getHttpSession().removeAttribute(REQ_LOGIN_ERROR);
-		if (StringUtils.isNotEmpty(errorTxt)) {
-			getHttpRequest().setAttribute(REQ_LOGIN_ERROR, getText(errorTxt));
-		} else {
-			getHttpRequest().setAttribute(REQ_LOGIN_ERROR, getText(SUCCESS_LOGOUT));
-		}
+    
+    public String logout() {
+        if (debugEnabled) {
+            S_LOGGER.debug("Entering Method  Login.logout()");
+        }
+        
+        removeSessionAttribute(SESSION_USER_INFO);
+        String errorTxt = (String) getSessionAttribute(REQ_LOGIN_ERROR);
+        if (StringUtils.isNotEmpty(errorTxt)) {
+            setReqAttribute(REQ_LOGIN_ERROR, getText(errorTxt));
+        } else {
+            setReqAttribute(REQ_LOGIN_ERROR, getText(SUCCESS_LOGOUT));
+        }
+        removeSessionAttribute(REQ_LOGIN_ERROR);
+        
         return SUCCESS;
     }
-	
-	public void loginSuccess(User user) {
-		if (debugEnabled) {
-			S_LOGGER.debug("Entering Method  Login.loginSuccess(UserInfo userInfo)");
-		}
-		if (debugEnabled) {
-			S_LOGGER.debug("loginSuccess()  UserName = "+ user.getLoginId());
-		}
-		getHttpSession().setAttribute(REQ_USER_INFO, user);
-    	getHttpRequest().setAttribute(REQ_SHOW_WELCOME, getText(WELCOME_SHOW));
-    	try {
-        	ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-            List<VideoInfo> videoInfos = administrator.getVideoInfos();
-            FrameworkConfiguration configuration = PhrescoFrameworkFactory.getFrameworkConfig();
-            getHttpRequest().setAttribute(REQ_SERVER_URL, configuration.getServerPath());
-            getHttpRequest().setAttribute(REQ_VIDEO_INFOS, videoInfos);
-    	} catch (PhrescoException e) {
-        	if (debugEnabled) {
-                S_LOGGER.error("Entered into catch block of Login.loginSuccess()"+ FrameworkUtil.getStackTraceAsString(e));
-    		}
-    	}
-	}
-	
-	public String cmdLogin(){
-		getHttpRequest().setAttribute("cmdLogin", "cmdLogin");
-		return login();
-	}
-	
-    private boolean isInvalid(String value) {
-        return (value == null || value.length() == 0);
+    
+    private String authenticate() {
+        if (isDebugEnabled) {
+            S_LOGGER.debug("Entering Method  Login.authenticate()");
+        }
+        
+        User user = null;
+        try {
+            ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
+            Credentials credentials = new Credentials(getUsername(), FrameworkUtil.encryptString(getPassword()));
+            user = administrator.doLogin(credentials);
+            if (user == null) {
+                setReqAttribute(REQ_LOGIN_ERROR, getText(ERROR_LOGIN));
+                
+                return LOGIN_FAILURE;
+            }
+            if (!user.isPhrescoEnabled()) {
+                setReqAttribute(REQ_LOGIN_ERROR, getText(ERROR_LOGIN_ACCESS_DENIED));
+                
+                return LOGIN_FAILURE;
+            }
+            setSessionAttribute(SESSION_USER_INFO, user);
+        } catch (PhrescoException e) {
+            setReqAttribute(REQ_LOGIN_ERROR, getText(ERROR_EXCEPTION));
+
+            return LOGIN_FAILURE;
+        }
+            
+        return SUCCESS;
     }
 
+    private boolean validateLogin() {
+        if (isDebugEnabled) {
+            S_LOGGER.debug("Entering Method  Login.validateLogin()");
+        }
+        
+        if (StringUtils.isEmpty(getUsername())) {
+            setReqAttribute(REQ_LOGIN_ERROR, getText(ERROR_LOGIN_INVALID_USERNAME));
+            return false;
+        }
+        if (StringUtils.isEmpty(getPassword())) {
+            setReqAttribute(REQ_LOGIN_ERROR, getText(ERROR_LOGIN_INVALID_PASSWORD));
+            return false;
+        }
+        
+        return true;
+    }
+    
     public String getUsername() {
         return username;
     }
@@ -187,13 +160,12 @@ public class Login extends FrameworkBaseAction {
     public void setPassword(String password) {
         this.password = password;
     }
-
-	public String getFromPage() {
-		return fromPage;
-	}
-
-	public void setFromPage(String fromPage) {
-		this.fromPage = fromPage;
-	}
     
+    public boolean isLoginFirst() {
+        return loginFirst;
+    }
+
+    public void setLoginFirst(boolean loginFirst) {
+        this.loginFirst = loginFirst;
+    }
 }

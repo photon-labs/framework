@@ -167,12 +167,13 @@ public class Build extends FrameworkBaseAction {
 			S_LOGGER.debug("Entering Method  Build.view()");
 
 		try {
+		    System.out.println("prjectCode:::" + projectCode);
 			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
 			Project project = administrator.getProject(projectCode);
 			List<BuildInfo> builds = administrator.getBuildInfos(project);
 			getHttpRequest().setAttribute(REQ_SELECTED_APP_TYPE, project.getApplicationInfo().getTechInfo().getVersion());
 			getHttpRequest().setAttribute(REQ_BUILD, builds);
-			getHttpRequest().setAttribute(REQ_PROJECT, project);
+			getHttpRequest().setAttribute(REQ_APPINFO, project.getApplicationInfo());
 			String techId = project.getApplicationInfo().getTechInfo().getVersion();
 			String readLogFile = "";
 			boolean tempConnectionAlive = false;
@@ -355,7 +356,6 @@ public class Build extends FrameworkBaseAction {
 
 		getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
 		getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
-		getHttpRequest().setAttribute(REQ_PROJECT, project);
 		getHttpRequest().setAttribute(REQ_BUILD_FROM, from);
 		getHttpRequest().setAttribute(REQ_TECHNOLOGY, technology);
 		getHttpRequest().setAttribute(REQ_DEPLOY_BUILD_NUMBER, buildNumber);
@@ -404,13 +404,10 @@ public class Build extends FrameworkBaseAction {
 
 		try {
 			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-			Map<String, Object> sessionMap = ActionContext.getContext().getSession();
 			Project project = administrator.getProject(projectCode);
 			List<BuildInfo> builds = administrator.getBuildInfos(project);
 			getHttpRequest().setAttribute(REQ_BUILD, builds);
-			getHttpRequest().setAttribute(REQ_PROJECT, project);
-
-			sessionMap.remove(SESSION_PROPERTY_INFO_LIST);
+			getHttpRequest().setAttribute(REQ_APPINFO, project.getApplicationInfo());
 		} catch (Exception e) {
 			if (debugEnabled) {
 				S_LOGGER.error("Entered into catch block of Build.builds()" + FrameworkUtil.getStackTraceAsString(e));

@@ -35,6 +35,7 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -489,11 +490,10 @@ public class FrameworkUtil extends FrameworkBaseAction implements FrameworkConst
     	return testCasePath;
     }
     
-    public static void setAppInfoDependents(HttpServletRequest request) throws PhrescoException {
+    public static void setAppInfoDependents(HttpServletRequest request, String customerId) throws PhrescoException {
         FrameworkConfiguration configuration = PhrescoFrameworkFactory.getFrameworkConfig();
         ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-        //TODO:Need to handle
-//        request.setAttribute(SESSION_APPLICATION_TYPES, administrator.getApplicationTypes());
+        request.setAttribute(REQ_APPLICATION_TYPES, administrator.getApplicationTypes(customerId));
         request.setAttribute(REQ_CODE_PREFIX, configuration.getCodePrefix());
     }
     
@@ -629,4 +629,28 @@ public class FrameworkUtil extends FrameworkBaseAction implements FrameworkConst
 		}
 		return sonarTechReports;
 	}
+	
+	/**
+	 * To encrypt the given string
+	 * @param inputString
+	 * @return
+	 */
+	public static String encryptString(String inputString) {
+        byte[] encodeBase64 = Base64.encodeBase64(inputString.getBytes());
+        String encodedString = new String(encodeBase64);
+
+        return encodedString;
+    }
+	
+	/**
+	 * To decrypt the given string
+	 * @param inputString
+	 * @return
+	 */
+	public static String decryptString(String inputString) {
+        byte[] decodedBytes = Base64.decodeBase64(inputString);
+        String decodedString = new String(decodedBytes);
+
+        return decodedString;
+    }
 }

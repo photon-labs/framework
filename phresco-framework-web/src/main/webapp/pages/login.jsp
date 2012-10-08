@@ -18,6 +18,7 @@
   ###
   --%>
 <!doctype html>
+<%@ page import="org.apache.commons.lang.StringUtils"%>
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <html>
 <head>
@@ -81,51 +82,45 @@ $(document).ready(function() {
                   <img class="welcomeimg" src="images/welcome_photon_red.png">
              </div> 
 	    <div class="lgnintro_container_left">
-	    <h1 class="l_align">Login</h1><h1 class="lp_align"></h1>    
+	    	<h1 class="l_align">Login</h1>
+	    	<h1 class="lp_align"></h1>    
 			<%
 			     String loginError = (String)request.getAttribute(FrameworkConstants.REQ_LOGIN_ERROR);
 			%>
-			&nbsp;&nbsp;&nbsp;<div id="logimErrMesg" class="lgnError"><%= loginError == null?"":loginError %></div>  
+			&nbsp;&nbsp;&nbsp;
+			<div id="logimErrMesg" class="lgnError"><%= StringUtils.isEmpty(loginError) ? "" : loginError %></div>
+			
             <form name="login" action="login" method="post" class="marginBottomZero">
 				<!--  UserName starts -->
 				<div class="clearfix" >
 				     <label class="labellg" for="xlInput" class="lgnfieldLb1">Username:</label>
-				     <input class="xlarge settings_text lgnField" id="xlInput" id="username" name="username" type="text" autofocus="" maxlength="63" title="63 Characters only" placeholder="Enter the username" />
-				    </div>
+				     <input class="xlarge settings_text lgnField" id="xlInput" id="username" name="username" type="text" 
+				     	autofocus="" maxlength="63" title="63 Characters only" placeholder="Enter the username" />
+			    </div>
 				<!--  UserName ends -->
 		              
 	            <!--  Password starts -->
 	            <div class="clearfix" >
 	                <label class="labellg" for="xlInput" class="lgnFieldLbl">Password:</label>
-	                <input class="xlarge settings_text lgnField" id="xlInput" id="password" name="password" type="password"  maxlength="63" title="63 Characters only" value ="" placeholder="Enter the password"/>
+	                <input class="xlarge settings_text lgnField" id="xlInput" id="password" name="password" type="password"
+	                	maxlength="63" title="63 Characters only" value ="" placeholder="Enter the password"/>
 	            </div>
 	            <!--  Password ends -->
 		              
                 <!-- Remember me check starts  -->
 		        <div class="login_check">
-                      <input type="checkbox" name="rememberme">
-                      <labelrem>Remember me</labelrem>
-                    
+	                <input type="checkbox" name="rememberme">
+	                <labelrem>Remember me</labelrem>
                 </div>
                 <!-- Remember me check ends  -->
-               
                 
 	        	<div class="clearfix">
 	                <div class="input lgnBtnLabel">
 	                    <input type="submit" value="Login" class="primary btn lgnBtn" id="Login">
-	                    <%-- <%
-	                         String loginError = (String)request.getAttribute(FrameworkConstants.REQ_LOGIN_ERROR);
-	                    %>
-	                    &nbsp;&nbsp;&nbsp;<div id="logimErrMesg" class="lgnError"><%= loginError == null?"":loginError %></div> --%>
+	            	</div>
 	            </div>
-	            </div>
-	            <input type="hidden" name="fromPage" value="login"/>
+	            <input type="hidden" name="loginFirst" value="false"/>
 			</form>
-				                
-	        <!--  <div class="intro_container_left_feed">
-	            <p><span></span> &copy;2012 Photon. All rights reserved</p>
-	        </div> -->
-	        
 	    </div>
 </div>
 	

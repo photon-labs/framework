@@ -22,18 +22,10 @@
 <%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
 <%@ page import="com.photon.phresco.commons.model.LogInfo"%>
 
-	<%-- <style type="text/css">
-		.errorMessage li{ 
-			list-style: none;
-			color:#000000;
-			text-align: left;
-		}
-	</style> --%>
-
-	<% 
-		LogInfo log = (LogInfo)request.getAttribute(FrameworkConstants.REQ_LOG_REPORT); 
-		if (log != null) {
-	%>
+<% 
+	LogInfo log = (LogInfo)request.getAttribute(FrameworkConstants.REQ_LOG_REPORT); 
+	if (log != null) {
+%>
 	
 <script>
 	$(".exceptionErrors").css("top", "44%");
@@ -81,8 +73,6 @@
 // 			$("#errorReportTrace").next().slideToggle();
 // 			$("#trackTrace").next().animate({height: 'toggle'});
 // 		});
-		
-		
 	});
 
 	function errorReportEnable(prop) {
@@ -148,5 +138,4 @@
 		</div>
 	</div>
 	<!-- Error dialog ends -->
-	
 	<% } %>

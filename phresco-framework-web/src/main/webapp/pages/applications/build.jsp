@@ -27,10 +27,10 @@
 <%@ page import="java.util.Collection"%>
 <%@ page import="java.util.Iterator"%>
 <%@ page import="org.apache.commons.lang.StringUtils"%>
+
 <%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
 <%@ page import="com.photon.phresco.util.TechnologyTypes" %>
 <%@ page import="com.photon.phresco.util.Utility" %>
-<%@ page import="com.photon.phresco.framework.api.Project" %>
 <%@ page import="com.photon.phresco.framework.model.BuildInfo"%>
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 <%@ page import="com.photon.phresco.framework.commons.NodeJSUtil" %>
@@ -69,10 +69,11 @@
 <%
     String technology = null;
 
-	Project project = (Project) request.getAttribute(FrameworkConstants.REQ_PROJECT);
-	ApplicationInfo appInfo = project.getApplicationInfo();
-	String projectCode = appInfo.getCode();
-	technology = appInfo.getTechInfo().getVersion();
+	ApplicationInfo appInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_APPINFO);
+	String projectCode = "";
+	//TODO:Need to handle
+// 	String projectCode = appInfo.getCode();
+// 	technology = appInfo.getTechInfo().getVersion();
 	
 	List<BuildInfo> buildInfos = (List<BuildInfo>) request.getAttribute(FrameworkConstants.REQ_BUILD);
     String selectedAppType = (String) request.getAttribute(FrameworkConstants.REQ_SELECTED_APP_TYPE);
@@ -300,7 +301,7 @@
 		params = params.concat(from);
 		params = params.concat("&buildNumber=");
 		params = params.concat(buildNumber);
-       	popup('generateBuild', params, $('#popup_div'));
+       	popup('generateBuild', '', $('#popup_div'), '', '', params);
         escPopup();
     }
     

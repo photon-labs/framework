@@ -38,8 +38,6 @@
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 <%@ page import="com.photon.phresco.framework.model.SettingsInfo"%>
 
-<%@ include file="../../userInfoDetails.jsp" %>
-
 <%
     String selectedStr = "";
 	String name = "";
@@ -174,14 +172,14 @@ h1 {margin-bottom: 0;}
 					<select id="environments" name="environments" class="selectEqualWidth">
 						<%
 						    for(Environment env : envs ) {
-														envName = env.getName();
-														desc = env.getDesc();
-														isDefault = env.isDefaultEnv();
-														if(isDefault) {
-															selectedStr = "selected";
-														} else {
-															selectedStr = "";
-														}
+								envName = env.getName();
+								desc = env.getDesc();
+								isDefault = env.isDefaultEnv();
+								if(isDefault) {
+									selectedStr = "selected";
+								} else {
+									selectedStr = "";
+								}
 						%>
 									<option value="<%=env.getName()%>" <%=selectedStr%>><%=env.getName()%></option>
 						<%

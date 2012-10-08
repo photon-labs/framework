@@ -21,34 +21,26 @@
 <%@ page import="com.photon.phresco.commons.model.User"%>
 
 <%
-	User userInfo = (User)session.getAttribute(FrameworkConstants.REQ_USER_INFO);
+	User userInfo = (User)session.getAttribute(FrameworkConstants.SESSION_USER_INFO);
 	boolean disableCI = false;
-	if (userInfo == null || userInfo.getDisplayName() == null) {
-	session.setAttribute(FrameworkConstants.REQ_LOGIN_ERROR, FrameworkConstants.SESSION_EXPIRED);
 %>
-	 <script type="text/javascript">
-	 	window.location.href = "logout.action";
-	 </script>
 <%
-	} else {
-		if (userInfo.getRoleIds() != null) {
-			for (String role : userInfo.getRoleIds()) {
-				if (role.equals(FrameworkConstants.ENGINEER)) {
-				 	disableCI = true;	// Restrict CI
+	if (userInfo.getRoleIds() != null) {
+		for (String role : userInfo.getRoleIds()) {
+			if (role.equals(FrameworkConstants.ENGINEER)) {
+			 	disableCI = true;	// Restrict CI
 %>
-				 <script type="text/javascript">
-				 	disableCreateProject(); // Restrict creating project
-				 </script>
+				<script type="text/javascript">
+					disableCreateProject(); // Restrict creating project
+				</script>
 <%
-				}
-				
-				if (role.equals(FrameworkConstants.RELEASE_ENGINEER)) {
+			}
+			if (role.equals(FrameworkConstants.RELEASE_ENGINEER)) {
 %>
-				 <script type="text/javascript">
-				 	disableCreateProject(); // Restrict creating project
-				 </script>
+				<script type="text/javascript">
+					disableCreateProject(); // Restrict creating project
+				</script>
 <%
-				}
 			}
 		}
 	}

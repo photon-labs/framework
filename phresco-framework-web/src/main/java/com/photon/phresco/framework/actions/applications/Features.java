@@ -80,6 +80,8 @@ public class Features extends FrameworkBaseAction {
 	private String configDbNames = null;
 	private String fromTab = null;
 	private List<String> defaultModules =  null;
+	
+	private String customerId = "";
 
 	public String features() {
 		if (debugEnabled) {
@@ -148,7 +150,7 @@ public class Features extends FrameworkBaseAction {
 			}
 
 			setFeaturesInRequest(administrator, appInfo);
-			getHttpRequest().setAttribute(REQ_PROJECT_INFO, appInfo);
+			getHttpRequest().setAttribute(REQ_APPINFO, appInfo);
 
 			List<ArtifactGroup> coreModules = (List<ArtifactGroup>) getHttpRequest().getAttribute(REQ_CORE_MODULES);
 			List<ArtifactGroup> customModules = (List<ArtifactGroup>) getHttpRequest().getAttribute(REQ_CUSTOM_MODULES);
@@ -227,7 +229,7 @@ public class Features extends FrameworkBaseAction {
 		appInfo.setPilotInfo(new Element(pilotProjectName));
 
 		setTechnology(appInfo, administrator);
-		FrameworkUtil.setAppInfoDependents(request);
+		FrameworkUtil.setAppInfoDependents(request, getCustomerId());
 	}
 
 	private void setTechnology(ApplicationInfo appInfo, ProjectAdministrator administrator) throws PhrescoException {
@@ -713,4 +715,12 @@ public class Features extends FrameworkBaseAction {
 	public void setDefaultModules(List<String> defaultModules) {
 		this.defaultModules = defaultModules;
 	}
+	
+	public String getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(String customerId) {
+        this.customerId = customerId;
+    }
 }

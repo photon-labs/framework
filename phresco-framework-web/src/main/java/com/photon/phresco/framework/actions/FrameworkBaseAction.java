@@ -25,6 +25,8 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,6 +42,8 @@ import org.apache.struts2.ServletActionContext;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
 import com.photon.phresco.commons.FrameworkConstants;
+import com.photon.phresco.commons.model.LogInfo;
+import com.photon.phresco.commons.model.User;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.api.ProjectAdministrator;
@@ -163,6 +167,56 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
     	}
     	return warModules;
     }
+    
+    protected String showErrorPopup(PhrescoException e, String action) {
+        StringWriter sw = null;
+        PrintWriter pw = null;
+        try {
+            sw = new StringWriter();
+            pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            String stacktrace = sw.toString();
+            User userInfo = (User) getHttpSession().getAttribute(SESSION_USER_INFO);
+            LogInfo log = new LogInfo();
+            log.setMessage(e.getLocalizedMessage());
+            log.setTrace(stacktrace);
+            log.setAction(action);
+            log.setUserId(userInfo.getLoginId());
+            setReqAttribute(REQ_LOG_REPORT, log);
+        } finally {
+            if (pw != null) {
+                pw.close();
+            }
+            if (sw != null) {
+                try {
+                    sw.close();
+                } catch (IOException e1) {
+                    //Do nothing due to error popup
+                }
+            }
+        }
+        return LOG_ERROR;
+    }
+    
+    protected void setReqAttribute(String key, Object value) {
+        getHttpRequest().setAttribute(key, value);
+    }
+    
+    protected Object getReqAttribute(String key) {
+        return getHttpRequest().getAttribute(key);
+    }
+    
+    protected void setSessionAttribute(String key, Object value) {
+        getHttpSession().setAttribute(key, value);
+    }
+    
+    protected void removeSessionAttribute(String key) {
+        getHttpSession().removeAttribute(key);
+    }
+    
+    protected Object getSessionAttribute(String key) {
+        return getHttpSession().getAttribute(key);
+    }
 
     public String getPath() {
     	return path;
@@ -179,5 +233,4 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
 	public void setCopyToClipboard(String copyToClipboard) {
 		this.copyToClipboard = copyToClipboard;
 	}
-
 }

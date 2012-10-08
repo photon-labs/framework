@@ -26,28 +26,8 @@
 
 <%
 	String validationStatus = (String)session.getAttribute("validationStatus");
-	String displayName = "";
-	User userInfo = (User)session.getAttribute(FrameworkConstants.REQ_USER_INFO);
-	if (userInfo == null || userInfo.getDisplayName() == null) {
-	request.setAttribute(FrameworkConstants.REQ_LOGIN_ERROR, "Invalid Username or Password");
-%>
-
-	 <script type="text/javascript"> 
-	     $.ajax({
-	         url : 'logout',
-	         success : function(data) {
-	             $("html").empty();
-	             $("html").addClass('lgnBg');
-	             $("html").html(data);
-	         }
-	     }); 
-     
-	 </script>
-	
-<%
-	} else {
-		displayName = userInfo.getDisplayName();
-	}
+	User user = (User)session.getAttribute(FrameworkConstants.SESSION_USER_INFO);
+	String displayName = user.getDisplayName();
 %>
 
 <div class="header">
@@ -58,10 +38,26 @@
 		<div class="nav_slider">
 			<div class="headerInnerTop">
 				<ul>
-					<li class="wid_home"><a href="#" class="inactive" name="headerMenu" oncontextmenu="localStorage.menuSelected = 'home';" id="home"><s:text name="label.hdr.home"/></a></li>
-					<li class="wid_app"><a href="#" class="inactive" name="headerMenu" oncontextmenu="localStorage.menuSelected = 'applications';" id="applications"><s:text name="label.appln"/></a></li>
-					<li class="wid_set"><a href="#" class="inactive" name="headerMenu" oncontextmenu="localStorage.menuSelected = 'settings';" id="settings"><s:text name="label.hdr.settings"/></a></li>
-					<li class="wid_help"><a href="#" class="inactive" name="headerMenu" oncontextmenu="localStorage.menuSelected = 'forum';"  id="forum"><s:text name="label.help"/></a></li>
+					<li class="wid_home">
+						<a href="#" class="inactive" name="headerMenu" oncontextmenu="localStorage.menuSelected = 'home';" id="home">
+							<s:text name="label.hdr.home"/>
+						</a>
+					</li>
+					<li class="wid_app">
+						<a href="#" class="inactive" name="headerMenu" oncontextmenu="localStorage.menuSelected = 'applications';" id="applications">
+							<s:text name="label.appln"/>
+						</a>
+					</li>
+					<li class="wid_set">
+						<a href="#" class="inactive" name="headerMenu" oncontextmenu="localStorage.menuSelected = 'settings';" id="settings">
+							<s:text name="label.hdr.settings"/>
+						</a>
+					</li>
+					<li class="wid_help">
+						<a href="#" class="inactive" name="headerMenu" oncontextmenu="localStorage.menuSelected = 'forum';" id="forum">
+							<s:text name="label.help"/>
+						</a>
+					</li>
 				</ul>
 				<div class="close_links" id="close_links">
 					<a href="JavaScript:void(0);">
@@ -103,7 +99,7 @@
 
 <%
 	String selectedMenu = "home";
-	if(request.getAttribute(FrameworkConstants.REQ_SELECTED_MENU) != null) {
+	if (request.getAttribute(FrameworkConstants.REQ_SELECTED_MENU) != null) {
 		 selectedMenu = (String) request.getAttribute(FrameworkConstants.REQ_SELECTED_MENU);
 	}
 %>
@@ -122,20 +118,18 @@
             if (selectedMenu == "applications") {
             	bacgroundValidate("validateFramework");
             }
-            
-            performAction(selectedMenu, '', $("#container"));
+            performAction(selectedMenu, $('#formCustomers'), $("#container"));
         });
         
         $("#goToHome").click(function() {
         	$("a[name='headerMenu']").attr("class", "inactive");
 			$("#home").attr("class", "active");
             var selectedMenu = "home";
-           
             performAction(selectedMenu, '', $("#container"));
         });
         
         //This function is to handle the click event of about click(Version update)
-        $(".abtPopUp").click(function(){
+        $(".abtPopUp").click(function() {
         	disableScreen();
         	$("#aboutDialog").css("display", 'block');
         	$("#loadingIcon").show();
@@ -165,18 +159,18 @@
     	});
 		
 		// to show user info on mouse over
-        $('#signOut li').mouseenter(function(){
+        $('#signOut li').mouseenter(function() {
          	$("div li.usersettings div").hide(0);
          	$(this).children("div li.usersettings div").show(0);
-     	}).mouseleave(function(){
+     	}).mouseleave(function() {
          	$("div li.usersettings div").hide(0);
      	});
 		
      	// shows preloader until page loads
-        $("#forum").click(function(){
+        $("#forum").click(function() {
         	$(".loadingIcon").show();
         	getCurrentCSS();
-        })
+        });
     });
        
     function disableCreateProject() {
@@ -190,5 +184,4 @@
     	disableControl($("#startJenkins"), "btn disabled");
     	disableControl($("#stopJenkins"), "btn disabled");
     }
-    
 </script>

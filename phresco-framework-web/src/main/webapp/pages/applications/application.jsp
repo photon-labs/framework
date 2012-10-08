@@ -19,16 +19,10 @@
   --%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
-<%@ page import="java.util.List" %>
-<%@ page import="java.util.ArrayList" %>
-<%@ page import="java.util.Collection" %>
-<%@ page import="java.util.Iterator" %>
-
 <%@ page import="org.apache.commons.lang.StringUtils" %>
+
 <%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
-
-<%@ include file="../userInfoDetails.jsp" %>
 
 <!--  Heading Starts -->
 <%
@@ -36,16 +30,16 @@
     if (StringUtils.isEmpty(fromPage)) {
         fromPage = "";
     }
-    ApplicationInfo selectedInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_PROJECT_INFO); 
+    ApplicationInfo selectedAppInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_APPINFO); 
     String projectCode = "";
-    if(selectedInfo != null) {
-        projectCode = selectedInfo.getCode();
+    if (selectedAppInfo != null) {
+        projectCode = selectedAppInfo.getCode();
     }
     String disabled = "disabled";
     if (StringUtils.isNotEmpty(fromPage)) {
 %>
         <div class="page-header">
-        	<h1 style="float: left;"><s:text name="label.editappln"/> - <%= selectedInfo.getName() %></h1>
+        	<h1 style="float: left;"><s:text name="label.editappln"/> - <%= selectedAppInfo.getName() %></h1>
         	<div class="icon_div">
 				<a href="#" onclick="showProjectValidationResult();" title="Validate project">
 					<img src="images/icons/validate_failure_icon.png" id="validationErr_validateProject" style="display: none;">
@@ -82,9 +76,8 @@
         </ul>
 <%  } %>
 
+<form id="formApplication"> 
 	<input type="hidden" id="fromPage" value="<%= fromPage %>" name="fromPage"/>
-	
-<form> 
 	<input type="hidden" id="projectCode" value="<%= projectCode %>" name="projectCode"/>
 </form>
 <!--  Heading Ends-->
@@ -95,9 +88,6 @@
 
 <div class="tabDiv appInfoTabDiv" id="tabDiv">
 </div>
-
-<!-- <div id="validateProject">
-</div> -->
 
 <script type="text/javascript">
 	$(".appInfoTabDiv").css("padding-top", "0px");
@@ -124,13 +114,7 @@
 		
         var selectedTab = "appinfo";
         $("#validationDiv").hide();	
-		var params = "";
-    	if (!isBlank($('form').serialize())) {
-    		params = $('form').serialize() + "&";
-    	}
-		params = params.concat("fromPage=");
-		params = params.concat('<%= fromPage %>');
-		performAction(selectedTab, params, $("#tabDiv"));
+		performAction(selectedTab, $('#formApplication'), $("#tabDiv"), '', getCustomerIdAsParam());
 		
         $("a[name='appTabs']").click(function() {
         	var selectedTab = $(this).attr("id");
@@ -144,17 +128,13 @@
         			if(selectedTab != "features"){
         				changeStyle(selectedTab);        				
         			}
-					disableScreen();
-					showLoadingIcon($("#loadingIconDiv"));
+					showLoadingIcon();
 				}
-        		
-				var params = "";
-		    	if (!isBlank($('form').serialize())) {
-		    		params = $('form').serialize() + "&";
-		    	}
-				params = params.concat("fromPage=");
-				params = params.concat('<%= fromPage %>');
-        		performAction(selectedTab, params, $("#tabDiv"));
+        		if (selectedTab == "features") {
+        			performAction(selectedTab, $('#formAppInfo'), $("#tabDiv"));
+    			} else {
+    				performAction(selectedTab, $('#formApplication'), $("#tabDiv"));    				
+    			}
         	}
         });
     });
@@ -164,24 +144,6 @@
         $("a[id='" + selectedTab + "']").attr("class", "selected");
     }
     
-    function openFolder(path) {
-		var params = "path=";
-		params = params.concat(path);
-		performAction('openFolder', params, '');
-    }
-    
-    function copyPath(path) {
-		var params = "path=";
-		params = params.concat(path);
-		performAction('copyPath', params, '');
-	}
-    
-    function copyToClipboard(data) {
-        var params = "copyToClipboard=";
-        params = params.concat(data);
-        performAction('copyToClipboard', params, '');
-	}
-    
     /* To show the validation result */
 	function showProjectValidationResult() {
     	$("#popup_div").empty();
@@ -189,18 +151,9 @@
 		disableScreen();		
 		popup('showProjectValidationResult', '', $('#popup_div')); // there was xtra param here
 	}
-
-    // this method is to fill select box with data in ShowSettings
-    function fillData(element, data) {
-    	if ((data != undefined || !isBlank(data)) && data != "") {
-    		$('#' + element).append('<optgroup label="Settings" class="optgrplbl" id="' + element + 'Group">');
-			for (i in data) {
-				$('#' + element + 'Group').append($("<option></option>").attr("value",data[i]).text(data[i]));
-			}
-			$('#' + element).append('</optgroup>');
-		} else {
-			$('#' + element + 'Group').remove();
-		}
+    
+	// To reload the appinfo page based on the customer when the customer is changed
+	function reloadCurrentPage() {
+		performAction('appinfo', $('#formApplication'), $("#tabDiv"), '', getCustomerIdAsParam());
 	}
-
 </script>

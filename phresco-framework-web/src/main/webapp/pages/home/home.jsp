@@ -1,4 +1,3 @@
-
 <%--
   ###
   Framework Web Archive
@@ -20,10 +19,6 @@
   --%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
-<%@ page import="java.util.Iterator"%>
-<%@ page import="java.util.List" %>
-<%@ page import="java.util.ArrayList"%>
-
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 
 <% 
@@ -34,22 +29,19 @@
 %>
 
 <div class="intro_container">
-<!-- Phresco js -->
-<script type="text/javascript" src="../../js/phresco/common.js"></script>
-<script type="text/javascript">
+	<script type="text/javascript">
+		if (localStorage["welcome"]) {
+			$(".errorOverlay").show().css("display","none");
+			$(".intro_container").show().css("display","none");
+		} else if (localStorage.menuSelected == 'video') { // To hide the welcome overlay page.
+			$(".errorOverlay").show().css("display","none");
+			$(".intro_container").show().css("display","none"); 
+		} else {
+			$(".errorOverlay").show().css("display","<%= showWelcome %>");
+			$(".intro_container").show().css("display","<%= showWelcome %>");
+		}
+	</script>
 
-	if (localStorage["welcome"]) {
-		$(".errorOverlay").show().css("display","none");
-		$(".intro_container").show().css("display","none");
-	 } else if (localStorage.menuSelected == 'video'){ // To hide the welcome overlay page.
-		$(".errorOverlay").show().css("display","none");
-		$(".intro_container").show().css("display","none"); 
-	 } else {
-		$(".errorOverlay").show().css("display","<%= showWelcome %>");
-		$(".intro_container").show().css("display","<%= showWelcome %>");
-	}
-
-</script>
     <div class="intro_container_left">
         <h1>Welcome to <span class="hed_red">Phres</span>co<span class="hed_gray">.com</span></h1>
         <p class="p_align">
@@ -85,7 +77,7 @@
     </div>
 <%
 	String selectedNav = "home";
-	if(request.getAttribute(FrameworkConstants.REQ_SELECTED_MENU) != null) {
+	if (request.getAttribute(FrameworkConstants.REQ_SELECTED_MENU) != null) {
 		 selectedNav = (String) request.getAttribute(FrameworkConstants.REQ_SELECTED_MENU);
 	}
 %>
@@ -125,21 +117,27 @@
    
 </div>
 
-<img class="loadingIcon">
+<!-- <img class="loadingIcon"> --> 
+
+<form id="formHome">
+	<input type="hidden" name="fromPage" value="home">
+</form>
 
 <script type="text/javascript">
 $(document).ready(function() {
 	bacgroundValidate("validateFramework", '');
-	var params = "fromPage=";
-	params = params.concat("home");
-	performAction('home', params, $("#container"));
+	
+	performAction('home', $("#formHome"), $("#container"));
+	
 	$(".mycube_slides").show().css("border","none");
+	
     // for navigation to page
-    $("a[id='<%= selectedNav%>']").attr("class", "active"); 
+    $("a[id='<%= selectedNav %>']").attr("class", "active"); 
 
     $("#dontShowCheck").click(function() { 
-         if ($(this).is(":checked"))
-        	 localStorage.welcome = true;
+         if ($(this).is(":checked")) {
+        	 localStorage.welcome = true;        	 
+         }
     });
  
     $(".homegostart").click(function () {
@@ -158,7 +156,7 @@ $(document).ready(function() {
         if (selectedNav == "applications") {
         	bacgroundValidate("validateFramework", "true");
         }
-		performAction(selectedNav, '', $("#container"));
+		performAction(selectedNav, $('#customersForm'), $("#container"));
     });
 	
  	// shows preloader until page loads
@@ -169,7 +167,7 @@ $(document).ready(function() {
     
     if (localStorage.menuSelected) {
     	if (localStorage.menuSelected == 'video') {
-    		localStorage.menuSelected = 'home';	//To clear the video value in home page.
+    		localStorage.menuSelected = 'home';
     	} else {
     		$("a[name='navMenu']").attr("class", "inactive");
     		$(this).attr("class", "active");

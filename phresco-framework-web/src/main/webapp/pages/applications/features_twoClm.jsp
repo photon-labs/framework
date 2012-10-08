@@ -151,7 +151,7 @@
     }
 
     String fromPage = (String) request.getAttribute(FrameworkConstants.REQ_FROM_PAGE);
-    ApplicationInfo appInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_PROJECT_INFO);
+    ApplicationInfo appInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_APPINFO);
     String projectCode = "";
     String techId = "";
     if (appInfo != null) {

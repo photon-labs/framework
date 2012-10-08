@@ -460,7 +460,7 @@ public class Settings extends FrameworkBaseAction {
             List<Environment> environments = administrator.getEnvironments();
             getHttpRequest().setAttribute(ENVIRONMENTS, environments);
 //            getHttpRequest().setAttribute(REQ_ALL_TECHNOLOGIES, administrator.getAllTechnologies());//TODO:Need to handle
-			getHttpRequest().setAttribute(REQ_FROM_PAGE, FROM_PAGE);
+			getHttpRequest().setAttribute(REQ_FROM_PAGE, FROM_PAGE_EDIT);
 			getHttpRequest().setAttribute(REQ_SELECTED_MENU, SETTINGS);
 			getHttpSession().removeAttribute(ERROR_SETTINGS);
 			getHttpSession().removeAttribute(SETTINGS_PARAMS);
@@ -552,11 +552,11 @@ public class Settings extends FrameworkBaseAction {
             }
 			
 			getHttpSession().setAttribute(oldName, newSettingsInfo);
-			if (!validate(administrator, FROM_PAGE)) {
+			if (!validate(administrator, FROM_PAGE_EDIT)) {
 				isValidated = true;
 			    List<SettingsTemplate> settingsTemplates = administrator.getSettingsTemplates();
 	            getHttpRequest().setAttribute(SESSION_SETTINGS_TEMPLATES, settingsTemplates);
-				request.setAttribute(REQ_FROM_PAGE, FROM_PAGE);
+				request.setAttribute(REQ_FROM_PAGE, FROM_PAGE_EDIT);
 				request.setAttribute(REQ_OLD_NAME, oldName);
 				return Action.SUCCESS;
 			}

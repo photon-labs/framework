@@ -19,8 +19,7 @@
   --%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
-<%@include file="progress.jsp" %>
-
+<%@ page import="org.apache.commons.collections.CollectionUtils"%>
 <%@ page import="java.util.ArrayList"%>
 <%@ page import="java.util.List"%>
 
@@ -29,16 +28,16 @@
 <%@ page import="com.photon.phresco.framework.api.ValidationResult" %>
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 
-<%@ include file="../userInfoDetails.jsp" %>
 <%@ include file="errorReport.jsp" %>
+<%@ include file="progress.jsp" %>
 
 <script type="text/javascript" src="js/delete.js" ></script>
 <script type="text/javascript" src="js/confirm-dialog.js" ></script>
 <script type="text/javascript" src="js/loading.js"></script>
 <script type="text/javascript" src="js/home-header.js" ></script>
 <script type="text/javascript" src="js/reader.js" ></script>
-	<!-- Window Resizer -->
-<script type="text/javascript" src="js/windowResizer.js"></script>
+<script type="text/javascript" src="js/windowResizer.js"></script><!-- Window Resizer -->
+
 <style type="text/css">
 	.btn.success, .alert-message.success {
        	margin-top: -35px;
@@ -66,10 +65,10 @@
 	
 	<div class="icon_div">
 		<a href="#" onclick="showFrameworkValidationResult();" title="Validate framework">
-			<img src="images/icons/validate_failure_icon.png" id="validationErr_validateFramework" style="display: none;">
+			<img src="images/icons/validate_failure_icon.png" id="validationErr_validateFramework" class="hideContent"/>
 		</a>
 		<a href="#" onclick="showFrameworkValidationResult();" title="Validate framework">
-			<img src="images/icons/validate_success_icon.png" id="validationSuccess_validateFramework" style="display: none;">
+			<img src="images/icons/validate_success_icon.png" id="validationSuccess_validateFramework" class="hideContent"/>
 		</a>
 	</div>
 </div>
@@ -77,31 +76,24 @@
 <form name="delete" action="delete" method="post" autocomplete="off" id="deleteObjects" class="app_list_form">
 	<div class="operation">
 		<input id="add" type="button" value="<s:text name="label.addappln"/>" class="btn primary"/>
-		<!-- <a href="#" class="btn primary" id="discover">Discover</a> -->
 		<a href="#" class="btn primary" id="import"><s:text name="label.import.application"/></a>
 		<input id="deleteButton" type="button" value="<s:text name="label.delete"/>" class="btn disabled" disabled="disabled"/>
 	</div>
-	
-	<div class="table_div">
-		<%
-			List<Project> projects = (List<Project>)request.getAttribute("Projects");
-		%>
-		
-		<s:if test="hasActionMessages()">
-			<div class="alert-message success"  id="successmsg">
-				<s:actionmessage />
-			</div>
-		</s:if>
-		
-		<%
-			if(projects == null || projects.size()== 0) {
-		%>
+	<%
+		List<Project> projects = (List<Project>) request.getAttribute(FrameworkConstants.REQ_PROJECTS);
+		if (CollectionUtils.isEmpty(projects)) {
+	%>
 			<div class="alert-message block-message warning" >
 				<center><s:label key="error.message" cssClass="errorMsgLabel"/></center>
 			</div>
-		<%
-			} else {
-		%>
+	<% } else { %>
+		<div class="table_div">
+			<s:if test="hasActionMessages()">
+				<div class="alert-message success"  id="successmsg">
+					<s:actionmessage />
+				</div>
+			</s:if>
+			
 			<div class="fixed-table-container">
 	      		<div class="header-background"> </div>
 	      		<div class="fixed-table-container-inner">
@@ -153,27 +145,18 @@
 			              			<a href="#" id="projectUpdate" class="iconsCenterAlign"><img id="<%= projectInfo.getCode() %>" class="projectUpdate" src="images/icons/refresh.png" title="Update" class="iconSizeinList"/></a>
 			              		</td>
 			            	</tr>
-			            <%
-							}
-						%>	
+			            <% } %>	
 			          	</tbody>
 			        </table>
 	      		</div>
-    		</div>
-		<%
-			}
-		%>
-	</div>
+	   		</div>
+		</div>
+	<% } %>
 </form>
 
-<!--  Repo dialog Start -->
-<!-- <div class="popup_div" id="importFromSvn"></div>  -->
-<!--  Repo dialog Start -->
-
 <script type="text/javascript">
-	/* To check whether the device is ipad or not */
-	if(!isiPad()){
-		/* JQuery scroll bar */
+	/* To check whether the device is ipad or not and apply scrollbar */
+	if (!isiPad()) {
 		$(".fixed-table-container-inner").scrollbars();  
 	}
 
@@ -211,11 +194,7 @@
 		$('#add').click(function() {
 			disableScreen();
 			showLoadingIcon($("#loadingIconDiv"));
-			var params = "";
-	    	if (!isBlank($('form').serialize())) {
-	    		params = $('form').serialize() + "&";
-	    	}
-	        performAction('applicationDetails', params, $('#container'));
+	        performAction('applicationDetails', $('#formCustomers'), $('#container'));
 	    });
 		
 		$('#discover').click(function() {
@@ -242,14 +221,11 @@
 			showLoadingIcon($("#loadingIconDiv"));
 	        var projectCode = $(this).attr("id");
 	        var params = "";
-	    	if (!isBlank($('form').serialize())) {
-	    		params = $('form').serialize() + "&";
-	    	}
 			params = params.concat("projectCode=");
 			params = params.concat(projectCode);
 			params = params.concat("&fromPage=");
 			params = params.concat("edit");
-	        performAction('applicationDetails', params, $('#container'));
+	        performAction('applicationDetails', $('#formCustomers'), $('#container'), '', params);
 	    });
 		
         $('.pdfCreation').click(function() {

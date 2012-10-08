@@ -28,7 +28,6 @@
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 <%@ page import="com.photon.phresco.framework.model.BuildInfo"%>
 <%@ page import="com.photon.phresco.framework.commons.NodeJSUtil" %>
-<%@ page import="com.photon.phresco.framework.api.Project"%>
 
 <style type="text/css">
    	table th {
@@ -50,8 +49,7 @@
 	Boolean popup = Boolean.FALSE;
 	
     List<BuildInfo> buildInfos = (List<BuildInfo>) request.getAttribute(FrameworkConstants.REQ_BUILD);
-    Project project = (Project)request.getAttribute(FrameworkConstants.REQ_PROJECT);
-    ApplicationInfo selectedInfo = project.getApplicationInfo();
+    ApplicationInfo selectedInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_APPINFO);
     String projectCode = selectedInfo.getCode();
     String technology = selectedInfo.getTechInfo().getVersion();
 	

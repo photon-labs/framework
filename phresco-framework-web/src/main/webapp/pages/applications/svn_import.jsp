@@ -25,7 +25,7 @@
 <%@ page import="com.photon.phresco.commons.model.User"%>
 
 <% 
-	User user = (User)session.getAttribute(FrameworkConstants.REQ_USER_INFO);
+	User user = (User)session.getAttribute(FrameworkConstants.SESSION_USER_INFO);
 	String password = (String) session.getAttribute(FrameworkConstants.SESSION_USER_PASSWORD);
 	String repoUrl = (String)request.getAttribute(FrameworkConstants.REPO_URL);
 	String fromTab = (String)request.getAttribute(FrameworkConstants.REQ_FROM_TAB);
