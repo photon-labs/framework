@@ -40,6 +40,7 @@ import com.photon.phresco.framework.api.Validator;
 import com.photon.phresco.util.Utility;
 
 public class EnvironmentValidator implements Validator, DirectoryWalkListener {
+	
 public List<String> invalidProjects = new ArrayList<String>();
 	public List<ValidationResult> validate(String ProjectCode) throws PhrescoException {
 		List<ValidationResult> results = new ArrayList<ValidationResult>(16);
