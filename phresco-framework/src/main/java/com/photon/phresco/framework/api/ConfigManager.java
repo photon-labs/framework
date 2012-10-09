@@ -19,7 +19,40 @@
  */
 package com.photon.phresco.framework.api;
 
+import java.util.List;
+
+import com.photon.phresco.configuration.Environment;
+import com.photon.phresco.exception.PhrescoException;
+
 
 public interface ConfigManager {
+	
+	/**
+	 * Returns the list of environments with the names provided
+	 * @param names names of the environments to be returned
+	 * @return returns the environments with the matching names
+	 */
+	List<Environment> getEnvironments(List<String> names) throws PhrescoException;
+	
+	/**
+	 * Adds the environments to the existing list of environments
+	 * @param environments
+	 * @throws PhrescoException
+	 */
+	void addEnvironments(List<Environment> environments) throws PhrescoException;
+
+	/**
+	 * Updates the environment
+	 * @param environment
+	 * @throws PhrescoException
+	 */
+	void updateEnvironment(Environment environment) throws PhrescoException;
+	
+	/**
+	 * Deletes the environment provided by the name
+	 * @param envName
+	 * @throws PhrescoException
+	 */
+	void deleteEnvironment(String envName) throws PhrescoException;
 
 }
