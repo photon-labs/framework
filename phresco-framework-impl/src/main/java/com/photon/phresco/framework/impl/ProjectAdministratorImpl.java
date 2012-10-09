@@ -658,20 +658,6 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 return serverDownloadInfos;
 	 }
 
-	 private List<DownloadInfo> filterDownloadInfos(String customerId, String techId, String category) throws PhrescoException {
-	     List<DownloadInfo> allDownloadInfos = getServiceManager().getDownloads(customerId, techId);
-	     List<DownloadInfo> downloadInfos = new ArrayList<DownloadInfo>(); 
-		 if (CollectionUtils.isNotEmpty(allDownloadInfos)) {
-		     for (DownloadInfo downloadInfo : allDownloadInfos) {
-		         if (downloadInfo.getCategory().equals(category)) {
-		             downloadInfos.add(downloadInfo);
-		         }
-	         }
-		 }
-		 
-		 return downloadInfos;
-    }
-
 	 @Override
 	 public List<DownloadInfo> getDbDownloadInfos(String customerId, String techId) throws PhrescoException {
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.getDbDownloadInfo()");
@@ -707,6 +693,20 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 			 
 	     return othersDownloadInfos;
 	 }
+	 
+	 private List<DownloadInfo> filterDownloadInfos(String customerId, String techId, String category) throws PhrescoException {
+         List<DownloadInfo> allDownloadInfos = getServiceManager().getDownloads(customerId, techId);
+         List<DownloadInfo> downloadInfos = new ArrayList<DownloadInfo>(); 
+         if (CollectionUtils.isNotEmpty(allDownloadInfos)) {
+             for (DownloadInfo downloadInfo : allDownloadInfos) {
+                 if (downloadInfo.getCategory().equals(category)) {
+                     downloadInfos.add(downloadInfo);
+                 }
+             }
+         }
+         
+         return downloadInfos;
+    }
 	 
 	 /**
 	  * This method is to fetch the settings template through REST service
@@ -2073,42 +2073,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 return "Production";
 	 }
 
-	 public List<DownloadInfo> getDatabases() throws PhrescoException {
-		 try {
-		     //TODO:Need to handle
-//			 return getServiceManager().getDatabases();
-		 } catch (Exception ex) {
-			 throw new PhrescoException(ex);
-		 }
-		 return null;
-	 }
-	 
-	 public List<DownloadInfo> getDatabases(String customerId, String techId) throws PhrescoException {
-         try {
-             return getServiceManager().getDatabases(customerId, techId);
-         } catch (Exception ex) {
-             throw new PhrescoException(ex);
-         }
-     }
-
-	 public List<DownloadInfo> getServers() throws PhrescoException {
-		 try {
-		   //TODO:Need to handle
-//			 return getServiceManager().getServers();
-		 } catch (Exception ex) {
-			 throw new PhrescoException(ex);
-		 }
-		 return null;
-	 }
-	 
-	 public List<DownloadInfo> getServers(String customerId, String techId) throws PhrescoException {
-         try {
-             return getServiceManager().getServers(customerId, techId);
-         } catch (Exception ex) {
-             throw new PhrescoException(ex);
-         }
-     }
-	 
+	 @Override
 	 public List<WebService> getWebservices() throws PhrescoException {
          try {
              return getServiceManager().getWebServices();
@@ -2117,10 +2082,12 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
          }
      }
 	 
+	 @Override
 	 public List<ApplicationInfo> getPilotProjects(String customerId, String techId) throws PhrescoException {
          try {
              return getServiceManager().getPilotProjects(customerId, techId);
          } catch (Exception ex) {
+             ex.printStackTrace();
              throw new PhrescoException(ex);
          }
      }
@@ -2146,7 +2113,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 	 }
 
 	 /**
-	/* Delete the Sql Folder 
+	  * Delete the Sql Folder
 	  */
 	 public void deleteSqlFolder(List<String> dbList , ApplicationInfo appInfo) throws PhrescoException {
 		 initializeSqlMap();

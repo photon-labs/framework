@@ -94,11 +94,7 @@ public class Applications extends FrameworkBaseAction {
 	
 	private String projectCode = "";
 	private String fromPage = "";
-	private String repositoryUrl = "";
-	private String userName = "";
-	private String password = "";
-	private String revision = "";
-	private String revisionVal = "";
+	
 	private String globalValidationStatus = "";
 	private List<String> pilotModules = null;
 	private List<String> pilotJSLibs = null;
@@ -108,18 +104,22 @@ public class Applications extends FrameworkBaseAction {
 	private String selectedVersions = "";
 	private String selectedAttrType = "";
 	private String selectedParamName = "";
-	private String hiddenFieldValue = "";
 	private String divTobeUpdated = "";
-	boolean hasError = false;
-	private String envError = "";
 	private List<String> techVersions = null;
 	private boolean hasConfiguration = false;
 	private String configServerNames = "";
 	private String configDbNames = "";
-	private boolean svnImport = false;
-	private String svnImportMsg = "";
 	List<String> deletableDbs = new ArrayList<String>();
 	private String fromTab = "";
+	
+	private String repositoryUrl = "";
+    private String userName = "";
+    private String password = "";
+    private String revision = "";
+    private String revisionVal = "";
+    private boolean svnImport = false;
+    private String svnImportMsg = "";
+	
 	private String fileType = "";
 	private String fileorfolder = null;
 	//svn info
@@ -132,6 +132,13 @@ public class Applications extends FrameworkBaseAction {
 	private String applicationType = "";
 	private String technology = "";
 	
+	boolean hasError = false;
+    private String envError = "";
+	
+    /**
+     * To get the list of projects
+     * @return
+     */
     public String list() {
 		if (s_debugEnabled) {
 		    S_LOGGER.debug("Entering Method  Applications.list()");
@@ -179,8 +186,7 @@ public class Applications extends FrameworkBaseAction {
 	    
 		try {
 			setReqAttribute(REQ_FROM_PAGE, fromPage);
-			HttpServletRequest request = getHttpRequest();
- 			FrameworkUtil.setAppInfoDependents(request, getCustomerId());
+ 			FrameworkUtil.setAppInfoDependents(getHttpRequest(), getCustomerId());
 			setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
 			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
 			ApplicationInfo appInfo = null;
@@ -230,13 +236,10 @@ public class Applications extends FrameworkBaseAction {
                 setReqAttribute(REQ_APPINFO, appInfo);
                 setApplicationType(appInfo.getTechInfo().getAppTypeId());
             }
-            System.out.println("getApplicationType():::" + getApplicationType());
-            System.out.println("getCustomerId():::" + getCustomerId());
             List<Technology> technologies = administrator.getAppTypeTechnologies(getCustomerId(), getApplicationType());
-            getHttpRequest().setAttribute(REQ_APPTYPE_TECHNOLOGIES, technologies);
-            getHttpRequest().setAttribute(REQ_SELECTED_JSLIBS,
-                    getHttpRequest().getParameter(REQ_SELECTED_JSLIBS));
-            getHttpRequest().setAttribute(REQ_FROM_PAGE, fromPage);
+            setReqAttribute(REQ_APPTYPE_TECHNOLOGIES, technologies);
+            setReqAttribute(REQ_SELECTED_JSLIBS, getHttpRequest().getParameter(REQ_SELECTED_JSLIBS));
+            setReqAttribute(REQ_FROM_PAGE, fromPage);
 		} catch (Exception e) {
 			S_LOGGER.error("Entered into catch block of Applications.applicationType()"
 						+ FrameworkUtil.getStackTraceAsString(e));
@@ -263,15 +266,18 @@ public class Applications extends FrameworkBaseAction {
 				setReqAttribute(REQ_APPINFO, appInfo);
 			}
 			//To get the servers
-//			List<DownloadInfo> servers = administrator.getServers(getCustomerId(), getTechnology());
-//			setReqAttribute(REQ_SERVERS, servers);
+			List<DownloadInfo> servers = administrator.getServerDownloadInfos(getCustomerId(), getTechnology());
+			System.out.println("servers:::" + servers);
+			setReqAttribute(REQ_SERVERS, servers);
 			
 			//To get the databases
-//			List<DownloadInfo> databases = administrator.getDatabases(getCustomerId(), getTechnology());
-//			setReqAttribute(REQ_DATABASE, databases);
+			List<DownloadInfo> databases = administrator.getDbDownloadInfos(getCustomerId(), getTechnology());
+			System.out.println("databases:::" + databases);
+			setReqAttribute(REQ_DATABASE, databases);
 			
 			//To get the webservices
 			List<WebService> webservices = administrator.getWebservices();
+			System.out.println("webservices:::" + webservices);
 			setReqAttribute(REQ_WEBSERVICES, webservices);
 			
 			//To get the pilot projects
@@ -282,7 +288,7 @@ public class Applications extends FrameworkBaseAction {
 			setReqAttribute(REQ_APPTYPE, getApplicationType());
 			setReqAttribute(REQ_SELECTED_TECHNOLOGY, getTechnology());
 		} catch (Exception e) {
-			S_LOGGER.error("Entered into catch block of  Applications.technology()"	+ FrameworkUtil.getStackTraceAsString(e));
+		    S_LOGGER.error("Entered into catch block of  Applications.technology()"	+ FrameworkUtil.getStackTraceAsString(e));
 			new LogErrorReport(e, "Getting technology");
 		}
 
@@ -873,7 +879,7 @@ public class Applications extends FrameworkBaseAction {
 		return APP_SHOW_PROJECT_VLDT_RSLT;
 	}
 
-	public String discover() {
+	private String discover() {
 		S_LOGGER.debug("Entering Method  Applications.discover()");
 		
 		try {
@@ -886,7 +892,7 @@ public class Applications extends FrameworkBaseAction {
 			new LogErrorReport(e, "Discovering projects");
 			// return APP_LIST;
 		}
-		getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
+		setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
 		
 		return APP_LIST;
 	}
@@ -934,7 +940,7 @@ public class Applications extends FrameworkBaseAction {
 			String appType = getHttpRequest().getParameter(REQ_APPLICATION_TYPE);
 			String type = getHttpRequest().getParameter(ATTR_TYPE);
 			String from = getHttpRequest().getParameter(REQ_FROM);
-			getHttpRequest().setAttribute(REQ_FROM, from);
+			setReqAttribute(REQ_FROM, from);
 			ApplicationType applicationType = null;
 			applicationType = ApplicationsUtil.getApplicationType(getHttpRequest(), appType);
 //			Technology techonology = applicationType.getTechonology(techId);//TODO:Need to handle
@@ -965,8 +971,8 @@ public class Applications extends FrameworkBaseAction {
 //							}
 //						}
 					}
-					getHttpRequest().setAttribute("listSelectedServerIds", listSelectedServerIds);
-					getHttpRequest().setAttribute(REQ_HEADER_TYPE, "Select");
+					setReqAttribute("listSelectedServerIds", listSelectedServerIds);
+					setReqAttribute(REQ_HEADER_TYPE, "Select");
 				} else {
 					attrName = getHttpRequest().getParameter("attrName");
 					String selectedVersions = getHttpRequest().getParameter("selectedVersions");
@@ -983,11 +989,11 @@ public class Applications extends FrameworkBaseAction {
 //							}
 //						}
 //					}
-					getHttpRequest().setAttribute("listSelectedServerIds", listSelectedServerIds);
-					getHttpRequest().setAttribute(REQ_LISTSELECTED_VERSIONS, listSelectedVersions);
-					getHttpRequest().setAttribute(REQ_HEADER_TYPE, "Edit");
+					setReqAttribute("listSelectedServerIds", listSelectedServerIds);
+					setReqAttribute(REQ_LISTSELECTED_VERSIONS, listSelectedVersions);
+					setReqAttribute(REQ_HEADER_TYPE, "Edit");
 				}
-//				getHttpRequest().setAttribute("servers", servers);//TODO:Need to handle
+//				setReqAttribute("servers", servers);//TODO:Need to handle
 			}
 			if (Constants.SETTINGS_TEMPLATE_DB.equals(type)) {
 				List<Integer> listSelectedDatabaseIds = null;
@@ -1014,8 +1020,8 @@ public class Applications extends FrameworkBaseAction {
 //							}
 //						}
 					}
-					getHttpRequest().setAttribute("listSelectedDatabaseIds", listSelectedDbIds);
-					getHttpRequest().setAttribute(REQ_HEADER_TYPE, "Select");
+					setReqAttribute("listSelectedDatabaseIds", listSelectedDbIds);
+					setReqAttribute(REQ_HEADER_TYPE, "Select");
 				} else {
 					attrName = getHttpRequest().getParameter("attrName");
 					ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
@@ -1041,7 +1047,7 @@ public class Applications extends FrameworkBaseAction {
 //	
 //								}
 //								if (StringUtils.isNotEmpty(sb.toString())) {
-//									getHttpRequest().setAttribute("projectInfoDbVersions", sb.toString().substring(0, sb.length() - 1));
+//									setReqAttribute("projectInfoDbVersions", sb.toString().substring(0, sb.length() - 1));
 //								}
 //							}
 						}
@@ -1060,17 +1066,17 @@ public class Applications extends FrameworkBaseAction {
 //							}
 //						}
 //					}
-					getHttpRequest().setAttribute("listSelectedDatabaseIds", listSelectedDatabaseIds);
-					getHttpRequest().setAttribute(REQ_LISTSELECTED_VERSIONS, listSelectedVersions);
-					getHttpRequest().setAttribute(REQ_HEADER_TYPE, "Edit");
+					setReqAttribute("listSelectedDatabaseIds", listSelectedDatabaseIds);
+					setReqAttribute(REQ_LISTSELECTED_VERSIONS, listSelectedVersions);
+					setReqAttribute(REQ_HEADER_TYPE, "Edit");
 				}
-//				getHttpRequest().setAttribute("databases", databases);//TODO:Need to handle
+//				setReqAttribute("databases", databases);//TODO:Need to handle
 			}
 			
-			getHttpRequest().setAttribute("attrName", attrName);
-			getHttpRequest().setAttribute("header", type);
-			getHttpRequest().setAttribute(REQ_FROM, from);
-			getHttpRequest().setAttribute(REQ_FROM_PAGE, fromPage);
+			setReqAttribute("attrName", attrName);
+			setReqAttribute("header", type);
+			setReqAttribute(REQ_FROM, from);
+			setReqAttribute(REQ_FROM_PAGE, fromPage);
 		} catch (Exception e) {
 			S_LOGGER.error("Entered into catch block of Applications.openAttrPopup()"
 							+ FrameworkUtil.getStackTraceAsString(e));
@@ -1294,11 +1300,11 @@ public class Applications extends FrameworkBaseAction {
 	public String browse() {
 		S_LOGGER.debug("Entering Method  Applications.browse()");
 		try {
-			getHttpRequest().setAttribute(FILE_TYPES, fileType);
-			getHttpRequest().setAttribute(FILE_BROWSE, fileorfolder);
+		    setReqAttribute(FILE_TYPES, fileType);
+		    setReqAttribute(FILE_BROWSE, fileorfolder);
 			String projectLocation = Utility.getProjectHome() + projectCode;
-			getHttpRequest().setAttribute(REQ_PROJECT_LOCATION, projectLocation.replace(File.separator, FORWARD_SLASH));
-			getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
+			setReqAttribute(REQ_PROJECT_LOCATION, projectLocation.replace(File.separator, FORWARD_SLASH));
+			setReqAttribute(REQ_PROJECT_CODE, projectCode);
 		} catch (Exception e) {
 			S_LOGGER.error("Entered into catch block of  Applications.browse()"	+ FrameworkUtil.getStackTraceAsString(e));
 			new LogErrorReport(e, "File Browse");
@@ -1317,20 +1323,20 @@ public class Applications extends FrameworkBaseAction {
 				List<CertificateInfo> certificates = administrator.getCertificate(host, port);
 				if (CollectionUtils.isNotEmpty(certificates)) {
 					isCertificateAvailable = true;
-					getHttpRequest().setAttribute("certificates", certificates);
+					setReqAttribute("certificates", certificates);
 				}
 			}
-			getHttpRequest().setAttribute(FILE_TYPES, FILE_TYPE_CRT);
-			getHttpRequest().setAttribute(FILE_BROWSE, FILE_BROWSE);
+			setReqAttribute(FILE_TYPES, FILE_TYPE_CRT);
+			setReqAttribute(FILE_BROWSE, FILE_BROWSE);
 			String projectLocation = "";
 			if (StringUtils.isNotEmpty(projectCode)) {
 				projectLocation = Utility.getProjectHome() + projectCode;
 			} else {
 				projectLocation = Utility.getProjectHome();
 			}
-			getHttpRequest().setAttribute(REQ_PROJECT_LOCATION, projectLocation.replace(File.separator, FORWARD_SLASH));
-			getHttpRequest().setAttribute(REQ_RMT_DEP_IS_CERT_AVAIL, isCertificateAvailable);
-			getHttpRequest().setAttribute(REQ_RMT_DEP_FILE_BROWSE_FROM, CONFIGURATION);
+			setReqAttribute(REQ_PROJECT_LOCATION, projectLocation.replace(File.separator, FORWARD_SLASH));
+			setReqAttribute(REQ_RMT_DEP_IS_CERT_AVAIL, isCertificateAvailable);
+			setReqAttribute(REQ_RMT_DEP_FILE_BROWSE_FROM, CONFIGURATION);
 		} catch(Exception e) {
 			throw new PhrescoException(e);
 		}
@@ -1512,14 +1518,6 @@ public class Applications extends FrameworkBaseAction {
 
 	public void setSelectedParamName(String selectedParamName) {
 		this.selectedParamName = selectedParamName;
-	}
-	
-	public String getHiddenFieldValue() {
-		return hiddenFieldValue;
-	}
-
-	public void setHiddenFieldValue(String hiddenFieldValue) {
-		this.hiddenFieldValue = hiddenFieldValue;
 	}
 	
 	public String getDivTobeUpdated() {

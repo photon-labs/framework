@@ -19,15 +19,12 @@
   --%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
-<%@ page import="java.util.Arrays" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.util.List" %>
-<%@ page import="java.util.Collection" %>
 <%@ page import="org.apache.commons.collections.CollectionUtils" %>
 <%@ page import="org.apache.commons.lang.StringUtils" %>
-<%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
 
-<%@ page import="com.photon.phresco.framework.api.Project" %>
+<%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
 <%@ page import="com.photon.phresco.util.TechnologyTypes"%>
 <%@ page import="com.photon.phresco.commons.model.WebService"%>
 <%@ page import="com.photon.phresco.commons.model.DownloadInfo"%>
@@ -57,7 +54,7 @@
     
     List<DownloadInfo> selectedServers = null;
     List<DownloadInfo> selectedDatabases = null;
-    List<DownloadInfo> selectedWebServices = null;
+    List<WebService> selectedWebServices = null;
     boolean isEmailSupportSelected = false;
     String selectedPilotProj = null;
     String projectInfoDbNames = "";
@@ -93,8 +90,10 @@
 		pilotTechVersions = pilotProjectInfo.getTechnology().getVersions(); */
 // 	}
 	
-	List<DownloadInfo> servers = (List<DownloadInfo>) request.getAttribute(FrameworkConstants.REQ_TEST_SERVERS);
+	//To get all the servers, databases and webservices
+	List<DownloadInfo> servers = (List<DownloadInfo>) request.getAttribute(FrameworkConstants.REQ_SERVERS);
 	List<DownloadInfo> databases = (List<DownloadInfo>) request.getAttribute( FrameworkConstants.REQ_DATABASES);
+	List<WebService> webservices = (List<WebService>) request.getAttribute( FrameworkConstants.REQ_WEBSERVICES);
 %>
 
 <div class="clearfix">
@@ -132,13 +131,15 @@
 <form id="deleteObjects">
 	<!-- Servers are loaded here starts -->
 	<div class="clearfix" id="server">
-		<label for="xlInput" class="new-xlInput"><s:text name="label.supported.servers"/></label>
+		<label class="new-xlInput"><s:text name="label.supported.servers"/></label>
 	    
 	    <div class="input new-input" id="dispServer" style="color: #ffffff;">
 	
 	    </div>
 	    
-	    <label for="xlInput" id="Server" style="cursor: pointer; margin: 3px 0 0 20px; text-align: center; background-color: #cccccc; border-radius: 6px; line-height: 25px; padding: 0px;  color: #000000; width:50px;"><s:text name="label.add"/></label>
+	    <label id="Server" style="cursor: pointer; margin: 3px 0 0 20px; text-align: center; background-color: #cccccc; border-radius: 6px; line-height: 25px; padding: 0px;  color: #000000; width:50px;">
+	    	<s:text name="label.add"/>
+	    </label>
 	    
 	    <input type="hidden" id="selectedServer" name="selectedServers" value="">
 	</div>
@@ -146,12 +147,12 @@
 
 	<!-- Databases are loaded here starts -->
 	<div class="clearfix" id="database">
-		<label for="xlInput" Class="new-xlInput"><s:text name="label.supported.dbs"/></label>
+		<label Class="new-xlInput"><s:text name="label.supported.dbs"/></label>
 		<div class="input new-input" id="dispDatabase" style="color: #ffffff">
 	
 	    </div>
 	    
-	    <label for="xlInput" id="Database" style="cursor: pointer; margin: 3px 0 0 20px; text-align: center; background-color: #cccccc; border-radius: 6px; line-height: 25px; padding: 0px;  color: #000000; width:50px;"><s:text name="label.add"/></label>
+	    <label id="Database" style="cursor: pointer; margin: 3px 0 0 20px; text-align: center; background-color: #cccccc; border-radius: 6px; line-height: 25px; padding: 0px;  color: #000000; width:50px;"><s:text name="label.add"/></label>
 	    
 	    <input type="hidden" id="selectedDatabase" name="selectedDatabases" value="">
 	</div>
@@ -166,15 +167,13 @@
 			<div id="multilist-scroller">
 				<ul>
 					<!-- TODO:Need to handle -->
-					<%-- <%
+					<%
 						checkedStr = "";
-						List<WebService> webservices = selectedTechnology.getWebservices();
-						if(webservices != null) {
-							for(WebService webservice : webservices) {
-								if(selectedWebServices != null && CollectionUtils.isNotEmpty(selectedWebServices)) {
-								
-									for(WebService selectedWebService : selectedWebServices) {
-										if(selectedWebService.getId() == webservice.getId()){
+						if (CollectionUtils.isNotEmpty(webservices)) {
+							for (WebService webservice : webservices) {
+								if (CollectionUtils.isNotEmpty(selectedWebServices)) {
+									for (WebService selectedWebService : selectedWebServices) {
+										if (selectedWebService.getId() == webservice.getId()) {
 											checkedStr = "checked";
 											break;
 										} else {
@@ -190,7 +189,7 @@
 					<%        
 							}
 						}
-					%> --%>
+					%>
 				</ul>
 			</div>
 		</div>
@@ -203,8 +202,6 @@
 	<s:label for="email" key="label.web.email" theme="simple" cssClass="new-xlInput"/>
 		<div class="input new-input">
 				<%
-// 					boolean isEmailSupported = selectedTechnology.isEmailSupported();
-					
 					if (isEmailSupportSelected) {
 						selectedStr = "checked";
 					}
@@ -555,17 +552,11 @@
 		params = params.concat('<%= appType %>');
 		params = params.concat("&type=");
 		params = params.concat(type);
-// 		params = params.concat("&techId=");
-<%-- 		params = params.concat('<%= selectedTechnology.getId() %>'); --%>
 		params = params.concat("&attrName=");
 		params = params.concat(attrName);
 		params = params.concat("&selectedVersions=");
 		params = params.concat(selectedVersions);
-		params = params.concat("&from=");
-		params = params.concat(from);
-		params = params.concat("&fromPage=");
-		params = params.concat('<%= fromPage %>');
-		popup('openAttrPopup', params, $('#popup_div'));
+		popup('openAttrPopup', $('#formAppInfo'), $('#popup_div'), '', '', params);
 	}
 	
 	/** To get the versions onChange of the select box option **/

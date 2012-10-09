@@ -648,34 +648,6 @@ public interface ProjectAdministrator {
 	//TODO: Remove the below method once the plugins are adapted for configuration.xml
 	SettingsInfo getSettingsInfo(String name, String type, String projectCode) throws PhrescoException;
 	
-	/**
-	 * get servers from service
-	 * @param 
-	 * @return
-	 * @throws PhrescoException
-	 */
-	List<DownloadInfo> getServers() throws PhrescoException;
-	
-	/**
-	 * To get the servers based on the given customer and techId
-	 * @param customerId
-	 * @param techId
-	 * @return
-	 * @throws PhrescoException
-	 */
-	List<DownloadInfo> getServers(String customerId, String techId) throws PhrescoException;
-	
-	List<DownloadInfo> getDatabases() throws PhrescoException;
-	
-	/**
-     * To get the databases based on the given customer and techId
-     * @param customerId
-     * @param techId
-     * @return
-     * @throws PhrescoException
-     */
-    List<DownloadInfo> getDatabases(String customerId, String techId) throws PhrescoException;
-    
     /**
      * To get the webservices
      * @return

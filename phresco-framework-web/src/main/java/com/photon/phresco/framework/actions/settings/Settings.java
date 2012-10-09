@@ -642,13 +642,15 @@ public class Settings extends FrameworkBaseAction {
 				S_LOGGER.debug("Setting Template object value " + settingsTemplate.toString());
 			}
 			if(SERVER.equals(settingsType)) {
-				List<DownloadInfo> servers = administrator.getServers();
-				getHttpRequest().setAttribute(REQ_TEST_SERVERS, servers);
+			    //TODO:Need to handle
+//				List<DownloadInfo> servers = administrator.getServers();
+//				getHttpRequest().setAttribute(REQ_TEST_SERVERS, servers);
 			}
 			
 			if(Constants.SETTINGS_TEMPLATE_DB.equals(settingsType)) {
-				List<DownloadInfo> databases = administrator.getDatabases();
-				getHttpRequest().setAttribute(REQ_PROJECT_INFO_DATABASES, databases);
+	            //TODO:Need to handle
+//				List<DownloadInfo> databases = administrator.getDatabases();
+//				getHttpRequest().setAttribute(REQ_PROJECT_INFO_DATABASES, databases);
 			}
 			getHttpRequest().setAttribute(REQ_CURRENT_SETTINGS_TEMPLATE, settingsTemplate);
 //			getHttpRequest().setAttribute(REQ_ALL_TECHNOLOGIES, administrator.getAlsslTechnologies());//TODO:Need to handle
