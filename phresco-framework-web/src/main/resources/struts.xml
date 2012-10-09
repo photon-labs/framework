@@ -27,15 +27,16 @@
     <constant name="struts.ui.theme" value="simple" />
     
     <package name="default" extends="struts-default,json-default">
-    	<global-results>
-			<result name="success">/pages/login.jsp</result>
-			<result name="logError">/pages/errorReport.jsp</result>
-		</global-results>
 		
         <result-types>
             <result-type name="tiles" class="org.apache.struts2.views.tiles.TilesResult" />
         </result-types>
         
+    	<global-results>
+			<!-- <result name="success">/pages/login.jsp</result>-->
+			<result name="logError">/pages/errorReport.jsp</result>
+		</global-results>
+
         <!--  Login Page Action -->
         <action name="login" method="login" class="com.photon.phresco.framework.actions.Login">
             <result name="success" type="tiles">home</result>

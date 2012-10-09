@@ -28,7 +28,6 @@
 <%@ page import="com.photon.phresco.framework.api.ValidationResult" %>
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 
-<%@ include file="errorReport.jsp" %>
 <%@ include file="progress.jsp" %>
 
 <script type="text/javascript" src="js/delete.js" ></script>
