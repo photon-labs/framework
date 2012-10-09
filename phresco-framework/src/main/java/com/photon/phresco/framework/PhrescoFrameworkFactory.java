@@ -23,7 +23,9 @@ import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.api.CIManager;
 import com.photon.phresco.framework.api.ConfigManager;
+import com.photon.phresco.framework.api.ProjectAdministrator;
 import com.photon.phresco.framework.api.ProjectManager;
+import com.photon.phresco.framework.api.ProjectRuntimeManager;
 import com.photon.phresco.framework.api.UpdateManager;
 
 public class PhrescoFrameworkFactory {
@@ -33,6 +35,9 @@ public class PhrescoFrameworkFactory {
     }
 
     //TODO:Can we read this from a property file?
+    private static final String PROJECT_ADMINISTRATOR_IMPL = "com.photon.phresco.framework.impl.ProjectAdministratorImpl";
+    private static final String PROJECT_RUNTIME_MANAGER_IMPL = "com.photon.phresco.framework.impl.ProjectRuntimeManagerImpl";
+ 
     private static final String PROJECT_MANAGER_IMPL = "com.photon.phresco.framework.impl.ProjectManagerImpl";
     private static final String APPLICATION_MANAGER_IMPL = "com.photon.phresco.framework.impl.ApplicationManagerImpl";
     private static final String CONFIG_MANAGER_IMPL = "com.photon.phresco.framework.impl.ConfigManagerImpl";
@@ -46,6 +51,9 @@ public class PhrescoFrameworkFactory {
     private static CIManager ciManager = null;
     private static UpdateManager updateManager = null;
 
+    private static ProjectAdministrator administrator = null;
+    private static ProjectRuntimeManager runtimeManager = null;
+    
     private static final String FRAMEWORK_CONFIG = "framework.config";
 
     public static FrameworkConfiguration getFrameworkConfig() throws PhrescoException {
@@ -54,6 +62,25 @@ public class PhrescoFrameworkFactory {
         }
 
         return frameworkConfig;
+    }
+    
+    //TODO: Need to remove ProjectAdministrator
+    public static  ProjectAdministrator getProjectAdministrator() throws PhrescoException {
+        if (administrator == null) {
+            administrator = (ProjectAdministrator) constructClass(PROJECT_ADMINISTRATOR_IMPL);
+        }
+
+        return administrator;
+    }
+
+    //TODO: Need to remove ProjectRuntimeManager
+    public static ProjectRuntimeManager getProjectRuntimeManager() throws PhrescoException {
+        if (runtimeManager == null) {
+            runtimeManager = (ProjectRuntimeManager) constructClass(PROJECT_RUNTIME_MANAGER_IMPL);
+        }
+
+        return runtimeManager;
+
     }
 
     public static  ProjectManager getProjectManager() throws PhrescoException {

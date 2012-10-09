@@ -60,8 +60,8 @@ import com.google.gson.JsonParser;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
+import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.api.CIManager;
-import com.photon.phresco.framework.api.ProjectAdministrator;
 import com.photon.phresco.framework.model.BuildInfo;
 import com.photon.phresco.framework.model.CIBuild;
 import com.photon.phresco.framework.model.CIJob;
@@ -78,7 +78,9 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
     private CLI cli = null;
     
     private ServiceManager getServiceManager() throws PhrescoException {
-        return PhrescoFrameworkFactory.getProjectAdministrator().getServiceManager();
+        //TODO: get the Servie manger in the service-client
+        return null;
+//        return PhrescoFrameworkFactory.getProjectAdministrator().getServiceManager();
     }
 
     @Override
@@ -678,7 +680,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
         S_LOGGER.debug("Entering Method CIManagerImpl.getBuildInfos");
         List<BuildInfo> buildInfo = null;
         try {
-        	ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
+        	ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
         	String jenkinsDataHome = System.getenv(JENKINS_HOME);
             StringBuilder builder = new StringBuilder(jenkinsDataHome);
             builder.append(File.separator);
@@ -689,7 +691,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
             builder.append(BUILD_DIR);
             builder.append(File.separator);
             builder.append(BUILD_INFO_FILE_NAME);
-        	buildInfo = administrator.readBuildInfo(new File(builder.toString()));
+        	buildInfo = applicationManager.getBuildInfos(new File(builder.toString()));
 		} catch (Exception e) {
    			S_LOGGER.error("Entered into the catch block of CIManagerImpl.getBuildInfos" + e.getLocalizedMessage());
 		}

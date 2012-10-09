@@ -1,11 +1,13 @@
 package com.photon.phresco.framework.api;
 
+import java.io.File;
 import java.io.Reader;
 import java.util.List;
 
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.exception.PhrescoException;
+import com.photon.phresco.framework.model.BuildInfo;
 
 public interface ApplicationManager {
 
@@ -32,4 +34,12 @@ public interface ApplicationManager {
 	 * @throws PhrescoException
 	 */
 	void configureReport(ApplicationInfo appInfo, List<String> reportOptions) throws PhrescoException;
+	
+	/**
+	 * This method read the buildInfos from the build.info json file.
+	 * @param buildInfoFile
+	 * @return
+	 * @throws PhrescoException
+	 */
+	List<BuildInfo> getBuildInfos(File buildInfoFile) throws PhrescoException;
 }

@@ -1876,10 +1876,10 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 //1.Check for phresco directory structure validation
 		 //2.Check for Environment settings like Android Home, Node JS Home
 		 List<ValidationResult> results = new ArrayList<ValidationResult>(64);
-		 List<Validator> validators = PhrescoFrameworkFactory.getValidators(TechnologyTypes.ALL_TECHS);
+		 /*List<Validator> validators = PhrescoFrameworkFactory.getValidators(TechnologyTypes.ALL_TECHS);
 		 for (Validator validator : validators) {
 			 results.addAll(validator.validate(null));
-		 }
+		 }*/
 
 		 return results;
 	 }
@@ -1889,13 +1889,13 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 //2.Validate for changes in the list of modules in projects
 		 //	info and the actual list of modules present in the directory
 		 List<ValidationResult> results = new ArrayList<ValidationResult>(64);
-		 String techId = project.getApplicationInfo().getTechInfo().getVersion();
+		 /*String techId = project.getApplicationInfo().getTechInfo().getVersion();
 		 List<Validator> validators = PhrescoFrameworkFactory.getValidators(techId);
 
 		 for (Validator validator : validators) {
 
 			 results.addAll(validator.validate(project.getApplicationInfo().getCode()));
-		 }
+		 }*/
 
 		 return results;
 	 }

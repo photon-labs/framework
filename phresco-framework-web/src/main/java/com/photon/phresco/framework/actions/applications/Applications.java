@@ -21,7 +21,6 @@ package com.photon.phresco.framework.actions.applications;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -144,15 +143,8 @@ public class Applications extends FrameworkBaseAction {
 		    S_LOGGER.debug("Entering Method  Applications.list()");
 		}
 		
-		try {
-			setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
-			removeSessionAttribute(projectCode);
-		} catch (Exception e) {
-			S_LOGGER.error("Entered into catch block of Applications.list()"
-					+ FrameworkUtil.getStackTraceAsString(e));
-			new LogErrorReport(e, "Listing projects");
-		}
-		
+		setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
+        removeSessionAttribute(projectCode);
 		return discover();
 	}
 
@@ -170,10 +162,8 @@ public class Applications extends FrameworkBaseAction {
 				setReqAttribute(REQ_APPINFO, appInfo);
 				setReqAttribute(REQ_FROM_PAGE, fromPage);
             }
-		} catch (Exception e) {
-			S_LOGGER.error("Entered into catch block of Applications.addApplication()"
-					+ FrameworkUtil.getStackTraceAsString(e));
-			new LogErrorReport(e, REQ_TITLE_ADD_APPLICATION);
+		} catch (PhrescoException e) {
+			return showErrorPopup(e, REQ_TITLE_ADD_APPLICATION);
 		}
 		
 		return APP_APPLICATION_DETAILS;
@@ -213,10 +203,8 @@ public class Applications extends FrameworkBaseAction {
 			}
 			setReqAttribute(REQ_CONFIG_SERVER_NAMES, configServerNames);
 	        setReqAttribute(REQ_CONFIG_DB_NAMES, configDbNames);
-		} catch (Exception e) {
-			S_LOGGER.error("Entered into catch block of Applications.appInfo()"
-						+ FrameworkUtil.getStackTraceAsString(e));
-			new LogErrorReport(e, REQ_TITLE_ADD_APPLICATION);
+		} catch (PhrescoException e) {
+			return showErrorPopup(e, REQ_TITLE_ADD_APPLICATION);
 		}
         
 		return APP_APPINFO;
@@ -240,10 +228,8 @@ public class Applications extends FrameworkBaseAction {
             setReqAttribute(REQ_APPTYPE_TECHNOLOGIES, technologies);
             setReqAttribute(REQ_SELECTED_JSLIBS, getHttpRequest().getParameter(REQ_SELECTED_JSLIBS));
             setReqAttribute(REQ_FROM_PAGE, fromPage);
-		} catch (Exception e) {
-			S_LOGGER.error("Entered into catch block of Applications.applicationType()"
-						+ FrameworkUtil.getStackTraceAsString(e));
-			new LogErrorReport(e, "Getting Application Type");
+		} catch (PhrescoException e) {
+			return showErrorPopup(e, "Getting Application Type");
 		}
 		
 		return APP_TYPE;
@@ -267,17 +253,14 @@ public class Applications extends FrameworkBaseAction {
 			}
 			//To get the servers
 			List<DownloadInfo> servers = administrator.getServerDownloadInfos(getCustomerId(), getTechnology());
-			System.out.println("servers:::" + servers);
 			setReqAttribute(REQ_SERVERS, servers);
 			
 			//To get the databases
 			List<DownloadInfo> databases = administrator.getDbDownloadInfos(getCustomerId(), getTechnology());
-			System.out.println("databases:::" + databases);
 			setReqAttribute(REQ_DATABASE, databases);
 			
 			//To get the webservices
 			List<WebService> webservices = administrator.getWebservices();
-			System.out.println("webservices:::" + webservices);
 			setReqAttribute(REQ_WEBSERVICES, webservices);
 			
 			//To get the pilot projects
@@ -287,9 +270,8 @@ public class Applications extends FrameworkBaseAction {
 			setReqAttribute(REQ_FROM_PAGE, fromPage);
 			setReqAttribute(REQ_APPTYPE, getApplicationType());
 			setReqAttribute(REQ_SELECTED_TECHNOLOGY, getTechnology());
-		} catch (Exception e) {
-		    S_LOGGER.error("Entered into catch block of  Applications.technology()"	+ FrameworkUtil.getStackTraceAsString(e));
-			new LogErrorReport(e, "Getting technology");
+		} catch (PhrescoException e) {
+		    return showErrorPopup(e, "Getting technology");
 		}
 
 		return APP_TECHNOLOGY;
@@ -307,10 +289,8 @@ public class Applications extends FrameworkBaseAction {
 			//TODO:Need to handle
 //			Technology techonology = applicationType.getTechonology(selectedTechnology);
 //			techVersions = techonology.getVersions();
-		} catch(Exception e) {
-			S_LOGGER.error("Entered into catch block of  Applications.techVersions()"
-							+ FrameworkUtil.getStackTraceAsString(e));
-			new LogErrorReport(e, "Getting technology versions");
+		} catch(PhrescoException e) {
+			return showErrorPopup(e, "Getting technology versions");
 		}
 		
 		return SUCCESS;
@@ -349,10 +329,8 @@ public class Applications extends FrameworkBaseAction {
 			setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
 	        setReqAttribute(REQ_CONFIG_SERVER_NAMES, configServerNames);
 	        setReqAttribute(REQ_CONFIG_DB_NAMES, configDbNames);
-		} catch (Exception e) {
-			S_LOGGER.error("Entered into catch block of  Applications.previous()"
-						+ FrameworkUtil.getStackTraceAsString(e));
-			new LogErrorReport(e, "When previous button is clicked");
+		} catch (PhrescoException e) {
+		    return showErrorPopup(e, "AppInfo");
 		}
 
         return APP_APPINFO;
@@ -371,9 +349,8 @@ public class Applications extends FrameworkBaseAction {
 			addActionMessage(getText(SUCCESS_PROJECT, Collections.singletonList(appInfo.getName())));
 			removeSessionAttribute(projectCode);
 	        setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
-		} catch (Exception e) {
-			S_LOGGER.error("Entered into catch block of  Applications.save()"
-					+ FrameworkUtil.getStackTraceAsString(e));
+		} catch (PhrescoException e) {
+		    return showErrorPopup(e, "Save Application");
 		}
 		
 		return discover();
@@ -391,13 +368,13 @@ public class Applications extends FrameworkBaseAction {
 			setFeatures(administrator, appInfo);
 			//TODO:Need to handle
 //			ApplicationInfo originalinfo = appInfo.clone();
-			File projectPath = new File(Utility.getProjectHome(), appInfo.getCode() + File.separator 
-			                    + FOLDER_DOT_PHRESCO + File.separator + PROJECT_INFO);
-			try {
+//			File projectPath = new File(Utility.getProjectHome(), appInfo.getCode() + File.separator 
+//			                    + FOLDER_DOT_PHRESCO + File.separator + PROJECT_INFO);
+			/*try {
 				reader = new BufferedReader(new FileReader(projectPath));
 			} catch (FileNotFoundException e) {
 				throw new PhrescoException(e);
-			}
+			}*/
 			//TODO:Need to handle
 //			List<ModuleGroup> modules = appInfo.getTechnology().getModules();
 //			List<ModuleGroup> jsLibraries = appInfo.getTechnology().getJsLibraries();
@@ -541,10 +518,8 @@ public class Applications extends FrameworkBaseAction {
 			}
 			getHttpRequest().setAttribute(REQ_FROM_PAGE, FROM_PAGE_EDIT);
 			getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
-		} catch (Exception e) {
-			S_LOGGER.error("Entered into catch block of  Applications.edit()"
-						+ FrameworkUtil.getStackTraceAsString(e));
-			new LogErrorReport(e, "Project edit");
+		} catch (PhrescoException e) {
+		    return showErrorPopup(e, "Edit Application");
 		}
 		
 		return APP_APPLICATION;
@@ -570,10 +545,8 @@ public class Applications extends FrameworkBaseAction {
 
 			administrator.deleteProject(projectCodes);
 			addActionMessage(SUCCESS_PROJECT_DELETE);
-		} catch (Exception e) {
-			S_LOGGER.error("Entered into catch block of Applications.delete()"
-						+ FrameworkUtil.getStackTraceAsString(e));
-			new LogErrorReport(e, "Project delete");
+		} catch (PhrescoException e) {
+		    return showErrorPopup(e, "Delete Application");
 		}
 		
 		return list();
@@ -695,9 +668,8 @@ public class Applications extends FrameworkBaseAction {
 			getHttpRequest().setAttribute(REPO_URL, connectionUrl);
 			getHttpRequest().setAttribute(REQ_FROM_TAB, UPDATE_SVN_PROJECT);
 			getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
-		} catch (Exception e) {
-			S_LOGGER.error("Entered into catch block of Applications.updateProjectPopup()" + FrameworkUtil.getStackTraceAsString(e));
-			new LogErrorReport(e, "Updating project popup");
+		} catch (PhrescoException e) {
+		    return showErrorPopup(e, "Update Application");
 		}
 		return APP_IMPORT_FROM_SVN;
 	}
@@ -786,6 +758,7 @@ public class Applications extends FrameworkBaseAction {
 		return SUCCESS;
 	}
 	
+	//TODO: No need the validator remove all validator
 	public String validateFramework() {
 		S_LOGGER.debug("Entering Method  Applications.validateFramework()");
 		
@@ -823,6 +796,7 @@ public class Applications extends FrameworkBaseAction {
 		return APP_VALIDATE_FRAMEWORK;
 	}
 
+	   //TODO: No need the validator remove all validator
 	public String showFrameworkValidationResult() {
 		S_LOGGER.debug("Entering Method  Applications.showFrameworkValidationResult()");
 		getHttpRequest().setAttribute(VALIDATE_FROM, VALIDATE_FRAMEWORK);
@@ -830,6 +804,7 @@ public class Applications extends FrameworkBaseAction {
 		return APP_SHOW_FRAMEWORK_VLDT_RSLT;
 	}
 
+	   //TODO: No need the validator remove all validator
 	public String validateProject() { 
 		S_LOGGER.debug("Entering Method  Applications.validateProject()");
 		
@@ -870,6 +845,7 @@ public class Applications extends FrameworkBaseAction {
 		return APP_VALIDATE_PROJECT;
 	}
 
+	   //TODO: No need the validator remove all validator
 	public String showProjectValidationResult() {
 		S_LOGGER.debug("Entering Method  Applications.showProjectValidationResult()");
 		
@@ -880,17 +856,17 @@ public class Applications extends FrameworkBaseAction {
 	}
 
 	private String discover() {
-		S_LOGGER.debug("Entering Method  Applications.discover()");
-		
+	    if (s_debugEnabled) {
+	        S_LOGGER.debug("Entering Method  Applications.discover()");
+	    }
+	    
 		try {
 			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
 			List<Project> projects = administrator.discover(Collections.singletonList(new File(Utility.getProjectHome())));
 			setReqAttribute(REQ_PROJECTS, projects);
-		} catch (Exception e) {
-			S_LOGGER.error("Entered into catch block of Applications.discover()"
-						+ FrameworkUtil.getStackTraceAsString(e));
-			new LogErrorReport(e, "Discovering projects");
-			// return APP_LIST;
+		} catch (PhrescoException e) {
+			S_LOGGER.error("Entered into catch block of Applications.discover()" + FrameworkUtil.getStackTraceAsString(e));
+			return showErrorPopup(e, "Discovering projects");
 		}
 		setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
 		
@@ -899,39 +875,32 @@ public class Applications extends FrameworkBaseAction {
 	
 	public String showSettings() {
 		S_LOGGER.debug("entered Applications.showSettings()");
-		
+
 		try {
-			if (showSettings != null && Boolean.valueOf(showSettings)) {
-				if (CollectionUtils.isNotEmpty(getEnvironmentNames())) {
-					settingsEnv = getEnvironmentNames();
-				} else {
-					envError = getText(NO_SETTINGS_ENV);
-				}
-			} 
-		} catch (Exception e) {
-			S_LOGGER.error("Entered into catch block of Applications.showSettings()"
-						+ FrameworkUtil.getStackTraceAsString(e));
+		    if (showSettings != null && Boolean.valueOf(showSettings)) {
+		        if (CollectionUtils.isNotEmpty(getEnvironmentNames())) {
+		            settingsEnv = getEnvironmentNames();
+		        } else {
+		            envError = getText(NO_SETTINGS_ENV);
+		        }
+		    } 
+		} catch (PhrescoException e) {
+		    return showErrorPopup(e, "Show Settings");
 		}
-		
+
 		return SUCCESS;
 	}
-	
-	private List<String> getEnvironmentNames() {
-		List<String> names = new ArrayList<String>(5);
-		try {
-			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-			List<Environment> environments = administrator.getEnvironments();
-			if (CollectionUtils.isNotEmpty(environments)) {
-				for (Environment environment : environments) {
-					names.add(environment.getName());
-				}
-			}
-		} catch (Exception e) {
-			S_LOGGER.error("Entered into catch block of Applications.getEnvironmentNames()"
-						+ FrameworkUtil.getStackTraceAsString(e));
-		}
-		
-		return names;
+
+	private List<String> getEnvironmentNames() throws PhrescoException {
+	    List<String> names = new ArrayList<String>(5);
+	    ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
+	    List<Environment> environments = administrator.getEnvironments();
+	    if (CollectionUtils.isNotEmpty(environments)) {
+	        for (Environment environment : environments) {
+	            names.add(environment.getName());
+	        }
+	    }
+	    return names;
 	}
 
 	public String openAttrPopup() throws PhrescoException {
@@ -1077,10 +1046,8 @@ public class Applications extends FrameworkBaseAction {
 			setReqAttribute("header", type);
 			setReqAttribute(REQ_FROM, from);
 			setReqAttribute(REQ_FROM_PAGE, fromPage);
-		} catch (Exception e) {
-			S_LOGGER.error("Entered into catch block of Applications.openAttrPopup()"
-							+ FrameworkUtil.getStackTraceAsString(e));
-			new LogErrorReport(e, "Getting server and database");
+		} catch (PhrescoException e) {
+		    return showErrorPopup(e, "Getting server and database");
 		}
 		
 		return "openAttrPopup";

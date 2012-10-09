@@ -1,1 +1,13 @@
 target/
+
+.project
+
+*.prefs
+
+phresco-framework-impl/.classpath
+
+phresco-framework-web/.classpath
+
+phresco-framework/.classpath
+
+*.jasper
