@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<environment>
+<phresco>
+ <technology>
+   <mobileWidgetConstants>
+        <appInfoMobileWidgetNameValue>MobileWidget_Eshop_Proj</appInfoMobileWidgetNameValue>
+        <appInfoMobileWidgetNoneNameValue>MobileWidget_None_Proj</appInfoMobileWidgetNoneNameValue>
+        <appInfoMobileWidgetDescValue>This is a Mobile widget project</appInfoMobileWidgetDescValue>
+        <appInfoTechMobappMobileWidget>//option[@value='tech-html5-mobile-widget']</appInfoTechMobappMobileWidget>
+        <appInfoTechMobappMobileWidgetClick>css=option[value="tech-html5-mobile-widget"]</appInfoTechMobappMobileWidgetClick>
+        <createdMobileWidgetNoneProject>//a[@id='PHR_MobileWidget_None_Proj']</createdMobileWidgetNoneProject>
+        <createdMobileWidgetProject>//a[@id='PHR_MobileWidget_Eshop_Proj']</createdMobileWidgetProject>
+        <MobileWidgetServerNameValue>MobileWidgetServer</MobileWidgetServerNameValue>
+        <MobileWidgetServerDescValue>MobileWidgetServer</MobileWidgetServerDescValue>
+        <MobileWidgetBuildGenBuildMobileWidgetServer>dfghd</MobileWidgetBuildGenBuildMobileWidgetServer>
+        <MobWidgBuildGenBuildMobWidgWebServ>dfgdhg</MobWidgBuildGenBuildMobWidgWebServ>
+        
+        <MobileWidgetServerHostValue>localhost</MobileWidgetServerHostValue>
+        <MobileWidgetServerPortValue>8080</MobileWidgetServerPortValue>
+        
+         <!--  ********* MobileWidgetServerDeployDirValue *********** -->
+        
+        <MobileWidgetServerDeployDirValue>D:\Softwares\apache-tomcat-6.0.35\webapps</MobileWidgetServerDeployDirValue>
+        
+         <!--  ********* MobileWidgetServerDeployDirValue *********** -->
+         
+        <MobileWidgetServerUsername>admin</MobileWidgetServerUsername>
+        <MobileWidgetServerPassword>admin</MobileWidgetServerPassword>>
+        <MobileWidgetNoneServerContextValue>YUIMobileNoneApp</MobileWidgetNoneServerContextValue>
+        <MobileWidgetEshopServerContextValue>YUIMobileEshopApp</MobileWidgetEshopServerContextValue>
+        
+   </mobileWidgetConstants>
+ </technology>
+</phresco>
+</environment>

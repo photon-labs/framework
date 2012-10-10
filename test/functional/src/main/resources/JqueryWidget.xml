@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<environment>
+<phresco>
+<technology>
+<jquerywidget>
+      <jqueryWidgetCreatedProj>//a[contains(text(),'JqueryWidget_Eshop_Proj')]</jqueryWidgetCreatedProj>
+     <jqueryWidgetNoneCreatedProj>//a[contains(text(),'JqueryWidget_None_Proj')]</jqueryWidgetNoneCreatedProj>>
+      <appInfojqueryProjNameValue>JqueryWidget_Eshop_Proj</appInfojqueryProjNameValue>
+      <appInfojqueryNoneProjNameValue>JqueryWidget_None_Proj</appInfojqueryNoneProjNameValue>
+      <appInfojqueryProjDescValue>This is a Jquery Widget project</appInfojqueryProjDescValue>
+      <appInfoTechjqueryWidget>//option[@value='tech-html5-jquery-widget']</appInfoTechjqueryWidget>
+      <jqueryConfigServNameValue>JqueryServer</jqueryConfigServNameValue>
+      <jqueryConfigservDescValue>Server configuration for Widget project</jqueryConfigservDescValue>
+      <jqueryconfigServHostValue>localhost</jqueryconfigServHostValue>
+      <jqueryconfigServPortValue>8080</jqueryconfigServPortValue>
+      <jqueryconfigServDeployDir>D:\Softwares\apache-tomcat-6.0.35\webapps</jqueryconfigServDeployDir>
+      <jqueryNoneconfigServContextNameValue>MultichannelJqueryNoneApp</jqueryNoneconfigServContextNameValue>
+      <jqueryEshopconfigServContextNameValue>MultichannelJqueryEshopApp</jqueryEshopconfigServContextNameValue>
+      <jqueryConfigWebServiceNameValue>JqueryWebserv</jqueryConfigWebServiceNameValue>
+      <jqueryConfigWebserviceDesc>WebService configuration for Jquery Widget project</jqueryConfigWebserviceDesc>
+      <jqueryconfigWebserviceHostValue>172.16.17.180</jqueryconfigWebserviceHostValue>
+      <jqueryconfigWebservicePortValue>2020</jqueryconfigWebservicePortValue>
+      <jqueryconfigWebservContextNameValue>eshop</jqueryconfigWebservContextNameValue>
+      <jqueryconfigServUsernameValue>admin</jqueryconfigServUsernameValue>
+      <jqueryconfigServpasswordValue>admin</jqueryconfigServpasswordValue>
+      
+       <!--  ********* jqueryconfigServDeployDirectoryValue *********** -->
+       
+      <jqueryconfigServDeployDirectoryValue>D:\Softwares\apache-tomcat-6.0.35\webapps</jqueryconfigServDeployDirectoryValue>
+      
+       <!--  ********* jqueryconfigServDeployDirectoryValue *********** -->
+       
+      <jqueryconfigServContextValue>jqueryapp</jqueryconfigServContextValue>
+      <appInfojqueryMobileProjNameValue>JqueryMobileWidget_None_Proj</appInfojqueryMobileProjNameValue>
+      <appInfojqueryMobileProjDescValue>This is a Jquery Mobile Widget project</appInfojqueryMobileProjDescValue>
+      <appInfoTechjqueryMobileWidget>//option[@value='tech-html5-jquery-mobile-widget']</appInfoTechjqueryMobileWidget>
+      <jqueryMobileNoneconfigServContextNameValue>JqueryMobileNoneApp</jqueryMobileNoneconfigServContextNameValue>
+       <jqueryMobileEshopconfigServContextNameValue>JqueryMobileEshopApp</jqueryMobileEshopconfigServContextNameValue>
+      <jqueryMobileWidgetCreatedProj>//a[contains(text(),'JqueryMobileWidget_None_Proj')]</jqueryMobileWidgetCreatedProj>
+      
+      <appInfojqueryMobileProjEshopNameValue>JqueryMobileWidget_Eshop_Proj</appInfojqueryMobileProjEshopNameValue>
+      <appInfojqueryMobileCreatedProjEshop>//a[contains(text(),'JqueryMobileWidget_Eshop_Proj')]</appInfojqueryMobileCreatedProjEshop>
+      
+</jquerywidget>
+</technology>
+</phresco>
+</environment>

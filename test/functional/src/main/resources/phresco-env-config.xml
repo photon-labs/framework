@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<environment>
+    <Browser>firefox</Browser>
+		   <server>
+		       <protocol>http</protocol>
+               <host>localhost</host>
+               <port>2468</port>
+               <context>phresco</context>
+               <speed>300</speed>
+           </server>
+           
+	       
+</environment>

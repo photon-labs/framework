@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<environment>
+<phresco>
+ <technology>
+   <php>
+      <appInfoPhpNameValue>PHP_Blog_Proj</appInfoPhpNameValue>
+      <appInfoPhpNoneNameValue>PHP_None_Proj</appInfoPhpNoneNameValue>
+      <appInfoPhpDescriptionValue>This is a PHP project</appInfoPhpDescriptionValue>
+      <phpConfigurationNameServer>ServerConfig</phpConfigurationNameServer>
+      <appInfophpPhpBlog>//option[@value='phpblog']</appInfophpPhpBlog>
+      <phpGenBuildServerconfig>label=ServerConfig</phpGenBuildServerconfig>
+      <phpGenBuildDbconfig>label=DBConfig</phpGenBuildDbconfig>
+      <phpConfigServerValue>ServerConfig</phpConfigServerValue>
+      
+       <!--  ********* phpConfigServerDeployDir *********** -->
+       
+      <phpConfigServerDeployDir>c:\wamp\www</phpConfigServerDeployDir>
+      
+       <!--  ********* phpConfigServerDeployDir *********** -->
+       
+      <phpNoneConfigServerContext>PHPNoneApp</phpNoneConfigServerContext>
+      <phpBlogConfigServerContext>PHPBlogApp</phpBlogConfigServerContext>
+      <phpConfigDbName>DBConfig</phpConfigDbName>
+      <phpConfigDbDescription>Database Configuration</phpConfigDbDescription>
+      <phpConfigDbUsername>root</phpConfigDbUsername>
+      <phpSettingsDbName>DBPHP</phpSettingsDbName>
+      <appInfoTechWebappPhp>label=PHP</appInfoTechWebappPhp>
+      <appInfoTechWebappPhpClick>//option[@value='tech-php']</appInfoTechWebappPhpClick>
+      <phpCreatedproject>//a[contains(text(),'PHP_Blog_Proj')]</phpCreatedproject>
+      <phpServerConfigHost>localhost</phpServerConfigHost>
+      <phpServerConfigPort>80</phpServerConfigPort>
+      <phpConfigPort>3306</phpConfigPort>
+      <phpGenBuildServerConfig>label=ServerConfig</phpGenBuildServerConfig>
+      <phpGenBuildServerConfigClick>css=option[value="ServerConfig"]</phpGenBuildServerConfigClick>
+      <phpGenBuildDbConfig>label=DBConfig</phpGenBuildDbConfig>
+      <phpGenBuildDbConfigClick>css=option[value="DBConfig"]</phpGenBuildDbConfigClick>
+      <phpNoneCreatedproject>//a[contains(text(),'PHP_None_Proj')]</phpNoneCreatedproject>>
+      
+      
+   </php>
+ </technology>
+</phresco>
+</environment>

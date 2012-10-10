@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<environment>
+
+<phresco>
+ <technology>
+       <javaStandalone>
+           
+          <appInfoJavaStandaloneNoneNameValue>JavaStandalone_None_Proj</appInfoJavaStandaloneNoneNameValue>
+          <appInfoJavaStandaloneDescValue>This is a JavaStandalone project</appInfoJavaStandaloneDescValue>
+          <createdJavaStandaloneProject>//a[contains(text(),'JavaStandalone_None_Proj')]</createdJavaStandaloneProject>
+          <appInfoTechWebappjavaStandaloneClick>//option[@value='tech-java-standalone']</appInfoTechWebappjavaStandaloneClick>
+         
+       </javaStandalone>
+ </technology>
+</phresco>
+</environment>

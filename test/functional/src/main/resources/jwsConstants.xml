@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<environment>
+<phresco>
+ <technology>
+   <jws>
+      <appInfoTechWebServJavaWebServ>label=Java Web Service</appInfoTechWebServJavaWebServ>
+      <appInfoTechWebServJavaWebServClick>//option[@value='tech-java-webservice']</appInfoTechWebServJavaWebServClick>
+      <createdJavaWebServProject>//a[contains(text(),'JWS_Eshop_Proj')]</createdJavaWebServProject>
+      <appInfoJavaWebServEshop>//option[@value='EShop WebService']</appInfoJavaWebServEshop>
+      <JWSBuildGenBuildJavaWebServServer>label=myserver</JWSBuildGenBuildJavaWebServServer>
+      <JWSBuildGenBuildJavaWebServDb>label=mydb1</JWSBuildGenBuildJavaWebServDb>
+      <JWSBuildGenBuildJavaWebServServerClick>css=option[value="myserver"]</JWSBuildGenBuildJavaWebServServerClick>
+      <JWSBuildGenBuildJavaWebServDbClick>css=option[value="mydb1"]</JWSBuildGenBuildJavaWebServDbClick>
+      <appInfoJavaWebServNameValue>JWS_Eshop_Proj</appInfoJavaWebServNameValue>
+      <appInfoJavaWebServNoneNameValue>JWS_None_Proj</appInfoJavaWebServNoneNameValue>
+      <appInfoJavaWebServDescValue>This is JavaWebService project</appInfoJavaWebServDescValue>
+      <JavaWebServServerNameValue>JwsServer</JavaWebServServerNameValue>
+      <JavaWebServServerDescValue>JavaWebService server Configurations</JavaWebServServerDescValue>
+      <JavaWebServNoneServerContextValue>JavaWebServiceNoneApp</JavaWebServNoneServerContextValue>
+      <JavaWebServEshopServerContextValue>JavaWebServiceEShopApp</JavaWebServEshopServerContextValue>
+      <JavaWebServServerHostValue>localhost</JavaWebServServerHostValue>
+      <JavaWebServServerPortValue>8080</JavaWebServServerPortValue>
+      
+      <!--  ********* JavaWebServServerDeployDirValue *********** -->
+      
+      <JavaWebServServerDeployDirValue>D:\Softwares\apache-tomcat-6.0.35\webapps</JavaWebServServerDeployDirValue>
+      
+      <!--  ********* JavaWebServServerDeployDirValue *********** -->
+      
+      <JavaWebServServerTypeValue>wamp</JavaWebServServerTypeValue>
+      <JavaWebServDbNameValue>JwsDatabase</JavaWebServDbNameValue>
+      <JavaWebServDbDescValue>Javawerservice DB configuration</JavaWebServDbDescValue>
+      <JavaWebServDbContextValue>Database</JavaWebServDbContextValue>
+      <JavaWebServDbHostValue>localhost</JavaWebServDbHostValue>
+      <JavaWebServDbPortValue>3306</JavaWebServDbPortValue>
+      <JavaWebServDbUserNameValue>root</JavaWebServDbUserNameValue>
+      <JavaWebServBuildRunAgainstSrcButton>id=runAgnSrc</JavaWebServBuildRunAgainstSrcButton>
+      <JavaWebServBuildRunButton>id=javaRunAgainstSrc</JavaWebServBuildRunButton>
+      <JavaWebServBuildStopButton>id=stopbtn</JavaWebServBuildStopButton>
+      <createdJavaWebServNoneProject>//a[contains(text(),'JWS_None_Proj')]</createdJavaWebServNoneProject>
+      <JavaWebServServerUserNameValue>admin</JavaWebServServerUserNameValue>
+      <JavaWebServServerPasswordValue>admin</JavaWebServServerPasswordValue>
+   </jws>
+ </technology>
+</phresco>
+</environment>

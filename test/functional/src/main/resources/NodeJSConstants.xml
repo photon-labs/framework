@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<environment>
+<phresco>
+ <technology>
+       <nodejs>
+            <createdNodeJSProject>//a[contains(text(),'NodeJS_Eshop_Webservice')]</createdNodeJSProject>
+            <appInfoNodeJSNameValue>NodeJS_Eshop_Webservice</appInfoNodeJSNameValue>
+            <appInfoNodeJSNoneNameValue>NodeJS_None_Webservice</appInfoNodeJSNoneNameValue>
+            <appInfoNodeJSDescValue>This is a NodeJS project</appInfoNodeJSDescValue>
+            <appInfoTechWebServNodeJS>//option[@value='tech-nodejs-webservice']</appInfoTechWebServNodeJS>
+            <appInfoTechEshopWebServ>//option[@value='EShop WebService']</appInfoTechEshopWebServ>
+            <appInfoNodeJSServNameValue>NodeServer</appInfoNodeJSServNameValue>
+            <NodeJSServerDescValue>Server configuration for NodeJS Pilot Project</NodeJSServerDescValue>
+            <NodeJSServerHostValue>localhost</NodeJSServerHostValue>
+            <NodeJSServNoneServerPortValue>7770</NodeJSServNoneServerPortValue>
+            <NodeJSServEshopServerPortValue>8880</NodeJSServEshopServerPortValue>
+            <NodeJSServerDeployDirValue>c:\temp</NodeJSServerDeployDirValue>
+            <NodeJSServerNoneContextValue>NodejsNoneApp</NodeJSServerNoneContextValue>
+            <NodeJSServerEshopContextValue>NodejsEApp</NodeJSServerEshopContextValue>
+            <NodeJSDbNameValue>NodejsDataBase</NodeJSDbNameValue>
+            <NodeJSDbDescValue>Db configuration for NodeJS Pilot Project</NodeJSDbDescValue>
+            <NodeJSDbHostValue>localhost</NodeJSDbHostValue>
+            <NodeJSDbPortValue>3306</NodeJSDbPortValue>
+            <NodeJSDbUserNameValue>root</NodeJSDbUserNameValue>
+            <NodeJSDbNameValue>NodeDb</NodeJSDbNameValue>
+            <NodeJSBuildRunAgainstSrcButton>id=nodeJS_runAgnSrc</NodeJSBuildRunAgainstSrcButton>
+            <NodeJSBuildRunButton>id=runAgainstSrc</NodeJSBuildRunButton>
+            <NodeJSBuildStopButton>id=stopbtn</NodeJSBuildStopButton>
+            <NodeJSBuildGenBuildNodeJSServer>label=NodeServer</NodeJSBuildGenBuildNodeJSServer>
+            <NodeJSBuildGenBuildNodeJSDb>label=NodeDb</NodeJSBuildGenBuildNodeJSDb>
+            <NodeJSBuildGenBuildNodeJSServerClick>css=option[value="NodeServer"]</NodeJSBuildGenBuildNodeJSServerClick>
+            <NodeJSBuildGenBuildNodeJSDbClick>css=option[value="NodeDb"]</NodeJSBuildGenBuildNodeJSDbClick>
+            <NodeJSBuildGentdBuildDownload>css=img[title="Download"]</NodeJSBuildGentdBuildDownload>
+             <createdNodeJSProjectNone>//a[contains(text(),'NodeJS_None_Webservice')]</createdNodeJSProjectNone>
+             <NodeJSServServerUsernameValue>admin</NodeJSServServerUsernameValue>
+             <NodeJSServServerPasswordValue>admin</NodeJSServServerPasswordValue>
+       </nodejs>
+ </technology>
+</phresco> 
+</environment>
