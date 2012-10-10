@@ -27,6 +27,9 @@ import com.photon.phresco.framework.api.ProjectAdministrator;
 import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.framework.api.ProjectRuntimeManager;
 import com.photon.phresco.framework.api.UpdateManager;
+import com.photon.phresco.service.client.api.ServiceContext;
+import com.photon.phresco.service.client.api.ServiceManager;
+import com.photon.phresco.service.client.factory.ServiceClientFactory;
 
 public class PhrescoFrameworkFactory {
 
@@ -53,6 +56,7 @@ public class PhrescoFrameworkFactory {
 
     private static ProjectAdministrator administrator = null;
     private static ProjectRuntimeManager runtimeManager = null;
+    private static ServiceManager serviceManager = null;
     
     private static final String FRAMEWORK_CONFIG = "framework.config";
 
@@ -121,6 +125,13 @@ public class PhrescoFrameworkFactory {
         }
 
         return updateManager;
+    }
+    
+    public static ServiceManager getServiceManager(ServiceContext context) throws PhrescoException {
+    	if (serviceManager == null) {
+    		serviceManager = ServiceClientFactory.getServiceManager(context);
+    	}
+    	return serviceManager;
     }
 
     private static Object constructClass(String className) throws PhrescoException {
