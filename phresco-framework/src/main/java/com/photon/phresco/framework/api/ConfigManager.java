@@ -22,7 +22,7 @@ package com.photon.phresco.framework.api;
 import java.util.List;
 
 import com.photon.phresco.configuration.Environment;
-import com.photon.phresco.exception.PhrescoException;
+import com.photon.phresco.exception.ConfigurationException;
 
 
 public interface ConfigManager {
@@ -32,27 +32,27 @@ public interface ConfigManager {
 	 * @param names names of the environments to be returned
 	 * @return returns the environments with the matching names
 	 */
-	List<Environment> getEnvironments(List<String> names) throws PhrescoException;
+	List<Environment> getEnvironments(List<String> names) throws ConfigurationException;
 	
 	/**
 	 * Adds the environments to the existing list of environments
 	 * @param environments
-	 * @throws PhrescoException
+	 * @throws ConfigurationException
 	 */
-	void addEnvironments(List<Environment> environments) throws PhrescoException;
+	void addEnvironments(List<Environment> environments) throws ConfigurationException;
 
 	/**
 	 * Updates the environment
 	 * @param environment
-	 * @throws PhrescoException
+	 * @throws ConfigurationException
 	 */
-	void updateEnvironment(Environment environment) throws PhrescoException;
+	void updateEnvironment(Environment environment) throws ConfigurationException;
 	
 	/**
 	 * Deletes the environment provided by the name
 	 * @param envName
-	 * @throws PhrescoException
+	 * @throws ConfigurationException
 	 */
-	void deleteEnvironment(String envName) throws PhrescoException;
+	void deleteEnvironment(String envName) throws ConfigurationException;
 
 }
