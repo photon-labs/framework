@@ -26,7 +26,7 @@ public interface ApplicationManager {
 	 * @return Returns the maven output as Reader object
 	 * @throws PhrescoException
 	 */
-	Reader performAction(ActionType actionType) throws PhrescoException;
+	Reader performAction(ProjectInfo projectInfo, ActionType actionType) throws PhrescoException;
 	
 	/**
 	 * This method configures the maven site report for the application
