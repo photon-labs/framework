@@ -19,7 +19,6 @@
   --%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
-<%@ include file="errorReport.jsp" %>
 <%@ include file="description_dialog.jsp" %>
 
 <%@ page import="java.util.ArrayList" %>

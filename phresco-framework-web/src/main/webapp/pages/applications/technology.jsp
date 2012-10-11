@@ -31,8 +31,6 @@
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 <%@ page import="com.photon.phresco.commons.model.Technology"%>
 
-<%@ include file="errorReport.jsp" %>
-
 <script type="text/javascript" src="js/confirm-dialog.js" ></script>
 
 <%

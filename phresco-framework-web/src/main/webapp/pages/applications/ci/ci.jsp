@@ -20,7 +20,6 @@
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ include file="../progress.jsp" %>
-<%@ include file="../errorReport.jsp" %>
 <%@ include file="../../userInfoDetails.jsp" %>
 
 <%@ page import="java.util.List"%>

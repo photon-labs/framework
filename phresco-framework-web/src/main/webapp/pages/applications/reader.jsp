@@ -21,8 +21,6 @@
 <%@ page import="java.io.IOException"%>
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 
-<%@ include file="errorReport.jsp" %>
-
 <%
     String projectCode = (String) request.getAttribute(FrameworkConstants.REQ_PROJECT_CODE);
     String testType = (String) request.getAttribute(FrameworkConstants.REQ_TEST_TYPE);
