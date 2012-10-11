@@ -28,9 +28,9 @@
     
     <package name="default" extends="struts-default,json-default">
 		
-        <result-types>
+        <!--<result-types>
             <result-type name="tiles" class="org.apache.struts2.views.tiles.TilesResult" />
-        </result-types>
+        </result-types>-->
         
     	<global-results>
 			<!-- <result name="success">/pages/login.jsp</result>-->
@@ -39,12 +39,12 @@
 
         <!--  Login Page Action -->
         <action name="login" method="login" class="com.photon.phresco.framework.actions.Login">
-            <result name="success" type="tiles">home</result>
+            <result name="success">/pages/baselayout.jsp</result>
             <result name="failure">/pages/login.jsp</result>
         </action>
         
         <action name="cmdlogin" method="cmdLogin" class="com.photon.phresco.framework.actions.Login">
-            <result name="success" type="tiles">home</result>
+            <result name="success">/admin/baselayout.jsp</result>
             <result name="failure">/pages/login.jsp</result>
         </action>
         
@@ -581,7 +581,7 @@
         </action>
 		
 		<action name="updateVersion" method="update" class="com.photon.phresco.framework.actions.applications.VersionUpdate">
-			<result name="success">updatedInfo.jsp</result>
+			<result name="success">/pages/updatedInfo.jsp</result>
 		</action>
         
         <action name="about" method="about" class="com.photon.phresco.framework.actions.applications.VersionUpdate">

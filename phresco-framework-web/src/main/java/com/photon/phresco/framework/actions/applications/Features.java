@@ -114,7 +114,7 @@ public class Features extends FrameworkBaseAction {
 //					appInfo.setProjectCode(externalCode);
 //				}
 				if (StringUtils.isNotEmpty(projectVersion)) {
-					appInfo.setVersion(projectVersion);
+//					appInfo.setVersion(projectVersion);
 				}
 				//TODO:Need to Handle
 //				if (groupId != null) {
@@ -222,7 +222,7 @@ public class Features extends FrameworkBaseAction {
 //		if (artifactId != null) {
 //			appInfo.setArtifactId(artifactId);
 //		}
-		appInfo.setVersion(projectVersion);
+//		appInfo.setVersion(projectVersion);
 		appInfo.setDescription(description);
 		appInfo.setTechInfo(new TechnologyInfo(application, technology));
 		String pilotProjectName = getHttpRequest().getParameter(REQ_SELECTED_PILOT_PROJ);

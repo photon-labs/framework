@@ -22,24 +22,28 @@
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <html>
 <head>
-<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-<meta content="width=device-width" name="viewport">
-<title>Phresco</title>
-<link REL="SHORTCUT ICON" HREF="images/favicon.ico">
-<script type="text/javascript" src="js/jquery-1.6.4.min.js"></script>
-<script type="text/javascript" src="js/jquery.cookie.js"></script>
+	<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+	<meta content="width=device-width" name="viewport">
+	<title>Phresco</title>
+	<link REL="SHORTCUT ICON" HREF="images/favicon.ico">
 
-<!-- Phresco js -->
-<script type="text/javascript" src="js/phresco/common.js"></script>
+	<!-- basic js -->
+	<script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
+	<script type="text/javascript" src="js/jquery-ui-1.8.18.custom.min.js"></script>
 
-<link type="text/css" rel="stylesheet" href="css/bootstrap-1.2.0.css">
-<link type="text/css" rel="stylesheet" href="themes/photon/css/phresco.css">
-<link type="text/css" rel="stylesheet" class="changeme" id="theme">
+	<!-- right panel scroll bar -->
+	<script type="text/javascript" src="js/home.js"></script>
+
+	<!-- commons.js -->
+	<script type="text/javascript" src="js/common.js"></script>
+
+	<link type="text/css" rel="stylesheet" href="css/bootstrap.css">
+	<link type="text/css" rel="stylesheet" href="theme/photon/css/phresco.css">
+	<link type="text/css" rel="stylesheet" class="changeme" id="theme">
 
 <script type="text/javascript">
 $(document).ready(function() {
-	var key = "color";
-	showWelcomeImage(key);
+	showWelcomeImage();
     <%
 		String cmdLogin = (String) request.getAttribute("cmdLogin");
 		if (cmdLogin != null) {
@@ -71,15 +75,15 @@ $(document).ready(function() {
 </head>
 <body class="lgnBg">
       <div class="logoimg">
-          <img class="logoimage" src="images/photon_phresco_logo_red.png">
+          <img class="logoimage" src="theme/photon/images/photon_phresco_logo_red.png">
       </div>
       <div class="innoimg">
-           <img class="phtaccinno" border="0" alt="" onclick="window.open('http://www.photon.in','_blank');" src="images/acc_inov_red.png">
+           <img class="phtaccinno" border="0" alt="" onclick="window.open('http://www.photon.in','_blank');" src="theme/photon/images/acc_inov_red.png">
       </div>
 	 
       <div class="lgnintro_container lgnContainer">
 	        <div class="welcome" id="welcome">
-                  <img class="welcomeimg" src="images/welcome_photon_red.png">
+                  <img class="welcomeimg" src="theme/photon/images/welcome_photon_red.png">
              </div> 
 	    <div class="lgnintro_container_left">
 	    	<h1 class="l_align">Login</h1>
@@ -116,7 +120,7 @@ $(document).ready(function() {
                 
 	        	<div class="clearfix">
 	                <div class="input lgnBtnLabel">
-	                    <input type="submit" value="Login" class="primary btn lgnBtn" id="Login">
+	                    <input type="submit" value="Login" class="btn btn-primary lgnBtn" id="Login">
 	            	</div>
 	            </div>
 	            <input type="hidden" name="loginFirst" value="false"/>

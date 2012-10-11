@@ -152,9 +152,9 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 
 		File projectPath = new File(Utility.getProjectHome()+ File.separator+ info.getCode());
 		String techId = info.getTechInfo().getVersion();
-		if (StringUtils.isEmpty(info.getVersion())) {
+		/*if (StringUtils.isEmpty(info.getVersion())) {
 			info.setVersion(PROJECT_VERSION); // TODO: Needs to be fixed
-		}
+		}*/
 		ClientResponse response = getServiceManager().createProject(info);
 		S_LOGGER.debug("createProject response code " + response.getStatus());
 
@@ -237,9 +237,9 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 
 		S_LOGGER.debug("Entering Method ProjectAdministratorImpl.updateProject(ProjectInfo info, File path)");
 		S_LOGGER.debug("updateProject() > info name : " + delta.getName());
-		if (StringUtils.isEmpty(delta.getVersion())) {
+		/*if (StringUtils.isEmpty(delta.getVersion())) {
 			delta.setVersion(PROJECT_VERSION); // TODO: Needs to be fixed
-		}
+		}*/
 		
 		ClientResponse response = null;
 		String techId = delta.getTechInfo().getVersion();
@@ -2097,9 +2097,9 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 			 String path = Utility.getProjectHome() + appInfo.getCode() + File.separator + POM_FILE;
 			 PomProcessor processor = new PomProcessor(new File(path));
 			 Model model = processor.getModel();
-			 if (StringUtils.isNotEmpty(appInfo.getVersion())) {
+			 /*if (StringUtils.isNotEmpty(appInfo.getVersion())) {
 				 model.setVersion(appInfo.getVersion());
-			 }
+			 }*/
 			 if (StringUtils.isNotEmpty(appInfo.getPilotContent().getGroupId())) {
 				 model.setGroupId(appInfo.getPilotContent().getGroupId());
 			 }
