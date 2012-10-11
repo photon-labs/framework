@@ -30,236 +30,114 @@
 
 <%@ include file="progress.jsp" %>
 
-<script type="text/javascript" src="js/delete.js" ></script>
-<script type="text/javascript" src="js/confirm-dialog.js" ></script>
-<script type="text/javascript" src="js/loading.js"></script>
-<script type="text/javascript" src="js/home-header.js" ></script>
-<script type="text/javascript" src="js/reader.js" ></script>
-<script type="text/javascript" src="js/windowResizer.js"></script><!-- Window Resizer -->
-
-<style type="text/css">
-	.btn.success, .alert-message.success {
-       	margin-top: -35px;
-   	}
-   	
-   	table th {
-		padding: 0 0 0 9px;  
-	}
-	   	
-	td {
-	 	padding: 5px;
-	 	text-align: left;
-	}
-	  
-	th {
-	 	padding: 0 5px;
-	 	text-align: left;
-	}
-</style>
+<%
+	List<Project> projects = (List<Project>) request.getAttribute(FrameworkConstants.REQ_PROJECTS);
+	String customerId = (String) request.getAttribute(FrameworkConstants.REQ_CUSTOMER_ID);
+%>
 
 <div class="page-header">
 	<h1 style="float: left;">
-		Applications 
+		<s:text name="lbl.projects"/>
 	</h1>
-	
-	<div class="icon_div">
-		<a href="#" onclick="showFrameworkValidationResult();" title="Validate framework">
-			<img src="images/icons/validate_failure_icon.png" id="validationErr_validateFramework" class="hideContent"/>
-		</a>
-		<a href="#" onclick="showFrameworkValidationResult();" title="Validate framework">
-			<img src="images/icons/validate_success_icon.png" id="validationSuccess_validateFramework" class="hideContent"/>
-		</a>
-	</div>
 </div>
 
-<form name="delete" action="delete" method="post" autocomplete="off" id="deleteObjects" class="app_list_form">
+<form id="formProjectList" class="projectList">
+
 	<div class="operation">
-		<input id="add" type="button" value="<s:text name="label.addappln"/>" class="btn primary"/>
-		<a href="#" class="btn primary" id="import"><s:text name="label.import.application"/></a>
-		<input id="deleteButton" type="button" value="<s:text name="label.delete"/>" class="btn disabled" disabled="disabled"/>
-	</div>
-	<%
-		List<Project> projects = (List<Project>) request.getAttribute(FrameworkConstants.REQ_PROJECTS);
-		if (CollectionUtils.isEmpty(projects)) {
-	%>
-			<div class="alert-message block-message warning" >
-				<center><s:label key="error.message" cssClass="errorMsgLabel"/></center>
+		<input type="button" class="btn btn-primary" name="configTemplate_add" id="configtempAdd" 
+	         onclick="loadContent('applicationDetails', $('#formProjectList'), $('#container'));" 
+		         value="<s:text name='lbl.projects.add'/>"/>
+		<input type="button" class="btn btn-primary" name="configTemplate_add" id="configtempAdd" 
+	         onclick="loadContent('configtempAdd', $('#formProjectList'), $('#subcontainer'));" 
+		         value="<s:text name='lbl.applications.import'/>"/>
+		<input type="button" class="btn" id="del" disabled value="<s:text name='lbl.delete'/>"
+			onclick="showDeleteConfirmation('<s:text name='lbl.delete'/>');"/>
+		<s:if test="hasActionMessages()">
+			<div class="alert alert-success alert-message" id="successmsg" >
+				<s:actionmessage />
 			</div>
-	<% } else { %>
+		</s:if>
+		<s:if test="hasActionErrors()">
+			<div class="alert alert-error"  id="errormsg">
+				<s:actionerror />
+			</div>
+		</s:if>
+	</div>
+	
+	<% if (CollectionUtils.isEmpty(projects)) { %>
+		<div class="alert alert-block">
+			<s:text name='alert.msg.configTemp.not.available'/>
+		</div>
+    <% } else { %>	
 		<div class="table_div">
-			<s:if test="hasActionMessages()">
-				<div class="alert-message success"  id="successmsg">
-					<s:actionmessage />
-				</div>
-			</s:if>
-			
 			<div class="fixed-table-container">
-	      		<div class="header-background"> </div>
-	      		<div class="fixed-table-container-inner">
-			        <table cellspacing="0" class="zebra-striped">
-			          	<thead>
-				            <tr>
-								<th class="first">
-				                	<div class="th-inner">
-				                		<input type="checkbox" value="" id="checkAllAuto" name="checkAllAuto">
-				                	</div>
-				              	</th>
-				              	<th class="second">
-				                	<div class="th-inner"><s:text name="label.name"/></div>
-				              	</th>
-				              	<th class="third">
-				                	<div class="th-inner"><s:text name="label.description"/></div>
-				              	</th>
-				              	<th class="third">
-				                	<div class="th-inner"><s:text name="label.technology"/></div>
-				              	</th>
-				              	<th class="third">
-				                	<div class="th-inner"><s:text name="label.print"/></div>
-				              	</th>
-				              	<th class="third">
-				                	<div class="th-inner"><s:text name="label.update"/></div>
-				              	</th>
-				            </tr>
-			          	</thead>
-			
-			          	<tbody>
-			          	<%
-			          	    for (Project project : projects) {
-								ApplicationInfo projectInfo = project.getApplicationInfo();
-			          	%>
-			            	<tr>
-			              		<td class="checkbox_list">
-			              			<input type="checkbox" class="check" name="selectedProjects" value="<%= projectInfo.getCode() %>">
-			              		</td>
-			              		<td>
-			              			<a href="#" name="edit" id="<%= projectInfo.getCode() %>" ><%= projectInfo.getName() %></a>
-			              		</td>
-			              		<td style="width: 40%;"><%= projectInfo.getDescription() %></td>
-			              		<!-- TODO:Need to handle -->
-			              		<%-- <td><%= projectInfo.getTechnology().getName() %></td> --%>
-			              		<td class="iconsTd">
-			              			<a href="#" id="pdfPopup" class="iconsCenterAlign"><img id="<%= projectInfo.getCode() %>" class="pdfCreation" src="images/icons/print_pdf.png" title="Generate Report" class="iconSizeinList"/></a>
-			              		</td>
-			              		<td class="iconsTd">
-			              			<a href="#" id="projectUpdate" class="iconsCenterAlign"><img id="<%= projectInfo.getCode() %>" class="projectUpdate" src="images/icons/refresh.png" title="Update" class="iconSizeinList"/></a>
-			              		</td>
-			            	</tr>
-			            <% } %>	
-			          	</tbody>
-			        </table>
-	      		</div>
-	   		</div>
+				<div class="header-background"> </div>
+				<div class="fixed-table-container-inner">
+					<table cellspacing="0" class="zebra-striped">
+						<thead>
+								<tr>
+									<th class="first">
+										<div class="th-inner tablehead">
+											<input type="checkbox" value="" id="checkAllAuto" name="checkAllAuto" onclick="checkAllEvent(this,$('.configtempltes'), false);">
+										</div>
+									</th>
+									<th class="second">
+										<div class="th-inner tablehead"><s:label key="lbl.name" theme="simple"/></div>
+									</th>
+									<th class="third">
+										<div class="th-inner tablehead"><s:label key="lbl.desc" theme="simple"/></div>
+									</th>
+									<th class="third">
+										<div class="th-inner tablehead"><s:label key="lbl.technolgoy" theme="simple"/></div>
+									</th>
+									<th class="third">
+										<div class="th-inner tablehead"><s:label key="lbl.print" theme="simple"/></div>
+									</th>
+									<th class="third">
+										<div class="th-inner tablehead"><s:label key="lbl.update" theme="simple"/></div>
+									</th>
+								</tr>
+						</thead>
+						
+						<tbody>
+						  	<%
+								for (Project project : projects) {
+									ApplicationInfo projectInfo = project.getApplicationInfo();
+							%>
+								<tr>
+									<td class="checkboxwidth">
+										<input type="checkbox" class="check" name="selectedProjects" value="<%= projectInfo.getCode() %>">
+									</td>
+									<td class="nameConfig">
+										<a href="#" onclick="editConfigTemp('<%= projectInfo.getId() %>');" name="edit" id="" >
+											<%= projectInfo.getName() %>
+										</a>
+									</td>
+									<td class="descConfig">
+										<%= projectInfo.getDescription() %>
+									</td>
+									<td class="hoverAppliesTo">
+										<%= projectInfo.getDescription() %>
+									</td>
+									<td id="icon-width">
+										<a href="#" id="pdfPopup" class="iconsCenterAlign"><img id="<%= projectInfo.getCode() %>" class="pdfCreation" 
+											src="images/icons/print_pdf.png" title="Generate Report" class="iconSizeinList"/></a>
+									</td>
+									<td id="icon-width">
+										<a href="#" id="projectUpdate" class="iconsCenterAlign"><img id="<%= projectInfo.getCode() %>" class="projectUpdate" 
+											src="images/icons/refresh.png" title="Update" class="iconSizeinList"/></a>
+									</td>
+								</tr>
+							<% 
+								}
+							%>
+						</tbody>
+					</table>
+				</div>
+			</div>
 		</div>
 	<% } %>
+	
+	<!-- Hidden Fields -->
+	<input type="hidden" name="customerId" value="<%= customerId %>">
 </form>
-
-<script type="text/javascript">
-	/* To check whether the device is ipad or not and apply scrollbar */
-	if (!isiPad()) {
-		$(".fixed-table-container-inner").scrollbars();  
-	}
-
-	$(document).ready(function() {
-		if(refreshIntervalId != undefined) {
-			clearInterval(refreshIntervalId);			
-		}
-		enableScreen(); // for some popups like svn_import and CI , it should stay till the completion of the process
-		
-		<% 
-			if (session.getAttribute(FrameworkConstants.SESSION_FRMK_VLDT_STATUS) != null) {
-				String frameworkValidationStatus = (String)session.getAttribute(FrameworkConstants.SESSION_FRMK_VLDT_STATUS);
-				if (frameworkValidationStatus == "ERROR") {
-		%>
-					$("#validationErr_validateFramework").show();
-        <%		} else { %>
-        			$("#validationSuccess_validateFramework").css("display", "block");
-       	<% 		} 
-			}
-       	%>
-		
-		$("#applications").attr("class", "active");
-		$("#home").attr("class", "inactive");
-		
-		$('#deleteButton').click(function() {
-			$("#confirmationText").html("Do you want to delete the selected project(s)?");
-		    dialog('block');
-		    escBlockPopup();
-		});
-	
-		$('#import').click(function() {
-			importFromSvn();
-		});
-		
-		$('#add').click(function() {
-			disableScreen();
-			showLoadingIcon($("#loadingIconDiv"));
-	        performAction('applicationDetails', $('#formCustomers'), $('#container'));
-	    });
-		
-		$('#discover').click(function() {
-			var params = "";
-	    	if (!isBlank($('form').serialize())) {
-	    		params = $('form').serialize() + "&";
-	    	}
-			showLoadingIcon($("#container")); // Loading Icon
-			performAction('applicationDetails', params, $('#container'));
-	    });
-		
-		$('form').submit(function() {
-            showProgessBar("Deleting Project (s)", 100);
-            var params = "";
-	    	if (!isBlank($('form').serialize())) {
-	    		params = $('form').serialize() + "&";
-	    	}
-			performAction('delete', params, $('#container'));
-	        return false;
-	    });
-		
-		$("a[name='edit']").click(function() {
-			disableScreen();
-			showLoadingIcon($("#loadingIconDiv"));
-	        var projectCode = $(this).attr("id");
-	        var params = "";
-			params = params.concat("projectCode=");
-			params = params.concat(projectCode);
-			params = params.concat("&fromPage=");
-			params = params.concat("edit");
-	        performAction('applicationDetails', $('#formCustomers'), $('#container'), '', params);
-	    });
-		
-        $('.pdfCreation').click(function() {
-    		showPopup();
-    		$('#popup_div').empty();
-    		var params = "";
-    		params = params.concat("projectCode=");
-			params = params.concat($(this).attr("id"));
-    		popup('printAsPdfPopup', params, $('#popup_div'));
-    	    escPopup();
-	    });
-        
-        $('.projectUpdate').click(function() {
-    		showPopup();
-    		$('#popup_div').empty();
-    		var params = "";
-    		params = params.concat("projectCode=");
-			params = params.concat($(this).attr("id"));
-    		popup('updateProjectPopup', params, $('#popup_div'));
-    	    escPopup();
-	    });
-        
-	});
-	
-	function importFromSvn() {
-		showPopup();
-		$('#popup_div').empty();
-		popup('importFromSvn', '', $('#popup_div'));
-	    escPopup();
-	}
-	
-	/* To show the validation result */
-	function showFrameworkValidationResult() {
-		showPopup();
-		$('#popup_div').empty();
-		popup('showFrameworkValidationResult', '', $('#popup_div'));
-	}
-</script>

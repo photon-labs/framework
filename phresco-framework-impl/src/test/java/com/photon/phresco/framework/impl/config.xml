@@ -19,4 +19,14 @@
             <host>1010</host>
         </TestDatabase>
     </environment>
+<environment default="true" desc="Test For Production" name="Production">
+        <TestServer name="Server">
+            <port>1010</port>
+            <host>1010</host>
+        </TestServer>
+        <TestDatabase name="Database">
+            <port>1010</port>
+            <host>1010</host>
+        </TestDatabase>
+    </environment>
 </environments>

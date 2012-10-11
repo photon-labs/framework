@@ -26,6 +26,7 @@ public interface FrameworkConstants {
     /*
      * Common constants
      */
+    
 	String FEATURES = "features"; 
     int JOB_STATUS_NOTOK = -1;
     String FOLDER_DOT_PHRESCO = ".phresco";
