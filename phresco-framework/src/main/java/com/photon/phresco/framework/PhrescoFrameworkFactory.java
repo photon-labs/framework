@@ -26,7 +26,7 @@ import com.photon.phresco.framework.api.ConfigManager;
 import com.photon.phresco.framework.api.ProjectAdministrator;
 import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.framework.api.ProjectRuntimeManager;
-import com.photon.phresco.framework.api.UpdateManager;
+import com.photon.phresco.framework.api.UpgradeManager;
 import com.photon.phresco.service.client.api.ServiceContext;
 import com.photon.phresco.service.client.api.ServiceManager;
 import com.photon.phresco.service.client.factory.ServiceClientFactory;
@@ -45,14 +45,14 @@ public class PhrescoFrameworkFactory {
     private static final String APPLICATION_MANAGER_IMPL = "com.photon.phresco.framework.impl.ApplicationManagerImpl";
     private static final String CONFIG_MANAGER_IMPL = "com.photon.phresco.framework.impl.ConfigManagerImpl";
     private static final String CI_MANAGER_IMPL = "com.photon.phresco.framework.impl.CIManagerImpl";
-    private static final String UPDATE_MANAGER_IMPL = "com.photon.phresco.framework.impl.UpdateManagerImpl";
+    private static final String UPDATE_MANAGER_IMPL = "com.photon.phresco.framework.impl.UpgradeManagerImpl";
 
     private static FrameworkConfiguration frameworkConfig = null;
     private static ProjectManager projectManager = null;
     private static ApplicationManager applicationManager = null;
     private static ConfigManager configManager = null;
     private static CIManager ciManager = null;
-    private static UpdateManager updateManager = null;
+    private static UpgradeManager updateManager = null;
 
     private static ProjectAdministrator administrator = null;
     private static ProjectRuntimeManager runtimeManager = null;
@@ -119,9 +119,9 @@ public class PhrescoFrameworkFactory {
         return ciManager;
     }
 
-    public static UpdateManager getUpdateManager() throws PhrescoException {
+    public static UpgradeManager getUpdateManager() throws PhrescoException {
         if (updateManager == null) {
-        	updateManager = (UpdateManager) constructClass(UPDATE_MANAGER_IMPL);
+        	updateManager = (UpgradeManager) constructClass(UPDATE_MANAGER_IMPL);
         }
 
         return updateManager;
