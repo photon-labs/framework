@@ -26,7 +26,7 @@ import org.apache.log4j.Logger;
 import com.photon.phresco.commons.model.VersionInfo;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
-import com.photon.phresco.framework.api.UpdateManager;
+import com.photon.phresco.framework.api.UpgradeManager;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 
 public class VersionUpdate extends FrameworkBaseAction {
@@ -54,7 +54,7 @@ public class VersionUpdate extends FrameworkBaseAction {
 		}
 		try {
 			versionInfo = new VersionInfo();
-			UpdateManager updateManager = PhrescoFrameworkFactory.getUpdateManager();
+			UpgradeManager updateManager = PhrescoFrameworkFactory.getUpdateManager();
 			currentVersion = updateManager.getCurrentVersion();
 			versionInfo = updateManager.checkForUpdate(currentVersion);
 			message = versionInfo.getMessage();
@@ -74,7 +74,7 @@ public class VersionUpdate extends FrameworkBaseAction {
 			S_LOGGER.debug("Entering Method VersionUpdate.update()");
 		}
 		try {
-			UpdateManager updateManager = PhrescoFrameworkFactory.getUpdateManager();
+			UpgradeManager updateManager = PhrescoFrameworkFactory.getUpdateManager();
 			HttpServletRequest request = getHttpRequest();
 			String newVersion = (String) getHttpRequest().getAttribute(REQ_LATEST_VERSION);
 			updateManager.doUpdate(newVersion);

@@ -19,13 +19,15 @@
  */
 package com.photon.phresco.framework.api;
 
+import com.photon.phresco.commons.model.VersionInfo;
+import com.photon.phresco.exception.PhrescoException;
+
 public interface UpgradeManager {
 
-    String getServerVersion();
+	  VersionInfo checkForUpdate(String versionNo) throws PhrescoException;
 
-    String getFrameworkVersion();
-
-    void isUpgradeRequired();
-
+	  void doUpdate(String newVersion) throws PhrescoException;
+	 
+	  String getCurrentVersion() throws PhrescoException;
 
 }
