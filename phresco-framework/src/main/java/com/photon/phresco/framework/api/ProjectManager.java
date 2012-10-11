@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.exception.PhrescoException;
+import com.photon.phresco.service.client.api.ServiceManager;
 
 public interface ProjectManager {
 
@@ -21,7 +22,7 @@ public interface ProjectManager {
 	 * @return Returns the ProjectInfo with all the ApplicationInfos
 	 * @throws PhrescoException
 	 */
-	ProjectInfo getProject(String projectId) throws PhrescoException;
+	ProjectInfo getProject(String projectId, String customerId) throws PhrescoException;
 	
 	/**
 	 * This method creates the project with the selected application layers
@@ -29,7 +30,7 @@ public interface ProjectManager {
 	 * @return ProjectInfo
 	 * @throws PhrescoException
 	 */
-	ProjectInfo create(ProjectInfo projectInfo) throws PhrescoException;
+	ProjectInfo create(ProjectInfo projectInfo, ServiceManager serviceManager) throws PhrescoException;
 	
 	/**
 	 * This method updates the project
@@ -37,7 +38,7 @@ public interface ProjectManager {
 	 * @return ProjectInfo
 	 * @throws PhrescoException
 	 */
-	ProjectInfo update(ProjectInfo projectInfo) throws PhrescoException;
+	ProjectInfo update(ProjectInfo projectInfo, ServiceManager serviceManager) throws PhrescoException;
 	
 	/**
 	 * This method deletes the project in local filesystem and not is server
