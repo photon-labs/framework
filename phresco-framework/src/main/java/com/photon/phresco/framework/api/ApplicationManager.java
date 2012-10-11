@@ -8,6 +8,7 @@ import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.model.BuildInfo;
+import com.photon.phresco.service.client.api.ServiceManager;
 
 public interface ApplicationManager {
 
@@ -17,7 +18,7 @@ public interface ApplicationManager {
 	 * @return Returns the updated ProjectInfo which contains the specific ApplicationInfo
 	 * @throws PhrescoException
 	 */
-	ProjectInfo update(ProjectInfo projectInfo) throws PhrescoException;
+	ProjectInfo update(ProjectInfo projectInfo, ServiceManager serviceManager) throws PhrescoException;
 	
 	/**
 	 * This method executes the maven command against the provided ActionType
@@ -25,7 +26,7 @@ public interface ApplicationManager {
 	 * @return Returns the maven output as Reader object
 	 * @throws PhrescoException
 	 */
-	Reader performAction(ActionType actionType) throws PhrescoException;
+	Reader performAction(ProjectInfo projectInfo, ActionType actionType) throws PhrescoException;
 	
 	/**
 	 * This method configures the maven site report for the application

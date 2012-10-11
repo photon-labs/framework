@@ -67,6 +67,7 @@ import com.photon.phresco.commons.model.ApplicationType;
 import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.DownloadInfo;
 import com.photon.phresco.commons.model.LogInfo;
+import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.SettingsTemplate;
 import com.photon.phresco.commons.model.Technology;
 import com.photon.phresco.commons.model.User;
@@ -155,7 +156,8 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		/*if (StringUtils.isEmpty(info.getVersion())) {
 			info.setVersion(PROJECT_VERSION); // TODO: Needs to be fixed
 		}*/
-		ClientResponse response = getServiceManager().createProject(info);
+		ProjectInfo projectInfo = null;
+		ClientResponse response = getServiceManager().createProject(projectInfo);
 		S_LOGGER.debug("createProject response code " + response.getStatus());
 
 		if (response.getStatus() == 200) {
@@ -248,7 +250,8 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		}
 		boolean flag = !techId.equals(TechnologyTypes.JAVA_WEBSERVICE) && !techId.equals(TechnologyTypes.JAVA_STANDALONE) && !techId.equals(TechnologyTypes.ANDROID_NATIVE);
 		updateDocument(delta, path);
-		response = getServiceManager().updateProject(appInfo);
+		ProjectInfo projectInfo = null;
+		response = getServiceManager().updateProject(projectInfo);
 		if(response.getStatus() == 401){
 			throw new PhrescoException("Session expired");
 		}
@@ -1997,7 +2000,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 
 	 public List<Environment> getEnvFromService() throws PhrescoException {
 		 try {
-			 return getServiceManager().getDefaultEnvFromServer();
+			 return Collections.singletonList(getServiceManager().getDefaultEnvFromServer());
 		 } catch (ClientHandlerException ex) {
 			 S_LOGGER.error(ex.getLocalizedMessage());
 			 throw new PhrescoException(ex);
