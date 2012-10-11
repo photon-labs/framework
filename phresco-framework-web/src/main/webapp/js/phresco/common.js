@@ -268,6 +268,12 @@ function checkForSplChr(name) {
 	return newName;
 }
 
+//to check for spcl char & number
+function checkForSplChrNum(name) {
+	newName = name.replace(/[^a-zA-Z \-\_]+/g, '');
+	return newName;
+}
+
 function isValidChar(event, obj) {
 	var k;
 	document.all ? k = event.keyCode : k = event.which;

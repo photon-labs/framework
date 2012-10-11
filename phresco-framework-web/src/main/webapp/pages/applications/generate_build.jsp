@@ -24,6 +24,7 @@
 <%@ page import="java.util.Set"%>
 <%@ page import="java.util.Iterator"%>
 <%@ page import="java.util.HashMap"%>
+<%@page import="java.util.Arrays"%>
 <%@ page import="org.apache.commons.lang.StringUtils" %>
 <%@ page import="com.photon.phresco.configuration.Environment"%>
 
@@ -34,6 +35,14 @@
 <%@ page import="org.apache.commons.collections.CollectionUtils" %>
 <%@ page import="com.photon.phresco.commons.XCodeConstants"%>
 <%@ page import="com.photon.phresco.commons.AndroidConstants"%>
+
+<%@ page import="org.apache.commons.collections.CollectionUtils" %>
+<%@ page import="com.photon.phresco.framework.commons.FrameworkUtil" %>
+<%@ page import="org.antlr.stringtemplate.StringTemplate" %>
+<%@page import="com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter"%>
+<%@ page import="com.photon.phresco.plugins.util.MojoProcessor"%>
+<%@ page import="com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.Name.Value;"%>
+
 
 <script src="js/reader.js" ></script>
 <script src="js/select-envs.js"></script>
@@ -63,6 +72,12 @@
    	
    	Map<String, String> jsMap = (Map<String, String>) request.getAttribute(FrameworkConstants.REQ_MINIFY_MAP);
    	String fileLoc = (String) request.getAttribute("fileLocation");
+   	
+   	String buildName = "";
+    List<Parameter> parameters = (List<Parameter>) request.getAttribute("parameters");
+    if (FrameworkConstants.REQ_DEPLOY.equals(from)) {
+    	buildName = (String) request.getAttribute("buildName");
+    }
 %>
 
 <form action="build" method="post" autocomplete="off" class="build_form" id="generateBuildForm">
@@ -119,90 +134,79 @@
         %>
         
 
-        <%
-                    if ("generateBuild".equals(from)) {
-                %>
-		        <div class="clearfix">
-				    <label for="xlInput" class="xlInput popup-label"><s:text name="label.build.name"/></label>
-				    <div class="input">
-						<input type="text" placeholder="<s:text name="build.name"/>" class="xlarge javastd" id="userBuildName" name="userBuildName" maxlength="20" title="20 Characters only"/>
-				    </div>
-				</div>
+       <!-- dynamic parameters starts -->
+		<% //if (from.equals("generateBuild")) {
+			for (Parameter parameter: parameters) { 
+		%>    
 				<div class="clearfix">
-				    <label for="xlInput" class="xlInput popup-label"><s:text name="label.build.number"/></label>
-				    <div class="input">
-						<input type="text" placeholder="<s:text name="build.number"/>" class="xlarge javastd" id="userBuildNumber" name="userBuildNumber" maxlength="6" title="6 Characters only"/>
-				    </div>
-				</div>
-				
-				<%
-								    if (TechnologyTypes.JAVA_STANDALONE.contains(technology)) {
-								%>
-				<div class="clearfix">
-					<label for="xlInput" class="xlInput popup-label "><s:text name="label.jar.name"/></label>
-				    <div class="input">
-						<input type="text" class="xlarge javastd" id="jarName" name="jarName" value="<%=StringUtils.isNotEmpty(finalName) ? finalName : ""%>" maxlength="40" title="40 Characters only"/>
-				    </div>
-				</div>
-				
-				<div class="clearfix">
-					<label for="xlInput" class="xlInput popup-label"><s:text name="label.main.class.name"/></label>
-				    <div class="input">
-						<input type="text" class="xlarge javastd" id="mainClassName" name="mainClassName" 
-							value="<%=StringUtils.isNotEmpty(mainClassValue) ? mainClassValue : ""%>" 
-							maxlength="40" title="40 Characters only"/>
-				    </div>
-				</div>	
-			<%
-				    }
-				%>	
-			
-			<%
-							    if (TechnologyTypes.BLACKBERRY_HYBRID.contains(technology)) {
-							%>
-				<div class="clearfix">
-					<label for="xlInput" class="xlInput popup-label "><s:text name="label.keypassword"/></label>
-				    <div class="input">
-						<input type="password" placeholder="<s:text name="Enter the Password"/>" class="xlarge javastd" 
-							name="keypass" maxlength="20" title="20 Characters only"/>
-				    </div>
-				</div>								
-			<%
-											    }
-											%>	
-			
-		
-			<%
-									    if (TechnologyTypes.WIN_METRO.contains(technology)) {
-									%>
-					<div class="clearfix">
-						<label for="xlInput" class="xlInput popup-label "><s:text name="label.configuration"/></label>
-					    <div class="input">
-							<select name="configuration" class="xlarge">
-								<option value="Release">Release</option>
-								<option value="Debug">Debug</option>
-							</select>
-					    </div>
-					</div>
-					<div class="clearfix">
-						<label for="xlInput" class="xlInput popup-label"><s:text name="label.platform"/></label>
-					    <div class="input">
-							<select name="platform" class="xlarge">
-								<option value="Any CPU">Any CPU</option>
-								<option value="ARM">ARM</option>
-								<option value="X86">X86</option>
-								<option value="X64">X64</option>
-							</select>
-					    </div>
-					</div>	
-			<%
-				    }
-				%>	
-		<%
-			    }
-			%>
+	    <%			Boolean mandatory = false;
+					if (Boolean.parseBoolean(parameter.getRequired())) {
+						mandatory = true;
+		 			}
+						if (!"Hidden".equals(parameter.getType())) {
+							List<Value> values = parameter.getName().getValue();						
+							for(Value value : values) {
+								if (value.getLang().equals("en")) {	//load label
+									StringTemplate labelElmnt = FrameworkUtil.constructLabelElement(mandatory, value.getValue());
+			%>					
+								<%= labelElmnt %>
+			<%			   		break;
+								}
+							}
+						}
+					
+					// load input text box
+					if ((parameter.getType().equals("String") || parameter.getType().equals("Number") || parameter.getType().equals("Boolean") || 
+									parameter.getType().equals("Hidden")) && parameter.getPossibleValues() == null) { 
+						String type ="", cssClass = "", id, name, placeholder, value="";
+						if ("Password".equals(parameter.getType())) {
+							type = "password";
+							cssClass = "xlarge javastd";
+						} else if ("Boolean".equals(parameter.getType())) {
+							type = "checkbox";
+							cssClass = "chckBxAlign";
+						} else if ("Hidden".equals(parameter.getType())) {
+							type = "hidden";
+						} else {
+							type = "text";
+							cssClass = "xlarge javastd";
+						}
+						StringTemplate txtInputElement = FrameworkUtil.constructInputElement(type, cssClass, "", parameter.getKey(), "", StringUtils.isNotEmpty(parameter.getValue()) ? parameter.getValue():"");
+		%> 	
+				    	<%= txtInputElement %>
+		<% 			} else if (parameter.getPossibleValues() != null) { //load select list box
+				    	List<String> psblValues = parameter.getPossibleValues().getValue();
+						List<String> selectedValList = Arrays.asList(parameter.getValue().split("\\s*,\\s*"));
+						StringTemplate selectElmnt = FrameworkUtil.constructSelectElement("", "", parameter.getKey(), psblValues, selectedValList, false);
+		%>				
+						<%= selectElmnt %>
+						
+		<% 			}  
+					//dynamically loads values into select box for environmet
+					if ("DynamicParameter".equals(parameter.getType())) {
+						List<String> dynamicEnvNames = (List<String>) request.getAttribute("dynamicEnvNames");
+						List<String> selectedValList = Arrays.asList(parameter.getValue().split("\\s*,\\s*"));
+						StringTemplate selectDynamicElmnt = FrameworkUtil.constructSelectElement("multiSelHeight", "", parameter.getKey(), dynamicEnvNames, selectedValList, true);
+		%>				
+				    	<%= selectDynamicElmnt %>
+		<%			} 
+		%>
+			</div>
+			<script type="text/javascript">
+				$('input[name="<%= parameter.getKey() %>"]').live('input propertychange',function(e) {
+					var name = $(this).val();
+					var type = '<%= parameter.getType() %>';
+					var txtBoxName = '<%= parameter.getKey() %>';
+					validateInput(name, type, txtBoxName);
+				});
+			</script>
+		<% 		}
+			//}	
+		%>
+		<!-- dynamic parameters ends -->
+       
 
-		<div class="clearfix">
+		<%-- <div class="clearfix">
 		    <label for="xlInput" class="xlInput popup-label"><span class="red">*</span> <s:text name="label.environment"/></label>
 		    <div class="input">
 		    	<%
@@ -274,7 +278,7 @@
 				    }
 				%>
 			</div>
-		</div>
+		</div> --%>
 
 		<!-- TODO:Need to handle -->
 		<%-- <%
@@ -301,7 +305,7 @@
 		    }
 		%>	 --%>
 		
-		<%
+		<%-- <%
 					    if (TechnologyTypes.IPHONES.contains(technology)) {
 					%>
 			<!-- SDK -->
@@ -352,7 +356,7 @@
 			</div>
 		<%
 		    }
-		%>	
+		%>	 --%>
 		
 		<fieldset class="popup-fieldset fieldset_center_align">
 			<!-- Show Settings -->
@@ -426,7 +430,7 @@
 			       	</select>
 				</div>
 			</div>
-	        <table>
+	        <%-- <table>
 	            <tbody>
 					<tr>
 		                <td style="border-bottom: none;">
@@ -452,7 +456,7 @@
 		                </td>
 	            	</tr>
 	        	</tbody>
-			</table>
+			</table> --%>
 			<input id="DbWithSqlFiles" value="" type="hidden">
 			<%-- <div style="text-align: left;padding-left: 2%; padding-bottom: 5px; font-weight: bold;">
 				<input type="checkbox" id="rollBack" name="rollBack" /> &nbsp;<span class="textarea_span popup-span"><s:text name="label.rollback"/></span>

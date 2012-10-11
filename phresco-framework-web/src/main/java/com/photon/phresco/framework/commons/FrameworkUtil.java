@@ -40,6 +40,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Element;
+import org.antlr.stringtemplate.StringTemplate;
 
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.exception.PhrescoException;
@@ -59,7 +60,13 @@ public class FrameworkUtil extends FrameworkBaseAction implements FrameworkConst
 	private static final long serialVersionUID = 1L;
 	private static FrameworkUtil frameworkUtil = null;
     private static final Logger S_LOGGER = Logger.getLogger(FrameworkUtil.class);
-    
+
+	private static final String LABEL_TEMPLATE = "<label for='xlInput' class='xlInput popup-label'>$mandatory$$txt$</label>";
+	private static final String MANDATORY = "<span class='red'>*</span>&nbsp";
+	private static final String SELECT_TEMPLATE = "<div class='input'><select class=\"xlarge $cssClass$\" name=\"$name$\" $multiple$>$options$</select></div>";
+	private static final String INPUT_TEMPLATE = "<div class='input'><input type=\"$type$\" class=\"$class$\" id=\"$id$\" " + 
+													"name=\"$name$\" placeholder=\"$placeholder$\" value=\"$value$\" $checked$/></div>";
+
     private Map<String, String> unitTestMap = new HashMap<String, String>(8);
     private Map<String, String> unitReportMap = new HashMap<String, String>(8);
     private Map<String, String> funcationTestMap = new HashMap<String, String>(8);
@@ -652,5 +659,69 @@ public class FrameworkUtil extends FrameworkBaseAction implements FrameworkConst
         String decodedString = new String(decodedBytes);
 
         return decodedString;
+    }
+
+    public static StringTemplate constructInputElement(String type, String cssClass, String id, String name, 
+    										String placeholder, String value) {
+    	StringTemplate inputElement = new StringTemplate(INPUT_TEMPLATE);
+    	inputElement.setAttribute("type", type);
+    	inputElement.setAttribute("class", cssClass);
+    	inputElement.setAttribute("id", id);
+    	inputElement.setAttribute("name", name);
+    	inputElement.setAttribute("placeholder", placeholder);
+    	inputElement.setAttribute("value", value);
+    	
+    	/* to check/uncheck the checkboxes based on the value */
+    	if (Boolean.parseBoolean(value)) {
+    		inputElement.setAttribute("checked", "checked");
+    	} else {
+    		inputElement.setAttribute("checked", "");
+    	}
+
+		return inputElement;
+    }
+    
+    public static StringTemplate constructSelectElement(String cssClass, String id, String name,
+											List<String> values, List<String> selectedValues, Boolean isMultiple) {
+    	StringTemplate selectElement = new StringTemplate(SELECT_TEMPLATE);
+    	StringBuilder options = constructOptions(values, selectedValues);
+    	selectElement.setAttribute("name", name);
+    	selectElement.setAttribute("cssClass", cssClass);
+    	if (isMultiple) {
+    		selectElement.setAttribute("multiple", "multiple");
+    	} else {
+    		selectElement.setAttribute("multiple", "");
+    	}
+    	selectElement.setAttribute("options", options);
+    	
+    	return selectElement;
+    }	
+    
+    private static StringBuilder constructOptions(List<String> values, List<String> selectedValues) {
+    	StringBuilder builder = new StringBuilder();
+    	String selectedStr = "";
+		 for (String value : values) {
+			 if (selectedValues!= null && selectedValues.contains(value)) {
+				 selectedStr = "selected";
+			 } else {
+				 selectedStr = "";
+			 }
+			builder.append("<option value=\"");
+			builder.append(value + "\" " + selectedStr + ">" + value + "</option>");
+		}
+		 
+		 return builder;
+    }
+    
+    public static StringTemplate constructLabelElement(Boolean isMandatory, String Label) {
+    	StringTemplate labelElement = new StringTemplate(LABEL_TEMPLATE);
+    	if (isMandatory) {
+    		labelElement.setAttribute("mandatory", MANDATORY);
+    	} else {
+    		labelElement.setAttribute("mandatory", "");
+    	}
+    	labelElement.setAttribute("txt", Label);
+
+    	return labelElement;
     }
 }

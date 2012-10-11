@@ -5340,3 +5340,13 @@ a[id='androidSigning']:hover {
     padding-top: 3px;
 }
 /* Customer list box ends */
+
+/* css for dynamic params starts*/
+.multiSelHeight {
+	height: 80px;
+}
+
+input[class*='chckBxAlign'] {
+	margin-top:8px;
+}
+/* css for dynamic params ends*/

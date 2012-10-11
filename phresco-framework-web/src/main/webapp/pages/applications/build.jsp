@@ -295,10 +295,13 @@
        	var currentId = obj.id;
        	var idArray = currentId.split('#');
        	var buildNumber = idArray[1];
+       	var buildName = $(obj).attr("buildName");
         var params = "from=";
 		params = params.concat(from);
 		params = params.concat("&buildNumber=");
 		params = params.concat(buildNumber);
+		params = params.concat("&buildName=");
+		params = params.concat(buildName);
        	popup('generateBuild', '', $('#popup_div'), '', '', params);
         escPopup();
     }
