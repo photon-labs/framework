@@ -189,9 +189,9 @@
 	
     $(document).ready(function() {
 		$("#name").focus();
-    	escPopup();
+    	//escPopup();
         checkDefault();
-        changeStyle("appinfo");
+        //	changeStyle("appinfo");
         $("input[name='applicationType']").click(function() {
             changeApplication();
         });
@@ -213,7 +213,7 @@
 	    	}
 			params = params.concat("fromPage=");
 			params = params.concat('<%= fromPage %>');
-			performAction('features', params, $("#tabDiv"));
+			//performAction('features', params, $("#tabDiv"));
 			return false;
 		});
 		
@@ -225,7 +225,7 @@
 			params = params.concat("fromPage=");
 			params = params.concat("edit");
 	    	showLoadingIcon($("#tabDiv")); // Loading Icon
-			performAction('applications', params, $('#container'));
+			//performAction('applications', params, $('#container'));
 		});
 		
 		window.setTimeout(function () { document.getElementById('name').focus(); }, 250);
@@ -233,7 +233,7 @@
 
 	//This function is to handle the change event for application radio
 	function changeApplication() {
-		performAction('applicationType', $('#formAppInfo'), $('#AjaxContainer'));
+		//performAction('applicationType', $('#formAppInfo'), $('#AjaxContainer'));
 	}
 
 	function codeGenerate(projNname) {
@@ -242,7 +242,7 @@
         photonPrefix = photonPrefix + name;
         photonPrefix = photonPrefix.replace(/\s/g, '');
         $("#internalCode").val(photonPrefix);
-        $("#code").val(photonPrefix);
+        //$("#code").val(photonPrefix);
     }
     
     function checkDefault() {

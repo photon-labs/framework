@@ -263,8 +263,6 @@ td {
 	
 }
 
-
-
 .first .th-inner {
 	border-left: medium none;
 	padding-left: 6px;
@@ -914,13 +912,8 @@ a {
 /* header ends */
 
 /* navigation tab starts */
-.subtabs {
-	height: 24px;
-	margin-left: 0 !important;
-}
-
-.subtabsLi {
-	margin-left: 84px;
+.subLinks {
+	height: 28px;
 }
 
 .tabs,.pills {
@@ -945,6 +938,25 @@ a {
 	display: block;
 }
 
+.tabs li a.inactive label {
+	line-height: 25px;
+	cursor: pointer;
+}
+
+.tabs li a.active label {
+	line-height: 25px;
+	cursor: pointer;
+}
+
+.tabs li a.inactive:hover label {
+	cursor: pointer;
+}
+
+.subtabs {
+	float: right;
+	margin-right: 20px;
+}
+
 a {
 	font-weight: inherit;
 	line-height: inherit;
@@ -958,6 +970,7 @@ a {
 	position: relative;
 	top: 0px;
 }
+/* navigation tab ends */
 
 /* scrollbar starts */
 .scroll-bar {
@@ -2248,7 +2261,7 @@ h1 small {
 }
 
 /* Tab start*/
-.tabs, .pills {
+/*.tabs, .pills {
     margin: 0 0 1px 7px;
     padding-top: 4px;
 }
@@ -2257,7 +2270,7 @@ h1 small {
     padding: 0 14px;
     -webkit-border-top-left-radius: 5px 5px;
 	-webkit-border-top-right-radius: 5px 5px;
-}
+}*/
 /* Tab end*/
 .no_cursor {
     cursor:default;
@@ -2372,10 +2385,6 @@ fieldset {
 /*** app sub tabs starts ***/
 .appInfoTabDiv {
     height: 87%;
-}
-
-.tabs > li {
-    margin-top: 5px;
 }
 
 .appForm {

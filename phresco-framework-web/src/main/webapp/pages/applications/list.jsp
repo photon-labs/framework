@@ -28,8 +28,6 @@
 <%@ page import="com.photon.phresco.framework.api.ValidationResult" %>
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 
-<%@ include file="progress.jsp" %>
-
 <%
 	List<Project> projects = (List<Project>) request.getAttribute(FrameworkConstants.REQ_PROJECTS);
 	String customerId = (String) request.getAttribute(FrameworkConstants.REQ_CUSTOMER_ID);
@@ -78,7 +76,7 @@
 								<tr>
 									<th class="first">
 										<div class="th-inner tablehead">
-											<input type="checkbox" value="" id="checkAllAuto" name="checkAllAuto" onclick="checkAllEvent(this,$('.configtempltes'), false);">
+											<input type="checkbox" value="" id="checkAllAuto" name="checkAllAuto" onclick="checkAllEvent(this,$('.selectedProjects'), false);">
 										</div>
 									</th>
 									<th class="second">
@@ -106,10 +104,10 @@
 							%>
 								<tr>
 									<td class="checkboxwidth">
-										<input type="checkbox" class="check" name="selectedProjects" value="<%= projectInfo.getCode() %>">
+										<input type="checkbox" class="check selectedProjects" name="selectedProjects" value="<%= projectInfo.getCode() %>">
 									</td>
 									<td class="nameConfig">
-										<a href="#" onclick="editConfigTemp('<%= projectInfo.getId() %>');" name="edit" id="" >
+										<a href="#" onclick="editApplication('<%= projectInfo.getCode() %>');" name="edit">
 											<%= projectInfo.getName() %>
 										</a>
 									</td>
@@ -141,3 +139,33 @@
 	<!-- Hidden Fields -->
 	<input type="hidden" name="customerId" value="<%= customerId %>">
 </form>
+
+<script type="text/javascript">
+	//To check whether the device is ipad or not and then apply jquery scrollbar
+	if (!isiPad()) {
+		$(".fixed-table-container-inner").scrollbars();  
+	}
+
+	$(document).ready(function() {
+		toDisableCheckAll();
+		enableScreen();
+		
+		/*$("td[id = 'hoverAppliesTo']").text(function(index) {
+	        return textTrim($(this));
+	    });*/
+		
+   	});
+	
+    function editApplication(projectCode) {
+		var params = "configId=";
+		params = params.concat(projectCode);
+		loadContent("applicationDetails", $("#formProjectList"), $('#container'), params);
+	}
+    
+ 	// This method calling from confirmDialog.jsp
+    function continueDeletion() {
+    	confirmDialog('none','');
+    	loadContent('configtempDelete', $('#formProjectList'), $('#container'));
+    }
+ 	
+</script>

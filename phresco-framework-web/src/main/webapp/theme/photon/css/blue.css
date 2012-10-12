@@ -81,6 +81,37 @@ a:focus {
 	color: #FFFFFF;
 }
 
+.headerInnerTop li a label{
+    color: #FFFFFF;
+}
+
+.headerInnerTop li a:hover {
+    color: #FFFFFF;
+    background: none repeat scroll 0 0 #004366;
+}
+
+.headerInnerTop li a.active {
+    color: #FFFFFF;
+    background: #004366;
+}
+
+.headerInnerbottom {
+    color: white;
+    background: #049cdb; /* Old browsers */
+    background-image:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIHZpZXdCb3g9IjAgMCAxIDEiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiPgo8bGluZWFyR3JhZGllbnQgaWQ9Imc2MDkiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjAlIiB5Mj0iMTAwJSI+CjxzdG9wIHN0b3AtY29sb3I9IiMwNDlDREIiIG9mZnNldD0iMCIvPjxzdG9wIHN0b3AtY29sb3I9IiMwMDY0Q0QiIG9mZnNldD0iMSIvPgo8L2xpbmVhckdyYWRpZW50Pgo8cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMSIgaGVpZ2h0PSIxIiBmaWxsPSJ1cmwoI2c2MDkpIiAvPgo8L3N2Zz4=);
+    background: -moz-linear-gradient(top,  #049cdb 42%, #0064cd 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(42%,#049cdb), color-stop(100%,#0064cd)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #049cdb 42%,#0064cd 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #049cdb 42%,#0064cd 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #049cdb 42%,#0064cd 100%); /* IE10+ */
+    background: linear-gradient(top,  #049cdb 42%,#0064cd 100%); /* W3C */
+}
+
+.tabs li a.inactive label  {
+	line-height: 25px;
+	color:#000000;
+}
+
 .headerInnerTop li a:hover {
     color: #FFFFFF;
     background: none repeat scroll 0 0 #004366;
@@ -126,6 +157,10 @@ footer {
     color:#878181;
 }
 
+.navTopBorder {
+	border-top: 3px solid #006DCF;
+}
+  
 .post-title a {
 	color: #fff;
 }
@@ -792,6 +827,7 @@ h1 small, h2 small, h3 small, h4 small, h5 small, h6 small {
 h1 small {
     color: #ffffff;
 }
+
 .errorMsgLabel {
     color: #000000;
 }
@@ -799,12 +835,15 @@ h1 small {
 .red {
     color:#9d050b;
 }
+
 .tabs {
     border-bottom: none;
 }
+
 li {
     color: #000000;
 }
+
 .tabs > li.active > a {
     background: #004366;
     border-color: 1px solid rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
@@ -816,7 +855,7 @@ li {
     color:#000000;
 }
 
-.tabs li a.selected, .tabs > li > a:hover  {
+.tabs li a.active, .tabs > li > a:hover, .tabs li a.active label , .tabs > li > a:hover label , .tabs li a.inactive:hover label{
     color: #FFFFFF;
     background: #4f0d10; /* Old browsers */
     background-image:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIHZpZXdCb3g9IjAgMCAxIDEiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiPgo8bGluZWFyR3JhZGllbnQgaWQ9Imc2MDkiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjAlIiB5Mj0iMTAwJSI+CjxzdG9wIHN0b3AtY29sb3I9IiMwNDlDREIiIG9mZnNldD0iMCIvPjxzdG9wIHN0b3AtY29sb3I9IiMwMDY0Q0QiIG9mZnNldD0iMSIvPgo8L2xpbmVhckdyYWRpZW50Pgo8cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMSIgaGVpZ2h0PSIxIiBmaWxsPSJ1cmwoI2c2MDkpIiAvPgo8L3N2Zz4=);
@@ -827,30 +866,10 @@ li {
     background: -ms-linear-gradient(top,  #049cdb 42%,#0064cd 100%); /* IE10+ */
     background: linear-gradient(top,  #049cdb 42%,#0064cd 100%); /* W3C */
     border-bottom: 0px solid #ddd;
+	cursor: pointer;
+    line-height: 25px;
 }
 
-/* .tabs li a.selected {
-    color: #FFFFFF;
-    background: #4f0d10; Old browsers
-    background: -moz-linear-gradient(top,  #049cdb 42%, #0064cd 100%); FF3.6+
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(42%,#049cdb), color-stop(100%,#0064cd)); Chrome,Safari4+
-    background: -webkit-linear-gradient(top,  #049cdb 42%,#0064cd 100%); Chrome10+,Safari5.1+
-    background: -o-linear-gradient(top,  #049cdb 42%,#0064cd 100%); Opera 11.10+
-    background: -ms-linear-gradient(top,  #049cdb 42%,#0064cd 100%); IE10+
-    background: linear-gradient(top,  #049cdb 42%,#0064cd 100%); W3C
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#049cdb', endColorstr='#0064cd',GradientType=0 ); IE6-9
-}
-
-.tabs > li > a:hover {
-    background: #049CDB;
-    color:#000000;
-    border-top: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-    border-bottom: 0px solid #ddd;
-} */
-
-label {
-    color: #404040;
-}
 /*** ajax Container css starts ***/
 .app_type_version {
     color: #404040; 

@@ -100,7 +100,8 @@
         
         <!--  Applications action -->
         <action name="applicationDetails" method="applicationDetails" class="com.photon.phresco.framework.actions.applications.Applications">
-            <result name="applicationDetails">/pages/applications/application.jsp</result>
+            <!--  <result name="applicationDetails">/pages/applications/application.jsp</result>-->
+            <result name="applicationDetails">/pages/applications/menu.jsp</result>
         </action>
         
         <action name="appinfo" method="appInfo" class="com.photon.phresco.framework.actions.applications.Applications">
