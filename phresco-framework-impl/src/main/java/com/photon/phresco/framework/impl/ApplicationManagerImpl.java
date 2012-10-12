@@ -20,8 +20,10 @@ import com.google.gson.reflect.TypeToken;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.exception.PhrescoException;
+import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.api.ActionType;
 import com.photon.phresco.framework.api.ApplicationManager;
+import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.framework.model.BuildInfo;
 import com.photon.phresco.service.client.api.ServiceManager;
 import com.photon.phresco.util.Constants;
@@ -39,7 +41,7 @@ public class ApplicationManagerImpl implements ApplicationManager {
 		if (isDebugEnabled) {
 			S_LOGGER.debug("Entering Method ApplicationManagerImpl.update(" +
 					"ProjectInfo projectInfo, ServiceManager serviceManager)");
-			S_LOGGER.debug("performAction() ProjectInformation = "+projectInfo.getAppInfos().get(0));
+			S_LOGGER.debug("performAction() ProjectInformation = "+ projectInfo.getAppInfos().get(0));
 		}
 		ClientResponse response = serviceManager.updateProject(projectInfo);
 		if (response.getStatus() == 200) {
@@ -55,7 +57,7 @@ public class ApplicationManagerImpl implements ApplicationManager {
 			throw new PhrescoException("Project updation failed");
 		}
 		
-		return null;
+		return projectInfo;
 	}
 
 	@Override
@@ -91,6 +93,24 @@ public class ApplicationManagerImpl implements ApplicationManager {
 		 }
 	}
 	
+	@Override
+	public ApplicationInfo getApplicationInfo(String customerId, String projectId, String appId) throws PhrescoException {
+		ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
+		List<ProjectInfo> projectInfos = projectManager.discover(customerId);
+		for (ProjectInfo projectInfo : projectInfos) {
+			if(projectInfo.getId().equals(projectId)) {
+				List<ApplicationInfo> appInfos = projectInfo.getAppInfos();
+				for (ApplicationInfo applicationInfo : appInfos) {
+					if(applicationInfo.getId().equals(appId)) {
+						return applicationInfo;
+					}
+				}
+			}
+		}
+
+		return null;
+	}
+	
 	
 	public StringBuilder buildMavenCommand(ActionType actionType) {
 		if (isDebugEnabled) {
@@ -101,7 +121,6 @@ public class ApplicationManagerImpl implements ApplicationManager {
         builder.append(Constants.PHRESCO);
         builder.append(Constants.STR_COLON);
         builder.append(actionType.getName());
-        builder.append(Constants.SPACE);
         
         return builder;
     }

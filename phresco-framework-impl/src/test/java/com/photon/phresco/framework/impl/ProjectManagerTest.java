@@ -1,6 +1,5 @@
 package com.photon.phresco.framework.impl;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,8 +15,6 @@ import com.photon.phresco.commons.model.TechnologyInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.api.ProjectManager;
-import com.photon.phresco.util.FileUtil;
-import com.photon.phresco.util.Utility;
 
 /**
  * This Test case has one test which validates 
@@ -51,21 +48,29 @@ public class ProjectManagerTest extends BaseTest {
 		System.out.println("serviceManager :::: " + serviceManager.getCustomers());
 		projectManager.create(projectInfo, serviceManager);
 		List<ProjectInfo> appList = projectManager.discover(customerId);
-		Assert.assertEquals(1, appList.size());
+		Assert.assertEquals(3, appList.size());
 	}
 	
-	private ProjectInfo getProjectInfo() {
+//	@Test
+	public void testUpdateProject() throws PhrescoException {
+		ProjectInfo projectInfo = getProjectInfo();
+		ProjectInfo update = projectManager.update(projectInfo, serviceManager);
+		System.out.println(update.getDescription());
+	}
+	
+	public ProjectInfo getProjectInfo() {
 		ProjectInfo projectInfo = new ProjectInfo();
 		projectInfo.setNoOfApps(3);
 		projectInfo.setVersion("1.0");
+		projectInfo.setDescription("Phresco Test Project");
 		projectInfo.setProjectCode("PHR_sampleproject");
 		List<String> customerIds = new ArrayList<String>();
 		customerIds.add(customerId);
 		projectInfo.setCustomerIds(customerIds);
 		List<ApplicationInfo> appInfos = new ArrayList<ApplicationInfo>();
 		appInfos.add(getAppInfo("Test1", "tech-php"));
-		appInfos.add(getAppInfo("Test2", "tech-php"));
-		appInfos.add(getAppInfo("Test3", "tech-php"));
+//		appInfos.add(getAppInfo("Test2", "tech-php"));
+//		appInfos.add(getAppInfo("Test3", "tech-php"));
 		projectInfo.setAppInfos(appInfos);
 		return projectInfo;
 	}

@@ -16,7 +16,7 @@ public class BaseTest {
 	@BeforeClass
 	public static void setUpBeforeClass() throws PhrescoException {
 		//String serviceURL = "http://172.16.25.196:3030/service/rest/api";
-		String serviceURL = "http://localhost:4040/service/rest/api";
+		String serviceURL = "http://localhost:8080/service/rest/api";
 		String userName = "phresco";
 		byte[] encodeBase64 = Base64.encodeBase64("U83EfU$r".getBytes());
         String password = new String(encodeBase64);
