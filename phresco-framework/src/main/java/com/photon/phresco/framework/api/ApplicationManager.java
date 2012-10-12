@@ -43,4 +43,13 @@ public interface ApplicationManager {
 	 * @throws PhrescoException
 	 */
 	List<BuildInfo> getBuildInfos(File buildInfoFile) throws PhrescoException;
+	
+	/**
+	 * @param customerId
+	 * @param projectId
+	 * @param appId
+	 * @return
+	 * @throws PhrescoException
+	 */
+	ApplicationInfo getApplicationInfo(String customerId, String projectId, String appId) throws PhrescoException;
 }
