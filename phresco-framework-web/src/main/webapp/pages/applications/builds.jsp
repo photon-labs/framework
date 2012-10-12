@@ -151,7 +151,7 @@
 		                                 <img src="images/icons/deploy.png" />  
 		                                </a>   
 		                            <% } else if (!TechnologyTypes.JAVA_STANDALONE.contains(technology)) { %>
-				       	  				<a id="buildNumberHref#<%= buildInfo.getBuildNo() %>" href="#" value="<%= buildInfo.getBuildNo() %>" onClick="generateBuild('<%= projectCode %>', 'deploy', this);">			       	  				
+				       	  				<a id="buildNumberHref#<%= buildInfo.getBuildNo() %>" buildName="<%=buildInfo.getBuildName() %>" href="#" value="<%= buildInfo.getBuildNo() %>" onClick="generateBuild('<%= projectCode %>', 'deploy', this);">			       	  				
 				       	  					<img src="images/icons/deploy.png" />
 				       	  				</a>
 				       	  			<% } %>

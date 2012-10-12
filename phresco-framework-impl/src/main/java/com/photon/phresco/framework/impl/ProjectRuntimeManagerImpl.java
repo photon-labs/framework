@@ -60,7 +60,7 @@ public class ProjectRuntimeManagerImpl implements ProjectRuntimeManager {
 	private static Boolean DebugEnabled = S_LOGGER.isDebugEnabled();
 	private static Map<String, String> pluginMap = new HashMap<String, String>();
 	
-	static {
+	/*static {
 	    pluginMap.put(TechnologyTypes.PHP_DRUPAL7, Constants.MVN_PLUGIN_DRUPAL_ID);
 	    pluginMap.put(TechnologyTypes.PHP_DRUPAL6, Constants.MVN_PLUGIN_DRUPAL_ID);
 	    pluginMap.put(TechnologyTypes.PHP, Constants.MVN_PLUGIN_PHP_ID);
@@ -83,7 +83,7 @@ public class ProjectRuntimeManagerImpl implements ProjectRuntimeManager {
 	    pluginMap.put(TechnologyTypes.ANDROID_LIBRARY, Constants.MVN_PLUGIN_ANDROID_ID);
 	    pluginMap.put(TechnologyTypes.SITE_CORE, Constants.MVN_PLUGIN_SITECORE_ID);
 	    pluginMap.put(TechnologyTypes.BLACKBERRY_HYBRID, Constants.MVN_PLUGIN_BLACKBERRY_ID);
-	}
+	}*/
 	
 	/**
 	 * This method is to build the given project
@@ -120,9 +120,9 @@ public class ProjectRuntimeManagerImpl implements ProjectRuntimeManager {
 		}
 		StringBuilder builder = new StringBuilder(Constants.MVN_COMMAND);
 		builder.append(Constants.SPACE);
-		builder.append(Constants.MVN_PLUGIN_DRUPAL_ID);
-		builder.append(Constants.STR_COLON);
-		builder.append(Constants.MVN_GOAL_DEPLOY);
+//		builder.append(Constants.MVN_PLUGIN_DRUPAL_ID);
+//		builder.append(Constants.STR_COLON);
+//		builder.append(Constants.MVN_GOAL_DEPLOY);
 		builder.append(Constants.SPACE);
 		if (DebugEnabled) {
 			S_LOGGER.debug("deploy() SettingsInformation = " +info.getSettingsInfos());
@@ -232,11 +232,11 @@ public class ProjectRuntimeManagerImpl implements ProjectRuntimeManager {
     	if (DebugEnabled) {
     		S_LOGGER.debug("buildMavenCommand() Project Code = " + project.getApplicationInfo().getCode());
 		}
-        String techId = pluginMap.get(project.getApplicationInfo().getTechInfo().getVersion());
+        /*String techId = pluginMap.get(project.getApplicationInfo().getTechInfo().getVersion());
         if (StringUtils.isNotEmpty(techId)) {
             builder.append(techId);
-        }
-        
+        }*/
+    	builder.append(Constants.MVN_PLUGIN_PHRESCO_ID);
         builder.append(actionType.getName());
         builder.append(Constants.SPACE);
         builder.append(buildMavenArgCommand(actionType, paramsMap));

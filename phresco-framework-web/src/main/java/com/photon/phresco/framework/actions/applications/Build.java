@@ -31,6 +31,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -39,6 +42,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.DocumentBuilder;
@@ -62,6 +66,7 @@ import com.google.gson.Gson;
 import com.opensymphony.xwork2.ActionContext;
 import com.photon.phresco.commons.AndroidConstants;
 import com.photon.phresco.commons.XCodeConstants;
+import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
@@ -90,6 +95,10 @@ import com.phresco.pom.model.PluginExecution.Configuration;
 import com.phresco.pom.model.PluginExecution.Goals;
 import com.phresco.pom.util.AndroidPomProcessor;
 import com.phresco.pom.util.PomProcessor;
+import com.photon.phresco.param.api.DynamicParameter;
+import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
+import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues;
+import com.photon.phresco.plugins.util.MojoProcessor;
 
 public class Build extends FrameworkBaseAction {
 
@@ -267,9 +276,8 @@ public class Build extends FrameworkBaseAction {
 		return APP_BUILD;
 	}
 
-	
-
-	public String generateBuild() {
+	@SuppressWarnings("unchecked")
+	public String generateBuild() throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException, IOException, ParserConfigurationException, SAXException {
 		S_LOGGER.debug("Entering Method  Build.generateBuild()");
 		String technology = null;
 		String from = null;
@@ -287,6 +295,7 @@ public class Build extends FrameworkBaseAction {
 				BuildInfo buildInfo = administrator.getBuildInfo(project, Integer.parseInt(buildNumber));
 				List<String> buildInfoEnvs = buildInfo.getEnvironments();
 				getHttpRequest().setAttribute(BUILD_INFO_ENVS, buildInfoEnvs);
+				getHttpRequest().setAttribute("buildName", getHttpRequest().getParameter("buildName"));
 			} else {
 				List<Environment> environments = administrator.getEnvironments(project);
 				getHttpRequest().setAttribute(REQ_ENVIRONMENTS, environments);
@@ -353,13 +362,48 @@ public class Build extends FrameworkBaseAction {
 		if (CollectionUtils.isNotEmpty(projectModules)) {
 			getHttpRequest().setAttribute(REQ_PROJECT_MODULES, projectModules);
 		}
-
+		try {
+			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
+			project = administrator.getProject(projectCode);
+			ApplicationInfo projectInfo = project.getApplicationInfo();
+			String goal = "";
+			MojoProcessor mojo = new MojoProcessor(new File(Utility.getProjectHome() + FILE_SEPARATOR + projectCode + FILE_SEPARATOR + ".phresco/" + "phresco-plugin-info.xml"));
+			if ("generateBuild".equals(from)) {
+				goal = "package";
+			} else {
+				goal = "deploy";
+			}
+			com.photon.phresco.plugins.model.Mojos.Mojo.Configuration configuration = mojo.getConfiguration(goal);
+			List<Parameter> parameters = configuration.getParameters().getParameter();
+			for (Parameter parameter : parameters) {
+				if (parameter.getDynamicParameter() != null) {
+					PossibleValues dynamicEnvs = getDynamicValues(projectInfo, parameter.getDynamicParameter().getClazz());
+					List<String> dynamicEnvsNames = dynamicEnvs.getValue();
+					getHttpRequest().setAttribute("dynamicEnvNames", dynamicEnvsNames);
+				}
+			}
+			
+			getHttpRequest().setAttribute("parameters", parameters);
+		} catch (PhrescoException e) {
+			e.printStackTrace();
+		} 
+		
 		getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
 		getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
 		getHttpRequest().setAttribute(REQ_BUILD_FROM, from);
 		getHttpRequest().setAttribute(REQ_TECHNOLOGY, technology);
 		getHttpRequest().setAttribute(REQ_DEPLOY_BUILD_NUMBER, buildNumber);
 		return APP_GENERATE_BUILD;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private PossibleValues getDynamicValues(ApplicationInfo projectInfo, String className) throws ClassNotFoundException,
+			NoSuchMethodException, InstantiationException,
+			IllegalAccessException, InvocationTargetException, IOException, ParserConfigurationException, SAXException {
+		
+		Class<DynamicParameter> loadedClass = (Class<DynamicParameter>) Class.forName(className);
+		DynamicParameter dynamicParameter = loadedClass.newInstance();
+		return dynamicParameter.getValues(projectInfo);
 	}
 	
 	private void includesFiles(Element element) {
@@ -422,6 +466,8 @@ public class Build extends FrameworkBaseAction {
 	public String build() {
 		S_LOGGER.debug("Entering Method  Build.build()");
 		try {
+			persistValuesToXml("package");
+			
 			ActionType actionType = null;
 			ProjectRuntimeManager runtimeManager = PhrescoFrameworkFactory.getProjectRuntimeManager();
 			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
@@ -437,7 +483,17 @@ public class Build extends FrameworkBaseAction {
 				minification();
 			}
 			
-			if (StringUtils.isNotEmpty(environments)) {
+			/* adding values to settings map info */
+			MojoProcessor mojo = new MojoProcessor(new File(Utility.getProjectHome() + FILE_SEPARATOR + projectCode + FILE_SEPARATOR + ".phresco/" + "phresco-plugin-info.xml"));
+			com.photon.phresco.plugins.model.Mojos.Mojo.Configuration mojoConfiguration = mojo.getConfiguration("package");
+			List<Parameter> parameters = mojoConfiguration.getParameters().getParameter();
+			for (Parameter parameter : parameters) {
+				if (getHttpRequest().getParameter(parameter.getKey()) != null ) {
+					settingsInfoMap.put(parameter.getKey(), parameter.getValue());
+				}
+			}
+			
+			/*if (StringUtils.isNotEmpty(environments)) {
 				settingsInfoMap.put(ENVIRONMENT_NAME, environments);
 			}
 
@@ -447,7 +503,7 @@ public class Build extends FrameworkBaseAction {
 
 			if (StringUtils.isNotEmpty(userBuildNumber)) {
 				settingsInfoMap.put(BUILD_NUMBER, userBuildNumber);
-			}
+			}*/
 
 			if (StringUtils.isNotEmpty(androidVersion)) {
 				settingsInfoMap.put(AndroidConstants.ANDROID_VERSION_MVN_PARAM, androidVersion);
@@ -532,7 +588,33 @@ public class Build extends FrameworkBaseAction {
 
 		return APP_ENVIRONMENT_READER;
 	}
-	
+
+	private void persistValuesToXml(String goal) throws PhrescoException {
+		MojoProcessor mojo = new MojoProcessor(new File(Utility.getProjectHome() + FILE_SEPARATOR + projectCode + FILE_SEPARATOR + ".phresco/" + "phresco-plugin-info.xml"));
+		com.photon.phresco.plugins.model.Mojos.Mojo.Configuration configuration = mojo.getConfiguration(goal);
+		List<Parameter> parameters = configuration.getParameters().getParameter();
+		StringBuilder csParamVal = new StringBuilder();
+		String sep = "";
+		for (Parameter parameter : parameters) {
+			if (parameter.getDynamicParameter() != null) {
+				String[] parameterValues = getHttpRequest().getParameterValues(parameter.getKey());
+				for (String parameterValue : parameterValues) {
+					csParamVal.append(sep);
+					csParamVal.append(parameterValue);
+					sep = ",";
+				}
+				parameter.setValue(csParamVal.toString());
+			} else {
+				if (getHttpRequest().getParameter(parameter.getKey()) != null ) {
+					parameter.setValue(getHttpRequest().getParameter(parameter.getKey()));
+				} else {
+					parameter.setValue("false");//to update value of skipTest if it is unchecked
+				}
+			}
+		}
+		mojo.save();
+	}
+
 	private File isFileExists(Project project) throws IOException {
 		StringBuilder builder = new StringBuilder(Utility.getProjectHome());
 		builder.append(project.getApplicationInfo().getCode());
@@ -665,8 +747,9 @@ public class Build extends FrameworkBaseAction {
 		return view();
 	}
 
-	public String deploy() {
+	public String deploy() throws PhrescoException {
 		S_LOGGER.debug("Entering Method  Build.deploy()");
+		persistValuesToXml("deploy");
 		String buildNumber = getHttpRequest().getParameter(REQ_DEPLOY_BUILD_NUMBER);
 		String simulatorVersion = getHttpRequest().getParameter(REQ_DEPLOY_IPHONE_SIMULATOR_VERSION);
 		try {
