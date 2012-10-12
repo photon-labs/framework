@@ -2184,11 +2184,11 @@ Width > 1280 and <= 1360
 		border-radius: 1px 1px 35px 35px;
 		height: 30px;
 		position: absolute;
-		width: 135px;
+		width: 128px;
 		z-index: 3;
 		font-size: 12px;
 		cursor: pointer;
-		margin-left: -6%;
+		margin-left: 8%;
 		text-align: center;
 		font-weight: bold;
 	}
@@ -2962,11 +2962,11 @@ Width > 1441 and <= 1600
 		-webkit-border-bottom-left-radius: 23px 23px;
 		height: 30px;
 		position: absolute;
-		width: 135px;
+		width: 128px;
 		z-index: 3;
 		font-size: 12px;
 		cursor: pointer;
-		margin-left: -6%;
+		margin-left: 7%;
 		text-align: center;
 		font-weight: bold;
 	}
