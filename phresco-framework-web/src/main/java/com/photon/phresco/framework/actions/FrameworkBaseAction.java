@@ -45,17 +45,23 @@ import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.LogInfo;
 import com.photon.phresco.commons.model.User;
 import com.photon.phresco.exception.PhrescoException;
+import com.photon.phresco.framework.FrameworkConfiguration;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.api.ProjectAdministrator;
 import com.photon.phresco.framework.commons.FrameworkActions;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.commons.LogErrorReport;
+import com.photon.phresco.service.client.api.ServiceClientConstant;
+import com.photon.phresco.service.client.api.ServiceContext;
+import com.photon.phresco.service.client.api.ServiceManager;
+import com.photon.phresco.service.client.factory.ServiceClientFactory;
+import com.photon.phresco.util.Credentials;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.exception.PhrescoPomException;
 import com.phresco.pom.model.Model.Modules;
 import com.phresco.pom.util.PomProcessor;
 
-public class FrameworkBaseAction extends ActionSupport implements FrameworkConstants, FrameworkActions {
+public class FrameworkBaseAction extends ActionSupport implements FrameworkConstants, FrameworkActions, ServiceClientConstant {
 	private static final Logger S_LOGGER = Logger.getLogger(FrameworkBaseAction.class);
 	private static Boolean debugEnabled = S_LOGGER.isDebugEnabled();
 
@@ -63,6 +69,12 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
     private ProjectAdministrator projectAdministrator = null;
     private String path = null;
     private String copyToClipboard = null;
+    
+    private static ServiceManager serviceManager = null;
+    
+    protected ServiceManager getServiceManager() {
+		return serviceManager;
+	}
     
     public ProjectAdministrator getProjectAdministrator() throws PhrescoException {
         if(projectAdministrator == null) {
@@ -196,6 +208,23 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
             }
         }
         return LOG_ERROR;
+    }
+    
+    protected User doLogin(Credentials credentials) throws PhrescoException {
+        try {
+            String userName = credentials.getUsername();
+            String password = credentials.getPassword();
+            ServiceContext context = new ServiceContext();
+            FrameworkConfiguration configuration = PhrescoFrameworkFactory.getFrameworkConfig();
+            context.put(SERVICE_URL, configuration.getServerPath());
+            context.put(SERVICE_USERNAME, userName);
+            context.put(SERVICE_PASSWORD, password);
+            serviceManager = ServiceClientFactory.getServiceManager(context);
+        } catch (Exception ex) {
+            S_LOGGER.error(ex.getLocalizedMessage());
+            throw new PhrescoException(ex);
+        }
+        return serviceManager.getUserInfo();
     }
     
     protected void setReqAttribute(String key, Object value) {

@@ -45,6 +45,9 @@ public interface FrameworkConstants {
     String FROM_PAGE_LOGIN = "login";
     
     String REQ_CUSTOMER_ID = "customerId";
+    String REQ_PROJECT_ID = "projectId";
+    String REQ_APP_ID = "appId";
+    String REQ_CURRENT_APP_NAME = "currentAppName";
    
     String DO_NOT_CHECKIN_DIR = "do_not_checkin";
     String ARCHIVES = "archives";

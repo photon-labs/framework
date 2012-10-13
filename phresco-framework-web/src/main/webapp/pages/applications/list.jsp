@@ -24,13 +24,12 @@
 <%@ page import="java.util.List"%>
 
 <%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
-<%@ page import="com.photon.phresco.framework.api.Project" %>
+<%@ page import="com.photon.phresco.commons.model.ProjectInfo"%>
 <%@ page import="com.photon.phresco.framework.api.ValidationResult" %>
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 
 <%
-	List<Project> projects = (List<Project>) request.getAttribute(FrameworkConstants.REQ_PROJECTS);
-	String customerId = (String) request.getAttribute(FrameworkConstants.REQ_CUSTOMER_ID);
+	List<ProjectInfo> projects = (List<ProjectInfo>) request.getAttribute(FrameworkConstants.REQ_PROJECTS);
 %>
 
 <div class="page-header">
@@ -40,13 +39,12 @@
 </div>
 
 <form id="formProjectList" class="projectList">
-
 	<div class="operation">
-		<input type="button" class="btn btn-primary" name="configTemplate_add" id="configtempAdd" 
-	         onclick="loadContent('applicationDetails', $('#formProjectList'), $('#container'));" 
+		<input type="button" class="btn btn-primary" name="addProject" id="addProject" 
+	         onclick="loadContent('projectDetails', $('#formProjectList'), $('#container'));" 
 		         value="<s:text name='lbl.projects.add'/>"/>
-		<input type="button" class="btn btn-primary" name="configTemplate_add" id="configtempAdd" 
-	         onclick="loadContent('configtempAdd', $('#formProjectList'), $('#subcontainer'));" 
+		<input type="button" class="btn btn-primary" name="importAppln" id="importAppln" 
+	         onclick="loadContent('importAppln', $('#formProjectList'), $('#subcontainer'));" 
 		         value="<s:text name='lbl.applications.import'/>"/>
 		<input type="button" class="btn" id="del" disabled value="<s:text name='lbl.delete'/>"
 			onclick="showDeleteConfirmation('<s:text name='lbl.delete'/>');"/>
@@ -64,69 +62,78 @@
 	
 	<% if (CollectionUtils.isEmpty(projects)) { %>
 		<div class="alert alert-block">
-			<s:text name='alert.msg.configTemp.not.available'/>
+			<s:text name='alert.msg.project.not.available'/>
 		</div>
     <% } else { %>	
 		<div class="table_div">
 			<div class="fixed-table-container">
-				<div class="header-background"> </div>
+				<div class="header-background"></div>
 				<div class="fixed-table-container-inner">
 					<table cellspacing="0" class="zebra-striped">
 						<thead>
-								<tr>
-									<th class="first">
-										<div class="th-inner tablehead">
-											<input type="checkbox" value="" id="checkAllAuto" name="checkAllAuto" onclick="checkAllEvent(this,$('.selectedProjects'), false);">
-										</div>
-									</th>
-									<th class="second">
-										<div class="th-inner tablehead"><s:label key="lbl.name" theme="simple"/></div>
-									</th>
-									<th class="third">
-										<div class="th-inner tablehead"><s:label key="lbl.desc" theme="simple"/></div>
-									</th>
-									<th class="third">
-										<div class="th-inner tablehead"><s:label key="lbl.technolgoy" theme="simple"/></div>
-									</th>
-									<th class="third">
-										<div class="th-inner tablehead"><s:label key="lbl.print" theme="simple"/></div>
-									</th>
-									<th class="third">
-										<div class="th-inner tablehead"><s:label key="lbl.update" theme="simple"/></div>
-									</th>
-								</tr>
+							<tr>
+								<th class="first">
+									<div class="th-inner tablehead">
+										<input type="checkbox" value="" id="checkAllAuto" name="checkAllAuto" 
+											onclick="checkAllEvent(this,$('.selectedProjects'), false);">
+									</div>
+								</th>
+								<th class="second">
+									<div class="th-inner tablehead"><s:label key="lbl.name" theme="simple"/></div>
+								</th>
+								<th class="third">
+									<div class="th-inner tablehead"><s:label key="lbl.desc" theme="simple"/></div>
+								</th>
+								<th class="third">
+									<div class="th-inner tablehead"><s:label key="lbl.technolgoy" theme="simple"/></div>
+								</th>
+								<th class="third">
+									<div class="th-inner tablehead"><s:label key="lbl.print" theme="simple"/></div>
+								</th>
+								<th class="third">
+									<div class="th-inner tablehead"><s:label key="lbl.update" theme="simple"/></div>
+								</th>
+							</tr>
 						</thead>
 						
 						<tbody>
 						  	<%
-								for (Project project : projects) {
-									ApplicationInfo projectInfo = project.getApplicationInfo();
+						  		for (ProjectInfo project : projects) {
+					  				List<ApplicationInfo> appInfos = project.getAppInfos();
+					  				if (CollectionUtils.isNotEmpty(appInfos)) {
+					  					for (ApplicationInfo appInfo : appInfos) {
 							%>
-								<tr>
-									<td class="checkboxwidth">
-										<input type="checkbox" class="check selectedProjects" name="selectedProjects" value="<%= projectInfo.getCode() %>">
-									</td>
-									<td class="nameConfig">
-										<a href="#" onclick="editApplication('<%= projectInfo.getCode() %>');" name="edit">
-											<%= projectInfo.getName() %>
-										</a>
-									</td>
-									<td class="descConfig">
-										<%= projectInfo.getDescription() %>
-									</td>
-									<td class="hoverAppliesTo">
-										<%= projectInfo.getDescription() %>
-									</td>
-									<td id="icon-width">
-										<a href="#" id="pdfPopup" class="iconsCenterAlign"><img id="<%= projectInfo.getCode() %>" class="pdfCreation" 
-											src="images/icons/print_pdf.png" title="Generate Report" class="iconSizeinList"/></a>
-									</td>
-									<td id="icon-width">
-										<a href="#" id="projectUpdate" class="iconsCenterAlign"><img id="<%= projectInfo.getCode() %>" class="projectUpdate" 
-											src="images/icons/refresh.png" title="Update" class="iconSizeinList"/></a>
-									</td>
-								</tr>
-							<% 
+										<tr>
+											<td class="checkboxwidth">
+												<input type="checkbox" class="check selectedProjects" name="selectedProjects" value="<%= appInfo.getCode() %>">
+											</td>
+											<td class="nameConfig">
+												<a href="#" onclick="editApplication('<%= project.getId() %>', '<%= appInfo.getId() %>');" name="edit">
+													<%= project.getName() %>
+												</a>
+											</td>
+											<td class="descConfig">
+												<%= project.getDescription() %>
+											</td>
+											<td class="hoverAppliesTo">
+												<%= appInfo.getDescription() %>
+											</td>
+											<td id="icon-width">
+												<a href="#" id="pdfPopup" class="iconsCenterAlign">
+													<img id="<%= appInfo.getCode() %>" class="pdfCreation" src="images/icons/print_pdf.png"
+														title="Generate Report" class="iconSizeinList"/>
+												</a>
+											</td>
+											<td id="icon-width">
+												<a href="#" id="projectUpdate" class="iconsCenterAlign">
+													<img id="<%= appInfo.getCode() %>" class="projectUpdate" src="images/icons/refresh.png"
+														title="Update" class="iconSizeinList"/>
+												</a>
+											</td>
+										</tr>
+							<%
+					  					}
+					  				}
 								}
 							%>
 						</tbody>
@@ -135,9 +142,6 @@
 			</div>
 		</div>
 	<% } %>
-	
-	<!-- Hidden Fields -->
-	<input type="hidden" name="customerId" value="<%= customerId %>">
 </form>
 
 <script type="text/javascript">
@@ -156,10 +160,12 @@
 		
    	});
 	
-    function editApplication(projectCode) {
-		var params = "configId=";
-		params = params.concat(projectCode);
-		loadContent("applicationDetails", $("#formProjectList"), $('#container'), params);
+    function editApplication(projectId, appId) {
+		var params = "projectId=";
+		params = params.concat(projectId);
+		params = params.concat("&appId");
+		params = params.concat(appId);
+		loadContent("loadMenu", $("#formCustomers"), $('#container'), params);
 	}
     
  	// This method calling from confirmDialog.jsp
@@ -167,5 +173,4 @@
     	confirmDialog('none','');
     	loadContent('configtempDelete', $('#formProjectList'), $('#container'));
     }
- 	
 </script>

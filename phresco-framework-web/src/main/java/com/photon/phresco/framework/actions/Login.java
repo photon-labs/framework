@@ -45,8 +45,6 @@ import org.apache.log4j.Logger;
 
 import com.photon.phresco.commons.model.User;
 import com.photon.phresco.exception.PhrescoException;
-import com.photon.phresco.framework.PhrescoFrameworkFactory;
-import com.photon.phresco.framework.api.ProjectAdministrator;
 import com.photon.phresco.util.Credentials;
 
 public class Login extends FrameworkBaseAction {
@@ -104,9 +102,8 @@ public class Login extends FrameworkBaseAction {
         
         User user = null;
         try {
-            ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
             Credentials credentials = new Credentials(getUsername(), getPassword());
-            user = administrator.doLogin(credentials);
+            user = doLogin(credentials);
             if (user == null) {
                 setReqAttribute(REQ_LOGIN_ERROR, getText(ERROR_LOGIN));
                 

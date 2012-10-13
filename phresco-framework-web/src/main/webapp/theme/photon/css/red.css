@@ -1473,3 +1473,8 @@ background-color: #ffffff;
 	background: linear-gradient(top,  #5b0a0e 0%,#630a0a 100%); /* W3C */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#5b0a0e', endColorstr='#630a0a',GradientType=0 ); /* IE6-9 */		
 }
+
+/* moved from admin ui */
+.mandatory {
+	color: red;
+}

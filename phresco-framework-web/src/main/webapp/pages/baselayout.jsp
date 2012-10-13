@@ -19,13 +19,15 @@
   --%>
 <!doctype html>
 <%@ taglib uri="/struts-tags" prefix="s"%>
+
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
 
-<%@ page import="org.apache.commons.collections.CollectionUtils"%>
 <%@ page import="java.util.List"%>
 
-<%@ page import="com.photon.phresco.commons.model.User"%>
+<%@ page import="org.apache.commons.collections.CollectionUtils"%>
+
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
+<%@ page import="com.photon.phresco.commons.model.User"%>
 
 <html>
 	<head>
@@ -215,6 +217,28 @@
 							<s:text name="lbl.hdr.applications"/></span>
 						</a>
 					</div>
+					
+					<form id="formCustomers" class="form">
+						<div class="control-group customer_name">
+							<s:label key="lbl.customer" cssClass="control-label custom_label labelbold" theme="simple"/>
+							<div class="controls customer_select_div">
+								<select name="customerId" class="customer_listbox">
+					                <%
+					                	User user = (User) session.getAttribute(FrameworkConstants.SESSION_USER_INFO);
+					                    if (user != null) {
+					                    	List<String> customerIds = user.getCustomerIds();
+								            for (String customerId : customerIds) { 
+								    %>
+					                            <option value="<%= customerId %>"><%= customerId %></option>
+									<% 
+								            }
+								        } 
+								    %>
+								</select>
+							</div>
+						</div>
+					</form>
+					
 					<div class="righttopnav">
 						<a href="JavaScript:void(0);" class="abtPopUp" class="arrow_links_top"><span
 							class="shortcutRed" id=""></span><span class="shortcutWh"

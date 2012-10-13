@@ -36,7 +36,7 @@ function clickButton(button, tag) {
 }
 
 function loadContent(pageUrl, form, tag, additionalParams, callSuccessEvent) {
-	showLoadingIcon(tag);
+//	showLoadingIcon(tag);
 	var params = "";
 	if (form != undefined && form != "" && !isBlank(form.serialize())) {
 		params = form.serialize();
