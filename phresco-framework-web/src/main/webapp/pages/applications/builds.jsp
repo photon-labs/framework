@@ -20,14 +20,14 @@
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.util.List"%>
+
+<%@ page import="org.apache.commons.collections.CollectionUtils"%>
 <%@ page import="org.apache.commons.collections.MapUtils" %>
 
 <%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
-<%@ page import="com.photon.phresco.util.Utility" %>
 <%@ page import="com.photon.phresco.util.TechnologyTypes" %>
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 <%@ page import="com.photon.phresco.framework.model.BuildInfo"%>
-<%@ page import="com.photon.phresco.framework.commons.NodeJSUtil" %>
 
 <style type="text/css">
    	table th {
@@ -46,19 +46,13 @@
 </style>
 
 <%
-	Boolean popup = Boolean.FALSE;
-	
     List<BuildInfo> buildInfos = (List<BuildInfo>) request.getAttribute(FrameworkConstants.REQ_BUILD);
     ApplicationInfo selectedInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_APPINFO);
-    String projectCode = selectedInfo.getCode();
-    String technology = selectedInfo.getTechInfo().getVersion();
-	
-	if (TechnologyTypes.ANDROIDS.contains(technology)) {
-		popup = Boolean.TRUE;
-	}
+    String projectCode = "PHR_html5JqueryMoiEs";
+    String technology = "tech-html5-jquery-mobile-widget";
 %>
 
-<% if (buildInfos == null || buildInfos.size() == 0) { %>
+<% if (CollectionUtils.isEmpty(buildInfos)) { %>
 	<div class="alert-message block-message warning" style="margin-top: 5px">
 	    <center><s:label key="configuration.info.message" cssClass="errorMsgLabel"/></center>
 	</div>
@@ -71,22 +65,22 @@
 			          	<thead>
 				            <tr>
 								<th class="first">
-				                	<div class="th-inner-head ">
+				                	<div class="th-inner">
 				                		<input type="checkbox" value="" id="checkAllAuto" name="checkAllAuto">
 				                	</div>
 				              	</th>
 				              	<th class="second">
-				                	<div class="th-inner-head ">#</div>
+				                	<div class="th-inner">#</div>
 				              	</th>
 				              	<th class="third">
-				                	<div class="th-inner-head "><s:text name="label.date"/></div>
+				                	<div class="th-inner"><s:text name="label.date"/></div>
 				              	</th>
 				              	<th class="third">
-				                	<div class="th-inner-head "><s:text name="label.download"/></div>
+				                	<div class="th-inner"><s:text name="label.download"/></div>
 				              	</th>
 				              	<% if (!(TechnologyTypes.NODE_JS_WEBSERVICE.equals(technology) || TechnologyTypes.JAVA_STANDALONE.contains(technology))) { %>
 					              	<th class="third">
-					                	<div class="th-inner-head ">
+					                	<div class="th-inner">
 					                		Deploy
 					                	</div>
 					              	</th>

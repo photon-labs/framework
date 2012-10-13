@@ -157,6 +157,10 @@ div.lgnBtnLabel {
 	margin: 5px 5px 5px 6px;
 }
 
+.operation.build{
+	height: 21px;
+}
+
 .customer_list {
 	height: 98%;
 	margin: 0;
@@ -5429,3 +5433,23 @@ input[class*='chckBxAlign'] {
 }
 
 /*new css for 2.0 starts*/
+
+
+.alert-message.success.build {
+	margin-top: 5px;
+	left: 21%; 
+}
+
+.build_table_div {
+    margin-top: 5px;
+    border-radius: 6px 6px 6px 6px;
+    margin-left: 6px;
+    margin-right: 6px;
+	height:98%;
+}
+
+.clear {
+	clear: both;
+	line-height: 0;
+	height: 0;
+}
