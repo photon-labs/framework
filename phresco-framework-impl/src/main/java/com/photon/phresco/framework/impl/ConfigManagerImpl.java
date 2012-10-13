@@ -47,8 +47,18 @@ public class ConfigManagerImpl implements ConfigManager {
 	private static Element rootElement = null;
 	private File configFile = null;
 	
-	public ConfigManagerImpl(File configFile) {
+	public ConfigManagerImpl(File configFile) throws ConfigurationException {
 		this.configFile = configFile;
+		try {
+			if(!configFile.exists()) {
+				createNewDoc();
+			} else {
+				createDocFromExist(new FileInputStream(configFile));
+			}
+		} catch (Exception e) {
+			throw new ConfigurationException(e);
+		}
+		
 	}
 	
 	@Override
@@ -65,13 +75,11 @@ public class ConfigManagerImpl implements ConfigManager {
 	@Override
 	public void addEnvironments(List<Environment> environments)
 			throws ConfigurationException {
-		initXml(configFile);
 		createEnvironment(environments, configFile);
 	}
 	
 	@Override
 	public void updateEnvironment(Environment environment) throws ConfigurationException {
-		initXml(configFile);
 		String envName = environment.getName();
 		Node oldNode = getNode(getXpathEnv(envName).toString());
 		Element newNode = createEnvironmentNode(environment);
@@ -85,25 +93,12 @@ public class ConfigManagerImpl implements ConfigManager {
 	
 	@Override
 	public void deleteEnvironment(String envName) throws ConfigurationException {
-		initXml(configFile);
 		String xpath = getXpathEnv(envName).toString();
 		Element envNode = (Element) getNode(xpath);
 		envNode.getParentNode().removeChild(envNode);
 		try {
 			writeXml(new FileOutputStream(configFile));
 		} catch (FileNotFoundException e) {
-			throw new ConfigurationException(e);
-		}
-	}
-	
-	private void initXml(File configFile) throws ConfigurationException {
-		try {
-			if(!configFile.exists()) {
-				createNewDoc();
-			} else {
-				createDocFromExist(new FileInputStream(configFile));
-			}
-		} catch (Exception e) {
 			throw new ConfigurationException(e);
 		}
 	}
@@ -222,5 +217,10 @@ public class ConfigManagerImpl implements ConfigManager {
 		}
 		return xpathNode;
 	}
-	
+
+	@Override
+	public List<Environment> getEnvironments() throws ConfigurationException {
+		ConfigReader configReader = new ConfigReader(configFile);
+		return configReader.getAllEnvironments();
+	}
 }
