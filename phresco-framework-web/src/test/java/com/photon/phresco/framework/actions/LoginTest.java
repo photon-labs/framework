@@ -47,7 +47,7 @@ public class LoginTest implements FrameworkConstants{
             String username = "kaleeswaran_s";
 			String password = "Suresh@123";
 			Credentials credentials = new Credentials(username, password);
-            userInfo = administrator.doLogin(credentials);
+//            userInfo = administrator.doLogin(credentials);
             
 //            if (!userInfo.isLoginValidation()) {
 //            	System.out.println("Login failure1!!!!!!");

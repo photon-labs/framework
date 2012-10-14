@@ -409,6 +409,7 @@ a {
     border: 1px solid #ddd;
 }
 
+/** popup starts **/
 .popup_Modal {
 	background-color: #ffffff;
 	border: 1px solid #999;
@@ -417,6 +418,43 @@ a {
 	-moz-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
 	box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
 }
+
+.modallbl-color {
+	color: #555555;
+}
+
+.modallbl-color label {
+	color: #555555;
+}
+
+.modal-header {
+    border: 1px solid #ffffff;
+    background:#3A090B;
+}
+
+.modal-header .close {
+    color: #FFFFFF;
+}
+
+.modal-header h3 {
+    color: #ffffff;
+}
+
+/** popup end **/
+
+/* For multiselect list box starts */
+.multilist-scroller {
+	background-color: #fff;
+}
+
+.multiselect {
+	background-color: #fff;
+}
+
+.multilist-scroller ul li {
+	color: #000;
+}
+/* For multiselect list box starts */
 
 .bordered-table th + th, .bordered-table td + td, .bordered-table th + td {
     border-left: 1px solid #ddd;
@@ -1066,19 +1104,6 @@ background-color: #ffffff;
     color: #9D261D;
 }
 /*** Settigs and Configuration field description end ***/
-
-.modal-header {
-    border: 1px solid #ffffff;
-    background:#3A090B;
-}
-
-.modal-header .close {
-    color: #FFFFFF;
-}
-
-.modal-header h3 {
-    color: #ffffff;
-}
 
 .signOut {
     background-color:transparent;

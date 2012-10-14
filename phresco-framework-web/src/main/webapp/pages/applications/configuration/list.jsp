@@ -66,7 +66,7 @@
 		<input type="button" class="btn" id="del" disabled value="<s:text name='lbl.delete'/>"
 			onclick="showDeleteConfirmation('<s:text name='lbl.delete'/>');"/>
 
-		<!-- Environment Buttton 
+		<!-- Environment Buttton -->
 	    <a data-toggle="modal" href="#popupPage" class="btn btn-primary"><s:text name='lbl.app.config.environments'/></a>
 		         
 		<s:if test="hasActionMessages()">
@@ -163,22 +163,9 @@
 	<% } %>
 </form>
 
-<div id="popupPage" class="modal hide fade">
-	<div class="modal-header">
-		<a class="close" data-dismiss="modal" >&times;</a>
-		<h3>Modal Heading</h3>
-	</div>
-	<div class="modal-body">
-	</div>
-	<div class="modal-footer">
-		<a href="#" class="btn btn-primary">Ok</a>
-		<a href="#" class="btn" data-dismiss="modal" >Cancel</a>
-	</div>
-</div>
-
-
 <script type="text/javascript">
 	$("a[data-toggle=modal]").click(function() {
+		$('#popupTitle').html("<s:text name='lbl.environment'/>");
 		$('.modal-body').load('openEnvironmentPopup');
 	});
 

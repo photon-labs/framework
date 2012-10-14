@@ -251,8 +251,8 @@ public class ProjectAdministratorTest implements FrameworkConstants {
 
     //@Test
     public void testVideoInfos() throws PhrescoException {
-        List<VideoInfo> videoInfos = administrator.getVideoInfos();
-        System.out.println(videoInfos);
+//        List<VideoInfo> videoInfos = administrator.getVideoInfos();
+//        System.out.println(videoInfos);
     }
 
     @Test

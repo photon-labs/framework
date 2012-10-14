@@ -20,7 +20,7 @@ public class ConfigManagerTest {
 	private File configFile = null;
 	
 	@Before
-	public void initTest() {
+	public void initTest() throws ConfigurationException {
 		configFile  = new File("src/test/java/com/photon/phresco/framework/impl/config.xml");
 		configManager = new ConfigManagerImpl(configFile);
 	}

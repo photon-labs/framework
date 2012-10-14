@@ -33,30 +33,48 @@
    	List<Environment> envInfoValues = (List<Environment>) request.getAttribute(FrameworkConstants.ENVIRONMENTS);
 %>
 
-<!--<div class="popup_Modal" style="top: 40%;">
-	<div class="modal-header">
-		<h3 id="generateBuildTitle">
-			<s:text name="label.environment"/>
-		</h3>
-		<a class="close" href="#" id="close">&times;</a>
+<form id="environment" class="form-horizontal">
+	<div class="control-group">
+		<s:label key="lbl.name" cssClass="control-label labelbold modallbl-color" theme="simple"/>
+		<div class="controls">
+			<input type="text" name="envName" id="envName" class="span3"  placeholder="<s:text name='lbl.place.holder.name'/>" 
+			maxlength="30" title="<s:text name='lbl.title.30.chars'/>" />
+		</div>
+	</div>
+	
+	<div class="control-group">
+		<label class="control-label labelbold modallbl-color">
+			<s:text name='lbl.desc'/>
+		</label>
+		<div class="controls">
+			<textarea placeholder="<s:text name='place.hldr.configTemp.add.desc'/>" class="input-xlarge" 
+				name="envDesc" maxlength="150" title="<s:text name='lbl.title.150.chars'/>" placeholder="<s:text name='lbl.place.holder.desc'/>">
+			</textarea>
+			<input type="button" value="<s:text name='lbl.btn.add'/>" tabindex=3 id="add" class="btn btn-primary addButton">
+		</div>
 	</div>
 
-	<div class="modal-body" style="height: 230px;">
--->		<div class="clearfix">
-			<label for="xlInput" class="xlInput popup-label" ><span class="red">*</span> <s:text name="label.name"/></label>
-			<div class="input">
-				<input type="text" id="envName" name="envName" tabindex=1 class="xlarge" maxlength="30" title="30 Characters only">	
-			</div>
+	<fieldset class="popup-fieldset">
+		<legend class="fieldSetLegend" ><s:text name="lbl.added.environments"/></legend>
+		<div class="popupTypeFields" id="typefield">
+            <div class="multilist-scroller multiselect" style="height: 95px; width:300px;">
+                <ul>
+	       			<li>
+						<input type="checkbox" name="technology" value="One" class="check techCheck" style="margin: 3px 8px 6px 0;">One
+					</li>
+				</ul>
+            </div>
 		</div>
-		<div class="clearfix">
-			<label for="xlInput" class="xlInput popup-label"><s:text name="label.description"/></label>
-			<div class="input">
-				<textarea id="envDesc" class="xlarge env-desc" tabindex=2 maxlength="150" title="150 Characters only"></textarea>
-				<input type="button" value="Add" tabindex=3 id="Add" class="primary btn" style="margin-top: 36px;">
-			</div>
+		<div class="popupimage">
+			<img src="images/icons/top_arrow.png" title="<s:text name='lbl.title.moveup'/>" id="up" class="imageup"><br>
+			<img src="images/icons/delete.png"" title="<s:text name='lbl.title.remove'/>" id="remove" class="imageremove"><br>
+			<img src="images/icons/btm_arrow.png" title="<s:text name='lbl.title.movedown'/>" id="down" class="imagedown">
 		</div>
-		<form id="environment" method="post" autocomplete="off">
-			<fieldset class="popup-fieldset" style="height: 115px;">
+		<div class="defaultButton">
+			<input type="button" value="Set as Default" tabindex=5 id="setAsDefault" class="btn btn-primary">
+		</div>
+	</fieldset>
+			<!--<fieldset class="popup-fieldset" style="height: 115px;">
 				<legend class="fieldSetLegend" ><s:text name="label.added.environment"/></legend>
 				<select name="selectedEvn" id="selectedEvn" tabindex=4 class="xlarge" multiple="multiple" style="height: 88px; width: 300px; float: left; margin-left: 100px;" >
 					<%
@@ -75,30 +93,15 @@
 				<div id="setAsDefaultDiv" style="float: right; margin-right: 35px;">
 				    <input type="button" value="Set as Default" tabindex=5 id="setAsDefault" class="primary btn" style="margin-top: 30px;">
 				</div>
-			</fieldset>
-		</form>
-<!--	</div>
-	
-	<div class="modal-footer">
-		<div class="action popup-action">
-		    <input type="button" class="btn primary" value="<s:text name="label.cancel"/>" id="cancel" tabindex=7>
-            <input type="button" class="btn primary" value="<s:text name="label.save"/>" id="save" tabindex=6>
-            
-			<div id="errMsg" class="envErrMsg"></div>
-			<div id="reportMsg" class="envErrMsg"></div>
-
-			<div class="popup alert-message success" id="popupSuccessMsg"></div>
-			<div class="popup alert-message error" id="popupErrorMsg"></div>
-		</div>
-	</div>
-</div>-->
+			</fieldset>-->
+</form>
 
 
 <!-- selectedEnvs hidden field will be updated with the newly added environments after clicking the Add button -->
 <input type="hidden" id="selectedEnvs" name="selectedEnvs" value="">
 <input type="hidden" id="deletableItems" name="deletableItems" value="">
 <script type="text/javascript">
-	escPopup();
+	//escPopup();
 	
 	var name =  "";
 	var desc =  "";
