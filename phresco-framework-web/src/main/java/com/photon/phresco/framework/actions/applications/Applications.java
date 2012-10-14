@@ -147,6 +147,10 @@ public class Applications extends FrameworkBaseAction {
     private List<String> projectServers = null;
     private String technology = "";
     
+    private boolean errorFound = false;
+    private String projectNameErr = "";
+    private String projectCodeErr = "";
+    
     private String projectId = "";
 	private String appId = "";
 	
@@ -248,6 +252,28 @@ public class Applications extends FrameworkBaseAction {
 		applicationInfo.setAppDirName(dirName);
 		
 		return applicationInfo;
+	}
+	
+	public String validateForm() {
+	    try {
+	        boolean hasError = false;
+            if (StringUtils.isEmpty(getProjectName())) {
+                setProjectNameErr(getText(ERROR_NAME));
+                hasError = true;
+            }
+            if (StringUtils.isEmpty(getProjectCode())) {
+                setProjectCodeErr(getText(ERROR_CODE));
+                hasError = true;
+            }
+            
+            if (hasError) {
+                setErrorFound(true);
+            }
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+        
+        return SUCCESS;
 	}
 	
 	public String loadMenu() {
@@ -1824,4 +1850,28 @@ public class Applications extends FrameworkBaseAction {
 	public void setAppId(String appId) {
 		this.appId = appId;
 	}
+	
+	public boolean isErrorFound() {
+        return errorFound;
+    }
+
+    public void setErrorFound(boolean errorFound) {
+        this.errorFound = errorFound;
+    }
+
+    public String getProjectNameErr() {
+        return projectNameErr;
+    }
+
+    public void setProjectNameErr(String projectNameErr) {
+        this.projectNameErr = projectNameErr;
+    }
+    
+    public String getProjectCodeErr() {
+        return projectCodeErr;
+    }
+
+    public void setProjectCodeErr(String projectCodeErr) {
+        this.projectCodeErr = projectCodeErr;
+    }
 }

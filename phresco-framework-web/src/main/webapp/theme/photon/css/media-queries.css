@@ -156,7 +156,7 @@ Width <= 1024
 		overflow-x: hidden;
 		overflow-y: auto;
 		position: relative;
-		height: 87.5%;
+		height: 86%;
 	}
 	
 	.featuresScrollDiv {
@@ -1019,8 +1019,7 @@ Width >= 1152 and < 1280
 		overflow-x: hidden;
 		overflow-y: auto;
 		position: relative;
-		height: 93%;
-		/* max-height: 93%; */
+		height: 88%;
 	}
 	
 	.appInfoTabDiv {
@@ -1466,8 +1465,7 @@ Width <= 1280 and height <= 800
 		overflow-x: hidden;
 		overflow-y: auto;
 		position: relative;
-		height:88.7%;
-		/* max-height: 88%; */
+		height:86%;
 	}
 	
 	.featuresScrollDiv {
@@ -2251,8 +2249,7 @@ Width > 1280 and <= 1360
 		overflow-x: hidden;
 		overflow-y: auto;
 		position: relative;
-		height: 89%;
-		/* max-height: 90%; */
+		height: 85%;
 	}
 	
 	.appInfoTabDiv {
@@ -3023,8 +3020,7 @@ Width > 1441 and <= 1600
 		overflow-x: hidden;
 		overflow-y: auto;
 		position: relative;
-		height: 90.2%;
-		/* max-height: 92%; */
+		height: 87%;
 	}
 	
 	.featuresScrollDiv {

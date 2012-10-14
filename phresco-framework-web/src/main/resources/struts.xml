@@ -107,6 +107,10 @@
             <result type="json"/>
         </action>
         
+        <action name="createProjectValidate" method="validateForm" class="com.photon.phresco.framework.actions.applications.Applications">
+			<result type="json"/>
+        </action>
+        
         <action name="createProject" method="createProject" class="com.photon.phresco.framework.actions.applications.Applications">
 			<result name="list">/pages/applications/list.jsp</result>
         </action>

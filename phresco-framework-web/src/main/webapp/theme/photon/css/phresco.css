@@ -1855,12 +1855,9 @@ div.vjs-big-play-button span {
     width: 130px;
 }*/
 .page-header {
-    /* border-top-left-radius: 8px;
-    border-top-right-radius: 8px; */
     border-bottom: medium none;
-  /*  height: 28px;*/
     margin-bottom: 0;
-    width: 100%;
+    width: 99.8%;
 }
 
 .page-header h1 {
@@ -3869,10 +3866,8 @@ div.submit_input {
 
 .theme_accordion_container{
     float: left;
-    /* margin: 7px; */
     margin: 1px;
-    width: 98.95%;
-    /* border-radius:5px; */
+    width: 99.6%;
 }
 
 .accordion_head{
@@ -4111,7 +4106,7 @@ div.submit_input {
 .appInfoScrollDiv {
 	overflow-y: auto; 
 	overflow-x: hidden; 
-	height: 90%;
+	height: 87%;
 }
 
 .featuresScrollDiv {
@@ -5464,7 +5459,7 @@ input[class*='chckBxAlign'] {
 .content_adder {
 	height: 83%;
 	overflow-y: auto;
-	padding-top: 0px;
+	padding-top: 5px;
 	width: 100%;
 	overflow-x: hidden;
 }
@@ -5514,6 +5509,14 @@ input[class*='chckBxAlign'] {
     padding-right: 10px;
 }
 
+.accordion-control-label {
+	float: left;
+	width: 30%;
+    padding-right: 10px;
+	padding-top: 5px;
+	text-align: right;
+}
+
 .inputs-list {
 	list-style: none;
 }
@@ -5542,4 +5545,28 @@ input[class*='chckBxAlign'] {
 	clear: both;
 	line-height: 0;
 	height: 0;
+}
+
+.vAlignMiddle {
+	vertical-align: middle !important;
+}
+
+.vAlignSub {
+	vertical-align: sub !important;
+}
+
+.buildTypeSpan {
+	margin-right: 5px !important;
+}
+
+.noBorder {
+	border: none;
+}
+
+.autoWidth {
+	width: auto !important;
+}
+
+.weblayerTabel {
+	margin-left: 24%;
 }

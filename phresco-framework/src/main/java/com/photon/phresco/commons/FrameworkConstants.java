@@ -917,8 +917,8 @@ public interface FrameworkConstants {
     String ERROR_ENV_DUPLICATE = "Environment {0} already exists";
     String ERROR_DUPLICATE_ENV_IN_SETTINGS = "Environment {0} already exists in global settings";
     String ERROR_NO_CONFIG = "environment.config.not.available";
-    String ERROR_NAME = "Name is missing";
-    String ERROR_CODE = "Code is missing";
+    String ERROR_NAME = "err.msg.empty.name";
+    String ERROR_CODE = "err.msg.empty.code";
     String ERROR_ENV = "Environment is missing";
     String CLONE_CONFIG_STATUS = "cloneConfigStatus";
     String ERROR_ENV_REMOVE = "Environment {0} is already in use";

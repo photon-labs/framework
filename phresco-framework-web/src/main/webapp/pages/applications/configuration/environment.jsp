@@ -37,8 +37,8 @@
 	<div class="control-group">
 		<s:label key="lbl.name" cssClass="control-label labelbold modallbl-color" theme="simple"/>
 		<div class="controls">
-			<input type="text" name="envName" id="envName" class="span3"  placeholder="<s:text name='lbl.place.holder.name'/>" 
-			maxlength="30" title="<s:text name='lbl.title.30.chars'/>" />
+			<input type="text" name="envName" id="envName" class="span3"  placeholder="<s:text name='place.hldr.env.name'/>" 
+			maxlength="30" title="<s:text name='title.30.chars'/>" />
 		</div>
 	</div>
 	
@@ -48,7 +48,7 @@
 		</label>
 		<div class="controls">
 			<textarea placeholder="<s:text name='place.hldr.configTemp.add.desc'/>" class="input-xlarge" 
-				name="envDesc" maxlength="150" title="<s:text name='lbl.title.150.chars'/>" placeholder="<s:text name='lbl.place.holder.desc'/>">
+				name="envDesc" maxlength="150" title="<s:text name='title.150.chars'/>" placeholder="<s:text name='place.hldr.env.desc'/>">
 			</textarea>
 			<input type="button" value="<s:text name='lbl.btn.add'/>" tabindex=3 id="add" class="btn btn-primary addButton">
 		</div>
