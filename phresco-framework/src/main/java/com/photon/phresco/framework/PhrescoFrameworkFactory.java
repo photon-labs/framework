@@ -19,6 +19,10 @@
  */
 package com.photon.phresco.framework;
 
+import java.io.File;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.api.CIManager;
@@ -103,13 +107,14 @@ public class PhrescoFrameworkFactory {
         return applicationManager;
     }
 
-    public static ConfigManager getConfigManager() throws PhrescoException {
+    public static ConfigManager getConfigManager(File configFile) throws PhrescoException {
         if (configManager == null) {
-        	configManager = (ConfigManager) constructClass(CONFIG_MANAGER_IMPL);
+            configManager = (ConfigManager) constructClass(CONFIG_MANAGER_IMPL, new Object[] { configFile });
         }
 
         return configManager;
     }
+
     
     public static CIManager getCIManager() throws PhrescoException {
         if (ciManager == null) {
@@ -144,6 +149,36 @@ public class PhrescoFrameworkFactory {
         } catch (InstantiationException e) {
             throw new PhrescoException(e);
         } catch (IllegalAccessException e) {
+            throw new PhrescoException(e);
+        }
+    }
+    
+    /**
+     * 
+     * @param className
+     * @param params
+     * @return
+     * @throws PhrescoException
+     */
+    private static Object constructClass(String className, Object[] params) throws PhrescoException {
+        try {
+            Class<?> c = Class.forName(CONFIG_MANAGER_IMPL);
+            Constructor<?> constructor = c.getConstructor(c.getClass());
+            return constructor.newInstance(params);
+
+        } catch (ClassNotFoundException e) {
+            throw new PhrescoException(e);
+        } catch (SecurityException e) {
+            throw new PhrescoException(e);
+        } catch (NoSuchMethodException e) {
+            throw new PhrescoException(e);
+        } catch (IllegalArgumentException e) {
+            throw new PhrescoException(e);
+        } catch (InstantiationException e) {
+            throw new PhrescoException(e);
+        } catch (IllegalAccessException e) {
+            throw new PhrescoException(e);
+        } catch (InvocationTargetException e) {
             throw new PhrescoException(e);
         }
     }

@@ -1035,6 +1035,15 @@ a {
 	display: none;
 }
 
+.alert-block {
+    font-weight: bold;
+    margin-left: 5px;
+    margin-right: 5px;
+    padding-bottom: 5px;
+    padding-top: 6px;
+    text-align: center;
+}
+
 /*welcome start*/
 .intro_container {
     height: auto;
@@ -5274,12 +5283,12 @@ a[id='androidSigning']:hover {
 	cursor : pointer;
 }
 
-.hide {
+/*.hide {
 	display: none;
 	float: left;
 	margin-left:4px;
 	cursor : pointer;
-}
+}*/
 
 #compNameText {
 	float:left;

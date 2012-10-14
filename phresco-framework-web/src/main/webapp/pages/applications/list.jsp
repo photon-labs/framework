@@ -45,11 +45,14 @@
 		<input type="button" class="btn btn-primary" name="configTemplate_add" id="configtempAdd" 
 	         onclick="loadContent('applicationDetails', $('#formProjectList'), $('#container'));" 
 		         value="<s:text name='lbl.projects.add'/>"/>
+		         
 		<input type="button" class="btn btn-primary" name="configTemplate_add" id="configtempAdd" 
 	         onclick="loadContent('configtempAdd', $('#formProjectList'), $('#subcontainer'));" 
 		         value="<s:text name='lbl.applications.import'/>"/>
+		         
 		<input type="button" class="btn" id="del" disabled value="<s:text name='lbl.delete'/>"
 			onclick="showDeleteConfirmation('<s:text name='lbl.delete'/>');"/>
+			
 		<s:if test="hasActionMessages()">
 			<div class="alert alert-success alert-message" id="successmsg" >
 				<s:actionmessage />
@@ -64,7 +67,7 @@
 	
 	<% if (CollectionUtils.isEmpty(projects)) { %>
 		<div class="alert alert-block">
-			<s:text name='alert.msg.configTemp.not.available'/>
+			<s:text name='lbl.err.msg.list.project'/>
 		</div>
     <% } else { %>	
 		<div class="table_div">

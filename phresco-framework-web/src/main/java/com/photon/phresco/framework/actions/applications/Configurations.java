@@ -42,6 +42,7 @@ import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
+import com.photon.phresco.framework.api.ConfigManager;
 import com.photon.phresco.framework.api.Project;
 import com.photon.phresco.framework.api.ProjectAdministrator;
 import com.photon.phresco.framework.commons.FrameworkUtil;
@@ -61,6 +62,10 @@ public class Configurations extends FrameworkBaseAction {
     
     private static final Logger S_LOGGER = Logger.getLogger(Configurations.class);
     private static Boolean debugEnabled  = S_LOGGER.isDebugEnabled();
+    
+    private String projectId;
+    private String customerId;
+    
     private String configName = null;
     private String description = null;
     private String oldName = null;
@@ -103,18 +108,18 @@ public class Configurations extends FrameworkBaseAction {
         
 		Project project = null;
     	try {
-            ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-            project = administrator.getProject(projectCode);
-            List<Environment> environments = administrator.getEnvironments(project);
-            getHttpRequest().setAttribute(ENVIRONMENTS, environments);
-            List<SettingsInfo> configurations = administrator.configurations(project);
-            for (SettingsInfo configuration : configurations) {
-            	List<PropertyInfo> propertyInfos = configuration.getPropertyInfos();
-            	for (PropertyInfo propertyInfo : propertyInfos) {
-					propertyInfo.getValue();
-				}
-            }
-            getHttpRequest().setAttribute(REQ_CONFIGURATION, configurations);
+//    	    ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+//    	    applicationManager.getApplicationInfo(customerId, projectId, appId);
+    	    
+    	    
+    	    File file = new File("/Users/bharatkumarradha/Documents/Builds/1.2/phresco-framework/workspace/projects/service/phresco-service-web/src/main/resources/phresco-env-config.xml"); 
+            ConfigManager configManager = PhrescoFrameworkFactory.getConfigManager(file);
+//            configManager.get
+//            project = administrator.getProject(projectCode);
+//            List<Environment> environments = administrator.getEnvironments(project);
+//            configManager.getEnvironments(names);
+//            getHttpRequest().setAttribute(ENVIRONMENTS, environments);
+//            List<SettingsInfo> configurations = administrator.configurations(project);
             String cloneConfigStatus = getHttpRequest().getParameter(CLONE_CONFIG_STATUS); 
             if (cloneConfigStatus != null) {
             	addActionMessage(getText(ENV_CLONE_SUCCESS));
@@ -798,12 +803,11 @@ public class Configurations extends FrameworkBaseAction {
     public String openEnvironmentPopup() {
     	ProjectAdministrator administrator;
 		try {
-			administrator = getProjectAdministrator();
+			/*administrator = getProjectAdministrator();
 			Project project = administrator.getProject(projectCode);
-			List<Environment> enviroments = administrator.getEnvironments(project);
+			List<Environment> enviroments = administrator.getEnvironments(project);*/
+		    List<Environment> enviroments = new ArrayList<Environment>();
 			getHttpRequest().setAttribute(ENVIRONMENTS, enviroments);
-		} catch (PhrescoException e) {
-			
 		} catch (Exception e) {
 		}
     	return APP_ENVIRONMENT;
@@ -1163,4 +1167,20 @@ public class Configurations extends FrameworkBaseAction {
 	public void setFlag(boolean flag) {
 		this.flag = flag;
 	}
+
+    public String getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(String projectId) {
+        this.projectId = projectId;
+    }
+
+    public String getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(String customerId) {
+        this.customerId = customerId;
+    }
 }

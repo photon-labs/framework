@@ -51,6 +51,7 @@
 		<!-- Pop Up box -->
 		<script type="text/javascript" src="js/bootstrap-modal.js"></script>
 		<script type="text/javascript" src="js/bootstrap-transition.js"></script>
+		<!--<script type="text/javascript" src="js/bootstrap.js"></script>-->
 
 		<!-- right panel scroll bar -->
 		<script type="text/javascript" src="js/home.js"></script>
@@ -87,7 +88,9 @@
 		<script type="text/javascript" src="js/delete.js" ></script>
 		<script type="text/javascript" src="js/loading.js"></script>
 		<script type="text/javascript" src="js/reader.js" ></script>
-		<script type="text/javascript" src="js/windowResizer.js"></script><!-- Window Resizer -->
+		
+		<!-- Window Resizer -->
+		<script type="text/javascript" src="js/windowResizer.js"></script>
 		
 		
 		<script type="text/javascript">

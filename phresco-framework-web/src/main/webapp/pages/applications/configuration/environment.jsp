@@ -33,7 +33,7 @@
    	List<Environment> envInfoValues = (List<Environment>) request.getAttribute(FrameworkConstants.ENVIRONMENTS);
 %>
 
-<div class="popup_Modal" style="top: 40%;">
+<!--<div class="popup_Modal" style="top: 40%;">
 	<div class="modal-header">
 		<h3 id="generateBuildTitle">
 			<s:text name="label.environment"/>
@@ -42,7 +42,7 @@
 	</div>
 
 	<div class="modal-body" style="height: 230px;">
-		<div class="clearfix">
+-->		<div class="clearfix">
 			<label for="xlInput" class="xlInput popup-label" ><span class="red">*</span> <s:text name="label.name"/></label>
 			<div class="input">
 				<input type="text" id="envName" name="envName" tabindex=1 class="xlarge" maxlength="30" title="30 Characters only">	
@@ -77,7 +77,7 @@
 				</div>
 			</fieldset>
 		</form>
-	</div>
+<!--	</div>
 	
 	<div class="modal-footer">
 		<div class="action popup-action">
@@ -86,12 +86,14 @@
             
 			<div id="errMsg" class="envErrMsg"></div>
 			<div id="reportMsg" class="envErrMsg"></div>
-<!-- 			error and success message -->
+
 			<div class="popup alert-message success" id="popupSuccessMsg"></div>
 			<div class="popup alert-message error" id="popupErrorMsg"></div>
 		</div>
 	</div>
-</div>
+</div>-->
+
+
 <!-- selectedEnvs hidden field will be updated with the newly added environments after clicking the Add button -->
 <input type="hidden" id="selectedEnvs" name="selectedEnvs" value="">
 <input type="hidden" id="deletableItems" name="deletableItems" value="">
