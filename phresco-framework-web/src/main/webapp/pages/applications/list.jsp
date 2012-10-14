@@ -65,11 +65,7 @@
 	
 	<% if (CollectionUtils.isEmpty(projects)) { %>
 		<div class="alert alert-block">
-<<<<<<< HEAD
 			<s:text name='lbl.err.msg.list.project'/>
-=======
-			<s:text name='alert.msg.project.not.available'/>
->>>>>>> 02cbc926af090add9ae36e905ad0f8bfddee33cd
 		</div>
     <% } else { %>	
 		<div class="table_div">
