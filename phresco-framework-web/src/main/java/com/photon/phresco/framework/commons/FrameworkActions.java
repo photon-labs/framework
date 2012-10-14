@@ -83,6 +83,7 @@ public interface FrameworkActions {
     String APP_GENERATE_JMETER_LOAD = "generateJmeterLoad";
     String APP_DOWNLOAD = "download";
     String APP_APPLICATION_DETAILS = "applicationDetails";
+    String APP_MENU = "appMenu";
     String APP_APPINFO = "appinfo";
     String APP_APPLICATION = "application";
     String APP_VALIDATE_FRAMEWORK = "validateFramework";

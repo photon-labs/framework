@@ -25,7 +25,6 @@
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 
 <!--  Heading Starts -->
-<%
     String fromPage = (String) request.getAttribute(FrameworkConstants.REQ_FROM_PAGE);
     if (StringUtils.isEmpty(fromPage)) {
         fromPage = "";

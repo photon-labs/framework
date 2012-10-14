@@ -21,6 +21,10 @@
 Width <= 1024
 *************************************************************************************/
 @media screen and (max-width : 1024px) {
+	label, input, button, select, textarea {
+		font-size: 12px;
+	}
+
 	/* header starts */
 	
 	.app_list_form {
@@ -48,7 +52,7 @@ Width <= 1024
 	
 	#container {
 	    z-index: 15004;
-	    width: 94%
+	    width: 94%;
 	    height: 85%;
 	}
 	
@@ -153,7 +157,6 @@ Width <= 1024
 		overflow-y: auto;
 		position: relative;
 		height: 87.5%;
-		/* max-height: 87%; */
 	}
 	
 	.featuresScrollDiv {
@@ -3160,7 +3163,7 @@ Width > 1441 and <= 1600
 	}
 	
 	.build_progress_div {
-	    float: left;
+	    float: right;
 	    height: 93%;
 	    margin-left: 0;
 	    margin-top: 0;

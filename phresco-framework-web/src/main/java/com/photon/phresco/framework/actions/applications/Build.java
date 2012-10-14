@@ -176,8 +176,7 @@ public class Build extends FrameworkBaseAction {
 			S_LOGGER.debug("Entering Method  Build.view()");
 
 		try {
-		    System.out.println("prjectCode:::" + projectCode);
-			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
+		   	ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
 			Project project = administrator.getProject(projectCode);
 			List<BuildInfo> builds = administrator.getBuildInfos(project);
 			getHttpRequest().setAttribute(REQ_SELECTED_APP_TYPE, project.getApplicationInfo().getTechInfo().getVersion());

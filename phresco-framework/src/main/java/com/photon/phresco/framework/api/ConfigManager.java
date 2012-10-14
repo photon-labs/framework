@@ -54,5 +54,12 @@ public interface ConfigManager {
 	 * @throws ConfigurationException
 	 */
 	void deleteEnvironment(String envName) throws ConfigurationException;
+	
+	/**
+	 * Get All The Environments
+	 * @return
+	 * @throws ConfigurationException
+	 */
+	List<Environment> getEnvironments() throws ConfigurationException;
 
 }

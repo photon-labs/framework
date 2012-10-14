@@ -324,14 +324,14 @@ public interface ProjectAdministrator {
 
     void deleteBuildInfos(Project project, int[] buildNumbers) throws PhrescoException;
 
-    List<VideoInfo> getVideoInfos() throws PhrescoException;
-
-    /**
-     * Returns all the videos for the given Thumbnail image name
-     * @return
-     * @throws PhrescoException
-     */
-    List<VideoType> getVideoTypes(String name) throws PhrescoException;
+//    List<VideoInfo> getVideoInfos() throws PhrescoException;
+//
+//    /**
+//     * Returns all the videos for the given Thumbnail image name
+//     * @return
+//     * @throws PhrescoException
+//     */
+//    List<VideoType> getVideoTypes(String name) throws PhrescoException;
 
     /**
      * Returns the core modules specified under the given technology
@@ -346,14 +346,6 @@ public interface ProjectAdministrator {
      * @return list of custom modules
      */
     List<ArtifactGroup> getCustomModules(Technology technology);
-
-    /**
-     * Authenticates the user credentials and returns the user information
-     * @param credentials
-     * @return
-     * @throws PhrescoException
-     */
-    User doLogin(Credentials credentials) throws PhrescoException;
 
     /**
      * To get the server download infos for the given customer and the techid

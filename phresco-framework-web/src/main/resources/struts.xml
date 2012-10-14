@@ -99,12 +99,23 @@
         </action>
         
         <!--  Applications action -->
-        <action name="applicationDetails" method="applicationDetails" class="com.photon.phresco.framework.actions.applications.Applications">
-            <!--  <result name="applicationDetails">/pages/applications/application.jsp</result>-->
-            <result name="applicationDetails">/pages/applications/menu.jsp</result>
+        <action name="projectDetails" method="projectDetails" class="com.photon.phresco.framework.actions.applications.Applications">
+            <result name="applicationDetails">/pages/applications/add.jsp</result>
         </action>
         
-        <action name="appinfo" method="appInfo" class="com.photon.phresco.framework.actions.applications.Applications">
+        <action name="getServers" method="fetchServers" class="com.photon.phresco.framework.actions.applications.Applications">
+            <result type="json"/>
+        </action>
+        
+        <action name="createProject" method="createProject" class="com.photon.phresco.framework.actions.applications.Applications">
+			<result name="list">/pages/applications/list.jsp</result>
+        </action>
+        
+        <action name="loadMenu" method="loadMenu" class="com.photon.phresco.framework.actions.applications.Applications">
+            <result name="appMenu">/pages/applications/menu.jsp</result>
+        </action>
+        
+       	<action name="appInfo" method="editApplication" class="com.photon.phresco.framework.actions.applications.Applications">
             <result name="appinfo">/pages/applications/appinfo.jsp</result>
         </action>
         

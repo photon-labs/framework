@@ -83,7 +83,6 @@ import com.photon.phresco.framework.api.CIManager;
 import com.photon.phresco.framework.api.Project;
 import com.photon.phresco.framework.api.ProjectAdministrator;
 import com.photon.phresco.framework.api.ValidationResult;
-import com.photon.phresco.framework.api.Validator;
 import com.photon.phresco.framework.model.BuildInfo;
 import com.photon.phresco.framework.model.CIBuild;
 import com.photon.phresco.framework.model.CIJob;
@@ -631,26 +630,6 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
         
         return customerProjects;
     }
-
-	 @Override
-     public User doLogin(Credentials credentials) throws PhrescoException {
-         S_LOGGER.debug("Entering Method ProjectAdministratorImpl.doLogin(Credentials credentials)");
-
-         try {
-             String userName = credentials.getUsername();
-             String password = credentials.getPassword();
-             ServiceContext context = new ServiceContext();
-             FrameworkConfiguration configuration = PhrescoFrameworkFactory.getFrameworkConfig();
-             context.put(SERVICE_URL, configuration.getServerPath());
-             context.put(SERVICE_USERNAME, userName);
-             context.put(SERVICE_PASSWORD, password);
-             serviceManager = ServiceClientFactory.getServiceManager(context);
-         } catch (Exception ex) {
-             S_LOGGER.error(ex.getLocalizedMessage());
-             throw new PhrescoException(ex);
-         }
-         return serviceManager.getUserInfo();
-     }
 
 	 @Override
 	 public List<DownloadInfo> getServerDownloadInfos(String customerId, String techId) throws PhrescoException {
@@ -1499,28 +1478,28 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 }
 	 }
 
-	 @Override
-	 public List<VideoInfo> getVideoInfos() throws PhrescoException {
-		 try {
-			 return getServiceManager().getVideoInfos();
-		 } catch (ClientHandlerException ex) {
-			 S_LOGGER.error(ex.getLocalizedMessage());
-			 throw new PhrescoException(ex);
-		 }
-	 }
-
-	 @Override
-	 public List<VideoType> getVideoTypes(String name) throws PhrescoException {
-		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.getVideoTypes(String name)");
-		 List<VideoInfo> videoInfos = getVideoInfos();
-		 for (VideoInfo videoInfo : videoInfos) {
-			 S_LOGGER.debug("getVideoTypes() Name = "+name);
-			 if(videoInfo.getName().equals(name)) {
-				 return videoInfo.getVideoList();
-			 }
-		 }
-		 return null;
-	 }
+//	 @Override
+//	 public List<VideoInfo> getVideoInfos() throws PhrescoException {
+//		 try {
+//			 return getServiceManager().getVideoInfos();
+//		 } catch (ClientHandlerException ex) {
+//			 S_LOGGER.error(ex.getLocalizedMessage());
+//			 throw new PhrescoException(ex);
+//		 }
+//	 }
+//
+//	 @Override
+//	 public List<VideoType> getVideoTypes(String name) throws PhrescoException {
+//		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.getVideoTypes(String name)");
+//		 List<VideoInfo> videoInfos = getVideoInfos();
+//		 for (VideoInfo videoInfo : videoInfos) {
+//			 S_LOGGER.debug("getVideoTypes() Name = "+name);
+//			 if(videoInfo.getName().equals(name)) {
+//				 return videoInfo.getVideoList();
+//			 }
+//		 }
+//		 return null;
+//	 }
 
 	 @Override
 	 public List<ArtifactGroup> getCoreModules(Technology technology) {

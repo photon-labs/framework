@@ -157,6 +157,10 @@ div.lgnBtnLabel {
 	margin: 5px 5px 5px 6px;
 }
 
+.operation.build{
+	height: 21px;
+}
+
 .customer_list {
 	height: 98%;
 	margin: 0;
@@ -767,6 +771,11 @@ a {
 	position: absolute;
 	width: 218px;
 	z-index: 3;
+}
+
+/* label */
+.labelbold {
+  font-weight:bold;
 }
 
 .headerInnerTop li {
@@ -3821,7 +3830,8 @@ div.submit_input {
 }
 
 .lft_menus_container{
-    width:99.5%;
+    /* width:99.5%; */
+    width: 100.5%;
     float:left;
 }
 
@@ -5368,3 +5378,87 @@ input[class*='chckBxAlign'] {
 	margin-top:8px;
 }
 /* css for dynamic params ends*/
+	
+/* moved from admin ui starts */
+.content_adder {
+	height: 83%;
+	overflow-y: auto;
+	padding-top: 0px;
+	width: 100%;
+	overflow-x: hidden;
+}
+/* for multi select  */
+.multilist-scroller {
+	overflow-y: auto;
+	height: 100%;
+	width: 100%;
+	background-color: #fff;
+	border-radius: 3px;
+	width: 301px;
+}
+
+.multiselect {
+	height: 95px;
+	width: 290px;
+}
+
+.multilist-scroller ul {
+	list-style-type: none;
+	margin: 0;
+	padding: 5px;
+}
+
+.multilist-scroller ul li {
+	color: #000;
+	padding: 0 5px;
+}
+
+.multilist-scroller input.check {
+	margin: 3px 8px 6px 0;
+}
+
+.multilist-scroller input.checkall {
+	margin: 3px 8px 6px 0;
+}
+
+/* moved from admin ui ends */
+
+/*new css for 2.0 starts*/
+.projOperation {
+	height: 20px;
+}
+
+.form-horizontal .control-label {
+    width: 31%;
+    padding-right: 10px;
+}
+
+.inputs-list {
+	list-style: none;
+}
+
+.accordianChkBox {
+	margin-right:5px !important; 
+}
+
+/*new css for 2.0 starts*/
+
+
+.alert-message.success.build {
+	margin-top: 5px;
+	left: 21%; 
+}
+
+.build_table_div {
+    margin-top: 5px;
+    border-radius: 6px 6px 6px 6px;
+    margin-left: 6px;
+    margin-right: 6px;
+	height:98%;
+}
+
+.clear {
+	clear: both;
+	line-height: 0;
+	height: 0;
+}

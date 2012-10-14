@@ -1447,3 +1447,8 @@ table tr {
 	color: #000000;
 	text-decoration: none;
 }
+
+/* moved from admin ui */
+.mandatory {
+	color: red;
+}

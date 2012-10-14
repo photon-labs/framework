@@ -57,6 +57,7 @@ import com.photon.phresco.commons.model.ApplicationType;
 import com.photon.phresco.commons.model.DownloadInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.Technology;
+import com.photon.phresco.commons.model.TechnologyInfo;
 import com.photon.phresco.commons.model.WebService;
 import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.PhrescoException;
@@ -64,8 +65,10 @@ import com.photon.phresco.framework.FrameworkConfiguration;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.SVNAccessor;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
+import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.api.Project;
 import com.photon.phresco.framework.api.ProjectAdministrator;
+import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.framework.api.ValidationResult;
 import com.photon.phresco.framework.commons.ApplicationsUtil;
 import com.photon.phresco.framework.commons.DiagnoseUtil;
@@ -129,12 +132,25 @@ public class Applications extends FrameworkBaseAction {
 	private String customerId = "";
 	
 	private String applicationType = "";
-	private String technology = "";
 	
 	boolean hasError = false;
     private String envError = "";
+    
+    private List<DownloadInfo> servers = null;
+    
+    private List<String> layers = null;
+	private String projectName = "";
+	private String projectDesc = "";
+    private String projectVersion = "";
+    private List<String> projectWebservices = null;
+    private List<String> projectDatabases = null;
+    private List<String> projectServers = null;
+    private String technology = "";
+    
+    private String projectId = "";
+	private String appId = "";
 	
-    /**
+	/**
      * To get the list of projects
      * @return
      */
@@ -143,32 +159,130 @@ public class Applications extends FrameworkBaseAction {
 		    S_LOGGER.debug("Entering Method  Applications.list()");
 		}
 		
-		setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
-        removeSessionAttribute(projectCode);
-		return discover();
+		try {
+			ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
+			List<ProjectInfo> projects = projectManager.discover("photon");
+			setReqAttribute(REQ_PROJECTS, projects);
+			setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
+	        removeSessionAttribute(projectCode);
+		} catch (PhrescoException e) {
+			S_LOGGER.error("Entered into catch block of Applications.list()" + FrameworkUtil.getStackTraceAsString(e));
+			return showErrorPopup(e, "Listing projects");
+		}
+		
+        return APP_LIST;
 	}
-
-	public String applicationDetails() {
+    
+	public String projectDetails() {
 	    if (s_debugEnabled) {
 	        S_LOGGER.debug("Entering Method  Applications.applicationDetails()");
 	    }
-
+	    
 		try {
-		    setReqAttribute(REQ_FROM_PAGE, getHttpRequest().getParameter(REQ_FROM_PAGE));
-	        if (StringUtils.isNotEmpty(projectCode)) {
-    			removeSessionAttribute(projectCode);
-    			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-			    ApplicationInfo appInfo = administrator.getProject(projectCode).getApplicationInfo();
-				setReqAttribute(REQ_APPINFO, appInfo);
-				setReqAttribute(REQ_FROM_PAGE, fromPage);
-            }
+			List<Technology> technologies = getServiceManager().getArcheTypes(getCustomerId());
+			setReqAttribute(REQ_ALL_TECHNOLOGIES, technologies);
 		} catch (PhrescoException e) {
 			return showErrorPopup(e, REQ_TITLE_ADD_APPLICATION);
 		}
 		
 		return APP_APPLICATION_DETAILS;
 	}
+	
+	/**
+	 * To get the servers for the given customerid and techId 
+	 * @return
+	 */
+	public String fetchServers() {
+		if (s_debugEnabled) {
+	        S_LOGGER.debug("Entering Method  Applications.getServers");
+	    }
+		
+		try {
+			setReqAttribute(REQ_CUSTOMER_ID, getCustomerId());
+			setServers(getServiceManager().getServers(getCustomerId(), getTechnology()));
+		} catch (PhrescoException e) {
+			// TODO Auto-generated catch block
+		}
+		
+		return SUCCESS;
+	}
+	
+	public String createProject() {
+		if (s_debugEnabled) {
+	        S_LOGGER.debug("Entering Method  Applications.createProject()");
+	    }
+		
+		try {
+			PhrescoFrameworkFactory.getProjectManager().create(getProjectInfo(), getServiceManager());
+		} catch (PhrescoException e) {
+			// TODO: handle exception
+		}
+		
+		return list();
+	}
+	
+	private ProjectInfo getProjectInfo() {
+		ProjectInfo projectInfo = new ProjectInfo();
+		projectInfo.setNoOfApps(3);
+		projectInfo.setName(getProjectName());
+		projectInfo.setVersion(getProjectVersion());
+		projectInfo.setDescription(getProjectDesc());
+		projectInfo.setProjectCode(getProjectCode());
+		List<String> customerIds = new ArrayList<String>();
+		customerIds.add("photon");
+		projectInfo.setCustomerIds(customerIds);
+		List<ApplicationInfo> appInfos = new ArrayList<ApplicationInfo>();
+		appInfos.add(getAppInfo(getProjectCode() + "1", "tech-php"));
+		appInfos.add(getAppInfo(getProjectCode() + "2", "tech-php"));
+		appInfos.add(getAppInfo(getProjectCode() + "3", "tech-php"));
+		projectInfo.setAppInfos(appInfos);
+		
+		return projectInfo;
+	}
 
+	private ApplicationInfo getAppInfo(String dirName, String techId) {
+		ApplicationInfo applicationInfo = new ApplicationInfo();
+		TechnologyInfo techInfo = new TechnologyInfo();
+		techInfo.setVersion(techId);
+		applicationInfo.setTechInfo(techInfo);
+		applicationInfo.setAppDirName(dirName);
+		
+		return applicationInfo;
+	}
+	
+	public String loadMenu() {
+		if (s_debugEnabled) {
+	        S_LOGGER.debug("Entering Method  Applications.loadMenu()");
+	    }
+		try {
+			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+			ApplicationInfo applicationInfo = applicationManager.getApplicationInfo(getCustomerId(), getProjectId(), getAppId());
+			setReqAttribute(REQ_CURRENT_APP_NAME, applicationInfo.getName());
+			setReqAttribute(REQ_PROJECT_ID, getProjectId());
+			setReqAttribute(REQ_APP_ID, getAppId());
+		} catch(Exception e) {
+			// TODO: handle exception
+		}
+		
+		return APP_MENU;
+	}
+	
+	public String editApplication() {
+		if (s_debugEnabled) {
+	        S_LOGGER.debug("Entering Method  Applications.editAppInfo()");
+	    }
+		
+		try {
+			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+			ApplicationInfo applicationInfo = applicationManager.getApplicationInfo(getCustomerId(), getProjectId(), getAppId());
+			setReqAttribute(REQ_APPINFO, applicationInfo);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		
+		return APP_APPINFO;
+	}
+	
 	public String appInfo() {
 	    if (s_debugEnabled) {
 	        S_LOGGER.debug("Entering Method  Applications.appInfo()");
@@ -861,8 +975,8 @@ public class Applications extends FrameworkBaseAction {
 	    }
 	    
 		try {
-			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-			List<Project> projects = administrator.discover(Collections.singletonList(new File(Utility.getProjectHome())));
+			ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
+			List<ProjectInfo> projects = projectManager.discover("photon");
 			setReqAttribute(REQ_PROJECTS, projects);
 		} catch (PhrescoException e) {
 			S_LOGGER.error("Entered into catch block of Applications.discover()" + FrameworkUtil.getStackTraceAsString(e));
@@ -883,7 +997,7 @@ public class Applications extends FrameworkBaseAction {
 		        } else {
 		            envError = getText(NO_SETTINGS_ENV);
 		        }
-		    } 
+		    }
 		} catch (PhrescoException e) {
 		    return showErrorPopup(e, "Show Settings");
 		}
@@ -1630,4 +1744,84 @@ public class Applications extends FrameworkBaseAction {
     public void setTechnology(String technology) {
         this.technology = technology;
     }
+    
+    public List<DownloadInfo> getServers() {
+		return servers;
+	}
+
+	public void setServers(List<DownloadInfo> servers) {
+		this.servers = servers;
+	}
+	
+	public String getProjectName() {
+		return projectName;
+	}
+
+	public void setProjectName(String projectName) {
+		this.projectName = projectName;
+	}
+
+	public String getProjectDesc() {
+		return projectDesc;
+	}
+
+	public void setProjectDesc(String projectDesc) {
+		this.projectDesc = projectDesc;
+	}
+
+	public String getProjectVersion() {
+		return projectVersion;
+	}
+
+	public void setProjectVersion(String projectVersion) {
+		this.projectVersion = projectVersion;
+	}
+
+	public List<String> getProjectWebservices() {
+		return projectWebservices;
+	}
+
+	public void setProjectWebservices(List<String> projectWebservices) {
+		this.projectWebservices = projectWebservices;
+	}
+
+	public List<String> getProjectDatabases() {
+		return projectDatabases;
+	}
+
+	public void setProjectDatabases(List<String> projectDatabases) {
+		this.projectDatabases = projectDatabases;
+	}
+
+	public List<String> getProjectServers() {
+		return projectServers;
+	}
+
+	public void setProjectServers(List<String> projectServers) {
+		this.projectServers = projectServers;
+	}
+	
+	public List<String> getLayers() {
+		return layers;
+	}
+
+	public void setLayers(List<String> layers) {
+		this.layers = layers;
+	}
+	
+	public String getProjectId() {
+		return projectId;
+	}
+
+	public void setProjectId(String projectId) {
+		this.projectId = projectId;
+	}
+
+	public String getAppId() {
+		return appId;
+	}
+
+	public void setAppId(String appId) {
+		this.appId = appId;
+	}
 }

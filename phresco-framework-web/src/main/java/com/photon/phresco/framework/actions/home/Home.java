@@ -47,8 +47,7 @@ public class Home extends FrameworkBaseAction implements FrameworkActions {
 		}
 
 	    try {
-			ProjectAdministrator projectAdministrator = getProjectAdministrator();
-			List<VideoInfo> videoInfos = projectAdministrator.getVideoInfos();
+			List<VideoInfo> videoInfos = getServiceManager().getVideoInfos();
 			FrameworkConfiguration configuration = PhrescoFrameworkFactory.getFrameworkConfig();
 			getHttpRequest().setAttribute(REQ_SERVER_URL, configuration.getServerPath());
 			getHttpRequest().setAttribute(REQ_VIDEO_INFOS, videoInfos);
@@ -68,10 +67,10 @@ public class Home extends FrameworkBaseAction implements FrameworkActions {
 		try {
 			String videoName = getHttpRequest().getParameter(REQ_VIDEO);
 			ProjectAdministrator projectAdministrator = getProjectAdministrator();
-			List<VideoType> videoTypes = projectAdministrator.getVideoTypes(videoName);
+//			List<VideoType> videoTypes = projectAdministrator.getVideoTypes(videoName);
 			FrameworkConfiguration configuration = PhrescoFrameworkFactory.getFrameworkConfig();
 			getHttpRequest().setAttribute(REQ_SERVER_URL, configuration.getServerPath());
-			getHttpRequest().setAttribute(REQ_VIDEO_TYPES, videoTypes);
+//			getHttpRequest().setAttribute(REQ_VIDEO_TYPES, videoTypes);
 		} catch (PhrescoException e) {
 			e.printStackTrace();
 		}

@@ -80,12 +80,12 @@
 
 <!--  Form Starts -->
 <form id="formAppInfo" autocomplete="off" class="app_add_form" autofocus="autofocus">
-    <div class="appInfoScrollDiv">           
+    <div class="appInfoScrollDiv">          
 		<!--  Name Starts -->
-		<div class="clearfix <%=request.getAttribute(FrameworkConstants.REQ_NAME)!= null ? "error" : "" %>" id="nameErrDiv">
-		    <label for="xlInput" class="xlInput new-xlInput"><span class="red">*</span> <s:text name="label.name"/></label>
-		    <div class="input new-input">
-		        <input class="xlarge" id="name" name="name" maxlength="30" title="30 Characters only"
+		<div class="control-group <%=request.getAttribute(FrameworkConstants.REQ_NAME)!= null ? "error" : "" %>" id="nameErrDiv">
+		    <label class="control-label labelbold"><span class="red">*</span> <s:text name="label.name"/></label>
+		    <div class="controls">
+		        <input class="input-xlarge" id="name" name="name" maxlength="30" title="30 Characters only"
 		            type="text"  value ="<%= selectedInfo == null ? "" : selectedInfo.getName() %>" 
 		            autofocus="autofocus" placeholder="<s:text name="label.name.placeholder"/>" <%= disabled %> />
 		        <span class="help-inline" id="nameErrMsg">
@@ -96,39 +96,40 @@
 		<!--  Name Ends -->
 	
 		<!--  Code Starts -->
-		<div class="clearfix">
-		    <label for="xlInput" class="xlInput new-xlInput"><s:text name="label.code"/></label>
-		    <div class="input new-input">
+		<div class="control-group">
+		    <label class="control-label labelbold"><s:text name="label.code"/></label>
+		    <div class="controls">
 		        <input type="hidden" id="code" name="code" value="<%= selectedInfo == null ? codePrefix : selectedInfo.getCode() %>" />
 		        <%-- <input class="xlarge" id="internalCode" name="internalCode"
 		            type="text"  value ="<%= selectedInfo == null ? codePrefix : selectedInfo.getCode() %>" disabled /> --%>
-				<input class="xlarge" id="externalCode" name="externalCode"
+				<input class="input-xlarge" id="externalCode" name="externalCode"
 		            type="text" maxlength="12" value ="<%= externalCode %>" title="12 Characters only" placeholder="<s:text name="label.code.placeholder"/>"/>
 		    </div>
 		</div>
 		<!--  Code Ends -->
 	                    
 		<!--  Description Starts -->
-		<div class="clearfix">
-		    <s:label for="description" key="label.description" theme="simple" cssClass="new-xlInput"/>
-		    <div class="input new-input">
-		        <textarea class="appinfo-desc xxlarge" maxlength="150" title="150 Characters only" class="xxlarge" id="textarea" name="description"
+		<div class="control-group">
+		    <s:label key="label.description" theme="simple" cssClass="control-label labelbold"/>
+		    <div class="controls">
+		        <textarea class="appinfo-desc input-xxlarge" maxlength="150" title="150 Characters only" class="xxlarge" id="textarea" name="description"
 		        	placeholder="<s:text name="label.description.placeholder"/>"><%= selectedInfo == null ? "" : selectedInfo.getDescription() %></textarea>
 		    </div>
 		</div>
 		<!--  Description Ends -->
 		
 		<!--  Version Starts -->
-		<div class="clearfix">
-		    <s:label for="version" key="label.project.version" theme="simple" cssClass="new-xlInput"/>
-		    <div class="input new-input">
-				<input class="xlarge" id="projectVersion" name="projectVersion" maxlength="20" title="20 Characters only"
+		<div class="control-group">
+		    <s:label key="label.project.version" theme="simple" cssClass="control-label labelbold"/>
+		    <div class="controls">
+				<input class="input-xlarge" id="projectVersion" name="projectVersion" maxlength="20" title="20 Characters only"
 					type="text"  value ="<%= StringUtils.isEmpty(fromPage) ? "1.0.0" : projectVersion %>"/>
 		    </div>
 		</div>
 		<!--  Version Ends -->
 		
-		<!--  Application Type Starts-->
+		<!-- TODO: Need to handle -->
+		<%-- <!--  Application Type Starts-->
 		<div class="clearfix">
 		    <div class="input new-input">
 		        <ul class="inputs-list">
@@ -150,7 +151,7 @@
 		            </li>
 		        </ul>
 		    </div>
-		</div>
+		</div> --%>
 		<!--  Application Type Ends-->
 	                    
 		<!--  Dependecies are loaded -->
@@ -159,8 +160,8 @@
 	
     <!--  Submit and Cancel buttons Starts -->
     <div class="actions">
-        <input id="next" type="submit" value="<s:text name="label.next"/>" class="primary btn createProject_btn">
-        <input type="button" id="cancel" value="<s:text name="label.cancel"/>" class="primary btn">
+        <input id="next" type="submit" value="<s:text name="label.next"/>" class="btn btn-primary">
+        <input type="button" id="cancel" value="<s:text name="label.cancel"/>" class="btn btn-primary">
     </div>
     <!--  Submit and Cancel buttons Ends -->
     

@@ -18,51 +18,21 @@
   ###
   --%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
-<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
 
 <%@ page import="java.util.List"%>
-<%@ page import="java.util.ArrayList"%>
-<%@ page import="java.util.Collection"%>
-<%@ page import="java.util.Iterator"%>
+
 <%@ page import="org.apache.commons.lang.StringUtils"%>
 
 <%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
-<%@ page import="com.photon.phresco.util.TechnologyTypes" %>
-<%@ page import="com.photon.phresco.util.Utility" %>
-<%@ page import="com.photon.phresco.framework.model.BuildInfo"%>
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
-<%@ page import="com.photon.phresco.framework.commons.NodeJSUtil" %>
+<%@ page import="com.photon.phresco.framework.model.BuildInfo"%>
+<%@ page import="com.photon.phresco.util.TechnologyTypes" %>
 
 <script type="text/javascript" src="js/delete.js" ></script>
 <script type="text/javascript" src="js/confirm-dialog.js" ></script>
 <script type="text/javascript" src="js/loading.js" ></script>
 <script type="text/javascript" src="js/home-header.js" ></script>
 <script type="text/javascript" src="js/reader.js" ></script>
-
-<style type="text/css">
-    .btn.success, .alert-message.success {
-        margin-top: 5px;
-        left: 21%; 
-    }
-    
-    .table_div {
-    	margin-top: 5px;
-    } 
-    
-    .build_table_div {
-	    margin-top: 5px;
-	    border-radius: 6px 6px 6px 6px;
-	    margin-left: 6px;
-	    margin-right: 6px;
-		height:98%;
-	}
-    
-    /* .build_detail_div {
-    	margin-top:5px;
-    } */
-    
-    
-</style>
 
 <%
     String technology = null;
@@ -117,12 +87,17 @@
 </div>
 
 <form action="deleteBuild" method="post" autocomplete="off" id="deleteObjects" class="build_form">
-    <div class="operation">
+    <div class="operation build">
+    	<div class="icon_div">
+			<a href="#" id="openFolder"><img id="folderIcon" src="images/icons/open-folder.png" title="Open folder" /></a>
+			<a href="#" id="copyPath"><img src="images/icons/copy-path.png" title="Copy path"/></a>
+		</div>
+			
 		<div class="build_delete_btn_div">
-		    <input id="generatebtn" type="button" value="<s:text name="label.generatebuild"/>" class="primary btn env_btn">
-		    <input id="deleteButton" type="button" value="<s:text name="label.delete"/>" class="btn disabled" disabled="disabled"/>
-		</div> 
-		<div class="runagint_source";>
+		    <input id="generatebtn" type="button" value="<s:text name="label.generatebuild"/>" class="btn btn-primary">
+		    <input id="deleteButton" type="button" value="<s:text name="label.delete"/>" class="btn" disabled="disabled"/>
+		</div>
+		<div class="runagint_source">
 		<%
 			if(TechnologyTypes.NODE_JS_WEBSERVICE.equals(technology)) {
 		%>
@@ -143,12 +118,8 @@
 				<input id="restartbtn" type="button" value="<s:text name="label.restart"/>" class="btn disabled" onclick="restartServer();"/>
 			</div>		
 		<% } %>
-		
-			<div class="icon_div">
-				<a href="#" id="openFolder"><img id="folderIcon" src="images/icons/open-folder.png" title="Open folder" /></a>
-				<a href="#" id="copyPath"><img src="images/icons/copy-path.png" title="Copy path"/></a>
-			</div>
 		</div>
+		<div class="clear"></div>
 	</div>
 
 	<div class="buildDiv">
@@ -219,10 +190,8 @@
     	
         if (($('#database option').length == 0) && ($('#server option').length == 0)) {
                  $('#buildbtn').prop("disabled", true);
-        }       
-        $('#deleteButton').removeClass("btn primary");
-        $('#deleteButton').addClass("btn disabled");
-        $('#deleteButton').attr("disabled", true);
+        }
+        
         $('#showSettings').click(function(){
             $('.build_form').attr("action", "buildView");
             $('.build_form').submit();
