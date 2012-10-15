@@ -36,8 +36,9 @@
    <% } else { 
 		sonarPath = (String) request.getAttribute(FrameworkConstants.REQ_SONAR_PATH);
    %>
-		<iframe src="" frameBorder="0" class="iframe_container"></iframe>
-   <% } %>
+		 <iframe src="" frameBorder="0" class="iframe_container"></iframe>
+		
+	<% } %>
 	
 <script>
 	var localstore = $("link[title='phresco']").attr("href");
@@ -46,8 +47,32 @@
 	$(document).ready(function() {
 	    reloadIframe();
 	    $(".styles").click(function() {
-	        reloadIframe('$('iframe')','<%= sonarPath %>');
+	        reloadIframe();
 	    });
 	});
+	
+	function reloadIframe() {
+		var theme = localStorage["color"];
+	    if(theme == null || theme == undefined || theme == "undefined" || theme == "null" || theme == "themes/photon/css/red.css") {
+	         theme = "themes/photon/css/red.css";
+	    }
+	    
+	    var source = "";
+	     <% 
+	    	if (TechnologyTypes.IPHONES.contains(technology)) { 
+	    %>
+	    	source = "<%= sonarPath %>";
+	    <% } else { %>
+	    	source = "<%= sonarPath %>?css=" + theme;
+		<%	
+	    	} 
+	    %> 
+	    iframe.attr({
+	        src: source
+	    }); 
+	    iframe.load(function() {
+	        $(".loadingIcon").hide();
+	    });
+	}
 	
 </script>
