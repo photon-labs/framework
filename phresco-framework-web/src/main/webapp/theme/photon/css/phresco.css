@@ -411,7 +411,7 @@ a {
 .shortcut_bottom {
 	height: 38px;
 	bottom: -5px;
-	margin-top: 3px;
+	margin-top: -3px;
 	position: relative;
 	width: 100%;
 }
@@ -2133,16 +2133,6 @@ input, select, textarea {
     margin-top: -25px;
 }
 
-.about {
-    position: absolute;
-    z-index: 60001;
-    display:block;
-    margin: 0 auto; 
-    left: 50%;
-    top: 50%;
-    margin-left: -280px;
-    margin-top: -160px;
-}
 
 .exceptionErrors {
 	display:none;
@@ -4136,6 +4126,10 @@ div.submit_input {
 	height:100%;
 }
 
+#validateAgainst {
+	margin-bottom: 0px;
+}
+
 .iframe_container_forum {
 	width:93.5%;
 	height:100%;
@@ -5089,11 +5083,25 @@ ul#display-inline-block-example li {
     margin-top: -34px;
 }
 
+.sonarWarning {
+	margin-left: 478px;
+	margin-top: -33px;
+	width: 31%;
+	height: 15px;
+}
+
 .sonarLabelWarn {
 	color:#000000;
     padding: 0;
     width: 100%;
+    margin-top: -25px;
     text-align: center;
+    font-weight: bold;
+}
+
+#warning_icon {
+	margin-left: -162px;
+    margin-top: -5px;
 }
 
 

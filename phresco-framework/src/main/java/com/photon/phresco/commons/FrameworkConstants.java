@@ -404,6 +404,7 @@ public interface FrameworkConstants {
     String REQ_NODEJS_SERVER_LOG = "NodeJsServerLog";
     String REQ_PROJECT = "project";
     String REQ_PROJECT_CODE = "projectCode";
+    String REQ_APP_INFO = "applicationInfo";
     String REQ_PROJECT_LOCATION = "projectLocation";
     String REQ_SELECTED_TAB = "selectedTab";
     String REQ_SELECTED_MENU = "selectedHeader";

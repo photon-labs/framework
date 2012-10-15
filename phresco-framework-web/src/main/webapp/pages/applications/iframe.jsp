@@ -21,7 +21,8 @@
 <%@ page import="com.photon.phresco.util.TechnologyTypes" %>
 
 <%
-	String error = (String) request.getAttribute(FrameworkConstants.REQ_ERROR);
+	//String error = (String) request.getAttribute(FrameworkConstants.REQ_ERROR);
+	String error = null;	  
 	String technology = (String)request.getAttribute(FrameworkConstants.REQ_TECHNOLOGY);
 		  
 	String sonarPath = "";
@@ -57,7 +58,7 @@
 	    }
 	    
 	    var source = "";
-	    <% 
+	     <% 
 	    	if (TechnologyTypes.IPHONES.contains(technology)) { 
 	    %>
 	    	source = "<%= sonarPath %>";
@@ -65,12 +66,13 @@
 	    	source = "<%= sonarPath %>?css=" + theme;
 		<%	
 	    	} 
-	    %>
-	    $("iframe").attr({
+	    %> 
+	    iframe.attr({
 	        src: source
-	    });
-	    $('iframe').load(function() {
+	    }); 
+	    iframe.load(function() {
 	        $(".loadingIcon").hide();
 	    });
 	}
+	
 </script>

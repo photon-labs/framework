@@ -50,8 +50,8 @@
 <script>
 	var popupHeight = -(($(".popup_Modal").height()/2)-4);
 	$(".popup_Modal").css("margin-top", popupHeight +"px");
-	escPopup();
-	function closePopup() {
+	//escPopup();
+	function closePopup(){
 		$(".wel_come").show().css("display","none");
 	   	$("#build-outputOuter").hide();
 	}

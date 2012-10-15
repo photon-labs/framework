@@ -1177,5 +1177,4 @@ public class Configurations extends FrameworkBaseAction {
 	public void setFlag(boolean flag) {
 		this.flag = flag;
 	}
-
 }
