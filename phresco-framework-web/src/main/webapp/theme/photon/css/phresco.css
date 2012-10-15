@@ -5563,6 +5563,28 @@ input[class*='chckBxAlign'] {
 	width: auto !important;
 }
 
-.weblayerTabel {
-	margin-left: 24%;
+.float-left {
+	float: left;
+}
+
+.float-right {
+	float: right;
+}
+
+.align-in-row {
+	float: left;
+	margin-right: 30px;
+}
+
+.align-div-center {
+	margin: auto;
+	width: 50%;
+}
+
+.align-in-row.width {
+	width: 13%;
+}
+
+.bottom-space {
+	padding-bottom: 34px;
 }

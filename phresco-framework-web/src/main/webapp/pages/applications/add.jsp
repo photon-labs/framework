@@ -40,32 +40,33 @@
 <div class="appInfoScrollDiv">
 	<form id="formCreateProject" autocomplete="off" class="form-horizontal app_create_project" autofocus="autofocus">
 	<div class="content_adder">
-		<!--  Name Starts -->
-		<div class="control-group" id="nameControl">
+		<!-- Name Starts -->
+		<div class="control-group" id="projectNameControl">
 			<label class="control-label labelbold">
 				<span class="mandatory">*</span>&nbsp;<s:text name='lbl.name' />
 			</label>
 			<div class="controls">
 				<input placeholder="<s:text name="place.hldr.proj.add.name"/>" class="input-xlarge" type="text" 
 					name="projectName" maxlength="30" title="<s:text name="title.30.chars"/>">
-				<span class="help-inline" id="nameError"></span>
+				<span class="help-inline" id="projectNameError"></span>
 			</div>
 		</div>
-		<!--  Name Ends -->
+		<!-- Name Ends -->
 		
-		<!--  Code Starts -->
-		<div class="control-group">
+		<!-- Code Starts -->
+		<div class="control-group" id="projectCodeControl">
 			<label class="control-label labelbold">
 				<span class="mandatory">*</span>&nbsp;<s:text name='label.code' />
 			</label>
 			<div class="controls">
 				<input placeholder='<s:text name="place.hldr.proj.add.code"/>' class="input-xlarge" type="text" 
 					name="projectCode" maxlength="12" title="<s:text name="title.12.chars"/>">
+				<span class="help-inline" id="projectCodeError"></span>
 			</div>
 		</div>
-		<!--  Code Ends -->
+		<!-- Code Ends -->
 		
-		<!--  Description Starts -->
+		<!-- Description Starts -->
 		<div class="control-group">
 			<label class="control-label labelbold"><s:text name='label.description' />
 			</label>
@@ -74,9 +75,9 @@
 					rows="3" name="projectDesc" maxlength="150" title="<s:text name="title.150.chars"/>"></textarea>
 			</div>
 		</div>
-		<!--  Description Ends -->
+		<!-- Description Ends -->
 		
-		<!--  Version Starts -->
+		<!-- Version Starts -->
 		<div class="control-group">
 			<label class="control-label labelbold"><s:text name='label.project.version' />
 			</label>
@@ -85,9 +86,9 @@
 					placeholder='<s:text name="place.hldr.proj.add.version"/>' maxlength="20" title="<s:text name="title.20.chars"/>">
 			</div>
 		</div>
-		<!--  Version Starts -->
+		<!-- Version Starts -->
 		
-		<!--  PreBuild/Build it myself Starts -->
+		<!-- PreBuild/Build it myself Starts -->
 		<div class="control-group">
 			<label class="control-label labelbold"></label>
 			<div class="controls">
@@ -101,7 +102,7 @@
 				</ul>
 			</div>
 		</div>
-		<!--  PreBuild/Build it myself ends -->
+		<!-- PreBuild/Build it myself ends -->
 	
 		<!-- Application layer accordion starts -->
 		<div class="theme_accordion_container">
@@ -150,46 +151,39 @@
 						<div class="mfbox siteinnertooltiptxt">
 							<div class="scrollpanel">
 								<section class="scrollpanel_inner">
-									<div>
-										<table class="weblayerTabel">
-											<tr>
-												<td class="noBorder">
-													<label class="control-label autoWidth">
-														<s:text name='lbl.projects.layer.web'/>
-													</label>
-												</td>
-												<td class="noBorder">
-													<select class="input-medium">
-														<option value=""> --select-- </option>
-														<option value="html5"> HTML5 </option>
-													</select>
-												</td>
-												<td class="noBorder">
-													<label class="control-label autoWidth">
-														<s:text name='lbl.projcts.add.widget'/>
-													</label>
-												</td>
-												<td class="noBorder">
-													<select class="input-medium">
-														<option value=""> --select-- </option>
-														<option value="yui"> YUI</option>
-														<option value="jquery"> Jquery </option>
-													</select>
-												</td>
-												<td class="noBorder">
-													<label class="control-label autoWidth">
-														<s:text name='lbl.version'/>
-													</label>
-												</td>
-												<td class="noBorder">
-													<select class="input-medium">
-														<option value=""> --select-- </option>
-														<option value="1.0"> 1.0 </option>
-														<option value="1.1"> 1.2 </option>
-													</select>
-												</td>
-											</tr>
-										</table>
+									<div class="align-div-center">
+										<div class="align-in-row">
+											<label class="control-label autoWidth">
+												<s:text name='lbl.projects.layer.web'/>
+											</label>
+										
+											<select class="input-medium">
+												<option value=""> --select-- </option>
+												<option value="html5"> HTML5 </option>
+											</select>
+										</div>
+										<div class="align-in-row">
+											<label class="control-label autoWidth">
+												<s:text name='lbl.projcts.add.widget'/>
+											</label>
+										
+											<select class="input-medium">
+												<option value=""> --select-- </option>
+												<option value="yui"> YUI</option>
+												<option value="jquery"> Jquery </option>
+											</select>
+										</div>
+										<div class="float-left">
+											<label class="control-label autoWidth">
+												<s:text name='lbl.version'/>
+											</label>
+										
+											<select class="input-medium">
+												<option value=""> --select-- </option>
+												<option value="1.0"> 1.0 </option>
+												<option value="1.1"> 1.2 </option>
+											</select>
+										</div>
 									</div>
 								</section>
 							</div>
@@ -214,124 +208,128 @@
 						<div class="mfbox siteinnertooltiptxt">
 							<div class="scrollpanel">
 								<section class="scrollpanel_inner">
-									<table  class="weblayerTabel">
-										<tr>
-											<td class="noBorder">
-												<input type="checkbox"/>
-												<span class="vAlignSub">&nbsp;iOS </span>
-											</td>
-											<td class="noBorder">
-												<select class="input-medium">
-													<option value=""> --version-- </option>
-													<option value="1.0"> 4.2 </option>
-													<option value="1.0"> 5.1 </option>
-													<option value="1.0"> 6.0 </option>
-												</select>
-											</td>
-											<td class="noBorder">
-												<select class="input-medium">
-													<option value=""> --select-- </option>
-													<option value="Hybrid"> Hybrid </option>
-													<option value="Native"> Native </option>
-												</select>
-											</td>
-											<td class="noBorder">
-												<input type="checkbox"/>
-												<span class="vAlignSub">&nbsp;iPhone</span>
-											</td>
-											<td class="noBorder">
-												<input type="checkbox"/>
-												<span class="vAlignSub">&nbsp;iPad</span>
-											</td>
-										</tr>
-										<tr>
-											<td class="noBorder">
-												<input type="checkbox"/>
-												<span class="vAlignSub">&nbsp;Android </span>
-											</td>
-											<td class="noBorder">
-												<select class="input-medium">
-													<option value=""> --version-- </option>
-													<option value="1.0"> 2.3 </option>
-													<option value="1.0"> 3.0 </option>
-													<option value="1.0"> 4.0 </option>
-													<option value="1.0"> 4.1 </option>
-												</select>
-											</td>
-											<td class="noBorder">
-												<select class="input-medium">
-													<option value=""> --select-- </option>
-													<option value="Hybrid"> Hybrid </option>
-													<option value="Native"> Native </option>
-												</select>
-											</td>
-											<td class="noBorder">
-												<input type="checkbox"/>
-												<span class="vAlignSub">&nbsp;Phone</span>
-											</td>
-											<td class="noBorder">
-												<input type="checkbox"/>
-												<span class="vAlignSub">&nbsp;Tablet</span>
-											</td>
-										</tr>
-										<tr>
-											<td class="noBorder">
-												<input type="checkbox"/>
-												<span class="vAlignSub">&nbsp;Windows </span>
-											</td>
-											<td class="noBorder">
-												<select class="input-medium">
-													<option value=""> --version-- </option>
-													<option value="1.0"> 7.0 </option>
-													<option value="1.0"> 8.0 </option>
-												</select>
-											</td>
-											<td class="noBorder">
-												<select class="input-medium">
-													<option value=""> --select-- </option>
-													<option value="Hybrid"> Hybrid </option>
-													<option value="Native"> Native </option>
-												</select>
-											</td>
-											<td class="noBorder">
-												<input type="checkbox"/>
-												<span class="vAlignSub">&nbsp;Phone</span>
-											</td>
-											<td class="noBorder">
-												<input type="checkbox"/>
-												<span class="vAlignSub">&nbsp;Tablet</span>
-											</td>
-										</tr>
-										<tr>
-											<td class="noBorder">
-												<input type="checkbox"/>
-												<span class="vAlignSub">&nbsp;BlackBerry </span>
-											</td>
-											<td class="noBorder">
-												<select class="input-medium">
-													<option value=""> --version-- </option>
-													<option value="1.0"> 5.0 </option>
-													<option value="1.0"> 6.1 </option>
-													<option value="1.0"> 7.1 </option>
-												</select>
-											</td>
-											<td class="noBorder">
-												<select class="input-medium">
-													<option value=""> --select-- </option>
-													<option value="Hybrid"> Hybrid </option>
-													<option value="Native"> Native </option>
-												</select>
-											</td>
-											<td class="noBorder">
-												<input type="checkbox"/>
-												<span class="vAlignSub">&nbsp;Phone</span>
-											</td>
-											<td class="noBorder">
-												<input type="checkbox"/>
-												<span class="vAlignSub">&nbsp;Tablet</span>
-											</td>
-										</tr>
-									</table>
+									<div class="align-div-center bottom-space">
+										<div class="align-in-row width">
+											<input type="checkbox"/>
+											<span class="vAlignSub">&nbsp;iOS </span>
+										</div>
+										<div class="align-in-row">
+											<select class="input-medium">
+												<option value=""> --version-- </option>
+												<option value="1.0"> 4.2 </option>
+												<option value="1.0"> 5.1 </option>
+												<option value="1.0"> 6.0 </option>
+											</select>
+										</div>
+										<div class="align-in-row">
+											<select class="input-medium">
+												<option value=""> --select-- </option>
+												<option value="Hybrid"> Hybrid </option>
+												<option value="Native"> Native </option>
+											</select>
+										</div>
+										<div class="align-in-row width">
+											<input type="checkbox"/>
+											<span class="vAlignSub">&nbsp;iPhone</span>
+										</div>
+										<div class="float-left">
+											<input type="checkbox"/>
+											<span class="vAlignSub">&nbsp;iPad</span>
+										</div>
+									</div>
+									<div class="clear"></div>
+									
+									<div class="align-div-center bottom-space">
+										<div class="align-in-row width">
+											<input type="checkbox"/>
+											<span class="vAlignSub">&nbsp;Android </span>
+										</div>
+										<div class="align-in-row">
+											<select class="input-medium">
+												<option value=""> --version-- </option>
+												<option value="1.0"> 2.3 </option>
+												<option value="1.0"> 3.0 </option>
+												<option value="1.0"> 4.0 </option>
+												<option value="1.0"> 4.1 </option>
+											</select>
+										</div>
+										<div class="align-in-row">
+											<select class="input-medium">
+												<option value=""> --select-- </option>
+												<option value="Hybrid"> Hybrid </option>
+												<option value="Native"> Native </option>
+											</select>
+										</div>
+										<div class="align-in-row width">
+											<input type="checkbox"/>
+											<span class="vAlignSub">&nbsp;Phone</span>
+										</div>
+										<div class="float-left">
+											<input type="checkbox"/>
+											<span class="vAlignSub">&nbsp;Tablet</span>
+										</div>
+									</div>
+									<div class="clear"></div>
+									
+									<div class="align-div-center bottom-space">
+										<div class="align-in-row width">
+											<input type="checkbox"/>
+											<span class="vAlignSub">&nbsp;Windows </span>
+										</div>
+										<div class="align-in-row">
+											<select class="input-medium">
+												<option value=""> --version-- </option>
+												<option value="1.0"> 7.0 </option>
+												<option value="1.0"> 8.0 </option>
+											</select>
+										</div>
+										<div class="align-in-row">
+											<select class="input-medium">
+												<option value=""> --select-- </option>
+												<option value="Hybrid"> Hybrid </option>
+												<option value="Native"> Native </option>
+											</select>
+										</div>
+										<div class="align-in-row width">
+											<input type="checkbox"/>
+											<span class="vAlignSub">&nbsp;Phone</span>
+										</div>
+										<div class="float-left">
+											<input type="checkbox"/>
+											<span class="vAlignSub">&nbsp;Tablet</span>
+										</div>
+									</div>
+									<div class="clear"></div>
+									
+									<div class="align-div-center">
+										<div class="align-in-row width">
+											<input type="checkbox"/>
+											<span class="vAlignSub">&nbsp;BlackBerry </span>
+										</div>
+										<div class="align-in-row">
+											<select class="input-medium">
+												<option value=""> --version-- </option>
+												<option value="1.0"> 5.0 </option>
+												<option value="1.0"> 6.1 </option>
+												<option value="1.0"> 7.1 </option>
+											</select>
+										</div>
+										<div class="align-in-row">
+											<select class="input-medium">
+												<option value=""> --select-- </option>
+												<option value="Hybrid"> Hybrid </option>
+												<option value="Native"> Native </option>
+											</select>
+										</div>
+										<div class="align-in-row width">
+											<input type="checkbox"/>
+											<span class="vAlignSub">&nbsp;Phone</span>
+										</div>
+										<div class="float-left">
+											<input type="checkbox"/>
+											<span class="vAlignSub">&nbsp;Tablet</span>
+										</div>
+									</div>
 								</section>
 							</div>
 						</div>
@@ -367,4 +365,18 @@
 			validate('createProject', $('#formCreateProject'), $("#container"), params);
 		});
 	});
+	
+	function findError(data) {
+		if (!isBlank(data.projectNameError)) {
+			showError($("#projectNameControl"), $("#projectNameError"), data.projectNameError);
+		} else {
+			hideError($("#projectNameControl"), $("#projectNameError"));
+		}
+		
+		if (!isBlank(data.projectCodeError)) {
+			showError($("#projectCodeControl"), $("#projectCodeError"), data.projectCodeError);
+		} else {
+			hideError($("#projectCodeControl"), $("#projectCodeError"));
+		}
+	}
 </script>

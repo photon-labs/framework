@@ -148,8 +148,8 @@ public class Applications extends FrameworkBaseAction {
     private String technology = "";
     
     private boolean errorFound = false;
-    private String projectNameErr = "";
-    private String projectCodeErr = "";
+    private String projectNameError = "";
+    private String projectCodeError = "";
     
     private String projectId = "";
 	private String appId = "";
@@ -219,7 +219,7 @@ public class Applications extends FrameworkBaseAction {
 		try {
 			PhrescoFrameworkFactory.getProjectManager().create(getProjectInfo(), getServiceManager());
 		} catch (PhrescoException e) {
-			// TODO: handle exception
+		    return showErrorPopup(e, EXCEPTION_CREATE_PROJECT);
 		}
 		
 		return list();
@@ -255,22 +255,22 @@ public class Applications extends FrameworkBaseAction {
 	}
 	
 	public String validateForm() {
-	    try {
-	        boolean hasError = false;
-            if (StringUtils.isEmpty(getProjectName())) {
-                setProjectNameErr(getText(ERROR_NAME));
-                hasError = true;
-            }
-            if (StringUtils.isEmpty(getProjectCode())) {
-                setProjectCodeErr(getText(ERROR_CODE));
-                hasError = true;
-            }
-            
-            if (hasError) {
-                setErrorFound(true);
-            }
-        } catch (Exception e) {
-            // TODO: handle exception
+	    if (s_debugEnabled) {
+            S_LOGGER.debug("Entering Method  Applications.validateForm()");
+        }
+	    
+	    boolean hasError = false;
+        if (StringUtils.isEmpty(getProjectName())) {
+            setProjectNameError(getText(ERROR_NAME));
+            hasError = true;
+        }
+        if (StringUtils.isEmpty(getProjectCode())) {
+            setProjectCodeError(getText(ERROR_CODE));
+            hasError = true;
+        }
+        
+        if (hasError) {
+            setErrorFound(true);
         }
         
         return SUCCESS;
@@ -280,6 +280,7 @@ public class Applications extends FrameworkBaseAction {
 		if (s_debugEnabled) {
 	        S_LOGGER.debug("Entering Method  Applications.loadMenu()");
 	    }
+		
 		try {
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			ApplicationInfo applicationInfo = applicationManager.getApplicationInfo(getCustomerId(), getProjectId(), getAppId());
@@ -1859,19 +1860,19 @@ public class Applications extends FrameworkBaseAction {
         this.errorFound = errorFound;
     }
 
-    public String getProjectNameErr() {
-        return projectNameErr;
+    public String getProjectNameError() {
+        return projectNameError;
     }
 
-    public void setProjectNameErr(String projectNameErr) {
-        this.projectNameErr = projectNameErr;
+    public void setProjectNameError(String projectNameErr) {
+        this.projectNameError = projectNameErr;
     }
     
-    public String getProjectCodeErr() {
-        return projectCodeErr;
+    public String getProjectCodeError() {
+        return projectCodeError;
     }
 
-    public void setProjectCodeErr(String projectCodeErr) {
-        this.projectCodeErr = projectCodeErr;
+    public void setProjectCodeError(String projectCodeErr) {
+        this.projectCodeError = projectCodeErr;
     }
 }

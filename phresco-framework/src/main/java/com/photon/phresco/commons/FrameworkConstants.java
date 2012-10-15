@@ -396,7 +396,7 @@ public interface FrameworkConstants {
      * Ex: REQ_XXX
      */
     String REQ_APPINFO	= "appInfo";
-	String REQ_TITLE_ADD_APPLICATION = "Add ApPlication";
+	String REQ_TITLE_ADD_APPLICATION = "Add Application";
     String REQ_BUILD_FROM = "from";
     String REQ_NODEJS_SERVER_LOG = "NodeJsServerLog";
     String REQ_PROJECT = "project";
@@ -1442,4 +1442,11 @@ public interface FrameworkConstants {
 		String _1024_768 = "1024*768";
 		String _320_480 = "320*480";
 		String REQ_RESOLUTIONS = "resolution";
+		
+		/*****************************
+	     * Error Report
+	     * I18N Keys Constants
+	     * String EXCEPTION_XXX
+	     *****************************/ 
+		String EXCEPTION_CREATE_PROJECT = "excep.hdr.proj.create";
 }
