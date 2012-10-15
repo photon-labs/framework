@@ -24,7 +24,7 @@
 <script type="text/javascript">
 	$(document).ready(function() {
 		var params = $('#formCustomers').serialize();
-		clickMenu($("a[name='appTab']"), $("#subcontainer"), params);
+		clickMenu($("a[name='appTab']"), $("#subcontainer"), $('#formAppMenu'), params);
 		loadContent("appInfo", $('#formAppMenu'), $("#subcontainer"), params);
 		activateMenu($("#appinfo"));
 	});
