@@ -69,6 +69,9 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
     private ProjectAdministrator projectAdministrator = null;
     private String path = null;
     private String copyToClipboard = null;
+    private String customerId = "";
+    private String projectId = "";
+    private String appId = "";
     
     private static ServiceManager serviceManager = null;
     
@@ -262,4 +265,29 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
 	public void setCopyToClipboard(String copyToClipboard) {
 		this.copyToClipboard = copyToClipboard;
 	}
+
+	public String getCustomerId() {
+	    return customerId;
+	}
+
+	public void setCustomerId(String customerId) {
+	    this.customerId = customerId;
+	}
+
+    public String getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(String projectId) {
+        this.projectId = projectId;
+    }
+
+    public String getAppId() {
+        return appId;
+    }
+
+    public void setAppId(String appId) {
+        this.appId = appId;
+    }
+
 }

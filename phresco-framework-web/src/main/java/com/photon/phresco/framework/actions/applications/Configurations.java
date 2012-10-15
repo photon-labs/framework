@@ -36,12 +36,14 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.opensymphony.xwork2.Action;
+import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.PropertyTemplate;
 import com.photon.phresco.commons.model.SettingsTemplate;
 import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
+import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.api.ConfigManager;
 import com.photon.phresco.framework.api.Project;
 import com.photon.phresco.framework.api.ProjectAdministrator;
@@ -62,9 +64,6 @@ public class Configurations extends FrameworkBaseAction {
     
     private static final Logger S_LOGGER = Logger.getLogger(Configurations.class);
     private static Boolean debugEnabled  = S_LOGGER.isDebugEnabled();
-    
-    private String projectId;
-    private String customerId;
     
     private String configName = null;
     private String description = null;
@@ -108,9 +107,12 @@ public class Configurations extends FrameworkBaseAction {
         
 		Project project = null;
     	try {
-//    	    ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-//    	    applicationManager.getApplicationInfo(customerId, projectId, appId);
-    	    
+    	    System.out.println("cust id " + getCustomerId());
+    	    System.out.println("project id " + getProjectId());
+    	    System.out.println("app id " + getAppId());
+    	    ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+    	    ApplicationInfo applicationInfo = applicationManager.getApplicationInfo(getCustomerId(), getProjectId(), getAppId());
+    	    String projectHome = Utility.getProjectHome();
     	    
     	    File file = new File("/Users/bharatkumarradha/Documents/Builds/1.2/phresco-framework/workspace/projects/service/phresco-service-web/src/main/resources/phresco-env-config.xml"); 
             ConfigManager configManager = PhrescoFrameworkFactory.getConfigManager(file);

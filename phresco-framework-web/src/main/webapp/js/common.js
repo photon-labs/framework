@@ -18,7 +18,7 @@
  * ###
  */
  
-function yesnoPopup(url, title, okLabel) {
+function yesnoPopup(url, title, params, okLabel) {
 	$("a[data-toggle=modal]").click(function() {
 		$('#popupTitle').html(title); // Title for the popup
 		$('#popupClose').hide();
@@ -27,7 +27,12 @@ function yesnoPopup(url, title, okLabel) {
 			$('#popupOk').html(okLabel); // label for the ok button 
 		}
 		
-		$('.modal-body').load(url); //url to render the body content for the popup
+		var data = "";
+		if (params !== undefined && !isBlank(params)) {
+			data = params; 
+		}
+		
+		$('.modal-body').load(url, data); //url to render the body content for the popup
 	});
 }
 

@@ -129,8 +129,6 @@ public class Applications extends FrameworkBaseAction {
 	// import from git
 	private String repoType = "";
 	
-	private String customerId = "";
-	
 	private String applicationType = "";
 	
 	boolean hasError = false;
@@ -264,6 +262,7 @@ public class Applications extends FrameworkBaseAction {
             setProjectNameError(getText(ERROR_NAME));
             hasError = true;
         }
+        
         if (StringUtils.isEmpty(getProjectCode())) {
             setProjectCodeError(getText(ERROR_CODE));
             hasError = true;
@@ -1748,14 +1747,6 @@ public class Applications extends FrameworkBaseAction {
 		this.repoType = repoType;
 	}
 	
-	public String getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(String customerId) {
-        this.customerId = customerId;
-    }
-    
     public String getApplicationType() {
         return applicationType;
     }
