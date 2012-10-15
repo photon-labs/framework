@@ -394,6 +394,30 @@ function copyToClipboard(data) {
 	});
 }
 
+function reloadIframe(iframe, source) {
+	var theme = localStorage["color"];
+    if(theme == null || theme == undefined || theme == "undefined" || theme == "null" || theme == "themes/photon/css/red.css") {
+         theme = "themes/photon/css/red.css";
+    }
+    
+    var source = "";
+     <% 
+    	if (TechnologyTypes.IPHONES.contains(technology)) { 
+    %>
+    	source = "<%= sonarPath %>";
+    <% } else { %>
+    	source = "<%= sonarPath %>?css=" + theme;
+	<%	
+    	} 
+    %> 
+    iframe.attr({
+        src: source
+    }); 
+    iframe.load(function() {
+        $(".loadingIcon").hide();
+    });
+}
+
 //trim the long content
 function textTrim(obj) {
     var val = $(obj).text();

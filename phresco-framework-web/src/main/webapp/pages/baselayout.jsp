@@ -189,16 +189,17 @@
 					<li class="usersettings">
 						<%= displayName %>
 						<img src="images/downarrow.png" class="arrow">
-                        <div class="userInfo">&nbsp;<s:label key="lbl.usrset.skins"  theme="simple"/>&nbsp;
+                        <div class="userInfo" >&nbsp;&nbsp;<s:text name="label.skins" />&nbsp;
                             <a class="styles" href="#"  rel="theme/photon/css/red.css">
 								<img src="images/red_themer.jpg" class="skinImage">
-							</a>
+							</a>&nbsp;
 							<a class="styles" href="#"  rel="theme/photon/css/blue.css">
 								<img src="images/blue_themer.jpg" class="skinImage">
 							</a>
                         </div>
-                        <div class="userInfo"><a href="#" class="abtPopUp about"><s:label key="lbl.usrset.abtservice"/></a></div>
-                        <div class="userInfo"><a href="<s:url action='admin/logout'/>" id="signOut"><s:label key="lbl.usrset.signout"/></a></div>
+                        <div class="userInfo"><a href="#" class="">&nbsp;&nbsp;<s:text name="lbl.hdr.help"/></a></div>
+                        <div class="userInfo"><a href="#" class="abtPopUp about">&nbsp;&nbsp;<s:text name="label.abt.phresco"/></a></div>
+                        <div class="userInfo"><a href="<s:url action='admin/logout'/>" id="signOut">&nbsp;<s:text name="label.signout"/></a></div>
 					</li>
 				</div>
 			</div>

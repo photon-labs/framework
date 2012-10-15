@@ -17,14 +17,15 @@
   limitations under the License.
   ###
   --%>
-<%@ taglib uri="/struts-tags" prefix="s"%>
 
-<%@ include file="progress.jsp" %>
+<%@ taglib uri="/struts-tags" prefix="s"%> 
 
 <%@ page import="java.util.List"%>
 <%@ page import="java.util.ArrayList"%>
 <%@ page import="java.util.Collection"%>
 <%@ page import="java.util.Iterator"%>
+
+<%@ include file="progress.jsp" %>
 
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.framework.api.Project" %>
@@ -32,18 +33,19 @@
 <%@ page import="com.photon.phresco.util.TechnologyTypes" %>
 <%@ page import="com.photon.phresco.framework.commons.ApplicationsUtil"%>
 <%@ page import="com.photon.phresco.framework.commons.PBXNativeTarget"%>
+<%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 
 <script src="js/reader.js" ></script>
-<script type="text/javascript" src="js/home-header.js" ></script>
-<script type="text/javascript" src="js/phresco/common.js"></script>
 
-<%
-    String projectCode = (String) request.getAttribute(FrameworkConstants.REQ_PROJECT_CODE);
-	Project project = (Project)request.getAttribute(FrameworkConstants.REQ_PROJECT);
-	String technology = (String)project.getApplicationInfo().getTechInfo().getVersion();
-	String sonarError = (String)request.getAttribute(FrameworkConstants.REQ_ERROR);
+ <%
+	ApplicationInfo applicationInfo = (ApplicationInfo)request.getAttribute(FrameworkConstants.REQ_APP_INFO);
+	String appId = (String)applicationInfo.getTechInfo().getAppTypeId();  
+	String technology = (String)applicationInfo.getTechInfo().getVersion();
+	//String sonarError = (String)request.getAttribute(FrameworkConstants.REQ_ERROR);
+	String sonarError = "error";
    	//xcode targets
-   	List<PBXNativeTarget> xcodeConfigs = (List<PBXNativeTarget>) request.getAttribute(FrameworkConstants.REQ_XCODE_CONFIGS);
+   	//List<PBXNativeTarget> xcodeConfigs = (List<PBXNativeTarget>) request.getAttribute(FrameworkConstants.REQ_XCODE_CONFIGS);
+   	
 	String disabledStr = "";
 	boolean isIphoneTech = false;
 	if (!TechnologyTypes.IPHONES.contains(technology) && StringUtils.isNotEmpty(sonarError)) {
@@ -52,12 +54,30 @@
 	if (TechnologyTypes.IPHONES.contains(technology)) {
 		isIphoneTech = true;
 	}
-%>
-<form action="check" id="check">
+%>  
+
+<form id="formCodeList" class="codeList">
 	<div class="operation">
-	    <input id="validate" type="button" value="Validate" class="btn primary" <%= disabledStr %>>
-		&nbsp;&nbsp;<strong id="lblType" class="noTestAvail"><s:text name="label.sonar.report"/></strong>&nbsp;
-		<select id="report" name="report">
+		<input type="button" class="btn btn-primary" name="validate" id="validate" 
+	         onclick="loadContent('code', $('#formCodeList'), $('#subcontainer'));" 
+		         value="<s:text name='label.validate'/>"/>&nbsp;&nbsp;
+		         <strong id="validateType" class="validateType"><s:text name="label.sonar.report"/></strong>&nbsp;
+		         <select id="validateAgainst" name="validateAgainst">
+		        <%--  <% if (TechnologyTypes.HTML5_WIDGET.equals(technology) || TechnologyTypes.HTML5_MOBILE_WIDGET.equals(technology) 
+				|| TechnologyTypes.HTML5.equals(technology) || TechnologyTypes.HTML5_JQUERY_MOBILE_WIDGET.equals(technology) 
+				|| TechnologyTypes.HTML5_MULTICHANNEL_JQUERY_WIDGET.equals(technology) || TechnologyTypes.JAVA_WEBSERVICE.equals(technology)) { %> --%>
+					<option value="java" ><s:text name="label.tech.java"/></option>
+					<option value="js" ><s:text name="label.tech.javascript"/></option>
+					<option value="web" ><s:text name="label.tech.jsp"/></option>
+					<%-- <% } else { %> --%>
+					<option value="source" ><s:text name="label.validateAgainst.source"/></option>
+					<%-- <% } %> --%>
+					<option value="functional" ><s:text name="label.validateAgainst.functionalTest"/></option>
+				</select>
+		         
+	   <%--  <input id="validate" type="button" value="Validate" class="btn primary" <%= disabledStr %>>
+		&nbsp;&nbsp;<strong id="lblType" class="noTestAvail"><s:text name="label.sonar.report"/></strong>&nbsp; --%>
+		<%-- <select id="report" name="report">
 		<% if (TechnologyTypes.HTML5_WIDGET.equals(technology) || TechnologyTypes.HTML5_MOBILE_WIDGET.equals(technology) 
 				|| TechnologyTypes.HTML5.equals(technology) || TechnologyTypes.HTML5_JQUERY_MOBILE_WIDGET.equals(technology) 
 				|| TechnologyTypes.HTML5_MULTICHANNEL_JQUERY_WIDGET.equals(technology) || TechnologyTypes.JAVA_WEBSERVICE.equals(technology)) { %>	
@@ -78,13 +98,16 @@
 				<option value="source" ><s:text name="label.validateAgainst.source"/></option>
 		<% 	} %>
 			<option value="functional" ><s:text name="label.funtional"/></option>
-		</select>
+		</select> --%>
 	</div>
-	<% if (!TechnologyTypes.IPHONES.contains(technology) && StringUtils.isNotEmpty(sonarError)) { %>
-		<div class="alert-message warning sonar">
+	 <% if (!TechnologyTypes.IPHONES.contains(technology) && StringUtils.isNotEmpty(sonarError)) { %>
+		<div class="alert alert-block sonarWarning">
+		<!-- 	<i class="icon-warning-sign"></i> -->
+			<img id="warning_icon" src="images/icons/warningIcon.png" />
 			<s:label cssClass="sonarLabelWarn" key="sonar.not.started" />
 		</div>
 	<% } %>
+	
 </form> 
 <div id="sonar_report" class="sonar_report">
 
@@ -93,15 +116,16 @@
 <script>
     $(document).ready(function() {
 		/** To enable/disable the validate button based on the sonar startup **/
-    	<% if (!TechnologyTypes.IPHONES.contains(technology) && StringUtils.isNotEmpty(sonarError)) { %>
+    	<%-- <% if (!TechnologyTypes.IPHONES.contains(technology) && StringUtils.isNotEmpty(sonarError)) { %>
     			$("#validate").removeClass("primary");	
     			$("#validate").addClass("disabled");
     	<% } else { %>
     			$("#validate").addClass("primary");	
 				  $("#validate").removeClass("disabled");
-    	<% } %>
+    	<% } %> --%>
 
-    	changeStyle("code");
+    	
+    	//changeStyle("code");
     	sonarReport();
     	enableScreen();
     	
@@ -109,7 +133,7 @@
 			getCodeValidatePopUp();
   		});
 		
-		$('#report').change(function() {
+		$('#validateAgainst').change(function() {
 			sonarReport();
   		});
   
@@ -128,7 +152,7 @@
     	$('#build-output').html("Validating code...");
 		$('#build-outputOuter').show().css("display","block");
 		$(".wel_come").show().css("display","block");
-		readerHandlerSubmit('progressValidate', '<%= projectCode %>', '<%= FrameworkConstants.REQ_SONAR_PATH %>');
+		readerHandlerSubmit('progressValidate', '<%= appId %>', '<%= FrameworkConstants.REQ_SONAR_PATH %>');
 	}
     
     function sonarReport() {
@@ -138,7 +162,6 @@
     
     function getCodeValidatePopUp() {
     	$('#popup_div').empty();
-		showPopup();
       	popup('getCodeValidatePopUp', '', $('#popup_div'));
     }
     

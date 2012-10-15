@@ -66,6 +66,7 @@ import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ApplicationType;
 import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.DownloadInfo;
+import com.photon.phresco.commons.model.DownloadInfo.Category;
 import com.photon.phresco.commons.model.LogInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.SettingsTemplate;
@@ -677,11 +678,11 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 	 }
 	 
 	 private List<DownloadInfo> filterDownloadInfos(String customerId, String techId, String category) throws PhrescoException {
-         List<DownloadInfo> allDownloadInfos = getServiceManager().getDownloads(customerId, techId);
+         List<DownloadInfo> allDownloadInfos = getServiceManager().getDownloads(customerId, techId, category);
          List<DownloadInfo> downloadInfos = new ArrayList<DownloadInfo>(); 
          if (CollectionUtils.isNotEmpty(allDownloadInfos)) {
              for (DownloadInfo downloadInfo : allDownloadInfos) {
-                 if (downloadInfo.getCategory().equals(category)) {
+                 if (downloadInfo.getCategory().equalsIgnoreCase(DownloadInfo.Category.valueOf(category).name())) {
                      downloadInfos.add(downloadInfo);
                  }
              }

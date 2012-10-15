@@ -1169,20 +1169,4 @@ public class Configurations extends FrameworkBaseAction {
 	public void setFlag(boolean flag) {
 		this.flag = flag;
 	}
-
-    public String getProjectId() {
-        return projectId;
-    }
-
-    public void setProjectId(String projectId) {
-        this.projectId = projectId;
-    }
-
-    public String getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(String customerId) {
-        this.customerId = customerId;
-    }
 }
