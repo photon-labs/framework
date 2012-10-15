@@ -23,10 +23,10 @@ import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
+import com.photon.phresco.commons.api.ConfigManager;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.api.CIManager;
-import com.photon.phresco.framework.api.ConfigManager;
 import com.photon.phresco.framework.api.ProjectAdministrator;
 import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.framework.api.ProjectRuntimeManager;
