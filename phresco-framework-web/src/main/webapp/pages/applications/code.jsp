@@ -58,7 +58,7 @@
 
 <form id="formCodeList" class="codeList">
 	<div class="operation">
-		<input type="button" class="btn btn-primary" name="validate" id="validate" 
+		<input type="button" class="btn disabled" name="validate" id="validate" 
 	         onclick="loadContent('code', $('#formCodeList'), $('#subcontainer'));" 
 		         value="<s:text name='label.validate'/>"/>&nbsp;&nbsp;
 		         <strong id="validateType" class="validateType"><s:text name="label.sonar.report"/></strong>&nbsp;
