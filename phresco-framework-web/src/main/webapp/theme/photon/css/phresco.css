@@ -2847,10 +2847,6 @@ fieldset {
 }
 /* For multiselect list box starts */
 
-.modal-header {
-	padding: 5px 3%;
-}
-
 .popuptable {
     border-bottom:none;
 }
