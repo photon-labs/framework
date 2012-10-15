@@ -678,7 +678,8 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 	 }
 	 
 	 private List<DownloadInfo> filterDownloadInfos(String customerId, String techId, String category) throws PhrescoException {
-         List<DownloadInfo> allDownloadInfos = getServiceManager().getDownloads(customerId, techId, category);
+         List<DownloadInfo> allDownloadInfos = new ArrayList<DownloadInfo>();
+         /*allDownloadInfos = getServiceManager().getDownloads(customerId, techId, category);
          List<DownloadInfo> downloadInfos = new ArrayList<DownloadInfo>(); 
          if (CollectionUtils.isNotEmpty(allDownloadInfos)) {
              for (DownloadInfo downloadInfo : allDownloadInfos) {
@@ -686,9 +687,9 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
                      downloadInfos.add(downloadInfo);
                  }
              }
-         }
+         }*/
          
-         return downloadInfos;
+         return allDownloadInfos;
     }
 	 
 	 /**
