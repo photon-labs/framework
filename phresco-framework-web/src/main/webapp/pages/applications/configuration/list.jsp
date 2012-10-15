@@ -164,9 +164,5 @@
 </form>
 
 <script type="text/javascript">
-	$("a[data-toggle=modal]").click(function() {
-		$('#popupTitle').html("<s:text name='lbl.environment'/>");
-		$('.modal-body').load('openEnvironmentPopup');
-	});
-
+	yesnoPopup('openEnvironmentPopup', "<s:text name='lbl.environment'/>");
 </script>

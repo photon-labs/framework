@@ -17,6 +17,31 @@
  * limitations under the License.
  * ###
  */
+ 
+function yesnoPopup(url, title, okLabel) {
+	$("a[data-toggle=modal]").click(function() {
+		$('#popupTitle').html(title); // Title for the popup
+		$('#popupClose').hide();
+	
+		if (okLabel !== undefined && !isBlank(okLabel)) {
+			$('#popupOk').html(okLabel); // label for the ok button 
+		}
+		
+		$('.modal-body').load(url); //url to render the body content for the popup
+	});
+}
+
+function progressPopup(url, title) {
+	$("a[data-toggle=modal]").click(function() {
+		if (title !== undefined && !isBlank(title)) {
+			$('#popupTitle').html(title);
+		}
+		$('#popupOk').hide();
+		$('#popupCancel').hide();
+		$('.modal-body').load(url);
+	});
+}
+
 function clickMenu(menu, tag, form) {
 	menu.click(function() {
 		showLoadingIcon(tag);
