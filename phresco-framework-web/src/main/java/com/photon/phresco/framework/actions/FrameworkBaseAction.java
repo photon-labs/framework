@@ -42,11 +42,13 @@ import org.apache.struts2.ServletActionContext;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
 import com.photon.phresco.commons.FrameworkConstants;
+import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.LogInfo;
 import com.photon.phresco.commons.model.User;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.FrameworkConfiguration;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
+import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.api.ProjectAdministrator;
 import com.photon.phresco.framework.commons.FrameworkActions;
 import com.photon.phresco.framework.commons.FrameworkUtil;
@@ -228,6 +230,20 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
             throw new PhrescoException(ex);
         }
         return serviceManager.getUserInfo();
+    }
+    
+    public ApplicationInfo getApplicationInfo() throws PhrescoException {
+        ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+        return applicationManager.getApplicationInfo(getCustomerId(), getProjectId(), getAppId());
+    }
+    public String getAppHome() throws PhrescoException {
+        StringBuilder builder = new StringBuilder(Utility.getProjectHome());
+        builder.append(getApplicationInfo().getAppDirName());
+        builder.append(File.separator);
+        builder.append(FOLDER_DOT_PHRESCO);
+        builder.append(File.separator);
+        builder.append(CONFIGURATION_INFO_FILE_NAME);
+        return builder.toString();
     }
     
     protected void setReqAttribute(String key, Object value) {

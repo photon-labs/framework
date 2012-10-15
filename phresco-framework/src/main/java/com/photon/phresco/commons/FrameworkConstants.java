@@ -364,6 +364,9 @@ public interface FrameworkConstants {
     String SETTINGS_FROM_TAB = "fromTab";
     String ENVIRONMENT_VALUES = "envs";  
     String DELETABLE_ENVS = "deletableEnvs";
+    String CONFIG_FILE_FAIL = "excep.hdr.config.fail.file";
+    String CONFIG_FAIL_ENVS = "excep.hdr.config.fail.envs";
+
     /*
      * Session Constants
      * Ex: SESSION_XXX

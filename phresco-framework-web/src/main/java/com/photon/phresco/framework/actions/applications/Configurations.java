@@ -36,14 +36,13 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.opensymphony.xwork2.Action;
-import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.PropertyTemplate;
 import com.photon.phresco.commons.model.SettingsTemplate;
 import com.photon.phresco.configuration.Environment;
+import com.photon.phresco.exception.ConfigurationException;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
-import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.api.ConfigManager;
 import com.photon.phresco.framework.api.Project;
 import com.photon.phresco.framework.api.ProjectAdministrator;
@@ -107,15 +106,7 @@ public class Configurations extends FrameworkBaseAction {
         
 		Project project = null;
     	try {
-    	    System.out.println("cust id " + getCustomerId());
-    	    System.out.println("project id " + getProjectId());
-    	    System.out.println("app id " + getAppId());
-    	    ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-    	    ApplicationInfo applicationInfo = applicationManager.getApplicationInfo(getCustomerId(), getProjectId(), getAppId());
-    	    String projectHome = Utility.getProjectHome();
-    	    
-    	    File file = new File("/Users/bharatkumarradha/Documents/Builds/1.2/phresco-framework/workspace/projects/service/phresco-service-web/src/main/resources/phresco-env-config.xml"); 
-            ConfigManager configManager = PhrescoFrameworkFactory.getConfigManager(file);
+    	    List<Environment> environments = getEnvironments();
 //            configManager.get
 //            project = administrator.getProject(projectCode);
 //            List<Environment> environments = administrator.getEnvironments(project);
@@ -136,6 +127,25 @@ public class Configurations extends FrameworkBaseAction {
         getHttpRequest().setAttribute(REQ_PROJECT, project);
         getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
         return APP_LIST;
+    }
+
+    /**
+     * @return 
+     * @throws PhrescoException
+     * @throws ConfigurationException
+     */
+    private List<Environment> getEnvironments() throws PhrescoException, ConfigurationException {
+        ConfigManager configManager = getConfigManager();
+        return configManager.getEnvironments();
+    }
+
+    /**
+     * @return
+     * @throws PhrescoException
+     */
+    private ConfigManager getConfigManager() throws PhrescoException {
+        File appDir = new File(getAppHome());
+        return PhrescoFrameworkFactory.getConfigManager(appDir);
     }
     
     public String add() {
@@ -803,15 +813,13 @@ public class Configurations extends FrameworkBaseAction {
 	}
     
     public String openEnvironmentPopup() {
-    	ProjectAdministrator administrator;
-		try {
-			/*administrator = getProjectAdministrator();
-			Project project = administrator.getProject(projectCode);
-			List<Environment> enviroments = administrator.getEnvironments(project);*/
-		    List<Environment> enviroments = new ArrayList<Environment>();
-			getHttpRequest().setAttribute(ENVIRONMENTS, enviroments);
-		} catch (Exception e) {
-		}
+        try {
+            getHttpRequest().setAttribute(ENVIRONMENTS, getEnvironments());
+        } catch (PhrescoException e) {
+            showErrorPopup(e, getText(CONFIG_FILE_FAIL));
+        } catch (ConfigurationException e) {
+            showErrorPopup(new PhrescoException(e), getText(CONFIG_FAIL_ENVS));
+        }
     	return APP_ENVIRONMENT;
     }
     
@@ -1170,19 +1178,4 @@ public class Configurations extends FrameworkBaseAction {
 		this.flag = flag;
 	}
 
-    public String getProjectId() {
-        return projectId;
-    }
-
-    public void setProjectId(String projectId) {
-        this.projectId = projectId;
-    }
-
-    public String getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(String customerId) {
-        this.customerId = customerId;
-    }
 }
