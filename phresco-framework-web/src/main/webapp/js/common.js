@@ -42,13 +42,13 @@ function progressPopup(url, title) {
 	});
 }
 
-function clickMenu(menu, tag, form) {
+function clickMenu(menu, tag, form, additionalParam) {
 	menu.click(function() {
 		showLoadingIcon(tag);
 		inActivateAllMenu(menu);
 		activateMenu($(this));
 		var selectedMenu = $(this).attr("id");
-		var additionalParam = $(this).attr('additionalParam');
+//		var additionalParam = $(this).attr('additionalParam');
 		loadContent(selectedMenu, form, tag, additionalParam);
 	});
 }

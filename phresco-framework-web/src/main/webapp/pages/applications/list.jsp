@@ -166,7 +166,7 @@
     function editApplication(projectId, appId) {
 		var params = "projectId=";
 		params = params.concat(projectId);
-		params = params.concat("&appId");
+		params = params.concat("&appId=");
 		params = params.concat(appId);
 		loadContent("loadMenu", $("#formCustomers"), $('#container'), params);
 	}
