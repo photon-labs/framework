@@ -30,6 +30,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -63,6 +64,7 @@ import com.google.gson.Gson;
 import com.photon.phresco.commons.AndroidConstants;
 import com.photon.phresco.commons.XCodeConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
+import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.ConfigurationException;
 import com.photon.phresco.exception.PhrescoException;
@@ -72,6 +74,7 @@ import com.photon.phresco.framework.api.ActionType;
 import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.api.Project;
 import com.photon.phresco.framework.api.ProjectAdministrator;
+import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.framework.api.ProjectRuntimeManager;
 import com.photon.phresco.framework.commons.ApplicationsUtil;
 import com.photon.phresco.framework.commons.DiagnoseUtil;
@@ -517,32 +520,38 @@ public class Build extends FrameworkBaseAction {
 	public String build() {
 		S_LOGGER.debug("Entering Method  Build.build()");
 		try {
-			persistValuesToXml(PHASE_PACKAGE);
+			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+			ApplicationInfo applicationInfo = applicationManager.getApplicationInfo(getCustomerId(), getProjectId(), getAppId());
+			ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
+			ProjectInfo projectInfos = projectManager.getProject(getProjectId(), getCustomerId());
 			
+			
+			persistValuesToXml(applicationInfo, PHASE_PACKAGE);
 			ActionType actionType = null;
-			ProjectRuntimeManager runtimeManager = PhrescoFrameworkFactory.getProjectRuntimeManager();
-			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-			Project project = administrator.getProject(projectCode);
-			String technology = project.getApplicationInfo().getTechInfo().getVersion();
-
-			Map<String, String> settingsInfoMap = new HashMap<String, String>(2);
-			
-			if(TechnologyTypes.HTML5_MULTICHANNEL_JQUERY_WIDGET.equals(technology) || 
-					TechnologyTypes.HTML5_JQUERY_MOBILE_WIDGET.equals(technology) ||
-					TechnologyTypes.HTML5_MOBILE_WIDGET.equals(technology) ||
-					TechnologyTypes.HTML5_WIDGET.equals(technology)){
-				minification();
-			}
-			
-			/* adding values to settings map info */
-			MojoProcessor mojo = new MojoProcessor(new File(Utility.getProjectHome() + FILE_SEPARATOR + projectCode + FILE_SEPARATOR + ".phresco/" + PHRESCO_PLUGIN_INFO_XML));
-			com.photon.phresco.plugins.model.Mojos.Mojo.Configuration mojoConfiguration = mojo.getConfiguration("package");
-			List<Parameter> parameters = mojoConfiguration.getParameters().getParameter();
-			for (Parameter parameter : parameters) {
-				if (getHttpRequest().getParameter(parameter.getKey()) != null ) {
-					settingsInfoMap.put(parameter.getKey(), parameter.getValue());
-				}
-			}
+			actionType = ActionType.BUILD;
+//			ProjectRuntimeManager runtimeManager = PhrescoFrameworkFactory.getProjectRuntimeManager();
+//			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
+//			Project project = administrator.getProject(projectCode);
+//			String technology = project.getApplicationInfo().getTechInfo().getVersion();
+//
+//			Map<String, String> settingsInfoMap = new HashMap<String, String>(2);
+//			
+//			if(TechnologyTypes.HTML5_MULTICHANNEL_JQUERY_WIDGET.equals(technology) || 
+//					TechnologyTypes.HTML5_JQUERY_MOBILE_WIDGET.equals(technology) ||
+//					TechnologyTypes.HTML5_MOBILE_WIDGET.equals(technology) ||
+//					TechnologyTypes.HTML5_WIDGET.equals(technology)){
+//				minification();
+//			}
+//			
+//			/* adding values to settings map info */
+//			MojoProcessor mojo = new MojoProcessor(new File(Utility.getProjectHome() + FILE_SEPARATOR + projectCode + FILE_SEPARATOR + ".phresco/" + PHRESCO_PLUGIN_INFO_XML));
+//			com.photon.phresco.plugins.model.Mojos.Mojo.Configuration mojoConfiguration = mojo.getConfiguration("package");
+//			List<Parameter> parameters = mojoConfiguration.getParameters().getParameter();
+//			for (Parameter parameter : parameters) {
+//				if (getHttpRequest().getParameter(parameter.getKey()) != null ) {
+//					settingsInfoMap.put(parameter.getKey(), parameter.getValue());
+//				}
+//			}
 			
 			/*if (StringUtils.isNotEmpty(environments)) {
 				settingsInfoMap.put(ENVIRONMENT_NAME, environments);
@@ -556,79 +565,79 @@ public class Build extends FrameworkBaseAction {
 				settingsInfoMap.put(BUILD_NUMBER, userBuildNumber);
 			}*/
 
-			if (StringUtils.isNotEmpty(androidVersion)) {
-				settingsInfoMap.put(AndroidConstants.ANDROID_VERSION_MVN_PARAM, androidVersion);
-			}
+//			if (StringUtils.isNotEmpty(androidVersion)) {
+//				settingsInfoMap.put(AndroidConstants.ANDROID_VERSION_MVN_PARAM, androidVersion);
+//			}
+//
+//			if (TechnologyTypes.JAVA_STANDALONE.contains(technology)) {
+//				settingsInfoMap.put(MAINCLASSNAME, mainClassName);
+//				settingsInfoMap.put(JARNAME, jarName);
+//			}
+//
+//			if (TechnologyTypes.WIN_METRO.contains(technology)) {
+//				settingsInfoMap.put(CONFIGURATION, configuration);
+//				settingsInfoMap.put(PLATFORM, platform);
+//			}
+//			
+//			if (TechnologyTypes.BLACKBERRY_HYBRID.contains(technology)) {
+//				settingsInfoMap.put(KEYPASS, keypass);
+//			}
+//			
+//			if (TechnologyTypes.IPHONES.contains(technology)) {
+//				settingsInfoMap.put(IPHONE_SDK, sdk);
+//				settingsInfoMap.put(IPHONE_CONFIGURATION, mode);
+//				settingsInfoMap.put(IPHONE_TARGET_NAME, target);
+//				if (TechnologyTypes.IPHONE_HYBRID.equals(technology)) {
+//					settingsInfoMap.put(IPHONE_PLISTFILE, XCodeConstants.HYBRID_PLIST);
+//					settingsInfoMap.put(ENCRYPT, FALSE);
+//				} else if (TechnologyTypes.IPHONE_NATIVE.equals(technology)) {
+//					settingsInfoMap.put(IPHONE_PLISTFILE, XCodeConstants.NATIVE_PLIST);
+//					settingsInfoMap.put(ENCRYPT, TRUE);
+//				}
+//			}
+//
+//			if (TechnologyTypes.ANDROIDS.contains(technology)) {
+//				actionType = ActionType.MOBILE_COMMON_COMMAND;
+//				actionType.setSkipTest(true);
+//				actionType.setProfileId("");
+//				if (StringUtils.isNotEmpty(signing) && StringUtils.isNotEmpty(profileAvailable)) {
+//					StringBuilder builder = new StringBuilder(Utility.getProjectHome());
+//					builder.append(projectCode);
+//					builder.append(File.separatorChar);
+//					builder.append(POM_XML);
+//					File pomPath = new File(builder.toString());
+//					AndroidPomProcessor processor = new AndroidPomProcessor(pomPath);
+//					if (pomPath.exists() && processor.hasSigning()) {
+//						actionType.setProfileId(processor.getSigningProfile());
+//					}
+//				}
+//				if (StringUtils.isEmpty(proguard)) {
+//					// if the checkbox is selected value should be set to false
+//					// otherwise true
+//					proguard = TRUE;
+//				}
+//				settingsInfoMap.put(ANDROID_PROGUARD_SKIP, proguard);
+//				// settingsInfoMap.put(SKIPTESTS, TRUE);
+//			} else if (TechnologyTypes.IPHONES.contains(technology)) {
+//				actionType = ActionType.IPHONE_BUILD_UNIT_TEST;
+//			} else {
+//				actionType = ActionType.BUILD;
+//			}
 
-			if (TechnologyTypes.JAVA_STANDALONE.contains(technology)) {
-				settingsInfoMap.put(MAINCLASSNAME, mainClassName);
-				settingsInfoMap.put(JARNAME, jarName);
-			}
-
-			if (TechnologyTypes.WIN_METRO.contains(technology)) {
-				settingsInfoMap.put(CONFIGURATION, configuration);
-				settingsInfoMap.put(PLATFORM, platform);
-			}
-			
-			if (TechnologyTypes.BLACKBERRY_HYBRID.contains(technology)) {
-				settingsInfoMap.put(KEYPASS, keypass);
-			}
-			
-			if (TechnologyTypes.IPHONES.contains(technology)) {
-				settingsInfoMap.put(IPHONE_SDK, sdk);
-				settingsInfoMap.put(IPHONE_CONFIGURATION, mode);
-				settingsInfoMap.put(IPHONE_TARGET_NAME, target);
-				if (TechnologyTypes.IPHONE_HYBRID.equals(technology)) {
-					settingsInfoMap.put(IPHONE_PLISTFILE, XCodeConstants.HYBRID_PLIST);
-					settingsInfoMap.put(ENCRYPT, FALSE);
-				} else if (TechnologyTypes.IPHONE_NATIVE.equals(technology)) {
-					settingsInfoMap.put(IPHONE_PLISTFILE, XCodeConstants.NATIVE_PLIST);
-					settingsInfoMap.put(ENCRYPT, TRUE);
-				}
-			}
-
-			if (TechnologyTypes.ANDROIDS.contains(technology)) {
-				actionType = ActionType.MOBILE_COMMON_COMMAND;
-				actionType.setSkipTest(true);
-				actionType.setProfileId("");
-				if (StringUtils.isNotEmpty(signing) && StringUtils.isNotEmpty(profileAvailable)) {
-					StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-					builder.append(projectCode);
-					builder.append(File.separatorChar);
-					builder.append(POM_XML);
-					File pomPath = new File(builder.toString());
-					AndroidPomProcessor processor = new AndroidPomProcessor(pomPath);
-					if (pomPath.exists() && processor.hasSigning()) {
-						actionType.setProfileId(processor.getSigningProfile());
-					}
-				}
-				if (StringUtils.isEmpty(proguard)) {
-					// if the checkbox is selected value should be set to false
-					// otherwise true
-					proguard = TRUE;
-				}
-				settingsInfoMap.put(ANDROID_PROGUARD_SKIP, proguard);
-				// settingsInfoMap.put(SKIPTESTS, TRUE);
-			} else if (TechnologyTypes.IPHONES.contains(technology)) {
-				actionType = ActionType.IPHONE_BUILD_UNIT_TEST;
-			} else {
-				actionType = ActionType.BUILD;
-			}
-
-			if (StringUtils.isNotEmpty(projectModule)) {
-				settingsInfoMap.put(MODULE_NAME, projectModule);
-				actionType.setWorkingDirectory(Utility.getProjectHome() + project.getApplicationInfo().getCode()
-						+ File.separatorChar + projectModule);
-			} else {
-				actionType.setWorkingDirectory(null);
-			}
+//			if (StringUtils.isNotEmpty(projectModule)) {
+//				settingsInfoMap.put(MODULE_NAME, projectModule);
+//				actionType.setWorkingDirectory(Utility.getProjectHome() + project.getApplicationInfo().getCode()
+//						+ File.separatorChar + projectModule);
+//			} else {
+//				actionType.setWorkingDirectory(null);
+//			}
 			actionType.setHideLog(Boolean.parseBoolean(hideLog));
 			actionType.setShowError(Boolean.parseBoolean(showError));
 			actionType.setShowDebug(Boolean.parseBoolean(showDebug));
 			actionType.setSkipTest(Boolean.parseBoolean(skipTest));
-			BufferedReader reader = runtimeManager.performAction(project, actionType, settingsInfoMap, null);
-			getHttpSession().setAttribute(projectCode + REQ_BUILD, reader);
-			getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
+			Reader reader = applicationManager.performAction(projectInfos, actionType);
+			getHttpSession().setAttribute(getAppId() + REQ_BUILD, reader);
+			getHttpRequest().setAttribute(REQ_APP_ID, getAppId());
 			getHttpRequest().setAttribute(REQ_TEST_TYPE, REQ_BUILD);
 		} catch (Exception e) {
 			S_LOGGER.error("Entered into catch block of Build.build()" + FrameworkUtil.getStackTraceAsString(e));
@@ -640,8 +649,8 @@ public class Build extends FrameworkBaseAction {
 		return APP_ENVIRONMENT_READER;
 	}
 
-	private void persistValuesToXml(String goal) throws PhrescoException {
-		MojoProcessor mojo = new MojoProcessor(new File(Utility.getProjectHome() + FILE_SEPARATOR + projectCode + FILE_SEPARATOR + ".phresco/" + PHRESCO_PLUGIN_INFO_XML));
+	private void persistValuesToXml(ApplicationInfo applicationInfo, String goal) throws PhrescoException {
+		MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(applicationInfo)));
 		com.photon.phresco.plugins.model.Mojos.Mojo.Configuration configuration = mojo.getConfiguration(goal);
 		List<Parameter> parameters = configuration.getParameters().getParameter();
 		StringBuilder csParamVal = new StringBuilder();
@@ -800,7 +809,7 @@ public class Build extends FrameworkBaseAction {
 
 	public String deploy() throws PhrescoException {
 		S_LOGGER.debug("Entering Method  Build.deploy()");
-		persistValuesToXml(PHASE_DEPLOY);
+	//	persistValuesToXml(PHASE_DEPLOY);
 		String buildNumber = getHttpRequest().getParameter(REQ_DEPLOY_BUILD_NUMBER);
 		String simulatorVersion = getHttpRequest().getParameter(REQ_DEPLOY_IPHONE_SIMULATOR_VERSION);
 		try {

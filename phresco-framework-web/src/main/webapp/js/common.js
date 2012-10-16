@@ -20,6 +20,7 @@
  
 function yesnoPopup(url, title, okUrl, okLabel) {
 	$("a[data-toggle=modal]").click(function() {
+		disableScreen();
 		$('#popupTitle').html(title); // Title for the popup
 		$('#popupClose').hide();
 	
@@ -138,6 +139,27 @@ function loadData(data, tag, pageUrl, callSuccessEvent) {
 			setTimeOut();
 		}
 	}
+}
+
+function readerHandlerSubmit(pageUrl, appId, testType, form, callSuccessEvent, additionalParams) {
+	var params = getParameters(form, additionalParams);
+	showParentPage();
+	enableScreen();
+    $.ajax({
+        url : pageUrl,
+        data : params,
+        type : "POST",
+        cache: false,
+        success : function(data) {
+        	//if (checkForUserSession(data)) {
+            	$("#build-output").empty();
+            	readerHandler(data, appId, testType, pageUrl);
+            	if (callSuccessEvent != undefined && !isBlank(callSuccessEvent)) {
+            		successEvent(pageUrl, data);
+            	}
+        	//}
+        }
+    });
 }
 
 //To get the parameters based on the availability
@@ -437,7 +459,7 @@ $(document).keydown(function(e) {
 //Shows the parent page
 function showParentPage() {
 	enableScreen();
-	$('#popup_div').hide();
+	$('#popupPage').hide();
 }
 
 //To disable the given control

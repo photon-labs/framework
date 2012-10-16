@@ -41,8 +41,8 @@
 <%@ page import="org.antlr.stringtemplate.StringTemplate" %>
 <%@page import="com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter"%>
 <%@ page import="com.photon.phresco.plugins.util.MojoProcessor"%>
-<%@ page import="com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.Name.Value;"%>
-
+<%@ page import="com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.Name.Value"%>
+<%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 
 <script src="js/reader.js" ></script>
 <script src="js/select-envs.js"></script>
@@ -78,6 +78,12 @@
     if (FrameworkConstants.REQ_DEPLOY.equals(from)) {
     	buildName = (String) request.getAttribute("buildName");
     }
+    
+    ApplicationInfo applicationInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_APP_INFO);
+    String appId  = "";
+    if (applicationInfo != null) {
+	    appId = applicationInfo.getId();
+    }    
 %>
 
 <form action="build" method="post" autocomplete="off" class="build_form form-horizontal" id="generateBuildForm">
@@ -137,7 +143,7 @@
        <!-- dynamic parameters starts -->
 		<% 
 			for (Parameter parameter: parameters) { 
-		%>    
+		%>    	
 				<div class="clearfix">
 	    <%			Boolean mandatory = false;
 					if (Boolean.parseBoolean(parameter.getRequired())) {
@@ -194,12 +200,12 @@
 		%>
 			</div>
 			<script type="text/javascript">
-				$('input[name="<%= parameter.getKey() %>"]').live('input propertychange',function(e) {
+				<%-- $('input[name="<%= parameter.getKey() %>"]').live('input propertychange',function(e) {
 					var name = $(this).val();
 					var type = '<%= parameter.getType() %>';
 					var txtBoxName = '<%= parameter.getKey() %>';
 					validateInput(name, type, txtBoxName);
-				});
+				}); --%>
 			</script>
 		<% 		}
 		%>
@@ -594,7 +600,7 @@
 <% if (TechnologyTypes.MOBILES.contains(technology)) { %>
 		<input type="hidden" id="mobile" value="mobile">
 <% } %> --%>
-</form> 
+</form>
 
 <script type="text/javascript">
     
@@ -630,7 +636,20 @@
 			showParentPage();
 		});
 		$('#popupOk').click(function(){
-			/*need to handle build and deploy actions*/
+			if ($('input[type=checkbox][name=signing]').is(':checked') && isBlank($('#profileAvailable').val())) {
+				$("#errMsg").html('<%= FrameworkConstants.PROFILE_CREATE_MSG %>');
+				return false;
+			}
+			
+			/* enable text box only if any file selected for minification */
+			$('input[name="jsFileName"]').each(function () {
+				if($(this).val() !== "") {
+					$(this).attr("disabled", false);
+				}
+			});
+
+			buildValidateSuccess("build", '<%= FrameworkConstants.REQ_BUILD %>');
+			
 		});
 		
 		$('#build').click(function() {
@@ -929,12 +948,11 @@
 	function buildValidateSuccess(lclURL, lclReaderSession) {
 		url = lclURL;
 		readerSession = lclReaderSession;
-		alert("build validate");
 		checkForConfig();
 	}
 	
 	function checkForConfig() {
-		loadContent('checkForConfiguration', $("#generateBuildForm"), '', getParams(), true);
+		loadContent('checkForConfiguration', $("#generateBuildForm"), '', getBasicParams(), true);
 	}
 	
 	function successEnvValidation(data) {
@@ -943,7 +961,7 @@
 		} else {
 			$('.build_cmd_div').css("display", "block");
 			$("#build-output").empty();
-			showParentPage();
+			//showParentPage();
 			if(url == "build") {
 				$("#warningmsg").show();
 				$("#build-output").html("Generating build...");
@@ -963,8 +981,8 @@
 		params = params.concat("&environments=");
 		params = params.concat(getSelectedEnvs());
 		params = params.concat("&DbWithSqlFiles=");
-		params = params.concat($('#DbWithSqlFiles').val());
-		readerHandlerSubmit(url, '<%= projectCode %>', testType, params, true); --%>
+		params = params.concat($('#DbWithSqlFiles').val()); --%>
+		readerHandlerSubmit(url, '<%= appId %>', testType, $("#generateBuildForm"), true, getBasicParams());
 	}
 	
 	/** This method is to enforce the use of default environment **/
