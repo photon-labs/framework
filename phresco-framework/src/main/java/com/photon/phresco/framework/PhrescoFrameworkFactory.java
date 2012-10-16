@@ -47,7 +47,7 @@ public class PhrescoFrameworkFactory {
  
     private static final String PROJECT_MANAGER_IMPL = "com.photon.phresco.framework.impl.ProjectManagerImpl";
     private static final String APPLICATION_MANAGER_IMPL = "com.photon.phresco.framework.impl.ApplicationManagerImpl";
-    private static final String CONFIG_MANAGER_IMPL = "com.photon.phresco.framework.impl.ConfigManagerImpl";
+    private static final String CONFIG_MANAGER_IMPL = "com.photon.phresco.commons.impl.ConfigManagerImpl";
     private static final String CI_MANAGER_IMPL = "com.photon.phresco.framework.impl.CIManagerImpl";
     private static final String UPDATE_MANAGER_IMPL = "com.photon.phresco.framework.impl.UpgradeManagerImpl";
 
@@ -73,7 +73,7 @@ public class PhrescoFrameworkFactory {
     }
     
     //TODO: Need to remove ProjectAdministrator
-    public static  ProjectAdministrator getProjectAdministrator() throws PhrescoException {
+    public static ProjectAdministrator getProjectAdministrator() throws PhrescoException {
         if (administrator == null) {
             administrator = (ProjectAdministrator) constructClass(PROJECT_ADMINISTRATOR_IMPL);
         }
@@ -91,7 +91,7 @@ public class PhrescoFrameworkFactory {
 
     }
 
-    public static  ProjectManager getProjectManager() throws PhrescoException {
+    public static ProjectManager getProjectManager() throws PhrescoException {
         if (projectManager == null) {
         	projectManager = (ProjectManager) constructClass(PROJECT_MANAGER_IMPL);
         }
@@ -109,7 +109,7 @@ public class PhrescoFrameworkFactory {
 
     public static ConfigManager getConfigManager(File configFile) throws PhrescoException {
         if (configManager == null) {
-            configManager = (ConfigManager) constructClass(CONFIG_MANAGER_IMPL, new Object[] { configFile });
+            configManager = (ConfigManager) constructClass(CONFIG_MANAGER_IMPL, new Class[] {configFile.getClass() }, new Object[] { configFile });
         }
 
         return configManager;
@@ -157,15 +157,15 @@ public class PhrescoFrameworkFactory {
      * 
      * @param className
      * @param params
+     * @param objects 
      * @return
      * @throws PhrescoException
      */
-    private static Object constructClass(String className, Object[] params) throws PhrescoException {
+    private static Object constructClass(String className, @SuppressWarnings("rawtypes") Class[] params, Object[] paramValues) throws PhrescoException {
         try {
-            Class<?> c = Class.forName(CONFIG_MANAGER_IMPL);
-            Constructor<?> constructor = c.getConstructor(c.getClass());
-            return constructor.newInstance(params);
-
+            Class<?> c = Class.forName(className);
+            Constructor<?> constructor = c.getConstructor(params);
+            return constructor.newInstance(paramValues);
         } catch (ClassNotFoundException e) {
             throw new PhrescoException(e);
         } catch (SecurityException e) {

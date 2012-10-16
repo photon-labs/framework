@@ -110,7 +110,7 @@ public class Settings extends FrameworkBaseAction {
 			getHttpRequest().setAttribute(REQ_SELECTED_MENU, SETTINGS);
 			ProjectAdministrator administratorEnvs = getProjectAdministrator();
 			List<Environment> envs = administratorEnvs.getEnvironments();
-            getHttpRequest().setAttribute(ENVIRONMENTS, envs);
+            getHttpRequest().setAttribute(REQ_ENVIRONMENTS, envs);
 		} catch (Exception e) {
         	if (debugEnabled) {
                 S_LOGGER.error("Entered into catch block of Settings.list()"+ FrameworkUtil.getStackTraceAsString(e));
@@ -134,7 +134,7 @@ public class Settings extends FrameworkBaseAction {
 			getHttpSession().removeAttribute(SETTINGS_PARAMS);
 			
 			List<Environment> envs = administrator.getEnvironments();
-            getHttpRequest().setAttribute(ENVIRONMENTS, envs);
+            getHttpRequest().setAttribute(REQ_ENVIRONMENTS, envs);
             Collections.sort(envs, new EnvironmentComparator());
 //            getHttpRequest().setAttribute(REQ_ALL_TECHNOLOGIES, administrator.getAllTechnologies());//TODO:Need to handle
 		} catch (PhrescoException e) {
@@ -202,7 +202,7 @@ public class Settings extends FrameworkBaseAction {
 	                    	}
 	                    }
 						if ("certificate".equals(key)) {
-							String env = getHttpRequest().getParameter(ENVIRONMENTS);
+							String env = getHttpRequest().getParameter(REQ_ENVIRONMENTS);
 							if (StringUtils.isNotEmpty(value)) {
 								File file = new File(value); 
 								value = "certificates" + FILE_SEPARATOR + env + "-" + settingsName + ".crt";
@@ -237,7 +237,7 @@ public class Settings extends FrameworkBaseAction {
 				return Action.SUCCESS;
 			}
             
-            String[] selectedEnvs = getHttpRequest().getParameterValues(ENVIRONMENTS);
+            String[] selectedEnvs = getHttpRequest().getParameterValues(REQ_ENVIRONMENTS);
             StringBuilder environments = new StringBuilder();
             for (String envs : selectedEnvs) { 
                 if (environments.length() > 0) environments.append(',');
@@ -310,7 +310,7 @@ public class Settings extends FrameworkBaseAction {
 			S_LOGGER.debug("validate() Frompage = "+fromPage);
 		}
 		
-		String[] environments = getHttpRequest().getParameterValues(ENVIRONMENTS);
+		String[] environments = getHttpRequest().getParameterValues(REQ_ENVIRONMENTS);
 		boolean validate = true;
 		
 		if (StringUtils.isEmpty(settingsName.trim())) {
@@ -458,7 +458,7 @@ public class Settings extends FrameworkBaseAction {
             List<SettingsTemplate> settingsTemplates = administrator.getSettingsTemplates();
             getHttpRequest().setAttribute(SESSION_SETTINGS_TEMPLATES, settingsTemplates);
             List<Environment> environments = administrator.getEnvironments();
-            getHttpRequest().setAttribute(ENVIRONMENTS, environments);
+            getHttpRequest().setAttribute(REQ_ENVIRONMENTS, environments);
 //            getHttpRequest().setAttribute(REQ_ALL_TECHNOLOGIES, administrator.getAllTechnologies());//TODO:Need to handle
 			getHttpRequest().setAttribute(REQ_FROM_PAGE, FROM_PAGE_EDIT);
 			getHttpRequest().setAttribute(REQ_SELECTED_MENU, SETTINGS);
@@ -526,7 +526,7 @@ public class Settings extends FrameworkBaseAction {
             				value = remoteDeploymentChk;
 	            		}
 	            		if ("certificate".equals(key)) {
-							String env = getHttpRequest().getParameter(ENVIRONMENTS);
+							String env = getHttpRequest().getParameter(REQ_ENVIRONMENTS);
 							if (StringUtils.isNotEmpty(value)) {
 								File file = new File(value); 
 								value = "certificates" + FILE_SEPARATOR + env + "-" + settingsName + ".crt";
@@ -562,7 +562,7 @@ public class Settings extends FrameworkBaseAction {
 			}
 			getHttpRequest().setAttribute(REQ_SELECTED_MENU, SETTINGS);
 			S_LOGGER.debug("Settings Info object value which going to be updated" + newSettingsInfo);
-            String environment = getHttpRequest().getParameter(ENVIRONMENTS);
+            String environment = getHttpRequest().getParameter(REQ_ENVIRONMENTS);
             administrator.updateSetting(environment, oldName, newSettingsInfo);
             if (SERVER.equals(settingsType)){
 				addActionMessage(getText(SERVER_UPDATE_SUCCESS, Collections.singletonList(settingsName)));
@@ -693,7 +693,7 @@ public class Settings extends FrameworkBaseAction {
             ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
             getHttpRequest().setAttribute(SETTINGS_FROM_TAB, getHttpRequest().getParameter(SETTINGS_FROM_TAB));
             List<Environment> envs = administrator.getEnvironments();
-            getHttpRequest().setAttribute(ENVIRONMENTS, envs);
+            getHttpRequest().setAttribute(REQ_ENVIRONMENTS, envs);
         } catch (PhrescoException e) {
             if (debugEnabled) {
                 S_LOGGER.error("Entered into catch block of Configurations.createEnvironment()" + FrameworkUtil.getStackTraceAsString(e));

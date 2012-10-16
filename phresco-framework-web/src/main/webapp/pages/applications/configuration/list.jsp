@@ -47,7 +47,7 @@
         selectedInfo = project.getApplicationInfo();
         projectCode = selectedInfo.getCode();
     }
-	List<Environment> envInfoValues = (List<Environment>) request.getAttribute(FrameworkConstants.ENVIRONMENTS);
+	List<Environment> envInfoValues = (List<Environment>) request.getAttribute(FrameworkConstants.REQ_ENVIRONMENTS);
    
     List<SettingsInfo> configurations = (List<SettingsInfo>)request.getAttribute("configuration");
 	Map<String, String> urls = new HashMap<String, String>();

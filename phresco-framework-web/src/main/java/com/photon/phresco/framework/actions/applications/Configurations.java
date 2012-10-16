@@ -138,6 +138,21 @@ public class Configurations extends FrameworkBaseAction {
         ConfigManager configManager = getConfigManager();
         return configManager.getEnvironments();
     }
+    
+    public String openEnvironmentPopup() {
+        try {
+            getHttpRequest().setAttribute(REQ_ENVIRONMENTS, getEnvironments());
+        } catch (PhrescoException e) {
+            e.printStackTrace();
+            return showErrorPopup(e, getText(CONFIG_FILE_FAIL));
+        } catch (ConfigurationException e) {
+            e.printStackTrace();
+            return showErrorPopup(new PhrescoException(e), getText(CONFIG_FAIL_ENVS));
+        }
+        return APP_ENVIRONMENT;
+    }
+    
+
 
     /**
      * @return
@@ -160,7 +175,7 @@ public class Configurations extends FrameworkBaseAction {
             List<SettingsTemplate> settingsTemplates = administrator.getSettingsTemplates();
             getHttpSession().setAttribute(SESSION_SETTINGS_TEMPLATES, settingsTemplates);
             List<Environment> environments = administrator.getEnvironments(project);
-            getHttpRequest().setAttribute(ENVIRONMENTS, environments);
+            getHttpRequest().setAttribute(REQ_ENVIRONMENTS, environments);
             Collections.sort(environments, new EnvironmentComparator());
             getHttpSession().removeAttribute(ERROR_SETTINGS);
             getHttpRequest().setAttribute(REQ_PROJECT, project);
@@ -235,7 +250,7 @@ public class Configurations extends FrameworkBaseAction {
 	                    	}
 	                    }
 						if ("certificate".equals(key)) {
-							String env = getHttpRequest().getParameter(ENVIRONMENTS);
+							String env = getHttpRequest().getParameter(REQ_ENVIRONMENTS);
 							if (StringUtils.isNotEmpty(value)) {
 								File file = new File(value);
 								if (file.exists()) {
@@ -268,7 +283,7 @@ public class Configurations extends FrameworkBaseAction {
             getHttpRequest().setAttribute(REQ_CONFIG_INFO, settingsInfo);
             getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
             getHttpRequest().setAttribute(REQ_PROJECT, project);
-            String[] environments = getHttpRequest().getParameterValues(ENVIRONMENTS);
+            String[] environments = getHttpRequest().getParameterValues(REQ_ENVIRONMENTS);
 
             StringBuilder sb = new StringBuilder();
             for (String envs : environments) { 
@@ -456,7 +471,7 @@ public class Configurations extends FrameworkBaseAction {
     		S_LOGGER.debug("validate() Frompage = " + fromPage);
 		}
     	boolean validate = true;
-    	String[] environments = getHttpRequest().getParameterValues(ENVIRONMENTS);
+    	String[] environments = getHttpRequest().getParameterValues(REQ_ENVIRONMENTS);
     	
     	if (StringUtils.isEmpty(configType)) {
     		setTypeError(getText(NO_CONFIG_TYPE));
@@ -613,7 +628,7 @@ public class Configurations extends FrameworkBaseAction {
         	}
 
         	List<Environment> environments = administrator.getEnvironments(project);
-            getHttpRequest().setAttribute(ENVIRONMENTS, environments);
+            getHttpRequest().setAttribute(REQ_ENVIRONMENTS, environments);
             getHttpRequest().setAttribute(SESSION_OLD_NAME, oldName);
             getHttpRequest().setAttribute(REQ_CONFIG_INFO, selectedConfigInfo);
             getHttpRequest().setAttribute(REQ_FROM_PAGE, FROM_PAGE_EDIT);
@@ -678,7 +693,7 @@ public class Configurations extends FrameworkBaseAction {
 	   	                	value = remoteDeploymentChk;
 	                    }
 	   	                if ("certificate".equals(key)) {
-							String env = getHttpRequest().getParameter(ENVIRONMENTS);
+							String env = getHttpRequest().getParameter(REQ_ENVIRONMENTS);
 							if (StringUtils.isNotEmpty(value)) {
 								File file = new File(value);
 								if (file.exists()) {
@@ -718,7 +733,7 @@ public class Configurations extends FrameworkBaseAction {
             	getHttpRequest().setAttribute(REQ_OLD_NAME, oldName);
             	return Action.SUCCESS;
             }
-            String environment = getHttpRequest().getParameter(ENVIRONMENTS);
+            String environment = getHttpRequest().getParameter(REQ_ENVIRONMENTS);
             administrator.updateConfiguration(environment, oldName, settingsInfo, project);
             addActionMessage("Configuration updated successfully");
 
@@ -812,17 +827,6 @@ public class Configurations extends FrameworkBaseAction {
 		return SETTINGS_TYPE;
 	}
     
-    public String openEnvironmentPopup() {
-        try {
-            getHttpRequest().setAttribute(ENVIRONMENTS, getEnvironments());
-        } catch (PhrescoException e) {
-            showErrorPopup(e, getText(CONFIG_FILE_FAIL));
-        } catch (ConfigurationException e) {
-            showErrorPopup(new PhrescoException(e), getText(CONFIG_FAIL_ENVS));
-        }
-    	return APP_ENVIRONMENT;
-    }
-    
     public String setAsDefault() {
     	S_LOGGER.debug("Entering Method  Configurations.setAsDefault()");
     	S_LOGGER.debug("SetAsdefault" + setAsDefaultEnv);
@@ -867,7 +871,7 @@ public class Configurations extends FrameworkBaseAction {
     		Project project = administrator.getProject(projectCode);
     		
     		List<Environment> environments = administrator.getEnvironments(project);
-    		getHttpRequest().setAttribute(ENVIRONMENTS, environments);
+    		getHttpRequest().setAttribute(REQ_ENVIRONMENTS, environments);
     		getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
     		getHttpRequest().setAttribute(CLONE_FROM_CONFIG_NAME, configName);
     		getHttpRequest().setAttribute(CLONE_FROM_ENV_NAME, envName);

@@ -361,7 +361,6 @@ public interface FrameworkConstants {
      * Environment Constants
      * 
      */
-    String ENVIRONMENTS = "environments";
     String SETTINGS_FROM_TAB = "fromTab";
     String ENVIRONMENT_VALUES = "envs";  
     String DELETABLE_ENVS = "deletableEnvs";

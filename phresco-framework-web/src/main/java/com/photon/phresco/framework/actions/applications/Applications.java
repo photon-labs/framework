@@ -1391,7 +1391,7 @@ public class Applications extends FrameworkBaseAction {
 	
 	public String checkForConfigType() throws PhrescoException {
 		try{
-			String envs = getHttpRequest().getParameter(ENVIRONMENTS);
+			String envs = getHttpRequest().getParameter(REQ_ENVIRONMENTS);
 			if(StringUtils.isEmpty(envs)){
 				setHasError(false);
 				return SUCCESS;
