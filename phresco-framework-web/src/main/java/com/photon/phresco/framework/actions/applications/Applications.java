@@ -1318,17 +1318,21 @@ public class Applications extends FrameworkBaseAction {
 	}
 	
 	public String checkForConfiguration() throws PhrescoException {
-		try {
+		/*try {
+			System.out.println("inside try check for config()************************");
 			boolean isError = false;
-			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-			Project project = administrator.getProject(projectCode);
+			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+			ApplicationInfo applicationInfo = applicationManager.getApplicationInfo(getCustomerId(), getProjectId(), getAppId());
+			
+//			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
+//			Project project = administrator.getProject(projectCode);
 			//TODO:Need to handle
 //			Technology technology = project.getApplicationInfo().getTechnology();
 //			List<Server> servers = technology.getServers();
 //			List<Database> databases = technology.getDatabases();
 //			List<WebService> webservices = technology.getWebservices();
 //			boolean emailSupported = technology.isEmailSupported();
-
+			
 			String envs = getHttpRequest().getParameter(ENVIRONMENTS);
 			if(StringUtils.isEmpty(envs)){
 				setHasError(false);
@@ -1339,11 +1343,11 @@ public class Applications extends FrameworkBaseAction {
 			String from = getHttpRequest().getParameter(REQ_FROM);
 			for (String envName : envArr) {
 				if (NODEJS_RUN_AGAINST.equals(from) || JAVA_RUN_AGAINST.equals(from)) {
-					if (CollectionUtils.isEmpty(administrator.getSettingsInfos(Constants.SETTINGS_TEMPLATE_SERVER, projectCode, envName))) {
-						setEnvError(getText(ERROR_NO_CONFIG));
-						setHasError(true);
-						return SUCCESS;
-					}
+//					if (CollectionUtils.isEmpty(administrator.getSettingsInfos(Constants.SETTINGS_TEMPLATE_SERVER, projectCode, envName))) {
+//						setEnvError(getText(ERROR_NO_CONFIG));
+//						setHasError(true);
+//						return SUCCESS;
+//					}
 				}
 				
 				//TODO:Need to handle
@@ -1378,9 +1382,10 @@ public class Applications extends FrameworkBaseAction {
 				}
 			}
 		} catch (Exception e) {
+			System.out.println("inside catch******************");
 			throw new PhrescoException(e);
-		}
-		
+		}*/
+
 		return SUCCESS;
 	}
 	
