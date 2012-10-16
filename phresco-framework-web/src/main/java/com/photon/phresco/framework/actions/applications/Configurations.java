@@ -36,6 +36,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.opensymphony.xwork2.Action;
+import com.photon.phresco.commons.api.ConfigManager;
 import com.photon.phresco.commons.model.PropertyTemplate;
 import com.photon.phresco.commons.model.SettingsTemplate;
 import com.photon.phresco.configuration.Environment;
@@ -43,7 +44,6 @@ import com.photon.phresco.exception.ConfigurationException;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
-import com.photon.phresco.framework.api.ConfigManager;
 import com.photon.phresco.framework.api.Project;
 import com.photon.phresco.framework.api.ProjectAdministrator;
 import com.photon.phresco.framework.commons.FrameworkUtil;
