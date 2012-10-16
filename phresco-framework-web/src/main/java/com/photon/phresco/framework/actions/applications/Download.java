@@ -21,12 +21,11 @@ package com.photon.phresco.framework.actions.applications;
 
 import org.apache.log4j.Logger;
 
-import com.photon.phresco.commons.model.ApplicationInfo;
+import com.photon.phresco.commons.model.DownloadInfo;
 import com.photon.phresco.exception.PhrescoException;
-import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
-import com.photon.phresco.framework.api.ProjectAdministrator;
 import com.photon.phresco.framework.commons.LogErrorReport;
+import com.photon.phresco.service.client.api.ServiceManager;
 
 public class Download extends FrameworkBaseAction {
 
@@ -35,35 +34,22 @@ public class Download extends FrameworkBaseAction {
     private static final Logger S_LOGGER = Logger.getLogger(Applications.class);
     private static Boolean s_debugEnabled  = S_LOGGER.isDebugEnabled();
     
-    private String projectCode = "";
-    
     public String list() {
     	if (s_debugEnabled) {
     		S_LOGGER.debug("Entering Method Download.list()");
     	}
     	
     	try {
-			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-			ApplicationInfo applicationInfo = administrator.getProject(getProjectCode()).getApplicationInfo();
-			String cusomerId = applicationInfo.getCustomerIds().get(0);
-			String techId = applicationInfo.getTechInfo().getVersion();
-			setReqAttribute(REQ_SERVER_DOWNLOAD_INFO, administrator.getServerDownloadInfos(cusomerId, techId));
-			setReqAttribute(REQ_DB_DOWNLOAD_INFO, administrator.getDbDownloadInfos(cusomerId, techId));
-			setReqAttribute(REQ_EDITOR_DOWNLOAD_INFO, administrator.getEditorDownloadInfos(cusomerId, techId));
-			setReqAttribute(REQ_TOOLS_DOWNLOAD_INFO, administrator.getToolsDownloadInfos(cusomerId, techId));
-			setReqAttribute(REQ_OTHERS_DOWNLOAD_INFO, administrator.getOtherDownloadInfos(cusomerId, techId));
+			String techId = getTechId();
+			ServiceManager serviceManager = getServiceManager();
+			setReqAttribute(REQ_SERVER_DOWNLOAD_INFO, serviceManager.getDownloads(getCustomerId(), techId, DownloadInfo.Category.SERVER.name()));
+			setReqAttribute(REQ_DB_DOWNLOAD_INFO, serviceManager.getDownloads(getCustomerId(), techId, DownloadInfo.Category.DATABASE.name()));
+			setReqAttribute(REQ_EDITOR_DOWNLOAD_INFO, serviceManager.getDownloads(getCustomerId(), techId, DownloadInfo.Category.EDITOR.name()));
+			setReqAttribute(REQ_TOOLS_DOWNLOAD_INFO, serviceManager.getDownloads(getCustomerId(), techId, DownloadInfo.Category.TOOLS.name()));
+			setReqAttribute(REQ_OTHERS_DOWNLOAD_INFO, serviceManager.getDownloads(getCustomerId(), techId, DownloadInfo.Category.OTHERS.name()));
 		} catch (PhrescoException e) {
 			new LogErrorReport(e, "Listing downloads");
 		}
-    	
         return APP_DOWNLOAD;
-    }
-    
-    public String getProjectCode() {
-        return projectCode;
-    }
-
-    public void setProjectCode(String projectCode) {
-        this.projectCode = projectCode;
     }
 }

@@ -3887,7 +3887,12 @@ div.submit_input {
     float:left;
 }
 
-.siteaccordion{
+ .downloadContent {
+	height: 350px;
+	overflow-y: hidden;
+} 
+
+.siteaccordion {
     cursor: pointer;
     margin:0px;
     float:left;
@@ -3920,7 +3925,7 @@ div.submit_input {
     float:left;
     margin:0px;
     padding:0px;
-    width:100%;
+    width:99.5%;
 }
 
 .scrollpanel{
@@ -4098,8 +4103,18 @@ div.submit_input {
 	height: 95.5%;
 }
 
-.download_tbl{
+.download_tbl {
 	border-radius: 6px; 
+	width: 100%;
+}
+
+.download_tbl_header {
+	height: 32px;
+	border-radius: 6px; 
+}
+
+#Downloadtab_div {
+	height: 92%;
 }
 
 .label_center {
@@ -5090,7 +5105,7 @@ ul#display-inline-block-example li {
 	color:#000000;
     padding: 0;
     width: 100%;
-    margin-top: -25px;
+    margin-top: -21px;
     text-align: center;
     font-weight: bold;
 }

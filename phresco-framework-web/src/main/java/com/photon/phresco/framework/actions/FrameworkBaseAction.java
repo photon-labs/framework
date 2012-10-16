@@ -44,6 +44,7 @@ import com.opensymphony.xwork2.ActionSupport;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.LogInfo;
+import com.photon.phresco.commons.model.TechnologyInfo;
 import com.photon.phresco.commons.model.User;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.FrameworkConfiguration;
@@ -236,6 +237,15 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
         ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
         return applicationManager.getApplicationInfo(getCustomerId(), getProjectId(), getAppId());
     }
+    
+    public String getTechId() throws PhrescoException {
+    	TechnologyInfo techInfo = getApplicationInfo().getTechInfo();
+    	if (techInfo != null) {
+    		return techInfo.getId();
+    	}
+    	throw new PhrescoException("Technology not Found");
+    }
+    
     public String getAppHome() throws PhrescoException {
         StringBuilder builder = new StringBuilder(Utility.getProjectHome());
         builder.append(getApplicationInfo().getAppDirName());

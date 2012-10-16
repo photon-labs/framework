@@ -103,7 +103,7 @@
 	 <% if (!TechnologyTypes.IPHONES.contains(technology) && StringUtils.isNotEmpty(sonarError)) { %>
 		<div class="alert alert-block sonarWarning">
 		<!-- 	<i class="icon-warning-sign"></i> -->
-			<img id="warning_icon" src="images/icons/warningIcon.png" />
+			<img id="warning_icon" src="images/icons/warning_icon.png" />
 			<s:label cssClass="sonarLabelWarn" key="sonar.not.started" />
 		</div>
 	<% } %>
@@ -126,6 +126,7 @@
 
     	
     	//changeStyle("code");
+    	hideLoadingIcon();
     	sonarReport();
     	enableScreen();
     	
@@ -157,12 +158,12 @@
     
     function sonarReport() {
         $("#sonar_report").empty();
-        popup('check', '', $('#sonar_report'));
+        loadContent('check', '', $('#sonar_report'));
     }
     
     function getCodeValidatePopUp() {
     	$('#popup_div').empty();
-      	popup('getCodeValidatePopUp', '', $('#popup_div'));
+    	loadContent('getCodeValidatePopUp', '', $('#popup_div'));
     }
     
 	function checkObj(obj) {
