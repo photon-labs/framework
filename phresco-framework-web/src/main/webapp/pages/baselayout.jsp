@@ -139,11 +139,22 @@
                 displayName = userInfo.getDisplayName();
             }
         %>
-		<!--<div class="modal-backdrop fade in popupalign"></div>-->
+		<div class="modal-backdrop fade in popupalign"></div>
 	    
-	    <div id="progressBar" class="progress active progress_bar">
-		    <div id="progress-bar" class="bar progress_text"></div>
+	    <!-- In Progress starts -->
+		<div id="progressbar" class="progressPosition">
+			<div id="indicatorInnerElem">
+				<span id="progressnum"></span>
+			</div>
+			<div id="indicator"></div>
 		</div>
+		<!-- In Progress Ends -->
+		
+		<!-- Loding icon div starts -->
+		<div id="loadingIconDiv" class="hideContent"> 
+			<img class="loadingIcon" id="loadingIconImg" src="" />
+		</div>
+		<!-- Loding icon div ends -->
 		
 		<!-- Header Starts Here -->
 		<header>

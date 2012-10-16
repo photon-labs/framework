@@ -38,12 +38,12 @@
     String technology = null;
 
 	ApplicationInfo appInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_APPINFO);
-	String projectCode = "";
+	String projectId = (String) request.getAttribute("projectId");
 	//TODO:Need to handle
 // 	String projectCode = appInfo.getCode();
 // 	technology = appInfo.getTechInfo().getVersion();
 	
-	List<BuildInfo> buildInfos = (List<BuildInfo>) request.getAttribute(FrameworkConstants.REQ_BUILD);
+	/* List<BuildInfo> buildInfos = (List<BuildInfo>) request.getAttribute(FrameworkConstants.REQ_BUILD);
     String selectedAppType = (String) request.getAttribute(FrameworkConstants.REQ_SELECTED_APP_TYPE);
     String testType = (String) request.getAttribute(FrameworkConstants.REQ_TEST_TYPE);
   	StringBuilder sbBuildPath = new StringBuilder();
@@ -73,7 +73,7 @@
  			javaServerStatus = session.getAttribute(projectCode + FrameworkConstants.SESSION_JAVA_SERVER_STATUS).toString().equals("true") ? true : false;
  		}
 		serverLog = (String) request.getAttribute(FrameworkConstants.REQ_SERVER_LOG);
-	}
+	} */
 %>
 
 <s:if test="hasActionMessages()">
@@ -94,11 +94,14 @@
 		</div>
 			
 		<div class="build_delete_btn_div">
-		    <input id="generatebtn" type="button" value="<s:text name="label.generatebuild"/>" class="btn btn-primary">
+		    <%-- <input id="generatebtn" type="button" value="<s:text name="label.generatebuild"/>" class="btn btn-primary"> --%>
+		    
+	    <a data-toggle="modal" href="#popupPage" class="btn btn-primary" additionalParam="from=generateBuild"><s:text name='label.generatebuild'/></a>
+		    
 		    <input id="deleteButton" type="button" value="<s:text name="label.delete"/>" class="btn" disabled="disabled"/>
 		</div>
 		<div class="runagint_source">
-		<%
+		<%-- <%
 			if(TechnologyTypes.NODE_JS_WEBSERVICE.equals(technology)) {
 		%>
 			<div id="nodeJS_btndiv" class="nodeJS_div">
@@ -110,14 +113,14 @@
 		
 		<%
 			if(TechnologyTypes.JAVA_WEBSERVICE.equals(technology) || TechnologyTypes.HTML5_WIDGET.equals(technology) 
-					|| TechnologyTypes.HTML5_MOBILE_WIDGET.equals(technology) || TechnologyTypes.HTML5_MULTICHANNEL_JQUERY_WIDGET.equals(technology)) {
+					|| TechnologyTypes.HTML5_MOBILE_WIDGET.equals(technology)) {
 		%>
 			<div id="nodeJS_btndiv" class="nodeJS_div">
 				<input id="runAgnSrc" type="button" value="<s:text name="label.runagainsrc"/>" class="primary btn">
 				<input id="stopbtn" type="button" value="<s:text name="label.stop"/>" class="btn disabled" onclick="stopServer();">
 				<input id="restartbtn" type="button" value="<s:text name="label.restart"/>" class="btn disabled" onclick="restartServer();"/>
 			</div>		
-		<% } %>
+		<% } %> --%>
 		</div>
 		<div class="clear"></div>
 	</div>
@@ -144,7 +147,7 @@
 
 				<!-- Command Display starts -->
 				<div class="build_cmd_div" id="build-output">
-			    	<%= serverLog %>
+			    	<%-- <%= serverLog %> --%>
 				</div>
 				<!-- Command Display starts -->
             </div>
@@ -155,7 +158,7 @@
 <!-- <div class="popup_div" id="generateBuild"> </div>-->
 
 <script type="text/javascript">
-	<%
+	<%-- <%
 		if(TechnologyTypes.NODE_JS_WEBSERVICE.equals(technology)) {
 	%>
 			if (<%= nodeServerStatus %>) {
@@ -178,15 +181,15 @@
 			}
 	<% 
 		} 
-	%>
+	%> --%>
 	
     $(document).ready(function() {
-    	enableScreen();
+    	yesnoPopup('generateBuild', '<s:text name="label.generatebuild"/>', 'build','<s:text name="label.build"/>');
     	if ($.browser.safari && $.browser.version == 530.17) {
     		$(".buildDiv").show().css("float","left");
     	}
     	
-    	refreshTable('<%= projectCode %>');
+    	<%-- refreshTable('<%= projectCode %>'); --%>
     	
         if (($('#database option').length == 0) && ($('#server option').length == 0)) {
                  $('#buildbtn').prop("disabled", true);
@@ -197,7 +200,7 @@
             $('.build_form').submit();
         });
         
-        $('#generatebtn').click(function() {
+        <%-- $('#generatebtn').click(function() {
             generateBuild('<%= projectCode %>', "generateBuild", this);
         });
         
@@ -207,7 +210,7 @@
         
         $('#runAgnSrc').click(function() {
         	generateBuild('<%= projectCode %>', "runAgnSrc", this);
-        });
+        }); --%>
         
         $('#deleteButton').click(function() {
 			$("#confirmationText").html("Do you want to delete the selected build(s)");
@@ -225,13 +228,13 @@
 	        return false;
 	    });
         
-        $('#openFolder').click(function() {
+       <%--  $('#openFolder').click(function() {
             openFolder('<%= sbBuildPath %>');
         });
         
         $('#copyPath').click(function() {
            copyPath('<%= sbBuildPath %>');
-        });
+        }); --%>
     });
     
 
@@ -249,7 +252,7 @@
         var buildNumber = idArray[1];
         var params = "buildNumber=";
         params = params.concat(buildNumber);
-		readerHandlerSubmit('deploy', '<%= projectCode %>', 'Deploy', params);
+		<%-- readerHandlerSubmit('deploy', '<%= projectCode %>', 'Deploy', params); --%>
     }
  	
     function copyToClipboard(data) {
@@ -267,12 +270,8 @@
        	var buildName = $(obj).attr("buildName");
         var params = "from=";
 		params = params.concat(from);
-		params = params.concat("&buildNumber=");
-		params = params.concat(buildNumber);
-		params = params.concat("&buildName=");
-		params = params.concat(buildName);
-       	popup('generateBuild', '', $('#popup_div'), '', '', params);
-        escPopup();
+       	//popup('generateBuild', $('#formAppMenu'), $('#popup_div'), '', '', params);
+       // escPopup();
     }
     
     function deployAndroid(obj){
@@ -330,7 +329,7 @@
  		$("#build-output").html("Server is restarting...");
  		$("#stopbtn").attr("class", "btn disabled");
        	$("#restartbtn").attr("class", "btn disabled");
- 		readerHandlerSubmit('restartServer', '<%= projectCode %>', '<%= FrameworkConstants.REQ_JAVA_START %>', '', true);
+ 		<%-- readerHandlerSubmit('restartServer', '<%= projectCode %>', '<%= FrameworkConstants.REQ_JAVA_START %>', '', true); --%>
  	}
  	
 	function stopServer() {
@@ -338,7 +337,7 @@
 		$("#build-output").html("Server is stopping...");
 		$("#stopbtn").attr("class", "btn disabled");
        	$("#restartbtn").attr("class", "btn disabled");
-		readerHandlerSubmit('stopServer', '<%= projectCode %>', '<%= FrameworkConstants.REQ_JAVA_STOP %>', '', true);
+		<%-- readerHandlerSubmit('stopServer', '<%= projectCode %>', '<%= FrameworkConstants.REQ_JAVA_STOP %>', '', true); --%>
  	}
 	
 	function successEvent(pageUrl, data) {

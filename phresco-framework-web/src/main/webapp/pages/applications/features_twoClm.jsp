@@ -487,7 +487,7 @@
 
 <script type="text/javascript">
 	$(document).ready(function() {
-		enableScreen();
+		hideLoadingIcon();//To hide the loading icon
 	});
 	
 	$('#projectCode').val('<%= projectCode %>'); //this is for changing the sub-tab.

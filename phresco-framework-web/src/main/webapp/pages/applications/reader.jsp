@@ -22,13 +22,13 @@
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 
 <%
-    String projectCode = (String) request.getAttribute(FrameworkConstants.REQ_PROJECT_CODE);
+    String appId = (String) request.getAttribute(FrameworkConstants.REQ_APP_ID);
     String testType = (String) request.getAttribute(FrameworkConstants.REQ_TEST_TYPE);
-    if (projectCode == null && testType == null) {
-        projectCode = request.getParameter(FrameworkConstants.REQ_PROJECT_CODE);
+    if (appId == null && testType == null) {
+        appId = request.getParameter(FrameworkConstants.REQ_PROJECT_CODE);
         testType = request.getParameter(FrameworkConstants.REQ_TEST_TYPE);
     }
-    BufferedReader reader = (BufferedReader) session.getAttribute(projectCode + testType);
+    BufferedReader reader = (BufferedReader) session.getAttribute(appId + testType);
 
     String line = null;
     if (reader != null) {
@@ -36,7 +36,7 @@
 			line = reader.readLine();
             if (line == null) {
                 line = "EOF";
-                session.removeAttribute(projectCode + testType);
+                session.removeAttribute(appId + testType);
             }
 %>
                 <%= line %>
@@ -47,7 +47,7 @@
 <%
     		}
     } else {
-    	session.removeAttribute(projectCode + testType);
+    	session.removeAttribute(appId + testType);
 %>
 		<%= "EOF" %>
 <%

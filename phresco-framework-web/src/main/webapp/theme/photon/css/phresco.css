@@ -1223,17 +1223,14 @@ p.p_align {
 /*** In progress starts ***/
 
 #progressbar {
-/*   position:relative; */
-  position:absolute;
-  width:250px;
-  padding:0 0 0 0;
-/*   background-image:url("../images/pggray.png"); */
-  height:17px;
-/*   border:1px solid #CCC; */
-  -moz-border-radius:2px;
-  border-radius:2px;
-  display: none;
- z-index: 6;
+	position:absolute;
+	width:250px;
+	padding:0 0 0 0;
+	height:17px;
+	-moz-border-radius:2px;
+	border-radius:2px;
+	display: none;
+	z-index: 1041;
 }
 
 #indicator {
@@ -3890,7 +3887,12 @@ div.submit_input {
     float:left;
 }
 
-.siteaccordion{
+ .downloadContent {
+	height: 350px;
+	overflow-y: hidden;
+} 
+
+.siteaccordion {
     cursor: pointer;
     margin:0px;
     float:left;
@@ -3923,7 +3925,7 @@ div.submit_input {
     float:left;
     margin:0px;
     padding:0px;
-    width:100%;
+    width:99.5%;
 }
 
 .scrollpanel{
@@ -4101,8 +4103,18 @@ div.submit_input {
 	height: 95.5%;
 }
 
-.download_tbl{
+.download_tbl {
 	border-radius: 6px; 
+	width: 100%;
+}
+
+.download_tbl_header {
+	height: 32px;
+	border-radius: 6px; 
+}
+
+#Downloadtab_div {
+	height: 92%;
 }
 
 .label_center {
@@ -4495,7 +4507,6 @@ legend {
 	position: absolute; 
 	left: 48%; 
 	top: 40%; 
-	display: none;
 }
 
 /** preloader gif starts **/
@@ -5071,7 +5082,7 @@ ul#display-inline-block-example li {
 	position: relative;
     text-align: center;
     top: 46%;
-    z-index: 6;
+    z-index: 1041;
 }
 
 .alert-message.warning.sonar {
@@ -5094,7 +5105,7 @@ ul#display-inline-block-example li {
 	color:#000000;
     padding: 0;
     width: 100%;
-    margin-top: -25px;
+    margin-top: -21px;
     text-align: center;
     font-weight: bold;
 }
@@ -5529,7 +5540,10 @@ input[class*='chckBxAlign'] {
 	margin-right:5px !important; 
 }
 
-/*new css for 2.0 starts*/
+.popupLbl {
+	color: #000;
+}	
+/*new css for 2.0 ends*/
 
 
 .alert-message.success.build {
@@ -5567,6 +5581,11 @@ input[class*='chckBxAlign'] {
 	border: none;
 }
 
+.no-left-bottom-border {
+	border-left: 0 none !important;
+	border-bottom: 0 none !important;
+}
+
 .autoWidth {
 	width: auto !important;
 }
@@ -5595,4 +5614,12 @@ input[class*='chckBxAlign'] {
 
 .bottom-space {
 	padding-bottom: 34px;
+}
+
+.table-pad {
+	padding: 0 0 0 10px !important;
+}
+
+.table-chkbx {
+	width: 20px;
 }
