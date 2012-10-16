@@ -64,6 +64,6 @@ public class ApplicationManagerTest extends BaseTest{
 		String projectId = projectInfo.getId();
 		ApplicationInfo applicationInfo = applicationManager.getApplicationInfo("photon", projectId, "PHR_Test");
 		System.out.println(applicationInfo.getAppDirName());
-		applicationManager.delete(applicationInfo);
+//		applicationManager.delete(applicationInfo);
 	}
 }
