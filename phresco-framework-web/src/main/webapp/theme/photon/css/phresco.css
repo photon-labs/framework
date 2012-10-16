@@ -1223,17 +1223,14 @@ p.p_align {
 /*** In progress starts ***/
 
 #progressbar {
-/*   position:relative; */
-  position:absolute;
-  width:250px;
-  padding:0 0 0 0;
-/*   background-image:url("../images/pggray.png"); */
-  height:17px;
-/*   border:1px solid #CCC; */
-  -moz-border-radius:2px;
-  border-radius:2px;
-  display: none;
- z-index: 6;
+	position:absolute;
+	width:250px;
+	padding:0 0 0 0;
+	height:17px;
+	-moz-border-radius:2px;
+	border-radius:2px;
+	display: none;
+	z-index: 1041;
 }
 
 #indicator {
@@ -4495,7 +4492,6 @@ legend {
 	position: absolute; 
 	left: 48%; 
 	top: 40%; 
-	display: none;
 }
 
 /** preloader gif starts **/
@@ -5071,7 +5067,7 @@ ul#display-inline-block-example li {
 	position: relative;
     text-align: center;
     top: 46%;
-    z-index: 6;
+    z-index: 1041;
 }
 
 .alert-message.warning.sonar {
@@ -5529,7 +5525,10 @@ input[class*='chckBxAlign'] {
 	margin-right:5px !important; 
 }
 
-/*new css for 2.0 starts*/
+.popupLbl {
+	color: #000;
+}	
+/*new css for 2.0 ends*/
 
 
 .alert-message.success.build {
@@ -5567,6 +5566,11 @@ input[class*='chckBxAlign'] {
 	border: none;
 }
 
+.no-left-bottom-border {
+	border-left: 0 none !important;
+	border-bottom: 0 none !important;
+}
+
 .autoWidth {
 	width: auto !important;
 }
@@ -5595,4 +5599,12 @@ input[class*='chckBxAlign'] {
 
 .bottom-space {
 	padding-bottom: 34px;
+}
+
+.table-pad {
+	padding: 0 0 0 10px !important;
+}
+
+.table-chkbx {
+	width: 20px;
 }

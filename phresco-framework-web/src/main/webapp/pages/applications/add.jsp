@@ -362,7 +362,7 @@
 		//Will be triggered when the create project button is clicked
 		$('#createProject').click(function() {
 			var params = $('#formCustomers').serialize();
-			validate('createProject', $('#formCreateProject'), $("#container"), params);
+			validate('createProject', $('#formCreateProject'), $("#container"), params, '<s:text name='progress.txt.add.proj'/>');
 		});
 	});
 	

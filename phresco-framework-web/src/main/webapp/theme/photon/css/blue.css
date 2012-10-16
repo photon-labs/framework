@@ -1480,3 +1480,11 @@ table tr {
 .mandatory {
 	color: red;
 }
+
+.no-left-bottom-border {
+	border-top: 1px solid #CCCCCC !important;
+}
+
+.table tbody tr:hover td, .table tbody tr:hover th {
+	background-color: #8ABBED;
+}

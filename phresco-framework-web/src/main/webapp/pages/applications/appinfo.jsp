@@ -189,6 +189,8 @@
 	}
 	
     $(document).ready(function() {
+   		hideLoadingIcon();//To hide the loading icon
+    	
 		$("#name").focus();
     	//escPopup();
         checkDefault();

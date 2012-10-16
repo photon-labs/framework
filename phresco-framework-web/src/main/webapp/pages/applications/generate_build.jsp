@@ -49,12 +49,12 @@
 
 <%
     String defaultEnv = "";
-   	String projectCode = (String) request.getAttribute(FrameworkConstants.REQ_PROJECT_CODE);
+   //	String projectCode = (String) request.getAttribute(FrameworkConstants.REQ_PROJECT_CODE);
    	String from = (String) request.getAttribute(FrameworkConstants.REQ_BUILD_FROM);
-   	String technology = (String)request.getAttribute(FrameworkConstants.REQ_TECHNOLOGY);
+  // 	String technology = (String)request.getAttribute(FrameworkConstants.REQ_TECHNOLOGY);
    	String testType = (String) request.getAttribute(FrameworkConstants.REQ_TEST_TYPE);
    	String importSqlPro  = (String) request.getAttribute(FrameworkConstants.REQ_IMPORT_SQL);
-   	String buildNumber = (String) request.getAttribute(FrameworkConstants.REQ_DEPLOY_BUILD_NUMBER);
+   //	String buildNumber = (String) request.getAttribute(FrameworkConstants.REQ_DEPLOY_BUILD_NUMBER);
    	String finalName = (String) request.getAttribute(FrameworkConstants.FINAL_NAME);
    	String mainClassValue = (String) request.getAttribute(FrameworkConstants.MAIN_CLASS_VALUE);
    	String checkImportSql = "";
@@ -74,15 +74,15 @@
    	String fileLoc = (String) request.getAttribute("fileLocation");
    	
    	String buildName = "";
-    List<Parameter> parameters = (List<Parameter>) request.getAttribute("parameters");
+    List<Parameter> parameters = (List<Parameter>) request.getAttribute(FrameworkConstants.REQ_DYNAMIC_PARAMETERS);
     if (FrameworkConstants.REQ_DEPLOY.equals(from)) {
     	buildName = (String) request.getAttribute("buildName");
     }
 %>
 
-<form action="build" method="post" autocomplete="off" class="build_form" id="generateBuildForm">
-<div class="popup_Modal topFouty" id="generateBuild_Modal">
-	<div class="modal-header">
+<form action="build" method="post" autocomplete="off" class="build_form form-horizontal" id="generateBuildForm">
+<div class="" id="generateBuild_Modal">
+	<%-- <div class="modal-header">
 		<h3 id="generateBuildTitle">
 		<%
 		    if ("nodeJS_runAgnSrc".equals(from) || "runAgnSrc".equals(from)) {
@@ -101,13 +101,13 @@
 			%>
 		</h3>
 		<a class="close" href="#" id="close">&times;</a>
-	</div>
+	</div> --%>
 
 	<!-- For build alone starts-->
-	<input name="<%=FrameworkConstants.REQ_DEPLOY_BUILD_NUMBER%>" type="hidden" value="<%=buildNumber%>"/>
+	<%-- <input name="<%=FrameworkConstants.REQ_DEPLOY_BUILD_NUMBER%>" type="hidden" value="<%=buildNumber%>"/> --%>
 	<!-- For build alone ends -->
 			
-	<div class="modal-body">
+	<!-- <div class="modal-body"> -->
 
 		<%
 		    if (CollectionUtils.isNotEmpty(projectModules) && "generateBuild".equals(from)) {
@@ -135,7 +135,7 @@
         
 
        <!-- dynamic parameters starts -->
-		<% //if (from.equals("generateBuild")) {
+		<% 
 			for (Parameter parameter: parameters) { 
 		%>    
 				<div class="clearfix">
@@ -143,11 +143,12 @@
 					if (Boolean.parseBoolean(parameter.getRequired())) {
 						mandatory = true;
 		 			}
-						if (!"Hidden".equals(parameter.getType())) {
+						if (!FrameworkConstants.TYPE_HIDDEN.equalsIgnoreCase(parameter.getType())) {
 							List<Value> values = parameter.getName().getValue();						
 							for(Value value : values) {
 								if (value.getLang().equals("en")) {	//load label
-									StringTemplate labelElmnt = FrameworkUtil.constructLabelElement(mandatory, value.getValue());
+									String cssClass = "popupLbl";
+									StringTemplate labelElmnt = FrameworkUtil.constructLabelElement(mandatory, cssClass, value.getValue());
 			%>					
 								<%= labelElmnt %>
 			<%			   		break;
@@ -156,20 +157,20 @@
 						}
 					
 					// load input text box
-					if ((parameter.getType().equals("String") || parameter.getType().equals("Number") || parameter.getType().equals("Boolean") || 
-									parameter.getType().equals("Hidden")) && parameter.getPossibleValues() == null) { 
+					if ((FrameworkConstants.TYPE_STRING.equalsIgnoreCase(parameter.getType()) || FrameworkConstants.TYPE_NUMBER.equalsIgnoreCase(parameter.getType()) || FrameworkConstants.TYPE_BOOLEAN.equalsIgnoreCase(parameter.getType()) || 
+									FrameworkConstants.TYPE_HIDDEN.equalsIgnoreCase(parameter.getType())) && parameter.getPossibleValues() == null) { 
 						String type ="", cssClass = "", id, name, placeholder, value="";
-						if ("Password".equals(parameter.getType())) {
+						if (FrameworkConstants.TYPE_PASSWORD.equalsIgnoreCase(parameter.getType())) {
 							type = "password";
-							cssClass = "xlarge javastd";
-						} else if ("Boolean".equals(parameter.getType())) {
+							cssClass = "";
+						} else if (FrameworkConstants.TYPE_BOOLEAN.equalsIgnoreCase(parameter.getType())) {
 							type = "checkbox";
 							cssClass = "chckBxAlign";
-						} else if ("Hidden".equals(parameter.getType())) {
+						} else if (FrameworkConstants.TYPE_HIDDEN.equalsIgnoreCase(parameter.getType())) {
 							type = "hidden";
 						} else {
 							type = "text";
-							cssClass = "xlarge javastd";
+							cssClass = "";
 						}
 						StringTemplate txtInputElement = FrameworkUtil.constructInputElement(type, cssClass, "", parameter.getKey(), "", StringUtils.isNotEmpty(parameter.getValue()) ? parameter.getValue():"");
 		%> 	
@@ -183,8 +184,8 @@
 						
 		<% 			}  
 					//dynamically loads values into select box for environmet
-					if ("DynamicParameter".equals(parameter.getType())) {
-						List<String> dynamicEnvNames = (List<String>) request.getAttribute("dynamicEnvNames");
+					if (FrameworkConstants.TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(parameter.getType())) {
+						List<String> dynamicEnvNames = (List<String>) request.getAttribute(FrameworkConstants.REQ_DYNAMIC_ENV_NAMES);
 						List<String> selectedValList = Arrays.asList(parameter.getValue().split("\\s*,\\s*"));
 						StringTemplate selectDynamicElmnt = FrameworkUtil.constructSelectElement("multiSelHeight", "", parameter.getKey(), dynamicEnvNames, selectedValList, true);
 		%>				
@@ -201,7 +202,6 @@
 				});
 			</script>
 		<% 		}
-			//}	
 		%>
 		<!-- dynamic parameters ends -->
        
@@ -358,7 +358,7 @@
 		    }
 		%>	 --%>
 		
-		<fieldset class="popup-fieldset fieldset_center_align">
+		<%-- <fieldset class="popup-fieldset fieldset_center_align">
 			<!-- Show Settings -->
 			<div class="clearfix">
 				<div class="xlInput">
@@ -404,21 +404,21 @@
 							    }
 							%>
 							<!-- TODO:Need to handle -->
-							<%-- <%
+							<%
 							    if (!from.equals("generateBuild") && CollectionUtils.isNotEmpty(project.getApplicationInfo().getTechnology().getDatabases())) {
 							%>
 								<input type="checkbox" id="importSql" name="importSql" value="true" <%= checkImportSql%> >
 								<span class="textarea_span popup-span"><s:text name="label.import.sql"/></span>
-							<% } %> --%>
-							<%-- <% if (from.equals("generateBuild") && TechnologyTypes.ANDROIDS.contains(technology)) { %>
+							<% } %>
+							<% if (from.equals("generateBuild") && TechnologyTypes.ANDROIDS.contains(technology)) { %>
 								<input type="checkbox" id="proguard" name="proguard" value="false" disabled="disabled">
 								<span class="textarea_span popup-span"><s:text name="label.progurad"/></span>
-							<% } %> --%>
+							<% } %>
 						</li>
 					</ul>
 				</div>	
 			</div>
-		</fieldset>
+		</fieldset> --%>
 		
 		<!-- sql execution starts  -->
 		<fieldset class="popup-fieldset fieldset_center_align" id="sqlExecutionContain" style="display: none;">
@@ -465,7 +465,7 @@
 		<!-- sql execution ends  -->
 		
 <!-- 		advanced settingd -->
-		<% if ("generateBuild".equals(from) && TechnologyTypes.ANDROIDS.contains(technology)) { %>
+		<%-- <% if ("generateBuild".equals(from) && TechnologyTypes.ANDROIDS.contains(technology)) { %>
 			<div class="theme_accordion_container clearfix" style="float: none;">
 			    <section class="accordion_panel_wid">
 			        <div class="accordion_panel_inner adv-settings-accoridan-inner">
@@ -497,12 +497,12 @@
 			        </div>
 			    </section>
 			</div>
-			<input id="profileAvailable" name="profileAvailable" type="hidden" value=""/>
-		<% } %>
+			<input id="profileAvailable" name="profileAvailable" type="hidden" value=""/> 
+		<% } %>--%>
 <!-- 		advanced settings end -->
 
 <!-- minifier setting starts -->
-		<% if ("generateBuild".equals(from) && (TechnologyTypes.HTML5_MULTICHANNEL_JQUERY_WIDGET.equals(technology) || 
+		<%-- <% if ("generateBuild".equals(from) && (TechnologyTypes.HTML5_MULTICHANNEL_JQUERY_WIDGET.equals(technology) || 
 				TechnologyTypes.HTML5_JQUERY_MOBILE_WIDGET.equals(technology) || 
 				TechnologyTypes.HTML5_MOBILE_WIDGET.equals(technology) ||
 				TechnologyTypes.HTML5_WIDGET.equals(technology))) { %>
@@ -565,12 +565,12 @@
 			        </div>
 			    </section>
 			</div> 
-		<% } %>
-	</div>
+		<% } %> --%>
+	<!-- </div> -->
 	
 <!--  minifier setting  end -->
 	
-	<div class="modal-footer">
+	<%-- <div class="modal-footer">
 		<div class="action popup-action">
 			<img class="popupLoadingIcon"> 
 			<div id="errMsg" class="generate_build_err_msg adv-settings-error-msg"></div>
@@ -588,37 +588,37 @@
 				<% } %>
 			</div>
 		</div>
-	</div>
+	</div> --%>
 </div>
-
+<%-- 
 <% if (TechnologyTypes.MOBILES.contains(technology)) { %>
 		<input type="hidden" id="mobile" value="mobile">
-<% } %>
+<% } %> --%>
 </form> 
 
 <script type="text/javascript">
     
-	<%
+	<%-- <%
 		if (TechnologyTypes.ANDROIDS.contains(technology) && (Boolean) request.getAttribute(FrameworkConstants.REQ_ANDROID_HAS_SIGNING)) {
 	%>
 		$('#profileAvailable').val("true");
 	<%
 		}
-	%>
+	%> --%>
 
 	if(!isiPad()){
 	    /* JQuery scroll bar */
 		$(".generate_build").scrollbars();
 	}
 
-	if (<%= TechnologyTypes.IPHONES.contains(technology) %> || <%= TechnologyTypes.ANDROIDS.contains(technology) %> ) {
+	<%-- if (<%= TechnologyTypes.IPHONES.contains(technology) %> || <%= TechnologyTypes.ANDROIDS.contains(technology) %> ) {
 		$("#importSql").attr("disabled", "disabled");
 	}
 	
 	if (<%= TechnologyTypes.SHAREPOINT.equals(technology) %> || <%= TechnologyTypes.DOT_NET.equals(technology) %>) {
         $("#importSql").attr("checked", false); 
         $("#importSql").attr("disabled", "disabled"); 
-	}
+	} --%>
 	
 	var url = "";
 	var readerSession = "";
@@ -626,11 +626,13 @@
 	$(document).ready(function() {
 		// accodion for advanced issue
 		accordion();
-		
 		$('#close, #cancel').click(function() {
 			showParentPage();
 		});
-
+		$('#popupOk').click(function(){
+			/*need to handle build and deploy actions*/
+		});
+		
 		$('#build').click(function() {
 			if ($('input[type=checkbox][name=signing]').is(':checked') && isBlank($('#profileAvailable').val())) {
 				$("#errMsg").html('<%= FrameworkConstants.PROFILE_CREATE_MSG %>');
@@ -884,8 +886,8 @@
 		if(!isBlank($("#environments").val())) { 
 			var params = 'environments=';
 		    params = params.concat($("#environments").val());
-		    params = params.concat("&projectCode=");
-		    params = params.concat('<%= projectCode %>');
+		    <%-- params = params.concat("&projectCode=");
+		    params = params.concat('<%= projectCode %>'); --%>
 			performAction("getSqlDatabases", params, '', true);
 		}
 	}
@@ -901,8 +903,8 @@
 		    params = params.concat($("#databases").val());
 		    params =  params.concat('&environments=');
 		    params = params.concat($("#environments").val());
-		    params = params.concat("&projectCode=");
-		    params = params.concat('<%= projectCode %>');
+		   <%--  params = params.concat("&projectCode=");
+		    params = params.concat('<%= projectCode %>'); --%>
 			performAction("fetchSQLFiles", params, '', true);
 		}
 	}
@@ -927,7 +929,12 @@
 	function buildValidateSuccess(lclURL, lclReaderSession) {
 		url = lclURL;
 		readerSession = lclReaderSession;
+		alert("build validate");
 		checkForConfig();
+	}
+	
+	function checkForConfig() {
+		loadContent('checkForConfiguration', $("#generateBuildForm"), '', getParams(), true);
 	}
 	
 	function successEnvValidation(data) {
@@ -952,12 +959,12 @@
 	}
 	
 	function performUrlActions(url, testType) {
-		var params = "";
+		<%-- var params = "";
 		params = params.concat("&environments=");
 		params = params.concat(getSelectedEnvs());
 		params = params.concat("&DbWithSqlFiles=");
 		params = params.concat($('#DbWithSqlFiles').val());
-		readerHandlerSubmit(url, '<%= projectCode %>', testType, params, true);
+		readerHandlerSubmit(url, '<%= projectCode %>', testType, params, true); --%>
 	}
 	
 	/** This method is to enforce the use of default environment **/
@@ -1023,7 +1030,7 @@
 		
 		$('#browseLocation').remove();
 		$('#generateBuildForm').hide();
-		var params = "techonolgy=";
+		<%-- var params = "techonolgy=";
 		var Technology = '<%= technology %>';
 		params = params.concat(Technology);
 		params = params.concat("&fileType=js");
@@ -1032,7 +1039,7 @@
 		params = params.concat(jsName);
 		params = params.concat("&selectedJsFiles=");
 		params = params.concat(jsFiles);
-		popup('jsFileBrowse', params, $('#popup_div'), '', true);
+		popup('jsFileBrowse', params, $('#popup_div'), '', true); --%>
 	}
 	
 	function updateHiddenField(jsName, jsFiles, fileLocation) {

@@ -169,6 +169,10 @@
 		$(".fixed-table-container-inner").scrollbars();
 	}
 	
+	$(document).ready(function() {
+		hideLoadingIcon();//To hide the loading icon
+	});
+	
 	// By default disable all Run buttons under builds
     $(".nodejs_startbtn").attr("class", "btn disabled");
     $(".nodejs_startbtn").attr("disabled", true);

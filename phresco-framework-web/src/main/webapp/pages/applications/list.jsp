@@ -69,80 +69,92 @@
 		</div>
     <% } else { %>	
 		<div class="table_div">
-			<div class="fixed-table-container">
-				<div class="header-background"></div>
-				<div class="fixed-table-container-inner">
-					<table cellspacing="0" class="zebra-striped">
-						<thead>
-							<tr>
-								<th class="first">
-									<div class="th-inner tablehead">
-										<input type="checkbox" value="" id="checkAllAuto" name="checkAllAuto" 
-											onclick="checkAllEvent(this,$('.selectedProjects'), false);">
-									</div>
-								</th>
-								<th class="second">
-									<div class="th-inner tablehead"><s:label key="lbl.name" theme="simple"/></div>
-								</th>
-								<th class="third">
-									<div class="th-inner tablehead"><s:label key="lbl.desc" theme="simple"/></div>
-								</th>
-								<th class="third">
-									<div class="th-inner tablehead"><s:label key="lbl.technolgoy" theme="simple"/></div>
-								</th>
-								<th class="third">
-									<div class="th-inner tablehead"><s:label key="lbl.print" theme="simple"/></div>
-								</th>
-								<th class="third">
-									<div class="th-inner tablehead"><s:label key="lbl.update" theme="simple"/></div>
-								</th>
-							</tr>
-						</thead>
-						
-						<tbody>
-						  	<%
-						  		for (ProjectInfo project : projects) {
-					  				List<ApplicationInfo> appInfos = project.getAppInfos();
-					  				if (CollectionUtils.isNotEmpty(appInfos)) {
-					  					for (ApplicationInfo appInfo : appInfos) {
-							%>
-										<tr>
-											<td class="checkboxwidth">
-												<input type="checkbox" class="check selectedProjects" name="selectedProjects" value="<%= appInfo.getCode() %>">
-											</td>
-											<td class="nameConfig">
-												<a href="#" onclick="editApplication('<%= project.getId() %>', '<%= appInfo.getId() %>');" name="edit">
-													<%= project.getName() %>
-												</a>
-											</td>
-											<td class="descConfig">
-												<%= project.getDescription() %>
-											</td>
-											<td class="hoverAppliesTo">
-												<%= appInfo.getDescription() %>
-											</td>
-											<td id="icon-width">
-												<a href="#" id="pdfPopup" class="iconsCenterAlign">
-													<img id="<%= appInfo.getCode() %>" class="pdfCreation" src="images/icons/print_pdf.png"
-														title="Generate Report" class="iconSizeinList"/>
-												</a>
-											</td>
-											<td id="icon-width">
-												<a href="#" id="projectUpdate" class="iconsCenterAlign">
-													<img id="<%= appInfo.getCode() %>" class="projectUpdate" src="images/icons/refresh.png"
-														title="Update" class="iconSizeinList"/>
-												</a>
-											</td>
-										</tr>
-							<%
-					  					}
-					  				}
-								}
-							%>
-						</tbody>
-					</table>
-				</div>
+		<% for (ProjectInfo project : projects) { %>
+			<div class="theme_accordion_container">
+				<section class="accordion_panel_wid">
+					<div class="accordion_panel_inner">
+						<section class="lft_menus_container">
+							<span class="siteaccordion closereg">
+								<span>
+									<input type="checkbox" id="checkAll1" class="accordianChkBox"/>
+									<a class="vAlignSub"><%= project.getName() %></a>
+								</span>
+							</span>
+							<div class="mfbox siteinnertooltiptxt hideContent">
+								<div class="scrollpanel">
+									<section class="scrollpanel_inner">
+								    	<table class="table table-bordered table_border">
+								    		<thead>
+								    			<tr class="header-background">
+								    				<th class="no-left-bottom-border table-pad table-chkbx">
+								    					<input type="checkbox" value="" id="checkAllAuto" name="checkAllAuto" 
+															onclick="checkAllEvent(this,$('.selectedProjects'), false);">
+								    				</th>
+								    				<th class="no-left-bottom-border table-pad">
+								    					<s:label key="lbl.name" cssClass="labelbold"/>
+								    				</th>
+								    				<th class="no-left-bottom-border table-pad">
+								    					<s:label key="lbl.desc" cssClass="labelbold"/>
+								    				</th>
+								    				<th class="no-left-bottom-border table-pad">
+								    					<s:label key="lbl.technolgoy" cssClass="labelbold"/>
+								    				</th>
+								    				<th class="no-left-bottom-border table-pad">
+								    					<s:label key="lbl.print" cssClass="labelbold"/>
+								    				</th>
+								    				<th class="no-left-bottom-border table-pad">
+								    					<s:label key="lbl.update" cssClass="labelbold"/>
+								    				</th>
+								    			</tr>
+								    		</thead>
+								    		<tbody>
+								    			<%
+													List<ApplicationInfo> appInfos = project.getAppInfos();
+													if (CollectionUtils.isNotEmpty(appInfos)) {
+														for (ApplicationInfo appInfo : appInfos) {
+												%>
+															<tr>
+																<td class="no-left-bottom-border table-pad">
+																	<input type="checkbox" class="check selectedProjects" name="selectedProjects" value="<%= appInfo.getCode() %>">
+																</td>
+																<td class="no-left-bottom-border table-pad">
+																	<a href="#" onclick="editApplication('<%= project.getId() %>', '<%= appInfo.getId() %>');" name="edit">
+																		<%= project.getName() %>
+																	</a>
+																</td>
+																<td class="no-left-bottom-border table-pad">
+																	<%= project.getDescription() %>
+																</td>
+																<td class="no-left-bottom-border table-pad">
+																	<%= appInfo.getTechInfo().getVersion() %>
+																</td>
+																<td class="no-left-bottom-border table-pad">
+																	<a href="#" id="pdfPopup">
+																		<img id="<%= appInfo.getCode() %>" class="pdfCreation" src="images/icons/print_pdf.png"
+																			title="Generate Report" class="iconSizeinList"/>
+																	</a>
+																</td>
+																<td class="no-left-bottom-border table-pad">
+																	<a href="#" id="projectUpdate">
+																		<img id="<%= appInfo.getCode() %>" class="projectUpdate" src="images/icons/refresh.png"
+																			title="Update" class="iconSizeinList"/>
+																	</a>
+																</td>
+															</tr>
+													<%
+															}
+														}
+													%>
+								    		</tbody>
+										</table>
+									</section>
+								</div>
+							</div>
+						</section>  
+					</div>
+				</section>
 			</div>
+			<% } %>
 		</div>
 	<% } %>
 </form>
@@ -150,17 +162,13 @@
 <script type="text/javascript">
 	//To check whether the device is ipad or not and then apply jquery scrollbar
 	if (!isiPad()) {
-		$(".fixed-table-container-inner").scrollbars();  
+// 		$(".table_div").scrollbars();  
 	}
 
 	$(document).ready(function() {
 		toDisableCheckAll();
-		enableScreen();
 		
-		/*$("td[id = 'hoverAppliesTo']").text(function(index) {
-	        return textTrim($(this));
-	    });*/
-		
+		hideLoadingIcon();//To hide the loading icon
    	});
 	
     function editApplication(projectId, appId) {

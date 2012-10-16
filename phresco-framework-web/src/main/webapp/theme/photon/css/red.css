@@ -1510,3 +1510,25 @@ background-color: #ffffff;
 .vAlignSub {
 	color: #ffffff;
 }
+
+#indicator {
+	background: #C7141C; /* Old browsers */
+    background: -moz-linear-gradient(top,  #C7141C 0%, #B1121D 44%, #9D111E 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#C7141C), color-stop(44%,#B1121D), color-stop(100%,#9D111E)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  #C7141C 0%,#B1121D 44%,#9D111E 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  #C7141C 0%,#B1121D 44%,#9D111E 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  #C7141C 0%,#B1121D 44%,#9D111E 100%); /* IE10+ */
+	background: linear-gradient(top,  #C7141C 0%,#B1121D 44%,#9D111E 100%); /* W3C */
+}
+
+.table_border {
+	border: 1px solid #3A090B;
+}
+
+.no-left-bottom-border {
+	border-top: 1px solid #3A090B !important;
+}
+
+.table tbody tr:hover td, .table tbody tr:hover th {
+ 	background-color: #630A0A;
+}

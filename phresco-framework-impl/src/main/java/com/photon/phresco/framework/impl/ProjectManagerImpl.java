@@ -10,7 +10,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -39,7 +43,8 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 	
 	private static final Logger S_LOGGER= Logger.getLogger(ProjectManagerImpl.class);
 	private static boolean isDebugEnabled = S_LOGGER.isDebugEnabled();
-    
+	private Map<String, ProjectInfo> projectInfosMap = null;
+	
 	public List<ProjectInfo> discover(String customerId) throws PhrescoException {
 		if (isDebugEnabled) {
 			S_LOGGER.debug("Entering Method ProjectManagerImpl.discover(String CustomerId)");
@@ -52,21 +57,27 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		if (!projectsHome.exists()) {
 			return null;
 		}
-
+		projectInfosMap = new HashMap<String, ProjectInfo>();
 		List<ProjectInfo> projectInfos = new ArrayList<ProjectInfo>();
 	    File[] appDirs = projectsHome.listFiles();
 	    for (File appDir : appDirs) {
 			File[] dotPhrescoFolders = appDir.listFiles(new PhrescoFileNameFilter(FOLDER_DOT_PHRESCO));
-			if (dotPhrescoFolders == null || dotPhrescoFolders.length == 0) {
-				continue;
+			if (ArrayUtils.isEmpty(dotPhrescoFolders)) {
+                throw new PhrescoException(".phresco folder not found in project "+appDir.getName());
+            }
+			File[] dotProjectFiles = dotPhrescoFolders[0].listFiles(new PhrescoFileNameFilter(PROJECT_INFO_FILE));
+			if (ArrayUtils.isEmpty(dotProjectFiles)) {
+			    throw new PhrescoException("project.info file not found in .phresco of project "+dotPhrescoFolders[0].getParent());
 			}
-	        for (File dotPhrescoFolder : dotPhrescoFolders) {
-				File[] dotProjectFiles = dotPhrescoFolder.listFiles(new PhrescoFileNameFilter(PROJECT_INFO_FILE));
-				fillProjects(dotProjectFiles, projectInfos, customerId);
-			}
+			fillProjects(dotProjectFiles[0], projectInfos, customerId);
 	    }
-		
-		return projectInfos;
+	    
+	    Iterator<Entry<String, ProjectInfo>> iterator = projectInfosMap.entrySet().iterator();
+        while (iterator.hasNext()) {
+            projectInfos.add(iterator.next().getValue());
+        }
+
+        return projectInfos;
 	}
 
 	public ProjectInfo getProject(String projectId, String customerId) throws PhrescoException {
@@ -159,31 +170,29 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		return deletionSuccess;
 	}
 	
-	private void fillProjects(File[] dotProjectFiles, List<ProjectInfo> projectInfos, String customerId) throws PhrescoException {
+    private void fillProjects(File dotProjectFile, List<ProjectInfo> projectInfos, String customerId) throws PhrescoException {
+        S_LOGGER.debug("Entering Method ProjectManagerImpl.fillProjects(File[] dotProjectFiles, List<Project> projects)");
 
-		 S_LOGGER.debug("Entering Method ProjectManagerImpl.fillProjects(File[] dotProjectFiles, List<Project> projects)");
-
-		 if(ArrayUtils.isEmpty(dotProjectFiles)) {
-			 return;
-		 }
-
-		 Gson gson = new Gson();
-		 BufferedReader reader = null;
-
-		 for (File dotProjectFile : dotProjectFiles) {
-			 try {
-				 reader = new BufferedReader(new FileReader(dotProjectFile));
-				 ProjectInfo projectInfo = gson.fromJson(reader, ProjectInfo.class);
-				 if (projectInfo.getCustomerIds().get(0).equalsIgnoreCase(customerId)) {
-					 projectInfos.add(projectInfo);
-				 }
-			 } catch (FileNotFoundException e) {
-				 throw new PhrescoException(e);
-			 } finally {
-				 Utility.closeStream(reader);
-			 }
-		 }
-	 }
+        Gson gson = new Gson();
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new FileReader(dotProjectFile));
+            ProjectInfo projectInfo = gson.fromJson(reader, ProjectInfo.class);
+            if (projectInfo.getCustomerIds().get(0).equalsIgnoreCase(customerId)) {
+                ProjectInfo projectInfoInMap = projectInfosMap.get(projectInfo.getId());
+                if (projectInfoInMap != null) {
+                    projectInfoInMap.getAppInfos().add(projectInfo.getAppInfos().get(0));
+                    projectInfosMap.put(projectInfo.getId(), projectInfoInMap);
+                } else {
+                    projectInfosMap.put(projectInfo.getId(), projectInfo);
+                }
+            }
+        } catch (FileNotFoundException e) {
+            throw new PhrescoException(e);
+        } finally {
+            Utility.closeStream(reader);
+        }
+    }
 	
 	private void extractArchive(ClientResponse response, ProjectInfo info) throws  IOException, PhrescoException {
 		InputStream inputStream = response.getEntityInputStream();

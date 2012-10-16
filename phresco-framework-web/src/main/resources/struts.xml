@@ -259,7 +259,7 @@
             <result name="build">/pages/applications/build.jsp</result>
         </action>
 
-        <action name="generateBuild" method="generateBuild" class="com.photon.phresco.framework.actions.applications.Build">
+        <action name="generateBuild" method="showGenerateBuildPopup" class="com.photon.phresco.framework.actions.applications.Build">
             <result name="generateBuild">/pages/applications/generate_build.jsp</result>
         </action>
         
