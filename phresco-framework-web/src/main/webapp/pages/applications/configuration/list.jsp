@@ -165,4 +165,8 @@
 
 <script type="text/javascript">
 	yesnoPopup('openEnvironmentPopup', "<s:text name='lbl.environment'/>");
+	
+	$(document).ready(function() {
+		hideLoadingIcon();//To hide the loading icon
+	});
 </script>

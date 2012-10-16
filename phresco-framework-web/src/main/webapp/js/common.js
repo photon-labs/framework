@@ -60,7 +60,7 @@ function progressPopup(url, title) {
 
 function clickMenu(menu, tag, form, additionalParam) {
 	menu.click(function() {
-		showLoadingIcon(tag);
+		showLoadingIcon();
 		inActivateAllMenu(menu);
 		activateMenu($(this));
 		var selectedMenu = $(this).attr("id");
@@ -78,16 +78,7 @@ function clickButton(button, tag) {
 
 function loadContent(pageUrl, form, tag, additionalParams, callSuccessEvent) {
 //	showLoadingIcon(tag);
-	var params = "";
-	if (form != undefined && form != "" && !isBlank(form.serialize())) {
-		params = form.serialize();
-		if (!isBlank(additionalParams)) {
-			params = params.concat("&");
-			params = params.concat(additionalParams);	
-		} 
-	} else if (additionalParams != undefined && additionalParams != "")  {
-		params = additionalParams;
-	}
+	var params = getParameters(form, additionalParams);
 	$.ajax({
 		url : pageUrl,
 		data : params,
@@ -113,14 +104,11 @@ function clickSave(pageUrl, params, tag, progressText) {
 	});
 }
 
-function validate(pageUrl, form, tag, progressText, disabledDiv) {
+function validate(pageUrl, form, tag, additionalParams, progressText, disabledDiv) {
 	if (disabledDiv != undefined && disabledDiv != "") {
 		enableDivCtrls(disabledDiv);
 	}
-	var params = "";
-	if (form != undefined && !isBlank(form)) {
-		params = form.serialize();
-	}
+	var params = getParameters(form, additionalParams);
 	$.ajax({
 		url : pageUrl + "Validate",
 		data : params,
@@ -151,6 +139,23 @@ function loadData(data, tag, pageUrl, callSuccessEvent) {
 		}
 	}
 }
+
+//To get the parameters based on the availability
+function getParameters(form, additionalParams) {
+	var params = "";
+	if (form != undefined && form != "" && !isBlank(form.serialize())) {
+		params = form.serialize();
+		if (!isBlank(additionalParams)) {
+			params = params.concat("&");
+			params = params.concat(additionalParams);
+		}
+	} else {
+		params = additionalParams;
+	}
+	
+	return params;
+}
+
 
 function inActivateAllMenu(allLink) {
 	allLink.attr("class", "inactive");
@@ -253,27 +258,32 @@ function accordion() {
     });
 }
 
-function showLoadingIcon(tag) {
+function showLoadingIcon() {
 	var src = "theme/photon/images/loading_blue.gif";
 	var theme =localStorage["color"];
     if (theme == undefined || theme == "theme/photon/css/red.css") {
     	src = "theme/photon/images/loading_red.gif";
     }
+    $("#loadingIconDiv").show();
+	$("#loadingIconImg").attr("src", src);
     disableScreen();
- 	tag.empty();
-	tag.html("<img class='loadingIcon' src='"+ src +"' style='display: block'>");
+}
+
+function hideLoadingIcon() {
+	$("#loadingIconDiv").hide();
+	enableScreen();
 }
 
 function showProgressBar(progressText) {
-	$(".bar").html(progressText);
+	$("#progressnum").html(progressText);
 	$(".modal-backdrop").show();
-	$(".progress").show();
+	$("#progressbar").show();
 	setInterval(prog, 100);
 }
 
 function hideProgressBar() {
 	$(".modal-backdrop").hide();
-	$(".progress").hide();
+	$("#progressbar").hide();
 }
 
 // It allows A-Z, a-z, 0-9, - and _ 
@@ -335,7 +345,7 @@ function disableScreen() {
 
 //To enable the screen by hiding an overlay
 function enableScreen() {
-	//$(".modal-backdrop").hide();
+	$(".modal-backdrop").hide();
 }
 
 //To fill the pom details in the textbox if available while uploading the files

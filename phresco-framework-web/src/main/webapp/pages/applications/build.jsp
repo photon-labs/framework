@@ -185,7 +185,6 @@
 	
     $(document).ready(function() {
     	yesnoPopup('generateBuild', '<s:text name="label.generatebuild"/>', 'build','<s:text name="label.build"/>');
-    	enableScreen();
     	if ($.browser.safari && $.browser.version == 530.17) {
     		$(".buildDiv").show().css("float","left");
     	}
