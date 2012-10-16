@@ -61,12 +61,15 @@ public class FrameworkUtil extends FrameworkBaseAction implements FrameworkConst
 	private static FrameworkUtil frameworkUtil = null;
     private static final Logger S_LOGGER = Logger.getLogger(FrameworkUtil.class);
 
-	private static final String LABEL_TEMPLATE = "<label for='xlInput' class='xlInput popup-label'>$mandatory$$txt$</label>";
+	private static final String LABEL_TEMPLATE = "<div class='control-group'><label for='xlInput' class='control-label labelbold $class$'>$mandatory$$txt$</label>";
 	private static final String MANDATORY = "<span class='red'>*</span>&nbsp";
-	private static final String SELECT_TEMPLATE = "<div class='input'><select class=\"xlarge $cssClass$\" name=\"$name$\" $multiple$>$options$</select></div>";
-	private static final String INPUT_TEMPLATE = "<div class='input'><input type=\"$type$\" class=\"$class$\" id=\"$id$\" " + 
-													"name=\"$name$\" placeholder=\"$placeholder$\" value=\"$value$\" $checked$/></div>";
+	private static final String SELECT_TEMPLATE = "<div class='controls'><select class=\"input-xlarge $cssClass$\" name=\"$name$\" $multiple$>$options$</select></div>";
+	private static final String INPUT_TEMPLATE = "<div class='controls'><input type=\"$type$\" class=\"input-xlarge $class$\" id=\"$id$\" " + 
+													"name=\"$name$\" placeholder=\"$placeholder$\" value=\"$value$\" $checked$/></div></div>";
 
+	private static final String MULTI_SELECT_TEMPLATE = "<div class='multilist-scroller multiselct'><ul></ul></div>";
+	private static final String MULTISELECT_LIST_OPTIONS_TEMPLATE = "<li><input type='checkbox' value='' name=''>All</li>";
+	
     private Map<String, String> unitTestMap = new HashMap<String, String>(8);
     private Map<String, String> unitReportMap = new HashMap<String, String>(8);
     private Map<String, String> funcationTestMap = new HashMap<String, String>(8);
@@ -713,7 +716,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements FrameworkConst
 		 return builder;
     }
     
-    public static StringTemplate constructLabelElement(Boolean isMandatory, String Label) {
+    public static StringTemplate constructLabelElement(Boolean isMandatory, String cssClass, String Label) {
     	StringTemplate labelElement = new StringTemplate(LABEL_TEMPLATE);
     	if (isMandatory) {
     		labelElement.setAttribute("mandatory", MANDATORY);
@@ -721,7 +724,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements FrameworkConst
     		labelElement.setAttribute("mandatory", "");
     	}
     	labelElement.setAttribute("txt", Label);
-
+    	labelElement.setAttribute("class", cssClass);
     	return labelElement;
     }
 }

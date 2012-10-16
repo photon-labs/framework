@@ -5529,7 +5529,10 @@ input[class*='chckBxAlign'] {
 	margin-right:5px !important; 
 }
 
-/*new css for 2.0 starts*/
+.popupLbl {
+	color: #000;
+}	
+/*new css for 2.0 ends*/
 
 
 .alert-message.success.build {

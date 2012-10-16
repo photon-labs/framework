@@ -300,6 +300,7 @@ public interface FrameworkConstants {
     String ANDROID_PROFILE_PLUGIN_ARTIFACT_ID = "maven-jarsigner-plugin";
     String ANDROID_PROFILE_PLUGIN_VERSION = "1.2";
     String PHASE_PACKAGE = "package";
+    String PHASE_DEPLOY = "deploy";
     String ANDROID_EXECUTION_ID = "signing";
     String ELEMENT_ARCHIVE_DIR = "archiveDirectory";
     String ELEMENT_REMOVE_EXIST_SIGN = "removeExistingSignatures";
@@ -670,7 +671,7 @@ public interface FrameworkConstants {
 	
 	String REQ_CONFIG_SERVER_NAMES = "configServerNames";
 	String REQ_CONFIG_DB_NAMES = "configDbNames";
-
+	
     /*
      * REST url
      */
@@ -1454,4 +1455,19 @@ public interface FrameworkConstants {
 	     * String EXCEPTION_XXX
 	     *****************************/ 
 		String EXCEPTION_CREATE_PROJECT = "excep.hdr.proj.create";
+		
+		/**
+		 * Dynamic Parameter Constants
+		 */
+		
+		String TYPE_STRING = "string";
+		String TYPE_HIDDEN = "hidden";
+		String TYPE_PASSWORD  = "password";
+		String TYPE_NUMBER = "number";
+		String TYPE_BOOLEAN = "boolean";
+		String TYPE_DYNAMIC_PARAMETER = "DynamicParameter";
+		String PHRESCO_PLUGIN_INFO_XML = "phresco-plugin-info.xml";
+		
+		String REQ_DYNAMIC_PARAMETERS = "parameters";
+		String REQ_DYNAMIC_ENV_NAMES = "dynamicEnvNames";
 }

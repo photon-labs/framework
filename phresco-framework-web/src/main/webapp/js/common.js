@@ -18,7 +18,7 @@
  * ###
  */
  
-function yesnoPopup(url, title, params, okLabel) {
+function yesnoPopup(url, title, okUrl, okLabel) {
 	$("a[data-toggle=modal]").click(function() {
 		$('#popupTitle').html(title); // Title for the popup
 		$('#popupClose').hide();
@@ -26,14 +26,25 @@ function yesnoPopup(url, title, params, okLabel) {
 		if (okLabel !== undefined && !isBlank(okLabel)) {
 			$('#popupOk').html(okLabel); // label for the ok button 
 		}
-		
+		$('#popupOk').attr("okUrl", okUrl);
 		var data = "";
-		if (params !== undefined && !isBlank(params)) {
-			data = params; 
-		}
-		
+		data = getBasicParams();
+		/*if (params !== undefined && !isBlank(params)) {
+			data = params;
+		}*/
+		data = data.concat("&");
+		var additionalParam = $(this).attr('additionalParam');
+		data = data.concat(additionalParam);
 		$('.modal-body').load(url, data); //url to render the body content for the popup
 	});
+}
+
+function getBasicParams() {
+	var params = $('#formCustomers').serialize();
+	params = params.concat("&");
+	params = params.concat($('#formAppMenu').serialize());
+	
+	return params;
 }
 
 function progressPopup(url, title) {
