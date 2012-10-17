@@ -37,17 +37,24 @@
 	String appLayerId = "";
 	String webLayerId = "";
 	String mobileLayerId = "";
+	String appLayerName = "";
+	String webLayerName = "";
+	String mobileLayerName = "";
 	if (CollectionUtils.isNotEmpty(layers)) {
 		for (ApplicationType layer : layers) {
-		    if (FrameworkConstants.LAYER_APPLICATION.equals(layer.getName())) {
+		    if (FrameworkConstants.LAYER_APP_ID.equals(layer.getId())) {
+		        appLayerId = layer.getId();
+		        appLayerName = layer.getName();
 		        appLayerTechGroups = layer.getTechGroups();
 		    }
-			if (FrameworkConstants.LAYER_WEB.equals(layer.getName())) {
+			if (FrameworkConstants.LAYER_WEB_ID.equals(layer.getId())) {
 			    webLayerId = layer.getId();
+			    webLayerName = layer.getName();
 			    webLayerTechGroups = layer.getTechGroups();
 		    }
-			if (FrameworkConstants.LAYER_MOBILE.equals(layer.getName())) {
+			if (FrameworkConstants.LAYER_MOB_ID.equals(layer.getId())) {
 			    mobileLayerId = layer.getId();
+			    mobileLayerName = layer.getName();
 			    mobileLayerTechGroups = layer.getTechGroups();
 		    }
 		}
@@ -135,7 +142,7 @@
 						<span class="siteaccordion closereg">
 							<span>
 								<input type="checkbox" id="checkAll1" class="accordianChkBox" name="layer" value="<%= appLayerId %>"/>
-								<a class="vAlignSub"><s:text name='lbl.projects.layer.app'/></a>
+								<a class="vAlignSub"><%= appLayerName %></a>
 							</span>
 						</span>
 						<div class="mfbox siteinnertooltiptxt hideContent">
@@ -180,7 +187,7 @@
 						<span class="siteaccordion closereg">
 							<span>
 								<input type="checkbox" id="checkAll1" class="accordianChkBox" name="layer" value="<%= webLayerId %>"/>
-								<a class="vAlignSub"><s:text name='lbl.projects.layer.web'/></a>
+								<a class="vAlignSub"><%= webLayerName %></a>
 							</span>
 						</span>
 						<div class="mfbox siteinnertooltiptxt">
@@ -242,7 +249,7 @@
 						<span class="siteaccordion closereg">
 							<span>
 								<input type="checkbox" id="checkAll1" class="accordianChkBox" name="layer" value="<%= mobileLayerId %>"/>
-								<a class="vAlignSub"><s:text name='lbl.projects.layer.mobile'/></a>
+								<a class="vAlignSub"><%= mobileLayerName %></a>
 							</span>
 						</span>
 						<div class="mfbox siteinnertooltiptxt">

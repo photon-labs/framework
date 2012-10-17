@@ -26,10 +26,6 @@ public interface FrameworkConstants {
     /*
      * Common constants
      */
-    
-    String LAYER_APPLICATION = "Application Layer";
-    String LAYER_WEB = "Web Layer";
-    String LAYER_MOBILE = "Mobile Layer";
     String LAYER_MOB_ID = "mob-layer";
     String LAYER_APP_ID = "app-layer";
     String LAYER_WEB_ID = "web-layer";
