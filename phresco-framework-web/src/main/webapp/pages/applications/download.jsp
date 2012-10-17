@@ -44,7 +44,7 @@
             	<% 
             	if (CollectionUtils.isNotEmpty(serverDownloadInfos)) {
             	%>
-                <span class="siteaccordion closereg"><span><s:text name="label.servers"/></span></span>
+                <span class="siteaccordion closereg"><span><s:text name="lbl.servers"/></span></span>
                 <div class="mfbox siteinnertooltiptxt downloadContent">
                     <div class="scrollpanel">
                         <section class="scrollpanel_inner">
@@ -52,9 +52,9 @@
 	                        	<thead>
 	                            	<tr class="download_tbl_header">
                             			<th><s:text name="lbl.name"/></th>
-                            			<th><s:text name="label.version"/></th>
-                            			<th><s:text name="label.size"/></th>
-                            			<th class="label_center"><s:text name="label.download"/></th>
+                            			<th><s:text name="lbl.version"/></th>
+                            			<th><s:text name="lbl.size"/></th>
+                            			<th class="label_center"><s:text name="lbl.download"/></th>
                             		</tr>
 	                            </thead>
 	                            
@@ -85,7 +85,7 @@
                 <% 
                 	} if (CollectionUtils.isNotEmpty(dbDownloadInfos)) { 
                 %>
-                <span class="siteaccordion closereg"><span><s:text name="label.database"/></span></span>
+                <span class="siteaccordion closereg"><span><s:text name="lbl.database"/></span></span>
                 <div class="mfbox siteinnertooltiptxt downloadContent">
                     <div class="scrollpanel">
                         <section class="scrollpanel_inner">
@@ -93,9 +93,9 @@
 	                        	<thead>
 	                            	<tr class="download_tbl_header">
                             			<th><s:text name="lbl.name"/></th>
-                            			<th><s:text name="label.version"/></th>
-                            			<th><s:text name="label.size"/></th>
-                            			<th class="label_center"><s:text name="label.download"/></th>
+                            			<th><s:text name="lbl.version"/></th>
+                            			<th><s:text name="lbl.size"/></th>
+                            			<th class="label_center"><s:text name="lbl.download"/></th>
                             		</tr>	
 	                            </thead>
 	                            
@@ -130,7 +130,7 @@
                 <% 
                 	}  if(CollectionUtils.isNotEmpty(editorDownloadInfos)) { 
                 %>
-                <span class="siteaccordion closereg"><span><s:text name="label.editors"/></span></span>
+                <span class="siteaccordion closereg"><span><s:text name="lbl.editors"/></span></span>
                 <div class="mfbox siteinnertooltiptxt downloadContent">
                     <div class="scrollpanel">
                         <section class="scrollpanel_inner">
@@ -138,9 +138,9 @@
 	                        	<thead>
 	                            	<tr class="download_tbl_header">
                             			<th><s:text name="lbl.name"/></th>
-                            			<th><s:text name="label.version"/></th>
-                            			<th><s:text name="label.size"/></th>
-                            			<th class="label_center"><s:text name="label.download"/></th>
+                            			<th><s:text name="lbl.version"/></th>
+                            			<th><s:text name="lbl.size"/></th>
+                            			<th class="label_center"><s:text name="lbl.download"/></th>
                             		</tr>
 	                            </thead>
 	                        	
@@ -174,7 +174,7 @@
                 <% 
                 	} if(CollectionUtils.isNotEmpty(toolsDownloadInfos)) { 
                 %>
-                <span class="siteaccordion closereg"><span><s:text name="label.tools"/></span></span>
+                <span class="siteaccordion closereg"><span><s:text name="lbl.tools"/></span></span>
                 <div class="mfbox siteinnertooltiptxt downloadContent">
                     <div class="scrollpanel">
                         <section class="scrollpanel_inner">
@@ -182,9 +182,9 @@
 	                        	<thead>
 	                            	<tr class="download_tbl_header">
                             			<th><s:text name="lbl.name"/></th>
-                            			<th><s:text name="label.version"/></th>
-                            			<th><s:text name="label.size"/></th>
-                            			<th class="label_center"><s:text name="label.download"/></th>
+                            			<th><s:text name="lbl.version"/></th>
+                            			<th><s:text name="lbl.size"/></th>
+                            			<th class="label_center"><s:text name="lbl.download"/></th>
                             		</tr>	
 	                            </thead>
 	                            
@@ -219,7 +219,7 @@
                 <% 
                 	} if(CollectionUtils.isNotEmpty(othersDownloadInfos)) { 
                 %>
-                <span class="siteaccordion closereg"><span><s:text name="label.others"/></span></span>
+                <span class="siteaccordion closereg"><span><s:text name="lbl.others"/></span></span>
                 <div class="mfbox siteinnertooltiptxt downloadContent">
                     <div class="scrollpanel">
                         <section class="scrollpanel_inner">
@@ -227,9 +227,9 @@
 	                        	<thead>
 	                            	<tr class="download_tbl_header">
                             			<th><s:text name="lbl.name"/></th>
-                            			<th><s:text name="label.version"/></th>
-                            			<th><s:text name="label.size"/></th>
-                            			<th class="label_center"><s:text name="label.download"/></th>
+                            			<th><s:text name="lbl.version"/></th>
+                            			<th><s:text name="lbl.size"/></th>
+                            			<th class="label_center"><s:text name="lbl.download"/></th>
                             		</tr>	
 	                            </thead>
 	                            
@@ -268,11 +268,9 @@
 
 <script type="text/javascript">
 	
-/* To check whether the device is ipad or not */
 	$(".mfbox").scrollbars();
 	
 	$(document).ready(function(){
-		//accordion();
 		hideLoadingIcon();
 	});
 </script>

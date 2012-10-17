@@ -200,7 +200,7 @@
 					<li class="usersettings">
 						<%= displayName %>
 						<img src="images/downarrow.png" class="arrow">
-                        <div class="userInfo" >&nbsp;&nbsp;<s:text name="label.skins" />&nbsp;
+                        <div class="userInfo" >&nbsp;&nbsp;<s:text name="lbl.skins" />&nbsp;
                             <a class="styles" href="#"  rel="theme/photon/css/red.css">
 								<img src="images/red_themer.jpg" class="skinImage">
 							</a>&nbsp;
@@ -209,8 +209,8 @@
 							</a>
                         </div>
                         <div class="userInfo"><a href="#" class="">&nbsp;&nbsp;<s:text name="lbl.hdr.help"/></a></div>
-                        <div class="userInfo"><a href="#" class="abtPopUp about">&nbsp;&nbsp;<s:text name="label.abt.phresco"/></a></div>
-                        <div class="userInfo"><a href="<s:url action='admin/logout'/>" id="signOut">&nbsp;<s:text name="label.signout"/></a></div>
+                        <div class="userInfo"><a href="#" class="abtPopUp about">&nbsp;&nbsp;<s:text name="lbl.abt.phresco"/></a></div>
+                        <div class="userInfo"><a href="<s:url action='admin/logout'/>" id="signOut">&nbsp;<s:text name="lbl.signout"/></a></div>
 					</li>
 				</div>
 			</div>
