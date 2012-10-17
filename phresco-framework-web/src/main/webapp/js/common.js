@@ -481,3 +481,21 @@ function enableCtrl(control) {
 function enableDivCtrls(disabledDiv) {
 	disabledDiv.removeAttr("disabled");
 }
+
+/** To fill the data in the select box **/
+function fillVersions(obj, data, selectTxt) {
+	obj.empty();
+	if (isBlank(data)) {
+		obj.append($("<option></option>").attr("value", "").text(selectTxt));
+	}
+	if (data != undefined && !isBlank(data)) {
+		for (i in data) {
+			obj.append($("<option></option>").attr("value", data[i]).text(data[i]));
+		}
+	}
+}
+
+/** To fill the given text and value into the select box **/
+function fillOptions(obj, value, text, selectTxt) {
+	obj.append($("<option></option>").attr("value", value).text(text));
+}

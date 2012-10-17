@@ -27,6 +27,13 @@ public interface FrameworkConstants {
      * Common constants
      */
     
+    String LAYER_APPLICATION = "Application Layer";
+    String LAYER_WEB = "Web Layer";
+    String LAYER_MOBILE = "Mobile Layer";
+    String LAYER_MOB_ID = "mob-layer";
+    String LAYER_APP_ID = "app-layer";
+    String LAYER_WEB_ID = "web-layer";
+    
 	String FEATURES = "features"; 
     int JOB_STATUS_NOTOK = -1;
     String FOLDER_DOT_PHRESCO = ".phresco";
@@ -48,6 +55,12 @@ public interface FrameworkConstants {
     String REQ_PROJECT_ID = "projectId";
     String REQ_APP_ID = "appId";
     String REQ_CURRENT_APP_NAME = "currentAppName";
+    String REQ_PROJECT_LAYERS = "layers";
+    String REQ_PARAM_NAME_TECH_GROUP = "TechGroup";
+    String REQ_PARAM_NAME_TECHNOLOGY = "Technology";
+    String REQ_PARAM_NAME_VERSION = "Version";
+    String REQ_PARAM_NAME_PHONE = "Phone";
+    String REQ_PARAM_NAME_TABLET = "Tablet";
    
     String DO_NOT_CHECKIN_DIR = "do_not_checkin";
     String ARCHIVES = "archives";

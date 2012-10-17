@@ -57,6 +57,7 @@ import com.photon.phresco.commons.model.ApplicationType;
 import com.photon.phresco.commons.model.DownloadInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.Technology;
+import com.photon.phresco.commons.model.TechnologyGroup;
 import com.photon.phresco.commons.model.TechnologyInfo;
 import com.photon.phresco.commons.model.WebService;
 import com.photon.phresco.configuration.Environment;
@@ -89,62 +90,64 @@ import com.sun.jersey.api.client.WebResource.Builder;
 
 public class Applications extends FrameworkBaseAction {
 
-	private static final long serialVersionUID = -4282767788002019870L;
+    private static final long serialVersionUID = -4282767788002019870L;
 
-	private static final Logger S_LOGGER = Logger.getLogger(Applications.class);
-	private static Boolean s_debugEnabled = S_LOGGER.isDebugEnabled();
-	
-	private String projectCode = "";
-	private String fromPage = "";
-	
-	private String globalValidationStatus = "";
-	private List<String> pilotModules = null;
-	private List<String> pilotJSLibs = null;
-	private String showSettings = "";
-	private List<String> settingsEnv = null;
-	private List<String> versions = null;
-	private String selectedVersions = "";
-	private String selectedAttrType = "";
-	private String selectedParamName = "";
-	private String divTobeUpdated = "";
-	private List<String> techVersions = null;
-	private boolean hasConfiguration = false;
-	private String configServerNames = "";
-	private String configDbNames = "";
-	List<String> deletableDbs = new ArrayList<String>();
-	private String fromTab = "";
-	
-	private String repositoryUrl = "";
+    private static final Logger S_LOGGER = Logger.getLogger(Applications.class);
+    private static Boolean s_debugEnabled = S_LOGGER.isDebugEnabled();
+
+    private String fromPage = "";
+
+    private String globalValidationStatus = "";
+    private List<String> pilotModules = null;
+    private List<String> pilotJSLibs = null;
+    private String showSettings = "";
+    private List<String> settingsEnv = null;
+    private String selectedVersions = "";
+    private String selectedAttrType = "";
+    private String selectedParamName = "";
+    private String divTobeUpdated = "";
+    private List<String> techVersions = null;
+    private boolean hasConfiguration = false;
+    private String configServerNames = "";
+    private String configDbNames = "";
+    List<String> deletableDbs = new ArrayList<String>();
+    private String fromTab = "";
+
+    private String repositoryUrl = "";
     private String userName = "";
     private String password = "";
     private String revision = "";
     private String revisionVal = "";
     private boolean svnImport = false;
     private String svnImportMsg = "";
-	
-	private String fileType = "";
-	private String fileorfolder = null;
-	//svn info
-	private String credential = "";
-	// import from git
-	private String repoType = "";
-	
-	private String applicationType = "";
-	
-	boolean hasError = false;
+
+    private String fileType = "";
+    private String fileorfolder = null;
+    //svn info
+    private String credential = "";
+    // import from git
+    private String repoType = "";
+
+    private String applicationType = "";
+
+    boolean hasError = false;
     private String envError = "";
-    
+
     private List<DownloadInfo> servers = null;
-    
-    private List<String> layers = null;
-	private String projectName = "";
-	private String projectDesc = "";
+
+    private String projectName = "";
+    private String projectCode = "";
+    private String projectDesc = "";
     private String projectVersion = "";
     private List<String> projectWebservices = null;
     private List<String> projectDatabases = null;
     private List<String> projectServers = null;
     private String technology = "";
-    
+    private List<String> layer = null;
+
+    private List<TechnologyInfo> widgets = null;
+    private List<String> versions = null;
+
     private boolean errorFound = false;
     private String projectNameError = "";
     private String projectCodeError = "";
@@ -157,206 +160,319 @@ public class Applications extends FrameworkBaseAction {
      * @return
      */
     public String list() {
-		if (s_debugEnabled) {
-		    S_LOGGER.debug("Entering Method  Applications.list()");
-		}
-		
-		try {
-			ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
-			List<ProjectInfo> projects = projectManager.discover("photon");
-			setReqAttribute(REQ_PROJECTS, projects);
-			setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
-	        removeSessionAttribute(projectCode);
-		} catch (PhrescoException e) {
-			S_LOGGER.error("Entered into catch block of Applications.list()" + FrameworkUtil.getStackTraceAsString(e));
-			return showErrorPopup(e, "Listing projects");
-		}
-		
-        return APP_LIST;
-	}
-    
-	public String projectDetails() {
-	    if (s_debugEnabled) {
-	        S_LOGGER.debug("Entering Method  Applications.applicationDetails()");
-	    }
-	    
-		try {
-			List<Technology> technologies = getServiceManager().getArcheTypes(getCustomerId());
-			setReqAttribute(REQ_ALL_TECHNOLOGIES, technologies);
-		} catch (PhrescoException e) {
-			return showErrorPopup(e, REQ_TITLE_ADD_APPLICATION);
-		}
-		
-		return APP_APPLICATION_DETAILS;
-	}
-	
-	/**
-	 * To get the servers for the given customerid and techId 
-	 * @return
-	 */
-	public String fetchServers() {
-		if (s_debugEnabled) {
-	        S_LOGGER.debug("Entering Method  Applications.getServers");
-	    }
-		
-		try {
-			setReqAttribute(REQ_CUSTOMER_ID, getCustomerId());
-			setServers(getServiceManager().getServers(getCustomerId(), getTechnology()));
-		} catch (PhrescoException e) {
-			// TODO Auto-generated catch block
-		}
-		
-		return SUCCESS;
-	}
-	
-	public String createProject() {
-		if (s_debugEnabled) {
-	        S_LOGGER.debug("Entering Method  Applications.createProject()");
-	    }
-		
-		try {
-			PhrescoFrameworkFactory.getProjectManager().create(getProjectInfo(), getServiceManager());
-		} catch (PhrescoException e) {
-		    return showErrorPopup(e, EXCEPTION_CREATE_PROJECT);
-		}
-		
-		return list();
-	}
-	
-	private ProjectInfo getProjectInfo() {
-		ProjectInfo projectInfo = new ProjectInfo();
-		projectInfo.setNoOfApps(3);
-		projectInfo.setName(getProjectName());
-		projectInfo.setVersion(getProjectVersion());
-		projectInfo.setDescription(getProjectDesc());
-		projectInfo.setProjectCode(getProjectCode());
-		List<String> customerIds = new ArrayList<String>();
-		customerIds.add("photon");
-		projectInfo.setCustomerIds(customerIds);
-		List<ApplicationInfo> appInfos = new ArrayList<ApplicationInfo>();
-		appInfos.add(getAppInfo(getProjectCode() + "1", "tech-php"));
-		appInfos.add(getAppInfo(getProjectCode() + "2", "tech-php"));
-		appInfos.add(getAppInfo(getProjectCode() + "3", "tech-php"));
-		projectInfo.setAppInfos(appInfos);
-		
-		return projectInfo;
-	}
+        if (s_debugEnabled) {
+            S_LOGGER.debug("Entering Method  Applications.list()");
+        }
 
-	private ApplicationInfo getAppInfo(String dirName, String techId) {
-		ApplicationInfo applicationInfo = new ApplicationInfo();
-		TechnologyInfo techInfo = new TechnologyInfo();
-		techInfo.setVersion(techId);
-		applicationInfo.setTechInfo(techInfo);
-		applicationInfo.setAppDirName(dirName);
-		
-		return applicationInfo;
-	}
-	
-	public String validateForm() {
-	    if (s_debugEnabled) {
+        try {
+            ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
+            List<ProjectInfo> projects = projectManager.discover("photon");
+            setReqAttribute(REQ_PROJECTS, projects);
+            setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
+            removeSessionAttribute(projectCode);
+        } catch (PhrescoException e) {
+            S_LOGGER.error("Entered into catch block of Applications.list()" + FrameworkUtil.getStackTraceAsString(e));
+            return showErrorPopup(e, "Listing projects");
+        }
+
+        return APP_LIST;
+    }
+
+    public String addProject() {
+        if (s_debugEnabled) {
+            S_LOGGER.debug("Entering Method  Applications.applicationDetails()");
+        }
+
+        try {
+            List<ApplicationType> layers = getServiceManager().getApplicationTypes(getCustomerId());
+            setReqAttribute(REQ_PROJECT_LAYERS, layers);
+        } catch (PhrescoException e) {
+            return showErrorPopup(e, REQ_TITLE_ADD_APPLICATION);
+        }
+
+        return APP_APPLICATION_DETAILS;
+    }
+
+    public String fetchMobileTechVersions() {
+        if (s_debugEnabled) {
+            S_LOGGER.debug("Entering Method  Applications.fetchMobileTechVersions()");
+        }
+
+        try {
+            String layerId = getHttpRequest().getParameter("layerId");
+            String techGroupId = getHttpRequest().getParameter("techGroupId");
+            List<TechnologyGroup> techGroups = filterLayer(layerId).getTechGroups();
+            TechnologyGroup technologyGroup = filterTechnologyGroup(techGroups, techGroupId);
+            String techId = getHttpRequest().getParameter(technologyGroup.getId() + "Technology");
+            List<TechnologyInfo> techInfos = technologyGroup.getTechInfos();
+            if (CollectionUtils.isNotEmpty(techInfos)) {
+                for (TechnologyInfo techInfo : techInfos) {
+                    if (techInfo.getId().equals(techId)) {
+                        setVersions(techInfo.getTechVersions());
+                        break;
+                    }
+                }
+            }
+        } catch (PhrescoException e) {
+            return showErrorPopup(e, REQ_TITLE_ADD_APPLICATION);
+        }
+
+        return SUCCESS;
+    }
+
+    public String fetchWebLayerWidgets() {
+        if (s_debugEnabled) {
+            S_LOGGER.debug("Entering Method  Applications.fetchMobileTechVersions()");
+        }
+
+        try {
+            String layerId = getHttpRequest().getParameter("layerId");
+            String techGroupId = getHttpRequest().getParameter(layerId + "TechGroup");
+            List<TechnologyGroup> techGroups = filterLayer(layerId).getTechGroups();
+            TechnologyGroup technologyGroup = filterTechnologyGroup(techGroups, techGroupId);
+            setWidgets(technologyGroup.getTechInfos());
+        } catch (PhrescoException e) {
+            return showErrorPopup(e, REQ_TITLE_ADD_APPLICATION);
+        }
+
+        return SUCCESS;
+    }
+
+    /**
+     * To get the layer based on the given layer name
+     * @param layers
+     * @param layerName
+     * @return
+     * @throws PhrescoException 
+     */
+    private ApplicationType filterLayer(String layerId) throws PhrescoException {
+        List<ApplicationType> layers = getServiceManager().getApplicationTypes(getCustomerId());
+        if (CollectionUtils.isNotEmpty(layers)) {
+            for (ApplicationType layer : layers) {
+                if (layer.getId().equals(layerId)) {
+                    return layer;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * To get the technology group based on the given technology group Id
+     * @param technologyGroups
+     * @param id
+     * @return
+     */
+    private TechnologyGroup filterTechnologyGroup(List<TechnologyGroup> technologyGroups, String id) {
+        if (CollectionUtils.isNotEmpty(technologyGroups)) {
+            for (TechnologyGroup technologyGroup : technologyGroups) {
+                if (technologyGroup.getId().equalsIgnoreCase(id)) {
+                    return technologyGroup;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * To get the servers for the given customerid and techId 
+     * @return
+     */
+    public String fetchServers() {
+        if (s_debugEnabled) {
+            S_LOGGER.debug("Entering Method  Applications.getServers");
+        }
+
+        try {
+            setReqAttribute(REQ_CUSTOMER_ID, getCustomerId());
+            setServers(getServiceManager().getServers(getCustomerId(), getTechnology()));
+        } catch (PhrescoException e) {
+            // TODO Auto-generated catch block
+        }
+
+        return SUCCESS;
+    }
+
+    public String createProject() {
+        if (s_debugEnabled) {
+            S_LOGGER.debug("Entering Method  Applications.createProject()");
+        }
+
+        try {
+            PhrescoFrameworkFactory.getProjectManager().create(getProjectInfo(), getServiceManager());
+        } catch (PhrescoException e) {
+            return showErrorPopup(e, EXCEPTION_CREATE_PROJECT);
+        }
+
+        return list();
+    }
+
+    private ProjectInfo getProjectInfo() throws PhrescoException {
+        ProjectInfo projectInfo = new ProjectInfo();
+        projectInfo.setName(getProjectName());
+        projectInfo.setVersion(getProjectVersion());
+        projectInfo.setDescription(getProjectDesc());
+        projectInfo.setProjectCode(getProjectCode());
+        projectInfo.setCustomerIds(Collections.singletonList(getCustomerId()));
+        List<ApplicationInfo> appInfos = new ArrayList<ApplicationInfo>();
+        if (CollectionUtils.isNotEmpty(getLayer())) {
+            for (String layerId : getLayer()) {
+                if (LAYER_MOB_ID.equals(layerId)) {
+                    getMobileLayerAppInfos(appInfos, layerId);
+                } else {
+                    getOtherLayerAppInfos(appInfos, layerId);
+                }
+            }
+        }
+        projectInfo.setAppInfos(appInfos);
+        projectInfo.setNoOfApps(appInfos.size());
+        
+        return projectInfo;
+    }
+
+    private List<ApplicationInfo> getMobileLayerAppInfos(List<ApplicationInfo> appInfos, String layerId) throws PhrescoException {
+        String[] techGroupIds = getHttpRequest().getParameterValues(layerId + REQ_PARAM_NAME_TECH_GROUP);
+        if (!ArrayUtils.isEmpty(techGroupIds)) {
+            for (String techGroupId : techGroupIds) {
+                String techId = getHttpRequest().getParameter(techGroupId + REQ_PARAM_NAME_TECHNOLOGY);
+                String version = getHttpRequest().getParameter(techGroupId + REQ_PARAM_NAME_VERSION);
+                boolean phoneEnabled = Boolean.parseBoolean(getHttpRequest().getParameter(techGroupId + REQ_PARAM_NAME_PHONE));
+                boolean tabletEnabled = Boolean.parseBoolean(getHttpRequest().getParameter(techGroupId + REQ_PARAM_NAME_TABLET));
+                appInfos.add(getAppInfo(getProjectCode() + techGroupId, techId, version, phoneEnabled, tabletEnabled));
+            }
+        }
+
+        return appInfos;
+    }
+
+    private List<ApplicationInfo> getOtherLayerAppInfos(List<ApplicationInfo> appInfos, String layerId) throws PhrescoException {
+        String techId = getHttpRequest().getParameter(layerId + REQ_PARAM_NAME_TECHNOLOGY);
+        String version = getHttpRequest().getParameter(layerId + REQ_PARAM_NAME_VERSION);
+        appInfos.add(getAppInfo(getProjectCode() + techId, techId, version, false, false));
+
+        return appInfos;
+    }
+
+    private ApplicationInfo getAppInfo(String dirName, String techId, String version, boolean phoneEnabled, boolean tabletEnabled) throws PhrescoException {
+        ApplicationInfo applicationInfo = new ApplicationInfo();
+        TechnologyInfo techInfo = new TechnologyInfo();
+        techInfo.setId(techId);
+        techInfo.setVersion(version);
+        applicationInfo.setTechInfo(techInfo);
+        applicationInfo.setAppDirName(dirName);
+        applicationInfo.setPhoneEnabled(phoneEnabled);
+        applicationInfo.setTabletEnabled(tabletEnabled);
+
+        return applicationInfo;
+    }
+
+    public String validateForm() {
+        if (s_debugEnabled) {
             S_LOGGER.debug("Entering Method  Applications.validateForm()");
         }
-	    
-	    boolean hasError = false;
+
+        boolean hasError = false;
         if (StringUtils.isEmpty(getProjectName())) {
             setProjectNameError(getText(ERROR_NAME));
             hasError = true;
         }
-        
+
         if (StringUtils.isEmpty(getProjectCode())) {
             setProjectCodeError(getText(ERROR_CODE));
             hasError = true;
         }
-        
+
         if (hasError) {
             setErrorFound(true);
         }
-        
+
         return SUCCESS;
-	}
-	
-	public String loadMenu() {
-		if (s_debugEnabled) {
-	        S_LOGGER.debug("Entering Method  Applications.loadMenu()");
-	    }
-		
-		try {
-			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-			ApplicationInfo applicationInfo = applicationManager.getApplicationInfo(getCustomerId(), getProjectId(), getAppId());
-			setReqAttribute(REQ_CURRENT_APP_NAME, applicationInfo.getName());
-			setReqAttribute(REQ_PROJECT_ID, getProjectId());
-			setReqAttribute(REQ_APP_ID, getAppId());
-		} catch(Exception e) {
-			// TODO: handle exception
-		}
-		
-		return APP_MENU;
-	}
-	
-	public String editApplication() {
-		if (s_debugEnabled) {
-	        S_LOGGER.debug("Entering Method  Applications.editAppInfo()");
-	    }
-		
-		try {
-			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-			ApplicationInfo applicationInfo = applicationManager.getApplicationInfo(getCustomerId(), getProjectId(), getAppId());
-			setReqAttribute(REQ_APPINFO, applicationInfo);
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
-		
-		return APP_APPINFO;
-	}
-	
-	public String appInfo() {
-	    if (s_debugEnabled) {
-	        S_LOGGER.debug("Entering Method  Applications.appInfo()");
-	    }
-	    
-		try {
-			setReqAttribute(REQ_FROM_PAGE, fromPage);
- 			FrameworkUtil.setAppInfoDependents(getHttpRequest(), getCustomerId());
-			setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
-			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-			ApplicationInfo appInfo = null;
-			if (FEATURES.equals(fromTab)) {
-				appInfo = (ApplicationInfo) getSessionAttribute(projectCode);
-			}
-			if (StringUtils.isNotEmpty(fromPage) && appInfo == null) {
-				appInfo = administrator.getProject(projectCode).getApplicationInfo();
-				setSessionAttribute(projectCode, appInfo);
-			}
-			
-			setReqAttribute(REQ_TEMP_SELECTED_PILOT_PROJ, getHttpRequest().getParameter(REQ_SELECTED_PILOT_PROJ));
-			String[] modules = getHttpRequest().getParameterValues(REQ_SELECTEDMODULES);
-			if (!ArrayUtils.isEmpty(modules)) {
-				Map<String, String> mapModules = ApplicationsUtil.getIdAndVersionAsMap(getHttpRequest(), modules);
-				setReqAttribute(REQ_TEMP_SELECTEDMODULES, mapModules);
-			}
+    }
 
-			String[] jsLibs = getHttpRequest().getParameterValues(REQ_SELECTED_JSLIBS);
-			if (!ArrayUtils.isEmpty(jsLibs)) {
-				Map<String, String> mapJsLib = ApplicationsUtil
-						.getIdAndVersionAsMap(getHttpRequest(), jsLibs);
-				setReqAttribute(REQ_TEMP_SELECTED_JSLIBS, mapJsLib);
-			}
-			setReqAttribute(REQ_CONFIG_SERVER_NAMES, configServerNames);
-	        setReqAttribute(REQ_CONFIG_DB_NAMES, configDbNames);
-		} catch (PhrescoException e) {
-			return showErrorPopup(e, REQ_TITLE_ADD_APPLICATION);
-		}
-        
-		return APP_APPINFO;
-	}
+    public String loadMenu() {
+        if (s_debugEnabled) {
+            S_LOGGER.debug("Entering Method  Applications.loadMenu()");
+        }
 
-	public String applicationType() {
-	    if (s_debugEnabled) {
-	        S_LOGGER.debug("Entering Method  Applications.applicationType()");
-	    }
-	    
-		try {
-		    ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
+        try {
+            ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+            ApplicationInfo applicationInfo = applicationManager.getApplicationInfo(getCustomerId(), getProjectId(), getAppId());
+            setReqAttribute(REQ_CURRENT_APP_NAME, applicationInfo.getName());
+            setReqAttribute(REQ_PROJECT_ID, getProjectId());
+            setReqAttribute(REQ_APP_ID, getAppId());
+        } catch(Exception e) {
+            // TODO: handle exception
+        }
+
+        return APP_MENU;
+    }
+
+    public String editApplication() {
+        if (s_debugEnabled) {
+            S_LOGGER.debug("Entering Method  Applications.editAppInfo()");
+        }
+
+        try {
+            ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+            ApplicationInfo applicationInfo = applicationManager.getApplicationInfo(getCustomerId(), getProjectId(), getAppId());
+            setReqAttribute(REQ_APPINFO, applicationInfo);
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+
+        return APP_APPINFO;
+    }
+
+    public String appInfo() {
+        if (s_debugEnabled) {
+            S_LOGGER.debug("Entering Method  Applications.appInfo()");
+        }
+
+        try {
+            setReqAttribute(REQ_FROM_PAGE, fromPage);
+            FrameworkUtil.setAppInfoDependents(getHttpRequest(), getCustomerId());
+            setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
+            ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
+            ApplicationInfo appInfo = null;
+            if (FEATURES.equals(fromTab)) {
+                appInfo = (ApplicationInfo) getSessionAttribute(projectCode);
+            }
+            if (StringUtils.isNotEmpty(fromPage) && appInfo == null) {
+                appInfo = administrator.getProject(projectCode).getApplicationInfo();
+                setSessionAttribute(projectCode, appInfo);
+            }
+
+            setReqAttribute(REQ_TEMP_SELECTED_PILOT_PROJ, getHttpRequest().getParameter(REQ_SELECTED_PILOT_PROJ));
+            String[] modules = getHttpRequest().getParameterValues(REQ_SELECTEDMODULES);
+            if (!ArrayUtils.isEmpty(modules)) {
+                Map<String, String> mapModules = ApplicationsUtil.getIdAndVersionAsMap(getHttpRequest(), modules);
+                setReqAttribute(REQ_TEMP_SELECTEDMODULES, mapModules);
+            }
+
+            String[] jsLibs = getHttpRequest().getParameterValues(REQ_SELECTED_JSLIBS);
+            if (!ArrayUtils.isEmpty(jsLibs)) {
+                Map<String, String> mapJsLib = ApplicationsUtil
+                .getIdAndVersionAsMap(getHttpRequest(), jsLibs);
+                setReqAttribute(REQ_TEMP_SELECTED_JSLIBS, mapJsLib);
+            }
+            setReqAttribute(REQ_CONFIG_SERVER_NAMES, configServerNames);
+            setReqAttribute(REQ_CONFIG_DB_NAMES, configDbNames);
+        } catch (PhrescoException e) {
+            return showErrorPopup(e, REQ_TITLE_ADD_APPLICATION);
+        }
+
+        return APP_APPINFO;
+    }
+
+    public String applicationType() {
+        if (s_debugEnabled) {
+            S_LOGGER.debug("Entering Method  Applications.applicationType()");
+        }
+
+        try {
+            ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
             Project project = null;
             if (StringUtils.isNotEmpty(projectCode) && FROM_PAGE_EDIT.equals(fromPage)) {
                 project = administrator.getProject(projectCode);
@@ -368,962 +484,962 @@ public class Applications extends FrameworkBaseAction {
             setReqAttribute(REQ_APPTYPE_TECHNOLOGIES, technologies);
             setReqAttribute(REQ_SELECTED_JSLIBS, getHttpRequest().getParameter(REQ_SELECTED_JSLIBS));
             setReqAttribute(REQ_FROM_PAGE, fromPage);
-		} catch (PhrescoException e) {
-			return showErrorPopup(e, "Getting Application Type");
-		}
-		
-		return APP_TYPE;
-	}
+        } catch (PhrescoException e) {
+            return showErrorPopup(e, "Getting Application Type");
+        }
 
-	public String technology() {
-	    if (s_debugEnabled) {
-	        S_LOGGER.debug("Entering Method  Applications.technology()");
-	    }
-	    
-		try {
-			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-			Project project = null;
-			if (StringUtils.isNotEmpty(projectCode)) {
-				project = administrator.getProject(projectCode);
-			}
-			if (project != null) {
-				ApplicationInfo appInfo = project.getApplicationInfo();
-				S_LOGGER.debug("project info value"	+ appInfo.toString());
-				setReqAttribute(REQ_APPINFO, appInfo);
-			}
-			//To get the servers
-			List<DownloadInfo> servers = administrator.getServerDownloadInfos(getCustomerId(), getTechnology());
-			setReqAttribute(REQ_SERVERS, servers);
-			
-			//To get the databases
-			List<DownloadInfo> databases = administrator.getDbDownloadInfos(getCustomerId(), getTechnology());
-			setReqAttribute(REQ_DATABASE, databases);
-			
-			//To get the webservices
-			List<WebService> webservices = administrator.getWebservices();
-			setReqAttribute(REQ_WEBSERVICES, webservices);
-			
-			//To get the pilot projects
-			List<ApplicationInfo> pilotProjects = administrator.getPilotProjects(getCustomerId(), getTechnology());
-			setReqAttribute(REQ_PILOT_PROJECT_INFO, pilotProjects);
-			
-			setReqAttribute(REQ_FROM_PAGE, fromPage);
-			setReqAttribute(REQ_APPTYPE, getApplicationType());
-			setReqAttribute(REQ_SELECTED_TECHNOLOGY, getTechnology());
-		} catch (PhrescoException e) {
-		    return showErrorPopup(e, "Getting technology");
-		}
+        return APP_TYPE;
+    }
 
-		return APP_TECHNOLOGY;
-	}
-	
-	public String techVersions() {
-	    if (s_debugEnabled) {
-	        S_LOGGER.debug("Entering Method  Applications.techVersions()");
-	    }
-	    
-		try {
-			String appType = getHttpRequest().getParameter(REQ_APPLICATION_TYPE);
-			String selectedTechnology = getHttpRequest().getParameter(REQ_TECHNOLOGY);
-			ApplicationType applicationType = ApplicationsUtil.getApplicationType(getHttpRequest(), appType);
-			//TODO:Need to handle
-//			Technology techonology = applicationType.getTechonology(selectedTechnology);
-//			techVersions = techonology.getVersions();
-		} catch(PhrescoException e) {
-			return showErrorPopup(e, "Getting technology versions");
-		}
-		
-		return SUCCESS;
-	}
+    public String technology() {
+        if (s_debugEnabled) {
+            S_LOGGER.debug("Entering Method  Applications.technology()");
+        }
 
-	public String previous() throws PhrescoException {
-	    if (s_debugEnabled) {
-	        S_LOGGER.debug("Entered previous()");
-	    }
+        try {
+            ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
+            Project project = null;
+            if (StringUtils.isNotEmpty(projectCode)) {
+                project = administrator.getProject(projectCode);
+            }
+            if (project != null) {
+                ApplicationInfo appInfo = project.getApplicationInfo();
+                S_LOGGER.debug("project info value"	+ appInfo.toString());
+                setReqAttribute(REQ_APPINFO, appInfo);
+            }
+            //To get the servers
+            List<DownloadInfo> servers = administrator.getServerDownloadInfos(getCustomerId(), getTechnology());
+            setReqAttribute(REQ_SERVERS, servers);
 
-		try {
-			setReqAttribute(REQ_PROJECT_CODE, projectCode);
-			ProjectInfo projectInfo = null;
-			if (projectCode != null) {
-				projectInfo = (ProjectInfo) getHttpSession().getAttribute(
-						projectCode);
+            //To get the databases
+            List<DownloadInfo> databases = administrator.getDbDownloadInfos(getCustomerId(), getTechnology());
+            setReqAttribute(REQ_DATABASE, databases);
 
-				setReqAttribute(REQ_TEMP_SELECTED_PILOT_PROJ, getHttpRequest().getParameter(REQ_SELECTED_PILOT_PROJ));
-				String[] modules = getHttpRequest().getParameterValues(REQ_SELECTEDMODULES);
-				if (!ArrayUtils.isEmpty(modules)) {
-					Map<String, String> mapModules = ApplicationsUtil
-							.getIdAndVersionAsMap(getHttpRequest(), modules);
-					getHttpRequest().setAttribute(REQ_TEMP_SELECTEDMODULES,
-							mapModules);
-				}
+            //To get the webservices
+            List<WebService> webservices = administrator.getWebservices();
+            setReqAttribute(REQ_WEBSERVICES, webservices);
 
-				String[] jsLibs = getHttpRequest().getParameterValues(REQ_SELECTED_JSLIBS);
-				if (!ArrayUtils.isEmpty(jsLibs)) {
-					Map<String, String> mapJsLib = ApplicationsUtil.getIdAndVersionAsMap(getHttpRequest(), jsLibs);
-					setReqAttribute(REQ_TEMP_SELECTED_JSLIBS, mapJsLib);
-				}
-			}
-			setSessionAttribute(projectCode, projectInfo);
-			HttpServletRequest request = getHttpRequest();
-			FrameworkUtil.setAppInfoDependents(request, getCustomerId());
-			setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
-	        setReqAttribute(REQ_CONFIG_SERVER_NAMES, configServerNames);
-	        setReqAttribute(REQ_CONFIG_DB_NAMES, configDbNames);
-		} catch (PhrescoException e) {
-		    return showErrorPopup(e, "AppInfo");
-		}
+            //To get the pilot projects
+            List<ApplicationInfo> pilotProjects = administrator.getPilotProjects(getCustomerId(), getTechnology());
+            setReqAttribute(REQ_PILOT_PROJECT_INFO, pilotProjects);
+
+            setReqAttribute(REQ_FROM_PAGE, fromPage);
+            setReqAttribute(REQ_APPTYPE, getApplicationType());
+            setReqAttribute(REQ_SELECTED_TECHNOLOGY, getTechnology());
+        } catch (PhrescoException e) {
+            return showErrorPopup(e, "Getting technology");
+        }
+
+        return APP_TECHNOLOGY;
+    }
+
+    public String techVersions() {
+        if (s_debugEnabled) {
+            S_LOGGER.debug("Entering Method  Applications.techVersions()");
+        }
+
+        try {
+            String appType = getHttpRequest().getParameter(REQ_APPLICATION_TYPE);
+            String selectedTechnology = getHttpRequest().getParameter(REQ_TECHNOLOGY);
+            ApplicationType applicationType = ApplicationsUtil.getApplicationType(getHttpRequest(), appType);
+            //TODO:Need to handle
+            //			Technology techonology = applicationType.getTechonology(selectedTechnology);
+            //			techVersions = techonology.getVersions();
+        } catch(PhrescoException e) {
+            return showErrorPopup(e, "Getting technology versions");
+        }
+
+        return SUCCESS;
+    }
+
+    public String previous() throws PhrescoException {
+        if (s_debugEnabled) {
+            S_LOGGER.debug("Entered previous()");
+        }
+
+        try {
+            setReqAttribute(REQ_PROJECT_CODE, projectCode);
+            ProjectInfo projectInfo = null;
+            if (projectCode != null) {
+                projectInfo = (ProjectInfo) getHttpSession().getAttribute(
+                        projectCode);
+
+                setReqAttribute(REQ_TEMP_SELECTED_PILOT_PROJ, getHttpRequest().getParameter(REQ_SELECTED_PILOT_PROJ));
+                String[] modules = getHttpRequest().getParameterValues(REQ_SELECTEDMODULES);
+                if (!ArrayUtils.isEmpty(modules)) {
+                    Map<String, String> mapModules = ApplicationsUtil
+                    .getIdAndVersionAsMap(getHttpRequest(), modules);
+                    getHttpRequest().setAttribute(REQ_TEMP_SELECTEDMODULES,
+                            mapModules);
+                }
+
+                String[] jsLibs = getHttpRequest().getParameterValues(REQ_SELECTED_JSLIBS);
+                if (!ArrayUtils.isEmpty(jsLibs)) {
+                    Map<String, String> mapJsLib = ApplicationsUtil.getIdAndVersionAsMap(getHttpRequest(), jsLibs);
+                    setReqAttribute(REQ_TEMP_SELECTED_JSLIBS, mapJsLib);
+                }
+            }
+            setSessionAttribute(projectCode, projectInfo);
+            HttpServletRequest request = getHttpRequest();
+            FrameworkUtil.setAppInfoDependents(request, getCustomerId());
+            setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
+            setReqAttribute(REQ_CONFIG_SERVER_NAMES, configServerNames);
+            setReqAttribute(REQ_CONFIG_DB_NAMES, configDbNames);
+        } catch (PhrescoException e) {
+            return showErrorPopup(e, "AppInfo");
+        }
 
         return APP_APPINFO;
-	}
+    }
 
-	public String save() throws PhrescoException {
-	    if (s_debugEnabled) {
-	        S_LOGGER.debug("Entering Method Applications.save()");
-	    }
+    public String save() throws PhrescoException {
+        if (s_debugEnabled) {
+            S_LOGGER.debug("Entering Method Applications.save()");
+        }
 
-		try {
-		    ApplicationInfo appInfo = (ApplicationInfo) getHttpSession().getAttribute(projectCode);
-			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-			setFeatures(administrator, appInfo);
-			administrator.createProject(appInfo, null);
-			addActionMessage(getText(SUCCESS_PROJECT, Collections.singletonList(appInfo.getName())));
-			removeSessionAttribute(projectCode);
-	        setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
-		} catch (PhrescoException e) {
-		    return showErrorPopup(e, "Save Application");
-		}
-		
-		return discover();
-	}
+        try {
+            ApplicationInfo appInfo = (ApplicationInfo) getHttpSession().getAttribute(projectCode);
+            ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
+            setFeatures(administrator, appInfo);
+            administrator.createProject(appInfo, null);
+            addActionMessage(getText(SUCCESS_PROJECT, Collections.singletonList(appInfo.getName())));
+            removeSessionAttribute(projectCode);
+            setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
+        } catch (PhrescoException e) {
+            return showErrorPopup(e, "Save Application");
+        }
 
-	public String update() throws PhrescoException {
-	    if (s_debugEnabled) {
-	        S_LOGGER.debug("Entering Method  Applications.update()");
-	    }
-		
-		BufferedReader reader = null;
-		try {
-		    ApplicationInfo appInfo = (ApplicationInfo) getHttpSession().getAttribute(projectCode);
-			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-			setFeatures(administrator, appInfo);
-			//TODO:Need to handle
-//			ApplicationInfo originalinfo = appInfo.clone();
-//			File projectPath = new File(Utility.getProjectHome(), appInfo.getCode() + File.separator 
-//			                    + FOLDER_DOT_PHRESCO + File.separator + PROJECT_INFO);
-			/*try {
+        return discover();
+    }
+
+    public String update() throws PhrescoException {
+        if (s_debugEnabled) {
+            S_LOGGER.debug("Entering Method  Applications.update()");
+        }
+
+        BufferedReader reader = null;
+        try {
+            ApplicationInfo appInfo = (ApplicationInfo) getHttpSession().getAttribute(projectCode);
+            ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
+            setFeatures(administrator, appInfo);
+            //TODO:Need to handle
+            //			ApplicationInfo originalinfo = appInfo.clone();
+            //			File projectPath = new File(Utility.getProjectHome(), appInfo.getCode() + File.separator 
+            //			                    + FOLDER_DOT_PHRESCO + File.separator + PROJECT_INFO);
+            /*try {
 				reader = new BufferedReader(new FileReader(projectPath));
 			} catch (FileNotFoundException e) {
 				throw new PhrescoException(e);
 			}*/
-			//TODO:Need to handle
-//			List<ModuleGroup> modules = appInfo.getTechnology().getModules();
-//			List<ModuleGroup> jsLibraries = appInfo.getTechnology().getJsLibraries();
-//			if (CollectionUtils.isNotEmpty(modules)) {
-//				appInfo.getTechnology().setModules(null);
-//			}
-//		
-//			if (CollectionUtils.isNotEmpty(jsLibraries)) {
-//				appInfo.getTechnology().setJsLibraries(null);
-//			}
-			try {
-				ApplicationInfo tempAppInfo = administrator.getProject(projectCode).getApplicationInfo();
-				List<String> newDatabases = appInfo.getSelectedDatabases();
-				List<String> newDbNames = new ArrayList<String>();
-				if (CollectionUtils.isNotEmpty(newDatabases)) {
-				    //TODO:Need to handle
-//					for (Database newDatabase : newDatabases) {
-//						newDbNames.add(newDatabase.getName());
-//					}
-				}
-				
-				List<String> projectInfoDbs = tempAppInfo.getSelectedDatabases();
-				List<String> projectInfoDbNames = new ArrayList<String>();
-				if (CollectionUtils.isNotEmpty(projectInfoDbs)) {
-				    //TODO:Need to handle
-//					for (Database projectInfoDb : projectInfoDbs) {
-//						projectInfoDbNames.add(projectInfoDb.getName());
-//					}
-				}
-				
-				if (CollectionUtils.isNotEmpty(projectInfoDbNames) && projectInfoDbNames != null) {
-					for (String projectInfoDbName : projectInfoDbNames) {
-						if (!newDbNames.contains(projectInfoDbName)) {
-							deletableDbs.add(projectInfoDbName);
-						} else {
-							for (String newDatabase : newDatabases) {
-								for (String projectInfoDb : projectInfoDbs) {
-								    //TODO:Need to handle
-//									if (newDatabase.getName().equals(projectInfoDb.getName())) {
-//										List<String> newDbVersions = newDatabase.getVersions();
-//										List<String> projectInfoDbVersions = projectInfoDb.getVersions();
-//										compareVersions(projectInfoDb.getName(), projectInfoDbVersions, newDbVersions);
-//									}
-								}
-							}
-						}
-					}
-				}
-				
-				administrator.deleteSqlFolder(deletableDbs, appInfo);
-				UserInfo userInfo = (UserInfo) getHttpSession().getAttribute(SESSION_USER_INFO);
-				//TODO:Need to handle
-//				administrator.updateProject(appInfo, originalinfo, projectPath,userInfo);
-				removeConfiguration();
-				addActionMessage(getText(UPDATE_PROJECT,Collections.singletonList(appInfo.getName())));
-			} catch (Exception e) {
+            //TODO:Need to handle
+            //			List<ModuleGroup> modules = appInfo.getTechnology().getModules();
+            //			List<ModuleGroup> jsLibraries = appInfo.getTechnology().getJsLibraries();
+            //			if (CollectionUtils.isNotEmpty(modules)) {
+            //				appInfo.getTechnology().setModules(null);
+            //			}
+            //		
+            //			if (CollectionUtils.isNotEmpty(jsLibraries)) {
+            //				appInfo.getTechnology().setJsLibraries(null);
+            //			}
+            try {
+                ApplicationInfo tempAppInfo = administrator.getProject(projectCode).getApplicationInfo();
+                List<String> newDatabases = appInfo.getSelectedDatabases();
+                List<String> newDbNames = new ArrayList<String>();
+                if (CollectionUtils.isNotEmpty(newDatabases)) {
+                    //TODO:Need to handle
+                    //					for (Database newDatabase : newDatabases) {
+                    //						newDbNames.add(newDatabase.getName());
+                    //					}
+                }
 
-			}
-		} catch (PhrescoException e) {
-			S_LOGGER.error("Entered into catch block of  Applications.update()" + FrameworkUtil.getStackTraceAsString(e));
-			new LogErrorReport(e, "Update Project");
-		} finally {
-			try {
-				reader.close();
-			} catch (IOException e) {
-				throw new PhrescoException(e);
-			}
-		}
-		removeSessionAttribute(projectCode);
-		setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
-		
-		return discover();
-	}
-	
-	private void compareVersions(String dbName, List<String> projectInfoDbVersions, List<String> newDbVersions) {
-		for (String projectInfoDbVersion : projectInfoDbVersions) {
-			if (newDbVersions.contains(projectInfoDbVersion)) {
-				
-			}
-			else {
-				deletableDbs.add(dbName + "/" + projectInfoDbVersion.trim());
-			}
-		}
-	}
-	
-	private void setFeatures(ProjectAdministrator administrator,
-			ApplicationInfo appInfo) throws PhrescoException {
-		S_LOGGER.debug("Entering Method  Applications.setFeatures()");
-		
-		String module = getHttpRequest().getParameter(REQ_SELECTEDMODULES);
-		String[] modules = module.split(",");
+                List<String> projectInfoDbs = tempAppInfo.getSelectedDatabases();
+                List<String> projectInfoDbNames = new ArrayList<String>();
+                if (CollectionUtils.isNotEmpty(projectInfoDbs)) {
+                    //TODO:Need to handle
+                    //					for (Database projectInfoDb : projectInfoDbs) {
+                    //						projectInfoDbNames.add(projectInfoDb.getName());
+                    //					}
+                }
 
-		//TODO:Need to handle
-//		ApplicationType applicationType = administrator.getApplicationType(appInfo.getTechInfo().getAppTypeId());
-//		if (S_LOGGER.isDebugEnabled()) {
-//			S_LOGGER.debug("Application Type object value "
-//					+ applicationType.toString());
-//		}
+                if (CollectionUtils.isNotEmpty(projectInfoDbNames) && projectInfoDbNames != null) {
+                    for (String projectInfoDbName : projectInfoDbNames) {
+                        if (!newDbNames.contains(projectInfoDbName)) {
+                            deletableDbs.add(projectInfoDbName);
+                        } else {
+                            for (String newDatabase : newDatabases) {
+                                for (String projectInfoDb : projectInfoDbs) {
+                                    //TODO:Need to handle
+                                    //									if (newDatabase.getName().equals(projectInfoDb.getName())) {
+                                    //										List<String> newDbVersions = newDatabase.getVersions();
+                                    //										List<String> projectInfoDbVersions = projectInfoDb.getVersions();
+                                    //										compareVersions(projectInfoDb.getName(), projectInfoDbVersions, newDbVersions);
+                                    //									}
+                                }
+                            }
+                        }
+                    }
+                }
 
-		if (!ArrayUtils.isEmpty(modules)) {
-		    //TODO:Need to handle
-//			List<ModuleGroup> allModules = applicationType.getTechonology(
-//					appInfo.getTechnology().getId()).getModules();
-//			List<ModuleGroup> selectedModules = ApplicationsUtil.getSelectedTuples(getHttpRequest(), allModules, modules);
-//			appInfo.getTechnology().setModules(selectedModules);
-		}
+                administrator.deleteSqlFolder(deletableDbs, appInfo);
+                UserInfo userInfo = (UserInfo) getHttpSession().getAttribute(SESSION_USER_INFO);
+                //TODO:Need to handle
+                //				administrator.updateProject(appInfo, originalinfo, projectPath,userInfo);
+                removeConfiguration();
+                addActionMessage(getText(UPDATE_PROJECT,Collections.singletonList(appInfo.getName())));
+            } catch (Exception e) {
 
-		String jsLib = getHttpRequest().getParameter(REQ_SELECTED_JSLIBS);
-		String[] jsLibs = jsLib.split(",");
-		if (!ArrayUtils.isEmpty(jsLibs)) {
-		  //TODO:Need to handle
-//			List<ModuleGroup> allModules = applicationType.getTechonology(
-//					appInfo.getTechnology().getId()).getJsLibraries();
-//			List<ModuleGroup> selectedModules = ApplicationsUtil
-//			.getSelectedTuples(getHttpRequest(), allModules, jsLibs);
-//			appInfo.getTechnology().setJsLibraries(selectedModules);
-		}
-	}
+            }
+        } catch (PhrescoException e) {
+            S_LOGGER.error("Entered into catch block of  Applications.update()" + FrameworkUtil.getStackTraceAsString(e));
+            new LogErrorReport(e, "Update Project");
+        } finally {
+            try {
+                reader.close();
+            } catch (IOException e) {
+                throw new PhrescoException(e);
+            }
+        }
+        removeSessionAttribute(projectCode);
+        setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
 
-	public String edit() {
-		S_LOGGER.debug("Entering Method  Applications.edit()");
-		
-		try {
-			FrameworkConfiguration configuration = null;
-			configuration = PhrescoFrameworkFactory.getFrameworkConfig();
-			Client client = ClientHelper.createClient();
-			WebResource resource = client.resource(configuration
-					.getServerPath() + FrameworkConstants.REST_APPS_PATH);
-			Builder builder = resource.accept(MediaType.APPLICATION_JSON_TYPE);
-			GenericType<List<ApplicationType>> genericType = new GenericType<List<ApplicationType>>() {
-			};
-			List<ApplicationType> applicationTypes = builder.get(genericType);
-			if (S_LOGGER.isDebugEnabled()) {
-				S_LOGGER.debug("Application Types received from rest service");
-				if (applicationTypes != null) {
-					for (ApplicationType applicationType : applicationTypes) {
-						S_LOGGER.debug("Application Type value"
-								+ applicationType.toString());
-					}
-				}
-			}
-			getHttpRequest().setAttribute(REQ_FROM_PAGE, FROM_PAGE_EDIT);
-			getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
-		} catch (PhrescoException e) {
-		    return showErrorPopup(e, "Edit Application");
-		}
-		
-		return APP_APPLICATION;
-	}
+        return discover();
+    }
 
-	public String delete() {
-		S_LOGGER.debug("Entering Method  Applications.delete()");
-		
-		try {
-			HttpServletRequest request = (HttpServletRequest) ActionContext
-					.getContext().get(ServletActionContext.HTTP_REQUEST);
-			String selectedProjects[] = request
-					.getParameterValues(REQ_SELECTEDPROJECTS);
+    private void compareVersions(String dbName, List<String> projectInfoDbVersions, List<String> newDbVersions) {
+        for (String projectInfoDbVersion : projectInfoDbVersions) {
+            if (newDbVersions.contains(projectInfoDbVersion)) {
 
-			ProjectAdministrator administrator = PhrescoFrameworkFactory
-					.getProjectAdministrator();
-			List<String> projectCodes = new ArrayList<String>();
-			if (selectedProjects != null) {
-				for (String selctedProject : selectedProjects) {
-					projectCodes.add(selctedProject);
-				}
-			}
+            }
+            else {
+                deletableDbs.add(dbName + "/" + projectInfoDbVersion.trim());
+            }
+        }
+    }
 
-			administrator.deleteProject(projectCodes);
-			addActionMessage(SUCCESS_PROJECT_DELETE);
-		} catch (PhrescoException e) {
-		    return showErrorPopup(e, "Delete Application");
-		}
-		
-		return list();
-	}
+    private void setFeatures(ProjectAdministrator administrator,
+            ApplicationInfo appInfo) throws PhrescoException {
+        S_LOGGER.debug("Entering Method  Applications.setFeatures()");
 
-	public String importSVNApplication() {
-		S_LOGGER.debug("Entering Method  Applications.importApplication()");
-		S_LOGGER.debug("repoType " + repoType);
-		S_LOGGER.debug("repositoryUrl " + repositoryUrl);
-		try {
-			File checkOutDir = new File(Utility.getProjectHome());
-			if (StringUtils.isEmpty(credential)) {
-				String decryptedPass = new String(Base64.decodeBase64(password));
-				password = decryptedPass;
-			}
+        String module = getHttpRequest().getParameter(REQ_SELECTEDMODULES);
+        String[] modules = module.split(",");
 
-			SVNAccessor svnAccessor = new SVNAccessor(repositoryUrl, userName, password);
-			String projCode = svnAccessor.getAppInfo(revision).getCode();
-			S_LOGGER.debug("Import Application repository Url"
-						+ repositoryUrl + " Username " + userName);
-			revision = !HEAD_REVISION.equals(revision) ? revisionVal : revision;
-			svnAccessor.checkout(checkOutDir, revision, true, projCode);
-			svnImport = true;
-			svnImportMsg = getText(IMPORT_SUCCESS_PROJECT);
-			// update connection url in pom.xml
-			updateSCMConnection(projCode, repositoryUrl);
-		} catch(SVNAuthenticationException e) {
-	         S_LOGGER.error("Entered into catch block of Applications.importApplication()"
-						+ FrameworkUtil.getStackTraceAsString(e));
-	         svnImport = false;
-	         svnImportMsg = getText(INVALID_CREDENTIALS);
-	    } catch(SVNException e) {
-	    	S_LOGGER.error("Entered into catch block of Applications.importApplication()"
-					+ FrameworkUtil.getStackTraceAsString(e)); 
-	    	svnImport = false;
-	    	if(e.getMessage().indexOf(SVN_FAILED) != -1) {
-	    		svnImportMsg = getText(INVALID_URL);
-	    	} else if(e.getMessage().indexOf(SVN_INTERNAL) != -1) {
-	    		svnImportMsg = getText(INVALID_REVISION);
-	    	} else {
-	    		svnImportMsg = getText(INVALID_FOLDER);
-	    	}
-	    } catch(PhrescoException e) {
-	    	S_LOGGER.error("Entered into catch block of Applications.importApplication()"
-					+ FrameworkUtil.getStackTraceAsString(e));
-	    	svnImport = false;
-	    	svnImportMsg = getText(PROJECT_ALREADY);
-	    } catch (Exception e) {
-			S_LOGGER.error("Entered into catch block of Applications.importApplication()"
-					+ FrameworkUtil.getStackTraceAsString(e)); 
-			svnImport = false;
-			svnImportMsg = getText(IMPORT_PROJECT_FAIL);
-		}
-		return SUCCESS;
-	}
-	
-	public String importGITApplication() {
-		S_LOGGER.debug("Entering Method  Applications.importApplication()");
-		S_LOGGER.debug("repoType " + repoType);
-		S_LOGGER.debug("repositoryUrl " + repositoryUrl);
-		S_LOGGER.debug("Entering Method  Applications.importFromGit()");
-		try {
-			String uuid = UUID.randomUUID().toString();
-			File gitImportTemp = new File(Utility.getPhrescoTemp(), uuid);
-			S_LOGGER.debug("gitImportTemp " + gitImportTemp);
-			if(gitImportTemp.exists()) {
-				S_LOGGER.debug("Empty git directory need to be removed before importing from git ");
-				FileUtils.deleteDirectory(gitImportTemp);
-			}
-			S_LOGGER.debug("gitImportTemp " + gitImportTemp);
-			importFromGit(repositoryUrl, gitImportTemp);
-			ApplicationInfo appInfo = getAppInfo(gitImportTemp);
-			S_LOGGER.debug(appInfo.getCode());
-			importToWorkspace(gitImportTemp, Utility.getProjectHome() , appInfo.getCode());
-			svnImport = true;
-			svnImportMsg = getText(IMPORT_SUCCESS_PROJECT);
-			//update connection in pom.xml
-			updateSCMConnection(appInfo.getCode(), repositoryUrl);
-		} catch(org.apache.commons.io.FileExistsException e) { // Destination '/Users/kaleeswaran/projects/PHR_Phpblog' already exists
-			S_LOGGER.error("Entered into catch block of Applications.importFromGit()" + FrameworkUtil.getStackTraceAsString(e));
-			svnImport = false;
-			svnImportMsg = getText(PROJECT_ALREADY);
-		} catch(org.eclipse.jgit.api.errors.TransportException e) { //Invalid remote: origin (URL)
-			S_LOGGER.error("Entered into catch block of Applications.importFromGit()" + FrameworkUtil.getStackTraceAsString(e));
-			svnImport = false;
-			svnImportMsg = getText(INVALID_URL);
-		} catch(org.eclipse.jgit.api.errors.InvalidRemoteException e) { //Invalid remote: origin (URL)
-			S_LOGGER.error("Entered into catch block of Applications.importFromGit()" + FrameworkUtil.getStackTraceAsString(e));
-			svnImport = false;
-			svnImportMsg = getText(INVALID_URL);
-		}  catch(PhrescoException e) {
-	    	S_LOGGER.error("Entered into catch block of Applications.importFromGit()" + FrameworkUtil.getStackTraceAsString(e));
-	    	svnImport = false;
-	    	svnImportMsg = getText(INVALID_FOLDER);
-	    } catch (Exception e) {
-			S_LOGGER.error("Entered into catch block of Applications.importFromGit()" + FrameworkUtil.getStackTraceAsString(e));
-			svnImport = false;
-			svnImportMsg = getText(IMPORT_PROJECT_FAIL);
-		}
-		return SUCCESS;
-	}
+        //TODO:Need to handle
+        //		ApplicationType applicationType = administrator.getApplicationType(appInfo.getTechInfo().getAppTypeId());
+        //		if (S_LOGGER.isDebugEnabled()) {
+        //			S_LOGGER.debug("Application Type object value "
+        //					+ applicationType.toString());
+        //		}
 
-	public String importFromSvn() {
-		return APP_IMPORT_FROM_SVN;
-	}
-	
-	public String updateProjectPopup() {
-		S_LOGGER.debug("Entering Method  Applications.updateProjectPopup()");
-		try {
-			String connectionUrl = "";
-			FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-			PomProcessor processor = frameworkUtil.getPomProcessor(projectCode);
-			Scm scm = processor.getSCM();
-			if(scm != null) {
-				connectionUrl = scm.getConnection();
-			}
-			S_LOGGER.debug("connectionUrl " + connectionUrl);
-			getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
-			getHttpRequest().setAttribute(REPO_URL, connectionUrl);
-			getHttpRequest().setAttribute(REQ_FROM_TAB, UPDATE_SVN_PROJECT);
-			getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
-		} catch (PhrescoException e) {
-		    return showErrorPopup(e, "Update Application");
-		}
-		return APP_IMPORT_FROM_SVN;
-	}
+        if (!ArrayUtils.isEmpty(modules)) {
+            //TODO:Need to handle
+            //			List<ModuleGroup> allModules = applicationType.getTechonology(
+            //					appInfo.getTechnology().getId()).getModules();
+            //			List<ModuleGroup> selectedModules = ApplicationsUtil.getSelectedTuples(getHttpRequest(), allModules, modules);
+            //			appInfo.getTechnology().setModules(selectedModules);
+        }
 
-	public String updateGitProject() {
-		S_LOGGER.debug("Entering Method  Applications.updateGitProject()");
-		try {
-			S_LOGGER.debug("update SCM Connection " + repositoryUrl);
-			S_LOGGER.debug("userName " + userName);
-			S_LOGGER.debug("Repo type " + repoType);
-			S_LOGGER.debug("projectCode " + projectCode);
-			updateSCMConnection(projectCode, repositoryUrl);
-			
-			File updateDir = new File(Utility.getProjectHome() , projectCode);
-			S_LOGGER.debug("updateDir GIT... " + updateDir);
-			Git git = Git.open(updateDir); //checkout is the folder with .git
-			git.pull().call(); //succeeds
-			
-			svnImport = true;
-			svnImportMsg = getText(SUCCESS_PROJECT_UPDATE);
-		} catch(org.apache.commons.io.FileExistsException e) { // Destination '/Users/kaleeswaran/projects/PHR_Phpblog' already exists
-			S_LOGGER.error("Entered into catch block of Applications.importFromGit()" + getText(FAILURE_PROJECT_UPDATE) + FrameworkUtil.getStackTraceAsString(e));
-			svnImport = false;
-			svnImportMsg = getText(FAILURE_PROJECT_UPDATE);
-		} catch(org.eclipse.jgit.api.errors.TransportException e) { //Invalid remote: origin (URL)
-			S_LOGGER.error("Entered into catch block of Applications.importFromGit()" + getText(FAILURE_PROJECT_UPDATE) + FrameworkUtil.getStackTraceAsString(e));
-			svnImport = false;
-			svnImportMsg = getText(INVALID_URL);
-		} catch(org.eclipse.jgit.api.errors.InvalidRemoteException e) { //Invalid remote: origin (URL)
-			S_LOGGER.error("Entered into catch block of Applications.importFromGit()" + getText(FAILURE_PROJECT_UPDATE) + FrameworkUtil.getStackTraceAsString(e));
-			svnImport = false;
-			svnImportMsg = getText(INVALID_URL);
-		}  catch(PhrescoException e) {
-	    	S_LOGGER.error("Entered into catch block of Applications.importFromGit()" + getText(FAILURE_PROJECT_UPDATE) + FrameworkUtil.getStackTraceAsString(e));
-	    	svnImport = false;
-	    	svnImportMsg = getText(INVALID_FOLDER);
-	    } catch (Exception e) {
-			S_LOGGER.error("Entered into catch block of Applications.importFromGit()" + getText(FAILURE_PROJECT_UPDATE) + FrameworkUtil.getStackTraceAsString(e));
-			svnImport = false;
-			svnImportMsg = getText(FAILURE_PROJECT_UPDATE);
-		}
-		return SUCCESS;
-	}
-	
-	public String updateSVNProject() {
-		S_LOGGER.debug("Entering Method  Applications.updateSVNProject()");
-		try {
-			S_LOGGER.debug("update SCM Connection " + repositoryUrl);
-			S_LOGGER.debug("userName " + userName);
-			S_LOGGER.debug("Repo type " + repoType);
-			S_LOGGER.debug("projectCode " + projectCode);
-			updateSCMConnection(projectCode, repositoryUrl);
-			
-			SVNAccessor svnAccessor = new SVNAccessor(repositoryUrl, userName, password);
-			S_LOGGER.debug("Import Application repository Url" + repositoryUrl + " Username " + userName);
-			revision = !HEAD_REVISION.equals(revision) ? revisionVal : revision;
-			File updateDir = new File(Utility.getProjectHome() , projectCode);
-			S_LOGGER.debug("updateDir SVN... " + updateDir);
-			svnAccessor.update(updateDir, revision, false);
-			
-			svnImport = true;
-			svnImportMsg = getText(SUCCESS_PROJECT_UPDATE);
-		} catch(SVNAuthenticationException e) {
-	         S_LOGGER.error("Entered into catch block of Applications.importApplication()" + getText(INVALID_CREDENTIALS) + FrameworkUtil.getStackTraceAsString(e));
-	         svnImport = false;
-	         svnImportMsg = getText(INVALID_CREDENTIALS);
-	    } catch(SVNException e) {
-	    	S_LOGGER.error("Entered into catch block of Applications.importApplication()" + FrameworkUtil.getStackTraceAsString(e)); 
-	    	svnImport = false;
-	    	if(e.getMessage().indexOf(SVN_FAILED) != -1) {
-	    		svnImportMsg = getText(INVALID_URL);
-	    	} else if(e.getMessage().indexOf(SVN_INTERNAL) != -1) {
-	    		svnImportMsg = getText(INVALID_REVISION);
-	    	} else {
-	    		svnImportMsg = getText(INVALID_FOLDER);
-	    	}
-	    } catch(PhrescoException e) {
-	    	S_LOGGER.error("Entered into catch block of Applications.importApplication()" + getText(FAILURE_PROJECT_UPDATE) + FrameworkUtil.getStackTraceAsString(e));
-	    	svnImport = false;
-	    	svnImportMsg = getText(FAILURE_PROJECT_UPDATE);
-	    } catch (Exception e) {
-			S_LOGGER.error("Entered into catch block of Applications.importApplication()" + getText(FAILURE_PROJECT_UPDATE) + FrameworkUtil.getStackTraceAsString(e)); 
-			svnImport = false;
-			svnImportMsg = getText(FAILURE_PROJECT_UPDATE);
-		}
-		return SUCCESS;
-	}
-	
-	//TODO: No need the validator remove all validator
-	public String validateFramework() {
-		S_LOGGER.debug("Entering Method  Applications.validateFramework()");
-		
-		try {
-			getHttpRequest().setAttribute(VALIDATE_FROM, VALIDATE_FRAMEWORK);
-			// From home when clicking applications , it becomes true
-			String validateInBg = getHttpRequest().getParameter(VALIDATE_IN_BG);
-			if (validateInBg.equals("true") && getHttpSession().getAttribute(SESSION_FRMK_VLDT_RSLT) != null) {
-				setGlobalValidationStatus((String) getHttpSession().getAttribute(SESSION_FRMK_VLDT_STATUS));
-				return Action.SUCCESS;
-			} else {
-				getHttpSession().removeAttribute(SESSION_FRMK_VLDT_STATUS);
-				getHttpSession().removeAttribute(SESSION_FRMK_VLDT_RSLT);
-				ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-				List<ValidationResult> validationResults = administrator.validate();
-				String validationStatus = null;
-				for (ValidationResult validationResult : validationResults) {
-					validationStatus = validationResult.getStatus().toString();
-					if (validationStatus == "ERROR") {
-						getHttpSession().setAttribute(SESSION_FRMK_VLDT_STATUS,	"ERROR");
-					}
-				}
-				getHttpSession().setAttribute(SESSION_FRMK_VLDT_RSLT, validationResults);
-				if (validateInBg.equals("true")) {
-					setGlobalValidationStatus(validationStatus);
-					return Action.SUCCESS;
-				}
-			}
-		} catch (Exception e) {
-			S_LOGGER.error("Entered into catch block of Applications.validateFramework()"
-						+ FrameworkUtil.getStackTraceAsString(e));
-			new LogErrorReport(e, "Validating framework");
-		}
-		
-		return APP_VALIDATE_FRAMEWORK;
-	}
+        String jsLib = getHttpRequest().getParameter(REQ_SELECTED_JSLIBS);
+        String[] jsLibs = jsLib.split(",");
+        if (!ArrayUtils.isEmpty(jsLibs)) {
+            //TODO:Need to handle
+            //			List<ModuleGroup> allModules = applicationType.getTechonology(
+            //					appInfo.getTechnology().getId()).getJsLibraries();
+            //			List<ModuleGroup> selectedModules = ApplicationsUtil
+            //			.getSelectedTuples(getHttpRequest(), allModules, jsLibs);
+            //			appInfo.getTechnology().setJsLibraries(selectedModules);
+        }
+    }
 
-	   //TODO: No need the validator remove all validator
-	public String showFrameworkValidationResult() {
-		S_LOGGER.debug("Entering Method  Applications.showFrameworkValidationResult()");
-		getHttpRequest().setAttribute(VALIDATE_FROM, VALIDATE_FRAMEWORK);
-		
-		return APP_SHOW_FRAMEWORK_VLDT_RSLT;
-	}
+    public String edit() {
+        S_LOGGER.debug("Entering Method  Applications.edit()");
 
-	   //TODO: No need the validator remove all validator
-	public String validateProject() { 
-		S_LOGGER.debug("Entering Method  Applications.validateProject()");
-		
-		try {
-			getHttpRequest().setAttribute(VALIDATE_FROM, VALIDATE_PROJECT);
-			String validateInBg = getHttpRequest().getParameter(VALIDATE_IN_BG);
-			if (getHttpSession().getAttribute(projectCode + SESSION_PRJT_VLDT_RSLT) != null	&& "true".equals(validateInBg)) {
-				setGlobalValidationStatus((String) getHttpSession().getAttribute(projectCode + SESSION_PRJT_VLDT_STATUS));
-				return Action.SUCCESS;
-			} else {
-				getHttpSession().removeAttribute(projectCode + SESSION_PRJT_VLDT_RSLT);
-				getHttpSession().removeAttribute(projectCode + SESSION_PRJT_VLDT_STATUS);
-				ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-				String validationStatus = null;
-				if (!StringUtils.isEmpty(projectCode)) {
-					Project project = administrator.getProject(projectCode);
-					List<ValidationResult> validationResults = administrator.validate(project);
-					for (ValidationResult validationResult : validationResults) {
-						validationStatus = validationResult.getStatus().toString();
-						if (validationStatus == "ERROR") {
-							getHttpSession().setAttribute(projectCode + SESSION_PRJT_VLDT_STATUS, "ERROR");
-						}
-					}
-					getHttpSession().setAttribute(projectCode + SESSION_PRJT_VLDT_RSLT,	validationResults);
-				}
-				
-				if (validateInBg.equals("true")) {
-					setGlobalValidationStatus(validationStatus);
-					return Action.SUCCESS;
-				}
-			}
-		} catch (Exception e) {
-			S_LOGGER.error("Entered into catch block of Applications.validateProject()"
-						+ FrameworkUtil.getStackTraceAsString(e));
-			new LogErrorReport(e, "Validating project");
-		}
-		
-		return APP_VALIDATE_PROJECT;
-	}
+        try {
+            FrameworkConfiguration configuration = null;
+            configuration = PhrescoFrameworkFactory.getFrameworkConfig();
+            Client client = ClientHelper.createClient();
+            WebResource resource = client.resource(configuration
+                    .getServerPath() + FrameworkConstants.REST_APPS_PATH);
+            Builder builder = resource.accept(MediaType.APPLICATION_JSON_TYPE);
+            GenericType<List<ApplicationType>> genericType = new GenericType<List<ApplicationType>>() {
+            };
+            List<ApplicationType> applicationTypes = builder.get(genericType);
+            if (S_LOGGER.isDebugEnabled()) {
+                S_LOGGER.debug("Application Types received from rest service");
+                if (applicationTypes != null) {
+                    for (ApplicationType applicationType : applicationTypes) {
+                        S_LOGGER.debug("Application Type value"
+                                + applicationType.toString());
+                    }
+                }
+            }
+            getHttpRequest().setAttribute(REQ_FROM_PAGE, FROM_PAGE_EDIT);
+            getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
+        } catch (PhrescoException e) {
+            return showErrorPopup(e, "Edit Application");
+        }
 
-	   //TODO: No need the validator remove all validator
-	public String showProjectValidationResult() {
-		S_LOGGER.debug("Entering Method  Applications.showProjectValidationResult()");
-		
-		getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
-		getHttpRequest().setAttribute(VALIDATE_FROM, VALIDATE_PROJECT);
-		
-		return APP_SHOW_PROJECT_VLDT_RSLT;
-	}
+        return APP_APPLICATION;
+    }
 
-	private String discover() {
-	    if (s_debugEnabled) {
-	        S_LOGGER.debug("Entering Method  Applications.discover()");
-	    }
-	    
-		try {
-			ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
-			List<ProjectInfo> projects = projectManager.discover("photon");
-			setReqAttribute(REQ_PROJECTS, projects);
-		} catch (PhrescoException e) {
-			S_LOGGER.error("Entered into catch block of Applications.discover()" + FrameworkUtil.getStackTraceAsString(e));
-			return showErrorPopup(e, "Discovering projects");
-		}
-		setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
-		
-		return APP_LIST;
-	}
-	
-	public String showSettings() {
-		S_LOGGER.debug("entered Applications.showSettings()");
+    public String delete() {
+        S_LOGGER.debug("Entering Method  Applications.delete()");
 
-		try {
-		    if (showSettings != null && Boolean.valueOf(showSettings)) {
-		        if (CollectionUtils.isNotEmpty(getEnvironmentNames())) {
-		            settingsEnv = getEnvironmentNames();
-		        } else {
-		            envError = getText(NO_SETTINGS_ENV);
-		        }
-		    }
-		} catch (PhrescoException e) {
-		    return showErrorPopup(e, "Show Settings");
-		}
+        try {
+            HttpServletRequest request = (HttpServletRequest) ActionContext
+            .getContext().get(ServletActionContext.HTTP_REQUEST);
+            String selectedProjects[] = request
+            .getParameterValues(REQ_SELECTEDPROJECTS);
 
-		return SUCCESS;
-	}
+            ProjectAdministrator administrator = PhrescoFrameworkFactory
+            .getProjectAdministrator();
+            List<String> projectCodes = new ArrayList<String>();
+            if (selectedProjects != null) {
+                for (String selctedProject : selectedProjects) {
+                    projectCodes.add(selctedProject);
+                }
+            }
 
-	private List<String> getEnvironmentNames() throws PhrescoException {
-	    List<String> names = new ArrayList<String>(5);
-	    ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-	    List<Environment> environments = administrator.getEnvironments();
-	    if (CollectionUtils.isNotEmpty(environments)) {
-	        for (Environment environment : environments) {
-	            names.add(environment.getName());
-	        }
-	    }
-	    return names;
-	}
+            administrator.deleteProject(projectCodes);
+            addActionMessage(SUCCESS_PROJECT_DELETE);
+        } catch (PhrescoException e) {
+            return showErrorPopup(e, "Delete Application");
+        }
 
-	public String openAttrPopup() throws PhrescoException {
-		try {
-			String techId = getHttpRequest().getParameter("techId");
-			String appType = getHttpRequest().getParameter(REQ_APPLICATION_TYPE);
-			String type = getHttpRequest().getParameter(ATTR_TYPE);
-			String from = getHttpRequest().getParameter(REQ_FROM);
-			setReqAttribute(REQ_FROM, from);
-			ApplicationType applicationType = null;
-			applicationType = ApplicationsUtil.getApplicationType(getHttpRequest(), appType);
-//			Technology techonology = applicationType.getTechonology(techId);//TODO:Need to handle
-			String attrName = null;
-			if (Constants.SETTINGS_TEMPLATE_SERVER.equals(type)) {
-				List<Integer> listSelectedServerIds = null;
-//				List<DownloadInfo> servers = techonology.getServers();//TODO:Need to handle
-				if(StringUtils.isEmpty(from)) {
-					List<String> listSelectedServers = null;
-					List<String> listSelectedServerNames = null;
-					String selectedServers = getHttpRequest().getParameter("selectedServers");
-					if (StringUtils.isNotEmpty(selectedServers)) {
-						listSelectedServerNames = new ArrayList<String>();
-						listSelectedServers = new ArrayList<String>(Arrays.asList(selectedServers.split("#SEP#")));
-						if (CollectionUtils.isNotEmpty(listSelectedServers)) {
-							for (String listSelectedServer : listSelectedServers) {
-								String[] split = listSelectedServer.split("#VSEP#");
-								listSelectedServerNames.add(split[0].trim());
-							}
-						}
-						listSelectedServerIds = new ArrayList<Integer>(2);
-						//TODO:Need to handle
-//						if (CollectionUtils.isNotEmpty(servers)) {
-//							for (DownloadInfo server : servers) {
-//								if(listSelectedServerNames.contains(server.getName())) {
-//									listSelectedServerIds.add(server.getId());
-//								}
-//							}
-//						}
-					}
-					setReqAttribute("listSelectedServerIds", listSelectedServerIds);
-					setReqAttribute(REQ_HEADER_TYPE, "Select");
-				} else {
-					attrName = getHttpRequest().getParameter("attrName");
-					String selectedVersions = getHttpRequest().getParameter("selectedVersions");
-					selectedVersions = selectedVersions.replaceAll(" ", "");
-					List<String> listSelectedVersions = new ArrayList<String>(Arrays.asList(selectedVersions.split(",")));
-					listSelectedServerIds = new ArrayList<Integer>(2);
-					//TODO:Need to handle
-//					if (CollectionUtils.isNotEmpty(servers)) {
-//						for (DownloadInfo server : servers) {
-//							String serverName = server.getName().trim();
-//							serverName = serverName.replaceAll("\\s+", "");
-//							if(serverName.equals(attrName)) {
-//								listSelectedServerIds.add(server.getId());
-//							}
-//						}
-//					}
-					setReqAttribute("listSelectedServerIds", listSelectedServerIds);
-					setReqAttribute(REQ_LISTSELECTED_VERSIONS, listSelectedVersions);
-					setReqAttribute(REQ_HEADER_TYPE, "Edit");
-				}
-//				setReqAttribute("servers", servers);//TODO:Need to handle
-			}
-			if (Constants.SETTINGS_TEMPLATE_DB.equals(type)) {
-				List<Integer> listSelectedDatabaseIds = null;
-//				List<DownloadInfo> databases = techonology.getDatabases();//TODO:Need to handle
-				if(StringUtils.isEmpty(from)) {
-					List<String> listSelectedDbs = null;
-					List<String> listSelectedDbNames = null;
-					List<Integer> listSelectedDbIds = null;
-					String selectedDatabases = getHttpRequest().getParameter("selectedDatabases");
-					if (StringUtils.isNotEmpty(selectedDatabases)) {
-						listSelectedDbNames = new ArrayList<String>();
-						listSelectedDbs = new ArrayList<String>(Arrays.asList(selectedDatabases.split("#SEP#")));
-						for (String listSelectedDb : listSelectedDbs) {
-							String[] split = listSelectedDb.split("#VSEP#");
-							listSelectedDbNames.add(split[0].trim());
-						}
-						listSelectedDbIds = new ArrayList<Integer>(2);
-						//TODO:Need to handle
-//						if (CollectionUtils.isNotEmpty(databases)) {
-//							for (DownloadInfo database : databases) {
-//								if(listSelectedDbNames.contains(database.getName())) {
-//									listSelectedDbIds.add(database.getId());
-//								}
-//							}
-//						}
-					}
-					setReqAttribute("listSelectedDatabaseIds", listSelectedDbIds);
-					setReqAttribute(REQ_HEADER_TYPE, "Select");
-				} else {
-					attrName = getHttpRequest().getParameter("attrName");
-					ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-					if (StringUtils.isNotEmpty(projectCode)) {
-						Project project = administrator.getProject(projectCode);
-						if (project != null) {
-							ApplicationInfo appInfo = project.getApplicationInfo();
-//							List<DownloadInfo> projectInfoDbs = appInfo.getTechnology().getDatabases();//TODO:Need to handle
-							List<String> projectInfoDbVersions = new ArrayList<String>();
-							StringBuilder sb = new StringBuilder();
-							//TODO:Need to handle
-//							if (CollectionUtils.isNotEmpty(projectInfoDbs)) {
-//								for (DownloadInfo projectInfoDb : projectInfoDbs) {
-//									if (projectInfoDb.getName().equals(attrName)) {
-//										projectInfoDbVersions.addAll(projectInfoDb.getVersions());
-//									}
-//								}
-//								if (CollectionUtils.isNotEmpty(projectInfoDbVersions)) {
-//									for (String projectInfoDbVersion : projectInfoDbVersions) {
-//										sb.append(projectInfoDbVersion);
-//										sb.append(",");
-//									}
-//	
-//								}
-//								if (StringUtils.isNotEmpty(sb.toString())) {
-//									setReqAttribute("projectInfoDbVersions", sb.toString().substring(0, sb.length() - 1));
-//								}
-//							}
-						}
-					}
-					String selectedVersions = getHttpRequest().getParameter("selectedVersions");
-					selectedVersions = selectedVersions.replaceAll(" ", "");
-					List<String> listSelectedVersions = new ArrayList<String>(Arrays.asList(selectedVersions.split(",")));
-					listSelectedDatabaseIds = new ArrayList<Integer>(2);
-					//TODO:Need to handle
-//					if (CollectionUtils.isNotEmpty(databases)) {
-//						for (DownloadInfo database : databases) {
-//							String databaseName = database.getName().trim();
-//							databaseName = databaseName.replaceAll("\\s+", "");
-//							if(databaseName.equals(attrName)) {
-//								listSelectedDatabaseIds.add(database.getId());
-//							}
-//						}
-//					}
-					setReqAttribute("listSelectedDatabaseIds", listSelectedDatabaseIds);
-					setReqAttribute(REQ_LISTSELECTED_VERSIONS, listSelectedVersions);
-					setReqAttribute(REQ_HEADER_TYPE, "Edit");
-				}
-//				setReqAttribute("databases", databases);//TODO:Need to handle
-			}
-			
-			setReqAttribute("attrName", attrName);
-			setReqAttribute("header", type);
-			setReqAttribute(REQ_FROM, from);
-			setReqAttribute(REQ_FROM_PAGE, fromPage);
-		} catch (PhrescoException e) {
-		    return showErrorPopup(e, "Getting server and database");
-		}
-		
-		return "openAttrPopup";
-	}
-	
-	public String allVersions() throws PhrescoException {
-		versions = new ArrayList<String>(2);
-		String techId = getHttpRequest().getParameter("techId");
-		String appType = getHttpRequest().getParameter(REQ_APPLICATION_TYPE);
-		String type = getHttpRequest().getParameter("type");
-		
-		int selectedId = Integer.parseInt(getHttpRequest().getParameter("selectedId"));
-		ApplicationType applicationType = ApplicationsUtil.getApplicationType(getHttpRequest(), appType);
-		//TODO:Need to handle
-//		Technology selectedTechnology = applicationType.getTechonology(techId);
-//		
-//		if ("Server".equals(type)) {
-//			List<DownloadInfo> servers = selectedTechnology.getServers();
-//			for (DownloadInfo server : servers) {
-//				if(server.getId() == selectedId) {
-//					versions = server.getVersions();
-//				}
-//			}
-//		}
-//		if ("Database".equals(type)) {
-//			List<DownloadInfo> databases = selectedTechnology.getDatabases();
-//			for (DownloadInfo database : databases) {
-//				if(database.getId() == selectedId) {
-//					versions.addAll(database.getVersions());
-//				}
-//			}
-//		}
-		
-		return SUCCESS;
-	}
-	
-	public String addDetails() throws PhrescoException {
-		String type = getHttpRequest().getParameter("type");
-		setSelectedParamName(getHttpRequest().getParameter("paramName"));
-		divTobeUpdated = getHttpRequest().getParameter("divTobeUpdated");
-		if ("Server".equals(type)) {
-			String[] selectedServerVersions = getHttpRequest().getParameterValues("serverVersion");
-			selectedVersions = convertToCommaDelimited(selectedServerVersions);
-		} else {
-			String[] selectedDbVersions = getHttpRequest().getParameterValues("databaseVersion");
-			selectedVersions = convertToCommaDelimited(selectedDbVersions);
-		}
-		setSelectedAttrType(type);
-		
-		return SUCCESS;
-	}
-	
-	public static String convertToCommaDelimited(String[] list) {
-		StringBuffer retString = new StringBuffer("");
-		for (int i = 0; list != null && i < list.length; i++) {
-			retString.append(list[i]);
-			if (i < list.length - 1) {
-				retString.append(','+" ");
-			}
-		}
-		
-		return retString.toString();
-	}
-	
-	public String checkForRespectiveConfig() throws PhrescoException {
-		try {
-			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-			Project project = administrator.getProject(projectCode);
-			Map<String, List<String>> deleteConfigs = new HashMap<String , List<String>>();
-			List<String> configNames = new ArrayList<String>();
-			List<SettingsInfo> configurations = administrator.configurations(selectedAttrType, project);
-			if (CollectionUtils.isNotEmpty(configurations)) {
-				for (SettingsInfo config : configurations) {
-					deleteConfigs.clear();
-					configNames.clear();
-					PropertyInfo serverType = config.getPropertyInfo(Constants.SERVER_TYPE);
-					if (serverType.getValue().equalsIgnoreCase(selectedParamName)) {
-						setHasConfiguration(true);
-					}
-				}
-			}
-		} catch (Exception e) {
-			throw new PhrescoException(e);
-		}
-		
-		return SUCCESS;
-	}
-	
-	private void removeConfiguration() throws PhrescoException {
-		try {
-			if (StringUtils.isNotEmpty(configServerNames)) {
-				deleteConfigurations("Server", configServerNames.substring(0, configServerNames.length() - 1));
-			}
-			if (StringUtils.isNotEmpty(configDbNames)) {
-				deleteConfigurations("Database", configDbNames.substring(0, configDbNames.length() - 1));
-			}
-		} catch (Exception e) {
-			throw new PhrescoException(e);
-		}
-	}
-	
-	private void deleteConfigurations (String type, String configName) throws PhrescoException {
-		try {
-		    String [] items = configName.split(",");
-		    List<String> deleteConfigNames = Arrays.asList(items);
-			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-			Project project = administrator.getProject(projectCode);
-			Map<String, List<String>> deleteConfigs = new HashMap<String , List<String>>();
-			List<String> configNames = new ArrayList<String>();
-			List<SettingsInfo> configurations = administrator.configurations(type, project);
-			if (CollectionUtils.isNotEmpty(configurations)) {
-				for (SettingsInfo config : configurations) {
-					deleteConfigs.clear();
-					configNames.clear();
-					PropertyInfo serverType = config.getPropertyInfo(Constants.SERVER_TYPE);
-					for (String deleteConfigName : deleteConfigNames) {
-						if (serverType.getValue().equalsIgnoreCase(deleteConfigName)) {
-							configNames.add(config.getName());
-							deleteConfigs.put(config.getEnvName(), configNames);
-							administrator.deleteConfigurations(deleteConfigs, project);
-						}
-					}
-				}
-			}
-		} catch(Exception e) {
-			throw new PhrescoException(e);
-		}
-	}
-	
-	public String checkForConfiguration() throws PhrescoException {
-		/*try {
+        return list();
+    }
+
+    public String importSVNApplication() {
+        S_LOGGER.debug("Entering Method  Applications.importApplication()");
+        S_LOGGER.debug("repoType " + repoType);
+        S_LOGGER.debug("repositoryUrl " + repositoryUrl);
+        try {
+            File checkOutDir = new File(Utility.getProjectHome());
+            if (StringUtils.isEmpty(credential)) {
+                String decryptedPass = new String(Base64.decodeBase64(password));
+                password = decryptedPass;
+            }
+
+            SVNAccessor svnAccessor = new SVNAccessor(repositoryUrl, userName, password);
+            String projCode = svnAccessor.getAppInfo(revision).getCode();
+            S_LOGGER.debug("Import Application repository Url"
+                    + repositoryUrl + " Username " + userName);
+            revision = !HEAD_REVISION.equals(revision) ? revisionVal : revision;
+            svnAccessor.checkout(checkOutDir, revision, true, projCode);
+            svnImport = true;
+            svnImportMsg = getText(IMPORT_SUCCESS_PROJECT);
+            // update connection url in pom.xml
+            updateSCMConnection(projCode, repositoryUrl);
+        } catch(SVNAuthenticationException e) {
+            S_LOGGER.error("Entered into catch block of Applications.importApplication()"
+                    + FrameworkUtil.getStackTraceAsString(e));
+            svnImport = false;
+            svnImportMsg = getText(INVALID_CREDENTIALS);
+        } catch(SVNException e) {
+            S_LOGGER.error("Entered into catch block of Applications.importApplication()"
+                    + FrameworkUtil.getStackTraceAsString(e)); 
+            svnImport = false;
+            if(e.getMessage().indexOf(SVN_FAILED) != -1) {
+                svnImportMsg = getText(INVALID_URL);
+            } else if(e.getMessage().indexOf(SVN_INTERNAL) != -1) {
+                svnImportMsg = getText(INVALID_REVISION);
+            } else {
+                svnImportMsg = getText(INVALID_FOLDER);
+            }
+        } catch(PhrescoException e) {
+            S_LOGGER.error("Entered into catch block of Applications.importApplication()"
+                    + FrameworkUtil.getStackTraceAsString(e));
+            svnImport = false;
+            svnImportMsg = getText(PROJECT_ALREADY);
+        } catch (Exception e) {
+            S_LOGGER.error("Entered into catch block of Applications.importApplication()"
+                    + FrameworkUtil.getStackTraceAsString(e)); 
+            svnImport = false;
+            svnImportMsg = getText(IMPORT_PROJECT_FAIL);
+        }
+        return SUCCESS;
+    }
+
+    public String importGITApplication() {
+        S_LOGGER.debug("Entering Method  Applications.importApplication()");
+        S_LOGGER.debug("repoType " + repoType);
+        S_LOGGER.debug("repositoryUrl " + repositoryUrl);
+        S_LOGGER.debug("Entering Method  Applications.importFromGit()");
+        try {
+            String uuid = UUID.randomUUID().toString();
+            File gitImportTemp = new File(Utility.getPhrescoTemp(), uuid);
+            S_LOGGER.debug("gitImportTemp " + gitImportTemp);
+            if(gitImportTemp.exists()) {
+                S_LOGGER.debug("Empty git directory need to be removed before importing from git ");
+                FileUtils.deleteDirectory(gitImportTemp);
+            }
+            S_LOGGER.debug("gitImportTemp " + gitImportTemp);
+            importFromGit(repositoryUrl, gitImportTemp);
+            ApplicationInfo appInfo = getAppInfo(gitImportTemp);
+            S_LOGGER.debug(appInfo.getCode());
+            importToWorkspace(gitImportTemp, Utility.getProjectHome() , appInfo.getCode());
+            svnImport = true;
+            svnImportMsg = getText(IMPORT_SUCCESS_PROJECT);
+            //update connection in pom.xml
+            updateSCMConnection(appInfo.getCode(), repositoryUrl);
+        } catch(org.apache.commons.io.FileExistsException e) { // Destination '/Users/kaleeswaran/projects/PHR_Phpblog' already exists
+            S_LOGGER.error("Entered into catch block of Applications.importFromGit()" + FrameworkUtil.getStackTraceAsString(e));
+            svnImport = false;
+            svnImportMsg = getText(PROJECT_ALREADY);
+        } catch(org.eclipse.jgit.api.errors.TransportException e) { //Invalid remote: origin (URL)
+            S_LOGGER.error("Entered into catch block of Applications.importFromGit()" + FrameworkUtil.getStackTraceAsString(e));
+            svnImport = false;
+            svnImportMsg = getText(INVALID_URL);
+        } catch(org.eclipse.jgit.api.errors.InvalidRemoteException e) { //Invalid remote: origin (URL)
+            S_LOGGER.error("Entered into catch block of Applications.importFromGit()" + FrameworkUtil.getStackTraceAsString(e));
+            svnImport = false;
+            svnImportMsg = getText(INVALID_URL);
+        }  catch(PhrescoException e) {
+            S_LOGGER.error("Entered into catch block of Applications.importFromGit()" + FrameworkUtil.getStackTraceAsString(e));
+            svnImport = false;
+            svnImportMsg = getText(INVALID_FOLDER);
+        } catch (Exception e) {
+            S_LOGGER.error("Entered into catch block of Applications.importFromGit()" + FrameworkUtil.getStackTraceAsString(e));
+            svnImport = false;
+            svnImportMsg = getText(IMPORT_PROJECT_FAIL);
+        }
+        return SUCCESS;
+    }
+
+    public String importFromSvn() {
+        return APP_IMPORT_FROM_SVN;
+    }
+
+    public String updateProjectPopup() {
+        S_LOGGER.debug("Entering Method  Applications.updateProjectPopup()");
+        try {
+            String connectionUrl = "";
+            FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+            PomProcessor processor = frameworkUtil.getPomProcessor(projectCode);
+            Scm scm = processor.getSCM();
+            if(scm != null) {
+                connectionUrl = scm.getConnection();
+            }
+            S_LOGGER.debug("connectionUrl " + connectionUrl);
+            getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
+            getHttpRequest().setAttribute(REPO_URL, connectionUrl);
+            getHttpRequest().setAttribute(REQ_FROM_TAB, UPDATE_SVN_PROJECT);
+            getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
+        } catch (PhrescoException e) {
+            return showErrorPopup(e, "Update Application");
+        }
+        return APP_IMPORT_FROM_SVN;
+    }
+
+    public String updateGitProject() {
+        S_LOGGER.debug("Entering Method  Applications.updateGitProject()");
+        try {
+            S_LOGGER.debug("update SCM Connection " + repositoryUrl);
+            S_LOGGER.debug("userName " + userName);
+            S_LOGGER.debug("Repo type " + repoType);
+            S_LOGGER.debug("projectCode " + projectCode);
+            updateSCMConnection(projectCode, repositoryUrl);
+
+            File updateDir = new File(Utility.getProjectHome() , projectCode);
+            S_LOGGER.debug("updateDir GIT... " + updateDir);
+            Git git = Git.open(updateDir); //checkout is the folder with .git
+            git.pull().call(); //succeeds
+
+            svnImport = true;
+            svnImportMsg = getText(SUCCESS_PROJECT_UPDATE);
+        } catch(org.apache.commons.io.FileExistsException e) { // Destination '/Users/kaleeswaran/projects/PHR_Phpblog' already exists
+            S_LOGGER.error("Entered into catch block of Applications.importFromGit()" + getText(FAILURE_PROJECT_UPDATE) + FrameworkUtil.getStackTraceAsString(e));
+            svnImport = false;
+            svnImportMsg = getText(FAILURE_PROJECT_UPDATE);
+        } catch(org.eclipse.jgit.api.errors.TransportException e) { //Invalid remote: origin (URL)
+            S_LOGGER.error("Entered into catch block of Applications.importFromGit()" + getText(FAILURE_PROJECT_UPDATE) + FrameworkUtil.getStackTraceAsString(e));
+            svnImport = false;
+            svnImportMsg = getText(INVALID_URL);
+        } catch(org.eclipse.jgit.api.errors.InvalidRemoteException e) { //Invalid remote: origin (URL)
+            S_LOGGER.error("Entered into catch block of Applications.importFromGit()" + getText(FAILURE_PROJECT_UPDATE) + FrameworkUtil.getStackTraceAsString(e));
+            svnImport = false;
+            svnImportMsg = getText(INVALID_URL);
+        }  catch(PhrescoException e) {
+            S_LOGGER.error("Entered into catch block of Applications.importFromGit()" + getText(FAILURE_PROJECT_UPDATE) + FrameworkUtil.getStackTraceAsString(e));
+            svnImport = false;
+            svnImportMsg = getText(INVALID_FOLDER);
+        } catch (Exception e) {
+            S_LOGGER.error("Entered into catch block of Applications.importFromGit()" + getText(FAILURE_PROJECT_UPDATE) + FrameworkUtil.getStackTraceAsString(e));
+            svnImport = false;
+            svnImportMsg = getText(FAILURE_PROJECT_UPDATE);
+        }
+        return SUCCESS;
+    }
+
+    public String updateSVNProject() {
+        S_LOGGER.debug("Entering Method  Applications.updateSVNProject()");
+        try {
+            S_LOGGER.debug("update SCM Connection " + repositoryUrl);
+            S_LOGGER.debug("userName " + userName);
+            S_LOGGER.debug("Repo type " + repoType);
+            S_LOGGER.debug("projectCode " + projectCode);
+            updateSCMConnection(projectCode, repositoryUrl);
+
+            SVNAccessor svnAccessor = new SVNAccessor(repositoryUrl, userName, password);
+            S_LOGGER.debug("Import Application repository Url" + repositoryUrl + " Username " + userName);
+            revision = !HEAD_REVISION.equals(revision) ? revisionVal : revision;
+            File updateDir = new File(Utility.getProjectHome() , projectCode);
+            S_LOGGER.debug("updateDir SVN... " + updateDir);
+            svnAccessor.update(updateDir, revision, false);
+
+            svnImport = true;
+            svnImportMsg = getText(SUCCESS_PROJECT_UPDATE);
+        } catch(SVNAuthenticationException e) {
+            S_LOGGER.error("Entered into catch block of Applications.importApplication()" + getText(INVALID_CREDENTIALS) + FrameworkUtil.getStackTraceAsString(e));
+            svnImport = false;
+            svnImportMsg = getText(INVALID_CREDENTIALS);
+        } catch(SVNException e) {
+            S_LOGGER.error("Entered into catch block of Applications.importApplication()" + FrameworkUtil.getStackTraceAsString(e)); 
+            svnImport = false;
+            if(e.getMessage().indexOf(SVN_FAILED) != -1) {
+                svnImportMsg = getText(INVALID_URL);
+            } else if(e.getMessage().indexOf(SVN_INTERNAL) != -1) {
+                svnImportMsg = getText(INVALID_REVISION);
+            } else {
+                svnImportMsg = getText(INVALID_FOLDER);
+            }
+        } catch(PhrescoException e) {
+            S_LOGGER.error("Entered into catch block of Applications.importApplication()" + getText(FAILURE_PROJECT_UPDATE) + FrameworkUtil.getStackTraceAsString(e));
+            svnImport = false;
+            svnImportMsg = getText(FAILURE_PROJECT_UPDATE);
+        } catch (Exception e) {
+            S_LOGGER.error("Entered into catch block of Applications.importApplication()" + getText(FAILURE_PROJECT_UPDATE) + FrameworkUtil.getStackTraceAsString(e)); 
+            svnImport = false;
+            svnImportMsg = getText(FAILURE_PROJECT_UPDATE);
+        }
+        return SUCCESS;
+    }
+
+    //TODO: No need the validator remove all validator
+    public String validateFramework() {
+        S_LOGGER.debug("Entering Method  Applications.validateFramework()");
+
+        try {
+            getHttpRequest().setAttribute(VALIDATE_FROM, VALIDATE_FRAMEWORK);
+            // From home when clicking applications , it becomes true
+            String validateInBg = getHttpRequest().getParameter(VALIDATE_IN_BG);
+            if (validateInBg.equals("true") && getHttpSession().getAttribute(SESSION_FRMK_VLDT_RSLT) != null) {
+                setGlobalValidationStatus((String) getHttpSession().getAttribute(SESSION_FRMK_VLDT_STATUS));
+                return Action.SUCCESS;
+            } else {
+                getHttpSession().removeAttribute(SESSION_FRMK_VLDT_STATUS);
+                getHttpSession().removeAttribute(SESSION_FRMK_VLDT_RSLT);
+                ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
+                List<ValidationResult> validationResults = administrator.validate();
+                String validationStatus = null;
+                for (ValidationResult validationResult : validationResults) {
+                    validationStatus = validationResult.getStatus().toString();
+                    if (validationStatus == "ERROR") {
+                        getHttpSession().setAttribute(SESSION_FRMK_VLDT_STATUS,	"ERROR");
+                    }
+                }
+                getHttpSession().setAttribute(SESSION_FRMK_VLDT_RSLT, validationResults);
+                if (validateInBg.equals("true")) {
+                    setGlobalValidationStatus(validationStatus);
+                    return Action.SUCCESS;
+                }
+            }
+        } catch (Exception e) {
+            S_LOGGER.error("Entered into catch block of Applications.validateFramework()"
+                    + FrameworkUtil.getStackTraceAsString(e));
+            new LogErrorReport(e, "Validating framework");
+        }
+
+        return APP_VALIDATE_FRAMEWORK;
+    }
+
+    //TODO: No need the validator remove all validator
+    public String showFrameworkValidationResult() {
+        S_LOGGER.debug("Entering Method  Applications.showFrameworkValidationResult()");
+        getHttpRequest().setAttribute(VALIDATE_FROM, VALIDATE_FRAMEWORK);
+
+        return APP_SHOW_FRAMEWORK_VLDT_RSLT;
+    }
+
+    //TODO: No need the validator remove all validator
+    public String validateProject() { 
+        S_LOGGER.debug("Entering Method  Applications.validateProject()");
+
+        try {
+            getHttpRequest().setAttribute(VALIDATE_FROM, VALIDATE_PROJECT);
+            String validateInBg = getHttpRequest().getParameter(VALIDATE_IN_BG);
+            if (getHttpSession().getAttribute(projectCode + SESSION_PRJT_VLDT_RSLT) != null	&& "true".equals(validateInBg)) {
+                setGlobalValidationStatus((String) getHttpSession().getAttribute(projectCode + SESSION_PRJT_VLDT_STATUS));
+                return Action.SUCCESS;
+            } else {
+                getHttpSession().removeAttribute(projectCode + SESSION_PRJT_VLDT_RSLT);
+                getHttpSession().removeAttribute(projectCode + SESSION_PRJT_VLDT_STATUS);
+                ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
+                String validationStatus = null;
+                if (!StringUtils.isEmpty(projectCode)) {
+                    Project project = administrator.getProject(projectCode);
+                    List<ValidationResult> validationResults = administrator.validate(project);
+                    for (ValidationResult validationResult : validationResults) {
+                        validationStatus = validationResult.getStatus().toString();
+                        if (validationStatus == "ERROR") {
+                            getHttpSession().setAttribute(projectCode + SESSION_PRJT_VLDT_STATUS, "ERROR");
+                        }
+                    }
+                    getHttpSession().setAttribute(projectCode + SESSION_PRJT_VLDT_RSLT,	validationResults);
+                }
+
+                if (validateInBg.equals("true")) {
+                    setGlobalValidationStatus(validationStatus);
+                    return Action.SUCCESS;
+                }
+            }
+        } catch (Exception e) {
+            S_LOGGER.error("Entered into catch block of Applications.validateProject()"
+                    + FrameworkUtil.getStackTraceAsString(e));
+            new LogErrorReport(e, "Validating project");
+        }
+
+        return APP_VALIDATE_PROJECT;
+    }
+
+    //TODO: No need the validator remove all validator
+    public String showProjectValidationResult() {
+        S_LOGGER.debug("Entering Method  Applications.showProjectValidationResult()");
+
+        getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
+        getHttpRequest().setAttribute(VALIDATE_FROM, VALIDATE_PROJECT);
+
+        return APP_SHOW_PROJECT_VLDT_RSLT;
+    }
+
+    private String discover() {
+        if (s_debugEnabled) {
+            S_LOGGER.debug("Entering Method  Applications.discover()");
+        }
+
+        try {
+            ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
+            List<ProjectInfo> projects = projectManager.discover("photon");
+            setReqAttribute(REQ_PROJECTS, projects);
+        } catch (PhrescoException e) {
+            S_LOGGER.error("Entered into catch block of Applications.discover()" + FrameworkUtil.getStackTraceAsString(e));
+            return showErrorPopup(e, "Discovering projects");
+        }
+        setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
+
+        return APP_LIST;
+    }
+
+    public String showSettings() {
+        S_LOGGER.debug("entered Applications.showSettings()");
+
+        try {
+            if (showSettings != null && Boolean.valueOf(showSettings)) {
+                if (CollectionUtils.isNotEmpty(getEnvironmentNames())) {
+                    settingsEnv = getEnvironmentNames();
+                } else {
+                    envError = getText(NO_SETTINGS_ENV);
+                }
+            }
+        } catch (PhrescoException e) {
+            return showErrorPopup(e, "Show Settings");
+        }
+
+        return SUCCESS;
+    }
+
+    private List<String> getEnvironmentNames() throws PhrescoException {
+        List<String> names = new ArrayList<String>(5);
+        ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
+        List<Environment> environments = administrator.getEnvironments();
+        if (CollectionUtils.isNotEmpty(environments)) {
+            for (Environment environment : environments) {
+                names.add(environment.getName());
+            }
+        }
+        return names;
+    }
+
+    public String openAttrPopup() throws PhrescoException {
+        try {
+            String techId = getHttpRequest().getParameter("techId");
+            String appType = getHttpRequest().getParameter(REQ_APPLICATION_TYPE);
+            String type = getHttpRequest().getParameter(ATTR_TYPE);
+            String from = getHttpRequest().getParameter(REQ_FROM);
+            setReqAttribute(REQ_FROM, from);
+            ApplicationType applicationType = null;
+            applicationType = ApplicationsUtil.getApplicationType(getHttpRequest(), appType);
+            //			Technology techonology = applicationType.getTechonology(techId);//TODO:Need to handle
+            String attrName = null;
+            if (Constants.SETTINGS_TEMPLATE_SERVER.equals(type)) {
+                List<Integer> listSelectedServerIds = null;
+                //				List<DownloadInfo> servers = techonology.getServers();//TODO:Need to handle
+                if(StringUtils.isEmpty(from)) {
+                    List<String> listSelectedServers = null;
+                    List<String> listSelectedServerNames = null;
+                    String selectedServers = getHttpRequest().getParameter("selectedServers");
+                    if (StringUtils.isNotEmpty(selectedServers)) {
+                        listSelectedServerNames = new ArrayList<String>();
+                        listSelectedServers = new ArrayList<String>(Arrays.asList(selectedServers.split("#SEP#")));
+                        if (CollectionUtils.isNotEmpty(listSelectedServers)) {
+                            for (String listSelectedServer : listSelectedServers) {
+                                String[] split = listSelectedServer.split("#VSEP#");
+                                listSelectedServerNames.add(split[0].trim());
+                            }
+                        }
+                        listSelectedServerIds = new ArrayList<Integer>(2);
+                        //TODO:Need to handle
+                        //						if (CollectionUtils.isNotEmpty(servers)) {
+                        //							for (DownloadInfo server : servers) {
+                        //								if(listSelectedServerNames.contains(server.getName())) {
+                        //									listSelectedServerIds.add(server.getId());
+                        //								}
+                        //							}
+                        //						}
+                    }
+                    setReqAttribute("listSelectedServerIds", listSelectedServerIds);
+                    setReqAttribute(REQ_HEADER_TYPE, "Select");
+                } else {
+                    attrName = getHttpRequest().getParameter("attrName");
+                    String selectedVersions = getHttpRequest().getParameter("selectedVersions");
+                    selectedVersions = selectedVersions.replaceAll(" ", "");
+                    List<String> listSelectedVersions = new ArrayList<String>(Arrays.asList(selectedVersions.split(",")));
+                    listSelectedServerIds = new ArrayList<Integer>(2);
+                    //TODO:Need to handle
+                    //					if (CollectionUtils.isNotEmpty(servers)) {
+                    //						for (DownloadInfo server : servers) {
+                    //							String serverName = server.getName().trim();
+                    //							serverName = serverName.replaceAll("\\s+", "");
+                    //							if(serverName.equals(attrName)) {
+                    //								listSelectedServerIds.add(server.getId());
+                    //							}
+                    //						}
+                    //					}
+                    setReqAttribute("listSelectedServerIds", listSelectedServerIds);
+                    setReqAttribute(REQ_LISTSELECTED_VERSIONS, listSelectedVersions);
+                    setReqAttribute(REQ_HEADER_TYPE, "Edit");
+                }
+                //				setReqAttribute("servers", servers);//TODO:Need to handle
+            }
+            if (Constants.SETTINGS_TEMPLATE_DB.equals(type)) {
+                List<Integer> listSelectedDatabaseIds = null;
+                //				List<DownloadInfo> databases = techonology.getDatabases();//TODO:Need to handle
+                if(StringUtils.isEmpty(from)) {
+                    List<String> listSelectedDbs = null;
+                    List<String> listSelectedDbNames = null;
+                    List<Integer> listSelectedDbIds = null;
+                    String selectedDatabases = getHttpRequest().getParameter("selectedDatabases");
+                    if (StringUtils.isNotEmpty(selectedDatabases)) {
+                        listSelectedDbNames = new ArrayList<String>();
+                        listSelectedDbs = new ArrayList<String>(Arrays.asList(selectedDatabases.split("#SEP#")));
+                        for (String listSelectedDb : listSelectedDbs) {
+                            String[] split = listSelectedDb.split("#VSEP#");
+                            listSelectedDbNames.add(split[0].trim());
+                        }
+                        listSelectedDbIds = new ArrayList<Integer>(2);
+                        //TODO:Need to handle
+                        //						if (CollectionUtils.isNotEmpty(databases)) {
+                        //							for (DownloadInfo database : databases) {
+                        //								if(listSelectedDbNames.contains(database.getName())) {
+                        //									listSelectedDbIds.add(database.getId());
+                        //								}
+                        //							}
+                        //						}
+                    }
+                    setReqAttribute("listSelectedDatabaseIds", listSelectedDbIds);
+                    setReqAttribute(REQ_HEADER_TYPE, "Select");
+                } else {
+                    attrName = getHttpRequest().getParameter("attrName");
+                    ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
+                    if (StringUtils.isNotEmpty(projectCode)) {
+                        Project project = administrator.getProject(projectCode);
+                        if (project != null) {
+                            ApplicationInfo appInfo = project.getApplicationInfo();
+                            //							List<DownloadInfo> projectInfoDbs = appInfo.getTechnology().getDatabases();//TODO:Need to handle
+                            List<String> projectInfoDbVersions = new ArrayList<String>();
+                            StringBuilder sb = new StringBuilder();
+                            //TODO:Need to handle
+                            //							if (CollectionUtils.isNotEmpty(projectInfoDbs)) {
+                            //								for (DownloadInfo projectInfoDb : projectInfoDbs) {
+                            //									if (projectInfoDb.getName().equals(attrName)) {
+                            //										projectInfoDbVersions.addAll(projectInfoDb.getVersions());
+                            //									}
+                            //								}
+                            //								if (CollectionUtils.isNotEmpty(projectInfoDbVersions)) {
+                            //									for (String projectInfoDbVersion : projectInfoDbVersions) {
+                            //										sb.append(projectInfoDbVersion);
+                            //										sb.append(",");
+                            //									}
+                            //	
+                            //								}
+                            //								if (StringUtils.isNotEmpty(sb.toString())) {
+                            //									setReqAttribute("projectInfoDbVersions", sb.toString().substring(0, sb.length() - 1));
+                            //								}
+                            //							}
+                        }
+                    }
+                    String selectedVersions = getHttpRequest().getParameter("selectedVersions");
+                    selectedVersions = selectedVersions.replaceAll(" ", "");
+                    List<String> listSelectedVersions = new ArrayList<String>(Arrays.asList(selectedVersions.split(",")));
+                    listSelectedDatabaseIds = new ArrayList<Integer>(2);
+                    //TODO:Need to handle
+                    //					if (CollectionUtils.isNotEmpty(databases)) {
+                    //						for (DownloadInfo database : databases) {
+                    //							String databaseName = database.getName().trim();
+                    //							databaseName = databaseName.replaceAll("\\s+", "");
+                    //							if(databaseName.equals(attrName)) {
+                    //								listSelectedDatabaseIds.add(database.getId());
+                    //							}
+                    //						}
+                    //					}
+                    setReqAttribute("listSelectedDatabaseIds", listSelectedDatabaseIds);
+                    setReqAttribute(REQ_LISTSELECTED_VERSIONS, listSelectedVersions);
+                    setReqAttribute(REQ_HEADER_TYPE, "Edit");
+                }
+                //				setReqAttribute("databases", databases);//TODO:Need to handle
+            }
+
+            setReqAttribute("attrName", attrName);
+            setReqAttribute("header", type);
+            setReqAttribute(REQ_FROM, from);
+            setReqAttribute(REQ_FROM_PAGE, fromPage);
+        } catch (PhrescoException e) {
+            return showErrorPopup(e, "Getting server and database");
+        }
+
+        return "openAttrPopup";
+    }
+
+    public String allVersions() throws PhrescoException {
+        versions = new ArrayList<String>(2);
+        String techId = getHttpRequest().getParameter("techId");
+        String appType = getHttpRequest().getParameter(REQ_APPLICATION_TYPE);
+        String type = getHttpRequest().getParameter("type");
+
+        int selectedId = Integer.parseInt(getHttpRequest().getParameter("selectedId"));
+        ApplicationType applicationType = ApplicationsUtil.getApplicationType(getHttpRequest(), appType);
+        //TODO:Need to handle
+        //		Technology selectedTechnology = applicationType.getTechonology(techId);
+        //		
+        //		if ("Server".equals(type)) {
+        //			List<DownloadInfo> servers = selectedTechnology.getServers();
+        //			for (DownloadInfo server : servers) {
+        //				if(server.getId() == selectedId) {
+        //					versions = server.getVersions();
+        //				}
+        //			}
+        //		}
+        //		if ("Database".equals(type)) {
+        //			List<DownloadInfo> databases = selectedTechnology.getDatabases();
+        //			for (DownloadInfo database : databases) {
+        //				if(database.getId() == selectedId) {
+        //					versions.addAll(database.getVersions());
+        //				}
+        //			}
+        //		}
+
+        return SUCCESS;
+    }
+
+    public String addDetails() throws PhrescoException {
+        String type = getHttpRequest().getParameter("type");
+        setSelectedParamName(getHttpRequest().getParameter("paramName"));
+        divTobeUpdated = getHttpRequest().getParameter("divTobeUpdated");
+        if ("Server".equals(type)) {
+            String[] selectedServerVersions = getHttpRequest().getParameterValues("serverVersion");
+            selectedVersions = convertToCommaDelimited(selectedServerVersions);
+        } else {
+            String[] selectedDbVersions = getHttpRequest().getParameterValues("databaseVersion");
+            selectedVersions = convertToCommaDelimited(selectedDbVersions);
+        }
+        setSelectedAttrType(type);
+
+        return SUCCESS;
+    }
+
+    public static String convertToCommaDelimited(String[] list) {
+        StringBuffer retString = new StringBuffer("");
+        for (int i = 0; list != null && i < list.length; i++) {
+            retString.append(list[i]);
+            if (i < list.length - 1) {
+                retString.append(','+" ");
+            }
+        }
+
+        return retString.toString();
+    }
+
+    public String checkForRespectiveConfig() throws PhrescoException {
+        try {
+            ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
+            Project project = administrator.getProject(projectCode);
+            Map<String, List<String>> deleteConfigs = new HashMap<String , List<String>>();
+            List<String> configNames = new ArrayList<String>();
+            List<SettingsInfo> configurations = administrator.configurations(selectedAttrType, project);
+            if (CollectionUtils.isNotEmpty(configurations)) {
+                for (SettingsInfo config : configurations) {
+                    deleteConfigs.clear();
+                    configNames.clear();
+                    PropertyInfo serverType = config.getPropertyInfo(Constants.SERVER_TYPE);
+                    if (serverType.getValue().equalsIgnoreCase(selectedParamName)) {
+                        setHasConfiguration(true);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new PhrescoException(e);
+        }
+
+        return SUCCESS;
+    }
+
+    private void removeConfiguration() throws PhrescoException {
+        try {
+            if (StringUtils.isNotEmpty(configServerNames)) {
+                deleteConfigurations("Server", configServerNames.substring(0, configServerNames.length() - 1));
+            }
+            if (StringUtils.isNotEmpty(configDbNames)) {
+                deleteConfigurations("Database", configDbNames.substring(0, configDbNames.length() - 1));
+            }
+        } catch (Exception e) {
+            throw new PhrescoException(e);
+        }
+    }
+
+    private void deleteConfigurations (String type, String configName) throws PhrescoException {
+        try {
+            String [] items = configName.split(",");
+            List<String> deleteConfigNames = Arrays.asList(items);
+            ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
+            Project project = administrator.getProject(projectCode);
+            Map<String, List<String>> deleteConfigs = new HashMap<String , List<String>>();
+            List<String> configNames = new ArrayList<String>();
+            List<SettingsInfo> configurations = administrator.configurations(type, project);
+            if (CollectionUtils.isNotEmpty(configurations)) {
+                for (SettingsInfo config : configurations) {
+                    deleteConfigs.clear();
+                    configNames.clear();
+                    PropertyInfo serverType = config.getPropertyInfo(Constants.SERVER_TYPE);
+                    for (String deleteConfigName : deleteConfigNames) {
+                        if (serverType.getValue().equalsIgnoreCase(deleteConfigName)) {
+                            configNames.add(config.getName());
+                            deleteConfigs.put(config.getEnvName(), configNames);
+                            administrator.deleteConfigurations(deleteConfigs, project);
+                        }
+                    }
+                }
+            }
+        } catch(Exception e) {
+            throw new PhrescoException(e);
+        }
+    }
+
+    public String checkForConfiguration() throws PhrescoException {
+        /*try {
 			System.out.println("inside try check for config()************************");
 			boolean isError = false;
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			ApplicationInfo applicationInfo = applicationManager.getApplicationInfo(getCustomerId(), getProjectId(), getAppId());
-			
+
 //			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
 //			Project project = administrator.getProject(projectCode);
 			//TODO:Need to handle
@@ -1332,7 +1448,7 @@ public class Applications extends FrameworkBaseAction {
 //			List<Database> databases = technology.getDatabases();
 //			List<WebService> webservices = technology.getWebservices();
 //			boolean emailSupported = technology.isEmailSupported();
-			
+
 			String envs = getHttpRequest().getParameter(ENVIRONMENTS);
 			if(StringUtils.isEmpty(envs)){
 				setHasError(false);
@@ -1349,7 +1465,7 @@ public class Applications extends FrameworkBaseAction {
 //						return SUCCESS;
 //					}
 				}
-				
+
 				//TODO:Need to handle
 //				if (CollectionUtils.isNotEmpty(servers) && CollectionUtils.isEmpty(administrator.getSettingsInfos(Constants.SETTINGS_TEMPLATE_SERVER, projectCode, envName))) {
 //					isError = true;
@@ -1370,7 +1486,7 @@ public class Applications extends FrameworkBaseAction {
 //					isError = true;
 //					unAvailableTypes.add("E-mail");
 //				}
-				
+
 				if (isError) {
 					String csvUnAvailableTypes = "";
 					if (CollectionUtils.isNotEmpty(unAvailableTypes)) {
@@ -1386,372 +1502,372 @@ public class Applications extends FrameworkBaseAction {
 			throw new PhrescoException(e);
 		}*/
 
-		return SUCCESS;
-	}
-	
-	public String checkForConfigType() throws PhrescoException {
-		try{
-			String envs = getHttpRequest().getParameter(REQ_ENVIRONMENTS);
-			if(StringUtils.isEmpty(envs)){
-				setHasError(false);
-				return SUCCESS;
-			}
-			String type = getHttpRequest().getParameter("type");
-			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-			if(CollectionUtils.isEmpty(administrator.getSettingsInfos(type, projectCode, envs))) {
-				setEnvError(getText(ERROR_ENV_CONFIG, Collections.singletonList(type)));
-				setHasError(true);
-			}
-		} catch(Exception e) {
-			throw new PhrescoException(e);
-		}
-		
-		return SUCCESS;
-	}
-	
-	public String browse() {
-		S_LOGGER.debug("Entering Method  Applications.browse()");
-		try {
-		    setReqAttribute(FILE_TYPES, fileType);
-		    setReqAttribute(FILE_BROWSE, fileorfolder);
-			String projectLocation = Utility.getProjectHome() + projectCode;
-			setReqAttribute(REQ_PROJECT_LOCATION, projectLocation.replace(File.separator, FORWARD_SLASH));
-			setReqAttribute(REQ_PROJECT_CODE, projectCode);
-		} catch (Exception e) {
-			S_LOGGER.error("Entered into catch block of  Applications.browse()"	+ FrameworkUtil.getStackTraceAsString(e));
-			new LogErrorReport(e, "File Browse");
-		}
-		return SUCCESS;
-	}
+        return SUCCESS;
+    }
 
-	public String authenticateServer() throws PhrescoException {
-		try {
-			String host = (String)getHttpRequest().getParameter(SERVER_HOST);
-			int port = Integer.parseInt(getHttpRequest().getParameter(SERVER_PORT));
-			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-			boolean connectionAlive = DiagnoseUtil.isConnectionAlive("https", host, port);
-			boolean isCertificateAvailable = false;
-			if (connectionAlive) {
-				List<CertificateInfo> certificates = administrator.getCertificate(host, port);
-				if (CollectionUtils.isNotEmpty(certificates)) {
-					isCertificateAvailable = true;
-					setReqAttribute("certificates", certificates);
-				}
-			}
-			setReqAttribute(FILE_TYPES, FILE_TYPE_CRT);
-			setReqAttribute(FILE_BROWSE, FILE_BROWSE);
-			String projectLocation = "";
-			if (StringUtils.isNotEmpty(projectCode)) {
-				projectLocation = Utility.getProjectHome() + projectCode;
-			} else {
-				projectLocation = Utility.getProjectHome();
-			}
-			setReqAttribute(REQ_PROJECT_LOCATION, projectLocation.replace(File.separator, FORWARD_SLASH));
-			setReqAttribute(REQ_RMT_DEP_IS_CERT_AVAIL, isCertificateAvailable);
-			setReqAttribute(REQ_RMT_DEP_FILE_BROWSE_FROM, CONFIGURATION);
-		} catch(Exception e) {
-			throw new PhrescoException(e);
-		}
+    public String checkForConfigType() throws PhrescoException {
+        try{
+            String envs = getHttpRequest().getParameter(REQ_ENVIRONMENTS);
+            if(StringUtils.isEmpty(envs)){
+                setHasError(false);
+                return SUCCESS;
+            }
+            String type = getHttpRequest().getParameter("type");
+            ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
+            if(CollectionUtils.isEmpty(administrator.getSettingsInfos(type, projectCode, envs))) {
+                setEnvError(getText(ERROR_ENV_CONFIG, Collections.singletonList(type)));
+                setHasError(true);
+            }
+        } catch(Exception e) {
+            throw new PhrescoException(e);
+        }
 
-		return SUCCESS;
-	}
-	
-	public boolean importFromGit(String url, File directory) throws Exception {
-		S_LOGGER.debug("Entering Method  Applications.importFromGit()");
-		S_LOGGER.debug("importing git " + url);
-	    Git repo = Git.cloneRepository().setURI(url).setDirectory(directory).call();
-	    for (Ref b : repo.branchList().setListMode(ListMode.ALL).call()) {
-	    	S_LOGGER.debug("(standard): cloned branch " + b.getName());
-	    }
-	    repo.getRepository().close();
-	    return true;
-	}
-	
-	public ApplicationInfo getAppInfo(File directory) throws Exception {
-		S_LOGGER.debug("Entering Method  Applications.getProjectInfo()");
-		BufferedReader reader = null;
-		try {
-		    File dotProjectFile = new File(directory, FOLDER_DOT_PHRESCO + File.separator + PROJECT_INFO);
-		    S_LOGGER.debug("dotProjectFile" + dotProjectFile);
-		    if (!dotProjectFile.exists()) {
-		        throw new PhrescoException("Phresco Project definition not found");
-		    }
-		    reader = new BufferedReader(new FileReader(dotProjectFile));
-		    return new Gson().fromJson(reader, ApplicationInfo.class);
-		} finally {
-		    Utility.closeStream(reader);
-		}
-	}
-	
-	private void importToWorkspace(File gitImportTemp, String phrescoHomeDirectory, String projectCode) throws Exception {
-		S_LOGGER.debug("Entering Method  Applications.importToWorkspace()");
-		File workspaceProjectDir = new File(phrescoHomeDirectory + projectCode);
-		S_LOGGER.debug("workspaceProjectDir "+ workspaceProjectDir);
-		if (workspaceProjectDir.exists()) {
-			S_LOGGER.debug("workspaceProjectDir exists"+ workspaceProjectDir);
-			throw new org.apache.commons.io.FileExistsException();
-		}
-		S_LOGGER.debug("gitImportTemp ====> " + gitImportTemp);
-		S_LOGGER.debug("workspaceProjectDir ====> " + workspaceProjectDir);
-		FileUtils.copyDirectory(gitImportTemp, workspaceProjectDir);
-		try {
-			FileUtils.deleteDirectory(gitImportTemp);
-		} catch (IOException e) {
-			S_LOGGER.debug("pack file is not deleted "  + e.getLocalizedMessage());
-		}
-	}
-	
-	private void updateSCMConnection(String projCode, String repoUrl) throws Exception {
-		S_LOGGER.debug("Entering Method  Applications.updateSCMConnection()");
-		FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-		PomProcessor processor = frameworkUtil.getPomProcessor(projCode);
-		if (processor.getSCM() == null) {
-			S_LOGGER.debug("processor.getSCM() exists and repo url " + repoUrl);
-			processor.setSCM(repoUrl, "", "", "");
-			processor.save();
-		}
-	}
-	
-	public String getProjectCode() {
-		return projectCode;
-	}
+        return SUCCESS;
+    }
 
-	public void setProjectCode(String projectCode) {
-		this.projectCode = projectCode;
-	}
+    public String browse() {
+        S_LOGGER.debug("Entering Method  Applications.browse()");
+        try {
+            setReqAttribute(FILE_TYPES, fileType);
+            setReqAttribute(FILE_BROWSE, fileorfolder);
+            String projectLocation = Utility.getProjectHome() + projectCode;
+            setReqAttribute(REQ_PROJECT_LOCATION, projectLocation.replace(File.separator, FORWARD_SLASH));
+            setReqAttribute(REQ_PROJECT_CODE, projectCode);
+        } catch (Exception e) {
+            S_LOGGER.error("Entered into catch block of  Applications.browse()"	+ FrameworkUtil.getStackTraceAsString(e));
+            new LogErrorReport(e, "File Browse");
+        }
+        return SUCCESS;
+    }
 
-	public String getFromPage() {
-		return fromPage;
-	}
+    public String authenticateServer() throws PhrescoException {
+        try {
+            String host = (String)getHttpRequest().getParameter(SERVER_HOST);
+            int port = Integer.parseInt(getHttpRequest().getParameter(SERVER_PORT));
+            ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
+            boolean connectionAlive = DiagnoseUtil.isConnectionAlive("https", host, port);
+            boolean isCertificateAvailable = false;
+            if (connectionAlive) {
+                List<CertificateInfo> certificates = administrator.getCertificate(host, port);
+                if (CollectionUtils.isNotEmpty(certificates)) {
+                    isCertificateAvailable = true;
+                    setReqAttribute("certificates", certificates);
+                }
+            }
+            setReqAttribute(FILE_TYPES, FILE_TYPE_CRT);
+            setReqAttribute(FILE_BROWSE, FILE_BROWSE);
+            String projectLocation = "";
+            if (StringUtils.isNotEmpty(projectCode)) {
+                projectLocation = Utility.getProjectHome() + projectCode;
+            } else {
+                projectLocation = Utility.getProjectHome();
+            }
+            setReqAttribute(REQ_PROJECT_LOCATION, projectLocation.replace(File.separator, FORWARD_SLASH));
+            setReqAttribute(REQ_RMT_DEP_IS_CERT_AVAIL, isCertificateAvailable);
+            setReqAttribute(REQ_RMT_DEP_FILE_BROWSE_FROM, CONFIGURATION);
+        } catch(Exception e) {
+            throw new PhrescoException(e);
+        }
 
-	public void setFromPage(String fromPage) {
-		this.fromPage = fromPage;
-	}
+        return SUCCESS;
+    }
 
-	public String getRepourl() {
-		return repositoryUrl;
-	}
+    public boolean importFromGit(String url, File directory) throws Exception {
+        S_LOGGER.debug("Entering Method  Applications.importFromGit()");
+        S_LOGGER.debug("importing git " + url);
+        Git repo = Git.cloneRepository().setURI(url).setDirectory(directory).call();
+        for (Ref b : repo.branchList().setListMode(ListMode.ALL).call()) {
+            S_LOGGER.debug("(standard): cloned branch " + b.getName());
+        }
+        repo.getRepository().close();
+        return true;
+    }
 
-	public void setRepourl(String repourl) {
-		this.repositoryUrl = repourl;
-	}
+    public ApplicationInfo getAppInfo(File directory) throws Exception {
+        S_LOGGER.debug("Entering Method  Applications.getProjectInfo()");
+        BufferedReader reader = null;
+        try {
+            File dotProjectFile = new File(directory, FOLDER_DOT_PHRESCO + File.separator + PROJECT_INFO);
+            S_LOGGER.debug("dotProjectFile" + dotProjectFile);
+            if (!dotProjectFile.exists()) {
+                throw new PhrescoException("Phresco Project definition not found");
+            }
+            reader = new BufferedReader(new FileReader(dotProjectFile));
+            return new Gson().fromJson(reader, ApplicationInfo.class);
+        } finally {
+            Utility.closeStream(reader);
+        }
+    }
 
-	public String getUsername() {
-		return userName;
-	}
+    private void importToWorkspace(File gitImportTemp, String phrescoHomeDirectory, String projectCode) throws Exception {
+        S_LOGGER.debug("Entering Method  Applications.importToWorkspace()");
+        File workspaceProjectDir = new File(phrescoHomeDirectory + projectCode);
+        S_LOGGER.debug("workspaceProjectDir "+ workspaceProjectDir);
+        if (workspaceProjectDir.exists()) {
+            S_LOGGER.debug("workspaceProjectDir exists"+ workspaceProjectDir);
+            throw new org.apache.commons.io.FileExistsException();
+        }
+        S_LOGGER.debug("gitImportTemp ====> " + gitImportTemp);
+        S_LOGGER.debug("workspaceProjectDir ====> " + workspaceProjectDir);
+        FileUtils.copyDirectory(gitImportTemp, workspaceProjectDir);
+        try {
+            FileUtils.deleteDirectory(gitImportTemp);
+        } catch (IOException e) {
+            S_LOGGER.debug("pack file is not deleted "  + e.getLocalizedMessage());
+        }
+    }
 
-	public void setUsername(String username) {
-		this.userName = username;
-	}
+    private void updateSCMConnection(String projCode, String repoUrl) throws Exception {
+        S_LOGGER.debug("Entering Method  Applications.updateSCMConnection()");
+        FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+        PomProcessor processor = frameworkUtil.getPomProcessor(projCode);
+        if (processor.getSCM() == null) {
+            S_LOGGER.debug("processor.getSCM() exists and repo url " + repoUrl);
+            processor.setSCM(repoUrl, "", "", "");
+            processor.save();
+        }
+    }
 
-	public String getPassword() {
-		return password;
-	}
+    public String getProjectCode() {
+        return projectCode;
+    }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    public void setProjectCode(String projectCode) {
+        this.projectCode = projectCode;
+    }
 
-	public String getRevision() {
-		return revision;
-	}
+    public String getFromPage() {
+        return fromPage;
+    }
 
-	public void setRevision(String revision) {
-		this.revision = revision;
-	}
+    public void setFromPage(String fromPage) {
+        this.fromPage = fromPage;
+    }
 
-	public String getRevisionVal() {
-		return revisionVal;
-	}
+    public String getRepourl() {
+        return repositoryUrl;
+    }
 
-	public void setRevisionVal(String revisionVal) {
-		this.revisionVal = revisionVal;
-	}
+    public void setRepourl(String repourl) {
+        this.repositoryUrl = repourl;
+    }
 
-	public String getShowSettings() {
-		return showSettings;
-	}
+    public String getUsername() {
+        return userName;
+    }
 
-	public void setShowSettings(String showSettings) {
-		this.showSettings = showSettings;
-	}
+    public void setUsername(String username) {
+        this.userName = username;
+    }
 
-	public String getGlobalValidationStatus() {
-		return globalValidationStatus;
-	}
+    public String getPassword() {
+        return password;
+    }
 
-	public void setGlobalValidationStatus(String globalValidationStatus) {
-		this.globalValidationStatus = globalValidationStatus;
-	}
-	
-	public List<String> getPilotModules() {
-		return pilotModules;
-	}
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-	public void setPilotModules(List<String> pilotModules) {
-		this.pilotModules = pilotModules;
-	}
-	
-	public List<String> getPilotJSLibs() {
-		return pilotJSLibs;
-	}
+    public String getRevision() {
+        return revision;
+    }
 
-	public void setPilotJSLibs(List<String> pilotJSLibs) {
-		this.pilotJSLibs = pilotJSLibs;
-	}
-	
-	public List<String> getVersions() {
-		return versions;
-	}
+    public void setRevision(String revision) {
+        this.revision = revision;
+    }
 
-	public void setVersions(List<String> versions) {
-		this.versions = versions;
-	}
-	
-	public String getSelectedVersions() {
-		return selectedVersions;
-	}
+    public String getRevisionVal() {
+        return revisionVal;
+    }
 
-	public void setSelectedVersions(String selectedVersions) {
-		this.selectedVersions = selectedVersions;
-	}
-	
-	public String getSelectedAttrType() {
-		return selectedAttrType;
-	}
+    public void setRevisionVal(String revisionVal) {
+        this.revisionVal = revisionVal;
+    }
 
-	public void setSelectedAttrType(String selectedAttrType) {
-		this.selectedAttrType = selectedAttrType;
-	}
+    public String getShowSettings() {
+        return showSettings;
+    }
 
-	public String getSelectedParamName() {
-		return selectedParamName;
-	}
+    public void setShowSettings(String showSettings) {
+        this.showSettings = showSettings;
+    }
 
-	public void setSelectedParamName(String selectedParamName) {
-		this.selectedParamName = selectedParamName;
-	}
-	
-	public String getDivTobeUpdated() {
-		return divTobeUpdated;
-	}
+    public String getGlobalValidationStatus() {
+        return globalValidationStatus;
+    }
 
-	public void setDivTobeUpdated(String divTobeUpdated) {
-		this.divTobeUpdated = divTobeUpdated;
-	}
-	
-	public List<String> getSettingsEnv() {
-		return settingsEnv;
-	}
+    public void setGlobalValidationStatus(String globalValidationStatus) {
+        this.globalValidationStatus = globalValidationStatus;
+    }
 
-	public void setSettingsEnv(List<String> settingsEnv) {
-		this.settingsEnv = settingsEnv;
-	}
-	
-	public boolean isHasError() {
-		return hasError;
-	}
+    public List<String> getPilotModules() {
+        return pilotModules;
+    }
 
-	public void setHasError(boolean hasError) {
-		this.hasError = hasError;
-	}
-	
-	public String getEnvError() {
-		return envError;
-	}
+    public void setPilotModules(List<String> pilotModules) {
+        this.pilotModules = pilotModules;
+    }
 
-	public void setEnvError(String envError) {
-		this.envError = envError;
-	}
-	
-	public List<String> getTechVersions() {
-		return techVersions;
-	}
+    public List<String> getPilotJSLibs() {
+        return pilotJSLibs;
+    }
 
-	public void setTechVersions(List<String> techVersions) {
-		this.techVersions = techVersions;
-	}
-	
-	public boolean isHasConfiguration() {
-		return hasConfiguration;
-	}
+    public void setPilotJSLibs(List<String> pilotJSLibs) {
+        this.pilotJSLibs = pilotJSLibs;
+    }
 
-	public void setHasConfiguration(boolean hasConfiguration) {
-		this.hasConfiguration = hasConfiguration;
-	}
-	
-	public String getConfigServerNames() {
-		return configServerNames;
-	}
+    public List<String> getVersions() {
+        return versions;
+    }
 
-	public void setConfigServerNames(String configServerNames) {
-		this.configServerNames = configServerNames;
-	}
+    public void setVersions(List<String> versions) {
+        this.versions = versions;
+    }
 
-	public String getConfigDbNames() {
-		return configDbNames;
-	}
+    public String getSelectedVersions() {
+        return selectedVersions;
+    }
 
-	public void setConfigDbNames(String configDbNames) {
-		this.configDbNames = configDbNames;
-	}
+    public void setSelectedVersions(String selectedVersions) {
+        this.selectedVersions = selectedVersions;
+    }
 
-	public boolean isSvnImport() {
-		return svnImport;
-	}
+    public String getSelectedAttrType() {
+        return selectedAttrType;
+    }
 
-	public void setSvnImport(boolean svnImport) {
-		this.svnImport = svnImport;
-	}
+    public void setSelectedAttrType(String selectedAttrType) {
+        this.selectedAttrType = selectedAttrType;
+    }
 
-	public String getSvnImportMsg() {
-		return svnImportMsg;
-	}
+    public String getSelectedParamName() {
+        return selectedParamName;
+    }
 
-	public void setSvnImportMsg(String svnImportMsg) {
-		this.svnImportMsg = svnImportMsg;
-	}
+    public void setSelectedParamName(String selectedParamName) {
+        this.selectedParamName = selectedParamName;
+    }
 
-	public String getFromTab() {
-		return fromTab;
-	}
+    public String getDivTobeUpdated() {
+        return divTobeUpdated;
+    }
 
-	public void setFromTab(String fromTab) {
-		this.fromTab = fromTab;
-	}
+    public void setDivTobeUpdated(String divTobeUpdated) {
+        this.divTobeUpdated = divTobeUpdated;
+    }
 
-	public String getCredential() {
-		return credential;
-	}
+    public List<String> getSettingsEnv() {
+        return settingsEnv;
+    }
 
-	public void setCredential(String credential) {
-		this.credential = credential;
-	}
+    public void setSettingsEnv(List<String> settingsEnv) {
+        this.settingsEnv = settingsEnv;
+    }
 
-	public String getFileType() {
-		return fileType;
-	}
+    public boolean isHasError() {
+        return hasError;
+    }
 
-	public void setFileType(String fileType) {
-		this.fileType = fileType;
-	}
+    public void setHasError(boolean hasError) {
+        this.hasError = hasError;
+    }
 
-	public String getFileorfolder() {
-		return fileorfolder;
-	}
+    public String getEnvError() {
+        return envError;
+    }
 
-	public void setFileorfolder(String fileorfolder) {
-		this.fileorfolder = fileorfolder;
-	}
+    public void setEnvError(String envError) {
+        this.envError = envError;
+    }
 
-	public String getRepoType() {
-		return repoType;
-	}
+    public List<String> getTechVersions() {
+        return techVersions;
+    }
 
-	public void setRepoType(String repoType) {
-		this.repoType = repoType;
-	}
-	
+    public void setTechVersions(List<String> techVersions) {
+        this.techVersions = techVersions;
+    }
+
+    public boolean isHasConfiguration() {
+        return hasConfiguration;
+    }
+
+    public void setHasConfiguration(boolean hasConfiguration) {
+        this.hasConfiguration = hasConfiguration;
+    }
+
+    public String getConfigServerNames() {
+        return configServerNames;
+    }
+
+    public void setConfigServerNames(String configServerNames) {
+        this.configServerNames = configServerNames;
+    }
+
+    public String getConfigDbNames() {
+        return configDbNames;
+    }
+
+    public void setConfigDbNames(String configDbNames) {
+        this.configDbNames = configDbNames;
+    }
+
+    public boolean isSvnImport() {
+        return svnImport;
+    }
+
+    public void setSvnImport(boolean svnImport) {
+        this.svnImport = svnImport;
+    }
+
+    public String getSvnImportMsg() {
+        return svnImportMsg;
+    }
+
+    public void setSvnImportMsg(String svnImportMsg) {
+        this.svnImportMsg = svnImportMsg;
+    }
+
+    public String getFromTab() {
+        return fromTab;
+    }
+
+    public void setFromTab(String fromTab) {
+        this.fromTab = fromTab;
+    }
+
+    public String getCredential() {
+        return credential;
+    }
+
+    public void setCredential(String credential) {
+        this.credential = credential;
+    }
+
+    public String getFileType() {
+        return fileType;
+    }
+
+    public void setFileType(String fileType) {
+        this.fileType = fileType;
+    }
+
+    public String getFileorfolder() {
+        return fileorfolder;
+    }
+
+    public void setFileorfolder(String fileorfolder) {
+        this.fileorfolder = fileorfolder;
+    }
+
+    public String getRepoType() {
+        return repoType;
+    }
+
+    public void setRepoType(String repoType) {
+        this.repoType = repoType;
+    }
+
     public String getApplicationType() {
         return applicationType;
     }
@@ -1759,7 +1875,7 @@ public class Applications extends FrameworkBaseAction {
     public void setApplicationType(String applicationType) {
         this.applicationType = applicationType;
     }
-    
+
     public String getTechnology() {
         return technology;
     }
@@ -1767,88 +1883,64 @@ public class Applications extends FrameworkBaseAction {
     public void setTechnology(String technology) {
         this.technology = technology;
     }
-    
+
     public List<DownloadInfo> getServers() {
-		return servers;
-	}
+        return servers;
+    }
 
-	public void setServers(List<DownloadInfo> servers) {
-		this.servers = servers;
-	}
-	
-	public String getProjectName() {
-		return projectName;
-	}
+    public void setServers(List<DownloadInfo> servers) {
+        this.servers = servers;
+    }
 
-	public void setProjectName(String projectName) {
-		this.projectName = projectName;
-	}
+    public String getProjectName() {
+        return projectName;
+    }
 
-	public String getProjectDesc() {
-		return projectDesc;
-	}
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
+    }
 
-	public void setProjectDesc(String projectDesc) {
-		this.projectDesc = projectDesc;
-	}
+    public String getProjectDesc() {
+        return projectDesc;
+    }
 
-	public String getProjectVersion() {
-		return projectVersion;
-	}
+    public void setProjectDesc(String projectDesc) {
+        this.projectDesc = projectDesc;
+    }
 
-	public void setProjectVersion(String projectVersion) {
-		this.projectVersion = projectVersion;
-	}
+    public String getProjectVersion() {
+        return projectVersion;
+    }
 
-	public List<String> getProjectWebservices() {
-		return projectWebservices;
-	}
+    public void setProjectVersion(String projectVersion) {
+        this.projectVersion = projectVersion;
+    }
 
-	public void setProjectWebservices(List<String> projectWebservices) {
-		this.projectWebservices = projectWebservices;
-	}
+    public List<String> getProjectWebservices() {
+        return projectWebservices;
+    }
 
-	public List<String> getProjectDatabases() {
-		return projectDatabases;
-	}
+    public void setProjectWebservices(List<String> projectWebservices) {
+        this.projectWebservices = projectWebservices;
+    }
 
-	public void setProjectDatabases(List<String> projectDatabases) {
-		this.projectDatabases = projectDatabases;
-	}
+    public List<String> getProjectDatabases() {
+        return projectDatabases;
+    }
 
-	public List<String> getProjectServers() {
-		return projectServers;
-	}
+    public void setProjectDatabases(List<String> projectDatabases) {
+        this.projectDatabases = projectDatabases;
+    }
 
-	public void setProjectServers(List<String> projectServers) {
-		this.projectServers = projectServers;
-	}
-	
-	public List<String> getLayers() {
-		return layers;
-	}
+    public List<String> getProjectServers() {
+        return projectServers;
+    }
 
-	public void setLayers(List<String> layers) {
-		this.layers = layers;
-	}
-	
-	public String getProjectId() {
-		return projectId;
-	}
+    public void setProjectServers(List<String> projectServers) {
+        this.projectServers = projectServers;
+    }
 
-	public void setProjectId(String projectId) {
-		this.projectId = projectId;
-	}
-
-	public String getAppId() {
-		return appId;
-	}
-
-	public void setAppId(String appId) {
-		this.appId = appId;
-	}
-	
-	public boolean isErrorFound() {
+    public boolean isErrorFound() {
         return errorFound;
     }
 
@@ -1863,12 +1955,28 @@ public class Applications extends FrameworkBaseAction {
     public void setProjectNameError(String projectNameErr) {
         this.projectNameError = projectNameErr;
     }
-    
+
     public String getProjectCodeError() {
         return projectCodeError;
     }
 
     public void setProjectCodeError(String projectCodeErr) {
         this.projectCodeError = projectCodeErr;
+    }
+
+    public List<TechnologyInfo> getWidgets() {
+        return widgets;
+    }
+
+    public void setWidgets(List<TechnologyInfo> widgets) {
+        this.widgets = widgets;
+    }
+
+    public List<String> getLayer() {
+        return layer;
+    }
+
+    public void setLayer(List<String> layer) {
+        this.layer = layer;
     }
 }

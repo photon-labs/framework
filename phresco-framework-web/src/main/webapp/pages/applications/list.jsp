@@ -41,7 +41,7 @@
 <form id="formProjectList" class="projectList">
 	<div class="operation">
 		<input type="button" class="btn btn-primary" name="addProject" id="addProject" 
-	         onclick="loadContent('projectDetails', $('#formProjectList'), $('#container'));" 
+	         onclick="loadContent('addProject', $('#formCustomers'), $('#container'));" 
 		         value="<s:text name='lbl.projects.add'/>"/>
 
 		<input type="button" class="btn btn-primary" name="importAppln" id="importAppln" 
@@ -126,7 +126,7 @@
 																	<%= project.getDescription() %>
 																</td>
 																<td class="no-left-bottom-border table-pad">
-																	<%= appInfo.getTechInfo().getVersion() %>
+																	<%= appInfo.getTechInfo().getId() %>
 																</td>
 																<td class="no-left-bottom-border table-pad">
 																	<a href="#" id="pdfPopup">

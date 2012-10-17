@@ -22,13 +22,36 @@
 <%@ page import="java.util.List"%>
 
 <%@ page import="org.apache.commons.lang.StringUtils" %>
+<%@ page import="org.apache.commons.collections.CollectionUtils"%>
 
 <%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
-<%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
-<%@ page import="com.photon.phresco.commons.model.Technology"%>
+<%@ page import="com.photon.phresco.commons.model.ApplicationType"%>
+<%@ page import="com.photon.phresco.commons.model.TechnologyGroup"%>
+<%@ page import="com.photon.phresco.commons.model.TechnologyInfo"%>
 
 <%
-	List<Technology> technologies = (List<Technology>) request.getAttribute(FrameworkConstants.REQ_ALL_TECHNOLOGIES);
+	List<ApplicationType> layers = (List<ApplicationType>) request.getAttribute(FrameworkConstants.REQ_PROJECT_LAYERS);
+	List<TechnologyGroup> appLayerTechGroups = null;
+	List<TechnologyGroup> webLayerTechGroups = null;
+	List<TechnologyGroup> mobileLayerTechGroups = null;
+	String appLayerId = "";
+	String webLayerId = "";
+	String mobileLayerId = "";
+	if (CollectionUtils.isNotEmpty(layers)) {
+		for (ApplicationType layer : layers) {
+		    if (FrameworkConstants.LAYER_APPLICATION.equals(layer.getName())) {
+		        appLayerTechGroups = layer.getTechGroups();
+		    }
+			if (FrameworkConstants.LAYER_WEB.equals(layer.getName())) {
+			    webLayerId = layer.getId();
+			    webLayerTechGroups = layer.getTechGroups();
+		    }
+			if (FrameworkConstants.LAYER_MOBILE.equals(layer.getName())) {
+			    mobileLayerId = layer.getId();
+			    mobileLayerTechGroups = layer.getTechGroups();
+		    }
+		}
+	}
 %>
 
 <div class="page-header">
@@ -111,7 +134,7 @@
 					<section class="lft_menus_container">
 						<span class="siteaccordion closereg">
 							<span>
-								<input type="checkbox" id="checkAll1" class="accordianChkBox"/>
+								<input type="checkbox" id="checkAll1" class="accordianChkBox" name="layer" value="<%= appLayerId %>"/>
 								<a class="vAlignSub"><s:text name='lbl.projects.layer.app'/></a>
 							</span>
 						</span>
@@ -121,10 +144,22 @@
 									<div class="control-group">
 										<label class="accordion-control-label labelbold"><s:text name='label.technology'/></label>
 										<div class="controls">
-											<select class="input-xlarge" name="technology">
-												<% for (Technology technology : technologies) { %>
-													<option value='<%= technology.getId() %>'> <%= technology.getName() %> </option>
-												<% } %>
+											<select class="input-xlarge" name="<%= appLayerId + FrameworkConstants.REQ_PARAM_NAME_TECHNOLOGY%>">
+												<option value="" selected disabled>Select Technology</option>
+												<% 
+													if (CollectionUtils.isNotEmpty(appLayerTechGroups)) {
+														for (TechnologyGroup appLayerTechGroup : appLayerTechGroups) {
+														    List<TechnologyInfo> techInfos = appLayerTechGroup.getTechInfos();
+														    if (CollectionUtils.isNotEmpty(techInfos)) {
+														        for (TechnologyInfo techInfo : techInfos) {
+												%>
+																	<option value='<%= techInfo.getId() %>'><%= techInfo.getName() %></option>
+												<%
+														        }
+														    }
+														}
+													}
+												%>
 											</select>
 										</div>
 									</div>
@@ -144,7 +179,7 @@
 					<section class="lft_menus_container">
 						<span class="siteaccordion closereg">
 							<span>
-								<input type="checkbox" id="checkAll1" class="accordianChkBox"/>
+								<input type="checkbox" id="checkAll1" class="accordianChkBox" name="layer" value="<%= webLayerId %>"/>
 								<a class="vAlignSub"><s:text name='lbl.projects.layer.web'/></a>
 							</span>
 						</span>
@@ -157,9 +192,18 @@
 												<s:text name='lbl.projects.layer.web'/>
 											</label>
 										
-											<select class="input-medium">
-												<option value=""> --select-- </option>
-												<option value="html5"> HTML5 </option>
+											<select class="input-medium" name="<%= webLayerId + FrameworkConstants.REQ_PARAM_NAME_TECH_GROUP %>"
+												onchange="getWebLayerWidgets('<%= webLayerId %>', '<%= webLayerId + FrameworkConstants.REQ_PARAM_NAME_TECHNOLOGY %>');">
+												<option value="" selected disabled>Select Web Layer</option>
+												<%
+													if (CollectionUtils.isNotEmpty(webLayerTechGroups)) {
+													    for (TechnologyGroup webLayerTechGroup : webLayerTechGroups) {
+												%>
+															<option value="<%= webLayerTechGroup.getId() %>"><%= webLayerTechGroup.getName() %></option>
+												<%
+													    }
+													}
+												%>
 											</select>
 										</div>
 										<div class="align-in-row">
@@ -167,10 +211,8 @@
 												<s:text name='lbl.projcts.add.widget'/>
 											</label>
 										
-											<select class="input-medium">
-												<option value=""> --select-- </option>
-												<option value="yui"> YUI</option>
-												<option value="jquery"> Jquery </option>
+											<select name="<%= webLayerId + FrameworkConstants.REQ_PARAM_NAME_TECHNOLOGY %>" class="input-medium" onchange="getWidgetVersions(this, '<%= webLayerId + FrameworkConstants.REQ_PARAM_NAME_VERSION %>');">
+												<option value="" selected disabled>Select Widget</option>
 											</select>
 										</div>
 										<div class="float-left">
@@ -178,10 +220,8 @@
 												<s:text name='lbl.version'/>
 											</label>
 										
-											<select class="input-medium">
-												<option value=""> --select-- </option>
-												<option value="1.0"> 1.0 </option>
-												<option value="1.1"> 1.2 </option>
+											<select name="<%= webLayerId + FrameworkConstants.REQ_PARAM_NAME_VERSION %>" class="input-medium">
+												<option value="" selected disabled>Select Version</option>
 											</select>
 										</div>
 									</div>
@@ -201,135 +241,57 @@
 					<section class="lft_menus_container">
 						<span class="siteaccordion closereg">
 							<span>
-								<input type="checkbox" id="checkAll1" class="accordianChkBox"/>
+								<input type="checkbox" id="checkAll1" class="accordianChkBox" name="layer" value="<%= mobileLayerId %>"/>
 								<a class="vAlignSub"><s:text name='lbl.projects.layer.mobile'/></a>
 							</span>
 						</span>
 						<div class="mfbox siteinnertooltiptxt">
 							<div class="scrollpanel">
 								<section class="scrollpanel_inner">
-									<div class="align-div-center bottom-space">
+								<%
+									if (CollectionUtils.isNotEmpty(mobileLayerTechGroups)) {
+									    for (TechnologyGroup mobileLayerTechGroup : mobileLayerTechGroups) {
+								%>
+									<div class="align-div-center bottom-space" id="<%= mobileLayerTechGroup.getId() %>LayerDiv">
 										<div class="align-in-row width">
-											<input type="checkbox"/>
-											<span class="vAlignSub">&nbsp;iOS </span>
+											<input type="checkbox" name="<%= mobileLayerId %>TechGroup" value="<%= mobileLayerTechGroup.getId() %>" id="<%= mobileLayerTechGroup.getId() %>"/>
+											<span class="vAlignSub">&nbsp;<%= mobileLayerTechGroup.getName() %>&nbsp;</span>
 										</div>
 										<div class="align-in-row">
-											<select class="input-medium">
-												<option value=""> --version-- </option>
-												<option value="1.0"> 4.2 </option>
-												<option value="1.0"> 5.1 </option>
-												<option value="1.0"> 6.0 </option>
+											<select class="input-medium" name="<%= mobileLayerTechGroup.getId() + FrameworkConstants.REQ_PARAM_NAME_TECHNOLOGY %>"
+												onchange="getMobileTechVersions('<%= mobileLayerId %>', '<%= mobileLayerTechGroup.getId() %>', '<%= mobileLayerTechGroup.getId() + FrameworkConstants.REQ_PARAM_NAME_VERSION %>');">
+												<option value="" selected disabled>Select Type</option>
+												<%
+													List<TechnologyInfo> mobileInfos = mobileLayerTechGroup.getTechInfos();	
+													if (CollectionUtils.isNotEmpty(mobileInfos)) {
+													    for (TechnologyInfo mobileInfo : mobileInfos) {
+												%>
+															<option value="<%= mobileInfo.getId() %>"><%= mobileInfo.getName() %></option>
+												<%
+														}
+													}
+												%>
 											</select>
 										</div>
 										<div class="align-in-row">
-											<select class="input-medium">
-												<option value=""> --select-- </option>
-												<option value="Hybrid"> Hybrid </option>
-												<option value="Native"> Native </option>
+											<select class="input-medium" name="<%= mobileLayerTechGroup.getId() + FrameworkConstants.REQ_PARAM_NAME_VERSION %>" id="<%= mobileLayerTechGroup.getId() %>">
+												<option value="" selected disabled>Select Version</option>
 											</select>
 										</div>
 										<div class="align-in-row width">
-											<input type="checkbox"/>
-											<span class="vAlignSub">&nbsp;iPhone</span>
-										</div>
-										<div class="float-left">
-											<input type="checkbox"/>
-											<span class="vAlignSub">&nbsp;iPad</span>
-										</div>
-									</div>
-									<div class="clear"></div>
-									
-									<div class="align-div-center bottom-space">
-										<div class="align-in-row width">
-											<input type="checkbox"/>
-											<span class="vAlignSub">&nbsp;Android </span>
-										</div>
-										<div class="align-in-row">
-											<select class="input-medium">
-												<option value=""> --version-- </option>
-												<option value="1.0"> 2.3 </option>
-												<option value="1.0"> 3.0 </option>
-												<option value="1.0"> 4.0 </option>
-												<option value="1.0"> 4.1 </option>
-											</select>
-										</div>
-										<div class="align-in-row">
-											<select class="input-medium">
-												<option value=""> --select-- </option>
-												<option value="Hybrid"> Hybrid </option>
-												<option value="Native"> Native </option>
-											</select>
-										</div>
-										<div class="align-in-row width">
-											<input type="checkbox"/>
+											<input type="checkbox" name="<%= mobileLayerTechGroup.getId() + FrameworkConstants.REQ_PARAM_NAME_PHONE %>" value="true"/>
 											<span class="vAlignSub">&nbsp;Phone</span>
 										</div>
 										<div class="float-left">
-											<input type="checkbox"/>
+											<input type="checkbox" name="<%= mobileLayerTechGroup.getId() + FrameworkConstants.REQ_PARAM_NAME_TABLET %>" value="true"/>
 											<span class="vAlignSub">&nbsp;Tablet</span>
 										</div>
 									</div>
 									<div class="clear"></div>
-									
-									<div class="align-div-center bottom-space">
-										<div class="align-in-row width">
-											<input type="checkbox"/>
-											<span class="vAlignSub">&nbsp;Windows </span>
-										</div>
-										<div class="align-in-row">
-											<select class="input-medium">
-												<option value=""> --version-- </option>
-												<option value="1.0"> 7.0 </option>
-												<option value="1.0"> 8.0 </option>
-											</select>
-										</div>
-										<div class="align-in-row">
-											<select class="input-medium">
-												<option value=""> --select-- </option>
-												<option value="Hybrid"> Hybrid </option>
-												<option value="Native"> Native </option>
-											</select>
-										</div>
-										<div class="align-in-row width">
-											<input type="checkbox"/>
-											<span class="vAlignSub">&nbsp;Phone</span>
-										</div>
-										<div class="float-left">
-											<input type="checkbox"/>
-											<span class="vAlignSub">&nbsp;Tablet</span>
-										</div>
-									</div>
-									<div class="clear"></div>
-									
-									<div class="align-div-center">
-										<div class="align-in-row width">
-											<input type="checkbox"/>
-											<span class="vAlignSub">&nbsp;BlackBerry </span>
-										</div>
-										<div class="align-in-row">
-											<select class="input-medium">
-												<option value=""> --version-- </option>
-												<option value="1.0"> 5.0 </option>
-												<option value="1.0"> 6.1 </option>
-												<option value="1.0"> 7.1 </option>
-											</select>
-										</div>
-										<div class="align-in-row">
-											<select class="input-medium">
-												<option value=""> --select-- </option>
-												<option value="Hybrid"> Hybrid </option>
-												<option value="Native"> Native </option>
-											</select>
-										</div>
-										<div class="align-in-row width">
-											<input type="checkbox"/>
-											<span class="vAlignSub">&nbsp;Phone</span>
-										</div>
-										<div class="float-left">
-											<input type="checkbox"/>
-											<span class="vAlignSub">&nbsp;Tablet</span>
-										</div>
-									</div>
+									<%
+									    	}
+										}
+									%>
 								</section>
 							</div>
 						</div>
@@ -352,7 +314,7 @@
 
 <script type="text/javascript">
 	//To check whether the device is ipad or not and then apply jquery scrollbar
-	if(!isiPad()){
+	if(!isiPad()) {
 		$(".appInfoScrollDiv").scrollbars();
 	}
 
@@ -366,6 +328,7 @@
 		});
 	});
 	
+	//To show the validation error messages
 	function findError(data) {
 		if (!isBlank(data.projectNameError)) {
 			showError($("#projectNameControl"), $("#projectNameError"), data.projectNameError);
@@ -378,5 +341,49 @@
 		} else {
 			hideError($("#projectCodeControl"), $("#projectCodeError"));
 		}
+	}
+	
+	var objName; //select box object name
+	//To get the versions of the selected mobile technologies
+	function getMobileTechVersions(layerId, techGroupId, toBeFilledCtrlName) {
+		objName = toBeFilledCtrlName;
+		var params = getBasicParams();
+		params = params.concat("&layerId=");
+		params = params.concat(layerId);
+		params = params.concat("&techGroupId=");
+		params = params.concat(techGroupId);
+		loadContent("fetchMobileTechVersions", $('#formCreateProject'), '', params, true);
+	}
+	
+	//To get the widgets of the selected web layer and load in the widget select box 
+	function getWebLayerWidgets(layerId, widgetObjName) {
+		objName = widgetObjName;
+		var params = getBasicParams();
+		params = params.concat("&layerId=");
+		params = params.concat(layerId);
+		loadContent("fetchWebLayerWidgets", $('#formCreateProject'), '', params, true);
+	}
+	
+	var map = {};
+	//Success event functions
+	function successEvent(pageUrl, data) {
+		//To fill the versions for the selected mobile technology
+		if (pageUrl == "fetchMobileTechVersions") {
+			fillVersions($("select[name='"+ objName +"']"), data.versions, "No Versions available");
+		}
+		
+		//To fill the widgets for the selected web
+		if (pageUrl == "fetchWebLayerWidgets") {
+			for (i in data.widgets) {
+				fillOptions($("select[name='"+ objName +"']"), data.widgets[i].id, data.widgets[i].name);
+				map[data.widgets[i].id] = data.widgets[i].techVersions;
+			}
+		}
+	}
+	
+	//To fill the versions of the selected widget
+	function getWidgetVersions(obj, objectName) {
+		var id = $(obj).val();
+		fillVersions($("select[name='"+ objectName +"']"), map[id], "No Versions available");
 	}
 </script>
