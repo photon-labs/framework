@@ -124,7 +124,7 @@
 					$("div li.usersettings div").hide(0);
 				});
 
-				clickMenu($("a[name='headerMenu']"), $("#container"));
+				clickMenu($("a[name='headerMenu']"), $("#container"), $('#formCustomers'));
 				loadContent("home", '', $("#container"));
 				activateMenu($("#home"));
 				showWelcomeImage();
