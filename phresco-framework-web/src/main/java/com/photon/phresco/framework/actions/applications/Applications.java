@@ -166,7 +166,7 @@ public class Applications extends FrameworkBaseAction {
 
         try {
             ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
-            List<ProjectInfo> projects = projectManager.discover("photon");
+            List<ProjectInfo> projects = projectManager.discover(getCustomerId());
             setReqAttribute(REQ_PROJECTS, projects);
             setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
             removeSessionAttribute(projectCode);
@@ -199,11 +199,11 @@ public class Applications extends FrameworkBaseAction {
         }
 
         try {
-            String layerId = getHttpRequest().getParameter("layerId");
-            String techGroupId = getHttpRequest().getParameter("techGroupId");
+            String layerId = getHttpRequest().getParameter(REQ_PARAM_NAME_LAYER_ID);
+            String techGroupId = getHttpRequest().getParameter(REQ_PARAM_NAME_TECH_GROUP_ID);
             List<TechnologyGroup> techGroups = filterLayer(layerId).getTechGroups();
             TechnologyGroup technologyGroup = filterTechnologyGroup(techGroups, techGroupId);
-            String techId = getHttpRequest().getParameter(technologyGroup.getId() + "Technology");
+            String techId = getHttpRequest().getParameter(technologyGroup.getId() + REQ_PARAM_NAME_TECHNOLOGY);
             List<TechnologyInfo> techInfos = technologyGroup.getTechInfos();
             if (CollectionUtils.isNotEmpty(techInfos)) {
                 for (TechnologyInfo techInfo : techInfos) {
@@ -226,8 +226,8 @@ public class Applications extends FrameworkBaseAction {
         }
 
         try {
-            String layerId = getHttpRequest().getParameter("layerId");
-            String techGroupId = getHttpRequest().getParameter(layerId + "TechGroup");
+            String layerId = getHttpRequest().getParameter(REQ_PARAM_NAME_LAYER_ID);
+            String techGroupId = getHttpRequest().getParameter(layerId + REQ_PARAM_NAME_TECH_GROUP);
             List<TechnologyGroup> techGroups = filterLayer(layerId).getTechGroups();
             TechnologyGroup technologyGroup = filterTechnologyGroup(techGroups, techGroupId);
             setWidgets(technologyGroup.getTechInfos());

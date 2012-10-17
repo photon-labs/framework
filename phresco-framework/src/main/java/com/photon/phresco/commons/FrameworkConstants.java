@@ -57,6 +57,8 @@ public interface FrameworkConstants {
     String REQ_PARAM_NAME_VERSION = "Version";
     String REQ_PARAM_NAME_PHONE = "Phone";
     String REQ_PARAM_NAME_TABLET = "Tablet";
+    String REQ_PARAM_NAME_LAYER_ID = "layerId";
+    String REQ_PARAM_NAME_TECH_GROUP_ID = "techGroupId";
    
     String DO_NOT_CHECKIN_DIR = "do_not_checkin";
     String ARCHIVES = "archives";
