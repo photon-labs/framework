@@ -60,19 +60,19 @@
 	<div class="operation">
 		<input type="button" class="btn disabled" name="validate" id="validate" 
 	         onclick="loadContent('code', $('#formCodeList'), $('#subcontainer'));" 
-		         value="<s:text name='label.validate'/>"/>&nbsp;&nbsp;
-		         <strong id="validateType" class="validateType"><s:text name="label.sonar.report"/></strong>&nbsp;
+		         value="<s:text name='lbl.validate'/>"/>&nbsp;&nbsp;
+		         <strong id="validateType" class="validateType"><s:text name="lbl.sonar.report"/></strong>&nbsp;
 		         <select id="validateAgainst" name="validateAgainst">
 		        <%--  <% if (TechnologyTypes.HTML5_WIDGET.equals(technology) || TechnologyTypes.HTML5_MOBILE_WIDGET.equals(technology) 
 				|| TechnologyTypes.HTML5.equals(technology) || TechnologyTypes.HTML5_JQUERY_MOBILE_WIDGET.equals(technology) 
 				|| TechnologyTypes.HTML5_MULTICHANNEL_JQUERY_WIDGET.equals(technology) || TechnologyTypes.JAVA_WEBSERVICE.equals(technology)) { %> --%>
-					<option value="java" ><s:text name="label.tech.java"/></option>
-					<option value="js" ><s:text name="label.tech.javascript"/></option>
-					<option value="web" ><s:text name="label.tech.jsp"/></option>
+					<option value="java" ><s:text name="lbl.tech.java"/></option>
+					<option value="js" ><s:text name="lbl.tech.javascript"/></option>
+					<option value="web" ><s:text name="lbl.tech.jsp"/></option>
 					<%-- <% } else { %> --%>
-					<option value="source" ><s:text name="label.validateAgainst.source"/></option>
+					<option value="source" ><s:text name="lbl.validateAgainst.source"/></option>
 					<%-- <% } %> --%>
-					<option value="functional" ><s:text name="label.validateAgainst.functionalTest"/></option>
+					<option value="functional" ><s:text name="lbl.validateAgainst.functionalTest"/></option>
 				</select>
 		         
 	   <%--  <input id="validate" type="button" value="Validate" class="btn primary" <%= disabledStr %>>
