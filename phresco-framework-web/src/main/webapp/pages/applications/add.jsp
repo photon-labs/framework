@@ -133,16 +133,21 @@
 			</div>
 		</div>
 		<!-- PreBuild/Build it myself ends -->
+		
+		<div class="control-group" id="layerControl" style="text-align: center; color: #B94A48;">
+		
+		</div>
 	
 		<!-- Application layer accordion starts -->
 		<div class="theme_accordion_container">
 			<section class="accordion_panel_wid">
 				<div class="accordion_panel_inner">
 					<section class="lft_menus_container">
-						<span class="siteaccordion closereg">
+						<span class="siteaccordion closereg" id="appLayerControl">
 							<span>
 								<input type="checkbox" id="checkAll1" class="accordianChkBox" name="layer" value="<%= appLayerId %>"/>
-								<a class="vAlignSub"><%= appLayerName %></a>
+								<a id="appLayerHeading" class="vAlignSub"><%= appLayerName %></a>
+								<p id="appLayerError" class="accordion-error-txt"></p>
 							</span>
 						</span>
 						<div class="mfbox siteinnertooltiptxt hideContent">
@@ -184,10 +189,11 @@
 			<section class="accordion_panel_wid">
 				<div class="accordion_panel_inner">
 					<section class="lft_menus_container">
-						<span class="siteaccordion closereg">
+						<span class="siteaccordion closereg" id="webLayerControl">
 							<span>
 								<input type="checkbox" id="checkAll1" class="accordianChkBox" name="layer" value="<%= webLayerId %>"/>
-								<a class="vAlignSub"><%= webLayerName %></a>
+								<a id="webLayerHeading" class="vAlignSub"><%= webLayerName %></a>
+								<p id="webLayerError" class="accordion-error-txt"></p>
 							</span>
 						</span>
 						<div class="mfbox siteinnertooltiptxt">
@@ -246,10 +252,11 @@
 			<section class="accordion_panel_wid">
 				<div class="accordion_panel_inner">
 					<section class="lft_menus_container">
-						<span class="siteaccordion closereg">
+						<span class="siteaccordion closereg" id="mobileLayerControl">
 							<span>
 								<input type="checkbox" id="checkAll1" class="accordianChkBox" name="layer" value="<%= mobileLayerId %>"/>
-								<a class="vAlignSub"><%= mobileLayerName %></a>
+								<a id="mobileLayerHeading" class="vAlignSub"><%= mobileLayerName %></a>
+								<p id="mobileLayerError" class="accordion-error-txt"></p>
 							</span>
 						</span>
 						<div class="mfbox siteinnertooltiptxt">
@@ -347,6 +354,30 @@
 			showError($("#projectCodeControl"), $("#projectCodeError"), data.projectCodeError);
 		} else {
 			hideError($("#projectCodeControl"), $("#projectCodeError"));
+		}
+		
+		if (!isBlank(data.layerError)) {
+			showError($("#layerControl"), $("#layerControl"), data.layerError);
+		} else {
+			hideError($("#layerControl"), $("#layerControl"));
+		}
+		
+		if (!isBlank(data.appTechError)) {
+			showErrorInAccordion($("#appLayerControl"), $('#appLayerHeading'), $("#appLayerError"), data.appTechError);
+		} else {
+			hideErrorInAccordion($("#appLayerControl"), $('#appLayerHeading'), $("#appLayerError"));
+		}
+		
+		if (!isBlank(data.webTechError)) {
+			showErrorInAccordion($("#webLayerControl"), $('#webLayerHeading'), $("#webLayerError"), data.webTechError);
+		} else {
+			hideErrorInAccordion($("#webLayerControl"), $('#webLayerHeading'), $("#webLayerError"));
+		}
+		
+		if (!isBlank(data.mobTechError)) {
+			showErrorInAccordion($("#mobileLayerControl"), $('#mobileLayerHeading'), $("#mobileLayerError"), data.mobTechError);
+		} else {
+			hideErrorInAccordion($("#mobileLayerControl"), $('#mobileLayerHeading'), $("#mobileLayerError"));
 		}
 	}
 	

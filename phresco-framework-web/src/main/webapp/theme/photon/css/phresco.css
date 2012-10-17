@@ -5633,3 +5633,19 @@ input[class*='chckBxAlign'] {
 .table-chkbx {
 	width: 20px;
 }
+
+.accordion-error {
+	background: none repeat scroll 0 0 #FAE5E3 !important;
+}
+
+.accordion-error-txt {
+	width: auto;
+	float: right;
+	color: #B94A48;
+	margin: 4px;
+	font-weight: normal;
+}
+
+.accordion-hdr-color {
+	color: #B94A48 !important;
+}
