@@ -38,7 +38,13 @@ function yesnoPopup(url, title, okUrl, okLabel) {
 		data = data.concat(additionalParam);
 		$('.modal-body').load(url, data); //url to render the body content for the popup
 	});
+	
+	$('#popupOk').click(function(){
+		popupOnOk(okUrl); // this function will be kept in where the yesnoPopup() called
+	});
 }
+
+
 
 function getBasicParams() {
 	var params = $('#formCustomers').serialize();

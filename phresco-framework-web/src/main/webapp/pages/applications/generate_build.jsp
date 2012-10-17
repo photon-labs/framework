@@ -184,7 +184,7 @@
 		<% 			} else if (parameter.getPossibleValues() != null) { //load select list box
 				    	List<String> psblValues = parameter.getPossibleValues().getValue();
 						List<String> selectedValList = Arrays.asList(parameter.getValue().split("\\s*,\\s*"));
-						StringTemplate selectElmnt = FrameworkUtil.constructSelectElement("", "", parameter.getKey(), psblValues, selectedValList, false);
+						StringTemplate selectElmnt = FrameworkUtil.constructSelectElement("", "", parameter.getKey(), psblValues, selectedValList, parameter.getMultiple());
 		%>				
 						<%= selectElmnt %>
 						
@@ -193,7 +193,7 @@
 					if (FrameworkConstants.TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(parameter.getType())) {
 						List<String> dynamicEnvNames = (List<String>) request.getAttribute(FrameworkConstants.REQ_DYNAMIC_ENV_NAMES);
 						List<String> selectedValList = Arrays.asList(parameter.getValue().split("\\s*,\\s*"));
-						StringTemplate selectDynamicElmnt = FrameworkUtil.constructSelectElement("multiSelHeight", "", parameter.getKey(), dynamicEnvNames, selectedValList, true);
+						StringTemplate selectDynamicElmnt = FrameworkUtil.constructSelectElement("multiSelHeight", "", parameter.getKey(), dynamicEnvNames, selectedValList, parameter.getMultiple());
 		%>				
 				    	<%= selectDynamicElmnt %>
 		<%			} 
@@ -635,24 +635,8 @@
 		$('#close, #cancel').click(function() {
 			showParentPage();
 		});
-		$('#popupOk').click(function(){
-			if ($('input[type=checkbox][name=signing]').is(':checked') && isBlank($('#profileAvailable').val())) {
-				$("#errMsg").html('<%= FrameworkConstants.PROFILE_CREATE_MSG %>');
-				return false;
-			}
-			
-			/* enable text box only if any file selected for minification */
-			$('input[name="jsFileName"]').each(function () {
-				if($(this).val() !== "") {
-					$(this).attr("disabled", false);
-				}
-			});
-
-			buildValidateSuccess("build", '<%= FrameworkConstants.REQ_BUILD %>');
-			
-		});
 		
-		$('#build').click(function() {
+		<%-- $('#build').click(function() {
 			if ($('input[type=checkbox][name=signing]').is(':checked') && isBlank($('#profileAvailable').val())) {
 				$("#errMsg").html('<%= FrameworkConstants.PROFILE_CREATE_MSG %>');
 				return false;
@@ -666,7 +650,7 @@
 			});
 
 			buildValidateSuccess("build", '<%= FrameworkConstants.REQ_BUILD %>');
-		});
+		}); --%>
 		
 		$('#userBuildNumber').bind('input propertychange', function (e) { 	//userBuildNumber validation
 			var userBuildNumber = $(this).val();
@@ -1066,4 +1050,23 @@
 		$('input[name="'+ jsName +'"]').val(jsFiles);
 		$('input[name="fileLocation"]').val(fileLocation);
 	}
+	
+	function popupOnOk(okUrl) {
+		if (okUrl === "build") {
+			if ($('input[type=checkbox][name=signing]').is(':checked') && isBlank($('#profileAvailable').val())) {
+				$("#errMsg").html('<%= FrameworkConstants.PROFILE_CREATE_MSG %>');
+				return false;
+			}
+			
+			/* enable text box only if any file selected for minification */
+			$('input[name="jsFileName"]').each(function () {
+				if($(this).val() !== "") {
+					$(this).attr("disabled", false);
+				}
+			});
+
+			buildValidateSuccess("build", '<%= FrameworkConstants.REQ_BUILD %>');
+		}	
+	}
+	
 </script>

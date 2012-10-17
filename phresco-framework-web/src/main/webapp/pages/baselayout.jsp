@@ -327,7 +327,7 @@
 		<!-- Footer Ends Here -->
 		
 		<!-- Delete confirmation dialog starts -->
-		<%@ include file="confirmDialog.jsp" %>
+		<%-- <%@ include file="confirmDialog.jsp" %> --%>
 		<!-- Delete confirmation dialog ends -->
 		
 		<!-- Popup Starts-->

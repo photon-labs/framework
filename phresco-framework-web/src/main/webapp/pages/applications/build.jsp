@@ -184,6 +184,7 @@
 	%> --%>
 	
     $(document).ready(function() {
+    	hideLoadingIcon();
     	yesnoPopup('generateBuild', '<s:text name="label.generatebuild"/>', 'build','<s:text name="label.build"/>');
     	if ($.browser.safari && $.browser.version == 530.17) {
     		$(".buildDiv").show().css("float","left");

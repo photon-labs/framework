@@ -35,12 +35,12 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.antlr.stringtemplate.StringTemplate;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Element;
-import org.antlr.stringtemplate.StringTemplate;
 
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.exception.PhrescoException;
@@ -66,9 +66,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements FrameworkConst
 	private static final String SELECT_TEMPLATE = "<div class='controls'><select class=\"input-xlarge $cssClass$\" name=\"$name$\" $multiple$>$options$</select></div>";
 	private static final String INPUT_TEMPLATE = "<div class='controls'><input type=\"$type$\" class=\"input-xlarge $class$\" id=\"$id$\" " + 
 													"name=\"$name$\" placeholder=\"$placeholder$\" value=\"$value$\" $checked$/></div></div>";
-
-	private static final String MULTI_SELECT_TEMPLATE = "<div class='multilist-scroller multiselct'><ul></ul></div>";
-	private static final String MULTISELECT_LIST_OPTIONS_TEMPLATE = "<li><input type='checkbox' value='' name=''>All</li>";
+	private static final String MULTI_SELECT_TEMPLATE = "<div class='controls'><div class='multiSelectBorder'><div class='multilist-scroller multiselect $class$' id=\"$id$\"><ul>$multiSelectOptions$</ul></div></div></div>";
 	
     private Map<String, String> unitTestMap = new HashMap<String, String>(8);
     private Map<String, String> unitReportMap = new HashMap<String, String>(8);
@@ -685,21 +683,36 @@ public class FrameworkUtil extends FrameworkBaseAction implements FrameworkConst
     }
     
     public static StringTemplate constructSelectElement(String cssClass, String id, String name,
-											List<String> values, List<String> selectedValues, Boolean isMultiple) {
+			List<String> values, List<String> selectedValues, String isMultiple) {
+    	if (Boolean.parseBoolean(isMultiple)) {
+    		return constructMultiSelectElement(cssClass, id, name, values, selectedValues);
+    	} else {
+    		return constructSingleSelectElement(cssClass, id, name, values, selectedValues);
+    	}
+    }
+
+    public static StringTemplate constructSingleSelectElement(String cssClass, String id, String name,
+    		List<String> values, List<String> selectedValues) {
     	StringTemplate selectElement = new StringTemplate(SELECT_TEMPLATE);
     	StringBuilder options = constructOptions(values, selectedValues);
     	selectElement.setAttribute("name", name);
     	selectElement.setAttribute("cssClass", cssClass);
-    	if (isMultiple) {
-    		selectElement.setAttribute("multiple", "multiple");
-    	} else {
-    		selectElement.setAttribute("multiple", "");
-    	}
     	selectElement.setAttribute("options", options);
     	
     	return selectElement;
-    }	
+    }
     
+    private static StringTemplate constructMultiSelectElement(String cssClass, String id, String name,
+			List<String> values, List<String> selectedValues) {
+    	StringTemplate multiSelectElement = new StringTemplate(MULTI_SELECT_TEMPLATE);
+    	multiSelectElement.setAttribute("name", name);
+    	multiSelectElement.setAttribute("cssClass", cssClass);
+    	multiSelectElement.setAttribute("id", id);
+    	StringBuilder multiSelectOptions = constructMultiSelectOptions(name, values, selectedValues);
+    	multiSelectElement.setAttribute("multiSelectOptions", multiSelectOptions);
+    	
+    	return multiSelectElement;
+    }
     private static StringBuilder constructOptions(List<String> values, List<String> selectedValues) {
     	StringBuilder builder = new StringBuilder();
     	String selectedStr = "";
@@ -715,6 +728,24 @@ public class FrameworkUtil extends FrameworkBaseAction implements FrameworkConst
 		 
 		 return builder;
     }
+    
+    private static StringBuilder constructMultiSelectOptions(String name, List<String> values, List<String> selectedValues) {
+    	StringBuilder builder = new StringBuilder();
+    	
+    	String checkedStr = "";
+		 for (String value : values) {
+			 if (selectedValues!= null && selectedValues.contains(value)) {
+				 checkedStr = "checked";
+			 } else {
+				 checkedStr = "";
+			 }
+			builder.append("<li><input type='checkbox' class='popUpChckBox' value=\"");
+			builder.append(value + "\" name=\""+ name + "\" " + checkedStr + ">" + value + "</li>");
+		}
+		 
+		 return builder;
+    }
+    
     
     public static StringTemplate constructLabelElement(Boolean isMandatory, String cssClass, String Label) {
     	StringTemplate labelElement = new StringTemplate(LABEL_TEMPLATE);

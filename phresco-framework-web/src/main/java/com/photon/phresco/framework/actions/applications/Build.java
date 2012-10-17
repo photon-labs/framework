@@ -631,10 +631,10 @@ public class Build extends FrameworkBaseAction {
 //			} else {
 //				actionType.setWorkingDirectory(null);
 //			}
-			actionType.setHideLog(Boolean.parseBoolean(hideLog));
-			actionType.setShowError(Boolean.parseBoolean(showError));
-			actionType.setShowDebug(Boolean.parseBoolean(showDebug));
-			actionType.setSkipTest(Boolean.parseBoolean(skipTest));
+//			actionType.setHideLog(Boolean.parseBoolean(hideLog));
+//			actionType.setShowError(Boolean.parseBoolean(showError));
+//			actionType.setShowDebug(Boolean.parseBoolean(showDebug));
+//			actionType.setSkipTest(Boolean.parseBoolean(skipTest));
 			Reader reader = applicationManager.performAction(projectInfos, actionType);
 			getHttpSession().setAttribute(getAppId() + REQ_BUILD, reader);
 			getHttpRequest().setAttribute(REQ_APP_ID, getAppId());

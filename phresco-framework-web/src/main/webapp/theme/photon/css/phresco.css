@@ -2807,7 +2807,7 @@ fieldset {
 
 .multiselect {
 	overflow-y: auto;
-	height: 95px;
+	height: 95px !important;
 	width: 290px;
 	background-color: #fff;
 	border-radius: 3px;
@@ -2832,6 +2832,16 @@ fieldset {
 .multilist-scroller input.checkall {
 	margin: 3px 8px 6px 0;
 }
+/*for multi select inside popup*/
+.multiSelectBorder {
+	float: left;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.popUpChckBox {
+	margin-right: 4px !important;
+}	
+
 /* For multiselect list box starts */
 
 .popuptable {
