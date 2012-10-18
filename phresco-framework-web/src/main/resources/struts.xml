@@ -56,14 +56,30 @@
         <action name="video" method="video" class="com.photon.phresco.framework.actions.home.Home">
             <result name="video">/pages/home/video.jsp</result>
         </action>
-
-        <!--  Applications Actions -->
-        <action name="applications" method="list" class="com.photon.phresco.framework.actions.applications.Applications">
+        
+		<!-- Project Actions -->
+        <action name="applications" method="list" class="com.photon.phresco.framework.actions.applications.Projects">
             <result name="list">/pages/applications/list.jsp</result>
         </action>
         
-        <action name="discover" method="discover" class="com.photon.phresco.framework.actions.applications.Applications">
-            <result name="list">/pages/applications/list.jsp</result>
+        <action name="addProject" method="addProject" class="com.photon.phresco.framework.actions.applications.Projects">
+            <result name="applicationDetails">/pages/applications/add.jsp</result>
+        </action>
+        
+        <action name="fetchMobileTechVersions" method="fetchMobileTechVersions" class="com.photon.phresco.framework.actions.applications.Projects">
+			<result type="json"/>
+        </action>
+        
+        <action name="fetchWebLayerWidgets" method="fetchWebLayerWidgets" class="com.photon.phresco.framework.actions.applications.Projects">
+			<result type="json"/>
+        </action>
+        
+        <action name="createProjectValidate" method="validateForm" class="com.photon.phresco.framework.actions.applications.Projects">
+			<result type="json"/>
+        </action>
+        
+        <action name="createProject" method="createProject" class="com.photon.phresco.framework.actions.applications.Projects">
+			<result name="list">/pages/applications/list.jsp</result>
         </action>
         
         <action name="delete" method="delete" class="com.photon.phresco.framework.actions.applications.Applications">
@@ -98,31 +114,7 @@
             <result type="json"/>
         </action>
         
-        <!--  Applications action -->
-        <action name="addProject" method="addProject" class="com.photon.phresco.framework.actions.applications.Applications">
-            <result name="applicationDetails">/pages/applications/add.jsp</result>
-        </action>
-        
-        <action name="getServers" method="fetchServers" class="com.photon.phresco.framework.actions.applications.Applications">
-            <result type="json"/>
-        </action>
-        
-        <action name="fetchMobileTechVersions" method="fetchMobileTechVersions" class="com.photon.phresco.framework.actions.applications.Applications">
-			<result type="json"/>
-        </action>
-        
-        <action name="fetchWebLayerWidgets" method="fetchWebLayerWidgets" class="com.photon.phresco.framework.actions.applications.Applications">
-			<result type="json"/>
-        </action>
-        
-        <action name="createProjectValidate" method="validateForm" class="com.photon.phresco.framework.actions.applications.Applications">
-			<result type="json"/>
-        </action>
-        
-        <action name="createProject" method="createProject" class="com.photon.phresco.framework.actions.applications.Applications">
-			<result name="list">/pages/applications/list.jsp</result>
-        </action>
-        
+        <!--  Applications actions -->
         <action name="loadMenu" method="loadMenu" class="com.photon.phresco.framework.actions.applications.Applications">
             <result name="appMenu">/pages/applications/menu.jsp</result>
         </action>
@@ -145,6 +137,10 @@
        
         <action name="previous" method="previous" class="com.photon.phresco.framework.actions.applications.Applications">
             <result name="appinfo">/pages/applications/appinfo.jsp</result>
+        </action>
+        
+		<action name="getServers" method="fetchServers" class="com.photon.phresco.framework.actions.applications.Applications">
+			<result type="json"/>
         </action>
         
         <action name="save" method="save" class="com.photon.phresco.framework.actions.applications.Applications">

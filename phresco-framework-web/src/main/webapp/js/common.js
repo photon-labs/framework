@@ -249,6 +249,18 @@ function hideError(tag, span) {
 	span.empty();
 }
 
+function showErrorInAccordion(tag, headingObj, span, errmsg) {
+	tag.addClass("accordion-error");
+	headingObj.addClass("accordion-hdr-color");
+	span.text(errmsg);
+}
+
+function hideErrorInAccordion(tag, headingObj, span) {
+	tag.removeClass("accordion-error");
+	headingObj.removeClass("accordion-hdr-color");
+	span.empty();
+}
+
 function setTimeOut() {
 	setTimeout(function() {
 		$('#successmsg').fadeOut("slow", function () {

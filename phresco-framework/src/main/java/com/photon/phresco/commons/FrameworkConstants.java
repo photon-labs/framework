@@ -935,11 +935,12 @@ public interface FrameworkConstants {
     String ERROR_NO_CONFIG = "environment.config.not.available";
     String ERROR_NAME = "err.msg.empty.name";
     String ERROR_CODE = "err.msg.empty.code";
+    String ERROR_LAYER = "err.msg.empty.layer";
+    String ERROR_TECHNOLOGY = "err.msg.empty.technology";
     String ERROR_ENV = "Environment is missing";
     String CLONE_CONFIG_STATUS = "cloneConfigStatus";
     String ERROR_ENV_REMOVE = "Environment {0} is already in use";
     String ERROR_ENVS_REMOVE = "Environment(s) {0} are already in use";
-    String ERROR_TECHNOLOGY = "Technology is missing";
     String ERROR_DUPLICATE_NAME = "Name already exists";
     String ERROR_DUPLICATE_NAME_IN_SETTINGS = "Name already exists in global settings";
     String ERROR_DUPLICATE_NAME_IN_CONFIGURATIONS = "Name already exists in configurations of the {0} project";
