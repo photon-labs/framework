@@ -356,12 +356,6 @@
 			hideError($("#projectCodeControl"), $("#projectCodeError"));
 		}
 		
-		if (!isBlank(data.layerError)) {
-			showError($("#layerControl"), $("#layerControl"), data.layerError);
-		} else {
-			hideError($("#layerControl"), $("#layerControl"));
-		}
-		
 		if (!isBlank(data.appTechError)) {
 			showErrorInAccordion($("#appLayerControl"), $('#appLayerHeading'), $("#appLayerError"), data.appTechError);
 		} else {

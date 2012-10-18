@@ -66,7 +66,7 @@ public class Projects extends FrameworkBaseAction {
     private String mobTechError = "";
     private String appTechError = "";
     private String webTechError = "";
-    
+
     /**
      * To get the list of projects
      * @return
@@ -84,12 +84,16 @@ public class Projects extends FrameworkBaseAction {
             removeSessionAttribute(projectCode);
         } catch (PhrescoException e) {
             S_LOGGER.error("Entered into catch block of Applications.list()" + FrameworkUtil.getStackTraceAsString(e));
-            return showErrorPopup(e, "Listing projects");
+            return showErrorPopup(e, EXCEPTION_PROJECT_LIST);
         }
 
         return APP_LIST;
     }
 
+    /**
+     * To get the add project page
+     * @return
+     */
     public String addProject() {
         if (s_debugEnabled) {
             S_LOGGER.debug("Entering Method  Applications.applicationDetails()");
@@ -99,12 +103,16 @@ public class Projects extends FrameworkBaseAction {
             List<ApplicationType> layers = getServiceManager().getApplicationTypes(getCustomerId());
             setReqAttribute(REQ_PROJECT_LAYERS, layers);
         } catch (PhrescoException e) {
-            return showErrorPopup(e, REQ_TITLE_ADD_APPLICATION);
+            return showErrorPopup(e, EXCEPTION_PROJECT_ADD);
         }
 
         return APP_APPLICATION_DETAILS;
     }
 
+    /**
+     * To get the selected mobile technology's version
+     * @return
+     */
     public String fetchMobileTechVersions() {
         if (s_debugEnabled) {
             S_LOGGER.debug("Entering Method  Applications.fetchMobileTechVersions()");
@@ -126,12 +134,16 @@ public class Projects extends FrameworkBaseAction {
                 }
             }
         } catch (PhrescoException e) {
-            return showErrorPopup(e, REQ_TITLE_ADD_APPLICATION);
+            return showErrorPopup(e, EXCEPTION_PROJECT_MOB_TECH_VERSIONS);
         }
 
         return SUCCESS;
     }
 
+    /**
+     * To the selected web layer's widgets
+     * @return
+     */
     public String fetchWebLayerWidgets() {
         if (s_debugEnabled) {
             S_LOGGER.debug("Entering Method  Applications.fetchMobileTechVersions()");
@@ -144,7 +156,7 @@ public class Projects extends FrameworkBaseAction {
             TechnologyGroup technologyGroup = filterTechnologyGroup(techGroups, techGroupId);
             setWidgets(technologyGroup.getTechInfos());
         } catch (PhrescoException e) {
-            return showErrorPopup(e, REQ_TITLE_ADD_APPLICATION);
+            return showErrorPopup(e, EXCEPTION_PROJECT_WEB_LAYER_WIDGETS);
         }
 
         return SUCCESS;
@@ -188,6 +200,10 @@ public class Projects extends FrameworkBaseAction {
         return null;
     }
 
+    /**
+     * To create the project with the selected applications
+     * @return
+     */
     public String createProject() {
         if (s_debugEnabled) {
             S_LOGGER.debug("Entering Method  Applications.createProject()");
@@ -196,12 +212,17 @@ public class Projects extends FrameworkBaseAction {
         try {
             PhrescoFrameworkFactory.getProjectManager().create(getProjectInfo(), getServiceManager());
         } catch (PhrescoException e) {
-            return showErrorPopup(e, EXCEPTION_CREATE_PROJECT);
+            return showErrorPopup(e, EXCEPTION_PROJECT_CREATE);
         }
 
         return list();
     }
 
+    /**
+     * To get the projectInfo with the selected application infos
+     * @return
+     * @throws PhrescoException
+     */
     private ProjectInfo getProjectInfo() throws PhrescoException {
         ProjectInfo projectInfo = new ProjectInfo();
         projectInfo.setName(getProjectName());
@@ -225,6 +246,13 @@ public class Projects extends FrameworkBaseAction {
         return projectInfo;
     }
 
+    /**
+     * To get the application infos for mobile technology
+     * @param appInfos
+     * @param layerId
+     * @return
+     * @throws PhrescoException
+     */
     private List<ApplicationInfo> getMobileLayerAppInfos(List<ApplicationInfo> appInfos, String layerId) throws PhrescoException {
         String[] techGroupIds = getHttpRequest().getParameterValues(layerId + REQ_PARAM_NAME_TECH_GROUP);
         if (!ArrayUtils.isEmpty(techGroupIds)) {
@@ -233,27 +261,45 @@ public class Projects extends FrameworkBaseAction {
                 String version = getHttpRequest().getParameter(techGroupId + REQ_PARAM_NAME_VERSION);
                 boolean phoneEnabled = Boolean.parseBoolean(getHttpRequest().getParameter(techGroupId + REQ_PARAM_NAME_PHONE));
                 boolean tabletEnabled = Boolean.parseBoolean(getHttpRequest().getParameter(techGroupId + REQ_PARAM_NAME_TABLET));
-                appInfos.add(getAppInfo(getProjectCode() + techGroupId, techId, version, phoneEnabled, tabletEnabled));
+                appInfos.add(getAppInfo(getProjectName() + HYPHEN + techGroupId, techId, version, phoneEnabled, tabletEnabled));
             }
         }
 
         return appInfos;
     }
 
+    /**
+     * To get the application infos for app and web technologies
+     * @param appInfos
+     * @param layerId
+     * @return
+     * @throws PhrescoException
+     */
     private List<ApplicationInfo> getOtherLayerAppInfos(List<ApplicationInfo> appInfos, String layerId) throws PhrescoException {
         String techId = getHttpRequest().getParameter(layerId + REQ_PARAM_NAME_TECHNOLOGY);
         String version = getHttpRequest().getParameter(layerId + REQ_PARAM_NAME_VERSION);
-        appInfos.add(getAppInfo(getProjectCode() + techId, techId, version, false, false));
+        appInfos.add(getAppInfo(getProjectName() + HYPHEN + techId, techId, version, false, false));
 
         return appInfos;
     }
 
+    /**
+     * To get the single application info for the given technology
+     * @param dirName
+     * @param techId
+     * @param version
+     * @param phoneEnabled
+     * @param tabletEnabled
+     * @return
+     * @throws PhrescoException
+     */
     private ApplicationInfo getAppInfo(String dirName, String techId, String version, boolean phoneEnabled, boolean tabletEnabled) throws PhrescoException {
         ApplicationInfo applicationInfo = new ApplicationInfo();
         TechnologyInfo techInfo = new TechnologyInfo();
         techInfo.setId(techId);
         techInfo.setVersion(version);
         applicationInfo.setTechInfo(techInfo);
+        applicationInfo.setName(dirName);
         applicationInfo.setAppDirName(dirName);
         applicationInfo.setPhoneEnabled(phoneEnabled);
         applicationInfo.setTabletEnabled(tabletEnabled);
@@ -261,6 +307,10 @@ public class Projects extends FrameworkBaseAction {
         return applicationInfo;
     }
 
+    /**
+     * To validate the form fields
+     * @return
+     */
     public String validateForm() {
         if (s_debugEnabled) {
             S_LOGGER.debug("Entering Method  Applications.validateForm()");
@@ -279,7 +329,9 @@ public class Projects extends FrameworkBaseAction {
         }
         //validate if none of the layer is selected
         if (CollectionUtils.isEmpty(getLayer())) {
-            setLayerError(getText(ERROR_LAYER));
+            setAppTechError(getText(ERROR_TECHNOLOGY));
+            setWebTechError(getText(ERROR_TECHNOLOGY));
+            setMobTechError(getText(ERROR_TECHNOLOGY));
             hasError = true;
         }
         //empty validation for technology in the selected layer

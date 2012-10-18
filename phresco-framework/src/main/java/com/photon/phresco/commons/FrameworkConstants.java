@@ -26,6 +26,8 @@ public interface FrameworkConstants {
     /*
      * Common constants
      */
+    String HYPHEN = "-";
+    
     String LAYER_MOB_ID = "mob-layer";
     String LAYER_APP_ID = "app-layer";
     String LAYER_WEB_ID = "web-layer";
@@ -1465,7 +1467,11 @@ public interface FrameworkConstants {
 	     * I18N Keys Constants
 	     * String EXCEPTION_XXX
 	     *****************************/ 
-		String EXCEPTION_CREATE_PROJECT = "excep.hdr.proj.create";
+		String EXCEPTION_PROJECT_CREATE = "excep.hdr.proj.create";
+		String EXCEPTION_PROJECT_LIST = "excep.hdr.proj.list";
+		String EXCEPTION_PROJECT_ADD = "excep.hdr.proj.add";
+		String EXCEPTION_PROJECT_MOB_TECH_VERSIONS = "excep.hdr.proj.mob.tech.versions";
+		String EXCEPTION_PROJECT_WEB_LAYER_WIDGETS = "excep.hdr.proj.web.layer.widgets";
 		
 		/**
 		 * Dynamic Parameter Constants

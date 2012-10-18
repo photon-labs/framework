@@ -119,7 +119,7 @@
 																</td>
 																<td class="no-left-bottom-border table-pad">
 																	<a href="#" onclick="editApplication('<%= project.getId() %>', '<%= appInfo.getId() %>');" name="edit">
-																		<%= project.getName() %>
+																		<%= appInfo.getName() %>
 																	</a>
 																</td>
 																<td class="no-left-bottom-border table-pad">
