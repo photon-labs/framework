@@ -169,4 +169,8 @@
 	$(document).ready(function() {
 		hideLoadingIcon();//To hide the loading icon
 	});
+	
+	function popupOnOk(url) {
+			
+	}
 </script>

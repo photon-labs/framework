@@ -24,6 +24,8 @@
 <%@ page import="java.util.Collection"%>
 <%@ page import="java.util.Iterator"%>
 
+<%@ page import="org.apache.commons.collections.CollectionUtils"%>
+
 <%@ page import="com.photon.phresco.configuration.Environment" %>
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 
@@ -45,8 +47,8 @@
 			<s:text name='lbl.desc'/>
 		</label>
 		<div class="controls">
-			<textarea placeholder="<s:text name='place.hldr.configTemp.add.desc'/>" class="input-xlarge" 
-				name="envDesc" maxlength="150" title="<s:text name='title.150.chars'/>" placeholder="<s:text name='place.hldr.env.desc'/>">
+			<textarea name="envDesc" id="envDesc" class="input-xlarge" 
+				 maxlength="150" title="<s:text name='title.150.chars'/>" placeholder="<s:text name='place.hldr.env.desc'/>">
 			</textarea>
 			<input type="button" value="<s:text name='lbl.btn.add'/>" tabindex=3 id="add" class="btn btn-primary addButton">
 		</div>
@@ -55,12 +57,16 @@
 	<fieldset class="popup-fieldset">
 		<legend class="fieldSetLegend" ><s:text name="lbl.added.environments"/></legend>
 		<div class="popupTypeFields" id="typefield">
-            <div class="multilist-scroller multiselect" style="height: 95px; width:300px;">
+            <div class="multilist-scroller multiselect" id='multiselect'>
                 <ul>
-                <% for (Environment environment : environments ) { %>
+                <% for (Environment environment : environments ) {
+                	String disable = "";
+                	if (environment.isDefaultEnv() || CollectionUtils.isNotEmpty(environment.getConfigurations())) {
+                		disable = "disabled";
+                 %>
 	       			<li>
-						<input type="checkbox" name="technology" value="<%= environment.getName() %>" title="<%= environment.getDesc() %>" 
-							class="check techCheck" <%= environment.isDefaultEnv() ? "disabled" : ""%>><%= environment.getName() %>
+						<input type="checkbox" name="envNames" class="check techCheck" value="<%= environment.getName() %>" 
+							title="<%= environment.getDesc() %>" <%= disable %>/><%= environment.getName() %>
 					</li>
 				<% } %>
 				</ul>
@@ -72,7 +78,7 @@
 			<img src="images/icons/btm_arrow.png" title="<s:text name='lbl.title.movedown'/>" id="down" class="imagedown">
 		</div>
 		<div class="defaultButton">
-			<input type="button" value="Set as Default" tabindex=5 id="setAsDefault" class="btn btn-primary">
+			<input type="button" value="<s:text name='lbl.btn.set.default' />" tabindex=5 id="setAsDefault" class="btn btn-primary">
 		</div>
 	</fieldset>
 </form>
@@ -81,3 +87,17 @@
 <!-- selectedEnvs hidden field will be updated with the newly added environments after clicking the Add button -->
 <input type="hidden" id="selectedEnvs" name="selectedEnvs" value="">
 <input type="hidden" id="deletableItems" name="deletableItems" value="">
+
+<script type="text/javascript">
+	$('#add').click(function() {
+		addCheckbox();
+	});
+	
+	function addCheckbox() {
+		var value = $('#envName').val();
+		var title = $('#envDesc').val();
+		var checkbox = '<input type="checkbox" name="envNames" class="check techCheck" value="' + value + '" title="' + title + '" />' + value;
+		$("#multiselect ul li:last").after('<li>' + checkbox + '</li>');
+	}
+	
+</script>

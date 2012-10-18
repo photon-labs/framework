@@ -64,6 +64,16 @@ public class Configurations extends FrameworkBaseAction {
     private static final Logger S_LOGGER = Logger.getLogger(Configurations.class);
     private static Boolean debugEnabled  = S_LOGGER.isDebugEnabled();
     
+    private List<String> environments = null;
+    
+   /* public List<String> getEnvironments() {
+        return environments;
+    }*/
+    
+    public void setEnvironments(List<String> environments) {
+        this.environments = environments;
+    }
+
     private String configName = null;
     private String description = null;
     private String oldName = null;
@@ -349,6 +359,9 @@ public class Configurations extends FrameworkBaseAction {
     
     public String createEnvironment() {
     	try {
+    	    
+    	    getConfigManager().getEnvironments();
+    	    
             String[] split = null;
             ProjectAdministrator administrator = PhrescoFrameworkFactory
                     .getProjectAdministrator();
