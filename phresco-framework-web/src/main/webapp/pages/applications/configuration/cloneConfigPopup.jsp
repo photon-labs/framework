@@ -28,7 +28,7 @@
 <% 
     String fromTab = (String) request.getAttribute(FrameworkConstants.SETTINGS_FROM_TAB);
     String projectCode = (String) request.getAttribute(FrameworkConstants.REQ_PROJECT_CODE);
-    List<Environment> envInfoValues = (List<Environment>) request.getAttribute(FrameworkConstants.ENVIRONMENTS);
+    List<Environment> envInfoValues = (List<Environment>) request.getAttribute(FrameworkConstants.REQ_ENVIRONMENTS);
     String configName = (String) request.getAttribute(FrameworkConstants.CLONE_FROM_CONFIG_NAME);
     String copyFromEnvName = (String)request.getAttribute(FrameworkConstants.CLONE_FROM_ENV_NAME);
     String configType = (String) request.getAttribute(FrameworkConstants.CLONE_FROM_CONFIG_TYPE);

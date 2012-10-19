@@ -73,7 +73,7 @@
 		projectCode = selectedInfo.getCode();
 	}
 		
-		List<Environment> envs = (List<Environment>) request.getAttribute(FrameworkConstants.ENVIRONMENTS);
+		List<Environment> envs = (List<Environment>) request.getAttribute(FrameworkConstants.REQ_ENVIRONMENTS);
 %>
 
 <style>

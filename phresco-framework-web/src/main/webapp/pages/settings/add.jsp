@@ -63,7 +63,7 @@
         fromPage = (String) request.getAttribute(FrameworkConstants.REQ_FROM_PAGE);
     }
     
-    List<Environment> envs = (List<Environment>) request.getAttribute(FrameworkConstants.ENVIRONMENTS);
+    List<Environment> envs = (List<Environment>) request.getAttribute(FrameworkConstants.REQ_ENVIRONMENTS);
     Map<String, String> errorMap = (Map<String, String>) session.getAttribute(FrameworkConstants.ERROR_SETTINGS);
     Map<String, Technology> mapTechnologies = (Map<String, Technology>)request.getAttribute(FrameworkConstants.REQ_ALL_TECHNOLOGIES);
 %>

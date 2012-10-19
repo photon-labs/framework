@@ -63,6 +63,7 @@
                 	String disable = "";
                 	if (environment.isDefaultEnv() || CollectionUtils.isNotEmpty(environment.getConfigurations())) {
                 		disable = "disabled";
+                	}
                  %>
 	       			<li>
 						<input type="checkbox" name="envNames" class="check techCheck" value="<%= environment.getName() %>" 

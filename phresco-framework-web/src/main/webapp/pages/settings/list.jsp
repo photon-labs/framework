@@ -39,7 +39,7 @@
 <script type="text/javascript" src="js/loading.js"></script>
 <script type="text/javascript" src="js/home-header.js" ></script>
 <%
-List<Environment> envs = (List<Environment>) request.getAttribute(FrameworkConstants.ENVIRONMENTS);
+List<Environment> envs = (List<Environment>) request.getAttribute(FrameworkConstants.REQ_ENVIRONMENTS);
 %>
 <style type="text/css">
     .btn.success, .alert-message.success {

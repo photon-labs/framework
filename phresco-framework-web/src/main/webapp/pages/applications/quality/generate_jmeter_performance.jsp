@@ -628,7 +628,7 @@
 				$('#performance-popup').show().css("display","none");
 				disableScreen();
 				$('#build-outputOuter').show().css("display","block");
-				var param = '<%= FrameworkConstants.ENVIRONMENTS %>' + "=";
+				var param = '<%= FrameworkConstants.REQ_ENVIRONMENTS %>' + "=";
 				param = param.concat(getSelectedEnvs());
 				$('#Server').removeAttr("disabled");
 				readerHandlerSubmit('perTest', '<%= projectCode %>', '<%= FrameworkConstants.PERFORMACE %>', param);

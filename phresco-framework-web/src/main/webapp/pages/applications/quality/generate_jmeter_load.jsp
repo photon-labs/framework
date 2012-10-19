@@ -326,7 +326,7 @@
 	
 	function progress() {
 		$('.popup_div').show().css("display","none");
-		var param = '<%= FrameworkConstants.ENVIRONMENTS %>' + "=";
+		var param = '<%= FrameworkConstants.REQ_ENVIRONMENTS %>' + "=";
 		param = param.concat(getSelectedEnvs());
 		readerHandlerSubmit('load', '<%= projectCode %>', '<%= FrameworkConstants.LOAD %>', param);
 		return false;
