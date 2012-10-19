@@ -54,7 +54,7 @@ public class WinMetroProjectTest extends BaseTest{
 //	@Test
 	public void PerformActionTest() throws PhrescoException {
 		System.out.println(projectInfo.getVersion());
-		applicationManager.performAction(projectInfo, ActionType.BUILD);
+//		applicationManager.performAction(projectInfo, ActionType.BUILD);
 }
 
 }

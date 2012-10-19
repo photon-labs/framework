@@ -35,7 +35,7 @@ public class ApplicationManagerTest extends BaseTest{
 	@Test
 	public void PerformActionTest() throws PhrescoException {
 		ProjectInfo projectInfo = getProjectInfo("tech-php", "tech-php" , "Sample-Php-1" , "Sample-Php-2", "PHR_PHP");
-		applicationManager.performAction(projectInfo, ActionType.BUILD);
+//		applicationManager.performAction(projectInfo, ActionType.BUILD);
 	}
 	
 	@Test
