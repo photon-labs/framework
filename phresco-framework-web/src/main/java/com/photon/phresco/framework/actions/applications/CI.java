@@ -318,8 +318,8 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
 			ProjectAdministrator administrator = PhrescoFrameworkFactory
 					.getProjectAdministrator();
 			Project project = administrator.getProject(projectCode);
-			ActionType actionType = ActionType.JENKINS_SETUP;
-			actionType.setWorkingDirectory(Utility.getJenkinsHome());
+//			ActionType actionType = ActionType.JENKINS_SETUP;
+//			actionType.setWorkingDirectory(Utility.getJenkinsHome());
 			if (debugEnabled) {
 				S_LOGGER.debug("Jenkins Home "
 						+ Utility.getJenkinsHome().toString());
@@ -331,9 +331,9 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
 			administrator.getMavenHomeXml();
 			// place email ext plugin in plugin folder
 			administrator.getEmailExtPlugin();
-			BufferedReader reader = runtimeManager.performAction(project,
-					actionType, null, null);
-			getHttpSession().setAttribute(projectCode + CI_SETUP, reader);
+//			BufferedReader reader = runtimeManager.performAction(project,
+//					actionType, null, null);
+//			getHttpSession().setAttribute(projectCode + CI_SETUP, reader);
 			getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
 			getHttpRequest().setAttribute(REQ_TEST_TYPE, CI_SETUP);
 		} catch (Exception e) {
@@ -544,12 +544,12 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
 				proguard = TRUE;
 			}
 			settingsInfoMap.put(ANDROID_PROGUARD_SKIP, proguard);
-			actionType = ActionType.MOBILE_COMMON_COMMAND;
+//			actionType = ActionType.MOBILE_COMMON_COMMAND;
 			if (StringUtils.isNotEmpty(signing)) {
-				actionType.setProfileId(PROFILE_ID);
+//				actionType.setProfileId(PROFILE_ID);
 			}
 		} else if (TechnologyTypes.IPHONES.contains(technology)) {
-			actionType = ActionType.IPHONE_BUILD_UNIT_TEST;
+//			actionType = ActionType.IPHONE_BUILD_UNIT_TEST;
 		} else {
 			actionType = ActionType.BUILD;
 		}
@@ -616,17 +616,17 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
 		ProjectRuntimeManager runtimeManager = PhrescoFrameworkFactory
 				.getProjectRuntimeManager();
 		String mvncmd = "";
-		StringBuilder command = actionType.getCommand();
+//		StringBuilder command = actionType.getCommand();
 		StringBuilder buildMavenCommand = new StringBuilder();
-		if (command == null) {
-			buildMavenCommand = runtimeManager.buildMavenCommand(project,
-					actionType, valuesMap);
-		} else {
-			buildMavenCommand.append(command);
-			buildMavenCommand.append(SPACE);
-			buildMavenCommand.append(runtimeManager.buildMavenArgCommand(
-					actionType, valuesMap));
-		}
+//		if (command == null) {
+//			buildMavenCommand = runtimeManager.buildMavenCommand(project,
+//					actionType, valuesMap);
+//		} else {
+//			buildMavenCommand.append(command);
+//			buildMavenCommand.append(SPACE);
+//			buildMavenCommand.append(runtimeManager.buildMavenArgCommand(
+//					actionType, valuesMap));
+//		}
 		mvncmd = buildMavenCommand.toString().substring(4).trim();
 		return mvncmd;
 	}
@@ -644,18 +644,18 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
 			settingsInfoMap.put(DEPLOY_ANDROID_DEVICE_MODE, device);
 			settingsInfoMap.put(DEPLOY_ANDROID_EMULATOR_AVD,
 					REQ_ANDROID_DEFAULT);
-			actionType = ActionType.ANDROID_TEST_COMMAND;
+//			actionType = ActionType.ANDROID_TEST_COMMAND;
 		} else if (TechnologyTypes.IPHONES.equals(technology)) {
 			settingsInfoMap.put(BUILD_NAME, CI_BUILD_NAME + IPHONE_FORMAT);
 			settingsInfoMap.put(BUILD_NUMBER, FIRST_BUILD);
-			actionType = ActionType.IPHONE_FUNCTIONAL_COMMAND;
+//			actionType = ActionType.IPHONE_FUNCTIONAL_COMMAND;
 		} else if (TechnologyTypes.IPHONE_HYBRID.equals(technology)) {
 			settingsInfoMap = null;
 			actionType = ActionType.TEST;
 		} else {
 			// settingsInfoMap.put(TEST, TEST_PARAM_VALUE);
 			if (TechnologyTypes.SHAREPOINT.equals(technology) || TechnologyTypes.DOT_NET.equals(technology)) {
-				actionType = ActionType.SHAREPOINT_NUNIT_TEST;
+//				actionType = ActionType.SHAREPOINT_NUNIT_TEST;
 			} else {
 				actionType = ActionType.TEST;
 			}
@@ -818,14 +818,14 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
 			ProjectAdministrator administrator = PhrescoFrameworkFactory
 					.getProjectAdministrator();
 			Project project = administrator.getProject(projectCode);
-			ActionType actionType = ActionType.JENKINS_START;
-			actionType.setWorkingDirectory(Utility.getJenkinsHome());
+//			ActionType actionType = ActionType.JENKINS_START;
+//			actionType.setWorkingDirectory(Utility.getJenkinsHome());
 			S_LOGGER.debug("Jenkins Home "
 					+ Utility.getJenkinsHome().toString());
-			BufferedReader reader = runtimeManager.performAction(project,
-					actionType, null, null);
+//			BufferedReader reader = runtimeManager.performAction(project,
+//					actionType, null, null);
 
-			getHttpSession().setAttribute(projectCode + CI_START, reader);
+//			getHttpSession().setAttribute(projectCode + CI_START, reader);
 			getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
 			getHttpRequest().setAttribute(REQ_TEST_TYPE, CI_START);
 		} catch (Exception e) {
@@ -843,14 +843,14 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
 			ProjectAdministrator administrator = PhrescoFrameworkFactory
 					.getProjectAdministrator();
 			Project project = administrator.getProject(projectCode);
-			ActionType actionType = ActionType.JENKINS_STOP;
-			actionType.setWorkingDirectory(Utility.getJenkinsHome());
+//			ActionType actionType = ActionType.JENKINS_STOP;
+//			actionType.setWorkingDirectory(Utility.getJenkinsHome());
 			S_LOGGER.debug("Jenkins Home "
 					+ Utility.getJenkinsHome().toString());
-			BufferedReader reader = runtimeManager.performAction(project,
-					actionType, null, null);
+//			BufferedReader reader = runtimeManager.performAction(project,
+//					actionType, null, null);
 
-			getHttpSession().setAttribute(projectCode + CI_STOP, reader);
+//			getHttpSession().setAttribute(projectCode + CI_STOP, reader);
 			getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
 			getHttpRequest().setAttribute(REQ_TEST_TYPE, CI_STOP);
 		} catch (Exception e) {

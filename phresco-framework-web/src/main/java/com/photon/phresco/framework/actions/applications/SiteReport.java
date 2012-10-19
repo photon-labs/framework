@@ -126,8 +126,8 @@ public class SiteReport extends FrameworkBaseAction {
 			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
 			Project project = administrator.getProject(projectCode);
 			ProjectRuntimeManager runtimeManager = PhrescoFrameworkFactory.getProjectRuntimeManager();
-			actionType = ActionType.SITE_REPORT;
-			actionType.setWorkingDirectory(null);
+//			actionType = ActionType.SITE_REPORT;
+//			actionType.setWorkingDirectory(null);
 			BufferedReader reader = runtimeManager.performAction(project, actionType, null, null);
 			getHttpSession().setAttribute(projectCode + REQ_SITE_REPORT, reader);
 			getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);

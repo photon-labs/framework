@@ -1482,9 +1482,16 @@ public interface FrameworkConstants {
 		String TYPE_PASSWORD  = "password";
 		String TYPE_NUMBER = "number";
 		String TYPE_BOOLEAN = "boolean";
+		String TYPE_LIST = "list";
 		String TYPE_DYNAMIC_PARAMETER = "DynamicParameter";
 		String PHRESCO_PLUGIN_INFO_XML = "phresco-plugin-info.xml";
 		
 		String REQ_DYNAMIC_PARAMETERS = "parameters";
-		String REQ_DYNAMIC_ENV_NAMES = "dynamicEnvNames";
+		String REQ_DYNAMIC_POSSIBLE_VALUES = "possibleValues";
+		String PLUGIN_PARAMETER_FRAMEWORK = "framework";
+		
+		/**
+		 * Exception Popup Constants
+		 */
+		String EXCEPTION_GENERATE_BUILD = "exception.generate.build";
 }

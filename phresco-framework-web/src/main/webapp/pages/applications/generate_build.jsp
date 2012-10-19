@@ -141,8 +141,8 @@
         
 
        <!-- dynamic parameters starts -->
-		<% 
-			for (Parameter parameter: parameters) { 
+		<%
+			for (Parameter parameter: parameters) {
 		%>    	
 				<div class="clearfix">
 	    <%			Boolean mandatory = false;
@@ -163,16 +163,13 @@
 						}
 					
 					// load input text box
-					if ((FrameworkConstants.TYPE_STRING.equalsIgnoreCase(parameter.getType()) || FrameworkConstants.TYPE_NUMBER.equalsIgnoreCase(parameter.getType()) || FrameworkConstants.TYPE_BOOLEAN.equalsIgnoreCase(parameter.getType()) || 
-									FrameworkConstants.TYPE_HIDDEN.equalsIgnoreCase(parameter.getType())) && parameter.getPossibleValues() == null) { 
+					if (FrameworkConstants.TYPE_STRING.equalsIgnoreCase(parameter.getType()) || FrameworkConstants.TYPE_NUMBER.equalsIgnoreCase(parameter.getType()) || 
+							FrameworkConstants.TYPE_PASSWORD.equalsIgnoreCase(parameter.getType()) || FrameworkConstants.TYPE_HIDDEN.equalsIgnoreCase(parameter.getType())) { 
 						String type ="", cssClass = "", id, name, placeholder, value="";
 						if (FrameworkConstants.TYPE_PASSWORD.equalsIgnoreCase(parameter.getType())) {
 							type = "password";
 							cssClass = "";
-						} else if (FrameworkConstants.TYPE_BOOLEAN.equalsIgnoreCase(parameter.getType())) {
-							type = "checkbox";
-							cssClass = "chckBxAlign";
-						} else if (FrameworkConstants.TYPE_HIDDEN.equalsIgnoreCase(parameter.getType())) {
+						}  else if (FrameworkConstants.TYPE_HIDDEN.equalsIgnoreCase(parameter.getType())) {
 							type = "hidden";
 						} else {
 							type = "text";
@@ -181,8 +178,14 @@
 						StringTemplate txtInputElement = FrameworkUtil.constructInputElement(type, cssClass, "", parameter.getKey(), "", StringUtils.isNotEmpty(parameter.getValue()) ? parameter.getValue():"");
 		%> 	
 				    	<%= txtInputElement %>
-		<% 			} else if (parameter.getPossibleValues() != null) { //load select list box
-				    	List<String> psblValues = parameter.getPossibleValues().getValue();
+		<% 			} else if (FrameworkConstants.TYPE_BOOLEAN.equalsIgnoreCase(parameter.getType())) {
+						String cssClass = "chckBxAlign";
+						StringTemplate chckBoxElement = FrameworkUtil.constructCheckBoxElement(cssClass, "", parameter.getKey(), parameter.getValue());
+		%>			
+						<%= chckBoxElement%>	
+		<%			
+					} else if (FrameworkConstants.TYPE_LIST.equalsIgnoreCase(parameter.getType()) && parameter.getPossibleValues() != null) { //load select list box
+				    	List<com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value> psblValues = parameter.getPossibleValues().getValue();
 						List<String> selectedValList = Arrays.asList(parameter.getValue().split("\\s*,\\s*"));
 						StringTemplate selectElmnt = FrameworkUtil.constructSelectElement("", "", parameter.getKey(), psblValues, selectedValList, parameter.getMultiple());
 		%>				
@@ -191,7 +194,7 @@
 		<% 			}  
 					//dynamically loads values into select box for environmet
 					if (FrameworkConstants.TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(parameter.getType())) {
-						List<String> dynamicEnvNames = (List<String>) request.getAttribute(FrameworkConstants.REQ_DYNAMIC_ENV_NAMES);
+						List<com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value> dynamicEnvNames = (List<com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value>) request.getAttribute(FrameworkConstants.REQ_DYNAMIC_POSSIBLE_VALUES);
 						List<String> selectedValList = Arrays.asList(parameter.getValue().split("\\s*,\\s*"));
 						StringTemplate selectDynamicElmnt = FrameworkUtil.constructSelectElement("multiSelHeight", "", parameter.getKey(), dynamicEnvNames, selectedValList, parameter.getMultiple());
 		%>				
@@ -1068,5 +1071,11 @@
 			buildValidateSuccess("build", '<%= FrameworkConstants.REQ_BUILD %>');
 		}	
 	}
-	
+	function changeChckBoxValue(obj) {
+		if ($(obj).is(':checked')) {
+			$(obj).val("true");
+		} else {
+			$(obj).val("false");
+		}
+	}
 </script>

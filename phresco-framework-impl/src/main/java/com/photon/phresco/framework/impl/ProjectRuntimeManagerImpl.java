@@ -189,14 +189,14 @@ public class ProjectRuntimeManagerImpl implements ProjectRuntimeManager {
 					"Project project, ActionType action, Map<String, String> paramsMap,CallBack callBack)");
 			S_LOGGER.debug("performAction() ProjectInformation = "+project.getApplicationInfo());
 		}
-    	StringBuilder command = action.getCommand();
-    	if (action.getCommand() == null) {
-    		command = buildMavenCommand(project, action, paramsMap);
-    	}
+//    	StringBuilder command = action.getCommand();
+//    	if (action.getCommand() == null) {
+    	StringBuilder command = buildMavenCommand(project, action, paramsMap);
+//    	}
     	
-    	if (action instanceof MobileCommand || action instanceof AndroidTestCommand || action instanceof Sonar || action instanceof IphoneIpa || action instanceof IPhoneFunctionalCommand || action instanceof IphoneBuildAndUnitTest  || action instanceof IphoneCodeValidate || action instanceof SCMUpdate) {
+//    	if (action instanceof MobileCommand || action instanceof AndroidTestCommand || action instanceof Sonar || action instanceof IphoneIpa || action instanceof IPhoneFunctionalCommand || action instanceof IphoneBuildAndUnitTest  || action instanceof IphoneCodeValidate || action instanceof SCMUpdate) {
     		command.append(" " + buildMavenArgCommand(action, paramsMap));
-    	}
+//    	}
     	return executeMavenCommand(project, action, command);
     }
 
@@ -205,16 +205,16 @@ public class ProjectRuntimeManagerImpl implements ProjectRuntimeManager {
     		S_LOGGER.debug("Entering Method ProjectRuntimeManagerImpl.executeMavenCommand(Project project, ActionType action, StringBuilder command)");
     		S_LOGGER.debug("executeMavenCommand() Project Code = " + project.getApplicationInfo().getCode());
     		S_LOGGER.debug("executeMavenCommand() Command = " + command.toString());
-    		S_LOGGER.debug("executeMavenCommand() ActionType Name = " + action.getName());
-    		S_LOGGER.debug("executeMavenCommand() ActionType Working directory = " + action.getWorkingDirectory());
+//    		S_LOGGER.debug("executeMavenCommand() ActionType Name = " + action.getName());
+//    		S_LOGGER.debug("executeMavenCommand() ActionType Working directory = " + action.getWorkingDirectory());
 		}
 		Commandline cl = new Commandline(command.toString());
-        String workingDirectory = action.getWorkingDirectory();
-        if (StringUtils.isNotEmpty(workingDirectory)) {
-            cl.setWorkingDirectory(workingDirectory);
-        } else {
-            cl.setWorkingDirectory(Utility.getProjectHome() + project.getApplicationInfo().getCode());
-        }
+//        String workingDirectory = action.getWorkingDirectory();
+//        if (StringUtils.isNotEmpty(workingDirectory)) {
+//            cl.setWorkingDirectory(workingDirectory);
+//        } else {
+//            cl.setWorkingDirectory(Utility.getProjectHome() + project.getApplicationInfo().getCode());
+//        }
         try {
             Process process = cl.execute();
             return new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -237,7 +237,7 @@ public class ProjectRuntimeManagerImpl implements ProjectRuntimeManager {
             builder.append(techId);
         }*/
     	builder.append(Constants.MVN_PLUGIN_PHRESCO_ID);
-        builder.append(actionType.getName());
+//        builder.append(actionType.getName());
         builder.append(Constants.SPACE);
         builder.append(buildMavenArgCommand(actionType, paramsMap));
         
@@ -250,34 +250,34 @@ public class ProjectRuntimeManagerImpl implements ProjectRuntimeManager {
 		}
 
     	StringBuilder builder = new StringBuilder();
-        if (actionType.canHideLog()) {
-            builder.append("-q");
-            builder.append(Constants.SPACE);
-        }
-        
-        if (actionType.canShowError()) {
-            builder.append("-e");
-            builder.append(Constants.SPACE);
-        }
-        
-        if (actionType.canShowDebug()) {
-            builder.append("-X");
-            builder.append(Constants.SPACE);
-        }
-        
-        if (actionType.canSkipTest()) {
-            builder.append("-DskipTests=true");
-            builder.append(Constants.SPACE);
-        } else {
-        	builder.append("-DskipTests=false");
-        	builder.append(Constants.SPACE);
-        }
-
-        if (StringUtils.isNotEmpty(actionType.getProfileId())) {
-            builder.append("-P");
-            builder.append(actionType.getProfileId());
-            builder.append(Constants.SPACE);
-        }
+//        if (actionType.canHideLog()) {
+//            builder.append("-q");
+//            builder.append(Constants.SPACE);
+//        }
+//        
+//        if (actionType.canShowError()) {
+//            builder.append("-e");
+//            builder.append(Constants.SPACE);
+//        }
+//        
+//        if (actionType.canShowDebug()) {
+//            builder.append("-X");
+//            builder.append(Constants.SPACE);
+//        }
+//        
+//        if (actionType.canSkipTest()) {
+//            builder.append("-DskipTests=true");
+//            builder.append(Constants.SPACE);
+//        } else {
+//        	builder.append("-DskipTests=false");
+//        	builder.append(Constants.SPACE);
+//        }
+//
+//        if (StringUtils.isNotEmpty(actionType.getProfileId())) {
+//            builder.append("-P");
+//            builder.append(actionType.getProfileId());
+//            builder.append(Constants.SPACE);
+//        }
         
         if (paramsMap == null || paramsMap.isEmpty()) {
             return builder;

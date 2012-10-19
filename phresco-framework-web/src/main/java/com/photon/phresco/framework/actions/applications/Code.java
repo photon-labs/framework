@@ -222,9 +222,9 @@ public class Code extends FrameworkBaseAction {
             if (TechnologyTypes.IPHONES.contains(technology)) {
             	S_LOGGER.debug("Selected target .... " + target);
             	codeValidateMap.put(IPHONE_SCHEMA_PARAM, target);
-            	actionType = ActionType.IPHONE_CODE_VALIDATE;
+//            	actionType = ActionType.IPHONE_CODE_VALIDATE;
             } else {
-            	actionType = ActionType.SONAR;
+//            	actionType = ActionType.SONAR;
             }
             
           /*  if (FUNCTIONALTEST.equals(validateAgainst)) {
@@ -238,7 +238,7 @@ public class Code extends FrameworkBaseAction {
             	actionType.setProfileId(codeTechnology);
             }*/
             
-            actionType.setSkipTest(Boolean.parseBoolean(skipTest));
+//            actionType.setSkipTest(Boolean.parseBoolean(skipTest));
             //BufferedReader reader = runtimeManager.performAction(project, actionType, codeValidateMap, null);
             //setReqAttribute(projectCode + REQ_SONAR_PATH, reader);
             //setReqAttribute(REQ_PROJECT_CODE, projectCode);

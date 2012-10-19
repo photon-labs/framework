@@ -19,7 +19,7 @@
  */
 // from auto close
 var showSuccessComplete = true;
-function readerHandler(data, projectCode, testType, pageUrl) {
+function readerHandler(data, appId, testType, pageUrl) {
 	// from auto close
 	if($.trim(data) == 'Test is not available for this project') {
 		data = '<b>Test is not available for this project</b>';
@@ -33,7 +33,6 @@ function readerHandler(data, projectCode, testType, pageUrl) {
 	   $("#warningmsg").hide();
 	   $('#loadingDiv').hide();
 	   $('#buildbtn').prop("disabled", false);
-	   
 	   // from auto close
 //	   if(showSuccessComplete) {
 //		   $("#build-output").append("Successfully Completed" + '<br>');
@@ -41,7 +40,7 @@ function readerHandler(data, projectCode, testType, pageUrl) {
 	   $('#build-output').prop('scrollTop', $('#build-output').prop('scrollHeight'));
 	   
 	   if(testType == "build") {
-		   refreshTable(projectCode);
+		   refreshTable(appId);
 	   }
 	   return;
    }
@@ -55,7 +54,7 @@ function readerHandler(data, projectCode, testType, pageUrl) {
 			}
 		   $("#build-output").append(data + '<br>');
 		   $('#build-output').prop('scrollTop', $('#build-output').prop('scrollHeight')); 
-			asyncHandler(projectCode, testType, pageUrl);
+			asyncHandler(appId, testType, pageUrl);
 		}
 	});
 	
@@ -63,16 +62,17 @@ function readerHandler(data, projectCode, testType, pageUrl) {
 	if($("a[name='appTabs']").length == 0) {
 		  $("#build-output").append(data + '<br>');
 		  $('#build-output').prop('scrollTop', $('#build-output').prop('scrollHeight')); 
-		  asyncHandler(projectCode, testType, pageUrl);
+		  asyncHandler(appId, testType, pageUrl);
 	}
 }
 
-function asyncHandler(projectCode, testType, pageUrl) {
+
+function asyncHandler(appId, testType, pageUrl) {
    $.ajax({
         url : 'pages/applications/reader.jsp',
         type : "POST",
         data : {
-            'projectCode' : projectCode,
+            'appId' : appId,
             'testType' : testType
         },
         success : function(data) { 
@@ -80,16 +80,16 @@ function asyncHandler(projectCode, testType, pageUrl) {
             		($.trim(data)).indexOf("Compilation failure") > -1) {
             	runAgainstSrcSDown ();
             }
-            readerHandler(data, projectCode, testType, pageUrl); 
+            readerHandler(data, appId, testType, pageUrl); 
         }
     });
 }
 
-function refreshTable(projectCode) {
+function refreshTable(appId) {
     $.ajax({
          url : 'builds',
          data : {
-             'projectCode' : projectCode
+             'appId' : appId
          },
          type : "POST",
          success : function(data) { 

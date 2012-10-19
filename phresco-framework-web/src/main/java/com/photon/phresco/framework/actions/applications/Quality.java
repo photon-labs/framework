@@ -226,10 +226,10 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
 				S_LOGGER.debug("Android device name " + device);
                 settingsInfoMap.put(DEPLOY_ANDROID_DEVICE_MODE, device); //TODO: Need to be changed
                 settingsInfoMap.put(DEPLOY_ANDROID_EMULATOR_AVD, REQ_ANDROID_DEFAULT);
-                actionType = ActionType.ANDROID_TEST_COMMAND;
+//                actionType = ActionType.ANDROID_TEST_COMMAND;
               
             } else if (TechnologyTypes.IPHONE_NATIVE.equals(techId)) {
-				actionType = ActionType.IPHONE_BUILD_UNIT_TEST;
+//				actionType = ActionType.IPHONE_BUILD_UNIT_TEST;
 				settingsInfoMap.put(UNIT_TEST, TRUE);
 				settingsInfoMap.put(IPHONE_TARGET_NAME, target);
 				settingsInfoMap.put(IPHONE_SDK, sdk);
@@ -241,7 +241,7 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
             } else {
                 settingsInfoMap.put(TEST_PARAM, TEST_PARAM_VALUE);
                 if (TechnologyTypes.SHAREPOINT.equals(techId) || TechnologyTypes.DOT_NET.equals(techId)) {
-                	actionType = ActionType.SHAREPOINT_NUNIT_TEST;
+//                	actionType = ActionType.SHAREPOINT_NUNIT_TEST;
                 } else {
                 	actionType = ActionType.TEST;
                 }
@@ -257,7 +257,7 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
             	builder.append(File.separatorChar);
             	builder.append(testModule);
             }
-            actionType.setWorkingDirectory(builder.toString());
+//            actionType.setWorkingDirectory(builder.toString());
             
             S_LOGGER.debug("Unit test directory " + builder.toString());
             S_LOGGER.debug("Unit test Setting Info map value " + settingsInfoMap);
@@ -298,14 +298,14 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
                    S_LOGGER.debug("Android device name " + device);
                 settingsInfoMap.put(DEPLOY_ANDROID_DEVICE_MODE, device);
                 settingsInfoMap.put(DEPLOY_ANDROID_EMULATOR_AVD, REQ_ANDROID_DEFAULT);
-                actionType = ActionType.ANDROID_TEST_COMMAND;
+//                actionType = ActionType.ANDROID_TEST_COMMAND;
             } else if (TechnologyTypes.IPHONE_NATIVE.equals(techId)) {
             	String buildNumber = getHttpRequest().getParameter(REQ_TEST_BUILD_ID);
             	String applicationPath = administrator.getBuildInfo(project, Integer.parseInt(buildNumber)).getBuildName();
             	settingsInfoMap.put(BUILD_NUMBER, buildNumber);
             	//addition param for 1.2.0. plugins, backward compatibility
             	settingsInfoMap.put(IPHONE_BUILD_NAME, applicationPath);
-                actionType = ActionType.IPHONE_FUNCTIONAL_COMMAND;
+//                actionType = ActionType.IPHONE_FUNCTIONAL_COMMAND;
                
 	        } else if (TechnologyTypes.IPHONE_HYBRID.equals(techId)) {
 	        	settingsInfoMap = null;
@@ -314,7 +314,7 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
 	        	S_LOGGER.debug("All test param added");
                 settingsInfoMap.put(TEST_PARAM, TEST_PARAM_VALUE);
                 if (TechnologyTypes.SHAREPOINT.equals(techId) || TechnologyTypes.DOT_NET.equals(techId)) {
-                	actionType = ActionType.SHAREPOINT_NUNIT_TEST;
+//                	actionType = ActionType.SHAREPOINT_NUNIT_TEST;
                 } else {
                 	actionType = ActionType.TEST;
                 }
@@ -339,7 +339,7 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
             }
             String funcitonalTestDir = frameworkUtil.getFuncitonalTestDir(techId);
             builder.append(funcitonalTestDir);
-            actionType.setWorkingDirectory(builder.toString());
+//            actionType.setWorkingDirectory(builder.toString());
             
             S_LOGGER.debug("Functional test directory " + builder.toString());
             S_LOGGER.debug("Functional test Setting Info map value " + settingsInfoMap);
@@ -951,14 +951,14 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
                         getHttpRequest().setAttribute(PATH, 
                                 frameworkUtil.getUnitTestDir(techId));
                     } else if (APP_FUNCTIONAL_TEST.equals(testType) && !TechnologyTypes.IPHONE_HYBRID.equals(techId)) {
-                        ActionType actionType = ActionType.STOP_SELENIUM_SERVER;
+//                        ActionType actionType = ActionType.STOP_SELENIUM_SERVER;
                         StringBuilder builder = new StringBuilder(Utility.getProjectHome());
                         builder.append(project.getApplicationInfo().getCode());
                         String funcitonalTestDir = frameworkUtil.getFuncitonalTestDir(techId);
                         builder.append(funcitonalTestDir);
-                        actionType.setWorkingDirectory(builder.toString());
+//                        actionType.setWorkingDirectory(builder.toString());
                         ProjectRuntimeManager runtimeManager = PhrescoFrameworkFactory.getProjectRuntimeManager();
-                        runtimeManager.performAction(project, actionType, null, null);
+//                        runtimeManager.performAction(project, actionType, null, null);
                         getHttpRequest().setAttribute(PATH, 
                                 frameworkUtil.getFuncitonalTestDir(techId));
                     }
@@ -1055,24 +1055,24 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
                 String[] connectedDevices = getHttpRequest().getParameterValues(ANDROID_DEVICE);
                 String devices = FrameworkUtil.convertToCommaDelimited(connectedDevices);
                 settingsInfoMap.put(ANDROID_DEVICE_LIST, devices);
-                actionType = ActionType.ANDROID_TEST_COMMAND;
-                if (SHOW_ERROR.equals(showError)) {
-                	actionType.setShowError(true);
-            	} else {
-            		actionType.setShowError(false);
-            	}
-                
-                if (HIDE_LOG.equals(hideLog)) {
-                	actionType.setHideLog(true);
-            	} else {
-            		actionType.setHideLog(false);
-            	}
-                
-                if (SHOW_DEBUG.equals(showDebug)) {
-                	actionType.setShowDebug(true);
-            	} else {
-            		actionType.setShowDebug(false);
-            	}
+//                actionType = ActionType.ANDROID_TEST_COMMAND;
+//                if (SHOW_ERROR.equals(showError)) {
+//                	actionType.setShowError(true);
+//            	} else {
+//            		actionType.setShowError(false);
+//            	}
+//                
+//                if (HIDE_LOG.equals(hideLog)) {
+//                	actionType.setHideLog(true);
+//            	} else {
+//            		actionType.setHideLog(false);
+//            	}
+//                
+//                if (SHOW_DEBUG.equals(showDebug)) {
+//                	actionType.setShowDebug(true);
+//            	} else {
+//            		actionType.setShowDebug(false);
+//            	}
                 
                 
                    S_LOGGER.debug("Load method ANDROIDS type settingsInfoMap value " + settingsInfoMap);
@@ -1159,7 +1159,7 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
 	            gson.toJson(perform,writer);
 	            writer.close();
             }
-            actionType.setWorkingDirectory(builder.toString());
+//            actionType.setWorkingDirectory(builder.toString());
             ProjectRuntimeManager runtimeManager = PhrescoFrameworkFactory.getProjectRuntimeManager();
             reader = runtimeManager.performAction(project, actionType, settingsInfoMap, null);
             getHttpSession().setAttribute(projectCode + PERFORMACE, reader);
@@ -1217,7 +1217,7 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
                 String device = getHttpRequest().getParameter(REQ_ANDROID_DEVICE);
                 settingsInfoMap.put(DEPLOY_ANDROID_DEVICE_MODE, device); //TODO: Need to be changed
                 settingsInfoMap.put(DEPLOY_ANDROID_EMULATOR_AVD, REQ_ANDROID_DEFAULT);
-                actionType = ActionType.ANDROID_TEST_COMMAND;
+//                actionType = ActionType.ANDROID_TEST_COMMAND;
                 
                    S_LOGGER.debug("Load method ANDROIDS type settingsInfoMap value " + settingsInfoMap);
                 
@@ -1244,7 +1244,7 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
             	QualityUtil.adaptTestConfig(builder.toString(), serverSetting);
 			}
             QualityUtil.adaptLoadJmx(builder.toString(), Integer.parseInt(noOfUsers), Integer.parseInt(rampUpPeriod), Integer.parseInt(loopCount), headersMap);
-            actionType.setWorkingDirectory(builder.toString());
+//            actionType.setWorkingDirectory(builder.toString());
             ProjectRuntimeManager runtimeManager = PhrescoFrameworkFactory.getProjectRuntimeManager();
             BufferedReader reader = runtimeManager.performAction(project, actionType, settingsInfoMap, null);
             

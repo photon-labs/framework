@@ -48,6 +48,7 @@ import com.photon.phresco.framework.FrameworkConfiguration;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
 import com.photon.phresco.framework.api.ProjectAdministrator;
+import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
 import com.photon.phresco.util.TechnologyTypes;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.model.Model;
@@ -66,6 +67,8 @@ public class FrameworkUtil extends FrameworkBaseAction implements FrameworkConst
 	private static final String SELECT_TEMPLATE = "<div class='controls'><select class=\"input-xlarge $cssClass$\" name=\"$name$\" $multiple$>$options$</select></div>";
 	private static final String INPUT_TEMPLATE = "<div class='controls'><input type=\"$type$\" class=\"input-xlarge $class$\" id=\"$id$\" " + 
 													"name=\"$name$\" placeholder=\"$placeholder$\" value=\"$value$\" $checked$/></div></div>";
+	private static final String CHECKBOX_TEMPLATE = "<div class='controls'><input type='checkbox' class=\"$class$\" id=\"$id$\" " + 
+														"name=\"$name$\" value=\"$value$\" $checked$ onclick='changeChckBoxValue(this);'/></div></div>";
 	private static final String MULTI_SELECT_TEMPLATE = "<div class='controls'><div class='multiSelectBorder'><div class='multilist-scroller multiselect $class$' id=\"$id$\"><ul>$multiSelectOptions$</ul></div></div></div>";
 	
     private Map<String, String> unitTestMap = new HashMap<String, String>(8);
@@ -682,8 +685,22 @@ public class FrameworkUtil extends FrameworkBaseAction implements FrameworkConst
 		return inputElement;
     }
     
+    public static StringTemplate constructCheckBoxElement(String cssClass, String id, String name, String value) {
+    	StringTemplate checkboxElement = new StringTemplate(CHECKBOX_TEMPLATE);
+    	checkboxElement.setAttribute("class", cssClass);
+    	checkboxElement.setAttribute("id", id);
+    	checkboxElement.setAttribute("name", name);
+    	checkboxElement.setAttribute("value", value);
+    	if (Boolean.parseBoolean(value)) {
+    		checkboxElement.setAttribute("checked", "checked");
+    	} else {
+    		checkboxElement.setAttribute("checked", "");
+    	}
+    	return checkboxElement;
+    }
+    
     public static StringTemplate constructSelectElement(String cssClass, String id, String name,
-			List<String> values, List<String> selectedValues, String isMultiple) {
+			List<Value> values, List<String> selectedValues, String isMultiple) {
     	if (Boolean.parseBoolean(isMultiple)) {
     		return constructMultiSelectElement(cssClass, id, name, values, selectedValues);
     	} else {
@@ -692,7 +709,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements FrameworkConst
     }
 
     public static StringTemplate constructSingleSelectElement(String cssClass, String id, String name,
-    		List<String> values, List<String> selectedValues) {
+    		List<Value> values, List<String> selectedValues) {
     	StringTemplate selectElement = new StringTemplate(SELECT_TEMPLATE);
     	StringBuilder options = constructOptions(values, selectedValues);
     	selectElement.setAttribute("name", name);
@@ -703,7 +720,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements FrameworkConst
     }
     
     private static StringTemplate constructMultiSelectElement(String cssClass, String id, String name,
-			List<String> values, List<String> selectedValues) {
+			List<Value> values, List<String> selectedValues) {
     	StringTemplate multiSelectElement = new StringTemplate(MULTI_SELECT_TEMPLATE);
     	multiSelectElement.setAttribute("name", name);
     	multiSelectElement.setAttribute("cssClass", cssClass);
@@ -713,34 +730,34 @@ public class FrameworkUtil extends FrameworkBaseAction implements FrameworkConst
     	
     	return multiSelectElement;
     }
-    private static StringBuilder constructOptions(List<String> values, List<String> selectedValues) {
+    private static StringBuilder constructOptions(List<Value> values, List<String> selectedValues) {
     	StringBuilder builder = new StringBuilder();
     	String selectedStr = "";
-		 for (String value : values) {
-			 if (selectedValues!= null && selectedValues.contains(value)) {
+		 for (Value value : values) {
+			 if (selectedValues!= null && selectedValues.contains(value.getValue())) {
 				 selectedStr = "selected";
 			 } else {
 				 selectedStr = "";
 			 }
 			builder.append("<option value=\"");
-			builder.append(value + "\" " + selectedStr + ">" + value + "</option>");
+			builder.append(value.getValue() + "\" " + selectedStr + ">" + value.getValue() + "</option>");
 		}
 		 
 		 return builder;
     }
     
-    private static StringBuilder constructMultiSelectOptions(String name, List<String> values, List<String> selectedValues) {
+    private static StringBuilder constructMultiSelectOptions(String name, List<Value> values, List<String> selectedValues) {
     	StringBuilder builder = new StringBuilder();
     	
     	String checkedStr = "";
-		 for (String value : values) {
-			 if (selectedValues!= null && selectedValues.contains(value)) {
+		 for (Value value : values) {
+			 if (selectedValues!= null && selectedValues.contains(value.getValue())) {
 				 checkedStr = "checked";
 			 } else {
 				 checkedStr = "";
 			 }
 			builder.append("<li><input type='checkbox' class='popUpChckBox' value=\"");
-			builder.append(value + "\" name=\""+ name + "\" " + checkedStr + ">" + value + "</li>");
+			builder.append(value.getValue() + "\" name=\""+ name + "\" " + checkedStr + ">" + value.getValue() + "</li>");
 		}
 		 
 		 return builder;

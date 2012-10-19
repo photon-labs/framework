@@ -32,7 +32,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -64,7 +63,6 @@ import com.google.gson.Gson;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.configuration.Environment;
-import com.photon.phresco.exception.ConfigurationException;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
@@ -82,10 +80,8 @@ import com.photon.phresco.framework.commons.PBXNativeTarget;
 import com.photon.phresco.framework.model.BuildInfo;
 import com.photon.phresco.framework.model.PluginProperties;
 import com.photon.phresco.framework.model.SettingsInfo;
-import com.photon.phresco.param.api.DynamicParameter;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
-import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues;
-import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
+import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.MavenCommands.MavenCommand;
 import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.IosSdkUtil;
@@ -276,7 +272,7 @@ public class Build extends FrameworkBaseAction {
 	}
 
 	@SuppressWarnings("unchecked")
-	public String generateBuild() throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException, IOException, ParserConfigurationException, SAXException, ConfigurationException {
+	public String generateBuild() throws PhrescoException {
 		S_LOGGER.debug("Entering Method  Build.generateBuild()");
 		String technology = null;
 		String from = null;
@@ -410,9 +406,12 @@ public class Build extends FrameworkBaseAction {
 	/**
 	 * To show generate build popup with loaded dynamic parameters 
 	 */
-	public String showGenerateBuildPopup() throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException, 
-			InvocationTargetException, IOException, ParserConfigurationException, SAXException, ConfigurationException {
-		setDynamicParameters(PHASE_PACKAGE); 
+	public String showGenerateBuildPopup() {
+		try {
+			setDynamicParameters(PHASE_PACKAGE);
+		} catch (PhrescoException e) {
+			showErrorPopup(e, getText(EXCEPTION_GENERATE_BUILD));
+		} 
 		
 		return APP_GENERATE_BUILD;
 	}
@@ -421,78 +420,21 @@ public class Build extends FrameworkBaseAction {
 	/**
 	 * To set List of parameters in request
 	 * @param goal
-	 * @throws ClassNotFoundException
-	 * @throws NoSuchMethodException
-	 * @throws InstantiationException
-	 * @throws IllegalAccessException
-	 * @throws InvocationTargetException
-	 * @throws IOException
-	 * @throws ParserConfigurationException
-	 * @throws SAXException
-	 * @throws ConfigurationException
+	 * @throws PhrescoException
 	 */
-	private void setDynamicParameters(String goal) throws ClassNotFoundException, NoSuchMethodException, InstantiationException,
-			IllegalAccessException, InvocationTargetException, IOException, ParserConfigurationException, SAXException, ConfigurationException {
+	private void setDynamicParameters(String goal) throws PhrescoException{
 		try {
-			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-			ApplicationInfo applicationInfo = applicationManager.getApplicationInfo(getCustomerId(), getProjectId(), getAppId());
+			ApplicationInfo applicationInfo = getApplicationInfo();
 			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(applicationInfo)));
-			com.photon.phresco.plugins.model.Mojos.Mojo.Configuration configuration = mojo.getConfiguration(goal);
-			List<Parameter> parameters = configuration.getParameters().getParameter();
+			List<Parameter> parameters = getMojoParameters(mojo, goal);
 			if (CollectionUtils.isNotEmpty(parameters)) {
-				setDynamicEnvParameters(applicationInfo, parameters);	
+				setDynamicPossibleValues(applicationInfo, parameters);	
 			}
 			setReqAttribute(REQ_APPINFO, applicationInfo);
 			setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
 		} catch (PhrescoException e) {
 			e.printStackTrace();
 		}
-	}
-	
-	/**
-	 * To get phresco-plugin-info.xml file path
-	 * @param applicationInfo
-	 * @return
-	 */
-	private String getPhrescoPluginInfoFilePath(ApplicationInfo applicationInfo) {
-		String filePath = Utility.getProjectHome() + FILE_SEPARATOR + applicationInfo.getAppDirName() + FILE_SEPARATOR + FOLDER_DOT_PHRESCO + FILE_SEPARATOR + PHRESCO_PLUGIN_INFO_XML;
-		
-		return filePath;
-	}
-
-	/**
-	 * To set List of Environments as Dynamic parameter in request
-	 * @param applicationInfo
-	 * @param parameters
-	 * @throws ClassNotFoundException
-	 * @throws NoSuchMethodException
-	 * @throws InstantiationException
-	 * @throws IllegalAccessException
-	 * @throws InvocationTargetException
-	 * @throws IOException
-	 * @throws ParserConfigurationException
-	 * @throws SAXException
-	 * @throws ConfigurationException
-	 */
-	private void setDynamicEnvParameters(ApplicationInfo applicationInfo, List<Parameter> parameters) throws ClassNotFoundException, NoSuchMethodException, InstantiationException,
-			IllegalAccessException, InvocationTargetException, IOException, ParserConfigurationException, SAXException, ConfigurationException {
-		for (Parameter parameter : parameters) {
-			if (parameter.getDynamicParameter() != null) {
-				PossibleValues dynamicEnvs = getDynamicValues(applicationInfo, parameter.getDynamicParameter().getClazz());
-				List<Value> dynamicEnvsNames = dynamicEnvs.getValue();
-				setReqAttribute(REQ_DYNAMIC_ENV_NAMES, dynamicEnvsNames);
-			}
-		}
-	}
-	
-	@SuppressWarnings("unchecked")
-	private PossibleValues getDynamicValues(ApplicationInfo applicationInfo, String className) throws ClassNotFoundException,
-			NoSuchMethodException, InstantiationException,
-			IllegalAccessException, InvocationTargetException, IOException, ParserConfigurationException, SAXException, ConfigurationException {
-		
-		Class<DynamicParameter> loadedClass = (Class<DynamicParameter>) Class.forName(className);
-		DynamicParameter dynamicParameter = loadedClass.newInstance();
-		return dynamicParameter.getValues(applicationInfo);
 	}
 	
 	public String builds() {
@@ -520,20 +462,31 @@ public class Build extends FrameworkBaseAction {
 		S_LOGGER.debug("Entering Method  Build.build()");
 		try {
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-			ApplicationInfo applicationInfo = applicationManager.getApplicationInfo(getCustomerId(), getProjectId(), getAppId());
 			ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
-			ProjectInfo projectInfos = projectManager.getProject(getProjectId(), getCustomerId());
+			ProjectInfo projectInfo = projectManager.getProject(getProjectId(), getCustomerId());
 			
+			ApplicationInfo applicationInfo = getApplicationInfo();
+			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(applicationInfo)));
+			persistValuesToXml(mojo, PHASE_PACKAGE);
 			
-			persistValuesToXml(applicationInfo, PHASE_PACKAGE);
 			ActionType actionType = null;
 			actionType = ActionType.BUILD;
-//			ProjectRuntimeManager runtimeManager = PhrescoFrameworkFactory.getProjectRuntimeManager();
-//			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-//			Project project = administrator.getProject(projectCode);
-//			String technology = project.getApplicationInfo().getTechInfo().getVersion();
-//
-//			Map<String, String> settingsInfoMap = new HashMap<String, String>(2);
+
+			//To get maven build arguments
+			List<Parameter> parameters = getMojoParameters(mojo, PHASE_PACKAGE);
+			List<String> buildArgCmds = new ArrayList<String>();			
+			for (Parameter parameter : parameters) {
+				if (parameter.getPluginParameter()!= null && PLUGIN_PARAMETER_FRAMEWORK.equalsIgnoreCase(parameter.getPluginParameter())) {
+					List<MavenCommand> mavenCommand = parameter.getMavenCommands().getMavenCommand();
+					for (MavenCommand mavenCmd : mavenCommand) {
+						if (parameter.getValue().equalsIgnoreCase(mavenCmd.getKey())) {
+							buildArgCmds.add(mavenCmd.getValue());
+						}
+					}
+				}
+			}
+			String workingDirectory = getAppDirectoryPath(applicationInfo);
+			
 //			
 //			if(TechnologyTypes.HTML5_MULTICHANNEL_JQUERY_WIDGET.equals(technology) || 
 //					TechnologyTypes.HTML5_JQUERY_MOBILE_WIDGET.equals(technology) ||
@@ -542,59 +495,6 @@ public class Build extends FrameworkBaseAction {
 //				minification();
 //			}
 //			
-//			/* adding values to settings map info */
-//			MojoProcessor mojo = new MojoProcessor(new File(Utility.getProjectHome() + FILE_SEPARATOR + projectCode + FILE_SEPARATOR + ".phresco/" + PHRESCO_PLUGIN_INFO_XML));
-//			com.photon.phresco.plugins.model.Mojos.Mojo.Configuration mojoConfiguration = mojo.getConfiguration("package");
-//			List<Parameter> parameters = mojoConfiguration.getParameters().getParameter();
-//			for (Parameter parameter : parameters) {
-//				if (getHttpRequest().getParameter(parameter.getKey()) != null ) {
-//					settingsInfoMap.put(parameter.getKey(), parameter.getValue());
-//				}
-//			}
-			
-			/*if (StringUtils.isNotEmpty(environments)) {
-				settingsInfoMap.put(ENVIRONMENT_NAME, environments);
-			}
-
-			if (StringUtils.isNotEmpty(userBuildName)) {
-				settingsInfoMap.put(BUILD_NAME, userBuildName);
-			}
-
-			if (StringUtils.isNotEmpty(userBuildNumber)) {
-				settingsInfoMap.put(BUILD_NUMBER, userBuildNumber);
-			}*/
-
-//			if (StringUtils.isNotEmpty(androidVersion)) {
-//				settingsInfoMap.put(AndroidConstants.ANDROID_VERSION_MVN_PARAM, androidVersion);
-//			}
-//
-//			if (TechnologyTypes.JAVA_STANDALONE.contains(technology)) {
-//				settingsInfoMap.put(MAINCLASSNAME, mainClassName);
-//				settingsInfoMap.put(JARNAME, jarName);
-//			}
-//
-//			if (TechnologyTypes.WIN_METRO.contains(technology)) {
-//				settingsInfoMap.put(CONFIGURATION, configuration);
-//				settingsInfoMap.put(PLATFORM, platform);
-//			}
-//			
-//			if (TechnologyTypes.BLACKBERRY_HYBRID.contains(technology)) {
-//				settingsInfoMap.put(KEYPASS, keypass);
-//			}
-//			
-//			if (TechnologyTypes.IPHONES.contains(technology)) {
-//				settingsInfoMap.put(IPHONE_SDK, sdk);
-//				settingsInfoMap.put(IPHONE_CONFIGURATION, mode);
-//				settingsInfoMap.put(IPHONE_TARGET_NAME, target);
-//				if (TechnologyTypes.IPHONE_HYBRID.equals(technology)) {
-//					settingsInfoMap.put(IPHONE_PLISTFILE, XCodeConstants.HYBRID_PLIST);
-//					settingsInfoMap.put(ENCRYPT, FALSE);
-//				} else if (TechnologyTypes.IPHONE_NATIVE.equals(technology)) {
-//					settingsInfoMap.put(IPHONE_PLISTFILE, XCodeConstants.NATIVE_PLIST);
-//					settingsInfoMap.put(ENCRYPT, TRUE);
-//				}
-//			}
-//
 //			if (TechnologyTypes.ANDROIDS.contains(technology)) {
 //				actionType = ActionType.MOBILE_COMMON_COMMAND;
 //				actionType.setSkipTest(true);
@@ -615,64 +515,22 @@ public class Build extends FrameworkBaseAction {
 //					// otherwise true
 //					proguard = TRUE;
 //				}
-//				settingsInfoMap.put(ANDROID_PROGUARD_SKIP, proguard);
-//				// settingsInfoMap.put(SKIPTESTS, TRUE);
-//			} else if (TechnologyTypes.IPHONES.contains(technology)) {
-//				actionType = ActionType.IPHONE_BUILD_UNIT_TEST;
-//			} else {
-//				actionType = ActionType.BUILD;
-//			}
-
-//			if (StringUtils.isNotEmpty(projectModule)) {
-//				settingsInfoMap.put(MODULE_NAME, projectModule);
-//				actionType.setWorkingDirectory(Utility.getProjectHome() + project.getApplicationInfo().getCode()
-//						+ File.separatorChar + projectModule);
-//			} else {
-//				actionType.setWorkingDirectory(null);
-//			}
-//			actionType.setHideLog(Boolean.parseBoolean(hideLog));
-//			actionType.setShowError(Boolean.parseBoolean(showError));
-//			actionType.setShowDebug(Boolean.parseBoolean(showDebug));
-//			actionType.setSkipTest(Boolean.parseBoolean(skipTest));
-			Reader reader = applicationManager.performAction(projectInfos, actionType);
-			getHttpSession().setAttribute(getAppId() + REQ_BUILD, reader);
-			getHttpRequest().setAttribute(REQ_APP_ID, getAppId());
-			getHttpRequest().setAttribute(REQ_TEST_TYPE, REQ_BUILD);
+			
+			Reader reader = applicationManager.performAction(projectInfo, actionType, buildArgCmds, workingDirectory);
+			setSessionAttribute(getAppId() + REQ_BUILD, reader);
+			setReqAttribute(REQ_APP_ID, getAppId());
+			setReqAttribute(REQ_TEST_TYPE, REQ_BUILD);
 		} catch (Exception e) {
 			S_LOGGER.error("Entered into catch block of Build.build()" + FrameworkUtil.getStackTraceAsString(e));
 			new LogErrorReport(e, "Building ");
 		}
 
-		getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
+		setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
 
 		return APP_ENVIRONMENT_READER;
 	}
 
-	private void persistValuesToXml(ApplicationInfo applicationInfo, String goal) throws PhrescoException {
-		MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(applicationInfo)));
-		com.photon.phresco.plugins.model.Mojos.Mojo.Configuration configuration = mojo.getConfiguration(goal);
-		List<Parameter> parameters = configuration.getParameters().getParameter();
-		StringBuilder csParamVal = new StringBuilder();
-		String sep = "";
-		for (Parameter parameter : parameters) {
-			if (parameter.getDynamicParameter() != null) {
-				String[] parameterValues = getHttpRequest().getParameterValues(parameter.getKey());
-				for (String parameterValue : parameterValues) {
-					csParamVal.append(sep);
-					csParamVal.append(parameterValue);
-					sep = ",";
-				}
-				parameter.setValue(csParamVal.toString());
-			} else {
-				if (getHttpRequest().getParameter(parameter.getKey()) != null ) {
-					parameter.setValue(getHttpRequest().getParameter(parameter.getKey()));
-				} else {
-					parameter.setValue("false");//to update value of skipTest if it is unchecked
-				}
-			}
-		}
-		mojo.save();
-	}
+	
 
 	private File isFileExists(Project project) throws IOException {
 		StringBuilder builder = new StringBuilder(Utility.getProjectHome());
@@ -880,7 +738,7 @@ public class Build extends FrameworkBaseAction {
 			S_LOGGER.debug("technology ====> " + technology);
 			if (TechnologyTypes.IPHONES.contains(technology) || TechnologyTypes.ANDROIDS.contains(technology)) {
 				S_LOGGER.debug("Mobile command !!!!!");
-				actionType = ActionType.MOBILE_COMMON_COMMAND;
+//				actionType = ActionType.MOBILE_COMMON_COMMAND;
 			} else {
 				S_LOGGER.debug("Deploy Command!!!!!");
 				actionType = ActionType.DEPLOY;
@@ -892,11 +750,11 @@ public class Build extends FrameworkBaseAction {
 				builder.append(File.separator);
 				builder.append(buildInfo.getModuleName());
 			}
-			actionType.setWorkingDirectory(builder.toString());
-			actionType.setHideLog(Boolean.parseBoolean(hideLog));
-			actionType.setShowError(Boolean.parseBoolean(showError));
-			actionType.setShowDebug(Boolean.parseBoolean(showDebug));
-			actionType.setSkipTest(Boolean.parseBoolean(skipTest));
+//			actionType.setWorkingDirectory(builder.toString());
+//			actionType.setHideLog(Boolean.parseBoolean(hideLog));
+//			actionType.setShowError(Boolean.parseBoolean(showError));
+//			actionType.setShowDebug(Boolean.parseBoolean(showDebug));
+//			actionType.setSkipTest(Boolean.parseBoolean(skipTest));
 			BufferedReader reader = runtimeManager.performAction(project, actionType, valuesMap, null);
 			getHttpSession().setAttribute(projectCode + REQ_FROM_TAB_DEPLOY, reader);
 			getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
@@ -1029,7 +887,7 @@ public class Build extends FrameworkBaseAction {
 		}
 		String buildNumber = getHttpRequest().getParameter(REQ_DEPLOY_BUILD_NUMBER);
 		try {
-			ActionType actionType = ActionType.IPHONE_DOWNLOADIPA_COMMAND;
+//			ActionType actionType = ActionType.IPHONE_DOWNLOADIPA_COMMAND;
 			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
 			ProjectRuntimeManager runtimeManager = PhrescoFrameworkFactory.getProjectRuntimeManager();
 			Project project = administrator.getProject(projectCode);
@@ -1047,9 +905,9 @@ public class Build extends FrameworkBaseAction {
 			valuesMap
 					.put("app.path", administrator.getBuildInfo(project, Integer.parseInt(buildNumber)).getBuildName());
 			valuesMap.put("build.name", appBuildName);
-			BufferedReader reader = runtimeManager.performAction(project, actionType, valuesMap, null);
-			while (reader.readLine() != null) {
-			}
+//			BufferedReader reader = runtimeManager.performAction(project, actionType, valuesMap, null);
+//			while (reader.readLine() != null) {
+//			}
 			String ipaPath = administrator.getBuildInfo(project, Integer.parseInt(buildNumber)).getBuildName();
 			ipaPath = ipaPath.substring(0, ipaPath.lastIndexOf("/")) + FILE_SEPARATOR + projectCode + ".ipa";
 			fileInputStream = new FileInputStream(new File(ipaPath));
@@ -1104,13 +962,13 @@ public class Build extends FrameworkBaseAction {
 			Map<String, String> valueMap = new HashMap<String, String>(2);
 			valueMap.put(ENVIRONMENT_NAME, environments);
 			valueMap.put(IMPORT_SQL, importSQL);
-			ActionType nodeStart = ActionType.START_SERVER;
-			BufferedReader reader = runtimeManager.performAction(project, nodeStart, valueMap, null);
+//			ActionType nodeStart = ActionType.START_SERVER;
+//			BufferedReader reader = runtimeManager.performAction(project, nodeStart, valueMap, null);
 			String line;
-			line = reader.readLine();
-			while (!line.startsWith("[INFO] server started") && !line.startsWith("[INFO] server startup failed")) {
-				line = reader.readLine();
-			}
+//			line = reader.readLine();
+//			while (!line.startsWith("[INFO] server started") && !line.startsWith("[INFO] server startup failed")) {
+//				line = reader.readLine();
+//			}
 			waitForTime(2);
 			readLogFile(project, "");
 
@@ -1157,13 +1015,13 @@ public class Build extends FrameworkBaseAction {
 			Map<String, String> valueMap = new HashMap<String, String>(2);
 			valueMap.put(ENVIRONMENT_NAME, environments);
 			valueMap.put(IMPORT_SQL, importSql);
-			ActionType nodeStart = ActionType.START_SERVER;
-			BufferedReader reader = runtimeManager.performAction(project, nodeStart, valueMap, null);
-			String line;
-			line = reader.readLine();
-			while (!line.startsWith("[INFO] server started") && !line.startsWith("[INFO] server startup failed")) {
-				line = reader.readLine();
-			}
+//			ActionType nodeStart = ActionType.START_SERVER;
+//			BufferedReader reader = runtimeManager.performAction(project, nodeStart, valueMap, null);
+//			String line;
+//			line = reader.readLine();
+//			while (!line.startsWith("[INFO] server started") && !line.startsWith("[INFO] server startup failed")) {
+//				line = reader.readLine();
+//			}
 			readLogFile(project, "");
 		} catch (Exception e) {
 			if (debugEnabled) {
@@ -1191,13 +1049,13 @@ public class Build extends FrameworkBaseAction {
 			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
 			Project project = administrator.getProject(projectCode);
 			ProjectRuntimeManager runtimeManager = PhrescoFrameworkFactory.getProjectRuntimeManager();
-			ActionType nodeStop = ActionType.STOP_SERVER;
-			BufferedReader reader = runtimeManager.performAction(project, nodeStop, null, null);
-			String line;
-			line = reader.readLine();
-			while (!line.startsWith("[INFO] BUILD SUCCESS")) {
-				line = reader.readLine();
-			}
+//			ActionType nodeStop = ActionType.STOP_SERVER;
+//			BufferedReader reader = runtimeManager.performAction(project, nodeStop, null, null);
+//			String line;
+//			line = reader.readLine();
+//			while (!line.startsWith("[INFO] BUILD SUCCESS")) {
+//				line = reader.readLine();
+//			}
 			readLogFile(project, "");
 			if (envFile.exists()) {
 				envFile.delete();
@@ -1328,9 +1186,9 @@ public class Build extends FrameworkBaseAction {
 				deleteLogFile();
 				javaMap.put(ENVIRONMENT_NAME, environments);
 				javaMap.put(IMPORT_SQL, importSQL);
-				ActionType serverStart = ActionType.START_SERVER;
-				BufferedReader reader = runtimeManager.performAction(project, serverStart, javaMap, null);
-				getHttpSession().setAttribute(projectCode + REQ_JAVA_START, reader);
+//				ActionType serverStart = ActionType.START_SERVER;
+//				BufferedReader reader = runtimeManager.performAction(project, serverStart, javaMap, null);
+//				getHttpSession().setAttribute(projectCode + REQ_JAVA_START, reader);
 			}
 			boolean connectionAlive = DiagnoseUtil.isConnectionAlive(serverProtocol, serverHost, serverPort);
 			getHttpSession().setAttribute(projectCode + SESSION_JAVA_SERVER_PROTOCOL_VALUE, serverProtocol);
@@ -1448,16 +1306,16 @@ public class Build extends FrameworkBaseAction {
 			}
 			Map<String, String> javaMap = new HashMap<String, String>(2);
 			javaMap.put(ENVIRONMENT_NAME, environments);
-			ActionType serverStop = ActionType.STOP_SERVER;
-			BufferedReader reader = runtimeManager.performAction(project, serverStop, javaMap, null);
-			if (readData) {
-				String line = null;
-				while ((line = reader.readLine()) != null) {
-				}
-			}
+//			ActionType serverStop = ActionType.STOP_SERVER;
+//			BufferedReader reader = runtimeManager.performAction(project, serverStop, javaMap, null);
+//			if (readData) {
+//				String line = null;
+//				while ((line = reader.readLine()) != null) {
+//				}
+//			}
 			getHttpSession().removeAttribute(project.getApplicationInfo().getCode() + SESSION_JAVA_SERVER_STATUS);
 			getHttpSession().removeAttribute(project.getApplicationInfo().getCode() + IMPORT_SQL);
-			getHttpSession().setAttribute(projectCode + REQ_JAVA_STOP, reader);
+//			getHttpSession().setAttribute(projectCode + REQ_JAVA_STOP, reader);
 			getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
 			getHttpRequest().setAttribute(REQ_TEST_TYPE, REQ_JAVA_STOP);
 		} catch (Exception e) {

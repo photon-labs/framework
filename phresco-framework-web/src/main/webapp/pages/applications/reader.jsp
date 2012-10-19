@@ -25,7 +25,7 @@
     String appId = (String) request.getAttribute(FrameworkConstants.REQ_APP_ID);
     String testType = (String) request.getAttribute(FrameworkConstants.REQ_TEST_TYPE);
     if (appId == null && testType == null) {
-        appId = request.getParameter(FrameworkConstants.REQ_PROJECT_CODE);
+        appId = request.getParameter(FrameworkConstants.REQ_APP_ID);
         testType = request.getParameter(FrameworkConstants.REQ_TEST_TYPE);
     }
     BufferedReader reader = (BufferedReader) session.getAttribute(appId + testType);
@@ -38,7 +38,7 @@
                 line = "EOF";
                 session.removeAttribute(appId + testType);
             }
-%>
+%>				
                 <%= line %>
 		<%
 		    } catch (IOException e) {

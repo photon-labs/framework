@@ -21,7 +21,7 @@ package com.photon.phresco.framework.api;
 
 import org.apache.commons.lang.StringUtils;
 
-public abstract class AbstractActionType implements ActionType {
+public abstract class AbstractActionType  {
     public String workingDirectory = null;
     public boolean hideLog = false;
     public boolean showError = false;
