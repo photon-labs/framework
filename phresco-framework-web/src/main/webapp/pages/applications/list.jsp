@@ -180,7 +180,6 @@
 	}
     
  	function popupOnOk(okUrl) {
- 		console.info("inside popupOnOk delete....");
  		var params = $("#formCustomers").serialize();
  		loadContent("deleteProject", $("#formProjectList"), $('#container'), params);
  	}
