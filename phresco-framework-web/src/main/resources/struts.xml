@@ -82,8 +82,13 @@
 			<result name="list">/pages/applications/list.jsp</result>
         </action>
         
-        <action name="delete" method="delete" class="com.photon.phresco.framework.actions.applications.Applications">
+        <action name="deleteProject" method="delete" class="com.photon.phresco.framework.actions.applications.Projects">
             <result name="list">/pages/applications/list.jsp</result>
+        </action>
+        
+        <!--  Applications actions -->
+        <action name="loadMenu" method="loadMenu" class="com.photon.phresco.framework.actions.applications.Applications">
+            <result name="appMenu">/pages/applications/menu.jsp</result>
         </action>
         
         <action name="import" method="importApplication" class="com.photon.phresco.framework.actions.applications.Applications">
@@ -112,11 +117,6 @@
         
         <action name="importGITProject" method="importGITApplication" class="com.photon.phresco.framework.actions.applications.Applications">
             <result type="json"/>
-        </action>
-        
-        <!--  Applications actions -->
-        <action name="loadMenu" method="loadMenu" class="com.photon.phresco.framework.actions.applications.Applications">
-            <result name="appMenu">/pages/applications/menu.jsp</result>
         </action>
         
        	<action name="appInfo" method="editApplication" class="com.photon.phresco.framework.actions.applications.Applications">

@@ -20,7 +20,7 @@
  
 function yesnoPopup(url, title, okUrl, okLabel) {
 	$("a[data-toggle=modal]").click(function() {
-		disableScreen();
+//		disableScreen();
 		$('#popupTitle').html(title); // Title for the popup
 		$('#popupClose').hide();
 	
@@ -43,8 +43,6 @@ function yesnoPopup(url, title, okUrl, okLabel) {
 		popupOnOk(okUrl); // this function will be kept in where the yesnoPopup() called
 	});
 }
-
-
 
 function getBasicParams() {
 	var params = $('#formCustomers').serialize();
@@ -141,7 +139,6 @@ function loadData(data, tag, pageUrl, callSuccessEvent) {
 		} else {
 			tag.empty();
 			tag.html(data);
-			accordion();
 			setTimeOut();
 		}
 	}
@@ -184,7 +181,6 @@ function getParameters(form, additionalParams) {
 	return params;
 }
 
-
 function inActivateAllMenu(allLink) {
 	allLink.attr("class", "inactive");
 }
@@ -203,22 +199,22 @@ function checkAllEvent(currentCheckbox, childCheckBox, disable) {
 	toDisableAllCheckbox(currentCheckbox,childCheckBox, disable);
 }
 
-function checkboxEvent() {
-	var chkboxStatus = $('.check').is(':checked');
+function checkboxEvent(childChkbxObj, parentChkbxObj) {
+	var chkboxStatus = childChkbxObj.is(':checked');
 	buttonStatus(chkboxStatus);
-	if ($('.check').length == $(".check:checked").length) {
-		$('#checkAllAuto').prop('checked', true);
+	if (childChkbxObj.length == childChkbxObj.filter(':checked').length) {
+		parentChkbxObj.prop('checked', true);
 	} else {
-		$('#checkAllAuto').prop('checked', false);
+		parentChkbxObj.prop('checked', false);
 	}
 }
 
 function buttonStatus(checkAll) {
-	$('#del').attr('disabled', !checkAll);
+	$('#deleteBtn').attr('disabled', !checkAll);
 	if (checkAll) {
-		$('#del').addClass('btn-primary');
+		$('#deleteBtn').addClass('btn-primary');
 	} else {
-		$('#del').removeClass('btn-primary');
+		$('#deleteBtn').removeClass('btn-primary');
 	}
 }
 
@@ -285,15 +281,13 @@ function accordion() {
         var _tempIndex = $('.siteaccordion').index(this);
         $('.siteaccordion').removeClass('openreg').addClass('closereg');
         $('.mfbox').each(function(e) {
-            if ($(this).css('display')=='block'){
+            if ($(this).css('display') == 'block') {
                 $(this).slideUp('300');
             }
         });
-        if ($('.mfbox').eq(_tempIndex).css('display')=='none') {
+        if ($('.mfbox').eq(_tempIndex).css('display') == 'none') {
             $(this).removeClass('closereg').addClass('openreg');
-            $('.mfbox').eq(_tempIndex).slideDown(300,function() {
-                
-            });
+            $('.mfbox').eq(_tempIndex).slideDown(300,function() {});
         }
     });
 }
@@ -467,12 +461,12 @@ function textTrim(obj) {
     return val;
 }
 
-$(document).keydown(function(e) {
+/*$(document).keydown(function(e) {
     // ESCAPE key pressed
 	if (e.keyCode == 27) {
 	   showParentPage();
     }
-});
+});*/
 
 //Shows the parent page
 function showParentPage() {
@@ -510,4 +504,22 @@ function fillVersions(obj, data, selectTxt) {
 /** To fill the given text and value into the select box **/
 function fillOptions(obj, value, text, selectTxt) {
 	obj.append($("<option></option>").attr("value", value).text(text));
+}
+
+function confirmDialog(title, bodyText, okUrl, okLabel) {
+	$("#deleteBtn").click(function() {
+//		disableScreen();
+		$('#popupTitle').html(title); // Title for the popup
+		$('#popupClose').hide();
+	
+		$('.modal-body').html(bodyText);
+		
+		if (okLabel !== undefined && !isBlank(okLabel)) {
+			$('#popupOk').html(okLabel); // label for the ok button 
+		}
+	});
+	
+	$('#popupOk').click(function() {
+		popupOnOk(okUrl); // this function will be kept in where the yesnoPopup() called
+	});
 }

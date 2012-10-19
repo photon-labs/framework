@@ -205,7 +205,7 @@
   }
 
   $.fn.modal.defaults = {
-      backdrop: false
+      backdrop: true
     , keyboard: true
     , show: true
   }

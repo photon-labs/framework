@@ -61,8 +61,6 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import com.google.gson.Gson;
-import com.photon.phresco.commons.AndroidConstants;
-import com.photon.phresco.commons.XCodeConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.configuration.Environment;
@@ -87,6 +85,7 @@ import com.photon.phresco.framework.model.SettingsInfo;
 import com.photon.phresco.param.api.DynamicParameter;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues;
+import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
 import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.IosSdkUtil;
@@ -480,7 +479,7 @@ public class Build extends FrameworkBaseAction {
 		for (Parameter parameter : parameters) {
 			if (parameter.getDynamicParameter() != null) {
 				PossibleValues dynamicEnvs = getDynamicValues(applicationInfo, parameter.getDynamicParameter().getClazz());
-				List<String> dynamicEnvsNames = dynamicEnvs.getValue();
+				List<Value> dynamicEnvsNames = dynamicEnvs.getValue();
 				setReqAttribute(REQ_DYNAMIC_ENV_NAMES, dynamicEnvsNames);
 			}
 		}

@@ -340,7 +340,7 @@
 			</div>
 			<div class="modal-footer">
 				<a href="#" class="btn btn-primary" data-dismiss="modal" id="popupCancel"><s:text name='lbl.btn.cancel'/></a>
-				<a href="#" class="btn btn-primary" id="popupOk"><s:text name='lbl.btn.ok'/></a>
+				<a href="#" class="btn btn-primary" data-dismiss="modal" id="popupOk"><s:text name='lbl.btn.ok'/></a>
 				<a href="#" class="btn btn-primary" data-dismiss="modal" id="popupClose"><s:text name='lbl.btn.close'/></a>
 			</div>
 		</div>

@@ -133,17 +133,13 @@
 			</div>
 		</div>
 		<!-- PreBuild/Build it myself ends -->
-		
-		<div class="control-group" id="layerControl" style="text-align: center; color: #B94A48;">
-		
-		</div>
 	
 		<!-- Application layer accordion starts -->
 		<div class="theme_accordion_container">
 			<section class="accordion_panel_wid">
 				<div class="accordion_panel_inner">
 					<section class="lft_menus_container">
-						<span class="siteaccordion closereg" id="appLayerControl">
+						<span class="siteaccordion closereg" id="appLayerControl" onclick="accordionClick(this, $('input[value=<%= appLayerId %>]'));">
 							<span>
 								<input type="checkbox" id="checkAll1" class="accordianChkBox" name="layer" value="<%= appLayerId %>"/>
 								<a id="appLayerHeading" class="vAlignSub"><%= appLayerName %></a>
@@ -189,7 +185,7 @@
 			<section class="accordion_panel_wid">
 				<div class="accordion_panel_inner">
 					<section class="lft_menus_container">
-						<span class="siteaccordion closereg" id="webLayerControl">
+						<span class="siteaccordion closereg" id="webLayerControl" onclick="accordionClick(this, $('input[value=<%= webLayerId %>]'));">
 							<span>
 								<input type="checkbox" id="checkAll1" class="accordianChkBox" name="layer" value="<%= webLayerId %>"/>
 								<a id="webLayerHeading" class="vAlignSub"><%= webLayerName %></a>
@@ -252,7 +248,7 @@
 			<section class="accordion_panel_wid">
 				<div class="accordion_panel_inner">
 					<section class="lft_menus_container">
-						<span class="siteaccordion closereg" id="mobileLayerControl">
+						<span class="siteaccordion closereg" id="mobileLayerControl" onclick="accordionClick(this, $('input[value=<%= mobileLayerId %>]'));">
 							<span>
 								<input type="checkbox" id="checkAll1" class="accordianChkBox" name="layer" value="<%= mobileLayerId %>"/>
 								<a id="mobileLayerHeading" class="vAlignSub"><%= mobileLayerName %></a>
@@ -322,11 +318,14 @@
 <!--  Submit and Cancel buttons Starts -->
 <div class="actions">
 	<input type="button" id="createProject" value="<s:text name="lbl.create"/>" class="btn btn-primary">
-	<input type="button" id="cancel" value="<s:text name="label.cancel"/>" class="btn btn-primary">
+	<input type="button" id="cancel" value="<s:text name="label.cancel"/>" class="btn btn-primary" 
+		onclick="loadContent('applications', $('#formCustomers'), $('#container'));"> 
 </div>
 <!--  Submit and Cancel buttons Ends -->
 
 <script type="text/javascript">
+	addProjectAccordion();
+	
 	//To check whether the device is ipad or not and then apply jquery scrollbar
 	if(!isiPad()) {
 		$(".appInfoScrollDiv").scrollbars();
@@ -341,6 +340,24 @@
 			validate('createProject', $('#formCreateProject'), $("#container"), params, '<s:text name='progress.txt.add.proj'/>');
 		});
 	});
+	
+	function addProjectAccordion() {
+	    $('.siteaccordion').removeClass('openreg').addClass('closereg');
+	    $('.mfbox').css('display','none');
+	}
+	
+	function accordionClick(thisObj, currentChkBoxObj) {
+		var _tempIndex = $('.siteaccordion').index(thisObj);
+			
+		var isChecked = currentChkBoxObj.is(":checked");
+		if (isChecked) {
+			$(thisObj).removeClass('closereg').addClass('openreg');
+			$('.mfbox').eq(_tempIndex).slideDown(300,function() {});			
+		} else {
+			$(thisObj).removeClass('openreg').addClass('closereg');
+			$('.mfbox').eq(_tempIndex).slideUp(300,function() {});
+		}
+    }
 	
 	//To show the validation error messages
 	function findError(data) {

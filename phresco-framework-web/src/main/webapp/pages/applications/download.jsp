@@ -267,8 +267,12 @@
 </div>
 
 <script type="text/javascript">
+	accordion();//To create the accordion
 	
-	$(".mfbox").scrollbars();
+	//To check whether the device is ipad or not and then apply jquery scrollbar
+	if(!isiPad()) {
+		$(".mfbox").scrollbars();
+	}
 	
 	$(document).ready(function(){
 		hideLoadingIcon();

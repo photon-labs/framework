@@ -19,13 +19,13 @@
   --%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
-<%@ page import="org.apache.commons.collections.CollectionUtils"%>
 <%@ page import="java.util.ArrayList"%>
 <%@ page import="java.util.List"%>
 
+<%@ page import="org.apache.commons.collections.CollectionUtils"%>
+
 <%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
 <%@ page import="com.photon.phresco.commons.model.ProjectInfo"%>
-<%@ page import="com.photon.phresco.framework.api.ValidationResult" %>
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 
 <%
@@ -40,16 +40,13 @@
 
 <form id="formProjectList" class="projectList">
 	<div class="operation">
-		<input type="button" class="btn btn-primary" name="addProject" id="addProject" 
-	         onclick="loadContent('addProject', $('#formCustomers'), $('#container'));" 
-		         value="<s:text name='lbl.projects.add'/>"/>
+		<input type="button" class="btn btn-primary" name="addProject" id="addProject" value="<s:text name='lbl.projects.add'/>"
+			onclick="loadContent('addProject', $('#formCustomers'), $('#container'));"/>
 
-		<input type="button" class="btn btn-primary" name="importAppln" id="importAppln" 
-	         onclick="loadContent('importAppln', $('#formProjectList'), $('#subcontainer'));" 
-		         value="<s:text name='lbl.applications.import'/>"/>
+		<input type="button" class="btn btn-primary" name="importAppln" id="importAppln" value="<s:text name='lbl.applications.import'/>"
+			onclick="loadContent('importAppln', $('#formProjectList'), $('#subcontainer'));"/>
 		         
-		<input type="button" class="btn" id="del" disabled value="<s:text name='lbl.delete'/>"
-			onclick="showDeleteConfirmation('<s:text name='lbl.delete'/>');"/>
+		<input type="button" class="btn" id="deleteBtn" disabled value="<s:text name='lbl.delete'/>" data-toggle="modal" href="#popupPage"/>
 			
 		<s:if test="hasActionMessages()">
 			<div class="alert alert-success alert-message" id="successmsg" >
@@ -76,7 +73,7 @@
 						<section class="lft_menus_container">
 							<span class="siteaccordion closereg">
 								<span>
-									<input type="checkbox" id="checkAll1" class="accordianChkBox"/>
+									<input type="checkbox" id="<%= project.getId() %>" class="accordianChkBox" onclick="checkAllEvent(this, $('.<%= project.getId() %>'), false);"/>
 									<a class="vAlignSub"><%= project.getName() %></a>
 								</span>
 							</span>
@@ -87,8 +84,6 @@
 								    		<thead>
 								    			<tr class="header-background">
 								    				<th class="no-left-bottom-border table-pad table-chkbx">
-								    					<input type="checkbox" value="" id="checkAllAuto" name="checkAllAuto" 
-															onclick="checkAllEvent(this,$('.selectedProjects'), false);">
 								    				</th>
 								    				<th class="no-left-bottom-border table-pad">
 								    					<s:label key="lbl.name" cssClass="labelbold"/>
@@ -115,7 +110,8 @@
 												%>
 															<tr>
 																<td class="no-left-bottom-border table-pad">
-																	<input type="checkbox" class="check selectedProjects" name="selectedProjects" value="<%= appInfo.getCode() %>">
+																	<input type="checkbox" class="check <%= project.getId() %>" name="selectedProjectId" value="<%= appInfo.getCode() %>"
+																		onclick="checkboxEvent($('.<%= project.getId() %>'), $('#<%= project.getId() %>'));">
 																</td>
 																<td class="no-left-bottom-border table-pad">
 																	<a href="#" onclick="editApplication('<%= project.getId() %>', '<%= appInfo.getId() %>');" name="edit">
@@ -160,6 +156,10 @@
 </form>
 
 <script type="text/javascript">
+	accordion();//To create the accordion
+	
+	confirmDialog('<s:text name="lbl.hdr.confirm.dialog"/>', '<s:text name="modal.body.text.del.project"/>', 'build','<s:text name="lbl.btn.ok"/>');
+	
 	//To check whether the device is ipad or not and then apply jquery scrollbar
 	if (!isiPad()) {
 // 		$(".table_div").scrollbars();  
@@ -179,9 +179,9 @@
 		loadContent("loadMenu", $("#formCustomers"), $('#container'), params);
 	}
     
- 	// This method calling from confirmDialog.jsp
-    function continueDeletion() {
-    	confirmDialog('none','');
-    	loadContent('configtempDelete', $('#formProjectList'), $('#container'));
-    }
+ 	function popupOnOk(okUrl) {
+ 		console.info("inside popupOnOk delete....");
+ 		var params = $("#formCustomers").serialize();
+ 		loadContent("deleteProject", $("#formProjectList"), $('#container'), params);
+ 	}
 </script>

@@ -58,6 +58,8 @@ public class Projects extends FrameworkBaseAction {
 
     private List<TechnologyInfo> widgets = null;
     private List<String> versions = null;
+    
+    private List<String> selectedProjectId = new ArrayList<String>();
 
     private boolean errorFound = false;
     private String projectNameError = "";
@@ -306,6 +308,32 @@ public class Projects extends FrameworkBaseAction {
 
         return applicationInfo;
     }
+    
+    /**
+     * To delete the selected projects or applications
+     * @return
+     */
+    public String delete() {
+        if (s_debugEnabled) {
+            S_LOGGER.debug("Entering Method  Applications.validateForm()");
+        }
+        
+        /*try {
+            ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
+            if (CollectionUtils.isNotEmpty(getSelectedProjectId())) {
+                List<ProjectInfo> deletableProjectInfos = new ArrayList<ProjectInfo>();
+                for (String projectId : getSelectedProjectId()) {
+                    deletableProjectInfos.add(projectManager.getProject(projectId, getCustomerId()));
+                    ProjectInfo projectInfo = projectManager.getProject(projectId, getCustomerId());
+                }
+            }
+            projectManager.delete(null);
+        } catch (PhrescoException e) {
+
+        }*/
+        
+        return list();
+    }
 
     /**
      * To validate the form fields
@@ -486,5 +514,13 @@ public class Projects extends FrameworkBaseAction {
 
     public void setLayerError(String layerError) {
         this.layerError = layerError;
+    }
+    
+    public List<String> getSelectedProjectId() {
+        return selectedProjectId;
+    }
+
+    public void setSelectedProjectId(List<String> selectedProject) {
+        this.selectedProjectId = selectedProject;
     }
 }
