@@ -64,13 +64,13 @@ public class Configurations extends FrameworkBaseAction {
     private static final Logger S_LOGGER = Logger.getLogger(Configurations.class);
     private static Boolean debugEnabled  = S_LOGGER.isDebugEnabled();
     
-    private List<String> environments = null;
+    private List<Environment> environments = new ArrayList<Environment>(1);
     
-   /* public List<String> getEnvironments() {
+    public List<Environment> getEnvironments() {
         return environments;
-    }*/
+    }
     
-    public void setEnvironments(List<String> environments) {
+    public void setEnvironments(List<Environment> environments) {
         this.environments = environments;
     }
 
@@ -116,7 +116,7 @@ public class Configurations extends FrameworkBaseAction {
         
 		Project project = null;
     	try {
-    	    List<Environment> environments = getEnvironments();
+    	    List<Environment> environments = getAllEnvironments();
 //            configManager.get
 //            project = administrator.getProject(projectCode);
 //            List<Environment> environments = administrator.getEnvironments(project);
@@ -144,14 +144,14 @@ public class Configurations extends FrameworkBaseAction {
      * @throws PhrescoException
      * @throws ConfigurationException
      */
-    private List<Environment> getEnvironments() throws PhrescoException, ConfigurationException {
+    private List<Environment> getAllEnvironments() throws PhrescoException, ConfigurationException {
         ConfigManager configManager = getConfigManager();
         return configManager.getEnvironments();
     }
     
     public String openEnvironmentPopup() {
         try {
-            getHttpRequest().setAttribute(REQ_ENVIRONMENTS, getEnvironments());
+            getHttpRequest().setAttribute(REQ_ENVIRONMENTS, getAllEnvironments());
         } catch (PhrescoException e) {
             e.printStackTrace();
             return showErrorPopup(e, getText(CONFIG_FILE_FAIL));
@@ -360,9 +360,15 @@ public class Configurations extends FrameworkBaseAction {
     public String createEnvironment() {
     	try {
     	    
-    	    getConfigManager().getEnvironments();
+    	    System.out.println("createEnvironment ================= ");
+//    	    getConfigManager().getEnvironments();
     	    
-            String[] split = null;
+    	    System.out.println("envs = " + getEnvironments());
+    	    System.out.println("createEnvironment add ================= ");
+    	    getConfigManager().addEnvironments(getEnvironments());
+    	    
+    	    
+            /*String[] split = null;
             ProjectAdministrator administrator = PhrescoFrameworkFactory
                     .getProjectAdministrator();
             Project project = administrator.getProject(projectCode);
@@ -394,8 +400,9 @@ public class Configurations extends FrameworkBaseAction {
 				addActionMessage(getText(DELETE_ENVIRONMENT));
 			} else if(CollectionUtils.isNotEmpty(environments) && StringUtils.isEmpty(selectedItems)) {
 				addActionMessage(getText(CREATE_SUCCESS_ENVIRONMENT));
-			}
+			}*/
     	} catch(Exception e) {
+    	    e.printStackTrace();
     		if (debugEnabled) {
                 S_LOGGER.error("Entered into catch block of Configurations.createEnvironment()" + FrameworkUtil.getStackTraceAsString(e));
      		}

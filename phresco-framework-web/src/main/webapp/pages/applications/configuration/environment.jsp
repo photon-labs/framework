@@ -48,8 +48,7 @@
 		</label>
 		<div class="controls">
 			<textarea name="envDesc" id="envDesc" class="input-xlarge" 
-				 maxlength="150" title="<s:text name='title.150.chars'/>" placeholder="<s:text name='place.hldr.env.desc'/>">
-			</textarea>
+				 maxlength="150" title="<s:text name='title.150.chars'/>" placeholder="<s:text name='place.hldr.env.desc'/>"></textarea>
 			<input type="button" value="<s:text name='lbl.btn.add'/>" tabindex=3 id="add" class="btn btn-primary addButton">
 		</div>
 	</div>
@@ -61,12 +60,13 @@
                 <ul>
                 <% for (Environment environment : environments ) {
                 	String disable = "";
-                	if (environment.isDefaultEnv() || CollectionUtils.isNotEmpty(environment.getConfigurations())) {
-                		disable = "disabled";
-                	}
+                	//if (environment.isDefaultEnv() || CollectionUtils.isNotEmpty(environment.getConfigurations())) {
+                		//disable = "disabled";
+                	//}
                  %>
 	       			<li>
-						<input type="checkbox" name="envNames" class="check techCheck" value="<%= environment.getName() %>" 
+						<input type="checkbox" name="envNames" class="check techCheck" 
+							value='{"name": "<%= environment.getName() %>", "desc": "<%= environment.getDesc() %>", "defaultEnv": "<%= environment.isDefaultEnv() %>" }' 
 							title="<%= environment.getDesc() %>" <%= disable %>/><%= environment.getName() %>
 					</li>
 				<% } %>
@@ -91,13 +91,15 @@
 
 <script type="text/javascript">
 	$('#add').click(function() {
-		addCheckbox();
+		addRow();
 	});
 	
-	function addCheckbox() {
+	function addRow() {
 		var value = $('#envName').val();
-		var title = $('#envDesc').val();
-		var checkbox = '<input type="checkbox" name="envNames" class="check techCheck" value="' + value + '" title="' + title + '" />' + value;
+		var desc = $('#envDesc').val();
+		var checkValue = '{"name": "' + value + '", "desc": "' + desc + '", "defaultEnv": "false" }';
+		
+		var checkbox = '<input type="checkbox" name="envNames" class="check techCheck" value=\'' + checkValue + '\' title="' + desc + '" />' + value;
 		$("#multiselect ul li:last").after('<li>' + checkbox + '</li>');
 	}
 	

@@ -90,6 +90,7 @@
 		<script type="text/javascript" src="js/delete.js" ></script>
 		<script type="text/javascript" src="js/loading.js"></script>
 		<script type="text/javascript" src="js/reader.js" ></script>
+		<script type="text/javascript" src="js/jquery-tojson.js" ></script>
 		
 		<!-- Window Resizer -->
 		<script type="text/javascript" src="js/windowResizer.js"></script>
@@ -340,7 +341,7 @@
 			</div>
 			<div class="modal-footer">
 				<a href="#" class="btn btn-primary" data-dismiss="modal" id="popupCancel"><s:text name='lbl.btn.cancel'/></a>
-				<a href="#" class="btn btn-primary" data-dismiss="modal" id="popupOk"><s:text name='lbl.btn.ok'/></a>
+				<a href="#" class="btn btn-primary popupOk" data-dismiss="modal" id=""><s:text name='lbl.btn.ok'/></a>
 				<a href="#" class="btn btn-primary" data-dismiss="modal" id="popupClose"><s:text name='lbl.btn.close'/></a>
 			</div>
 		</div>

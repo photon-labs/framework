@@ -83,6 +83,13 @@
         </dependency>
         
         <dependency>
+            <groupId>org.apache.struts</groupId>
+            <artifactId>struts2-json-plugin</artifactId>
+            <version>${struts2-json-plugin.version}</version>
+        </dependency>
+        
+        
+        <dependency>
             <groupId>struts</groupId>
             <artifactId>struts</artifactId>
             <version>${struts.version}</version>
@@ -154,12 +161,6 @@
             <groupId>xalan</groupId>
             <artifactId>xalan</artifactId>
             <version>${xalan.version}</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.apache.struts</groupId>
-            <artifactId>struts2-json-plugin</artifactId>
-            <version>${struts2-json-plugin.version}</version>
         </dependency>
         
         <dependency>

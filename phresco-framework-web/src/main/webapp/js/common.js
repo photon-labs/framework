@@ -24,23 +24,28 @@ function yesnoPopup(url, title, okUrl, okLabel) {
 		$('#popupTitle').html(title); // Title for the popup
 		$('#popupClose').hide();
 	
+		$(".popupOk").attr('id', okUrl); // popup action mapped to id
+
 		if (okLabel !== undefined && !isBlank(okLabel)) {
-			$('#popupOk').html(okLabel); // label for the ok button 
+			$('#' + okUrl).html(okLabel); // label for the ok button 
 		}
-		$('#popupOk').attr("okUrl", okUrl);
+		
 		var data = "";
 		data = getBasicParams();
 		/*if (params !== undefined && !isBlank(params)) {
 			data = params;
 		}*/
+
 		data = data.concat("&");
 		var additionalParam = $(this).attr('additionalParam');
 		data = data.concat(additionalParam);
+
+		$('.modal-body').empty();
 		$('.modal-body').load(url, data); //url to render the body content for the popup
-	});
-	
-	$('#popupOk').click(function(){
-		popupOnOk(okUrl); // this function will be kept in where the yesnoPopup() called
+
+		$('#' + okUrl).click(function() {
+			popupOnOk(okUrl); // this function will be kept in where the yesnoPopup() called
+		});
 	});
 }
 
@@ -50,6 +55,13 @@ function getBasicParams() {
 	params = params.concat($('#formAppMenu').serialize());
 	
 	return params;
+}
+
+function getBasicParamsAsJson() {
+	var customersJson = $('#formCustomers').toJSON();
+	var appMenuJson = $('#formAppMenu').toJSON();
+	var jsonObject = $.extend(customersJson, appMenuJson);
+	return '"customerId": "' + jsonObject.customerId + '", "projectId": "' + jsonObject.projectId + '", "appId": "' + jsonObject.appId + '"'; 
 }
 
 function progressPopup(url, title) {
@@ -515,11 +527,12 @@ function confirmDialog(title, bodyText, okUrl, okLabel) {
 		$('.modal-body').html(bodyText);
 		
 		if (okLabel !== undefined && !isBlank(okLabel)) {
-			$('#popupOk').html(okLabel); // label for the ok button 
+			$('a [class ~= "popupOk"]').attr('id', okUrl);
+			$('#' + okUrl).html(okLabel); // label for the ok button 
 		}
 	});
 	
-	$('#popupOk').click(function() {
+	$('#' + okUrl).click(function() {
 		popupOnOk(okUrl); // this function will be kept in where the yesnoPopup() called
 	});
 }

@@ -164,13 +164,36 @@
 </form>
 
 <script type="text/javascript">
-	yesnoPopup('openEnvironmentPopup', "<s:text name='lbl.environment'/>");
+	yesnoPopup('openEnvironmentPopup', "<s:text name='lbl.environment'/>", 'createEnvironment');
 	
 	$(document).ready(function() {
 		hideLoadingIcon();//To hide the loading icon
 	});
 	
 	function popupOnOk(url) {
-			
+		var envs = [];
+		$('[name="envNames"]').each(function() {
+			envs.push($(this).val());
+		});
+		
+		var basicParams = getBasicParamsAsJson();
+		var params = '{' + basicParams + ', "environments": [' + envs.join(',') + ']}';
+		//var jsonParams = $.extend(basciParams, envs);
+		//var params = JSON.stringify(jsonParams);
+		alert('params === ' + params);
+		
+		//var env1 = '{"environments": [ { "name" : "Production", "desc" : "My Prod", "defaultEnv" : "true" }, { "name" : "Dev", "desc" : "My Dev", "defaultEnv" : "false" }]}'
+		$.ajax({
+			url : url,
+			data : params,
+			type : "POST",
+			dataType : "json",
+			contentType: "application/json; charset=utf-8",
+			success : function(data) {
+				//hideProgressBar();
+				//loadData(data, tag);
+			}
+		});	
 	}
+
 </script>
