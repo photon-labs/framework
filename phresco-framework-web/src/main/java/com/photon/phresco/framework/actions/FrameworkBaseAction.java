@@ -242,7 +242,7 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
         return serviceManager.getUserInfo();
     }
     
-	public ProjectInfo getProjectInfo() throws PhrescoException {
+	protected ProjectInfo getProjectInfo() throws PhrescoException {
 		ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
 		ProjectInfo projectInfo = projectManager.getProject(getProjectId(), getCustomerId());
 		return projectInfo;

@@ -212,7 +212,7 @@ public class Projects extends FrameworkBaseAction {
         }
 
         try {
-            PhrescoFrameworkFactory.getProjectManager().create(getProjectInfo(), getServiceManager());
+            PhrescoFrameworkFactory.getProjectManager().create(createProjectInfo(), getServiceManager());
         } catch (PhrescoException e) {
             return showErrorPopup(e, EXCEPTION_PROJECT_CREATE);
         }
@@ -225,7 +225,7 @@ public class Projects extends FrameworkBaseAction {
      * @return
      * @throws PhrescoException
      */
-    private ProjectInfo getProjectInfo() throws PhrescoException {
+    private ProjectInfo createProjectInfo() throws PhrescoException {
         ProjectInfo projectInfo = new ProjectInfo();
         projectInfo.setName(getProjectName());
         projectInfo.setVersion(getProjectVersion());
