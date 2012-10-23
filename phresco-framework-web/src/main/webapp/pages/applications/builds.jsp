@@ -47,9 +47,11 @@
 
 <%
     List<BuildInfo> buildInfos = (List<BuildInfo>) request.getAttribute(FrameworkConstants.REQ_BUILD);
-    ApplicationInfo selectedInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_APPINFO);
-    String projectCode = "PHR_html5JqueryMoiEs";
-    String technology = "tech-html5-jquery-mobile-widget";
+    ApplicationInfo applicationInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_APPINFO);
+    String appDirectory = "";
+    if (applicationInfo != null) {
+    	appDirectory = applicationInfo.getAppDirName(); 
+    }
 %>
 
 <% if (CollectionUtils.isEmpty(buildInfos)) { %>
@@ -60,7 +62,7 @@
 		<div class="build_table_div">
 			<div class="fixed-table-container">
 	      		<div class="header-background"> </div>
-	      		<div class="fixed-table-container-inner">
+	      		<div class="fixed-table-container-inner builds-list-table">
 			        <table cellspacing="0" class="zebra-striped">
 			          	<thead>
 				            <tr>
@@ -76,15 +78,11 @@
 				                	<div class="th-inner"><s:text name="label.date"/></div>
 				              	</th>
 				              	<th class="third">
-				                	<div class="th-inner"><s:text name="label.download"/></div>
+				                	<div class="th-inner"><s:text name="lbl.download"/></div>
 				              	</th>
-				              	<% if (!(TechnologyTypes.NODE_JS_WEBSERVICE.equals(technology) || TechnologyTypes.JAVA_STANDALONE.contains(technology))) { %>
-					              	<th class="third">
-					                	<div class="th-inner">
-					                		Deploy
-					                	</div>
-					              	</th>
-				              	<% } %>
+				              	<th class="third">
+				                	<div class="th-inner"><s:text name="label.deploy"></s:text></div>
+				              	</th>
 				            </tr>
 			          	</thead>
 			
@@ -98,6 +96,25 @@
 			              		</td>
 			              		<td><%= buildInfo.getBuildNo() %></td>
 			              		<td style="width: 40%;">
+	              					<label class="bldLable" title="Configured with <%= buildInfo.getEnvironments() %>"><%= buildInfo.getTimeStamp() %></label>
+			              		</td>
+			              		<td>
+			              			<a href="<s:url action='downloadBuild'>
+					          		     <s:param name="buildNumber"><%= buildInfo.getBuildNo() %></s:param>
+					          		     <s:param name="appDirectory"><%= appDirectory %></s:param>
+					          		     </s:url>"><img src="images/icons/download.png" title="<%= buildInfo.getBuildName()%>"/>
+		                            </a>
+			              		</td>
+		              			<td>
+		              				<a class="deploy"  data-toggle="modal" href="#popupPage" additionalParam="from=deploy&buildNumber=<%= buildInfo.getBuildNo() %>">
+		              				 	<img src="images/icons/deploy.png" />
+		              				</a>
+	                                <%-- <a id="buildNumberHref#<%= buildInfo.getBuildNo() %>" href="#" value="<%= buildInfo.getBuildNo() %>" onClick="deploy(this);">
+	                                    <img src="images/icons/deploy.png" />
+	                                </a> --%>
+			              		</td>
+			              	</tr>	
+			              		<%-- <td style="width: 40%;">
 			              				<% if (TechnologyTypes.JAVA_STANDALONE.contains(technology)) { %>
 			              					<label class="bldLable"><%= buildInfo.getTimeStamp() %></label>
 			              				<% } else { %>
@@ -149,8 +166,7 @@
 				       	  					<img src="images/icons/deploy.png" />
 				       	  				</a>
 				       	  			<% } %>
-			              		</td>
-			            	</tr>
+			              		</td> --%>
 			            <%
 							}
 						%>	
@@ -171,22 +187,23 @@
 	
 	$(document).ready(function() {
 		hideLoadingIcon();//To hide the loading icon
+		yesnoPopup($(".deploy"), 'showDeploy', '<s:text name="label.deploy"/>', 'deploy','<s:text name="label.deploy"/>');
 	});
 	
 	// By default disable all Run buttons under builds
     $(".nodejs_startbtn").attr("class", "btn disabled");
     $(".nodejs_startbtn").attr("disabled", true);
 	
-    if (<%= TechnologyTypes.NODE_JS_WEBSERVICE.equals(technology) %>) {
+   <%--  if (<%= TechnologyTypes.NODE_JS_WEBSERVICE.equals(technology) %>) {
         $('.build_td4').css("width", "18.5%");  
-    }
+    } --%>
     
-    function startNodeJS(obj) {
+   <%--  function startNodeJS(obj) {
 		$("#build-output").empty();
 		$("#build-output").html("Server is starting...");  
         var params = "buildNumber=";
         params = params.concat(obj.id);
-        readerHandlerSubmit('startNodeJSServer', '<%= projectCode %>', '', params, true);
+        readerHandlerSubmit('startNodeJSServer', '<%=  %>', '', params, true);
     }
     
     function stopNodeJS() {
@@ -202,7 +219,7 @@
     	$("#build-output").html("Server is restarting...");
       	$("#stopbtn").attr("class", "btn disabled");
        	$("#restartbtn").attr("class", "btn disabled");
-        readerHandlerSubmit('restartNodeJSServer', '<%= projectCode %>', '<%= FrameworkConstants.REQ_READ_LOG_FILE %>', '', true);
-    } 
+        readerHandlerSubmit('restartNodeJSServer', '', '<%= FrameworkConstants.REQ_READ_LOG_FILE %>', '', true);
+    }  --%>
 
 </script>

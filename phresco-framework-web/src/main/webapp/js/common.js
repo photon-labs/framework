@@ -18,8 +18,8 @@
  * ###
  */
  
-function yesnoPopup(url, title, okUrl, okLabel) {
-	$("a[data-toggle=modal]").click(function() {
+function yesnoPopup(modalObj, url, title, okUrl, okLabel) {
+		modalObj.click(function() {
 		$('#popupClose').hide();
 
 		$('#popupTitle').html(title); // Title for the popup
@@ -525,7 +525,6 @@ function confirmDialog(title, bodyText, okUrl, okLabel) {
 	});
 	
 	$('#' + okUrl).click(function() {
-		alert('going to click confirmDialog ok....');
 		popupOnOk(okUrl); // this function will be kept in where the yesnoPopup() called
 	});
 }

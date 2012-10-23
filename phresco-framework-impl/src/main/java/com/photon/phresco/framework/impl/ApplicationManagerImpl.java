@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.Commandline;
@@ -66,10 +67,7 @@ public class ApplicationManagerImpl implements ApplicationManager {
 					"Project project, ActionType action, Map<String, String> paramsMap,CallBack callBack)");
 			S_LOGGER.debug("performAction() ProjectInformation = "+projectInfo.getAppInfos().get(0));
 		}
-//    	StringBuilder command = action.getCommand();
-//    	if (action.getCommand() == null) {
-    		StringBuilder command = buildMavenCommand(action, mavenArgCommands);
-//    	}
+		StringBuilder command = buildMavenCommand(action, mavenArgCommands);
     	return executeMavenCommand(projectInfo, action, command, workingDirectory);
 	}
 
@@ -92,6 +90,20 @@ public class ApplicationManagerImpl implements ApplicationManager {
 	}
 	
 	@Override
+	public BuildInfo getBuildInfo(int buildNumber, String buildInfoFileDirectory) throws PhrescoException {
+		List<BuildInfo> buildInfos = getBuildInfos(new File(buildInfoFileDirectory));
+		if (CollectionUtils.isNotEmpty(buildInfos)) {
+			for (BuildInfo buildInfo : buildInfos) {
+				if (buildInfo.getBuildNo() == buildNumber) {
+					return buildInfo;
+				}
+			}
+		}
+		
+		return null;
+	}
+	
+	@Override
 	public ApplicationInfo getApplicationInfo(String customerId, String projectId, String appId) throws PhrescoException {
 		ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
 		List<ProjectInfo> projectInfos = projectManager.discover(customerId);
@@ -108,7 +120,6 @@ public class ApplicationManagerImpl implements ApplicationManager {
 
 		return null;
 	}
-	
 	
 	public StringBuilder buildMavenCommand(ActionType actionType, List<String> mavenArgCommands) {
 		if (isDebugEnabled) {
@@ -133,15 +144,11 @@ public class ApplicationManagerImpl implements ApplicationManager {
     		S_LOGGER.debug("executeMavenCommand() Project Code = " + projectInfo.getProjectCode());
     		S_LOGGER.debug("executeMavenCommand() Command = " + command.toString());
     		S_LOGGER.debug("executeMavenCommand() ActionType Name = " + action.getActionType());
-//    		S_LOGGER.debug("executeMavenCommand() ActionType Working directory = " + action.getWorkingDirectory());
 		}
 		Commandline cl = new Commandline(command.toString());
-//        String workingDirectory = action.getWorkingDirectory();
-//        if (StringUtils.isNotEmpty(workingDirectory)) {
-//            cl.setWorkingDirectory(workingDirectory);
-//        } else {
+        if (StringUtils.isNotEmpty(workingDirectory)) {
             cl.setWorkingDirectory(workingDirectory);
-//        }
+        } 
         try {
             Process process = cl.execute();
             return new BufferedReader(new InputStreamReader(process.getInputStream()));

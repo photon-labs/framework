@@ -31,6 +31,7 @@ public interface FrameworkConstants {
     String LAYER_MOB_ID = "mob-layer";
     String LAYER_APP_ID = "app-layer";
     String LAYER_WEB_ID = "web-layer";
+    String CSV_PATTERN = "\\s*,\\s*";
     
 	String FEATURES = "features"; 
     int JOB_STATUS_NOTOK = -1;
@@ -1472,6 +1473,13 @@ public interface FrameworkConstants {
 		String EXCEPTION_PROJECT_ADD = "excep.hdr.proj.add";
 		String EXCEPTION_PROJECT_MOB_TECH_VERSIONS = "excep.hdr.proj.mob.tech.versions";
 		String EXCEPTION_PROJECT_WEB_LAYER_WIDGETS = "excep.hdr.proj.web.layer.widgets";
+		String EXCEPTION_GENERATE_BUILD = "exception.generate.build";
+		String EXCEPTION_GENERATE_DEPLOY = "exception.generate.deploy";
+		String EXCEPTION_BUILD = "exception.build";
+		String EXCEPTION_DEPLOY = "exception.deploy";
+		String EXCEPTION_LOAD_CLASS = "exception.load.class";
+		
+		String EXCEPTION_BUILDS = "exception.builds.table";
 		
 		/**
 		 * Dynamic Parameter Constants
@@ -1485,13 +1493,7 @@ public interface FrameworkConstants {
 		String TYPE_LIST = "list";
 		String TYPE_DYNAMIC_PARAMETER = "DynamicParameter";
 		String PHRESCO_PLUGIN_INFO_XML = "phresco-plugin-info.xml";
-		
+		String PLUGIN_PARAMETER_FRAMEWORK = "framework";
 		String REQ_DYNAMIC_PARAMETERS = "parameters";
 		String REQ_DYNAMIC_POSSIBLE_VALUES = "possibleValues";
-		String PLUGIN_PARAMETER_FRAMEWORK = "framework";
-		
-		/**
-		 * Exception Popup Constants
-		 */
-		String EXCEPTION_GENERATE_BUILD = "exception.generate.build";
 }

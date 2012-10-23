@@ -40,7 +40,7 @@ function readerHandler(data, appId, testType, pageUrl) {
 	   $('#build-output').prop('scrollTop', $('#build-output').prop('scrollHeight'));
 	   
 	   if(testType == "build") {
-		   refreshTable(appId);
+		   refreshTable();
 	   }
 	   return;
    }
@@ -85,15 +85,6 @@ function asyncHandler(appId, testType, pageUrl) {
     });
 }
 
-function refreshTable(appId) {
-    $.ajax({
-         url : 'builds',
-         data : {
-             'appId' : appId
-         },
-         type : "POST",
-         success : function(data) { 
-             $('#build-body-container').html(data);
-         }
-     });
+function refreshTable() {
+	loadContent('builds', '', $('#build-body-container'), getBasicParams());
  }

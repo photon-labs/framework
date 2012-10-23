@@ -29,6 +29,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -44,6 +45,7 @@ import com.opensymphony.xwork2.ActionSupport;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.LogInfo;
+import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.TechnologyInfo;
 import com.photon.phresco.commons.model.User;
 import com.photon.phresco.exception.PhrescoException;
@@ -51,11 +53,13 @@ import com.photon.phresco.framework.FrameworkConfiguration;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.api.ProjectAdministrator;
+import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.framework.commons.FrameworkActions;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.commons.LogErrorReport;
 import com.photon.phresco.param.api.DynamicParameter;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
+import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.MavenCommands.MavenCommand;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
 import com.photon.phresco.plugins.util.MojoProcessor;
@@ -238,6 +242,12 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
         return serviceManager.getUserInfo();
     }
     
+	public ProjectInfo getProjectInfo() throws PhrescoException {
+		ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
+		ProjectInfo projectInfo = projectManager.getProject(getProjectId(), getCustomerId());
+		return projectInfo;
+	}
+	
     public ApplicationInfo getApplicationInfo() throws PhrescoException {
         ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
         return applicationManager.getApplicationInfo(getCustomerId(), getProjectId(), getAppId());
@@ -267,7 +277,7 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
 		String sep = "";
 		for (Parameter parameter : parameters) {
 			if (parameter.getDynamicParameter() != null) {
-				String[] parameterValues = getHttpRequest().getParameterValues(parameter.getKey());
+				String[] parameterValues = getReqParameterValues(parameter.getKey());
 				for (String parameterValue : parameterValues) {
 					csParamVal.append(sep);
 					csParamVal.append(parameterValue);
@@ -275,8 +285,8 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
 				}
 				parameter.setValue(csParamVal.toString());
 			} else {
-				if (getHttpRequest().getParameter(parameter.getKey()) != null ) {
-					parameter.setValue(getHttpRequest().getParameter(parameter.getKey()));
+				if (getReqParameter(parameter.getKey()) != null ) {
+					parameter.setValue(getReqParameter(parameter.getKey()));
 				} else {
 					parameter.setValue(Boolean.FALSE.toString());//to update value of skipTest if it is unchecked
 				}
@@ -311,12 +321,15 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
 	}
     
     /**
-     * 
-     * @param key
-     * @param value
+     * To get path of the application
+     * @param applicationInfo
      */
     protected String getAppDirectoryPath(ApplicationInfo applicationInfo) {
     	return Utility.getProjectHome() + applicationInfo.getAppDirName();
+    }
+    
+    protected String getBuildInfosFilePath(ApplicationInfo applicationInfo) {
+    	return getAppDirectoryPath(applicationInfo) + FILE_SEPARATOR + BUILD_DIR + FILE_SEPARATOR +BUILD_INFO_FILE_NAME;
     }
     
     /**
@@ -325,27 +338,43 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
 	 * @param parameters
 	 * @throws PhrescoException
 	 */
-	protected void setDynamicPossibleValues(ApplicationInfo applicationInfo, List<Parameter> parameters) throws PhrescoException {
-		for (Parameter parameter : parameters) {
-			if (parameter.getDynamicParameter() != null) {
-				PossibleValues possibleValue = getDynamicValues(applicationInfo, parameter.getDynamicParameter().getClazz());
-				List<Value> possibleValues = (List<Value>) possibleValue.getValue();
-				setReqAttribute(REQ_DYNAMIC_POSSIBLE_VALUES, possibleValues);
-			}
-		}
+	protected void setDynamicPossibleValues(Map<String, Object> map, Parameter parameter) throws PhrescoException {
+		PossibleValues possibleValue = getDynamicValues(map, parameter.getDynamicParameter().getClazz());
+		List<Value> possibleValues = (List<Value>) possibleValue.getValue();
+		setReqAttribute(REQ_DYNAMIC_POSSIBLE_VALUES, possibleValues);
 	}
 	
 	@SuppressWarnings("unchecked")
-	private PossibleValues getDynamicValues(ApplicationInfo applicationInfo, String className) throws PhrescoException {
-		
+	private PossibleValues getDynamicValues(Map<String, Object> map, String className) throws PhrescoException {
 		try {
 			Class<DynamicParameter> loadedClass = (Class<DynamicParameter>) Class.forName(className);
 			DynamicParameter dynamicParameter = loadedClass.newInstance();
-			return dynamicParameter.getValues(applicationInfo);
+			return dynamicParameter.getValues(map);
 		} catch (Exception e) {
-			throw new PhrescoException("Unable to load the class " + className);
+			throw new PhrescoException(getText(EXCEPTION_LOAD_CLASS) + className);
 		}
 		
+	}
+	
+
+	/**
+	 * To get list of maven command arguments
+	 * @param parameters
+	 * @return
+	 */
+	protected List<String> getMavenArgCommands(List<Parameter> parameters) {
+		List<String> buildArgCmds = new ArrayList<String>();			
+		for (Parameter parameter : parameters) {
+			if (parameter.getPluginParameter()!= null && PLUGIN_PARAMETER_FRAMEWORK.equalsIgnoreCase(parameter.getPluginParameter())) {
+				List<MavenCommand> mavenCommand = parameter.getMavenCommands().getMavenCommand();
+				for (MavenCommand mavenCmd : mavenCommand) {
+					if (parameter.getValue().equalsIgnoreCase(mavenCmd.getKey())) {
+						buildArgCmds.add(mavenCmd.getValue());
+					}
+				}
+			}
+		}
+		return buildArgCmds;
 	}
 	
     protected void setReqAttribute(String key, Object value) {
@@ -355,6 +384,14 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
     protected Object getReqAttribute(String key) {
         return getHttpRequest().getAttribute(key);
     }
+    
+    protected String getReqParameter(String key) {
+		return getHttpRequest().getParameter(key);
+	}
+	
+	protected String[] getReqParameterValues(String Key) {
+		return getHttpRequest().getParameterValues(Key);
+	}
     
     protected void setSessionAttribute(String key, Object value) {
         getHttpSession().setAttribute(key, value);

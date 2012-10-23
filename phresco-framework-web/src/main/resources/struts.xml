@@ -268,7 +268,10 @@
         </action>
 
         <action name="generateBuild" method="showGenerateBuildPopup" class="com.photon.phresco.framework.actions.applications.Build">
-            <result name="generateBuild">/pages/applications/generate_build.jsp</result>
+            <result name="generateBuild">/pages/applications/generateBuild.jsp</result>
+        </action>
+        <action name="showDeploy" method="showDeployPopup" class="com.photon.phresco.framework.actions.applications.Build">
+            <result name="generateBuild">/pages/applications/generateBuild.jsp</result>
         </action>
         
         <action name="getSqlDatabases" method="getSqlDatabases" class="com.photon.phresco.framework.actions.applications.Build">

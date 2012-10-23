@@ -81,7 +81,6 @@ import com.photon.phresco.framework.model.BuildInfo;
 import com.photon.phresco.framework.model.PluginProperties;
 import com.photon.phresco.framework.model.SettingsInfo;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
-import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.MavenCommands.MavenCommand;
 import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.IosSdkUtil;
@@ -178,7 +177,6 @@ public class Build extends FrameworkBaseAction {
 //			getHttpRequest().setAttribute(REQ_BUILD, builds);
 			getHttpRequest().setAttribute(REQ_APPINFO, applicationInfo);
 			//need to change
-			getHttpRequest().setAttribute("projectId", getProjectId());
 			/*String techId = project.getApplicationInfo().getTechInfo().getVersion();
 			String readLogFile = "";
 			boolean tempConnectionAlive = false;
@@ -408,27 +406,56 @@ public class Build extends FrameworkBaseAction {
 	 */
 	public String showGenerateBuildPopup() {
 		try {
-			setDynamicParameters(PHASE_PACKAGE);
+			String from = getReqParameter(REQ_FROM);
+			Map<String, Object> buildParamMap = new HashMap<String, Object>();
+			ApplicationInfo applicationInfo = getApplicationInfo();
+			buildParamMap.put(REQ_APP_INFO, applicationInfo);
+			setDynamicParameters(buildParamMap, PHASE_PACKAGE);
+			setReqAttribute(REQ_FROM, from);
 		} catch (PhrescoException e) {
-			showErrorPopup(e, getText(EXCEPTION_GENERATE_BUILD));
+			return showErrorPopup(e, getText(EXCEPTION_GENERATE_BUILD));
 		} 
 		
 		return APP_GENERATE_BUILD;
 	}
+	
+	/*
+	 *  To show deploy popup with loaded dynamic parameters 
+	 */
+	public String showDeployPopup() throws PhrescoException {
+		try {
+			String from = getReqParameter(REQ_FROM);
+			Map<String, Object> deployParamMap = new HashMap<String, Object>();
+			ApplicationInfo applicationInfo = getApplicationInfo();
+			String buildNumber = getReqParameter(REQ_DEPLOY_BUILD_NUMBER);
+			deployParamMap.put(REQ_APP_INFO, applicationInfo);
+			deployParamMap.put(REQ_DEPLOY_BUILD_NUMBER, buildNumber);
+			setDynamicParameters(deployParamMap, PHASE_DEPLOY);
+			setReqAttribute(REQ_DEPLOY_BUILD_NUMBER, buildNumber);
+			setReqAttribute(REQ_FROM, from);
+		} catch (PhrescoException e) {
+			return showErrorPopup(e, getText(EXCEPTION_GENERATE_DEPLOY));
+		} 
 
+		return APP_GENERATE_BUILD;
+	}
 	
 	/**
 	 * To set List of parameters in request
 	 * @param goal
 	 * @throws PhrescoException
 	 */
-	private void setDynamicParameters(String goal) throws PhrescoException{
+	private void setDynamicParameters(Map<String, Object> dynamicParamMap, String goal) throws PhrescoException{
 		try {
-			ApplicationInfo applicationInfo = getApplicationInfo();
+			ApplicationInfo applicationInfo = (ApplicationInfo) dynamicParamMap.get(REQ_APP_INFO);
 			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(applicationInfo)));
 			List<Parameter> parameters = getMojoParameters(mojo, goal);
 			if (CollectionUtils.isNotEmpty(parameters)) {
-				setDynamicPossibleValues(applicationInfo, parameters);	
+				for (Parameter parameter : parameters) {
+					if (parameter.getDynamicParameter() != null) {
+						setDynamicPossibleValues(dynamicParamMap, parameter);
+					}
+				}
 			}
 			setReqAttribute(REQ_APPINFO, applicationInfo);
 			setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
@@ -437,100 +464,54 @@ public class Build extends FrameworkBaseAction {
 		}
 	}
 	
-	public String builds() {
+	public String builds() throws PhrescoException {
 		if (debugEnabled)
 			S_LOGGER.debug("Entering Method  Build.builds()");
 
 		try {
-			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-			Project project = administrator.getProject(projectCode);
-			List<BuildInfo> builds = administrator.getBuildInfos(project);
-			getHttpRequest().setAttribute(REQ_BUILD, builds);
-			getHttpRequest().setAttribute(REQ_APPINFO, project.getApplicationInfo());
-		} catch (Exception e) {
+			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+			ApplicationInfo applicationInfo = getApplicationInfo();
+			List<BuildInfo> builds = applicationManager.getBuildInfos(new File(getBuildInfosFilePath(applicationInfo)));
+			setReqAttribute(REQ_BUILD, builds);
+			setReqAttribute(REQ_APPINFO, applicationInfo);
+		} catch (PhrescoException e) {
 			if (debugEnabled) {
 				S_LOGGER.error("Entered into catch block of Build.builds()" + FrameworkUtil.getStackTraceAsString(e));
 			}
-			new LogErrorReport(e, "Getting builds info");
+			showErrorPopup(e, getText(EXCEPTION_BUILDS));
 		}
-
-		getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
+		setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
+		
 		return APP_BUILDS;
 	}
 
-	public String build() {
+	public String build() throws PhrescoException {
 		S_LOGGER.debug("Entering Method  Build.build()");
 		try {
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-			ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
-			ProjectInfo projectInfo = projectManager.getProject(getProjectId(), getCustomerId());
-			
+			ProjectInfo projectInfo = getProjectInfo();
 			ApplicationInfo applicationInfo = getApplicationInfo();
 			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(applicationInfo)));
 			persistValuesToXml(mojo, PHASE_PACKAGE);
 			
-			ActionType actionType = null;
-			actionType = ActionType.BUILD;
-
 			//To get maven build arguments
 			List<Parameter> parameters = getMojoParameters(mojo, PHASE_PACKAGE);
-			List<String> buildArgCmds = new ArrayList<String>();			
-			for (Parameter parameter : parameters) {
-				if (parameter.getPluginParameter()!= null && PLUGIN_PARAMETER_FRAMEWORK.equalsIgnoreCase(parameter.getPluginParameter())) {
-					List<MavenCommand> mavenCommand = parameter.getMavenCommands().getMavenCommand();
-					for (MavenCommand mavenCmd : mavenCommand) {
-						if (parameter.getValue().equalsIgnoreCase(mavenCmd.getKey())) {
-							buildArgCmds.add(mavenCmd.getValue());
-						}
-					}
-				}
-			}
+			List<String> buildArgCmds = getMavenArgCommands(parameters);
 			String workingDirectory = getAppDirectoryPath(applicationInfo);
 			
-//			
-//			if(TechnologyTypes.HTML5_MULTICHANNEL_JQUERY_WIDGET.equals(technology) || 
-//					TechnologyTypes.HTML5_JQUERY_MOBILE_WIDGET.equals(technology) ||
-//					TechnologyTypes.HTML5_MOBILE_WIDGET.equals(technology) ||
-//					TechnologyTypes.HTML5_WIDGET.equals(technology)){
-//				minification();
-//			}
-//			
-//			if (TechnologyTypes.ANDROIDS.contains(technology)) {
-//				actionType = ActionType.MOBILE_COMMON_COMMAND;
-//				actionType.setSkipTest(true);
-//				actionType.setProfileId("");
-//				if (StringUtils.isNotEmpty(signing) && StringUtils.isNotEmpty(profileAvailable)) {
-//					StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-//					builder.append(projectCode);
-//					builder.append(File.separatorChar);
-//					builder.append(POM_XML);
-//					File pomPath = new File(builder.toString());
-//					AndroidPomProcessor processor = new AndroidPomProcessor(pomPath);
-//					if (pomPath.exists() && processor.hasSigning()) {
-//						actionType.setProfileId(processor.getSigningProfile());
-//					}
-//				}
-//				if (StringUtils.isEmpty(proguard)) {
-//					// if the checkbox is selected value should be set to false
-//					// otherwise true
-//					proguard = TRUE;
-//				}
-			
-			Reader reader = applicationManager.performAction(projectInfo, actionType, buildArgCmds, workingDirectory);
+			Reader reader = applicationManager.performAction(projectInfo, ActionType.BUILD, buildArgCmds, workingDirectory);
 			setSessionAttribute(getAppId() + REQ_BUILD, reader);
 			setReqAttribute(REQ_APP_ID, getAppId());
 			setReqAttribute(REQ_TEST_TYPE, REQ_BUILD);
-		} catch (Exception e) {
+		} catch (PhrescoException e) {
 			S_LOGGER.error("Entered into catch block of Build.build()" + FrameworkUtil.getStackTraceAsString(e));
-			new LogErrorReport(e, "Building ");
+			return showErrorPopup(e, getText(EXCEPTION_BUILD));
 		}
 
 		setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
 
 		return APP_ENVIRONMENT_READER;
 	}
-
-	
 
 	private File isFileExists(Project project) throws IOException {
 		StringBuilder builder = new StringBuilder(Utility.getProjectHome());
@@ -666,111 +647,28 @@ public class Build extends FrameworkBaseAction {
 
 	public String deploy() throws PhrescoException {
 		S_LOGGER.debug("Entering Method  Build.deploy()");
-	//	persistValuesToXml(PHASE_DEPLOY);
-		String buildNumber = getHttpRequest().getParameter(REQ_DEPLOY_BUILD_NUMBER);
-		String simulatorVersion = getHttpRequest().getParameter(REQ_DEPLOY_IPHONE_SIMULATOR_VERSION);
 		try {
-			if (StringUtils.isNotEmpty(importSql)) {
-				configureSqlExecution();
-			}
-			ActionType actionType = null;
-			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-			Project project = administrator.getProject(projectCode);
-			BuildInfo buildInfo = administrator.getBuildInfo(project, Integer.parseInt(buildNumber));
-			ProjectRuntimeManager runtimeManager = PhrescoFrameworkFactory.getProjectRuntimeManager();
-			Map<String, String> valuesMap = new HashMap<String, String>(2);
-			String techId = project.getApplicationInfo().getTechInfo().getVersion();
-			if (TechnologyTypes.IPHONES.contains(techId)) {
-				valuesMap.put(BUILD_NUMBER, buildNumber);
-				//addition param for 1.2.0. plugins, backward compatibility
-				valuesMap.put(IPHONE_BUILD_NAME, buildInfo.getBuildName());
-				// if deploy to device is selected we have to pass device deploy
-				// param as additional param
-				if (StringUtils.isNotEmpty(deployTo) && deployTo.equals(REQ_IPHONE_SIMULATOR)) {
-					valuesMap.put(IPHONE_SIMULATOR_VERSION, simulatorVersion);
-					valuesMap.put(DEVICE_TO_USE, family);
-				} else {
-					valuesMap.put(DEVICE_DEPLOY, TRUE);
-				}
-			} else {
-				valuesMap.put(BUILD_NUMBER, buildNumber);
-				//addition param for 1.2.0. plugins, backward compatibility
-				valuesMap.put(DEPLOY_BUILD_NAME, buildInfo.getBuildName());
-			}
-
-			if (!(TechnologyTypes.IPHONES.contains(techId) || TechnologyTypes.ANDROIDS.contains(techId) || TechnologyTypes.SHAREPOINT
-					.equals(techId))
-					&& StringUtils.isNotEmpty(importSql)) {
-				valuesMap.put(DEPLOY_IMPORT_SQL, importSql);
-			}
-
-			if (StringUtils.isNotEmpty(environments)) {
-				valuesMap.put(ENVIRONMENT_NAME, environments);
-			}
-
-			if (TechnologyTypes.SHAREPOINT.equals(project.getApplicationInfo().getTechInfo().getVersion())) {
-				S_LOGGER.debug("Share point is passing server name!!!!!!!!");
-				valuesMap.put(DEPLOY_SERVERNAME, buildInfo.getServerName());
-			}
-
-			if (debugEnabled) {
-				S_LOGGER.debug("To be deployed build name" + buildInfo.getBuildName());
-				S_LOGGER.debug("To be deployed build location" + buildInfo.getDeployLocation());
-				S_LOGGER.debug("To be deployed build context" + buildInfo.getContext());
-			}
-			String technology = project.getApplicationInfo().getTechInfo().getVersion();
-			if (TechnologyTypes.ANDROIDS.contains(technology)) {
-				String device = getHttpRequest().getParameter(REQ_ANDROID_DEVICE);
-				if (device.equals(SERIAL_NUMBER)) {
-					device = serialNumber;
-				}
-				if (debugEnabled) {
-					S_LOGGER.debug("To be deployed Android device name" + device);
-				}
-				valuesMap.put(DEPLOY_ANDROID_DEVICE_MODE, device); // TODO: Need
-																	// to be
-																	// changed
-				valuesMap.put(DEPLOY_ANDROID_EMULATOR_AVD, REQ_ANDROID_DEFAULT);
-				// valuesMap.put(AndroidConstants.ANDROID_VERSION_MVN_PARAM,
-				// androidVersion);
-			}
+			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+			ProjectInfo projectInfo = getProjectInfo();
+			ApplicationInfo applicationInfo = getApplicationInfo();
+			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(applicationInfo)));
 			
-			S_LOGGER.debug("technology ====> " + technology);
-			if (TechnologyTypes.IPHONES.contains(technology) || TechnologyTypes.ANDROIDS.contains(technology)) {
-				S_LOGGER.debug("Mobile command !!!!!");
-//				actionType = ActionType.MOBILE_COMMON_COMMAND;
-			} else {
-				S_LOGGER.debug("Deploy Command!!!!!");
-				actionType = ActionType.DEPLOY;
-			}
-
-			StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-			builder.append(project.getApplicationInfo().getCode());
-			if (StringUtils.isNotEmpty(buildInfo.getModuleName())) {
-				builder.append(File.separator);
-				builder.append(buildInfo.getModuleName());
-			}
-//			actionType.setWorkingDirectory(builder.toString());
-//			actionType.setHideLog(Boolean.parseBoolean(hideLog));
-//			actionType.setShowError(Boolean.parseBoolean(showError));
-//			actionType.setShowDebug(Boolean.parseBoolean(showDebug));
-//			actionType.setSkipTest(Boolean.parseBoolean(skipTest));
-			BufferedReader reader = runtimeManager.performAction(project, actionType, valuesMap, null);
-			getHttpSession().setAttribute(projectCode + REQ_FROM_TAB_DEPLOY, reader);
-			getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
-			getHttpRequest().setAttribute(REQ_TEST_TYPE, REQ_FROM_TAB_DEPLOY);
-
-			// This is for first time to check import Sql checkbox, and not
-			// required for the below technologies
-			if (!(TechnologyTypes.IPHONES.contains(technology) || TechnologyTypes.ANDROIDS.contains(technology) || TechnologyTypes.SHAREPOINT
-					.equals(technology))) {
-				updateImportSqlConfig(project);
-			}
-		} catch (Exception e) {
+			persistValuesToXml(mojo, PHASE_DEPLOY);
+			
+			//To get maven build arguments
+			List<Parameter> parameters = getMojoParameters(mojo, PHASE_DEPLOY);
+			List<String> buildArgCmds = getMavenArgCommands(parameters);
+			String workingDirectory = getAppDirectoryPath(applicationInfo);
+			Reader reader = applicationManager.performAction(projectInfo, ActionType.DEPLOY, buildArgCmds, workingDirectory);
+			setSessionAttribute(getAppId() + REQ_FROM_TAB_DEPLOY, reader);
+			setReqAttribute(REQ_APP_ID, getAppId());
+			setReqAttribute(REQ_TEST_TYPE, REQ_FROM_TAB_DEPLOY);
+			
+		} catch (PhrescoException e) {
 			if (debugEnabled) {
 				S_LOGGER.error("Entered into catch block of Build.deploy()" + FrameworkUtil.getStackTraceAsString(e));
 			}
-			new LogErrorReport(e, "Deploying");
+			return showErrorPopup(e, getText(EXCEPTION_DEPLOY));
 		}
 
 		getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);

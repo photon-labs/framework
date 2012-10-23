@@ -64,12 +64,12 @@ public class FrameworkUtil extends FrameworkBaseAction implements FrameworkConst
 
 	private static final String LABEL_TEMPLATE = "<div class='control-group'><label for='xlInput' class='control-label labelbold $class$'>$mandatory$$txt$</label>";
 	private static final String MANDATORY = "<span class='red'>*</span>&nbsp";
-	private static final String SELECT_TEMPLATE = "<div class='controls'><select class=\"input-xlarge $cssClass$\" name=\"$name$\" $multiple$>$options$</select></div>";
+	private static final String SELECT_TEMPLATE = "<div class='controls'><select class=\"input-xlarge $cssClass$\" name=\"$name$\" $multiple$>$options$</select></div></div>";
 	private static final String INPUT_TEMPLATE = "<div class='controls'><input type=\"$type$\" class=\"input-xlarge $class$\" id=\"$id$\" " + 
 													"name=\"$name$\" placeholder=\"$placeholder$\" value=\"$value$\" $checked$/></div></div>";
 	private static final String CHECKBOX_TEMPLATE = "<div class='controls'><input type='checkbox' class=\"$class$\" id=\"$id$\" " + 
 														"name=\"$name$\" value=\"$value$\" $checked$ onclick='changeChckBoxValue(this);'/></div></div>";
-	private static final String MULTI_SELECT_TEMPLATE = "<div class='controls'><div class='multiSelectBorder'><div class='multilist-scroller multiselect $class$' id=\"$id$\"><ul>$multiSelectOptions$</ul></div></div></div>";
+	private static final String MULTI_SELECT_TEMPLATE = "<div class='controls'><div class='multiSelectBorder'><div class='multilist-scroller multiselect multiSelHeight $class$' id=\"$id$\"><ul>$multiSelectOptions$</ul></div></div></div></div>";
 	
     private Map<String, String> unitTestMap = new HashMap<String, String>(8);
     private Map<String, String> unitReportMap = new HashMap<String, String>(8);

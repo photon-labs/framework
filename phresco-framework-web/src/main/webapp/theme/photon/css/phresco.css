@@ -2798,20 +2798,16 @@ fieldset {
 /* For multiselect list box starts */
 .multilist-scroller {
 	overflow-y: auto;
-	height: 100%;
-	width: 100%;
 	background-color: #fff;
 	border-radius: 3px;
-	width: 301px;
 }
 
 .multiselect {
 	overflow-y: auto;
 	height: 95px !important;
-	width: 290px;
+	width: 297px !important;
 	background-color: #fff;
 	border-radius: 3px;
-	width: 301px;
 }
 
 .multilist-scroller ul {
@@ -5552,6 +5548,10 @@ input[class*='chckBxAlign'] {
 
 .popupLbl {
 	color: #000;
+}
+
+.builds-list-table .th-inner {
+	top: 195px;
 }	
 /*new css for 2.0 ends*/
 

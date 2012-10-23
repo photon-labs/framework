@@ -67,7 +67,7 @@
 			onclick="showDeleteConfirmation('<s:text name='lbl.delete'/>');"/>
 
 		<!-- Environment Buttton -->
-	    <a data-toggle="modal" href="#popupPage" class="btn btn-primary"><s:text name='lbl.app.config.environments'/></a>
+	    <a data-toggle="modal" id="addEnvironments" href="#popupPage" class="btn btn-primary"><s:text name='lbl.app.config.environments'/></a>
 		         
 		<s:if test="hasActionMessages()">
 			<div class="alert alert-success alert-message" id="successmsg" >
@@ -164,7 +164,7 @@
 </form>
 
 <script type="text/javascript">
-	yesnoPopup('openEnvironmentPopup', "<s:text name='lbl.environment'/>", 'createEnvironment');
+	yesnoPopup($("#addEnvironments"), 'openEnvironmentPopup', "<s:text name='lbl.environment'/>", 'createEnvironment');
 	
 	$(document).ready(function() {
 		hideLoadingIcon();//To hide the loading icon

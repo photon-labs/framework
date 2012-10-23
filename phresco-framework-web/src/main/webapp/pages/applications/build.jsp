@@ -37,8 +37,11 @@
 <%
     String technology = null;
 
-	ApplicationInfo appInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_APPINFO);
-	String projectId = (String) request.getAttribute("projectId");
+	ApplicationInfo applicationInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_APPINFO);
+	String appId = "";
+	if (applicationInfo != null) {
+		appId = applicationInfo.getId();
+	}	
 	//TODO:Need to handle
 // 	String projectCode = appInfo.getCode();
 // 	technology = appInfo.getTechInfo().getVersion();
@@ -96,7 +99,7 @@
 		<div class="build_delete_btn_div">
 		    <%-- <input id="generatebtn" type="button" value="<s:text name="label.generatebuild"/>" class="btn btn-primary"> --%>
 		    
-	    <a data-toggle="modal" href="#popupPage" class="btn btn-primary" additionalParam="from=generateBuild"><s:text name='label.generatebuild'/></a>
+	    <a data-toggle="modal" href="#popupPage" id="generateBuild" class="btn btn-primary" additionalParam="from=generateBuild"><s:text name='label.generatebuild'/></a>
 		    
 		    <input id="deleteButton" type="button" value="<s:text name="label.delete"/>" class="btn" disabled="disabled"/>
 		</div>
@@ -184,13 +187,12 @@
 	%> --%>
 	
     $(document).ready(function() {
-    	hideLoadingIcon();
-    	yesnoPopup('generateBuild', '<s:text name="label.generatebuild"/>', 'build','<s:text name="label.build"/>');
+    	yesnoPopup($('#generateBuild'),'generateBuild', '<s:text name="label.generatebuild"/>', 'build','<s:text name="label.build"/>');
     	if ($.browser.safari && $.browser.version == 530.17) {
     		$(".buildDiv").show().css("float","left");
     	}
     	
-    	<%-- refreshTable('<%= projectCode %>'); --%>
+    	refreshTable();
     	
         if (($('#database option').length == 0) && ($('#server option').length == 0)) {
                  $('#buildbtn').prop("disabled", true);

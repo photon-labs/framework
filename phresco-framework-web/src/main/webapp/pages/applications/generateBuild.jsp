@@ -73,10 +73,10 @@
    	Map<String, String> jsMap = (Map<String, String>) request.getAttribute(FrameworkConstants.REQ_MINIFY_MAP);
    	String fileLoc = (String) request.getAttribute("fileLocation");
    	
-   	String buildName = "";
+   	String buildNumber = "";
     List<Parameter> parameters = (List<Parameter>) request.getAttribute(FrameworkConstants.REQ_DYNAMIC_PARAMETERS);
     if (FrameworkConstants.REQ_DEPLOY.equals(from)) {
-    	buildName = (String) request.getAttribute("buildName");
+    	buildNumber = (String) request.getAttribute(FrameworkConstants.REQ_DEPLOY_BUILD_NUMBER);
     }
     
     ApplicationInfo applicationInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_APP_INFO);
@@ -88,33 +88,6 @@
 
 <form action="build" method="post" autocomplete="off" class="build_form form-horizontal" id="generateBuildForm">
 <div class="" id="generateBuild_Modal">
-	<%-- <div class="modal-header">
-		<h3 id="generateBuildTitle">
-		<%
-		    if ("nodeJS_runAgnSrc".equals(from) || "runAgnSrc".equals(from)) {
-		%>
-				<s:text name="label.runagainsrc"/>
-			<%
-			    } else if (FrameworkConstants.DEPLOY.equals(from)) {
-			%>
-				<s:text name="label.deploy"/>
-			<%
-			    } else {
-			%>
-				<s:text name="label.generatebuild"/>
-			<%
-			    }
-			%>
-		</h3>
-		<a class="close" href="#" id="close">&times;</a>
-	</div> --%>
-
-	<!-- For build alone starts-->
-	<%-- <input name="<%=FrameworkConstants.REQ_DEPLOY_BUILD_NUMBER%>" type="hidden" value="<%=buildNumber%>"/> --%>
-	<!-- For build alone ends -->
-			
-	<!-- <div class="modal-body"> -->
-
 		<%
 		    if (CollectionUtils.isNotEmpty(projectModules) && "generateBuild".equals(from)) {
 		%>
@@ -141,11 +114,9 @@
         
 
        <!-- dynamic parameters starts -->
-		<%
+		<%	
 			for (Parameter parameter: parameters) {
-		%>    	
-				<div class="clearfix">
-	    <%			Boolean mandatory = false;
+	    			Boolean mandatory = false;
 					if (Boolean.parseBoolean(parameter.getRequired())) {
 						mandatory = true;
 		 			}
@@ -155,9 +126,9 @@
 								if (value.getLang().equals("en")) {	//load label
 									String cssClass = "popupLbl";
 									StringTemplate labelElmnt = FrameworkUtil.constructLabelElement(mandatory, cssClass, value.getValue());
-			%>					
+		%>					
 								<%= labelElmnt %>
-			<%			   		break;
+		<%			   		    break;
 								}
 							}
 						}
@@ -186,7 +157,7 @@
 		<%			
 					} else if (FrameworkConstants.TYPE_LIST.equalsIgnoreCase(parameter.getType()) && parameter.getPossibleValues() != null) { //load select list box
 				    	List<com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value> psblValues = parameter.getPossibleValues().getValue();
-						List<String> selectedValList = Arrays.asList(parameter.getValue().split("\\s*,\\s*"));
+						List<String> selectedValList = Arrays.asList(parameter.getValue().split(FrameworkConstants.CSV_PATTERN));
 						StringTemplate selectElmnt = FrameworkUtil.constructSelectElement("", "", parameter.getKey(), psblValues, selectedValList, parameter.getMultiple());
 		%>				
 						<%= selectElmnt %>
@@ -195,13 +166,12 @@
 					//dynamically loads values into select box for environmet
 					if (FrameworkConstants.TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(parameter.getType())) {
 						List<com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value> dynamicEnvNames = (List<com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value>) request.getAttribute(FrameworkConstants.REQ_DYNAMIC_POSSIBLE_VALUES);
-						List<String> selectedValList = Arrays.asList(parameter.getValue().split("\\s*,\\s*"));
-						StringTemplate selectDynamicElmnt = FrameworkUtil.constructSelectElement("multiSelHeight", "", parameter.getKey(), dynamicEnvNames, selectedValList, parameter.getMultiple());
+						List<String> selectedValList = Arrays.asList(parameter.getValue().split(FrameworkConstants.CSV_PATTERN));
+						StringTemplate selectDynamicElmnt = FrameworkUtil.constructSelectElement("", "", parameter.getKey(), dynamicEnvNames, selectedValList, parameter.getMultiple());
 		%>				
 				    	<%= selectDynamicElmnt %>
 		<%			} 
 		%>
-			</div>
 			<script type="text/javascript">
 				<%-- $('input[name="<%= parameter.getKey() %>"]').live('input propertychange',function(e) {
 					var name = $(this).val();
@@ -213,422 +183,15 @@
 		<% 		}
 		%>
 		<!-- dynamic parameters ends -->
-       
-
-		<%-- <div class="clearfix">
-		    <label for="xlInput" class="xlInput popup-label"><span class="red">*</span> <s:text name="label.environment"/></label>
-		    <div class="input">
-		    	<%
-		    	    if ("generateBuild".equals(from) && !TechnologyTypes.MOBILES.contains(technology)) {
-		    	%>
-		    		<div class="generate_build">
-			        	<ul id="environments" name="environment" class="xlarge">
-				        	<li class="config_tab">
-								<s:text name="label.configuration"/>
-							</li>
-				        	<%
-				        	    String selectedStr = "";
-				        									if(environments != null) {
-				        										for (Environment environment : environments) {
-				        											if(environment.isDefaultEnv()) {
-				        												defaultEnv = environment.getName();
-				        												selectedStr = "Disabled Checked";
-				        											} else {
-				        												selectedStr = "";
-				        											}
-				        	%>
-										<li class="environment_list">
-											<input type="checkbox" id="environments" value="<%=environment.getName()%>" <%=selectedStr%> onClick="selectEnvs()">&nbsp;<%=environment.getName()%>
-										</li>
-							<%
-							    } 
-															}
-							%>
-			        </ul>
-		        </div>
-		        <%
-		            } else {
-		        %>
-		        	<select id="environments" name="environment" class="xlarge">
-		        		<%
-		        		    if (FrameworkConstants.DEPLOY.equals(from) && buildInfoEnvs != null && CollectionUtils.isNotEmpty(buildInfoEnvs)) {
-		        				        				for (String env : buildInfoEnvs) {
-		        		%>
-		        				<option value="<%=env%>"><%=env%></option>
-		        				<%
-		        				    }
-		        				%>
-		        		<%
-		        		    } else {
-		        		%>
-					        	<optgroup label="Configurations" class="optgrplbl">
-								<%
-								    String selectedStr = "";
-																	if(environments != null) {
-																		for (Environment environment : environments) {
-																			if(environment.isDefaultEnv()) {
-																				defaultEnv = environment.getName();
-																				selectedStr = "selected";
-																			} else {
-																				selectedStr = "";
-																			}
-								%>
-										<option value="<%=environment.getName()%>" <%=selectedStr%> onClick="selectEnvs()"><%=environment.getName()%></option>
-								<%
-								    } 
-																	}
-								%>
-								</optgroup>
-						<%
-						    }
-						%>
-					</select>
-				<%
-				    }
-				%>
-			</div>
-		</div> --%>
-
-		<!-- TODO:Need to handle -->
-		<%-- <%
-		    if (TechnologyTypes.ANDROIDS.contains(technology)) { 
-						String pilotProjectName = project.getApplicationInfo().getPilotProjectName();
-		%>
-			<!-- Android Version -->
-			<div class="clearfix">
-				<label for="xlInput" class="xlInput popup-label"><s:text name="label.sdk"/></label>
-				<div class="input">
-					<select id="androidVersion" name="androidVersion" class="xlarge" >
-						<%
-						    int initialVer =  StringUtils.isEmpty(pilotProjectName) ? 0 : 1;
-													for (int i = initialVer; i < AndroidConstants.SUPPORTED_SDKS.length; i++) {
-						%>
-							<option value="<%=AndroidConstants.SUPPORTED_SDKS[i]%>"><%=AndroidConstants.SUPPORTED_SDKS[i]%></option>
-						<%
-						    }
-						%>
-					</select>
-				</div>
-			</div>
-		<%
-		    }
-		%>	 --%>
-		
-		<%-- <%
-					    if (TechnologyTypes.IPHONES.contains(technology)) {
-					%>
-			<!-- SDK -->
-			<div class="clearfix">
-				<label for="xlInput" class="xlInput popup-label"><s:text name="label.sdk"/></label>
-				<div class="input">
-					<select id="sdk" name="sdk" class="xlarge" >
-						<%
-						    if (macSdks != null) {
-														for (String sdk : macSdks) {
-						%>
-							<option value="<%=sdk%>"><%=sdk%></option>
-						<%
-						    } 
-													}
-						%>
-					</select>
-				</div>
-			</div>
-		
-			<!-- TARGET -->
-			<div class="clearfix">
-				<label for="xlInput" class="xlInput popup-label"><s:text name="label.target"/></label>
-				<div class="input">
-					<select id="target" name="target" class="xlarge" >
-					<%
-					    if (xcodeConfigs != null) { 
-												for (PBXNativeTarget xcodeConfig : xcodeConfigs) {
-					%>
-							<option value="<%=xcodeConfig.getName()%>"><%=xcodeConfig.getName()%></option>
-						<%
-						    } 
-											}
-						%>	
-			       </select>
-				</div>
-			</div>
-			
-			<!-- Mode -->
-			<div class="clearfix">
-				<label for="xlInput" class="xlInput popup-label"><s:text name="label.mode"/></label>
-				<div class="input">
-					<select id="mode" name="mode" class="xlarge" >
-						<option value="<%=XCodeConstants.CONFIGURATION_DEBUG%>"><%=XCodeConstants.CONFIGURATION_DEBUG%></option>
-						<option value="<%=XCodeConstants.CONFIGURATION_RELEASE%>"><%=XCodeConstants.CONFIGURATION_RELEASE%></option>
-					</select>
-				</div>
-			</div>
-		<%
-		    }
-		%>	 --%>
-		
-		<%-- <fieldset class="popup-fieldset fieldset_center_align">
-			<!-- Show Settings -->
-			<div class="clearfix">
-				<div class="xlInput">
-					<ul class="inputs-list">
-						<li class="popup-li">
-							<%
-							    if (!FrameworkConstants.DEPLOY.equals(from)) {
-							%>
-								<input type="checkbox" id="showSettings" name="showSettings" value="showsettings">
-								<span class="textarea_span popup-span"><s:text name="label.show.setting"/></span>
-							<%
-							    }
-							%> <%
-     if (FrameworkConstants.REQ_GENERATE_BUILD.equals(from)
-  			&& (TechnologyTypes.JAVA_STANDALONE.equals(technology)
-  					|| TechnologyTypes.JAVA_WEBSERVICE
-  							.equals(technology)
-  					|| TechnologyTypes.JAVA.equals(technology)
-  					|| TechnologyTypes.HTML5.equals(technology)
-  					|| TechnologyTypes.HTML5_JQUERY_MOBILE_WIDGET
-  							.equals(technology)
-  					|| TechnologyTypes.HTML5_MOBILE_WIDGET
-  							.equals(technology)
-  					|| TechnologyTypes.HTML5_MULTICHANNEL_JQUERY_WIDGET
-  							.equals(technology) || TechnologyTypes.HTML5_WIDGET
-  					.equals(technology))) {
- %>
-								<input type="checkbox" id="skipTest" name="skipTest" value="true">
-								<span class="textarea_span popup-span"><s:text name="label.skip.unit.test"/></span>
-							<%
-							    }
-							%>
-							<%
-							    if ("generateBuild".equals(from) || FrameworkConstants.DEPLOY.equals(from)) {
-							%>
-								<input type="checkbox" id="showError" name="showError" value="true">
-								<span class="textarea_span popup-span"><s:text name="label.show.error"/></span>
-								<input type="checkbox" id="hideLog" name="hideLog" value="true">
-								<span class="textarea_span popup-span"><s:text name="label.hide.log"/></span>
-								<input type="checkbox" id="showDebug" name="showDebug" value="true">
-								<span class="textarea_span popup-span"><s:text name="label.show.debug"/></span>
-							<%
-							    }
-							%>
-							<!-- TODO:Need to handle -->
-							<%
-							    if (!from.equals("generateBuild") && CollectionUtils.isNotEmpty(project.getApplicationInfo().getTechnology().getDatabases())) {
-							%>
-								<input type="checkbox" id="importSql" name="importSql" value="true" <%= checkImportSql%> >
-								<span class="textarea_span popup-span"><s:text name="label.import.sql"/></span>
-							<% } %>
-							<% if (from.equals("generateBuild") && TechnologyTypes.ANDROIDS.contains(technology)) { %>
-								<input type="checkbox" id="proguard" name="proguard" value="false" disabled="disabled">
-								<span class="textarea_span popup-span"><s:text name="label.progurad"/></span>
-							<% } %>
-						</li>
-					</ul>
-				</div>	
-			</div>
-		</fieldset> --%>
-		
-		<!-- sql execution starts  -->
-		<fieldset class="popup-fieldset fieldset_center_align" id="sqlExecutionContain" style="display: none;">
-			<legend class="fieldSetLegend"><s:text name="label.sql.execute"/></legend>
-			<div class="clearfix">
-				<label for="xlInput" class="xlInput popup-label" style="width: 210px;"><s:text name="label.databases"/></label>
-				<div class="input" style="text-align: left; margin-left: 231px;">
-					<select id="databases" name="database" class="xlarge" >
-			       	</select>
-				</div>
-			</div>
-	        <%-- <table>
-	            <tbody>
-					<tr>
-		                <td style="border-bottom: none;">
-	                        <select id="avaliableSourceScript" multiple="multiple" style="height: 150px; width:200px;">
-	
-	                        </select>                     
-		                </td>
-		                <td style="border-bottom: none; padding-left: 15px; padding-right: 15px;">
-		                	<ul style="list-style : none;">
-		                		<li style="padding-bottom: 5px; margin-top:10px;"><input type="button" class="btn primary" id="btnAddAll" value=">>" style="width:30px;"></li>
-		                		<li style="padding-bottom: 5px;"><input type="button" class="btn primary" id="btnAdd" value=">" style="width:30px;"></li>
-								<li style="padding-bottom: 5px;"><input type="button" class="btn primary" id="btnRemove" value="<" style="width:30px;"></li>
-								<li style="padding-bottom: 5px;"><input type="button" class="btn primary" id="btnRemoveAll" value="<<" style="width:30px;"></li>
-		                	</ul>
-		                </td>
-		                <td style="border-bottom: none; padding-left: 31px;">
-	                        <select id="selectedSourceScript" name="selectedSourceScript" multiple="multiple" style="height: 150px; width:200px;">
-							</select>
-		                </td>
-		                <td style="border-bottom: none;padding-right: 25px">
-	                		<img src="images/icons/top_arrow.png" title="Move up" id="up" style="cursor: pointer;"><br>
-	                		<img src="images/icons/btm_arrow.png" title="Move down" id="down" style="cursor: pointer; margin-top: 16px;" >
-		                </td>
-	            	</tr>
-	        	</tbody>
-			</table> --%>
-			<input id="DbWithSqlFiles" value="" type="hidden">
-			<%-- <div style="text-align: left;padding-left: 2%; padding-bottom: 5px; font-weight: bold;">
-				<input type="checkbox" id="rollBack" name="rollBack" /> &nbsp;<span class="textarea_span popup-span"><s:text name="label.rollback"/></span>
-			</div> --%>
-		</fieldset>
-		<!-- sql execution ends  -->
-		
-<!-- 		advanced settingd -->
-		<%-- <% if ("generateBuild".equals(from) && TechnologyTypes.ANDROIDS.contains(technology)) { %>
-			<div class="theme_accordion_container clearfix" style="float: none;">
-			    <section class="accordion_panel_wid">
-			        <div class="accordion_panel_inner adv-settings-accoridan-inner">
-			            <section class="lft_menus_container adv-settings-width">
-			                <span class="siteaccordion" id="siteaccordion_active"><span><s:text name="build.advanced.settings"/></span></span>
-			                <div class="mfbox siteinnertooltiptxt">
-			                    <div class="scrollpanel adv_setting_accordian_bottom">
-			                        <section class="scrollpanel_inner">
-										<fieldset class="popup-fieldset fieldset_center_align">
-											<!-- Show Settings -->
-											<div class="clearfix">
-												<div class="xlInput">
-													<ul class="inputs-list">
-														<li class="popup-li">
-															<input type="checkbox" id="proguard" name="proguard" value="false">
-															<span class="textarea_span popup-span"><s:text name="label.progurad"/></span>
-															
-															<input type="checkbox" id="signing" name="signing" value="false">
-															<span class="textarea_span popup-span"><a href="#" class="popup-span" id="androidSigning" ><s:text name="label.signing"/></a></span>
-														</li>
-													</ul>
-												</div>	
-											</div>
-										</fieldset>
-			                        </section>
-			                    </div>
-			                </div>
-			            </section>  
-			        </div>
-			    </section>
-			</div>
-			<input id="profileAvailable" name="profileAvailable" type="hidden" value=""/> 
-		<% } %>--%>
-<!-- 		advanced settings end -->
-
-<!-- minifier setting starts -->
-		<%-- <% if ("generateBuild".equals(from) && (TechnologyTypes.HTML5_MULTICHANNEL_JQUERY_WIDGET.equals(technology) || 
-				TechnologyTypes.HTML5_JQUERY_MOBILE_WIDGET.equals(technology) || 
-				TechnologyTypes.HTML5_MOBILE_WIDGET.equals(technology) ||
-				TechnologyTypes.HTML5_WIDGET.equals(technology))) { %>
-			<div class="theme_accordion_container clearfix" style="float: none;">
-			    <section class="accordion_panel_wid">
-			        <div class="accordion_panel_inner adv-settings-accoridan-inner">
-			            <section class="lft_menus_container adv-settings-width">
-			                <span class="siteaccordion" id="siteaccordion_active"><span><s:text name="build.minifer"/></span></span>
-			                <div class="mfbox siteinnertooltiptxt">
-			                    <div class="scrollpanel adv_setting_accordian_bottom">
-			                        <section class="scrollpanel_inner">
-			                        	<div class="minifyDiv">
-											<fieldset class="popup-fieldset fieldset_center_align minify_popup">
-												<% 
-													if (jsMap != null && !jsMap.isEmpty()) {
-														Set keys = jsMap.keySet();
-														Iterator iter = jsMap.keySet().iterator();
-													    while (iter.hasNext()) {
-														    String key = (String) iter.next();
-														    String val = (String) jsMap.get(key);
-												%>
-															<div class = "browseJs">
-																<div class="clearfix">
-																	<label for="xlInput" class="xlInput popup-label minifyLbl"><s:text name="build.js.minification"/></label>
-																	<div class="input">
-																		<input type="button" id="<%= key %>" class="btn primary chooseJS" value="<s:text name="build.minify.browse"/>" onclick="browseFiles(this);">
-																		<label for="xlInput" class="xlInput popup-label compNameLbl"><s:text name="build.compress.name"/></label>
-																		<input type="text" name="jsFileName" class="<%= key %>" id="compNameText" disabled value="<%= key %>"/>
-																	</div>
-																	<a><img title="" src="images/icons/add_icon.png" id="addJSComp" class="minifyAddIcon" onclick="addJsCompTag();"></a>
-																	<a><img class="del imagealign hide" src="images/icons/minus_icon.png" onclick="removeTag(this);"></a>
-																</div>
-																<input type="hidden" tempName="<%= key %>" name="<%= key %>" value="<%= val %>" id="selectedJs">
-															</div>
-												<%
-														}
-													} else {
-												%>
-												<div class = "browseJs">
-														<div class="clearfix">
-															<label for="xlInput" class="xlInput popup-label minifyLbl"><s:text name="build.js.minification"/></label>
-															<div class="input">
-																<input type="button" id="getJsFiles1" class="btn primary chooseJS" value="<s:text name="build.minify.browse"/>" onclick="browseFiles(this);">
-																<label for="xlInput" class="xlInput popup-label compNameLbl"><s:text name="build.compress.name"/></label>
-																<input type="text" name="jsFileName" class="getJsFiles1" id="compNameText" disabled/>
-															</div>
-															<a><img title="" src="images/icons/add_icon.png" id="addJSComp" class="minifyAddIcon" onclick="addJsCompTag();"></a>
-															<a><img class="del imagealign hide" src="images/icons/minus_icon.png" onclick="removeTag(this);"></a>
-														</div>
-														<input type="hidden" tempName="getJsFiles1" name="getJsFiles1" value="" id="selectedJs">
-													</div>
-											<% } %>		
-											</fieldset>
-										</div>
-										<input type="hidden" name="fileLocation" value="<%= StringUtils.isNotEmpty(fileLoc) ? fileLoc : "" %>"/>
-			                        </section>
-			                    </div>
-			                </div>
-			            </section>  
-			        </div>
-			    </section>
-			</div> 
-		<% } %> --%>
-	<!-- </div> -->
-	
-<!--  minifier setting  end -->
-	
-	<%-- <div class="modal-footer">
-		<div class="action popup-action">
-			<img class="popupLoadingIcon"> 
-			<div id="errMsg" class="generate_build_err_msg adv-settings-error-msg"></div>
-			<div style="float: right;">
-				<input type="hidden" name="from" value="<%= from %>" id="from">
-				<input type="button" class="btn primary" value="<s:text name="label.cancel"/>" id="cancel">
-				<% if ("nodeJS_runAgnSrc".equals(from)) {%>
-					<input type="button" id="runAgainstSrc" class="btn primary" value="<s:text name="label.run"/>">
-				<% } else if ("runAgnSrc".equals(from)) {%>
-					<input type="button" id="javaRunAgainstSrc" class="btn primary" value="<s:text name="label.run"/>">
-				<% } else if (FrameworkConstants.DEPLOY.equals(from)) {%>	
-					<input type="button" id="deploy" class="btn primary" value="<s:text name="label.deploy"/>">
-				<% } else { %>
-					<input type="button" id="build" class="btn primary" value="<s:text name="label.build"/>">
-				<% } %>
-			</div>
-		</div>
-	</div> --%>
 </div>
-<%-- 
-<% if (TechnologyTypes.MOBILES.contains(technology)) { %>
-		<input type="hidden" id="mobile" value="mobile">
-<% } %> --%>
 </form>
 
 <script type="text/javascript">
-    
-	<%-- <%
-		if (TechnologyTypes.ANDROIDS.contains(technology) && (Boolean) request.getAttribute(FrameworkConstants.REQ_ANDROID_HAS_SIGNING)) {
-	%>
-		$('#profileAvailable').val("true");
-	<%
-		}
-	%> --%>
-
 	if(!isiPad()){
 	    /* JQuery scroll bar */
 		$(".generate_build").scrollbars();
 	}
 
-	<%-- if (<%= TechnologyTypes.IPHONES.contains(technology) %> || <%= TechnologyTypes.ANDROIDS.contains(technology) %> ) {
-		$("#importSql").attr("disabled", "disabled");
-	}
-	
-	if (<%= TechnologyTypes.SHAREPOINT.equals(technology) %> || <%= TechnologyTypes.DOT_NET.equals(technology) %>) {
-        $("#importSql").attr("checked", false); 
-        $("#importSql").attr("disabled", "disabled"); 
-	} --%>
-	
 	var url = "";
 	var readerSession = "";
 	
@@ -638,22 +201,6 @@
 		$('#close, #cancel').click(function() {
 			showParentPage();
 		});
-		
-		<%-- $('#build').click(function() {
-			if ($('input[type=checkbox][name=signing]').is(':checked') && isBlank($('#profileAvailable').val())) {
-				$("#errMsg").html('<%= FrameworkConstants.PROFILE_CREATE_MSG %>');
-				return false;
-			}
-			
-			/* enable text box only if any file selected for minification */
-			$('input[name="jsFileName"]').each(function () {
-				if($(this).val() !== "") {
-					$(this).attr("disabled", false);
-				}
-			});
-
-			buildValidateSuccess("build", '<%= FrameworkConstants.REQ_BUILD %>');
-		}); --%>
 		
 		$('#userBuildNumber').bind('input propertychange', function (e) { 	//userBuildNumber validation
 			var userBuildNumber = $(this).val();
@@ -677,15 +224,6 @@
 			var jarName = $(this).val();
 			jarName = checkForJarName(jarName);
         	$(this).val(jarName);
-		});
-		
-		$('#deploy').click(function() {
-			var isChecked = $('#importSql').is(":checked");
-			if ($('#importSql').is(":checked") && $('#selectedSourceScript option').length == 0) {
-				$("#errMsg").html('<%= FrameworkConstants.SELECT_DB %>');
-				return false;
-			}
-			buildValidateSuccess("deploy", '<%= FrameworkConstants.REQ_FROM_TAB_DEPLOY %>');
 		});
 		
 		/** NodeJS run against source **/
@@ -1054,22 +592,28 @@
 		$('input[name="fileLocation"]').val(fileLocation);
 	}
 	
-	function popupOnOk(okUrl) {
+	function popupOnOk(obj) {
+ 		var okUrl = $(obj).attr("id");
 		if (okUrl === "build") {
 			if ($('input[type=checkbox][name=signing]').is(':checked') && isBlank($('#profileAvailable').val())) {
 				$("#errMsg").html('<%= FrameworkConstants.PROFILE_CREATE_MSG %>');
 				return false;
 			}
-			
 			/* enable text box only if any file selected for minification */
 			$('input[name="jsFileName"]').each(function () {
 				if($(this).val() !== "") {
 					$(this).attr("disabled", false);
 				}
 			});
-
 			buildValidateSuccess("build", '<%= FrameworkConstants.REQ_BUILD %>');
-		}	
+		} else if (okUrl === "deploy") {
+			var isChecked = $('#importSql').is(":checked");
+			if ($('#importSql').is(":checked") && $('#selectedSourceScript option').length == 0) {
+				$("#errMsg").html('<%= FrameworkConstants.SELECT_DB %>');
+				return false;
+			}
+			buildValidateSuccess("deploy", '<%= FrameworkConstants.REQ_FROM_TAB_DEPLOY %>');
+		}
 	}
 	function changeChckBoxValue(obj) {
 		if ($(obj).is(':checked')) {
@@ -1078,4 +622,9 @@
 			$(obj).val("false");
 		}
 	}
+	
+	//to update build number in hidden field for deploy popup
+	<% if (FrameworkConstants.REQ_DEPLOY.equals(from)) { %>
+		$("input[name=userBuildNumber]").val('<%= buildNumber %>');
+	<% } %>
 </script>

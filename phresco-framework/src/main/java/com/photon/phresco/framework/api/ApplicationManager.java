@@ -53,4 +53,6 @@ public interface ApplicationManager {
 	 */
 	ApplicationInfo getApplicationInfo(String customerId, String projectId, String appId) throws PhrescoException;
 
+	BuildInfo getBuildInfo(int buildNumber, String buildInfoFileDirectory) throws PhrescoException;
+
 }
