@@ -153,10 +153,8 @@ public class Configurations extends FrameworkBaseAction {
         try {
             getHttpRequest().setAttribute(REQ_ENVIRONMENTS, getAllEnvironments());
         } catch (PhrescoException e) {
-            e.printStackTrace();
             return showErrorPopup(e, getText(CONFIG_FILE_FAIL));
         } catch (ConfigurationException e) {
-            e.printStackTrace();
             return showErrorPopup(new PhrescoException(e), getText(CONFIG_FAIL_ENVS));
         }
         return APP_ENVIRONMENT;

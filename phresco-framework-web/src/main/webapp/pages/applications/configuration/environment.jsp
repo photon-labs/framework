@@ -24,6 +24,7 @@
 <%@ page import="java.util.Collection"%>
 <%@ page import="java.util.Iterator"%>
 
+<%@ page import="com.google.gson.Gson"%>
 <%@ page import="org.apache.commons.collections.CollectionUtils"%>
 
 <%@ page import="com.photon.phresco.configuration.Environment" %>
@@ -31,6 +32,7 @@
 
 <% 
    	List<Environment> environments = (List<Environment>) request.getAttribute(FrameworkConstants.REQ_ENVIRONMENTS);
+	Gson gson = new Gson();
 %>
 
 <form id="environment" class="form-horizontal">
@@ -59,6 +61,7 @@
             <div class="multilist-scroller multiselect" id='multiselect'>
                 <ul>
                 <% for (Environment environment : environments ) {
+                	String envJson = gson.toJson(environment);
                 	String disable = "";
                 	//if (environment.isDefaultEnv() || CollectionUtils.isNotEmpty(environment.getConfigurations())) {
                 		//disable = "disabled";
@@ -66,8 +69,7 @@
                  %>
 	       			<li>
 						<input type="checkbox" name="envNames" class="check techCheck" 
-							value='{"name": "<%= environment.getName() %>", "desc": "<%= environment.getDesc() %>", "defaultEnv": "<%= environment.isDefaultEnv() %>" }' 
-							title="<%= environment.getDesc() %>" <%= disable %>/><%= environment.getName() %>
+							value='<%= envJson %>' title="<%= environment.getDesc() %>" <%= disable %>/><%= environment.getName() %>
 					</li>
 				<% } %>
 				</ul>

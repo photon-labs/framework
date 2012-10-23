@@ -20,32 +20,22 @@
  
 function yesnoPopup(url, title, okUrl, okLabel) {
 	$("a[data-toggle=modal]").click(function() {
-//		disableScreen();
-		$('#popupTitle').html(title); // Title for the popup
 		$('#popupClose').hide();
-	
-		$(".popupOk").attr('id', okUrl); // popup action mapped to id
 
+		$('#popupTitle').html(title); // Title for the popup
+		$(".popupOk").attr('id', okUrl); // popup action mapped to id
 		if (okLabel !== undefined && !isBlank(okLabel)) {
 			$('#' + okUrl).html(okLabel); // label for the ok button 
 		}
 		
 		var data = "";
 		data = getBasicParams();
-		/*if (params !== undefined && !isBlank(params)) {
-			data = params;
-		}*/
-
 		data = data.concat("&");
 		var additionalParam = $(this).attr('additionalParam');
 		data = data.concat(additionalParam);
 
 		$('.modal-body').empty();
 		$('.modal-body').load(url, data); //url to render the body content for the popup
-
-		$('#' + okUrl).click(function() {
-			popupOnOk(okUrl); // this function will be kept in where the yesnoPopup() called
-		});
 	});
 }
 
@@ -523,6 +513,8 @@ function confirmDialog(title, bodyText, okUrl, okLabel) {
 //		disableScreen();
 		$('#popupTitle').html(title); // Title for the popup
 		$('#popupClose').hide();
+		
+		$(".popupOk").attr('id', okUrl);
 	
 		$('.modal-body').html(bodyText);
 		
@@ -533,6 +525,7 @@ function confirmDialog(title, bodyText, okUrl, okLabel) {
 	});
 	
 	$('#' + okUrl).click(function() {
+		alert('going to click confirmDialog ok....');
 		popupOnOk(okUrl); // this function will be kept in where the yesnoPopup() called
 	});
 }

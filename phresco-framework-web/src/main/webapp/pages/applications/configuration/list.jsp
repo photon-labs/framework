@@ -170,7 +170,7 @@
 		hideLoadingIcon();//To hide the loading icon
 	});
 	
-	function popupOnOk(url) {
+	function popupOnOk(self) {
 		var envs = [];
 		$('[name="envNames"]').each(function() {
 			envs.push($(this).val());
@@ -178,11 +178,8 @@
 		
 		var basicParams = getBasicParamsAsJson();
 		var params = '{' + basicParams + ', "environments": [' + envs.join(',') + ']}';
-		//var jsonParams = $.extend(basciParams, envs);
-		//var params = JSON.stringify(jsonParams);
-		alert('params === ' + params);
-		
-		//var env1 = '{"environments": [ { "name" : "Production", "desc" : "My Prod", "defaultEnv" : "true" }, { "name" : "Dev", "desc" : "My Dev", "defaultEnv" : "false" }]}'
+		var url = $(self).attr('id');
+
 		$.ajax({
 			url : url,
 			data : params,
