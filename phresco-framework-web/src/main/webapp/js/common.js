@@ -29,9 +29,9 @@ function yesnoPopup(url, title, okUrl, okLabel) {
 		}
 		
 		var data = "";
-		data = getBasicParams();
+		data = getBasicParams(); //customerid, projectid, appid
 		data = data.concat("&");
-		var additionalParam = $(this).attr('additionalParam');
+		var additionalParam = $(this).attr('additionalParam'); //additional parms if any
 		data = data.concat(additionalParam);
 
 		$('.modal-body').empty();
