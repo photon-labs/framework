@@ -19,8 +19,6 @@
   --%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
-<%@ include file="../../userInfoDetails.jsp" %>
-
 <%@ page import="java.util.List"%>
 <%@ page import="java.util.ArrayList"%>
 <%@ page import="java.util.Collection"%>
@@ -58,17 +56,17 @@
 <div id="subTabcontent">
 	<div id="navigation">
 		<ul>
-			<li><a href="#" class="unselected" name="quality" id="unit"><s:text name="label.unit"/></a></li>
-			<li><a href="#" class="unselected" name="quality" id="functional"><s:text name="label.funtional"/></a></li>
+			<li><a href="#" class="active" name="qualityTab" id="unit"><s:text name="label.unit"/></a></li>
+			<li><a href="#" class="inactive" name="qualityTab" id="functional"><s:text name="label.funtional"/></a></li>
 			<%
 				if (!TechnologyTypes.IPHONES.contains(techId)) {
 			%>
-					<li><a href="#" class="unselected" name="quality" id="performance"><s:text name="label.performance"/></a></li>
+					<li><a href="#" class="inactive" name="qualityTab" id="performance"><s:text name="label.performance"/></a></li>
 			<%
 				}
 				if (!(TechnologyTypes.ANDROIDS.contains(techId) || TechnologyTypes.IPHONES.contains(techId))) {
 			%>
-					<li><a href="#" class="unselected" name="quality" id="load"><s:text name="label.load"/></a></li>
+					<li><a href="#" class="inactive" name="qualityTab" id="load"><s:text name="label.load"/></a></li>
 			<%
 				}
 			%>
@@ -84,6 +82,14 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
+    	var params = getBasicParams();
+    	clickMenu($("a[name='qualityTab']"), $("#subTabcontainer"), '', params);//handles the click event of the quality sub tabs
+		loadContent("unit", '', $("#subTabcontainer"), params);//
+		activateMenu($("#unit"));
+		
+    	//Must be removed
+    	hideLoadingIcon();
+    	
 		var testType = "<%= testTypeSelected%>"
 		
 		if(testType == "null"){
@@ -93,7 +99,7 @@
 			$("a[id='" + testType + "']").attr("class", "selected");
 		}		
 
-		changeTesting(testType);
+// 		changeTesting(testType);
 
 		$("a[name='quality']").click(function() {
 			$("a[name='quality']").attr("class", "unselected");

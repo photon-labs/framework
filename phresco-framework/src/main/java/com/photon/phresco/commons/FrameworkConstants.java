@@ -27,11 +27,14 @@ public interface FrameworkConstants {
      * Common constants
      */
     String HYPHEN = "-";
+
+	String CSV_PATTERN = "\\s*,\\s*";
     
     String LAYER_MOB_ID = "mob-layer";
     String LAYER_APP_ID = "app-layer";
     String LAYER_WEB_ID = "web-layer";
-    String CSV_PATTERN = "\\s*,\\s*";
+    
+    String JAVASCRIPT = "javascript";
     
 	String FEATURES = "features"; 
     int JOB_STATUS_NOTOK = -1;
@@ -1473,6 +1476,7 @@ public interface FrameworkConstants {
 		String EXCEPTION_PROJECT_ADD = "excep.hdr.proj.add";
 		String EXCEPTION_PROJECT_MOB_TECH_VERSIONS = "excep.hdr.proj.mob.tech.versions";
 		String EXCEPTION_PROJECT_WEB_LAYER_WIDGETS = "excep.hdr.proj.web.layer.widgets";
+		String EXCEPTION_QUALITY_UNIT = "excep.hdr.quality.unit";
 		String EXCEPTION_GENERATE_BUILD = "exception.generate.build";
 		String EXCEPTION_GENERATE_DEPLOY = "exception.generate.deploy";
 		String EXCEPTION_BUILD = "exception.build";
@@ -1496,4 +1500,9 @@ public interface FrameworkConstants {
 		String PLUGIN_PARAMETER_FRAMEWORK = "framework";
 		String REQ_DYNAMIC_PARAMETERS = "parameters";
 		String REQ_DYNAMIC_POSSIBLE_VALUES = "possibleValues";
+		/**
+		 * Test and test report directory constants
+		 */
+		String POM_PROP_KEY_UNITTEST_DIR = "phresco.unitTest.dir";
+		String POM_PROP_KEY_UNITTEST_RPT_DIR = "phresco.unitTestReport.dir";
 }

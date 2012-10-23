@@ -148,9 +148,9 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
     	
     }
     
-    protected List<String> getProjectModules(String projectCode) {
+    protected List<String> getProjectModules(String appDirName) {
     	try {
-            StringBuilder builder = getProjectHome(projectCode);
+            StringBuilder builder = getProjectHome(appDirName);
             builder.append(File.separatorChar);
             builder.append(POM_XML);
     		File pomPath = new File(builder.toString());
@@ -169,9 +169,9 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
     	return null;
     }
 
-	private StringBuilder getProjectHome(String projectCode) {
+	private StringBuilder getProjectHome(String appDirName) {
 		StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-		builder.append(projectCode);
+		builder.append(appDirName);
 		return builder;
 	}
     

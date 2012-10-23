@@ -63,7 +63,7 @@
 
 <div class="page-header">
 	<h1>
-		<s:text name="lbl.projects.add"/> <small><span class="mandatory">*</span>&nbsp;<s:text name="label.mandatory"/></small>
+		<s:text name="lbl.projects.add"/> <small><span class="mandatory">*</span>&nbsp;<s:text name="lbl.mandatory.text"/></small>
 	</h1>
 </div>
 
@@ -109,7 +109,7 @@
 		
 		<!-- Version Starts -->
 		<div class="control-group">
-			<label class="control-label labelbold"><s:text name='label.project.version' />
+			<label class="control-label labelbold"><s:text name='lbl.version' />
 			</label>
 			<div class="controls">
 				<input id="projVersion" class="input-xlarge" type="text" name="projectVersion" 
@@ -150,10 +150,10 @@
 							<div class="scrollpanel">
 								<section class="scrollpanel_inner">
 									<div class="control-group">
-										<label class="accordion-control-label labelbold"><s:text name='label.technology'/></label>
+										<label class="accordion-control-label labelbold"><s:text name='lbl.technology'/></label>
 										<div class="controls">
 											<select class="input-xlarge" name="<%= appLayerId + FrameworkConstants.REQ_PARAM_NAME_TECHNOLOGY%>">
-												<option value="" selected disabled>Select Technology</option>
+												<option value="" selected disabled><s:text name='lbl.default.opt.select.tech'/></option>
 												<% 
 													if (CollectionUtils.isNotEmpty(appLayerTechGroups)) {
 														for (TechnologyGroup appLayerTechGroup : appLayerTechGroups) {
@@ -203,7 +203,7 @@
 										
 											<select class="input-medium" name="<%= webLayerId + FrameworkConstants.REQ_PARAM_NAME_TECH_GROUP %>"
 												onchange="getWebLayerWidgets('<%= webLayerId %>', '<%= webLayerId + FrameworkConstants.REQ_PARAM_NAME_TECHNOLOGY %>');">
-												<option value="" selected disabled>Select Web Layer</option>
+												<option value="" selected disabled><s:text name='lbl.default.opt.select.weblayer'/></option>
 												<%
 													if (CollectionUtils.isNotEmpty(webLayerTechGroups)) {
 													    for (TechnologyGroup webLayerTechGroup : webLayerTechGroups) {
@@ -221,7 +221,7 @@
 											</label>
 										
 											<select name="<%= webLayerId + FrameworkConstants.REQ_PARAM_NAME_TECHNOLOGY %>" class="input-medium" onchange="getWidgetVersions(this, '<%= webLayerId + FrameworkConstants.REQ_PARAM_NAME_VERSION %>');">
-												<option value="" selected disabled>Select Widget</option>
+												<option value="" selected disabled><s:text name='lbl.default.opt.select.widget'/></option>
 											</select>
 										</div>
 										<div class="float-left">
@@ -230,7 +230,7 @@
 											</label>
 										
 											<select name="<%= webLayerId + FrameworkConstants.REQ_PARAM_NAME_VERSION %>" class="input-medium">
-												<option value="" selected disabled>Select Version</option>
+												<option value="" selected disabled><s:text name='lbl.default.opt.select.version'/></option>
 											</select>
 										</div>
 									</div>
@@ -270,7 +270,7 @@
 										<div class="align-in-row">
 											<select class="input-medium" name="<%= mobileLayerTechGroup.getId() + FrameworkConstants.REQ_PARAM_NAME_TECHNOLOGY %>"
 												onchange="getMobileTechVersions('<%= mobileLayerId %>', '<%= mobileLayerTechGroup.getId() %>', '<%= mobileLayerTechGroup.getId() + FrameworkConstants.REQ_PARAM_NAME_VERSION %>');">
-												<option value="" selected disabled>Select Type</option>
+												<option value="" selected disabled><s:text name='lbl.default.opt.select.type'/></option>
 												<%
 													List<TechnologyInfo> mobileInfos = mobileLayerTechGroup.getTechInfos();	
 													if (CollectionUtils.isNotEmpty(mobileInfos)) {
@@ -285,16 +285,16 @@
 										</div>
 										<div class="align-in-row">
 											<select class="input-medium" name="<%= mobileLayerTechGroup.getId() + FrameworkConstants.REQ_PARAM_NAME_VERSION %>" id="<%= mobileLayerTechGroup.getId() %>">
-												<option value="" selected disabled>Select Version</option>
+												<option value="" selected disabled><s:text name='lbl.default.opt.select.version'/></option>
 											</select>
 										</div>
 										<div class="align-in-row width">
 											<input type="checkbox" name="<%= mobileLayerTechGroup.getId() + FrameworkConstants.REQ_PARAM_NAME_PHONE %>" value="true"/>
-											<span class="vAlignSub">&nbsp;Phone</span>
+											<span class="vAlignSub">&nbsp;<s:text name='lbl.device.type.phone'/></span>
 										</div>
 										<div class="float-left">
 											<input type="checkbox" name="<%= mobileLayerTechGroup.getId() + FrameworkConstants.REQ_PARAM_NAME_TABLET %>" value="true"/>
-											<span class="vAlignSub">&nbsp;Tablet</span>
+											<span class="vAlignSub">&nbsp;<s:text name='lbl.device.type.tablet'/></span>
 										</div>
 									</div>
 									<div class="clear"></div>
@@ -317,8 +317,8 @@
 
 <!--  Submit and Cancel buttons Starts -->
 <div class="actions">
-	<input type="button" id="createProject" value="<s:text name="lbl.create"/>" class="btn btn-primary">
-	<input type="button" id="cancel" value="<s:text name="label.cancel"/>" class="btn btn-primary" 
+	<input type="button" id="createProject" value="<s:text name="lbl.btn.create"/>" class="btn btn-primary">
+	<input type="button" id="cancel" value="<s:text name="lbl.btn.cancel"/>" class="btn btn-primary" 
 		onclick="loadContent('applications', $('#formCustomers'), $('#container'));"> 
 </div>
 <!--  Submit and Cancel buttons Ends -->
@@ -418,7 +418,7 @@
 	function successEvent(pageUrl, data) {
 		//To fill the versions for the selected mobile technology
 		if (pageUrl == "fetchMobileTechVersions") {
-			fillVersions($("select[name='"+ objName +"']"), data.versions, "No Versions available");
+			fillSelectbox($("select[name='"+ objName +"']"), data.versions, "No Versions available");
 		}
 		
 		//To fill the widgets for the selected web
@@ -433,6 +433,6 @@
 	//To fill the versions of the selected widget
 	function getWidgetVersions(obj, objectName) {
 		var id = $(obj).val();
-		fillVersions($("select[name='"+ objectName +"']"), map[id], "No Versions available");
+		fillSelectbox($("select[name='"+ objectName +"']"), map[id], "No Versions available");
 	}
 </script>

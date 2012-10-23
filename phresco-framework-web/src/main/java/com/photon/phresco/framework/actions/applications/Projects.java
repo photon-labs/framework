@@ -21,7 +21,9 @@ package com.photon.phresco.framework.actions.applications;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
@@ -49,17 +51,22 @@ public class Projects extends FrameworkBaseAction {
 
     private static final Logger S_LOGGER = Logger.getLogger(Projects.class);
     private static Boolean s_debugEnabled = S_LOGGER.isDebugEnabled();
+    
+    private static Map<String, ApplicationType> s_layerMap = new HashMap<String, ApplicationType>();
+    private static Map<String, TechnologyGroup> s_technologyGroupMap = new HashMap<String, TechnologyGroup>();
 
     private String projectName = "";
     private String projectCode = "";
     private String projectDesc = "";
     private String projectVersion = "";
-    private List<String> layer = null;
+    private List<String> layer = new ArrayList<String>(8);
+    private String layerId = "";
+    private String techGroupId = "";
 
-    private List<TechnologyInfo> widgets = null;
-    private List<String> versions = null;
+    private List<TechnologyInfo> widgets = new ArrayList<TechnologyInfo>(8);
+    private List<String> versions = new ArrayList<String>(8);
     
-    private List<String> selectedProjectId = new ArrayList<String>();
+    private List<String> selectedProjectId = new ArrayList<String>(8);
 
     private boolean errorFound = false;
     private String projectNameError = "";
@@ -85,8 +92,10 @@ public class Projects extends FrameworkBaseAction {
             setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
             removeSessionAttribute(projectCode);
         } catch (PhrescoException e) {
-            S_LOGGER.error("Entered into catch block of Applications.list()" + FrameworkUtil.getStackTraceAsString(e));
-            return showErrorPopup(e, EXCEPTION_PROJECT_LIST);
+            if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Projects.list()" + FrameworkUtil.getStackTraceAsString(e));
+            }
+            return showErrorPopup(e, getText(EXCEPTION_PROJECT_LIST));
         }
 
         return APP_LIST;
@@ -105,7 +114,10 @@ public class Projects extends FrameworkBaseAction {
             List<ApplicationType> layers = getServiceManager().getApplicationTypes(getCustomerId());
             setReqAttribute(REQ_PROJECT_LAYERS, layers);
         } catch (PhrescoException e) {
-            return showErrorPopup(e, EXCEPTION_PROJECT_ADD);
+            if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Projects.addProject()" + FrameworkUtil.getStackTraceAsString(e));
+            }
+            return showErrorPopup(e, getText(EXCEPTION_PROJECT_ADD));
         }
 
         return APP_APPLICATION_DETAILS;
@@ -121,11 +133,9 @@ public class Projects extends FrameworkBaseAction {
         }
 
         try {
-            String layerId = getHttpRequest().getParameter(REQ_PARAM_NAME_LAYER_ID);
-            String techGroupId = getHttpRequest().getParameter(REQ_PARAM_NAME_TECH_GROUP_ID);
-            List<TechnologyGroup> techGroups = filterLayer(layerId).getTechGroups();
-            TechnologyGroup technologyGroup = filterTechnologyGroup(techGroups, techGroupId);
-            String techId = getHttpRequest().getParameter(technologyGroup.getId() + REQ_PARAM_NAME_TECHNOLOGY);
+            List<TechnologyGroup> techGroups = filterLayer(getLayerId()).getTechGroups();
+            TechnologyGroup technologyGroup = filterTechnologyGroup(techGroups, getTechGroupId());
+            String techId = getReqParameter(technologyGroup.getId() + REQ_PARAM_NAME_TECHNOLOGY);
             List<TechnologyInfo> techInfos = technologyGroup.getTechInfos();
             if (CollectionUtils.isNotEmpty(techInfos)) {
                 for (TechnologyInfo techInfo : techInfos) {
@@ -136,7 +146,10 @@ public class Projects extends FrameworkBaseAction {
                 }
             }
         } catch (PhrescoException e) {
-            return showErrorPopup(e, EXCEPTION_PROJECT_MOB_TECH_VERSIONS);
+            if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Projects.fetchMobileTechVersions()" + FrameworkUtil.getStackTraceAsString(e));
+            }
+            return showErrorPopup(e, getText(EXCEPTION_PROJECT_MOB_TECH_VERSIONS));
         }
 
         return SUCCESS;
@@ -152,36 +165,38 @@ public class Projects extends FrameworkBaseAction {
         }
 
         try {
-            String layerId = getHttpRequest().getParameter(REQ_PARAM_NAME_LAYER_ID);
-            String techGroupId = getHttpRequest().getParameter(layerId + REQ_PARAM_NAME_TECH_GROUP);
-            List<TechnologyGroup> techGroups = filterLayer(layerId).getTechGroups();
+            String techGroupId = getReqParameter(getLayerId() + REQ_PARAM_NAME_TECH_GROUP);
+            List<TechnologyGroup> techGroups = filterLayer(getLayerId()).getTechGroups();
             TechnologyGroup technologyGroup = filterTechnologyGroup(techGroups, techGroupId);
             setWidgets(technologyGroup.getTechInfos());
         } catch (PhrescoException e) {
-            return showErrorPopup(e, EXCEPTION_PROJECT_WEB_LAYER_WIDGETS);
+            if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Projects.fetchWebLayerWidgets()" + FrameworkUtil.getStackTraceAsString(e));
+            }
+            return showErrorPopup(e, getText(EXCEPTION_PROJECT_WEB_LAYER_WIDGETS));
         }
 
         return SUCCESS;
     }
 
     /**
-     * To get the layer based on the given layer name
+     * To get the layer based on the given layer id
      * @param layers
      * @param layerName
      * @return
      * @throws PhrescoException 
      */
     private ApplicationType filterLayer(String layerId) throws PhrescoException {
-        List<ApplicationType> layers = getServiceManager().getApplicationTypes(getCustomerId());
-        if (CollectionUtils.isNotEmpty(layers)) {
-            for (ApplicationType layer : layers) {
-                if (layer.getId().equals(layerId)) {
-                    return layer;
+        if (s_layerMap.get(layerId) == null) {
+            List<ApplicationType> layers = getServiceManager().getApplicationTypes(getCustomerId());
+            if (CollectionUtils.isNotEmpty(layers)) {
+                for (ApplicationType layer : layers) {
+                    s_layerMap.put(layer.getId(), layer);
                 }
             }
         }
 
-        return null;
+        return s_layerMap.get(layerId);
     }
 
     /**
@@ -192,14 +207,14 @@ public class Projects extends FrameworkBaseAction {
      */
     private TechnologyGroup filterTechnologyGroup(List<TechnologyGroup> technologyGroups, String id) {
         if (CollectionUtils.isNotEmpty(technologyGroups)) {
-            for (TechnologyGroup technologyGroup : technologyGroups) {
-                if (technologyGroup.getId().equalsIgnoreCase(id)) {
-                    return technologyGroup;
+            if (s_technologyGroupMap.get(id) == null) {
+                for (TechnologyGroup technologyGroup : technologyGroups) {
+                    s_technologyGroupMap.put(technologyGroup.getId(), technologyGroup);
                 }
             }
         }
 
-        return null;
+        return s_technologyGroupMap.get(id);
     }
 
     /**
@@ -214,7 +229,10 @@ public class Projects extends FrameworkBaseAction {
         try {
             PhrescoFrameworkFactory.getProjectManager().create(createProjectInfo(), getServiceManager());
         } catch (PhrescoException e) {
-            return showErrorPopup(e, EXCEPTION_PROJECT_CREATE);
+            if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Projects.createProject()" + FrameworkUtil.getStackTraceAsString(e));
+            }
+            return showErrorPopup(e, getText(EXCEPTION_PROJECT_CREATE));
         }
 
         return list();
@@ -256,13 +274,13 @@ public class Projects extends FrameworkBaseAction {
      * @throws PhrescoException
      */
     private List<ApplicationInfo> getMobileLayerAppInfos(List<ApplicationInfo> appInfos, String layerId) throws PhrescoException {
-        String[] techGroupIds = getHttpRequest().getParameterValues(layerId + REQ_PARAM_NAME_TECH_GROUP);
+        String[] techGroupIds = getReqParameterValues(layerId + REQ_PARAM_NAME_TECH_GROUP);
         if (!ArrayUtils.isEmpty(techGroupIds)) {
             for (String techGroupId : techGroupIds) {
                 String techId = getHttpRequest().getParameter(techGroupId + REQ_PARAM_NAME_TECHNOLOGY);
                 String version = getHttpRequest().getParameter(techGroupId + REQ_PARAM_NAME_VERSION);
-                boolean phoneEnabled = Boolean.parseBoolean(getHttpRequest().getParameter(techGroupId + REQ_PARAM_NAME_PHONE));
-                boolean tabletEnabled = Boolean.parseBoolean(getHttpRequest().getParameter(techGroupId + REQ_PARAM_NAME_TABLET));
+                boolean phoneEnabled = Boolean.parseBoolean(getReqParameter(techGroupId + REQ_PARAM_NAME_PHONE));
+                boolean tabletEnabled = Boolean.parseBoolean(getReqParameter(techGroupId + REQ_PARAM_NAME_TABLET));
                 appInfos.add(getAppInfo(getProjectName() + HYPHEN + techGroupId, techId, version, phoneEnabled, tabletEnabled));
             }
         }
@@ -278,8 +296,8 @@ public class Projects extends FrameworkBaseAction {
      * @throws PhrescoException
      */
     private List<ApplicationInfo> getOtherLayerAppInfos(List<ApplicationInfo> appInfos, String layerId) throws PhrescoException {
-        String techId = getHttpRequest().getParameter(layerId + REQ_PARAM_NAME_TECHNOLOGY);
-        String version = getHttpRequest().getParameter(layerId + REQ_PARAM_NAME_VERSION);
+        String techId = getReqParameter(layerId + REQ_PARAM_NAME_TECHNOLOGY);
+        String version = getReqParameter(layerId + REQ_PARAM_NAME_VERSION);
         appInfos.add(getAppInfo(getProjectName() + HYPHEN + techId, techId, version, false, false));
 
         return appInfos;
@@ -365,7 +383,7 @@ public class Projects extends FrameworkBaseAction {
         //empty validation for technology in the selected layer
         if (CollectionUtils.isNotEmpty(getLayer())) {
             for (String layerId : getLayer()) {
-                String techId = getHttpRequest().getParameter(layerId + REQ_PARAM_NAME_TECHNOLOGY);
+                String techId = getReqParameter(layerId + REQ_PARAM_NAME_TECHNOLOGY);
                 if (LAYER_APP_ID.equals(layerId)) {//for application layer
                     if (StringUtils.isEmpty(techId)) {
                         setAppTechError(getText(ERROR_TECHNOLOGY));
@@ -379,13 +397,13 @@ public class Projects extends FrameworkBaseAction {
                     }
                 }
                 if (LAYER_MOB_ID.equals(layerId)) {//for mobile layer
-                    String[] techGroupIds = getHttpRequest().getParameterValues(layerId + REQ_PARAM_NAME_TECH_GROUP);
+                    String[] techGroupIds = getReqParameterValues(layerId + REQ_PARAM_NAME_TECH_GROUP);
                     if (ArrayUtils.isEmpty(techGroupIds)) {//empty validation for technology group
                         setMobTechError(getText(ERROR_TECHNOLOGY));
                         hasError = true;
                     } else {
                         for (String techGroupId : techGroupIds) {//empty validation for technology in the selected technology group
-                            techId = getHttpRequest().getParameter(techGroupId + REQ_PARAM_NAME_TECHNOLOGY);
+                            techId = getReqParameter(techGroupId + REQ_PARAM_NAME_TECHNOLOGY);
                             if (StringUtils.isEmpty(techId)) {
                                 setMobTechError(getText(ERROR_LAYER));
                                 hasError = true;
@@ -522,5 +540,21 @@ public class Projects extends FrameworkBaseAction {
 
     public void setSelectedProjectId(List<String> selectedProject) {
         this.selectedProjectId = selectedProject;
+    }
+    
+    public String getLayerId() {
+        return layerId;
+    }
+
+    public void setLayerId(String layerId) {
+        this.layerId = layerId;
+    }
+
+    public String getTechGroupId() {
+        return techGroupId;
+    }
+
+    public void setTechGroupId(String techGroupId) {
+        this.techGroupId = techGroupId;
     }
 }

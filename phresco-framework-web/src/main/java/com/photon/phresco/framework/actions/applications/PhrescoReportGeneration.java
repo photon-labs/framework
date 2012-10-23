@@ -837,7 +837,7 @@ public class PhrescoReportGeneration extends FrameworkBaseAction implements Fram
 		ArrayList<XmlReport> xmlReports = new ArrayList<XmlReport>();
 		String reportFilePath = "";
 		if (UNIT.equals(testType)) {
-			reportFilePath = Utility.getProjectHome() + projectCode + reportPaths.getUnitReportDir(techId);
+			reportFilePath = Utility.getProjectHome() + projectCode + reportPaths.getUnitTestReportDir(getApplicationInfo());
 		} else {
 			reportFilePath = Utility.getProjectHome() + projectCode + reportPaths.getFunctionalReportDir(techId);
 		}
@@ -865,7 +865,7 @@ public class PhrescoReportGeneration extends FrameworkBaseAction implements Fram
 		
 		String reportFilePath = "";
 		if (UNIT.equals(testType)) {
-			reportFilePath = Utility.getProjectHome() + projectCode + reportPaths.getUnitReportDir(techId);
+			reportFilePath = Utility.getProjectHome() + projectCode + reportPaths.getUnitTestReportDir(getApplicationInfo());
 		} else {
 			reportFilePath = Utility.getProjectHome() + projectCode + reportPaths.getFunctionalReportDir(techId);
 		}

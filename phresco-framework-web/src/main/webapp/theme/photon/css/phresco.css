@@ -2875,8 +2875,7 @@ fieldset {
 
 #subTabcontent {
     height: 98%;
-    margin-top: 2px;
-    overflow: hidden;
+    margin-top: 18px;
     position: relative;
     width: 100%;
 }

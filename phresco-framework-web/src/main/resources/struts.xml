@@ -517,11 +517,19 @@
             <result type="json" />
         </action>
         
+        <action name="unit" method="unit" class="com.photon.phresco.framework.actions.applications.Quality">
+        	<result name="unit">/pages/applications/quality/unit.jsp</result>
+		</action>
+        
         <action name="fillTestResultFiles" method="fillTestResultFiles" class="com.photon.phresco.framework.actions.applications.Quality">
         	<result type="json" />
         </action>
         
-        <action name="fillTestSuites" method="fillTestSuites"  class="com.photon.phresco.framework.actions.applications.Quality">
+        <action name="fillTestSuites" method="fillTestSuites" class="com.photon.phresco.framework.actions.applications.Quality">
+        	<result type="json" />
+        </action>
+        
+        <action name="fetchUnitTestSuites" method="fetchUnitTestSuites" class="com.photon.phresco.framework.actions.applications.Quality">
         	<result type="json" />
         </action>
         
@@ -541,9 +549,9 @@
             <result name="reader">/pages/applications/reader.jsp</result>
         </action>
         
-        <action name="unit" method="unit" class="com.photon.phresco.framework.actions.applications.Quality">
-        	<result name="reader">/pages/applications/reader.jsp</result>
-        </action>
+<!--         <action name="unit" method="unit" class="com.photon.phresco.framework.actions.applications.Quality"> -->
+<!--         	<result name="reader">/pages/applications/reader.jsp</result> -->
+<!--         </action> -->
         
         <action name="perTest" method="performanceTest" class="com.photon.phresco.framework.actions.applications.Quality">
         	<result name="reader">/pages/applications/reader.jsp</result>

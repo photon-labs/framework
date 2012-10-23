@@ -47,7 +47,7 @@
 		</div>
 		
 		<div class="modal-body">
-            <% if (CollectionUtils.isNotEmpty(projectModules)) {  %>
+            <% if (CollectionUtils.isNotEmpty(projectModules)) { %>
             <div id="agnBrowser" class="build server">
 				<!-- Modules -->
 				<div class="clearfix">
@@ -55,7 +55,7 @@
 					<div class="input">
 						<select id="testModule" name="testModule" class="xlarge" >
 						 <%
-						       for(String projectModule : projectModules) {
+						       for (String projectModule : projectModules) {
 						 %>
 								<option value="<%= projectModule%>"> <%= projectModule %></option>
 						 <% } %>

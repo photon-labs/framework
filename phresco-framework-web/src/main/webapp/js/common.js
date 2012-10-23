@@ -491,7 +491,7 @@ function enableDivCtrls(disabledDiv) {
 }
 
 /** To fill the data in the select box **/
-function fillVersions(obj, data, selectTxt) {
+function fillSelectbox(obj, data, selectTxt) {
 	obj.empty();
 	if (isBlank(data)) {
 		obj.append($("<option></option>").attr("value", "").text(selectTxt));

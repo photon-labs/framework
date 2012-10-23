@@ -74,6 +74,7 @@ import org.xml.sax.SAXParseException;
 
 import com.google.gson.Gson;
 import com.photon.phresco.commons.FrameworkConstants;
+import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.FrameworkConfiguration;
@@ -113,6 +114,7 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
     private static final long serialVersionUID = -2040671011555139339L;
     private static final Logger S_LOGGER = Logger.getLogger(Quality.class);
     private static Boolean debugEnabled  =S_LOGGER.isDebugEnabled();
+    
     private List<SettingsInfo> serverSettings = null;
     private String showSettings = null;
     private String testSuite = null;
@@ -207,8 +209,28 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
 	private String iosTestType = null;
 	
 	private static Map<String, Map<String, NodeList>> testSuiteMap = Collections.synchronizedMap(new HashMap<String, Map<String, NodeList>>(8));
+	
+	public String unit() throws JAXBException, IOException, PhrescoPomException {
+	    if (debugEnabled) {
+	        S_LOGGER.debug("Entering Method Quality.unit()");
+	    }
+	    
+	    try {
+	        ApplicationInfo appInfo = getApplicationInfo();
+	        FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+	        getHttpRequest().setAttribute(PATH, frameworkUtil.getUnitTestDir(appInfo));
+            setReqAttribute(REQ_APP_INFO, appInfo);
+            List<String> projectModules = getProjectModules(appInfo.getAppDirName());
+            getHttpRequest().setAttribute(REQ_PROJECT_MODULES, projectModules);
+        } catch (PhrescoException e) {
+            e.printStackTrace();
+            return showErrorPopup(e, getText(EXCEPTION_QUALITY_UNIT));
+        }
+	    
+	    return APP_UNIT_TEST;
+	}
     
-    public String unit() {
+    public String unit1() {
     	S_LOGGER.debug("Entering Method Quality.unit()");
 
         getHttpRequest().setAttribute(REQ_TEST_TYPE_SELECTED, REQ_TEST_UNIT);
@@ -251,7 +273,7 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
             builder.append(project.getApplicationInfo().getCode());
             List<String> projectModules = getProjectModules(projectCode);
             if (CollectionUtils.isEmpty(projectModules)) {
-            	String unitTestDir = frameworkUtil.getUnitTestDir(techId);
+            	String unitTestDir = frameworkUtil.getUnitTestDir(null);//TODO:Need to handle
             	builder.append(unitTestDir);
             } else {
             	builder.append(File.separatorChar);
@@ -395,18 +417,18 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
         getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
         return APP_ENVIRONMENT_READER;
     }
-
-    private String getTestResultPath(Project project, String testResultFile) throws ParserConfigurationException, 
-    SAXException, IOException, TransformerException, PhrescoException {
+    
+    private String getTestResultPath(ApplicationInfo appInfo, String testResultFile) throws ParserConfigurationException, 
+    SAXException, IOException, TransformerException, PhrescoException, JAXBException, PhrescoPomException {
     	S_LOGGER.debug("Entering Method Quality.getTestDocument(Project project, String testResultFile)");
-    	S_LOGGER.debug("getTestDocument() ProjectInfo = "+project.getApplicationInfo());
+    	S_LOGGER.debug("getTestDocument() ProjectInfo = "+appInfo);
     	S_LOGGER.debug("getTestDocument() TestResultFile = "+testResultFile);
     	
-    	String techId = project.getApplicationInfo().getTechInfo().getVersion();
+    	String techId = appInfo.getTechInfo().getId();
         FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
         StringBuilder sb = new StringBuilder();
         sb.append(Utility.getProjectHome());
-        sb.append(project.getApplicationInfo().getCode());
+        sb.append(appInfo.getAppDirName());
 
         if (FUNCTIONAL.equals(testType)) {
         	if (StringUtils.isNotEmpty(projectModule)) {
@@ -430,7 +452,7 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
                 	sb.append(UNIT_TEST_JASMINE_REPORT_DIR);
                 }
         	} else {
-        		sb.append(frameworkUtil.getUnitReportDir(techId));
+        		sb.append(frameworkUtil.getUnitTestReportDir(appInfo));
         	}
         } else if (LOAD.equals(testType)) {
             sb.append(frameworkUtil.getLoadReportDir(techId));
@@ -485,19 +507,16 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
         return null;
 	}
 
-	public String fillTestResultFiles() throws ParserConfigurationException, SAXException, IOException, TransformerException {
+	public String fillTestResultFiles() throws PhrescoException, ParserConfigurationException, SAXException, IOException, TransformerException, JAXBException, PhrescoPomException {
     	S_LOGGER.debug("Entering Method Quality.getTestSuites(Project project)");
 
         try {
-        	
-        	ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-        	Project project = administrator.getProject(projectCode);
         	Map<String, NodeList> mapTestResultName = null;
         	mapTestResultName = testSuiteMap.get(projectCode + testType + projectModule + techReport);
         	
 //        	String resultPath = "";
         	
-    		String testResultPath = getTestResultPath(project, null);
+    		String testResultPath = getTestResultPath(getApplicationInfo(), null);
             /*if (StringUtils.isNotEmpty(projectModule)) {
                 StringBuilder sb = new StringBuilder();
                 sb.append(Utility.getProjectHome());
@@ -546,15 +565,70 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
 		return null;
     }
 	
+	public String fetchUnitTestSuites() throws ParserConfigurationException, SAXException, IOException, TransformerException, JAXBException, PhrescoPomException {
+	    if (debugEnabled) {
+	        S_LOGGER.debug("Entering Method Quality.fillUnitTestSuites");
+	    }
+	    
+	    try {
+	        String testSuitesMapKey = getAppId() + getTestType() + getProjectModule() + getTechReport();
+	        Map<String, NodeList> mapTestResultName = testSuiteMap.get(testSuitesMapKey);
+	        String testResultPath = getUnitTestResultPath(getApplicationInfo(), null);
+	        if (MapUtils.isEmpty(mapTestResultName)) {
+                File[] resultFiles = getTestResultFiles(testResultPath);
+                if (!ArrayUtils.isEmpty(resultFiles)) {
+                    QualityUtil.sortResultFile(resultFiles);
+                    updateCache(resultFiles);
+                } else {
+                    setValidated(true);
+                    setShowError(getText(ERROR_UNIT_TEST));
+                    return SUCCESS;
+                }
+                mapTestResultName = testSuiteMap.get(testSuitesMapKey);
+            }
+        } catch (PhrescoException e) {
+            // TODO: handle exception
+        }
+        
+	    return SUCCESS;
+	}
+	
+	private String getUnitTestResultPath(ApplicationInfo appInfo, String testResultFile) throws PhrescoException, JAXBException, IOException, PhrescoPomException {
+        if (debugEnabled) {
+            S_LOGGER.debug("Entering Method Quality.getUnitTestResultPath()");
+        }
+        
+        StringBuilder sb = new StringBuilder();
+        FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+        sb.append(Utility.getProjectHome());
+        sb.append(appInfo.getAppDirName());
+        if (StringUtils.isNotEmpty(getProjectModule())) {
+            sb.append(File.separatorChar);
+            sb.append(getProjectModule());
+        }
+        StringBuilder tempsb = new StringBuilder(sb);
+        if (JAVASCRIPT.equals(getTechReport())) {
+            tempsb.append(UNIT_TEST_QUNIT_REPORT_DIR);
+            File file = new File(tempsb.toString());
+            if (file.isDirectory() && file.list().length > 0) {
+                sb.append(UNIT_TEST_QUNIT_REPORT_DIR);
+            } else {
+                sb.append(UNIT_TEST_JASMINE_REPORT_DIR);
+            }
+        } else {
+            sb.append(frameworkUtil.getUnitTestReportDir(appInfo));
+        }
+        
+        return sb.toString();
+    }
+	
 	public String fillTestSuites() {
 		S_LOGGER.debug("Entering Method Quality.fillTestSuites");
 		try {
-			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-	    	Project project = administrator.getProject(projectCode);
-	    	Map<String, NodeList> mapTestResultName = null;
-	    	mapTestResultName = testSuiteMap.get(projectCode + testType + projectModule + techReport);
+	    	String testSuitesMapKey = getAppId() + getTestType() + getProjectModule() + getTechReport();
+	    	Map<String, NodeList> mapTestResultName = testSuiteMap.get(testSuitesMapKey);
 	    	
-			String testResultPath = getTestResultPath(project, null);
+			String testResultPath = getTestResultPath(getApplicationInfo(), null);
 	    	if (MapUtils.isEmpty(mapTestResultName) || StringUtils.isNotEmpty(fromPage)) {
 	    		File[] resultFiles = getTestResultFiles(testResultPath);
 	    		if (resultFiles != null) {
@@ -570,7 +644,6 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
 	    			return SUCCESS;
 	    		}
 	
-	        	String testSuitesMapKey = projectCode + testType + projectModule + techReport;
 	        	mapTestResultName = testSuiteMap.get(testSuitesMapKey);
 	    	} 
 	    	
@@ -877,13 +950,13 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
         return tcError;
     }
 
-    private List<TestResult> getLoadTestResult(Project project, String testResultFile) throws TransformerException, PhrescoException, ParserConfigurationException, SAXException, IOException {
+    private List<TestResult> getLoadTestResult(ApplicationInfo appInfo, String testResultFile) throws TransformerException, PhrescoException, ParserConfigurationException, SAXException, IOException {
            S_LOGGER.debug("Entering Method Quality.getLoadTestResult(Project project, String testResultFile)");
-           S_LOGGER.debug("getTestResult() ProjectInfo = " + project.getApplicationInfo());
+           S_LOGGER.debug("getTestResult() ProjectInfo = " + appInfo);
            S_LOGGER.debug("getTestResult() TestResultFile = " + testResultFile);
         List<TestResult> testResults = new ArrayList<TestResult>(2);
         try {
-        	String testResultPath = getTestResultPath(project, testResultFile);
+        	String testResultPath = getTestResultPath(appInfo, testResultFile);
             Document doc = getDocument(new File(testResultPath)); 
             NodeList nodeList = org.apache.xpath.XPathAPI.selectNodeList(doc, XPATH_TEST_RESULT);
 
@@ -929,18 +1002,19 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
     	S_LOGGER.debug("Entering Method Quality.testType()");
         
     	try {
-            ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-            Project project = administrator.getProject(projectCode);
+    	    ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
+    	    ApplicationInfo appInfo = getApplicationInfo();
             String testType = getHttpRequest().getParameter(REQ_TEST_TYPE);
-            String techId = project.getApplicationInfo().getTechInfo().getVersion();
+            String techId = appInfo.getTechInfo().getId();
             
             // Show warning message for Android technology in quality page when build is not available
-            if (TechnologyTypes.ANDROIDS.contains(techId)) {
-            	int buildSize = administrator.getBuildInfos(project).size();
-                getHttpRequest().setAttribute(REQ_BUILD_WARNING, buildSize == 0);
-            } else {
-            	getHttpRequest().setAttribute(REQ_BUILD_WARNING, false);
-            }
+            //TODO:Need to handle
+//            if (TechnologyTypes.ANDROIDS.contains(techId)) {
+//            	int buildSize = administrator.getBuildInfos(project).size();
+//                getHttpRequest().setAttribute(REQ_BUILD_WARNING, buildSize == 0);
+//            } else {
+//            	getHttpRequest().setAttribute(REQ_BUILD_WARNING, false);
+//            }
             
             S_LOGGER.debug("Test type() test type " + testType);
             if (testType != null && (APP_UNIT_TEST.equals(testType) || APP_FUNCTIONAL_TEST.equals(testType))) {
@@ -949,11 +1023,11 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
                     FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
                     if (APP_UNIT_TEST.equals(testType)) {
                         getHttpRequest().setAttribute(PATH, 
-                                frameworkUtil.getUnitTestDir(techId));
+                                frameworkUtil.getUnitTestDir(appInfo));
                     } else if (APP_FUNCTIONAL_TEST.equals(testType) && !TechnologyTypes.IPHONE_HYBRID.equals(techId)) {
 //                        ActionType actionType = ActionType.STOP_SELENIUM_SERVER;
                         StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-                        builder.append(project.getApplicationInfo().getCode());
+                        builder.append(appInfo.getAppDirName());
                         String funcitonalTestDir = frameworkUtil.getFuncitonalTestDir(techId);
                         builder.append(funcitonalTestDir);
 //                        actionType.setWorkingDirectory(builder.toString());
@@ -972,7 +1046,7 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
                 } catch (Exception e) {
                     getHttpRequest().setAttribute(REQ_ERROR_TESTSUITE, getText(ERROR_FUNCTIONAL_TEST));
                 }
-                getHttpRequest().setAttribute(REQ_PROJECT, project);
+                getHttpRequest().setAttribute(REQ_APP_INFO, appInfo);
                 getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
                 getHttpRequest().setAttribute(REQ_TEST_TYPE, testType);
                 List<String> projectModules = getProjectModules();
@@ -985,7 +1059,7 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
                 FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
                 StringBuilder sb = new StringBuilder();
                 sb.append(Utility.getProjectHome());
-                sb.append(project.getApplicationInfo().getCode());
+                sb.append(appInfo.getAppDirName());
                 getHttpRequest().setAttribute(PATH,	frameworkUtil.getLoadTestDir(techId));
                 sb.append(frameworkUtil.getLoadReportDir(techId));
                    S_LOGGER.debug("test type load  test Report directory " + sb.toString());
@@ -999,7 +1073,7 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
                     getHttpRequest().setAttribute(REQ_ERROR_TESTSUITE, getText(ERROR_LOAD_TEST));
                 }
                 getHttpRequest().setAttribute(REQ_TEST_TYPE, testType);
-                getHttpRequest().setAttribute(REQ_PROJECT, project);
+                getHttpRequest().setAttribute(REQ_APP_INFO, appInfo);
                 getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
                 return testType;
             }
@@ -1009,7 +1083,7 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
                 FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
                 getHttpRequest().setAttribute(PATH,	frameworkUtil.getPerformanceTestDir(techId));
                 getHttpRequest().setAttribute(REQ_TEST_TYPE, testType);
-                getHttpRequest().setAttribute(REQ_PROJECT, project);
+                getHttpRequest().setAttribute(REQ_APP_INFO, appInfo);
                 getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
                 return testType;
             }
@@ -1270,9 +1344,7 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
         
         try {
             String testResultFile = getHttpRequest().getParameter(REQ_TEST_RESULT_FILE);
-            ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-            Project project = administrator.getProject(projectCode);
-            List<TestResult> testResults = getLoadTestResult(project, testResultFile);
+            List<TestResult> testResults = getLoadTestResult(getApplicationInfo(), testResultFile);
             getHttpRequest().setAttribute(REQ_TEST_RESULT, testResults);
             Gson gson = new Gson();
             StringBuilder jSon = new StringBuilder();
@@ -1411,13 +1483,13 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
             String testResultFile = getHttpRequest().getParameter(REQ_TEST_RESULT_FILE);
             String showGraphFor = getHttpRequest().getParameter("showGraphFor");
             ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-            Project project = administrator.getProject(projectCode);
+            ApplicationInfo appInfo = getApplicationInfo();
 //            String deviceId = getHttpRequest().getParameter("deviceId"); // android device id for display
-            String techId = project.getApplicationInfo().getTechInfo().getVersion();
+            String techId = appInfo.getTechInfo().getId();
                S_LOGGER.debug("Performance test file name " + testResultFile);
             
             if (!testResultFile.equals("null")) {
-            	String testResultPath = getTestResultPath(project, testResultFile);
+            	String testResultPath = getTestResultPath(appInfo, testResultFile);
                 Document document = getDocument(new File(testResultPath)); 
                 Map<String, PerformanceTestResult> performanceReport = QualityUtil.getPerformanceReport(document, getHttpRequest(), techId, testResultDeviceId); // need to pass tech id and tag name
                 getHttpRequest().setAttribute(REQ_TEST_RESULT, performanceReport);
@@ -1463,7 +1535,7 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
                 getHttpRequest().setAttribute(FrameworkConstants.REQ_GRAPH_LABEL, label.toString());
                 getHttpRequest().setAttribute(FrameworkConstants.REQ_GRAPH_ALL_DATA, allMin +", "+ allAvg +", "+ allMax);
                 getHttpRequest().setAttribute(FrameworkConstants.REQ_SHOW_GRAPH, showGraphFor);
-                getHttpRequest().setAttribute(REQ_PROJECT, project);
+                getHttpRequest().setAttribute(REQ_APP_INFO, appInfo);
             } else {
                 getHttpRequest().setAttribute(REQ_ERROR_TESTSUITE, ERROR_TEST_SUITE);
             }
@@ -1972,11 +2044,9 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
 	public String devices() {
 		S_LOGGER.debug("Entering Method Quality.devices()");
         try {
-            ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-            Project project = administrator.getProject(projectCode);
             String testResultFile = getHttpRequest().getParameter(REQ_TEST_RESULT_FILE);
             if (!testResultFile.equals("null")) {
-            	String testResultPath = getTestResultPath(project, testResultFile);
+            	String testResultPath = getTestResultPath(getApplicationInfo(), testResultFile);
                 Document document = getDocument(new File(testResultPath)); 
         		deviceNames = QualityUtil.getDeviceNames(document);
             }
@@ -2049,16 +2119,16 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
         try {
         	boolean isReportAvailable = false;
         	ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-            Project project = administrator.getProject(projectCode);
+        	ApplicationInfo appInfo = getApplicationInfo();
             FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-            String technology = project.getApplicationInfo().getTechInfo().getVersion();
+            String technology = appInfo.getTechInfo().getId();
             // is sonar report available
             isReportAvailable = isSonarReportAvailable(frameworkUtil, technology);
             
             // is test report available
             S_LOGGER.debug("sonar report avail !!!!!!!! " + isReportAvailable);
     	    if (!isReportAvailable) {
-    	    	isReportAvailable = isTestReportAvailable(frameworkUtil, technology, project);
+    	    	isReportAvailable = isTestReportAvailable(frameworkUtil, technology, appInfo);
     	    }
             
     	    S_LOGGER.debug(" Xml Results Available ====> " + isReportAvailable);
@@ -2163,15 +2233,15 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
 	    return XmlResultsAvailable;
 	}
 	
-	private boolean isTestReportAvailable(FrameworkUtil frameworkUtil, String technology, Project project) {
+	private boolean isTestReportAvailable(FrameworkUtil frameworkUtil, String technology, ApplicationInfo appInfo) throws JAXBException, IOException, PhrescoPomException {
 		//check unit and functional are executed already or not
         StringBuilder sb = new StringBuilder();
         sb.append(Utility.getProjectHome());
-        sb.append(project.getApplicationInfo().getCode());
+        sb.append(appInfo.getAppDirName());
 		boolean XmlResultsAvailable = false;
             if(!XmlResultsAvailable) {
-            	S_LOGGER.debug("Unit dir " + sb.toString() + frameworkUtil.getUnitReportDir(technology));
-	            File file = new File(sb.toString() + frameworkUtil.getUnitReportDir(technology));
+            	S_LOGGER.debug("Unit dir " + sb.toString() + frameworkUtil.getUnitTestReportDir(appInfo));
+	            File file = new File(sb.toString() + frameworkUtil.getUnitTestReportDir(appInfo));
 	            File[] children = file.listFiles(new XmlNameFileFilter(FILE_EXTENSION_XML));
 	            if(children != null && children.length > 0) {
 	            	XmlResultsAvailable = true;

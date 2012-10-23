@@ -34,6 +34,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.bind.JAXBException;
 
 import org.antlr.stringtemplate.StringTemplate;
 import org.apache.commons.codec.binary.Base64;
@@ -42,7 +43,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Element;
 
-import com.photon.phresco.commons.FrameworkConstants;
+import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.FrameworkConfiguration;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
@@ -51,12 +52,13 @@ import com.photon.phresco.framework.api.ProjectAdministrator;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
 import com.photon.phresco.util.TechnologyTypes;
 import com.photon.phresco.util.Utility;
+import com.phresco.pom.exception.PhrescoPomException;
 import com.phresco.pom.model.Model;
 import com.phresco.pom.model.Model.Profiles;
 import com.phresco.pom.model.Profile;
 import com.phresco.pom.util.PomProcessor;
 
-public class FrameworkUtil extends FrameworkBaseAction implements FrameworkConstants {
+public class FrameworkUtil extends FrameworkBaseAction {
 
 	private static final long serialVersionUID = 1L;
 	private static FrameworkUtil frameworkUtil = null;
@@ -441,14 +443,15 @@ public class FrameworkUtil extends FrameworkBaseAction implements FrameworkConst
 		testCasePathMap.put(TechnologyTypes.JAVA_STANDALONE, XPATH_JAVA_WEBSERVICE_TESTCASE);
 	}
 	
-    public String getUnitTestDir(String technologyId) {
-        String key = unitTestMap.get(technologyId);
-        return qualityReportsProp.getProperty(key);
+    public String getUnitTestDir(ApplicationInfo appInfo) throws JAXBException, IOException, PhrescoPomException {
+        PomProcessor pomProcessor = new PomProcessor(new File(Utility.getProjectHome() + appInfo.getAppDirName() + File.separator + POM_FILE));
+        
+        return pomProcessor.getProperty(POM_PROP_KEY_UNITTEST_DIR);
     }
     
-    public String getUnitReportDir(String technologyId) {
-        String key = unitReportMap.get(technologyId);
-        return qualityReportsProp.getProperty(key);
+    public String getUnitTestReportDir(ApplicationInfo appInfo) throws JAXBException, IOException, PhrescoPomException {
+        PomProcessor pomProcessor = new PomProcessor(new File(Utility.getProjectHome() + appInfo.getAppDirName() + File.separator + POM_FILE));
+        return pomProcessor.getProperty(POM_PROP_KEY_UNITTEST_RPT_DIR);
     }
     
     public String getFuncitonalTestDir(String technologyId) {
@@ -496,7 +499,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements FrameworkConst
     	return testSuitePath;
     }
     
-    public String getTestCasePath(String technologyId){
+    public  String getTestCasePath(String technologyId){
     	String testCasePath = testCasePathMap.get(technologyId);
     	return testCasePath;
     }
@@ -762,7 +765,6 @@ public class FrameworkUtil extends FrameworkBaseAction implements FrameworkConst
 		 
 		 return builder;
     }
-    
     
     public static StringTemplate constructLabelElement(Boolean isMandatory, String cssClass, String Label) {
     	StringTemplate labelElement = new StringTemplate(LABEL_TEMPLATE);

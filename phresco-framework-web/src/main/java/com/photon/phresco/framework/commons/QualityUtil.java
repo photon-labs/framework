@@ -599,8 +599,8 @@ public class QualityUtil {
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static void sortResultFile(File[] children){
-            S_LOGGER.debug("Entering Method QualityUtil.sortResultFile() for quality tab" + children);
+	public static void sortResultFile(File[] children) {
+        S_LOGGER.debug("Entering Method QualityUtil.sortResultFile() for quality tab" + children);
 		Arrays.sort( children, new Comparator() {
         	public int compare(Object o1, Object o2) {
             	if (((File)o1).lastModified() > ((File)o2).lastModified()) {
