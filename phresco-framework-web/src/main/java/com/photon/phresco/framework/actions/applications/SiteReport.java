@@ -101,7 +101,7 @@ public class SiteReport extends FrameworkBaseAction {
          	}
 		} catch (PhrescoException e) {
 			S_LOGGER.error("Entered into catch block of SiteReport.checkForSiteReport()" + FrameworkUtil.getStackTraceAsString(e));
-			return showErrorPopup(e,  getText(EXCEPTION_REPORT_CHECKFOR_SITE));
+			return showErrorPopup(e,  getText(EXCEPTION_REPORT_VIEW_SITE));
 		}
 		
 		return APP_SITE_REPORT_VIEW;
