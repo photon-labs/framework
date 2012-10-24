@@ -152,11 +152,18 @@ Width <= 1024
 	    height: 90%;
 	}
 	
+	.projectScrollDiv {
+		overflow-x: hidden;
+		overflow-y: auto;
+		position: relative;
+		height: 83% !important;
+	}
+	
 	.appInfoScrollDiv {
 		overflow-x: hidden;
 		overflow-y: auto;
 		position: relative;
-		height: 86%;
+		height: 83% !important;
 	}
 	
 	.featuresScrollDiv {
@@ -543,6 +550,13 @@ Width size <= 1024
 	    height: 96%;
 	}
 	
+	.projectScrollDiv {
+		overflow-x: hidden;
+		overflow-y: auto;
+		position: relative;
+		height: 92%;
+	}
+	
 	.appInfoScrollDiv {
 		overflow-x: hidden;
 		overflow-y: auto;
@@ -917,6 +931,13 @@ Width >= 1152 and < 1280
 		margin: auto;
 		padding-left: 19%;
 		width: 55%;
+	}
+	
+	.projectScrollDiv {
+		overflow-x: hidden;
+		overflow-y: auto;
+		position: relative;
+		height: 88%;
 	}
 	
 	.appInfoScrollDiv {
@@ -1330,6 +1351,13 @@ Width <= 1280 and height <= 800
 		position: relative;
 	}
 	
+	.projectScrollDiv {
+		overflow-x: hidden;
+		overflow-y: auto;
+		position: relative;
+		height:86%;
+	}
+	
 	.appInfoScrollDiv {
 		overflow-x: hidden;
 		overflow-y: auto;
@@ -1598,11 +1626,18 @@ Width >= 1280 and height >= 800
 	    width: auto;
 	}
 	
+	.projectScrollDiv {
+		overflow-x: hidden;
+		overflow-y: auto;
+		position: relative;
+		height: 90%;
+	}
+	
 	.appInfoScrollDiv {
 		overflow-x: hidden;
 		overflow-y: auto;
 		position: relative;
-		height: 95.5%;
+		height: 92%;
 	}
 	
 	.app_features_form {
@@ -2043,6 +2078,13 @@ Width > 1280 and <= 1360
 		position: relative;
 	}
 	
+	.projectScrollDiv {
+		overflow-x: hidden;
+		overflow-y: auto;
+		position: relative;
+		height: 85%;
+	}
+	
 	.appInfoScrollDiv {
 		overflow-x: hidden;
 		overflow-y: auto;
@@ -2392,6 +2434,13 @@ Width > 1360 and <= 1440
 		overflow-y: auto;
 		overflow-x:hidden;
 		position: relative;
+	}
+	
+	.projectScrollDiv {
+		overflow-x: hidden;
+		overflow-y: auto;
+		position: relative;
+		height: 92%;
 	}
 	
 	.appInfoScrollDiv {
@@ -2752,6 +2801,13 @@ Width > 1441 and <= 1600
 		overflow-y: auto;
 		overflow-x:hidden;
 		position: relative;
+	}
+	
+	.projectScrollDiv {
+		overflow-x: hidden;
+		overflow-y: auto;
+		position: relative;
+		height: 87%;
 	}
 	
 	.appInfoScrollDiv {

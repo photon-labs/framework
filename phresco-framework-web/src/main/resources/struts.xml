@@ -127,6 +127,14 @@
             <result name="appinfo">/pages/applications/appinfo.jsp</result>
         </action>
         
+         <action name="fetchDownloadInfos" method="fetchDownloadInfos" class="com.photon.phresco.framework.actions.applications.Applications">
+			<result type="json"/>
+        </action>
+        
+        <action name="featuresList" method="featuresList" class="com.photon.phresco.framework.actions.applications.Applications">
+            <result name="features">/pages/applications/features.jsp</result>
+        </action>
+        
         <action name="applicationType" method="applicationType" class="com.photon.phresco.framework.actions.applications.Applications">
             <result name="applicationType">/pages/applications/application_type.jsp</result>
         </action>

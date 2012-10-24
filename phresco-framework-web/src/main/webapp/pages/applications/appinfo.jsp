@@ -17,11 +17,10 @@
   limitations under the License.
   ###
   --%>
+
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
-<%@ page import="java.util.ArrayList" %>
 <%@ page import="java.util.Collection" %>
-<%@ page import="java.util.Iterator" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Map" %>
 
@@ -30,64 +29,34 @@
 <%@ page import="org.apache.commons.collections.MapUtils" %>
 
 <%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
-<%@ page import="com.photon.phresco.framework.api.Project" %>
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
-<%@ page import="com.photon.phresco.commons.model.ApplicationType"%>
+<%@ page import="com.photon.phresco.commons.model.WebService"%>
+<%@ page import="com.photon.phresco.commons.model.DownloadInfo"%>
 
-<!--  Heading Starts -->
 <%
-	String customerId = (String) request.getAttribute(FrameworkConstants.REQ_CUSTOMER_ID);
-    String codePrefix = (String) request.getAttribute(FrameworkConstants.REQ_CODE_PREFIX);
-    String fromPage = (String) request.getAttribute(FrameworkConstants.REQ_FROM_PAGE);
-    String disabled = "disabled";
-    if (StringUtils.isEmpty(fromPage)){
-        fromPage = "";
-        disabled = "";
-    }
-    String projectCode = (String) request.getAttribute(FrameworkConstants.REQ_PROJECT_CODE);
-    if (StringUtils.isEmpty(projectCode)) {
-    	projectCode = "";
-    } 
-    Map<String, String> selectedFeatures = (Map<String, String>) request.getAttribute(FrameworkConstants.REQ_TEMP_SELECTEDMODULES);
-    Map<String, String> selectedJsLibs = (Map<String, String>) request.getAttribute(FrameworkConstants.REQ_TEMP_SELECTED_JSLIBS);
-    String selectedPilotProj = (String) request.getAttribute(FrameworkConstants.REQ_TEMP_SELECTED_PILOT_PROJ);
-    ApplicationInfo selectedInfo = (ApplicationInfo) session.getAttribute(projectCode);
-    
-    String configServerNames = (String) request.getAttribute(FrameworkConstants.REQ_CONFIG_SERVER_NAMES);
-    String configDbNames = (String) request.getAttribute(FrameworkConstants.REQ_CONFIG_DB_NAMES);
-    
-    String externalCode = "";
-    String projectVersion = "";
-    String groupId = "";
-    String artifactId = "";
-    if (selectedInfo != null) {
-        //TODO:Need to handle
-//     	if (selectedInfo.getProjectCode() != null) {
-//     		externalCode = selectedInfo.getProjectCode();
-//     	}
-    	if (selectedInfo.getVersion() != null) {
-    		projectVersion = selectedInfo.getVersion();
-    	}
-    	//TODO:Need to handle
-    	/* if (selectedInfo.getGroupId() != null) {
-    		groupId = selectedInfo.getGroupId();
-    	}
-    	if (selectedInfo.getArtifactId() != null) {
-    		artifactId = selectedInfo.getArtifactId();
-    	} */
-    }
+	ApplicationInfo selectedInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_APPINFO);
+	List<WebService> webservices = (List<WebService>)request.getAttribute(FrameworkConstants.REQ_WEBSERVICES);
+	String name = "";
+	String code = "";
+	String description = "";
+	String version = "";
+	if (selectedInfo != null) {
+		name = selectedInfo.getName();
+		code = selectedInfo.getCode();
+		description = selectedInfo.getDescription();
+		version = selectedInfo.getVersion();
+	}
 %>
 
 <!--  Form Starts -->
 <form id="formAppInfo" autocomplete="off" class="app_add_form" autofocus="autofocus">
     <div class="appInfoScrollDiv">          
 		<!--  Name Starts -->
-		<div class="control-group <%=request.getAttribute(FrameworkConstants.REQ_NAME)!= null ? "error" : "" %>" id="nameErrDiv">
-		    <label class="control-label labelbold"><span class="red">*</span> <s:text name="label.name"/></label>
+		<div class="control-group" id="nameErrDiv">
+		    <label class="accordion-control-label labelbold"><span class="red">*</span> <s:text name="lbl.name"/></label>
 		    <div class="controls">
-		        <input class="input-xlarge" id="name" name="name" maxlength="30" title="30 Characters only"
-		            type="text"  value ="<%= selectedInfo == null ? "" : selectedInfo.getName() %>" 
-		            autofocus="autofocus" placeholder="<s:text name="label.name.placeholder"/>" <%= disabled %> />
+		        <input class="input-xlarge" id="name" name="name" maxlength="30" title="<s:text name="title.30.chars"/>"
+		            type="text"  value ="<%= name %>" autofocus="autofocus" placeholder="<s:text name="label.name.placeholder"/>" />
 		        <span class="help-inline" id="nameErrMsg">
 		           
 		        </span>
@@ -97,62 +66,198 @@
 	
 		<!--  Code Starts -->
 		<div class="control-group">
-		    <label class="control-label labelbold"><s:text name="label.code"/></label>
+		    <label class="accordion-control-label labelbold"><s:text name='lbl.code'/></label>
 		    <div class="controls">
-		        <input type="hidden" id="code" name="code" value="<%= selectedInfo == null ? codePrefix : selectedInfo.getCode() %>" />
-		        <%-- <input class="xlarge" id="internalCode" name="internalCode"
-		            type="text"  value ="<%= selectedInfo == null ? codePrefix : selectedInfo.getCode() %>" disabled /> --%>
-				<input class="input-xlarge" id="externalCode" name="externalCode"
-		            type="text" maxlength="12" value ="<%= externalCode %>" title="12 Characters only" placeholder="<s:text name="label.code.placeholder"/>"/>
+				<input class="input-xlarge" id="externalCode" name="code"
+		            type="text" maxlength="12" value ="<%= StringUtils.isNotEmpty(code) ? code : "" %>" title="<s:text name="title.12.chars"/>" 
+		            placeholder="<s:text name="label.code.placeholder"/>"/>
 		    </div>
 		</div>
 		<!--  Code Ends -->
 	                    
 		<!--  Description Starts -->
 		<div class="control-group">
-		    <s:label key="label.description" theme="simple" cssClass="control-label labelbold"/>
+		     <label class="accordion-control-label labelbold"><s:text name='lbl.desc'/></label>
 		    <div class="controls">
-		        <textarea class="appinfo-desc input-xxlarge" maxlength="150" title="150 Characters only" class="xxlarge" id="textarea" name="description"
-		        	placeholder="<s:text name="label.description.placeholder"/>"><%= selectedInfo == null ? "" : selectedInfo.getDescription() %></textarea>
+		        <textarea class="appinfo-desc input-xlarge" maxlength="150" title="<s:text name="title.150.chars"/>" class="xlarge" 
+		        	id="textarea" placeholder="<s:text name="label.description.placeholder"/>"
+		        	name="description" value="<%= StringUtils.isNotEmpty(description) ? description : "" %>"></textarea>
 		    </div>
 		</div>
 		<!--  Description Ends -->
 		
 		<!--  Version Starts -->
 		<div class="control-group">
-		    <s:label key="label.project.version" theme="simple" cssClass="control-label labelbold"/>
+		    <label class="accordion-control-label labelbold"><s:text name='lbl.version'/></label>
 		    <div class="controls">
-				<input class="input-xlarge" id="projectVersion" name="projectVersion" maxlength="20" title="20 Characters only"
-					type="text"  value ="<%= StringUtils.isEmpty(fromPage) ? "1.0.0" : projectVersion %>"/>
+				<input class="input-xlarge" id="projectVersion" placeholder="<s:text name="label.project.version.placeholder"/>"
+					name="projectVersion" maxlength="20" title="<s:text name="title.20.chars"/>"
+					type="text"  value ="<%= StringUtils.isNotEmpty(version) ? version : "" %>"/>
 		    </div>
 		</div>
 		<!--  Version Ends -->
 		
-		<!-- TODO: Need to handle -->
-		<%-- <!--  Application Type Starts-->
-		<div class="clearfix">
-		    <div class="input new-input">
-		        <ul class="inputs-list">
-		            <li> 
-			            <%
-			                List<ApplicationType> appTypes = (List<ApplicationType>) request.getAttribute(FrameworkConstants.REQ_APPLICATION_TYPES);
-			                String checkedStr = "";
-			                for (ApplicationType applicationType : appTypes) {
-			                    String id = applicationType.getId();
-			                    String name = applicationType.getName();
-			                    String displayName = applicationType.getName();
-// 			                    if (selectedInfo != null) {
-// 			                        checkedStr = name.equals(selectedInfo.getTechInfo().getAppTypeId()) ? "checked" : "";
-// 			                    }
-			            %>
-			                <input type="radio" name="applicationType" id="<%= id %>" value="<%= id %>" <%= checkedStr %> <%= disabled %>/> 
-			                <span class="textarea_span"><%= displayName %></span>
-			            <% } %>
-		            </li>
-		        </ul>
-		    </div>
-		</div> --%>
-		<!--  Application Type Ends-->
+		<!-- Technology version start -->
+		<div class="control-group">
+			<label class="accordion-control-label labelbold"><s:text name='lbl.technology'/></label>
+			<div class="controls">
+				<input type="text" class="input-xlarge" value="<%= selectedInfo.getTechInfo().getId() %>" disabled="disabled"/>
+				<input type="hidden" name="technologyId" value="<%= selectedInfo.getTechInfo().getId() %>"/>
+			</div>
+		</div>
+		<!-- Technology version ends -->
+		
+		<!-- pilot project start -->
+		<div class="control-group">
+			<label class="accordion-control-label labelbold"><s:text name='lbl.pilot.project'/></label>
+			<div class="controls">
+				<select class="input-xlarge" name="<%= FrameworkConstants.REQ_PARAM_NAME_TECHNOLOGY%>">
+					<option value="" selected disabled>Select Pilot Projects</option>
+				</select>
+			</div>
+		</div>
+		<!-- pilot project ends -->
+		
+		<!-- servers start -->
+		<div class="theme_accordion_container">
+			<section class="accordion_panel_wid">
+				<div class="accordion_panel_inner">
+					<section class="lft_menus_container">
+						<span class="siteaccordion closereg" onclick="accordionClick(this, $('input[value=serverLayer]'));">
+							<span>
+								<input type="checkbox" id="checkAll1" class="accordianChkBox" name="layer" value="serverLayer" 
+									onclick="getDownloadInfo('<%= DownloadInfo.Category.SERVER.name() %>', $('#1_server'), '<s:text name='lbl.default.opt.select.server'/>')"/>
+								<a  class="vAlignSub"><s:text name='lbl.servers'/></a>
+							</span>
+						</span>
+						<div class="mfbox siteinnertooltiptxt hideContent">
+							<table class="table_for_downloadInfos" align="center">
+								<thead class="fieldset-tableheader">
+									<tr class="noBorder">
+										<th class="table_header"><s:text name='lbl.servers'/></th>
+										<th><s:text name='lbl.version'/></th>
+										<th></th>
+										<th></th>
+									</tr>
+								</thead>
+								<tbody id="propTempTbody">
+									<tr class="noBorder 1_serverdynamicadd">
+										<td>
+											<select class="input-medium" id="1_server" name="server" 
+												onchange="getVersions($('#1_server'), $('#1_serverVersion'));">
+											</select>
+										</td>
+										<td>
+											<select class="input-medium" id="1_serverVersion" name="serverVersion">
+												<option><s:text name='lbl.default.opt.select.version'/></option>
+											</select>
+										</td>
+										<td>
+										  	<a>
+										  		<img class="add imagealign" src="images/icons/add_icon.png" onclick="addServer(this);">
+								  			</a>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</section>  
+				</div>
+			</section>
+		</div>
+		
+		<!-- servers ends -->
+		
+		<!-- databases start -->
+		<div class="theme_accordion_container">
+			<section class="accordion_panel_wid">
+				<div class="accordion_panel_inner">
+					<section class="lft_menus_container">
+						<span class="siteaccordion closereg" onclick="accordionClick(this, $('input[value=databaseLayer]'));">
+							<span>
+								<input type="checkbox" id="checkAll1" class="accordianChkBox" name="layer" value="databaseLayer"
+								onclick="getDownloadInfo('<%= DownloadInfo.Category.DATABASE.name() %>', $('#1_database'), '<s:text name='lbl.default.opt.select.database'/>')"/>
+								<a class="vAlignSub"><s:text name='lbl.database'/></a>
+							</span>
+						</span>
+						<div class="mfbox siteinnertooltiptxt hideContent">
+							<table class="table_for_downloadInfos"  align="center">
+									<thead class = "fieldset-tableheader">
+										<tr class="noBorder">
+											<th class="table_header"><s:text name='lbl.database'/></th>
+											<th><s:text name='lbl.version'/></th>
+											<th></th>
+											<th></th>
+										</tr>
+									</thead>
+									<tbody id="propTempTbodyDatabase">
+										<tr class="noBorder _databasedynamicadd" >
+											<td>
+												<select class="input-medium" id="1_database" name="database"
+												onchange="getVersions($('#1_database'), $('#1_databaseVersion'));" >
+												</select>
+											</td>
+											<td>
+												<select class="input-medium" id="1_databaseVersion" name="databaseVersion">
+												<option><s:text name='lbl.default.opt.select.version'/></option>
+												</select>
+											</td>
+											<td>
+											  	<a>
+											  		<img class="add imagealign" src="images/icons/add_icon.png" onclick="addDatabase(this);">
+										  		</a>
+											</td>
+										</tr>
+									</tbody>
+							</table>
+						</div>
+					</section>  
+				</div>
+			</section>
+		</div>
+		<!-- databases ends -->
+		
+		<!-- webservice start -->
+		<div class="theme_accordion_container">
+			<section class="accordion_panel_wid" >
+				<div class="accordion_panel_inner">
+					<section class="lft_menus_container">
+						<span class="siteaccordion closereg" onclick="accordionClick(this, $('input[value=webserviceLayer]'));">
+							<span>
+								<input type="checkbox" id="checkAll1" class="accordianChkBox" name="layer" value="webserviceLayer"/>
+								<a class="vAlignSub"><s:text name='lbl.webservice'/></a>
+							</span>
+						</span>
+						<div class="mfbox siteinnertooltiptxt hideContent">
+							<div class="control-group autoWidthForWebservice">
+					            <div class="controls">
+					            	<div class="typeFields">
+						                <div class="multilist-scroller multiselct multiselectForWebservice">
+							                <ul>
+							                    <%
+							                        if (CollectionUtils.isNotEmpty(webservices)) {
+					   									for (WebService webservice : webservices) {
+							                    %>
+						                   			<li>
+														<input type="checkbox" name="webservice" value="<%= webservice.getId() %>"
+															class="check techCheck"><%= webservice.getName() %>
+													</li>
+												<% 	 
+														}
+													}
+												%> 
+											</ul>
+						                </div>
+									</div>
+								</div>
+				                <span class="help-inline applyerror" id="techError"></span>
+					        </div>
+						</div>
+					</section>  
+				</div>
+			</section>
+		</div>
+		<!-- webservice ends -->
 	                    
 		<!--  Dependecies are loaded -->
 		<div class="Create_project_inner" id="AjaxContainer"></div>
@@ -160,24 +265,13 @@
 	
     <!--  Submit and Cancel buttons Starts -->
     <div class="actions">
-        <input id="next" type="submit" value="<s:text name="label.next"/>" class="btn btn-primary">
-        <input type="button" id="cancel" value="<s:text name="label.cancel"/>" class="btn btn-primary">
+        <input id="next" type="button" value="<s:text name="label.next"/>" class="btn btn-primary" 
+        	onclick="loadContent('featuresList', $('#formAppInfo'), $('#subcontainer'));"/>
+        <input type="button" id="cancel" value="<s:text name="lbl.btn.cancel"/>" class="btn btn-primary" 
+			onclick="loadContent('applications', $('#formCustomers'), $('#container'));">
     </div>
     <!--  Submit and Cancel buttons Ends -->
     
-    <!-- Hidden Fields -->
-    <input type="hidden" name="customerId" value="<%= customerId %>">
-    <input type="hidden" id="configServerNames" name="configServerNames" value="<%= configServerNames == null ? "" : configServerNames %>">
-   	<input type="hidden" id="configDbNames" name="configDbNames" value="<%= configDbNames == null ? "" : configDbNames %>">
-   	<% if (MapUtils.isNotEmpty(selectedFeatures)) { %>
-   		<input type="hidden" id="selectedFeatures" name="selectedFeatures" value="<%= selectedFeatures %>">
-   	<% } 	
-   	   if (MapUtils.isNotEmpty(selectedJsLibs)) { %>
-   		<input type="hidden" id="selectedJsLibs" name="selectedJsLibs" value="<%= selectedJsLibs %>">
-   	<% } %>
-   	<input type="hidden" id="selectedPilotProj" name="selectedPilotProj" value="<%= selectedPilotProj %>">
-   	<input type="hidden" name="fromTab" value="appInfo">
-
 </form> 
 <!--  Form Ends -->
     
@@ -192,8 +286,6 @@
    		hideLoadingIcon();//To hide the loading icon
     	
 		$("#name").focus();
-    	//escPopup();
-        checkDefault();
         //	changeStyle("appinfo");
         $("input[name='applicationType']").click(function() {
             changeApplication();
@@ -204,23 +296,9 @@
         	var projNname = $(this).val();
         	projNname = checkForSplChr(projNname);
         	$(this).val(projNname);
-        	codeGenerate(projNname);
          });
         
-		$('form').submit(function() {
-			disableScreen();
-			showLoadingIcon($("#loadingIconDiv"));
-			var params = "";
-	    	if (!isBlank($('form').serialize())) {
-	    		params = $('form').serialize() + "&";
-	    	}
-			params = params.concat("fromPage=");
-			params = params.concat('<%= fromPage %>');
-			//performAction('features', params, $("#tabDiv"));
-			return false;
-		});
-		
-		$('#cancel').click(function() {
+		/*  $('#cancel').click(function() {
 			var params = "";
 	    	if (!isBlank($('form').serialize())) {
 	    		params = $('form').serialize() + "&";
@@ -229,58 +307,110 @@
 			params = params.concat("edit");
 	    	showLoadingIcon($("#tabDiv")); // Loading Icon
 			//performAction('applications', params, $('#container'));
-		});
+		});   */
 		
 		window.setTimeout(function () { document.getElementById('name').focus(); }, 250);
 	});
 
-	//This function is to handle the change event for application radio
-	function changeApplication() {
-		//performAction('applicationType', $('#formAppInfo'), $('#AjaxContainer'));
+    function removeTag(currentTag) {
+		$(currentTag).parent().parent().remove();
 	}
-
-	function codeGenerate(projNname) {
-		var name = projNname;
-		var photonPrefix = "<%= codePrefix %>";
-        photonPrefix = photonPrefix + name;
-        photonPrefix = photonPrefix.replace(/\s/g, '');
-        $("#internalCode").val(photonPrefix);
-        //$("#code").val(photonPrefix);
+    
+    var serverCounter = 2;
+    function addServer(){
+		var trId = serverCounter + "_serverdynamicadd";
+		var servrName = serverCounter + "_serverName";
+		var servrVerson = serverCounter + "_serverVersion";
+		
+		var newPropTempRow = $(document.createElement('tr')).attr("id", trId).attr("class", "noBorder");
+		newPropTempRow.html("<td class='textwidth'><select class='input-medium' tempId='"+ serverCounter +"' id='"+ servrName +"'  name='serverName' onchange='getServerVersions(this);'><option>Select Server</option></select></td>" +
+				"<td class='textwidth'><select class='input-medium' id='"+ servrVerson +"'  name='serverVersion'><option>Select Version</option></select></td>"+
+				"<td class='imagewidth'><a ><img class='add imagealign' " + 
+		 			" temp='"+ servrName +"' src='images/icons/add_icon.png' onclick='addServer(this);'></a></td><td><img class = 'del imagealign'" + 
+		 			"src='images/icons/minus_icon.png' onclick='removeTag(this);'></td>")
+	 	newPropTempRow.appendTo("#propTempTbody");		
+		serverCounter++;
+		getDownloadInfo('<%= DownloadInfo.Category.SERVER.name() %>', $("select[id='"+ servrName +"']"),'<s:text name='label.select.server'/>');
+		
+    }			
+    
+    var databaseCounter = 2;
+    function addDatabase(){
+		var trId = databaseCounter + "_databasedynamicadd";
+		var databaseName = databaseCounter + "_databaseName";
+		var databaseVerson = databaseCounter + "_databaseVersion";
+		
+		var newPropTempRow = $(document.createElement('tr')).attr("id", trId).attr("class", "noBorder");
+		newPropTempRow.html("<td class='textwidth'><select class='input-medium' tempId='"+databaseCounter+"' id='"+ databaseName +"'  name='databaseName' onchange='getDatabaseVersions(this);'><option>Select Database</option></select></td>" +
+				"<td class='textwidth'><select class='input-medium' id='"+ databaseVerson +"'  name='databaseVersion'><option>Select Version</option></select></td>"+
+				"<td class='imagewidth'><a ><img class='add imagealign' " + 
+		 			" temp='"+ databaseName +"' src='images/icons/add_icon.png' onclick='addDatabase(this);'></a></td><td><img class = 'del imagealign'" + 
+		 			"src='images/icons/minus_icon.png' onclick='removeTag(this);'></td>")
+	 	newPropTempRow.appendTo("#propTempTbodyDatabase");		
+		databaseCounter++;
+		getDownloadInfo('<%= DownloadInfo.Category.DATABASE.name() %>', $("select[id='"+ databaseName +"']"), '<s:text name='label.select.db'/>');
+    }		
+    
+    var selectBoxobj;
+    var defaultOption = "";
+    function getDownloadInfo(type, toBeFilledCtrlObj, defaultOptTxt) {
+    	defaultOption = defaultOptTxt;
+    	selectBoxobj = toBeFilledCtrlObj;
+		var params = getBasicParams();
+		params = params.concat("&type=");
+		params = params.concat(type);
+		params = params.concat("&techId=");
+		params = params.concat('<%= selectedInfo.getTechInfo().getId() %>');
+		loadContent("fetchDownloadInfos", '', '', params, true);
+	}
+    
+    var map = {};
+	//Success event functions
+	function successEvent(pageUrl, data) {
+		//To fill the servers/database for the selected 
+		if (pageUrl == "fetchDownloadInfos") {
+			selectBoxobj.empty();
+			selectBoxobj.append($("<option value='' selected disabled></option>").text(defaultOption));
+			for (i in data.downloadInfos) {
+				fillOptions(selectBoxobj, data.downloadInfos[i].id, data.downloadInfos[i].name);
+				var versions = data.downloadInfos[i].artifactGroup.versions;
+				map[data.downloadInfos[i].id] = versions;
+			}
+		}
+	}
+	
+	function getServerVersions(obj) {
+		var id = $(obj).attr("tempId");
+		var toObj = $("#" + id + "_serverVersion");
+		getVersions($(obj), toObj);
+	}
+	
+	function getDatabaseVersions(obj) {
+		var id = $(obj).attr("tempId");
+		var toObj = $("#" + id + "_databaseVersion");
+		getVersions($(obj), toObj);
+	}
+	
+	//To get the versions of the selected server/Db
+	function getVersions(obj, toBeFilledCtrlObj) {
+		toBeFilledCtrlObj.empty();
+		var id = obj.val();
+		var versions = map[id];
+		for (i in versions) {
+			fillOptions(toBeFilledCtrlObj, versions[i].id, versions[i].version);
+		}
+	}
+	
+	function accordionClick(thisObj, currentChkBoxObj) {
+		var _tempIndex = $('.siteaccordion').index(thisObj);
+			
+		var isChecked = currentChkBoxObj.is(":checked");
+		if (isChecked) {
+			$(thisObj).removeClass('closereg').addClass('openreg');
+			$('.mfbox').eq(_tempIndex).slideDown(300,function() {});			
+		} else {
+			$(thisObj).removeClass('openreg').addClass('closereg');
+			$('.mfbox').eq(_tempIndex).slideUp(300,function() {});
+		}
     }
-    
-    function checkDefault() {
-        var $radios = $("input[name='applicationType']");
-        if ($radios.is(':checked') === false) {
-            $radios.filter("[value='apptype-webapp']").attr('checked', true);
-        }
-        changeApplication();
-    }
-    
-    function validationError(data) {
-    	enableScreen();
-		$(".clearfix").removeClass("error");
-    	$(".help-inline").text("");
-    	if (data.nameError != undefined) {
-    		$("#nameErrMsg").text(data.nameError);
-        	$("#nameErrDiv").addClass("error");
-        	$("#name").focus();
-    	} 
-    	if (data.nameError == "Invalid Name") {
-    		$("#name").val("");
-    		$("#name").focus();
-    	}
-    }
-    
-    $("#externalCode").bind('input propertychange',function(e){ 
-    	var name = $(this).val();
-    	name = checkForCode(name);
-    	$(this).val(name);
-     });
-    
-    $('#projectVersion').bind('input propertychange', function (e) { 	
-    	var version = $(this).val();
-    	version = checkForVersion(version);
-    	$(this).val(version);
-     });
-  
 </script>

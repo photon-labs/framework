@@ -69,6 +69,7 @@ public interface FrameworkConstants {
     String REQ_PROJECT_LAYERS = "layers";
     String REQ_PARAM_NAME_TECH_GROUP = "TechGroup";
     String REQ_PARAM_NAME_TECHNOLOGY = "Technology";
+    String REQ_PARAM_NAME_TECH__ID = "techId";
     String REQ_PARAM_NAME_VERSION = "Version";
     String REQ_PARAM_NAME_PHONE = "Phone";
     String REQ_PARAM_NAME_TABLET = "Tablet";
@@ -1484,6 +1485,7 @@ public interface FrameworkConstants {
 		String EXCEPTION_PROJECT_LIST = "excep.hdr.proj.list";
 		String EXCEPTION_PROJECT_ADD = "excep.hdr.proj.add";
 		String EXCEPTION_PROJECT_MOB_TECH_VERSIONS = "excep.hdr.proj.mob.tech.versions";
+		String EXCEPTION_DOWNLOADINFOS = "excep.hdr.downloadInfos";
 		String EXCEPTION_PROJECT_WEB_LAYER_WIDGETS = "excep.hdr.proj.web.layer.widgets";
 		String EXCEPTION_QUALITY_UNIT = "excep.hdr.quality.unit";
 		String EXCEPTION_GENERATE_BUILD = "exception.generate.build";

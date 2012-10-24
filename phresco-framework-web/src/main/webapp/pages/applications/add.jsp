@@ -67,7 +67,7 @@
 	</h1>
 </div>
 
-<div class="appInfoScrollDiv">
+<div class="projectScrollDiv ">
 	<form id="formCreateProject" autocomplete="off" class="form-horizontal app_create_project" autofocus="autofocus">
 	<div class="content_adder">
 		<!-- Name Starts -->
@@ -328,7 +328,7 @@
 	
 	//To check whether the device is ipad or not and then apply jquery scrollbar
 	if(!isiPad()) {
-		$(".appInfoScrollDiv").scrollbars();
+		$(".projectScrollDiv").scrollbars();
 	}
 
 	$(document).ready(function() {

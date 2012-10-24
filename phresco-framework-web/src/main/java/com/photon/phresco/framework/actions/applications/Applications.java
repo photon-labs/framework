@@ -57,6 +57,7 @@ import com.photon.phresco.commons.model.ApplicationType;
 import com.photon.phresco.commons.model.DownloadInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.Technology;
+import com.photon.phresco.commons.model.TechnologyInfo;
 import com.photon.phresco.commons.model.WebService;
 import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.PhrescoException;
@@ -105,6 +106,7 @@ public class Applications extends FrameworkBaseAction {
     private String selectedParamName = "";
     private String divTobeUpdated = "";
     private List<String> techVersions = null;
+    private List<DownloadInfo> downloadInfos = null;
     private boolean hasConfiguration = false;
     private String configServerNames = "";
     private String configDbNames = "";
@@ -130,6 +132,14 @@ public class Applications extends FrameworkBaseAction {
 
     boolean hasError = false;
     private String envError = "";
+    private String name = "";
+    private String code = "";
+    private String description = "";
+    private String projectVersion = "";
+    private String technologyId = "";
+    private List<String> serverVersion = null;
+    private List<String> databaseVersion = null;
+    private List<String> webservice = null;
 
     private List<DownloadInfo> servers = null;
 
@@ -180,9 +190,9 @@ public class Applications extends FrameworkBaseAction {
         }
 
         try {
-            ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-            ApplicationInfo applicationInfo = applicationManager.getApplicationInfo(getCustomerId(), getProjectId(), getAppId());
-            setReqAttribute(REQ_APPINFO, applicationInfo);
+            setReqAttribute(REQ_APPINFO, getApplicationInfo());
+            List<WebService> webServices = getServiceManager().getWebServices();
+            setReqAttribute(REQ_WEBSERVICES, webServices);
         } catch (Exception e) {
             // TODO: handle exception
         }
@@ -231,6 +241,26 @@ public class Applications extends FrameworkBaseAction {
         return APP_APPINFO;
     }
 
+    /**
+     * To get the selected server's/database version
+     * @return
+     */
+    public String fetchDownloadInfos() {
+        if (s_debugEnabled) {
+            S_LOGGER.debug("Entering Method  Applications.fetchDownloadInfos()");
+        }
+
+        try {
+            String type = getHttpRequest().getParameter(REQ_TYPE);
+            String techId = getHttpRequest().getParameter(REQ_PARAM_NAME_TECH__ID);
+            setDownloadInfos(getServiceManager().getDownloads(getCustomerId(), techId, type));
+        } catch (PhrescoException e) {
+            return showErrorPopup(e, EXCEPTION_DOWNLOADINFOS);
+        }
+
+        return SUCCESS;
+    }
+    
     public String applicationType() {
         if (s_debugEnabled) {
             S_LOGGER.debug("Entering Method  Applications.applicationType()");
@@ -256,7 +286,34 @@ public class Applications extends FrameworkBaseAction {
         return APP_TYPE;
     }
 
-    public String technology() {
+    public String featuresList() {
+    	if (s_debugEnabled) {
+            S_LOGGER.debug("Entering Method  Applications.featuresList()");
+        }
+    	ApplicationInfo appInfo = createApplicationInfo();
+    	setReqAttribute(REQ_APPINFO, appInfo);
+    	
+		return "features";
+    	
+    }
+    
+    private ApplicationInfo createApplicationInfo() {
+    	ApplicationInfo appInfo = new ApplicationInfo();
+    	appInfo.setName(getName());
+    	appInfo.setCode(getCode());
+    	appInfo.setDescription(getDescription());
+    	appInfo.setVersion(getProjectVersion());
+    	TechnologyInfo techInfo = new TechnologyInfo();
+    	techInfo.setId(getTechnologyId());
+		appInfo.setTechInfo(techInfo );
+    	appInfo.setSelectedServers(getServerVersion());
+    	appInfo.setSelectedDatabases(getDatabaseVersion());
+    	appInfo.setSelectedWebservices(getWebservice());
+    	
+    	return appInfo;
+	}
+    
+	public String technology() {
         if (s_debugEnabled) {
             S_LOGGER.debug("Entering Method  Applications.technology()");
         }
@@ -1657,4 +1714,58 @@ public class Applications extends FrameworkBaseAction {
     public void setServers(List<DownloadInfo> servers) {
         this.servers = servers;
     }
+	public List<DownloadInfo> getDownloadInfos() {
+		return downloadInfos;
+	}
+	public void setDownloadInfos(List<DownloadInfo> downloadInfos) {
+		this.downloadInfos = downloadInfos;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getCode() {
+		return code;
+	}
+	public void setCode(String code) {
+		this.code = code;
+	}
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	public String getProjectVersion() {
+		return projectVersion;
+	}
+	public void setProjectVersion(String projectVersion) {
+		this.projectVersion = projectVersion;
+	}
+	public String getTechnologyId() {
+		return technologyId;
+	}
+	public void setTechnologyId(String technologyId) {
+		this.technologyId = technologyId;
+	}
+	public List<String> getServerVersion() {
+		return serverVersion;
+	}
+	public void setServerVersion(List<String> serverVersion) {
+		this.serverVersion = serverVersion;
+	}
+	public List<String> getDatabaseVersion() {
+		return databaseVersion;
+	}
+	public void setDatabaseVersion(List<String> databaseVersion) {
+		this.databaseVersion = databaseVersion;
+	}
+	public List<String> getWebservice() {
+		return webservice;
+	}
+	public void setWebservice(List<String> webservice) {
+		this.webservice = webservice;
+	}
 }
