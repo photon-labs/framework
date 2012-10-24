@@ -179,7 +179,6 @@ function getParameters(form, additionalParams) {
 	} else {
 		params = additionalParams;
 	}
-	
 	return params;
 }
 

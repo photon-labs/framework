@@ -35,6 +35,15 @@ public interface FrameworkConstants {
     String LAYER_WEB_ID = "web-layer";
     
     String JAVASCRIPT = "javascript";
+
+    String LBL = "lbl.";
+    String LBL_BTN = "lbl.btn";
+    String LBL_URL = "lbl.pageurl.";
+    String LBL_PROG_TXT = "lbl.prog.txt.";
+    String FROM_PAGE_EDIT = "edit";
+    String FROM_PAGE_ADD = "add";
+    
+    String CONFIG = "config";
     
 	String FEATURES = "features"; 
     int JOB_STATUS_NOTOK = -1;
@@ -228,7 +237,6 @@ public interface FrameworkConstants {
     String TEST_PARAM_VALUE = "AllTest";
     String ALL_TEST_SUITES = "All";
     String KEY_QUOTES = "\"";
-    String FROM_PAGE_EDIT = "edit";
     String DEPLOY_BUILD_NAME = "buildName";
     String IPHONE_BUILD_NAME = "application.path";
     String IPHONE_SIMULATOR_VERSION = "simulator.version";

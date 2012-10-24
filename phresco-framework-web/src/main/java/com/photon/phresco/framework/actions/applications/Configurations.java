@@ -48,7 +48,6 @@ import com.photon.phresco.framework.api.Project;
 import com.photon.phresco.framework.api.ProjectAdministrator;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.commons.LogErrorReport;
-import com.photon.phresco.framework.impl.EnvironmentComparator;
 import com.photon.phresco.framework.model.CertificateInfo;
 import com.photon.phresco.framework.model.PropertyInfo;
 import com.photon.phresco.framework.model.SettingsInfo;
@@ -151,7 +150,7 @@ public class Configurations extends FrameworkBaseAction {
     
     public String openEnvironmentPopup() {
         try {
-            getHttpRequest().setAttribute(REQ_ENVIRONMENTS, getAllEnvironments());
+            setReqAttribute(REQ_ENVIRONMENTS, getAllEnvironments());
         } catch (PhrescoException e) {
             return showErrorPopup(e, getText(CONFIG_FILE_FAIL));
         } catch (ConfigurationException e) {
@@ -175,8 +174,23 @@ public class Configurations extends FrameworkBaseAction {
     	if (debugEnabled) {
     		S_LOGGER.debug("Entering Method  Configurations.add()");
     	}
+        try {
+            List<Environment> environments = getAllEnvironments();
+            List<SettingsTemplate> configTemplates = getServiceManager().getconfigTemplates(getCustomerId());
+            for (SettingsTemplate settingsTemplate : configTemplates) {
+                
+                List<PropertyTemplate> properties2 = settingsTemplate.getProperties();
+            }
+            setReqAttribute(REQ_SETTINGS_TEMPLATES, configTemplates);
+            setReqAttribute(REQ_ENVIRONMENTS, environments);
+            setReqAttribute(REQ_FROM_PAGE, FROM_PAGE_ADD);
+        } catch (PhrescoException e) {
+            return showErrorPopup(e, getText(CONFIG_FILE_FAIL));
+        } catch (ConfigurationException e) {
+            return showErrorPopup(new PhrescoException(e), getText(CONFIG_FAIL_ENVS));
+        }
 
-        getHttpSession().removeAttribute(REQ_CONFIG_INFO);
+        /*getHttpSession().removeAttribute(REQ_CONFIG_INFO);
         try {
             ProjectAdministrator administrator = getProjectAdministrator();
             Project project = administrator.getProject(projectCode);
@@ -192,9 +206,9 @@ public class Configurations extends FrameworkBaseAction {
                S_LOGGER.error("Entered into catch block of Configurations.add()" + FrameworkUtil.getStackTraceAsString(e));
     		}
         	new LogErrorReport(e, "Configurations add");
-        }
+        }*/
         
-        getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
+//        getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
         return APP_CONFIG_ADD;
     }
     
@@ -356,55 +370,19 @@ public class Configurations extends FrameworkBaseAction {
     }
     
     public String createEnvironment() {
+        if (debugEnabled) {
+            S_LOGGER.debug("Entered into Configurations.createEnvironment()");
+        }
+        
     	try {
-    	    
-    	    System.out.println("createEnvironment ================= ");
-//    	    getConfigManager().getEnvironments();
-    	    
-    	    System.out.println("envs = " + getEnvironments());
-    	    System.out.println("createEnvironment add ================= ");
     	    getConfigManager().addEnvironments(getEnvironments());
-    	    
-    	    
-            /*String[] split = null;
-            ProjectAdministrator administrator = PhrescoFrameworkFactory
-                    .getProjectAdministrator();
-            Project project = administrator.getProject(projectCode);
-            String envs = getHttpRequest().getParameter(ENVIRONMENT_VALUES);
-            String selectedItems = getHttpRequest().getParameter("deletableEnvs");
-            if(StringUtils.isNotEmpty(selectedItems)){
-            	deleteEnvironment(selectedItems);
-    	    }
-            
-            List<Environment> environments = new ArrayList<Environment>();
-            if (StringUtils.isNotEmpty(envs)) {
-                List<String> listSelectedEnvs = new ArrayList<String>(
-                        Arrays.asList(envs.split("#SEP#")));
-                for (String listSelectedEnv : listSelectedEnvs) {
-                    try {
-                        split = listSelectedEnv.split("#DSEP#");
-                        environments.add(new Environment(split[0], split[1],
-                                false));
-                    } catch (ArrayIndexOutOfBoundsException e) {
-                        environments.add(new Environment(split[0], "", false));
-                    }
-                }
-            }
-	    	administrator.createEnvironments(project, environments, false);
-	    	
-			if(StringUtils.isNotEmpty(selectedItems) && CollectionUtils.isNotEmpty(environments)) {
-				addActionMessage(getText(UPDATE_ENVIRONMENT));
-			} else if(StringUtils.isNotEmpty(selectedItems) && CollectionUtils.isEmpty(environments)){
-				addActionMessage(getText(DELETE_ENVIRONMENT));
-			} else if(CollectionUtils.isNotEmpty(environments) && StringUtils.isEmpty(selectedItems)) {
-				addActionMessage(getText(CREATE_SUCCESS_ENVIRONMENT));
-			}*/
     	} catch(Exception e) {
-    	    e.printStackTrace();
-    		if (debugEnabled) {
+    		
+    	    if (debugEnabled) {
                 S_LOGGER.error("Entered into catch block of Configurations.createEnvironment()" + FrameworkUtil.getStackTraceAsString(e));
      		}
-    		addActionMessage(getText(CREATE_FAILURE_ENVIRONMENT));
+    		
+    	    return showErrorPopup(new PhrescoException(e), getText(CONFIG_FILE_FAIL));
     	}
     	return list();
     }
