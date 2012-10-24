@@ -19,10 +19,13 @@
  */
  
 function yesnoPopup(modalObj, url, title, okUrl, okLabel) {
-		modalObj.click(function() {
+	modalObj.click(function() {
 		$('#popupClose').hide();
 
 		$('#popupTitle').html(title); // Title for the popup
+		$('#popupClose').hide(); //no need close button since yesno popup
+		$('#popupOk, #popupCancel').show(); // show ok & cancel button
+	
 		$(".popupOk").attr('id', okUrl); // popup action mapped to id
 		if (okLabel !== undefined && !isBlank(okLabel)) {
 			$('#' + okUrl).html(okLabel); // label for the ok button 
@@ -54,14 +57,19 @@ function getBasicParamsAsJson() {
 	return '"customerId": "' + jsonObject.customerId + '", "projectId": "' + jsonObject.projectId + '", "appId": "' + jsonObject.appId + '"'; 
 }
 
-function progressPopup(url, title) {
-	$("a[data-toggle=modal]").click(function() {
+function progressPopup(pageUrl, title, appId, actionType, form, callSuccessEvent, additionalParams) {
+	$("#generate").click(function() {
 		if (title !== undefined && !isBlank(title)) {
 			$('#popupTitle').html(title);
 		}
-		$('#popupOk').hide();
-		$('#popupCancel').hide();
-		$('.modal-body').load(url);
+		$('.modal-body').empty();
+		$('.popupOk, #popupCancel').hide(); // hide ok & cancel button
+		
+		$('#popupClose').show();
+		readerHandlerSubmit(pageUrl, appId, actionType, form, callSuccessEvent, additionalParams);
+	});
+	$('#popupClose').click(function(){
+		popupClose(pageUrl); // this function will be kept in where the progressPopup() called
 	});
 }
 
@@ -146,7 +154,7 @@ function loadData(data, tag, pageUrl, callSuccessEvent) {
 	}
 }
 
-function readerHandlerSubmit(pageUrl, appId, testType, form, callSuccessEvent, additionalParams) {
+function readerHandlerSubmit(pageUrl, appId, actionType, form, callSuccessEvent, additionalParams) {
 	var params = getParameters(form, additionalParams);
 	showParentPage();
 	enableScreen();
@@ -157,8 +165,8 @@ function readerHandlerSubmit(pageUrl, appId, testType, form, callSuccessEvent, a
         cache: false,
         success : function(data) {
         	//if (checkForUserSession(data)) {
-            	$("#build-output").empty();
-            	readerHandler(data, appId, testType, pageUrl);
+            	$("#modal-body").empty();
+            	readerHandler(data, appId, actionType, pageUrl);
             	if (callSuccessEvent != undefined && !isBlank(callSuccessEvent)) {
             		successEvent(pageUrl, data);
             	}
@@ -188,6 +196,25 @@ function inActivateAllMenu(allLink) {
 
 function activateMenu(selectedMenu) {
 	selectedMenu.attr('class', "active");
+}
+
+function checkAllHandler(parentCheckBox, childCheckBox) {
+	 // add multiple select / deselect functionality
+    $(parentCheckBox).click(function () {
+          $(childCheckBox).attr('checked', this.checked);
+    });
+ 
+    // if all checkbox are selected, check the selectall checkbox
+    // and viceversa
+    $(childCheckBox).click(function(){
+ 
+        if($(childCheckBox).length == $(childCheckBox + ":checked").length) {
+            $(parentCheckBox).attr("checked", "checked");
+        } else {
+            $(parentCheckBox).removeAttr("checked");
+        }
+ 
+    });
 }
 
 function checkAllEvent(currentCheckbox, childCheckBox, disable) {

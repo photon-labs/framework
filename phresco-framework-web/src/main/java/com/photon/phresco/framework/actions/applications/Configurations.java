@@ -177,10 +177,6 @@ public class Configurations extends FrameworkBaseAction {
         try {
             List<Environment> environments = getAllEnvironments();
             List<SettingsTemplate> configTemplates = getServiceManager().getconfigTemplates(getCustomerId());
-            for (SettingsTemplate settingsTemplate : configTemplates) {
-                
-                List<PropertyTemplate> properties2 = settingsTemplate.getProperties();
-            }
             setReqAttribute(REQ_SETTINGS_TEMPLATES, configTemplates);
             setReqAttribute(REQ_ENVIRONMENTS, environments);
             setReqAttribute(REQ_FROM_PAGE, FROM_PAGE_ADD);
