@@ -1047,6 +1047,7 @@ a {
     padding-bottom: 5px;
     padding-top: 6px;
     text-align: center;
+	margin-top: 10px;
 }
 
 /*welcome start*/
@@ -5648,12 +5649,13 @@ input[class*='chckBxAlign'] {
 }
 
 #successmsg {
-	height: 17px;
+	height: 16px;
     margin-left: 246px;
     margin-top: -34px;
     padding: 6px;
     width: 50%;
     text-align: center;
+    margin-bottom: 0px;
 }
 
 .modal-body {
