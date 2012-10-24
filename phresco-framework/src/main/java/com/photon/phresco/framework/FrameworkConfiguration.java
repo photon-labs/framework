@@ -21,14 +21,19 @@ package com.photon.phresco.framework;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Properties;
 
 import com.photon.phresco.commons.FrameworkConstants;
+import com.photon.phresco.configuration.ConfigReader;
+import com.photon.phresco.configuration.Configuration;
 import com.photon.phresco.exception.PhrescoException;
 
 public class FrameworkConfiguration implements FrameworkConstants {
 
     private Properties frameworkConfig;
+    private String configFilePath =  "phresco-env-config.xml";
+    private String serverUrl;
 
     public FrameworkConfiguration(String fileName) throws PhrescoException {
         initFrameworkConfig(fileName);
@@ -46,9 +51,33 @@ public class FrameworkConfiguration implements FrameworkConstants {
         }
     }
 
-    public String getServerPath() {
-        return frameworkConfig.getProperty(PHRESCO_SERVER_URL);
-    }
+    private List<Configuration> configurationList(String configType) throws PhrescoException {
+		InputStream stream = null;
+		stream = this.getClass().getClassLoader().getResourceAsStream(configFilePath);
+		try {
+			ConfigReader configReader = new ConfigReader(stream);
+			String environment = System.getProperty("SERVER_ENVIRONMENT");
+			if (environment == null || environment.isEmpty() ) {
+				environment = configReader.getDefaultEnvName();
+			}
+			return configReader.getConfigurations(environment, configType);
+		} catch (Exception e) {
+		    throw new PhrescoException(e);
+		}
+	}
+    
+	public String getServerPath() throws PhrescoException {
+		List<Configuration> configurations = configurationList("WebService");
+		for (Configuration configuration : configurations) {
+			String protocol = configuration.getProperties().getProperty("protocol");
+			String host = configuration.getProperties().getProperty("host");
+			String port = configuration.getProperties().getProperty("port");
+			String context = configuration.getProperties().getProperty("context");
+			String additional_context = configuration.getProperties().getProperty("additional_context");
+			serverUrl = protocol + "://" + host + ":" +  port + "/" + context+ additional_context;
+		}
+		return serverUrl;
+	}
 
     public String getCodePrefix() {
         return frameworkConfig.getProperty(PHRESCO_CODE_PREFIX);
