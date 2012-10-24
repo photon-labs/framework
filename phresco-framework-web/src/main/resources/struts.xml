@@ -691,7 +691,7 @@
         
         <!-- Site Report  -->
         <action name="veiwSiteReport" method="viewSiteReport" class="com.photon.phresco.framework.actions.applications.SiteReport">
-            <result name="siteReport">/pages/applications/siteReport/site_report.jsp</result>
+            <result name="siteReport">/pages/applications/siteReport/siteReport.jsp</result>
         </action>
         
         <action name="checkForSiteReport" method="checkForSiteReport" class="com.photon.phresco.framework.actions.applications.SiteReport">
@@ -707,7 +707,7 @@
         </action>
         
         <action name="createReportConfig" method="createReportConfig" class="com.photon.phresco.framework.actions.applications.SiteReport">
-            <result name="siteReport">/pages/applications/siteReport/site_report.jsp</result>
+            <result name="siteReport">/pages/applications/siteReport/siteReport.jsp</result>
         </action>
         
         <action name="advancedBuildSettings" method="advancedBuildSettings" class="com.photon.phresco.framework.actions.applications.Build">
