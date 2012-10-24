@@ -22,8 +22,8 @@ package com.photon.phresco.framework.actions.applications;
 import java.io.BufferedReader;
 import java.io.File;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -33,147 +33,136 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.photon.phresco.commons.model.ApplicationInfo;
+import com.photon.phresco.commons.model.ProjectInfo;
+import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
 import com.photon.phresco.framework.api.ActionType;
-import com.photon.phresco.framework.api.Project;
-import com.photon.phresco.framework.api.ProjectAdministrator;
-import com.photon.phresco.framework.api.ProjectRuntimeManager;
+import com.photon.phresco.framework.api.ApplicationManager;
+import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.framework.commons.FrameworkUtil;
-import com.photon.phresco.framework.commons.LogErrorReport;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.site.ReportCategories;
 import com.phresco.pom.site.Reports;
+import com.phresco.pom.util.SiteConfigurator;
 
 public class SiteReport extends FrameworkBaseAction {
 	private static final long serialVersionUID = 1L;
 	private static final Logger S_LOGGER = Logger.getLogger(SiteReport.class);
+	private static Boolean s_debugEnabled = S_LOGGER.isDebugEnabled();
 	
-	private String projectCode = null;
+	private String SITE_REPORT_PATH = "/do_not_checkin/target/site/index.html";
+	
+	private List<String> reports = null;
     
 	public String viewSiteReport() {
-		S_LOGGER.debug("Entering Method  SiteReport.viewSiteReport()");
+		if (s_debugEnabled) {
+			S_LOGGER.debug("Entering Method  SiteReport.viewSiteReport()");
+		}
 		
 		try {
-		    ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-		    ApplicationInfo appInfo = administrator.getProject(projectCode).getApplicationInfo();
-		    List<Reports> selectedReports = administrator.getPomReports(appInfo);
-            getHttpRequest().setAttribute(REQ_SITE_SLECTD_REPORTS, selectedReports);
-			getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
-		} catch (Exception e) {
-			S_LOGGER.error("Entered into catch block of SiteReport.viewSiteReport()"
-					+ FrameworkUtil.getStackTraceAsString(e));
-			new LogErrorReport(e, "View site report");
+		    List<Reports> selectedReports = getPomReports(getApplicationInfo());
+		    setReqAttribute(REQ_SITE_SLECTD_REPORTS, selectedReports);
+		} catch (PhrescoException e) {
+			return showErrorPopup(e,  getText(EXCEPTION_REPORT_VIEW_SITE));
 		}
 		
 		return APP_SITE_REPORT_VIEW;
 	}
-	
-	public String checkForSiteReport() {
-		S_LOGGER.debug("Entering Method  SiteReport.checkForSiteReport()");
+
+	public String checkForSiteReport() throws UnknownHostException {
+		if (s_debugEnabled) {
+			S_LOGGER.debug("Entering Method  SiteReport.checkForSiteReport()");
+		}
 		
 		try {
+			String appDirName =getApplicationInfo().getAppDirName();
 			Properties sysProps = System.getProperties();
 	        S_LOGGER.debug( "Phresco FileServer Value of " + PHRESCO_FILE_SERVER_PORT_NO + " is " + sysProps.getProperty(PHRESCO_FILE_SERVER_PORT_NO) );
 	        String phrescoFileServerNumber = sysProps.getProperty(PHRESCO_FILE_SERVER_PORT_NO);
         	StringBuilder siteReportPath = new StringBuilder(Utility.getProjectHome());
-        	siteReportPath.append(projectCode);
-        	siteReportPath.append(File.separatorChar);
-        	siteReportPath.append(DO_NOT_CHECKIN_DIR);
-        	siteReportPath.append(File.separatorChar);
-        	siteReportPath.append(TARGET_DIR);
-        	siteReportPath.append(File.separatorChar);
-        	siteReportPath.append(SITE_REPORT_DIR);
-        	siteReportPath.append(File.separatorChar);
-        	siteReportPath.append(INDEX_HTML);
+        	siteReportPath.append(appDirName);
+        	siteReportPath.append(SITE_REPORT_PATH);
             File indexPath = new File(siteReportPath.toString());
             if (indexPath.isFile() && StringUtils.isNotEmpty(phrescoFileServerNumber)) {
          		StringBuilder sb = new StringBuilder();
             	sb.append(HTTP_PROTOCOL);
             	sb.append(PROTOCOL_POSTFIX);
-            	InetAddress thisIp =InetAddress.getLocalHost();
+            	InetAddress thisIp = InetAddress.getLocalHost();
             	sb.append(thisIp.getHostAddress());
             	sb.append(COLON);
             	sb.append(phrescoFileServerNumber);
             	sb.append(FORWARD_SLASH);
-            	sb.append(projectCode);
-            	sb.append(FORWARD_SLASH);
-            	sb.append(DO_NOT_CHECKIN_DIR);
-            	sb.append(FORWARD_SLASH);
-            	sb.append(TARGET_DIR);
-            	sb.append(FORWARD_SLASH);
-            	sb.append(SITE_REPORT_DIR);
-            	sb.append(FORWARD_SLASH);
-            	sb.append(INDEX_HTML);
-            	getHttpRequest().setAttribute(REQ_SITE_REPORT_PATH, sb.toString());
+            	sb.append(appDirName);
+            	sb.append(SITE_REPORT_PATH);
+            	setReqAttribute(REQ_SITE_REPORT_PATH, sb.toString());
          	} else {
-         		getHttpRequest().setAttribute(REQ_ERROR, false);
+         		setReqAttribute(REQ_ERROR, false);
          	}
-		} catch (Exception e) {
-			S_LOGGER.error("Entered into catch block of SiteReport.checkForSiteReport()"
-					+ FrameworkUtil.getStackTraceAsString(e));
-			new LogErrorReport(e, "Getting site report");
+		} catch (PhrescoException e) {
+			S_LOGGER.error("Entered into catch block of SiteReport.checkForSiteReport()" + FrameworkUtil.getStackTraceAsString(e));
+			return showErrorPopup(e,  getText(EXCEPTION_REPORT_CHECKFOR_SITE));
 		}
 		
 		return APP_SITE_REPORT_VIEW;
 	}
 	
 	public String generateSiteReport() {
-		S_LOGGER.debug("Entering Method  SiteReport.generateReport()");
+		if (s_debugEnabled) {
+			S_LOGGER.debug("Entering Method  SiteReport.generateReport()");
+		}
 		
 		try {
 			ActionType actionType = null;
-			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-			Project project = administrator.getProject(projectCode);
-			ProjectRuntimeManager runtimeManager = PhrescoFrameworkFactory.getProjectRuntimeManager();
-//			actionType = ActionType.SITE_REPORT;
-//			actionType.setWorkingDirectory(null);
-			BufferedReader reader = runtimeManager.performAction(project, actionType, null, null);
-			getHttpSession().setAttribute(projectCode + REQ_SITE_REPORT, reader);
-			getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
-			getHttpRequest().setAttribute(REQ_TEST_TYPE, REQ_SITE_REPORT);
-		} catch (Exception e) {
+			ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
+			ProjectInfo projectInfo = projectManager.getProject(getProjectId(), getCustomerId());
+			actionType = ActionType.SITE_REPORT;
+			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+			ApplicationInfo applicationInfo = getApplicationInfo();
+			String appDirectoryPath = getAppDirectoryPath(applicationInfo);
+			BufferedReader reader = applicationManager.performAction(projectInfo, actionType, null, appDirectoryPath);
+			setSessionAttribute(getAppId() + REQ_SITE_REPORT, reader);
+			setReqAttribute(REQ_APP_ID, getAppId());
+			setReqAttribute(REQ_ACTION_TYPE, REQ_SITE_REPORT);
+		} catch (PhrescoException e) {
 			S_LOGGER.error("Entered into catch block of SiteReport.generateSiteReport()"
 					+ FrameworkUtil.getStackTraceAsString(e));
-			new LogErrorReport(e, "Generating site report");
+			return showErrorPopup(e,  getText(EXCEPTION_REPORT_GENERATE_SITE_REPORT));
 		}
 		
 		return APP_ENVIRONMENT_READER;
 	}
 	
 	public String configure() {
-		S_LOGGER.debug("Entering Method  SiteReport.configure()");
+		if (s_debugEnabled) {
+			S_LOGGER.debug("Entering Method  SiteReport.configure()");
+		}
 		
 		try {
-			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-			ApplicationInfo appInfo = administrator.getProject(projectCode).getApplicationInfo();
-			List<Reports> reports = administrator.getReports(appInfo);
-			List<Reports> selectedReports = administrator.getPomReports(appInfo);
-			getHttpRequest().setAttribute(REQ_SITE_REPORTS, reports);
-			getHttpRequest().setAttribute(REQ_SITE_SLECTD_REPORTS, selectedReports);
-			getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
-		} catch (Exception e) {
+			String techId = getTechId();
+			ApplicationInfo appInfo = getApplicationInfo();
+			List<Reports> reports = getServiceManager().getReports(techId);
+			setReqAttribute(REQ_SITE_REPORTS, reports);
+			List<Reports> selectedReports = getPomReports(appInfo);
+			setReqAttribute(REQ_SITE_REPORTS, reports);
+			setReqAttribute(REQ_SITE_SLECTD_REPORTS, selectedReports);
+		} catch (PhrescoException e) {
 			S_LOGGER.error("Entered into catch block of SiteReport.configure()"
 					+ FrameworkUtil.getStackTraceAsString(e));
-			new LogErrorReport(e, "Getting type of reports");
+			return showErrorPopup(e,  getText(EXCEPTION_REPORT_CONFIGURE));
 		}
 		
 		return APP_SITE_REPORT_CONFIGURE;
 	}
 	
 	public String createReportConfig() {
-		S_LOGGER.debug("Entering Method  SiteReport.createReportConfig()");
+		if (s_debugEnabled) {	
+			S_LOGGER.debug("Entering Method  SiteReport.createReportConfig()");
+		}
 		
 		try {
-			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-			ApplicationInfo appInfo = administrator.getProject(projectCode).getApplicationInfo();
-			
 			//To get the selected reports from the UI
-			String[] arraySelectedReports = getHttpRequest().getParameterValues(REQ_SITE_REPORTS);
-			List<String> selectedReports = null; 
-			if (!ArrayUtils.isEmpty(arraySelectedReports)) {
-				selectedReports = Arrays.asList(arraySelectedReports);
-			}
+			List<String> selectedReports = getReports();
 			
 			//To get the selected ReportCategories from the UI
 			String[] arraySelectedRptCategories = getHttpRequest().getParameterValues(REQ_SITE_SLECTD_REPORTSCATEGORIES);
@@ -187,7 +176,8 @@ public class SiteReport extends FrameworkBaseAction {
 			}
 			
 			// To get the list of Reports to be added
-			List<Reports> allReports = administrator.getReports(appInfo);
+			String techId = getTechId();
+			List<Reports> allReports = getServiceManager().getReports(techId);
 			List<Reports> reportsToBeAdded = new ArrayList<Reports>();
 			if (CollectionUtils.isNotEmpty(selectedReports) && CollectionUtils.isNotEmpty(allReports)) {
 				for (Reports report : allReports) {
@@ -196,23 +186,44 @@ public class SiteReport extends FrameworkBaseAction {
 					}
 				}
 			}
-			
-			administrator.updateRptPluginInPOM(appInfo, reportsToBeAdded, selectedReportCategories);
+			updateRptPluginInPOM(getApplicationInfo(), reportsToBeAdded, selectedReportCategories);
 			addActionMessage(getText(SUCCESS_SITE_CONFIGURE));
-		} catch (Exception e) {
+		} catch (PhrescoException e) {
 			S_LOGGER.error("Entered into catch block of SiteReport.createReportConfig()"
 					+ FrameworkUtil.getStackTraceAsString(e));
-			new LogErrorReport(e, "Configuring site report");
+			return showErrorPopup(e,  getText(EXCEPTION_REPORT_CREATE_REPORT_CONFIG));
 		}
 		
 		return viewSiteReport();
 	}
 	
-	public String getProjectCode() {
-		return projectCode;
+	private void updateRptPluginInPOM(ApplicationInfo appInfo, List<Reports> reports, List<ReportCategories> reportCategories) throws PhrescoException {
+		try {
+			SiteConfigurator configurator = new SiteConfigurator();
+			File file = new File(getAppPom());
+			configurator.addReportPlugin(reports, reportCategories, file);
+		} catch (Exception e) {
+			throw new PhrescoException();
+		}
 	}
 
-	public void setProjectCode(String projectCode) {
-		this.projectCode = projectCode;
+	private List<Reports> getPomReports(ApplicationInfo appInfo) throws PhrescoException {
+		try {
+			SiteConfigurator configurator = new SiteConfigurator();
+			File file = new File(getAppPom());
+			List<Reports> reports = configurator.getReports(file);
+			
+			return reports;
+		} catch (PhrescoException ex) {
+			throw new PhrescoException(ex);
+		}
+	}
+
+	public List<String> getReports() {
+		return reports;
+	}
+
+	public void setReports(List<String> reports) {
+		this.reports = reports;
 	}
 }

@@ -82,6 +82,10 @@ public class Features extends FrameworkBaseAction {
 	private List<String> defaultModules =  null;
 	
 	private String customerId = "";
+	
+	public String listFeatures() {
+	    return APP_FEATURES_ONE_CLM;
+	}
 
 	public String features() {
 		if (debugEnabled) {

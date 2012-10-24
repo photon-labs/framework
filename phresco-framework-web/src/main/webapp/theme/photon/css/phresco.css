@@ -94,10 +94,6 @@ footer {
 	margin-bottom: -1;
 }
 
-.clearfix {
-	margin-bottom: 6px;
-}
-
 .lgnField {
 	margin-top: 6px;
 }
@@ -2287,10 +2283,6 @@ fieldset {
     padding-top: 1.5%;
 }
 
-.clearfix {
-    margin-bottom: 6px;
-}
-
 .input-xlarge, input.xlarge, textarea.xlarge, select.xlarge {
     width: 290px;
 }
@@ -3734,6 +3726,12 @@ div.submit_input {
 
 .actionMessage li {
     list-style: none;
+    color: #000000;
+    font-weight: bold;
+}
+
+.actionMessage {
+	margin-left: 0px;
 }
 
 .twipsy.bootstrap-right .twipsy-arrow {
@@ -5647,4 +5645,18 @@ input[class*='chckBxAlign'] {
 
 .accordion-hdr-color {
 	color: #B94A48 !important;
+}
+
+#successmsg {
+	height: 17px;
+    margin-left: 246px;
+    margin-top: -34px;
+    padding: 6px;
+    width: 50%;
+    text-align: center;
+}
+
+.modal-body {
+	overflow: auto;
+	height: 300px;
 }

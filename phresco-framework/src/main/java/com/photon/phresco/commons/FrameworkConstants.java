@@ -501,6 +501,7 @@ public interface FrameworkConstants {
     String REQ_APPLICATION_TYPE = "applicationType";
     String REQ_OLD_CONFIG_NAME = "configName";
     String REQ_TEST_TYPE = "testType";
+    String REQ_ACTION_TYPE = "actionType";
     String REQ_TEST_EXE = "testExecuted";
     String REQ_REPORT_STATUS = "reportStatus";
     String REQ_REPORT_DELETE_STATUS = "reportDeleteStatus";
@@ -1484,6 +1485,11 @@ public interface FrameworkConstants {
 		String EXCEPTION_LOAD_CLASS = "exception.load.class";
 		
 		String EXCEPTION_BUILDS = "exception.builds.table";
+		String EXCEPTION_REPORT_VIEW_SITE = "excep.report.view.report";
+		String EXCEPTION_REPORT_GENERATE_SITE_REPORT = "excep.report.generate.site.report";
+		String EXCEPTION_REPORT_CONFIGURE = "excep.report.configure";
+		String EXCEPTION_REPORT_CREATE_REPORT_CONFIG = "excep.report.create.report.config";
+		String EXCEPTION_REPORT_CHECKFOR_SITE = "excep.report.checkfor.site";
 		
 		/**
 		 * Dynamic Parameter Constants

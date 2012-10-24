@@ -61,7 +61,7 @@ public class ApplicationManagerImpl implements ApplicationManager {
 	}
 
 	@Override
-	public Reader performAction(ProjectInfo projectInfo, ActionType action, List<String> mavenArgCommands, String workingDirectory) throws PhrescoException {
+	public BufferedReader performAction(ProjectInfo projectInfo, ActionType action, List<String> mavenArgCommands, String workingDirectory) throws PhrescoException {
 		if (isDebugEnabled) {
 			S_LOGGER.debug("Entering Method ApplicationManagerImpl.performAction(" +
 					"Project project, ActionType action, Map<String, String> paramsMap,CallBack callBack)");
