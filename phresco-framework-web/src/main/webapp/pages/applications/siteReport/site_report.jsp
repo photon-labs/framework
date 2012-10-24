@@ -88,7 +88,7 @@
     	var okUrl = $(obj).attr("id");
 		if (okUrl === "createReportConfig") {
 			$('input:checkbox[value="maven-project-info-reports-plugin"]').prop('checked', true);
-		    $('input:checkbox[value="' + index + '"]').removeAttr('disabled', true);
+		    $('input:checkbox[value="index"]').removeAttr('disabled', true);
 		    var params = getBasicParams();
 		    loadContent('createReportConfig',$('#formConfigureList'), $('#subcontainer'), params);
 		}
