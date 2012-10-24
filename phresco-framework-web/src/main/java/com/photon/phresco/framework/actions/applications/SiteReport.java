@@ -53,7 +53,7 @@ public class SiteReport extends FrameworkBaseAction {
 	
 	private String SITE_REPORT_PATH = "/do_not_checkin/target/site/index.html";
 	
-	private List<String> reports = null;
+	private List<String> reports = new ArrayList<String>(8);
     
 	public String viewSiteReport() {
 		if (s_debugEnabled) {
