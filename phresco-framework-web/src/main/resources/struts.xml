@@ -155,8 +155,8 @@
             <result name="list">/pages/applications/list.jsp</result>
         </action>
         
-        <action name="features" method="features" class="com.photon.phresco.framework.actions.applications.Features">
-            <result name="features_oneClm">/pages/applications/features_oneClm.jsp</result>
+        <action name="features" method="listFeatures" class="com.photon.phresco.framework.actions.applications.Features">
+            <result name="features_oneClm">/pages/applications/features.jsp</result>
             <result name="features_twoClm">/pages/applications/features_twoClm.jsp</result>
             <result name="features_threeClm">/pages/applications/features_threeClm.jsp</result>
             <result type="json" />
@@ -533,6 +533,11 @@
         	<result type="json" />
         </action>
         
+		<action name="showUnitTestPopUp" method="showUnitTestPopUp" class="com.photon.phresco.framework.actions.applications.Quality">
+			<result name="unit">/pages/applications/quality/unit.jsp</result>
+        	<result type="json" />
+        </action>
+		
         <action name="fetchBuildInfoEnvs" method="fetchBuildInfoEnvs" class="com.photon.phresco.framework.actions.applications.Quality">
             <result type="json" />
         </action>
