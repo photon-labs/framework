@@ -26,9 +26,10 @@
 	String siteReportPath = (String)request.getAttribute(FrameworkConstants.REQ_SITE_REPORT_PATH);
 	if (StringUtils.isEmpty(siteReportPath)) {
 %>
-		<div class="alert-message block-message warning" >
-			<center><s:label cssClass="errorMsgLabel" key="site.report.not.available"/></center>
+		<div class="alert alert-block">
+			<s:text name='site.report.not.available'/>
 		</div>
+		
 <% } else { %>
 		<iframe src="<%= siteReportPath %>" frameBorder="0" class="iframe_container" id="siteReportIframe"></iframe>
 <% } %>

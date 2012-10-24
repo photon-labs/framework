@@ -19,7 +19,7 @@
  */
 // from auto close
 var showSuccessComplete = true;
-function readerHandler(data, appId, testType, pageUrl) {
+function readerHandler(data, appId, actionType, pageUrl) {
 	// from auto close
 	if($.trim(data) == 'Test is not available for this project') {
 		data = '<b>Test is not available for this project</b>';
@@ -37,50 +37,48 @@ function readerHandler(data, appId, testType, pageUrl) {
 //	   if(showSuccessComplete) {
 //		   $("#build-output").append("Successfully Completed" + '<br>');
 //	   }
-	   $('#build-output').prop('scrollTop', $('#build-output').prop('scrollHeight'));
+	   $('.modal-body').prop('scrollTop', $('.modal-body').prop('scrollHeight'));
 	   
-	   if(testType == "build") {
-		   refreshTable();
+	   if(actionType == "build") {
+		   refreshTable(appId);
 	   }
 	   return;
    }
-	   
-	$("a[name='appTabs']").each(function(index, value) {
-		if ($(this).attr('class') === 'selected') {
-			if ($(this).attr('id') === 'buildView' && (testType === 'SonarPath' || testType === 'unit' || testType === 'functional' || testType === 'performance' || testType === 'load')) {
+	
+	$("a[name='appTab']").each(function() {
+		if ($(this).attr('class') === 'active') {
+			if ($(this).attr('id') === 'buildView' && (actionType === 'SonarPath' || actionType === 'unit' || actionType === 'functional' || actionType === 'performance' || actionType === 'load')) {
 				console.info('returning...');
 				return;
-				
 			}
-		   $("#build-output").append(data + '<br>');
-		   $('#build-output').prop('scrollTop', $('#build-output').prop('scrollHeight')); 
-			asyncHandler(appId, testType, pageUrl);
+			$(".modal-body").append(data + '<br>');
+			$('.modal-body').prop('scrollTop', $('.modal-body').prop('scrollHeight')); 
+			asyncHandler(appId, actionType, pageUrl);
 		}
 	});
 	
 	// if apps tab is not present proceed async handler
-	if($("a[name='appTabs']").length == 0) {
-		  $("#build-output").append(data + '<br>');
-		  $('#build-output').prop('scrollTop', $('#build-output').prop('scrollHeight')); 
-		  asyncHandler(appId, testType, pageUrl);
+	if($("a[name='appTab']").length == 0) {
+		  $(".modal-body").append(data + '<br>');
+		  $('.modal-body').prop('scrollTop', $('.modal-body').prop('scrollHeight')); 
+		  asyncHandler(appId, actionType, pageUrl);
 	}
 }
 
-
-function asyncHandler(appId, testType, pageUrl) {
+function asyncHandler(appId, actionType, pageUrl) {
    $.ajax({
         url : 'pages/applications/reader.jsp',
         type : "POST",
         data : {
             'appId' : appId,
-            'testType' : testType
+            'actionType' : actionType
         },
         success : function(data) { 
             if ((pageUrl == "restartServer" || pageUrl == "runAgainstSource") && 
             		($.trim(data)).indexOf("Compilation failure") > -1) {
             	runAgainstSrcSDown ();
             }
-            readerHandler(data, appId, testType, pageUrl); 
+            readerHandler(data, appId, actionType, pageUrl); 
         }
     });
 }

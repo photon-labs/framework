@@ -17,18 +17,19 @@
   limitations under the License.
   ###
   --%>
+<%@page import="org.apache.commons.lang.StringUtils"%>
 <%@ page import="java.io.BufferedReader"%>
 <%@ page import="java.io.IOException"%>
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 
 <%
     String appId = (String) request.getAttribute(FrameworkConstants.REQ_APP_ID);
-    String testType = (String) request.getAttribute(FrameworkConstants.REQ_TEST_TYPE);
-    if (appId == null && testType == null) {
+    String actionType = (String) request.getAttribute(FrameworkConstants.REQ_ACTION_TYPE);
+    if (StringUtils.isEmpty(appId) && StringUtils.isEmpty(actionType)) {
         appId = request.getParameter(FrameworkConstants.REQ_APP_ID);
-        testType = request.getParameter(FrameworkConstants.REQ_TEST_TYPE);
+        actionType = request.getParameter(FrameworkConstants.REQ_ACTION_TYPE);
     }
-    BufferedReader reader = (BufferedReader) session.getAttribute(appId + testType);
+    BufferedReader reader = (BufferedReader) session.getAttribute(appId + actionType);
 
     String line = null;
     if (reader != null) {
@@ -36,7 +37,7 @@
 			line = reader.readLine();
             if (line == null) {
                 line = "EOF";
-                session.removeAttribute(appId + testType);
+                session.removeAttribute(appId + actionType);
             }
 %>				
                 <%= line %>
@@ -47,7 +48,7 @@
 <%
     		}
     } else {
-    	session.removeAttribute(appId + testType);
+    	session.removeAttribute(appId + actionType);
 %>
 		<%= "EOF" %>
 <%
