@@ -69,7 +69,8 @@
 								            <section class="lft_menus_container" style="width:100%;">
 								                <span class="siteaccordion <%= CollectionUtils.isEmpty(report.getReportCategories()) ? "closereg_empty" : "closereg" %> reportcolor" style="border: none;">
 									                <span id="reportList">
-									                  <input type="checkbox" class="parentCheck" name="reports" value="<%= report.getArtifactId() %>" <%= checkedStr %>>&nbsp;<%= report.getDisplayName() %>
+									                  <input type="checkbox" class="parentCheck parentCheck<%= report.getArtifactId() %>" name="reports" 
+									                  		value="<%= report.getArtifactId() %>" <%= checkedStr %>>&nbsp;<%= report.getDisplayName() %>
 									                </span>
 								                </span>
 								                <%
@@ -103,14 +104,20 @@
                                                                            %>
                                                                                 
                                                                                    <li class="environment_list" style="margin: 0;">
-                                                                                       <input type="checkbox" class="check" name="<%= report.getArtifactId() %>" value="<%= reportCategory.getName() %>" <%= indexCheck %> <%= categoryChk %>>&nbsp;<%= reportCategory.getName() %>
+                                                                                       <input type="checkbox" class="check <%= report.getArtifactId() %>"  name="<%= report.getArtifactId() %>" 
+                                                                                       		value="<%= reportCategory.getName() %>" <%= indexCheck %> <%= categoryChk %>>&nbsp;<%= reportCategory.getName() %>
                                                                                    </li>
                                                                            <%  
                                                                                    
                                                                            }       
                                                                            %>
-                                                                           
-                                                                           </div>    
+                                                                     
+                                                                     	<script type="text/javascript">
+                                                                     	$(document).ready(function() {
+                                                                     		checkAllHandler($('.parentCheck<%= report.getArtifactId() %>'), $('.<%= report.getArtifactId() %>'));
+                                                                     	});
+                                                                     	</script>
+																	</div>    
                                                                 </div>
                                                             </fieldset>
 								                        </section>
@@ -138,7 +145,6 @@
 		$(".report_scroll").scrollbars(); // jquery scroll bar
 		accordion();
 		indexHandler();
-		checkAllHandler($('input:checkbox[value="maven-project-info-reports-plugin"]'), $('.check'));
 		checkAllReports();
 		
 		$('.parentCheck').click(function() { //index checkbox should be always checked and disabled

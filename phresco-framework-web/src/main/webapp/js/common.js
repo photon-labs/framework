@@ -19,14 +19,12 @@
  */
  
 function yesnoPopup(modalObj, url, title, okUrl, okLabel) {
-		modalObj.click(function() {
+	modalObj.click(function() {
 		$('#popupClose').hide();
 
 		$('#popupTitle').html(title); // Title for the popup
-		$('.modal-body').empty();
-		$('#popupClose').hide();
-		$('#popupOk').show();
-		$('#popupCancel').show();
+		$('#popupClose').hide(); //no need close button since yesno popup
+		$('#popupOk, #popupCancel').show(); // show ok & cancel button
 	
 		$(".popupOk").attr('id', okUrl); // popup action mapped to id
 		if (okLabel !== undefined && !isBlank(okLabel)) {
@@ -65,8 +63,8 @@ function progressPopup(pageUrl, title, appId, actionType, form, callSuccessEvent
 			$('#popupTitle').html(title);
 		}
 		$('.modal-body').empty();
-		$('.popupOk').hide();
-		$('#popupCancel').hide();
+		$('.popupOk, #popupCancel').hide(); // hide ok & cancel button
+		
 		$('#popupClose').show();
 		readerHandlerSubmit(pageUrl, appId, actionType, form, callSuccessEvent, additionalParams);
 	});
