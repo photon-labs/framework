@@ -77,6 +77,7 @@ public interface FrameworkConstants {
     String REQ_PARAM_NAME_TECH_GROUP_ID = "techGroupId";
    
     String DO_NOT_CHECKIN_DIR = "do_not_checkin";
+    String SETTINGS_XML = "settings.xml";
     String ARCHIVES = "archives";
     String CUMULATIVE = "cumulativeReports";
     String BUILD_DIR = DO_NOT_CHECKIN_DIR + File.separator + "build";
@@ -327,6 +328,7 @@ public interface FrameworkConstants {
     String ANDROID_PROFILE_PLUGIN_VERSION = "1.2";
     String PHASE_PACKAGE = "package";
     String PHASE_DEPLOY = "deploy";
+    String PHASE_UNIT_TEST = "unitTest";
     String ANDROID_EXECUTION_ID = "signing";
     String ELEMENT_ARCHIVE_DIR = "archiveDirectory";
     String ELEMENT_REMOVE_EXIST_SIGN = "removeExistingSignatures";
@@ -425,6 +427,7 @@ public interface FrameworkConstants {
      * Ex: REQ_XXX
      */
     String REQ_APPINFO	= "appInfo";
+    String REQ_APP_DIR_NAME  = "appDirName";
 	String REQ_TITLE_ADD_APPLICATION = "Add Application";
     String REQ_BUILD_FROM = "from";
     String REQ_NODEJS_SERVER_LOG = "NodeJsServerLog";
@@ -607,6 +610,7 @@ public interface FrameworkConstants {
     String REQ_HEADER = "header";
     String REQ_HEADER_TYPE = "headerType";
     String REQ_FROM	= "from";
+    String REQ_GOAL = "goal";
     String REQ_ATTRNAME	= "attrName";
     String SETTINGS_PARAMS = "SETTINGS_PARAMS";
     String REQ_KEY_SUCCESS_EMAILS = "successEmails";
@@ -1489,13 +1493,13 @@ public interface FrameworkConstants {
 		String EXCEPTION_DOWNLOADINFOS = "excep.hdr.downloadInfos";
 		String EXCEPTION_PROJECT_WEB_LAYER_WIDGETS = "excep.hdr.proj.web.layer.widgets";
 		String EXCEPTION_QUALITY_UNIT = "excep.hdr.quality.unit";
-		String EXCEPTION_GENERATE_BUILD = "exception.generate.build";
-		String EXCEPTION_GENERATE_DEPLOY = "exception.generate.deploy";
-		String EXCEPTION_BUILD = "exception.build";
-		String EXCEPTION_DEPLOY = "exception.deploy";
-		String EXCEPTION_LOAD_CLASS = "exception.load.class";
-		
-		String EXCEPTION_BUILDS = "exception.builds.table";
+		String EXCEPTION_BUILD_POPUP = "excep.hdr.build.popup";
+		String EXCEPTION_DEPLOY_POPUP = "excep.hdr.deploy.popup";
+		String EXCEPTION_BUILD_GENERATE = "excep.hdr.build.generate";
+		String EXCEPTION_DEPLOY_GENERATE = "excep.hdr.deploy.generate";
+		String EXCEPTION_LOAD_CLASS = "excep.hdr.load.class";
+		String EXCEPTION_BUILDS_LIST = "excep.hdr.builds.list";
+		String EXCEPTIN_BUILD_DEPENDANT_VALUE = "excep.hdr.build.depndnt.val";
 		String EXCEPTION_REPORT_VIEW_SITE = "excep.report.view";
 		String EXCEPTION_REPORT_GENERATE_SITE_REPORT = "excep.report.generate";
 		String EXCEPTION_REPORT_CONFIGURE = "excep.report.configure";
@@ -1511,12 +1515,14 @@ public interface FrameworkConstants {
 		String TYPE_PASSWORD  = "password";
 		String TYPE_NUMBER = "number";
 		String TYPE_BOOLEAN = "boolean";
+		String TEXT_BOX = "text";
 		String TYPE_LIST = "list";
 		String TYPE_DYNAMIC_PARAMETER = "DynamicParameter";
 		String PHRESCO_PLUGIN_INFO_XML = "phresco-plugin-info.xml";
 		String PLUGIN_PARAMETER_FRAMEWORK = "framework";
 		String REQ_DYNAMIC_PARAMETERS = "parameters";
 		String REQ_DYNAMIC_POSSIBLE_VALUES = "possibleValues";
+		String REQ_SESSION_DYNAMIC_PARAM_MAP = "sessionDynamicParamMap";
 		/**
 		 * Test and test report directory constants
 		 */

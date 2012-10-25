@@ -149,7 +149,7 @@
          		<!-- Command Display Heading starts -->
 
 				<!-- Command Display starts -->
-				<div class="build_cmd_div" id="build-output">
+				<div class="build_cmd_div" id="console_div">
 			    	<%-- <%= serverLog %> --%>
 				</div>
 				<!-- Command Display starts -->
@@ -187,7 +187,7 @@
 	%> --%>
 	
     $(document).ready(function() {
-    	yesnoPopup($('#generateBuild'),'generateBuild', '<s:text name="label.generatebuild"/>', 'build','<s:text name="label.build"/>');
+    	yesnoPopup($('#generateBuild'), 'generateBuild', '<s:text name="label.generatebuild"/>', 'build','<s:text name="label.build"/>');
     	if ($.browser.safari && $.browser.version == 530.17) {
     		$(".buildDiv").show().css("float","left");
     	}
@@ -381,6 +381,8 @@
 			hideDbWithVersions();
 		} else if (pageUrl == "jsToMinify") {
 			updateHiddenField(data.jsFinalName, data.selectedJs, data.browseLocation);
+    	} else if (pageUrl == "dependancyListener") {
+    		updateDependantValue(data);
     	}
     }
 </script>

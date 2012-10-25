@@ -29,7 +29,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -57,12 +56,6 @@ import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.framework.commons.FrameworkActions;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.commons.LogErrorReport;
-import com.photon.phresco.param.api.DynamicParameter;
-import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
-import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.MavenCommands.MavenCommand;
-import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues;
-import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
-import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.service.client.api.ServiceClientConstant;
 import com.photon.phresco.service.client.api.ServiceContext;
 import com.photon.phresco.service.client.api.ServiceManager;
@@ -279,43 +272,6 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
         return builder.toString();
     }
     
-    protected void persistValuesToXml(MojoProcessor mojo, String goal) throws PhrescoException {
-		List<Parameter> parameters = getMojoParameters(mojo, goal);
-		StringBuilder csParamVal = new StringBuilder();
-		String sep = "";
-		for (Parameter parameter : parameters) {
-			if (parameter.getDynamicParameter() != null) {
-				String[] parameterValues = getReqParameterValues(parameter.getKey());
-				for (String parameterValue : parameterValues) {
-					csParamVal.append(sep);
-					csParamVal.append(parameterValue);
-					sep = ",";
-				}
-				parameter.setValue(csParamVal.toString());
-			} else {
-				if (getReqParameter(parameter.getKey()) != null ) {
-					parameter.setValue(getReqParameter(parameter.getKey()));
-				} else {
-					parameter.setValue(Boolean.FALSE.toString());//to update value of skipTest if it is unchecked
-				}
-			}
-		}
-		mojo.save();
-	}
-    
-    /**
-     * To get list of parameters from phresco-plugin-info.xml
-     * @param applicationInfo
-     * @param goal
-     * @return List<Parameter>
-     * @throws PhrescoException
-     */
-    protected List<Parameter> getMojoParameters(MojoProcessor mojo, String goal) throws PhrescoException {
-		com.photon.phresco.plugins.model.Mojos.Mojo.Configuration mojoConfiguration = mojo.getConfiguration(goal);
-		List<Parameter> parameters = mojoConfiguration.getParameters().getParameter();
-		return parameters;
-	}
-    
     /**
      * To get path of phresco-plugin-info.xml file
      * @param applicationInfo
@@ -340,51 +296,10 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
     	return getAppDirectoryPath(applicationInfo) + FILE_SEPARATOR + BUILD_DIR + FILE_SEPARATOR +BUILD_INFO_FILE_NAME;
     }
     
-    /**
-	 * To set List of Possible values as Dynamic parameter in request
-	 * @param applicationInfo
-	 * @param parameters
-	 * @throws PhrescoException
-	 */
-	protected void setDynamicPossibleValues(Map<String, Object> map, Parameter parameter) throws PhrescoException {
-		PossibleValues possibleValue = getDynamicValues(map, parameter.getDynamicParameter().getClazz());
-		List<Value> possibleValues = (List<Value>) possibleValue.getValue();
-		setReqAttribute(REQ_DYNAMIC_POSSIBLE_VALUES, possibleValues);
-	}
-	
-	@SuppressWarnings("unchecked")
-	private PossibleValues getDynamicValues(Map<String, Object> map, String className) throws PhrescoException {
-		try {
-			Class<DynamicParameter> loadedClass = (Class<DynamicParameter>) Class.forName(className);
-			DynamicParameter dynamicParameter = loadedClass.newInstance();
-			return dynamicParameter.getValues(map);
-		} catch (Exception e) {
-			throw new PhrescoException(getText(EXCEPTION_LOAD_CLASS) + className);
-		}
-		
-	}
-	
+    protected String getSettingsPath() {
+    	return Utility.getProjectHome() + SETTINGS_XML;
+    }
 
-	/**
-	 * To get list of maven command arguments
-	 * @param parameters
-	 * @return
-	 */
-	protected List<String> getMavenArgCommands(List<Parameter> parameters) {
-		List<String> buildArgCmds = new ArrayList<String>();			
-		for (Parameter parameter : parameters) {
-			if (parameter.getPluginParameter()!= null && PLUGIN_PARAMETER_FRAMEWORK.equalsIgnoreCase(parameter.getPluginParameter())) {
-				List<MavenCommand> mavenCommand = parameter.getMavenCommands().getMavenCommand();
-				for (MavenCommand mavenCmd : mavenCommand) {
-					if (parameter.getValue().equalsIgnoreCase(mavenCmd.getKey())) {
-						buildArgCmds.add(mavenCmd.getValue());
-					}
-				}
-			}
-		}
-		return buildArgCmds;
-	}
-	
     protected void setReqAttribute(String key, Object value) {
         getHttpRequest().setAttribute(key, value);
     }

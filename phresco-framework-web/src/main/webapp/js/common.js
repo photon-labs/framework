@@ -554,3 +554,52 @@ function confirmDialog(title, bodyText, okUrl, okLabel) {
 		popupOnOk(okUrl); // this function will be kept in where the yesnoPopup() called
 	});
 }
+
+//to dynamically update dependancy data into controls 
+function constructElements(data, pushToElement, isMultiple, controlType) {
+	if (isMultiple === undefined && controlType === undefined) {
+		constructMultiSelectOptions(data, pushToElement);
+	} else if (isMultiple === false) {
+		// for single select list box
+	} else if (controlType !== undefined ) {
+		//other controls ( text box)
+	}
+}
+/**
+ * To dynamically update dependancy data into multi select checkbox
+ * 
+ * Step 1. Reads already existing values in a array
+ * Step 2. Clear the content of multiselect control
+ * Step 3. create ul element
+ * Step 4. iterate resultant json data  
+ * Step 5. check whether result data matches already existed data and if it exist make it as checked
+ * Step 6. construct li element with result data
+ * Step 7. append constructed ul element multi select control 
+ * 
+ */
+function constructMultiSelectOptions(data, pushToElement) {
+	//See step 1
+	var selected = new Array();
+	$('#'+pushToElement+' input:checked').each(function() {
+	    selected.push($(this).val());
+	});
+	//See step 2
+	$("#"+pushToElement).empty();
+	//See step 3
+	var ulElement =$(document.createElement('ul'));
+	var checkedStr = "";
+	//See step 4
+	for (i in data.dependentValues) {
+		//See step 5
+		if($.inArray(data.dependentValues[i].value, selected) > -1){
+			checkedStr = "checked";
+		} else {
+			checkedStr = "";
+		}
+		//See step 6
+		var liElement = "<li><input type='checkbox' name='"+ pushToElement +"' value='" + data.dependentValues[i].value + "' class='popUpChckBox'"+checkedStr+">"+data.dependentValues[i].value+"</li>";
+		ulElement.append(liElement);
+	}
+	//See step 7
+	$("#"+pushToElement).append(ulElement);
+}

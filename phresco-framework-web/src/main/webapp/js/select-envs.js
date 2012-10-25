@@ -18,9 +18,9 @@
  * ###
  */
 $(document).ready(function() {
-	$('#showSettings').click(function() {
+	/*$('#showSettings').click(function() {
 		showSettings();
-	});
+	});*/
 });
 
 function showSettings() {
