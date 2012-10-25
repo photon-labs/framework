@@ -508,7 +508,8 @@
         	<result name="type">/pages/settings/type.jsp</result>
         </action>
 
-		<action name="configurationsType" method="configurationsType" class="com.photon.phresco.framework.actions.applications.Configurations">
+		<action name="configType" method="showProperties" class="com.photon.phresco.framework.actions.applications.Configurations">
+			<interceptor-ref name="json" />
         	<result name="type">/pages/applications/configuration/type.jsp</result>
         </action>
         

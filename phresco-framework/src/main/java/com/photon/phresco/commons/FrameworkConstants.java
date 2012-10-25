@@ -472,6 +472,7 @@ public interface FrameworkConstants {
     String REQ_CONFIGURATION = "configuration";
     String REQ_SETTINGS_TEMPLATES = "SettingsTemplates";
     String REQ_CONFIG_TYPE_OTHER = "Other";
+    String REQ_PROPERTIES = "properties";
     String REQ_CONFIG_PROP_KEY = "propertyKey";
     String REQ_SERVER_SETTINGS = "serverSettings";
     String REQ_DATABASE_SETTINGS = "databaseSettings";

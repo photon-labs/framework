@@ -34,7 +34,7 @@ function yesnoPopup(modalObj, url, title, okUrl, okLabel) {
 		var data = "";
 		data = getBasicParams(); //customerid, projectid, appid
 		data = data.concat("&");
-		var additionalParam = $(this).attr('additionalParam'); //additional parms if any
+		var additionalParam = $(this).attr('additionalParam'); //additional params if any
 		data = data.concat(additionalParam);
 
 		$('.modal-body').empty();
