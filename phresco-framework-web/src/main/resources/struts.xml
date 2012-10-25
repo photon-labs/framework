@@ -282,6 +282,10 @@
             <result name="generateBuild">/pages/applications/generateBuild.jsp</result>
         </action>
         
+        <action name="dependancyListener" method="dependancyListener" class="com.photon.phresco.framework.actions.applications.Build">
+            <result type="json" />
+        </action>
+        
         <action name="getSqlDatabases" method="getSqlDatabases" class="com.photon.phresco.framework.actions.applications.Build">
             <result type="json" />
         </action>

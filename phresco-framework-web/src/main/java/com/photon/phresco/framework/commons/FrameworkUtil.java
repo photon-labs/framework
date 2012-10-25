@@ -66,11 +66,11 @@ public class FrameworkUtil extends FrameworkBaseAction {
 
 	private static final String LABEL_TEMPLATE = "<div class='control-group'><label for='xlInput' class='control-label labelbold $class$'>$mandatory$$txt$</label>";
 	private static final String MANDATORY = "<span class='red'>*</span>&nbsp";
-	private static final String SELECT_TEMPLATE = "<div class='controls'><select class=\"input-xlarge $cssClass$\" name=\"$name$\" $multiple$>$options$</select></div></div>";
+	private static final String SELECT_TEMPLATE = "<div class='controls'><select class=\"input-xlarge $cssClass$\" id=\"$id$\" name=\"$name$\" isMultiple=\"$isMultiple$\">$options$</select></div></div>";
 	private static final String INPUT_TEMPLATE = "<div class='controls'><input type=\"$type$\" class=\"input-xlarge $class$\" id=\"$id$\" " + 
 													"name=\"$name$\" placeholder=\"$placeholder$\" value=\"$value$\" $checked$/></div></div>";
 	private static final String CHECKBOX_TEMPLATE = "<div class='controls'><input type='checkbox' class=\"$class$\" id=\"$id$\" " + 
-														"name=\"$name$\" value=\"$value$\" $checked$ onclick='changeChckBoxValue(this);'/></div></div>";
+														"name=\"$name$\" value=\"$value$\" $checked$ onclick=\"$onClickFunction$\"/></div></div>";
 	private static final String MULTI_SELECT_TEMPLATE = "<div class='controls'><div class='multiSelectBorder'><div class='multilist-scroller multiselect multiSelHeight $class$' id=\"$id$\"><ul>$multiSelectOptions$</ul></div></div></div></div>";
 	
     private Map<String, String> unitTestMap = new HashMap<String, String>(8);
@@ -688,12 +688,17 @@ public class FrameworkUtil extends FrameworkBaseAction {
 		return inputElement;
     }
     
-    public static StringTemplate constructCheckBoxElement(String cssClass, String id, String name, String value) {
+    public static StringTemplate constructCheckBoxElement(String cssClass, String id, String name, String value, String onClickFunction) {
     	StringTemplate checkboxElement = new StringTemplate(CHECKBOX_TEMPLATE);
     	checkboxElement.setAttribute("class", cssClass);
     	checkboxElement.setAttribute("id", id);
     	checkboxElement.setAttribute("name", name);
-    	checkboxElement.setAttribute("value", value);
+    	if (StringUtils.isNotEmpty(value)) {
+    		checkboxElement.setAttribute("value", value);	
+    	} else {
+    		checkboxElement.setAttribute("value", false);
+    	}
+    	checkboxElement.setAttribute("onClickFunction", onClickFunction);
     	if (Boolean.parseBoolean(value)) {
     		checkboxElement.setAttribute("checked", "checked");
     	} else {
@@ -707,17 +712,19 @@ public class FrameworkUtil extends FrameworkBaseAction {
     	if (Boolean.parseBoolean(isMultiple)) {
     		return constructMultiSelectElement(cssClass, id, name, values, selectedValues);
     	} else {
-    		return constructSingleSelectElement(cssClass, id, name, values, selectedValues);
+    		return constructSingleSelectElement(cssClass, id, name, values, selectedValues, isMultiple);
     	}
     }
 
     public static StringTemplate constructSingleSelectElement(String cssClass, String id, String name,
-    		List<Value> values, List<String> selectedValues) {
+    		List<Value> values, List<String> selectedValues, String isMultiple) {
     	StringTemplate selectElement = new StringTemplate(SELECT_TEMPLATE);
     	StringBuilder options = constructOptions(values, selectedValues);
     	selectElement.setAttribute("name", name);
     	selectElement.setAttribute("cssClass", cssClass);
     	selectElement.setAttribute("options", options);
+    	selectElement.setAttribute("id", id);
+    	selectElement.setAttribute("isMultiple", isMultiple);
     	
     	return selectElement;
     }

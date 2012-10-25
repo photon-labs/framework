@@ -30,7 +30,6 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -65,12 +64,11 @@ import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
-import com.photon.phresco.framework.actions.FrameworkBaseAction;
+import com.photon.phresco.framework.actions.DynamicParameterUtil;
 import com.photon.phresco.framework.api.ActionType;
 import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.api.Project;
 import com.photon.phresco.framework.api.ProjectAdministrator;
-import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.framework.api.ProjectRuntimeManager;
 import com.photon.phresco.framework.commons.ApplicationsUtil;
 import com.photon.phresco.framework.commons.DiagnoseUtil;
@@ -81,6 +79,7 @@ import com.photon.phresco.framework.model.BuildInfo;
 import com.photon.phresco.framework.model.PluginProperties;
 import com.photon.phresco.framework.model.SettingsInfo;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
+import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
 import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.IosSdkUtil;
@@ -95,12 +94,11 @@ import com.phresco.pom.model.PluginExecution.Goals;
 import com.phresco.pom.util.AndroidPomProcessor;
 import com.phresco.pom.util.PomProcessor;
 
-public class Build extends FrameworkBaseAction {
+public class Build extends DynamicParameterUtil {
 
 	private static final long serialVersionUID = -9172394838984622961L;
 	private static final Logger S_LOGGER = Logger.getLogger(Build.class);
 	private static Boolean debugEnabled = S_LOGGER.isDebugEnabled();
-	private String showSettings = null;
 	private String database = null;
 	private String server = null;
 	private String email = null;
@@ -124,6 +122,7 @@ public class Build extends FrameworkBaseAction {
 	private String projectModule = null;
 	private String mainClassName = null;
 	private String jarName = null;
+	
 	// Iphone deploy option
 	private String deployTo = "";
 	private String userBuildName = null;
@@ -165,7 +164,14 @@ public class Build extends FrameworkBaseAction {
 	static {
 		initDbPathMap();
 	}
-
+	
+	//Dynamic parameter related
+	private String from = "";
+	private List<Value> dependentValues = null; //Value for dependancy parameters
+	private String dependantKey = ""; 
+	private String dependantValue = "";
+	private String goal = "";
+	
 	public String view() {
 		if (debugEnabled)
 			S_LOGGER.debug("Entering Method  Build.view()");
@@ -269,172 +275,52 @@ public class Build extends FrameworkBaseAction {
 		return APP_BUILD;
 	}
 
-	@SuppressWarnings("unchecked")
-	public String generateBuild() throws PhrescoException {
-		S_LOGGER.debug("Entering Method  Build.generateBuild()");
-		String technology = null;
-		String from = null;
-		Project project = null;
-		List<String> projectModules = null;
-		String buildNumber = null;
-		from = getHttpRequest().getParameter(REQ_BUILD_FROM);
-		try {
-			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-			project = administrator.getProject(projectCode);
-			technology = project.getApplicationInfo().getTechInfo().getVersion();
-			from = getHttpRequest().getParameter(REQ_BUILD_FROM);
-			importSqlFlag(project);
-			buildNumber = getHttpRequest().getParameter(REQ_DEPLOY_BUILD_NUMBER);
-			if (DEPLOY.equals(from)) {
-				BuildInfo buildInfo = administrator.getBuildInfo(project, Integer.parseInt(buildNumber));
-				List<String> buildInfoEnvs = buildInfo.getEnvironments();
-				getHttpRequest().setAttribute(BUILD_INFO_ENVS, buildInfoEnvs);
-				getHttpRequest().setAttribute("buildName", getHttpRequest().getParameter("buildName"));
-			} else {
-				List<Environment> environments = administrator.getEnvironments(project);
-				getHttpRequest().setAttribute(REQ_ENVIRONMENTS, environments);
-			}
-			// Get xcode targets
-			if (TechnologyTypes.IPHONES.contains(technology)) {
-				List<PBXNativeTarget> xcodeConfigs = ApplicationsUtil.getXcodeConfiguration(projectCode);
-				for (PBXNativeTarget xcodeConfig : xcodeConfigs) {
-					S_LOGGER.debug("Iphone technology terget name" + xcodeConfig.getName());
-				}
-				getHttpRequest().setAttribute(REQ_XCODE_CONFIGS, xcodeConfigs);
-				// get list of sdks
-				List<String> iphoneSdks = IosSdkUtil.getMacSdks(MacSdkType.iphoneos);
-				iphoneSdks.addAll(IosSdkUtil.getMacSdks(MacSdkType.iphonesimulator));
-				iphoneSdks.addAll(IosSdkUtil.getMacSdks(MacSdkType.macosx));
-				getHttpRequest().setAttribute(REQ_IPHONE_SDKS, iphoneSdks);
-			}
-
-			// get has signing info from android pom
-			if (TechnologyTypes.ANDROIDS.contains(technology)) {
-				StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-				builder.append(projectCode);
-				builder.append(File.separatorChar);
-				builder.append(POM_XML);
-				File pomPath = new File(builder.toString());
-				AndroidPomProcessor processor = new AndroidPomProcessor(pomPath);
-				if (pomPath.exists() && processor.hasSigning()) {
-					getHttpRequest().setAttribute(REQ_ANDROID_HAS_SIGNING, true);
-				} else {
-					getHttpRequest().setAttribute(REQ_ANDROID_HAS_SIGNING, false);
-				}
-			}
-			projectModules = projectModuleMap.get(projectCode);
-			if (CollectionUtils.isEmpty(projectModules)) {
-				projectModules = getWarProjectModules(projectCode);
-				projectModuleMap.put(projectCode, projectModules);
-			}
-
-			if (TechnologyTypes.JAVA_STANDALONE.equals(technology)) {
-				getValueFromJavaStdAlonePom();
-			}
-			
-			if (TechnologyTypes.HTML5_MULTICHANNEL_JQUERY_WIDGET.equals(technology) || 
-					TechnologyTypes.HTML5_JQUERY_MOBILE_WIDGET.equals(technology) ||
-					TechnologyTypes.HTML5_MOBILE_WIDGET.equals(technology) ||
-					TechnologyTypes.HTML5_WIDGET.equals(technology)){
-				StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-				builder.append(projectCode);
-				builder.append(File.separatorChar);
-				builder.append(POM_XML);
-				File pomPath = new File(builder.toString());
-				PomProcessor processor = new PomProcessor(pomPath);
-				com.phresco.pom.model.Plugin.Configuration pluginConfig = processor.getPlugin(MINIFY_PLUGIN_GROUPID,MINIFY_PLUGIN_ARTFACTID).getConfiguration();
-				List<Element> elements = pluginConfig.getAny();
-				for (Element element : elements) {
-					includesFiles(element);
-				}
-			}
-
-		} catch (Exception e) {
-			S_LOGGER.error("Entered into catch block of Build.generateBuild()" + FrameworkUtil.getStackTraceAsString(e));
-		}
-
-		if (CollectionUtils.isNotEmpty(projectModules)) {
-			getHttpRequest().setAttribute(REQ_PROJECT_MODULES, projectModules);
-		}
-		
-		getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
-		getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
-		getHttpRequest().setAttribute(REQ_BUILD_FROM, from);
-		getHttpRequest().setAttribute(REQ_TECHNOLOGY, technology);
-		getHttpRequest().setAttribute(REQ_DEPLOY_BUILD_NUMBER, buildNumber);
-		return APP_GENERATE_BUILD;
-	}
-	
-	private void includesFiles(Element element) {
-		try {
-			Map<String, String> map = new HashMap<String, String>();
-			String opFileLoc = "";
-			if (POM_AGGREGATIONS.equals(element.getNodeName())){
-				NodeList aggregationList = element.getElementsByTagName(POM_AGGREGATION);
-				for (int i = 0; i < aggregationList.getLength(); i++) {
-					Element childNode = (Element) aggregationList.item(i);
-					NodeList includeList = childNode.getElementsByTagName(POM_INCLUDES).item(0).getChildNodes();
-					StringBuilder sb = new StringBuilder(); 
-					String sep = "";
-					for (int j = 0; j < includeList.getLength()-1; j++) {
-						Element include = (Element) includeList.item(j);
-						String file = include.getTextContent().substring(include.getTextContent().lastIndexOf("/")+1);
-						sb.append(sep);
-						sb.append(file);
-					    sep = ",";
-					}
-					Element outputElement = (Element) childNode.getElementsByTagName(POM_OUTPUT).item(0);
-					String opFileName = outputElement.getTextContent().substring(
-							outputElement.getTextContent().lastIndexOf("/")+1);
-					String compressName = opFileName.substring(0, opFileName.indexOf("."));
-					map.put(compressName, sb.toString());
-					opFileLoc = outputElement.getTextContent().substring(0,
-							outputElement.getTextContent().lastIndexOf("/")+1);
-					
-					getHttpRequest().setAttribute(REQ_MINIFY_MAP, map);
-				}
-				opFileLoc = opFileLoc.replace(MINIFY_OUTPUT_DIRECTORY, projectCode);
-				getHttpRequest().setAttribute("fileLocation", opFileLoc);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}	
-	}
-	
 	/**
 	 * To show generate build popup with loaded dynamic parameters 
 	 */
-	public String showGenerateBuildPopup() {
+	public String showGenerateBuildPopup() throws PhrescoException {
+		if (debugEnabled) {
+			S_LOGGER.debug("Entering Method  Build.showGenerateBuildPopup()");
+		}
 		try {
-			String from = getReqParameter(REQ_FROM);
 			Map<String, Object> buildParamMap = new HashMap<String, Object>();
 			ApplicationInfo applicationInfo = getApplicationInfo();
 			buildParamMap.put(REQ_APP_INFO, applicationInfo);
-			setDynamicParameters(buildParamMap, PHASE_PACKAGE);
-			setReqAttribute(REQ_FROM, from);
+			List<Parameter> parameters = setDynamicParameters(buildParamMap, PHASE_PACKAGE);
+			
+			setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);	
+			setReqAttribute(REQ_APPINFO, applicationInfo);
+			setReqAttribute(REQ_GOAL, PHASE_PACKAGE);
+			setReqAttribute(REQ_FROM, getFrom());
 		} catch (PhrescoException e) {
-			return showErrorPopup(e, getText(EXCEPTION_GENERATE_BUILD));
+			return showErrorPopup(e, getText(EXCEPTION_BUILD_POPUP));
 		} 
 		
 		return APP_GENERATE_BUILD;
 	}
 	
-	/*
+	/**
 	 *  To show deploy popup with loaded dynamic parameters 
 	 */
 	public String showDeployPopup() throws PhrescoException {
+		if (debugEnabled) {
+			S_LOGGER.debug("Entering Method  Build.showDeployPopup()");
+		}
 		try {
-			String from = getReqParameter(REQ_FROM);
 			Map<String, Object> deployParamMap = new HashMap<String, Object>();
 			ApplicationInfo applicationInfo = getApplicationInfo();
 			String buildNumber = getReqParameter(REQ_DEPLOY_BUILD_NUMBER);
 			deployParamMap.put(REQ_APP_INFO, applicationInfo);
 			deployParamMap.put(REQ_DEPLOY_BUILD_NUMBER, buildNumber);
-			setDynamicParameters(deployParamMap, PHASE_DEPLOY);
+			List<Parameter> parameters = setDynamicParameters(deployParamMap, PHASE_DEPLOY);
+			
+			setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);			
+			setReqAttribute(REQ_APPINFO, applicationInfo);
 			setReqAttribute(REQ_DEPLOY_BUILD_NUMBER, buildNumber);
-			setReqAttribute(REQ_FROM, from);
+			setReqAttribute(REQ_GOAL, PHASE_DEPLOY);
+			setReqAttribute(REQ_FROM, getFrom());
 		} catch (PhrescoException e) {
-			return showErrorPopup(e, getText(EXCEPTION_GENERATE_DEPLOY));
+			return showErrorPopup(e, getText(EXCEPTION_DEPLOY_POPUP));
 		} 
 
 		return APP_GENERATE_BUILD;
@@ -445,23 +331,50 @@ public class Build extends FrameworkBaseAction {
 	 * @param goal
 	 * @throws PhrescoException
 	 */
-	private void setDynamicParameters(Map<String, Object> dynamicParamMap, String goal) throws PhrescoException{
+	private List<Parameter> setDynamicParameters(Map<String, Object> dynamicParamMap, String goal) throws PhrescoException {
+		List<Parameter> parameters = null;
 		try {
 			ApplicationInfo applicationInfo = (ApplicationInfo) dynamicParamMap.get(REQ_APP_INFO);
 			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(applicationInfo)));
-			List<Parameter> parameters = getMojoParameters(mojo, goal);
+			parameters = getMojoParameters(mojo, goal);
 			if (CollectionUtils.isNotEmpty(parameters)) {
 				for (Parameter parameter : parameters) {
+					if (parameter.getDependency() != null) {
+						dynamicParamMap.put(parameter.getDependency(), parameter.getValue());
+					}
 					if (parameter.getDynamicParameter() != null) {
-						setDynamicPossibleValues(dynamicParamMap, parameter);
+						List<Value> possibleValues = setDynamicPossibleValues(dynamicParamMap, parameter);
+						setReqAttribute(REQ_DYNAMIC_POSSIBLE_VALUES, possibleValues);
 					}
 				}
 			}
-			setReqAttribute(REQ_APPINFO, applicationInfo);
-			setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
 		} catch (PhrescoException e) {
-			e.printStackTrace();
+			throw new PhrescoException(e);
 		}
+		
+		return parameters;
+	}
+	
+	@SuppressWarnings("unchecked")
+	/**
+	 * To handle dependency events
+	 */
+	public String dependancyListener() throws PhrescoException {
+		if (debugEnabled) {
+			S_LOGGER.debug("Entering Method  Build.dependancyListener()");
+		}	
+		try {
+			Map<String, Object> sessionMap = (Map<String, Object>) getSessionAttribute(REQ_SESSION_DYNAMIC_PARAM_MAP);
+			sessionMap.put(getDependantKey(), getDependantValue());
+			ApplicationInfo applicationInfo = getApplicationInfo();
+			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(applicationInfo)));
+			Parameter parameter = mojo.getParameter(getGoal(), dependantKey);
+			List<Value> dependantPossibleValues = setDynamicPossibleValues(sessionMap, parameter);
+			setDependentValues(dependantPossibleValues);//to parse resultant dependant values as json
+		} catch (PhrescoException e) {
+			return showErrorPopup(e, getText(EXCEPTIN_BUILD_DEPENDANT_VALUE));
+		}
+		return SUCCESS;
 	}
 	
 	public String builds() throws PhrescoException {
@@ -478,15 +391,16 @@ public class Build extends FrameworkBaseAction {
 			if (debugEnabled) {
 				S_LOGGER.error("Entered into catch block of Build.builds()" + FrameworkUtil.getStackTraceAsString(e));
 			}
-			showErrorPopup(e, getText(EXCEPTION_BUILDS));
+			return showErrorPopup(e, getText(EXCEPTION_BUILDS_LIST));
 		}
-		setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
 		
 		return APP_BUILDS;
 	}
 
 	public String build() throws PhrescoException {
-		S_LOGGER.debug("Entering Method  Build.build()");
+		if (debugEnabled) {
+			S_LOGGER.debug("Entering Method  Build.build()");
+		}
 		try {
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			ProjectInfo projectInfo = getProjectInfo();
@@ -499,16 +413,47 @@ public class Build extends FrameworkBaseAction {
 			List<String> buildArgCmds = getMavenArgCommands(parameters);
 			String workingDirectory = getAppDirectoryPath(applicationInfo);
 			
-			Reader reader = applicationManager.performAction(projectInfo, ActionType.BUILD, buildArgCmds, workingDirectory);
+			BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.BUILD, buildArgCmds, workingDirectory);
 			setSessionAttribute(getAppId() + REQ_BUILD, reader);
 			setReqAttribute(REQ_APP_ID, getAppId());
-			setReqAttribute(REQ_TEST_TYPE, REQ_BUILD);
+			setReqAttribute(REQ_ACTION_TYPE, REQ_BUILD);
 		} catch (PhrescoException e) {
-			S_LOGGER.error("Entered into catch block of Build.build()" + FrameworkUtil.getStackTraceAsString(e));
-			return showErrorPopup(e, getText(EXCEPTION_BUILD));
+			if (debugEnabled) {
+				S_LOGGER.error("Entered into catch block of Build.build()" + FrameworkUtil.getStackTraceAsString(e));
+			}
+			return showErrorPopup(e, getText(EXCEPTION_BUILD_GENERATE));
 		}
 
-		setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
+		return APP_ENVIRONMENT_READER;
+	}
+	
+	public String deploy() throws PhrescoException {
+		if (debugEnabled) {
+			S_LOGGER.debug("Entering Method  Build.deploy()");
+		}
+		try {
+			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+			ProjectInfo projectInfo = getProjectInfo();
+			ApplicationInfo applicationInfo = getApplicationInfo();
+			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(applicationInfo)));
+			
+			persistValuesToXml(mojo, PHASE_DEPLOY);
+			
+			//To get maven build arguments
+			List<Parameter> parameters = getMojoParameters(mojo, PHASE_DEPLOY);
+			List<String> buildArgCmds = getMavenArgCommands(parameters);
+			String workingDirectory = getAppDirectoryPath(applicationInfo);
+			BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.DEPLOY, buildArgCmds, workingDirectory);
+			setSessionAttribute(getAppId() + REQ_FROM_TAB_DEPLOY, reader);
+			setReqAttribute(REQ_APP_ID, getAppId());
+			setReqAttribute(REQ_ACTION_TYPE, REQ_FROM_TAB_DEPLOY);
+			
+		} catch (PhrescoException e) {
+			if (debugEnabled) {
+				S_LOGGER.error("Entered into catch block of Build.deploy()" + FrameworkUtil.getStackTraceAsString(e));
+			}
+			return showErrorPopup(e, getText(EXCEPTION_DEPLOY_GENERATE));
+		}
 
 		return APP_ENVIRONMENT_READER;
 	}
@@ -643,91 +588,6 @@ public class Build extends FrameworkBaseAction {
 
 		getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
 		return view();
-	}
-
-	public String deploy() throws PhrescoException {
-		S_LOGGER.debug("Entering Method  Build.deploy()");
-		try {
-			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-			ProjectInfo projectInfo = getProjectInfo();
-			ApplicationInfo applicationInfo = getApplicationInfo();
-			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(applicationInfo)));
-			
-			persistValuesToXml(mojo, PHASE_DEPLOY);
-			
-			//To get maven build arguments
-			List<Parameter> parameters = getMojoParameters(mojo, PHASE_DEPLOY);
-			List<String> buildArgCmds = getMavenArgCommands(parameters);
-			String workingDirectory = getAppDirectoryPath(applicationInfo);
-			Reader reader = applicationManager.performAction(projectInfo, ActionType.DEPLOY, buildArgCmds, workingDirectory);
-			setSessionAttribute(getAppId() + REQ_FROM_TAB_DEPLOY, reader);
-			setReqAttribute(REQ_APP_ID, getAppId());
-			setReqAttribute(REQ_TEST_TYPE, REQ_FROM_TAB_DEPLOY);
-			
-		} catch (PhrescoException e) {
-			if (debugEnabled) {
-				S_LOGGER.error("Entered into catch block of Build.deploy()" + FrameworkUtil.getStackTraceAsString(e));
-			}
-			return showErrorPopup(e, getText(EXCEPTION_DEPLOY));
-		}
-
-		getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
-		return APP_ENVIRONMENT_READER;
-	}
-
-	public String deployAndroid() {
-		if (debugEnabled) {
-			S_LOGGER.debug("Entering Method  Build.deployAndroid()");
-		}
-		try {
-			String buildNumber = getHttpRequest().getParameter(REQ_DEPLOY_BUILD_NUMBER);
-			if (debugEnabled) {
-				S_LOGGER.debug("Deploy Android build number" + buildNumber);
-			}
-			getHttpRequest().setAttribute("projectCode", projectCode);
-			getHttpRequest().setAttribute(REQ_DEPLOY_BUILD_NUMBER, buildNumber);
-			getHttpRequest().setAttribute(REQ_FROM_TAB, REQ_FROM_TAB_DEPLOY);
-		} catch (Exception e) {
-			if (debugEnabled) {
-				S_LOGGER.error("Entered into catch block of Build.deployAndroid()"
-						+ FrameworkUtil.getStackTraceAsString(e));
-			}
-			new LogErrorReport(e, "Deploying android");
-		}
-		return APP_DEPLOY_ANDROID;
-	}
-
-	public String deployIphone() {
-		if (debugEnabled) {
-			S_LOGGER.debug("Entering Method  Build.deployIphone()");
-		}
-		try {
-			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-			Project project = administrator.getProject(projectCode);
-			String buildNumber = getHttpRequest().getParameter(REQ_DEPLOY_BUILD_NUMBER);
-			BuildInfo buildInfo = administrator.getBuildInfo(project, Integer.parseInt(buildNumber));
-			boolean createIpa = MapUtils.getBooleanValue(buildInfo.getOptions(), CAN_CREATE_IPA);
-			boolean deviceDeploy = MapUtils.getBooleanValue(buildInfo.getOptions(), DEPLOY_TO_DEVICE);
-			getHttpRequest().setAttribute(REQ_DEPLOY_BUILD_NUMBER, buildNumber);
-			if (debugEnabled) {
-				S_LOGGER.debug("Deploy IPhone build number" + buildNumber);
-			}
-			getHttpRequest().setAttribute("projectCode", projectCode);
-			getHttpRequest().setAttribute(REQ_HIDE_DEPLOY_TO_SIMULATOR,
-					new Boolean(!createIpa && !deviceDeploy ? true : false));
-			getHttpRequest().setAttribute(REQ_HIDE_DEPLOY_TO_DEVICE,
-					new Boolean(createIpa && deviceDeploy ? true : false));
-			getHttpRequest().setAttribute(REQ_FROM_TAB, REQ_FROM_TAB_DEPLOY);
-			// get list of sdk versions
-			List<String> iphoneSimulatorSdks = IosSdkUtil.getMacSdksVersions(MacSdkType.iphonesimulator);
-			getHttpRequest().setAttribute(REQ_IPHONE_SIMULATOR_SDKS, iphoneSimulatorSdks);
-		} catch (Exception e) {
-			if (debugEnabled) {
-				S_LOGGER.error("Entered into catch block of Build.Iphone()" + FrameworkUtil.getStackTraceAsString(e));
-			}
-			new LogErrorReport(e, "Deploying Iphone");
-		}
-		return APP_DEPLOY_IPHONE;
 	}
 
 	public String download() {
@@ -1727,14 +1587,6 @@ public class Build extends FrameworkBaseAction {
 		}
 	}
 
-	public String getShowSettings() {
-		return showSettings;
-	}
-
-	public void setShowSettings(String showSettings) {
-		this.showSettings = showSettings;
-	}
-
 	public InputStream getFileInputStream() {
 		return fileInputStream;
 	}
@@ -2097,5 +1949,45 @@ public class Build extends FrameworkBaseAction {
 
 	public void setPlatform(String platform) {
 		this.platform = platform;
+	}
+
+	public List<Value> getDependentValues() {
+		return dependentValues;
+	}
+
+	public void setDependentValues(List<Value> dependentValues) {
+		this.dependentValues = dependentValues;
+	}
+
+	public String getDependantKey() {
+		return dependantKey;
+	}
+
+	public void setDependantKey(String dependantKey) {
+		this.dependantKey = dependantKey;
+	}
+
+	public String getDependantValue() {
+		return dependantValue;
+	}
+
+	public void setDependantValue(String dependantValue) {
+		this.dependantValue = dependantValue;
+	}
+
+	public String getGoal() {
+		return goal;
+	}
+
+	public void setGoal(String goal) {
+		this.goal = goal;
+	}
+
+	public void setFrom(String from) {
+		this.from = from;
+	}
+
+	public String getFrom() {
+		return from;
 	}
 }

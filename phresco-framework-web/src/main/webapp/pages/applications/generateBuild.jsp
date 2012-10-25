@@ -24,22 +24,22 @@
 <%@ page import="java.util.Set"%>
 <%@ page import="java.util.Iterator"%>
 <%@ page import="java.util.HashMap"%>
-<%@page import="java.util.Arrays"%>
-<%@ page import="org.apache.commons.lang.StringUtils" %>
-<%@ page import="com.photon.phresco.configuration.Environment"%>
+<%@ page import="java.util.Arrays"%>
 
+<%@ page import="org.apache.commons.lang.StringUtils" %>
+<%@ page import="org.apache.commons.collections.CollectionUtils" %>
+<%@ page import="org.apache.commons.collections.CollectionUtils" %>
+<%@ page import="org.antlr.stringtemplate.StringTemplate" %>
+
+<%@ page import="com.photon.phresco.configuration.Environment"%>
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.util.TechnologyTypes" %>
 <%@ page import="com.photon.phresco.framework.commons.ApplicationsUtil"%>
 <%@ page import="com.photon.phresco.framework.commons.PBXNativeTarget"%>
-<%@ page import="org.apache.commons.collections.CollectionUtils" %>
 <%@ page import="com.photon.phresco.commons.XCodeConstants"%>
 <%@ page import="com.photon.phresco.commons.AndroidConstants"%>
-
-<%@ page import="org.apache.commons.collections.CollectionUtils" %>
 <%@ page import="com.photon.phresco.framework.commons.FrameworkUtil" %>
-<%@ page import="org.antlr.stringtemplate.StringTemplate" %>
-<%@page import="com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter"%>
+<%@ page import="com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter"%>
 <%@ page import="com.photon.phresco.plugins.util.MojoProcessor"%>
 <%@ page import="com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.Name.Value"%>
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
@@ -49,12 +49,9 @@
 
 <%
     String defaultEnv = "";
-   //	String projectCode = (String) request.getAttribute(FrameworkConstants.REQ_PROJECT_CODE);
    	String from = (String) request.getAttribute(FrameworkConstants.REQ_BUILD_FROM);
-  // 	String technology = (String)request.getAttribute(FrameworkConstants.REQ_TECHNOLOGY);
    	String testType = (String) request.getAttribute(FrameworkConstants.REQ_TEST_TYPE);
    	String importSqlPro  = (String) request.getAttribute(FrameworkConstants.REQ_IMPORT_SQL);
-   //	String buildNumber = (String) request.getAttribute(FrameworkConstants.REQ_DEPLOY_BUILD_NUMBER);
    	String finalName = (String) request.getAttribute(FrameworkConstants.FINAL_NAME);
    	String mainClassValue = (String) request.getAttribute(FrameworkConstants.MAIN_CLASS_VALUE);
    	String checkImportSql = "";
@@ -74,12 +71,15 @@
    	String fileLoc = (String) request.getAttribute("fileLocation");
    	
    	String buildNumber = "";
-    List<Parameter> parameters = (List<Parameter>) request.getAttribute(FrameworkConstants.REQ_DYNAMIC_PARAMETERS);
-    if (FrameworkConstants.REQ_DEPLOY.equals(from)) {
+   	if (FrameworkConstants.REQ_DEPLOY.equals(from)) {
     	buildNumber = (String) request.getAttribute(FrameworkConstants.REQ_DEPLOY_BUILD_NUMBER);
     }
+   	
+   	//To read parameter list from phresco-plugin-info.xml
+   	List<Parameter> parameters = (List<Parameter>) request.getAttribute(FrameworkConstants.REQ_DYNAMIC_PARAMETERS);
     
     ApplicationInfo applicationInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_APP_INFO);
+    String goal = (String) request.getAttribute(FrameworkConstants.REQ_GOAL);
     String appId  = "";
     if (applicationInfo != null) {
 	    appId = applicationInfo.getId();
@@ -151,23 +151,30 @@
 				    	<%= txtInputElement %>
 		<% 			} else if (FrameworkConstants.TYPE_BOOLEAN.equalsIgnoreCase(parameter.getType())) {
 						String cssClass = "chckBxAlign";
-						StringTemplate chckBoxElement = FrameworkUtil.constructCheckBoxElement(cssClass, "", parameter.getKey(), parameter.getValue());
+						String onClickFunction = "";
+						if (parameter.getDependency() != null) {
+							//If current control has dependancy value 
+							onClickFunction = "dependancyChckBoxEvent(this, '"+parameter.getDependency()+"');";
+						} else {
+							onClickFunction = "changeChckBoxValue(this);";
+						}
+						StringTemplate chckBoxElement = FrameworkUtil.constructCheckBoxElement(cssClass, parameter.getKey(), parameter.getKey(), parameter.getValue(), onClickFunction);
 		%>			
 						<%= chckBoxElement%>	
 		<%			
 					} else if (FrameworkConstants.TYPE_LIST.equalsIgnoreCase(parameter.getType()) && parameter.getPossibleValues() != null) { //load select list box
+						//To construct select box element if type is list and if possible value exists
 				    	List<com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value> psblValues = parameter.getPossibleValues().getValue();
 						List<String> selectedValList = Arrays.asList(parameter.getValue().split(FrameworkConstants.CSV_PATTERN));
-						StringTemplate selectElmnt = FrameworkUtil.constructSelectElement("", "", parameter.getKey(), psblValues, selectedValList, parameter.getMultiple());
+						StringTemplate selectElmnt = FrameworkUtil.constructSelectElement("",parameter.getKey(), parameter.getKey(), psblValues, selectedValList, parameter.getMultiple());
 		%>				
 						<%= selectElmnt %>
 						
-		<% 			}  
-					//dynamically loads values into select box for environmet
-					if (FrameworkConstants.TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(parameter.getType())) {
+		<% 			} else if (FrameworkConstants.TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(parameter.getType())) {
+						//To dynamically load values into select box for environmet
 						List<com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value> dynamicEnvNames = (List<com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value>) request.getAttribute(FrameworkConstants.REQ_DYNAMIC_POSSIBLE_VALUES);
 						List<String> selectedValList = Arrays.asList(parameter.getValue().split(FrameworkConstants.CSV_PATTERN));
-						StringTemplate selectDynamicElmnt = FrameworkUtil.constructSelectElement("", "", parameter.getKey(), dynamicEnvNames, selectedValList, parameter.getMultiple());
+						StringTemplate selectDynamicElmnt = FrameworkUtil.constructSelectElement("", parameter.getKey(), parameter.getKey(), dynamicEnvNames, selectedValList, parameter.getMultiple());
 		%>				
 				    	<%= selectDynamicElmnt %>
 		<%			} 
@@ -485,15 +492,15 @@
 			showError(data);
 		} else {
 			$('.build_cmd_div').css("display", "block");
-			$("#build-output").empty();
+			$("#console_div").empty();
 			//showParentPage();
 			if(url == "build") {
 				$("#warningmsg").show();
-				$("#build-output").html("Generating build...");
+				$("#console_div").html("Generating build...");
 			} else if(url == "deploy") {
-				$("#build-output").html("Deploying project...");
+				$("#console_div").html("Deploying project...");
 			} else {
-				$("#build-output").html("Server is starting...");
+				$("#console_div").html("Server is starting...");
 				disableControl($("#nodeJS_runAgnSrc"), "btn disabled");
 				disableControl($("#runAgnSrc"), "btn disabled");
 			}
@@ -625,6 +632,39 @@
 	
 	//to update build number in hidden field for deploy popup
 	<% if (FrameworkConstants.REQ_DEPLOY.equals(from)) { %>
-		$("input[name=userBuildNumber]").val('<%= buildNumber %>');
+		$("input[name=buildNumber]").val('<%= buildNumber %>');
 	<% } %>
+	
+	var pushToElement = "";
+	var isMultiple = "";
+	var controlType = "";
+	function dependancyChckBoxEvent(obj, dependantKey) {
+		changeChckBoxValue(obj);
+		pushToElement = dependantKey;
+		isMultiple = $("#"+pushToElement).attr("isMultiple");
+		controlType = $("#"+pushToElement).attr("type");
+		var dependantValue = $(obj).is(':checked');
+		var params = "";
+		params = params.concat("dependantKey=");
+		params = params.concat(dependantKey);
+		params = params.concat("&dependantValue=");
+		params = params.concat(dependantValue);
+		params = params.concat("&goal=");
+		params = params.concat('<%= goal%>');
+		params = params.concat("&");
+		params = params.concat(getBasicParams());
+		loadContent('dependancyListener', '', '', params, true);
+	}
+	
+	function updateDependantValue(data) {
+		constructElements(data, pushToElement, isMultiple, controlType);
+	}
+	
+	/* $("#showSettings").click(function(){
+		var params = "";
+		params = params.concat("showSettings=");
+		params = params.concat($(this).is(':checked'));
+		alert(params);
+		loadContent('showSettings', '', '', params, true);
+	}); */
 </script>

@@ -337,7 +337,7 @@
 				<a class="close" data-dismiss="modal" >&times;</a>
 				<h3 id="popupTitle"><s:text name='lbl.progress'/></h3>
 			</div>
-			<div class="modal-body">
+			<div class="modal-body" id="console_div">
 			</div>
 			<div class="modal-footer">
 				<a href="#" class="btn btn-primary" data-dismiss="modal" id="popupCancel"><s:text name='lbl.btn.cancel'/></a>
