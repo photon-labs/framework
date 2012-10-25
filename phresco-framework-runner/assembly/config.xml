@@ -32,6 +32,7 @@ xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assemb
 			<includes>
 			    <include>bin/*.bat</include>
 			    <include>bin/*.xml</include>
+			    <include>bin/*.properties</include>
 			    <include>docs/**</include>
 			    <include>conf/**</include>
 			    <include>README.txt</include>
