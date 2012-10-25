@@ -549,6 +549,10 @@
 		<action name="showUnitTestPopUp" method="showUnitTestPopUp" class="com.photon.phresco.framework.actions.applications.Quality">
 			<result name="success">/pages/applications/generateBuild.jsp</result>
         </action>
+        
+        <action name="runUnitTest" method="runUnitTest" class="com.photon.phresco.framework.actions.applications.Quality">
+        	<result name="reader">/pages/applications/reader.jsp</result>
+        </action>
 		
         <action name="fetchBuildInfoEnvs" method="fetchBuildInfoEnvs" class="com.photon.phresco.framework.actions.applications.Quality">
             <result type="json" />

@@ -163,8 +163,10 @@
 
 <script type="text/javascript">
 $(document).ready(function() {
-	<% if (/* CollectionUtils.isNotEmpty(parameters) || */ CollectionUtils.isNotEmpty(projectModules)) { %>
+	<% if (CollectionUtils.isNotEmpty(parameters) || CollectionUtils.isNotEmpty(projectModules)) { %>
 		yesnoPopup($('#unitTest'), 'showUnitTestPopUp', '<s:text name="label.unit.test"/>', 'runUnitTest','<s:text name="label.test"/>');
+	<% } else { %>
+		progressPopup($('#unitTest'), 'runUnitTest', '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.UNIT %>', '', '', getBasicParams());
 	<% } %>
 	
 	loadTestResults();

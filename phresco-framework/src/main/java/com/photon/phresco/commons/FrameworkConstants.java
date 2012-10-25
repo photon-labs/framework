@@ -328,7 +328,7 @@ public interface FrameworkConstants {
     String ANDROID_PROFILE_PLUGIN_VERSION = "1.2";
     String PHASE_PACKAGE = "package";
     String PHASE_DEPLOY = "deploy";
-    String PHASE_UNIT_TEST = "unitTest";
+    String PHASE_UNIT_TEST = "unit-test";
     String ANDROID_EXECUTION_ID = "signing";
     String ELEMENT_ARCHIVE_DIR = "archiveDirectory";
     String ELEMENT_REMOVE_EXIST_SIGN = "removeExistingSignatures";

@@ -24,7 +24,7 @@ function yesnoPopup(modalObj, url, title, okUrl, okLabel) {
 
 		$('#popupTitle').html(title); // Title for the popup
 		$('#popupClose').hide(); //no need close button since yesno popup
-		$('#popupOk, #popupCancel').show(); // show ok & cancel button
+		$('.popupOk, #popupCancel').show(); // show ok & cancel button
 	
 		$(".popupOk").attr('id', okUrl); // popup action mapped to id
 		if (okLabel !== undefined && !isBlank(okLabel)) {
@@ -57,18 +57,17 @@ function getBasicParamsAsJson() {
 	return '"customerId": "' + jsonObject.customerId + '", "projectId": "' + jsonObject.projectId + '", "appId": "' + jsonObject.appId + '"'; 
 }
 
-function progressPopup(pageUrl, title, appId, actionType, form, callSuccessEvent, additionalParams) {
-	$("#generate").click(function() {
+function progressPopup(btnObj, pageUrl, title, appId, actionType, form, callSuccessEvent, additionalParams) {
+	btnObj.click(function() {
 		if (title !== undefined && !isBlank(title)) {
 			$('#popupTitle').html(title);
 		}
 		$('.modal-body').empty();
-		$('.popupOk').hide(); // hide ok & cancel button
-		$('#popupCancel').hide();
 		$('#popupClose').show();
+		$('.popupOk, #popupCancel').hide(); // hide ok & cancel button
 		readerHandlerSubmit(pageUrl, appId, actionType, form, callSuccessEvent, additionalParams);
 	});
-	$('#popupClose').click(function(){
+	$('#popupClose').click(function() {
 		popupClose(pageUrl); // this function will be kept in where the progressPopup() called
 	});
 }

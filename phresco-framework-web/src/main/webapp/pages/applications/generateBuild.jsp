@@ -84,14 +84,14 @@
 				<s:text name='lbl.name' />
 			</label>
 			<div class="controls">
-				<select id="projectModule" name="projectModule" class="xlarge" >
-					 <%
-					     for(String projectModule : projectModules) {
-					 %>
-							<option value="<%= projectModule %>"> <%= projectModule %></option>
-					 <%
-					     }
-					 %>
+				<select name="projectModule" class="xlarge" >
+					<%
+						for(String projectModule : projectModules) {
+					%>
+						<option value="<%= projectModule %>"> <%= projectModule %></option>
+					<%
+						}
+					%>
 				</select>
 			</div>
 		</div>
@@ -99,66 +99,66 @@
 		}
 	%>
 
-       <!-- dynamic parameters starts -->
-		<%	
+	<!-- dynamic parameters starts -->
+	<%	
+		if (CollectionUtils.isNotEmpty(parameters)) {
 			for (Parameter parameter: parameters) {
-    			Boolean mandatory = false;
-    			String lableTxt = "";
-    			String labelClass = "";
+	   			Boolean mandatory = false;
+	   			String lableTxt = "";
+	   			String labelClass = "";
 				if (Boolean.parseBoolean(parameter.getRequired())) {
 					mandatory = true;
 	 			}
-					if (!FrameworkConstants.TYPE_HIDDEN.equalsIgnoreCase(parameter.getType())) {
-						List<Value> values = parameter.getName().getValue();						
-						for(Value value : values) {
-							if (value.getLang().equals("en")) {	//to get label of parameter
-								labelClass = "popupLbl";
-								lableTxt = value.getValue();
+				if (!FrameworkConstants.TYPE_HIDDEN.equalsIgnoreCase(parameter.getType())) {
+					List<Value> values = parameter.getName().getValue();						
+					for(Value value : values) {
+						if (value.getLang().equals("en")) {	//to get label of parameter
+							labelClass = "popupLbl";
+							lableTxt = value.getValue();
 				   		    break;
-							}
 						}
 					}
-				
+				}
+					
 				// load input text box
 				if (FrameworkConstants.TYPE_STRING.equalsIgnoreCase(parameter.getType()) || FrameworkConstants.TYPE_NUMBER.equalsIgnoreCase(parameter.getType()) || 
-						FrameworkConstants.TYPE_PASSWORD.equalsIgnoreCase(parameter.getType()) || FrameworkConstants.TYPE_HIDDEN.equalsIgnoreCase(parameter.getType())) { 
+					FrameworkConstants.TYPE_PASSWORD.equalsIgnoreCase(parameter.getType()) || FrameworkConstants.TYPE_HIDDEN.equalsIgnoreCase(parameter.getType())) { 
 				StringTemplate txtInputElement = FrameworkUtil.constructInputElement(mandatory, lableTxt, labelClass, parameter.getType(), "", parameter.getKey(), parameter.getKey(), "", StringUtils.isNotEmpty(parameter.getValue()) ? parameter.getValue():"");
-		%> 	
+	%> 	
 				<%= txtInputElement %>
-		<% 			
+	<% 			
 				} else if (FrameworkConstants.TYPE_BOOLEAN.equalsIgnoreCase(parameter.getType())) {
-						String cssClass = "chckBxAlign";
-						String onClickFunction = "";
-						if (parameter.getDependency() != null) {
-							//If current control has dependancy value 
-							onClickFunction = "dependancyChckBoxEvent(this, '"+parameter.getDependency()+"');";
-						} else {
-							onClickFunction = "changeChckBoxValue(this);";
-						}
-						StringTemplate chckBoxElement = FrameworkUtil.constructCheckBoxElement(mandatory, lableTxt, labelClass, cssClass, parameter.getKey(), parameter.getKey(), parameter.getValue(), onClickFunction);
-		%>			
-				<%= chckBoxElement%>	
-		<%			
+					String cssClass = "chckBxAlign";
+					String onClickFunction = "";
+					if (parameter.getDependency() != null) {
+						//If current control has dependancy value 
+						onClickFunction = "dependancyChckBoxEvent(this, '"+parameter.getDependency()+"');";
+				} else {
+					onClickFunction = "changeChckBoxValue(this);";
+				}
+				StringTemplate chckBoxElement = FrameworkUtil.constructCheckBoxElement(mandatory, lableTxt, labelClass, cssClass, parameter.getKey(), parameter.getKey(), parameter.getValue(), onClickFunction);
+	%>			
+					<%= chckBoxElement%>	
+	<%			
 				} else if (FrameworkConstants.TYPE_LIST.equalsIgnoreCase(parameter.getType()) && parameter.getPossibleValues() != null) { //load select list box
 					//To construct select box element if type is list and if possible value exists
-			    	List<com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value> psblValues = 
-			    				parameter.getPossibleValues().getValue();
+			    	List<com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value> psblValues = parameter.getPossibleValues().getValue();
 					List<String> selectedValList = Arrays.asList(parameter.getValue().split(FrameworkConstants.CSV_PATTERN));
 					StringTemplate selectElmnt = FrameworkUtil.constructSelectElement(mandatory, lableTxt, labelClass, "", parameter.getKey(), parameter.getKey(), psblValues, selectedValList, parameter.getMultiple());
-		%>				
-				<%= selectElmnt %>
+	%>				
+					<%= selectElmnt %>
 						
-		<% 			
+	<% 			
 				} else if (FrameworkConstants.TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(parameter.getType())) {
 					//To dynamically load values into select box for environmet
 					List<com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value> dynamicEnvNames = (List<com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value>) request.getAttribute(FrameworkConstants.REQ_DYNAMIC_POSSIBLE_VALUES);
 					List<String> selectedValList = Arrays.asList(parameter.getValue().split(FrameworkConstants.CSV_PATTERN));
 					StringTemplate selectDynamicElmnt = FrameworkUtil.constructSelectElement(mandatory, lableTxt, labelClass, "", parameter.getKey(), parameter.getKey(), dynamicEnvNames, selectedValList, parameter.getMultiple());
-		%>				
-		    	<%= selectDynamicElmnt %>
-		<%
-			} 
-		%>
+	%>				
+		    		<%= selectDynamicElmnt %>
+	<%
+				} 
+	%>
 			<script type="text/javascript">
 				<%-- $('input[name="<%= parameter.getKey() %>"]').live('input propertychange',function(e) {
 					var name = $(this).val();
@@ -167,10 +167,11 @@
 					validateInput(name, type, txtBoxName);
 				}); --%>
 			</script>
-		<% 
+	<% 
 			}
-		%>
-		<!-- dynamic parameters ends -->
+		}
+	%>
+	<!-- dynamic parameters ends -->
 </div>
 </form>
 
@@ -296,7 +297,7 @@
 		
 		//execute Sql script
 		executeSqlShowHide();
-		showHideMinusIcon();
+// 		showHideMinusIcon();
 	});
 	
 	function addDbWithVersions() {
@@ -496,6 +497,17 @@
 				return false;
 			}
 			buildValidateSuccess("deploy", '<%= FrameworkConstants.REQ_FROM_TAB_DEPLOY %>');
+		} else if (okUrl === "runUnitTest") {
+			setTimeout(function () {
+				$('#popupPage').modal('show')
+	        }, 600);
+			$('#popupTitle').html("Progress");
+			$('.modal-body').empty();
+			$('.popupOk').hide(); // hide ok & cancel button
+			$('#popupCancel').hide();
+			$('#popupClose').show();
+
+			readerHandlerSubmit(okUrl, '<%= appId %>', '<%= FrameworkConstants.UNIT %>', $("#generateBuildForm"), '', getBasicParams());
 		}
 	}
 	
