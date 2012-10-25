@@ -1528,3 +1528,7 @@ background-color: #ffffff;
 .table tbody tr:hover td, .table tbody tr:hover th {
  	background-color: #630A0A;
 }
+
+.popupLbl {
+	color: #000;
+}
