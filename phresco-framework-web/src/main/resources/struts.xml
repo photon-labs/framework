@@ -282,6 +282,10 @@
             <result name="generateBuild">/pages/applications/generateBuild.jsp</result>
         </action>
         
+        <action name="dependancyListener" method="dependancyListener" class="com.photon.phresco.framework.actions.applications.Build">
+            <result type="json" />
+        </action>
+        
         <action name="getSqlDatabases" method="getSqlDatabases" class="com.photon.phresco.framework.actions.applications.Build">
             <result type="json" />
         </action>
@@ -542,8 +546,7 @@
         </action>
         
 		<action name="showUnitTestPopUp" method="showUnitTestPopUp" class="com.photon.phresco.framework.actions.applications.Quality">
-			<result name="unit">/pages/applications/quality/unit.jsp</result>
-        	<result type="json" />
+			<result name="success">/pages/applications/generateBuild.jsp</result>
         </action>
 		
         <action name="fetchBuildInfoEnvs" method="fetchBuildInfoEnvs" class="com.photon.phresco.framework.actions.applications.Quality">

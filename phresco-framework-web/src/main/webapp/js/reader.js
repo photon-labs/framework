@@ -37,7 +37,7 @@ function readerHandler(data, appId, actionType, pageUrl) {
 //	   if(showSuccessComplete) {
 //		   $("#build-output").append("Successfully Completed" + '<br>');
 //	   }
-	   $('.modal-body').prop('scrollTop', $('.modal-body').prop('scrollHeight'));
+	   $('#console_div').prop('scrollTop', $('#console_div').prop('scrollHeight'));
 	   
 	   if(actionType == "build") {
 		   refreshTable(appId);
@@ -51,16 +51,16 @@ function readerHandler(data, appId, actionType, pageUrl) {
 				console.info('returning...');
 				return;
 			}
-			$(".modal-body").append(data + '<br>');
-			$('.modal-body').prop('scrollTop', $('.modal-body').prop('scrollHeight')); 
+			$("#console_div").append(data + '<br>');
+			$('#console_div').prop('scrollTop', $('#console_div').prop('scrollHeight')); 
 			asyncHandler(appId, actionType, pageUrl);
 		}
 	});
 	
 	// if apps tab is not present proceed async handler
 	if($("a[name='appTab']").length == 0) {
-		  $(".modal-body").append(data + '<br>');
-		  $('.modal-body').prop('scrollTop', $('.modal-body').prop('scrollHeight')); 
+		  $("#console_div").append(data + '<br>');
+		  $('#console_div').prop('scrollTop', $('#console_div').prop('scrollHeight')); 
 		  asyncHandler(appId, actionType, pageUrl);
 	}
 }
