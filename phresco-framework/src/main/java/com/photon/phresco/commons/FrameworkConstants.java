@@ -35,6 +35,15 @@ public interface FrameworkConstants {
     String LAYER_WEB_ID = "web-layer";
     
     String JAVASCRIPT = "javascript";
+
+    String LBL = "lbl.";
+    String LBL_BTN = "lbl.btn";
+    String LBL_URL = "lbl.pageurl.";
+    String LBL_PROG_TXT = "lbl.prog.txt.";
+    String FROM_PAGE_EDIT = "edit";
+    String FROM_PAGE_ADD = "add";
+    
+    String CONFIG = "config";
     
 	String FEATURES = "features"; 
     int JOB_STATUS_NOTOK = -1;
@@ -60,6 +69,7 @@ public interface FrameworkConstants {
     String REQ_PROJECT_LAYERS = "layers";
     String REQ_PARAM_NAME_TECH_GROUP = "TechGroup";
     String REQ_PARAM_NAME_TECHNOLOGY = "Technology";
+    String REQ_PARAM_NAME_TECH__ID = "techId";
     String REQ_PARAM_NAME_VERSION = "Version";
     String REQ_PARAM_NAME_PHONE = "Phone";
     String REQ_PARAM_NAME_TABLET = "Tablet";
@@ -228,7 +238,6 @@ public interface FrameworkConstants {
     String TEST_PARAM_VALUE = "AllTest";
     String ALL_TEST_SUITES = "All";
     String KEY_QUOTES = "\"";
-    String FROM_PAGE_EDIT = "edit";
     String DEPLOY_BUILD_NAME = "buildName";
     String IPHONE_BUILD_NAME = "application.path";
     String IPHONE_SIMULATOR_VERSION = "simulator.version";
@@ -1476,6 +1485,7 @@ public interface FrameworkConstants {
 		String EXCEPTION_PROJECT_LIST = "excep.hdr.proj.list";
 		String EXCEPTION_PROJECT_ADD = "excep.hdr.proj.add";
 		String EXCEPTION_PROJECT_MOB_TECH_VERSIONS = "excep.hdr.proj.mob.tech.versions";
+		String EXCEPTION_DOWNLOADINFOS = "excep.hdr.downloadInfos";
 		String EXCEPTION_PROJECT_WEB_LAYER_WIDGETS = "excep.hdr.proj.web.layer.widgets";
 		String EXCEPTION_QUALITY_UNIT = "excep.hdr.quality.unit";
 		String EXCEPTION_GENERATE_BUILD = "exception.generate.build";
@@ -1485,11 +1495,11 @@ public interface FrameworkConstants {
 		String EXCEPTION_LOAD_CLASS = "exception.load.class";
 		
 		String EXCEPTION_BUILDS = "exception.builds.table";
-		String EXCEPTION_REPORT_VIEW_SITE = "excep.report.view.report";
-		String EXCEPTION_REPORT_GENERATE_SITE_REPORT = "excep.report.generate.site.report";
+		String EXCEPTION_REPORT_VIEW_SITE = "excep.report.view";
+		String EXCEPTION_REPORT_GENERATE_SITE_REPORT = "excep.report.generate";
 		String EXCEPTION_REPORT_CONFIGURE = "excep.report.configure";
 		String EXCEPTION_REPORT_CREATE_REPORT_CONFIG = "excep.report.create.report.config";
-		String EXCEPTION_REPORT_CHECKFOR_SITE = "excep.report.checkfor.site";
+		
 		
 		/**
 		 * Dynamic Parameter Constants

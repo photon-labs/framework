@@ -43,7 +43,7 @@
 		<input type="button" class="btn btn-primary" name="addProject" id="addProject" value="<s:text name='lbl.projects.add'/>"
 			onclick="loadContent('addProject', $('#formCustomers'), $('#container'));"/>
 
-		<input type="button" class="btn btn-primary" name="importAppln" id="importAppln" value="<s:text name='lbl.applications.import'/>"
+		<input type="button" class="btn btn-primary" name="importAppln" id="importAppln" value="<s:text name='lbl.app.import'/>"
 			onclick="loadContent('importAppln', $('#formProjectList'), $('#subcontainer'));"/>
 		         
 		<input type="button" class="btn" id="deleteBtn" disabled value="<s:text name='lbl.delete'/>" data-toggle="modal" href="#popupPage"/>

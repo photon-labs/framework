@@ -1047,6 +1047,7 @@ a {
     padding-bottom: 5px;
     padding-top: 6px;
     text-align: center;
+	margin-top: 10px;
 }
 
 /*welcome start*/
@@ -1969,6 +1970,10 @@ h1 {
     position: relative;
 }
 
+.table_for_downloadInfos {
+	width: 40% !important;
+}
+
 .settingsList_table_div {
     height:98%;
     margin-left: 6px;
@@ -2015,6 +2020,15 @@ input, select, textarea {
 	margin-top: 6px; 
 	width: 176px; 
 	margin-right: 45px;
+}
+
+.table_header {
+	line-height: 32.5px;
+    text-align: left;
+    vertical-align: middle;
+    font-weight: bold;
+    font-size: 13px;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
 }
 
 #resultView{
@@ -2846,6 +2860,14 @@ fieldset {
     border-radius: 5px;
     margin-left:0px;
     width: 100%;
+}
+
+.multiselectForWebservice {
+	height: 95px; 
+	width:250px; 
+	align:center;
+	margin-top:15px;
+	margin-bottom:15px;
 }
 
 .popup-action {
@@ -4094,6 +4116,12 @@ div.submit_input {
 }
 
 /** Scroll divs **/
+.projectScrollDiv {
+	overflow-y: auto; 
+	overflow-x: hidden; 
+	height: 87%;
+}
+
 .appInfoScrollDiv {
 	overflow-y: auto; 
 	overflow-x: hidden; 
@@ -5593,6 +5621,11 @@ input[class*='chckBxAlign'] {
 	border-bottom: 0 none !important;
 }
 
+.autoWidthForWebservice {
+	margin:auto;
+	width:35%;
+}
+
 .autoWidth {
 	width: auto !important;
 }
@@ -5648,12 +5681,13 @@ input[class*='chckBxAlign'] {
 }
 
 #successmsg {
-	height: 17px;
+	height: 16px;
     margin-left: 246px;
     margin-top: -34px;
     padding: 6px;
     width: 50%;
     text-align: center;
+    margin-bottom: 0px;
 }
 
 .modal-body {

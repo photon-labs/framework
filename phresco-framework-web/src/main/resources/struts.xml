@@ -127,6 +127,14 @@
             <result name="appinfo">/pages/applications/appinfo.jsp</result>
         </action>
         
+         <action name="fetchDownloadInfos" method="fetchDownloadInfos" class="com.photon.phresco.framework.actions.applications.Applications">
+			<result type="json"/>
+        </action>
+        
+        <action name="featuresList" method="featuresList" class="com.photon.phresco.framework.actions.applications.Applications">
+            <result name="features">/pages/applications/features.jsp</result>
+        </action>
+        
         <action name="applicationType" method="applicationType" class="com.photon.phresco.framework.actions.applications.Applications">
             <result name="applicationType">/pages/applications/application_type.jsp</result>
         </action>
@@ -691,7 +699,7 @@
         
         <!-- Site Report  -->
         <action name="veiwSiteReport" method="viewSiteReport" class="com.photon.phresco.framework.actions.applications.SiteReport">
-            <result name="siteReport">/pages/applications/siteReport/site_report.jsp</result>
+            <result name="siteReport">/pages/applications/siteReport/siteReport.jsp</result>
         </action>
         
         <action name="checkForSiteReport" method="checkForSiteReport" class="com.photon.phresco.framework.actions.applications.SiteReport">
@@ -707,7 +715,7 @@
         </action>
         
         <action name="createReportConfig" method="createReportConfig" class="com.photon.phresco.framework.actions.applications.SiteReport">
-            <result name="siteReport">/pages/applications/siteReport/site_report.jsp</result>
+            <result name="siteReport">/pages/applications/siteReport/siteReport.jsp</result>
         </action>
         
         <action name="advancedBuildSettings" method="advancedBuildSettings" class="com.photon.phresco.framework.actions.applications.Build">

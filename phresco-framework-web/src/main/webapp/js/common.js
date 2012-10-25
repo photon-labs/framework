@@ -63,8 +63,8 @@ function progressPopup(pageUrl, title, appId, actionType, form, callSuccessEvent
 			$('#popupTitle').html(title);
 		}
 		$('.modal-body').empty();
-		$('.popupOk, #popupCancel').hide(); // hide ok & cancel button
-		
+		$('.popupOk').hide(); // hide ok & cancel button
+		$('#popupCancel').hide();
 		$('#popupClose').show();
 		readerHandlerSubmit(pageUrl, appId, actionType, form, callSuccessEvent, additionalParams);
 	});
@@ -187,7 +187,6 @@ function getParameters(form, additionalParams) {
 	} else {
 		params = additionalParams;
 	}
-	
 	return params;
 }
 

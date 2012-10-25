@@ -53,7 +53,7 @@ public class SiteReport extends FrameworkBaseAction {
 	
 	private String SITE_REPORT_PATH = "/do_not_checkin/target/site/index.html";
 	
-	private List<String> reports = null;
+	private List<String> reports = new ArrayList<String>(8);
     
 	public String viewSiteReport() {
 		if (s_debugEnabled) {
@@ -101,7 +101,7 @@ public class SiteReport extends FrameworkBaseAction {
          	}
 		} catch (PhrescoException e) {
 			S_LOGGER.error("Entered into catch block of SiteReport.checkForSiteReport()" + FrameworkUtil.getStackTraceAsString(e));
-			return showErrorPopup(e,  getText(EXCEPTION_REPORT_CHECKFOR_SITE));
+			return showErrorPopup(e,  getText(EXCEPTION_REPORT_VIEW_SITE));
 		}
 		
 		return APP_SITE_REPORT_VIEW;

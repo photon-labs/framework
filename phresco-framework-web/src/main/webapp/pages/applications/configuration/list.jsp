@@ -59,7 +59,7 @@
     <div class="operation">
     	<!-- Add Configuration Button --> 
 		<input type="button" class="btn btn-primary" name="configAdd" id="configAdd" 
-	         onclick="loadContent('addConfiguration', $('#formConfigList'), $('#subcontainer'));" 
+	         onclick="loadContent('addConfiguration', $('#formConfigList, #formCustomers, #formAppMenu'), $('#subcontainer'));" 
 		         value="<s:text name='lbl.btn.add'/>"/>
 
 		<!-- Delete Configuration Button -->

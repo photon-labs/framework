@@ -67,7 +67,7 @@
 %>
         <div class="page-header">
             <h1>
-                <s:text name="lbl.applications.add"/> <small><span class="red">*</span> <s:text name="label.mandatory"/></small>
+                <s:text name="lbl.app.add"/> <small><span class="red">*</span> <s:text name="label.mandatory"/></small>
             </h1>
         </div>
         <ul class="tabs">
