@@ -43,6 +43,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Element;
 
+import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.FrameworkConfiguration;
@@ -58,20 +59,21 @@ import com.phresco.pom.model.Model.Profiles;
 import com.phresco.pom.model.Profile;
 import com.phresco.pom.util.PomProcessor;
 
-public class FrameworkUtil extends FrameworkBaseAction {
+public class FrameworkUtil extends FrameworkBaseAction implements FrameworkConstants {
 
 	private static final long serialVersionUID = 1L;
 	private static FrameworkUtil frameworkUtil = null;
     private static final Logger S_LOGGER = Logger.getLogger(FrameworkUtil.class);
-
-	private static final String LABEL_TEMPLATE = "<div class='control-group'><label for='xlInput' class='control-label labelbold $class$'>$mandatory$$txt$</label>";
+    
+    private static final String CONTROL_GROUP_TEMPLATE = "<div class='control-group'>$lable$ $controls$</div>";
+	private static final String LABEL_TEMPLATE = "<label for='xlInput' class='control-label labelbold $class$'>$mandatory$$txt$</label>";
 	private static final String MANDATORY = "<span class='red'>*</span>&nbsp";
-	private static final String SELECT_TEMPLATE = "<div class='controls'><select class=\"input-xlarge $cssClass$\" id=\"$id$\" name=\"$name$\" isMultiple=\"$isMultiple$\">$options$</select></div></div>";
+	private static final String SELECT_TEMPLATE = "<div class='controls'><select class=\"input-xlarge $cssClass$\" id=\"$id$\" name=\"$name$\" isMultiple=\"$isMultiple$\">$options$</select></div>";
 	private static final String INPUT_TEMPLATE = "<div class='controls'><input type=\"$type$\" class=\"input-xlarge $class$\" id=\"$id$\" " + 
-													"name=\"$name$\" placeholder=\"$placeholder$\" value=\"$value$\" $checked$/></div></div>";
+													"name=\"$name$\" placeholder=\"$placeholder$\" value=\"$value$\" $checked$/></div>";
 	private static final String CHECKBOX_TEMPLATE = "<div class='controls'><input type='checkbox' class=\"$class$\" id=\"$id$\" " + 
-														"name=\"$name$\" value=\"$value$\" $checked$ onclick=\"$onClickFunction$\"/></div></div>";
-	private static final String MULTI_SELECT_TEMPLATE = "<div class='controls'><div class='multiSelectBorder'><div class='multilist-scroller multiselect multiSelHeight $class$' id=\"$id$\"><ul>$multiSelectOptions$</ul></div></div></div></div>";
+														"name=\"$name$\" value=\"$value$\" $checked$ onclick=\"$onClickFunction$\"/></div>";
+	private static final String MULTI_SELECT_TEMPLATE = "<div class='controls'><div class='multiSelectBorder'><div class='multilist-scroller multiselect multiSelHeight $class$' id=\"$id$\"><ul>$multiSelectOptions$</ul></div></div></div>";
 	
     private Map<String, String> unitTestMap = new HashMap<String, String>(8);
     private Map<String, String> unitReportMap = new HashMap<String, String>(8);
@@ -668,8 +670,11 @@ public class FrameworkUtil extends FrameworkBaseAction {
         return decodedString;
     }
 
-    public static StringTemplate constructInputElement(String type, String cssClass, String id, String name, 
+    public static StringTemplate constructInputElement(Boolean isMandatory, String lableText, String lableClass, String inputType, String cssClass, String id, String name, 
     										String placeholder, String value) {
+    	StringTemplate controlGroupElement = new StringTemplate(CONTROL_GROUP_TEMPLATE);
+    	StringTemplate lableElmnt = constructLabelElement(isMandatory, lableClass, lableText);
+    	String type = getInputType(inputType);
     	StringTemplate inputElement = new StringTemplate(INPUT_TEMPLATE);
     	inputElement.setAttribute("type", type);
     	inputElement.setAttribute("class", cssClass);
@@ -684,11 +689,34 @@ public class FrameworkUtil extends FrameworkBaseAction {
     	} else {
     		inputElement.setAttribute("checked", "");
     	}
-
-		return inputElement;
+    	
+    	controlGroupElement.setAttribute("lable", lableElmnt);
+    	controlGroupElement.setAttribute("controls", inputElement);
+    	
+		return controlGroupElement;
     }
+
+	/**
+	 * @param inputType
+	 * @return
+	 */
+	private static String getInputType(String inputType) {
+		String type = "";
+		if (TYPE_PASSWORD.equalsIgnoreCase(inputType)) {
+    		type = TYPE_PASSWORD;
+		}  else if (TYPE_HIDDEN.equalsIgnoreCase(inputType)) {
+			type = TYPE_HIDDEN;
+		} else {
+			type = TEXT_BOX;
+		}
+		
+		return type;
+	}
     
-    public static StringTemplate constructCheckBoxElement(String cssClass, String id, String name, String value, String onClickFunction) {
+    public static StringTemplate constructCheckBoxElement(Boolean isMandatory, String lableText, String lableClass, String cssClass, String id, String name, String value, String onClickFunction) {
+    	StringTemplate controlGroupElement = new StringTemplate(CONTROL_GROUP_TEMPLATE);
+    	StringTemplate lableElmnt = constructLabelElement(isMandatory, lableClass, lableText);
+    	
     	StringTemplate checkboxElement = new StringTemplate(CHECKBOX_TEMPLATE);
     	checkboxElement.setAttribute("class", cssClass);
     	checkboxElement.setAttribute("id", id);
@@ -704,20 +732,27 @@ public class FrameworkUtil extends FrameworkBaseAction {
     	} else {
     		checkboxElement.setAttribute("checked", "");
     	}
-    	return checkboxElement;
+    	
+    	controlGroupElement.setAttribute("lable", lableElmnt);
+    	controlGroupElement.setAttribute("controls", checkboxElement);
+    	
+    	return controlGroupElement;
     }
     
-    public static StringTemplate constructSelectElement(String cssClass, String id, String name,
+    public static StringTemplate constructSelectElement(Boolean isMandatory, String lableText, String lableClass, String cssClass, String id, String name,
 			List<Value> values, List<String> selectedValues, String isMultiple) {
     	if (Boolean.parseBoolean(isMultiple)) {
-    		return constructMultiSelectElement(cssClass, id, name, values, selectedValues);
+    		return constructMultiSelectElement(isMandatory, lableText, lableClass, cssClass, id, name, values, selectedValues);
     	} else {
-    		return constructSingleSelectElement(cssClass, id, name, values, selectedValues, isMultiple);
+    		return constructSingleSelectElement(isMandatory, lableText, lableClass, cssClass, id, name, values, selectedValues, isMultiple);
     	}
     }
 
-    public static StringTemplate constructSingleSelectElement(String cssClass, String id, String name,
+    public static StringTemplate constructSingleSelectElement(Boolean isMandatory, String lableText, String lableClass, String cssClass, String id, String name,
     		List<Value> values, List<String> selectedValues, String isMultiple) {
+    	StringTemplate controlGroupElement = new StringTemplate(CONTROL_GROUP_TEMPLATE);
+    	StringTemplate lableElmnt = constructLabelElement(isMandatory, lableClass, lableText);
+    	
     	StringTemplate selectElement = new StringTemplate(SELECT_TEMPLATE);
     	StringBuilder options = constructOptions(values, selectedValues);
     	selectElement.setAttribute("name", name);
@@ -726,11 +761,17 @@ public class FrameworkUtil extends FrameworkBaseAction {
     	selectElement.setAttribute("id", id);
     	selectElement.setAttribute("isMultiple", isMultiple);
     	
-    	return selectElement;
+    	controlGroupElement.setAttribute("lable", lableElmnt);
+    	controlGroupElement.setAttribute("controls", selectElement);
+    	
+    	return controlGroupElement;
     }
     
-    private static StringTemplate constructMultiSelectElement(String cssClass, String id, String name,
+    private static StringTemplate constructMultiSelectElement(Boolean isMandatory, String lableText, String lableClass, String cssClass, String id, String name,
 			List<Value> values, List<String> selectedValues) {
+    	StringTemplate controlGroupElement = new StringTemplate(CONTROL_GROUP_TEMPLATE);
+    	StringTemplate lableElmnt = constructLabelElement(isMandatory, lableClass, lableText);
+    	
     	StringTemplate multiSelectElement = new StringTemplate(MULTI_SELECT_TEMPLATE);
     	multiSelectElement.setAttribute("name", name);
     	multiSelectElement.setAttribute("cssClass", cssClass);
@@ -738,7 +779,10 @@ public class FrameworkUtil extends FrameworkBaseAction {
     	StringBuilder multiSelectOptions = constructMultiSelectOptions(name, values, selectedValues);
     	multiSelectElement.setAttribute("multiSelectOptions", multiSelectOptions);
     	
-    	return multiSelectElement;
+    	controlGroupElement.setAttribute("lable", lableElmnt);
+    	controlGroupElement.setAttribute("controls", multiSelectElement);
+    	
+    	return controlGroupElement;
     }
     private static StringBuilder constructOptions(List<Value> values, List<String> selectedValues) {
     	StringBuilder builder = new StringBuilder();
