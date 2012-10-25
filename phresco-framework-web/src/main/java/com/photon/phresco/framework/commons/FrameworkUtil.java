@@ -736,7 +736,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements FrameworkConst
     }
     
     public static StringTemplate constructSelectElement(Boolean isMandatory, String lableText, String lableClass, String cssClass, String id, String name,
-			List<Value> values, List<String> selectedValues, String isMultiple) {
+			List<? extends Object> values, List<String> selectedValues, String isMultiple) {
     	if (Boolean.parseBoolean(isMultiple)) {
     		return constructMultiSelectElement(isMandatory, lableText, lableClass, cssClass, id, name, values, selectedValues);
     	} else {
@@ -745,7 +745,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements FrameworkConst
     }
 
     public static StringTemplate constructSingleSelectElement(Boolean isMandatory, String lableText, String lableClass, String cssClass, String id, String name,
-    		List<Value> values, List<String> selectedValues, String isMultiple) {
+    		List<? extends Object> values, List<String> selectedValues, String isMultiple) {
     	StringTemplate controlGroupElement = new StringTemplate(CONTROL_GROUP_TEMPLATE);
     	StringTemplate lableElmnt = constructLabelElement(isMandatory, lableClass, lableText);
     	
@@ -764,7 +764,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements FrameworkConst
     }
     
     private static StringTemplate constructMultiSelectElement(Boolean isMandatory, String lableText, String lableClass, String cssClass, String id, String name,
-			List<Value> values, List<String> selectedValues) {
+			List<? extends Object> values, List<String> selectedValues) {
     	StringTemplate controlGroupElement = new StringTemplate(CONTROL_GROUP_TEMPLATE);
     	StringTemplate lableElmnt = constructLabelElement(isMandatory, lableClass, lableText);
     	
@@ -780,39 +780,57 @@ public class FrameworkUtil extends FrameworkBaseAction implements FrameworkConst
     	
     	return controlGroupElement;
     }
-    private static StringBuilder constructOptions(List<Value> values, List<String> selectedValues) {
+    private static StringBuilder constructOptions(List<? extends Object> values, List<String> selectedValues) {
     	StringBuilder builder = new StringBuilder();
     	String selectedStr = "";
-		 for (Value value : values) {
-			 if (selectedValues!= null && selectedValues.contains(value.getValue())) {
-				 selectedStr = "selected";
-			 } else {
-				 selectedStr = "";
-			 }
-			builder.append("<option value=\"");
-			builder.append(value.getValue() + "\" " + selectedStr + ">" + value.getValue() + "</option>");
-		}
-		 
-		 return builder;
+    	for (Object value : values) {
+    		String optionValue = getValue(value);
+    		if (selectedValues!= null && selectedValues.contains(optionValue)) {
+    			selectedStr = "selected";
+    		} else {
+    			selectedStr = "";
+    		}
+    		builder.append("<option value=\"");
+    		builder.append(optionValue + "\" " + selectedStr + ">" + optionValue + "</option>");
+    	}
+
+    	return builder;
     }
-    
-    private static StringBuilder constructMultiSelectOptions(String name, List<Value> values, List<String> selectedValues) {
+
+    private static StringBuilder constructMultiSelectOptions(String name, List<? extends Object> values, List<String> selectedValues) {
     	StringBuilder builder = new StringBuilder();
-    	
+
     	String checkedStr = "";
-		 for (Value value : values) {
-			 if (selectedValues!= null && selectedValues.contains(value.getValue())) {
-				 checkedStr = "checked";
-			 } else {
-				 checkedStr = "";
-			 }
-			builder.append("<li><input type='checkbox' class='popUpChckBox' value=\"");
-			builder.append(value.getValue() + "\" name=\""+ name + "\" " + checkedStr + ">" + value.getValue() + "</li>");
-		}
-		 
-		 return builder;
+    	for (Object value : values) {
+    		String optionValue = getValue(value);
+    		if (selectedValues!= null && selectedValues.contains(optionValue)) {
+    			checkedStr = "checked";
+    		} else {
+    			checkedStr = "";
+    		}
+    		builder.append("<li><input type='checkbox' class='popUpChckBox' value=\"");
+    		builder.append(optionValue + "\" name=\""+ name + "\" " + checkedStr + ">" + optionValue + "</li>");
+    	}
+
+    	return builder;
     }
     
+
+	/**
+	 * @param value
+	 * @return
+	 */
+	private static String getValue(Object value) {
+		String optionValue = "";
+		if (value instanceof Value) {
+			optionValue = ((Value) value).getValue();
+		} else {
+			optionValue = (String) value;
+		}
+		return optionValue;
+	}
+    
+
     public static StringTemplate constructLabelElement(Boolean isMandatory, String cssClass, String Label) {
     	StringTemplate labelElement = new StringTemplate(LABEL_TEMPLATE);
     	if (isMandatory) {
