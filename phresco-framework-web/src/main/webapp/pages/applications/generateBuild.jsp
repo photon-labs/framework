@@ -21,26 +21,16 @@
 
 <%@ page import="java.util.List"%>
 <%@ page import="java.util.Map"%>
-<%@ page import="java.util.Set"%>
-<%@ page import="java.util.Iterator"%>
-<%@ page import="java.util.HashMap"%>
 <%@ page import="java.util.Arrays"%>
 
 <%@ page import="org.apache.commons.lang.StringUtils" %>
-<%@ page import="org.apache.commons.collections.CollectionUtils" %>
 <%@ page import="org.apache.commons.collections.CollectionUtils" %>
 <%@ page import="org.antlr.stringtemplate.StringTemplate" %>
 
 <%@ page import="com.photon.phresco.configuration.Environment"%>
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
-<%@ page import="com.photon.phresco.util.TechnologyTypes" %>
-<%@ page import="com.photon.phresco.framework.commons.ApplicationsUtil"%>
-<%@ page import="com.photon.phresco.framework.commons.PBXNativeTarget"%>
-<%@ page import="com.photon.phresco.commons.XCodeConstants"%>
-<%@ page import="com.photon.phresco.commons.AndroidConstants"%>
 <%@ page import="com.photon.phresco.framework.commons.FrameworkUtil" %>
 <%@ page import="com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter"%>
-<%@ page import="com.photon.phresco.plugins.util.MojoProcessor"%>
 <%@ page import="com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.Name.Value"%>
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 
@@ -48,8 +38,7 @@
 <script src="js/select-envs.js"></script>
 
 <%
-    String defaultEnv = "";
-   	String from = (String) request.getAttribute(FrameworkConstants.REQ_BUILD_FROM);
+    /* String defaultEnv = "";
    	String testType = (String) request.getAttribute(FrameworkConstants.REQ_TEST_TYPE);
    	String importSqlPro  = (String) request.getAttribute(FrameworkConstants.REQ_IMPORT_SQL);
    	String finalName = (String) request.getAttribute(FrameworkConstants.FINAL_NAME);
@@ -57,19 +46,19 @@
    	String checkImportSql = "";
    	if (importSqlPro != null && Boolean.parseBoolean(importSqlPro)) {
    	    checkImportSql = "checked";
-   	}
+   	} */
    	
    	//xcode targets
-   	List<PBXNativeTarget> xcodeConfigs = (List<PBXNativeTarget>) request.getAttribute(FrameworkConstants.REQ_XCODE_CONFIGS);
-   	List<String> projectModules = (List<String>) request.getAttribute(FrameworkConstants.REQ_PROJECT_MODULES);
+   	/* List<PBXNativeTarget> xcodeConfigs = (List<PBXNativeTarget>) request.getAttribute(FrameworkConstants.REQ_XCODE_CONFIGS);
    	List<String> buildInfoEnvs = (List<String>) request.getAttribute(FrameworkConstants.BUILD_INFO_ENVS);
-   	List<Environment> environments = (List<Environment>) request.getAttribute(FrameworkConstants.REQ_ENVIRONMENTS);
+   	List<Environment> environments = (List<Environment>) request.getAttribute(FrameworkConstants.REQ_ENVIRONMENTS); */
    	// mac sdks
-   	List<String> macSdks = (List<String>) request.getAttribute(FrameworkConstants.REQ_IPHONE_SDKS);
+   /* 	List<String> macSdks = (List<String>) request.getAttribute(FrameworkConstants.REQ_IPHONE_SDKS);
    	
    	Map<String, String> jsMap = (Map<String, String>) request.getAttribute(FrameworkConstants.REQ_MINIFY_MAP);
-   	String fileLoc = (String) request.getAttribute("fileLocation");
+   	String fileLoc = (String) request.getAttribute("fileLocation"); */
    	
+   	String from = (String) request.getAttribute(FrameworkConstants.REQ_BUILD_FROM);
    	String buildNumber = "";
    	if (FrameworkConstants.REQ_DEPLOY.equals(from)) {
     	buildNumber = (String) request.getAttribute(FrameworkConstants.REQ_DEPLOY_BUILD_NUMBER);
@@ -77,107 +66,108 @@
    	
    	//To read parameter list from phresco-plugin-info.xml
    	List<Parameter> parameters = (List<Parameter>) request.getAttribute(FrameworkConstants.REQ_DYNAMIC_PARAMETERS);
+   	
+   	List<String> projectModules = (List<String>) request.getAttribute(FrameworkConstants.REQ_PROJECT_MODULES);
     
     ApplicationInfo applicationInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_APP_INFO);
     String goal = (String) request.getAttribute(FrameworkConstants.REQ_GOAL);
-    String appId  = "";
-    if (applicationInfo != null) {
-	    appId = applicationInfo.getId();
-    }    
+    String appId  = applicationInfo.getId();
 %>
 
-<form action="build" method="post" autocomplete="off" class="build_form form-horizontal" id="generateBuildForm">
-<div class="" id="generateBuild_Modal">
-		<%
-		    if (CollectionUtils.isNotEmpty(projectModules) && "generateBuild".equals(from)) {
-		%>
-            <div id="agnBrowser" class="build server">
-				<!-- Modules -->
-				<div class="clearfix">
-					<label for="xlInput" class="xlInput popup-label"><s:text name="label.modules"/></label>
-					<div class="input">
-						<select id="projectModule" name="projectModule" class="xlarge" >
-						 <%
-						     for(String projectModule : projectModules) {
-						 %>
-								<option value="<%=projectModule%>"> <%=projectModule%></option>
-						 <%
-						     }
-						 %>
-						</select>
-					</div>
-				</div>
-            </div>
-        <%
-            }
-        %>
-        
+<form autocomplete="off" class="build_form form-horizontal" id="generateBuildForm">
+<div id="generateBuild_Modal">
+	<%
+	    if (CollectionUtils.isNotEmpty(projectModules)) {
+	%>
+		<div class="control-group">
+			<label class="control-label labelbold popupLbl">
+				<s:text name='lbl.name' />
+			</label>
+			<div class="controls">
+				<select id="projectModule" name="projectModule" class="xlarge" >
+					 <%
+					     for(String projectModule : projectModules) {
+					 %>
+							<option value="<%= projectModule %>"> <%= projectModule %></option>
+					 <%
+					     }
+					 %>
+				</select>
+			</div>
+		</div>
+	<%
+		}
+	%>
 
-       <!-- dynamic parameters starts -->
-		<%	
-			for (Parameter parameter: parameters) {
-	    			Boolean mandatory = false;
-					if (Boolean.parseBoolean(parameter.getRequired())) {
-						mandatory = true;
-		 			}
-						if (!FrameworkConstants.TYPE_HIDDEN.equalsIgnoreCase(parameter.getType())) {
-							List<Value> values = parameter.getName().getValue();						
-							for(Value value : values) {
-								if (value.getLang().equals("en")) {	//load label
-									String cssClass = "popupLbl";
-									StringTemplate labelElmnt = FrameworkUtil.constructLabelElement(mandatory, cssClass, value.getValue());
-		%>					
-								<%= labelElmnt %>
-		<%			   		    break;
-								}
-							}
-						}
+	<!-- dynamic parameters starts -->
+	<%	
+		for (Parameter parameter: parameters) {
+   			Boolean mandatory = false;
+			if (Boolean.parseBoolean(parameter.getRequired())) {
+				mandatory = true;
+ 			}
+			if (!FrameworkConstants.TYPE_HIDDEN.equalsIgnoreCase(parameter.getType())) {
+				List<Value> values = parameter.getName().getValue();						
+				for(Value value : values) {
+					if (value.getLang().equals("en")) {	//load label
+						String cssClass = "popupLbl";
+						StringTemplate labelElmnt = FrameworkUtil.constructLabelElement(mandatory, cssClass, value.getValue());
+	%>					
+						<%= labelElmnt %>
+	<%			   		    
+						break;
+					}
+				}
+			}
 					
-					// load input text box
-					if (FrameworkConstants.TYPE_STRING.equalsIgnoreCase(parameter.getType()) || FrameworkConstants.TYPE_NUMBER.equalsIgnoreCase(parameter.getType()) || 
-							FrameworkConstants.TYPE_PASSWORD.equalsIgnoreCase(parameter.getType()) || FrameworkConstants.TYPE_HIDDEN.equalsIgnoreCase(parameter.getType())) { 
-						String type ="", cssClass = "", id, name, placeholder, value="";
-						if (FrameworkConstants.TYPE_PASSWORD.equalsIgnoreCase(parameter.getType())) {
-							type = "password";
-							cssClass = "";
-						}  else if (FrameworkConstants.TYPE_HIDDEN.equalsIgnoreCase(parameter.getType())) {
-							type = "hidden";
-						} else {
-							type = "text";
-							cssClass = "";
-						}
-						StringTemplate txtInputElement = FrameworkUtil.constructInputElement(type, cssClass, "", parameter.getKey(), "", StringUtils.isNotEmpty(parameter.getValue()) ? parameter.getValue():"");
-		%> 	
-				    	<%= txtInputElement %>
-		<% 			} else if (FrameworkConstants.TYPE_BOOLEAN.equalsIgnoreCase(parameter.getType())) {
-						String cssClass = "chckBxAlign";
-						String onClickFunction = "";
-						if (parameter.getDependency() != null) {
-							//If current control has dependancy value 
-							onClickFunction = "dependancyChckBoxEvent(this, '"+parameter.getDependency()+"');";
-						} else {
-							onClickFunction = "changeChckBoxValue(this);";
-						}
-						StringTemplate chckBoxElement = FrameworkUtil.constructCheckBoxElement(cssClass, parameter.getKey(), parameter.getKey(), parameter.getValue(), onClickFunction);
+			// load input text box
+			if (FrameworkConstants.TYPE_STRING.equalsIgnoreCase(parameter.getType()) || FrameworkConstants.TYPE_NUMBER.equalsIgnoreCase(parameter.getType()) || 
+					FrameworkConstants.TYPE_PASSWORD.equalsIgnoreCase(parameter.getType()) || FrameworkConstants.TYPE_HIDDEN.equalsIgnoreCase(parameter.getType())) { 
+				String type ="", cssClass = "", id, name, placeholder, value="";
+				if (FrameworkConstants.TYPE_PASSWORD.equalsIgnoreCase(parameter.getType())) {
+					type = "password";
+					cssClass = "";
+				}  else if (FrameworkConstants.TYPE_HIDDEN.equalsIgnoreCase(parameter.getType())) {
+					type = "hidden";
+				} else {
+					type = "text";
+					cssClass = "";
+				}
+				StringTemplate txtInputElement = FrameworkUtil.constructInputElement(type, cssClass, "", parameter.getKey(), "", StringUtils.isNotEmpty(parameter.getValue()) ? parameter.getValue():"");
+	%> 	
+		    	<%= txtInputElement %>
+	<% 			
+			} else if (FrameworkConstants.TYPE_BOOLEAN.equalsIgnoreCase(parameter.getType())) {
+				String cssClass = "chckBxAlign";
+				String onClickFunction = "";
+				if (parameter.getDependency() != null) {
+					//If current control has dependancy value 
+					onClickFunction = "dependancyChckBoxEvent(this, '"+parameter.getDependency()+"');";
+				} else {
+					onClickFunction = "changeChckBoxValue(this);";
+				}
+				StringTemplate chckBoxElement = FrameworkUtil.constructCheckBoxElement(cssClass, parameter.getKey(), parameter.getKey(), parameter.getValue(), onClickFunction);
 		%>			
-						<%= chckBoxElement%>	
+				<%= chckBoxElement%>	
 		<%			
-					} else if (FrameworkConstants.TYPE_LIST.equalsIgnoreCase(parameter.getType()) && parameter.getPossibleValues() != null) { //load select list box
-						//To construct select box element if type is list and if possible value exists
-				    	List<com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value> psblValues = parameter.getPossibleValues().getValue();
-						List<String> selectedValList = Arrays.asList(parameter.getValue().split(FrameworkConstants.CSV_PATTERN));
-						StringTemplate selectElmnt = FrameworkUtil.constructSelectElement("",parameter.getKey(), parameter.getKey(), psblValues, selectedValList, parameter.getMultiple());
+			} else if (FrameworkConstants.TYPE_LIST.equalsIgnoreCase(parameter.getType()) && parameter.getPossibleValues() != null) { //load select list box
+				//To construct select box element if type is list and if possible value exists
+		    	List<com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value> psblValues = parameter.getPossibleValues().getValue();
+				List<String> selectedValList = Arrays.asList(parameter.getValue().split(FrameworkConstants.CSV_PATTERN));
+				StringTemplate selectElmnt = FrameworkUtil.constructSelectElement("",parameter.getKey(), parameter.getKey(), psblValues, selectedValList, parameter.getMultiple());
 		%>				
-						<%= selectElmnt %>
+				<%= selectElmnt %>
 						
-		<% 			} else if (FrameworkConstants.TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(parameter.getType())) {
-						//To dynamically load values into select box for environmet
-						List<com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value> dynamicEnvNames = (List<com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value>) request.getAttribute(FrameworkConstants.REQ_DYNAMIC_POSSIBLE_VALUES);
-						List<String> selectedValList = Arrays.asList(parameter.getValue().split(FrameworkConstants.CSV_PATTERN));
-						StringTemplate selectDynamicElmnt = FrameworkUtil.constructSelectElement("", parameter.getKey(), parameter.getKey(), dynamicEnvNames, selectedValList, parameter.getMultiple());
+		<% 			
+			} else if (FrameworkConstants.TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(parameter.getType())) {
+				//To dynamically load values into select box for environmet
+				List<com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value> dynamicEnvNames = (List<com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value>) request.getAttribute(FrameworkConstants.REQ_DYNAMIC_POSSIBLE_VALUES);
+				List<String> selectedValList = Arrays.asList(parameter.getValue().split(FrameworkConstants.CSV_PATTERN));
+				StringTemplate selectDynamicElmnt = FrameworkUtil.constructSelectElement("", parameter.getKey(), parameter.getKey(), dynamicEnvNames, selectedValList, parameter.getMultiple());
 		%>				
-				    	<%= selectDynamicElmnt %>
-		<%			} 
+		    	<%= selectDynamicElmnt %>
+		<%
+			} 
 		%>
 			<script type="text/javascript">
 				<%-- $('input[name="<%= parameter.getKey() %>"]').live('input propertychange',function(e) {
@@ -187,7 +177,8 @@
 					validateInput(name, type, txtBoxName);
 				}); --%>
 			</script>
-		<% 		}
+		<% 
+			}
 		%>
 		<!-- dynamic parameters ends -->
 </div>
@@ -201,37 +192,9 @@
 
 	var url = "";
 	var readerSession = "";
-	
 	$(document).ready(function() {
 		// accodion for advanced issue
 		accordion();
-		$('#close, #cancel').click(function() {
-			showParentPage();
-		});
-		
-		$('#userBuildNumber').bind('input propertychange', function (e) { 	//userBuildNumber validation
-			var userBuildNumber = $(this).val();
-			userBuildNumber = checkForNumber(userBuildNumber);
-        	$(this).val(userBuildNumber);
-		});
-		
-		$('#userBuildName').bind('input propertychange', function (e) { 	//userBuildName validation
-			var userBuildName = $(this).val();
-			userBuildName = checkForSplChr(userBuildName);
-        	$(this).val(userBuildName);
-		});
-		
-		$('#mainClassName').bind('input propertychange', function (e) { 	//mainClassName validation for JavaStandAlone Projects
-			var mainClassName = $(this).val();
-			mainClassName = checkForClassName(mainClassName);
-        	$(this).val(mainClassName);
-		});
-		
-		$('#jarName').bind('input propertychange', function (e) { 	//jarName validation for JavaStandAlone Projects
-			var jarName = $(this).val();
-			jarName = checkForJarName(jarName);
-        	$(this).val(jarName);
-		});
 		
 		/** NodeJS run against source **/
 		$('#runAgainstSrc').click(function() {
@@ -508,95 +471,18 @@
 		}
 	}
 	
-	function performUrlActions(url, testType) {
+	function performUrlActions(url, actionType) {
 		<%-- var params = "";
 		params = params.concat("&environments=");
 		params = params.concat(getSelectedEnvs());
 		params = params.concat("&DbWithSqlFiles=");
 		params = params.concat($('#DbWithSqlFiles').val()); --%>
-		readerHandlerSubmit(url, '<%= appId %>', testType, $("#generateBuildForm"), true, getBasicParams());
-	}
-	
-	/** This method is to enforce the use of default environment **/
-	function selectEnvs() {
-		var from = $("#from").val();
-		if (from == "generateBuild") {
-			$("input[value='<%= defaultEnv %>']").attr("checked", "checked");
-			$("input[value='<%= defaultEnv %>']").attr("disabled", "disabled");
-		}
+		readerHandlerSubmit(url, '<%= appId %>', actionType, $("#generateBuildForm"), true, getBasicParams());
 	}
 	
 	function showAdvSettingsConfigure() {
 		showPopup();
 		popup('advancedBuildSettings', '', $('#popup_div'), '', true);
-	}
-	
-	function removeAdvSettings() {
-// 		alert("Remove settings configure");
-	}
-	
-	var counter = 2;
-	function addJsCompTag(){
-		var browseId = "getJsFiles"+counter;
-		
-		var newMinDiv = $(document.createElement('div')).attr("id", 'browseJS' + counter);
-		newMinDiv.html("<div class='clearfix'><label for='xlInput' class='xlInput popup-label' style='width:100px;'><s:text name='build.js.minification'/></label>" +
-		"<div class='input'><input type='button' id='"+ browseId +"' class='btn primary chooseJS' value='<s:text name='build.minify.browse'/>' onclick='browseFiles(this);' style = 'float:left; margin-left:-30px;'>" + 
-		"<label for='xlInput' class='xlInput popup-label' style='padding-right:6px;'><s:text name='build.compress.name'/></label>" + 
-		"<input type='text' class='"+browseId+"' name='jsFileName' id='compNameText' value ='' disabled/></div>" +
-		"<a><img title='' src='images/icons/add_icon.png' id='addJSComp' class='minifyAddIcon' onclick='addJsCompTag();'></a>" + 
-		"<a><img class = 'del imagealign hide' src='images/icons/minus_icon.png' onclick='removeTag(this);'></a><input type='hidden' tempName='"+browseId+"' class='' name='"+browseId+"' value='' id='selectedJs'></div>"); 
-		newMinDiv.appendTo(".minify_popup");
-		counter++;
-		removeTag();
-		showHideMinusIcon();
-	}
-	
-	function showHideMinusIcon() {
-		var noOfRows = $('input[id="selectedJs"]').size();
-		if (noOfRows > 1) {
-			$(".del").show();
-		} else if (noOfRows === 1) {
-			$(".del").hide();
-		}
-	}
-	
-	function removeTag(currentTag) {
-		var noOfRows = $('input[id="selectedJs"]').size();
-		if(noOfRows > 1 && currentTag !== undefined) {
-			$(currentTag).parent().parent().parent().remove();
-			noOfRows--;
-		} 
-		if (noOfRows === 1) {
-			$(".del").hide();
-		}
-	}
-	
-	var textBoxClass = "";
-	function browseFiles(obj) {
-		textBoxClass = $(obj).attr("id");
-		var jsName = $('input[class="'+ textBoxClass +'"]').val();
-		var jsFiles = $('input[name="'+ jsName +'"]').val();
-		
-		$('#browseLocation').remove();
-		$('#generateBuildForm').hide();
-		<%-- var params = "techonolgy=";
-		var Technology = '<%= technology %>';
-		params = params.concat(Technology);
-		params = params.concat("&fileType=js");
-		params = params.concat("&fileorfolder=All");
-		params = params.concat("&selectedJsName=");
-		params = params.concat(jsName);
-		params = params.concat("&selectedJsFiles=");
-		params = params.concat(jsFiles);
-		popup('jsFileBrowse', params, $('#popup_div'), '', true); --%>
-	}
-	
-	function updateHiddenField(jsName, jsFiles, fileLocation) {
-		$("."+textBoxClass).val(jsName);
-		$('input[tempName="'+ textBoxClass +'"]').attr("name", jsName);
-		$('input[name="'+ jsName +'"]').val(jsFiles);
-		$('input[name="fileLocation"]').val(fileLocation);
 	}
 	
 	function popupOnOk(obj) {
@@ -622,6 +508,7 @@
 			buildValidateSuccess("deploy", '<%= FrameworkConstants.REQ_FROM_TAB_DEPLOY %>');
 		}
 	}
+	
 	function changeChckBoxValue(obj) {
 		if ($(obj).is(':checked')) {
 			$(obj).val("true");
@@ -659,12 +546,4 @@
 	function updateDependantValue(data) {
 		constructElements(data, pushToElement, isMultiple, controlType);
 	}
-	
-	/* $("#showSettings").click(function(){
-		var params = "";
-		params = params.concat("showSettings=");
-		params = params.concat($(this).is(':checked'));
-		alert(params);
-		loadContent('showSettings', '', '', params, true);
-	}); */
 </script>

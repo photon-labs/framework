@@ -443,15 +443,12 @@ public class FrameworkUtil extends FrameworkBaseAction {
 		testCasePathMap.put(TechnologyTypes.JAVA_STANDALONE, XPATH_JAVA_WEBSERVICE_TESTCASE);
 	}
 	
-    public String getUnitTestDir(ApplicationInfo appInfo) throws JAXBException, IOException, PhrescoPomException {
-        PomProcessor pomProcessor = new PomProcessor(new File(Utility.getProjectHome() + appInfo.getAppDirName() + File.separator + POM_FILE));
-        
-        return pomProcessor.getProperty(POM_PROP_KEY_UNITTEST_DIR);
+    public String getUnitTestDir(ApplicationInfo appInfo) throws PhrescoException, PhrescoPomException {
+        return getPomProcessor(appInfo.getAppDirName()).getProperty(POM_PROP_KEY_UNITTEST_DIR);
     }
     
-    public String getUnitTestReportDir(ApplicationInfo appInfo) throws JAXBException, IOException, PhrescoPomException {
-        PomProcessor pomProcessor = new PomProcessor(new File(Utility.getProjectHome() + appInfo.getAppDirName() + File.separator + POM_FILE));
-        return pomProcessor.getProperty(POM_PROP_KEY_UNITTEST_RPT_DIR);
+    public String getUnitTestReportDir(ApplicationInfo appInfo) throws PhrescoPomException, PhrescoException {
+        return getPomProcessor(appInfo.getAppDirName()).getProperty(POM_PROP_KEY_UNITTEST_RPT_DIR);
     }
     
     public String getFuncitonalTestDir(String technologyId) {
@@ -556,10 +553,10 @@ public class FrameworkUtil extends FrameworkBaseAction {
 		}
     }
     
-    public PomProcessor getPomProcessor(String projectCode) throws PhrescoException {
+    public PomProcessor getPomProcessor(String appDirName) throws PhrescoException {
     	try {
     		StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-    		builder.append(projectCode);
+    		builder.append(appDirName);
     		builder.append(File.separatorChar);
     		builder.append(POM_XML);
     		S_LOGGER.debug("builder.toString() " + builder.toString());

@@ -79,7 +79,7 @@ import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.FrameworkConfiguration;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
-import com.photon.phresco.framework.actions.FrameworkBaseAction;
+import com.photon.phresco.framework.actions.DynamicParameterUtil;
 import com.photon.phresco.framework.api.ActionType;
 import com.photon.phresco.framework.api.Project;
 import com.photon.phresco.framework.api.ProjectAdministrator;
@@ -100,6 +100,8 @@ import com.photon.phresco.framework.model.TestCaseError;
 import com.photon.phresco.framework.model.TestCaseFailure;
 import com.photon.phresco.framework.model.TestResult;
 import com.photon.phresco.framework.model.TestSuite;
+import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
+import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.IosSdkUtil;
 import com.photon.phresco.util.IosSdkUtil.MacSdkType;
@@ -109,7 +111,7 @@ import com.phresco.pom.exception.PhrescoPomException;
 import com.phresco.pom.model.Model.Modules;
 import com.phresco.pom.util.PomProcessor;
 
-public class Quality extends FrameworkBaseAction implements FrameworkConstants {
+public class Quality extends DynamicParameterUtil {
 
     private static final long serialVersionUID = -2040671011555139339L;
     private static final Logger S_LOGGER = Logger.getLogger(Quality.class);
@@ -218,16 +220,58 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
 	    try {
 	        ApplicationInfo appInfo = getApplicationInfo();
 	        FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-	        getHttpRequest().setAttribute(PATH, frameworkUtil.getUnitTestDir(appInfo));
+	        setReqAttribute(PATH, frameworkUtil.getUnitTestDir(appInfo));
             setReqAttribute(REQ_APP_INFO, appInfo);
-            List<String> projectModules = getProjectModules(appInfo.getAppDirName());
-            getHttpRequest().setAttribute(REQ_PROJECT_MODULES, projectModules);
+//            List<String> projectModules = getProjectModules(appInfo.getAppDirName());
+            List<String> projectModules = new ArrayList<String>();
+            projectModules.add("phresco-framework-web");
+            projectModules.add("phresco-framework-impl");
+            projectModules.add("phresco-framework");
+            MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(appInfo)));
+            List<Parameter> dynamicParameters = getMojoParameters(mojo, PHASE_UNIT_TEST);
+            setReqAttribute(REQ_DYNAMIC_PARAMETERS, dynamicParameters);
+            setReqAttribute(REQ_PROJECT_MODULES, projectModules);
         } catch (PhrescoException e) {
-            e.printStackTrace();
             return showErrorPopup(e, getText(EXCEPTION_QUALITY_UNIT));
         }
 	    
 	    return APP_UNIT_TEST;
+	}
+	
+	public String showUnitTestPopUp() {
+	    if (debugEnabled) {
+            S_LOGGER.debug("Entering Method Quality.showUnitTestPopUp()");
+        }
+	    
+	    try {
+//    	    List<String> projectModules = getProjectModules(getApplicationInfo().getAppDirName());
+	        List<String> projectModules = new ArrayList<String>();
+    	    projectModules.add("phresco-framework-web");
+            projectModules.add("phresco-framework-impl");
+            projectModules.add("phresco-framework");
+            getHttpRequest().setAttribute(REQ_PROJECT_MODULES, projectModules);
+            MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(getApplicationInfo())));
+            List<Parameter> dynamicParameters = getMojoParameters(mojo, PHASE_UNIT_TEST);
+            setReqAttribute(REQ_DYNAMIC_PARAMETERS, dynamicParameters);
+	    } catch (PhrescoException e) {
+	        e.printStackTrace();
+	    }
+	    
+	    return SUCCESS;
+	}
+	
+	public String runUnitTest() {
+	    if (debugEnabled) {
+            S_LOGGER.debug("Entering Method Quality.runUnitTest()");
+        }
+	    
+	    try {
+            
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+	    
+	    return APP_ENVIRONMENT_READER;
 	}
     
     public String unit1() {
@@ -1719,15 +1763,14 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
         return osType;
     }
 
-    public String testReport() {
+    public String testReport() throws TransformerException {
     	S_LOGGER.debug("Entering Method Quality.testReport()");
     	try {
-    		String testSuitesMapKey = projectCode + testType + projectModule + techReport;
+    		String testSuitesMapKey = getAppId() + getTestType() + getProjectModule() + getTechReport();
         	Map<String, NodeList> testResultNameMap = testSuiteMap.get(testSuitesMapKey);
-//            NodeList testSuites = testResultNameMap.get(testResultFile); //testSuite
-            NodeList testSuites = testResultNameMap.get(testSuite);
+            NodeList testSuites = testResultNameMap.get(getTestSuite());
     		
-    		if (ALL_TEST_SUITES.equals(testSuite)) {
+    		if (ALL_TEST_SUITES.equals(getTestSuite())) {
     			Map<String, String> testSuitesResultMap = new HashMap<String, String>();
     			float totalTestSuites = 0;
     			float successTestSuites = 0;
@@ -1741,14 +1784,13 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
     	    			if (CollectionUtils.isNotEmpty(allTestSuites)) {
     		    			for (TestSuite tstSuite : allTestSuites) {
     		    				//testsuite values are set before calling getTestCases value
-    							testSuite = tstSuite.getName();
-    				            List<TestCase> testCases = getTestCases(allTestResultNodeList);
+    							setTestSuite(tstSuite.getName());
     				            float tests = 0;
     				            float failures = 0;
     				            float errors = 0;
-    				            tests = Float.parseFloat((String) getHttpRequest().getAttribute(REQ_TESTSUITE_TESTS));
-    				            failures = Float.parseFloat((String) getHttpRequest().getAttribute(REQ_TESTSUITE_FAILURES));
-    				            errors = Float.parseFloat((String) getHttpRequest().getAttribute(REQ_TESTSUITE_ERRORS));
+    				            tests = Float.parseFloat((String) getReqAttribute(REQ_TESTSUITE_TESTS));
+    				            failures = Float.parseFloat((String) getReqAttribute(REQ_TESTSUITE_FAILURES));
+    				            errors = Float.parseFloat((String) getReqAttribute(REQ_TESTSUITE_ERRORS));
     				            float success = 0;
     				            
     				            if (failures != 0 && errors == 0) {
@@ -1784,25 +1826,24 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
     	    			}
         			}
 				}
-    			getHttpRequest().setAttribute(REQ_ALL_TESTSUITE_MAP, testSuitesResultMap);
-				getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
+    			setReqAttribute(REQ_ALL_TESTSUITE_MAP, testSuitesResultMap);
+				setReqAttribute(REQ_APP_DIR_NAME, getApplicationInfo().getAppDirName());
     			return APP_ALL_TEST_REPORT; 
     		} else {
 	            if (testSuites.getLength() > 0 ) {
 	            	List<TestCase> testCases = getTestCases(testSuites);
 	            	if (CollectionUtils.isEmpty(testCases)) {
-	            		getHttpRequest().setAttribute(REQ_ERROR_TESTSUITE, ERROR_TEST_CASE);
+	            		setReqAttribute(REQ_ERROR_TESTSUITE, ERROR_TEST_CASE);
 	            	} else {
-	            		getHttpRequest().setAttribute(REQ_TESTCASES, testCases);
+	            		setReqAttribute(REQ_TESTCASES, testCases);
 	            	}
 	            }
     		}
-        } catch (Exception e) {
+        } catch (PhrescoException e) {
         	S_LOGGER.error("Entered into catch block of Quality.testSuite()"+ e);
         }
 
-        getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
-		return APP_TEST_REPORT; //APP_QUALITY_TESTSUITE;
+		return APP_TEST_REPORT;
     }
     
     public String testAndroid(){
@@ -2233,7 +2274,7 @@ public class Quality extends FrameworkBaseAction implements FrameworkConstants {
 	    return XmlResultsAvailable;
 	}
 	
-	private boolean isTestReportAvailable(FrameworkUtil frameworkUtil, String technology, ApplicationInfo appInfo) throws JAXBException, IOException, PhrescoPomException {
+	private boolean isTestReportAvailable(FrameworkUtil frameworkUtil, String technology, ApplicationInfo appInfo) throws PhrescoPomException, PhrescoException {
 		//check unit and functional are executed already or not
         StringBuilder sb = new StringBuilder();
         sb.append(Utility.getProjectHome());

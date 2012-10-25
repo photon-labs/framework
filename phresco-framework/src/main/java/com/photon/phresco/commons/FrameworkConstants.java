@@ -328,6 +328,7 @@ public interface FrameworkConstants {
     String ANDROID_PROFILE_PLUGIN_VERSION = "1.2";
     String PHASE_PACKAGE = "package";
     String PHASE_DEPLOY = "deploy";
+    String PHASE_UNIT_TEST = "unitTest";
     String ANDROID_EXECUTION_ID = "signing";
     String ELEMENT_ARCHIVE_DIR = "archiveDirectory";
     String ELEMENT_REMOVE_EXIST_SIGN = "removeExistingSignatures";
@@ -426,6 +427,7 @@ public interface FrameworkConstants {
      * Ex: REQ_XXX
      */
     String REQ_APPINFO	= "appInfo";
+    String REQ_APP_DIR_NAME  = "appDirName";
 	String REQ_TITLE_ADD_APPLICATION = "Add Application";
     String REQ_BUILD_FROM = "from";
     String REQ_NODEJS_SERVER_LOG = "NodeJsServerLog";

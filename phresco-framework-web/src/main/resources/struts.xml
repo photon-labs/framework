@@ -546,8 +546,7 @@
         </action>
         
 		<action name="showUnitTestPopUp" method="showUnitTestPopUp" class="com.photon.phresco.framework.actions.applications.Quality">
-			<result name="unit">/pages/applications/quality/unit.jsp</result>
-        	<result type="json" />
+			<result name="success">/pages/applications/generateBuild.jsp</result>
         </action>
 		
         <action name="fetchBuildInfoEnvs" method="fetchBuildInfoEnvs" class="com.photon.phresco.framework.actions.applications.Quality">
