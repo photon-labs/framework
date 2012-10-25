@@ -30,6 +30,7 @@
 <%@ page import="com.photon.phresco.framework.model.TestSuite"%>
 <%@ page import="com.photon.phresco.framework.model.TestCase"%>
 <%@ page import="com.photon.phresco.util.TechnologyTypes" %>
+<%@ page import="com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter"%>
 
 <script src="js/reader.js" ></script>
 
@@ -40,6 +41,7 @@
 	String path = (String) request.getAttribute(FrameworkConstants.PATH);
 	String fromPage = (String) request.getAttribute(FrameworkConstants.REQ_FROM_PAGE);
 	List<String> projectModules = (List<String>) request.getAttribute(FrameworkConstants.REQ_PROJECT_MODULES);
+	List<Parameter> parameters = (List<Parameter>) request.getAttribute(FrameworkConstants.REQ_DYNAMIC_PARAMETERS);
 %>
 
 <form autocomplete="off" class="marginBottomZero" id="form_test">
@@ -66,7 +68,8 @@
 		
 		<ul id="display-inline-block-example">
 			<li id="first">
-				<input id="testbtn" type="button" value="<s:text name="label.test"/>" class="btn btn-primary env_btn">
+<%-- 				<input id="testbtn" type="button" value="<s:text name="label.test"/>" class="btn btn-primary env_btn"> --%>
+				<a data-toggle="modal" href="#popupPage" id="unitTest" class="btn btn-primary"><s:text name='label.test'/></a>
 			</li>
 
 			<%
@@ -160,6 +163,10 @@
 
 <script type="text/javascript">
 $(document).ready(function() {
+	<% if (/* CollectionUtils.isNotEmpty(parameters) || */ CollectionUtils.isNotEmpty(projectModules)) { %>
+		yesnoPopup($('#unitTest'), 'showUnitTestPopUp', '<s:text name="label.unit.test"/>', 'runUnitTest','<s:text name="label.test"/>');
+	<% } %>
+	
 	loadTestResults();
 	
 	$("#testResultFile, #testSuite, #testSuiteDisplay, #testResultLbl, #resultView").hide();
@@ -172,7 +179,7 @@ $(document).ready(function() {
 	var tblheight = ($("#subTabcontainer").height() - $("#form_test").height());
 	$('.responsiveTableDisplay').css("height", parseInt((tblheight/($("#subTabcontainer").height()))*100) +'%');
 	
-	$('#testbtn').click(function() {
+	<%-- $('#testbtn').click(function() {
 	 	<% if (TechnologyTypes.ANDROIDS.contains(techId)) { %>
 			openAndroidPopup();
 		<% } else if (TechnologyTypes.IPHONES.contains(techId)) { %>
@@ -185,7 +192,7 @@ $(document).ready(function() {
 				unitTestProgress();
 			<% } %>
 		<% } %>
-    });
+    }); --%>
     
     $('#openFolder').click(function() {
 		openFolder('<%= appId %><%= path %>');
@@ -229,13 +236,10 @@ function loadTestResults() {
 }
 
 function testReport() {
-	var params = "";
-   	if (!isBlank($('form').serialize())) {
-   		params = $('form').serialize() + "&";
-   	}
-	params = params.concat("testType=");
+	var params = getBasicParams();
+	params = params.concat("&testType=");
 	params = params.concat('<%= FrameworkConstants.UNIT %>');
-	performAction('testReport', params, $('#testSuiteDisplay'));
+	loadContent('testReport', $('#form_test'), $('#testSuiteDisplay'), params);
 	//show print as pdf icon
 	$('#pdfPopup').show();
 }
@@ -246,7 +250,6 @@ function successEvent(pageUrl, data) {
 			if (data.validated != undefined && data.validated) {
 				return validationError(data.showError);
 			}
-
 			var testSuiteNames = data.testSuiteNames;
 			if ((testSuiteNames != undefined || !isBlank(testSuiteNames))) {
 				$("#errorDiv").hide();

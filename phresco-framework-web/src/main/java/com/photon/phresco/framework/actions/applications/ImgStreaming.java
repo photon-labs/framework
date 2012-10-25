@@ -32,6 +32,7 @@ import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 
 import com.photon.phresco.commons.FrameworkConstants;
+import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
@@ -42,13 +43,14 @@ import com.photon.phresco.util.Utility;
 
 public class ImgStreaming extends FrameworkBaseAction implements FrameworkConstants {
 	
-	private static final Logger S_LOGGER = Logger.getLogger(ImgStreaming.class);
-    private static Boolean debugEnabled  =S_LOGGER.isDebugEnabled();
-    private String projectCode = null;
-    // screen shot dispaly
+    private static final long serialVersionUID = 1L;
+    
+    private static final Logger S_LOGGER = Logger.getLogger(ImgStreaming.class);
+    private static Boolean debugEnabled  = S_LOGGER.isDebugEnabled();
+    
     private byte[] imageInBytes = null; 
-    private String contentType = null; 
-    private String contentDisposition = null; 
+    private String contentType = ""; 
+    private String contentDisposition = ""; 
     private int contentLength; 
     private int bufferSize; 
     
@@ -93,13 +95,13 @@ public class ImgStreaming extends FrameworkBaseAction implements FrameworkConsta
         if (debugEnabled) {
             S_LOGGER.debug("Entering Method Quality.getScreenShotPath()");
          }
+        
+        ApplicationInfo applicationInfo = getApplicationInfo();
         FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-        ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-        Project project = administrator.getProject(projectCode);
     	StringBuilder sbuilder = new StringBuilder();
     	sbuilder.append(Utility.getProjectHome());
-    	sbuilder.append(project.getApplicationInfo().getCode());
-    	sbuilder.append(frameworkUtil.getFunctionalReportDir(project.getApplicationInfo().getTechInfo().getVersion()));
+    	sbuilder.append(applicationInfo.getAppDirName());
+    	sbuilder.append(frameworkUtil.getFunctionalReportDir(applicationInfo.getTechInfo().getId()));
     	sbuilder.append(File.separator);
     	sbuilder.append(SCREENSHOT_DIR);
     	sbuilder.append(File.separator);
@@ -147,15 +149,4 @@ public class ImgStreaming extends FrameworkBaseAction implements FrameworkConsta
 	public void setBufferSize(int bufferSize) {
 		this.bufferSize = bufferSize;
 	}
-
-
-	public String getProjectCode() {
-		return projectCode;
-	}
-
-
-	public void setProjectCode(String projectCode) {
-		this.projectCode = projectCode;
-	}
-	
 }
