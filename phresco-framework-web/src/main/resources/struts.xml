@@ -243,11 +243,11 @@
             <result name="reader">/pages/applications/reader.jsp</result>
         </action>
         
-        <action name="startJenkins" method="startJenkins" class="com.photon.phresco.framework.actions.applications.CI">
+        <action name="startJenkins" method="start" class="com.photon.phresco.framework.actions.applications.CI">
             <result name="reader">/pages/applications/reader.jsp</result>
         </action>
         
-        <action name="stopJenkins" method="stopJenkins" class="com.photon.phresco.framework.actions.applications.CI">
+        <action name="stopJenkins" method="stop" class="com.photon.phresco.framework.actions.applications.CI">
             <result name="reader">/pages/applications/reader.jsp</result>
         </action>
         
