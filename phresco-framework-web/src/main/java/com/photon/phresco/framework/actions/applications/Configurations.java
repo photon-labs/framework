@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.antlr.stringtemplate.StringTemplate;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -64,15 +65,10 @@ public class Configurations extends FrameworkBaseAction {
     private static Boolean debugEnabled  = S_LOGGER.isDebugEnabled();
     
     private List<Environment> environments = new ArrayList<Environment>(1);
+    private SettingsTemplate settingTemplate = null;
     
-    public List<Environment> getEnvironments() {
-        return environments;
-    }
     
-    public void setEnvironments(List<Environment> environments) {
-        this.environments = environments;
-    }
-
+    
     private String configName = null;
     private String description = null;
     private String oldName = null;
@@ -186,27 +182,10 @@ public class Configurations extends FrameworkBaseAction {
             return showErrorPopup(new PhrescoException(e), getText(CONFIG_FAIL_ENVS));
         }
 
-        /*getHttpSession().removeAttribute(REQ_CONFIG_INFO);
-        try {
-            ProjectAdministrator administrator = getProjectAdministrator();
-            Project project = administrator.getProject(projectCode);
-            List<SettingsTemplate> settingsTemplates = administrator.getSettingsTemplates();
-            getHttpSession().setAttribute(SESSION_SETTINGS_TEMPLATES, settingsTemplates);
-            List<Environment> environments = administrator.getEnvironments(project);
-            getHttpRequest().setAttribute(REQ_ENVIRONMENTS, environments);
-            Collections.sort(environments, new EnvironmentComparator());
-            getHttpSession().removeAttribute(ERROR_SETTINGS);
-            getHttpRequest().setAttribute(REQ_PROJECT, project);
-        } catch (Exception e) {
-        	if (debugEnabled) {
-               S_LOGGER.error("Entered into catch block of Configurations.add()" + FrameworkUtil.getStackTraceAsString(e));
-    		}
-        	new LogErrorReport(e, "Configurations add");
-        }*/
-        
-//        getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
         return APP_CONFIG_ADD;
     }
+    
+    
     
     public String save() {
     	if (debugEnabled) {
@@ -778,12 +757,16 @@ public class Configurations extends FrameworkBaseAction {
         return list();
     }
     
-    public String configurationsType() {
+    public String showProperties() {
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method  Settings.settingsType()");
 		}
 		try {
-			String projectCode = (String)getHttpRequest().getParameter(REQ_PROJECT_CODE);
+		    
+		    List<PropertyTemplate> properties = getSettingTemplate().getProperties();
+		    setReqAttribute(REQ_PROPERTIES, properties);
+		    
+			/*String projectCode = (String)getHttpRequest().getParameter(REQ_PROJECT_CODE);
 			String oldName = (String)getHttpRequest().getParameter(REQ_OLD_NAME);
 			ProjectAdministrator administrator = getProjectAdministrator();
 			Project project = administrator.getProject(projectCode);
@@ -809,7 +792,7 @@ public class Configurations extends FrameworkBaseAction {
 //			getHttpRequest().setAttribute(REQ_ALL_TECHNOLOGIES, administrator.getAllTechnologies());//TODO:Need to handle
             getHttpRequest().setAttribute(SESSION_OLD_NAME, oldName);
             getHttpRequest().setAttribute(REQ_CONFIG_INFO, selectedConfigInfo);
-            getHttpRequest().setAttribute(REQ_FROM_PAGE, FROM_PAGE_EDIT);
+            getHttpRequest().setAttribute(REQ_FROM_PAGE, FROM_PAGE_EDIT);*/
 		} catch (Exception e) {
         	if (debugEnabled) {
                S_LOGGER.error("Entered into catch block of Configurations.configurationsType()" + FrameworkUtil.getStackTraceAsString(e));
@@ -1173,4 +1156,28 @@ public class Configurations extends FrameworkBaseAction {
 	public void setFlag(boolean flag) {
 		this.flag = flag;
 	}
+	
+
+
+	
+	
+	
+	
+    
+    public List<Environment> getEnvironments() {
+        return environments;
+    }
+    
+    public void setEnvironments(List<Environment> environments) {
+        this.environments = environments;
+    }
+
+    public SettingsTemplate getSettingTemplate() {
+        return settingTemplate;
+    }
+
+    public void setSettingTemplate(SettingsTemplate settingTemplate) {
+        this.settingTemplate = settingTemplate;
+    }
+
 }

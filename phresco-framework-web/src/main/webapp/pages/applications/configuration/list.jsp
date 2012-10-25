@@ -187,8 +187,6 @@
 			dataType : "json",
 			contentType: "application/json; charset=utf-8",
 			success : function(data) {
-				//hideProgressBar();
-				//loadData(data, tag);
 			}
 		});	
 	}
