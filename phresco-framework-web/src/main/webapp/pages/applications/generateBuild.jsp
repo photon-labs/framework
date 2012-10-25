@@ -99,71 +99,60 @@
 		}
 	%>
 
-	<!-- dynamic parameters starts -->
-	<%	
-		for (Parameter parameter: parameters) {
-   			Boolean mandatory = false;
-			if (Boolean.parseBoolean(parameter.getRequired())) {
-				mandatory = true;
- 			}
-			if (!FrameworkConstants.TYPE_HIDDEN.equalsIgnoreCase(parameter.getType())) {
-				List<Value> values = parameter.getName().getValue();						
-				for(Value value : values) {
-					if (value.getLang().equals("en")) {	//load label
-						String cssClass = "popupLbl";
-						StringTemplate labelElmnt = FrameworkUtil.constructLabelElement(mandatory, cssClass, value.getValue());
-	%>					
-						<%= labelElmnt %>
-	<%			   		    
-						break;
+       <!-- dynamic parameters starts -->
+		<%	
+			for (Parameter parameter: parameters) {
+    			Boolean mandatory = false;
+    			String lableTxt = "";
+    			String labelClass = "";
+				if (Boolean.parseBoolean(parameter.getRequired())) {
+					mandatory = true;
+	 			}
+					if (!FrameworkConstants.TYPE_HIDDEN.equalsIgnoreCase(parameter.getType())) {
+						List<Value> values = parameter.getName().getValue();						
+						for(Value value : values) {
+							if (value.getLang().equals("en")) {	//to get label of parameter
+								labelClass = "popupLbl";
+								lableTxt = value.getValue();
+				   		    break;
+							}
+						}
 					}
-				}
-			}
-					
-			// load input text box
-			if (FrameworkConstants.TYPE_STRING.equalsIgnoreCase(parameter.getType()) || FrameworkConstants.TYPE_NUMBER.equalsIgnoreCase(parameter.getType()) || 
-					FrameworkConstants.TYPE_PASSWORD.equalsIgnoreCase(parameter.getType()) || FrameworkConstants.TYPE_HIDDEN.equalsIgnoreCase(parameter.getType())) { 
-				String type ="", cssClass = "", id, name, placeholder, value="";
-				if (FrameworkConstants.TYPE_PASSWORD.equalsIgnoreCase(parameter.getType())) {
-					type = "password";
-					cssClass = "";
-				}  else if (FrameworkConstants.TYPE_HIDDEN.equalsIgnoreCase(parameter.getType())) {
-					type = "hidden";
-				} else {
-					type = "text";
-					cssClass = "";
-				}
-				StringTemplate txtInputElement = FrameworkUtil.constructInputElement(type, cssClass, "", parameter.getKey(), "", StringUtils.isNotEmpty(parameter.getValue()) ? parameter.getValue():"");
-	%> 	
-		    	<%= txtInputElement %>
-	<% 			
-			} else if (FrameworkConstants.TYPE_BOOLEAN.equalsIgnoreCase(parameter.getType())) {
-				String cssClass = "chckBxAlign";
-				String onClickFunction = "";
-				if (parameter.getDependency() != null) {
-					//If current control has dependancy value 
-					onClickFunction = "dependancyChckBoxEvent(this, '"+parameter.getDependency()+"');";
-				} else {
-					onClickFunction = "changeChckBoxValue(this);";
-				}
-				StringTemplate chckBoxElement = FrameworkUtil.constructCheckBoxElement(cssClass, parameter.getKey(), parameter.getKey(), parameter.getValue(), onClickFunction);
+				
+				// load input text box
+				if (FrameworkConstants.TYPE_STRING.equalsIgnoreCase(parameter.getType()) || FrameworkConstants.TYPE_NUMBER.equalsIgnoreCase(parameter.getType()) || 
+						FrameworkConstants.TYPE_PASSWORD.equalsIgnoreCase(parameter.getType()) || FrameworkConstants.TYPE_HIDDEN.equalsIgnoreCase(parameter.getType())) { 
+				StringTemplate txtInputElement = FrameworkUtil.constructInputElement(mandatory, lableTxt, labelClass, parameter.getType(), "", parameter.getKey(), parameter.getKey(), "", StringUtils.isNotEmpty(parameter.getValue()) ? parameter.getValue():"");
+		%> 	
+				<%= txtInputElement %>
+		<% 			
+				} else if (FrameworkConstants.TYPE_BOOLEAN.equalsIgnoreCase(parameter.getType())) {
+						String cssClass = "chckBxAlign";
+						String onClickFunction = "";
+						if (parameter.getDependency() != null) {
+							//If current control has dependancy value 
+							onClickFunction = "dependancyChckBoxEvent(this, '"+parameter.getDependency()+"');";
+						} else {
+							onClickFunction = "changeChckBoxValue(this);";
+						}
+						StringTemplate chckBoxElement = FrameworkUtil.constructCheckBoxElement(mandatory, lableTxt, labelClass, cssClass, parameter.getKey(), parameter.getKey(), parameter.getValue(), onClickFunction);
 		%>			
 				<%= chckBoxElement%>	
 		<%			
-			} else if (FrameworkConstants.TYPE_LIST.equalsIgnoreCase(parameter.getType()) && parameter.getPossibleValues() != null) { //load select list box
-				//To construct select box element if type is list and if possible value exists
-		    	List<com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value> psblValues = parameter.getPossibleValues().getValue();
-				List<String> selectedValList = Arrays.asList(parameter.getValue().split(FrameworkConstants.CSV_PATTERN));
-				StringTemplate selectElmnt = FrameworkUtil.constructSelectElement("",parameter.getKey(), parameter.getKey(), psblValues, selectedValList, parameter.getMultiple());
+				} else if (FrameworkConstants.TYPE_LIST.equalsIgnoreCase(parameter.getType()) && parameter.getPossibleValues() != null) { //load select list box
+					//To construct select box element if type is list and if possible value exists
+			    	List<com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value> psblValues = parameter.getPossibleValues().getValue();
+					List<String> selectedValList = Arrays.asList(parameter.getValue().split(FrameworkConstants.CSV_PATTERN));
+					StringTemplate selectElmnt = FrameworkUtil.constructSelectElement(mandatory, lableTxt, labelClass, "", parameter.getKey(), parameter.getKey(), psblValues, selectedValList, parameter.getMultiple());
 		%>				
 				<%= selectElmnt %>
 						
 		<% 			
-			} else if (FrameworkConstants.TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(parameter.getType())) {
-				//To dynamically load values into select box for environmet
-				List<com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value> dynamicEnvNames = (List<com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value>) request.getAttribute(FrameworkConstants.REQ_DYNAMIC_POSSIBLE_VALUES);
-				List<String> selectedValList = Arrays.asList(parameter.getValue().split(FrameworkConstants.CSV_PATTERN));
-				StringTemplate selectDynamicElmnt = FrameworkUtil.constructSelectElement("", parameter.getKey(), parameter.getKey(), dynamicEnvNames, selectedValList, parameter.getMultiple());
+				} else if (FrameworkConstants.TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(parameter.getType())) {
+					//To dynamically load values into select box for environmet
+					List<com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value> dynamicEnvNames = (List<com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value>) request.getAttribute(FrameworkConstants.REQ_DYNAMIC_POSSIBLE_VALUES);
+					List<String> selectedValList = Arrays.asList(parameter.getValue().split(FrameworkConstants.CSV_PATTERN));
+					StringTemplate selectDynamicElmnt = FrameworkUtil.constructSelectElement(mandatory, lableTxt, labelClass, "", parameter.getKey(), parameter.getKey(), dynamicEnvNames, selectedValList, parameter.getMultiple());
 		%>				
 		    	<%= selectDynamicElmnt %>
 		<%

@@ -1517,6 +1517,7 @@ public interface FrameworkConstants {
 		String TYPE_PASSWORD  = "password";
 		String TYPE_NUMBER = "number";
 		String TYPE_BOOLEAN = "boolean";
+		String TEXT_BOX = "text";
 		String TYPE_LIST = "list";
 		String TYPE_DYNAMIC_PARAMETER = "DynamicParameter";
 		String PHRESCO_PLUGIN_INFO_XML = "phresco-plugin-info.xml";

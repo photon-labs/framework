@@ -35,8 +35,10 @@ xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assemb
 			<fileMode>0777</fileMode>
 			<includes>
 				<include>pom.xml</include>
+                <include>template/*.xml</include>
 			</includes>
 		</fileSet>
+        
 					
 	</fileSets>
 
