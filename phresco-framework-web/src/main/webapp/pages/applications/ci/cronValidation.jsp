@@ -35,13 +35,13 @@
 	</div>
 	<div class="abt_div">
 		<div id="testCaseDesc" class="testCaseDesc">
-               <table border="1" cellpadding="0" cellspacing="0" class="tbl" width="100%">
+               <table border="0" cellpadding="0" cellspacing="0" class="tbl" width="100%">
                	   <tr>
                        <td width="1%" nowrap><b id="SelectedSchedule" class="popup-label"></b></td>
                        <td><b></b></td>
                    </tr>
                    <tr class="popup-label">
-                       <td width="1%" nowrap class="popup-label"><b><s:text name="label.name"/></b></td>
+                       <td width="1%" nowrap class="popup-label"><b><s:text name="lbl.name"/></b></td>
                        <td class="popup-label"><b><s:text name="label.date"/></b></td>
                    </tr>
                 <% 	
@@ -65,7 +65,7 @@
 	
 	<div class="modal-footer">
 		<div class="action abt_action">
-			<input type="button" class="btn primary" value="<s:text name="label.close"/>" id="closeDialog">
+			<input id="closeDialog" type="button" value="<s:text name="label.close"/>" class="btn btn-primary">
 		</div>
 	</div>
 		

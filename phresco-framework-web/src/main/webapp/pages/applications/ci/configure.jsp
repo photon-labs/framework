@@ -35,14 +35,15 @@
 <%@ page import="com.photon.phresco.commons.XCodeConstants"%>
 <%@ page import="com.photon.phresco.commons.AndroidConstants"%>
 <%@ page import="com.photon.phresco.framework.model.SettingsInfo"%>
+<%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 
 <script src="js/select-envs.js"></script>
 
 <%
-    List<SettingsInfo> serverConfigs = (List<SettingsInfo>) request.getAttribute(FrameworkConstants.REQ_SERVER_CONFIGS);
-	List<SettingsInfo> databaseConfigs = (List<SettingsInfo>) request.getAttribute(FrameworkConstants.REQ_DATABASE_CONFIGS);
-	List<SettingsInfo> emailConfigs = (List<SettingsInfo>) request.getAttribute(FrameworkConstants.REQ_EMAIL_CONFIGS);
-	List<SettingsInfo> webServiceConfigs = (List<SettingsInfo>) request.getAttribute(FrameworkConstants.REQ_WEBSERVICE_CONFIGS);
+//     List<SettingsInfo> serverConfigs = (List<SettingsInfo>) request.getAttribute(FrameworkConstants.REQ_SERVER_CONFIGS);
+// 	List<SettingsInfo> databaseConfigs = (List<SettingsInfo>) request.getAttribute(FrameworkConstants.REQ_DATABASE_CONFIGS);
+// 	List<SettingsInfo> emailConfigs = (List<SettingsInfo>) request.getAttribute(FrameworkConstants.REQ_EMAIL_CONFIGS);
+// 	List<SettingsInfo> webServiceConfigs = (List<SettingsInfo>) request.getAttribute(FrameworkConstants.REQ_WEBSERVICE_CONFIGS);
 	
 	String showSettings = (String) request.getAttribute(FrameworkConstants.REQ_SHOW_SETTINGS);
 	if(showSettings != null && Boolean.valueOf(showSettings)){
@@ -54,30 +55,33 @@
 
 	CIJob existingJob =  (CIJob) request.getAttribute(FrameworkConstants.REQ_EXISTING_JOB);
 	String disableStr = existingJob == null ? "" : "disabled";
-    String projectCode = (String) request.getAttribute(FrameworkConstants.REQ_PROJECT_CODE );
-	Project project = (Project)request.getAttribute(FrameworkConstants.REQ_PROJECT);
-	String technology = (String)project.getApplicationInfo().getTechInfo().getVersion();
+//     String projectCode = (String) request.getAttribute(FrameworkConstants.REQ_PROJECT_CODE );
+// 	Project project = (Project)request.getAttribute(FrameworkConstants.REQ_PROJECT);
+// 	String technology = (String)project.getApplicationInfo().getTechInfo().getVersion();
+    ApplicationInfo appInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_APP_INFO);
+    String appId  = appInfo.getId();
+    
     String actionStr = "saveJob";
     actionStr = (existingJob == null || StringUtils.isEmpty(existingJob.getRepoType())) ? "saveJob" : "updateJob";
     existingJob = (existingJob == null || StringUtils.isEmpty(existingJob.getRepoType())) ? null : existingJob; // when we setup it ll have only jenkins url and port in that case we have to check svnUrl and make null
    	//xcode targets
-   	List<PBXNativeTarget> xcodeConfigs = (List<PBXNativeTarget>) request.getAttribute(FrameworkConstants.REQ_XCODE_CONFIGS);
-   	List<Environment> environments = (List<Environment>) request.getAttribute(FrameworkConstants.REQ_ENVIRONMENTS);
+//    	List<PBXNativeTarget> xcodeConfigs = (List<PBXNativeTarget>) request.getAttribute(FrameworkConstants.REQ_XCODE_CONFIGS);
+//    	List<Environment> environments = (List<Environment>) request.getAttribute(FrameworkConstants.REQ_ENVIRONMENTS);
    	// mac sdks
-   	List<String> macSdks = (List<String>) request.getAttribute(FrameworkConstants.REQ_IPHONE_SDKS);
-   	List<String> macSimulatorSdkVersions = (List<String>) request.getAttribute(FrameworkConstants.REQ_IPHONE_SIMULATOR_SDKS);
-    Map<String, String> browserMap = (Map<String, String>)request.getAttribute(FrameworkConstants.REQ_TEST_BROWSERS);
+//    	List<String> macSdks = (List<String>) request.getAttribute(FrameworkConstants.REQ_IPHONE_SDKS);
+//    	List<String> macSimulatorSdkVersions = (List<String>) request.getAttribute(FrameworkConstants.REQ_IPHONE_SIMULATOR_SDKS);
+//     Map<String, String> browserMap = (Map<String, String>)request.getAttribute(FrameworkConstants.REQ_TEST_BROWSERS);
     List<String> existingClonedWorkspaces = (List<String>) request.getAttribute(FrameworkConstants.REQ_EXISTING_CLONNED_JOBS);
     List<String> existingJobsNames = (List<String>) request.getAttribute(FrameworkConstants.REQ_EXISTING_JOBS_NAMES);
 %>
-<div class="popup_Modal configurePopUp" id="ciDetails">
-    <form name="ciDetails" action="<%= actionStr %>" method="post" autocomplete="off" class="ci_form" id="ciForm">
-        <div class="modal-header">
-            <h3><s:text name="label.ci"/></h3>
-            <a class="close" href="#" id="close">&times;</a>
-        </div>
+<!-- <div class="popup_Modal configurePopUp" id="ciDetails"> -->
+    <form name="ciDetails" action="<%= actionStr %>" method="post" autocomplete="off" class="ci_form form-horizontal" id="ciForm">
+<!--         <div class="modal-header"> -->
+<%--             <h3><s:text name="label.ci"/></h3> --%>
+<!--             <a class="close" href="#" id="close">&times;</a> -->
+<!--         </div> -->
         
-        <div class="modal-body" id="ciConfigs" style="padding-top: 2px;">
+<!--         <div class="modal-body" id="ciConfigs" style="padding-top: 2px;"> -->
         	<div class="clearfix">
 				<label for="xlInput" class="xlInput popup-label"></label>
 				<div class="input">
@@ -85,48 +89,112 @@
 				</div>
 			</div>
 			
-        	<div class="clearfix">
-				<label for="xlInput" class="xlInput popup-label"><span class="red">* </span><s:text name="label.name"/></label>
-				<div class="input">
-					<input type="text" id="name" name="name" value="<%= existingJob == null ? "" : existingJob.getName()%>" <%= existingJob == null ? "" : "disabled" %> autofocus>
+<!--         	<div class="clearfix"> -->
+<%-- 				<label for="xlInput" class="xlInput popup-label"><span class="red">* </span><s:text name="label.name"/></label> --%>
+<!-- 				<div class="input"> -->
+<%-- 					<input type="text" id="name" name="name" value="<%= existingJob == null ? "" : existingJob.getName()%>" <%= existingJob == null ? "" : "disabled" %> autofocus> --%>
+<!-- 				</div> -->
+<!-- 			</div> -->
+			
+			<div class="control-group">
+				<label class="control-label labelbold popupLbl">
+					<s:text name='lbl.name' />
+				</label>
+				<div class="controls">
+					<input type="text" id="name" name="name" class="input-xlarge" value="<%= existingJob == null ? "" : existingJob.getName()%>" <%= existingJob == null ? "" : "disabled" %> autofocus>
 				</div>
 			</div>
 			
-			<div class="clearfix">
-				<label for="xlInput" class="xlInput popup-label"><s:text name="label.svn.type"/></label>
+<!-- 			<div class="clearfix"> -->
+<%-- 				<label for="xlInput" class="xlInput popup-label"><s:text name="label.svn.type"/></label> --%>
 				
-				<div class="input">
-					<div class="multipleFields ciTypeWidth">
-						<div><input type="radio" name="svnType" value="svn"  <%= existingJob == null ? "checked" : "" %> />&nbsp; <s:text name="label.svn"/></div>
-					</div>
-					<div class="multipleFields ciTypeWidth">
-						<div><input type="radio" name="svnType" value="git" />&nbsp; <s:text name="label.git"/></div>
-					</div>
-					<!-- clonned workspace radio button -->
-					<div class="multipleFields ciTypeCloneWidth">
-						<div><input type="radio" name="svnType" value="clonedWorkspace" />&nbsp; <s:text name="label.cloned"/></div>
-					</div>
+<!-- 				<div class="input"> -->
+<!-- 					<div class="multipleFields ciTypeWidth"> -->
+<%-- 						<div><input type="radio" name="svnType" value="svn"  <%= existingJob == null ? "checked" : "" %> />&nbsp; <s:text name="label.svn"/></div> --%>
+<!-- 					</div> -->
+<!-- 					<div class="multipleFields ciTypeWidth"> -->
+<%-- 						<div><input type="radio" name="svnType" value="git" />&nbsp; <s:text name="label.git"/></div> --%>
+<!-- 					</div> -->
+<!-- 					clonned workspace radio button -->
+<!-- 					<div class="multipleFields ciTypeCloneWidth"> -->
+<%-- 						<div><input type="radio" name="svnType" value="clonedWorkspace" />&nbsp; <s:text name="label.cloned"/></div> --%>
+<!-- 					</div> -->
+<!-- 				</div> -->
+<!-- 			</div> -->
+			<div class="control-group">
+				<label class="control-label labelbold popupLbl">
+					<s:text name='label.svn.type' />
+				</label>
+				<div class="controls">
+<!-- 				<label class="radio"> -->
+					<input type="radio" name="svnType" value="svn"  <%= existingJob == null ? "checked" : "" %> />&nbsp; <s:text name="label.svn"/>
+<!-- 				</label> -->
+					<input type="radio" name="svnType" value="git" />&nbsp; <s:text name="label.git"/>
+					<input type="radio" name="svnType" value="clonedWorkspace" />&nbsp; <s:text name="label.cloned"/>
 				</div>
 			</div>
-			<div class="clearfix" id="svnUrlField">
-				<label for="xlInput" class="xlInput popup-label"><span class="red">* </span><s:text name="label.svn.url"/></label>
-				<div class="input">
-					<input type="text" id="svnurl" class="ciSvnUrlWidth" name="svnurl" value="<%= existingJob == null ? "" : existingJob.getSvnUrl()%>">
+			
+<!-- 			<div class="clearfix" id="svnUrlField"> -->
+<%-- 				<label for="xlInput" class="xlInput popup-label"><span class="red">* </span><s:text name="label.svn.url"/></label> --%>
+<!-- 				<div class="input"> -->
+<%-- 					<input type="text" id="svnurl" class="ciSvnUrlWidth" name="svnurl" value="<%= existingJob == null ? "" : existingJob.getSvnUrl()%>"> --%>
+<!-- 				</div> -->
+<!-- 			</div> -->
+			
+<!-- 			class="ciSvnUrlWidth" -->
+			<div class="control-group">
+				<label class="control-label labelbold popupLbl">
+					<s:text name='label.svn.url' />
+				</label>
+				<div class="controls">
+					<input type="text" id="svnurl" name="svnurl" class="input-xlarge" value="<%= existingJob == null ? "" : existingJob.getSvnUrl()%>">
 				</div>
 			</div>
 
-			<div class="clearfix" id="divBranch">
-				<label for="xlInput" class="xlInput popup-label"><span class="red">* </span><s:text name="label.branch"/></label>
-				<div class="input">
-					<input type="text" id="branch" name="branch" maxlength="63" title="63 Characters only" value="">
+<!-- 			<div class="clearfix" id="divBranch"> -->
+<%-- 				<label for="xlInput" class="xlInput popup-label"><span class="red">* </span><s:text name="label.branch"/></label> --%>
+<!-- 				<div class="input"> -->
+<!-- 					<input type="text" id="branch" name="branch" maxlength="63" title="63 Characters only" value=""> -->
+<!-- 				</div> -->
+<!-- 			</div> -->
+			
+			<div class="control-group">
+				<label class="control-label labelbold popupLbl">
+					<s:text name='label.branch' />
+				</label>
+				<div class="controls">
+					<input type="text" id="branch" name="branch" class="input-xlarge" maxlength="63" title="63 Characters only" value="">
 				</div>
 			</div>
 			
 			<!-- Use clonned workspaces -->
-			<div class="clearfix" id="usedClonnedWorkspace">
-				<label for="xlInput" class="xlInput popup-label"><s:text name="label.parent.project"/></label>
-				<div class="input">
-					<select name="usedClonnedWorkspace" class="xlarge" >
+<!-- 			<div class="clearfix" id="usedClonnedWorkspace"> -->
+<%-- 				<label for="xlInput" class="xlInput popup-label"><s:text name="label.parent.project"/></label> --%>
+<!-- 				<div class="input"> -->
+<%-- 					<select name="usedClonnedWorkspace" class="xlarge" > --%>
+<%-- 						<%  --%>
+<!-- // 							if (existingClonedWorkspaces != null) { -->
+<!-- // 								for(String clonedWrkSpace : existingClonedWorkspaces) { -->
+<!-- // 									if(existingJob != null && existingJob.getName().equals(clonedWrkSpace)) { -->
+<!-- // 										continue; -->
+<!-- // 									} -->
+									
+<%-- 						%> --%>
+<%-- 							<option value="<%= clonedWrkSpace %>"><%= clonedWrkSpace %></option> --%>
+<%-- 						<%  --%>
+<!-- // 								} -->
+<!-- // 							} -->
+<%-- 						%> --%>
+<%-- 					</select> --%>
+<!-- 				</div> -->
+<!--             </div> -->
+            
+            <div class="control-group">
+				<label class="control-label labelbold popupLbl">
+					<s:text name='label.parent.project' />
+				</label>
+				<div class="controls">
+						<select name="usedClonnedWorkspace" class="input-xlarge " >
 						<% 
 							if (existingClonedWorkspaces != null) {
 								for(String clonedWrkSpace : existingClonedWorkspaces) {
@@ -142,69 +210,112 @@
 						%>
 					</select>
 				</div>
-            </div>
+			</div>
 						
-			<div class="clearfix" id="divUsername">
-				<label for="xlInput" class="xlInput popup-label"><span class="red">* </span><s:text name="label.username"/></label>
-				<div class="input">
-					<input type="text" id="username" name="username" maxlength="63" title="63 Characters only" value="">
+<!-- 			<div class="clearfix" id="divUsername"> -->
+<%-- 				<label for="xlInput" class="xlInput popup-label"><span class="red">* </span><s:text name="label.username"/></label> --%>
+<!-- 				<div class="input"> -->
+<!-- 					<input type="text" id="username" name="username" maxlength="63" title="63 Characters only" value=""> -->
+<!-- 				</div> -->
+<!-- 			</div> -->
+			<div class="control-group">
+				<label class="control-label labelbold popupLbl">
+					<s:text name='label.username' />
+				</label>
+				<div class="controls">
+					<input type="text" id="username" name="username" class="input-xlarge" maxlength="63" title="63 Characters only" value="">
 				</div>
 			</div>
 			
-			<div class="clearfix" id="divPassword">
-				<label for="xlInput" class="xlInput popup-label"><span class="red">* </span><s:text name="label.password"/></label>
-				<div class="input">
-					<input type="password" id="password" name="password" maxlength="63" title="63 Characters only" value="">
+<!-- 			<div class="clearfix" id="divPassword"> -->
+<%-- 				<label for="xlInput" class="xlInput popup-label"><span class="red">* </span><s:text name="label.password"/></label> --%>
+<!-- 				<div class="input"> -->
+<!-- 					<input type="password" id="password" name="password" maxlength="63" title="63 Characters only" value=""> -->
+<!-- 				</div> -->
+<!-- 			</div> -->
+			<div class="control-group">
+				<label class="control-label labelbold popupLbl">
+					<s:text name='label.password' />
+				</label>
+				<div class="controls">
+					<input type="password" id="password" name="password" class="input-xlarge" maxlength="63" title="63 Characters only" value="">
 				</div>
 			</div>
 			
-			<div class="clearfix">
-				<label for="xlInput" class="xlInput popup-label"><s:text name="label.sender.mail"/></label>
-				<div class="input">
-					<input type="text" name="senderEmailId" value="<%= existingJob == null ? "" : existingJob.getSenderEmailId()%>">
+<!-- 			<div class="clearfix"> -->
+<%-- 				<label for="xlInput" class="xlInput popup-label"><s:text name="label.sender.mail"/></label> --%>
+<!-- 				<div class="input"> -->
+<%-- 					<input type="text" name="senderEmailId" value="<%= existingJob == null ? "" : existingJob.getSenderEmailId()%>"> --%>
+<!-- 				</div> -->
+<!-- 			</div> -->
+			<div class="control-group">
+				<label class="control-label labelbold popupLbl">
+					<s:text name='label.sender.mail' />
+				</label>
+				<div class="controls">
+					<input type="text" name="senderEmailId" class="input-xlarge" value="<%= existingJob == null ? "" : existingJob.getSenderEmailId()%>">
 				</div>
 			</div>
 			
-			<div class="clearfix">
-				<label for="xlInput" class="xlInput popup-label"><s:text name="label.sender.pwd"/></label>
-				<div class="input">
-					<input type="password" name="senderEmailPassword" value="<%= existingJob == null ? "" : existingJob.getSenderEmailPassword()%>">
+<!-- 			<div class="clearfix"> -->
+<%-- 				<label for="xlInput" class="xlInput popup-label"><s:text name="label.sender.pwd"/></label> --%>
+<!-- 				<div class="input"> -->
+<%-- 					<input type="password" name="senderEmailPassword" value="<%= existingJob == null ? "" : existingJob.getSenderEmailPassword()%>"> --%>
+<!-- 				</div> -->
+<!-- 			</div> -->
+			<div class="control-group">
+				<label class="control-label labelbold popupLbl">
+					<s:text name='label.sender.pwd' />
+				</label>
+				<div class="controls">
+					<input type="password" name="senderEmailPassword" class="input-xlarge" value="<%= existingJob == null ? "" : existingJob.getSenderEmailPassword()%>">
 				</div>
 			</div>
 			
-			<div class="clearfix">
-				<label for="xlInput" class="xlInput popup-label"><s:text name="label.recipient.mail"/></label>
+<!-- 			<div class="clearfix"> -->
+<%-- 				<label for="xlInput" class="xlInput popup-label"><s:text name="label.recipient.mail"/></label> --%>
 				
-				<div class="input">
-					<div class="multipleFields emaillsFieldsWidth">
-						<div><input id="successEmail" type="checkbox" name="emails"  value="success"/>&nbsp; <s:text name="label.when.success"/></div>
-					</div>
-					<div class="multipleFields">
-						<div><input id="successEmailId" type="text" name="successEmailIds"  value="<%= existingJob == null ? "" : (String)existingJob.getEmail().get("successEmails")%>" disabled></div>
-					</div>
-				</div>
+<!-- 				<div class="input"> -->
+<!-- 					<div class="multipleFields emaillsFieldsWidth"> -->
+<%-- 						<div><input id="successEmail" type="checkbox" name="emails"  value="success"/>&nbsp; <s:text name="label.when.success"/></div> --%>
+<!-- 					</div> -->
+<!-- 					<div class="multipleFields"> -->
+<%-- 						<div><input id="successEmailId" type="text" name="successEmailIds"  value="<%= existingJob == null ? "" : (String)existingJob.getEmail().get("successEmails")%>" disabled></div> --%>
+<!-- 					</div> -->
+<!-- 				</div> -->
 				
-				<div class="input">
-					<div class="multipleFields emaillsFieldsWidth">
-						<div><input id="failureEmail" type="checkbox" name="emails" value="failure"/> &nbsp;<s:text name="label.when.fail"/></div>
-					</div>
-					<div class="multipleFields">
-						<div><input id="failureEmailId" type="text" name="failureEmailIds" value="<%= existingJob == null ? "" : (String)existingJob.getEmail().get("failureEmails")%>" disabled></div>
-					</div>
-				</div>
-					<label for="xlInput" class="xlInput popup-label"><span class="red">* </span>Build Triggers</label>
-				<div class="input">
-					<div class="multipleFields emaillsFieldsWidth">
-						<div><input id="buildPeriodically" type="checkbox" name="triggers" value="TimerTrigger"/>&nbsp;Build periodically</div>
-					</div>
-				</div>
+<!-- 				<div class="input"> -->
+<!-- 					<div class="multipleFields emaillsFieldsWidth"> -->
+<%-- 						<div><input id="failureEmail" type="checkbox" name="emails" value="failure"/> &nbsp;<s:text name="label.when.fail"/></div> --%>
+<!-- 					</div> -->
+<!-- 					<div class="multipleFields"> -->
+<%-- 						<div><input id="failureEmailId" type="text" name="failureEmailIds" value="<%= existingJob == null ? "" : (String)existingJob.getEmail().get("failureEmails")%>" disabled></div> --%>
+<!-- 					</div> -->
+<!-- 				</div> -->
 				
-				<div class="input">
-					<div class="multipleFields emaillsFieldsWidth">
-						<div><input id="pollSCM" type="checkbox" name="triggers" value="SCMTrigger"/>&nbsp;Poll SCM</div>
-					</div>
+<%-- 				<label for="xlInput" class="xlInput popup-label"><span class="red">* </span>Build Triggers</label> --%>
+<!-- 				<div class="input"> -->
+<!-- 					<div class="multipleFields emaillsFieldsWidth"> -->
+<!-- 						<div><input id="buildPeriodically" type="checkbox" name="triggers" value="TimerTrigger"/>&nbsp;Build periodically</div> -->
+<!-- 					</div> -->
+<!-- 				</div> -->
+<!-- 				<div class="input"> -->
+<!-- 					<div class="multipleFields emaillsFieldsWidth"> -->
+<!-- 						<div><input id="pollSCM" type="checkbox" name="triggers" value="SCMTrigger"/>&nbsp;Poll SCM</div> -->
+<!-- 					</div> -->
+<!-- 				</div> -->
+<!-- 			</div> -->
+			
+			<div class="control-group">
+				<label class="control-label labelbold popupLbl">
+					<span class="red">* </span>Build Triggers
+				</label>
+				<div class="controls">
+					<input id="buildPeriodically" type="checkbox" name="triggers" value="TimerTrigger"/>&nbsp;Build periodically
+					<input id="pollSCM" type="checkbox" name="triggers" value="SCMTrigger"/>&nbsp;Poll SCM
 				</div>
 			</div>
+				
 			<%
 				String schedule = existingJob == null ? "" : (String)existingJob.getScheduleType();
 				
@@ -253,21 +364,25 @@
 					
 				}
 			%>
-			<div class="clearfix">
-				<label for="xlInput" class="xlInput popup-label"><s:text name="label.schedule"/></label>
-				
-				<div class="input">
-					<div class="multipleFields quartsRadioWidth">
-						<div><input id="scheduleDaily" type="radio" name="schedule" value="Daily"  onChange="javascript:show('Daily');" <%= ((schedule.equals("Daily")) || (schedule.equals(""))) ? "checked" : "" %> />&nbsp; <s:text name="label.daily"/></div>
-					</div>
-					<div class="multipleFields quartsRadioWidth">
-						<div><input id="scheduleDaily" type="radio" name="schedule" value="Weekly" onChange="javascript:show('Weekly');" <%= schedule.equals("Weekly") ? "checked" : "" %> />&nbsp; <s:text name="label.weekly"/></div>
-					</div>
-					<div class="multipleFields quartsRadioWidth">
-						<div><input id="scheduleDaily" type="radio" name="schedule" value="Monthly" onChange="javascript:show('Monthly');" <%= schedule.equals("Monthly") ? "checked" : "" %>/>&nbsp; <s:text name="label.monthly"/></div>
-					</div>
+			
+			<div class="control-group">
+				<label class="control-label labelbold popupLbl">
+					<s:text name='label.schedule' />
+				</label>
+				<div class="controls">
+					<input id="scheduleDaily" type="radio" name="schedule" value="Daily"  onChange="javascript:show('Daily');" <%= ((schedule.equals("Daily")) || (schedule.equals(""))) ? "checked" : "" %> />&nbsp; <s:text name="label.daily"/>
+					<input id="scheduleDaily" type="radio" name="schedule" value="Weekly" onChange="javascript:show('Weekly');" <%= schedule.equals("Weekly") ? "checked" : "" %> />&nbsp; <s:text name="label.weekly"/>
+					<input id="scheduleDaily" type="radio" name="schedule" value="Monthly" onChange="javascript:show('Monthly');" <%= schedule.equals("Monthly") ? "checked" : "" %>/>&nbsp; <s:text name="label.monthly"/>
 				</div>
-				<div  id='Daily' class="schedulerWidth">
+			</div>
+			
+			
+			<div class="control-group">
+				<label class="control-label labelbold popupLbl">
+					&nbsp; <!-- kalees -->
+				</label>
+				<div class="controls">
+					<div  id='Daily'> <!-- class="schedulerWidth" -->
 					<div><s:text name="label.every"/> &nbsp;&nbsp;&nbsp;&nbsp;	<s:text name="label.hours"/> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <s:text name="label.minutes"/></div>
 					<div class="dailyInnerDiv">
 						<s:text name="label.At"/> &nbsp;&nbsp;
@@ -300,7 +415,7 @@
 						</select>
                     </div>
 				</div>
-				<div id='Weekly' class="schedulerWidth">
+				<div id='Weekly'> <!-- class="schedulerWidth" -->
    					<select id="weekly_week" name="weekly_week" multiple onChange="javascript:show('Weekly');" class="schedulerDay alignVertical">
 				   		<%
 				   			String defaultSelectedStr = "";
@@ -350,7 +465,7 @@
                    	</select>&nbsp;<s:text name="label.minute"/>
                                                 
 				</div>
-				<div id='Monthly' class="schedulerWidth">
+				<div id='Monthly'> <!-- class="schedulerWidth" -->
                    <s:text name="label.every"/>
                    <select id="monthly_day" name="monthly_day" onChange="javascript:show('Monthly');" class="schedulerSelectWidth alignVertical">
                            <option value="*">*</option>
@@ -414,18 +529,191 @@
                     </select> &nbsp; <s:text name="label.minute"/>
                                                 
 				</div>
-				
-			</div>
-			
-			<div class="clearfix">
-				<label for="xlInput" class="xlInput popup-label"><s:text name="label.cron.expression"/></label>
-				<div class="input" id="cronValidation">
-<!-- 					<input type="text" id="cronExpression" name="cronExpression" value=""> -->
 				</div>
 			</div>
-        </div>
+			
+<!-- 			<div class="clearfix"> -->
+<%-- 				<label for="xlInput" class="xlInput popup-label"><s:text name="label.schedule"/></label> --%>
+				
+<!-- 				<div class="input"> -->
+<!-- 					<div class="multipleFields quartsRadioWidth"> -->
+<%-- 						<div><input id="scheduleDaily" type="radio" name="schedule" value="Daily"  onChange="javascript:show('Daily');" <%= ((schedule.equals("Daily")) || (schedule.equals(""))) ? "checked" : "" %> />&nbsp; <s:text name="label.daily"/></div> --%>
+<!-- 					</div> -->
+<!-- 					<div class="multipleFields quartsRadioWidth"> -->
+<%-- 						<div><input id="scheduleDaily" type="radio" name="schedule" value="Weekly" onChange="javascript:show('Weekly');" <%= schedule.equals("Weekly") ? "checked" : "" %> />&nbsp; <s:text name="label.weekly"/></div> --%>
+<!-- 					</div> -->
+<!-- 					<div class="multipleFields quartsRadioWidth"> -->
+<%-- 						<div><input id="scheduleDaily" type="radio" name="schedule" value="Monthly" onChange="javascript:show('Monthly');" <%= schedule.equals("Monthly") ? "checked" : "" %>/>&nbsp; <s:text name="label.monthly"/></div> --%>
+<!-- 					</div> -->
+<!-- 				</div> -->
+<!-- 				<div  id='Daily' class="schedulerWidth"> -->
+<%-- 					<div><s:text name="label.every"/> &nbsp;&nbsp;&nbsp;&nbsp;	<s:text name="label.hours"/> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <s:text name="label.minutes"/></div> --%>
+<!-- 					<div class="dailyInnerDiv"> -->
+<%-- 						<s:text name="label.At"/> &nbsp;&nbsp; --%>
+<%-- 						<input type="checkbox" id="daily_every" name="daily_every" onChange="javascript:show('Daily');" <%= dailyEvery %>> --%>
+<!-- 						&nbsp;&nbsp; -->
+<%-- 	                    <select id="daily_hour" name="daily_hour" onChange="javascript:show('Daily');" class="schedulerSelectWidth"> --%>
+<!-- 	                         <option value="*">*</option> -->
+<%-- 	                         <%  --%>
+<!-- // 	                         	for (int i = 1; i < 24; i++) { -->
+<!-- // 	                         		String selectedStr = ""; -->
+<!-- // 	                         		if(!StringUtils.isEmpty(dailyHour) && dailyHour.equals("" + i)) { -->
+<!-- // 	                         			selectedStr = "selected"; -->
+<!-- // 	                         		} -->
+<%-- 	                         %> --%>
+<%-- 	                         	<option value="<%= i %>" <%= selectedStr %>> <%= i %> </option> --%>
+<%-- 	                         <% } %> --%>
+<%-- 	                   	</select> --%>
+<!-- 	                     &nbsp;	&nbsp; -->
+<%-- 					    <select id="daily_minute" name="daily_minute" onChange="javascript:show('Daily');" class="schedulerSelectWidth"> --%>
+<!-- 							<option value="*">*</option>             -->
+<%-- 						<%  --%>
+<!-- // 							for (int i = 1; i < 60; i++) {  -->
+<!-- //                          		String selectedStr = ""; -->
+<!-- //                          		if(!StringUtils.isEmpty(dailyMinute) && dailyMinute.equals("" + i)) { -->
+<!-- //                          			selectedStr = "selected"; -->
+<!-- //                          		} -->
+<%-- 						%> --%>
+<%-- 							<option value="<%= i %>" <%= selectedStr %>><%= i %></option> --%>
+<%-- 						<% } %> --%>
+<%-- 						</select> --%>
+<!--                     </div> -->
+<!-- 				</div> -->
+<!-- 				<div id='Weekly' class="schedulerWidth"> -->
+<%--    					<select id="weekly_week" name="weekly_week" multiple onChange="javascript:show('Weekly');" class="schedulerDay alignVertical"> --%>
+<%-- 				   		<% --%>
+<!-- // 				   			String defaultSelectedStr = ""; -->
+<!-- // 				   			if(StringUtils.isEmpty(weeklyWeek)) { -->
+<!-- // 				             	defaultSelectedStr = "selected"; -->
+<!-- // 				           	} -->
+<%-- 				   		%> --%>
+<%-- 				   			<option value="*" <%= defaultSelectedStr %>>*</option> --%>
+<%-- 				   		<% --%>
+<!-- // 				   			for(int i = 1; i < weekDays.length; i++){ -->
+<!-- // 				   				String selectedStr = ""; -->
+<!-- // 				   				if(!StringUtils.isEmpty(weeklyWeek) && weeklyWeek.equals("" + i)) { -->
+<!-- //                      				selectedStr = "selected"; -->
+<!-- //                      			} -->
+<%-- 						%> --%>
+<%-- 							<option value="<%= i %>" <%= selectedStr %>><%= weekDays[i] %></option> --%>
+<%--                         <%   --%>
+<!-- //                         	} -->
+<%-- 				   		%> --%>
+<%--                     </select> --%>
+                    
+<%--                     &nbsp; <s:text name="label.smal.at"/> &nbsp; --%>
+<%--                     <select id="weekly_hours" name="weekly_hours" onChange="javascript:show('Weekly');" class="schedulerSelectWidth alignVertical"> --%>
+<!--                         <option value="*">*</option> -->
+<%-- 	                    <%  --%>
+<!-- // 	                    	for (int i = 1; i < 24; i++) { -->
+<!-- // 	                    		String selectedStr = ""; -->
+<!-- // 	                     		if(!StringUtils.isEmpty(weeklyHour) && weeklyHour.equals("" + i)) { -->
+<!-- // 	                     			selectedStr = "selected"; -->
+<!-- // 	                     		} -->
+<%-- 	                    %> --%>
+<%-- 	                        <option value="<%= i %>" <%= selectedStr %>><%= i %></option> --%>
+<%-- 	                    <% } %> --%>
+<%--                     </select>&nbsp;<s:text name="label.hour"/>&nbsp; --%>
+                    
+<%--                   	<select id="weekly_minute" name="weekly_minute" onChange="javascript:show('Weekly');" class="schedulerSelectWidth alignVertical"> --%>
+<!-- 	                  <option value="*">*</option>             -->
+<%-- 	                  <%  --%>
+<!-- // 	                  		for (int i = 1; i < 60; i++) {  -->
+<!-- // 	                    		String selectedStr = ""; -->
+<!-- // 	                     		if(!StringUtils.isEmpty(weeklyMinute) && weeklyMinute.equals("" + i)) { -->
+<!-- // 	                     			selectedStr = "selected"; -->
+<!-- // 	                     		} -->
+<%-- 	                  %> --%>
+<%-- 	                      <option value="<%= i %>" <%= selectedStr %>><%= i %></option> --%>
+<%-- 	                  <% } %> --%>
+<%--                    	</select>&nbsp;<s:text name="label.minute"/> --%>
+                                                
+<!-- 				</div> -->
+<!-- 				<div id='Monthly' class="schedulerWidth"> -->
+<%--                    <s:text name="label.every"/> --%>
+<%--                    <select id="monthly_day" name="monthly_day" onChange="javascript:show('Monthly');" class="schedulerSelectWidth alignVertical"> --%>
+<!--                            <option value="*">*</option> -->
+<%--                        <%  --%>
+<!-- //                        		for (int i = 1; i <= 31; i++) {  -->
+<!-- // 	                    		String selectedStr = ""; -->
+<!-- // 	                     		if(!StringUtils.isEmpty(monthlyDay) && monthlyDay.equals("" + i)) { -->
+<!-- // 	                     			selectedStr = "selected"; -->
+<!-- // 	                     		} -->
+<%--                        	%> --%>
+<%--                            <option value="<%= i %>" <%= selectedStr %>><%= i %></option> --%>
+<%--                        <% } %> --%>
+<%--                    </select>&nbsp;<s:text name="label.of"/>&nbsp; --%>
+                   
+<%--                   	<select id="monthly_month" name="monthly_month" multiple onChange="javascript:show('Monthly');" class="schedulerDay alignVertical"> --%>
+<%-- 						<% --%>
+<!-- // 				   			defaultSelectedStr = ""; -->
+<!-- // 				   			if(StringUtils.isEmpty(monthlyMonth)) { -->
+<!-- // 				             	defaultSelectedStr = "selected"; -->
+<!-- // 				           	} -->
+<%-- 				   		%> --%>
+<%-- 				   			<option value="*" <%= defaultSelectedStr %>>*</option> --%>
+<%-- 				   		<% --%>
+<!-- // 				   			for(int i = 1; i < months.length; i++){ -->
+<!-- // 				   				String selectedStr = ""; -->
+<!-- // 				   				if(!StringUtils.isEmpty(monthlyMonth) && monthlyMonth.equals("" + i)) { -->
+<!-- //                      				selectedStr = "selected"; -->
+<!-- //                      			} -->
+<%-- 						%> --%>
+<%-- 							<option value="<%= i %>" <%= selectedStr %>><%= months[i] %></option> --%>
+<%--                         <%   --%>
+<!-- //                         	} -->
+<%-- 				   		%> --%>
+<%--                     </select> --%>
+                    
+<%-- 					&nbsp; <s:text name="label.smal.at"/> &nbsp; --%>
+<%--                     <select id="monthly_hour" name="monthly_hour" onChange="javascript:show('Monthly');" class="schedulerSelectWidth alignVertical"> --%>
+<!--                         <option value="*">*</option> -->
+<%--                     <%  --%>
+<!-- //                     	for (int i = 1; i < 24; i++) {  -->
+<!-- //                     		String selectedStr = ""; -->
+<!-- //                      		if(!StringUtils.isEmpty(monthlyHour) && monthlyHour.equals("" + i)) { -->
+<!-- //                      			selectedStr = "selected"; -->
+<!-- //                      		} -->
+<%--                     %> --%>
+<%--                         <option value="<%= i %>" <%= selectedStr %>><%= i %></option> --%>
+<%--                     <% } %> --%>
+<%--                     </select>&nbsp;<s:text name="label.hour"/> --%>
+<!--                     &nbsp; -->
+<%--                     <select id="monthly_minute" name="monthly_minute" onChange="javascript:show('Monthly');" class="schedulerSelectWidth alignVertical"> --%>
+<!--                         <option value="*">*</option> -->
+<%--                     <%  --%>
+<!-- //                     	for (int i = 1; i < 60; i++) {  -->
+<!-- //                     		String selectedStr = ""; -->
+<!-- //                      		if(!StringUtils.isEmpty(monthlyMinute) && monthlyMinute.equals("" + i)) { -->
+<!-- //                      			selectedStr = "selected"; -->
+<!-- //                      		} -->
+<%--                     %> --%>
+<%--                         <option value="<%= i %>" <%= selectedStr %>><%= i %></option> --%>
+<%--                     <% } %> --%>
+<%--                     </select> &nbsp; <s:text name="label.minute"/> --%>
+                                                
+<!-- 				</div> -->
+				
+<!-- 			</div> -->
+			
+<!-- 			<div class="clearfix"> -->
+<%-- 				<label for="xlInput" class="xlInput popup-label"><s:text name="label.cron.expression"/></label> --%>
+<!-- 				<div class="input" id="cronValidation"> -->
+<!-- 					<input type="text" id="cronExpression" name="cronExpression" value=""> -->
+<!-- 				</div> -->
+<!-- 			</div> -->
+			
+			<div class="control-group">
+				<label class="control-label labelbold popupLbl">
+					<s:text name='label.cron.expression' />
+				</label>
+				<div class="controls" id="cronValidation">
+				</div>
+			</div>
+			
+<!--         </div> -->
 		
-		<div class="modal-body" id="configs">
+<!-- 		<div class="modal-body" id="configs"> -->
 
 			<!-- CI basic settings starts -->
 			<div class="theme_accordion_container clearfix" style="float: none;">
@@ -438,281 +726,348 @@
 			                        <section class="scrollpanel_inner">
 			                        <!--  Ci job configuration starts -->
 										<!-- Ci operation -->
-										<div class="clearfix">
-										    <label for="xlInput" class="xlInput popup-label"><s:text name="label.ci.operation"/></label>
-										    <div class="input">
-										        <select id="operation" name="operation" class="xlarge">
+<!-- 										<div class="clearfix"> -->
+<%-- 										    <label for="xlInput" class="xlInput popup-label"><s:text name="label.ci.operation"/></label> --%>
+<!-- 										    <div class="input"> -->
+<%-- 										        <select id="operation" name="operation" class="xlarge"> --%>
+<!-- 											        <option value="build">Build</option> -->
+<%-- 											        <% if (!TechnologyTypes.JAVA_STANDALONE.contains(technology)) { %> --%>
+<!-- 											        	<option value="deploy">Deploy</option> -->
+<%-- 											        <% } %> --%>
+<!-- 											        <option value="functionalTest">Functional Test</option> -->
+<%-- 												</select> --%>
+<!-- 											</div> -->
+<!-- 										</div> -->
+										
+										<div class="control-group">
+											<label class="control-label labelbold popupLbl">
+												<s:text name='label.ci.operation' />
+											</label>
+											<div class="controls">
+												<select id="operation" name="operation" class="input-xlarge">
 											        <option value="build">Build</option>
-											        <% if (!TechnologyTypes.JAVA_STANDALONE.contains(technology)) { %>
 											        	<option value="deploy">Deploy</option>
-											        <% } %>
 											        <option value="functionalTest">Functional Test</option>
 												</select>
 											</div>
 										</div>
 										
-										<div class="clearfix" id="environmentConfig">
-										    <label for="xlInput" class="xlInput popup-label"><span class="red">*</span> <s:text name="label.environment"/></label>
-										    <div class="input">
-										        <select id="environments" name="environment" class="xlarge">
-											        <optgroup label="Configurations" class="optgrplbl">
-														<%
-															String defaultEnv = "";
-															String selectedStr = "";
-															if(environments != null) {
-																for (Environment environment : environments) {
-																	if(environment.isDefaultEnv()) {
-																		defaultEnv = environment.getName();
-																		selectedStr = "selected";
-																	} else {
-																		selectedStr = "";
-																	}
-														%>
-																<option value="<%= environment.getName() %>" <%= selectedStr %> onClick="selectEnvs()"><%= environment.getName() %></option>
-														<% 		} 
-															}
-														%>
+<!-- 										<div class="clearfix" id="environmentConfig"> -->
+<%-- 										    <label for="xlInput" class="xlInput popup-label"><span class="red">*</span> <s:text name="label.environment"/></label> --%>
+<!-- 										    <div class="input"> -->
+<%-- 										        <select id="environments" name="environment" class="xlarge"> --%>
+<!-- 											        <optgroup label="Configurations" class="optgrplbl"> -->
+<%-- 														<% --%>
+<!-- // 															String defaultEnv = ""; -->
+<!-- // 															String selectedStr = ""; -->
+<!-- // 															if(environments != null) { -->
+<!-- // 																for (Environment environment : environments) { -->
+<!-- // 																	if(environment.isDefaultEnv()) { -->
+<!-- // 																		defaultEnv = environment.getName(); -->
+<!-- // 																		selectedStr = "selected"; -->
+<!-- // 																	} else { -->
+<!-- // 																		selectedStr = ""; -->
+<!-- // 																	} -->
+<%-- 														%> --%>
+<%-- 																<option value="<%= environment.getName() %>" <%= selectedStr %> onClick="selectEnvs()"><%= environment.getName() %></option> --%>
+<%-- 														<% 		}  --%>
+<!-- // 															} -->
+<%-- 														%> --%>
+<!-- 													</optgroup> -->
+<%-- 												</select> --%>
+<!-- 											</div> -->
+<!-- 										</div> -->
+										<div class="control-group">
+											<label class="control-label labelbold popupLbl">
+												<s:text name='label.environment' />
+											</label>
+											<div class="controls">
+												<select id="environments" name="environment" class="input-xlarge">
+													<optgroup label="Configurations" class="optgrplbl">
 													</optgroup>
 												</select>
 											</div>
 										</div>
 										
 										<div id="jobBuildConfigs">
-											<% if (!TechnologyTypes.ANDROIDS.contains(technology) && !TechnologyTypes.IPHONES.contains(technology) && !TechnologyTypes.JAVA_STANDALONE.contains(technology)) { %>
+<%-- 											<% if (!TechnologyTypes.ANDROIDS.contains(technology) && !TechnologyTypes.IPHONES.contains(technology) && !TechnologyTypes.JAVA_STANDALONE.contains(technology)) { %> --%>
 												
 												<!-- Browser -->
-												<div class="clearfix" id="browserConfig">
-													<label for="xlInput" class="xlInput popup-label"><s:text name="label.browser"/></label>
-													<div class="input">
-														<select id="browser" name="browser" class="xlarge" >
-														<%
-															Iterator browsers = browserMap.entrySet().iterator();
-															while (browsers.hasNext()) {
-															    Map.Entry entry = (Map.Entry) browsers.next();
-															    String key = (String)entry.getKey();
-															    String value = (String)entry.getValue();
-														%>
-																<option value="<%=key%>"><%=value%></option>
-														<%	    
-															}
-														%>
-														</select>
-													</div>
-												</div>
-											<% } %>
-											<% if (TechnologyTypes.JAVA_STANDALONE.contains(technology)) { %>
-												<div id="javaStandaloneConfig" style="display: none;">
-													<div class="clearfix">
-														<label for="xlInput" class="xlInput popup-label"><s:text name="label.jar.name"/></label>
-														<div class="input">
-															<input type="text" id="jarName" name="jarName" class="xlarge deploy_xlarge">	
-														</div>
-													</div>
-													
-													<div class="clearfix">
-														<label for="xlInput" class="xlInput popup-label"><s:text name="label.main.class.name"/></label>
-														<div class="input">
-															<input type="text" id="mainClassName" name="mainClassName" class="xlarge deploy_xlarge">	
-														</div>
-													</div>
-												</div>
-											<% } %>
-											
-											<% if (TechnologyTypes.ANDROIDS.contains(technology)) { %>
-												<!-- Android Version -->
-												<div class="clearfix" id="androidSdkConfig">
-													<label for="xlInput" class="xlInput popup-label"><s:text name="label.sdk"/></label>
-													<div class="input">
-														<select id="androidVersion" name="androidVersion" class="xlarge" >
-															<%
-																for (int i=0; i<AndroidConstants.SUPPORTED_SDKS.length; i++) {
-																	if (!AndroidConstants.SUPPORTED_SDKS[i].equalsIgnoreCase(FrameworkConstants.ANDROID_LOWER_VER)) {
-															%>
-																<option value="<%= AndroidConstants.SUPPORTED_SDKS[i] %>"><%= AndroidConstants.SUPPORTED_SDKS[i] %></option>
-															<%  	}
-																} %>
-														</select>
-													</div>
-												</div>
+<!-- 												<div class="clearfix" id="browserConfig"> -->
+<%-- 													<label for="xlInput" class="xlInput popup-label"><s:text name="label.browser"/></label> --%>
+<!-- 													<div class="input"> -->
+<%-- 														<select id="browser" name="browser" class="xlarge" > --%>
+<%-- 														<% --%>
+<!-- // 															Iterator browsers = browserMap.entrySet().iterator(); -->
+<!-- // 															while (browsers.hasNext()) { -->
+<!-- // 															    Map.Entry entry = (Map.Entry) browsers.next(); -->
+<!-- // 															    String key = (String)entry.getKey(); -->
+<!-- // 															    String value = (String)entry.getValue(); -->
+<%-- 														%> --%>
+<%-- 																<option value="<%=key%>"><%=value%></option> --%>
+<%-- 														<%	     --%>
+<!-- // 															} -->
+<%-- 														%> --%>
+<%-- 														</select> --%>
+<!-- 													</div> -->
+<!-- 												</div> -->
 												
-												<div id="androidDevicesConfig">
-													<div class="clearfix">
-														<label for="xlInput" class="xlInput popup-label"><s:text name="label.android.devices"/></label>
-														<div class="input">
-															<select id="androidDevice" name="device" class="xlarge">
-																<option value="usb">USB</option>
-																<option value="emulator">Emulator</option>
-																<option value="serialNumber">Serial Number</option>
-															</select>
-														</div>
-													</div>
-													
-													<div class="clearfix" id="serialNo_div">
-														<label for="xlInput" class="xlInput popup-label"><s:text name="label.sreialno"/></label>
-														<div class="input">
-															<input type="text" id="serialNum" name="serialNumber" class="xlarge deploy_xlarge">	
-														</div>
-													</div>
-												</div>
-											<% } %>	
+										<div class="control-group">
+											<label class="control-label labelbold popupLbl">
+												<s:text name='label.browser' />
+											</label>
+											<div class="controls">
+												<select id="browser" name="browser" class="input-xlarge">
+												</select>
+											</div>
+										</div>
 										
-											<% if (TechnologyTypes.IPHONES.contains(technology)) { %>
-											
-												<div id="iphoneBuildConfig">
-													<!-- TARGET -->
-									                <div class="clearfix">
-									                    <label for="xlInput" class="xlInput popup-label"><s:text name="label.target"/></label>
-									                    <div class="input">
-															<select id="target" name="target" class="xlarge" >
-															<% if (xcodeConfigs != null) { 
-																	for (PBXNativeTarget xcodeConfig : xcodeConfigs) {
-																%>
-																	<option value="<%= xcodeConfig.getName() %>"><%= xcodeConfig.getName() %></option>
-																<% } 
-															} %>	
-													       </select>
-									                    </div>
-									                </div>
-										                
-													<!-- SDK -->
-													<div class="clearfix">
-														<label for="xlInput" class="xlInput popup-label"><s:text name="label.sdk"/></label>
-														<div class="input">
-															<select id="sdk" name="sdk" class="xlarge" >
-																<%
-																	if (macSdks != null) {
-																		for (String sdk : macSdks) {
-																%>
-																	<option value="<%= sdk %>"><%= sdk %></option>
-																<% 
-																		} 
-																	}
-																%>
-															</select>
-														</div>
-													</div>
+<%-- 											<% } %> --%>
+<%-- 											<% if (TechnologyTypes.JAVA_STANDALONE.contains(technology)) { %> --%>
+<!-- 												<div id="javaStandaloneConfig" style="display: none;"> -->
+<!-- 													<div class="clearfix"> -->
+<%-- 														<label for="xlInput" class="xlInput popup-label"><s:text name="label.jar.name"/></label> --%>
+<!-- 														<div class="input"> -->
+<!-- 															<input type="text" id="jarName" name="jarName" class="xlarge deploy_xlarge">	 -->
+<!-- 														</div> -->
+<!-- 													</div> -->
 													
-													<!-- Mode -->
-													<div class="clearfix">
-														<label for="xlInput" class="xlInput popup-label"><s:text name="label.mode"/></label>
-														<div class="input">
-															<select id="mode" name="mode" class="xlarge" >
-																<option value="<%= XCodeConstants.CONFIGURATION_DEBUG %>"><%= XCodeConstants.CONFIGURATION_DEBUG %></option>
-																<option value="<%= XCodeConstants.CONFIGURATION_RELEASE %>"><%= XCodeConstants.CONFIGURATION_RELEASE %></option>
-															</select>
-														</div>
-													</div>
-												</div>
+<!-- 													<div class="clearfix"> -->
+<%-- 														<label for="xlInput" class="xlInput popup-label"><s:text name="label.main.class.name"/></label> --%>
+<!-- 														<div class="input"> -->
+<!-- 															<input type="text" id="mainClassName" name="mainClassName" class="xlarge deploy_xlarge">	 -->
+<!-- 														</div> -->
+<!-- 													</div> -->
+<!-- 												</div> -->
+<%-- 											<% } %> --%>
+											
+<%-- 											<% if (TechnologyTypes.ANDROIDS.contains(technology)) { %> --%>
+<!-- 												Android Version -->
+<!-- 												<div class="clearfix" id="androidSdkConfig"> -->
+<%-- 													<label for="xlInput" class="xlInput popup-label"><s:text name="label.sdk"/></label> --%>
+<!-- 													<div class="input"> -->
+<%-- 														<select id="androidVersion" name="androidVersion" class="xlarge" > --%>
+<%-- 															<% --%>
+<!-- // 																for (int i=0; i<AndroidConstants.SUPPORTED_SDKS.length; i++) { -->
+<!-- // 																	if (!AndroidConstants.SUPPORTED_SDKS[i].equalsIgnoreCase(FrameworkConstants.ANDROID_LOWER_VER)) { -->
+<%-- 															%> --%>
+<%-- 																<option value="<%= AndroidConstants.SUPPORTED_SDKS[i] %>"><%= AndroidConstants.SUPPORTED_SDKS[i] %></option> --%>
+<%-- 															<%  	} --%>
+<%-- 																} %> --%>
+<%-- 														</select> --%>
+<!-- 													</div> -->
+<!-- 												</div> -->
 												
-												<!-- deploy to device or simulator option -->
-												<div id="iphoneDeployConfig">
-															<div class="clearfix">
-																	<label for="xlInput" class="xlInput popup-label"><s:text name="label.deploy.to"/></label>
+<!-- 												<div id="androidDevicesConfig"> -->
+<!-- 													<div class="clearfix"> -->
+<%-- 														<label for="xlInput" class="xlInput popup-label"><s:text name="label.android.devices"/></label> --%>
+<!-- 														<div class="input"> -->
+<%-- 															<select id="androidDevice" name="device" class="xlarge"> --%>
+<!-- 																<option value="usb">USB</option> -->
+<!-- 																<option value="emulator">Emulator</option> -->
+<!-- 																<option value="serialNumber">Serial Number</option> -->
+<%-- 															</select> --%>
+<!-- 														</div> -->
+<!-- 													</div> -->
+													
+<!-- 													<div class="clearfix" id="serialNo_div"> -->
+<%-- 														<label for="xlInput" class="xlInput popup-label"><s:text name="label.sreialno"/></label> --%>
+<!-- 														<div class="input"> -->
+<!-- 															<input type="text" id="serialNum" name="serialNumber" class="xlarge deploy_xlarge">	 -->
+<!-- 														</div> -->
+<!-- 													</div> -->
+<!-- 												</div> -->
+<%-- 											<% } %>	 --%>
+										
+<%-- 											<% if (TechnologyTypes.IPHONES.contains(technology)) { %> --%>
+											
+<!-- 												<div id="iphoneBuildConfig"> -->
+<!-- 													TARGET -->
+<!-- 									                <div class="clearfix"> -->
+<%-- 									                    <label for="xlInput" class="xlInput popup-label"><s:text name="label.target"/></label> --%>
+<!-- 									                    <div class="input"> -->
+<%-- 															<select id="target" name="target" class="xlarge" > --%>
+<%-- 															<% if (xcodeConfigs != null) {  --%>
+<!-- // 																	for (PBXNativeTarget xcodeConfig : xcodeConfigs) { -->
+<%-- 																%> --%>
+<%-- 																	<option value="<%= xcodeConfig.getName() %>"><%= xcodeConfig.getName() %></option> --%>
+<%-- 																<% }  --%>
+<%-- 															} %>	 --%>
+<%-- 													       </select> --%>
+<!-- 									                    </div> -->
+<!-- 									                </div> -->
+										                
+<!-- 													SDK -->
+<!-- 													<div class="clearfix"> -->
+<%-- 														<label for="xlInput" class="xlInput popup-label"><s:text name="label.sdk"/></label> --%>
+<!-- 														<div class="input"> -->
+<%-- 															<select id="sdk" name="sdk" class="xlarge" > --%>
+<%-- 																<% --%>
+<!-- // 																	if (macSdks != null) { -->
+<!-- // 																		for (String sdk : macSdks) { -->
+<%-- 																%> --%>
+<%-- 																	<option value="<%= sdk %>"><%= sdk %></option> --%>
+<%-- 																<%  --%>
+<!-- // 																		}  -->
+<!-- // 																	} -->
+<%-- 																%> --%>
+<%-- 															</select> --%>
+<!-- 														</div> -->
+<!-- 													</div> -->
+													
+<!-- 													Mode -->
+<!-- 													<div class="clearfix"> -->
+<%-- 														<label for="xlInput" class="xlInput popup-label"><s:text name="label.mode"/></label> --%>
+<!-- 														<div class="input"> -->
+<%-- 															<select id="mode" name="mode" class="xlarge" > --%>
+<%-- 																<option value="<%= XCodeConstants.CONFIGURATION_DEBUG %>"><%= XCodeConstants.CONFIGURATION_DEBUG %></option> --%>
+<%-- 																<option value="<%= XCodeConstants.CONFIGURATION_RELEASE %>"><%= XCodeConstants.CONFIGURATION_RELEASE %></option> --%>
+<%-- 															</select> --%>
+<!-- 														</div> -->
+<!-- 													</div> -->
+<!-- 												</div> -->
+												
+<!-- 												deploy to device or simulator option -->
+<!-- 												<div id="iphoneDeployConfig"> -->
+<!-- 															<div class="clearfix"> -->
+<%-- 																	<label for="xlInput" class="xlInput popup-label"><s:text name="label.deploy.to"/></label> --%>
 																	
-																	<div class="input">
-																		<div class="multipleFields emaillsFieldsWidth">
-																			<div><input type="radio" name="deployTo" value="simulator" checked>&nbsp; <s:text name="label.simulator"/></div>
-																		</div>
-																		<div class="multipleFields">
-																			<div>
-																				<select id="simulatorVersion" name="simulatorVersion" class="medium">
-																					<%
-																					    if (macSimulatorSdkVersions != null) {
-																					    	for (String simulatorVersion : macSimulatorSdkVersions) {
-																					%>
-																					     <option value="<%= simulatorVersion %>"><%= simulatorVersion %></option>
-																					<%
-																					    	}
-																					    }
-																					%>
-																				</select>
-																			</div>
-																		</div>
-																	</div>
+<!-- 																	<div class="input"> -->
+<!-- 																		<div class="multipleFields emaillsFieldsWidth"> -->
+<%-- 																			<div><input type="radio" name="deployTo" value="simulator" checked>&nbsp; <s:text name="label.simulator"/></div> --%>
+<!-- 																		</div> -->
+<!-- 																		<div class="multipleFields"> -->
+<!-- 																			<div> -->
+<%-- 																				<select id="simulatorVersion" name="simulatorVersion" class="medium"> --%>
+<%-- 																					<% --%>
+<!-- // 																					    if (macSimulatorSdkVersions != null) { -->
+<!-- // 																					    	for (String simulatorVersion : macSimulatorSdkVersions) { -->
+<%-- 																					%> --%>
+<%-- 																					     <option value="<%= simulatorVersion %>"><%= simulatorVersion %></option> --%>
+<%-- 																					<% --%>
+<!-- // 																					    	} -->
+<!-- // 																					    } -->
+<%-- 																					%> --%>
+<%-- 																				</select> --%>
+<!-- 																			</div> -->
+<!-- 																		</div> -->
+<!-- 																	</div> -->
 																	
-																	<div class="input">
-																		<div class="multipleFields emaillsFieldsWidth">
-																			<div><input type="radio" name="deployTo" value="device"> &nbsp;<s:text name="label.deplot.to.device"/></div>
-																		</div>
-																		<div class="multipleFields">
-																			<div></div>
-																		</div>
-																	</div>
-															</div>
-											<% } %>	
+<!-- 																	<div class="input"> -->
+<!-- 																		<div class="multipleFields emaillsFieldsWidth"> -->
+<%-- 																			<div><input type="radio" name="deployTo" value="device"> &nbsp;<s:text name="label.deplot.to.device"/></div> --%>
+<!-- 																		</div> -->
+<!-- 																		<div class="multipleFields"> -->
+<!-- 																			<div></div> -->
+<!-- 																		</div> -->
+<!-- 																	</div> -->
+<!-- 															</div> -->
+<%-- 											<% } %>	 --%>
 										</div>
 										<!-- Down stream projects specification -->
-										<div class="clearfix">
-											<label for="xlInput" class="xlInput popup-label"><s:text name="label.downstream.projects"/></label>
-											<div class="input">
-												<select id="downstreamProject" name="downstreamProject" class="xlarge" >
-														<option value="">-</option>
-														<% 
-															if (existingJobsNames != null) {
-																for(String existJobName : existingJobsNames) {
-																	if(existingJob != null && existingJob.getName().equals(existJobName)) {
-																		continue;
-																	}
-														%>
-															<option value="<%= existJobName %>"><%= existJobName %></option>
-														<% 
-																}
-															}
-														%>
+<!-- 										<div class="clearfix"> -->
+<%-- 											<label for="xlInput" class="xlInput popup-label"><s:text name="label.downstream.projects"/></label> --%>
+<!-- 											<div class="input"> -->
+<%-- 												<select id="downstreamProject" name="downstreamProject" class="xlarge" > --%>
+<!-- 														<option value="">-</option> -->
+<%-- 														<%  --%>
+<!-- // 															if (existingJobsNames != null) { -->
+<!-- // 																for(String existJobName : existingJobsNames) { -->
+<!-- // 																	if(existingJob != null && existingJob.getName().equals(existJobName)) { -->
+<!-- // 																		continue; -->
+<!-- // 																	} -->
+<%-- 														%> --%>
+<%-- 															<option value="<%= existJobName %>"><%= existJobName %></option> --%>
+<%-- 														<%  --%>
+<!-- // 																} -->
+<!-- // 															} -->
+<%-- 														%> --%>
+<%-- 												</select> --%>
+<!-- 											</div> -->
+<!-- 										</div> -->
+										
+										<div class="control-group">
+											<label class="control-label labelbold popupLbl">
+												<s:text name='label.downstream.projects' />
+											</label>
+											<div class="controls">
+												<select id="downstreamProject" name="downstreamProject" class="input-xlarge">
+													<option value="">-</option>
 												</select>
 											</div>
 										</div>
 										
 										<!-- clone this workspace -->
-										<div class="clearfix">
-											<label for="xlInput" class="xlInput popup-label"><s:text name="label.clone.workspace"/></label>
+<!-- 										<div class="clearfix"> -->
+<%-- 											<label for="xlInput" class="xlInput popup-label"><s:text name="label.clone.workspace"/></label> --%>
 											
-											<div class="input">
-												<div class="multipleFields quartsRadioWidth">
-													<div><input type="radio" name="cloneWorkspace" value="true" />&nbsp; <s:text name="label.yes"/></div>
-												</div>
-												<div class="multipleFields quartsRadioWidth">
-													<div><input type="radio" name="cloneWorkspace" value="false" checked/>&nbsp; <s:text name="label.no"/></div>
-												</div>
+<!-- 											<div class="input"> -->
+<!-- 												<div class="multipleFields quartsRadioWidth"> -->
+<%-- 													<div><input type="radio" name="cloneWorkspace" value="true" />&nbsp; <s:text name="label.yes"/></div> --%>
+<!-- 												</div> -->
+<!-- 												<div class="multipleFields quartsRadioWidth"> -->
+<%-- 													<div><input type="radio" name="cloneWorkspace" value="false" checked/>&nbsp; <s:text name="label.no"/></div> --%>
+<!-- 												</div> -->
+<!-- 											</div> -->
+<!-- 										</div> -->
+										
+										<div class="control-group">
+											<label class="control-label labelbold popupLbl">
+												<s:text name='label.clone.workspace' />
+											</label>
+											<div class="controls">
+												<input type="radio" name="cloneWorkspace" value="true" />&nbsp; <s:text name="label.yes"/>
+												<input type="radio" name="cloneWorkspace" value="false" checked/>&nbsp; <s:text name="label.no"/>
+											</div>
+										</div>
+			
+										<!-- Show Settings -->
+<!-- 										<div class="clearfix"> -->
+<!-- 											<label for="xlInput" class="xlInput popup-label"></label> -->
+<!-- 											<div class="input"> -->
+<%-- 												<input type="checkbox" id="showSettings" name="showSettings" value="showsettings" <%= showSettings %>> <s:text name="label.show.setting"/> --%>
+<!-- 													&nbsp; -->
+<%-- 											<% if (TechnologyTypes.ANDROIDS.contains(technology)) { %> --%>
+<!-- 													<input type="checkbox" id="proguard" name="proguard" value="false"> -->
+<%-- 													<span><s:text name="label.progurad"/></span> --%>
+													
+<!-- 													<input type="checkbox" id="signing" name="signing" value="false"> -->
+<%-- 													<span class="popup-span"><s:text name="label.signing"/></span> --%>
+																						
+<%-- 											<% } %> --%>
+											
+<%-- 											<% if (CollectionUtils.isNotEmpty(project.getProjectInfo().getTechnology().getDatabases())) {%> --%>
+<%-- 											<% if (false) {%> --%>
+<!-- 												<input type="checkbox" id="importSql" name="importSql" value="true"> -->
+<%-- 												<span class="textarea_span popup-span"><s:text name="label.import.sql"/></span> --%>
+<%-- 											<% } %> --%>
+											
+<%-- 											<%  --%>
+<!-- // 												if ((TechnologyTypes.JAVA_STANDALONE.equals(technology) -->
+<!-- // 											 					|| TechnologyTypes.JAVA_WEBSERVICE.equals(technology) -->
+<!-- // 											 					|| TechnologyTypes.JAVA.equals(technology) -->
+<!-- // 											 					|| TechnologyTypes.HTML5.equals(technology) -->
+<!-- // 											 					|| TechnologyTypes.HTML5_JQUERY_MOBILE_WIDGET.equals(technology) -->
+<!-- // 											 					|| TechnologyTypes.HTML5_MOBILE_WIDGET.equals(technology) -->
+<!-- // 											 					|| TechnologyTypes.HTML5_MULTICHANNEL_JQUERY_WIDGET.equals(technology) || TechnologyTypes.HTML5_WIDGET.equals(technology))) { -->
+<%-- 											 %> --%>
+<!-- 													<input type="checkbox" id="skipTest" name="skipTest" value="true"> -->
+<%-- 													<span class="textarea_span popup-span"><s:text name="label.skip.unit.test"/></span> --%>
+<%-- 											<% } %> --%>
+<!-- 											</div> -->
+<!-- 										</div> -->
+									
+										<div class="control-group">
+											<label class="control-label labelbold popupLbl">
+												<s:text name='label.show.setting' />
+											</label>
+											<div class="controls">
+												<input type="checkbox" id="showSettings" name="showSettings" value="showsettings" <%= showSettings %>> &nbsp; <s:text name="label.show.setting"/>
+												<input type="checkbox" id="proguard" name="proguard" value="false">&nbsp;<s:text name="label.progurad"/>
+												<input type="checkbox" id="signing" name="signing" value="false">&nbsp;<s:text name="label.signing"/>
 											</div>
 										</div>
 										
-										<!-- Show Settings -->
-										<div class="clearfix">
-											<label for="xlInput" class="xlInput popup-label"></label>
-											<div class="input">
-												<input type="checkbox" id="showSettings" name="showSettings" value="showsettings" <%= showSettings %>> <s:text name="label.show.setting"/>
-													&nbsp;
-											<% if (TechnologyTypes.ANDROIDS.contains(technology)) { %>
-													<input type="checkbox" id="proguard" name="proguard" value="false">
-													<span><s:text name="label.progurad"/></span>
-													
-													<input type="checkbox" id="signing" name="signing" value="false">
-													<span class="popup-span"><s:text name="label.signing"/></span>
-																						
-											<% } %>
-											
-<%-- 											<% if (CollectionUtils.isNotEmpty(project.getProjectInfo().getTechnology().getDatabases())) {%> --%>
-											<% if (false) {%>
-												<input type="checkbox" id="importSql" name="importSql" value="true">
-												<span class="textarea_span popup-span"><s:text name="label.import.sql"/></span>
-											<% } %>
-											
-											<% 
-												if ((TechnologyTypes.JAVA_STANDALONE.equals(technology)
-											 					|| TechnologyTypes.JAVA_WEBSERVICE.equals(technology)
-											 					|| TechnologyTypes.JAVA.equals(technology)
-											 					|| TechnologyTypes.HTML5.equals(technology)
-											 					|| TechnologyTypes.HTML5_JQUERY_MOBILE_WIDGET.equals(technology)
-											 					|| TechnologyTypes.HTML5_MOBILE_WIDGET.equals(technology)
-											 					|| TechnologyTypes.HTML5_MULTICHANNEL_JQUERY_WIDGET.equals(technology) || TechnologyTypes.HTML5_WIDGET.equals(technology))) {
-											 %>
-													<input type="checkbox" id="skipTest" name="skipTest" value="true">
-													<span class="textarea_span popup-span"><s:text name="label.skip.unit.test"/></span>
-											<% } %>
-											</div>
-										</div>
-									
 									<!--  Ci job configuration ends -->
 			                        </section>
 			                    </div>
@@ -733,16 +1088,25 @@
 			                    <div class="scrollpanel adv_setting_accordian_bottom">
 			                        <section class="scrollpanel_inner">
 			
-										<div class="clearfix">
-											<label for="xlInput" class="xlInput popup-label"><s:text name="label.enable.build.release"/></label>
+<!-- 										<div class="clearfix"> -->
+<%-- 											<label for="xlInput" class="xlInput popup-label"><s:text name="label.enable.build.release"/></label> --%>
 											
-											<div class="input">
-												<div class="multipleFields quartsRadioWidth">
-													<div><input type="radio" name="enableBuildRelease" value="true" />&nbsp; <s:text name="label.yes"/></div>
-												</div>
-												<div class="multipleFields quartsRadioWidth">
-													<div><input type="radio" name="enableBuildRelease" value="false" checked />&nbsp; <s:text name="label.no"/></div>
-												</div>
+<!-- 											<div class="input"> -->
+<!-- 												<div class="multipleFields quartsRadioWidth"> -->
+<%-- 													<div><input type="radio" name="enableBuildRelease" value="true" />&nbsp; <s:text name="label.yes"/></div> --%>
+<!-- 												</div> -->
+<!-- 												<div class="multipleFields quartsRadioWidth"> -->
+<%-- 													<div><input type="radio" name="enableBuildRelease" value="false" checked />&nbsp; <s:text name="label.no"/></div> --%>
+<!-- 												</div> -->
+<!-- 											</div> -->
+<!-- 										</div> -->
+										<div class="control-group">
+											<label class="control-label labelbold popupLbl">
+												<s:text name='label.enable.build.release' />
+											</label>
+											<div class="controls">
+												<input type="radio" name="enableBuildRelease" value="true" />&nbsp; <s:text name="label.yes"/>
+												<input type="radio" name="enableBuildRelease" value="false" checked />&nbsp; <s:text name="label.no"/>
 											</div>
 										</div>
 										
@@ -750,60 +1114,122 @@
 											<legend class="fieldSetLegend"><s:text name="label.build.release"/></legend>
 											
 											<div id="CollabNetConfig">
-												<div class="clearfix">
-													<label for="xlInput" class="xlInput popup-label"><span class="red">* </span><s:text name="label.build.release.url"/></label>
-													<div class="input">
-														<input type="text" id="collabNetURL" class="ciBuildReleaseURL" name="collabNetURL" value="<%= existingJob == null ? "" : existingJob.getCollabNetURL() %>">
+											
+<!-- 												<div class="clearfix"> -->
+<%-- 													<label for="xlInput" class="xlInput popup-label"><span class="red">* </span><s:text name="label.build.release.url"/></label> --%>
+<!-- 													<div class="input"> -->
+<%-- 														<input type="text" id="collabNetURL" class="ciBuildReleaseURL" name="collabNetURL" value="<%= existingJob == null ? "" : existingJob.getCollabNetURL() %>"> --%>
+<!-- 													</div> -->
+<!-- 												</div> -->
+												<div class="control-group">
+													<label class="control-label labelbold popupLbl">
+														<s:text name='label.build.release.url' />
+													</label>
+													<div class="controls">
+														<input type="text" id="collabNetURL" class="input-xlarge" name="collabNetURL" value="<%= existingJob == null ? "" : existingJob.getCollabNetURL() %>">
 													</div>
 												</div>
 									
-												<div class="clearfix">
-													<label for="xlInput" class="xlInput popup-label"><span class="red">* </span><s:text name="label.build.release.username"/></label>
-													<div class="input">
-														<input type="text" id="collabNetusername" name="collabNetusername" maxlength="63" title="63 Characters only" value="<%= existingJob == null ? "" : existingJob.getCollabNetusername() %>">
+<!-- 												<div class="clearfix"> -->
+<%-- 													<label for="xlInput" class="xlInput popup-label"><span class="red">* </span><s:text name="label.build.release.username"/></label> --%>
+<!-- 													<div class="input"> -->
+<%-- 														<input type="text" id="collabNetusername" name="collabNetusername" maxlength="63" title="63 Characters only" value="<%= existingJob == null ? "" : existingJob.getCollabNetusername() %>"> --%>
+<!-- 													</div> -->
+<!-- 												</div> -->
+												<div class="control-group">
+													<label class="control-label labelbold popupLbl">
+														<s:text name='label.build.release.username' />
+													</label>
+													<div class="controls">
+														<input type="text" id="collabNetusername" name="collabNetusername" class="input-xlarge" maxlength="63" title="63 Characters only" value="<%= existingJob == null ? "" : existingJob.getCollabNetusername() %>">
 													</div>
 												</div>
 												
-												<div class="clearfix">
-													<label for="xlInput" class="xlInput popup-label"><span class="red">* </span><s:text name="label.build.release.password"/></label>
-													<div class="input">
-														<input type="password" id="collabNetpassword" name="collabNetpassword" maxlength="63" title="63 Characters only" value="<%= existingJob == null ? "" : existingJob.getCollabNetpassword() %>">
+<!-- 												<div class="clearfix"> -->
+<%-- 													<label for="xlInput" class="xlInput popup-label"><span class="red">* </span><s:text name="label.build.release.password"/></label> --%>
+<!-- 													<div class="input"> -->
+<%-- 														<input type="password" id="collabNetpassword" name="collabNetpassword" maxlength="63" title="63 Characters only" value="<%= existingJob == null ? "" : existingJob.getCollabNetpassword() %>"> --%>
+<!-- 													</div> -->
+<!-- 												</div> -->
+												<div class="control-group">
+													<label class="control-label labelbold popupLbl">
+														<s:text name='label.build.release.password' />
+													</label>
+													<div class="controls">
+														<input type="password" id="collabNetpassword" name="collabNetpassword" class="input-xlarge" maxlength="63" title="63 Characters only" value="<%= existingJob == null ? "" : existingJob.getCollabNetpassword() %>">
 													</div>
 												</div>
 												
-												<div class="clearfix">
-													<label for="xlInput" class="xlInput popup-label"><span class="red">* </span><s:text name="label.build.release.project"/></label>
-													<div class="input">
-														<input type="text" id="collabNetProject" name="collabNetProject" maxlength="63" title="63 Characters only" value="<%= existingJob == null ? "" : existingJob.getCollabNetProject() %>">
+<!-- 												<div class="clearfix"> -->
+<%-- 													<label for="xlInput" class="xlInput popup-label"><span class="red">* </span><s:text name="label.build.release.project"/></label> --%>
+<!-- 													<div class="input"> -->
+<%-- 														<input type="text" id="collabNetProject" name="collabNetProject" maxlength="63" title="63 Characters only" value="<%= existingJob == null ? "" : existingJob.getCollabNetProject() %>"> --%>
+<!-- 													</div> -->
+<!-- 												</div> -->
+												
+												<div class="control-group">
+													<label class="control-label labelbold popupLbl">
+														<s:text name='label.build.release.project' />
+													</label>
+													<div class="controls">
+														<input type="text" id="collabNetProject" name="collabNetProject" class="input-xlarge" maxlength="63" title="63 Characters only" value="<%= existingJob == null ? "" : existingJob.getCollabNetProject() %>">
 													</div>
 												</div>
 												
-												<div class="clearfix">
-													<label for="xlInput" class="xlInput popup-label"><span class="red">* </span><s:text name="label.build.release.package"/></label>
-													<div class="input">
-														<input type="text" id="collabNetPackage" name="collabNetPackage" maxlength="63" title="63 Characters only" value="<%= existingJob == null ? "" : existingJob.getCollabNetPackage() %>">
+												
+<!-- 												<div class="clearfix"> -->
+<%-- 													<label for="xlInput" class="xlInput popup-label"><span class="red">* </span><s:text name="label.build.release.package"/></label> --%>
+<!-- 													<div class="input"> -->
+<%-- 														<input type="text" id="collabNetPackage" name="collabNetPackage" maxlength="63" title="63 Characters only" value="<%= existingJob == null ? "" : existingJob.getCollabNetPackage() %>"> --%>
+<!-- 													</div> -->
+<!-- 												</div> -->
+												<div class="control-group">
+													<label class="control-label labelbold popupLbl">
+														<s:text name='label.build.release.package' />
+													</label>
+													<div class="controls">
+														<input type="text" id="collabNetPackage" name="collabNetPackage" class="input-xlarge" maxlength="63" title="63 Characters only" value="<%= existingJob == null ? "" : existingJob.getCollabNetPackage() %>">
 													</div>
 												</div>
 												
-												<div class="clearfix">
-													<label for="xlInput" class="xlInput popup-label"><span class="red">* </span><s:text name="label.build.release.release.name"/></label>
-													<div class="input">
-														<input type="text" id="collabNetRelease" name="collabNetRelease" maxlength="63" title="63 Characters only" value="<%= existingJob == null ? "" : existingJob.getCollabNetRelease() %>">
+<!-- 												<div class="clearfix"> -->
+<%-- 													<label for="xlInput" class="xlInput popup-label"><span class="red">* </span><s:text name="label.build.release.release.name"/></label> --%>
+<!-- 													<div class="input"> -->
+<%-- 														<input type="text" id="collabNetRelease" name="collabNetRelease" maxlength="63" title="63 Characters only" value="<%= existingJob == null ? "" : existingJob.getCollabNetRelease() %>"> --%>
+<!-- 													</div> -->
+<!-- 												</div> -->
+												
+												<div class="control-group">
+													<label class="control-label labelbold popupLbl">
+														<s:text name='label.build.release.release.name' />
+													</label>
+													<div class="controls">
+														<input type="text" id="collabNetRelease" name="collabNetRelease" class="input-xlarge" maxlength="63" title="63 Characters only" value="<%= existingJob == null ? "" : existingJob.getCollabNetRelease() %>">
 													</div>
 												</div>
 												
-												<div class="clearfix">
-													<label for="xlInput" class="xlInput popup-label"><s:text name="label.build.release.overwrite"/></label>
+<!-- 												<div class="clearfix"> -->
+<%-- 													<label for="xlInput" class="xlInput popup-label"><s:text name="label.build.release.overwrite"/></label> --%>
 													
-													<div class="input">
-														<div class="multipleFields quartsRadioWidth">
-															<div><input type="radio" name="overwriteFiles" value="true" checked />&nbsp; <s:text name="label.yes"/></div>
-														</div>
-														<div class="multipleFields quartsRadioWidth">
-															<div><input type="radio" name="overwriteFiles" value="false" />&nbsp; <s:text name="label.no"/></div>
-														</div>
+<!-- 													<div class="input"> -->
+<!-- 														<div class="multipleFields quartsRadioWidth"> -->
+<%-- 															<div><input type="radio" name="overwriteFiles" value="true" checked />&nbsp; <s:text name="label.yes"/></div> --%>
+<!-- 														</div> -->
+<!-- 														<div class="multipleFields quartsRadioWidth"> -->
+<%-- 															<div><input type="radio" name="overwriteFiles" value="false" />&nbsp; <s:text name="label.no"/></div> --%>
+<!-- 														</div> -->
+<!-- 													</div> -->
+<!-- 												</div> -->
+												<div class="control-group">
+													<label class="control-label labelbold popupLbl">
+														<s:text name='label.build.release.overwrite' />
+													</label>
+													<div class="controls">
+														<input type="radio" name="overwriteFiles" value="true" checked />&nbsp; <s:text name="label.yes"/>
+														<input type="radio" name="overwriteFiles" value="false" />&nbsp; <s:text name="label.no"/>
 													</div>
 												</div>
+										
 											</div>
 											
 										</fieldset>
@@ -816,21 +1242,21 @@
 			</div>
     	<!-- build release plugin changes ends -->
     	
-		</div>
+<!-- 		</div> -->
     
-        <div class="modal-footer">
-             <div style="float: left;" id="loadingDiv">
-					<div id="errMsg"></div>
-				    <img src="themes/photon/images/loading_red.gif" class="popupLoadingIcon" style="display: none;"> 
-	    	 </div> 
-	    	<input type="hidden" name="oldJobName" value="<%= existingJob == null ? "" : existingJob.getName()%>" >
-            <input type="button" class="btn primary" value="<s:text name="label.cancel"/>" id="cancel">
-            <input type="button" class="btn primary" value="<s:text name="label.save"/>" id="actionBtn">
-            <input type="button" class="btn primary" value="<s:text name="label.next"/>" id="nextBtn">
-            <input type="button" class="btn primary" value="<s:text name="label.previous"/>" id="preBtn">
-        </div>
+<!--         <div class="modal-footer"> -->
+<!--              <div style="float: left;" id="loadingDiv"> -->
+<!-- 					<div id="errMsg"></div> -->
+<!-- 				    <img src="themes/photon/images/loading_red.gif" class="popupLoadingIcon" style="display: none;">  -->
+<!-- 	    	 </div>  -->
+<%-- 	    	<input type="hidden" name="oldJobName" value="<%= existingJob == null ? "" : existingJob.getName()%>" > --%>
+<%--             <input type="button" class="btn primary" value="<s:text name="label.cancel"/>" id="cancel"> --%>
+<%--             <input type="button" class="btn primary" value="<s:text name="label.save"/>" id="actionBtn"> --%>
+<%--             <input type="button" class="btn primary" value="<s:text name="label.next"/>" id="nextBtn"> --%>
+<%--             <input type="button" class="btn primary" value="<s:text name="label.previous"/>" id="preBtn"> --%>
+<!--         </div> -->
     </form>
-</div>
+<!-- </div> -->
 
 <script type="text/javascript">
 	var selectedSchedule = $("input:radio[name=schedule]:checked").val();
@@ -1041,36 +1467,36 @@
 				$("input:radio[name=cloneWorkspace][value=<%= existingJob.isCloneWorkspace() %>]").prop("checked", true);
 				
 				//Iphone
-				$("#target option[value='<%= existingJob.getTarget() %>']").attr('selected', 'selected');
-				$("#sdk option[value='<%= existingJob.getIphoneSdk() %>']").attr('selected', 'selected');
-				$("#mode option[value='<%= existingJob.getMode() %>']").attr('selected', 'selected');
+<%-- 				$("#target option[value='<%= existingJob.getTarget() %>']").attr('selected', 'selected'); --%>
+<%-- 				$("#sdk option[value='<%= existingJob.getIphoneSdk() %>']").attr('selected', 'selected'); --%>
+<%-- 				$("#mode option[value='<%= existingJob.getMode() %>']").attr('selected', 'selected'); --%>
 				
 				$("input:radio[name=deployTo][value=<%= existingJob.getDeployTo() %>]").prop("checked", true);
-			<%
-				if(StringUtils.isNotEmpty(existingJob.getSimulatorVersion())) {
-			%>
-				$("input:text[name=simulatorVersion]").val("<%= existingJob.getSimulatorVersion() %>");
-			<%
-				}
-			%>
-				//android
-				$("#androidVersion option[value='<%= existingJob.getAndroidVersion() %>']").attr('selected', 'selected');
-				$("#androidDevice option[value='<%= existingJob.getDevice() %>']").attr('selected', 'selected');
+<%-- 			<% --%>
+// 				if(StringUtils.isNotEmpty(existingJob.getSimulatorVersion())) {
+<%-- 			%> --%>
+<%-- 				$("input:text[name=simulatorVersion]").val("<%= existingJob.getSimulatorVersion() %>"); --%>
+<%-- 			<% --%>
+// 				}
+<%-- 			%> --%>
+// 				//android
+<%-- 				$("#androidVersion option[value='<%= existingJob.getAndroidVersion() %>']").attr('selected', 'selected'); --%>
+<%-- 				$("#androidDevice option[value='<%= existingJob.getDevice() %>']").attr('selected', 'selected'); --%>
 				
-			<%
-				if(StringUtils.isNotEmpty(existingJob.getAndroidSerialNumber())) {
-			%>
-				$("input:text[name=serialNumber]").val("<%= existingJob.getAndroidSerialNumber() %>");
-			<%
-				}
-			%>
+<%-- 			<% --%>
+// 				if(StringUtils.isNotEmpty(existingJob.getAndroidSerialNumber())) {
+<%-- 			%> --%>
+<%-- 				$("input:text[name=serialNumber]").val("<%= existingJob.getAndroidSerialNumber() %>"); --%>
+<%-- 			<% --%>
+// 				}
+<%-- 			%> --%>
 			
-				$("input:checkbox[name=proguard][value=<%= existingJob.getProguard() %>]").prop("checked", true);
-				$("input:checkbox[name=signing][value=<%= existingJob.getSigning() %>]").prop("checked", true);
+<%-- 				$("input:checkbox[name=proguard][value=<%= existingJob.getProguard() %>]").prop("checked", true); --%>
+<%-- 				$("input:checkbox[name=signing][value=<%= existingJob.getSigning() %>]").prop("checked", true); --%>
 				
-				//java standalone technology
-				$("input:text[name=jarName]").val("<%= existingJob.getJarName() %>");
-				$("input:text[name=mainClassName]").val("<%= existingJob.getMainClassName() %>");
+// 				//java standalone technology
+<%-- 				$("input:text[name=jarName]").val("<%= existingJob.getJarName() %>"); --%>
+<%-- 				$("input:text[name=mainClassName]").val("<%= existingJob.getMainClassName() %>"); --%>
 		<%
 			}
 		%>
@@ -1111,64 +1537,64 @@
 		//hide java stanalone info by default
 		$('#javaStandaloneConfig').hide();
 		if($('#operation').val() == "functionalTest") {
-			<% 
-				if (TechnologyTypes.IPHONES.contains(technology)) { 
-			%>
-					$('#iphoneDeployConfig, #environmentConfig, #iphoneBuildConfig').hide();
-			<% 
-				} else if (TechnologyTypes.ANDROIDS.contains(technology)) { 
-			%>
-				$('#environmentConfig, #androidSdkConfig').hide();
-				$('#androidDevicesConfig').show();
-			<% 
-				} else if (TechnologyTypes.JAVA_STANDALONE.contains(technology)) {
-			%>
-				$('#environmentConfig, #browserConfig').hide();
-			<%	
-				} else {
-			%>
-					$('#browserConfig').show();
-			<% } %>
+<%-- 			<%  --%>
+// 				if (TechnologyTypes.IPHONES.contains(technology)) { 
+<%-- 			%> --%>
+// 					$('#iphoneDeployConfig, #environmentConfig, #iphoneBuildConfig').hide();
+<%-- 			<%  --%>
+// 				} else if (TechnologyTypes.ANDROIDS.contains(technology)) { 
+<%-- 			%> --%>
+// 				$('#environmentConfig, #androidSdkConfig').hide();
+// 				$('#androidDevicesConfig').show();
+<%-- 			<%  --%>
+// 				} else if (TechnologyTypes.JAVA_STANDALONE.contains(technology)) {
+<%-- 			%> --%>
+// 				$('#environmentConfig, #browserConfig').hide();
+<%-- 			<%	 --%>
+// 				} else {
+<%-- 			%> --%>
+// 					$('#browserConfig').show();
+<%-- 			<% } %> --%>
 		} else if($('#operation').val() == "deploy") {
-			<% 
-				if (TechnologyTypes.IPHONES.contains(technology)) { 
-			%>
-					$('#iphoneDeployConfig').show();
-					$('#iphoneBuildConfig, #environmentConfig').hide();
-			<% 
-				} else if (TechnologyTypes.ANDROIDS.contains(technology)) { 
-			%>
-					$('#environmentConfig, #androidSdkConfig').hide();
-					$('#androidDevicesConfig').show();
-			<% 
-				} else {
-			%>
-					$('#browserConfig').hide();
-			<% } %>
+<%-- 			<%  --%>
+// 				if (TechnologyTypes.IPHONES.contains(technology)) { 
+<%-- 			%> --%>
+// 					$('#iphoneDeployConfig').show();
+// 					$('#iphoneBuildConfig, #environmentConfig').hide();
+<%-- 			<%  --%>
+// 				} else if (TechnologyTypes.ANDROIDS.contains(technology)) { 
+<%-- 			%> --%>
+// 					$('#environmentConfig, #androidSdkConfig').hide();
+// 					$('#androidDevicesConfig').show();
+<%-- 			<%  --%>
+// 				} else {
+<%-- 			%> --%>
+// 					$('#browserConfig').hide();
+<%-- 			<% } %> --%>
 		} else if($('#operation').val() == "build") {
-			<% 
-				if (TechnologyTypes.JAVA_STANDALONE.contains(technology)) { 
-			%>
-				$('#javaStandaloneConfig').show();//hide java stanalone two fields
-			<% 
-				}
-			%>
+<%-- 			<%  --%>
+// 				if (TechnologyTypes.JAVA_STANDALONE.contains(technology)) { 
+<%-- 			%> --%>
+// 				$('#javaStandaloneConfig').show();//hide java stanalone two fields
+<%-- 			<%  --%>
+// 				}
+<%-- 			%> --%>
 			
-			<% 
-				if (TechnologyTypes.IPHONES.contains(technology)) { 
-			%>
-				$('#iphoneDeployConfig').hide();
-				$('#iphoneBuildConfig').show();
-			<% 
-				} else if (TechnologyTypes.ANDROIDS.contains(technology)) { 
-			%>
-				$('#androidDevicesConfig').hide();
-				$('#environmentConfig, #androidSdkConfig').show();
-			<% 
-				} else {
-			%>
-				$('#browserConfig').hide();
-			<% } %>
+<%-- 			<%  --%>
+// 				if (TechnologyTypes.IPHONES.contains(technology)) { 
+<%-- 			%> --%>
+// 				$('#iphoneDeployConfig').hide();
+// 				$('#iphoneBuildConfig').show();
+<%-- 			<%  --%>
+// 				} else if (TechnologyTypes.ANDROIDS.contains(technology)) { 
+<%-- 			%> --%>
+// 				$('#androidDevicesConfig').hide();
+// 				$('#environmentConfig, #androidSdkConfig').show();
+<%-- 			<%  --%>
+// 				} else {
+<%-- 			%> --%>
+// 				$('#browserConfig').hide();
+<%-- 			<% } %> --%>
 		}	
 	}
 	
@@ -1178,7 +1604,8 @@
 		$('.popupLoadingIcon').css("display","block");
 		var url = $("#ciForm").attr("action");
 		$('#ciForm :input').attr('disabled', false);
-		popup(url, '', $('#tabDiv'));
+		alert("handle CI  form submit ");
+// 		popup(url, '', $('#tabDiv'));
 	}
 	
 	function enableDisableCollabNet() {
@@ -1225,20 +1652,20 @@
 	 	}
 	}
 	
-	function validateJavaStandAloneTech() {
-		if(isBlank($('input:text[name=jarName]').val())) {
-			ciConfigureError('errMsg', "Jarname is missing");
-			$('input:text[name=jarName]').focus();
-			return false;
-		} else if (isBlank($('input:text[name=mainClassName]').val())) {
-			ciConfigureError('errMsg', "MainClassName is missing");
-			$('input:text[name=mainClassName]').focus();
-			return false;
-		} else {
-			ciConfigureError('errMsg', "");
-			return true;
-	 	}
-	}
+// 	function validateJavaStandAloneTech() {
+// 		if(isBlank($('input:text[name=jarName]').val())) {
+// 			ciConfigureError('errMsg', "Jarname is missing");
+// 			$('input:text[name=jarName]').focus();
+// 			return false;
+// 		} else if (isBlank($('input:text[name=mainClassName]').val())) {
+// 			ciConfigureError('errMsg', "MainClassName is missing");
+// 			$('input:text[name=mainClassName]').focus();
+// 			return false;
+// 		} else {
+// 			ciConfigureError('errMsg', "");
+// 			return true;
+// 	 	}
+// 	}
 	
 	function credentialsDisp() {
 		if($("input:radio[name=svnType][value='svn']").is(':checked')) {
@@ -1371,8 +1798,12 @@
         }
     }
     
-    function cronValidationLoad(params) {
-    	popup('cronValidation', params, $('#cronValidation'));
+    function cronValidationLoad(additionalParams) {
+//     	popup('cronValidation', params, $('#cronValidation'));
+		var params = getBasicParams();
+		params = params.concat("&");
+		params = params.concat(additionalParams);
+    	loadContent('cronValidation','', $('#cronValidation'), params, false);
     	
     }
 </script>
