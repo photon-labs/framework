@@ -627,3 +627,12 @@ function enableButton(buttonObj) {
     buttonObj.addClass('btn-primary');
     buttonObj.attr("disabled", false);
 }
+
+//To check whether the url is valid or not
+function isValidUrl(url) {
+    if (/^(http|https|ftp|git):\/\/[a-z0-9]+([-.]{1}[a-z0-9]+)*.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/i.test(url)) {
+      return false;
+    } else {
+      return true;
+    }   
+}
