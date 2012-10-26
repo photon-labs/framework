@@ -82,12 +82,12 @@
 <!--         </div> -->
         
 <!--         <div class="modal-body" id="ciConfigs" style="padding-top: 2px;"> -->
-        	<div class="clearfix">
-				<label for="xlInput" class="xlInput popup-label"></label>
-				<div class="input">
-					<span id="missingData" class="missingData" style="color:#690A0B;"></span>
-				</div>
-			</div>
+<!--         	<div class="clearfix"> -->
+<!-- 				<label for="xlInput" class="xlInput popup-label"></label> -->
+<!-- 				<div class="input"> -->
+<%-- 					<span id="missingData" class="missingData" style="color:#690A0B;"></span> --%>
+<!-- 				</div> -->
+<!-- 			</div> -->
 			
 <!--         	<div class="clearfix"> -->
 <%-- 				<label for="xlInput" class="xlInput popup-label"><span class="red">* </span><s:text name="label.name"/></label> --%>
@@ -95,6 +95,16 @@
 <%-- 					<input type="text" id="name" name="name" value="<%= existingJob == null ? "" : existingJob.getName()%>" <%= existingJob == null ? "" : "disabled" %> autofocus> --%>
 <!-- 				</div> -->
 <!-- 			</div> -->
+
+<div class="theme_accordion_container clearfix" style="float: none;">
+    <section class="accordion_panel_wid">
+        <div class="accordion_panel_inner adv-settings-accoridan-inner">
+            <section class="lft_menus_container adv-settings-width">
+                <span class="siteaccordion" id="siteaccordion_active"><span><s:text name="label.build.basic.config"/></span></span>
+                <div class="mfbox siteinnertooltiptxt" id="build_adv_sett">
+                    <div class="scrollpanel adv_setting_accordian_bottom">
+                        <section class="scrollpanel_inner">
+			
 			
 			<div class="control-group">
 				<label class="control-label labelbold popupLbl">
@@ -125,7 +135,7 @@
 				<label class="control-label labelbold popupLbl">
 					<s:text name='label.svn.type' />
 				</label>
-				<div class="controls">
+				<div class="controls" style="padding-top: 5px;">
 <!-- 				<label class="radio"> -->
 					<input type="radio" name="svnType" value="svn"  <%= existingJob == null ? "checked" : "" %> />&nbsp; <s:text name="label.svn"/>
 <!-- 				</label> -->
@@ -310,7 +320,7 @@
 				<label class="control-label labelbold popupLbl">
 					<span class="red">* </span>Build Triggers
 				</label>
-				<div class="controls">
+				<div class="controls" style="padding-top: 5px;">
 					<input id="buildPeriodically" type="checkbox" name="triggers" value="TimerTrigger"/>&nbsp;Build periodically
 					<input id="pollSCM" type="checkbox" name="triggers" value="SCMTrigger"/>&nbsp;Poll SCM
 				</div>
@@ -369,7 +379,7 @@
 				<label class="control-label labelbold popupLbl">
 					<s:text name='label.schedule' />
 				</label>
-				<div class="controls">
+				<div class="controls" style="padding-top: 5px;">
 					<input id="scheduleDaily" type="radio" name="schedule" value="Daily"  onChange="javascript:show('Daily');" <%= ((schedule.equals("Daily")) || (schedule.equals(""))) ? "checked" : "" %> />&nbsp; <s:text name="label.daily"/>
 					<input id="scheduleDaily" type="radio" name="schedule" value="Weekly" onChange="javascript:show('Weekly');" <%= schedule.equals("Weekly") ? "checked" : "" %> />&nbsp; <s:text name="label.weekly"/>
 					<input id="scheduleDaily" type="radio" name="schedule" value="Monthly" onChange="javascript:show('Monthly');" <%= schedule.equals("Monthly") ? "checked" : "" %>/>&nbsp; <s:text name="label.monthly"/>
@@ -377,12 +387,13 @@
 			</div>
 			
 			
-			<div class="control-group">
-				<label class="control-label labelbold popupLbl">
-					&nbsp; <!-- kalees -->
-				</label>
-				<div class="controls">
-					<div  id='Daily'> <!-- class="schedulerWidth" -->
+<!-- 			<div class="control-group"> -->
+<!-- 				<label class="control-label labelbold popupLbl"> -->
+<!-- 					&nbsp; kalees -->
+<!-- 				</label> -->
+<!-- 				<div class="controls"> -->
+		<div class="clearfix">
+					<div  id='Daily' style="text-align: center; margin-bottom: 5px;"> <!-- class="schedulerWidth" -->
 					<div><s:text name="label.every"/> &nbsp;&nbsp;&nbsp;&nbsp;	<s:text name="label.hours"/> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <s:text name="label.minutes"/></div>
 					<div class="dailyInnerDiv">
 						<s:text name="label.At"/> &nbsp;&nbsp;
@@ -415,7 +426,7 @@
 						</select>
                     </div>
 				</div>
-				<div id='Weekly'> <!-- class="schedulerWidth" -->
+				<div id='Weekly' style="text-align: center; margin-bottom: 5px;"> <!-- class="schedulerWidth" -->
    					<select id="weekly_week" name="weekly_week" multiple onChange="javascript:show('Weekly');" class="schedulerDay alignVertical">
 				   		<%
 				   			String defaultSelectedStr = "";
@@ -465,7 +476,7 @@
                    	</select>&nbsp;<s:text name="label.minute"/>
                                                 
 				</div>
-				<div id='Monthly'> <!-- class="schedulerWidth" -->
+				<div id='Monthly' style="text-align: center; margin-bottom: 5px;"> <!-- class="schedulerWidth" -->
                    <s:text name="label.every"/>
                    <select id="monthly_day" name="monthly_day" onChange="javascript:show('Monthly');" class="schedulerSelectWidth alignVertical">
                            <option value="*">*</option>
@@ -529,7 +540,7 @@
                     </select> &nbsp; <s:text name="label.minute"/>
                                                 
 				</div>
-				</div>
+<!-- 				</div> -->
 			</div>
 			
 <!-- 			<div class="clearfix"> -->
@@ -711,6 +722,13 @@
 				</div>
 			</div>
 			
+			            </section>
+                    </div>
+                </div>
+            </section>  
+        </div>
+    </section>
+</div>
 <!--         </div> -->
 		
 <!-- 		<div class="modal-body" id="configs"> -->
@@ -1015,7 +1033,7 @@
 											<label class="control-label labelbold popupLbl">
 												<s:text name='label.clone.workspace' />
 											</label>
-											<div class="controls">
+											<div class="controls" style="padding-top: 5px;">
 												<input type="radio" name="cloneWorkspace" value="true" />&nbsp; <s:text name="label.yes"/>
 												<input type="radio" name="cloneWorkspace" value="false" checked/>&nbsp; <s:text name="label.no"/>
 											</div>
@@ -1061,7 +1079,7 @@
 											<label class="control-label labelbold popupLbl">
 												<s:text name='label.show.setting' />
 											</label>
-											<div class="controls">
+											<div class="controls" style="padding-top: 5px;">
 												<input type="checkbox" id="showSettings" name="showSettings" value="showsettings" <%= showSettings %>> &nbsp; <s:text name="label.show.setting"/>
 												<input type="checkbox" id="proguard" name="proguard" value="false">&nbsp;<s:text name="label.progurad"/>
 												<input type="checkbox" id="signing" name="signing" value="false">&nbsp;<s:text name="label.signing"/>
@@ -1104,7 +1122,7 @@
 											<label class="control-label labelbold popupLbl">
 												<s:text name='label.enable.build.release' />
 											</label>
-											<div class="controls">
+											<div class="controls" style="padding-top: 5px;">
 												<input type="radio" name="enableBuildRelease" value="true" />&nbsp; <s:text name="label.yes"/>
 												<input type="radio" name="enableBuildRelease" value="false" checked />&nbsp; <s:text name="label.no"/>
 											</div>
@@ -1224,7 +1242,7 @@
 													<label class="control-label labelbold popupLbl">
 														<s:text name='label.build.release.overwrite' />
 													</label>
-													<div class="controls">
+													<div class="controls" style="padding-top: 5px;">
 														<input type="radio" name="overwriteFiles" value="true" checked />&nbsp; <s:text name="label.yes"/>
 														<input type="radio" name="overwriteFiles" value="false" />&nbsp; <s:text name="label.no"/>
 													</div>
