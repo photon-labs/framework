@@ -91,12 +91,12 @@
 	
 	Gson gson = new Gson();
 %>
-<form id="formConfigAdd" class="form-horizontal">
+<form id="formConfigAdd" class="form-horizontal formClass">
 	<h4>
 		<%= title %> 
 	</h4>
 	
-	<div class="appInfoScrollDiv content_adder" id="downloadInputDiv">
+	<div class="content_adder">
 		<div class="control-group" id="nameControl">
 			<label class="control-label labelbold">
 				<span class="mandatory">*</span>&nbsp;<s:text name='lbl.name'/>
@@ -114,7 +114,7 @@
 			</label>
 			<div class="controls">
 				<textarea id="configDesc"  placeholder="<s:text name='place.hldr.config.desc'/>" class="input-xlarge"
-					maxlength="150" title="<s:text name='title.150.chars'/>" name="description"><%= description %></textarea>
+					maxlength="150" title="<s:text name='title.150.chars'/>" name="desc"><%= description %></textarea>
 			</div>
 		</div> <!-- Desc -->
 		
@@ -124,8 +124,8 @@
 			</label>	
 			<div class="controls">
 				<select id="environment" name="environment">
-				<% for (Environment environment : environments) { String envJson = gson.toJson(environment);%>
-					<option value='<%= gson.toJson(environment) %>' ><%= environment.getName() %></option>
+				<% for (Environment env : environments) { %>
+					<option value='<%= gson.toJson(env) %>'><%= env.getName() %></option>
                 <% } %>
 				</select>
 				<span class="help-inline" id="envError"></span>
@@ -147,10 +147,10 @@
 		</div> <!-- Type -->
 		
 		<div id="typeContainer"></div>
-		
 	</div>
+	
 	<div class="bottom_button">
-		<input type="button" id="" class="btn btn-primary" value='<%= buttonLbl %>' />	
+		<input type="button" id="saveConfiguration" class="btn btn-primary" value='<%= buttonLbl %>' />	
 		<input type="button" id="downloadCancel" class="btn btn-primary" value="<s:text name='lbl.btn.cancel'/>" />
 	</div>
 	
@@ -161,26 +161,34 @@
 
 <script type="text/javascript">
 
-	/* To check whether the divice is ipad or not */
-	if (!isiPad()){
-	    /* JQuery scroll bar */
-		$(".appInfoScrollDiv").scrollbars();
-	}
+	/* To check whether the device is ipad or not */
+	$(document).ready(function() {
+		if (!isiPad()) {
+			$(".content_adder").scrollbars(); //JQuery scroll bar
+		}
+	});
 	
 	$('#type').change(function() { 
-		var settingTemplate = '{ "settingTemplate": ' + $('#type').val() + ' }';
-		loadJsonContent('configType', settingTemplate,  $('#typeContainer'));
+		var params = '{ "settingTemplate": ' + $('#type').val() + ' }';
+		loadJsonContent('configType', params,  $('#typeContainer'));
 	}).triggerHandler("change");
 	
-	function loadJsonContent(url, jsonParam, containerTag) {
-		$.ajax({
-			url : url,
-			data : jsonParam,
-			type : "POST",
-			contentType: "application/json; charset=utf-8",
-			success : function(data) {
-				loadData(data, containerTag);
-			}
-		});	
-	}
+	$('#saveConfiguration').click(function() {
+		var name = $('#configName').val();
+		var desc = $('#configDesc').val();
+		var env = $('#environment').val();
+		var jsonObject = $('#configProperties').toJSON();
+		var configStr = JSON.stringify(jsonObject);
+		var template = $.parseJSON($('#type').val());
+		var type = template.name;
+		var configId = template.id;
+		
+		var jsonParam = '{ ' + getBasicParamsAsJson() + ', "configName": "' + name + '", "description": "' + desc + '", "configType": "' + type 
+								+ '", "configId": "' + configId + '", "environment" : ' + env + ', ' + configStr.substring(1);  
+
+		alert(jsonParam);
+		loadJsonContent('saveConfiguration', jsonParam, $("#subcontainer"));	
+	});
+	
+	
 </script>

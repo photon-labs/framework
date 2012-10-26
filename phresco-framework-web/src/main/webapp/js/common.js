@@ -42,6 +42,18 @@ function yesnoPopup(modalObj, url, title, okUrl, okLabel) {
 	});
 }
 
+function loadJsonContent(url, jsonParam, containerTag) {
+	$.ajax({
+		url : url,
+		data : jsonParam,
+		type : "POST",
+		contentType: "application/json; charset=utf-8",
+		success : function(data) {
+			loadData(data, containerTag);
+		}
+	});	
+}
+
 function getBasicParams() {
 	var params = $('#formCustomers').serialize();
 	params = params.concat("&");
@@ -105,7 +117,9 @@ function clickButton(button, tag) {
 
 function loadContent(pageUrl, form, tag, additionalParams, callSuccessEvent) {
 //	showLoadingIcon(tag);
+
 	var params = getParameters(form, additionalParams);
+	alert('params ' + params);
 	$.ajax({
 		url : pageUrl,
 		data : params,

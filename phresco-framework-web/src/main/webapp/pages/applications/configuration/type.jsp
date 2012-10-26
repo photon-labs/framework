@@ -29,6 +29,7 @@
 <%@ page import="com.photon.phresco.commons.model.PropertyTemplate" %>
 <%@ page import="com.photon.phresco.framework.commons.FrameworkUtil" %>
 
+<form id="configProperties">
 <%
 	
 	List<PropertyTemplate> properties = (List<PropertyTemplate>) request.getAttribute(FrameworkConstants.REQ_PROPERTIES);
@@ -46,5 +47,5 @@
         }
     }
 %>
-<%= sb.toString() %>
-
+	<%= sb.toString() %>
+</form>

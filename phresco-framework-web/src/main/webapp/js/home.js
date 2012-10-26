@@ -1511,7 +1511,7 @@ function _resizeimg(_imgwidth, _imgheight, _this){
 }
 */
 /***********************/
-settime = 500;
+var settime = 500;
 
 	
 function viewsitemap(){

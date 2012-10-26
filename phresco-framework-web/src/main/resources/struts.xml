@@ -403,6 +403,7 @@
         </action>
 
         <action name="saveConfiguration" method="save" class="com.photon.phresco.framework.actions.applications.Configurations">
+        	<interceptor-ref name="json" />
             <result name="list">/pages/applications/configuration/list.jsp</result>
             <result type="json" />
         </action>

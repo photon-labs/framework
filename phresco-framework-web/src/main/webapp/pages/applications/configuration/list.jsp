@@ -59,7 +59,7 @@
     <div class="operation">
     	<!-- Add Configuration Button --> 
 		<input type="button" class="btn btn-primary" name="configAdd" id="configAdd" 
-	         onclick="loadContent('addConfiguration', $('#formConfigList, #formCustomers, #formAppMenu'), $('#subcontainer'));" 
+	         onclick="loadContent('addConfiguration', $('#formCustomers, #formAppMenu'), $('#subcontainer'));" 
 		         value="<s:text name='lbl.btn.add'/>"/>
 
 		<!-- Delete Configuration Button -->
@@ -180,7 +180,8 @@
 		var params = '{' + basicParams + ', "environments": [' + envs.join(',') + ']}';
 		var url = $(self).attr('id');
 
-		$.ajax({
+		loadJsonContent(url, params, $('#typeContainer'));
+		/*$.ajax({
 			url : url,
 			data : params,
 			type : "POST",
@@ -188,7 +189,7 @@
 			contentType: "application/json; charset=utf-8",
 			success : function(data) {
 			}
-		});	
+		});*/	
 	}
 
 </script>

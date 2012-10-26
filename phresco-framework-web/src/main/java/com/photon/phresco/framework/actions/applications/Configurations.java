@@ -27,10 +27,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.antlr.stringtemplate.StringTemplate;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -40,6 +40,7 @@ import com.opensymphony.xwork2.Action;
 import com.photon.phresco.commons.api.ConfigManager;
 import com.photon.phresco.commons.model.PropertyTemplate;
 import com.photon.phresco.commons.model.SettingsTemplate;
+import com.photon.phresco.configuration.Configuration;
 import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.ConfigurationException;
 import com.photon.phresco.exception.PhrescoException;
@@ -64,9 +65,10 @@ public class Configurations extends FrameworkBaseAction {
     private static final Logger S_LOGGER = Logger.getLogger(Configurations.class);
     private static Boolean debugEnabled  = S_LOGGER.isDebugEnabled();
     
-    private List<Environment> environments = new ArrayList<Environment>(1);
+    private List<Environment> environments = new ArrayList<Environment>(8);
+    private Environment environment = null;
     private SettingsTemplate settingTemplate = null;
-    
+    private String configId = null;
     
     
     private String configName = null;
@@ -172,6 +174,7 @@ public class Configurations extends FrameworkBaseAction {
     	}
         try {
             List<Environment> environments = getAllEnvironments();
+            System.out.println("cust id " + getCustomerId());
             List<SettingsTemplate> configTemplates = getServiceManager().getconfigTemplates(getCustomerId());
             setReqAttribute(REQ_SETTINGS_TEMPLATES, configTemplates);
             setReqAttribute(REQ_ENVIRONMENTS, environments);
@@ -191,7 +194,37 @@ public class Configurations extends FrameworkBaseAction {
     	if (debugEnabled) {
     		S_LOGGER.debug("Entering Method  Configurations.save()");
 		}  
+
         try {
+            SettingsTemplate configTemplate = getServiceManager().getConfigTemplate(getConfigId(), getCustomerId());
+            Properties properties = new Properties();
+            List<PropertyTemplate> properties2 = configTemplate.getProperties();
+            for (PropertyTemplate propertyTemplate : properties2) {
+                String key = propertyTemplate.getKey();
+                String value = getReqParameter(key);
+                System.out.println(key + " === " + value);
+                if (StringUtils.isNotEmpty(value)) {
+                    properties.put(key, value);
+                }
+            }
+            
+            Configuration config = new Configuration(getConfigName(), getConfigType());
+            config.setDesc(getDescription());
+            config.setProperties(properties);
+            
+            Environment environment = getEnvironment();
+            List<Configuration> configurations = environment.getConfigurations();
+            configurations.add(config);
+            getConfigManager().updateEnvironment(environment);
+        } catch (PhrescoException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (ConfigurationException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    	
+        /*try {
         	initDriverMap();
             ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
             Project project = administrator.getProject(projectCode);
@@ -306,7 +339,9 @@ public class Configurations extends FrameworkBaseAction {
                S_LOGGER.error("Entered into catch block of Configurations.save()" + FrameworkUtil.getStackTraceAsString(e));
     		}
         	new LogErrorReport(e, "Configurations save");
-        }
+        }*/
+    	
+    	
         
         getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
         return list();
@@ -1172,12 +1207,28 @@ public class Configurations extends FrameworkBaseAction {
         this.environments = environments;
     }
 
+    public Environment getEnvironment() {
+        return environment;
+    }
+
+    public void setEnvironment(Environment environment) {
+        this.environment = environment;
+    }
+
     public SettingsTemplate getSettingTemplate() {
         return settingTemplate;
     }
 
     public void setSettingTemplate(SettingsTemplate settingTemplate) {
         this.settingTemplate = settingTemplate;
+    }
+
+    public String getConfigId() {
+        return configId;
+    }
+
+    public void setConfigId(String configId) {
+        this.configId = configId;
     }
 
 }

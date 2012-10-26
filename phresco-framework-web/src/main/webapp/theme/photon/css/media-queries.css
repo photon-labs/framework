@@ -21,6 +21,11 @@
 Width <= 1024
 *************************************************************************************/
 @media screen and (max-width : 1024px) {
+
+	.content_adder {
+		height: 84%;
+	}
+
 	label, input, button, select, textarea {
 		font-size: 12px;
 	}
@@ -798,6 +803,10 @@ Width >= 1025 and < 1151
 *************************************************************************************/
 @media screen and (min-width : 1025px) and (max-width : 1151px) {
 	
+	.content_adder {
+		height: 86%;
+	}
+	
 	.app_list_form {
     	height: 91%;
 	}
@@ -868,6 +877,10 @@ Width >= 1025 and < 1151
 Width >= 1152 and < 1280
 *************************************************************************************/
 @media screen and (min-width : 1152px) and (max-width : 1279px) {
+	
+	.content_adder {
+		height: 88%;
+	}
 	
 	.app_list_form {
     	height: 98%;
@@ -1174,6 +1187,15 @@ Width >= 1152 and < 1280
 Width <= 1280 and height <= 800
 *************************************************************************************/
 @media screen and (min-width : 1280px) and (max-height : 800px) {
+	
+	.formClass {
+		height: 95%;
+		margin: 0;
+	}
+	
+	.content_adder {
+		height: 85%;
+	}
 	
 	.app_list_form {
     	height: 85%;
@@ -1588,6 +1610,15 @@ Width >= 1280 and height >= 800
 *************************************************************************************/
 @media screen and (min-width : 1280px) and (min-height : 801px) {
 	
+	.formClass {
+		height: 97%;
+		margin: 0;
+	}
+	
+	.content_adder {
+		height: 93%;
+	}
+	
 	.app_list_form {
     	height: 91%;
 	}
@@ -1908,6 +1939,10 @@ Width > 1280 and <= 1360
 *************************************************************************************/
 @media screen and (min-width : 1281px) and (max-width : 1360px) {
 	
+	.content_adder {
+		height: 84%;
+	}
+
 	.app_list_form {
     	height: 87%;
 	}
