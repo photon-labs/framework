@@ -1522,7 +1522,7 @@ public interface FrameworkConstants {
 		String TYPE_DYNAMIC_PARAMETER = "DynamicParameter";
 		String PHRESCO_PLUGIN_INFO_XML = "phresco-plugin-info.xml";
 		String PLUGIN_PARAMETER_FRAMEWORK = "framework";
-		String REQ_DYNAMIC_PARAMETERS = "parameters";
+		String REQ_DYNAMIC_PARAMETERS = "dynamicParameters";
 		String REQ_DYNAMIC_POSSIBLE_VALUES = "possibleValues";
 		String REQ_SESSION_DYNAMIC_PARAM_MAP = "sessionDynamicParamMap";
 		/**
