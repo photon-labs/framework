@@ -224,11 +224,7 @@ public class Quality extends DynamicParameterUtil {
 	        FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
 	        setReqAttribute(PATH, frameworkUtil.getUnitTestDir(appInfo));
             setReqAttribute(REQ_APP_INFO, appInfo);
-//            List<String> projectModules = getProjectModules(appInfo.getAppDirName());
-            List<String> projectModules = new ArrayList<String>();
-            projectModules.add("phresco-framework-web");
-            projectModules.add("phresco-framework-impl");
-            projectModules.add("phresco-framework");
+            List<String> projectModules = getProjectModules(appInfo.getAppDirName());
             MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(appInfo)));
             List<Parameter> dynamicParameters = getMojoParameters(mojo, PHASE_UNIT_TEST);
             setReqAttribute(REQ_DYNAMIC_PARAMETERS, dynamicParameters);
@@ -246,11 +242,7 @@ public class Quality extends DynamicParameterUtil {
         }
 	    
 	    try {
-//    	    List<String> projectModules = getProjectModules(getApplicationInfo().getAppDirName());
-	        List<String> projectModules = new ArrayList<String>();
-    	    projectModules.add("phresco-framework-web");
-            projectModules.add("phresco-framework-impl");
-            projectModules.add("phresco-framework");
+    	    List<String> projectModules = getProjectModules(getApplicationInfo().getAppDirName());
             setReqAttribute(REQ_PROJECT_MODULES, projectModules);
             MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(getApplicationInfo())));
             List<Parameter> dynamicParameters = getMojoParameters(mojo, PHASE_UNIT_TEST);

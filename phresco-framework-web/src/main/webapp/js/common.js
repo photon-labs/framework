@@ -72,6 +72,19 @@ function progressPopup(btnObj, pageUrl, title, appId, actionType, form, callSucc
 	});
 }
 
+function progressPopupAsSecPopup(url, title, appId, actionType, form, additionalParams) {
+	setTimeout(function () {
+		$('#popupPage').modal('show')
+    }, 600);
+	$('#popupTitle').html(title);
+	$('.modal-body').empty();
+	$('.popupOk').hide(); // hide ok & cancel button
+	$('#popupCancel').hide();
+	$('#popupClose').show();
+
+	readerHandlerSubmit(url, appId, actionType, form, '', additionalParams);
+}
+
 function clickMenu(menu, tag, form, additionalParam) {
 	menu.click(function() {
 		showLoadingIcon();
@@ -155,8 +168,8 @@ function loadData(data, tag, pageUrl, callSuccessEvent) {
 
 function readerHandlerSubmit(pageUrl, appId, actionType, form, callSuccessEvent, additionalParams) {
 	var params = getParameters(form, additionalParams);
-	showParentPage();
-	enableScreen();
+//	showParentPage();
+//	enableScreen();
     $.ajax({
         url : pageUrl,
         data : params,

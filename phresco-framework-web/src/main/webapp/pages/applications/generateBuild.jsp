@@ -498,16 +498,8 @@
 			}
 			buildValidateSuccess("deploy", '<%= FrameworkConstants.REQ_FROM_TAB_DEPLOY %>');
 		} else if (okUrl === "runUnitTest") {
-			setTimeout(function () {
-				$('#popupPage').modal('show')
-	        }, 600);
-			$('#popupTitle').html("Progress");
-			$('.modal-body').empty();
-			$('.popupOk').hide(); // hide ok & cancel button
-			$('#popupCancel').hide();
-			$('#popupClose').show();
-
-			readerHandlerSubmit(okUrl, '<%= appId %>', '<%= FrameworkConstants.UNIT %>', $("#generateBuildForm"), '', getBasicParams());
+			var params = getBasicParams();
+			progressPopupAsSecPopup('runUnitTest', '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.UNIT %>', $("#generateBuildForm"), params);
 		}
 	}
 	
