@@ -102,6 +102,7 @@ import com.photon.phresco.framework.model.TestCaseFailure;
 import com.photon.phresco.framework.model.TestResult;
 import com.photon.phresco.framework.model.TestSuite;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
+import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
 import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.IosSdkUtil;
@@ -505,7 +506,7 @@ public class Quality extends DynamicParameterUtil {
         		sb.append(frameworkUtil.getUnitTestReportDir(appInfo));
         	}
         } else if (LOAD.equals(testType)) {
-            sb.append(frameworkUtil.getLoadReportDir(techId));
+            /*sb.append(frameworkUtil.getLoadReportDir(techId));*/
             sb.append(File.separator);
             sb.append(testResultFile);
         } else if (PERFORMACE.equals(testType)) {
@@ -1110,8 +1111,8 @@ public class Quality extends DynamicParameterUtil {
                 StringBuilder sb = new StringBuilder();
                 sb.append(Utility.getProjectHome());
                 sb.append(appInfo.getAppDirName());
-                getHttpRequest().setAttribute(PATH,	frameworkUtil.getLoadTestDir(techId));
-                sb.append(frameworkUtil.getLoadReportDir(techId));
+               /* getHttpRequest().setAttribute(PATH,	frameworkUtil.getLoadTestDir(techId));
+                sb.append(frameworkUtil.getLoadReportDir(techId));*/
                    S_LOGGER.debug("test type load  test Report directory " + sb.toString());
                 File file = new File(sb.toString());
                 File[] children = file.listFiles(new XmlNameFileFilter(FILE_EXTENSION_XML));
@@ -1311,8 +1312,72 @@ public class Quality extends DynamicParameterUtil {
         getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
         return APP_ENVIRONMENT_READER;
     }
+    
+    public String load() throws JAXBException, IOException, PhrescoPomException {
+	    
+    	if (debugEnabled) {
+	        S_LOGGER.debug("Entering Method Quality.load()");
+	    } 
+	    
+    	try {
+    		 ApplicationInfo appInfo = getApplicationInfo();	
+    		 FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+             setReqAttribute(PATH, frameworkUtil.getLoadTestDir());
+             File file = new File(Utility.getProjectHome() + appInfo.getAppDirName()+ frameworkUtil.getLoadTestReportDir());
+             File[] children = file.listFiles(new XmlNameFileFilter(FILE_EXTENSION_XML));
+             if(children != null) {
+             	QualityUtil.sortResultFile(children);
+                 getHttpRequest().setAttribute(REQ_JMETER_REPORT_FILES, children);
+             } else {
+                 getHttpRequest().setAttribute(REQ_ERROR_TESTSUITE, getText(ERROR_LOAD_TEST));
+             }
 
-    public String load() {
+             getHttpRequest().setAttribute(REQ_APP_INFO, appInfo);
+    	} catch(Exception e){
+    		 e.printStackTrace();
+        }
+    	
+    	return "load";
+    }
+    
+    public String showLoadTestPopup() throws PhrescoException{
+    	
+    	try {
+    		String from = getReqParameter(REQ_FROM);
+    		Map<String, Object> loadParamMap = new HashMap<String, Object>();
+    		ApplicationInfo applicationInfo = getApplicationInfo();
+    		loadParamMap.put(REQ_APP_INFO, applicationInfo);
+    		setDynamicParameters(loadParamMap, PHASE_LOAD_TEST);
+    		setReqAttribute(REQ_FROM, from);
+    	} catch(Exception e) {
+    		e.printStackTrace();
+    	}
+    	
+    	return "Success";
+   }
+    
+    public String runLoadTest() {
+    	if (debugEnabled) {
+	        S_LOGGER.debug("Entering Method Quality.runLoadTest()");
+	    } 
+    	
+    	try {
+    		ApplicationInfo appInfo = getApplicationInfo();
+	        StringBuilder workingDirectory = new StringBuilder(getAppDirectoryPath(appInfo));
+	        MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(appInfo)));
+            persistValuesToXml(mojo, PHASE_LOAD_TEST);
+            ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+            BufferedReader reader = applicationManager.performAction(getProjectInfo(), ActionType.LOAD_TEST, null, workingDirectory.toString());
+            setSessionAttribute(getAppId() + LOAD, reader);
+            setReqAttribute(REQ_APP_ID, getAppId());
+            setReqAttribute(REQ_ACTION_TYPE, LOAD);
+    	} catch(Exception e) {
+    		e.printStackTrace();
+    	}
+    	return APP_ENVIRONMENT_READER;
+    }
+    
+    public String load1() {
         
            S_LOGGER.debug("Entering Method Quality.load()");
         
@@ -1359,10 +1424,10 @@ public class Quality extends DynamicParameterUtil {
             FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
             StringBuilder builder = new StringBuilder(Utility.getProjectHome());
             builder.append(project.getApplicationInfo().getCode());
-            String loadTestDirPath = frameworkUtil.getLoadTestDir(techId);
-               S_LOGGER.debug("Load test directory path " + loadTestDirPath + "Test Name " + testName);
+            /*String loadTestDirPath = frameworkUtil.getLoadTestDir(techId);*/
+             /*  S_LOGGER.debug("Load test directory path " + loadTestDirPath + "Test Name " + testName);
             
-            builder.append(loadTestDirPath);
+            builder.append(loadTestDirPath);*/
             QualityUtil.changeTestName(builder.toString(), testName);
             for (SettingsInfo serverSetting : serverSettings) {
             	QualityUtil.adaptTestConfig(builder.toString(), serverSetting);
@@ -1387,6 +1452,31 @@ public class Quality extends DynamicParameterUtil {
         getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
         return APP_ENVIRONMENT_READER;
     }
+    
+    
+    
+    private void setDynamicParameters(Map<String, Object> dynamicParamMap, String goal) throws PhrescoException{
+		try {
+			ApplicationInfo applicationInfo = (ApplicationInfo) dynamicParamMap.get(REQ_APP_INFO);
+			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(applicationInfo)));
+			List<Parameter> parameters = getMojoParameters(mojo, goal);
+			if (CollectionUtils.isNotEmpty(parameters)) {
+				for (Parameter parameter : parameters) {
+					if (parameter.getDependency() != null) {
+						dynamicParamMap.put(parameter.getDependency(), parameter.getValue());
+					}
+					if (parameter.getDynamicParameter() != null) {
+						List<Value> possibleValues = setDynamicPossibleValues(dynamicParamMap, parameter);
+						setReqAttribute(REQ_DYNAMIC_POSSIBLE_VALUES, possibleValues);
+					}
+				}
+			}
+			setReqAttribute(REQ_APPINFO, applicationInfo);
+			setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
+		} catch (PhrescoException e) {
+			e.printStackTrace();
+		}
+	}
 
     public String loadTestResult() {
         
@@ -2055,8 +2145,8 @@ public class Quality extends DynamicParameterUtil {
             sb.append(Utility.getProjectHome());
             sb.append(project.getApplicationInfo().getCode());
             if(StringUtils.isEmpty(settingType)) {
-            	testDirPath = frameworkUtil.getLoadReportDir(techId);
-            	sb.append(testDirPath);
+            	/*testDirPath = frameworkUtil.getLoadReportDir(techId);
+            	sb.append(testDirPath);*/
             } else {
                 testDirPath = frameworkUtil.getPerformanceReportDir(techId);
                 if (StringUtils.isNotEmpty(testDirPath) && StringUtils.isNotEmpty(settingType)) {
@@ -2313,12 +2403,12 @@ public class Quality extends DynamicParameterUtil {
             }
             
             if(!XmlResultsAvailable) {
-            	S_LOGGER.debug("Load dir " + sb.toString() + frameworkUtil.getLoadReportDir(technology));
+            	/*S_LOGGER.debug("Load dir " + sb.toString() + frameworkUtil.getLoadReportDir(technology));
 	            File file = new File(sb.toString() + frameworkUtil.getLoadReportDir(technology));
 	            File[] children = file.listFiles(new XmlNameFileFilter(FILE_EXTENSION_XML));
 	            if(children != null && children.length > 0) {
 	            	XmlResultsAvailable = true;
-	            }
+	            }*/
             }
 		return XmlResultsAvailable;
 	}

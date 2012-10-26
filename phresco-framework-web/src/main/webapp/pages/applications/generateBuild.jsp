@@ -500,6 +500,9 @@
 		} else if (okUrl === "runUnitTest") {
 			var params = getBasicParams();
 			progressPopupAsSecPopup('runUnitTest', '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.UNIT %>', $("#generateBuildForm"), params);
+		} else if (okUrl === "runLoadTest") {
+			var params = getBasicParams();
+			progressPopupAsSecPopup('runLoadTest', '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.LOAD %>', $("#generateBuildForm"), params);
 		}
 	}
 	

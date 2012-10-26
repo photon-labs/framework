@@ -278,6 +278,7 @@
         <action name="generateBuild" method="showGenerateBuildPopup" class="com.photon.phresco.framework.actions.applications.Build">
             <result name="generateBuild">/pages/applications/generateBuild.jsp</result>
         </action>
+        
         <action name="showDeploy" method="showDeployPopup" class="com.photon.phresco.framework.actions.applications.Build">
             <result name="generateBuild">/pages/applications/generateBuild.jsp</result>
         </action>
@@ -533,7 +534,19 @@
         <action name="unit" method="unit" class="com.photon.phresco.framework.actions.applications.Quality">
         	<result name="unit">/pages/applications/quality/unit.jsp</result>
 		</action>
-        
+		
+		<action name="load" method="load" class="com.photon.phresco.framework.actions.applications.Quality">
+        	<result name="load">/pages/applications/quality/load.jsp</result>
+		</action>
+		
+		<action name="showLoadTestPopup" method="showLoadTestPopup" class="com.photon.phresco.framework.actions.applications.Quality">
+        	<result name="Success">/pages/applications/generateBuild.jsp</result>
+		</action>
+		
+		<action name="runLoadTest" method="runLoadTest" class="com.photon.phresco.framework.actions.applications.Quality">
+        	<result name="reader">/pages/applications/reader.jsp</result>
+		</action> 
+		
         <action name="fillTestResultFiles" method="fillTestResultFiles" class="com.photon.phresco.framework.actions.applications.Quality">
         	<result type="json" />
         </action>
@@ -562,9 +575,9 @@
         	<result name="reader">/pages/applications/reader.jsp</result>
         </action>
         
-        <action name="load" method="load" class="com.photon.phresco.framework.actions.applications.Quality">
-            <result name="reader">/pages/applications/reader.jsp</result>
-        </action>
+<!--         <action name="load" method="load" class="com.photon.phresco.framework.actions.applications.Quality"> -->
+<!--             <result name="reader">/pages/applications/reader.jsp</result> -->
+<!--         </action> -->
         
         <action name="performanceTest" method="performance" class="com.photon.phresco.framework.actions.applications.Quality">
             <result name="reader">/pages/applications/reader.jsp</result>
