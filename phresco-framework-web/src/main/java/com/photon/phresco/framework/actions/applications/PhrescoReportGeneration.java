@@ -85,7 +85,7 @@ import com.photon.phresco.util.Utility;
 import com.phresco.pom.util.PomProcessor;
 
 
-public class PhrescoReportGeneration extends FrameworkBaseAction implements FrameworkConstants {
+public class PhrescoReportGeneration extends FrameworkBaseAction {
 
 	private static final long serialVersionUID = 1L;
 	private static final Logger S_LOGGER = Logger.getLogger(PhrescoReportGeneration.class);
@@ -144,9 +144,9 @@ public class PhrescoReportGeneration extends FrameworkBaseAction implements Fram
 					generateJmeterPerformanceReport(jmeterTestResults);
 				}
 			}  else if (LOAD.equals(testType)) {
-				List<LoadTestReport> loadTestResults = getLoadTestResults();
+				//List<LoadTestReport> loadTestResults = getLoadTestResults();
 				// Load test report generation
-				generateLoadTestReport(loadTestResults);
+				//generateLoadTestReport(loadTestResults);
 			}
 		} catch (Exception e) {
 			S_LOGGER.error("Entering into catch block of PhrescoReportGeneration.generatePdfReport()" + FrameworkUtil.getStackTraceAsString(e));
@@ -199,8 +199,8 @@ public class PhrescoReportGeneration extends FrameworkBaseAction implements Fram
 			}
 			
 			//load test details
-			List<LoadTestReport> loadTestResults = getLoadTestResults();
-			S_LOGGER.debug("loadTestResults" + loadTestResults);
+			/*List<LoadTestReport> loadTestResults = getLoadTestResults();*/
+			//S_LOGGER.debug("loadTestResults" + loadTestResults);
 			
 			Map<String, Object> cumulativeReportparams = new HashMap<String,Object>();
 			cumulativeReportparams.put(REQ_PROJECT_CODE, projectCode);
@@ -217,7 +217,7 @@ public class PhrescoReportGeneration extends FrameworkBaseAction implements Fram
 				cumulativeReportparams.put(PERFORMANCE_SPECIAL_HANDLE, false);
 				cumulativeReportparams.put(PERFORMANCE_TEST_REPORTS, jmeterTestResults);
 			}
-			cumulativeReportparams.put(LOAD_TEST_REPORTS, loadTestResults);
+			//cumulativeReportparams.put(LOAD_TEST_REPORTS, loadTestResults);
 			
 			//Sonar details
 			List<SonarReport> sonarReports = new ArrayList<SonarReport>();
@@ -723,7 +723,7 @@ public class PhrescoReportGeneration extends FrameworkBaseAction implements Fram
 		}
 	}
 	
-	public List<LoadTestReport> getLoadTestResults()  throws Exception {
+	/*public List<LoadTestReport> getLoadTestResults()  throws Exception {
 		List<LoadTestReport> loadTestReports = new ArrayList<LoadTestReport>();
 		String reportFilePath = Utility.getProjectHome() + projectCode + reportPaths.getLoadReportDir(techId);
 		List<String> testResultFiles = getTestResultFiles(reportFilePath);
@@ -740,7 +740,7 @@ public class PhrescoReportGeneration extends FrameworkBaseAction implements Fram
 			loadTestReports.add(loadTestReport);
 		}
 		return loadTestReports;
-	}
+	}*/
 	
 	public ArrayList<JmeterTypeReport> getJmeterTestResults() throws Exception {
         List<String> testResultsTypes = new ArrayList<String>();
@@ -957,7 +957,7 @@ public class PhrescoReportGeneration extends FrameworkBaseAction implements Fram
         try {
             String testSuitePath = null;
     		if (UNIT.equals(testType)) {
-    			testSuitePath = reportPaths.getUnitTestSuitePath(techId);
+    			testSuitePath = reportPaths.getUnitTestSuitePath(getApplicationInfo());
     		} else {
     			testSuitePath = reportPaths.getFunctionalTestSuitePath(techId);
     		}
@@ -1009,11 +1009,11 @@ public class PhrescoReportGeneration extends FrameworkBaseAction implements Fram
             String testCasePath = null;
             String testSuitePath = null;
     		if (UNIT.equals(testType)) {
-                testSuitePath = reportPaths.getUnitTestSuitePath(techId);
+                testSuitePath = reportPaths.getUnitTestSuitePath(getApplicationInfo());
     		} else {
                 testSuitePath = reportPaths.getFunctionalTestSuitePath(techId);
     		}
-    		testCasePath = reportPaths.getTestCasePath(techId);
+    		testCasePath = reportPaths.getTestCasePath(getApplicationInfo());
     		S_LOGGER.debug("testSuitePath " + testSuitePath);
     		S_LOGGER.debug("testCasePath " + testCasePath);
             StringBuilder sb = new StringBuilder(); //testsuites/testsuite[@name='yyy']/testcase

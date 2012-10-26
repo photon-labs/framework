@@ -543,8 +543,11 @@ function enableDivCtrls(disabledDiv) {
 }
 
 /** To fill the data in the select box **/
-function fillSelectbox(obj, data, selectTxt) {
+function fillSelectbox(obj, data, selectTxt, selectVal) {
 	obj.empty();
+	if (!isBlank(selectTxt) && !isBlank(selectVal)) {
+		obj.append($("<option></option>").attr("value", selectVal).text(selectTxt));
+	}
 	if (isBlank(data)) {
 		obj.append($("<option></option>").attr("value", "").text(selectTxt));
 	}
@@ -640,4 +643,13 @@ function disableButton(buttonObj) {
 function enableButton(buttonObj) {
     buttonObj.addClass('btn-primary');
     buttonObj.attr("disabled", false);
+}
+
+//To check whether the url is valid or not
+function isValidUrl(url) {
+    if (/^(http|https|ftp|git):\/\/[a-z0-9]+([-.]{1}[a-z0-9]+)*.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/i.test(url)) {
+      return false;
+    } else {
+      return true;
+    }   
 }

@@ -102,6 +102,7 @@ import com.photon.phresco.framework.model.TestCaseFailure;
 import com.photon.phresco.framework.model.TestResult;
 import com.photon.phresco.framework.model.TestSuite;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
+import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
 import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.IosSdkUtil;
@@ -254,6 +255,24 @@ public class Quality extends DynamicParameterUtil {
 	    return SUCCESS;
 	}
 	
+	public String showFunctionalTestPopUp() {
+        if (debugEnabled) {
+            S_LOGGER.debug("Entering Method Quality.showFunctionalTestPopUp()");
+        }
+        
+        try {
+            List<String> projectModules = getProjectModules(getApplicationInfo().getAppDirName());
+            setReqAttribute(REQ_PROJECT_MODULES, projectModules);
+            MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(getApplicationInfo())));
+            List<Parameter> dynamicParameters = getMojoParameters(mojo, PHASE_FUNCTIONAL_TEST);
+            setReqAttribute(REQ_DYNAMIC_PARAMETERS, dynamicParameters);
+        } catch (PhrescoException e) {
+            return showErrorPopup(e, getText(EXCEPTION_QUALITY_UNIT_RPT));
+        }
+        
+        return SUCCESS;
+    }
+	
 	public String runUnitTest() {
 	    if (debugEnabled) {
             S_LOGGER.debug("Entering Method Quality.runUnitTest()");
@@ -323,7 +342,7 @@ public class Quality extends DynamicParameterUtil {
             builder.append(project.getApplicationInfo().getCode());
             List<String> projectModules = getProjectModules(projectCode);
             if (CollectionUtils.isEmpty(projectModules)) {
-            	String unitTestDir = frameworkUtil.getUnitTestDir(null);//TODO:Need to handle
+            	String unitTestDir = frameworkUtil.getUnitTestDir(getApplicationInfo());//TODO:Need to handle
             	builder.append(unitTestDir);
             } else {
             	builder.append(File.separatorChar);
@@ -505,7 +524,7 @@ public class Quality extends DynamicParameterUtil {
         		sb.append(frameworkUtil.getUnitTestReportDir(appInfo));
         	}
         } else if (LOAD.equals(testType)) {
-            sb.append(frameworkUtil.getLoadReportDir(techId));
+            /*sb.append(frameworkUtil.getLoadReportDir(techId));*/
             sb.append(File.separator);
             sb.append(testResultFile);
         } else if (PERFORMACE.equals(testType)) {
@@ -622,9 +641,9 @@ public class Quality extends DynamicParameterUtil {
 	    
 	    try {
 	        String testSuitesMapKey = getAppId() + getTestType() + getProjectModule() + getTechReport();
-	        Map<String, NodeList> mapTestResultName = testSuiteMap.get(testSuitesMapKey);
+	        Map<String, NodeList> testResultNameMap = testSuiteMap.get(testSuitesMapKey);
 	        String testResultPath = getUnitTestResultPath(getApplicationInfo(), null);
-	        if (MapUtils.isEmpty(mapTestResultName)) {
+	        if (MapUtils.isEmpty(testResultNameMap)) {
                 File[] resultFiles = getTestResultFiles(testResultPath);
                 if (!ArrayUtils.isEmpty(resultFiles)) {
                     QualityUtil.sortResultFile(resultFiles);
@@ -634,8 +653,15 @@ public class Quality extends DynamicParameterUtil {
                     setShowError(getText(ERROR_UNIT_TEST));
                     return SUCCESS;
                 }
-                mapTestResultName = testSuiteMap.get(testSuitesMapKey);
+                testResultNameMap = testSuiteMap.get(testSuitesMapKey);
             }
+	        List<String> resultTestSuiteNames = new ArrayList<String>(testResultNameMap.keySet());
+            if (CollectionUtils.isEmpty(resultTestSuiteNames)) {
+                setValidated(true);
+                setShowError(getText(ERROR_UNIT_TEST));
+                return SUCCESS;
+            }
+            setTestSuiteNames(resultTestSuiteNames);
         } catch (PhrescoException e) {
             // TODO: handle exception
         }
@@ -697,7 +723,6 @@ public class Quality extends DynamicParameterUtil {
 	        	mapTestResultName = testSuiteMap.get(testSuitesMapKey);
 	    	} 
 	    	
-	    	
 	    	List<String> resultTestSuiteNames = new ArrayList<String>(mapTestResultName.keySet());
 	    	if (CollectionUtils.isEmpty(resultTestSuiteNames)) {
 	    		setValidated(true);
@@ -720,7 +745,7 @@ public class Quality extends DynamicParameterUtil {
 		return SUCCESS;
 	}
     
-    private void updateCache(File[] resultFiles) throws FileNotFoundException, ParserConfigurationException, SAXException, IOException, TransformerException, PhrescoException {
+    private void updateCache(File[] resultFiles) throws FileNotFoundException, ParserConfigurationException, SAXException, IOException, TransformerException, PhrescoException, PhrescoPomException {
 		Map<String, NodeList> mapTestSuites = new HashMap<String, NodeList>(10);
     	for (File resultFile : resultFiles) {
 			try {
@@ -743,24 +768,19 @@ public class Quality extends DynamicParameterUtil {
             	S_LOGGER.error("Entered into catch block of Quality.updateCache()"+ e);
 			}
 		}
-	    String testSuitesKey = projectCode + testType + projectModule + techReport;
+	    String testSuitesKey = getAppId() + getTestType() + getProjectModule() + getTechReport();
 		testSuiteMap.put(testSuitesKey, mapTestSuites);
     }
     
-    private NodeList evaluateTestSuite(Document doc) throws PhrescoException, XPathExpressionException {
-        ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-        Project project = administrator.getProject(projectCode);
-        String techId = project.getApplicationInfo().getTechInfo().getVersion();
+    private NodeList evaluateTestSuite(Document doc) throws PhrescoException, XPathExpressionException, PhrescoPomException {
         String testSuitePath = null;
+        ApplicationInfo appInfo = getApplicationInfo();
         FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
         if (APP_UNIT_TEST.equals(testType)) {
-        	testSuitePath = frameworkUtil.getUnitTestSuitePath(techId);
+        	testSuitePath = frameworkUtil.getUnitTestSuitePath(appInfo);
         } else if (APP_FUNCTIONAL_TEST.equals(testType)) {
-        	testSuitePath = frameworkUtil.getFunctionalTestSuitePath(techId);
+//        	testSuitePath = frameworkUtil.getFunctionalTestSuitePath(appInfo);
         }
-        
-        S_LOGGER.debug("Project info " + project.getApplicationInfo().getName() +" Test suite path " + testSuitePath);
-        
     	XPath xpath = XPathFactory.newInstance().newXPath();
 		XPathExpression xPathExpression = xpath.compile(testSuitePath);
 		NodeList testSuiteNode = (NodeList) xPathExpression.evaluate(doc, XPathConstants.NODESET);
@@ -804,24 +824,21 @@ public class Quality extends DynamicParameterUtil {
 		return testSuites;
     }
 
-    private List<TestCase> getTestCases(NodeList testSuites) throws TransformerException, PhrescoException {
+    private List<TestCase> getTestCases(NodeList testSuites) throws TransformerException, PhrescoException, PhrescoPomException {
     	S_LOGGER.debug("Entering Method Quality.getTestCases(Document doc, String testSuiteName)");
         
     	try {
             String testCasePath = null;
             String testSuitePath = null;
             FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-            ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-            Project project = administrator.getProject(projectCode);
-            getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
-            String techId = project.getApplicationInfo().getTechInfo().getVersion();
+            ApplicationInfo appInfo = getApplicationInfo();
            
             if (APP_UNIT_TEST.equals(testType)) {
-            	testSuitePath = frameworkUtil.getUnitTestSuitePath(techId);
+            	testSuitePath = frameworkUtil.getUnitTestSuitePath(getApplicationInfo());
             } else if (APP_FUNCTIONAL_TEST.equals(testType)) {
-            	testSuitePath = frameworkUtil.getFunctionalTestSuitePath(techId);
+//            	testSuitePath = frameworkUtil.getFunctionalTestSuitePath(techId);
             }
-            testCasePath = frameworkUtil.getTestCasePath(techId);
+            testCasePath = frameworkUtil.getTestCasePath(appInfo);
             
             S_LOGGER.debug("Test suite path " + testSuitePath);
             S_LOGGER.debug("Test suite path " + testCasePath);
@@ -866,8 +883,8 @@ public class Quality extends DynamicParameterUtil {
 
         	StringBuilder screenShotDir = new StringBuilder();
         	screenShotDir.append(Utility.getProjectHome());
-        	screenShotDir.append(project.getApplicationInfo().getCode());
-        	screenShotDir.append(frameworkUtil.getFunctionalReportDir(techId));
+        	screenShotDir.append(getApplicationInfo().getAppDirName());
+//        	screenShotDir.append(frameworkUtil.getFunctionalReportDir(appInfo));
         	screenShotDir.append(File.separator);
         	screenShotDir.append(SCREENSHOT_DIR);
         	screenShotDir.append(File.separator);
@@ -1073,7 +1090,7 @@ public class Quality extends DynamicParameterUtil {
                     FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
                     if (APP_UNIT_TEST.equals(testType)) {
                         getHttpRequest().setAttribute(PATH, 
-                                frameworkUtil.getUnitTestDir(appInfo));
+                                frameworkUtil.getUnitTestDir(getApplicationInfo()));
                     } else if (APP_FUNCTIONAL_TEST.equals(testType) && !TechnologyTypes.IPHONE_HYBRID.equals(techId)) {
 //                        ActionType actionType = ActionType.STOP_SELENIUM_SERVER;
                         StringBuilder builder = new StringBuilder(Utility.getProjectHome());
@@ -1110,8 +1127,8 @@ public class Quality extends DynamicParameterUtil {
                 StringBuilder sb = new StringBuilder();
                 sb.append(Utility.getProjectHome());
                 sb.append(appInfo.getAppDirName());
-                getHttpRequest().setAttribute(PATH,	frameworkUtil.getLoadTestDir(techId));
-                sb.append(frameworkUtil.getLoadReportDir(techId));
+                getHttpRequest().setAttribute(PATH,	frameworkUtil.getLoadTestDir(appInfo));
+                sb.append(frameworkUtil.getLoadTestReportDir(appInfo));
                    S_LOGGER.debug("test type load  test Report directory " + sb.toString());
                 File file = new File(sb.toString());
                 File[] children = file.listFiles(new XmlNameFileFilter(FILE_EXTENSION_XML));
@@ -1311,8 +1328,72 @@ public class Quality extends DynamicParameterUtil {
         getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
         return APP_ENVIRONMENT_READER;
     }
+    
+    public String load() throws JAXBException, IOException, PhrescoPomException {
+	    
+    	if (debugEnabled) {
+	        S_LOGGER.debug("Entering Method Quality.load()");
+	    } 
+	    
+    	try {
+    		 ApplicationInfo appInfo = getApplicationInfo();	
+    		 FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+             setReqAttribute(PATH, frameworkUtil.getLoadTestDir(appInfo));
+             File file = new File(Utility.getProjectHome() + appInfo.getAppDirName()+ frameworkUtil.getLoadTestReportDir(appInfo));
+             File[] children = file.listFiles(new XmlNameFileFilter(FILE_EXTENSION_XML));
+             if(children != null) {
+             	QualityUtil.sortResultFile(children);
+                 getHttpRequest().setAttribute(REQ_JMETER_REPORT_FILES, children);
+             } else {
+                 getHttpRequest().setAttribute(REQ_ERROR_TESTSUITE, getText(ERROR_LOAD_TEST));
+             }
 
-    public String load() {
+             getHttpRequest().setAttribute(REQ_APP_INFO, appInfo);
+    	} catch(Exception e){
+    		 e.printStackTrace();
+        }
+    	
+    	return "load";
+    }
+    
+    public String showLoadTestPopup() throws PhrescoException{
+    	
+    	try {
+    		String from = getReqParameter(REQ_FROM);
+    		Map<String, Object> loadParamMap = new HashMap<String, Object>();
+    		ApplicationInfo applicationInfo = getApplicationInfo();
+    		loadParamMap.put(REQ_APP_INFO, applicationInfo);
+    		setDynamicParameters(loadParamMap, PHASE_LOAD_TEST);
+    		setReqAttribute(REQ_FROM, from);
+    	} catch(Exception e) {
+    		e.printStackTrace();
+    	}
+    	
+    	return "Success";
+   }
+    
+    public String runLoadTest() {
+    	if (debugEnabled) {
+	        S_LOGGER.debug("Entering Method Quality.runLoadTest()");
+	    } 
+    	
+    	try {
+    		ApplicationInfo appInfo = getApplicationInfo();
+	        StringBuilder workingDirectory = new StringBuilder(getAppDirectoryPath(appInfo));
+	        MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(appInfo)));
+            persistValuesToXml(mojo, PHASE_LOAD_TEST);
+            ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+            BufferedReader reader = applicationManager.performAction(getProjectInfo(), ActionType.LOAD_TEST, null, workingDirectory.toString());
+            setSessionAttribute(getAppId() + LOAD, reader);
+            setReqAttribute(REQ_APP_ID, getAppId());
+            setReqAttribute(REQ_ACTION_TYPE, LOAD);
+    	} catch(Exception e) {
+    		e.printStackTrace();
+    	}
+    	return APP_ENVIRONMENT_READER;
+    }
+    
+    public String load1() {
         
            S_LOGGER.debug("Entering Method Quality.load()");
         
@@ -1359,10 +1440,10 @@ public class Quality extends DynamicParameterUtil {
             FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
             StringBuilder builder = new StringBuilder(Utility.getProjectHome());
             builder.append(project.getApplicationInfo().getCode());
-            String loadTestDirPath = frameworkUtil.getLoadTestDir(techId);
-               S_LOGGER.debug("Load test directory path " + loadTestDirPath + "Test Name " + testName);
+            /*String loadTestDirPath = frameworkUtil.getLoadTestDir(techId);*/
+             /*  S_LOGGER.debug("Load test directory path " + loadTestDirPath + "Test Name " + testName);
             
-            builder.append(loadTestDirPath);
+            builder.append(loadTestDirPath);*/
             QualityUtil.changeTestName(builder.toString(), testName);
             for (SettingsInfo serverSetting : serverSettings) {
             	QualityUtil.adaptTestConfig(builder.toString(), serverSetting);
@@ -1387,6 +1468,31 @@ public class Quality extends DynamicParameterUtil {
         getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
         return APP_ENVIRONMENT_READER;
     }
+    
+    
+    
+    private void setDynamicParameters(Map<String, Object> dynamicParamMap, String goal) throws PhrescoException{
+		try {
+			ApplicationInfo applicationInfo = (ApplicationInfo) dynamicParamMap.get(REQ_APP_INFO);
+			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(applicationInfo)));
+			List<Parameter> parameters = getMojoParameters(mojo, goal);
+			if (CollectionUtils.isNotEmpty(parameters)) {
+				for (Parameter parameter : parameters) {
+					if (parameter.getDependency() != null) {
+						dynamicParamMap.put(parameter.getDependency(), parameter.getValue());
+					}
+					if (parameter.getDynamicParameter() != null) {
+						List<Value> possibleValues = setDynamicPossibleValues(dynamicParamMap, parameter);
+						setReqAttribute(REQ_DYNAMIC_POSSIBLE_VALUES, possibleValues);
+					}
+				}
+			}
+			setReqAttribute(REQ_APPINFO, applicationInfo);
+			setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
+		} catch (PhrescoException e) {
+			e.printStackTrace();
+		}
+	}
 
     public String loadTestResult() {
         
@@ -1769,13 +1875,12 @@ public class Quality extends DynamicParameterUtil {
         return osType;
     }
 
-    public String testReport() throws TransformerException {
+    public String testReport() throws TransformerException, PhrescoPomException {
     	S_LOGGER.debug("Entering Method Quality.testReport()");
     	try {
     		String testSuitesMapKey = getAppId() + getTestType() + getProjectModule() + getTechReport();
         	Map<String, NodeList> testResultNameMap = testSuiteMap.get(testSuitesMapKey);
             NodeList testSuites = testResultNameMap.get(getTestSuite());
-    		
     		if (ALL_TEST_SUITES.equals(getTestSuite())) {
     			Map<String, String> testSuitesResultMap = new HashMap<String, String>();
     			float totalTestSuites = 0;
@@ -1791,6 +1896,7 @@ public class Quality extends DynamicParameterUtil {
     		    			for (TestSuite tstSuite : allTestSuites) {
     		    				//testsuite values are set before calling getTestCases value
     							setTestSuite(tstSuite.getName());
+    							getTestCases(allTestResultNodeList);
     				            float tests = 0;
     				            float failures = 0;
     				            float errors = 0;
@@ -2047,18 +2153,16 @@ public class Quality extends DynamicParameterUtil {
         try {
         	String testDirPath = null;
         	testResultFiles =  new ArrayList<String>();
-            ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-            Project project = administrator.getProject(projectCode);
-            String techId = project.getApplicationInfo().getTechInfo().getVersion();
+        	ApplicationInfo appInfo = getApplicationInfo();
             FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
             StringBuilder sb = new StringBuilder();
             sb.append(Utility.getProjectHome());
-            sb.append(project.getApplicationInfo().getCode());
+            sb.append(appInfo.getAppDirName());
             if(StringUtils.isEmpty(settingType)) {
-            	testDirPath = frameworkUtil.getLoadReportDir(techId);
+            	testDirPath = frameworkUtil.getLoadTestReportDir(appInfo);
             	sb.append(testDirPath);
             } else {
-                testDirPath = frameworkUtil.getPerformanceReportDir(techId);
+                testDirPath = frameworkUtil.getPerformanceReportDir("");
                 if (StringUtils.isNotEmpty(testDirPath) && StringUtils.isNotEmpty(settingType)) {
                     Pattern p = Pattern.compile("dir_type");
                     Matcher matcher = p.matcher(testDirPath);
@@ -2313,8 +2417,8 @@ public class Quality extends DynamicParameterUtil {
             }
             
             if(!XmlResultsAvailable) {
-            	S_LOGGER.debug("Load dir " + sb.toString() + frameworkUtil.getLoadReportDir(technology));
-	            File file = new File(sb.toString() + frameworkUtil.getLoadReportDir(technology));
+            	S_LOGGER.debug("Load dir " + sb.toString() + frameworkUtil.getLoadTestReportDir(appInfo));
+	            File file = new File(sb.toString() + frameworkUtil.getLoadTestReportDir(appInfo));
 	            File[] children = file.listFiles(new XmlNameFileFilter(FILE_EXTENSION_XML));
 	            if(children != null && children.length > 0) {
 	            	XmlResultsAvailable = true;

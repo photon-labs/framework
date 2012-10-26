@@ -20,9 +20,15 @@
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.io.File"%>
+<%@ page import="java.util.List"%>
 <%@ page import="com.photon.phresco.framework.api.Project"%>
+<%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.util.TechnologyTypes" %>
+
+<%@ page import="org.apache.commons.collections.CollectionUtils" %>
+<%@ page import="org.apache.commons.lang.StringUtils"%>
+<%@ page import="com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter"%>
 
 <%@include file="../progress.jsp" %>
 
@@ -43,32 +49,38 @@
 <form action="load" method="post" autocomplete="off" class="marginBottomZero">
    <!--  <div class="frame-header frameHeaderPadding btnTestPadding"> -->
      <div class="operation">
-            <input id="testbtn" type="button" value="<s:text name="label.test"/>" class="primary btn env_btn">
+            <input data-toggle="modal" href="#popupPage" id="loadTestBtn" type="button" value="<s:text name="label.test"/>" class="btn btn-primary env_btn" additionalParam="from=load">
         <div class="icon_fun_div printAsPdf">
         	<a href="#" id="pdfPopup" style="display: none;"><img id="pdfCreation" src="images/icons/print_pdf.png" title="generate pdf" style="height: 20px; width: 20px;"/></a>
 			<a href="#" id="openFolder"><img id="folderIcon" src="images/icons/open-folder.png" title="Open folder" /></a>
 			<a href="#" id="copyPath"><img src="images/icons/copy-path.png" title="Copy path"/></a>
 		</div>
+		 
     </div>
 </form>
 
 <!-- load test button ends -->
 <%
-    Boolean popup = Boolean.FALSE;
-	Project project = (Project)request.getAttribute(FrameworkConstants.REQ_PROJECT);
-	String projectCode = (String)request.getAttribute(FrameworkConstants.REQ_PROJECT_CODE);
-	String testType = (String) request.getAttribute(FrameworkConstants.REQ_TEST_TYPE);
+	ApplicationInfo appInfo = (ApplicationInfo)request.getAttribute(FrameworkConstants.REQ_APP_INFO);
+	String appId = appInfo.getId();
+	String techId = appInfo.getTechInfo().getId();
+	String fromPage = (String) request.getAttribute(FrameworkConstants.REQ_FROM_PAGE);
+	List<Parameter> parameters = (List<Parameter>) request.getAttribute(FrameworkConstants.REQ_DYNAMIC_PARAMETERS);
+	//Must be Removed
+	Boolean popup = Boolean.FALSE;
+	/* Project project = (Project)request.getAttribute(FrameworkConstants.REQ_PROJECT);
+	String projectCode = (String)request.getAttribute(FrameworkConstants.REQ_PROJECT_CODE); */
+	
    	String testError = (String) request.getAttribute(FrameworkConstants.REQ_ERROR_TESTSUITE);
-    String technology =  project.getApplicationInfo().getTechInfo().getVersion();
+    /* String technology =  project.getApplicationInfo().getTechInfo().getVersion();
 	if (TechnologyTypes.ANDROIDS.contains(technology)) {
 		popup = Boolean.TRUE;
-	}
-	String path = (String) request.getAttribute(FrameworkConstants.PATH);
-   	if(testError != null) {
+	} */
+	String path = (String) request.getAttribute(FrameworkConstants.PATH); 
+   	if(testError != null) { 
 %>
-    <div class="alert-message block-message warning" style="margin: 5px 5px 0;">
-		<center><label class="errorMsgLabel"><%= testError %></label></center>
-	</div>
+    <div class="alert alert-block" id="errorDiv" style="margin-left: 1px; margin-top: 5px;"><%= testError %></div> 
+	
 	
 	<script type="text/javascript">
 		enableScreen();
@@ -105,9 +117,7 @@
 	    });
 	
 	    function loadTestResults() {
-	        var testResult = $("#testResults").val();
-	        $("#testResultDisplay").empty();
-     	    var params = "";
+	    	<%-- var params = "";
 	    	if (!isBlank($('form').serialize())) {
 	    		params = $('form').serialize() + "&";
 	    	}
@@ -116,11 +126,23 @@
 			params = params.concat("&testResultFile=");
 			params = params.concat(testResult);
 			getCurrentCSS();
-	        $('.popupLoadingIcon').show();
+	        $('.popupLoadingIcon').show(); 
 			performAction('loadTestResult', params, $('#testResultDisplay'));
 			//show print as pdf icon
-			$('#pdfPopup').show();
-	    }
+			$('#pdfPopup').show();  --%>
+	    	var params = getBasicParams();
+	    	var testResult = $("#testResults").val();
+	    	params = params.concat("&testType=");
+	    	params = params.concat('<%= FrameworkConstants.LOAD %>');
+			params = params.concat("&testResultFile=");
+			params = params.concat(testResult);
+	           	
+	        $("#testResultDisplay").empty();
+	        loadContent('loadTestResult','', $('#testResultDisplay'), params);
+	   }    
+     	    
+			
+	    
 	</script>
 <% } %>
 
@@ -131,13 +153,14 @@
 <script type="text/javascript">
     
 	    $(document).ready(function() {
+    		yesnoPopup($('#loadTestBtn'),'showLoadTestPopup', '<s:text name="label.load.test"/>', 'runLoadTest','<s:text name="label.test"/>');
 	    	
 	    	//Disable test button for load
 	    	if(<%= popup %>){
 	    		disableControl($("#testbtn"), "btn disabled");	
 	    	}
 	    	
-	        $('#testbtn').click(function() {
+	        <%-- $('#testbtn').click(function() {
 	        	$("#popup_div").empty(); // remove perfromance html data and to avoid name conflict with load test
 			 	if(<%= popup %>){
 					openAndroidPopup();
@@ -160,7 +183,7 @@
 	 			params = params.concat('<%= testType %>');
 	     		popup('printAsPdfPopup', params, $('#popup_div'));
 	     	    escPopup();
-	 	    });
+	 	    }); --%>
 	    });
     
        
@@ -173,10 +196,10 @@
 			escPopup();
         }
         
-        $('#closeGenerateTest, #closeGenTest').click(function() {
+        <%-- $('#closeGenerateTest, #closeGenTest').click(function() {
 			changeTesting('<%= testType %>');
 			enableScreen();
-		});
+		}); --%>
         
 		function openAndroidPopup(){
 			$('#popup_div').empty();

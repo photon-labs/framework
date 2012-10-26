@@ -251,14 +251,14 @@ if(!isiPad()){
 	$(".accordion_panel_inner").scrollbars();
 }
 
+var isCiRefresh = false; // for ci page use - this should be global : kalees
+
 // buildSize to refresh ci after build completed
 var refreshCi = false;
 var isJenkinsAlive = false;
 var isJenkinsReady = false;
 
 $(document).ready(function() {
-	
-	var isCiRefresh = false; // for ci page use - this should be global : kalees
 	
 	accordion();
 // 	$("#popup_div").css("display","none");
@@ -287,14 +287,15 @@ $(document).ready(function() {
 		enableDisableDeleteButton($(this).val());
 	});
 	
-    $('#configure').click(function() {
-		if (isMoreThanOneJobSelected()) {
-			alert("handle this event ");
-			showHidePopupMsg($(".ciAlertMsg"), '<%= FrameworkConstants.CI_ONE_JOB_REQUIRED%>');
-			return false;			
-		}
-        showCI(); // display configure popup
-    });
+	yesnoPopup($('#configure'), 'configure', '<s:text name="label.ci"/>', 'saveJob','<s:text name="label.save"/>');
+//     $('#configure').click(function() {
+// 		if (isMoreThanOneJobSelected()) {
+// 			alert("handle this event ");
+<%-- 			showHidePopupMsg($(".ciAlertMsg"), '<%= FrameworkConstants.CI_ONE_JOB_REQUIRED%>'); --%>
+// 			return false;			
+// 		}
+//         showCI(); // display configure popup
+//     });
     
 //     $('#closeGenerateTest, #closeGenTest').click(function() {
 //     	ProgressShow("none");
@@ -357,7 +358,7 @@ $(document).ready(function() {
     		params = $('form').serialize() + "&";
     	}
     	
-        performAction('CIBuildDelete', params, $("#tabDiv"));
+//         performAction('CIBuildDelete', params, $("#tabDiv"));
 //      loadContent("appInfo", $('#formAppMenu'), $("#subcontainer"), params);
 // 		loadContent(pageUrl, form, tag, additionalParams, callSuccessEvent)
 	    loadContent('CIBuildDelete',$('#deleteObjects'), $('#subcontainer'), getBasicParams(), false);
@@ -385,12 +386,13 @@ function buildCI() {
 
 // show configure popup
 function showCI() {
-	alert("handle showCI () ")
-	$("#popup_div").empty();
-    $("#showConfigure").empty();
-    showPopup();
-	popup('configure', '', $('#popup_div'));
-    escPopup();
+	alert("handle showCI () ");
+	
+// 	$("#popup_div").empty();
+//     $("#showConfigure").empty();
+//     showPopup();
+// 	popup('configure', '', $('#popup_div'));
+//     escPopup();
 }
 
 // function setupProgress() {
@@ -546,7 +548,7 @@ function successEvent(pageUrl, data) {
 // 		successRefreshCI(data);
 // 	} else if(pageUrl == "checkForConfiguration") {
 // 		successEnvValidation(data);
-// 	}
+	}
 }
 
 function enableDisableDeleteButton(atleastOneCheckBoxVal) {
