@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
+
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.param.api.DynamicParameter;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
@@ -25,8 +27,11 @@ public class DynamicParameterUtil extends FrameworkBaseAction {
      */
     protected List<Parameter> getMojoParameters(MojoProcessor mojo, String goal) throws PhrescoException {
 		com.photon.phresco.plugins.model.Mojos.Mojo.Configuration mojoConfiguration = mojo.getConfiguration(goal);
-		List<Parameter> parameters = mojoConfiguration.getParameters().getParameter();
-		return parameters;
+		if (mojoConfiguration != null) {
+		    return mojoConfiguration.getParameters().getParameter();
+		}
+		
+		return null;
 	}
     
 	
@@ -65,24 +70,26 @@ public class DynamicParameterUtil extends FrameworkBaseAction {
 		List<Parameter> parameters = getMojoParameters(mojo, goal);
 		StringBuilder csParamVal = new StringBuilder();
 		String sep = "";
-		for (Parameter parameter : parameters) {
-			if (Boolean.parseBoolean(parameter.getMultiple())) {
-				String[] parameterValues = getReqParameterValues(parameter.getKey());
-				for (String parameterValue : parameterValues) {
-					csParamVal.append(sep);
-					csParamVal.append(parameterValue);
-					sep = ",";
-				}
-				parameter.setValue(csParamVal.toString());
-			} else if (TYPE_BOOLEAN.equalsIgnoreCase(parameter.getType())){
-				if (getReqParameter(parameter.getKey()) != null) {
-					parameter.setValue(getReqParameter(parameter.getKey()));
-				} else {
-					parameter.setValue(Boolean.FALSE.toString());
-				}
-			} else {
-				parameter.setValue(getReqParameter(parameter.getKey()));
-			}
+		if (CollectionUtils.isNotEmpty(parameters)) {
+    		for (Parameter parameter : parameters) {
+    			if (Boolean.parseBoolean(parameter.getMultiple())) {
+    				String[] parameterValues = getReqParameterValues(parameter.getKey());
+    				for (String parameterValue : parameterValues) {
+    					csParamVal.append(sep);
+    					csParamVal.append(parameterValue);
+    					sep = ",";
+    				}
+    				parameter.setValue(csParamVal.toString());
+    			} else if (TYPE_BOOLEAN.equalsIgnoreCase(parameter.getType())){
+    				if (getReqParameter(parameter.getKey()) != null) {
+    					parameter.setValue(getReqParameter(parameter.getKey()));
+    				} else {
+    					parameter.setValue(Boolean.FALSE.toString());
+    				}
+    			} else {
+    				parameter.setValue(getReqParameter(parameter.getKey()));
+    			}
+    		}
 		}
 		mojo.save();
 	}

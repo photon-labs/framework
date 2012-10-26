@@ -81,6 +81,7 @@ import com.photon.phresco.framework.FrameworkConfiguration;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.DynamicParameterUtil;
 import com.photon.phresco.framework.api.ActionType;
+import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.api.Project;
 import com.photon.phresco.framework.api.ProjectAdministrator;
 import com.photon.phresco.framework.api.ProjectRuntimeManager;
@@ -127,7 +128,6 @@ public class Quality extends DynamicParameterUtil {
     private String projectCode = null;
     private String testType = null;
     private String testResultFile = null;
-    private String projectModule = "";
 	private String techReport = "";
     private String testModule = null;
 	private String showError = null;
@@ -210,6 +210,8 @@ public class Quality extends DynamicParameterUtil {
 	//ios test type iosTestType
 	private String iosTestType = null;
 	
+	private String projectModule = "";
+	
 	private static Map<String, Map<String, NodeList>> testSuiteMap = Collections.synchronizedMap(new HashMap<String, Map<String, NodeList>>(8));
 	
 	public String unit() throws JAXBException, IOException, PhrescoPomException {
@@ -232,7 +234,7 @@ public class Quality extends DynamicParameterUtil {
             setReqAttribute(REQ_DYNAMIC_PARAMETERS, dynamicParameters);
             setReqAttribute(REQ_PROJECT_MODULES, projectModules);
         } catch (PhrescoException e) {
-            return showErrorPopup(e, getText(EXCEPTION_QUALITY_UNIT));
+            return showErrorPopup(e, getText(EXCEPTION_QUALITY_UNIT_RPT));
         }
 	    
 	    return APP_UNIT_TEST;
@@ -249,12 +251,12 @@ public class Quality extends DynamicParameterUtil {
     	    projectModules.add("phresco-framework-web");
             projectModules.add("phresco-framework-impl");
             projectModules.add("phresco-framework");
-            getHttpRequest().setAttribute(REQ_PROJECT_MODULES, projectModules);
+            setReqAttribute(REQ_PROJECT_MODULES, projectModules);
             MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(getApplicationInfo())));
             List<Parameter> dynamicParameters = getMojoParameters(mojo, PHASE_UNIT_TEST);
             setReqAttribute(REQ_DYNAMIC_PARAMETERS, dynamicParameters);
 	    } catch (PhrescoException e) {
-	        e.printStackTrace();
+	        return showErrorPopup(e, getText(EXCEPTION_QUALITY_UNIT_RPT));
 	    }
 	    
 	    return SUCCESS;
@@ -266,9 +268,21 @@ public class Quality extends DynamicParameterUtil {
         }
 	    
 	    try {
-            
-        } catch (Exception e) {
-            // TODO: handle exception
+	        ApplicationInfo appInfo = getApplicationInfo();
+	        StringBuilder workingDirectory = new StringBuilder(getAppDirectoryPath(appInfo));
+	        if (StringUtils.isNotEmpty(getProjectModule())) {
+	            workingDirectory.append(File.separator);
+	            workingDirectory.append(getProjectModule());
+	        }
+	        MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(appInfo)));
+            persistValuesToXml(mojo, PHASE_UNIT_TEST);
+            ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+            BufferedReader reader = applicationManager.performAction(getProjectInfo(), ActionType.UNIT_TEST, null, workingDirectory.toString());
+            setSessionAttribute(getAppId() + UNIT, reader);
+            setReqAttribute(REQ_APP_ID, getAppId());
+            setReqAttribute(REQ_ACTION_TYPE, UNIT);
+        } catch (PhrescoException e) {
+            return showErrorPopup(e, getText(EXCEPTION_QUALITY_UNIT_RUN));
         }
 	    
 	    return APP_ENVIRONMENT_READER;
@@ -309,7 +323,7 @@ public class Quality extends DynamicParameterUtil {
                 if (TechnologyTypes.SHAREPOINT.equals(techId) || TechnologyTypes.DOT_NET.equals(techId)) {
 //                	actionType = ActionType.SHAREPOINT_NUNIT_TEST;
                 } else {
-                	actionType = ActionType.TEST;
+//                	actionType = ActionType.TEST;
                 }
             }
             FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
@@ -375,14 +389,14 @@ public class Quality extends DynamicParameterUtil {
                
 	        } else if (TechnologyTypes.IPHONE_HYBRID.equals(techId)) {
 	        	settingsInfoMap = null;
-	            actionType = ActionType.TEST;
+//	            actionType = ActionType.TEST;
 	        } else {
 	        	S_LOGGER.debug("All test param added");
                 settingsInfoMap.put(TEST_PARAM, TEST_PARAM_VALUE);
                 if (TechnologyTypes.SHAREPOINT.equals(techId) || TechnologyTypes.DOT_NET.equals(techId)) {
 //                	actionType = ActionType.SHAREPOINT_NUNIT_TEST;
                 } else {
-                	actionType = ActionType.TEST;
+//                	actionType = ActionType.TEST;
                 }
             }
            
@@ -1197,7 +1211,7 @@ public class Quality extends DynamicParameterUtil {
                    S_LOGGER.debug("Performance test method ANDROIDS type settingsInfoMap value " + settingsInfoMap);
                
             } else {
-            	actionType = ActionType.TEST;
+//            	actionType = ActionType.TEST;
                 if (Constants.SETTINGS_TEMPLATE_SERVER.equals(jmeterTestAgainst)) {
                     String serverSetting = getHttpRequest().getParameter(Constants.SETTINGS_TEMPLATE_SERVER);
                     selectedSettings = administrator.getSettingsInfo(serverSetting, Constants.SETTINGS_TEMPLATE_SERVER, project.getApplicationInfo().getCode(), environment);
@@ -1340,7 +1354,7 @@ public class Quality extends DynamicParameterUtil {
                    S_LOGGER.debug("Load method ANDROIDS type settingsInfoMap value " + settingsInfoMap);
                 
             } else {
-            	actionType = ActionType.TEST;
+//            	actionType = ActionType.TEST;
             	String environment = getHttpRequest().getParameter(REQ_ENVIRONMENTS);
             	String type = getHttpRequest().getParameter("jmeterTestAgainst");
                 if(serverSettings == null) {

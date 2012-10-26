@@ -26,6 +26,7 @@
 <%@ page import="java.util.Collection"%>
 <%@ page import="java.util.Iterator"%>
 
+<%@ page import="com.google.gson.Gson"%>
 <%@ page import="org.apache.commons.lang.StringUtils" %>
 <%@ page import="org.apache.commons.collections.MapUtils" %>
 <%@ page import="org.apache.commons.collections.CollectionUtils"%>
@@ -75,6 +76,10 @@
 		projectCode = selectedInfo.getCode();
 	}
 		
+
+
+
+
 	
 	
 	List<Environment> environments = (List<Environment>) request.getAttribute(FrameworkConstants.REQ_ENVIRONMENTS);
@@ -84,13 +89,14 @@
 	String buttonLbl = FrameworkActionUtil.getButtonLabel(fromPage);
 	String pageUrl = FrameworkActionUtil.getPageUrl(FrameworkConstants.CONFIG, fromPage);
 	
+	Gson gson = new Gson();
 %>
 <form id="formConfigAdd" class="form-horizontal">
 	<h4>
 		<%= title %> 
 	</h4>
-	 
-	<div class="content_adder" id="downloadInputDiv">
+	
+	<div class="appInfoScrollDiv content_adder" id="downloadInputDiv">
 		<div class="control-group" id="nameControl">
 			<label class="control-label labelbold">
 				<span class="mandatory">*</span>&nbsp;<s:text name='lbl.name'/>
@@ -118,8 +124,8 @@
 			</label>	
 			<div class="controls">
 				<select id="environment" name="environment">
-				<% for (Environment environment : environments) { %>
-					<option value="<%= environment.getName() %>"><%= environment.getName() %></option>
+				<% for (Environment environment : environments) { String envJson = gson.toJson(environment);%>
+					<option value='<%= gson.toJson(environment) %>' ><%= environment.getName() %></option>
                 <% } %>
 				</select>
 				<span class="help-inline" id="envError"></span>
@@ -133,23 +139,48 @@
 			<div class="controls">
 				<select id="type" name="type">
 				<% for (SettingsTemplate settingsTemplate : settingsTemplates) { %>
-					<option value="<%= settingsTemplate.getName() %>"><%= settingsTemplate.getName() %></option>
+					<option value='<%= gson.toJson(settingsTemplate) %>' ><%= settingsTemplate.getName() %></option>
                 <% } %>
 				</select>
 				<span class="help-inline" id="envError"></span>
 			</div>
 		</div> <!-- Type -->
 		
+		<div id="typeContainer"></div>
+		
+	</div>
 	<div class="bottom_button">
 		<input type="button" id="" class="btn btn-primary" value='<%= buttonLbl %>' />	
 		<input type="button" id="downloadCancel" class="btn btn-primary" value="<s:text name='lbl.btn.cancel'/>" />
 	</div>
 	
 	<!-- Hidden Fields -->
-    <input type="hidden" name="fromPage" value="<%= StringUtils.isNotEmpty(fromPage) ? fromPage : "" %>"/>
+    <input type="hidden" name="fromPage" value="<%= fromPage %>"/>
     <input type="hidden" name="oldName" value="<%= name %>"/>
 </form>
 
 <script type="text/javascript">
+
+	/* To check whether the divice is ipad or not */
+	if (!isiPad()){
+	    /* JQuery scroll bar */
+		$(".appInfoScrollDiv").scrollbars();
+	}
 	
+	$('#type').change(function() { 
+		var settingTemplate = '{ "settingTemplate": ' + $('#type').val() + ' }';
+		loadJsonContent('configType', settingTemplate,  $('#typeContainer'));
+	}).triggerHandler("change");
+	
+	function loadJsonContent(url, jsonParam, containerTag) {
+		$.ajax({
+			url : url,
+			data : jsonParam,
+			type : "POST",
+			contentType: "application/json; charset=utf-8",
+			success : function(data) {
+				loadData(data, containerTag);
+			}
+		});	
+	}
 </script>

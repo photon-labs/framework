@@ -512,7 +512,8 @@
         	<result name="type">/pages/settings/type.jsp</result>
         </action>
 
-		<action name="configurationsType" method="configurationsType" class="com.photon.phresco.framework.actions.applications.Configurations">
+		<action name="configType" method="showProperties" class="com.photon.phresco.framework.actions.applications.Configurations">
+			<interceptor-ref name="json" />
         	<result name="type">/pages/applications/configuration/type.jsp</result>
         </action>
         
@@ -547,6 +548,10 @@
         
 		<action name="showUnitTestPopUp" method="showUnitTestPopUp" class="com.photon.phresco.framework.actions.applications.Quality">
 			<result name="success">/pages/applications/generateBuild.jsp</result>
+        </action>
+        
+        <action name="runUnitTest" method="runUnitTest" class="com.photon.phresco.framework.actions.applications.Quality">
+        	<result name="reader">/pages/applications/reader.jsp</result>
         </action>
 		
         <action name="fetchBuildInfoEnvs" method="fetchBuildInfoEnvs" class="com.photon.phresco.framework.actions.applications.Quality">

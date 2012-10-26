@@ -328,7 +328,7 @@ public interface FrameworkConstants {
     String ANDROID_PROFILE_PLUGIN_VERSION = "1.2";
     String PHASE_PACKAGE = "package";
     String PHASE_DEPLOY = "deploy";
-    String PHASE_UNIT_TEST = "unitTest";
+    String PHASE_UNIT_TEST = "unit-test";
     String ANDROID_EXECUTION_ID = "signing";
     String ELEMENT_ARCHIVE_DIR = "archiveDirectory";
     String ELEMENT_REMOVE_EXIST_SIGN = "removeExistingSignatures";
@@ -478,6 +478,7 @@ public interface FrameworkConstants {
     String REQ_CONFIGURATION = "configuration";
     String REQ_SETTINGS_TEMPLATES = "SettingsTemplates";
     String REQ_CONFIG_TYPE_OTHER = "Other";
+    String REQ_PROPERTIES = "properties";
     String REQ_CONFIG_PROP_KEY = "propertyKey";
     String REQ_SERVER_SETTINGS = "serverSettings";
     String REQ_DATABASE_SETTINGS = "databaseSettings";
@@ -1495,6 +1496,8 @@ public interface FrameworkConstants {
 		String EXCEPTION_DOWNLOADINFOS = "excep.hdr.downloadInfos";
 		String EXCEPTION_PROJECT_WEB_LAYER_WIDGETS = "excep.hdr.proj.web.layer.widgets";
 		String EXCEPTION_QUALITY_UNIT = "excep.hdr.quality.unit";
+		String EXCEPTION_QUALITY_UNIT_RPT = "excep.hdr.quality.unit.report";
+		String EXCEPTION_QUALITY_UNIT_RUN = "excep.hdr.quality.unit.run";
 		String EXCEPTION_BUILD_POPUP = "excep.hdr.build.popup";
 		String EXCEPTION_DEPLOY_POPUP = "excep.hdr.deploy.popup";
 		String EXCEPTION_BUILD_GENERATE = "excep.hdr.build.generate";
@@ -1522,7 +1525,7 @@ public interface FrameworkConstants {
 		String TYPE_DYNAMIC_PARAMETER = "DynamicParameter";
 		String PHRESCO_PLUGIN_INFO_XML = "phresco-plugin-info.xml";
 		String PLUGIN_PARAMETER_FRAMEWORK = "framework";
-		String REQ_DYNAMIC_PARAMETERS = "parameters";
+		String REQ_DYNAMIC_PARAMETERS = "dynamicParameters";
 		String REQ_DYNAMIC_POSSIBLE_VALUES = "possibleValues";
 		String REQ_SESSION_DYNAMIC_PARAM_MAP = "sessionDynamicParamMap";
 		/**
