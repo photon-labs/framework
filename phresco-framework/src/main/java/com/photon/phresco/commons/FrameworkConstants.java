@@ -1493,6 +1493,8 @@ public interface FrameworkConstants {
 		String EXCEPTION_DOWNLOADINFOS = "excep.hdr.downloadInfos";
 		String EXCEPTION_PROJECT_WEB_LAYER_WIDGETS = "excep.hdr.proj.web.layer.widgets";
 		String EXCEPTION_QUALITY_UNIT = "excep.hdr.quality.unit";
+		String EXCEPTION_QUALITY_UNIT_RPT = "excep.hdr.quality.unit.report";
+		String EXCEPTION_QUALITY_UNIT_RUN = "excep.hdr.quality.unit.run";
 		String EXCEPTION_BUILD_POPUP = "excep.hdr.build.popup";
 		String EXCEPTION_DEPLOY_POPUP = "excep.hdr.deploy.popup";
 		String EXCEPTION_BUILD_GENERATE = "excep.hdr.build.generate";
