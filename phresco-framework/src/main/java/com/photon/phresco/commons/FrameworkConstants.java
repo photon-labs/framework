@@ -1533,6 +1533,7 @@ public interface FrameworkConstants {
 		String PHASE_PACKAGE = "package";
 	    String PHASE_DEPLOY = "deploy";
 	    String PHASE_UNIT_TEST = "unit-test";
+	    String PHASE_FUNCTIONAL_TEST = "functional-test";
 	    String PHASE_LOAD_TEST = "load-test";
 		
 		
@@ -1541,6 +1542,8 @@ public interface FrameworkConstants {
 		 */
 		String POM_PROP_KEY_UNITTEST_DIR = "phresco.unitTest.dir";
 		String POM_PROP_KEY_UNITTEST_RPT_DIR = "phresco.unitTestReport.dir";
+		String POM_PROP_KEY_UNITTEST_TESTSUITE_XPATH = "phresco.unitTest.testsuite.xpath";
+		String POM_PROP_KEY_UNITTEST_TESTCASE_PATH = "phresco.unitTest.testcase.path";
 		String POM_PROP_KEY_LOADTEST_DIR = "phresco.loadTest.dir";
 		String POM_PROP_KEY_LOADTEST_RPT_DIR = "phresco.loadTestReport.dir";
 		

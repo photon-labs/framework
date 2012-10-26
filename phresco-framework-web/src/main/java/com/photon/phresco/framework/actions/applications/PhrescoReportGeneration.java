@@ -85,7 +85,7 @@ import com.photon.phresco.util.Utility;
 import com.phresco.pom.util.PomProcessor;
 
 
-public class PhrescoReportGeneration extends FrameworkBaseAction implements FrameworkConstants {
+public class PhrescoReportGeneration extends FrameworkBaseAction {
 
 	private static final long serialVersionUID = 1L;
 	private static final Logger S_LOGGER = Logger.getLogger(PhrescoReportGeneration.class);
@@ -957,7 +957,7 @@ public class PhrescoReportGeneration extends FrameworkBaseAction implements Fram
         try {
             String testSuitePath = null;
     		if (UNIT.equals(testType)) {
-    			testSuitePath = reportPaths.getUnitTestSuitePath(techId);
+    			testSuitePath = reportPaths.getUnitTestSuitePath(getApplicationInfo());
     		} else {
     			testSuitePath = reportPaths.getFunctionalTestSuitePath(techId);
     		}
@@ -1009,11 +1009,11 @@ public class PhrescoReportGeneration extends FrameworkBaseAction implements Fram
             String testCasePath = null;
             String testSuitePath = null;
     		if (UNIT.equals(testType)) {
-                testSuitePath = reportPaths.getUnitTestSuitePath(techId);
+                testSuitePath = reportPaths.getUnitTestSuitePath(getApplicationInfo());
     		} else {
                 testSuitePath = reportPaths.getFunctionalTestSuitePath(techId);
     		}
-    		testCasePath = reportPaths.getTestCasePath(techId);
+    		testCasePath = reportPaths.getTestCasePath(getApplicationInfo());
     		S_LOGGER.debug("testSuitePath " + testSuitePath);
     		S_LOGGER.debug("testCasePath " + testCasePath);
             StringBuilder sb = new StringBuilder(); //testsuites/testsuite[@name='yyy']/testcase

@@ -91,7 +91,6 @@ function clickMenu(menu, tag, form, additionalParam) {
 		inActivateAllMenu(menu);
 		activateMenu($(this));
 		var selectedMenu = $(this).attr("id");
-		console.info("selectedMenu=======>",selectedMenu);
 //		var additionalParam = $(this).attr('additionalParam');
 		loadContent(selectedMenu, form, tag, additionalParam);
 	});
@@ -530,8 +529,11 @@ function enableDivCtrls(disabledDiv) {
 }
 
 /** To fill the data in the select box **/
-function fillSelectbox(obj, data, selectTxt) {
+function fillSelectbox(obj, data, selectTxt, selectVal) {
 	obj.empty();
+	if (!isBlank(selectTxt) && !isBlank(selectVal)) {
+		obj.append($("<option></option>").attr("value", selectVal).text(selectTxt));
+	}
 	if (isBlank(data)) {
 		obj.append($("<option></option>").attr("value", "").text(selectTxt));
 	}
