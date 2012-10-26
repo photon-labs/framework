@@ -6,8 +6,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 
+import com.photon.phresco.api.DynamicParameter;
 import com.photon.phresco.exception.PhrescoException;
-import com.photon.phresco.param.api.DynamicParameter;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.MavenCommands.MavenCommand;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues;

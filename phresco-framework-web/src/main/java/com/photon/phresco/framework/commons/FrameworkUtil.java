@@ -34,6 +34,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.bind.JAXBException;
 
 import org.antlr.stringtemplate.StringTemplate;
 import org.apache.commons.codec.binary.Base64;
@@ -452,6 +453,14 @@ public class FrameworkUtil extends FrameworkBaseAction implements FrameworkConst
         return getPomProcessor(appInfo.getAppDirName()).getProperty(POM_PROP_KEY_UNITTEST_RPT_DIR);
     }
     
+    public String getLoadTestDir() throws PhrescoException, PhrescoPomException {
+    	return getPomProcessor(getApplicationInfo().getAppDirName()).getProperty(POM_PROP_KEY_LOADTEST_DIR);
+    }
+    
+    public String getLoadTestReportDir() throws PhrescoPomException, PhrescoException {
+    	return getPomProcessor(getApplicationInfo().getAppDirName()).getProperty(POM_PROP_KEY_LOADTEST_RPT_DIR);
+    }
+    
     public String getFuncitonalTestDir(String technologyId) {
         String key = funcationTestMap.get(technologyId);
         return qualityReportsProp.getProperty(key);
@@ -477,16 +486,6 @@ public class FrameworkUtil extends FrameworkBaseAction implements FrameworkConst
         return qualityReportsProp.getProperty(key);
     }
    
-    public String getLoadTestDir(String technologyId) {
-        String key = loadTestMap.get(technologyId);
-        return qualityReportsProp.getProperty(key);
-    }
-    
-    public String getLoadReportDir(String technologyId) {
-        String key = loadReportMap.get(technologyId);
-        return qualityReportsProp.getProperty(key);
-    }
-    
     public String getUnitTestSuitePath(String technologyId){
     	String testSuitePath = unitTestSuitePathMap.get(technologyId);
     	return testSuitePath;

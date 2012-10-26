@@ -1,25 +1,26 @@
 package com.photon.phresco.framework.param;
 
-import java.util.Map;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.collections.MapUtils;
 import org.xml.sax.SAXException;
 
-import com.photon.phresco.commons.api.ConfigManager;
-import com.photon.phresco.commons.impl.ConfigManagerImpl;
+import com.photon.phresco.api.ConfigManager;
+import com.photon.phresco.api.DynamicParameter;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.ConfigurationException;
-import com.photon.phresco.param.api.DynamicParameter;
+import com.photon.phresco.framework.actions.FrameworkBaseAction;
+import com.photon.phresco.impl.ConfigManagerImpl;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.Utility;
-import com.photon.phresco.framework.actions.FrameworkBaseAction;
 
 @SuppressWarnings("serial")
 public class EnvironmentParameter extends FrameworkBaseAction implements DynamicParameter, Constants {
@@ -52,6 +53,10 @@ public class EnvironmentParameter extends FrameworkBaseAction implements Dynamic
     		possibleValues.getValue().add(value);
 		}
     	setSessionAttribute(REQ_SESSION_DYNAMIC_PARAM_MAP, map);
+    	List<Value> value = possibleValues.getValue();
+    	for (Value value2 : value) {
+			System.out.println("env ---"+value2.getValue());
+		}
     	
     	return possibleValues;
     }
