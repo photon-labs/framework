@@ -57,8 +57,8 @@ function getBasicParamsAsJson() {
 	return '"customerId": "' + jsonObject.customerId + '", "projectId": "' + jsonObject.projectId + '", "appId": "' + jsonObject.appId + '"'; 
 }
 
-function progressPopup(pageUrl, title, appId, actionType, form, callSuccessEvent, additionalParams) {
-	$("#generate").click(function() {
+function progressPopup(btnObj, pageUrl, title, appId, actionType, form, callSuccessEvent, additionalParams) {
+	btnObj.click(function() {
 		if (title !== undefined && !isBlank(title)) {
 			$('#popupTitle').html(title);
 		}
@@ -602,4 +602,16 @@ function constructMultiSelectOptions(data, pushToElement) {
 	}
 	//See step 7
 	$("#"+pushToElement).append(ulElement);
+}
+
+//To disable the given button object 
+function disableButton(buttonObj) {
+    buttonObj.removeClass('btn-primary');
+    buttonObj.attr("disabled", true);
+}
+
+//To enable the given button object
+function enableButton(buttonObj) {
+    buttonObj.addClass('btn-primary');
+    buttonObj.attr("disabled", false);
 }

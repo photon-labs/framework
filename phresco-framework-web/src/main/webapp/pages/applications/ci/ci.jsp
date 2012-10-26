@@ -61,12 +61,11 @@
 </style>
 
 <%
-    Project project = (Project)request.getAttribute(FrameworkConstants.REQ_PROJECT);
-    ApplicationInfo selectedInfo = null;
-    String projectCode = null;
-    if(project != null) {
-       selectedInfo = project.getApplicationInfo();
-       projectCode = selectedInfo.getCode();
+// 	System.out.println("Need to handle this!!!!!!!!!! in JSP page!!!!!!");
+	ApplicationInfo appInfo = (ApplicationInfo)request.getAttribute(FrameworkConstants.REQ_APPINFO);
+	String appId  = null;
+    if(appInfo != null) {
+    	appId  = appInfo.getId();
     }
     String jenkinsAlive = request.getAttribute(FrameworkConstants.CI_JENKINS_ALIVE).toString();
     boolean isAtleastOneJobIsInProgress = false;
@@ -86,13 +85,13 @@
 <form action="CIBuildDelete" name="ciBuilds" id="deleteObjects" method="post" class="configurations_list_form ciFormJob">
     <div class="operation ciOperationDiv">
     	<div class="ciOperationEleme">
-	        <input id="setup" type="button" value="<s:text name="label.setup"/>" class="primary btn">
-	        <input id="startJenkins" type="button" value="<s:text name="label.start"/>" class="primary btn">
-	        <input id="stopJenkins" type="button" value="<s:text name="label.stop"/>" class="btn disabled" disabled="disabled">
-	        <input id="configure" type="button" value="<s:text name="label.configure"/>" class="primary btn">
-	        <input id="build" type="button" value="<s:text name="label.build"/>" class="btn disabled" disabled="disabled" onclick="buildCI();">
-	        <input id="deleteButton" type="button" value="<s:text name="label.deletebuild"/>" class="btn disabled" disabled="disabled">
-	        <input id="deleteJob" type="button" value="<s:text name="label.deletejob"/>" class="btn disabled" disabled="disabled" onclick="deleteCIJob();">
+	        <input id="setup" type="button" value="<s:text name="label.setup"/>" class="btn btn-primary" data-toggle="modal" href="#popupPage" >
+	        <input id="startJenkins" type="button" value="<s:text name="label.start"/>" class="btn btn-primary" data-toggle="modal" href="#popupPage" >
+	        <input id="stopJenkins" type="button" value="<s:text name="label.stop"/>" class="btn" disabled="disabled" data-toggle="modal" href="#popupPage" >
+	        <input id="configure" type="button" value="<s:text name="label.configure"/>" class="btn btn-primary" data-toggle="modal" href="#popupPage" >
+	        <input id="build" type="button" value="<s:text name="label.build"/>" class="btn" disabled="disabled" onclick="buildCI();">
+	        <input id="deleteButton" type="button" value="<s:text name="label.deletebuild"/>" class="btn" disabled="disabled">
+	        <input id="deleteJob" type="button" value="<s:text name="label.deletejob"/>" class="btn" disabled="disabled" onclick="deleteCIJob();">
         </div>
     </div>
     
@@ -105,8 +104,8 @@
         	isExistJob = false;
     %>
 <!--     jobs not available message -->
-        <div class="alert-message block-message warning" >
-            <center><s:label key="ci.jobs.error.message" cssClass="errorMsgLabel"/></center>
+        <div class="alert alert-block" >
+            <center><s:text name='ci.jobs.error.message'/></center>
         </div>
     <%
 		} else {
@@ -176,7 +175,7 @@
 								                            %>
 										                		<a href="<s:url action='CIBuildDownload'>
 												          		     <s:param name="buildDownloadUrl"><%= downloadUrl %></s:param>
-												          		     <s:param name="projectCode"><%= projectCode %></s:param>
+												          		     <s:param name="appId"><%= appId %></s:param>
 												          		     <s:param name="buildNumber"><%= build.getNumber() %></s:param>
 												          		     <s:param name="downloadJobName"><%= jobName %></s:param>
 												          		     </s:url>"><img src="images/icons/download.png" title="Download"/>
@@ -259,12 +258,14 @@ var isJenkinsReady = false;
 
 $(document).ready(function() {
 	
-	accordion();
-	$("#popup_div").css("display","none");
-	$("#popup_div").empty();
-	enableScreen();
+	var isCiRefresh = false; // for ci page use - this should be global : kalees
 	
-	hideProgessBar();
+	accordion();
+// 	$("#popup_div").css("display","none");
+// 	$("#popup_div").empty();
+	enableScreen();
+	hideLoadingIcon();
+// 	hideProgessBar();
 	
 	$("input:checkbox[name='allBuilds']").click(function() {
 		$("input:checkbox[class='" + $(this).val() +"']").attr('checked', $(this).is(':checked'));
@@ -288,57 +289,62 @@ $(document).ready(function() {
 	
     $('#configure').click(function() {
 		if (isMoreThanOneJobSelected()) {
+			alert("handle this event ");
 			showHidePopupMsg($(".ciAlertMsg"), '<%= FrameworkConstants.CI_ONE_JOB_REQUIRED%>');
 			return false;			
 		}
-        showCI();
+        showCI(); // display configure popup
     });
     
-    $('#setup').click(function() {
-       	ProgressShow("block");
-       	$("#build-output").empty();
-       	getCurrentCSS();
-       	setupProgress();
-    });
+//     $('#closeGenerateTest, #closeGenTest').click(function() {
+//     	ProgressShow("none");
+//     	refreshAfterServerUp();
+//     });
     
-    $('#closeGenerateTest, #closeGenTest').click(function() {
-    	ProgressShow("none");
-    	refreshAfterServerUp();
-    });
+    progressPopup($('#setup'), 'setup', '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.CI_SETUP %>', '', '', getBasicParams());
+//     $('#setup').click(function() {
+//        	ProgressShow("block");
+//        	$("#build-output").empty();
+//        	getCurrentCSS();
+//        	setupProgress();
+//     });
     
-    $('#startJenkins').click(function() {
-    	isCiRefresh = true; //after stratup , when closing popup, page should refreshed after some time
-       	ProgressShow("block");
-       	$("#build-output").empty();
-       	getCurrentCSS();
-        startJenkins();
-    });
+    progressPopup($('#startJenkins'), 'startJenkins', '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.CI_START %>', '', '', getBasicParams());
+//     $('#startJenkins').click(function() {
+//     	isCiRefresh = true; //after stratup , when closing popup, page should refreshed after some time
+//        	ProgressShow("block");
+//        	$("#build-output").empty();
+//        	getCurrentCSS();
+//         startJenkins();
+//     });
     
-    $('#stopJenkins').click(function() {
-       	ProgressShow("block");
-       	$("#build-output").empty();
-       	getCurrentCSS();
-        stopJenkins();
-    });
+    progressPopup($('#stopJenkins'), 'stopJenkins', '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.CI_STOP %>', '', '', getBasicParams());
+//     $('#stopJenkins').click(function() {
+//        	ProgressShow("block");
+//        	$("#build-output").empty();
+//        	getCurrentCSS();
+//         stopJenkins();
+//     });
     
     if(<%= jenkinsAlive %>) {
     	console.log("jenkins alive , enable configure button ");
     	enableStart();
-    	enableControl($("#configure"), "primary btn");
-    	disableControl($("#setup"), "btn disabled"); // when CI running setup should not work
+    	enableButton($("#configure"));
+    	disableButton($("#setup"));
     } else {
     	console.log("Jenkins down , disabled configure button ");
     	enableStop();
-    	disableControl($("#configure"), "btn disabled");
+    	disableButton($("#configure"));
     }
     
-//     RBACK implemented
-    if ('<%= disableCI %>' == 'true') {
-    	disableCI();	//Restrict CI
-    }
+// //     RBACK implemented
+<%--     if ('<%= disableCI %>' == 'true') { --%>
+//     	disableCI();	//Restrict CI
+//     }
     
     // delete ci builds
     $('#deleteButton').click(function() {
+    	alert("need to handle ");
            $("#confirmationText").html("Do you want to delete the selected build(s)");
            dialog('block');
            escBlockPopup();
@@ -350,15 +356,19 @@ $(document).ready(function() {
     	if (!isBlank($('form').serialize())) {
     		params = $('form').serialize() + "&";
     	}
+    	
         performAction('CIBuildDelete', params, $("#tabDiv"));
+//      loadContent("appInfo", $('#formAppMenu'), $("#subcontainer"), params);
+// 		loadContent(pageUrl, form, tag, additionalParams, callSuccessEvent)
+	    loadContent('CIBuildDelete',$('#deleteObjects'), $('#subcontainer'), getBasicParams(), false);
         return false;
     });
 	
 	// if build is in progress disable configure button
     if (<%= isAtleastOneJobIsInProgress %> || <%= isBuildTriggeredFromUI %>) {
     	console.log("build is in progress, disable configure button ");
-    	disableControl($("#configure"), "btn disabled"); // when building , user should not configure which leads to restart of jenkins
-    	disableControl($("#build"), "btn disabled");
+    	disableButton($("#configure"));
+    	disableButton($("#build"));
     	refreshCi = true;
     	console.log("at least one job is in progres...");
     	refreshBuild();
@@ -373,7 +383,9 @@ function buildCI() {
 	popup('buildCI', '', $('#tabDiv'));
 }
 
+// show configure popup
 function showCI() {
+	alert("handle showCI () ")
 	$("#popup_div").empty();
     $("#showConfigure").empty();
     showPopup();
@@ -381,25 +393,25 @@ function showCI() {
     escPopup();
 }
 
-function setupProgress() {
-	$('#loadingDiv').css("display","block");
-	readerHandlerSubmit('setup', '<%= projectCode %>', '<%= FrameworkConstants.CI_SETUP %>');
-}
+// function setupProgress() {
+// 	$('#loadingDiv').css("display","block");
+<%-- 	readerHandlerSubmit('setup', '<%= appId %>', '<%= FrameworkConstants.CI_SETUP %>'); --%>
+// }
 
-function ProgressShow(prop) {
-    $(".wel_come").show().css("display",prop);
-    $('#build-outputOuter').show().css("display",prop);
-}
+// function ProgressShow(prop) {
+//     $(".wel_come").show().css("display",prop);
+//     $('#build-outputOuter').show().css("display",prop);
+// }
 
-function startJenkins() {
-	$('#loadingDiv').css("display","block");
-	readerHandlerSubmit('startJenkins', '<%= projectCode %>', '<%= FrameworkConstants.CI_START %>');
-}
+// function startJenkins() {
+// 	$('#loadingDiv').css("display","block");
+<%-- 	readerHandlerSubmit('startJenkins', '<%= appId %>', '<%= FrameworkConstants.CI_START %>'); --%>
+// }
 
-function stopJenkins() {
-	$('#loadingDiv').css("display","block");
-	readerHandlerSubmit('stopJenkins', '<%= projectCode %>', '<%= FrameworkConstants.CI_STOP %>');
-}
+// function stopJenkins() {
+// 	$('#loadingDiv').css("display","block");
+<%-- 	readerHandlerSubmit('stopJenkins', '<%= appId %>', '<%= FrameworkConstants.CI_STOP %>'); --%>
+// }
 
 function deleteCIJob(){
     showProgessBar("Deleting job (s)", 100);
@@ -407,17 +419,18 @@ function deleteCIJob(){
 	if (!isBlank($('form').serialize())) {
 		params = $('form').serialize() + "&";
 	}
-	performAction('CIJobDelete', params, $("#tabDiv"));
+// 	performAction('CIJobDelete', params, $("#tabDiv"));
+	loadContent('CIJobDelete',$('#deleteObjects'), $('#subcontainer'), getBasicParams(), false);
 }
 
 function enableStart() {
-    disableControl($("#startJenkins"), "btn disabled");
-    enableControl($("#stopJenkins"), "primary btn");
+    disableButton($("#startJenkins"));
+    enableButton($("#stopJenkins"));
 }
 
 function enableStop() {
-    enableControl($("#startJenkins"), "primary btn");
-    disableControl($("#stopJenkins"), "btn disabled");
+    enableButton($("#startJenkins"));
+    disableButton($("#stopJenkins"));
 }
 
 //when background build is in progress, have to refresh ci page
@@ -428,7 +441,8 @@ function refreshBuild() {
 			params = $('form').serialize() + "&";
 		}
 		console.log("Going to get no of jobs in progress " + refreshCi);	
-		performAction('getNoOfJobsIsInProgress', params, '', true);
+// 		performAction('getNoOfJobsIsInProgress', params, '', true);
+		loadContent('getNoOfJobsIsInProgress',$('#deleteObjects'), '', getBasicParams(), true);
 	}
 }
 
@@ -444,7 +458,8 @@ function successRefreshBuild(data) {
     	}
     	showLoadingIcon($("#tabDiv")); // Loading Icon
     	console.log("build succeeded going to load builds.....");
-		performAction('ci', params, $("#tabDiv"));
+// 		performAction('ci', params, $("#tabDiv"));
+		loadContent('ci',$('#deleteObjects'), $('#subcontainer'), getBasicParams(), false);
 	} else {
 		window.setTimeout(refreshBuild, 15000); // wait for 15 sec
 	}
@@ -456,7 +471,7 @@ function refreshAfterServerUp() {
 	// after configured job , jenkins will take some time to load. In that case after jenkins started(fully up and running), we have to enable this
 // 	$("#warningmsg").show();
 	
-   	localJenkinsAliveCheck ();
+   	localJenkinsAliveCheck (); // checks jenkins status and updates the variable
 	
 	console.log("Local jenkins alive called ===> jenkins alive ===> " + isJenkinsAlive);
 	console.log("Local jenkins alive called ===> jenkins ready ===> " + isJenkinsReady);
@@ -467,9 +482,9 @@ function refreshAfterServerUp() {
 		reloadCI();
 	} else if(isCiRefresh && (!isJenkinsAlive || !isJenkinsReady)) { // when start is clicked it will come here
 		//till page is reloaded disable these buttons.
-	   	disableControl($("#configure"), "btn disabled");
-	   	disableControl($("#build"), "btn disabled");
-	   	disableControl($("#deleteJob"), "btn disabled");
+	   	disableButton($("#configure"));
+	   	disableButton($("#build"));
+	   	disableButton($("#deleteJob"));
 	   	$(".errorMsgLabel").text('<%= FrameworkConstants.CI_BUILD_LOADED_SHORTLY%>');
 	   	
 		console.log("I ll wait till jenkins gets ready!!!");
@@ -489,7 +504,8 @@ function reloadCI() {
     	}
     	showLoadingIcon($("#tabDiv")); // Loading Icon
     	console.log("Server startup completed ..." + isCiRefresh);
-		performAction('ci', params, $("#tabDiv"));
+// 		performAction('ci', params, $("#tabDiv"));
+		loadContent('ci',$('#deleteObjects'), $('#subcontainer'), getBasicParams(), false);
 	} else {
 		$(".errorMsgLabel").text('<%= FrameworkConstants.CI_NO_JOBS_AVAILABLE%>');
 	}
@@ -523,27 +539,29 @@ function localJenkinsAliveCheck () {
 
 function successEvent(pageUrl, data) {
 	if(pageUrl == "getNoOfJobsIsInProgress") {
+		alert("calling success events!!!!");
 		successRefreshBuild(data);
-	} else if(pageUrl == "getBuildsSize") {
-		successRefreshCI(data);
-	} else if(pageUrl == "checkForConfiguration") {
-		successEnvValidation(data);
-	}
+	} 
+	else if(pageUrl == "getBuildsSize") {
+// 		successRefreshCI(data);
+// 	} else if(pageUrl == "checkForConfiguration") {
+// 		successEnvValidation(data);
+// 	}
 }
 
 function enableDisableDeleteButton(atleastOneCheckBoxVal) {
 	if (isAtleastOneCheckBoxCheked('jobBuildsList')) {
-		enableControl($("#deleteButton"), "primary btn");
+		enableButton($("#deleteButton"));
 	} else {
-		disableControl($("#deleteButton"), "btn disabled");
+		disableButton($("#deleteButton"));
 	}
 	
 	if ($("input[type=checkbox][name='Jobs']:checked").length > 0) {
-		enableControl($("#deleteJob"), "primary btn");
-		enableControl($("#build"), "primary btn");
+		enableButton($("#deleteJob"));
+		enableButton($("#build"));
 	} else {
-		disableControl($("#deleteJob"), "btn disabled");
-		disableControl($("#build"), "btn disabled");
+		disableButton($("#deleteJob"));
+		disableButton($("#build"));
 	}
 }
 
@@ -553,5 +571,27 @@ function isMoreThanOneJobSelected() {
 	} else {
 		return false;
 	}
+}
+
+function popupClose(closeUrl) {
+	alert("handle load content here " + closeUrl);
+	showParentPage();
+	if (closeUrl === "setup") {
+// 		refreshAfterServerUp();
+// 	    var params = getBasicParams();
+// 	    loadContent('veiwSiteReport',$('#formConfigureList'), $('#subcontainer'), params);
+	} else 	if (closeUrl === "startJenkins") {
+		isCiRefresh = true; //after stratup , when closing popup, page should refreshed after some time
+// 		refreshAfterServerUp();
+// 	    var params = getBasicParams();
+// 	    loadContent('veiwSiteReport',$('#formConfigureList'), $('#subcontainer'), params);
+	} else 	if (closeUrl === "stopJenkins") {
+// 		refreshAfterServerUp();
+// 	    var params = getBasicParams();
+// 		loadContent(pageUrl, form, tag, additionalParams, callSuccessEvent)
+// 	    loadContent('veiwSiteReport',$('#formConfigureList'), $('#subcontainer'), params);
+	}
+	
+	refreshAfterServerUp();
 }
 </script>
