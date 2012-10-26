@@ -19,114 +19,130 @@
  */
 package com.photon.phresco.framework.api;
 
-import java.util.List;
+import java.io.*;
+import java.util.*;
 
-import com.photon.phresco.exception.PhrescoException;
-import com.photon.phresco.framework.model.BuildInfo;
-import com.photon.phresco.framework.model.CIBuild;
-import com.photon.phresco.framework.model.CIJob;
-import com.photon.phresco.framework.model.CIJobStatus;
+import com.photon.phresco.commons.model.*;
+import com.photon.phresco.exception.*;
+import com.photon.phresco.framework.model.*;
 
 
 /**
  * Interface for communicating with Jenkins (CI)
  */
 public interface CIManager {
-    /**
-     * Creates jobs in Jenkins.
-     * @return
-     * @throws PhrescoException
-     */
-    CIJobStatus createJob(CIJob job) throws PhrescoException;
-    
-    /**
-     * Updates jobs in Jenkins.
-     * @return
-     * @throws PhrescoException
-     */
-    CIJobStatus updateJob(CIJob job) throws PhrescoException;
-    
-    /**
-     * builds job in Jenkins.
-     * @return
-     * @throws PhrescoException
-     */
-    CIJobStatus buildJob(CIJob job) throws PhrescoException;
-    
-    /**
-     * Gets builds info from the server.
-     * @return
-     * @throws PhrescoException
-     */
-    List<CIBuild> getCIBuilds(CIJob job) throws PhrescoException;
-    
-    /**
-     * Get the jdk home xml file from the server and store in jenkins_home.
-     * @return
-     * @throws PhrescoException
-     */
-    void getJdkHomeXml() throws PhrescoException;
+	
+	/**
+	 * setup jenkins in phresco
+	 * @param projectInfo
+	 * @param buildArgCmds
+	 * @param workingDirectory
+	 * @return
+	 * @throws PhrescoException
+	 */
+	BufferedReader setup(ProjectInfo projectInfo, ActionType action, List<String> buildArgCmds, String workingDirectory) throws PhrescoException;
+	
+	/**
+	 * start jenkins in phresco
+	 * @param projectInfo
+	 * @param buildArgCmds
+	 * @param workingDirectory
+	 * @return
+	 * @throws PhrescoException
+	 */
+	BufferedReader start(ProjectInfo projectInfo, ActionType action, List<String> buildArgCmds, String workingDirectory) throws PhrescoException;
+	
+	/**
+	 * stop jenkins in phresco
+	 * @param projectInfo
+	 * @param buildArgCmds
+	 * @param workingDirectory
+	 * @return
+	 * @throws PhrescoException
+	 */
+	BufferedReader stop(ProjectInfo projectInfo, ActionType action, List<String> buildArgCmds, String workingDirectory) throws PhrescoException;
+	
+	/**
+	 * Returns particular job info
+	 * @param appInfo
+	 * @param jobName
+	 * @return
+	 * @throws PhrescoException
+	 */
+	CIJob getJob(ApplicationInfo appInfo, String jobName) throws PhrescoException;
+	
+	/**
+	 * Returns the list of user created jobs
+	 * @param appInfo
+	 * @return
+	 * @throws PhrescoException
+	 */
+	List<CIJob> getJobs(ApplicationInfo appInfo) throws PhrescoException;
+	
+	/**
+	 * Creates jobs in Jenkins.
+	 * @param appInfo
+	 * @param job
+	 * @throws PhrescoException
+	 */
+	void createJob(ApplicationInfo appInfo, CIJob job) throws PhrescoException;
 
-    /**
-     * Get the maven home xml file from the server and store in jenkins_home.
-     * @return
-     * @throws PhrescoException
-     */
-    void getMavenHomeXml() throws PhrescoException;
-    
-    /**
-     * Get the credential xml file from the server when job is created.
-     * @return
-     * @throws PhrescoException
-     */
-    void setMailCredential(CIJob job) throws PhrescoException;
-    
-    /**
-     * Returns total number of builds in progress.
-     * @return
-     * @throws PhrescoException
-     */
-    int getTotalBuilds(CIJob job) throws PhrescoException;
-    
-    /**
-     * Deletes jobs.
-     * @return
-     * @throws PhrescoException
-     */
-    CIJobStatus deleteCI(CIJob job, List<String> builds) throws PhrescoException;
+	/**
+	 * Updates jobs in Jenkins.
+	 * @param appInfo
+	 * @param job
+	 * @throws PhrescoException
+	 */
+	void updateJob(ApplicationInfo appInfo, CIJob job) throws PhrescoException;
 
-    /**
-     * Returns int value based on the progress of build
-     * @return
-     * @throws PhrescoException
-     */
-    int getProgressInBuild(CIJob job) throws PhrescoException;
-    
-    /**
-     * Get the Email-ext plugin from the server.
-     * @return
-     * @throws PhrescoException
-     */
-	void getEmailExtPlugin() throws PhrescoException;
+	/**
+	 * triggers build on jobs
+	 * @param appInfo
+	 * @param jobs
+	 * @return
+	 * @throws PhrescoException
+	 */
+	CIJobStatus buildJobs(ApplicationInfo appInfo, List<String> jobs) throws PhrescoException;
 	
-    /**
-     * Delete already existing builds inside do_not_checkin folder.
-     * @return
-     * @throws PhrescoException
-     */
-	void deleteDoNotCheckin(CIJob job) throws PhrescoException;
+	/**
+	 * Delete job. If build is null, job will be deleted
+	 * @param appInfo
+	 * @param jobs
+	 * @return
+	 * @throws PhrescoException
+	 */
+	CIJobStatus deleteJobs(ApplicationInfo appInfo, List<String> jobs) throws PhrescoException;
 	
-    /**
-     * Returns all the buildinfo object.
-     * @return
-     * @throws PhrescoException
-     */
-	List<BuildInfo> getBuildInfos(CIJob job) throws PhrescoException;
-	
-    /**
-     * Return particular buildinfo obj.
-     * @return
-     * @throws PhrescoException
-     */
-	BuildInfo getBuildInfo(CIJob job, int buildNumber) throws PhrescoException;
+	/**
+	 * Delete job. If build is null, job will be deleted
+	 * @param appInfo
+	 * @param builds
+	 * @return
+	 * @throws PhrescoException
+	 */
+	CIJobStatus deleteBuilds(ApplicationInfo appInfo, Map<String, List<String>> builds) throws PhrescoException;
+
+	/**
+	 * Gets builds for a job from the jenkins.
+	 * @param job
+	 * @return
+	 * @throws PhrescoException
+	 */
+	List<CIBuild> getBuilds(CIJob job) throws PhrescoException;
+
+	/**
+	 * Checks whether job is in progress
+	 * @param ciJob
+	 * @return
+	 * @throws PhrescoException
+	 */
+	boolean isJobCreatingBuild(CIJob ciJob) throws PhrescoException;
+
+	/**
+	 * Get total number of builds
+	 * @param appInfo
+	 * @return
+	 * @throws PhrescoException
+	 */
+	int getTotalBuilds(ApplicationInfo appInfo) throws PhrescoException;
 }

@@ -393,60 +393,60 @@ public interface ProjectAdministrator {
      */
     String getJforumPath() throws PhrescoException;
 
-    void createJob(Project project, CIJob job) throws PhrescoException;
-
-    void updateJob(Project project, CIJob job) throws PhrescoException;
-
-    CIJob getJob(Project project) throws PhrescoException;
-
-    /**
-     * Returns the list of user created jobs
-     * @return
-     * @throws PhrescoException
-     */
-    List<CIJob> getJobs(Project project) throws PhrescoException;
-    
-    /**
-     * Returns particular job object
-     * @return
-     * @throws PhrescoException
-     */
-    CIJob getJob(Project project, String jobName) throws PhrescoException;
-    
-    /**
-     * Writes particular jobs object in .phresco folder
-     * @return
-     * @throws PhrescoException
-     */
-    void writeJsonJobs(Project project, List<CIJob> job, String status) throws PhrescoException;
-    
-    /**
-     * Delete jobs object in .phresco folder
-     * @return
-     * @throws PhrescoException
-     */
-    void deleteJsonJobs(Project project, List<CIJob> job) throws PhrescoException;
-    
-    /**
-     * Delete job object in .phresco folder
-     * @return
-     * @throws PhrescoException
-     */
-    void updateJsonJob(Project project, CIJob job) throws PhrescoException;
-    
-    /**
-     * Returns build of jobs
-     * @return
-     * @throws PhrescoException
-     */
-    CIJobStatus buildJobs(Project project, List<String> jobs) throws PhrescoException;
-
-    /**
-     * Returns build of a particular job
-     * @return
-     * @throws PhrescoException
-     */
-    List<CIBuild> getBuilds(CIJob ciJob) throws PhrescoException;
+//    void createJob(ApplicationInfo appInfo, CIJob job) throws PhrescoException;
+//
+//    void updateJob(ApplicationInfo appInfo, CIJob job) throws PhrescoException;
+//
+//    CIJob getJob(ApplicationInfo appInfo) throws PhrescoException;
+//
+//    /**
+//     * Returns the list of user created jobs
+//     * @return
+//     * @throws PhrescoException
+//     */
+//    List<CIJob> getJobs(ApplicationInfo appInfo) throws PhrescoException;
+//    
+//    /**
+//     * Returns particular job object
+//     * @return
+//     * @throws PhrescoException
+//     */
+//    CIJob getJob(ApplicationInfo appInfo, String jobName) throws PhrescoException;
+//    
+//    /**
+//     * Writes particular jobs object in .phresco folder
+//     * @return
+//     * @throws PhrescoException
+//     */
+//    void writeJsonJobs(ApplicationInfo appInfo, List<CIJob> job, String status) throws PhrescoException;
+//    
+//    /**
+//     * Delete jobs object in .phresco folder
+//     * @return
+//     * @throws PhrescoException
+//     */
+//    void deleteJsonJobs(ApplicationInfo appInfo, List<CIJob> job) throws PhrescoException;
+//    
+//    /**
+//     * Delete job object in .phresco folder
+//     * @return
+//     * @throws PhrescoException
+//     */
+//    void updateJsonJob(ApplicationInfo appInfo, CIJob job) throws PhrescoException;
+//    
+//    /**
+//     * Returns build of jobs
+//     * @return
+//     * @throws PhrescoException
+//     */
+//    CIJobStatus buildJobs(ApplicationInfo appInfo, List<String> jobs) throws PhrescoException;
+//
+//    /**
+//     * Returns build of a particular job
+//     * @return
+//     * @throws PhrescoException
+//     */
+//    List<CIBuild> getBuilds(CIJob ciJob) throws PhrescoException;
 
 	String sendReport(LogInfo loginfo) throws PhrescoException ;
 
@@ -459,62 +459,62 @@ public interface ProjectAdministrator {
 	 */
 	List<ValidationResult> validate(Project project) throws PhrescoException;
 	
-    /**
-     * Stores jdk home spcified xml file in jenkins home location
-     * @throws PhrescoException
-     */
-	void getJdkHomeXml() throws PhrescoException;
-	
-    /**
-     * Stores maven home spcified xml file in jenkins home location
-     * @throws PhrescoException
-     */
-	void getMavenHomeXml() throws PhrescoException;
-	
+//    /**
+//     * Stores jdk home spcified xml file in jenkins home location
+//     * @throws PhrescoException
+//     */
+//	void getJdkHomeXml() throws PhrescoException;
+//	
+//    /**
+//     * Stores maven home spcified xml file in jenkins home location
+//     * @throws PhrescoException
+//     */
+//	void getMavenHomeXml() throws PhrescoException;
+//	
 
 	List<ValidationResult> validate() throws PhrescoException;
 	
-    /**
-     * Get total number of builds
-     * @throws PhrescoException
-     */
-	int getTotalBuilds(Project project) throws PhrescoException;
-	
-    /**
-     * Delete job. If build is null job ll be deleted
-     * @throws PhrescoException
-     */
-	CIJobStatus deleteCIBuild(Project project, Map<String, List<String>> builds) throws PhrescoException;
-
-    /**
-     * Delete job. If build is null job ll be deleted
-     * @throws PhrescoException
-     */
-	CIJobStatus deleteCIJobs(Project project, List<String> jobs) throws PhrescoException;
-	
-    /**
-     * Checks whether job is in progress
-     * @throws PhrescoException
-     */
-	int getProgressInBuild(Project project) throws PhrescoException;
-	
-    /**
-     * Checks whether job is in progress
-     * @throws PhrescoException
-     */
-	boolean isJobCreatingBuild(CIJob ciJob) throws PhrescoException;
-	
-    /**
-     * gets exmail ext plugin from nexus and stores it in jenkins plugin dir
-     * @throws PhrescoException
-     */
-	void getEmailExtPlugin() throws PhrescoException;
-	
-    /**
-     * Delete existing builds in do_not_checkin folder
-     * @throws PhrescoException
-     */
-	void deleteDoNotCheckin(Project project) throws PhrescoException;
+//    /**
+//     * Get total number of builds
+//     * @throws PhrescoException
+//     */
+//	int getTotalBuilds(ApplicationInfo appInfo) throws PhrescoException;
+//	
+//    /**
+//     * Delete job. If build is null job ll be deleted
+//     * @throws PhrescoException
+//     */
+//	CIJobStatus deleteCIBuild(ApplicationInfo appInfo, Map<String, List<String>> builds) throws PhrescoException;
+//
+//    /**
+//     * Delete job. If build is null job ll be deleted
+//     * @throws PhrescoException
+//     */
+//	CIJobStatus deleteCIJobs(ApplicationInfo appInfo, List<String> jobs) throws PhrescoException;
+//	
+//    /**
+//     * Checks whether job is in progress
+//     * @throws PhrescoException
+//     */
+//	int getProgressInBuild(ApplicationInfo appInfo) throws PhrescoException;
+//	
+//    /**
+//     * Checks whether job is in progress
+//     * @throws PhrescoException
+//     */
+//	boolean isJobCreatingBuild(CIJob ciJob) throws PhrescoException;
+//	
+//    /**
+//     * gets exmail ext plugin from nexus and stores it in jenkins plugin dir
+//     * @throws PhrescoException
+//     */
+//	void getEmailExtPlugin() throws PhrescoException;
+//	
+//    /**
+//     * Delete existing builds in do_not_checkin folder
+//     * @throws PhrescoException
+//     */
+//	void deleteDoNotCheckin(ApplicationInfo appInfo) throws PhrescoException;
 	
 	/**
 	 * Create the environments in the configuration.xml file under the specified project
@@ -669,14 +669,14 @@ public interface ProjectAdministrator {
 	 List<Reports> getPomReports(ApplicationInfo appInfo) throws PhrescoException;
 	 
 	 void updateRptPluginInPOM(ApplicationInfo appInfo, List<Reports> reports, List<ReportCategories> reportCategories) throws PhrescoException;
-	 
-	/**
-	 * Returns CI build object for build number
-	 * @param job, buildNumber
-	 * @return BuildInfo
-	 * @throws PhrescoException
-	 */
-	 BuildInfo getCIBuildInfo(CIJob job, int buildNumber) throws PhrescoException;
+//	 
+//	/**
+//	 * Returns CI build object for build number
+//	 * @param job, buildNumber
+//	 * @return BuildInfo
+//	 * @throws PhrescoException
+//	 */
+//	 BuildInfo getCIBuildInfo(CIJob job, int buildNumber) throws PhrescoException;
 	 
 	 List<CertificateInfo> getCertificate(String host, int port) throws PhrescoException;
 	 

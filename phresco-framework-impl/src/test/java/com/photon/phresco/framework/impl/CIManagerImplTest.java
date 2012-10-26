@@ -73,7 +73,7 @@ public class CIManagerImplTest implements FrameworkConstants{
             
             
             System.out.println("configPath =======> " + configPath);
-            ConfigProcessor processor = new ConfigProcessor(new URL(configPath));
+//            ConfigProcessor processor = new ConfigProcessor(new URL(configPath));
             CIJob job = createJob();
             CIJob job1 =  updateWithCollabNetFileRelease(job);
             
@@ -83,7 +83,7 @@ public class CIManagerImplTest implements FrameworkConstants{
             
             CIJob job4 = updateWithBuildOtherProjects(job3);
             // Operation
-            ciManager.customizeNodes(processor, job4);
+//            ciManager.customizeNodes(processor, job4);
             //success
 //            processor.deleteNodesAtXpath();
 //            processor.changeAttributeValue();
@@ -91,8 +91,8 @@ public class CIManagerImplTest implements FrameworkConstants{
             
             //Conver to file
             File dest = new File("/Users/kaleeswaran/Desktop/IphoneConfig.xml");
-            InputStream configAsStream = processor.getConfigAsStream();
-            ciManager.streamToFile(dest, configAsStream) ;
+//            InputStream configAsStream = processor.getConfigAsStream();
+//            ciManager.streamToFile(dest, configAsStream) ;
             System.out.println("configPath =======> " + configPath);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -145,7 +145,7 @@ public class CIManagerImplTest implements FrameworkConstants{
 	        
 			File dest = new File("/Users/kaleeswaran/Desktop/gitHubConfig.xml");
             InputStream configAsStream = getConfigAsStream();
-            ciManager.streamToFile(dest, configAsStream) ;
+//            ciManager.streamToFile(dest, configAsStream) ;
             System.out.println("new value added =======> " + url);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -157,11 +157,11 @@ public class CIManagerImplTest implements FrameworkConstants{
 		try {
 			System.out.println("getDownloadUrls!!!!!");
 			CIJob createJob = createJob();
-			List<CIBuild> ciBuilds = ciManager.getCIBuilds(createJob);
-			System.out.println(ciBuilds.size());
-			for (CIBuild ciBuild : ciBuilds) {
-				System.out.println("download zip !!!!" + ciBuild.getDownload());
-			}
+//			List<CIBuild> ciBuilds = ciManager.getCIBuilds(createJob);
+//			System.out.println(ciBuilds.size());
+//			for (CIBuild ciBuild : ciBuilds) {
+//				System.out.println("download zip !!!!" + ciBuild.getDownload());
+//			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -71,7 +71,7 @@
 
     $(document).ready(function() {
     	yesnoPopup($('#configurePopup'),'siteConfigure', '<s:text name="header.site.report.configure"/>', 'createReportConfig','<s:text name="lbl.btn.ok"/>');
-    	progressPopup('generateReport', '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.REQ_SITE_REPORT %>', '', '', getBasicParams());
+    	progressPopup($("#generate"), 'generateReport', '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.REQ_SITE_REPORT %>', '', '', getBasicParams());
     	hideLoadingIcon();
     	enableScreen();
     	checkForSiteReport();

@@ -375,6 +375,9 @@ public interface FrameworkConstants {
     
     String ADMIN_CONFIG_JFORUM_PATH = "phresco.forum.url";
 
+    String CONFIG_XML = "config.xml";
+    String CREDENTIAL_XML = "credential.xml";
+    String MAIL = "mail";
     String CI_JDK_HOME_XML = "config.xml";
     String CI_SECRET_KEY_FILE = "secret.key";
     String CI_MAVEN_HOME_XML = "hudson.tasks.Maven.xml";

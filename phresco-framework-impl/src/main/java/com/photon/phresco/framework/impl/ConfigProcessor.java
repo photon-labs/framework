@@ -19,34 +19,25 @@
  */
 package com.photon.phresco.framework.impl;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.List;
+import java.io.*;
+import java.security.*;
+import java.util.*;
 
-import javax.crypto.Cipher;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
+import javax.crypto.*;
+import javax.crypto.spec.*;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
-import org.jdom.output.XMLOutputter;
-import org.jdom.xpath.XPath;
+import org.apache.commons.lang.*;
+import org.apache.log4j.*;
+import org.jdom.*;
+import org.jdom.input.*;
+import org.jdom.output.*;
+import org.jdom.xpath.*;
 
+import com.photon.phresco.commons.*;
 import com.photon.phresco.commons.CIPasswordScrambler;
-import com.photon.phresco.commons.FrameworkConstants;
-import com.photon.phresco.exception.PhrescoException;
-import com.photon.phresco.framework.model.CIJob;
-import com.trilead.ssh2.crypto.Base64;
+import com.photon.phresco.exception.*;
+import com.photon.phresco.framework.model.*;
+import com.trilead.ssh2.crypto.*;
 
 public class ConfigProcessor implements FrameworkConstants {
 	private static final Logger S_LOGGER = Logger.getLogger(ConfigProcessor.class);
@@ -56,15 +47,15 @@ public class ConfigProcessor implements FrameworkConstants {
     
     public static final String CONFIG_PATH = "http://172.16.18.178:8080/nexus/content/groups/public//config/ci/config/0.2/config-0.2.xml";
     
-    public ConfigProcessor(URL url) throws JDOMException, IOException {
+    public ConfigProcessor(File configFile) throws JDOMException, IOException {
     	if (DebugEnabled) {
     		S_LOGGER.debug("Entering Method ConfigProcessor.ConfigProcessor(URL url)");
 		}
         SAXBuilder builder = new SAXBuilder();
         if (DebugEnabled) {
-        	S_LOGGER.debug("ConfigProcessor(() URL = "+ url);
+        	S_LOGGER.debug("ConfigProcessor(() PATH = "+ configFile.getCanonicalPath());
 		}
-        document_ = builder.build(url);
+        document_ = builder.build(configFile);
         root_ = document_.getRootElement();
     }
     
@@ -267,15 +258,15 @@ public class ConfigProcessor implements FrameworkConstants {
             throw new Error(e);
         }
     }
-    public static void main(String[] args) {
-        try {
-            ConfigProcessor processor = new ConfigProcessor(new URL(CONFIG_PATH));
-        } catch (JDOMException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
+//    public static void main(String[] args) {
+//        try {
+//            ConfigProcessor processor = new ConfigProcessor(new URL(CONFIG_PATH));
+//        } catch (JDOMException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        }
+//    }
 }

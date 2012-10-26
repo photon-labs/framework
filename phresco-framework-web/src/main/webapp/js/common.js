@@ -615,3 +615,15 @@ function constructMultiSelectOptions(data, pushToElement) {
 	//See step 7
 	$("#"+pushToElement).append(ulElement);
 }
+
+//To disable the given button object 
+function disableButton(buttonObj) {
+    buttonObj.removeClass('btn-primary');
+    buttonObj.attr("disabled", true);
+}
+
+//To enable the given button object
+function enableButton(buttonObj) {
+    buttonObj.addClass('btn-primary');
+    buttonObj.attr("disabled", false);
+}
