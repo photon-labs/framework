@@ -325,4 +325,16 @@ public class SCMManagerImpl implements SCMManager {
 			}
 		}
 	}
+
+	public void importProject(String type, String url, String username,
+			String password, String branch) throws PhrescoException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void updateProject(String type, String url, String username,
+			String password, String branch) throws PhrescoException {
+		// TODO Auto-generated method stub
+		
+	}
 }

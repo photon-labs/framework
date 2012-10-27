@@ -222,7 +222,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
         }
         try {
             String jenkinsTemplateDir = Utility.getJenkinsTemplateDir();
-            String mailFilePath = jenkinsTemplateDir + MAIL + HYPHEN + CONFIG_XML;
+            String mailFilePath = jenkinsTemplateDir + MAIL + HYPHEN + CREDENTIAL_XML;
             System.out.println("configFilePath ======> " + mailFilePath);
             File mailFile = new File(mailFilePath);
             
