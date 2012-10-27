@@ -91,6 +91,7 @@
 		<script type="text/javascript" src="js/loading.js"></script>
 		<script type="text/javascript" src="js/reader.js" ></script>
 		<script type="text/javascript" src="js/jquery-tojson.js" ></script>
+		<script type="text/javascript" src="js/json2.js" ></script>
 		
 		<!-- Window Resizer -->
 		<script type="text/javascript" src="js/windowResizer.js"></script>

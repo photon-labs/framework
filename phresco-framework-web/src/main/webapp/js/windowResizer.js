@@ -43,6 +43,29 @@ $(document).ready(function() {
 		$(".scrollCiList").css("height",newHeight_addinfodiv - 110);
 		$("#CiBuildsList").css("height",newHeight_addinfodiv - 120);
 		
+				
+		
+		
+		var newHeight_contentAdder = $(".content_adder").height();
+		$(".scroll-line").css("height", newHeight_contentAdder - 70);
+		$(".scroll-bar").css("height", newHeight_contentAdder - 10);
+		
+		$(".multilist-scroller .scroll-line").css("position", "static");
+		$(".multilist-scroller .scroll-bar").css("height", "82px");
+		$(".multilist-scroller .scroll-bar").css("top", "7px");
+
+		
+		var newHeight_formHoriz = $(".form-horizontal").height();
+		$(".content_adder").css("height", newHeight_formHoriz - 70);
+		
+		var newHeight_content = $(".form-horizontal").height();
+		$(".content_feature").css("height", newHeight_content - 95);
+		
+		var newWidth_button = $(".form-horizontal").width();
+		$(".bottom_button").css("width", newWidth_button - 25);		
+		
+		
+		
 		/* Appinfo page */
 		var newHeight_addformdiv = $(".appInfoTabDiv").height();
 		$(".app_add_form").css("height",newHeight_addformdiv - 15);

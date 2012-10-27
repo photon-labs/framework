@@ -68,27 +68,19 @@
 		
 		<ul id="display-inline-block-example">
 			<li id="first">
-<%-- 				<input id="testbtn" type="button" value="<s:text name="label.test"/>" class="btn btn-primary env_btn"> --%>
-				<a data-toggle="modal" href="#popupPage" id="unitTest" class="btn btn-primary"><s:text name='label.test'/></a>
+				<a data-toggle="modal" href="#popupPage" id="unitTest" class="btn btn-primary"><s:text name='lbl.test'/></a>
 			</li>
-
-			<%
-		        List<TestSuite> testSuites = (List<TestSuite>) request.getAttribute(FrameworkConstants.REQ_TEST_SUITE);
-		        Set<String> testResultFiles = (Set<String>) request.getAttribute(FrameworkConstants.REQ_TEST_RESULT_FILE_NAMES);
-		        String selectedTestResultFile = (String) request.getAttribute(FrameworkConstants.REQ_SELECTED_TEST_RESULT_FILE);
-		        boolean buttonRow = false;
-			%>
-
 			<% 
+				boolean buttonRow = false;
 				if (CollectionUtils.isNotEmpty(projectModules)) {
 					buttonRow = true;
 			%>
 			
 			<li id="label">
-				&nbsp;<strong><s:text name="label.module"/></strong> 
+				&nbsp;<strong><s:text name="lbl.module"/></strong> 
 			</li>
 			<li>
-				<select id="projectModule" name="projectModule"> 
+				<select id="projectModule" name="projectModule" class="input-large"> 
 					<% for (String projectModule : projectModules) { %>
 						<option value="<%= projectModule %>"><%= projectModule %></option>
 					<% } %>
@@ -126,31 +118,19 @@
 					<li id="first"></li>
 			<% } %>
 					<li id="label">
-						&nbsp;<strong class="hideCtrl" id="testResultLbl"><s:text name="label.test.suite"/></strong> 
+						&nbsp;<strong class="hideCtrl" id="testResultLbl"><s:text name="lbl.test.suite"/></strong> 
 					</li>
 					<li>
-						<select id="testSuite" name="testSuite" class="hideContent">
-							<option value="All">All</option>
-							<% 
-								if (CollectionUtils.isNotEmpty(testSuites)) {
-									for(TestSuite testSuiteDisplay : testSuites) {
-							%>
-									<option value="<%= testSuiteDisplay.getName() %>" id="<%= testSuiteDisplay.getFailures() %>,<%= testSuiteDisplay.getErrors() %>,<%= testSuiteDisplay.getTests() %>,<%= selectedTestResultFile %>" ><%= testSuiteDisplay.getName() %></option>
-							
-							<% 
-							        }
-								}
-							%>
-						</select>
+						<select id="testSuite" name="testSuite" class="hideContent"></select>
 					</li>
 					
 					<li id="label">
-						&nbsp;<strong class="hideCtrl" id="testResultLbl"><s:text name="label.test.result.view"/></strong> 
+						&nbsp;<strong class="hideCtrl" id="testResultLbl"><s:text name="lbl.test.result.view"/></strong> 
 					</li>
 					<li>
-						<select id="resultView" name="resultView" class="hideContent selectDefaultWidth"> 
-							<option value="tabular" >Tabular View</option>
-							<option value="graphical" >Graphical View</option>
+						<select id="resultView" name="resultView" class="input-medium hideContent"> 
+							<option value="tabular"><s:text name="lbl.test.view.tabular"/></option>
+							<option value="graphical"><s:text name="lbl.test.view.graphical"/></option>
 						</select>
 					</li>
 				</ul>
@@ -169,7 +149,7 @@ $(document).ready(function() {
 		progressPopup($('#unitTest'), 'runUnitTest', '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.UNIT %>', '', '', getBasicParams());
 	<% } %>
 	
-	loadTestResults();
+	loadTestSuites();
 	
 	$("#testResultFile, #testSuite, #testSuiteDisplay, #testResultLbl, #resultView").hide();
 	
@@ -221,7 +201,7 @@ $(document).ready(function() {
 	});
 	
 	$('#projectModule, #techReport').change(function() {
-		loadTestResults();
+		loadTestSuites();
 	});
 
 	$('#testSuite').change(function() {
@@ -230,7 +210,7 @@ $(document).ready(function() {
 });
 
 //To get the testsuites
-function loadTestResults() {
+function loadTestSuites() {
 	var params = getBasicParams();
 	params = params.concat("&testType=");
 	params = params.concat('<%= FrameworkConstants.UNIT %>');
@@ -259,7 +239,7 @@ function successEvent(pageUrl, data) {
 				$("#testResultFile").hide();
 				$('#testSuite').empty();
 				$('#testSuite').append($("<option></option>").attr("value", "All").text("All"));
-				fillSelectbox($('#testSuite'), testSuiteNames);
+				fillSelectbox($('#testSuite'), testSuiteNames, 'All', 'All');
 				testReport();
 			}
 		}		
@@ -283,15 +263,8 @@ function changeView() {
 		$("#tabularView").show();
 	}
 }
-			
-function unitTestProgress() {
-	disableScreen();
-   	$('#build-outputOuter').show().css("display","block");
-   	getCurrentCSS();
-   	readerHandlerSubmit('unit', '<%= appId %>', '<%= FrameworkConstants.UNIT %>', '');
-}
 	    
-function openAndroidPopup() {
+/* function openAndroidPopup() {
 	showPopup();
 	var params = "testType=";
 	params = params.concat("unit");
@@ -309,5 +282,5 @@ function openUnitTestPopup() {
 	var params = "testType=";
 	params = params.concat("unit");
 	popup('generateUnitTest', params, $('#popup_div'));
-}
+} */
 </script>

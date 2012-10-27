@@ -34,7 +34,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.bind.JAXBException;
 
 import org.antlr.stringtemplate.StringTemplate;
 import org.apache.commons.codec.binary.Base64;
@@ -43,7 +42,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Element;
 
-import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.FrameworkConfiguration;
@@ -59,7 +57,7 @@ import com.phresco.pom.model.Model.Profiles;
 import com.phresco.pom.model.Profile;
 import com.phresco.pom.util.PomProcessor;
 
-public class FrameworkUtil extends FrameworkBaseAction implements FrameworkConstants {
+public class FrameworkUtil extends FrameworkBaseAction {
 
 	private static final long serialVersionUID = 1L;
 	private static FrameworkUtil frameworkUtil = null;
@@ -445,20 +443,28 @@ public class FrameworkUtil extends FrameworkBaseAction implements FrameworkConst
 		testCasePathMap.put(TechnologyTypes.JAVA_STANDALONE, XPATH_JAVA_WEBSERVICE_TESTCASE);
 	}
 	
-    public String getUnitTestDir(ApplicationInfo appInfo) throws PhrescoException, PhrescoPomException {
-        return getPomProcessor(appInfo.getAppDirName()).getProperty(POM_PROP_KEY_UNITTEST_DIR);
+    public String getUnitTestDir(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
+        return getPomProcessor(appinfo.getAppDirName()).getProperty(POM_PROP_KEY_UNITTEST_DIR);
     }
     
-    public String getUnitTestReportDir(ApplicationInfo appInfo) throws PhrescoPomException, PhrescoException {
-        return getPomProcessor(appInfo.getAppDirName()).getProperty(POM_PROP_KEY_UNITTEST_RPT_DIR);
+    public String getUnitTestReportDir(ApplicationInfo appinfo) throws PhrescoPomException, PhrescoException {
+        return getPomProcessor(appinfo.getAppDirName()).getProperty(POM_PROP_KEY_UNITTEST_RPT_DIR);
+    }
+
+	public String getUnitTestSuitePath(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
+        return getPomProcessor(appinfo.getAppDirName()).getProperty(POM_PROP_KEY_UNITTEST_TESTSUITE_XPATH);
     }
     
-    public String getLoadTestDir() throws PhrescoException, PhrescoPomException {
-    	return getPomProcessor(getApplicationInfo().getAppDirName()).getProperty(POM_PROP_KEY_LOADTEST_DIR);
+    public  String getTestCasePath(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
+        return getPomProcessor(appinfo.getAppDirName()).getProperty(POM_PROP_KEY_UNITTEST_TESTCASE_PATH);
     }
     
-    public String getLoadTestReportDir() throws PhrescoPomException, PhrescoException {
-    	return getPomProcessor(getApplicationInfo().getAppDirName()).getProperty(POM_PROP_KEY_LOADTEST_RPT_DIR);
+    public String getLoadTestDir(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
+    	return getPomProcessor(appinfo.getAppDirName()).getProperty(POM_PROP_KEY_LOADTEST_DIR);
+    }
+    
+    public String getLoadTestReportDir(ApplicationInfo appinfo) throws PhrescoPomException, PhrescoException {
+    	return getPomProcessor(appinfo.getAppDirName()).getProperty(POM_PROP_KEY_LOADTEST_RPT_DIR);
     }
     
     public String getFuncitonalTestDir(String technologyId) {
@@ -494,11 +500,6 @@ public class FrameworkUtil extends FrameworkBaseAction implements FrameworkConst
     public String getFunctionalTestSuitePath(String technologyId){
     	String testSuitePath = functionalTestSuitePathMap.get(technologyId);
     	return testSuitePath;
-    }
-    
-    public  String getTestCasePath(String technologyId){
-    	String testCasePath = testCasePathMap.get(technologyId);
-    	return testCasePath;
     }
     
     public static void setAppInfoDependents(HttpServletRequest request, String customerId) throws PhrescoException {

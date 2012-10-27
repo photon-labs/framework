@@ -42,6 +42,18 @@ function yesnoPopup(modalObj, url, title, okUrl, okLabel) {
 	});
 }
 
+function loadJsonContent(url, jsonParam, containerTag) {
+	$.ajax({
+		url : url,
+		data : jsonParam,
+		type : "POST",
+		contentType: "application/json; charset=utf-8",
+		success : function(data) {
+			loadData(data, containerTag);
+		}
+	});	
+}
+
 function getBasicParams() {
 	var params = $('#formCustomers').serialize();
 	params = params.concat("&");
@@ -91,7 +103,6 @@ function clickMenu(menu, tag, form, additionalParam) {
 		inActivateAllMenu(menu);
 		activateMenu($(this));
 		var selectedMenu = $(this).attr("id");
-		console.info("selectedMenu=======>",selectedMenu);
 //		var additionalParam = $(this).attr('additionalParam');
 		loadContent(selectedMenu, form, tag, additionalParam);
 	});
@@ -106,7 +117,9 @@ function clickButton(button, tag) {
 
 function loadContent(pageUrl, form, tag, additionalParams, callSuccessEvent) {
 //	showLoadingIcon(tag);
+
 	var params = getParameters(form, additionalParams);
+	alert('params ' + params);
 	$.ajax({
 		url : pageUrl,
 		data : params,
@@ -532,8 +545,11 @@ function enableDivCtrls(disabledDiv) {
 }
 
 /** To fill the data in the select box **/
-function fillSelectbox(obj, data, selectTxt) {
+function fillSelectbox(obj, data, selectTxt, selectVal) {
 	obj.empty();
+	if (!isBlank(selectTxt) && !isBlank(selectVal)) {
+		obj.append($("<option></option>").attr("value", selectVal).text(selectTxt));
+	}
 	if (isBlank(data)) {
 		obj.append($("<option></option>").attr("value", "").text(selectTxt));
 	}

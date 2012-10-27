@@ -63,11 +63,11 @@
         
 		<!-- Project Actions -->
         <action name="applications" method="list" class="com.photon.phresco.framework.actions.applications.Projects">
-            <result name="list">/pages/applications/list.jsp</result>
+            <result name="list">/pages/projects/list.jsp</result>
         </action>
         
         <action name="addProject" method="addProject" class="com.photon.phresco.framework.actions.applications.Projects">
-            <result name="applicationDetails">/pages/applications/add.jsp</result>
+            <result name="applicationDetails">/pages/projects/add.jsp</result>
         </action>
         
         <action name="fetchMobileTechVersions" method="fetchMobileTechVersions" class="com.photon.phresco.framework.actions.applications.Projects">
@@ -83,14 +83,14 @@
         </action>
         
         <action name="createProject" method="createProject" class="com.photon.phresco.framework.actions.applications.Projects">
-			<result name="list">/pages/applications/list.jsp</result>
+			<result name="list">/pages/projects/list.jsp</result>
         </action>
         
         <action name="deleteProject" method="delete" class="com.photon.phresco.framework.actions.applications.Projects">
-            <result name="list">/pages/applications/list.jsp</result>
+            <result name="list">/pages/projects/list.jsp</result>
         </action>
         
-        <!--  Applications actions -->
+        <!-- Applications actions -->
         <action name="loadMenu" method="loadMenu" class="com.photon.phresco.framework.actions.applications.Applications">
             <result name="appMenu">/pages/applications/menu.jsp</result>
         </action>
@@ -404,6 +404,7 @@
         </action>
 
         <action name="saveConfiguration" method="save" class="com.photon.phresco.framework.actions.applications.Configurations">
+        	<interceptor-ref name="json" />
             <result name="list">/pages/applications/configuration/list.jsp</result>
             <result type="json" />
         </action>
