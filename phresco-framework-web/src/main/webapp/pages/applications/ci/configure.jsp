@@ -53,7 +53,7 @@
     List<String> existingJobsNames = (List<String>) request.getAttribute(FrameworkConstants.REQ_EXISTING_JOBS_NAMES);
 %>
 <!-- <div class="popup_Modal configurePopUp" id="ciDetails"> -->
-    <form name="ciDetails" action="<%= actionStr %>" method="post" autocomplete="off" class="ci_form form-horizontal" id="configureForm">
+    <form name="ciDetails" action="<%= actionStr %>" method="post" autocomplete="on" class="ci_form form-horizontal" id="configureForm">
 <!--         <div class="modal-header"> -->
 <%--             <h3><s:text name="label.ci"/></h3> --%>
 <!--             <a class="close" href="#" id="close">&times;</a> -->
@@ -678,7 +678,7 @@
 <!-- 												</div> -->
 												<div class="control-group">
 													<label class="control-label labelbold popupLbl">
-														<s:text name='label.build.release.url' />
+														<span class="red">* </span>  <s:text name='label.build.release.url' />
 													</label>
 													<div class="controls">
 														<input type="text" id="collabNetURL" class="input-xlarge" name="collabNetURL" value="<%= existingJob == null ? "" : existingJob.getCollabNetURL() %>">
@@ -693,7 +693,7 @@
 <!-- 												</div> -->
 												<div class="control-group">
 													<label class="control-label labelbold popupLbl">
-														<s:text name='label.build.release.username' />
+														<span class="red">* </span>  <s:text name='label.build.release.username' />
 													</label>
 													<div class="controls">
 														<input type="text" id="collabNetusername" name="collabNetusername" class="input-xlarge" maxlength="63" title="63 Characters only" value="<%= existingJob == null ? "" : existingJob.getCollabNetusername() %>">
@@ -708,7 +708,7 @@
 <!-- 												</div> -->
 												<div class="control-group">
 													<label class="control-label labelbold popupLbl">
-														<s:text name='label.build.release.password' />
+														<span class="red">* </span>  <s:text name='label.build.release.password' />
 													</label>
 													<div class="controls">
 														<input type="password" id="collabNetpassword" name="collabNetpassword" class="input-xlarge" maxlength="63" title="63 Characters only" value="<%= existingJob == null ? "" : existingJob.getCollabNetpassword() %>">
@@ -724,7 +724,7 @@
 												
 												<div class="control-group">
 													<label class="control-label labelbold popupLbl">
-														<s:text name='label.build.release.project' />
+														<span class="red">* </span>  <s:text name='label.build.release.project' />
 													</label>
 													<div class="controls">
 														<input type="text" id="collabNetProject" name="collabNetProject" class="input-xlarge" maxlength="63" title="63 Characters only" value="<%= existingJob == null ? "" : existingJob.getCollabNetProject() %>">
@@ -740,7 +740,7 @@
 <!-- 												</div> -->
 												<div class="control-group">
 													<label class="control-label labelbold popupLbl">
-														<s:text name='label.build.release.package' />
+														<span class="red">* </span>  <s:text name='label.build.release.package' />
 													</label>
 													<div class="controls">
 														<input type="text" id="collabNetPackage" name="collabNetPackage" class="input-xlarge" maxlength="63" title="63 Characters only" value="<%= existingJob == null ? "" : existingJob.getCollabNetPackage() %>">
@@ -756,7 +756,7 @@
 												
 												<div class="control-group">
 													<label class="control-label labelbold popupLbl">
-														<s:text name='label.build.release.release.name' />
+														<span class="red">* </span> <s:text name='label.build.release.release.name' />
 													</label>
 													<div class="controls">
 														<input type="text" id="collabNetRelease" name="collabNetRelease" class="input-xlarge" maxlength="63" title="63 Characters only" value="<%= existingJob == null ? "" : existingJob.getCollabNetRelease() %>">
@@ -914,11 +914,10 @@
 		// android , iphone and other technology
 		//hide java stanalone info by default
 // 		$('#javaStandaloneConfig').hide();
-		alert("load sub page as page here !!! ");
 		if($('#operation').val() == "build") {
-// 			loadContent('generateBuild','', $('#dynamicConfigLoad'), getBasicParams(), false);
+			loadContent('generateBuild','', $('#dynamicConfigLoad'), getBasicParams(), false);
 		} else if($('#operation').val() == "deploy") {
-			loadContent('generateDeploy', '', $('#dynamicConfigLoad'), getBasicParams(), false);
+			loadContent('deploy', '', $('#dynamicConfigLoad'), getBasicParams(), false);
 		} else if($('#operation').val() == "functionalTest") {
 			loadContent('generateFunctionalTest', '', $('#dynamicConfigLoad'), getBasicParams(), false);
 		}	
@@ -926,7 +925,6 @@
 	
 	function popupOnOk(obj) {
  		var okUrl = $(obj).attr("id");
- 		alert("popup button clicked " + okUrl);
  		
 		// do the validation for collabNet info only if the user selects git radio button
  		var validation = configureJobValidation();
@@ -942,13 +940,11 @@
 	
 	// after validation success, show loading icon and creates job
 	function configureJob(url) {
-		alert("Url " + url);
 		isCiRefresh = true;
-		getCurrentCSS();
-		$('.popupLoadingIcon').css("display","block");
+// 		getCurrentCSS();
+// 		$('.popupLoadingIcon').css("display","block");
 // 		var url = $("#configureForm").attr("action");
 		$('#configureForm :input').attr('disabled', false);
-		alert("handle CI  form submit ");
 		loadContent(url, $('#configureForm'), $('#subcontainer'), getBasicParams(), false);
 	}
 	
@@ -971,12 +967,12 @@
 		var svnurl= $("#svnurl").val();
 		var username= $("#username").val();
 		var password= $("#password").val();
-		if(name == ""){
+		if(isBlank(name)) {
 			$("#errMsg").html("Enter the Name");
 			$("#name").focus();
 			$("#name").val("");
 			return false;
-		}
+		} 
 		
 		if($("input:radio[name=svnType][value='svn']").is(':checked')) {
 			if(isValidUrl(svnurl)){
@@ -992,14 +988,12 @@
 				$("#username").val("");
 				return false;
 			}
-			if(password == "") {
+			if(isBlank(password)) {
 				$("#errMsg").html("Enter Password");
 				$("#password").focus();
 				return false;
-			} else {
-				$("#errMsg").empty();
 			}
-		}
+		} 
 		
 		if($("input:radio[name=svnType][value='git']").is(':checked')) {
 			if(isValidUrl(svnurl)) {
@@ -1014,19 +1008,18 @@
 				$("#branch").focus();
 				$("#branch").val("");
 				return false;
-			} else {
-				$("#errMsg").empty();
 			}
-		}
+		} 
 		
 		if($("input:radio[name=svnType][value='clonedWorkspace']").is(':checked')) {
 			if(!$("#usedClonnedWorkspace option:selected").length){
 				$("#errMsg").html("There is no parent project to configure");
 				return false;
-			} else {
-				$("#errMsg").empty();
 			}
 		}
+		
+		ciConfigureError('errMsg', "");
+		return true;
 	}
 	
 	function collabNetValidation() {
