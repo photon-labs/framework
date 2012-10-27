@@ -455,8 +455,24 @@ public class FrameworkUtil extends FrameworkBaseAction {
         return getPomProcessor(appinfo.getAppDirName()).getProperty(POM_PROP_KEY_UNITTEST_TESTSUITE_XPATH);
     }
     
-    public  String getTestCasePath(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
+    public  String getUnitTestCasePath(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
         return getPomProcessor(appinfo.getAppDirName()).getProperty(POM_PROP_KEY_UNITTEST_TESTCASE_PATH);
+    }
+    
+    public String getFunctionalTestDir(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
+        return getPomProcessor(appinfo.getAppDirName()).getProperty(POM_PROP_KEY_FUNCTEST_DIR);
+    }
+    
+    public String getFunctionalTestReportDir(ApplicationInfo appinfo) throws PhrescoPomException, PhrescoException {
+        return getPomProcessor(appinfo.getAppDirName()).getProperty(POM_PROP_KEY_FUNCTEST_RPT_DIR);
+    }
+
+    public String getFunctionalTestSuitePath(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
+        return getPomProcessor(appinfo.getAppDirName()).getProperty(POM_PROP_KEY_FUNCTEST_TESTSUITE_XPATH);
+    }
+    
+    public  String getFunctionalTestCasePath(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
+        return getPomProcessor(appinfo.getAppDirName()).getProperty(POM_PROP_KEY_FUNCTEST_TESTCASE_PATH);
     }
     
     public String getLoadTestDir(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {

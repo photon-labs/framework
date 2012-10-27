@@ -254,9 +254,14 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
     	throw new PhrescoException("Technology not Found");
     }
     
-    public String getAppPom() throws PhrescoException {
+    public String getApplicationHome() throws PhrescoException {
         StringBuilder builder = new StringBuilder(Utility.getProjectHome());
         builder.append(getApplicationInfo().getAppDirName());
+        return builder.toString();
+    }
+    
+    public String getAppPom() throws PhrescoException {
+        StringBuilder builder = new StringBuilder(getApplicationHome());
         builder.append(File.separator);
         builder.append(POM_FILE);
         return builder.toString();

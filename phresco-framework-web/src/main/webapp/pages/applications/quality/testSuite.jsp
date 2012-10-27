@@ -275,7 +275,7 @@
 	}
 	
     $(document).ready(function() {
-    	changeView();
+    	hideLoadingIcon();
     	
     	if ($('#label').hasClass('techLabel')){
             $("#th-first").removeClass("th-inner-test").addClass("th-inner-testtech");

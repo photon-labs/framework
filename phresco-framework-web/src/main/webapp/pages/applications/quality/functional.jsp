@@ -19,327 +19,307 @@
   --%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
-<%@ include file="../progress.jsp" %>
-
 <%@ page import="java.util.List"%>
-<%@ page import="java.util.Set"%>
-<%@ page import="java.util.ArrayList"%>
-<%@ page import="java.util.Collection"%>
-<%@ page import="java.util.Iterator"%>
-<%@ page import="org.apache.commons.collections.CollectionUtils" %>
 
-<%@ page import="com.photon.phresco.framework.model.TestSuite"%>
-<%@ page import="com.photon.phresco.framework.model.TestCase"%>
+<%@ page import="org.apache.commons.collections.CollectionUtils" %>
+<%@ page import="org.apache.commons.lang.StringUtils"%>
+
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
-<%@ page import="com.photon.phresco.framework.api.Project"%>
+<%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 <%@ page import="com.photon.phresco.util.TechnologyTypes" %>
 
 <%
-    Boolean popup = Boolean.FALSE;
-    Project project = (Project)request.getAttribute(FrameworkConstants.REQ_PROJECT);
-    String projectCode = project.getApplicationInfo().getCode();
-//     String technology =  project.getApplicationInfo().getTechnology().getName();//TODO:Need to handle
-    String techId = project.getApplicationInfo().getTechInfo().getVersion();
+	ApplicationInfo appInfo = (ApplicationInfo)request.getAttribute(FrameworkConstants.REQ_APP_INFO);
+	String appId = appInfo.getId();
+	String techId = appInfo.getTechInfo().getId();
 	String path = (String) request.getAttribute(FrameworkConstants.PATH);
 	String fromPage = (String) request.getAttribute(FrameworkConstants.REQ_FROM_PAGE);
+	List<String> projectModules = (List<String>) request.getAttribute(FrameworkConstants.REQ_PROJECT_MODULES);
 %>
-    <form action="functional" method="post" autocomplete="off" class="marginBottomZero" id="form_test">
-			<div class="operation">
-	            <%
-	            	if ((Boolean)request.getAttribute(FrameworkConstants.REQ_BUILD_WARNING)) {
-	            %>
-		            <div class="alert-message warning display_msg" >
-						<s:label cssClass="labelWarn" key="build.required.message"/>
-				    </div>
-			   <%
-	            	}
-			   %>
-				<div class="icon_fun_div printAsPdf">
-					<a href="#" id="pdfPopup" style="display: none;"><img id="pdfCreation" src="images/icons/print_pdf.png" title="generate pdf" style="height: 20px; width: 20px;"/></a>
-					<a href="#" id="openFolder"><img id="folderIcon" src="images/icons/open-folder.png" title="Open folder" /></a>
-					<a href="#" id="copyPath"><img src="images/icons/copy-path.png" title="Copy path" /></a>
+
+<form action="functional" method="post" autocomplete="off" class="marginBottomZero" id="form_test">
+	<div class="operation">
+		<%-- <% if ((Boolean)request.getAttribute(FrameworkConstants.REQ_BUILD_WARNING)) { %>
+			<div class="alert-message warning display_msg" >
+				<s:label cssClass="labelWarn" key="build.required.message"/>
+		    </div>
+		<% } %> --%>
+		
+		<div class="icon_fun_div printAsPdf">
+			<a href="#" id="pdfPopup" style="display: none;"><img id="pdfCreation" src="images/icons/print_pdf.png" title="generate pdf" style="height: 20px; width: 20px;"/></a>
+			<a href="#" id="openFolder"><img id="folderIcon" src="images/icons/open-folder.png" title="Open folder" /></a>
+			<a href="#" id="copyPath"><img src="images/icons/copy-path.png" title="Copy path" /></a>
+		</div>
+		
+		<ul id="display-inline-block-example">
+			<li id="first" style="width: auto;">
+				<input type="button" data-toggle="modal" href="#popupPage" id="functionalTest" class="btn btn-primary" 
+					value="<s:text name='lbl.test'/>">
+			</li>
+			<li id="first" style="width: auto;">
+				<input type="button" data-toggle="modal" href="#popupPage" id="startHub" class="btn btn-primary" 
+					value="<s:text name='lbl.functional.start.hub'/>">
+			</li>
+			<li id="first">
+				<input type="button" data-toggle="modal" href="#popupPage" id="startNode" class="btn btn-primary" 
+					value="<s:text name='lbl.functional.start.node'/>">
+			</li>
+
+			<%
+	  	 		String testError = (String) request.getAttribute(FrameworkConstants.REQ_ERROR_TESTSUITE);
+       			if (testError != null) {
+    		%>
+		    	<div class="alert-message block-message warning hideContent" id="errorDiv" style="margin: 5px 0 0 0;">
+						<%= testError %>
 				</div>
-				<ul id="display-inline-block-example">
-					<li id="first">
-						<input id="testbtn" type="button" value="<s:text name="label.test"/>" class="primary btn env_btn">
-					</li>
-    
-	<script type="text/javascript">
-		$(document).ready(function() {
-			
-			$('#closeGenerateTest, #closeGenTest').click(function() {
-				changeTesting("functional", "testGenerated");
-				$(".wel_come").show().css("display","none");
-				$("#popup_div").css("display","none");
-				$("#popup_div").empty();
-			});
-			
-			$('#testbtn').click(function() {
-				$("#popup_div").empty();
-				showPopup();
-			 	<% 
-			 		if (TechnologyTypes.IPHONE_NATIVE.equals(techId)) { 
-			 	%>
-			 		generateTest('testIphone', 'popup_div');
-			 	<% 
-			 		} else if (TechnologyTypes.ANDROIDS.contains(techId)) {
-			 	%>
-			 		generateTest('testAndroid', 'popup_div');
-			 		
-				<% 
-			 		} else if (TechnologyTypes.IPHONE_HYBRID.equals(techId)) {
-			 	%>
-			 		iphone_HybridTest('testIphone', 'Iphone_HybridTest');
-				<% 
-			 		} else {
-			 	%>
-			 		generateTest('generateTest', 'popup_div');			 	
-			 	<% 
-			 		}
-			 	
-			 	%>
-
-			});
-			$('#openFolder').click(function() {
-	        	//$('#folderIcon').attr('src','images/icons/close.png');
-	            openFolder('<%= projectCode %><%= path %>');
-	        });
-	        
-	        $('#copyPath').click(function() {
-	           copyPath('<%= projectCode %><%= path %>');
-	        });
-	        
-	        $('#pdfCreation').click(function() {
-	    		showPopup();
-	    		$('#popup_div').empty();
-				var params = "testType=";
-				params = params.concat("functional");
-	    		popup('printAsPdfPopup', params, $('#popup_div'));
-	    	    escPopup();
-		    });
-		});	
-		
-		function generateTest(urlAction, container, event) {
-			// load testSuite
-			if($('#testSuites').find("option:selected").attr("id") != undefined) {
-				var results = $('#testSuites').find("option:selected").attr("id").split(",");
-				var failures = results[0];
-				var errors = results[1];
-				var tests = results[2];
-				var selectedTestResultFile = results[3];
-			}
-			var testSuite = $("#testSuites").val();
-			//changeTestResultFile
-			if(event == "testResultFiles") {
-				selectedTestResultFile = $('#testResultFiles').val();
-			}
-	        var params = "";
-	    	if (!isBlank($('form').serialize())) {
-	    		params = $('form').serialize() + "&";
-	    	}
-			params = params.concat("testSuite=");
-			params = params.concat(testSuite);
-			params = params.concat("&testType=");
-			params = params.concat('<%= FrameworkConstants.FUNCTIONAL %>');
-			params = params.concat("&failures=");
-			params = params.concat(failures);
-			params = params.concat("&errs=");
-			params = params.concat(errors);
-			params = params.concat("&tests=");
-			params = params.concat(tests);
-			params = params.concat("&selectedTestResultFileName=");
-			params = params.concat(selectedTestResultFile);
-			showLoadingIcon($('#'+ container)); // Loading Icon
-			performAction(urlAction, params, $('#'+ container));
-		    escPopup()
-		}
-		    
-		function iphone_HybridTest() {
-            $("#popup_div").css("display","none");
-			showConsoleProgress('block');
-			readerHandlerSubmit('functional', '<%= projectCode %>', '<%= FrameworkConstants.FUNCTIONAL %>', '');
-		}
-	 </script>
-    
-	<%
-	   String testError = (String) request.getAttribute(FrameworkConstants.REQ_ERROR_TESTSUITE);
-       if(testError != null) {
-    %>
-    	<div class="alert-message block-message warning" style="margin: 5px 0 0 0;">
-			<center><label class="errorMsgLabel"><%= testError %></label></center>
-		</div>
-	<% } else {
-	        List<TestSuite> testSuites = (List<TestSuite>) request.getAttribute(FrameworkConstants.REQ_TEST_SUITE);
-	        Set<String> testResultFiles = (Set<String>) request.getAttribute(FrameworkConstants.REQ_TEST_RESULT_FILE_NAMES);
-	        String selectedTestResultFile = (String) request.getAttribute(FrameworkConstants.REQ_SELECTED_TEST_RESULT_FILE);
-	        List<String> projectModules = (List<String>) request.getAttribute(FrameworkConstants.REQ_PROJECT_MODULES);
-	        boolean buttonRow = false;
-	%>
-        
-        <% 
-        	if(CollectionUtils.isNotEmpty(projectModules)) {
-        		buttonRow = true;
-        %>
-				<li id="label">
-					&nbsp;<strong><s:text name="label.module"/></strong> 
-				</li>
-				<li>
-					<select id="projectModule" name="projectModule"> <!-- class="funcModuleList"  -->
-						<% for(String projectModule : projectModules) { %>
-					  <option value="<%= projectModule %>" id="<%= projectModule %>" ><%= projectModule %> </option>
-					
-					<% 
-				        }
-					%>
-					</select>
-				</li>
-			<% 	}
-				if (buttonRow) {
+			<% 
+				} else {
+	        		boolean buttonRow = false;
 			%>
+        
+        	<% 
+        			if (CollectionUtils.isNotEmpty(projectModules)) {
+        				buttonRow = true;
+        	%>
+						<li id="label">
+							&nbsp;<strong><s:text name="lbl.module"/></strong> 
+						</li>
+						<li>
+							<select id="projectModule" name="projectModule" class="input-large"> 
+								<% for (String projectModule : projectModules) { %>
+									<option value="<%= projectModule %>"><%= projectModule %></option>
+								<% } %>
+							</select>
+						</li>
+			<%
+					}
+					if (buttonRow) {
+			%>
+						</ul>
+			<%
+					}
+			%>
+		        	<div class="alert-message block-message warning hideCtrl" id="errorDiv" style="margin: 5px 0 0 0;">
+						<center><label class="errorMsgLabel"></label></center>
+					</div>
+			<% 
+					if (buttonRow) {
+			%>
+						<ul id="display-inline-block-example">
+							<li id="first"></li>
+			<% 
+					}
+			%>
+			
+					<li id="label">
+						&nbsp;<strong class="hideCtrl" id="testResultLbl"><s:text name="label.test.suite"/></strong> 
+					</li>
+					<li>
+						<select id="testSuite" name="testSuite" class="hideContent"></select>
+					</li>
+					<li id="label">
+						&nbsp;<strong id="view" class="hideCtrl"><s:text name="label.test.result.view"/></strong> 
+					</li>
+					<li>
+						<select id="resultView" name="resultView" class="input-medium hideContent"> 
+							<option value="tabular"><s:text name="lbl.test.view.tabular"/></option>
+							<option value="graphical"><s:text name="lbl.test.view.graphical"/></option>
+						</select>
+					</li>
 				</ul>
-			<% } %>
-
-        	<div class="alert-message block-message warning hideCtrl" id="errorDiv" style="margin: 5px 0 0 0;">
-				<center><label class="errorMsgLabel"></label></center>
-			</div>
-			
-			<% if (buttonRow) { %>
-			<ul id="display-inline-block-example">
-				<li id="first"></li>
-			<% } %>
-			
-			<li id="label">
-				&nbsp;<strong class="hideCtrl" id="testResultLbl"><s:text name="label.test.suite"/></strong> 
-			</li>
-			<li>
-				<select id="testSuite" name="testSuite"> <!--  class="funcList" -->
-					<option value="All">All</option>
-					<% 
-					if(CollectionUtils.isNotEmpty(testSuites)) {
-						for(TestSuite testSuiteDisplay : testSuites) {
-					%>
-					  <option value="<%= testSuiteDisplay.getName() %>" id="<%= testSuiteDisplay.getFailures() %>,<%= testSuiteDisplay.getErrors() %>,<%= testSuiteDisplay.getTests() %>,<%= selectedTestResultFile %>" ><%= testSuiteDisplay.getName() %> </option>
-					
-					<% 
-				        }
-					}
-					%>
-				</select>
-			</li>
-			<li id="label">
-				&nbsp;<strong id="view" class="hideCtrl"><s:text name="label.test.result.view"/></strong> 
-			</li>
-			<li>
-				<select id="resultView" name="resultView" class="techList selectDefaultWidth"> 
-					<option value="tabular" >Tabular View</option>
-					<option value="graphical" >Graphical View</option>
-				</select>
-			</li>
-			</ul>
-		</div>
-	</form>
-	
-	<div id="testSuiteDisplay" class="testSuiteDisplay responsiveTableDisplay" style="height: 87%;">
-	</div>
-		
-        <script type="text/javascript">
-
-			$(document).ready(function() {
-				$("#testResultFile, #testSuite, #testSuiteDisplay, #resultView, #testResultLbl, #view").hide();
-				
-				$('#resultView').change(function() {
-					changeView();
-				});
-				
-				// table resize
-				var tblheight = (($("#subTabcontainer").height() - $("#form_test").height()));
-				$('.responsiveTableDisplay').css("height", parseInt((tblheight/($("#subTabcontainer").height()))*100) +'%');
-			});
-			
-			loadTestResults();
-			
-			$('#projectModule').change(function() {
-				loadTestResults();
-			});
-
-			$('#testSuite').change(function() {
-				testReport();
-			});
-
-			function loadTestResults() {
-				var params = "";
-		    	if (!isBlank($('form').serialize())) {
-		    		params = $('form').serialize() + "&";
-		    	}
-				params = params.concat("testType=");
-				params = params.concat('<%= FrameworkConstants.FUNCTIONAL %>');
-				
-		    	<% if (StringUtils.isNotEmpty(fromPage)) { %>
-					params = params.concat("&fromPage=");
-					params = params.concat('<%= fromPage %>');
-				<% } %>
-
-				performAction('fillTestSuites', params, '', true);
-			}
-
-			function testReport() {
-				var params = "";
-		    	if (!isBlank($('form').serialize())) {
-		    		params = $('form').serialize() + "&";
-		    	}
-				params = params.concat("testType=");
-				params = params.concat('<%= FrameworkConstants.FUNCTIONAL %>');
-				performAction('testReport', params, $('#testSuiteDisplay'));
-				//show print as pdf icon
-				$('#pdfPopup').show();
-			}
-
-			function successEvent(pageUrl, data) {
-				if(pageUrl == "checkForConfiguration") {
-		    		successEnvValidation(data);
-		    	} else if(pageUrl == "checkForConfigType") {
-		    		successEnvValidation(data);
-		    	} else if(pageUrl == "fetchBuildInfoEnvs") {
-		    		fillVersions("environments", data.buildInfoEnvs);
-		    	} else {
-		    		if ((data != undefined || !isBlank(data)) && data != "") {
-						if (data.validated != undefined && data.validated) {
-							return validationError(data.showError);
-						}
-						var testSuiteNames = data.testSuiteNames;
-						if ((testSuiteNames != undefined || !isBlank(testSuiteNames))) {
-							$("#errorDiv").hide();
-							$("#testResultFile, #testSuite, #testSuiteDisplay, #testResultLbl, #resultView, strong").show();
-							$("#testResultFile").hide();
-							$('#testSuite').empty();
-							$('#testSuite').append($("<option></option>").attr("value", "All").text("All"));
-							for (i in testSuiteNames) {
-								$('#testSuite').append($("<option></option>").attr("value", testSuiteNames[i]).text(testSuiteNames[i]));
-							}
-							testReport();
-						}
-					
-					}
-		    	}
-			}
-
-			function validationError(errMsg) {
-				$(".errorMsgLabel").html(errMsg);
-				$("#errorDiv").show();
-				$("#testResultFile, #testSuite, #testSuiteDisplay, #resultView, #testResultLbl, #view").hide();
-				enableScreen();
-			}
-			
-			function changeView() {
-				var resultView = $('#resultView').val();
-				if (resultView == 'graphical') {
-					$("#graphicalView").show();
-					$("#tabularView").hide();
-				} else  {
-					$("#graphicalView").hide();
-					$("#tabularView").show();
+			<%
 				}
+			%>
+	</div>
+</form>
+
+<!-- Test suite chart display starts -->
+<div id="testSuiteDisplay" class="testSuiteDisplay responsiveTableDisplay" style="height: 87%;"></div>
+<!-- Test suite chart display ends -->
+
+<script type="text/javascript">
+$(document).ready(function() {
+	hideLoadingIcon();
+	
+	yesnoPopup($('#functionalTest'), 'showFunctionalTestPopUp', '<s:text name="lbl.functional.test"/>', 'runFunctionalTest','<s:text name="lbl.test"/>');
+	yesnoPopup($('#startHub'), 'showStartHubPopUp', '<s:text name="lbl.functional.start.hub"/>', 'startHub','<s:text name="lbl.start"/>');
+	yesnoPopup($('#startNode'), 'showStartNodePopUp', '<s:text name="lbl.functional.start.node"/>', 'startNode','<s:text name="lbl.start"/>');
+	
+	loadTestSuites();
+				
+	$("#testResultFile, #testSuite, #testSuiteDisplay, #resultView, #testResultLbl, #view").hide();
+				
+	$('#resultView').change(function() {
+		changeView();
+	});
+				
+	// table resize
+	var tblheight = (($("#subTabcontainer").height() - $("#form_test").height()));
+	$('.responsiveTableDisplay').css("height", parseInt((tblheight/($("#subTabcontainer").height()))*100) +'%');
+				
+	$('#closeGenerateTest, #closeGenTest').click(function() {
+		changeTesting("functional", "testGenerated");
+		$(".wel_come").show().css("display","none");
+		$("#popup_div").css("display","none");
+		$("#popup_div").empty();
+	});
+				
+	$('#testbtn').click(function() {
+		$("#popup_div").empty();
+		showPopup();
+	 	<% 
+	 		if (TechnologyTypes.IPHONE_NATIVE.equals(techId)) { 
+	 	%>
+	 		generateTest('testIphone', 'popup_div');
+	 	<% 
+	 		} else if (TechnologyTypes.ANDROIDS.contains(techId)) {
+	 	%>
+	 		generateTest('testAndroid', 'popup_div');
+	 		
+		<% 
+	 		} else if (TechnologyTypes.IPHONE_HYBRID.equals(techId)) {
+	 	%>
+	 		iphone_HybridTest('testIphone', 'Iphone_HybridTest');
+		<% 
+	 		} else {
+	 	%>
+	 		generateTest('generateTest', 'popup_div');			 	
+	 	<% 
+	 		}
+	 	
+	 	%>
+	});
+	
+	$('#openFolder').click(function() {
+		openFolder('<%= appId %><%= path %>');
+	});
+       
+	$('#copyPath').click(function() {
+		copyPath('<%= appId %><%= path %>');
+	});
+		        
+	$('#pdfCreation').click(function() {
+   		showPopup();
+   		$('#popup_div').empty();
+		var params = "testType=";
+		params = params.concat("functional");
+   		popup('printAsPdfPopup', params, $('#popup_div'));
+   	    escPopup();
+    });
+		        
+	$('#projectModule').change(function() {
+		loadTestResults();
+	});
+
+	$('#testSuite').change(function() {
+		testReport();
+	});
+});
+			
+//To get the testsuites
+function loadTestSuites() {
+	var params = getBasicParams();
+	params = params.concat("&testType=");
+	params = params.concat('<%= FrameworkConstants.FUNCTIONAL %>');
+	loadContent('fetchFunctionalTestSuites', $('#form_test'), '', params, true);
+}
+
+function testReport() {
+	var params = "";
+   	if (!isBlank($('form').serialize())) {
+   		params = $('form').serialize() + "&";
+   	}
+	params = params.concat("testType=");
+	params = params.concat('<%= FrameworkConstants.FUNCTIONAL %>');
+	performAction('testReport', params, $('#testSuiteDisplay'));
+	//show print as pdf icon
+	$('#pdfPopup').show();
+}
+
+function successEvent(pageUrl, data) {
+	if (pageUrl == "checkForConfiguration") {
+   		successEnvValidation(data);
+   	} else if (pageUrl == "checkForConfigType") {
+   		successEnvValidation(data);
+   	} else if (pageUrl == "fetchBuildInfoEnvs") {
+   		fillVersions("environments", data.buildInfoEnvs);
+   	} else {
+   		if ((data != undefined || !isBlank(data)) && data != "") {
+			if (data.validated != undefined && data.validated) {
+				return validationError(data.showError);
 			}
-		</script>
-    <% } %>
- 
+			var testSuiteNames = data.testSuiteNames;
+			if ((testSuiteNames != undefined || !isBlank(testSuiteNames))) {
+				$("#errorDiv").hide();
+				$("#testResultFile, #testSuite, #testSuiteDisplay, #testResultLbl, #resultView, strong").show();
+				$("#testResultFile").hide();
+				$('#testSuite').empty();
+				$('#testSuite').append($("<option></option>").attr("value", "All").text("All"));
+				for (i in testSuiteNames) {
+					$('#testSuite').append($("<option></option>").attr("value", testSuiteNames[i]).text(testSuiteNames[i]));
+				}
+				testReport();
+			}
+		}
+   	}
+}
+
+function validationError(errMsg) {
+	$(".errorMsgLabel").html(errMsg);
+	$("#errorDiv").show();
+	$("#testResultFile, #testSuite, #testSuiteDisplay, #resultView, #testResultLbl, #view").hide();
+	enableScreen();
+}
+			
+function changeView() {
+	var resultView = $('#resultView').val();
+	if (resultView == 'graphical') {
+		$("#graphicalView").show();
+		$("#tabularView").hide();
+	} else  {
+		$("#graphicalView").hide();
+		$("#tabularView").show();
+	}
+}
+			
+function generateTest(urlAction, container, event) {
+	// load testSuite
+	if ($('#testSuites').find("option:selected").attr("id") != undefined) {
+		var results = $('#testSuites').find("option:selected").attr("id").split(",");
+		var failures = results[0];
+		var errors = results[1];
+		var tests = results[2];
+		var selectedTestResultFile = results[3];
+	}
+	var testSuite = $("#testSuites").val();
+	//changeTestResultFile
+	if (event == "testResultFiles") {
+		selectedTestResultFile = $('#testResultFiles').val();
+	}
+	var params = "";
+   	if (!isBlank($('form').serialize())) {
+   		params = $('form').serialize() + "&";
+   	}
+	params = params.concat("testSuite=");
+	params = params.concat(testSuite);
+	params = params.concat("&testType=");
+	params = params.concat('<%= FrameworkConstants.FUNCTIONAL %>');
+	params = params.concat("&failures=");
+	params = params.concat(failures);
+	params = params.concat("&errs=");
+	params = params.concat(errors);
+	params = params.concat("&tests=");
+	params = params.concat(tests);
+	params = params.concat("&selectedTestResultFileName=");
+	params = params.concat(selectedTestResultFile);
+	showLoadingIcon($('#'+ container)); // Loading Icon
+	performAction(urlAction, params, $('#'+ container));
+    escPopup()
+}
+			    
+function iphone_HybridTest() {
+	$("#popup_div").css("display","none");
+	showConsoleProgress('block');
+	readerHandlerSubmit('functional', '<%= appId %>', '<%= FrameworkConstants.FUNCTIONAL %>', '');
+}
+</script> 

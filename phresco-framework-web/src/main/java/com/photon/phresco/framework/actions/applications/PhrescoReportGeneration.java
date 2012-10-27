@@ -1013,7 +1013,7 @@ public class PhrescoReportGeneration extends FrameworkBaseAction {
     		} else {
                 testSuitePath = reportPaths.getFunctionalTestSuitePath(techId);
     		}
-    		testCasePath = reportPaths.getTestCasePath(getApplicationInfo());
+    		testCasePath = reportPaths.getUnitTestCasePath(getApplicationInfo());
     		S_LOGGER.debug("testSuitePath " + testSuitePath);
     		S_LOGGER.debug("testCasePath " + testCasePath);
             StringBuilder sb = new StringBuilder(); //testsuites/testsuite[@name='yyy']/testcase

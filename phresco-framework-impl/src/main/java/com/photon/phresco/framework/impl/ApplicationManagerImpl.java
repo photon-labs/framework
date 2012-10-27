@@ -68,7 +68,6 @@ public class ApplicationManagerImpl implements ApplicationManager {
 			S_LOGGER.debug("performAction() ProjectInformation = "+projectInfo.getAppInfos().get(0));
 		}
 		StringBuilder command = buildMavenCommand(action, mavenArgCommands);
-		System.out.println("Test command=====>"+command);
     	return executeMavenCommand(projectInfo, action, command, workingDirectory);
 	}
 

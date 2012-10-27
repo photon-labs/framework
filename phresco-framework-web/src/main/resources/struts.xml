@@ -195,7 +195,7 @@
         </action>
         
         <action name="quality" method="quality" class="com.photon.phresco.framework.actions.applications.Quality">
-            <result name="quality">/pages/applications/quality/quality.jsp</result>
+            <result name="quality">/pages/applications/quality/menu.jsp</result>
         </action>
         
 		<action name="ci" method="ci" class="com.photon.phresco.framework.actions.applications.CI">
@@ -536,6 +536,18 @@
         	<result name="unit">/pages/applications/quality/unit.jsp</result>
 		</action>
 		
+		<action name="fetchUnitTestSuites" method="fetchUnitTestSuites" class="com.photon.phresco.framework.actions.applications.Quality">
+        	<result type="json" />
+        </action>
+        
+		<action name="showUnitTestPopUp" method="showUnitTestPopUp" class="com.photon.phresco.framework.actions.applications.Quality">
+			<result name="success">/pages/applications/generateBuild.jsp</result>
+        </action>
+		
+		<action name="runUnitTest" method="runUnitTest" class="com.photon.phresco.framework.actions.applications.Quality">
+        	<result name="reader">/pages/applications/reader.jsp</result>
+        </action>
+        
 		<action name="load" method="load" class="com.photon.phresco.framework.actions.applications.Quality">
         	<result name="load">/pages/applications/quality/load.jsp</result>
 		</action>
@@ -556,25 +568,33 @@
         	<result type="json" />
         </action>
         
-        <action name="fetchUnitTestSuites" method="fetchUnitTestSuites" class="com.photon.phresco.framework.actions.applications.Quality">
+        <action name="functional" method="functional" class="com.photon.phresco.framework.actions.applications.Quality">
+        	<result name="functional">/pages/applications/quality/functional.jsp</result>
+		</action>
+		
+		<action name="fetchFunctionalTestSuites" method="fetchFunctionalTestSuites" class="com.photon.phresco.framework.actions.applications.Quality">
         	<result type="json" />
         </action>
-        
-		<action name="showUnitTestPopUp" method="showUnitTestPopUp" class="com.photon.phresco.framework.actions.applications.Quality">
+		
+		<action name="showFunctionalTestPopUp" method="showFunctionalTestPopUp" class="com.photon.phresco.framework.actions.applications.Quality">
 			<result name="success">/pages/applications/generateBuild.jsp</result>
         </action>
         
-        <action name="runUnitTest" method="runUnitTest" class="com.photon.phresco.framework.actions.applications.Quality">
-        	<result name="reader">/pages/applications/reader.jsp</result>
+        <action name="showStartHubPopUp" method="showStartHubPopUp" class="com.photon.phresco.framework.actions.applications.Quality">
+			<result name="success">/pages/applications/generateBuild.jsp</result>
         </action>
-		
+        
+        <action name="showStartNodePopUp" method="showStartNodePopUp" class="com.photon.phresco.framework.actions.applications.Quality">
+			<result name="success">/pages/applications/generateBuild.jsp</result>
+        </action>
+        
         <action name="fetchBuildInfoEnvs" method="fetchBuildInfoEnvs" class="com.photon.phresco.framework.actions.applications.Quality">
             <result type="json" />
         </action>
         
-        <action name="functional" method="functional" class="com.photon.phresco.framework.actions.applications.Quality">
-        	<result name="reader">/pages/applications/reader.jsp</result>
-        </action>
+<!--         <action name="functional" method="functional" class="com.photon.phresco.framework.actions.applications.Quality"> -->
+<!--         	<result name="reader">/pages/applications/reader.jsp</result> -->
+<!--         </action> -->
         
 <!--         <action name="load" method="load" class="com.photon.phresco.framework.actions.applications.Quality"> -->
 <!--             <result name="reader">/pages/applications/reader.jsp</result> -->

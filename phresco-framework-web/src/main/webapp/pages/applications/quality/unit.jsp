@@ -20,17 +20,14 @@
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.util.List"%>
-<%@ page import="java.util.Set"%>
 
 <%@ page import="org.apache.commons.collections.CollectionUtils" %>
 <%@ page import="org.apache.commons.lang.StringUtils"%>
 
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
-<%@ page import="com.photon.phresco.framework.model.TestSuite"%>
-<%@ page import="com.photon.phresco.framework.model.TestCase"%>
-<%@ page import="com.photon.phresco.util.TechnologyTypes" %>
 <%@ page import="com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter"%>
+<%@ page import="com.photon.phresco.util.TechnologyTypes" %>
 
 <script src="js/reader.js" ></script>
 
@@ -144,7 +141,7 @@
 <script type="text/javascript">
 $(document).ready(function() {
 	<% if (CollectionUtils.isNotEmpty(parameters) || CollectionUtils.isNotEmpty(projectModules)) { %>
-		yesnoPopup($('#unitTest'), 'showUnitTestPopUp', '<s:text name="label.unit.test"/>', 'runUnitTest','<s:text name="label.test"/>');
+		yesnoPopup($('#unitTest'), 'showUnitTestPopUp', '<s:text name="lbl.unit.test"/>', 'runUnitTest','<s:text name="lbl.test"/>');
 	<% } else { %>
 		progressPopup($('#unitTest'), 'runUnitTest', '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.UNIT %>', '', '', getBasicParams());
 	<% } %>
