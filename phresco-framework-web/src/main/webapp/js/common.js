@@ -570,8 +570,8 @@ function fillOptions(obj, value, text, selectTxt) {
 	obj.append($("<option></option>").attr("value", value).text(text));
 }
 
-function confirmDialog(title, bodyText, okUrl, okLabel) {
-	$("#deleteBtn").click(function() {
+function confirmDialog(obj, title, bodyText, okUrl, okLabel) {
+	obj.click(function() {
 //		disableScreen();
 		$('#popupTitle').html(title); // Title for the popup
 		$('#popupClose').hide();
