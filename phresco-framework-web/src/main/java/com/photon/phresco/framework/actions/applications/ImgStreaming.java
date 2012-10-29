@@ -34,12 +34,10 @@ import org.apache.struts2.ServletActionContext;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.exception.PhrescoException;
-import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
-import com.photon.phresco.framework.api.Project;
-import com.photon.phresco.framework.api.ProjectAdministrator;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.util.Utility;
+import com.phresco.pom.exception.PhrescoPomException;
 
 public class ImgStreaming extends FrameworkBaseAction implements FrameworkConstants {
 	
@@ -91,7 +89,7 @@ public class ImgStreaming extends FrameworkBaseAction implements FrameworkConsta
         return jpgByteArray;
     }
     
-    private String getScreenshotPath(String testCaseName)  throws PhrescoException {
+    private String getScreenshotPath(String testCaseName)  throws PhrescoException, PhrescoPomException {
         if (debugEnabled) {
             S_LOGGER.debug("Entering Method Quality.getScreenShotPath()");
          }
@@ -101,7 +99,7 @@ public class ImgStreaming extends FrameworkBaseAction implements FrameworkConsta
     	StringBuilder sbuilder = new StringBuilder();
     	sbuilder.append(Utility.getProjectHome());
     	sbuilder.append(applicationInfo.getAppDirName());
-    	sbuilder.append(frameworkUtil.getFunctionalReportDir(applicationInfo.getTechInfo().getId()));
+    	sbuilder.append(frameworkUtil.getFunctionalTestReportDir(applicationInfo));
     	sbuilder.append(File.separator);
     	sbuilder.append(SCREENSHOT_DIR);
     	sbuilder.append(File.separator);

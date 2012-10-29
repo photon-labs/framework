@@ -482,19 +482,9 @@ public class FrameworkUtil extends FrameworkBaseAction {
     public String getLoadTestReportDir(ApplicationInfo appinfo) throws PhrescoPomException, PhrescoException {
     	return getPomProcessor(appinfo.getAppDirName()).getProperty(POM_PROP_KEY_LOADTEST_RPT_DIR);
     }
-    
-    public String getFuncitonalTestDir(String technologyId) {
-        String key = funcationTestMap.get(technologyId);
-        return qualityReportsProp.getProperty(key);
-    }
-    
+
     public String getFuncitonalAdaptDir(String technologyId) {
         String key = funcationAdaptMap.get(technologyId);
-        return qualityReportsProp.getProperty(key);
-    }
-    
-    public String getFunctionalReportDir(String technologyId) {
-        String key = funcationReportMap.get(technologyId);
         return qualityReportsProp.getProperty(key);
     }
     
@@ -506,16 +496,6 @@ public class FrameworkUtil extends FrameworkBaseAction {
     public String getPerformanceReportDir(String technologyId) {
         String key = performanceReportMap.get(technologyId);
         return qualityReportsProp.getProperty(key);
-    }
-   
-    public String getUnitTestSuitePath(String technologyId){
-    	String testSuitePath = unitTestSuitePathMap.get(technologyId);
-    	return testSuitePath;
-    }
-    
-    public String getFunctionalTestSuitePath(String technologyId){
-    	String testSuitePath = functionalTestSuitePathMap.get(technologyId);
-    	return testSuitePath;
     }
     
     public static void setAppInfoDependents(HttpServletRequest request, String customerId) throws PhrescoException {

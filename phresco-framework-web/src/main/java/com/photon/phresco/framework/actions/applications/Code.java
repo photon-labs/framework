@@ -19,7 +19,6 @@
  */
 package com.photon.phresco.framework.actions.applications;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
@@ -159,7 +158,7 @@ public class Code extends FrameworkBaseAction {
 	        	//builder.append(projectCode);
                 if (StringUtils.isNotEmpty(report) && FUNCTIONALTEST.equals(report)) {
                     FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-                    builder.append(frameworkUtil.getFuncitonalTestDir(applicationInfo.getVersion()));
+                    builder.append(frameworkUtil.getFunctionalTestReportDir(applicationInfo));
                 }
                 builder.append(File.separatorChar);
 	        	builder.append(POM_XML);

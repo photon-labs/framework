@@ -218,7 +218,7 @@ function testReport() {
 	var params = getBasicParams();
 	params = params.concat("&testType=");
 	params = params.concat('<%= FrameworkConstants.UNIT %>');
-	loadContent('testReport', $('#form_test'), $('#testSuiteDisplay'), params);
+	loadContent('fetchUnitTestReport', $('#form_test'), $('#testSuiteDisplay'), params);
 	//show print as pdf icon
 	$('#pdfPopup').show();
 }
@@ -259,6 +259,13 @@ function changeView() {
 		$("#graphicalView").hide();
 		$("#tabularView").show();
 	}
+}
+
+//Handles the ok button click event in the popup
+function popupOnOk(obj) {
+	var okUrl = $(obj).attr("id");
+	var params = getBasicParams();
+	progressPopupAsSecPopup(okUrl, '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.UNIT %>', $("#generateBuildForm"), params);
 }
 	    
 /* function openAndroidPopup() {

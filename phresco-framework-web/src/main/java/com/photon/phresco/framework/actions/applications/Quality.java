@@ -584,8 +584,8 @@ public class Quality extends DynamicParameterUtil {
             	builder.append(File.separatorChar);
             	builder.append(testModule);
             }
-            String funcitonalTestDir = frameworkUtil.getFuncitonalTestDir(techId);
-            builder.append(funcitonalTestDir);
+//            String funcitonalTestDir = frameworkUtil.getFuncitonalTestDir(techId);
+//            builder.append(funcitonalTestDir);
 //            actionType.setWorkingDirectory(builder.toString());
             
             S_LOGGER.debug("Functional test directory " + builder.toString());
@@ -616,8 +616,8 @@ public class Quality extends DynamicParameterUtil {
         		jarLocation = builder.toString();
         		builder = new StringBuilder(Utility.getProjectHome());          // Adding Location of JAR as Dependency in pom.xml
         		builder.append(project.getApplicationInfo().getCode());
-        		funcitonalTestDir = frameworkUtil.getFuncitonalTestDir(techId);
-                builder.append(funcitonalTestDir);
+//        		funcitonalTestDir = frameworkUtil.getFuncitonalTestDir(techId);
+//                builder.append(funcitonalTestDir);
             	systemPath = new File(builder.toString() + File.separator + POM_FILE);
 	        	pomprocessor = new PomProcessor(systemPath);
 	        	pomprocessor.addDependency(JAVA_STANDALONE, JAVA_STANDALONE, DEPENDENCY_VERSION, SYSTEM, null, jarLocation);
@@ -660,7 +660,7 @@ public class Quality extends DynamicParameterUtil {
                 sb.append(File.separatorChar);
                 sb.append(projectModule);
     		}
-            sb.append(frameworkUtil.getFunctionalReportDir(techId));
+//            sb.append(frameworkUtil.getFunctionalReportDir(techId));
         } else if (UNIT.equals(testType)) {
         	if (StringUtils.isNotEmpty(projectModule)) {
                 sb.append(File.separatorChar);
@@ -876,17 +876,15 @@ public class Quality extends DynamicParameterUtil {
 
     	List<TestSuite> testSuites = new ArrayList<TestSuite>(2);
 		TestSuite testSuite = null;
-
 		for (int i = 0; i < nodelist.getLength(); i++) {
 		    testSuite =  new TestSuite();
 		    Node node = nodelist.item(i);
 		    NamedNodeMap nameNodeMap = node.getAttributes();
 
-		    for (int k = 0; k < nameNodeMap.getLength(); k++){
+		    for (int k = 0; k < nameNodeMap.getLength(); k++) {
 		        Node attribute = nameNodeMap.item(k);
 		        String attributeName = attribute.getNodeName();
 		        String attributeValue = attribute.getNodeValue();
-
 		        if (ATTR_ASSERTIONS.equals(attributeName)) {
 		            testSuite.setAssertions(attributeValue);
 		        } else if (ATTR_ERRORS.equals(attributeName)) {
@@ -905,80 +903,66 @@ public class Quality extends DynamicParameterUtil {
 		    }
 		    testSuites.add(testSuite);
 		}
+		
 		return testSuites;
     }
 
-    private List<TestCase> getTestCases(NodeList testSuites) throws TransformerException, PhrescoException, PhrescoPomException {
+    private List<TestCase> getTestCases(NodeList testSuites, String testSuitePath, String testCasePath) throws TransformerException, PhrescoException, PhrescoPomException {
     	S_LOGGER.debug("Entering Method Quality.getTestCases(Document doc, String testSuiteName)");
         
     	try {
-            String testCasePath = null;
-            String testSuitePath = null;
-            FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-            ApplicationInfo appInfo = getApplicationInfo();
-           
-            if (APP_UNIT_TEST.equals(testType)) {
-            	testSuitePath = frameworkUtil.getUnitTestSuitePath(getApplicationInfo());
-            } else if (APP_FUNCTIONAL_TEST.equals(testType)) {
-//            	testSuitePath = frameworkUtil.getFunctionalTestSuitePath(techId);
-            }
-            testCasePath = frameworkUtil.getUnitTestCasePath(appInfo);
-            
             S_LOGGER.debug("Test suite path " + testSuitePath);
             S_LOGGER.debug("Test suite path " + testCasePath);
             
             StringBuilder sb = new StringBuilder(); //testsuites/testsuite[@name='yyy']/testcase
-            //sb.append(XPATH_SINGLE_TESTSUITE);
             sb.append(testSuitePath);
             sb.append(NAME_FILTER_PREFIX);
-            sb.append(testSuite);
+            sb.append(getTestSuite());
             sb.append(NAME_FILTER_SUFIX);
             sb.append(testCasePath);
 
             XPath xpath = XPathFactory.newInstance().newXPath();
-            NodeList nodelist = (NodeList) xpath.evaluate(sb.toString(), testSuites.item(0).getParentNode(), XPathConstants.NODESET);
+            NodeList nodeList = (NodeList) xpath.evaluate(sb.toString(), testSuites.item(0).getParentNode(), XPathConstants.NODESET);
             
             // For tehnologies like php and drupal duoe to plugin change xml testcase path modified
-            if (nodelist.getLength() == 0) {
+            if (nodeList.getLength() == 0) {
                 StringBuilder sbMulti = new StringBuilder();
                 sbMulti.append(testSuitePath);
                 sbMulti.append(NAME_FILTER_PREFIX);
-                sbMulti.append(testSuite);
+                sbMulti.append(getTestSuite());
                 sbMulti.append(NAME_FILTER_SUFIX);
                 sbMulti.append(XPATH_TESTSUTE_TESTCASE);
-                nodelist = (NodeList) xpath.evaluate(sbMulti.toString(), testSuites.item(0).getParentNode(), XPathConstants.NODESET);
+                nodeList = (NodeList) xpath.evaluate(sbMulti.toString(), testSuites.item(0).getParentNode(), XPathConstants.NODESET);
             }
             
             // For technology sharepoint
-            if (nodelist.getLength() == 0) {
+            if (nodeList.getLength() == 0) {
                 StringBuilder sbMulti = new StringBuilder(); //testsuites/testsuite[@name='yyy']/testcase
                 sbMulti.append(XPATH_MULTIPLE_TESTSUITE);
                 sbMulti.append(NAME_FILTER_PREFIX);
-                sbMulti.append(testSuite);
+                sbMulti.append(getTestSuite());
                 sbMulti.append(NAME_FILTER_SUFIX);
                 sbMulti.append(testCasePath);
-                nodelist = (NodeList) xpath.evaluate(sbMulti.toString(), testSuites.item(0).getParentNode(), XPathConstants.NODESET);
+                nodeList = (NodeList) xpath.evaluate(sbMulti.toString(), testSuites.item(0).getParentNode(), XPathConstants.NODESET);
             }
 
             List<TestCase> testCases = new ArrayList<TestCase>();
-
-            int failureTestCases = 0;
-            int errorTestCases = 0;
-
-        	StringBuilder screenShotDir = new StringBuilder();
-        	screenShotDir.append(Utility.getProjectHome());
-        	screenShotDir.append(getApplicationInfo().getAppDirName());
-//        	screenShotDir.append(frameworkUtil.getFunctionalReportDir(appInfo));
+            
+        	StringBuilder screenShotDir = new StringBuilder(getApplicationHome());
+        	screenShotDir.append(File.separator);
+        	FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+        	screenShotDir.append(frameworkUtil.getFunctionalTestReportDir(getApplicationInfo()));
         	screenShotDir.append(File.separator);
         	screenShotDir.append(SCREENSHOT_DIR);
         	screenShotDir.append(File.separator);
         	
-            for (int i = 0; i < nodelist.getLength(); i++) {
-                Node node = nodelist.item(i);
+        	int failureTestCases = 0;
+            int errorTestCases = 0;
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                Node node = nodeList.item(i);
                 NodeList childNodes = node.getChildNodes();
                 NamedNodeMap nameNodeMap = node.getAttributes();
                 TestCase testCase = new TestCase();
-
                 for (int k = 0; k < nameNodeMap.getLength(); k++) {
                     Node attribute = nameNodeMap.item(k);
                     String attributeName = attribute.getNodeName();
@@ -999,10 +983,8 @@ public class Quality extends DynamicParameterUtil {
                 }
                 
                 if (childNodes != null && childNodes.getLength() > 0) {
-
                     for (int j = 0; j < childNodes.getLength(); j++) {
                         Node childNode = childNodes.item(j);
-
                         if (ELEMENT_FAILURE.equals(childNode.getNodeName())) {
                         	failureTestCases++;
                             TestCaseFailure failure = getFailure(childNode);
@@ -1028,14 +1010,11 @@ public class Quality extends DynamicParameterUtil {
                         }
                     }
                 }
-
                 testCases.add(testCase);
             }
-
-            getHttpRequest().setAttribute(REQ_TESTSUITE_FAILURES, failureTestCases + "");
-            getHttpRequest().setAttribute(REQ_TESTSUITE_ERRORS, errorTestCases + "");
-            getHttpRequest().setAttribute(REQ_TESTSUITE_TESTS, nodelist.getLength() + "");
-			getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
+            setReqAttribute(REQ_TESTSUITE_FAILURES, failureTestCases + "");
+            setReqAttribute(REQ_TESTSUITE_ERRORS, errorTestCases + "");
+            setReqAttribute(REQ_TESTSUITE_TESTS, nodeList.getLength() + "");
 			
             return testCases;
         } catch (PhrescoException e) {
@@ -1078,12 +1057,10 @@ public class Quality extends DynamicParameterUtil {
            S_LOGGER.debug("Entering Method Quality.getError(Node errorNode)");
            S_LOGGER.debug("getError() Node = "+errorNode.getNodeName());
         TestCaseError tcError = new TestCaseError();
-
         try {
             tcError.setDescription(errorNode.getTextContent());
             tcError.setErrorType(REQ_TITLE_ERROR);
             NamedNodeMap nameNodeMap = errorNode.getAttributes();
-
             if (nameNodeMap != null && nameNodeMap.getLength() > 0) {
                 for (int k = 0; k < nameNodeMap.getLength(); k++){
                     Node attribute = nameNodeMap.item(k);
@@ -1179,13 +1156,13 @@ public class Quality extends DynamicParameterUtil {
 //                        ActionType actionType = ActionType.STOP_SELENIUM_SERVER;
                         StringBuilder builder = new StringBuilder(Utility.getProjectHome());
                         builder.append(appInfo.getAppDirName());
-                        String funcitonalTestDir = frameworkUtil.getFuncitonalTestDir(techId);
-                        builder.append(funcitonalTestDir);
+//                        String funcitonalTestDir = frameworkUtil.getFuncitonalTestDir(techId);
+//                        builder.append(funcitonalTestDir);
 //                        actionType.setWorkingDirectory(builder.toString());
                         ProjectRuntimeManager runtimeManager = PhrescoFrameworkFactory.getProjectRuntimeManager();
 //                        runtimeManager.performAction(project, actionType, null, null);
-                        getHttpRequest().setAttribute(PATH, 
-                                frameworkUtil.getFuncitonalTestDir(techId));
+//                        getHttpRequest().setAttribute(PATH, 
+//                                frameworkUtil.getFuncitonalTestDir(techId));
                     }
 
                     getHttpRequest().setAttribute(REQ_FROM_PAGE, fromPage);
@@ -1958,8 +1935,38 @@ public class Quality extends DynamicParameterUtil {
         }
         return osType;
     }
+    
+    public String fetchUnitTestReport() throws TransformerException, PhrescoPomException {
+        try {
+            ApplicationInfo appInfo = getApplicationInfo();
+            FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+            String testSuitePath = frameworkUtil.getUnitTestSuitePath(appInfo);
+            String testCasePath = frameworkUtil.getUnitTestCasePath(appInfo);
+            
+            return testReport(testSuitePath, testCasePath);
+        } catch (PhrescoException e) {
+            // TODO: handle exception
+        }
+        
+        return null;
+    }
+    
+    public String fetchFunctionalTestReport() throws TransformerException, PhrescoPomException {
+        try {
+            ApplicationInfo appInfo = getApplicationInfo();
+            FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+            String testSuitePath = frameworkUtil.getFunctionalTestSuitePath(appInfo);
+            String testCasePath = frameworkUtil.getFunctionalTestCasePath(appInfo);
+            
+            return testReport(testSuitePath, testCasePath);
+        } catch (PhrescoException e) {
+            // TODO: handle exception
+        }
+        
+        return null;
+    }
 
-    public String testReport() throws TransformerException, PhrescoPomException {
+    private String testReport(String testSuitePath, String testCasePath) throws TransformerException, PhrescoPomException {
     	S_LOGGER.debug("Entering Method Quality.testReport()");
     	try {
     		String testSuitesMapKey = getAppId() + getTestType() + getProjectModule() + getTechReport();
@@ -1980,7 +1987,7 @@ public class Quality extends DynamicParameterUtil {
     		    			for (TestSuite tstSuite : allTestSuites) {
     		    				//testsuite values are set before calling getTestCases value
     							setTestSuite(tstSuite.getName());
-    							getTestCases(allTestResultNodeList);
+    							getTestCases(allTestResultNodeList, testSuitePath, testCasePath);
     				            float tests = 0;
     				            float failures = 0;
     				            float errors = 0;
@@ -2027,7 +2034,7 @@ public class Quality extends DynamicParameterUtil {
     			return APP_ALL_TEST_REPORT; 
     		} else {
 	            if (testSuites.getLength() > 0 ) {
-	            	List<TestCase> testCases = getTestCases(testSuites);
+	            	List<TestCase> testCases = getTestCases(testSuites, testSuitePath, testCasePath);
 	            	if (CollectionUtils.isEmpty(testCases)) {
 	            		setReqAttribute(REQ_ERROR_TESTSUITE, ERROR_TEST_CASE);
 	            	} else {
@@ -2036,6 +2043,7 @@ public class Quality extends DynamicParameterUtil {
 	            }
     		}
         } catch (PhrescoException e) {
+            e.printStackTrace();
         	S_LOGGER.error("Entered into catch block of Quality.testSuite()"+ e);
         }
 
@@ -2401,7 +2409,7 @@ public class Quality extends DynamicParameterUtil {
 	        	builder.append(projectCode);
 	        	
 	            if (FUNCTIONALTEST.equals(sonarProfile)) {
-	                builder.append(frameworkUtil.getFuncitonalTestDir(technology));
+//	                builder.append(frameworkUtil.getFuncitonalTestDir(technology));
 	            }
 	            
 	            builder.append(File.separatorChar);
@@ -2484,12 +2492,12 @@ public class Quality extends DynamicParameterUtil {
             }
             
             if(!XmlResultsAvailable) {
-            	S_LOGGER.debug("Fucntional dir " + sb.toString() + frameworkUtil.getFunctionalReportDir(technology));
-	            File file = new File(sb.toString() + frameworkUtil.getFunctionalReportDir(technology));
-	            File[] children = file.listFiles(new XmlNameFileFilter(FILE_EXTENSION_XML));
-	            if(children != null && children.length > 0) {
-	            	XmlResultsAvailable = true;
-	            }
+//            	S_LOGGER.debug("Fucntional dir " + sb.toString() + frameworkUtil.getFunctionalReportDir(technology));
+//	            File file = new File(sb.toString() + frameworkUtil.getFunctionalReportDir(technology));
+//	            File[] children = file.listFiles(new XmlNameFileFilter(FILE_EXTENSION_XML));
+//	            if(children != null && children.length > 0) {
+//	            	XmlResultsAvailable = true;
+//	            }
             }
             
             if(!XmlResultsAvailable) {

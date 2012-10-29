@@ -37,7 +37,7 @@
 	List<String> projectModules = (List<String>) request.getAttribute(FrameworkConstants.REQ_PROJECT_MODULES);
 %>
 
-<form action="functional" method="post" autocomplete="off" class="marginBottomZero" id="form_test">
+<form autocomplete="off" class="marginBottomZero" id="form_test">
 	<div class="operation">
 		<%-- <% if ((Boolean)request.getAttribute(FrameworkConstants.REQ_BUILD_WARNING)) { %>
 			<div class="alert-message warning display_msg" >
@@ -141,12 +141,12 @@
 $(document).ready(function() {
 	hideLoadingIcon();
 	
+	loadTestSuites();
+	
 	yesnoPopup($('#functionalTest'), 'showFunctionalTestPopUp', '<s:text name="lbl.functional.test"/>', 'runFunctionalTest','<s:text name="lbl.test"/>');
 	yesnoPopup($('#startHub'), 'showStartHubPopUp', '<s:text name="lbl.functional.start.hub"/>', 'startHub','<s:text name="lbl.start"/>');
 	yesnoPopup($('#startNode'), 'showStartNodePopUp', '<s:text name="lbl.functional.start.node"/>', 'startNode','<s:text name="lbl.start"/>');
 	
-	loadTestSuites();
-				
 	$("#testResultFile, #testSuite, #testSuiteDisplay, #resultView, #testResultLbl, #view").hide();
 				
 	$('#resultView').change(function() {
@@ -170,23 +170,21 @@ $(document).ready(function() {
 	 	<% 
 	 		if (TechnologyTypes.IPHONE_NATIVE.equals(techId)) { 
 	 	%>
-	 		generateTest('testIphone', 'popup_div');
+	 			generateTest('testIphone', 'popup_div');
 	 	<% 
 	 		} else if (TechnologyTypes.ANDROIDS.contains(techId)) {
 	 	%>
-	 		generateTest('testAndroid', 'popup_div');
-	 		
+	 			generateTest('testAndroid', 'popup_div');
 		<% 
 	 		} else if (TechnologyTypes.IPHONE_HYBRID.equals(techId)) {
 	 	%>
-	 		iphone_HybridTest('testIphone', 'Iphone_HybridTest');
+	 			iphone_HybridTest('testIphone', 'Iphone_HybridTest');
 		<% 
 	 		} else {
 	 	%>
-	 		generateTest('generateTest', 'popup_div');			 	
+	 			generateTest('generateTest', 'popup_div');			 	
 	 	<% 
 	 		}
-	 	
 	 	%>
 	});
 	
@@ -225,13 +223,10 @@ function loadTestSuites() {
 }
 
 function testReport() {
-	var params = "";
-   	if (!isBlank($('form').serialize())) {
-   		params = $('form').serialize() + "&";
-   	}
-	params = params.concat("testType=");
+	var params = getBasicParams();
+	params = params.concat("&testType=");
 	params = params.concat('<%= FrameworkConstants.FUNCTIONAL %>');
-	performAction('testReport', params, $('#testSuiteDisplay'));
+	loadContent('fetchFunctionalTestReport', $('#form_test'), $('#testSuiteDisplay'), params);
 	//show print as pdf icon
 	$('#pdfPopup').show();
 }
@@ -270,7 +265,7 @@ function validationError(errMsg) {
 	$("#testResultFile, #testSuite, #testSuiteDisplay, #resultView, #testResultLbl, #view").hide();
 	enableScreen();
 }
-			
+
 function changeView() {
 	var resultView = $('#resultView').val();
 	if (resultView == 'graphical') {

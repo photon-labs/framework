@@ -628,7 +628,12 @@
             <result name="success">/pages/applications/iphone_popup.jsp</result>
         </action>
         
-        <action name="testReport" method="testReport" class="com.photon.phresco.framework.actions.applications.Quality">
+        <action name="fetchUnitTestReport" method="fetchUnitTestReport" class="com.photon.phresco.framework.actions.applications.Quality">
+        	<result name="testReport">/pages/applications/quality/testSuite.jsp</result>
+            <result name="allTestReport">/pages/applications/quality/allTestSuiteResult.jsp</result>
+        </action>
+        
+        <action name="fetchFunctionalTestReport" method="fetchFunctionalTestReport" class="com.photon.phresco.framework.actions.applications.Quality">
         	<result name="testReport">/pages/applications/quality/testSuite.jsp</result>
             <result name="allTestReport">/pages/applications/quality/allTestSuiteResult.jsp</result>
         </action>
