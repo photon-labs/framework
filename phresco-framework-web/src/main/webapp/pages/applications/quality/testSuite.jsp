@@ -234,7 +234,6 @@
 				
 		</div>
 	</div>
-	
 	<div class="modal-footer">
 		<div class="action abt_action">
 			<input type="button" class="btn primary" value="<s:text name="lbl.close"/>" id="closeDialog">
@@ -257,7 +256,6 @@
 			<img class="testCaseImg" id="screenShotImgSrc" src="" title="screenShot"  height= "100px" width= "100px"></img>
 		</div>
 	</div>
-	
 	<div class="modal-footer">
 		<div class="action abt_action">
 			<input type="button" class="btn primary" value="<s:text name="label.close"/>" id="closeTCScreenShotPopupDlg">
@@ -276,6 +274,8 @@
 	
     $(document).ready(function() {
     	hideLoadingIcon();
+    	
+    	changeView();
     	
     	if ($('#label').hasClass('techLabel')){
             $("#th-first").removeClass("th-inner-test").addClass("th-inner-testtech");

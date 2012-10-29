@@ -97,21 +97,20 @@
 				            		ArrayList<String> successData = new ArrayList<String>();
 				            		ArrayList<String> failureData = new ArrayList<String>();
 				            		ArrayList<String> errorData = new ArrayList<String>();
-				            		
 					          		for (String key : keySet) {
-					          			String results = allTestSuiteReport.get(key);
-					          			String[] result = results.split(",");
-					          			
-					          			float total = Float.parseFloat(result[0]);
-					          			float success = Float.parseFloat(result[1]);
-					          			float failure = Float.parseFloat(result[2]);
-					          			float error = Float.parseFloat(result[3]);
+					          			String csvResults = allTestSuiteReport.get(key);
+					          			String[] results = csvResults.split(",");
+					          			float total = Float.parseFloat(results[0]);
+					          			float success = Float.parseFloat(results[1]);
+					          			float failure = Float.parseFloat(results[2]);
+					          			float error = Float.parseFloat(results[3]);
 					          			totalTstCases = totalTstCases + (int)total;
 					          			totalSuccessTstCases = totalSuccessTstCases + (int)success;
 					          			totalFailureTstCases = totalFailureTstCases + (int)failure;
 					          			totalErrorTstCases = totalErrorTstCases + (int)error;
 					          			
-					            		graphData = graphData + FrameworkConstants.SQUARE_OPEN + (int)success + "," + (int)failure + "," + (int)error + FrameworkConstants.SQUARE_CLOSE + ",";
+					            		graphData = graphData + FrameworkConstants.SQUARE_OPEN + (int)success + "," + (int)failure + "," 
+					            					+ (int)error + FrameworkConstants.SQUARE_CLOSE + ",";
 					            		testSuiteLabels = testSuiteLabels + "'" + key + "',";
 					          	%>
 					            	<tr>
@@ -194,7 +193,6 @@
 		// based on view show the list(table/graph)
 		changeView();
 		canvasInit();
-		enableScreen();
 		
 		$(".styles").click(function() {
 			canvasInit();

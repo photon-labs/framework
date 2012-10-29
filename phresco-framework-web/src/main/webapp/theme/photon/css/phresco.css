@@ -5085,7 +5085,7 @@ ul#display-inline-block-example li#label {
 
 ul#display-inline-block-example li {
 	display: inline-block;
-	width: 25%;
+	width: 24%;
 	min-height: 25%;
 	 
 	/* For IE 7 */
