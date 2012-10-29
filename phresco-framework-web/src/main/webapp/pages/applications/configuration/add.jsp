@@ -184,9 +184,8 @@
 		var configId = template.id;
 		
 		var jsonParam = '{ ' + getBasicParamsAsJson() + ', "configName": "' + name + '", "description": "' + desc + '", "configType": "' + type 
-								+ '", "configId": "' + configId + '", "environment" : ' + env + ', ' + configStr.substring(1);  
-
-		alert(jsonParam);
+								+ '", "configId": "' + configId + '", "environment" : ' + env + ', ' + configStr.substring(1);
+								
 		loadJsonContent('saveConfiguration', jsonParam, $("#subcontainer"));	
 	});
 	

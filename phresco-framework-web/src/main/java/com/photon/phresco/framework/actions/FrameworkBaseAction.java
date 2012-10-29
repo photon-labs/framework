@@ -29,6 +29,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -77,6 +78,7 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
     private String customerId = "";
     private String projectId = "";
     private String appId = "";
+    private Map<String, Object> map = null;
     
     private static ServiceManager serviceManager = null;
     
@@ -90,6 +92,10 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
         }
         
         return projectAdministrator;
+    }
+    
+    public ActionContext getActionContext() {
+        return ActionContext.getContext();
     }
     
     public HttpServletRequest getHttpRequest() {
@@ -313,9 +319,20 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
         return getHttpRequest().getAttribute(key);
     }
     
-    protected String getReqParameter(String key) {
-		return getHttpRequest().getParameter(key);
+    private Map<String, Object> getContextParameters() {
+        if (map == null) {
+            map = getActionContext().getParameters();
+        }
+        return map;
+    }
+    
+    protected String getActionContextParam(String key) {
+		return (String) getContextParameters().get(key);
 	}
+    
+    protected String getReqParameter(String key) {
+        return getHttpRequest().getParameter(key);
+    }
 	
 	protected String[] getReqParameterValues(String Key) {
 		return getHttpRequest().getParameterValues(Key);
