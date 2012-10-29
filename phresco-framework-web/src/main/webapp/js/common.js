@@ -18,7 +18,7 @@
  * ###
  */
  
-function yesnoPopup(modalObj, url, title, okUrl, okLabel) {
+function yesnoPopup(modalObj, url, title, okUrl, okLabel, form) {
 	modalObj.click(function() {
 		$('#popupClose').hide();
 
@@ -37,6 +37,12 @@ function yesnoPopup(modalObj, url, title, okUrl, okLabel) {
 		var additionalParam = $(this).attr('additionalParam'); //additional params if any
 		data = data.concat(additionalParam);
 
+		var params = getParameters(form, '');
+		if (!isBlank(params)) {
+			data = data.concat("&");
+			data = data.concat(params);
+		}
+				
 		$('.modal-body').empty();
 		$('.modal-body').load(url, data); //url to render the body content for the popup
 	});
