@@ -63,13 +63,17 @@ import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.commons.LogErrorReport;
 import com.photon.phresco.framework.commons.PBXNativeTarget;
 import com.photon.phresco.framework.model.*;
+import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.*;
+import com.photon.phresco.plugins.util.*;
 import com.photon.phresco.util.IosSdkUtil;
 import com.photon.phresco.util.IosSdkUtil.MacSdkType;
 import com.photon.phresco.util.TechnologyTypes;
 import com.photon.phresco.util.Utility;
 import com.sun.jersey.api.client.*;
+import com.photon.phresco.framework.actions.DynamicParameterUtil;
+import com.photon.phresco.framework.api.ActionType;
 
-public class CI extends FrameworkBaseAction implements FrameworkConstants {
+public class CI extends DynamicParameterUtil implements FrameworkConstants {
 
 	private static final String FIRST_BUILD = "1";
 	private static final long serialVersionUID = -2040671011555139339L;
@@ -355,6 +359,7 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
 				existJob = new CIJob();
 			}
 			InetAddress thisIp = InetAddress.getLocalHost();
+			// basic information
 			existJob.setName(name);
 			existJob.setSvnUrl(svnurl);
 			existJob.setUserName(username);
@@ -365,24 +370,20 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
 			Map<String, String> emails = new HashMap<String, String>(2);
 			emails.put(REQ_KEY_SUCCESS_EMAILS, successEmailIds);
 			emails.put(REQ_KEY_FAILURE_EMAILS, failureEmailIds);
-
 			String mvncmd = "";
 			if (BUILD.equals(operation)) {
 				S_LOGGER.debug("Build operation!!!!!!");
-//				mvncmd = getBuildCommand(project, technology);
-				mvncmd = "phresco:build";
+				ActionType actionType = ActionType.BUILD;
+				mvncmd = actionType.toString();
 			} else if (DEPLOY.equals(operation)) {
 				S_LOGGER.debug("Deploy operation!!!!!!");
-//				mvncmd = getDeployCommand(project, technology);
-				mvncmd = "phresco:deploy";
+				ActionType actionType = ActionType.DEPLOY;
+				mvncmd = actionType.toString();
 			} else if (FUNCTIONAL_TEST.equals(operation)) {
 				S_LOGGER.debug("Functional test operation!!!!!");
-//				mvncmd = getFunctionalTestCommand(project, technology);
-//				if (!(TechnologyTypes.IPHONES.contains(technology) || TechnologyTypes.ANDROIDS
-//						.contains(technology))) {
-//					mvncmd = CI_FUNCTIONAL_ADAPT + mvncmd;
-//				}
-				mvncmd = "phresco:functionalTest";
+//				ActionType actionType = ActionType.FUNCTIONAL_TEST;
+//				System.out.println("build operation command " + actionType);
+//				mvncmd = actionType.toString();
 			}
 			if (!"clonedWorkspace".equals(svnType) && BUILD.equals(operation)) {
 				mvncmd = CI_PROFILE + mvncmd;
@@ -397,6 +398,15 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
 			existJob.setBranch(branch);
 			existJob.setRepoType(svnType);
 			// collabNet file release plugin imple
+//			System.out.println("enableBuildRelease =====> " + enableBuildRelease);
+//			System.out.println("collabNetURL =====> " + collabNetURL);
+//			System.out.println("collabNetusername =====> " + collabNetusername);
+//			System.out.println("collabNetpassword =====> " + collabNetpassword);
+//			System.out.println("collabNetProject =====> " + collabNetProject);
+//			System.out.println("collabNetPackage =====> " + collabNetPackage);
+//			System.out.println("collabNetRelease =====> " + collabNetRelease);
+//			System.out.println("collabNetoverWriteFiles =====> " + collabNetoverWriteFiles);
+			
 			existJob.setEnableBuildRelease(enableBuildRelease);
 			existJob.setCollabNetURL(collabNetURL);
 			existJob.setCollabNetusername(collabNetusername);
@@ -412,15 +422,18 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
 			existJob.setDownStreamProject(downstreamProject);
 			existJob.setOperation(operation);
 
-			// extra info
-			S_LOGGER.debug("deployTo =====> " + deployTo);
-			S_LOGGER.debug("simulatorVersion =====> " + simulatorVersion);
-			S_LOGGER.debug("serialNumber =====> " + serialNumber);
-			S_LOGGER.debug("browser =====> " + browser);
-			existJob.setImportSql(importSql);
-			existJob.setBrowser(browser);
-			existJob.setEnvironment(environment);
-
+			// build info
+//			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+//			ProjectInfo projectInfo = getProjectInfo();
+			ApplicationInfo applicationInfo = getApplicationInfo();
+			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(applicationInfo)));
+			persistValuesToXml(mojo, PHASE_PACKAGE);
+			
+			//To get maven build arguments
+			List<Parameter> parameters = getMojoParameters(mojo, PHASE_PACKAGE);
+			List<String> buildArgCmds = getMavenArgCommands(parameters);
+//			System.out.println("buildArgCmds ======> " + buildArgCmds);
+			
 			String funcitonalTestDir = "";
 			if (FUNCTIONAL_TEST.equals(operation)) {
 				FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
@@ -433,38 +446,20 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
 				}
 			}
 			S_LOGGER.debug("funcitonalTestDir ======> " + funcitonalTestDir);
-/*			if (TechnologyTypes.IPHONES.contains(technology)) {
-				// iphone specific info
-				existJob.setDeployTo(deployTo);
-				existJob.setSimulatorVersion(simulatorVersion);
-				existJob.setTarget(target);
-				existJob.setIphoneSdk(sdk);
-				existJob.setMode(mode);
-				existJob.setIphoneSerialNumber(serialNumber);
-			} else if (TechnologyTypes.ANDROIDS.contains(technology)) {
-				existJob.setAndroidVersion(androidVersion);
-				existJob.setDevice(device);
-				existJob.setAndroidSerialNumber(serialNumber);
-				existJob.setProguard(proguard);
-				existJob.setSigning(signing);
-				existJob.setAndroidSerialNumber(serialNumber);
-			} else if (TechnologyTypes.JAVA_STANDALONE.contains(technology)) {
-				existJob.setJarName(jarName);
-				existJob.setMainClassName(mainClassName);
-				existJob.setEnablePostBuildStep(true);
-			}*/
 
 			existJob.setPomLocation(funcitonalTestDir + POM_XML);
 
 			if (CI_CREATE_JOB_COMMAND.equals(jobType)) {
-				ciManager.createJob(appInfo, existJob);
+//				System.out.println(" creating job approached  " + existJob);
+//				ciManager.createJob(appInfo, existJob);
 				addActionMessage(getText(SUCCESS_JOB));
 			} else if (CI_UPDATE_JOB_COMMAND.equals(jobType)) {
-				ciManager.updateJob(appInfo, existJob);
+//				System.out.println(" updating job approached  " + existJob);
+//				ciManager.updateJob(appInfo, existJob);
 				addActionMessage(getText(SUCCESS_UPDATE));
 			}
 
-			restartJenkins(); // TODO: reload config
+//			restartJenkins(); // TODO: reload config
 
 			setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
 		} catch (Exception e) {
@@ -834,7 +829,7 @@ public class CI extends FrameworkBaseAction implements FrameworkConstants {
 			BufferedReader reader1 = (BufferedReader) getHttpSession().getAttribute(getAppId() + CI_START);
 			String line1;
 			line1 = reader1.readLine();
-			while (!line1.startsWith("[INFO] BUILD SUCCESS")) {
+			while (line1 != null && !line1.startsWith("[INFO] BUILD SUCCESS")) {
 				line1 = reader1.readLine();
 				if (debugEnabled) {
 					S_LOGGER.debug("Restart Start Console : " + line);

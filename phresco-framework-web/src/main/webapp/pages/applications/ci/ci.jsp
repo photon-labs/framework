@@ -145,7 +145,7 @@
 				                            		</th>
 				                            		<th>#</th>
 			                            			<th><s:text name="label.url"/></th>
-			                            			<th><s:text name="label.download"/></th>
+			                            			<th><s:text name="lbl.download"/></th>
 			                            			<th><s:text name="label.time"/></th>
 			                            			<th><s:text name="label.status"/></th>
 			                            		</tr>
@@ -276,7 +276,7 @@ $(document).ready(function() {
 // 	$("#popup_div").empty();
 	enableScreen();
 	hideLoadingIcon();
-// 	hideProgessBar();
+// 	hideProgessBar(); // when deleting builds and jobs
 	
 	$("input:checkbox[name='allBuilds']").click(function() {
 		$("input:checkbox[class='" + $(this).val() +"']").attr('checked', $(this).is(':checked'));
@@ -299,14 +299,6 @@ $(document).ready(function() {
 	});
 	
 	yesnoPopup($('#configure'), 'configure', '<s:text name="label.configure"/>', 'saveJob','<s:text name="label.save"/>', $('#deleteObjects'));
-//     $('#configure').click(function() {
-// 		if (isMoreThanOneJobSelected()) {
-// 			alert("handle this event ");
-<%-- 			showHidePopupMsg($(".ciAlertMsg"), '<%= FrameworkConstants.CI_ONE_JOB_REQUIRED%>'); --%>
-// 			return false;			
-// 		}
-//         showCI(); // display configure popup
-//     });
     
 //     $('#closeGenerateTest, #closeGenTest').click(function() {
 //     	ProgressShow("none");
@@ -314,29 +306,10 @@ $(document).ready(function() {
 //     });
     
     progressPopup($('#setup'), 'setup', '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.CI_SETUP %>', '', '', getBasicParams());
-//     $('#setup').click(function() {
-//        	ProgressShow("block");
-//        	$("#build-output").empty();
-//        	getCurrentCSS();
-//        	setupProgress();
-//     });
     
     progressPopup($('#startJenkins'), 'startJenkins', '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.CI_START %>', '', '', getBasicParams());
-//     $('#startJenkins').click(function() {
-//     	isCiRefresh = true; //after stratup , when closing popup, page should refreshed after some time
-//        	ProgressShow("block");
-//        	$("#build-output").empty();
-//        	getCurrentCSS();
-//         startJenkins();
-//     });
     
     progressPopup($('#stopJenkins'), 'stopJenkins', '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.CI_STOP %>', '', '', getBasicParams());
-//     $('#stopJenkins').click(function() {
-//        	ProgressShow("block");
-//        	$("#build-output").empty();
-//        	getCurrentCSS();
-//         stopJenkins();
-//     });
     
     if(<%= jenkinsAlive %>) {
     	console.log("jenkins alive , enable configure button ");
@@ -376,6 +349,7 @@ $(document).ready(function() {
         return false;
     });
 	
+	// when checking on more than one job, configure button should be disabled. it can not show already created job info for more than one job
 	$("input[type=checkbox][name='Jobs']").click(function() {
 		if (isMoreThanOneJobSelected()) {
 //			alert("handle this event ");
@@ -413,35 +387,9 @@ function buildCI() {
 	popup('buildCI', '', $('#tabDiv'));
 }
 
-// show configure popup
-function showCI() {
-	alert("handle showCI () ");
-	
-// 	$("#popup_div").empty();
-//     $("#showConfigure").empty();
-//     showPopup();
-// 	popup('configure', '', $('#popup_div'));
-//     escPopup();
-}
-
-// function setupProgress() {
-// 	$('#loadingDiv').css("display","block");
-<%-- 	readerHandlerSubmit('setup', '<%= appId %>', '<%= FrameworkConstants.CI_SETUP %>'); --%>
-// }
-
 // function ProgressShow(prop) {
 //     $(".wel_come").show().css("display",prop);
 //     $('#build-outputOuter').show().css("display",prop);
-// }
-
-// function startJenkins() {
-// 	$('#loadingDiv').css("display","block");
-<%-- 	readerHandlerSubmit('startJenkins', '<%= appId %>', '<%= FrameworkConstants.CI_START %>'); --%>
-// }
-
-// function stopJenkins() {
-// 	$('#loadingDiv').css("display","block");
-<%-- 	readerHandlerSubmit('stopJenkins', '<%= appId %>', '<%= FrameworkConstants.CI_STOP %>'); --%>
 // }
 
 function deleteCIJob(){

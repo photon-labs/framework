@@ -804,7 +804,7 @@
 <!-- 					<div id="errMsg"></div> -->
 <!-- 				    <img src="themes/photon/images/loading_red.gif" class="popupLoadingIcon" style="display: none;">  -->
 <!-- 	    	 </div>  -->
-<%-- 	    	<input type="hidden" name="oldJobName" value="<%= existingJob == null ? "" : existingJob.getName()%>" > --%>
+	    	<input type="hidden" name="oldJobName" value="<%= existingJob == null ? "" : existingJob.getName()%>" >
 <%--             <input type="button" class="btn primary" value="<s:text name="label.cancel"/>" id="cancel"> --%>
 <%--             <input type="button" class="btn primary" value="<s:text name="label.save"/>" id="actionBtn"> --%>
 <%--             <input type="button" class="btn primary" value="<s:text name="label.next"/>" id="nextBtn"> --%>
@@ -906,8 +906,8 @@
 		$('#operation').change(function() {
 			showConfigBasedOnTech();
 		});
-		
 		showConfigBasedOnTech();
+		
 	});
 	
 	function showConfigBasedOnTech() {
@@ -925,7 +925,6 @@
 	
 	function popupOnOk(obj) {
  		var okUrl = $(obj).attr("id");
- 		
 		// do the validation for collabNet info only if the user selects git radio button
  		var validation = configureJobValidation();
 		// when validation is true
@@ -945,7 +944,7 @@
 // 		$('.popupLoadingIcon').css("display","block");
 // 		var url = $("#configureForm").attr("action");
 		$('#configureForm :input').attr('disabled', false);
-		loadContent(url, $('#configureForm'), $('#subcontainer'), getBasicParams(), false);
+		loadContent(url, $('#configureForm, #generateBuildForm'), $('#subcontainer'), getBasicParams(), false);
 	}
 	
 	function enableDisableCollabNet() {
