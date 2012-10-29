@@ -45,7 +45,7 @@ $(document).ready(function() {
 		
 				
 		
-		
+		/*
 		var newHeight_contentAdder = $(".content_adder").height();
 		$(".scroll-line").css("height", newHeight_contentAdder - 70);
 		$(".scroll-bar").css("height", newHeight_contentAdder - 10);
@@ -63,6 +63,7 @@ $(document).ready(function() {
 		
 		var newWidth_button = $(".form-horizontal").width();
 		$(".bottom_button").css("width", newWidth_button - 25);		
+		*/
 		
 		
 		

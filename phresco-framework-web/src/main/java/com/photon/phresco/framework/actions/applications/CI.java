@@ -370,26 +370,6 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 			Map<String, String> emails = new HashMap<String, String>(2);
 			emails.put(REQ_KEY_SUCCESS_EMAILS, successEmailIds);
 			emails.put(REQ_KEY_FAILURE_EMAILS, failureEmailIds);
-			String mvncmd = "";
-			if (BUILD.equals(operation)) {
-				S_LOGGER.debug("Build operation!!!!!!");
-				ActionType actionType = ActionType.BUILD;
-				mvncmd = actionType.toString();
-			} else if (DEPLOY.equals(operation)) {
-				S_LOGGER.debug("Deploy operation!!!!!!");
-				ActionType actionType = ActionType.DEPLOY;
-				mvncmd = actionType.toString();
-			} else if (FUNCTIONAL_TEST.equals(operation)) {
-				S_LOGGER.debug("Functional test operation!!!!!");
-//				ActionType actionType = ActionType.FUNCTIONAL_TEST;
-//				System.out.println("build operation command " + actionType);
-//				mvncmd = actionType.toString();
-			}
-			if (!"clonedWorkspace".equals(svnType) && BUILD.equals(operation)) {
-				mvncmd = CI_PROFILE + mvncmd;
-			}
-			S_LOGGER.debug("mvn command" + mvncmd);
-			existJob.setMvnCommand(mvncmd);
 			existJob.setEmail(emails);
 			existJob.setScheduleType(schedule);
 			existJob.setScheduleExpression(cronExpression);
@@ -397,16 +377,8 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 			existJob.setSenderEmailPassword(senderEmailPassword);
 			existJob.setBranch(branch);
 			existJob.setRepoType(svnType);
-			// collabNet file release plugin imple
-//			System.out.println("enableBuildRelease =====> " + enableBuildRelease);
-//			System.out.println("collabNetURL =====> " + collabNetURL);
-//			System.out.println("collabNetusername =====> " + collabNetusername);
-//			System.out.println("collabNetpassword =====> " + collabNetpassword);
-//			System.out.println("collabNetProject =====> " + collabNetProject);
-//			System.out.println("collabNetPackage =====> " + collabNetPackage);
-//			System.out.println("collabNetRelease =====> " + collabNetRelease);
-//			System.out.println("collabNetoverWriteFiles =====> " + collabNetoverWriteFiles);
 			
+			// collabNet file release plugin imple
 			existJob.setEnableBuildRelease(enableBuildRelease);
 			existJob.setCollabNetURL(collabNetURL);
 			existJob.setCollabNetusername(collabNetusername);
@@ -422,9 +394,7 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 			existJob.setDownStreamProject(downstreamProject);
 			existJob.setOperation(operation);
 
-			// build info
-//			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-//			ProjectInfo projectInfo = getProjectInfo();
+			// Build info
 			ApplicationInfo applicationInfo = getApplicationInfo();
 			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(applicationInfo)));
 			persistValuesToXml(mojo, PHASE_PACKAGE);
@@ -432,23 +402,33 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 			//To get maven build arguments
 			List<Parameter> parameters = getMojoParameters(mojo, PHASE_PACKAGE);
 			List<String> buildArgCmds = getMavenArgCommands(parameters);
-//			System.out.println("buildArgCmds ======> " + buildArgCmds);
-			
-			String funcitonalTestDir = "";
-			if (FUNCTIONAL_TEST.equals(operation)) {
-				FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-				/*funcitonalTestDir = frameworkUtil
-						.getFuncitonalTestDir(technology);*/
-				if (StringUtils.isNotEmpty(funcitonalTestDir)) {
-					// removing / value , which not valid
-					funcitonalTestDir = funcitonalTestDir.substring(1)
-							+ File.separator;
-				}
+			String mvncmd = "";
+			if (BUILD.equals(operation)) {
+				S_LOGGER.debug("Build operation!!!!!!");
+				ActionType actionType = ActionType.BUILD;
+				mvncmd = actionType.toString();
+			} else if (DEPLOY.equals(operation)) {
+				S_LOGGER.debug("Deploy operation!!!!!!");
+				ActionType actionType = ActionType.DEPLOY;
+				mvncmd = actionType.toString();
+			} else if (FUNCTIONAL_TEST.equals(operation)) {
+				S_LOGGER.debug("Functional test operation!!!!!");
+//				ActionType actionType = ActionType.FUNCTIONAL_TEST;
+//				System.out.println("build operation command " + actionType);
+//				mvncmd = actionType.toString();
 			}
-			S_LOGGER.debug("funcitonalTestDir ======> " + funcitonalTestDir);
-
-			existJob.setPomLocation(funcitonalTestDir + POM_XML);
-
+			
+			if (!CollectionUtils.isEmpty(buildArgCmds)) {
+				mvncmd = mvncmd + SPACE + buildArgCmds;
+			}
+			
+			if (!"clonedWorkspace".equals(svnType) && BUILD.equals(operation)) {
+				mvncmd = CI_PROFILE + mvncmd;
+			}
+			
+			S_LOGGER.debug("mvn command" + mvncmd);
+			existJob.setMvnCommand(mvncmd);
+			
 			if (CI_CREATE_JOB_COMMAND.equals(jobType)) {
 //				System.out.println(" creating job approached  " + existJob);
 //				ciManager.createJob(appInfo, existJob);
@@ -472,180 +452,6 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 
 		return ci();
 
-	}
-
-	private String getBuildCommand(Project project, String technology) throws PhrescoException {
-		Map<String, String> settingsInfoMap = new HashMap<String, String>(2);
-		ActionType actionType = null;
-		// For web technologies
-		if (StringUtils.isNotEmpty(environment)) {
-			settingsInfoMap.put(ENVIRONMENT_NAME, environment);
-		}
-
-		// For android technologies
-		if (StringUtils.isNotEmpty(androidVersion)) {
-			settingsInfoMap.put(AndroidConstants.ANDROID_VERSION_MVN_PARAM,
-					androidVersion);
-		}
-
-		settingsInfoMap.put(BUILD_NAME, CI_BUILD_NAME);
-		settingsInfoMap.put(BUILD_NUMBER, FIRST_BUILD);
-		
-		// For iphone technoloies
-		if (TechnologyTypes.IPHONES.contains(technology)) {
-			settingsInfoMap.put(IPHONE_SDK, sdk);
-			settingsInfoMap.put(IPHONE_CONFIGURATION, mode);
-			settingsInfoMap.put(IPHONE_TARGET_NAME, target);
-			if (TechnologyTypes.IPHONE_HYBRID.equals(technology)) {
-				settingsInfoMap.put(IPHONE_PLISTFILE,
-						XCodeConstants.HYBRID_PLIST);
-				settingsInfoMap.put(ENCRYPT, FALSE);
-			} else if (TechnologyTypes.IPHONE_NATIVE.equals(technology)) {
-				settingsInfoMap.put(IPHONE_PLISTFILE,
-						XCodeConstants.NATIVE_PLIST);
-				settingsInfoMap.put(ENCRYPT, TRUE);
-			}
-		}
-
-		// For java stanalone
-		if (TechnologyTypes.JAVA_STANDALONE.contains(technology)) {
-			settingsInfoMap.put(JAR_NAME, jarName);
-			settingsInfoMap.put(MAIN_CLASS_NAME, mainClassName);
-		}
-		// For mobile technologies
-		if (TechnologyTypes.ANDROIDS.contains(technology)) {
-			if (StringUtils.isEmpty(proguard)) {
-				// if the checkbox is selected value should be set to false
-				// otherwise true
-				proguard = TRUE;
-			}
-			settingsInfoMap.put(ANDROID_PROGUARD_SKIP, proguard);
-//			actionType = ActionType.MOBILE_COMMON_COMMAND;
-			if (StringUtils.isNotEmpty(signing)) {
-//				actionType.setProfileId(PROFILE_ID);
-			}
-		} else if (TechnologyTypes.IPHONES.contains(technology)) {
-//			actionType = ActionType.IPHONE_BUILD_UNIT_TEST;
-		} else {
-			actionType = ActionType.BUILD;
-		}
-		return getMVNCommand(project, settingsInfoMap, actionType);
-	}
-
-	private String getDeployCommand(Project project, String technology)
-			throws PhrescoException {
-		Map<String, String> valuesMap = new HashMap<String, String>(2);
-		ActionType actionType = null;
-		String techId = project.getApplicationInfo().getTechInfo().getVersion();
-
-		if (TechnologyTypes.IPHONES.contains(techId)) {
-			valuesMap.put(TRIGGER_SIMULATOR, FALSE);
-			valuesMap.put(BUILD_NAME, CI_BUILD_NAME + IPHONE_FORMAT);
-			valuesMap.put(BUILD_NUMBER, FIRST_BUILD);
-			// if deploy to device is selected we have to pass device deploy
-			// param as additional param
-			if (StringUtils.isNotEmpty(deployTo)
-					&& deployTo.equals(REQ_IPHONE_SIMULATOR)) {
-				valuesMap.put(IPHONE_SIMULATOR_VERSION, simulatorVersion);
-			} else {
-				valuesMap.put(DEVICE_DEPLOY, TRUE);
-			}
-		} else if (TechnologyTypes.ANDROIDS.contains(techId)) {
-			valuesMap.put(BUILD_NAME, CI_BUILD_NAME + ANDROID_FORMAT);
-			valuesMap.put(BUILD_NUMBER, FIRST_BUILD);
-		} else {
-			valuesMap.put(BUILD_NAME, CI_BUILD_NAME + ARCHIVE_FORMAT);
-			valuesMap.put(BUILD_NUMBER, FIRST_BUILD);
-		}
-
-		if (!(TechnologyTypes.IPHONES.contains(techId)
-				|| TechnologyTypes.ANDROIDS.contains(techId) || TechnologyTypes.SHAREPOINT
-					.equals(techId)) && StringUtils.isNotEmpty(importSql)) {
-			// valuesMap.put(DEPLOY_IMPORT_SQL, importSql);
-		}
-
-		if (StringUtils.isNotEmpty(environment)
-				&& !(TechnologyTypes.IPHONES.contains(techId))
-				&& !(TechnologyTypes.ANDROIDS.contains(techId))) {
-			valuesMap.put(ENVIRONMENT_NAME, environment);
-		}
-
-		if (TechnologyTypes.ANDROIDS.contains(technology)) {
-			String device = getHttpRequest().getParameter(REQ_ANDROID_DEVICE);
-			if (device.equals(SERIAL_NUMBER)) {
-				device = serialNumber;
-			}
-			if (debugEnabled) {
-				S_LOGGER.debug("To be deployed Android device name" + device);
-			}
-			valuesMap.put(DEPLOY_ANDROID_DEVICE_MODE, device);
-			valuesMap.put(DEPLOY_ANDROID_EMULATOR_AVD, REQ_ANDROID_DEFAULT);
-		}
-		actionType = ActionType.DEPLOY;
-
-		return getMVNCommand(project, valuesMap, actionType);
-	}
-
-	private String getMVNCommand(Project project,
-			Map<String, String> valuesMap, ActionType actionType)
-			throws PhrescoException {
-		ProjectRuntimeManager runtimeManager = PhrescoFrameworkFactory
-				.getProjectRuntimeManager();
-		String mvncmd = "";
-//		StringBuilder command = actionType.getCommand();
-		StringBuilder buildMavenCommand = new StringBuilder();
-//		if (command == null) {
-//			buildMavenCommand = runtimeManager.buildMavenCommand(project,
-//					actionType, valuesMap);
-//		} else {
-//			buildMavenCommand.append(command);
-//			buildMavenCommand.append(SPACE);
-//			buildMavenCommand.append(runtimeManager.buildMavenArgCommand(
-//					actionType, valuesMap));
-//		}
-		mvncmd = buildMavenCommand.toString().substring(4).trim();
-		return mvncmd;
-	}
-
-	private String getFunctionalTestCommand(Project project, String technology)
-			throws PhrescoException {
-		ActionType actionType = null;
-		Map<String, String> settingsInfoMap = new HashMap<String, String>(2);
-		if (TechnologyTypes.ANDROIDS.contains(technology)) {
-			String device = getHttpRequest().getParameter(REQ_ANDROID_DEVICE);
-			if (device.equals(SERIAL_NUMBER)) {
-				device = serialNumber;
-			}
-			S_LOGGER.debug("Android device name " + device);
-			settingsInfoMap.put(DEPLOY_ANDROID_DEVICE_MODE, device);
-			settingsInfoMap.put(DEPLOY_ANDROID_EMULATOR_AVD,
-					REQ_ANDROID_DEFAULT);
-//			actionType = ActionType.ANDROID_TEST_COMMAND;
-		} else if (TechnologyTypes.IPHONES.equals(technology)) {
-			settingsInfoMap.put(BUILD_NAME, CI_BUILD_NAME + IPHONE_FORMAT);
-			settingsInfoMap.put(BUILD_NUMBER, FIRST_BUILD);
-//			actionType = ActionType.IPHONE_FUNCTIONAL_COMMAND;
-		} else if (TechnologyTypes.IPHONE_HYBRID.equals(technology)) {
-			settingsInfoMap = null;
-//			actionType = ActionType.TEST;
-		} else {
-			// settingsInfoMap.put(TEST, TEST_PARAM_VALUE);
-			if (TechnologyTypes.SHAREPOINT.equals(technology) || TechnologyTypes.DOT_NET.equals(technology)) {
-//				actionType = ActionType.SHAREPOINT_NUNIT_TEST;
-			} else {
-//				actionType = ActionType.TEST;
-			}
-		}
-		if (!TechnologyTypes.ANDROIDS.contains(technology)
-				&& !TechnologyTypes.IPHONES.contains(technology)
-				&& !TechnologyTypes.BLACKBERRY_HYBRID.equals(technology)
-				&& !TechnologyTypes.SHAREPOINT.equals(technology)
-				&& !TechnologyTypes.DOT_NET.equals(technology)
-				&& !TechnologyTypes.JAVA_STANDALONE.equals(technology)) {
-			settingsInfoMap.put(ENVIRONMENT_NAME, environment);
-			settingsInfoMap.put(BROWSER, browser);
-		}
-		return getMVNCommand(project, settingsInfoMap, actionType);
 	}
 
 	public String build() {

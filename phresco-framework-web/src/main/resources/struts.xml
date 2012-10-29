@@ -29,7 +29,7 @@
     <package name="default" extends="struts-default,json-default">
     
 	    <interceptors>
-	        <interceptor name="json1" class="org.apache.struts2.json.JSONInterceptor"/>
+	        <interceptor name="json" class="com.photon.phresco.framework.actions.JSONInterceptor"/>
 	    </interceptors>
 		
     	<global-results>

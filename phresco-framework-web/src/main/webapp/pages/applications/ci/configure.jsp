@@ -53,7 +53,7 @@
     List<String> existingJobsNames = (List<String>) request.getAttribute(FrameworkConstants.REQ_EXISTING_JOBS_NAMES);
 %>
 <!-- <div class="popup_Modal configurePopUp" id="ciDetails"> -->
-    <form name="ciDetails" action="<%= actionStr %>" method="post" autocomplete="on" class="ci_form form-horizontal" id="configureForm">
+    <form id="configureForm" name="ciDetails" action="<%= actionStr %>" method="post" class="ci_form form-horizontal">
 <!--         <div class="modal-header"> -->
 <%--             <h3><s:text name="label.ci"/></h3> --%>
 <!--             <a class="close" href="#" id="close">&times;</a> -->
@@ -883,12 +883,12 @@
 				$("#usedClonnedWorkspace option[value='<%= existingJob.getUsedClonnedWorkspace() %>']").attr('selected', 'selected');
 				$("#downstreamProject option[value='<%= existingJob.getDownStreamProject() %>']").attr('selected', 'selected');
 				$("#operation option[value='<%= existingJob.getOperation() %>']").attr('selected', 'selected');
-				$("#environments option[value='<%= existingJob.getEnvironment() %>']").attr('selected', 'selected');
+<%-- 				$("#environments option[value='<%= existingJob.getEnvironment() %>']").attr('selected', 'selected'); --%>
 				//clone the workspace
 				$("input:radio[name=cloneWorkspace][value=<%= existingJob.isCloneWorkspace() %>]").prop("checked", true);
 				
 				
-				$("input:radio[name=deployTo][value=<%= existingJob.getDeployTo() %>]").prop("checked", true);
+<%-- 				$("input:radio[name=deployTo][value=<%= existingJob.getDeployTo() %>]").prop("checked", true); --%>
 		<%
 			}
 		%>
@@ -921,20 +921,6 @@
 		} else if($('#operation').val() == "functionalTest") {
 			loadContent('generateFunctionalTest', '', $('#dynamicConfigLoad'), getBasicParams(), false);
 		}	
-	}
-	
-	function popupOnOk(obj) {
- 		var okUrl = $(obj).attr("id");
-		// do the validation for collabNet info only if the user selects git radio button
- 		var validation = configureJobValidation();
-		// when validation is true
- 		if (validation && $("input:radio[name=enableBuildRelease][value='true']").is(':checked')) {
- 			if(collabNetValidation()){
- 				configureJob(okUrl);
- 			}
- 		} else if (validation) {
-			configureJob(okUrl);
-		}
 	}
 	
 	// after validation success, show loading icon and creates job

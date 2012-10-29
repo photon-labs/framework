@@ -158,11 +158,11 @@
 <script type="text/javascript">
 	accordion();//To create the accordion
 	
-	confirmDialog('<s:text name="lbl.hdr.confirm.dialog"/>', '<s:text name="modal.body.text.del.project"/>', 'build','<s:text name="lbl.btn.ok"/>');
+	confirmDialog($("#deleteBtn"), '<s:text name="lbl.hdr.confirm.dialog"/>', '<s:text name="modal.body.text.del.project"/>', 'build','<s:text name="lbl.btn.ok"/>');
 	
 	//To check whether the device is ipad or not and then apply jquery scrollbar
 	if (!isiPad()) {
-// 		$(".table_div").scrollbars();  
+ 		$(".table_div").scrollbars();  
 	}
 
 	$(document).ready(function() {
