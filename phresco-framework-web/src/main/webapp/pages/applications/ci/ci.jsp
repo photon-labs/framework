@@ -20,7 +20,7 @@
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ include file="../progress.jsp" %>
-<%@ include file="../../userInfoDetails.jsp" %>
+<%-- <%@ include file="../../userInfoDetails.jsp" %> --%>
 
 <%@ page import="java.util.List"%>
 <%@ page import="java.util.Map"%>
@@ -78,7 +78,7 @@
     </div>
 </s:if>
 
-<div class="alert-message ciAlertMsg"  id="warningmsg">
+<div class="alert alert-block ciAlertMsg"  id="warningmsg">
 	<s:label cssClass="labelWarn ciLabelWarn" key="ci.warn.message" />
 </div>
 
@@ -88,7 +88,7 @@
 	        <input id="setup" type="button" value="<s:text name="label.setup"/>" class="btn btn-primary" data-toggle="modal" href="#popupPage" >
 	        <input id="startJenkins" type="button" value="<s:text name="label.start"/>" class="btn btn-primary" data-toggle="modal" href="#popupPage" >
 	        <input id="stopJenkins" type="button" value="<s:text name="label.stop"/>" class="btn" disabled="disabled" data-toggle="modal" href="#popupPage" >
-	        <input id="configure" type="button" value="<s:text name="label.configure"/>" class="btn btn-primary" data-toggle="modal" href="#popupPage" >
+	        <input id="configure" type="button" value="<s:text name="label.configure"/>" class="btn btn-primary" data-toggle="modal" href="#popupPage"> <!-- additional param -->
 	        <input id="build" type="button" value="<s:text name="label.build"/>" class="btn" disabled="disabled" onclick="buildCI();">
 	        <input id="deleteButton" type="button" value="<s:text name="label.deletebuild"/>" class="btn" disabled="disabled">
 	        <input id="deleteJob" type="button" value="<s:text name="label.deletejob"/>" class="btn" disabled="disabled" onclick="deleteCIJob();">
@@ -217,9 +217,19 @@
 			                        	%>
 			                        	    <div class="alert-message block-message warning" >
 			                        	    	<%  if(!new Boolean(request.getAttribute(FrameworkConstants.CI_BUILD_JENKINS_ALIVE + jobName).toString()).booleanValue()) { %>
-			                        	    		<center><s:label key="ci.server.down.message" cssClass="errorMsgLabel"/></center>
+			                        	    		<div class="alert alert-block" >
+			                        	    		<center>
+			                        	    				 <s:text name='ci.server.down.message'/>
+<%-- 			                        	    				 <s:label key="ci.server.down.message" cssClass="errorMsgLabel"/> --%>
+			                        	    		</center>
+			                        	    		</div>
 			                        	    	<% } else { %>
-													<center><s:label key="ci.error.message" cssClass="errorMsgLabel"/></center>			                        	    	
+			                        	    		<div class="alert alert-block" >
+													<center>
+														<s:text name='ci.error.message'/>
+<%-- 														<s:label key="ci.error.message" cssClass="errorMsgLabel"/> --%>
+													</center>
+													</div>			                        	    	
 			                        	    	<% } %>
 									        </div>
 			                        	<% } %>
@@ -260,6 +270,7 @@ var isJenkinsReady = false;
 
 $(document).ready(function() {
 	
+	$('.siteaccordion').unbind('click');
 	accordion();
 // 	$("#popup_div").css("display","none");
 // 	$("#popup_div").empty();
@@ -287,7 +298,7 @@ $(document).ready(function() {
 		enableDisableDeleteButton($(this).val());
 	});
 	
-	yesnoPopup($('#configure'), 'configure', '<s:text name="label.ci"/>', 'saveJob','<s:text name="label.save"/>');
+	yesnoPopup($('#configure'), 'configure', '<s:text name="label.configure"/>', 'saveJob','<s:text name="label.save"/>', $('#deleteObjects'));
 //     $('#configure').click(function() {
 // 		if (isMoreThanOneJobSelected()) {
 // 			alert("handle this event ");
@@ -365,6 +376,21 @@ $(document).ready(function() {
         return false;
     });
 	
+	$("input[type=checkbox][name='Jobs']").click(function() {
+		if (isMoreThanOneJobSelected()) {
+//			alert("handle this event ");
+			$(".ciAlertMsg").show();
+			$(".ciAlertMsg").html('<%= FrameworkConstants.CI_ONE_JOB_REQUIRED%>');
+			disableButton($("#configure"));
+<%-- 			showHidePopupMsg($(".ciAlertMsg"), '<%= FrameworkConstants.CI_ONE_JOB_REQUIRED%>'); --%>
+// 			return false;			
+		} else {
+			$(".ciAlertMsg").hide();
+			$(".ciAlertMsg").html("");
+			enableButton($("#configure"));
+		}
+	});
+	
 	// if build is in progress disable configure button
     if (<%= isAtleastOneJobIsInProgress %> || <%= isBuildTriggeredFromUI %>) {
     	console.log("build is in progress, disable configure button ");
@@ -378,6 +404,9 @@ $(document).ready(function() {
 	if(isCiRefresh) {
 		refreshAfterServerUp(); // after server restarted , it ll reload builds and ll refresh page (reload page after 10 sec)	
 	}
+	
+// 	// delete this - kalees
+// 	enableButton($("#configure"));
 });
 
 function buildCI() {
@@ -499,12 +528,13 @@ function refreshAfterServerUp() {
 }
 
 function reloadCI() {
-	if ($("a[name='appTabs'][class='selected']").attr("id") == "ci" && $(".wel_come").css("display") == "none"){
-    	var params = "";
-    	if (!isBlank($('form').serialize())) {
-    		params = $('form').serialize() + "&";
-    	}
-    	showLoadingIcon($("#tabDiv")); // Loading Icon
+	if ($("a[name='appTab'][class='active']").attr("id") == "ci" && $("#popupPage").css("display") == "none"){
+		console.log("reload CI called and going to refresh the page ");
+//     	var params = "";
+//     	if (!isBlank($('form').serialize())) {
+//     		params = $('form').serialize() + "&";
+//     	}
+//     	showLoadingIcon($("#tabDiv")); // Loading Icon
     	console.log("Server startup completed ..." + isCiRefresh);
 // 		performAction('ci', params, $("#tabDiv"));
 		loadContent('ci',$('#deleteObjects'), $('#subcontainer'), getBasicParams(), false);
@@ -564,6 +594,22 @@ function enableDisableDeleteButton(atleastOneCheckBoxVal) {
 	} else {
 		disableButton($("#deleteJob"));
 		disableButton($("#build"));
+	}
+}
+
+function isAllCheckBoxCheked(tagControlId) {
+	if (!$("tbody#" + tagControlId + " input[type=checkbox]:not(:checked)").length) {
+		 return true;
+	} else {
+		return false;
+	}
+}
+
+function isAtleastOneCheckBoxCheked(tagControlId) {
+	if ($("tbody." + tagControlId + " input[type=checkbox]:checked").length > 0) {
+		 return true;
+	} else {
+		return false;
 	}
 }
 
