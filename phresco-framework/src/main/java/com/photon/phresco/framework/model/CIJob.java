@@ -86,6 +86,9 @@ public class CIJob {
     private boolean enablePostBuildStep;
     private boolean enablePreBuildStep;
     
+    private List<String> prebuildStepCommands;
+    private List<String> postbuildStepCommands;
+    
     public CIJob() {
         super();
     }
@@ -457,5 +460,21 @@ public class CIJob {
 
 	public void setEnablePreBuildStep(boolean enablePreBuildStep) {
 		this.enablePreBuildStep = enablePreBuildStep;
+	}
+
+	public List<String> getPrebuildStepCommands() {
+		return prebuildStepCommands;
+	}
+
+	public void setPrebuildStepCommands(List<String> prebuildStepCommands) {
+		this.prebuildStepCommands = prebuildStepCommands;
+	}
+
+	public List<String> getPostbuildStepCommands() {
+		return postbuildStepCommands;
+	}
+
+	public void setPostbuildStepCommands(List<String> postbuildStepCommands) {
+		this.postbuildStepCommands = postbuildStepCommands;
 	}
 }

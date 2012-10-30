@@ -446,6 +446,11 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 			
 			S_LOGGER.debug("funcitonalTestDir ======> " + funcitonalTestDir);
 			
+			// prebuild step enable
+			existJob.setEnablePreBuildStep(true);
+			List<String> preBuildStepCmds = new ArrayList<String>();
+			preBuildStepCmds.add("phresco:cipreperform");
+			
 			if (CI_CREATE_JOB_COMMAND.equals(jobType)) {
 				System.out.println(" creating job approached  " + existJob);
 				ciManager.createJob(appInfo, existJob);
