@@ -78,7 +78,7 @@ public class CIJob {
 //    private String proguard = "";
 //    private String signing = "";
     
-//    private String pomLocation = "";
+    private String pomLocation = "";
     
     //java Stanalone tech info
 //    private String jarName = "";
@@ -418,13 +418,13 @@ public class CIJob {
 //		this.mode = mode;
 //	}
 //
-//	public String getPomLocation() {
-//		return pomLocation;
-//	}
-//
-//	public void setPomLocation(String pomLocation) {
-//		this.pomLocation = pomLocation;
-//	}
+	public String getPomLocation() {
+		return pomLocation;
+	}
+
+	public void setPomLocation(String pomLocation) {
+		this.pomLocation = pomLocation;
+	}
 //
 //	public String getJarName() {
 //		return jarName;

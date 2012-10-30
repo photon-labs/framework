@@ -466,10 +466,10 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
         }
         
         // pom location specifier 
-//        if (StringUtils.isNotEmpty(job.getPomLocation())) {
-//        	S_LOGGER.debug("POM location changing " + job.getPomLocation());
-//        	processor.updatePOMLocation(job.getPomLocation());
-//        }
+        if (StringUtils.isNotEmpty(job.getPomLocation())) {
+        	S_LOGGER.debug("POM location changing " + job.getPomLocation());
+        	processor.updatePOMLocation(job.getPomLocation());
+        }
         
 //        if(job.isEnablePostBuildStep() && FUNCTIONAL_TEST.equals(job.getOperation())) {
 //        	System.out.println("java stanalone technology with functional test enabled!!!!!!!");
