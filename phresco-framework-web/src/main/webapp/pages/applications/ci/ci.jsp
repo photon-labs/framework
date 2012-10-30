@@ -90,8 +90,8 @@
 	        <input id="stopJenkins" type="button" value="<s:text name="label.stop"/>" class="btn" disabled="disabled" data-toggle="modal" href="#popupPage" >
 	        <input id="configure" type="button" value="<s:text name="label.configure"/>" class="btn btn-primary" data-toggle="modal" href="#popupPage"> <!-- additional param -->
 	        <input id="build" type="button" value="<s:text name="label.build"/>" class="btn" disabled="disabled" onclick="buildCI();">
-	        <input id="deleteButton" type="button" value="<s:text name="label.deletebuild"/>" class="btn" disabled="disabled">
-	        <input id="deleteJob" type="button" value="<s:text name="label.deletejob"/>" class="btn" disabled="disabled" onclick="deleteCIJob();">
+	        <input id="deleteBuild" type="button" value="<s:text name="label.deletebuild"/>" class="btn" disabled="disabled" data-toggle="modal" href="#popupPage">
+	        <input id="deleteJob" type="button" value="<s:text name="label.deletejob"/>" class="btn" disabled="disabled" data-toggle="modal" href="#popupPage">
         </div>
     </div>
     
@@ -145,7 +145,7 @@
 				                            		</th>
 				                            		<th>#</th>
 			                            			<th><s:text name="label.url"/></th>
-			                            			<th><s:text name="label.download"/></th>
+			                            			<th><s:text name="lbl.download"/></th>
 			                            			<th><s:text name="label.time"/></th>
 			                            			<th><s:text name="label.status"/></th>
 			                            		</tr>
@@ -276,7 +276,7 @@ $(document).ready(function() {
 // 	$("#popup_div").empty();
 	enableScreen();
 	hideLoadingIcon();
-// 	hideProgessBar();
+	hideProgressBar(); // when deleting builds and jobs
 	
 	$("input:checkbox[name='allBuilds']").click(function() {
 		$("input:checkbox[class='" + $(this).val() +"']").attr('checked', $(this).is(':checked'));
@@ -299,14 +299,6 @@ $(document).ready(function() {
 	});
 	
 	yesnoPopup($('#configure'), 'configure', '<s:text name="label.configure"/>', 'saveJob','<s:text name="label.save"/>', $('#deleteObjects'));
-//     $('#configure').click(function() {
-// 		if (isMoreThanOneJobSelected()) {
-// 			alert("handle this event ");
-<%-- 			showHidePopupMsg($(".ciAlertMsg"), '<%= FrameworkConstants.CI_ONE_JOB_REQUIRED%>'); --%>
-// 			return false;			
-// 		}
-//         showCI(); // display configure popup
-//     });
     
 //     $('#closeGenerateTest, #closeGenTest').click(function() {
 //     	ProgressShow("none");
@@ -314,29 +306,13 @@ $(document).ready(function() {
 //     });
     
     progressPopup($('#setup'), 'setup', '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.CI_SETUP %>', '', '', getBasicParams());
-//     $('#setup').click(function() {
-//        	ProgressShow("block");
-//        	$("#build-output").empty();
-//        	getCurrentCSS();
-//        	setupProgress();
-//     });
     
     progressPopup($('#startJenkins'), 'startJenkins', '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.CI_START %>', '', '', getBasicParams());
-//     $('#startJenkins').click(function() {
-//     	isCiRefresh = true; //after stratup , when closing popup, page should refreshed after some time
-//        	ProgressShow("block");
-//        	$("#build-output").empty();
-//        	getCurrentCSS();
-//         startJenkins();
-//     });
     
     progressPopup($('#stopJenkins'), 'stopJenkins', '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.CI_STOP %>', '', '', getBasicParams());
-//     $('#stopJenkins').click(function() {
-//        	ProgressShow("block");
-//        	$("#build-output").empty();
-//        	getCurrentCSS();
-//         stopJenkins();
-//     });
+    
+    confirmDialog($("#deleteBuild"), '<s:text name="lbl.hdr.confirm.dialog"/>', '<s:text name="modal.body.text.del.builds"/>', 'deleteBuild','<s:text name="lbl.btn.ok"/>');
+    confirmDialog($("#deleteJob"), '<s:text name="lbl.hdr.confirm.dialog"/>', '<s:text name="modal.body.text.del.jobs"/>', 'deleteJob','<s:text name="lbl.btn.ok"/>');
     
     if(<%= jenkinsAlive %>) {
     	console.log("jenkins alive , enable configure button ");
@@ -354,31 +330,9 @@ $(document).ready(function() {
 //     	disableCI();	//Restrict CI
 //     }
     
-    // delete ci builds
-    $('#deleteButton').click(function() {
-    	alert("need to handle ");
-           $("#confirmationText").html("Do you want to delete the selected build(s)");
-           dialog('block');
-           escBlockPopup();
-    });
-    
-	$('form').submit(function() {
-        showProgessBar("Deleting Build (s)", 100);
-        var params = "";
-    	if (!isBlank($('form').serialize())) {
-    		params = $('form').serialize() + "&";
-    	}
-    	
-//         performAction('CIBuildDelete', params, $("#tabDiv"));
-//      loadContent("appInfo", $('#formAppMenu'), $("#subcontainer"), params);
-// 		loadContent(pageUrl, form, tag, additionalParams, callSuccessEvent)
-	    loadContent('CIBuildDelete',$('#deleteObjects'), $('#subcontainer'), getBasicParams(), false);
-        return false;
-    });
-	
+	// when checking on more than one job, configure button should be disabled. it can not show already created job info for more than one job
 	$("input[type=checkbox][name='Jobs']").click(function() {
 		if (isMoreThanOneJobSelected()) {
-//			alert("handle this event ");
 			$(".ciAlertMsg").show();
 			$(".ciAlertMsg").html('<%= FrameworkConstants.CI_ONE_JOB_REQUIRED%>');
 			disableButton($("#configure"));
@@ -410,47 +364,22 @@ $(document).ready(function() {
 });
 
 function buildCI() {
-	popup('buildCI', '', $('#tabDiv'));
+// 	popup('buildCI', '', $('#tabDiv'));
+	loadContent('buildCI',$('#deleteObjects'), $('#subcontainer'), getBasicParams(), false);
 }
-
-// show configure popup
-function showCI() {
-	alert("handle showCI () ");
-	
-// 	$("#popup_div").empty();
-//     $("#showConfigure").empty();
-//     showPopup();
-// 	popup('configure', '', $('#popup_div'));
-//     escPopup();
-}
-
-// function setupProgress() {
-// 	$('#loadingDiv').css("display","block");
-<%-- 	readerHandlerSubmit('setup', '<%= appId %>', '<%= FrameworkConstants.CI_SETUP %>'); --%>
-// }
 
 // function ProgressShow(prop) {
 //     $(".wel_come").show().css("display",prop);
 //     $('#build-outputOuter').show().css("display",prop);
 // }
 
-// function startJenkins() {
-// 	$('#loadingDiv').css("display","block");
-<%-- 	readerHandlerSubmit('startJenkins', '<%= appId %>', '<%= FrameworkConstants.CI_START %>'); --%>
-// }
-
-// function stopJenkins() {
-// 	$('#loadingDiv').css("display","block");
-<%-- 	readerHandlerSubmit('stopJenkins', '<%= appId %>', '<%= FrameworkConstants.CI_STOP %>'); --%>
-// }
-
+function deleteCIBuild() {
+	showProgressBar("Deleting Build (s)");
+	loadContent('CIBuildDelete',$('#deleteObjects'), $('#subcontainer'), getBasicParams(), false);
+}
+	
 function deleteCIJob(){
-    showProgessBar("Deleting job (s)", 100);
-    var params = "";
-	if (!isBlank($('form').serialize())) {
-		params = $('form').serialize() + "&";
-	}
-// 	performAction('CIJobDelete', params, $("#tabDiv"));
+	showProgressBar("Deleting job (s)");
 	loadContent('CIJobDelete',$('#deleteObjects'), $('#subcontainer'), getBasicParams(), false);
 }
 
@@ -571,7 +500,6 @@ function localJenkinsAliveCheck () {
 
 function successEvent(pageUrl, data) {
 	if(pageUrl == "getNoOfJobsIsInProgress") {
-		alert("calling success events!!!!");
 		successRefreshBuild(data);
 	} 
 	else if(pageUrl == "getBuildsSize") {
@@ -583,9 +511,9 @@ function successEvent(pageUrl, data) {
 
 function enableDisableDeleteButton(atleastOneCheckBoxVal) {
 	if (isAtleastOneCheckBoxCheked('jobBuildsList')) {
-		enableButton($("#deleteButton"));
+		enableButton($("#deleteBuild"));
 	} else {
-		disableButton($("#deleteButton"));
+		disableButton($("#deleteBuild"));
 	}
 	
 	if ($("input[type=checkbox][name='Jobs']:checked").length > 0) {
@@ -641,5 +569,25 @@ function popupClose(closeUrl) {
 	}
 	
 	refreshAfterServerUp();
+}
+
+function popupOnOk(obj) {
+		var okUrl = $(obj).attr("id");
+		if (okUrl == "saveJob" || okUrl == "updateJob" ) {
+			// do the validation for collabNet info only if the user selects git radio button
+			var validation = configureJobValidation();
+		// when validation is true
+			if (validation && $("input:radio[name=enableBuildRelease][value='true']").is(':checked')) {
+				if(collabNetValidation()){
+					configureJob(okUrl);
+				}
+			} else if (validation) {
+				configureJob(okUrl);
+			}
+		} else if (okUrl == "deleteBuild" ) {
+			deleteCIBuild();
+		}  else if (okUrl == "deleteJob" ) {
+			deleteCIJob();
+		}
 }
 </script>

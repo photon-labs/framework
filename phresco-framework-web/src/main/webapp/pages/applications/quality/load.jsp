@@ -209,4 +209,10 @@
 			popup('testAndroid', params, $('#popup_div'));
 		}
 		
+		//Handles the ok button click event in the popup
+		function popupOnOk(obj) {
+			var okUrl = $(obj).attr("id");
+			var params = getBasicParams();
+			progressPopupAsSecPopup(okUrl, '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.LOAD %>', $("#generateBuildForm"), params);
+		}		
     </script>

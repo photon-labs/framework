@@ -343,6 +343,36 @@
 		<%-- readerHandlerSubmit('stopServer', '<%= projectCode %>', '<%= FrameworkConstants.REQ_JAVA_STOP %>', '', true); --%>
  	}
 	
+	function popupOnOk(obj) {
+ 		var okUrl = $(obj).attr("id");
+		if (okUrl === "build") {
+			if ($('input[type=checkbox][name=signing]').is(':checked') && isBlank($('#profileAvailable').val())) {
+				$("#errMsg").html('<%= FrameworkConstants.PROFILE_CREATE_MSG %>');
+				return false;
+			}
+			/* enable text box only if any file selected for minification */
+			$('input[name="jsFileName"]').each(function () {
+				if($(this).val() !== "") {
+					$(this).attr("disabled", false);
+				}
+			});
+			buildValidateSuccess("build", '<%= FrameworkConstants.REQ_BUILD %>');
+		} else if (okUrl === "deploy") {
+			var isChecked = $('#importSql').is(":checked");
+			if ($('#importSql').is(":checked") && $('#selectedSourceScript option').length == 0) {
+				$("#errMsg").html('<%= FrameworkConstants.SELECT_DB %>');
+				return false;
+			}
+			buildValidateSuccess("deploy", '<%= FrameworkConstants.REQ_FROM_TAB_DEPLOY %>');
+		} else if (okUrl === "runUnitTest") {
+			var params = getBasicParams();
+			progressPopupAsSecPopup('runUnitTest', '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.UNIT %>', $("#generateBuildForm"), params);
+		} else if (okUrl === "runLoadTest") {
+			var params = getBasicParams();
+			progressPopupAsSecPopup('runLoadTest', '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.LOAD %>', $("#generateBuildForm"), params);
+		}
+	}
+	
 	function successEvent(pageUrl, data) {
     	if(pageUrl == "restartNodeJSServer") {
     		runAgainstSrcServerRunning();

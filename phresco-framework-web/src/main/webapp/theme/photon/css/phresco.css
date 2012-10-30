@@ -183,19 +183,19 @@ div.lgnBtnLabel {
 }
 
 /*** page header ends***/
-.table_div {
+/* .table_div {
 	border-radius: 6px 6px 6px 6px;
 	height: 91%;
 	margin-left: 6px;
 	margin-right: 11px;
-}
+} */
 
-.table_div {
+/* .table_div {
 	border-radius: 6px 6px 6px 6px;
 	height: 83%;
 	margin-left: 6px;
 	margin-right: 6px;
-}
+} */
 
 .table_data_div {
 	height: 90%;
@@ -995,7 +995,7 @@ a {
     background-repeat:no-repeat;
     background-position:center;
     width:7px !important;
-    top:7px;
+    top:1px;
     height:100%!important;
 }
 
@@ -1940,11 +1940,18 @@ h1 {
 
 .table_div {
     border-radius: 6px 6px 6px 6px;
-    height: 86%;
-    margin-left: 6px;
-    margin-right: 6px;
+  	height: 83%; 
+    overflow-y: auto; 
+	overflow-x: hidden; 
+    /* margin-left: 6px;
+    margin-right: 6px; */
     -webkit-border-top-right-radius: 11px 13px;
     -webkit-border-top-left-radius: 11px 13px;
+}
+
+.projectList {
+	height: 94%;
+    padding-top: 6px;
 }
 
 .table_data_div {
@@ -2347,12 +2354,16 @@ fieldset {
 }
 
 /*** ajax Container css ends ***/
-.appinfo-desc{
+.appinfo-desc {
 	max-width:750px;
 	max-height:500px;
 }
 
-.env-desc{
+.appinfoTech {
+	width: 300px;
+}
+
+.env-desc {
 	max-width:290px;
 	max-height:58px;
 	width:290px;
@@ -5085,7 +5096,7 @@ ul#display-inline-block-example li#label {
 
 ul#display-inline-block-example li {
 	display: inline-block;
-	width: 25%;
+	width: 24%;
 	min-height: 25%;
 	 
 	/* For IE 7 */

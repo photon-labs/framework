@@ -467,7 +467,7 @@ public class PhrescoReportGeneration extends FrameworkBaseAction {
         	
             if (StringUtils.isNotEmpty(report) && FUNCTIONALTEST.equals(report)) {
                 frameworkUtil = FrameworkUtil.getInstance();
-                builder.append(frameworkUtil.getFuncitonalTestDir(techId));
+//                builder.append(frameworkUtil.getFuncitonalTestDir(techId));
             }
             
             builder.append(File.separatorChar);
@@ -839,7 +839,7 @@ public class PhrescoReportGeneration extends FrameworkBaseAction {
 		if (UNIT.equals(testType)) {
 			reportFilePath = Utility.getProjectHome() + projectCode + reportPaths.getUnitTestReportDir(getApplicationInfo());
 		} else {
-			reportFilePath = Utility.getProjectHome() + projectCode + reportPaths.getFunctionalReportDir(techId);
+//			reportFilePath = Utility.getProjectHome() + projectCode + reportPaths.getFunctionalReportDir(techId);
 		}
 		List<String> testResultFiles = getTestResultFiles(reportFilePath);
 		for (String resultFile : testResultFiles) {
@@ -867,7 +867,7 @@ public class PhrescoReportGeneration extends FrameworkBaseAction {
 		if (UNIT.equals(testType)) {
 			reportFilePath = Utility.getProjectHome() + projectCode + reportPaths.getUnitTestReportDir(getApplicationInfo());
 		} else {
-			reportFilePath = Utility.getProjectHome() + projectCode + reportPaths.getFunctionalReportDir(techId);
+//			reportFilePath = Utility.getProjectHome() + projectCode + reportPaths.getFunctionalReportDir(techId);
 		}
 		S_LOGGER.debug("reportFilePath " + reportFilePath);
 		List<String> testResultFiles = getTestResultFiles(reportFilePath);
@@ -959,7 +959,7 @@ public class PhrescoReportGeneration extends FrameworkBaseAction {
     		if (UNIT.equals(testType)) {
     			testSuitePath = reportPaths.getUnitTestSuitePath(getApplicationInfo());
     		} else {
-    			testSuitePath = reportPaths.getFunctionalTestSuitePath(techId);
+//    			testSuitePath = reportPaths.getFunctionalTestSuitePath(techId);
     		}
     		S_LOGGER.debug("testSuitePath " + testSuitePath);
             NodeList nodelist = org.apache.xpath.XPathAPI.selectNodeList(doc, XPATH_MULTIPLE_TESTSUITE);
@@ -1011,7 +1011,7 @@ public class PhrescoReportGeneration extends FrameworkBaseAction {
     		if (UNIT.equals(testType)) {
                 testSuitePath = reportPaths.getUnitTestSuitePath(getApplicationInfo());
     		} else {
-                testSuitePath = reportPaths.getFunctionalTestSuitePath(techId);
+//                testSuitePath = reportPaths.getFunctionalTestSuitePath(techId);
     		}
     		testCasePath = reportPaths.getUnitTestCasePath(getApplicationInfo());
     		S_LOGGER.debug("testSuitePath " + testSuitePath);

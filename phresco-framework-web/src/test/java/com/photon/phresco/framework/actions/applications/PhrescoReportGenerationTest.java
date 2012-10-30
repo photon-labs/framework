@@ -303,7 +303,7 @@ public class PhrescoReportGenerationTest extends FrameworkBaseAction implements 
         	
             if (StringUtils.isNotEmpty(report) && FUNCTIONALTEST.equals(report)) {
                 FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-                builder.append(frameworkUtil.getFuncitonalTestDir(techId));
+//                builder.append(frameworkUtil.getFuncitonalTestDir(techId));
             }
             
             builder.append(File.separatorChar);
