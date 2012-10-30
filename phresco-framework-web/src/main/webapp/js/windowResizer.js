@@ -23,8 +23,8 @@ $(document).ready(function() {
 	var heightDiff_MainWrpr = $(window).height()- $(".main_wrapper").height();
 	var heightDiff_Wrpr = $(".main_wrapper").height()- $(".wrapper").height();
 	var heightDiff_Content = $(".wrapper").height()- $("#container").height();
-	var heightDiff_tablediv = $("#container").height()- $(".table_div").height();
-	var heightDiff_tabledatadiv = $(".table_div").height()- $(".table_data_div").height();
+	//var heightDiff_tablediv = $("#container").height()- $(".table_div").height();
+	//var heightDiff_tabledatadiv = $(".table_div").height()- $(".table_data_div").height();
 	
 	
 
@@ -45,7 +45,7 @@ $(document).ready(function() {
 		
 				
 		
-		
+		/*
 		var newHeight_contentAdder = $(".content_adder").height();
 		$(".scroll-line").css("height", newHeight_contentAdder - 70);
 		$(".scroll-bar").css("height", newHeight_contentAdder - 10);
@@ -63,6 +63,7 @@ $(document).ready(function() {
 		
 		var newWidth_button = $(".form-horizontal").width();
 		$(".bottom_button").css("width", newWidth_button - 25);		
+		*/
 		
 		
 		
@@ -103,7 +104,7 @@ $(document).ready(function() {
 		$(".build_progress_div").css("height",newHeight_build_left_container - 23);
 		
 		var newHeight_tablediv = $("#container").height();
-		$(".table_div").css("height",newHeight_tablediv - heightDiff_tablediv);
+		//$(".table_div").css("height",newHeight_tablediv - heightDiff_tablediv);
 		
 		/* To resize table list and scrollbar */
 		

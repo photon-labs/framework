@@ -47,7 +47,7 @@ public class PhrescoFrameworkFactory {
  
     private static final String PROJECT_MANAGER_IMPL = "com.photon.phresco.framework.impl.ProjectManagerImpl";
     private static final String APPLICATION_MANAGER_IMPL = "com.photon.phresco.framework.impl.ApplicationManagerImpl";
-    private static final String CONFIG_MANAGER_IMPL = "com.photon.phresco.commons.impl.ConfigManagerImpl";
+    private static final String CONFIG_MANAGER_IMPL = "com.photon.phresco.impl.ConfigManagerImpl";
     private static final String CI_MANAGER_IMPL = "com.photon.phresco.framework.impl.CIManagerImpl";
     private static final String UPDATE_MANAGER_IMPL = "com.photon.phresco.framework.impl.UpgradeManagerImpl";
 

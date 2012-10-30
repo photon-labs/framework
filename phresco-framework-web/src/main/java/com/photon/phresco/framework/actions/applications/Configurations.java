@@ -20,6 +20,7 @@
 package com.photon.phresco.framework.actions.applications;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -174,7 +175,6 @@ public class Configurations extends FrameworkBaseAction {
     	}
         try {
             List<Environment> environments = getAllEnvironments();
-            System.out.println("cust id " + getCustomerId());
             List<SettingsTemplate> configTemplates = getServiceManager().getconfigTemplates(getCustomerId());
             setReqAttribute(REQ_SETTINGS_TEMPLATES, configTemplates);
             setReqAttribute(REQ_ENVIRONMENTS, environments);
@@ -197,12 +197,12 @@ public class Configurations extends FrameworkBaseAction {
 
         try {
             SettingsTemplate configTemplate = getServiceManager().getConfigTemplate(getConfigId(), getCustomerId());
+
             Properties properties = new Properties();
             List<PropertyTemplate> properties2 = configTemplate.getProperties();
             for (PropertyTemplate propertyTemplate : properties2) {
                 String key = propertyTemplate.getKey();
-                String value = getReqParameter(key);
-                System.out.println(key + " === " + value);
+                String value = getActionContextParam(key);
                 if (StringUtils.isNotEmpty(value)) {
                     properties.put(key, value);
                 }
@@ -217,11 +217,9 @@ public class Configurations extends FrameworkBaseAction {
             configurations.add(config);
             getConfigManager().updateEnvironment(environment);
         } catch (PhrescoException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            return showErrorPopup(e, "");
         } catch (ConfigurationException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            return showErrorPopup(new PhrescoException(e), "");
         }
     	
         /*try {
@@ -799,6 +797,10 @@ public class Configurations extends FrameworkBaseAction {
 		try {
 		    
 		    List<PropertyTemplate> properties = getSettingTemplate().getProperties();
+//		    for (PropertyTemplate propertyTemplate : properties) {
+//		        String capitalizeKey = WordUtils.capitalize(propertyTemplate.getKey());
+//		        setDynamicParameter(capitalizeKey);
+//            }
 		    setReqAttribute(REQ_PROPERTIES, properties);
 		    
 			/*String projectCode = (String)getHttpRequest().getParameter(REQ_PROJECT_CODE);
@@ -836,6 +838,21 @@ public class Configurations extends FrameworkBaseAction {
 		}
 		return SETTINGS_TYPE;
 	}
+    
+    private void setDynamicParameter(String fieldName) {
+        Class aClass = this.getClass();
+        Class[] paramTypes = new Class[1]; 
+            paramTypes[0] = String.class; // get the actual param type
+
+        String methodName = "set"+fieldName; // fieldName String
+        Method m = null;
+              try {
+                m = aClass.getMethod(methodName, paramTypes);
+             }
+             catch (NoSuchMethodException nsme) {
+           nsme.printStackTrace();
+          }
+    }
     
     public String setAsDefault() {
     	S_LOGGER.debug("Entering Method  Configurations.setAsDefault()");
