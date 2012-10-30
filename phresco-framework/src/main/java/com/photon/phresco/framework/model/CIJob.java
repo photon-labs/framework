@@ -83,7 +83,8 @@ public class CIJob {
     //java Stanalone tech info
 //    private String jarName = "";
 //    private String mainClassName = "";
-    private boolean enablePostBuildStep = false;
+    private boolean enablePostBuildStep;
+    private boolean enablePreBuildStep;
     
     public CIJob() {
         super();
@@ -448,5 +449,13 @@ public class CIJob {
 
 	public void setEnablePostBuildStep(boolean enablePostBuildStep) {
 		this.enablePostBuildStep = enablePostBuildStep;
+	}
+
+	public boolean isEnablePreBuildStep() {
+		return enablePreBuildStep;
+	}
+
+	public void setEnablePreBuildStep(boolean enablePreBuildStep) {
+		this.enablePreBuildStep = enablePreBuildStep;
 	}
 }
