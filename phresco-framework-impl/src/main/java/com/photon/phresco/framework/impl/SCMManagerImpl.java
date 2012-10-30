@@ -3,14 +3,14 @@ package com.photon.phresco.framework.impl;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FilenameFilter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ListBranchCommand.ListMode;
@@ -33,7 +33,6 @@ import org.tmatesoft.svn.core.wc.SVNWCUtil;
 
 import com.google.gson.Gson;
 import com.photon.phresco.commons.model.ApplicationInfo;
-import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.api.SCMManager;
 import com.photon.phresco.util.FileUtil;
@@ -48,37 +47,32 @@ public class SCMManagerImpl implements SCMManager {
 	private static final String PHRESCO = "/.phresco";
 	String IMPORT_SUCCESS_PROJECT = "Project imported successfully";
 	String HEAD_REVISION = "HEAD";
-	String FOLDER_DOT_PHRESCO = ".phresco";
+	private static final String FOLDER_DOT_PHRESCO = ".phresco";
+	private static final String PROJECT_INFO_FILE = "project.info";
 //	private String revisionVal = ""; TODO : need this validation in web
 	private static boolean dotphresco;
-
+	SVNClientManager cm = null;
 	public void importProject(String type, String url, String username,
 			String password, String branch, String revision, String projcode)
 			throws Exception {
 		S_LOGGER.debug("Entering Method  Applications.importApplication()");
 		S_LOGGER.debug("repoType " + type);
 		S_LOGGER.debug("repositoryUrl " + url);
+		
 		try {
+			SVNURL svnURL = SVNURL.parseURIEncoded(url);
+			DAVRepositoryFactory.setup();
+			DefaultSVNOptions options = new DefaultSVNOptions();
+			cm = SVNClientManager.newInstance(options, username, password);
 			if ("svn".equals(type)) {
-				validateURL(url, username, password);
-				if (!dotphresco) {
+				System.out.println("calling validate");
+				boolean validateURL = validateURL(url, username, password, revision, svnURL);
+				if (validateURL) {
+					System.out.println("Phresco found ");// check out whole dir
+//					(File dstPath, String revision, boolean isRecursive, String projCode,SVNURL svnURL)
+					checkout(new File(Utility.getProjectHome()), revision, false, "", svnURL);
+				} else {
 					System.out.println("Phresco Project definition not found");
-				} else if (dotphresco == true) {
-					DAVRepositoryFactory.setup();
-					SVNURL svnURL = SVNURL.parseURIEncoded(url);
-					DefaultSVNOptions options = new DefaultSVNOptions();
-					SVNClientManager cm = SVNClientManager.newInstance(options, username, password);
-					File checkOutDir = new File(Utility.getProjectHome());
-//					revision = HEAD_REVISION.equals(revision) ? revision : revisionVal;
-					// getProjectInfo(revision);
-					File projectRoot = new File(checkOutDir, projcode);
-
-					if (projectRoot.exists()) {
-						throw new PhrescoException("Import Fails", "Project with the code " + projcode + " already present");
-					}
-					SVNUpdateClient uc = cm.getUpdateClient();
-					uc.doCheckout(SVNURL.parseURIEncoded(url), projectRoot, SVNRevision.UNDEFINED, SVNRevision.parse(revision), SVNDepth.UNKNOWN, false);
-					System.out.println("Completed!!!!");
 				}
 			} else if ("git".equals(type)) {
 				String uuid = UUID.randomUUID().toString();
@@ -89,13 +83,22 @@ public class SCMManagerImpl implements SCMManager {
 					FileUtils.deleteDirectory(gitImportTemp);
 				}
 				S_LOGGER.debug("gitImportTemp " + gitImportTemp);
+				System.out.println("Please wait while Cloning...");
 				importFromGit(url, gitImportTemp);
-				ApplicationInfo appInfo = GITgetAppInfo(gitImportTemp);
-				S_LOGGER.debug(appInfo.getCode());
-				importToWorkspace(gitImportTemp, Utility.getProjectHome(), projcode);
-				// update connection in pom.xml
-				updateSCMConnection(appInfo.getCode(), url);
-			}
+				System.out.println("validating for .phresco");
+				boolean valid = validPhrecoDirCheck(gitImportTemp);
+				if (valid){
+					System.out.println("Validation success!");
+					importFromTemp(gitImportTemp);
+					System.out.println("Cloning success");
+//				// update connection in pom.xml
+//				updateSCMConnection(appInfo.getCode(), url);
+				} else {
+					System.out.println("Phresco definition not found!!");
+				}
+				if(gitImportTemp.exists())
+					FileUtils.deleteDirectory(gitImportTemp);
+				}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -146,8 +149,7 @@ public class SCMManagerImpl implements SCMManager {
 		}
 	}
 
-	private void importToWorkspace(File gitImportTemp, String projectHome,
-			String code) throws Exception {
+	private void importToWorkspace(File gitImportTemp, String projectHome,String code) throws Exception {
 		S_LOGGER.debug("Entering Method  Applications.importToWorkspace()");
 		File workspaceProjectDir = new File(projectHome + code);
 		S_LOGGER.debug("workspaceProjectDir " + workspaceProjectDir);
@@ -162,22 +164,6 @@ public class SCMManagerImpl implements SCMManager {
 			FileUtils.deleteDirectory(gitImportTemp);
 		} catch (IOException e) {
 			S_LOGGER.debug("pack file is not deleted " + e.getLocalizedMessage());
-		}
-	}
-
-	private ApplicationInfo GITgetAppInfo(File gitImportTemp) throws Exception {
-		S_LOGGER.debug("Entering Method Applications.getProjectInfo()");
-		BufferedReader reader = null;
-		try {
-			File dotProjectFile = new File(gitImportTemp, FOLDER_DOT_PHRESCO + File.separator + PROJECT_INFO);
-			S_LOGGER.debug("dotProjectFile" + dotProjectFile);
-			if (!dotProjectFile.exists()) {
-				throw new PhrescoException("Phresco Project definition not found");
-			}
-			reader = new BufferedReader(new FileReader(dotProjectFile));
-			return new Gson().fromJson(reader, ApplicationInfo.class);
-		} finally {
-			Utility.closeStream(reader);
 		}
 	}
 
@@ -217,41 +203,19 @@ public class SCMManagerImpl implements SCMManager {
 		}
 	}
 
-	private ProjectInfo getProjectInfo(String url, String username, String password, String revision) throws Exception {
-		BufferedReader reader = null;
-		File tempDir = new File(Utility.getSystemTemp(), SVN_CHECKOUT_TEMP);
-		System.out.println("temp dir : SVNAccessor " + tempDir);
-		try {
-			SVNURL svnURL = SVNURL.parseURIEncoded(url);
-			DefaultSVNOptions options = new DefaultSVNOptions();
-			SVNClientManager cm = SVNClientManager.newInstance(options, username, password);
-			
-			SVNUpdateClient uc = cm.getUpdateClient();
-			uc.doCheckout(svnURL.appendPath(PHRESCO, true), tempDir, SVNRevision.UNDEFINED, SVNRevision.parse(revision), SVNDepth.UNKNOWN, false);
-
-			File dotProjectFile = new File(tempDir, PROJECT_INFO);
-			if (!dotProjectFile.exists()) {
-				throw new PhrescoException("Phresco Project definition not found");
-			}
-
-			reader = new BufferedReader(new FileReader(dotProjectFile));
-			return new Gson().fromJson(reader, ProjectInfo.class);
-		} finally {
-			Utility.closeStream(reader);
-			if (tempDir.exists()) {
-				FileUtil.delete(tempDir);
-			}
-		}
+	private static void setupLibrary() {
+		DAVRepositoryFactory.setup();
+		SVNRepositoryFactoryImpl.setup();
+		FSRepositoryFactory.setup();
 	}
 
-	public static void validateURL(String url, String name, String password) throws Exception {
+	public boolean validateURL(String url, String name, String password, String revision, SVNURL svnURL) throws Exception {
 		setupLibrary();
 		SVNRepository repository = null;
 		try {
 			repository = SVNRepositoryFactory.create(SVNURL.parseURIEncoded(url));
 		} catch (SVNException svne) {
-			System.err.println("error while creating an SVNRepository for location '" + url + "': " + svne.getMessage());
-			System.exit(1);
+			System.out.println("error while creating an SVNRepository for location '" + url + "': " + svne.getMessage());
 		}
 		ISVNAuthenticationManager authManager = SVNWCUtil.createDefaultAuthenticationManager(name, password);
 		repository.setAuthenticationManager(authManager);
@@ -259,82 +223,240 @@ public class SCMManagerImpl implements SCMManager {
 			SVNNodeKind nodeKind = repository.checkPath("", -1);
 			if (nodeKind == SVNNodeKind.NONE) {
 				System.out.println("There is no entry at '" + url + "'.");
-//				System.exit(1);
 			} else if (nodeKind == SVNNodeKind.FILE) {
 				System.out.println("The entry at '" + url + "' is a file while a directory was expected.");
-//				System.exit(1);
 			}
 			System.out.println("Repository Root: " + repository.getRepositoryRoot(true));
 			System.out.println("Repository UUID: " + repository.getRepositoryUUID(true));
-			validateRootDir(repository, "", url);
+			return validateRootDir(repository, "", revision, svnURL, true);
 		} catch (SVNException svne) {
 			System.out.println("error while listing entries: " + svne.getMessage());
-//			System.exit(1);
 		}
+		return false;
 	}
-
-	private static void setupLibrary() {
-		DAVRepositoryFactory.setup();
-		SVNRepositoryFactoryImpl.setup();
-		FSRepositoryFactory.setup();
-	}
-
-	public static void validateRootDir(SVNRepository repository, String path, String url) throws Exception {
-		List<String> list = new ArrayList<String>();
+	
+	public boolean validateRootDir(SVNRepository repository, String path, String revision, SVNURL svnURL, boolean recursive) throws Exception {
+		// second leve check
 		Collection entries = repository.getDir(path, -1, null, (Collection) null);
 		Iterator iterator = entries.iterator();
+		System.out.println("Entry size ======> " + entries.size());
 		if (entries.size() != 0) {
 			while (iterator.hasNext()) {
 				SVNDirEntry entry = (SVNDirEntry) iterator.next();
-				// System.out.println(entry.getURL().removePathTail());
-				// System.out.println();
-				if ((entry.getKind() == SVNNodeKind.DIR)
-						&& (entry.getName().equals(".phresco"))) {
-					System.out.println("iteration 1 Phresco Project definition found @ " + entry.getURL().removePathTail());
-					dotphresco = true;
-					break;
-				} else if (entry.getKind() == SVNNodeKind.DIR) {
-					System.out.println(entry.getName() + " added to list @ iterate1 ");
-					list.add(entry.getName().toString());
+				System.out.println("Entry name " + entry.getName());
+				System.out.println("Entry Path " + entry.getURL());
+				
+				if(entry.getKind() == SVNNodeKind.DIR) {
+					// root dir check
+					boolean validSVN = isValidSVN(entry, revision, svnURL);
+					if (validSVN) {
+						System.out.println("valid SVn "); // handle here for checkout
+						return validSVN;
+					}
+				}
+				
+				if(entry.getKind() == SVNNodeKind.DIR && recursive) {
+					// recursive call should be false for 2 level check
+					return validateRootDir(repository, (path.equals("")) ? entry.getName() : path + "/" + entry.getName(), revision, svnURL, false);
 				}
 			}
-			if (dotphresco == false) {
-				for (int i = 0; i < list.size(); i++) {
-					validateChildDir(repository, (path.equals("")) ? list.get(i) : path + "/" + list.get(i), url);
+		}
+		return false;
+	}
+	
+	private boolean isValidSVN(SVNDirEntry entry, String revision, SVNURL svnURL) throws Exception {
+		if((entry.getName().equals(".phresco")) && (entry.getKind() == SVNNodeKind.DIR) ){
+			 System.out.println("phresco found");
+			 return isValidSVN(revision, entry.getURL());
+		 }
+		return false;
+	}
+	
+	private boolean isValidSVN(String revision, SVNURL svnURL) throws Exception {
+		 ApplicationInfo appInfo = getappInfo(revision, svnURL); // handle here for checkout
+		 if(appInfo != null) {
+			 System.out.println("This is valid project ");
+			 return true;
+		 }
+		return false;
+	}
+	private boolean isValidPhrescoDir(File appDir) {
+		if (appDir.isDirectory()) { // Only check the folders not files
+            File[] dotPhrescoFolders = appDir.listFiles(new PhrescoFileNameFilter(FOLDER_DOT_PHRESCO));
+            for (File dotPhrescoFolder : dotPhrescoFolders) {
+				System.out.println("dotPhrescoFolder ====> " + dotPhrescoFolder);
+			}
+            if (ArrayUtils.isEmpty(dotPhrescoFolders)) {
+                return false;
+            }
+            File[] dotProjectFiles = dotPhrescoFolders[0].listFiles(new PhrescoFileNameFilter(PROJECT_INFO_FILE));
+            if (ArrayUtils.isEmpty(dotProjectFiles)) {
+            	return false;
+            }
+        }
+		return true;
+	}
+	
+	public ApplicationInfo getAppInfo(File directory) throws Exception {
+        S_LOGGER.debug("Entering Method  Applications.getProjectInfo()");
+        BufferedReader reader = null;
+        try {
+            File dotProjectFile = new File(directory, FOLDER_DOT_PHRESCO + File.separator + PROJECT_INFO);
+            System.out.println(dotProjectFile.getAbsolutePath());
+            S_LOGGER.debug("dotProjectFile" + dotProjectFile);
+            if (!dotProjectFile.exists()) {
+                return null;
+            }
+            reader = new BufferedReader(new FileReader(dotProjectFile));
+            return new Gson().fromJson(reader, ApplicationInfo.class);
+        } finally {
+            Utility.closeStream(reader);
+        }
+    }
+	
+	public boolean validPhrecoDirCheck(File dir) {
+		try {
+			// root dir
+			boolean validPhrescoDir = isValidPhrescoDir(dir);
+			if (!validPhrescoDir) {
+//				// sub dir check
+				File[] listFiles = dir.listFiles();
+				for (File listFile : listFiles) {
+					if(isValidPhrescoDir(listFile)) {
+						return true;
+					}
 				}
 			}
-		} else {
-			System.out.println("No Entries in the given directory, try another url!");
+			return validPhrescoDir;
+		} catch (Exception e) {
+			return false;
 		}
 	}
-
-	public static void validateChildDir(SVNRepository repository, String path, String url) throws Exception {
-		Collection entries1 = repository.getDir(path, -1, null, (Collection) null);
-		Iterator iterator1 = entries1.iterator();
-		while (iterator1.hasNext()) {
-			SVNDirEntry entry = (SVNDirEntry) iterator1.next();
-			// System.out.println(entry.getURL().removePathTail());
-			// System.out.println();
-			if ((entry.getKind() == SVNNodeKind.DIR)
-					&& (entry.getName().equals(".phresco"))) {
-				System.out.println();
-				System.out.println("iteration 2 Phresco Project definition found @ " + entry.getURL().removePathTail());
-				System.out.println();
-				dotphresco = true;
-				break;
+	
+	public void importFromTemp(File dir) {
+		try {
+			ApplicationInfo appInfo = null;
+			// first level checking for .phresco folder
+			appInfo = getAppInfo(dir);
+			if (appInfo != null) {
+				importToWorkspace(dir, Utility.getProjectHome(), appInfo.getName());
+			} else {
+				// second level check for .phresco folder
+				File[] listFiles = dir.listFiles();
+				for (File listFile : listFiles) {
+					appInfo = getAppInfo(listFile);
+					if (appInfo != null) {
+						importToWorkspace(listFile, Utility.getProjectHome(), appInfo.getName());
+					} else {
+						importToWorkspace(listFile, Utility.getProjectHome(), listFile.getName());
+					}
+				}
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
+	
+	 public ApplicationInfo getappInfo(String revision, SVNURL svnURL) { // throws Exception 
+	        BufferedReader reader = null;
+	        File tempDir = new File(Utility.getSystemTemp(), SVN_CHECKOUT_TEMP);
+	        System.out.println("temp dir : SVNAccessor " +tempDir );
+	        try {
+	            SVNUpdateClient uc = cm.getUpdateClient();
+	            System.out.println("SVNURL : " + svnURL.removePathTail());
+	            uc.doCheckout(svnURL, tempDir, SVNRevision.UNDEFINED, SVNRevision.parse(revision), SVNDepth.UNKNOWN, false);
+	            
+	            File dotProjectFile = new File(tempDir, PROJECT_INFO);
+	            if (!dotProjectFile.exists()) {
+	                throw new PhrescoException("Phresco Project definition not found");
+	            }
 
-	public void importProject(String type, String url, String username,
-			String password, String branch) throws PhrescoException {
-		// TODO Auto-generated method stub
-		
+	            reader = new BufferedReader(new FileReader(dotProjectFile));
+	            return new Gson().fromJson(reader, ApplicationInfo.class);
+	        } catch(Exception e) {
+	        	System.out.println("Exception caught ");
+	        	e.printStackTrace();
+	        } finally {
+	            Utility.closeStream(reader);
+	            if (tempDir.exists()) {
+	                FileUtil.delete(tempDir);
+	            }
+	        }
+	        return null;
+	 }
+	 
+	public void checkout(File dstPath, String revision, boolean isRecursive, String projCode, SVNURL svnURL) throws Exception {
+//	       File projectRoot = new File(dstPath, projCode);
+//	       if (projectRoot.exists()) {
+//	           throw new PhrescoException("Import Fails", "Project with the code " + projCode + " already present");
+//	       }
+		System.out.println(dstPath);
+	       SVNUpdateClient uc = cm.getUpdateClient();
+	       uc.doCheckout(svnURL, dstPath, SVNRevision.UNDEFINED, SVNRevision.parse(revision),
+	               SVNDepth.UNKNOWN, false);
 	}
 
-	public void updateProject(String type, String url, String username,
-			String password, String branch) throws PhrescoException {
-		// TODO Auto-generated method stub
-		
-	}
+
+//		private ProjectInfo getProjectInfo(String url, String username, String password, String revision) throws Exception {
+//			BufferedReader reader = null;
+//			File tempDir = new File(Utility.getSystemTemp(), SVN_CHECKOUT_TEMP);
+//			System.out.println("temp dir : SVNAccessor " + tempDir);
+//			try {
+//				SVNURL svnURL = SVNURL.parseURIEncoded(url);
+//				DefaultSVNOptions options = new DefaultSVNOptions();
+//				SVNClientManager cm = SVNClientManager.newInstance(options, username, password);
+//				
+//				SVNUpdateClient uc = cm.getUpdateClient();
+//				uc.doCheckout(svnURL.appendPath(PHRESCO, true), tempDir, SVNRevision.UNDEFINED, SVNRevision.parse(revision), SVNDepth.UNKNOWN, false);
+	//
+//				File dotProjectFile = new File(tempDir, PROJECT_INFO);
+//				if (!dotProjectFile.exists()) {
+//					throw new PhrescoException("Phresco Project definition not found");
+//				}
+	//
+//				reader = new BufferedReader(new FileReader(dotProjectFile));
+//				return new Gson().fromJson(reader, ProjectInfo.class);
+//			} finally {
+//				Utility.closeStream(reader);
+//				if (tempDir.exists()) {
+//					FileUtil.delete(tempDir);
+//				}
+//			}
+//		}
+
+//		private ProjectInfo getProjectInfo(String url, String username, String password, String revision) throws Exception {
+//			BufferedReader reader = null;
+//			File tempDir = new File(Utility.getSystemTemp(), SVN_CHECKOUT_TEMP);
+//			System.out.println("temp dir : SVNAccessor " + tempDir);
+//			try {
+//				SVNURL svnURL = SVNURL.parseURIEncoded(url);
+//				DefaultSVNOptions options = new DefaultSVNOptions();
+//				SVNClientManager cm = SVNClientManager.newInstance(options, username, password);
+//				
+//				SVNUpdateClient uc = cm.getUpdateClient();
+//				uc.doCheckout(svnURL.appendPath(PHRESCO, true), tempDir, SVNRevision.UNDEFINED, SVNRevision.parse(revision), SVNDepth.UNKNOWN, false);
+	//
+//				File dotProjectFile = new File(tempDir, PROJECT_INFO);
+//				if (!dotProjectFile.exists()) {
+//					throw new PhrescoException("Phresco Project definition not found");
+//				}
+	//
+//				reader = new BufferedReader(new FileReader(dotProjectFile));
+//				return new Gson().fromJson(reader, ProjectInfo.class);
+//			} finally {
+//				Utility.closeStream(reader);
+//				if (tempDir.exists()) {
+//					FileUtil.delete(tempDir);
+//				}
+//			}
+//		}
+}
+class PhrescoFileNameFilter implements FilenameFilter {
+	 private String filter_;
+	 public PhrescoFileNameFilter(String filter) {
+		 filter_ = filter;
+	 }
+	 public boolean accept(File dir, String name) {
+		 return name.endsWith(filter_);
+	 }
 }
