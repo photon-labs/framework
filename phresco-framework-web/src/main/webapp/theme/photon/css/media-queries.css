@@ -157,6 +157,11 @@ Width <= 1024
 	    height: 90%;
 	}
 	
+	.projectList {
+	    height: 100%;
+	    padding-top: 6px;
+	}
+	
 	.projectScrollDiv {
 		overflow-x: hidden;
 		overflow-y: auto;
@@ -562,6 +567,11 @@ Width size <= 1024
 		height: 92%;
 	}
 	
+	.projectList {
+	    height: 100%;
+	    padding-top: 6px;
+	}
+	
 	.appInfoScrollDiv {
 		overflow-x: hidden;
 		overflow-y: auto;
@@ -951,6 +961,11 @@ Width >= 1152 and < 1280
 		overflow-y: auto;
 		position: relative;
 		height: 88%;
+	}
+	
+	.projectList {
+	    height: 100%;
+	    padding-top: 6px;
 	}
 	
 	.appInfoScrollDiv {
@@ -1358,12 +1373,12 @@ Width <= 1280 and height <= 800
 		position: relative;
 	}
 	
-	.table_div {
+	/* .table_div {
 		border-radius: 6px 6px 6px 6px;
 		height: 93%;
 		margin-left: 6px;
 		margin-right: 6px;
-	}
+	} */
 	
 	.table_data_div {
 		height: 87%;
@@ -1378,6 +1393,11 @@ Width <= 1280 and height <= 800
 		overflow-y: auto;
 		position: relative;
 		height:86%;
+	}
+	
+	.projectList {
+	    height: 99%;
+	    padding-top: 6px;
 	}
 	
 	.appInfoScrollDiv {
@@ -1462,12 +1482,12 @@ Width <= 1280 and height <= 800
 	    width: 50%;
 	}
 	
-	.table_div {
+	/* .table_div {
 	    border-radius: 6px 6px 6px 6px;
 	    height: 98%;
 	    margin-left: 6px;
 	    margin-right: 6px;
-	}
+	} */
 	
 	.table_div_unit {
 	    border-radius: 6px 6px 6px 6px;
@@ -1664,6 +1684,11 @@ Width >= 1280 and height >= 800
 		height: 90%;
 	}
 	
+	.projectList {
+	    height: 98%;
+	    padding-top: 6px;
+	}
+	
 	.appInfoScrollDiv {
 		overflow-x: hidden;
 		overflow-y: auto;
@@ -1756,12 +1781,12 @@ Width >= 1280 and height >= 800
 		position: relative;
 	}
 	
-	.table_div {
+	/* .table_div {
 		border-radius: 6px 6px 6px 6px;
 		height: 97%;
 		margin-left: 6px;
 		margin-right: 6px;
-	}
+	} */
 	
 	.table_data_div {
 		height: 87%;
@@ -2098,12 +2123,12 @@ Width > 1280 and <= 1360
 		position: relative;
 	}
 	
-	.table_div {
+	/* .table_div {
 		border-radius: 6px 6px 6px 6px;
 		height: 93%;
 		margin-left: 6px;
 		margin-right: 6px;
-	}
+	} */
 	
 	.table_data_div {
 		height: 87%;
@@ -2118,6 +2143,11 @@ Width > 1280 and <= 1360
 		overflow-y: auto;
 		position: relative;
 		height: 85%;
+	}
+	
+	.projectList {
+	    height: 98%;
+	    padding-top: 6px;
 	}
 	
 	.appInfoScrollDiv {
@@ -2201,12 +2231,12 @@ Width > 1280 and <= 1360
 	    height: 98%;
 	}
 	
-	.table_div {
+	/* .table_div {
 	    border-radius: 6px 6px 6px 6px;
 	    height: 95%;
 	    margin-left: 6px;
 	    margin-right: 6px;
-	}
+	} */
 	
 	.build_progress_div {
 	    float: left;
@@ -2457,11 +2487,11 @@ Width > 1360 and <= 1440
 		position: relative;
 	}
 	
-	.table_div {
+	/* .table_div {
 		border-radius: 6px 6px 6px 6px;
 		margin-left: 6px;
 		margin-right: 6px;
-	}
+	} */
 	
 	.table_data_div {
 		height: 87%;
@@ -2476,6 +2506,11 @@ Width > 1360 and <= 1440
 		overflow-y: auto;
 		position: relative;
 		height: 92%;
+	}
+	
+	.projectList {
+	    height: 94%;
+	    padding-top: 6px;
 	}
 	
 	.appInfoScrollDiv {
@@ -2568,12 +2603,12 @@ Width > 1360 and <= 1440
 	    width: 50%;
 	}
 	
-	.table_div {
+	/* .table_div {
 	    border-radius: 6px 6px 6px 6px;
 	    height: 95%;
 	    margin-left: 6px;
 	    margin-right: 6px;
-	}
+	} */
 	
 	.table_div_unit {
 	    border-radius: 6px 6px 6px 6px;
@@ -2824,11 +2859,11 @@ Width > 1441 and <= 1600
 		position: relative;
 	}
 	
-	.table_div {
+	/* .table_div {
 		border-radius: 6px 6px 6px 6px;
 		margin-left: 6px;
 		margin-right: 6px;
-	}
+	} */
 	
 	.table_data_div {
 		height: 87%;
@@ -2843,6 +2878,11 @@ Width > 1441 and <= 1600
 		overflow-y: auto;
 		position: relative;
 		height: 87%;
+	}
+	
+	.projectList {
+	    height: 100%;
+	    padding-top: 6px;
 	}
 	
 	.appInfoScrollDiv {
@@ -2935,12 +2975,12 @@ Width > 1441 and <= 1600
 	    width: 50%;
 	}
 	
-	.table_div {
+	/* .table_div {
 	    border-radius: 6px 6px 6px 6px;
 	    height: 95%;
 	    margin-left: 6px;
 	    margin-right: 6px;
-	}
+	} */
 	
 	.table_div_unit {
 	    border-radius: 6px 6px 6px 6px;

@@ -49,7 +49,7 @@
 %>
 
 <!--  Form Starts -->
-<form id="formAppInfo" autocomplete="off" class="app_add_form" autofocus="autofocus">
+<form id="formAppInfo" autocomplete="off" class="form-horizontal app_add_form" autofocus="autofocus">
     <div class="appInfoScrollDiv">          
 		<!--  Name Starts -->
 		<div class="control-group" id="nameErrDiv">
@@ -111,7 +111,7 @@
 		<div class="control-group">
 			<label class="accordion-control-label labelbold"><s:text name='lbl.pilot.project'/></label>
 			<div class="controls">
-				<select class="input-xlarge" name="<%= FrameworkConstants.REQ_PARAM_NAME_TECHNOLOGY%>">
+				<select class="input-xlarge appinfoTech" name="<%= FrameworkConstants.REQ_PARAM_NAME_TECHNOLOGY%>">
 					<option value="" selected disabled>Select Pilot Projects</option>
 				</select>
 			</div>
