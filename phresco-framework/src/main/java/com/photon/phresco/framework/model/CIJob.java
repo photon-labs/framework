@@ -78,12 +78,16 @@ public class CIJob {
 //    private String proguard = "";
 //    private String signing = "";
     
-//    private String pomLocation = "";
+    private String pomLocation = "";
     
     //java Stanalone tech info
 //    private String jarName = "";
 //    private String mainClassName = "";
-    private boolean enablePostBuildStep = false;
+    private boolean enablePostBuildStep;
+    private boolean enablePreBuildStep;
+    
+    private List<String> prebuildStepCommands;
+    private List<String> postbuildStepCommands;
     
     public CIJob() {
         super();
@@ -418,13 +422,13 @@ public class CIJob {
 //		this.mode = mode;
 //	}
 //
-//	public String getPomLocation() {
-//		return pomLocation;
-//	}
-//
-//	public void setPomLocation(String pomLocation) {
-//		this.pomLocation = pomLocation;
-//	}
+	public String getPomLocation() {
+		return pomLocation;
+	}
+
+	public void setPomLocation(String pomLocation) {
+		this.pomLocation = pomLocation;
+	}
 //
 //	public String getJarName() {
 //		return jarName;
@@ -448,5 +452,29 @@ public class CIJob {
 
 	public void setEnablePostBuildStep(boolean enablePostBuildStep) {
 		this.enablePostBuildStep = enablePostBuildStep;
+	}
+
+	public boolean isEnablePreBuildStep() {
+		return enablePreBuildStep;
+	}
+
+	public void setEnablePreBuildStep(boolean enablePreBuildStep) {
+		this.enablePreBuildStep = enablePreBuildStep;
+	}
+
+	public List<String> getPrebuildStepCommands() {
+		return prebuildStepCommands;
+	}
+
+	public void setPrebuildStepCommands(List<String> prebuildStepCommands) {
+		this.prebuildStepCommands = prebuildStepCommands;
+	}
+
+	public List<String> getPostbuildStepCommands() {
+		return postbuildStepCommands;
+	}
+
+	public void setPostbuildStepCommands(List<String> postbuildStepCommands) {
+		this.postbuildStepCommands = postbuildStepCommands;
 	}
 }

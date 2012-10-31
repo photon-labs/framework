@@ -38,9 +38,11 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.*;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.codehaus.plexus.util.FileUtils;
 import org.quartz.CronExpression;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -406,20 +408,22 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 			if (BUILD.equals(operation)) {
 				S_LOGGER.debug("Build operation!!!!!!");
 				ActionType actionType = ActionType.BUILD;
-				mvncmd = actionType.toString();
+				mvncmd =  actionType.getActionType().toString();
 			} else if (DEPLOY.equals(operation)) {
 				S_LOGGER.debug("Deploy operation!!!!!!");
 				ActionType actionType = ActionType.DEPLOY;
-				mvncmd = actionType.toString();
+				mvncmd =  actionType.getActionType().toString();
 			} else if (FUNCTIONAL_TEST.equals(operation)) {
 				S_LOGGER.debug("Functional test operation!!!!!");
 //				ActionType actionType = ActionType.FUNCTIONAL_TEST;
 //				System.out.println("build operation command " + actionType);
-//				mvncmd = actionType.toString();
+//				mvncmd =  actionType.getActionType().toString();
 			}
 			
 			if (!CollectionUtils.isEmpty(buildArgCmds)) {
-				mvncmd = mvncmd + SPACE + buildArgCmds;
+				for (String buildArgCmd : buildArgCmds) {
+					mvncmd = mvncmd + SPACE + buildArgCmd;
+				}
 			}
 			
 			if (!"clonedWorkspace".equals(svnType) && BUILD.equals(operation)) {
@@ -429,19 +433,52 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 			S_LOGGER.debug("mvn command" + mvncmd);
 			existJob.setMvnCommand(mvncmd);
 			
+			String funcitonalTestDir = "";
+			if (FUNCTIONAL_TEST.equals(operation)) {
+				FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+				funcitonalTestDir = frameworkUtil.getFunctionalTestDir(appInfo);
+				if (StringUtils.isNotEmpty(funcitonalTestDir)) {
+					// removing / value , which not valid
+					funcitonalTestDir = funcitonalTestDir.substring(1) + File.separator;
+				}
+			}
+			existJob.setPomLocation(funcitonalTestDir + POM_XML);
+			
+			S_LOGGER.debug("funcitonalTestDir ======> " + funcitonalTestDir);
+			
+			// prebuild step enable
+			existJob.setEnablePreBuildStep(true);
+			List<String> preBuildStepCmds = new ArrayList<String>();
+			preBuildStepCmds.add("phresco:cipreperform");
+			
 			if (CI_CREATE_JOB_COMMAND.equals(jobType)) {
-//				System.out.println(" creating job approached  " + existJob);
-//				ciManager.createJob(appInfo, existJob);
+				System.out.println(" creating job approached  " + existJob);
+				ciManager.createJob(appInfo, existJob);
 				addActionMessage(getText(SUCCESS_JOB));
 			} else if (CI_UPDATE_JOB_COMMAND.equals(jobType)) {
-//				System.out.println(" updating job approached  " + existJob);
-//				ciManager.updateJob(appInfo, existJob);
+				System.out.println(" updating job approached  " + existJob);
+				ciManager.updateJob(appInfo, existJob);
 				addActionMessage(getText(SUCCESS_UPDATE));
 			}
 
 //			restartJenkins(); // TODO: reload config
 
 			setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
+			// copy phresco-plugin-info file to jenkins workspace
+			String phrescoPluginInfoFilePath = getPhrescoPluginInfoFilePath(appInfo);
+			if(StringUtils.isEmpty(phrescoPluginInfoFilePath)) {
+				throw new PhrescoException("phrescoPluginInfoFilePath not found");
+			}
+			File phrescoPluginFile = new File(phrescoPluginInfoFilePath);
+			if(StringUtils.isEmpty(name)) {
+				throw new PhrescoException("Job name is empty");
+			}
+			String jenkinsJobDirPath = getJenkinsJobDirPath(name);
+			File jenkinsJobDir = new File(jenkinsJobDirPath);
+			System.out.println("phrescoPluginFile =====> " + phrescoPluginFile.getCanonicalPath());
+			System.out.println("jenkinsJobDir =====> " + jenkinsJobDir.getCanonicalPath());
+			boolean copyPhrescoPluginFile = copyPhrescoPluginFile(phrescoPluginFile, jenkinsJobDir);
+			System.out.println("Copy the file to jenkins workspace " + copyPhrescoPluginFile);
 		} catch (Exception e) {
 			e.printStackTrace();
 			S_LOGGER.error("Entered into catch block of CI.doUpdateSave()"
@@ -454,6 +491,37 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 
 	}
 
+	private boolean copyPhrescoPluginFile(File phrescoPluginInfo, File jenkinsWorkspaceJob) {
+		try {
+			FileUtils.copyFileToDirectory(phrescoPluginInfo, jenkinsWorkspaceJob);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+	
+	private String getJenkinsJobDirPath(String jobName) throws PhrescoException {
+		try {
+			String jenkinsHomePath = System.getenv(JENKINS_HOME);
+			if (StringUtils.isEmpty(jenkinsHomePath)) {
+				throw new PhrescoException("Jenkins Home not found in env");
+			}
+			StringBuilder builder = new StringBuilder(jenkinsHomePath);
+			builder.append(File.separator);
+	        builder.append("workspace");
+	        builder.append(File.separator);
+	        builder.append(jobName);
+	        builder.append(File.separator);
+	        builder.append(".phresco");
+	        builder.append(File.separator);
+	        FileUtils.mkdir(builder.toString());
+	        return builder.toString();
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+	}
+	
 	public String build() {
 		S_LOGGER.debug("Entering Method  CI.build()");
 		try {
