@@ -39,6 +39,7 @@ import org.apache.log4j.Logger;
 
 import com.opensymphony.xwork2.Action;
 import com.photon.phresco.api.ConfigManager;
+import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.PropertyTemplate;
 import com.photon.phresco.commons.model.SettingsTemplate;
 import com.photon.phresco.configuration.Configuration;
@@ -119,20 +120,19 @@ public class Configurations extends FrameworkBaseAction {
 //            project = administrator.getProject(projectCode);
 //            List<Environment> environments = administrator.getEnvironments(project);
 //            configManager.getEnvironments(names);
-//            getHttpRequest().setAttribute(ENVIRONMENTS, environments);
-//            List<SettingsInfo> configurations = administrator.configurations(project);
+            setReqAttribute(REQ_ENVIRONMENTS, environments);
+           // List<SettingsInfo> configurations = administrator.configurations(project);
             String cloneConfigStatus = getHttpRequest().getParameter(CLONE_CONFIG_STATUS); 
             if (cloneConfigStatus != null) {
             	addActionMessage(getText(ENV_CLONE_SUCCESS));
             }
-        } catch (Exception e) {
-        	if (debugEnabled) {
-               S_LOGGER.error("Entered into catch block of Configurations.list()" + FrameworkUtil.getStackTraceAsString(e));
-    		}
-        	new LogErrorReport(e, "Configurations list");
-        }
+        } catch (PhrescoException e) {
+        	return showErrorPopup(e,  getText(EXCEPTION_CONFIGURATION_LIST_ENV));
+        } catch (ConfigurationException e) {
+        	  return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_CONFIGURATION_LIST_CONFIG));
+		}
         
-        getHttpRequest().setAttribute(REQ_PROJECT, project);
+       // getHttpRequest().setAttribute(REQ_PROJECT, project);
         getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
         return APP_LIST;
     }
