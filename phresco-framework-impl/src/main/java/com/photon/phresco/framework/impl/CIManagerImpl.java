@@ -485,7 +485,10 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
         if (job.isEnablePreBuildStep()) {
         	System.out.println("java stanalone technology with functional test enabled!!!!!!!");
         	//iterate over loop
-        	processor.enablePreBuildStep(job.getPomLocation(), job.getMvnCommand());
+        	List<String> prebuildStepCommands = job.getPrebuildStepCommands();
+        	for (String prebuildStepCommand : prebuildStepCommands) {
+        		processor.enablePreBuildStep(job.getPomLocation(), prebuildStepCommand);
+			}
         }
         
     }

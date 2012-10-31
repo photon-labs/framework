@@ -411,7 +411,7 @@ function successRefreshBuild(data) {
 	console.log("successRefreshBuild....." + data);
 	//data can be zero when no build is in progress, can be int value for each running job
 	// noOfJobsIsinProgress also can be zero  when no jobs in in progress
-	if (data < <%= noOfJobsIsinProgress %> || data > <%= noOfJobsIsinProgress %>) { // When build is increased or decreased on a job refresh the page , refresh the page
+	if (data.numberOfJobsInProgress < <%= noOfJobsIsinProgress %> || data.numberOfJobsInProgress > <%= noOfJobsIsinProgress %>) { // When build is increased or decreased on a job refresh the page , refresh the page
 		var params = "";
     	if (!isBlank($('form').serialize())) {
     		params = $('form').serialize() + "&";
@@ -503,6 +503,7 @@ function successEvent(pageUrl, data) {
 		successRefreshBuild(data);
 	} 
 	else if(pageUrl == "getBuildsSize") {
+		alert("I never used ");
 // 		successRefreshCI(data);
 // 	} else if(pageUrl == "checkForConfiguration") {
 // 		successEnvValidation(data);
@@ -574,6 +575,10 @@ function popupClose(closeUrl) {
 function popupOnOk(obj) {
 		var okUrl = $(obj).attr("id");
 		if (okUrl == "saveJob" || okUrl == "updateJob" ) {
+			if (isMoreThanOneJobSelected()) {
+				alert("update job validation ");
+				okUrl == "updateJob";
+			}
 			// do the validation for collabNet info only if the user selects git radio button
 			var validation = configureJobValidation();
 		// when validation is true

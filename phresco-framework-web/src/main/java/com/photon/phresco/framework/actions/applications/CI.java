@@ -449,7 +449,8 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 			// prebuild step enable
 			existJob.setEnablePreBuildStep(true);
 			List<String> preBuildStepCmds = new ArrayList<String>();
-			preBuildStepCmds.add("phresco:cipreperform");
+			preBuildStepCmds.add("phresco:ci-prestep -DjobName=${env.JOB_NAME}");
+			existJob.setPrebuildStepCommands(preBuildStepCmds);
 			
 			if (CI_CREATE_JOB_COMMAND.equals(jobType)) {
 				System.out.println(" creating job approached  " + existJob);
@@ -464,21 +465,6 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 //			restartJenkins(); // TODO: reload config
 
 			setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
-			// copy phresco-plugin-info file to jenkins workspace
-			String phrescoPluginInfoFilePath = getPhrescoPluginInfoFilePath(appInfo);
-			if(StringUtils.isEmpty(phrescoPluginInfoFilePath)) {
-				throw new PhrescoException("phrescoPluginInfoFilePath not found");
-			}
-			File phrescoPluginFile = new File(phrescoPluginInfoFilePath);
-			if(StringUtils.isEmpty(name)) {
-				throw new PhrescoException("Job name is empty");
-			}
-			String jenkinsJobDirPath = getJenkinsJobDirPath(name);
-			File jenkinsJobDir = new File(jenkinsJobDirPath);
-			System.out.println("phrescoPluginFile =====> " + phrescoPluginFile.getCanonicalPath());
-			System.out.println("jenkinsJobDir =====> " + jenkinsJobDir.getCanonicalPath());
-			boolean copyPhrescoPluginFile = copyPhrescoPluginFile(phrescoPluginFile, jenkinsJobDir);
-			System.out.println("Copy the file to jenkins workspace " + copyPhrescoPluginFile);
 		} catch (Exception e) {
 			e.printStackTrace();
 			S_LOGGER.error("Entered into catch block of CI.doUpdateSave()"
