@@ -31,7 +31,7 @@
 <%@ page import="com.photon.phresco.configuration.Environment"%>
 <%@ page import="org.apache.commons.collections.CollectionUtils" %>
 <%@ page import="com.photon.phresco.util.TechnologyTypes" %>
-<%@ page import="com.photon.phresco.framework.model.BuildInfo"%>
+<%@ page import="com.photon.phresco.commons.model.BuildInfo"%>
 
 <script src="js/reader.js" ></script>
 <script src="js/select-envs.js"></script>

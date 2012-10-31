@@ -1504,10 +1504,12 @@ public interface FrameworkConstants {
 		String EXCEPTION_BUILDS_LIST = "excep.hdr.builds.list";
 		String EXCEPTIN_BUILD_DEPENDANT_VALUE = "excep.hdr.build.depndnt.val";
 		String EXCEPTION_QUALITY_LOAD = "excep.hdr.quality.unit";
-		String EXCEPTION_REPORT_VIEW_SITE = "excep.report.view";
-		String EXCEPTION_REPORT_GENERATE_SITE_REPORT = "excep.report.generate";
-		String EXCEPTION_REPORT_CONFIGURE = "excep.report.configure";
-		String EXCEPTION_REPORT_CREATE_REPORT_CONFIG = "excep.report.create.report.config";
+		String EXCEPTION_REPORT_VIEW_SITE = "excep.hdr.report.view";
+		String EXCEPTION_REPORT_GENERATE_SITE_REPORT = "excep.hdr.report.generate";
+		String EXCEPTION_REPORT_CONFIGURE = "excep.hdr.report.configure";
+		String EXCEPTION_REPORT_CREATE_REPORT_CONFIG = "excep.hdr.report.create.report.config";
+		String EXCEPTION_CONFIGURATION_LIST_ENV = "excep.hdr.configuration.list.env";
+		String EXCEPTION_CONFIGURATION_LIST_CONFIG = "excep.hdr.configuration.list.config";
 		
 		
 		/**
