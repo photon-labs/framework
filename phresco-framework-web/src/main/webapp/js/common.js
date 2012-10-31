@@ -196,7 +196,7 @@ function readerHandlerSubmit(pageUrl, appId, actionType, form, callSuccessEvent,
         cache: false,
         success : function(data) {
         	//if (checkForUserSession(data)) {
-            	$("#modal-body").empty();
+            	$("#console_div").empty();
             	readerHandler(data, appId, actionType, pageUrl);
             	if (callSuccessEvent != undefined && !isBlank(callSuccessEvent)) {
             		successEvent(pageUrl, data);
@@ -283,6 +283,18 @@ function toDisableCheckAll() {
 	} else {
 		$('#checkAllAuto').prop('disabled', true);
 	}
+}
+
+//To disable the given button object 
+function disableButton(buttonObj) {
+	buttonObj.removeClass('btn-primary');
+	buttonObj.attr("disabled", true);
+}
+
+//To enable the given button object
+function enableButton(buttonObj) {
+	buttonObj.addClass('btn-primary');
+	buttonObj.attr("disabled", false);
 }
 
 function toDisableAllCheckbox(currentCheckbox,childCheckBox, disable) {

@@ -25,8 +25,6 @@
 
 <%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
-<%@ page import="com.photon.phresco.commons.model.BuildInfo"%>
-<%@ page import="com.photon.phresco.util.TechnologyTypes" %>
 
 <script type="text/javascript" src="js/delete.js" ></script>
 <script type="text/javascript" src="js/confirm-dialog.js" ></script>
@@ -35,13 +33,12 @@
 <script type="text/javascript" src="js/reader.js" ></script>
 
 <%
-    String technology = null;
-
 	ApplicationInfo applicationInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_APPINFO);
 	String appId = "";
 	if (applicationInfo != null) {
 		appId = applicationInfo.getId();
-	}	
+	}
+	
 	//TODO:Need to handle
 // 	String projectCode = appInfo.getCode();
 // 	technology = appInfo.getTechInfo().getVersion();
@@ -56,27 +53,13 @@
   	sbBuildPath.append("/");
   	sbBuildPath.append(FrameworkConstants.BUILD_PATH);
     
-    
-    String serverLog = "";
-	Boolean nodeServerStatus = (Boolean) session.getAttribute(projectCode + FrameworkConstants.SESSION_NODEJS_SERVER_STATUS);
-	Boolean javaServerStatus = (Boolean) session.getAttribute(projectCode + FrameworkConstants.SESSION_JAVA_SERVER_STATUS);
-	
-	if (TechnologyTypes.NODE_JS_WEBSERVICE.equals(technology)) {
-		if (session.getAttribute(projectCode + FrameworkConstants.SESSION_NODEJS_SERVER_STATUS) == null) {
-			nodeServerStatus = false;
- 		} else {
- 			nodeServerStatus = session.getAttribute(projectCode + FrameworkConstants.SESSION_NODEJS_SERVER_STATUS).toString().equals("true") ? true : false;
- 		}
-		serverLog = (String) request.getAttribute(FrameworkConstants.REQ_SERVER_LOG);
-	}
-	if (TechnologyTypes.HTML5_MOBILE_WIDGET.equals(technology) || TechnologyTypes.HTML5_WIDGET.equals(technology) || TechnologyTypes.JAVA_WEBSERVICE.equals(technology) || TechnologyTypes.HTML5_MULTICHANNEL_JQUERY_WIDGET.equals(technology)) {
-		if (session.getAttribute(projectCode + FrameworkConstants.SESSION_JAVA_SERVER_STATUS) == null) {
-			javaServerStatus = false;
- 		} else {
- 			javaServerStatus = session.getAttribute(projectCode + FrameworkConstants.SESSION_JAVA_SERVER_STATUS).toString().equals("true") ? true : false;
- 		}
-		serverLog = (String) request.getAttribute(FrameworkConstants.REQ_SERVER_LOG);
-	} */
+	boolean serverStatus = Boolean.parseBoolean((String) session.getAttribute(appId + FrameworkConstants.SESSION_SERVER_STATUS));
+// 	if (session.getAttribute(appId + FrameworkConstants.SESSION_SERVER_STATUS) == null) {
+// 		serverStatus = false;
+// 	} else {
+// 		serverStatus = session.getAttribute(appId + FrameworkConstants.SESSION_SERVER_STATUS).toString().equals("true") ? true : false;
+// 	}
+	String runAgsSrcLog = (String) request.getAttribute(FrameworkConstants.REQ_SERVER_LOG);
 %>
 
 <s:if test="hasActionMessages()">
@@ -97,33 +80,11 @@
 		</div>
 			
 		<div class="build_delete_btn_div">
-		    <%-- <input id="generatebtn" type="button" value="<s:text name="label.generatebuild"/>" class="btn btn-primary"> --%>
-		    
-	    <a data-toggle="modal" href="#popupPage" id="generateBuild" class="btn btn-primary" additionalParam="from=generateBuild"><s:text name='label.generatebuild'/></a>
-		    
-		    <input id="deleteButton" type="button" value="<s:text name="label.delete"/>" class="btn" disabled="disabled"/>
-		</div>
-		<div class="runagint_source">
-		<%-- <%
-			if(TechnologyTypes.NODE_JS_WEBSERVICE.equals(technology)) {
-		%>
-			<div id="nodeJS_btndiv" class="nodeJS_div">
-				<input id="nodeJS_runAgnSrc" type="button" value="<s:text name="label.runagainsrc"/>" class="primary btn">
-				<input id="stopbtn" type="button" value="<s:text name="label.stop"/>" class="btn disabled" onclick="stopNodeJS();">
-				<input id="restartbtn" type="button" value="<s:text name="label.restart"/>" class="btn disabled" onclick="restartNodeJS();"/>
-			</div>		
-		<% } %>
-		
-		<%
-			if(TechnologyTypes.JAVA_WEBSERVICE.equals(technology) || TechnologyTypes.HTML5_WIDGET.equals(technology) 
-					|| TechnologyTypes.HTML5_MOBILE_WIDGET.equals(technology)) {
-		%>
-			<div id="nodeJS_btndiv" class="nodeJS_div">
-				<input id="runAgnSrc" type="button" value="<s:text name="label.runagainsrc"/>" class="primary btn">
-				<input id="stopbtn" type="button" value="<s:text name="label.stop"/>" class="btn disabled" onclick="stopServer();">
-				<input id="restartbtn" type="button" value="<s:text name="label.restart"/>" class="btn disabled" onclick="restartServer();"/>
-			</div>		
-		<% } %> --%>
+		    <a data-toggle="modal" href="#popupPage" id="generateBuild" class="btn btn-primary" additionalParam="from=generateBuild"><s:text name='label.generatebuild'/></a>
+			<input id="deleteButton" type="button" value="<s:text name="label.delete"/>" class="btn" disabled="disabled"/>
+			<input type="button" class="btn btn-primary" data-toggle="modal" href="#popupPage" id="runAgainstSourceStart" value="<s:text name='label.runagainsrc'/>"/>
+		    <input type="button" class="btn" id="runAgainstSourceStop" value="<s:text name='label.stop'/>" disabled onclick="stopServer();"/>
+		    <input type="button" class="btn" id="runAgainstSourceRestart" value="<s:text name='label.restart'/>" disabled onclick="restartServer();"/>
 		</div>
 		<div class="clear"></div>
 	</div>
@@ -146,11 +107,10 @@
 						</tr>
 		           </table>
           		</div>
-         		<!-- Command Display Heading starts -->
 
 				<!-- Command Display starts -->
 				<div class="build_cmd_div" id="console_div">
-			    	<%-- <%= serverLog %> --%>
+			    	 <%= runAgsSrcLog %>
 				</div>
 				<!-- Command Display starts -->
             </div>
@@ -158,33 +118,12 @@
 	</div>
 </form>
 
-<!-- <div class="popup_div" id="generateBuild"> </div>-->
-
 <script type="text/javascript">
-	<%-- <%
-		if(TechnologyTypes.NODE_JS_WEBSERVICE.equals(technology)) {
-	%>
-			if (<%= nodeServerStatus %>) {
-				runAgainstSrcServerRunning();
-			} else {
-				runAgainstSrcServerDown();
-			}
-	<% 
-		} 
-	%>
-	
-	<%
-		if(TechnologyTypes.JAVA_WEBSERVICE.equals(technology) || TechnologyTypes.HTML5_WIDGET.equals(technology) 
-			|| TechnologyTypes.HTML5_MOBILE_WIDGET.equals(technology) || TechnologyTypes.HTML5_MULTICHANNEL_JQUERY_WIDGET.equals(technology)) {
-	%>
-			if (<%= javaServerStatus %>) {
-				runAgainstSrcRunning();
-			} else {
-				runAgainstSrcSDown();
-			}
-	<% 
-		} 
-	%> --%>
+	if (<%=serverStatus%>) {
+		runAgainstSrcServerRunning();
+	} else {
+		runAgainstSrcServerDown();
+	}
 	
     $(document).ready(function() {
     	yesnoPopup($('#generateBuild'), 'generateBuild', '<s:text name="label.generatebuild"/>', 'build','<s:text name="label.build"/>');
@@ -202,18 +141,6 @@
             $('.build_form').attr("action", "buildView");
             $('.build_form').submit();
         });
-        
-        <%-- $('#generatebtn').click(function() {
-            generateBuild('<%= projectCode %>', "generateBuild", this);
-        });
-        
-        $('#nodeJS_runAgnSrc').click(function() {
-        	generateBuild('<%= projectCode %>', "nodeJS_runAgnSrc", this);
-        });
-        
-        $('#runAgnSrc').click(function() {
-        	generateBuild('<%= projectCode %>', "runAgnSrc", this);
-        }); --%>
         
         $('#deleteButton').click(function() {
 			$("#confirmationText").html("Do you want to delete the selected build(s)");
@@ -240,8 +167,7 @@
         }); --%>
     });
     
-
-	$('#clipboard').click(function(){
+	$('#clipboard').click(function() {
 		copyToClipboard($('#build-output').text());
 	});
     
@@ -299,48 +225,36 @@
        	popup('deployIphone', params, $('#popup_div'));
     }
     
-    // When Node js is  running disable run against source button
+    // When  server is  running disable run against source button
     function runAgainstSrcServerRunning() {
-	    disableControl($("#nodeJS_runAgnSrc"), "btn disabled");
-	   	enableControl($("#stopbtn"), "btn nodejs_stopbtn");
-	   	enableControl($("#restartbtn"), "primary btn");
+    	disableButton($("#runAgainstSourceStart"));
+    	enableButton($("#runAgainstSourceStop"));
+    	enableButton($("#runAgainstSourceRestart"));
 	}
     	
- 	// When Node js is not running enable run against source button
+ 	// When server is not running enable run against source button
     function runAgainstSrcServerDown() {
-		disableControl($("#stopbtn"), "btn disabled");
-	    disableControl($("#restartbtn"), "btn disabled");
-	    enableControl($("#nodeJS_runAgnSrc"), "primary btn");
+    	disableButton($("#runAgainstSourceStop"));
+    	disableButton($("#runAgainstSourceRestart"));
+    	enableButton($("#runAgainstSourceStart"))
     }
  	
- // When Java WS is  running enable run against source button
-    function runAgainstSrcRunning() {
-		disableControl($("#runAgnSrc"), "btn disabled");
-	   	enableControl($("#stopbtn"), "btn nodejs_stopbtn");
-	   	enableControl($("#restartbtn"), "primary btn");
-    }
-    
- 	// When Java WS is not running enable run against source button
-    function runAgainstSrcSDown() {
-		disableControl($("#stopbtn"), "btn disabled");
-	    disableControl($("#restartbtn"), "btn disabled");
-	    enableControl($("#runAgnSrc"), "primary btn");
-    }
- 	
+ 	// when server is restarted in run against source 
  	function restartServer() {
- 		$("#build-output").empty();
- 		$("#build-output").html("Server is restarting...");
- 		$("#stopbtn").attr("class", "btn disabled");
-       	$("#restartbtn").attr("class", "btn disabled");
- 		<%-- readerHandlerSubmit('restartServer', '<%= projectCode %>', '<%= FrameworkConstants.REQ_JAVA_START %>', '', true); --%>
+ 		$("#console_div").empty();
+ 		$("#console_div").html("Server is restarting...");
+ 		disableButton($("#runAgainstSourceStop"));
+		disableButton($("#runAgainstSourceRestart"));
+		readerHandlerSubmit('restartServer', '<%= appId %>', '<%= FrameworkConstants.REQ_START %>', '', true, getBasicParams());
  	}
  	
+ 	// when server is stopped in run against source 
 	function stopServer() {
-		$("#build-output").empty();
-		$("#build-output").html("Server is stopping...");
-		$("#stopbtn").attr("class", "btn disabled");
-       	$("#restartbtn").attr("class", "btn disabled");
-		<%-- readerHandlerSubmit('stopServer', '<%= projectCode %>', '<%= FrameworkConstants.REQ_JAVA_STOP %>', '', true); --%>
+		$("#console_div").empty();
+		$("#console_div").html("Server is stopping...");
+		disableButton($("#runAgainstSourceStop"));
+		disableButton($("#runAgainstSourceRestart"));
+		readerHandlerSubmit('stopServer', '<%= appId %>', '<%= FrameworkConstants.REQ_STOP %>', '', true, getBasicParams());
  	}
 	
 	function popupOnOk(obj) {
@@ -364,6 +278,13 @@
 				return false;
 			}
 			buildValidateSuccess("deploy", '<%= FrameworkConstants.REQ_FROM_TAB_DEPLOY %>');
+		} else if (okUrl === "startServer") {
+			var isChecked = $('#importSql').is(":checked");
+			if ($('#importSql').is(":checked") && $('#selectedSourceScript option').length == 0) {
+				$("#errMsg").html('<%= FrameworkConstants.SELECT_DB %>');
+				return false;
+			}
+			buildValidateSuccess('startServer', '<%= FrameworkConstants.REQ_START %>');
 		} else if (okUrl === "runUnitTest") {
 			var params = getBasicParams();
 			progressPopupAsSecPopup('runUnitTest', '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.UNIT %>', $("#generateBuildForm"), params);
@@ -374,19 +295,15 @@
 	}
 	
 	function successEvent(pageUrl, data) {
-    	if(pageUrl == "restartNodeJSServer") {
-    		runAgainstSrcServerRunning();
-    	} else if(pageUrl == "stopNodeJSServer") {
-    		runAgainstSrcServerDown();
-    	} else if(pageUrl == "startNodeJSServer") {
-    		runAgainstSrcServerRunning();
-     	} else if(pageUrl == "restartServer" || pageUrl == "runAgainstSource") {
-     		runAgainstSrcRunning();
+    	 if(pageUrl == "restartServer" || pageUrl == "runAgainstSource") {
+     		runAgainstSrcServerRunning();
      	} else if(pageUrl == "stopServer") {
-     		runAgainstSrcSDown();
+     		runAgainstSrcServerDown();
      	} else if(pageUrl == "NodeJSRunAgainstSource" && $.trim(data) == "Server startup failed") {
      		runAgainstSrcServerDown();
-     	} else if(pageUrl == "NodeJSRunAgainstSource" && $.trim(data) != "Server startup failed") {
+     	}  else  if(pageUrl == "startServer" && ($.trim(data) == "Server startup failed" || $.trim(data) == "[INFO] BUILD FAILURE")) {
+     		runAgainstSrcServerDown();
+     	} else if(pageUrl == "startServer" && $.trim(data) != "Server startup failed") {
      		runAgainstSrcServerRunning();
      	} else if(pageUrl == "checkForConfiguration") {
     		successEnvValidation(data);
