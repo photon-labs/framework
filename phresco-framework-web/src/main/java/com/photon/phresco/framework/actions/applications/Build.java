@@ -59,6 +59,7 @@ import org.xml.sax.SAXException;
 
 import com.google.gson.Gson;
 import com.photon.phresco.commons.model.ApplicationInfo;
+import com.photon.phresco.commons.model.BuildInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
@@ -71,7 +72,6 @@ import com.photon.phresco.framework.api.ProjectRuntimeManager;
 import com.photon.phresco.framework.commons.DiagnoseUtil;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.commons.LogErrorReport;
-import com.photon.phresco.framework.model.BuildInfo;
 import com.photon.phresco.framework.model.PluginProperties;
 import com.photon.phresco.framework.model.SettingsInfo;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
@@ -280,6 +280,7 @@ public class Build extends DynamicParameterUtil {
 			Map<String, Object> buildParamMap = new HashMap<String, Object>();
 			ApplicationInfo applicationInfo = getApplicationInfo();
 			buildParamMap.put(REQ_APP_INFO, applicationInfo);
+			buildParamMap.put(REQ_CUSTOMER_ID, getCustomerId());
 			List<Parameter> parameters = setDynamicParameters(buildParamMap, PHASE_PACKAGE);
 			
 			setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);	

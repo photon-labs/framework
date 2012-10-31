@@ -25,7 +25,7 @@
 
 <%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
-<%@ page import="com.photon.phresco.framework.model.BuildInfo"%>
+<%@ page import="com.photon.phresco.commons.model.BuildInfo"%>
 <%@ page import="com.photon.phresco.util.TechnologyTypes" %>
 
 <script type="text/javascript" src="js/delete.js" ></script>
