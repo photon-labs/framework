@@ -176,6 +176,7 @@ public interface FrameworkConstants {
 	String TARGETS_NODE = "targets";
 	String HUDSON_TASKS_MAVEN_NODE = "hudson.tasks.Maven";
 	String POST_BUILDERS_NODE = "postbuilders";
+	String PRE_BUILDERS_NODE = "prebuilders";
     String CI_FILE_RELEASE_PUBLISHER_NODE="publishers";
     String COLON = ":";
     String HTTP_PROTOCOL = "http";
