@@ -51,7 +51,7 @@
   	sbBuildPath.append("/");    //File separator is not working for this function.
   	sbBuildPath.append(FrameworkConstants.CHECKIN_DIR);
   	sbBuildPath.append("/");
-  	sbBuildPath.append(FrameworkConstants.BUILD_PATH);
+  	sbBuildPath.append(FrameworkConstants.BUILD_PATH);*/
     
 	boolean serverStatus = Boolean.parseBoolean((String) session.getAttribute(appId + FrameworkConstants.SESSION_SERVER_STATUS));
 // 	if (session.getAttribute(appId + FrameworkConstants.SESSION_SERVER_STATUS) == null) {

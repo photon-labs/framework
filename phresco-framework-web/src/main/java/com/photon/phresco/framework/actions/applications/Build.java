@@ -30,7 +30,6 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -168,7 +167,7 @@ public class Build extends DynamicParameterUtil {
 	private String dependantValue = "";
 	private String goal = "";
 	
-	public String view() throws ConfigurationException, IOException {
+	public String view() throws PhrescoException {
 		if (debugEnabled)
 			S_LOGGER.debug("Entering Method  Build.view()");
 		try {
@@ -216,11 +215,11 @@ public class Build extends DynamicParameterUtil {
 				}
 				setReqAttribute(REQ_SERVER_LOG, readLogFile);
 
-		} catch (PhrescoException e) {
+		} catch (ConfigurationException e) {
 			if (debugEnabled) {
 				S_LOGGER.error("Entered into catch block of Build.view()" + FrameworkUtil.getStackTraceAsString(e));
 			}
-			return showErrorPopup(e, getText("excep.hdr.proj.view"));
+			return showErrorPopup(new PhrescoException(e), getText("excep.hdr.proj.view"));
 		}
 		return APP_BUILD;
 	}
@@ -529,7 +528,7 @@ public class Build extends DynamicParameterUtil {
 
 	}
 
-	public String delete() {
+	public String delete() throws PhrescoException {
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method  Build.delete()");
 		}
@@ -564,7 +563,7 @@ public class Build extends DynamicParameterUtil {
 		return view();
 	}
 
-	public String download() {
+	public String download() throws PhrescoException {
 
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method Build.download()");
@@ -612,7 +611,7 @@ public class Build extends DynamicParameterUtil {
 		return view();
 	}
 
-	public String downloadIpa() {
+	public String downloadIpa() throws PhrescoException {
 
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method Build.downloadIPA()");
@@ -790,11 +789,6 @@ public class Build extends DynamicParameterUtil {
 			setSessionAttribute(getAppId() + SESSION_SERVER_PROTOCOL_VALUE, serverProtocol);
 			setSessionAttribute(getAppId() + SESSION_SERVER_HOST_VALUE, serverHost);
 			setSessionAttribute(getAppId() + SESSION_SERVER_PORT_VALUE, new Integer(serverPort).toString());
-		} catch (IOException e) {
-			if (debugEnabled) {
-				S_LOGGER.error("Entered into catch block of Build.startServer()" + FrameworkUtil.getStackTraceAsString(e));
-			}
-			throw new PhrescoException(e);
 		} catch (ConfigurationException e) {
 			if (debugEnabled) {
 				S_LOGGER.error("Entered into catch block of Build.startServer()" + FrameworkUtil.getStackTraceAsString(e));
@@ -940,14 +934,18 @@ public class Build extends DynamicParameterUtil {
 		return builder.toString();
 	}
 
-	public void deleteLogFile() throws IOException, PhrescoException {
-		File logFile = new File(getLogFilePath());
-		File infoFile = new File(getLogFolderPath() + File.separator + RUN_AGS_LOG_FILE);
-		if (logFile.isFile() && logFile.exists()) {
-			logFile.delete();
-		} 
-		if(infoFile.isFile() && infoFile.exists()) {
-			infoFile.delete();
+	public void deleteLogFile() throws PhrescoException {
+		try {
+			File logFile = new File(getLogFilePath());
+			File infoFile = new File(getLogFolderPath() + File.separator + RUN_AGS_LOG_FILE);
+			if (logFile.isFile() && logFile.exists()) {
+				logFile.delete();
+			} 
+			if(infoFile.isFile() && infoFile.exists()) {
+				infoFile.delete();
+			}
+		} catch (PhrescoException e) {
+			throw new PhrescoException(e);
 		}
 	}
 
