@@ -57,7 +57,7 @@
 	    <section class="accordion_panel_wid">
 	        <div class="accordion_panel_inner adv-settings-accoridan-inner">
 	            <section class="lft_menus_container adv-settings-width">
-	                <span class="siteaccordion" id="siteaccordion_active"><span><s:text name="label.build.basic.config"/></span></span>
+	                <span class="siteaccordion" id="siteaccordion_active"><span><s:text name="lbl.build.basic.config"/></span></span>
 	                <div class="mfbox siteinnertooltiptxt" id="build_adv_sett">
 	                    <div class="scrollpanel adv_setting_accordian_bottom">
 	                        <section class="scrollpanel_inner">
@@ -73,18 +73,18 @@
 								
 								<div class="control-group">
 									<label class="control-label labelbold popupLbl">
-										<s:text name='label.svn.type' />
+										<s:text name='lbl.svn.type' />
 									</label>
 									<div class="controls" style="padding-top: 5px;">
-										<input type="radio" name="svnType" value="svn"  <%= existingJob == null ? "checked" : "" %> />&nbsp; <s:text name="label.svn"/>
-										<input type="radio" name="svnType" value="git" />&nbsp; <s:text name="label.git"/>
-										<input type="radio" name="svnType" value="clonedWorkspace" />&nbsp; <s:text name="label.cloned"/>
+										<input type="radio" name="svnType" value="svn"  <%= existingJob == null ? "checked" : "" %> />&nbsp; <s:text name="lbl.svn"/>
+										<input type="radio" name="svnType" value="git" />&nbsp; <s:text name="lbl.git"/>
+										<input type="radio" name="svnType" value="clonedWorkspace" />&nbsp; <s:text name="lbl.cloned"/>
 									</div>
 								</div>
 								
 								<div class="control-group" id="urlControl">
 									<label class="control-label labelbold popupLbl">
-										<span class="red">* </span> <s:text name='label.svn.url' />
+										<span class="red">* </span> <s:text name='lbl.svn.url' />
 									</label>
 									<div class="controls">
 										<input type="text" id="svnurl" name="svnurl" class="input-xlarge" value="<%= existingJob == null ? "" : existingJob.getSvnUrl()%>">
@@ -93,7 +93,7 @@
 					
 								<div class="control-group" id="branchControl">
 									<label class="control-label labelbold popupLbl">
-										<span class="red">* </span> <s:text name='label.branch' />
+										<span class="red">* </span> <s:text name='lbl.branch' />
 									</label>
 									<div class="controls">
 										<input type="text" id="branch" name="branch" class="input-xlarge" maxlength="63" title="63 Characters only" value="">
@@ -103,7 +103,7 @@
 								<!-- Use clonned workspaces -->
 					            <div class="control-group" id="parentProjectControl">
 									<label class="control-label labelbold popupLbl">
-										<s:text name='label.parent.project' />
+										<s:text name='lbl.parent.project' />
 									</label>
 									<div class="controls">
 											<select name="usedClonnedWorkspace" class="input-xlarge " >
@@ -126,7 +126,7 @@
 											
 								<div class="control-group" id="usernameControl">
 									<label class="control-label labelbold popupLbl">
-										<span class="red">* </span> <s:text name='label.username' />
+										<span class="red">* </span> <s:text name='lbl.username' />
 									</label>
 									<div class="controls">
 										<input type="text" id="username" name="username" class="input-xlarge" maxlength="63" title="63 Characters only" value="">
@@ -135,7 +135,7 @@
 								
 								<div class="control-group" id="passwordControl">
 									<label class="control-label labelbold popupLbl">
-										<span class="red">* </span> <s:text name='label.password' />
+										<span class="red">* </span> <s:text name='lbl.password' />
 									</label>
 									<div class="controls">
 										<input type="password" id="password" name="password" class="input-xlarge" maxlength="63" title="63 Characters only" value="">
@@ -144,7 +144,7 @@
 								
 								<div class="control-group">
 									<label class="control-label labelbold popupLbl">
-										<s:text name='label.sender.mail' />
+										<s:text name='lbl.sender.mail' />
 									</label>
 									<div class="controls">
 										<input type="text" name="senderEmailId" class="input-xlarge" value="<%= existingJob == null ? "" : existingJob.getSenderEmailId()%>">
@@ -153,7 +153,7 @@
 								
 								<div class="control-group">
 									<label class="control-label labelbold popupLbl">
-										<s:text name='label.sender.pwd' />
+										<s:text name='lbl.sender.pwd' />
 									</label>
 									<div class="controls">
 										<input type="password" name="senderEmailPassword" class="input-xlarge" value="<%= existingJob == null ? "" : existingJob.getSenderEmailPassword()%>">
@@ -162,12 +162,12 @@
 								
 								<div class="control-group">
 									<label class="control-label labelbold popupLbl">
-										<s:text name='label.recipient.mail' />
+										<s:text name='lbl.recipient.mail' />
 									</label>
 									<div class="controls">
 										<div class="input">
 											<div class="multipleFields emaillsFieldsWidth">
-												<div><input id="successEmail" type="checkbox" name="emails"  value="success"/>&nbsp; <s:text name="label.when.success"/></div>
+												<div><input id="successEmail" type="checkbox" name="emails"  value="success"/>&nbsp; <s:text name="lbl.when.success"/></div>
 											</div>
 											<div class="multipleFields">
 												<div><input id="successEmailId" type="text" name="successEmailIds"  value="<%= existingJob == null ? "" : (String)existingJob.getEmail().get("successEmails")%>" disabled></div>
@@ -176,7 +176,7 @@
 										
 										<div class="input">
 											<div class="multipleFields emaillsFieldsWidth">
-												<div><input id="failureEmail" type="checkbox" name="emails" value="failure"/> &nbsp;<s:text name="label.when.fail"/></div>
+												<div><input id="failureEmail" type="checkbox" name="emails" value="failure"/> &nbsp;<s:text name="lbl.when.fail"/></div>
 											</div>
 											<div class="multipleFields">
 												<div><input id="failureEmailId" type="text" name="failureEmailIds" value="<%= existingJob == null ? "" : (String)existingJob.getEmail().get("failureEmails")%>" disabled></div>
@@ -187,7 +187,7 @@
 								
 								<div class="control-group">
 									<label class="control-label labelbold popupLbl">
-										Build Triggers
+										<s:text name='lbl.build.trigger' />
 									</label>
 									<div class="controls" style="padding-top: 5px;">
 										<input id="buildPeriodically" type="checkbox" name="triggers" value="TimerTrigger"/>&nbsp;Build periodically
@@ -246,21 +246,21 @@
 								
 								<div class="control-group">
 									<label class="control-label labelbold popupLbl">
-										<s:text name='label.schedule' />
+										<s:text name='lbl.schedule' />
 									</label>
 									<div class="controls" style="padding-top: 5px;">
-										<input id="scheduleDaily" type="radio" name="schedule" value="Daily"  onChange="javascript:show('Daily');" <%= ((schedule.equals("Daily")) || (schedule.equals(""))) ? "checked" : "" %> />&nbsp; <s:text name="label.daily"/>
-										<input id="scheduleDaily" type="radio" name="schedule" value="Weekly" onChange="javascript:show('Weekly');" <%= schedule.equals("Weekly") ? "checked" : "" %> />&nbsp; <s:text name="label.weekly"/>
-										<input id="scheduleDaily" type="radio" name="schedule" value="Monthly" onChange="javascript:show('Monthly');" <%= schedule.equals("Monthly") ? "checked" : "" %>/>&nbsp; <s:text name="label.monthly"/>
+										<input id="scheduleDaily" type="radio" name="schedule" value="Daily"  onChange="javascript:show('Daily');" <%= ((schedule.equals("Daily")) || (schedule.equals(""))) ? "checked" : "" %> />&nbsp; <s:text name="lbl.daily"/>
+										<input id="scheduleDaily" type="radio" name="schedule" value="Weekly" onChange="javascript:show('Weekly');" <%= schedule.equals("Weekly") ? "checked" : "" %> />&nbsp; <s:text name="lbl.weekly"/>
+										<input id="scheduleDaily" type="radio" name="schedule" value="Monthly" onChange="javascript:show('Monthly');" <%= schedule.equals("Monthly") ? "checked" : "" %>/>&nbsp; <s:text name="lbl.monthly"/>
 									</div>
 								</div>
 								
 								
 							<div class="clearfix">
 										<div  id='Daily' style="text-align: center; margin-bottom: 5px;"> <!-- class="schedulerWidth" -->
-										<div><s:text name="label.every"/> &nbsp;&nbsp;&nbsp;&nbsp;	<s:text name="label.hours"/> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <s:text name="label.minutes"/></div>
+										<div><s:text name="lbl.every"/> &nbsp;&nbsp;&nbsp;&nbsp;	<s:text name="lbl.hours"/> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <s:text name="lbl.minutes"/></div>
 										<div class="dailyInnerDiv">
-											<s:text name="label.At"/> &nbsp;&nbsp;
+											<s:text name="lbl.At"/> &nbsp;&nbsp;
 											<input type="checkbox" id="daily_every" name="daily_every" onChange="javascript:show('Daily');" <%= dailyEvery %>>
 											&nbsp;&nbsp;
 						                    <select id="daily_hour" name="daily_hour" onChange="javascript:show('Daily');" class="schedulerSelectWidth">
@@ -312,7 +312,7 @@
 									   		%>
 					                    </select>
 					                    
-					                    &nbsp; <s:text name="label.smal.at"/> &nbsp;
+					                    &nbsp; <s:text name="lbl.smal.at"/> &nbsp;
 					                    <select id="weekly_hours" name="weekly_hours" onChange="javascript:show('Weekly');" class="schedulerSelectWidth alignVertical">
 					                        <option value="*">*</option>
 						                    <% 
@@ -324,7 +324,7 @@
 						                    %>
 						                        <option value="<%= i %>" <%= selectedStr %>><%= i %></option>
 						                    <% } %>
-					                    </select>&nbsp;<s:text name="label.hour"/>&nbsp;
+					                    </select>&nbsp;<s:text name="lbl.hour"/>&nbsp;
 					                    
 					                  	<select id="weekly_minute" name="weekly_minute" onChange="javascript:show('Weekly');" class="schedulerSelectWidth alignVertical">
 						                  <option value="*">*</option>            
@@ -337,11 +337,11 @@
 						                  %>
 						                      <option value="<%= i %>" <%= selectedStr %>><%= i %></option>
 						                  <% } %>
-					                   	</select>&nbsp;<s:text name="label.minute"/>
+					                   	</select>&nbsp;<s:text name="lbl.minute"/>
 					                                                
 									</div>
 									<div id='Monthly' style="text-align: center; margin-bottom: 5px;"> <!-- class="schedulerWidth" -->
-					                   <s:text name="label.every"/>
+					                   <s:text name="lbl.every"/>
 					                   <select id="monthly_day" name="monthly_day" onChange="javascript:show('Monthly');" class="schedulerSelectWidth alignVertical">
 					                           <option value="*">*</option>
 					                       <% 
@@ -353,7 +353,7 @@
 					                       	%>
 					                           <option value="<%= i %>" <%= selectedStr %>><%= i %></option>
 					                       <% } %>
-					                   </select>&nbsp;<s:text name="label.of"/>&nbsp;
+					                   </select>&nbsp;<s:text name="lbl.of"/>&nbsp;
 					                   
 					                  	<select id="monthly_month" name="monthly_month" multiple onChange="javascript:show('Monthly');" class="schedulerDay alignVertical">
 											<%
@@ -376,7 +376,7 @@
 									   		%>
 					                    </select>
 					                    
-										&nbsp; <s:text name="label.smal.at"/> &nbsp;
+										&nbsp; <s:text name="lbl.smal.at"/> &nbsp;
 					                    <select id="monthly_hour" name="monthly_hour" onChange="javascript:show('Monthly');" class="schedulerSelectWidth alignVertical">
 					                        <option value="*">*</option>
 					                    <% 
@@ -388,7 +388,7 @@
 					                    %>
 					                        <option value="<%= i %>" <%= selectedStr %>><%= i %></option>
 					                    <% } %>
-					                    </select>&nbsp;<s:text name="label.hour"/>
+					                    </select>&nbsp;<s:text name="lbl.hour"/>
 					                    &nbsp;
 					                    <select id="monthly_minute" name="monthly_minute" onChange="javascript:show('Monthly');" class="schedulerSelectWidth alignVertical">
 					                        <option value="*">*</option>
@@ -401,14 +401,14 @@
 					                    %>
 					                        <option value="<%= i %>" <%= selectedStr %>><%= i %></option>
 					                    <% } %>
-					                    </select> &nbsp; <s:text name="label.minute"/>
+					                    </select> &nbsp; <s:text name="lbl.minute"/>
 					                                                
 									</div>
 								</div>
 								
 								<div class="control-group">
 									<label class="control-label labelbold popupLbl">
-										<s:text name='label.cron.expression' />
+										<s:text name='lbl.cron.expression' />
 									</label>
 									<div class="controls" id="cronValidation">
 									</div>
@@ -417,7 +417,7 @@
 								<!-- Down stream projects specification -->
 								<div class="control-group">
 									<label class="control-label labelbold popupLbl">
-										<s:text name='label.downstream.projects' />
+										<s:text name='lbl.downstream.projects' />
 									</label>
 									<div class="controls">
 										<select id="downstreamProject" name="downstreamProject" class="input-xlarge">
@@ -429,11 +429,11 @@
 								<!-- clone this workspace -->
 								<div class="control-group">
 									<label class="control-label labelbold popupLbl">
-										<s:text name='label.clone.workspace' />
+										<s:text name='lbl.clone.workspace' />
 									</label>
 									<div class="controls" style="padding-top: 5px;">
-										<input type="radio" name="cloneWorkspace" value="true" />&nbsp; <s:text name="label.yes"/>
-										<input type="radio" name="cloneWorkspace" value="false" checked/>&nbsp; <s:text name="label.no"/>
+										<input type="radio" name="cloneWorkspace" value="true" />&nbsp; <s:text name="lbl.yes"/>
+										<input type="radio" name="cloneWorkspace" value="false" checked/>&nbsp; <s:text name="lbl.no"/>
 									</div>
 								</div>
 											
@@ -450,7 +450,7 @@
 	    <section class="accordion_panel_wid">
 	        <div class="accordion_panel_inner adv-settings-accoridan-inner">
 	            <section class="lft_menus_container adv-settings-width">
-	                <span class="siteaccordion" id="siteaccordion_active"><span><s:text name="label.build.config"/></span></span>
+	                <span class="siteaccordion" id="siteaccordion_active"><span><s:text name="lbl.build.config"/></span></span>
 	                <div class="mfbox siteinnertooltiptxt" id="build_adv_sett">
 	                    <div class="scrollpanel adv_setting_accordian_bottom">
 	                        <section class="scrollpanel_inner">
@@ -459,12 +459,12 @@
 								
 								<div class="control-group">
 									<label class="control-label labelbold popupLbl">
-										<s:text name='label.ci.operation' />
+										<s:text name='lbl.ci.operation' />
 									</label>
 									<div class="controls">
 										<select id="operation" name="operation" class="input-xlarge">
 									        <option value="build">Build</option>
-									        	<option value="deploy">Deploy</option>
+									        <option value="deploy">Deploy</option>
 									        <option value="functionalTest">Functional Test</option>
 										</select>
 									</div>
@@ -488,29 +488,29 @@
 	    <section class="accordion_panel_wid">
 	        <div class="accordion_panel_inner adv-settings-accoridan-inner">
 	            <section class="lft_menus_container adv-settings-width">
-	                <span class="siteaccordion" id="siteaccordion_active"><span><s:text name="label.build.uploader.config"/></span></span>
+	                <span class="siteaccordion" id="siteaccordion_active"><span><s:text name="lbl.build.uploader.config"/></span></span>
 	                <div class="mfbox siteinnertooltiptxt" id="build_adv_sett">
 	                    <div class="scrollpanel adv_setting_accordian_bottom">
 	                        <section class="scrollpanel_inner">
 	
 								<div class="control-group">
 									<label class="control-label labelbold popupLbl">
-										<s:text name='label.enable.build.release' />
+										<s:text name='lbl.enable.build.release' />
 									</label>
 									<div class="controls" style="padding-top: 5px;">
-										<input type="radio" name="enableBuildRelease" value="true" />&nbsp; <s:text name="label.yes"/>
-										<input type="radio" name="enableBuildRelease" value="false" checked />&nbsp; <s:text name="label.no"/>
+										<input type="radio" name="enableBuildRelease" value="true" />&nbsp; <s:text name="lbl.yes"/>
+										<input type="radio" name="enableBuildRelease" value="false" checked />&nbsp; <s:text name="lbl.no"/>
 									</div>
 								</div>
 								
 								<fieldset class="popup-fieldset fieldsetBottom perFieldSet" style="text-align: left;" id="collabNetInfo">
-									<legend class="fieldSetLegend"><s:text name="label.build.release"/></legend>
+									<legend class="fieldSetLegend"><s:text name="lbl.build.release"/></legend>
 									
 									<div id="CollabNetConfig">
 									
 										<div class="control-group">
 											<label class="control-label labelbold popupLbl">
-												<span class="red">* </span>  <s:text name='label.build.release.url' />
+												<span class="red">* </span>  <s:text name='lbl.build.release.url' />
 											</label>
 											<div class="controls">
 												<input type="text" id="collabNetURL" class="input-xlarge" name="collabNetURL" value="<%= existingJob == null ? "" : existingJob.getCollabNetURL() %>">
@@ -519,7 +519,7 @@
 							
 										<div class="control-group">
 											<label class="control-label labelbold popupLbl">
-												<span class="red">* </span>  <s:text name='label.build.release.username' />
+												<span class="red">* </span>  <s:text name='lbl.build.release.username' />
 											</label>
 											<div class="controls">
 												<input type="text" id="collabNetusername" name="collabNetusername" class="input-xlarge" maxlength="63" title="63 Characters only" value="<%= existingJob == null ? "" : existingJob.getCollabNetusername() %>">
@@ -528,7 +528,7 @@
 										
 										<div class="control-group">
 											<label class="control-label labelbold popupLbl">
-												<span class="red">* </span>  <s:text name='label.build.release.password' />
+												<span class="red">* </span>  <s:text name='lbl.build.release.password' />
 											</label>
 											<div class="controls">
 												<input type="password" id="collabNetpassword" name="collabNetpassword" class="input-xlarge" maxlength="63" title="63 Characters only" value="<%= existingJob == null ? "" : existingJob.getCollabNetpassword() %>">
@@ -537,7 +537,7 @@
 										
 										<div class="control-group">
 											<label class="control-label labelbold popupLbl">
-												<span class="red">* </span>  <s:text name='label.build.release.project' />
+												<span class="red">* </span>  <s:text name='lbl.build.release.project' />
 											</label>
 											<div class="controls">
 												<input type="text" id="collabNetProject" name="collabNetProject" class="input-xlarge" maxlength="63" title="63 Characters only" value="<%= existingJob == null ? "" : existingJob.getCollabNetProject() %>">
@@ -546,7 +546,7 @@
 										
 										<div class="control-group">
 											<label class="control-label labelbold popupLbl">
-												<span class="red">* </span>  <s:text name='label.build.release.package' />
+												<span class="red">* </span>  <s:text name='lbl.build.release.package' />
 											</label>
 											<div class="controls">
 												<input type="text" id="collabNetPackage" name="collabNetPackage" class="input-xlarge" maxlength="63" title="63 Characters only" value="<%= existingJob == null ? "" : existingJob.getCollabNetPackage() %>">
@@ -555,7 +555,7 @@
 										
 										<div class="control-group">
 											<label class="control-label labelbold popupLbl">
-												<span class="red">* </span> <s:text name='label.build.release.release.name' />
+												<span class="red">* </span> <s:text name='lbl.build.release.release.name' />
 											</label>
 											<div class="controls">
 												<input type="text" id="collabNetRelease" name="collabNetRelease" class="input-xlarge" maxlength="63" title="63 Characters only" value="<%= existingJob == null ? "" : existingJob.getCollabNetRelease() %>">
@@ -564,11 +564,11 @@
 										
 										<div class="control-group">
 											<label class="control-label labelbold popupLbl">
-												<s:text name='label.build.release.overwrite' />
+												<s:text name='lbl.build.release.overwrite' />
 											</label>
 											<div class="controls" style="padding-top: 5px;">
-												<input type="radio" name="overwriteFiles" value="true" checked />&nbsp; <s:text name="label.yes"/>
-												<input type="radio" name="overwriteFiles" value="false" />&nbsp; <s:text name="label.no"/>
+												<input type="radio" name="overwriteFiles" value="true" checked />&nbsp; <s:text name="lbl.yes"/>
+												<input type="radio" name="overwriteFiles" value="false" />&nbsp; <s:text name="lbl.no"/>
 											</div>
 										</div>
 								

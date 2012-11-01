@@ -86,13 +86,13 @@
 <form action="CIBuildDelete" name="ciBuilds" id="deleteObjects" method="post" class="configurations_list_form ciFormJob">
     <div class="operation ciOperationDiv">
     	<div class="ciOperationEleme">
-	        <input id="setup" type="button" value="<s:text name="label.setup"/>" class="btn btn-primary" data-toggle="modal" href="#popupPage" >
-	        <input id="startJenkins" type="button" value="<s:text name="label.start"/>" class="btn btn-primary" data-toggle="modal" href="#popupPage" >
-	        <input id="stopJenkins" type="button" value="<s:text name="label.stop"/>" class="btn" disabled="disabled" data-toggle="modal" href="#popupPage" >
-	        <input id="configure" type="button" value="<s:text name="label.configure"/>" class="btn btn-primary" data-toggle="modal" href="#popupPage"> <!-- additional param -->
-	        <input id="build" type="button" value="<s:text name="label.build"/>" class="btn" disabled="disabled" onclick="buildCI();">
-	        <input id="deleteBuild" type="button" value="<s:text name="label.deletebuild"/>" class="btn" disabled="disabled" data-toggle="modal" href="#popupPage">
-	        <input id="deleteJob" type="button" value="<s:text name="label.deletejob"/>" class="btn" disabled="disabled" data-toggle="modal" href="#popupPage">
+	        <input id="setup" type="button" value="<s:text name="lbl.setup"/>" class="btn btn-primary" data-toggle="modal" href="#popupPage" >
+	        <input id="startJenkins" type="button" value="<s:text name="lbl.start"/>" class="btn btn-primary" data-toggle="modal" href="#popupPage" >
+	        <input id="stopJenkins" type="button" value="<s:text name="lbl.stop"/>" class="btn" disabled="disabled" data-toggle="modal" href="#popupPage" >
+	        <input id="configure" type="button" value="<s:text name="lbl.configure"/>" class="btn btn-primary" data-toggle="modal" href="#popupPage"> <!-- additional param -->
+	        <input id="build" type="button" value="<s:text name="lbl.build"/>" class="btn" disabled="disabled" onclick="buildCI();">
+	        <input id="deleteBuild" type="button" value="<s:text name="lbl.deletebuild"/>" class="btn" disabled="disabled" data-toggle="modal" href="#popupPage">
+	        <input id="deleteJob" type="button" value="<s:text name="lbl.deletejob"/>" class="btn" disabled="disabled" data-toggle="modal" href="#popupPage">
         </div>
     </div>
     
@@ -145,10 +145,10 @@
 														<input type="checkbox" value="<%= jobName %>" class="<%= jobName %>AllBuild" name="allBuilds">
 				                            		</th>
 				                            		<th>#</th>
-			                            			<th><s:text name="label.url"/></th>
+			                            			<th><s:text name="lbl.url"/></th>
 			                            			<th><s:text name="lbl.download"/></th>
-			                            			<th><s:text name="label.time"/></th>
-			                            			<th><s:text name="label.status"/></th>
+			                            			<th><s:text name="lbl.time"/></th>
+			                            			<th><s:text name="lbl.status"/></th>
 			                            		</tr>
 				                            </thead>
 				                            
@@ -299,7 +299,7 @@ $(document).ready(function() {
 		enableDisableDeleteButton($(this).val());
 	});
 	
-	yesnoPopup($('#configure'), 'configure', '<s:text name="label.configure"/>', 'saveJob','<s:text name="label.save"/>', $('#deleteObjects'));
+	yesnoPopup($('#configure'), 'configure', '<s:text name="lbl.configure"/>', 'saveJob','<s:text name="lbl.save"/>', $('#deleteObjects'));
     
 //     $('#closeGenerateTest, #closeGenTest').click(function() {
 //     	ProgressShow("none");

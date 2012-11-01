@@ -141,7 +141,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
             
             String jenkinsTemplateDir = Utility.getJenkinsTemplateDir();
             String configFilePath = jenkinsTemplateDir + job.getRepoType() + HYPHEN + CONFIG_XML;
-            System.out.println("configFilePath ======> " + configFilePath);
+            System.out.println("configFilePath ...  " + configFilePath);
             File configFile = new File(configFilePath);
             
             ConfigProcessor processor = new ConfigProcessor(configFile);
@@ -190,16 +190,18 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
         try {
             String jenkinsTemplateDir = Utility.getJenkinsTemplateDir();
             String credentialFilePath = jenkinsTemplateDir + job.getRepoType() + HYPHEN + CREDENTIAL_XML;
-            System.out.println("credentialFilePath ========> " + credentialFilePath);
+            if (debugEnabled) {
+            	S_LOGGER.debug("credentialFilePath ... " + credentialFilePath);
+            }
             File credentialFile = new File(credentialFilePath);
             
             SvnProcessor processor = new SvnProcessor(credentialFile);
             
-			DataInputStream in = new DataInputStream(new FileInputStream(credentialFile));
-			while (in.available() != 0) {
-				System.out.println(in.readLine());
-			}
-			in.close();
+//			DataInputStream in = new DataInputStream(new FileInputStream(credentialFile));
+//			while (in.available() != 0) {
+//				System.out.println(in.readLine());
+//			}
+//			in.close();
 			
             processor.changeNodeValue("credentials/entry//userName", job.getUserName());
             processor.changeNodeValue("credentials/entry//password", job.getPassword());
@@ -223,16 +225,18 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
         try {
             String jenkinsTemplateDir = Utility.getJenkinsTemplateDir();
             String mailFilePath = jenkinsTemplateDir + MAIL + HYPHEN + CREDENTIAL_XML;
-            System.out.println("configFilePath ======> " + mailFilePath);
+            if (debugEnabled) {
+            	S_LOGGER.debug("configFilePath ... " + mailFilePath);
+            }
             File mailFile = new File(mailFilePath);
             
             SvnProcessor processor = new SvnProcessor(mailFile);
             
-			DataInputStream in = new DataInputStream(new FileInputStream(mailFile));
-			while (in.available() != 0) {
-				System.out.println(in.readLine());
-			}
-			in.close();
+//			DataInputStream in = new DataInputStream(new FileInputStream(mailFile));
+//			while (in.available() != 0) {
+//				System.out.println(in.readLine());
+//			}
+//			in.close();
 			
 			// Mail have to go with jenkins running email address
 			InetAddress ownIP = InetAddress.getLocalHost();
