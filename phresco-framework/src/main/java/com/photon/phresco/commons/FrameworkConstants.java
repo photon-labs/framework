@@ -198,7 +198,8 @@ public interface FrameworkConstants {
     String SERVER_PORT = "port";
     String LOG_DIR = "log";
     String RUN_AGS_ENV_FILE = "runagainstsource.info";
-    String LOG_FILE = "server.log";
+    String LOG_FILE = "sourcecompile.log";
+    String RUN_AGS_LOG_FILE = "runagainstsource.log";
     String LINE_SEPERATOR = "line.separator";
     String READ_LOG_VIEW = "view";
     String READ_ERROR_LOG_VIEW = "errorLogView";
@@ -415,15 +416,10 @@ public interface FrameworkConstants {
     String SESSION_GRAPH_SCRIPT = "graphScript";
     String SESSION_NODEJS_SERVER_NAME = "_serverName";
     String SESSION_NODEJS_DB_NAME = "_databaseName";
-    String SESSION_NODEJS_SERVER_STATUS = "_NodeJSServerStatus";
-    String SESSION_JAVA_SERVER_STATUS = "_javaServerStatus";
-    String SESSION_NODEJS_IMPORTSQL_VALUE = "_importSqlValue";
-    String SESSION_NODEJS_SERVER_PORT_VALUE ="NodeServerPort";
-    String SESSION_NODEJS_SERVER_HOST_VALUE ="NodeServerHost";
-    String SESSION_NODEJS_SERVER_PROTOCOL_VALUE ="NodeServerProtocol";
-    String SESSION_JAVA_SERVER_PORT_VALUE ="JavaServerPort";
-    String SESSION_JAVA_SERVER_HOST_VALUE ="JavaServerHost";
-    String SESSION_JAVA_SERVER_PROTOCOL_VALUE ="JavaServerProtocol";
+    String SESSION_SERVER_STATUS = "_serverStatus";
+    String SESSION_SERVER_PORT_VALUE ="serverPort";
+    String SESSION_SERVER_HOST_VALUE ="serverHost";
+    String SESSION_SERVER_PROTOCOL_VALUE ="serverProtocol";
     String SESSION_ENV_NAME = "environment";
     /*
      * Request Constants
@@ -668,6 +664,8 @@ public interface FrameworkConstants {
 	String REQ_JAVA_READ_LOG_FILE = "javaReadLogFile";
 	String REQ_JAVA_START = "javaStart";
 	String REQ_JAVA_STOP = "javaStop";
+	String REQ_START = "Start";
+	String REQ_STOP = "Stop";
 	
 	String REQ_EXTERNAL_FEATURES = "External Features";
 	String REQ_CUSTOM_FEATURES = "Custom Features";
@@ -1506,10 +1504,15 @@ public interface FrameworkConstants {
 		String EXCEPTION_BUILDS_LIST = "excep.hdr.builds.list";
 		String EXCEPTIN_BUILD_DEPENDANT_VALUE = "excep.hdr.build.depndnt.val";
 		String EXCEPTION_QUALITY_LOAD = "excep.hdr.quality.unit";
-		String EXCEPTION_REPORT_VIEW_SITE = "excep.report.view";
-		String EXCEPTION_REPORT_GENERATE_SITE_REPORT = "excep.report.generate";
-		String EXCEPTION_REPORT_CONFIGURE = "excep.report.configure";
-		String EXCEPTION_REPORT_CREATE_REPORT_CONFIG = "excep.report.create.report.config";
+		String EXCEPTION_REPORT_VIEW_SITE = "excep.hdr.report.view";
+		String EXCEPTION_REPORT_GENERATE_SITE_REPORT = "excep.hdr.report.generate";
+		String EXCEPTION_REPORT_CONFIGURE = "excep.hdr.report.configure";
+		String EXCEPTION_REPORT_CREATE_REPORT_CONFIG = "excep.hdr.report.create.report.config";
+		String EXCEPTION_CONFIGURATION_LIST_ENV = "excep.hdr.configuration.list.env";
+		String EXCEPTION_CONFIGURATION_LIST_CONFIG = "excep.hdr.configuration.list.config";
+		String EXCEPTION_RUNAGNSRC_SERVER_START = "excep.hdr.proj.runagnsrc.server.start";
+		String EXCEPTION_RUNAGNSRC_SERVER_STOP = "excep.hdr.proj.runagssrc.stop";
+		String EXCEPTION_RUNAGNSRC_SERVER_RESTART = "excep.hdr.proj.runagssrc.restart";
 		
 		
 		/**
@@ -1545,13 +1548,11 @@ public interface FrameworkConstants {
 		/**
 		 * Test and test report directory constants
 		 */
-		String POM_PROP_KEY_UNITTEST_DIR = "phresco.unitTest.dir";
 		String POM_PROP_KEY_UNITTEST_RPT_DIR = "phresco.unitTestReport.dir";
 		String POM_PROP_KEY_UNITTEST_TESTSUITE_XPATH = "phresco.unitTest.testsuite.xpath";
 		String POM_PROP_KEY_UNITTEST_TESTCASE_PATH = "phresco.unitTest.testcase.path";
 		String POM_PROP_KEY_LOADTEST_DIR = "phresco.loadTest.dir";
 		String POM_PROP_KEY_LOADTEST_RPT_DIR = "phresco.loadTestReport.dir";
-		String POM_PROP_KEY_FUNCTEST_DIR = "phresco.functioanlTest.dir";
         String POM_PROP_KEY_FUNCTEST_RPT_DIR = "phresco.functionalTestReport.dir";
         String POM_PROP_KEY_FUNCTEST_TESTSUITE_XPATH = "phresco.functionalTest.testsuite.xpath";
         String POM_PROP_KEY_FUNCTEST_TESTCASE_PATH = "phresco.functionalTest.testcase.path";

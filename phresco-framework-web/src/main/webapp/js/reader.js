@@ -74,9 +74,13 @@ function asyncHandler(appId, actionType, pageUrl) {
             'actionType' : actionType
         },
         success : function(data) { 
-            if ((pageUrl == "restartServer" || pageUrl == "runAgainstSource") && 
-            		($.trim(data)).indexOf("Compilation failure") > -1) {
-            	runAgainstSrcSDown ();
+        	// To Change Button for Run Against Source depending on Server 
+            if ((pageUrl == "startServer" || pageUrl == "restartServer")) {
+            	if ($.trim(data).indexOf("BUILD FAILURE") > -1 || $.trim(data).indexOf("Server startup failed") > -1) {
+            		runAgainstSrcServerDown();
+            	} else if ($.trim(data).indexOf("server started") > -1 || $.trim(data).indexOf("Running war") > -1) {
+            		runAgainstSrcServerRunning();
+            	}
             }
             readerHandler(data, appId, actionType, pageUrl); 
         }
