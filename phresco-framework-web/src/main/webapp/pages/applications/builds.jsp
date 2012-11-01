@@ -27,7 +27,7 @@
 <%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
 <%@ page import="com.photon.phresco.util.TechnologyTypes" %>
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
-<%@ page import="com.photon.phresco.framework.model.BuildInfo"%>
+<%@ page import="com.photon.phresco.commons.model.BuildInfo"%>
 
 <style type="text/css">
    	table th {

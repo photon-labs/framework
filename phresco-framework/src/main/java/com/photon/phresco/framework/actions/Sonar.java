@@ -19,12 +19,11 @@
  */
 package com.photon.phresco.framework.actions;
 
-import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.framework.api.AbstractActionType;
 
 public class Sonar extends AbstractActionType {
     
-    private static final String NAME = "sonar";
+    private static final String NAME = "validate-code";
     private String type;
     
     public String getName() {
@@ -32,7 +31,7 @@ public class Sonar extends AbstractActionType {
     }
     
     public StringBuilder getCommand() {
-    	return new StringBuilder(FrameworkConstants.MVN_SONAR_COMMAND);
+    	return null;
     }
 
     public String getType() {

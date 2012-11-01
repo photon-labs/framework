@@ -455,8 +455,7 @@
 				$("#console_div").html("Deploying project...");
 			} else {
 				$("#console_div").html("Server is starting...");
-				disableControl($("#nodeJS_runAgnSrc"), "btn disabled");
-				disableControl($("#runAgnSrc"), "btn disabled");
+				disableButton($("#runAgainstSourceStart"));
 			}
 			performUrlActions(url, readerSession);
 		}
