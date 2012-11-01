@@ -53,12 +53,13 @@
   	sbBuildPath.append("/");
   	sbBuildPath.append(FrameworkConstants.BUILD_PATH);*/
     
-	boolean serverStatus = Boolean.parseBoolean((String) session.getAttribute(appId + FrameworkConstants.SESSION_SERVER_STATUS));
-// 	if (session.getAttribute(appId + FrameworkConstants.SESSION_SERVER_STATUS) == null) {
-// 		serverStatus = false;
-// 	} else {
-// 		serverStatus = session.getAttribute(appId + FrameworkConstants.SESSION_SERVER_STATUS).toString().equals("true") ? true : false;
-// 	}
+  	boolean serverStatus = false;
+//	boolean serverStatus = Boolean.parseBoolean((String) session.getAttribute(appId + FrameworkConstants.SESSION_SERVER_STATUS));
+ 	if (session.getAttribute(appId + FrameworkConstants.SESSION_SERVER_STATUS) == null) {
+		serverStatus = false;
+		} else {
+ 		serverStatus = session.getAttribute(appId + FrameworkConstants.SESSION_SERVER_STATUS).toString().equals("true") ? true : false;
+ 	}
 	String runAgsSrcLog = (String) request.getAttribute(FrameworkConstants.REQ_SERVER_LOG);
 %>
 
@@ -127,6 +128,7 @@
 	
     $(document).ready(function() {
     	yesnoPopup($('#generateBuild'), 'generateBuild', '<s:text name="label.generatebuild"/>', 'build','<s:text name="label.build"/>');
+    	yesnoPopup($('#runAgainstSourceStart'),'showRunAgainstSourcePopup', '<s:text name="label.runagainstsource"/>', 'startServer','<s:text name="label.run"/>');
     	if ($.browser.safari && $.browser.version == 530.17) {
     		$(".buildDiv").show().css("float","left");
     	}
