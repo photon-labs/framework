@@ -558,6 +558,9 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 			 return job;
 		 } catch (FileNotFoundException e) {
 			 return null;
+		 } catch (com.google.gson.JsonParseException e) {
+			 S_LOGGER.debug("it is already adpted project !!!!!");
+			 return null;
 		 } catch (IOException e) {
 			 return null;
 		 }

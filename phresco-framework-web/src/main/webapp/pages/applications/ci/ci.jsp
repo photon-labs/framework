@@ -61,8 +61,9 @@
 </style>
 
 <%
-// 	System.out.println("Need to handle this!!!!!!!!!! in JSP page!!!!!!");
 	ApplicationInfo appInfo = (ApplicationInfo)request.getAttribute(FrameworkConstants.REQ_APPINFO);
+	String customerId = (String)request.getAttribute(FrameworkConstants.REQ_CUSTOMER_ID);
+	String projectId = (String)request.getAttribute(FrameworkConstants.REQ_PROJECT_ID);
 	String appId  = null;
     if(appInfo != null) {
     	appId  = appInfo.getId();
@@ -176,6 +177,8 @@
 										                		<a href="<s:url action='CIBuildDownload'>
 												          		     <s:param name="buildDownloadUrl"><%= downloadUrl %></s:param>
 												          		     <s:param name="appId"><%= appId %></s:param>
+												          		     <s:param name="customerId"><%= customerId %></s:param>
+												          		     <s:param name="projectId"><%= projectId %></s:param>
 												          		     <s:param name="buildNumber"><%= build.getNumber() %></s:param>
 												          		     <s:param name="downloadJobName"><%= jobName %></s:param>
 												          		     </s:url>"><img src="images/icons/download.png" title="Download"/>
@@ -220,14 +223,12 @@
 			                        	    		<div class="alert alert-block" >
 			                        	    		<center>
 			                        	    				 <s:text name='ci.server.down.message'/>
-<%-- 			                        	    				 <s:label key="ci.server.down.message" cssClass="errorMsgLabel"/> --%>
 			                        	    		</center>
 			                        	    		</div>
 			                        	    	<% } else { %>
 			                        	    		<div class="alert alert-block" >
 													<center>
 														<s:text name='ci.error.message'/>
-<%-- 														<s:label key="ci.error.message" cssClass="errorMsgLabel"/> --%>
 													</center>
 													</div>			                        	    	
 			                        	    	<% } %>
@@ -408,7 +409,7 @@ function refreshBuild() {
 
 function successRefreshBuild(data) {
 	console.log("noOfJobsIsinProgress....." + <%= noOfJobsIsinProgress %>);
-	console.log("successRefreshBuild....." + data);
+	console.log("successRefreshBuild....." + data.numberOfJobsInProgress);
 	//data can be zero when no build is in progress, can be int value for each running job
 	// noOfJobsIsinProgress also can be zero  when no jobs in in progress
 	if (data.numberOfJobsInProgress < <%= noOfJobsIsinProgress %> || data.numberOfJobsInProgress > <%= noOfJobsIsinProgress %>) { // When build is increased or decreased on a job refresh the page , refresh the page
@@ -433,8 +434,8 @@ function refreshAfterServerUp() {
 	
    	localJenkinsAliveCheck (); // checks jenkins status and updates the variable
 	
-	console.log("Local jenkins alive called ===> jenkins alive ===> " + isJenkinsAlive);
-	console.log("Local jenkins alive called ===> jenkins ready ===> " + isJenkinsReady);
+	console.log("Local jenkins alive called ....  jenkins alive ... " + isJenkinsAlive);
+	console.log("Local jenkins alive called .... jenkins ready ... " + isJenkinsReady);
 	
    	//default : isCiRefresh = true
 	if (!isCiRefresh) { //when stop is clicked it will comme here
@@ -459,13 +460,8 @@ function refreshAfterServerUp() {
 function reloadCI() {
 	if ($("a[name='appTab'][class='active']").attr("id") == "ci" && $("#popupPage").css("display") == "none"){
 		console.log("reload CI called and going to refresh the page ");
-//     	var params = "";
-//     	if (!isBlank($('form').serialize())) {
-//     		params = $('form').serialize() + "&";
-//     	}
 //     	showLoadingIcon($("#tabDiv")); // Loading Icon
     	console.log("Server startup completed ..." + isCiRefresh);
-// 		performAction('ci', params, $("#tabDiv"));
 		loadContent('ci',$('#deleteObjects'), $('#subcontainer'), getBasicParams(), false);
 	} else {
 		$(".errorMsgLabel").text('<%= FrameworkConstants.CI_NO_JOBS_AVAILABLE%>');
@@ -550,6 +546,14 @@ function isMoreThanOneJobSelected() {
 	}
 }
 
+function isOneJobSelected() {
+	if ($("input[type=checkbox][name='Jobs']:checked").length > 0)  {
+		return true;
+	} else {
+		return false;
+	}
+}
+
 function popupClose(closeUrl) {
 	alert("handle load content here " + closeUrl);
 	showParentPage();
@@ -575,18 +579,22 @@ function popupClose(closeUrl) {
 function popupOnOk(obj) {
 		var okUrl = $(obj).attr("id");
 		if (okUrl == "saveJob" || okUrl == "updateJob" ) {
-			if (isMoreThanOneJobSelected()) {
-				alert("update job validation ");
-				okUrl == "updateJob";
+			if (isOneJobSelected()) {
+				console.log("update job validation ");
+				okUrl = "updateJob";
+			} else {
+				console.log("This is save job ");
 			}
 			// do the validation for collabNet info only if the user selects git radio button
 			var validation = configureJobValidation();
 		// when validation is true
 			if (validation && $("input:radio[name=enableBuildRelease][value='true']").is(':checked')) {
-				if(collabNetValidation()){
+				if(collabNetValidation()) {
+					console.log("create job with collabnet plugin ");
 					configureJob(okUrl);
 				}
 			} else if (validation) {
+				console.log("create job with OUT collabnet plugin ");
 				configureJob(okUrl);
 			}
 		} else if (okUrl == "deleteBuild" ) {

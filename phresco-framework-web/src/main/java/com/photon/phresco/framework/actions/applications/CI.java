@@ -176,6 +176,8 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 			ApplicationInfo appInfo = getApplicationInfo();
 			
 			setReqAttribute(REQ_APPINFO, appInfo);
+			setReqAttribute(REQ_CUSTOMER_ID, getCustomerId());
+			setReqAttribute(REQ_PROJECT_ID, getProjectId());
 			setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
 			setReqAttribute(CI_JENKINS_ALIVE, jenkinsAlive);
 
