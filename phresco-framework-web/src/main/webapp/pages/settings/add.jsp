@@ -313,7 +313,7 @@
             <div class="clearfix">
                 <label>&nbsp;</label>
                 <div class="submit_input">
-                    <input type="button" value="<s:text name="label.save"/>" id="save" class="primary btn">
+                    <input type="button" value="<s:text name="lbl.save"/>" id="save" class="primary btn">
                     <input type="button" value="<s:text name="label.cancel"/>" id="cancelSettings" class="primary btn">
                 </div>
             </div>

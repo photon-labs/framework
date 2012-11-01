@@ -82,13 +82,15 @@ public class ConfigProcessor implements FrameworkConstants {
         xpath.addNamespace(root_.getNamespace());
         Element triggerNode = (Element) xpath.selectSingleNode(root_);
         triggerNode.removeContent();
-    	for (String trigger : triggers) {
-			if(TIMER_TRIGGER.equals(trigger)) {
-				triggerNode.addContent(createElement("hudson.triggers.TimerTrigger", null).addContent(createElement("spec", cronExpression)));
-			} else {
-				triggerNode.addContent(createElement("hudson.triggers.SCMTrigger", null).addContent(createElement("spec", cronExpression)));
-			}
-		}
+        if (triggers != null) {
+        	for (String trigger : triggers) {
+    			if(TIMER_TRIGGER.equals(trigger)) {
+    				triggerNode.addContent(createElement("hudson.triggers.TimerTrigger", null).addContent(createElement("spec", cronExpression)));
+    			} else {
+    				triggerNode.addContent(createElement("hudson.triggers.SCMTrigger", null).addContent(createElement("spec", cronExpression)));
+    			}
+    		}
+        }
     }
     
     public void enableCollabNetBuildReleasePlugin(CIJob job) throws PhrescoException {

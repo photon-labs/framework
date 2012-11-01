@@ -20,60 +20,29 @@
 package com.photon.phresco.framework.actions.applications;
 
 import java.io.*;
-import java.lang.reflect.*;
-import java.net.ConnectException;
-import java.net.HttpURLConnection;
-import java.net.InetAddress;
-import java.net.URL;
-import java.net.URLConnection;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.net.*;
+import java.text.*;
+import java.util.*;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.*;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.io.*;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.codehaus.plexus.util.FileUtils;
-import org.quartz.CronExpression;
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
+import org.apache.commons.collections.*;
+import org.apache.commons.lang.*;
+import org.apache.log4j.*;
+import org.quartz.*;
+import org.w3c.dom.*;
 
-import com.google.gson.*;
-import com.google.gson.reflect.*;
-import com.photon.phresco.commons.AndroidConstants;
+import com.photon.phresco.commons.*;
 import com.photon.phresco.commons.CIPasswordScrambler;
-import com.photon.phresco.commons.FrameworkConstants;
-import com.photon.phresco.commons.XCodeConstants;
 import com.photon.phresco.commons.model.*;
-import com.photon.phresco.configuration.Environment;
-import com.photon.phresco.exception.PhrescoException;
-import com.photon.phresco.framework.PhrescoFrameworkFactory;
-import com.photon.phresco.framework.actions.FrameworkBaseAction;
+import com.photon.phresco.framework.*;
+import com.photon.phresco.framework.actions.*;
 import com.photon.phresco.framework.api.*;
-import com.photon.phresco.framework.commons.ApplicationsUtil;
-import com.photon.phresco.framework.commons.DiagnoseUtil;
-import com.photon.phresco.framework.commons.FrameworkUtil;
-import com.photon.phresco.framework.commons.LogErrorReport;
-import com.photon.phresco.framework.commons.PBXNativeTarget;
+import com.photon.phresco.framework.commons.*;
 import com.photon.phresco.framework.model.*;
-import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.*;
+import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
 import com.photon.phresco.plugins.util.*;
-import com.photon.phresco.util.IosSdkUtil;
-import com.photon.phresco.util.IosSdkUtil.MacSdkType;
-import com.photon.phresco.util.TechnologyTypes;
-import com.photon.phresco.util.Utility;
-import com.sun.jersey.api.client.*;
-import com.photon.phresco.framework.actions.DynamicParameterUtil;
-import com.photon.phresco.framework.api.ActionType;
+import com.photon.phresco.util.*;
 
 public class CI extends DynamicParameterUtil implements FrameworkConstants {
 
@@ -91,15 +60,7 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 	private String failureEmailIds = null;
 	private String schedule = null;
 	private String cronExpression = null;
-	private String showSettings = null;
-	private List<String> serverSettings = null;
-	private List<String> dbSettings = null;
-	private List<String> websrvcSettings = null;
-	private List<String> emailSettings = null;
-	private String database = null;
-	private String server = null;
 	private String email = null;
-	private String webservice = null;
 	private String buildDownloadUrl = null;
 	private InputStream fileInputStream;
 	private String fileName = "";
@@ -108,14 +69,6 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 	private int totalBuildSize;
 	boolean buildInProgress = false;
 
-	private String environment = null;
-	private String sdk = null;
-	private String mode = null;
-	private String androidVersion = null;
-	private String signing = null;
-
-	private String target = "";
-	private String proguard = null;
 	private List<String> triggers = null;
 	private String buildNumber = null;
 	CIJob job = null;
@@ -144,18 +97,6 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 	// whether we want to clone this workspace
 	private boolean cloneWorkspace = false;
 
-	// Extra build, deplot and test info
-	private String importSql = "";
-	private String deployTo = "";
-	private String simulatorVersion = "";
-	private String serialNumber = "";
-	private String browser = "";
-	private String device = "";
-
-	// java Standalone tech info
-	private String jarName = "";
-	private String mainClassName = "";
-
 	public String ci() {
 		S_LOGGER.debug("Entering Method CI.ci()");
 		try {
@@ -176,6 +117,8 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 			ApplicationInfo appInfo = getApplicationInfo();
 			
 			setReqAttribute(REQ_APPINFO, appInfo);
+			setReqAttribute(REQ_CUSTOMER_ID, getCustomerId());
+			setReqAttribute(REQ_PROJECT_ID, getProjectId());
 			setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
 			setReqAttribute(CI_JENKINS_ALIVE, jenkinsAlive);
 
@@ -195,15 +138,15 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 					buildInProgress = false;
 					buildJenkinsAlive = DiagnoseUtil.isConnectionAlive(HTTP_PROTOCOL, ciJob.getJenkinsUrl(), Integer.parseInt(ciJob.getJenkinsPort()));
 					isJobCreatingBuild = ciManager.isJobCreatingBuild(ciJob);
-					S_LOGGER.debug("ciJob.getName() ====> " + ciJob.getName());
-					S_LOGGER.debug("ciJob.getName() alive  ====> " + buildJenkinsAlive);
-					S_LOGGER.debug("ciJob.getName() isJobCreatingBuild  ====> " + isJobCreatingBuild);
+					S_LOGGER.debug("ciJob.getName() ... " + ciJob.getName());
+					S_LOGGER.debug("ciJob.getName() alive ... " + buildJenkinsAlive);
+					S_LOGGER.debug("ciJob.getName() isJobCreatingBuild .... " + isJobCreatingBuild);
 					setReqAttribute(CI_BUILD_JENKINS_ALIVE + ciJob.getName(), buildJenkinsAlive);
 					setReqAttribute(CI_BUILD_IS_IN_PROGRESS + ciJob.getName(), isJobCreatingBuild);
 					if (buildJenkinsAlive == true) {
 						builds = ciManager.getBuilds(ciJob);
 					}
-					S_LOGGER.debug("ciJob.getName() builds ====> " + builds);
+					S_LOGGER.debug("ciJob.getName() builds .... " + builds);
 					ciJobsAndBuilds.put(ciJob.getName(), builds);
 				}
 			}
@@ -212,9 +155,7 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 			S_LOGGER.debug("numberOfJobsInProgress " + numberOfJobsInProgress);
 			setReqAttribute(CI_NO_OF_JOBS_IN_PROGRESS, numberOfJobsInProgress);
 		} catch (Exception e) {
-			e.printStackTrace();
-			S_LOGGER.error("Entered into catch block of CI.ci()"
-					+ FrameworkUtil.getStackTraceAsString(e));
+			S_LOGGER.error("Entered into catch block of CI.ci()" + FrameworkUtil.getStackTraceAsString(e));
 		}
 		return APP_CI;
 	}
@@ -231,32 +172,8 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
 			ApplicationInfo appInfo = getApplicationInfo();
-			// Get environment info
-//			List<Environment> environments = administrator.getEnvironments(project); // dynamicK
-//			getHttpRequest().setAttribute(REQ_ENVIRONMENTS, environments);
 			setReqAttribute(REQ_APPINFO, appInfo);
-			// Get xcode targets
-/*			String technology = project.getApplicationInfo().getTechInfo().getVersion();// dynamicK
-			if (TechnologyTypes.IPHONES.contains(technology)) {
-				List<PBXNativeTarget> xcodeConfigs = ApplicationsUtil
-						.getXcodeConfiguration(projectCode);
-				getHttpRequest().setAttribute(REQ_XCODE_CONFIGS, xcodeConfigs);
-				// get list of sdks
-				List<String> iphoneSdks = IosSdkUtil
-						.getMacSdks(MacSdkType.iphoneos);
-				iphoneSdks.addAll(IosSdkUtil
-						.getMacSdks(MacSdkType.iphonesimulator));
-				iphoneSdks.addAll(IosSdkUtil.getMacSdks(MacSdkType.macosx));
-				getHttpRequest().setAttribute(REQ_IPHONE_SDKS, iphoneSdks);
-				// get list of sdk versions
-				List<String> iphoneSimulatorSdks = IosSdkUtil
-						.getMacSdksVersions(MacSdkType.iphonesimulator);
-				getHttpRequest().setAttribute(REQ_IPHONE_SIMULATOR_SDKS,
-						iphoneSimulatorSdks);
-			}*/
-			// get functional test browsers
-			/*Quality qty = new Quality();// dynamicK
-			qty.getFunctionalTestBrowsers(technology);*/
+			
 			List<String> clonedWorkspaces = null;
 			List<String> existingJobsNames = null;
 			CIJob existJob = ciManager.getJob(appInfo, jobName);
@@ -270,26 +187,22 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 						S_LOGGER.debug("Cloned names .... " + ciJob.getName());
 						clonedWorkspaces.add(ciJob.getName());
 					}
-					S_LOGGER.debug("existJob names in code .... "
-							+ existJob);
+					S_LOGGER.debug("existJob names in code .... " + existJob);
 					existingJobsNames.add(ciJob.getName());
 				}
 			}
-			if (existJob != null
-					&& StringUtils.isNotEmpty(existJob.getCollabNetpassword())) {
+			if (existJob != null && StringUtils.isNotEmpty(existJob.getCollabNetpassword())) {
 				existJob.setCollabNetpassword(CIPasswordScrambler.unmask(existJob.getCollabNetpassword()));
 			}
+			
 			if(existJob != null) {
 				existJob.setPassword(CIPasswordScrambler.unmask(existJob.getPassword()));
 			}
 			setReqAttribute(REQ_EXISTING_JOB, existJob);
-			setReqAttribute(REQ_EXISTING_JOBS_NAMES,
-					existingJobsNames);
-			setReqAttribute(REQ_EXISTING_CLONNED_JOBS,
-					clonedWorkspaces);
+			setReqAttribute(REQ_EXISTING_JOBS_NAMES, existingJobsNames);
+			setReqAttribute(REQ_EXISTING_CLONNED_JOBS, clonedWorkspaces);
 		} catch (Exception e) {
-			S_LOGGER.error("Entered into catch block of CI.configure()"
-					+ FrameworkUtil.getStackTraceAsString(e));
+			S_LOGGER.error("Entered into catch block of CI.configure()" + FrameworkUtil.getStackTraceAsString(e));
 			new LogErrorReport(e, "CI configuration clicked");
 		}
 		return APP_CI_CONFIGURE;
@@ -312,17 +225,7 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 			setSessionAttribute(getAppId() + CI_SETUP, reader);
 			setReqAttribute(REQ_APP_ID, getAppId());
 			setReqAttribute(REQ_ACTION_TYPE, CI_SETUP);
-			
-//			BufferedReader reader1 = (BufferedReader) getHttpSession().getAttribute(getAppId() + CI_SETUP);
-//			System.out.println("printing !!!!!!! ");
-//			if (reader1 != null) {
-//				while(reader1.readLine() != null) {
-//					System.out.println(reader1.readLine());
-//				}
-//			}
-			
 		} catch (Exception e) {
-			e.printStackTrace();
 			if (debugEnabled) {
 				S_LOGGER.error("Entered into catch block of CI.setup()"
 						+ FrameworkUtil.getStackTraceAsString(e));
@@ -419,32 +322,16 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 //				System.out.println("build operation command " + actionType);
 //				mvncmd =  actionType.getActionType().toString();
 			}
-			
 			if (!CollectionUtils.isEmpty(buildArgCmds)) {
 				for (String buildArgCmd : buildArgCmds) {
 					mvncmd = mvncmd + SPACE + buildArgCmd;
 				}
 			}
-			
 			if (!"clonedWorkspace".equals(svnType) && BUILD.equals(operation)) {
 				mvncmd = CI_PROFILE + mvncmd;
 			}
-			
 			S_LOGGER.debug("mvn command" + mvncmd);
 			existJob.setMvnCommand(mvncmd);
-			
-			String funcitonalTestDir = "";
-			if (FUNCTIONAL_TEST.equals(operation)) {
-				FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-				funcitonalTestDir = frameworkUtil.getFunctionalTestDir(appInfo);
-				if (StringUtils.isNotEmpty(funcitonalTestDir)) {
-					// removing / value , which not valid
-					funcitonalTestDir = funcitonalTestDir.substring(1) + File.separator;
-				}
-			}
-			existJob.setPomLocation(funcitonalTestDir + POM_XML);
-			
-			S_LOGGER.debug("funcitonalTestDir ======> " + funcitonalTestDir);
 			
 			// prebuild step enable
 			existJob.setEnablePreBuildStep(true);
@@ -452,6 +339,7 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 			preBuildStepCmds.add("phresco:ci-prestep -DjobName=${env.JOB_NAME}");
 			existJob.setPrebuildStepCommands(preBuildStepCmds);
 			
+			// configure job here
 			if (CI_CREATE_JOB_COMMAND.equals(jobType)) {
 				System.out.println(" creating job approached  " + existJob);
 				ciManager.createJob(appInfo, existJob);
@@ -466,7 +354,6 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 
 			setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
 		} catch (Exception e) {
-			e.printStackTrace();
 			S_LOGGER.error("Entered into catch block of CI.doUpdateSave()"
 					+ FrameworkUtil.getStackTraceAsString(e));
 			addActionMessage(getText(CI_SAVE_UPDATE_FAILED,
@@ -477,37 +364,6 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 
 	}
 
-	private boolean copyPhrescoPluginFile(File phrescoPluginInfo, File jenkinsWorkspaceJob) {
-		try {
-			FileUtils.copyFileToDirectory(phrescoPluginInfo, jenkinsWorkspaceJob);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
-		return true;
-	}
-	
-	private String getJenkinsJobDirPath(String jobName) throws PhrescoException {
-		try {
-			String jenkinsHomePath = System.getenv(JENKINS_HOME);
-			if (StringUtils.isEmpty(jenkinsHomePath)) {
-				throw new PhrescoException("Jenkins Home not found in env");
-			}
-			StringBuilder builder = new StringBuilder(jenkinsHomePath);
-			builder.append(File.separator);
-	        builder.append("workspace");
-	        builder.append(File.separator);
-	        builder.append(jobName);
-	        builder.append(File.separator);
-	        builder.append(".phresco");
-	        builder.append(File.separator);
-	        FileUtils.mkdir(builder.toString());
-	        return builder.toString();
-		} catch (Exception e) {
-			throw new PhrescoException(e);
-		}
-	}
-	
 	public String build() {
 		S_LOGGER.debug("Entering Method  CI.build()");
 		try {
@@ -526,7 +382,6 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 			setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
 			setReqAttribute(CI_BUILD_TRIGGERED_FROM_UI, TRUE);
 		} catch (Exception e) {
-			e.printStackTrace();
 			setReqAttribute(CI_BUILD_TRIGGERED_FROM_UI, FALSE);
 			S_LOGGER.error("Entered into catch block of CI.build()" + FrameworkUtil.getStackTraceAsString(e));
 			addActionMessage(getText(CI_BUILD_FAILED, e.getLocalizedMessage()));
@@ -534,20 +389,19 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 		return ci();
 	}
 
-	public String getTotalBuilds() {
-		if (debugEnabled) {
-			S_LOGGER.debug("Entering Method  CI.getTotalBuilds()");
-		}
-		try {
-			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
-			ApplicationInfo appInfo = getApplicationInfo();// kalees - handle these two methods
-			totalBuildSize = ciManager.getTotalBuilds(appInfo); // when getting all the builds , it ll try to get all build status, so it ll  return -1.
-		} catch (Exception e) {
-			e.printStackTrace();
-			totalBuildSize = -1;
-		}
-		return "success";
-	}
+//	public String getTotalBuilds() {
+//		if (debugEnabled) {
+//			S_LOGGER.debug("Entering Method  CI.getTotalBuilds()");
+//		}
+//		try {
+//			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
+//			ApplicationInfo appInfo = getApplicationInfo();
+//			totalBuildSize = ciManager.getTotalBuilds(appInfo); // when getting all the builds , it ll try to get all build status, so it ll  return -1.
+//		} catch (Exception e) {
+//			totalBuildSize = -1;
+//		}
+//		return "success";
+//	}
 
 	public String deleteCIBuild() {
 		S_LOGGER.debug("Entering Method  CI.deleteCIBuild()");
@@ -590,7 +444,6 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 			}
 			setReqAttribute(REQ_APPINFO, appInfo);
 		} catch (Exception e) {
-			e.printStackTrace();
 			S_LOGGER.error("Entered into catch block of CI.deleteCIBuild()" + FrameworkUtil.getStackTraceAsString(e));
 			new LogErrorReport(e, "Build delete");
 		}
@@ -615,7 +468,6 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 			}
 			setReqAttribute(REQ_APPINFO, appInfo);
 		} catch (Exception e) {
-			e.printStackTrace();
 			S_LOGGER.error("Entered into catch block of CI.deleteCIJob()" + FrameworkUtil.getStackTraceAsString(e));
 			new LogErrorReport(e, "Job delete");
 		}
@@ -638,7 +490,6 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 			setReqAttribute(REQ_APP_ID, getAppId());
 			setReqAttribute(REQ_ACTION_TYPE, CI_START);
 		} catch (Exception e) {
-			e.printStackTrace();
 			S_LOGGER.error("Entered into catch block of CI.startJenkins()" + FrameworkUtil.getStackTraceAsString(e));
 		}
 		return APP_ENVIRONMENT_READER;
@@ -658,7 +509,6 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 			setReqAttribute(REQ_APP_ID, getAppId());
 			setReqAttribute(REQ_ACTION_TYPE, CI_STOP);
 		} catch (Exception e) {
-			e.printStackTrace();
 			S_LOGGER.error("Entered into catch block of CI.stopJenkins()"
 					+ FrameworkUtil.getStackTraceAsString(e));
 		}
@@ -698,7 +548,6 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 			waitForTime(2);
 
 		} catch (Exception e) {
-			e.printStackTrace();
 			if (debugEnabled) {
 				S_LOGGER.error("Entered into catch block of CI.restartJenkins()"
 						+ FrameworkUtil.getStackTraceAsString(e));
@@ -748,15 +597,9 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 					if ("*".equals(hours) && "*".equals(minutes)) {
 						cronExpression = "0 * * * * ?";
 					} else if ("*".equals(hours) && !"*".equals(minutes)) {
-						cronExpression = "0 " + "*/" + minutes + " * * * ?"; // 0
-																				// replace
-																				// with
-																				// *
+						cronExpression = "0 " + "*/" + minutes + " * * * ?"; // 0 replace with *
 					} else if (!"*".equals(hours) && "*".equals(minutes)) {
-						cronExpression = "0 0 " + "*/" + hours + " * * ?"; // 0
-																			// replace
-																			// with
-																			// *
+						cronExpression = "0 0 " + "*/" + hours + " * * ?"; // 0 replace with *
 					} else if (!"*".equals(hours) && !"*".equals(minutes)) {
 						cronExpression = "0 " + minutes + " */" + hours
 								+ " * * ?"; // 0 replace with *
@@ -810,20 +653,13 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 			S_LOGGER.debug("Entering Method  CI.testCronExpression(String expression)");
 			S_LOGGER.debug("testCronExpression() Expression = " + expression);
 			final CronExpression cronExpression = new CronExpression(expression);
-			final Date nextValidDate1 = cronExpression
-					.getNextValidTimeAfter(new Date());
-			final Date nextValidDate2 = cronExpression
-					.getNextValidTimeAfter(nextValidDate1);
-			final Date nextValidDate3 = cronExpression
-					.getNextValidTimeAfter(nextValidDate2);
-			final Date nextValidDate4 = cronExpression
-					.getNextValidTimeAfter(nextValidDate3);
-			dates = new Date[] { nextValidDate1, nextValidDate2,
-					nextValidDate3, nextValidDate4 };
+			final Date nextValidDate1 = cronExpression.getNextValidTimeAfter(new Date());
+			final Date nextValidDate2 = cronExpression.getNextValidTimeAfter(nextValidDate1);
+			final Date nextValidDate3 = cronExpression.getNextValidTimeAfter(nextValidDate2);
+			final Date nextValidDate4 = cronExpression.getNextValidTimeAfter(nextValidDate3);
+			dates = new Date[] { nextValidDate1, nextValidDate2, nextValidDate3, nextValidDate4 };
 		} catch (Exception e) {
-			e.printStackTrace();
-			S_LOGGER.error("Entered into catch block of CI.testCronExpression()"
-					+ FrameworkUtil.getStackTraceAsString(e));
+			S_LOGGER.error("Entered into catch block of CI.testCronExpression()" + FrameworkUtil.getStackTraceAsString(e));
 		}
 		return dates;
 	}
@@ -837,9 +673,7 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 			NodeList nodelist = org.apache.xpath.XPathAPI.selectNodeList(document, portNoNode);
 			portNo = nodelist.item(0).getTextContent();
 		} catch (Exception e) {
-			e.printStackTrace();
-			S_LOGGER.error("Entered into catch block of CI.getPortNo()"
-					+ FrameworkUtil.getStackTraceAsString(e));
+			S_LOGGER.error("Entered into catch block of CI.getPortNo()" + FrameworkUtil.getStackTraceAsString(e));
 		}
 		return portNo;
 	}
@@ -857,9 +691,7 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 			fileName = existJob.getName();
 			return SUCCESS;
 		} catch (Exception e) {
-			e.printStackTrace();
-			S_LOGGER.error("Entered into catch block of CI.CIBuildDownload()"
-					+ FrameworkUtil.getStackTraceAsString(e));
+			S_LOGGER.error("Entered into catch block of CI.CIBuildDownload()" + FrameworkUtil.getStackTraceAsString(e));
 		}
 		return SUCCESS;
 	}
@@ -880,9 +712,7 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
-			S_LOGGER.error("Entered into catch block of CI.buildProgress()"
-					+ FrameworkUtil.getStackTraceAsString(e));
+			S_LOGGER.error("Entered into catch block of CI.buildProgress()" + FrameworkUtil.getStackTraceAsString(e));
 		}
 		return SUCCESS;
 	}
@@ -978,76 +808,12 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 		this.cronExpression = cronExpression;
 	}
 
-	public String getShowSettings() {
-		return showSettings;
-	}
-
-	public void setShowSettings(String showSettings) {
-		this.showSettings = showSettings;
-	}
-
-	public List<String> getServerSettings() {
-		return serverSettings;
-	}
-
-	public void setServerSettings(List<String> serverSettings) {
-		this.serverSettings = serverSettings;
-	}
-
-	public List<String> getDbSettings() {
-		return dbSettings;
-	}
-
-	public void setDbSettings(List<String> dbSettings) {
-		this.dbSettings = dbSettings;
-	}
-
-	public List<String> getWebsrvcSettings() {
-		return websrvcSettings;
-	}
-
-	public void setWebsrvcSettings(List<String> websrvcSettings) {
-		this.websrvcSettings = websrvcSettings;
-	}
-
-	public List<String> getEmailSettings() {
-		return emailSettings;
-	}
-
-	public void setEmailSettings(List<String> emailSettings) {
-		this.emailSettings = emailSettings;
-	}
-
-	public String getServer() {
-		return server;
-	}
-
-	public void setServer(String server) {
-		this.server = server;
-	}
-
-	public String getDatabase() {
-		return database;
-	}
-
-	public void setDatabase(String database) {
-		this.database = database;
-	}
-
 	public String getEmail() {
 		return email;
 	}
 
 	public void setEmail(String email) {
 		this.email = email;
-	}
-
-	public String getWebservice() {
-		return webservice;
-	}
-
-	public void setWebservice(String webservice) {
-		this.webservice = webservice;
 	}
 
 	public String getBuildDownloadUrl() {
@@ -1106,54 +872,6 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 		this.buildInProgress = buildInProgress;
 	}
 
-	public String getEnvironment() {
-		return environment;
-	}
-
-	public void setEnvironment(String environment) {
-		this.environment = environment;
-	}
-
-	public String getSdk() {
-		return sdk;
-	}
-
-	public void setSdk(String sdk) {
-		this.sdk = sdk;
-	}
-
-	public String getMode() {
-		return mode;
-	}
-
-	public void setMode(String mode) {
-		this.mode = mode;
-	}
-
-	public String getAndroidVersion() {
-		return androidVersion;
-	}
-
-	public void setAndroidVersion(String androidVersion) {
-		this.androidVersion = androidVersion;
-	}
-
-	public String getTarget() {
-		return target;
-	}
-
-	public void setTarget(String target) {
-		this.target = target;
-	}
-
-	public String getProguard() {
-		return proguard;
-	}
-
-	public void setProguard(String proguard) {
-		this.proguard = proguard;
-	}
-
 	public List<String> getTriggers() {
 		return triggers;
 	}
@@ -1192,14 +910,6 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 
 	public void setDownloadJobName(String downloadJobName) {
 		this.downloadJobName = downloadJobName;
-	}
-
-	public String getSigning() {
-		return signing;
-	}
-
-	public void setSigning(String signing) {
-		this.signing = signing;
 	}
 
 	public String getSvnType() {
@@ -1328,69 +1038,5 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 
 	public void setCloneWorkspace(boolean cloneWorkspace) {
 		this.cloneWorkspace = cloneWorkspace;
-	}
-
-	public String getImportSql() {
-		return importSql;
-	}
-
-	public void setImportSql(String importSql) {
-		this.importSql = importSql;
-	}
-
-	public String getDeployTo() {
-		return deployTo;
-	}
-
-	public void setDeployTo(String deployTo) {
-		this.deployTo = deployTo;
-	}
-
-	public String getSimulatorVersion() {
-		return simulatorVersion;
-	}
-
-	public void setSimulatorVersion(String simulatorVersion) {
-		this.simulatorVersion = simulatorVersion;
-	}
-
-	public String getSerialNumber() {
-		return serialNumber;
-	}
-
-	public void setSerialNumber(String serialNumber) {
-		this.serialNumber = serialNumber;
-	}
-
-	public String getBrowser() {
-		return browser;
-	}
-
-	public void setBrowser(String browser) {
-		this.browser = browser;
-	}
-
-	public String getDevice() {
-		return device;
-	}
-
-	public void setDevice(String device) {
-		this.device = device;
-	}
-
-	public String getJarName() {
-		return jarName;
-	}
-
-	public void setJarName(String jarName) {
-		this.jarName = jarName;
-	}
-
-	public String getMainClassName() {
-		return mainClassName;
-	}
-
-	public void setMainClassName(String mainClassName) {
-		this.mainClassName = mainClassName;
 	}
 }

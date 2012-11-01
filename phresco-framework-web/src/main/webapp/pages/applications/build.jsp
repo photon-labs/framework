@@ -84,7 +84,7 @@
 		    <a data-toggle="modal" href="#popupPage" id="generateBuild" class="btn btn-primary" additionalParam="from=generateBuild"><s:text name='label.generatebuild'/></a>
 			<input id="deleteButton" type="button" value="<s:text name="label.delete"/>" class="btn" disabled="disabled"/>
 			<input type="button" class="btn btn-primary" data-toggle="modal" href="#popupPage" id="runAgainstSourceStart" value="<s:text name='label.runagainsrc'/>"/>
-		    <input type="button" class="btn" id="runAgainstSourceStop" value="<s:text name='label.stop'/>" disabled onclick="stopServer();"/>
+		    <input type="button" class="btn" id="runAgainstSourceStop" value="<s:text name='lbl.stop'/>" disabled onclick="stopServer();"/>
 		    <input type="button" class="btn" id="runAgainstSourceRestart" value="<s:text name='label.restart'/>" disabled onclick="restartServer();"/>
 		</div>
 		<div class="clear"></div>
@@ -127,7 +127,7 @@
 	}
 	
     $(document).ready(function() {
-    	yesnoPopup($('#generateBuild'), 'generateBuild', '<s:text name="label.generatebuild"/>', 'build','<s:text name="label.build"/>');
+    	yesnoPopup($('#generateBuild'), 'generateBuild', '<s:text name="label.generatebuild"/>', 'build','<s:text name="lbl.build"/>');
     	yesnoPopup($('#runAgainstSourceStart'),'showRunAgainstSourcePopup', '<s:text name="label.runagainstsource"/>', 'startServer','<s:text name="label.run"/>');
     	if ($.browser.safari && $.browser.version == 530.17) {
     		$(".buildDiv").show().css("float","left");

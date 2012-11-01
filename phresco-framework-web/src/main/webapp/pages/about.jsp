@@ -84,8 +84,8 @@
 	<div class="modal-footer">
 		<div class="abt_copyright abtQuest">&nbsp;<s:text name="label.do.u.want.delete"/></div>
 		<div class="action abt_action">
-			<input type="button" class="btn primary" value="<s:text name="label.no"/>" id="UpdateNo">
-			<input type="button" class="btn primary" value="<s:text name="label.yes"/>" id="updateYes">
+			<input type="button" class="btn primary" value="<s:text name="lbl.no"/>" id="UpdateNo">
+			<input type="button" class="btn primary" value="<s:text name="lbl.yes"/>" id="updateYes">
 		</div>
 	</div>
 </div>
