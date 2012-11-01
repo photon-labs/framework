@@ -197,15 +197,15 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 					buildInProgress = false;
 					buildJenkinsAlive = DiagnoseUtil.isConnectionAlive(HTTP_PROTOCOL, ciJob.getJenkinsUrl(), Integer.parseInt(ciJob.getJenkinsPort()));
 					isJobCreatingBuild = ciManager.isJobCreatingBuild(ciJob);
-					S_LOGGER.debug("ciJob.getName() ====> " + ciJob.getName());
-					S_LOGGER.debug("ciJob.getName() alive  ====> " + buildJenkinsAlive);
-					S_LOGGER.debug("ciJob.getName() isJobCreatingBuild  ====> " + isJobCreatingBuild);
+					S_LOGGER.debug("ciJob.getName() ... " + ciJob.getName());
+					S_LOGGER.debug("ciJob.getName() alive ... " + buildJenkinsAlive);
+					S_LOGGER.debug("ciJob.getName() isJobCreatingBuild .... " + isJobCreatingBuild);
 					setReqAttribute(CI_BUILD_JENKINS_ALIVE + ciJob.getName(), buildJenkinsAlive);
 					setReqAttribute(CI_BUILD_IS_IN_PROGRESS + ciJob.getName(), isJobCreatingBuild);
 					if (buildJenkinsAlive == true) {
 						builds = ciManager.getBuilds(ciJob);
 					}
-					S_LOGGER.debug("ciJob.getName() builds ====> " + builds);
+					S_LOGGER.debug("ciJob.getName() builds .... " + builds);
 					ciJobsAndBuilds.put(ciJob.getName(), builds);
 				}
 			}

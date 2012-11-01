@@ -74,7 +74,7 @@
 %>
 
 <s:if test="hasActionMessages()">
-    <div class="alert-message success"  id="successmsg" style="margin-top: 2px; margin-left: 165px;">
+    <div class="alert alert-message success" id="successmsg" style="margin-top: 3px; margin-left: 100px;">
         <s:actionmessage />
     </div>
 </s:if>
