@@ -153,6 +153,8 @@ public interface FrameworkConstants {
     String REPO_TYPE = "repoType";
     String UPDATE_SVN_PROJECT = "updateProject";
     String SVN_TYPE = "svnType";
+    String SVN_CHECKOUT_TEMP = "svn-checkout-temp";
+    String PHRESCO = "/.phresco";
     String GITHUB_SCM = "hudson.plugins.git.GitSCM";
     String SVN_SCM = "hudson.scm.SubversionSCM";
     String GITHUB_SCM_FILE_NAME = "gitHubScm.xml";
