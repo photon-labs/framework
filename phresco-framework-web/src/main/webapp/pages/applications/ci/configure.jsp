@@ -321,7 +321,7 @@
 			
 			<div class="control-group">
 				<label class="control-label labelbold popupLbl">
-					<span class="red">* </span>Build Triggers
+					Build Triggers
 				</label>
 				<div class="controls" style="padding-top: 5px;">
 					<input id="buildPeriodically" type="checkbox" name="triggers" value="TimerTrigger"/>&nbsp;Build periodically
@@ -856,7 +856,7 @@
 		
 		show(selectedSchedule);
 		<% 
-			if(existingJob != null) {
+			if(existingJob != null && existingJob.getTriggers() != null) {
 				for(String trigger : existingJob.getTriggers()) {
 		%>
 					$("input[value='<%= trigger%>']").prop("checked", true);
