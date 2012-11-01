@@ -214,7 +214,6 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 			S_LOGGER.debug("numberOfJobsInProgress " + numberOfJobsInProgress);
 			setReqAttribute(CI_NO_OF_JOBS_IN_PROGRESS, numberOfJobsInProgress);
 		} catch (Exception e) {
-			e.printStackTrace();
 			S_LOGGER.error("Entered into catch block of CI.ci()"
 					+ FrameworkUtil.getStackTraceAsString(e));
 		}
@@ -324,7 +323,6 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 //			}
 			
 		} catch (Exception e) {
-			e.printStackTrace();
 			if (debugEnabled) {
 				S_LOGGER.error("Entered into catch block of CI.setup()"
 						+ FrameworkUtil.getStackTraceAsString(e));
@@ -468,7 +466,6 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 
 			setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
 		} catch (Exception e) {
-			e.printStackTrace();
 			S_LOGGER.error("Entered into catch block of CI.doUpdateSave()"
 					+ FrameworkUtil.getStackTraceAsString(e));
 			addActionMessage(getText(CI_SAVE_UPDATE_FAILED,
@@ -483,7 +480,6 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 		try {
 			FileUtils.copyFileToDirectory(phrescoPluginInfo, jenkinsWorkspaceJob);
 		} catch (Exception e) {
-			e.printStackTrace();
 			return false;
 		}
 		return true;
@@ -528,7 +524,6 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 			setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
 			setReqAttribute(CI_BUILD_TRIGGERED_FROM_UI, TRUE);
 		} catch (Exception e) {
-			e.printStackTrace();
 			setReqAttribute(CI_BUILD_TRIGGERED_FROM_UI, FALSE);
 			S_LOGGER.error("Entered into catch block of CI.build()" + FrameworkUtil.getStackTraceAsString(e));
 			addActionMessage(getText(CI_BUILD_FAILED, e.getLocalizedMessage()));
@@ -545,7 +540,6 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 			ApplicationInfo appInfo = getApplicationInfo();// kalees - handle these two methods
 			totalBuildSize = ciManager.getTotalBuilds(appInfo); // when getting all the builds , it ll try to get all build status, so it ll  return -1.
 		} catch (Exception e) {
-			e.printStackTrace();
 			totalBuildSize = -1;
 		}
 		return "success";
@@ -592,7 +586,6 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 			}
 			setReqAttribute(REQ_APPINFO, appInfo);
 		} catch (Exception e) {
-			e.printStackTrace();
 			S_LOGGER.error("Entered into catch block of CI.deleteCIBuild()" + FrameworkUtil.getStackTraceAsString(e));
 			new LogErrorReport(e, "Build delete");
 		}
@@ -617,7 +610,6 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 			}
 			setReqAttribute(REQ_APPINFO, appInfo);
 		} catch (Exception e) {
-			e.printStackTrace();
 			S_LOGGER.error("Entered into catch block of CI.deleteCIJob()" + FrameworkUtil.getStackTraceAsString(e));
 			new LogErrorReport(e, "Job delete");
 		}
@@ -640,7 +632,6 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 			setReqAttribute(REQ_APP_ID, getAppId());
 			setReqAttribute(REQ_ACTION_TYPE, CI_START);
 		} catch (Exception e) {
-			e.printStackTrace();
 			S_LOGGER.error("Entered into catch block of CI.startJenkins()" + FrameworkUtil.getStackTraceAsString(e));
 		}
 		return APP_ENVIRONMENT_READER;
@@ -660,7 +651,6 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 			setReqAttribute(REQ_APP_ID, getAppId());
 			setReqAttribute(REQ_ACTION_TYPE, CI_STOP);
 		} catch (Exception e) {
-			e.printStackTrace();
 			S_LOGGER.error("Entered into catch block of CI.stopJenkins()"
 					+ FrameworkUtil.getStackTraceAsString(e));
 		}
@@ -700,7 +690,6 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 			waitForTime(2);
 
 		} catch (Exception e) {
-			e.printStackTrace();
 			if (debugEnabled) {
 				S_LOGGER.error("Entered into catch block of CI.restartJenkins()"
 						+ FrameworkUtil.getStackTraceAsString(e));
@@ -823,7 +812,6 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 			dates = new Date[] { nextValidDate1, nextValidDate2,
 					nextValidDate3, nextValidDate4 };
 		} catch (Exception e) {
-			e.printStackTrace();
 			S_LOGGER.error("Entered into catch block of CI.testCronExpression()"
 					+ FrameworkUtil.getStackTraceAsString(e));
 		}
@@ -839,7 +827,6 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 			NodeList nodelist = org.apache.xpath.XPathAPI.selectNodeList(document, portNoNode);
 			portNo = nodelist.item(0).getTextContent();
 		} catch (Exception e) {
-			e.printStackTrace();
 			S_LOGGER.error("Entered into catch block of CI.getPortNo()"
 					+ FrameworkUtil.getStackTraceAsString(e));
 		}
@@ -859,7 +846,6 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 			fileName = existJob.getName();
 			return SUCCESS;
 		} catch (Exception e) {
-			e.printStackTrace();
 			S_LOGGER.error("Entered into catch block of CI.CIBuildDownload()"
 					+ FrameworkUtil.getStackTraceAsString(e));
 		}
@@ -882,7 +868,6 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
 			S_LOGGER.error("Entered into catch block of CI.buildProgress()"
 					+ FrameworkUtil.getStackTraceAsString(e));
 		}
