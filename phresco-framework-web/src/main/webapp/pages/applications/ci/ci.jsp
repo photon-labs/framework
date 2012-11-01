@@ -220,13 +220,13 @@
 			                        	%>
 			                        	    <div class="alert-message block-message warning" >
 			                        	    	<%  if(!new Boolean(request.getAttribute(FrameworkConstants.CI_BUILD_JENKINS_ALIVE + jobName).toString()).booleanValue()) { %>
-			                        	    		<div class="alert alert-block" >
+			                        	    		<div class="alert alert-block" style="margin-top: 0px;">
 			                        	    		<center>
 			                        	    				 <s:text name='ci.server.down.message'/>
 			                        	    		</center>
 			                        	    		</div>
 			                        	    	<% } else { %>
-			                        	    		<div class="alert alert-block" >
+			                        	    		<div class="alert alert-block" style="margin-top: 0px;">
 													<center>
 														<s:text name='ci.error.message'/>
 													</center>
@@ -396,13 +396,9 @@ function enableStop() {
 
 //when background build is in progress, have to refresh ci page
 function refreshBuild() {
+	console.log("refresh build method called value " + refreshCi);
 	if(refreshCi) {
-    	var params = "";
-		if (!isBlank($('form').serialize())) {
-			params = $('form').serialize() + "&";
-		}
 		console.log("Going to get no of jobs in progress " + refreshCi);	
-// 		performAction('getNoOfJobsIsInProgress', params, '', true);
 		loadContent('getNoOfJobsIsInProgress',$('#deleteObjects'), '', getBasicParams(), true);
 	}
 }
@@ -410,17 +406,18 @@ function refreshBuild() {
 function successRefreshBuild(data) {
 	console.log("noOfJobsIsinProgress....." + <%= noOfJobsIsinProgress %>);
 	console.log("successRefreshBuild....." + data.numberOfJobsInProgress);
+	console.log("refreshCi ... " + refreshCi);
 	//data can be zero when no build is in progress, can be int value for each running job
 	// noOfJobsIsinProgress also can be zero  when no jobs in in progress
 	if (data.numberOfJobsInProgress < <%= noOfJobsIsinProgress %> || data.numberOfJobsInProgress > <%= noOfJobsIsinProgress %>) { // When build is increased or decreased on a job refresh the page , refresh the page
-		var params = "";
-    	if (!isBlank($('form').serialize())) {
-    		params = $('form').serialize() + "&";
-    	}
-    	showLoadingIcon($("#tabDiv")); // Loading Icon
     	console.log("build succeeded going to load builds.....");
-// 		performAction('ci', params, $("#tabDiv"));
-		loadContent('ci',$('#deleteObjects'), $('#subcontainer'), getBasicParams(), false);
+    	if ($("a[name='appTab'][class='active']").attr("id") == "ci" && $("#popupPage").css("display") == "block") {
+    		console.log("Build trugger completed in jenkins , but UI is blocking ");
+//     		refreshCi = false;
+    	} else {
+    		showLoadingIcon(); // Loading Icon
+    		loadContent('ci', $('#deleteObjects'), $('#subcontainer'), getBasicParams(), false);
+    	}
 	} else {
 		window.setTimeout(refreshBuild, 15000); // wait for 15 sec
 	}
@@ -464,6 +461,7 @@ function reloadCI() {
     	console.log("Server startup completed ..." + isCiRefresh);
 		loadContent('ci',$('#deleteObjects'), $('#subcontainer'), getBasicParams(), false);
 	} else {
+		console.log("reload CI : It is not in CI tab or popup available ");
 		$(".errorMsgLabel").text('<%= FrameworkConstants.CI_NO_JOBS_AVAILABLE%>');
 	}
 }
@@ -499,7 +497,7 @@ function successEvent(pageUrl, data) {
 		successRefreshBuild(data);
 	} 
 	else if(pageUrl == "getBuildsSize") {
-		alert("I never used ");
+		console.log("I never used ");
 // 		successRefreshCI(data);
 // 	} else if(pageUrl == "checkForConfiguration") {
 // 		successEnvValidation(data);
@@ -555,7 +553,7 @@ function isOneJobSelected() {
 }
 
 function popupClose(closeUrl) {
-	alert("handle load content here " + closeUrl);
+	console.log("handle load content here " + closeUrl);
 	showParentPage();
 	if (closeUrl === "setup") {
 // 		refreshAfterServerUp();

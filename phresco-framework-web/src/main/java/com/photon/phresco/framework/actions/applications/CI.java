@@ -389,19 +389,19 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 		return ci();
 	}
 
-	public String getTotalBuilds() {
-		if (debugEnabled) {
-			S_LOGGER.debug("Entering Method  CI.getTotalBuilds()");
-		}
-		try {
-			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
-			ApplicationInfo appInfo = getApplicationInfo();
-			totalBuildSize = ciManager.getTotalBuilds(appInfo); // when getting all the builds , it ll try to get all build status, so it ll  return -1.
-		} catch (Exception e) {
-			totalBuildSize = -1;
-		}
-		return "success";
-	}
+//	public String getTotalBuilds() {
+//		if (debugEnabled) {
+//			S_LOGGER.debug("Entering Method  CI.getTotalBuilds()");
+//		}
+//		try {
+//			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
+//			ApplicationInfo appInfo = getApplicationInfo();
+//			totalBuildSize = ciManager.getTotalBuilds(appInfo); // when getting all the builds , it ll try to get all build status, so it ll  return -1.
+//		} catch (Exception e) {
+//			totalBuildSize = -1;
+//		}
+//		return "success";
+//	}
 
 	public String deleteCIBuild() {
 		S_LOGGER.debug("Entering Method  CI.deleteCIBuild()");
