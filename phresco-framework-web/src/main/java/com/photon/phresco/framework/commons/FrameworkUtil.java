@@ -64,12 +64,12 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 	private static FrameworkUtil frameworkUtil = null;
     private static final Logger S_LOGGER = Logger.getLogger(FrameworkUtil.class);
     
-    private static final String CONTROL_GROUP_TEMPLATE = "<div class='control-group'>$lable$ $controls$</div>";
+    private static final String CONTROL_GROUP_TEMPLATE = "<div class='control-group' id=\"$ctrlGrpId$\">$lable$ $controls$</div>";
 	private static final String LABEL_TEMPLATE = "<label for='xlInput' class='control-label labelbold $class$'>$mandatory$$txt$</label>";
 	private static final String MANDATORY = "<span class='red'>*</span>&nbsp";
 	private static final String SELECT_TEMPLATE = "<div class='controls'><select class=\"input-xlarge $cssClass$\" id=\"$id$\" name=\"$name$\" isMultiple=\"$isMultiple$\">$options$</select></div>";
 	private static final String INPUT_TEMPLATE = "<div class='controls'><input type=\"$type$\" class=\"input-xlarge $class$\" id=\"$id$\" " + 
-													"name=\"$name$\" placeholder=\"$placeholder$\" value=\"$value$\" $checked$/></div>";
+													"name=\"$name$\" placeholder=\"$placeholder$\" value=\"$value$\"><span class='help-inline' id=\"$ctrlsId$\"></span></div>";
 	private static final String CHECKBOX_TEMPLATE = "<div class='controls'><input type='checkbox' class=\"$class$\" id=\"$id$\" " + 
 														"name=\"$name$\" value=\"$value$\" $checked$ onclick=\"$onClickFunction$\"/></div>";
 	private static final String MULTI_SELECT_TEMPLATE = "<div class='controls'><div class='multiSelectBorder'><div class='multilist-scroller multiselect multiSelHeight $class$' id=\"$id$\"><ul>$multiSelectOptions$</ul></div></div></div>";
@@ -664,8 +664,9 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     }
 
     public static StringTemplate constructInputElement(Boolean isMandatory, String lableText, String lableClass, String inputType, String cssClass, String id, String name, 
-    										String placeholder, String value) {
+    										String placeholder, String value, String ctrlGrpId, String ctrlsId) {
     	StringTemplate controlGroupElement = new StringTemplate(CONTROL_GROUP_TEMPLATE);
+    	controlGroupElement.setAttribute("ctrlGrpId", ctrlGrpId);
     	StringTemplate lableElmnt = constructLabelElement(isMandatory, lableClass, lableText);
     	String type = getInputType(inputType);
     	StringTemplate inputElement = new StringTemplate(INPUT_TEMPLATE);
@@ -675,6 +676,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	inputElement.setAttribute("name", name);
     	inputElement.setAttribute("placeholder", placeholder);
     	inputElement.setAttribute("value", value);
+    	inputElement.setAttribute("ctrlsId", ctrlsId);
     	
     	/* to check/uncheck the checkboxes based on the value */
     	if (Boolean.parseBoolean(value)) {

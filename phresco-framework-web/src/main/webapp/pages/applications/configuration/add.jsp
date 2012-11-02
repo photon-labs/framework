@@ -35,6 +35,7 @@
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.configuration.Environment" %>
+<%@ page import="com.photon.phresco.configuration.Configuration" %>
 <%@ page import="com.photon.phresco.framework.actions.util.FrameworkActionUtil"%>
 <%@ page import="com.photon.phresco.framework.api.Project" %>
 <%@ page import="com.photon.phresco.framework.model.PropertyInfo"%>
@@ -76,12 +77,6 @@
 		projectCode = selectedInfo.getCode();
 	}
 		
-
-
-
-
-	
-	
 	List<Environment> environments = (List<Environment>) request.getAttribute(FrameworkConstants.REQ_ENVIRONMENTS);
 	List<SettingsTemplate> settingsTemplates = (List<SettingsTemplate>) request.getAttribute(FrameworkConstants.REQ_SETTINGS_TEMPLATES);
 	
@@ -97,14 +92,14 @@
 	</h4>
 	
 	<div class="content_adder">
-		<div class="control-group" id="nameControl">
+		<div class="control-group" id="configNameControl">
 			<label class="control-label labelbold">
 				<span class="mandatory">*</span>&nbsp;<s:text name='lbl.name'/>
 			</label>
 			<div class="controls">
 				<input id="configName" placeholder="<s:text name='place.hldr.config.name'/>" 
 					value="<%= name %>" maxlength="30" title="<s:text name='title.30.chars'/>" class="input-xlarge" type="text" name="name">
-				<span class="help-inline" id="nameError"></span>
+				<span class="help-inline" id="configNameError"></span>
 			</div>
 		</div> <!-- Name -->
 			
@@ -118,7 +113,7 @@
 			</div>
 		</div> <!-- Desc -->
 		
-		<div class="control-group" id="groupControl">
+		<div class="control-group" id="configEnvControl">
 			<label class="control-label labelbold">
 				<span class="mandatory">*</span>&nbsp;<s:text name='lbl.environment'/>
 			</label>	
@@ -128,11 +123,11 @@
 					<option value='<%= gson.toJson(env) %>'><%= env.getName() %></option>
                 <% } %>
 				</select>
-				<span class="help-inline" id="envError"></span>
+				<span class="help-inline" id="configEnvError"></span>
 			</div>
 		</div> <!-- Environment -->
 		
-		<div class="control-group" id="groupControl">
+		<div class="control-group" id="configTypeControl">
 			<label class="control-label labelbold">
 				<span class="mandatory">*</span>&nbsp;<s:text name='lbl.type'/>
 			</label>	
@@ -142,7 +137,7 @@
 					<option value='<%= gson.toJson(settingsTemplate) %>' ><%= settingsTemplate.getName() %></option>
                 <% } %>
 				</select>
-				<span class="help-inline" id="envError"></span>
+				<span class="help-inline" id="configTypeError"></span>
 			</div>
 		</div> <!-- Type -->
 		
@@ -185,9 +180,44 @@
 		
 		var jsonParam = '{ ' + getBasicParamsAsJson() + ', "configName": "' + name + '", "description": "' + desc + '", "configType": "' + type 
 								+ '", "configId": "' + configId + '", "environment" : ' + env + ', ' + configStr.substring(1);
-								
-		loadJsonContent('saveConfiguration', jsonParam, $("#subcontainer"));	
+		
+		
+		validateJson('saveConfiguration', '', $("#subcontainer"), jsonParam);
+		/* loadJsonContent('saveConfiguration', jsonParam, $("#subcontainer")); */	
 	});
 	
+	//To show the validation error messages
+	function findError(data) {
+	
+		if (!isBlank(data.configNameError)) {
+			showError($("#configNameControl"), $("#configNameError"), data.configNameError);
+		} else {
+			hideError($("#configNameControl"), $("#configNameError"));
+		}
+		
+		if (!isBlank(data.dynamicError)) {
+	    	var dynamicErrors = data.dynamicError.split(",");
+	    	for (var i = 0; i < dynamicErrors.length; i++) {
+    		var dynErr = dynamicErrors[i].split(":");
+	    		if (!isBlank(dynErr[1])) {
+		    		showError($("#" + dynErr[0] + "Control"), $("#" + dynErr[0]+ "Error"), dynErr[1]);
+		    	} else{
+					hideError($("#" + dynErr[0] + "Control"), $("#" + dynErr[0]+ "Error"));
+				}
+    		}
+		} 
+		
+		if (!isBlank(data.configEnvError)) {
+			showError($("#configEnvControl"), $("#configEnvError"), data.configEnvError);
+		} else {
+			hideError($("#configEnvControl"), $("#configEnvError"));
+		}
+		
+		if (!isBlank(data.configTypeError)) {
+			showError($("#configTypeControl"), $("#configTypeError"), data.configTypeError);
+		} else {
+			hideError($("#configTypeControl"), $("#configTypeError"));
+		} 
+	}
 	
 </script>

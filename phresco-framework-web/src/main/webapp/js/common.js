@@ -174,6 +174,26 @@ function validate(pageUrl, form, tag, additionalParams, progressText, disabledDi
 	});
 }
 
+function validateJson(url, form, containerTag, jsonParam, progressText, disabledDiv) {
+	if (disabledDiv != undefined && disabledDiv != "") {
+		enableDivCtrls(disabledDiv);
+	}
+	
+	$.ajax({
+		url : url + "Validate",
+		data : jsonParam,
+		type : "POST",
+		contentType: "application/json; charset=utf-8",
+		success : function(data) {
+			if (data.errorFound != undefined && data.errorFound) {
+				findError(data);
+			} else {
+				loadJsonContent(url, jsonParam, containerTag);
+			}
+		}
+	});
+}
+
 function loadData(data, tag, pageUrl, callSuccessEvent) {
 	//To load the login page if the user session is not available
 	if (data != undefined && data != "[object Object]" && data != "[object XMLDocument]" 

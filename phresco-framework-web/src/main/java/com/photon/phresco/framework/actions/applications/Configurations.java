@@ -66,6 +66,7 @@ public class Configurations extends FrameworkBaseAction {
     
     private static final Logger S_LOGGER = Logger.getLogger(Configurations.class);
     private static Boolean debugEnabled  = S_LOGGER.isDebugEnabled();
+    private static Boolean s_debugEnabled = S_LOGGER.isDebugEnabled();
     
     private List<Environment> environments = new ArrayList<Environment>(8);
     private Environment environment = null;
@@ -78,7 +79,11 @@ public class Configurations extends FrameworkBaseAction {
     private String oldName = null;
     private String[] appliesto = null;
     private String projectCode = null;
-    private String nameError = null;
+    private boolean errorFound = false;
+	private String configNameError = null;
+	private String configEnvError = null;
+	private String configTypeError = null;
+	private String nameError = null;
     private String typeError = null;
     private String portError = null;
     private String dynamicError = "";
@@ -113,15 +118,9 @@ public class Configurations extends FrameworkBaseAction {
         	S_LOGGER.debug("Configuration.list() entered");
         }
         
-		Project project = null;
     	try {
     	    List<Environment> environments = getAllEnvironments();
-//            configManager.get
-//            project = administrator.getProject(projectCode);
-//            List<Environment> environments = administrator.getEnvironments(project);
-//            configManager.getEnvironments(names);
             setReqAttribute(REQ_ENVIRONMENTS, environments);
-           // List<SettingsInfo> configurations = administrator.configurations(project);
             String cloneConfigStatus = getHttpRequest().getParameter(CLONE_CONFIG_STATUS); 
             if (cloneConfigStatus != null) {
             	addActionMessage(getText(ENV_CLONE_SUCCESS));
@@ -132,7 +131,6 @@ public class Configurations extends FrameworkBaseAction {
         	  return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_CONFIGURATION_LIST_CONFIG));
 		}
         
-       // getHttpRequest().setAttribute(REQ_PROJECT, project);
         getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
         return APP_LIST;
     }
@@ -196,11 +194,11 @@ public class Configurations extends FrameworkBaseAction {
 		}  
 
         try {
+        	
             SettingsTemplate configTemplate = getServiceManager().getConfigTemplate(getConfigId(), getCustomerId());
-
             Properties properties = new Properties();
-            List<PropertyTemplate> properties2 = configTemplate.getProperties();
-            for (PropertyTemplate propertyTemplate : properties2) {
+            List<PropertyTemplate> property = configTemplate.getProperties();
+            for (PropertyTemplate propertyTemplate : property) {
                 String key = propertyTemplate.getKey();
                 String value = getActionContextParam(key);
                 if (StringUtils.isNotEmpty(value)) {
@@ -344,6 +342,49 @@ public class Configurations extends FrameworkBaseAction {
         getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
         return list();
     }
+    
+    /**
+     * To validate the form fields
+     * @return
+     * @throws PhrescoException 
+     */
+    public String validateConfiguration() throws PhrescoException {
+    	
+    	boolean hasError = false;
+    	
+    	if (StringUtils.isEmpty(getConfigName())) {
+    		setConfigNameError(getText(ERROR_NAME));
+            hasError = true;
+        }
+    	
+    	if (StringUtils.isEmpty(getConfigType())) {
+    		setConfigTypeError(getText(ERROR_CONFIG_TYPE));
+            hasError = true;
+        }
+    	
+    	SettingsTemplate configTemplate = getServiceManager().getConfigTemplate(getConfigId(), getCustomerId());
+        List<PropertyTemplate> properties = configTemplate.getProperties();
+        for (PropertyTemplate propertyTemplate : properties) {
+            String key = propertyTemplate.getKey();
+            String value = getActionContextParam(key);
+            if (propertyTemplate.isRequired() && StringUtils.isEmpty(value)) {
+            	String field = propertyTemplate.getName();
+            	dynamicError += key + ":" + field + " is empty" + ",";
+            }
+        }
+        
+        if (StringUtils.isNotEmpty(dynamicError)) {
+	        dynamicError = dynamicError.substring(0, dynamicError.length() - 1);
+	        setDynamicError(dynamicError);
+	        hasError = true;
+	   	}
+        if (hasError) {
+            setErrorFound(true);
+        }
+        
+        return SUCCESS;
+    }
+    
     
     private String getDbDriver(String dbtype) {
 		return dbDriverMap.get(dbtype);
@@ -1209,11 +1250,37 @@ public class Configurations extends FrameworkBaseAction {
 		this.flag = flag;
 	}
 	
+	public String getConfigNameError() {
+		return configNameError;
+	}
+	
+	public void setConfigNameError(String configNameError) {
+		this.configNameError = configNameError;
+	}
+	
+	public String getConfigEnvError() {
+		return configEnvError;
+	}
 
+	public void setConfigEnvError(String configEnvError) {
+		this.configEnvError = configEnvError;
+	}
+	
+	public String getConfigTypeError() {
+		return configTypeError;
+	}
 
+	public void setConfigTypeError(String configTypeError) {
+		this.configTypeError = configTypeError;
+	}
+
+	 public boolean isErrorFound() {
+		return errorFound;
+	}
 	
-	
-	
+	public void setErrorFound(boolean errorFound) {
+		this.errorFound = errorFound;
+	}
 	
     
     public List<Environment> getEnvironments() {
