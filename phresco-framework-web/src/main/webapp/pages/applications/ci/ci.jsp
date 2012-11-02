@@ -270,10 +270,12 @@ $(document).ready(function() {
 	
 	$('.siteaccordion').unbind('click');
 	accordion();
-// 	$("#popup_div").css("display","none");
-// 	$("#popup_div").empty();
+	// hide popup
+	$('#popupPage').modal('hide');
+
 	enableScreen();
 	hideLoadingIcon();
+	hidePopuploadingIcon();
 	hideProgressBar(); // when deleting builds and jobs
 	
 	$("input:checkbox[name='allBuilds']").click(function() {
@@ -446,7 +448,7 @@ function refreshAfterServerUp() {
 function reloadCI() {
 	if ($("a[name='appTab'][class='active']").attr("id") == "ci" && $("#popupPage").css("display") == "none"){
 		console.log("reload CI called and going to refresh the page ");
-//     	showLoadingIcon($("#tabDiv")); // Loading Icon
+    	showLoadingIcon(); // Loading Icon
     	console.log("Server startup completed ..." + isCiRefresh);
 		loadContent('ci',$('#deleteObjects'), $('#subcontainer'), getBasicParams(), false);
 	} else {
@@ -575,6 +577,9 @@ function popupOnOk(obj) {
 				console.log("create job with OUT collabnet plugin ");
 				configureJob(okUrl);
 			}
+			
+			// show popup loading icon
+			showPopuploadingIcon();
 		} else if (okUrl == "deleteBuild" ) {
 			deleteCIBuild();
 		}  else if (okUrl == "deleteJob" ) {
