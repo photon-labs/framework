@@ -221,13 +221,13 @@
 			                        	    <div class="alert-message block-message warning" >
 			                        	    	<%  if(!new Boolean(request.getAttribute(FrameworkConstants.CI_BUILD_JENKINS_ALIVE + jobName).toString()).booleanValue()) { %>
 			                        	    		<div class="alert alert-block" style="margin-top: 0px;">
-			                        	    		<center>
+			                        	    		<center class="errorMsgLbl">
 			                        	    				 <s:text name='ci.server.down.message'/>
 			                        	    		</center>
 			                        	    		</div>
 			                        	    	<% } else { %>
 			                        	    		<div class="alert alert-block" style="margin-top: 0px;">
-													<center>
+													<center class="errorMsgLbl">
 														<s:text name='ci.error.message'/>
 													</center>
 													</div>			                        	    	
@@ -432,7 +432,7 @@ function refreshAfterServerUp() {
 	   	disableButton($("#configure"));
 	   	disableButton($("#build"));
 	   	disableButton($("#deleteJob"));
-	   	$(".errorMsgLabel").text('<%= FrameworkConstants.CI_BUILD_LOADED_SHORTLY%>');
+	   	$(".errorMsgLbl").text('<%= FrameworkConstants.CI_BUILD_LOADED_SHORTLY%>');
 	   	
 		console.log("I ll wait till jenkins gets ready!!!");
 		window.setTimeout(refreshAfterServerUp, 15000); // wait for 15 sec
@@ -451,40 +451,39 @@ function reloadCI() {
 		loadContent('ci',$('#deleteObjects'), $('#subcontainer'), getBasicParams(), false);
 	} else {
 		console.log("reload CI : It is not in CI tab or popup available ");
-		$(".errorMsgLabel").text('<%= FrameworkConstants.CI_NO_JOBS_AVAILABLE%>');
+		$(".errorMsgLbl").text('<%= FrameworkConstants.CI_NO_JOBS_AVAILABLE%>');
 	}
 }
 
 function localJenkinsAliveCheck () {
-// 	loadContent('ci',$('#deleteObjects'), $('#subcontainer'), getBasicParams(), false); // 6th param
-    $.ajax({
-        url : "localJenkinsAliveCheck",
-        data: { },
-        type: "POST",
-        success : function(data) {
-        	if($.trim(data) == '200') {
-        		console.log("200");
-        		isJenkinsAlive = true;
-        		isJenkinsReady = true;
-        	}
-        	if($.trim(data) == '503') {
-        		console.log("503");
-        		isJenkinsAlive = true;
-        		isJenkinsReady = false;
-        	}
-        	if($.trim(data) == '404') {
-        		console.log("404");
-        		isJenkinsAlive = false;
-        		isJenkinsReady = false;
-        	}
-        },
-        async:false
-    });
+	console.log("local jenkins alive check called ");
+	loadContent('localJenkinsAliveCheck',$('#deleteObjects'), '', getBasicParams(), true, false);
+}
+
+function successLocalJenkinsAliveCheck (data) {
+	if ($.trim(data.localJenkinsAlive) == '200') {
+		console.log("200");
+		isJenkinsAlive = true;
+		isJenkinsReady = true;
+	}
+	if ($.trim(data.localJenkinsAlive) == '503') {
+		console.log("503");
+		isJenkinsAlive = true;
+		isJenkinsReady = false;
+	}
+	if ($.trim(data.localJenkinsAlive) == '404') {
+		console.log("404");
+		isJenkinsAlive = false;
+		isJenkinsReady = false;
+	}
 }
 
 function successEvent(pageUrl, data) {
-	if(pageUrl == "getNoOfJobsIsInProgress") {
+	if (pageUrl == "getNoOfJobsIsInProgress") {
 		successRefreshBuild(data);
+	} else if (pageUrl == "localJenkinsAliveCheck") {
+		console.log("success jenkins alive check called ");
+		successLocalJenkinsAliveCheck(data);
 	}
 }
 
@@ -536,15 +535,19 @@ function isOneJobSelected() {
 	}
 }
 
-function popupClose(closeUrl) {
+function popupOnClose(obj) {
+	var closeUrl = $(obj).attr("id");
 	console.log("handle load content here " + closeUrl);
 	showParentPage();
 	if (closeUrl === "setup") {
+		console.log("setup called ");
 // 		refreshAfterServerUp();
 	} else 	if (closeUrl === "startJenkins") {
+		console.log("start called ");
 		isCiRefresh = true; //after stratup , when closing popup, page should refreshed after some time
 // 		refreshAfterServerUp();
 	} else 	if (closeUrl === "stopJenkins") {
+		console.log("stop called ");
 // 		refreshAfterServerUp();
 	}
 	

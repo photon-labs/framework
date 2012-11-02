@@ -83,11 +83,12 @@ function progressPopup(btnObj, pageUrl, title, appId, actionType, form, callSucc
 		$('.modal-body').empty();
 		$('#popupClose').show();
 		$('.popupOk, #popupCancel').hide(); // hide ok & cancel button
+		$(".popupClose").attr('id', pageUrl); // popup action mapped to id
 		readerHandlerSubmit(pageUrl, appId, actionType, form, callSuccessEvent, additionalParams);
 	});
-	$('#popupClose').click(function() {
-		popupClose(pageUrl); // this function will be kept in where the progressPopup() called
-	});
+//	$('#popupClose').click(function() {
+//		popupClose(pageUrl); // this function will be kept in where the progressPopup() called
+//	});
 }
 
 function progressPopupAsSecPopup(url, title, appId, actionType, form, additionalParams) {
@@ -121,9 +122,12 @@ function clickButton(button, tag) {
 	});
 }
 
-function loadContent(pageUrl, form, tag, additionalParams, callSuccessEvent) {
+function loadContent(pageUrl, form, tag, additionalParams, callSuccessEvent, ajaxCallType) {
 //	showLoadingIcon(tag);
-
+	if (ajaxCallType == undefined || ajaxCallType == "") {
+		ajaxCallType = true;
+	}
+	
 	var params = getParameters(form, additionalParams);
 	$.ajax({
 		url : pageUrl,
@@ -131,7 +135,8 @@ function loadContent(pageUrl, form, tag, additionalParams, callSuccessEvent) {
 		type : "POST",
 		success : function(data) {
 			loadData(data, tag, pageUrl, callSuccessEvent);
-		}
+		},
+		async: ajaxCallType
 	});
 }
 

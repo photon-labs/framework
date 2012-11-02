@@ -813,7 +813,8 @@
 		<!-- minification ends -->
 		
 		<action name="localJenkinsAliveCheck" method="localJenkinsLocalAlive" class="com.photon.phresco.framework.actions.applications.CI">
-        	<result type="json"><param name="root">localJenkinsAlive</param></result>
+        	<result type="json"/>
+<!--         	<param name="root">localJenkinsAlive</param> -->
         </action>
     </package>
 </struts>
