@@ -37,7 +37,9 @@
 
 <form id="environment" class="form-horizontal">
 	<div class="control-group">
-		<s:label key="lbl.name" cssClass="control-label labelbold modallbl-color" theme="simple"/>
+		<label class="control-label labelbold modallbl-color">
+			<span class="mandatory">*</span>&nbsp;<s:text name='lbl.name' />
+		</label>
 		<div class="controls">
 			<input type="text" name="envName" id="envName" class="span3"  placeholder="<s:text name='place.hldr.env.name'/>" 
 			maxlength="30" title="<s:text name='title.30.chars'/>" />
@@ -91,10 +93,34 @@
 <input type="hidden" id="selectedEnvs" name="selectedEnvs" value="">
 <input type="hidden" id="deletableItems" name="deletableItems" value="">
 
+
 <script type="text/javascript">
 	$('#add').click(function() {
-		addRow();
+		$('#errMsg').html("");
+		var returnVal = true;
+		name =($.trim($('#envName').val()));
+		desc = $("#envDesc").val();
+		if(name == "") {
+			$("#errMsg").html("<s:text name='enter.environment.name'/>");
+			$("#envName").focus();
+			$("#envName").val("");
+			returnVal = false;
+		} else {
+			$('#envName').empty();
+			addRow();
+		} 
+		
 	});
+	
+	$('#setAsDefault').click(function() {
+    	 $('#errMsg').html('');
+         var setAsDefaultEnvsSize = $('#multiselect :checked').size();
+         if (setAsDefaultEnvsSize < 1 || setAsDefaultEnvsSize > 1) {
+        	 $("#errMsg").html("<s:text name='please.select.one.environment'/>");
+        	 return false;
+         }
+    });
+	
 	
 	function addRow() {
 		var value = $('#envName').val();

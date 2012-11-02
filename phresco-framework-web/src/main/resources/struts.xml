@@ -409,6 +409,11 @@
             <result type="json" />
         </action>
         
+        <action name="saveConfigurationValidate" method="validateConfiguration" class="com.photon.phresco.framework.actions.applications.Configurations">
+    	    <interceptor-ref name="json" />
+			<result type="json"/>
+        </action>
+        
         <action name="editConfiguration" method="edit" class="com.photon.phresco.framework.actions.applications.Configurations">
             <result name="editConfiguration">/pages/applications/configuration/add.jsp</result>
         </action>

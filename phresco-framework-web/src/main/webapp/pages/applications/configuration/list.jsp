@@ -129,9 +129,6 @@
 								    		<tbody>
 								    			<%
 														List<Configuration> configurations = envInfoValue.getConfigurations();
-										    			for (Configuration configuration : configurations) {
-															System.out.println("configuration in jsp-------" + configuration);
-														}
 								    					if (CollectionUtils.isNotEmpty(configurations)) {
 															for (Configuration configuration : configurations) {
 												%>

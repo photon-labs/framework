@@ -959,7 +959,8 @@ public interface FrameworkConstants {
     String ERROR_CODE = "err.msg.empty.code";
     String ERROR_LAYER = "err.msg.empty.layer";
     String ERROR_TECHNOLOGY = "err.msg.empty.technology";
-    String ERROR_ENV = "Environment is missing";
+    String ERROR_ENV = "err.msg.empty.environment";
+    String ERROR_CONFIG_TYPE = "err.msg.empty.config.type";
     String CLONE_CONFIG_STATUS = "cloneConfigStatus";
     String ERROR_ENV_REMOVE = "Environment {0} is already in use";
     String ERROR_ENVS_REMOVE = "Environment(s) {0} are already in use";
