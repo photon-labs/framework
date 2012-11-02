@@ -104,7 +104,7 @@
         if (MapUtils.isEmpty(existingJobs) ) {
         	isExistJob = false;
     %>
-<!--     jobs not available message -->
+		<!--  jobs not available message -->
         <div class="alert alert-block" >
             <center><s:text name='ci.jobs.error.message'/></center>
         </div>
@@ -250,9 +250,6 @@
     %>
 </form>
 
-<!-- <div class="popup_div" id="CI">
-</div> -->
-
 <script type="text/javascript">
 
 /* To check whether the device is ipad or not */
@@ -360,19 +357,11 @@ $(document).ready(function() {
 		refreshAfterServerUp(); // after server restarted , it ll reload builds and ll refresh page (reload page after 10 sec)	
 	}
 	
-// 	// delete this - kalees
-// 	enableButton($("#configure"));
 });
 
 function buildCI() {
-// 	popup('buildCI', '', $('#tabDiv'));
 	loadContent('buildCI',$('#deleteObjects'), $('#subcontainer'), getBasicParams(), false);
 }
-
-// function ProgressShow(prop) {
-//     $(".wel_come").show().css("display",prop);
-//     $('#build-outputOuter').show().css("display",prop);
-// }
 
 function deleteCIBuild() {
 	showProgressBar("Deleting Build (s)");
@@ -467,6 +456,7 @@ function reloadCI() {
 }
 
 function localJenkinsAliveCheck () {
+// 	loadContent('ci',$('#deleteObjects'), $('#subcontainer'), getBasicParams(), false); // 6th param
     $.ajax({
         url : "localJenkinsAliveCheck",
         data: { },
@@ -495,12 +485,6 @@ function localJenkinsAliveCheck () {
 function successEvent(pageUrl, data) {
 	if(pageUrl == "getNoOfJobsIsInProgress") {
 		successRefreshBuild(data);
-	} 
-	else if(pageUrl == "getBuildsSize") {
-		console.log("I never used ");
-// 		successRefreshCI(data);
-// 	} else if(pageUrl == "checkForConfiguration") {
-// 		successEnvValidation(data);
 	}
 }
 
@@ -557,18 +541,11 @@ function popupClose(closeUrl) {
 	showParentPage();
 	if (closeUrl === "setup") {
 // 		refreshAfterServerUp();
-// 	    var params = getBasicParams();
-// 	    loadContent('veiwSiteReport',$('#formConfigureList'), $('#subcontainer'), params);
 	} else 	if (closeUrl === "startJenkins") {
 		isCiRefresh = true; //after stratup , when closing popup, page should refreshed after some time
 // 		refreshAfterServerUp();
-// 	    var params = getBasicParams();
-// 	    loadContent('veiwSiteReport',$('#formConfigureList'), $('#subcontainer'), params);
 	} else 	if (closeUrl === "stopJenkins") {
 // 		refreshAfterServerUp();
-// 	    var params = getBasicParams();
-// 		loadContent(pageUrl, form, tag, additionalParams, callSuccessEvent)
-// 	    loadContent('veiwSiteReport',$('#formConfigureList'), $('#subcontainer'), params);
 	}
 	
 	refreshAfterServerUp();
@@ -585,7 +562,7 @@ function popupOnOk(obj) {
 			}
 			// do the validation for collabNet info only if the user selects git radio button
 			var validation = configureJobValidation();
-		// when validation is true
+			// when validation is true
 			if (validation && $("input:radio[name=enableBuildRelease][value='true']").is(':checked')) {
 				if(collabNetValidation()) {
 					console.log("create job with collabnet plugin ");

@@ -170,6 +170,22 @@ public interface FrameworkConstants {
     String CI_FILE_RELEASE_FILE_PATTERN="file__patterns";
     String CI_FILE_RELEASE_FILE_PATTERN_NODE ="hudson.plugins.collabnet.documentuploader.FilePattern";
     String CI_BUILD_EXT = "do_not_checkin/build/*.zip";
+    String STRING_NULL = "null";
+    String API_JSON = "api/json";
+    String BUSY_EXECUTORS = "computer/api/xml?xpath=/computerSet/busyExecutors/text()";
+    String DELETE_TYPE_BUILD = "Build";
+    String DELETE_TYPE_JOB = "Job";
+    String SUCCESS_EMAILS = "successEmails";
+    String FAILURE_EMAILS = "failureEmails";
+    String TRIGGER_SUCCESS__EMAIL_RECIPIENT_LIST = "publishers//hudson.plugins.emailext.ExtendedEmailPublisher//configuredTriggers//hudson.plugins.emailext.plugins.trigger.SuccessTrigger//email//recipientList";
+    String TRIGGER_FAILURE_EMAIL_RECIPIENT_LIST = "publishers//hudson.plugins.emailext.ExtendedEmailPublisher//configuredTriggers//hudson.plugins.emailext.plugins.trigger.FailureTrigger//email//recipientList";
+    String GOALS = "goals";
+    String TRIGGERS = "triggers";
+    String TRIGGERS_SPEC = "triggers//spec";
+    String SCM_BRANCHES_NAME = "scm/branches//name";
+    String SCM_USER_REMOTE_CONFIGS_URL = "scm/userRemoteConfigs//url";
+    String SCM_LOCATIONS_REMOTE = "scm/locations//remote";
+    String DD_MM_YYYY_HH_MM_SS = "dd/MM/yyyy hh:mm:ss";
 	String HUDSON_TASKS_BUILD_TRIGGER_NODE = "hudson.tasks.BuildTrigger";
 	String MAVEN_HOME_ENV = "MAVEN_HOME";
 	String USE_PRIVATE_REPOSITORY_NODE = "usePrivateRepository";
@@ -280,6 +296,10 @@ public interface FrameworkConstants {
     String CI_UTF8 = "UTF-8";
     String CI_START = "CIStart";
     String CI_STOP = "CIStop";
+    String CODE_404 = "404";
+    String CI_PRE_BUILD_STEP = "phresco:ci-prestep -DjobName=${env.JOB_NAME}";
+    
+    String SKIP_TESTS = "-DskipTests=true";
     String TEST_DIRECTORY = "dir_type";
     String MVN_TEST_COMMAND = "mvn clean test";
     String MVN_SHAREPOINT_NUNIT_TEST_COMMAND = "mvn sharepoint:test";
