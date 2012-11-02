@@ -57,6 +57,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 
 	private static final Logger S_LOGGER = Logger.getLogger(SCMManagerImpl.class);
 	private static Boolean debugEnabled = S_LOGGER.isDebugEnabled();
+	boolean dotphresco ;
 	SVNClientManager cm = null;
 
 	public boolean importProject(String type, String url, String username,
@@ -374,8 +375,8 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				S_LOGGER.debug("Repository Root: " + repository.getRepositoryRoot(true));
 				S_LOGGER.debug("Repository UUID: " + repository.getRepositoryUUID(true));
 			}
-			validateDir(repository, "", revision, svnURL, true);
-			return true;
+			boolean valid = validateDir(repository, "", revision, svnURL, true);
+			return valid;
 		} catch (SVNException svne) {
 			if(debugEnabled){
 				S_LOGGER.error("error while listing entries: " + svne.getMessage());
@@ -384,7 +385,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		}
 	}
 
-	private void validateDir(SVNRepository repository, String path,
+	private boolean validateDir(SVNRepository repository, String path,
 			String revision, SVNURL svnURL, boolean recursive)throws PhrescoException {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.validateDir()");
@@ -423,7 +424,8 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 						// update connection url in pom.xml
 						updateSCMConnection(appInfo.getName(),
 								svnURL.toDecodedString());
-
+						dotphresco = true;
+						return dotphresco;
 					} else if (entry.getKind() == SVNNodeKind.DIR && recursive) {
 						// second level check (only one iteration)
 						SVNURL svnnewURL = svnURL.appendPath("/" + entry.getName(), true);
@@ -442,6 +444,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			}
 			throw new PhrescoException(e.getLocalizedMessage());
 		}
+		return dotphresco;
 	}
 
 	private void importFromGit(String url, File gitImportTemp, String username, String password)throws PhrescoException {
@@ -494,9 +497,10 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				}
 				// update connection in pom.xml
 				updateSCMConnection(appInfo.getName(), url);
+				return true;
 			}
 		}
-		return true;
+		return false;
 	}
 
 	private ApplicationInfo getGitAppInfo(File directory)throws PhrescoException {
