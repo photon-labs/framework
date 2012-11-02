@@ -183,6 +183,8 @@ public interface FrameworkConstants {
     String TRIGGER_FAILURE_EMAIL_RECIPIENT_LIST = "publishers//hudson.plugins.emailext.ExtendedEmailPublisher//configuredTriggers//hudson.plugins.emailext.plugins.trigger.FailureTrigger//email//recipientList";
 	String CRON_VALIDATION = "cronValidation";
 	String CI_TOMCAT_HTTP_PORT = "/project/build/plugins/plugin/configuration/tomcatHttpPort";
+	String CI_ERROR = "error.";
+	String CI_MESSAGE = ".message";
     String GOALS = "goals";
     String TRIGGERS = "triggers";
     String TRIGGERS_SPEC = "triggers//spec";

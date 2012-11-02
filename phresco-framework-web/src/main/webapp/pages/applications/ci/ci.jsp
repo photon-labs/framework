@@ -40,6 +40,7 @@
 <%@ page import="com.photon.phresco.framework.api.Project" %>
 <%@ page import="com.photon.phresco.framework.model.CIBuild"%>
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
+<%@ page import="com.photon.phresco.framework.actions.util.FrameworkActionUtil"%>
 
 <script src="js/reader.js" ></script>
 <script type="text/javascript" src="js/delete.js" ></script>
@@ -219,19 +220,15 @@
 			                        		} else {
 			                        	%>
 			                        	    <div class="alert-message block-message warning" >
-			                        	    	<%  if(!new Boolean(request.getAttribute(FrameworkConstants.CI_BUILD_JENKINS_ALIVE + jobName).toString()).booleanValue()) { %>
-			                        	    		<div class="alert alert-block" style="margin-top: 0px;">
+			                        	    	<%  
+			                        	    		String jobAliveStatus = request.getAttribute(FrameworkConstants.CI_BUILD_JENKINS_ALIVE + jobName).toString();
+			                        	    		String title = FrameworkActionUtil.getTitle(FrameworkConstants.CI_ERROR + jobAliveStatus + FrameworkConstants.CI_MESSAGE, FrameworkConstants.CI);
+			                        	    	%>
+		                        	    		<div class="alert alert-block" style="margin-top: 0px;">
 			                        	    		<center class="errorMsgLbl">
-			                        	    				 <s:text name='ci.server.down.message'/>
+			                        	    			<%= title %>
 			                        	    		</center>
-			                        	    		</div>
-			                        	    	<% } else { %>
-			                        	    		<div class="alert alert-block" style="margin-top: 0px;">
-													<center class="errorMsgLbl">
-														<s:text name='ci.error.message'/>
-													</center>
-													</div>			                        	    	
-			                        	    	<% } %>
+		                        	    		</div>
 									        </div>
 			                        	<% } %>
 			                        </section>
