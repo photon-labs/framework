@@ -187,26 +187,6 @@
 		// accodion for advanced issue
 // 		accordion();
 		
-		/** NodeJS run against source **/
-		$('#runAgainstSrc').click(function() {
-			var isChecked = $('#importSql').is(":checked");
-			if ($('#importSql').is(":checked") && $('#selectedSourceScript option').length == 0) {
-				$("#errMsg").html('<%= FrameworkConstants.SELECT_DB %>');
-				return false;
-			}
-			buildValidateSuccess('NodeJSRunAgainstSource', '<%= FrameworkConstants.REQ_READ_LOG_FILE %>');
-		});
-		
-		/** Java run against source **/
-		$('#javaRunAgainstSrc').click(function() {
-			var isChecked = $('#importSql').is(":checked");
-			if ($('#importSql').is(":checked") && $('#selectedSourceScript option').length == 0) {
-				$("#errMsg").html('<%= FrameworkConstants.SELECT_DB %>');
-				return false;
-			}
-			buildValidateSuccess('runAgainstSource', '<%= FrameworkConstants.REQ_JAVA_START %>');
-		});
-		
 		$('#importSql').click(function() {
 			var isChecked = $('#importSql').is(":checked");
 			if (isChecked) {
@@ -453,9 +433,6 @@
 				$("#console_div").html("Generating build...");
 			} else if(url == "deploy") {
 				$("#console_div").html("Deploying project...");
-			} else {
-				$("#console_div").html("Server is starting...");
-				disableButton($("#runAgainstSourceStart"));
 			}
 			performUrlActions(url, readerSession);
 		}

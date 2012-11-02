@@ -84,7 +84,7 @@
 		    <a data-toggle="modal" href="#popupPage" id="generateBuild" class="btn btn-primary" additionalParam="from=generateBuild"><s:text name='label.generatebuild'/></a>
 			<input id="deleteButton" type="button" value="<s:text name="label.delete"/>" class="btn" disabled="disabled"/>
 			<input type="button" class="btn btn-primary" data-toggle="modal" href="#popupPage" id="runAgainstSourceStart" value="<s:text name='label.runagainsrc'/>"/>
-		    <input type="button" class="btn" id="runAgainstSourceStop" value="<s:text name='label.stop'/>" disabled onclick="stopServer();"/>
+		    <input type="button" class="btn" id="runAgainstSourceStop" value="<s:text name='lbl.stop'/>" disabled onclick="stopServer();"/>
 		    <input type="button" class="btn" id="runAgainstSourceRestart" value="<s:text name='label.restart'/>" disabled onclick="restartServer();"/>
 		</div>
 		<div class="clear"></div>
@@ -127,7 +127,7 @@
 	}
 	
     $(document).ready(function() {
-    	yesnoPopup($('#generateBuild'), 'generateBuild', '<s:text name="label.generatebuild"/>', 'build','<s:text name="label.build"/>');
+    	yesnoPopup($('#generateBuild'), 'generateBuild', '<s:text name="label.generatebuild"/>', 'build','<s:text name="lbl.build"/>');
     	yesnoPopup($('#runAgainstSourceStart'),'showRunAgainstSourcePopup', '<s:text name="label.runagainstsource"/>', 'startServer','<s:text name="label.run"/>');
     	if ($.browser.safari && $.browser.version == 530.17) {
     		$(".buildDiv").show().css("float","left");
@@ -247,7 +247,7 @@
  		$("#console_div").html("Server is restarting...");
  		disableButton($("#runAgainstSourceStop"));
 		disableButton($("#runAgainstSourceRestart"));
-		readerHandlerSubmit('restartServer', '<%= appId %>', '<%= FrameworkConstants.REQ_START %>', '', true, getBasicParams());
+		readerHandlerSubmit('restartServer', '<%= appId %>', '<%= FrameworkConstants.REQ_START %>', '', false, getBasicParams());
  	}
  	
  	// when server is stopped in run against source 
@@ -281,33 +281,21 @@
 			}
 			buildValidateSuccess("deploy", '<%= FrameworkConstants.REQ_FROM_TAB_DEPLOY %>');
 		} else if (okUrl === "startServer") {
+			$("#console_div").html("Server is starting...");
+			disableButton($("#runAgainstSourceStart"));
 			var isChecked = $('#importSql').is(":checked");
 			if ($('#importSql').is(":checked") && $('#selectedSourceScript option').length == 0) {
 				$("#errMsg").html('<%= FrameworkConstants.SELECT_DB %>');
 				return false;
 			}
-			buildValidateSuccess('startServer', '<%= FrameworkConstants.REQ_START %>');
-		} else if (okUrl === "runUnitTest") {
-			var params = getBasicParams();
-			progressPopupAsSecPopup('runUnitTest', '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.UNIT %>', $("#generateBuildForm"), params);
-		} else if (okUrl === "runLoadTest") {
-			var params = getBasicParams();
-			progressPopupAsSecPopup('runLoadTest', '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.LOAD %>', $("#generateBuildForm"), params);
+			readerHandlerSubmit('startServer', '<%= appId %>', '<%= FrameworkConstants.REQ_START %>', $("#generateBuildForm"), false, getBasicParams());
 		}
 	}
 	
 	function successEvent(pageUrl, data) {
-    	 if(pageUrl == "restartServer" || pageUrl == "runAgainstSource") {
-     		runAgainstSrcServerRunning();
-     	} else if(pageUrl == "stopServer") {
+		if(pageUrl == "stopServer") {
      		runAgainstSrcServerDown();
-     	} else if(pageUrl == "NodeJSRunAgainstSource" && $.trim(data) == "Server startup failed") {
-     		runAgainstSrcServerDown();
-     	}  else  if(pageUrl == "startServer" && ($.trim(data) == "Server startup failed" || $.trim(data) == "[INFO] BUILD FAILURE")) {
-     		runAgainstSrcServerDown();
-     	} else if(pageUrl == "startServer" && $.trim(data) != "Server startup failed") {
-     		runAgainstSrcServerRunning();
-     	} else if(pageUrl == "checkForConfiguration") {
+		} else if(pageUrl == "checkForConfiguration") {
     		successEnvValidation(data);
     	} else if(pageUrl == "checkForConfigType") {
     		successEnvValidation(data);

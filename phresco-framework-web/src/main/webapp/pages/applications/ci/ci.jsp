@@ -61,8 +61,9 @@
 </style>
 
 <%
-// 	System.out.println("Need to handle this!!!!!!!!!! in JSP page!!!!!!");
 	ApplicationInfo appInfo = (ApplicationInfo)request.getAttribute(FrameworkConstants.REQ_APPINFO);
+	String customerId = (String)request.getAttribute(FrameworkConstants.REQ_CUSTOMER_ID);
+	String projectId = (String)request.getAttribute(FrameworkConstants.REQ_PROJECT_ID);
 	String appId  = null;
     if(appInfo != null) {
     	appId  = appInfo.getId();
@@ -73,7 +74,7 @@
 %>
 
 <s:if test="hasActionMessages()">
-    <div class="alert-message success"  id="successmsg" style="margin-top: 2px; margin-left: 165px;">
+    <div class="alert alert-message success" id="successmsg" style="margin-top: 3px; margin-left: 100px;">
         <s:actionmessage />
     </div>
 </s:if>
@@ -85,13 +86,13 @@
 <form action="CIBuildDelete" name="ciBuilds" id="deleteObjects" method="post" class="configurations_list_form ciFormJob">
     <div class="operation ciOperationDiv">
     	<div class="ciOperationEleme">
-	        <input id="setup" type="button" value="<s:text name="label.setup"/>" class="btn btn-primary" data-toggle="modal" href="#popupPage" >
-	        <input id="startJenkins" type="button" value="<s:text name="label.start"/>" class="btn btn-primary" data-toggle="modal" href="#popupPage" >
-	        <input id="stopJenkins" type="button" value="<s:text name="label.stop"/>" class="btn" disabled="disabled" data-toggle="modal" href="#popupPage" >
-	        <input id="configure" type="button" value="<s:text name="label.configure"/>" class="btn btn-primary" data-toggle="modal" href="#popupPage"> <!-- additional param -->
-	        <input id="build" type="button" value="<s:text name="label.build"/>" class="btn" disabled="disabled" onclick="buildCI();">
-	        <input id="deleteBuild" type="button" value="<s:text name="label.deletebuild"/>" class="btn" disabled="disabled" data-toggle="modal" href="#popupPage">
-	        <input id="deleteJob" type="button" value="<s:text name="label.deletejob"/>" class="btn" disabled="disabled" data-toggle="modal" href="#popupPage">
+	        <input id="setup" type="button" value="<s:text name="lbl.setup"/>" class="btn btn-primary" data-toggle="modal" href="#popupPage" >
+	        <input id="startJenkins" type="button" value="<s:text name="lbl.start"/>" class="btn btn-primary" data-toggle="modal" href="#popupPage" >
+	        <input id="stopJenkins" type="button" value="<s:text name="lbl.stop"/>" class="btn" disabled="disabled" data-toggle="modal" href="#popupPage" >
+	        <input id="configure" type="button" value="<s:text name="lbl.configure"/>" class="btn btn-primary" data-toggle="modal" href="#popupPage"> <!-- additional param -->
+	        <input id="build" type="button" value="<s:text name="lbl.build"/>" class="btn" disabled="disabled" onclick="buildCI();">
+	        <input id="deleteBuild" type="button" value="<s:text name="lbl.deletebuild"/>" class="btn" disabled="disabled" data-toggle="modal" href="#popupPage">
+	        <input id="deleteJob" type="button" value="<s:text name="lbl.deletejob"/>" class="btn" disabled="disabled" data-toggle="modal" href="#popupPage">
         </div>
     </div>
     
@@ -144,10 +145,10 @@
 														<input type="checkbox" value="<%= jobName %>" class="<%= jobName %>AllBuild" name="allBuilds">
 				                            		</th>
 				                            		<th>#</th>
-			                            			<th><s:text name="label.url"/></th>
+			                            			<th><s:text name="lbl.url"/></th>
 			                            			<th><s:text name="lbl.download"/></th>
-			                            			<th><s:text name="label.time"/></th>
-			                            			<th><s:text name="label.status"/></th>
+			                            			<th><s:text name="lbl.time"/></th>
+			                            			<th><s:text name="lbl.status"/></th>
 			                            		</tr>
 				                            </thead>
 				                            
@@ -176,6 +177,8 @@
 										                		<a href="<s:url action='CIBuildDownload'>
 												          		     <s:param name="buildDownloadUrl"><%= downloadUrl %></s:param>
 												          		     <s:param name="appId"><%= appId %></s:param>
+												          		     <s:param name="customerId"><%= customerId %></s:param>
+												          		     <s:param name="projectId"><%= projectId %></s:param>
 												          		     <s:param name="buildNumber"><%= build.getNumber() %></s:param>
 												          		     <s:param name="downloadJobName"><%= jobName %></s:param>
 												          		     </s:url>"><img src="images/icons/download.png" title="Download"/>
@@ -217,17 +220,15 @@
 			                        	%>
 			                        	    <div class="alert-message block-message warning" >
 			                        	    	<%  if(!new Boolean(request.getAttribute(FrameworkConstants.CI_BUILD_JENKINS_ALIVE + jobName).toString()).booleanValue()) { %>
-			                        	    		<div class="alert alert-block" >
+			                        	    		<div class="alert alert-block" style="margin-top: 0px;">
 			                        	    		<center>
 			                        	    				 <s:text name='ci.server.down.message'/>
-<%-- 			                        	    				 <s:label key="ci.server.down.message" cssClass="errorMsgLabel"/> --%>
 			                        	    		</center>
 			                        	    		</div>
 			                        	    	<% } else { %>
-			                        	    		<div class="alert alert-block" >
+			                        	    		<div class="alert alert-block" style="margin-top: 0px;">
 													<center>
 														<s:text name='ci.error.message'/>
-<%-- 														<s:label key="ci.error.message" cssClass="errorMsgLabel"/> --%>
 													</center>
 													</div>			                        	    	
 			                        	    	<% } %>
@@ -298,7 +299,7 @@ $(document).ready(function() {
 		enableDisableDeleteButton($(this).val());
 	});
 	
-	yesnoPopup($('#configure'), 'configure', '<s:text name="label.configure"/>', 'saveJob','<s:text name="label.save"/>', $('#deleteObjects'));
+	yesnoPopup($('#configure'), 'configure', '<s:text name="lbl.configure"/>', 'saveJob','<s:text name="lbl.save"/>', $('#deleteObjects'));
     
 //     $('#closeGenerateTest, #closeGenTest').click(function() {
 //     	ProgressShow("none");
@@ -395,31 +396,28 @@ function enableStop() {
 
 //when background build is in progress, have to refresh ci page
 function refreshBuild() {
+	console.log("refresh build method called value " + refreshCi);
 	if(refreshCi) {
-    	var params = "";
-		if (!isBlank($('form').serialize())) {
-			params = $('form').serialize() + "&";
-		}
 		console.log("Going to get no of jobs in progress " + refreshCi);	
-// 		performAction('getNoOfJobsIsInProgress', params, '', true);
 		loadContent('getNoOfJobsIsInProgress',$('#deleteObjects'), '', getBasicParams(), true);
 	}
 }
 
 function successRefreshBuild(data) {
 	console.log("noOfJobsIsinProgress....." + <%= noOfJobsIsinProgress %>);
-	console.log("successRefreshBuild....." + data);
+	console.log("successRefreshBuild....." + data.numberOfJobsInProgress);
+	console.log("refreshCi ... " + refreshCi);
 	//data can be zero when no build is in progress, can be int value for each running job
 	// noOfJobsIsinProgress also can be zero  when no jobs in in progress
 	if (data.numberOfJobsInProgress < <%= noOfJobsIsinProgress %> || data.numberOfJobsInProgress > <%= noOfJobsIsinProgress %>) { // When build is increased or decreased on a job refresh the page , refresh the page
-		var params = "";
-    	if (!isBlank($('form').serialize())) {
-    		params = $('form').serialize() + "&";
-    	}
-    	showLoadingIcon($("#tabDiv")); // Loading Icon
     	console.log("build succeeded going to load builds.....");
-// 		performAction('ci', params, $("#tabDiv"));
-		loadContent('ci',$('#deleteObjects'), $('#subcontainer'), getBasicParams(), false);
+    	if ($("a[name='appTab'][class='active']").attr("id") == "ci" && $("#popupPage").css("display") == "block") {
+    		console.log("Build trugger completed in jenkins , but UI is blocking ");
+//     		refreshCi = false;
+    	} else {
+    		showLoadingIcon(); // Loading Icon
+    		loadContent('ci', $('#deleteObjects'), $('#subcontainer'), getBasicParams(), false);
+    	}
 	} else {
 		window.setTimeout(refreshBuild, 15000); // wait for 15 sec
 	}
@@ -433,8 +431,8 @@ function refreshAfterServerUp() {
 	
    	localJenkinsAliveCheck (); // checks jenkins status and updates the variable
 	
-	console.log("Local jenkins alive called ===> jenkins alive ===> " + isJenkinsAlive);
-	console.log("Local jenkins alive called ===> jenkins ready ===> " + isJenkinsReady);
+	console.log("Local jenkins alive called ....  jenkins alive ... " + isJenkinsAlive);
+	console.log("Local jenkins alive called .... jenkins ready ... " + isJenkinsReady);
 	
    	//default : isCiRefresh = true
 	if (!isCiRefresh) { //when stop is clicked it will comme here
@@ -459,15 +457,11 @@ function refreshAfterServerUp() {
 function reloadCI() {
 	if ($("a[name='appTab'][class='active']").attr("id") == "ci" && $("#popupPage").css("display") == "none"){
 		console.log("reload CI called and going to refresh the page ");
-//     	var params = "";
-//     	if (!isBlank($('form').serialize())) {
-//     		params = $('form').serialize() + "&";
-//     	}
 //     	showLoadingIcon($("#tabDiv")); // Loading Icon
     	console.log("Server startup completed ..." + isCiRefresh);
-// 		performAction('ci', params, $("#tabDiv"));
 		loadContent('ci',$('#deleteObjects'), $('#subcontainer'), getBasicParams(), false);
 	} else {
+		console.log("reload CI : It is not in CI tab or popup available ");
 		$(".errorMsgLabel").text('<%= FrameworkConstants.CI_NO_JOBS_AVAILABLE%>');
 	}
 }
@@ -503,7 +497,7 @@ function successEvent(pageUrl, data) {
 		successRefreshBuild(data);
 	} 
 	else if(pageUrl == "getBuildsSize") {
-		alert("I never used ");
+		console.log("I never used ");
 // 		successRefreshCI(data);
 // 	} else if(pageUrl == "checkForConfiguration") {
 // 		successEnvValidation(data);
@@ -550,8 +544,16 @@ function isMoreThanOneJobSelected() {
 	}
 }
 
+function isOneJobSelected() {
+	if ($("input[type=checkbox][name='Jobs']:checked").length > 0)  {
+		return true;
+	} else {
+		return false;
+	}
+}
+
 function popupClose(closeUrl) {
-	alert("handle load content here " + closeUrl);
+	console.log("handle load content here " + closeUrl);
 	showParentPage();
 	if (closeUrl === "setup") {
 // 		refreshAfterServerUp();
@@ -575,18 +577,22 @@ function popupClose(closeUrl) {
 function popupOnOk(obj) {
 		var okUrl = $(obj).attr("id");
 		if (okUrl == "saveJob" || okUrl == "updateJob" ) {
-			if (isMoreThanOneJobSelected()) {
-				alert("update job validation ");
-				okUrl == "updateJob";
+			if (isOneJobSelected()) {
+				console.log("update job validation ");
+				okUrl = "updateJob";
+			} else {
+				console.log("This is save job ");
 			}
 			// do the validation for collabNet info only if the user selects git radio button
 			var validation = configureJobValidation();
 		// when validation is true
 			if (validation && $("input:radio[name=enableBuildRelease][value='true']").is(':checked')) {
-				if(collabNetValidation()){
+				if(collabNetValidation()) {
+					console.log("create job with collabnet plugin ");
 					configureJob(okUrl);
 				}
 			} else if (validation) {
+				console.log("create job with OUT collabnet plugin ");
 				configureJob(okUrl);
 			}
 		} else if (okUrl == "deleteBuild" ) {
