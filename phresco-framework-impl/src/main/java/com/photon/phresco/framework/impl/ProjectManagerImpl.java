@@ -91,6 +91,26 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		}
 		return null;
 	}
+	
+	@Override
+	public ProjectInfo getProject(String projectId, String customerId, String appId) throws PhrescoException {
+		File[] appDirs = new File(Utility.getProjectHome()).listFiles();
+	    for (File appDir : appDirs) {
+	        if (appDir.isDirectory()) { // Only check the folders not files
+	            File[] dotPhrescoFolders = appDir.listFiles(new PhrescoFileNameFilter(FOLDER_DOT_PHRESCO));
+	            if (ArrayUtils.isEmpty(dotPhrescoFolders)) {
+	                throw new PhrescoException(".phresco folder not found in project " + appDir.getName());
+	            }
+	            File[] dotProjectFiles = dotPhrescoFolders[0].listFiles(new PhrescoFileNameFilter(PROJECT_INFO_FILE));
+	            ProjectInfo projectInfo = getProjectInfo(dotProjectFiles[0], projectId, customerId, appId);
+	            if (projectInfo != null) {
+	            	return projectInfo;
+	            }
+	        }
+	    }
+		
+		return null;
+	}
 
 	public ProjectInfo create(ProjectInfo projectInfo, ServiceManager serviceManager) throws PhrescoException {
 		if (isDebugEnabled) {
@@ -194,6 +214,31 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
         } finally {
             Utility.closeStream(reader);
         }
+    }
+    
+    private ProjectInfo getProjectInfo(File dotProjectFile, String projectId, String customerId, String appId) throws PhrescoException {
+        S_LOGGER.debug("Entering Method ProjectManagerImpl.fillProjects(File[] dotProjectFiles, List<Project> projects)");
+
+        Gson gson = new Gson();
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new FileReader(dotProjectFile));
+            ProjectInfo projectInfo = gson.fromJson(reader, ProjectInfo.class);
+            if (projectInfo.getCustomerIds().get(0).equalsIgnoreCase(customerId) && projectInfo.getId().equals(projectId)) {
+                List<ApplicationInfo> appInfos = projectInfo.getAppInfos();
+                for (ApplicationInfo applicationInfo : appInfos) {
+					if (applicationInfo.getId().equals(appId)) {
+						return projectInfo;
+					}
+				}
+            }
+        } catch (FileNotFoundException e) {
+            throw new PhrescoException(e);
+        } finally {
+            Utility.closeStream(reader);
+        }
+        
+		return null;
     }
 	
 	private void extractArchive(ClientResponse response, ProjectInfo info) throws  IOException, PhrescoException {

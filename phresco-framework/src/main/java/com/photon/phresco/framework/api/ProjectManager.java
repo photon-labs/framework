@@ -47,4 +47,14 @@ public interface ProjectManager {
 	 * @throws PhrescoException
 	 */
 	boolean delete(ProjectInfo projectInfo) throws PhrescoException;
+	
+	/**
+	 * This method returns the ProjectInfo of the given appId
+	 * @param projectId
+	 * @param customerId
+	 * @param appId
+	 * @return
+	 * @throws PhrescoException
+	 */
+	ProjectInfo getProject(String projectId, String customerId, String appId) throws PhrescoException;
 }

@@ -370,6 +370,32 @@ a {
 	border-top: 0px solid #ddd;
 }
 
+#result div {
+    background-image: -moz-linear-gradient(center top , #850E11, #630A0A);
+    background: #470411;
+    color: #FFFFFF;
+    background-color: #630A0A;
+    line-height: 25px;
+    border-bottom: 2px solid black;
+    border-top: 2px solid black;
+    padding: 0px 5px 0px 5px;
+}
+
+.custom_features_wrapper_right {
+ 	border: 1px solid #6B0C0C;
+    border-radius: 6px 6px 6px 6px;
+}
+     
+.custom_features {
+	border: 1px solid #6B0C0C;
+	border-radius: 6px 6px 0 0;
+}
+
+.version_des {
+	margin-left:12%; 
+	color: #FFFFFF; 
+}
+
 /*corner arrows starts*/
 .lefttopnav {
     background-image: url(../images/a_red_lefttop.png);

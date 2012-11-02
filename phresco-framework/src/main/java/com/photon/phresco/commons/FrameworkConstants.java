@@ -65,7 +65,9 @@ public interface FrameworkConstants {
     String REQ_CUSTOMER_ID = "customerId";
     String REQ_PROJECT_ID = "projectId";
     String REQ_APP_ID = "appId";
+    String REQ_PILOT_PROJECTS = "pilotProjects";
     String REQ_CURRENT_APP_NAME = "currentAppName";
+    String REQ_PROJECT_FEATURES = "projectInfoFeatures";
     String REQ_PROJECT_LAYERS = "layers";
     String REQ_PARAM_NAME_TECH_GROUP = "TechGroup";
     String REQ_PARAM_NAME_TECHNOLOGY = "Technology";
@@ -75,7 +77,10 @@ public interface FrameworkConstants {
     String REQ_PARAM_NAME_TABLET = "Tablet";
     String REQ_PARAM_NAME_LAYER_ID = "layerId";
     String REQ_PARAM_NAME_TECH_GROUP_ID = "techGroupId";
-   
+    String REQ_FEATURES_TYPE_MODULE = "FEATURE";
+    String REQ_FEATURES_TYPE = "type";
+    String REQ_FEATURES_MOD_GRP = "moduleGroup";
+    
     String DO_NOT_CHECKIN_DIR = "do_not_checkin";
     String SETTINGS_XML = "settings.xml";
     String ARCHIVES = "archives";
@@ -423,6 +428,7 @@ public interface FrameworkConstants {
      * Session Constants
      * Ex: SESSION_XXX
      */
+    String SESSION_APPINFO	= "sessionAppInfo";
     String SESSION_SELECTED_INFO = "selectedInfo";
     String SESSION_SELECTED_MODULES = "selectedModules";
     String REQ_APPLICATION_TYPES = "ApplicationTypes";
@@ -449,6 +455,7 @@ public interface FrameworkConstants {
     String REQ_APP_DIR_NAME  = "appDirName";
 	String REQ_TITLE_ADD_APPLICATION = "Add Application";
     String REQ_BUILD_FROM = "from";
+    String REQ_PROJECT_INFO = "projectInfo";
     String REQ_NODEJS_SERVER_LOG = "NodeJsServerLog";
     String REQ_PROJECT = "project";
     String REQ_PROJECT_CODE = "projectCode";
@@ -1511,8 +1518,12 @@ public interface FrameworkConstants {
 		String EXCEPTION_PROJECT_CREATE = "excep.hdr.proj.create";
 		String EXCEPTION_PROJECT_LIST = "excep.hdr.proj.list";
 		String EXCEPTION_PROJECT_ADD = "excep.hdr.proj.add";
+		String EXCEPTION_PROJECT_UPDATE = "excep.hdr.proj.update";
+		String EXCEPTION_APPLICATION_EDIT = "excep.hdr.appInfo.edit";
 		String EXCEPTION_PROJECT_MOB_TECH_VERSIONS = "excep.hdr.proj.mob.tech.versions";
 		String EXCEPTION_DOWNLOADINFOS = "excep.hdr.downloadInfos";
+		String EXCEPTION_LOADMENU = "excep.hdr.load.menu";
+		String EXCEPTION_TECHNOLOGY = "excep.hdr.tech";
 		String EXCEPTION_PROJECT_WEB_LAYER_WIDGETS = "excep.hdr.proj.web.layer.widgets";
 		String EXCEPTION_QUALITY_UNIT = "excep.hdr.quality.unit";
 		String EXCEPTION_QUALITY_UNIT_RPT = "excep.hdr.quality.unit.report";

@@ -69,10 +69,10 @@ $(document).ready(function() {
 		
 		/* Appinfo page */
 		var newHeight_addformdiv = $(".appInfoTabDiv").height();
-		$(".app_add_form").css("height",newHeight_addformdiv - 15);
+		$(".app_add_form").css("height", newHeight_addformdiv - 15);
 		
 		var newHeight_appinfo_div = $(".app_add_form").height();
-		$(".appInfoScrollDiv").css("height", newHeight_appinfo_div - 35) ;
+		$(".appInfoScrollDiv").css("height", newHeight_appinfo_div - 48) ;
 		
 		/* Feature page */
 		var newHeight_feature_div = $(".appInfoTabDiv").height();

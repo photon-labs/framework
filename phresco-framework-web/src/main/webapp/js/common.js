@@ -372,8 +372,8 @@ function accordion() {
 	var showContent = 0;	
     $('.siteaccordion').removeClass('openreg').addClass('closereg');
     $('.mfbox').css('display','none');
-    $('.mfbox').eq(showContent).css('display','block');
-    $('.siteaccordion').eq(showContent).attr("id", "siteaccordion_active");
+//    $('.mfbox').eq(showContent).css('display','block');
+//    $('.siteaccordion').eq(showContent).attr("id", "siteaccordion_active");
     
     $('.siteaccordion').bind('click',function(e) {
         var _tempIndex = $('.siteaccordion').index(this);
