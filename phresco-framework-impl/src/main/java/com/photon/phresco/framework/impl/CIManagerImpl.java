@@ -376,9 +376,9 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
         JsonArray asJsonArray = jsonObject.getAsJsonArray(FrameworkConstants.CI_JOB_BUILD_ARTIFACTS);
         
         if(jsonObject.get(FrameworkConstants.CI_JOB_BUILD_RESULT).toString().equals(STRING_NULL)) { // when build is result is not known
-        	ciBuild.setStatus("INPROGRESS");
+        	ciBuild.setStatus(INPROGRESS);
         } else if(resultJson.getAsString().equals(CI_SUCCESS_FLAG) && asJsonArray.size() < 1) { // when build is success and zip relative path is not added in json
-            ciBuild.setStatus("INPROGRESS");
+            ciBuild.setStatus(INPROGRESS);
         } else {
         	ciBuild.setStatus(resultJson.getAsString());
         	//download path
