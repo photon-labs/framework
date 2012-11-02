@@ -71,14 +71,14 @@
 				</div>
 				
 				<div class="clearfix">
-					<label for="xlInput" class="xlInput popup-label"><span class="red">*</span> <s:text name="label.username"/></label>
+					<label for="xlInput" class="xlInput popup-label"><span class="red">*</span> <s:text name="lbl.username"/></label>
 					<div class="input">
 						<input type="text" name="username" id="userName" maxlength="63" title="63 Characters only">&nbsp;&nbsp;<span id="missingUsername" class="missingData"></span>
 					</div>
 				</div>
 				
 				<div class="clearfix">
-					<label for="xlInput" class="xlInput popup-label"><span class="red">*</span> <s:text name="label.password"/></label>
+					<label for="xlInput" class="xlInput popup-label"><span class="red">*</span> <s:text name="lbl.password"/></label>
 					<div class="input">
 						<input type="password" name="password" id="password" maxlength="63" title="63 Characters only">&nbsp;&nbsp;<span id="missingPassword" class="missingData"></span>
 					</div>

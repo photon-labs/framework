@@ -42,7 +42,7 @@
             sb.append(dropDownControl);
         } else {
             StringTemplate inputControl = FrameworkUtil.constructInputElement(propertyTemplate.isRequired(), propertyTemplate.getName(), "", propertyTemplate.getType(),
-                    "", propertyTemplate.getKey(), propertyTemplate.getKey(), propertyTemplate.getHelpText(), "");
+                    "", propertyTemplate.getKey(), propertyTemplate.getKey(), propertyTemplate.getHelpText(), "",  propertyTemplate.getKey()+"Control", propertyTemplate.getKey()+"Error");
             sb.append(inputControl);
         }
     }

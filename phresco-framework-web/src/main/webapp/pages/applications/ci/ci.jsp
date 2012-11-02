@@ -104,7 +104,7 @@
         if (MapUtils.isEmpty(existingJobs) ) {
         	isExistJob = false;
     %>
-<!--     jobs not available message -->
+		<!--  jobs not available message -->
         <div class="alert alert-block" >
             <center><s:text name='ci.jobs.error.message'/></center>
         </div>
@@ -221,13 +221,13 @@
 			                        	    <div class="alert-message block-message warning" >
 			                        	    	<%  if(!new Boolean(request.getAttribute(FrameworkConstants.CI_BUILD_JENKINS_ALIVE + jobName).toString()).booleanValue()) { %>
 			                        	    		<div class="alert alert-block" style="margin-top: 0px;">
-			                        	    		<center>
+			                        	    		<center class="errorMsgLbl">
 			                        	    				 <s:text name='ci.server.down.message'/>
 			                        	    		</center>
 			                        	    		</div>
 			                        	    	<% } else { %>
 			                        	    		<div class="alert alert-block" style="margin-top: 0px;">
-													<center>
+													<center class="errorMsgLbl">
 														<s:text name='ci.error.message'/>
 													</center>
 													</div>			                        	    	
@@ -250,9 +250,6 @@
     %>
 </form>
 
-<!-- <div class="popup_div" id="CI">
-</div> -->
-
 <script type="text/javascript">
 
 /* To check whether the device is ipad or not */
@@ -273,10 +270,12 @@ $(document).ready(function() {
 	
 	$('.siteaccordion').unbind('click');
 	accordion();
-// 	$("#popup_div").css("display","none");
-// 	$("#popup_div").empty();
+	// hide popup
+	$('#popupPage').modal('hide');
+
 	enableScreen();
 	hideLoadingIcon();
+	hidePopuploadingIcon();
 	hideProgressBar(); // when deleting builds and jobs
 	
 	$("input:checkbox[name='allBuilds']").click(function() {
@@ -360,19 +359,11 @@ $(document).ready(function() {
 		refreshAfterServerUp(); // after server restarted , it ll reload builds and ll refresh page (reload page after 10 sec)	
 	}
 	
-// 	// delete this - kalees
-// 	enableButton($("#configure"));
 });
 
 function buildCI() {
-// 	popup('buildCI', '', $('#tabDiv'));
 	loadContent('buildCI',$('#deleteObjects'), $('#subcontainer'), getBasicParams(), false);
 }
-
-// function ProgressShow(prop) {
-//     $(".wel_come").show().css("display",prop);
-//     $('#build-outputOuter').show().css("display",prop);
-// }
 
 function deleteCIBuild() {
 	showProgressBar("Deleting Build (s)");
@@ -443,7 +434,7 @@ function refreshAfterServerUp() {
 	   	disableButton($("#configure"));
 	   	disableButton($("#build"));
 	   	disableButton($("#deleteJob"));
-	   	$(".errorMsgLabel").text('<%= FrameworkConstants.CI_BUILD_LOADED_SHORTLY%>');
+	   	$(".errorMsgLbl").text('<%= FrameworkConstants.CI_BUILD_LOADED_SHORTLY%>');
 	   	
 		console.log("I ll wait till jenkins gets ready!!!");
 		window.setTimeout(refreshAfterServerUp, 15000); // wait for 15 sec
@@ -457,50 +448,44 @@ function refreshAfterServerUp() {
 function reloadCI() {
 	if ($("a[name='appTab'][class='active']").attr("id") == "ci" && $("#popupPage").css("display") == "none"){
 		console.log("reload CI called and going to refresh the page ");
-//     	showLoadingIcon($("#tabDiv")); // Loading Icon
+    	showLoadingIcon(); // Loading Icon
     	console.log("Server startup completed ..." + isCiRefresh);
 		loadContent('ci',$('#deleteObjects'), $('#subcontainer'), getBasicParams(), false);
 	} else {
 		console.log("reload CI : It is not in CI tab or popup available ");
-		$(".errorMsgLabel").text('<%= FrameworkConstants.CI_NO_JOBS_AVAILABLE%>');
+		$(".errorMsgLbl").text('<%= FrameworkConstants.CI_NO_JOBS_AVAILABLE%>');
 	}
 }
 
 function localJenkinsAliveCheck () {
-    $.ajax({
-        url : "localJenkinsAliveCheck",
-        data: { },
-        type: "POST",
-        success : function(data) {
-        	if($.trim(data) == '200') {
-        		console.log("200");
-        		isJenkinsAlive = true;
-        		isJenkinsReady = true;
-        	}
-        	if($.trim(data) == '503') {
-        		console.log("503");
-        		isJenkinsAlive = true;
-        		isJenkinsReady = false;
-        	}
-        	if($.trim(data) == '404') {
-        		console.log("404");
-        		isJenkinsAlive = false;
-        		isJenkinsReady = false;
-        	}
-        },
-        async:false
-    });
+	console.log("local jenkins alive check called ");
+	loadContent('localJenkinsAliveCheck',$('#deleteObjects'), '', getBasicParams(), true, false);
+}
+
+function successLocalJenkinsAliveCheck (data) {
+	if ($.trim(data.localJenkinsAlive) == '200') {
+		console.log("200");
+		isJenkinsAlive = true;
+		isJenkinsReady = true;
+	}
+	if ($.trim(data.localJenkinsAlive) == '503') {
+		console.log("503");
+		isJenkinsAlive = true;
+		isJenkinsReady = false;
+	}
+	if ($.trim(data.localJenkinsAlive) == '404') {
+		console.log("404");
+		isJenkinsAlive = false;
+		isJenkinsReady = false;
+	}
 }
 
 function successEvent(pageUrl, data) {
-	if(pageUrl == "getNoOfJobsIsInProgress") {
+	if (pageUrl == "getNoOfJobsIsInProgress") {
 		successRefreshBuild(data);
-	} 
-	else if(pageUrl == "getBuildsSize") {
-		console.log("I never used ");
-// 		successRefreshCI(data);
-// 	} else if(pageUrl == "checkForConfiguration") {
-// 		successEnvValidation(data);
+	} else if (pageUrl == "localJenkinsAliveCheck") {
+		console.log("success jenkins alive check called ");
+		successLocalJenkinsAliveCheck(data);
 	}
 }
 
@@ -552,23 +537,20 @@ function isOneJobSelected() {
 	}
 }
 
-function popupClose(closeUrl) {
+function popupOnClose(obj) {
+	var closeUrl = $(obj).attr("id");
 	console.log("handle load content here " + closeUrl);
 	showParentPage();
 	if (closeUrl === "setup") {
+		console.log("setup called ");
 // 		refreshAfterServerUp();
-// 	    var params = getBasicParams();
-// 	    loadContent('veiwSiteReport',$('#formConfigureList'), $('#subcontainer'), params);
 	} else 	if (closeUrl === "startJenkins") {
+		console.log("start called ");
 		isCiRefresh = true; //after stratup , when closing popup, page should refreshed after some time
 // 		refreshAfterServerUp();
-// 	    var params = getBasicParams();
-// 	    loadContent('veiwSiteReport',$('#formConfigureList'), $('#subcontainer'), params);
 	} else 	if (closeUrl === "stopJenkins") {
+		console.log("stop called ");
 // 		refreshAfterServerUp();
-// 	    var params = getBasicParams();
-// 		loadContent(pageUrl, form, tag, additionalParams, callSuccessEvent)
-// 	    loadContent('veiwSiteReport',$('#formConfigureList'), $('#subcontainer'), params);
 	}
 	
 	refreshAfterServerUp();
@@ -585,7 +567,7 @@ function popupOnOk(obj) {
 			}
 			// do the validation for collabNet info only if the user selects git radio button
 			var validation = configureJobValidation();
-		// when validation is true
+			// when validation is true
 			if (validation && $("input:radio[name=enableBuildRelease][value='true']").is(':checked')) {
 				if(collabNetValidation()) {
 					console.log("create job with collabnet plugin ");
@@ -595,6 +577,9 @@ function popupOnOk(obj) {
 				console.log("create job with OUT collabnet plugin ");
 				configureJob(okUrl);
 			}
+			
+			// show popup loading icon
+			showPopuploadingIcon();
 		} else if (okUrl == "deleteBuild" ) {
 			deleteCIBuild();
 		}  else if (okUrl == "deleteJob" ) {

@@ -20,10 +20,10 @@
  
 function yesnoPopup(modalObj, url, title, okUrl, okLabel, form) {
 	modalObj.click(function() {
-		$('#popupClose').hide();
+		$('.popupClose').hide();
 
 		$('#popupTitle').html(title); // Title for the popup
-		$('#popupClose').hide(); //no need close button since yesno popup
+		$('.popupClose').hide(); //no need close button since yesno popup
 		$('.popupOk, #popupCancel').show(); // show ok & cancel button
 	
 		$(".popupOk").attr('id', okUrl); // popup action mapped to id
@@ -81,13 +81,14 @@ function progressPopup(btnObj, pageUrl, title, appId, actionType, form, callSucc
 			$('#popupTitle').html(title);
 		}
 		$('.modal-body').empty();
-		$('#popupClose').show();
+		$('.popupClose').show();
 		$('.popupOk, #popupCancel').hide(); // hide ok & cancel button
+		$(".popupClose").attr('id', pageUrl); // popup action mapped to id
 		readerHandlerSubmit(pageUrl, appId, actionType, form, callSuccessEvent, additionalParams);
 	});
-	$('#popupClose').click(function() {
-		popupClose(pageUrl); // this function will be kept in where the progressPopup() called
-	});
+//	$('.popupClose').click(function() {
+//		popupClose(pageUrl); // this function will be kept in where the progressPopup() called
+//	});
 }
 
 function progressPopupAsSecPopup(url, title, appId, actionType, form, additionalParams) {
@@ -98,7 +99,7 @@ function progressPopupAsSecPopup(url, title, appId, actionType, form, additional
 	$('.modal-body').empty();
 	$('.popupOk').hide(); // hide ok & cancel button
 	$('#popupCancel').hide();
-	$('#popupClose').show();
+	$('.popupClose').show();
 
 	readerHandlerSubmit(url, appId, actionType, form, '', additionalParams);
 }
@@ -121,9 +122,12 @@ function clickButton(button, tag) {
 	});
 }
 
-function loadContent(pageUrl, form, tag, additionalParams, callSuccessEvent) {
+function loadContent(pageUrl, form, tag, additionalParams, callSuccessEvent, ajaxCallType) {
 //	showLoadingIcon(tag);
-
+	if (ajaxCallType == undefined || ajaxCallType == "") {
+		ajaxCallType = true;
+	}
+	
 	var params = getParameters(form, additionalParams);
 	$.ajax({
 		url : pageUrl,
@@ -131,7 +135,8 @@ function loadContent(pageUrl, form, tag, additionalParams, callSuccessEvent) {
 		type : "POST",
 		success : function(data) {
 			loadData(data, tag, pageUrl, callSuccessEvent);
-		}
+		},
+		async: ajaxCallType
 	});
 }
 
@@ -164,6 +169,26 @@ function validate(pageUrl, form, tag, additionalParams, progressText, disabledDi
 				findError(data);
 			} else {
 				clickSave(pageUrl, params, tag, progressText);
+			}
+		}
+	});
+}
+
+function validateJson(url, form, containerTag, jsonParam, progressText, disabledDiv) {
+	if (disabledDiv != undefined && disabledDiv != "") {
+		enableDivCtrls(disabledDiv);
+	}
+	
+	$.ajax({
+		url : url + "Validate",
+		data : jsonParam,
+		type : "POST",
+		contentType: "application/json; charset=utf-8",
+		success : function(data) {
+			if (data.errorFound != undefined && data.errorFound) {
+				findError(data);
+			} else {
+				loadJsonContent(url, jsonParam, containerTag);
 			}
 		}
 	});
@@ -365,20 +390,34 @@ function accordion() {
     });
 }
 
-function showLoadingIcon() {
+function getLoadingImgPath() {
 	var src = "theme/photon/images/loading_blue.gif";
 	var theme =localStorage["color"];
     if (theme == undefined || theme == "theme/photon/css/red.css") {
     	src = "theme/photon/images/loading_red.gif";
     }
+    return src;
+}
+
+function showLoadingIcon() {
     $("#loadingIconDiv").show();
-	$("#loadingIconImg").attr("src", src);
+	$("#loadingIconImg").attr("src", getLoadingImgPath());
     disableScreen();
 }
 
 function hideLoadingIcon() {
 	$("#loadingIconDiv").hide();
 	enableScreen();
+}
+
+function showPopuploadingIcon() {
+	$("#errMsg").empty(); // remove error message while displaying loading icon
+    $("#popuploadingIcon").show();
+	$("#popuploadingIcon").attr("src", getLoadingImgPath());
+}
+
+function hidePopuploadingIcon() {
+	$("#popuploadingIcon").hide();
 }
 
 function showProgressBar(progressText) {
@@ -586,7 +625,7 @@ function confirmDialog(obj, title, bodyText, okUrl, okLabel) {
 	obj.click(function() {
 //		disableScreen();
 		$('#popupTitle').html(title); // Title for the popup
-		$('#popupClose').hide();
+		$('.popupClose').hide();
 		
 		$(".popupOk").attr('id', okUrl);
 	

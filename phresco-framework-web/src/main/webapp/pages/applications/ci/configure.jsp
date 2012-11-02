@@ -591,11 +591,13 @@
 	loadSchedule(selectedSchedule);
 	
 	$(document).ready(function() {
-		//accordian
 // 		accordion();
 		
 		$('.siteaccordion').unbind('click');
 		accordion();
+		
+		// when clicking on save button, popup should not hide
+		$('.popupOk').attr("data-dismiss", "");
 		
 		credentialsDisp();
 		$("#name").focus();

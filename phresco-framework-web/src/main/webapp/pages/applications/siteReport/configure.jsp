@@ -77,7 +77,7 @@
 									                List<ReportCategories> reportCategories = report.getReportCategories();
 													if (CollectionUtils.isNotEmpty(reportCategories)) {
 								                %>
-								                <div class="mfbox siteinnertooltiptxt" style="display: none;">
+								                <div class="mfbox siteinnertooltiptxt hideContent">
 								                    <div class="scrollpanel adv_setting_accordian_bottom">
 								                        <section class="scrollpanel_inner">
                                                                <fieldset class="popup-fieldset fieldset_center_align categoryList" style="border: none;">

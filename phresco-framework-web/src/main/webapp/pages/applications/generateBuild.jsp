@@ -123,7 +123,7 @@
 				// load input text box
 				if (FrameworkConstants.TYPE_STRING.equalsIgnoreCase(parameter.getType()) || FrameworkConstants.TYPE_NUMBER.equalsIgnoreCase(parameter.getType()) || 
 					FrameworkConstants.TYPE_PASSWORD.equalsIgnoreCase(parameter.getType()) || FrameworkConstants.TYPE_HIDDEN.equalsIgnoreCase(parameter.getType())) { 
-				StringTemplate txtInputElement = FrameworkUtil.constructInputElement(mandatory, lableTxt, labelClass, parameter.getType(), "", parameter.getKey(), parameter.getKey(), "", StringUtils.isNotEmpty(parameter.getValue()) ? parameter.getValue():"");
+				StringTemplate txtInputElement = FrameworkUtil.constructInputElement(mandatory, lableTxt, labelClass, parameter.getType(), "", parameter.getKey(), parameter.getKey(), "", StringUtils.isNotEmpty(parameter.getValue()) ? parameter.getValue():"", parameter.getKey() + "Control", parameter.getKey() + "Error");
 	%> 	
 				<%= txtInputElement %>
 	<% 			
