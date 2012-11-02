@@ -164,11 +164,11 @@
 						                    			<td><a href="<%= build.getUrl() %>" target="_blank"><%= build.getUrl().replace("%20", " ") %></a></td>
 						                    			<td style="padding-left: 3%;">
 						                    				<%
-								                                if(build.getStatus().equals("INPROGRESS"))  {
+								                                if(build.getStatus().equals(FrameworkConstants.INPROGRESS))  {
 								                            %>
 								                                <img src="images/icons/inprogress.png" title="In progress"/>
 										              		<% 
-								                                } else if(build.getStatus().equals("SUCCESS")) {
+								                                } else if(build.getStatus().equals(FrameworkConstants.CI_SUCCESS_FLAG)) {
 								                                	String downloadUrl = build.getUrl()+ FrameworkConstants.CI_JOB_BUILD_ARTIFACT;
 								                                	if (StringUtils.isNotEmpty(build.getDownload())) {
 								                                		downloadUrl = downloadUrl + FrameworkConstants.FORWARD_SLASH + build.getDownload().replaceAll("\"","");								                                		
@@ -195,11 +195,11 @@
 						                    			<td><%= build.getTimeStamp() %></td>
 						                    			<td>
 						                    				<% 
-								                                if(build.getStatus().equals("SUCCESS")) {
+								                                if(build.getStatus().equals(FrameworkConstants.CI_SUCCESS_FLAG)) {
 								                            %>
 								                                <img src="images/icons/success.png" title="Success">
 								                           	<%
-								                                } else if(build.getStatus().equals("INPROGRESS"))  { 
+								                                } else if(build.getStatus().equals(FrameworkConstants.INPROGRESS))  { 
 								                            %>
 								                                <img src="images/icons/inprogress.png" title="In progress"/>
 								                            <%
@@ -300,11 +300,6 @@ $(document).ready(function() {
 	
 	yesnoPopup($('#configure'), 'configure', '<s:text name="lbl.configure"/>', 'saveJob','<s:text name="lbl.save"/>', $('#deleteObjects'));
     
-//     $('#closeGenerateTest, #closeGenTest').click(function() {
-//     	ProgressShow("none");
-//     	refreshAfterServerUp();
-//     });
-    
     progressPopup($('#setup'), 'setup', '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.CI_SETUP %>', '', '', getBasicParams());
     
     progressPopup($('#startJenkins'), 'startJenkins', '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.CI_START %>', '', '', getBasicParams());
@@ -325,19 +320,12 @@ $(document).ready(function() {
     	disableButton($("#configure"));
     }
     
-// //     RBACK implemented
-<%--     if ('<%= disableCI %>' == 'true') { --%>
-//     	disableCI();	//Restrict CI
-//     }
-    
 	// when checking on more than one job, configure button should be disabled. it can not show already created job info for more than one job
 	$("input[type=checkbox][name='Jobs']").click(function() {
 		if (isMoreThanOneJobSelected()) {
 			$(".ciAlertMsg").show();
 			$(".ciAlertMsg").html('<%= FrameworkConstants.CI_ONE_JOB_REQUIRED%>');
 			disableButton($("#configure"));
-<%-- 			showHidePopupMsg($(".ciAlertMsg"), '<%= FrameworkConstants.CI_ONE_JOB_REQUIRED%>'); --%>
-// 			return false;			
 		} else {
 			$(".ciAlertMsg").hide();
 			$(".ciAlertMsg").html("");
@@ -543,14 +531,11 @@ function popupOnClose(obj) {
 	showParentPage();
 	if (closeUrl === "setup") {
 		console.log("setup called ");
-// 		refreshAfterServerUp();
 	} else 	if (closeUrl === "startJenkins") {
 		console.log("start called ");
 		isCiRefresh = true; //after stratup , when closing popup, page should refreshed after some time
-// 		refreshAfterServerUp();
 	} else 	if (closeUrl === "stopJenkins") {
 		console.log("stop called ");
-// 		refreshAfterServerUp();
 	}
 	
 	refreshAfterServerUp();
@@ -574,7 +559,7 @@ function popupOnOk(obj) {
 					configureJob(okUrl);
 				}
 			} else if (validation) {
-				console.log("create job with OUT collabnet plugin ");
+				console.log("create job with out collabnet plugin ");
 				configureJob(okUrl);
 			}
 			

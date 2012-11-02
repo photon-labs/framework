@@ -21,7 +21,6 @@ package com.photon.phresco.framework.actions.applications;
 
 import java.io.*;
 import java.net.*;
-import java.text.*;
 import java.util.*;
 
 import javax.servlet.http.*;
@@ -35,6 +34,7 @@ import org.w3c.dom.*;
 import com.photon.phresco.commons.*;
 import com.photon.phresco.commons.CIPasswordScrambler;
 import com.photon.phresco.commons.model.*;
+import com.photon.phresco.exception.*;
 import com.photon.phresco.framework.*;
 import com.photon.phresco.framework.actions.*;
 import com.photon.phresco.framework.api.*;
@@ -169,10 +169,11 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 				S_LOGGER.debug("numberOfJobsInProgress " + numberOfJobsInProgress);
 			}
 			setReqAttribute(CI_NO_OF_JOBS_IN_PROGRESS, numberOfJobsInProgress);
-		} catch (Exception e) {
+		} catch (PhrescoException e) {
 			if (debugEnabled) {
 				S_LOGGER.error("Entered into catch block of CI.ci()" + FrameworkUtil.getStackTraceAsString(e));
 			}
+			return showErrorPopup(e, getText(EXCEPTION_CI_JOB_LIST));
 		}
 		return APP_CI;
 	}
@@ -222,17 +223,17 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 				existJob.setCollabNetpassword(CIPasswordScrambler.unmask(existJob.getCollabNetpassword()));
 			}
 			
-			if(existJob != null) {
+			if (existJob != null) {
 				existJob.setPassword(CIPasswordScrambler.unmask(existJob.getPassword()));
 			}
 			setReqAttribute(REQ_EXISTING_JOB, existJob);
 			setReqAttribute(REQ_EXISTING_JOBS_NAMES, existingJobsNames);
 			setReqAttribute(REQ_EXISTING_CLONNED_JOBS, clonedWorkspaces);
-		} catch (Exception e) {
+		} catch (PhrescoException e) {
 			if (debugEnabled) {
 				S_LOGGER.error("Entered into catch block of CI.configure()" + FrameworkUtil.getStackTraceAsString(e));
 			}
-			new LogErrorReport(e, "CI configuration clicked");
+			return showErrorPopup(e, getText(EXCEPTION_CI_CONFIGURE_POPUP));
 		}
 		return APP_CI_CONFIGURE;
 	}
@@ -254,10 +255,9 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 			setSessionAttribute(getAppId() + CI_SETUP, reader);
 			setReqAttribute(REQ_APP_ID, getAppId());
 			setReqAttribute(REQ_ACTION_TYPE, CI_SETUP);
-		} catch (Exception e) {
+		} catch (PhrescoException e) {
 			if (debugEnabled) {
-				S_LOGGER.error("Entered into catch block of CI.setup()"
-						+ FrameworkUtil.getStackTraceAsString(e));
+				S_LOGGER.error("Entered into catch block of CI.setup()" + FrameworkUtil.getStackTraceAsString(e));
 			}
 		}
 		return APP_ENVIRONMENT_READER;
@@ -398,14 +398,10 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 
 			setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
 		} catch (Exception e) {
-			S_LOGGER.error("Entered into catch block of CI.doUpdateSave()"
-					+ FrameworkUtil.getStackTraceAsString(e));
-			addActionMessage(getText(CI_SAVE_UPDATE_FAILED,
-					e.getLocalizedMessage()));
+			S_LOGGER.error("Entered into catch block of CI.doUpdateSave()" + FrameworkUtil.getStackTraceAsString(e));
+			addActionMessage(getText(CI_SAVE_UPDATE_FAILED, e.getLocalizedMessage()));
 		}
-
 		return ci();
-
 	}
 
 	public String build() {
@@ -431,7 +427,7 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 			}
 			setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
 			setReqAttribute(CI_BUILD_TRIGGERED_FROM_UI, TRUE);
-		} catch (Exception e) {
+		} catch (PhrescoException e) {
 			setReqAttribute(CI_BUILD_TRIGGERED_FROM_UI, FALSE);
 			S_LOGGER.error("Entered into catch block of CI.build()" + FrameworkUtil.getStackTraceAsString(e));
 			addActionMessage(getText(CI_BUILD_FAILED, e.getLocalizedMessage()));
@@ -493,9 +489,9 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 				addActionMessage(getText(ciJobStatus.getMessage()));
 			}
 			setReqAttribute(REQ_APPINFO, appInfo);
-		} catch (Exception e) {
+		} catch (PhrescoException e) {
 			S_LOGGER.error("Entered into catch block of CI.deleteCIBuild()" + FrameworkUtil.getStackTraceAsString(e));
-			new LogErrorReport(e, "Build delete");
+			return showErrorPopup(e, getText(EXCEPTION_CI_BUILD_DELETION));
 		}
 		setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
 		return ci();
@@ -525,9 +521,9 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 				addActionMessage(getText(ciJobStatus.getMessage()));
 			}
 			setReqAttribute(REQ_APPINFO, appInfo);
-		} catch (Exception e) {
+		} catch (PhrescoException e) {
 			S_LOGGER.error("Entered into catch block of CI.deleteCIJob()" + FrameworkUtil.getStackTraceAsString(e));
-			new LogErrorReport(e, "Job delete");
+			return showErrorPopup(e, getText(EXCEPTION_CI_JOB_DELETION));
 		}
 		setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
 		return ci();
@@ -546,12 +542,13 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 			
 			List<String> buildArgCmds = null;
 			String workingDirectory = Utility.getJenkinsHome();
+
 			BufferedReader reader = ciManager.start(projectInfo, ActionType.START, buildArgCmds , workingDirectory);
 			
 			setSessionAttribute(getAppId() + CI_START, reader);
 			setReqAttribute(REQ_APP_ID, getAppId());
 			setReqAttribute(REQ_ACTION_TYPE, CI_START);
-		} catch (Exception e) {
+		} catch (PhrescoException e) {
 			S_LOGGER.error("Entered into catch block of CI.startJenkins()" + FrameworkUtil.getStackTraceAsString(e));
 		}
 		return APP_ENVIRONMENT_READER;
@@ -571,12 +568,12 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 			List<String> buildArgCmds = null;
 			String workingDirectory = Utility.getJenkinsHome();
 			BufferedReader reader = ciManager.stop(projectInfo, ActionType.STOP, buildArgCmds , workingDirectory);
+			
 			setSessionAttribute(getAppId() + CI_STOP, reader);
 			setReqAttribute(REQ_APP_ID, getAppId());
 			setReqAttribute(REQ_ACTION_TYPE, CI_STOP);
-		} catch (Exception e) {
-			S_LOGGER.error("Entered into catch block of CI.stopJenkins()"
-					+ FrameworkUtil.getStackTraceAsString(e));
+		} catch (PhrescoException e) {
+			S_LOGGER.error("Entered into catch block of CI.stopJenkins()" + FrameworkUtil.getStackTraceAsString(e));
 		}
 		return APP_ENVIRONMENT_READER;
 	}
@@ -619,12 +616,11 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 
 		} catch (Exception e) {
 			if (debugEnabled) {
-				S_LOGGER.error("Entered into catch block of CI.restartJenkins()"
-						+ FrameworkUtil.getStackTraceAsString(e));
+				S_LOGGER.error("Entered into catch block of CI.restartJenkins()" + FrameworkUtil.getStackTraceAsString(e));
 			}
 		}
 
-		return "restarted";
+		return RESTARTED;
 	}
 
 	public void waitForTime(int waitSec) {
@@ -710,20 +706,20 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 				setReqAttribute(REQ_CRON_EXPRESSION, cronExpression);
 				setReqAttribute(REQ_CRON_DATES, dates);
 				setReqAttribute(REQ_JOB_NAME, jobName);
-				return "cronValidation";
+				return CRON_VALIDATION;
 			}
 
-		} catch (Exception e) {
+		} catch (PhrescoException e) {
 			if (debugEnabled) {
 				S_LOGGER.error("Entered into catch block of CI.cronValidation()"
 						+ FrameworkUtil.getStackTraceAsString(e));
 			}
 			// addActionError(getText("Cron Expression failed to validate"));
 		}
-		return "cronValidation";
+		return CRON_VALIDATION;
 	}
 
-	public Date[] testCronExpression(String expression) throws ParseException {
+	public Date[] testCronExpression(String expression) throws PhrescoException {
 		Date[] dates = null;
 		try {
 			if (debugEnabled) {
@@ -740,24 +736,26 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 			if (debugEnabled) {
 				S_LOGGER.error("Entered into catch block of CI.testCronExpression()" + FrameworkUtil.getStackTraceAsString(e));
 			}
+			throw new PhrescoException(e);
 		}
 		return dates;
 	}
 
-	public static String getPortNo(String path) throws Exception {
+	public static String getPortNo(String path) throws PhrescoException {
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method CI.getPortNo()");
 		}
 		String portNo = "";
 		try {
-			Document document = ApplicationsUtil.getDocument(new File(path + File.separator + "pom.xml"));
-			String portNoNode = "/project/build/plugins/plugin/configuration/tomcatHttpPort";
+			Document document = ApplicationsUtil.getDocument(new File(path + File.separator + POM_FILE));
+			String portNoNode = CI_TOMCAT_HTTP_PORT;
 			NodeList nodelist = org.apache.xpath.XPathAPI.selectNodeList(document, portNoNode);
 			portNo = nodelist.item(0).getTextContent();
 		} catch (Exception e) {
 			if (debugEnabled) {
 				S_LOGGER.error("Entered into catch block of CI.getPortNo()" + FrameworkUtil.getStackTraceAsString(e));
 			}
+			throw new PhrescoException(e);
 		}
 		return portNo;
 	}
@@ -780,8 +778,8 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 			return SUCCESS;
 		} catch (Exception e) {
 			S_LOGGER.error("Entered into catch block of CI.CIBuildDownload()" + FrameworkUtil.getStackTraceAsString(e));
+			return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_CI_BUILD_DOWNLOAD_NOT_AVAILABLE));
 		}
-		return SUCCESS;
 	}
 
 	public String numberOfJobsIsInProgress() {
@@ -799,7 +797,7 @@ public class CI extends DynamicParameterUtil implements FrameworkConstants {
 					}
 				}
 			}
-		} catch (Exception e) {
+		} catch (PhrescoException e) {
 			if (debugEnabled) {
 				S_LOGGER.error("Entered into catch block of CI.buildProgress()" + FrameworkUtil.getStackTraceAsString(e));
 			}

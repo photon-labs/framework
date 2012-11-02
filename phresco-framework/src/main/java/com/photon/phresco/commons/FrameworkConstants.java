@@ -143,6 +143,8 @@ public interface FrameworkConstants {
 	String COLOR = "color";
 	String ORDINAL = "ordinal";
 	String CI_SUCCESS_FLAG = "SUCCESS";
+	String INPROGRESS = "INPROGRESS";
+	String RESTARTED = "restarted";
 	String NAME = "name";
 	String CHILD_PROJECTS = "childProjects";
 	String THRESHOLD = "threshold";
@@ -179,6 +181,8 @@ public interface FrameworkConstants {
     String FAILURE_EMAILS = "failureEmails";
     String TRIGGER_SUCCESS__EMAIL_RECIPIENT_LIST = "publishers//hudson.plugins.emailext.ExtendedEmailPublisher//configuredTriggers//hudson.plugins.emailext.plugins.trigger.SuccessTrigger//email//recipientList";
     String TRIGGER_FAILURE_EMAIL_RECIPIENT_LIST = "publishers//hudson.plugins.emailext.ExtendedEmailPublisher//configuredTriggers//hudson.plugins.emailext.plugins.trigger.FailureTrigger//email//recipientList";
+	String CRON_VALIDATION = "cronValidation";
+	String CI_TOMCAT_HTTP_PORT = "/project/build/plugins/plugin/configuration/tomcatHttpPort";
     String GOALS = "goals";
     String TRIGGERS = "triggers";
     String TRIGGERS_SPEC = "triggers//spec";
@@ -1534,6 +1538,11 @@ public interface FrameworkConstants {
 		String EXCEPTION_RUNAGNSRC_SERVER_START = "excep.hdr.proj.runagnsrc.server.start";
 		String EXCEPTION_RUNAGNSRC_SERVER_STOP = "excep.hdr.proj.runagssrc.stop";
 		String EXCEPTION_RUNAGNSRC_SERVER_RESTART = "excep.hdr.proj.runagssrc.restart";
+		String EXCEPTION_CI_JOB_LIST = "excep.hdr.ci.job.list.failed";
+		String EXCEPTION_CI_CONFIGURE_POPUP = "excep.hdr.ci.configure.popup.failed";
+		String EXCEPTION_CI_JOB_DELETION = "excep.hdr.ci.job.deletion.failed";
+		String EXCEPTION_CI_BUILD_DELETION = "excep.hdr.ci.build.deletion.failed";
+		String EXCEPTION_CI_BUILD_DOWNLOAD_NOT_AVAILABLE = "excep.hdr.ci.build.download.not.available";
 		
 		
 		/**
