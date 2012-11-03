@@ -20,11 +20,9 @@
 package com.photon.phresco.framework.impl;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.bind.JAXBException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -110,10 +108,6 @@ public class ServerPluginUtil {
 			throw new PhrescoException(e);
 		} catch (PhrescoPomException e) {
 			throw new PhrescoException(e);
-		} catch (JAXBException e) {
-			throw new PhrescoException(e);
-		} catch (IOException e) {
-			throw new PhrescoException(e);
 		}
 	}
 
@@ -122,10 +116,6 @@ public class ServerPluginUtil {
 			PomProcessor pomprocessor = new PomProcessor(path);
 			pomprocessor.deletePlugin("com.oracle.weblogic", "weblogic-maven-plugin");
 			pomprocessor.save();
-		} catch (JAXBException e) {
-			throw new PhrescoException(e);
-		} catch (IOException e) {
-			throw new PhrescoException(e);
 		} catch (PhrescoPomException e) {
 			throw new PhrescoException(e);
 		}
