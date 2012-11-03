@@ -33,7 +33,6 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.Writer;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -1778,7 +1777,7 @@ public class Quality extends DynamicParameterUtil {
         return APP_QUALITY;
     }
 
-    public String generateFunctionalTest() {
+    public String generateFunctionalTest() throws PhrescoException {
     	S_LOGGER.debug("Entering Method Quality.generateTest()");
         
     	List<Environment> environments = null;
@@ -1907,12 +1906,8 @@ public class Quality extends DynamicParameterUtil {
     		if (pomModule != null) {
     			return pomModule.getModule();
     		}
-    	} catch (JAXBException e) {
-    		e.printStackTrace();
-    	} catch (IOException e) {
-    		e.printStackTrace();
     	} catch (PhrescoPomException e) {
-    		e.printStackTrace();
+    		 // TODO: handle exception
     	}
     	return null;
     }
@@ -2388,74 +2383,79 @@ public class Quality extends DynamicParameterUtil {
         return SUCCESS;
     }
 
-	private boolean isSonarReportAvailable(FrameworkUtil frameworkUtil, String technology) throws PhrescoException, MalformedURLException, JAXBException,
-			IOException {
-		boolean isSonarReportAvailable = false;
-		// check for sonar alive
-		if (!TechnologyTypes.MOBILES.contains(technology)) {
-			List<String> sonarProfiles = frameworkUtil.getSonarProfiles(projectCode);
-			if (CollectionUtils.isEmpty(sonarProfiles)) {
-				sonarProfiles.add(SONAR_SOURCE);
-			}
-			sonarProfiles.add(FUNCTIONAL);
-			FrameworkConfiguration frameworkConfig = PhrescoFrameworkFactory.getFrameworkConfig();
-			String serverUrl = frameworkUtil.getSonarURL();
-			String sonarReportPath = frameworkConfig.getSonarReportPath().replace(FORWARD_SLASH + SONAR, "");
-			serverUrl = serverUrl + sonarReportPath;
-			S_LOGGER.debug("serverUrl with report path " + serverUrl);
-			for (String sonarProfile : sonarProfiles) {
-				//get sonar report
-				StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-	        	builder.append(projectCode);
-	        	
-	            if (FUNCTIONALTEST.equals(sonarProfile)) {
+	private boolean isSonarReportAvailable(FrameworkUtil frameworkUtil, String technology) throws PhrescoException {
+		try {
+			boolean isSonarReportAvailable = false;
+			// check for sonar alive
+			if (!TechnologyTypes.MOBILES.contains(technology)) {
+				List<String> sonarProfiles = frameworkUtil.getSonarProfiles(projectCode);
+				if (CollectionUtils.isEmpty(sonarProfiles)) {
+					sonarProfiles.add(SONAR_SOURCE);
+				}
+				sonarProfiles.add(FUNCTIONAL);
+				FrameworkConfiguration frameworkConfig = PhrescoFrameworkFactory.getFrameworkConfig();
+				String serverUrl = frameworkUtil.getSonarURL();
+				String sonarReportPath = frameworkConfig.getSonarReportPath().replace(FORWARD_SLASH + SONAR, "");
+				serverUrl = serverUrl + sonarReportPath;
+				S_LOGGER.debug("serverUrl with report path " + serverUrl);
+				for (String sonarProfile : sonarProfiles) {
+					//get sonar report
+					StringBuilder builder = new StringBuilder(Utility.getProjectHome());
+			    	builder.append(projectCode);
+			    	
+			        if (FUNCTIONALTEST.equals(sonarProfile)) {
 //	                builder.append(frameworkUtil.getFuncitonalTestDir(technology));
-	            }
-	            
-	            builder.append(File.separatorChar);
-	        	builder.append(POM_XML);
-	        	File sonarPomPath = new File(builder.toString());
-	        	
-	        	PomProcessor processor = new PomProcessor(sonarPomPath);
-	        	String groupId = processor.getModel().getGroupId();
-	        	String artifactId = processor.getModel().getArtifactId();
+			        }
+			        
+			        builder.append(File.separatorChar);
+			    	builder.append(POM_XML);
+			    	File sonarPomPath = new File(builder.toString());
+			    	
+			    	PomProcessor processor = new PomProcessor(sonarPomPath);
+			    	String groupId = processor.getModel().getGroupId();
+			    	String artifactId = processor.getModel().getArtifactId();
 
-	        	StringBuilder sbuild = new StringBuilder();
-	        	sbuild.append(groupId);
-	        	sbuild.append(COLON);
-	        	sbuild.append(artifactId);
-	        	
-	        	if (!SOURCE_DIR.equals(sonarProfile)) {
-	        		sbuild.append(COLON);
-	        		sbuild.append(sonarProfile);
-	        	}
-	        	
-	        	String artifact = sbuild.toString();
-	        	String sonarUrl = serverUrl + artifact;
-	        	S_LOGGER.debug("sonarUrl... " + sonarUrl);
-	        	if (isSonarAlive(sonarUrl)) {
-	        		isSonarReportAvailable = true;
-	        		break;
-	        	}
+			    	StringBuilder sbuild = new StringBuilder();
+			    	sbuild.append(groupId);
+			    	sbuild.append(COLON);
+			    	sbuild.append(artifactId);
+			    	
+			    	if (!SOURCE_DIR.equals(sonarProfile)) {
+			    		sbuild.append(COLON);
+			    		sbuild.append(sonarProfile);
+			    	}
+			    	
+			    	String artifact = sbuild.toString();
+			    	String sonarUrl = serverUrl + artifact;
+			    	S_LOGGER.debug("sonarUrl... " + sonarUrl);
+			    	if (isSonarAlive(sonarUrl)) {
+			    		isSonarReportAvailable = true;
+			    		break;
+			    	}
+				}
+				
 			}
-			
+			    
+			if (TechnologyTypes.IPHONES.contains(technology)) {
+				StringBuilder codeValidatePath = new StringBuilder(Utility.getProjectHome());
+				codeValidatePath.append(projectCode);
+				codeValidatePath.append(File.separatorChar);
+				codeValidatePath.append(DO_NOT_CHECKIN_DIR);
+				codeValidatePath.append(File.separatorChar);
+				codeValidatePath.append(STATIC_ANALYSIS_REPORT);
+				codeValidatePath.append(File.separatorChar);
+				codeValidatePath.append(INDEX_HTML);
+			    File indexPath = new File(codeValidatePath.toString());
+			    if (indexPath.exists()) {
+			    	isSonarReportAvailable = true;
+			    }
+			}
+			return isSonarReportAvailable;
+		} catch (PhrescoException e) {
+			throw new PhrescoException(e);
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
 		}
-		    
-		if (TechnologyTypes.IPHONES.contains(technology)) {
-			StringBuilder codeValidatePath = new StringBuilder(Utility.getProjectHome());
-			codeValidatePath.append(projectCode);
-			codeValidatePath.append(File.separatorChar);
-			codeValidatePath.append(DO_NOT_CHECKIN_DIR);
-			codeValidatePath.append(File.separatorChar);
-			codeValidatePath.append(STATIC_ANALYSIS_REPORT);
-			codeValidatePath.append(File.separatorChar);
-			codeValidatePath.append(INDEX_HTML);
-		    File indexPath = new File(codeValidatePath.toString());
-		    if (indexPath.exists()) {
-		    	isSonarReportAvailable = true;
-		    }
-		}
-		return isSonarReportAvailable;
 	}
 
 	private boolean isSonarAlive(String url) {

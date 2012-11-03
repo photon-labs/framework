@@ -33,7 +33,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.xml.bind.JAXBException;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -147,7 +146,7 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
     	
     }
     
-    protected List<String> getProjectModules(String appDirName) {
+    protected List<String> getProjectModules(String appDirName) throws PhrescoException {
     	try {
             StringBuilder builder = getProjectHome(appDirName);
             builder.append(File.separatorChar);
@@ -158,12 +157,8 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
     		if (pomModule != null) {
     			return pomModule.getModule();
     		}
-    	} catch (JAXBException e) {
-    		e.printStackTrace();
-    	} catch (IOException e) {
-    		e.printStackTrace();
     	} catch (PhrescoPomException e) {
-    		e.printStackTrace();
+    		 throw new PhrescoException(e);
     	}
     	return null;
     }
@@ -174,24 +169,30 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
 		return builder;
 	}
     
-    protected List<String> getWarProjectModules(String projectCode) throws JAXBException, IOException, ArrayIndexOutOfBoundsException, PhrescoPomException {
-    	List<String> projectModules = getProjectModules(projectCode);
-    	List<String> warModules = new ArrayList<String>(5);
-    	if (CollectionUtils.isNotEmpty(projectModules)) {
-	    	for (String projectModule : projectModules) {
-	    		StringBuilder pathBuilder = getProjectHome(projectCode);
-	    		pathBuilder.append(File.separatorChar);
-	    		pathBuilder.append(projectModule);
-	    		pathBuilder.append(File.separatorChar);
-	    		pathBuilder.append(POM_XML);
-	    		PomProcessor processor = new PomProcessor(new File(pathBuilder.toString()));
-	    		String packaging = processor.getModel().getPackaging();
-				if (StringUtils.isNotEmpty(packaging) && WAR.equalsIgnoreCase(packaging)) {
-	    			warModules.add(projectModule);
-	    		}
+    protected List<String> getWarProjectModules(String projectCode) throws PhrescoException {
+    	try {
+			List<String> projectModules = getProjectModules(projectCode);
+			List<String> warModules = new ArrayList<String>(5);
+			if (CollectionUtils.isNotEmpty(projectModules)) {
+				for (String projectModule : projectModules) {
+					StringBuilder pathBuilder = getProjectHome(projectCode);
+					pathBuilder.append(File.separatorChar);
+					pathBuilder.append(projectModule);
+					pathBuilder.append(File.separatorChar);
+					pathBuilder.append(POM_XML);
+					PomProcessor processor = new PomProcessor(new File(pathBuilder.toString()));
+					String packaging = processor.getModel().getPackaging();
+					if (StringUtils.isNotEmpty(packaging) && WAR.equalsIgnoreCase(packaging)) {
+						warModules.add(projectModule);
+					}
+				}
 			}
-    	}
-    	return warModules;
+			return warModules;
+		} catch (PhrescoException e) {
+			throw new PhrescoException(e);
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
+		}
     }
     
     protected String showErrorPopup(PhrescoException e, String action) {

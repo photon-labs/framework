@@ -9,8 +9,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.UUID;
 
-import javax.xml.bind.JAXBException;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.jgit.api.CloneCommand;
@@ -51,6 +49,7 @@ import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.api.SCMManager;
 import com.photon.phresco.util.FileUtil;
 import com.photon.phresco.util.Utility;
+import com.phresco.pom.exception.PhrescoPomException;
 import com.phresco.pom.util.PomProcessor;
 
 public class SCMManagerImpl implements SCMManager, FrameworkConstants {
@@ -302,7 +301,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				processor.setSCM(repoUrl, "", "", "");
 				processor.save();
 			}
-		} catch (JAXBException e) {
+		} catch (PhrescoPomException e) {
 			if(debugEnabled){
 				S_LOGGER.error("Entering catch block of updateSCMConnection()"+ e.getLocalizedMessage());
 			}
