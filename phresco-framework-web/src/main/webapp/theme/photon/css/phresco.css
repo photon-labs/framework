@@ -5784,3 +5784,18 @@ input[class*='chckBxAlign'] {
 	overflow: auto;
 	height: 300px;
 }
+
+div.control-group.valReportLbl {
+	float: left;
+    margin-left: 20px;
+    width: 80%;
+}
+
+.validateType {
+	float: left;
+    width: 120px;
+}
+
+.validateReportSelectBox {
+	float: left;
+}

@@ -1581,6 +1581,7 @@ public interface FrameworkConstants {
 		 */
 		String PHASE_PACKAGE = "package";
 	    String PHASE_DEPLOY = "deploy";
+	    String PHASE_VALIDATE_CODE = "validate-code";
 	    String PHASE_UNIT_TEST = "unit-test";
 	    String PHASE_FUNCTIONAL_TEST = "functional-test";
 	    String PHASE_START_HUB = "start-hub";

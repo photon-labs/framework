@@ -21,8 +21,7 @@
 <%@ page import="com.photon.phresco.util.TechnologyTypes" %>
 
 <%
-	//String error = (String) request.getAttribute(FrameworkConstants.REQ_ERROR);
-	String error = null;	  
+	String error = (String) request.getAttribute(FrameworkConstants.REQ_ERROR);
 	String technology = (String)request.getAttribute(FrameworkConstants.REQ_TECHNOLOGY);
 		  
 	String sonarPath = "";
@@ -53,7 +52,7 @@
 	
 	function reloadIframe() {
 		var theme = localStorage["color"];
-	    if(theme == null || theme == undefined || theme == "undefined" || theme == "null" || theme == "themes/photon/css/red.css") {
+	    if (theme == null || theme == undefined || theme == "undefined" || theme == "null" || theme == "themes/photon/css/red.css") {
 	         theme = "themes/photon/css/red.css";
 	    }
 	    
@@ -67,10 +66,10 @@
 		<%	
 	    	} 
 	    %> 
-	    iframe.attr({
-	        src: source
-	    }); 
-	    iframe.load(function() {
+	    
+	    $('iframe').attr("src", source);
+	    
+	    $('iframe').load(function() {
 	        $(".loadingIcon").hide();
 	    });
 	}

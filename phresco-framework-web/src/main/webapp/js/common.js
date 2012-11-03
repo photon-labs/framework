@@ -28,15 +28,18 @@ function yesnoPopup(modalObj, url, title, okUrl, okLabel, form) {
 	
 		$(".popupOk").attr('id', okUrl); // popup action mapped to id
 		if (okLabel !== undefined && !isBlank(okLabel)) {
-			$('#' + okUrl).html(okLabel); // label for the ok button 
+			$('#' + okUrl).html(okLabel); // label for the ok button
 		}
 		
 		var data = "";
 		data = getBasicParams(); //customerid, projectid, appid
-		data = data.concat("&");
-		var additionalParam = $(this).attr('additionalParam'); //additional params if any
-		data = data.concat(additionalParam);
 
+		if (!isBlank($(this).attr('additionalParam'))) {
+			data = data.concat("&");
+			var additionalParam = $(this).attr('additionalParam'); //additional params if any
+			data = data.concat(additionalParam);
+		}
+		
 		var params = getParameters(form, '');
 		if (!isBlank(params)) {
 			data = data.concat("&");
@@ -101,6 +104,21 @@ function progressPopupAsSecPopup(url, title, appId, actionType, form, additional
 	$('#popupCancel').hide();
 	$('.popupClose').show();
 
+	$('#popupClose').show();
+	
+	/*var theme = localStorage["color"];
+	$(".popupLoadingIcon").css("display", "block");
+	var loadingRedIcon = "themes/photon/images/loading_red.gif";
+	var loadingBlueIcon = "themes/photon/images/loading_blue.gif";
+    if(theme == undefined || theme == null || theme == "null" || theme == "" || theme == "undefined" || theme == "themes/photon/css/red.css") {
+    	theme = loadingRedIcon;
+    	$('.loadingIcon, .popupLoadingIcon').attr("src", theme);
+    }
+    else {
+    	theme = loadingBlueIcon;
+    	$('.loadingIcon, .popupLoadingIcon').attr("src", theme);
+    }*/
+    
 	readerHandlerSubmit(url, appId, actionType, form, '', additionalParams);
 }
 
@@ -244,6 +262,20 @@ function getParameters(form, additionalParams) {
 		params = additionalParams;
 	}
 	return params;
+}
+
+// show loading icon 
+function getCurrentCSS() {
+    var theme =localStorage["color"];
+	$(".popupLoadingIcon").css("display", "block");
+	var loadingRedIcon = "themes/photon/images/loading_red.gif";
+	var loadingBlueIcon = "themes/photon/images/loading_blue.gif";
+    if(theme == undefined || theme == null || theme == "null" || theme == "" || theme == "undefined" || theme == "themes/photon/css/red.css") {
+    	$('.loadingIcon, .popupLoadingIcon').attr("src", loadingRedIcon);
+    }
+    else {
+    	$('.loadingIcon, .popupLoadingIcon').attr("src", loadingBlueIcon);
+    }
 }
 
 function inActivateAllMenu(allLink) {

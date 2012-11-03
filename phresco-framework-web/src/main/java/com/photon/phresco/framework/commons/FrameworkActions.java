@@ -95,7 +95,13 @@ public interface FrameworkActions {
     String APP_SHOW_CODE_VALIDATE_POPUP = "showCodeValidatePopUp";
     String APP_SITE_REPORT_VIEW = "siteReport";
     String APP_SITE_REPORT_CONFIGURE = "configure";
-
+    
+    /*****************************
+     * Code Action path
+     * String CODE_XXX
+     *****************************/
+    String SHOW_CODE_VALIDATE_POPUP = "showCodeValidatePopup";
+    
     /*****************************
      * Settings Action path
      * String SETTINGS_XXX

@@ -259,12 +259,21 @@
             <result name="reader">/pages/applications/reader.jsp</result>
         </action>
         
-        <action name="code" method="view" class="com.photon.phresco.framework.actions.applications.Code">
+        <!-- code tab -->
+        <!-- <action name="code" method="view" class="com.photon.phresco.framework.actions.applications.Code">
+            <result name="code">/pages/applications/code.jsp</result>
+        </action> -->
+        
+        <action name="code" method="code" class="com.photon.phresco.framework.actions.applications.Code">
             <result name="code">/pages/applications/code.jsp</result>
         </action>
         
-        <action name="progressValidate" method="progressValidate" class="com.photon.phresco.framework.actions.applications.Code">
-        	<result name="reader">/pages/applications/reader.jsp</result>
+        <action name="showCodeValidatePopup" method="showCodeValidatePopup" class="com.photon.phresco.framework.actions.applications.Code">
+            <result name="showCodeValidatePopup">/pages/applications/generateBuild.jsp</result>
+        </action>
+        
+        <action name="codeValidate" method="codeValidate" class="com.photon.phresco.framework.actions.applications.Code">
+            <result name="reader">/pages/applications/reader.jsp</result>
         </action>
         
         <action name="check" method="check" class="com.photon.phresco.framework.actions.applications.Code">
@@ -739,9 +748,9 @@
             <result type="json"><param name="root">buildInProgress</param></result>
         </action>
         
-        <action name="getCodeValidatePopUp" method="showCodeValidatePopUp" class="com.photon.phresco.framework.actions.applications.Code">
+        <!-- <action name="getCodeValidatePopUp" method="showCodeValidatePopUp" class="com.photon.phresco.framework.actions.applications.Code">
             <result name="showCodeValidatePopUp">/pages/applications/code_validate_pop_up.jsp</result>
-        </action>
+        </action> -->
         
         <action name="getDevices" method="devices" class="com.photon.phresco.framework.actions.applications.Quality">
         	<result type="json"><param name="root">deviceNames</param></result>
