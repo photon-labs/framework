@@ -95,6 +95,10 @@
 
 
 <script type="text/javascript">
+
+$(document).ready(function() {
+	$('#errMsg').empty();
+	
 	$('#add').click(function() {
 		$('#errMsg').html("");
 		var returnVal = true;
@@ -106,13 +110,24 @@
 			$("#envName").val("");
 			returnVal = false;
 		} else {
-			$('#envName').empty();
-			addRow();
-		} 
+			$('#multiselect ul li input[type=checkbox]').each(function() {
+				var jsonData = $(this).val();
+				var envs = $.parseJSON(jsonData);
+				var envName = envs.name;
+				if (name.trim().toLowerCase() == envName.trim().toLowerCase()) {
+					$("#errMsg").html("<s:text name='environment.name.already.exists'/>");
+					returnVal = false;
+					return false;
+				} 
+			});
+		}
 		
+		if (returnVal) {
+			addRow();		
+		}
 	});
 	
-	$('#setAsDefault').click(function() {
+	$('#setAsDefault, #remove').click(function() {
     	 $('#errMsg').html('');
          var setAsDefaultEnvsSize = $('#multiselect :checked').size();
          if (setAsDefaultEnvsSize < 1 || setAsDefaultEnvsSize > 1) {
@@ -121,6 +136,7 @@
          }
     });
 	
+});
 	
 	function addRow() {
 		var value = $('#envName').val();

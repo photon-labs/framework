@@ -164,7 +164,7 @@
 	});
 	
 	$('#type').change(function() { 
-		var params = '{ "settingTemplate": ' + $('#type').val() + ' }';
+		var params = '{ ' + getBasicParamsAsJson() + ', "settingTemplate": ' + $('#type').val() + ' }';
 		loadJsonContent('configType', params,  $('#typeContainer'));
 	}).triggerHandler("change");
 	

@@ -836,13 +836,14 @@ public class Configurations extends FrameworkBaseAction {
 			S_LOGGER.debug("Entering Method  Settings.settingsType()");
 		}
 		try {
-		    
+			ApplicationInfo appInfo = getApplicationInfo();
 		    List<PropertyTemplate> properties = getSettingTemplate().getProperties();
 //		    for (PropertyTemplate propertyTemplate : properties) {
 //		        String capitalizeKey = WordUtils.capitalize(propertyTemplate.getKey());
 //		        setDynamicParameter(capitalizeKey);
 //            }
 		    setReqAttribute(REQ_PROPERTIES, properties);
+		    setReqAttribute(REQ_APPINFO, appInfo);
 		    
 			/*String projectCode = (String)getHttpRequest().getParameter(REQ_PROJECT_CODE);
 			String oldName = (String)getHttpRequest().getParameter(REQ_OLD_NAME);
