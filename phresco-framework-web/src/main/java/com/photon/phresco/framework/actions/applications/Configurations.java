@@ -94,6 +94,9 @@ public class Configurations extends FrameworkBaseAction {
 	private String envError = null;
 	private String emailError = null;
 	private String remoteDeploymentChk = null;
+	private String currentEnvName = null;
+	private String currentConfigType = null;
+	private String currentConfigName = null;
    
 	// Environemnt delete
     private boolean isEnvDeleteSuceess = true;
@@ -213,7 +216,7 @@ public class Configurations extends FrameworkBaseAction {
             Environment environment = getEnvironment();
             List<Configuration> configurations = environment.getConfigurations();
             configurations.add(config);
-            getConfigManager().updateEnvironment(environment);
+            getConfigManager().createConfiguration(environment.getName(), config);
         } catch (PhrescoException e) {
             return showErrorPopup(e, "");
         } catch (ConfigurationException e) {
@@ -662,30 +665,37 @@ public class Configurations extends FrameworkBaseAction {
     		S_LOGGER.debug("Entering Method  Configurations.edit()");
     	}
         try {
-            ProjectAdministrator administrator = getProjectAdministrator();
+        	List<Environment> environments = getAllEnvironments();
+        	setReqAttribute(REQ_ENVIRONMENTS, environments);
+        	Configuration selectedConfigInfo = getConfigManager().getConfiguration(currentEnvName, currentConfigType, currentConfigName);
+        	List<SettingsTemplate> configTemplates = getServiceManager().getconfigTemplates(getCustomerId());
+            setReqAttribute(REQ_SETTINGS_TEMPLATES, configTemplates);
+        	setReqAttribute(REQ_CONFIG_INFO, selectedConfigInfo);
+        	setReqAttribute(REQ_FROM_PAGE, FROM_PAGE_EDIT);
+        	
+            /*ProjectAdministrator administrator = getProjectAdministrator();
             List<SettingsTemplate> settingsTemplates = administrator.getSettingsTemplates();
             getHttpSession().setAttribute(SESSION_SETTINGS_TEMPLATES, settingsTemplates);
             Project project = administrator.getProject(projectCode);
-            SettingsInfo selectedConfigInfo = administrator.configuration(oldName, getEnvName(), project);
+            SettingsInfo selectedConfigInfo = administrator.configuration(oldName, getEnvName(), project);*/
 
-        	if (debugEnabled) {
+        	/*if (debugEnabled) {
         		S_LOGGER.debug("Configurations.edit() old name" + oldName);
-        	}
+        	}*/
 
-        	List<Environment> environments = administrator.getEnvironments(project);
+        /*	List<Environment> environments = administrator.getEnvironments(project);
             getHttpRequest().setAttribute(REQ_ENVIRONMENTS, environments);
             getHttpRequest().setAttribute(SESSION_OLD_NAME, oldName);
             getHttpRequest().setAttribute(REQ_CONFIG_INFO, selectedConfigInfo);
             getHttpRequest().setAttribute(REQ_FROM_PAGE, FROM_PAGE_EDIT);
             getHttpRequest().setAttribute(REQ_PROJECT, project);
             getHttpSession().removeAttribute(ERROR_SETTINGS);
-            getHttpRequest().setAttribute("currentEnv", envName);
-        } catch (Exception e) {
-        	if (debugEnabled) {
-               S_LOGGER.error("Entered into catch block of Configurations.edit()" + FrameworkUtil.getStackTraceAsString(e));
-    		}
-        	new LogErrorReport(e, "Configurations edit");
-        }
+            getHttpRequest().setAttribute("currentEnv", envName);*/
+        } catch (PhrescoException e) {
+        	return showErrorPopup(e,  "");
+        } catch (ConfigurationException e) {
+        	return showErrorPopup(new PhrescoException(e),"");
+		}
 
         getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
         return APP_CONFIG_EDIT;
@@ -836,13 +846,14 @@ public class Configurations extends FrameworkBaseAction {
 			S_LOGGER.debug("Entering Method  Settings.settingsType()");
 		}
 		try {
-		    
+			ApplicationInfo appInfo = getApplicationInfo();
 		    List<PropertyTemplate> properties = getSettingTemplate().getProperties();
 //		    for (PropertyTemplate propertyTemplate : properties) {
 //		        String capitalizeKey = WordUtils.capitalize(propertyTemplate.getKey());
 //		        setDynamicParameter(capitalizeKey);
 //            }
 		    setReqAttribute(REQ_PROPERTIES, properties);
+		    setReqAttribute(REQ_APPINFO, appInfo);
 		    
 			/*String projectCode = (String)getHttpRequest().getParameter(REQ_PROJECT_CODE);
 			String oldName = (String)getHttpRequest().getParameter(REQ_OLD_NAME);
@@ -871,11 +882,8 @@ public class Configurations extends FrameworkBaseAction {
             getHttpRequest().setAttribute(SESSION_OLD_NAME, oldName);
             getHttpRequest().setAttribute(REQ_CONFIG_INFO, selectedConfigInfo);
             getHttpRequest().setAttribute(REQ_FROM_PAGE, FROM_PAGE_EDIT);*/
-		} catch (Exception e) {
-        	if (debugEnabled) {
-               S_LOGGER.error("Entered into catch block of Configurations.configurationsType()" + FrameworkUtil.getStackTraceAsString(e));
-    		}
-        	new LogErrorReport(e, "Configurations type");
+		} catch (PhrescoException e) {
+        	return showErrorPopup(e,  getText(EXCEPTION_CONFIGURATION_SHOW_PROPERTIES));
 		}
 		return SETTINGS_TYPE;
 	}
@@ -899,7 +907,8 @@ public class Configurations extends FrameworkBaseAction {
     	S_LOGGER.debug("Entering Method  Configurations.setAsDefault()");
     	S_LOGGER.debug("SetAsdefault" + setAsDefaultEnv);
 		try {
-    		ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
+			getConfigManager().addEnvironments(environments);
+    		/*ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
     		Project project = administrator.getProject(projectCode);
     		
     		if (StringUtils.isEmpty(setAsDefaultEnv)) {
@@ -907,6 +916,7 @@ public class Configurations extends FrameworkBaseAction {
     			S_LOGGER.debug("Env value is empty");
     		}
     		
+    		//List<Environment> enviroments = getAllEnvironments();
     		List<Environment> enviroments = administrator.getEnvironments(project);
     		boolean envAvailable = false;
     		for (Environment environment : enviroments) {
@@ -921,7 +931,7 @@ public class Configurations extends FrameworkBaseAction {
     			return SUCCESS;
     		}
 	    	administrator.setAsDefaultEnv(setAsDefaultEnv, project);
-	    	setEnvError(getText(ENV_SET_AS_DEFAULT_SUCCESS, Collections.singletonList(setAsDefaultEnv)));
+	    	setEnvError(getText(ENV_SET_AS_DEFAULT_SUCCESS, Collections.singletonList(setAsDefaultEnv)));*/
 	    	// set flag value to indicate , successfully env set as default
 	    	flag = true;
 	    	S_LOGGER.debug("successfully updated the config xml");
@@ -1314,5 +1324,28 @@ public class Configurations extends FrameworkBaseAction {
     public void setConfigId(String configId) {
         this.configId = configId;
     }
+    
+    public String getCurrentEnvName() {
+		return currentEnvName;
+	}
 
+	public void setCurrentEnvName(String currentEnvName) {
+		this.currentEnvName = currentEnvName;
+	}
+
+	public String getCurrentConfigType() {
+		return currentConfigType;
+	}
+
+	public void setCurrentConfigType(String currentConfigType) {
+		this.currentConfigType = currentConfigType;
+	}
+
+	public String getCurrentConfigName() {
+		return currentConfigName;
+	}
+
+	public void setCurrentConfigName(String currentConfigName) {
+		this.currentConfigName = currentConfigName;
+	}
 }

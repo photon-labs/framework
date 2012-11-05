@@ -35,7 +35,7 @@
 	Gson gson = new Gson();
 %>
 
-<form id="environment" class="form-horizontal">
+<form id="formEnvironment" class="form-horizontal">
 	<div class="control-group">
 		<label class="control-label labelbold modallbl-color">
 			<span class="mandatory">*</span>&nbsp;<s:text name='lbl.name' />
@@ -65,13 +65,13 @@
                 <% for (Environment environment : environments ) {
                 	String envJson = gson.toJson(environment);
                 	String disable = "";
-                	//if (environment.isDefaultEnv() || CollectionUtils.isNotEmpty(environment.getConfigurations())) {
-                		//disable = "disabled";
-                	//}
+                	/* if (environment.isDefaultEnv() || CollectionUtils.isNotEmpty(environment.getConfigurations())) {
+                		disable = "disabled";
+                	} */
                  %>
 	       			<li>
 						<input type="checkbox" name="envNames" class="check techCheck" 
-							value='<%= envJson %>' title="<%= environment.getDesc() %>" <%= disable %>/><%= environment.getName() %>
+							value='<%= envJson %>' title="<%= environment.getDesc() %>" <%-- <%= environment.isDefaultEnv() ? "disabled" : ""%> --%>/><%= environment.getName() %>
 					</li>
 				<% } %>
 				</ul>
@@ -95,6 +95,10 @@
 
 
 <script type="text/javascript">
+
+$(document).ready(function() {
+	$('#errMsg').empty();
+	
 	$('#add').click(function() {
 		$('#errMsg').html("");
 		var returnVal = true;
@@ -106,21 +110,61 @@
 			$("#envName").val("");
 			returnVal = false;
 		} else {
-			$('#envName').empty();
-			addRow();
-		} 
+			$('#multiselect ul li input[type=checkbox]').each(function() {
+				var jsonData = $(this).val();
+				var envs = $.parseJSON(jsonData);
+				var envName = envs.name;
+				if (name.trim().toLowerCase() == envName.trim().toLowerCase()) {
+					$("#errMsg").html("<s:text name='environment.name.already.exists'/>");
+					returnVal = false;
+					return false;
+				} 
+			});
+		}
 		
+		if (returnVal) {
+			addRow();		
+		}
 	});
 	
 	$('#setAsDefault').click(function() {
-    	 $('#errMsg').html('');
+    	 $('#errMsg').empty();
+    	 selectEnv();
          var setAsDefaultEnvsSize = $('#multiselect :checked').size();
-         if (setAsDefaultEnvsSize < 1 || setAsDefaultEnvsSize > 1) {
-        	 $("#errMsg").html("<s:text name='please.select.one.environment'/>");
+         
+         if (setAsDefaultEnvsSize > 1) {
+        	 $("#errMsg").html("<s:text name='please.select.only.one.environment'/>");
         	 return false;
          }
+         
+         var setAsDefaultEnvs = new Array();
+         $('#multiselect :checked').each( function() {
+        	var selectedEnvsData = $(this).val();
+			var selectedEnv = $.parseJSON(selectedEnvsData);
+			if(selectedEnv.defaultEnv == false){
+				selectedEnv.defaultEnv = "true";
+			}
+        	setAsDefaultEnvs.push(selectedEnv.defaultEnv);
+         });
     });
 	
+	//To remove the added Environment value in UI
+    $('#remove').click(function() {
+    	 selectEnv();
+    	 // To remove the Environments from the list box which is not in the XML
+        $('#multiselect ul li input[type=checkbox]:checked').each( function() {
+        	var checkedData = $(this).val();
+			var checkedDataObj = $.parseJSON(checkedData);
+			var env = checkedDataObj.defaultEnv; // selected checkbox
+			if(env == true ){
+				$("#errMsg").html("<s:text name='you.cant.remove.defaultEnv'/>");
+			} else {
+				//remove
+			}			
+        });
+    });  
+	
+});
 	
 	function addRow() {
 		var value = $('#envName').val();
@@ -129,6 +173,14 @@
 		
 		var checkbox = '<input type="checkbox" name="envNames" class="check techCheck" value=\'' + checkValue + '\' title="' + desc + '" />' + value;
 		$("#multiselect ul li:last").after('<li>' + checkbox + '</li>');
+	}
+	
+	function selectEnv() {
+		var checkedEnvsSize = $('#multiselect :checked').size();
+        if (checkedEnvsSize < 1) {
+       	 $("#errMsg").html("<s:text name='please.select.one.environment'/>");
+       	 return false;
+        }
 	}
 	
 </script>

@@ -19,7 +19,9 @@
  */
 package com.photon.phresco.framework.actions.applications;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.URL;
@@ -34,10 +36,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.photon.phresco.commons.model.ApplicationInfo;
+import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.FrameworkConfiguration;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
-import com.photon.phresco.framework.actions.FrameworkBaseAction;
+import com.photon.phresco.framework.actions.DynamicParameterUtil;
 import com.photon.phresco.framework.api.ActionType;
 import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.api.Project;
@@ -47,13 +50,16 @@ import com.photon.phresco.framework.commons.ApplicationsUtil;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.commons.LogErrorReport;
 import com.photon.phresco.framework.commons.PBXNativeTarget;
+import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
+import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.util.TechnologyTypes;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.util.PomProcessor;
 
-public class Code extends FrameworkBaseAction {
-    private static final long serialVersionUID = 8217209827121703596L;
+public class Code extends DynamicParameterUtil {
+	private static final long serialVersionUID = 8217209827121703596L;
     private static final Logger S_LOGGER = Logger.getLogger(Code.class);
+    private static Boolean debugEnabled = S_LOGGER.isDebugEnabled();
     
 	private String skipTest = null;
     private String codeTechnology = null;
@@ -61,7 +67,7 @@ public class Code extends FrameworkBaseAction {
     private String validateAgainst = null;
 	private String target = null;
 	private static String FUNCTIONALTEST = "functional";
-
+	
 	public String view() {
     	S_LOGGER.debug("Entering Method Code.view()");
 		String serverUrl = "";
@@ -97,8 +103,69 @@ public class Code extends FrameworkBaseAction {
         }
     	return APP_CODE;
     }
+	
+	public String showCodeValidatePopup() {
+		if (debugEnabled) {
+			S_LOGGER.debug("Entering Method  Code.showCodeValidatePopup()");
+		}
+		try {
+			ApplicationInfo applicationInfo = getApplicationInfo();
+			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(applicationInfo)));
+			List<Parameter> parameters = getMojoParameters(mojo, PHASE_VALIDATE_CODE);
+			setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
+		} catch (PhrescoException e) {
+			if (debugEnabled) {
+				S_LOGGER.error("Entered into catch block of Code.showCodeValidatePopup()" + FrameworkUtil.getStackTraceAsString(e));
+			}
+		}
+		return SHOW_CODE_VALIDATE_POPUP;
+	}
     
-    public String check() {
+	public String code() {
+		if (debugEnabled) {
+			S_LOGGER.debug("Entering Method  Code.codeValidationResult()");
+		}
+		String serverUrl = "";
+		try {
+        	setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
+        	ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+        	ApplicationInfo applicationInfo = applicationManager.getApplicationInfo(getCustomerId(), getProjectId(), getAppId());
+        	setReqAttribute(REQ_APP_INFO, applicationInfo);
+        	
+        	MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(applicationInfo)));
+			Parameter parameter = mojo.getParameter(PHASE_VALIDATE_CODE, "sonar");
+			String key = parameter.getKey();
+			
+			setReqAttribute("parameter", parameter);
+      		
+			FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+			serverUrl = frameworkUtil.getSonarURL();
+			URL sonarURL = new URL(serverUrl);
+			HttpURLConnection connection = null;
+    	    try {
+    	    	connection = (HttpURLConnection) sonarURL.openConnection();
+    	    	int responseCode = connection.getResponseCode();
+    	    	if (responseCode != 200) {
+    	    		setReqAttribute(REQ_ERROR, getText(SONAR_NOT_STARTED));
+                }
+    	    } catch(Exception e) {
+    	    	setReqAttribute(REQ_ERROR, getText(SONAR_NOT_STARTED));
+    	    }
+			/*if (TechnologyTypes.IPHONES.contains(applicationInfo.getTechInfo().getVersion())) {
+				List<PBXNativeTarget> xcodeConfigs = ApplicationsUtil.getXcodeConfiguration(applicationInfo.getAppDirName());
+				for (PBXNativeTarget xcodeConfig : xcodeConfigs) {
+					S_LOGGER.debug("Iphone technology terget name" + xcodeConfig.getName());
+				}
+				setReqAttribute(REQ_XCODE_CONFIGS, xcodeConfigs);
+			}*/
+    	} catch (Exception e) {
+    		S_LOGGER.error("Entered into catch block of Code.codeValidationResult()"+ FrameworkUtil.getStackTraceAsString(e));
+    		new LogErrorReport(e, "Code codeValidationResult");
+        }
+		return APP_CODE;
+	}
+	
+	public String check() {
     	S_LOGGER.debug("Entering Method Code.check()");
     	StringBuilder sb = new StringBuilder();
     	String technology = null;
@@ -109,7 +176,8 @@ public class Code extends FrameworkBaseAction {
 	        
             FrameworkConfiguration frameworkConfig = PhrescoFrameworkFactory.getFrameworkConfig();
             ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-			ApplicationInfo applicationInfo = applicationManager.getApplicationInfo(getCustomerId(), getProjectId(), getAppId());
+            ApplicationInfo applicationInfo = getApplicationInfo();
+			
 			technology = applicationInfo.getTechInfo().getVersion();
             if (TechnologyTypes.IPHONES.contains(technology)) {
             	StringBuilder codeValidatePath = new StringBuilder(Utility.getProjectHome());
@@ -154,29 +222,29 @@ public class Code extends FrameworkBaseAction {
 	    	    	Matcher matcher = pattern.matcher(serverUrl);
 	    	    	serverUrl = matcher.replaceAll("");
 	    	    }
-	        	StringBuilder builder = new StringBuilder(Utility.getProjectHome());
+	        	StringBuilder builder = new StringBuilder(getApplicationHome());
 	        	//builder.append(projectCode);
-                if (StringUtils.isNotEmpty(report) && FUNCTIONALTEST.equals(report)) {
+                /*if (StringUtils.isNotEmpty(report) && FUNCTIONALTEST.equals(report)) {
                     FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
                     builder.append(frameworkUtil.getFunctionalTestReportDir(applicationInfo));
-                }
+                }*/
                 builder.append(File.separatorChar);
 	        	builder.append(POM_XML);
 	        	File pomPath = new File(builder.toString());
 	        	PomProcessor processor = new PomProcessor(pomPath);
 	        	String groupId = processor.getModel().getGroupId();
 	        	String artifactId = processor.getModel().getArtifactId();
-	
 	        	sb.append(serverUrl);
 	        	sb.append(frameworkConfig.getSonarReportPath());
 	        	sb.append(groupId);
 	        	sb.append(COLON);
 	        	sb.append(artifactId);
+	        	String validateAgainst = getHttpRequest().getParameter("validateAgainst");
 	        	
 	        	S_LOGGER.debug("groupid : artif ====> " + sb.toString());
-	        	if (StringUtils.isNotEmpty(report) && !SOURCE_DIR.equals(report)) {
+	        	if (StringUtils.isNotEmpty(validateAgainst) && !SOURCE_DIR.equals(validateAgainst)) {
 	        		sb.append(COLON);
-	        		sb.append(report);
+	        		sb.append(validateAgainst);
 	        	}
 	        	S_LOGGER.debug("Url to access API ====> " + sb.toString());
 	    		try {
@@ -187,6 +255,7 @@ public class Code extends FrameworkBaseAction {
 					S_LOGGER.debug("Response code value " + responseCode);
 					if (responseCode != 200) {
 						setReqAttribute(REQ_ERROR, getText(FAILURE_CODE_REVIEW));
+						System.out.println("code review status .........." + getText(FAILURE_CODE_REVIEW));
 					    S_LOGGER.debug("try APP_CODE....... " + APP_CODE);
 					    return APP_CODE;
 		            }
@@ -200,14 +269,41 @@ public class Code extends FrameworkBaseAction {
     	} catch (Exception e) {
 			S_LOGGER.error("Entered into catch block of Code.check()"+ FrameworkUtil.getStackTraceAsString(e));
     	}
-    	//setReqAttribute(REQ_PROJECT_CODE, projectCode);
     	setReqAttribute(REQ_TECHNOLOGY, technology);
     	setReqAttribute(REQ_SONAR_PATH, sb.toString());
         return APP_CODE;
     }
     
+	public String codeValidate() throws IOException {
+		if (debugEnabled) {
+			S_LOGGER.debug("Entering Method Code.codeValidate()");
+		}
+		try {
+			ProjectInfo projectInfo = getProjectInfo();
+			ApplicationInfo applicationInfo = getApplicationInfo();
+			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(applicationInfo)));
+			persistValuesToXml(mojo, PHASE_VALIDATE_CODE);
+			
+			List<Parameter> parameters = getMojoParameters(mojo, PHASE_VALIDATE_CODE);
+			List<String> buildArgCmds = getMavenArgCommands(parameters);
+			String workingDirectory = getAppDirectoryPath(applicationInfo);
+			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+			
+			BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.CODE_VALIDATE, buildArgCmds, workingDirectory);
+			setSessionAttribute(getAppId() + REQ_CODE, reader);
+			setReqAttribute(REQ_APP_ID, getAppId());
+			setReqAttribute(REQ_ACTION_TYPE, REQ_CODE);
+		} catch (PhrescoException e) {
+			e.printStackTrace();
+		}
+		
+		return APP_ENVIRONMENT_READER;
+	}
+	
+	
+	
     public String progressValidate() {
-    	S_LOGGER.debug("Entering Method  Code.progressValidate()");
+    	S_LOGGER.debug("Entering Method Code.progressValidate()");
     	try {
         	ProjectRuntimeManager runtimeManager;
         	ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
@@ -267,7 +363,7 @@ public class Code extends FrameworkBaseAction {
 		}
 	}
 	
-	public String showCodeValidatePopUp(){
+	/*public String showCodeValidatePopUp(){
 		String technology = null;
 		Project project = null;
 		S_LOGGER.debug("Entering Method  Code.progressValidate()");
@@ -279,14 +375,14 @@ public class Code extends FrameworkBaseAction {
            // getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
 			setReqAttribute(APPLICATION_PROJECT, project);
             if (TechnologyTypes.IPHONES.contains(technology)) {
-				/*List<PBXNativeTarget> xcodeConfigs = ApplicationsUtil.getXcodeConfiguration(projectCode);
-				setReqAttribute(REQ_XCODE_CONFIGS, xcodeConfigs);*/
+				List<PBXNativeTarget> xcodeConfigs = ApplicationsUtil.getXcodeConfiguration(projectCode);
+				setReqAttribute(REQ_XCODE_CONFIGS, xcodeConfigs);
 			}
         } catch (Exception e) {
         	S_LOGGER.error("Entered into catch block of Code.progressValidate()"+ FrameworkUtil.getStackTraceAsString(e));
         }
     	return APP_SHOW_CODE_VALIDATE_POPUP;
-    }
+    }*/
 
 	public String getCodeTechnology() {
 		return codeTechnology;

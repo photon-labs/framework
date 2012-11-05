@@ -1,11 +1,9 @@
 package com.photon.phresco.framework.impl.update;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.bind.JAXBException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -32,9 +30,7 @@ public class ProfileUpdater implements FrameworkConstants {
 			if (updateJavaProfile || updateWebProfile || updateJsProfile) {
 				pomProcessor.save();
 			}
-		} catch (JAXBException e) {
-			throw new PhrescoException(e);
-		} catch (IOException e) {
+		} catch (PhrescoPomException e) {
 			throw new PhrescoException(e);
 		}
 	}
@@ -106,10 +102,6 @@ public class ProfileUpdater implements FrameworkConstants {
 			pomProcessor.save();
 		} catch (PhrescoException e) {
 			throw new PhrescoException(e);
-		} catch (JAXBException e) {
-			throw new PhrescoException(e);
-		} catch (IOException e) {
-			throw new PhrescoException(e);
 		}
 	}
 	
@@ -128,27 +120,34 @@ public class ProfileUpdater implements FrameworkConstants {
 				updateWordPressProperties(pomProcessor);
 				pomProcessor.save();
 			}
-		} catch (JAXBException e) {
+		} catch (PhrescoPomException e) {
 			throw new PhrescoException(e);
-		} catch (IOException e) {
-			throw new PhrescoException(e);		}
+		}
 	}
 
 	private boolean updatePhpProperties(PomProcessor pomProcessor) throws PhrescoException {
 		return addProperty(pomProcessor);
 	}
 
-	private boolean updateDrupalProperties(PomProcessor pomProcessor) throws PhrescoException, ParserConfigurationException {
-		pomProcessor.setProperty(DRUPAL_VERSION, DRUPAL_STANDAD_VERSION);
-		pomProcessor.setProperty(DRUPAL_STANDARD, DRUPAL);
+	private boolean updateDrupalProperties(PomProcessor pomProcessor) throws PhrescoException {
+		try {
+			pomProcessor.setProperty(DRUPAL_VERSION, DRUPAL_STANDAD_VERSION);
+			pomProcessor.setProperty(DRUPAL_STANDARD, DRUPAL);
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
+		}
 		return addProperty(pomProcessor);
 	}
-	private boolean updateWordPressProperties(PomProcessor pomProcessor) throws PhrescoException, ParserConfigurationException {
-		pomProcessor.setProperty(WORDPRESS_STANDARD, WORDPRESS);
+	private boolean updateWordPressProperties(PomProcessor pomProcessor) throws PhrescoException {
+		try {
+			pomProcessor.setProperty(WORDPRESS_STANDARD, WORDPRESS);
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
+		}
 		return addProperty(pomProcessor);
 	}
 
-	private boolean addProperty(PomProcessor pomProcessor) throws PhrescoException{
+	private boolean addProperty(PomProcessor pomProcessor) throws PhrescoException {
 		try {
 			pomProcessor.setProperty(SONAR_LANGUAGE, LANGUAGE);
 			pomProcessor.setProperty(SONAR_PHPPMD_SKIP, FALSE);
@@ -166,7 +165,7 @@ public class ProfileUpdater implements FrameworkConstants {
 			pomProcessor.setProperty(SONAR_PHPPMD_TIMEOUT, "100");
 			pomProcessor.setProperty(SONAR_PHPCODESNIFFER_TIMEOUT, "100");
 			pomProcessor.setProperty(SONAR_PHASE, PHASE);
-		} catch (ParserConfigurationException e) {
+		} catch (PhrescoPomException e) {
 			throw new PhrescoException(e);
 		}
 		return true;

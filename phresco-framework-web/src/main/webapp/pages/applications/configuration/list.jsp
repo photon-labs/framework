@@ -41,15 +41,7 @@
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 
 <%
-  /*   Project project = (Project)request.getAttribute(FrameworkConstants.REQ_PROJECT);
-    ApplicationInfo selectedInfo = null;
-    String projectCode = null;
-    if(project != null) {
-        selectedInfo = project.getApplicationInfo();
-        projectCode = selectedInfo.getCode();
-    } */
 	List<Environment> envInfoValues = (List<Environment>) request.getAttribute(FrameworkConstants.REQ_ENVIRONMENTS);
-   // List<SettingsInfo> configurations = (List<SettingsInfo>)request.getAttribute("configuration");
 	Map<String, String> urls = new HashMap<String, String>();
 %>
 
@@ -204,17 +196,7 @@
 		var basicParams = getBasicParamsAsJson();
 		var params = '{' + basicParams + ', "environments": [' + envs.join(',') + ']}';
 		var url = $(self).attr('id');
-
-		loadJsonContent(url, params, $('#typeContainer'));
-		/*$.ajax({
-			url : url,
-			data : params,
-			type : "POST",
-			dataType : "json",
-			contentType: "application/json; charset=utf-8",
-			success : function(data) {
-			}
-		});*/	
+		loadJsonContent(url, params, $('#subcontainer'));
 	}
 
 </script>

@@ -49,6 +49,7 @@ public interface FrameworkActions {
 	String APP_PROJECTMODULES = "projectModules";
 	String APP_EDIT = "edit";
 	String APP_FEATURES = "features";
+	String APP_FEATURES_LIST = "featuresList";
 	String APP_FEATURES_ONE_CLM = "features_oneClm";
 	String APP_FEATURES_TWO_CLM = "features_twoClm";
 	String APP_FEATURES_THREE_CLM = "features_threeClm";
@@ -86,6 +87,7 @@ public interface FrameworkActions {
     String APP_MENU = "appMenu";
     String APP_APPINFO = "appinfo";
     String APP_APPLICATION = "application";
+    String APP_UPDATE = "updateApplication";
     String APP_VALIDATE_FRAMEWORK = "validateFramework";
     String APP_VALIDATE_PROJECT = "validateProject";
     String APP_SHOW_FRAMEWORK_VLDT_RSLT = "showFrameworkVldtRslt";
@@ -93,7 +95,13 @@ public interface FrameworkActions {
     String APP_SHOW_CODE_VALIDATE_POPUP = "showCodeValidatePopUp";
     String APP_SITE_REPORT_VIEW = "siteReport";
     String APP_SITE_REPORT_CONFIGURE = "configure";
-
+    
+    /*****************************
+     * Code Action path
+     * String CODE_XXX
+     *****************************/
+    String SHOW_CODE_VALIDATE_POPUP = "showCodeValidatePopup";
+    
     /*****************************
      * Settings Action path
      * String SETTINGS_XXX

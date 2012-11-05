@@ -82,6 +82,7 @@ import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.TechnologyTypes;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.android.AndroidProfile;
+import com.phresco.pom.exception.PhrescoPomException;
 import com.phresco.pom.model.Plugin;
 import com.phresco.pom.model.PluginExecution;
 import com.phresco.pom.model.PluginExecution.Configuration;
@@ -1007,13 +1008,13 @@ public class Build extends DynamicParameterUtil {
 			getHttpRequest().setAttribute(FINAL_NAME, finalName);
 			getHttpRequest().setAttribute(MAIN_CLASS_VALUE, mainClassValue);
 
-		} catch (JAXBException e) {
-			throw new PhrescoException(e);
 		} catch (IOException e) {
 			throw new PhrescoException(e);
 		} catch (ParserConfigurationException e) {
 			throw new PhrescoException(e);
 		} catch (SAXException e) {
+			throw new PhrescoException(e);
+		} catch (PhrescoPomException e) {
 			throw new PhrescoException(e);
 		}
 	}

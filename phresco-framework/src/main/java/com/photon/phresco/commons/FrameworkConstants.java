@@ -61,11 +61,15 @@ public interface FrameworkConstants {
     String GIT_IMPORT_TEMP_DIR = "gitImportTemp";
     String SONAR = "sonar";
     String FROM_PAGE_LOGIN = "login";
+    String SERVER_KEY = "server";
+    String DATABASE_KEY = "Database";
     
     String REQ_CUSTOMER_ID = "customerId";
     String REQ_PROJECT_ID = "projectId";
     String REQ_APP_ID = "appId";
+    String REQ_PILOT_PROJECTS = "pilotProjects";
     String REQ_CURRENT_APP_NAME = "currentAppName";
+    String REQ_PROJECT_FEATURES = "projectInfoFeatures";
     String REQ_PROJECT_LAYERS = "layers";
     String REQ_PARAM_NAME_TECH_GROUP = "TechGroup";
     String REQ_PARAM_NAME_TECHNOLOGY = "Technology";
@@ -75,7 +79,10 @@ public interface FrameworkConstants {
     String REQ_PARAM_NAME_TABLET = "Tablet";
     String REQ_PARAM_NAME_LAYER_ID = "layerId";
     String REQ_PARAM_NAME_TECH_GROUP_ID = "techGroupId";
-   
+    String REQ_FEATURES_TYPE_MODULE = "FEATURE";
+    String REQ_FEATURES_TYPE = "type";
+    String REQ_FEATURES_MOD_GRP = "moduleGroup";
+    
     String DO_NOT_CHECKIN_DIR = "do_not_checkin";
     String SETTINGS_XML = "settings.xml";
     String ARCHIVES = "archives";
@@ -143,6 +150,8 @@ public interface FrameworkConstants {
 	String COLOR = "color";
 	String ORDINAL = "ordinal";
 	String CI_SUCCESS_FLAG = "SUCCESS";
+	String INPROGRESS = "INPROGRESS";
+	String RESTARTED = "restarted";
 	String NAME = "name";
 	String CHILD_PROJECTS = "childProjects";
 	String THRESHOLD = "threshold";
@@ -179,6 +188,10 @@ public interface FrameworkConstants {
     String FAILURE_EMAILS = "failureEmails";
     String TRIGGER_SUCCESS__EMAIL_RECIPIENT_LIST = "publishers//hudson.plugins.emailext.ExtendedEmailPublisher//configuredTriggers//hudson.plugins.emailext.plugins.trigger.SuccessTrigger//email//recipientList";
     String TRIGGER_FAILURE_EMAIL_RECIPIENT_LIST = "publishers//hudson.plugins.emailext.ExtendedEmailPublisher//configuredTriggers//hudson.plugins.emailext.plugins.trigger.FailureTrigger//email//recipientList";
+	String CRON_VALIDATION = "cronValidation";
+	String CI_TOMCAT_HTTP_PORT = "/project/build/plugins/plugin/configuration/tomcatHttpPort";
+	String CI_ERROR = "error.";
+	String CI_MESSAGE = ".message";
     String GOALS = "goals";
     String TRIGGERS = "triggers";
     String TRIGGERS_SPEC = "triggers//spec";
@@ -423,6 +436,7 @@ public interface FrameworkConstants {
      * Session Constants
      * Ex: SESSION_XXX
      */
+    String SESSION_APPINFO	= "sessionAppInfo";
     String SESSION_SELECTED_INFO = "selectedInfo";
     String SESSION_SELECTED_MODULES = "selectedModules";
     String REQ_APPLICATION_TYPES = "ApplicationTypes";
@@ -449,6 +463,7 @@ public interface FrameworkConstants {
     String REQ_APP_DIR_NAME  = "appDirName";
 	String REQ_TITLE_ADD_APPLICATION = "Add Application";
     String REQ_BUILD_FROM = "from";
+    String REQ_PROJECT_INFO = "projectInfo";
     String REQ_NODEJS_SERVER_LOG = "NodeJsServerLog";
     String REQ_PROJECT = "project";
     String REQ_PROJECT_CODE = "projectCode";
@@ -1511,8 +1526,12 @@ public interface FrameworkConstants {
 		String EXCEPTION_PROJECT_CREATE = "excep.hdr.proj.create";
 		String EXCEPTION_PROJECT_LIST = "excep.hdr.proj.list";
 		String EXCEPTION_PROJECT_ADD = "excep.hdr.proj.add";
+		String EXCEPTION_PROJECT_UPDATE = "excep.hdr.proj.update";
+		String EXCEPTION_APPLICATION_EDIT = "excep.hdr.appInfo.edit";
 		String EXCEPTION_PROJECT_MOB_TECH_VERSIONS = "excep.hdr.proj.mob.tech.versions";
 		String EXCEPTION_DOWNLOADINFOS = "excep.hdr.downloadInfos";
+		String EXCEPTION_LOADMENU = "excep.hdr.load.menu";
+		String EXCEPTION_TECHNOLOGY = "excep.hdr.tech";
 		String EXCEPTION_PROJECT_WEB_LAYER_WIDGETS = "excep.hdr.proj.web.layer.widgets";
 		String EXCEPTION_QUALITY_UNIT = "excep.hdr.quality.unit";
 		String EXCEPTION_QUALITY_UNIT_RPT = "excep.hdr.quality.unit.report";
@@ -1531,9 +1550,15 @@ public interface FrameworkConstants {
 		String EXCEPTION_REPORT_CREATE_REPORT_CONFIG = "excep.hdr.report.create.report.config";
 		String EXCEPTION_CONFIGURATION_LIST_ENV = "excep.hdr.configuration.list.env";
 		String EXCEPTION_CONFIGURATION_LIST_CONFIG = "excep.hdr.configuration.list.config";
+		String EXCEPTION_CONFIGURATION_SHOW_PROPERTIES = "excep.hdr.configuration.show.properties";
 		String EXCEPTION_RUNAGNSRC_SERVER_START = "excep.hdr.proj.runagnsrc.server.start";
 		String EXCEPTION_RUNAGNSRC_SERVER_STOP = "excep.hdr.proj.runagssrc.stop";
 		String EXCEPTION_RUNAGNSRC_SERVER_RESTART = "excep.hdr.proj.runagssrc.restart";
+		String EXCEPTION_CI_JOB_LIST = "excep.hdr.ci.job.list.failed";
+		String EXCEPTION_CI_CONFIGURE_POPUP = "excep.hdr.ci.configure.popup.failed";
+		String EXCEPTION_CI_JOB_DELETION = "excep.hdr.ci.job.deletion.failed";
+		String EXCEPTION_CI_BUILD_DELETION = "excep.hdr.ci.build.deletion.failed";
+		String EXCEPTION_CI_BUILD_DOWNLOAD_NOT_AVAILABLE = "excep.hdr.ci.build.download.not.available";
 		
 		
 		/**
@@ -1559,6 +1584,7 @@ public interface FrameworkConstants {
 		 */
 		String PHASE_PACKAGE = "package";
 	    String PHASE_DEPLOY = "deploy";
+	    String PHASE_VALIDATE_CODE = "validate-code";
 	    String PHASE_UNIT_TEST = "unit-test";
 	    String PHASE_FUNCTIONAL_TEST = "functional-test";
 	    String PHASE_START_HUB = "start-hub";

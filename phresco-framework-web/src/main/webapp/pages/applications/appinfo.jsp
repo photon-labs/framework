@@ -28,29 +28,44 @@
 <%@ page import="org.apache.commons.collections.CollectionUtils" %>
 <%@ page import="org.apache.commons.collections.MapUtils" %>
 
+<%@page import="com.photon.phresco.commons.model.ProjectInfo"%>
 <%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 <%@ page import="com.photon.phresco.commons.model.WebService"%>
 <%@ page import="com.photon.phresco.commons.model.DownloadInfo"%>
 
 <%
-	ApplicationInfo selectedInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_APPINFO);
+	String appId = (String)request.getAttribute(FrameworkConstants.REQ_APP_ID);
+	List<ApplicationInfo> pilotProjects = (List<ApplicationInfo>) session.getAttribute(FrameworkConstants.REQ_PILOT_PROJECTS);
+	ProjectInfo projectInfo = (ProjectInfo) session.getAttribute(appId + FrameworkConstants.SESSION_APPINFO);
 	List<WebService> webservices = (List<WebService>)request.getAttribute(FrameworkConstants.REQ_WEBSERVICES);
+	String technologyId = "";
+	String id = "";
 	String name = "";
 	String code = "";
 	String description = "";
 	String version = "";
-	if (selectedInfo != null) {
+	String pilotInfo = "";
+	List<String> feature = null;
+	if (projectInfo != null) {
+		ApplicationInfo selectedInfo = projectInfo.getAppInfos().get(0);
+		technologyId = selectedInfo.getTechInfo().getId();
+		id = selectedInfo.getId();
 		name = selectedInfo.getName();
 		code = selectedInfo.getCode();
 		description = selectedInfo.getDescription();
 		version = selectedInfo.getVersion();
+		feature = projectInfo.getAppInfos().get(0).getSelectedModules();
+		if(selectedInfo.getPilotInfo() != null){
+		pilotInfo = selectedInfo.getPilotInfo().getId();
+		}
 	}
 %>
 
 <!--  Form Starts -->
 <form id="formAppInfo" autocomplete="off" class="form-horizontal app_add_form" autofocus="autofocus">
-    <div class="appInfoScrollDiv">          
+    <div class="appInfoScrollDiv">
+              
 		<!--  Name Starts -->
 		<div class="control-group" id="nameErrDiv">
 		    <label class="accordion-control-label labelbold"><span class="red">*</span> <s:text name="lbl.name"/></label>
@@ -91,7 +106,7 @@
 		    <label class="accordion-control-label labelbold"><s:text name='lbl.version'/></label>
 		    <div class="controls">
 				<input class="input-xlarge" id="projectVersion" placeholder="<s:text name="label.project.version.placeholder"/>"
-					name="projectVersion" maxlength="20" title="<s:text name="title.20.chars"/>"
+					name="applicationVersion" maxlength="20" title="<s:text name="title.20.chars"/>"
 					type="text"  value ="<%= StringUtils.isNotEmpty(version) ? version : "" %>"/>
 		    </div>
 		</div>
@@ -101,8 +116,8 @@
 		<div class="control-group">
 			<label class="accordion-control-label labelbold"><s:text name='lbl.technology'/></label>
 			<div class="controls">
-				<input type="text" class="input-xlarge" value="<%= selectedInfo.getTechInfo().getId() %>" disabled="disabled"/>
-				<input type="hidden" name="technologyId" value="<%= selectedInfo.getTechInfo().getId() %>"/>
+				<input type="text" class="input-xlarge" value="<%= technologyId %>" disabled="disabled"/>
+				<input type="hidden" name="technology" value="<%= technologyId %>"/>
 			</div>
 		</div>
 		<!-- Technology version ends -->
@@ -111,8 +126,21 @@
 		<div class="control-group">
 			<label class="accordion-control-label labelbold"><s:text name='lbl.pilot.project'/></label>
 			<div class="controls">
-				<select class="input-xlarge appinfoTech" name="<%= FrameworkConstants.REQ_PARAM_NAME_TECHNOLOGY%>">
+				<select class="input-xlarge appinfoTech" name="pilotProject">
 					<option value="" selected disabled>Select Pilot Projects</option>
+						<%
+	                        if (CollectionUtils.isNotEmpty(pilotProjects)) {
+								for (ApplicationInfo appInfo : pilotProjects) {
+									String selectedStr= "";
+									if (appInfo.getId().equals(pilotInfo)) {
+										selectedStr = "selected";
+									}
+	                    %>
+                   					<option value = "<%=appInfo.getId() %>" <%= selectedStr %>><%=appInfo.getName() %></option>
+						<% 	 
+								}
+							}
+						%> 
 				</select>
 			</div>
 		</div>
@@ -134,25 +162,23 @@
 							<table class="table_for_downloadInfos" align="center">
 								<thead class="fieldset-tableheader">
 									<tr class="noBorder">
-										<th class="table_header"><s:text name='lbl.servers'/></th>
-										<th><s:text name='lbl.version'/></th>
-										<th></th>
-										<th></th>
+										<th class="table_header noBorder"><s:text name='lbl.servers'/></th>
+										<th class="noBorder"><s:text name='lbl.version'/></th>
 									</tr>
 								</thead>
 								<tbody id="propTempTbody">
 									<tr class="noBorder 1_serverdynamicadd">
-										<td>
+										<td class="noBorder">
 											<select class="input-medium" id="1_server" name="server" 
 												onchange="getVersions($('#1_server'), $('#1_serverVersion'));">
 											</select>
 										</td>
-										<td>
+										<td class="noBorder">
 											<select class="input-medium" id="1_serverVersion" name="serverVersion">
 												<option><s:text name='lbl.default.opt.select.version'/></option>
 											</select>
 										</td>
-										<td>
+										<td class="noBorder">
 										  	<a>
 										  		<img class="add imagealign" src="images/icons/add_icon.png" onclick="addServer(this);">
 								  			</a>
@@ -184,25 +210,23 @@
 							<table class="table_for_downloadInfos"  align="center">
 									<thead class = "fieldset-tableheader">
 										<tr class="noBorder">
-											<th class="table_header"><s:text name='lbl.database'/></th>
-											<th><s:text name='lbl.version'/></th>
-											<th></th>
-											<th></th>
+											<th class="table_header noBorder"><s:text name='lbl.database'/></th>
+											<th class="noBorder"><s:text name='lbl.version'/></th>
 										</tr>
 									</thead>
 									<tbody id="propTempTbodyDatabase">
 										<tr class="noBorder _databasedynamicadd" >
-											<td>
+											<td class="noBorder">
 												<select class="input-medium" id="1_database" name="database"
 												onchange="getVersions($('#1_database'), $('#1_databaseVersion'));" >
 												</select>
 											</td>
-											<td>
+											<td class="noBorder">
 												<select class="input-medium" id="1_databaseVersion" name="databaseVersion">
 												<option><s:text name='lbl.default.opt.select.version'/></option>
 												</select>
 											</td>
-											<td>
+											<td class="noBorder">
 											  	<a>
 											  		<img class="add imagealign" src="images/icons/add_icon.png" onclick="addDatabase(this);">
 										  		</a>
@@ -266,12 +290,16 @@
     <!--  Submit and Cancel buttons Starts -->
     <div class="actions">
         <input id="next" type="button" value="<s:text name="label.next"/>" class="btn btn-primary" 
-        	onclick="loadContent('featuresList', $('#formAppInfo'), $('#subcontainer'));"/>
+        	onclick="featuresPage();"/>
         <input type="button" id="cancel" value="<s:text name="lbl.btn.cancel"/>" class="btn btn-primary" 
 			onclick="loadContent('applications', $('#formCustomers'), $('#container'));">
     </div>
     <!--  Submit and Cancel buttons Ends -->
     
+    <!-- Hidden Field -->
+	<%-- <input type="hidden" name="appId" value="<%= id %>"/> --%>
+	<input type="hidden" id="feature" name="feature" value="<%= feature %>"/>
+	<input type="hidden" name="techId" value="<%= technologyId %>"/>
 </form> 
 <!--  Form Ends -->
     
@@ -281,6 +309,9 @@
 	    /* JQuery scroll bar */
 		$(".appInfoScrollDiv").scrollbars();
 	}
+	
+	inActivateAllMenu($("a[name='appTab']"));
+	activateMenu($('#appInfo'));
 	
     $(document).ready(function() {
    		hideLoadingIcon();//To hide the loading icon
@@ -323,10 +354,10 @@
 		var servrVerson = serverCounter + "_serverVersion";
 		
 		var newPropTempRow = $(document.createElement('tr')).attr("id", trId).attr("class", "noBorder");
-		newPropTempRow.html("<td class='textwidth'><select class='input-medium' tempId='"+ serverCounter +"' id='"+ servrName +"'  name='serverName' onchange='getServerVersions(this);'><option>Select Server</option></select></td>" +
-				"<td class='textwidth'><select class='input-medium' id='"+ servrVerson +"'  name='serverVersion'><option>Select Version</option></select></td>"+
-				"<td class='imagewidth'><a ><img class='add imagealign' " + 
-		 			" temp='"+ servrName +"' src='images/icons/add_icon.png' onclick='addServer(this);'></a></td><td><img class = 'del imagealign'" + 
+		newPropTempRow.html("<td class='noBorder'><select class='input-medium' tempId='"+ serverCounter +"' id='"+ servrName +"'  name='serverName' onchange='getServerVersions(this);'><option>Select Server</option></select></td>" +
+				"<td class='noBorder'><select class='input-medium' id='"+ servrVerson +"'  name='serverVersion'><option>Select Version</option></select></td>"+
+				"<td class='noBorder'><a ><img class='add imagealign' " + 
+		 			" temp='"+ servrName +"' src='images/icons/add_icon.png' onclick='addServer(this);'></a></td><td class='noBorder'><img class = 'del imagealign'" + 
 		 			"src='images/icons/minus_icon.png' onclick='removeTag(this);'></td>")
 	 	newPropTempRow.appendTo("#propTempTbody");		
 		serverCounter++;
@@ -341,10 +372,10 @@
 		var databaseVerson = databaseCounter + "_databaseVersion";
 		
 		var newPropTempRow = $(document.createElement('tr')).attr("id", trId).attr("class", "noBorder");
-		newPropTempRow.html("<td class='textwidth'><select class='input-medium' tempId='"+databaseCounter+"' id='"+ databaseName +"'  name='databaseName' onchange='getDatabaseVersions(this);'><option>Select Database</option></select></td>" +
-				"<td class='textwidth'><select class='input-medium' id='"+ databaseVerson +"'  name='databaseVersion'><option>Select Version</option></select></td>"+
-				"<td class='imagewidth'><a ><img class='add imagealign' " + 
-		 			" temp='"+ databaseName +"' src='images/icons/add_icon.png' onclick='addDatabase(this);'></a></td><td><img class = 'del imagealign'" + 
+		newPropTempRow.html("<td class='noBorder'><select class='input-medium' tempId='"+databaseCounter+"' id='"+ databaseName +"'  name='databaseName' onchange='getDatabaseVersions(this);'><option>Select Database</option></select></td>" +
+				"<td class='noBorder'><select class='input-medium' id='"+ databaseVerson +"'  name='databaseVersion'><option>Select Version</option></select></td>"+
+				"<td class='noBorder'><a ><img class='add imagealign' " + 
+		 			" temp='"+ databaseName +"' src='images/icons/add_icon.png' onclick='addDatabase(this);'></a></td><td class='noBorder'><img class = 'del imagealign'" + 
 		 			"src='images/icons/minus_icon.png' onclick='removeTag(this);'></td>")
 	 	newPropTempRow.appendTo("#propTempTbodyDatabase");		
 		databaseCounter++;
@@ -360,7 +391,7 @@
 		params = params.concat("&type=");
 		params = params.concat(type);
 		params = params.concat("&techId=");
-		params = params.concat('<%= selectedInfo.getTechInfo().getId() %>');
+		params = params.concat('<%= technologyId %>');
 		loadContent("fetchDownloadInfos", '', '', params, true);
 	}
     
@@ -413,4 +444,9 @@
 			$('.mfbox').eq(_tempIndex).slideUp(300,function() {});
 		}
     }
+	
+	function featuresPage(){
+		var params = getBasicParams();
+		loadContent('features', $('#formAppInfo'), $('#subcontainer'), params);
+	}
 </script>
