@@ -19,9 +19,11 @@
  */
 package com.photon.phresco.framework.commons;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.math.BigDecimal;
@@ -40,6 +42,8 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.codehaus.plexus.util.cli.CommandLineException;
+import org.codehaus.plexus.util.cli.Commandline;
 import org.w3c.dom.Element;
 
 import com.photon.phresco.commons.model.ApplicationInfo;
@@ -64,15 +68,15 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 	private static FrameworkUtil frameworkUtil = null;
     private static final Logger S_LOGGER = Logger.getLogger(FrameworkUtil.class);
     
-    private static final String CONTROL_GROUP_TEMPLATE = "<div class='control-group' id=\"$ctrlGrpId$\">$lable$ $controls$</div>";
+    private static final String CONTROL_GROUP_TEMPLATE = "<div class='control-group $ctrlGrpClass$' id=\"$ctrlGrpId$\">$lable$ $controls$</div>";
 	private static final String LABEL_TEMPLATE = "<label for='xlInput' class='control-label labelbold $class$'>$mandatory$$txt$</label>";
 	private static final String MANDATORY = "<span class='red'>*</span>&nbsp";
-	private static final String SELECT_TEMPLATE = "<div class='controls'><select class=\"input-xlarge $cssClass$\" id=\"$id$\" name=\"$name$\" isMultiple=\"$isMultiple$\">$options$</select></div>";
+	private static final String SELECT_TEMPLATE = "<div class='controls'><select class=\"input-xlarge $cssClass$\" id=\"$id$\" name=\"$name$\" isMultiple=\"$isMultiple$\" onchange=\"$onChangeFunction$\">$options$</select><span class='help-inline' id=\"$ctrlsId$\"></span></div>";
 	private static final String INPUT_TEMPLATE = "<div class='controls'><input type=\"$type$\" class=\"input-xlarge $class$\" id=\"$id$\" " + 
 													"name=\"$name$\" placeholder=\"$placeholder$\" value=\"$value$\"><span class='help-inline' id=\"$ctrlsId$\"></span></div>";
 	private static final String CHECKBOX_TEMPLATE = "<div class='controls'><input type='checkbox' class=\"$class$\" id=\"$id$\" " + 
-														"name=\"$name$\" value=\"$value$\" $checked$ onclick=\"$onClickFunction$\"/></div>";
-	private static final String MULTI_SELECT_TEMPLATE = "<div class='controls'><div class='multiSelectBorder'><div class='multilist-scroller multiselect multiSelHeight $class$' id=\"$id$\"><ul>$multiSelectOptions$</ul></div></div></div>";
+														"name=\"$name$\" value=\"$value$\" $checked$ onclick=\"$onClickFunction$\"/><span class='help-inline' id=\"$ctrlsId$\"></span></div>";
+	private static final String MULTI_SELECT_TEMPLATE = "<div class='controls'><div class='multiSelectBorder'><div class='multilist-scroller multiselect multiSelHeight $class$' id=\"$id$\"><ul>$multiSelectOptions$</ul></div><span class='help-inline' id=\"$ctrlsId$\"></span></div></div>";
 	
     private Map<String, String> unitTestMap = new HashMap<String, String>(8);
     private Map<String, String> unitReportMap = new HashMap<String, String>(8);
@@ -444,44 +448,58 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 		testCasePathMap.put(TechnologyTypes.JAVA_STANDALONE, XPATH_JAVA_WEBSERVICE_TESTCASE);
 	}
 	
-    public String getUnitTestDir(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
-        return getPomProcessor(appinfo.getAppDirName()).getProperty(POM_PROP_KEY_UNITTEST_DIR);
+    public String getUnitTestDir(ApplicationInfo appInfo) throws PhrescoException, PhrescoPomException {
+        return getPomProcessor(appInfo.getAppDirName()).getProperty(POM_PROP_KEY_UNITTEST_DIR);
     }
     
-    public String getUnitTestReportDir(ApplicationInfo appinfo) throws PhrescoPomException, PhrescoException {
-        return getPomProcessor(appinfo.getAppDirName()).getProperty(POM_PROP_KEY_UNITTEST_RPT_DIR);
+    public String getUnitTestReportDir(ApplicationInfo appInfo) throws PhrescoPomException, PhrescoException {
+        return getPomProcessor(appInfo.getAppDirName()).getProperty(POM_PROP_KEY_UNITTEST_RPT_DIR);
     }
 
-	public String getUnitTestSuitePath(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
-        return getPomProcessor(appinfo.getAppDirName()).getProperty(POM_PROP_KEY_UNITTEST_TESTSUITE_XPATH);
+	public String getUnitTestSuitePath(ApplicationInfo appInfo) throws PhrescoException, PhrescoPomException {
+        return getPomProcessor(appInfo.getAppDirName()).getProperty(POM_PROP_KEY_UNITTEST_TESTSUITE_XPATH);
     }
     
-    public  String getUnitTestCasePath(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
-        return getPomProcessor(appinfo.getAppDirName()).getProperty(POM_PROP_KEY_UNITTEST_TESTCASE_PATH);
+    public  String getUnitTestCasePath(ApplicationInfo appInfo) throws PhrescoException, PhrescoPomException {
+        return getPomProcessor(appInfo.getAppDirName()).getProperty(POM_PROP_KEY_UNITTEST_TESTCASE_PATH);
     }
     
-    public String getFunctionalTestDir(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
-        return getPomProcessor(appinfo.getAppDirName()).getProperty(POM_PROP_KEY_FUNCTEST_DIR);
+    public String getSeleniumToolType(ApplicationInfo appInfo) throws PhrescoException, PhrescoPomException {
+        return getPomProcessor(appInfo.getAppDirName()).getProperty(POM_PROP_KEY_FUNCTEST_SELENIUM_TOOL);
     }
     
-    public String getFunctionalTestReportDir(ApplicationInfo appinfo) throws PhrescoPomException, PhrescoException {
-        return getPomProcessor(appinfo.getAppDirName()).getProperty(POM_PROP_KEY_FUNCTEST_RPT_DIR);
+    public String getFunctionalTestDir(ApplicationInfo appInfo) throws PhrescoException, PhrescoPomException {
+        return getPomProcessor(appInfo.getAppDirName()).getProperty(POM_PROP_KEY_FUNCTEST_DIR);
+    }
+    
+    public String getFunctionalTestReportDir(ApplicationInfo appInfo) throws PhrescoPomException, PhrescoException {
+        return getPomProcessor(appInfo.getAppDirName()).getProperty(POM_PROP_KEY_FUNCTEST_RPT_DIR);
     }
 
-    public String getFunctionalTestSuitePath(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
-        return getPomProcessor(appinfo.getAppDirName()).getProperty(POM_PROP_KEY_FUNCTEST_TESTSUITE_XPATH);
+    public String getFunctionalTestSuitePath(ApplicationInfo appInfo) throws PhrescoException, PhrescoPomException {
+        return getPomProcessor(appInfo.getAppDirName()).getProperty(POM_PROP_KEY_FUNCTEST_TESTSUITE_XPATH);
     }
     
-    public  String getFunctionalTestCasePath(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
-        return getPomProcessor(appinfo.getAppDirName()).getProperty(POM_PROP_KEY_FUNCTEST_TESTCASE_PATH);
+    public  String getFunctionalTestCasePath(ApplicationInfo appInfo) throws PhrescoException, PhrescoPomException {
+        return getPomProcessor(appInfo.getAppDirName()).getProperty(POM_PROP_KEY_FUNCTEST_TESTCASE_PATH);
     }
     
-    public String getLoadTestDir(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
-    	return getPomProcessor(appinfo.getAppDirName()).getProperty(POM_PROP_KEY_LOADTEST_DIR);
+    public String getLoadTestDir(ApplicationInfo appInfo) throws PhrescoException, PhrescoPomException {
+    	return getPomProcessor(appInfo.getAppDirName()).getProperty(POM_PROP_KEY_LOADTEST_DIR);
     }
     
     public String getLoadTestReportDir(ApplicationInfo appinfo) throws PhrescoPomException, PhrescoException {
     	return getPomProcessor(appinfo.getAppDirName()).getProperty(POM_PROP_KEY_LOADTEST_RPT_DIR);
+    }
+
+	public String getHubConfigFile(ApplicationInfo appInfo) throws PhrescoException, PhrescoPomException {
+        StringBuilder sb = new StringBuilder(Utility.getProjectHome());
+        sb.append(appInfo.getAppDirName());
+        sb.append(File.separator);
+        sb.append(getFunctionalTestDir(appInfo));
+        sb.append(File.separator);
+        sb.append("hubconfig.json");
+        return sb.toString();
     }
 
     public String getFuncitonalAdaptDir(String technologyId) {
@@ -663,10 +681,14 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
         return decodedString;
     }
 
-    public static StringTemplate constructInputElement(Boolean isMandatory, String lableText, String lableClass, String inputType, String cssClass, String id, String name, 
-    										String placeholder, String value, String ctrlGrpId, String ctrlsId) {
+    public static StringTemplate constructInputElement(Boolean isMandatory, String lableText, String lableClass, 
+                String inputType, String cssClass, String id, String name, String placeholder,
+                String value, boolean showControl, String ctrlGrpId, String ctrlsId) {
     	StringTemplate controlGroupElement = new StringTemplate(CONTROL_GROUP_TEMPLATE);
     	controlGroupElement.setAttribute("ctrlGrpId", ctrlGrpId);
+    	if (!showControl) {
+    	    controlGroupElement.setAttribute("ctrlGrpClass", "hideContent");
+    	}
     	StringTemplate lableElmnt = constructLabelElement(isMandatory, lableClass, lableText);
     	String type = getInputType(inputType);
     	StringTemplate inputElement = new StringTemplate(INPUT_TEMPLATE);
@@ -677,6 +699,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	inputElement.setAttribute("placeholder", placeholder);
     	inputElement.setAttribute("value", value);
     	inputElement.setAttribute("ctrlsId", ctrlsId);
+    	
     	
     	/* to check/uncheck the checkboxes based on the value */
     	if (Boolean.parseBoolean(value)) {
@@ -708,8 +731,14 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 		return type;
 	}
     
-    public static StringTemplate constructCheckBoxElement(Boolean isMandatory, String lableText, String lableClass, String cssClass, String id, String name, String value, String onClickFunction) {
+    public static StringTemplate constructCheckBoxElement(Boolean isMandatory, String lableText, String lableClass, String cssClass, String id,
+                String name, String value, String onClickFunction, boolean showControl, String ctrlGrpId, String ctrlsId) {
     	StringTemplate controlGroupElement = new StringTemplate(CONTROL_GROUP_TEMPLATE);
+    	controlGroupElement.setAttribute("ctrlGrpId", ctrlGrpId);
+    	if (!showControl) {
+            controlGroupElement.setAttribute("ctrlGrpClass", "hideContent");
+        }
+    	
     	StringTemplate lableElmnt = constructLabelElement(isMandatory, lableClass, lableText);
     	
     	StringTemplate checkboxElement = new StringTemplate(CHECKBOX_TEMPLATE);
@@ -727,6 +756,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	} else {
     		checkboxElement.setAttribute("checked", "");
     	}
+    	checkboxElement.setAttribute("ctrlsId", ctrlsId);
     	
     	controlGroupElement.setAttribute("lable", lableElmnt);
     	controlGroupElement.setAttribute("controls", checkboxElement);
@@ -735,17 +765,22 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     }
     
     public static StringTemplate constructSelectElement(Boolean isMandatory, String lableText, String lableClass, String cssClass, String id, String name,
-			List<? extends Object> values, List<String> selectedValues, String isMultiple) {
+			List<? extends Object> values, List<String> selectedValues, String isMultiple, String onChangeFunction, boolean showControl, String ctrlGrpId, String ctrlsId) {
     	if (Boolean.parseBoolean(isMultiple)) {
-    		return constructMultiSelectElement(isMandatory, lableText, lableClass, cssClass, id, name, values, selectedValues);
+    		return constructMultiSelectElement(isMandatory, lableText, lableClass, cssClass, id, name, values, selectedValues, showControl, ctrlGrpId, ctrlsId);
     	} else {
-    		return constructSingleSelectElement(isMandatory, lableText, lableClass, cssClass, id, name, values, selectedValues, isMultiple);
+    		return constructSingleSelectElement(isMandatory, lableText, lableClass, cssClass, id, name, values, selectedValues, isMultiple, onChangeFunction, showControl, ctrlGrpId, ctrlsId);
     	}
     }
 
     public static StringTemplate constructSingleSelectElement(Boolean isMandatory, String lableText, String lableClass, String cssClass, String id, String name,
-    		List<? extends Object> values, List<String> selectedValues, String isMultiple) {
+    		List<? extends Object> values, List<String> selectedValues, String isMultiple, String onChangeFunction, boolean showControl, String ctrlGrpId, String ctrlsId) {
     	StringTemplate controlGroupElement = new StringTemplate(CONTROL_GROUP_TEMPLATE);
+    	controlGroupElement.setAttribute("ctrlGrpId", ctrlGrpId);
+    	if (!showControl) {
+            controlGroupElement.setAttribute("ctrlGrpClass", "hideContent");
+        }
+    	
     	StringTemplate lableElmnt = constructLabelElement(isMandatory, lableClass, lableText);
     	
     	StringTemplate selectElement = new StringTemplate(SELECT_TEMPLATE);
@@ -755,6 +790,8 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	selectElement.setAttribute("options", options);
     	selectElement.setAttribute("id", id);
     	selectElement.setAttribute("isMultiple", isMultiple);
+    	selectElement.setAttribute("ctrlsId", ctrlsId);
+    	selectElement.setAttribute("onChangeFunction", onChangeFunction);
     	
     	controlGroupElement.setAttribute("lable", lableElmnt);
     	controlGroupElement.setAttribute("controls", selectElement);
@@ -763,8 +800,13 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     }
     
     private static StringTemplate constructMultiSelectElement(Boolean isMandatory, String lableText, String lableClass, String cssClass, String id, String name,
-			List<? extends Object> values, List<String> selectedValues) {
+			List<? extends Object> values, List<String> selectedValues, boolean showControl, String ctrlGrpId, String ctrlsId) {
     	StringTemplate controlGroupElement = new StringTemplate(CONTROL_GROUP_TEMPLATE);
+    	controlGroupElement.setAttribute("ctrlGrpId", ctrlGrpId);
+    	if (!showControl) {
+            controlGroupElement.setAttribute("ctrlGrpClass", "hideContent");
+        }
+    	
     	StringTemplate lableElmnt = constructLabelElement(isMandatory, lableClass, lableText);
     	
     	StringTemplate multiSelectElement = new StringTemplate(MULTI_SELECT_TEMPLATE);
@@ -773,12 +815,14 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	multiSelectElement.setAttribute("id", id);
     	StringBuilder multiSelectOptions = constructMultiSelectOptions(name, values, selectedValues);
     	multiSelectElement.setAttribute("multiSelectOptions", multiSelectOptions);
+    	multiSelectElement.setAttribute("ctrlsId", ctrlsId);
     	
     	controlGroupElement.setAttribute("lable", lableElmnt);
     	controlGroupElement.setAttribute("controls", multiSelectElement);
     	
     	return controlGroupElement;
     }
+    
     private static StringBuilder constructOptions(List<? extends Object> values, List<String> selectedValues) {
     	StringBuilder builder = new StringBuilder();
     	String selectedStr = "";
@@ -814,7 +858,6 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	return builder;
     }
     
-
 	/**
 	 * @param value
 	 * @return
@@ -840,5 +883,16 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	labelElement.setAttribute("txt", Label);
     	labelElement.setAttribute("class", cssClass);
     	return labelElement;
+    }
+    
+    public static BufferedReader executeCommand(String command, String workingDir) throws PhrescoException {
+        try {
+            Commandline cl = new Commandline(command);
+            cl.setWorkingDirectory(workingDir);
+            Process process = cl.execute();
+            return new BufferedReader(new InputStreamReader(process.getInputStream()));
+        } catch (CommandLineException e) {
+            throw new PhrescoException(e);
+        }
     }
 }

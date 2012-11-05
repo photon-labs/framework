@@ -678,12 +678,37 @@ function confirmDialog(obj, title, bodyText, okUrl, okLabel) {
 function constructElements(data, pushToElement, isMultiple, controlType) {
 	if (isMultiple === undefined && controlType === undefined) {
 		constructMultiSelectOptions(data, pushToElement);
-	} else if (isMultiple === false) {
-		// for single select list box
+	} else if (isMultiple === "false") {
+		constructSingleSelectOptions(data, pushToElement);
 	} else if (controlType !== undefined ) {
 		//other controls ( text box)
 	}
 }
+
+function constructSingleSelectOptions(data, pushToElement) {
+	//See step 1
+	var selected = "";
+	$('#'+pushToElement+' option:selected').each(function() {
+		selected = $(this).val();
+	});
+	//See step 2
+	$("#"+pushToElement).empty();
+	var selectedStr = "";
+	//See step 3
+	for(i in data.dependentValues) {
+		//See step 4
+		if(data.dependentValues[i].value == selected) {
+			selectedStr = "selected";
+		} else {
+			selectedStr = "";
+		}
+		//See step 5
+		var liElement = "<option value = '" + data.dependentValues[i].value + "' "+ selectedStr +">" + data.dependentValues[i].value + "</option>";
+		//See step 6
+		$("#"+pushToElement).append(liElement);
+	}
+}
+
 /**
  * To dynamically update dependancy data into multi select checkbox
  * 

@@ -593,14 +593,26 @@
 		<action name="showFunctionalTestPopUp" method="showFunctionalTestPopUp" class="com.photon.phresco.framework.actions.applications.Quality">
 			<result name="success">/pages/applications/generateBuild.jsp</result>
         </action>
+
+        <action name="changeEveDependancyListener" method="changeEveDependancyListener" class="com.photon.phresco.framework.actions.applications.Quality">
+			<result type="json" />
+        </action>
         
         <action name="showStartHubPopUp" method="showStartHubPopUp" class="com.photon.phresco.framework.actions.applications.Quality">
 			<result name="success">/pages/applications/generateBuild.jsp</result>
         </action>
         
+        <action name="startHub" method="startHub" class="com.photon.phresco.framework.actions.applications.Quality">
+        	<result name="reader">/pages/applications/reader.jsp</result>
+		</action>
+        
         <action name="showStartNodePopUp" method="showStartNodePopUp" class="com.photon.phresco.framework.actions.applications.Quality">
 			<result name="success">/pages/applications/generateBuild.jsp</result>
         </action>
+        
+        <action name="startNode" method="startNode" class="com.photon.phresco.framework.actions.applications.Quality">
+        	<result name="reader">/pages/applications/reader.jsp</result>
+		</action>
         
         <action name="fetchBuildInfoEnvs" method="fetchBuildInfoEnvs" class="com.photon.phresco.framework.actions.applications.Quality">
             <result type="json" />

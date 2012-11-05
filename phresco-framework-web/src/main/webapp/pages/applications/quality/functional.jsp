@@ -29,10 +29,11 @@
 <%@ page import="com.photon.phresco.util.TechnologyTypes" %>
 
 <%
-	ApplicationInfo appInfo = (ApplicationInfo)request.getAttribute(FrameworkConstants.REQ_APP_INFO);
+	ApplicationInfo appInfo = (ApplicationInfo)request.getAttribute(FrameworkConstants.REQ_APPINFO);
 	String appId = appInfo.getId();
 	String techId = appInfo.getTechInfo().getId();
 	String path = (String) request.getAttribute(FrameworkConstants.PATH);
+	String functioanlTestTool = (String) request.getAttribute(FrameworkConstants.REQ_FUNCTEST_SELENIUM_TOOL);
 	String fromPage = (String) request.getAttribute(FrameworkConstants.REQ_FROM_PAGE);
 	List<String> projectModules = (List<String>) request.getAttribute(FrameworkConstants.REQ_PROJECT_MODULES);
 %>
@@ -56,18 +57,19 @@
 				<input type="button" data-toggle="modal" href="#popupPage" id="functionalTest" class="btn btn-primary" 
 					value="<s:text name='lbl.test'/>">
 			</li>
-			<li id="first" style="width: auto;">
-				<input type="button" data-toggle="modal" href="#popupPage" id="startHub" class="btn btn-primary" 
-					value="<s:text name='lbl.functional.start.hub'/>">
-			</li>
-			<li id="first">
-				<input type="button" data-toggle="modal" href="#popupPage" id="startNode" class="btn btn-primary" 
-					value="<s:text name='lbl.functional.start.node'/>">
-			</li>
-
+			<% if (FrameworkConstants.SELENIUM_GRID.equals(functioanlTestTool)) { %>
+				<li id="first" style="width: auto;">
+					<input type="button" data-toggle="modal" href="#popupPage" id="startHubBtn" class="btn btn-primary" 
+						value="<s:text name='lbl.functional.start.hub'/>">
+				</li>
+				<li id="first">
+					<input type="button" data-toggle="modal" href="#popupPage" id="startNodeBtn" class="btn btn-primary" 
+						value="<s:text name='lbl.functional.start.node'/>">
+				</li>
 			<%
+				}
 	  	 		String testError = (String) request.getAttribute(FrameworkConstants.REQ_ERROR_TESTSUITE);
-       			if (testError != null) {
+       			if (StringUtils.isNotEmpty(testError)) {
     		%>
 		    	<div class="alert-message block-message warning hideContent" id="errorDiv" style="margin: 5px 0 0 0;">
 						<%= testError %>
@@ -75,9 +77,6 @@
 			<% 
 				} else {
 	        		boolean buttonRow = false;
-			%>
-        
-        	<% 
         			if (CollectionUtils.isNotEmpty(projectModules)) {
         				buttonRow = true;
         	%>
@@ -144,8 +143,8 @@ $(document).ready(function() {
 	loadTestSuites();
 	
 	yesnoPopup($('#functionalTest'), 'showFunctionalTestPopUp', '<s:text name="lbl.functional.test"/>', 'runFunctionalTest','<s:text name="lbl.test"/>');
-	yesnoPopup($('#startHub'), 'showStartHubPopUp', '<s:text name="lbl.functional.start.hub"/>', 'startHub','<s:text name="lbl.start"/>');
-	yesnoPopup($('#startNode'), 'showStartNodePopUp', '<s:text name="lbl.functional.start.node"/>', 'startNode','<s:text name="lbl.start"/>');
+	yesnoPopup($('#startHubBtn'), 'showStartHubPopUp', '<s:text name="lbl.functional.start.hub"/>', 'startHub','<s:text name="lbl.start"/>');
+	yesnoPopup($('#startNodeBtn'), 'showStartNodePopUp', '<s:text name="lbl.functional.start.node"/>', 'startNode','<s:text name="lbl.start"/>');
 	
 	$("#testResultFile, #testSuite, #testSuiteDisplay, #resultView, #testResultLbl, #view").hide();
 				
@@ -316,5 +315,17 @@ function iphone_HybridTest() {
 	$("#popup_div").css("display","none");
 	showConsoleProgress('block');
 	readerHandlerSubmit('functional', '<%= appId %>', '<%= FrameworkConstants.FUNCTIONAL %>', '');
+}
+
+//Handles the ok button click event in the popup
+function popupOnOk(obj) {
+	var okUrl = $(obj).attr("id");
+	if (okUrl === "startHub") {
+		var params = getBasicParams();
+		progressPopupAsSecPopup(okUrl, '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.START_HUB %>', $("#generateBuildForm"), params);
+	} else if (okUrl === "startNode") {
+		var params = getBasicParams();
+		progressPopupAsSecPopup(okUrl, '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.START_NODE %>', $("#generateBuildForm"), params);
+	}
 }
 </script> 

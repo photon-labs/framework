@@ -82,10 +82,10 @@
 	                      //To construct select box element if type is list and if possible value exists
 	                        List<com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value> psblValues = parameter.getPossibleValues().getValue();
 	                        List<String> selectedValList = Arrays.asList(parameter.getValue().split(FrameworkConstants.CSV_PATTERN));
-	                        StringTemplate selectElmt = FrameworkUtil.constructSelectElement(mandatory, "Validate Report", "validateType" , "", "validateAgainst", "validateAgainst", psblValues, selectedValList, parameter.getMultiple());
+// 	                        StringTemplate selectElmt = FrameworkUtil.constructSelectElement(mandatory, "Validate Report", "validateType" , "", "validateAgainst", "validateAgainst", psblValues, selectedValList, parameter.getMultiple());
 	                        
                %>
-                        <%= selectElmt %>
+<%--                         <%= selectElmt %> --%>
                <% }
 	             }
 	           %> 

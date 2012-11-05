@@ -260,6 +260,8 @@ public interface FrameworkConstants {
     String SHOW_DEBUG = "showdebug";
     String SKIP_TEST = "skiptest";
 	String FUNCTIONAL_TEST = "functionalTest";
+	String REQ_FUNCTEST_SELENIUM_TOOL = "functionalTestSeleniumTool";
+	String SELENIUM_GRID = "grid";
 	String BUILD = "build";
     String DEPLOY = "deploy";
     String BUILD_INFO_ENVS = "buildInfoEnvs";
@@ -701,6 +703,9 @@ public interface FrameworkConstants {
 	String REQ_JAVA_STOP = "javaStop";
 	String REQ_START = "Start";
 	String REQ_STOP = "Stop";
+	
+	String START_NODE = "startNode";
+	String START_HUB = "startHub";
 	
 	String REQ_EXTERNAL_FEATURES = "External Features";
 	String REQ_CUSTOM_FEATURES = "Custom Features";
@@ -1590,6 +1595,7 @@ public interface FrameworkConstants {
 	    String PHASE_START_HUB = "start-hub";
 	    String PHASE_START_NODE = "start-node";
 	    String PHASE_LOAD_TEST = "load-test";
+	    String PHASE_RUNGAINST_SRC_START = "start";
 		
 		
 		/**
@@ -1600,6 +1606,7 @@ public interface FrameworkConstants {
 		String POM_PROP_KEY_UNITTEST_TESTCASE_PATH = "phresco.unitTest.testcase.path";
 		String POM_PROP_KEY_LOADTEST_DIR = "phresco.loadTest.dir";
 		String POM_PROP_KEY_LOADTEST_RPT_DIR = "phresco.loadTestReport.dir";
+		String POM_PROP_KEY_FUNCTEST_SELENIUM_TOOL = "phresco.functioanlTest.selenium.tool";
         String POM_PROP_KEY_FUNCTEST_RPT_DIR = "phresco.functionalTestReport.dir";
         String POM_PROP_KEY_FUNCTEST_TESTSUITE_XPATH = "phresco.functionalTest.testsuite.xpath";
         String POM_PROP_KEY_FUNCTEST_TESTCASE_PATH = "phresco.functionalTest.testcase.path";

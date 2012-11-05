@@ -32,7 +32,7 @@
 <script src="js/reader.js" ></script>
 
 <%
-	ApplicationInfo appInfo = (ApplicationInfo)request.getAttribute(FrameworkConstants.REQ_APP_INFO);
+	ApplicationInfo appInfo = (ApplicationInfo)request.getAttribute(FrameworkConstants.REQ_APPINFO);
 	String appId = appInfo.getId();
 	String techId = appInfo.getTechInfo().getId();
 	String path = (String) request.getAttribute(FrameworkConstants.PATH);
