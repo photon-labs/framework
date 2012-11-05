@@ -61,6 +61,8 @@ public interface FrameworkConstants {
     String GIT_IMPORT_TEMP_DIR = "gitImportTemp";
     String SONAR = "sonar";
     String FROM_PAGE_LOGIN = "login";
+    String SERVER_KEY = "server";
+    String DATABASE_KEY = "Database";
     
     String REQ_CUSTOMER_ID = "customerId";
     String REQ_PROJECT_ID = "projectId";
@@ -1548,6 +1550,7 @@ public interface FrameworkConstants {
 		String EXCEPTION_REPORT_CREATE_REPORT_CONFIG = "excep.hdr.report.create.report.config";
 		String EXCEPTION_CONFIGURATION_LIST_ENV = "excep.hdr.configuration.list.env";
 		String EXCEPTION_CONFIGURATION_LIST_CONFIG = "excep.hdr.configuration.list.config";
+		String EXCEPTION_CONFIGURATION_SHOW_PROPERTIES = "excep.hdr.configuration.show.properties";
 		String EXCEPTION_RUNAGNSRC_SERVER_START = "excep.hdr.proj.runagnsrc.server.start";
 		String EXCEPTION_RUNAGNSRC_SERVER_STOP = "excep.hdr.proj.runagssrc.stop";
 		String EXCEPTION_RUNAGNSRC_SERVER_RESTART = "excep.hdr.proj.runagssrc.restart";

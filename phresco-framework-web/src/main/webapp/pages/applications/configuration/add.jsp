@@ -54,13 +54,13 @@
     boolean isDefault = false;
 	
     String currentEnv = (String) request.getAttribute(FrameworkConstants.REQ_CURRENTENV);
-	SettingsInfo configInfo = (SettingsInfo) request.getAttribute(FrameworkConstants.REQ_CONFIG_INFO);
+    Configuration configInfo = (Configuration) request.getAttribute(FrameworkConstants.REQ_CONFIG_INFO);
 	request.setAttribute(FrameworkConstants.REQ_CONFIG_INFO , configInfo);
 	
 		if (configInfo != null) {
 		    envName = configInfo.getEnvName();
 			name = configInfo.getName();
-			description = configInfo.getDescription();
+			description = configInfo.getDesc();
 			selectedType = configInfo.getType();
 		}
 	
@@ -68,21 +68,12 @@
 			fromPage = (String) request.getAttribute(FrameworkConstants.REQ_FROM_PAGE);
 		}
 		
-		Map<String, String> errorMap = (Map<String, String>) session.getAttribute(FrameworkConstants.ERROR_SETTINGS);
-		Project project = (Project)request.getAttribute(FrameworkConstants.REQ_PROJECT);
-		ApplicationInfo selectedInfo = null;
-		String projectCode = null;
-		if(project != null) {
-		selectedInfo = project.getApplicationInfo();
-		projectCode = selectedInfo.getCode();
-	}
-		
 	List<Environment> environments = (List<Environment>) request.getAttribute(FrameworkConstants.REQ_ENVIRONMENTS);
 	List<SettingsTemplate> settingsTemplates = (List<SettingsTemplate>) request.getAttribute(FrameworkConstants.REQ_SETTINGS_TEMPLATES);
 	
 	String title = FrameworkActionUtil.getTitle(FrameworkConstants.CONFIG, fromPage);
 	String buttonLbl = FrameworkActionUtil.getButtonLabel(fromPage);
-	String pageUrl = FrameworkActionUtil.getPageUrl(FrameworkConstants.CONFIG, fromPage);
+	//String pageUrl = FrameworkActionUtil.getPageUrl(FrameworkConstants.CONFIG, fromPage);
 	
 	Gson gson = new Gson();
 %>
@@ -119,9 +110,17 @@
 			</label>	
 			<div class="controls">
 				<select id="environment" name="environment">
-				<% for (Environment env : environments) { %>
-					<option value='<%= gson.toJson(env) %>'><%= env.getName() %></option>
-                <% } %>
+				<% for (Environment env : environments) {
+						if (env.getName().equals(envName)) {
+							selectedStr = "selected";
+							} else {
+								selectedStr = "";
+							}
+				%>
+					<option value='<%= gson.toJson(env) %>' <%= selectedStr %>><%= env.getName() %></option>
+                <% 		 
+                	} 
+                %>
 				</select>
 				<span class="help-inline" id="configEnvError"></span>
 			</div>
@@ -133,8 +132,14 @@
 			</label>	
 			<div class="controls">
 				<select id="type" name="type">
-				<% for (SettingsTemplate settingsTemplate : settingsTemplates) { %>
-					<option value='<%= gson.toJson(settingsTemplate) %>' ><%= settingsTemplate.getName() %></option>
+				<% for (SettingsTemplate settingsTemplate : settingsTemplates) { 
+					if(settingsTemplate.getName().equals(selectedType)) {
+						selectedStr = "selected";
+							} else {
+								selectedStr = "";
+							}	
+				%>	
+					<option value='<%= gson.toJson(settingsTemplate) %>' <%= selectedStr %>><%= settingsTemplate.getName() %></option>
                 <% } %>
 				</select>
 				<span class="help-inline" id="configTypeError"></span>
@@ -183,7 +188,6 @@
 		
 		
 		validateJson('saveConfiguration', '', $("#subcontainer"), jsonParam);
-		/* loadJsonContent('saveConfiguration', jsonParam, $("#subcontainer")); */	
 	});
 	
 	//To show the validation error messages
@@ -201,7 +205,7 @@
     		var dynErr = dynamicErrors[i].split(":");
 	    		if (!isBlank(dynErr[1])) {
 		    		showError($("#" + dynErr[0] + "Control"), $("#" + dynErr[0]+ "Error"), dynErr[1]);
-		    	} else{
+		    	} else {
 					hideError($("#" + dynErr[0] + "Control"), $("#" + dynErr[0]+ "Error"));
 				}
     		}

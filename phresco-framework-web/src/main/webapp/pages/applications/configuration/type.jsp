@@ -18,6 +18,7 @@
   ###
   --%>
   
+<%@page import="com.itextpdf.text.log.SysoLogger"%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.util.ArrayList"%>
@@ -39,9 +40,9 @@
     for (PropertyTemplate propertyTemplate : properties) {
         List<String> possibleValues = new ArrayList<String>(8);
 
-        if ("server".equals(propertyTemplate.getKey())) {
+        if (FrameworkConstants.SERVER_KEY.equals(propertyTemplate.getKey())) {
         	possibleValues = appInfo.getSelectedServers();
-    	} else if ("Database".equals(propertyTemplate.getKey())) {
+    	} else if (FrameworkConstants.DATABASE_KEY.equals(propertyTemplate.getKey())) {
     		possibleValues = appInfo.getSelectedDatabases();
     	} else {
     		possibleValues = propertyTemplate.getPossibleValues();
