@@ -37,50 +37,50 @@ import com.sun.jersey.client.urlconnection.HTTPSProperties;
 
 public class ClientHelper {
 
-public static ClientConfig configureClient() {
-TrustManager[ ] certs = new TrustManager[ ] {
-new X509TrustManager() {
-@Override
-public X509Certificate[] getAcceptedIssuers() {
-return null;
-}
-@Override
-public void checkServerTrusted(X509Certificate[] chain, String authType)
-throws CertificateException {
-}
-@Override
-public void checkClientTrusted(X509Certificate[] chain, String authType)
-throws CertificateException {
-}
-}
-};
-SSLContext ctx = null;
-try {
-ctx = SSLContext.getInstance("TLS");
-ctx.init(null, certs, new SecureRandom());
-} catch (java.security.GeneralSecurityException ex) {
-}
-HttpsURLConnection.setDefaultSSLSocketFactory(ctx.getSocketFactory());
+	public static ClientConfig configureClient() {
+		TrustManager[ ] certs = new TrustManager[ ] {
+				new X509TrustManager() {
+					@Override
+					public X509Certificate[] getAcceptedIssuers() {
+						return null;
+					}
+					@Override
+					public void checkServerTrusted(X509Certificate[] chain, String authType)
+					throws CertificateException {
+					}
+					@Override
+					public void checkClientTrusted(X509Certificate[] chain, String authType)
+					throws CertificateException {
+					}
+				}
+		};
+		SSLContext ctx = null;
+		try {
+			ctx = SSLContext.getInstance("TLS");
+			ctx.init(null, certs, new SecureRandom());
+		} catch (java.security.GeneralSecurityException ex) {
+		}
+		HttpsURLConnection.setDefaultSSLSocketFactory(ctx.getSocketFactory());
 
-ClientConfig config = new DefaultClientConfig();
-try {
-config.getProperties().put(HTTPSProperties.PROPERTY_HTTPS_PROPERTIES, new HTTPSProperties(
-new HostnameVerifier() {
-@Override
-public boolean verify(String hostname, SSLSession session) {
-	System.out.println(hostname);
-	System.out.println(session);
-return true;
-}
-},
-ctx
-));
-} catch(Exception e) {
-}
-return config;
-}
+		ClientConfig config = new DefaultClientConfig();
+		try {
+			config.getProperties().put(HTTPSProperties.PROPERTY_HTTPS_PROPERTIES, new HTTPSProperties(
+					new HostnameVerifier() {
+						@Override
+						public boolean verify(String hostname, SSLSession session) {
+							System.out.println(hostname);
+							System.out.println(session);
+							return true;
+						}
+					},
+					ctx
+			));
+		} catch(Exception e) {
+		}
+		return config;
+	}
 
-public static Client createClient() {
-return Client.create(ClientHelper.configureClient());
-}
+	public static Client createClient() {
+		return Client.create(ClientHelper.configureClient());
+	}
 }
