@@ -90,7 +90,7 @@ import com.phresco.pom.model.PluginExecution.Goals;
 import com.phresco.pom.util.AndroidPomProcessor;
 import com.phresco.pom.util.PomProcessor;
 
-public class Build extends DynamicParameterUtil {
+public class Build extends DynamicParameterUtil implements Constants {
 
 	private static final long serialVersionUID = -9172394838984622961L;
 	private static final Logger S_LOGGER = Logger.getLogger(Build.class);

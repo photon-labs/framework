@@ -36,6 +36,7 @@ import com.opensymphony.xwork2.Action;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.ArtifactGroup.Type;
+import com.photon.phresco.commons.model.ArtifactGroupInfo;
 import com.photon.phresco.commons.model.ArtifactInfo;
 import com.photon.phresco.commons.model.Element;
 import com.photon.phresco.commons.model.ProjectInfo;
@@ -84,8 +85,8 @@ public class Features extends FrameworkBaseAction {
 	private String technology = null;
 	private String applicationVersion = "";
 	private String appId = "";
-	private List<String> serverVersion = null;
-    private List<String> databaseVersion = null;
+	private List<ArtifactGroupInfo> serverVersion = null;
+    private List<ArtifactGroupInfo> databaseVersion = null;
     private List<String> webservice = null;
 	private String technologyId = "";
 	private String type = "";
@@ -752,19 +753,19 @@ public class Features extends FrameworkBaseAction {
         this.customerId = customerId;
     }
     
-    public List<String> getServerVersion() {
+    public List<ArtifactGroupInfo> getServerVersion() {
 		return serverVersion;
 	}
     
-	public void setServerVersion(List<String> serverVersion) {
+	public void setServerVersion(List<ArtifactGroupInfo> serverVersion) {
 		this.serverVersion = serverVersion;
 	}
 	
-	public List<String> getDatabaseVersion() {
+	public List<ArtifactGroupInfo> getDatabaseVersion() {
 		return databaseVersion;
 	}
 	
-	public void setDatabaseVersion(List<String> databaseVersion) {
+	public void setDatabaseVersion(List<ArtifactGroupInfo> databaseVersion) {
 		this.databaseVersion = databaseVersion;
 	}
 	
