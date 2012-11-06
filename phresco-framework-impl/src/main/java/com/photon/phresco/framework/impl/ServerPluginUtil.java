@@ -32,6 +32,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.photon.phresco.commons.model.ApplicationInfo;
+import com.photon.phresco.commons.model.ArtifactGroupInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.phresco.pom.exception.PhrescoPomException;
 import com.phresco.pom.util.PomProcessor;
@@ -39,8 +40,8 @@ import com.phresco.pom.util.PomProcessor;
 public class ServerPluginUtil {
 
 	protected void addServerPlugin(ApplicationInfo info, File path) throws PhrescoException {
-		List<String> servers = info.getSelectedServers();
-		if (CollectionUtils.isEmpty(servers)) {
+		List<ArtifactGroupInfo> servers = info.getSelectedServers();
+		if (CollectionUtils.isNotEmpty(servers)) {
 			return;
 		}
 

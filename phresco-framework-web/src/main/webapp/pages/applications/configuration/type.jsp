@@ -18,6 +18,7 @@
   ###
   --%>
   
+<%@page import="com.photon.phresco.commons.model.ArtifactGroupInfo"%>
 <%@page import="com.itextpdf.text.log.SysoLogger"%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
@@ -41,9 +42,11 @@
         List<String> possibleValues = new ArrayList<String>(8);
 
         if (FrameworkConstants.SERVER_KEY.equals(propertyTemplate.getKey())) {
-        	possibleValues = appInfo.getSelectedServers();
+        	ArtifactGroupInfo artifactGroupInfo = appInfo.getSelectedServers().get(0);
+        	possibleValues = artifactGroupInfo.getArtifactInfoIds();
     	} else if (FrameworkConstants.DATABASE_KEY.equals(propertyTemplate.getKey())) {
-    		possibleValues = appInfo.getSelectedDatabases();
+    		ArtifactGroupInfo artifactGroupInfo = appInfo.getSelectedDatabases().get(0);
+    		possibleValues = artifactGroupInfo.getArtifactInfoIds();
     	} else {
     		possibleValues = propertyTemplate.getPossibleValues();
     	}

@@ -27,12 +27,10 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.opensymphony.xwork2.Action;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.DownloadInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
-import com.photon.phresco.commons.model.SelectedFeature;
 import com.photon.phresco.commons.model.WebService;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
@@ -103,7 +101,7 @@ public class Applications extends FrameworkBaseAction {
     private String type = "";
     private String applicationId = "";
     
-    private SelectedFeature selectFeature;
+//    private SelectedFeature selectFeature;
     
     private List<String> jsonData = null;
     
@@ -161,13 +159,13 @@ public class Applications extends FrameworkBaseAction {
             	ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
             
             	List<String> jsonData = getJsonData();
-            	List<SelectedFeature> selectedFeatures = new ArrayList<SelectedFeature>();
-            	for (String string : jsonData) {
-					Gson gson = new Gson();
-					SelectedFeature obj = gson.fromJson(string, SelectedFeature.class);
-					selectedFeatures.add(obj);
-				}
-            	setSessionAttribute(REQ_SELECTED_FEATURES, selectedFeatures);
+//            	List<SelectedFeature> selectedFeatures = new ArrayList<SelectedFeature>();
+//            	for (String string : jsonData) {
+//					Gson gson = new Gson();
+//					SelectedFeature obj = gson.fromJson(string, SelectedFeature.class);
+//					selectedFeatures.add(obj);
+//				}
+//            	setSessionAttribute(REQ_SELECTED_FEATURES, selectedFeatures);
         		projectInfo.setAppInfos(Collections.singletonList(appInfo));
         		setSessionAttribute(getAppId() + SESSION_APPINFO, projectInfo);
         	}
@@ -572,7 +570,7 @@ public class Applications extends FrameworkBaseAction {
             List<ProjectInfo> projects = projectManager.discover(getCustomerId());
             setReqAttribute(REQ_PROJECTS, projects);
             removeSessionAttribute(getAppId() + SESSION_APPINFO);
-            removeSessionAttribute(REQ_SELECTED_FEATURES);
+//            removeSessionAttribute(REQ_SELECTED_FEATURES);
             removeSessionAttribute(REQ_PILOT_PROJECTS);
 		} catch (PhrescoException e) {
 			return showErrorPopup(e, EXCEPTION_PROJECT_UPDATE);
