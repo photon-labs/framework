@@ -1,0 +1,104 @@
+/*
+ * ###
+ * Framework Web Archive
+ * 
+ * Copyright (C) 1999 - 2012 Photon Infotech Inc.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ###
+ */
+.loadmask {
+	z-index: 100;
+    position: absolute;
+    top:0;
+    left:0;
+    -moz-opacity: 0.3;
+    opacity: .30;
+    filter: alpha(opacity=30);
+    background-color: #CCC;
+    width: 100%;
+    height: 100%;
+    zoom: 1;
+}
+
+.loadmask-msg {
+    z-index: 20001;
+    position: absolute;
+    top: 0;
+    left: 0;
+    border:1px solid #6593cf;
+    background: #c3daf9;
+    padding:2px;
+}
+
+.loadmask-msg div {
+	width: 200px;
+	height:27px;
+    padding:5px 10px 5px 25px;
+    background: #fbfbfb url('../images/loadingn.gif') no-repeat 5px 5px;
+    line-height: 16px;
+    border:1px solid #a3bad9;
+    color:#222;
+    font:normal 11px tahoma, arial, helvetica, sans-serif;
+    cursor:wait;
+}
+
+.masked {
+    overflow: hidden !important;
+}
+
+.masked-relative {
+    position: relative !important;
+}
+
+.masked-hidden {
+    visibility: hidden !important;
+}
+
+#progressbar {
+  position:relative;
+  width:250px;
+  padding:0 0 0 0;
+/*   background-image:url("../images/pggray.png"); */
+  height:17px;
+/*   border:1px solid #CCC; */
+  -moz-border-radius:2px;
+  border-radius:2px;
+}
+#indicator {
+  position:absolute;
+  left:0;
+  top:0;
+  width:0px;
+  height:17px;
+  margin:0 0 0 0;
+  font-size: 10px;
+  text-align: center;
+}
+
+#indicatorInnerElem {
+  position:absolute;
+  left:0;
+  top:0;
+  height:17px;
+  margin:0 0 0 0;
+  font-size: 10px;
+  text-align: center;
+  width: 250px; 
+  background:none;
+}
+
+.indicatorInner {
+	width: 250px; 
+	background:none;
+}
