@@ -101,44 +101,6 @@ public class Features extends FrameworkBaseAction {
 			}
 			projectInfo.setAppInfos(Collections.singletonList(createApplicationInfo(appInfo)));
 			setSessionAttribute(getAppId() + SESSION_APPINFO, projectInfo);
-			List<String> selectedModuleIds = appInfo.getSelectedModules();
-			List<String> selectedJSLibIds = appInfo.getSelectedJSLibs();
-			List<String> selectedComponentIds = appInfo.getSelectedComponents();
-			List<ArtifactGroup> projectInfoFeatures = new ArrayList<ArtifactGroup>();
-			List<ArtifactGroup> allModules = getServiceManager().getFeatures(getCustomerId(), getTechId(), Type.FEATURE.name());
-			List<ArtifactGroup> allJSLibs = getServiceManager().getFeatures(getCustomerId(), getTechId(), Type.JAVASCRIPT.name());
-			List<ArtifactGroup> allComponents = getServiceManager().getFeatures(getCustomerId(), getTechId(), Type.COMPONENT.name());
-			if (CollectionUtils.isNotEmpty(selectedModuleIds)) {
-				for (ArtifactGroup artifactGroup : allModules) {
-					List<ArtifactInfo> versions = artifactGroup.getVersions();
-					for (ArtifactInfo artifactInfo : versions) {
-						if (selectedModuleIds.contains(artifactInfo.getId())) {
-							projectInfoFeatures.add(artifactGroup);
-						}
-					}
-				}
-			}
-			if (CollectionUtils.isNotEmpty(selectedJSLibIds)) {
-				for (ArtifactGroup artifactGroup : allJSLibs) {
-					List<ArtifactInfo> versions = artifactGroup.getVersions();
-					for (ArtifactInfo artifactInfo : versions) {
-						if (selectedJSLibIds.contains(artifactInfo.getId())) {
-							projectInfoFeatures.add(artifactGroup);
-						}
-					}
-				}
-			}
-			if (CollectionUtils.isNotEmpty(selectedComponentIds)){
-				for (ArtifactGroup artifactGroup : allComponents) {
-					List<ArtifactInfo> versions = artifactGroup.getVersions();
-					for (ArtifactInfo artifactInfo : versions) {
-						if (selectedComponentIds.contains(artifactInfo.getId())) {
-							projectInfoFeatures.add(artifactGroup);
-						}
-					}
-				}
-			}
-			setReqAttribute(REQ_PROJECT_FEATURES, projectInfoFeatures);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

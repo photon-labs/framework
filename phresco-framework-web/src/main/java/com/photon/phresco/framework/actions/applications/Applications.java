@@ -19,62 +19,30 @@
  */
 package com.photon.phresco.framework.actions.applications;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.struts2.ServletActionContext;
-import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.ListBranchCommand.ListMode;
-import org.eclipse.jgit.lib.Ref;
-import org.tmatesoft.svn.core.SVNAuthenticationException;
-import org.tmatesoft.svn.core.SVNException;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.opensymphony.xwork2.Action;
-import com.opensymphony.xwork2.ActionContext;
 import com.photon.phresco.commons.model.ApplicationInfo;
-import com.photon.phresco.commons.model.ApplicationType;
 import com.photon.phresco.commons.model.DownloadInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
-import com.photon.phresco.commons.model.Technology;
+import com.photon.phresco.commons.model.SelectedFeature;
 import com.photon.phresco.commons.model.WebService;
-import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
-import com.photon.phresco.framework.SVNAccessor;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
 import com.photon.phresco.framework.api.Project;
 import com.photon.phresco.framework.api.ProjectAdministrator;
 import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.framework.api.ValidationResult;
-import com.photon.phresco.framework.commons.ApplicationsUtil;
-import com.photon.phresco.framework.commons.DiagnoseUtil;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.commons.LogErrorReport;
-import com.photon.phresco.framework.model.CertificateInfo;
-import com.photon.phresco.framework.model.PropertyInfo;
-import com.photon.phresco.framework.model.SettingsInfo;
-import com.photon.phresco.util.Constants;
-import com.photon.phresco.util.Utility;
-import com.phresco.pom.model.Scm;
-import com.phresco.pom.util.PomProcessor;
 
 public class Applications extends FrameworkBaseAction {
 
@@ -134,7 +102,11 @@ public class Applications extends FrameworkBaseAction {
     private String techId = "";
     private String type = "";
     private String applicationId = "";
-
+    
+    private SelectedFeature selectFeature;
+    
+    private List<String> jsonData = null;
+    
     public String loadMenu() {
         if (s_debugEnabled) {
             S_LOGGER.debug("Entering Method  Applications.loadMenu()");
@@ -187,9 +159,15 @@ public class Applications extends FrameworkBaseAction {
         	} else {
         		projectInfo = (ProjectInfo)getSessionAttribute(getAppId() + SESSION_APPINFO);
             	ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
-            	appInfo.setSelectedModules(getFeature());
-            	appInfo.setSelectedJSLibs(getJavascript());
-            	appInfo.setSelectedComponents(getComponent());
+            
+            	List<String> jsonData = getJsonData();
+            	List<SelectedFeature> selectedFeatures = new ArrayList<SelectedFeature>();
+            	for (String string : jsonData) {
+					Gson gson = new Gson();
+					SelectedFeature obj = gson.fromJson(string, SelectedFeature.class);
+					selectedFeatures.add(obj);
+				}
+            	setSessionAttribute(REQ_SELECTED_FEATURES, selectedFeatures);
         		projectInfo.setAppInfos(Collections.singletonList(appInfo));
         		setSessionAttribute(getAppId() + SESSION_APPINFO, projectInfo);
         	}
@@ -203,6 +181,7 @@ public class Applications extends FrameworkBaseAction {
         return APP_APPINFO;
     }
 
+    
    /* public String appInfo() {
         if (s_debugEnabled) {
             S_LOGGER.debug("Entering Method  Applications.appInfo()");
@@ -244,7 +223,7 @@ public class Applications extends FrameworkBaseAction {
         return APP_APPINFO;
     }*/
 
-    /**
+	/**
      * To get the selected server's/database version
      * @return
      */
@@ -259,7 +238,7 @@ public class Applications extends FrameworkBaseAction {
             List<DownloadInfo> downloadInfos = getServiceManager().getDownloads(getCustomerId(), techId, type);
 			setDownloadInfos(downloadInfos);
         } catch (PhrescoException e) {
-            return showErrorPopup(e, EXCEPTION_DOWNLOADINFOS);
+            return showErrorPopup(e, getText(EXCEPTION_DOWNLOADINFOS));
         }
 
         return SUCCESS;
@@ -593,6 +572,7 @@ public class Applications extends FrameworkBaseAction {
             List<ProjectInfo> projects = projectManager.discover(getCustomerId());
             setReqAttribute(REQ_PROJECTS, projects);
             removeSessionAttribute(getAppId() + SESSION_APPINFO);
+            removeSessionAttribute(REQ_SELECTED_FEATURES);
             removeSessionAttribute(REQ_PILOT_PROJECTS);
 		} catch (PhrescoException e) {
 			return showErrorPopup(e, EXCEPTION_PROJECT_UPDATE);
@@ -1755,5 +1735,21 @@ public class Applications extends FrameworkBaseAction {
 	}
 	public void setApplicationId(String applicationId) {
 		this.applicationId = applicationId;
+	}
+
+	public SelectedFeature getSelectFeature() {
+		return selectFeature;
+	}
+
+	public void setSelectFeature(SelectedFeature selectFeature) {
+		this.selectFeature = selectFeature;
+	}
+
+	public List<String> getJsonData() {
+		return jsonData;
+	}
+
+	public void setJsonData(List<String> jsonData) {
+		this.jsonData = jsonData;
 	}
 }

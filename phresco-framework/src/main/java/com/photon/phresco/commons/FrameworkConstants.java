@@ -69,6 +69,7 @@ public interface FrameworkConstants {
     String REQ_APP_ID = "appId";
     String REQ_PILOT_PROJECTS = "pilotProjects";
     String REQ_CURRENT_APP_NAME = "currentAppName";
+    String REQ_SELECTED_FEATURES = "selectedFeatures";
     String REQ_PROJECT_FEATURES = "projectInfoFeatures";
     String REQ_PROJECT_LAYERS = "layers";
     String REQ_PARAM_NAME_TECH_GROUP = "TechGroup";

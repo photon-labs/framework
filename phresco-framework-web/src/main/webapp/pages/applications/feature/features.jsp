@@ -17,18 +17,21 @@
   limitations under the License.
   ###
   --%>
-<%@page import="com.photon.phresco.commons.model.ArtifactGroup.Type"%>
-<%@page import="org.eclipse.jdt.internal.compiler.ast.ForeachStatement"%>
+
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.util.List"%>
 
+<%@ page import="com.photon.phresco.commons.model.ArtifactGroup.Type"%>
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
+<%@ page import="com.photon.phresco.commons.model.SelectedFeature"%>
 <%@ page import="com.photon.phresco.commons.model.ArtifactGroup"%>
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
+
 <%@ page import="com.photon.phresco.commons.model.ProjectInfo"%>
 
 <%
+	List<SelectedFeature> selectFeatures = (List<SelectedFeature>)session.getAttribute(FrameworkConstants.REQ_SELECTED_FEATURES);
 	String appId = (String) request.getAttribute(FrameworkConstants.REQ_APP_ID);
 	List<ArtifactGroup> selectedFeatures = (List<ArtifactGroup>) request.getAttribute(FrameworkConstants.REQ_PROJECT_FEATURES);
 	ProjectInfo projectInfo = (ProjectInfo)session.getAttribute(appId + FrameworkConstants.SESSION_APPINFO);
@@ -39,9 +42,6 @@
 	if (projectInfo != null) {
 		ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
 		technologyId = appInfo.getTechInfo().getId();
-		selectedModules = appInfo.getSelectedModules();
-		selectedJSLibs = appInfo.getSelectedJSLibs();
-		selectedComponents = appInfo.getSelectedComponents();
 	}
 %> 
 <form id="formFeatures" class="featureForm">
@@ -89,19 +89,14 @@
 </form>
 
 <script type="text/javascript">
-<%
-	 if(selectedFeatures != null){
-		 for(ArtifactGroup artifact : selectedFeatures){
-			String dispName = artifact.getName();
-			String dispValue = artifact.getVersions().get(0).getVersion();
-			String hiddenFieldVersion = artifact.getVersions().get(0).getId();
-			Type type= artifact.getType();
-			String hiddenFieldname = type.toString().toLowerCase();
+<%	
+	 if(selectFeatures != null) {
+		 for(SelectedFeature features : selectFeatures) {
 %>
-		constructFeaturesDiv('<%= dispName %>', '<%= dispValue %>', '<%= hiddenFieldname %>', '<%= hiddenFieldVersion %>');
+		constructFeaturesDiv('<%= features.getDispName() %>', '<%= features.getDispValue() %>', '<%= features.getType() %>', '<%= features.getVersionID() %>');
 <%		
 	 	}
- 	}
+	}
 %>
 	inActivateAllMenu($("a[name='appTab']"));
 	activateMenu($('#features'));
@@ -144,8 +139,10 @@
     function constructFeaturesDiv(dispName, dispValue, hiddenFieldname, hiddenFieldVersion) {
 		$("div[id='"+ dispName +"']").remove();
 		$("input[class='"+ dispName +"']").remove();
-		$("#result").append('<input type="hidden" class="'+dispName+'" name="'+hiddenFieldname+'" value="'+hiddenFieldVersion+'">');
+		
+		$("#result").append('<input type="hidden" class = "'+dispName+'" value={"dispName":"'+dispName+'","dispValue":"'+dispValue+'","versionID":"'+hiddenFieldVersion+'","type":"'+hiddenFieldname+'"} name="jsonData">');
 		$("#result").append('<div id="'+dispName+'">'+dispName+' - '+dispValue+'<a href="#" id="'+dispName+'" onclick="remove(this);">&times;</a></div>');
+		
     }
     
     // Function to remove the final features in right tab  
@@ -172,4 +169,5 @@
   		var params = getBasicParams();
   		loadContent('previous', $('#formFeatures'), $('#subcontainer'), params);
   	}
+  	
 </script>
