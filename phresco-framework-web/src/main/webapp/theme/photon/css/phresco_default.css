@@ -41,7 +41,7 @@ body {
 
 header {
 	font-size: 20px;
-	height: 55px;
+	height: 110px;
 	left: 0;
 	line-height: 30px;
 	padding: 0;
@@ -68,15 +68,6 @@ footer {
 }
 
 /** login **/
-.lgnContainer {
-	left: 50%;
-	margin-left: -190px;
-	margin-top: -157px;
-	padding-left: 18px;
-	padding-top: 0;
-	top: 50%;
-	width: 330px;
-}
 
 #welcome {
 	text-align: center;
@@ -92,6 +83,7 @@ footer {
 
 .marginBottomZero {
 	margin-bottom: -1;
+	width:100%;
 }
 
 .lgnField {
@@ -124,8 +116,9 @@ div.lgnBtnLabel {
 }
 
 .l_align {
-	margin-bottom: 18px;
+	margin-bottom: 13px;
 	line-height: 24px;
+	text-transform:uppercase;
 }
 /** login end **/
 
@@ -297,7 +290,7 @@ input[type="checkbox"],input[type="radio"] {
 	border: medium none;
 	height: auto;
 	line-height: normal;
-	margin: 6px 0;
+	margin: 4px 0;
 	padding: 0;
 	width: auto;
 	cursor: pointer;
@@ -1869,87 +1862,6 @@ h1 {
     line-height: 24px;
 }
 
-.feature_checkbox {
-	float: left;
-	margin-top: 7px; 
-	margin-right: 5px;
-}
-
-.version_des {
-	margin-left:12%; 
-	color: #333333;
-}
-
-.fea_add_but {
-	width: 3%;
-	height: 8%;
-	margin-top: 15%
-}
-
-.external_features_wrapper {
-    border-radius : 6px;
-    float: left;
-    height: auto;
-    width:100%;
-}
-
-.features_ver_sel {
-    border: none;
-    margin-bottom: 0px;
-    margin-top: 0.5%;
-    height: 20px;
-    padding: 0px;
-    webkit-border-radius: 0px;
-    -moz-border-radius: 0px;
-    border-radius: 0px;
-    float: right;
-    width:20%;
-}
-
-.features_cl {
-    width: 11% !important;
-    font-weight: bold;
-}
-        
-.accordianchange {
-    width: 45%;
-    margin: auto;
-}
-
-#result div a {
-	float: right;
-	margin-right: 10px;
-}
-         
-#coremodule_accordion_container {
-   	border: none;
-	width: 99.3%;
-	height: 91%;
-	overflow-y:auto;
-	overflow-x:hidden;
-}
-
-.feature_heading {
-	font-weight: bold; 
-	padding-left: 2%;
-	padding-top: 1%;
-}
-
-.featureForm {
-   height: 97%;
-}
-
-.featureTypeWidth {
-   width: 30%
-}
-
-.tblheader {
-    border-radius: 6px 6px 0 0;
-    -webkit-border-top-left-radius: 10px 10px;
-	-webkit-border-top-right-radius: 10px 10px;
-	height: 30px;
-}
-
 #welcome{
 	text-align: center; 
 	margin-left: -17px;
@@ -2459,11 +2371,9 @@ fieldset {
     text-align: right;
     background: transparent;*/
     float: right;
-    margin-right: 7px;
-    margin-top: 14px;
+    margin-right: 20px;
+    margin-top: 4px;
     padding: 0 0px 0px 00px; 
-    padding-top:0%;
-    margin-bottom:-21px
 }
 
 .features_actions {
@@ -2479,9 +2389,8 @@ fieldset {
     margin-top: 18px;
     padding: 17px 20px 18px 150px; */
     float: right;
-    margin-right: 9px;
+    margin-right: 20px;
     margin-top: 4px;
-    padding-top: 3%;
 }
 /*** app info add end ***/
 
@@ -2961,8 +2870,8 @@ fieldset {
 	height: 95px; 
 	width:250px; 
 	align:center;
-	margin-top:9px;
-	margin-bottom:4px;
+	margin-top:15px;
+	margin-bottom:15px;
 }
 
 .popup-action {
@@ -3244,7 +3153,7 @@ fieldset {
 .lgnContainer {
     left: 50%;
     top: 50%;
-    width: 330px;
+    width: 350px;
     padding-left: 18px;
     padding-top: 0;
     margin-left: -190px;
@@ -3257,7 +3166,8 @@ fieldset {
     margin-top: 6px;
 }
 .btn.lgnBtn {
-    margin: 24px 0px 0 0;
+    margin: 4px 0px 0 0;
+	float:right;
 }
 div.lgnBtnLabel {
     margin-left: 0;
@@ -3743,7 +3653,7 @@ div.submit_input {
 
 .app_add_form {
     height: 94%;
-    padding-top: 0px;
+    padding-top: 6px;
 }
 
 .settings_table_data_div {
@@ -3969,6 +3879,7 @@ div.submit_input {
 
 .theme_accordion_container{
     float: left;
+    margin: 1px;
     width: 99.6%;
 }
 
@@ -5713,7 +5624,7 @@ input[class*='chckBxAlign'] {
 
 .autoWidthForWebservice {
 	margin:auto;
-	width:67%;
+	width:35%;
 }
 
 .autoWidth {
@@ -5783,19 +5694,4 @@ input[class*='chckBxAlign'] {
 .modal-body {
 	overflow: auto;
 	height: 300px;
-}
-
-div.control-group.valReportLbl {
-	float: left;
-    margin-left: 20px;
-    width: 80%;
-}
-
-.validateType {
-	float: left;
-    width: 120px;
-}
-
-.validateReportSelectBox {
-	float: left;
 }
