@@ -22,7 +22,7 @@ package com.photon.phresco.framework.api;
 
 public enum ActionType {
 
-	BUILD("phresco:package"), DEPLOY("phresco:deploy"), UNIT_TEST("phresco:unit-test"), LOAD_TEST("phresco:load-test"), CODE_VALIDATE("phresco:validate-code"), SITE_REPORT("clean site"), INSTALL("install"), START("t7:run-forked"), STOP("t7:stop-forked");
+	BUILD("phresco:package"), DEPLOY("phresco:deploy"), UNIT_TEST("phresco:unit-test"), LOAD_TEST("phresco:load-test"), CODE_VALIDATE("phresco:validate-code"), SITE_REPORT("clean site"), INSTALL("install"), START("t7:run-forked"), STOP("t7:stop-forked"), RUNAGAINSTSOURCE("phresco:start"), STOPSERVER("phresco:stop");
 	private String actionType;
 
 	private ActionType(String actionType) {

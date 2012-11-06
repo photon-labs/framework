@@ -10,12 +10,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.photon.phresco.commons.model.ApplicationInfo;
+import com.photon.phresco.commons.model.BuildInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.api.ActionType;
 import com.photon.phresco.framework.api.ApplicationManager;
-import com.photon.phresco.framework.model.BuildInfo;
 import com.photon.phresco.util.Utility;
 
 public class ApplicationManagerTest extends BaseTest{

@@ -61,11 +61,16 @@ public interface FrameworkConstants {
     String GIT_IMPORT_TEMP_DIR = "gitImportTemp";
     String SONAR = "sonar";
     String FROM_PAGE_LOGIN = "login";
+    String SERVER_KEY = "server";
+    String DATABASE_KEY = "Database";
     
     String REQ_CUSTOMER_ID = "customerId";
     String REQ_PROJECT_ID = "projectId";
     String REQ_APP_ID = "appId";
+    String REQ_PILOT_PROJECTS = "pilotProjects";
     String REQ_CURRENT_APP_NAME = "currentAppName";
+    String REQ_SELECTED_FEATURES = "selectedFeatures";
+    String REQ_PROJECT_FEATURES = "projectInfoFeatures";
     String REQ_PROJECT_LAYERS = "layers";
     String REQ_PARAM_NAME_TECH_GROUP = "TechGroup";
     String REQ_PARAM_NAME_TECHNOLOGY = "Technology";
@@ -75,7 +80,10 @@ public interface FrameworkConstants {
     String REQ_PARAM_NAME_TABLET = "Tablet";
     String REQ_PARAM_NAME_LAYER_ID = "layerId";
     String REQ_PARAM_NAME_TECH_GROUP_ID = "techGroupId";
-   
+    String REQ_FEATURES_TYPE_MODULE = "FEATURE";
+    String REQ_FEATURES_TYPE = "type";
+    String REQ_FEATURES_MOD_GRP = "moduleGroup";
+    
     String DO_NOT_CHECKIN_DIR = "do_not_checkin";
     String SETTINGS_XML = "settings.xml";
     String ARCHIVES = "archives";
@@ -143,6 +151,8 @@ public interface FrameworkConstants {
 	String COLOR = "color";
 	String ORDINAL = "ordinal";
 	String CI_SUCCESS_FLAG = "SUCCESS";
+	String INPROGRESS = "INPROGRESS";
+	String RESTARTED = "restarted";
 	String NAME = "name";
 	String CHILD_PROJECTS = "childProjects";
 	String THRESHOLD = "threshold";
@@ -153,6 +163,8 @@ public interface FrameworkConstants {
     String REPO_TYPE = "repoType";
     String UPDATE_SVN_PROJECT = "updateProject";
     String SVN_TYPE = "svnType";
+    String SVN_CHECKOUT_TEMP = "svn-checkout-temp";
+    String PHRESCO = "/.phresco";
     String GITHUB_SCM = "hudson.plugins.git.GitSCM";
     String SVN_SCM = "hudson.scm.SubversionSCM";
     String GITHUB_SCM_FILE_NAME = "gitHubScm.xml";
@@ -168,6 +180,26 @@ public interface FrameworkConstants {
     String CI_FILE_RELEASE_FILE_PATTERN="file__patterns";
     String CI_FILE_RELEASE_FILE_PATTERN_NODE ="hudson.plugins.collabnet.documentuploader.FilePattern";
     String CI_BUILD_EXT = "do_not_checkin/build/*.zip";
+    String STRING_NULL = "null";
+    String API_JSON = "api/json";
+    String BUSY_EXECUTORS = "computer/api/xml?xpath=/computerSet/busyExecutors/text()";
+    String DELETE_TYPE_BUILD = "Build";
+    String DELETE_TYPE_JOB = "Job";
+    String SUCCESS_EMAILS = "successEmails";
+    String FAILURE_EMAILS = "failureEmails";
+    String TRIGGER_SUCCESS__EMAIL_RECIPIENT_LIST = "publishers//hudson.plugins.emailext.ExtendedEmailPublisher//configuredTriggers//hudson.plugins.emailext.plugins.trigger.SuccessTrigger//email//recipientList";
+    String TRIGGER_FAILURE_EMAIL_RECIPIENT_LIST = "publishers//hudson.plugins.emailext.ExtendedEmailPublisher//configuredTriggers//hudson.plugins.emailext.plugins.trigger.FailureTrigger//email//recipientList";
+	String CRON_VALIDATION = "cronValidation";
+	String CI_TOMCAT_HTTP_PORT = "/project/build/plugins/plugin/configuration/tomcatHttpPort";
+	String CI_ERROR = "error.";
+	String CI_MESSAGE = ".message";
+    String GOALS = "goals";
+    String TRIGGERS = "triggers";
+    String TRIGGERS_SPEC = "triggers//spec";
+    String SCM_BRANCHES_NAME = "scm/branches//name";
+    String SCM_USER_REMOTE_CONFIGS_URL = "scm/userRemoteConfigs//url";
+    String SCM_LOCATIONS_REMOTE = "scm/locations//remote";
+    String DD_MM_YYYY_HH_MM_SS = "dd/MM/yyyy hh:mm:ss";
 	String HUDSON_TASKS_BUILD_TRIGGER_NODE = "hudson.tasks.BuildTrigger";
 	String MAVEN_HOME_ENV = "MAVEN_HOME";
 	String USE_PRIVATE_REPOSITORY_NODE = "usePrivateRepository";
@@ -176,6 +208,7 @@ public interface FrameworkConstants {
 	String TARGETS_NODE = "targets";
 	String HUDSON_TASKS_MAVEN_NODE = "hudson.tasks.Maven";
 	String POST_BUILDERS_NODE = "postbuilders";
+	String PRE_BUILDERS_NODE = "prebuilders";
     String CI_FILE_RELEASE_PUBLISHER_NODE="publishers";
     String COLON = ":";
     String HTTP_PROTOCOL = "http";
@@ -195,7 +228,8 @@ public interface FrameworkConstants {
     String SERVER_PORT = "port";
     String LOG_DIR = "log";
     String RUN_AGS_ENV_FILE = "runagainstsource.info";
-    String LOG_FILE = "server.log";
+    String LOG_FILE = "sourcecompile.log";
+    String RUN_AGS_LOG_FILE = "runagainstsource.log";
     String LINE_SEPERATOR = "line.separator";
     String READ_LOG_VIEW = "view";
     String READ_ERROR_LOG_VIEW = "errorLogView";
@@ -227,6 +261,8 @@ public interface FrameworkConstants {
     String SHOW_DEBUG = "showdebug";
     String SKIP_TEST = "skiptest";
 	String FUNCTIONAL_TEST = "functionalTest";
+	String REQ_FUNCTEST_SELENIUM_TOOL = "functionalTestSeleniumTool";
+	String SELENIUM_GRID = "grid";
 	String BUILD = "build";
     String DEPLOY = "deploy";
     String BUILD_INFO_ENVS = "buildInfoEnvs";
@@ -276,6 +312,10 @@ public interface FrameworkConstants {
     String CI_UTF8 = "UTF-8";
     String CI_START = "CIStart";
     String CI_STOP = "CIStop";
+    String CODE_404 = "404";
+    String CI_PRE_BUILD_STEP = "phresco:ci-prestep -DjobName=${env.JOB_NAME}";
+    
+    String SKIP_TESTS = "-DskipTests=true";
     String TEST_DIRECTORY = "dir_type";
     String MVN_TEST_COMMAND = "mvn clean test";
     String MVN_SHAREPOINT_NUNIT_TEST_COMMAND = "mvn sharepoint:test";
@@ -399,6 +439,7 @@ public interface FrameworkConstants {
      * Session Constants
      * Ex: SESSION_XXX
      */
+    String SESSION_APPINFO	= "sessionAppInfo";
     String SESSION_SELECTED_INFO = "selectedInfo";
     String SESSION_SELECTED_MODULES = "selectedModules";
     String REQ_APPLICATION_TYPES = "ApplicationTypes";
@@ -412,15 +453,10 @@ public interface FrameworkConstants {
     String SESSION_GRAPH_SCRIPT = "graphScript";
     String SESSION_NODEJS_SERVER_NAME = "_serverName";
     String SESSION_NODEJS_DB_NAME = "_databaseName";
-    String SESSION_NODEJS_SERVER_STATUS = "_NodeJSServerStatus";
-    String SESSION_JAVA_SERVER_STATUS = "_javaServerStatus";
-    String SESSION_NODEJS_IMPORTSQL_VALUE = "_importSqlValue";
-    String SESSION_NODEJS_SERVER_PORT_VALUE ="NodeServerPort";
-    String SESSION_NODEJS_SERVER_HOST_VALUE ="NodeServerHost";
-    String SESSION_NODEJS_SERVER_PROTOCOL_VALUE ="NodeServerProtocol";
-    String SESSION_JAVA_SERVER_PORT_VALUE ="JavaServerPort";
-    String SESSION_JAVA_SERVER_HOST_VALUE ="JavaServerHost";
-    String SESSION_JAVA_SERVER_PROTOCOL_VALUE ="JavaServerProtocol";
+    String SESSION_SERVER_STATUS = "_serverStatus";
+    String SESSION_SERVER_PORT_VALUE ="serverPort";
+    String SESSION_SERVER_HOST_VALUE ="serverHost";
+    String SESSION_SERVER_PROTOCOL_VALUE ="serverProtocol";
     String SESSION_ENV_NAME = "environment";
     /*
      * Request Constants
@@ -430,6 +466,7 @@ public interface FrameworkConstants {
     String REQ_APP_DIR_NAME  = "appDirName";
 	String REQ_TITLE_ADD_APPLICATION = "Add Application";
     String REQ_BUILD_FROM = "from";
+    String REQ_PROJECT_INFO = "projectInfo";
     String REQ_NODEJS_SERVER_LOG = "NodeJsServerLog";
     String REQ_PROJECT = "project";
     String REQ_PROJECT_CODE = "projectCode";
@@ -665,6 +702,11 @@ public interface FrameworkConstants {
 	String REQ_JAVA_READ_LOG_FILE = "javaReadLogFile";
 	String REQ_JAVA_START = "javaStart";
 	String REQ_JAVA_STOP = "javaStop";
+	String REQ_START = "Start";
+	String REQ_STOP = "Stop";
+	
+	String START_NODE = "startNode";
+	String START_HUB = "startHub";
 	
 	String REQ_EXTERNAL_FEATURES = "External Features";
 	String REQ_CUSTOM_FEATURES = "Custom Features";
@@ -958,7 +1000,8 @@ public interface FrameworkConstants {
     String ERROR_CODE = "err.msg.empty.code";
     String ERROR_LAYER = "err.msg.empty.layer";
     String ERROR_TECHNOLOGY = "err.msg.empty.technology";
-    String ERROR_ENV = "Environment is missing";
+    String ERROR_ENV = "err.msg.empty.environment";
+    String ERROR_CONFIG_TYPE = "err.msg.empty.config.type";
     String CLONE_CONFIG_STATUS = "cloneConfigStatus";
     String ERROR_ENV_REMOVE = "Environment {0} is already in use";
     String ERROR_ENVS_REMOVE = "Environment(s) {0} are already in use";
@@ -1489,8 +1532,12 @@ public interface FrameworkConstants {
 		String EXCEPTION_PROJECT_CREATE = "excep.hdr.proj.create";
 		String EXCEPTION_PROJECT_LIST = "excep.hdr.proj.list";
 		String EXCEPTION_PROJECT_ADD = "excep.hdr.proj.add";
+		String EXCEPTION_PROJECT_UPDATE = "excep.hdr.proj.update";
+		String EXCEPTION_APPLICATION_EDIT = "excep.hdr.appInfo.edit";
 		String EXCEPTION_PROJECT_MOB_TECH_VERSIONS = "excep.hdr.proj.mob.tech.versions";
 		String EXCEPTION_DOWNLOADINFOS = "excep.hdr.downloadInfos";
+		String EXCEPTION_LOADMENU = "excep.hdr.load.menu";
+		String EXCEPTION_TECHNOLOGY = "excep.hdr.tech";
 		String EXCEPTION_PROJECT_WEB_LAYER_WIDGETS = "excep.hdr.proj.web.layer.widgets";
 		String EXCEPTION_QUALITY_UNIT = "excep.hdr.quality.unit";
 		String EXCEPTION_QUALITY_UNIT_RPT = "excep.hdr.quality.unit.report";
@@ -1503,10 +1550,21 @@ public interface FrameworkConstants {
 		String EXCEPTION_BUILDS_LIST = "excep.hdr.builds.list";
 		String EXCEPTIN_BUILD_DEPENDANT_VALUE = "excep.hdr.build.depndnt.val";
 		String EXCEPTION_QUALITY_LOAD = "excep.hdr.quality.unit";
-		String EXCEPTION_REPORT_VIEW_SITE = "excep.report.view";
-		String EXCEPTION_REPORT_GENERATE_SITE_REPORT = "excep.report.generate";
-		String EXCEPTION_REPORT_CONFIGURE = "excep.report.configure";
-		String EXCEPTION_REPORT_CREATE_REPORT_CONFIG = "excep.report.create.report.config";
+		String EXCEPTION_REPORT_VIEW_SITE = "excep.hdr.report.view";
+		String EXCEPTION_REPORT_GENERATE_SITE_REPORT = "excep.hdr.report.generate";
+		String EXCEPTION_REPORT_CONFIGURE = "excep.hdr.report.configure";
+		String EXCEPTION_REPORT_CREATE_REPORT_CONFIG = "excep.hdr.report.create.report.config";
+		String EXCEPTION_CONFIGURATION_LIST_ENV = "excep.hdr.configuration.list.env";
+		String EXCEPTION_CONFIGURATION_LIST_CONFIG = "excep.hdr.configuration.list.config";
+		String EXCEPTION_CONFIGURATION_SHOW_PROPERTIES = "excep.hdr.configuration.show.properties";
+		String EXCEPTION_RUNAGNSRC_SERVER_START = "excep.hdr.proj.runagnsrc.server.start";
+		String EXCEPTION_RUNAGNSRC_SERVER_STOP = "excep.hdr.proj.runagssrc.stop";
+		String EXCEPTION_RUNAGNSRC_SERVER_RESTART = "excep.hdr.proj.runagssrc.restart";
+		String EXCEPTION_CI_JOB_LIST = "excep.hdr.ci.job.list.failed";
+		String EXCEPTION_CI_CONFIGURE_POPUP = "excep.hdr.ci.configure.popup.failed";
+		String EXCEPTION_CI_JOB_DELETION = "excep.hdr.ci.job.deletion.failed";
+		String EXCEPTION_CI_BUILD_DELETION = "excep.hdr.ci.build.deletion.failed";
+		String EXCEPTION_CI_BUILD_DOWNLOAD_NOT_AVAILABLE = "excep.hdr.ci.build.download.not.available";
 		
 		
 		/**
@@ -1532,23 +1590,24 @@ public interface FrameworkConstants {
 		 */
 		String PHASE_PACKAGE = "package";
 	    String PHASE_DEPLOY = "deploy";
+	    String PHASE_VALIDATE_CODE = "validate-code";
 	    String PHASE_UNIT_TEST = "unit-test";
 	    String PHASE_FUNCTIONAL_TEST = "functional-test";
 	    String PHASE_START_HUB = "start-hub";
 	    String PHASE_START_NODE = "start-node";
 	    String PHASE_LOAD_TEST = "load-test";
+	    String PHASE_RUNGAINST_SRC_START = "start";
 		
 		
 		/**
 		 * Test and test report directory constants
 		 */
-		String POM_PROP_KEY_UNITTEST_DIR = "phresco.unitTest.dir";
 		String POM_PROP_KEY_UNITTEST_RPT_DIR = "phresco.unitTestReport.dir";
 		String POM_PROP_KEY_UNITTEST_TESTSUITE_XPATH = "phresco.unitTest.testsuite.xpath";
 		String POM_PROP_KEY_UNITTEST_TESTCASE_PATH = "phresco.unitTest.testcase.path";
 		String POM_PROP_KEY_LOADTEST_DIR = "phresco.loadTest.dir";
 		String POM_PROP_KEY_LOADTEST_RPT_DIR = "phresco.loadTestReport.dir";
-		String POM_PROP_KEY_FUNCTEST_DIR = "phresco.functioanlTest.dir";
+		String POM_PROP_KEY_FUNCTEST_SELENIUM_TOOL = "phresco.functioanlTest.selenium.tool";
         String POM_PROP_KEY_FUNCTEST_RPT_DIR = "phresco.functionalTestReport.dir";
         String POM_PROP_KEY_FUNCTEST_TESTSUITE_XPATH = "phresco.functionalTest.testsuite.xpath";
         String POM_PROP_KEY_FUNCTEST_TESTCASE_PATH = "phresco.functionalTest.testcase.path";

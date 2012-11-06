@@ -123,41 +123,59 @@
 				// load input text box
 				if (FrameworkConstants.TYPE_STRING.equalsIgnoreCase(parameter.getType()) || FrameworkConstants.TYPE_NUMBER.equalsIgnoreCase(parameter.getType()) || 
 					FrameworkConstants.TYPE_PASSWORD.equalsIgnoreCase(parameter.getType()) || FrameworkConstants.TYPE_HIDDEN.equalsIgnoreCase(parameter.getType())) { 
-				StringTemplate txtInputElement = FrameworkUtil.constructInputElement(mandatory, lableTxt, labelClass, parameter.getType(), "", parameter.getKey(), parameter.getKey(), "", StringUtils.isNotEmpty(parameter.getValue()) ? parameter.getValue():"");
+					StringTemplate txtInputElement = FrameworkUtil.constructInputElement(mandatory, lableTxt, labelClass,
+					        parameter.getType(), "", parameter.getKey(), parameter.getKey(), "", 
+					        StringUtils.isNotEmpty(parameter.getValue()) ? parameter.getValue():"", parameter.isShow(), parameter.getKey() + "Control", parameter.getKey() + "Error");
 	%> 	
 				<%= txtInputElement %>
-	<% 			
+	<%
 				} else if (FrameworkConstants.TYPE_BOOLEAN.equalsIgnoreCase(parameter.getType())) {
 					String cssClass = "chckBxAlign";
 					String onClickFunction = "";
-					if (parameter.getDependency() != null) {
+					if (StringUtils.isNotEmpty(parameter.getDependency())) {
 						//If current control has dependancy value 
-						onClickFunction = "dependancyChckBoxEvent(this, '"+parameter.getDependency()+"');";
-				} else {
-					onClickFunction = "changeChckBoxValue(this);";
-				}
-				StringTemplate chckBoxElement = FrameworkUtil.constructCheckBoxElement(mandatory, lableTxt, labelClass, cssClass, parameter.getKey(), parameter.getKey(), parameter.getValue(), onClickFunction);
-	%>			
+						onClickFunction = "dependancyChckBoxEvent(this, '"+ parameter.getKey() +"');";
+					} else {
+						onClickFunction = "changeChckBoxValue(this);";
+					}
+					StringTemplate chckBoxElement = FrameworkUtil.constructCheckBoxElement(mandatory, lableTxt, labelClass, cssClass, parameter.getKey(),
+					        parameter.getKey(), parameter.getValue(), onClickFunction, parameter.isShow(), parameter.getKey() + "Control", parameter.getKey() + "Error");
+	%>
 					<%= chckBoxElement%>	
-	<%			
+	<%
 				} else if (FrameworkConstants.TYPE_LIST.equalsIgnoreCase(parameter.getType()) && parameter.getPossibleValues() != null) { //load select list box
 					//To construct select box element if type is list and if possible value exists
 			    	List<com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value> psblValues = parameter.getPossibleValues().getValue();
 					List<String> selectedValList = Arrays.asList(parameter.getValue().split(FrameworkConstants.CSV_PATTERN));
-					StringTemplate selectElmnt = FrameworkUtil.constructSelectElement(mandatory, lableTxt, labelClass, "", parameter.getKey(), parameter.getKey(), psblValues, selectedValList, parameter.getMultiple());
-	%>				
+					String onChangeFunction = "";
+					if (StringUtils.isNotEmpty(parameter.getDependency())) {
+						onChangeFunction = "selectBoxOnChangeEvent(this,  '"+ parameter.getKey() +"', '"+ parameter.getDependency() +"')";
+					} else if (CollectionUtils.isNotEmpty(psblValues) && psblValues.get(0).getDependency() != null) {
+						onChangeFunction = "selectBoxOnChangeEvent(this,  '"+ parameter.getKey() +"')";
+					}
+					StringTemplate selectElmnt = FrameworkUtil.constructSelectElement(mandatory, lableTxt, labelClass, "", parameter.getKey(),
+					        parameter.getKey(), psblValues, selectedValList, parameter.getMultiple(), onChangeFunction, parameter.isShow(), 
+					        parameter.getKey() + "Control", parameter.getKey() + "Error");
+	%>
 					<%= selectElmnt %>
-						
-	<% 			
+	<%
 				} else if (FrameworkConstants.TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(parameter.getType())) {
 					//To dynamically load values into select box for environmet
-					List<com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value> dynamicEnvNames = (List<com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value>) request.getAttribute(FrameworkConstants.REQ_DYNAMIC_POSSIBLE_VALUES);
+					List<com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value> dynamicPsblValues = (List<com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value>) request.getAttribute(FrameworkConstants.REQ_DYNAMIC_POSSIBLE_VALUES + parameter.getKey());
 					List<String> selectedValList = Arrays.asList(parameter.getValue().split(FrameworkConstants.CSV_PATTERN));
-					StringTemplate selectDynamicElmnt = FrameworkUtil.constructSelectElement(mandatory, lableTxt, labelClass, "", parameter.getKey(), parameter.getKey(), dynamicEnvNames, selectedValList, parameter.getMultiple());
+					String onChangeFunction = ""; 
+					if(!Boolean.parseBoolean(parameter.getMultiple()) && StringUtils.isNotEmpty(parameter.getDependency())) {
+					    onChangeFunction = "selectBoxOnChangeEvent(this, '"+ parameter.getKey() +"')";
+					} else {
+					    onChangeFunction = "";
+					}
+					StringTemplate selectDynamicElmnt = FrameworkUtil.constructSelectElement(mandatory, lableTxt, labelClass, "", parameter.getKey(),
+					        parameter.getKey(), dynamicPsblValues, selectedValList, parameter.getMultiple(), onChangeFunction, 
+					        parameter.isShow(), parameter.getKey() + "Control", parameter.getKey() + "Error");
 	%>				
 		    		<%= selectDynamicElmnt %>
 	<%
-				} 
+				}
 	%>
 			<script type="text/javascript">
 				<%-- $('input[name="<%= parameter.getKey() %>"]').live('input propertychange',function(e) {
@@ -186,26 +204,6 @@
 	$(document).ready(function() {
 		// accodion for advanced issue
 // 		accordion();
-		
-		/** NodeJS run against source **/
-		$('#runAgainstSrc').click(function() {
-			var isChecked = $('#importSql').is(":checked");
-			if ($('#importSql').is(":checked") && $('#selectedSourceScript option').length == 0) {
-				$("#errMsg").html('<%= FrameworkConstants.SELECT_DB %>');
-				return false;
-			}
-			buildValidateSuccess('NodeJSRunAgainstSource', '<%= FrameworkConstants.REQ_READ_LOG_FILE %>');
-		});
-		
-		/** Java run against source **/
-		$('#javaRunAgainstSrc').click(function() {
-			var isChecked = $('#importSql').is(":checked");
-			if ($('#importSql').is(":checked") && $('#selectedSourceScript option').length == 0) {
-				$("#errMsg").html('<%= FrameworkConstants.SELECT_DB %>');
-				return false;
-			}
-			buildValidateSuccess('runAgainstSource', '<%= FrameworkConstants.REQ_JAVA_START %>');
-		});
 		
 		$('#importSql').click(function() {
 			var isChecked = $('#importSql').is(":checked");
@@ -453,10 +451,6 @@
 				$("#console_div").html("Generating build...");
 			} else if(url == "deploy") {
 				$("#console_div").html("Deploying project...");
-			} else {
-				$("#console_div").html("Server is starting...");
-				disableControl($("#nodeJS_runAgnSrc"), "btn disabled");
-				disableControl($("#runAgnSrc"), "btn disabled");
 			}
 			performUrlActions(url, readerSession);
 		}
@@ -492,9 +486,11 @@
 	var pushToElement = "";
 	var isMultiple = "";
 	var controlType = "";
-	function dependancyChckBoxEvent(obj, dependantKey) {
+	function dependancyChckBoxEvent(obj, currentParamKey) {
 		changeChckBoxValue(obj);
-		pushToElement = dependantKey;
+		var selectedOption = $(obj).val();
+		changeEveDependancyListener(selectedOption, currentParamKey);
+		<%-- pushToElement = dependantKey;
 		isMultiple = $("#"+pushToElement).attr("isMultiple");
 		controlType = $("#"+pushToElement).attr("type");
 		var dependantValue = $(obj).is(':checked');
@@ -507,10 +503,61 @@
 		params = params.concat('<%= goal%>');
 		params = params.concat("&");
 		params = params.concat(getBasicParams());
-		loadContent('dependancyListener', '', '', params, true);
+		loadContent('dependancyListener', '', '', params, true); --%>
 	}
 	
 	function updateDependantValue(data) {
 		constructElements(data, pushToElement, isMultiple, controlType);
+	}
+	
+	function selectBoxOnChangeEvent(obj, currentParamKey) {
+		var selectedOption = $(obj).val();
+		changeEveDependancyListener(selectedOption, currentParamKey);
+	}
+	
+	function changeEveDependancyListener(selectedOption, currentParamKey) {
+		var params = getBasicParams();
+		params = params.concat("&goal=");
+		params = params.concat('<%= goal%>');
+		params = params.concat("&currentParamKey=");
+		params = params.concat(currentParamKey);
+		params = params.concat("&selectedOption=");
+		params = params.concat(selectedOption);
+		loadContent('changeEveDependancyListener', '', '', params, true);
+	}
+	
+	function successEvent(pageUrl, data) {
+		if (pageUrl === "changeEveDependancyListener") {
+			if (data.controlsTobeHidden != undefined && !isBlank(data.controlsTobeHidden)) {
+				hideControl(data.controlsTobeHidden);
+			}
+			if (data.controlsTobeShown != undefined && !isBlank(data.controlsTobeShown)) {
+				showControl(data.controlsTobeShown);
+			}
+			if (data.dependentValues != undefined && !isBlank(data.dependentValues)) {
+				pushToElement = data.pushToElement;
+				isMultiple = $("#"+pushToElement).attr("isMultiple");
+				controlType = $("#"+pushToElement).attr("type");
+				constructElements(data, pushToElement, isMultiple, controlType);
+			}
+			
+			var selectedOption = $('#' + data.controlsTobeShown[0]).val();
+			var currentParamKey = data.controlsTobeShown[0];
+			if (data.needToCallAgain != undefined && data.needToCallAgain) {
+				changeEveDependancyListener(selectedOption, currentParamKey);
+			}
+		}
+	}
+	
+	function hideControl(controls) {
+		for (i in controls) {
+			$('#' + controls[i] + 'Control').hide();
+		}
+	}
+	
+	function showControl(controls) {
+		for (i in controls) {
+			$('#' + controls[i] + 'Control').show();
+		}
 	}
 </script>

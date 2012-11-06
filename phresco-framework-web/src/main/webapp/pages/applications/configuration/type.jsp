@@ -18,32 +18,45 @@
   ###
   --%>
   
+<%@page import="com.itextpdf.text.log.SysoLogger"%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
+<%@ page import="java.util.ArrayList"%>
 <%@ page import="java.util.List"%>
 
 <%@ page import="org.antlr.stringtemplate.StringTemplate" %>
 <%@ page import="org.apache.commons.collections.CollectionUtils" %>
 
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
+<%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 <%@ page import="com.photon.phresco.commons.model.PropertyTemplate" %>
 <%@ page import="com.photon.phresco.framework.commons.FrameworkUtil" %>
 
 <form id="configProperties">
 <%
-	
+	ApplicationInfo appInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_APPINFO);
 	List<PropertyTemplate> properties = (List<PropertyTemplate>) request.getAttribute(FrameworkConstants.REQ_PROPERTIES);
 	StringBuilder sb = new StringBuilder();
     for (PropertyTemplate propertyTemplate : properties) {
-        List<String> possibleValues = propertyTemplate.getPossibleValues();
+        List<String> possibleValues = new ArrayList<String>(8);
+
+        if (FrameworkConstants.SERVER_KEY.equals(propertyTemplate.getKey())) {
+        	possibleValues = appInfo.getSelectedServers();
+    	} else if (FrameworkConstants.DATABASE_KEY.equals(propertyTemplate.getKey())) {
+    		possibleValues = appInfo.getSelectedDatabases();
+    	} else {
+    		possibleValues = propertyTemplate.getPossibleValues();
+    	}
+    	
         if (CollectionUtils.isNotEmpty(possibleValues)) {
-            StringTemplate dropDownControl = FrameworkUtil.constructSelectElement(propertyTemplate.isRequired(), propertyTemplate.getName(), "", "", propertyTemplate.getName(), 
-                    propertyTemplate.getKey(), possibleValues, null, Boolean.FALSE.toString());
-            sb.append(dropDownControl);
+//             StringTemplate dropDownControl = FrameworkUtil.constructSelectElement(propertyTemplate.isRequired(), propertyTemplate.getName(), "", "", propertyTemplate.getName(), 
+//                     propertyTemplate.getKey(), possibleValues, null, Boolean.FALSE.toString());
+//             sb.append(dropDownControl);
         } else {
-            StringTemplate inputControl = FrameworkUtil.constructInputElement(propertyTemplate.isRequired(), propertyTemplate.getName(), "", propertyTemplate.getType(),
-                    "", propertyTemplate.getKey(), propertyTemplate.getKey(), propertyTemplate.getHelpText(), "");
-            sb.append(inputControl);
+//             StringTemplate inputControl = FrameworkUtil.constructInputElement(propertyTemplate.isRequired(), propertyTemplate.getName(), "", propertyTemplate.getType(),
+//                     "", propertyTemplate.getKey(), propertyTemplate.getKey(), propertyTemplate.getHelpText(), "",  propertyTemplate.getKey() + "Control", propertyTemplate.getKey() + "Error");
+            
+//             sb.append(inputControl);
         }
     }
 %>

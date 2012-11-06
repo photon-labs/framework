@@ -20,10 +20,12 @@
 package com.photon.phresco.framework.actions.applications;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,6 +35,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.Writer;
 import java.net.HttpURLConnection;
+import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DateFormat;
@@ -65,6 +68,7 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.codehaus.plexus.util.cli.CommandLineException;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -75,6 +79,7 @@ import org.xml.sax.SAXParseException;
 import com.google.gson.Gson;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
+import com.photon.phresco.commons.model.BuildInfo;
 import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.FrameworkConfiguration;
@@ -91,7 +96,10 @@ import com.photon.phresco.framework.commons.LogErrorReport;
 import com.photon.phresco.framework.commons.PBXNativeTarget;
 import com.photon.phresco.framework.commons.QualityUtil;
 import com.photon.phresco.framework.commons.filter.FileListFilter;
-import com.photon.phresco.framework.model.BuildInfo;
+import com.photon.phresco.framework.model.HubConfiguration;
+import com.photon.phresco.framework.model.NodeCapability;
+import com.photon.phresco.framework.model.NodeConfig;
+import com.photon.phresco.framework.model.NodeConfiguration;
 import com.photon.phresco.framework.model.PerformanceDetails;
 import com.photon.phresco.framework.model.PerformanceTestResult;
 import com.photon.phresco.framework.model.PropertyInfo;
@@ -102,6 +110,7 @@ import com.photon.phresco.framework.model.TestCaseFailure;
 import com.photon.phresco.framework.model.TestResult;
 import com.photon.phresco.framework.model.TestSuite;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
+import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
 import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.util.Constants;
@@ -213,6 +222,44 @@ public class Quality extends DynamicParameterUtil {
 	
 	private String projectModule = "";
 	
+	//Hub configuration
+	private int port;
+	private int newSessionWaitTimeout;
+	private List<String> servlets = new ArrayList<String>();
+	private String prioritizer = "";
+	private String capabilityMatcher = "";
+	private boolean throwOnCapabilityNotPresent = false;
+	private int nodePolling;
+    private int cleanUpCycle;
+    private int timeout;
+    private int browserTimeout;
+    private int maxSession;
+    
+    //Node configuration
+    private String browserName = "";
+    private int maxInstances;
+    private String seleniumProtocol = "";
+    private String proxy = "";
+    private String host = "";
+    private boolean register = false;
+    private int registerCycle;
+    private int hubPort;
+    private String hubHost = "";
+    
+    //Dynamic parameter
+    private List<Value> dependentValues = null; //Value for dependancy parameters
+    private String dependentParamKey = "";
+    private String currentParamKey = ""; 
+    private String dependantValue = "";
+    private String goal = "";
+    private String selectedOption = "";
+    List<String> controlsTobeHidden = new ArrayList<String>();
+    List<String> controlsTobeShown = new ArrayList<String>();
+    private boolean needToCallAgain = false;
+    private String pushToElement = "";
+
+    private String COMMAND_START_HUB = "java -jar lib/selenium-server-standalone-2.25.0.jar -role hub -hubConfig hubconfig.json";
+	
 	private static Map<String, Map<String, NodeList>> testSuiteMap = Collections.synchronizedMap(new HashMap<String, Map<String, NodeList>>(8));
 	
 	public String unit() throws JAXBException, IOException, PhrescoPomException {
@@ -224,9 +271,9 @@ public class Quality extends DynamicParameterUtil {
 	        ApplicationInfo appInfo = getApplicationInfo();
 	        FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
 	        setReqAttribute(PATH, frameworkUtil.getUnitTestDir(appInfo));
-            setReqAttribute(REQ_APP_INFO, appInfo);
+            setReqAttribute(REQ_APPINFO, appInfo);
             setProjModulesInReq();
-            setDynamicParametersInReq(PHASE_UNIT_TEST);
+            setDynamicParametersInReq(appInfo, PHASE_UNIT_TEST);
         } catch (PhrescoException e) {
             return showErrorPopup(e, getText(EXCEPTION_QUALITY_UNIT_RPT));
         }
@@ -291,7 +338,7 @@ public class Quality extends DynamicParameterUtil {
         }
 	    
 	    try {
-	        setDynamicParametersInReq(PHASE_UNIT_TEST);
+	        setDynamicParametersInReq(getApplicationInfo(), PHASE_UNIT_TEST);
     	    setProjModulesInReq();
 	    } catch (PhrescoException e) {
 	        return showErrorPopup(e, getText(EXCEPTION_QUALITY_UNIT_RPT));
@@ -305,13 +352,7 @@ public class Quality extends DynamicParameterUtil {
         setReqAttribute(REQ_PROJECT_MODULES, projectModules);
     }
 
-    private void setDynamicParametersInReq(String goal) throws PhrescoException {
-        MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(getApplicationInfo())));
-        List<Parameter> dynamicParameters = getMojoParameters(mojo, goal);
-        setReqAttribute(REQ_DYNAMIC_PARAMETERS, dynamicParameters);
-    }
-	
-	public String runUnitTest() {
+	public String runUnitTest() throws PhrescoPomException {
         if (debugEnabled) {
             S_LOGGER.debug("Entering Method Quality.runUnitTest()");
         }
@@ -344,10 +385,11 @@ public class Quality extends DynamicParameterUtil {
         
         try {
             ApplicationInfo appInfo = getApplicationInfo();
-            FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
             setProjModulesInReq();
-            setReqAttribute(PATH, frameworkUtil.getUnitTestDir(appInfo));
-            setReqAttribute(REQ_APP_INFO, appInfo);
+            FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+            setReqAttribute(PATH, frameworkUtil.getFunctionalTestDir(appInfo));
+            setReqAttribute(REQ_FUNCTEST_SELENIUM_TOOL, frameworkUtil.getSeleniumToolType(appInfo));
+            setReqAttribute(REQ_APPINFO, appInfo);
         } catch (PhrescoException e) {
             return showErrorPopup(e, getText(EXCEPTION_QUALITY_UNIT_RPT));
         }
@@ -401,8 +443,19 @@ public class Quality extends DynamicParameterUtil {
         }
         
         try {
+            ApplicationInfo appInfo = getApplicationInfo();
+            removeSessionAttribute(appInfo.getId() + PHASE_FUNCTIONAL_TEST + REQ_SESSION_DYNAMIC_PARAM_MAP);
+            removeSessionAttribute(appInfo.getId() + PHASE_FUNCTIONAL_TEST + "controlsTobeShowed");
             setProjModulesInReq();
-            setDynamicParametersInReq(PHASE_FUNCTIONAL_TEST);
+            Map<String, Object> watcherMap = new HashMap<String, Object>();
+            watcherMap.put(REQ_APP_INFO, appInfo);
+            List<Parameter> parameters = setDynamicParametersInReq(appInfo, PHASE_FUNCTIONAL_TEST);
+            List<String> controlsTobeShowed = new ArrayList<String>();
+            setPossibleValuesInReq(parameters, watcherMap, controlsTobeShowed);
+            setSessionAttribute(appInfo.getId() + PHASE_FUNCTIONAL_TEST + REQ_SESSION_DYNAMIC_PARAM_MAP, watcherMap);
+            setSessionAttribute(appInfo.getId() + PHASE_FUNCTIONAL_TEST + "controlsTobeShowed", controlsTobeShowed);
+            setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
+            setReqAttribute(REQ_GOAL, PHASE_FUNCTIONAL_TEST);
         } catch (PhrescoException e) {
             return showErrorPopup(e, getText(EXCEPTION_QUALITY_UNIT_RPT));
         }
@@ -410,19 +463,175 @@ public class Quality extends DynamicParameterUtil {
         return SUCCESS;
     }
 	
-	public String showStartHubPopUp() {
+	@SuppressWarnings("unchecked")
+	public String changeEveDependancyListener() {
+	    try {
+            ApplicationInfo appInfo = getApplicationInfo();
+            
+            MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(appInfo)));
+            //To get the current parameter key with the selected options value
+            Parameter currentParameter = mojo.getParameter(getGoal(), getCurrentParamKey());
+            PossibleValues possibleValues = currentParameter.getPossibleValues();
+            if (possibleValues != null) {//To get the dependent parameter key from the possible values
+                List<Value> values = possibleValues.getValue();
+                for (Value value : values) {
+                    if (value.getKey().equals(getSelectedOption())) {
+                        setDependentParamKey(value.getDependency());
+                    }
+                }
+            } else if (StringUtils.isNotEmpty(currentParameter.getDependency())) {//To get the dependent parameter key
+                setDependentParamKey(currentParameter.getDependency());
+            }
+            
+            Map<String, Object> watcherMap = (Map<String, Object>) getSessionAttribute(getAppId() + getGoal() + REQ_SESSION_DYNAMIC_PARAM_MAP);
+            Map<String, String> valuesMap = new HashMap<String, String>();
+            
+            List<Parameter> mojoParameters = getMojoParameters(mojo, getGoal());
+            if (CollectionUtils.isNotEmpty(mojoParameters)) {
+                for (Parameter parameter : mojoParameters) {
+                    PossibleValues paramPossibleValues = parameter.getPossibleValues();
+                    if (paramPossibleValues != null) {
+                        List<Value> values = paramPossibleValues.getValue();
+                        for (Value value : values) {
+                            if (StringUtils.isNotEmpty(value.getDependency()) && value.getDependency().equals(getCurrentParamKey())) {
+                                updateValuesMap(watcherMap, valuesMap, parameter);
+                            }
+                        }
+                    } 
+                    if (StringUtils.isNotEmpty(parameter.getDependency()) && parameter.getDependency().equals(getCurrentParamKey())) {
+                        updateValuesMap(watcherMap, valuesMap, parameter);
+                    }
+                }
+            }
+
+            //To get the previously shown parameters key and add it in the controlsTobeHidden collection
+            Map<String, String> previousValMap = (Map<String, String>) watcherMap.get(getCurrentParamKey());
+
+            if (MapUtils.isNotEmpty(previousValMap)) {
+                Set<String> keySet = previousValMap.keySet();
+                if (keySet != null && !keySet.contains(getDependentParamKey())) {//To check if the dependent parameter key is not in the map
+                    for (String key : keySet) {
+                        Parameter parameter = mojo.getParameter(getGoal(), key);
+                        controlsTobeHidden.add(key);
+                        controlsTobeHidden.add(parameter.getDependency());
+                    }
+                }
+            }
+            
+            //To update the watcherMap
+            getDependentParamKey();
+            valuesMap.put(getDependentParamKey(), getSelectedOption());
+            watcherMap.put(getCurrentParamKey(), valuesMap);
+
+            Parameter dependentParameter = mojo.getParameter(getGoal(), getDependentParamKey());
+            if (dependentParameter != null && dependentParameter.getDynamicParameter() != null) {
+                List<Value> dependantPossibleValues = setDynamicPossibleValues(watcherMap, dependentParameter);
+                valuesMap.put(getDependentParamKey(), dependantPossibleValues.get(0).getValue());
+                watcherMap.put(getCurrentParamKey(), valuesMap);
+                setDependentValues(dependantPossibleValues);//to parse resultant dependent values as json
+            }
+                
+            controlsTobeShown.add(dependentParameter.getKey());
+            
+            if (StringUtils.isNotEmpty(dependentParameter.getDependency())) {
+                setNeedToCallAgain(true);
+            }
+            
+            setPushToElement(getDependentParamKey());
+        } catch (PhrescoException e) {
+            e.printStackTrace();
+            // TODO: handle exception
+        }
+        
+	    return SUCCESS;
+	}
+
+    private void updateValuesMap(Map<String, Object> watcherMap, Map<String, String> valuesMap, Parameter parameter) {
+        Set<String> watcherMapKeySet = watcherMap.keySet();
+        if (CollectionUtils.isNotEmpty(watcherMapKeySet)) {
+            for (String watcherMapKey : watcherMapKeySet) {
+                if (watcherMap.get(watcherMapKey) instanceof Map) {
+                    Map<String, String> watcherMapValuesMap = (Map<String, String>) watcherMap.get(watcherMapKey);
+                    Set<String> keySet = watcherMapValuesMap.keySet();
+                    if (CollectionUtils.isNotEmpty(keySet) && keySet.contains(getCurrentParamKey())) {
+                        valuesMap.put(getCurrentParamKey(), getSelectedOption());
+                        watcherMap.put(parameter.getKey(), valuesMap);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+	
+	public String showStartHubPopUp() throws PhrescoPomException, FileNotFoundException {
         if (debugEnabled) {
             S_LOGGER.debug("Entering Method Quality.showStartHubPopUp()");
         }
         
         try {
-            setDynamicParametersInReq(PHASE_START_HUB);
+            setDynamicParametersInReq(getApplicationInfo(), PHASE_START_HUB);
         } catch (PhrescoException e) {
             return showErrorPopup(e, getText(EXCEPTION_QUALITY_UNIT_RPT));
         }
         
         return SUCCESS;
     }
+	
+	public String startHub() throws PhrescoPomException, IOException, CommandLineException {
+	    try {
+	        ApplicationInfo appInfo = getApplicationInfo();
+	        MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(appInfo)));
+            persistValuesToXml(mojo, PHASE_START_HUB);
+            updateHubConfigInfo(appInfo);
+            FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+            String workingDir = getApplicationHome() + frameworkUtil.getFunctionalTestDir(appInfo);
+            FrameworkUtil.executeCommand(COMMAND_START_HUB, workingDir);
+        } catch (PhrescoException e) {
+            e.printStackTrace();
+        }
+        
+        return APP_ENVIRONMENT_READER;
+	}
+	
+	private void updateHubConfigInfo(ApplicationInfo appInfo) throws PhrescoPomException, IOException {
+	    BufferedWriter out = null;
+	    FileWriter fileWriter = null;
+	    try {
+    	    HubConfiguration hubConfig = new HubConfiguration();
+    	    InetAddress thisIp =InetAddress.getLocalHost();
+    	    hubConfig.setHost(thisIp.getHostAddress());
+    	    hubConfig.setPort(getPort());
+    	    hubConfig.setNewSessionWaitTimeout(getNewSessionWaitTimeout());
+    	    hubConfig.setServlets(getServlets());
+    	    if (StringUtils.isNotEmpty(getPrioritizer())) {
+    	        hubConfig.setPrioritizer(getPrioritizer());
+    	    }
+    	    hubConfig.setCapabilityMatcher(getCapabilityMatcher());
+    	    hubConfig.setThrowOnCapabilityNotPresent(isThrowOnCapabilityNotPresent());
+    	    hubConfig.setNodePolling(getNodePolling());
+    	    hubConfig.setCleanUpCycle(getCleanUpCycle());
+    	    hubConfig.setTimeout(getTimeout());
+    	    hubConfig.setBrowserTimeout(getBrowserTimeout());
+    	    hubConfig.setMaxSession(getMaxSession());
+    	    
+    	    Gson gson = new Gson();
+    	    String infoJSON = gson.toJson(hubConfig);
+    	    FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+            String configPath = frameworkUtil.getHubConfigFile(appInfo);
+            fileWriter = new FileWriter(configPath);
+            out = new BufferedWriter(fileWriter);
+            out.write(infoJSON);
+	    } catch (PhrescoException e) {
+            
+        } finally {
+            if (out != null) {
+                out.close();
+            }
+            if (fileWriter != null) {
+                fileWriter.close();
+            }
+        }
+	}
 	
 	public String showStartNodePopUp() {
         if (debugEnabled) {
@@ -430,12 +639,67 @@ public class Quality extends DynamicParameterUtil {
         }
         
         try {
-            setDynamicParametersInReq(PHASE_START_NODE);
+            setDynamicParametersInReq(getApplicationInfo(), PHASE_START_NODE);
         } catch (PhrescoException e) {
             return showErrorPopup(e, getText(EXCEPTION_QUALITY_UNIT_RPT));
         }
         
         return SUCCESS;
+    }
+	
+	public void startNode() throws PhrescoPomException, IOException, CommandLineException {
+        try {
+            ApplicationInfo appInfo = getApplicationInfo();
+            MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(appInfo)));
+            persistValuesToXml(mojo, PHASE_START_HUB);
+            updateNodeConfigInfo(appInfo);
+            FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+            String workingDir = getApplicationHome() + frameworkUtil.getFunctionalTestDir(appInfo);
+            FrameworkUtil.executeCommand(COMMAND_START_HUB, workingDir);
+        } catch (PhrescoException e) {
+            e.printStackTrace();
+        }
+    }
+	
+	private void updateNodeConfigInfo(ApplicationInfo appInfo) throws PhrescoPomException, IOException {
+        BufferedWriter out = null;
+        FileWriter fileWriter = null;
+        try {
+            NodeConfiguration nodeConfiguration = new NodeConfiguration();
+            NodeCapability nodeCapability = new NodeCapability();
+            nodeCapability.setBrowserName(getBrowserName());
+            nodeCapability.setMaxInstances(getMaxInstances());
+            nodeCapability.setSeleniumProtocol(getSeleniumProtocol());
+            nodeConfiguration.setNodeCapability(Collections.singletonList(nodeCapability));
+            
+            NodeConfig nodeConfig = new NodeConfig();
+            nodeConfig.setProxy(getProxy());
+            nodeConfig.setMaxSession(getMaxSession());
+            nodeConfig.setPort(getPort());
+            nodeConfig.setHost(getHost());
+            nodeConfig.setRegister(isRegister());
+            nodeConfig.setRegisterCycle(getRegisterCycle());
+            nodeConfig.setHubPort(getHubPort());
+            nodeConfig.setHubHost(getHubHost());
+            nodeConfiguration.setNodeConfig(nodeConfig);
+            
+            Gson gson = new Gson();
+            String infoJSON = gson.toJson(nodeConfiguration);
+            FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+            String configPath = frameworkUtil.getHubConfigFile(appInfo);
+            fileWriter = new FileWriter(configPath);
+            out = new BufferedWriter(fileWriter);
+            out.write(infoJSON);
+        } catch (PhrescoException e) {
+            
+        } finally {
+            if (out != null) {
+                out.close();
+            }
+            if (fileWriter != null) {
+                fileWriter.close();
+            }
+        }
     }
 	
 	private List<String> getTestSuiteNames(String testResultPath, String testSuitePath) throws FileNotFoundException, ParserConfigurationException,
@@ -1422,9 +1686,9 @@ public class Quality extends DynamicParameterUtil {
     	try {
     		String from = getReqParameter(REQ_FROM);
     		Map<String, Object> loadParamMap = new HashMap<String, Object>();
-    		ApplicationInfo applicationInfo = getApplicationInfo();
-    		loadParamMap.put(REQ_APP_INFO, applicationInfo);
-    		setDynamicParameters(loadParamMap, PHASE_LOAD_TEST);
+    		ApplicationInfo appInfo = getApplicationInfo();
+    		loadParamMap.put(REQ_APP_INFO, appInfo);
+    		setDynamicParametersInReq(appInfo, PHASE_LOAD_TEST);
     		setReqAttribute(REQ_FROM, from);
     	} catch(Exception e) {
     		e.printStackTrace();
@@ -1530,31 +1794,6 @@ public class Quality extends DynamicParameterUtil {
         return APP_ENVIRONMENT_READER;
     }
     
-    
-    
-    private void setDynamicParameters(Map<String, Object> dynamicParamMap, String goal) throws PhrescoException{
-		try {
-			ApplicationInfo applicationInfo = (ApplicationInfo) dynamicParamMap.get(REQ_APP_INFO);
-			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(applicationInfo)));
-			List<Parameter> parameters = getMojoParameters(mojo, goal);
-			if (CollectionUtils.isNotEmpty(parameters)) {
-				for (Parameter parameter : parameters) {
-					if (parameter.getDependency() != null) {
-						dynamicParamMap.put(parameter.getDependency(), parameter.getValue());
-					}
-					if (parameter.getDynamicParameter() != null) {
-						List<Value> possibleValues = setDynamicPossibleValues(dynamicParamMap, parameter);
-						setReqAttribute(REQ_DYNAMIC_POSSIBLE_VALUES, possibleValues);
-					}
-				}
-			}
-			setReqAttribute(REQ_APPINFO, applicationInfo);
-			setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
-		} catch (PhrescoException e) {
-			e.printStackTrace();
-		}
-	}
-
     public String loadTestResult() {
         
            S_LOGGER.debug("Entering Method Quality.loadTestResult()");
@@ -1778,7 +2017,7 @@ public class Quality extends DynamicParameterUtil {
         return APP_QUALITY;
     }
 
-    public String generateFunctionalTest() {
+    public String generateFunctionalTest() throws PhrescoException {
     	S_LOGGER.debug("Entering Method Quality.generateTest()");
         
     	List<Environment> environments = null;
@@ -1907,10 +2146,6 @@ public class Quality extends DynamicParameterUtil {
     		if (pomModule != null) {
     			return pomModule.getModule();
     		}
-    	} catch (JAXBException e) {
-    		e.printStackTrace();
-    	} catch (IOException e) {
-    		e.printStackTrace();
     	} catch (PhrescoPomException e) {
     		e.printStackTrace();
     	}
@@ -2389,7 +2624,7 @@ public class Quality extends DynamicParameterUtil {
     }
 
 	private boolean isSonarReportAvailable(FrameworkUtil frameworkUtil, String technology) throws PhrescoException, MalformedURLException, JAXBException,
-			IOException {
+			IOException, PhrescoPomException {
 		boolean isSonarReportAvailable = false;
 		// check for sonar alive
 		if (!TechnologyTypes.MOBILES.contains(technology)) {
@@ -3085,4 +3320,244 @@ public class Quality extends DynamicParameterUtil {
 	public void setResolution(String resolution) {
 		this.resolution = resolution;
 	}
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    public int getNewSessionWaitTimeout() {
+        return newSessionWaitTimeout;
+    }
+
+    public void setNewSessionWaitTimeout(int newSessionWaitTimeout) {
+        this.newSessionWaitTimeout = newSessionWaitTimeout;
+    }
+
+    public List<String> getServlets() {
+        return servlets;
+    }
+
+    public void setServlets(List<String> servlets) {
+        this.servlets = servlets;
+    }
+
+    public String getPrioritizer() {
+        return prioritizer;
+    }
+
+    public void setPrioritizer(String prioritizer) {
+        this.prioritizer = prioritizer;
+    }
+
+    public String getCapabilityMatcher() {
+        return capabilityMatcher;
+    }
+
+    public void setCapabilityMatcher(String capabilityMatcher) {
+        this.capabilityMatcher = capabilityMatcher;
+    }
+
+    public boolean isThrowOnCapabilityNotPresent() {
+        return throwOnCapabilityNotPresent;
+    }
+
+    public void setThrowOnCapabilityNotPresent(boolean throwOnCapabilityNotPresent) {
+        this.throwOnCapabilityNotPresent = throwOnCapabilityNotPresent;
+    }
+
+    public int getNodePolling() {
+        return nodePolling;
+    }
+
+    public void setNodePolling(int nodePolling) {
+        this.nodePolling = nodePolling;
+    }
+
+    public int getCleanUpCycle() {
+        return cleanUpCycle;
+    }
+
+    public void setCleanUpCycle(int cleanUpCycle) {
+        this.cleanUpCycle = cleanUpCycle;
+    }
+
+    public int getTimeout() {
+        return timeout;
+    }
+
+    public void setTimeout(int timeout) {
+        this.timeout = timeout;
+    }
+
+    public int getBrowserTimeout() {
+        return browserTimeout;
+    }
+
+    public void setBrowserTimeout(int browserTimeout) {
+        this.browserTimeout = browserTimeout;
+    }
+
+    public int getMaxSession() {
+        return maxSession;
+    }
+
+    public void setMaxSession(int maxSession) {
+        this.maxSession = maxSession;
+    }
+
+    public String getBrowserName() {
+        return browserName;
+    }
+
+    public void setBrowserName(String browserName) {
+        this.browserName = browserName;
+    }
+
+    public int getMaxInstances() {
+        return maxInstances;
+    }
+
+    public void setMaxInstances(int maxInstances) {
+        this.maxInstances = maxInstances;
+    }
+
+    public String getSeleniumProtocol() {
+        return seleniumProtocol;
+    }
+
+    public void setSeleniumProtocol(String seleniumProtocol) {
+        this.seleniumProtocol = seleniumProtocol;
+    }
+
+    public String getProxy() {
+        return proxy;
+    }
+
+    public void setProxy(String proxy) {
+        this.proxy = proxy;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public boolean isRegister() {
+        return register;
+    }
+
+    public void setRegister(boolean register) {
+        this.register = register;
+    }
+
+    public int getRegisterCycle() {
+        return registerCycle;
+    }
+
+    public void setRegisterCycle(int registerCycle) {
+        this.registerCycle = registerCycle;
+    }
+
+    public int getHubPort() {
+        return hubPort;
+    }
+
+    public void setHubPort(int hubPort) {
+        this.hubPort = hubPort;
+    }
+
+    public String getHubHost() {
+        return hubHost;
+    }
+
+    public void setHubHost(String hubHost) {
+        this.hubHost = hubHost;
+    }
+    
+    public List<Value> getDependentValues() {
+        return dependentValues;
+    }
+
+    public void setDependentValues(List<Value> dependentValues) {
+        this.dependentValues = dependentValues;
+    }
+    
+    public String getCurrentParamKey() {
+        return currentParamKey;
+    }
+
+    public void setCurrentParamKey(String currentParamKey) {
+        this.currentParamKey = currentParamKey;
+    }
+
+    public String getDependentParamKey() {
+        return dependentParamKey;
+    }
+
+    public void setDependentParamKey(String dependantKey) {
+        this.dependentParamKey = dependantKey;
+    }
+
+    public String getDependantValue() {
+        return dependantValue;
+    }
+
+    public void setDependantValue(String dependantValue) {
+        this.dependantValue = dependantValue;
+    }
+
+    public String getGoal() {
+        return goal;
+    }
+
+    public void setGoal(String goal) {
+        this.goal = goal;
+    }
+    
+    public List<String> getControlsTobeHidden() {
+        return controlsTobeHidden;
+    }
+
+    public void setControlsTobeHidden(List<String> controlsTobeHidden) {
+        this.controlsTobeHidden = controlsTobeHidden;
+    }
+
+    public String getSelectedOption() {
+        return selectedOption;
+    }
+
+    public void setSelectedOption(String selectedOption) {
+        this.selectedOption = selectedOption;
+    }
+
+    public boolean isNeedToCallAgain() {
+        return needToCallAgain;
+    }
+
+    public void setNeedToCallAgain(boolean needToCallAgain) {
+        this.needToCallAgain = needToCallAgain;
+    }
+
+    public List<String> getControlsTobeShown() {
+        return controlsTobeShown;
+    }
+
+    public void setControlsTobeShown(List<String> controlsTobeShown) {
+        this.controlsTobeShown = controlsTobeShown;
+    }
+
+    public String getPushToElement() {
+        return pushToElement;
+    }
+
+    public void setPushToElement(String pushToElement) {
+        this.pushToElement = pushToElement;
+    }
 }

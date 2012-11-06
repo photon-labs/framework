@@ -1,4 +1,6 @@
 import java.io.File;
+
+import com.itextpdf.text.log.SysoLogger;
 import com.photon.phresco.framework.impl.SCMManagerImpl;
 import com.photon.phresco.framework.actions.applications.Applications;
 
@@ -33,16 +35,35 @@ public class ApplicationsTest {
 	}
 	
 //	@Test
+	public void isValidDirCheck() {
+		try {
+			File dir = new File("C:\\Documents and Settings\\santhosh_ja\\workspace\\temp\\19880bb7-80a6-4635-8526-72602d032b5d");
+//			File dir = new File("C:\\Documents and Settings\\santhosh_ja\\workspace\\temp\\DrupalEshop");
+			SCMManagerImpl scmi = new SCMManagerImpl();
+			boolean status = scmi.validPhrecoDirCheck(dir);
+			if (status) {
+				System.out.println("definition found... coping to workspace ");
+				scmi.importFromTemp(dir);
+			} else {
+				System.out.println("Definition not found");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+//	@Test
 	public void testCheckOut() throws Exception	{
 		try{
-			File file =new File("D:\\chkout","sample");
+		File file =new File("D:\\chkout","sample");
 		SCMManagerImpl scmi=new SCMManagerImpl();
-		RepoDirRecursiveImpl rdri=new RepoDirRecursiveImpl();
-//		scmi.importProject("svn","https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/IphoneAutomationInJe/" , "santhosh_ja" , "santJ!23" , null , "HEAD" , "Test1");
-		scmi.importProject("git","https://github.com/kaleeswaran14/PHR_Phpblog",null,null,"master",null, "GIT");
-//		rdri.importGitProject("git", "https://github.com/phresco/widget-eshop", null,null, "master", null ,"samplegit");
-		Applications ap=new Applications();
-	 	ap.importFromGit("https://github.com/phresco/jquery-widget-eshop.git/",file);
+//		RepoDirRecursiveImpl rdri=new RepoDirRecursiveImpl();
+		scmi.importProject("svn","https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/IphoneAutomationInJe/2.0/phresco-test" , "santhosh_ja" , "santJ!23" , null , "HEAD" , "SVN1");
+//		scmi.importProject("svn","https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/IphoneAutomationInJe/2.0/phresco-test/sample applayer-tech-php" , "santhosh_ja" , "santJ!23" , null , "HEAD" , "SVN1");
+//		scmi.importProject("git","https://github.com/santhosh-ja/Test.git",null,null,"master",null, "GIT");
+//		scmi.importProject("git", "https://github.com/phresco/drupal7-eshop.git", null,null, "master", null ,"samplegit");
+//		Applications ap=new Applications();
+//	 	ap.importFromGit("https://github.com/phresco/jquery-widget-eshop.git/",file);
 		}
 		catch(Exception e)
 		{
@@ -56,7 +77,7 @@ public class ApplicationsTest {
 				
 			SCMManagerImpl scmi=new SCMManagerImpl();
 //			scmi.updateProject("svn","https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/1.0.0/PHR_AndroidHybrid_PilotProject/" , "santhosh_ja" , "santJ!23" , null , "HEAD" , "Sample");
-//		 	scmi.updateProject("git","https://github.com/phresco/jquery-widget-eshop.git/",null,null,"master",null, "PHR_jquerywidget");
+		 	scmi.updateProject("git","https://github.com/santhosh-ja/Test.git",null,null,"master",null, "sample applayer-tech-php");
 		 	
 			}
 			catch(Exception e)

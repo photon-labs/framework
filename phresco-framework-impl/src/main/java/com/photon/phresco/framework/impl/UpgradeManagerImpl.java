@@ -29,7 +29,6 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.ws.rs.core.MediaType;
-import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.log4j.Logger;
@@ -86,10 +85,6 @@ public class UpgradeManagerImpl implements UpgradeManager, FrameworkConstants   
 					FrameworkConstants.BIN_DIR +  File.separator + FrameworkConstants.POM_FILE);
 			PomProcessor processor = new PomProcessor(pomFile);
 			return processor.getProperty(FrameworkConstants.PROPERTY_VERSION);
-		} catch (JAXBException e) {
-			throw new PhrescoException(e);
-		} catch (IOException e) {
-			throw new PhrescoException(e);
 		} catch (PhrescoPomException e) {
 			throw new PhrescoException(e);
 		}

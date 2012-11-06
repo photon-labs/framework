@@ -34,7 +34,6 @@ import java.security.KeyStore;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -65,40 +64,28 @@ import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ApplicationType;
 import com.photon.phresco.commons.model.ArtifactGroup;
+import com.photon.phresco.commons.model.BuildInfo;
 import com.photon.phresco.commons.model.DownloadInfo;
-import com.photon.phresco.commons.model.DownloadInfo.Category;
 import com.photon.phresco.commons.model.LogInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.SettingsTemplate;
 import com.photon.phresco.commons.model.Technology;
 import com.photon.phresco.commons.model.User;
-import com.photon.phresco.commons.model.VideoInfo;
-import com.photon.phresco.commons.model.VideoType;
 import com.photon.phresco.commons.model.WebService;
 import com.photon.phresco.configuration.Configuration;
 import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.PhrescoException;
-import com.photon.phresco.framework.FrameworkConfiguration;
-import com.photon.phresco.framework.PhrescoFrameworkFactory;
-import com.photon.phresco.framework.api.CIManager;
 import com.photon.phresco.framework.api.Project;
 import com.photon.phresco.framework.api.ProjectAdministrator;
 import com.photon.phresco.framework.api.ValidationResult;
-import com.photon.phresco.framework.model.BuildInfo;
-import com.photon.phresco.framework.model.CIBuild;
-import com.photon.phresco.framework.model.CIJob;
-import com.photon.phresco.framework.model.CIJobStatus;
 import com.photon.phresco.framework.model.CertificateInfo;
 import com.photon.phresco.framework.model.SettingsInfo;
 import com.photon.phresco.framework.win8.util.ItemGroupUpdater;
 import com.photon.phresco.service.client.api.ServiceClientConstant;
-import com.photon.phresco.service.client.api.ServiceContext;
 import com.photon.phresco.service.client.api.ServiceManager;
-import com.photon.phresco.service.client.factory.ServiceClientFactory;
 import com.photon.phresco.util.ArchiveUtil;
 import com.photon.phresco.util.ArchiveUtil.ArchiveType;
 import com.photon.phresco.util.Constants;
-import com.photon.phresco.util.Credentials;
 import com.photon.phresco.util.ProjectUtils;
 import com.photon.phresco.util.ServiceConstants;
 import com.photon.phresco.util.TechnologyTypes;
@@ -186,17 +173,9 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 			spUtil.addServerPlugin(info, pomPath);
 		}
 		boolean drupal = techId.equals(TechnologyTypes.PHP_DRUPAL7) || techId.equals(TechnologyTypes.PHP_DRUPAL6);
-		try {
-			if(drupal) {
-				updateDrupalVersion(projectPath, info);
-				excludeModule(info);
-			}
-		} catch (IOException e1) {
-			throw new PhrescoException(e1);
-		} catch (JAXBException e1) {
-			throw new PhrescoException(e1);
-		} catch (ParserConfigurationException e1) {
-			throw new PhrescoException(e1);	
+		if(drupal) {
+			updateDrupalVersion(projectPath, info);
+			excludeModule(info);
 		}
 
 		// Creating configuration file, after successfull creation of project
@@ -429,12 +408,6 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 			}
 			
 			processor.save();
-		} catch (JAXBException e) {
-			throw new PhrescoException(e);
-		} catch (IOException e) {
-			throw new PhrescoException(e);
-		} catch (ParserConfigurationException e) {
-			throw new PhrescoException(e);
 		} catch (PhrescoPomException e) {
 			throw new PhrescoException(e);
 		}
@@ -443,16 +416,21 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 	/**
 	 * @param path
 	 * @param info
+	 * @throws PhrescoException 
 	 * @throws IOException
 	 * @throws JAXBException
 	 * @throws ParserConfigurationException
 	 */
-	private void updateDrupalVersion(File path, ApplicationInfo info) throws IOException, JAXBException, ParserConfigurationException {
-		File xmlFile = new File(path, POM_FILE);
-		PomProcessor processor = new PomProcessor(xmlFile);
-		String selectedVersion = info.getTechInfo().getVersion();
-		processor.setProperty(DRUPAL_VERSION, selectedVersion);
-		processor.save();
+	private void updateDrupalVersion(File path, ApplicationInfo info) throws PhrescoException {
+		try {
+			File xmlFile = new File(path, POM_FILE);
+			PomProcessor processor = new PomProcessor(xmlFile);
+			String selectedVersion = info.getTechInfo().getVersion();
+			processor.setProperty(DRUPAL_VERSION, selectedVersion);
+			processor.save();
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
+		}
 	}
 
 	@Override
@@ -502,7 +480,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		return null;
 	}
 
-	private static void updatePomProject(ApplicationInfo appInfo) throws PhrescoException, PhrescoPomException {
+	private static void updatePomProject(ApplicationInfo appInfo) throws PhrescoException {
 		File path = new File(Utility.getProjectHome() + File.separator + appInfo.getCode() + File.separator + POM_FILE);
 		try {
 			PomProcessor pomProcessor = new PomProcessor(path);
@@ -515,9 +493,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 				pomProcessor.addDependency(moduleGroup.getGroupId(), moduleGroup.getArtifactId(), moduleGroup.getVersions().get(0).getVersion());
 				pomProcessor.save();
 			}*/
-			} catch (JAXBException e) {
-				throw new PhrescoException(e);
-			} catch (IOException e) {
+			} catch (PhrescoPomException e) {
 				throw new PhrescoException(e);
 		}
 	}

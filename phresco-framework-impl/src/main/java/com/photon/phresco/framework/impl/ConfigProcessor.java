@@ -82,13 +82,15 @@ public class ConfigProcessor implements FrameworkConstants {
         xpath.addNamespace(root_.getNamespace());
         Element triggerNode = (Element) xpath.selectSingleNode(root_);
         triggerNode.removeContent();
-    	for (String trigger : triggers) {
-			if(TIMER_TRIGGER.equals(trigger)) {
-				triggerNode.addContent(createElement("hudson.triggers.TimerTrigger", null).addContent(createElement("spec", cronExpression)));
-			} else {
-				triggerNode.addContent(createElement("hudson.triggers.SCMTrigger", null).addContent(createElement("spec", cronExpression)));
-			}
-		}
+        if (triggers != null) {
+        	for (String trigger : triggers) {
+    			if(TIMER_TRIGGER.equals(trigger)) {
+    				triggerNode.addContent(createElement("hudson.triggers.TimerTrigger", null).addContent(createElement("spec", cronExpression)));
+    			} else {
+    				triggerNode.addContent(createElement("hudson.triggers.SCMTrigger", null).addContent(createElement("spec", cronExpression)));
+    			}
+    		}
+        }
     }
     
     public void enableCollabNetBuildReleasePlugin(CIJob job) throws PhrescoException {
@@ -188,16 +190,35 @@ public class ConfigProcessor implements FrameworkConstants {
 	        xpath.addNamespace(root_.getNamespace());
 	        Element postBuildNode = (Element) xpath.selectSingleNode(root_);
 	        
-			String[] ciAdapted = mvnCommand.split(CI_FUNCTIONAL_ADAPT);
-			for (String ciCommand : ciAdapted) {
-				S_LOGGER.debug("ciCommand...." + ciCommand);
-			}
-			S_LOGGER.debug("CI adapted value " + ciAdapted[1]);
+			S_LOGGER.debug("CI adapted value " + mvnCommand);
 			S_LOGGER.debug("CI pomLocation " + pomLocation);
     		org.jdom.Element element = new Element(HUDSON_TASKS_MAVEN_NODE);
-			element.addContent(createElement(TARGETS_NODE, ciAdapted[1]));
+			element.addContent(createElement(TARGETS_NODE, mvnCommand));
 			element.addContent(createElement(MAVEN_NAME_NODE, MAVEN_HOME_ENV));
-			element.addContent(createElement(POM_NODE, pomLocation));
+			if (!StringUtils.isEmpty(pomLocation)) {
+				element.addContent(createElement(POM_NODE, pomLocation));
+			}
+			element.addContent(createElement(USE_PRIVATE_REPOSITORY_NODE, "false"));
+			S_LOGGER.debug("pullisherNode " + postBuildNode);
+	        postBuildNode.addContent(element);
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+    }
+    
+    public void enablePreBuildStep(String pomLocation, String mvnCommand) throws PhrescoException {
+    	S_LOGGER.debug("Entering Method ConfigProcessor.enablePreBuildStep");
+    	try {
+	    	XPath xpath = XPath.newInstance(PRE_BUILDERS_NODE);
+	        xpath.addNamespace(root_.getNamespace());
+	        Element postBuildNode = (Element) xpath.selectSingleNode(root_);
+	        
+    		org.jdom.Element element = new Element(HUDSON_TASKS_MAVEN_NODE);
+			element.addContent(createElement(TARGETS_NODE, mvnCommand));
+			element.addContent(createElement(MAVEN_NAME_NODE, MAVEN_HOME_ENV));
+			if (!StringUtils.isEmpty(pomLocation)) {
+				element.addContent(createElement(POM_NODE, pomLocation));
+			}
 			element.addContent(createElement(USE_PRIVATE_REPOSITORY_NODE, "false"));
 			S_LOGGER.debug("pullisherNode " + postBuildNode);
 	        postBuildNode.addContent(element);

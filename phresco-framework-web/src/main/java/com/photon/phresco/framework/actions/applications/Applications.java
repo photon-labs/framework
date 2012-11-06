@@ -19,73 +19,30 @@
  */
 package com.photon.phresco.framework.actions.applications;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.MediaType;
-
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.struts2.ServletActionContext;
-import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.ListBranchCommand.ListMode;
-import org.eclipse.jgit.lib.Ref;
-import org.tmatesoft.svn.core.SVNAuthenticationException;
-import org.tmatesoft.svn.core.SVNException;
 
 import com.google.gson.Gson;
-import com.jcraft.jsch.UserInfo;
+import com.google.gson.JsonObject;
 import com.opensymphony.xwork2.Action;
-import com.opensymphony.xwork2.ActionContext;
-import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
-import com.photon.phresco.commons.model.ApplicationType;
 import com.photon.phresco.commons.model.DownloadInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
-import com.photon.phresco.commons.model.Technology;
-import com.photon.phresco.commons.model.TechnologyInfo;
+import com.photon.phresco.commons.model.SelectedFeature;
 import com.photon.phresco.commons.model.WebService;
-import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.PhrescoException;
-import com.photon.phresco.framework.FrameworkConfiguration;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
-import com.photon.phresco.framework.SVNAccessor;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
-import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.api.Project;
 import com.photon.phresco.framework.api.ProjectAdministrator;
 import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.framework.api.ValidationResult;
-import com.photon.phresco.framework.commons.ApplicationsUtil;
-import com.photon.phresco.framework.commons.DiagnoseUtil;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.commons.LogErrorReport;
-import com.photon.phresco.framework.impl.ClientHelper;
-import com.photon.phresco.framework.model.CertificateInfo;
-import com.photon.phresco.framework.model.PropertyInfo;
-import com.photon.phresco.framework.model.SettingsInfo;
-import com.photon.phresco.util.Constants;
-import com.photon.phresco.util.Utility;
-import com.phresco.pom.model.Scm;
-import com.phresco.pom.util.PomProcessor;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.GenericType;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.WebResource.Builder;
 
 public class Applications extends FrameworkBaseAction {
 
@@ -112,6 +69,9 @@ public class Applications extends FrameworkBaseAction {
     private String configDbNames = "";
     List<String> deletableDbs = new ArrayList<String>();
     private String fromTab = "";
+    private List<String> feature= null;
+    private List<String> component= null;
+    private List<String> javascript= null;
 
     private String repositoryUrl = "";
     private String userName = "";
@@ -132,14 +92,6 @@ public class Applications extends FrameworkBaseAction {
 
     boolean hasError = false;
     private String envError = "";
-    private String name = "";
-    private String code = "";
-    private String description = "";
-    private String projectVersion = "";
-    private String technologyId = "";
-    private List<String> serverVersion = null;
-    private List<String> databaseVersion = null;
-    private List<String> webservice = null;
 
     private List<DownloadInfo> servers = null;
 
@@ -147,29 +99,35 @@ public class Applications extends FrameworkBaseAction {
     private String technology = "";
 
     private List<String> versions = null;
-
+    private String techId = "";
+    private String type = "";
+    private String applicationId = "";
+    
+    private SelectedFeature selectFeature;
+    
+    private List<String> jsonData = null;
+    
     public String loadMenu() {
         if (s_debugEnabled) {
             S_LOGGER.debug("Entering Method  Applications.loadMenu()");
         }
 
         try {
-            ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-            ApplicationInfo applicationInfo = applicationManager.getApplicationInfo(getCustomerId(), getProjectId(), getAppId());
-            setReqAttribute(REQ_CURRENT_APP_NAME, applicationInfo.getName());
+            setReqAttribute(REQ_CURRENT_APP_NAME, getApplicationInfo().getName());
             setReqAttribute(REQ_PROJECT_ID, getProjectId());
             setReqAttribute(REQ_APP_ID, getAppId());
-        } catch(Exception e) {
-            // TODO: handle exception
+        } catch(PhrescoException e) {
+        	return showErrorPopup(e, EXCEPTION_LOADMENU);
         }
 
         return APP_MENU;
     }
+    
     /**
      * To get the servers for the given customerid and techId 
      * @return
      */
-    public String fetchServers() {
+    /*public String fetchServers() {
         if (s_debugEnabled) {
             S_LOGGER.debug("Entering Method  Applications.getServers");
         }
@@ -182,25 +140,49 @@ public class Applications extends FrameworkBaseAction {
         }
 
         return SUCCESS;
-    }
+    }*/
 
     public String editApplication() {
         if (s_debugEnabled) {
-            S_LOGGER.debug("Entering Method  Applications.editAppInfo()");
+            S_LOGGER.debug("Entering Method  Applications.editApplication()");
         }
 
         try {
-            setReqAttribute(REQ_APPINFO, getApplicationInfo());
+        	ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
+        	ProjectInfo projectInfo = null;
+        	if (getSessionAttribute(getAppId() + SESSION_APPINFO) == null) {
+        		projectInfo = projectManager.getProject(getProjectId(), getCustomerId(), getAppId());
+        		String technologyId = projectInfo.getAppInfos().get(0).getTechInfo().getId();
+        		List<ApplicationInfo> pilotProjects = getServiceManager().getPilotProjects(getCustomerId(), technologyId);
+        		setSessionAttribute(REQ_PILOT_PROJECTS, pilotProjects);
+        		setSessionAttribute(getAppId() + SESSION_APPINFO, projectInfo);
+        	} else {
+        		projectInfo = (ProjectInfo)getSessionAttribute(getAppId() + SESSION_APPINFO);
+            	ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
+            
+            	List<String> jsonData = getJsonData();
+            	List<SelectedFeature> selectedFeatures = new ArrayList<SelectedFeature>();
+            	for (String string : jsonData) {
+					Gson gson = new Gson();
+					SelectedFeature obj = gson.fromJson(string, SelectedFeature.class);
+					selectedFeatures.add(obj);
+				}
+            	setSessionAttribute(REQ_SELECTED_FEATURES, selectedFeatures);
+        		projectInfo.setAppInfos(Collections.singletonList(appInfo));
+        		setSessionAttribute(getAppId() + SESSION_APPINFO, projectInfo);
+        	}
             List<WebService> webServices = getServiceManager().getWebServices();
             setReqAttribute(REQ_WEBSERVICES, webServices);
-        } catch (Exception e) {
-            // TODO: handle exception
+            setReqAttribute(REQ_APP_ID, getAppId());
+        } catch (PhrescoException e) {
+        	return showErrorPopup(e, EXCEPTION_APPLICATION_EDIT);
         }
 
         return APP_APPINFO;
     }
 
-    public String appInfo() {
+    
+   /* public String appInfo() {
         if (s_debugEnabled) {
             S_LOGGER.debug("Entering Method  Applications.appInfo()");
         }
@@ -239,9 +221,9 @@ public class Applications extends FrameworkBaseAction {
         }
 
         return APP_APPINFO;
-    }
+    }*/
 
-    /**
+	/**
      * To get the selected server's/database version
      * @return
      */
@@ -253,15 +235,16 @@ public class Applications extends FrameworkBaseAction {
         try {
             String type = getHttpRequest().getParameter(REQ_TYPE);
             String techId = getHttpRequest().getParameter(REQ_PARAM_NAME_TECH__ID);
-            setDownloadInfos(getServiceManager().getDownloads(getCustomerId(), techId, type));
+            List<DownloadInfo> downloadInfos = getServiceManager().getDownloads(getCustomerId(), techId, type);
+			setDownloadInfos(downloadInfos);
         } catch (PhrescoException e) {
-            return showErrorPopup(e, EXCEPTION_DOWNLOADINFOS);
+            return showErrorPopup(e, getText(EXCEPTION_DOWNLOADINFOS));
         }
 
         return SUCCESS;
     }
     
-    public String applicationType() {
+   /* public String applicationType() {
         if (s_debugEnabled) {
             S_LOGGER.debug("Entering Method  Applications.applicationType()");
         }
@@ -284,36 +267,9 @@ public class Applications extends FrameworkBaseAction {
         }
 
         return APP_TYPE;
-    }
+    }*/
 
-    public String featuresList() {
-    	if (s_debugEnabled) {
-            S_LOGGER.debug("Entering Method  Applications.featuresList()");
-        }
-    	ApplicationInfo appInfo = createApplicationInfo();
-    	setReqAttribute(REQ_APPINFO, appInfo);
-    	
-		return "features";
-    	
-    }
-    
-    private ApplicationInfo createApplicationInfo() {
-    	ApplicationInfo appInfo = new ApplicationInfo();
-    	appInfo.setName(getName());
-    	appInfo.setCode(getCode());
-    	appInfo.setDescription(getDescription());
-    	appInfo.setVersion(getProjectVersion());
-    	TechnologyInfo techInfo = new TechnologyInfo();
-    	techInfo.setId(getTechnologyId());
-		appInfo.setTechInfo(techInfo );
-    	appInfo.setSelectedServers(getServerVersion());
-    	appInfo.setSelectedDatabases(getDatabaseVersion());
-    	appInfo.setSelectedWebservices(getWebservice());
-    	
-    	return appInfo;
-	}
-    
-	public String technology() {
+	/*public String technology() {
         if (s_debugEnabled) {
             S_LOGGER.debug("Entering Method  Applications.technology()");
         }
@@ -349,7 +305,7 @@ public class Applications extends FrameworkBaseAction {
             setReqAttribute(REQ_APPTYPE, getApplicationType());
             setReqAttribute(REQ_SELECTED_TECHNOLOGY, getTechnology());
         } catch (PhrescoException e) {
-            return showErrorPopup(e, "Getting technology");
+            return showErrorPopup(e, EXCEPTION_TECHNOLOGY);
         }
 
         return APP_TECHNOLOGY;
@@ -373,8 +329,8 @@ public class Applications extends FrameworkBaseAction {
 
         return SUCCESS;
     }
-
-    public String previous() throws PhrescoException {
+*/
+   /* public String previous() throws PhrescoException {
         if (s_debugEnabled) {
             S_LOGGER.debug("Entered previous()");
         }
@@ -412,9 +368,9 @@ public class Applications extends FrameworkBaseAction {
         }
 
         return APP_APPINFO;
-    }
+    }*/
 
-    public String save() throws PhrescoException {
+   /* public String save() throws PhrescoException {
         if (s_debugEnabled) {
             S_LOGGER.debug("Entering Method Applications.save()");
         }
@@ -432,9 +388,9 @@ public class Applications extends FrameworkBaseAction {
         }
 
         return discover();
-    }
+    }*/
 
-    public String update() throws PhrescoException {
+    /*public String update() throws PhrescoException {
         if (s_debugEnabled) {
             S_LOGGER.debug("Entering Method  Applications.update()");
         }
@@ -448,11 +404,11 @@ public class Applications extends FrameworkBaseAction {
             //			ApplicationInfo originalinfo = appInfo.clone();
             //			File projectPath = new File(Utility.getProjectHome(), appInfo.getCode() + File.separator 
             //			                    + FOLDER_DOT_PHRESCO + File.separator + PROJECT_INFO);
-            /*try {
+            try {
 				reader = new BufferedReader(new FileReader(projectPath));
 			} catch (FileNotFoundException e) {
 				throw new PhrescoException(e);
-			}*/
+			}
             //TODO:Need to handle
             //			List<ModuleGroup> modules = appInfo.getTechnology().getModules();
             //			List<ModuleGroup> jsLibraries = appInfo.getTechnology().getJsLibraries();
@@ -525,9 +481,9 @@ public class Applications extends FrameworkBaseAction {
         setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
 
         return discover();
-    }
+    }*/
 
-    private void compareVersions(String dbName, List<String> projectInfoDbVersions, List<String> newDbVersions) {
+   /* private void compareVersions(String dbName, List<String> projectInfoDbVersions, List<String> newDbVersions) {
         for (String projectInfoDbVersion : projectInfoDbVersions) {
             if (newDbVersions.contains(projectInfoDbVersion)) {
 
@@ -536,9 +492,9 @@ public class Applications extends FrameworkBaseAction {
                 deletableDbs.add(dbName + "/" + projectInfoDbVersion.trim());
             }
         }
-    }
+    }*/
 
-    private void setFeatures(ProjectAdministrator administrator,
+  /*  private void setFeatures(ProjectAdministrator administrator,
             ApplicationInfo appInfo) throws PhrescoException {
         S_LOGGER.debug("Entering Method  Applications.setFeatures()");
 
@@ -570,9 +526,9 @@ public class Applications extends FrameworkBaseAction {
             //			.getSelectedTuples(getHttpRequest(), allModules, jsLibs);
             //			appInfo.getTechnology().setJsLibraries(selectedModules);
         }
-    }
+    }*/
 
-    public String edit() {
+   /* public String edit() {
         S_LOGGER.debug("Entering Method  Applications.edit()");
 
         try {
@@ -601,9 +557,31 @@ public class Applications extends FrameworkBaseAction {
         }
 
         return APP_APPLICATION;
-    }
+    }*/
 
-    public String delete() {
+    public String update() {
+    	try {
+    		ProjectInfo projectInfo = (ProjectInfo)getSessionAttribute(getAppId() + SESSION_APPINFO);
+        	ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
+        	appInfo.setSelectedModules(getFeature());
+        	appInfo.setSelectedJSLibs(getJavascript());
+        	appInfo.setSelectedComponents(getComponent());
+    		projectInfo.setAppInfos(Collections.singletonList(appInfo));
+    		ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
+    		projectManager.update(projectInfo, getServiceManager());
+            List<ProjectInfo> projects = projectManager.discover(getCustomerId());
+            setReqAttribute(REQ_PROJECTS, projects);
+            removeSessionAttribute(getAppId() + SESSION_APPINFO);
+            removeSessionAttribute(REQ_SELECTED_FEATURES);
+            removeSessionAttribute(REQ_PILOT_PROJECTS);
+		} catch (PhrescoException e) {
+			return showErrorPopup(e, EXCEPTION_PROJECT_UPDATE);
+		}
+        
+    	return APP_UPDATE;
+    }
+    
+    /*public String delete() {
         S_LOGGER.debug("Entering Method  Applications.delete()");
 
         try {
@@ -630,8 +608,8 @@ public class Applications extends FrameworkBaseAction {
 //        return list();
         return null;
     }
-
-    public String importSVNApplication() {
+*/
+   /* public String importSVNApplication() {
         S_LOGGER.debug("Entering Method  Applications.importApplication()");
         S_LOGGER.debug("repoType " + repoType);
         S_LOGGER.debug("repositoryUrl " + repositoryUrl);
@@ -726,9 +704,9 @@ public class Applications extends FrameworkBaseAction {
             svnImportMsg = getText(IMPORT_PROJECT_FAIL);
         }
         return SUCCESS;
-    }
+    }*/
 
-    public String importFromSvn() {
+    /*public String importFromSvn() {
         return APP_IMPORT_FROM_SVN;
     }
 
@@ -835,7 +813,7 @@ public class Applications extends FrameworkBaseAction {
             svnImportMsg = getText(FAILURE_PROJECT_UPDATE);
         }
         return SUCCESS;
-    }
+    }*/
 
     //TODO: No need the validator remove all validator
     public String validateFramework() {
@@ -934,7 +912,7 @@ public class Applications extends FrameworkBaseAction {
         return APP_SHOW_PROJECT_VLDT_RSLT;
     }
 
-    private String discover() {
+  /*  private String discover() {
         if (s_debugEnabled) {
             S_LOGGER.debug("Entering Method  Applications.discover()");
         }
@@ -1257,7 +1235,7 @@ public class Applications extends FrameworkBaseAction {
     }
 
     public String checkForConfiguration() throws PhrescoException {
-        /*try {
+        try {
 			System.out.println("inside try check for config()************************");
 			boolean isError = false;
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
@@ -1323,7 +1301,7 @@ public class Applications extends FrameworkBaseAction {
 		} catch (Exception e) {
 			System.out.println("inside catch******************");
 			throw new PhrescoException(e);
-		}*/
+		}
 
         return SUCCESS;
     }
@@ -1449,7 +1427,7 @@ public class Applications extends FrameworkBaseAction {
             processor.setSCM(repoUrl, "", "", "");
             processor.save();
         }
-    }
+    }*/
 
     public String getProjectCode() {
         return projectCode;
@@ -1714,58 +1692,64 @@ public class Applications extends FrameworkBaseAction {
     public void setServers(List<DownloadInfo> servers) {
         this.servers = servers;
     }
+    
 	public List<DownloadInfo> getDownloadInfos() {
 		return downloadInfos;
 	}
+	
 	public void setDownloadInfos(List<DownloadInfo> downloadInfos) {
 		this.downloadInfos = downloadInfos;
 	}
-	public String getName() {
-		return name;
+	public List<String> getFeature() {
+		return feature;
 	}
-	public void setName(String name) {
-		this.name = name;
+	public void setFeature(List<String> feature) {
+		this.feature = feature;
 	}
-	public String getCode() {
-		return code;
+	public List<String> getComponent() {
+		return component;
 	}
-	public void setCode(String code) {
-		this.code = code;
+	public void setComponent(List<String> component) {
+		this.component = component;
 	}
-	public String getDescription() {
-		return description;
+	public List<String> getJavascript() {
+		return javascript;
 	}
-	public void setDescription(String description) {
-		this.description = description;
+	public void setJavascript(List<String> javascript) {
+		this.javascript = javascript;
 	}
-	public String getProjectVersion() {
-		return projectVersion;
+	public String getTechId() {
+		return techId;
 	}
-	public void setProjectVersion(String projectVersion) {
-		this.projectVersion = projectVersion;
+	public void setTechId(String techId) {
+		this.techId = techId;
 	}
-	public String getTechnologyId() {
-		return technologyId;
+	public String getType() {
+		return type;
 	}
-	public void setTechnologyId(String technologyId) {
-		this.technologyId = technologyId;
+	public void setType(String type) {
+		this.type = type;
 	}
-	public List<String> getServerVersion() {
-		return serverVersion;
+	public String getApplicationId() {
+		return applicationId;
 	}
-	public void setServerVersion(List<String> serverVersion) {
-		this.serverVersion = serverVersion;
+	public void setApplicationId(String applicationId) {
+		this.applicationId = applicationId;
 	}
-	public List<String> getDatabaseVersion() {
-		return databaseVersion;
+
+	public SelectedFeature getSelectFeature() {
+		return selectFeature;
 	}
-	public void setDatabaseVersion(List<String> databaseVersion) {
-		this.databaseVersion = databaseVersion;
+
+	public void setSelectFeature(SelectedFeature selectFeature) {
+		this.selectFeature = selectFeature;
 	}
-	public List<String> getWebservice() {
-		return webservice;
+
+	public List<String> getJsonData() {
+		return jsonData;
 	}
-	public void setWebservice(List<String> webservice) {
-		this.webservice = webservice;
+
+	public void setJsonData(List<String> jsonData) {
+		this.jsonData = jsonData;
 	}
 }

@@ -39,6 +39,7 @@ import org.apache.log4j.Logger;
 
 import com.opensymphony.xwork2.Action;
 import com.photon.phresco.api.ConfigManager;
+import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.PropertyTemplate;
 import com.photon.phresco.commons.model.SettingsTemplate;
 import com.photon.phresco.configuration.Configuration;
@@ -65,6 +66,7 @@ public class Configurations extends FrameworkBaseAction {
     
     private static final Logger S_LOGGER = Logger.getLogger(Configurations.class);
     private static Boolean debugEnabled  = S_LOGGER.isDebugEnabled();
+    private static Boolean s_debugEnabled = S_LOGGER.isDebugEnabled();
     
     private List<Environment> environments = new ArrayList<Environment>(8);
     private Environment environment = null;
@@ -77,7 +79,11 @@ public class Configurations extends FrameworkBaseAction {
     private String oldName = null;
     private String[] appliesto = null;
     private String projectCode = null;
-    private String nameError = null;
+    private boolean errorFound = false;
+	private String configNameError = null;
+	private String configEnvError = null;
+	private String configTypeError = null;
+	private String nameError = null;
     private String typeError = null;
     private String portError = null;
     private String dynamicError = "";
@@ -88,6 +94,9 @@ public class Configurations extends FrameworkBaseAction {
 	private String envError = null;
 	private String emailError = null;
 	private String remoteDeploymentChk = null;
+	private String currentEnvName = null;
+	private String currentConfigType = null;
+	private String currentConfigName = null;
    
 	// Environemnt delete
     private boolean isEnvDeleteSuceess = true;
@@ -112,27 +121,19 @@ public class Configurations extends FrameworkBaseAction {
         	S_LOGGER.debug("Configuration.list() entered");
         }
         
-		Project project = null;
     	try {
     	    List<Environment> environments = getAllEnvironments();
-//            configManager.get
-//            project = administrator.getProject(projectCode);
-//            List<Environment> environments = administrator.getEnvironments(project);
-//            configManager.getEnvironments(names);
-//            getHttpRequest().setAttribute(ENVIRONMENTS, environments);
-//            List<SettingsInfo> configurations = administrator.configurations(project);
+            setReqAttribute(REQ_ENVIRONMENTS, environments);
             String cloneConfigStatus = getHttpRequest().getParameter(CLONE_CONFIG_STATUS); 
             if (cloneConfigStatus != null) {
             	addActionMessage(getText(ENV_CLONE_SUCCESS));
             }
-        } catch (Exception e) {
-        	if (debugEnabled) {
-               S_LOGGER.error("Entered into catch block of Configurations.list()" + FrameworkUtil.getStackTraceAsString(e));
-    		}
-        	new LogErrorReport(e, "Configurations list");
-        }
+        } catch (PhrescoException e) {
+        	return showErrorPopup(e,  getText(EXCEPTION_CONFIGURATION_LIST_ENV));
+        } catch (ConfigurationException e) {
+        	  return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_CONFIGURATION_LIST_CONFIG));
+		}
         
-        getHttpRequest().setAttribute(REQ_PROJECT, project);
         getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
         return APP_LIST;
     }
@@ -196,11 +197,11 @@ public class Configurations extends FrameworkBaseAction {
 		}  
 
         try {
+        	
             SettingsTemplate configTemplate = getServiceManager().getConfigTemplate(getConfigId(), getCustomerId());
-
             Properties properties = new Properties();
-            List<PropertyTemplate> properties2 = configTemplate.getProperties();
-            for (PropertyTemplate propertyTemplate : properties2) {
+            List<PropertyTemplate> property = configTemplate.getProperties();
+            for (PropertyTemplate propertyTemplate : property) {
                 String key = propertyTemplate.getKey();
                 String value = getActionContextParam(key);
                 if (StringUtils.isNotEmpty(value)) {
@@ -215,7 +216,7 @@ public class Configurations extends FrameworkBaseAction {
             Environment environment = getEnvironment();
             List<Configuration> configurations = environment.getConfigurations();
             configurations.add(config);
-            getConfigManager().updateEnvironment(environment);
+            getConfigManager().createConfiguration(environment.getName(), config);
         } catch (PhrescoException e) {
             return showErrorPopup(e, "");
         } catch (ConfigurationException e) {
@@ -344,6 +345,49 @@ public class Configurations extends FrameworkBaseAction {
         getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
         return list();
     }
+    
+    /**
+     * To validate the form fields
+     * @return
+     * @throws PhrescoException 
+     */
+    public String validateConfiguration() throws PhrescoException {
+    	
+    	boolean hasError = false;
+    	
+    	if (StringUtils.isEmpty(getConfigName())) {
+    		setConfigNameError(getText(ERROR_NAME));
+            hasError = true;
+        }
+    	
+    	if (StringUtils.isEmpty(getConfigType())) {
+    		setConfigTypeError(getText(ERROR_CONFIG_TYPE));
+            hasError = true;
+        }
+    	
+    	SettingsTemplate configTemplate = getServiceManager().getConfigTemplate(getConfigId(), getCustomerId());
+        List<PropertyTemplate> properties = configTemplate.getProperties();
+        for (PropertyTemplate propertyTemplate : properties) {
+            String key = propertyTemplate.getKey();
+            String value = getActionContextParam(key);
+            if (propertyTemplate.isRequired() && StringUtils.isEmpty(value)) {
+            	String field = propertyTemplate.getName();
+            	dynamicError += key + ":" + field + " is empty" + ",";
+            }
+        }
+        
+        if (StringUtils.isNotEmpty(dynamicError)) {
+	        dynamicError = dynamicError.substring(0, dynamicError.length() - 1);
+	        setDynamicError(dynamicError);
+	        hasError = true;
+	   	}
+        if (hasError) {
+            setErrorFound(true);
+        }
+        
+        return SUCCESS;
+    }
+    
     
     private String getDbDriver(String dbtype) {
 		return dbDriverMap.get(dbtype);
@@ -621,30 +665,37 @@ public class Configurations extends FrameworkBaseAction {
     		S_LOGGER.debug("Entering Method  Configurations.edit()");
     	}
         try {
-            ProjectAdministrator administrator = getProjectAdministrator();
+        	List<Environment> environments = getAllEnvironments();
+        	setReqAttribute(REQ_ENVIRONMENTS, environments);
+        	Configuration selectedConfigInfo = getConfigManager().getConfiguration(currentEnvName, currentConfigType, currentConfigName);
+        	List<SettingsTemplate> configTemplates = getServiceManager().getconfigTemplates(getCustomerId());
+            setReqAttribute(REQ_SETTINGS_TEMPLATES, configTemplates);
+        	setReqAttribute(REQ_CONFIG_INFO, selectedConfigInfo);
+        	setReqAttribute(REQ_FROM_PAGE, FROM_PAGE_EDIT);
+        	
+            /*ProjectAdministrator administrator = getProjectAdministrator();
             List<SettingsTemplate> settingsTemplates = administrator.getSettingsTemplates();
             getHttpSession().setAttribute(SESSION_SETTINGS_TEMPLATES, settingsTemplates);
             Project project = administrator.getProject(projectCode);
-            SettingsInfo selectedConfigInfo = administrator.configuration(oldName, getEnvName(), project);
+            SettingsInfo selectedConfigInfo = administrator.configuration(oldName, getEnvName(), project);*/
 
-        	if (debugEnabled) {
+        	/*if (debugEnabled) {
         		S_LOGGER.debug("Configurations.edit() old name" + oldName);
-        	}
+        	}*/
 
-        	List<Environment> environments = administrator.getEnvironments(project);
+        /*	List<Environment> environments = administrator.getEnvironments(project);
             getHttpRequest().setAttribute(REQ_ENVIRONMENTS, environments);
             getHttpRequest().setAttribute(SESSION_OLD_NAME, oldName);
             getHttpRequest().setAttribute(REQ_CONFIG_INFO, selectedConfigInfo);
             getHttpRequest().setAttribute(REQ_FROM_PAGE, FROM_PAGE_EDIT);
             getHttpRequest().setAttribute(REQ_PROJECT, project);
             getHttpSession().removeAttribute(ERROR_SETTINGS);
-            getHttpRequest().setAttribute("currentEnv", envName);
-        } catch (Exception e) {
-        	if (debugEnabled) {
-               S_LOGGER.error("Entered into catch block of Configurations.edit()" + FrameworkUtil.getStackTraceAsString(e));
-    		}
-        	new LogErrorReport(e, "Configurations edit");
-        }
+            getHttpRequest().setAttribute("currentEnv", envName);*/
+        } catch (PhrescoException e) {
+        	return showErrorPopup(e,  "");
+        } catch (ConfigurationException e) {
+        	return showErrorPopup(new PhrescoException(e),"");
+		}
 
         getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
         return APP_CONFIG_EDIT;
@@ -795,13 +846,14 @@ public class Configurations extends FrameworkBaseAction {
 			S_LOGGER.debug("Entering Method  Settings.settingsType()");
 		}
 		try {
-		    
+			ApplicationInfo appInfo = getApplicationInfo();
 		    List<PropertyTemplate> properties = getSettingTemplate().getProperties();
 //		    for (PropertyTemplate propertyTemplate : properties) {
 //		        String capitalizeKey = WordUtils.capitalize(propertyTemplate.getKey());
 //		        setDynamicParameter(capitalizeKey);
 //            }
 		    setReqAttribute(REQ_PROPERTIES, properties);
+		    setReqAttribute(REQ_APPINFO, appInfo);
 		    
 			/*String projectCode = (String)getHttpRequest().getParameter(REQ_PROJECT_CODE);
 			String oldName = (String)getHttpRequest().getParameter(REQ_OLD_NAME);
@@ -830,11 +882,8 @@ public class Configurations extends FrameworkBaseAction {
             getHttpRequest().setAttribute(SESSION_OLD_NAME, oldName);
             getHttpRequest().setAttribute(REQ_CONFIG_INFO, selectedConfigInfo);
             getHttpRequest().setAttribute(REQ_FROM_PAGE, FROM_PAGE_EDIT);*/
-		} catch (Exception e) {
-        	if (debugEnabled) {
-               S_LOGGER.error("Entered into catch block of Configurations.configurationsType()" + FrameworkUtil.getStackTraceAsString(e));
-    		}
-        	new LogErrorReport(e, "Configurations type");
+		} catch (PhrescoException e) {
+        	return showErrorPopup(e,  getText(EXCEPTION_CONFIGURATION_SHOW_PROPERTIES));
 		}
 		return SETTINGS_TYPE;
 	}
@@ -858,7 +907,8 @@ public class Configurations extends FrameworkBaseAction {
     	S_LOGGER.debug("Entering Method  Configurations.setAsDefault()");
     	S_LOGGER.debug("SetAsdefault" + setAsDefaultEnv);
 		try {
-    		ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
+			getConfigManager().addEnvironments(environments);
+    		/*ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
     		Project project = administrator.getProject(projectCode);
     		
     		if (StringUtils.isEmpty(setAsDefaultEnv)) {
@@ -866,6 +916,7 @@ public class Configurations extends FrameworkBaseAction {
     			S_LOGGER.debug("Env value is empty");
     		}
     		
+    		//List<Environment> enviroments = getAllEnvironments();
     		List<Environment> enviroments = administrator.getEnvironments(project);
     		boolean envAvailable = false;
     		for (Environment environment : enviroments) {
@@ -880,7 +931,7 @@ public class Configurations extends FrameworkBaseAction {
     			return SUCCESS;
     		}
 	    	administrator.setAsDefaultEnv(setAsDefaultEnv, project);
-	    	setEnvError(getText(ENV_SET_AS_DEFAULT_SUCCESS, Collections.singletonList(setAsDefaultEnv)));
+	    	setEnvError(getText(ENV_SET_AS_DEFAULT_SUCCESS, Collections.singletonList(setAsDefaultEnv)));*/
 	    	// set flag value to indicate , successfully env set as default
 	    	flag = true;
 	    	S_LOGGER.debug("successfully updated the config xml");
@@ -1209,11 +1260,37 @@ public class Configurations extends FrameworkBaseAction {
 		this.flag = flag;
 	}
 	
+	public String getConfigNameError() {
+		return configNameError;
+	}
+	
+	public void setConfigNameError(String configNameError) {
+		this.configNameError = configNameError;
+	}
+	
+	public String getConfigEnvError() {
+		return configEnvError;
+	}
 
+	public void setConfigEnvError(String configEnvError) {
+		this.configEnvError = configEnvError;
+	}
+	
+	public String getConfigTypeError() {
+		return configTypeError;
+	}
 
+	public void setConfigTypeError(String configTypeError) {
+		this.configTypeError = configTypeError;
+	}
+
+	 public boolean isErrorFound() {
+		return errorFound;
+	}
 	
-	
-	
+	public void setErrorFound(boolean errorFound) {
+		this.errorFound = errorFound;
+	}
 	
     
     public List<Environment> getEnvironments() {
@@ -1247,5 +1324,28 @@ public class Configurations extends FrameworkBaseAction {
     public void setConfigId(String configId) {
         this.configId = configId;
     }
+    
+    public String getCurrentEnvName() {
+		return currentEnvName;
+	}
 
+	public void setCurrentEnvName(String currentEnvName) {
+		this.currentEnvName = currentEnvName;
+	}
+
+	public String getCurrentConfigType() {
+		return currentConfigType;
+	}
+
+	public void setCurrentConfigType(String currentConfigType) {
+		this.currentConfigType = currentConfigType;
+	}
+
+	public String getCurrentConfigName() {
+		return currentConfigName;
+	}
+
+	public void setCurrentConfigName(String currentConfigName) {
+		this.currentConfigName = currentConfigName;
+	}
 }

@@ -22,6 +22,7 @@ package com.photon.phresco.framework.actions.applications;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -34,6 +35,8 @@ import org.apache.log4j.Logger;
 import com.opensymphony.xwork2.Action;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
+import com.photon.phresco.commons.model.ArtifactGroup.Type;
+import com.photon.phresco.commons.model.ArtifactInfo;
 import com.photon.phresco.commons.model.Element;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.Technology;
@@ -54,14 +57,8 @@ public class Features extends FrameworkBaseAction {
 	private String projectCode = null;
 	private String externalCode = null;
 	private String fromPage = null;
-	private String name = null;
-	private String code = null;
-	private String groupId = null;
-	private String projectVersion = null;
-	private String artifactId = null;
-	private String description = null;
+	
 	private String application = null;
-	private String technology = null;
 	private List<String> techVersion = null;
 	private String nameError = null;
 	private String moduleId = null;
@@ -81,13 +78,64 @@ public class Features extends FrameworkBaseAction {
 	private String fromTab = null;
 	private List<String> defaultModules =  null;
 	
+	private String name = "";
+	private String code = "";
+	private String description = "";
+	private String technology = null;
+	private String applicationVersion = "";
+	private String appId = "";
+	private List<String> serverVersion = null;
+    private List<String> databaseVersion = null;
+    private List<String> webservice = null;
+	private String technologyId = "";
+	private String type = "";
 	private String customerId = "";
+	private String pilotProject = "";
 	
-	public String listFeatures() {
-	    return APP_FEATURES_ONE_CLM;
+	public String features() {
+		try {
+			ProjectInfo projectInfo = (ProjectInfo)getSessionAttribute(getAppId() + SESSION_APPINFO);
+			ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
+			if (appInfo == null) {
+				appInfo = new ApplicationInfo();
+			}
+			projectInfo.setAppInfos(Collections.singletonList(createApplicationInfo(appInfo)));
+			setSessionAttribute(getAppId() + SESSION_APPINFO, projectInfo);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    	
+	    return APP_FEATURES;
+	}
+	
+	private ApplicationInfo createApplicationInfo(ApplicationInfo appInfo) {
+    	appInfo.setId(getAppId());
+    	appInfo.setName(getName());
+    	appInfo.setCode(getCode());
+    	appInfo.setDescription(getDescription());
+    	appInfo.setVersion(getApplicationVersion());
+    	TechnologyInfo techInfo = new TechnologyInfo();
+    	techInfo.setId(getTechnology());
+		appInfo.setTechInfo(techInfo );
+		Element element = new Element();
+		element.setId(getPilotProject());
+		appInfo.setPilotInfo(element);
+    	appInfo.setSelectedServers(getServerVersion());
+    	appInfo.setSelectedDatabases(getDatabaseVersion());
+    	appInfo.setSelectedWebservices(getWebservice());
+    	
+    	return appInfo;
 	}
 
-	public String features() {
+	public String listFeatures() throws PhrescoException {
+		List<ArtifactGroup> moduleGroups = getServiceManager().getFeatures(getCustomerId(), getTechnologyId(), getType());
+		setReqAttribute(REQ_FEATURES_MOD_GRP, moduleGroups);
+		setReqAttribute(REQ_FEATURES_TYPE, getType());
+		setReqAttribute(REQ_APP_ID, getAppId());
+		
+		return APP_FEATURES_LIST;
+	}
+	/*public String features1() {
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method  Features.features()");
 		}
@@ -117,9 +165,9 @@ public class Features extends FrameworkBaseAction {
 //				if (externalCode != null) {
 //					appInfo.setProjectCode(externalCode);
 //				}
-				if (StringUtils.isNotEmpty(projectVersion)) {
+//				if (StringUtils.isNotEmpty(projectVersion)) {
 //					appInfo.setVersion(projectVersion);
-				}
+//				}
 				//TODO:Need to Handle
 //				if (groupId != null) {
 //					appInfo.setGroupId(groupId);
@@ -243,7 +291,7 @@ public class Features extends FrameworkBaseAction {
 		Technology technology = new Technology();
 
 		//TODO:Need to handle
-		/*technology.setId(selectedTechnology.getId());
+		technology.setId(selectedTechnology.getId());
 		technology.setName(selectedTechnology.getName());
 		if (StringUtils.isEmpty(fromPage)) {
 			technology.setVersions(techVersion);
@@ -265,7 +313,7 @@ public class Features extends FrameworkBaseAction {
 
 		List<Server> servers = selectedTechnology.getServers();
 		List<Database> databases = selectedTechnology.getDatabases();
-		List<WebService> webservices = selectedTechnology.getWebservices();*/
+		List<WebService> webservices = selectedTechnology.getWebservices();
 		
 		String selectedServers = getHttpRequest().getParameter("selectedServers");
 		String selectedDatabases = getHttpRequest().getParameter("selectedDatabases");
@@ -339,7 +387,7 @@ public class Features extends FrameworkBaseAction {
 			S_LOGGER.debug("Entering Method  Features.setFeaturesInRequest()");
 		}
 		//TODO:Need to handle
-		/*Technology selectedTechnology = appInfo.getTechnology();
+		Technology selectedTechnology = appInfo.getTechnology();
 		ApplicationType applicationType = administrator
 				.getApplicationType(appInfo.getApplication());
 		Technology techonology = applicationType
@@ -377,7 +425,7 @@ public class Features extends FrameworkBaseAction {
 					ApplicationsUtil.getMapFromModuleGroups(selectedTechnology
 							.getJsLibraries()));
 			// pilotJsLibs.putAll(ApplicationsUtil.getMapFromModuleGroups(selectedTechnology.getJsLibraries()));
-		}*/
+		}
 
 		getHttpRequest().setAttribute(REQ_FROM_PAGE, fromPage);
 		getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
@@ -399,7 +447,7 @@ public class Features extends FrameworkBaseAction {
 			defaultModules = new ArrayList<String>();
 			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
 			//TODO:Need to handle
-			/*Technology technology = administrator.getTechnology(techId);
+			Technology technology = administrator.getTechnology(techId);
 			List<ModuleGroup> coreModules = (List<ModuleGroup>) administrator.getCoreModules(technology);
 			if (CollectionUtils.isNotEmpty(coreModules) && coreModules != null) {
 				for (ModuleGroup coreModule : coreModules) {
@@ -424,7 +472,7 @@ public class Features extends FrameworkBaseAction {
 						defaultModules.add(jsLibrary.getId());
 					}
 				}
-			}*/
+			}
 		} catch (Exception e) {
 			if (debugEnabled) {
 				S_LOGGER.error("Entered into catch block of fetchDefaultModules()"
@@ -439,7 +487,7 @@ public class Features extends FrameworkBaseAction {
 	public String checkDependency() {
 		try {
 		  //TODO:Need to handle
-			/*List<ModuleGroup> allModules = getAllModule();
+			List<ModuleGroup> allModules = getAllModule();
 
 			for (ModuleGroup module : allModules) {
 				if (module.getId().equals(moduleId)) {
@@ -458,7 +506,7 @@ public class Features extends FrameworkBaseAction {
 								.getDependentVersions();
 					}
 				}
-			}*/
+			}
 		} catch (Exception e) {
 			if (debugEnabled) {
 				S_LOGGER.error("Entered into catch block of Features.checkDependency()"
@@ -486,7 +534,7 @@ public class Features extends FrameworkBaseAction {
 //		}
 
 		return null;
-	}
+	}*/
 
 	public Collection<String> getDependentIds() {
 		return dependentIds;
@@ -672,36 +720,12 @@ public class Features extends FrameworkBaseAction {
 		this.configDbNames = configDbNames;
 	}
 
-	public String getGroupId() {
-		return groupId;
-	}
-
-	public void setGroupId(String groupId) {
-		this.groupId = groupId;
-	}
-
-	public String getArtifactId() {
-		return artifactId;
-	}
-
-	public void setArtifactId(String artifactId) {
-		this.artifactId = artifactId;
-	}
-
 	public String getExternalCode() {
 		return externalCode;
 	}
 
 	public void setExternalCode(String externalCode) {
 		this.externalCode = externalCode;
-	}
-	
-	public String getProjectVersion() {
-		return projectVersion;
-	}
-
-	public void setProjectVersion(String projectVersion) {
-		this.projectVersion = projectVersion;
 	}
 	
 	public String getFromTab() {
@@ -727,4 +751,68 @@ public class Features extends FrameworkBaseAction {
     public void setCustomerId(String customerId) {
         this.customerId = customerId;
     }
+    
+    public List<String> getServerVersion() {
+		return serverVersion;
+	}
+    
+	public void setServerVersion(List<String> serverVersion) {
+		this.serverVersion = serverVersion;
+	}
+	
+	public List<String> getDatabaseVersion() {
+		return databaseVersion;
+	}
+	
+	public void setDatabaseVersion(List<String> databaseVersion) {
+		this.databaseVersion = databaseVersion;
+	}
+	
+	public List<String> getWebservice() {
+		return webservice;
+	}
+	
+	public void setWebservice(List<String> webservice) {
+		this.webservice = webservice;
+	}
+	
+	public String getApplicationVersion() {
+		return applicationVersion;
+	}
+
+	public void setApplicationVersion(String applicationVersion) {
+		this.applicationVersion = applicationVersion;
+	}
+
+	public String getTechnologyId() {
+		return technologyId;
+	}
+
+	public void setTechnologyId(String technologyId) {
+		this.technologyId = technologyId;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public String getAppId() {
+		return appId;
+	}
+
+	public void setAppId(String appId) {
+		this.appId = appId;
+	}
+
+	public String getPilotProject() {
+		return pilotProject;
+	}
+
+	public void setPilotProject(String pilotProject) {
+		this.pilotProject = pilotProject;
+	}
 }

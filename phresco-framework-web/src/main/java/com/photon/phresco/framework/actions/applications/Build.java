@@ -30,7 +30,6 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -59,7 +58,10 @@ import org.xml.sax.SAXException;
 
 import com.google.gson.Gson;
 import com.photon.phresco.commons.model.ApplicationInfo;
+import com.photon.phresco.commons.model.BuildInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
+import com.photon.phresco.configuration.ConfigurationInfo;
+import com.photon.phresco.exception.ConfigurationException;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.DynamicParameterUtil;
@@ -71,7 +73,6 @@ import com.photon.phresco.framework.api.ProjectRuntimeManager;
 import com.photon.phresco.framework.commons.DiagnoseUtil;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.commons.LogErrorReport;
-import com.photon.phresco.framework.model.BuildInfo;
 import com.photon.phresco.framework.model.PluginProperties;
 import com.photon.phresco.framework.model.SettingsInfo;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
@@ -81,6 +82,7 @@ import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.TechnologyTypes;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.android.AndroidProfile;
+import com.phresco.pom.exception.PhrescoPomException;
 import com.phresco.pom.model.Plugin;
 import com.phresco.pom.model.PluginExecution;
 import com.phresco.pom.model.PluginExecution.Configuration;
@@ -110,7 +112,7 @@ public class Build extends DynamicParameterUtil {
 	private String target = "";
 	private String mode = null;
 	private String androidVersion = null;
-	private String environments = null;
+	private String environments = "";
 	private String serialNumber = null;
 	private String proguard = null;
 	private String projectModule = null;
@@ -166,106 +168,60 @@ public class Build extends DynamicParameterUtil {
 	private String dependantValue = "";
 	private String goal = "";
 	
-	public String view() {
+	public String view() throws PhrescoException {
 		if (debugEnabled)
 			S_LOGGER.debug("Entering Method  Build.view()");
 		try {
 		   	ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 		   	ApplicationInfo applicationInfo = applicationManager.getApplicationInfo(getCustomerId(), getProjectId(), getAppId());
-//			List<BuildInfo> builds = administrator.getBuildInfos(project);
-//			getHttpRequest().setAttribute(REQ_SELECTED_APP_TYPE, project.getApplicationInfo().getTechInfo().getVersion());
-//			getHttpRequest().setAttribute(REQ_BUILD, builds);
-			getHttpRequest().setAttribute(REQ_APPINFO, applicationInfo);
-			//need to change
-			/*String techId = project.getApplicationInfo().getTechInfo().getVersion();
+		   	setReqAttribute(REQ_APPINFO, applicationInfo);
 			String readLogFile = "";
 			boolean tempConnectionAlive = false;
 			int serverPort = 0;
-			if (TechnologyTypes.NODE_JS_WEBSERVICE.equals(techId)) {
-				String serverProtocol = (String) getHttpSession().getAttribute(
-						projectCode + SESSION_NODEJS_SERVER_PROTOCOL_VALUE);
-				String serverHost = (String) getHttpSession().getAttribute(
-						projectCode + SESSION_NODEJS_SERVER_HOST_VALUE);
-				String serverPortStr = (String) getHttpSession().getAttribute(
-						projectCode + SESSION_NODEJS_SERVER_PORT_VALUE);
-				if (serverProtocol == null && serverHost == null && serverPortStr == null) {
-					String runAgainstInfoEnv = readRunAgainstInfo(projectCode);
-					if (runAgainstInfoEnv != null && !runAgainstInfoEnv.isEmpty()) {
-						List<SettingsInfo> settingsInfos = administrator.getSettingsInfos(
-								Constants.SETTINGS_TEMPLATE_SERVER, projectCode, runAgainstInfoEnv);
-						if (settingsInfos != null && CollectionUtils.isNotEmpty(settingsInfos)) {
-							for (SettingsInfo settingsInfo : settingsInfos) {
-								serverProtocol = settingsInfo.getPropertyInfo(Constants.SERVER_PROTOCOL).getValue();
-								serverHost = settingsInfo.getPropertyInfo(Constants.SERVER_HOST).getValue();
-								serverPortStr = settingsInfo.getPropertyInfo(Constants.SERVER_PORT).getValue();
-								readLogFile = "";
-
-							}
+			String serverProtocol = (String) getSessionAttribute(getAppId() + SESSION_SERVER_PROTOCOL_VALUE);
+			String serverHost = (String) getSessionAttribute(getAppId() + SESSION_SERVER_HOST_VALUE);
+			String serverPortStr = (String) getSessionAttribute(getAppId() + SESSION_SERVER_PORT_VALUE);
+			if (StringUtils.isEmpty(serverProtocol) && StringUtils.isEmpty(serverHost) && StringUtils.isEmpty(serverPortStr)) {
+				String runAgainstInfoEnv = readRunAgainstInfo();
+				if (StringUtils.isNotEmpty(runAgainstInfoEnv)) {
+					com.photon.phresco.api.ConfigManager configManager = PhrescoFrameworkFactory
+							.getConfigManager(new File(Utility.getProjectHome() + getApplicationInfo().getAppDirName() + File.separator
+									+ Constants.DOT_PHRESCO_FOLDER + File.separator + Constants.CONFIGURATION_INFO_FILE));
+					List<com.photon.phresco.configuration.Configuration> configurations = configManager
+							.getConfigurations(runAgainstInfoEnv, Constants.SETTINGS_TEMPLATE_SERVER);
+					if (CollectionUtils.isNotEmpty(configurations)) {
+						for (com.photon.phresco.configuration.Configuration serverConfiguration : configurations) {
+							serverProtocol = serverConfiguration.getProperties().getProperty(Constants.SERVER_PROTOCOL);
+							serverHost = serverConfiguration.getProperties().getProperty(Constants.SERVER_HOST);
+							serverPortStr = serverConfiguration.getProperties().getProperty(Constants.SERVER_PORT);
+							readLogFile = "";
 						}
 					}
 				}
-				if (serverPortStr != null) {
+		 }
+				if (StringUtils.isNotEmpty(serverPortStr)) {
 					serverPort = Integer.parseInt(serverPortStr);
 				}
-				if (serverProtocol != null && serverHost != null && serverPort != 0) {
+				
+				if (StringUtils.isNotEmpty(serverProtocol) && StringUtils.isNotEmpty(serverHost) && serverPort != 0) {
 					tempConnectionAlive = DiagnoseUtil.isConnectionAlive(serverProtocol, serverHost, serverPort);
-					getHttpSession().setAttribute(projectCode + SESSION_NODEJS_SERVER_STATUS, tempConnectionAlive);
+					setSessionAttribute(getAppId() + SESSION_SERVER_STATUS, tempConnectionAlive);
 				}
 				if (tempConnectionAlive) {
-					readLogFile = readLogFile(project, READ_LOG_VIEW);
+					readLogFile = readRunAgsSrcLogFile();
 				} else {
-					deleteNodejsLogFile(projectCode);
+					deleteLogFile();
 					readLogFile = "";
 
 				}
-			}
-			if (TechnologyTypes.HTML5_MOBILE_WIDGET.equals(techId) || TechnologyTypes.HTML5_WIDGET.equals(techId)
-					|| TechnologyTypes.JAVA_WEBSERVICE.equals(techId)) {
-				String serverProtocol = (String) getHttpSession().getAttribute(
-						projectCode + SESSION_JAVA_SERVER_PROTOCOL_VALUE);
-				String serverHost = (String) getHttpSession()
-						.getAttribute(projectCode + SESSION_JAVA_SERVER_HOST_VALUE);
-				String serverPortStr = (String) getHttpSession().getAttribute(
-						projectCode + SESSION_JAVA_SERVER_PORT_VALUE);
-				if (serverProtocol == null && serverHost == null && serverPortStr == null) {
-					String runAgainstInfoEnv = readRunAgainstInfo(projectCode);
-					if (runAgainstInfoEnv != null && !runAgainstInfoEnv.isEmpty()) {
-						List<SettingsInfo> settingsInfos = administrator.getSettingsInfos(
-								Constants.SETTINGS_TEMPLATE_SERVER, projectCode, runAgainstInfoEnv);
-						if (settingsInfos != null && CollectionUtils.isNotEmpty(settingsInfos)) {
-							for (SettingsInfo settingsInfo : settingsInfos) {
-								serverProtocol = settingsInfo.getPropertyInfo(Constants.SERVER_PROTOCOL).getValue();
-								serverHost = settingsInfo.getPropertyInfo(Constants.SERVER_HOST).getValue();
-								serverPortStr = settingsInfo.getPropertyInfo(Constants.SERVER_PORT).getValue();
-								readLogFile = "";
+				setReqAttribute(REQ_SERVER_LOG, readLogFile);
 
-							}
-						}
-					}
-				}
-				if (serverPortStr != null) {
-					serverPort = Integer.parseInt(serverPortStr);
-				}
-				if (serverProtocol != null && serverHost != null && serverPort != 0) {
-					boolean connectionAlive = DiagnoseUtil.isConnectionAlive(serverProtocol, serverHost, serverPort);
-					if (connectionAlive) {
-						readLogFile = javaReadLogFile();
-					} else {
-						readLogFile = "";
-					}
-					getHttpSession().setAttribute(projectCode + SESSION_JAVA_SERVER_STATUS, connectionAlive);
-				}
-			}*/
-//			getHttpRequest().setAttribute(REQ_SERVER_LOG, readLogFile);
-
-		} catch (Exception e) {
+		} catch (ConfigurationException e) {
 			if (debugEnabled) {
 				S_LOGGER.error("Entered into catch block of Build.view()" + FrameworkUtil.getStackTraceAsString(e));
 			}
-			new LogErrorReport(e, "Build view");
+			return showErrorPopup(new PhrescoException(e), getText("excep.hdr.proj.view"));
 		}
-
-		getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
 		return APP_BUILD;
 	}
 
@@ -277,15 +233,34 @@ public class Build extends DynamicParameterUtil {
 			S_LOGGER.debug("Entering Method  Build.showGenerateBuildPopup()");
 		}
 		try {
-			Map<String, Object> buildParamMap = new HashMap<String, Object>();
-			ApplicationInfo applicationInfo = getApplicationInfo();
-			buildParamMap.put(REQ_APP_INFO, applicationInfo);
-			List<Parameter> parameters = setDynamicParameters(buildParamMap, PHASE_PACKAGE);
-			
-			setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);	
-			setReqAttribute(REQ_APPINFO, applicationInfo);
-			setReqAttribute(REQ_GOAL, PHASE_PACKAGE);
-			setReqAttribute(REQ_FROM, getFrom());
+		    ApplicationInfo appInfo = getApplicationInfo();
+            removeSessionAttribute(appInfo.getId() + PHASE_PACKAGE + REQ_SESSION_DYNAMIC_PARAM_MAP);
+            removeSessionAttribute(appInfo.getId() + PHASE_PACKAGE + "controlsTobeShowed");
+            setProjModulesInReq();
+            Map<String, Object> watcherMap = new HashMap<String, Object>();
+            watcherMap.put(REQ_APP_INFO, appInfo);
+            List<Parameter> parameters = setDynamicParametersInReq(appInfo, PHASE_PACKAGE);
+            List<String> controlsTobeShowed = new ArrayList<String>();
+            setPossibleValuesInReq(parameters, watcherMap, controlsTobeShowed);
+            setSessionAttribute(appInfo.getId() + PHASE_PACKAGE + REQ_SESSION_DYNAMIC_PARAM_MAP, watcherMap);
+            setSessionAttribute(appInfo.getId() + PHASE_PACKAGE + "controlsTobeShowed", controlsTobeShowed);
+            setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
+            setReqAttribute(REQ_GOAL, PHASE_PACKAGE); 
+		    
+		    
+//			Map<String, Object> buildParamMap = new HashMap<String, Object>();
+//			ApplicationInfo appInfo = getApplicationInfo();
+//			buildParamMap.put(REQ_APP_INFO, appInfo);
+//			buildParamMap.put(REQ_CUSTOMER_ID, getCustomerId());
+//			List<Parameter> parameters = setDynamicParametersInReq(appInfo, PHASE_PACKAGE);
+//			setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
+//			List<String> controlsTobeShowed = new ArrayList<String>();
+//            setPossibleValuesInReq(parameters, buildParamMap, controlsTobeShowed);
+//            setSessionAttribute(appInfo.getId() + PHASE_PACKAGE + REQ_SESSION_DYNAMIC_PARAM_MAP, buildParamMap);
+//            setSessionAttribute(appInfo.getId() + PHASE_PACKAGE + "controlsTobeShowed", controlsTobeShowed);
+//			setReqAttribute(REQ_APPINFO, appInfo);
+//			setReqAttribute(REQ_GOAL, PHASE_PACKAGE);
+//			setReqAttribute(REQ_FROM, getFrom());
 		} catch (PhrescoException e) {
 			return showErrorPopup(e, getText(EXCEPTION_BUILD_POPUP));
 		} 
@@ -293,8 +268,37 @@ public class Build extends DynamicParameterUtil {
 		return APP_GENERATE_BUILD;
 	}
 	
+	private void setProjModulesInReq() throws PhrescoException {
+        List<String> projectModules = getProjectModules(getApplicationInfo().getAppDirName());
+        setReqAttribute(REQ_PROJECT_MODULES, projectModules);
+    }
+	
 	/**
-	 *  To show deploy popup with loaded dynamic parameters 
+	 * To show Run Against Source  popup with loaded dynamic parameters 
+	 */
+	public String showrunAgainstSourcePopup() {
+		if (debugEnabled) {
+			S_LOGGER.debug("Entering Method  Build.showrunAgainstSourcePopup()");
+		}
+		try {
+			Map<String, Object> runAgainstSrcMap = new HashMap<String, Object>();
+			ApplicationInfo applicationInfo = getApplicationInfo();
+			runAgainstSrcMap.put(REQ_APP_INFO, applicationInfo);
+			List<Parameter> parameters = setDynamicParametersInReq(applicationInfo, PHASE_RUNGAINST_SRC_START);
+//            setPossibleValuesInReq(parameters, runAgainstSrcMap);
+			
+			setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
+			setReqAttribute(REQ_APPINFO, applicationInfo);
+			setReqAttribute(REQ_FROM, getFrom());
+		} catch (PhrescoException e) {
+			return showErrorPopup(e, getText("excep.hdr.runagainstsource.popup"));
+		}
+
+		return APP_GENERATE_BUILD;
+	}
+
+	/*
+	 * To show deploy popup with loaded dynamic parameters
 	 */
 	public String showDeployPopup() throws PhrescoException {
 		if (debugEnabled) {
@@ -549,7 +553,7 @@ public class Build extends DynamicParameterUtil {
 
 	}
 
-	public String delete() {
+	public String delete() throws PhrescoException {
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method  Build.delete()");
 		}
@@ -584,7 +588,7 @@ public class Build extends DynamicParameterUtil {
 		return view();
 	}
 
-	public String download() {
+	public String download() throws PhrescoException {
 
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method Build.download()");
@@ -632,7 +636,7 @@ public class Build extends DynamicParameterUtil {
 		return view();
 	}
 
-	public String downloadIpa() {
+	public String downloadIpa() throws PhrescoException {
 
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method Build.downloadIPA()");
@@ -681,308 +685,234 @@ public class Build extends DynamicParameterUtil {
 		}
 		return view();
 	}
-
-	public String NodeJSRunAgainstSource() throws PhrescoException {
-		if (debugEnabled)
-			S_LOGGER.debug("Entering Method Build.runAgainstSource()");
-
-		String serverHost = null;
-		String serverProtocol = null;
-		int serverPort = 0;
-
-		try {
-			if (StringUtils.isNotEmpty(importSql)) {
-				configureSqlExecution();
-			}
-			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-			Project project = administrator.getProject(projectCode);
-			String projectCode = project.getApplicationInfo().getCode();
-			String importSQL = (String) getHttpRequest().getParameter(IMPORT_SQL);
-			getHttpSession().setAttribute(projectCode + SESSION_NODEJS_IMPORTSQL_VALUE, importSQL);
-			ProjectRuntimeManager runtimeManager = PhrescoFrameworkFactory.getProjectRuntimeManager();
-			List<SettingsInfo> serverDetails = administrator.getSettingsInfos(Constants.SETTINGS_TEMPLATE_SERVER,
-					projectCode, environments);
-			for (SettingsInfo settingsInfo : serverDetails) {
-				serverHost = settingsInfo.getPropertyInfo(Constants.SERVER_HOST).getValue();
-				serverProtocol = settingsInfo.getPropertyInfo(Constants.SERVER_PROTOCOL).getValue();
-				serverPort = Integer.parseInt(settingsInfo.getPropertyInfo(Constants.SERVER_PORT).getValue());
-			}
-			boolean tempConnectionAlive = DiagnoseUtil.isConnectionAlive(serverProtocol, serverHost, serverPort);
-			if (!tempConnectionAlive) {
-				deleteNodejsLogFile(projectCode);
-			}
-			Map<String, String> valueMap = new HashMap<String, String>(2);
-			valueMap.put(ENVIRONMENT_NAME, environments);
-			valueMap.put(IMPORT_SQL, importSQL);
-//			ActionType nodeStart = ActionType.START_SERVER;
-//			BufferedReader reader = runtimeManager.performAction(project, nodeStart, valueMap, null);
-			String line;
-//			line = reader.readLine();
-//			while (!line.startsWith("[INFO] server started") && !line.startsWith("[INFO] server startup failed")) {
-//				line = reader.readLine();
-//			}
-			waitForTime(2);
-			readLogFile(project, "");
-
-			getHttpSession().setAttribute(projectCode + SESSION_NODEJS_SERVER_PROTOCOL_VALUE, serverProtocol);
-			getHttpSession().setAttribute(projectCode + SESSION_NODEJS_SERVER_HOST_VALUE, serverHost);
-			getHttpSession().setAttribute(projectCode + SESSION_NODEJS_SERVER_PORT_VALUE,
-					new Integer(serverPort).toString());
-			getHttpSession().setAttribute(projectCode + SESSION_NODEJS_SERVER_STATUS, tempConnectionAlive);
-			getHttpSession().setAttribute(projectCode + SESSION_ENV_NAME, environments);
-			getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
-		} catch (Exception e) {
-			if (debugEnabled) {
-				S_LOGGER.error("Entered into catch block of Build.runAgainstSource()"
-						+ FrameworkUtil.getStackTraceAsString(e));
-			}
-			new LogErrorReport(new PhrescoException("Server Startup Failed"), "NodeJS run against source");
-		}
-		return APP_ENVIRONMENT_READER;
-	}
-
-	public String restartNodeJSServer() {
-		if (debugEnabled)
-			S_LOGGER.debug("Entering Method Build.restartNodeJSServer()");
-		stopNodeJSServer();
-		startNodeJSServer();
-		return APP_ENVIRONMENT_READER;
-
-	}
-
-	public String startNodeJSServer() {
-		if (debugEnabled)
-			S_LOGGER.debug("Entering Method Build.startNodeJSServer()");
-
-		try {
-			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-			Project project = administrator.getProject(projectCode);
-			String importSql = (String) getHttpSession().getAttribute(projectCode + SESSION_NODEJS_IMPORTSQL_VALUE);
-			environments = (String) getHttpSession()
-					.getAttribute(project.getApplicationInfo().getCode() + SESSION_ENV_NAME);
-			if (debugEnabled) {
-				S_LOGGER.debug("startNodeJSServer Environment name " + environments);
-			}
-			ProjectRuntimeManager runtimeManager = PhrescoFrameworkFactory.getProjectRuntimeManager();
-			Map<String, String> valueMap = new HashMap<String, String>(2);
-			valueMap.put(ENVIRONMENT_NAME, environments);
-			valueMap.put(IMPORT_SQL, importSql);
-//			ActionType nodeStart = ActionType.START_SERVER;
-//			BufferedReader reader = runtimeManager.performAction(project, nodeStart, valueMap, null);
-//			String line;
-//			line = reader.readLine();
-//			while (!line.startsWith("[INFO] server started") && !line.startsWith("[INFO] server startup failed")) {
-//				line = reader.readLine();
-//			}
-			readLogFile(project, "");
-		} catch (Exception e) {
-			if (debugEnabled) {
-				S_LOGGER.error("Entered into catch block of Build.startNodeJSServer()"
-						+ FrameworkUtil.getStackTraceAsString(e));
-			}
-			new LogErrorReport(e, "Start nodejs server");
-		}
-		getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
-		return APP_ENVIRONMENT_READER;
-	}
-
-	public String stopNodeJSServer() {
+	
+	/**
+	 * Run against source Execution For java , Nodejs and HTML technologies.
+	 *
+	 */
+	public String runAgainstSource() throws IOException {
 		if (debugEnabled) {
-			S_LOGGER.debug("Entering Method Build.stopNodeJSServer()");
+			S_LOGGER.debug("Entering Method Build.javaRunAgainstSource()");
 		}
+		
 		try {
-			StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-			builder.append(projectCode);
-			builder.append(File.separator);
-			builder.append(FOLDER_DOT_PHRESCO);
-			builder.append(File.separator);
-			builder.append(RUN_AGS_ENV_FILE);
-			File envFile = new File(builder.toString());
-			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-			Project project = administrator.getProject(projectCode);
-			ProjectRuntimeManager runtimeManager = PhrescoFrameworkFactory.getProjectRuntimeManager();
-//			ActionType nodeStop = ActionType.STOP_SERVER;
-//			BufferedReader reader = runtimeManager.performAction(project, nodeStop, null, null);
-//			String line;
-//			line = reader.readLine();
-//			while (!line.startsWith("[INFO] BUILD SUCCESS")) {
-//				line = reader.readLine();
-//			}
-			readLogFile(project, "");
-			if (envFile.exists()) {
-				envFile.delete();
+			BufferedReader compileReader = compileSource();
+			String line = compileReader.readLine();
+			while (StringUtils.isNotEmpty(line) && !line.startsWith("[INFO] BUILD FAILURE")) {
+				line = compileReader.readLine();
 			}
-			getHttpSession().removeAttribute(project.getApplicationInfo().getCode()	+ SESSION_NODEJS_SERVER_STATUS);
-			getHttpSession().removeAttribute(project.getApplicationInfo().getCode()	+ SESSION_NODEJS_IMPORTSQL_VALUE);
-			getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
-			getHttpRequest().setAttribute(REQ_PROJECT, project);
-		} catch (Exception e) {
+			BufferedReader reader = null;
+			if (StringUtils.isNotEmpty(line) && line.startsWith("[INFO] BUILD FAILURE")) {
+				reader = new BufferedReader(new FileReader(getLogFilePath()));
+			} else {
+				reader = startServer();
+			}
+			setSessionAttribute(getAppId() + REQ_START, reader);
+			setReqAttribute(REQ_APP_ID, getAppId());
+			setReqAttribute(REQ_ACTION_TYPE, REQ_START);
+		} catch (PhrescoException e) {
 			if (debugEnabled) {
-				S_LOGGER.error("Entered into catch block of Build.stopNodeJSServer()"
-						+ FrameworkUtil.getStackTraceAsString(e));
+				S_LOGGER.error("Entered into catch block of Build.runAgainstSource()" + FrameworkUtil.getStackTraceAsString(e));
 			}
-			new LogErrorReport(e, "Stop nodejs server");
+			return showErrorPopup(e, getText(EXCEPTION_RUNAGNSRC_SERVER_START));
 		}
-		getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
+
+		return APP_ENVIRONMENT_READER;
+
+	}
+	
+	/**
+	 * Stops the server  For java , Nodejs and HTML technologies.
+	 */
+	public String stopServer() {
+		if (debugEnabled) {
+			S_LOGGER.debug("Entering Method Build.handleStopServer()");
+		}
+		
+		try {
+			setSessionAttribute(getAppId() + REQ_START, null);
+			BufferedReader reader = handleStopServer(false);
+			removeSessionAttribute(getAppId() + SESSION_SERVER_STATUS);
+			setSessionAttribute(getAppId() + REQ_STOP, reader);
+			setReqAttribute(REQ_APP_ID, getAppId());
+			setReqAttribute(REQ_ACTION_TYPE, REQ_STOP);
+		} catch (PhrescoException e) {
+			if (debugEnabled) {
+				S_LOGGER.error("Entered into catch block of Build.stopServer()" + FrameworkUtil.getStackTraceAsString(e));
+			}
+			return showErrorPopup(e, getText(EXCEPTION_RUNAGNSRC_SERVER_STOP));
+		}
+
 		return APP_ENVIRONMENT_READER;
 	}
 
-	// Second parameter is used to specify this method should return only string
-	// to view method
-	public String readLogFile(Project project, String fromNodejs) {
-		BufferedReader reader = null;
-		StringBuffer contents = new StringBuffer();
+	/**
+	 * Restarts the server For java , Nodejs and HTML technologies.
+	 *
+	 */
+	public String restartServer() throws IOException  {
+		if (debugEnabled) {
+			S_LOGGER.debug("Entering Method Build.restartServer()");
+		}
+		
 		try {
-			File file = new File(getLogFilePath());
-			// It executed when file not exist and view method called
-			if (!file.exists() && fromNodejs.equals(READ_LOG_VIEW)) {
-				return "";
+			handleStopServer(true);
+			BufferedReader compileReader = compileSource();
+			String line = compileReader.readLine();
+			while (line != null && !line.startsWith("[INFO] BUILD FAILURE")) {
+				line = compileReader.readLine();
 			}
-			// It executed when file exist and view method called
-			if (file.exists() && fromNodejs.equals(READ_LOG_VIEW)) {
-				reader = new BufferedReader(new FileReader(file));
-				String text = null;
+			BufferedReader reader = null;
+			if (line != null && line.startsWith("[INFO] BUILD FAILURE")) {
+				reader = new BufferedReader(new FileReader(getLogFilePath()));
+			} else {
+				reader = startServer();
+			}
+			setSessionAttribute(getAppId() + REQ_START, reader);
+			setReqAttribute(REQ_APP_ID, getAppId());
+			setReqAttribute(REQ_ACTION_TYPE, REQ_START);
+		} catch (PhrescoException e) {
+			return showErrorPopup(e, getText(EXCEPTION_RUNAGNSRC_SERVER_RESTART));
+		}
+
+		return APP_ENVIRONMENT_READER;
+	}
+
+	private BufferedReader startServer() throws PhrescoException {
+		if (debugEnabled) {
+			S_LOGGER.debug("Entering Method Build.startServer()");
+		}
+		
+		BufferedReader reader = null;
+		try {
+			ApplicationInfo applicationInfo = getApplicationInfo();
+			com.photon.phresco.api.ConfigManager configManager = PhrescoFrameworkFactory
+					.getConfigManager(new File(Utility.getProjectHome() + getApplicationInfo().getAppDirName()
+							+ File.separator + Constants.DOT_PHRESCO_FOLDER + File.separator
+							+ Constants.CONFIGURATION_INFO_FILE));
+			List<com.photon.phresco.configuration.Configuration> configurations = configManager.getConfigurations(
+					"Production", Constants.SETTINGS_TEMPLATE_SERVER);
+			String serverHost = "";
+			String serverProtocol = "";
+			int serverPort = 0;
+			if (CollectionUtils.isNotEmpty(configurations)) {
+				for (com.photon.phresco.configuration.Configuration serverConfiguration : configurations) {
+					serverHost = serverConfiguration.getProperties().getProperty(Constants.SERVER_HOST);
+					serverProtocol = serverConfiguration.getProperties().getProperty(Constants.SERVER_PROTOCOL);
+					serverPort = Integer.parseInt(serverConfiguration.getProperties()
+							.getProperty(Constants.SERVER_PORT));
+				}
+			}
+			// TODO: delete the server.log and create empty server.log file
+			deleteLogFile();
+			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+			ProjectInfo projectInfo = getProjectInfo();
+			String workingDirectory = getAppDirectoryPath(applicationInfo);
+			reader = applicationManager.performAction(projectInfo, ActionType.RUNAGAINSTSOURCE, null, workingDirectory);
+			boolean connectionAlive = DiagnoseUtil.isConnectionAlive(serverProtocol, serverHost, serverPort);
+			setSessionAttribute(getAppId() + SESSION_SERVER_STATUS, connectionAlive);
+			setSessionAttribute(getAppId() + SESSION_SERVER_PROTOCOL_VALUE, serverProtocol);
+			setSessionAttribute(getAppId() + SESSION_SERVER_HOST_VALUE, serverHost);
+			setSessionAttribute(getAppId() + SESSION_SERVER_PORT_VALUE, new Integer(serverPort).toString());
+		} catch (ConfigurationException e) {
+			if (debugEnabled) {
+				S_LOGGER.error("Entered into catch block of Build.startServer()" + FrameworkUtil.getStackTraceAsString(e));
+			}
+			throw new PhrescoException(e);
+		}
+		
+		return reader;
+	}
+
+	private BufferedReader compileSource() throws PhrescoException {
+		if (debugEnabled) {
+			S_LOGGER.debug("Entering Method Build.compileSource()");
+		}
+		
+		BufferedReader reader = null;
+		try {
+			Commandline cl = new Commandline("mvn clean compile");
+			String projectDir = Utility.getProjectHome() + getApplicationInfo().getAppDirName();
+			cl.setWorkingDirectory(projectDir);
+			Process process = cl.execute();
+			reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+			writeLog(reader);
+			reader = new BufferedReader(new FileReader(getLogFilePath()));
+		} catch (FileNotFoundException e) {
+			if (debugEnabled) {
+				S_LOGGER.error("Entered into catch block of Build.compileSource()"
+						+ FrameworkUtil.getStackTraceAsString(e));
+			}
+			throw new PhrescoException(e);
+		} catch (CommandLineException e) {
+			if (debugEnabled) {
+				S_LOGGER.error("Entered into catch block of Build.compileSource()"
+						+ FrameworkUtil.getStackTraceAsString(e));
+			}
+			throw new PhrescoException(e);
+		}
+		
+		return reader;
+	}
+
+	private BufferedReader handleStopServer(boolean readData) throws PhrescoException {
+		if (debugEnabled) {
+			S_LOGGER.debug("Entering Method Build.handleStopServer()");
+		}
+		
+		BufferedReader reader = null;
+		try {
+			ApplicationInfo applicationInfo = getApplicationInfo();
+			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+			String workingDirectory = getAppDirectoryPath(applicationInfo);
+			reader = applicationManager.performAction(getProjectInfo(), ActionType.STOPSERVER, null, workingDirectory);
+			if (readData) {
+				while (StringUtils.isNotEmpty(reader.readLine())) {}
+			}
+		} catch (Exception e) {
+			if (debugEnabled) {
+				S_LOGGER.error("Entered into catch block of Build.handleStopServer()"
+						+ FrameworkUtil.getStackTraceAsString(e));
+			}
+		}
+		
+		return reader;
+	}
+	
+	private String readRunAgsSrcLogFile() throws PhrescoException {
+		BufferedReader reader = null;
+		try {
+			File runAgsLogfile = new File(getLogFolderPath() + File.separator + RUN_AGS_LOG_FILE) ;
+			if (runAgsLogfile.exists()) {
+				reader = new BufferedReader(new FileReader(runAgsLogfile));
+				String text = "";
+				StringBuffer contents = new StringBuffer();
 				while ((text = reader.readLine()) != null) {
 					contents.append(text).append(System.getProperty(LINE_SEPERATOR));
 				}
 				return contents.toString();
 			}
-			// It executed when file not exist and return reader
-			if (!file.exists()) {
-				StringReader sb = new StringReader("Server startup failed");
-				reader = new BufferedReader(sb);
-				getHttpSession().setAttribute(projectCode + REQ_READ_LOG_FILE, reader);
-				getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
-				getHttpRequest().setAttribute(REQ_TEST_TYPE, REQ_READ_LOG_FILE);
-			}
-			// It executed when file existence and return reader
-			if (file.exists()) {
-				reader = new BufferedReader(new FileReader(file));
-				getHttpSession().setAttribute(projectCode + REQ_READ_LOG_FILE, reader);
-				getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
-				getHttpRequest().setAttribute(REQ_TEST_TYPE, REQ_READ_LOG_FILE);
-			}
-
 		} catch (FileNotFoundException e) {
 			if (debugEnabled) {
-				S_LOGGER.error("Entered into catch block of Build.readLogFile()"
+				S_LOGGER.error("Entered into catch block of Build.readRunAgsSrcLogFile()"
 						+ FrameworkUtil.getStackTraceAsString(e));
 			}
+			throw new PhrescoException(e);
 		} catch (IOException e) {
 			if (debugEnabled) {
-				S_LOGGER.error("Entered into catch block of Build.readLogFile()"
+				S_LOGGER.error("Entered into catch block of Build.readRunAgsSrcLogFile()"
 						+ FrameworkUtil.getStackTraceAsString(e));
 			}
+			throw new PhrescoException(e);
+		} finally { 
+			Utility.closeReader(reader);
 		}
+		
 		return null;
 	}
 
-	public String runAgainstSource() {
-		if (debugEnabled)
-			S_LOGGER.debug("Entering Method Build.javaRunAgainstSource()");
-		try {
-			if (StringUtils.isNotEmpty(importSql)) {
-				configureSqlExecution();
-			}
-			String importSQL = (String) getHttpRequest().getParameter(IMPORT_SQL);
-			handleRunAgainstSrc(environments, importSQL);
-		} catch (Exception e) {
-			if (debugEnabled) {
-				S_LOGGER.error("Entered into catch block of Build.javaRunAgainstSource()"
-						+ FrameworkUtil.getStackTraceAsString(e));
-			}
-			new LogErrorReport(e, "Java run against source");
-		}
-		return APP_ENVIRONMENT_READER;
-	}
-
-	private void handleRunAgainstSrc(String environments, String importSQL) {
-		String serverHost = "";
-		String serverProtocol = "";
-		int serverPort = 0;
-		BufferedReader fileReader = null;
-		String line = "";
-		try {
-			ProjectRuntimeManager runtimeManager = PhrescoFrameworkFactory.getProjectRuntimeManager();
-			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-			Project project = administrator.getProject(projectCode);
-			getHttpSession().setAttribute(projectCode + IMPORT_SQL, importSQL);
-			Map<String, String> javaMap = new HashMap<String, String>(2);
-			List<SettingsInfo> serverDetails = administrator.getSettingsInfos(Constants.SETTINGS_TEMPLATE_SERVER,
-					projectCode, environments);
-			for (SettingsInfo settingsInfo : serverDetails) {
-				serverHost = settingsInfo.getPropertyInfo(Constants.SERVER_HOST).getValue();
-				serverProtocol = settingsInfo.getPropertyInfo(Constants.SERVER_PROTOCOL).getValue();
-				serverPort = Integer.parseInt(settingsInfo.getPropertyInfo(Constants.SERVER_PORT).getValue());
-				break;
-			}
-
-			try {
-				compileProject();
-				fileReader = new BufferedReader(new FileReader(getLogFilePath()));
-				line = fileReader.readLine();
-				while (line != null && !line.startsWith("[INFO] BUILD FAILURE")) {
-					line = fileReader.readLine();
-				}
-			} finally {
-				if (fileReader != null) {
-					fileReader.close();
-				}
-			}
-
-			if (line != null && line.startsWith("[INFO] BUILD FAILURE")) {
-				getHttpSession().setAttribute(projectCode + REQ_JAVA_START,
-						new BufferedReader(new FileReader(getLogFilePath())));
-			} else {
-				// TODO: delete the server.log and create empty server.log file
-				deleteLogFile();
-				javaMap.put(ENVIRONMENT_NAME, environments);
-				javaMap.put(IMPORT_SQL, importSQL);
-//				ActionType serverStart = ActionType.START_SERVER;
-//				BufferedReader reader = runtimeManager.performAction(project, serverStart, javaMap, null);
-//				getHttpSession().setAttribute(projectCode + REQ_JAVA_START, reader);
-			}
-			boolean connectionAlive = DiagnoseUtil.isConnectionAlive(serverProtocol, serverHost, serverPort);
-			getHttpSession().setAttribute(projectCode + SESSION_JAVA_SERVER_PROTOCOL_VALUE, serverProtocol);
-			getHttpSession().setAttribute(projectCode + SESSION_JAVA_SERVER_HOST_VALUE, serverHost);
-			getHttpSession().setAttribute(projectCode + SESSION_JAVA_SERVER_PORT_VALUE,
-					new Integer(serverPort).toString());
-			getHttpSession().setAttribute(projectCode + SESSION_JAVA_SERVER_STATUS, connectionAlive);
-			getHttpSession().setAttribute(projectCode + SESSION_ENV_NAME, environments);
-			getHttpSession().setAttribute(projectCode + IMPORT_SQL, importSQL);
-			getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
-			getHttpRequest().setAttribute(REQ_TEST_TYPE, REQ_JAVA_START);
-		} catch (Exception e) {
-			e.printStackTrace();
-			if (debugEnabled) {
-				S_LOGGER.error("Entered into catch block of Build.javaRunAgainstSource()"
-						+ FrameworkUtil.getStackTraceAsString(e));
-			}
-			new LogErrorReport(e, "Java run against source");
-		}
-	}
-
-	private BufferedReader compileProject() {
-		BufferedReader reader = null;
-		try {
-			Commandline cl = new Commandline("mvn clean compile");
-			String projectDir = Utility.getProjectHome() + projectCode;
-			cl.setWorkingDirectory(projectDir);
-			Process process = cl.execute();
-			reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-			writeLog(reader);
-		} catch (CommandLineException e) {
-			if (debugEnabled) {
-				S_LOGGER.error("Entered into catch block of Build.installProject()"
-						+ FrameworkUtil.getStackTraceAsString(e));
-			}
-			new LogErrorReport(e, "Java run against source");
-		}
-		return reader;
-	}
-
-	private void writeLog(BufferedReader in) {
-		String line = null;
+	
+	private void writeLog(BufferedReader in) throws PhrescoException {
 		FileWriter fstream = null;
 		BufferedWriter out = null;
 		try {
@@ -993,128 +923,35 @@ public class Build extends DynamicParameterUtil {
 			}
 			fstream = new FileWriter(getLogFilePath());
 			out = new BufferedWriter(fstream);
+			String line = "";
 			while ((line = in.readLine()) != null) {
 				out.write(line + "\n");
 				out.flush();
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new PhrescoException(e);
 		} finally {
+			Utility.closeWriter(out);
 			try {
-				if (out != null) {
-					out.close();
-				}
 				if (fstream != null) {
 					fstream.close();
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
+				throw new PhrescoException(e);
 			}
 		}
 	}
 
-	public String restartServer() {
-		if (debugEnabled)
-			S_LOGGER.debug("Entering Method Build.restartServer()");
-		handleJavaStop(true);
-		startServer();
-		return APP_ENVIRONMENT_READER;
-	}
-
-	public String startServer() {
-		if (debugEnabled) {
-			S_LOGGER.debug("Entering Method Build.startNodeJSServer()");
-		}
-		try {
-			environments = (String) getHttpSession().getAttribute(projectCode + SESSION_ENV_NAME);
-			String importSql = (String) getHttpSession().getAttribute(projectCode + IMPORT_SQL);
-			handleRunAgainstSrc(environments, importSql);
-		} catch (Exception e) {
-			if (debugEnabled) {
-				S_LOGGER.error("Entered into catch block of Build.javaStartServer()"
-						+ FrameworkUtil.getStackTraceAsString(e));
-			}
-			new LogErrorReport(e, "Java start server");
-		}
-		getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
-		return APP_ENVIRONMENT_READER;
-	}
-
-	public String stopServer() {
-		handleJavaStop(false);
-		return APP_ENVIRONMENT_READER;
-	}
-
-	private void handleJavaStop(boolean readData) {
-		if (debugEnabled)
-			S_LOGGER.debug("Entering Method Build.javaStopServer()");
-		try {
-			ProjectRuntimeManager runtimeManager = PhrescoFrameworkFactory.getProjectRuntimeManager();
-			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-			Project project = administrator.getProject(projectCode);
-			environments = (String) getHttpSession().getAttribute(projectCode + SESSION_ENV_NAME);
-			if (environments == null) {
-				environments = readRunAgainstInfo(projectCode);
-			}
-			Map<String, String> javaMap = new HashMap<String, String>(2);
-			javaMap.put(ENVIRONMENT_NAME, environments);
-//			ActionType serverStop = ActionType.STOP_SERVER;
-//			BufferedReader reader = runtimeManager.performAction(project, serverStop, javaMap, null);
-//			if (readData) {
-//				String line = null;
-//				while ((line = reader.readLine()) != null) {
-//				}
-//			}
-			getHttpSession().removeAttribute(project.getApplicationInfo().getCode() + SESSION_JAVA_SERVER_STATUS);
-			getHttpSession().removeAttribute(project.getApplicationInfo().getCode() + IMPORT_SQL);
-//			getHttpSession().setAttribute(projectCode + REQ_JAVA_STOP, reader);
-			getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
-			getHttpRequest().setAttribute(REQ_TEST_TYPE, REQ_JAVA_STOP);
-		} catch (Exception e) {
-			if (debugEnabled) {
-				S_LOGGER.error("Entered into catch block of Build.javaStopServer()"
-						+ FrameworkUtil.getStackTraceAsString(e));
-			}
-			new LogErrorReport(e, "Java stop server");
-		}
-	}
-
-	public String javaReadLogFile() throws InterruptedException {
-		String logMsg = "";
-		BufferedReader input = null;
-		try {
-			input = new BufferedReader(new FileReader(getLogFilePath()));
-			String line = null;
-			while ((line = input.readLine()) != null) {
-				logMsg = logMsg + line + "<br/>";
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				if (input != null) {
-					input.close();
-				}
-			} catch (IOException e) {
-				if (debugEnabled) {
-					S_LOGGER.error("Entered into catch block of Build.javaReadLogFile()"
-							+ FrameworkUtil.getStackTraceAsString(e));
-				}
-			}
-		}
-		return logMsg;
-	}
-
-	private String getLogFilePath() {
+	private String getLogFilePath() throws PhrescoException {
 		StringBuilder builder = new StringBuilder(getLogFolderPath());
 		builder.append(File.separator);
 		builder.append(LOG_FILE);
 		return builder.toString();
 	}
 
-	private String getLogFolderPath() {
+	private String getLogFolderPath() throws PhrescoException {
 		StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-		builder.append(projectCode);
+		builder.append(getApplicationInfo().getAppDirName());
 		builder.append(File.separator);
 		builder.append(DO_NOT_CHECKIN_DIR);
 		builder.append(File.separator);
@@ -1122,27 +959,19 @@ public class Build extends DynamicParameterUtil {
 		return builder.toString();
 	}
 
-	public File getLogFile(File dir) {
-		waitForTime(1);
-		File javaReadLogFile = null;
-		for (File child : dir.listFiles()) {
-			if (child.getName().startsWith(CATALINA_FILE_START_NAME)) {
-				waitForTime(5);
-				javaReadLogFile = child;
+	public void deleteLogFile() throws PhrescoException {
+		try {
+			File logFile = new File(getLogFilePath());
+			File infoFile = new File(getLogFolderPath() + File.separator + RUN_AGS_LOG_FILE);
+			if (logFile.isFile() && logFile.exists()) {
+				logFile.delete();
+			} 
+			if(infoFile.isFile() && infoFile.exists()) {
+				infoFile.delete();
 			}
+		} catch (PhrescoException e) {
+			throw new PhrescoException(e);
 		}
-		return javaReadLogFile;
-	}
-
-	public void deleteLogFile() throws IOException {
-		File logFile = new File(getLogFilePath());
-		if (logFile.isFile() && logFile.exists()) {
-			boolean delete = logFile.delete();
-		}
-		if (!logFile.exists()) {
-			logFile.createNewFile();
-		}
-
 	}
 
 	public void waitForTime(int waitSec) {
@@ -1154,54 +983,36 @@ public class Build extends DynamicParameterUtil {
 		}
 	}
 
-	private String readRunAgainstInfo(String projectCode) throws PhrescoException {
+	private String readRunAgainstInfo() throws PhrescoException {
 		String env = null;
 		BufferedReader reader = null;
 		try {
+			ConfigurationInfo info = new ConfigurationInfo();
 			StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-			builder.append(projectCode);
+			builder.append(getApplicationInfo().getAppDirName());
 			builder.append(File.separator);
 			builder.append(FOLDER_DOT_PHRESCO);
 			builder.append(File.separator);
 			builder.append(RUN_AGS_ENV_FILE);
-			File envFile = new File(builder.toString());
-			if (envFile.exists()) {
+			File infoFile = new File(builder.toString());
+			if(infoFile.exists()) {
 				reader = new BufferedReader(new FileReader(builder.toString()));
-				env = reader.readLine();
+				Gson gson = new Gson();
+				info = gson.fromJson(reader, ConfigurationInfo.class);
+				env = info.getEnvironment();
 			}
 		} catch (IOException e) {
 			throw new PhrescoException(e);
 		} finally {
-			try {
-				if (reader != null) {
-					reader.close();
-				}
-			} catch (IOException e) {
-				throw new PhrescoException(e);
-			}
+			Utility.closeReader(reader);
 		}
 
 		return env;
 	}
 
-	private void deleteNodejsLogFile(String projectcode) {
-		StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-		builder.append(projectcode);
-		builder.append(File.separator);
-		builder.append(DO_NOT_CHECKIN_DIR);
-		builder.append(File.separator);
-		builder.append(LOG_DIR);
-		builder.append(File.separator);
-		builder.append(LOG_FILE);
-		File nodejsLogFile = new File(builder.toString());
-		if (nodejsLogFile.exists()) {
-			nodejsLogFile.delete();
-		}
-	}
-
 	private void getValueFromJavaStdAlonePom() throws PhrescoException {
 		try {
-			File file = new File(Utility.getProjectHome() + File.separator + projectCode + File.separator + POM_FILE);
+			File file = new File(Utility.getProjectHome() + File.separator + getApplicationInfo().getAppDirName() + File.separator + POM_FILE);
 			PomProcessor pomProcessor = new PomProcessor(file);
 			String finalName = pomProcessor.getFinalName();
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -1221,13 +1032,13 @@ public class Build extends DynamicParameterUtil {
 			getHttpRequest().setAttribute(FINAL_NAME, finalName);
 			getHttpRequest().setAttribute(MAIN_CLASS_VALUE, mainClassValue);
 
-		} catch (JAXBException e) {
-			throw new PhrescoException(e);
 		} catch (IOException e) {
 			throw new PhrescoException(e);
 		} catch (ParserConfigurationException e) {
 			throw new PhrescoException(e);
 		} catch (SAXException e) {
+			throw new PhrescoException(e);
+		} catch (PhrescoPomException e) {
 			throw new PhrescoException(e);
 		}
 	}

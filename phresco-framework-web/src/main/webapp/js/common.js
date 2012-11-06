@@ -20,23 +20,26 @@
  
 function yesnoPopup(modalObj, url, title, okUrl, okLabel, form) {
 	modalObj.click(function() {
-		$('#popupClose').hide();
+		$('.popupClose').hide();
 
 		$('#popupTitle').html(title); // Title for the popup
-		$('#popupClose').hide(); //no need close button since yesno popup
+		$('.popupClose').hide(); //no need close button since yesno popup
 		$('.popupOk, #popupCancel').show(); // show ok & cancel button
 	
 		$(".popupOk").attr('id', okUrl); // popup action mapped to id
 		if (okLabel !== undefined && !isBlank(okLabel)) {
-			$('#' + okUrl).html(okLabel); // label for the ok button 
+			$('#' + okUrl).html(okLabel); // label for the ok button
 		}
 		
 		var data = "";
 		data = getBasicParams(); //customerid, projectid, appid
-		data = data.concat("&");
-		var additionalParam = $(this).attr('additionalParam'); //additional params if any
-		data = data.concat(additionalParam);
 
+		if (!isBlank($(this).attr('additionalParam'))) {
+			data = data.concat("&");
+			var additionalParam = $(this).attr('additionalParam'); //additional params if any
+			data = data.concat(additionalParam);
+		}
+		
 		var params = getParameters(form, '');
 		if (!isBlank(params)) {
 			data = data.concat("&");
@@ -81,13 +84,14 @@ function progressPopup(btnObj, pageUrl, title, appId, actionType, form, callSucc
 			$('#popupTitle').html(title);
 		}
 		$('.modal-body').empty();
-		$('#popupClose').show();
+		$('.popupClose').show();
 		$('.popupOk, #popupCancel').hide(); // hide ok & cancel button
+		$(".popupClose").attr('id', pageUrl); // popup action mapped to id
 		readerHandlerSubmit(pageUrl, appId, actionType, form, callSuccessEvent, additionalParams);
 	});
-	$('#popupClose').click(function() {
-		popupClose(pageUrl); // this function will be kept in where the progressPopup() called
-	});
+//	$('.popupClose').click(function() {
+//		popupClose(pageUrl); // this function will be kept in where the progressPopup() called
+//	});
 }
 
 function progressPopupAsSecPopup(url, title, appId, actionType, form, additionalParams) {
@@ -98,8 +102,23 @@ function progressPopupAsSecPopup(url, title, appId, actionType, form, additional
 	$('.modal-body').empty();
 	$('.popupOk').hide(); // hide ok & cancel button
 	$('#popupCancel').hide();
-	$('#popupClose').show();
+	$('.popupClose').show();
 
+	$('#popupClose').show();
+	
+	/*var theme = localStorage["color"];
+	$(".popupLoadingIcon").css("display", "block");
+	var loadingRedIcon = "themes/photon/images/loading_red.gif";
+	var loadingBlueIcon = "themes/photon/images/loading_blue.gif";
+    if(theme == undefined || theme == null || theme == "null" || theme == "" || theme == "undefined" || theme == "themes/photon/css/red.css") {
+    	theme = loadingRedIcon;
+    	$('.loadingIcon, .popupLoadingIcon').attr("src", theme);
+    }
+    else {
+    	theme = loadingBlueIcon;
+    	$('.loadingIcon, .popupLoadingIcon').attr("src", theme);
+    }*/
+    
 	readerHandlerSubmit(url, appId, actionType, form, '', additionalParams);
 }
 
@@ -121,9 +140,12 @@ function clickButton(button, tag) {
 	});
 }
 
-function loadContent(pageUrl, form, tag, additionalParams, callSuccessEvent) {
+function loadContent(pageUrl, form, tag, additionalParams, callSuccessEvent, ajaxCallType) {
 //	showLoadingIcon(tag);
-
+	if (ajaxCallType == undefined || ajaxCallType == "") {
+		ajaxCallType = true;
+	}
+	
 	var params = getParameters(form, additionalParams);
 	$.ajax({
 		url : pageUrl,
@@ -131,7 +153,8 @@ function loadContent(pageUrl, form, tag, additionalParams, callSuccessEvent) {
 		type : "POST",
 		success : function(data) {
 			loadData(data, tag, pageUrl, callSuccessEvent);
-		}
+		},
+		async: ajaxCallType
 	});
 }
 
@@ -169,6 +192,26 @@ function validate(pageUrl, form, tag, additionalParams, progressText, disabledDi
 	});
 }
 
+function validateJson(url, form, containerTag, jsonParam, progressText, disabledDiv) {
+	if (disabledDiv != undefined && disabledDiv != "") {
+		enableDivCtrls(disabledDiv);
+	}
+	
+	$.ajax({
+		url : url + "Validate",
+		data : jsonParam,
+		type : "POST",
+		contentType: "application/json; charset=utf-8",
+		success : function(data) {
+			if (data.errorFound != undefined && data.errorFound) {
+				findError(data);
+			} else {
+				loadJsonContent(url, jsonParam, containerTag);
+			}
+		}
+	});
+}
+
 function loadData(data, tag, pageUrl, callSuccessEvent) {
 	//To load the login page if the user session is not available
 	if (data != undefined && data != "[object Object]" && data != "[object XMLDocument]" 
@@ -196,7 +239,7 @@ function readerHandlerSubmit(pageUrl, appId, actionType, form, callSuccessEvent,
         cache: false,
         success : function(data) {
         	//if (checkForUserSession(data)) {
-            	$("#modal-body").empty();
+            	$("#console_div").empty();
             	readerHandler(data, appId, actionType, pageUrl);
             	if (callSuccessEvent != undefined && !isBlank(callSuccessEvent)) {
             		successEvent(pageUrl, data);
@@ -219,6 +262,20 @@ function getParameters(form, additionalParams) {
 		params = additionalParams;
 	}
 	return params;
+}
+
+// show loading icon 
+function getCurrentCSS() {
+    var theme =localStorage["color"];
+	$(".popupLoadingIcon").css("display", "block");
+	var loadingRedIcon = "themes/photon/images/loading_red.gif";
+	var loadingBlueIcon = "themes/photon/images/loading_blue.gif";
+    if(theme == undefined || theme == null || theme == "null" || theme == "" || theme == "undefined" || theme == "themes/photon/css/red.css") {
+    	$('.loadingIcon, .popupLoadingIcon').attr("src", loadingRedIcon);
+    }
+    else {
+    	$('.loadingIcon, .popupLoadingIcon').attr("src", loadingBlueIcon);
+    }
 }
 
 function inActivateAllMenu(allLink) {
@@ -285,6 +342,18 @@ function toDisableCheckAll() {
 	}
 }
 
+//To disable the given button object 
+function disableButton(buttonObj) {
+	buttonObj.removeClass('btn-primary');
+	buttonObj.attr("disabled", true);
+}
+
+//To enable the given button object
+function enableButton(buttonObj) {
+	buttonObj.addClass('btn-primary');
+	buttonObj.attr("disabled", false);
+}
+
 function toDisableAllCheckbox(currentCheckbox,childCheckBox, disable) {
 	if($(currentCheckbox).is(':checked')){
 		childCheckBox.prop('disabled', disable);
@@ -335,8 +404,8 @@ function accordion() {
 	var showContent = 0;	
     $('.siteaccordion').removeClass('openreg').addClass('closereg');
     $('.mfbox').css('display','none');
-    $('.mfbox').eq(showContent).css('display','block');
-    $('.siteaccordion').eq(showContent).attr("id", "siteaccordion_active");
+//    $('.mfbox').eq(showContent).css('display','block');
+//    $('.siteaccordion').eq(showContent).attr("id", "siteaccordion_active");
     
     $('.siteaccordion').bind('click',function(e) {
         var _tempIndex = $('.siteaccordion').index(this);
@@ -353,20 +422,34 @@ function accordion() {
     });
 }
 
-function showLoadingIcon() {
+function getLoadingImgPath() {
 	var src = "theme/photon/images/loading_blue.gif";
 	var theme =localStorage["color"];
     if (theme == undefined || theme == "theme/photon/css/red.css") {
     	src = "theme/photon/images/loading_red.gif";
     }
+    return src;
+}
+
+function showLoadingIcon() {
     $("#loadingIconDiv").show();
-	$("#loadingIconImg").attr("src", src);
+	$("#loadingIconImg").attr("src", getLoadingImgPath());
     disableScreen();
 }
 
 function hideLoadingIcon() {
 	$("#loadingIconDiv").hide();
 	enableScreen();
+}
+
+function showPopuploadingIcon() {
+	$("#errMsg").empty(); // remove error message while displaying loading icon
+    $("#popuploadingIcon").show();
+	$("#popuploadingIcon").attr("src", getLoadingImgPath());
+}
+
+function hidePopuploadingIcon() {
+	$("#popuploadingIcon").hide();
 }
 
 function showProgressBar(progressText) {
@@ -574,7 +657,7 @@ function confirmDialog(obj, title, bodyText, okUrl, okLabel) {
 	obj.click(function() {
 //		disableScreen();
 		$('#popupTitle').html(title); // Title for the popup
-		$('#popupClose').hide();
+		$('.popupClose').hide();
 		
 		$(".popupOk").attr('id', okUrl);
 	
@@ -595,12 +678,37 @@ function confirmDialog(obj, title, bodyText, okUrl, okLabel) {
 function constructElements(data, pushToElement, isMultiple, controlType) {
 	if (isMultiple === undefined && controlType === undefined) {
 		constructMultiSelectOptions(data, pushToElement);
-	} else if (isMultiple === false) {
-		// for single select list box
+	} else if (isMultiple === "false") {
+		constructSingleSelectOptions(data, pushToElement);
 	} else if (controlType !== undefined ) {
 		//other controls ( text box)
 	}
 }
+
+function constructSingleSelectOptions(data, pushToElement) {
+	//See step 1
+	var selected = "";
+	$('#'+pushToElement+' option:selected').each(function() {
+		selected = $(this).val();
+	});
+	//See step 2
+	$("#"+pushToElement).empty();
+	var selectedStr = "";
+	//See step 3
+	for(i in data.dependentValues) {
+		//See step 4
+		if(data.dependentValues[i].value == selected) {
+			selectedStr = "selected";
+		} else {
+			selectedStr = "";
+		}
+		//See step 5
+		var liElement = "<option value = '" + data.dependentValues[i].value + "' "+ selectedStr +">" + data.dependentValues[i].value + "</option>";
+		//See step 6
+		$("#"+pushToElement).append(liElement);
+	}
+}
+
 /**
  * To dynamically update dependancy data into multi select checkbox
  * 

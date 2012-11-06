@@ -95,7 +95,7 @@
             <result name="appMenu">/pages/applications/menu.jsp</result>
         </action>
         
-        <action name="import" method="importApplication" class="com.photon.phresco.framework.actions.applications.Applications">
+       <!--  <action name="import" method="importApplication" class="com.photon.phresco.framework.actions.applications.Applications">
             <result name="list">/pages/applications/list.jsp</result>
         </action>
         
@@ -121,7 +121,7 @@
         
         <action name="importGITProject" method="importGITApplication" class="com.photon.phresco.framework.actions.applications.Applications">
             <result type="json"/>
-        </action>
+        </action> -->
         
        	<action name="appInfo" method="editApplication" class="com.photon.phresco.framework.actions.applications.Applications">
             <result name="appinfo">/pages/applications/appinfo.jsp</result>
@@ -131,11 +131,7 @@
 			<result type="json"/>
         </action>
         
-        <action name="featuresList" method="featuresList" class="com.photon.phresco.framework.actions.applications.Applications">
-            <result name="features">/pages/applications/features.jsp</result>
-        </action>
-        
-        <action name="applicationType" method="applicationType" class="com.photon.phresco.framework.actions.applications.Applications">
+       <!--  <action name="applicationType" method="applicationType" class="com.photon.phresco.framework.actions.applications.Applications">
             <result name="applicationType">/pages/applications/application_type.jsp</result>
         </action>
       
@@ -145,32 +141,36 @@
         
         <action name="techVersions" method="techVersions" class="com.photon.phresco.framework.actions.applications.Applications">
             <result type="json" />
-        </action>
+        </action> -->
        
-        <action name="previous" method="previous" class="com.photon.phresco.framework.actions.applications.Applications">
+        <action name="previous" method="editApplication" class="com.photon.phresco.framework.actions.applications.Applications">
             <result name="appinfo">/pages/applications/appinfo.jsp</result>
         </action>
         
-		<action name="getServers" method="fetchServers" class="com.photon.phresco.framework.actions.applications.Applications">
+		<!-- <action name="getServers" method="fetchServers" class="com.photon.phresco.framework.actions.applications.Applications">
 			<result type="json"/>
         </action>
         
         <action name="save" method="save" class="com.photon.phresco.framework.actions.applications.Applications">
             <result name="list">/pages/applications/list.jsp</result>
+        </action> -->
+        
+        <action name="finish" method="update" class="com.photon.phresco.framework.actions.applications.Applications">
+          <result name="updateApplication">/pages/projects/list.jsp</result>
         </action>
         
-        <action name="update" method="update" class="com.photon.phresco.framework.actions.applications.Applications">
-            <result name="list">/pages/applications/list.jsp</result>
-        </action>
-        
-        <action name="features" method="listFeatures" class="com.photon.phresco.framework.actions.applications.Features">
-            <result name="features_oneClm">/pages/applications/features.jsp</result>
+        <action name="features" method="features" class="com.photon.phresco.framework.actions.applications.Features">
+            <result name="features">/pages/applications/feature/features.jsp</result>
             <result name="features_twoClm">/pages/applications/features_twoClm.jsp</result>
             <result name="features_threeClm">/pages/applications/features_threeClm.jsp</result>
             <result type="json" />
         </action>
         
-        <action name="checkDependency" method="checkDependency" class="com.photon.phresco.framework.actions.applications.Features">
+        <action name="listFeatures" method="listFeatures" class="com.photon.phresco.framework.actions.applications.Features">
+          <result name="featuresList">/pages/applications/feature/list.jsp</result>
+        </action>
+        
+        <!-- <action name="checkDependency" method="checkDependency" class="com.photon.phresco.framework.actions.applications.Features">
             <result type="json" />
         </action>
         
@@ -192,7 +192,7 @@
         
         <action name="openAttrPopup" method="openAttrPopup" class="com.photon.phresco.framework.actions.applications.Applications">
             <result name="openAttrPopup">/pages/applications/add_appinfo_attr.jsp</result>
-        </action>
+        </action> -->
         
         <action name="quality" method="quality" class="com.photon.phresco.framework.actions.applications.Quality">
             <result name="quality">/pages/applications/quality/menu.jsp</result>
@@ -259,12 +259,21 @@
             <result name="reader">/pages/applications/reader.jsp</result>
         </action>
         
-        <action name="code" method="view" class="com.photon.phresco.framework.actions.applications.Code">
+        <!-- code tab -->
+        <!-- <action name="code" method="view" class="com.photon.phresco.framework.actions.applications.Code">
+            <result name="code">/pages/applications/code.jsp</result>
+        </action> -->
+        
+        <action name="code" method="code" class="com.photon.phresco.framework.actions.applications.Code">
             <result name="code">/pages/applications/code.jsp</result>
         </action>
         
-        <action name="progressValidate" method="progressValidate" class="com.photon.phresco.framework.actions.applications.Code">
-        	<result name="reader">/pages/applications/reader.jsp</result>
+        <action name="showCodeValidatePopup" method="showCodeValidatePopup" class="com.photon.phresco.framework.actions.applications.Code">
+            <result name="showCodeValidatePopup">/pages/applications/generateBuild.jsp</result>
+        </action>
+        
+        <action name="codeValidate" method="codeValidate" class="com.photon.phresco.framework.actions.applications.Code">
+            <result name="reader">/pages/applications/reader.jsp</result>
         </action>
         
         <action name="check" method="check" class="com.photon.phresco.framework.actions.applications.Code">
@@ -285,6 +294,10 @@
         
         <action name="dependancyListener" method="dependancyListener" class="com.photon.phresco.framework.actions.applications.Build">
             <result type="json" />
+        </action>
+        
+ 		<action name="showRunAgainstSourcePopup" method="showrunAgainstSourcePopup" class="com.photon.phresco.framework.actions.applications.Build">
+            <result name="generateBuild">/pages/applications/generateBuild.jsp</result>
         </action>
         
         <action name="getSqlDatabases" method="getSqlDatabases" class="com.photon.phresco.framework.actions.applications.Build">
@@ -328,12 +341,8 @@
         <action name="deploy" method="deploy" class="com.photon.phresco.framework.actions.applications.Build">
             <result name="reader">/pages/applications/reader.jsp</result>
         </action>
-        
-        <action name="NodeJSRunAgainstSource" method="NodeJSRunAgainstSource" class="com.photon.phresco.framework.actions.applications.Build">
-            <result name="reader">/pages/applications/reader.jsp</result>
-        </action>
-        
-        <action name="runAgainstSource" method="runAgainstSource" class="com.photon.phresco.framework.actions.applications.Build">
+                
+        <action name="startServer" method="runAgainstSource" class="com.photon.phresco.framework.actions.applications.Build">
             <result name="reader">/pages/applications/reader.jsp</result>
         </action>
         
@@ -344,7 +353,7 @@
          <action name="restartServer" method="restartServer" class="com.photon.phresco.framework.actions.applications.Build">
             <result name="reader">/pages/applications/reader.jsp</result>
         </action>
-        
+  <!--       
         <action name="startServer" method="startServer" class="com.photon.phresco.framework.actions.applications.Build">
             <result name="reader">/pages/applications/reader.jsp</result>
         </action>
@@ -359,7 +368,7 @@
 
         <action name="restartNodeJSServer" method="restartNodeJSServer" class="com.photon.phresco.framework.actions.applications.Build">
             <result name="reader">/pages/applications/reader.jsp</result>
-        </action>
+        </action> -->
 
         <action name="downloadBuild" method="download" class="com.photon.phresco.framework.actions.applications.Build">
             <result name="success" type="stream">
@@ -407,6 +416,11 @@
         	<interceptor-ref name="json" />
             <result name="list">/pages/applications/configuration/list.jsp</result>
             <result type="json" />
+        </action>
+        
+        <action name="saveConfigurationValidate" method="validateConfiguration" class="com.photon.phresco.framework.actions.applications.Configurations">
+    	    <interceptor-ref name="json" />
+			<result type="json"/>
         </action>
         
         <action name="editConfiguration" method="edit" class="com.photon.phresco.framework.actions.applications.Configurations">
@@ -579,14 +593,26 @@
 		<action name="showFunctionalTestPopUp" method="showFunctionalTestPopUp" class="com.photon.phresco.framework.actions.applications.Quality">
 			<result name="success">/pages/applications/generateBuild.jsp</result>
         </action>
+
+        <action name="changeEveDependancyListener" method="changeEveDependancyListener" class="com.photon.phresco.framework.actions.applications.Quality">
+			<result type="json" />
+        </action>
         
         <action name="showStartHubPopUp" method="showStartHubPopUp" class="com.photon.phresco.framework.actions.applications.Quality">
 			<result name="success">/pages/applications/generateBuild.jsp</result>
         </action>
         
+        <action name="startHub" method="startHub" class="com.photon.phresco.framework.actions.applications.Quality">
+        	<result name="reader">/pages/applications/reader.jsp</result>
+		</action>
+        
         <action name="showStartNodePopUp" method="showStartNodePopUp" class="com.photon.phresco.framework.actions.applications.Quality">
 			<result name="success">/pages/applications/generateBuild.jsp</result>
         </action>
+        
+        <action name="startNode" method="startNode" class="com.photon.phresco.framework.actions.applications.Quality">
+        	<result name="reader">/pages/applications/reader.jsp</result>
+		</action>
         
         <action name="fetchBuildInfoEnvs" method="fetchBuildInfoEnvs" class="com.photon.phresco.framework.actions.applications.Quality">
             <result type="json" />
@@ -727,16 +753,16 @@
         </action>
         
         <action name="getNoOfJobsIsInProgress" method="numberOfJobsIsInProgress" class="com.photon.phresco.framework.actions.applications.CI">
-            <result type="json"><param name="root">numberOfJobsInProgress</param></result>
+            <result type="json"/>
         </action>
         
         <action name="getBuildProgress" method="buildProgress" class="com.photon.phresco.framework.actions.applications.CI">
             <result type="json"><param name="root">buildInProgress</param></result>
         </action>
         
-        <action name="getCodeValidatePopUp" method="showCodeValidatePopUp" class="com.photon.phresco.framework.actions.applications.Code">
+        <!-- <action name="getCodeValidatePopUp" method="showCodeValidatePopUp" class="com.photon.phresco.framework.actions.applications.Code">
             <result name="showCodeValidatePopUp">/pages/applications/code_validate_pop_up.jsp</result>
-        </action>
+        </action> -->
         
         <action name="getDevices" method="devices" class="com.photon.phresco.framework.actions.applications.Quality">
         	<result type="json"><param name="root">deviceNames</param></result>
@@ -813,7 +839,8 @@
 		<!-- minification ends -->
 		
 		<action name="localJenkinsAliveCheck" method="localJenkinsLocalAlive" class="com.photon.phresco.framework.actions.applications.CI">
-        	<result type="json"><param name="root">localJenkinsAlive</param></result>
+        	<result type="json"/>
+<!--         	<param name="root">localJenkinsAlive</param> -->
         </action>
     </package>
 </struts>

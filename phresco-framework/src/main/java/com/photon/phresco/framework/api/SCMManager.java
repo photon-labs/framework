@@ -13,8 +13,8 @@ public interface SCMManager {
 	 * @param branch
 	 * @throws PhrescoException
 	 */
-	void importProject(String type, String url, String username,
-			String password, String branch) throws PhrescoException;
+	boolean importProject(String type, String url, String username,
+			String password, String branch, String revision, String projcode) throws PhrescoException;
 
 	/**
 	 * 
@@ -25,7 +25,7 @@ public interface SCMManager {
 	 * @param branch
 	 * @throws PhrescoException
 	 */
-	void updateProject(String type, String url, String username,
-			String password, String branch) throws PhrescoException;
+	boolean updateProject(String type, String url, String username,
+			String password, String branch,  String revision, String projcode) throws PhrescoException;
 
 }

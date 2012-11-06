@@ -35,21 +35,13 @@
 <%@ page import="com.photon.phresco.util.Constants"%>
 <%@ page import="com.photon.phresco.framework.api.Project" %>
 <%@ page import="com.photon.phresco.configuration.Environment" %>
+<%@ page import="com.photon.phresco.configuration.Configuration" %>
 <%@ page import="com.photon.phresco.framework.model.PropertyInfo"%>
 <%@ page import="com.photon.phresco.framework.model.SettingsInfo"%>
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 
 <%
-    Project project = (Project)request.getAttribute(FrameworkConstants.REQ_PROJECT);
-    ApplicationInfo selectedInfo = null;
-    String projectCode = null;
-    if(project != null) {
-        selectedInfo = project.getApplicationInfo();
-        projectCode = selectedInfo.getCode();
-    }
 	List<Environment> envInfoValues = (List<Environment>) request.getAttribute(FrameworkConstants.REQ_ENVIRONMENTS);
-   
-    List<SettingsInfo> configurations = (List<SettingsInfo>)request.getAttribute("configuration");
 	Map<String, String> urls = new HashMap<String, String>();
 %>
 
@@ -63,8 +55,10 @@
 		         value="<s:text name='lbl.btn.add'/>"/>
 
 		<!-- Delete Configuration Button -->
-		<input type="button" class="btn" id="del" disabled value="<s:text name='lbl.delete'/>"
-			onclick="showDeleteConfirmation('<s:text name='lbl.delete'/>');"/>
+		<%-- <input type="button" class="btn" id="del" id="deleteBtn" disabled value="<s:text name='lbl.delete'/>"
+			onclick="showDeleteConfirmation('<s:text name='lbl.delete'/>');"/> --%>
+			
+		<input type="button" class="btn" id="deleteBtn" disabled value="<s:text name='lbl.delete'/>" data-toggle="modal" href="#popupPage"/>
 
 		<!-- Environment Buttton -->
 	    <a data-toggle="modal" id="addEnvironments" href="#popupPage" class="btn btn-primary"><s:text name='lbl.app.config.environments'/></a>
@@ -82,94 +76,117 @@
     </div>
     
     
-    <% if (CollectionUtils.isEmpty(configurations)) { %>
-		<div class="alert alert-block">
+    <% if (CollectionUtils.isEmpty(envInfoValues)) { %>
+		 <div class="alert alert-block">
 			<s:text name='lbl.err.msg.list.config'/>
-		</div>
+		</div> 
     <% } else { %>	
-		<div class="table_div">
-			<div class="fixed-table-container">
-				<div class="header-background"> </div>
-				<div class="fixed-table-container-inner">
-					<table cellspacing="0" class="zebra-striped">
-						<thead>
-								<tr>
-									<th class="first">
-										<div class="th-inner tablehead">
-											<input type="checkbox" value="" id="checkAllAuto" name="checkAllAuto" onclick="checkAllEvent(this,$('.selectedProjects'), false);">
-										</div>
-									</th>
-									<th class="second">
-										<div class="th-inner tablehead"><s:label key="lbl.name" theme="simple"/></div>
-									</th>
-									<th class="third">
-										<div class="th-inner tablehead"><s:label key="lbl.desc" theme="simple"/></div>
-									</th>
-									<th class="third">
-										<div class="th-inner tablehead"><s:label key="lbl.type" theme="simple"/></div>
-									</th>
-									<th class="third">
-										<div class="th-inner tablehead"><s:label key="lbl.environment" theme="simple"/></div>
-									</th>
-									<th class="third">
-										<div class="th-inner tablehead"><s:label key="lbl.status" theme="simple"/></div>
-									</th>
-									<th class="third">
-										<div class="th-inner tablehead"><s:label key="lbl.clone" theme="simple"/></div>
-									</th>
-								</tr>
-						</thead>
-						
-						<tbody>
-						  	<%
-								for (SettingsInfo configuration : configurations) {
-									ApplicationInfo projectInfo = project.getApplicationInfo();
-							%>
-								<tr>
-									<td class="checkboxwidth">
-										<input type="checkbox" class="check selectedProjects" name="selectedProjects" value="<%= configuration.getName() %>">
-									</td>
-									<td class="nameConfig">
-										<a href="#" onclick="editApplication('<%= configuration.getName() %>');" name="edit">
-											<%= configuration.getName() %>
-										</a>
-									</td>
-									<td class="descConfig">
-										<%= configuration.getDescription() %>
-									</td>
-									<td class="hoverAppliesTo">
-										<%= configuration.getType() %>
-									</td>
-									<td class="hoverAppliesTo">
-										<%= configuration.getEnvName() %>
-									</td>
-									<td id="icon-width">
-										<a href="#" id="projectUpdate" class="iconsCenterAlign"><img id="<%= configuration.getName()  %>" class="projectUpdate" 
-											src="images/icons/inprogress.png" title="Update" class="iconSizeinList"/></a>
-									</td>
-									<td id="icon-width">
-										<a href="#" id="projectUpdate" class="iconsCenterAlign"><img id="<%= configuration.getName()  %>" class="projectUpdate" 
-											src="images/icons/clone.png" title="Update" class="iconSizeinList"/></a>
-									</td>
-								</tr>
-							<% 
-								}
-							%>
-						</tbody>
-					</table>
-				</div>
+    	<div class="table_div">
+		<% for (Environment envInfoValue : envInfoValues) { %>
+			<div class="theme_accordion_container">
+				<section class="accordion_panel_wid">
+					<div class="accordion_panel_inner">
+						<section class="lft_menus_container">
+							<span class="siteaccordion closereg">
+								<span>
+									<input type="checkbox" value="" id="<%=envInfoValue.getName() %>" class="accordianChkBox" name="checkAllAuto" onclick="checkAllEvent(this,$('.<%=envInfoValue.getName() %>'), false);"/>
+									<a class="vAlignSub"><%=envInfoValue.getName() %></a>
+								</span>
+							</span>
+							<div class="mfbox siteinnertooltiptxt hideContent">
+								<div class="scrollpanel">
+									<section class="scrollpanel_inner">
+								    	<table class="table table-bordered table_border">
+								    		<thead>
+								    			<tr class="header-background">
+								    				<th class="no-left-bottom-border table-pad table-chkbx">
+								    				</th>
+								    				<th class="no-left-bottom-border table-pad">
+								    					<s:label key="lbl.name" cssClass="labelbold"/>
+								    				</th>
+								    				<th class="no-left-bottom-border table-pad">
+								    					<s:label key="lbl.desc" cssClass="labelbold"/>
+								    				</th>
+								    				<th class="no-left-bottom-border table-pad">
+								    					<s:label key="lbl.type" cssClass="labelbold"/>
+								    				</th>
+								    				<th class="no-left-bottom-border table-pad">
+								    					<s:label key="lbl.status" cssClass="labelbold"/>
+								    				</th>
+								    				<th class="no-left-bottom-border table-pad">
+								    					<s:label key="lbl.clone" cssClass="labelbold"/>
+								    				</th>
+								    			</tr> 
+								    		</thead>
+								    		<tbody>
+								    			<%
+														List<Configuration> configurations = envInfoValue.getConfigurations();
+								    					if (CollectionUtils.isNotEmpty(configurations)) {
+															for (Configuration configuration : configurations) {
+												%>
+															<tr>
+																<td class="no-left-bottom-border table-pad">
+																	<input type="checkbox" class="check <%=envInfoValue.getName() %>" name="selectedProjects" value="<%= configuration.getName() %>"
+																	onclick="checkboxEvent($('.<%=envInfoValue.getName() %>'), $('#<%=envInfoValue.getName() %>'));">
+																</td>
+																<td class="no-left-bottom-border table-pad">
+																	<a href="#" onclick="editConfiguration('<%= envInfoValue.getName() %>', '<%= configuration.getType() %>','<%= configuration.getName() %>');" 
+																	name="edit"><%= configuration.getName() %>
+																	</a>
+																</td>
+																<td class="no-left-bottom-border table-pad">
+																	<%= configuration.getDesc() %>
+																</td>
+																<td class="no-left-bottom-border table-pad">
+																	<%= configuration.getType() %>
+																</td>
+																<td class="no-left-bottom-border table-pad">
+																	<a href="#" ><img id="<%= configuration.getName()  %>" class="projectUpdate" 
+																		src="images/icons/inprogress.png" title="Update" class="iconSizeinList"/></a>
+																</td>
+																<td class="no-left-bottom-border table-pad">
+																	<a href="#" ><img id="<%= configuration.getName()  %>" class="projectUpdate" 
+																		src="images/icons/clone.png" title="Update" class="iconSizeinList"/></a>
+																</td> 
+															</tr>
+													<%
+																}
+															}
+													%>  
+								    		</tbody>
+										</table>
+									</section>
+								</div>
+							</div>
+						</section>  
+					</div>
+				</section>
 			</div>
+			<% } %>
 		</div>
 	<% } %>
 </form>
 
 <script type="text/javascript">
 	yesnoPopup($("#addEnvironments"), 'openEnvironmentPopup', "<s:text name='lbl.environment'/>", 'createEnvironment');
+	confirmDialog($("#deleteBtn"), '<s:text name="lbl.hdr.confirm.dialog"/>', '<s:text name="modal.body.text.del.configuration"/>', '','<s:text name="lbl.btn.ok"/>');
 	
 	$(document).ready(function() {
+		accordion();
 		hideLoadingIcon();//To hide the loading icon
 	});
 	
+	 function editConfiguration(currentEnvName, currentConfigType, currentConfigName) {
+		 	var params = getBasicParams();
+			params = params.concat("&currentEnvName=");
+			params = params.concat(currentEnvName);
+			params = params.concat("&currentConfigType=");
+			params = params.concat(currentConfigType);
+			params = params.concat("&currentConfigName=");
+			params = params.concat(currentConfigName);
+			loadContent("editConfiguration", $("#formConfigAdd"), $('#subcontainer'), params);
+	}
+	 
 	function popupOnOk(self) {
 		var envs = [];
 		$('[name="envNames"]').each(function() {
@@ -179,17 +196,7 @@
 		var basicParams = getBasicParamsAsJson();
 		var params = '{' + basicParams + ', "environments": [' + envs.join(',') + ']}';
 		var url = $(self).attr('id');
-
-		loadJsonContent(url, params, $('#typeContainer'));
-		/*$.ajax({
-			url : url,
-			data : params,
-			type : "POST",
-			dataType : "json",
-			contentType: "application/json; charset=utf-8",
-			success : function(data) {
-			}
-		});*/	
+		loadJsonContent(url, params, $('#subcontainer'));
 	}
 
 </script>
