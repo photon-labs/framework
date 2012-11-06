@@ -45,6 +45,37 @@ Width <= 1024
 		width: 98.2%;
 	}
 	
+	.custom_features {
+		border-radius: 6px 6px 0 0;
+        float: left;
+        height: 73.5%;
+        margin: 1%;
+        width: 45.8%;
+     }
+     
+     .custom_features_wrapper_right {
+        border-radius: 6px 6px 6px 6px;
+        float: right;
+        height: 73.5%;
+        margin: 1% 1% 1% 0;
+        width: 43.5%;
+     } 
+         
+     .feature_content_adder {
+		height: 91%;
+		overflow-y: auto;
+		padding-top: 0%;
+		width: 99.5%;
+		overflow-x: hidden;
+	}
+	
+	.features_actions {
+	    border-radius: 0 0 3px 3px;
+	    float: right;
+	    margin-right: 9px;
+	    margin-top: 4px;
+	    padding-top: 0;
+	}
 	.wrapper {
 		bottom: 48px;
 		height: 100%;
@@ -438,6 +469,30 @@ Width size <= 1024
 		position: absolute;
 		top: 55px;
 		width: 98.2%;
+	}
+	
+	.custom_features {
+		border-radius: 6px 6px 0 0;
+        float: left;
+        height: 79.5%;
+        margin: 1%;
+        width: 45.8%;
+     }
+     
+     .custom_features_wrapper_right {
+        border-radius: 6px 6px 6px 6px;
+        float: right;
+        height: 79.5%;
+        margin: 1% 1% 1% 0;
+        width: 43.5%;
+     } 
+         
+     .feature_content_adder {
+		height: 91%;
+		overflow-y: auto;
+		padding-top: 0%;
+		width: 45.5%;
+		overflow-x: hidden;
 	}
 	
 	.wrapper {
@@ -841,6 +896,30 @@ Width >= 1025 and < 1151
 	    width: 100%;
 	}
 	
+	.custom_features {
+		border-radius: 6px 6px 0 0;
+        float: left;
+        height: 73.5%;
+        margin: 1%;
+        width: 45.8%;
+     }
+     
+     .custom_features_wrapper_right {
+        border-radius: 6px 6px 6px 6px;
+        float: right;
+        height: 73.5%;
+        margin: 1% 1% 1% 0;
+        width: 43.5%;
+     } 
+         
+     .feature_content_adder {
+		height: 91%;
+		overflow-y: auto;
+		padding-top: 0%;
+		width: 99.5%;
+		overflow-x: hidden;
+	}
+	
 	.build_detail_div {
 	    float: left;
 	    height: 96%;
@@ -908,6 +987,30 @@ Width >= 1152 and < 1280
      	margin-top: 5px;
      }
 	
+	.custom_features {
+		border-radius: 6px 6px 0 0;
+        float: left;
+        height: 73.5%;
+        margin: 1%;
+        width: 45.8%;
+     }
+     
+     .custom_features_wrapper_right {
+        border-radius: 6px 6px 6px 6px;
+        float: right;
+        height: 73.5%;
+        margin: 1% 1% 1% 0;
+        width: 43.5%;
+     } 
+         
+     .feature_content_adder {
+		height: 91%;
+		overflow-y: auto;
+		padding-top: 0%;
+		width: 99.5%;
+		overflow-x: hidden;
+	}
+		
 	.main_wrapper {
 		bottom: 48px;
 		padding-left: 10px;
@@ -1228,6 +1331,30 @@ Width <= 1280 and height <= 800
      	margin-top: 5px;
      }
      
+     .custom_features {
+		border-radius: 6px 6px 0 0;
+        float: left;
+        height: 73.5%;
+        margin: 1%;
+        width: 45.8%;
+     }
+     
+     .custom_features_wrapper_right {
+        border-radius: 6px 6px 6px 6px;
+        float: right;
+        height: 73.5%;
+        margin: 1% 1% 1% 0;
+        width: 43.5%;
+     } 
+         
+     .feature_content_adder {
+		height: 91%;
+		overflow-y: auto;
+		padding-top: 0%;
+		width: 99.5%;
+		overflow-x: hidden;
+	}
+	
 	.main_wrapper {
 		bottom: 48px;
 		padding-left: 10px;
@@ -1660,6 +1787,48 @@ Width >= 1280 and height >= 800
 		height: 84%;
 	}
 
+	.custom_features {
+		border-radius: 6px 6px 0 0;
+        float: left;
+        height: 79.5%;
+        margin: 1%;
+        width: 45.8%;
+     }
+     
+     .custom_features_wrapper_right {
+        border-radius: 6px 6px 6px 6px;
+        float: right;
+        height: 79.5%;
+        margin: 1% 1% 1% 0;
+        width: 45.5%;
+     } 
+         
+     .feature_content_adder {
+		height: 91%;
+		overflow-y: auto;
+		padding-top: 0%;
+		width: 99.5%;
+		overflow-x: hidden;
+	}
+	
+	.features_actions {
+	    -webkit-border-radius: 0 0 3px 3px;
+	    -moz-border-radius: 0 0 3px 3px;
+	    border-radius: 0 0 3px 3px;
+	    /* margin-right: -10px;
+	    text-align: right;
+	    background: transparent;
+	    margin-top: 0;
+	    margin-bottom: 0; */
+	    /* margin-bottom: 18px;
+	    margin-top: 18px;
+	    padding: 17px 20px 18px 150px; */
+	    float: right;
+	    margin-right: 9px;
+	    margin-top: 4px;
+	    padding-top: 3%;
+ 	}
+
 	.intro_container {
 		left: 18%;
 		position: absolute;
@@ -1753,7 +1922,7 @@ Width >= 1280 and height >= 800
 	}
 	
 	.app_add_form {
-	    height: 98%;
+	    height: 97%;
 	    padding-top: 6px;
 	}
 	
