@@ -1304,9 +1304,9 @@ public interface FrameworkConstants {
     String ABOUT_FAILURE_FAILURE = "abt.update.failure";
     
     /* OS Types */
-    String OS_NAME= "os.name";
+//    String OS_NAME= "os.name";
     String OS_ARCH = "os.arch";
-    String WINDOWS = "Windows";
+//    String WINDOWS = "Windows";
     String SERVER = "Server";
     String DATABASE = "Database";
     String WINDOWS7 = "Windows 7";
@@ -1585,30 +1585,4 @@ public interface FrameworkConstants {
 		String REQ_DYNAMIC_POSSIBLE_VALUES = "possibleValues";
 		String REQ_SESSION_DYNAMIC_PARAM_MAP = "sessionDynamicParamMap";
 		
-		/**
-		 * MVN Goal Constants
-		 */
-		String PHASE_PACKAGE = "package";
-	    String PHASE_DEPLOY = "deploy";
-	    String PHASE_VALIDATE_CODE = "validate-code";
-	    String PHASE_UNIT_TEST = "unit-test";
-	    String PHASE_FUNCTIONAL_TEST = "functional-test";
-	    String PHASE_START_HUB = "start-hub";
-	    String PHASE_START_NODE = "start-node";
-	    String PHASE_LOAD_TEST = "load-test";
-	    String PHASE_RUNGAINST_SRC_START = "start";
-		
-		
-		/**
-		 * Test and test report directory constants
-		 */
-		String POM_PROP_KEY_UNITTEST_RPT_DIR = "phresco.unitTestReport.dir";
-		String POM_PROP_KEY_UNITTEST_TESTSUITE_XPATH = "phresco.unitTest.testsuite.xpath";
-		String POM_PROP_KEY_UNITTEST_TESTCASE_PATH = "phresco.unitTest.testcase.path";
-		String POM_PROP_KEY_LOADTEST_DIR = "phresco.loadTest.dir";
-		String POM_PROP_KEY_LOADTEST_RPT_DIR = "phresco.loadTestReport.dir";
-		String POM_PROP_KEY_FUNCTEST_SELENIUM_TOOL = "phresco.functioanlTest.selenium.tool";
-        String POM_PROP_KEY_FUNCTEST_RPT_DIR = "phresco.functionalTestReport.dir";
-        String POM_PROP_KEY_FUNCTEST_TESTSUITE_XPATH = "phresco.functionalTest.testsuite.xpath";
-        String POM_PROP_KEY_FUNCTEST_TESTCASE_PATH = "phresco.functionalTest.testcase.path";
 }
