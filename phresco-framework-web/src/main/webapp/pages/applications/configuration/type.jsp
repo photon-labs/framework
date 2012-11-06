@@ -49,14 +49,14 @@
     	}
     	
         if (CollectionUtils.isNotEmpty(possibleValues)) {
-//             StringTemplate dropDownControl = FrameworkUtil.constructSelectElement(propertyTemplate.isRequired(), propertyTemplate.getName(), "", "", propertyTemplate.getName(), 
-//                     propertyTemplate.getKey(), possibleValues, null, Boolean.FALSE.toString());
-//             sb.append(dropDownControl);
+             StringTemplate dropDownControl = FrameworkUtil.constructSelectElement(propertyTemplate.isRequired(), propertyTemplate.getName(), "", "", propertyTemplate.getName(), 
+                     propertyTemplate.getKey(), possibleValues, null, Boolean.FALSE.toString(),"", true,  propertyTemplate.getKey() + "Control", propertyTemplate.getKey() + "Error");
+             sb.append(dropDownControl);
         } else {
-//             StringTemplate inputControl = FrameworkUtil.constructInputElement(propertyTemplate.isRequired(), propertyTemplate.getName(), "", propertyTemplate.getType(),
-//                     "", propertyTemplate.getKey(), propertyTemplate.getKey(), propertyTemplate.getHelpText(), "",  propertyTemplate.getKey() + "Control", propertyTemplate.getKey() + "Error");
+             StringTemplate inputControl = FrameworkUtil.constructInputElement(propertyTemplate.isRequired(), propertyTemplate.getName(), "", propertyTemplate.getType(),
+                     "", propertyTemplate.getKey(), propertyTemplate.getKey(), propertyTemplate.getHelpText(), "", true,  propertyTemplate.getKey() + "Control", propertyTemplate.getKey() + "Error");
             
-//             sb.append(inputControl);
+             sb.append(inputControl);
         }
     }
 %>
