@@ -493,7 +493,7 @@ function changeTheme() {
   	if (localStorage["color"] != null) {
         $("link[title='phresco']").attr("href", localStorage["color"]);
     } else {
-        $("link[title='phresco']").attr("href", "theme/photon/css/red.css");
+		$("link[title='phresco']").attr("href", "theme/photon/css/photon_theme.css");
     } 
 }
 
@@ -504,8 +504,8 @@ function showWelcomeImage() {
 		$('.headerlogoimg').attr("src","theme/photon/images/phresco_header_blue.png");
 		$('.phtaccinno').attr("src","theme/photon/images/acc_inov_blue.png");
 		$('.welcomeimg').attr("src","theme/photon/images/welcome_photon_blue.png");
-	} else if (theme == null || theme == undefined || theme == "theme/photon/css/red.css") {
-		$("link[id='theme']").attr("href", "theme/photon/css/red.css");
+	} else if (theme == null || theme == undefined || theme == "theme/photon/css/blue.css") {
+		$("link[id='theme']").attr("href", "theme/photon/css/photon_theme.css");
 		$('.headerlogoimg').attr("src","theme/photon/images/phresco_header_red.png");
 		$('.phtaccinno').attr("src","theme/photon/images/acc_inov_red.png");
 		$('.welcomeimg').attr("src","theme/photon/images/welcome_photon_red.png");

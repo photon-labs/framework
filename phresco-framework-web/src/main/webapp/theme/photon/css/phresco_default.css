@@ -371,6 +371,7 @@ a {
 }
 
 .shortcut_top {
+	display:none;
 	height: 38px;
 	margin-bottom: 3px;
 	position: relative;
@@ -398,6 +399,7 @@ a {
 }
 
 .shortcut_bottom {
+	display:none;
 	height: 38px;
 	bottom: -5px;
 	margin-top: -3px;

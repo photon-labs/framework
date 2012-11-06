@@ -38,7 +38,7 @@
 	<script type="text/javascript" src="js/common.js"></script>
 
 	<link type="text/css" rel="stylesheet" href="css/bootstrap.css">
-	<link type="text/css" rel="stylesheet" href="theme/photon/css/phresco.css">
+	<link type="text/css" rel="stylesheet" href="theme/photon/css/phresco_default.css">
 	<link type="text/css" rel="stylesheet" class="changeme" id="theme">
 
 <script type="text/javascript">
@@ -78,7 +78,7 @@ $(document).ready(function() {
           <img class="logoimage" src="theme/photon/images/photon_phresco_logo_red.png">
       </div>
       <div class="innoimg">
-           <img class="phtaccinno" border="0" alt="" onclick="window.open('http://www.photon.in','_blank');" src="theme/photon/images/acc_inov_red.png">
+           <img class="phtaccinno" border="0" alt="" onClick="window.open('http://www.photon.in','_blank');" src="theme/photon/images/acc_inov_red.png">
       </div>
 	 
       <div class="lgnintro_container lgnContainer">

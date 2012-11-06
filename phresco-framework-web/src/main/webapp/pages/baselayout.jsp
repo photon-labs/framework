@@ -37,7 +37,7 @@
 		<link REL="SHORTCUT ICON" HREF="images/favicon.ico">
 		<link rel="stylesheet" href="css/bootstrap.css">
 
-		<link type="text/css" rel="stylesheet" href="theme/photon/css/phresco.css" id="phresco" >
+		<link type="text/css" rel="stylesheet" href="theme/photon/css/phresco_default.css" id="phresco" >
 		<link type="text/css" rel="stylesheet" class="changeme" title="phresco">
 		<!-- media queries css -->
 		<link type="text/css" rel="stylesheet" href="theme/photon/css/media-queries.css">
