@@ -237,7 +237,9 @@ function successEvent(pageUrl, data) {
    		successEnvValidation(data);
    	} else if (pageUrl == "fetchBuildInfoEnvs") {
    		fillVersions("environments", data.buildInfoEnvs);
-   	} else {
+   	} else if (pageUrl === "changeEveDependancyListener") {
+		showHideAndUpdateData(data);
+	} else {
    		if ((data != undefined || !isBlank(data)) && data != "") {
 			if (data.validated != undefined && data.validated) {
 				return validationError(data.showError);

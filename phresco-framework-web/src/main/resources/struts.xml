@@ -485,7 +485,7 @@
             <result type="json" />
         </action>
         
-        <action name="checkForConfiguration" method="checkForConfiguration" class="com.photon.phresco.framework.actions.applications.Applications">
+        <action name="checkForConfiguration" method="checkForConfiguration" class="com.photon.phresco.framework.actions.applications.Build">
             <result type="json" />
         </action>
         
