@@ -162,11 +162,13 @@ public class Applications extends FrameworkBaseAction {
             
             	List<String> jsonData = getJsonData();
             	List<SelectedFeature> selectedFeatures = new ArrayList<SelectedFeature>();
-            	for (String string : jsonData) {
-					Gson gson = new Gson();
-					SelectedFeature obj = gson.fromJson(string, SelectedFeature.class);
-					selectedFeatures.add(obj);
-				}
+            	if(jsonData !=null) {
+	            	for (String string : jsonData) {
+						Gson gson = new Gson();
+						SelectedFeature obj = gson.fromJson(string, SelectedFeature.class);
+						selectedFeatures.add(obj);
+					}
+            	}
             	setSessionAttribute(REQ_SELECTED_FEATURES, selectedFeatures);
         		projectInfo.setAppInfos(Collections.singletonList(appInfo));
         		setSessionAttribute(getAppId() + SESSION_APPINFO, projectInfo);

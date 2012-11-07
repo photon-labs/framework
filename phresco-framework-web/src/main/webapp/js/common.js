@@ -768,3 +768,171 @@ function isValidUrl(url) {
       return true;
     }   
 }
+
+//For Execute Sql
+//execute sql codes
+function buttonAdd() {
+	addDbWithVersions();
+	$('#avaliableSourceScript > option:selected').appendTo('#selectedSourceScript');
+}
+	
+function buttonAddAll() {
+	var sqlFiles = "";
+	$('#avaliableSourceScript option').each(function(i, available) {
+		sqlFiles = $(available).val();
+		$('#DbWithSqlFiles').val($('#DbWithSqlFiles').val() + $('#dataBase').val()+ "#VSEP#" + sqlFiles + "#NAME#" + $(available).text() + "#SEP#");
+	});		
+	$('#avaliableSourceScript > option').appendTo('#selectedSourceScript');
+}
+
+function buttonRemove() {
+	updateDbWithVersionsForRemove();
+	$('#selectedSourceScript > option:selected').appendTo('#avaliableSourceScript');
+}
+
+function buttonRemoveAll() {
+	updateDbWithVersionsForRemoveAll();
+	$('#selectedSourceScript > option').appendTo('#avaliableSourceScript');
+}
+
+//To move up the values
+function moveUp() {
+	$('#selectedSourceScript option:selected').each( function() {
+		var newPos = $('#selectedSourceScript  option').index(this) - 1;
+		if (newPos > -1) {
+			$('#selectedSourceScript  option').eq(newPos).before("<option value='"+$(this).val()+"' selected='selected'>"+$(this).text()+"</option>");
+			$(this).remove();
+		}
+	});
+}
+
+//To move down the values
+function moveDown() {
+	var countOptions = $('#selectedSourceScript option').size();
+	$('#selectedSourceScript option:selected').each( function() {
+		var newPos = $('#selectedSourceScript  option').index(this) + 1;
+		if (newPos < countOptions) {
+			$('#selectedSourceScript  option').eq(newPos).after("<option value='"+$(this).val()+"' selected='selected'>"+$(this).text()+"</option>");
+			$(this).remove();
+		}
+	});
+}
+
+function addDbWithVersions() {
+	//creating new data list
+	var sqlFiles = "";
+	$("#avaliableSourceScript :selected").each(function(i, available) {
+		sqlFiles = $(available).val();
+		$('#DbWithSqlFiles').val($('#DbWithSqlFiles').val() + $('#dataBase').val()+ "#VSEP#" + sqlFiles + "#NAME#" + $(available).text() + "#SEP#");
+	});
+}
+
+function addDbWithVersions() {
+	//creating new data list
+	var sqlFiles = "";
+	$("#avaliableSourceScript :selected").each(function(i, available) {
+		sqlFiles = $(available).val();
+		$('#DbWithSqlFiles').val($('#DbWithSqlFiles').val() + $('#dataBase').val()+ "#VSEP#" + sqlFiles + "#NAME#" + $(available).text() + "#SEP#");
+	});
+}
+
+
+function updateDbWithVersionsForRemove() {
+	var toBeUpdatedDbwithVersions = "";
+	$("#selectedSourceScript option:selected").each(function(i, alreadySelected) {
+		var nameSep = new Array();
+		nameSep = $('#DbWithSqlFiles').val().split("#SEP#");
+		for (var i=0; i < nameSep.length - 1; i++) {
+			var addedDbs = nameSep[i].split("#VSEP#");
+			var addedSqlName = addedDbs[1].split("#NAME#");
+			if(($('#dataBase').val() == addedDbs[0]) && $(alreadySelected).val() != addedSqlName[0]) {
+				toBeUpdatedDbwithVersions = toBeUpdatedDbwithVersions + nameSep[i] + "#SEP#";
+			} else if(($('#dataBase').val() != addedDbs[0]) && $(alreadySelected).val() != addedSqlName[0]) {
+				toBeUpdatedDbwithVersions = toBeUpdatedDbwithVersions + nameSep[i] + "#SEP#";
+			}
+		}
+		$('#DbWithSqlFiles').val(toBeUpdatedDbwithVersions);
+	});
+}
+
+function updateDbWithVersionsForRemoveAll() {
+	var toBeUpdatedDbwithVersions = "";
+	$("#selectedSourceScript option").each(function(i, alreadySelected) {
+		var nameSep = new Array();
+		nameSep = $('#DbWithSqlFiles').val().split("#SEP#");
+		for (var i=0; i < nameSep.length - 1; i++) {
+			var addedDbs = nameSep[i].split("#VSEP#");
+			var addedSqlName = addedDbs[1].split("#NAME#");
+			if(($('#dataBase').val() != addedDbs[0]) && $(alreadySelected).val() != addedSqlName[0]) {
+				toBeUpdatedDbwithVersions = toBeUpdatedDbwithVersions + nameSep[i] + "#SEP#";
+			} else if(($('#dataBase').val() == addedDbs[0]) && $(alreadySelected).val() == addedSqlName[0]) {
+				toBeUpdatedDbwithVersions = toBeUpdatedDbwithVersions + nameSep[i] + "#SEP#";
+			}
+		}
+		$('#DbWithSqlFiles').val('');
+	});
+}
+
+function hideDbWithVersions() {
+	// getting existing data list
+	var nameSep = new Array();
+	nameSep = $('#DbWithSqlFiles').val().split("#SEP#");
+	for (var i=0; i < nameSep.length - 1; i++) {
+		var addedDbs = nameSep[i].split("#VSEP#");
+		var addedSqlName = addedDbs[1].split("#NAME#");
+		if($('#dataBase').val() == addedDbs[0]) {
+			$("#avaliableSourceScript option[value='" + addedSqlName[0] + "']").remove();
+		}
+	}
+	// show corresponding DB sql files
+	showSelectedDBWithVersions();
+}
+
+function showSelectedDBWithVersions() {
+	$('#selectedSourceScript').empty();
+	var nameSep = new Array();
+	nameSep = $('#DbWithSqlFiles').val().split("#SEP#");
+	for (var i=0; i < nameSep.length - 1; i++) {
+		var addedDbs = nameSep[i].split("#VSEP#");
+		var addedSqlName = addedDbs[1].split("#NAME#");
+		if($('#dataBase').val() == addedDbs[0]) {
+			$('#selectedSourceScript').append($("<option></option>").attr("value",addedSqlName[0]).text(addedSqlName[1])); 
+		}
+	}
+	
+	//hiding loading icon..
+	hideLoadingIcon();
+}
+
+function showHideAndUpdateData(data) {
+	if (data.controlsTobeHidden != undefined && !isBlank(data.controlsTobeHidden)) {
+		hideControl(data.controlsTobeHidden);
+	}
+	if (data.controlsTobeShown != undefined && !isBlank(data.controlsTobeShown)) {
+		showControl(data.controlsTobeShown);
+	}
+	if (data.dependentValues != undefined && !isBlank(data.dependentValues)) {
+		pushToElement = data.pushToElement;
+		isMultiple = $("#"+pushToElement).attr("isMultiple");
+		controlType = $("#"+pushToElement).attr("type");
+		constructElements(data, pushToElement, isMultiple, controlType);
+	}
+	
+	var selectedOption = $('#' + data.controlsTobeShown[0]).val();
+	var currentParamKey = data.controlsTobeShown[0];
+	if (data.needToCallAgain != undefined && data.needToCallAgain) {
+		changeEveDependancyListener(selectedOption, currentParamKey);
+	}
+}
+
+function hideControl(controls) {
+	for (i in controls) {
+		$('#' + controls[i] + 'Control').hide();
+	}
+}
+
+function showControl(controls) {
+	for (i in controls) {
+		$('#' + controls[i] + 'Control').show();
+	}
+}

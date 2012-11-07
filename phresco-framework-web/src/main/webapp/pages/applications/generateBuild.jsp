@@ -33,6 +33,7 @@
 <%@ page import="com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter"%>
 <%@ page import="com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.Name.Value"%>
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
+<%@ page import="com.photon.phresco.framework.commons.ParameterModel"%>
 
 <script src="js/reader.js" ></script>
 <script src="js/select-envs.js"></script>
@@ -103,12 +104,14 @@
 	<%	
 		if (CollectionUtils.isNotEmpty(parameters)) {
 			for (Parameter parameter: parameters) {
+				ParameterModel parameterModel = new ParameterModel();
 	   			Boolean mandatory = false;
 	   			String lableTxt = "";
 	   			String labelClass = "";
 				if (Boolean.parseBoolean(parameter.getRequired())) {
 					mandatory = true;
 	 			}
+				
 				if (!FrameworkConstants.TYPE_HIDDEN.equalsIgnoreCase(parameter.getType())) {
 					List<Value> values = parameter.getName().getValue();						
 					for(Value value : values) {
@@ -119,13 +122,23 @@
 						}
 					}
 				}
-					
+				parameterModel.setMandatory(mandatory);
+				parameterModel.setLableText(lableTxt);
+				parameterModel.setLableClass(labelClass);
+				parameterModel.setName(parameter.getKey());
+				parameterModel.setId(parameter.getKey());
+				parameterModel.setControlGroupId(parameter.getKey() + "Control");
+				parameterModel.setControlId(parameter.getKey() + "Error");
+				parameterModel.setShow(parameter.isShow());
+				
 				// load input text box
 				if (FrameworkConstants.TYPE_STRING.equalsIgnoreCase(parameter.getType()) || FrameworkConstants.TYPE_NUMBER.equalsIgnoreCase(parameter.getType()) || 
-					FrameworkConstants.TYPE_PASSWORD.equalsIgnoreCase(parameter.getType()) || FrameworkConstants.TYPE_HIDDEN.equalsIgnoreCase(parameter.getType())) { 
-					StringTemplate txtInputElement = FrameworkUtil.constructInputElement(mandatory, lableTxt, labelClass,
-					        parameter.getType(), "", parameter.getKey(), parameter.getKey(), "", 
-					        StringUtils.isNotEmpty(parameter.getValue()) ? parameter.getValue():"", parameter.isShow(), parameter.getKey() + "Control", parameter.getKey() + "Error");
+					FrameworkConstants.TYPE_PASSWORD.equalsIgnoreCase(parameter.getType()) || FrameworkConstants.TYPE_HIDDEN.equalsIgnoreCase(parameter.getType())) {
+					
+					parameterModel.setInputType(parameter.getType());
+					parameterModel.setValue(StringUtils.isNotEmpty(parameter.getValue()) ? parameter.getValue():"");
+					
+					StringTemplate txtInputElement = FrameworkUtil.constructInputElement(parameterModel);
 	%> 	
 				<%= txtInputElement %>
 	<%
@@ -138,8 +151,12 @@
 					} else {
 						onClickFunction = "changeChckBoxValue(this);";
 					}
-					StringTemplate chckBoxElement = FrameworkUtil.constructCheckBoxElement(mandatory, lableTxt, labelClass, cssClass, parameter.getKey(),
-					        parameter.getKey(), parameter.getValue(), onClickFunction, parameter.isShow(), parameter.getKey() + "Control", parameter.getKey() + "Error");
+					
+					parameterModel.setOnClickFunction(onClickFunction);
+					parameterModel.setCssClass(cssClass);
+					parameterModel.setValue(parameter.getValue());
+					
+					StringTemplate chckBoxElement = FrameworkUtil.constructCheckBoxElement(parameterModel);
 	%>
 					<%= chckBoxElement%>	
 	<%
@@ -153,13 +170,17 @@
 					} else if (CollectionUtils.isNotEmpty(psblValues) && psblValues.get(0).getDependency() != null) {
 						onChangeFunction = "selectBoxOnChangeEvent(this,  '"+ parameter.getKey() +"')";
 					}
-					StringTemplate selectElmnt = FrameworkUtil.constructSelectElement(mandatory, lableTxt, labelClass, "", parameter.getKey(),
-					        parameter.getKey(), psblValues, selectedValList, parameter.getMultiple(), onChangeFunction, parameter.isShow(), 
-					        parameter.getKey() + "Control", parameter.getKey() + "Error");
+					
+					parameterModel.setOnChangeFunction(onChangeFunction);
+					parameterModel.setSelectedValues(selectedValList);
+					parameterModel.setObjectValue(psblValues);
+					parameterModel.setMultiple(Boolean.parseBoolean(parameter.getMultiple()));
+					
+					StringTemplate selectElmnt = FrameworkUtil.constructSelectElement(parameterModel);
 	%>
 					<%= selectElmnt %>
-	<%
-				} else if (FrameworkConstants.TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(parameter.getType())) {
+	<% 			
+				} else if (FrameworkConstants.TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(parameter.getType()) && (!parameter.isSort())) {
 					//To dynamically load values into select box for environmet
 					List<com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value> dynamicPsblValues = (List<com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value>) request.getAttribute(FrameworkConstants.REQ_DYNAMIC_POSSIBLE_VALUES + parameter.getKey());
 					List<String> selectedValList = Arrays.asList(parameter.getValue().split(FrameworkConstants.CSV_PATTERN));
@@ -169,11 +190,21 @@
 					} else {
 					    onChangeFunction = "";
 					}
-					StringTemplate selectDynamicElmnt = FrameworkUtil.constructSelectElement(mandatory, lableTxt, labelClass, "", parameter.getKey(),
-					        parameter.getKey(), dynamicPsblValues, selectedValList, parameter.getMultiple(), onChangeFunction, 
-					        parameter.isShow(), parameter.getKey() + "Control", parameter.getKey() + "Error");
+					
+					parameterModel.setOnChangeFunction(onChangeFunction);
+					parameterModel.setSelectedValues(selectedValList);
+					parameterModel.setObjectValue(dynamicPsblValues);
+					parameterModel.setMultiple(Boolean.parseBoolean(parameter.getMultiple()));
+					
+					StringTemplate selectDynamicElmnt = FrameworkUtil.constructSelectElement(parameterModel);
 	%>				
 		    		<%= selectDynamicElmnt %>
+	<%
+		} else if (FrameworkConstants.TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(parameter.getType()) && (parameter.isSort())) {
+				List<com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value> dynamicPsblValues = (List<com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value>) request.getAttribute(FrameworkConstants.REQ_DYNAMIC_POSSIBLE_VALUES + parameter.getKey());
+				StringTemplate fieldSetElement = FrameworkUtil.constructFieldSetElement(dynamicPsblValues);
+	%>
+					<%= fieldSetElement %>
 	<%
 				}
 	%>
@@ -237,54 +268,6 @@
 // 			}
 		})
 		
-		//execute sql codes
-		$('#btnAdd').click(function(e) {
-			addDbWithVersions();
-			$('#avaliableSourceScript > option:selected').appendTo('#selectedSourceScript');
-		});
-			
-		$('#btnAddAll').click(function(e) {
-			var sqlFiles = "";
-			$('#avaliableSourceScript option').each(function(i, available) {
-				sqlFiles = $(available).val();
-				$('#DbWithSqlFiles').val($('#DbWithSqlFiles').val() + $('#databases').val()+ "#VSEP#" + sqlFiles + "#NAME#" + $(available).text() + "#SEP#");
-			});		
-			$('#avaliableSourceScript > option').appendTo('#selectedSourceScript');
-		});
-
-		$('#btnRemove').click(function() {
-			updateDbWithVersionsForRemove();
-   			$('#selectedSourceScript > option:selected').appendTo('#avaliableSourceScript');
-		});
-
-		$('#btnRemoveAll').click(function() {
-			updateDbWithVersionsForRemoveAll();
-   			$('#selectedSourceScript > option').appendTo('#avaliableSourceScript');
-		});
-		
-		//To move up the values
-		$('#up').bind('click', function() {
-			$('#selectedSourceScript option:selected').each( function() {
-				var newPos = $('#selectedSourceScript  option').index(this) - 1;
-				if (newPos > -1) {
-					$('#selectedSourceScript  option').eq(newPos).before("<option value='"+$(this).val()+"' selected='selected'>"+$(this).text()+"</option>");
-					$(this).remove();
-				}
-			});
-		});
-		
-		//To move down the values
-		$('#down').bind('click', function() {
-			var countOptions = $('#selectedSourceScript option').size();
-			$('#selectedSourceScript option:selected').each( function() {
-				var newPos = $('#selectedSourceScript  option').index(this) + 1;
-				if (newPos < countOptions) {
-					$('#selectedSourceScript  option').eq(newPos).after("<option value='"+$(this).val()+"' selected='selected'>"+$(this).text()+"</option>");
-					$(this).remove();
-				}
-			});
-		});
-		
 		$('#environments').change(function() {
 			if ($("#from").val() != "generateBuild") {
 				
@@ -297,82 +280,6 @@
 		executeSqlShowHide();
 // 		showHideMinusIcon();
 	});
-	
-	function addDbWithVersions() {
-		//creating new data list
-		var sqlFiles = "";
-		$("#avaliableSourceScript :selected").each(function(i, available) {
-			sqlFiles = $(available).val();
-			$('#DbWithSqlFiles').val($('#DbWithSqlFiles').val() + $('#databases').val()+ "#VSEP#" + sqlFiles + "#NAME#" + $(available).text() + "#SEP#");
-		});
-	}
-	
-	function hideDbWithVersions() {
-		// getting existing data list
-		var nameSep = new Array();
-		nameSep = $('#DbWithSqlFiles').val().split("#SEP#");
-		for (var i=0; i < nameSep.length - 1; i++) {
-			var addedDbs = nameSep[i].split("#VSEP#");
-			var addedSqlName = addedDbs[1].split("#NAME#");
-			if($('#databases').val() == addedDbs[0]) {
-				$("#avaliableSourceScript option[value='" + addedSqlName[0] + "']").remove();
-			}
-		}
-		// show corresponding DB sql files
-		showSelectedDBWithVersions();
-	}
-	
-	function showSelectedDBWithVersions() {
-		$('#selectedSourceScript').empty();
-		var nameSep = new Array();
-		nameSep = $('#DbWithSqlFiles').val().split("#SEP#");
-		for (var i=0; i < nameSep.length - 1; i++) {
-			var addedDbs = nameSep[i].split("#VSEP#");
-			var addedSqlName = addedDbs[1].split("#NAME#");
-			if($('#databases').val() == addedDbs[0]) {
-				$('#selectedSourceScript').append($("<option></option>").attr("value",addedSqlName[0]).text(addedSqlName[1])); 
-			}
-		}
-		
-		//hiding loading icon..
-		hideLoadingIcon();
-	}
-	
-	function updateDbWithVersionsForRemove() {
-		var toBeUpdatedDbwithVersions = "";
-		$("#selectedSourceScript option:selected").each(function(i, alreadySelected) {
-			var nameSep = new Array();
-			nameSep = $('#DbWithSqlFiles').val().split("#SEP#");
-			for (var i=0; i < nameSep.length - 1; i++) {
-				var addedDbs = nameSep[i].split("#VSEP#");
-				var addedSqlName = addedDbs[1].split("#NAME#");
-				if(($('#databases').val() == addedDbs[0]) && $(alreadySelected).val() != addedSqlName[0]) {
-					toBeUpdatedDbwithVersions = toBeUpdatedDbwithVersions + nameSep[i] + "#SEP#";
-				} else if(($('#databases').val() != addedDbs[0]) && $(alreadySelected).val() != addedSqlName[0]) {
-					toBeUpdatedDbwithVersions = toBeUpdatedDbwithVersions + nameSep[i] + "#SEP#";
-				}
-			}
-			$('#DbWithSqlFiles').val(toBeUpdatedDbwithVersions);
-		});
-	}
-	
-	function updateDbWithVersionsForRemoveAll() {
-		var toBeUpdatedDbwithVersions = "";
-		$("#selectedSourceScript option").each(function(i, alreadySelected) {
-			var nameSep = new Array();
-			nameSep = $('#DbWithSqlFiles').val().split("#SEP#");
-			for (var i=0; i < nameSep.length - 1; i++) {
-				var addedDbs = nameSep[i].split("#VSEP#");
-				var addedSqlName = addedDbs[1].split("#NAME#");
-				if(($('#databases').val() != addedDbs[0]) && $(alreadySelected).val() != addedSqlName[0]) {
-					toBeUpdatedDbwithVersions = toBeUpdatedDbwithVersions + nameSep[i] + "#SEP#";
-				} else if(($('#databases').val() == addedDbs[0]) && $(alreadySelected).val() == addedSqlName[0]) {
-					toBeUpdatedDbwithVersions = toBeUpdatedDbwithVersions + nameSep[i] + "#SEP#";
-				}
-			}
-			$('#DbWithSqlFiles').val(toBeUpdatedDbwithVersions);
-		});
-	}
 	
 	function executeSqlShowHide() {
 		if($('#importSql').is(":checked")) {
@@ -524,40 +431,5 @@
 		params = params.concat("&selectedOption=");
 		params = params.concat(selectedOption);
 		loadContent('changeEveDependancyListener', '', '', params, true);
-	}
-	
-	function successEvent(pageUrl, data) {
-		if (pageUrl === "changeEveDependancyListener") {
-			if (data.controlsTobeHidden != undefined && !isBlank(data.controlsTobeHidden)) {
-				hideControl(data.controlsTobeHidden);
-			}
-			if (data.controlsTobeShown != undefined && !isBlank(data.controlsTobeShown)) {
-				showControl(data.controlsTobeShown);
-			}
-			if (data.dependentValues != undefined && !isBlank(data.dependentValues)) {
-				pushToElement = data.pushToElement;
-				isMultiple = $("#"+pushToElement).attr("isMultiple");
-				controlType = $("#"+pushToElement).attr("type");
-				constructElements(data, pushToElement, isMultiple, controlType);
-			}
-			
-			var selectedOption = $('#' + data.controlsTobeShown[0]).val();
-			var currentParamKey = data.controlsTobeShown[0];
-			if (data.needToCallAgain != undefined && data.needToCallAgain) {
-				changeEveDependancyListener(selectedOption, currentParamKey);
-			}
-		}
-	}
-	
-	function hideControl(controls) {
-		for (i in controls) {
-			$('#' + controls[i] + 'Control').hide();
-		}
-	}
-	
-	function showControl(controls) {
-		for (i in controls) {
-			$('#' + controls[i] + 'Control').show();
-		}
 	}
 </script>

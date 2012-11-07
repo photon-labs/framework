@@ -90,7 +90,7 @@ import com.phresco.pom.model.PluginExecution.Goals;
 import com.phresco.pom.util.AndroidPomProcessor;
 import com.phresco.pom.util.PomProcessor;
 
-public class Build extends DynamicParameterUtil {
+public class Build extends DynamicParameterUtil implements Constants {
 
 	private static final long serialVersionUID = -9172394838984622961L;
 	private static final Logger S_LOGGER = Logger.getLogger(Build.class);
@@ -246,21 +246,6 @@ public class Build extends DynamicParameterUtil {
             setSessionAttribute(appInfo.getId() + PHASE_PACKAGE + "controlsTobeShowed", controlsTobeShowed);
             setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
             setReqAttribute(REQ_GOAL, PHASE_PACKAGE); 
-		    
-		    
-//			Map<String, Object> buildParamMap = new HashMap<String, Object>();
-//			ApplicationInfo appInfo = getApplicationInfo();
-//			buildParamMap.put(REQ_APP_INFO, appInfo);
-//			buildParamMap.put(REQ_CUSTOMER_ID, getCustomerId());
-//			List<Parameter> parameters = setDynamicParametersInReq(appInfo, PHASE_PACKAGE);
-//			setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
-//			List<String> controlsTobeShowed = new ArrayList<String>();
-//            setPossibleValuesInReq(parameters, buildParamMap, controlsTobeShowed);
-//            setSessionAttribute(appInfo.getId() + PHASE_PACKAGE + REQ_SESSION_DYNAMIC_PARAM_MAP, buildParamMap);
-//            setSessionAttribute(appInfo.getId() + PHASE_PACKAGE + "controlsTobeShowed", controlsTobeShowed);
-//			setReqAttribute(REQ_APPINFO, appInfo);
-//			setReqAttribute(REQ_GOAL, PHASE_PACKAGE);
-//			setReqAttribute(REQ_FROM, getFrom());
 		} catch (PhrescoException e) {
 			return showErrorPopup(e, getText(EXCEPTION_BUILD_POPUP));
 		} 
@@ -305,18 +290,22 @@ public class Build extends DynamicParameterUtil {
 			S_LOGGER.debug("Entering Method  Build.showDeployPopup()");
 		}
 		try {
-			Map<String, Object> deployParamMap = new HashMap<String, Object>();
-			ApplicationInfo applicationInfo = getApplicationInfo();
-			String buildNumber = getReqParameter(REQ_DEPLOY_BUILD_NUMBER);
-			deployParamMap.put(REQ_APP_INFO, applicationInfo);
-			deployParamMap.put(REQ_DEPLOY_BUILD_NUMBER, buildNumber);
-			List<Parameter> parameters = setDynamicParameters(deployParamMap, PHASE_DEPLOY);
-			
-			setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);			
-			setReqAttribute(REQ_APPINFO, applicationInfo);
-			setReqAttribute(REQ_DEPLOY_BUILD_NUMBER, buildNumber);
-			setReqAttribute(REQ_GOAL, PHASE_DEPLOY);
-			setReqAttribute(REQ_FROM, getFrom());
+			ApplicationInfo appInfo = getApplicationInfo();
+            removeSessionAttribute(appInfo.getId() + PHASE_DEPLOY + REQ_SESSION_DYNAMIC_PARAM_MAP);
+            removeSessionAttribute(appInfo.getId() + PHASE_DEPLOY + "controlsTobeShowed");
+            setProjModulesInReq();
+            Map<String, Object> watcherMap = new HashMap<String, Object>();
+            watcherMap.put(REQ_APP_INFO, appInfo);
+            String buildNumber = getReqParameter(REQ_DEPLOY_BUILD_NUMBER);
+            watcherMap.put(REQ_DEPLOY_BUILD_NUMBER, buildNumber);
+            List<Parameter> parameters = setDynamicParametersInReq(appInfo, PHASE_DEPLOY);
+            List<String> controlsTobeShowed = new ArrayList<String>();
+            setPossibleValuesInReq(parameters, watcherMap, controlsTobeShowed);
+            setSessionAttribute(appInfo.getId() + PHASE_DEPLOY + REQ_SESSION_DYNAMIC_PARAM_MAP, watcherMap);
+            setSessionAttribute(appInfo.getId() + PHASE_DEPLOY + "controlsTobeShowed", controlsTobeShowed);
+            setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
+            setReqAttribute(REQ_GOAL, PHASE_DEPLOY); 
+            setReqAttribute(REQ_FROM, getFrom());
 		} catch (PhrescoException e) {
 			return showErrorPopup(e, getText(EXCEPTION_DEPLOY_POPUP));
 		} 
@@ -342,7 +331,7 @@ public class Build extends DynamicParameterUtil {
 					}
 					if (parameter.getDynamicParameter() != null) {
 						List<Value> possibleValues = setDynamicPossibleValues(dynamicParamMap, parameter);
-						setReqAttribute(REQ_DYNAMIC_POSSIBLE_VALUES, possibleValues);
+						setReqAttribute(REQ_DYNAMIC_POSSIBLE_VALUES + parameter.getKey(), possibleValues);
 					}
 				}
 			}

@@ -874,7 +874,14 @@ img.phtaccinno {
 
 html, body {
   	color: #000000;
-    background:url(../images/theme_bg.jpg) repeat;
+    background: #641013; /* Old browsers */
+    background-image:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIHZpZXdCb3g9IjAgMCAxIDEiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiPgo8bGluZWFyR3JhZGllbnQgaWQ9Imc1NzUiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjAlIiB5Mj0iMTAwJSI+CjxzdG9wIHN0b3AtY29sb3I9IiM2NDEwMTMiIG9mZnNldD0iMCIvPjxzdG9wIHN0b3AtY29sb3I9IiMwMDAwMDAiIG9mZnNldD0iLjIwIi8+PHN0b3Agc3RvcC1jb2xvcj0iIzAwMDAwMCIgb2Zmc2V0PSIuNzAiLz48c3RvcCBzdG9wLWNvbG9yPSIjNDYwQjBEIiBvZmZzZXQ9IjEiLz4KPC9saW5lYXJHcmFkaWVudD4KPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNnNTc1KSIgLz4KPC9zdmc+);
+	background: -moz-linear-gradient(top, #641013 0%, #000000 12%, #000000 37%, #641013 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#641013), color-stop(12%,#000000), color-stop(37%,#000000), color-stop(100%,#641013)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, #641013 0%,#000000 12%,#000000 37%,#641013 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, #641013 0%,#000000 12%,#000000 37%,#641013 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top, #641013 0%,#000000 12%,#000000 37%,#641013 100%); /* IE10+ */
+	background: linear-gradient(top, #641013 0%,#000000 12%,#000000 37%,#641013 100%); /* W3C */
 }
 
 div.lgnError {

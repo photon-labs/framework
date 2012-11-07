@@ -371,6 +371,32 @@ a {
 .features_actions {
     border-top: 0px solid #ddd;
 }
+
+#result div {
+	background: -moz-linear-gradient(center top , #FFFFFF 0%, #E0E0E0 100%) repeat scroll 0 0 transparent;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#470411', endColorstr='#2b0007', GradientType=0);
+    color: #000000;
+    line-height: 25px;
+    border-bottom: 1px solid #D2D2D2;
+	border-top: 2px solid aliceblue;
+    padding: 0px 5px 0px 5px;
+}
+
+.custom_features_wrapper_right {
+ 	border: 1px solid #006DCF;
+    border-radius: 6px 6px 6px 6px;
+}
+     
+.custom_features {
+    border: 1px solid #006DCF;
+	border-radius: 6px 6px 0 0;
+}   
+ 
+.version_des {
+	margin-left:12%; 
+	color: #333333;
+}
+
 /*corner arrows starts*/
 .lefttopnav {
     background-image: url(../images/a_blue_lefttop.png);
