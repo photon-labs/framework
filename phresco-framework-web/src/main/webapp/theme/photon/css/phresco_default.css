@@ -759,6 +759,7 @@ a {
 /* label */
 .labelbold {
   font-weight:bold;
+  color:#FFFFFF;
 }
 
 .headerInnerTop li {
@@ -1706,7 +1707,7 @@ div.vjs-big-play-button span {
 
 #container {
     z-index: 15004;
-    width: 100%;
+    width: 99%;
     height: 85%;
 }
 
@@ -3876,7 +3877,7 @@ div.submit_input {
 
 .theme_accordion_container{
     float: left;
-    margin: 1px;
+    margin: 1px 5px;
     width: 99.6%;
 }
 
@@ -3910,7 +3911,7 @@ div.submit_input {
 
 .lft_menus_container{
     /* width:99.5%; */
-    width: 100.5%;
+    width: 100%;
     float:left;
 }
 
@@ -3952,7 +3953,7 @@ div.submit_input {
     float:left;
     margin:0px;
     padding:0px;
-    width:99.5%;
+    width:99.85%;
 }
 
 .scrollpanel{
@@ -4021,8 +4022,8 @@ div.submit_input {
 .closereg span {
     float:left;
     margin:0px;
-    background:url(../../../images/r_arrowclose.png) no-repeat 3%;
-    padding-left:5%;
+    background:url(../../../images/r_arrowclose.png) no-repeat 1%;
+    padding-left:2%;
     width:92%;
     line-height: 25px;
 }
@@ -4056,8 +4057,8 @@ div.submit_input {
 .openreg span {
     float:left;
     margin:0px;
-    background:url(../../../images/r_arrowopen.png) no-repeat 3%;
-    padding-left:5%;
+    background:url(../../../images/r_arrowopen.png) no-repeat 1%;
+    padding-left:2%;
     width:92%;
 }
 
