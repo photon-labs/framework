@@ -41,7 +41,7 @@ Width <= 1024
 		padding-left: 10px;
 		padding-right: 10px;
 		position: absolute;
-		top: 110px;
+		top: 115px;
 		width: 98.2%;
 	}
 	
@@ -467,7 +467,7 @@ Width size <= 1024
 		padding-left: 10px;
 		padding-right: 10px;
 		position: absolute;
-		top: 55px;
+		top: 115px;
 		width: 98.2%;
 	}
 	
@@ -1016,7 +1016,7 @@ Width >= 1152 and < 1280
 		padding-left: 10px;
 		padding-right: 10px;
 		position: absolute;
-		top: 55px;
+		top: 115px;
 		width: 98.2%;
 	}
 	
@@ -1360,7 +1360,7 @@ Width <= 1280 and height <= 800
 		padding-left: 10px;
 		padding-right: 10px;
 		position: absolute;
-		top: 55px;
+		top: 115px;
 		width: 98.2%;
 	}
 	
@@ -2147,7 +2147,7 @@ Width > 1280 and <= 1360
 		padding-left: 10px;
 		padding-right: 10px;
 		position: absolute;
-		top: 56px;
+		top: 115px;
 		width: 98.2%;
 	}
 	
@@ -2575,7 +2575,7 @@ Width > 1360 and <= 1440
 		padding-left: 10px;
 		padding-right: 10px;
 		position: absolute;
-		top: 56px;
+		top: 115px;
 		width: 98.2%;
 	}
 	
@@ -2947,7 +2947,7 @@ Width > 1441 and <= 1600
 		padding-left: 10px;
 		padding-right: 10px;
 		position: absolute;
-		top: 110px;
+		top: 115px;
 		width: 98.2%;
 	}
 	
@@ -2977,10 +2977,9 @@ Width > 1441 and <= 1600
 		width: 356px;
 	}
 	.headerInner {
-		float: left;
+		float: none;
 		margin: auto;
 		width: 55%;
-		padding-left: 24%;
 	}
 	.quick_links_outer {
 		border-radius: 1px 1px 35px 35px;

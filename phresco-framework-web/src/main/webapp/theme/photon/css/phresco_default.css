@@ -41,7 +41,7 @@ body {
 
 header {
 	font-size: 20px;
-	height: 110px;
+	height: 115px;
 	left: 0;
 	line-height: 30px;
 	padding: 0;
@@ -345,7 +345,7 @@ a {
 	padding-left: 10px;
 	padding-right: 10px;
 	position: absolute;
-	top: 56px;
+	top: 115px;
 	width: 98.2%;
 }
 
@@ -660,10 +660,9 @@ a {
 
 .headerInnerTop {
 	border-radius: 1px 1px 70px 70px;
-	float: left;
 	height: 30px;
+	float:left;
 	position: absolute;
-	width: 350px;
 	z-index: 5;
 }
 
@@ -690,8 +689,9 @@ a {
 	font-weight: bold;
 	text-transform: uppercase;
 	cursor: pointer;
+	color:#313131;
 }
-
+.close_links, .quick_lnk { display:none; }
 .quick_links_outer label {
 	padding-left: 26px;
 	cursor: pointer;
@@ -851,6 +851,7 @@ a {
 .Logo {
 	float: left;
 	width: 13%;
+	margin-top:10px;
 }
 
 .arrow {
@@ -902,7 +903,8 @@ a {
 #signOut {
 	text-decoration: none;
 	position: relative;
-	padding: 3px;
+	padding: 3px 0px;
+	margin-right:2%;
 }
 
 .popupalign {
@@ -1734,11 +1736,10 @@ div.vjs-big-play-button span {
 }
 
 .listviews {
-    float: left;
+    float: right;
     left: 0;
     position: relative;
-    top: 3px;
-    width: 125px;
+    top: 2px;
 }
 
 .listindex {
@@ -1765,14 +1766,14 @@ div.vjs-big-play-button span {
 
 #video-list-holder {
     float: right;
-    height: 319px;
+    height: 326px;
     overflow: auto;
-    width: 145px;
+    width: 127px;
     margin-left: 0px;
     /* margin-right: 5px; */
     overflow-x: hidden;
     /* border-radius:6px; */
-    margin-top: 3px;
+    margin-top: 0px;
 }
 .video-title-left {
     float: left;
@@ -3523,19 +3524,17 @@ div.submit_input {
 }
 
 .usersettings {
-    border-radius: 0 0 4px 4px;
+    border-radius: 0 0 7px 7px;
     float: right;
     font-size: 12px;
-    font-weight: bold;
     left: 3px;
     list-style: none outside none;
     position: relative;
     text-align: left;
     text-decoration: none;
     text-transform: capitalize;
-    top: -3px;
     width: auto;
-    padding: 4px;
+    padding: 5px;
 }
 .username {
 	cursor: pointer;

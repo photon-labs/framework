@@ -87,6 +87,7 @@ a:focus {
 
 #container {
     border: 1px solid #dedede;
+	background:url(../images/content_bg.png) repeat;
 }
 
 
@@ -108,14 +109,7 @@ a:hover {
 }
 
 .headerInnerTop {
-	background: #4f0d10; /* Old browsers */
-	background-image:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIHZpZXdCb3g9IjAgMCAxIDEiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiPgo8bGluZWFyR3JhZGllbnQgaWQ9Imc0MjMiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjAlIiB5Mj0iMTAwJSI+CjxzdG9wIHN0b3AtY29sb3I9IiM0RjBEMTAiIG9mZnNldD0iMCIvPjxzdG9wIHN0b3AtY29sb3I9IiNCNTEzMUIiIG9mZnNldD0iMSIvPgo8L2xpbmVhckdyYWRpZW50Pgo8cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMSIgaGVpZ2h0PSIxIiBmaWxsPSJ1cmwoI2c0MjMpIiAvPgo8L3N2Zz4=);
-    background: -moz-linear-gradient(top,  #4f0d10 42%, #b5131b 100%); /* FF3.6+ */
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(42%,#4f0d10), color-stop(100%,#b5131b)); /* Chrome,Safari4+ */
-    background: -webkit-linear-gradient(top,  #4f0d10 42%,#b5131b 100%); /* Chrome10+,Safari5.1+ */
-    background: -o-linear-gradient(top,  #4f0d10 42%,#b5131b 100%); /* Opera 11.10+ */
-    background: -ms-linear-gradient(top,  #4f0d10 42%,#b5131b 100%); /* IE10+ */
-    background: linear-gradient(top,  #4f0d10 42%,#b5131b 100%); /* W3C */
+	background:none; /* Old browsers */
 }
 
 .quick_links_outer {
@@ -502,39 +496,32 @@ footer {
 
 /*** Video Starts ***/
 #video-list-holder {
-    border: 1px solid #6B0C0C;
+    border-left: 1px solid #d7d7d7;
 }
 
 .video-title {
-	background: #6B0C0C;
+	background: #38b865;
 }
 
 .video-title-left {
-    color: #F4D7D7;
+    color: #fff;
 }
 
 .video-title-right {
-    color: #F4D7D7;
+    color: #fff;
 }
 
 .holder {
-   	/* box-shadow:10px 10px 9px #333333; */
+   	-webkit-box-shadow: 0px 0px 2px 2px #ccc;
+	box-shadow: 0px 0px 2px 2px #ccc; 
     -moz-border-radius: 10px 10px 9px #333333;
     -webkit-border-radius: 10px 10px 9px #333333;
     background: transparent;
-    border :1px solid #6B0C0C;
-    /* background: #d17070; Old browsers
-    background: -moz-linear-gradient(top,  #d17070 0%, #f7c6c8 8%, #ffffff 16%, #ffffff 94%, #f7c6c8 100%); FF3.6+
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#d17070), color-stop(8%,#f7c6c8), color-stop(16%,#ffffff), color-stop(94%,#ffffff), color-stop(100%,#f7c6c8)); Chrome,Safari4+
-    background: -webkit-linear-gradient(top,  #d17070 0%,#f7c6c8 8%,#ffffff 16%,#ffffff 94%,#f7c6c8 100%); Chrome10+,Safari5.1+
-    background: -o-linear-gradient(top,  #d17070 0%,#f7c6c8 8%,#ffffff 16%,#ffffff 94%,#f7c6c8 100%); Opera 11.10+
-    background: -ms-linear-gradient(top,  #d17070 0%,#f7c6c8 8%,#ffffff 16%,#ffffff 94%,#f7c6c8 100%); IE10+
-    background: linear-gradient(top,  #d17070 0%,#f7c6c8 8%,#ffffff 16%,#ffffff 94%,#f7c6c8 100%); W3C
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#d17070', endColorstr='#f7c6c8',GradientType=0 ); IE6-9 */
+    border :1px solid #fff;
 }
 
 .listindex {
-    color:#B5131B;
+    color:#38b865;
     background: transparent;
 	/* background: #ea7274; Old browsers
 	background: -moz-linear-gradient(top,  #ea7274 0%, #efefef 17%, #f4f4f4 91%, #dd7a80 100%); FF3.6+
@@ -549,7 +536,7 @@ footer {
 
 .listindex:hover {
     color:#ffffff;
-    background: none repeat scroll 0 0 #6B0C0C;
+    background: none repeat scroll 0 0 #38b865;
     /* background: #c9042e; Old browsers
     background: -moz-linear-gradient(top,  #c9042e 0%, #ba0319 46%, #6d0019 100%); FF3.6+
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#c9042e), color-stop(46%,#ba0319), color-stop(100%,#6d0019)); Chrome,Safari4+
@@ -561,7 +548,7 @@ footer {
 }
 
 .listindex-active {
-	background: #6B0C0C;
+	background: #38b865;
     /* background: #c9042e; Old browsers
     background: -moz-linear-gradient(top,  #c9042e 0%, #ba0319 46%, #6d0019 100%); FF3.6+
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#c9042e), color-stop(46%,#ba0319), color-stop(100%,#6d0019)); Chrome,Safari4+
