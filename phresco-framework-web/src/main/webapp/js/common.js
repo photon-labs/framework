@@ -21,7 +21,6 @@
 function yesnoPopup(modalObj, url, title, okUrl, okLabel, form) {
 	modalObj.click(function() {
 		$('.popupClose').hide();
-
 		$('#popupTitle').html(title); // Title for the popup
 		$('.popupClose').hide(); //no need close button since yesno popup
 		$('.popupOk, #popupCancel').show(); // show ok & cancel button
@@ -33,13 +32,11 @@ function yesnoPopup(modalObj, url, title, okUrl, okLabel, form) {
 		
 		var data = "";
 		data = getBasicParams(); //customerid, projectid, appid
-
-		if (!isBlank($(this).attr('additionalParam'))) {
+		var additionalParam = $(this).attr('additionalParam'); //additional params if any
+		if (!isBlank(additionalParam)) {
 			data = data.concat("&");
-			var additionalParam = $(this).attr('additionalParam'); //additional params if any
 			data = data.concat(additionalParam);
 		}
-		
 		var params = getParameters(form, '');
 		if (!isBlank(params)) {
 			data = data.concat("&");
@@ -352,6 +349,18 @@ function disableButton(buttonObj) {
 function enableButton(buttonObj) {
 	buttonObj.addClass('btn-primary');
 	buttonObj.attr("disabled", false);
+}
+
+//Enables button
+function enableControl(tagControl, css) {
+	tagControl.attr("class", css);
+	tagControl.attr("disabled", false);
+}
+
+// Disables button
+function disableControl(tagControl, css) {
+	tagControl.attr("class", css);
+	tagControl.attr("disabled", true);
 }
 
 function toDisableAllCheckbox(currentCheckbox,childCheckBox, disable) {

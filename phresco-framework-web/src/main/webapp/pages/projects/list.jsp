@@ -43,8 +43,7 @@
 		<input type="button" class="btn btn-primary" name="addProject" id="addProject" value="<s:text name='lbl.projects.add'/>"
 			onclick="loadContent('addProject', $('#formCustomers'), $('#container'));"/>
 
-		<input type="button" class="btn btn-primary" name="importAppln" id="importAppln" value="<s:text name='lbl.app.import'/>"
-			onclick="loadContent('importAppln', $('#formProjectList'), $('#subcontainer'));"/>
+		<input type="button" class="btn btn-primary" name="importAppln" id="importAppln" value="<s:text name='lbl.app.import'/>" data-toggle="modal" href="#popupPage"/>
 		         
 		<input type="button" class="btn" id="deleteBtn" disabled value="<s:text name='lbl.delete'/>" data-toggle="modal" href="#popupPage"/>
 			
@@ -133,7 +132,7 @@
 																<td class="no-left-bottom-border table-pad">
 																	<a href="#" id="projectUpdate">
 																		<img id="<%= appInfo.getCode() %>" class="projectUpdate" src="images/icons/refresh.png"
-																			title="Update" class="iconSizeinList"/>
+																			 additionalParam="projectId=<%= project.getId() %>&appId=<%= appInfo.getId() %>" title="Update" class="iconSizeinList" data-toggle="modal" href="#popupPage"/>
 																	</a>
 																</td>
 															</tr>
@@ -158,7 +157,7 @@
 <script type="text/javascript">
 	accordion();//To create the accordion
 	
-	confirmDialog($("#deleteBtn"), '<s:text name="lbl.hdr.confirm.dialog"/>', '<s:text name="modal.body.text.del.project"/>', 'build','<s:text name="lbl.btn.ok"/>');
+	confirmDialog($("#deleteBtn"), '<s:text name="lbl.hdr.confirm.dialog"/>', '<s:text name="modal.body.text.del.project"/>', 'deleteProject','<s:text name="lbl.btn.ok"/>');
 	
 	//To check whether the device is ipad or not and then apply jquery scrollbar
 	if (!isiPad()) {
@@ -169,6 +168,9 @@
 		toDisableCheckAll();
 		
 		hideLoadingIcon();//To hide the loading icon
+		//modalObj, url, title, okUrl, okLabel, form
+		yesnoPopup($('#importAppln'), 'importAppln', '<s:text name="lbl.app.import"/>', 'importUpdateAppln','<s:text name="lbl.app.import"/>', $('#formProjectList'));
+		yesnoPopup($('.projectUpdate'), 'updateProjectPopup', '<s:text name="lbl.app.update"/>', 'importUpdateAppln','<s:text name="lbl.app.update"/>', $('#formProjectList'));
    	});
 	
     function editApplication(projectId, appId) {
@@ -179,8 +181,17 @@
 		loadContent("loadMenu", $("#formCustomers"), $('#container'), params);
 	}
     
- 	function popupOnOk(okUrl) {
- 		var params = $("#formCustomers").serialize();
- 		loadContent("deleteProject", $("#formProjectList"), $('#container'), params);
+ 	function popupOnOk(obj) {
+ 		var okUrl = $(obj).attr("id");
+ 		if (okUrl == "importUpdateAppln") {
+ 			if(validateImportAppl()) {
+ 				importUpdateApp();
+ 			} 			
+ 		} else if (okUrl == "deleteProject") {
+ 	 		var params = $("#formCustomers").serialize();
+ 	 		loadContent("deleteProject", $("#formProjectList"), $('#container'), params);
+ 		} 
+ 		
  	}
+ 	
 </script>

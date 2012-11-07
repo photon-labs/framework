@@ -49,7 +49,6 @@ import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.api.SCMManager;
 import com.photon.phresco.util.FileUtil;
 import com.photon.phresco.util.Utility;
-import com.phresco.pom.exception.PhrescoPomException;
 import com.phresco.pom.util.PomProcessor;
 
 public class SCMManagerImpl implements SCMManager, FrameworkConstants {
@@ -290,7 +289,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 
 	private void updateSCMConnection(String projCode, String repoUrl)throws PhrescoException {
 		if(debugEnabled){
-			S_LOGGER.debug("Entering Method  SCMManagerImpl.updateSCMConnection()");
+			S_LOGGER.debug("Entering Method SCMManagerImpl.updateSCMConnection()");
 		}
 		try {
 			PomProcessor processor = getPomProcessor(projCode);
@@ -301,7 +300,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				processor.setSCM(repoUrl, "", "", "");
 				processor.save();
 			}
-		} catch (PhrescoPomException e) {
+		} catch (Exception e) {
 			if(debugEnabled){
 				S_LOGGER.error("Entering catch block of updateSCMConnection()"+ e.getLocalizedMessage());
 			}
@@ -411,6 +410,9 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 						}
 						SVNUpdateClient uc = cm.getUpdateClient();
 						File file = new File(Utility.getProjectHome(), appInfo.getName());
+						if (file.exists()) {
+							throw new PhrescoException("Import Fails,File Exists already", "Project with the code " + appInfo.getName() + " already present");
+			            }
 						if(debugEnabled){
 							S_LOGGER.debug("Checking out...");
 						}

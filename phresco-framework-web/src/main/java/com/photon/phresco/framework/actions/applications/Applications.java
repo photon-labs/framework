@@ -19,60 +19,28 @@
  */
 package com.photon.phresco.framework.actions.applications;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.struts2.ServletActionContext;
-import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.ListBranchCommand.ListMode;
-import org.eclipse.jgit.lib.Ref;
-import org.tmatesoft.svn.core.SVNAuthenticationException;
-import org.tmatesoft.svn.core.SVNException;
 
-import com.google.gson.Gson;
 import com.opensymphony.xwork2.Action;
-import com.opensymphony.xwork2.ActionContext;
 import com.photon.phresco.commons.model.ApplicationInfo;
-import com.photon.phresco.commons.model.ApplicationType;
 import com.photon.phresco.commons.model.DownloadInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
-import com.photon.phresco.commons.model.Technology;
 import com.photon.phresco.commons.model.WebService;
-import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
-import com.photon.phresco.framework.SVNAccessor;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
 import com.photon.phresco.framework.api.Project;
 import com.photon.phresco.framework.api.ProjectAdministrator;
 import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.framework.api.ValidationResult;
-import com.photon.phresco.framework.commons.ApplicationsUtil;
-import com.photon.phresco.framework.commons.DiagnoseUtil;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.commons.LogErrorReport;
-import com.photon.phresco.framework.model.CertificateInfo;
-import com.photon.phresco.framework.model.PropertyInfo;
-import com.photon.phresco.framework.model.SettingsInfo;
-import com.photon.phresco.util.Constants;
-import com.photon.phresco.util.Utility;
+import com.photon.phresco.framework.impl.SCMManagerImpl;
 import com.phresco.pom.model.Scm;
 import com.phresco.pom.util.PomProcessor;
 
@@ -129,11 +97,13 @@ public class Applications extends FrameworkBaseAction {
 
     private String projectCode = "";
     private String technology = "";
-
+    
     private List<String> versions = null;
     private String techId = "";
     private String type = "";
     private String applicationId = "";
+    public String errorString;
+    public boolean errorFlag;
 
     public String loadMenu() {
         if (s_debugEnabled) {
@@ -629,211 +599,296 @@ public class Applications extends FrameworkBaseAction {
         return null;
     }
 */
-   /* public String importSVNApplication() {
+    public String importSVNApplication() {
         S_LOGGER.debug("Entering Method  Applications.importApplication()");
         S_LOGGER.debug("repoType " + repoType);
-        S_LOGGER.debug("repositoryUrl " + repositoryUrl);
+        System.out.println("repositoryUrl kalee " + repositoryUrl);
+        revision = !HEAD_REVISION.equals(revision) ? revisionVal : revision;
+        SCMManagerImpl scmi = new SCMManagerImpl();
         try {
-            File checkOutDir = new File(Utility.getProjectHome());
-            if (StringUtils.isEmpty(credential)) {
-                String decryptedPass = new String(Base64.decodeBase64(password));
-                password = decryptedPass;
-            }
-
-            SVNAccessor svnAccessor = new SVNAccessor(repositoryUrl, userName, password);
-            String projCode = svnAccessor.getAppInfo(revision).getCode();
-            S_LOGGER.debug("Import Application repository Url"
-                    + repositoryUrl + " Username " + userName);
-            revision = !HEAD_REVISION.equals(revision) ? revisionVal : revision;
-            svnAccessor.checkout(checkOutDir, revision, true, projCode);
-            svnImport = true;
-            svnImportMsg = getText(IMPORT_SUCCESS_PROJECT);
-            // update connection url in pom.xml
-            updateSCMConnection(projCode, repositoryUrl);
-        } catch(SVNAuthenticationException e) {
-            S_LOGGER.error("Entered into catch block of Applications.importApplication()"
-                    + FrameworkUtil.getStackTraceAsString(e));
-            svnImport = false;
-            svnImportMsg = getText(INVALID_CREDENTIALS);
-        } catch(SVNException e) {
-            S_LOGGER.error("Entered into catch block of Applications.importApplication()"
-                    + FrameworkUtil.getStackTraceAsString(e)); 
-            svnImport = false;
-            if(e.getMessage().indexOf(SVN_FAILED) != -1) {
-                svnImportMsg = getText(INVALID_URL);
-            } else if(e.getMessage().indexOf(SVN_INTERNAL) != -1) {
-                svnImportMsg = getText(INVALID_REVISION);
-            } else {
-                svnImportMsg = getText(INVALID_FOLDER);
-            }
-        } catch(PhrescoException e) {
-            S_LOGGER.error("Entered into catch block of Applications.importApplication()"
-                    + FrameworkUtil.getStackTraceAsString(e));
-            svnImport = false;
-            svnImportMsg = getText(PROJECT_ALREADY);
-        } catch (Exception e) {
-            S_LOGGER.error("Entered into catch block of Applications.importApplication()"
-                    + FrameworkUtil.getStackTraceAsString(e)); 
-            svnImport = false;
-            svnImportMsg = getText(IMPORT_PROJECT_FAIL);
-        }
+			scmi.importProject("svn", repositoryUrl, userName, password, null, revision, "SVN");
+			errorString = "SVN Project Imported Succesfully";
+			errorFlag = true;
+		} catch (PhrescoException e) {
+			errorFlag = false;
+			errorString = e.getLocalizedMessage();
+			S_LOGGER.error("Entering catch block of importSVNApplication "+e.getLocalizedMessage());
+		}
+//        try {
+//			boolean valid = scmi.importProject("svn","https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/IphoneAutomationInJe/2.0/phresco-test/sample applayer-tech-php/", "santhosh_ja", "santJ!23", null, "HEAD", "SVN");
+//		} catch (PhrescoException e) {
+//			S_LOGGER.error("Entering catch block of svn import "+e.getLocalizedMessage());
+//		}
+//        try {
+        	// 
+        	
+//            File checkOutDir = new File(Utility.getProjectHome());
+//            if (StringUtils.isEmpty(credential)) {
+//                String decryptedPass = new String(Base64.decodeBase64(password));
+//                password = decryptedPass;
+//            }
+//
+//            SVNAccessor svnAccessor = new SVNAccessor(repositoryUrl, userName, password);
+//            String projCode = svnAccessor.getAppInfo(revision).getCode();
+//            S_LOGGER.debug("Import Application repository Url"
+//                    + repositoryUrl + " Username " + userName);
+//            revision = !HEAD_REVISION.equals(revision) ? revisionVal : revision;
+//           // svnAccessor.checkout(checkOutDir, revision, true, projCode);
+//            svnImport = true;
+//            svnImportMsg = getText(IMPORT_SUCCESS_PROJECT);
+//            // update connection url in pom.xml
+//            updateSCMConnection(projCode, repositoryUrl);
+//        } catch(SVNAuthenticationException e) {
+//            S_LOGGER.error("Entered into catch block of Applications.importApplication()"
+//                    + FrameworkUtil.getStackTraceAsString(e));
+//            svnImport = false;
+//            svnImportMsg = getText(INVALID_CREDENTIALS);
+//        } catch(SVNException e) {
+//            S_LOGGER.error("Entered into catch block of Applications.importApplication()"
+//                    + FrameworkUtil.getStackTraceAsString(e)); 
+//            svnImport = false;
+//            if(e.getMessage().indexOf(SVN_FAILED) != -1) {
+//                svnImportMsg = getText(INVALID_URL);
+//            } else if(e.getMessage().indexOf(SVN_INTERNAL) != -1) {
+//                svnImportMsg = getText(INVALID_REVISION);
+//            } else {
+//                svnImportMsg = getText(INVALID_FOLDER);
+//            }
+//        } catch(PhrescoException e) {
+//            S_LOGGER.error("Entered into catch block of Applications.importApplication()"
+//                    + FrameworkUtil.getStackTraceAsString(e));
+//            svnImport = false;
+//            svnImportMsg = getText(PROJECT_ALREADY);
+//        } catch (Exception e) {
+//            S_LOGGER.error("Entered into catch block of Applications.importApplication()"
+//                    + FrameworkUtil.getStackTraceAsString(e)); 
+//            svnImport = false;
+//            svnImportMsg = getText(IMPORT_PROJECT_FAIL);
+//        }
         return SUCCESS;
     }
 
     public String importGITApplication() {
-        S_LOGGER.debug("Entering Method  Applications.importApplication()");
-        S_LOGGER.debug("repoType " + repoType);
-        S_LOGGER.debug("repositoryUrl " + repositoryUrl);
-        S_LOGGER.debug("Entering Method  Applications.importFromGit()");
-        try {
-            String uuid = UUID.randomUUID().toString();
-            File gitImportTemp = new File(Utility.getPhrescoTemp(), uuid);
-            S_LOGGER.debug("gitImportTemp " + gitImportTemp);
-            if(gitImportTemp.exists()) {
-                S_LOGGER.debug("Empty git directory need to be removed before importing from git ");
-                FileUtils.deleteDirectory(gitImportTemp);
-            }
-            S_LOGGER.debug("gitImportTemp " + gitImportTemp);
-            importFromGit(repositoryUrl, gitImportTemp);
-            ApplicationInfo appInfo = getAppInfo(gitImportTemp);
-            S_LOGGER.debug(appInfo.getCode());
-            importToWorkspace(gitImportTemp, Utility.getProjectHome() , appInfo.getCode());
-            svnImport = true;
-            svnImportMsg = getText(IMPORT_SUCCESS_PROJECT);
-            //update connection in pom.xml
-            updateSCMConnection(appInfo.getCode(), repositoryUrl);
-        } catch(org.apache.commons.io.FileExistsException e) { // Destination '/Users/kaleeswaran/projects/PHR_Phpblog' already exists
-            S_LOGGER.error("Entered into catch block of Applications.importFromGit()" + FrameworkUtil.getStackTraceAsString(e));
-            svnImport = false;
-            svnImportMsg = getText(PROJECT_ALREADY);
-        } catch(org.eclipse.jgit.api.errors.TransportException e) { //Invalid remote: origin (URL)
-            S_LOGGER.error("Entered into catch block of Applications.importFromGit()" + FrameworkUtil.getStackTraceAsString(e));
-            svnImport = false;
-            svnImportMsg = getText(INVALID_URL);
-        } catch(org.eclipse.jgit.api.errors.InvalidRemoteException e) { //Invalid remote: origin (URL)
-            S_LOGGER.error("Entered into catch block of Applications.importFromGit()" + FrameworkUtil.getStackTraceAsString(e));
-            svnImport = false;
-            svnImportMsg = getText(INVALID_URL);
-        }  catch(PhrescoException e) {
-            S_LOGGER.error("Entered into catch block of Applications.importFromGit()" + FrameworkUtil.getStackTraceAsString(e));
-            svnImport = false;
-            svnImportMsg = getText(INVALID_FOLDER);
-        } catch (Exception e) {
-            S_LOGGER.error("Entered into catch block of Applications.importFromGit()" + FrameworkUtil.getStackTraceAsString(e));
-            svnImport = false;
-            svnImportMsg = getText(IMPORT_PROJECT_FAIL);
-        }
+    		SCMManagerImpl scmi = new SCMManagerImpl();
+    		
+    		try {
+    			scmi.importProject("git", repositoryUrl, userName, password, null, revision, "GIT");
+    			errorString = "GIT Project Imported Succesfully";
+    			errorFlag = true;
+    		} catch (PhrescoException e) {
+    			errorString = e.getLocalizedMessage();
+    			errorFlag = false;
+    			e.printErrorStack();
+    			System.out.println(e.getLocalizedMessage());
+    			S_LOGGER.error("Entering catch block of importFITApplication "+e.getLocalizedMessage());
+    		}
+//    		try {
+// 			scmi.importProject("svn", repositoryUrl, userName, password, null, revision, "SVN");
+//    		} catch (PhrescoException e) {
+// 			S_LOGGER.error("Entering catch block of importSVNApplication "+e.getLocalizedMessage());
+//    		}
+//        S_LOGGER.debug("Entering Method  Applications.importApplication()");
+//        S_LOGGER.debug("repoType " + repoType);
+//        S_LOGGER.debug("repositoryUrl " + repositoryUrl);
+//        S_LOGGER.debug("Entering Method  Applications.importFromGit()");
+//        try {
+//            String uuid = UUID.randomUUID().toString();
+//            File gitImportTemp = new File(Utility.getPhrescoTemp(), uuid);
+//            S_LOGGER.debug("gitImportTemp " + gitImportTemp);
+//            if(gitImportTemp.exists()) {
+//                S_LOGGER.debug("Empty git directory need to be removed before importing from git ");
+//                FileUtils.deleteDirectory(gitImportTemp);
+//            }
+//            S_LOGGER.debug("gitImportTemp " + gitImportTemp);
+//            importFromGit(repositoryUrl, gitImportTemp);
+//            ApplicationInfo appInfo = getAppInfo(gitImportTemp);
+//            S_LOGGER.debug(appInfo.getCode());
+//            importToWorkspace(gitImportTemp, Utility.getProjectHome() , appInfo.getCode());
+//            svnImport = true;
+//            svnImportMsg = getText(IMPORT_SUCCESS_PROJECT);
+//            //update connection in pom.xml
+//            updateSCMConnection(appInfo.getCode(), repositoryUrl);
+//        } catch(org.apache.commons.io.FileExistsException e) { // Destination '/Users/kaleeswaran/projects/PHR_Phpblog' already exists
+//            S_LOGGER.error("Entered into catch block of Applications.importFromGit()" + FrameworkUtil.getStackTraceAsString(e));
+//            svnImport = false;
+//            svnImportMsg = getText(PROJECT_ALREADY);
+//        } catch(org.eclipse.jgit.api.errors.TransportException e) { //Invalid remote: origin (URL)
+//            S_LOGGER.error("Entered into catch block of Applications.importFromGit()" + FrameworkUtil.getStackTraceAsString(e));
+//            svnImport = false;
+//            svnImportMsg = getText(INVALID_URL);
+//        } catch(org.eclipse.jgit.api.errors.InvalidRemoteException e) { //Invalid remote: origin (URL)
+//            S_LOGGER.error("Entered into catch block of Applications.importFromGit()" + FrameworkUtil.getStackTraceAsString(e));
+//            svnImport = false;
+//            svnImportMsg = getText(INVALID_URL);
+//        }  catch(PhrescoException e) {
+//            S_LOGGER.error("Entered into catch block of Applications.importFromGit()" + FrameworkUtil.getStackTraceAsString(e));
+//            svnImport = false;
+//            svnImportMsg = getText(INVALID_FOLDER);
+//        } catch (Exception e) {
+//            S_LOGGER.error("Entered into catch block of Applications.importFromGit()" + FrameworkUtil.getStackTraceAsString(e));
+//            svnImport = false;
+//            svnImportMsg = getText(IMPORT_PROJECT_FAIL);
+//        }
         return SUCCESS;
-    }*/
+    }
 
-    /*public String importFromSvn() {
-        return APP_IMPORT_FROM_SVN;
+    public String importAppln() {
+//    	 setReqAttribute(REQ_FROM_TAB, "import");
+        return "importApplication";
     }
 
     public String updateProjectPopup() {
         S_LOGGER.debug("Entering Method  Applications.updateProjectPopup()");
         try {
             String connectionUrl = "";
+            System.out.println(getAppId());
+			System.out.println(getProjectId());
+			System.out.println(getCustomerId());
+            ApplicationInfo applicationInfo = getApplicationInfo();
+            String appDirName = applicationInfo.getAppDirName();
+            System.out.println("Directory name"+appDirName);
+            
             FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-            PomProcessor processor = frameworkUtil.getPomProcessor(projectCode);
+            PomProcessor processor = frameworkUtil.getPomProcessor(appDirName);
             Scm scm = processor.getSCM();
             if(scm != null) {
                 connectionUrl = scm.getConnection();
             }
-            S_LOGGER.debug("connectionUrl " + connectionUrl);
-            getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
-            getHttpRequest().setAttribute(REPO_URL, connectionUrl);
-            getHttpRequest().setAttribute(REQ_FROM_TAB, UPDATE_SVN_PROJECT);
-            getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
+//            setReqAttribute(SESSION_USER_INFO, value); 	//get username
+//            setReqAttribute(SESSION_USER_PASSWORD, value);//get password
+//            System.out.println(SESSION_USER_INFO );
+//            System.out.println(SESSION_USER_PASSWORD );
+            System.out.println("connectionUrl " + connectionUrl);
+//            setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
+            setReqAttribute(REQ_APP_ID,getAppId());
+            setReqAttribute(REQ_PROJECT_ID,getProjectId());
+            setReqAttribute(REQ_CUSTOMER_ID,getCustomerId());
+            setReqAttribute(REPO_URL, connectionUrl);
+            setReqAttribute(REQ_FROM_TAB, "update");
+//            setReqAttribute(REQ_FROM_TAB, "updateProject");
+            setReqAttribute(REQ_APP_INFO, applicationInfo);
+//            ApplicationInfo appInfo = getApplicationInfo();
+//            setReqAttribute(REQ_APP_INFO, appInfo);
         } catch (PhrescoException e) {
+        	e.printErrorStack();
             return showErrorPopup(e, "Update Application");
         }
-        return APP_IMPORT_FROM_SVN;
+        return "updateApplication";
     }
 
     public String updateGitProject() {
-        S_LOGGER.debug("Entering Method  Applications.updateGitProject()");
-        try {
-            S_LOGGER.debug("update SCM Connection " + repositoryUrl);
-            S_LOGGER.debug("userName " + userName);
-            S_LOGGER.debug("Repo type " + repoType);
-            S_LOGGER.debug("projectCode " + projectCode);
-            updateSCMConnection(projectCode, repositoryUrl);
-
-            File updateDir = new File(Utility.getProjectHome() , projectCode);
-            S_LOGGER.debug("updateDir GIT... " + updateDir);
-            Git git = Git.open(updateDir); //checkout is the folder with .git
-            git.pull().call(); //succeeds
-
-            svnImport = true;
-            svnImportMsg = getText(SUCCESS_PROJECT_UPDATE);
-        } catch(org.apache.commons.io.FileExistsException e) { // Destination '/Users/kaleeswaran/projects/PHR_Phpblog' already exists
-            S_LOGGER.error("Entered into catch block of Applications.importFromGit()" + getText(FAILURE_PROJECT_UPDATE) + FrameworkUtil.getStackTraceAsString(e));
-            svnImport = false;
-            svnImportMsg = getText(FAILURE_PROJECT_UPDATE);
-        } catch(org.eclipse.jgit.api.errors.TransportException e) { //Invalid remote: origin (URL)
-            S_LOGGER.error("Entered into catch block of Applications.importFromGit()" + getText(FAILURE_PROJECT_UPDATE) + FrameworkUtil.getStackTraceAsString(e));
-            svnImport = false;
-            svnImportMsg = getText(INVALID_URL);
-        } catch(org.eclipse.jgit.api.errors.InvalidRemoteException e) { //Invalid remote: origin (URL)
-            S_LOGGER.error("Entered into catch block of Applications.importFromGit()" + getText(FAILURE_PROJECT_UPDATE) + FrameworkUtil.getStackTraceAsString(e));
-            svnImport = false;
-            svnImportMsg = getText(INVALID_URL);
-        }  catch(PhrescoException e) {
-            S_LOGGER.error("Entered into catch block of Applications.importFromGit()" + getText(FAILURE_PROJECT_UPDATE) + FrameworkUtil.getStackTraceAsString(e));
-            svnImport = false;
-            svnImportMsg = getText(INVALID_FOLDER);
-        } catch (Exception e) {
-            S_LOGGER.error("Entered into catch block of Applications.importFromGit()" + getText(FAILURE_PROJECT_UPDATE) + FrameworkUtil.getStackTraceAsString(e));
-            svnImport = false;
-            svnImportMsg = getText(FAILURE_PROJECT_UPDATE);
-        }
+    	SCMManagerImpl scmi = new SCMManagerImpl();
+		try {
+			ApplicationInfo applicationInfo = getApplicationInfo();
+            String appDirName = applicationInfo.getAppDirName();
+			scmi.updateProject("git", repositoryUrl, userName, password, null, null, appDirName );
+			errorString = "GIT project Updated Succesfully";
+			errorFlag = true;
+		} catch (PhrescoException e) {
+			errorString = e.getLocalizedMessage();
+			errorFlag = false;
+			e.printStackTrace();
+			System.out.println(e.getLocalizedMessage());
+			S_LOGGER.error("Entering catch block of updateGitProject "+e.getLocalizedMessage());
+		}
+    	
+//        S_LOGGER.debug("Entering Method  Applications.updateGitProject()");
+//        try {
+//            S_LOGGER.debug("update SCM Connection " + repositoryUrl);
+//            S_LOGGER.debug("userName " + userName);
+//            S_LOGGER.debug("Repo type " + repoType);
+//            S_LOGGER.debug("projectCode " + projectCode);
+////            updateSCMConnection(projectCode, repositoryUrl);
+//
+//            File updateDir = new File(Utility.getProjectHome() , projectCode);
+//            S_LOGGER.debug("updateDir GIT... " + updateDir);
+//            Git git = Git.open(updateDir); //checkout is the folder with .git
+//            git.pull().call(); //succeeds
+//
+//            svnImport = true;
+//            svnImportMsg = getText(SUCCESS_PROJECT_UPDATE);
+//        } catch(org.apache.commons.io.FileExistsException e) { // Destination '/Users/kaleeswaran/projects/PHR_Phpblog' already exists
+//            S_LOGGER.error("Entered into catch block of Applications.importFromGit()" + getText(FAILURE_PROJECT_UPDATE) + FrameworkUtil.getStackTraceAsString(e));
+//            svnImport = false;
+//            svnImportMsg = getText(FAILURE_PROJECT_UPDATE);
+//        } catch(org.eclipse.jgit.api.errors.TransportException e) { //Invalid remote: origin (URL)
+//            S_LOGGER.error("Entered into catch block of Applications.importFromGit()" + getText(FAILURE_PROJECT_UPDATE) + FrameworkUtil.getStackTraceAsString(e));
+//            svnImport = false;
+//            svnImportMsg = getText(INVALID_URL);
+//        } catch(org.eclipse.jgit.api.errors.InvalidRemoteException e) { //Invalid remote: origin (URL)
+//            S_LOGGER.error("Entered into catch block of Applications.importFromGit()" + getText(FAILURE_PROJECT_UPDATE) + FrameworkUtil.getStackTraceAsString(e));
+//            svnImport = false;
+//            svnImportMsg = getText(INVALID_URL);
+//        } catch (Exception e) {
+//            S_LOGGER.error("Entered into catch block of Applications.importFromGit()" + getText(FAILURE_PROJECT_UPDATE) + FrameworkUtil.getStackTraceAsString(e));
+//            svnImport = false;
+//            svnImportMsg = getText(FAILURE_PROJECT_UPDATE);
+//        }
         return SUCCESS;
     }
 
     public String updateSVNProject() {
-        S_LOGGER.debug("Entering Method  Applications.updateSVNProject()");
-        try {
-            S_LOGGER.debug("update SCM Connection " + repositoryUrl);
-            S_LOGGER.debug("userName " + userName);
-            S_LOGGER.debug("Repo type " + repoType);
-            S_LOGGER.debug("projectCode " + projectCode);
-            updateSCMConnection(projectCode, repositoryUrl);
-
-            SVNAccessor svnAccessor = new SVNAccessor(repositoryUrl, userName, password);
-            S_LOGGER.debug("Import Application repository Url" + repositoryUrl + " Username " + userName);
-            revision = !HEAD_REVISION.equals(revision) ? revisionVal : revision;
-            File updateDir = new File(Utility.getProjectHome() , projectCode);
-            S_LOGGER.debug("updateDir SVN... " + updateDir);
-            svnAccessor.update(updateDir, revision, false);
-
-            svnImport = true;
-            svnImportMsg = getText(SUCCESS_PROJECT_UPDATE);
-        } catch(SVNAuthenticationException e) {
-            S_LOGGER.error("Entered into catch block of Applications.importApplication()" + getText(INVALID_CREDENTIALS) + FrameworkUtil.getStackTraceAsString(e));
-            svnImport = false;
-            svnImportMsg = getText(INVALID_CREDENTIALS);
-        } catch(SVNException e) {
-            S_LOGGER.error("Entered into catch block of Applications.importApplication()" + FrameworkUtil.getStackTraceAsString(e)); 
-            svnImport = false;
-            if(e.getMessage().indexOf(SVN_FAILED) != -1) {
-                svnImportMsg = getText(INVALID_URL);
-            } else if(e.getMessage().indexOf(SVN_INTERNAL) != -1) {
-                svnImportMsg = getText(INVALID_REVISION);
-            } else {
-                svnImportMsg = getText(INVALID_FOLDER);
-            }
-        } catch(PhrescoException e) {
-            S_LOGGER.error("Entered into catch block of Applications.importApplication()" + getText(FAILURE_PROJECT_UPDATE) + FrameworkUtil.getStackTraceAsString(e));
-            svnImport = false;
-            svnImportMsg = getText(FAILURE_PROJECT_UPDATE);
-        } catch (Exception e) {
-            S_LOGGER.error("Entered into catch block of Applications.importApplication()" + getText(FAILURE_PROJECT_UPDATE) + FrameworkUtil.getStackTraceAsString(e)); 
-            svnImport = false;
-            svnImportMsg = getText(FAILURE_PROJECT_UPDATE);
-        }
+    	SCMManagerImpl scmi = new SCMManagerImpl();
+    	
+		try {
+			System.out.println("Appid "+getAppId());
+	    	System.out.println("projid "+getProjectId());
+	    	System.out.println("Custid "+getCustomerId());
+	    	System.out.println("reppourl "+repositoryUrl);
+			ApplicationInfo applicationInfo = getApplicationInfo();
+            String appDirName = applicationInfo.getAppDirName();
+			scmi.updateProject("svn", repositoryUrl, userName, password, null, null, appDirName );
+			errorString = "SVN Project Updated Succesfully";
+			errorFlag = true;
+		} catch (PhrescoException e) {
+			errorFlag = false;
+			errorString = e.getLocalizedMessage();
+			e.printStackTrace();
+			System.out.println(e.getLocalizedMessage());
+			S_LOGGER.error("Entering catch block of updateGitProject "+e.getLocalizedMessage());
+		}
+//        S_LOGGER.debug("Entering Method  Applications.updateSVNProject()");
+//        try {
+//            S_LOGGER.debug("update SCM Connection " + repositoryUrl);
+//            S_LOGGER.debug("userName " + userName);
+//            S_LOGGER.debug("Repo type " + repoType);
+//            S_LOGGER.debug("projectCode " + projectCode);
+////            updateSCMConnection(projectCode, repositoryUrl);
+//
+//            SVNAccessor svnAccessor = new SVNAccessor(repositoryUrl, userName, password);
+//            S_LOGGER.debug("Import Application repository Url" + repositoryUrl + " Username " + userName);
+//            revision = !HEAD_REVISION.equals(revision) ? revisionVal : revision;
+//            File updateDir = new File(Utility.getProjectHome() , projectCode);
+//            S_LOGGER.debug("updateDir SVN... " + updateDir);
+//            svnAccessor.update(updateDir, revision, false);
+//
+//            svnImport = true;
+//            svnImportMsg = getText(SUCCESS_PROJECT_UPDATE);
+//        } catch(SVNAuthenticationException e) {
+//            S_LOGGER.error("Entered into catch block of Applications.importApplication()" + getText(INVALID_CREDENTIALS) + FrameworkUtil.getStackTraceAsString(e));
+//            svnImport = false;
+//            svnImportMsg = getText(INVALID_CREDENTIALS);
+//        } catch(SVNException e) {
+//            S_LOGGER.error("Entered into catch block of Applications.importApplication()" + FrameworkUtil.getStackTraceAsString(e)); 
+//            svnImport = false;
+//            if(e.getMessage().indexOf(SVN_FAILED) != -1) {
+//                svnImportMsg = getText(INVALID_URL);
+//            } else if(e.getMessage().indexOf(SVN_INTERNAL) != -1) {
+//                svnImportMsg = getText(INVALID_REVISION);
+//            } else {
+//                svnImportMsg = getText(INVALID_FOLDER);
+//            }
+//        } catch(PhrescoException e) {
+//            S_LOGGER.error("Entered into catch block of Applications.importApplication()" + getText(FAILURE_PROJECT_UPDATE) + FrameworkUtil.getStackTraceAsString(e));
+//            svnImport = false;
+//            svnImportMsg = getText(FAILURE_PROJECT_UPDATE);
+//        } catch (Exception e) {
+//            S_LOGGER.error("Entered into catch block of Applications.importApplication()" + getText(FAILURE_PROJECT_UPDATE) + FrameworkUtil.getStackTraceAsString(e)); 
+//            svnImport = false;
+//            svnImportMsg = getText(FAILURE_PROJECT_UPDATE);
+//        }
         return SUCCESS;
-    }*/
+    }
 
     //TODO: No need the validator remove all validator
     public String validateFramework() {
@@ -1756,4 +1811,22 @@ public class Applications extends FrameworkBaseAction {
 	public void setApplicationId(String applicationId) {
 		this.applicationId = applicationId;
 	}
+
+	public boolean isErrorFlag() {
+		return errorFlag;
+	}
+
+	public void setErrorFlag(boolean errorFlag) {
+		this.errorFlag = errorFlag;
+	}
+
+	public String getErrorString() {
+		return errorString;
+	}
+
+	public void setErrorString(String errorString) {
+		this.errorString = errorString;
+	}
+	
+	
 }

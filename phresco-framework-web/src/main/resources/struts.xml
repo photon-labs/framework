@@ -95,12 +95,12 @@
             <result name="appMenu">/pages/applications/menu.jsp</result>
         </action>
         
-       <!--  <action name="import" method="importApplication" class="com.photon.phresco.framework.actions.applications.Applications">
+        <action name="import" method="importApplication" class="com.photon.phresco.framework.actions.applications.Applications">
             <result name="list">/pages/applications/list.jsp</result>
         </action>
         
-        <action name="importFromSvn" method="importFromSvn" class="com.photon.phresco.framework.actions.applications.Applications">
-            <result name="importFromSvn">/pages/applications/svn_import.jsp</result>
+        <action name="importAppln" method="importAppln" class="com.photon.phresco.framework.actions.applications.Applications">
+            <result name="importApplication">/pages/applications/svn_import.jsp</result>
         </action>
         
         <action name="updateSVNProject" method="updateSVNProject" class="com.photon.phresco.framework.actions.applications.Applications">
@@ -112,7 +112,7 @@
         </action>
         
         <action name="updateProjectPopup" method="updateProjectPopup" class="com.photon.phresco.framework.actions.applications.Applications">
-            <result name="importFromSvn">/pages/applications/svn_import.jsp</result>
+            <result name="updateApplication">/pages/applications/svn_import.jsp</result>
         </action>
         
         <action name="importSVNProject" method="importSVNApplication" class="com.photon.phresco.framework.actions.applications.Applications">
@@ -121,7 +121,7 @@
         
         <action name="importGITProject" method="importGITApplication" class="com.photon.phresco.framework.actions.applications.Applications">
             <result type="json"/>
-        </action> -->
+        </action> 
         
        	<action name="appInfo" method="editApplication" class="com.photon.phresco.framework.actions.applications.Applications">
             <result name="appinfo">/pages/applications/appinfo.jsp</result>
