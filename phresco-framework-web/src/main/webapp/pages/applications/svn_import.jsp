@@ -119,115 +119,103 @@
 			svnCredentialMark();
 		}
 			
-			 $("#repoUrl").keyup(function(event) {
-		        var repoUrl = $("input[name='repourl']").val();
-			 });
+		$("#repoUrl").keyup(function(event) {
+	       var repoUrl = $("input[name='repourl']").val();
+		});
 
-			$('#revision').click(function() {
+		$('#revision').click(function() {
 			$("#revisionVal").removeAttr("disabled");
-			});
+		});
 
-			$('#revisionHead').click(function() {
+		$('#revisionHead').click(function() {
 			$('#revisionVal').attr("disabled", "disabled");
-			});
+		});
 
-			  $('#credentials').click(function() {
-			  svnCredentialMark();
-			  });
+	  	$('#credentials').click(function() {
+		  	svnCredentialMark();
+		});
 			 
-			  $('[name=repoType]').change(function() {
-			  	extraInfoDisplay();
-			  });
+	  	$('[name=repoType]').change(function() {
+		  	extraInfoDisplay();
+		});
 			  
-				<%
-				  if (StringUtils.isNotEmpty(repoUrl) && repoUrl.contains(FrameworkConstants.GIT)) {
-				  %>
-				  $("[name=repoType] option[value='git']").attr('selected', 'selected');
-				  $('#typeInfo').show();
-				  <%
-				  } else if (StringUtils.isNotEmpty(repoUrl)) {
-				  %>
-				  $("[name=repoType] option[value='svn']").attr('selected', 'selected');
-				  $('#typeInfo').show();
-				  <%
-				  }
-				  %>
+		<% if (StringUtils.isNotEmpty(repoUrl) && repoUrl.contains(FrameworkConstants.GIT)) {%>
+		  	$("[name=repoType] option[value='git']").attr('selected', 'selected');
+		  	$('#typeInfo').show();
+		<% } else if (StringUtils.isNotEmpty(repoUrl)) { %>
+		  	$("[name=repoType] option[value='svn']").attr('selected', 'selected');
+		 	$('#typeInfo').show();
+	    <% } %>
 				  	
-					extraInfoDisplay();
-					$("#userName").val("<%= LoginId %>");
-			});
+			extraInfoDisplay();
+			$("#userName").val("<%= LoginId %>");
+	});
 
-			//base on the repo type credential info need to be displayed
-			function extraInfoDisplay() {
-			$("#errMsg").html("");
-			if($("[name=repoType]").val() == 'svn') {
+	//base on the repo type credential info need to be displayed
+	function extraInfoDisplay() {
+		$("#errMsg").html("");
+		if($("[name=repoType]").val() == 'svn') {
 			$('.credentialDet').show();
 			$('#svnRevisionInfo').show();
 			  // hide other credential checkbox
 			$('#otherCredentialInfo').show();
 			  // to make check box untick (fill with insight username and password)
 			urlBasedAction();
-			} else if($("[name=repoType]").val() == 'git') {
+		} else if($("[name=repoType]").val() == 'git') {
 			$('.credentialDet').hide();
 			$('#svnRevisionInfo').hide();
 			  // hide other credential checkbox
 			$('#otherCredentialInfo').hide();
 			enableSvnFormDet();
-			}
-			}
+		}
+	}
 
-			function urlBasedAction() {
-			      var repoUrl = $("input[name='repourl']").val();
-			        if (repoUrl.indexOf('insight.photoninfotech.com') != -1) {
+	function urlBasedAction() {
+        var repoUrl = $("input[name='repourl']").val();
+    	if (repoUrl.indexOf('insight.photoninfotech.com') != -1) {
 			$('#credentials').attr("checked", false);
-			        svnCredentialMark();
-			        } else if(!isBlank(repoUrl)) {
+	        svnCredentialMark();
+       	} else if(!isBlank(repoUrl)) {
 			$('#credentials').attr("checked", true);
-			        svnCredentialMark();
-			        }
-			}
+	        svnCredentialMark();
+        }
+	}
 
-			function svnCredentialMark() {
-			if($('#credentials').is(':checked')) {
+	function svnCredentialMark() {
+		if($('#credentials').is(':checked')) {
 			enableSvnFormDet();
 			$("#userName").val('');
 			$("#password").val('');
 			localStorage["svnImport"] = "credentials";
-			} else {
+		} else {
 			  $("#userName").val('');
 			  $("#password").val('');
 			  disableSvnFormDet();
 			  localStorage["svnImport"] = "";
-			}
-			}
+		}
+	}
 
-			function enableSvnFormDet() {
-			  enableControl($("input[name='password']"), "");
-			  enableControl($("input[name='username']"), "");
-			}
+	function enableSvnFormDet() {
+	  	enableControl($("input[name='password']"), "");
+	    enableControl($("input[name='username']"), "");
+	}
 
-			function disableSvnFormDet() {
-			  disableControl($("input[name='password']"), "");
-			  disableControl($("input[name='username']"), "");
-			}
+	function disableSvnFormDet() {
+	    disableControl($("input[name='password']"), "");
+	    disableControl($("input[name='username']"), "");
+	}
 	
 	function validateImportAppl() {
-		alert("validate import application called ");
 // 		When isValidUrl returns false URL is missing information is displayed
 		var repoUrl = $("input[name='repourl']").val();
-		
 		if(isValidUrl(repoUrl)){
-			alert(isValidUrl(repoUrl));
-			alert("chkin valid url");
 			$("#errMsg").html("URL is missing");
 			$("#repoUrl").focus();
 			return false;
 		}
-		alert("url came out with false");
+		
 		if($("[name=repoType]").val() == 'svn') {
-				
 			if(isBlank($.trim($("input[name='username']").val()))){
-				alert("chkin name return false");
 				$("#errMsg").html("Username is missing");
 				$("#userName").focus();
 				$("#userName").val("");
@@ -235,7 +223,6 @@
 			}
 			
 			if(isBlank($.trim($("input[name='password']").val()))){
-				alert("chkin pass return false");
 				$("#errMsg").html("Password is missing");
 				$("#password").focus();
 				$("#password").val("");
@@ -244,7 +231,6 @@
 			
 // 			the revision have to be validated
 			if($('input:radio[name=revision]:checked').val() == "revision" && (isBlank($.trim($('#revisionVal').val())))) {
-				alert("chkin revision return false");
 				$("#errMsg").html("Revision is missing");
 				$("#revisionVal").focus();
 				$("#revisionVal").val("");
@@ -258,17 +244,12 @@
 	}
 	
 	function importUpdateApp() {
-		alert("importUpdateApp");
 		var params = getBasicParams();
 		params = params.concat("projectId =");
 		params = params.concat("<%= projectId %>");
 		params = params.concat("&appId =");
 		params = params.concat("<%= applicationId %>");
 		params = params.concat("&loginId =");
-<%-- 		params = params.concat("<%= LoginId %>"); --%>
-// 		console.info("param " + params);
-		alert(params);
-		alert("get Action called ========> " + getAction());
 		// show popup loading icon
 		showPopuploadingIcon();
 		loadContent(getAction(), $('#repoDetails'), '', params, true);
@@ -285,12 +266,14 @@
 		hidePopuploadingIcon();
 		if (!data.errorFlag) {
 			alert("Exception "+data.errorString);
+			$('#popupPage').modal('hide');
 		} else if(data.errorFlag) {
 			alert(data.errorString);
 			//has to be fixed
 			$('#popupPage').modal('hide');
 			loadContent("applications",$('#formProjectList'),$("#container"),getBasicParams());
 		}
+	}
 // 			alert("fetching...");
 // 		$("#errMsg").empty();
 // 		$('.popupLoadingIcon').hide();
@@ -306,20 +289,16 @@
 // 		$('.popupLoadingIcon').hide();
 // 		$("#errMsg").html(data.svnImportMsg);
 // 		}
-		}
 
-function getAction() {
-	var action = "<%= action %>";
-	console.info("action :"+action);
-	var actionUrl = "";
-	if ($("[name=repoType]").val() == 'svn') {
-		console.info("repotye :"+"svn");
-		actionUrl = action + "SVNProject";
-	} else if ($("[name=repoType]").val() == 'git') {
-		actionUrl = action + "GITProject";
+	function getAction() {
+		var action = "<%= action %>";
+		var actionUrl = "";
+		if ($("[name=repoType]").val() == 'svn') {
+			actionUrl = action + "SVNProject";
+		} else if ($("[name=repoType]").val() == 'git') {
+			actionUrl = action + "GITProject";
+		}
+		return actionUrl;
 	}
-	console.info("URL "+ actionUrl);
-	return actionUrl;
-}
 	
 </script>

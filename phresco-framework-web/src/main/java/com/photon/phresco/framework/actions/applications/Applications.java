@@ -602,7 +602,6 @@ public class Applications extends FrameworkBaseAction {
     public String importSVNApplication() {
         S_LOGGER.debug("Entering Method  Applications.importApplication()");
         S_LOGGER.debug("repoType " + repoType);
-        System.out.println("repositoryUrl kalee " + repositoryUrl);
         revision = !HEAD_REVISION.equals(revision) ? revisionVal : revision;
         SCMManagerImpl scmi = new SCMManagerImpl();
         try {
@@ -678,8 +677,6 @@ public class Applications extends FrameworkBaseAction {
     		} catch (PhrescoException e) {
     			errorString = e.getLocalizedMessage();
     			errorFlag = false;
-    			e.printErrorStack();
-    			System.out.println(e.getLocalizedMessage());
     			S_LOGGER.error("Entering catch block of importFITApplication "+e.getLocalizedMessage());
     		}
 //    		try {
@@ -741,13 +738,8 @@ public class Applications extends FrameworkBaseAction {
         S_LOGGER.debug("Entering Method  Applications.updateProjectPopup()");
         try {
             String connectionUrl = "";
-            System.out.println(getAppId());
-			System.out.println(getProjectId());
-			System.out.println(getCustomerId());
             ApplicationInfo applicationInfo = getApplicationInfo();
             String appDirName = applicationInfo.getAppDirName();
-            System.out.println("Directory name"+appDirName);
-            
             FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
             PomProcessor processor = frameworkUtil.getPomProcessor(appDirName);
             Scm scm = processor.getSCM();
@@ -758,7 +750,6 @@ public class Applications extends FrameworkBaseAction {
 //            setReqAttribute(SESSION_USER_PASSWORD, value);//get password
 //            System.out.println(SESSION_USER_INFO );
 //            System.out.println(SESSION_USER_PASSWORD );
-            System.out.println("connectionUrl " + connectionUrl);
 //            setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
             setReqAttribute(REQ_APP_ID,getAppId());
             setReqAttribute(REQ_PROJECT_ID,getProjectId());
@@ -788,7 +779,6 @@ public class Applications extends FrameworkBaseAction {
 			errorString = e.getLocalizedMessage();
 			errorFlag = false;
 			e.printStackTrace();
-			System.out.println(e.getLocalizedMessage());
 			S_LOGGER.error("Entering catch block of updateGitProject "+e.getLocalizedMessage());
 		}
     	
@@ -831,10 +821,6 @@ public class Applications extends FrameworkBaseAction {
     	SCMManagerImpl scmi = new SCMManagerImpl();
     	
 		try {
-			System.out.println("Appid "+getAppId());
-	    	System.out.println("projid "+getProjectId());
-	    	System.out.println("Custid "+getCustomerId());
-	    	System.out.println("reppourl "+repositoryUrl);
 			ApplicationInfo applicationInfo = getApplicationInfo();
             String appDirName = applicationInfo.getAppDirName();
 			scmi.updateProject("svn", repositoryUrl, userName, password, null, null, appDirName );
@@ -843,8 +829,6 @@ public class Applications extends FrameworkBaseAction {
 		} catch (PhrescoException e) {
 			errorFlag = false;
 			errorString = e.getLocalizedMessage();
-			e.printStackTrace();
-			System.out.println(e.getLocalizedMessage());
 			S_LOGGER.error("Entering catch block of updateGitProject "+e.getLocalizedMessage());
 		}
 //        S_LOGGER.debug("Entering Method  Applications.updateSVNProject()");
