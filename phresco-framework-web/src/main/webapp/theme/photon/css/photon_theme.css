@@ -79,7 +79,9 @@ a:focus {
 #container {
     border: 1px solid #dedede;
 	background:url(../images/content_bg.png) repeat;
+	padding-bottom:8px;
 }
+#subcontainer { padding-bottom:8px; }
 
 
 strong {
@@ -287,7 +289,7 @@ body {
 
 table th, table td {
     border-bottom: 1px solid #3A090B;
-    color: #FFFFFF;
+    color: #313131;
 }
 
 a { 
@@ -717,7 +719,7 @@ div.vjs-big-play-button span {
 /*** Video Ends ***/
 
 .navTopBorder {
-	border-top: 3px solid #9F111D;
+	/*border-top: 3px solid #9F111D;*/
 }
 
 /*** app info add start ***/
@@ -822,11 +824,15 @@ h1 small {
 }
 
 li {
-    color: #FFFFFF;
+    color: #313131;
 }
-
+.tabs li label {
+	margin:0;
+	line-height:35px !important;
+	bor
+}	
 .tabs li a.inactive label  {
-	color: #000000;
+	color: #fff;
 }
 
 .tabs li a.inactive:hover label  {
@@ -854,9 +860,8 @@ li {
 }
 
 .tabs > li > a, .pills > li > a {
-    /* background: -moz-linear-gradient(center top , #E1E1E1 0%, #E0E0E0 100%) repeat scroll 0 0 transparent; */
-    background: #E1E1E1;
-    color:#000000;
+    background: #323232;
+    color:#fff;
 }
 
 .tabs li a.selected, .tabs > li > a:hover  {
@@ -1054,7 +1059,7 @@ label {
 }
 
 .usersettings {
-	background:#3A090B;	
+	background:#313131;	
 }
 
 .userInfo{
@@ -1448,6 +1453,14 @@ label {
 }
 .table_border td {
 	line-height:32px !important;
+	color:#313131 !important;
+}
+.table_border th label {
+	color:#FFFFFF !important;
+}
+.table_border td img {
+	vertical-align:middle;
+	text-align:center;
 }
 .table_border a {
 	color:#323232 !important;
@@ -1464,3 +1477,4 @@ label {
 .popupLbl {
 	color: #000;
 }
+.fieldset-tableheader { color:#313131; }
