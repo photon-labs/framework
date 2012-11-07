@@ -530,6 +530,7 @@ public interface FrameworkConstants {
     String REQ_READER = "Reader";
     String REQ_SONAR_PATH = "SonarPath";
     String REQ_CONFIG_INFO = "configInfo";
+    String REQ_PROPERTIES_INFO = "propertiesInfo";
     String REQ_OLD_NAME = "oldName";
     String REQ_ERROR = "error";
     String REQ_SELECTED_ITEMS = "check";
@@ -1557,6 +1558,7 @@ public interface FrameworkConstants {
 		String EXCEPTION_CONFIGURATION_LIST_ENV = "excep.hdr.configuration.list.env";
 		String EXCEPTION_CONFIGURATION_LIST_CONFIG = "excep.hdr.configuration.list.config";
 		String EXCEPTION_CONFIGURATION_SHOW_PROPERTIES = "excep.hdr.configuration.show.properties";
+		String EXCEPTION_CONFIGURATION_DELETE_ENVIRONMENT = "excep.hdr.configuration.delete.environment";
 		String EXCEPTION_RUNAGNSRC_SERVER_START = "excep.hdr.proj.runagnsrc.server.start";
 		String EXCEPTION_RUNAGNSRC_SERVER_STOP = "excep.hdr.proj.runagssrc.stop";
 		String EXCEPTION_RUNAGNSRC_SERVER_RESTART = "excep.hdr.proj.runagssrc.restart";
