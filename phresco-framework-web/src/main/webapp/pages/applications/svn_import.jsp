@@ -266,7 +266,6 @@
 		hidePopuploadingIcon();
 		if (!data.errorFlag) {
 			alert("Exception "+data.errorString);
-			$('#popupPage').modal('hide');
 		} else if(data.errorFlag) {
 			alert(data.errorString);
 			//has to be fixed
