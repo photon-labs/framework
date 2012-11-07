@@ -342,11 +342,10 @@ a {
 /*** End footer ***/
 .main_wrapper {
 	bottom: 48px;
-	padding-left: 10px;
-	padding-right: 10px;
 	position: absolute;
 	top: 115px;
-	width: 98.2%;
+	width: 98%;
+	left:2%;
 }
 
 .wrapper {
@@ -361,7 +360,7 @@ a {
 
 #container {
 	height: 83%;
-	width: 94%;
+	width: 100%;
 	margin: 0 auto;
 }
 
@@ -652,44 +651,36 @@ a {
 
 /* header starts */
 .headerInner {
-	float: left;
 	margin: auto;
-	padding-left: 20%;
-	width: 55%;
 }
 
 .headerInnerTop {
 	border-radius: 1px 1px 70px 70px;
 	height: 30px;
-	float:left;
-	position: absolute;
 	z-index: 5;
 }
 
 .headerInnerTop ul {
 	list-style: none outside none;
-	margin: 0 35px;
-	position: absolute;
-	width: 350px;
 	z-index: 3;
-}
-
-.headerInnerTop li {
-	float: left;
-	font-weight: bold;
-	list-style: none outside none;
-	margin: 0 6px 2px 1px;
-	padding: 4px 0 0;
+	clear:right;
+	float:right;
+	margin:0;
+	margin-right:2%;
+	text-align:right;
+	width:475px;
+	margin-top:68px;
+	position:absolute;
+	right:0%;
 }
 
 .headerInnerTop li a label {
 	float: left;
-	font-size: 12px;
+	font-size: 17px;
 	text-decoration: none;
 	font-weight: bold;
 	text-transform: uppercase;
 	cursor: pointer;
-	color:#313131;
 }
 .close_links, .quick_lnk { display:none; }
 .quick_links_outer label {
@@ -701,6 +692,7 @@ a {
 	text-decoration: none;
 	text-transform: uppercase;
 	cursor: pointer;
+	
 }
 
 .shortcutWh label {
@@ -772,9 +764,12 @@ a {
 .headerInnerTop li {
 	float: left;
 	list-style: none outside none;
-	margin: 0 6px 2px 1px;
+	margin-right:9%;
 	padding: 4px 0 0;
 	font-weight: bold;
+}
+.headerInnerTop li:last-child {
+	margin:0;
 }
 
 .wid_home {
@@ -795,32 +790,33 @@ a {
 
 .headerInnerTop li a {
 	float: left;
-	font-size: 12px;
+	font-size: 17px;
 	padding: 3px 5px;
 	text-decoration: none;
 	text-transform: uppercase;
 }
 
 .headerInnerTop li a:hover {
-	border-radius: 4px 4px 4px 4px;
 	float: left;
-	font-size: 12px;
-	padding: 3px 5px;
+	font-size: 17px;
 	text-decoration: none;
 	font-weight: bold;
 	text-transform: uppercase;
-	height: 20px;
+	padding: 3px 5px;
+	color:#37b764;
 }
 
 .headerInnerTop li a.active {
-	border-radius: 4px 4px 4px 4px;
+	
 	float: left;
-	font-size: 12px;
-	padding: 3px 5px;
+	font-size: 17px;
 	text-decoration: none;
 	font-weight: bold;
 	text-transform: uppercase;
-	height: 20px;
+	padding: 3px 5px;
+}
+.headerInnerTop li a.active label {
+	color:#37b764 !important;
 }
 
 .headerInnerbottom {
@@ -1710,7 +1706,7 @@ div.vjs-big-play-button span {
 
 #container {
     z-index: 15004;
-    width: 94%;
+    width: 100%;
     height: 85%;
 }
 

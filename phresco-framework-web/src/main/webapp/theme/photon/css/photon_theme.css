@@ -129,29 +129,17 @@ a:hover {
 }
 
 .headerInnerTop li a {
-	color: #FFFFFF;
+	color: #313131;
 }
 
 .headerInnerTop li a:hover {
-    color: #FFFFFF;
-    background: #C7141C; /* Old browsers */
-	background: -moz-linear-gradient(top,  #C7141C 0%, #B1121D 44%, #9D111E 100%); /* FF3.6+ */
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#C7141C), color-stop(44%,#B1121D), color-stop(100%,#9D111E)); /* Chrome,Safari4+ */
-	background: -webkit-linear-gradient(top,  #C7141C 0%,#B1121D 44%,#9D111E 100%); /* Chrome10+,Safari5.1+ */
-	background: -o-linear-gradient(top,  #C7141C 0%,#B1121D 44%,#9D111E 100%); /* Opera 11.10+ */
-	background: -ms-linear-gradient(top,  #C7141C 0%,#B1121D 44%,#9D111E 100%); /* IE10+ */
-	background: linear-gradient(top,  #C7141C 0%,#B1121D 44%,#9D111E 100%); /* W3C */
+   	color:#37b764;
+    background:none;
 }
 
 .headerInnerTop li a.active {
-    color: #FFFFFF;
-	background: #C7141C; /* Old browsers */
-    background: -moz-linear-gradient(top,  #C7141C 0%, #B1121D 44%, #9D111E 100%); /* FF3.6+ */
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#C7141C), color-stop(44%,#B1121D), color-stop(100%,#9D111E)); /* Chrome,Safari4+ */
-	background: -webkit-linear-gradient(top,  #C7141C 0%,#B1121D 44%,#9D111E 100%); /* Chrome10+,Safari5.1+ */
-	background: -o-linear-gradient(top,  #C7141C 0%,#B1121D 44%,#9D111E 100%); /* Opera 11.10+ */
-	background: -ms-linear-gradient(top,  #C7141C 0%,#B1121D 44%,#9D111E 100%); /* IE10+ */
-	background: linear-gradient(top,  #C7141C 0%,#B1121D 44%,#9D111E 100%); /* W3C */
+    color:#37b764 !important;
+    background:none;
 }
 
 .headerInnerbottom {
@@ -904,7 +892,7 @@ fieldset {
 }
 
 label {
-    color: #FFFFFF;
+    /*color: #FFFFFF;*/
 }
 
 /*** ajax Container css starts ***/
@@ -1071,6 +1059,7 @@ label {
 .signOut {
     background-color:transparent;
     color: #fff;
+	float:right;
 }
 
 .usersettings {
@@ -1079,11 +1068,11 @@ label {
 
 .userInfo{
 	background:#ffffff;
-	color: #9D261D;
+	color: #38b865;
 }
 
 .userInfo a {
-	color: #9D261D;
+	color: #38b865;
 }
 
 .build_table_data_div {
