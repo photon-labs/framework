@@ -39,7 +39,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.bind.JAXBException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -224,6 +223,11 @@ public class Build extends DynamicParameterUtil implements Constants {
 		}
 		return APP_BUILD;
 	}
+	
+	public String checkForConfiguration() {
+		
+		return SUCCESS;
+	}
 
 	/**
 	 * To show generate build popup with loaded dynamic parameters 
@@ -239,6 +243,7 @@ public class Build extends DynamicParameterUtil implements Constants {
             setProjModulesInReq();
             Map<String, Object> watcherMap = new HashMap<String, Object>();
             watcherMap.put(REQ_APP_INFO, appInfo);
+            watcherMap.put(REQ_CUSTOMER_ID, getCustomerId());
             List<Parameter> parameters = setDynamicParametersInReq(appInfo, PHASE_PACKAGE);
             List<String> controlsTobeShowed = new ArrayList<String>();
             setPossibleValuesInReq(parameters, watcherMap, controlsTobeShowed);
@@ -296,6 +301,7 @@ public class Build extends DynamicParameterUtil implements Constants {
             setProjModulesInReq();
             Map<String, Object> watcherMap = new HashMap<String, Object>();
             watcherMap.put(REQ_APP_INFO, appInfo);
+            watcherMap.put(REQ_CUSTOMER_ID, getCustomerId());
             String buildNumber = getReqParameter(REQ_DEPLOY_BUILD_NUMBER);
             watcherMap.put(REQ_DEPLOY_BUILD_NUMBER, buildNumber);
             List<Parameter> parameters = setDynamicParametersInReq(appInfo, PHASE_DEPLOY);
