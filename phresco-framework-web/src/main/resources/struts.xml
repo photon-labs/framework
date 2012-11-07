@@ -457,7 +457,9 @@
         </action>
         
         <action name="deleteEnvironment" method="deleteEnvironment" class="com.photon.phresco.framework.actions.applications.Configurations">
-			<result type="json" />
+        	<interceptor-ref name="json" />
+        	<result name="list">/pages/applications/configuration/list.jsp</result>
+<!-- 			<result type="json" /> -->
         </action>
         
         <action name="deleteSettingsEnvironment" method="deleteSettingsEnvironment" class="com.photon.phresco.framework.actions.settings.Settings">

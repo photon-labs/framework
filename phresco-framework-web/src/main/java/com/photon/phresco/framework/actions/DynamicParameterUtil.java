@@ -8,21 +8,29 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.photon.phresco.api.DynamicParameter;
 import com.photon.phresco.commons.model.ApplicationInfo;
+import com.photon.phresco.commons.model.ArtifactGroup;
+import com.photon.phresco.commons.model.ArtifactInfo;
+import com.photon.phresco.commons.model.Customer;
+import com.photon.phresco.commons.model.RepoInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.MavenCommands.MavenCommand;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
 import com.photon.phresco.plugins.util.MojoProcessor;
+import com.photon.phresco.service.client.api.ServiceManager;
+import com.photon.phresco.util.PhrescoDynamicLoader;
 import com.photon.phresco.util.Utility;
 
 public class DynamicParameterUtil extends FrameworkBaseAction {
 
 	private static final long serialVersionUID = 1L;
+	private static Map<String, PhrescoDynamicLoader> pdlMap = new HashMap<String, PhrescoDynamicLoader>();
 	
 	/**
      * To get path of phresco-plugin-info.xml file
@@ -149,46 +157,43 @@ public class DynamicParameterUtil extends FrameworkBaseAction {
 	}
 	
 	private PossibleValues getDynamicValues(Map<String, Object> map, Parameter parameter) throws PhrescoException {
-		String className = "";
 		try {
-//			Map<String, PhrescoDynamicLoader> pdlMap = new HashMap<String, PhrescoDynamicLoader>();
-//			String customerId = (String) map.get(REQ_CUSTOMER_ID);
-			className = parameter.getDynamicParameter().getClazz();
-			
-			//To get repo info from Customer object
-//			ServiceManager serviceManager = getServiceManager();
-//			Customer customer = serviceManager.getCustomer(customerId);
-//			RepoInfo repoInfo = customer.getRepoInfo();
-
-			//To set groupid,artfid,type infos to List<ArtifactGroup>
-//			List<ArtifactGroup> artifactGroups = new ArrayList<ArtifactGroup>();
-//			ArtifactGroup artifactGroup = new ArtifactGroup();
-//			artifactGroup.setGroupId(parameter.getDynamicParameter().getDependencies().getDependency().getGroupId());
-//			artifactGroup.setArtifactId(parameter.getDynamicParameter().getDependencies().getDependency().getArtifactId());
-//			artifactGroup.setPackaging(parameter.getDynamicParameter().getDependencies().getDependency().getType());
-//
-//			//to set version
-//			List<ArtifactInfo> artifactInfos = new ArrayList<ArtifactInfo>();
-//	        ArtifactInfo artifactInfo = new ArtifactInfo();
-//	        artifactInfo.setVersion(parameter.getDynamicParameter().getDependencies().getDependency().getVersion());
-//			artifactInfos.add(artifactInfo);
-//	        artifactGroup.setVersions(artifactInfos);
-//			artifactGroups.add(artifactGroup);
-			
-			
-			//dynamically loads specified Class
-//			PhrescoDynamicLoader pdl = new PhrescoDynamicLoader(repoInfo, artifactGroups);
-//			DynamicParameter dynamicParameter = pdl.getDynamicParameter(className);
-			
-			Class<DynamicParameter> loadedClass = (Class<DynamicParameter>) Class.forName(className);
-			DynamicParameter dynamicParameter = loadedClass.newInstance();
+			String customerId = (String) map.get(REQ_CUSTOMER_ID);
+			String className = parameter.getDynamicParameter().getClazz();
+			DynamicParameter dynamicParameter;
+			PhrescoDynamicLoader phrescoDynamicLoader = pdlMap.get(customerId);
+			if (MapUtils.isNotEmpty(pdlMap) && phrescoDynamicLoader != null) {
+				dynamicParameter = phrescoDynamicLoader.getDynamicParameter(className);
+			} else {
+				//To get repo info from Customer object
+				ServiceManager serviceManager = getServiceManager();
+				Customer customer = serviceManager.getCustomer(customerId);
+				RepoInfo repoInfo = customer.getRepoInfo();
+				//To set groupid,artfid,type infos to List<ArtifactGroup>
+				List<ArtifactGroup> artifactGroups = new ArrayList<ArtifactGroup>();
+				ArtifactGroup artifactGroup = new ArtifactGroup();
+				artifactGroup.setGroupId(parameter.getDynamicParameter().getDependencies().getDependency().getGroupId());
+				artifactGroup.setArtifactId(parameter.getDynamicParameter().getDependencies().getDependency().getArtifactId());
+				artifactGroup.setPackaging(parameter.getDynamicParameter().getDependencies().getDependency().getType());
+				//to set version
+				List<ArtifactInfo> artifactInfos = new ArrayList<ArtifactInfo>();
+		        ArtifactInfo artifactInfo = new ArtifactInfo();
+		        artifactInfo.setVersion(parameter.getDynamicParameter().getDependencies().getDependency().getVersion());
+				artifactInfos.add(artifactInfo);
+		        artifactGroup.setVersions(artifactInfos);
+				artifactGroups.add(artifactGroup);
+				
+				//dynamically loads specified Class
+				phrescoDynamicLoader = new PhrescoDynamicLoader(repoInfo, artifactGroups);
+				dynamicParameter = phrescoDynamicLoader.getDynamicParameter(className);
+				pdlMap.put(customerId, phrescoDynamicLoader);
+			}
 			
 			return dynamicParameter.getValues(map);
 		} catch (Exception e) {
 		    e.printStackTrace();
-			throw new PhrescoException(getText(EXCEPTION_LOAD_CLASS) + className);
+			throw new PhrescoException(e);
 		}
-		
 	}
 	
 	/**
