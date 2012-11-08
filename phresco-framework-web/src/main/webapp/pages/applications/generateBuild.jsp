@@ -155,6 +155,7 @@
 					parameterModel.setOnClickFunction(onClickFunction);
 					parameterModel.setCssClass(cssClass);
 					parameterModel.setValue(parameter.getValue());
+					parameterModel.setDependency(parameter.getDependency());
 					
 					StringTemplate chckBoxElement = FrameworkUtil.constructCheckBoxElement(parameterModel);
 	%>
@@ -175,6 +176,7 @@
 					parameterModel.setSelectedValues(selectedValList);
 					parameterModel.setObjectValue(psblValues);
 					parameterModel.setMultiple(Boolean.parseBoolean(parameter.getMultiple()));
+					parameterModel.setDependency(parameter.getDependency());
 					
 					StringTemplate selectElmnt = FrameworkUtil.constructSelectElement(parameterModel);
 	%>
@@ -195,6 +197,7 @@
 					parameterModel.setSelectedValues(selectedValList);
 					parameterModel.setObjectValue(dynamicPsblValues);
 					parameterModel.setMultiple(Boolean.parseBoolean(parameter.getMultiple()));
+					parameterModel.setDependency(parameter.getDependency());
 					
 					StringTemplate selectDynamicElmnt = FrameworkUtil.constructSelectElement(parameterModel);
 	%>				
@@ -394,23 +397,7 @@
 	var isMultiple = "";
 	var controlType = "";
 	function dependancyChckBoxEvent(obj, currentParamKey) {
-		changeChckBoxValue(obj);
-		var selectedOption = $(obj).val();
-		changeEveDependancyListener(selectedOption, currentParamKey);
-		<%-- pushToElement = dependantKey;
-		isMultiple = $("#"+pushToElement).attr("isMultiple");
-		controlType = $("#"+pushToElement).attr("type");
-		var dependantValue = $(obj).is(':checked');
-		var params = "";
-		params = params.concat("dependantKey=");
-		params = params.concat(dependantKey);
-		params = params.concat("&dependantValue=");
-		params = params.concat(dependantValue);
-		params = params.concat("&goal=");
-		params = params.concat('<%= goal%>');
-		params = params.concat("&");
-		params = params.concat(getBasicParams());
-		loadContent('dependancyListener', '', '', params, true); --%>
+		selectBoxOnChangeEvent(obj, currentParamKey);
 	}
 	
 	function updateDependantValue(data) {
@@ -419,7 +406,39 @@
 	
 	function selectBoxOnChangeEvent(obj, currentParamKey) {
 		var selectedOption = $(obj).val();
-		changeEveDependancyListener(selectedOption, currentParamKey);
+		$(obj).blur();//To remove the focus from the current element
+		var dependencyAttr;
+		
+		var controlType = $(obj).prop('tagName');
+		if (controlType === 'INPUT') {
+			selectedOption = $(obj).is(':checked');
+			dependencyAttr = $(obj).attr('additionalParam');
+		} else if (controlType === 'SELECT') {
+			var previousDependencyAttr = $(obj).attr('additionalparam');//get the previvous dependency keys from additionalParam attr
+			var csvPreviousDependency = previousDependencyAttr.substring(previousDependencyAttr.indexOf('=') + 1);
+			dependencyAttr =  obj.options[obj.selectedIndex].getAttribute('additionalparam'); //$('option:selected', obj).attr('additionalParam'); 
+
+			if (csvPreviousDependency !== undefined && !isBlank(csvPreviousDependency) && 
+					csvPreviousDependency !==  dependencyAttr) {//hide event of all the dependencies of the previuos dependencies
+				var csvDependencies = getAllDependencies(csvPreviousDependency);
+				var previousDependencyArr = new Array();
+				previousDependencyArr = csvDependencies.split(',');
+				hideControl(previousDependencyArr);
+			}
+		}
+		
+		changeEveDependancyListener(selectedOption, currentParamKey); // update the watcher while changing the drop down
+		
+		if (dependencyAttr !== undefined) {
+			var csvDependencies = dependencyAttr.substring(dependencyAttr.indexOf('=') + 1);
+			csvDependencies = getAllDependencies(csvDependencies);
+			var dependencyArr = new Array();
+			dependencyArr = csvDependencies.split(',');
+			for (var i = 0; i < dependencyArr.length; i+=1) {
+				$('#' + $.trim(dependencyArr[i]) + 'Control').show();
+				updateDependancy(dependencyArr[i]);
+			}
+		}
 	}
 	
 	function changeEveDependancyListener(selectedOption, currentParamKey) {
@@ -430,6 +449,49 @@
 		params = params.concat(currentParamKey);
 		params = params.concat("&selectedOption=");
 		params = params.concat(selectedOption);
-		loadContent('changeEveDependancyListener', '', '', params, true);
+		
+		loadContent('changeEveDependancyListener', '', '', params, true, false);
+	}
+	
+	function updateDependancy(dependency) {
+		var params = getBasicParams();
+		params = params.concat("&goal=");
+		params = params.concat('<%= goal%>');
+		params = params.concat("&dependency=");
+		params = params.concat(dependency);
+		
+		loadContent('updateDependancy', '', '', params, true, false);
+	}
+	
+	function successEvent(pageUrl, data) {
+		if (pageUrl === "updateDependancy") {
+			if (data.dependency != undefined && !isBlank(data.dependency)) {
+				if (data.dependentValues != undefined && !isBlank(data.dependentValues)) {
+					var isMultiple = $('#' + data.dependency).attr("isMultiple");
+					var controlType = $('#' + data.dependency).attr('type');
+					constructElements(data.dependentValues, data.dependency, isMultiple, controlType);
+				}
+			}
+		}
+	}
+	
+	function getAllDependencies(keys) {
+		var dependencies = keys;
+		var comma = ',';
+		var keyArr = CSVToArray(keys);
+		for (var i=0; i < keyArr.length; i+=1) {
+			var controlType = $('#' + $.trim(keyArr[i])).prop('tagName');
+			var additionalParam;
+			if (controlType === 'SELECT') {
+				additionalParam = $('#' + $.trim(keyArr[i]) + ' option:selected').attr('additionalParam');
+			} else if (controlType === 'INPUT') {
+				additionalParam = $('#' + $.trim(keyArr[i])).attr('additionalParam');
+			}
+			if (additionalParam != undefined && !isBlank(additionalParam)) {
+				dependencies = dependencies.concat(comma);
+				dependencies = dependencies.concat(additionalParam.substring(additionalParam.indexOf('=') + 1));			
+			}
+		}
+		return dependencies;
 	}
 </script>

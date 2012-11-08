@@ -2,6 +2,9 @@ package com.photon.phresco.framework.commons;
 
 import java.util.List;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
+
 public class ParameterModel {
 	private String lableText = "";
 	private String lableClass = "";
@@ -20,8 +23,9 @@ public class ParameterModel {
 	private boolean mandatory;
 	private boolean multiple;
 	private boolean show;
+	private String dependency = "";
 	
-	public String getLableText() {
+    public String getLableText() {
 		return lableText;
 	}
 	
@@ -156,4 +160,36 @@ public class ParameterModel {
 	public boolean isShow() {
 		return show;
 	}
+	
+	public String getDependency() {
+        return dependency;
+    }
+
+    public void setDependency(String dependency) {
+        this.dependency = dependency;
+    }
+    
+    public String toString() {
+        return new ToStringBuilder(this,
+                ToStringStyle.DEFAULT_STYLE)
+                .append("lableText", getLableText())
+                .append("lableClass", getLableClass())
+                .append("id", getId())
+                .append("cssClass", getCssClass())
+                .append("name", getName())
+                .append("placeHolder", getPlaceHolder())
+                .append("value", getValue())
+                .append("inputType", getInputType())
+                .append("onClickFunction", getOnClickFunction())
+                .append("onChangeFunction", getOnChangeFunction())
+                .append("controlGroupId", getControlGroupId())
+                .append("controlId", getControlId())
+                .append("objectValue", getObjectValue())
+                .append("selectedValues", getSelectedValues())
+                .append("mandatory", isMandatory())
+                .append("multiple", isMultiple())
+                .append("show", isShow())
+                .append("dependency", getDependency())
+                .toString();
+    }
 }

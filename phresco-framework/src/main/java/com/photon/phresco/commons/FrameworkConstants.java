@@ -1585,6 +1585,6 @@ public interface FrameworkConstants {
 		String PLUGIN_PARAMETER_FRAMEWORK = "framework";
 		String REQ_DYNAMIC_PARAMETERS = "dynamicParameters";
 		String REQ_DYNAMIC_POSSIBLE_VALUES = "possibleValues";
-		String REQ_SESSION_DYNAMIC_PARAM_MAP = "sessionDynamicParamMap";
+		String SESSION_WATCHER_MAP = "sessionDynamicParamMap";
 		
 }

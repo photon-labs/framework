@@ -16,8 +16,10 @@ import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.ArtifactInfo;
 import com.photon.phresco.commons.model.Customer;
+import com.photon.phresco.commons.model.DependantParameters;
 import com.photon.phresco.commons.model.RepoInfo;
 import com.photon.phresco.exception.PhrescoException;
+import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.MavenCommands.MavenCommand;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues;
@@ -61,7 +63,7 @@ public class DynamicParameterUtil extends FrameworkBaseAction {
 		return null;
 	}
     
-    protected List<Parameter> setDynamicParametersInReq(ApplicationInfo appInfo, String goal) throws PhrescoException {
+    protected List<Parameter> getDynamicParameters(ApplicationInfo appInfo, String goal) throws PhrescoException {
         MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(appInfo)));
         com.photon.phresco.plugins.model.Mojos.Mojo.Configuration mojoConfiguration = mojo.getConfiguration(goal);
         List<Parameter> parameters = null;
@@ -74,100 +76,131 @@ public class DynamicParameterUtil extends FrameworkBaseAction {
     
     /**
      * To set List of parameters in request
+     * @param appInfo
      * @param goal
      * @throws PhrescoException
      */
-    protected void setPossibleValuesInReq(List<Parameter> parameters, Map<String, Object> watcherMap, List<String> controlsTobeShowed) throws PhrescoException {
+    protected void setPossibleValuesInReq(ApplicationInfo appInfo, List<Parameter> parameters, Map<String, DependantParameters> watcherMap) throws PhrescoException {
         try {
             if (CollectionUtils.isNotEmpty(parameters)) {
-                Map<String, String> valuesMap = new HashMap<String, String>();
                 for (Parameter parameter : parameters) {
-                    List<Value> dynParamPossibleValues = null;
-                    //To process the dynamic parameter
-                    if (parameter.getDynamicParameter() != null) {
-                        dynParamPossibleValues = setDynamicPossibleValues(watcherMap, parameter);
+                    String parameterKey = parameter.getKey();
+                    if (parameter.getDynamicParameter() != null) { //Dynamic parameter
+                        Map<String, Object> constructMapForDynVals = constructMapForDynVals(appInfo, watcherMap, parameterKey);
+                        
+                        // Get the values from the dynamic parameter class
+                        List<Value> dynParamPossibleValues = getDynamicPossibleValues(constructMapForDynVals, parameter);
+                        if (watcherMap.containsKey(parameterKey)) {
+                            DependantParameters dependantParameters = (DependantParameters) watcherMap.get(parameterKey);
+                            dependantParameters.setValue(dynParamPossibleValues.get(0).getValue());
+                        }
+                        
                         setReqAttribute(REQ_DYNAMIC_POSSIBLE_VALUES + parameter.getKey(), dynParamPossibleValues);
-                        //If dependency exist for current parameter then add its dependency and first possible value in watcher map
-                        if (StringUtils.isNotEmpty(parameter.getDependency())) {
-                            valuesMap.put(parameter.getDependency(), dynParamPossibleValues.get(0).getValue());
-                            watcherMap.put(parameter.getKey(), valuesMap);
-                            if (parameter.isShow()) {
-                                controlsTobeShowed.add(parameter.getDependency());
-                            }
-                        }
-                    }
-                    
-                    //To update the map with the dynamic parameters value
-                    Set<String> keySet = watcherMap.keySet();
-                    if (keySet != null) {
-                        for (String key : keySet) {
-                            if (key.equals(parameter.getKey())) {
-                                valuesMap.put(key, dynParamPossibleValues.get(0).getValue());
-                                watcherMap.put(parameter.getKey(), valuesMap);
-                                break;
-                            }
-                        }
-                    }
-                    
-                    if (parameter.getType().equalsIgnoreCase(TYPE_BOOLEAN) && StringUtils.isNotEmpty(parameter.getDependency())) {
-                        //To add the boolean parameter's dependency and its value into the watcher
-                        valuesMap.put(parameter.getDependency(), parameter.getValue());
-                        watcherMap.put(parameter.getKey(), valuesMap);
-                        //To add the current parameter's dependency into the controls to be showed collection
-                        if (parameter.isShow()) {
-                            controlsTobeShowed.add(parameter.getDependency());
-                        }
-                    }
-                    
-                    //To process the paramters if it has possible values
-                    if (parameter.getPossibleValues() != null) {
+                        addWatcher(watcherMap, parameter.getDependency(), parameterKey, dynParamPossibleValues.get(0).getValue());
+                    } else if (parameter.getPossibleValues() != null) { //Possible values
                         List<Value> values = parameter.getPossibleValues().getValue();
-                        //To add the possible values dependency and its key into the watcher
-                        if (StringUtils.isNotEmpty(values.get(0).getDependency())) {
-                            valuesMap.put(values.get(0).getDependency(), values.get(0).getKey());
-                            watcherMap.put(parameter.getKey(), valuesMap);
-                            //To add the current parameter's dependency into the controlsTobeShowed collection
-                            if (parameter.isShow()) {
-                                controlsTobeShowed.add(values.get(0).getDependency());
+                        
+                        if (watcherMap.containsKey(parameterKey)) {
+                            DependantParameters dependantParameters = (DependantParameters) watcherMap.get(parameterKey);
+                            dependantParameters.setValue(values.get(0).getValue());
+                        }
+                        
+                        for (Value value : values) {
+                            if (StringUtils.isNotEmpty(value.getDependency())) {
+//                                List<String> dependencyKeys = FrameworkUtil.getCsvAsList(value.getDependency());
+                                addWatcher(watcherMap, value.getDependency(), parameterKey, value.getValue());
                             }
                         }
-                    }
-                    
-                    //To change the show property of the parameter based on the controlsTobeShowed collection
-                    if (controlsTobeShowed.contains(parameter.getKey())) {
-                        parameter.setShow(true);
+                        addWatcher(watcherMap, parameter.getDependency(), parameterKey, values.get(0).getValue());
+                    } else if (parameter.getType().equalsIgnoreCase(TYPE_BOOLEAN) && StringUtils.isNotEmpty(parameter.getDependency())) { //Checkbox
+                        addWatcher(watcherMap, parameter.getDependency(), parameterKey, parameter.getValue());
                     }
                 }
             }
-        } catch (PhrescoException e) {
-            throw new PhrescoException(e);
+        } catch (Exception e) {
+            e.printStackTrace();
+            // TODO: handle exception
+        }
+    }
+
+    private void addWatcher(Map<String, DependantParameters> watcherMap, String dependency, String parameterKey,
+            String parameterValue) {
+        if (StringUtils.isNotEmpty(dependency)) {
+            List<String> dependencyKeys = FrameworkUtil.getCsvAsList(dependency);
+            for (String dependentKey : dependencyKeys) {
+                DependantParameters dependantParameters;
+                if (watcherMap.containsKey(dependentKey)) {
+                    dependantParameters = (DependantParameters) watcherMap.get(dependentKey);
+                } else {
+                    dependantParameters = new DependantParameters();
+                }
+                dependantParameters.getParentMap().put(parameterKey, parameterValue);
+                watcherMap.put(dependentKey, dependantParameters);
+            }
         }
     }
     
-	 /**
-	 * To set List of Possible values as Dynamic parameter in request
-	 * @param applicationInfo
-	 * @param parameters
-	 * @throws PhrescoException
-	 */
-	protected List<Value> setDynamicPossibleValues(Map<String, Object> map, Parameter parameter) throws PhrescoException {
-		PossibleValues possibleValue = getDynamicValues(map, parameter);
-		List<Value> possibleValues = (List<Value>) possibleValue.getValue();
-		return possibleValues;
-	}
+    protected Map<String, Object> constructMapForDynVals(ApplicationInfo appInfo, Map<String, DependantParameters> watcherMap, String parameterKey) {
+        Map<String, Object> paramMap = new HashMap<String, Object>(8);
+        DependantParameters dependantParameters = watcherMap.get(parameterKey);
+        if (dependantParameters != null) {
+            paramMap.putAll(getDependantParameters(dependantParameters.getParentMap(), watcherMap));
+        }
+        paramMap.put(DynamicParameter.KEY_APP_INFO, appInfo);
+        return paramMap;
+    }
+    
+    private Map<String, Object> getDependantParameters(Map<String, String> parentMap, Map<String, DependantParameters> watcherMap) {
+        Map<String, Object> paramMap = new HashMap<String, Object>(8);
+        Set<String> keySet = parentMap.keySet();
+        for (String key : keySet) {
+            if (watcherMap.get(key) != null) {
+                String value = ((DependantParameters) watcherMap.get(key)).getValue();
+                paramMap.put(key, value);
+            }
+        }
+        return paramMap;
+    }
+
+   /* protected void setDependencyToWatcher(Map<String, DependantParameters> watcherMap, List<String> dependencyKeys,  
+            String parentParamKey, String parentParamValue) {
+        for (String dependentKey : dependencyKeys) {
+            DependantParameters dependantParameters;
+            if (watcherMap.containsKey(dependentKey)) {
+                dependantParameters = (DependantParameters) watcherMap.get(dependentKey);
+            } else {
+                dependantParameters = new DependantParameters();
+            }
+            dependantParameters.getParentMap().put(parentParamKey, parentParamValue);
+            System.out.println("adding watcher " + dependentKey);
+            watcherMap.put(dependentKey, dependantParameters);
+        }
+    }*/
+
+    /**
+     * To set List of Possible values as Dynamic parameter in request
+     * @param watcherMap
+     * @param parameter
+     * @return
+     * @throws PhrescoException
+     */
+    protected List<Value> getDynamicPossibleValues(Map<String, Object> watcherMap, Parameter parameter) throws PhrescoException {
+        PossibleValues possibleValue = getDynamicValues(watcherMap, parameter);
+        List<Value> possibleValues = (List<Value>) possibleValue.getValue();
+        return possibleValues;
+    }
 	
-	private PossibleValues getDynamicValues(Map<String, Object> map, Parameter parameter) throws PhrescoException {
+	private PossibleValues getDynamicValues(Map<String, Object> watcherMap, Parameter parameter) throws PhrescoException {
 		try {
-			String customerId = (String) map.get(REQ_CUSTOMER_ID);
 			String className = parameter.getDynamicParameter().getClazz();
 			DynamicParameter dynamicParameter;
-			PhrescoDynamicLoader phrescoDynamicLoader = pdlMap.get(customerId);
+			PhrescoDynamicLoader phrescoDynamicLoader = pdlMap.get(getCustomerId());
 			if (MapUtils.isNotEmpty(pdlMap) && phrescoDynamicLoader != null) {
 				dynamicParameter = phrescoDynamicLoader.getDynamicParameter(className);
 			} else {
 				//To get repo info from Customer object
 				ServiceManager serviceManager = getServiceManager();
-				Customer customer = serviceManager.getCustomer(customerId);
+				Customer customer = serviceManager.getCustomer(getCustomerId());
 				RepoInfo repoInfo = customer.getRepoInfo();
 				//To set groupid,artfid,type infos to List<ArtifactGroup>
 				List<ArtifactGroup> artifactGroups = new ArrayList<ArtifactGroup>();
@@ -186,10 +219,10 @@ public class DynamicParameterUtil extends FrameworkBaseAction {
 				//dynamically loads specified Class
 				phrescoDynamicLoader = new PhrescoDynamicLoader(repoInfo, artifactGroups);
 				dynamicParameter = phrescoDynamicLoader.getDynamicParameter(className);
-				pdlMap.put(customerId, phrescoDynamicLoader);
+				pdlMap.put(getCustomerId(), phrescoDynamicLoader);
 			}
 			
-			return dynamicParameter.getValues(map);
+			return dynamicParameter.getValues(watcherMap);
 		} catch (Exception e) {
 		    e.printStackTrace();
 			throw new PhrescoException(e);

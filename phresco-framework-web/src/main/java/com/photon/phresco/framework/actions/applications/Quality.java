@@ -80,6 +80,7 @@ import com.google.gson.Gson;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.BuildInfo;
+import com.photon.phresco.commons.model.DependantParameters;
 import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.FrameworkConfiguration;
@@ -110,7 +111,6 @@ import com.photon.phresco.framework.model.TestCaseFailure;
 import com.photon.phresco.framework.model.TestResult;
 import com.photon.phresco.framework.model.TestSuite;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
-import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
 import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.util.Constants;
@@ -248,15 +248,10 @@ public class Quality extends DynamicParameterUtil implements Constants {
     
     //Dynamic parameter
     private List<Value> dependentValues = null; //Value for dependancy parameters
-    private String dependentParamKey = "";
     private String currentParamKey = ""; 
-    private String dependantValue = "";
     private String goal = "";
     private String selectedOption = "";
-    List<String> controlsTobeHidden = new ArrayList<String>();
-    List<String> controlsTobeShown = new ArrayList<String>();
-    private boolean needToCallAgain = false;
-    private String pushToElement = "";
+    private String dependency = "";
 
     private String COMMAND_START_HUB = "java -jar lib/selenium-server-standalone-2.25.0.jar -role hub -hubConfig hubconfig.json";
 	
@@ -273,7 +268,8 @@ public class Quality extends DynamicParameterUtil implements Constants {
 	        setReqAttribute(PATH, frameworkUtil.getUnitTestDir(appInfo));
             setReqAttribute(REQ_APPINFO, appInfo);
             setProjModulesInReq();
-            setDynamicParametersInReq(appInfo, PHASE_UNIT_TEST);
+            List<Parameter> parameters = getDynamicParameters(appInfo, PHASE_UNIT_TEST);
+            setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
         } catch (PhrescoException e) {
             return showErrorPopup(e, getText(EXCEPTION_QUALITY_UNIT_RPT));
         }
@@ -338,7 +334,15 @@ public class Quality extends DynamicParameterUtil implements Constants {
         }
 	    
 	    try {
-	        setDynamicParametersInReq(getApplicationInfo(), PHASE_UNIT_TEST);
+	        ApplicationInfo appInfo = getApplicationInfo();
+            removeSessionAttribute(appInfo.getId() + PHASE_UNIT_TEST + SESSION_WATCHER_MAP);
+            setProjModulesInReq();
+            Map<String, DependantParameters> watcherMap = new HashMap<String, DependantParameters>(8);
+            List<Parameter> parameters = getDynamicParameters(appInfo, PHASE_UNIT_TEST);
+            setPossibleValuesInReq(appInfo, parameters, watcherMap);
+            setSessionAttribute(appInfo.getId() + PHASE_UNIT_TEST + SESSION_WATCHER_MAP, watcherMap);
+            setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
+            setReqAttribute(REQ_GOAL, PHASE_UNIT_TEST);
     	    setProjModulesInReq();
 	    } catch (PhrescoException e) {
 	        return showErrorPopup(e, getText(EXCEPTION_QUALITY_UNIT_RPT));
@@ -444,16 +448,12 @@ public class Quality extends DynamicParameterUtil implements Constants {
         
         try {
             ApplicationInfo appInfo = getApplicationInfo();
-            removeSessionAttribute(appInfo.getId() + PHASE_FUNCTIONAL_TEST + REQ_SESSION_DYNAMIC_PARAM_MAP);
-            removeSessionAttribute(appInfo.getId() + PHASE_FUNCTIONAL_TEST + "controlsTobeShowed");
+            removeSessionAttribute(appInfo.getId() + PHASE_FUNCTIONAL_TEST + SESSION_WATCHER_MAP);
             setProjModulesInReq();
-            Map<String, Object> watcherMap = new HashMap<String, Object>();
-            watcherMap.put(REQ_APP_INFO, appInfo);
-            List<Parameter> parameters = setDynamicParametersInReq(appInfo, PHASE_FUNCTIONAL_TEST);
-            List<String> controlsTobeShowed = new ArrayList<String>();
-            setPossibleValuesInReq(parameters, watcherMap, controlsTobeShowed);
-            setSessionAttribute(appInfo.getId() + PHASE_FUNCTIONAL_TEST + REQ_SESSION_DYNAMIC_PARAM_MAP, watcherMap);
-            setSessionAttribute(appInfo.getId() + PHASE_FUNCTIONAL_TEST + "controlsTobeShowed", controlsTobeShowed);
+            Map<String, DependantParameters> watcherMap = new HashMap<String, DependantParameters>(8);
+            List<Parameter> parameters = getDynamicParameters(appInfo, PHASE_FUNCTIONAL_TEST);
+            setPossibleValuesInReq(appInfo, parameters, watcherMap);
+            setSessionAttribute(appInfo.getId() + PHASE_FUNCTIONAL_TEST + SESSION_WATCHER_MAP, watcherMap);
             setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
             setReqAttribute(REQ_GOAL, PHASE_FUNCTIONAL_TEST);
         } catch (PhrescoException e) {
@@ -463,113 +463,52 @@ public class Quality extends DynamicParameterUtil implements Constants {
         return SUCCESS;
     }
 	
-	@SuppressWarnings("unchecked")
-	public String changeEveDependancyListener() {
-	    try {
-            ApplicationInfo appInfo = getApplicationInfo();
-            
-            MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(appInfo)));
-            //To get the current parameter key with the selected options value
-            Parameter currentParameter = mojo.getParameter(getGoal(), getCurrentParamKey());
-            PossibleValues possibleValues = currentParameter.getPossibleValues();
-            if (possibleValues != null) {//To get the dependent parameter key from the possible values
-                List<Value> values = possibleValues.getValue();
-                for (Value value : values) {
-                    if (value.getKey().equals(getSelectedOption())) {
-                        setDependentParamKey(value.getDependency());
-                    }
-                }
-            } else if (StringUtils.isNotEmpty(currentParameter.getDependency())) {//To get the dependent parameter key
-                setDependentParamKey(currentParameter.getDependency());
-            }
-            
-            Map<String, Object> watcherMap = (Map<String, Object>) getSessionAttribute(getAppId() + getGoal() + REQ_SESSION_DYNAMIC_PARAM_MAP);
-            Map<String, String> valuesMap = new HashMap<String, String>();
-            
-            List<Parameter> mojoParameters = getMojoParameters(mojo, getGoal());
-            if (CollectionUtils.isNotEmpty(mojoParameters)) {
-                for (Parameter parameter : mojoParameters) {
-                    PossibleValues paramPossibleValues = parameter.getPossibleValues();
-                    if (paramPossibleValues != null) {
-                        List<Value> values = paramPossibleValues.getValue();
-                        for (Value value : values) {
-                            if (StringUtils.isNotEmpty(value.getDependency()) && value.getDependency().equals(getCurrentParamKey())) {
-                                updateValuesMap(watcherMap, valuesMap, parameter);
-                            }
-                        }
-                    } 
-                    if (StringUtils.isNotEmpty(parameter.getDependency()) && parameter.getDependency().equals(getCurrentParamKey())) {
-                        updateValuesMap(watcherMap, valuesMap, parameter);
-                    }
-                }
-            }
-
-            //To get the previously shown parameters key and add it in the controlsTobeHidden collection
-            Map<String, String> previousValMap = (Map<String, String>) watcherMap.get(getCurrentParamKey());
-
-            if (MapUtils.isNotEmpty(previousValMap)) {
-                Set<String> keySet = previousValMap.keySet();
-                if (keySet != null && !keySet.contains(getDependentParamKey())) {//To check if the dependent parameter key is not in the map
-                    for (String key : keySet) {
-                        Parameter parameter = mojo.getParameter(getGoal(), key);
-                        controlsTobeHidden.add(key);
-                        controlsTobeHidden.add(parameter.getDependency());
-                    }
-                }
-            }
-            
-            //To update the watcherMap
-            getDependentParamKey();
-            valuesMap.put(getDependentParamKey(), getSelectedOption());
-            watcherMap.put(getCurrentParamKey(), valuesMap);
-
-            Parameter dependentParameter = mojo.getParameter(getGoal(), getDependentParamKey());
-            if (dependentParameter != null && dependentParameter.getDynamicParameter() != null) {
-                List<Value> dependantPossibleValues = setDynamicPossibleValues(watcherMap, dependentParameter);
-                valuesMap.put(getDependentParamKey(), dependantPossibleValues.get(0).getValue());
-                watcherMap.put(getCurrentParamKey(), valuesMap);
-                setDependentValues(dependantPossibleValues);//to parse resultant dependent values as json
-            }
-                
-            controlsTobeShown.add(dependentParameter.getKey());
-            
-            if (StringUtils.isNotEmpty(dependentParameter.getDependency())) {
-                setNeedToCallAgain(true);
-            }
-            
-            setPushToElement(getDependentParamKey());
-        } catch (PhrescoException e) {
-            e.printStackTrace();
-            // TODO: handle exception
+	public String changeEveDependancyListener() throws PhrescoException {
+	    Map<String, DependantParameters> watcherMap = (Map<String, DependantParameters>) getSessionAttribute(getAppId() + getGoal() + SESSION_WATCHER_MAP);
+        //TODO: need to verify wether to remove the previous dependent from the watcher
+        // watcherMap.remove(getPreviousDependency()); // removing previous dependent from watcher
+        
+        DependantParameters currentParameters = watcherMap.get(getCurrentParamKey());
+        if (currentParameters != null) {
+            currentParameters.setValue(getSelectedOption());
         }
         
 	    return SUCCESS;
 	}
-
-    private void updateValuesMap(Map<String, Object> watcherMap, Map<String, String> valuesMap, Parameter parameter) {
-        Set<String> watcherMapKeySet = watcherMap.keySet();
-        if (CollectionUtils.isNotEmpty(watcherMapKeySet)) {
-            for (String watcherMapKey : watcherMapKeySet) {
-                if (watcherMap.get(watcherMapKey) instanceof Map) {
-                    Map<String, String> watcherMapValuesMap = (Map<String, String>) watcherMap.get(watcherMapKey);
-                    Set<String> keySet = watcherMapValuesMap.keySet();
-                    if (CollectionUtils.isNotEmpty(keySet) && keySet.contains(getCurrentParamKey())) {
-                        valuesMap.put(getCurrentParamKey(), getSelectedOption());
-                        watcherMap.put(parameter.getKey(), valuesMap);
-                        break;
-                    }
-                }
-            }
-        }
-    }
 	
+	public String updateDependancy() {
+	    try {
+	        ApplicationInfo applicationInfo = getApplicationInfo();
+	        MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(applicationInfo)));
+	        Map<String, DependantParameters> watcherMap = (Map<String, DependantParameters>) getSessionAttribute(getAppId() + getGoal() + SESSION_WATCHER_MAP);
+
+	        if (StringUtils.isNotEmpty(getDependency())) {
+	            // Get the values from the dynamic parameter class
+	            Parameter dependentParameter = mojo.getParameter(getGoal(), getDependency());
+	            if (dependentParameter.getDynamicParameter() != null) {
+	                Map<String, Object> constructMapForDynVals = constructMapForDynVals(applicationInfo, watcherMap, getDependency());
+	                List<Value> dependentPossibleValues = getDynamicPossibleValues(constructMapForDynVals, dependentParameter);
+	                setDependentValues(dependentPossibleValues);
+	                if (watcherMap.containsKey(getDependency())) {
+	                    DependantParameters dependantParameters = (DependantParameters) watcherMap.get(getDependency());
+	                    dependantParameters.setValue(dependentPossibleValues.get(0).getValue());
+	                }
+	            }
+	        }
+	        return SUCCESS;
+	    } catch (PhrescoException e) {
+	        //TODO: set title I18N properties 
+	        return showErrorPopup(e, "");
+	    }
+	}
+
 	public String showStartHubPopUp() throws PhrescoPomException, FileNotFoundException {
         if (debugEnabled) {
             S_LOGGER.debug("Entering Method Quality.showStartHubPopUp()");
         }
         
         try {
-            setDynamicParametersInReq(getApplicationInfo(), PHASE_START_HUB);
+            getDynamicParameters(getApplicationInfo(), PHASE_START_HUB);
         } catch (PhrescoException e) {
             return showErrorPopup(e, getText(EXCEPTION_QUALITY_UNIT_RPT));
         }
@@ -639,7 +578,7 @@ public class Quality extends DynamicParameterUtil implements Constants {
         }
         
         try {
-            setDynamicParametersInReq(getApplicationInfo(), PHASE_START_NODE);
+            getDynamicParameters(getApplicationInfo(), PHASE_START_NODE);
         } catch (PhrescoException e) {
             return showErrorPopup(e, getText(EXCEPTION_QUALITY_UNIT_RPT));
         }
@@ -1688,7 +1627,7 @@ public class Quality extends DynamicParameterUtil implements Constants {
     		Map<String, Object> loadParamMap = new HashMap<String, Object>();
     		ApplicationInfo appInfo = getApplicationInfo();
     		loadParamMap.put(REQ_APP_INFO, appInfo);
-    		setDynamicParametersInReq(appInfo, PHASE_LOAD_TEST);
+    		getDynamicParameters(appInfo, PHASE_LOAD_TEST);
     		setReqAttribute(REQ_FROM, from);
     	} catch(Exception e) {
     		e.printStackTrace();
@@ -3497,22 +3436,6 @@ public class Quality extends DynamicParameterUtil implements Constants {
         this.currentParamKey = currentParamKey;
     }
 
-    public String getDependentParamKey() {
-        return dependentParamKey;
-    }
-
-    public void setDependentParamKey(String dependantKey) {
-        this.dependentParamKey = dependantKey;
-    }
-
-    public String getDependantValue() {
-        return dependantValue;
-    }
-
-    public void setDependantValue(String dependantValue) {
-        this.dependantValue = dependantValue;
-    }
-
     public String getGoal() {
         return goal;
     }
@@ -3521,14 +3444,6 @@ public class Quality extends DynamicParameterUtil implements Constants {
         this.goal = goal;
     }
     
-    public List<String> getControlsTobeHidden() {
-        return controlsTobeHidden;
-    }
-
-    public void setControlsTobeHidden(List<String> controlsTobeHidden) {
-        this.controlsTobeHidden = controlsTobeHidden;
-    }
-
     public String getSelectedOption() {
         return selectedOption;
     }
@@ -3537,27 +3452,11 @@ public class Quality extends DynamicParameterUtil implements Constants {
         this.selectedOption = selectedOption;
     }
 
-    public boolean isNeedToCallAgain() {
-        return needToCallAgain;
+    public String getDependency() {
+        return dependency;
     }
 
-    public void setNeedToCallAgain(boolean needToCallAgain) {
-        this.needToCallAgain = needToCallAgain;
-    }
-
-    public List<String> getControlsTobeShown() {
-        return controlsTobeShown;
-    }
-
-    public void setControlsTobeShown(List<String> controlsTobeShown) {
-        this.controlsTobeShown = controlsTobeShown;
-    }
-
-    public String getPushToElement() {
-        return pushToElement;
-    }
-
-    public void setPushToElement(String pushToElement) {
-        this.pushToElement = pushToElement;
+    public void setDependency(String dependency) {
+        this.dependency = dependency;
     }
 }

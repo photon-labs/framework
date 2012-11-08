@@ -615,6 +615,10 @@
 			<result type="json" />
         </action>
         
+        <action name="updateDependancy" method="updateDependancy" class="com.photon.phresco.framework.actions.applications.Quality">
+			<result type="json" />
+        </action>
+        
         <action name="showStartHubPopUp" method="showStartHubPopUp" class="com.photon.phresco.framework.actions.applications.Quality">
 			<result name="success">/pages/applications/generateBuild.jsp</result>
         </action>
