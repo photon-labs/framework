@@ -464,15 +464,16 @@ public class Quality extends DynamicParameterUtil implements Constants {
     }
 	
 	public String changeEveDependancyListener() throws PhrescoException {
-	    Map<String, DependantParameters> watcherMap = (Map<String, DependantParameters>) getSessionAttribute(getAppId() + getGoal() + SESSION_WATCHER_MAP);
-        //TODO: need to verify wether to remove the previous dependent from the watcher
-        // watcherMap.remove(getPreviousDependency()); // removing previous dependent from watcher
-        
+	    Map<String, DependantParameters> watcherMap = (Map<String, DependantParameters>) 
+	            getSessionAttribute(getAppId() + getGoal() + SESSION_WATCHER_MAP);
+	    
         DependantParameters currentParameters = watcherMap.get(getCurrentParamKey());
-        if (currentParameters != null) {
-            currentParameters.setValue(getSelectedOption());
+        if (currentParameters == null) {
+            currentParameters = new DependantParameters();
         }
-        
+        currentParameters.setValue(getSelectedOption());
+        watcherMap.put(getCurrentParamKey(), currentParameters);
+
 	    return SUCCESS;
 	}
 	

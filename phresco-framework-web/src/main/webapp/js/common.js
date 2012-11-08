@@ -686,7 +686,6 @@ function constructElements(data, pushToElement, isMultiple, controlType) {
 }
 
 function constructSingleSelectOptions(dependentValues, pushToElement) {
-	
 	var control = $('#'+ pushToElement + ' option:selected');
 	var selected = control.val();
 	var additionalParam = control.attr('additionalParam'); 
@@ -714,27 +713,27 @@ function constructSingleSelectOptions(dependentValues, pushToElement) {
  * Step 7. append constructed ul element multi select control 
  * 
  */
-function constructMultiSelectOptions(data, pushToElement) {
+function constructMultiSelectOptions(dependentValues, pushToElement) {
 	//See step 1
 	var selected = new Array();
 	$('#'+pushToElement+' input:checked').each(function() {
 	    selected.push($(this).val());
 	});
 	//See step 2
-	$("#"+pushToElement).empty();
+	$("#" + pushToElement).empty();
 	//See step 3
 	var ulElement =$(document.createElement('ul'));
 	var checkedStr = "";
 	//See step 4
-	for (i in data.dependentValues) {
+	for (i in dependentValues) {
 		//See step 5
-		if($.inArray(data.dependentValues[i].value, selected) > -1){
+		if($.inArray(dependentValues[i].value, selected) > -1){
 			checkedStr = "checked";
 		} else {
 			checkedStr = "";
 		}
 		//See step 6
-		var liElement = "<li><input type='checkbox' name='"+ pushToElement +"' value='" + data.dependentValues[i].value + "' class='popUpChckBox'"+checkedStr+">"+data.dependentValues[i].value+"</li>";
+		var liElement = "<li><input type='checkbox' name='"+ pushToElement +"' value='" + dependentValues[i].value + "' class='popUpChckBox'"+checkedStr+">"+dependentValues[i].value+"</li>";
 		ulElement.append(liElement);
 	}
 	//See step 7
@@ -762,6 +761,8 @@ function isValidUrl(url) {
     }   
 }
 
+//Used for the dynamic parameter
+//To set the previous dependency for the control in onfocus
 function setPreviousDependent(self) {
 	var additionalParam = $('option:selected', self).attr('additionalParam');
 	if (additionalParam != undefined) {
@@ -772,7 +773,7 @@ function setPreviousDependent(self) {
 // This will parse a delimited string into an array of
 // arrays. The default delimiter is the comma, but this
 // can be overriden in the second argument.
-function CSVToArray(strData, strDelimiter){
+function CSVToArray(strData, strDelimiter) {
 	// Check to see if the delimiter is defined. If not,
 	// then default to comma.
 	strDelimiter = (strDelimiter || ",");

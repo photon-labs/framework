@@ -802,6 +802,8 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	StringTemplate multiSelectElement = new StringTemplate(getMultiSelectTemplate());
     	multiSelectElement.setAttribute("cssClass", pm.getCssClass());
     	multiSelectElement.setAttribute("id", pm.getId());
+    	multiSelectElement.setAttribute("additionalParam", pm.getDependency());
+    	
     	StringBuilder multiSelectOptions = constructMultiSelectOptions(pm.getName(), pm.getObjectValue(), pm.getSelectedValues());
     	multiSelectElement.setAttribute("multiSelectOptions", multiSelectOptions);
     	multiSelectElement.setAttribute("ctrlsId", pm.getControlId());
@@ -993,7 +995,8 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     private static String getMultiSelectTemplate() {
     	StringBuilder sb = new StringBuilder();
     	sb.append("<div class='controls'><div class='multiSelectBorder'>")
-    	.append("<div class='multilist-scroller multiselect multiSelHeight $class$' id=\"$id$\"><ul>$multiSelectOptions$</ul>")
+    	.append("<div class='multilist-scroller multiselect multiSelHeight $class$' id=\"$id$\"")
+    	.append(" additionalParam=\"dependency=$additionalParam$\"><ul>$multiSelectOptions$</ul>")
     	.append("</div><span class='help-inline' id=\"$ctrlsId$\"></span></div></div>");
     	
     	return sb.toString();

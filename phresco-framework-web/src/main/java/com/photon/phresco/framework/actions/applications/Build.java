@@ -241,15 +241,15 @@ public class Build extends DynamicParameterUtil implements Constants {
 		    ApplicationInfo appInfo = getApplicationInfo();
             removeSessionAttribute(appInfo.getId() + PHASE_PACKAGE + SESSION_WATCHER_MAP);
             setProjModulesInReq();
-            Map<String, DependantParameters> watcherMap = new HashMap<String, DependantParameters>();
+            Map<String, DependantParameters> watcherMap = new HashMap<String, DependantParameters>(8);
             List<Parameter> parameters = getDynamicParameters(appInfo, PHASE_PACKAGE);
             setPossibleValuesInReq(appInfo, parameters, watcherMap);
             setSessionAttribute(appInfo.getId() + PHASE_PACKAGE + SESSION_WATCHER_MAP, watcherMap);
             setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
-            setReqAttribute(REQ_GOAL, PHASE_PACKAGE); 
+            setReqAttribute(REQ_GOAL, PHASE_PACKAGE);
 		} catch (PhrescoException e) {
 			return showErrorPopup(e, getText(EXCEPTION_BUILD_POPUP));
-		} 
+		}
 		
 		return APP_GENERATE_BUILD;
 	}
