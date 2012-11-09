@@ -124,7 +124,7 @@ function progressPopupAsSecPopup(url, title, appId, actionType, form, additional
 
 function clickMenu(menu, tag, form, additionalParam) {
 	menu.click(function() {
-//		showLoadingIcon();
+		showLoadingIcon();
 		inActivateAllMenu(menu);
 		activateMenu($(this));
 		var selectedMenu = $(this).attr("id");
@@ -141,7 +141,7 @@ function clickButton(button, tag) {
 }
 
 function loadContent(pageUrl, form, tag, additionalParams, callSuccessEvent, ajaxCallType) {
-//	showLoadingIcon(tag);
+	//showLoadingIcon();
 	if (ajaxCallType == undefined || ajaxCallType == "") {
 		ajaxCallType = true;
 	}

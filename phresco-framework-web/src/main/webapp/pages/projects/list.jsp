@@ -172,6 +172,7 @@
    	});
 	
     function editApplication(projectId, appId) {
+    	showLoadingIcon();
 		var params = "projectId=";
 		params = params.concat(projectId);
 		params = params.concat("&appId=");
