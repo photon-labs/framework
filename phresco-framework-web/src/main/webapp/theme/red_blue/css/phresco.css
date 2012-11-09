@@ -301,6 +301,7 @@ input[type="checkbox"],input[type="radio"] {
 	padding: 0;
 	width: auto;
 	cursor: pointer;
+	margin-left:2%;
 }
 
 input,select,textarea {
@@ -2060,6 +2061,7 @@ h1 {
 
 .table_for_downloadInfos {
 	width: 40% !important;
+	margin-top: 0.5%;
 }
 
 .settingsList_table_div {
@@ -5613,6 +5615,17 @@ input[class*='chckBxAlign'] {
 	width: 301px;
 }
 
+.multilistVersion-scroller {
+	height: 51px;
+	width: 100%;
+	margin-top:3%;
+	padding-top:1%;
+	background-color: #fff;
+	border-radius: 3px;
+	overflow-y:auto;
+	width: 114px;
+}
+
 .multiselect {
 	height: 95px;
 	width: 290px;
@@ -5704,6 +5717,10 @@ input[class*='chckBxAlign'] {
 
 .noBorder {
 	border: none;
+}
+
+.noBorderForBody {
+	padding:1%;
 }
 
 .no-left-bottom-border {

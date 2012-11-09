@@ -1047,6 +1047,10 @@ table tr {
 	border:1px solid #CCCCCC;
 }
 
+.table_borderForDownloadInfos {
+	border: 3px solid #CCCCCC;
+}
+
 .appInfoTabDiv {
     border-top: 3px solid #006DCF;
     background: none;

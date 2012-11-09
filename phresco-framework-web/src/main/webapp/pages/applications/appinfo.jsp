@@ -18,6 +18,7 @@
   ###
   --%>
 
+<%@page import="com.photon.phresco.commons.model.ArtifactGroupInfo"%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.util.Collection" %>
@@ -47,6 +48,9 @@
 	String version = "";
 	String pilotInfo = "";
 	List<String> feature = null;
+	List<String> selectedWebservices = null;
+	List<ArtifactGroupInfo> selectedServers = null;
+	List<ArtifactGroupInfo> selectedDatabases = null;
 	if (projectInfo != null) {
 		ApplicationInfo selectedInfo = projectInfo.getAppInfos().get(0);
 		technologyId = selectedInfo.getTechInfo().getId();
@@ -58,6 +62,15 @@
 		feature = projectInfo.getAppInfos().get(0).getSelectedModules();
 		if(selectedInfo.getPilotInfo() != null){
 		pilotInfo = selectedInfo.getPilotInfo().getId();
+		}
+		if(selectedInfo.getSelectedWebservices() != null){
+			selectedWebservices = selectedInfo.getSelectedWebservices();
+		}
+		if(selectedInfo.getSelectedServers() !=null){
+			selectedServers = selectedInfo.getSelectedServers();
+		}
+		if(selectedInfo.getSelectedDatabases() !=null){
+			selectedDatabases = selectedInfo.getSelectedDatabases();
 		}
 	}
 %>
@@ -159,8 +172,8 @@
 							</span>
 						</span>
 						<div class="mfbox siteinnertooltiptxt hideContent">
-							<table class="table_for_downloadInfos" align="center">
-								<thead class="fieldset-tableheader">
+							<table class="table_for_downloadInfos table_borderForDownloadInfos" align="center">
+								<thead class="header-background">
 									<tr class="noBorder">
 										<th class="table_header noBorder"><s:text name='lbl.servers'/></th>
 										<th class="noBorder"><s:text name='lbl.version'/></th>
@@ -169,14 +182,18 @@
 								<tbody id="propTempTbody">
 									<tr class="noBorder 1_serverdynamicadd">
 										<td class="noBorder">
-											<select class="input-medium" id="1_server" name="server" 
+											<select class="input-medium" id="1_server" name="server" value=""
 												onchange="getVersions($('#1_server'), $('#1_serverVersion'));">
 											</select>
 										</td>
 										<td class="noBorder">
-											<select class="input-medium" id="1_serverVersion" name="serverVersion">
+											<%-- <select class="input-medium" id="1_serverVersion" name="serverVersion">
 												<option><s:text name='lbl.default.opt.select.version'/></option>
-											</select>
+											</select> --%>
+											<div class="multilistVersion-scroller " id="1_serverVersion">
+																<input type="checkbox" id="1_serverVersion" name="serverVersion"
+															class="check techCheck">
+								                </div>
 										</td>
 										<td class="noBorder">
 										  	<a>
@@ -195,6 +212,7 @@
 		<!-- servers ends -->
 		
 		<!-- databases start -->
+		<% if (selectedDatabases == null) { %>
 		<div class="theme_accordion_container">
 			<section class="accordion_panel_wid">
 				<div class="accordion_panel_inner">
@@ -207,24 +225,32 @@
 							</span>
 						</span>
 						<div class="mfbox siteinnertooltiptxt hideContent">
-							<table class="table_for_downloadInfos"  align="center">
-									<thead class = "fieldset-tableheader">
-										<tr class="noBorder">
+							<table class="table_for_downloadInfos table_borderForDownloadInfos"  align="center">
+									<thead class ="header-background">
+										<tr >
 											<th class="table_header noBorder"><s:text name='lbl.database'/></th>
 											<th class="noBorder"><s:text name='lbl.version'/></th>
+											<th></th>
+											<th></th>
+											<th></th>
 										</tr>
 									</thead>
 									<tbody id="propTempTbodyDatabase">
-										<tr class="noBorder _databasedynamicadd" >
+										<tr class=" _databasedynamicadd" >
 											<td class="noBorder">
 												<select class="input-medium" id="1_database" name="database"
 												onchange="getVersions($('#1_database'), $('#1_databaseVersion'));" >
 												</select>
 											</td>
 											<td class="noBorder">
-												<select class="input-medium" id="1_databaseVersion" name="databaseVersion">
+												<%-- <select class="input-medium" id="1_databaseVersion" name="databaseVersion">
 												<option><s:text name='lbl.default.opt.select.version'/></option>
-												</select>
+												</select> --%>
+												 <div class="multilistVersion-scroller " id="1_databaseVersion">
+																<input type="checkbox" id="1_databaseVersion" name="databaseVersion"
+															class="check techCheck">
+								                </div>
+												
 											</td>
 											<td class="noBorder">
 											  	<a>
@@ -239,6 +265,39 @@
 				</div>
 			</section>
 		</div>
+		<% } else { %>
+		<div class="theme_accordion_container">
+			<section class="accordion_panel_wid">
+				<div class="accordion_panel_inner">
+					<section class="lft_menus_container">
+						<span class="siteaccordion closereg" onclick="accordionClick(this, $('input[value=databaseLayer]'));">
+							<span>
+								<input type="checkbox" id="checkAll1" class="accordianChkBox" name="layer" value="databaseLayer"
+								onclick="selectedDatabasesFromProjectInfo();"/>
+								<a class="vAlignSub"><s:text name='lbl.database'/></a>
+							</span>
+						</span>
+						<div class="mfbox siteinnertooltiptxt hideContent">
+							<table class="table_for_downloadInfos table_borderForDownloadInfos"  align="center">
+									<thead class ="header-background">
+										<tr >
+											<th class="table_header noBorder"><s:text name='lbl.database'/></th>
+											<th class="noBorder"><s:text name='lbl.version'/></th>
+											<th></th>
+											<th></th>
+											<th></th>
+										</tr>
+									</thead>
+									<tbody id="propTempTbodyDatabase">
+									
+									</tbody>
+							</table>
+						</div>
+					</section>  
+				</div>
+			</section>
+		</div>
+		<% } %>
 		<!-- databases ends -->
 		
 		<!-- webservice start -->
@@ -261,14 +320,22 @@
 							                    <%
 							                        if (CollectionUtils.isNotEmpty(webservices)) {
 					   									for (WebService webservice : webservices) {
+					   										String selectedStr= "";
+					   										 if(selectedWebservices != null){
+					   											for(String string : selectedWebservices){
+					   												if (webservice.getId().equals(string)) {
+					   													selectedStr = "checked";
+					   												} 
+					   											}
+					   										 }
 							                    %>
 						                   			<li>
-														<input type="checkbox" name="webservice" value="<%= webservice.getId() %>"
+														<input type="checkbox" name="webservice" value="<%= webservice.getId() %>" <%= selectedStr%>
 															class="check techCheck"><%= webservice.getName() %>
 													</li>
 												<% 	 
-														}
-													}
+																}
+															}
 												%> 
 											</ul>
 						                </div>
@@ -308,6 +375,7 @@
 	if(!isiPad()){
 	    /* JQuery scroll bar */
 		$(".appInfoScrollDiv").scrollbars();
+		$(".multilistVersion-scroller").scrollbars();
 	}
 	
 	inActivateAllMenu($("a[name='appTab']"));
@@ -315,7 +383,7 @@
 	
     $(document).ready(function() {
    		hideLoadingIcon();//To hide the loading icon
-    	
+   		
 		$("#name").focus();
         //	changeStyle("appinfo");
         $("input[name='applicationType']").click(function() {
@@ -347,6 +415,45 @@
 		$(currentTag).parent().parent().remove();
 	}
     
+    function getScrollBar(){
+    	$(".multilistVersion-scroller").scrollbars();
+    }
+    
+	function selectedDatabasesFromProjectInfo() {
+		
+		<% if( selectedDatabases != null) {
+			System.out.println("enter into the if condition......");
+				for(ArtifactGroupInfo artifactGrpInfo : selectedDatabases) {
+					System.out.println("artifactGroup:::"+artifactGrpInfo.getArtifactGroupId());
+					String database = artifactGrpInfo.getArtifactGroupId();
+					List<String> databaseVersions = artifactGrpInfo.getArtifactInfoIds();
+					System.out.println("versions::::"+databaseVersions);
+		%>
+				constructSelectedDatabase('<%= database%>', '<%=databaseVersions%>');
+		<%
+			    }
+		    }
+		%>
+	}
+	
+	var selectedDatabaseCounter = 1;
+	function constructSelectedDatabase(selectedDatabase, databaseVersions){
+		var trId = selectedDatabaseCounter + "_databasedynamicadd";
+		var databaseName = selectedDatabaseCounter + "_databaseName";
+		var databaseVerson = selectedDatabaseCounter + "_databaseVersion";
+		
+		var newPropTempRow = $(document.createElement('tr')).attr("id", trId).attr("class", "noBorder");
+		newPropTempRow.html("<td class='noBorder'><select class='input-medium' tempId='"+selectedDatabaseCounter+"' id='"+ databaseName +"'  name='database' onchange='getDatabaseVersions(this);'><option>Select Database</option></select></td>" +
+				"<td class='noBorder'><div class='multilistVersion-scroller ' id='"+ databaseVerson +"'><input type='checkbox' id='"+ databaseVerson +"' name='databaseVersion'class='check techCheck'></div>"+
+				"<td class='noBorder'><a ><img class='add imagealign' " + 
+		 			" temp='"+ databaseName +"' src='images/icons/add_icon.png' onclick='addDatabase(this);'></a></td><td class='noBorder'><img class = 'del imagealign'" + 
+		 			"src='images/icons/minus_icon.png' onclick='removeTag(this);'></td>")
+	 	newPropTempRow.appendTo("#propTempTbodyDatabase");		
+		selectedDatabaseCounter++;
+		getScrollBar();
+		getDownloadInfo('<%= DownloadInfo.Category.DATABASE.name() %>', $("select[id='"+ databaseName +"']"), '<s:text name='label.select.db'/>',selectedDatabase, databaseVersions);
+    }		
+    
     var serverCounter = 2;
     function addServer(){
 		var trId = serverCounter + "_serverdynamicadd";
@@ -354,13 +461,14 @@
 		var servrVerson = serverCounter + "_serverVersion";
 		
 		var newPropTempRow = $(document.createElement('tr')).attr("id", trId).attr("class", "noBorder");
-		newPropTempRow.html("<td class='noBorder'><select class='input-medium' tempId='"+ serverCounter +"' id='"+ servrName +"'  name='serverName' onchange='getServerVersions(this);'><option>Select Server</option></select></td>" +
-				"<td class='noBorder'><select class='input-medium' id='"+ servrVerson +"'  name='serverVersion'><option>Select Version</option></select></td>"+
+		newPropTempRow.html("<td class='noBorder'><select class='input-medium' tempId='"+ serverCounter +"' id='"+ servrName +"'  name='server' onchange='getServerVersions(this);'><option>Select Server</option></select></td>" +
+				"<td class='noBorder'><div class=' multilistVersion-scroller ' id='"+ servrVerson +"'><input type='checkbox' id='"+ servrVerson +"' name='serverVersion' class='check techCheck'></div>"+
 				"<td class='noBorder'><a ><img class='add imagealign' " + 
 		 			" temp='"+ servrName +"' src='images/icons/add_icon.png' onclick='addServer(this);'></a></td><td class='noBorder'><img class = 'del imagealign'" + 
 		 			"src='images/icons/minus_icon.png' onclick='removeTag(this);'></td>")
 	 	newPropTempRow.appendTo("#propTempTbody");		
 		serverCounter++;
+		getScrollBar();
 		getDownloadInfo('<%= DownloadInfo.Category.SERVER.name() %>', $("select[id='"+ servrName +"']"),'<s:text name='label.select.server'/>');
 		
     }			
@@ -372,19 +480,24 @@
 		var databaseVerson = databaseCounter + "_databaseVersion";
 		
 		var newPropTempRow = $(document.createElement('tr')).attr("id", trId).attr("class", "noBorder");
-		newPropTempRow.html("<td class='noBorder'><select class='input-medium' tempId='"+databaseCounter+"' id='"+ databaseName +"'  name='databaseName' onchange='getDatabaseVersions(this);'><option>Select Database</option></select></td>" +
-				"<td class='noBorder'><select class='input-medium' id='"+ databaseVerson +"'  name='databaseVersion'><option>Select Version</option></select></td>"+
+		newPropTempRow.html("<td class='noBorder'><select class='input-medium' tempId='"+databaseCounter+"' id='"+ databaseName +"'  name='database' onchange='getDatabaseVersions(this);'><option>Select Database</option></select></td>" +
+				"<td class='noBorder'><div class='multilistVersion-scroller ' id='"+ databaseVerson +"'><input type='checkbox' id='"+ databaseVerson +"' name='databaseVersion'class='check techCheck'></div>"+
 				"<td class='noBorder'><a ><img class='add imagealign' " + 
 		 			" temp='"+ databaseName +"' src='images/icons/add_icon.png' onclick='addDatabase(this);'></a></td><td class='noBorder'><img class = 'del imagealign'" + 
 		 			"src='images/icons/minus_icon.png' onclick='removeTag(this);'></td>")
 	 	newPropTempRow.appendTo("#propTempTbodyDatabase");		
 		databaseCounter++;
+		getScrollBar();
 		getDownloadInfo('<%= DownloadInfo.Category.DATABASE.name() %>', $("select[id='"+ databaseName +"']"), '<s:text name='label.select.db'/>');
     }		
     
     var selectBoxobj;
     var defaultOption = "";
-    function getDownloadInfo(type, toBeFilledCtrlObj, defaultOptTxt) {
+    var slctDatabase = "";
+    var slctVersions = "";
+    function getDownloadInfo(type, toBeFilledCtrlObj, defaultOptTxt, selectedDatabase, databaseVersions) {
+    	slctDatabase = selectedDatabase;
+    	slctVersions = databaseVersions;
     	defaultOption = defaultOptTxt;
     	selectBoxobj = toBeFilledCtrlObj;
 		var params = getBasicParams();
@@ -402,6 +515,19 @@
 		if (pageUrl == "fetchDownloadInfos") {
 			selectBoxobj.empty();
 			selectBoxobj.append($("<option value='' selected disabled></option>").text(defaultOption));
+			if (slctDatabase != undefined) {
+				//selectBoxobj.empty();
+				for(i in data.downloadInfos) {
+					if(data.downloadInfos[i].id == slctDatabase) {
+						selectBoxobj.empty();
+						fillOptions(selectBoxobj, data.downloadInfos[i].id, data.downloadInfos[i].name);
+						getDatabaseVersions();
+					}
+					
+					var versions = data.downloadInfos[i].artifactGroup.versions;
+					map[data.downloadInfos[i].id] = versions;
+				}
+			}
 			for (i in data.downloadInfos) {
 				fillOptions(selectBoxobj, data.downloadInfos[i].id, data.downloadInfos[i].name);
 				var versions = data.downloadInfos[i].artifactGroup.versions;
@@ -428,9 +554,14 @@
 		var id = obj.val();
 		var versions = map[id];
 		for (i in versions) {
-			fillOptions(toBeFilledCtrlObj, versions[i].id, versions[i].version);
+			fillVersions(toBeFilledCtrlObj, versions[i].id, versions[i].version, id);
 		}
 	}
+	
+	function fillVersions(obj, value, text, parentValue) {
+		$('<div style="color: #000000;" ><input class="check techCheck" type="checkbox" name="'+parentValue+'" value="' + text + '"style="margin-right:5%;">'+ text +'</div>').appendTo(obj);
+	}
+
 	
 	function accordionClick(thisObj, currentChkBoxObj) {
 		var _tempIndex = $('.siteaccordion').index(thisObj);
@@ -445,8 +576,9 @@
 		}
     }
 	
-	function featuresPage(){
+	function featuresPage() {
 		var params = getBasicParams();
 		loadContent('features', $('#formAppInfo'), $('#subcontainer'), params);
 	}
+	
 </script>
