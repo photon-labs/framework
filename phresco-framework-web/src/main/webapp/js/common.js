@@ -121,7 +121,7 @@ function progressPopupAsSecPopup(url, title, appId, actionType, form, additional
 
 function clickMenu(menu, tag, form, additionalParam) {
 	menu.click(function() {
-//		showLoadingIcon();
+		showLoadingIcon();
 		inActivateAllMenu(menu);
 		activateMenu($(this));
 		var selectedMenu = $(this).attr("id");
@@ -137,7 +137,7 @@ function clickButton(button, tag) {
 	});
 }
 
-function loadContent(pageUrl, form, tag, additionalParams, callSuccessEvent, ajaxCallType) {
+function loadContent(pageUrl, form, tag, additionalParams, callSuccessEvent, ajaxCallType, callbackFunction) {
 //	showLoadingIcon(tag);
 	if (ajaxCallType == undefined || ajaxCallType == "") {
 		ajaxCallType = true;
@@ -149,7 +149,7 @@ function loadContent(pageUrl, form, tag, additionalParams, callSuccessEvent, aja
 		data : params,
 		type : "POST",
 		success : function(data) {
-			loadData(data, tag, pageUrl, callSuccessEvent);
+			loadData(data, tag, pageUrl, callSuccessEvent, callbackFunction);
 		},
 		async: ajaxCallType
 	});
@@ -209,14 +209,18 @@ function validateJson(url, form, containerTag, jsonParam, progressText, disabled
 	});
 }
 
-function loadData(data, tag, pageUrl, callSuccessEvent) {
+function loadData(data, tag, pageUrl, callSuccessEvent, callbackFunction) {
 	//To load the login page if the user session is not available
 	if (data != undefined && data != "[object Object]" && data != "[object XMLDocument]" 
 		&& !isBlank(data) && data.indexOf("Remember me") >= 0) {
 		window.location.href = "logout.action";
 	} else {
 		if (callSuccessEvent != undefined && !isBlank(callSuccessEvent) && callSuccessEvent) {
-			successEvent(pageUrl, data);
+			if (callbackFunction != undefined && !isBlank(callbackFunction)) {
+				window[callbackFunction](data);
+			} else {
+				successEvent(pageUrl, data);
+			}
 		} else {
 			tag.empty();
 			tag.html(data);
@@ -997,27 +1001,6 @@ function showSelectedDBWithVersions() {
 	
 	//hiding loading icon..
 	hideLoadingIcon();
-}
-
-function showHideAndUpdateData(data) {
-	if (data.controlsTobeHidden != undefined && !isBlank(data.controlsTobeHidden)) {
-		hideControl(data.controlsTobeHidden);
-	}
-	if (data.controlsTobeShown != undefined && !isBlank(data.controlsTobeShown)) {
-		showControl(data.controlsTobeShown);
-	}
-	if (data.dependentValues != undefined && !isBlank(data.dependentValues)) {
-		pushToElement = data.pushToElement;
-		isMultiple = $("#"+pushToElement).attr("isMultiple");
-		controlType = $("#"+pushToElement).attr("type");
-		constructElements(data, pushToElement, isMultiple, controlType);
-	}
-	
-	var selectedOption = $('#' + data.controlsTobeShown[0]).val();
-	var currentParamKey = data.controlsTobeShown[0];
-	if (data.needToCallAgain != undefined && data.needToCallAgain) {
-		changeEveDependancyListener(selectedOption, currentParamKey);
-	}
 }
 
 function hideControl(controls) {

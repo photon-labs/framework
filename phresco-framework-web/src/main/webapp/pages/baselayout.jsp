@@ -210,7 +210,7 @@
                         </div>
                         <div class="userInfo"><a href="#" class="">&nbsp;&nbsp;<s:text name="lbl.hdr.help"/></a></div>
                         <div class="userInfo"><a href="#" class="abtPopUp about">&nbsp;&nbsp;<s:text name="lbl.abt.phresco"/></a></div>
-                        <div class="userInfo"><a href="<s:url action='admin/logout'/>" id="signOut">&nbsp;<s:text name="lbl.signout"/></a></div>
+                        <div class="userInfo"><a href="<s:url action='logout'/>" id="signOut">&nbsp;<s:text name="lbl.signout"/></a></div>
 					</li>
 				</div>
 			</div>
@@ -350,6 +350,10 @@
 	</body>
 	
 	<script type="text/javascript">
+		$(document).ready(function() {
+			hideLoadingIcon();//To hide the loading icon
+		});
+	
 		var refreshIntervalId;
 		if ($.browser.safari && $.browser.version == 530.17) {
 			$(".shortcut_bottom").show().css("float","left");

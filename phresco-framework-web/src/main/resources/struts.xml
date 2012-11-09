@@ -284,7 +284,7 @@
         </action>
         
         <action name="showCodeValidatePopup" method="showCodeValidatePopup" class="com.photon.phresco.framework.actions.applications.Code">
-            <result name="showCodeValidatePopup">/pages/applications/generateBuild.jsp</result>
+            <result name="showCodeValidatePopup">/pages/applications/dynamic_parameter.jsp</result>
         </action>
         
         <action name="codeValidate" method="codeValidate" class="com.photon.phresco.framework.actions.applications.Code">
@@ -300,19 +300,15 @@
         </action>
 
         <action name="generateBuild" method="showGenerateBuildPopup" class="com.photon.phresco.framework.actions.applications.Build">
-            <result name="generateBuild">/pages/applications/generateBuild.jsp</result>
+            <result name="generateBuild">/pages/applications/dynamic_parameter.jsp</result>
         </action>
         
         <action name="showDeploy" method="showDeployPopup" class="com.photon.phresco.framework.actions.applications.Build">
-            <result name="generateBuild">/pages/applications/generateBuild.jsp</result>
-        </action>
-        
-        <action name="dependancyListener" method="dependancyListener" class="com.photon.phresco.framework.actions.applications.Build">
-            <result type="json" />
+            <result name="generateBuild">/pages/applications/dynamic_parameter.jsp</result>
         </action>
         
  		<action name="showRunAgainstSourcePopup" method="showrunAgainstSourcePopup" class="com.photon.phresco.framework.actions.applications.Build">
-            <result name="generateBuild">/pages/applications/generateBuild.jsp</result>
+            <result name="generateBuild">/pages/applications/dynamic_parameter.jsp</result>
         </action>
         
         <action name="getSqlDatabases" method="getSqlDatabases" class="com.photon.phresco.framework.actions.applications.Build">
@@ -572,7 +568,7 @@
         </action>
         
 		<action name="showUnitTestPopUp" method="showUnitTestPopUp" class="com.photon.phresco.framework.actions.applications.Quality">
-			<result name="success">/pages/applications/generateBuild.jsp</result>
+			<result name="success">/pages/applications/dynamic_parameter.jsp</result>
         </action>
 		
 		<action name="runUnitTest" method="runUnitTest" class="com.photon.phresco.framework.actions.applications.Quality">
@@ -584,7 +580,7 @@
 		</action>
 		
 		<action name="showLoadTestPopup" method="showLoadTestPopup" class="com.photon.phresco.framework.actions.applications.Quality">
-        	<result name="Success">/pages/applications/generateBuild.jsp</result>
+        	<result name="Success">/pages/applications/dynamic_parameter.jsp</result>
 		</action>
 		
 		<action name="runLoadTest" method="runLoadTest" class="com.photon.phresco.framework.actions.applications.Quality">
@@ -608,19 +604,19 @@
         </action>
 		
 		<action name="showFunctionalTestPopUp" method="showFunctionalTestPopUp" class="com.photon.phresco.framework.actions.applications.Quality">
-			<result name="success">/pages/applications/generateBuild.jsp</result>
+			<result name="success">/pages/applications/dynamic_parameter.jsp</result>
         </action>
 
-        <action name="changeEveDependancyListener" method="changeEveDependancyListener" class="com.photon.phresco.framework.actions.applications.Quality">
+        <action name="changeEveDependancyListener" method="changeEveDependancyListener" class="com.photon.phresco.framework.actions.applications.DynamicParameterAction">
 			<result type="json" />
         </action>
         
-        <action name="updateDependancy" method="updateDependancy" class="com.photon.phresco.framework.actions.applications.Quality">
+        <action name="updateDependancy" method="updateDependancy" class="com.photon.phresco.framework.actions.applications.DynamicParameterAction">
 			<result type="json" />
         </action>
         
         <action name="showStartHubPopUp" method="showStartHubPopUp" class="com.photon.phresco.framework.actions.applications.Quality">
-			<result name="success">/pages/applications/generateBuild.jsp</result>
+			<result name="success">/pages/applications/dynamic_parameter.jsp</result>
         </action>
         
         <action name="startHub" method="startHub" class="com.photon.phresco.framework.actions.applications.Quality">
@@ -628,7 +624,7 @@
 		</action>
         
         <action name="showStartNodePopUp" method="showStartNodePopUp" class="com.photon.phresco.framework.actions.applications.Quality">
-			<result name="success">/pages/applications/generateBuild.jsp</result>
+			<result name="success">/pages/applications/dynamic_parameter.jsp</result>
         </action>
         
         <action name="startNode" method="startNode" class="com.photon.phresco.framework.actions.applications.Quality">

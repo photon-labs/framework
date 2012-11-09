@@ -1,4 +1,4 @@
-package com.photon.phresco.framework.actions;
+package com.photon.phresco.framework.actions.applications;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -10,16 +10,18 @@ import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 import com.photon.phresco.api.DynamicParameter;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.ArtifactInfo;
 import com.photon.phresco.commons.model.Customer;
-import com.photon.phresco.commons.model.DependantParameters;
 import com.photon.phresco.commons.model.RepoInfo;
 import com.photon.phresco.exception.PhrescoException;
+import com.photon.phresco.framework.actions.FrameworkBaseAction;
 import com.photon.phresco.framework.commons.FrameworkUtil;
+import com.photon.phresco.framework.model.DependantParameters;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.MavenCommands.MavenCommand;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues;
@@ -29,9 +31,20 @@ import com.photon.phresco.service.client.api.ServiceManager;
 import com.photon.phresco.util.PhrescoDynamicLoader;
 import com.photon.phresco.util.Utility;
 
-public class DynamicParameterUtil extends FrameworkBaseAction {
+public class DynamicParameterAction extends FrameworkBaseAction {
 
 	private static final long serialVersionUID = 1L;
+	
+	private static final Logger S_LOGGER = Logger.getLogger(Quality.class);
+    private static Boolean s_debugEnabled  =S_LOGGER.isDebugEnabled();
+    
+    //Dynamic parameter
+    private List<Value> dependentValues = null; //Value for dependancy parameters
+    private String currentParamKey = ""; 
+    private String goal = "";
+    private String selectedOption = "";
+    private String dependency = "";
+    
 	private static Map<String, PhrescoDynamicLoader> pdlMap = new HashMap<String, PhrescoDynamicLoader>();
 	
 	/**
@@ -280,5 +293,92 @@ public class DynamicParameterUtil extends FrameworkBaseAction {
 		return buildArgCmds;
 	}
 	
+	public String changeEveDependancyListener() {
+        if (s_debugEnabled) {
+            S_LOGGER.debug("Entering Method Quality.changeEveDependancyListener()");
+        }
+        
+        Map<String, DependantParameters> watcherMap = (Map<String, DependantParameters>) 
+                getSessionAttribute(getAppId() + getGoal() + SESSION_WATCHER_MAP);
+        
+        DependantParameters currentParameters = watcherMap.get(getCurrentParamKey());
+        if (currentParameters == null) {
+            currentParameters = new DependantParameters();
+        }
+        currentParameters.setValue(getSelectedOption());
+        watcherMap.put(getCurrentParamKey(), currentParameters);
 
+        return SUCCESS;
+    }
+    
+    public String updateDependancy() {
+        if (s_debugEnabled) {
+            S_LOGGER.debug("Entering Method Quality.updateDependancy()");
+        }
+        
+        try {
+            ApplicationInfo applicationInfo = getApplicationInfo();
+            MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(applicationInfo)));
+            Map<String, DependantParameters> watcherMap = (Map<String, DependantParameters>) getSessionAttribute(getAppId() + getGoal() + SESSION_WATCHER_MAP);
+
+            if (StringUtils.isNotEmpty(getDependency())) {
+                // Get the values from the dynamic parameter class
+                Parameter dependentParameter = mojo.getParameter(getGoal(), getDependency());
+                if (dependentParameter.getDynamicParameter() != null) {
+                    Map<String, Object> constructMapForDynVals = constructMapForDynVals(applicationInfo, watcherMap, getDependency());
+                    List<Value> dependentPossibleValues = getDynamicPossibleValues(constructMapForDynVals, dependentParameter);
+                    setDependentValues(dependentPossibleValues);
+                    if (watcherMap.containsKey(getDependency())) {
+                        DependantParameters dependantParameters = (DependantParameters) watcherMap.get(getDependency());
+                        dependantParameters.setValue(dependentPossibleValues.get(0).getValue());
+                    }
+                }
+            }
+            return SUCCESS;
+        } catch (PhrescoException e) {
+            S_LOGGER.error("Entered into catch block of Quality.updateDependancy()"+ e);
+            return showErrorPopup(e, getText(EXCEPTION_QUALITY_FUNCTIONAL_RUN));
+        }
+    }
+    
+    
+    public List<Value> getDependentValues() {
+        return dependentValues;
+    }
+
+    public void setDependentValues(List<Value> dependentValues) {
+        this.dependentValues = dependentValues;
+    }
+    
+    public String getCurrentParamKey() {
+        return currentParamKey;
+    }
+
+    public void setCurrentParamKey(String currentParamKey) {
+        this.currentParamKey = currentParamKey;
+    }
+
+    public String getGoal() {
+        return goal;
+    }
+
+    public void setGoal(String goal) {
+        this.goal = goal;
+    }
+    
+    public String getSelectedOption() {
+        return selectedOption;
+    }
+
+    public void setSelectedOption(String selectedOption) {
+        this.selectedOption = selectedOption;
+    }
+
+    public String getDependency() {
+        return dependency;
+    }
+
+    public void setDependency(String dependency) {
+        this.dependency = dependency;
+    }
 }

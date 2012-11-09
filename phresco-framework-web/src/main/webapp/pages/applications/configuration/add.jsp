@@ -163,13 +163,21 @@
 
 	/* To check whether the device is ipad or not */
 	$(document).ready(function() {
+		hideLoadingIcon();//To hide the loading icon
 		if (!isiPad()) {
 			$(".content_adder").scrollbars(); //JQuery scroll bar
 		}
 	});
 	
-	$('#type').change(function() { 
-		var params = '{ ' + getBasicParamsAsJson() + ', "settingTemplate": ' + $('#type').val() + ' }';
+	$('#type').change(function() {
+		var selectedConfigname = $('#configName').val();
+		var envData = $.parseJSON($('#environment').val());
+		var selectedEnv = envData.name;
+		var typeData= $.parseJSON($('#type').val());
+		var selectedType = typeData.name;
+		var selectedConfigId = typeData.id;
+		var params = '{ ' + getBasicParamsAsJson() + ', "settingTemplate": ' + $('#type').val() + ' , "selectedConfigId": "' + selectedConfigId 
+			+ '" , "selectedEnv": "' + selectedEnv + '" , "selectedType": "' + selectedType + '" , "selectedConfigname": "' + selectedConfigname + '"}';
 		loadJsonContent('configType', params,  $('#typeContainer'));
 	}).triggerHandler("change");
 	

@@ -58,13 +58,11 @@ import org.xml.sax.SAXException;
 import com.google.gson.Gson;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.BuildInfo;
-import com.photon.phresco.commons.model.DependantParameters;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.configuration.ConfigurationInfo;
 import com.photon.phresco.exception.ConfigurationException;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
-import com.photon.phresco.framework.actions.DynamicParameterUtil;
 import com.photon.phresco.framework.api.ActionType;
 import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.api.Project;
@@ -73,6 +71,7 @@ import com.photon.phresco.framework.api.ProjectRuntimeManager;
 import com.photon.phresco.framework.commons.DiagnoseUtil;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.commons.LogErrorReport;
+import com.photon.phresco.framework.model.DependantParameters;
 import com.photon.phresco.framework.model.PluginProperties;
 import com.photon.phresco.framework.model.SettingsInfo;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
@@ -90,7 +89,7 @@ import com.phresco.pom.model.PluginExecution.Goals;
 import com.phresco.pom.util.AndroidPomProcessor;
 import com.phresco.pom.util.PomProcessor;
 
-public class Build extends DynamicParameterUtil implements Constants {
+public class Build extends DynamicParameterAction implements Constants {
 
 	private static final long serialVersionUID = -9172394838984622961L;
 	private static final Logger S_LOGGER = Logger.getLogger(Build.class);
@@ -310,28 +309,6 @@ public class Build extends DynamicParameterUtil implements Constants {
 		} 
 
 		return APP_GENERATE_BUILD;
-	}
-	
-	@SuppressWarnings("unchecked")
-	/**
-	 * To handle dependency events
-	 */
-	public String dependancyListener() throws PhrescoException {
-		if (debugEnabled) {
-			S_LOGGER.debug("Entering Method  Build.dependancyListener()");
-		}	
-		try {
-			Map<String, Object> sessionMap = (Map<String, Object>) getSessionAttribute(SESSION_WATCHER_MAP);
-			sessionMap.put(getDependantKey(), getDependantValue());
-			ApplicationInfo applicationInfo = getApplicationInfo();
-			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(applicationInfo)));
-			Parameter parameter = mojo.getParameter(getGoal(), dependantKey);
-			List<Value> dependantPossibleValues = getDynamicPossibleValues(sessionMap, parameter);
-			setDependentValues(dependantPossibleValues);//to parse resultant dependant values as json
-		} catch (PhrescoException e) {
-			return showErrorPopup(e, getText(EXCEPTIN_BUILD_DEPENDANT_VALUE));
-		}
-		return SUCCESS;
 	}
 	
 	public String builds() throws PhrescoException {
