@@ -115,6 +115,7 @@ public class Login extends FrameworkBaseAction {
                 return LOGIN_FAILURE;
             }
             setSessionAttribute(SESSION_USER_INFO, user);
+            setSessionAttribute(SESSION_USER_PASSWORD, getPassword());
         } catch (PhrescoException e) {
             setReqAttribute(REQ_LOGIN_ERROR, getText(ERROR_EXCEPTION));
 

@@ -33,8 +33,6 @@
 	String projectId = (String)request.getAttribute(FrameworkConstants.REQ_PROJECT_ID);
 	String action = StringUtils.isEmpty(fromTab) ? "import" : "update";
 	String customerId = (String)request.getAttribute(FrameworkConstants.REQ_CUSTOMER_ID);
-	System.out.println(FrameworkConstants.REQ_FROM_TAB+" : "+fromTab);
-
 	User userInfo = (User)session.getAttribute(FrameworkConstants.SESSION_USER_INFO);
     String LoginId = "";
     if (userInfo != null) {
@@ -149,6 +147,7 @@
 				  	
 			extraInfoDisplay();
 			$("#userName").val("<%= LoginId %>");
+			$("#password").val("<%= (String) session.getAttribute(FrameworkConstants.SESSION_USER_PASSWORD) %>");
 	});
 
 	//base on the repo type credential info need to be displayed
@@ -265,9 +264,8 @@
 		// hide loading icon
 		hidePopuploadingIcon();
 		if (!data.errorFlag) {
-			alert("Exception "+data.errorString);
+			$("#errMsg").html(data.errorString);
 		} else if(data.errorFlag) {
-			alert(data.errorString);
 			//has to be fixed
 			$('#popupPage').modal('hide');
 			loadContent("applications",$('#formProjectList'),$("#container"),getBasicParams());

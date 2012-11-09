@@ -874,6 +874,8 @@ public interface FrameworkConstants {
     String SVN_INTERNAL ="Internal";
     String INVALID_URL = "import.invalid.url";
     String INVALID_REVISION = "import.invalid.revision";
+    String NO_POM_XML = "project.pom.notexist";
+    String POM_URL_FAIL = "project.pomurlupdate.fail";
     /*
      * Delete Build keys
      */

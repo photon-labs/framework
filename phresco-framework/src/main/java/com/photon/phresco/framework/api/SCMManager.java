@@ -1,7 +1,5 @@
 package com.photon.phresco.framework.api;
 
-import com.photon.phresco.exception.*;
-
 public interface SCMManager {
 
 	/**
@@ -11,10 +9,11 @@ public interface SCMManager {
 	 * @param username
 	 * @param password
 	 * @param branch
-	 * @throws PhrescoException
+	 * @throws Exception 
+	 
 	 */
 	boolean importProject(String type, String url, String username,
-			String password, String branch, String revision, String projcode) throws PhrescoException;
+			String password, String branch, String revision, String projcode) throws Exception ;
 
 	/**
 	 * 
@@ -23,9 +22,10 @@ public interface SCMManager {
 	 * @param username
 	 * @param password
 	 * @param branch
-	 * @throws PhrescoException
+	 * @throws Exception 
+	
 	 */
 	boolean updateProject(String type, String url, String username,
-			String password, String branch,  String revision, String projcode) throws PhrescoException;
+			String password, String branch,  String revision, String projcode) throws Exception ;
 
 }
