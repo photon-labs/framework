@@ -140,6 +140,8 @@
 
 <script type="text/javascript">
 $(document).ready(function() {
+	hideLoadingIcon();
+	
 	<% if (CollectionUtils.isNotEmpty(parameters) || CollectionUtils.isNotEmpty(projectModules)) { %>
 		yesnoPopup($('#unitTest'), 'showUnitTestPopUp', '<s:text name="lbl.unit.test"/>', 'runUnitTest','<s:text name="lbl.test"/>');
 	<% } else { %>

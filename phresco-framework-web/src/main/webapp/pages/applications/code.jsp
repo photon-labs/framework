@@ -66,7 +66,7 @@
 	}
 %>  
 
-<form id="code" class="codeList">
+<form id="code" class="codeList" style="margin-top: 39px;">
 	<div class="operation">
         <input type="button" data-toggle="modal" href="#popupPage" id="codeValidatePopup" class="btn btn-primary" style=" float: left;" value="<s:text name='lbl.validate'/>" />
             <%
