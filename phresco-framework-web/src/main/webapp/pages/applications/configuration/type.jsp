@@ -24,6 +24,7 @@
 
 <%@ page import="java.util.ArrayList"%>
 <%@ page import="java.util.List"%>
+<%@ page import="java.util.Properties"%>
 
 <%@ page import="org.antlr.stringtemplate.StringTemplate" %>
 <%@ page import="org.apache.commons.collections.CollectionUtils" %>
@@ -32,34 +33,49 @@
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 <%@ page import="com.photon.phresco.commons.model.PropertyTemplate" %>
 <%@ page import="com.photon.phresco.framework.commons.FrameworkUtil" %>
+<%@ page import="com.photon.phresco.framework.commons.ParameterModel" %>
 
 <form id="configProperties">
 <%
 	ApplicationInfo appInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_APPINFO);
+	Properties propertiesInfo = (Properties) request.getAttribute(FrameworkConstants.REQ_PROPERTIES_INFO); 
 	List<PropertyTemplate> properties = (List<PropertyTemplate>) request.getAttribute(FrameworkConstants.REQ_PROPERTIES);
 	StringBuilder sb = new StringBuilder();
     for (PropertyTemplate propertyTemplate : properties) {
+    	String value = propertiesInfo.getProperty(propertyTemplate.getKey());
+    	ParameterModel pm = new ParameterModel();
+    	pm.setMandatory(propertyTemplate.isRequired());
+    	pm.setLableText(propertyTemplate.getName());
+    	pm.setId(propertyTemplate.getKey());
+    	pm.setName(propertyTemplate.getKey());
+    	pm.setControlGroupId(propertyTemplate.getKey() + "Control");
+    	pm.setControlId(propertyTemplate.getKey() + "Error");
+    	pm.setShow(true);
+    	
         List<String> possibleValues = new ArrayList<String>(8);
 
-        if (FrameworkConstants.SERVER_KEY.equals(propertyTemplate.getKey())) {
+       /*  if (FrameworkConstants.SERVER_KEY.equals(propertyTemplate.getKey())) {
         	ArtifactGroupInfo artifactGroupInfo = appInfo.getSelectedServers().get(0);
         	possibleValues = artifactGroupInfo.getArtifactInfoIds();
     	} else if (FrameworkConstants.DATABASE_KEY.equals(propertyTemplate.getKey())) {
     		ArtifactGroupInfo artifactGroupInfo = appInfo.getSelectedDatabases().get(0);
     		possibleValues = artifactGroupInfo.getArtifactInfoIds();
-    	} else {
+    	} else {  */
     		possibleValues = propertyTemplate.getPossibleValues();
-    	}
+    	/* } */
     	
         if (CollectionUtils.isNotEmpty(possibleValues)) {
-             /* StringTemplate dropDownControl = FrameworkUtil.constructSelectElement(propertyTemplate.isRequired(), propertyTemplate.getName(), "", "", propertyTemplate.getName(), 
-                     propertyTemplate.getKey(), possibleValues, null, Boolean.FALSE.toString(),"", true,  propertyTemplate.getKey() + "Control", propertyTemplate.getKey() + "Error");
-             sb.append(dropDownControl); */
+        	pm.setObjectValue(possibleValues);
+        	//pm.getSelectedValues(value);
+        	pm.setMultiple(false);
+            StringTemplate dropDownControl = FrameworkUtil.constructSelectElement(pm);
+            sb.append(dropDownControl);
         } else {
-             /* StringTemplate inputControl = FrameworkUtil.constructInputElement(propertyTemplate.isRequired(), propertyTemplate.getName(), "", propertyTemplate.getType(),
-                     "", propertyTemplate.getKey(), propertyTemplate.getKey(), propertyTemplate.getHelpText(), "", true,  propertyTemplate.getKey() + "Control", propertyTemplate.getKey() + "Error");
-            
-             sb.append(inputControl); */
+        	pm.setInputType(propertyTemplate.getType());
+        	pm.setPlaceHolder(propertyTemplate.getHelpText());
+        	pm.setValue(value);
+            StringTemplate inputControl = FrameworkUtil.constructInputElement(pm);
+            sb.append(inputControl);
         }
     }
 %>

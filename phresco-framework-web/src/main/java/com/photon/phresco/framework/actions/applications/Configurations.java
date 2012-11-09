@@ -70,12 +70,17 @@ public class Configurations extends FrameworkBaseAction {
     
     private List<Environment> environments = new ArrayList<Environment>(8);
     private Environment environment = null;
+    private List<Configuration> selectedConfig = new ArrayList<Configuration>(8);
+  
+	//private Configuration selectedConfig = null;
     private SettingsTemplate settingTemplate = null;
     private String selectedEnvirment = null;
     private String configId = null;
-    
-    
-    private String configName = null;
+    private String selectedConfigId = null;
+    private String selectedType = null;
+    private String selectedEnv = null;
+	private String selectedConfigname = null;
+	private String configName = null;
     private String description = null;
     private String oldName = null;
     private String[] appliesto = null;
@@ -653,19 +658,9 @@ public class Configurations extends FrameworkBaseAction {
         	List<Environment> environments = getAllEnvironments();
         	setReqAttribute(REQ_ENVIRONMENTS, environments);
         	Configuration selectedConfigInfo = getConfigManager().getConfiguration(currentEnvName, currentConfigType, currentConfigName);
-        	Properties selectedPropertiesInfo = selectedConfigInfo.getProperties();
-        	/*List<SettingsTemplate> configTemplates = getServiceManager().getconfigTemplates(getCustomerId());
-        	for (SettingsTemplate settingsTemplate : configTemplates) {
-        		List<PropertyTemplate> property = settingsTemplate.getProperties();
-		            for (PropertyTemplate propertyTemplate : property) {
-			            String key = propertyTemplate.getKey();
-			            selectedPropertiesInfo.getProperty(key);
-		            }
-        	}*/
         	List<SettingsTemplate> configTemplates = getServiceManager().getconfigTemplates(getCustomerId());
             setReqAttribute(REQ_SETTINGS_TEMPLATES, configTemplates);
         	setReqAttribute(REQ_CONFIG_INFO, selectedConfigInfo);
-        	setReqAttribute(REQ_PROPERTIES_INFO, selectedPropertiesInfo);
         	setReqAttribute(REQ_FROM_PAGE, FROM_PAGE_EDIT);
         	
             /*ProjectAdministrator administrator = getProjectAdministrator();
@@ -843,12 +838,11 @@ public class Configurations extends FrameworkBaseAction {
 		try {
 			ApplicationInfo appInfo = getApplicationInfo();
 		    List<PropertyTemplate> properties = getSettingTemplate().getProperties();
-//		    for (PropertyTemplate propertyTemplate : properties) {
-//		        String capitalizeKey = WordUtils.capitalize(propertyTemplate.getKey());
-//		        setDynamicParameter(capitalizeKey);
-//            }
+		    Configuration configuration = getConfigManager().getConfiguration(selectedEnv, selectedType, selectedConfigname);
+		    Properties selectedProperties = configuration.getProperties();
 		    setReqAttribute(REQ_PROPERTIES, properties);
 		    setReqAttribute(REQ_APPINFO, appInfo);
+		    setReqAttribute(REQ_PROPERTIES_INFO, selectedProperties);
 		    
 			/*String projectCode = (String)getHttpRequest().getParameter(REQ_PROJECT_CODE);
 			String oldName = (String)getHttpRequest().getParameter(REQ_OLD_NAME);
@@ -879,6 +873,8 @@ public class Configurations extends FrameworkBaseAction {
             getHttpRequest().setAttribute(REQ_FROM_PAGE, FROM_PAGE_EDIT);*/
 		} catch (PhrescoException e) {
         	return showErrorPopup(e,  getText(EXCEPTION_CONFIGURATION_SHOW_PROPERTIES));
+		} catch (ConfigurationException e) {
+			e.printStackTrace();
 		}
 		return SETTINGS_TYPE;
 	}
@@ -1351,4 +1347,42 @@ public class Configurations extends FrameworkBaseAction {
 	public void setSelectedEnvirment(String selectedEnvirment) {
 		this.selectedEnvirment = selectedEnvirment;
 	}
+
+	public String getSelectedConfigId() {
+		return selectedConfigId;
+	}
+
+	public void setSelectedConfigId(String selectedConfigId) {
+		this.selectedConfigId = selectedConfigId;
+	}
+	
+	public String getSelectedType() {
+		return selectedType;
+	}
+
+	public void setSelectedType(String selectedType) {
+		this.selectedType = selectedType;
+	}
+	
+	public String getSelectedEnv() {
+		return selectedEnv;
+	}
+
+	public void setSelectedEnv(String selectedEnv) {
+		this.selectedEnv = selectedEnv;
+	}
+
+	public String getSelectedConfigname() {
+		return selectedConfigname;
+	}
+
+	public void setSelectedConfigname(String selectedConfigname) {
+		this.selectedConfigname = selectedConfigname;
+	}
+	public void setSelectedConfig(List<Configuration> selectedConfig) {
+			this.selectedConfig = selectedConfig;
+	}
+
+
+
 }
