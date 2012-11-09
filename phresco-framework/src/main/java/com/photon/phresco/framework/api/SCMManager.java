@@ -13,7 +13,7 @@ public interface SCMManager {
 	 
 	 */
 	boolean importProject(String type, String url, String username,
-			String password, String branch, String revision, String projcode) throws Exception ;
+			String password, String branch, String revision) throws Exception ;
 
 	/**
 	 * 

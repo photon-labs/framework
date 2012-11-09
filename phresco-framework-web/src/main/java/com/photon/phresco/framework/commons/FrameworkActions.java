@@ -87,6 +87,7 @@ public interface FrameworkActions {
     String APP_MENU = "appMenu";
     String APP_APPINFO = "appinfo";
     String APP_APPLICATION = "application";
+    String APP_IMPORT = "importApplication";
     String APP_UPDATE = "updateApplication";
     String APP_VALIDATE_FRAMEWORK = "validateFramework";
     String APP_VALIDATE_PROJECT = "validateProject";

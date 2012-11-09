@@ -256,19 +256,27 @@
 	
 	function successEvent(pageUrl, data){
 		if(pageUrl == "importSVNProject" || pageUrl == "importGITProject" || pageUrl == "updateSVNProject" || pageUrl == "updateGITProject"){
-			checkError(data);
+			checkError(pageUrl, data);
 		}
 	}
 	
-	function checkError(data) {
+	function checkError(pageUrl, data) {
+		var statusFlag = " ";
 		// hide loading icon
 		hidePopuploadingIcon();
 		if (!data.errorFlag) {
 			$("#errMsg").html(data.errorString);
 		} else if(data.errorFlag) {
-			//has to be fixed
+			if ((pageUrl == "importGITProject" )||( pageUrl == "importSVNProject")){
+				 statusFlag = "import";
+			} else if((pageUrl == "updateGITProject" )||( pageUrl == "updateSVNProject")){
+				 statusFlag = "update";
+			}
+			var params = getBasicParams();
+			params = params.concat("statusFlag=");
+			params = params.concat(statusFlag);
 			$('#popupPage').modal('hide');
-			loadContent("applications",$('#formProjectList'),$("#container"),getBasicParams());
+			loadContent("applications", $('#formProjectList'), $("#container"), params);
 		}
 	}
 // 			alert("fetching...");

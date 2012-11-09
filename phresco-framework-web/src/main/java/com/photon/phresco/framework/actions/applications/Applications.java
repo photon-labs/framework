@@ -636,10 +636,10 @@ public class Applications extends FrameworkBaseAction {
 		if(s_debugEnabled){
 			S_LOGGER.debug("Entering Method  Applications.importSVNApplication()");
 		}
-		revision = !HEAD_REVISION.equals(revision) ? revisionVal : revision;
-		SCMManagerImpl scmi = new SCMManagerImpl();
 		try {
-			scmi.importProject("svn", repositoryUrl, userName, password, null,revision, "SVN");
+			revision = !HEAD_REVISION.equals(revision) ? revisionVal : revision;
+			SCMManagerImpl scmi = new SCMManagerImpl();
+			scmi.importProject(SVN, repositoryUrl, userName, password, null, revision);
 			errorString = getText(IMPORT_SUCCESS_PROJECT);
 			errorFlag = true;
 		} catch (SVNAuthenticationException e) {
@@ -671,15 +671,7 @@ public class Applications extends FrameworkBaseAction {
 				S_LOGGER.error(e.getLocalizedMessage());
 			}
 			errorFlag = false;
-			if(e.getMessage().equals("File already exists in workspace")){
-				errorString =getText(PROJECT_ALREADY);
-			}else if(e.getMessage().equals("Phresco Project definition not found")){
-				errorString = getText(INVALID_FOLDER);
-			}else if(e.getMessage().equals("Connection url pom updation failed")){
-				errorString = getText(POM_URL_FAIL);
-			}else{
-				errorString = getText(NO_POM_XML);
-			}
+			errorString =getText(e.getMessage());
 		} catch (Exception e) {
 			if(s_debugEnabled){
 				S_LOGGER.error(e.getLocalizedMessage());
@@ -696,7 +688,7 @@ public class Applications extends FrameworkBaseAction {
 		}
 		SCMManagerImpl scmi = new SCMManagerImpl();
 		try {
-			scmi.importProject("git", repositoryUrl, userName, password, "master" ,revision, "GIT");
+			scmi.importProject(GIT, repositoryUrl, userName, password, MASTER ,revision);
 			errorString = getText(IMPORT_SUCCESS_PROJECT);
 			errorFlag = true;
 		} catch (SVNAuthenticationException e) {	//Will not occur for GIT
@@ -728,15 +720,7 @@ public class Applications extends FrameworkBaseAction {
 				S_LOGGER.error(e.getLocalizedMessage());
 			}
 			errorFlag = false;
-			if(e.getMessage().equals("File already exists in workspace")){
-				errorString =getText(PROJECT_ALREADY);
-			}else if(e.getMessage().equals("Phresco Project definition not found")){
-				errorString = getText(INVALID_FOLDER);
-			}else if(e.getMessage().equals("Connection url pom updation failed")){
-				errorString = getText(POM_URL_FAIL);
-			}else{
-				errorString = getText(NO_POM_XML);
-			}
+			errorString = getText(e.getMessage());
 		} catch (Exception e) {
 			if(s_debugEnabled){
 				S_LOGGER.error(e.getLocalizedMessage());
@@ -748,7 +732,7 @@ public class Applications extends FrameworkBaseAction {
 	}
 
 	public String importAppln() {
-		return "importApplication";
+		return APP_IMPORT;
 	}
 
 	public String updateProjectPopup() {
@@ -767,7 +751,7 @@ public class Applications extends FrameworkBaseAction {
 			setReqAttribute(REQ_PROJECT_ID, getProjectId());
 			setReqAttribute(REQ_CUSTOMER_ID, getCustomerId());
 			setReqAttribute(REPO_URL, connectionUrl);
-			setReqAttribute(REQ_FROM_TAB, "update");
+			setReqAttribute(REQ_FROM_TAB, UPDATE);
 			setReqAttribute(REQ_APP_INFO, applicationInfo);
 		} catch (PhrescoException e) {
 			if(s_debugEnabled){
@@ -775,7 +759,8 @@ public class Applications extends FrameworkBaseAction {
 			}
 			return showErrorPopup(e, "Update Application");
 		}
-		return "updateApplication";
+
+		return APP_UPDATE;
 	}
 
 	public String updateGitProject() {
@@ -784,7 +769,7 @@ public class Applications extends FrameworkBaseAction {
 		try {
 			ApplicationInfo applicationInfo = getApplicationInfo();
 			String appDirName = applicationInfo.getAppDirName();
-			scmi.updateProject("git", repositoryUrl, userName, password, "master" ,null, appDirName);
+			scmi.updateProject(GIT, repositoryUrl, userName, password, MASTER , null, appDirName);
 			errorString = getText(SUCCESS_PROJECT_UPDATE);
 			errorFlag = true;
 		} catch (InvalidRemoteException e) {
@@ -817,7 +802,7 @@ public class Applications extends FrameworkBaseAction {
 			} else {
 				errorString = getText(IMPORT_PROJECT_FAIL);
 			}
-		} catch (org.apache.commons.io.FileExistsException e) {
+		} catch (FileExistsException e) {
 			if(s_debugEnabled){
 				S_LOGGER.error(e.getLocalizedMessage());
 			}
@@ -828,15 +813,7 @@ public class Applications extends FrameworkBaseAction {
 				S_LOGGER.error(e.getLocalizedMessage());
 			}
 			errorFlag = false;
-			if(e.getMessage().equals("File already exists in workspace")){
-				errorString =getText(PROJECT_ALREADY);
-			}else if(e.getMessage().equals("Phresco Project definition not found")){
-				errorString = getText(INVALID_FOLDER);
-			}else if(e.getMessage().equals("Connection url pom updation failed")){
-				errorString = getText(POM_URL_FAIL);
-			}else{
-				errorString = getText(NO_POM_XML);
-			}
+			errorString =getText(e.getMessage());
 		} catch (Exception e) {
 			if(s_debugEnabled){
 				S_LOGGER.error(e.getLocalizedMessage());
@@ -844,6 +821,7 @@ public class Applications extends FrameworkBaseAction {
 			errorString = getText(FAILURE_PROJECT_UPDATE);
 			errorFlag = false;
 		}
+
 		return SUCCESS;
 	}
 
@@ -854,12 +832,11 @@ public class Applications extends FrameworkBaseAction {
 		try {
 			ApplicationInfo applicationInfo = getApplicationInfo();
 			String appDirName = applicationInfo.getAppDirName();
-			scmi.updateProject("svn", repositoryUrl, userName, password, null,
-					revision, appDirName);
+			scmi.updateProject(SVN, repositoryUrl, userName, password, null, revision, appDirName);
 			errorString = getText(SUCCESS_PROJECT_UPDATE);
 			errorFlag = true;
 		} catch (InvalidRemoteException e) {
-			if(s_debugEnabled){
+			if(s_debugEnabled) {
 				S_LOGGER.error(e.getLocalizedMessage());
 			}
 			errorString = getText(INVALID_URL);
@@ -900,15 +877,7 @@ public class Applications extends FrameworkBaseAction {
 				S_LOGGER.error(e.getLocalizedMessage());
 			}
 			errorFlag = false;
-			if(e.getMessage().equals("File already exists in workspace")){
-				errorString =getText(PROJECT_ALREADY);
-			}else if(e.getMessage().equals("Phresco Project definition not found")){
-				errorString = getText(INVALID_FOLDER);
-			}else if(e.getMessage().equals("Connection url pom updation failed")){
-				errorString = getText(POM_URL_FAIL);
-			}else{
-				errorString = getText(NO_POM_XML);
-			}
+			errorString =getText(e.getMessage());
 		} catch (Exception e) {
 			if(s_debugEnabled){
 				S_LOGGER.error(e.getLocalizedMessage());

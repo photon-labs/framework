@@ -132,6 +132,8 @@ public interface FrameworkConstants {
     String CLASS = "class";
     String SCM = "scm";
     String SVN = "svn";
+    String MASTER = "master";
+    String UPDATE = "update";
     String REPO_URL = "repoUrl";
     String PROJECT_UPDATE_POPUP = "projectUpdatePopup";
     String CLONED_WORKSPACE = "clonedWorkspace";

@@ -37,25 +37,25 @@ public class ApplicationsTest {
 //  @Test
 	public void gitPrivateRepoClone() throws Exception {
 		boolean valid = scmi.importProject("git","https://github.com/bestbuymobileapps/bby-digital-deals.git",
-				"nikhilkumar-a", "phresco123", "master", null, "create");
+				"nikhilkumar-a", "phresco123", "master", null);
 		Assert.assertEquals(true, valid );
 	}
 	
 //	@Test
 	public void gitPublicRepoClone() throws Exception {
-		boolean valid = scmi.importProject("git","https://github.com/santhosh-ja/Test2.git", null, null, "master", null, "create");
+		boolean valid = scmi.importProject("git","https://github.com/santhosh-ja/Test2.git", null, null, "master", null);
 		Assert.assertEquals(true, valid );
 		}
 	
 //  @Test
 	public void svnSingleFileCheckout() throws Exception {
-		boolean valid = scmi.importProject("svn","https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/IphoneAutomationInJe/2.0/phresco-test/sample applayer-tech-php/", "santhosh_ja", "santJ!23", null, "HEAD", "SVN");
+		boolean valid = scmi.importProject("svn","https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/IphoneAutomationInJe/2.0/phresco-test/sample applayer-tech-php/", "santhosh_ja", "santJ!23", null, "HEAD");
 		Assert.assertEquals(true, valid );
 	}
 	
 //  @Test
 	public void svnMultipleFileCheckout() throws Exception {
-		boolean valid = scmi.importProject("svn","https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/IphoneAutomationInJe/2.0/phresco-test/", "santhosh_ja", "santJ!23", null, "HEAD", "SVN");
+		boolean valid = scmi.importProject("svn","https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/IphoneAutomationInJe/2.0/phresco-test/", "santhosh_ja", "santJ!23", null, "HEAD");
 		Assert.assertEquals(true, valid);
 	}
 
@@ -76,13 +76,13 @@ public class ApplicationsTest {
     //Clone/Checkout a non phresco-compliance projects
 //	@Test
 	public void gitClonePhrescoComplianceFail() throws Exception {
-		boolean valid = scmi.importProject("git","https://github.com/santhosh-ja/Test.git", null, null, "master", null, "create");
+		boolean valid = scmi.importProject("git","https://github.com/santhosh-ja/Test.git", null, null, "master", null);
 		Assert.assertEquals(false, valid);
 	}
 	
 //  @Test
 	public void svnCheckoutPhrescoComplianceFail() throws Exception {
-		boolean valid = scmi.importProject("svn","https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/IphoneAutomationInJe/2.0/", "santhosh_ja", "santJ!23", null, "HEAD", "SVN");
+		boolean valid = scmi.importProject("svn","https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/IphoneAutomationInJe/2.0/", "santhosh_ja", "santJ!23", null, "HEAD");
 		Assert.assertEquals(false, valid );
 		}
 	
@@ -111,7 +111,7 @@ public class ApplicationsTest {
 //SVN can checkout git url!!!	
 //  @Test
 	public void svnNamedGitUrl() throws Exception {
-		boolean valid = scmi.importProject("svn","https://github.com/santhosh-ja/Test2.git", null, null, null, "HEAD", "GIT");
+		boolean valid = scmi.importProject("svn","https://github.com/santhosh-ja/Test2.git", null, null, null, "HEAD");
 		Assert.assertEquals(true, valid );
 	}
 	
