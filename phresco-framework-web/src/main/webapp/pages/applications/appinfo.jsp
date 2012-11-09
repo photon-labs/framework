@@ -422,12 +422,9 @@
 	function selectedDatabasesFromProjectInfo() {
 		
 		<% if( selectedDatabases != null) {
-			System.out.println("enter into the if condition......");
 				for(ArtifactGroupInfo artifactGrpInfo : selectedDatabases) {
-					System.out.println("artifactGroup:::"+artifactGrpInfo.getArtifactGroupId());
 					String database = artifactGrpInfo.getArtifactGroupId();
 					List<String> databaseVersions = artifactGrpInfo.getArtifactInfoIds();
-					System.out.println("versions::::"+databaseVersions);
 		%>
 				constructSelectedDatabase('<%= database%>', '<%=databaseVersions%>');
 		<%
