@@ -39,7 +39,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.bind.JAXBException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -59,6 +58,7 @@ import org.xml.sax.SAXException;
 import com.google.gson.Gson;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.BuildInfo;
+import com.photon.phresco.commons.model.DependantParameters;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.configuration.ConfigurationInfo;
 import com.photon.phresco.exception.ConfigurationException;
@@ -90,7 +90,7 @@ import com.phresco.pom.model.PluginExecution.Goals;
 import com.phresco.pom.util.AndroidPomProcessor;
 import com.phresco.pom.util.PomProcessor;
 
-public class Build extends DynamicParameterUtil {
+public class Build extends DynamicParameterUtil implements Constants {
 
 	private static final long serialVersionUID = -9172394838984622961L;
 	private static final Logger S_LOGGER = Logger.getLogger(Build.class);
@@ -224,6 +224,11 @@ public class Build extends DynamicParameterUtil {
 		}
 		return APP_BUILD;
 	}
+	
+	public String checkForConfiguration() {
+		
+		return SUCCESS;
+	}
 
 	/**
 	 * To show generate build popup with loaded dynamic parameters 
@@ -234,36 +239,17 @@ public class Build extends DynamicParameterUtil {
 		}
 		try {
 		    ApplicationInfo appInfo = getApplicationInfo();
-            removeSessionAttribute(appInfo.getId() + PHASE_PACKAGE + REQ_SESSION_DYNAMIC_PARAM_MAP);
-            removeSessionAttribute(appInfo.getId() + PHASE_PACKAGE + "controlsTobeShowed");
+            removeSessionAttribute(appInfo.getId() + PHASE_PACKAGE + SESSION_WATCHER_MAP);
             setProjModulesInReq();
-            Map<String, Object> watcherMap = new HashMap<String, Object>();
-            watcherMap.put(REQ_APP_INFO, appInfo);
-            List<Parameter> parameters = setDynamicParametersInReq(appInfo, PHASE_PACKAGE);
-            List<String> controlsTobeShowed = new ArrayList<String>();
-            setPossibleValuesInReq(parameters, watcherMap, controlsTobeShowed);
-            setSessionAttribute(appInfo.getId() + PHASE_PACKAGE + REQ_SESSION_DYNAMIC_PARAM_MAP, watcherMap);
-            setSessionAttribute(appInfo.getId() + PHASE_PACKAGE + "controlsTobeShowed", controlsTobeShowed);
+            Map<String, DependantParameters> watcherMap = new HashMap<String, DependantParameters>(8);
+            List<Parameter> parameters = getDynamicParameters(appInfo, PHASE_PACKAGE);
+            setPossibleValuesInReq(appInfo, parameters, watcherMap);
+            setSessionAttribute(appInfo.getId() + PHASE_PACKAGE + SESSION_WATCHER_MAP, watcherMap);
             setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
-            setReqAttribute(REQ_GOAL, PHASE_PACKAGE); 
-		    
-		    
-//			Map<String, Object> buildParamMap = new HashMap<String, Object>();
-//			ApplicationInfo appInfo = getApplicationInfo();
-//			buildParamMap.put(REQ_APP_INFO, appInfo);
-//			buildParamMap.put(REQ_CUSTOMER_ID, getCustomerId());
-//			List<Parameter> parameters = setDynamicParametersInReq(appInfo, PHASE_PACKAGE);
-//			setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
-//			List<String> controlsTobeShowed = new ArrayList<String>();
-//            setPossibleValuesInReq(parameters, buildParamMap, controlsTobeShowed);
-//            setSessionAttribute(appInfo.getId() + PHASE_PACKAGE + REQ_SESSION_DYNAMIC_PARAM_MAP, buildParamMap);
-//            setSessionAttribute(appInfo.getId() + PHASE_PACKAGE + "controlsTobeShowed", controlsTobeShowed);
-//			setReqAttribute(REQ_APPINFO, appInfo);
-//			setReqAttribute(REQ_GOAL, PHASE_PACKAGE);
-//			setReqAttribute(REQ_FROM, getFrom());
+            setReqAttribute(REQ_GOAL, PHASE_PACKAGE);
 		} catch (PhrescoException e) {
 			return showErrorPopup(e, getText(EXCEPTION_BUILD_POPUP));
-		} 
+		}
 		
 		return APP_GENERATE_BUILD;
 	}
@@ -284,7 +270,7 @@ public class Build extends DynamicParameterUtil {
 			Map<String, Object> runAgainstSrcMap = new HashMap<String, Object>();
 			ApplicationInfo applicationInfo = getApplicationInfo();
 			runAgainstSrcMap.put(REQ_APP_INFO, applicationInfo);
-			List<Parameter> parameters = setDynamicParametersInReq(applicationInfo, PHASE_RUNGAINST_SRC_START);
+			List<Parameter> parameters = getDynamicParameters(applicationInfo, PHASE_RUNGAINST_SRC_START);
 //            setPossibleValuesInReq(parameters, runAgainstSrcMap);
 			
 			setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
@@ -305,52 +291,25 @@ public class Build extends DynamicParameterUtil {
 			S_LOGGER.debug("Entering Method  Build.showDeployPopup()");
 		}
 		try {
-			Map<String, Object> deployParamMap = new HashMap<String, Object>();
-			ApplicationInfo applicationInfo = getApplicationInfo();
-			String buildNumber = getReqParameter(REQ_DEPLOY_BUILD_NUMBER);
-			deployParamMap.put(REQ_APP_INFO, applicationInfo);
-			deployParamMap.put(REQ_DEPLOY_BUILD_NUMBER, buildNumber);
-			List<Parameter> parameters = setDynamicParameters(deployParamMap, PHASE_DEPLOY);
-			
-			setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);			
-			setReqAttribute(REQ_APPINFO, applicationInfo);
-			setReqAttribute(REQ_DEPLOY_BUILD_NUMBER, buildNumber);
-			setReqAttribute(REQ_GOAL, PHASE_DEPLOY);
-			setReqAttribute(REQ_FROM, getFrom());
+		    ApplicationInfo appInfo = getApplicationInfo();
+            removeSessionAttribute(appInfo.getId() + PHASE_DEPLOY + SESSION_WATCHER_MAP);
+            setProjModulesInReq();
+            Map<String, DependantParameters> watcherMap = new HashMap<String, DependantParameters>(8);
+//            watcherMap.put(REQ_CUSTOMER_ID, getCustomerId());
+            String buildNumber = getReqParameter(REQ_DEPLOY_BUILD_NUMBER);
+//            watcherMap.put(REQ_DEPLOY_BUILD_NUMBER, buildNumber);
+            List<Parameter> parameters = getDynamicParameters(appInfo, PHASE_DEPLOY);
+            setPossibleValuesInReq(appInfo, parameters, watcherMap);
+            setSessionAttribute(appInfo.getId() + PHASE_DEPLOY + SESSION_WATCHER_MAP, watcherMap);
+            setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
+            setReqAttribute(REQ_GOAL, PHASE_DEPLOY);
+            setProjModulesInReq();
+            setReqAttribute(REQ_FROM, getFrom());
 		} catch (PhrescoException e) {
 			return showErrorPopup(e, getText(EXCEPTION_DEPLOY_POPUP));
 		} 
 
 		return APP_GENERATE_BUILD;
-	}
-	
-	/**
-	 * To set List of parameters in request
-	 * @param goal
-	 * @throws PhrescoException
-	 */
-	private List<Parameter> setDynamicParameters(Map<String, Object> dynamicParamMap, String goal) throws PhrescoException {
-		List<Parameter> parameters = null;
-		try {
-			ApplicationInfo applicationInfo = (ApplicationInfo) dynamicParamMap.get(REQ_APP_INFO);
-			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(applicationInfo)));
-			parameters = getMojoParameters(mojo, goal);
-			if (CollectionUtils.isNotEmpty(parameters)) {
-				for (Parameter parameter : parameters) {
-					if (parameter.getDependency() != null) {
-						dynamicParamMap.put(parameter.getDependency(), parameter.getValue());
-					}
-					if (parameter.getDynamicParameter() != null) {
-						List<Value> possibleValues = setDynamicPossibleValues(dynamicParamMap, parameter);
-						setReqAttribute(REQ_DYNAMIC_POSSIBLE_VALUES, possibleValues);
-					}
-				}
-			}
-		} catch (PhrescoException e) {
-			throw new PhrescoException(e);
-		}
-		
-		return parameters;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -362,12 +321,12 @@ public class Build extends DynamicParameterUtil {
 			S_LOGGER.debug("Entering Method  Build.dependancyListener()");
 		}	
 		try {
-			Map<String, Object> sessionMap = (Map<String, Object>) getSessionAttribute(REQ_SESSION_DYNAMIC_PARAM_MAP);
+			Map<String, Object> sessionMap = (Map<String, Object>) getSessionAttribute(SESSION_WATCHER_MAP);
 			sessionMap.put(getDependantKey(), getDependantValue());
 			ApplicationInfo applicationInfo = getApplicationInfo();
 			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(applicationInfo)));
 			Parameter parameter = mojo.getParameter(getGoal(), dependantKey);
-			List<Value> dependantPossibleValues = setDynamicPossibleValues(sessionMap, parameter);
+			List<Value> dependantPossibleValues = getDynamicPossibleValues(sessionMap, parameter);
 			setDependentValues(dependantPossibleValues);//to parse resultant dependant values as json
 		} catch (PhrescoException e) {
 			return showErrorPopup(e, getText(EXCEPTIN_BUILD_DEPENDANT_VALUE));

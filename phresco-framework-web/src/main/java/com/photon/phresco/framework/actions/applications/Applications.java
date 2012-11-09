@@ -39,10 +39,16 @@ import org.eclipse.jgit.api.errors.WrongRepositoryStateException;
 import org.tmatesoft.svn.core.SVNAuthenticationException;
 import org.tmatesoft.svn.core.SVNException;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.opensymphony.xwork2.Action;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.DownloadInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
+import com.photon.phresco.commons.model.SelectedFeature;
 import com.photon.phresco.commons.model.WebService;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
@@ -118,6 +124,10 @@ public class Applications extends FrameworkBaseAction {
     public String errorString;
     public boolean errorFlag;
 
+    private SelectedFeature selectFeature;
+    
+    private List<String> jsonData = null;
+    
     public String loadMenu() {
         if (s_debugEnabled) {
             S_LOGGER.debug("Entering Method  Applications.loadMenu()");
@@ -170,9 +180,17 @@ public class Applications extends FrameworkBaseAction {
         	} else {
         		projectInfo = (ProjectInfo)getSessionAttribute(getAppId() + SESSION_APPINFO);
             	ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
-            	appInfo.setSelectedModules(getFeature());
-            	appInfo.setSelectedJSLibs(getJavascript());
-            	appInfo.setSelectedComponents(getComponent());
+            
+            	List<String> jsonData = getJsonData();
+            	List<SelectedFeature> selectedFeatures = new ArrayList<SelectedFeature>();
+            	if(jsonData !=null) {
+	            	for (String string : jsonData) {
+						Gson gson = new Gson();
+						SelectedFeature obj = gson.fromJson(string, SelectedFeature.class);
+						selectedFeatures.add(obj);
+					}
+            	}
+            	setSessionAttribute(REQ_SELECTED_FEATURES, selectedFeatures);
         		projectInfo.setAppInfos(Collections.singletonList(appInfo));
         		setSessionAttribute(getAppId() + SESSION_APPINFO, projectInfo);
         	}
@@ -186,6 +204,7 @@ public class Applications extends FrameworkBaseAction {
         return APP_APPINFO;
     }
 
+    
    /* public String appInfo() {
         if (s_debugEnabled) {
             S_LOGGER.debug("Entering Method  Applications.appInfo()");
@@ -227,7 +246,7 @@ public class Applications extends FrameworkBaseAction {
         return APP_APPINFO;
     }*/
 
-    /**
+	/**
      * To get the selected server's/database version
      * @return
      */
@@ -242,7 +261,7 @@ public class Applications extends FrameworkBaseAction {
             List<DownloadInfo> downloadInfos = getServiceManager().getDownloads(getCustomerId(), techId, type);
 			setDownloadInfos(downloadInfos);
         } catch (PhrescoException e) {
-            return showErrorPopup(e, EXCEPTION_DOWNLOADINFOS);
+            return showErrorPopup(e, getText(EXCEPTION_DOWNLOADINFOS));
         }
 
         return SUCCESS;
@@ -576,6 +595,7 @@ public class Applications extends FrameworkBaseAction {
             List<ProjectInfo> projects = projectManager.discover(getCustomerId());
             setReqAttribute(REQ_PROJECTS, projects);
             removeSessionAttribute(getAppId() + SESSION_APPINFO);
+            removeSessionAttribute(REQ_SELECTED_FEATURES);
             removeSessionAttribute(REQ_PILOT_PROJECTS);
 		} catch (PhrescoException e) {
 			return showErrorPopup(e, EXCEPTION_PROJECT_UPDATE);
@@ -1837,5 +1857,19 @@ public class Applications extends FrameworkBaseAction {
 		this.errorString = errorString;
 	}
 	
-	
+	public SelectedFeature getSelectFeature() {
+		return selectFeature;
+	}
+
+	public void setSelectFeature(SelectedFeature selectFeature) {
+		this.selectFeature = selectFeature;
+	}
+
+	public List<String> getJsonData() {
+		return jsonData;
+	}
+
+	public void setJsonData(List<String> jsonData) {
+		this.jsonData = jsonData;
+	}
 }

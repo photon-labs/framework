@@ -26,31 +26,46 @@
     <constant name="struts.custom.i18n.resources" value="framework" />
     <constant name="struts.ui.theme" value="simple" />
     
-    <package name="default" extends="struts-default,json-default">
+    <package name="login" extends="struts-default,json-default">
     
-	    <interceptors>
-	        <interceptor name="json" class="com.photon.phresco.framework.actions.JSONInterceptor"/>
-	    </interceptors>
-		
-    	<global-results>
-			<!-- <result name="success">/pages/login.jsp</result>-->
-			<result name="logError">/pages/errorReport.jsp</result>
-		</global-results>
-
-        <!--  Login Page Action -->
+    	 <!--  Login Page Action -->
         <action name="login" method="login" class="com.photon.phresco.framework.actions.Login">
             <result name="success">/pages/baselayout.jsp</result>
             <result name="failure">/pages/login.jsp</result>
         </action>
         
         <action name="cmdlogin" method="cmdLogin" class="com.photon.phresco.framework.actions.Login">
-            <result name="success">/admin/baselayout.jsp</result>
+           <!--  <result name="success">/admin/baselayout.jsp</result> -->
             <result name="failure">/pages/login.jsp</result>
-        </action>
+        </action> 
         
        	<action name="logout" method="logout" class="com.photon.phresco.framework.actions.Login">
             <result name="success">/pages/login.jsp</result>
         </action>
+    
+    </package>
+    
+     <package name="default" extends="struts-default,json-default">
+	    
+	    <interceptors>
+			<interceptor name="sessionValidatorInterceptor" class="com.photon.phresco.framework.actions.interceptors.SessionValidatorInterceptor">
+			</interceptor>
+			<interceptor name="json" class="com.photon.phresco.framework.actions.JSONInterceptor"/>
+		
+			<interceptor-stack name="interceptorStack">
+				<interceptor-ref name="sessionValidatorInterceptor" />
+				<interceptor-ref name="json" />
+				<interceptor-ref name="defaultStack" />
+			</interceptor-stack>
+		</interceptors>
+		
+		<default-interceptor-ref name="interceptorStack"/>
+		
+    	<global-results>
+			<result name="success">/pages/login.jsp</result>
+			<result name="logError">/pages/errorReport.jsp</result>
+		</global-results>
+
 
         <!--  Home Actions -->
         <action name="home" method="view" class="com.photon.phresco.framework.actions.home.Home">
@@ -457,7 +472,9 @@
         </action>
         
         <action name="deleteEnvironment" method="deleteEnvironment" class="com.photon.phresco.framework.actions.applications.Configurations">
-			<result type="json" />
+        	<interceptor-ref name="json" />
+        	<result name="list">/pages/applications/configuration/list.jsp</result>
+<!-- 			<result type="json" /> -->
         </action>
         
         <action name="deleteSettingsEnvironment" method="deleteSettingsEnvironment" class="com.photon.phresco.framework.actions.settings.Settings">
@@ -485,7 +502,7 @@
             <result type="json" />
         </action>
         
-        <action name="checkForConfiguration" method="checkForConfiguration" class="com.photon.phresco.framework.actions.applications.Applications">
+        <action name="checkForConfiguration" method="checkForConfiguration" class="com.photon.phresco.framework.actions.applications.Build">
             <result type="json" />
         </action>
         
@@ -595,6 +612,10 @@
         </action>
 
         <action name="changeEveDependancyListener" method="changeEveDependancyListener" class="com.photon.phresco.framework.actions.applications.Quality">
+			<result type="json" />
+        </action>
+        
+        <action name="updateDependancy" method="updateDependancy" class="com.photon.phresco.framework.actions.applications.Quality">
 			<result type="json" />
         </action>
         

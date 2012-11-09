@@ -33,6 +33,7 @@
 
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.util.Constants"%>
+<%@ page import="com.google.gson.Gson"%>
 <%@ page import="com.photon.phresco.framework.api.Project" %>
 <%@ page import="com.photon.phresco.configuration.Environment" %>
 <%@ page import="com.photon.phresco.configuration.Configuration" %>
@@ -42,6 +43,7 @@
 
 <%
 	List<Environment> envInfoValues = (List<Environment>) request.getAttribute(FrameworkConstants.REQ_ENVIRONMENTS);
+	Gson gson = new Gson();
 	Map<String, String> urls = new HashMap<String, String>();
 %>
 
@@ -82,14 +84,16 @@
 		</div> 
     <% } else { %>	
     	<div class="table_div">
-		<% for (Environment envInfoValue : envInfoValues) { %>
+		<% for (Environment envInfoValue : envInfoValues) { 
+			String envJson = gson.toJson(envInfoValue);
+		%>
 			<div class="theme_accordion_container">
 				<section class="accordion_panel_wid">
 					<div class="accordion_panel_inner">
 						<section class="lft_menus_container">
 							<span class="siteaccordion closereg">
 								<span>
-									<input type="checkbox" value="" id="<%=envInfoValue.getName() %>" class="accordianChkBox" name="checkAllAuto" onclick="checkAllEvent(this,$('.<%=envInfoValue.getName() %>'), false);"/>
+									<input type="checkbox" value='<%= envJson %>' id="<%=envInfoValue.getName() %>" class="accordianChkBox" name="checkEnv" onclick="checkAllEvent(this,$('.<%=envInfoValue.getName() %>'), false);"/>
 									<a class="vAlignSub"><%=envInfoValue.getName() %></a>
 								</span>
 							</span>
@@ -126,7 +130,7 @@
 												%>
 															<tr>
 																<td class="no-left-bottom-border table-pad">
-																	<input type="checkbox" class="check <%=envInfoValue.getName() %>" name="selectedProjects" value="<%= configuration.getName() %>"
+																	<input type="checkbox" class="check <%=envInfoValue.getName() %>" name="checkedConfig" value="<%= configuration.getName() %>"
 																	onclick="checkboxEvent($('.<%=envInfoValue.getName() %>'), $('#<%=envInfoValue.getName() %>'));">
 																</td>
 																<td class="no-left-bottom-border table-pad">
@@ -169,7 +173,7 @@
 
 <script type="text/javascript">
 	yesnoPopup($("#addEnvironments"), 'openEnvironmentPopup', "<s:text name='lbl.environment'/>", 'createEnvironment');
-	confirmDialog($("#deleteBtn"), '<s:text name="lbl.hdr.confirm.dialog"/>', '<s:text name="modal.body.text.del.configuration"/>', '','<s:text name="lbl.btn.ok"/>');
+	confirmDialog($("#deleteBtn"), '<s:text name="lbl.hdr.confirm.dialog"/>', '<s:text name="modal.body.text.del.configuration"/>', 'deleteEnvironment','<s:text name="lbl.btn.ok"/>');
 	
 	$(document).ready(function() {
 		accordion();
@@ -189,12 +193,19 @@
 	 
 	function popupOnOk(self) {
 		var envs = [];
+		var selectedEnv;
+		var selectedConfig = [];
 		$('[name="envNames"]').each(function() {
 			envs.push($(this).val());
 		});
 		
+		$('input[name="checkEnv"]:checked').each(function() {
+			var selectedEnvData = $.parseJSON($(this).val());
+			selectedEnv = selectedEnvData.name;
+		});
+		
 		var basicParams = getBasicParamsAsJson();
-		var params = '{' + basicParams + ', "environments": [' + envs.join(',') + ']}';
+		var params = '{' + basicParams + ', "environments": [' + envs.join(',') + '], "selectedEnvirment" : "' + selectedEnv + '"}';
 		var url = $(self).attr('id');
 		loadJsonContent(url, params, $('#subcontainer'));
 	}

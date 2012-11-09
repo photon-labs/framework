@@ -71,6 +71,7 @@ public class Configurations extends FrameworkBaseAction {
     private List<Environment> environments = new ArrayList<Environment>(8);
     private Environment environment = null;
     private SettingsTemplate settingTemplate = null;
+    private String selectedEnvirment = null;
     private String configId = null;
     
     
@@ -439,29 +440,13 @@ public class Configurations extends FrameworkBaseAction {
     	return list();
     }
     
-    public String deleteEnvironment(String selectedItems) {
+    public String deleteEnvironment() {
     	try {
-    		ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-            Project project = administrator.getProject(projectCode);
-	    	List<String> envNames = Arrays.asList(selectedItems.split(","));
-	    	List<String> deletableEnvs = new ArrayList<String>();
-	    	for (String envName : envNames) {
-				// Check if configurations are already exist
-				List<SettingsInfo> configurations = administrator.configurationsByEnvName(envName, project);
-                if (CollectionUtils.isEmpty(configurations)) {
-                	deletableEnvs.add(envName);
-                }
-			}
-	    	if (isEnvDeleteSuceess == true) {
-	    		// Delete Environment
-	    		administrator.deleteEnvironments(deletableEnvs, project);
-	    	}
+    		getConfigManager().deleteEnvironment(selectedEnvirment);
     	} catch(Exception e) {
-    		if (debugEnabled) {
-                S_LOGGER.error("Entered into catch block of Configurations.deleteEnvironment()" + FrameworkUtil.getStackTraceAsString(e));
-     		}
+    		 return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_CONFIGURATION_DELETE_ENVIRONMENT));
     	}
-    	return SUCCESS;
+    	return list();
     }
     
     public String checkForRemove(){
@@ -668,9 +653,19 @@ public class Configurations extends FrameworkBaseAction {
         	List<Environment> environments = getAllEnvironments();
         	setReqAttribute(REQ_ENVIRONMENTS, environments);
         	Configuration selectedConfigInfo = getConfigManager().getConfiguration(currentEnvName, currentConfigType, currentConfigName);
+        	Properties selectedPropertiesInfo = selectedConfigInfo.getProperties();
+        	/*List<SettingsTemplate> configTemplates = getServiceManager().getconfigTemplates(getCustomerId());
+        	for (SettingsTemplate settingsTemplate : configTemplates) {
+        		List<PropertyTemplate> property = settingsTemplate.getProperties();
+		            for (PropertyTemplate propertyTemplate : property) {
+			            String key = propertyTemplate.getKey();
+			            selectedPropertiesInfo.getProperty(key);
+		            }
+        	}*/
         	List<SettingsTemplate> configTemplates = getServiceManager().getconfigTemplates(getCustomerId());
             setReqAttribute(REQ_SETTINGS_TEMPLATES, configTemplates);
         	setReqAttribute(REQ_CONFIG_INFO, selectedConfigInfo);
+        	setReqAttribute(REQ_PROPERTIES_INFO, selectedPropertiesInfo);
         	setReqAttribute(REQ_FROM_PAGE, FROM_PAGE_EDIT);
         	
             /*ProjectAdministrator administrator = getProjectAdministrator();
@@ -1347,5 +1342,13 @@ public class Configurations extends FrameworkBaseAction {
 
 	public void setCurrentConfigName(String currentConfigName) {
 		this.currentConfigName = currentConfigName;
+	}
+
+	public String getSelectedEnvirment() {
+		return selectedEnvirment;
+	}
+
+	public void setSelectedEnvirment(String selectedEnvirment) {
+		this.selectedEnvirment = selectedEnvirment;
 	}
 }

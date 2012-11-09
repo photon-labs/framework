@@ -39,6 +39,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.antlr.stringtemplate.StringTemplate;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -68,16 +69,6 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 	private static FrameworkUtil frameworkUtil = null;
     private static final Logger S_LOGGER = Logger.getLogger(FrameworkUtil.class);
     
-    private static final String CONTROL_GROUP_TEMPLATE = "<div class='control-group $ctrlGrpClass$' id=\"$ctrlGrpId$\">$lable$ $controls$</div>";
-	private static final String LABEL_TEMPLATE = "<label for='xlInput' class='control-label labelbold $class$'>$mandatory$$txt$</label>";
-	private static final String MANDATORY = "<span class='red'>*</span>&nbsp";
-	private static final String SELECT_TEMPLATE = "<div class='controls'><select class=\"input-xlarge $cssClass$\" id=\"$id$\" name=\"$name$\" isMultiple=\"$isMultiple$\" onchange=\"$onChangeFunction$\">$options$</select><span class='help-inline' id=\"$ctrlsId$\"></span></div>";
-	private static final String INPUT_TEMPLATE = "<div class='controls'><input type=\"$type$\" class=\"input-xlarge $class$\" id=\"$id$\" " + 
-													"name=\"$name$\" placeholder=\"$placeholder$\" value=\"$value$\"><span class='help-inline' id=\"$ctrlsId$\"></span></div>";
-	private static final String CHECKBOX_TEMPLATE = "<div class='controls'><input type='checkbox' class=\"$class$\" id=\"$id$\" " + 
-														"name=\"$name$\" value=\"$value$\" $checked$ onclick=\"$onClickFunction$\"/><span class='help-inline' id=\"$ctrlsId$\"></span></div>";
-	private static final String MULTI_SELECT_TEMPLATE = "<div class='controls'><div class='multiSelectBorder'><div class='multilist-scroller multiselect multiSelHeight $class$' id=\"$id$\"><ul>$multiSelectOptions$</ul></div><span class='help-inline' id=\"$ctrlsId$\"></span></div></div>";
-	
     private Map<String, String> unitTestMap = new HashMap<String, String>(8);
     private Map<String, String> unitReportMap = new HashMap<String, String>(8);
     private Map<String, String> funcationTestMap = new HashMap<String, String>(8);
@@ -448,8 +439,12 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 		testCasePathMap.put(TechnologyTypes.JAVA_STANDALONE, XPATH_JAVA_WEBSERVICE_TESTCASE);
 	}
 	
-    public String getUnitTestDir(ApplicationInfo appInfo) throws PhrescoException, PhrescoPomException {
-        return getPomProcessor(appInfo.getAppDirName()).getProperty(POM_PROP_KEY_UNITTEST_DIR);
+	public String getSqlFilePath(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
+		return getPomProcessor(appinfo.getAppDirName()).getProperty("phresco.sql.path");
+	}
+	
+    public String getUnitTestDir(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
+        return getPomProcessor(appinfo.getAppDirName()).getProperty(POM_PROP_KEY_UNITTEST_DIR);
     }
     
     public String getUnitTestReportDir(ApplicationInfo appInfo) throws PhrescoPomException, PhrescoException {
@@ -681,32 +676,24 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
         return decodedString;
     }
 
-    public static StringTemplate constructInputElement(Boolean isMandatory, String lableText, String lableClass, 
-                String inputType, String cssClass, String id, String name, String placeholder,
-                String value, boolean showControl, String ctrlGrpId, String ctrlsId) {
-    	StringTemplate controlGroupElement = new StringTemplate(CONTROL_GROUP_TEMPLATE);
-    	controlGroupElement.setAttribute("ctrlGrpId", ctrlGrpId);
-    	if (!showControl) {
+    public static StringTemplate constructInputElement(ParameterModel pm) {
+    	StringTemplate controlGroupElement = new StringTemplate(getControlGroupTemplate());
+    	controlGroupElement.setAttribute("ctrlGrpId", pm.getControlGroupId());
+    	
+    	if (!pm.isShow()) {
     	    controlGroupElement.setAttribute("ctrlGrpClass", "hideContent");
     	}
-    	StringTemplate lableElmnt = constructLabelElement(isMandatory, lableClass, lableText);
-    	String type = getInputType(inputType);
-    	StringTemplate inputElement = new StringTemplate(INPUT_TEMPLATE);
+    	
+    	StringTemplate lableElmnt = constructLabelElement(pm.isMandatory(), pm.getLableClass(), pm.getLableText());
+    	String type = getInputType(pm.getInputType());
+    	StringTemplate inputElement = new StringTemplate(getInputTemplate());
     	inputElement.setAttribute("type", type);
-    	inputElement.setAttribute("class", cssClass);
-    	inputElement.setAttribute("id", id);
-    	inputElement.setAttribute("name", name);
-    	inputElement.setAttribute("placeholder", placeholder);
-    	inputElement.setAttribute("value", value);
-    	inputElement.setAttribute("ctrlsId", ctrlsId);
-    	
-    	
-    	/* to check/uncheck the checkboxes based on the value */
-    	if (Boolean.parseBoolean(value)) {
-    		inputElement.setAttribute("checked", "checked");
-    	} else {
-    		inputElement.setAttribute("checked", "");
-    	}
+    	inputElement.setAttribute("class", pm.getCssClass());
+    	inputElement.setAttribute("id", pm.getId());
+    	inputElement.setAttribute("name", pm.getName());
+    	inputElement.setAttribute("placeholder", pm.getPlaceHolder());
+    	inputElement.setAttribute("value", pm.getValue());
+    	inputElement.setAttribute("ctrlsId", pm.getControlId());
     	
     	controlGroupElement.setAttribute("lable", lableElmnt);
     	controlGroupElement.setAttribute("controls", inputElement);
@@ -731,32 +718,38 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 		return type;
 	}
     
-    public static StringTemplate constructCheckBoxElement(Boolean isMandatory, String lableText, String lableClass, String cssClass, String id,
-                String name, String value, String onClickFunction, boolean showControl, String ctrlGrpId, String ctrlsId) {
-    	StringTemplate controlGroupElement = new StringTemplate(CONTROL_GROUP_TEMPLATE);
-    	controlGroupElement.setAttribute("ctrlGrpId", ctrlGrpId);
-    	if (!showControl) {
+    public static StringTemplate constructCheckBoxElement(ParameterModel pm) {
+    	StringTemplate controlGroupElement = new StringTemplate(getControlGroupTemplate());
+    	controlGroupElement.setAttribute("ctrlGrpId", pm.getControlGroupId());
+    	if (!pm.isShow()) {
             controlGroupElement.setAttribute("ctrlGrpClass", "hideContent");
         }
     	
-    	StringTemplate lableElmnt = constructLabelElement(isMandatory, lableClass, lableText);
+    	StringTemplate lableElmnt = constructLabelElement(pm.isMandatory(), pm.getLableClass(), pm.getLableText());
     	
-    	StringTemplate checkboxElement = new StringTemplate(CHECKBOX_TEMPLATE);
-    	checkboxElement.setAttribute("class", cssClass);
-    	checkboxElement.setAttribute("id", id);
-    	checkboxElement.setAttribute("name", name);
-    	if (StringUtils.isNotEmpty(value)) {
-    		checkboxElement.setAttribute("value", value);	
+    	StringTemplate checkboxElement = new StringTemplate(getCheckBoxTemplate());
+    	checkboxElement.setAttribute("class", pm.getCssClass());
+    	checkboxElement.setAttribute("id", pm.getId());
+    	checkboxElement.setAttribute("name", pm.getName());
+    	if (StringUtils.isNotEmpty(pm.getValue())) {
+    		checkboxElement.setAttribute("value", pm.getValue());	
     	} else {
     		checkboxElement.setAttribute("value", false);
     	}
-    	checkboxElement.setAttribute("onClickFunction", onClickFunction);
-    	if (Boolean.parseBoolean(value)) {
+    	checkboxElement.setAttribute("onClickFunction", pm.getOnClickFunction());
+    	if (Boolean.parseBoolean(pm.getValue())) {
     		checkboxElement.setAttribute("checked", "checked");
     	} else {
     		checkboxElement.setAttribute("checked", "");
     	}
-    	checkboxElement.setAttribute("ctrlsId", ctrlsId);
+    	checkboxElement.setAttribute("ctrlsId", pm.getControlId());
+    	String additionalParam = getAdditionalParam(pm.getValue(), pm.getDependency());
+        if (StringUtils.isNotEmpty(additionalParam)) {
+            StringBuilder builder = new StringBuilder("additionalParam='dependency=");
+            builder.append(additionalParam);
+            builder.append("' ");
+            checkboxElement.setAttribute("additionalParam", builder);
+        }
     	
     	controlGroupElement.setAttribute("lable", lableElmnt);
     	controlGroupElement.setAttribute("controls", checkboxElement);
@@ -764,34 +757,32 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	return controlGroupElement;
     }
     
-    public static StringTemplate constructSelectElement(Boolean isMandatory, String lableText, String lableClass, String cssClass, String id, String name,
-			List<? extends Object> values, List<String> selectedValues, String isMultiple, String onChangeFunction, boolean showControl, String ctrlGrpId, String ctrlsId) {
-    	if (Boolean.parseBoolean(isMultiple)) {
-    		return constructMultiSelectElement(isMandatory, lableText, lableClass, cssClass, id, name, values, selectedValues, showControl, ctrlGrpId, ctrlsId);
+    public static StringTemplate constructSelectElement(ParameterModel pm) {
+    	if (pm.isMultiple()) {
+    		return constructMultiSelectElement(pm);
     	} else {
-    		return constructSingleSelectElement(isMandatory, lableText, lableClass, cssClass, id, name, values, selectedValues, isMultiple, onChangeFunction, showControl, ctrlGrpId, ctrlsId);
+    		return constructSingleSelectElement(pm);
     	}
     }
 
-    public static StringTemplate constructSingleSelectElement(Boolean isMandatory, String lableText, String lableClass, String cssClass, String id, String name,
-    		List<? extends Object> values, List<String> selectedValues, String isMultiple, String onChangeFunction, boolean showControl, String ctrlGrpId, String ctrlsId) {
-    	StringTemplate controlGroupElement = new StringTemplate(CONTROL_GROUP_TEMPLATE);
-    	controlGroupElement.setAttribute("ctrlGrpId", ctrlGrpId);
-    	if (!showControl) {
+    public static StringTemplate constructSingleSelectElement(ParameterModel pm) {
+    	StringTemplate controlGroupElement = new StringTemplate(getControlGroupTemplate());
+    	controlGroupElement.setAttribute("ctrlGrpId", pm.getControlGroupId());
+    	if (!pm.isShow()) {
             controlGroupElement.setAttribute("ctrlGrpClass", "hideContent");
         }
     	
-    	StringTemplate lableElmnt = constructLabelElement(isMandatory, lableClass, lableText);
+    	StringTemplate lableElmnt = constructLabelElement(pm.isMandatory(), pm.getLableClass(), pm.getLableText());
     	
-    	StringTemplate selectElement = new StringTemplate(SELECT_TEMPLATE);
-    	StringBuilder options = constructOptions(values, selectedValues);
-    	selectElement.setAttribute("name", name);
-    	selectElement.setAttribute("cssClass", cssClass);
+    	StringTemplate selectElement = new StringTemplate(getSelectTemplate());
+    	StringBuilder options = constructOptions(pm.getObjectValue(), pm.getSelectedValues(), pm.getDependency());
+    	selectElement.setAttribute("name", pm.getName());
+    	selectElement.setAttribute("cssClass", pm.getCssClass());
     	selectElement.setAttribute("options", options);
-    	selectElement.setAttribute("id", id);
-    	selectElement.setAttribute("isMultiple", isMultiple);
-    	selectElement.setAttribute("ctrlsId", ctrlsId);
-    	selectElement.setAttribute("onChangeFunction", onChangeFunction);
+    	selectElement.setAttribute("id", pm.getId());
+    	selectElement.setAttribute("isMultiple", pm.isMultiple());
+    	selectElement.setAttribute("ctrlsId", pm.getControlId());
+    	selectElement.setAttribute("onChangeFunction", pm.getOnChangeFunction());
     	
     	controlGroupElement.setAttribute("lable", lableElmnt);
     	controlGroupElement.setAttribute("controls", selectElement);
@@ -799,23 +790,23 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	return controlGroupElement;
     }
     
-    private static StringTemplate constructMultiSelectElement(Boolean isMandatory, String lableText, String lableClass, String cssClass, String id, String name,
-			List<? extends Object> values, List<String> selectedValues, boolean showControl, String ctrlGrpId, String ctrlsId) {
-    	StringTemplate controlGroupElement = new StringTemplate(CONTROL_GROUP_TEMPLATE);
-    	controlGroupElement.setAttribute("ctrlGrpId", ctrlGrpId);
-    	if (!showControl) {
+    private static StringTemplate constructMultiSelectElement(ParameterModel pm) {
+    	StringTemplate controlGroupElement = new StringTemplate(getControlGroupTemplate());
+    	controlGroupElement.setAttribute("ctrlGrpId", pm.getControlGroupId());
+    	if (!pm.isShow()) {
             controlGroupElement.setAttribute("ctrlGrpClass", "hideContent");
         }
     	
-    	StringTemplate lableElmnt = constructLabelElement(isMandatory, lableClass, lableText);
+    	StringTemplate lableElmnt = constructLabelElement(pm.isMandatory(), pm.getLableClass(), pm.getLableText());
     	
-    	StringTemplate multiSelectElement = new StringTemplate(MULTI_SELECT_TEMPLATE);
-    	multiSelectElement.setAttribute("name", name);
-    	multiSelectElement.setAttribute("cssClass", cssClass);
-    	multiSelectElement.setAttribute("id", id);
-    	StringBuilder multiSelectOptions = constructMultiSelectOptions(name, values, selectedValues);
+    	StringTemplate multiSelectElement = new StringTemplate(getMultiSelectTemplate());
+    	multiSelectElement.setAttribute("cssClass", pm.getCssClass());
+    	multiSelectElement.setAttribute("id", pm.getId());
+    	multiSelectElement.setAttribute("additionalParam", pm.getDependency());
+    	
+    	StringBuilder multiSelectOptions = constructMultiSelectOptions(pm.getName(), pm.getObjectValue(), pm.getSelectedValues());
     	multiSelectElement.setAttribute("multiSelectOptions", multiSelectOptions);
-    	multiSelectElement.setAttribute("ctrlsId", ctrlsId);
+    	multiSelectElement.setAttribute("ctrlsId", pm.getControlId());
     	
     	controlGroupElement.setAttribute("lable", lableElmnt);
     	controlGroupElement.setAttribute("controls", multiSelectElement);
@@ -823,21 +814,50 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	return controlGroupElement;
     }
     
-    private static StringBuilder constructOptions(List<? extends Object> values, List<String> selectedValues) {
+    private static StringBuilder constructOptions(List<? extends Object> values, List<String> selectedValues, String dependency) {
     	StringBuilder builder = new StringBuilder();
     	String selectedStr = "";
-    	for (Object value : values) {
-    		String optionValue = getValue(value);
-    		if (selectedValues!= null && selectedValues.contains(optionValue)) {
-    			selectedStr = "selected";
-    		} else {
-    			selectedStr = "";
-    		}
-    		builder.append("<option value=\"");
-    		builder.append(optionValue + "\" " + selectedStr + ">" + optionValue + "</option>");
+    	if (CollectionUtils.isNotEmpty(values)) {
+        	for (Object value : values) {
+        		String optionValue = getValue(value);
+        		if (selectedValues!= null && selectedValues.contains(optionValue)) {
+        			selectedStr = "selected";
+        		} else {
+        			selectedStr = "";
+        		}
+        		builder.append("<option value='");
+                builder.append(optionValue);
+                builder.append("' ");
+                String additionalParam = getAdditionalParam(value, dependency);
+                if (StringUtils.isNotEmpty(additionalParam)) {
+                    builder.append("additionalParam='dependency=");
+                    builder.append(additionalParam);
+                    builder.append("' ");
+                }
+                builder.append(selectedStr);
+                builder.append(">");
+                builder.append(optionValue);
+                builder.append("</option>");
+        	}
     	}
 
     	return builder;
+    }
+    
+    private static String getAdditionalParam(Object value, String dependency) {
+        StringBuilder builder = new StringBuilder();
+        boolean appendComma = false;
+        if (StringUtils.isNotEmpty(dependency)) {
+            appendComma = true;
+            builder.append(dependency);
+        }
+        if (value != null && value instanceof Value && StringUtils.isNotEmpty(((Value) value).getDependency())) {
+            if (appendComma) {
+                builder.append(",");
+            }
+            builder.append(((Value) value).getDependency());
+        }
+        return builder.toString();
     }
 
     private static StringBuilder constructMultiSelectOptions(String name, List<? extends Object> values, List<String> selectedValues) {
@@ -874,9 +894,9 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     
 
     public static StringTemplate constructLabelElement(Boolean isMandatory, String cssClass, String Label) {
-    	StringTemplate labelElement = new StringTemplate(LABEL_TEMPLATE);
+    	StringTemplate labelElement = new StringTemplate(getLableTemplate());
     	if (isMandatory) {
-    		labelElement.setAttribute("mandatory", MANDATORY);
+    		labelElement.setAttribute("mandatory", getMandatoryTemplate());
     	} else {
     		labelElement.setAttribute("mandatory", "");
     	}
@@ -894,5 +914,141 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
         } catch (CommandLineException e) {
             throw new PhrescoException(e);
         }
+    }
+
+    public static StringTemplate constructFieldSetElement(List<Value> dbFiles) {
+    	StringTemplate st = new StringTemplate(getFieldsetTemplate());
+    	StringBuilder builder = new StringBuilder();
+    	for (Value dbFile : dbFiles) {
+    		String filePath = dbFile.getValue();
+    		filePath = filePath.replace("#SEP#", "/");
+    		int index = filePath.lastIndexOf("/");
+    		String fileName = filePath.substring(index + 1);
+    		builder.append("<option value=\"");
+    		builder.append(filePath + "\" >" + fileName + "</option>");
+    	}
+    	st.setAttribute("fileList", builder);
+    	return st;
+    }
+
+    private static String getControlGroupTemplate() {
+    	StringBuilder sb = new StringBuilder();
+    	sb.append("<div class='control-group $ctrlGrpClass$' id=\"$ctrlGrpId$\">")
+    	.append("$lable$ $controls$")
+    	.append("</div>");
+    	
+    	return sb.toString();
+    }
+    
+    private static String getLableTemplate() {
+    	StringBuilder sb = new StringBuilder();
+    	sb.append("<label for='xlInput' class='control-label labelbold $class$'>")
+    	.append("$mandatory$ $txt$")
+    	.append("</label>");
+    	
+    	return sb.toString();
+    }
+    
+    private static String getMandatoryTemplate() {
+    	StringBuilder sb = new StringBuilder();
+    	sb.append("<span class='red'>*</span>&nbsp");
+    	
+    	return sb.toString();
+    }
+    
+    private static String getSelectTemplate() {
+    	StringBuilder sb = new StringBuilder();
+    	sb.append("<div class='controls'>")
+    	.append("<select class=\"input-xlarge $cssClass$\" ")
+    	.append("id=\"$id$\" name=\"$name$\" isMultiple=\"$isMultiple$\" ")
+    	.append("additionalParam=\"\" ")
+    	.append("onfocus=\"setPreviousDependent(this);\" ")
+    	.append("onchange=\"$onChangeFunction$\">")
+    	.append("$options$</select>")
+    	.append("<span class='help-inline' id=\"$ctrlsId$\"></span></div>");
+    	
+    	return sb.toString();
+    }
+    
+    private static String getInputTemplate() {
+    	StringBuilder sb = new StringBuilder();
+    	sb.append("<div class='controls'>")
+    	.append("<input type=\"$type$\" class=\"input-xlarge $class$\" id=\"$id$\" ")
+    	.append("id=\"$id$\" name=\"$name$\" isMultiple=\"$isMultiple$\" ")
+    	.append("name=\"$name$\" placeholder=\"$placeholder$\" value=\"$value$\">")
+    	.append("$options$</select>")
+    	.append("<span class='help-inline' id=\"$ctrlsId$\"></span></div>");
+    	
+    	return sb.toString();
+    }
+    
+    private static String getCheckBoxTemplate() {
+    	StringBuilder sb = new StringBuilder();
+    	sb.append("<div class='controls'>")
+    	.append("<input type='checkbox' class=\"$class$\" id=\"$id$\" ")
+    	.append("name=\"$name$\" value=\"$value$\" $checked$ onclick=\"$onClickFunction$\" $additionalParam$/>")
+    	.append("<span class='help-inline' id=\"$ctrlsId$\"></span></div>");
+    	
+    	return sb.toString();
+    }
+    
+    private static String getMultiSelectTemplate() {
+    	StringBuilder sb = new StringBuilder();
+    	sb.append("<div class='controls'><div class='multiSelectBorder'>")
+    	.append("<div class='multilist-scroller multiselect multiSelHeight $class$' id=\"$id$\"")
+    	.append(" additionalParam=\"dependency=$additionalParam$\"><ul>$multiSelectOptions$</ul>")
+    	.append("</div><span class='help-inline' id=\"$ctrlsId$\"></span></div></div>");
+    	
+    	return sb.toString();
+    }
+    
+    private static String getFieldsetTemplate() {
+    	StringBuilder sb = new StringBuilder();
+    	
+    	sb.append("<fieldset id='' class='popup-fieldset fieldset_center_align fieldSetClass'>")
+    	.append("<legend class='fieldSetLegend'>DB Script Execution</legend>")
+    	.append("<table class='fieldSetTbl'><tbody><tr class='fieldSetTr'><td  class='fieldSetTrTd'>")
+    	.append("<select class='fieldSetSelect' multiple='multiple' id='avaliableSourceScript'>$fileList$</select></td>")
+    	.append("<td class='fldSetSelectTd'><ul class='fldSetUl'>")
+    	.append("<li class='fldSetLi'><input type='button' value='&gt;&gt;' id='btnAddAll' class='btn btn-primary arrowBtn' onclick='buttonAddAll();'></li>")
+    	.append("<li class='fieldsetLi'><input type='button' value='&gt;' id='btnAdd' class='btn btn-primary arrowBtn' onclick='buttonAdd();'></li>") 
+    	.append("<li class='fieldsetLi'><input type='button' value='&lt;' id='btnRemove' class='btn btn-primary arrowBtn' onclick='buttonRemove();'></li>")
+    	.append("<li class='fieldsetLi'><input type='button' value='&lt;&lt;' id='btnRemoveAll' class='btn btn-primary arrowBtn' onclick='buttonRemoveAll();'></li>")
+    	.append("</ul></td><td class='fieldSetTrTd'>")
+    	.append("<select class='fieldSetSelect' multiple='multiple' name='selectedSourceScript' id='selectedSourceScript'></select>")
+    	.append("</td><td class='fldSetRightTd'><img  class='moveUp'  id='up' title='Move up' src='images/icons/top_arrow.png' onclick='moveUp();'><br>")
+    	.append("<img class='moveDown' id='down' title='Move down' src='images/icons/btm_arrow.png' onclick='moveDown();'></td></tr></tbody></table>")
+    	.append("<input type='hidden' value='' name='DbWithSqlFiles' id='DbWithSqlFiles'></fieldset>");	
+
+    	return sb.toString();
+    }
+    
+    public static List<String> getCsvAsList(String csv) {
+        Pattern csvPattern = Pattern.compile(CSV_PATTERN);
+        Matcher match = csvPattern.matcher(csv);
+
+        List<String> list = new ArrayList<String>(match.groupCount());
+        // For each field
+        while (match.find()) {
+            String value = match.group();
+            if (value == null) {
+                break;
+            }
+            if (value.endsWith(",")) {  // trim trailing ,
+                value = value.substring(0, value.length() - 1);
+            }
+            if (value.startsWith("\"")) { // assume also ends with
+                value = value.substring(1, value.length() - 1);
+            }
+            if (value.length() == 0) {
+                value = null;
+            }
+            list.add(value.trim());
+        }
+        if (CollectionUtils.isEmpty(list)) {
+            list.add(csv.trim());
+        }
+        
+        return list;
     }
 }

@@ -38,7 +38,7 @@
 	<script type="text/javascript" src="js/common.js"></script>
 
 	<link type="text/css" rel="stylesheet" href="css/bootstrap.css">
-	<link type="text/css" rel="stylesheet" href="theme/photon/css/phresco.css">
+	<link type="text/css" rel="stylesheet" href="theme/red_blue/css/phresco.css">
 	<link type="text/css" rel="stylesheet" class="changeme" id="theme">
 
 <script type="text/javascript">
@@ -75,15 +75,15 @@ $(document).ready(function() {
 </head>
 <body class="lgnBg">
       <div class="logoimg">
-          <img class="logoimage" src="theme/photon/images/photon_phresco_logo_red.png">
+          <img class="logoimage" src="theme/red_blue/images/photon_phresco_logo_red.png">
       </div>
       <div class="innoimg">
-           <img class="phtaccinno" border="0" alt="" onclick="window.open('http://www.photon.in','_blank');" src="theme/photon/images/acc_inov_red.png">
+           <img class="phtaccinno" border="0" alt="" onClick="window.open('http://www.photon.in','_blank');" src="theme/red_blue/images/acc_inov_red.png">
       </div>
 	 
       <div class="lgnintro_container lgnContainer">
 	        <div class="welcome" id="welcome">
-                  <img class="welcomeimg" src="theme/photon/images/welcome_photon_red.png">
+                  <img class="welcomeimg" src="theme/red_blue/images/welcome_photon_red.png">
              </div> 
 	    <div class="lgnintro_container_left">
 	    	<h1 class="l_align">Login</h1>

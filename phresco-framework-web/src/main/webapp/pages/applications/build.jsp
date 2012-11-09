@@ -320,6 +320,8 @@
 			updateHiddenField(data.jsFinalName, data.selectedJs, data.browseLocation);
     	} else if (pageUrl == "dependancyListener") {
     		updateDependantValue(data);
+    	} else if (pageUrl === "changeEveDependancyListener") {
+    		showHideAndUpdateData(data);
     	}
     }
 </script>

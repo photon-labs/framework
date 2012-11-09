@@ -64,6 +64,7 @@ import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ApplicationType;
 import com.photon.phresco.commons.model.ArtifactGroup;
+import com.photon.phresco.commons.model.ArtifactGroupInfo;
 import com.photon.phresco.commons.model.BuildInfo;
 import com.photon.phresco.commons.model.DownloadInfo;
 import com.photon.phresco.commons.model.LogInfo;
@@ -1745,7 +1746,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 	 protected void createSqlFolder(ApplicationInfo info, File path) throws PhrescoException {
 			String databaseType = "";
 			String parentFile = path.getParentFile().getParent();
-            List<String> databaseList = info.getSelectedDatabases();
+            List<ArtifactGroupInfo> databaseList = info.getSelectedDatabases();
             String techId = info.getTechInfo().getVersion();
             if (databaseList == null || databaseList.size() == 0) {
             	return;

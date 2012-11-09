@@ -38,11 +38,9 @@ Width <= 1024
 	
 	.main_wrapper {
 		bottom: 48px;
-		padding-left: 10px;
-		padding-right: 10px;
 		position: absolute;
-		top: 55px;
-		width: 98.2%;
+		top: 115px;
+		width: 98%;
 	}
 	
 	.custom_features {
@@ -88,7 +86,7 @@ Width <= 1024
 	
 	#container {
 	    z-index: 15004;
-	    width: 94%;
+	    width: 99%;
 	    height: 85%;
 	}
 	
@@ -464,11 +462,9 @@ Width size <= 1024
 	
 	.main_wrapper {
 		bottom: 48px;
-		padding-left: 10px;
-		padding-right: 10px;
 		position: absolute;
-		top: 55px;
-		width: 98.2%;
+		top: 115px;
+		width: 98%;
 	}
 	
 	.custom_features {
@@ -507,7 +503,7 @@ Width size <= 1024
 	
 	#container {
 	    z-index: 15004;
-	    width: 93%;
+	    width: 100%;
 	    height: 85%;
 	}
 	
@@ -1013,11 +1009,9 @@ Width >= 1152 and < 1280
 		
 	.main_wrapper {
 		bottom: 48px;
-		padding-left: 10px;
-		padding-right: 10px;
 		position: absolute;
-		top: 55px;
-		width: 98.2%;
+		top: 115px;
+		width: 98%;
 	}
 	
 	.wrapper {
@@ -1032,7 +1026,7 @@ Width >= 1152 and < 1280
 	
 	#container {
 	    z-index: 15004;
-	    width: 93%;
+	    width: 100%;
 	    height: 85%;
 	}
 	
@@ -1053,10 +1047,7 @@ Width >= 1152 and < 1280
 	}
 	
 	.headerInner {
-		float: left;
 		margin: auto;
-		padding-left: 19%;
-		width: 55%;
 	}
 	
 	.projectScrollDiv {
@@ -1357,11 +1348,9 @@ Width <= 1280 and height <= 800
 	
 	.main_wrapper {
 		bottom: 48px;
-		padding-left: 10px;
-		padding-right: 10px;
 		position: absolute;
-		top: 55px;
-		width: 98.2%;
+		top: 115px;
+		width: 98%;
 	}
 	
 	.wrapper {
@@ -1376,15 +1365,12 @@ Width <= 1280 and height <= 800
 	
 	#container {
 		z-index: 15004;
-		width: 94%;
+		width: 99%;
 		height: 84%;
 	}
 	
 	.headerInner {
-		float: left;
 		margin: auto;
-		padding-left: 20%;
-		width: 55%;
 	}
 	
 	.intro_container {
@@ -1783,7 +1769,7 @@ Width >= 1280 and height >= 800
 	
 	#container {
 		z-index: 15004;
-		width: 93%;
+		width: 99%;
 		height: 84%;
 	}
 
@@ -2144,11 +2130,9 @@ Width > 1280 and <= 1360
 	/* header starts */ 
 	 .main_wrapper {
 		bottom: 48px;
-		padding-left: 10px;
-		padding-right: 10px;
 		position: absolute;
-		top: 56px;
-		width: 98.2%;
+		top: 115px;
+		width: 98%;
 	}
 	
 	.intro_container {
@@ -2237,10 +2221,7 @@ Width > 1280 and <= 1360
 	}
 	
 	.headerInner {
-		float: left;
 		margin: auto;
-		width: 55%;
-		padding-left: 22%;
 	}
 	
 	.quick_links_outer {
@@ -2572,11 +2553,10 @@ Width > 1360 and <= 1440
 	/* header starts */
 	.main_wrapper {
 		bottom: 48px;
-		padding-left: 10px;
-		padding-right: 10px;
 		position: absolute;
-		top: 56px;
-		width: 98.2%;
+		top: 115px;
+		width: 98%;
+		margin:auto;
 	}
 	
 	.homegostart {
@@ -2605,10 +2585,7 @@ Width > 1360 and <= 1440
 		width: 356px;
 	}
 	.headerInner {
-		float: left;
 		margin: auto;
-		width: 55%;
-		padding-left: 24%;
 	}
 	.quick_links_outer {
 		border-radius: 1px 1px 35px 35px;
@@ -2944,11 +2921,9 @@ Width > 1441 and <= 1600
 	
 	.main_wrapper {
 		bottom: 48px;
-		padding-left: 10px;
-		padding-right: 10px;
 		position: absolute;
-		top: 56px;
-		width: 98.2%;
+		top: 115px;
+		width: 98%;
 	}
 	
 	.homegostart {
@@ -2977,10 +2952,8 @@ Width > 1441 and <= 1600
 		width: 356px;
 	}
 	.headerInner {
-		float: left;
+		float: none;
 		margin: auto;
-		width: 55%;
-		padding-left: 24%;
 	}
 	.quick_links_outer {
 		border-radius: 1px 1px 35px 35px;
