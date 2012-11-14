@@ -66,11 +66,9 @@ public class Configurations extends FrameworkBaseAction {
     
     private static final Logger S_LOGGER = Logger.getLogger(Configurations.class);
     private static Boolean debugEnabled  = S_LOGGER.isDebugEnabled();
-    private static Boolean s_debugEnabled = S_LOGGER.isDebugEnabled();
     
     private List<Environment> environments = new ArrayList<Environment>(8);
     private Environment environment = null;
-    private List<Configuration> selectedConfig = new ArrayList<Configuration>(8);
   
 	//private Configuration selectedConfig = null;
     private SettingsTemplate settingTemplate = null;
@@ -838,11 +836,14 @@ public class Configurations extends FrameworkBaseAction {
 		try {
 			ApplicationInfo appInfo = getApplicationInfo();
 		    List<PropertyTemplate> properties = getSettingTemplate().getProperties();
-		    Configuration configuration = getConfigManager().getConfiguration(selectedEnv, selectedType, selectedConfigname);
-		    Properties selectedProperties = configuration.getProperties();
-		    setReqAttribute(REQ_PROPERTIES, properties);
-		    setReqAttribute(REQ_APPINFO, appInfo);
-		    setReqAttribute(REQ_PROPERTIES_INFO, selectedProperties);
+            setReqAttribute(REQ_PROPERTIES, properties);
+            setReqAttribute(REQ_APPINFO, appInfo);
+
+            Configuration configuration = getConfigManager().getConfiguration(selectedEnv, selectedType, selectedConfigname);
+            if (configuration != null) {
+                Properties selectedProperties = configuration.getProperties();
+                setReqAttribute(REQ_PROPERTIES_INFO, selectedProperties);
+            }
 		    
 			/*String projectCode = (String)getHttpRequest().getParameter(REQ_PROJECT_CODE);
 			String oldName = (String)getHttpRequest().getParameter(REQ_OLD_NAME);
@@ -879,7 +880,7 @@ public class Configurations extends FrameworkBaseAction {
 		return SETTINGS_TYPE;
 	}
     
-    private void setDynamicParameter(String fieldName) {
+   /* private void setDynamicParameter(String fieldName) {
         Class aClass = this.getClass();
         Class[] paramTypes = new Class[1]; 
             paramTypes[0] = String.class; // get the actual param type
@@ -892,7 +893,7 @@ public class Configurations extends FrameworkBaseAction {
              catch (NoSuchMethodException nsme) {
            nsme.printStackTrace();
           }
-    }
+    }*/
     
     public String setAsDefault() {
     	S_LOGGER.debug("Entering Method  Configurations.setAsDefault()");
@@ -1002,10 +1003,10 @@ public class Configurations extends FrameworkBaseAction {
 	
     public String fetchProjectInfoVersions() {
     	try {
-	    	String configType = getHttpRequest().getParameter("configType");
-	    	String name = getHttpRequest().getParameter("name");
-	    	ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-	    	Project project = administrator.getProject(projectCode);
+//	    	String configType = getHttpRequest().getParameter("configType");
+//	    	String name = getHttpRequest().getParameter("name");
+//	    	ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
+//	    	Project project = administrator.getProject(projectCode);
 	    	//TODO:Need to handle
 	    	/*Technology technology = project.getApplicationInfo().getTechnology();
 	    	if ("Server".equals(configType)) {
@@ -1379,10 +1380,5 @@ public class Configurations extends FrameworkBaseAction {
 	public void setSelectedConfigname(String selectedConfigname) {
 		this.selectedConfigname = selectedConfigname;
 	}
-	public void setSelectedConfig(List<Configuration> selectedConfig) {
-			this.selectedConfig = selectedConfig;
-	}
-
-
 
 }

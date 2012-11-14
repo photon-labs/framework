@@ -42,7 +42,6 @@
 	List<PropertyTemplate> properties = (List<PropertyTemplate>) request.getAttribute(FrameworkConstants.REQ_PROPERTIES);
 	StringBuilder sb = new StringBuilder();
     for (PropertyTemplate propertyTemplate : properties) {
-    	String value = propertiesInfo.getProperty(propertyTemplate.getKey());
     	ParameterModel pm = new ParameterModel();
     	pm.setMandatory(propertyTemplate.isRequired());
     	pm.setLableText(propertyTemplate.getName());
@@ -51,6 +50,11 @@
     	pm.setControlGroupId(propertyTemplate.getKey() + "Control");
     	pm.setControlId(propertyTemplate.getKey() + "Error");
     	pm.setShow(true);
+
+    	String value = "";
+    	if (propertiesInfo != null) {
+    		propertiesInfo.getProperty(propertyTemplate.getKey());
+    	}
     	
         List<String> possibleValues = new ArrayList<String>(8);
 

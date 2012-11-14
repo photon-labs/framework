@@ -77,6 +77,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 import com.google.gson.Gson;
+import com.photon.phresco.commons.FileListFilter;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.BuildInfo;
@@ -94,7 +95,6 @@ import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.commons.LogErrorReport;
 import com.photon.phresco.framework.commons.PBXNativeTarget;
 import com.photon.phresco.framework.commons.QualityUtil;
-import com.photon.phresco.framework.commons.filter.FileListFilter;
 import com.photon.phresco.framework.model.DependantParameters;
 import com.photon.phresco.framework.model.HubConfiguration;
 import com.photon.phresco.framework.model.NodeCapability;
