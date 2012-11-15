@@ -21,6 +21,22 @@
 Width <= 1024
 *************************************************************************************/
 @media screen and (max-width : 1024px) {
+	.accordion_panel_inner {
+		width:99%;
+	}
+	.app_add_form .theme_accordion_container {
+		float: left;
+		margin: 0.1% 0%;
+		width: 98% !important;
+	}
+	#subcontainer { width:69%; float:right; margin-right:8px; }
+	/*.navTopBorder .scroll-content {
+		width:76%;
+		margin-left:220px;
+	}*/
+	.customer_name {
+		right:11.2%;
+	}
 
 	.content_adder {
 		height: 84%;
@@ -39,7 +55,7 @@ Width <= 1024
 	.main_wrapper {
 		bottom: 48px;
 		position: absolute;
-		top: 115px;
+		top: 74px;
 		width: 98%;
 	}
 	
@@ -444,8 +460,17 @@ Width <= 1024
 /***********************************************************************************
 Width size <= 1024
 ************************************************************************************/
+
+@media screen and (max-width : 768px) {
+	.app_add_form .theme_accordion_container {
+		float: left;
+		margin: 0.1% 2%;
+		width: 97% !important;
+	}
+	#subcontainer { width:69%; float:right; margin-right:8px; }
+}
+
 @media only screen and (max-device-width:768px) and (orientation:portrait) {
-	
 	.app_list_form {
     	height: 91%;
 	}
@@ -463,7 +488,7 @@ Width size <= 1024
 	.main_wrapper {
 		bottom: 48px;
 		position: absolute;
-		top: 115px;
+		top: 74px;
 		width: 98%;
 	}
 	
@@ -863,7 +888,17 @@ Width size <= 1024
 Width >= 1025 and < 1151
 *************************************************************************************/
 @media screen and (min-width : 1025px) and (max-width : 1151px) {
-	
+	.app_add_form .theme_accordion_container {
+		float: left;
+		margin: 0.1% 0%;
+		width: 98%;
+	}
+	#subcontainer {
+		width: 77%;
+		float: right;
+		margin-right: 5px;
+		margin-top: 10px;
+	}
 	.content_adder {
 		height: 86%;
 	}
@@ -962,7 +997,17 @@ Width >= 1025 and < 1151
 Width >= 1152 and < 1280
 *************************************************************************************/
 @media screen and (min-width : 1152px) and (max-width : 1279px) {
-	
+	.app_add_form .theme_accordion_container {
+		float: left;
+		margin: 0.1% 0%;
+		width: 98%;
+	}
+	#subcontainer {
+		width: 77%;
+		float: right;
+		margin-right: 5px;
+		margin-top: 10px;
+	}
 	.content_adder {
 		height: 88%;
 	}
@@ -1010,7 +1055,7 @@ Width >= 1152 and < 1280
 	.main_wrapper {
 		bottom: 48px;
 		position: absolute;
-		top: 115px;
+		top: 74px;
 		width: 98%;
 	}
 	
@@ -1026,7 +1071,7 @@ Width >= 1152 and < 1280
 	
 	#container {
 	    z-index: 15004;
-	    width: 100%;
+	    width: 99%;
 	    height: 85%;
 	}
 	
@@ -1349,7 +1394,7 @@ Width <= 1280 and height <= 800
 	.main_wrapper {
 		bottom: 48px;
 		position: absolute;
-		top: 115px;
+		top: 74px;
 		width: 98%;
 	}
 	
@@ -1742,7 +1787,17 @@ Width <= 1280 and height <= 800
 Width >= 1280 and height >= 800
 *************************************************************************************/
 @media screen and (min-width : 1280px) and (min-height : 801px) {
-	
+	.app_add_form .theme_accordion_container {
+		float: left;
+		margin: 0.1% 0%;
+		width: 98%;
+	}
+	#subcontainer {
+		width: 77%;
+		float: right;
+		margin-right: 5px;
+		margin-top: 10px;
+	}
 	.formClass {
 		height: 97%;
 		margin: 0;
@@ -2118,7 +2173,17 @@ Width >= 1280 and height >= 800
 Width > 1280 and <= 1360
 *************************************************************************************/
 @media screen and (min-width : 1281px) and (max-width : 1360px) {
-	
+	.app_add_form .theme_accordion_container {
+		float: left;
+		margin: 0.1% 0%;
+		width: 98%;
+	}
+	#subcontainer {
+		width: 82%;
+		float: right;
+		margin-right: 5px;
+		margin-top: 10px;
+	}
 	.content_adder {
 		height: 84%;
 	}
@@ -2131,7 +2196,7 @@ Width > 1280 and <= 1360
 	 .main_wrapper {
 		bottom: 48px;
 		position: absolute;
-		top: 115px;
+		top: 74px;
 		width: 98%;
 	}
 	
@@ -2545,7 +2610,17 @@ Width > 1280 and <= 1360
 Width > 1360 and <= 1440
 *************************************************************************************/
 @media only screen and (min-width : 1361px) and (max-width : 1440px) {
-	
+	.app_add_form .theme_accordion_container {
+		float: left;
+		margin: 0.1% 0%;
+		width: 98%;
+	}
+	#subcontainer {
+		width: 82%;
+		float: right;
+		margin-right: 5px;
+		margin-top: 10px;
+	}
 	.app_list_form {
     	height: 91%;
 	}
@@ -2554,7 +2629,7 @@ Width > 1360 and <= 1440
 	.main_wrapper {
 		bottom: 48px;
 		position: absolute;
-		top: 115px;
+		top: 74px;
 		width: 98%;
 		margin:auto;
 	}
@@ -2904,6 +2979,17 @@ Width > 1360 and <= 1440
 Width > 1441 and <= 1600
 *************************************************************************************/
 @media only screen and (min-width : 1441px) and (max-width : 1600px) {
+	.app_add_form .theme_accordion_container {
+		float: left;
+		margin: 0.1% 0%;
+		width: 98%;
+	}
+	#subcontainer {
+		width: 83%;
+		float: right;
+		margin-right: 5px;
+		margin-top: 10px;
+	}
 	/* header starts */
 	.app_list_form {
     	height: 90%;
@@ -2922,7 +3008,7 @@ Width > 1441 and <= 1600
 	.main_wrapper {
 		bottom: 48px;
 		position: absolute;
-		top: 115px;
+		top: 74px;
 		width: 98%;
 	}
 	
