@@ -282,7 +282,7 @@ body {
 
 table th, table td {
     border-bottom: 1px solid #39bc67;
-    color: #39bc67;
+    /*color: #39bc67;*/
 }
 
 a { 
@@ -1210,13 +1210,13 @@ label {
     border: 1px solid #3A090B !important;
 }
 
-.closereg {
+.closereg { 
     background: #39bc67;
     color: #FFF;
 	-webkit-border-radius: 6px;
 	border-radius: 6px; 
 	padding:4px 0;
-   /*  border-bottom: 1px solid #000; */
+    margin-bottom: 0.2%;
 }
 
 /* .closereg span {
@@ -1308,18 +1308,13 @@ label {
 
 /** download table **/
 .download_tbl_header{
-	background-image: -khtml-gradient(linear, left top, left bottom, from(#850E11), to(#630A0A) );
-    background-image: -moz-linear-gradient(top, #850E11, #630A0A);
-    background-image: -ms-linear-gradient(top, #850E11, #630A0A);
-    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #850E11), color-stop(100%, #630A0A) );
-    background-image: -webkit-linear-gradient(top, #850E11, #630A0A);
-    background-image: -o-linear-gradient(top, #850E11, #630A0A);
-    background-image: linear-gradient(top, #850E11, #630A0A);
-    background-color: #630A0A;
+    background: #39BC67;
+    color: white !important;
 }
 
 .download_tbl{
-	border:1px solid #3A090B; 
+	border:1px solid #39BC67; 
+    color:#313131 !important;
 }
 
 .scroll-bar .scroll-slider {
