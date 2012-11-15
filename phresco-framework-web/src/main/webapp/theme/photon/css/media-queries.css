@@ -24,12 +24,16 @@ Width <= 1024
 	.accordion_panel_inner {
 		width:99%;
 	}
+	.scrollpanel{
+	    width:99.78% !important;
+	    float:left;
+	}
 	.app_add_form .theme_accordion_container {
 		float: left;
 		margin: 0.1% 0%;
 		width: 98% !important;
 	}
-	#subcontainer { width:69%; float:right; margin-right:8px; }
+	#subcontainer {width: 74.5%; float:right; margin-right:8px; }
 	/*.navTopBorder .scroll-content {
 		width:76%;
 		margin-left:220px;
@@ -460,14 +464,18 @@ Width <= 1024
 /***********************************************************************************
 Width size <= 1024
 ************************************************************************************/
+@media screen and (min-width : 769px) and (max-width: 960px){
 
+	#subcontainer { width:68% !important; float:right; margin-right:8px; }
+
+}
 @media screen and (max-width : 768px) {
 	.app_add_form .theme_accordion_container {
 		float: left;
-		margin: 0.1% 2%;
-		width: 97% !important;
+		margin: 0.1% 0%;
+		width: 98% !important;
 	}
-	#subcontainer { width:69%; float:right; margin-right:8px; }
+	#subcontainer { width:68% !important; float:right; margin-right:8px; }
 }
 
 @media only screen and (max-device-width:768px) and (orientation:portrait) {
@@ -888,6 +896,10 @@ Width size <= 1024
 Width >= 1025 and < 1151
 *************************************************************************************/
 @media screen and (min-width : 1025px) and (max-width : 1151px) {
+	.scrollpanel{
+	    width:99.78% !important;
+	    float:left;
+	}
 	.app_add_form .theme_accordion_container {
 		float: left;
 		margin: 0.1% 0%;

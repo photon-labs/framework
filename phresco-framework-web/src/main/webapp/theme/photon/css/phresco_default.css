@@ -3912,7 +3912,7 @@ div.submit_input {
 .accordion_panel_inner {
     width:99.5%;
     float:left;
-    padding: 2px;
+    /*padding: 2px;*/
     overflow-x: hidden;
     overflow-y: auto;
 }
@@ -3924,8 +3924,8 @@ div.submit_input {
 }
 
  .downloadContent {
-	height: 350px;
-	overflow-y: hidden;
+	height: 200px;
+	overflow-y: auto;
 } 
 
 .siteaccordion {
@@ -3966,7 +3966,7 @@ div.submit_input {
 }
 
 .scrollpanel{
-    width:100%;
+    width:99.80%;
     float:left;
 }
 
