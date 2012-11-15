@@ -14,20 +14,10 @@ import org.apache.log4j.Logger;
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ListBranchCommand.ListMode;
-import org.eclipse.jgit.api.errors.CanceledException;
-import org.eclipse.jgit.api.errors.DetachedHeadException;
-import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.api.errors.InvalidConfigurationException;
-import org.eclipse.jgit.api.errors.InvalidRemoteException;
-import org.eclipse.jgit.api.errors.NoHeadException;
-import org.eclipse.jgit.api.errors.RefNotFoundException;
-import org.eclipse.jgit.api.errors.TransportException;
-import org.eclipse.jgit.api.errors.WrongRepositoryStateException;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.tmatesoft.svn.core.SVNDepth;
 import org.tmatesoft.svn.core.SVNDirEntry;
-import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNNodeKind;
 import org.tmatesoft.svn.core.SVNURL;
 import org.tmatesoft.svn.core.auth.ISVNAuthenticationManager;
@@ -45,11 +35,11 @@ import org.tmatesoft.svn.core.wc.SVNWCUtil;
 import com.google.gson.Gson;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
+import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.api.SCMManager;
 import com.photon.phresco.util.FileUtil;
 import com.photon.phresco.util.Utility;
-import com.phresco.pom.exception.PhrescoPomException;
 import com.phresco.pom.util.PomProcessor;
 
 public class SCMManagerImpl implements SCMManager, FrameworkConstants {
@@ -60,201 +50,111 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 	SVNClientManager cm = null;
 
 	public boolean importProject(String type, String url, String username,
-			String password, String branch, String revision, String projcode)
-			throws PhrescoException {
+			String password, String branch, String revision) throws Exception {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.importProject()");
-			S_LOGGER.debug("repoType " + type);
-			S_LOGGER.debug("repositoryUrl " + url);
 		}
-		try {
 			SVNURL svnURL = SVNURL.parseURIEncoded(url);
 			DAVRepositoryFactory.setup();
 			DefaultSVNOptions options = new DefaultSVNOptions();
 			cm = SVNClientManager.newInstance(options, username, password);
-			if (SVN.equals(type)) {
+		if (SVN.equals(type)) {
+			if(debugEnabled){
+				S_LOGGER.debug("SVN type");
+			}
+			boolean valid = checkOutFilter(url, username, password, revision, svnURL);
+			if(debugEnabled){
+				S_LOGGER.debug("Completed");
+			}
+			return valid;
+		} else if (GIT.equals(type)) {
+			if(debugEnabled){
+				S_LOGGER.debug("GIT type");
+			}
+			String uuid = UUID.randomUUID().toString();
+			File gitImportTemp = new File(Utility.getPhrescoTemp(), uuid);
+			if(debugEnabled){
+				S_LOGGER.debug("gitImportTemp " + gitImportTemp);
+			}
+			if (gitImportTemp.exists()) {
 				if(debugEnabled){
-					S_LOGGER.debug("SVN type");
-				}
-				boolean valid = checkOutFilter(url, username, password, revision, svnURL);
-				if(debugEnabled){
-					S_LOGGER.debug("Completed");
-				}
-				return valid;
-			} else if (GIT.equals(type)) {
-				if(debugEnabled){
-					S_LOGGER.debug("GIT type");
-				}
-				String uuid = UUID.randomUUID().toString();
-				File gitImportTemp = new File(Utility.getPhrescoTemp(), uuid);
-				if(debugEnabled){
-					S_LOGGER.debug("gitImportTemp " + gitImportTemp);
-				}
-				if (gitImportTemp.exists()) {
-					if(debugEnabled){
 					S_LOGGER.debug("Empty git directory need to be removed before importing from git ");
-					}
-					FileUtils.deleteDirectory(gitImportTemp);
 				}
+				FileUtils.deleteDirectory(gitImportTemp);
+			}
+			if(debugEnabled){
+				S_LOGGER.debug("gitImportTemp " + gitImportTemp);
+			}
+			importFromGit(url, gitImportTemp, username, password);
+			if(debugEnabled){
+				S_LOGGER.debug("Validating Phresco Definition");
+			}
+			boolean valid = cloneFilter(gitImportTemp, url, true);
+			if (gitImportTemp.exists()) {
 				if(debugEnabled){
-					S_LOGGER.debug("gitImportTemp " + gitImportTemp);
-				}
-				importFromGit(url, gitImportTemp, username, password);
-				if(debugEnabled){
-					S_LOGGER.debug("Validating Phresco Definition");
-				}
-				boolean valid = cloneFilter(gitImportTemp, url, true);
-				if (gitImportTemp.exists()) {
-					if(debugEnabled){
 					S_LOGGER.debug("Deleting ~Temp");
-					}
-					FileUtils.deleteDirectory(gitImportTemp);
 				}
-				if(debugEnabled){
-					S_LOGGER.debug("Completed");
-				}
-				return valid;
+				FileUtils.deleteDirectory(gitImportTemp);
 			}
-		} catch (SVNException e) {
 			if(debugEnabled){
-				S_LOGGER.error("Entering into catch block of importProject() "+ e.getLocalizedMessage());
+				S_LOGGER.debug("Completed");
 			}
-			throw new PhrescoException(e.getLocalizedMessage());
-		} catch (IOException e) {
-			if(debugEnabled){
-				S_LOGGER.error("Entering into catch block of importProject() "+ e.getLocalizedMessage());
-			}
-			throw new PhrescoException(e.getLocalizedMessage());
-		} catch (PhrescoException e) {
-			if(debugEnabled){
-				S_LOGGER.error("Entering into catch block of importProject() "+ e.getLocalizedMessage());
-			}
-			throw new PhrescoException(e.getLocalizedMessage());
-		} catch (Exception e) {
-			if(debugEnabled){
-				S_LOGGER.error("Entering into catch block of importProject() "+ e.getLocalizedMessage());
-			}
-			throw new PhrescoException(e.getLocalizedMessage());
+			return valid;
 		}
 		return false;
 	}
 
-	public boolean updateProject(String type, String url, String username,
-			String password, String branch, String revision, String projcode)throws PhrescoException {
+	public boolean updateProject(String type, String url, String username ,
+			String password, String branch, String revision, String projcode) throws Exception  {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.updateproject()");
 		}
-		try {
-			if ("svn".equals(type)) {
-				if(debugEnabled){
-					S_LOGGER.debug("SVN type");
-				}
-				DAVRepositoryFactory.setup();
-				SVNURL svnURL = SVNURL.parseURIEncoded(url);
-				DefaultSVNOptions options = new DefaultSVNOptions();
-				cm = SVNClientManager.newInstance(options,
-						username, password);
-				if(debugEnabled){
-					S_LOGGER.debug("update SCM Connection " + url);
-					S_LOGGER.debug("userName " + username);
-					S_LOGGER.debug("Repo type " + type);
-				}
-				// updateSCMConnection(projcode, url);
+		if (SVN.equals(type)) {
+			if(debugEnabled){
+				S_LOGGER.debug("SVN type");
+			}
+			DAVRepositoryFactory.setup();
+			SVNURL svnURL = SVNURL.parseURIEncoded(url);
+			DefaultSVNOptions options = new DefaultSVNOptions();
+			cm = SVNClientManager.newInstance(options, username, password);
+			if(debugEnabled){
+				S_LOGGER.debug("update SCM Connection " + url);
+			}
+			 updateSCMConnection(projcode, url);
 				// revision = HEAD_REVISION.equals(revision) ? revision
 				// : revisionVal;
-				File updateDir = new File(Utility.getProjectHome(), projcode);
-				if(debugEnabled){
-					S_LOGGER.debug("updateDir SVN... " + updateDir);
-					S_LOGGER.debug("Updating...");
-				}
-				SVNUpdateClient uc = cm.getUpdateClient();
-				uc.doUpdate(updateDir, SVNRevision.parse(revision),
-						SVNDepth.UNKNOWN, true, true);
-				if(debugEnabled){
-					S_LOGGER.debug("Updated!");
-				}
-				return true;
-			} else if ("git".equals(type)) {
-				if(debugEnabled){
-					S_LOGGER.debug("GIT type");
-					S_LOGGER.debug("update SCM Connection " + url);
-					S_LOGGER.debug("userName " + username);
-					S_LOGGER.debug("Repo type " + type);
-				}
-				updateSCMConnection(projcode, url);
-				File updateDir = new File(Utility.getProjectHome(), projcode); 
-				if(debugEnabled){
-					S_LOGGER.debug("Updating...");
-					S_LOGGER.debug("updateDir GIT... " + updateDir);
-				}
-				Git git = Git.open(updateDir); // checkout is the folder with .git
-				git.pull().call(); // succeeds
-				if(debugEnabled){
-					S_LOGGER.debug("Updated!");
-				}
-				return true;
-			}
-		} catch (SVNException e) {
+			File updateDir = new File(Utility.getProjectHome(), projcode);
 			if(debugEnabled){
-				S_LOGGER.error("Entering into catch block of updateProject() "+ e.getLocalizedMessage());
+				S_LOGGER.debug("updateDir SVN... " + updateDir);
+				S_LOGGER.debug("Updating...");
 			}
-			throw new PhrescoException(e.getLocalizedMessage());
-		} catch (IOException e) {
+			SVNUpdateClient uc = cm.getUpdateClient();
+			uc.doUpdate(updateDir, SVNRevision.parse(revision), SVNDepth.UNKNOWN, true, true);
 			if(debugEnabled){
-				S_LOGGER.error("Entering into catch block of updateProject() "+ e.getLocalizedMessage());
+				S_LOGGER.debug("Updated!");
 			}
-			throw new PhrescoException(e.getLocalizedMessage());
-			// Below Exceptions for GIT command
-		} catch (WrongRepositoryStateException e) {
+			return true;
+		} else if (GIT.equals(type)) {
 			if(debugEnabled){
-				S_LOGGER.error("Entering into catch block of updateProject() "+ e.getLocalizedMessage());
+				S_LOGGER.debug("GIT type");
 			}
-			throw new PhrescoException(e.getLocalizedMessage());
-		} catch (InvalidConfigurationException e) {
+			updateSCMConnection(projcode, url);
+			File updateDir = new File(Utility.getProjectHome(), projcode); 
 			if(debugEnabled){
-				S_LOGGER.error("Entering into catch block of updateProject() "+ e.getLocalizedMessage());
+				S_LOGGER.debug("updateDir GIT... " + updateDir);
 			}
-			throw new PhrescoException(e.getLocalizedMessage());
-		} catch (DetachedHeadException e) {
+			Git git = Git.open(updateDir); // checkout is the folder with .git
+			git.pull().call(); // succeeds
 			if(debugEnabled){
-				S_LOGGER.error("Entering into catch block of updateProject() "+ e.getLocalizedMessage());
+				S_LOGGER.debug("Updated!");
 			}
-			throw new PhrescoException(e.getLocalizedMessage());
-		} catch (InvalidRemoteException e) {
-			if(debugEnabled){
-				S_LOGGER.error("Entering into catch block of updateProject() "+ e.getLocalizedMessage());
-			}
-			throw new PhrescoException(e.getLocalizedMessage());
-		} catch (CanceledException e) {
-			if(debugEnabled){
-				S_LOGGER.error("Entering into catch block of updateProject() "+ e.getLocalizedMessage());
-			}
-			throw new PhrescoException(e.getLocalizedMessage());
-		} catch (RefNotFoundException e) {
-			if(debugEnabled){
-				S_LOGGER.error("Entering into catch block of updateProject() "+ e.getLocalizedMessage());
-			}
-			throw new PhrescoException(e.getLocalizedMessage());
-		} catch (NoHeadException e) {
-			if(debugEnabled){
-				S_LOGGER.error("Entering into catch block of updateProject() "+ e.getLocalizedMessage());
-			}
-			throw new PhrescoException(e.getLocalizedMessage());
-		} catch (TransportException e) {
-			if(debugEnabled){
-				S_LOGGER.error("Entering into catch block of updateProject() "+ e.getLocalizedMessage());
-			}
-			throw new PhrescoException(e.getLocalizedMessage());
-		} catch (GitAPIException e) {
-			if(debugEnabled){
-				S_LOGGER.error("Entering into catch block of updateProject() "+ e.getLocalizedMessage());
-			}
-			throw new PhrescoException(e.getLocalizedMessage());
+			return true;
 		}
+
 		return false;
 	}
 
-	private void importToWorkspace(File gitImportTemp, String projectHome,String code) throws PhrescoException {
+	private void importToWorkspace(File gitImportTemp, String projectHome,String code) throws Exception {
 		try {
 			if(debugEnabled){
 				S_LOGGER.debug("Entering Method  SCMManagerImpl.importToWorkspace()");
@@ -267,12 +167,12 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				if(debugEnabled){
 					S_LOGGER.debug("workspaceProjectDir exists "+ workspaceProjectDir);
 				}
-				throw new PhrescoException("File already exists in workspace");
+				throw new PhrescoException(PROJECT_ALREADY);
 			}
 			if(debugEnabled){
 				S_LOGGER.debug("Copyin from Temp to workspace...");
-				S_LOGGER.debug("gitImportTemp ====> " + gitImportTemp);
-				S_LOGGER.debug("workspaceProjectDir ====> " + workspaceProjectDir);
+				S_LOGGER.debug("gitImportTemp " + gitImportTemp);
+				S_LOGGER.debug("workspaceProjectDir " + workspaceProjectDir);
 			}
 			FileUtils.copyDirectory(gitImportTemp, workspaceProjectDir);
 			if(debugEnabled){
@@ -284,13 +184,12 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				S_LOGGER.error("Entering into catch block of importToWorkspace() "+ e.getLocalizedMessage());
 				S_LOGGER.error("pack file is not deleted ");
 			}
-			throw new PhrescoException(e.getLocalizedMessage());
 		}
 	}
 
-	private void updateSCMConnection(String projCode, String repoUrl)throws PhrescoException {
+	private void updateSCMConnection(String projCode, String repoUrl)throws Exception {
 		if(debugEnabled){
-			S_LOGGER.debug("Entering Method  SCMManagerImpl.updateSCMConnection()");
+			S_LOGGER.debug("Entering Method SCMManagerImpl.updateSCMConnection()");
 		}
 		try {
 			PomProcessor processor = getPomProcessor(projCode);
@@ -301,15 +200,15 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				processor.setSCM(repoUrl, "", "", "");
 				processor.save();
 			}
-		} catch (PhrescoPomException e) {
+		} catch (Exception e) {
 			if(debugEnabled){
 				S_LOGGER.error("Entering catch block of updateSCMConnection()"+ e.getLocalizedMessage());
 			}
-			throw new PhrescoException(e.getLocalizedMessage());
+			throw new PhrescoException(POM_URL_FAIL);
 		}
 	}
 
-	private PomProcessor getPomProcessor(String projCode)throws PhrescoException {
+	private PomProcessor getPomProcessor(String projCode)throws Exception {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.getPomProcessor()");
 		}
@@ -330,7 +229,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			if(debugEnabled){
 				S_LOGGER.error("Entring into catch block of getPomProcessor() "+ e.getLocalizedMessage());
 			}
-			throw new PhrescoException(e.getLocalizedMessage());
+			throw new PhrescoException(NO_POM_XML);
 		}
 	}
 
@@ -343,23 +242,15 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		FSRepositoryFactory.setup();
 	}
 
-	private boolean checkOutFilter(String url, String name, String password,String revision, SVNURL svnURL) throws PhrescoException {
+	private boolean checkOutFilter(String url, String name, String password,String revision, SVNURL svnURL) throws Exception {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.checkOutFilter()");
 		}
 		setupLibrary();
 		SVNRepository repository = null;
-		try {
 			repository = SVNRepositoryFactory.create(SVNURL.parseURIEncoded(url));
-		} catch (SVNException svne) {
-			if(debugEnabled){
-				S_LOGGER.error("error while creating an SVNRepository for location "+ url + "': " + svne.getMessage());
-			}
-			throw new PhrescoException(svne.getLocalizedMessage());
-		}
 		ISVNAuthenticationManager authManager = SVNWCUtil.createDefaultAuthenticationManager(name, password);
 		repository.setAuthenticationManager(authManager);
-		try {
 			SVNNodeKind nodeKind = repository.checkPath("", -1);
 			if (nodeKind == SVNNodeKind.NONE) {
 				if(debugEnabled){
@@ -376,25 +267,18 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			}
 			boolean valid = validateDir(repository, "", revision, svnURL, true);
 			return valid;
-		} catch (SVNException svne) {
-			if(debugEnabled){
-				S_LOGGER.error("error while listing entries: " + svne.getMessage());
-			}
-			throw new PhrescoException(svne.getLocalizedMessage());
-		}
 	}
 
 	private boolean validateDir(SVNRepository repository, String path,
-			String revision, SVNURL svnURL, boolean recursive)throws PhrescoException {
+			String revision, SVNURL svnURL, boolean recursive)throws Exception {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.validateDir()");
 		}
 		// first level check
-		try {
 			Collection entries = repository.getDir(path, -1, null, (Collection) null);
 			Iterator iterator = entries.iterator();
 			if(debugEnabled){
-				S_LOGGER.debug("Entry size ======> " + entries.size());
+				S_LOGGER.debug("Entry size " + entries.size());
 			}
 			if (entries.size() != 0) {
 				while (iterator.hasNext()) {
@@ -405,12 +289,17 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 							S_LOGGER.debug("Entry name " + entry.getName());
 							S_LOGGER.debug("Entry Path " + entry.getURL());
 						}
-						ApplicationInfo appInfo = getSvnAppInfo(revision, svnURL);
+						ProjectInfo projectInfo = getSvnAppInfo(revision, svnURL);
 						if(debugEnabled){
-							S_LOGGER.debug("AppInfo " + appInfo);
+							S_LOGGER.debug("AppInfo " + projectInfo);
 						}
 						SVNUpdateClient uc = cm.getUpdateClient();
-						File file = new File(Utility.getProjectHome(), appInfo.getName());
+						ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
+						
+						File file = new File(Utility.getProjectHome(), appInfo.getAppDirName());
+						if (file.exists()) {
+							throw new PhrescoException(PROJECT_ALREADY);
+			            }
 						if(debugEnabled){
 							S_LOGGER.debug("Checking out...");
 						}
@@ -421,7 +310,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 							S_LOGGER.debug("updating pom.xml");
 						}
 						// update connection url in pom.xml
-						updateSCMConnection(appInfo.getName(),
+						updateSCMConnection(appInfo.getAppDirName(),
 								svnURL.toDecodedString());
 						dotphresco = true;
 						return dotphresco;
@@ -429,7 +318,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 						// second level check (only one iteration)
 						SVNURL svnnewURL = svnURL.appendPath("/" + entry.getName(), true);
 						if(debugEnabled){
-							S_LOGGER.debug("Appended SVNURL for subdir---------> " + svnURL);
+							S_LOGGER.debug("Appended SVNURL for subdir " + svnURL);
 							S_LOGGER.debug("checking subdirectories");
 						}
 						validateDir(repository,(path.equals("")) ? entry.getName() : path
@@ -437,20 +326,13 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 					}
 				}
 			}
-		} catch (Exception e) {
-			if(debugEnabled){
-				S_LOGGER.error("Entering into catch block of validateDir() " + e.getLocalizedMessage());
-			}
-			throw new PhrescoException(e.getLocalizedMessage());
-		}
 		return dotphresco;
 	}
 
-	private void importFromGit(String url, File gitImportTemp, String username, String password)throws PhrescoException {
+	private void importFromGit(String url, File gitImportTemp, String username, String password)throws Exception {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.importFromGit()");
 		}
-		try {
 			if(debugEnabled){
 				S_LOGGER.debug("importing git " + url);
 			}
@@ -467,42 +349,32 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		            S_LOGGER.debug("(standard): cloned branch " + b.getName());
 		        }
 		        repo.getRepository().close();
-		} catch (InvalidRemoteException e) {
-			if(debugEnabled){
-				S_LOGGER.error("Entering into catch block of importFromGit() " + e.getLocalizedMessage());
-			}
-			throw new PhrescoException(e.getLocalizedMessage());
-		} catch (GitAPIException e) {
-			if(debugEnabled){
-				S_LOGGER.error("Entering into catch block of importFromGit() " + e.getLocalizedMessage());
-			}
-			throw new PhrescoException(e.getLocalizedMessage());
-		}
 	}
 
-	private boolean cloneFilter(File appDir, String url, boolean recursive)throws PhrescoException {
+	private boolean cloneFilter(File appDir, String url, boolean recursive)throws Exception {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.cloneFilter()");
 		}
 		if (appDir.isDirectory()) {
-			ApplicationInfo appInfo = getGitAppInfo(appDir);
+			ProjectInfo projectInfo = getGitAppInfo(appDir);
 			if(debugEnabled){
-				S_LOGGER.debug("appInfo " + appInfo);
+				S_LOGGER.debug("appInfo " + projectInfo);
 			}
+			ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
 			if (appInfo != null) {
-				importToWorkspace(appDir, Utility.getProjectHome(),	appInfo.getName());
+				importToWorkspace(appDir, Utility.getProjectHome(),	appInfo.getAppDirName());
 				if(debugEnabled){
 					S_LOGGER.debug("updating pom.xml");
 				}
 				// update connection in pom.xml
-				updateSCMConnection(appInfo.getName(), url);
+				updateSCMConnection(appInfo.getAppDirName(), url);
 				return true;
 			}
 		}
 		return false;
 	}
 
-	private ApplicationInfo getGitAppInfo(File directory)throws PhrescoException {
+	private ProjectInfo getGitAppInfo(File directory)throws PhrescoException {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  Applications.getGitAppInfo()");
 		}
@@ -517,18 +389,18 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				return null;
 			}
 			reader = new BufferedReader(new FileReader(dotProjectFile));
-			return new Gson().fromJson(reader, ApplicationInfo.class);
+			return new Gson().fromJson(reader, ProjectInfo.class);
 		} catch (FileNotFoundException e) {
 			if(debugEnabled){
 				S_LOGGER.error("Entering into catch block of getGitAppInfo() "+ e.getLocalizedMessage());
 			}
-			throw new PhrescoException(e.getLocalizedMessage());
+			throw new PhrescoException(INVALID_FOLDER);
 		} finally {
 			Utility.closeStream(reader);
 		}
 	}
 
-	private ApplicationInfo getSvnAppInfo(String revision, SVNURL svnURL)throws PhrescoException {
+	private ProjectInfo getSvnAppInfo(String revision, SVNURL svnURL)throws Exception {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  Applications.getSvnAppInfo()");
 		}
@@ -542,24 +414,12 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			uc.doCheckout(svnURL.appendPath(PHRESCO, true), tempDir,
 					SVNRevision.UNDEFINED, SVNRevision.parse(revision),
 					SVNDepth.UNKNOWN, false);
-
 			File dotProjectFile = new File(tempDir, PROJECT_INFO);
 			if (!dotProjectFile.exists()) {
-				throw new PhrescoException("Phresco Project definition not found");
+				throw new PhrescoException(INVALID_FOLDER);
 			}
-
 			reader = new BufferedReader(new FileReader(dotProjectFile));
-			return new Gson().fromJson(reader, ApplicationInfo.class);
-		} catch (SVNException e) {
-			if(debugEnabled){
-				S_LOGGER.error("Entering into catch block of getSvnAppInfo() "+ e.getLocalizedMessage());
-			}
-			throw new PhrescoException(e.getLocalizedMessage());
-		} catch (FileNotFoundException e) {
-			if(debugEnabled){
-				S_LOGGER.error("Entering into catch block of getSvnAppInfo() "+ e.getLocalizedMessage());
-			}
-			throw new PhrescoException(e.getLocalizedMessage());
+			return new Gson().fromJson(reader, ProjectInfo.class);
 		} finally {
 			Utility.closeStream(reader);
 

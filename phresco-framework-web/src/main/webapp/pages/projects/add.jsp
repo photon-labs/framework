@@ -325,6 +325,7 @@
 
 <script type="text/javascript">
 	addProjectAccordion();
+	hideLoadingIcon();//To hide the loading icon
 	
 	//To check whether the device is ipad or not and then apply jquery scrollbar
 	if(!isiPad()) {

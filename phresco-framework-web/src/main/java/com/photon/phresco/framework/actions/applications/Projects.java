@@ -75,8 +75,9 @@ public class Projects extends FrameworkBaseAction {
     private String mobTechError = "";
     private String appTechError = "";
     private String webTechError = "";
+    private String statusFlag = "" ;
 
-    /**
+	/**
      * To get the list of projects
      * @return
      */
@@ -84,13 +85,20 @@ public class Projects extends FrameworkBaseAction {
         if (s_debugEnabled) {
             S_LOGGER.debug("Entering Method  Applications.list()");
         }
-
+        
         try {
             ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
             List<ProjectInfo> projects = projectManager.discover(getCustomerId());
             setReqAttribute(REQ_PROJECTS, projects);
             setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
             removeSessionAttribute(projectCode);
+            if(statusFlag.equals("import")){
+            	System.out.println(getText(IMPORT_SUCCESS_PROJECT));
+            	addActionMessage(getText(IMPORT_SUCCESS_PROJECT));
+            } else if(statusFlag.equals("update")){
+            	System.out.println(getText(SUCCESS_PROJECT_UPDATE));
+            	addActionMessage(getText(SUCCESS_PROJECT_UPDATE));
+            }
         } catch (PhrescoException e) {
             if (s_debugEnabled) {
                 S_LOGGER.error("Entered into catch block of Projects.list()" + FrameworkUtil.getStackTraceAsString(e));
@@ -557,4 +565,12 @@ public class Projects extends FrameworkBaseAction {
     public void setTechGroupId(String techGroupId) {
         this.techGroupId = techGroupId;
     }
+    
+    public String getStatusFlag() {
+		return statusFlag;
+	}
+
+	public void setStatusFlag(String statusFlag) {
+		this.statusFlag = statusFlag;
+	}
 }

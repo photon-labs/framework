@@ -21,7 +21,6 @@
 function yesnoPopup(modalObj, url, title, okUrl, okLabel, form) {
 	modalObj.click(function() {
 		$('.popupClose').hide();
-
 		$('#popupTitle').html(title); // Title for the popup
 		$('.popupClose').hide(); //no need close button since yesno popup
 		$('.popupOk, #popupCancel').show(); // show ok & cancel button
@@ -33,13 +32,11 @@ function yesnoPopup(modalObj, url, title, okUrl, okLabel, form) {
 		
 		var data = "";
 		data = getBasicParams(); //customerid, projectid, appid
-
-		if (!isBlank($(this).attr('additionalParam'))) {
+		var additionalParam = $(this).attr('additionalParam'); //additional params if any
+		if (!isBlank(additionalParam)) {
 			data = data.concat("&");
-			var additionalParam = $(this).attr('additionalParam'); //additional params if any
 			data = data.concat(additionalParam);
 		}
-		
 		var params = getParameters(form, '');
 		if (!isBlank(params)) {
 			data = data.concat("&");
@@ -124,7 +121,7 @@ function progressPopupAsSecPopup(url, title, appId, actionType, form, additional
 
 function clickMenu(menu, tag, form, additionalParam) {
 	menu.click(function() {
-//		showLoadingIcon();
+		showLoadingIcon();
 		inActivateAllMenu(menu);
 		activateMenu($(this));
 		var selectedMenu = $(this).attr("id");
@@ -140,7 +137,7 @@ function clickButton(button, tag) {
 	});
 }
 
-function loadContent(pageUrl, form, tag, additionalParams, callSuccessEvent, ajaxCallType) {
+function loadContent(pageUrl, form, tag, additionalParams, callSuccessEvent, ajaxCallType, callbackFunction) {
 //	showLoadingIcon(tag);
 	if (ajaxCallType == undefined || ajaxCallType == "") {
 		ajaxCallType = true;
@@ -152,7 +149,7 @@ function loadContent(pageUrl, form, tag, additionalParams, callSuccessEvent, aja
 		data : params,
 		type : "POST",
 		success : function(data) {
-			loadData(data, tag, pageUrl, callSuccessEvent);
+			loadData(data, tag, pageUrl, callSuccessEvent, callbackFunction);
 		},
 		async: ajaxCallType
 	});
@@ -212,14 +209,18 @@ function validateJson(url, form, containerTag, jsonParam, progressText, disabled
 	});
 }
 
-function loadData(data, tag, pageUrl, callSuccessEvent) {
+function loadData(data, tag, pageUrl, callSuccessEvent, callbackFunction) {
 	//To load the login page if the user session is not available
 	if (data != undefined && data != "[object Object]" && data != "[object XMLDocument]" 
 		&& !isBlank(data) && data.indexOf("Remember me") >= 0) {
 		window.location.href = "logout.action";
 	} else {
 		if (callSuccessEvent != undefined && !isBlank(callSuccessEvent) && callSuccessEvent) {
-			successEvent(pageUrl, data);
+			if (callbackFunction != undefined && !isBlank(callbackFunction)) {
+				window[callbackFunction](data);
+			} else {
+				successEvent(pageUrl, data);
+			}
 		} else {
 			tag.empty();
 			tag.html(data);
@@ -354,6 +355,18 @@ function enableButton(buttonObj) {
 	buttonObj.attr("disabled", false);
 }
 
+//Enables button
+function enableControl(tagControl, css) {
+	tagControl.attr("class", css);
+	tagControl.attr("disabled", false);
+}
+
+// Disables button
+function disableControl(tagControl, css) {
+	tagControl.attr("class", css);
+	tagControl.attr("disabled", true);
+}
+
 function toDisableAllCheckbox(currentCheckbox,childCheckBox, disable) {
 	if($(currentCheckbox).is(':checked')){
 		childCheckBox.prop('disabled', disable);
@@ -423,10 +436,10 @@ function accordion() {
 }
 
 function getLoadingImgPath() {
-	var src = "theme/photon/images/loading_blue.gif";
+	var src = "theme/red_blue/images/loading_blue.gif";
 	var theme =localStorage["color"];
-    if (theme == undefined || theme == "theme/photon/css/red.css") {
-    	src = "theme/photon/images/loading_red.gif";
+    if (theme == undefined || theme == "theme/red_blue/css/red.css") {
+    	src = "theme/red_blue/images/loading_red.gif";
     }
     return src;
 }
@@ -493,22 +506,22 @@ function changeTheme() {
   	if (localStorage["color"] != null) {
         $("link[title='phresco']").attr("href", localStorage["color"]);
     } else {
-		$("link[title='phresco']").attr("href", "theme/photon/css/photon_theme.css");
+		$("link[title='phresco']").attr("href", "theme/red_blue/css/red.css");
     } 
 }
 
 function showWelcomeImage() {
 	var theme = localStorage['color'];
-	if (theme == "theme/photon/css/blue.css") {
+	if (theme == "theme/red_blue/css/blue.css") {
 		$("link[id='theme']").attr("href", localStorage["color"]);
-		$('.headerlogoimg').attr("src","theme/photon/images/phresco_header_blue.png");
-		$('.phtaccinno').attr("src","theme/photon/images/acc_inov_blue.png");
-		$('.welcomeimg').attr("src","theme/photon/images/welcome_photon_blue.png");
-	} else if (theme == null || theme == undefined || theme == "theme/photon/css/blue.css") {
-		$("link[id='theme']").attr("href", "theme/photon/css/photon_theme.css");
-		$('.headerlogoimg').attr("src","theme/photon/images/phresco_header_red.png");
-		$('.phtaccinno').attr("src","theme/photon/images/acc_inov_red.png");
-		$('.welcomeimg').attr("src","theme/photon/images/welcome_photon_red.png");
+		$('.headerlogoimg').attr("src","theme/red_blue/images/phresco_header_blue.png");
+		$('.phtaccinno').attr("src","theme/red_blue/images/acc_inov_blue.png");
+		$('.welcomeimg').attr("src","theme/red_blue/images/welcome_photon_blue.png");
+	} else if (theme == null || theme == undefined || theme == "theme/red_blue/css/blue.css") {
+		$("link[id='theme']").attr("href", "theme/red_blue/css/red.css");
+		$('.headerlogoimg').attr("src","theme/red_blue/images/phresco_header_red.png");
+		$('.phtaccinno').attr("src","theme/red_blue/images/acc_inov_red.png");
+		$('.welcomeimg').attr("src","theme/red_blue/images/welcome_photon_red.png");
 	}
 }
 
@@ -685,27 +698,19 @@ function constructElements(data, pushToElement, isMultiple, controlType) {
 	}
 }
 
-function constructSingleSelectOptions(data, pushToElement) {
-	//See step 1
-	var selected = "";
-	$('#'+pushToElement+' option:selected').each(function() {
-		selected = $(this).val();
-	});
-	//See step 2
-	$("#"+pushToElement).empty();
+function constructSingleSelectOptions(dependentValues, pushToElement) {
+	var control = $('#'+ pushToElement + ' option:selected');
+	var selected = control.val();
+	var additionalParam = control.attr('additionalParam'); 
+	$("#" + pushToElement).empty();
 	var selectedStr = "";
-	//See step 3
-	for(i in data.dependentValues) {
-		//See step 4
-		if(data.dependentValues[i].value == selected) {
+	for(i in dependentValues) {
+		if(dependentValues[i].value == selected) {
 			selectedStr = "selected";
 		} else {
 			selectedStr = "";
 		}
-		//See step 5
-		var liElement = "<option value = '" + data.dependentValues[i].value + "' "+ selectedStr +">" + data.dependentValues[i].value + "</option>";
-		//See step 6
-		$("#"+pushToElement).append(liElement);
+		$("<option></option>", {value: dependentValues[i].value, text: dependentValues[i].value, additionalParam: additionalParam}).appendTo("#" + pushToElement);
 	}
 }
 
@@ -721,27 +726,27 @@ function constructSingleSelectOptions(data, pushToElement) {
  * Step 7. append constructed ul element multi select control 
  * 
  */
-function constructMultiSelectOptions(data, pushToElement) {
+function constructMultiSelectOptions(dependentValues, pushToElement) {
 	//See step 1
 	var selected = new Array();
 	$('#'+pushToElement+' input:checked').each(function() {
 	    selected.push($(this).val());
 	});
 	//See step 2
-	$("#"+pushToElement).empty();
+	$("#" + pushToElement).empty();
 	//See step 3
 	var ulElement =$(document.createElement('ul'));
 	var checkedStr = "";
 	//See step 4
-	for (i in data.dependentValues) {
+	for (i in dependentValues) {
 		//See step 5
-		if($.inArray(data.dependentValues[i].value, selected) > -1){
+		if($.inArray(dependentValues[i].value, selected) > -1){
 			checkedStr = "checked";
 		} else {
 			checkedStr = "";
 		}
 		//See step 6
-		var liElement = "<li><input type='checkbox' name='"+ pushToElement +"' value='" + data.dependentValues[i].value + "' class='popUpChckBox'"+checkedStr+">"+data.dependentValues[i].value+"</li>";
+		var liElement = "<li><input type='checkbox' name='"+ pushToElement +"' value='" + dependentValues[i].value + "' class='popUpChckBox'"+checkedStr+">"+dependentValues[i].value+"</li>";
 		ulElement.append(liElement);
 	}
 	//See step 7
@@ -767,6 +772,100 @@ function isValidUrl(url) {
     } else {
       return true;
     }   
+}
+
+//Used for the dynamic parameter
+//To set the previous dependency for the control in onfocus
+function setPreviousDependent(self) {
+	var additionalParam = $('option:selected', self).attr('additionalParam');
+	if (additionalParam != undefined) {
+		$(self).attr('additionalParam', 'previous' +  additionalParam.charAt(0).toUpperCase() + additionalParam.slice(1));
+	}
+}
+
+// This will parse a delimited string into an array of
+// arrays. The default delimiter is the comma, but this
+// can be overriden in the second argument.
+function CSVToArray(strData, strDelimiter) {
+	// Check to see if the delimiter is defined. If not,
+	// then default to comma.
+	strDelimiter = (strDelimiter || ",");
+
+	// Create a regular expression to parse the CSV values.
+	var objPattern = new RegExp(
+		(
+			// Delimiters.
+			"(\\" + strDelimiter + "|\\r?\\n|\\r|^)" +
+
+			// Quoted fields.
+			"(?:\"([^\"]*(?:\"\"[^\"]*)*)\"|" +
+
+			// Standard fields.
+			"([^\"\\" + strDelimiter + "\\r\\n]*))"
+		),
+		"gi"
+		);
+
+
+	// Create an array to hold our data. Give the array
+	// a default empty first row.
+	var arrData = [[]];
+
+	// Create an array to hold our individual pattern
+	// matching groups.
+	var arrMatches = null;
+
+
+	// Keep looping over the regular expression matches
+	// until we can no longer find a match.
+	while (arrMatches = objPattern.exec( strData )){
+
+		// Get the delimiter that was found.
+		var strMatchedDelimiter = arrMatches[ 1 ];
+
+		// Check to see if the given delimiter has a length
+		// (is not the start of string) and if it matches
+		// field delimiter. If id does not, then we know
+		// that this delimiter is a row delimiter.
+		if (
+			strMatchedDelimiter.length &&
+			(strMatchedDelimiter != strDelimiter)
+			){
+
+			// Since we have reached a new row of data,
+			// add an empty row to our data array.
+			arrData.push( [] );
+
+		}
+
+
+		// Now that we have our delimiter out of the way,
+		// let's check to see which kind of value we
+		// captured (quoted or unquoted).
+		if (arrMatches[ 2 ]){
+
+			// We found a quoted value. When we capture
+			// this value, unescape any double quotes.
+			var strMatchedValue = arrMatches[ 2 ].replace(
+				new RegExp( "\"\"", "g" ),
+				"\""
+				);
+
+		} else {
+
+			// We found a non-quoted value.
+			var strMatchedValue = arrMatches[ 3 ];
+
+		}
+
+
+		// Now that we have our value string, let's add
+		// it to the data array.
+		arrData[ arrData.length - 1 ].push( strMatchedValue );
+	}
+
+	// Return the parsed data.
+	return( arrData );
 }
 
 //For Execute Sql
@@ -902,27 +1001,6 @@ function showSelectedDBWithVersions() {
 	
 	//hiding loading icon..
 	hideLoadingIcon();
-}
-
-function showHideAndUpdateData(data) {
-	if (data.controlsTobeHidden != undefined && !isBlank(data.controlsTobeHidden)) {
-		hideControl(data.controlsTobeHidden);
-	}
-	if (data.controlsTobeShown != undefined && !isBlank(data.controlsTobeShown)) {
-		showControl(data.controlsTobeShown);
-	}
-	if (data.dependentValues != undefined && !isBlank(data.dependentValues)) {
-		pushToElement = data.pushToElement;
-		isMultiple = $("#"+pushToElement).attr("isMultiple");
-		controlType = $("#"+pushToElement).attr("type");
-		constructElements(data, pushToElement, isMultiple, controlType);
-	}
-	
-	var selectedOption = $('#' + data.controlsTobeShown[0]).val();
-	var currentParamKey = data.controlsTobeShown[0];
-	if (data.needToCallAgain != undefined && data.needToCallAgain) {
-		changeEveDependancyListener(selectedOption, currentParamKey);
-	}
 }
 
 function hideControl(controls) {

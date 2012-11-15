@@ -39,6 +39,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.antlr.stringtemplate.StringTemplate;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -742,6 +743,13 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     		checkboxElement.setAttribute("checked", "");
     	}
     	checkboxElement.setAttribute("ctrlsId", pm.getControlId());
+    	String additionalParam = getAdditionalParam(pm.getValue(), pm.getDependency());
+        if (StringUtils.isNotEmpty(additionalParam)) {
+            StringBuilder builder = new StringBuilder("additionalParam='dependency=");
+            builder.append(additionalParam);
+            builder.append("' ");
+            checkboxElement.setAttribute("additionalParam", builder);
+        }
     	
     	controlGroupElement.setAttribute("lable", lableElmnt);
     	controlGroupElement.setAttribute("controls", checkboxElement);
@@ -767,7 +775,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	StringTemplate lableElmnt = constructLabelElement(pm.isMandatory(), pm.getLableClass(), pm.getLableText());
     	
     	StringTemplate selectElement = new StringTemplate(getSelectTemplate());
-    	StringBuilder options = constructOptions(pm.getObjectValue(), pm.getSelectedValues());
+    	StringBuilder options = constructOptions(pm.getObjectValue(), pm.getSelectedValues(), pm.getDependency());
     	selectElement.setAttribute("name", pm.getName());
     	selectElement.setAttribute("cssClass", pm.getCssClass());
     	selectElement.setAttribute("options", options);
@@ -794,6 +802,8 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	StringTemplate multiSelectElement = new StringTemplate(getMultiSelectTemplate());
     	multiSelectElement.setAttribute("cssClass", pm.getCssClass());
     	multiSelectElement.setAttribute("id", pm.getId());
+    	multiSelectElement.setAttribute("additionalParam", pm.getDependency());
+    	
     	StringBuilder multiSelectOptions = constructMultiSelectOptions(pm.getName(), pm.getObjectValue(), pm.getSelectedValues());
     	multiSelectElement.setAttribute("multiSelectOptions", multiSelectOptions);
     	multiSelectElement.setAttribute("ctrlsId", pm.getControlId());
@@ -804,21 +814,50 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	return controlGroupElement;
     }
     
-    private static StringBuilder constructOptions(List<? extends Object> values, List<String> selectedValues) {
+    private static StringBuilder constructOptions(List<? extends Object> values, List<String> selectedValues, String dependency) {
     	StringBuilder builder = new StringBuilder();
     	String selectedStr = "";
-    	for (Object value : values) {
-    		String optionValue = getValue(value);
-    		if (selectedValues!= null && selectedValues.contains(optionValue)) {
-    			selectedStr = "selected";
-    		} else {
-    			selectedStr = "";
-    		}
-    		builder.append("<option value=\"");
-    		builder.append(optionValue + "\" " + selectedStr + ">" + optionValue + "</option>");
+    	if (CollectionUtils.isNotEmpty(values)) {
+        	for (Object value : values) {
+        		String optionValue = getValue(value);
+        		if (selectedValues!= null && selectedValues.contains(optionValue)) {
+        			selectedStr = "selected";
+        		} else {
+        			selectedStr = "";
+        		}
+        		builder.append("<option value='");
+                builder.append(optionValue);
+                builder.append("' ");
+                String additionalParam = getAdditionalParam(value, dependency);
+                if (StringUtils.isNotEmpty(additionalParam)) {
+                    builder.append("additionalParam='dependency=");
+                    builder.append(additionalParam);
+                    builder.append("' ");
+                }
+                builder.append(selectedStr);
+                builder.append(">");
+                builder.append(optionValue);
+                builder.append("</option>");
+        	}
     	}
 
     	return builder;
+    }
+    
+    private static String getAdditionalParam(Object value, String dependency) {
+        StringBuilder builder = new StringBuilder();
+        boolean appendComma = false;
+        if (StringUtils.isNotEmpty(dependency)) {
+            appendComma = true;
+            builder.append(dependency);
+        }
+        if (value != null && value instanceof Value && StringUtils.isNotEmpty(((Value) value).getDependency())) {
+            if (appendComma) {
+                builder.append(",");
+            }
+            builder.append(((Value) value).getDependency());
+        }
+        return builder.toString();
     }
 
     private static StringBuilder constructMultiSelectOptions(String name, List<? extends Object> values, List<String> selectedValues) {
@@ -922,6 +961,8 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	sb.append("<div class='controls'>")
     	.append("<select class=\"input-xlarge $cssClass$\" ")
     	.append("id=\"$id$\" name=\"$name$\" isMultiple=\"$isMultiple$\" ")
+    	.append("additionalParam=\"\" ")
+    	.append("onfocus=\"setPreviousDependent(this);\" ")
     	.append("onchange=\"$onChangeFunction$\">")
     	.append("$options$</select>")
     	.append("<span class='help-inline' id=\"$ctrlsId$\"></span></div>");
@@ -945,7 +986,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	StringBuilder sb = new StringBuilder();
     	sb.append("<div class='controls'>")
     	.append("<input type='checkbox' class=\"$class$\" id=\"$id$\" ")
-    	.append("name=\"$name$\" value=\"$value$\" $checked$ onclick=\"$onClickFunction$\"/>")
+    	.append("name=\"$name$\" value=\"$value$\" $checked$ onclick=\"$onClickFunction$\" $additionalParam$/>")
     	.append("<span class='help-inline' id=\"$ctrlsId$\"></span></div>");
     	
     	return sb.toString();
@@ -954,7 +995,8 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     private static String getMultiSelectTemplate() {
     	StringBuilder sb = new StringBuilder();
     	sb.append("<div class='controls'><div class='multiSelectBorder'>")
-    	.append("<div class='multilist-scroller multiselect multiSelHeight $class$' id=\"$id$\"><ul>$multiSelectOptions$</ul>")
+    	.append("<div class='multilist-scroller multiselect multiSelHeight $class$' id=\"$id$\"")
+    	.append(" additionalParam=\"dependency=$additionalParam$\"><ul>$multiSelectOptions$</ul>")
     	.append("</div><span class='help-inline' id=\"$ctrlsId$\"></span></div></div>");
     	
     	return sb.toString();
@@ -979,5 +1021,34 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	.append("<input type='hidden' value='' name='DbWithSqlFiles' id='DbWithSqlFiles'></fieldset>");	
 
     	return sb.toString();
+    }
+    
+    public static List<String> getCsvAsList(String csv) {
+        Pattern csvPattern = Pattern.compile(CSV_PATTERN);
+        Matcher match = csvPattern.matcher(csv);
+
+        List<String> list = new ArrayList<String>(match.groupCount());
+        // For each field
+        while (match.find()) {
+            String value = match.group();
+            if (value == null) {
+                break;
+            }
+            if (value.endsWith(",")) {  // trim trailing ,
+                value = value.substring(0, value.length() - 1);
+            }
+            if (value.startsWith("\"")) { // assume also ends with
+                value = value.substring(1, value.length() - 1);
+            }
+            if (value.length() == 0) {
+                value = null;
+            }
+            list.add(value.trim());
+        }
+        if (CollectionUtils.isEmpty(list)) {
+            list.add(csv.trim());
+        }
+        
+        return list;
     }
 }

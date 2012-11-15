@@ -26,31 +26,46 @@
     <constant name="struts.custom.i18n.resources" value="framework" />
     <constant name="struts.ui.theme" value="simple" />
     
-    <package name="default" extends="struts-default,json-default">
+    <package name="login" extends="struts-default,json-default">
     
-	    <interceptors>
-	        <interceptor name="json" class="com.photon.phresco.framework.actions.JSONInterceptor"/>
-	    </interceptors>
-		
-    	<global-results>
-			<!-- <result name="success">/pages/login.jsp</result>-->
-			<result name="logError">/pages/errorReport.jsp</result>
-		</global-results>
-
-        <!--  Login Page Action -->
+    	 <!--  Login Page Action -->
         <action name="login" method="login" class="com.photon.phresco.framework.actions.Login">
             <result name="success">/pages/baselayout.jsp</result>
             <result name="failure">/pages/login.jsp</result>
         </action>
         
         <action name="cmdlogin" method="cmdLogin" class="com.photon.phresco.framework.actions.Login">
-            <result name="success">/admin/baselayout.jsp</result>
+           <!--  <result name="success">/admin/baselayout.jsp</result> -->
             <result name="failure">/pages/login.jsp</result>
-        </action>
+        </action> 
         
        	<action name="logout" method="logout" class="com.photon.phresco.framework.actions.Login">
             <result name="success">/pages/login.jsp</result>
         </action>
+    
+    </package>
+    
+     <package name="default" extends="struts-default,json-default">
+	    
+	    <interceptors>
+			<interceptor name="sessionValidatorInterceptor" class="com.photon.phresco.framework.actions.interceptors.SessionValidatorInterceptor">
+			</interceptor>
+			<interceptor name="json" class="com.photon.phresco.framework.actions.JSONInterceptor"/>
+		
+			<interceptor-stack name="interceptorStack">
+				<interceptor-ref name="sessionValidatorInterceptor" />
+				<interceptor-ref name="json" />
+				<interceptor-ref name="defaultStack" />
+			</interceptor-stack>
+		</interceptors>
+		
+		<default-interceptor-ref name="interceptorStack"/>
+		
+    	<global-results>
+			<result name="success">/pages/login.jsp</result>
+			<result name="logError">/pages/errorReport.jsp</result>
+		</global-results>
+
 
         <!--  Home Actions -->
         <action name="home" method="view" class="com.photon.phresco.framework.actions.home.Home">
@@ -95,12 +110,12 @@
             <result name="appMenu">/pages/applications/menu.jsp</result>
         </action>
         
-       <!--  <action name="import" method="importApplication" class="com.photon.phresco.framework.actions.applications.Applications">
+        <action name="import" method="importApplication" class="com.photon.phresco.framework.actions.applications.Applications">
             <result name="list">/pages/applications/list.jsp</result>
         </action>
         
-        <action name="importFromSvn" method="importFromSvn" class="com.photon.phresco.framework.actions.applications.Applications">
-            <result name="importFromSvn">/pages/applications/svn_import.jsp</result>
+        <action name="importAppln" method="importAppln" class="com.photon.phresco.framework.actions.applications.Applications">
+            <result name="importApplication">/pages/applications/svn_import.jsp</result>
         </action>
         
         <action name="updateSVNProject" method="updateSVNProject" class="com.photon.phresco.framework.actions.applications.Applications">
@@ -112,7 +127,7 @@
         </action>
         
         <action name="updateProjectPopup" method="updateProjectPopup" class="com.photon.phresco.framework.actions.applications.Applications">
-            <result name="importFromSvn">/pages/applications/svn_import.jsp</result>
+            <result name="updateApplication">/pages/applications/svn_import.jsp</result>
         </action>
         
         <action name="importSVNProject" method="importSVNApplication" class="com.photon.phresco.framework.actions.applications.Applications">
@@ -121,7 +136,7 @@
         
         <action name="importGITProject" method="importGITApplication" class="com.photon.phresco.framework.actions.applications.Applications">
             <result type="json"/>
-        </action> -->
+        </action> 
         
        	<action name="appInfo" method="editApplication" class="com.photon.phresco.framework.actions.applications.Applications">
             <result name="appinfo">/pages/applications/appinfo.jsp</result>
@@ -269,7 +284,7 @@
         </action>
         
         <action name="showCodeValidatePopup" method="showCodeValidatePopup" class="com.photon.phresco.framework.actions.applications.Code">
-            <result name="showCodeValidatePopup">/pages/applications/generateBuild.jsp</result>
+            <result name="showCodeValidatePopup">/pages/applications/dynamic_parameter.jsp</result>
         </action>
         
         <action name="codeValidate" method="codeValidate" class="com.photon.phresco.framework.actions.applications.Code">
@@ -285,19 +300,15 @@
         </action>
 
         <action name="generateBuild" method="showGenerateBuildPopup" class="com.photon.phresco.framework.actions.applications.Build">
-            <result name="generateBuild">/pages/applications/generateBuild.jsp</result>
+            <result name="generateBuild">/pages/applications/dynamic_parameter.jsp</result>
         </action>
         
         <action name="showDeploy" method="showDeployPopup" class="com.photon.phresco.framework.actions.applications.Build">
-            <result name="generateBuild">/pages/applications/generateBuild.jsp</result>
-        </action>
-        
-        <action name="dependancyListener" method="dependancyListener" class="com.photon.phresco.framework.actions.applications.Build">
-            <result type="json" />
+            <result name="generateBuild">/pages/applications/dynamic_parameter.jsp</result>
         </action>
         
  		<action name="showRunAgainstSourcePopup" method="showrunAgainstSourcePopup" class="com.photon.phresco.framework.actions.applications.Build">
-            <result name="generateBuild">/pages/applications/generateBuild.jsp</result>
+            <result name="generateBuild">/pages/applications/dynamic_parameter.jsp</result>
         </action>
         
         <action name="getSqlDatabases" method="getSqlDatabases" class="com.photon.phresco.framework.actions.applications.Build">
@@ -557,7 +568,7 @@
         </action>
         
 		<action name="showUnitTestPopUp" method="showUnitTestPopUp" class="com.photon.phresco.framework.actions.applications.Quality">
-			<result name="success">/pages/applications/generateBuild.jsp</result>
+			<result name="success">/pages/applications/dynamic_parameter.jsp</result>
         </action>
 		
 		<action name="runUnitTest" method="runUnitTest" class="com.photon.phresco.framework.actions.applications.Quality">
@@ -569,7 +580,7 @@
 		</action>
 		
 		<action name="showLoadTestPopup" method="showLoadTestPopup" class="com.photon.phresco.framework.actions.applications.Quality">
-        	<result name="Success">/pages/applications/generateBuild.jsp</result>
+        	<result name="Success">/pages/applications/dynamic_parameter.jsp</result>
 		</action>
 		
 		<action name="runLoadTest" method="runLoadTest" class="com.photon.phresco.framework.actions.applications.Quality">
@@ -593,15 +604,19 @@
         </action>
 		
 		<action name="showFunctionalTestPopUp" method="showFunctionalTestPopUp" class="com.photon.phresco.framework.actions.applications.Quality">
-			<result name="success">/pages/applications/generateBuild.jsp</result>
+			<result name="success">/pages/applications/dynamic_parameter.jsp</result>
         </action>
 
-        <action name="changeEveDependancyListener" method="changeEveDependancyListener" class="com.photon.phresco.framework.actions.applications.Quality">
+        <action name="changeEveDependancyListener" method="changeEveDependancyListener" class="com.photon.phresco.framework.actions.applications.DynamicParameterAction">
+			<result type="json" />
+        </action>
+        
+        <action name="updateDependancy" method="updateDependancy" class="com.photon.phresco.framework.actions.applications.DynamicParameterAction">
 			<result type="json" />
         </action>
         
         <action name="showStartHubPopUp" method="showStartHubPopUp" class="com.photon.phresco.framework.actions.applications.Quality">
-			<result name="success">/pages/applications/generateBuild.jsp</result>
+			<result name="success">/pages/applications/dynamic_parameter.jsp</result>
         </action>
         
         <action name="startHub" method="startHub" class="com.photon.phresco.framework.actions.applications.Quality">
@@ -609,7 +624,7 @@
 		</action>
         
         <action name="showStartNodePopUp" method="showStartNodePopUp" class="com.photon.phresco.framework.actions.applications.Quality">
-			<result name="success">/pages/applications/generateBuild.jsp</result>
+			<result name="success">/pages/applications/dynamic_parameter.jsp</result>
         </action>
         
         <action name="startNode" method="startNode" class="com.photon.phresco.framework.actions.applications.Quality">

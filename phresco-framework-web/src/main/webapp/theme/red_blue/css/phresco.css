@@ -301,6 +301,7 @@ input[type="checkbox"],input[type="radio"] {
 	padding: 0;
 	width: auto;
 	cursor: pointer;
+	margin-left:2%;
 }
 
 input,select,textarea {
@@ -2060,6 +2061,7 @@ h1 {
 
 .table_for_downloadInfos {
 	width: 40% !important;
+	margin-top: 0.5%;
 }
 
 .settingsList_table_div {
@@ -5613,6 +5615,17 @@ input[class*='chckBxAlign'] {
 	width: 301px;
 }
 
+.multilistVersion-scroller {
+	height: 51px;
+	width: 100%;
+	margin-top:3%;
+	padding-top:1%;
+	background-color: #fff;
+	border-radius: 3px;
+	overflow-y:auto;
+	width: 114px;
+}
+
 .multiselect {
 	height: 95px;
 	width: 290px;
@@ -5704,6 +5717,10 @@ input[class*='chckBxAlign'] {
 
 .noBorder {
 	border: none;
+}
+
+.noBorderForBody {
+	padding:1%;
 }
 
 .no-left-bottom-border {
@@ -5799,64 +5816,3 @@ div.control-group.valReportLbl {
 .validateReportSelectBox {
 	float: left;
 }
-
-/* for field set*/
-.fieldSetClass {
-	padding: 10px; 
-	margin: 10px; 
-	width: auto;
-}
-
-.fieldSetTbl {
-	width: 50%;
-}
-
-.fieldSetTr {
-	border:1px solid #fff;
-}	
-
-.fieldSetTrTd {
-	border-bottom: medium none; 
-	padding: 0px;
-}
-
-.fieldSetSelect {
-	height: 150px !important; 
-	width: 195px !important;
-}
-
-.fldSetSelectTd {
-	border-bottom: medium none;
-}
-
-.fldSetUl {
-	list-style: none outside none; 
-	margin-left: 0px;
-}
-
-.fldSetLi {
-	padding-bottom: 5px; 
-	margin-top:10px;
-}
-
-.arrowBtn {
-	width:30px !important;
-}
-
-.fieldsetLi {
-	padding-bottom: 5px;
-}
-
-.fldSetRightTd {
-	border-bottom: medium none; 
-	padding-right: 0px;
-}
-
-.moveUp {
-	cursor: pointer;
-}
-
-.moveDown {
-	cursor: pointer; 
-	margin-top: 16px;
-}	

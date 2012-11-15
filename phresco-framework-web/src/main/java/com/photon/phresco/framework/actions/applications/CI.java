@@ -44,7 +44,7 @@ import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Para
 import com.photon.phresco.plugins.util.*;
 import com.photon.phresco.util.*;
 
-public class CI extends DynamicParameterUtil implements FrameworkConstants {
+public class CI extends DynamicParameterAction implements FrameworkConstants {
 
 	private static final long serialVersionUID = -2040671011555139339L;
 	private static final Logger S_LOGGER = Logger.getLogger(CI.class);

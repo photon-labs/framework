@@ -132,6 +132,8 @@ public interface FrameworkConstants {
     String CLASS = "class";
     String SCM = "scm";
     String SVN = "svn";
+    String MASTER = "master";
+    String UPDATE = "update";
     String REPO_URL = "repoUrl";
     String PROJECT_UPDATE_POPUP = "projectUpdatePopup";
     String CLONED_WORKSPACE = "clonedWorkspace";
@@ -876,6 +878,8 @@ public interface FrameworkConstants {
     String SVN_INTERNAL ="Internal";
     String INVALID_URL = "import.invalid.url";
     String INVALID_REVISION = "import.invalid.revision";
+    String NO_POM_XML = "project.pom.not.exist";
+    String POM_URL_FAIL = "project.pomurlupdate.fail";
     /*
      * Delete Build keys
      */
@@ -1540,9 +1544,14 @@ public interface FrameworkConstants {
 		String EXCEPTION_LOADMENU = "excep.hdr.load.menu";
 		String EXCEPTION_TECHNOLOGY = "excep.hdr.tech";
 		String EXCEPTION_PROJECT_WEB_LAYER_WIDGETS = "excep.hdr.proj.web.layer.widgets";
-		String EXCEPTION_QUALITY_UNIT = "excep.hdr.quality.unit";
-		String EXCEPTION_QUALITY_UNIT_RPT = "excep.hdr.quality.unit.report";
+		String EXCEPTION_QUALITY_UNIT_LOAD = "excep.hdr.quality.unit.load";
+		String EXCEPTION_QUALITY_UNIT_TESTSUITES = "excep.hdr.quality.unit.load.testsuites";
 		String EXCEPTION_QUALITY_UNIT_RUN = "excep.hdr.quality.unit.run";
+		String EXCEPTION_QUALITY_UNIT_PARAMS = "excep.hdr.quality.unit.load.params";
+		String EXCEPTION_QUALITY_FUNCTIONAL_LOAD = "excep.hdr.quality.functional.load";
+		String EXCEPTION_QUALITY_FUNCTIONAL_TESTSUITES = "excep.hdr.quality.functional.load.testsuites";
+		String EXCEPTION_QUALITY_FUNCTIONAL_PARAMS = "excep.hdr.quality.functional.load.params";
+		String EXCEPTION_QUALITY_FUNCTIONAL_RUN = "excep.hdr.quality.functional.run";
 		String EXCEPTION_BUILD_POPUP = "excep.hdr.build.popup";
 		String EXCEPTION_DEPLOY_POPUP = "excep.hdr.deploy.popup";
 		String EXCEPTION_BUILD_GENERATE = "excep.hdr.build.generate";
@@ -1585,6 +1594,6 @@ public interface FrameworkConstants {
 		String PLUGIN_PARAMETER_FRAMEWORK = "framework";
 		String REQ_DYNAMIC_PARAMETERS = "dynamicParameters";
 		String REQ_DYNAMIC_POSSIBLE_VALUES = "possibleValues";
-		String REQ_SESSION_DYNAMIC_PARAM_MAP = "sessionDynamicParamMap";
+		String SESSION_WATCHER_MAP = "sessionDynamicParamMap";
 		
 }

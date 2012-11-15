@@ -17,19 +17,21 @@
  * limitations under the License.
  * ###
  */
-package com.photon.phresco.framework.commons.filter;
+package com.photon.phresco.commons;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.Arrays;
+import java.util.List;
 
 public class FileListFilter implements FilenameFilter {
 
 	private String name;
-	private String extension;
+	private List<String> extension;
 
-	public FileListFilter(String name, String extension) {
+	public FileListFilter(String name, String... extension) {
 		this.name = name;
-		this.extension = extension;
+		this.extension = Arrays.asList(extension);
 	}
 
 	public boolean accept(File directory, String filename) {
@@ -40,7 +42,9 @@ public class FileListFilter implements FilenameFilter {
 		}
 
 		if (extension != null) {
-			fileOK &= filename.endsWith('.' + extension);
+		    int mid = filename.lastIndexOf(".");
+		    String ext = filename.substring(mid + 1, filename.length());
+			fileOK &= extension.contains(ext);  // ext.endsWith('.' + extension);
 		}
 		return fileOK;
 	}

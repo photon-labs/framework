@@ -40,7 +40,6 @@ import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.FrameworkConfiguration;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
-import com.photon.phresco.framework.actions.DynamicParameterUtil;
 import com.photon.phresco.framework.api.ActionType;
 import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.api.Project;
@@ -57,7 +56,7 @@ import com.photon.phresco.util.TechnologyTypes;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.util.PomProcessor;
 
-public class Code extends DynamicParameterUtil implements Constants {
+public class Code extends DynamicParameterAction implements Constants {
 	private static final long serialVersionUID = 8217209827121703596L;
     private static final Logger S_LOGGER = Logger.getLogger(Code.class);
     private static Boolean debugEnabled = S_LOGGER.isDebugEnabled();

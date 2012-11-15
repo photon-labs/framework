@@ -125,6 +125,7 @@
 
 <script type="text/javascript">
 $(document).ready(function() {
+	hideLoadingIcon();//To hide the loading icon
 	bacgroundValidate("validateFramework", '');
 	
 	performAction('home', $("#formHome"), $("#container"));

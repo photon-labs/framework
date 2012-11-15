@@ -77,6 +77,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 import com.google.gson.Gson;
+import com.photon.phresco.commons.FileListFilter;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.BuildInfo;
@@ -84,7 +85,6 @@ import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.FrameworkConfiguration;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
-import com.photon.phresco.framework.actions.DynamicParameterUtil;
 import com.photon.phresco.framework.api.ActionType;
 import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.api.Project;
@@ -95,7 +95,7 @@ import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.commons.LogErrorReport;
 import com.photon.phresco.framework.commons.PBXNativeTarget;
 import com.photon.phresco.framework.commons.QualityUtil;
-import com.photon.phresco.framework.commons.filter.FileListFilter;
+import com.photon.phresco.framework.model.DependantParameters;
 import com.photon.phresco.framework.model.HubConfiguration;
 import com.photon.phresco.framework.model.NodeCapability;
 import com.photon.phresco.framework.model.NodeConfig;
@@ -110,8 +110,6 @@ import com.photon.phresco.framework.model.TestCaseFailure;
 import com.photon.phresco.framework.model.TestResult;
 import com.photon.phresco.framework.model.TestSuite;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
-import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues;
-import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
 import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.IosSdkUtil;
@@ -122,11 +120,11 @@ import com.phresco.pom.exception.PhrescoPomException;
 import com.phresco.pom.model.Model.Modules;
 import com.phresco.pom.util.PomProcessor;
 
-public class Quality extends DynamicParameterUtil implements Constants {
+public class Quality extends DynamicParameterAction implements Constants {
 
     private static final long serialVersionUID = -2040671011555139339L;
     private static final Logger S_LOGGER = Logger.getLogger(Quality.class);
-    private static Boolean debugEnabled  =S_LOGGER.isDebugEnabled();
+    private static Boolean s_debugEnabled  =S_LOGGER.isDebugEnabled();
     
     private List<SettingsInfo> serverSettings = null;
     private String showSettings = null;
@@ -246,24 +244,12 @@ public class Quality extends DynamicParameterUtil implements Constants {
     private int hubPort;
     private String hubHost = "";
     
-    //Dynamic parameter
-    private List<Value> dependentValues = null; //Value for dependancy parameters
-    private String dependentParamKey = "";
-    private String currentParamKey = ""; 
-    private String dependantValue = "";
-    private String goal = "";
-    private String selectedOption = "";
-    List<String> controlsTobeHidden = new ArrayList<String>();
-    List<String> controlsTobeShown = new ArrayList<String>();
-    private boolean needToCallAgain = false;
-    private String pushToElement = "";
-
     private String COMMAND_START_HUB = "java -jar lib/selenium-server-standalone-2.25.0.jar -role hub -hubConfig hubconfig.json";
 	
 	private static Map<String, Map<String, NodeList>> testSuiteMap = Collections.synchronizedMap(new HashMap<String, Map<String, NodeList>>(8));
 	
-	public String unit() throws JAXBException, IOException, PhrescoPomException {
-	    if (debugEnabled) {
+	public String unit() {
+	    if (s_debugEnabled) {
 	        S_LOGGER.debug("Entering Method Quality.unit()");
 	    }
 	    
@@ -273,16 +259,20 @@ public class Quality extends DynamicParameterUtil implements Constants {
 	        setReqAttribute(PATH, frameworkUtil.getUnitTestDir(appInfo));
             setReqAttribute(REQ_APPINFO, appInfo);
             setProjModulesInReq();
-            setDynamicParametersInReq(appInfo, PHASE_UNIT_TEST);
-        } catch (PhrescoException e) {
-            return showErrorPopup(e, getText(EXCEPTION_QUALITY_UNIT_RPT));
+            List<Parameter> parameters = getDynamicParameters(appInfo, PHASE_UNIT_TEST);
+            setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
+	    } catch (Exception e) {
+            if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Quality.unit()" + FrameworkUtil.getStackTraceAsString(e));
+            }
+            return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_QUALITY_UNIT_LOAD));
         }
 	    
 	    return APP_UNIT_TEST;
 	}
 	
-	public String fetchUnitTestSuites() throws ParserConfigurationException, SAXException, IOException, TransformerException, JAXBException, PhrescoPomException {
-        if (debugEnabled) {
+	public String fetchUnitTestSuites() {
+        if (s_debugEnabled) {
             S_LOGGER.debug("Entering Method Quality.fetchUnitTestSuites");
         }
         
@@ -298,15 +288,18 @@ public class Quality extends DynamicParameterUtil implements Constants {
                 return SUCCESS;
             }
             setTestSuiteNames(resultTestSuiteNames);
-        } catch (PhrescoException e) {
-            // TODO: handle exception
+        } catch (Exception e) {
+            if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Quality.fetchUnitTestSuites()" + FrameworkUtil.getStackTraceAsString(e));
+            }
+            return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_QUALITY_UNIT_TESTSUITES));
         }
         
         return SUCCESS;
     }
 	
 	private String getUnitTestResultPath(ApplicationInfo appInfo, String testResultFile) throws PhrescoException, JAXBException, IOException, PhrescoPomException {
-        if (debugEnabled) {
+        if (s_debugEnabled) {
             S_LOGGER.debug("Entering Method Quality.getUnitTestResultPath()");
         }
         
@@ -333,15 +326,26 @@ public class Quality extends DynamicParameterUtil implements Constants {
     }
     
 	public String showUnitTestPopUp() {
-	    if (debugEnabled) {
+	    if (s_debugEnabled) {
             S_LOGGER.debug("Entering Method Quality.showUnitTestPopUp()");
         }
 	    
 	    try {
-	        setDynamicParametersInReq(getApplicationInfo(), PHASE_UNIT_TEST);
+	        ApplicationInfo appInfo = getApplicationInfo();
+            removeSessionAttribute(appInfo.getId() + PHASE_UNIT_TEST + SESSION_WATCHER_MAP);
+            setProjModulesInReq();
+            Map<String, DependantParameters> watcherMap = new HashMap<String, DependantParameters>(8);
+            List<Parameter> parameters = getDynamicParameters(appInfo, PHASE_UNIT_TEST);
+            setPossibleValuesInReq(appInfo, parameters, watcherMap);
+            setSessionAttribute(appInfo.getId() + PHASE_UNIT_TEST + SESSION_WATCHER_MAP, watcherMap);
+            setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
+            setReqAttribute(REQ_GOAL, PHASE_UNIT_TEST);
     	    setProjModulesInReq();
 	    } catch (PhrescoException e) {
-	        return showErrorPopup(e, getText(EXCEPTION_QUALITY_UNIT_RPT));
+	        if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Quality.fetchUnitTestSuites()" + FrameworkUtil.getStackTraceAsString(e));
+            }
+            return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_QUALITY_UNIT_PARAMS));
 	    }
 	    
 	    return SUCCESS;
@@ -352,8 +356,8 @@ public class Quality extends DynamicParameterUtil implements Constants {
         setReqAttribute(REQ_PROJECT_MODULES, projectModules);
     }
 
-	public String runUnitTest() throws PhrescoPomException {
-        if (debugEnabled) {
+	public String runUnitTest() {
+        if (s_debugEnabled) {
             S_LOGGER.debug("Entering Method Quality.runUnitTest()");
         }
         
@@ -372,14 +376,17 @@ public class Quality extends DynamicParameterUtil implements Constants {
             setReqAttribute(REQ_APP_ID, getAppId());
             setReqAttribute(REQ_ACTION_TYPE, UNIT);
         } catch (PhrescoException e) {
+            if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Quality.runUnitTest()" + FrameworkUtil.getStackTraceAsString(e));
+            }
             return showErrorPopup(e, getText(EXCEPTION_QUALITY_UNIT_RUN));
         }
         
         return APP_ENVIRONMENT_READER;
     }
 	
-	public String functional() throws JAXBException, IOException, PhrescoPomException {
-        if (debugEnabled) {
+	public String functional() {
+        if (s_debugEnabled) {
             S_LOGGER.debug("Entering Method Quality.functional()");
         }
         
@@ -390,15 +397,18 @@ public class Quality extends DynamicParameterUtil implements Constants {
             setReqAttribute(PATH, frameworkUtil.getFunctionalTestDir(appInfo));
             setReqAttribute(REQ_FUNCTEST_SELENIUM_TOOL, frameworkUtil.getSeleniumToolType(appInfo));
             setReqAttribute(REQ_APPINFO, appInfo);
-        } catch (PhrescoException e) {
-            return showErrorPopup(e, getText(EXCEPTION_QUALITY_UNIT_RPT));
+        } catch (Exception e) {
+            if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Quality.functional()" + FrameworkUtil.getStackTraceAsString(e));
+            }
+            return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_QUALITY_FUNCTIONAL_LOAD));
         }
 
         return APP_FUNCTIONAL_TEST;
     }
 	
-	public String fetchFunctionalTestSuites() throws ParserConfigurationException, SAXException, IOException, TransformerException, JAXBException, PhrescoPomException {
-        if (debugEnabled) {
+	public String fetchFunctionalTestSuites() {
+        if (s_debugEnabled) {
             S_LOGGER.debug("Entering Method Quality.fillUnitTestSuites");
         }
         
@@ -414,15 +424,18 @@ public class Quality extends DynamicParameterUtil implements Constants {
                 return SUCCESS;
             }
             setTestSuiteNames(resultTestSuiteNames);
-        } catch (PhrescoException e) {
-            // TODO: handle exception
+        } catch (Exception e) {
+            if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Quality.fetchFunctionalTestSuites()" + FrameworkUtil.getStackTraceAsString(e));
+            }
+            return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_QUALITY_FUNCTIONAL_TESTSUITES));
         }
         
         return SUCCESS;
     }
 	
 	private String getFunctionalTestResultPath(ApplicationInfo appInfo, String testResultFile) throws PhrescoException, JAXBException, IOException, PhrescoPomException {
-        if (debugEnabled) {
+        if (s_debugEnabled) {
             S_LOGGER.debug("Entering Method Quality.getFunctionalTestResultPath()");
         }
         
@@ -438,140 +451,66 @@ public class Quality extends DynamicParameterUtil implements Constants {
     }
 	
 	public String showFunctionalTestPopUp() {
-        if (debugEnabled) {
+        if (s_debugEnabled) {
             S_LOGGER.debug("Entering Method Quality.showFunctionalTestPopUp()");
         }
         
         try {
             ApplicationInfo appInfo = getApplicationInfo();
-            removeSessionAttribute(appInfo.getId() + PHASE_FUNCTIONAL_TEST + REQ_SESSION_DYNAMIC_PARAM_MAP);
-            removeSessionAttribute(appInfo.getId() + PHASE_FUNCTIONAL_TEST + "controlsTobeShowed");
+            removeSessionAttribute(appInfo.getId() + PHASE_FUNCTIONAL_TEST + SESSION_WATCHER_MAP);
             setProjModulesInReq();
-            Map<String, Object> watcherMap = new HashMap<String, Object>();
-            watcherMap.put(REQ_APP_INFO, appInfo);
-            List<Parameter> parameters = setDynamicParametersInReq(appInfo, PHASE_FUNCTIONAL_TEST);
-            List<String> controlsTobeShowed = new ArrayList<String>();
-            setPossibleValuesInReq(parameters, watcherMap, controlsTobeShowed);
-            setSessionAttribute(appInfo.getId() + PHASE_FUNCTIONAL_TEST + REQ_SESSION_DYNAMIC_PARAM_MAP, watcherMap);
-            setSessionAttribute(appInfo.getId() + PHASE_FUNCTIONAL_TEST + "controlsTobeShowed", controlsTobeShowed);
+            Map<String, DependantParameters> watcherMap = new HashMap<String, DependantParameters>(8);
+            List<Parameter> parameters = getDynamicParameters(appInfo, PHASE_FUNCTIONAL_TEST);
+            setPossibleValuesInReq(appInfo, parameters, watcherMap);
+            setSessionAttribute(appInfo.getId() + PHASE_FUNCTIONAL_TEST + SESSION_WATCHER_MAP, watcherMap);
             setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
             setReqAttribute(REQ_GOAL, PHASE_FUNCTIONAL_TEST);
         } catch (PhrescoException e) {
-            return showErrorPopup(e, getText(EXCEPTION_QUALITY_UNIT_RPT));
+            if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Quality.showFunctionalTestPopUp()" + FrameworkUtil.getStackTraceAsString(e));
+            }
+            return showErrorPopup(e, getText(EXCEPTION_QUALITY_FUNCTIONAL_PARAMS));
         }
         
         return SUCCESS;
     }
 	
-	@SuppressWarnings("unchecked")
-	public String changeEveDependancyListener() {
+	public String runFunctionalTest() {
+	    if (s_debugEnabled) {
+	        S_LOGGER.debug("Entering Method Quality.runFunctionalTest()");
+	    }
+	    
 	    try {
-            ApplicationInfo appInfo = getApplicationInfo();
-            
-            MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(appInfo)));
-            //To get the current parameter key with the selected options value
-            Parameter currentParameter = mojo.getParameter(getGoal(), getCurrentParamKey());
-            PossibleValues possibleValues = currentParameter.getPossibleValues();
-            if (possibleValues != null) {//To get the dependent parameter key from the possible values
-                List<Value> values = possibleValues.getValue();
-                for (Value value : values) {
-                    if (value.getKey().equals(getSelectedOption())) {
-                        setDependentParamKey(value.getDependency());
-                    }
-                }
-            } else if (StringUtils.isNotEmpty(currentParameter.getDependency())) {//To get the dependent parameter key
-                setDependentParamKey(currentParameter.getDependency());
-            }
-            
-            Map<String, Object> watcherMap = (Map<String, Object>) getSessionAttribute(getAppId() + getGoal() + REQ_SESSION_DYNAMIC_PARAM_MAP);
-            Map<String, String> valuesMap = new HashMap<String, String>();
-            
-            List<Parameter> mojoParameters = getMojoParameters(mojo, getGoal());
-            if (CollectionUtils.isNotEmpty(mojoParameters)) {
-                for (Parameter parameter : mojoParameters) {
-                    PossibleValues paramPossibleValues = parameter.getPossibleValues();
-                    if (paramPossibleValues != null) {
-                        List<Value> values = paramPossibleValues.getValue();
-                        for (Value value : values) {
-                            if (StringUtils.isNotEmpty(value.getDependency()) && value.getDependency().equals(getCurrentParamKey())) {
-                                updateValuesMap(watcherMap, valuesMap, parameter);
-                            }
-                        }
-                    } 
-                    if (StringUtils.isNotEmpty(parameter.getDependency()) && parameter.getDependency().equals(getCurrentParamKey())) {
-                        updateValuesMap(watcherMap, valuesMap, parameter);
-                    }
-                }
-            }
+	        ApplicationInfo appInfo = getApplicationInfo();
+	        StringBuilder workingDirectory = new StringBuilder(getAppDirectoryPath(appInfo));
+	        if (StringUtils.isNotEmpty(getProjectModule())) {
+	            workingDirectory.append(File.separator);
+	            workingDirectory.append(getProjectModule());
+	        }
+	        MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(appInfo)));
+	        persistValuesToXml(mojo, PHASE_FUNCTIONAL_TEST);
+	        ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+	        BufferedReader reader = applicationManager.performAction(getProjectInfo(), ActionType.FUNCTIONAL_TEST, null, workingDirectory.toString());
+	        setSessionAttribute(getAppId() + FUNCTIONAL, reader);
+	        setReqAttribute(REQ_APP_ID, getAppId());
+	        setReqAttribute(REQ_ACTION_TYPE, FUNCTIONAL);
+	    } catch (PhrescoException e) {
+	        S_LOGGER.error("Entered into catch block of Quality.functional()"+ e);
+	        return showErrorPopup(e, getText(EXCEPTION_QUALITY_FUNCTIONAL_RUN));
+	    }
 
-            //To get the previously shown parameters key and add it in the controlsTobeHidden collection
-            Map<String, String> previousValMap = (Map<String, String>) watcherMap.get(getCurrentParamKey());
-
-            if (MapUtils.isNotEmpty(previousValMap)) {
-                Set<String> keySet = previousValMap.keySet();
-                if (keySet != null && !keySet.contains(getDependentParamKey())) {//To check if the dependent parameter key is not in the map
-                    for (String key : keySet) {
-                        Parameter parameter = mojo.getParameter(getGoal(), key);
-                        controlsTobeHidden.add(key);
-                        controlsTobeHidden.add(parameter.getDependency());
-                    }
-                }
-            }
-            
-            //To update the watcherMap
-            getDependentParamKey();
-            valuesMap.put(getDependentParamKey(), getSelectedOption());
-            watcherMap.put(getCurrentParamKey(), valuesMap);
-
-            Parameter dependentParameter = mojo.getParameter(getGoal(), getDependentParamKey());
-            if (dependentParameter != null && dependentParameter.getDynamicParameter() != null) {
-                List<Value> dependantPossibleValues = setDynamicPossibleValues(watcherMap, dependentParameter);
-                valuesMap.put(getDependentParamKey(), dependantPossibleValues.get(0).getValue());
-                watcherMap.put(getCurrentParamKey(), valuesMap);
-                setDependentValues(dependantPossibleValues);//to parse resultant dependent values as json
-            }
-                
-            controlsTobeShown.add(dependentParameter.getKey());
-            
-            if (StringUtils.isNotEmpty(dependentParameter.getDependency())) {
-                setNeedToCallAgain(true);
-            }
-            
-            setPushToElement(getDependentParamKey());
-        } catch (PhrescoException e) {
-            e.printStackTrace();
-            // TODO: handle exception
-        }
-        
-	    return SUCCESS;
+	    return APP_ENVIRONMENT_READER;
 	}
-
-    private void updateValuesMap(Map<String, Object> watcherMap, Map<String, String> valuesMap, Parameter parameter) {
-        Set<String> watcherMapKeySet = watcherMap.keySet();
-        if (CollectionUtils.isNotEmpty(watcherMapKeySet)) {
-            for (String watcherMapKey : watcherMapKeySet) {
-                if (watcherMap.get(watcherMapKey) instanceof Map) {
-                    Map<String, String> watcherMapValuesMap = (Map<String, String>) watcherMap.get(watcherMapKey);
-                    Set<String> keySet = watcherMapValuesMap.keySet();
-                    if (CollectionUtils.isNotEmpty(keySet) && keySet.contains(getCurrentParamKey())) {
-                        valuesMap.put(getCurrentParamKey(), getSelectedOption());
-                        watcherMap.put(parameter.getKey(), valuesMap);
-                        break;
-                    }
-                }
-            }
-        }
-    }
 	
 	public String showStartHubPopUp() throws PhrescoPomException, FileNotFoundException {
-        if (debugEnabled) {
+        if (s_debugEnabled) {
             S_LOGGER.debug("Entering Method Quality.showStartHubPopUp()");
         }
         
         try {
-            setDynamicParametersInReq(getApplicationInfo(), PHASE_START_HUB);
+            getDynamicParameters(getApplicationInfo(), PHASE_START_HUB);
         } catch (PhrescoException e) {
-            return showErrorPopup(e, getText(EXCEPTION_QUALITY_UNIT_RPT));
+            return showErrorPopup(e, getText(EXCEPTION_QUALITY_UNIT_LOAD));
         }
         
         return SUCCESS;
@@ -634,14 +573,14 @@ public class Quality extends DynamicParameterUtil implements Constants {
 	}
 	
 	public String showStartNodePopUp() {
-        if (debugEnabled) {
+        if (s_debugEnabled) {
             S_LOGGER.debug("Entering Method Quality.showStartNodePopUp()");
         }
         
         try {
-            setDynamicParametersInReq(getApplicationInfo(), PHASE_START_NODE);
+            getDynamicParameters(getApplicationInfo(), PHASE_START_NODE);
         } catch (PhrescoException e) {
-            return showErrorPopup(e, getText(EXCEPTION_QUALITY_UNIT_RPT));
+            return showErrorPopup(e, getText(EXCEPTION_QUALITY_UNIT_LOAD));
         }
         
         return SUCCESS;
@@ -1656,7 +1595,7 @@ public class Quality extends DynamicParameterUtil implements Constants {
     
     public String load() throws JAXBException, IOException, PhrescoPomException {
 	    
-    	if (debugEnabled) {
+    	if (s_debugEnabled) {
 	        S_LOGGER.debug("Entering Method Quality.load()");
 	    } 
 	    
@@ -1688,7 +1627,7 @@ public class Quality extends DynamicParameterUtil implements Constants {
     		Map<String, Object> loadParamMap = new HashMap<String, Object>();
     		ApplicationInfo appInfo = getApplicationInfo();
     		loadParamMap.put(REQ_APP_INFO, appInfo);
-    		setDynamicParametersInReq(appInfo, PHASE_LOAD_TEST);
+    		getDynamicParameters(appInfo, PHASE_LOAD_TEST);
     		setReqAttribute(REQ_FROM, from);
     	} catch(Exception e) {
     		e.printStackTrace();
@@ -1698,7 +1637,7 @@ public class Quality extends DynamicParameterUtil implements Constants {
    }
     
     public String runLoadTest() {
-    	if (debugEnabled) {
+    	if (s_debugEnabled) {
 	        S_LOGGER.debug("Entering Method Quality.runLoadTest()");
 	    } 
     	
@@ -2325,7 +2264,7 @@ public class Quality extends DynamicParameterUtil implements Constants {
     }
     
     public String fetchPerfTestJSONData() {
-		 if (debugEnabled) {
+		 if (s_debugEnabled) {
 		       S_LOGGER.debug("Entering Method Quality.fetchPerfTestJSONData()");
 		 }
 		 Reader read = null;
@@ -3479,85 +3418,5 @@ public class Quality extends DynamicParameterUtil implements Constants {
 
     public void setHubHost(String hubHost) {
         this.hubHost = hubHost;
-    }
-    
-    public List<Value> getDependentValues() {
-        return dependentValues;
-    }
-
-    public void setDependentValues(List<Value> dependentValues) {
-        this.dependentValues = dependentValues;
-    }
-    
-    public String getCurrentParamKey() {
-        return currentParamKey;
-    }
-
-    public void setCurrentParamKey(String currentParamKey) {
-        this.currentParamKey = currentParamKey;
-    }
-
-    public String getDependentParamKey() {
-        return dependentParamKey;
-    }
-
-    public void setDependentParamKey(String dependantKey) {
-        this.dependentParamKey = dependantKey;
-    }
-
-    public String getDependantValue() {
-        return dependantValue;
-    }
-
-    public void setDependantValue(String dependantValue) {
-        this.dependantValue = dependantValue;
-    }
-
-    public String getGoal() {
-        return goal;
-    }
-
-    public void setGoal(String goal) {
-        this.goal = goal;
-    }
-    
-    public List<String> getControlsTobeHidden() {
-        return controlsTobeHidden;
-    }
-
-    public void setControlsTobeHidden(List<String> controlsTobeHidden) {
-        this.controlsTobeHidden = controlsTobeHidden;
-    }
-
-    public String getSelectedOption() {
-        return selectedOption;
-    }
-
-    public void setSelectedOption(String selectedOption) {
-        this.selectedOption = selectedOption;
-    }
-
-    public boolean isNeedToCallAgain() {
-        return needToCallAgain;
-    }
-
-    public void setNeedToCallAgain(boolean needToCallAgain) {
-        this.needToCallAgain = needToCallAgain;
-    }
-
-    public List<String> getControlsTobeShown() {
-        return controlsTobeShown;
-    }
-
-    public void setControlsTobeShown(List<String> controlsTobeShown) {
-        this.controlsTobeShown = controlsTobeShown;
-    }
-
-    public String getPushToElement() {
-        return pushToElement;
-    }
-
-    public void setPushToElement(String pushToElement) {
-        this.pushToElement = pushToElement;
     }
 }

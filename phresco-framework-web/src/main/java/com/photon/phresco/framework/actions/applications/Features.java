@@ -85,8 +85,10 @@ public class Features extends FrameworkBaseAction {
 	private String technology = null;
 	private String applicationVersion = "";
 	private String appId = "";
-	private List<ArtifactGroupInfo> serverVersion = null;
-    private List<ArtifactGroupInfo> databaseVersion = null;
+	private List<String> server = null;
+	private List<String> database = null;
+	private List<String> serverVersion = null;
+    private List<String> databaseVersion = null;
     private List<String> webservice = null;
 	private String technologyId = "";
 	private String type = "";
@@ -121,8 +123,30 @@ public class Features extends FrameworkBaseAction {
 		Element element = new Element();
 		element.setId(getPilotProject());
 		appInfo.setPilotInfo(element);
-    	appInfo.setSelectedServers(getServerVersion());
-    	appInfo.setSelectedDatabases(getDatabaseVersion());
+		
+		List<ArtifactGroupInfo> selectedServers = new ArrayList<ArtifactGroupInfo>();
+		if (CollectionUtils.isNotEmpty(getServer())) {
+			ArtifactGroupInfo artifactGroupInfo = new ArtifactGroupInfo();
+			for (String serverId : getServer()) {
+				artifactGroupInfo.setArtifactGroupId(serverId);
+				artifactGroupInfo.setArtifactInfoIds(Arrays.asList(getReqParameterValues(serverId)));
+				selectedServers.add(artifactGroupInfo);
+			}
+		}
+    	appInfo.setSelectedServers(selectedServers);
+    	
+    	List<ArtifactGroupInfo> selectedDatabases = new ArrayList<ArtifactGroupInfo>();
+    	if (CollectionUtils.isNotEmpty(getDatabase())) {
+			
+			for (String databaseId : getDatabase()) {
+				ArtifactGroupInfo artifactGroupInfo = new ArtifactGroupInfo();
+				artifactGroupInfo.setArtifactGroupId(databaseId);
+				artifactGroupInfo.setArtifactInfoIds(Arrays.asList(getReqParameterValues(databaseId)));
+				selectedDatabases.add(artifactGroupInfo);
+			}
+		}
+    	appInfo.setSelectedDatabases(selectedDatabases);
+    	
     	appInfo.setSelectedWebservices(getWebservice());
     	
     	return appInfo;
@@ -753,19 +777,19 @@ public class Features extends FrameworkBaseAction {
         this.customerId = customerId;
     }
     
-    public List<ArtifactGroupInfo> getServerVersion() {
+    public List<String> getServerVersion() {
 		return serverVersion;
 	}
     
-	public void setServerVersion(List<ArtifactGroupInfo> serverVersion) {
+	public void setServerVersion(List<String> serverVersion) {
 		this.serverVersion = serverVersion;
 	}
 	
-	public List<ArtifactGroupInfo> getDatabaseVersion() {
+	public List<String> getDatabaseVersion() {
 		return databaseVersion;
 	}
 	
-	public void setDatabaseVersion(List<ArtifactGroupInfo> databaseVersion) {
+	public void setDatabaseVersion(List<String> databaseVersion) {
 		this.databaseVersion = databaseVersion;
 	}
 	
@@ -815,5 +839,21 @@ public class Features extends FrameworkBaseAction {
 
 	public void setPilotProject(String pilotProject) {
 		this.pilotProject = pilotProject;
+	}
+
+	public List<String> getServer() {
+		return server;
+	}
+
+	public void setServer(List<String> server) {
+		this.server = server;
+	}
+
+	public List<String> getDatabase() {
+		return database;
+	}
+
+	public void setDatabase(List<String> database) {
+		this.database = database;
 	}
 }

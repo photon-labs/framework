@@ -95,6 +95,7 @@ if(!isiPad()){
 }
 
 $(document).ready(function() {
+	hideLoadingIcon();
 	$(".styles").click(function() {
 		 $("iframe").attr({
              src: $("iframe").attr("src")

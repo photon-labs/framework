@@ -1426,7 +1426,7 @@ background-color: #ffffff;
 }
 
 .scroll-slider-inner-stp {
-    background-image: url(../images/strp.png);
+    background-image: url(/images/strpred.png);
 }
 
 /** Tool tip starts **/
@@ -1545,6 +1545,10 @@ background-color: #ffffff;
 
 .table_border {
 	border: 1px solid #3A090B;
+}
+
+.table_borderForDownloadInfos {
+	border: 3px solid #3A090B;
 }
 
 .no-left-bottom-border {
