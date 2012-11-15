@@ -31,6 +31,8 @@ public class IosTargetParameterImpl implements DynamicParameter {
     private static final String XCODEBUILD_LIST_WORKSPACE_CMD = "xcodebuild -list ";
     private static final String IPHONE_XCODE_WORKSPACE = "-workspace ";
     private static final String IPHONE_XCODE_PROJECT = "-project ";
+    private static final String XCODE_PROJECT_TARGETS = "Targets:";
+
     private static final String POM = "pom.xml";
     
     @Override
@@ -66,8 +68,16 @@ public class IosTargetParameterImpl implements DynamicParameter {
             BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
 
             String line = null;
-            while ((line = reader.readLine()) != null) {                   
-                if (StringUtils.isNotEmpty(line)) {
+            boolean isTarget = false;
+            
+            while ((line = reader.readLine()) != null) {       
+                if (line.trim().equals(XCODE_PROJECT_TARGETS)) { // getting only target
+                    isTarget = true;
+                } else if (line.trim().contains(":")) { // omitt all other configurations
+                    isTarget = false;
+                }
+                    
+                if (isTarget && StringUtils.isNotEmpty(line) && !line.trim().equals(XCODE_PROJECT_TARGETS)) {
                     Value value = new Value();
                     value.setValue(line.trim());
                     possibleValues.getValue().add(value);
