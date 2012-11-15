@@ -53,7 +53,7 @@
 
     	String value = "";
     	if (propertiesInfo != null) {
-    		propertiesInfo.getProperty(propertyTemplate.getKey());
+    		value = propertiesInfo.getProperty(propertyTemplate.getKey());
     	}
     	
         List<String> possibleValues = new ArrayList<String>(8);
@@ -70,7 +70,7 @@
     	
         if (CollectionUtils.isNotEmpty(possibleValues)) {
         	pm.setObjectValue(possibleValues);
-        	//pm.getSelectedValues(value);
+        	//pm.setSelectedValues(value);
         	pm.setMultiple(false);
             StringTemplate dropDownControl = FrameworkUtil.constructSelectElement(pm);
             sb.append(dropDownControl);
