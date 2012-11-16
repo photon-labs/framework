@@ -228,14 +228,16 @@
 </form>
 
 <script type="text/javascript">
-	if(!isiPad()){
-	    /* JQuery scroll bar */
+	//To check whether the device is ipad or not and then apply jquery scrollbar
+	if(!isiPad()) {
 		$(".generate_build").scrollbars();
 	}
 
 	var url = "";
 	var readerSession = "";
 	$(document).ready(function() {
+		showParameters();//To show the parameters based on the dependency
+		
 		// accodion for advanced issue
 // 		accordion();
 		
@@ -296,7 +298,7 @@
 	}
 	
 	function getDatabases() {
-		if(!isBlank($("#environments").val())) { 
+		if (!isBlank($("#environments").val())) { 
 			var params = 'environments=';
 		    params = params.concat($("#environments").val());
 		    <%-- params = params.concat("&projectCode=");
@@ -380,14 +382,6 @@
 		popup('advancedBuildSettings', '', $('#popup_div'), '', true);
 	}
 	
-	function changeChckBoxValue(obj) {
-		if ($(obj).is(':checked')) {
-			$(obj).val("true");
-		} else {
-			$(obj).val("false");
-		}
-	}
-	
 	//to update build number in hidden field for deploy popup
 	<% if (FrameworkConstants.REQ_DEPLOY.equals(from)) { %>
 		$("input[name=buildNumber]").val('<%= buildNumber %>');
@@ -439,6 +433,23 @@
 				updateDependancy(dependencyArr[i]);
 			}
 		}
+	}
+	
+	//Iterates all the elements in the build form and show the dependency elements
+	function showParameters() {
+		$(':input', '#generateBuildForm').each(function() {
+			var currentObjType = $(this).prop('tagName');
+			if (currentObjType === "SELECT") {
+				var dependencyAttr =  this.options[this.selectedIndex].getAttribute('additionalparam');
+				if (dependencyAttr !== null) {
+					var csvDependencies = dependencyAttr.substring(dependencyAttr.indexOf('=') + 1);
+					csvDependencies = getAllDependencies(csvDependencies);
+					var dependencyArr = new Array();
+					dependencyArr = csvDependencies.split(',');
+					showControl(dependencyArr);					
+				}
+			}
+		});
 	}
 	
 	function changeEveDependancyListener(selectedOption, currentParamKey) {
