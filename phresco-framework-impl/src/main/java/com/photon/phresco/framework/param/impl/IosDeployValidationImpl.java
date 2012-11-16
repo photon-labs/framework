@@ -38,21 +38,17 @@ public class IosDeployValidationImpl implements DynamicParameter {
             }
             
             Map<String, Boolean> options = buildInfo.getOptions();
-            System.out.println("getting options value ..... ");
             if (options != null) {
-            	System.out.println("options are not null ..... ");
             	boolean createIpa = MapUtils.getBooleanValue(buildInfo.getOptions(), "canCreateIpa");
             	boolean deviceDeploy = MapUtils.getBooleanValue(buildInfo.getOptions(), "deviceDeploy");
             	
             	if (!createIpa && !deviceDeploy) { // if it is simulator, show popup for following dependency
-            		System.out.println("inside if ..... ");
             		Value value = new Value();
                     value.setValue("simulator");
                     value.setDependency("sdkVersion,family,logs,buildNumber");
                     possibleValues.getValue().add(value);
                     return possibleValues;
             	} else { // if it is device, it should return null and should not show any popup
-            		System.out.println("inside else ..... ");
             		Value value = new Value();
                     value.setValue("device");
                     possibleValues.getValue().add(value);
