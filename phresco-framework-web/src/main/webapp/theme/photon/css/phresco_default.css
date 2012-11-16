@@ -2905,9 +2905,8 @@ fieldset {
     width: 100%;
 }
 #navigation {
-    padding-left: 50%;
-    height:25px;
-    margin-top: -18px;
+    height:30px;
+    margin: -18px 7px 0px 8px;
 }
 
 #navigation li {
@@ -2931,13 +2930,14 @@ fieldset {
 }
 
 #navigation ul li a {
-    display:block;
-    text-decoration:none;
-    height: 19px;
-    padding: 3px 14px;
-    border-radius: 4px 4px 0px 0px;
-    -webkit-border-top-left-radius: 5px 5px;
-	-webkit-border-top-right-radius: 5px 5px;
+   display: block;
+   text-decoration: none;
+   height: 21px;
+   margin-top: 3px;
+   padding: 3px 14px;
+   border-radius: 4px 4px 0px 0px;
+   -webkit-border-top-left-radius: 5px 5px;
+   -webkit-border-top-right-radius: 5px 5px;
 }
 
 #subTabcontainer {
@@ -3966,7 +3966,7 @@ div.submit_input {
 }
 
 .scrollpanel{
-    width:100%;
+    width:99.80%;
     float:left;
 }
 
@@ -5077,7 +5077,7 @@ ul#display-inline-block-example {
  
 ul#display-inline-block-example li#first {
 	display: inline-block;
-	width: 12%;
+	width: 8%;
 	min-height: 12%;
 	 
 	/* For IE 7 */
@@ -5256,7 +5256,7 @@ a[id='androidSigning']:hover {
 
 .ciOperationEleme {
 	display:table-cell; 
-	padding: 5px;
+	padding: 5px 0px;
 }
 
 .ciListElem {
@@ -5266,7 +5266,6 @@ a[id='androidSigning']:hover {
 
 .ciScrollListElem {
 	display:table-cell; 
-	border: 1px solid #6B0C0C;
 }
 
 .ciSvnUrlWidth {
@@ -5719,7 +5718,60 @@ input[class*='chckBxAlign'] {
 }
 .feature_heading {
 	padding: 10px;
-}
-.navTopBorder .mfbox {
-	border:1px solid #39bc67;
 }	
+#formEnvironment .control-label {
+	width: 20%;
+	margin-left: 18px;
+	padding-right: 10px;
+	text-align: left;
+}
+#formEnvironment .controls {
+	margin-left: 100px;
+}	
+#formEnvironment #envName {
+	width: 385px;
+}
+#formEnvironment #envDesc {
+	min-width: 385px;
+}
+#formEnvironment .controls #add {
+	margin-top: 3%;
+    margin-left: 32%;
+}
+ul#display-inline-block-example li#label strong {
+	color: #333;
+}
+ul#display-inline-block-example li:nth-child(5) {
+	margin-left: 5% !important;
+}
+ul#display-inline-block-example li:nth-child(4) select, ul#display-inline-block-example li:nth-child(6) select {
+	margin-top: 8px !important;
+}
+.qtyTable_view .header-background {
+	height: 0px !important;
+	background: none;
+}
+.qtyTable_view table thead tr {
+	height: 30px;
+	background: #39BC67;
+	color: white;	
+}
+.qtyTable_view table thead tr th:first-child {
+	border-radius: 11px 0px 0px 0px;
+}
+.qtyTable_view table thead tr th:last-child {
+	border-radius: 0px 11px 0px 0px;
+}
+.qtyTable_view table tr td a {
+	color: #333;
+	vertical-align: middle;
+}
+.qtyTable_view .zebra-striped table th, table td {
+	padding: 5px 10px 6px !important;
+}
+.icon_fun_div {
+	margin-top: 10px;
+}
+.table_for_downloadInfos .header-background {
+	background: none;
+}

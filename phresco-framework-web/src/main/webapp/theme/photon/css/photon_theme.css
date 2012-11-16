@@ -94,7 +94,7 @@ a:hover {
 }
 
 .zebra-striped tbody tr:hover td {
-    background-color: #850E11;
+    /*background-color: #850E11;*/
 }
 
 .page-header h1 {
@@ -943,20 +943,22 @@ label {
 
 /*** quality tab starts ***/
 #navigation {
-    background-color:#3A090B;
-    border-bottom: 1px solid #C7141C;
+    background-color:#39BC67;
+    border-radius: 6px;
 }
 
 #navigation ul li a {
-    background:#3A090B;
+    background: #323232;
+    margin-left: 5px;
 }
 
-#navigation ul li a:hover, #navigation ul li a.selected {
-    color: #FFFFFF;
+#navigation ul li a:hover, #navigation ul li a.selected { 
+    /*color: white;
     background-image:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIHZpZXdCb3g9IjAgMCAxIDEiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiPgo8bGluZWFyR3JhZGllbnQgaWQ9Imc5NzQiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjAlIiB5Mj0iMTAwJSI+CjxzdG9wIHN0b3AtY29sb3I9IiNDNzE0MUMiIG9mZnNldD0iMCIvPjxzdG9wIHN0b3AtY29sb3I9IiNCMTEyMUQiIG9mZnNldD0iMC41Ii8+PHN0b3Agc3RvcC1jb2xvcj0iIzlEMTExRSIgb2Zmc2V0PSIxIi8+CjwvbGluZWFyR3JhZGllbnQ+CjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9InVybCgjZzk3NCkiIC8+Cjwvc3ZnPg==);
     background: -moz-linear-gradient(center top, #C7141C 0%, #B1121D 44%, #9D111E 100%) repeat scroll 0 0 transparent;
     background: -webkit-linear-gradient(top, rgb(199,20,28) 0%, rgb(177,18,29) 44%, rgb(157,17,30) 100% );
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#C7141C), color-stop(44%,#B1121D), color-stop(100%,#9D111E));
+    */
 }
 /*** Specific testing css ***/
 
@@ -1459,3 +1461,10 @@ label {
 	color: #000;
 }
 .fieldset-tableheader { color:#313131; }
+
+
+
+#navigation ul li a label {
+    color: white;
+    padding-top: 3px;
+}
