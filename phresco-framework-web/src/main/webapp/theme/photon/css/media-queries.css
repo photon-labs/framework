@@ -67,7 +67,7 @@ Width <= 1024
 		border-radius: 6px 6px 0 0;
         float: left;
         height: 73.5%;
-        margin: 1%;
+        /*margin: 1%;*/
         width: 45.8%;
      }
      
@@ -75,7 +75,7 @@ Width <= 1024
         border-radius: 6px 6px 6px 6px;
         float: right;
         height: 73.5%;
-        margin: 1% 1% 1% 0;
+        /*margin: 1% 1% 1% 0;*/
         width: 43.5%;
      } 
          
@@ -515,7 +515,7 @@ Width size <= 1024
 		border-radius: 6px 6px 0 0;
         float: left;
         height: 79.5%;
-        margin: 1%;
+        /*margin: 1%;*/
         width: 45.8%;
      }
      
@@ -523,7 +523,7 @@ Width size <= 1024
         border-radius: 6px 6px 6px 6px;
         float: right;
         height: 79.5%;
-        margin: 1% 1% 1% 0;
+        /*margin: 1% 1% 1% 0;*/
         width: 43.5%;
      } 
          
@@ -953,7 +953,7 @@ Width >= 1025 and < 1151
 		border-radius: 6px 6px 0 0;
         float: left;
         height: 73.5%;
-        margin: 1%;
+        /*margin: 1%;*/
         width: 45.8%;
      }
      
@@ -961,7 +961,7 @@ Width >= 1025 and < 1151
         border-radius: 6px 6px 6px 6px;
         float: right;
         height: 73.5%;
-        margin: 1% 1% 1% 0;
+        /*margin: 1% 1% 1% 0;*/
         width: 43.5%;
      } 
          
@@ -1053,7 +1053,7 @@ Width >= 1152 and < 1280
 		border-radius: 6px 6px 0 0;
         float: left;
         height: 73.5%;
-        margin: 1%;
+        /*margin: 1%;*/
         width: 45.8%;
      }
      
@@ -1061,7 +1061,7 @@ Width >= 1152 and < 1280
         border-radius: 6px 6px 6px 6px;
         float: right;
         height: 73.5%;
-        margin: 1% 1% 1% 0;
+        /*margin: 1% 1% 1% 0;*/
         width: 43.5%;
      } 
          
@@ -1392,7 +1392,7 @@ Width <= 1280 and height <= 800
 		border-radius: 6px 6px 0 0;
         float: left;
         height: 73.5%;
-        margin: 1%;
+        /*margin: 1%;*/
         width: 45.8%;
      }
      
@@ -1400,7 +1400,7 @@ Width <= 1280 and height <= 800
         border-radius: 6px 6px 6px 6px;
         float: right;
         height: 73.5%;
-        margin: 1% 1% 1% 0;
+        /*margin: 1% 1% 1% 0;*/
         width: 43.5%;
      } 
          
@@ -1852,7 +1852,8 @@ Width >= 1280 and height >= 800
 		border-radius: 6px 6px 0 0;
         float: left;
         height: 79.5%;
-        margin: 1%;
+        /*margin: 1%;*/
+		margin-left:0;
         width: 45.8%;
      }
      
@@ -1860,7 +1861,7 @@ Width >= 1280 and height >= 800
         border-radius: 6px 6px 6px 6px;
         float: right;
         height: 79.5%;
-        margin: 1% 1% 1% 0;
+        /*margin: 1% 1% 1% 0;*/
         width: 45.5%;
      } 
          
