@@ -32,6 +32,7 @@ public class IosTargetParameterImpl implements DynamicParameter {
     private static final String IPHONE_XCODE_WORKSPACE = "-workspace ";
     private static final String IPHONE_XCODE_PROJECT = "-project ";
     private static final String XCODE_PROJECT_TARGETS = "Targets:";
+    private static final String XCODE_WORKSPACE_TARGETS = "Schemes:";
 
     private static final String POM = "pom.xml";
     
@@ -71,13 +72,13 @@ public class IosTargetParameterImpl implements DynamicParameter {
             boolean isTarget = false;
             
             while ((line = reader.readLine()) != null) {       
-                if (line.trim().equals(XCODE_PROJECT_TARGETS)) { // getting only target
+                if (line.trim().equals(XCODE_PROJECT_TARGETS) || line.trim().equals(XCODE_WORKSPACE_TARGETS)) { // getting only target
                     isTarget = true;
                 } else if (line.trim().contains(":")) { // omitt all other configurations
                     isTarget = false;
                 }
                     
-                if (isTarget && StringUtils.isNotEmpty(line) && !line.trim().equals(XCODE_PROJECT_TARGETS)) {
+                if (isTarget && StringUtils.isNotEmpty(line) && !line.trim().equals(XCODE_PROJECT_TARGETS) && !line.trim().equals(XCODE_WORKSPACE_TARGETS)) {
                     Value value = new Value();
                     value.setValue(line.trim());
                     possibleValues.getValue().add(value);
