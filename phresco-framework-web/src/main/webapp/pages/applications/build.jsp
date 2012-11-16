@@ -331,7 +331,10 @@
     	}
     }
 	
-	function deploy() {
-    	progressPopup('deploy', '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.REQ_FROM_TAB_DEPLOY %>', '', '', getBasicParams());
+	function deploy(additionalParam) {
+		var params = getBasicParams();
+		params = params.concat("&");
+		params = params.concat(additionalParam);
+    	progressPopup('deploy', '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.REQ_FROM_TAB_DEPLOY %>', '', '', params);
     }
 </script>

@@ -190,7 +190,8 @@
 		hideLoadingIcon();//To hide the loading icon
 		
 		$('.deploy').click(function() {
-    		validateDynamicParam('showDeploy', '<s:text name="label.deploy"/>', 'deploy','<s:text name="label.deploy"/>', '', '<%= Constants.PHASE_DEPLOY %>', true);
+			var additionalParam = $(this).attr('additionalParam'); //additional params if any
+    		validateDynamicParam('showDeploy', '<s:text name="label.deploy"/>', 'deploy','<s:text name="label.deploy"/>', '', '<%= Constants.PHASE_DEPLOY %>', true, additionalParam);
     	});
 		
 // 		yesnoPopup($(".deploy"), 'showDeploy', '<s:text name="label.deploy"/>', 'deploy','<s:text name="label.deploy"/>');
@@ -227,5 +228,4 @@
        	$("#restartbtn").attr("class", "btn disabled");
         readerHandlerSubmit('restartNodeJSServer', '', '<%= FrameworkConstants.REQ_READ_LOG_FILE %>', '', true);
     }  --%>
-
 </script>

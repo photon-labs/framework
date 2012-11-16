@@ -158,26 +158,29 @@ function validate(pageUrl, form, tag, additionalParams, progressText, disabledDi
 	});
 }
 
-function validateDynamicParam(successUrl, title, okUrl, okLabel, form, goal, needProgressPopUp) {
+function validateDynamicParam(successUrl, title, okUrl, okLabel, form, goal, needProgressPopUp, additionalParam) {
 	var params = getBasicParams();
 	params = params.concat("&goal=");
 	params = params.concat(goal);
+	if (additionalParam != undefined && !isBlank(additionalParam)) {
+		params = params.concat("&");
+		params = params.concat(additionalParam);
+	}
 	$.ajax({
 		url : "validateDynamicParam",
 		data : params,
 		type : "POST",
 		success : function(data) {
 			if (data.paramaterAvailable != undefined && data.paramaterAvailable) {
-				yesnoPopup(successUrl, title, okUrl, okLabel, form);
+				yesnoPopup(successUrl, title, okUrl, okLabel, form, additionalParam);
 			} else if (needProgressPopUp) {
-				console.info("okUrl::::" + okUrl);
-				window[okUrl]();
+				window[okUrl](additionalParam);
 			}
 		}
 	});
 }
 
-function yesnoPopup(url, title, okUrl, okLabel, form) {
+function yesnoPopup(url, title, okUrl, okLabel, form, additionalParam) {
 	$('#popupPage').modal('show');//To show the popup
 	
 	$('.popupClose').hide();
@@ -190,13 +193,8 @@ function yesnoPopup(url, title, okUrl, okLabel, form) {
 		$('#' + okUrl).html(okLabel); // label for the ok button
 	}
 	
-	var data = "";
-	data = getBasicParams(); //customerid, projectid, appid
-	var additionalParam = $(this).attr('additionalParam'); //additional params if any
-	if (!isBlank(additionalParam)) {
-		data = data.concat("&");
-		data = data.concat(additionalParam);
-	}
+	var data = getBasicParams(); //customerid, projectid, appid
+
 	var params = getParameters(form, '');
 	if (!isBlank(params)) {
 		data = data.concat("&");
