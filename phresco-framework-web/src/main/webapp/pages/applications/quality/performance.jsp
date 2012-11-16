@@ -23,11 +23,14 @@
 
 <%@ page import="com.photon.phresco.framework.api.Project"%>
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
+<%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 <%@ page import="com.photon.phresco.util.TechnologyTypes" %>
 
 <%@include file="../progress.jsp" %>
 
 <%
+	ApplicationInfo appInfo = (ApplicationInfo)request.getAttribute(FrameworkConstants.REQ_APPINFO);
+	String appDirName = appInfo.getAppDirName();
     Project project = (Project) request.getAttribute(FrameworkConstants.REQ_PROJECT);
 	String projectCode = (String) request.getAttribute(FrameworkConstants. REQ_PROJECT_CODE); 
    	String testType = (String) request.getAttribute(FrameworkConstants.REQ_TEST_TYPE);
@@ -170,11 +173,11 @@
         });
         
         $('#openFolder').click(function() {
-            openFolder('<%= projectCode %><%= path %>');
+            openFolder('<%= appDirName %><%= path %>');
         });
          
         $('#copyPath').click(function() {
-        	copyPath('<%= projectCode %><%= path %>');
+        	copyPath('<%= appDirName %><%= path %>');
         });
         
         $('#pdfCreation').click(function() {

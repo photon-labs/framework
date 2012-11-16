@@ -40,10 +40,10 @@
 	}
 	
 	//TODO:Need to handle
-// 	String projectCode = appInfo.getCode();
-// 	technology = appInfo.getTechInfo().getVersion();
+	String projectCode = applicationInfo.getAppDirName();
+// 	 technology =applicationInfo.getTechInfo().getVersion();
 	
-	/* List<BuildInfo> buildInfos = (List<BuildInfo>) request.getAttribute(FrameworkConstants.REQ_BUILD);
+//     List<BuildInfo> buildInfos = (List<BuildInfo>) request.getAttribute(FrameworkConstants.REQ_BUILD);
     String selectedAppType = (String) request.getAttribute(FrameworkConstants.REQ_SELECTED_APP_TYPE);
     String testType = (String) request.getAttribute(FrameworkConstants.REQ_TEST_TYPE);
   	StringBuilder sbBuildPath = new StringBuilder();
@@ -51,7 +51,7 @@
   	sbBuildPath.append("/");    //File separator is not working for this function.
   	sbBuildPath.append(FrameworkConstants.CHECKIN_DIR);
   	sbBuildPath.append("/");
-  	sbBuildPath.append(FrameworkConstants.BUILD_PATH);*/
+  	sbBuildPath.append(FrameworkConstants.BUILD_PATH);
     
   	boolean serverStatus = false;
 //	boolean serverStatus = Boolean.parseBoolean((String) session.getAttribute(appId + FrameworkConstants.SESSION_SERVER_STATUS));
@@ -160,17 +160,17 @@
 	        return false;
 	    });
         
-       <%--  $('#openFolder').click(function() {
+         $('#openFolder').click(function() {
             openFolder('<%= sbBuildPath %>');
         });
         
         $('#copyPath').click(function() {
            copyPath('<%= sbBuildPath %>');
-        }); --%>
+        });
     });
     
 	$('#clipboard').click(function() {
-		copyToClipboard($('#build-output').text());
+		copyToClipboard($('#console_div').text());
 	});
     
  	// Its used by iphone alone
@@ -189,7 +189,7 @@
     function copyToClipboard(data) {
         var params = "copyToClipboard=";
         params = params.concat(data);
-        performAction('copyToClipboard', params, '');
+        loadContent('copyToClipboard', '', '', params, '', '', '');
 	}
     
     function generateBuild(projectCode, from, obj) {

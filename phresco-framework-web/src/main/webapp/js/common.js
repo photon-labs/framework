@@ -412,6 +412,18 @@ function setTimeOut() {
 	}, 2000);
 }
 
+function openFolder(path) {
+	var params = "path=";
+	params = params.concat(path);
+	loadContent('openFolder', '', '', params, '', '', '');
+}
+
+function copyPath(path) {
+	var params = "path=";
+	params = params.concat(path);
+	loadContent('copyPath', '', '', params, '', '', '');
+}
+
 function accordion() {
 	/** Accordian starts **/
 	var showContent = 0;	
@@ -1014,3 +1026,5 @@ function showControl(controls) {
 		$('#' + controls[i] + 'Control').show();
 	}
 }
+
+

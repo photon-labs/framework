@@ -63,6 +63,7 @@
 <%
 	ApplicationInfo appInfo = (ApplicationInfo)request.getAttribute(FrameworkConstants.REQ_APP_INFO);
 	String appId = appInfo.getId();
+	String appDirName = appInfo.getAppDirName();
 	String techId = appInfo.getTechInfo().getId();
 	String fromPage = (String) request.getAttribute(FrameworkConstants.REQ_FROM_PAGE);
 	List<Parameter> parameters = (List<Parameter>) request.getAttribute(FrameworkConstants.REQ_DYNAMIC_PARAMETERS);
@@ -77,7 +78,7 @@
 		popup = Boolean.TRUE;
 	} */
 	String path = (String) request.getAttribute(FrameworkConstants.PATH); 
-   	if(testError != null) { 
+   	if (testError != null) { 
 %>
     <div class="alert alert-block" id="errorDiv" style="margin-left: 1px; margin-top: 5px;"><%= testError %></div> 
 	
@@ -167,23 +168,23 @@
 				} else {
 					generateJmeter('<%= testType %>');
 				}
-	        });
+	        });--%>
 	        $('#openFolder').click(function() {
-	             openFolder('<%= projectCode %><%= path %>');
+	             openFolder('<%= appDirName %><%= path %>');
 	         });
 	         
 	         $('#copyPath').click(function() {
-	            copyPath('<%= projectCode %><%= path %>');
+	            copyPath('<%= appDirName %><%= path %>');
 	         });
 	         
-	         $('#pdfCreation').click(function() {
+	        <%-- $('#pdfCreation').click(function() {
 	     		showPopup();
 	     		$('#popup_div').empty();
 	 			var params = "testType=";
 	 			params = params.concat('<%= testType %>');
 	     		popup('printAsPdfPopup', params, $('#popup_div'));
 	     	    escPopup();
-	 	    }); --%>
+	 	    });--%>
 	    });
     
        

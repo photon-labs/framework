@@ -31,6 +31,7 @@
 <%
 	ApplicationInfo appInfo = (ApplicationInfo)request.getAttribute(FrameworkConstants.REQ_APPINFO);
 	String appId = appInfo.getId();
+	String appDirName = appInfo.getAppDirName();
 	String techId = appInfo.getTechInfo().getId();
 	String path = (String) request.getAttribute(FrameworkConstants.PATH);
 	String functioanlTestTool = (String) request.getAttribute(FrameworkConstants.REQ_FUNCTEST_SELENIUM_TOOL);
@@ -188,11 +189,11 @@ $(document).ready(function() {
 	});
 	
 	$('#openFolder').click(function() {
-		openFolder('<%= appId %><%= path %>');
+		openFolder('<%= appDirName %><%= path %>');
 	});
        
 	$('#copyPath').click(function() {
-		copyPath('<%= appId %><%= path %>');
+		copyPath('<%= appDirName %><%= path %>');
 	});
 		        
 	$('#pdfCreation').click(function() {
