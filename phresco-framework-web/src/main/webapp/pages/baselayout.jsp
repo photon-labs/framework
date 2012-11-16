@@ -37,10 +37,10 @@
 		<link REL="SHORTCUT ICON" HREF="images/favicon.ico">
 		<link rel="stylesheet" href="css/bootstrap.css">
 
-		<link type="text/css" rel="stylesheet" href="theme/photon/css/phresco_default.css" id="phresco" >
+		<link type="text/css" rel="stylesheet" href="theme/red_blue/css/phresco.css" id="phresco" >
 		<link type="text/css" rel="stylesheet" class="changeme" title="phresco">
 		<!-- media queries css -->
-		<link type="text/css" rel="stylesheet" href="theme/photon/css/media-queries.css">
+		<link type="text/css" rel="stylesheet" href="theme/red_blue/css/media-queries.css">
 		
 		<!-- jquery file tree css starts -->
 		<link type="text/css" rel="stylesheet" href="css/jqueryFileTree.css" media="screen">
@@ -160,7 +160,7 @@
 		<header>
 			<div class="header">
 				<div class="Logo">
-					 <a href="#" id="goToHome"><img class="headerlogoimg" src="theme/photon/images/phresco_header_red.png" alt="logo"></a>
+					 <a href="#" id="goToHome"><img class="headerlogoimg" src="theme/red_blue/images/phresco_header_red.png" alt="logo"></a>
 				</div>
 				
 				<div id="signOut" class="signOut">
@@ -168,10 +168,10 @@
 						<%= displayName %>
 						<img src="images/downarrow.png" class="arrow">
                         <div class="userInfo" >&nbsp;&nbsp;<s:text name="lbl.skins" />&nbsp;
-                            <a class="styles" href="#"  rel="theme/photon/css/red.css">
+                            <a class="styles" href="#"  rel="theme/red_blue/css/red.css">
 								<img src="images/red_themer.jpg" class="skinImage">
 							</a>&nbsp;
-							<a class="styles" href="#"  rel="theme/photon/css/blue.css">
+							<a class="styles" href="#"  rel="theme/red_blue/css/blue.css">
 								<img src="images/blue_themer.jpg" class="skinImage">
 							</a>
                         </div>

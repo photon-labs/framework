@@ -304,6 +304,7 @@ public class Build extends DynamicParameterAction implements Constants {
             setReqAttribute(REQ_GOAL, PHASE_DEPLOY);
             setProjModulesInReq();
             setReqAttribute(REQ_FROM, getFrom());
+            setReqAttribute(REQ_DEPLOY_BUILD_NUMBER, buildNumber);
 		} catch (PhrescoException e) {
 			return showErrorPopup(e, getText(EXCEPTION_DEPLOY_POPUP));
 		} 
