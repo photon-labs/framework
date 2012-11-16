@@ -28,12 +28,14 @@
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter"%>
 <%@ page import="com.photon.phresco.util.TechnologyTypes" %>
+<%@ page import="com.photon.phresco.util.Constants"%>
 
 <script src="js/reader.js" ></script>
 
 <%
 	ApplicationInfo appInfo = (ApplicationInfo)request.getAttribute(FrameworkConstants.REQ_APPINFO);
 	String appId = appInfo.getId();
+	String appDirName = appInfo.getAppDirName();
 	String techId = appInfo.getTechInfo().getId();
 	String path = (String) request.getAttribute(FrameworkConstants.PATH);
 	String fromPage = (String) request.getAttribute(FrameworkConstants.REQ_FROM_PAGE);
@@ -65,7 +67,7 @@
 		
 		<ul id="display-inline-block-example">
 			<li id="first">
-				<a data-toggle="modal" href="#popupPage" id="unitTest" class="btn btn-primary"><s:text name='lbl.test'/></a>
+				<a id="unitTest" class="btn btn-primary"><s:text name='lbl.test'/></a>
 			</li>
 			<% 
 				boolean buttonRow = false;
@@ -142,11 +144,15 @@
 $(document).ready(function() {
 	hideLoadingIcon();
 	
-	<% if (CollectionUtils.isNotEmpty(parameters) || CollectionUtils.isNotEmpty(projectModules)) { %>
+	$('#unitTest').click(function() {
+		validateDynamicParam('showUnitTestPopUp', '<s:text name="lbl.unit.test"/>', 'runUnitTest','<s:text name="lbl.test"/>', '', '<%= Constants.PHASE_UNIT_TEST %>', true);
+	});
+	
+	<%-- <% if (CollectionUtils.isNotEmpty(parameters) || CollectionUtils.isNotEmpty(projectModules)) { %>
 		yesnoPopup($('#unitTest'), 'showUnitTestPopUp', '<s:text name="lbl.unit.test"/>', 'runUnitTest','<s:text name="lbl.test"/>');
 	<% } else { %>
 		progressPopup($('#unitTest'), 'runUnitTest', '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.UNIT %>', '', '', getBasicParams());
-	<% } %>
+	<% } %> --%>
 	
 	loadTestSuites();
 	
@@ -176,11 +182,11 @@ $(document).ready(function() {
     }); --%>
     
     $('#openFolder').click(function() {
-		openFolder('<%= appId %><%= path %>');
+		openFolder('<%= appDirName %><%= path %>');
 	});
        
 	$('#copyPath').click(function() {
-		copyPath('<%= appId %><%= path %>');
+		copyPath('<%= appDirName %><%= path %>');
 	});
     
 	$('#pdfCreation').click(function() {
@@ -207,6 +213,10 @@ $(document).ready(function() {
 		testReport();
 	});
 });
+
+function callProgressPopup() {
+	progressPopup('runUnitTest', '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.UNIT %>', '', '', getBasicParams());
+}
 
 //To get the testsuites
 function loadTestSuites() {
@@ -268,6 +278,11 @@ function popupOnOk(obj) {
 	var okUrl = $(obj).attr("id");
 	var params = getBasicParams();
 	progressPopupAsSecPopup(okUrl, '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.UNIT %>', $("#generateBuildForm"), params);
+}
+
+//This method will be called when there is no dynamic param
+function runUnitTest() {
+	progressPopup('runUnitTest', '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.UNIT %>', '', '', getBasicParams());
 }
 	    
 /* function openAndroidPopup() {

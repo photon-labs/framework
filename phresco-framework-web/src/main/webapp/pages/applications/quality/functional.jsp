@@ -27,10 +27,12 @@
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 <%@ page import="com.photon.phresco.util.TechnologyTypes" %>
+<%@ page import="com.photon.phresco.util.Constants"%>
 
 <%
 	ApplicationInfo appInfo = (ApplicationInfo)request.getAttribute(FrameworkConstants.REQ_APPINFO);
 	String appId = appInfo.getId();
+	String appDirName = appInfo.getAppDirName();
 	String techId = appInfo.getTechInfo().getId();
 	String path = (String) request.getAttribute(FrameworkConstants.PATH);
 	String functioanlTestTool = (String) request.getAttribute(FrameworkConstants.REQ_FUNCTEST_SELENIUM_TOOL);
@@ -54,17 +56,14 @@
 		
 		<ul id="display-inline-block-example">
 			<li id="first" style="width: auto;">
-				<input type="button" data-toggle="modal" href="#popupPage" id="functionalTest" class="btn btn-primary" 
-					value="<s:text name='lbl.test'/>">
+				<input type="button" id="functionalTest" class="btn btn-primary" value="<s:text name='lbl.test'/>">
 			</li>
 			<% if (FrameworkConstants.SELENIUM_GRID.equals(functioanlTestTool)) { %>
 				<li id="first" style="width: auto;">
-					<input type="button" data-toggle="modal" href="#popupPage" id="startHubBtn" class="btn btn-primary" 
-						value="<s:text name='lbl.functional.start.hub'/>">
+					<input type="button" id="startHubBtn" class="btn btn-primary" value="<s:text name='lbl.functional.start.hub'/>">
 				</li>
 				<li id="first">
-					<input type="button" data-toggle="modal" href="#popupPage" id="startNodeBtn" class="btn btn-primary" 
-						value="<s:text name='lbl.functional.start.node'/>">
+					<input type="button" id="startNodeBtn" class="btn btn-primary" value="<s:text name='lbl.functional.start.node'/>">
 				</li>
 			<%
 				}
@@ -142,9 +141,22 @@ $(document).ready(function() {
 	
 	loadTestSuites();
 	
-	yesnoPopup($('#functionalTest'), 'showFunctionalTestPopUp', '<s:text name="lbl.functional.test"/>', 'runFunctionalTest','<s:text name="lbl.test"/>');
-	yesnoPopup($('#startHubBtn'), 'showStartHubPopUp', '<s:text name="lbl.functional.start.hub"/>', 'startHub','<s:text name="lbl.start"/>');
-	yesnoPopup($('#startNodeBtn'), 'showStartNodePopUp', '<s:text name="lbl.functional.start.node"/>', 'startNode','<s:text name="lbl.start"/>');
+	$('#functionalTest').click(function() {
+		validateDynamicParam('showFunctionalTestPopUp', '<s:text name="lbl.functional.test"/>', 'runFunctionalTest','<s:text name="lbl.test"/>', '', '<%= Constants.PHASE_FUNCTIONAL_TEST %>');
+	});
+	
+	$('#startHubBtn').click(function() {
+		validateDynamicParam('showStartHubPopUp', '<s:text name="lbl.functional.start.hub"/>', 'startHub','<s:text name="lbl.start"/>', '', '<%= Constants.PHASE_START_HUB %>');
+	});
+	
+	$('#startNodeBtn').click(function() {
+		validateDynamicParam('showStartNodePopUp', '<s:text name="lbl.functional.start.node"/>', 'startNode','<s:text name="lbl.start"/>', '', '<%= Constants.PHASE_START_NODE %>');
+	});
+	
+	
+// 	yesnoPopup($('#functionalTest'), 'showFunctionalTestPopUp', '<s:text name="lbl.functional.test"/>', 'runFunctionalTest','<s:text name="lbl.test"/>');
+// 	yesnoPopup($('#startHubBtn'), 'showStartHubPopUp', '<s:text name="lbl.functional.start.hub"/>', 'startHub','<s:text name="lbl.start"/>');
+// 	yesnoPopup($('#startNodeBtn'), 'showStartNodePopUp', '<s:text name="lbl.functional.start.node"/>', 'startNode','<s:text name="lbl.start"/>');
 	
 	$("#testResultFile, #testSuite, #testSuiteDisplay, #resultView, #testResultLbl, #view").hide();
 				
@@ -188,11 +200,11 @@ $(document).ready(function() {
 	});
 	
 	$('#openFolder').click(function() {
-		openFolder('<%= appId %><%= path %>');
+		openFolder('<%= appDirName %><%= path %>');
 	});
        
 	$('#copyPath').click(function() {
-		copyPath('<%= appId %><%= path %>');
+		copyPath('<%= appDirName %><%= path %>');
 	});
 		        
 	$('#pdfCreation').click(function() {

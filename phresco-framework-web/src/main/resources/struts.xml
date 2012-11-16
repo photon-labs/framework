@@ -209,6 +209,10 @@
             <result name="openAttrPopup">/pages/applications/add_appinfo_attr.jsp</result>
         </action> -->
         
+        <action name="validateDynamicParam" method="validateDynamicParam" class="com.photon.phresco.framework.actions.applications.DynamicParameterAction">
+        	<result type="json" />
+        </action>
+        
         <action name="quality" method="quality" class="com.photon.phresco.framework.actions.applications.Quality">
             <result name="quality">/pages/applications/quality/menu.jsp</result>
         </action>

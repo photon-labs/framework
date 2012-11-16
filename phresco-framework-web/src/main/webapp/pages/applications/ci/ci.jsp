@@ -90,7 +90,7 @@
 	        <input id="setup" type="button" value="<s:text name="lbl.setup"/>" class="btn btn-primary" data-toggle="modal" href="#popupPage" >
 	        <input id="startJenkins" type="button" value="<s:text name="lbl.start"/>" class="btn btn-primary" data-toggle="modal" href="#popupPage" >
 	        <input id="stopJenkins" type="button" value="<s:text name="lbl.stop"/>" class="btn" disabled="disabled" data-toggle="modal" href="#popupPage" >
-	        <input id="configure" type="button" value="<s:text name="lbl.configure"/>" class="btn btn-primary" data-toggle="modal" href="#popupPage"> <!-- additional param -->
+	        <input id="configure" type="button" value="<s:text name="lbl.configure"/>" class="btn btn-primary">
 	        <input id="build" type="button" value="<s:text name="lbl.build"/>" class="btn" disabled="disabled" onclick="buildCI();">
 	        <input id="deleteBuild" type="button" value="<s:text name="lbl.deletebuild"/>" class="btn" disabled="disabled" data-toggle="modal" href="#popupPage">
 	        <input id="deleteJob" type="button" value="<s:text name="lbl.deletejob"/>" class="btn" disabled="disabled" data-toggle="modal" href="#popupPage">
@@ -295,7 +295,11 @@ $(document).ready(function() {
 		enableDisableDeleteButton($(this).val());
 	});
 	
-	yesnoPopup($('#configure'), 'configure', '<s:text name="lbl.configure"/>', 'saveJob','<s:text name="lbl.save"/>', $('#deleteObjects'));
+	$('#configure').click(function() {
+		yesnoPopup('configure', '<s:text name="lbl.configure"/>', 'saveJob','<s:text name="lbl.save"/>', $('#deleteObjects'));
+	});
+	
+// 	yesnoPopup($('#configure'), 'configure', '<s:text name="lbl.configure"/>', 'saveJob','<s:text name="lbl.save"/>', $('#deleteObjects'));
     
     progressPopup($('#setup'), 'setup', '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.CI_SETUP %>', '', '', getBasicParams());
     

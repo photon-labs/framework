@@ -205,7 +205,8 @@
 	<%
 				} else if (FrameworkConstants.TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(parameter.getType()) && (parameter.isSort())) {
 					List<com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value> dynamicPsblValues = (List<com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value>) request.getAttribute(FrameworkConstants.REQ_DYNAMIC_POSSIBLE_VALUES + parameter.getKey());
-					StringTemplate fieldSetElement = FrameworkUtil.constructFieldSetElement(dynamicPsblValues);
+					parameterModel.setObjectValue(dynamicPsblValues);
+					StringTemplate fieldSetElement = FrameworkUtil.constructFieldSetElement(parameterModel);
 	%>
 					<%= fieldSetElement %>
 	<%
@@ -228,14 +229,16 @@
 </form>
 
 <script type="text/javascript">
-	if(!isiPad()){
-	    /* JQuery scroll bar */
+	//To check whether the device is ipad or not and then apply jquery scrollbar
+	if(!isiPad()) {
 		$(".generate_build").scrollbars();
 	}
 
 	var url = "";
 	var readerSession = "";
 	$(document).ready(function() {
+		showParameters();//To show the parameters based on the dependency
+		
 		// accodion for advanced issue
 // 		accordion();
 		
@@ -296,7 +299,7 @@
 	}
 	
 	function getDatabases() {
-		if(!isBlank($("#environments").val())) { 
+		if (!isBlank($("#environments").val())) { 
 			var params = 'environments=';
 		    params = params.concat($("#environments").val());
 		    <%-- params = params.concat("&projectCode=");
@@ -380,14 +383,6 @@
 		popup('advancedBuildSettings', '', $('#popup_div'), '', true);
 	}
 	
-	function changeChckBoxValue(obj) {
-		if ($(obj).is(':checked')) {
-			$(obj).val("true");
-		} else {
-			$(obj).val("false");
-		}
-	}
-	
 	//to update build number in hidden field for deploy popup
 	<% if (FrameworkConstants.REQ_DEPLOY.equals(from)) { %>
 		$("input[name=buildNumber]").val('<%= buildNumber %>');
@@ -426,11 +421,11 @@
 				hideControl(previousDependencyArr);
 			}
 		}
-		
+		var csvDependencies;
 		changeEveDependancyListener(selectedOption, currentParamKey); // update the watcher while changing the drop down
 		
 		if (dependencyAttr !== undefined) {
-			var csvDependencies = dependencyAttr.substring(dependencyAttr.indexOf('=') + 1);
+			csvDependencies = dependencyAttr.substring(dependencyAttr.indexOf('=') + 1);
 			csvDependencies = getAllDependencies(csvDependencies);
 			var dependencyArr = new Array();
 			dependencyArr = csvDependencies.split(',');
@@ -439,6 +434,31 @@
 				updateDependancy(dependencyArr[i]);
 			}
 		}
+	}
+	
+	if ($(obj).attr("type")==="checkbox") {
+			if (!selectedOption) {
+				var previousDependencyArr = new Array();
+				previousDependencyArr = csvDependencies.split(',');
+				hideControl(previousDependencyArr);
+			}	
+		}
+
+	//Iterates all the elements in the build form and show the dependency elements
+	function showParameters() {
+		$(':input', '#generateBuildForm').each(function() {
+			var currentObjType = $(this).prop('tagName');
+			if (currentObjType === "SELECT") {
+				var dependencyAttr =  this.options[this.selectedIndex].getAttribute('additionalparam');
+				if (dependencyAttr !== null) {
+					var csvDependencies = dependencyAttr.substring(dependencyAttr.indexOf('=') + 1);
+					csvDependencies = getAllDependencies(csvDependencies);
+					var dependencyArr = new Array();
+					dependencyArr = csvDependencies.split(',');
+					showControl(dependencyArr);					
+				}
+			}
+		});
 	}
 	
 	function changeEveDependancyListener(selectedOption, currentParamKey) {

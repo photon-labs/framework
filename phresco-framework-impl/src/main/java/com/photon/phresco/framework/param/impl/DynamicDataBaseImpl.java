@@ -27,14 +27,14 @@ public class DynamicDataBaseImpl implements DynamicParameter, Constants {
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public PossibleValues getValues(Map<String, Object> map) throws IOException, ParserConfigurationException, SAXException, ConfigurationException, PhrescoException {
+	public PossibleValues getValues(Map<String, Object> paramMap) throws IOException, ParserConfigurationException, SAXException, ConfigurationException, PhrescoException {
 		PossibleValues possibleValues = new PossibleValues();
-    	ApplicationInfo applicationInfo = (ApplicationInfo) map.get(KEY_APP_INFO);
-    	
+    	ApplicationInfo applicationInfo = (ApplicationInfo) paramMap.get(KEY_APP_INFO);
+    	String envName = (String) paramMap.get(KEY_ENVIRONMENT);
     	//To search for db type in settings.xml
     	String settingsPath = getSettingsPath();
     	ConfigManager configManager = new ConfigManagerImpl(new File(settingsPath)); 
-    	List<Configuration> configurations = configManager.getConfigurations("Production", Constants.SETTINGS_TEMPLATE_DB);
+    	List<Configuration> configurations = configManager.getConfigurations(envName, Constants.SETTINGS_TEMPLATE_DB);
     	for (Configuration configuration : configurations) {
     		Value value = new Value();
     		value.setValue(configuration.getProperties().getProperty("type"));
@@ -46,7 +46,7 @@ public class DynamicDataBaseImpl implements DynamicParameter, Constants {
     		String appDirectory = applicationInfo.getAppDirName();
     		String configPath = getConfigurationPath(appDirectory).toString();
         	configManager = new ConfigManagerImpl(new File(configPath)); 
-        	configurations = configManager.getConfigurations("Production", Constants.SETTINGS_TEMPLATE_DB);
+        	configurations = configManager.getConfigurations(envName, Constants.SETTINGS_TEMPLATE_DB);
         	for (Configuration configuration : configurations) {
         		Value value = new Value();
         		value.setValue(configuration.getProperties().getProperty("type"));

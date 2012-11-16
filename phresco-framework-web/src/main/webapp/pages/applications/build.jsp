@@ -25,6 +25,7 @@
 
 <%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
+<%@ page import="com.photon.phresco.util.Constants"%>
 
 <script type="text/javascript" src="js/delete.js" ></script>
 <script type="text/javascript" src="js/confirm-dialog.js" ></script>
@@ -40,10 +41,10 @@
 	}
 	
 	//TODO:Need to handle
-// 	String projectCode = appInfo.getCode();
-// 	technology = appInfo.getTechInfo().getVersion();
+	String projectCode = applicationInfo.getAppDirName();
+// 	 technology =applicationInfo.getTechInfo().getVersion();
 	
-	/* List<BuildInfo> buildInfos = (List<BuildInfo>) request.getAttribute(FrameworkConstants.REQ_BUILD);
+//     List<BuildInfo> buildInfos = (List<BuildInfo>) request.getAttribute(FrameworkConstants.REQ_BUILD);
     String selectedAppType = (String) request.getAttribute(FrameworkConstants.REQ_SELECTED_APP_TYPE);
     String testType = (String) request.getAttribute(FrameworkConstants.REQ_TEST_TYPE);
   	StringBuilder sbBuildPath = new StringBuilder();
@@ -51,7 +52,7 @@
   	sbBuildPath.append("/");    //File separator is not working for this function.
   	sbBuildPath.append(FrameworkConstants.CHECKIN_DIR);
   	sbBuildPath.append("/");
-  	sbBuildPath.append(FrameworkConstants.BUILD_PATH);*/
+  	sbBuildPath.append(FrameworkConstants.BUILD_PATH);
     
   	boolean serverStatus = false;
 //	boolean serverStatus = Boolean.parseBoolean((String) session.getAttribute(appId + FrameworkConstants.SESSION_SERVER_STATUS));
@@ -81,9 +82,9 @@
 		</div>
 			
 		<div class="build_delete_btn_div">
-		    <a data-toggle="modal" href="#popupPage" id="generateBuild" class="btn btn-primary" additionalParam="from=generateBuild"><s:text name='label.generatebuild'/></a>
+		    <a id="generateBuild" class="btn btn-primary" additionalParam="from=generateBuild"><s:text name='label.generatebuild'/></a>
 			<input id="deleteButton" type="button" value="<s:text name="label.delete"/>" class="btn" disabled="disabled"/>
-			<input type="button" class="btn btn-primary" data-toggle="modal" href="#popupPage" id="runAgainstSourceStart" value="<s:text name='label.runagainsrc'/>"/>
+			<input type="button" class="btn btn-primary" id="runAgainstSourceStart" value="<s:text name='label.runagainsrc'/>"/>
 		    <input type="button" class="btn" id="runAgainstSourceStop" value="<s:text name='lbl.stop'/>" disabled onclick="stopServer();"/>
 		    <input type="button" class="btn" id="runAgainstSourceRestart" value="<s:text name='label.restart'/>" disabled onclick="restartServer();"/>
 		</div>
@@ -127,8 +128,17 @@
 	}
 	
     $(document).ready(function() {
-    	yesnoPopup($('#generateBuild'), 'generateBuild', '<s:text name="label.generatebuild"/>', 'build','<s:text name="lbl.build"/>');
-    	yesnoPopup($('#runAgainstSourceStart'),'showRunAgainstSourcePopup', '<s:text name="label.runagainstsource"/>', 'startServer','<s:text name="label.run"/>');
+    	$('#generateBuild').click(function() {
+    		validateDynamicParam('generateBuild', '<s:text name="label.generatebuild"/>', 'build','<s:text name="lbl.build"/>', '', '<%= Constants.PHASE_PACKAGE %>');
+    	});
+    	
+    	$('#runAgainstSourceStart').click(function() {
+    		validateDynamicParam('showRunAgainstSourcePopup', '<s:text name="label.runagainstsource"/>', 'startServer','<s:text name="label.run"/>', '', '<%= Constants.PHASE_RUNGAINST_SRC_START %>');
+    	});
+    	
+//     	yesnoPopup($('#generateBuild'), 'generateBuild', '<s:text name="label.generatebuild"/>', 'build','<s:text name="lbl.build"/>');
+//     	yesnoPopup($('#runAgainstSourceStart'),'showRunAgainstSourcePopup', '<s:text name="label.runagainstsource"/>', 'startServer','<s:text name="label.run"/>');
+
     	if ($.browser.safari && $.browser.version == 530.17) {
     		$(".buildDiv").show().css("float","left");
     	}
@@ -160,17 +170,17 @@
 	        return false;
 	    });
         
-       <%--  $('#openFolder').click(function() {
+         $('#openFolder').click(function() {
             openFolder('<%= sbBuildPath %>');
         });
         
         $('#copyPath').click(function() {
            copyPath('<%= sbBuildPath %>');
-        }); --%>
+        });
     });
     
 	$('#clipboard').click(function() {
-		copyToClipboard($('#build-output').text());
+		copyToClipboard($('#console_div').text());
 	});
     
  	// Its used by iphone alone
@@ -189,7 +199,7 @@
     function copyToClipboard(data) {
         var params = "copyToClipboard=";
         params = params.concat(data);
-        performAction('copyToClipboard', params, '');
+        loadContent('copyToClipboard', '', '', params, '', '', '');
 	}
     
     function generateBuild(projectCode, from, obj) {
@@ -319,5 +329,9 @@
 		} else if (pageUrl == "jsToMinify") {
 			updateHiddenField(data.jsFinalName, data.selectedJs, data.browseLocation);
     	}
+    }
+	
+	function deploy() {
+    	progressPopup('deploy', '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.REQ_FROM_TAB_DEPLOY %>', '', '', getBasicParams());
     }
 </script>

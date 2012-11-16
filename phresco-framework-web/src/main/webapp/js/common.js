@@ -1,6 +1,6 @@
 /*
  * ###
- * Service Web Archive
+ * Framework Web Archive
  * 
  * Copyright (C) 1999 - 2012 Photon Infotech Inc.
  * 
@@ -17,36 +17,6 @@
  * limitations under the License.
  * ###
  */
- 
-function yesnoPopup(modalObj, url, title, okUrl, okLabel, form) {
-	modalObj.click(function() {
-		$('.popupClose').hide();
-		$('#popupTitle').html(title); // Title for the popup
-		$('.popupClose').hide(); //no need close button since yesno popup
-		$('.popupOk, #popupCancel').show(); // show ok & cancel button
-	
-		$(".popupOk").attr('id', okUrl); // popup action mapped to id
-		if (okLabel !== undefined && !isBlank(okLabel)) {
-			$('#' + okUrl).html(okLabel); // label for the ok button
-		}
-		
-		var data = "";
-		data = getBasicParams(); //customerid, projectid, appid
-		var additionalParam = $(this).attr('additionalParam'); //additional params if any
-		if (!isBlank(additionalParam)) {
-			data = data.concat("&");
-			data = data.concat(additionalParam);
-		}
-		var params = getParameters(form, '');
-		if (!isBlank(params)) {
-			data = data.concat("&");
-			data = data.concat(params);
-		}
-				
-		$('.modal-body').empty();
-		$('.modal-body').load(url, data); //url to render the body content for the popup
-	});
-}
 
 function loadJsonContent(url, jsonParam, containerTag) {
 	$.ajax({
@@ -75,17 +45,16 @@ function getBasicParamsAsJson() {
 	return '"customerId": "' + jsonObject.customerId + '", "projectId": "' + jsonObject.projectId + '", "appId": "' + jsonObject.appId + '"'; 
 }
 
-function progressPopup(btnObj, pageUrl, title, appId, actionType, form, callSuccessEvent, additionalParams) {
-	btnObj.click(function() {
-		if (title !== undefined && !isBlank(title)) {
-			$('#popupTitle').html(title);
-		}
-		$('.modal-body').empty();
-		$('.popupClose').show();
-		$('.popupOk, #popupCancel').hide(); // hide ok & cancel button
-		$(".popupClose").attr('id', pageUrl); // popup action mapped to id
-		readerHandlerSubmit(pageUrl, appId, actionType, form, callSuccessEvent, additionalParams);
-	});
+function progressPopup(pageUrl, title, appId, actionType, form, callSuccessEvent, additionalParams) {
+	$('#popupPage').modal('show');//To show the popup
+	if (title !== undefined && !isBlank(title)) {
+		$('#popupTitle').html(title);
+	}
+	$('.modal-body').empty();
+	$('.popupClose').show();
+	$('.popupOk, #popupCancel').hide(); // hide ok & cancel button
+	$(".popupClose").attr('id', pageUrl); // popup action mapped to id
+	readerHandlerSubmit(pageUrl, appId, actionType, form, callSuccessEvent, additionalParams);
 //	$('.popupClose').click(function() {
 //		popupClose(pageUrl); // this function will be kept in where the progressPopup() called
 //	});
@@ -187,6 +156,55 @@ function validate(pageUrl, form, tag, additionalParams, progressText, disabledDi
 			}
 		}
 	});
+}
+
+function validateDynamicParam(successUrl, title, okUrl, okLabel, form, goal, needProgressPopUp) {
+	var params = getBasicParams();
+	params = params.concat("&goal=");
+	params = params.concat(goal);
+	$.ajax({
+		url : "validateDynamicParam",
+		data : params,
+		type : "POST",
+		success : function(data) {
+			if (data.paramaterAvailable != undefined && data.paramaterAvailable) {
+				yesnoPopup(successUrl, title, okUrl, okLabel, form);
+			} else if (needProgressPopUp) {
+				console.info("okUrl::::" + okUrl);
+				window[okUrl]();
+			}
+		}
+	});
+}
+
+function yesnoPopup(url, title, okUrl, okLabel, form) {
+	$('#popupPage').modal('show');//To show the popup
+	
+	$('.popupClose').hide();
+	$('#popupTitle').html(title); // Title for the popup
+	$('.popupClose').hide(); //no need close button since yesno popup
+	$('.popupOk, #popupCancel').show(); // show ok & cancel button
+
+	$(".popupOk").attr('id', okUrl); // popup action mapped to id
+	if (okLabel !== undefined && !isBlank(okLabel)) {
+		$('#' + okUrl).html(okLabel); // label for the ok button
+	}
+	
+	var data = "";
+	data = getBasicParams(); //customerid, projectid, appid
+	var additionalParam = $(this).attr('additionalParam'); //additional params if any
+	if (!isBlank(additionalParam)) {
+		data = data.concat("&");
+		data = data.concat(additionalParam);
+	}
+	var params = getParameters(form, '');
+	if (!isBlank(params)) {
+		data = data.concat("&");
+		data = data.concat(params);
+	}
+			
+	$('.modal-body').empty();
+	$('.modal-body').load(url, data); //url to render the body content for the popup
 }
 
 function validateJson(url, form, containerTag, jsonParam, progressText, disabledDiv) {
@@ -410,6 +428,18 @@ function setTimeOut() {
 			$('#errormsg').remove();
 		});
 	}, 2000);
+}
+
+function openFolder(path) {
+	var params = "path=";
+	params = params.concat(path);
+	loadContent('openFolder', '', '', params, '', '', '');
+}
+
+function copyPath(path) {
+	var params = "path=";
+	params = params.concat(path);
+	loadContent('copyPath', '', '', params, '', '', '');
 }
 
 function accordion() {
@@ -689,12 +719,26 @@ function confirmDialog(obj, title, bodyText, okUrl, okLabel) {
 
 //to dynamically update dependancy data into controls 
 function constructElements(data, pushToElement, isMultiple, controlType) {
-	if (isMultiple === undefined && controlType === undefined) {
+	if ($("#"+pushToElement+"Control").prop('tagName') == 'FIELDSET') {
+		constructFieldsetOptions(data, pushToElement+"Control");
+	} else if (isMultiple === undefined && controlType === undefined) {
 		constructMultiSelectOptions(data, pushToElement);
 	} else if (isMultiple === "false") {
 		constructSingleSelectOptions(data, pushToElement);
 	} else if (controlType !== undefined ) {
 		//other controls ( text box)
+	}
+}
+
+function constructFieldsetOptions(dependentValues, pushToElement) {
+	var fileName, filePath;
+	$("#avaliableSourceScript").empty();
+	for(i in dependentValues) {
+		fileName = dependentValues[i].value.substring(dependentValues[i].value.lastIndexOf('#') + 1);
+		filePath = dependentValues[i].value.replace('#SEP#','/');
+		
+		var optionElement = "<option value='"+ filePath +"'>"+fileName+"</option>";
+		$("#avaliableSourceScript").append(optionElement);
 	}
 }
 

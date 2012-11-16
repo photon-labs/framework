@@ -29,6 +29,7 @@
 <%@ page import="org.apache.commons.collections.CollectionUtils" %>
 <%@ page import="org.apache.commons.lang.StringUtils"%>
 <%@ page import="com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter"%>
+<%@ page import="com.photon.phresco.util.Constants"%>
 
 <%@include file="../progress.jsp" %>
 
@@ -49,7 +50,7 @@
 <form action="load" method="post" autocomplete="off" class="marginBottomZero">
    <!--  <div class="frame-header frameHeaderPadding btnTestPadding"> -->
      <div class="operation">
-            <input data-toggle="modal" href="#popupPage" id="loadTestBtn" type="button" value="<s:text name="label.test"/>" class="btn btn-primary env_btn" additionalParam="from=load">
+		<input id="loadTestBtn" type="button" value="<s:text name="label.test"/>" class="btn btn-primary env_btn" additionalParam="from=load">
         <div class="icon_fun_div printAsPdf">
         	<a href="#" id="pdfPopup" style="display: none;"><img id="pdfCreation" src="images/icons/print_pdf.png" title="generate pdf" style="height: 20px; width: 20px;"/></a>
 			<a href="#" id="openFolder"><img id="folderIcon" src="images/icons/open-folder.png" title="Open folder" /></a>
@@ -63,6 +64,7 @@
 <%
 	ApplicationInfo appInfo = (ApplicationInfo)request.getAttribute(FrameworkConstants.REQ_APP_INFO);
 	String appId = appInfo.getId();
+	String appDirName = appInfo.getAppDirName();
 	String techId = appInfo.getTechInfo().getId();
 	String fromPage = (String) request.getAttribute(FrameworkConstants.REQ_FROM_PAGE);
 	List<Parameter> parameters = (List<Parameter>) request.getAttribute(FrameworkConstants.REQ_DYNAMIC_PARAMETERS);
@@ -77,7 +79,7 @@
 		popup = Boolean.TRUE;
 	} */
 	String path = (String) request.getAttribute(FrameworkConstants.PATH); 
-   	if(testError != null) { 
+   	if (testError != null) { 
 %>
     <div class="alert alert-block" id="errorDiv" style="margin-left: 1px; margin-top: 5px;"><%= testError %></div> 
 	
@@ -153,7 +155,11 @@
 <script type="text/javascript">
     
 	    $(document).ready(function() {
-    		yesnoPopup($('#loadTestBtn'),'showLoadTestPopup', '<s:text name="label.load.test"/>', 'runLoadTest','<s:text name="label.test"/>');
+	    	$('#loadTestBtn').click(function() {
+	    		validateDynamicParam('showLoadTestPopup', '<s:text name="label.load.test"/>', 'runLoadTest','<s:text name="label.test"/>', '', '<%= Constants.PHASE_LOAD_TEST %>');
+	    	});
+	    	
+//     		yesnoPopup($('#loadTestBtn'),'showLoadTestPopup', '<s:text name="label.load.test"/>', 'runLoadTest','<s:text name="label.test"/>');
 	    	
 	    	//Disable test button for load
 	    	if(<%= popup %>){
@@ -167,23 +173,23 @@
 				} else {
 					generateJmeter('<%= testType %>');
 				}
-	        });
+	        });--%>
 	        $('#openFolder').click(function() {
-	             openFolder('<%= projectCode %><%= path %>');
+	             openFolder('<%= appDirName %><%= path %>');
 	         });
 	         
 	         $('#copyPath').click(function() {
-	            copyPath('<%= projectCode %><%= path %>');
+	            copyPath('<%= appDirName %><%= path %>');
 	         });
 	         
-	         $('#pdfCreation').click(function() {
+	        <%-- $('#pdfCreation').click(function() {
 	     		showPopup();
 	     		$('#popup_div').empty();
 	 			var params = "testType=";
 	 			params = params.concat('<%= testType %>');
 	     		popup('printAsPdfPopup', params, $('#popup_div'));
 	     	    escPopup();
-	 	    }); --%>
+	 	    });--%>
 	    });
     
        

@@ -169,8 +169,8 @@
 		
 		hideLoadingIcon();//To hide the loading icon
 		//modalObj, url, title, okUrl, okLabel, form
-		yesnoPopup($('#importAppln'), 'importAppln', '<s:text name="lbl.app.import"/>', 'importUpdateAppln','<s:text name="lbl.app.import"/>', $('#formProjectList'));
-		yesnoPopup($('.projectUpdate'), 'updateProjectPopup', '<s:text name="lbl.app.update"/>', 'importUpdateAppln','<s:text name="lbl.app.update"/>', $('#formProjectList'));
+// 		yesnoPopup($('#importAppln'), 'importAppln', '<s:text name="lbl.app.import"/>', 'importUpdateAppln','<s:text name="lbl.app.import"/>', $('#formProjectList'));
+// 		yesnoPopup($('.projectUpdate'), 'updateProjectPopup', '<s:text name="lbl.app.update"/>', 'importUpdateAppln','<s:text name="lbl.app.update"/>', $('#formProjectList'));
    	});
 	
     function editApplication(projectId, appId) {

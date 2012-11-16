@@ -33,7 +33,7 @@ Width <= 1024
 		margin: 0.1% 0%;
 		width: 98% !important;
 	}
-	#subcontainer {width: 74.5%; float:right; margin-right:8px; }
+	#subcontainer {width: 74.5%; float:right; }
 	/*.navTopBorder .scroll-content {
 		width:76%;
 		margin-left:220px;
@@ -67,7 +67,7 @@ Width <= 1024
 		border-radius: 6px 6px 0 0;
         float: left;
         height: 73.5%;
-        margin: 1%;
+        /*margin: 1%;*/
         width: 45.8%;
      }
      
@@ -75,7 +75,7 @@ Width <= 1024
         border-radius: 6px 6px 6px 6px;
         float: right;
         height: 73.5%;
-        margin: 1% 1% 1% 0;
+        /*margin: 1% 1% 1% 0;*/
         width: 43.5%;
      } 
          
@@ -354,7 +354,7 @@ Width <= 1024
 	#tabularView {	
 		position: relative;
 	    top: -27px;
-	    width: 98.5%;
+	    width: 97%;
 	}
 	
 	#envHelpTxt_Stg.twipsy {
@@ -466,8 +466,13 @@ Width size <= 1024
 ************************************************************************************/
 @media screen and (min-width : 769px) and (max-width: 960px){
 
-	#subcontainer { width:68% !important; float:right; margin-right:8px; }
-
+	#subcontainer { width:68% !important; float:right;  margin-right: 0px !important; }
+	ul#display-inline-block-example li:nth-child(5) {
+		margin-left: 21.5% !important;
+	}
+	ul#display-inline-block-example li:nth-child(3) {
+		width: 24% !important;
+	}
 }
 @media screen and (max-width : 768px) {
 	.app_add_form .theme_accordion_container {
@@ -475,7 +480,13 @@ Width size <= 1024
 		margin: 0.1% 0%;
 		width: 98% !important;
 	}
-	#subcontainer { width:68% !important; float:right; margin-right:8px; }
+	#subcontainer { width:68% !important; float:right; margin-right: 0px !important;}
+	ul#display-inline-block-example li:nth-child(5) {
+		margin-left: 21.5% !important;
+	}
+	ul#display-inline-block-example li:nth-child(3) {
+		width: 24% !important;
+	}
 }
 
 @media only screen and (max-device-width:768px) and (orientation:portrait) {
@@ -504,7 +515,7 @@ Width size <= 1024
 		border-radius: 6px 6px 0 0;
         float: left;
         height: 79.5%;
-        margin: 1%;
+        /*margin: 1%;*/
         width: 45.8%;
      }
      
@@ -512,7 +523,7 @@ Width size <= 1024
         border-radius: 6px 6px 6px 6px;
         float: right;
         height: 79.5%;
-        margin: 1% 1% 1% 0;
+        /*margin: 1% 1% 1% 0;*/
         width: 43.5%;
      } 
          
@@ -908,7 +919,6 @@ Width >= 1025 and < 1151
 	#subcontainer {
 		width: 77%;
 		float: right;
-		margin-right: 5px;
 		margin-top: 10px;
 	}
 	.content_adder {
@@ -943,7 +953,7 @@ Width >= 1025 and < 1151
 		border-radius: 6px 6px 0 0;
         float: left;
         height: 73.5%;
-        margin: 1%;
+        /*margin: 1%;*/
         width: 45.8%;
      }
      
@@ -951,7 +961,7 @@ Width >= 1025 and < 1151
         border-radius: 6px 6px 6px 6px;
         float: right;
         height: 73.5%;
-        margin: 1% 1% 1% 0;
+        /*margin: 1% 1% 1% 0;*/
         width: 43.5%;
      } 
          
@@ -1017,7 +1027,6 @@ Width >= 1152 and < 1280
 	#subcontainer {
 		width: 77%;
 		float: right;
-		margin-right: 5px;
 		margin-top: 10px;
 	}
 	.content_adder {
@@ -1044,7 +1053,7 @@ Width >= 1152 and < 1280
 		border-radius: 6px 6px 0 0;
         float: left;
         height: 73.5%;
-        margin: 1%;
+        /*margin: 1%;*/
         width: 45.8%;
      }
      
@@ -1052,7 +1061,7 @@ Width >= 1152 and < 1280
         border-radius: 6px 6px 6px 6px;
         float: right;
         height: 73.5%;
-        margin: 1% 1% 1% 0;
+        /*margin: 1% 1% 1% 0;*/
         width: 43.5%;
      } 
          
@@ -1383,7 +1392,7 @@ Width <= 1280 and height <= 800
 		border-radius: 6px 6px 0 0;
         float: left;
         height: 73.5%;
-        margin: 1%;
+        /*margin: 1%;*/
         width: 45.8%;
      }
      
@@ -1391,7 +1400,7 @@ Width <= 1280 and height <= 800
         border-radius: 6px 6px 6px 6px;
         float: right;
         height: 73.5%;
-        margin: 1% 1% 1% 0;
+        /*margin: 1% 1% 1% 0;*/
         width: 43.5%;
      } 
          
@@ -1807,7 +1816,6 @@ Width >= 1280 and height >= 800
 	#subcontainer {
 		width: 77%;
 		float: right;
-		margin-right: 5px;
 		margin-top: 10px;
 	}
 	.formClass {
@@ -1844,7 +1852,8 @@ Width >= 1280 and height >= 800
 		border-radius: 6px 6px 0 0;
         float: left;
         height: 79.5%;
-        margin: 1%;
+        /*margin: 1%;*/
+		margin-left:0;
         width: 45.8%;
      }
      
@@ -1852,7 +1861,7 @@ Width >= 1280 and height >= 800
         border-radius: 6px 6px 6px 6px;
         float: right;
         height: 79.5%;
-        margin: 1% 1% 1% 0;
+        /*margin: 1% 1% 1% 0;*/
         width: 45.5%;
      } 
          
@@ -2191,9 +2200,8 @@ Width > 1280 and <= 1360
 		width: 98%;
 	}
 	#subcontainer {
-		width: 82%;
+		width: 81%;
 		float: right;
-		margin-right: 5px;
 		margin-top: 10px;
 	}
 	.content_adder {
@@ -2630,7 +2638,6 @@ Width > 1360 and <= 1440
 	#subcontainer {
 		width: 82%;
 		float: right;
-		margin-right: 5px;
 		margin-top: 10px;
 	}
 	.app_list_form {
@@ -2999,7 +3006,6 @@ Width > 1441 and <= 1600
 	#subcontainer {
 		width: 83%;
 		float: right;
-		margin-right: 5px;
 		margin-top: 10px;
 	}
 	/* header starts */

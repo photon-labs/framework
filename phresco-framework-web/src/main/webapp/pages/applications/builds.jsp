@@ -26,6 +26,7 @@
 
 <%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
 <%@ page import="com.photon.phresco.util.TechnologyTypes" %>
+<%@ page import="com.photon.phresco.util.Constants"%>
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 <%@ page import="com.photon.phresco.commons.model.BuildInfo"%>
 
@@ -106,7 +107,7 @@
 		                            </a>
 			              		</td>
 		              			<td>
-		              				<a class="deploy"  data-toggle="modal" href="#popupPage" additionalParam="from=deploy&buildNumber=<%= buildInfo.getBuildNo() %>">
+		              				<a class="deploy" additionalParam="from=deploy&buildNumber=<%= buildInfo.getBuildNo() %>">
 		              				 	<img src="images/icons/deploy.png" />
 		              				</a>
 	                                <%-- <a id="buildNumberHref#<%= buildInfo.getBuildNo() %>" href="#" value="<%= buildInfo.getBuildNo() %>" onClick="deploy(this);">
@@ -187,13 +188,18 @@
 	
 	$(document).ready(function() {
 		hideLoadingIcon();//To hide the loading icon
-		yesnoPopup($(".deploy"), 'showDeploy', '<s:text name="label.deploy"/>', 'deploy','<s:text name="label.deploy"/>');
+		
+		$('.deploy').click(function() {
+    		validateDynamicParam('showDeploy', '<s:text name="label.deploy"/>', 'deploy','<s:text name="label.deploy"/>', '', '<%= Constants.PHASE_DEPLOY %>', true);
+    	});
+		
+// 		yesnoPopup($(".deploy"), 'showDeploy', '<s:text name="label.deploy"/>', 'deploy','<s:text name="label.deploy"/>');
 	});
 	
 	// By default disable all Run buttons under builds
     $(".nodejs_startbtn").attr("class", "btn disabled");
     $(".nodejs_startbtn").attr("disabled", true);
-	
+    
    <%--  if (<%= TechnologyTypes.NODE_JS_WEBSERVICE.equals(technology) %>) {
         $('.build_td4').css("width", "18.5%");  
     } --%>

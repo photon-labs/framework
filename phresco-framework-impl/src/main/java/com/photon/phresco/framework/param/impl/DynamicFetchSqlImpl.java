@@ -27,7 +27,6 @@ public class DynamicFetchSqlImpl implements DynamicParameter, Constants {
 	public PossibleValues getValues(Map<String, Object> map) throws PhrescoException, ConfigurationException {
 		PossibleValues possibleValues = new PossibleValues();
 		try {
-			String dbname = "mysql";
 			String dbVersion = "";
 			String sqlFileName = "";
 			String path = "";
@@ -35,10 +34,10 @@ public class DynamicFetchSqlImpl implements DynamicParameter, Constants {
 			String sqlFilePath = getSqlFilePath(applicationInfo);
 			String appDirectory = applicationInfo.getAppDirName();
 	    	String configPath = getConfigurationPath(appDirectory).toString();
-        	
+	    	String envName = (String) map.get(KEY_ENVIRONMENT);
+	    	String dbname = (String) map.get(KEY_DATABASE);
 	    	ConfigManager configManager = new ConfigManagerImpl(new File(configPath));
-			List<Configuration> configurations = configManager.getConfigurations("Production", SETTINGS_TEMPLATE_DB);
-//			Value value = new Value();
+			List<Configuration> configurations = configManager.getConfigurations(envName, SETTINGS_TEMPLATE_DB);
 			for (Configuration configuration : configurations) {
 				String dbType = configuration.getProperties().getProperty(DB_TYPE);
 				if (dbname.equals(dbType)) { 
