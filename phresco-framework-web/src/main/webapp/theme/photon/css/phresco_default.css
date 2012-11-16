@@ -3966,7 +3966,7 @@ div.submit_input {
 }
 
 .scrollpanel{
-    width:99.80%;
+    width:100%;
     float:left;
 }
 
@@ -5719,4 +5719,7 @@ input[class*='chckBxAlign'] {
 }
 .feature_heading {
 	padding: 10px;
+}
+.navTopBorder .mfbox {
+	border:1px solid #39bc67;
 }	
