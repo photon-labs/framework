@@ -28,6 +28,7 @@
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter"%>
 <%@ page import="com.photon.phresco.util.TechnologyTypes" %>
+<%@ page import="com.photon.phresco.util.Constants"%>
 
 <script src="js/reader.js" ></script>
 
@@ -66,7 +67,7 @@
 		
 		<ul id="display-inline-block-example">
 			<li id="first">
-				<a data-toggle="modal" href="#popupPage" id="unitTest" class="btn btn-primary"><s:text name='lbl.test'/></a>
+				<a id="unitTest" class="btn btn-primary"><s:text name='lbl.test'/></a>
 			</li>
 			<% 
 				boolean buttonRow = false;
@@ -143,11 +144,15 @@
 $(document).ready(function() {
 	hideLoadingIcon();
 	
-	<% if (CollectionUtils.isNotEmpty(parameters) || CollectionUtils.isNotEmpty(projectModules)) { %>
+	$('#unitTest').click(function() {
+		validateDynamicParam('showUnitTestPopUp', '<s:text name="lbl.unit.test"/>', 'runUnitTest','<s:text name="lbl.test"/>', '', '<%= Constants.PHASE_UNIT_TEST %>', true);
+	});
+	
+	<%-- <% if (CollectionUtils.isNotEmpty(parameters) || CollectionUtils.isNotEmpty(projectModules)) { %>
 		yesnoPopup($('#unitTest'), 'showUnitTestPopUp', '<s:text name="lbl.unit.test"/>', 'runUnitTest','<s:text name="lbl.test"/>');
 	<% } else { %>
 		progressPopup($('#unitTest'), 'runUnitTest', '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.UNIT %>', '', '', getBasicParams());
-	<% } %>
+	<% } %> --%>
 	
 	loadTestSuites();
 	
@@ -209,6 +214,10 @@ $(document).ready(function() {
 	});
 });
 
+function callProgressPopup() {
+	progressPopup('runUnitTest', '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.UNIT %>', '', '', getBasicParams());
+}
+
 //To get the testsuites
 function loadTestSuites() {
 	var params = getBasicParams();
@@ -269,6 +278,11 @@ function popupOnOk(obj) {
 	var okUrl = $(obj).attr("id");
 	var params = getBasicParams();
 	progressPopupAsSecPopup(okUrl, '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.UNIT %>', $("#generateBuildForm"), params);
+}
+
+//This method will be called when there is no dynamic param
+function runUnitTest() {
+	progressPopup('runUnitTest', '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.UNIT %>', '', '', getBasicParams());
 }
 	    
 /* function openAndroidPopup() {

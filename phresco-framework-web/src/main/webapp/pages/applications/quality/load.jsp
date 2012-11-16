@@ -29,6 +29,7 @@
 <%@ page import="org.apache.commons.collections.CollectionUtils" %>
 <%@ page import="org.apache.commons.lang.StringUtils"%>
 <%@ page import="com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter"%>
+<%@ page import="com.photon.phresco.util.Constants"%>
 
 <%@include file="../progress.jsp" %>
 
@@ -49,7 +50,7 @@
 <form action="load" method="post" autocomplete="off" class="marginBottomZero">
    <!--  <div class="frame-header frameHeaderPadding btnTestPadding"> -->
      <div class="operation">
-            <input data-toggle="modal" href="#popupPage" id="loadTestBtn" type="button" value="<s:text name="label.test"/>" class="btn btn-primary env_btn" additionalParam="from=load">
+		<input id="loadTestBtn" type="button" value="<s:text name="label.test"/>" class="btn btn-primary env_btn" additionalParam="from=load">
         <div class="icon_fun_div printAsPdf">
         	<a href="#" id="pdfPopup" style="display: none;"><img id="pdfCreation" src="images/icons/print_pdf.png" title="generate pdf" style="height: 20px; width: 20px;"/></a>
 			<a href="#" id="openFolder"><img id="folderIcon" src="images/icons/open-folder.png" title="Open folder" /></a>
@@ -154,7 +155,11 @@
 <script type="text/javascript">
     
 	    $(document).ready(function() {
-    		yesnoPopup($('#loadTestBtn'),'showLoadTestPopup', '<s:text name="label.load.test"/>', 'runLoadTest','<s:text name="label.test"/>');
+	    	$('#loadTestBtn').click(function() {
+	    		validateDynamicParam('showLoadTestPopup', '<s:text name="label.load.test"/>', 'runLoadTest','<s:text name="label.test"/>', '', '<%= Constants.PHASE_LOAD_TEST %>');
+	    	});
+	    	
+//     		yesnoPopup($('#loadTestBtn'),'showLoadTestPopup', '<s:text name="label.load.test"/>', 'runLoadTest','<s:text name="label.test"/>');
 	    	
 	    	//Disable test button for load
 	    	if(<%= popup %>){

@@ -63,7 +63,7 @@
 		<input type="button" class="btn" id="deleteBtn" disabled value="<s:text name='lbl.delete'/>" data-toggle="modal" href="#popupPage"/>
 
 		<!-- Environment Buttton -->
-	    <a data-toggle="modal" id="addEnvironments" href="#popupPage" class="btn btn-primary"><s:text name='lbl.app.config.environments'/></a>
+	    <a id="addEnvironments" class="btn btn-primary"><s:text name='lbl.app.config.environments'/></a>
 		         
 		<s:if test="hasActionMessages()">
 			<div class="alert alert-success alert-message" id="successmsg" >
@@ -172,7 +172,12 @@
 </form>
 
 <script type="text/javascript">
-	yesnoPopup($("#addEnvironments"), 'openEnvironmentPopup', "<s:text name='lbl.environment'/>", 'createEnvironment');
+	$('#addEnvironments').click(function() {
+		yesnoPopup('openEnvironmentPopup', '<s:text name="lbl.environment"/>', 'createEnvironment');
+	});
+	
+// 	yesnoPopup($("#addEnvironments"), 'openEnvironmentPopup', "<s:text name='lbl.environment'/>", 'createEnvironment');
+	
 	confirmDialog($("#deleteBtn"), '<s:text name="lbl.hdr.confirm.dialog"/>', '<s:text name="modal.body.text.del.configuration"/>', 'deleteEnvironment','<s:text name="lbl.btn.ok"/>');
 	
 	$(document).ready(function() {

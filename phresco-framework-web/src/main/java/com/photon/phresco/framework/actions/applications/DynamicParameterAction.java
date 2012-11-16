@@ -45,7 +45,9 @@ public class DynamicParameterAction extends FrameworkBaseAction {
     private String selectedOption = "";
     private String dependency = "";
     
-	private static Map<String, PhrescoDynamicLoader> pdlMap = new HashMap<String, PhrescoDynamicLoader>();
+    private boolean paramaterAvailable;
+    
+    private static Map<String, PhrescoDynamicLoader> pdlMap = new HashMap<String, PhrescoDynamicLoader>();
 	
 	/**
      * To get path of phresco-plugin-info.xml file
@@ -78,6 +80,17 @@ public class DynamicParameterAction extends FrameworkBaseAction {
     
     protected List<Parameter> getDynamicParameters(ApplicationInfo appInfo, String goal) throws PhrescoException {
         MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(appInfo)));
+        com.photon.phresco.plugins.model.Mojos.Mojo.Configuration mojoConfiguration = mojo.getConfiguration(goal);
+        List<Parameter> parameters = null;
+        if (mojoConfiguration != null) {
+            parameters = mojoConfiguration.getParameters().getParameter();
+        }
+        
+        return parameters;
+    }
+    
+    protected List<Parameter> getDynamicParameters(String goal) throws PhrescoException {
+        MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(getApplicationInfo())));
         com.photon.phresco.plugins.model.Mojos.Mojo.Configuration mojoConfiguration = mojo.getConfiguration(goal);
         List<Parameter> parameters = null;
         if (mojoConfiguration != null) {
@@ -360,6 +373,35 @@ public class DynamicParameterAction extends FrameworkBaseAction {
         }
     }
     
+    public String validateDynamicParam() {
+        try {
+            List<Parameter> parameters = getDynamicParameters(getGoal());
+            if (CollectionUtils.isEmpty(parameters)) {
+                setParamaterAvailable(false);
+                return SUCCESS;
+            }
+            
+            boolean hasShow = false;
+            for (Parameter parameter : parameters) {
+                if (parameter.isShow()) {
+                    hasShow = true;
+                    setParamaterAvailable(true);
+                    return SUCCESS;
+                }
+            }
+            if (!hasShow) {
+                Map<String, DependantParameters> watcherMap = new HashMap<String, DependantParameters>(8);
+                setPossibleValuesInReq(getApplicationInfo(), parameters, watcherMap);
+                if (watcherMap != null && !watcherMap.isEmpty()) {
+                    setParamaterAvailable(true);
+                }
+            }
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+        
+        return SUCCESS;
+    }
     
     public List<Value> getDependentValues() {
         return dependentValues;
@@ -399,5 +441,13 @@ public class DynamicParameterAction extends FrameworkBaseAction {
 
     public void setDependency(String dependency) {
         this.dependency = dependency;
+    }
+    
+    public boolean isParamaterAvailable() {
+        return paramaterAvailable;
+    }
+
+    public void setParamaterAvailable(boolean paramaterAvailable) {
+        this.paramaterAvailable = paramaterAvailable;
     }
 }

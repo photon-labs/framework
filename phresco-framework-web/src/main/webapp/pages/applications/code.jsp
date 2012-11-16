@@ -41,6 +41,7 @@
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 <%@ page import="com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter"%>
 <%@ page import="com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.Name.Value"%>
+<%@ page import="com.photon.phresco.util.Constants"%>
 
 <script src="js/reader.js" ></script>
 
@@ -68,7 +69,7 @@
 
 <form id="code" class="codeList" style="margin-top: 39px;">
 	<div class="operation">
-        <input type="button" data-toggle="modal" href="#popupPage" id="codeValidatePopup" class="btn btn-primary" style=" float: left;" value="<s:text name='lbl.validate'/>" />
+        <input type="button" id="codeValidatePopup" class="btn btn-primary" style=" float: left;" value="<s:text name='lbl.validate'/>" />
             <%
 	            if (parameter != null) {
 	                    Boolean mandatory = false;
@@ -148,7 +149,12 @@
 <script>
 $('.control-group').addClass("valReportLbl");
     $(document).ready(function() {
-    	yesnoPopup($('#codeValidatePopup'), 'showCodeValidatePopup', '<s:text name="popup.hdr.code.validate"/>', 'codeValidate','<s:text name="lbl.validate"/>');
+    	$('#codeValidatePopup').click(function() {
+    		validateDynamicParam('showCodeValidatePopup', '<s:text name="popup.hdr.code.validate"/>', 'codeValidate','<s:text name="lbl.validate"/>', '', '<%= Constants.PHASE_VALIDATE_CODE %>');
+    	});
+    	
+//     	yesnoPopup($('#codeValidatePopup'), 'showCodeValidatePopup', '<s:text name="popup.hdr.code.validate"/>', 'codeValidate','<s:text name="lbl.validate"/>');
+
 		/** To enable/disable the validate button based on the sonar startup **/
     	<%-- <% if (!TechnologyTypes.IPHONES.contains(technology) && StringUtils.isNotEmpty(sonarError)) { %>
     			$("#validate").removeClass("primary");	

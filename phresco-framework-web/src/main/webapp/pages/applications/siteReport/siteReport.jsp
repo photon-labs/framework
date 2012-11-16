@@ -42,8 +42,8 @@
 <form id="formReportList" class="reportList">
 	<div class="operation">
 		<!-- Generate Report Button --> 
-		 <input type="button" data-toggle="modal" href="#popupPage" name="generate" id="generate" class="btn btn-primary" additionalParam="getBasicParams();" value="<s:text name='lbl.site.report.generate'/>"<%= disabledStr %>/>
-		 <a data-toggle="modal" href="#popupPage" class="btn btn-primary" id="configurePopup" additionalParam="getBasicParams();"><s:text name='lbl.configure'/></a>        
+		 <input type="button" name="generate" id="generate" class="btn btn-primary" additionalParam="getBasicParams();" value="<s:text name='lbl.site.report.generate'/>"<%= disabledStr %>/>
+		 <a class="btn btn-primary" id="configurePopup" additionalParam="getBasicParams();"><s:text name='lbl.configure'/></a>        
 	</div>
 	
 	<s:if test="hasActionMessages()">
@@ -70,8 +70,17 @@
 	
 
     $(document).ready(function() {
-    	yesnoPopup($('#configurePopup'),'siteConfigure', '<s:text name="header.site.report.configure"/>', 'createReportConfig','<s:text name="lbl.btn.ok"/>');
-    	progressPopup($('#generate'), 'generateReport', '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.REQ_SITE_REPORT %>', '', '', getBasicParams());
+    	$('#configurePopup').click(function() {
+    		yesnoPopup('siteConfigure', '<s:text name="header.site.report.configure"/>', 'createReportConfig', '<s:text name="lbl.btn.ok"/>');
+    	});
+    	
+    	$('#generate').click(function() {
+    		progressPopup('generateReport', '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.REQ_SITE_REPORT %>', '', '', getBasicParams());
+    	});
+    	
+//     	yesnoPopup($('#configurePopup'),'siteConfigure', '<s:text name="header.site.report.configure"/>', 'createReportConfig','<s:text name="lbl.btn.ok"/>');
+
+<%--     	progressPopup($('#generate'), 'generateReport', '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.REQ_SITE_REPORT %>', '', '', getBasicParams()); --%>
     	hideLoadingIcon();
     	enableScreen();
     	checkForSiteReport();
