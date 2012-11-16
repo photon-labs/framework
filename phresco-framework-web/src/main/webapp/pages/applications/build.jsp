@@ -335,6 +335,6 @@
 		var params = getBasicParams();
 		params = params.concat("&");
 		params = params.concat(additionalParam);
-    	progressPopup('deploy', '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.REQ_FROM_TAB_DEPLOY %>', '', '', params);
+		readerHandlerSubmit('deploy', '<%= appId %>', '<%= FrameworkConstants.REQ_FROM_TAB_DEPLOY %>', $("#generateBuildForm"), false, params);
     }
 </script>

@@ -166,6 +166,7 @@ function validateDynamicParam(successUrl, title, okUrl, okLabel, form, goal, nee
 		params = params.concat("&");
 		params = params.concat(additionalParam);
 	}
+	
 	$.ajax({
 		url : "validateDynamicParam",
 		data : params,
@@ -199,6 +200,11 @@ function yesnoPopup(url, title, okUrl, okLabel, form, additionalParam) {
 	if (!isBlank(params)) {
 		data = data.concat("&");
 		data = data.concat(params);
+	}
+	
+	if (!isBlank(additionalParam)) {
+		data = data.concat("&");
+		data = data.concat(additionalParam);
 	}
 			
 	$('.modal-body').empty();

@@ -164,7 +164,11 @@
 				} else if (FrameworkConstants.TYPE_LIST.equalsIgnoreCase(parameter.getType()) && parameter.getPossibleValues() != null) { //load select list box
 					//To construct select box element if type is list and if possible value exists
 			    	List<com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value> psblValues = parameter.getPossibleValues().getValue();
-					List<String> selectedValList = Arrays.asList(parameter.getValue().split(FrameworkConstants.CSV_PATTERN));
+			    	if (StringUtils.isNotEmpty(parameter.getValue())) {
+						List<String> selectedValList = Arrays.asList(parameter.getValue().split(FrameworkConstants.CSV_PATTERN));	
+						parameterModel.setSelectedValues(selectedValList);
+					}
+			    	
 					String onChangeFunction = "";
 					if (StringUtils.isNotEmpty(parameter.getDependency())) {
 						onChangeFunction = "selectBoxOnChangeEvent(this,  '"+ parameter.getKey() +"', '"+ parameter.getDependency() +"')";
@@ -173,7 +177,6 @@
 					}
 					
 					parameterModel.setOnChangeFunction(onChangeFunction);
-					parameterModel.setSelectedValues(selectedValList);
 					parameterModel.setObjectValue(psblValues);
 					parameterModel.setMultiple(Boolean.parseBoolean(parameter.getMultiple()));
 					parameterModel.setDependency(parameter.getDependency());
@@ -185,7 +188,10 @@
 				} else if (FrameworkConstants.TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(parameter.getType()) && (!parameter.isSort())) {
 					//To dynamically load values into select box for environmet
 					List<com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value> dynamicPsblValues = (List<com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value>) request.getAttribute(FrameworkConstants.REQ_DYNAMIC_POSSIBLE_VALUES + parameter.getKey());
-					List<String> selectedValList = Arrays.asList(parameter.getValue().split(FrameworkConstants.CSV_PATTERN));
+					if (StringUtils.isNotEmpty(parameter.getValue())) {
+						List<String> selectedValList = Arrays.asList(parameter.getValue().split(FrameworkConstants.CSV_PATTERN));	
+						parameterModel.setSelectedValues(selectedValList);
+					}
 					String onChangeFunction = ""; 
 					if(!Boolean.parseBoolean(parameter.getMultiple()) && StringUtils.isNotEmpty(parameter.getDependency())) {
 					    onChangeFunction = "selectBoxOnChangeEvent(this, '"+ parameter.getKey() +"')";
@@ -194,7 +200,6 @@
 					}
 					
 					parameterModel.setOnChangeFunction(onChangeFunction);
-					parameterModel.setSelectedValues(selectedValList);
 					parameterModel.setObjectValue(dynamicPsblValues);
 					parameterModel.setMultiple(Boolean.parseBoolean(parameter.getMultiple()));
 					parameterModel.setDependency(parameter.getDependency());

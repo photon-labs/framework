@@ -116,13 +116,16 @@ public class DynamicParameterAction extends FrameworkBaseAction {
                         
                         // Get the values from the dynamic parameter class
                         List<Value> dynParamPossibleValues = getDynamicPossibleValues(constructMapForDynVals, parameter);
+                        addValueDependToWatcher(watcherMap, parameterKey, dynParamPossibleValues);
                         if (watcherMap.containsKey(parameterKey)) {
                             DependantParameters dependantParameters = (DependantParameters) watcherMap.get(parameterKey);
                             dependantParameters.setValue(dynParamPossibleValues.get(0).getValue());
                         }
                         
                         setReqAttribute(REQ_DYNAMIC_POSSIBLE_VALUES + parameter.getKey(), dynParamPossibleValues);
-                        addWatcher(watcherMap, parameter.getDependency(), parameterKey, dynParamPossibleValues.get(0).getValue());
+                        if (CollectionUtils.isNotEmpty(dynParamPossibleValues)) {
+                        	addWatcher(watcherMap, parameter.getDependency(), parameterKey, dynParamPossibleValues.get(0).getValue());
+                        }
                     } else if (parameter.getPossibleValues() != null) { //Possible values
                         List<Value> values = parameter.getPossibleValues().getValue();
                         
@@ -131,13 +134,10 @@ public class DynamicParameterAction extends FrameworkBaseAction {
                             dependantParameters.setValue(values.get(0).getValue());
                         }
                         
-                        for (Value value : values) {
-                            if (StringUtils.isNotEmpty(value.getDependency())) {
-//                                List<String> dependencyKeys = FrameworkUtil.getCsvAsList(value.getDependency());
-                                addWatcher(watcherMap, value.getDependency(), parameterKey, value.getValue());
-                            }
+                        addValueDependToWatcher(watcherMap, parameterKey, values);
+                        if (CollectionUtils.isNotEmpty(values)) {
+                            addWatcher(watcherMap, parameter.getDependency(), parameterKey, values.get(0).getValue());
                         }
-                        addWatcher(watcherMap, parameter.getDependency(), parameterKey, values.get(0).getValue());
                     } else if (parameter.getType().equalsIgnoreCase(TYPE_BOOLEAN) && StringUtils.isNotEmpty(parameter.getDependency())) { //Checkbox
                         addWatcher(watcherMap, parameter.getDependency(), parameterKey, parameter.getValue());
                     }
@@ -148,6 +148,18 @@ public class DynamicParameterAction extends FrameworkBaseAction {
             // TODO: handle exception
         }
     }
+
+
+	private void addValueDependToWatcher(
+			Map<String, DependantParameters> watcherMap, String parameterKey,
+			List<Value> values) {
+		for (Value value : values) {
+		    if (StringUtils.isNotEmpty(value.getDependency())) {
+//                                List<String> dependencyKeys = FrameworkUtil.getCsvAsList(value.getDependency());
+		        addWatcher(watcherMap, value.getDependency(), parameterKey, value.getValue());
+		    }
+		}
+	}
 
     private void addWatcher(Map<String, DependantParameters> watcherMap, String dependency, String parameterKey,
             String parameterValue) {
@@ -188,6 +200,7 @@ public class DynamicParameterAction extends FrameworkBaseAction {
         if (dependantParameters != null) {
             paramMap.putAll(getDependantParameters(dependantParameters.getParentMap(), watcherMap));
         }
+        System.out.println("Build number value in constructDynamic => " + getReqParameter(BUILD_NUMBER));
         paramMap.put(DynamicParameter.KEY_APP_INFO, appInfo);
         paramMap.put(DynamicParameter.KEY_BUILD_NO, getReqParameter(BUILD_NUMBER));
 
@@ -316,7 +329,9 @@ public class DynamicParameterAction extends FrameworkBaseAction {
 			if (parameter.getPluginParameter()!= null && PLUGIN_PARAMETER_FRAMEWORK.equalsIgnoreCase(parameter.getPluginParameter())) {
 				List<MavenCommand> mavenCommand = parameter.getMavenCommands().getMavenCommand();
 				for (MavenCommand mavenCmd : mavenCommand) {
-					if (parameter.getValue().equalsIgnoreCase(mavenCmd.getKey())) {
+					System.out.println("parameter key value ..." + parameter.getKey());
+					System.out.println("parameter value ..." + parameter.getValue());
+					if (StringUtils.isNotEmpty(parameter.getValue()) && parameter.getValue().equalsIgnoreCase(mavenCmd.getKey())) {
 						buildArgCmds.add(mavenCmd.getValue());
 					}
 				}
