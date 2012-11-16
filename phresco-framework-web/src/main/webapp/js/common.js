@@ -701,12 +701,26 @@ function confirmDialog(obj, title, bodyText, okUrl, okLabel) {
 
 //to dynamically update dependancy data into controls 
 function constructElements(data, pushToElement, isMultiple, controlType) {
-	if (isMultiple === undefined && controlType === undefined) {
+	if ($("#"+pushToElement+"Control").prop('tagName') == 'FIELDSET') {
+		constructFieldsetOptions(data, pushToElement+"Control");
+	} else if (isMultiple === undefined && controlType === undefined) {
 		constructMultiSelectOptions(data, pushToElement);
 	} else if (isMultiple === "false") {
 		constructSingleSelectOptions(data, pushToElement);
 	} else if (controlType !== undefined ) {
 		//other controls ( text box)
+	}
+}
+
+function constructFieldsetOptions(dependentValues, pushToElement) {
+	var fileName, filePath;
+	$("#avaliableSourceScript").empty();
+	for(i in dependentValues) {
+		fileName = dependentValues[i].value.substring(dependentValues[i].value.lastIndexOf('#') + 1);
+		filePath = dependentValues[i].value.replace('#SEP#','/');
+		
+		var optionElement = "<option value='"+ filePath +"'>"+fileName+"</option>";
+		$("#avaliableSourceScript").append(optionElement);
 	}
 }
 

@@ -2,6 +2,7 @@ package com.photon.phresco.framework.actions.applications;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +21,6 @@ import com.photon.phresco.commons.model.Customer;
 import com.photon.phresco.commons.model.RepoInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
-import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.model.DependantParameters;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.MavenCommands.MavenCommand;
@@ -138,8 +138,10 @@ public class DynamicParameterAction extends FrameworkBaseAction {
 
     private void addWatcher(Map<String, DependantParameters> watcherMap, String dependency, String parameterKey,
             String parameterValue) {
+    	
         if (StringUtils.isNotEmpty(dependency)) {
-            List<String> dependencyKeys = FrameworkUtil.getCsvAsList(dependency);
+//            List<String> dependencyKeys = FrameworkUtil.getCsvAsList(dependency);
+            List<String> dependencyKeys = Arrays.asList(dependency.split(CSV_PATTERN));
             for (String dependentKey : dependencyKeys) {
                 DependantParameters dependantParameters;
                 if (watcherMap.containsKey(dependentKey)) {
@@ -148,9 +150,23 @@ public class DynamicParameterAction extends FrameworkBaseAction {
                     dependantParameters = new DependantParameters();
                 }
                 dependantParameters.getParentMap().put(parameterKey, parameterValue);
+                addParentToWatcher(watcherMap, parameterKey, parameterValue);
                 watcherMap.put(dependentKey, dependantParameters);
             }
         }
+    }
+    
+    private void addParentToWatcher(Map<String, DependantParameters> watcherMap, String parameterKey,
+    		String parameterValue) {
+    	
+    	DependantParameters dependantParameters;
+        if (watcherMap.containsKey(parameterKey)) {
+            dependantParameters = (DependantParameters) watcherMap.get(parameterKey);
+        } else {
+            dependantParameters = new DependantParameters();
+        }
+    	dependantParameters.setValue(parameterValue);
+    	watcherMap.put(parameterKey, dependantParameters);
     }
     
     protected Map<String, Object> constructMapForDynVals(ApplicationInfo appInfo, Map<String, DependantParameters> watcherMap, String parameterKey) {
@@ -160,6 +176,8 @@ public class DynamicParameterAction extends FrameworkBaseAction {
             paramMap.putAll(getDependantParameters(dependantParameters.getParentMap(), watcherMap));
         }
         paramMap.put(DynamicParameter.KEY_APP_INFO, appInfo);
+        paramMap.put(DynamicParameter.KEY_BUILD_NO, getReqParameter(BUILD_NUMBER));
+
         return paramMap;
     }
     
@@ -172,6 +190,7 @@ public class DynamicParameterAction extends FrameworkBaseAction {
                 paramMap.put(key, value);
             }
         }
+
         return paramMap;
     }
 

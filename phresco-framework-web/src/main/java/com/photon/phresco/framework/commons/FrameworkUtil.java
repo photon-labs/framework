@@ -916,17 +916,26 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
         }
     }
 
-    public static StringTemplate constructFieldSetElement(List<Value> dbFiles) {
+    public static StringTemplate constructFieldSetElement(ParameterModel pm) {
     	StringTemplate st = new StringTemplate(getFieldsetTemplate());
-    	StringBuilder builder = new StringBuilder();
-    	for (Value dbFile : dbFiles) {
-    		String filePath = dbFile.getValue();
-    		filePath = filePath.replace("#SEP#", "/");
-    		int index = filePath.lastIndexOf("/");
-    		String fileName = filePath.substring(index + 1);
-    		builder.append("<option value=\"");
-    		builder.append(filePath + "\" >" + fileName + "</option>");
+    	
+    	if (!pm.isShow()) {
+    		st.setAttribute("hideClass", "hideContent");
     	}
+    	
+    	List<? extends Object> objectValues = pm.getObjectValue();
+    	StringBuilder builder = new StringBuilder();
+    	if (CollectionUtils.isNotEmpty(objectValues)) {
+        	for (Object objectValue : objectValues) {
+        		String filePath = getValue(objectValue);
+        		filePath = filePath.replace("#SEP#", "/");
+        		int index = filePath.lastIndexOf("/");
+        		String fileName = filePath.substring(index + 1);
+        		builder.append("<option value=\"");
+        		builder.append(filePath + "\" >" + fileName + "</option>");
+        	}
+    	}	
+    	
     	st.setAttribute("fileList", builder);
     	return st;
     }
@@ -974,9 +983,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	StringBuilder sb = new StringBuilder();
     	sb.append("<div class='controls'>")
     	.append("<input type=\"$type$\" class=\"input-xlarge $class$\" id=\"$id$\" ")
-    	.append("id=\"$id$\" name=\"$name$\" isMultiple=\"$isMultiple$\" ")
     	.append("name=\"$name$\" placeholder=\"$placeholder$\" value=\"$value$\">")
-    	.append("$options$</select>")
     	.append("<span class='help-inline' id=\"$ctrlsId$\"></span></div>");
     	
     	return sb.toString();
@@ -1005,7 +1012,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     private static String getFieldsetTemplate() {
     	StringBuilder sb = new StringBuilder();
     	
-    	sb.append("<fieldset id='' class='popup-fieldset fieldset_center_align fieldSetClass'>")
+    	sb.append("<fieldset id='fetchSqlControl' class='popup-fieldset fieldset_center_align fieldSetClass $hideClass$'>")
     	.append("<legend class='fieldSetLegend'>DB Script Execution</legend>")
     	.append("<table class='fieldSetTbl'><tbody><tr class='fieldSetTr'><td  class='fieldSetTrTd'>")
     	.append("<select class='fieldSetSelect' multiple='multiple' id='avaliableSourceScript'>$fileList$</select></td>")

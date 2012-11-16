@@ -205,7 +205,8 @@
 	<%
 				} else if (FrameworkConstants.TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(parameter.getType()) && (parameter.isSort())) {
 					List<com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value> dynamicPsblValues = (List<com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value>) request.getAttribute(FrameworkConstants.REQ_DYNAMIC_POSSIBLE_VALUES + parameter.getKey());
-					StringTemplate fieldSetElement = FrameworkUtil.constructFieldSetElement(dynamicPsblValues);
+					parameterModel.setObjectValue(dynamicPsblValues);
+					StringTemplate fieldSetElement = FrameworkUtil.constructFieldSetElement(parameterModel);
 	%>
 					<%= fieldSetElement %>
 	<%
@@ -420,11 +421,11 @@
 				hideControl(previousDependencyArr);
 			}
 		}
-		
+		var csvDependencies;
 		changeEveDependancyListener(selectedOption, currentParamKey); // update the watcher while changing the drop down
 		
 		if (dependencyAttr !== undefined) {
-			var csvDependencies = dependencyAttr.substring(dependencyAttr.indexOf('=') + 1);
+			csvDependencies = dependencyAttr.substring(dependencyAttr.indexOf('=') + 1);
 			csvDependencies = getAllDependencies(csvDependencies);
 			var dependencyArr = new Array();
 			dependencyArr = csvDependencies.split(',');
@@ -435,6 +436,14 @@
 		}
 	}
 	
+	if ($(obj).attr("type")==="checkbox") {
+			if (!selectedOption) {
+				var previousDependencyArr = new Array();
+				previousDependencyArr = csvDependencies.split(',');
+				hideControl(previousDependencyArr);
+			}	
+		}
+
 	//Iterates all the elements in the build form and show the dependency elements
 	function showParameters() {
 		$(':input', '#generateBuildForm').each(function() {

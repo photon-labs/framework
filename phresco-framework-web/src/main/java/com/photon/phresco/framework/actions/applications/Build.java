@@ -294,17 +294,14 @@ public class Build extends DynamicParameterAction implements Constants {
             removeSessionAttribute(appInfo.getId() + PHASE_DEPLOY + SESSION_WATCHER_MAP);
             setProjModulesInReq();
             Map<String, DependantParameters> watcherMap = new HashMap<String, DependantParameters>(8);
-//            watcherMap.put(REQ_CUSTOMER_ID, getCustomerId());
-            String buildNumber = getReqParameter(REQ_DEPLOY_BUILD_NUMBER);
-//            watcherMap.put(REQ_DEPLOY_BUILD_NUMBER, buildNumber);
             List<Parameter> parameters = getDynamicParameters(appInfo, PHASE_DEPLOY);
             setPossibleValuesInReq(appInfo, parameters, watcherMap);
             setSessionAttribute(appInfo.getId() + PHASE_DEPLOY + SESSION_WATCHER_MAP, watcherMap);
+            setReqAttribute(REQ_DEPLOY_BUILD_NUMBER, getReqParameter(BUILD_NUMBER));
             setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
             setReqAttribute(REQ_GOAL, PHASE_DEPLOY);
             setProjModulesInReq();
             setReqAttribute(REQ_FROM, getFrom());
-            setReqAttribute(REQ_DEPLOY_BUILD_NUMBER, buildNumber);
 		} catch (PhrescoException e) {
 			return showErrorPopup(e, getText(EXCEPTION_DEPLOY_POPUP));
 		} 
@@ -373,7 +370,9 @@ public class Build extends DynamicParameterAction implements Constants {
 			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(applicationInfo)));
 			
 			persistValuesToXml(mojo, PHASE_DEPLOY);
-			
+			if (StringUtils.isNotEmpty(DbWithSqlFiles)) {
+				configureSqlExecution(applicationInfo);
+			}
 			//To get maven build arguments
 			List<Parameter> parameters = getMojoParameters(mojo, PHASE_DEPLOY);
 			List<String> buildArgCmds = getMavenArgCommands(parameters);
@@ -1292,7 +1291,7 @@ public class Build extends DynamicParameterAction implements Constants {
 		sqlFolderPathMap.put(TechnologyTypes.WORDPRESS, "/source/sql/");
 	}
 
-	public void configureSqlExecution() {
+	public void configureSqlExecution(ApplicationInfo applicationInfo) {
 		Map<String, List<String>> dbsWithSqlFiles = new HashMap<String, List<String>>();
 		String[] dbWithSqlFiles = DbWithSqlFiles.split("#SEP#");
 		for (String dbWithSqlFile : dbWithSqlFiles) {
@@ -1310,7 +1309,7 @@ public class Build extends DynamicParameterAction implements Constants {
 		}
 		FileWriter writer = null;
 		try {
-			File sqlInfoFilePath = new File(Utility.getProjectHome() + projectCode + Constants.JSON_PATH);
+			File sqlInfoFilePath = new File(Utility.getProjectHome() + applicationInfo.getAppDirName() + Constants.JSON_PATH);
 			String json = new Gson().toJson(dbsWithSqlFiles);
 			writer = new FileWriter(new File(sqlInfoFilePath.getPath()));
 			writer.write(json);
