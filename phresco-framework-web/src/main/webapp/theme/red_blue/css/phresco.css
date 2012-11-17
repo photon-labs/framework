@@ -2988,13 +2988,15 @@ fieldset {
 #subTabcontent {
     height: 98%;
     margin-top: 18px;
+    overflow:hidden;
     position: relative;
     width: 100%;
+    top:-2px;
 }
 #navigation {
     padding-left: 50%;
     height:25px;
-    margin-top: -18px;
+    margin-top: -9px;
 }
 
 #navigation li {
@@ -3017,7 +3019,7 @@ fieldset {
 	text-align:left;
 }
 
-#navigation ul li a {
+#navigation ul li a.active label {
     display:block;
     text-decoration:none;
     height: 19px;
@@ -3025,6 +3027,24 @@ fieldset {
     border-radius: 4px 4px 0px 0px;
     -webkit-border-top-left-radius: 5px 5px;
 	-webkit-border-top-right-radius: 5px 5px;
+}
+
+#navigation ul li a.inactive label {
+    display:block;
+    text-decoration:none;
+    height: 19px;
+    padding: 3px 14px;
+    border-radius: 4px 4px 0px 0px;
+    -webkit-border-top-left-radius: 5px 5px;
+	-webkit-border-top-right-radius: 5px 5px;
+}
+
+#navigation ul li a.active:hover {
+	text-decoration:none;	
+}
+
+#navigation ul li a.inactive:hover {
+	text-decoration:none;
 }
 
 #subTabcontainer {

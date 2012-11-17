@@ -1003,6 +1003,7 @@ public interface FrameworkConstants {
     String ERROR_NO_CONFIG = "environment.config.not.available";
     String ERROR_NAME = "err.msg.empty.name";
     String ERROR_CODE = "err.msg.empty.code";
+    String ERROR_VERSION = "err.msg.empty.version";
     String ERROR_LAYER = "err.msg.empty.layer";
     String ERROR_TECHNOLOGY = "err.msg.empty.technology";
     String ERROR_ENV = "err.msg.empty.environment";

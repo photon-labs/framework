@@ -108,12 +108,14 @@
 		<!-- Description Ends -->
 		
 		<!-- Version Starts -->
-		<div class="control-group">
-			<label class="control-label labelbold"><s:text name='lbl.version' />
+		<div class="control-group" id="projectVersionControl">
+			<label class="control-label labelbold">
+				<span class="mandatory">*</span>&nbsp;<s:text name='lbl.version' />
 			</label>
 			<div class="controls">
 				<input id="projVersion" class="input-xlarge" type="text" name="projectVersion" 
 					placeholder='<s:text name="place.hldr.proj.add.version"/>' maxlength="20" title="<s:text name="title.20.chars"/>">
+				<span class="help-inline" id="projectVersionError"></span>
 			</div>
 		</div>
 		<!-- Version Starts -->
@@ -372,6 +374,12 @@
 			showError($("#projectCodeControl"), $("#projectCodeError"), data.projectCodeError);
 		} else {
 			hideError($("#projectCodeControl"), $("#projectCodeError"));
+		}
+		
+		if (!isBlank(data.projectVersionError)) {
+			showError($("#projectVersionControl"), $("#projectVersionError"), data.projectVersionError);
+		} else {
+			hideError($("#projectVersionControl"), $("#projectVersionError"));
 		}
 		
 		if (!isBlank(data.appTechError)) {
