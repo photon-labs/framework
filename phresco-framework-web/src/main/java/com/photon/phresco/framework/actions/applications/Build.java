@@ -241,8 +241,12 @@ public class Build extends DynamicParameterAction implements Constants {
             removeSessionAttribute(appInfo.getId() + PHASE_PACKAGE + SESSION_WATCHER_MAP);
             setProjModulesInReq();
             Map<String, DependantParameters> watcherMap = new HashMap<String, DependantParameters>(8);
-            List<Parameter> parameters = getDynamicParameters(appInfo, PHASE_PACKAGE);
-            setPossibleValuesInReq(appInfo, parameters, watcherMap);
+//            List<Parameter> parameters = getDynamicParameters(appInfo, PHASE_PACKAGE);
+            
+            MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(getApplicationInfo())));
+            List<Parameter> parameters = getMojoParameters(mojo, PHASE_PACKAGE);
+            
+            setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap);
             setSessionAttribute(appInfo.getId() + PHASE_PACKAGE + SESSION_WATCHER_MAP, watcherMap);
             setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
             setReqAttribute(REQ_GOAL, PHASE_PACKAGE);
@@ -294,8 +298,13 @@ public class Build extends DynamicParameterAction implements Constants {
             removeSessionAttribute(appInfo.getId() + PHASE_DEPLOY + SESSION_WATCHER_MAP);
             setProjModulesInReq();
             Map<String, DependantParameters> watcherMap = new HashMap<String, DependantParameters>(8);
-            List<Parameter> parameters = getDynamicParameters(appInfo, PHASE_DEPLOY);
-            setPossibleValuesInReq(appInfo, parameters, watcherMap);
+//            List<Parameter> parameters = getDynamicParameters(appInfo, PHASE_DEPLOY);
+
+            MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(getApplicationInfo())));
+            List<Parameter> parameters = getMojoParameters(mojo, PHASE_DEPLOY);
+
+            setPossibleValuesInReq(null, appInfo, parameters, watcherMap);
+            
             setSessionAttribute(appInfo.getId() + PHASE_DEPLOY + SESSION_WATCHER_MAP, watcherMap);
             setReqAttribute(REQ_DEPLOY_BUILD_NUMBER, getReqParameter(BUILD_NUMBER));
             setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
