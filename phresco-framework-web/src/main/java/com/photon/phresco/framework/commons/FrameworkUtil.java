@@ -820,13 +820,23 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	if (CollectionUtils.isNotEmpty(values)) {
         	for (Object value : values) {
         		String optionValue = getValue(value);
+        		String optionKey = "";
+        		if (value instanceof Value) {
+        		    optionKey = ((Value) value).getKey();
+        		}
+
         		if (selectedValues!= null && selectedValues.contains(optionValue)) {
         			selectedStr = "selected";
         		} else {
         			selectedStr = "";
         		}
+        		
         		builder.append("<option value='");
-                builder.append(optionValue);
+        		if (StringUtils.isNotEmpty(optionKey)) {
+        		    builder.append(optionKey);
+    		    } else {
+        		    builder.append(optionValue);
+    		    }
                 builder.append("' ");
                 String additionalParam = getAdditionalParam(value, dependency);
                 if (StringUtils.isNotEmpty(additionalParam)) {
