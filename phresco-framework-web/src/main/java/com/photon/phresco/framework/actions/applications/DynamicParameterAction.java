@@ -109,6 +109,7 @@ public class DynamicParameterAction extends FrameworkBaseAction {
     protected void setPossibleValuesInReq(ApplicationInfo appInfo, List<Parameter> parameters, Map<String, DependantParameters> watcherMap) throws PhrescoException {
         try {
             if (CollectionUtils.isNotEmpty(parameters)) {
+                MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(appInfo)));
                 for (Parameter parameter : parameters) {
                     String parameterKey = parameter.getKey();
                     if (parameter.getDynamicParameter() != null) { //Dynamic parameter
@@ -126,6 +127,7 @@ public class DynamicParameterAction extends FrameworkBaseAction {
                         if (CollectionUtils.isNotEmpty(dynParamPossibleValues)) {
                         	addWatcher(watcherMap, parameter.getDependency(), parameterKey, dynParamPossibleValues.get(0).getValue());
                         }
+                        parameter.setValue(dynParamPossibleValues.get(0).getValue());
                     } else if (parameter.getPossibleValues() != null) { //Possible values
                         List<Value> values = parameter.getPossibleValues().getValue();
                         
@@ -138,9 +140,17 @@ public class DynamicParameterAction extends FrameworkBaseAction {
                         if (CollectionUtils.isNotEmpty(values)) {
                             addWatcher(watcherMap, parameter.getDependency(), parameterKey, values.get(0).getValue());
                         }
+                        parameter.setValue(new String());
                     } else if (parameter.getType().equalsIgnoreCase(TYPE_BOOLEAN) && StringUtils.isNotEmpty(parameter.getDependency())) { //Checkbox
                         addWatcher(watcherMap, parameter.getDependency(), parameterKey, parameter.getValue());
+                        parameter.setValue(new String());
+                    } else {
+                        parameter.setValue(new String());
                     }
+                    if (DynamicParameter.KEY_BUILD_NO.equals(parameter.getKey())) {
+                        parameter.setValue(getReqParameter(BUILD_NUMBER));
+                    }
+                    mojo.save();
                 }
             }
         } catch (Exception e) {
@@ -148,7 +158,6 @@ public class DynamicParameterAction extends FrameworkBaseAction {
             // TODO: handle exception
         }
     }
-
 
 	private void addValueDependToWatcher(
 			Map<String, DependantParameters> watcherMap, String parameterKey,
@@ -329,8 +338,6 @@ public class DynamicParameterAction extends FrameworkBaseAction {
 			if (parameter.getPluginParameter()!= null && PLUGIN_PARAMETER_FRAMEWORK.equalsIgnoreCase(parameter.getPluginParameter())) {
 				List<MavenCommand> mavenCommand = parameter.getMavenCommands().getMavenCommand();
 				for (MavenCommand mavenCmd : mavenCommand) {
-					System.out.println("parameter key value ..." + parameter.getKey());
-					System.out.println("parameter value ..." + parameter.getValue());
 					if (StringUtils.isNotEmpty(parameter.getValue()) && parameter.getValue().equalsIgnoreCase(mavenCmd.getKey())) {
 						buildArgCmds.add(mavenCmd.getValue());
 					}
