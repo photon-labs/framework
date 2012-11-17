@@ -70,8 +70,12 @@
     </div>
 </s:if>
 
-<div class="alert-message warning"  id="warningmsg" style="display:none;">
-	<s:label cssClass="labelWarn" key="build.warn.message" />
+<!-- <div class="alert-message warning"  id="warningmsg" style="display:block;"> -->
+<%-- 	<s:label cssClass="labelWarn" key="build.warn.message" /> --%>
+<!-- </div> -->
+
+<div class="alert alert-block" id="warningmsg" style="display:block;">
+	<s:text name='build.warn.message'/>
 </div>
 
 <form action="deleteBuild" method="post" autocomplete="off" id="deleteObjects" class="build_form">
