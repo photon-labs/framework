@@ -1050,7 +1050,7 @@ label {
     background:#3A090B;
 }
 
-#navigation ul li a:hover, #navigation ul li a.selected {
+#navigation ul li a.inactive label:hover, #navigation ul li a.active label{
     color: #FFFFFF;
     background-image:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIHZpZXdCb3g9IjAgMCAxIDEiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiPgo8bGluZWFyR3JhZGllbnQgaWQ9Imc5NzQiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjAlIiB5Mj0iMTAwJSI+CjxzdG9wIHN0b3AtY29sb3I9IiNDNzE0MUMiIG9mZnNldD0iMCIvPjxzdG9wIHN0b3AtY29sb3I9IiNCMTEyMUQiIG9mZnNldD0iMC41Ii8+PHN0b3Agc3RvcC1jb2xvcj0iIzlEMTExRSIgb2Zmc2V0PSIxIi8+CjwvbGluZWFyR3JhZGllbnQ+CjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9InVybCgjZzk3NCkiIC8+Cjwvc3ZnPg==);
     background: -moz-linear-gradient(center top, #C7141C 0%, #B1121D 44%, #9D111E 100%) repeat scroll 0 0 transparent;
@@ -1561,4 +1561,8 @@ background-color: #ffffff;
 
 .popupLbl {
 	color: #000;
+}
+
+#subTabcontent {
+	margin-top: 0px;
 }
