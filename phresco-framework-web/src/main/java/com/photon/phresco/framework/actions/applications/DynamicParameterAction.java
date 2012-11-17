@@ -47,6 +47,8 @@ public class DynamicParameterAction extends FrameworkBaseAction {
     
     private boolean paramaterAvailable;
     
+    private String availableParams = "";
+    
     private static Map<String, PhrescoDynamicLoader> pdlMap = new HashMap<String, PhrescoDynamicLoader>();
 	
 	/**
@@ -102,13 +104,15 @@ public class DynamicParameterAction extends FrameworkBaseAction {
     
     /**
      * To set List of parameters in request
+     * @param mojo TODO
      * @param appInfo
      * @param goal
      * @throws PhrescoException
      */
-    protected void setPossibleValuesInReq(ApplicationInfo appInfo, List<Parameter> parameters, Map<String, DependantParameters> watcherMap) throws PhrescoException {
+    protected void setPossibleValuesInReq(MojoProcessor mojo, ApplicationInfo appInfo, List<Parameter> parameters, Map<String, DependantParameters> watcherMap) throws PhrescoException {
         try {
             if (CollectionUtils.isNotEmpty(parameters)) {
+                StringBuilder paramBuilder = new StringBuilder();
                 for (Parameter parameter : parameters) {
                     String parameterKey = parameter.getKey();
                     if (parameter.getDynamicParameter() != null) { //Dynamic parameter
@@ -126,6 +130,12 @@ public class DynamicParameterAction extends FrameworkBaseAction {
                         if (CollectionUtils.isNotEmpty(dynParamPossibleValues)) {
                         	addWatcher(watcherMap, parameter.getDependency(), parameterKey, dynParamPossibleValues.get(0).getValue());
                         }
+                        if (StringUtils.isNotEmpty(paramBuilder.toString())) {
+                            paramBuilder.append("&");
+                        }
+                        paramBuilder.append(parameterKey);
+                        paramBuilder.append("=");
+                        paramBuilder.append(dynParamPossibleValues.get(0).getValue());
                     } else if (parameter.getPossibleValues() != null) { //Possible values
                         List<Value> values = parameter.getPossibleValues().getValue();
                         
@@ -138,10 +148,23 @@ public class DynamicParameterAction extends FrameworkBaseAction {
                         if (CollectionUtils.isNotEmpty(values)) {
                             addWatcher(watcherMap, parameter.getDependency(), parameterKey, values.get(0).getValue());
                         }
+                        if (StringUtils.isNotEmpty(paramBuilder.toString())) {
+                            paramBuilder.append("&");
+                        }
+                        paramBuilder.append(parameterKey);
+                        paramBuilder.append("=");
+                        paramBuilder.append("");
                     } else if (parameter.getType().equalsIgnoreCase(TYPE_BOOLEAN) && StringUtils.isNotEmpty(parameter.getDependency())) { //Checkbox
                         addWatcher(watcherMap, parameter.getDependency(), parameterKey, parameter.getValue());
+                        if (StringUtils.isNotEmpty(paramBuilder.toString())) {
+                            paramBuilder.append("&");
+                        }
+                        paramBuilder.append(parameterKey);
+                        paramBuilder.append("=");
+                        paramBuilder.append("");
                     }
                 }
+                setAvailableParams(paramBuilder.toString());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -149,9 +172,7 @@ public class DynamicParameterAction extends FrameworkBaseAction {
         }
     }
 
-
-	private void addValueDependToWatcher(
-			Map<String, DependantParameters> watcherMap, String parameterKey,
+	private void addValueDependToWatcher(Map<String, DependantParameters> watcherMap, String parameterKey,
 			List<Value> values) {
 		for (Value value : values) {
 		    if (StringUtils.isNotEmpty(value.getDependency())) {
@@ -200,7 +221,6 @@ public class DynamicParameterAction extends FrameworkBaseAction {
         if (dependantParameters != null) {
             paramMap.putAll(getDependantParameters(dependantParameters.getParentMap(), watcherMap));
         }
-        System.out.println("Build number value in constructDynamic => " + getReqParameter(BUILD_NUMBER));
         paramMap.put(DynamicParameter.KEY_APP_INFO, appInfo);
         paramMap.put(DynamicParameter.KEY_BUILD_NO, getReqParameter(BUILD_NUMBER));
 
@@ -329,8 +349,6 @@ public class DynamicParameterAction extends FrameworkBaseAction {
 			if (parameter.getPluginParameter()!= null && PLUGIN_PARAMETER_FRAMEWORK.equalsIgnoreCase(parameter.getPluginParameter())) {
 				List<MavenCommand> mavenCommand = parameter.getMavenCommands().getMavenCommand();
 				for (MavenCommand mavenCmd : mavenCommand) {
-					System.out.println("parameter key value ..." + parameter.getKey());
-					System.out.println("parameter value ..." + parameter.getValue());
 					if (StringUtils.isNotEmpty(parameter.getValue()) && parameter.getValue().equalsIgnoreCase(mavenCmd.getKey())) {
 						buildArgCmds.add(mavenCmd.getValue());
 					}
@@ -390,7 +408,9 @@ public class DynamicParameterAction extends FrameworkBaseAction {
     
     public String validateDynamicParam() {
         try {
-            List<Parameter> parameters = getDynamicParameters(getGoal());
+            MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(getApplicationInfo())));
+            
+            List<Parameter> parameters = getMojoParameters(mojo, getGoal()); //getDynamicParameters(getGoal());
             if (CollectionUtils.isEmpty(parameters)) {
                 setParamaterAvailable(false);
                 return SUCCESS;
@@ -406,7 +426,7 @@ public class DynamicParameterAction extends FrameworkBaseAction {
             }
             if (!hasShow) {
                 Map<String, DependantParameters> watcherMap = new HashMap<String, DependantParameters>(8);
-                setPossibleValuesInReq(getApplicationInfo(), parameters, watcherMap);
+                setPossibleValuesInReq(mojo, getApplicationInfo(), parameters, watcherMap);
                 if (watcherMap != null && !watcherMap.isEmpty()) {
                     setParamaterAvailable(true);
                 }
@@ -464,5 +484,15 @@ public class DynamicParameterAction extends FrameworkBaseAction {
 
     public void setParamaterAvailable(boolean paramaterAvailable) {
         this.paramaterAvailable = paramaterAvailable;
+    }
+
+
+    public String getAvailableParams() {
+        return availableParams;
+    }
+
+
+    public void setAvailableParams(String availableParams) {
+        this.availableParams = availableParams;
     }
 }

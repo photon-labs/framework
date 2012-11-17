@@ -439,16 +439,16 @@
 				updateDependancy(dependencyArr[i]);
 			}
 		}
+		
+		if ($(obj).attr("type") === 'checkbox') {
+				if (!selectedOption) {
+					var previousDependencyArr = new Array();
+					previousDependencyArr = csvDependencies.split(',');
+					hideControl(previousDependencyArr);
+				}	
+			}
 	}
 	
-	if ($(obj).attr("type")==="checkbox") {
-			if (!selectedOption) {
-				var previousDependencyArr = new Array();
-				previousDependencyArr = csvDependencies.split(',');
-				hideControl(previousDependencyArr);
-			}	
-		}
-
 	//Iterates all the elements in the build form and show the dependency elements
 	function showParameters() {
 		$(':input', '#generateBuildForm').each(function() {

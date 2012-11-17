@@ -175,6 +175,10 @@ function validateDynamicParam(successUrl, title, okUrl, okLabel, form, goal, nee
 			if (data.paramaterAvailable != undefined && data.paramaterAvailable) {
 				yesnoPopup(successUrl, title, okUrl, okLabel, form, additionalParam);
 			} else if (needProgressPopUp) {
+				if (data.availableParams != undefined && !isBlank(data.availableParams)) {
+					additionalParam = additionalParam.concat("&");
+					additionalParam = additionalParam.concat(data.availableParams);
+				}
 				window[okUrl](additionalParam);
 			}
 		}

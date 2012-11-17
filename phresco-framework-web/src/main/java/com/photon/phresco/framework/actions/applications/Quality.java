@@ -336,7 +336,7 @@ public class Quality extends DynamicParameterAction implements Constants {
             setProjModulesInReq();
             Map<String, DependantParameters> watcherMap = new HashMap<String, DependantParameters>(8);
             List<Parameter> parameters = getDynamicParameters(appInfo, PHASE_UNIT_TEST);
-            setPossibleValuesInReq(appInfo, parameters, watcherMap);
+            setPossibleValuesInReq(null, appInfo, parameters, watcherMap);
             setSessionAttribute(appInfo.getId() + PHASE_UNIT_TEST + SESSION_WATCHER_MAP, watcherMap);
             setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
             setReqAttribute(REQ_GOAL, PHASE_UNIT_TEST);
@@ -460,8 +460,11 @@ public class Quality extends DynamicParameterAction implements Constants {
             removeSessionAttribute(appInfo.getId() + PHASE_FUNCTIONAL_TEST + SESSION_WATCHER_MAP);
             setProjModulesInReq();
             Map<String, DependantParameters> watcherMap = new HashMap<String, DependantParameters>(8);
-            List<Parameter> parameters = getDynamicParameters(appInfo, PHASE_FUNCTIONAL_TEST);
-            setPossibleValuesInReq(appInfo, parameters, watcherMap);
+
+            MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(getApplicationInfo())));
+            List<Parameter> parameters = getMojoParameters(mojo, PHASE_FUNCTIONAL_TEST);
+
+            setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap);
             setSessionAttribute(appInfo.getId() + PHASE_FUNCTIONAL_TEST + SESSION_WATCHER_MAP, watcherMap);
             setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
             setReqAttribute(REQ_GOAL, PHASE_FUNCTIONAL_TEST);
@@ -508,7 +511,10 @@ public class Quality extends DynamicParameterAction implements Constants {
         }
         
         try {
-            getDynamicParameters(getApplicationInfo(), PHASE_START_HUB);
+            ApplicationInfo appInfo = getApplicationInfo();
+            List<Parameter> parameters = getDynamicParameters(appInfo, PHASE_START_HUB);
+            setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
+            setReqAttribute(REQ_GOAL, PHASE_START_HUB);
         } catch (PhrescoException e) {
             return showErrorPopup(e, getText(EXCEPTION_QUALITY_UNIT_LOAD));
         }
@@ -524,7 +530,8 @@ public class Quality extends DynamicParameterAction implements Constants {
             updateHubConfigInfo(appInfo);
             FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
             String workingDir = getApplicationHome() + frameworkUtil.getFunctionalTestDir(appInfo);
-            FrameworkUtil.executeCommand(COMMAND_START_HUB, workingDir);
+            BufferedReader reader = Utility.executeCommand(COMMAND_START_HUB, workingDir);
+            setSessionAttribute(getAppId() + START_HUB, reader);
         } catch (PhrescoException e) {
             e.printStackTrace();
         }

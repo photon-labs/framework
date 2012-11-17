@@ -71,6 +71,7 @@ public class Projects extends FrameworkBaseAction {
     private boolean errorFound = false;
     private String projectNameError = "";
     private String projectCodeError = "";
+    private String projectVersionError = "";
     private String layerError = "";
     private String mobTechError = "";
     private String appTechError = "";
@@ -381,6 +382,11 @@ public class Projects extends FrameworkBaseAction {
             setProjectCodeError(getText(ERROR_CODE));
             hasError = true;
         }
+      //empty validation for projectVersion
+        if (StringUtils.isEmpty(getProjectVersion())) {
+            setProjectVersionError(getText(ERROR_CODE));
+            hasError = true;
+        }
         //validate if none of the layer is selected
         if (CollectionUtils.isEmpty(getLayer())) {
             setAppTechError(getText(ERROR_TECHNOLOGY));
@@ -492,6 +498,14 @@ public class Projects extends FrameworkBaseAction {
 
     public void setProjectCodeError(String projectCodeErr) {
         this.projectCodeError = projectCodeErr;
+    }
+
+    public String getProjectVersionError() {
+        return projectVersionError;
+    }
+
+    public void setProjectVersionError(String projectVersionError) {
+        this.projectVersionError = projectVersionError;
     }
 
     public List<TechnologyInfo> getWidgets() {
