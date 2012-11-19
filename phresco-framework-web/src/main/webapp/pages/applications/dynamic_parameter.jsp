@@ -214,6 +214,16 @@
 					StringTemplate fieldSetElement = FrameworkUtil.constructFieldSetElement(parameterModel);
 	%>
 					<%= fieldSetElement %>
+					
+	<%
+				} else if (FrameworkConstants.TYPE_MAP.equalsIgnoreCase(parameter.getType())) {
+					
+					parameterModel.setInputType(parameter.getType());
+					parameterModel.setValue(StringUtils.isNotEmpty(parameter.getValue()) ? parameter.getValue():"");
+					
+					StringTemplate txtMultiInputElement = FrameworkUtil.constructMultiInputElement(parameterModel);
+	%>
+					<%= txtMultiInputElement %>
 	<%
 				}
 	%>
@@ -524,5 +534,19 @@
 		} else {
 			$(obj).val("false");
 		}
+	}
+	
+	var count=2;
+	function addKey() {
+		var trId = count;
+		var id = count + "_addHeader";
+		
+		var newPropTempRow = $(document.createElement('tr')).attr("id", trId).attr("class", "borderForLoad");
+		newPropTempRow.html("<td class='borderForLoad'><input type='text' class='input-small' id='"+id+"' name='addHeader' placeholder='' value=''><span class='help-inline' id='addHeaderError'></span></td>"+
+				"<td class='borderForLoad'><input type='text' class='input-small' id='"+id+"' name='addHeader' placeholder='' value=''><span class='help-inline' id='addHeaderError'></span></td>"+
+				"<td class='borderForLoad'><a><img class='addimagealign' src='images/icons/add_icon.png' onclick='addKey(this);'></a></td><td class='borderForLoad'><img class = 'del imagealign'" + 
+		 			"src='images/icons/minus_icon.png' onclick='removeTag(this);'></td>")
+	 	newPropTempRow.appendTo("#propTempTbodyForHeader");		
+		count++;
 	}
 </script>

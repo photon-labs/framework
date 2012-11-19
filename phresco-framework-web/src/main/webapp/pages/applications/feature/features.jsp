@@ -106,6 +106,10 @@
         fillHeading();
         getFeature();
         accordion();
+ 		$('#appInfo').click(function () {
+   			
+			showPreviousPage();
+   		});
     });
     
     // Function for the feature list selection

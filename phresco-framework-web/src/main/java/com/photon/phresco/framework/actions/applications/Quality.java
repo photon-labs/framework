@@ -1634,7 +1634,8 @@ public class Quality extends DynamicParameterAction implements Constants {
     		Map<String, Object> loadParamMap = new HashMap<String, Object>();
     		ApplicationInfo appInfo = getApplicationInfo();
     		loadParamMap.put(REQ_APP_INFO, appInfo);
-    		getDynamicParameters(appInfo, PHASE_LOAD_TEST);
+    		List<Parameter> parameters = getDynamicParameters(appInfo, PHASE_LOAD_TEST);
+    		setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
     		setReqAttribute(REQ_FROM, from);
     	} catch(Exception e) {
     		e.printStackTrace();
