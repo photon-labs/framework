@@ -268,6 +268,7 @@ td {
 	position: fixed;
 	text-align: left;
 	top: 166px;
+	color: white;
 }
 
 .checkboxwidth {
@@ -2578,7 +2579,7 @@ fieldset {
 
 .build_delete_btn_div {
 	float: left; 
-	width: 48%;
+	width: 38%;
 	margin-left: 0px;
 }
 
@@ -5482,7 +5483,7 @@ a[id='androidSigning']:hover {
     position: absolute;
     top: 49px;
     width: auto;
-	right:7.5%;
+	right:10.5%;
 }
 .customer_name label {
 	color:#FFFFFF !important;
@@ -5588,7 +5589,7 @@ input[class*='chckBxAlign'] {
 }
 
 .builds-list-table .th-inner {
-	top: 195px;
+	top: 200px;
 }	
 /*new css for 2.0 ends*/
 
