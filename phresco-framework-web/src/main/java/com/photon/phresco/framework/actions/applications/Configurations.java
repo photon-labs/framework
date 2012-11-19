@@ -109,8 +109,8 @@ public class Configurations extends FrameworkBaseAction {
     
     // For IIS server
     private String appName = "";
-	private String nameOfSite = "";
-	  private String siteCoreInstPath = "";
+	private String siteName = "";
+	private String siteCoreInstPath = "";
     private String appNameError = null;
     private String siteNameError = null;
     private String siteCoreInstPathError = null;
@@ -201,7 +201,7 @@ public class Configurations extends FrameworkBaseAction {
 		}  
 
         try {
-        	
+        	boolean isIISServer = false;
             SettingsTemplate configTemplate = getServiceManager().getConfigTemplate(getConfigId(), getCustomerId());
             Properties properties = new Properties();
             List<PropertyTemplate> property = configTemplate.getProperties();
@@ -211,6 +211,19 @@ public class Configurations extends FrameworkBaseAction {
                 if (StringUtils.isNotEmpty(value)) {
                     properties.put(key, value);
                 }
+                if ("server".equals(key) && "IIS".equals(value)) {
+                	isIISServer = true;
+                }
+            }
+            
+            ApplicationInfo applicationInfo = getApplicationInfo();
+            if (applicationInfo.getTechInfo().getId().equals("tech-sitecore")) {
+            	properties.put(SETTINGS_TEMP_SITECORE_INST_PATH, siteCoreInstPath);
+            }
+            
+            if (isIISServer) {
+            	properties.put(SETTINGS_TEMP_KEY_APP_NAME, appName);
+            	properties.put(SETTINGS_TEMP_KEY_SITE_NAME, siteName);
             }
             
             Configuration config = new Configuration(getConfigName(), getConfigType());
@@ -358,6 +371,7 @@ public class Configurations extends FrameworkBaseAction {
     public String validateConfiguration() throws PhrescoException {
     	
     	boolean hasError = false;
+    	boolean isIISServer = false;
     	
     	if (StringUtils.isEmpty(getConfigName())) {
     		setConfigNameError(getText(ERROR_NAME));
@@ -374,10 +388,29 @@ public class Configurations extends FrameworkBaseAction {
         for (PropertyTemplate propertyTemplate : properties) {
             String key = propertyTemplate.getKey();
             String value = getActionContextParam(key);
+            if ("server".equals(key) && "IIS".equals(value)) {
+            	isIISServer = true;
+            }
+            
+            if(isIISServer && "context".equals(key)){
+            	propertyTemplate.setRequired(false);
+            }
+            
             if (propertyTemplate.isRequired() && StringUtils.isEmpty(value)) {
             	String field = propertyTemplate.getName();
             	dynamicError += key + ":" + field + " is empty" + ",";
             }
+        }
+        
+    	if (isIISServer) {
+        	if (StringUtils.isEmpty(getAppName())) {
+        		setAppNameError(getText(ERROR_CONFIG_APP_NAME ));
+        		 hasError = true;
+        	}
+        	if (StringUtils.isEmpty(getSiteName())) {
+        		setSiteNameError(getText(ERROR_CONFIG_SITE_NAME));
+        		 hasError = true;
+        	}
         }
         
         if (StringUtils.isNotEmpty(dynamicError)) {
@@ -445,7 +478,10 @@ public class Configurations extends FrameworkBaseAction {
     
     public String deleteEnvironment() {
     	try {
-    		getConfigManager().deleteEnvironment(selectedEnvirment);
+    		if(selectedEnvirment != null) {
+    			getConfigManager().deleteEnvironment(selectedEnvirment);
+    		} 
+    		
     	} catch(Exception e) {
     		 return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_CONFIGURATION_DELETE_ENVIRONMENT));
     	}
@@ -501,7 +537,7 @@ public class Configurations extends FrameworkBaseAction {
         return SUCCESS;
     }
     
-    private boolean validate(ProjectAdministrator administrator, String fromPage) throws PhrescoException {
+    /*private boolean validate(ProjectAdministrator administrator, String fromPage) throws PhrescoException {
     	if (debugEnabled) {
     		S_LOGGER.debug("Entering Method  Configurations.validate(ProjectAdministrator administrator, String fromPage)");
     		S_LOGGER.debug("validate() Frompage = " + fromPage);
@@ -646,7 +682,7 @@ public class Configurations extends FrameworkBaseAction {
     	}
 
 	   	return validate;
-    }
+    }*/
     
 	public String edit() {
     	if (debugEnabled) {
@@ -694,7 +730,10 @@ public class Configurations extends FrameworkBaseAction {
     		S_LOGGER.debug("Entering Method  Configurations.update()");
 		}  
         try {
-        	initDriverMap();
+        	
+        	
+        	
+        	/*initDriverMap();
             ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
             Project project = administrator.getProject(projectCode);
             List<PropertyInfo> propertyInfoList = new ArrayList<PropertyInfo>();
@@ -778,7 +817,7 @@ public class Configurations extends FrameworkBaseAction {
             }
             String environment = getHttpRequest().getParameter(REQ_ENVIRONMENTS);
             administrator.updateConfiguration(environment, oldName, settingsInfo, project);
-            addActionMessage("Configuration updated successfully");
+            addActionMessage("Configuration updated successfully");*/
 
         } catch (Exception e) {
         	if (debugEnabled) {
@@ -844,7 +883,8 @@ public class Configurations extends FrameworkBaseAction {
                 Properties selectedProperties = configuration.getProperties();
                 setReqAttribute(REQ_PROPERTIES_INFO, selectedProperties);
             }
-		    
+            
+            setReqAttribute(REQ_SELECTED_TYPE, selectedType);
 			/*String projectCode = (String)getHttpRequest().getParameter(REQ_PROJECT_CODE);
 			String oldName = (String)getHttpRequest().getParameter(REQ_OLD_NAME);
 			ProjectAdministrator administrator = getProjectAdministrator();
@@ -1212,13 +1252,13 @@ public class Configurations extends FrameworkBaseAction {
 		this.siteNameError = siteNameError;
 	}
 
-	public String getNameOfSite() {
+	/*public String getNameOfSite() {
 		return nameOfSite;
 	}
 
 	public void setNameOfSite(String nameOfSite) {
 		this.nameOfSite = nameOfSite;
-	}
+	}*/
 
 	public String getSiteCoreInstPath() {
 		return siteCoreInstPath;
@@ -1380,5 +1420,21 @@ public class Configurations extends FrameworkBaseAction {
 	public void setSelectedConfigname(String selectedConfigname) {
 		this.selectedConfigname = selectedConfigname;
 	}
+
+	public String getSiteName() {
+		return siteName;
+	}
+
+	public void setSiteName(String siteName) {
+		this.siteName = siteName;
+	}
+	
+	/*public Configuration getSelectedConfig() {
+		return selectedConfig;
+	}
+
+	public void setSelectedConfig(Configuration selectedConfig) {
+		this.selectedConfig = selectedConfig;
+	}*/
 
 }

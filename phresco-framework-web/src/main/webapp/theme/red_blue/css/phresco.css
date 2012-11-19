@@ -2602,6 +2602,11 @@ fieldset {
     height: 90%;
     margin-bottom: 0px;
 }
+
+#remoteDeployment {
+	margin: 0px;
+}
+
 /*** configuration list ends ***/
 
 /***configuration add starts ***/

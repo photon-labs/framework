@@ -73,7 +73,7 @@
 	
 	String title = FrameworkActionUtil.getTitle(FrameworkConstants.CONFIG, fromPage);
 	String buttonLbl = FrameworkActionUtil.getButtonLabel(fromPage);
-	//String pageUrl = FrameworkActionUtil.getPageUrl(FrameworkConstants.CONFIG, fromPage);
+	String pageUrl = FrameworkActionUtil.getPageUrl(FrameworkConstants.CONFIG, fromPage);
 	
 	Gson gson = new Gson();
 %>
@@ -150,7 +150,7 @@
 	</div>
 	
 	<div class="bottom_button">
-		<input type="button" id="saveConfiguration" class="btn btn-primary" value='<%= buttonLbl %>' />	
+		<input type="button" id="<%= pageUrl %>" class="btn btn-primary" value='<%= buttonLbl %>' />	
 		<input type="button" id="downloadCancel" class="btn btn-primary" value="<s:text name='lbl.btn.cancel'/>" />
 	</div>
 	
@@ -181,7 +181,7 @@
 		loadJsonContent('configType', params,  $('#typeContainer'));
 	}).triggerHandler("change");
 	
-	$('#saveConfiguration').click(function() {
+		$("#" + '<%= pageUrl %>').click(function() {
 		var name = $('#configName').val();
 		var desc = $('#configDesc').val();
 		var env = $('#environment').val();

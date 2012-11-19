@@ -533,6 +533,8 @@ public interface FrameworkConstants {
     String REQ_SONAR_PATH = "SonarPath";
     String REQ_CONFIG_INFO = "configInfo";
     String REQ_PROPERTIES_INFO = "propertiesInfo";
+    String REQ_SELECTED_TYPE = "selectedType";
+    String REQ_CONFIG_TYPE = "configType";
     String REQ_OLD_NAME = "oldName";
     String REQ_ERROR = "error";
     String REQ_SELECTED_ITEMS = "check";
@@ -1008,6 +1010,8 @@ public interface FrameworkConstants {
     String ERROR_TECHNOLOGY = "err.msg.empty.technology";
     String ERROR_ENV = "err.msg.empty.environment";
     String ERROR_CONFIG_TYPE = "err.msg.empty.config.type";
+    String ERROR_CONFIG_SITE_NAME = "err.msg.empty.config.site.name";
+    String ERROR_CONFIG_APP_NAME = "err.msg.empty.config.app.name";
     String CLONE_CONFIG_STATUS = "cloneConfigStatus";
     String ERROR_ENV_REMOVE = "Environment {0} is already in use";
     String ERROR_ENVS_REMOVE = "Environment(s) {0} are already in use";
