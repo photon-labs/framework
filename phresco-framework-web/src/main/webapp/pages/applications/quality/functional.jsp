@@ -340,6 +340,9 @@ function popupOnOk(obj) {
 	} else if (okUrl === "startNode") {
 		var params = getBasicParams();
 		progressPopupAsSecPopup(okUrl, '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.START_NODE %>', $("#generateBuildForm"), params);
+	} else if (okUrl === "runFunctionalTest") {
+		var params = getBasicParams();
+		progressPopupAsSecPopup(okUrl, '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.FUNCTIONAL %>', $("#generateBuildForm"), params);
 	}
 }
 </script> 

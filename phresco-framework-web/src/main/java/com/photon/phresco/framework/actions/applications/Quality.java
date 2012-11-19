@@ -527,7 +527,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 	        ApplicationInfo appInfo = getApplicationInfo();
 	        MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(appInfo)));
             persistValuesToXml(mojo, PHASE_START_HUB);
-            updateHubConfigInfo(appInfo);
+//            updateHubConfigInfo(appInfo);
             FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
             String workingDir = getApplicationHome() + frameworkUtil.getFunctionalTestDir(appInfo);
             BufferedReader reader = Utility.executeCommand(COMMAND_START_HUB, workingDir);
@@ -601,7 +601,7 @@ public class Quality extends DynamicParameterAction implements Constants {
             updateNodeConfigInfo(appInfo);
             FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
             String workingDir = getApplicationHome() + frameworkUtil.getFunctionalTestDir(appInfo);
-            FrameworkUtil.executeCommand(COMMAND_START_HUB, workingDir);
+            Utility.executeCommand(COMMAND_START_HUB, workingDir);
         } catch (PhrescoException e) {
             e.printStackTrace();
         }
