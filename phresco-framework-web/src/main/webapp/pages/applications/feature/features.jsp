@@ -130,17 +130,19 @@
         	var hiddenFieldname = ($('#featureselect').val()).toLowerCase();
         	var dispName = $(this).val();
         	var hiddenFieldVersion = $('select[name='+dispName+']').val();
+        	var moduleId = $('select[name='+dispName+']').attr('moduleId');
+        	//var myTag = element.attr("myTag");
         	var dispValue = $("#" + dispName + " option:selected").text();
-        	constructFeaturesDiv(dispName, dispValue, hiddenFieldname, hiddenFieldVersion);
+        	constructFeaturesDiv(dispName, dispValue, hiddenFieldname, hiddenFieldVersion, moduleId);
         });
     }
     
     // Function to construct the hidden fields for selected features
-    function constructFeaturesDiv(dispName, dispValue, hiddenFieldname, hiddenFieldVersion) {
+    function constructFeaturesDiv(dispName, dispValue, hiddenFieldname, hiddenFieldVersion, moduleId) {
 		$("div[id='"+ dispName +"']").remove();
 		$("input[class='"+ dispName +"']").remove();
 		
-		$("#result").append('<input type="hidden" class = "'+dispName+'" value={"dispName":"'+dispName+'","dispValue":"'+dispValue+'","versionID":"'+hiddenFieldVersion+'","type":"'+hiddenFieldname+'"} name="jsonData">');
+		$("#result").append('<input type="hidden" class = "'+dispName+'" value={"dispName":"'+dispName+'","moduleId":"'+moduleId+'","dispValue":"'+dispValue+'","versionID":"'+hiddenFieldVersion+'","type":"'+hiddenFieldname+'"} name="jsonData">');
 		$("#result").append('<div id="'+dispName+'">'+dispName+' - '+dispValue+'<a href="#" id="'+dispName+'" onclick="remove(this);">&times;</a></div>');
 		
     }

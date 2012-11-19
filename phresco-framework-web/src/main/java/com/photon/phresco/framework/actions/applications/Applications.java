@@ -19,7 +19,6 @@
  */
 package com.photon.phresco.framework.actions.applications;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -27,25 +26,15 @@ import java.util.List;
 import org.apache.commons.io.FileExistsException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.eclipse.jgit.api.errors.CanceledException;
-import org.eclipse.jgit.api.errors.DetachedHeadException;
-import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.api.errors.InvalidConfigurationException;
 import org.eclipse.jgit.api.errors.InvalidRemoteException;
-import org.eclipse.jgit.api.errors.NoHeadException;
-import org.eclipse.jgit.api.errors.RefNotFoundException;
 import org.eclipse.jgit.api.errors.TransportException;
-import org.eclipse.jgit.api.errors.WrongRepositoryStateException;
 import org.tmatesoft.svn.core.SVNAuthenticationException;
 import org.tmatesoft.svn.core.SVNException;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.opensymphony.xwork2.Action;
 import com.photon.phresco.commons.model.ApplicationInfo;
+import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.DownloadInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.SelectedFeature;
@@ -60,6 +49,7 @@ import com.photon.phresco.framework.api.ValidationResult;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.commons.LogErrorReport;
 import com.photon.phresco.framework.impl.SCMManagerImpl;
+import com.photon.phresco.service.client.api.ServiceManager;
 import com.phresco.pom.model.Scm;
 import com.phresco.pom.util.PomProcessor;
 
@@ -586,12 +576,37 @@ public class Applications extends FrameworkBaseAction {
     	try {
     		ProjectInfo projectInfo = (ProjectInfo)getSessionAttribute(getAppId() + SESSION_APPINFO);
         	ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
-        	appInfo.setSelectedModules(getFeature());
-        	appInfo.setSelectedJSLibs(getJavascript());
-        	appInfo.setSelectedComponents(getComponent());
+        	
+        	List<String> jsonData = getJsonData();
+        	List<String> selectedFeatures = new ArrayList<String>();
+        	List<String> selectedJsLibs = new ArrayList<String>();
+        	List<String> selectedComponents = new ArrayList<String>();
+        	List<ArtifactGroup> listArtifactGroup = new ArrayList<ArtifactGroup>();
+        	if(jsonData !=null) {
+            	for (String string : jsonData) {
+					Gson gson = new Gson();
+					SelectedFeature obj = gson.fromJson(string, SelectedFeature.class);
+					String artifactGroupId = obj.getModuleId();
+					ArtifactGroup artifactGroupInfo = getServiceManager().getArtifactGroupInfo(artifactGroupId);
+					listArtifactGroup.add(artifactGroupInfo);
+					if(obj.getType().equals("feature")){
+						selectedFeatures.add(obj.toString());
+					}
+					if(obj.getType().equals("javascript")){
+						selectedJsLibs.add(obj.toString());
+					}
+					if(obj.getType().equals("component")){
+						selectedComponents.add(obj.toString());
+					}
+					
+				}
+        	}
+        	appInfo.setSelectedModules(selectedFeatures);
+        	appInfo.setSelectedJSLibs(selectedJsLibs);
+        	appInfo.setSelectedComponents(selectedComponents);
     		projectInfo.setAppInfos(Collections.singletonList(appInfo));
     		ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
-    		projectManager.update(projectInfo, getServiceManager());
+    		projectManager.update(projectInfo, getServiceManager(), listArtifactGroup);
             List<ProjectInfo> projects = projectManager.discover(getCustomerId());
             setReqAttribute(REQ_PROJECTS, projects);
             removeSessionAttribute(getAppId() + SESSION_APPINFO);
@@ -603,7 +618,6 @@ public class Applications extends FrameworkBaseAction {
         
     	return APP_UPDATE;
     }
-    
     /*public String delete() {
         S_LOGGER.debug("Entering Method  Applications.delete()");
 
