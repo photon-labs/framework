@@ -517,4 +517,12 @@
 		}
 		return dependencies;
 	}
+	
+	function changeChckBoxValue(obj) {
+		if ($(obj).is(':checked')) {
+			$(obj).val("true");
+		} else {
+			$(obj).val("false");
+		}
+	}
 </script>
