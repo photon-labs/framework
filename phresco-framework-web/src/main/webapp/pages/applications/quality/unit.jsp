@@ -270,6 +270,12 @@ function popupOnOk(obj) {
 	progressPopupAsSecPopup(okUrl, '<%= appId %>', '<%= FrameworkConstants.UNIT %>', $("#generateBuildForm"), params);
 }
 
+// after executing the test. when clicking Progress popup , it will call this methid to load test results
+function popupOnClose(obj) {
+	var closeUrl = $(obj).attr("id");
+	loadTestSuites();
+}
+
 //This method will be called when there is no dynamic param
 function runUnitTest() {
 	progressPopup('runUnitTest', '<%= appId %>', '<%= FrameworkConstants.UNIT %>', '', '', getBasicParams());

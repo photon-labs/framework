@@ -344,4 +344,10 @@ function popupOnOk(obj) {
 		progressPopupAsSecPopup(okUrl, '<%= appId %>', '<%= FrameworkConstants.FUNCTIONAL %>', $("#generateBuildForm"), params);
 	}
 }
+
+//after executing the test. when clicking Progress popup , it will call this methid to load test results
+function popupOnClose(obj) {
+	var closeUrl = $(obj).attr("id");
+	loadTestSuites();
+}
 </script> 
