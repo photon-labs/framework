@@ -56,8 +56,8 @@
 %>
 
 <% if (CollectionUtils.isEmpty(buildInfos)) { %>
-	<div class="alert-message block-message warning" style="margin-top: 5px">
-	    <center><s:label key="configuration.info.message" cssClass="errorMsgLabel"/></center>
+	<div class="alert alert-block" style="margin-top: 5px">
+	    <center><s:text name='configuration.info.message'/></center>
 	</div>
 <% } else { %>
 		<div class="build_table_div">
