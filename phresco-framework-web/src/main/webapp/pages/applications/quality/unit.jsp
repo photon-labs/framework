@@ -148,12 +148,6 @@ $(document).ready(function() {
 		validateDynamicParam('showUnitTestPopUp', '<s:text name="lbl.unit.test"/>', 'runUnitTest','<s:text name="lbl.test"/>', '', '<%= Constants.PHASE_UNIT_TEST %>', true);
 	});
 	
-	<%-- <% if (CollectionUtils.isNotEmpty(parameters) || CollectionUtils.isNotEmpty(projectModules)) { %>
-		yesnoPopup($('#unitTest'), 'showUnitTestPopUp', '<s:text name="lbl.unit.test"/>', 'runUnitTest','<s:text name="lbl.test"/>');
-	<% } else { %>
-		progressPopup($('#unitTest'), 'runUnitTest', '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.UNIT %>', '', '', getBasicParams());
-	<% } %> --%>
-	
 	loadTestSuites();
 	
 	$("#testResultFile, #testSuite, #testSuiteDisplay, #testResultLbl, #resultView").hide();
@@ -214,10 +208,6 @@ $(document).ready(function() {
 	});
 });
 
-function callProgressPopup() {
-	progressPopup('runUnitTest', '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.UNIT %>', '', '', getBasicParams());
-}
-
 //To get the testsuites
 function loadTestSuites() {
 	var params = getBasicParams();
@@ -277,12 +267,12 @@ function changeView() {
 function popupOnOk(obj) {
 	var okUrl = $(obj).attr("id");
 	var params = getBasicParams();
-	progressPopupAsSecPopup(okUrl, '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.UNIT %>', $("#generateBuildForm"), params);
+	progressPopupAsSecPopup(okUrl, '<%= appId %>', '<%= FrameworkConstants.UNIT %>', $("#generateBuildForm"), params);
 }
 
 //This method will be called when there is no dynamic param
 function runUnitTest() {
-	progressPopup('runUnitTest', '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.UNIT %>', '', '', getBasicParams());
+	progressPopup('runUnitTest', '<%= appId %>', '<%= FrameworkConstants.UNIT %>', '', '', getBasicParams());
 }
 	    
 /* function openAndroidPopup() {

@@ -298,14 +298,18 @@ $(document).ready(function() {
 	$('#configure').click(function() {
 		yesnoPopup('configure', '<s:text name="lbl.configure"/>', 'saveJob','<s:text name="lbl.save"/>', $('#deleteObjects'));
 	});
-	
-// 	yesnoPopup($('#configure'), 'configure', '<s:text name="lbl.configure"/>', 'saveJob','<s:text name="lbl.save"/>', $('#deleteObjects'));
     
-    progressPopup($('#setup'), 'setup', '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.CI_SETUP %>', '', '', getBasicParams());
+    $('#setup').click(function() {
+    	progressPopup('setup', '<%= appId %>', '<%= FrameworkConstants.CI_SETUP %>', '', '', getBasicParams());
+	});
     
-    progressPopup($('#startJenkins'), 'startJenkins', '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.CI_START %>', '', '', getBasicParams());
+	$('#startJenkins').click(function() {
+		progressPopup('startJenkins', '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.CI_START %>', '', '', getBasicParams());
+	});
     
-    progressPopup($('#stopJenkins'), 'stopJenkins', '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.CI_STOP %>', '', '', getBasicParams());
+	$('#stopJenkins').click(function() {
+		progressPopup('stopJenkins', '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.CI_STOP %>', '', '', getBasicParams());
+	});
     
     confirmDialog($("#deleteBuild"), '<s:text name="lbl.hdr.confirm.dialog"/>', '<s:text name="modal.body.text.del.builds"/>', 'deleteBuild','<s:text name="lbl.btn.ok"/>');
     confirmDialog($("#deleteJob"), '<s:text name="lbl.hdr.confirm.dialog"/>', '<s:text name="modal.body.text.del.jobs"/>', 'deleteJob','<s:text name="lbl.btn.ok"/>');

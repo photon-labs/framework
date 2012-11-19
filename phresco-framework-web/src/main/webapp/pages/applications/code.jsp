@@ -81,6 +81,8 @@
 <script>
 $('.control-group').addClass("valReportLbl");
     $(document).ready(function() {
+    	hideLoadingIcon();
+    	
     	$('#codeValidatePopup').click(function() {
     		validateDynamicParam('showCodeValidatePopup', '<s:text name="popup.hdr.code.validate"/>', 'codeValidate','<s:text name="lbl.validate"/>', '', '<%= Constants.PHASE_VALIDATE_CODE %>');
     	});
@@ -109,7 +111,7 @@ $('.control-group').addClass("valReportLbl");
     function popupOnOk(obj) {
     	var okUrl = $(obj).attr("id");
         var params = getBasicParams();
-        progressPopupAsSecPopup(okUrl, '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.REQ_CODE %>', $("#generateBuildForm"), params);
+        progressPopupAsSecPopup(okUrl, '<%= appId %>', '<%= FrameworkConstants.REQ_CODE %>', $("#generateBuildForm"), params);
     }
     
     function sonarReport() {
