@@ -17,7 +17,7 @@
   limitations under the License.
   ###
   --%>
-<!doctype html>
+
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
@@ -28,8 +28,7 @@
 
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.commons.model.User"%>
-
-<html>
+<!doctype html>
 	<head>
 		<meta name="viewport" content="width=device-width, height=device-height, minimum-scale=0.25, maximum-scale=1.6">
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -111,17 +110,17 @@
 				});
 
 				// function to show user info in toggle 
-				$('div li.usersettings div').hide(0);
+				/* $('div li.usersettings div').hide(0); */
 				$('div li.usersettings').click(function() {
 					$('div li.usersettings div').slideToggle(0);
 				});
 
 				// to show user info on mouse over
 				$('#signOut li').mouseenter(function() {
-					$("div li.usersettings div").hide(0);
-					$(this).children("div li.usersettings div").show(0);
+					/* $("div li.usersettings div").hide(0);
+					$(this).children("div li.usersettings div").show(0); */
 				}).mouseleave(function() {
-					$("div li.usersettings div").hide(0);
+					/* $("div li.usersettings div").hide(0); */
 				});
 
 				clickMenu($("a[name='headerMenu']"), $("#container"), $('#formCustomers'));
@@ -167,14 +166,27 @@
 					<li class="usersettings">
 						<%= displayName %>
 						<img src="images/downarrow.png" class="arrow">
-                        <div class="userInfo" >&nbsp;&nbsp;<s:text name="lbl.skins" />&nbsp;
+						<div class="userInfo">
+                            <ul style="1px solid red">
+                                <li style="1px solid black">
+                                    <ul>
+                                        <li>red</li>
+                                        <li>blue</li>
+                                    </ul>  
+                                </li>
+                                <li style="1px solid black">
+                                    Photon
+                                </li>
+                            </ul>
+                        </div>
+                        <%-- <div class="userInfo" >&nbsp;&nbsp;<s:text name="lbl.skins" />&nbsp;
                             <a class="styles" href="#"  rel="theme/red_blue/css/red.css">
 								<img src="images/red_themer.jpg" class="skinImage">
 							</a>&nbsp;
 							<a class="styles" href="#"  rel="theme/red_blue/css/blue.css">
 								<img src="images/blue_themer.jpg" class="skinImage">
 							</a>
-                        </div>
+                        </div> --%>
                         <div class="userInfo"><a href="#" class="">&nbsp;&nbsp;<s:text name="lbl.hdr.help"/></a></div>
                         <div class="userInfo"><a href="#" class="abtPopUp about">&nbsp;&nbsp;<s:text name="lbl.abt.phresco"/></a></div>
                         <div class="userInfo"><a href="<s:url action='admin/logout'/>" id="signOut">&nbsp;&nbsp;<s:text name="lbl.signout"/></a></div>

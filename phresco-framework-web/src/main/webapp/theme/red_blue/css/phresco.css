@@ -5857,7 +5857,9 @@ div.control-group.valReportLbl {
 
 .validateType {
 	float: left;
-    width: 120px;
+    margin-left: 10px;
+    width: 112px;
+    padding: 4px 0;
 }
 
 .validateReportSelectBox {
