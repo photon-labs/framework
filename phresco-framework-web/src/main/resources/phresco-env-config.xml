@@ -15,19 +15,23 @@
             <additional_context>/</additional_context>
         </Server>
 	
-		 <WebService desc="" name="Webservice">
+		<WebService desc="" name="Webservice">
 			<protocol>http</protocol>
 			<host>172.16.18.178</host>
 			<port>2020</port>
 			<username/>
 			<password/>
-			<context>service-testing</context>
+			<context>service</context>
 			<additional_context>/rest/api</additional_context>
 		</WebService>
-    </environment>
-	
+                 
+        <Other appliesTo="tech-html5-widget" desc="" name="Apikey">
+            <apiKey>Bearer TXuk45IV_fFoCou1pzu15l2jEgka</apiKey>
+        </Other>
+</environment>
+    
 	 <environment default="false" name="Development">
-		 <Server appliesTo="tech-html5-widget" desc="" name="server">
+        <Server appliesTo="tech-html5-widget" desc="" name="server">
             <protocol>http</protocol>
             <host>localhost</host>
             <port>2468</port>
@@ -51,6 +55,11 @@
             <context>service</context>
 			<additional_context>/rest/api</additional_context>
         </WebService>
+        
+        <Other appliesTo="tech-html5-widget" desc="" name="Apikey">
+            <apiKey>Bearer TXuk45IV_fFoCou1pzu15l2jEgka</apiKey>
+        </Other>
+        
     </environment>
     
     <environment default="false" name="Testing">
@@ -78,5 +87,9 @@
             <context>service-testing</context>
 			<additional_context>/rest/api</additional_context>
         </WebService>
+        
+        <Other appliesTo="tech-html5-widget" desc="" name="Apikey">
+            <apiKey>Bearer TXuk45IV_fFoCou1pzu15l2jEgka</apiKey>
+        </Other>
     </environment>
 </environments>
