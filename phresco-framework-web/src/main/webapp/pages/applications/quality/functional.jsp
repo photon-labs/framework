@@ -335,13 +335,13 @@ function popupOnOk(obj) {
 	var okUrl = $(obj).attr("id");
 	if (okUrl === "startHub") {
 		var params = getBasicParams();
-		progressPopupAsSecPopup(okUrl, '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.START_HUB %>', $("#generateBuildForm"), params);
+		progressPopupAsSecPopup(okUrl, '<%= appId %>', '<%= FrameworkConstants.START_HUB %>', $("#generateBuildForm"), params);
 	} else if (okUrl === "startNode") {
 		var params = getBasicParams();
-		progressPopupAsSecPopup(okUrl, '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.START_NODE %>', $("#generateBuildForm"), params);
+		progressPopupAsSecPopup(okUrl, '<%= appId %>', '<%= FrameworkConstants.START_NODE %>', $("#generateBuildForm"), params);
 	} else if (okUrl === "runFunctionalTest") {
 		var params = getBasicParams();
-		progressPopupAsSecPopup(okUrl, '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.FUNCTIONAL %>', $("#generateBuildForm"), params);
+		progressPopupAsSecPopup(okUrl, '<%= appId %>', '<%= FrameworkConstants.FUNCTIONAL %>', $("#generateBuildForm"), params);
 	}
 }
 </script> 

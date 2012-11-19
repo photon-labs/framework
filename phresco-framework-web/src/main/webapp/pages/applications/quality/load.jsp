@@ -219,6 +219,6 @@
 		function popupOnOk(obj) {
 			var okUrl = $(obj).attr("id");
 			var params = getBasicParams();
-			progressPopupAsSecPopup(okUrl, '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.LOAD %>', $("#generateBuildForm"), params);
+			progressPopupAsSecPopup(okUrl, '<%= appId %>', '<%= FrameworkConstants.LOAD %>', $("#generateBuildForm"), params);
 		}		
     </script>

@@ -49,7 +49,6 @@ import com.photon.phresco.framework.api.ValidationResult;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.commons.LogErrorReport;
 import com.photon.phresco.framework.impl.SCMManagerImpl;
-import com.photon.phresco.service.client.api.ServiceManager;
 import com.phresco.pom.model.Scm;
 import com.phresco.pom.util.PomProcessor;
 

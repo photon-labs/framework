@@ -511,8 +511,7 @@ public class Quality extends DynamicParameterAction implements Constants {
         }
         
         try {
-            ApplicationInfo appInfo = getApplicationInfo();
-            List<Parameter> parameters = getDynamicParameters(appInfo, PHASE_START_HUB);
+            List<Parameter> parameters = getDynamicParameters(getApplicationInfo(), PHASE_START_HUB);
             setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
             setReqAttribute(REQ_GOAL, PHASE_START_HUB);
         } catch (PhrescoException e) {
@@ -585,7 +584,9 @@ public class Quality extends DynamicParameterAction implements Constants {
         }
         
         try {
-            getDynamicParameters(getApplicationInfo(), PHASE_START_NODE);
+            List<Parameter> parameters = getDynamicParameters(getApplicationInfo(), PHASE_START_NODE);
+            setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
+            setReqAttribute(REQ_GOAL, PHASE_START_NODE);
         } catch (PhrescoException e) {
             return showErrorPopup(e, getText(EXCEPTION_QUALITY_UNIT_LOAD));
         }
