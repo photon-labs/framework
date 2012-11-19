@@ -796,16 +796,11 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     }
     
     public static StringTemplate constructSelectElement(ParameterModel pm) {
-        try {
-            if (pm.isMultiple()) {
-                return constructMultiSelectElement(pm);
-            } else {
-                return constructSingleSelectElement(pm);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+    	if (pm.isMultiple()) {
+    		return constructMultiSelectElement(pm);
+    	} else {
+    		return constructSingleSelectElement(pm);
+    	}
     }
 
     public static StringTemplate constructSingleSelectElement(ParameterModel pm) {
