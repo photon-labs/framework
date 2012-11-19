@@ -81,15 +81,15 @@
 		 <WebService desc="" name="webservice">
             <protocol>http</protocol>
             <host>172.16.18.178</host>
-            <port>2020</port>
+            <port>8280</port>
             <username/>
             <password/>
-            <context>service-testing</context>
+            <context>service-testing/2.0</context>
 			<additional_context>/rest/api</additional_context>
         </WebService>
         
         <Other appliesTo="tech-html5-widget" desc="" name="Apikey">
-            <apiKey>Bearer TXuk45IV_fFoCou1pzu15l2jEgka</apiKey>
+            <apiKey>Bearer oaqHffzj7qp0nCLW8VKeE8toAIYa</apiKey>
         </Other>
     </environment>
 </environments>
