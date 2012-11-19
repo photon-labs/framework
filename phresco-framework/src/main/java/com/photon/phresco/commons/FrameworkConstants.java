@@ -351,6 +351,9 @@ public interface FrameworkConstants {
     String IPHONE_SDK = "sdk";
     String IOS_TEST_TYPE = "applicationTest";
     String IPHONE_CONFIGURATION = "configuration";
+    String SCHEMES = "Schemes";
+    String XCODEBUILD_LIST_WORKSPACE_CMD = "xcodebuild -list -workspace ";
+    String IPHONE_XCODE_WORKSPACE_PROJ_EXTN = "xcworkspace";
     String IPHONE_TARGET_NAME = "targetName";
     String IPHONE_PLISTFILE = "plistfile";
     String JAR_NAME = "jarName";
@@ -749,6 +752,7 @@ public interface FrameworkConstants {
 	
 	String REQ_CONFIG_SERVER_NAMES = "configServerNames";
 	String REQ_CONFIG_DB_NAMES = "configDbNames";
+	String REQ_SRC = "src";
 	
     /*
      * REST url
@@ -762,6 +766,7 @@ public interface FrameworkConstants {
     String PHRESCO_SONAR_URL = "phresco.code.sonar.url";
     String PHRESCO_CI_JENKINS_URL = "phresco.ci.jenkins.url";
     String PHRESCO_JFORUM_URL = "phresco.JForum.url";
+    String PHRESCO_CODE_VALIDATE_REPORT = "phresco.code.validate.report";
     
     String REST_APPS_PATH = "/apps";
     String REST_REPORTS = "/reports";
@@ -898,6 +903,10 @@ public interface FrameworkConstants {
      */
     String FAILURE_CODE_REVIEW = "Code validation report is not available";
 	String SONAR_NOT_STARTED = "sonar.not.started";
+	String REQ_SONAR_TECH_REPORTS = "sonarTechReports";
+	String REQ_PARAMETER = "parameter";
+	String REQ_VALIDATE_AGAINST = "validateAgainst";
+	String CHECK_IPHONE = "checkIphone";
     
     /*
      * Application Redirection keys
@@ -1594,6 +1603,7 @@ public interface FrameworkConstants {
 		String TYPE_BOOLEAN = "boolean";
 		String TEXT_BOX = "text";
 		String TYPE_LIST = "list";
+		String TYPE_MAP = "map";
 		String TYPE_DYNAMIC_PARAMETER = "DynamicParameter";
 		String PHRESCO_PLUGIN_INFO_XML = "phresco-plugin-info.xml";
 		String PLUGIN_PARAMETER_FRAMEWORK = "framework";

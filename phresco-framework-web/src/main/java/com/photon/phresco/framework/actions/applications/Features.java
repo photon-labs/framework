@@ -123,7 +123,6 @@ public class Features extends FrameworkBaseAction {
 		Element element = new Element();
 		element.setId(getPilotProject());
 		appInfo.setPilotInfo(element);
-		
 		List<ArtifactGroupInfo> selectedServers = new ArrayList<ArtifactGroupInfo>();
 		if (CollectionUtils.isNotEmpty(getServer())) {
 			ArtifactGroupInfo artifactGroupInfo = new ArtifactGroupInfo();
@@ -132,8 +131,9 @@ public class Features extends FrameworkBaseAction {
 				artifactGroupInfo.setArtifactInfoIds(Arrays.asList(getReqParameterValues(serverId)));
 				selectedServers.add(artifactGroupInfo);
 			}
+			appInfo.setSelectedServers(selectedServers);
 		}
-    	appInfo.setSelectedServers(selectedServers);
+    	
     	
     	List<ArtifactGroupInfo> selectedDatabases = new ArrayList<ArtifactGroupInfo>();
     	if (CollectionUtils.isNotEmpty(getDatabase())) {
@@ -144,9 +144,8 @@ public class Features extends FrameworkBaseAction {
 				artifactGroupInfo.setArtifactInfoIds(Arrays.asList(getReqParameterValues(databaseId)));
 				selectedDatabases.add(artifactGroupInfo);
 			}
+			appInfo.setSelectedDatabases(selectedDatabases);
 		}
-    	appInfo.setSelectedDatabases(selectedDatabases);
-    	
     	appInfo.setSelectedWebservices(getWebservice());
     	
     	return appInfo;

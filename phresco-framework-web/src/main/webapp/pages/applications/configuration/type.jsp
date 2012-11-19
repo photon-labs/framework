@@ -59,15 +59,21 @@
     	}
         List<String> possibleValues = new ArrayList<String>(8);
 
-       /*  if (FrameworkConstants.SERVER_KEY.equals(propertyTemplate.getKey())) {
-        	ArtifactGroupInfo artifactGroupInfo = appInfo.getSelectedServers().get(0);
-        	possibleValues = artifactGroupInfo.getArtifactInfoIds();
+         if (FrameworkConstants.SERVER_KEY.equals(propertyTemplate.getKey())) {
+        	List<ArtifactGroupInfo> artifactGroupInfos = appInfo.getSelectedServers();
+        	if(CollectionUtils.isNotEmpty(artifactGroupInfos)) {
+        		ArtifactGroupInfo artifactGroupInfo = artifactGroupInfos.get(0);
+        		possibleValues = artifactGroupInfo.getArtifactInfoIds();
+        	}
     	} else if (FrameworkConstants.DATABASE_KEY.equals(propertyTemplate.getKey())) {
-    		ArtifactGroupInfo artifactGroupInfo = appInfo.getSelectedDatabases().get(0);
-    		possibleValues = artifactGroupInfo.getArtifactInfoIds();
-    	} else {  */
+    		List<ArtifactGroupInfo> artifactGroupInfos = appInfo.getSelectedDatabases();
+    		if(CollectionUtils.isNotEmpty(artifactGroupInfos)) {
+    			ArtifactGroupInfo artifactGroupInfo = artifactGroupInfos.get(0);
+    			possibleValues = artifactGroupInfo.getArtifactInfoIds(); 
+    		}
+    	} else {  
     		possibleValues = propertyTemplate.getPossibleValues();
-    	/* } */
+    	 } 
     	
         if (CollectionUtils.isNotEmpty(possibleValues)) {
         	pm.setObjectValue(possibleValues);

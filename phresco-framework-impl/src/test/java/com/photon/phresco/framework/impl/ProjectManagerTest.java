@@ -44,9 +44,9 @@ public class ProjectManagerTest extends BaseTest {
 	}
 	
 //	@Test
-	public void testUpdateProject() throws PhrescoException {
-		ProjectInfo projectInfo = getProjectInfo("tech-php", "tech-php" , "Sample-Php-1" , "Sample-Php-2", "PHR_PHP");
-		ProjectInfo update = projectManager.update(projectInfo, serviceManager);
-		System.out.println(update.getDescription());
-	}	
+//	public void testUpdateProject() throws PhrescoException {
+//		ProjectInfo projectInfo = getProjectInfo("tech-php", "tech-php" , "Sample-Php-1" , "Sample-Php-2", "PHR_PHP");
+//		ProjectInfo update = projectManager.update(projectInfo, serviceManager);
+//		System.out.println(update.getDescription());
+//	}	
 }

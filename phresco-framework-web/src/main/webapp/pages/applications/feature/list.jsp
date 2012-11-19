@@ -43,7 +43,7 @@
 						<input class="feature_checkbox" type="checkbox" value=<%=artifactGroup.getName() %> id="checkAll1"/>
 						<a style="float: left; margin-left:2%;" href="#"><%=artifactGroup.getName() %></a>
 						
-						<select class="input-mini features_ver_sel" id="<%=artifactGroup.getName() %>"  name="<%=artifactGroup.getName() %>" >
+						<select class="input-mini features_ver_sel" id="<%=artifactGroup.getName() %>" moduleId="<%= artifactGroup.getId()%>" name="<%=artifactGroup.getName() %>" >
 							<%
 								List<ArtifactInfo> artifactInfos = artifactGroup.getVersions();
 								for (ArtifactInfo artifactInfo : artifactInfos) {
