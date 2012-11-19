@@ -2101,6 +2101,14 @@ h1 {
     margin-bottom:0px;
 }
 
+.vrsSelect {
+	width: 37.9%;
+}
+
+.vrsSngl {
+	width: 38%;
+}	
+
 input, select, textarea {
     -moz-transition: none;
     box-shadow: none;
@@ -5723,6 +5731,12 @@ input[class*='chckBxAlign'] {
 	height:98%;
 }
 
+.borderForLoad {
+	border: none;
+	padding-bottom: 3px;
+    padding-top: 2%;
+}
+
 .clear {
 	clear: both;
 	line-height: 0;
@@ -5821,6 +5835,13 @@ input[class*='chckBxAlign'] {
     width: 50%;
     text-align: center;
     margin-bottom: 0px;
+}
+
+.fieldSetClassForHeader {
+	padding: 10px; 
+	margin: 10px; 
+	width: auto;
+	margin-left: 30%;
 }
 
 .modal-body {
