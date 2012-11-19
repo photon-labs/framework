@@ -2,6 +2,7 @@ package com.photon.phresco.framework.api;
 
 import java.util.List;
 
+import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.service.client.api.ServiceManager;
@@ -38,7 +39,7 @@ public interface ProjectManager {
 	 * @return ProjectInfo
 	 * @throws PhrescoException
 	 */
-	ProjectInfo update(ProjectInfo projectInfo, ServiceManager serviceManager) throws PhrescoException;
+	ProjectInfo update(ProjectInfo projectInfo, ServiceManager serviceManager, List<ArtifactGroup> ArtifactGroup) throws PhrescoException;
 	
 	/**
 	 * This method deletes the project in local filesystem and not is server
