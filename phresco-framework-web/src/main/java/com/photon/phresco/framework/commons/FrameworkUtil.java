@@ -718,6 +718,48 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 		return type;
 	}
     
+	public static StringTemplate constructMultiInputElement(ParameterModel pm) {
+    	StringTemplate controlGroupElement = new StringTemplate(getControlGroupTemplate());
+    	controlGroupElement.setAttribute("ctrlGrpId", pm.getControlGroupId());
+    	
+    	if (!pm.isShow()) {
+    	    controlGroupElement.setAttribute("ctrlGrpClass", "hideContent");
+    	}
+    	
+    	StringTemplate lableElmnt = constructLabelElement(pm.isMandatory(), pm.getLableClass(), pm.getLableText());
+    	String type = getMultiInputType(pm.getInputType());
+    	StringTemplate inputElement = new StringTemplate(getMapTemplate());
+    	inputElement.setAttribute("type", type);
+    	inputElement.setAttribute("class", pm.getCssClass());
+    	inputElement.setAttribute("id", pm.getId());
+    	inputElement.setAttribute("name", pm.getName());
+    	inputElement.setAttribute("placeholder", pm.getPlaceHolder());
+    	inputElement.setAttribute("value", pm.getValue());
+    	inputElement.setAttribute("ctrlsId", pm.getControlId());
+    	
+    	//controlGroupElement.setAttribute("lable", lableElmnt);
+    	controlGroupElement.setAttribute("lable", inputElement);
+    	
+		return controlGroupElement;
+    }
+
+	/**
+	 * @param inputType
+	 * @return
+	 */
+	private static String getMultiInputType(String inputType) {
+		String type = "";
+		if (TYPE_PASSWORD.equalsIgnoreCase(inputType)) {
+    		type = TYPE_PASSWORD;
+		}  else if (TYPE_HIDDEN.equalsIgnoreCase(inputType)) {
+			type = TYPE_HIDDEN;
+		} else {
+			type = TEXT_BOX;
+		}
+		
+		return type;
+	}
+	
     public static StringTemplate constructCheckBoxElement(ParameterModel pm) {
     	StringTemplate controlGroupElement = new StringTemplate(getControlGroupTemplate());
     	controlGroupElement.setAttribute("ctrlGrpId", pm.getControlGroupId());
@@ -987,6 +1029,33 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	
     	return sb.toString();
     }
+    
+    private static String getMapTemplate() {
+    	StringBuilder sb = new StringBuilder();
+    	sb.append("<fieldset class='mfbox siteinnertooltiptxt popup-fieldset fieldSetClassForHeader'>")
+    	.append("<legend class='fieldSetLegend'>Add Header</legend>")
+    	.append("<table align='center'>")
+    	.append("<thead class='header-background'>")
+    	.append("<tr class='borderForLoad'>")
+    	.append("<th class='borderForLoad'>Key</th>")
+    	.append("<th class='borderForLoad'>Value</th><th></th><th></th></tr></thead>")
+    	.append("<tbody id='propTempTbodyForHeader'>")
+    	.append("<tr class='borderForLoad'>")
+    	.append("<td class='borderForLoad'>")
+    	.append("<input type='text' class='input-small' id=\"$id$\" ")
+    	.append("name=\"$name$\" placeholder=\"$placeholder$\" >")
+    	.append("<span class='help-inline' id=\"$ctrlsId$\"></span></td>")
+    	.append("<td class='borderForLoad'>")
+    	.append("<input type='text' class='input-small' id=\"$id$\" ")
+    	.append("name=\"$name$\" placeholder=\"$placeholder$\" >")
+    	.append("<span class='help-inline' id=\"$ctrlsId$\"></span></td>")
+    	.append("<td class='borderForLoad'>")
+    	.append("<a><img class='add imagealign' src='images/icons/add_icon.png' onclick='addKey(this);'></a></td>")
+    	.append("</tr></tbody></table></fieldset>");
+    	
+    	return sb.toString();
+    }
+   
     
     private static String getCheckBoxTemplate() {
     	StringBuilder sb = new StringBuilder();

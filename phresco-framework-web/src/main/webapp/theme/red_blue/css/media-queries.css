@@ -2604,12 +2604,14 @@ Width > 1360 and <= 1440
 		font-size: 20px;
 		width: 356px;
 	}
+	
 	.headerInner {
 		float: left;
 		margin: auto;
 		width: 55%;
 		padding-left: 24%;
 	}
+	
 	.quick_links_outer {
 		border-radius: 1px 1px 35px 35px;
 		-webkit-border-bottom-right-radius: 23px 23px;
@@ -2620,10 +2622,11 @@ Width > 1360 and <= 1440
 		z-index: 3;
 		font-size: 12px;
 		cursor: pointer;
-		margin-left: -6%;
+		margin-left: 6%;
 		text-align: center;
 		font-weight: bold;
 	}
+	
 	.wrapper {
 		bottom: 48px;
 		height: 100%;
@@ -2633,12 +2636,14 @@ Width > 1360 and <= 1440
 		top: 0;
 		width: 98%;
 	}
+	
 	.holder {
 		height: 353px;
 		margin: 6% 29%;
 		padding: 0px;
 		width: 592px;
 	}
+	
 	.right {
 		height: 87%;
 		overflow: hidden;
