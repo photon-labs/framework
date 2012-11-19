@@ -136,13 +136,30 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		if (response.getStatus() == 200) {
 			try {
 				extractArchive(response, projectInfo);
+				 String customerId = projectInfo.getCustomerIds().get(0);
+				 Customer customer = serviceManager.getCustomer(customerId);
+				 RepoInfo repoInfo = customer.getRepoInfo();
+				 List<ApplicationInfo> appInfos = projectInfo.getAppInfos();
+				 for (ApplicationInfo appInfo : appInfos) {
+				 String pluginInfoFile = Utility.getProjectHome() + appInfo.getAppDirName() + File.separator + DOT_PHRESCO_FOLDER +File.separator +  PHRESCO_PLUGIN_INFO_XML;
+				 MojoProcessor mojoProcessor = new MojoProcessor(new File(pluginInfoFile));
+				 ApplicationProcessor mojosApplicationProcessor = mojoProcessor.getApplicationProcessor();
+				 if(mojosApplicationProcessor != null) {
+				 List<ArtifactGroup> plugins = setArtifactGroup(mojosApplicationProcessor);
+				 
+				 //Dynamic Class Loading
+				 PhrescoDynamicLoader dynamicLoader = new PhrescoDynamicLoader(repoInfo, plugins);
+				 com.photon.phresco.api.ApplicationProcessor applicationProcessor = dynamicLoader.getApplicationProcessor(mojosApplicationProcessor.getClazz());
+				 applicationProcessor.postCreate(appInfo);
+				 }
 //				createSqlFolder(projectInfo, projectPath, serviceManager);
-				updateProjectPOM(projectInfo);
+//				updateProjectPOM(projectInfo);
 				
 				//TODO Define post create object and execute the corresponding technology implementation
 //				if (TechnologyTypes.WIN_METRO.equalsIgnoreCase(techId)) {
 //					ItemGroupUpdater.update(projectInfo, projectPath);
 //				}
+			  }
 			} catch (FileNotFoundException e) {
 				throw new PhrescoException(e); 
 			} catch (IOException e) {
@@ -183,27 +200,17 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 				 String pluginInfoFile = Utility.getProjectHome() + appInfo.getAppDirName() + File.separator + DOT_PHRESCO_FOLDER +File.separator +  PHRESCO_PLUGIN_INFO_XML;
 				 MojoProcessor mojoProcessor = new MojoProcessor(new File(pluginInfoFile));
 				 ApplicationProcessor mojosApplicationProcessor = mojoProcessor.getApplicationProcessor();
-				 List<ArtifactGroup> plugins = new ArrayList<ArtifactGroup>();
-				 ArtifactGroup artifactGroup = new ArtifactGroup();
-				 artifactGroup.setGroupId(mojosApplicationProcessor.getGroupId());
-				 artifactGroup.setArtifactId(mojosApplicationProcessor.getArtifactId());
-//				 artifactGroup.setType(Type.FEATURE);
-//				 
-//				 //to set version
-				 List<ArtifactInfo> artifactInfos = new ArrayList<ArtifactInfo>();
-				 ArtifactInfo artifactInfo = new ArtifactInfo();
-				 artifactInfo.setVersion(mojosApplicationProcessor.getVersion());
-				 artifactInfos.add(artifactInfo);
-				 artifactGroup.setVersions(artifactInfos);
-				 plugins.add(artifactGroup);
+				 if(mojosApplicationProcessor != null) {
+				 List<ArtifactGroup> plugins = setArtifactGroup(mojosApplicationProcessor);
 				 
 				 //Dynamic Class Loading
 				 PhrescoDynamicLoader dynamicLoader = new PhrescoDynamicLoader(repoInfo, plugins);
-				com.photon.phresco.api.ApplicationProcessor applicationProcessor = dynamicLoader.getApplicationProcessor(mojosApplicationProcessor.getClazz());
+				 com.photon.phresco.api.ApplicationProcessor applicationProcessor = dynamicLoader.getApplicationProcessor(mojosApplicationProcessor.getClazz());
 				 applicationProcessor.postUpdate(appInfo, artifactGroups);
+				 }
 //				extractArchive(response, projectInfo);
-				updateProjectPOM(projectInfo);
-				createSqlFolder(projectInfo, projectPath, serviceManager);
+//				updateProjectPOM(projectInfo);
+//				createSqlFolder(projectInfo, projectPath, serviceManager);
 				//TODO Define post update object and execute the corresponding technology implementation
 //				if (TechnologyTypes.WIN_METRO.equalsIgnoreCase(techId)) {
 //					ItemGroupUpdater.update(projectInfo, projectPath);
@@ -232,6 +239,24 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 //		}
 //		
 		return null;
+	}
+	
+	
+	private List<ArtifactGroup> setArtifactGroup(ApplicationProcessor mojosApplicationProcessor) {
+			List<ArtifactGroup> plugins = new ArrayList<ArtifactGroup>();
+			ArtifactGroup artifactGroup = new ArtifactGroup();
+			artifactGroup.setGroupId(mojosApplicationProcessor.getGroupId());
+			artifactGroup.setArtifactId(mojosApplicationProcessor.getArtifactId());
+			//artifactGroup.setType(Type.FEATURE);
+			//			 
+			//to set version
+			List<ArtifactInfo> artifactInfos = new ArrayList<ArtifactInfo>();
+			ArtifactInfo artifactInfo = new ArtifactInfo();
+			artifactInfo.setVersion(mojosApplicationProcessor.getVersion());
+			artifactInfos.add(artifactInfo);
+			artifactGroup.setVersions(artifactInfos);
+			plugins.add(artifactGroup);
+			return plugins;
 	}
 
 	public boolean delete(ProjectInfo projectInfo) throws PhrescoException {
