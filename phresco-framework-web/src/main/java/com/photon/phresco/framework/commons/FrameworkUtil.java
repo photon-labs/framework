@@ -915,17 +915,6 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	return labelElement;
     }
     
-    public static BufferedReader executeCommand(String command, String workingDir) throws PhrescoException {
-        try {
-            Commandline cl = new Commandline(command);
-            cl.setWorkingDirectory(workingDir);
-            Process process = cl.execute();
-            return new BufferedReader(new InputStreamReader(process.getInputStream()));
-        } catch (CommandLineException e) {
-            throw new PhrescoException(e);
-        }
-    }
-
     public static StringTemplate constructFieldSetElement(ParameterModel pm) {
     	StringTemplate st = new StringTemplate(getFieldsetTemplate());
     	

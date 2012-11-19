@@ -610,6 +610,10 @@
 		<action name="showFunctionalTestPopUp" method="showFunctionalTestPopUp" class="com.photon.phresco.framework.actions.applications.Quality">
 			<result name="success">/pages/applications/dynamic_parameter.jsp</result>
         </action>
+        
+        <action name="runFunctionalTest" method="runFunctionalTest" class="com.photon.phresco.framework.actions.applications.Quality">
+        	<result name="reader">/pages/applications/reader.jsp</result>
+        </action>
 
         <action name="changeEveDependancyListener" method="changeEveDependancyListener" class="com.photon.phresco.framework.actions.applications.DynamicParameterAction">
 			<result type="json" />
