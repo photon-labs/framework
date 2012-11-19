@@ -78,6 +78,13 @@ public class FrameworkConfiguration implements FrameworkConstants {
 		}
 		return serverUrl;
 	}
+    
+	public String apiKey() throws PhrescoException {
+		List<Configuration> configurations = configurationList("Other");
+		String apiKey = null;
+		for (Configuration configuration : configurations) {		
+		return apiKey;
+	}
 
     public String getCodePrefix() {
         return frameworkConfig.getProperty(PHRESCO_CODE_PREFIX);

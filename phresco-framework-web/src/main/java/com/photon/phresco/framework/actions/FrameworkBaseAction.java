@@ -234,6 +234,8 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
             context.put(SERVICE_URL, configuration.getServerPath());
             context.put(SERVICE_USERNAME, userName);
             context.put(SERVICE_PASSWORD, password);
+            context.put(SERVICE_API_KEY, configuration.apiKey());
+        
             serviceManager = ServiceClientFactory.getServiceManager(context);
         } catch (Exception ex) {
             S_LOGGER.error(ex.getLocalizedMessage());
