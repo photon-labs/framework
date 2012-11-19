@@ -48,10 +48,10 @@ public class Html5ProjectTest extends BaseTest{
 	}	
 	
 //	@Test
-	public void testUpdateProject() throws PhrescoException {		
-		ProjectInfo update = projectManager.update(projectInfo, serviceManager);
-		System.out.println(update.getDescription());
-	}
+//	public void testUpdateProject() throws PhrescoException {		
+//		ProjectInfo update = projectManager.update(projectInfo, serviceManager);
+//		System.out.println(update.getDescription());
+//	}
 	
 	@Test
 	public void PerformActionTest() throws PhrescoException {
