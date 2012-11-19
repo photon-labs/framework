@@ -58,7 +58,8 @@ function progressPopupAsSecPopup(url, appId, actionType, form, additionalParams)
 		$('#progressPopup').modal('show')
     }, 600);
 	$('#console_div').empty();
-	$(".popupClose").attr('id', pageUrl); // popup close action mapped to id
+	$(".popupClose").show();
+	$(".popupClose").attr('id', url); // popup close action mapped to id
 	
 	readerHandlerSubmit(url, appId, actionType, form, '', additionalParams);
 }
