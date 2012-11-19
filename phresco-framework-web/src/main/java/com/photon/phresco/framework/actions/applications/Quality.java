@@ -420,7 +420,7 @@ public class Quality extends DynamicParameterAction implements Constants {
             List<String> resultTestSuiteNames = getTestSuiteNames(testResultPath, testSuitePath);
             if (CollectionUtils.isEmpty(resultTestSuiteNames)) {
                 setValidated(true);
-                setShowError(getText(ERROR_UNIT_TEST));
+                setShowError(getText(ERROR_FUNCTIONAL_TEST));
                 return SUCCESS;
             }
             setTestSuiteNames(resultTestSuiteNames);
@@ -652,6 +652,7 @@ public class Quality extends DynamicParameterAction implements Constants {
             SAXException, IOException, TransformerException, PhrescoException, PhrescoPomException {
         String testSuitesMapKey = getAppId() + getTestType() + getProjectModule() + getTechReport();
         Map<String, NodeList> testResultNameMap = testSuiteMap.get(testSuitesMapKey);
+        List<String> resultTestSuiteNames = null;
         if (MapUtils.isEmpty(testResultNameMap)) {
             File[] resultFiles = getTestResultFiles(testResultPath);
             if (!ArrayUtils.isEmpty(resultFiles)) {
@@ -660,8 +661,9 @@ public class Quality extends DynamicParameterAction implements Constants {
             }
             testResultNameMap = testSuiteMap.get(testSuitesMapKey);
         }
-        List<String> resultTestSuiteNames = new ArrayList<String>(testResultNameMap.keySet());
-        
+        if (testResultNameMap != null) {
+        	resultTestSuiteNames = new ArrayList<String>(testResultNameMap.keySet());
+        }
         return resultTestSuiteNames;
     }
 	
@@ -1634,8 +1636,7 @@ public class Quality extends DynamicParameterAction implements Constants {
     		Map<String, Object> loadParamMap = new HashMap<String, Object>();
     		ApplicationInfo appInfo = getApplicationInfo();
     		loadParamMap.put(REQ_APP_INFO, appInfo);
-    		List<Parameter> parameters = getDynamicParameters(appInfo, PHASE_LOAD_TEST);
-    		setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
+    		getDynamicParameters(appInfo, PHASE_LOAD_TEST);
     		setReqAttribute(REQ_FROM, from);
     	} catch(Exception e) {
     		e.printStackTrace();

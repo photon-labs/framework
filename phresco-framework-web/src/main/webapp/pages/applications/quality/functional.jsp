@@ -97,8 +97,7 @@
 			<%
 					}
 			%>
-		        	<div class="alert-message block-message warning hideCtrl" id="errorDiv" style="margin: 5px 0 0 0;">
-						<center><label class="errorMsgLabel"></label></center>
+		        	<div class="alert alert-block hideContent" id="errorDiv" style="margin: 5px 0 0 0;">
 					</div>
 			<% 
 					if (buttonRow) {
@@ -273,7 +272,7 @@ function successEvent(pageUrl, data) {
 }
 
 function validationError(errMsg) {
-	$(".errorMsgLabel").html(errMsg);
+	$("#errorDiv").html(errMsg);
 	$("#errorDiv").show();
 	$("#testResultFile, #testSuite, #testSuiteDisplay, #resultView, #testResultLbl, #view").hide();
 	enableScreen();
