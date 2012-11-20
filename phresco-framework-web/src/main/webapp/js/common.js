@@ -64,14 +64,19 @@ function progressPopupAsSecPopup(url, appId, actionType, form, additionalParams)
 	readerHandlerSubmit(url, appId, actionType, form, '', additionalParams);
 }
 
-function clickMenu(menu, tag, form, additionalParam) {
+function clickMenu(menu, tag, form) {
 	menu.click(function() {
 		showLoadingIcon();
 		inActivateAllMenu(menu);
 		activateMenu($(this));
 		var selectedMenu = $(this).attr("id");
-//		var additionalParam = $(this).attr('additionalParam');
-		loadContent(selectedMenu, form, tag, additionalParam);
+		var additionalParams = "";
+		var params = $(this).attr('additionalParam');
+		if (params !== undefined && !isBlank(params)) {
+			params = params.concat(additionalParams);
+			params = params.concat("&");
+		}
+		loadContent(selectedMenu, form, tag, params);
 	});
 }
 
@@ -186,9 +191,9 @@ function yesnoPopup(url, title, okUrl, okLabel, form, additionalParam) {
 		data = data.concat("&");
 		data = data.concat(additionalParam);
 	}
-			
-	$('.modal-body').empty();
-	$('.modal-body').load(url, data); //url to render the body content for the popup
+	
+	$('#popup_div').empty();
+	$('#popup_div').load(url, data); //url to render the body content for the popup
 }
 
 function validateJson(url, form, containerTag, jsonParam, progressText, disabledDiv) {
@@ -255,7 +260,7 @@ function readerHandlerSubmit(pageUrl, appId, actionType, form, callSuccessEvent,
 //To get the parameters based on the availability
 function getParameters(form, additionalParams) {
 	var params = "";
-	if (form != undefined && form != "" && !isBlank(form.serialize())) {
+	if (form !== undefined && form !== "" && !isBlank(form.serialize())) {
 		params = form.serialize();
 		if (!isBlank(additionalParams)) {
 			params = params.concat("&");
@@ -688,7 +693,7 @@ function confirmDialog(obj, title, bodyText, okUrl, okLabel) {
 		
 		$(".popupOk").attr('id', okUrl);
 	
-		$('.modal-body').html(bodyText);
+		$('#popup_div').html(bodyText);
 		
 		if (okLabel !== undefined && !isBlank(okLabel)) {
 			$('a [class ~= "popupOk"]').attr('id', okUrl);

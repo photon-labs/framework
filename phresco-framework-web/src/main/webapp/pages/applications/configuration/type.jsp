@@ -60,14 +60,14 @@
         List<String> possibleValues = new ArrayList<String>(8);
 
          if (FrameworkConstants.SERVER_KEY.equals(propertyTemplate.getKey())) {
-        	List<ArtifactGroupInfo> artifactGroupInfos = appInfo.getSelectedServers();
-        	if(CollectionUtils.isNotEmpty(artifactGroupInfos)) {
+        	if(appInfo != null && CollectionUtils.isNotEmpty(appInfo.getSelectedServers())) {
+            	List<ArtifactGroupInfo> artifactGroupInfos = appInfo.getSelectedServers();
         		ArtifactGroupInfo artifactGroupInfo = artifactGroupInfos.get(0);
         		possibleValues = artifactGroupInfo.getArtifactInfoIds();
         	}
     	} else if (FrameworkConstants.DATABASE_KEY.equals(propertyTemplate.getKey())) {
-    		List<ArtifactGroupInfo> artifactGroupInfos = appInfo.getSelectedDatabases();
-    		if(CollectionUtils.isNotEmpty(artifactGroupInfos)) {
+    		if(appInfo != null && CollectionUtils.isNotEmpty(appInfo.getSelectedDatabases())) {
+        		List<ArtifactGroupInfo> artifactGroupInfos = appInfo.getSelectedDatabases();
     			ArtifactGroupInfo artifactGroupInfo = artifactGroupInfos.get(0);
     			possibleValues = artifactGroupInfo.getArtifactInfoIds(); 
     		}
@@ -133,8 +133,8 @@
     </div>
 </div>
 
-<% 
-	if (appInfo.getTechInfo().getId().equals("tech-sitecore") && selectedType.equals("Server")) { 
+	<% 
+	if (appInfo != null && appInfo.getTechInfo().getId().equals("tech-sitecore") && selectedType.equals("Server")) { 
 	%>
 	<div class="control-group" id="siteCoreControl">
 		<label class="control-label labelbold">
@@ -224,7 +224,7 @@ $("div#certificateControl").hide();
 	
 	function technologyBasedRemoteDeploy() {
 		<% 
-		if (appInfo.getTechInfo().getId().equals("tech-sitecore")) { 
+		if (appInfo != null && appInfo.getTechInfo().getId().equals("tech-sitecore")) { 
 		%>
 				hideDeployDir();
 		<% } %>
