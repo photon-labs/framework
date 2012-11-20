@@ -45,46 +45,22 @@ function getBasicParamsAsJson() {
 	return '"customerId": "' + jsonObject.customerId + '", "projectId": "' + jsonObject.projectId + '", "appId": "' + jsonObject.appId + '"'; 
 }
 
-function progressPopup(pageUrl, title, appId, actionType, form, callSuccessEvent, additionalParams) {
-	$('#popupPage').modal('show');//To show the popup
-	if (title !== undefined && !isBlank(title)) {
-		$('#popupTitle').html(title);
-	}
-	$('.modal-body').empty();
-	$('.popupClose').show();
-	$('.popupOk, #popupCancel').hide(); // hide ok & cancel button
-	$(".popupClose").attr('id', pageUrl); // popup action mapped to id
+function progressPopup(pageUrl, appId, actionType, form, callSuccessEvent, additionalParams) {
+	$('#progressPopup').modal('show');//To show the progress popup
+	$('#console_div').empty();
+	$(".popupClose").attr('id', pageUrl); // popup close action mapped to id
+	
 	readerHandlerSubmit(pageUrl, appId, actionType, form, callSuccessEvent, additionalParams);
-//	$('.popupClose').click(function() {
-//		popupClose(pageUrl); // this function will be kept in where the progressPopup() called
-//	});
 }
 
-function progressPopupAsSecPopup(url, title, appId, actionType, form, additionalParams) {
+function progressPopupAsSecPopup(url, appId, actionType, form, additionalParams) {
 	setTimeout(function () {
-		$('#popupPage').modal('show')
+		$('#progressPopup').modal('show')
     }, 600);
-	$('#popupTitle').html(title);
-	$('.modal-body').empty();
-	$('.popupOk').hide(); // hide ok & cancel button
-	$('#popupCancel').hide();
-	$('.popupClose').show();
-
-	$('#popupClose').show();
+	$('#console_div').empty();
+	$(".popupClose").show();
+	$(".popupClose").attr('id', url); // popup close action mapped to id
 	
-	/*var theme = localStorage["color"];
-	$(".popupLoadingIcon").css("display", "block");
-	var loadingRedIcon = "themes/photon/images/loading_red.gif";
-	var loadingBlueIcon = "themes/photon/images/loading_blue.gif";
-    if(theme == undefined || theme == null || theme == "null" || theme == "" || theme == "undefined" || theme == "themes/photon/css/red.css") {
-    	theme = loadingRedIcon;
-    	$('.loadingIcon, .popupLoadingIcon').attr("src", theme);
-    }
-    else {
-    	theme = loadingBlueIcon;
-    	$('.loadingIcon, .popupLoadingIcon').attr("src", theme);
-    }*/
-    
 	readerHandlerSubmit(url, appId, actionType, form, '', additionalParams);
 }
 

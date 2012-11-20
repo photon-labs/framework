@@ -528,6 +528,14 @@
 		return dependencies;
 	}
 	
+	function changeChckBoxValue(obj) {
+		if ($(obj).is(':checked')) {
+			$(obj).val("true");
+		} else {
+			$(obj).val("false");
+		}
+	}
+	
 	var count=2;
 	function addKey() {
 		var trId = count;

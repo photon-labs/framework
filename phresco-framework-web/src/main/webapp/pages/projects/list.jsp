@@ -43,7 +43,7 @@
 		<input type="button" class="btn btn-primary" name="addProject" id="addProject" value="<s:text name='lbl.projects.add'/>"
 			onclick="loadContent('addProject', $('#formCustomers'), $('#container'));"/>
 
-		<input type="button" class="btn btn-primary" name="importAppln" id="importAppln" value="<s:text name='lbl.app.import'/>" data-toggle="modal" href="#popupPage"/>
+		<input type="button" class="btn btn-primary" name="importAppln" id="importAppln" value="<s:text name='lbl.app.import'/>"/>
 		         
 		<input type="button" class="btn" id="deleteBtn" disabled value="<s:text name='lbl.delete'/>" data-toggle="modal" href="#popupPage"/>
 			
@@ -132,7 +132,7 @@
 																<td class="no-left-bottom-border table-pad">
 																	<a href="#" id="projectUpdate">
 																		<img id="<%= appInfo.getCode() %>" class="projectUpdate" src="images/icons/refresh.png"
-																			 additionalParam="projectId=<%= project.getId() %>&appId=<%= appInfo.getId() %>" title="Update" class="iconSizeinList" data-toggle="modal" href="#popupPage"/>
+																			 additionalParam="projectId=<%= project.getId() %>&appId=<%= appInfo.getId() %>" title="Update" class="iconSizeinList"/>
 																	</a>
 																</td>
 															</tr>
@@ -168,6 +168,16 @@
 		toDisableCheckAll();
 		
 		hideLoadingIcon();//To hide the loading icon
+		
+		$('#importAppln').click(function() {
+			yesnoPopup('importAppln', '<s:text name="lbl.app.import"/>', 'importUpdateAppln','<s:text name="lbl.app.import"/>');
+    	});
+		
+		$('.projectUpdate').click(function() {
+			var params = $(this).attr("additionalParam");
+			yesnoPopup('updateProjectPopup', '<s:text name="lbl.app.update"/>', 'importUpdateAppln','<s:text name="lbl.app.update"/>', '', params);
+    	});
+		
 		//modalObj, url, title, okUrl, okLabel, form
 // 		yesnoPopup($('#importAppln'), 'importAppln', '<s:text name="lbl.app.import"/>', 'importUpdateAppln','<s:text name="lbl.app.import"/>', $('#formProjectList'));
 // 		yesnoPopup($('.projectUpdate'), 'updateProjectPopup', '<s:text name="lbl.app.update"/>', 'importUpdateAppln','<s:text name="lbl.app.update"/>', $('#formProjectList'));
@@ -192,7 +202,5 @@
  	 		var params = $("#formCustomers").serialize();
  	 		loadContent("deleteProject", $("#formProjectList"), $('#container'), params);
  		} 
- 		
  	}
- 	
 </script>
