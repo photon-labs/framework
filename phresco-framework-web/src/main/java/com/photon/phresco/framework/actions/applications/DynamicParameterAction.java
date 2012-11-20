@@ -222,7 +222,9 @@ public class DynamicParameterAction extends FrameworkBaseAction {
             paramMap.putAll(getDependantParameters(dependantParameters.getParentMap(), watcherMap));
         }
         paramMap.put(DynamicParameter.KEY_APP_INFO, appInfo);
-        paramMap.put(DynamicParameter.KEY_BUILD_NO, getReqParameter(BUILD_NUMBER));
+        if (StringUtils.isNotEmpty(getReqParameter(BUILD_NUMBER))) {
+        	paramMap.put(DynamicParameter.KEY_BUILD_NO, getReqParameter(BUILD_NUMBER));
+        }
 
         return paramMap;
     }

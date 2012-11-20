@@ -41,6 +41,7 @@ Width <= 1024
 	.customer_name {
 		right:11.5%;
 	}
+
 	.content_adder {
 		height: 84%;
 	}
@@ -474,7 +475,7 @@ Width size <= 1024
 	}
 	.build_detail_div {
 	    float: left;
-	    height: 48% !important;
+	    height: 40% !important;
 	    margin-left: 0;
 	    margin-top : 0;
 	    width: 100%;
@@ -482,9 +483,9 @@ Width size <= 1024
 	
 	.build_progress_div {
 	    margin-left: 0;
-	    margin-top: 0px;
+	    margin-top: 8px !important;
 	    width: 100%;
-	    height: 48% !important;
+	    height: 45% !important;
 	}
 	.builds-list-table .th-inner {
 		top: 235px;
@@ -497,8 +498,6 @@ Width size <= 1024
 		right:15%;
 	}
 }
-
-
 @media screen and (max-width : 768px) {
 	.app_add_form .theme_accordion_container {
 		float: left;
@@ -776,7 +775,7 @@ Width size <= 1024
 	    height: 91%;
 	    margin-left: 0;
 	    margin-top : 0;
-	    width: 48%;
+	    width: 50%;
 	}
 	
 	.build_progress_div {
@@ -784,7 +783,7 @@ Width size <= 1024
 	    height: 91%;
 	    margin-left: 0;
 	    margin-top: 0px;
-	    width: 48%;
+	    width: 50%;
 	}
 	
 	.table_div_unit {
@@ -973,6 +972,7 @@ Width >= 1025 and < 1151
 	.content_adder {
 		height: 86%;
 	}
+	
 	.app_list_form {
     	height: 91%;
 	}
@@ -1026,7 +1026,7 @@ Width >= 1025 and < 1151
 	    height: 96%;
 	    margin-left: 0;
 	    margin-top : 0;
-	    width: 50%;
+	    width: 52%;
 	}
 	
 	.build_progress_div {
@@ -1034,7 +1034,7 @@ Width >= 1025 and < 1151
 	    height: 96%;
 	    margin-left: 0;
 	    margin-top: 0px;
-	    width: 50%;
+	    width: 48%;
 	}
 	
 	.intro_container {
@@ -1236,7 +1236,7 @@ Width >= 1152 and < 1280
 	    height: 100%;
 	    margin-left: 0;
 	    margin-top : 0;
-	    width: 52%;
+	    width: 50%;
 	}
 	
 	.build_progress_div {
@@ -1244,7 +1244,7 @@ Width >= 1152 and < 1280
 	    height: 100%;
 	    margin-left: 0;
 	    margin-top: 0px;
-	    width: 48%;
+	    width: 50%;
 	}
 	
 	.table_div_unit {
@@ -1698,7 +1698,7 @@ Width <= 1280 and height <= 800
 	    height: 92%;
 	    margin-left: 0;
 	    margin-top : 0;
-	    width: 48%;
+	    width: 50%;
 	}
 	
 	.build_progress_div {
@@ -1706,7 +1706,7 @@ Width <= 1280 and height <= 800
 	    height: 92%;
 	    margin-left: 0;
 	    margin-top: 0;
-	    width: 48%;
+	    width: 50%;
 	}
 	
 	/* .table_div {
@@ -2109,7 +2109,7 @@ Width >= 1280 and height >= 800
 		float: left;
 		height: 94.5%;
 		margin-left: 0;
-		width: 48%;
+		width: 50%;
 	}
 	
 	.buildDiv {
@@ -2523,7 +2523,7 @@ Width > 1280 and <= 1360
 	
 	.build_progress_div {
 	    float: left;
-	    height: 92%;
+	    height: 92% !important;
 	    margin-left: 0;
 	    width: 50%;
 	    margin-top: 0;
@@ -2531,9 +2531,9 @@ Width > 1280 and <= 1360
 	
 	.build_detail_div {
 	    float: left;
-	    height: 92%;
+	    height: 92% !important;
 	    margin-left: 0;
-	    width: 48%;
+	    width: 50%;
 	}
 	
 	.settings_add_form {
@@ -2886,9 +2886,9 @@ Width > 1360 and <= 1440
 	
 	.build_detail_div {
 	    float: left;
-	    height: 94%;
+	    height: 92% !important;
 	    margin-left: 0;
-	    width: 48%;
+	    width: 50%;
 	}
 	
 	/* .table_div {
@@ -2911,7 +2911,7 @@ Width > 1360 and <= 1440
 	
 	.build_progress_div {
 	    float: left;
-	    height: 94%;
+	    height: 92% !important;
 	    margin-left: 0;
 	    margin-top: 0;
 	    width: 50%;
@@ -3038,6 +3038,9 @@ Width > 1360 and <= 1440
      
      .align-div-center {
 		width: 70%;
+	}
+	.customer_name {
+		right: 8.5% !important;
 	}
 }
 
@@ -3264,9 +3267,9 @@ Width > 1441 and <= 1600
 	
 	.build_detail_div {
 	    float: left;
-	    height: 93%;
+	    height: 93% !important;
 	    margin-left: 0;
-	    width: 48%;
+	    width: 50%;
 	}
 	
 	/* .table_div {
@@ -3289,7 +3292,7 @@ Width > 1441 and <= 1600
 	
 	.build_progress_div {
 	    float: right;
-	    height: 93%;
+	    height: 93% !important;
 	    margin-left: 0;
 	    margin-top: 0;
 	    width: 50%;
@@ -3406,5 +3409,8 @@ Width > 1441 and <= 1600
 	
 	.align-div-center {
 		width: 51%;
+	}
+	.customer_name {
+		right: 8.5% !important;
 	}
 }
