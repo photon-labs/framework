@@ -425,7 +425,7 @@
                             <tasks>  
                                 <property name="sonar-version" value="${sonar.version}"/>
 								<echo message="Sonar Plugins copied to plugin directory "/>
-								<ant antfile="sonar-build.xml" target="init" inheritRefs="true" inheritAll="true"/>
+								<ant antfile="../conf/sonar/sonar-build.xml" target="init" inheritRefs="true" inheritAll="true"/>
 							</tasks>
 						</configuration>
 					</execution>
