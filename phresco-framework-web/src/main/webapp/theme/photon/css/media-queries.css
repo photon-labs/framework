@@ -39,8 +39,9 @@ Width <= 1024
 		margin-left:220px;
 	}*/
 	.customer_name {
-		right:11.5%;
+		right:11.2%;
 	}
+
 	.content_adder {
 		height: 84%;
 	}
@@ -472,33 +473,7 @@ Width size <= 1024
 	ul#display-inline-block-example li:nth-child(3) {
 		width: 24% !important;
 	}
-	.build_detail_div {
-	    float: left;
-	    height: 48% !important;
-	    margin-left: 0;
-	    margin-top : 0;
-	    width: 100%;
-	}
-	
-	.build_progress_div {
-	    margin-left: 0;
-	    margin-top: 0px;
-	    width: 100%;
-	    height: 48% !important;
-	}
-	.builds-list-table .th-inner {
-		top: 235px;
-	}
-	.runagint_source {
-		float: left;
-		margin-top: 5px;
-	}
-	.customer_name {
-		right:15%;
-	}
 }
-
-
 @media screen and (max-width : 768px) {
 	.app_add_form .theme_accordion_container {
 		float: left;
@@ -511,30 +486,6 @@ Width size <= 1024
 	}
 	ul#display-inline-block-example li:nth-child(3) {
 		width: 24% !important;
-	}
-	.build_detail_div {
-	    float: left;
-	    height: 47% !important;
-	    margin-left: 0;
-	    margin-top : 0;
-	    width: 100%;
-	}
-	
-	.build_progress_div {
-	    margin-left: 0;
-	    margin-top: 0px;
-	    width: 100%;
-	    height: 47% !important;
-	}
-	.builds-list-table .th-inner {
-		top: 235px;
-	}
-	.runagint_source {
-		float: left;
-		margin-top: 5px;
-	}
-	.customer_name {
-		right:15%;
 	}
 }
 
@@ -776,7 +727,7 @@ Width size <= 1024
 	    height: 91%;
 	    margin-left: 0;
 	    margin-top : 0;
-	    width: 48%;
+	    width: 50%;
 	}
 	
 	.build_progress_div {
@@ -784,7 +735,7 @@ Width size <= 1024
 	    height: 91%;
 	    margin-left: 0;
 	    margin-top: 0px;
-	    width: 48%;
+	    width: 50%;
 	}
 	
 	.table_div_unit {
@@ -973,6 +924,7 @@ Width >= 1025 and < 1151
 	.content_adder {
 		height: 86%;
 	}
+	
 	.app_list_form {
     	height: 91%;
 	}
@@ -1026,7 +978,7 @@ Width >= 1025 and < 1151
 	    height: 96%;
 	    margin-left: 0;
 	    margin-top : 0;
-	    width: 50%;
+	    width: 52%;
 	}
 	
 	.build_progress_div {
@@ -1034,7 +986,7 @@ Width >= 1025 and < 1151
 	    height: 96%;
 	    margin-left: 0;
 	    margin-top: 0px;
-	    width: 50%;
+	    width: 48%;
 	}
 	
 	.intro_container {
@@ -1055,7 +1007,7 @@ Width >= 1025 and < 1151
 	
 	.runagint_source {
 		float: right;
-		width: 44%;
+		width: 34%;
 	}
 	
 	.align-div-center {
@@ -1236,7 +1188,7 @@ Width >= 1152 and < 1280
 	    height: 100%;
 	    margin-left: 0;
 	    margin-top : 0;
-	    width: 52%;
+	    width: 50%;
 	}
 	
 	.build_progress_div {
@@ -1244,7 +1196,7 @@ Width >= 1152 and < 1280
 	    height: 100%;
 	    margin-left: 0;
 	    margin-top: 0px;
-	    width: 48%;
+	    width: 50%;
 	}
 	
 	.table_div_unit {
@@ -1698,7 +1650,7 @@ Width <= 1280 and height <= 800
 	    height: 92%;
 	    margin-left: 0;
 	    margin-top : 0;
-	    width: 48%;
+	    width: 50%;
 	}
 	
 	.build_progress_div {
@@ -1706,7 +1658,7 @@ Width <= 1280 and height <= 800
 	    height: 92%;
 	    margin-left: 0;
 	    margin-top: 0;
-	    width: 48%;
+	    width: 50%;
 	}
 	
 	/* .table_div {
@@ -2109,7 +2061,7 @@ Width >= 1280 and height >= 800
 		float: left;
 		height: 94.5%;
 		margin-left: 0;
-		width: 48%;
+		width: 50%;
 	}
 	
 	.buildDiv {
@@ -2533,7 +2485,7 @@ Width > 1280 and <= 1360
 	    float: left;
 	    height: 92%;
 	    margin-left: 0;
-	    width: 48%;
+	    width: 50%;
 	}
 	
 	.settings_add_form {
@@ -2888,7 +2840,7 @@ Width > 1360 and <= 1440
 	    float: left;
 	    height: 94%;
 	    margin-left: 0;
-	    width: 48%;
+	    width: 50%;
 	}
 	
 	/* .table_div {
@@ -3266,7 +3218,7 @@ Width > 1441 and <= 1600
 	    float: left;
 	    height: 93%;
 	    margin-left: 0;
-	    width: 48%;
+	    width: 50%;
 	}
 	
 	/* .table_div {

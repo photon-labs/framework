@@ -260,7 +260,6 @@ td {
 	position: fixed;
 	text-align: left;
 	top: 166px;
-	color: white;
 }
 
 .checkboxwidth {
@@ -2571,7 +2570,7 @@ fieldset {
 
 .build_delete_btn_div {
 	float: left; 
-	width: 38%;
+	width: 48%;
 	margin-left: 0px;
 }
 
@@ -3137,7 +3136,7 @@ fieldset {
 .lgnintro_container_left {
     padding:0px 0px 0px 0px;
     margin:auto;
-    width:330px;
+    width:325px;
 }
 .lgnintro_container_left span {
 	display:none;
@@ -5471,7 +5470,7 @@ a[id='androidSigning']:hover {
     position: absolute;
     top: 49px;
     width: auto;
-	right:10.5%;
+	right:7.5%;
 }
 .customer_name label {
 	color:#FFFFFF !important;
@@ -5577,7 +5576,7 @@ input[class*='chckBxAlign'] {
 }
 
 .builds-list-table .th-inner {
-	top: 200px;
+	top: 195px;
 }	
 /*new css for 2.0 ends*/
 
