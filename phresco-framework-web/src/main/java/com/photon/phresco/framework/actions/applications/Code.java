@@ -85,7 +85,7 @@ public class Code extends DynamicParameterAction implements Constants {
     		if (debugEnabled) {
     			S_LOGGER.error("Entered into catch block of Code.code()"+ FrameworkUtil.getStackTraceAsString(e));
     		}
-    		new LogErrorReport(e, "Code code()");
+    		return showErrorPopup(new PhrescoException(e), getText("excep.hdr.code.load"));
         }
 		return APP_CODE;
 	}
@@ -228,6 +228,7 @@ public class Code extends DynamicParameterAction implements Constants {
     		if (debugEnabled) {
     			S_LOGGER.error("Entered into catch block of Code.check()"+ FrameworkUtil.getStackTraceAsString(e));
     		}
+    		return showErrorPopup(new PhrescoException(e), getText("excep.hdr.code.load.report"));
     	}
     	if (debugEnabled) {
     		S_LOGGER.debug("Sonar final report path " + sb.toString());
@@ -260,6 +261,7 @@ public class Code extends DynamicParameterAction implements Constants {
 			if (debugEnabled) {
 				S_LOGGER.error("Entered into catch block of Code.showCodeValidatePopup()" + FrameworkUtil.getStackTraceAsString(e));
 			}
+			return showErrorPopup(new PhrescoException(e), getText("excep.hdr.code.load.validate.popup"));
 		}
 		return SHOW_CODE_VALIDATE_POPUP;
 	}
@@ -295,7 +297,7 @@ public class Code extends DynamicParameterAction implements Constants {
     		if (debugEnabled) {
     			S_LOGGER.error("Entered into catch block of Code.code()"+ FrameworkUtil.getStackTraceAsString(e));
     		}
-    		new LogErrorReport(e, "Code code()");
+    		return showErrorPopup(new PhrescoException(e), getText("excep.hdr.code.trigger.validate"));
 		}
 		
 		return APP_ENVIRONMENT_READER;
