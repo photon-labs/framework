@@ -23,9 +23,8 @@
 
 <script type="text/javascript">
 	$(document).ready(function() {
-		var params = $('#formCustomers').serialize();
-		clickMenu($("a[name='appTab']"), $("#subcontainer"), $('#formAppMenu'), params);
-		loadContent("appInfo", $('#formAppMenu'), $("#subcontainer"), params);
+		clickMenu($("a[name='appTab']"), $("#subcontainer"), $('#formAppMenu, #formCustomers'));
+		loadContent("appInfo", $('#formAppMenu, #formCustomers'), $("#subcontainer"));
 		activateMenu($("#appinfo"));
 	});
 </script>
@@ -59,7 +58,7 @@
 			<a href="#" class="inactive" name="appTab" id="code"><s:label key="lbl.app.menu.code" theme="simple"/></a>
 		</li>
 		<li>
-			<a href="#" class="inactive" name="appTab" id="configuration"><s:label key="lbl.app.menu.config" theme="simple"/></a>
+			<a href="#" class="inactive" name="appTab" id="configuration" additionalParam="fromPage=config"><s:label key="lbl.app.menu.config" theme="simple"/></a>
 		</li>
 		<li>
 			<a href="#" class="inactive" name="appTab" id="buildView"><s:label key="lbl.app.menu.build" theme="simple"/></a>

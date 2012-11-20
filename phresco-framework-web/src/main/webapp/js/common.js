@@ -45,57 +45,38 @@ function getBasicParamsAsJson() {
 	return '"customerId": "' + jsonObject.customerId + '", "projectId": "' + jsonObject.projectId + '", "appId": "' + jsonObject.appId + '"'; 
 }
 
-function progressPopup(pageUrl, title, appId, actionType, form, callSuccessEvent, additionalParams) {
-	$('#popupPage').modal('show');//To show the popup
-	if (title !== undefined && !isBlank(title)) {
-		$('#popupTitle').html(title);
-	}
-	$('.modal-body').empty();
-	$('.popupClose').show();
-	$('.popupOk, #popupCancel').hide(); // hide ok & cancel button
-	$(".popupClose").attr('id', pageUrl); // popup action mapped to id
+function progressPopup(pageUrl, appId, actionType, form, callSuccessEvent, additionalParams) {
+	$('#progressPopup').modal('show');//To show the progress popup
+	$('#console_div').empty();
+	$(".popupClose").attr('id', pageUrl); // popup close action mapped to id
+	
 	readerHandlerSubmit(pageUrl, appId, actionType, form, callSuccessEvent, additionalParams);
-//	$('.popupClose').click(function() {
-//		popupClose(pageUrl); // this function will be kept in where the progressPopup() called
-//	});
 }
 
-function progressPopupAsSecPopup(url, title, appId, actionType, form, additionalParams) {
+function progressPopupAsSecPopup(url, appId, actionType, form, additionalParams) {
 	setTimeout(function () {
-		$('#popupPage').modal('show')
+		$('#progressPopup').modal('show')
     }, 600);
-	$('#popupTitle').html(title);
-	$('.modal-body').empty();
-	$('.popupOk').hide(); // hide ok & cancel button
-	$('#popupCancel').hide();
-	$('.popupClose').show();
-
-	$('#popupClose').show();
+	$('#console_div').empty();
+	$(".popupClose").show();
+	$(".popupClose").attr('id', url); // popup close action mapped to id
 	
-	/*var theme = localStorage["color"];
-	$(".popupLoadingIcon").css("display", "block");
-	var loadingRedIcon = "themes/photon/images/loading_red.gif";
-	var loadingBlueIcon = "themes/photon/images/loading_blue.gif";
-    if(theme == undefined || theme == null || theme == "null" || theme == "" || theme == "undefined" || theme == "themes/photon/css/red.css") {
-    	theme = loadingRedIcon;
-    	$('.loadingIcon, .popupLoadingIcon').attr("src", theme);
-    }
-    else {
-    	theme = loadingBlueIcon;
-    	$('.loadingIcon, .popupLoadingIcon').attr("src", theme);
-    }*/
-    
 	readerHandlerSubmit(url, appId, actionType, form, '', additionalParams);
 }
 
-function clickMenu(menu, tag, form, additionalParam) {
+function clickMenu(menu, tag, form) {
 	menu.click(function() {
 		showLoadingIcon();
 		inActivateAllMenu(menu);
 		activateMenu($(this));
 		var selectedMenu = $(this).attr("id");
-//		var additionalParam = $(this).attr('additionalParam');
-		loadContent(selectedMenu, form, tag, additionalParam);
+		var additionalParams = "";
+		var params = $(this).attr('additionalParam');
+		if (params !== undefined && !isBlank(params)) {
+			params = params.concat(additionalParams);
+			params = params.concat("&");
+		}
+		loadContent(selectedMenu, form, tag, params);
 	});
 }
 
@@ -210,9 +191,9 @@ function yesnoPopup(url, title, okUrl, okLabel, form, additionalParam) {
 		data = data.concat("&");
 		data = data.concat(additionalParam);
 	}
-			
-	$('.modal-body').empty();
-	$('.modal-body').load(url, data); //url to render the body content for the popup
+	
+	$('#popup_div').empty();
+	$('#popup_div').load(url, data); //url to render the body content for the popup
 }
 
 function validateJson(url, form, containerTag, jsonParam, progressText, disabledDiv) {
@@ -279,7 +260,7 @@ function readerHandlerSubmit(pageUrl, appId, actionType, form, callSuccessEvent,
 //To get the parameters based on the availability
 function getParameters(form, additionalParams) {
 	var params = "";
-	if (form != undefined && form != "" && !isBlank(form.serialize())) {
+	if (form !== undefined && form !== "" && !isBlank(form.serialize())) {
 		params = form.serialize();
 		if (!isBlank(additionalParams)) {
 			params = params.concat("&");
@@ -712,7 +693,7 @@ function confirmDialog(obj, title, bodyText, okUrl, okLabel) {
 		
 		$(".popupOk").attr('id', okUrl);
 	
-		$('.modal-body').html(bodyText);
+		$('#popup_div').html(bodyText);
 		
 		if (okLabel !== undefined && !isBlank(okLabel)) {
 			$('a [class ~= "popupOk"]').attr('id', okUrl);

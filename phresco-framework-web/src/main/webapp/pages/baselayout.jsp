@@ -191,7 +191,7 @@
 								<li class="wid_app"><a href="#" class="inactive" name="headerMenu" id="applications">
 								    <s:label key="lbl.hdr.applications" theme="simple"/></a>
 								</li>
-								<li class="wid_set"><a href="#" class="inactive" name="headerMenu" id="settings">
+								<li class="wid_set"><a href="#" class="inactive" name="headerMenu" id="settings" additionalParam="fromPage=settings">
 								    <s:label key="lbl.hdr.settings"  theme="simple"/></a>
 								</li>
 								<li class="wid_help"><a href="#" class="inactive" name="headerMenu" id="help">
@@ -328,17 +328,14 @@
 		</footer>
 		<!-- Footer Ends Here -->
 		
-		<!-- Delete confirmation dialog starts -->
-		<%-- <%@ include file="confirmDialog.jsp" %> --%>
-		<!-- Delete confirmation dialog ends -->
-		
 		<!-- Popup Starts-->
 	    <div id="popupPage" class="modal hide fade">
 			<div class="modal-header">
 				<a class="close" data-dismiss="modal" >&times;</a>
-				<h3 id="popupTitle"><s:text name='lbl.progress'/></h3>
+				<h3 id="popupTitle"></h3>
 			</div>
-			<div class="modal-body" id="console_div">
+			<div class="modal-body" id="popup_div">
+			
 			</div>
 			<div class="modal-footer">
 				<a href="#" class="btn btn-primary" data-dismiss="modal" id="popupCancel"><s:text name='lbl.btn.cancel'/></a>
@@ -349,6 +346,22 @@
 			</div>
 		</div>
 	    <!-- Popup Ends -->
+	    
+	    <!-- Progress popup Starts-->
+	    <div id="progressPopup" class="modal hide fade">
+			<div class="modal-header">
+				<a class="close" data-dismiss="modal" >&times;</a>
+				<h3 id="popupTitle"><s:text name='lbl.progress'/></h3>
+			</div>
+			<div class="modal-body" id="console_div">
+			
+			</div>
+			<div class="modal-footer">
+				<a href="#" class="btn btn-primary popupClose" data-dismiss="modal" id="" onClick="popupOnClose(this);"><s:text name='lbl.btn.close'/></a>
+				<img class="popuploadingIcon" id="popuploadingIcon" src="" />
+			</div>
+		</div>
+	    <!-- Progress Popup Ends-->
 	</body>
 	
 	<script type="text/javascript">

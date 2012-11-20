@@ -71,15 +71,9 @@ footer {
 
 #welcome {
 	text-align: center;
-	margin-left: -17px;
+	margin-left: -153px !important;
 }
 
-.lgnintro_container_left {
-	float: left;
-	padding: 0px 0px 0px 0px;
-	margin: 0px;
-	width: 50%;
-}
 
 .marginBottomZero {
 	margin-bottom: -1;
@@ -116,8 +110,6 @@ div.lgnBtnLabel {
 }
 
 .l_align {
-	margin-bottom: 13px;
-	line-height: 24px;
 	text-transform:uppercase;
 }
 /** login end **/
@@ -3130,25 +3122,24 @@ fieldset {
 .lgnintro_container {
     padding:28px 0px 10px 43px;
     margin:0px;
-    width:700px;
+    width:100%;
     display: block;
 }
 
 .lgnintro_container {
-    left: 53%;
-    margin-left: -410px;
-    margin-top: -237px;
     position: absolute;
-    top: 40%;
+    top: 22%;
     z-index: 60001;
-    
+    padding-bottom:18px !important;
 }
 
 .lgnintro_container_left {
-    float:left;
     padding:0px 0px 0px 0px;
-    margin:0px;
-    width:50%;
+    margin:auto;
+    width:325px;
+}
+.lgnintro_container_left span {
+	display:none;
 }
 
 .lgnBg {
@@ -3158,13 +3149,9 @@ fieldset {
 }
 
 .lgnContainer {
-    left: 50%;
-    top: 50%;
-    width: 350px;
-    padding-left: 18px;
+    /*top: 50%;*/
+    width: 100%;
     padding-top: 0;
-    margin-left: -190px;
-    margin-top: -157px;
 }
 .lgnFieldLbl {
     text-align: left;
@@ -3178,6 +3165,7 @@ fieldset {
 }
 div.lgnBtnLabel {
     margin-left: 0;
+	margin-top:-20px;
 }
 div.lgnError{
     margin-top: 7px;
@@ -5482,7 +5470,7 @@ a[id='androidSigning']:hover {
     position: absolute;
     top: 49px;
     width: auto;
-	right:7.5%;
+	right:10.5%;
 }
 .customer_name label {
 	color:#FFFFFF !important;

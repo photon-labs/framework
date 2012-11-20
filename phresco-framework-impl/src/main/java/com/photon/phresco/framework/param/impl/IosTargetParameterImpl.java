@@ -81,6 +81,7 @@ public class IosTargetParameterImpl implements DynamicParameter {
                 if (isTarget && StringUtils.isNotEmpty(line) && !line.trim().equals(XCODE_PROJECT_TARGETS) && !line.trim().equals(XCODE_WORKSPACE_TARGETS)) {
                     Value value = new Value();
                     value.setValue(line.trim());
+                    value.setKey(line.trim());
                     possibleValues.getValue().add(value);
                 }
             }

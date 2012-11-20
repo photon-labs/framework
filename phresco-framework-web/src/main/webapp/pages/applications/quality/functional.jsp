@@ -97,8 +97,7 @@
 			<%
 					}
 			%>
-		        	<div class="alert-message block-message warning hideCtrl" id="errorDiv" style="margin: 5px 0 0 0;">
-						<center><label class="errorMsgLabel"></label></center>
+		        	<div class="alert alert-block hideContent" id="errorDiv" style="margin: 5px 0 0 0;">
 					</div>
 			<% 
 					if (buttonRow) {
@@ -273,7 +272,7 @@ function successEvent(pageUrl, data) {
 }
 
 function validationError(errMsg) {
-	$(".errorMsgLabel").html(errMsg);
+	$("#errorDiv").html(errMsg);
 	$("#errorDiv").show();
 	$("#testResultFile, #testSuite, #testSuiteDisplay, #resultView, #testResultLbl, #view").hide();
 	enableScreen();
@@ -336,13 +335,19 @@ function popupOnOk(obj) {
 	var okUrl = $(obj).attr("id");
 	if (okUrl === "startHub") {
 		var params = getBasicParams();
-		progressPopupAsSecPopup(okUrl, '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.START_HUB %>', $("#generateBuildForm"), params);
+		progressPopupAsSecPopup(okUrl, '<%= appId %>', '<%= FrameworkConstants.START_HUB %>', $("#generateBuildForm"), params);
 	} else if (okUrl === "startNode") {
 		var params = getBasicParams();
-		progressPopupAsSecPopup(okUrl, '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.START_NODE %>', $("#generateBuildForm"), params);
+		progressPopupAsSecPopup(okUrl, '<%= appId %>', '<%= FrameworkConstants.START_NODE %>', $("#generateBuildForm"), params);
 	} else if (okUrl === "runFunctionalTest") {
 		var params = getBasicParams();
-		progressPopupAsSecPopup(okUrl, '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.FUNCTIONAL %>', $("#generateBuildForm"), params);
+		progressPopupAsSecPopup(okUrl, '<%= appId %>', '<%= FrameworkConstants.FUNCTIONAL %>', $("#generateBuildForm"), params);
 	}
+}
+
+//after executing the test. when clicking Progress popup , it will call this methid to load test results
+function popupOnClose(obj) {
+	var closeUrl = $(obj).attr("id");
+	loadTestSuites();
 }
 </script> 

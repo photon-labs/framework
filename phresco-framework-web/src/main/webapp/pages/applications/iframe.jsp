@@ -17,33 +17,36 @@
   limitations under the License.
   ###
   --%>
+<%@ page import="org.apache.commons.lang.StringUtils"%>
+
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.util.TechnologyTypes" %>
 
 <%
 	String error = (String) request.getAttribute(FrameworkConstants.REQ_ERROR);
-	String technology = (String)request.getAttribute(FrameworkConstants.REQ_TECHNOLOGY);
+	String clangReport =  (String) request.getAttribute(FrameworkConstants.CLANG_REPORT);
 		  
 	String sonarPath = "";
 	
-	if(error != null) {
-%>
-        <div class="alert-message block-message warning" >
-			<center><label Class="errorMsgLabel"><%= error %></label></center>
+	if (StringUtils.isNotEmpty(error)) {
+%>      
+        <div class="alert alert-block">
+			<%= error %>
 		</div>
-        
-   <% } else { 
+<% 
+    } else { 
 		sonarPath = (String) request.getAttribute(FrameworkConstants.REQ_SONAR_PATH);
-   %>
+%>
 		 <iframe src="" frameBorder="0" class="iframe_container"></iframe>
 		
-	<% } %>
+<% } %>
 	
 <script>
 	var localstore = $("link[title='phresco']").attr("href");
 	localStorage["color"] =localstore;
 	
 	$(document).ready(function() {
+		hideLoadingIcon();
 	    reloadIframe();
 	    $(".styles").click(function() {
 	        reloadIframe();
@@ -58,7 +61,7 @@
 	    
 	    var source = "";
 	     <% 
-	    	if (TechnologyTypes.IPHONES.contains(technology)) { 
+	    	if (StringUtils.isNotEmpty(clangReport)) { 
 	    %>
 	    	source = "<%= sonarPath %>";
 	    <% } else { %>
@@ -69,9 +72,9 @@
 	    
 	    $('iframe').attr("src", source);
 	    
-	    $('iframe').load(function() {
-	        $(".loadingIcon").hide();
-	    });
+// 	    $('iframe').load(function() {
+// 	        $(".loadingIcon").hide();
+// 	    });
 	}
 	
 </script>

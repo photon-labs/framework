@@ -19,11 +19,9 @@
  */
 package com.photon.phresco.framework.commons;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.math.BigDecimal;
@@ -43,8 +41,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.codehaus.plexus.util.cli.CommandLineException;
-import org.codehaus.plexus.util.cli.Commandline;
 import org.w3c.dom.Element;
 
 import com.photon.phresco.commons.model.ApplicationInfo;
@@ -580,7 +576,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     }
     
     //get server Url for sonar
-    public String getSonarURL() throws PhrescoException {
+    public String getSonarHomeURL() throws PhrescoException {
     	FrameworkConfiguration frameworkConfig = PhrescoFrameworkFactory.getFrameworkConfig();
     	String serverUrl = "";
     	
@@ -598,22 +594,27 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 	    	serverUrl = matcher.replaceAll("");
 	    	S_LOGGER.debug("else condition serverUrl  " + serverUrl);
 	    }
-	    S_LOGGER.debug("serverUrl ... " + serverUrl);
-	    String sonarReportPath = frameworkConfig.getSonarReportPath();
-	    S_LOGGER.debug("sonarReportPath ... " + sonarReportPath);
-	    S_LOGGER.debug("sonarReportPath  " + sonarReportPath);
-	    String[] sonar = sonarReportPath.split("/");
-	    S_LOGGER.debug("sonar[1] " + sonar[1]);
-	    serverUrl = serverUrl.concat(FORWARD_SLASH + sonar[1]);
-		
 	    return serverUrl;
     }
     
-	public List<String> getSonarProfiles(String projectCode) throws PhrescoException {
-		List<String> sonarTechReports = new ArrayList<String>(4);
+    //get server Url for sonar
+    public String getSonarURL() throws PhrescoException {
+    	FrameworkConfiguration frameworkConfig = PhrescoFrameworkFactory.getFrameworkConfig();
+    	String serverUrl = getSonarHomeURL();
+    	S_LOGGER.debug("serverUrl ... " + serverUrl);
+	    String sonarReportPath = frameworkConfig.getSonarReportPath();
+	    S_LOGGER.debug("sonarReportPath ... " + sonarReportPath);
+	    String[] sonar = sonarReportPath.split("/");
+	    S_LOGGER.debug("sonar[1] " + sonar[1]);
+	    serverUrl = serverUrl.concat(FORWARD_SLASH + sonar[1]);
+	    S_LOGGER.debug("Final url => " + serverUrl);
+	    return serverUrl;
+    }
+    
+	public List<String> getSonarProfiles() throws PhrescoException {
+		List<String> sonarTechReports = new ArrayList<String>(6);
 		try {
-			StringBuilder pomBuilder = new StringBuilder(Utility.getProjectHome());
-			pomBuilder.append(projectCode);
+			StringBuilder pomBuilder = new StringBuilder(getApplicationHome());
 			pomBuilder.append(File.separator);
 			pomBuilder.append(POM_XML);
 			File pomPath = new File(pomBuilder.toString());
@@ -718,6 +719,48 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 		return type;
 	}
     
+	public static StringTemplate constructMultiInputElement(ParameterModel pm) {
+    	StringTemplate controlGroupElement = new StringTemplate(getControlGroupTemplate());
+    	controlGroupElement.setAttribute("ctrlGrpId", pm.getControlGroupId());
+    	
+    	if (!pm.isShow()) {
+    	    controlGroupElement.setAttribute("ctrlGrpClass", "hideContent");
+    	}
+    	
+    	StringTemplate lableElmnt = constructLabelElement(pm.isMandatory(), pm.getLableClass(), pm.getLableText());
+    	String type = getMultiInputType(pm.getInputType());
+    	StringTemplate inputElement = new StringTemplate(getMapTemplate());
+    	inputElement.setAttribute("type", type);
+    	inputElement.setAttribute("class", pm.getCssClass());
+    	inputElement.setAttribute("id", pm.getId());
+    	inputElement.setAttribute("name", pm.getName());
+    	inputElement.setAttribute("placeholder", pm.getPlaceHolder());
+    	inputElement.setAttribute("value", pm.getValue());
+    	inputElement.setAttribute("ctrlsId", pm.getControlId());
+    	
+    	//controlGroupElement.setAttribute("lable", lableElmnt);
+    	controlGroupElement.setAttribute("lable", inputElement);
+    	
+		return controlGroupElement;
+    }
+
+	/**
+	 * @param inputType
+	 * @return
+	 */
+	private static String getMultiInputType(String inputType) {
+		String type = "";
+		if (TYPE_PASSWORD.equalsIgnoreCase(inputType)) {
+    		type = TYPE_PASSWORD;
+		}  else if (TYPE_HIDDEN.equalsIgnoreCase(inputType)) {
+			type = TYPE_HIDDEN;
+		} else {
+			type = TEXT_BOX;
+		}
+		
+		return type;
+	}
+	
     public static StringTemplate constructCheckBoxElement(ParameterModel pm) {
     	StringTemplate controlGroupElement = new StringTemplate(getControlGroupTemplate());
     	controlGroupElement.setAttribute("ctrlGrpId", pm.getControlGroupId());
@@ -987,6 +1030,33 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	
     	return sb.toString();
     }
+    
+    private static String getMapTemplate() {
+    	StringBuilder sb = new StringBuilder();
+    	sb.append("<fieldset class='mfbox siteinnertooltiptxt popup-fieldset fieldSetClassForHeader'>")
+    	.append("<legend class='fieldSetLegend'>Add Header</legend>")
+    	.append("<table align='center'>")
+    	.append("<thead class='header-background'>")
+    	.append("<tr class='borderForLoad'>")
+    	.append("<th class='borderForLoad'>Key</th>")
+    	.append("<th class='borderForLoad'>Value</th><th></th><th></th></tr></thead>")
+    	.append("<tbody id='propTempTbodyForHeader'>")
+    	.append("<tr class='borderForLoad'>")
+    	.append("<td class='borderForLoad'>")
+    	.append("<input type='text' class='input-small' id=\"$id$\" ")
+    	.append("name=\"$name$\" placeholder=\"$placeholder$\" >")
+    	.append("<span class='help-inline' id=\"$ctrlsId$\"></span></td>")
+    	.append("<td class='borderForLoad'>")
+    	.append("<input type='text' class='input-small' id=\"$id$\" ")
+    	.append("name=\"$name$\" placeholder=\"$placeholder$\" >")
+    	.append("<span class='help-inline' id=\"$ctrlsId$\"></span></td>")
+    	.append("<td class='borderForLoad'>")
+    	.append("<a><img class='add imagealign' src='images/icons/add_icon.png' onclick='addKey(this);'></a></td>")
+    	.append("</tr></tbody></table></fieldset>");
+    	
+    	return sb.toString();
+    }
+   
     
     private static String getCheckBoxTemplate() {
     	StringBuilder sb = new StringBuilder();

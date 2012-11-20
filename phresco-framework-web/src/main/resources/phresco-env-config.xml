@@ -21,7 +21,7 @@
 			<port>2020</port>
 			<username/>
 			<password/>
-			<context>service</context>
+			<context>service-testing</context>
 			<additional_context>/rest/api</additional_context>
 		</WebService>
                  
@@ -63,7 +63,7 @@
     </environment>
     
     <environment default="false" name="Testing">
-		 <Server appliesTo="tech-html5-widget" desc="" name="server">
+	 <Server appliesTo="tech-html5-widget" desc="" name="server">
             <protocol>http</protocol>
             <host>localhost</host>
             <port>2468</port>
@@ -78,18 +78,50 @@
             <additional_context>/</additional_context>
         </Server>
 	
-		 <WebService desc="" name="webservice">
+	<WebService desc="" name="webservice">
             <protocol>http</protocol>
             <host>172.16.18.178</host>
-            <port>8280</port>
+            <port>2020</port>
             <username/>
             <password/>
-            <context>service-testing/2.0</context>
-			<additional_context>/rest/api</additional_context>
+            <context>service-testing</context>
+	    <additional_context>/rest/api</additional_context>
         </WebService>
         
         <Other appliesTo="tech-html5-widget" desc="" name="Apikey">
             <apiKey>Bearer oaqHffzj7qp0nCLW8VKeE8toAIYa</apiKey>
         </Other>
     </environment>
+
+     <environment default="false" name="Testing-ws">
+                 <Server appliesTo="tech-html5-widget" desc="" name="server">
+            <protocol>http</protocol>
+            <host>localhost</host>
+            <port>2468</port>
+            <admin_username/>
+            <admin_password/>
+            <remoteDeployment>false</remoteDeployment>
+            <certificate/>
+            <type>Apache</type>
+            <version>2.3</version>
+            <deploy_dir>D:\work\Framwork-apache-tomcat-7.0.14\webapps</deploy_dir>
+            <context>framework</context>
+            <additional_context>/</additional_context>
+        </Server>
+
+                 <WebService desc="" name="webservice">
+            <protocol>http</protocol>
+            <host>172.16.18.178</host>
+            <port>8280</port>
+            <username/>
+            <password/>
+            <context>service-testing/2.0</context>
+                        <additional_context>/rest/api</additional_context>
+        </WebService>
+
+        <Other appliesTo="tech-html5-widget" desc="" name="Apikey">
+            <apiKey>Bearer oaqHffzj7qp0nCLW8VKeE8toAIYa</apiKey>
+        </Other>
+    </environment>
+
 </environments>

@@ -278,11 +278,6 @@
             <result name="reader">/pages/applications/reader.jsp</result>
         </action>
         
-        <!-- code tab -->
-        <!-- <action name="code" method="view" class="com.photon.phresco.framework.actions.applications.Code">
-            <result name="code">/pages/applications/code.jsp</result>
-        </action> -->
-        
         <action name="code" method="code" class="com.photon.phresco.framework.actions.applications.Code">
             <result name="code">/pages/applications/code.jsp</result>
         </action>
@@ -482,6 +477,7 @@
         </action>
         
         <action name="updateConfiguration" method="update" class="com.photon.phresco.framework.actions.applications.Configurations">
+        	<interceptor-ref name="json" />
             <result name="list">/pages/applications/configuration/list.jsp</result>
             <result type="json" />
         </action>
@@ -515,8 +511,8 @@
         </action>
         
         <!--  Settings Actions -->
-        <action name="settings" method="list" class="com.photon.phresco.framework.actions.settings.Settings">
-            <result name="list">/pages/settings/list.jsp</result>
+        <action name="settings" method="list" class="com.photon.phresco.framework.actions.applications.Configurations">
+            <result name="list">/pages/applications/configuration/list.jsp</result>
         </action>
 
         <action name="deleteSettings" method="delete" class="com.photon.phresco.framework.actions.settings.Settings">
