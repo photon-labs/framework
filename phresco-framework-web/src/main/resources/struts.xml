@@ -278,11 +278,6 @@
             <result name="reader">/pages/applications/reader.jsp</result>
         </action>
         
-        <!-- code tab -->
-        <!-- <action name="code" method="view" class="com.photon.phresco.framework.actions.applications.Code">
-            <result name="code">/pages/applications/code.jsp</result>
-        </action> -->
-        
         <action name="code" method="code" class="com.photon.phresco.framework.actions.applications.Code">
             <result name="code">/pages/applications/code.jsp</result>
         </action>

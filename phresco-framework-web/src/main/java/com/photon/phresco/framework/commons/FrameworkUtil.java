@@ -576,7 +576,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     }
     
     //get server Url for sonar
-    public String getSonarURL() throws PhrescoException {
+    public String getSonarHomeURL() throws PhrescoException {
     	FrameworkConfiguration frameworkConfig = PhrescoFrameworkFactory.getFrameworkConfig();
     	String serverUrl = "";
     	
@@ -594,22 +594,27 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 	    	serverUrl = matcher.replaceAll("");
 	    	S_LOGGER.debug("else condition serverUrl  " + serverUrl);
 	    }
-	    S_LOGGER.debug("serverUrl ... " + serverUrl);
-	    String sonarReportPath = frameworkConfig.getSonarReportPath();
-	    S_LOGGER.debug("sonarReportPath ... " + sonarReportPath);
-	    S_LOGGER.debug("sonarReportPath  " + sonarReportPath);
-	    String[] sonar = sonarReportPath.split("/");
-	    S_LOGGER.debug("sonar[1] " + sonar[1]);
-	    serverUrl = serverUrl.concat(FORWARD_SLASH + sonar[1]);
-		
 	    return serverUrl;
     }
     
-	public List<String> getSonarProfiles(String projectCode) throws PhrescoException {
-		List<String> sonarTechReports = new ArrayList<String>(4);
+    //get server Url for sonar
+    public String getSonarURL() throws PhrescoException {
+    	FrameworkConfiguration frameworkConfig = PhrescoFrameworkFactory.getFrameworkConfig();
+    	String serverUrl = getSonarHomeURL();
+    	S_LOGGER.debug("serverUrl ... " + serverUrl);
+	    String sonarReportPath = frameworkConfig.getSonarReportPath();
+	    S_LOGGER.debug("sonarReportPath ... " + sonarReportPath);
+	    String[] sonar = sonarReportPath.split("/");
+	    S_LOGGER.debug("sonar[1] " + sonar[1]);
+	    serverUrl = serverUrl.concat(FORWARD_SLASH + sonar[1]);
+	    S_LOGGER.debug("Final url => " + serverUrl);
+	    return serverUrl;
+    }
+    
+	public List<String> getSonarProfiles() throws PhrescoException {
+		List<String> sonarTechReports = new ArrayList<String>(6);
 		try {
-			StringBuilder pomBuilder = new StringBuilder(Utility.getProjectHome());
-			pomBuilder.append(projectCode);
+			StringBuilder pomBuilder = new StringBuilder(getApplicationHome());
 			pomBuilder.append(File.separator);
 			pomBuilder.append(POM_XML);
 			File pomPath = new File(pomBuilder.toString());

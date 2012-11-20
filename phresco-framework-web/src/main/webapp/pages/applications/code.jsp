@@ -27,22 +27,23 @@
 
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
+<%@ page import="com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value"%>
 
 <%@ include file="progress.jsp" %>
 
 <script src="js/reader.js" ></script>
 
  <%
-	ApplicationInfo applicationInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_APP_INFO);
-	String appId = (String) applicationInfo.getId();
-	List<String> sonarTechReports = (List<String>) request.getAttribute("sonarTechReports");
-	String sonarError = "error";
-	sonarError = (String) request.getAttribute(FrameworkConstants.REQ_ERROR);
+	ApplicationInfo appInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_APP_INFO);
+	String appId = (String) appInfo.getId();
+	List<Value> techReports = (List<Value>) request.getAttribute(FrameworkConstants.REQ_VALUES);
+	String sonarError = (String) request.getAttribute(FrameworkConstants.REQ_ERROR);
+	String clangReport =  (String) request.getAttribute(FrameworkConstants.CLANG_REPORT);
 	String disabledStr = "";
-	if (StringUtils.isNotEmpty(sonarError)) {
+	// when this is iphone tech there will be a path in clangReport request
+	if (StringUtils.isEmpty(clangReport) && StringUtils.isNotEmpty(sonarError)) {
         disabledStr = "disabled";
     }
-	String checkIphone =  (String) request.getAttribute("checkIphone");
 %>  
 
 <form id="code" class="codeList">
@@ -51,19 +52,16 @@
            
         <strong id="validateType" class="validateType"><s:text name="lbl.sonar.report"/></strong>&nbsp;
         <select id="validateAgainst" name="validateAgainst">
+        
             <%
-                if (CollectionUtils.isNotEmpty(sonarTechReports)) {
-                	for (String sonarTechReport : sonarTechReports ) {
+                if (CollectionUtils.isNotEmpty(techReports)) {
+                	for (Value value : techReports) {
             %>
-                   <option value="<%= sonarTechReport %>" ><%= sonarTechReport %></option>
+                   <option value="<%= value.getKey() %>" ><%= value.getValue() %></option>
             <%
                 	}
-                } else { %>
-               	   <option value="src" ><s:text name="lbl.validateAgainst.source"/></option>
-            <%   
-                }
+                } 
             %>
-            <option value="functional" ><s:text name="lbl.validateAgainst.functionalTest"/></option>
 		</select>
 	</div>
 	
@@ -82,6 +80,7 @@
 $('.control-group').addClass("valReportLbl");
     $(document).ready(function() {
     	hideLoadingIcon();
+    	enableScreen();
     	
     	$('#codeValidatePopup').click(function() {
     		validateDynamicParam('showCodeValidatePopup', '<s:text name="popup.hdr.code.validate"/>', 'codeValidate','<s:text name="lbl.validate"/>', '', '<%= Constants.PHASE_VALIDATE_CODE %>');
@@ -96,6 +95,10 @@ $('.control-group').addClass("valReportLbl");
 	        $("#codeValidatePopup").removeClass("btn-disabled");
 	        sonarReport();
     	<% } %>
+    	
+<%--     	<% if (StringUtils.isNotEmpty(clangReport)) { %> --%>
+//     		$("#validateType").html("<s:text name='lbl.target'/>");
+<%--     	<% } %> --%>
     	
 		$('#validateAgainst').change(function() {
 			sonarReport();
@@ -129,5 +132,10 @@ $('.control-group').addClass("valReportLbl");
 		} else {
 			return obj;
 		}
+	}
+	
+	function popupOnClose(obj) {
+		var closeUrl = $(obj).attr("id");
+		loadContent("code", '', $("#subcontainer"), getBasicParams());
 	}
 </script>

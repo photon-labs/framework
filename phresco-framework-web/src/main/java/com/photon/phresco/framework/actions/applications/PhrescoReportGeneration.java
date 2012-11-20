@@ -222,7 +222,7 @@ public class PhrescoReportGeneration extends FrameworkBaseAction {
 			//Sonar details
 			List<SonarReport> sonarReports = new ArrayList<SonarReport>();
 			FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-        	List<String> sonarTechReports = frameworkUtil.getSonarProfiles(projectCode);
+        	List<String> sonarTechReports = frameworkUtil.getSonarProfiles();
     		if(CollectionUtils.isEmpty(sonarTechReports)) {
     			sonarTechReports.add(SONAR_SOURCE);
     		}

@@ -391,6 +391,11 @@ public interface FrameworkConstants {
 	String USER_NAME = "username";
 	String SCM_SVN = "scm:svn:";
     
+	/*
+	 * Dynamic parameters
+	 */
+	String KEY_APP_INFO = "applicationInfo";
+	
     /*
      *  File Types for Browse in Functional
      */
@@ -903,10 +908,12 @@ public interface FrameworkConstants {
      */
     String FAILURE_CODE_REVIEW = "Code validation report is not available";
 	String SONAR_NOT_STARTED = "sonar.not.started";
-	String REQ_SONAR_TECH_REPORTS = "sonarTechReports";
+	String REQ_TECH_REPORTS = "techReports";
 	String REQ_PARAMETER = "parameter";
+	String REQ_VALUES = "values";
 	String REQ_VALIDATE_AGAINST = "validateAgainst";
 	String CHECK_IPHONE = "checkIphone";
+	String CLANG_REPORT = "clangReport";
     
     /*
      * Application Redirection keys
