@@ -35,7 +35,6 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.Writer;
 import java.net.HttpURLConnection;
-import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DateFormat;
@@ -68,7 +67,6 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.codehaus.plexus.util.cli.CommandLineException;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -81,6 +79,7 @@ import com.photon.phresco.commons.FileListFilter;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.BuildInfo;
+import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.FrameworkConfiguration;
@@ -96,7 +95,6 @@ import com.photon.phresco.framework.commons.LogErrorReport;
 import com.photon.phresco.framework.commons.PBXNativeTarget;
 import com.photon.phresco.framework.commons.QualityUtil;
 import com.photon.phresco.framework.model.DependantParameters;
-import com.photon.phresco.framework.model.HubConfiguration;
 import com.photon.phresco.framework.model.NodeCapability;
 import com.photon.phresco.framework.model.NodeConfig;
 import com.photon.phresco.framework.model.NodeConfiguration;
@@ -498,7 +496,9 @@ public class Quality extends DynamicParameterAction implements Constants {
 	        setReqAttribute(REQ_APP_ID, getAppId());
 	        setReqAttribute(REQ_ACTION_TYPE, FUNCTIONAL);
 	    } catch (PhrescoException e) {
-	        S_LOGGER.error("Entered into catch block of Quality.functional()"+ e);
+	    	if (s_debugEnabled) {
+	    		S_LOGGER.error("Entered into catch block of Quality.runFunctionalTest()"+ FrameworkUtil.getStackTraceAsString(e));
+	    	}
 	        return showErrorPopup(e, getText(EXCEPTION_QUALITY_FUNCTIONAL_RUN));
 	    }
 
@@ -515,67 +515,39 @@ public class Quality extends DynamicParameterAction implements Constants {
             setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
             setReqAttribute(REQ_GOAL, PHASE_START_HUB);
         } catch (PhrescoException e) {
-            return showErrorPopup(e, getText(EXCEPTION_QUALITY_UNIT_LOAD));
+        	if (s_debugEnabled) {
+	    		S_LOGGER.error("Entered into catch block of Quality.showStartHubPopUp()"+ FrameworkUtil.getStackTraceAsString(e));
+	    	}
+            return showErrorPopup(e, getText(EXCEPTION_QUALITY_FUNCTIONAL_START_HUB_PARAMS));
         }
         
         return SUCCESS;
     }
-	
-	public String startHub() throws PhrescoPomException, IOException, CommandLineException {
-	    try {
-	        ApplicationInfo appInfo = getApplicationInfo();
-	        MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(appInfo)));
-            persistValuesToXml(mojo, PHASE_START_HUB);
-//            updateHubConfigInfo(appInfo);
-            FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-            String workingDir = getApplicationHome() + frameworkUtil.getFunctionalTestDir(appInfo);
-            BufferedReader reader = Utility.executeCommand(COMMAND_START_HUB, workingDir);
-            setSessionAttribute(getAppId() + START_HUB, reader);
-        } catch (PhrescoException e) {
-            e.printStackTrace();
-        }
-        
-        return APP_ENVIRONMENT_READER;
-	}
-	
-	private void updateHubConfigInfo(ApplicationInfo appInfo) throws PhrescoPomException, IOException {
-	    BufferedWriter out = null;
-	    FileWriter fileWriter = null;
-	    try {
-    	    HubConfiguration hubConfig = new HubConfiguration();
-    	    InetAddress thisIp =InetAddress.getLocalHost();
-    	    hubConfig.setHost(thisIp.getHostAddress());
-    	    hubConfig.setPort(getPort());
-    	    hubConfig.setNewSessionWaitTimeout(getNewSessionWaitTimeout());
-    	    hubConfig.setServlets(getServlets());
-    	    if (StringUtils.isNotEmpty(getPrioritizer())) {
-    	        hubConfig.setPrioritizer(getPrioritizer());
-    	    }
-    	    hubConfig.setCapabilityMatcher(getCapabilityMatcher());
-    	    hubConfig.setThrowOnCapabilityNotPresent(isThrowOnCapabilityNotPresent());
-    	    hubConfig.setNodePolling(getNodePolling());
-    	    hubConfig.setCleanUpCycle(getCleanUpCycle());
-    	    hubConfig.setTimeout(getTimeout());
-    	    hubConfig.setBrowserTimeout(getBrowserTimeout());
-    	    hubConfig.setMaxSession(getMaxSession());
-    	    
-    	    Gson gson = new Gson();
-    	    String infoJSON = gson.toJson(hubConfig);
-    	    FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-            String configPath = frameworkUtil.getHubConfigFile(appInfo);
-            fileWriter = new FileWriter(configPath);
-            out = new BufferedWriter(fileWriter);
-            out.write(infoJSON);
-	    } catch (PhrescoException e) {
-            
-        } finally {
-            if (out != null) {
-                out.close();
-            }
-            if (fileWriter != null) {
-                fileWriter.close();
-            }
-        }
+
+	public String startHub() {
+		if (s_debugEnabled) {
+			S_LOGGER.debug("Entering Method Quality.startHub()");
+		}
+
+		try {
+			ApplicationInfo appInfo = getApplicationInfo();
+			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(appInfo)));
+			persistValuesToXml(mojo, PHASE_START_HUB);
+			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+			ProjectInfo projectInfo = getProjectInfo();
+			String workingDirectory = getAppDirectoryPath(appInfo);
+			BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.START_HUB, null, workingDirectory);
+			setSessionAttribute(getAppId() + START_HUB, reader);
+			setReqAttribute(REQ_APP_ID, getAppId());
+			setReqAttribute(REQ_ACTION_TYPE, START_HUB);
+		} catch (PhrescoException e) {
+			if (s_debugEnabled) {
+	    		S_LOGGER.error("Entered into catch block of Quality.startHub()"+ FrameworkUtil.getStackTraceAsString(e));
+	    	}
+			return showErrorPopup(e, getText(EXCEPTION_QUALITY_FUNCTIONAL_START_HUB));
+		}
+
+		return APP_ENVIRONMENT_READER;
 	}
 	
 	public String showStartNodePopUp() {
@@ -588,27 +560,36 @@ public class Quality extends DynamicParameterAction implements Constants {
             setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
             setReqAttribute(REQ_GOAL, PHASE_START_NODE);
         } catch (PhrescoException e) {
-            return showErrorPopup(e, getText(EXCEPTION_QUALITY_UNIT_LOAD));
+        	if (s_debugEnabled) {
+	    		S_LOGGER.error("Entered into catch block of Quality.showStartNodePopUp()"+ FrameworkUtil.getStackTraceAsString(e));
+	    	}
+            return showErrorPopup(e, getText(EXCEPTION_QUALITY_FUNCTIONAL_START_NODE_PARAMS));
         }
         
         return SUCCESS;
     }
 	
 	public String startSelectedNodes() {
+		if (s_debugEnabled) {
+            S_LOGGER.debug("Entering Method Quality.startSelectedNodes()");
+        }
+		
         try {
-            ApplicationInfo appInfo = getApplicationInfo();
-            MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(appInfo)));
-            persistValuesToXml(mojo, PHASE_START_NODE);
-//            updateNodeConfigInfo(appInfo);
-            FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-            String workingDir = getApplicationHome() + frameworkUtil.getFunctionalTestDir(appInfo);
-//            Utility.executeCommand(COMMAND_START_HUB, workingDir);
+        	ApplicationInfo appInfo = getApplicationInfo();
+			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(appInfo)));
+			persistValuesToXml(mojo, PHASE_START_NODE);
+			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+			ProjectInfo projectInfo = getProjectInfo();
+			String workingDirectory = getAppDirectoryPath(appInfo);
+			BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.START_NODE, null, workingDirectory);
+			setSessionAttribute(getAppId() + START_NODE, reader);
+			setReqAttribute(REQ_APP_ID, getAppId());
+			setReqAttribute(REQ_ACTION_TYPE, START_NODE);
         } catch (PhrescoException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (PhrescoPomException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        	if (s_debugEnabled) {
+	    		S_LOGGER.error("Entered into catch block of Quality.startSelectedNodes()"+ FrameworkUtil.getStackTraceAsString(e));
+	    	}
+        	return showErrorPopup(e, getText(EXCEPTION_QUALITY_FUNCTIONAL_START_NODE));
         }
         
         return APP_ENVIRONMENT_READER;
