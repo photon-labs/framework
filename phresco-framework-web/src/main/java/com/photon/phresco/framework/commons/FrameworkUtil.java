@@ -719,7 +719,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 		return type;
 	}
     
-	public static StringTemplate constructMultiInputElement(ParameterModel pm) {
+	public static StringTemplate constructMapElement(ParameterModel pm) {
     	StringTemplate controlGroupElement = new StringTemplate(getControlGroupTemplate());
     	controlGroupElement.setAttribute("ctrlGrpId", pm.getControlGroupId());
     	
@@ -727,40 +727,37 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	    controlGroupElement.setAttribute("ctrlGrpClass", "hideContent");
     	}
     	
-    	StringTemplate lableElmnt = constructLabelElement(pm.isMandatory(), pm.getLableClass(), pm.getLableText());
-    	String type = getMultiInputType(pm.getInputType());
-    	StringTemplate inputElement = new StringTemplate(getMapTemplate());
-    	inputElement.setAttribute("type", type);
-    	inputElement.setAttribute("class", pm.getCssClass());
-    	inputElement.setAttribute("id", pm.getId());
-    	inputElement.setAttribute("name", pm.getName());
-    	inputElement.setAttribute("placeholder", pm.getPlaceHolder());
-    	inputElement.setAttribute("value", pm.getValue());
-    	inputElement.setAttribute("ctrlsId", pm.getControlId());
-    	
-    	//controlGroupElement.setAttribute("lable", lableElmnt);
-    	controlGroupElement.setAttribute("lable", inputElement);
+    	StringTemplate mapElement = new StringTemplate(getMapTemplate());
+    	mapElement.setAttribute("legendHeader", pm.getLableText());
+    	List<BasicParameterModel> childs = pm.getChilds();
+    	for (BasicParameterModel child : childs) {
+    	    StringTemplate childElement = new StringTemplate();
+            if (child.getInputType().equalsIgnoreCase(TYPE_LIST)) {
+                childElement = new StringTemplate(getMapSelectElement());
+                StringBuilder options = constructOptions(child.getObjectValue(), null, null);
+                childElement.setAttribute("options", options);
+            } else if (child.getInputType().equalsIgnoreCase(TYPE_STRING)) {
+                childElement = new StringTemplate(getMapInputElement());
+            }
+            childElement.setAttribute("name", child.getName());
+            updateChildLabels(mapElement, child);
+            mapElement.setAttribute("mapControls", childElement);
+        }
+    	controlGroupElement.setAttribute("lable", mapElement);
     	
 		return controlGroupElement;
     }
-
-	/**
-	 * @param inputType
-	 * @return
-	 */
-	private static String getMultiInputType(String inputType) {
-		String type = "";
-		if (TYPE_PASSWORD.equalsIgnoreCase(inputType)) {
-    		type = TYPE_PASSWORD;
-		}  else if (TYPE_HIDDEN.equalsIgnoreCase(inputType)) {
-			type = TYPE_HIDDEN;
-		} else {
-			type = TEXT_BOX;
-		}
-		
-		return type;
-	}
 	
+    private static void updateChildLabels(StringTemplate mapElement, BasicParameterModel child) {
+        String keyLabel = (String) mapElement.getAttribute("keyLabel");
+        if (StringUtils.isEmpty(keyLabel)) {
+            mapElement.setAttribute("keyLabel", child.getLableText());
+        } else {
+            mapElement.setAttribute("valueLabel", child.getLableText());
+        }
+        mapElement.setAttribute("childLabel", child.getLableText());
+    }
+
     public static StringTemplate constructCheckBoxElement(ParameterModel pm) {
     	StringTemplate controlGroupElement = new StringTemplate(getControlGroupTemplate());
     	controlGroupElement.setAttribute("ctrlGrpId", pm.getControlGroupId());
@@ -866,9 +863,11 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
         		String optionKey = "";
         		if (value instanceof Value) {
         		    optionKey = ((Value) value).getKey();
+        		} else if (value instanceof com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.Childs.Child.PossibleValues.Value) {
+        		    optionKey = ((com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.Childs.Child.PossibleValues.Value) value).getKey();
         		}
 
-        		if (selectedValues!= null && selectedValues.contains(optionValue)) {
+        		if (CollectionUtils.isNotEmpty(selectedValues) && selectedValues.contains(optionValue)) {
         			selectedStr = "selected";
         		} else {
         			selectedStr = "";
@@ -939,12 +938,13 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 		String optionValue = "";
 		if (value instanceof Value) {
 			optionValue = ((Value) value).getValue();
+		} else if (value instanceof com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.Childs.Child.PossibleValues.Value) {
+		    optionValue = ((com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.Childs.Child.PossibleValues.Value) value).getValue();
 		} else {
 			optionValue = (String) value;
 		}
 		return optionValue;
 	}
-    
 
     public static StringTemplate constructLabelElement(Boolean isMandatory, String cssClass, String Label) {
     	StringTemplate labelElement = new StringTemplate(getLableTemplate());
@@ -1034,30 +1034,45 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     private static String getMapTemplate() {
     	StringBuilder sb = new StringBuilder();
     	sb.append("<fieldset class='mfbox siteinnertooltiptxt popup-fieldset fieldSetClassForHeader'>")
-    	.append("<legend class='fieldSetLegend'>Add Header</legend>")
+    	.append("<legend class='fieldSetLegend'>$legendHeader$</legend>")
     	.append("<table align='center'>")
     	.append("<thead class='header-background'>")
     	.append("<tr class='borderForLoad'>")
-    	.append("<th class='borderForLoad'>Key</th>")
-    	.append("<th class='borderForLoad'>Value</th><th></th><th></th></tr></thead>")
+    	.append("<th class='borderForLoad'>$keyLabel$</th>")
+    	.append("<th class='borderForLoad'>$valueLabel$</th><th></th><th></th></tr></thead>")
     	.append("<tbody id='propTempTbodyForHeader'>")
     	.append("<tr class='borderForLoad'>")
+    	.append("$mapControls$")
     	.append("<td class='borderForLoad'>")
-    	.append("<input type='text' class='input-small' id=\"$id$\" ")
-    	.append("name=\"$name$\" placeholder=\"$placeholder$\" >")
-    	.append("<span class='help-inline' id=\"$ctrlsId$\"></span></td>")
-    	.append("<td class='borderForLoad'>")
-    	.append("<input type='text' class='input-small' id=\"$id$\" ")
-    	.append("name=\"$name$\" placeholder=\"$placeholder$\" >")
-    	.append("<span class='help-inline' id=\"$ctrlsId$\"></span></td>")
-    	.append("<td class='borderForLoad'>")
-    	.append("<a><img class='add imagealign' src='images/icons/add_icon.png' onclick='addKey(this);'></a></td>")
+    	.append("<a><img class='add imagealign' src='images/icons/add_icon.png' onclick='addRow(this);'></a></td>")
     	.append("</tr></tbody></table></fieldset>");
     	
     	return sb.toString();
     }
-   
     
+    private static String getMapSelectElement() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<td class='borderForLoad'>")
+        .append("<select class=\"input-medium $cssClass$\" ")
+        .append("id=\"$id$\" name=\"$name$\" isMultiple=\"$isMultiple$\">")
+        .append("$options$</select>")
+        .append("<span class='help-inline' id=\"$ctrlsId$\"></span>")
+        .append("</td>");
+        
+        return sb.toString();
+    }
+    
+    private static String getMapInputElement() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<td class='borderForLoad'>")
+        .append("<input type='text' class='input-mini' id=\"$id$\" ")
+        .append("name=\"$name$\" placeholder=\"$valuePlaceholder$\" />")
+        .append("<span class='help-inline' id=\"$ctrlsId$\"></span>")
+        .append("</td>");
+        
+        return sb.toString();
+    }
+   
     private static String getCheckBoxTemplate() {
     	StringBuilder sb = new StringBuilder();
     	sb.append("<div class='controls'>")

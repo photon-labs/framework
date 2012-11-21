@@ -19,75 +19,37 @@
  */
 package com.photon.phresco.framework.actions.applications;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.*;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.codehaus.plexus.util.cli.CommandLineException;
-import org.codehaus.plexus.util.cli.Commandline;
-import org.w3c.dom.Document;
+import org.apache.commons.collections.*;
+import org.apache.commons.lang.*;
+import org.apache.log4j.*;
+import org.codehaus.plexus.util.cli.*;
+import org.w3c.dom.*;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
+import org.xml.sax.*;
 
-import com.google.gson.Gson;
-import com.photon.phresco.commons.model.ApplicationInfo;
-import com.photon.phresco.commons.model.BuildInfo;
-import com.photon.phresco.commons.model.ProjectInfo;
-import com.photon.phresco.configuration.ConfigurationInfo;
-import com.photon.phresco.exception.ConfigurationException;
-import com.photon.phresco.exception.PhrescoException;
-import com.photon.phresco.framework.PhrescoFrameworkFactory;
-import com.photon.phresco.framework.api.ActionType;
-import com.photon.phresco.framework.api.ApplicationManager;
-import com.photon.phresco.framework.api.Project;
-import com.photon.phresco.framework.api.ProjectAdministrator;
-import com.photon.phresco.framework.api.ProjectRuntimeManager;
-import com.photon.phresco.framework.commons.DiagnoseUtil;
-import com.photon.phresco.framework.commons.FrameworkUtil;
-import com.photon.phresco.framework.commons.LogErrorReport;
-import com.photon.phresco.framework.model.DependantParameters;
-import com.photon.phresco.framework.model.PluginProperties;
-import com.photon.phresco.framework.model.SettingsInfo;
+import com.google.gson.*;
+import com.photon.phresco.commons.model.*;
+import com.photon.phresco.configuration.*;
+import com.photon.phresco.exception.*;
+import com.photon.phresco.framework.*;
+import com.photon.phresco.framework.api.*;
+import com.photon.phresco.framework.commons.*;
+import com.photon.phresco.framework.model.*;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
-import com.photon.phresco.plugins.util.MojoProcessor;
-import com.photon.phresco.util.Constants;
-import com.photon.phresco.util.TechnologyTypes;
-import com.photon.phresco.util.Utility;
-import com.phresco.pom.android.AndroidProfile;
-import com.phresco.pom.exception.PhrescoPomException;
-import com.phresco.pom.model.Plugin;
-import com.phresco.pom.model.PluginExecution;
+import com.photon.phresco.plugins.util.*;
+import com.photon.phresco.util.*;
+import com.phresco.pom.android.*;
+import com.phresco.pom.exception.*;
+import com.phresco.pom.model.*;
 import com.phresco.pom.model.PluginExecution.Configuration;
 import com.phresco.pom.model.PluginExecution.Goals;
-import com.phresco.pom.util.AndroidPomProcessor;
-import com.phresco.pom.util.PomProcessor;
+import com.phresco.pom.util.*;
 
 public class Build extends DynamicParameterAction implements Constants {
 
@@ -326,6 +288,8 @@ public class Build extends DynamicParameterAction implements Constants {
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			ApplicationInfo applicationInfo = getApplicationInfo();
 			List<BuildInfo> builds = applicationManager.getBuildInfos(new File(getBuildInfosFilePath(applicationInfo)));
+			setReqAttribute(REQ_CUSTOMER_ID, getCustomerId());
+			setReqAttribute(REQ_PROJECT_ID, getProjectId());
 			setReqAttribute(REQ_BUILD, builds);
 			setReqAttribute(REQ_APPINFO, applicationInfo);
 		} catch (PhrescoException e) {
@@ -534,51 +498,49 @@ public class Build extends DynamicParameterAction implements Constants {
 	}
 
 	public String download() throws PhrescoException {
-
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method Build.download()");
 		}
-		String buildNumber = getHttpRequest().getParameter(REQ_DEPLOY_BUILD_NUMBER);
 		try {
-			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-			Project project = administrator.getProject(projectCode);
-			StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-			builder.append(project.getApplicationInfo().getCode());
-			builder.append(File.separator);
-			String moduleName = administrator.getBuildInfo(project, Integer.parseInt(buildNumber)).getModuleName();
-			if (StringUtils.isNotEmpty(moduleName)) {
-				builder.append(moduleName);
-				builder.append(File.separator);
+			String buildNumber = getHttpRequest().getParameter(REQ_DEPLOY_BUILD_NUMBER);
+			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+			ApplicationInfo applicationInfo = getApplicationInfo();
+			if (StringUtils.isEmpty(buildNumber)) {
+				throw new PhrescoException("Build Number is empty ");
 			}
-			builder.append(BUILD_DIR);
-			builder.append(File.separator);
-			builder.append(administrator.getBuildInfo(project, Integer.parseInt(buildNumber)).getBuildName());
+			
+			BuildInfo buildInfo = applicationManager.getBuildInfo(Integer.parseInt(buildNumber), getBuildInfosFilePath(applicationInfo));
+			String deliverables = buildInfo.getDeliverables();
+			StringBuilder builder = new StringBuilder();
+			fileName = buildInfo.getBuildName();
+			if (StringUtils.isEmpty(deliverables)) {
+				builder.append(getApplicationHome());
+				builder.append(File.separator);
+				String moduleName = buildInfo.getModuleName();
+				if (StringUtils.isNotEmpty(moduleName)) {
+					builder.append(moduleName);
+					builder.append(File.separator);
+				}
+				builder.append(BUILD_DIR);
+				builder.append(File.separator);
+				builder.append(buildInfo.getBuildName());
+			} else {
+				builder.append(buildInfo.getDeliverables());
+				fileName = fileName.substring(fileName.lastIndexOf(FORWARD_SLASH) + 1);
+				fileName = fileName.split(SPLIT_DOT)[0] + ARCHIVE_FORMAT;
+			}
 			if (debugEnabled) {
 				S_LOGGER.debug("Download build number " + buildNumber + " Download location " + builder.toString());
 			}
-			if (TechnologyTypes.IPHONES.contains(project.getApplicationInfo().getTechInfo().getVersion())) {
-				String path = administrator.getBuildInfo(project, Integer.parseInt(buildNumber)).getDeliverables();
-				fileInputStream = new FileInputStream(new File(path));
-				fileName = administrator.getBuildInfo(project, Integer.parseInt(buildNumber)).getBuildName();
-				fileName = fileName.substring(fileName.lastIndexOf("/") + 1);
-			} else {
-				fileInputStream = new FileInputStream(new File(builder.toString()));
-				fileName = administrator.getBuildInfo(project, Integer.parseInt(buildNumber)).getBuildName();
-			}
+			fileInputStream = new FileInputStream(new File(builder.toString()));
 			return SUCCESS;
-		} catch (FileNotFoundException e) {
-			if (debugEnabled) {
-				S_LOGGER.error("Entered into catch block of Build.download()" + e);
-			}
-			new LogErrorReport(e, "Download builds");
+		} catch (Exception e) {
+    		if (debugEnabled) {
+    			S_LOGGER.error("Entered into catch block of Code.code()"+ FrameworkUtil.getStackTraceAsString(e));
+    		}
+    		return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_BUILD_DOWNLOAD_NOT_AVAILABLE));
 
-		} catch (Exception e1) {
-			if (debugEnabled) {
-				S_LOGGER.error("Entered into catch block of Build.download()" + FrameworkUtil.getStackTraceAsString(e1));
-			}
-			new LogErrorReport(e1, "Download builds");
-		}
-		return view();
+		} 
 	}
 
 	public String downloadIpa() throws PhrescoException {

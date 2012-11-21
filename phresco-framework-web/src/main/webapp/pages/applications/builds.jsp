@@ -49,6 +49,8 @@
 <%
     List<BuildInfo> buildInfos = (List<BuildInfo>) request.getAttribute(FrameworkConstants.REQ_BUILD);
     ApplicationInfo applicationInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_APPINFO);
+	String customerId = (String)request.getAttribute(FrameworkConstants.REQ_CUSTOMER_ID);
+	String projectId = (String)request.getAttribute(FrameworkConstants.REQ_PROJECT_ID);
     String appDirectory = "";
     if (applicationInfo != null) {
     	appDirectory = applicationInfo.getAppDirName(); 
@@ -103,6 +105,9 @@
 			              			<a href="<s:url action='downloadBuild'>
 					          		     <s:param name="buildNumber"><%= buildInfo.getBuildNo() %></s:param>
 					          		     <s:param name="appDirectory"><%= appDirectory %></s:param>
+					          		     <s:param name="appId"><%= applicationInfo.getId() %></s:param>
+										 <s:param name="customerId"><%= customerId %></s:param>
+										<s:param name="projectId"><%= projectId %></s:param>
 					          		     </s:url>"><img src="images/icons/download.png" title="<%= buildInfo.getBuildName()%>"/>
 		                            </a>
 			              		</td>
