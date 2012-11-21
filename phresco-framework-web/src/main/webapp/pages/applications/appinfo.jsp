@@ -11,14 +11,13 @@
        http://www.apache.org/licenses/LICENSE-2.0
   
   Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
+  distributed under the License is distributed on an "AS IS" BASIS,  
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
   ###
   --%>
 
-<%@page import="com.photon.phresco.commons.model.ArtifactGroupInfo"%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.util.Collection" %>
@@ -29,7 +28,8 @@
 <%@ page import="org.apache.commons.collections.CollectionUtils" %>
 <%@ page import="org.apache.commons.collections.MapUtils" %>
 
-<%@page import="com.photon.phresco.commons.model.ProjectInfo"%>
+<%@ page import="com.photon.phresco.commons.model.ArtifactGroupInfo"%>
+<%@ page import="com.photon.phresco.commons.model.ProjectInfo"%>
 <%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 <%@ page import="com.photon.phresco.commons.model.WebService"%>
@@ -40,13 +40,16 @@
 	List<ApplicationInfo> pilotProjects = (List<ApplicationInfo>) session.getAttribute(FrameworkConstants.REQ_PILOT_PROJECTS);
 	ProjectInfo projectInfo = (ProjectInfo) session.getAttribute(appId + FrameworkConstants.SESSION_APPINFO);
 	List<WebService> webservices = (List<WebService>)request.getAttribute(FrameworkConstants.REQ_WEBSERVICES);
-	String technologyId = "";
+	String appDir = (String) request.getAttribute(FrameworkConstants.REQ_OLD_APPDIR);
+	
 	String id = "";
 	String name = "";
 	String code = "";
 	String description = "";
 	String version = "";
 	String pilotInfo = "";
+	String technologyId = "";
+	String oldAppDirName = "";
 	List<String> feature = null;
 	List<String> selectedWebservices = null;
 	List<ArtifactGroupInfo> selectedServers = null;
@@ -57,6 +60,7 @@
 		id = selectedInfo.getId();
 		name = selectedInfo.getName();
 		code = selectedInfo.getCode();
+		oldAppDirName = selectedInfo.getAppDirName();
 		description = selectedInfo.getDescription();
 		version = selectedInfo.getVersion();
 		feature = projectInfo.getAppInfos().get(0).getSelectedModules();
@@ -75,6 +79,8 @@
 		if (selectedInfo.getSelectedDatabases() !=null) {
 			selectedDatabases = selectedInfo.getSelectedDatabases();
 		}
+	} else {
+		oldAppDirName = appDir;
 	}
 %>
 
@@ -105,7 +111,20 @@
 		    </div>
 		</div>
 		<!--  Code Ends -->
-	                    
+	         
+		<!--  AppDirectory Starts -->
+		<div class="control-group">
+		    <label class="accordion-control-label labelbold"><s:text name='lbl.AppDir'/></label>
+		    <div class="controls">
+				 <input class="input-xlarge" id="appDir" name="appDir" maxlength="30" title="<s:text name="title.30.chars"/>"
+		            type="text"  value ="<%= oldAppDirName %>" autofocus="autofocus" placeholder="<s:text name="label.name.placeholder"/>" />
+		        <span class="help-inline" id="nameErrMsg">
+		           
+		        </span>
+		    </div>
+		</div>
+		<!--  AppDirectory Ends -->
+		               
 		<!--  Description Starts -->
 		<div class="control-group">
 		     <label class="accordion-control-label labelbold"><s:text name='lbl.desc'/></label>
@@ -180,6 +199,9 @@
 									<tr class="noBorder">
 										<th class="table_header noBorder"><s:text name='lbl.servers'/></th>
 										<th class="noBorder"><s:text name='lbl.version'/></th>
+										<th></th>
+										<th></th>
+										<th></th>
 									</tr>
 								</thead>
 								<tbody id="propTempTbody">
@@ -335,6 +357,7 @@
 	<%-- <input type="hidden" name="appId" value="<%= id %>"/> --%>
 	<input type="hidden" id="feature" name="feature" value="<%= feature %>"/>
 	<input type="hidden" name="techId" value="<%= technologyId %>"/>
+	<input type="hidden" name="oldAppDirName" value="<%= oldAppDirName %>"/>
 </form> 
 <!--  Form Ends -->
     

@@ -252,7 +252,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 			if (TechnologyTypes.WIN_METRO.equalsIgnoreCase(techId)) {
 				ItemGroupUpdater.update(appInfo, projectPath);
 			}
-			ProjectUtils.updateProjectInfo(appInfo, path);
+//			ProjectUtils.updateProjectInfo(appInfo, path);
 			updateProjectPOM(appInfo);
 		} catch (FileNotFoundException e) {
 			throw new PhrescoException(e);

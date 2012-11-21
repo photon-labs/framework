@@ -39,7 +39,7 @@ public interface ProjectManager {
 	 * @return ProjectInfo
 	 * @throws PhrescoException
 	 */
-	ProjectInfo update(ProjectInfo projectInfo, ServiceManager serviceManager, List<ArtifactGroup> ArtifactGroup) throws PhrescoException;
+	ProjectInfo update(ProjectInfo projectInfo, ServiceManager serviceManager, List<ArtifactGroup> ArtifactGroup, String oldAppDirName) throws PhrescoException;
 	
 	/**
 	 * This method deletes the project in local filesystem and not is server

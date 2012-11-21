@@ -909,8 +909,13 @@ a {
 
 #signOut {
 	text-decoration: none;
-	position: relative;
 	padding: 3px;
+}
+
+
+.signOut {
+    position: absolute;
+    right:1%;
 }
 
 .popupalign {
@@ -5841,7 +5846,7 @@ input[class*='chckBxAlign'] {
 	padding: 10px; 
 	margin: 10px; 
 	width: auto;
-	margin-left: 30%;
+	margin-left: 25%;
 }
 
 .modal-body {

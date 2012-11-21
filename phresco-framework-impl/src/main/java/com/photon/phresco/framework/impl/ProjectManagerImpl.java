@@ -44,6 +44,7 @@ import com.photon.phresco.util.ArchiveUtil.ArchiveType;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.FileUtil;
 import com.photon.phresco.util.PhrescoDynamicLoader;
+import com.photon.phresco.util.ProjectUtils;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.exception.PhrescoPomException;
 import com.phresco.pom.model.Model;
@@ -185,59 +186,83 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		return projectInfo;
 	}
 
-	public ProjectInfo update(ProjectInfo projectInfo, ServiceManager serviceManager, List<ArtifactGroup> artifactGroups) throws PhrescoException {
-//		ClientResponse response = serviceManager.updateProject(projectInfo);
+	public ProjectInfo update(ProjectInfo projectInfo, ServiceManager serviceManager, List<ArtifactGroup> artifactGroups, String oldAppDirName) throws PhrescoException {
 //		System.out.println("response :::: " + response.getStatus());
-		File projectPath = new File(Utility.getProjectHome()+ File.separator + projectInfo.getAppInfos().get(0).getAppDirName());
 //		if (response.getStatus() == 200) {
-			BufferedReader breader = null;
-			try {
-				 String customerId = projectInfo.getCustomerIds().get(0);
-				 Customer customer = serviceManager.getCustomer(customerId);
-				 RepoInfo repoInfo = customer.getRepoInfo();
-				 List<ApplicationInfo> appInfos = projectInfo.getAppInfos();
-				 for (ApplicationInfo appInfo : appInfos) {
-				 String pluginInfoFile = Utility.getProjectHome() + appInfo.getAppDirName() + File.separator + DOT_PHRESCO_FOLDER +File.separator +  PHRESCO_PLUGIN_INFO_XML;
-				 MojoProcessor mojoProcessor = new MojoProcessor(new File(pluginInfoFile));
-				 ApplicationProcessor mojosApplicationProcessor = mojoProcessor.getApplicationProcessor();
-				 if(mojosApplicationProcessor != null) {
-				 List<ArtifactGroup> plugins = setArtifactGroup(mojosApplicationProcessor);
+		ClientResponse response = serviceManager.updateProject(projectInfo);
+		BufferedReader breader = null;
+		try {
+			
+			StringBuilder projectPathSb =  new StringBuilder(Utility.getProjectHome());
+			projectPathSb.append(projectInfo.getAppInfos().get(0).getAppDirName());
+			File projectPath = new File(projectPathSb.toString());
+			
+			StringBuilder oldPhrescoPathSb =  new StringBuilder(Utility.getProjectHome());
+			oldPhrescoPathSb.append(oldAppDirName);
+			File oldProjectPath = new File(oldPhrescoPathSb.toString());
+			oldProjectPath.renameTo(projectPath);
+			extractArchive(response, projectInfo);
+			StringBuilder dotPhrescoPathSb =  new StringBuilder(projectPath.getPath());
+			dotPhrescoPathSb.append(File.separator);
+			dotPhrescoPathSb.append(DOT_PHRESCO_FOLDER);
+			dotPhrescoPathSb.append(File.separator);
+			
+			String customerId = projectInfo.getCustomerIds().get(0);
+			Customer customer = serviceManager.getCustomer(customerId);
+			RepoInfo repoInfo = customer.getRepoInfo();
+			List<ApplicationInfo> appInfos = projectInfo.getAppInfos();
+			for (ApplicationInfo appInfo : appInfos) {
+				StringBuilder pluginInfoPathSb =  new StringBuilder(projectPath.getPath());
+				pluginInfoPathSb.append(File.separator);
+				String pluginInfoFile = dotPhrescoPathSb.toString() +  PHRESCO_PLUGIN_INFO_XML;
+				MojoProcessor mojoProcessor = new MojoProcessor(new File(pluginInfoFile));
+				ApplicationProcessor mojosApplicationProcessor = mojoProcessor.getApplicationProcessor();
+				
+				if(mojosApplicationProcessor != null) {
+					List<ArtifactGroup> plugins = setArtifactGroup(mojosApplicationProcessor);
 				 
-				 //Dynamic Class Loading
-				 PhrescoDynamicLoader dynamicLoader = new PhrescoDynamicLoader(repoInfo, plugins);
-				 com.photon.phresco.api.ApplicationProcessor applicationProcessor = dynamicLoader.getApplicationProcessor(mojosApplicationProcessor.getClazz());
-				 applicationProcessor.postUpdate(appInfo, artifactGroups);
-				 }
-//				extractArchive(response, projectInfo);
-//				updateProjectPOM(projectInfo);
-//				createSqlFolder(projectInfo, projectPath, serviceManager);
+				
+					//Dynamic Class Loading
+					PhrescoDynamicLoader dynamicLoader = new PhrescoDynamicLoader(repoInfo, plugins);
+					com.photon.phresco.api.ApplicationProcessor applicationProcessor = dynamicLoader.getApplicationProcessor(mojosApplicationProcessor.getClazz());
+					
+					applicationProcessor.postUpdate(appInfo, artifactGroups);
+				}
+				
+//				
+				File projectInfoPath = new File(dotPhrescoPathSb.toString() + PROJECT_INFO_FILE);
+				ProjectUtils.updateProjectInfo(projectInfo, projectInfoPath);//To update the project.info file
+				
+				updateProjectPOM(projectInfo);
+				
+				createSqlFolder(projectInfo, projectPath, serviceManager);
 				//TODO Define post update object and execute the corresponding technology implementation
-//				if (TechnologyTypes.WIN_METRO.equalsIgnoreCase(techId)) {
-//					ItemGroupUpdater.update(projectInfo, projectPath);
-//				}
-					StringBuilder sb = new StringBuilder();
-					sb.append("mvn");
-					sb.append(" ");
-					sb.append("validate");
-					breader = Utility.executeCommand(sb.toString(), projectPath.getPath());
-					String line = null;
-					while ((line = breader.readLine()) != null) {
-						if (line.startsWith("[ERROR]")) {
-							System.out.println(line);
-						}
+				//				if (TechnologyTypes.WIN_METRO.equalsIgnoreCase(techId)) {
+				//					ItemGroupUpdater.update(projectInfo, projectPath);
+				//				}
+				StringBuilder sb = new StringBuilder();
+				sb.append("mvn");
+				sb.append(" ");
+				sb.append("validate");
+				breader = Utility.executeCommand(sb.toString(), projectPath.getPath());
+				String line = null;
+				while ((line = breader.readLine()) != null) {
+					if (line.startsWith("[ERROR]")) {
+						System.out.println(line);
 					}
 				}
-			} catch (FileNotFoundException e) {
-				throw new PhrescoException(e); 
-			} catch (IOException e) {
-				throw new PhrescoException(e);
 			}
-//		} else if(response.getStatus() == 401){
-//			throw new PhrescoException("Session expired");
-//		} else {
-//			throw new PhrescoException("Project updation failed");
-//		}
-//		
+		} catch (FileNotFoundException e) {
+			throw new PhrescoException(e); 
+		} catch (IOException e) {
+			throw new PhrescoException(e);
+		}
+		//		} else if(response.getStatus() == 401){
+		//			throw new PhrescoException("Session expired");
+		//		} else {
+		//			throw new PhrescoException("Project updation failed");
+		//		}
+		//		
 		return null;
 	}
 	

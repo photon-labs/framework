@@ -215,6 +215,7 @@ public interface FrameworkConstants {
     String COLON = ":";
     String HTTP_PROTOCOL = "http";
     String PROTOCOL_POSTFIX = "://";
+    String SPLIT_DOT = "\\.";
     String FORWARD_SLASH = "/";
     String LOCALHOST = "localhost";
     String JENKINS_START = "JenkinsStart";
@@ -634,6 +635,7 @@ public interface FrameworkConstants {
     String REQ_ACTION="action";
     String REQ_BUILD_TEST="build";
     String REQ_DEPLOY = "deploy";
+    String REQ_OLD_APPDIR = "oldAppDirName";
     String REQ_ANDROID_CONN_DEVICES = "connAndroidDevices";
     String REQ_SERVERS = "servers";
     String REQ_DATABASES = "databases";
@@ -1575,6 +1577,12 @@ public interface FrameworkConstants {
 		String EXCEPTION_QUALITY_FUNCTIONAL_TESTSUITES = "excep.hdr.quality.functional.load.testsuites";
 		String EXCEPTION_QUALITY_FUNCTIONAL_PARAMS = "excep.hdr.quality.functional.load.params";
 		String EXCEPTION_QUALITY_FUNCTIONAL_RUN = "excep.hdr.quality.functional.run";
+		String EXCEPTION_QUALITY_FUNCTIONAL_START_HUB_PARAMS = "excep.hdr.quality.functional.start.hub.params";
+		String EXCEPTION_QUALITY_FUNCTIONAL_START_NODE_PARAMS = "excep.hdr.quality.functional.start.node.params";
+		String EXCEPTION_QUALITY_FUNCTIONAL_START_HUB = "excep.hdr.quality.functional.start.hub";
+		String EXCEPTION_QUALITY_FUNCTIONAL_START_NODE = "excep.hdr.quality.functional.start.node";
+		String EXCEPTION_QUALITY_FUNCTIONAL_STOP_NODE = "excep.hdr.quality.functional.stop.node";
+		String EXCEPTION_QUALITY_FUNCTIONAL_STOP_HUB = "excep.hdr.quality.functional.stop.hub";
 		String EXCEPTION_BUILD_POPUP = "excep.hdr.build.popup";
 		String EXCEPTION_DEPLOY_POPUP = "excep.hdr.deploy.popup";
 		String EXCEPTION_BUILD_GENERATE = "excep.hdr.build.generate";
@@ -1599,6 +1607,7 @@ public interface FrameworkConstants {
 		String EXCEPTION_CI_JOB_DELETION = "excep.hdr.ci.job.deletion.failed";
 		String EXCEPTION_CI_BUILD_DELETION = "excep.hdr.ci.build.deletion.failed";
 		String EXCEPTION_CI_BUILD_DOWNLOAD_NOT_AVAILABLE = "excep.hdr.ci.build.download.not.available";
+		String EXCEPTION_BUILD_DOWNLOAD_NOT_AVAILABLE = "excep.hdr.code.load";
 		
 		
 		/**

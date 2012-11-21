@@ -152,11 +152,6 @@ $(document).ready(function() {
 		validateDynamicParam('showStartNodePopUp', '<s:text name="lbl.functional.start.node"/>', 'startNode','<s:text name="lbl.start"/>', '', '<%= Constants.PHASE_START_NODE %>');
 	});
 	
-	
-// 	yesnoPopup($('#functionalTest'), 'showFunctionalTestPopUp', '<s:text name="lbl.functional.test"/>', 'runFunctionalTest','<s:text name="lbl.test"/>');
-// 	yesnoPopup($('#startHubBtn'), 'showStartHubPopUp', '<s:text name="lbl.functional.start.hub"/>', 'startHub','<s:text name="lbl.start"/>');
-// 	yesnoPopup($('#startNodeBtn'), 'showStartNodePopUp', '<s:text name="lbl.functional.start.node"/>', 'startNode','<s:text name="lbl.start"/>');
-	
 	$("#testResultFile, #testSuite, #testSuiteDisplay, #resultView, #testResultLbl, #view").hide();
 				
 	$('#resultView').change(function() {
