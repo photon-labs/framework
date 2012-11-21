@@ -37,10 +37,10 @@
 		<link REL="SHORTCUT ICON" HREF="images/favicon.ico">
 		<link rel="stylesheet" href="css/bootstrap.css">
 
-		<link type="text/css" rel="stylesheet" href="theme/red_blue/css/phresco.css" id="phresco" >
+		<link type="text/css" rel="stylesheet" href="theme/photon/css/phresco_default.css" id="phresco" >
 		<link type="text/css" rel="stylesheet" class="changeme" title="phresco">
 		<!-- media queries css -->
-		<link type="text/css" rel="stylesheet" href="theme/red_blue/css/media-queries.css">
+		<link type="text/css" rel="stylesheet" href="theme/photon/css/media-queries.css">
 		
 		<!-- jquery file tree css starts -->
 		<link type="text/css" rel="stylesheet" href="css/jqueryFileTree.css" media="screen">
@@ -111,17 +111,17 @@
 				});
 
 				// function to show user info in toggle 
-				$('div li.usersettings div').hide(0);
-				$('div li.usersettings').click(function() {
-					$('div li.usersettings div').slideToggle(0);
+				$('div aside.usersettings div').hide(0);
+				$('div aside.usersettings').click(function() {
+					$('div aside.usersettings div').slideToggle(0);
 				});
 
 				// to show user info on mouse over
-				$('#signOut li').mouseenter(function() {
-					$("div li.usersettings div").hide(0);
-					$(this).children("div li.usersettings div").show(0);
+				$('#signOut aside').mouseenter(function() {
+					$("div aside.usersettings div").hide(0);
+					$(this).children("div aside.usersettings div").show(0);
 				}).mouseleave(function() {
-					$("div li.usersettings div").hide(0);
+					$("div aside.usersettings div").hide(0);
 				});
 
 				clickMenu($("a[name='headerMenu']"), $("#container"), $('#formCustomers'));
@@ -160,25 +160,37 @@
 		<header>
 			<div class="header">
 				<div class="Logo">
-					 <a href="#" id="goToHome"><img class="headerlogoimg" src="theme/red_blue/images/phresco_header_red.png" alt="logo"></a>
+					 <a href="#" id="goToHome"><img class="headerlogoimg" src="theme/photon/images/phresco_header_red.png" alt="logo"></a>
 				</div>
 				
 				<div id="signOut" class="signOut">
-					<li class="usersettings">
+					<aside class="usersettings">
 						<%= displayName %>
 						<img src="images/downarrow.png" class="arrow">
-                        <div class="userInfo" >&nbsp;&nbsp;<s:text name="lbl.skins" />&nbsp;
-                            <a class="styles" href="#"  rel="theme/red_blue/css/red.css">
+                        <div class="userInfo" >
+                        	<!--&nbsp;&nbsp;<s:text name="lbl.skins" />&nbsp;
+                            <a class="styles" href="#"  rel="theme/photon/css/photon_theme.css">
 								<img src="images/red_themer.jpg" class="skinImage">
 							</a>&nbsp;
-							<a class="styles" href="#"  rel="theme/red_blue/css/blue.css">
+							<a class="styles" href="#"  rel="theme/photon/css/photon_theme.css">
 								<img src="images/blue_themer.jpg" class="skinImage">
-							</a>
+							</a> -->
+                            <ul>
+                            	<li class="theme_change"><a href="#">Themes</a>
+                                	<ul>
+                                    	<li><a href="#">Photon&nbsp;<img src="images/photon_theme.png"></a></li>
+                                        <li><a href="#">Red-Blue&nbsp;<img src="images/blue_themer.jpg">&nbsp;<img src="images/red_themer.jpg" class="skinImage"></a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="#">Help</a></li>
+                                <li><a href="#">About Phresco</a></li>
+                                <li><a href="#">Sign Out</a></li>
+                            </ul>
                         </div>
-                        <div class="userInfo"><a href="#" class="">&nbsp;&nbsp;<s:text name="lbl.hdr.help"/></a></div>
+                        <!--<div class="userInfo"><a href="#" class="">&nbsp;&nbsp;<s:text name="lbl.hdr.help"/></a></div>
                         <div class="userInfo"><a href="#" class="abtPopUp about">&nbsp;&nbsp;<s:text name="lbl.abt.phresco"/></a></div>
-                        <div class="userInfo"><a href="<s:url action='admin/logout'/>" id="signOut">&nbsp;&nbsp;<s:text name="lbl.signout"/></a></div>
-					</li>
+                        <div class="userInfo"><a href="<s:url action='admin/logout'/>" id="signOut">&nbsp;&nbsp;<s:text name="lbl.signout"/></a></div> -->
+					</aside>
 				</div>
                 
                 <div class="headerInner">
@@ -191,7 +203,7 @@
 								<li class="wid_app"><a href="#" class="inactive" name="headerMenu" id="applications">
 								    <s:label key="lbl.hdr.applications" theme="simple"/></a>
 								</li>
-								<li class="wid_set"><a href="#" class="inactive" name="headerMenu" id="settings" additionalParam="fromPage=settings">
+								<li class="wid_set"><a href="#" class="inactive" name="headerMenu" id="settings">
 								    <s:label key="lbl.hdr.settings"  theme="simple"/></a>
 								</li>
 								<li class="wid_help"><a href="#" class="inactive" name="headerMenu" id="help">
@@ -328,14 +340,17 @@
 		</footer>
 		<!-- Footer Ends Here -->
 		
+		<!-- Delete confirmation dialog starts -->
+		<%-- <%@ include file="confirmDialog.jsp" %> --%>
+		<!-- Delete confirmation dialog ends -->
+		
 		<!-- Popup Starts-->
 	    <div id="popupPage" class="modal hide fade">
 			<div class="modal-header">
 				<a class="close" data-dismiss="modal" >&times;</a>
-				<h3 id="popupTitle"></h3>
+				<h3 id="popupTitle"><s:text name='lbl.progress'/></h3>
 			</div>
-			<div class="modal-body" id="popup_div">
-			
+			<div class="modal-body" id="console_div">
 			</div>
 			<div class="modal-footer">
 				<a href="#" class="btn btn-primary" data-dismiss="modal" id="popupCancel"><s:text name='lbl.btn.cancel'/></a>
@@ -346,22 +361,6 @@
 			</div>
 		</div>
 	    <!-- Popup Ends -->
-	    
-	    <!-- Progress popup Starts-->
-	    <div id="progressPopup" class="modal hide fade">
-			<div class="modal-header">
-				<a class="close" data-dismiss="modal" >&times;</a>
-				<h3 id="popupTitle"><s:text name='lbl.progress'/></h3>
-			</div>
-			<div class="modal-body" id="console_div">
-			
-			</div>
-			<div class="modal-footer">
-				<a href="#" class="btn btn-primary popupClose" data-dismiss="modal" id="" onClick="popupOnClose(this);"><s:text name='lbl.btn.close'/></a>
-				<img class="popuploadingIcon" id="popuploadingIcon" src="" />
-			</div>
-		</div>
-	    <!-- Progress Popup Ends-->
 	</body>
 	
 	<script type="text/javascript">
