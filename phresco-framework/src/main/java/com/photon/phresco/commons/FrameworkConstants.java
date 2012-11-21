@@ -635,6 +635,7 @@ public interface FrameworkConstants {
     String REQ_ACTION="action";
     String REQ_BUILD_TEST="build";
     String REQ_DEPLOY = "deploy";
+    String REQ_OLD_APPDIR = "oldAppDirName";
     String REQ_ANDROID_CONN_DEVICES = "connAndroidDevices";
     String REQ_SERVERS = "servers";
     String REQ_DATABASES = "databases";
