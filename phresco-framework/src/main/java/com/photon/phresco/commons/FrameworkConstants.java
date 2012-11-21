@@ -215,6 +215,7 @@ public interface FrameworkConstants {
     String COLON = ":";
     String HTTP_PROTOCOL = "http";
     String PROTOCOL_POSTFIX = "://";
+    String SPLIT_DOT = "\\.";
     String FORWARD_SLASH = "/";
     String LOCALHOST = "localhost";
     String JENKINS_START = "JenkinsStart";
@@ -1597,6 +1598,7 @@ public interface FrameworkConstants {
 		String EXCEPTION_CI_JOB_DELETION = "excep.hdr.ci.job.deletion.failed";
 		String EXCEPTION_CI_BUILD_DELETION = "excep.hdr.ci.build.deletion.failed";
 		String EXCEPTION_CI_BUILD_DOWNLOAD_NOT_AVAILABLE = "excep.hdr.ci.build.download.not.available";
+		String EXCEPTION_BUILD_DOWNLOAD_NOT_AVAILABLE = "excep.hdr.code.load";
 		
 		
 		/**
