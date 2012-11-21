@@ -118,7 +118,7 @@ $(document).ready(function() {
 					$("#errMsg").html("<s:text name='environment.name.already.exists'/>");
 					returnVal = false;
 					return false;
-				} 
+				}
 			});
 		}
 		
@@ -128,59 +128,81 @@ $(document).ready(function() {
 	});
 	
 	$('#setAsDefault').click(function() {
-    	 $('#errMsg').empty();
-    	 selectEnv();
-         var setAsDefaultEnvsSize = $('#multiselect :checked').size();
-         
-         if (setAsDefaultEnvsSize > 1) {
-        	 $("#errMsg").html("<s:text name='please.select.only.one.environment'/>");
-        	 return false;
-         }
-         
-         var setAsDefaultEnvs = new Array();
-         $('#multiselect :checked').each( function() {
-        	var selectedEnvsData = $(this).val();
-			var selectedEnv = $.parseJSON(selectedEnvsData);
-			if(selectedEnv.defaultEnv == false){
+		$('#errMsg').empty();
+		selectEnv();
+		var setAsDefaultEnvsSize = $('#multiselect :checked').size();
+        
+        if (setAsDefaultEnvsSize > 1) {
+       	 $("#errMsg").html("<s:text name='please.select.only.one.environment'/>");
+       	 return false;
+        }
+        
+        $('#multiselect ul li input[type=checkbox]').each( function() {
+			var env = $.parseJSON($(this).val());
+       	 	env.defaultEnv = "false";
+        });
+        
+       	var setAsDefaultEnvs = new Array();
+        $('#multiselect :checked').each( function() {
+			var selectedEnv = $.parseJSON($(this).val());
 				selectedEnv.defaultEnv = "true";
-			}
-        	setAsDefaultEnvs.push(selectedEnv.defaultEnv);
-         });
-    });
+       			setAsDefaultEnvs.push(selectedEnv.defaultEnv);
+        }); 
+   });
 	
 	//To remove the added Environment value in UI
     $('#remove').click(function() {
     	 selectEnv();
     	 // To remove the Environments from the list box which is not in the XML
         $('#multiselect ul li input[type=checkbox]:checked').each( function() {
-        	var checkedData = $(this).val();
-			var checkedDataObj = $.parseJSON(checkedData);
+			var checkedDataObj = $.parseJSON($(this).val());
 			var env = checkedDataObj.defaultEnv; // selected checkbox
-			if(env == true ){
+			if(env == true){
 				$("#errMsg").html("<s:text name='you.cant.remove.defaultEnv'/>");
 			} else {
-				//remove
+				$('#multiselect ul li input[type=checkbox]:checked').parent().remove();
 			}			
         });
-    });  
+    });
 	
+  	//To move up the values
+	$('#up').bind('click', function() {
+		selectEnv();
+		$('#multiselect ul li input[type=checkbox]:checked').each( function() {
+			var checkedDataObj = $.parseJSON($(this).val());
+			var newPos = $('#multiselect ul li').index(this) -1;
+			if (newPos > -1) {
+				/* $('#multiselect ul li').eq(newPos).before("<li value='"+ checkedDataObj.name +"' checked='checked'>"+$(this).text()+"</li>");
+				$(this).remove(); */
+			} else {
+				$('#multiselect ul li').eq(newPos).before("<li value='"+ checkedDataObj.name +"' checked='checked'>"+$(this).text()+"</li>");
+				$(this).parent().remove();
+			}
+		});
+	}); 
 });
 	
+
 	function addRow() {
 		var value = $('#envName').val();
 		var desc = $('#envDesc').val();
-		var checkValue = '{"name": "' + value + '", "desc": "' + desc + '", "defaultEnv": "false" }';
-		
-		var checkbox = '<input type="checkbox" name="envNames" class="check techCheck" value=\'' + checkValue + '\' title="' + desc + '" />' + value;
-		$("#multiselect ul li:last").after('<li>' + checkbox + '</li>');
+		var checkValue = '{"name": "' + value + '", "desc": "' + desc
+				+ '", "defaultEnv": "false" }';
+		var checkbox = '<input type="checkbox" name="envNames" class="check techCheck" value=\'' + checkValue + '\' title="' + desc + '" />'
+				+ value;
+
+		if ($("#multiselect ul").has("li").length === 0) {
+			$("#multiselect ul").append('<li>' + checkbox + '</li>');
+		} else {
+			$("#multiselect ul li:last").after('<li>' + checkbox + '</li>');
+		}
 	}
-	
+
 	function selectEnv() {
 		var checkedEnvsSize = $('#multiselect :checked').size();
-        if (checkedEnvsSize < 1) {
-       	 $("#errMsg").html("<s:text name='please.select.one.environment'/>");
-       	 return false;
-        }
+		if (checkedEnvsSize < 1) {
+			$("#errMsg").html("<s:text name='please.select.one.environment'/>");
+			return false;
+		}
 	}
-	
 </script>

@@ -191,7 +191,7 @@
 								<li class="wid_app"><a href="#" class="inactive" name="headerMenu" id="applications">
 								    <s:label key="lbl.hdr.applications" theme="simple"/></a>
 								</li>
-								<li class="wid_set"><a href="#" class="inactive" name="headerMenu" id="settings">
+								<li class="wid_set"><a href="#" class="inactive" name="headerMenu" id="settings" additionalParam="fromPage=settings">
 								    <s:label key="lbl.hdr.settings"  theme="simple"/></a>
 								</li>
 								<li class="wid_help"><a href="#" class="inactive" name="headerMenu" id="help">
@@ -334,7 +334,7 @@
 				<a class="close" data-dismiss="modal" >&times;</a>
 				<h3 id="popupTitle"></h3>
 			</div>
-			<div class="modal-body">
+			<div class="modal-body" id="popup_div">
 			
 			</div>
 			<div class="modal-footer">

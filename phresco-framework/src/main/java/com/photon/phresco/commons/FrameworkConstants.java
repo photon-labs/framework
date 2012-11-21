@@ -731,6 +731,7 @@ public interface FrameworkConstants {
 	String REQ_FEATURES_RIGHT_MODULES = "rightModules";
 	String REQ_FEATURES_MODULE_CAT = "moduleCat";
 	String REQ_FEATURES_MODULES = "modules";
+	String REQ_CONFIG = "config";
 	String REQ_ENVIRONMENTS = "environments";
     String REQ_LOG_REPORT = "logReport";
     String REQ_PROJECT_INFO_SERVERS = "projectInfoServers";
@@ -943,6 +944,7 @@ public interface FrameworkConstants {
     String CLONE_FROM_CONFIG_TYPE = "cloneFromConfigType";
 	String CLONE_FROM_ENV_NAME = "cloneFromEnvName";
 	String CLONE_FROM_CONFIG_NAME = "cloneFromConfigName";
+	String TECH_SITE_CORE = "tech-sitecore";
     
     /*
      * Create Environment keys
