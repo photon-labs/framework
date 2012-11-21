@@ -909,8 +909,13 @@ a {
 
 #signOut {
 	text-decoration: none;
-	position: relative;
 	padding: 3px;
+}
+
+
+.signOut {
+    position: absolute;
+    right:1%;
 }
 
 .popupalign {
