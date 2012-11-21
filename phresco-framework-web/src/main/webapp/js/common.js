@@ -229,6 +229,7 @@ function loadData(data, tag, pageUrl, callSuccessEvent, callbackFunction) {
 				successEvent(pageUrl, data);
 			}
 		} else {
+			hideProgressBar();
 			tag.empty();
 			tag.html(data);
 			setTimeOut();

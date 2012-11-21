@@ -80,6 +80,7 @@ public class Applications extends FrameworkBaseAction {
     private List<String> feature= null;
     private List<String> component= null;
     private List<String> javascript= null;
+    private String oldAppDirName = "";
 
     private String repositoryUrl = "";
     private String userName = "";
@@ -166,6 +167,7 @@ public class Applications extends FrameworkBaseAction {
         		List<ApplicationInfo> pilotProjects = getServiceManager().getPilotProjects(getCustomerId(), technologyId);
         		setSessionAttribute(REQ_PILOT_PROJECTS, pilotProjects);
         		setSessionAttribute(getAppId() + SESSION_APPINFO, projectInfo);
+        		setReqAttribute(REQ_OLD_APPDIR,projectInfo.getAppInfos().get(0).getName());
         	} else {
         		projectInfo = (ProjectInfo)getSessionAttribute(getAppId() + SESSION_APPINFO);
             	ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
@@ -182,6 +184,7 @@ public class Applications extends FrameworkBaseAction {
             	setSessionAttribute(REQ_SELECTED_FEATURES, selectedFeatures);
         		projectInfo.setAppInfos(Collections.singletonList(appInfo));
         		setSessionAttribute(getAppId() + SESSION_APPINFO, projectInfo);
+        		setReqAttribute(REQ_OLD_APPDIR, getOldAppDirName());
         	}
             List<WebService> webServices = getServiceManager().getWebServices();
             setReqAttribute(REQ_WEBSERVICES, webServices);
@@ -589,13 +592,13 @@ public class Applications extends FrameworkBaseAction {
 					ArtifactGroup artifactGroupInfo = getServiceManager().getArtifactGroupInfo(artifactGroupId);
 					listArtifactGroup.add(artifactGroupInfo);
 					if(obj.getType().equals("feature")){
-						selectedFeatures.add(obj.toString());
+						selectedFeatures.add(string);
 					}
 					if(obj.getType().equals("javascript")){
-						selectedJsLibs.add(obj.toString());
+						selectedJsLibs.add(string);
 					}
 					if(obj.getType().equals("component")){
-						selectedComponents.add(obj.toString());
+						selectedComponents.add(string);
 					}
 					
 				}
@@ -605,7 +608,7 @@ public class Applications extends FrameworkBaseAction {
         	appInfo.setSelectedComponents(selectedComponents);
     		projectInfo.setAppInfos(Collections.singletonList(appInfo));
     		ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
-    		projectManager.update(projectInfo, getServiceManager(), listArtifactGroup);
+    		projectManager.update(projectInfo, getServiceManager(), listArtifactGroup, getOldAppDirName());
             List<ProjectInfo> projects = projectManager.discover(getCustomerId());
             setReqAttribute(REQ_PROJECTS, projects);
             removeSessionAttribute(getAppId() + SESSION_APPINFO);
@@ -1853,5 +1856,13 @@ public class Applications extends FrameworkBaseAction {
 
 	public void setJsonData(List<String> jsonData) {
 		this.jsonData = jsonData;
+	}
+
+	public String getOldAppDirName() {
+		return oldAppDirName;
+	}
+
+	public void setOldAppDirName(String oldAppDirName) {
+		this.oldAppDirName = oldAppDirName;
 	}
 }

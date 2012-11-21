@@ -21,6 +21,7 @@
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.util.List"%>
+<%@ page import="com.google.gson.Gson" %>
 
 <%@ page import="com.photon.phresco.commons.model.ArtifactGroup.Type"%>
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
@@ -32,6 +33,7 @@
 
 <%
 	List<SelectedFeature> selectFeatures = (List<SelectedFeature>)session.getAttribute(FrameworkConstants.REQ_SELECTED_FEATURES);
+	String oldAppDirName = (String) request.getAttribute(FrameworkConstants.REQ_OLD_APPDIR);
 	String appId = (String) request.getAttribute(FrameworkConstants.REQ_APP_ID);
 	List<ArtifactGroup> selectedFeatures = (List<ArtifactGroup>) request.getAttribute(FrameworkConstants.REQ_PROJECT_FEATURES);
 	ProjectInfo projectInfo = (ProjectInfo)session.getAttribute(appId + FrameworkConstants.SESSION_APPINFO);
@@ -39,9 +41,14 @@
 	List<String> selectedModules = null;
 	List<String> selectedJSLibs = null;
 	List<String> selectedComponents = null;
+	Gson gson = new Gson();
 	if (projectInfo != null) {
 		ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
 		technologyId = appInfo.getTechInfo().getId();
+		selectedModules = appInfo.getSelectedModules();
+		selectedJSLibs = appInfo.getSelectedJSLibs();
+		selectedComponents = appInfo.getSelectedComponents();
+		
 	}
 %> 
 <form id="formFeatures" class="featureForm">
@@ -86,6 +93,7 @@
 	
 	 <!-- Hidden fields --> 
 	<input type="hidden" name="technologyId" value="<%= technologyId %>">
+	<input type="hidden" name="oldAppDirName" value="<%= oldAppDirName %>">
 </form>
 
 <script type="text/javascript">
@@ -93,10 +101,45 @@
 	 if(selectFeatures != null) {
 		 for(SelectedFeature features : selectFeatures) {
 %>
-		constructFeaturesDiv('<%= features.getDispName() %>', '<%= features.getDispValue() %>', '<%= features.getType() %>', '<%= features.getVersionID() %>');
+		constructFeaturesDiv('<%= features.getDispName() %>', '<%= features.getDispValue() %>', '<%= features.getType() %>', '<%= features.getVersionID() %>', '<%= features.getModuleId() %>');
 <%		
 	 	}
 	}
+%>
+
+<%	
+	if(selectedModules != null) {
+			SelectedFeature obj = null;
+			for(String string : selectedModules) {
+				obj = gson.fromJson(string, SelectedFeature.class);
+%>
+			constructFeaturesDiv('<%= obj.getDispName() %>', '<%= obj.getDispValue() %>', '<%= obj.getType() %>', '<%= obj.getVersionID() %>', '<%= obj.getModuleId() %>');
+<%		
+	}
+}
+%>
+<%	
+	if(selectedJSLibs != null) {
+			SelectedFeature obj = null;
+			for(String string : selectedJSLibs) {
+			
+			obj = gson.fromJson(string, SelectedFeature.class);
+%>
+			constructFeaturesDiv('<%= obj.getDispName() %>', '<%= obj.getDispValue() %>', '<%= obj.getType() %>', '<%= obj.getVersionID() %>', '<%= obj.getModuleId() %>');
+<%		
+       }
+}
+%>
+<%	
+	if(selectedComponents != null) {
+			SelectedFeature obj = null;
+			for(String string : selectedComponents) {
+			obj = gson.fromJson(string, SelectedFeature.class);
+%>
+			constructFeaturesDiv('<%= obj.getDispName() %>', '<%= obj.getDispValue() %>', '<%= obj.getType() %>', '<%= obj.getVersionID() %>', '<%= obj.getModuleId() %>');
+<%		
+		}
+}
 %>
 	inActivateAllMenu($("a[name='appTab']"));
 	activateMenu($('#features'));
@@ -147,14 +190,14 @@
 		$("input[class='"+ dispName +"']").remove();
 		
 		$("#result").append('<input type="hidden" class = "'+dispName+'" value={"dispName":"'+dispName+'","moduleId":"'+moduleId+'","dispValue":"'+dispValue+'","versionID":"'+hiddenFieldVersion+'","type":"'+hiddenFieldname+'"} name="jsonData">');
-		$("#result").append('<div id="'+dispName+'">'+dispName+' - '+dispValue+'<a href="#" id="'+dispName+'" onclick="remove(this);">&times;</a></div>');
+		$("#result").append('<div class = "'+dispName+'"id="'+dispName+'">'+dispName+' - '+dispValue+'<a href="#" id="'+dispName+'" onclick="remove(this);">&times;</a></div>');
 		
     }
     
     // Function to remove the final features in right tab  
     function remove(thisObj) {
     	var id = $(thisObj).attr("id");
-    	$("#" + id).remove();
+    	$("." + id).remove();
     	$("." + id).remove();
     }
     
@@ -167,7 +210,8 @@
   	//Function for to get the list of features
     function updateApplication() {
     	var params = getBasicParams();
-    	loadContent('finish', $('#formFeatures'), $('#container'), params);
+    	showProgressBar('<s:text name='progress.txt.update.app'/>');
+    	loadContent('finish', $('#formFeatures'), $('#container'), params, false);
     }
   	
   	//Function for to get the previous page

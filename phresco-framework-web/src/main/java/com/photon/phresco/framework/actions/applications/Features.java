@@ -82,6 +82,8 @@ public class Features extends FrameworkBaseAction {
 	private String name = "";
 	private String code = "";
 	private String description = "";
+	private String appDir = "";
+	private String oldAppDirName = "";
 	private String technology = null;
 	private String applicationVersion = "";
 	private String appId = "";
@@ -103,6 +105,7 @@ public class Features extends FrameworkBaseAction {
 				appInfo = new ApplicationInfo();
 			}
 			projectInfo.setAppInfos(Collections.singletonList(createApplicationInfo(appInfo)));
+			setReqAttribute(REQ_OLD_APPDIR, getOldAppDirName());
 			setSessionAttribute(getAppId() + SESSION_APPINFO, projectInfo);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -114,6 +117,7 @@ public class Features extends FrameworkBaseAction {
 	private ApplicationInfo createApplicationInfo(ApplicationInfo appInfo) {
     	appInfo.setId(getAppId());
     	appInfo.setName(getName());
+    	appInfo.setAppDirName(getAppDir());
     	appInfo.setCode(getCode());
     	appInfo.setDescription(getDescription());
     	appInfo.setVersion(getApplicationVersion());
@@ -123,10 +127,11 @@ public class Features extends FrameworkBaseAction {
 		Element element = new Element();
 		element.setId(getPilotProject());
 		appInfo.setPilotInfo(element);
+		appInfo.setSelectedWebservices(getWebservice());
 		List<ArtifactGroupInfo> selectedServers = new ArrayList<ArtifactGroupInfo>();
 		if (CollectionUtils.isNotEmpty(getServer())) {
-			ArtifactGroupInfo artifactGroupInfo = new ArtifactGroupInfo();
 			for (String serverId : getServer()) {
+				ArtifactGroupInfo artifactGroupInfo = new ArtifactGroupInfo();
 				artifactGroupInfo.setArtifactGroupId(serverId);
 				artifactGroupInfo.setArtifactInfoIds(Arrays.asList(getReqParameterValues(serverId)));
 				selectedServers.add(artifactGroupInfo);
@@ -137,17 +142,16 @@ public class Features extends FrameworkBaseAction {
     	
     	List<ArtifactGroupInfo> selectedDatabases = new ArrayList<ArtifactGroupInfo>();
     	if (CollectionUtils.isNotEmpty(getDatabase())) {
-			
+    		
 			for (String databaseId : getDatabase()) {
 				ArtifactGroupInfo artifactGroupInfo = new ArtifactGroupInfo();
 				artifactGroupInfo.setArtifactGroupId(databaseId);
 				artifactGroupInfo.setArtifactInfoIds(Arrays.asList(getReqParameterValues(databaseId)));
 				selectedDatabases.add(artifactGroupInfo);
+				appInfo.setSelectedDatabases(selectedDatabases);
 			}
-			appInfo.setSelectedDatabases(selectedDatabases);
+			
 		}
-    	appInfo.setSelectedWebservices(getWebservice());
-    	
     	return appInfo;
 	}
 
@@ -852,7 +856,23 @@ public class Features extends FrameworkBaseAction {
 		return database;
 	}
 
+	public String getAppDir() {
+		return appDir;
+	}
+
+	public void setAppDir(String appDir) {
+		this.appDir = appDir;
+	}
+
 	public void setDatabase(List<String> database) {
 		this.database = database;
+	}
+
+	public String getOldAppDirName() {
+		return oldAppDirName;
+	}
+
+	public void setOldAppDirName(String oldAppDirName) {
+		this.oldAppDirName = oldAppDirName;
 	}
 }
