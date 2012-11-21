@@ -1,11 +1,14 @@
 package com.photon.phresco.framework.actions.applications;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -23,6 +26,7 @@ import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
 import com.photon.phresco.framework.model.DependantParameters;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
+import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.Childs.Child;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.MavenCommands.MavenCommand;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
@@ -311,33 +315,50 @@ public class DynamicParameterAction extends FrameworkBaseAction {
 	
 	/**
 	 * To persist entered values into phresco-plugin-info.xml
+	 * @throws IOException 
 	 */
-	 protected void persistValuesToXml(MojoProcessor mojo, String goal) throws PhrescoException {
-		List<Parameter> parameters = getMojoParameters(mojo, goal);
-		StringBuilder csParamVal = new StringBuilder();
-		String sep = "";
-		if (CollectionUtils.isNotEmpty(parameters)) {
-    		for (Parameter parameter : parameters) {
-    			if (Boolean.parseBoolean(parameter.getMultiple())) {
-    				String[] parameterValues = getReqParameterValues(parameter.getKey());
-    				for (String parameterValue : parameterValues) {
-    					csParamVal.append(sep);
-    					csParamVal.append(parameterValue);
-    					sep = ",";
-    				}
-    				parameter.setValue(csParamVal.toString());
-    			} else if (TYPE_BOOLEAN.equalsIgnoreCase(parameter.getType())){
-    				if (getReqParameter(parameter.getKey()) != null) {
-    					parameter.setValue(getReqParameter(parameter.getKey()));
-    				} else {
-    					parameter.setValue(Boolean.FALSE.toString());
-    				}
-    			} else {
-    				parameter.setValue(getReqParameter(parameter.getKey()));
-    			}
-    		}
-		}
-		mojo.save();
+	protected void persistValuesToXml(MojoProcessor mojo, String goal) throws PhrescoException {
+	    try {
+	        List<Parameter> parameters = getMojoParameters(mojo, goal);
+	        StringBuilder csParamVal = new StringBuilder();
+	        String sep = "";
+	        if (CollectionUtils.isNotEmpty(parameters)) {
+	            for (Parameter parameter : parameters) {
+	                if (Boolean.parseBoolean(parameter.getMultiple())) {
+	                    String[] parameterValues = getReqParameterValues(parameter.getKey());
+	                    for (String parameterValue : parameterValues) {
+	                        csParamVal.append(sep);
+	                        csParamVal.append(parameterValue);
+	                        sep = ",";
+	                    }
+	                    parameter.setValue(csParamVal.toString());
+	                } else if (TYPE_BOOLEAN.equalsIgnoreCase(parameter.getType())){
+	                    if (getReqParameter(parameter.getKey()) != null) {
+	                        parameter.setValue(getReqParameter(parameter.getKey()));
+	                    } else {
+	                        parameter.setValue(Boolean.FALSE.toString());
+	                    }
+	                } else if (parameter.getType().equalsIgnoreCase(TYPE_MAP)) {
+	                    List<Child> childs = parameter.getChilds().getChild();
+	                    String[] keys = getReqParameterValues(childs.get(0).getKey());
+	                    String[] values = getReqParameterValues(childs.get(1).getKey());
+	                    Properties properties = new Properties();
+	                    for (int i = 0; i < keys.length; i++) {
+	                        properties.put(keys[i], values[i]);
+	                    }
+	                    StringWriter writer = new StringWriter();
+	                    properties.store(writer, "");
+	                    String value = writer.getBuffer().toString();
+	                    parameter.setValue(value);
+	                } else {
+	                    parameter.setValue(getReqParameter(parameter.getKey()));
+	                }
+	            }
+	        }
+	        mojo.save();
+	    } catch (IOException e) {
+	        throw new PhrescoException(e);
+	    }
 	}
 
 	/**

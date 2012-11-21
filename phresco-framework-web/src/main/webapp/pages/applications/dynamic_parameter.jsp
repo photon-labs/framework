@@ -17,11 +17,13 @@
   limitations under the License.
   ###
   --%>
+
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.util.List"%>
 <%@ page import="java.util.Map"%>
 <%@ page import="java.util.Arrays"%>
+<%@ page import="java.util.ArrayList"%>
 
 <%@ page import="org.apache.commons.lang.StringUtils" %>
 <%@ page import="org.apache.commons.collections.CollectionUtils" %>
@@ -32,8 +34,10 @@
 <%@ page import="com.photon.phresco.framework.commons.FrameworkUtil" %>
 <%@ page import="com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter"%>
 <%@ page import="com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.Name.Value"%>
+<%@ page import="com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.Childs.Child"%>
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 <%@ page import="com.photon.phresco.framework.commons.ParameterModel"%>
+<%@ page import="com.photon.phresco.framework.commons.BasicParameterModel"%>
 
 <script src="js/reader.js" ></script>
 <script src="js/select-envs.js"></script>
@@ -89,7 +93,7 @@
 					<%
 						for(String projectModule : projectModules) {
 					%>
-						<option value="<%= projectModule %>"> <%= projectModule %></option>
+							<option value="<%= projectModule %>"><%= projectModule %></option>
 					<%
 						}
 					%>
@@ -140,7 +144,7 @@
 					
 					StringTemplate txtInputElement = FrameworkUtil.constructInputElement(parameterModel);
 	%> 	
-				<%= txtInputElement %>
+					<%= txtInputElement %>
 	<%
 				} else if (FrameworkConstants.TYPE_BOOLEAN.equalsIgnoreCase(parameter.getType())) {
 					String cssClass = "chckBxAlign";
@@ -164,7 +168,7 @@
 				} else if (FrameworkConstants.TYPE_LIST.equalsIgnoreCase(parameter.getType()) && parameter.getPossibleValues() != null) { //load select list box
 					//To construct select box element if type is list and if possible value exists
 			    	List<com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value> psblValues = parameter.getPossibleValues().getValue();
-			    	if (StringUtils.isNotEmpty(parameter.getValue())) {
+			    	if (StringUtils.isNotEmpty(parameter.getValue())) {//To get the previously selected value from the phresco-plugin-info
 						List<String> selectedValList = Arrays.asList(parameter.getValue().split(FrameworkConstants.CSV_PATTERN));	
 						parameterModel.setSelectedValues(selectedValList);
 					}
@@ -214,14 +218,30 @@
 					StringTemplate fieldSetElement = FrameworkUtil.constructFieldSetElement(parameterModel);
 	%>
 					<%= fieldSetElement %>
-					
 	<%
-				} else if (FrameworkConstants.TYPE_MAP.equalsIgnoreCase(parameter.getType())) {
+			    } else if (FrameworkConstants.TYPE_MAP.equalsIgnoreCase(parameter.getType())) {
+				    List<Child> paramChilds = parameter.getChilds().getChild();
+				    List<BasicParameterModel> childs = new ArrayList<BasicParameterModel>();
+				    for (Child paramChild : paramChilds) {
+				        BasicParameterModel child = new BasicParameterModel();
+				        child.setInputType(paramChild.getType());
+				        Child.Name.Value value = paramChild.getName().getValue();						
+						if (value.getLang().equals("en")) {	//to get label of parameter
+							lableTxt = value.getValue();
+						}
+				        child.setLableText(lableTxt);
+				        child.setName(paramChild.getKey());
+				        child.setMandatory(Boolean.valueOf(paramChild.getRequired()));
+				        
+				        if (paramChild.getPossibleValues() != null) {
+				            child.setObjectValue(paramChild.getPossibleValues().getValue());
+				        }
+				        child.setPlaceHolder(paramChild.getDescription());
+				        childs.add(child);
+				    }
+					parameterModel.setChilds(childs);
 					
-					parameterModel.setInputType(parameter.getType());
-					parameterModel.setValue(StringUtils.isNotEmpty(parameter.getValue()) ? parameter.getValue():"");
-					
-					StringTemplate txtMultiInputElement = FrameworkUtil.constructMultiInputElement(parameterModel);
+					StringTemplate txtMultiInputElement = FrameworkUtil.constructMapElement(parameterModel);
 	%>
 					<%= txtMultiInputElement %>
 	<%
@@ -536,17 +556,38 @@
 		}
 	}
 	
-	var count=2;
-	function addKey() {
-		var trId = count;
-		var id = count + "_addHeader";
-		
-		var newPropTempRow = $(document.createElement('tr')).attr("id", trId).attr("class", "borderForLoad");
-		newPropTempRow.html("<td class='borderForLoad'><input type='text' class='input-small' id='"+id+"' name='addHeader' placeholder='' value=''><span class='help-inline' id='addHeaderError'></span></td>"+
-				"<td class='borderForLoad'><input type='text' class='input-small' id='"+id+"' name='addHeader' placeholder='' value=''><span class='help-inline' id='addHeaderError'></span></td>"+
-				"<td class='borderForLoad'><a><img class='addimagealign' src='images/icons/add_icon.png' onclick='addKey(this);'></a></td><td class='borderForLoad'><img class = 'del imagealign'" + 
-		 			"src='images/icons/minus_icon.png' onclick='removeTag(this);'></td>")
-	 	newPropTempRow.appendTo("#propTempTbodyForHeader");		
-		count++;
+	function addRow(obj) {
+		var removeIconTd = $(document.createElement('td')).attr("class", "borderForLoad");
+		var removeIconAnchr = $(document.createElement('a'));
+		var removeIcon = $(document.createElement('img')).attr("class", "add imagealign").attr("src", "images/icons/minus_icon.png").attr("onclick", "removeRow(this)");
+		removeIconAnchr.append(removeIcon);
+		removeIconTd.append(removeIconAnchr);
+		var columns = $(obj).closest('table').children('tbody').children('tr:first').html();
+		var newRow = $(document.createElement('tr')).attr("class", "borderForLoad");
+		newRow.append(columns);
+		newRow.append(removeIconTd);
+		newRow.appendTo("#propTempTbodyForHeader");
+	}
+	
+	function removeRow(obj) {
+		$(obj).closest('tr').remove();
+	}
+	
+	function getTextElement(id, name) {
+		var element = "<input type='text' class='input-mini' id='"+id+"' name='"+name+"' value=''>";
+		element = element.concat("<span class='help-inline' id=''></span>");
+		return element;
+	}
+	
+	function getSelectElement(id, name) {
+		var element = "<select class='input-medium' id='"+id+"' name='"+name+"'>";
+		var length = $('#'+ name + ' option').length;
+		$('#'+ name + ' option').each(function() {
+			var text = $(this).text();
+			var value = $(this).val();
+			element = element.concat("<option value='"+value+"'>"+text+"</option>");
+		});
+		element = element.concat("</select>");
+		return element;
 	}
 </script>

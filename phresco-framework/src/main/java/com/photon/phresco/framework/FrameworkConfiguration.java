@@ -81,7 +81,6 @@ public class FrameworkConfiguration implements FrameworkConstants {
     
 	public String apiKey() throws PhrescoException {
 		List<Configuration> configurations = configurationList("Other");
-		System.out.println("Other config list => " + configurations.size());
 		String apiKey = null;
 		for (Configuration configuration : configurations) {
 			apiKey = configuration.getProperties().getProperty("apiKey");

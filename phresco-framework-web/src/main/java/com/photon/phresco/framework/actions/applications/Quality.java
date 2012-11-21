@@ -594,18 +594,24 @@ public class Quality extends DynamicParameterAction implements Constants {
         return SUCCESS;
     }
 	
-	public void startNode() throws PhrescoPomException, IOException, CommandLineException {
+	public String startSelectedNodes() {
         try {
             ApplicationInfo appInfo = getApplicationInfo();
             MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(appInfo)));
-            persistValuesToXml(mojo, PHASE_START_HUB);
-            updateNodeConfigInfo(appInfo);
+            persistValuesToXml(mojo, PHASE_START_NODE);
+//            updateNodeConfigInfo(appInfo);
             FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
             String workingDir = getApplicationHome() + frameworkUtil.getFunctionalTestDir(appInfo);
-            Utility.executeCommand(COMMAND_START_HUB, workingDir);
+//            Utility.executeCommand(COMMAND_START_HUB, workingDir);
         } catch (PhrescoException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (PhrescoPomException e) {
+            // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        
+        return APP_ENVIRONMENT_READER;
     }
 	
 	private void updateNodeConfigInfo(ApplicationInfo appInfo) throws PhrescoPomException, IOException {

@@ -363,22 +363,6 @@
          <action name="restartServer" method="restartServer" class="com.photon.phresco.framework.actions.applications.Build">
             <result name="reader">/pages/applications/reader.jsp</result>
         </action>
-  <!--       
-        <action name="startServer" method="startServer" class="com.photon.phresco.framework.actions.applications.Build">
-            <result name="reader">/pages/applications/reader.jsp</result>
-        </action>
-        
-        <action name="startNodeJSServer" method="startNodeJSServer" class="com.photon.phresco.framework.actions.applications.Build">
-            <result name="reader">/pages/applications/reader.jsp</result>
-        </action>
-        
-        <action name="stopNodeJSServer" method="stopNodeJSServer" class="com.photon.phresco.framework.actions.applications.Build">
-            <result name="reader">/pages/applications/reader.jsp</result>
-        </action>
-
-        <action name="restartNodeJSServer" method="restartNodeJSServer" class="com.photon.phresco.framework.actions.applications.Build">
-            <result name="reader">/pages/applications/reader.jsp</result>
-        </action> -->
 
         <action name="downloadBuild" method="download" class="com.photon.phresco.framework.actions.applications.Build">
             <result name="success" type="stream">
@@ -469,7 +453,6 @@
         <action name="deleteEnvironment" method="deleteEnvironment" class="com.photon.phresco.framework.actions.applications.Configurations">
         	<interceptor-ref name="json" />
         	<result name="list">/pages/applications/configuration/list.jsp</result>
-<!-- 			<result type="json" /> -->
         </action>
         
         <action name="deleteSettingsEnvironment" method="deleteSettingsEnvironment" class="com.photon.phresco.framework.actions.settings.Settings">
@@ -631,7 +614,7 @@
 			<result name="success">/pages/applications/dynamic_parameter.jsp</result>
         </action>
         
-        <action name="startNode" method="startNode" class="com.photon.phresco.framework.actions.applications.Quality">
+        <action name="startNode" method="startSelectedNodes" class="com.photon.phresco.framework.actions.applications.Quality">
         	<result name="reader">/pages/applications/reader.jsp</result>
 		</action>
         
@@ -639,21 +622,9 @@
             <result type="json" />
         </action>
         
-<!--         <action name="functional" method="functional" class="com.photon.phresco.framework.actions.applications.Quality"> -->
-<!--         	<result name="reader">/pages/applications/reader.jsp</result> -->
-<!--         </action> -->
-        
-<!--         <action name="load" method="load" class="com.photon.phresco.framework.actions.applications.Quality"> -->
-<!--             <result name="reader">/pages/applications/reader.jsp</result> -->
-<!--         </action> -->
-        
         <action name="performanceTest" method="performance" class="com.photon.phresco.framework.actions.applications.Quality">
             <result name="reader">/pages/applications/reader.jsp</result>
         </action>
-        
-<!--         <action name="unit" method="unit" class="com.photon.phresco.framework.actions.applications.Quality"> -->
-<!--         	<result name="reader">/pages/applications/reader.jsp</result> -->
-<!--         </action> -->
         
         <action name="perTest" method="performanceTest" class="com.photon.phresco.framework.actions.applications.Quality">
         	<result name="reader">/pages/applications/reader.jsp</result>
@@ -780,10 +751,6 @@
         <action name="getBuildProgress" method="buildProgress" class="com.photon.phresco.framework.actions.applications.CI">
             <result type="json"><param name="root">buildInProgress</param></result>
         </action>
-        
-        <!-- <action name="getCodeValidatePopUp" method="showCodeValidatePopUp" class="com.photon.phresco.framework.actions.applications.Code">
-            <result name="showCodeValidatePopUp">/pages/applications/code_validate_pop_up.jsp</result>
-        </action> -->
         
         <action name="getDevices" method="devices" class="com.photon.phresco.framework.actions.applications.Quality">
         	<result type="json"><param name="root">deviceNames</param></result>
