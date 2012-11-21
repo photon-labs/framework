@@ -47,7 +47,6 @@
 	String name = "";
 	String description = "";
 	String selectedType = "";
-	String fromPage = "";
 	String error = "";
 	String envName = "";
 	String desc = "";
@@ -64,23 +63,35 @@
 			selectedType = configInfo.getType();
 		}
 	
-		if (request.getAttribute(FrameworkConstants.REQ_FROM_PAGE) != null) {
+		/* if (request.getAttribute(FrameworkConstants.REQ_FROM_PAGE) != null) {
 			fromPage = (String) request.getAttribute(FrameworkConstants.REQ_FROM_PAGE);
-		}
+		} */
 		
 	List<Environment> environments = (List<Environment>) request.getAttribute(FrameworkConstants.REQ_ENVIRONMENTS);
 	List<SettingsTemplate> settingsTemplates = (List<SettingsTemplate>) request.getAttribute(FrameworkConstants.REQ_SETTINGS_TEMPLATES);
+	String fromPage = request.getParameter(FrameworkConstants.REQ_FROM_PAGE);
 	
 	String title = FrameworkActionUtil.getTitle(FrameworkConstants.CONFIG, fromPage);
 	String buttonLbl = FrameworkActionUtil.getButtonLabel(fromPage);
 	String pageUrl = FrameworkActionUtil.getPageUrl(FrameworkConstants.CONFIG, fromPage);
 	
 	Gson gson = new Gson();
+	String container = "subcontainer"; //load for configuration
+	if (fromPage.contains(FrameworkConstants.REQ_SETTINGS)) {
+		container = "container";
 %>
-<form id="formConfigAdd" class="form-horizontal formClass">
+<div class="page-header">
+    <h1>
+       <%= title %> 
+    </h1>
+</div>
+<% } else { %>
 	<h4>
 		<%= title %> 
 	</h4>
+<% } %>
+
+<form id="formConfigAdd" class="form-horizontal formClass">
 	
 	<div class="content_adder">
 		<div class="control-group" id="configNameControl">
@@ -176,8 +187,9 @@
 		var typeData= $.parseJSON($('#type').val());
 		var selectedType = typeData.name;
 		var selectedConfigId = typeData.id;
+		var fromPage = "<%= fromPage%>";
 		var params = '{ ' + getBasicParamsAsJson() + ', "settingTemplate": ' + $('#type').val() + ' , "selectedConfigId": "' + selectedConfigId 
-			+ '" , "selectedEnv": "' + selectedEnv + '" , "selectedType": "' + selectedType + '" , "selectedConfigname": "' + selectedConfigname + '"}';
+			+ '" , "selectedEnv": "' + selectedEnv + '" , "selectedType": "' + selectedType + '" , "fromPage": "' + fromPage + '" , "selectedConfigname": "' + selectedConfigname + '"}';
 		loadJsonContent('configType', params,  $('#typeContainer'));
 	}).triggerHandler("change");
 	
@@ -190,12 +202,12 @@
 		var template = $.parseJSON($('#type').val());
 		var type = template.name;
 		var configId = template.id;
-		
+		var fromPage = "<%= fromPage%>";
 		var jsonParam = '{ ' + getBasicParamsAsJson() + ', "configName": "' + name + '", "description": "' + desc + '", "configType": "' + type 
-								+ '", "configId": "' + configId + '", "environment" : ' + env + ', ' + configStr.substring(1);
+								+ '", "configId": "' + configId + '", "fromPage": "' + fromPage + '" , "environment" : ' + env + ', ' + configStr.substring(1);
 		
 		
-		validateJson('saveConfiguration', '', $("#subcontainer"), jsonParam);
+		validateJson('saveConfiguration', '', $('#<%= container %>'), jsonParam);
 	});
 	
 	//To show the validation error messages

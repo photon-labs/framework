@@ -17,6 +17,7 @@
   limitations under the License.
   ###
   --%>
+<%@page import="com.opensymphony.xwork2.ActionSupport"%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 
@@ -42,24 +43,36 @@
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 
 <%
-	List<Environment> envInfoValues = (List<Environment>) request.getAttribute(FrameworkConstants.REQ_ENVIRONMENTS);
+	List<Environment> envs = (List<Environment>) request.getAttribute(FrameworkConstants.REQ_ENVIRONMENTS);
 	Gson gson = new Gson();
 	Map<String, String> urls = new HashMap<String, String>();
+	String fromPage = (String) request.getAttribute(FrameworkConstants.REQ_FROM_PAGE);
+	ActionSupport actionSupport = new ActionSupport();
+	String container = "subcontainer"; //load for configuration 
+	if (FrameworkConstants.REQ_SETTINGS.equals(fromPage)) {
+		container = "container";
 %>
 
+<div class="page-header">
+    <h1>
+        Settings
+    </h1>
+</div>
+
+<% } %>
 
 <form id="formConfigList" class="configList">
     
     <div class="operation">
     	<!-- Add Configuration Button --> 
 		<input type="button" class="btn btn-primary" name="configAdd" id="configAdd" 
-	         onclick="loadContent('addConfiguration', $('#formCustomers, #formAppMenu'), $('#subcontainer'));" 
+	         onclick="loadContent('addConfiguration', $('#formCustomers, #formAppMenu'), $('#<%= container %>'), 'fromPage=add<%=fromPage%>');" 
 		         value="<s:text name='lbl.btn.add'/>"/>
 
-		<!-- Delete Configuration Button -->
 		<%-- <input type="button" class="btn" id="del" id="deleteBtn" disabled value="<s:text name='lbl.delete'/>"
 			onclick="showDeleteConfirmation('<s:text name='lbl.delete'/>');"/> --%>
 			
+		<!-- Delete Configuration Button -->	
 		<input type="button" class="btn" id="deleteBtn" disabled value="<s:text name='lbl.delete'/>" data-toggle="modal" href="#popupPage"/>
 
 		<!-- Environment Buttton -->
@@ -78,14 +91,14 @@
     </div>
     
     
-    <% if (CollectionUtils.isEmpty(envInfoValues)) { %>
+    <% if (CollectionUtils.isEmpty(envs)) { %>
 		 <div class="alert alert-block">
-			<s:text name='lbl.err.msg.list.config'/>
+			<%= actionSupport.getText("lbl.err.msg.list." + fromPage)%>
 		</div> 
     <% } else { %>	
     	<div class="table_div">
-		<% for (Environment envInfoValue : envInfoValues) { 
-			String envJson = gson.toJson(envInfoValue);
+		<% for (Environment env : envs) { 
+			String envJson = gson.toJson(env);
 		%>
 			<div class="theme_accordion_container">
 				<section class="accordion_panel_wid">
@@ -93,8 +106,8 @@
 						<section class="lft_menus_container">
 							<span class="siteaccordion closereg">
 								<span>
-									<input type="checkbox" value='<%= envJson %>' id="<%=envInfoValue.getName() %>" class="accordianChkBox" name="checkEnv" onclick="checkAllEvent(this,$('.<%=envInfoValue.getName() %>'), false);"/>
-									<a class="vAlignSub"><%=envInfoValue.getName() %></a>
+									<input type="checkbox" value='<%= envJson %>' id="<%=env.getName() %>" class="accordianChkBox" name="checkEnv" onclick="checkAllEvent(this,$('.<%=env.getName() %>'), false);"/>
+									<a class="vAlignSub"><%=env.getName() %></a>
 								</span>
 							</span>
 							<div class="mfbox siteinnertooltiptxt hideContent">
@@ -124,17 +137,18 @@
 								    		</thead>
 								    		<tbody>
 								    			<%
-														List<Configuration> configurations = envInfoValue.getConfigurations();
+														List<Configuration> configurations = env.getConfigurations();
 								    					if (CollectionUtils.isNotEmpty(configurations)) {
 															for (Configuration configuration : configurations) {
+																String configJson = gson.toJson(configuration);
 												%>
 															<tr>
 																<td class="no-left-bottom-border table-pad">
-																	<input type="checkbox" class="check <%=envInfoValue.getName() %>" name="checkedConfig" value="<%= configuration.getName() %>"
-																	onclick="checkboxEvent($('.<%=envInfoValue.getName() %>'), $('#<%=envInfoValue.getName() %>'));">
+																	<input type="checkbox" class="check <%=env.getName() %>" name="checkedConfig" value='<%= configJson %>'
+																	onclick="checkboxEvent($('.<%=env.getName() %>'), $('#<%=env.getName() %>'));">
 																</td>
 																<td class="no-left-bottom-border table-pad">
-																	<a href="#" onclick="editConfiguration('<%= envInfoValue.getName() %>', '<%= configuration.getType() %>','<%= configuration.getName() %>');" 
+																	<a href="#" onclick="editConfiguration('<%= env.getName() %>', '<%= configuration.getType() %>','<%= configuration.getName() %>');" 
 																	name="edit"><%= configuration.getName() %>
 																	</a>
 																</td>
@@ -172,11 +186,11 @@
 </form>
 
 <script type="text/javascript">
-	$('#addEnvironments').click(function() {
-		yesnoPopup('openEnvironmentPopup', '<s:text name="lbl.environment"/>', 'createEnvironment');
-	});
+		$('#addEnvironments').click(function() {
+			yesnoPopup('openEnvironmentPopup', '<s:text name="lbl.environment"/>', 'createEnvironment', '', '', 'fromPage=<%=fromPage%>');
+		});
 	
-// 	yesnoPopup($("#addEnvironments"), 'openEnvironmentPopup', "<s:text name='lbl.environment'/>", 'createEnvironment');
+    	//yesnoPopup($("#addEnvironments"), 'openEnvironmentPopup', "<s:text name='lbl.environment'/>", 'createEnvironment');
 	
 	confirmDialog($("#deleteBtn"), '<s:text name="lbl.hdr.confirm.dialog"/>', '<s:text name="modal.body.text.del.configuration"/>', 'deleteEnvironment','<s:text name="lbl.btn.ok"/>');
 	
@@ -186,20 +200,24 @@
 	});
 	
 	 function editConfiguration(currentEnvName, currentConfigType, currentConfigName) {
+			showLoadingIcon();
 		 	var params = getBasicParams();
+		 	var fromPage = "edit<%= fromPage%>";
 			params = params.concat("&currentEnvName=");
 			params = params.concat(currentEnvName);
 			params = params.concat("&currentConfigType=");
 			params = params.concat(currentConfigType);
 			params = params.concat("&currentConfigName=");
 			params = params.concat(currentConfigName);
-			loadContent("editConfiguration", $("#formConfigAdd"), $('#subcontainer'), params);
+			params = params.concat("&fromPage=");
+			params = params.concat(fromPage);
+			loadContent("editConfiguration", $("#formConfigAdd"), $('#<%= container %>'), params);
 	}
 	 
 	function popupOnOk(self) {
 		var envs = [];
 		var selectedEnv;
-		var selectedConfig = [];
+		var selectedConfigData = [];
 		$('[name="envNames"]').each(function() {
 			envs.push($(this).val());
 		});
@@ -209,10 +227,15 @@
 			selectedEnv = selectedEnvData.name;
 		});
 		
+		$('[name="checkedConfig"]:checked').each(function() {
+			selectedConfigData = $(this).val();
+		}); 
+		
 		var basicParams = getBasicParamsAsJson();
-		var params = '{' + basicParams + ', "environments": [' + envs.join(',') + '], "selectedEnvirment" : "' + selectedEnv + '"}';
+		var fromPage = "<%= fromPage%>";
+		var params = '{' + basicParams + ', "fromPage" : "' + fromPage + '", "environments": [' + envs.join(',') + '], "selectedEnvirment" : "' + selectedEnv + '", "selectedConfig": [' + selectedConfigData + ']}';
 		var url = $(self).attr('id');
-		loadJsonContent(url, params, $('#subcontainer'));
+			loadJsonContent(url, params, $('#<%= container %>'));
 	}
 
 </script>

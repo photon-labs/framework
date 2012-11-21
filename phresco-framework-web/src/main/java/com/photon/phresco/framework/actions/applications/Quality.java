@@ -2577,7 +2577,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 		boolean isSonarReportAvailable = false;
 		// check for sonar alive
 		if (!TechnologyTypes.MOBILES.contains(technology)) {
-			List<String> sonarProfiles = frameworkUtil.getSonarProfiles(projectCode);
+			List<String> sonarProfiles = frameworkUtil.getSonarProfiles();
 			if (CollectionUtils.isEmpty(sonarProfiles)) {
 				sonarProfiles.add(SONAR_SOURCE);
 			}

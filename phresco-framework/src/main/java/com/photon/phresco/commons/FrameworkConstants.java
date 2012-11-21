@@ -391,6 +391,11 @@ public interface FrameworkConstants {
 	String USER_NAME = "username";
 	String SCM_SVN = "scm:svn:";
     
+	/*
+	 * Dynamic parameters
+	 */
+	String KEY_APP_INFO = "applicationInfo";
+	
     /*
      *  File Types for Browse in Functional
      */
@@ -725,6 +730,7 @@ public interface FrameworkConstants {
 	String REQ_FEATURES_RIGHT_MODULES = "rightModules";
 	String REQ_FEATURES_MODULE_CAT = "moduleCat";
 	String REQ_FEATURES_MODULES = "modules";
+	String REQ_CONFIG = "config";
 	String REQ_ENVIRONMENTS = "environments";
     String REQ_LOG_REPORT = "logReport";
     String REQ_PROJECT_INFO_SERVERS = "projectInfoServers";
@@ -903,10 +909,12 @@ public interface FrameworkConstants {
      */
     String FAILURE_CODE_REVIEW = "Code validation report is not available";
 	String SONAR_NOT_STARTED = "sonar.not.started";
-	String REQ_SONAR_TECH_REPORTS = "sonarTechReports";
+	String REQ_TECH_REPORTS = "techReports";
 	String REQ_PARAMETER = "parameter";
+	String REQ_VALUES = "values";
 	String REQ_VALIDATE_AGAINST = "validateAgainst";
 	String CHECK_IPHONE = "checkIphone";
+	String CLANG_REPORT = "clangReport";
     
     /*
      * Application Redirection keys
@@ -935,6 +943,7 @@ public interface FrameworkConstants {
     String CLONE_FROM_CONFIG_TYPE = "cloneFromConfigType";
 	String CLONE_FROM_ENV_NAME = "cloneFromEnvName";
 	String CLONE_FROM_CONFIG_NAME = "cloneFromConfigName";
+	String TECH_SITE_CORE = "tech-sitecore";
     
     /*
      * Create Environment keys

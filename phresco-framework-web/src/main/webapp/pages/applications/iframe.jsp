@@ -24,9 +24,7 @@
 
 <%
 	String error = (String) request.getAttribute(FrameworkConstants.REQ_ERROR);
-	String technology = (String)request.getAttribute(FrameworkConstants.REQ_TECHNOLOGY);
-	
-	String flag =  (String) request.getAttribute("checkIphone");
+	String clangReport =  (String) request.getAttribute(FrameworkConstants.CLANG_REPORT);
 		  
 	String sonarPath = "";
 	
@@ -63,7 +61,7 @@
 	    
 	    var source = "";
 	     <% 
-	    	if (TechnologyTypes.IPHONES.contains(technology)) { 
+	    	if (StringUtils.isNotEmpty(clangReport)) { 
 	    %>
 	    	source = "<%= sonarPath %>";
 	    <% } else { %>

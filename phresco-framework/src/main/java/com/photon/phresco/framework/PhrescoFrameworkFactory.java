@@ -107,12 +107,14 @@ public class PhrescoFrameworkFactory {
         return applicationManager;
     }
 
+    /**
+     * ConfigManager instance created and can't be single instance due to read more than one file
+     * @param configFile
+     * @return
+     * @throws PhrescoException
+     */
     public static ConfigManager getConfigManager(File configFile) throws PhrescoException {
-        if (configManager == null) {
-            configManager = (ConfigManager) constructClass(CONFIG_MANAGER_IMPL, new Class[] {configFile.getClass() }, new Object[] { configFile });
-        }
-
-        return configManager;
+    	return (ConfigManager) constructClass(CONFIG_MANAGER_IMPL, new Class[] {configFile.getClass() }, new Object[] { configFile });
     }
 
     

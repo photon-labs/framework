@@ -22,7 +22,7 @@
 <script type="text/javascript">
     $(document).ready(function() {
     	var params = getBasicParams();
-    	clickMenu($("a[name='qualityTab']"), $("#subTabcontainer"), '', params);//handles the click event of the quality sub tabs
+    	clickMenu($("a[name='qualityTab']"), $("#subTabcontainer"), $('#formAppMenu, #formCustomers'));//handles the click event of the quality sub tabs
 		loadContent("unit", '', $("#subTabcontainer"), params);
 		activateMenu($("#unit"));
 	});
