@@ -43,7 +43,6 @@ header {
 	font-size: 20px;
 	height: 115px;
 	left: 0;
-	line-height: 30px;
 	padding: 0;
 	position: absolute;
 	text-align: center;
@@ -71,7 +70,7 @@ footer {
 
 #welcome {
 	text-align: center;
-	margin-left: -153px !important;
+	margin-left: -64px !important;
 }
 
 
@@ -5773,6 +5772,7 @@ ul#display-inline-block-example li:nth-child(4) select, ul#display-inline-block-
 }
 .feature_content_adder .accordion_panel_inner select {
 	margin:0 !important;
+	float:right !important;
 }
 .feature_content_adder .accordion_panel_inner {
 	margin-bottom:3px;
@@ -5786,6 +5786,8 @@ ul#display-inline-block-example li:nth-child(4) select, ul#display-inline-block-
 .feature_content_adder .accordion_panel_inner .closereg span input {
 	margin-left:5px;
 	margin-right:5px;
+	float:left !important;
+	margin-top:8px !important;
 }
 .feature_content_adder .accordion_panel_inner .openreg span {
 	background: url(../../../images/r_arrowopen.png) no-repeat 2% !important;
@@ -5794,6 +5796,8 @@ ul#display-inline-block-example li:nth-child(4) select, ul#display-inline-block-
 .feature_content_adder .accordion_panel_inner .openreg span input {
 	margin-left:5px;
 	margin-right:5px;
+	float:left !important;
+	margin-top:8px !important;
 }
 .feature_content_adder .accordion_panel_inner .siteinnertooltiptxt {
 	width:99.6% !important;
