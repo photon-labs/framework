@@ -726,9 +726,9 @@ public class Quality extends DynamicParameterAction implements Constants {
         return SUCCESS;
     }
 	
-	public String startSelectedNodes() {
+	public String startNode() {
 		if (s_debugEnabled) {
-            S_LOGGER.debug("Entering Method Quality.startSelectedNodes()");
+            S_LOGGER.debug("Entering Method Quality.startNode()");
         }
 		
         try {
@@ -743,13 +743,35 @@ public class Quality extends DynamicParameterAction implements Constants {
 			setReqAttribute(REQ_APP_ID, getAppId());
 			setReqAttribute(REQ_ACTION_TYPE, START_NODE);
         } catch (PhrescoException e) {
+            e.printStackTrace();
         	if (s_debugEnabled) {
 	    		S_LOGGER.error("Entered into catch block of Quality.startSelectedNodes()"+ FrameworkUtil.getStackTraceAsString(e));
 	    	}
-        	return showErrorPopup(e, getText(EXCEPTION_QUALITY_FUNCTIONAL_STOP_NODE));
+        	return showErrorPopup(e, getText(EXCEPTION_QUALITY_FUNCTIONAL_START_NODE));
         }
         
         return APP_ENVIRONMENT_READER;
+    }
+	
+	public String stopNode() {
+        if (s_debugEnabled) {
+            S_LOGGER.debug("Entering Method Quality.stopNode()");
+        }
+
+        try {
+            ApplicationInfo appInfo = getApplicationInfo();
+            ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+            ProjectInfo projectInfo = getProjectInfo();
+            String workingDirectory = getAppDirectoryPath(appInfo);
+            applicationManager.performAction(projectInfo, ActionType.STOP_NODE, null, workingDirectory);
+        } catch (PhrescoException e) {
+            if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Quality.stopNode()"+ FrameworkUtil.getStackTraceAsString(e));
+            }
+            return showErrorPopup(e, getText(EXCEPTION_QUALITY_FUNCTIONAL_STOP_NODE));
+        }
+
+        return SUCCESS;
     }
 	
 	private List<String> getTestSuiteNames(String testResultPath, String testSuitePath) throws FileNotFoundException, ParserConfigurationException,

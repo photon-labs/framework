@@ -634,8 +634,12 @@
 			<result name="success">/pages/applications/dynamic_parameter.jsp</result>
         </action>
         
-        <action name="startNode" method="startSelectedNodes" class="com.photon.phresco.framework.actions.applications.Quality">
+        <action name="startNode" method="startNode" class="com.photon.phresco.framework.actions.applications.Quality">
         	<result name="reader">/pages/applications/reader.jsp</result>
+		</action>
+		
+		<action name="stopNode" method="stopNode" class="com.photon.phresco.framework.actions.applications.Quality">
+			<result type="json" />
 		</action>
         
         <action name="fetchBuildInfoEnvs" method="fetchBuildInfoEnvs" class="com.photon.phresco.framework.actions.applications.Quality">

@@ -48,7 +48,7 @@ function getBasicParamsAsJson() {
 function progressPopup(pageUrl, appId, actionType, form, callSuccessEvent, additionalParams, stopUrl) {
 	$('#progressPopup').modal('show');//To show the progress popup
 	$('#console_div').empty();
-	$(".popupClose").attr('id', pageUrl); // popup close action mapped to id
+	$(".progressPopupClose").attr('id', pageUrl); // popup close action mapped to id
 	
 	if (stopUrl != undefined && !isBlank(stopUrl)) {
 		$(".popupStop").show();
@@ -63,8 +63,8 @@ function progressPopupAsSecPopup(url, appId, actionType, form, additionalParams,
 		$('#progressPopup').modal('show')
     }, 600);
 	$('#console_div').empty();
-	$(".popupClose").show();
-	$(".popupClose").attr('id', url); // popup close action mapped to id
+	$(".progressPopupClose").show();
+	$(".progressPopupClose").attr('id', url); // popup close action mapped to id
 	
 	if (stopUrl != undefined && !isBlank(stopUrl)) {
 		$(".popupStop").show();

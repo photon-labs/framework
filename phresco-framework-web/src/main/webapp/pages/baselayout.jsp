@@ -357,7 +357,7 @@
 			
 			</div>
 			<div class="modal-footer">
-				<a href="#" class="btn btn-primary popupClose" data-dismiss="modal" id="" onClick="popupOnClose(this);"><s:text name='lbl.btn.close'/></a>
+				<a href="#" class="btn btn-primary progressPopupClose" data-dismiss="modal" id="" onClick="popupOnClose(this);"><s:text name='lbl.btn.close'/></a>
 				<a href="#" class="btn btn-primary popupStop hideContent" data-dismiss="modal" id="" onClick="popupOnStop(this);"><s:text name='lbl.btn.stop'/></a>
 				<img class="popuploadingIcon" id="popuploadingIcon" src="" />
 			</div>

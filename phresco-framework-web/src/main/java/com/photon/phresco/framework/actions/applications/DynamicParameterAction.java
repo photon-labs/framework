@@ -332,7 +332,7 @@ public class DynamicParameterAction extends FrameworkBaseAction {
 	                        sep = ",";
 	                    }
 	                    parameter.setValue(csParamVal.toString());
-	                } else if (TYPE_BOOLEAN.equalsIgnoreCase(parameter.getType())){
+	                } else if (TYPE_BOOLEAN.equalsIgnoreCase(parameter.getType())) {
 	                    if (getReqParameter(parameter.getKey()) != null) {
 	                        parameter.setValue(getReqParameter(parameter.getKey()));
 	                    } else {
