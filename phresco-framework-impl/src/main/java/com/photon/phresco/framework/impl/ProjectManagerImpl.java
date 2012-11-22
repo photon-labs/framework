@@ -23,6 +23,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.google.gson.Gson;
+import com.photon.phresco.api.ApplicationProcessor;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
@@ -35,7 +36,7 @@ import com.photon.phresco.commons.model.RepoInfo;
 import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.api.ProjectManager;
-import com.photon.phresco.plugins.model.Mojos.ApplicationProcessor;
+import com.photon.phresco.plugins.model.Mojos.ApplicationHandler;
 import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.service.client.api.ServiceClientConstant;
 import com.photon.phresco.service.client.api.ServiceManager;
@@ -144,13 +145,13 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 				 for (ApplicationInfo appInfo : appInfos) {
 				 String pluginInfoFile = Utility.getProjectHome() + appInfo.getAppDirName() + File.separator + DOT_PHRESCO_FOLDER +File.separator +  PHRESCO_PLUGIN_INFO_XML;
 				 MojoProcessor mojoProcessor = new MojoProcessor(new File(pluginInfoFile));
-				 ApplicationProcessor mojosApplicationProcessor = mojoProcessor.getApplicationProcessor();
-				 if(mojosApplicationProcessor != null) {
-				 List<ArtifactGroup> plugins = setArtifactGroup(mojosApplicationProcessor);
+				 ApplicationHandler applicationHandler = mojoProcessor.getApplicationHandler();
+				 if(applicationHandler != null) {
+				 List<ArtifactGroup> plugins = setArtifactGroup(applicationHandler);
 				 
 				 //Dynamic Class Loading
 				 PhrescoDynamicLoader dynamicLoader = new PhrescoDynamicLoader(repoInfo, plugins);
-				 com.photon.phresco.api.ApplicationProcessor applicationProcessor = dynamicLoader.getApplicationProcessor(mojosApplicationProcessor.getClazz());
+				 ApplicationProcessor applicationProcessor = dynamicLoader.getApplicationProcessor(applicationHandler.getClazz());
 				 applicationProcessor.postCreate(appInfo);
 				 }
 //				createSqlFolder(projectInfo, projectPath, serviceManager);
@@ -188,11 +189,11 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 
 	public ProjectInfo update(ProjectInfo projectInfo, ServiceManager serviceManager, List<ArtifactGroup> artifactGroups, String oldAppDirName) throws PhrescoException {
 //		System.out.println("response :::: " + response.getStatus());
-//		if (response.getStatus() == 200) {
 		ClientResponse response = serviceManager.updateProject(projectInfo);
+		if (response.getStatus() == 200) {
 		BufferedReader breader = null;
 		try {
-			
+			System.out.println("Project Updated.........................");
 			StringBuilder projectPathSb =  new StringBuilder(Utility.getProjectHome());
 			projectPathSb.append(projectInfo.getAppInfos().get(0).getAppDirName());
 			File projectPath = new File(projectPathSb.toString());
@@ -216,15 +217,15 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 				pluginInfoPathSb.append(File.separator);
 				String pluginInfoFile = dotPhrescoPathSb.toString() +  PHRESCO_PLUGIN_INFO_XML;
 				MojoProcessor mojoProcessor = new MojoProcessor(new File(pluginInfoFile));
-				ApplicationProcessor mojosApplicationProcessor = mojoProcessor.getApplicationProcessor();
-				
-				if(mojosApplicationProcessor != null) {
-					List<ArtifactGroup> plugins = setArtifactGroup(mojosApplicationProcessor);
+				ApplicationHandler applicationHandler = mojoProcessor.getApplicationHandler();
+				System.out.println("applicationHandler===============> ");
+				if(applicationHandler != null) {
+					List<ArtifactGroup> plugins = setArtifactGroup(applicationHandler);
 				 
 				
 					//Dynamic Class Loading
 					PhrescoDynamicLoader dynamicLoader = new PhrescoDynamicLoader(repoInfo, plugins);
-					com.photon.phresco.api.ApplicationProcessor applicationProcessor = dynamicLoader.getApplicationProcessor(mojosApplicationProcessor.getClazz());
+					ApplicationProcessor applicationProcessor = dynamicLoader.getApplicationProcessor(applicationHandler.getClazz());
 					
 					applicationProcessor.postUpdate(appInfo, artifactGroups);
 				}
@@ -263,21 +264,22 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		//			throw new PhrescoException("Project updation failed");
 		//		}
 		//		
+		}
 		return null;
 	}
 	
 	
-	private List<ArtifactGroup> setArtifactGroup(ApplicationProcessor mojosApplicationProcessor) {
+	private List<ArtifactGroup> setArtifactGroup(ApplicationHandler applicationHandler) {
 			List<ArtifactGroup> plugins = new ArrayList<ArtifactGroup>();
 			ArtifactGroup artifactGroup = new ArtifactGroup();
-			artifactGroup.setGroupId(mojosApplicationProcessor.getGroupId());
-			artifactGroup.setArtifactId(mojosApplicationProcessor.getArtifactId());
+			artifactGroup.setGroupId(applicationHandler.getGroupId());
+			artifactGroup.setArtifactId(applicationHandler.getArtifactId());
 			//artifactGroup.setType(Type.FEATURE);
 			//			 
 			//to set version
 			List<ArtifactInfo> artifactInfos = new ArrayList<ArtifactInfo>();
 			ArtifactInfo artifactInfo = new ArtifactInfo();
-			artifactInfo.setVersion(mojosApplicationProcessor.getVersion());
+			artifactInfo.setVersion(applicationHandler.getVersion());
 			artifactInfos.add(artifactInfo);
 			artifactGroup.setVersions(artifactInfos);
 			plugins.add(artifactGroup);
