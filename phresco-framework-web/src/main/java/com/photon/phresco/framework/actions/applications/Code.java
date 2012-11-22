@@ -170,7 +170,13 @@ public class Code extends DynamicParameterAction implements Constants {
                 	sb.append(COLON);
                 	sb.append(phrescoFileServerNumber);
                 	sb.append(FORWARD_SLASH);
-                	sb.append(codeValidatePath.toString().replace(File.separator, FORWARD_SLASH));
+                	sb.append(getApplicationInfo().getAppDirName());
+                	sb.append(validateReportUrl);
+                	sb.append(validateAgainst);
+                	sb.append(FORWARD_SLASH);
+                	sb.append(INDEX_HTML);
+//                	sb.append(codeValidatePath.toString().replace(File.separator, FORWARD_SLASH));
+                	S_LOGGER.debug("File server path " + sb.toString());
              	} else {
              		setReqAttribute(REQ_ERROR, getText(FAILURE_CODE_REVIEW));
              	}
