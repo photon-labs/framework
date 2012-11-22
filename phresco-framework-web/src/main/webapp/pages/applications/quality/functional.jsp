@@ -245,6 +245,18 @@ function successEvent(pageUrl, data) {
    		fillVersions("environments", data.buildInfoEnvs);
    	} else if (pageUrl === "changeEveDependancyListener") {
 		showHideAndUpdateData(data);
+	} else if (pageUrl === "checkForHub") { 
+		if (data.connectionAlive) {
+			progressPopup('showStartedHubLog', '<%= appId %>', '<%= FrameworkConstants.START_HUB %>', '', '', getBasicParams(), 'stopHub');
+		} else {
+			yesnoPopup('showStartHubPopUp', '<s:text name="lbl.functional.start.hub"/>', 'startHub', '<s:text name="lbl.start"/>');
+		}
+	} else if (pageUrl === "checkForNode") { 
+		if (data.connectionAlive) {
+			progressPopup('showStartedNodeLog', '<%= appId %>', '<%= FrameworkConstants.START_NODE %>', '', '', getBasicParams(), 'stopNode');
+		} else {
+			yesnoPopup('showStartNodePopUp', '<s:text name="lbl.functional.start.node"/>', 'startNode', '<s:text name="lbl.start"/>');
+		}
 	} else {
    		if ((data != undefined || !isBlank(data)) && data != "") {
 			if (data.validated != undefined && data.validated) {
@@ -264,6 +276,14 @@ function successEvent(pageUrl, data) {
 			}
 		}
    	}
+}
+
+function popupOnStop(obj) {
+	var url = $(obj).attr("id");
+	var params = getBasicParams();
+	if (url === "stopHub" || url === "stopNode") {
+		loadContent(url, '', '', params, true);
+	}
 }
 
 function validationError(errMsg) {
@@ -330,10 +350,10 @@ function popupOnOk(obj) {
 	var okUrl = $(obj).attr("id");
 	if (okUrl === "startHub") {
 		var params = getBasicParams();
-		progressPopupAsSecPopup(okUrl, '<%= appId %>', '<%= FrameworkConstants.START_HUB %>', $("#generateBuildForm"), params);
+		progressPopupAsSecPopup(okUrl, '<%= appId %>', '<%= FrameworkConstants.START_HUB %>', $("#generateBuildForm"), params, 'stopHub');
 	} else if (okUrl === "startNode") {
 		var params = getBasicParams();
-		progressPopupAsSecPopup(okUrl, '<%= appId %>', '<%= FrameworkConstants.START_NODE %>', $("#generateBuildForm"), params);
+		progressPopupAsSecPopup(okUrl, '<%= appId %>', '<%= FrameworkConstants.START_NODE %>', $("#generateBuildForm"), params, 'stopNode');
 	} else if (okUrl === "runFunctionalTest") {
 		var params = getBasicParams();
 		progressPopupAsSecPopup(okUrl, '<%= appId %>', '<%= FrameworkConstants.FUNCTIONAL %>', $("#generateBuildForm"), params);

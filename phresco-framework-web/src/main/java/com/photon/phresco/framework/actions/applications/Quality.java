@@ -20,12 +20,11 @@
 package com.photon.phresco.framework.actions.applications;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
+import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -90,13 +89,13 @@ import com.photon.phresco.framework.api.Project;
 import com.photon.phresco.framework.api.ProjectAdministrator;
 import com.photon.phresco.framework.api.ProjectRuntimeManager;
 import com.photon.phresco.framework.commons.ApplicationsUtil;
+import com.photon.phresco.framework.commons.DiagnoseUtil;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.commons.LogErrorReport;
 import com.photon.phresco.framework.commons.PBXNativeTarget;
 import com.photon.phresco.framework.commons.QualityUtil;
 import com.photon.phresco.framework.model.DependantParameters;
-import com.photon.phresco.framework.model.NodeCapability;
-import com.photon.phresco.framework.model.NodeConfig;
+import com.photon.phresco.framework.model.HubConfiguration;
 import com.photon.phresco.framework.model.NodeConfiguration;
 import com.photon.phresco.framework.model.PerformanceDetails;
 import com.photon.phresco.framework.model.PerformanceTestResult;
@@ -242,8 +241,8 @@ public class Quality extends DynamicParameterAction implements Constants {
     private int hubPort;
     private String hubHost = "";
     
-    private String COMMAND_START_HUB = "java -jar lib/selenium-server-standalone-2.25.0.jar -role hub -hubConfig hubconfig.json";
-	
+    boolean connectionAlive = false;
+    
 	private static Map<String, Map<String, NodeList>> testSuiteMap = Collections.synchronizedMap(new HashMap<String, Map<String, NodeList>>(8));
 	
 	public String unit() {
@@ -505,6 +504,67 @@ public class Quality extends DynamicParameterAction implements Constants {
 	    return APP_ENVIRONMENT_READER;
 	}
 	
+	public String checkForHub() {
+	    if (s_debugEnabled) {
+            S_LOGGER.debug("Entering Method Quality.checkForHub()");
+        }
+	    
+	    BufferedReader reader = null;
+	    try {
+	        FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+	        String functionalTestDir = frameworkUtil.getFunctionalTestDir(getApplicationInfo());
+	        StringBuilder sb = new StringBuilder(getApplicationHome());
+	        sb.append(functionalTestDir)
+	        .append(File.separator)
+	        .append("hubconfig.json");
+	        File hubConfigFile = new File(sb.toString());
+	        Gson gson = new Gson();
+            reader = new BufferedReader(new FileReader(hubConfigFile));
+            HubConfiguration hubConfig = gson.fromJson(reader, HubConfiguration.class);
+            if (hubConfig != null) {
+                String host = hubConfig.getHost();
+                int port = hubConfig.getPort();
+                setConnectionAlive(DiagnoseUtil.isConnectionAlive(HTTP_PROTOCOL, host, port));
+            }
+        } catch (PhrescoException e) {
+            // TODO: handle exception
+        } catch (PhrescoPomException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } finally {
+            Utility.closeStream(reader);
+        }
+	    
+	    return SUCCESS;
+	}
+	
+	public String showStartedHubLog() {
+	    if (s_debugEnabled) {
+            S_LOGGER.debug("Entering Method Quality.showStartedHubLog()");
+        }
+	    
+	    try {
+	        StringBuilder sb = new StringBuilder(getApplicationHome());
+	        sb.append(File.separator)
+	        .append(DO_NOT_CHECKIN_DIR)
+	        .append(File.separator)
+	        .append(LOG_DIR)
+	        .append(File.separator)
+	        .append("hub.log");
+	        BufferedReader reader = new BufferedReader(new FileReader(sb.toString()));
+	        setSessionAttribute(getAppId() + START_HUB, reader);
+	        setReqAttribute(REQ_APP_ID, getAppId());
+	        setReqAttribute(REQ_ACTION_TYPE, START_HUB);
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+	    
+	    return APP_ENVIRONMENT_READER;
+	}
+	
 	public String showStartHubPopUp() throws PhrescoPomException, FileNotFoundException {
         if (s_debugEnabled) {
             S_LOGGER.debug("Entering Method Quality.showStartHubPopUp()");
@@ -550,6 +610,103 @@ public class Quality extends DynamicParameterAction implements Constants {
 		return APP_ENVIRONMENT_READER;
 	}
 	
+	public String stopHub() {
+        if (s_debugEnabled) {
+            S_LOGGER.debug("Entering Method Quality.stopHub()");
+        }
+
+        try {
+            ApplicationInfo appInfo = getApplicationInfo();
+            ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+            ProjectInfo projectInfo = getProjectInfo();
+            String workingDirectory = getAppDirectoryPath(appInfo);
+            applicationManager.performAction(projectInfo, ActionType.STOP_HUB, null, workingDirectory);
+        } catch (PhrescoException e) {
+            if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Quality.stopHub()"+ FrameworkUtil.getStackTraceAsString(e));
+            }
+            return showErrorPopup(e, getText(EXCEPTION_QUALITY_FUNCTIONAL_STOP_HUB));
+        }
+
+        return SUCCESS;
+    }
+	
+	public String checkForNode() {
+        if (s_debugEnabled) {
+            S_LOGGER.debug("Entering Method Quality.checkForNode()");
+        }
+        
+        BufferedReader reader = null;
+        try {
+            FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+            String functionalTestDir = frameworkUtil.getFunctionalTestDir(getApplicationInfo());
+            StringBuilder sb = new StringBuilder(getApplicationHome());
+            sb.append(functionalTestDir)
+            .append(File.separator)
+            .append("nodeconfig.json");
+            File hubConfigFile = new File(sb.toString());
+            Gson gson = new Gson();
+            reader = new BufferedReader(new FileReader(hubConfigFile));
+            NodeConfiguration nodeConfiguration = gson.fromJson(reader, NodeConfiguration.class);
+            if (nodeConfiguration != null) {
+                String host = nodeConfiguration.getConfiguration().getHost();
+                int port = nodeConfiguration.getConfiguration().getPort();
+                setConnectionAlive(DiagnoseUtil.isConnectionAlive(HTTP_PROTOCOL, host, port));
+            }
+        } catch (PhrescoException e) {
+            if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Quality.checkForNode()"+ FrameworkUtil.getStackTraceAsString(e));
+            }
+            return showErrorPopup(e, getText(EXCEPTION_QUALITY_FUNCTIONAL_START_HUB));
+        } catch (PhrescoPomException e) {
+            if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Quality.checkForNode()"+ FrameworkUtil.getStackTraceAsString(e));
+            }
+            return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_QUALITY_FUNCTIONAL_START_HUB));
+        } catch (FileNotFoundException e) {
+            if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Quality.checkForNode()"+ FrameworkUtil.getStackTraceAsString(e));
+            }
+            return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_QUALITY_FUNCTIONAL_START_HUB));
+        } finally {
+            Utility.closeStream(reader);
+        }
+        
+        return SUCCESS;
+    }
+	
+	public String showStartedNodeLog() {
+        if (s_debugEnabled) {
+            S_LOGGER.debug("Entering Method Quality.showStartedNodeLog()");
+        }
+        
+        try {
+            StringBuilder sb = new StringBuilder(getApplicationHome());
+            sb.append(File.separator)
+            .append(DO_NOT_CHECKIN_DIR)
+            .append(File.separator)
+            .append(LOG_DIR)
+            .append(File.separator)
+            .append("node.log");
+            BufferedReader reader = new BufferedReader(new FileReader(sb.toString()));
+            setSessionAttribute(getAppId() + START_NODE, reader);
+            setReqAttribute(REQ_APP_ID, getAppId());
+            setReqAttribute(REQ_ACTION_TYPE, START_NODE);
+        } catch (PhrescoException e) {
+            if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Quality.showStartedNodeLog()"+ FrameworkUtil.getStackTraceAsString(e));
+            }
+            return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_QUALITY_FUNCTIONAL_START_HUB));
+        } catch (FileNotFoundException e) {
+            if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Quality.showStartedNodeLog()"+ FrameworkUtil.getStackTraceAsString(e));
+            }
+            return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_QUALITY_FUNCTIONAL_START_HUB));
+        }
+        
+        return APP_ENVIRONMENT_READER;
+    }
+	
 	public String showStartNodePopUp() {
         if (s_debugEnabled) {
             S_LOGGER.debug("Entering Method Quality.showStartNodePopUp()");
@@ -589,51 +746,10 @@ public class Quality extends DynamicParameterAction implements Constants {
         	if (s_debugEnabled) {
 	    		S_LOGGER.error("Entered into catch block of Quality.startSelectedNodes()"+ FrameworkUtil.getStackTraceAsString(e));
 	    	}
-        	return showErrorPopup(e, getText(EXCEPTION_QUALITY_FUNCTIONAL_START_NODE));
+        	return showErrorPopup(e, getText(EXCEPTION_QUALITY_FUNCTIONAL_STOP_NODE));
         }
         
         return APP_ENVIRONMENT_READER;
-    }
-	
-	private void updateNodeConfigInfo(ApplicationInfo appInfo) throws PhrescoPomException, IOException {
-        BufferedWriter out = null;
-        FileWriter fileWriter = null;
-        try {
-            NodeConfiguration nodeConfiguration = new NodeConfiguration();
-            NodeCapability nodeCapability = new NodeCapability();
-            nodeCapability.setBrowserName(getBrowserName());
-            nodeCapability.setMaxInstances(getMaxInstances());
-            nodeCapability.setSeleniumProtocol(getSeleniumProtocol());
-            nodeConfiguration.setNodeCapability(Collections.singletonList(nodeCapability));
-            
-            NodeConfig nodeConfig = new NodeConfig();
-            nodeConfig.setProxy(getProxy());
-            nodeConfig.setMaxSession(getMaxSession());
-            nodeConfig.setPort(getPort());
-            nodeConfig.setHost(getHost());
-            nodeConfig.setRegister(isRegister());
-            nodeConfig.setRegisterCycle(getRegisterCycle());
-            nodeConfig.setHubPort(getHubPort());
-            nodeConfig.setHubHost(getHubHost());
-            nodeConfiguration.setNodeConfig(nodeConfig);
-            
-            Gson gson = new Gson();
-            String infoJSON = gson.toJson(nodeConfiguration);
-            FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-            String configPath = frameworkUtil.getHubConfigFile(appInfo);
-            fileWriter = new FileWriter(configPath);
-            out = new BufferedWriter(fileWriter);
-            out.write(infoJSON);
-        } catch (PhrescoException e) {
-            
-        } finally {
-            if (out != null) {
-                out.close();
-            }
-            if (fileWriter != null) {
-                fileWriter.close();
-            }
-        }
     }
 	
 	private List<String> getTestSuiteNames(String testResultPath, String testSuitePath) throws FileNotFoundException, ParserConfigurationException,
@@ -3415,5 +3531,13 @@ public class Quality extends DynamicParameterAction implements Constants {
 
     public void setHubHost(String hubHost) {
         this.hubHost = hubHost;
+    }
+
+    public boolean isConnectionAlive() {
+        return connectionAlive;
+    }
+
+    public void setConnectionAlive(boolean connectionAlive) {
+        this.connectionAlive = connectionAlive;
     }
 }

@@ -31,30 +31,30 @@ public class NodeConfiguration {
 	    
 	}
 
-    List<NodeCapability> nodeCapability;
-	NodeConfig nodeConfig;
+    List<NodeCapability> capabilities;
+	NodeConfig configuration;
 	
-	public List<NodeCapability> getNodeCapability() {
-        return nodeCapability;
+	public List<NodeCapability> getCapabilities() {
+        return capabilities;
     }
 	
-	public void setNodeCapability(List<NodeCapability> nodeCapability) {
-        this.nodeCapability = nodeCapability;
+	public void setCapabilities(List<NodeCapability> nodeCapability) {
+        this.capabilities = nodeCapability;
     }
 
-    public NodeConfig getNodeConfig() {
-        return nodeConfig;
+    public NodeConfig getConfiguration() {
+        return configuration;
     }
 
-    public void setNodeConfig(NodeConfig nodeConfig) {
-        this.nodeConfig = nodeConfig;
+    public void setConfiguration(NodeConfig nodeConfig) {
+        this.configuration = nodeConfig;
     }
 	
 	public String toString() {
         return new ToStringBuilder(this,
                 ToStringStyle.DEFAULT_STYLE)
-                .append("nodeCapability", getNodeCapability())
-                .append("nodeConfig", getNodeConfig())
+                .append("nodeCapability", getCapabilities())
+                .append("nodeConfig", getConfiguration())
                 .toString();
     }
 }

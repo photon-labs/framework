@@ -602,6 +602,14 @@
 			<result type="json" />
         </action>
         
+        <action name="checkForHub" method="checkForHub" class="com.photon.phresco.framework.actions.applications.Quality">
+			<result type="json" />
+        </action>
+        
+        <action name="showStartedHubLog" method="showStartedHubLog" class="com.photon.phresco.framework.actions.applications.Quality">
+			<result name="reader">/pages/applications/reader.jsp</result>
+        </action>
+        
         <action name="showStartHubPopUp" method="showStartHubPopUp" class="com.photon.phresco.framework.actions.applications.Quality">
 			<result name="success">/pages/applications/dynamic_parameter.jsp</result>
         </action>
@@ -609,6 +617,18 @@
         <action name="startHub" method="startHub" class="com.photon.phresco.framework.actions.applications.Quality">
         	<result name="reader">/pages/applications/reader.jsp</result>
 		</action>
+		
+		<action name="stopHub" method="stopHub" class="com.photon.phresco.framework.actions.applications.Quality">
+			<result type="json" />
+		</action>
+		
+		<action name="checkForNode" method="checkForNode" class="com.photon.phresco.framework.actions.applications.Quality">
+			<result type="json" />
+        </action>
+        
+        <action name="showStartedNodeLog" method="showStartedNodeLog" class="com.photon.phresco.framework.actions.applications.Quality">
+			<result name="reader">/pages/applications/reader.jsp</result>
+        </action>
         
         <action name="showStartNodePopUp" method="showStartNodePopUp" class="com.photon.phresco.framework.actions.applications.Quality">
 			<result name="success">/pages/applications/dynamic_parameter.jsp</result>

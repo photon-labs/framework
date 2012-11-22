@@ -45,21 +45,31 @@ function getBasicParamsAsJson() {
 	return '"customerId": "' + jsonObject.customerId + '", "projectId": "' + jsonObject.projectId + '", "appId": "' + jsonObject.appId + '"'; 
 }
 
-function progressPopup(pageUrl, appId, actionType, form, callSuccessEvent, additionalParams) {
+function progressPopup(pageUrl, appId, actionType, form, callSuccessEvent, additionalParams, stopUrl) {
 	$('#progressPopup').modal('show');//To show the progress popup
 	$('#console_div').empty();
 	$(".popupClose").attr('id', pageUrl); // popup close action mapped to id
 	
+	if (stopUrl != undefined && !isBlank(stopUrl)) {
+		$(".popupStop").show();
+		$(".popupStop").attr('id', stopUrl); // popup stop action mapped to id
+	}
+	
 	readerHandlerSubmit(pageUrl, appId, actionType, form, callSuccessEvent, additionalParams);
 }
 
-function progressPopupAsSecPopup(url, appId, actionType, form, additionalParams) {
+function progressPopupAsSecPopup(url, appId, actionType, form, additionalParams, stopUrl) {
 	setTimeout(function () {
 		$('#progressPopup').modal('show')
     }, 600);
 	$('#console_div').empty();
 	$(".popupClose").show();
 	$(".popupClose").attr('id', url); // popup close action mapped to id
+	
+	if (stopUrl != undefined && !isBlank(stopUrl)) {
+		$(".popupStop").show();
+		$(".popupStop").attr('id', stopUrl); // popup stop action mapped to id
+	}
 	
 	readerHandlerSubmit(url, appId, actionType, form, '', additionalParams);
 }
@@ -154,7 +164,13 @@ function validateDynamicParam(successUrl, title, okUrl, okLabel, form, goal, nee
 		type : "POST",
 		success : function(data) {
 			if (data.paramaterAvailable != undefined && data.paramaterAvailable) {
-				yesnoPopup(successUrl, title, okUrl, okLabel, form, additionalParam);
+				if (successUrl === "showStartHubPopUp") {
+					loadContent("checkForHub", '', '', getBasicParams(), true, '', '');
+				} else if (successUrl === "showStartNodePopUp") {
+					loadContent("checkForNode", '', '', params, true, '', '');
+				} else {
+					yesnoPopup(successUrl, title, okUrl, okLabel, form, additionalParam);
+				}
 			} else if (needProgressPopUp) {
 				if (data.availableParams != undefined && !isBlank(data.availableParams)) {
 					additionalParam = additionalParam.concat("&");
