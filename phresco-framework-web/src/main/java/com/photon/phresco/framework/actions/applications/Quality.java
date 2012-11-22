@@ -527,13 +527,20 @@ public class Quality extends DynamicParameterAction implements Constants {
                 setConnectionAlive(DiagnoseUtil.isConnectionAlive(HTTP_PROTOCOL, host, port));
             }
         } catch (PhrescoException e) {
-            // TODO: handle exception
+            if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Quality.checkForHub()"+ FrameworkUtil.getStackTraceAsString(e));
+            }
+            return showErrorPopup(e, getText(EXCEPTION_QUALITY_FUNCTIONAL_HUB_CONNECTION));
         } catch (PhrescoPomException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Quality.checkForHub()"+ FrameworkUtil.getStackTraceAsString(e));
+            }
+            return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_QUALITY_FUNCTIONAL_HUB_CONNECTION));
         } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Quality.checkForHub()"+ FrameworkUtil.getStackTraceAsString(e));
+            }
+            return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_QUALITY_FUNCTIONAL_HUB_CONNECTION));
         } finally {
             Utility.closeStream(reader);
         }
@@ -558,8 +565,16 @@ public class Quality extends DynamicParameterAction implements Constants {
 	        setSessionAttribute(getAppId() + START_HUB, reader);
 	        setReqAttribute(REQ_APP_ID, getAppId());
 	        setReqAttribute(REQ_ACTION_TYPE, START_HUB);
-        } catch (Exception e) {
-            // TODO: handle exception
+        } catch (PhrescoException e) {
+            if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Quality.showStartedHubLog()"+ FrameworkUtil.getStackTraceAsString(e));
+            }
+            return showErrorPopup(e, getText(EXCEPTION_QUALITY_FUNCTIONAL_HUB_LOG));
+        } catch (FileNotFoundException e) {
+            if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Quality.showStartedHubLog()"+ FrameworkUtil.getStackTraceAsString(e));
+            }
+            return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_QUALITY_FUNCTIONAL_HUB_LOG));
         }
 	    
 	    return APP_ENVIRONMENT_READER;
@@ -657,17 +672,17 @@ public class Quality extends DynamicParameterAction implements Constants {
             if (s_debugEnabled) {
                 S_LOGGER.error("Entered into catch block of Quality.checkForNode()"+ FrameworkUtil.getStackTraceAsString(e));
             }
-            return showErrorPopup(e, getText(EXCEPTION_QUALITY_FUNCTIONAL_START_HUB));
+            return showErrorPopup(e, getText(EXCEPTION_QUALITY_FUNCTIONAL_NODE_CONNECTION));
         } catch (PhrescoPomException e) {
             if (s_debugEnabled) {
                 S_LOGGER.error("Entered into catch block of Quality.checkForNode()"+ FrameworkUtil.getStackTraceAsString(e));
             }
-            return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_QUALITY_FUNCTIONAL_START_HUB));
+            return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_QUALITY_FUNCTIONAL_NODE_CONNECTION));
         } catch (FileNotFoundException e) {
             if (s_debugEnabled) {
                 S_LOGGER.error("Entered into catch block of Quality.checkForNode()"+ FrameworkUtil.getStackTraceAsString(e));
             }
-            return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_QUALITY_FUNCTIONAL_START_HUB));
+            return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_QUALITY_FUNCTIONAL_NODE_CONNECTION));
         } finally {
             Utility.closeStream(reader);
         }
@@ -696,12 +711,12 @@ public class Quality extends DynamicParameterAction implements Constants {
             if (s_debugEnabled) {
                 S_LOGGER.error("Entered into catch block of Quality.showStartedNodeLog()"+ FrameworkUtil.getStackTraceAsString(e));
             }
-            return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_QUALITY_FUNCTIONAL_START_HUB));
+            return showErrorPopup(e, getText(EXCEPTION_QUALITY_FUNCTIONAL_NODE_LOG));
         } catch (FileNotFoundException e) {
             if (s_debugEnabled) {
                 S_LOGGER.error("Entered into catch block of Quality.showStartedNodeLog()"+ FrameworkUtil.getStackTraceAsString(e));
             }
-            return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_QUALITY_FUNCTIONAL_START_HUB));
+            return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_QUALITY_FUNCTIONAL_NODE_LOG));
         }
         
         return APP_ENVIRONMENT_READER;
@@ -743,9 +758,8 @@ public class Quality extends DynamicParameterAction implements Constants {
 			setReqAttribute(REQ_APP_ID, getAppId());
 			setReqAttribute(REQ_ACTION_TYPE, START_NODE);
         } catch (PhrescoException e) {
-            e.printStackTrace();
         	if (s_debugEnabled) {
-	    		S_LOGGER.error("Entered into catch block of Quality.startSelectedNodes()"+ FrameworkUtil.getStackTraceAsString(e));
+	    		S_LOGGER.error("Entered into catch block of Quality.startNode()"+ FrameworkUtil.getStackTraceAsString(e));
 	    	}
         	return showErrorPopup(e, getText(EXCEPTION_QUALITY_FUNCTIONAL_START_NODE));
         }
@@ -793,196 +807,8 @@ public class Quality extends DynamicParameterAction implements Constants {
         return resultTestSuiteNames;
     }
 	
-    public String unit1() {
-    	S_LOGGER.debug("Entering Method Quality.unit()");
-
-        getHttpRequest().setAttribute(REQ_TEST_TYPE_SELECTED, REQ_TEST_UNIT);
-        try{
-        	ActionType actionType = null;
-            ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-            Project project = administrator.getProject(projectCode);
-            String techId = project.getApplicationInfo().getTechInfo().getVersion();
-            Map<String, String> settingsInfoMap = new HashMap<String, String>(2);
-            if (TechnologyTypes.ANDROIDS.contains(techId)) {
-                String device = getHttpRequest().getParameter(REQ_ANDROID_DEVICE);
-				if (device.equals(SERIAL_NUMBER)) {
-					device = serialNumber;
-				}
-				S_LOGGER.debug("Android device name " + device);
-                settingsInfoMap.put(DEPLOY_ANDROID_DEVICE_MODE, device); //TODO: Need to be changed
-                settingsInfoMap.put(DEPLOY_ANDROID_EMULATOR_AVD, REQ_ANDROID_DEFAULT);
-//                actionType = ActionType.ANDROID_TEST_COMMAND;
-              
-            } else if (TechnologyTypes.IPHONE_NATIVE.equals(techId)) {
-//				actionType = ActionType.IPHONE_BUILD_UNIT_TEST;
-				settingsInfoMap.put(UNIT_TEST, TRUE);
-				settingsInfoMap.put(IPHONE_TARGET_NAME, target);
-				settingsInfoMap.put(IPHONE_SDK, sdk);
-
-				// application test or logical test
-				iosTestType = Boolean.valueOf(iosTestType).toString();
-				S_LOGGER.debug("iosTestType " + iosTestType);
-				settingsInfoMap.put(IOS_TEST_TYPE, iosTestType);
-            } else {
-                settingsInfoMap.put(TEST_PARAM, TEST_PARAM_VALUE);
-                if (TechnologyTypes.SHAREPOINT.equals(techId) || TechnologyTypes.DOT_NET.equals(techId)) {
-//                	actionType = ActionType.SHAREPOINT_NUNIT_TEST;
-                } else {
-//                	actionType = ActionType.TEST;
-                }
-            }
-            FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-            StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-            builder.append(project.getApplicationInfo().getCode());
-            List<String> projectModules = getProjectModules(projectCode);
-            if (CollectionUtils.isEmpty(projectModules)) {
-            	String unitTestDir = frameworkUtil.getUnitTestDir(getApplicationInfo());//TODO:Need to handle
-            	builder.append(unitTestDir);
-            } else {
-            	builder.append(File.separatorChar);
-            	builder.append(testModule);
-            }
-//            actionType.setWorkingDirectory(builder.toString());
-            
-            S_LOGGER.debug("Unit test directory " + builder.toString());
-            S_LOGGER.debug("Unit test Setting Info map value " + settingsInfoMap);
-            
-            ProjectRuntimeManager runtimeManager = PhrescoFrameworkFactory.getProjectRuntimeManager();
-            BufferedReader reader = runtimeManager.performAction(project, actionType, settingsInfoMap, null);
-            getHttpSession().setAttribute(projectCode + UNIT, reader);
-            getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
-            getHttpRequest().setAttribute(REQ_TEST_TYPE, UNIT);
-        } catch (Exception e){
-            if (e instanceof FileNotFoundException) {
-                getHttpRequest().setAttribute(REQ_ERROR_TESTSUITE, getText(ERROR_UNIT_TEST));
-            }
-            S_LOGGER.error("Entered into catch block of Quality.unit()"+ e);
-            new LogErrorReport(e, "Quality Unit test");
-        }
-        getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
-        return APP_ENVIRONMENT_READER;
-    }
-
-    public String functional1() {
-           S_LOGGER.debug("Entering Method Quality.functional()");
-        getHttpRequest().setAttribute(REQ_TEST_TYPE_SELECTED, REQ_TEST_FUNCTIONAL);
-        try {
-        	ActionType actionType = null;
-            String envs = getHttpRequest().getParameter(ENVIRONMENT_VALUES);
-            String browser = getHttpRequest().getParameter(REQ_TEST_BROWSER);
-            ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-            Project project = administrator.getProject(projectCode);
-            String techId = project.getApplicationInfo().getTechInfo().getVersion();
-            getHttpRequest().setAttribute(REQ_PROJECT, project);  
-            Map<String, String> settingsInfoMap = new HashMap<String, String>(2);
-            if (TechnologyTypes.ANDROIDS.contains(techId)) {
-                String device = getHttpRequest().getParameter(REQ_ANDROID_DEVICE);
-				if(device.equals(SERIAL_NUMBER)) {
-					device = serialNumber;
-				}
-                   S_LOGGER.debug("Android device name " + device);
-                settingsInfoMap.put(DEPLOY_ANDROID_DEVICE_MODE, device);
-                settingsInfoMap.put(DEPLOY_ANDROID_EMULATOR_AVD, REQ_ANDROID_DEFAULT);
-//                actionType = ActionType.ANDROID_TEST_COMMAND;
-            } else if (TechnologyTypes.IPHONE_NATIVE.equals(techId)) {
-            	String buildNumber = getHttpRequest().getParameter(REQ_TEST_BUILD_ID);
-            	String applicationPath = administrator.getBuildInfo(project, Integer.parseInt(buildNumber)).getBuildName();
-            	settingsInfoMap.put(BUILD_NUMBER, buildNumber);
-            	//addition param for 1.2.0. plugins, backward compatibility
-            	settingsInfoMap.put(IPHONE_BUILD_NAME, applicationPath);
-//                actionType = ActionType.IPHONE_FUNCTIONAL_COMMAND;
-               
-	        } else if (TechnologyTypes.IPHONE_HYBRID.equals(techId)) {
-	        	settingsInfoMap = null;
-//	            actionType = ActionType.TEST;
-	        } else {
-	        	S_LOGGER.debug("All test param added");
-                settingsInfoMap.put(TEST_PARAM, TEST_PARAM_VALUE);
-                if (TechnologyTypes.SHAREPOINT.equals(techId) || TechnologyTypes.DOT_NET.equals(techId)) {
-//                	actionType = ActionType.SHAREPOINT_NUNIT_TEST;
-                } else {
-//                	actionType = ActionType.TEST;
-                }
-            }
-           
-            S_LOGGER.debug("settingsInfoMap ========>" + settingsInfoMap);
-            if (StringUtils.isEmpty(testModule) && !TechnologyTypes.ANDROIDS.contains(techId) 
-                    && !TechnologyTypes.IPHONES.contains(techId) && !TechnologyTypes.BLACKBERRY_HYBRID.equals(techId) 
-                    && !TechnologyTypes.SHAREPOINT.equals(techId) && !TechnologyTypes.DOT_NET.equals(techId) 
-                    && !TechnologyTypes.JAVA_STANDALONE.equals(technologyId)) {
-                FunctionalUtil.adaptTestConfig(project, envs, browser, resolution);
-            } /*else {
-            	actionType = ActionType.INSTALL;
-            }*/
-            FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-            StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-            builder.append(project.getApplicationInfo().getCode());
-            
-            if (StringUtils.isNotEmpty(testModule)) {
-            	builder.append(File.separatorChar);
-            	builder.append(testModule);
-            }
-//            String funcitonalTestDir = frameworkUtil.getFuncitonalTestDir(techId);
-//            builder.append(funcitonalTestDir);
-//            actionType.setWorkingDirectory(builder.toString());
-            
-            S_LOGGER.debug("Functional test directory " + builder.toString());
-            S_LOGGER.debug("Functional test Setting Info map value " + settingsInfoMap);
-            
-            //java stand alone - run against jar
-            if( TechnologyTypes.JAVA_STANDALONE.equals(techId) && (testAgainst.trim().equalsIgnoreCase("jar"))){
-            	systemPath = new File(builder.toString() + File.separator + POM_FILE);
-	        	PomProcessor pomprocessor = new PomProcessor(systemPath);
-	        	pomprocessor.addDependency(JAVA_STANDALONE, JAVA_STANDALONE, DEPENDENCY_VERSION, SYSTEM, null, jarLocation);
-	        	pomprocessor.save();
-            }
-            
-            // java stand alone - run against build
-            if( TechnologyTypes.JAVA_STANDALONE.equals(techId) && (testAgainst.trim().equalsIgnoreCase("build"))){
-            	builder = new StringBuilder(Utility.getProjectHome());             // Getting Name of Jar From POM Processor
-        		builder.append(project.getApplicationInfo().getCode());
-        		systemPath = new File(builder.toString() + File.separator + POM_FILE);
-        		PomProcessor pomprocessor = new PomProcessor(systemPath);
-        		jarName = pomprocessor.getFinalName();
-        		builder.append(File.separator);
-        		builder.append(DO_NOT_CHECKIN_DIR);
-        		builder.append(File.separator);
-        		builder.append(TARGET_DIR);
-        		builder.append(File.separator);
-        		builder.append(jarName);
-        		builder.append(".jar");
-        		jarLocation = builder.toString();
-        		builder = new StringBuilder(Utility.getProjectHome());          // Adding Location of JAR as Dependency in pom.xml
-        		builder.append(project.getApplicationInfo().getCode());
-//        		funcitonalTestDir = frameworkUtil.getFuncitonalTestDir(techId);
-//                builder.append(funcitonalTestDir);
-            	systemPath = new File(builder.toString() + File.separator + POM_FILE);
-	        	pomprocessor = new PomProcessor(systemPath);
-	        	pomprocessor.addDependency(JAVA_STANDALONE, JAVA_STANDALONE, DEPENDENCY_VERSION, SYSTEM, null, jarLocation);
-	        	pomprocessor.save();
-            }
-            
-            ProjectRuntimeManager runtimeManager = PhrescoFrameworkFactory.getProjectRuntimeManager();
-            BufferedReader reader = runtimeManager.performAction(project, actionType, settingsInfoMap, null);
-            
-            getHttpSession().setAttribute(projectCode + FUNCTIONAL, reader);
-            getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
-            getHttpRequest().setAttribute(REQ_TEST_TYPE, FUNCTIONAL);
-            
-        } catch (Exception e) {
-        	if (e instanceof FileNotFoundException) {
-                getHttpRequest().setAttribute(REQ_ERROR_TESTSUITE, getText(ERROR_FUNCTIONAL_TEST));
-            }
-               S_LOGGER.error("Entered into catch block of Quality.functional()"+ e);
-            new LogErrorReport(e, "Quality Functional test");
-        }
-        
-        getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
-        return APP_ENVIRONMENT_READER;
-    }
-    
     private String getTestResultPath(ApplicationInfo appInfo, String testResultFile) throws ParserConfigurationException, 
-    SAXException, IOException, TransformerException, PhrescoException, JAXBException, PhrescoPomException {
+            SAXException, IOException, TransformerException, PhrescoException, JAXBException, PhrescoPomException {
     	S_LOGGER.debug("Entering Method Quality.getTestDocument(Project project, String testResultFile)");
     	S_LOGGER.debug("getTestDocument() ProjectInfo = "+appInfo);
     	S_LOGGER.debug("getTestDocument() TestResultFile = "+testResultFile);
@@ -1033,7 +859,6 @@ public class Quality extends DynamicParameterAction implements Constants {
             sb.append(testResultFile);
         }
 
-//        return getDocument(getTestResultFile(sb.toString()));
         return sb.toString();
     }
 
