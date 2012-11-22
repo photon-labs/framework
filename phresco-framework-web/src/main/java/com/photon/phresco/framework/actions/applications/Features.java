@@ -124,9 +124,11 @@ public class Features extends FrameworkBaseAction {
     	TechnologyInfo techInfo = new TechnologyInfo();
     	techInfo.setId(getTechnology());
 		appInfo.setTechInfo(techInfo );
-		Element element = new Element();
-		element.setId(getPilotProject());
-		appInfo.setPilotInfo(element);
+		if(StringUtils.isNotEmpty(getPilotProject())) {
+			Element element = new Element();
+			element.setId(getPilotProject());
+			appInfo.setPilotInfo(element);
+		}
 		appInfo.setSelectedWebservices(getWebservice());
 		List<ArtifactGroupInfo> selectedServers = new ArrayList<ArtifactGroupInfo>();
 		if (CollectionUtils.isNotEmpty(getServer())) {
