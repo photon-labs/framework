@@ -5339,6 +5339,7 @@ input.xlarge.javastd {
 
 .btn_browse {
 	padding: 5px 10px 3px !important;
+	margin-left: 5px;
 }
 
 a[id='androidSigning']:hover {

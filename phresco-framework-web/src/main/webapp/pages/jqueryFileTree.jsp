@@ -31,11 +31,6 @@
     String dir = request.getParameter("dir");
     String fileTypes = request.getParameter("restrictFileTypes");
     String filesOrFolders = request.getParameter("filesOrFolders");
-    String techId = request.getParameter("technology");
-    String selectedFiles = request.getParameter("selectedFilesList");;
-    selectedFiles = selectedFiles.replace("%2C",",");
-    List<String> jsFiles = Arrays.asList(selectedFiles.split("\\s*,\\s*"));
-    
     
     if (dir == null) {
     	return;
@@ -47,10 +42,10 @@
 	    dir += "/";
 	}
 	
-	dir = java.net.URLDecoder.decode(dir, "UTF-8");	
-	fileTypes = java.net.URLDecoder.decode(fileTypes, "UTF-8");	
-	filesOrFolders = java.net.URLDecoder.decode(filesOrFolders, "UTF-8");	
-
+ 	dir = java.net.URLDecoder.decode(dir, "UTF-8");	
+ 	fileTypes = java.net.URLDecoder.decode(fileTypes, "UTF-8");	
+ 	filesOrFolders = java.net.URLDecoder.decode(filesOrFolders, "UTF-8");	
+	
 	final String[] includeFileTypes = fileTypes.split(",");
 	
     if (new File(dir).exists()) {
@@ -82,16 +77,8 @@
 				    		continue;
 				    	}
 					}
-					if(TechnologyTypes.HTML5_MULTICHANNEL_JQUERY_WIDGET.equals(techId) || 
-							TechnologyTypes.HTML5_JQUERY_MOBILE_WIDGET.equals(techId) ||
-							TechnologyTypes.HTML5_MOBILE_WIDGET.equals(techId) ||
-							TechnologyTypes.HTML5_WIDGET.equals(techId)){
-						 out.print("<li><input type=checkbox name=jsMinCheck id=\""+file+"\" value=\""+file+"\"><span  class=jsmin-span >"
-								+ file + "</li>"); 
-					}else {
 						out.print("<li class=\"file ext_" + ext + "\"><a href=\"#\" rel=\"" + dir + file + "\">"
 								+ file + "</a></li>");
-					}
 					
 			    	}
 			}
@@ -100,12 +87,10 @@
     }
 %>
 <script type="text/javascript">
-	$(document).ready(function() {
-		<% for (String jsFile : jsFiles) { %>
-			$('input[name=jsMinCheck]').each(function () {
-				var selJs = '<%= jsFile %>';
-				$('input[id="'+ selJs +'"]').attr("checked", true);				
-			});
-		<% } %> 
-	});
+	function add_popupOnOk(obj) {
+		setTimeout(function () {
+			$('#popupPage').modal('show');
+	    }, 600);
+		$('#fileLocation').val($('#browseSelectedLocation').val());
+	}
 </script>

@@ -48,8 +48,10 @@ public class DynamicParameterAction extends FrameworkBaseAction {
     private String goal = "";
     private String selectedOption = "";
     private String dependency = "";
-    
-    private boolean paramaterAvailable;
+    private String fileType = ""; //for file browse 
+    private String fileOrFolder = ""; //for file browse
+    	
+	private boolean paramaterAvailable;
     
     private String availableParams = "";
     
@@ -461,6 +463,15 @@ public class DynamicParameterAction extends FrameworkBaseAction {
         return SUCCESS;
     }
     
+    public String openBrowseFileTree() throws PhrescoException {
+		setReqAttribute(FILE_TYPES, getFileType());
+		setReqAttribute(FILE_BROWSE, getFileOrFolder());
+		ApplicationInfo applicationInfo = getApplicationInfo();
+		setReqAttribute(REQ_PROJECT_LOCATION, getAppDirectoryPath(applicationInfo).replace(File.separator, FORWARD_SLASH));
+		
+		return SUCCESS;
+	}
+    
     public List<Value> getDependentValues() {
         return dependentValues;
     }
@@ -509,13 +520,27 @@ public class DynamicParameterAction extends FrameworkBaseAction {
         this.paramaterAvailable = paramaterAvailable;
     }
 
-
     public String getAvailableParams() {
         return availableParams;
     }
 
-
     public void setAvailableParams(String availableParams) {
         this.availableParams = availableParams;
     }
+    
+    public String getFileType() {
+		return fileType;
+	}
+
+	public void setFileType(String fileType) {
+		this.fileType = fileType;
+	}
+
+	public String getFileOrFolder() {
+		return fileOrFolder;
+	}
+
+	public void setFileOrFolder(String fileOrFolder) {
+		this.fileOrFolder = fileOrFolder;
+	}
 }
