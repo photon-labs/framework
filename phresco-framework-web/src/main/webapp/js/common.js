@@ -996,23 +996,12 @@ function buttonAdd() {
 	$('#avaliableSourceScript > option:selected').appendTo('#selectedSourceScript');
 }
 	
-function buttonAddAll() {
-	var sqlFiles = "";
-	$('#avaliableSourceScript option').each(function(i, available) {
-		sqlFiles = $(available).val();
-		$('#DbWithSqlFiles').val($('#DbWithSqlFiles').val() + $('#dataBase').val()+ "#VSEP#" + sqlFiles + "#NAME#" + $(available).text() + "#SEP#");
-	});		
-	$('#avaliableSourceScript > option').appendTo('#selectedSourceScript');
-}
-
 function buttonRemove() {
 	updateDbWithVersionsForRemove();
-	$('#selectedSourceScript > option:selected').appendTo('#avaliableSourceScript');
 }
 
 function buttonRemoveAll() {
 	updateDbWithVersionsForRemoveAll();
-	$('#selectedSourceScript > option').appendTo('#avaliableSourceScript');
 }
 
 //To move up the values
@@ -1038,60 +1027,154 @@ function moveDown() {
 	});
 }
 
-function addDbWithVersions() {
-	//creating new data list
-	var sqlFiles = "";
-	$("#avaliableSourceScript :selected").each(function(i, available) {
-		sqlFiles = $(available).val();
-		$('#DbWithSqlFiles').val($('#DbWithSqlFiles').val() + $('#dataBase').val()+ "#VSEP#" + sqlFiles + "#NAME#" + $(available).text() + "#SEP#");
-	});
-}
-
-function addDbWithVersions() {
-	//creating new data list
-	var sqlFiles = "";
-	$("#avaliableSourceScript :selected").each(function(i, available) {
-		sqlFiles = $(available).val();
-		$('#DbWithSqlFiles').val($('#DbWithSqlFiles').val() + $('#dataBase').val()+ "#VSEP#" + sqlFiles + "#NAME#" + $(available).text() + "#SEP#");
-	});
-}
-
-
-function updateDbWithVersionsForRemove() {
-	var toBeUpdatedDbwithVersions = "";
-	$("#selectedSourceScript option:selected").each(function(i, alreadySelected) {
-		var nameSep = new Array();
-		nameSep = $('#DbWithSqlFiles').val().split("#SEP#");
-		for (var i=0; i < nameSep.length - 1; i++) {
-			var addedDbs = nameSep[i].split("#VSEP#");
-			var addedSqlName = addedDbs[1].split("#NAME#");
-			if(($('#dataBase').val() == addedDbs[0]) && $(alreadySelected).val() != addedSqlName[0]) {
-				toBeUpdatedDbwithVersions = toBeUpdatedDbwithVersions + nameSep[i] + "#SEP#";
-			} else if(($('#dataBase').val() != addedDbs[0]) && $(alreadySelected).val() != addedSqlName[0]) {
-				toBeUpdatedDbwithVersions = toBeUpdatedDbwithVersions + nameSep[i] + "#SEP#";
-			}
-		}
-		$('#DbWithSqlFiles').val(toBeUpdatedDbwithVersions);
-	});
-}
-
 function updateDbWithVersionsForRemoveAll() {
-	var toBeUpdatedDbwithVersions = "";
-	$("#selectedSourceScript option").each(function(i, alreadySelected) {
-		var nameSep = new Array();
-		nameSep = $('#DbWithSqlFiles').val().split("#SEP#");
-		for (var i=0; i < nameSep.length - 1; i++) {
-			var addedDbs = nameSep[i].split("#VSEP#");
-			var addedSqlName = addedDbs[1].split("#NAME#");
-			if(($('#dataBase').val() != addedDbs[0]) && $(alreadySelected).val() != addedSqlName[0]) {
-				toBeUpdatedDbwithVersions = toBeUpdatedDbwithVersions + nameSep[i] + "#SEP#";
-			} else if(($('#dataBase').val() == addedDbs[0]) && $(alreadySelected).val() == addedSqlName[0]) {
-				toBeUpdatedDbwithVersions = toBeUpdatedDbwithVersions + nameSep[i] + "#SEP#";
+	var dbType = $('#dataBase').val();
+	$("#selectedSourceScript > option").each(function(i,available) {
+		var availableSource = $(available).val();
+		var availableText = $(available).text();
+		var jsonValue = $('#fetchSql').val();
+		var allFiles = jQuery.parseJSON(jsonValue);
+		var matchType = availableSource.match(dbType);
+		if (matchType == dbType) {
+			$("#selectedSourceScript option[value='"+ availableSource +"']").remove();
+			var alreadyExists = isAvailable(availableSource);
+			if (alreadyExists == false) {
+				$('#avaliableSourceScript').append("<option value="+ availableSource +">" + availableText + "</option>");
 			}
+			$.each(allFiles, function(dbType, value) {
+				 for(i=0; i<allFiles[dbType].length; i++){
+					if(allFiles[dbType][i] === availableSource){
+						allFiles[dbType].splice(i,1);
+					}
+			    }
+			});
+			
+		 var newJsonValue = JSON.stringify(allFiles);
+		 $('#fetchSql').val(newJsonValue);
 		}
-		$('#DbWithSqlFiles').val('');
 	});
 }
+
+
+
+function buttonAddAll() {
+	var dbType = $('#dataBase').val();
+	var jsonValue = $('#fetchSql').val();
+	$("#avaliableSourceScript > option").each(function(i, available) {
+		var sqlFiles = [];
+		sqlFiles.push($(available).val());
+		var selected = $(available).val();
+		var selectedText = $(available).text();
+		var alreadyExists = $("#selectedSourceScript option[value='"+ selected + "']").length > 0;
+		if (alreadyExists == true) {
+			$("#avaliableSourceScript > option").each(function(i, available) {
+				var select = $(available).val();
+				$("#avaliableSourceScript option[value='"+ select +"']").remove();
+			});
+			return false;
+		}
+		
+		$("#avaliableSourceScript option[value='"+ selected +"']").remove();
+		$('#selectedSourceScript').append("<option value="+ selected +">" + selectedText + "</option>");
+		
+		if (jsonValue === undefined || isBlank(jsonValue)) {
+			jsonValue = '{"' + dbType + '" : ["' + sqlFiles.join(',') + '"]}';
+		} else {
+			var allFiles = jQuery.parseJSON(jsonValue);
+			var dbFiles = allFiles[dbType];
+			if (dbFiles !== undefined && !isBlank(dbFiles)) {
+				sqlFiles = dbFiles.concat(sqlFiles);
+				allFiles[dbType] = sqlFiles;
+				jsonValue = JSON.stringify(allFiles);
+			} else {
+				jsonValue = jsonValue.substring(0, jsonValue.length - 1);
+				jsonValue = jsonValue + ', "' + dbType + '" : ["' + sqlFiles.join('","') + '"]}';
+			}
+		}
+	});
+	$('#fetchSql').val(jsonValue);
+	$('#avaliableSourceScript > option:selected').appendTo('#selectedSourceScript');
+}
+
+function addDbWithVersions() {
+	var dbType = $('#dataBase').val();
+	var jsonValue = $('#fetchSql').val();
+	$("#avaliableSourceScript :selected").each(function(i, available) {
+		var sqlFiles = [];
+		sqlFiles.push($(available).val());
+		var selected = $(available).val();
+		
+		var alreadyExists = $("#selectedSourceScript option[value='"+ selected + "']").length > 0;
+		if (alreadyExists == true) {
+			$("#avaliableSourceScript option[value='"+ selected +"']").remove();
+			return false;
+		}
+		
+		if (jsonValue === undefined || isBlank(jsonValue)) {
+			jsonValue = '{"' + dbType + '" : ["' + sqlFiles.join(',') + '"]}';
+		} else {
+			
+			var allFiles = jQuery.parseJSON(jsonValue);
+			var dbFiles = allFiles[dbType];
+			if (dbFiles !== undefined && !isBlank(dbFiles)) {
+				sqlFiles = dbFiles.concat(sqlFiles);
+				allFiles[dbType] = sqlFiles;
+				jsonValue = JSON.stringify(allFiles);
+			} else {
+				jsonValue = jsonValue.substring(0, jsonValue.length - 1);
+				jsonValue = jsonValue + ', "' + dbType + '" : ["' + sqlFiles.join('","') + '"]}';
+			}
+		}
+	});
+	$('#fetchSql').val(jsonValue);
+}
+
+	function updateDbWithVersionsForRemove() {
+		$("#selectedSourceScript option:selected").each(function(i, optionSelected) {
+			var jsonValue = $('#fetchSql').val();
+			var allFiles = [];
+			var selected = $(optionSelected).val();
+			var selectedText = $(optionSelected).text();
+			allFiles = jQuery.parseJSON(jsonValue);
+			var dbType = $('#dataBase').val();
+			var entry = document.getElementById("selectedSourceScript");
+			var selectedSource = entry.options[entry.selectedIndex].value;
+			
+			var matchType = selectedSource.match(dbType);
+			
+			if (dbType == matchType) {
+				var available = isAvailable(selected);
+				if(!available) {
+					$('#avaliableSourceScript').append("<option value="+ selected +">" + selectedText + "</option>");
+				}
+				$("#selectedSourceScript option[value='"+ selected +"']").remove();
+				var flag = isAvailable(selected);
+				if (flag == true) {
+					$.each(allFiles, function(dbType, value) {
+						 for(i=0; i<allFiles[dbType].length; i++){
+							if(allFiles[dbType][i] === selected){
+								allFiles[dbType].splice(i,1);
+							}
+					    }
+					});
+				}
+				var newJsonValue = JSON.stringify(allFiles);
+				 $('#fetchSql').val(newJsonValue);
+				}
+		});
+	}
+	
+	function isAvailable(selected) {
+		var flag = false;
+		$("#avaliableSourceScript > option").each(function() {
+			var availableSource = this.value ;
+			if (availableSource == selected) {
+				flag = true;
+				return false;
+			}
+		});
+		return flag;
+	}
 
 function hideDbWithVersions() {
 	// getting existing data list

@@ -152,11 +152,12 @@
 					if (StringUtils.isNotEmpty(parameter.getDependency())) {
 						//If current control has dependancy value 
 						onClickFunction = "dependancyChckBoxEvent(this, '"+ parameter.getKey() +"');";
-					} else {
-						onClickFunction = "changeChckBoxValue(this);";
 					}
-					
 					parameterModel.setOnClickFunction(onClickFunction);
+					
+					String onChangeFunction = "changeChckBoxValue(this);";
+					parameterModel.setOnChangeFunction(onChangeFunction);										
+					
 					parameterModel.setCssClass(cssClass);
 					parameterModel.setValue(parameter.getValue());
 					parameterModel.setDependency(parameter.getDependency());
@@ -498,7 +499,7 @@
 	function showParameters() {
 		$(':input', '#generateBuildForm').each(function() {
 			var currentObjType = $(this).prop('tagName');
-			if (currentObjType === "SELECT") {
+			if (currentObjType === "SELECT" && this.options[this.selectedIndex] !== undefined) {
 				var dependencyAttr =  this.options[this.selectedIndex].getAttribute('additionalparam');
 				if (dependencyAttr !== null) {
 					var csvDependencies = dependencyAttr.substring(dependencyAttr.indexOf('=') + 1);
