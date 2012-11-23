@@ -43,6 +43,7 @@ public interface FrameworkActions {
      * String APP_XXX
      *****************************/
 	String APP_LIST = "list";
+	String APP_ENV_LIST = "envList";
 	String APP_ADD_APPLICATION = "add";
 	String APP_TYPE = "applicationType";
 	String APP_TECHNOLOGY = "technology";

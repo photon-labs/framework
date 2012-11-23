@@ -54,7 +54,7 @@
 	
     String currentEnv = (String) request.getAttribute(FrameworkConstants.REQ_CURRENTENV);
     Configuration configInfo = (Configuration) request.getAttribute(FrameworkConstants.REQ_CONFIG_INFO);
-	request.setAttribute(FrameworkConstants.REQ_CONFIG_INFO , configInfo);
+    String configPath = (String) request.getAttribute(FrameworkConstants.REQ_CONFIG_PATH);
 	
 		if (configInfo != null) {
 		    envName = configInfo.getEnvName();
@@ -171,7 +171,7 @@
 </form>
 
 <script type="text/javascript">
-
+	
 	/* To check whether the device is ipad or not */
 	$(document).ready(function() {
 		hideLoadingIcon();//To hide the loading icon
@@ -188,12 +188,13 @@
 		var selectedType = typeData.name;
 		var selectedConfigId = typeData.id;
 		var fromPage = "<%= fromPage%>";
+		var configPath = "<%= configPath%>";
 		var params = '{ ' + getBasicParamsAsJson() + ', "settingTemplate": ' + $('#type').val() + ' , "selectedConfigId": "' + selectedConfigId 
-			+ '" , "selectedEnv": "' + selectedEnv + '" , "selectedType": "' + selectedType + '" , "fromPage": "' + fromPage + '" , "selectedConfigname": "' + selectedConfigname + '"}';
+			+ '" , "selectedEnv": "' + selectedEnv + '" , "selectedType": "' + selectedType + '" , "fromPage": "' + fromPage + '", "configPath": "' + configPath + '", "selectedConfigname": "' + selectedConfigname + '"}';
 		loadJsonContent('configType', params,  $('#typeContainer'));
 	}).triggerHandler("change");
 	
-		$("#" + '<%= pageUrl %>').click(function() {
+	$('#<%= pageUrl %>').click(function() {
 		var name = $('#configName').val();
 		var desc = $('#configDesc').val();
 		var env = $('#environment').val();
@@ -201,13 +202,14 @@
 		var configStr = JSON.stringify(jsonObject);
 		var template = $.parseJSON($('#type').val());
 		var type = template.name;
+		var oldName = "<%= name %>";
 		var configId = template.id;
 		var fromPage = "<%= fromPage%>";
+		var configPath = "<%= configPath%>";
 		var jsonParam = '{ ' + getBasicParamsAsJson() + ', "configName": "' + name + '", "description": "' + desc + '", "configType": "' + type 
-								+ '", "configId": "' + configId + '", "fromPage": "' + fromPage + '" , "environment" : ' + env + ', ' + configStr.substring(1);
+								+ '", "configId": "' + configId + '", "oldName": "' + oldName + '", "configPath": "' + configPath + '", "fromPage": "' + fromPage + '", "environment" : ' + env + ', ' + configStr.substring(1);
 		
-		
-		validateJson('saveConfiguration', '', $('#<%= container %>'), jsonParam);
+		validateJson('<%= pageUrl %>', '', $('#<%= container %>'), jsonParam);
 	});
 	
 	//To show the validation error messages

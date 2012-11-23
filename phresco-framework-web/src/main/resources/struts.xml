@@ -382,12 +382,21 @@
             </result>
         </action>
 
-		<action name="configuration" method="list" class="com.photon.phresco.framework.actions.applications.Configurations">
+		<action name="configuration" method="configList" class="com.photon.phresco.framework.actions.applications.Configurations">
             <result name="list">/pages/applications/configuration/list.jsp</result>
         </action>
         
+        <action name="settings" method="settingsList" class="com.photon.phresco.framework.actions.applications.Configurations">
+            <result name="list">/pages/settings/list.jsp</result>
+        </action>
+        
+        <action name="envList" method="envList" class="com.photon.phresco.framework.actions.applications.Configurations">
+            <result name="envList">/pages/applications/configuration/envList.jsp</result>
+        </action>
+        
         <action name="deleteConfigurations" method="delete" class="com.photon.phresco.framework.actions.applications.Configurations">
-            <result name="list">/pages/applications/configuration/list.jsp</result>
+        	<result name="envList">/pages/applications/configuration/envList.jsp</result>
+          <!--   <result name="list">/pages/applications/configuration/list.jsp</result> -->
         </action>
         
         <action name="addConfiguration" method="add" class="com.photon.phresco.framework.actions.applications.Configurations">
@@ -398,21 +407,54 @@
            <result type="json" />
         </action>
 
-        <action name="fetchSettingProjectInfoVersions" method="fetchSettingProjectInfoVersions" class="com.photon.phresco.framework.actions.settings.Settings">
+        <!-- <action name="fetchSettingProjectInfoVersions" method="fetchSettingProjectInfoVersions" class="com.photon.phresco.framework.actions.settings.Settings">
            <result type="json" />
-        </action>
+        </action> -->
 
         <action name="checkForRespectiveConfig" method="checkForRespectiveConfig" class="com.photon.phresco.framework.actions.applications.Applications">
             <result type="json" />
         </action>
 
-        <action name="saveConfiguration" method="save" class="com.photon.phresco.framework.actions.applications.Configurations">
+        <action name="saveConfiguration" method="saveConfiguration" class="com.photon.phresco.framework.actions.applications.Configurations">
         	<interceptor-ref name="json" />
             <result name="list">/pages/applications/configuration/list.jsp</result>
             <result type="json" />
         </action>
         
+        <action name="saveSettings" method="saveSettings" class="com.photon.phresco.framework.actions.applications.Configurations">
+        	<interceptor-ref name="json" />
+            <result name="list">/pages/settings/list.jsp</result>
+            <result type="json" />
+        </action>
+        
         <action name="saveConfigurationValidate" method="validateConfiguration" class="com.photon.phresco.framework.actions.applications.Configurations">
+    	    <interceptor-ref name="json" />
+			<result type="json"/>
+        </action>
+        
+        <action name="saveSettingsValidate" method="validateConfiguration" class="com.photon.phresco.framework.actions.applications.Configurations">
+    	    <interceptor-ref name="json" />
+			<result type="json"/>
+        </action>
+        
+        <action name="updateConfiguration" method="updateConfiguration" class="com.photon.phresco.framework.actions.applications.Configurations">
+        	<interceptor-ref name="json" />
+            <result name="list">/pages/applications/configuration/list.jsp</result>
+            <result type="json" />
+        </action>
+        
+        <action name="updateSettings" method="updateSettings" class="com.photon.phresco.framework.actions.applications.Configurations">
+        	<interceptor-ref name="json" />
+            <result name="list">/pages/settings/list.jsp</result>
+            <result type="json" />
+        </action>
+        
+        <action name="updateConfigurationValidate" method="validateConfiguration" class="com.photon.phresco.framework.actions.applications.Configurations">
+    	    <interceptor-ref name="json" />
+			<result type="json"/>
+        </action>
+        
+        <action name="updateSettingsValidate" method="validateConfiguration" class="com.photon.phresco.framework.actions.applications.Configurations">
     	    <interceptor-ref name="json" />
 			<result type="json"/>
         </action>
@@ -437,39 +479,17 @@
             <result type="json" />
         </action>
         
-        <action name="openSettingsEnvPopup" method="openSettingsEnvPopup" class="com.photon.phresco.framework.actions.settings.Settings">
-            <result name="environment">/pages/applications/configuration/environment.jsp</result>
-        </action>
-        
         <action name="createEnvironment" method="createEnvironment" class="com.photon.phresco.framework.actions.applications.Configurations">
         	<interceptor-ref name="json" />
-			<result name="list">/pages/applications/configuration/list.jsp</result>
-        </action>
-        
-        <action name="createSettingsEnvironment" method="createSettingsEnvironment" class="com.photon.phresco.framework.actions.settings.Settings">
-            <result name="list">/pages/settings/list.jsp</result>
+        	<result name="envList">/pages/applications/configuration/envList.jsp</result>
         </action>
         
         <action name="deleteEnvironment" method="deleteEnvironment" class="com.photon.phresco.framework.actions.applications.Configurations">
         	<interceptor-ref name="json" />
-        	<result name="list">/pages/applications/configuration/list.jsp</result>
-        </action>
-        
-        <action name="deleteSettingsEnvironment" method="deleteSettingsEnvironment" class="com.photon.phresco.framework.actions.settings.Settings">
-            <result type="json" />
-        </action>
-        
-        <action name="updateConfiguration" method="update" class="com.photon.phresco.framework.actions.applications.Configurations">
-        	<interceptor-ref name="json" />
-            <result name="list">/pages/applications/configuration/list.jsp</result>
-            <result type="json" />
+        	 <result name="envList">/pages/applications/configuration/envList.jsp</result>
         </action>
         
         <action name="checkDuplicateEnv" method="checkDuplicateEnv" class="com.photon.phresco.framework.actions.applications.Configurations">
-            <result type="json" />
-        </action>
-        
-        <action name="checkDuplicateEnvSettings" method="checkDuplicateEnvSettings" class="com.photon.phresco.framework.actions.settings.Settings">
             <result type="json" />
         </action>
         
@@ -477,9 +497,9 @@
             <result type="json" />
         </action>
         
-         <action name="checkForRemoveSettings" method="checkForRemoveSettings" class="com.photon.phresco.framework.actions.settings.Settings">
+         <!-- <action name="checkForRemoveSettings" method="checkForRemoveSettings" class="com.photon.phresco.framework.actions.settings.Settings">
             <result type="json" />
-        </action>
+        </action> -->
         
         <action name="checkForConfiguration" method="checkForConfiguration" class="com.photon.phresco.framework.actions.applications.Build">
             <result type="json" />
@@ -493,37 +513,6 @@
             <result name="success">/pages/fileBrowse.jsp</result>
         </action>
         
-        <!--  Settings Actions -->
-        <action name="settings" method="list" class="com.photon.phresco.framework.actions.applications.Configurations">
-            <result name="list">/pages/applications/configuration/list.jsp</result>
-        </action>
-
-        <action name="deleteSettings" method="delete" class="com.photon.phresco.framework.actions.settings.Settings">
-            <result name="list">/pages/settings/list.jsp</result>
-        </action>
-
-        <action name="addSettings" method="add" class="com.photon.phresco.framework.actions.settings.Settings">
-        	<result name="add">/pages/settings/add.jsp</result>
-        </action>
-
-        <action name="saveSetting" method="save" class="com.photon.phresco.framework.actions.settings.Settings">
-        	<result name="list">/pages/settings/list.jsp</result>
-        	<result type="json" />
-        </action>
-        
-        <action name="editSetting" method="edit" class="com.photon.phresco.framework.actions.settings.Settings">
-            <result name="edit">/pages/settings/add.jsp</result>
-        </action>
-
-        <action name="updateSetting" method="update" class="com.photon.phresco.framework.actions.settings.Settings">
-        	<result name="list">/pages/settings/list.jsp</result>
-        	<result type="json" />
-        </action>
-
-       	<action name="settingsType" method="settingsType" class="com.photon.phresco.framework.actions.settings.Settings">
-        	<result name="type">/pages/settings/type.jsp</result>
-        </action>
-
 		<action name="configType" method="showProperties" class="com.photon.phresco.framework.actions.applications.Configurations">
 			<interceptor-ref name="json" />
         	<result name="type">/pages/applications/configuration/type.jsp</result>
@@ -714,9 +703,9 @@
             <result type="json"><param name="root">atleastOneFileAvail</param></result>
         </action>
         
-        <action name="connectionAliveCheck" method="connectionAliveCheck" class="com.photon.phresco.framework.actions.settings.Settings">
+        <!-- <action name="connectionAliveCheck" method="connectionAliveCheck" class="com.photon.phresco.framework.actions.settings.Settings">
         	<result type="json"><param name="root">connectionAlive</param></result>
-        </action>
+        </action> -->
 		
 		<action name="updateVersion" method="update" class="com.photon.phresco.framework.actions.applications.VersionUpdate">
 			<result name="success">/pages/updatedInfo.jsp</result>

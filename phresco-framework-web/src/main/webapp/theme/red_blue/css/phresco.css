@@ -43,7 +43,7 @@ header {
 	font-size: 20px;
 	height: 55px;
 	left: 0;
-	line-height: 30px;
+	/* line-height: 30px; */
 	padding: 0;
 	position: absolute;
 	text-align: center;
@@ -884,38 +884,42 @@ a {
 	z-index: 3000;
 }
 
-.userInfo {
-	height: 17px;
-	padding: 1px;
+.userInfo ul {
+    margin:0px;
+    padding:0px;
+    list-style:none;
 }
 
-.username {
-	cursor: pointer;
+.userInfo ul li {
+    line-height:20px;
+    padding-left:7px;
 }
 
-.userInfo label {
-	margin-left: 3px;
+.userInfo ul li img {
+    margin-left:3px;
 }
 
-.userInfo a label {
-	cursor: pointer;
-	margin-left: 3px;
+.userInfo ul li.theme_change {
+    margin-bottom:3px;
+    padding-bottom:3px;
 }
 
-#about {
-	text-decoration: none;
-	padding: 3px;
+.userInfo ul li a {
+    text-decoration:none;
 }
 
-#signOut {
-	text-decoration: none;
-	padding: 3px;
+.userInfo ul li ul {
+    margin:0;
+    padding:0;
+    padding-left:12px;
 }
-
 
 .signOut {
-    position: absolute;
-    right:1%;
+	text-decoration: none;
+	padding: 3px;
+	position: absolute;
+    right: 0;
+    margin-right: 10px;
 }
 
 .popupalign {
@@ -3664,18 +3668,11 @@ div.submit_input {
     text-transform: capitalize;
     top: -3px;
     width: auto;
-    padding: 4px;
+    padding: 4px 6px;
 }
 .username {
 	cursor: pointer;
 }
-
-
-
-/* .userInfo {
-     margin-left: 10px;
-} */
-
 
 /*** navigation for phresco ***/
 .linkbox { 

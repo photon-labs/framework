@@ -32,6 +32,7 @@ import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Para
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
 import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.service.client.api.ServiceManager;
+import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.PhrescoDynamicLoader;
 import com.photon.phresco.util.Utility;
 
@@ -62,10 +63,11 @@ public class DynamicParameterAction extends FrameworkBaseAction {
      * @param applicationInfo
      * @return 
      */
-    protected String getPhrescoPluginInfoFilePath(ApplicationInfo applicationInfo) {
-		String filePath = Utility.getProjectHome() + FILE_SEPARATOR + applicationInfo.getAppDirName() + FILE_SEPARATOR + 
-										FOLDER_DOT_PHRESCO + FILE_SEPARATOR + PHRESCO_PLUGIN_INFO_XML;
-		
+	protected String getPhrescoPluginInfoFilePath(ApplicationInfo applicationInfo) {
+		String filePath = Utility.getProjectHome() + applicationInfo.getAppDirName() + FILE_SEPARATOR
+				+ FOLDER_DOT_PHRESCO + FILE_SEPARATOR
+				+ Constants.PHRESCO_PLUGIN_INFO_XML;
+
 		return filePath;
 	}
     

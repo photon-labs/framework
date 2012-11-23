@@ -43,6 +43,7 @@ header {
 	font-size: 20px;
 	height: 115px;
 	left: 0;
+	/* line-height: 30px; */
 	padding: 0;
 	position: absolute;
 	text-align: center;
@@ -863,36 +864,44 @@ a {
 	width: auto;
 	padding: 4px;
 	z-index: 3000;
-}
-
-.userInfo {
-	height: 17px;
-	padding: 1px;
-}
-
-.username {
 	cursor: pointer;
 }
 
-.userInfo label {
-	margin-left: 3px;
+.userInfo ul {
+    margin:0px;
+    padding:0px;
+    list-style:none;
 }
 
-.userInfo a label {
-	cursor: pointer;
-	margin-left: 3px;
+.userInfo ul li {
+    line-height:20px;
+    padding-left:7px;
 }
 
-#about {
-	text-decoration: none;
-	padding: 3px;
+.userInfo ul li img {
+    margin-left:3px;
+}
+
+.userInfo ul li.theme_change {
+    margin-bottom:3px;
+    padding-bottom:3px;
+}
+
+.userInfo ul li a {
+    text-decoration:none;
+}
+
+.userInfo ul li ul {
+    margin:0;
+    padding:0;
+    padding-left:12px;
 }
 
 #signOut {
 	text-decoration: none;
 	position: relative;
 	padding: 3px 0px;
-	margin-right:2%;
+	margin-right:1%;
 }
 
 .popupalign {

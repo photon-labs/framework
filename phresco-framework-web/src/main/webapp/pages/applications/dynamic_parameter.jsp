@@ -157,6 +157,7 @@
 					} else {
 						onClickFunction = "changeChckBoxValue(this);";
 					}
+					
 					parameterModel.setOnChangeFunction(onChangeFunction);
 					parameterModel.setOnClickFunction(onClickFunction);
 					parameterModel.setCssClass(cssClass);
@@ -257,6 +258,7 @@
 					<%= txtMultiInputElement %>
 	<%
 				} else if (FrameworkConstants.TYPE_FILE_BROWSE.equalsIgnoreCase(parameter.getType())) {
+					parameterModel.setFileType(parameter.getFileType());
 					StringTemplate browseFileElement = FrameworkUtil.constructBrowseFileTreeElement(parameterModel);
 	%>
 					<%= browseFileElement %>
@@ -499,7 +501,7 @@
 	function showParameters() {
 		$(':input', '#generateBuildForm').each(function() {
 			var currentObjType = $(this).prop('tagName');
-			if (currentObjType === "SELECT") {
+			if (currentObjType === "SELECT" && this.options[this.selectedIndex] !== undefined) {
 				var dependencyAttr =  this.options[this.selectedIndex].getAttribute('additionalparam');
 				if (dependencyAttr !== null) {
 					var csvDependencies = dependencyAttr.substring(dependencyAttr.indexOf('=') + 1);
@@ -609,8 +611,10 @@
 	
 	function browseFiles(obj) {
 		$('#popupPage').modal('hide');
+		var fileTypes = $(obj).attr("fileTypes");
 		var params = "";
-		params = params.concat("&fileType=jar");
+		params = params.concat("&fileType=");
+		params = params.concat(fileTypes);
 		params = params.concat("&fileOrFolder=All");
 		additionalPopup('openBrowseFileTree', 'Browse', 'jstd', '', '', params, true);
 	}

@@ -560,7 +560,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 	        .append(File.separator)
 	        .append(LOG_DIR)
 	        .append(File.separator)
-	        .append("hub.log");
+	        .append(Constants.HUB_LOG);
 	        BufferedReader reader = new BufferedReader(new FileReader(sb.toString()));
 	        setSessionAttribute(getAppId() + START_HUB, reader);
 	        setReqAttribute(REQ_APP_ID, getAppId());
@@ -656,7 +656,7 @@ public class Quality extends DynamicParameterAction implements Constants {
             FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
             String functionalTestDir = frameworkUtil.getFunctionalTestDir(getApplicationInfo());
             StringBuilder sb = new StringBuilder(getApplicationHome());
-            sb.append(functionalTestDir).append(File.separator).append("nodeconfig.json");
+            sb.append(functionalTestDir).append(File.separator).append(Constants.NODE_CONFIG_JSON);
             File hubConfigFile = new File(sb.toString());
             Gson gson = new Gson();
             reader = new BufferedReader(new FileReader(hubConfigFile));
@@ -700,7 +700,7 @@ public class Quality extends DynamicParameterAction implements Constants {
             .append(File.separator)
             .append(LOG_DIR)
             .append(File.separator)
-            .append("node.log");
+            .append(Constants.NODE_LOG);
             BufferedReader reader = new BufferedReader(new FileReader(sb.toString()));
             setSessionAttribute(getAppId() + START_NODE, reader);
             setReqAttribute(REQ_APP_ID, getAppId());
