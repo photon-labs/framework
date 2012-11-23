@@ -150,7 +150,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 	private String settingType = null;
     private String settingName = null;
     private String caption = null;
-    private List<String> testResultFiles = null;
+    private List<String> testResultFiles = new ArrayList<String>();
     private List<TestSuite> testSuites = null;
     private List<String> testSuiteNames = null;
     private boolean validated = false;
@@ -180,7 +180,7 @@ public class Quality extends DynamicParameterAction implements Constants {
     private String jmeterTestAgainst = null;
     private String technologyId=null;
 
-    private boolean isAtleastOneFileAvail = false;
+    private boolean resultFileAvailable = false;
 
     // android performance tag name
     private String testResultDeviceId = null;
@@ -454,12 +454,14 @@ public class Quality extends DynamicParameterAction implements Constants {
         
         try {
             ApplicationInfo appInfo = getApplicationInfo();
+            FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+            String seleniumToolType = frameworkUtil.getSeleniumToolType(appInfo);
             removeSessionAttribute(appInfo.getId() + PHASE_FUNCTIONAL_TEST + SESSION_WATCHER_MAP);
             setProjModulesInReq();
             Map<String, DependantParameters> watcherMap = new HashMap<String, DependantParameters>(8);
 
-            MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(getApplicationInfo())));
-            List<Parameter> parameters = getMojoParameters(mojo, PHASE_FUNCTIONAL_TEST);
+            MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(appInfo)));
+            List<Parameter> parameters = getMojoParameters(mojo, PHASE_FUNCTIONAL_TEST + seleniumToolType);
 
             setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap);
             setSessionAttribute(appInfo.getId() + PHASE_FUNCTIONAL_TEST + SESSION_WATCHER_MAP, watcherMap);
@@ -470,6 +472,11 @@ public class Quality extends DynamicParameterAction implements Constants {
                 S_LOGGER.error("Entered into catch block of Quality.showFunctionalTestPopUp()" + FrameworkUtil.getStackTraceAsString(e));
             }
             return showErrorPopup(e, getText(EXCEPTION_QUALITY_FUNCTIONAL_PARAMS));
+        } catch (PhrescoPomException e) {
+            if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Quality.showFunctionalTestPopUp()" + FrameworkUtil.getStackTraceAsString(e));
+            }
+            return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_QUALITY_FUNCTIONAL_PARAMS));
         }
         
         return SUCCESS;
@@ -488,7 +495,9 @@ public class Quality extends DynamicParameterAction implements Constants {
 	            workingDirectory.append(getProjectModule());
 	        }
 	        MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(appInfo)));
-	        persistValuesToXml(mojo, PHASE_FUNCTIONAL_TEST);
+	        FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+            String seleniumToolType = frameworkUtil.getSeleniumToolType(appInfo);
+	        persistValuesToXml(mojo, PHASE_FUNCTIONAL_TEST + seleniumToolType);
 	        ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 	        BufferedReader reader = applicationManager.performAction(getProjectInfo(), ActionType.FUNCTIONAL_TEST, null, workingDirectory.toString());
 	        setSessionAttribute(getAppId() + FUNCTIONAL, reader);
@@ -499,7 +508,12 @@ public class Quality extends DynamicParameterAction implements Constants {
 	    		S_LOGGER.error("Entered into catch block of Quality.runFunctionalTest()"+ FrameworkUtil.getStackTraceAsString(e));
 	    	}
 	        return showErrorPopup(e, getText(EXCEPTION_QUALITY_FUNCTIONAL_RUN));
-	    }
+	    } catch (PhrescoPomException e) {
+	        if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Quality.runFunctionalTest()"+ FrameworkUtil.getStackTraceAsString(e));
+            }
+            return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_QUALITY_FUNCTIONAL_RUN));
+        }
 
 	    return APP_ENVIRONMENT_READER;
 	}
@@ -560,7 +574,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 	        .append(File.separator)
 	        .append(LOG_DIR)
 	        .append(File.separator)
-	        .append(Constants.HUB_LOG);
+	        .append(HUB_LOG);
 	        BufferedReader reader = new BufferedReader(new FileReader(sb.toString()));
 	        setSessionAttribute(getAppId() + START_HUB, reader);
 	        setReqAttribute(REQ_APP_ID, getAppId());
@@ -656,7 +670,9 @@ public class Quality extends DynamicParameterAction implements Constants {
             FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
             String functionalTestDir = frameworkUtil.getFunctionalTestDir(getApplicationInfo());
             StringBuilder sb = new StringBuilder(getApplicationHome());
-            sb.append(functionalTestDir).append(File.separator).append(Constants.NODE_CONFIG_JSON);
+            sb.append(functionalTestDir)
+			.append(File.separator)
+			.append(Constants.NODE_CONFIG_JSON);
             File hubConfigFile = new File(sb.toString());
             Gson gson = new Gson();
             reader = new BufferedReader(new FileReader(hubConfigFile));
@@ -786,6 +802,56 @@ public class Quality extends DynamicParameterAction implements Constants {
         return SUCCESS;
     }
 	
+    public String performance() {
+        if (s_debugEnabled) {
+            S_LOGGER.debug("Entering Method Quality.performance()");
+        }
+
+        try {
+            ApplicationInfo appInfo = getApplicationInfo();
+            FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+            getHttpRequest().setAttribute(PATH, frameworkUtil.getPerformanceTestDir(appInfo));
+            setReqAttribute(REQ_APPINFO, appInfo);
+        } catch (PhrescoException e) {
+            if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Quality.performance()"+ FrameworkUtil.getStackTraceAsString(e));
+            }
+            return showErrorPopup(e, getText(EXCEPTION_QUALITY_FUNCTIONAL_STOP_NODE));
+        } catch (PhrescoPomException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        return APP_PERFORMANCE_TEST;
+    }
+    
+    public String showPerformanceTestPopUp() {
+        if (s_debugEnabled) {
+            S_LOGGER.debug("Entering Method Quality.showPerformanceTestPopUp()");
+        }
+        
+        try {
+            ApplicationInfo appInfo = getApplicationInfo();
+            removeSessionAttribute(appInfo.getId() + PHASE_FUNCTIONAL_TEST + SESSION_WATCHER_MAP);
+            Map<String, DependantParameters> watcherMap = new HashMap<String, DependantParameters>(8);
+
+            MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(appInfo)));
+            List<Parameter> parameters = getMojoParameters(mojo, PHASE_PERFORMANCE_TEST);
+
+            setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap);
+            setSessionAttribute(appInfo.getId() + PHASE_PERFORMANCE_TEST + SESSION_WATCHER_MAP, watcherMap);
+            setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
+            setReqAttribute(REQ_GOAL, PHASE_PERFORMANCE_TEST);
+        } catch (PhrescoException e) {
+            if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Quality.showFunctionalTestPopUp()" + FrameworkUtil.getStackTraceAsString(e));
+            }
+            return showErrorPopup(e, getText(EXCEPTION_QUALITY_FUNCTIONAL_PARAMS));
+        }
+        
+        return SUCCESS;
+    }
+	
 	private List<String> getTestSuiteNames(String testResultPath, String testSuitePath) throws FileNotFoundException, ParserConfigurationException,
             SAXException, IOException, TransformerException, PhrescoException, PhrescoPomException {
         String testSuitesMapKey = getAppId() + getTestType() + getProjectModule() + getTechReport();
@@ -811,26 +877,23 @@ public class Quality extends DynamicParameterAction implements Constants {
     	S_LOGGER.debug("getTestDocument() ProjectInfo = "+appInfo);
     	S_LOGGER.debug("getTestDocument() TestResultFile = "+testResultFile);
     	
-    	String techId = appInfo.getTechInfo().getId();
         FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-        StringBuilder sb = new StringBuilder();
-        sb.append(Utility.getProjectHome());
-        sb.append(appInfo.getAppDirName());
+        StringBuilder sb = new StringBuilder(getApplicationHome());
 
-        if (FUNCTIONAL.equals(testType)) {
+        if (FUNCTIONAL.equals(getTestType())) {
         	if (StringUtils.isNotEmpty(projectModule)) {
                 sb.append(File.separatorChar);
                 sb.append(projectModule);
     		}
-//            sb.append(frameworkUtil.getFunctionalReportDir(techId));
-        } else if (UNIT.equals(testType)) {
-        	if (StringUtils.isNotEmpty(projectModule)) {
+            sb.append(frameworkUtil.getFunctionalTestReportDir(appInfo));
+        } else if (UNIT.equals(getTestType())) {
+        	if (StringUtils.isNotEmpty(getProjectModule())) {
                 sb.append(File.separatorChar);
-                sb.append(projectModule);
+                sb.append(getProjectModule());
     		}
         	
         	StringBuilder tempsb = new StringBuilder(sb);
-        	if ("javascript".equals(techReport)) {
+        	if ("javascript".equals(getTechReport())) {
         		tempsb.append(UNIT_TEST_QUNIT_REPORT_DIR);
         		File file = new File(tempsb.toString());
                 if (file.isDirectory() && file.list().length > 0) {
@@ -841,18 +904,18 @@ public class Quality extends DynamicParameterAction implements Constants {
         	} else {
         		sb.append(frameworkUtil.getUnitTestReportDir(appInfo));
         	}
-        } else if (LOAD.equals(testType)) {
+        } else if (LOAD.equals(getTestType())) {
             /*sb.append(frameworkUtil.getLoadReportDir(techId));*/
             sb.append(File.separator);
             sb.append(testResultFile);
-        } else if (PERFORMACE.equals(testType)) {
-            String performanceReportDir = frameworkUtil.getPerformanceReportDir(techId);
+        } else if (PERFORMACE.equals(getTestType())) {
+            String performanceTestReportDir = frameworkUtil.getPerformanceTestReportDir(appInfo);
             Pattern p = Pattern.compile(TEST_DIRECTORY);
-            Matcher matcher = p.matcher(performanceReportDir);
-            if (StringUtils.isNotEmpty(performanceReportDir) && matcher.find()) {
-                performanceReportDir = matcher.replaceAll(testResultsType);
+            Matcher matcher = p.matcher(performanceTestReportDir);
+            if (StringUtils.isNotEmpty(performanceTestReportDir) && matcher.find()) {
+                performanceTestReportDir = matcher.replaceAll(getTestResultsType());
             }
-            sb.append(performanceReportDir);
+            sb.append(performanceTestReportDir);
             sb.append(File.separator);
             sb.append(testResultFile);
         }
@@ -1370,7 +1433,7 @@ public class Quality extends DynamicParameterAction implements Constants {
             if (testType != null && APP_PERFORMANCE_TEST.equals(testType)) {
                    S_LOGGER.debug("Test type() test type performance test");
                 FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-                getHttpRequest().setAttribute(PATH,	frameworkUtil.getPerformanceTestDir(techId));
+//                getHttpRequest().setAttribute(PATH,	frameworkUtil.getPerformanceTestDir(techId));
                 getHttpRequest().setAttribute(REQ_TEST_TYPE, testType);
                 getHttpRequest().setAttribute(REQ_APP_INFO, appInfo);
                 getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
@@ -1497,10 +1560,10 @@ public class Quality extends DynamicParameterAction implements Constants {
             FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
             StringBuilder builder = new StringBuilder(Utility.getProjectHome());
             builder.append(project.getApplicationInfo().getCode());
-            String performanceTestDir = frameworkUtil.getPerformanceTestDir(techId);
+//            String performanceTestDir = frameworkUtil.getPerformanceTestDir(techId);
             
-               S_LOGGER.debug("Performance test directory path from framework util " + frameworkUtil.getPerformanceTestDir(techId));
-               builder.append(performanceTestDir);
+//               S_LOGGER.debug("Performance test directory path from framework util " + frameworkUtil.getPerformanceTestDir(techId));
+//               builder.append(performanceTestDir);
                S_LOGGER.debug("Performance test directory path " + builder.toString());
             if (!TechnologyTypes.ANDROIDS.contains(techId)) {
             	if ("WebService".equals(jmeterTestAgainst)) {
@@ -1745,107 +1808,113 @@ public class Quality extends DynamicParameterAction implements Constants {
         return "loadTestResult";
     }
 
-    @SuppressWarnings("static-access")
-	public String performanceTestResultFiles() {
-        
-           S_LOGGER.debug("Entering Method Quality.performanceTestResultFiles()");
-        
-        try {
-            ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-            Project project = administrator.getProject(projectCode);
-            FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-            StringBuilder sb = new StringBuilder();
-            sb.append(Utility.getProjectHome());
-            sb.append(project.getApplicationInfo().getCode());
-            String performanceReportDir = frameworkUtil.getPerformanceReportDir(project.getApplicationInfo().getTechInfo().getVersion());
-            
-               S_LOGGER.debug("test type performance test Report directory " + performanceReportDir);
-                       
-            if (StringUtils.isNotEmpty(performanceReportDir) && StringUtils.isNotEmpty(testResultsType)) {
-                Pattern p = Pattern.compile("dir_type");
-                Matcher matcher = p.matcher(performanceReportDir);
-                performanceReportDir = matcher.replaceAll(testResultsType);
-                sb.append(performanceReportDir);
-            }
-            
-               S_LOGGER.debug("test type performance test Report directory & Type " + sb.toString() + " Type " + testResultsType);
-            
-            
-            File file = new File(sb.toString());
-            File[] children = file.listFiles(new XmlNameFileFilter(FILE_EXTENSION_XML));
-            QualityUtil util = new QualityUtil();
-            if(children != null) {
-            	util.sortResultFile(children);
-                getHttpRequest().setAttribute(REQ_JMETER_REPORT_FILES, children);
-            } else {
-                getHttpRequest().setAttribute(REQ_ERROR_TESTSUITE, ERROR_TEST_SUITE);
-            }
-            testResultFiles = new ArrayList<String>();
-            for (File resultFile : children) {
-                if (resultFile.isFile()) {
-                    testResultFiles.add(resultFile.getName());
-                }
-            }
-        } catch(Exception e) {
-            
-               S_LOGGER.error("Entered into catch block of Quality.performanceTestResultFiles()"+ FrameworkUtil.getStackTraceAsString(e));
+    public String performanceTestResultAvail() {
+        if (s_debugEnabled) {
+            S_LOGGER.debug("Entering Method Quality.performanceTestResultAvail()");
         }
-        return "success";
-    }
-    
-	public String performanceTestResultAvail() {
-           S_LOGGER.debug("Entering Method Quality.performanceTestResultAvail()");
+
         try {
-            ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-            Project project = administrator.getProject(projectCode);
             FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
             List<String> testResultsTypes = new ArrayList<String>();
             testResultsTypes.add("server");
             testResultsTypes.add("database");
             testResultsTypes.add("webservices");
-            for(String perType: testResultsTypes) {
-                StringBuilder sb = new StringBuilder();
-                sb.append(Utility.getProjectHome());
-                sb.append(project.getApplicationInfo().getCode());
-                String performanceReportDir = frameworkUtil.getPerformanceReportDir(project.getApplicationInfo().getTechInfo().getVersion());
-                
-	            if (StringUtils.isNotEmpty(performanceReportDir) && StringUtils.isNotEmpty(perType)) {
-	                Pattern p = Pattern.compile("dir_type");
-	                Matcher matcher = p.matcher(performanceReportDir);
-	                performanceReportDir = matcher.replaceAll(perType);
-	                sb.append(performanceReportDir); 
-	            }
-	            File file = new File(sb.toString());
-	            File[] children = file.listFiles(new XmlNameFileFilter(FILE_EXTENSION_XML));
-	            if(children != null && children.length > 0) {
-	            	isAtleastOneFileAvail = true;
-	            	break;
-	            }
+            for (String testResultsType: testResultsTypes) {
+                StringBuilder sb = new StringBuilder(getApplicationHome());
+                String performanceReportDir = frameworkUtil.getPerformanceTestReportDir(getApplicationInfo());
+                if (StringUtils.isNotEmpty(performanceReportDir) && StringUtils.isNotEmpty(testResultsType)) {
+                    Pattern p = Pattern.compile("dir_type");
+                    Matcher matcher = p.matcher(performanceReportDir);
+                    performanceReportDir = matcher.replaceAll(testResultsType);
+                    sb.append(performanceReportDir); 
+                }
+                File file = new File(sb.toString());
+                File[] children = file.listFiles(new XmlNameFileFilter(FILE_EXTENSION_XML));
+                if (!ArrayUtils.isEmpty(children)) {
+                    setResultFileAvailable(true);
+                    break;
+                }
             }
-            
         } catch(Exception e) {
-               S_LOGGER.error("Entered into catch block of Quality.performanceTestResultAvail()"+ FrameworkUtil.getStackTraceAsString(e));
+            if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Quality.performanceTestResultAvail()"+ FrameworkUtil.getStackTraceAsString(e));
+            }
         }
-        return "success";
+
+        return SUCCESS;
     }
 	
-    public String performanceTestResult() {
-           S_LOGGER.debug("Entering Method Quality.performanceTestResult()");
+    public String fetchPerformanceTestResultFiles() {
+        if (s_debugEnabled) {
+            S_LOGGER.debug("Entering Method Quality.fetchPerformanceTestResultFiles()");
+        }
         
         try {
-            String testResultFile = getHttpRequest().getParameter(REQ_TEST_RESULT_FILE);
-            String showGraphFor = getHttpRequest().getParameter("showGraphFor");
-            ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
+            StringBuilder sb = new StringBuilder(getApplicationHome());
+            FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+            String performanceReportDir = frameworkUtil.getPerformanceTestReportDir(getApplicationInfo());
+            
+            if (s_debugEnabled) {
+                S_LOGGER.debug("test type performance test Report directory " + performanceReportDir);
+            }
+
+            if (StringUtils.isNotEmpty(performanceReportDir) && StringUtils.isNotEmpty(getTestResultsType())) {
+                Pattern p = Pattern.compile(TEST_DIRECTORY);
+                Matcher matcher = p.matcher(performanceReportDir);
+                performanceReportDir = matcher.replaceAll(getTestResultsType());
+                sb.append(performanceReportDir);
+            }
+            
+            if (s_debugEnabled) {
+                S_LOGGER.debug("test type performance test Report directory & Type " + sb.toString() + " Type " + getTestResultsType());
+            }
+
+            File file = new File(sb.toString());
+            File[] childrens = file.listFiles(new XmlNameFileFilter(FILE_EXTENSION_XML));
+            if (!ArrayUtils.isEmpty(childrens)) {
+                QualityUtil.sortResultFile(childrens);
+                setReqAttribute(REQ_JMETER_REPORT_FILES, childrens);
+            } else {
+                setReqAttribute(REQ_ERROR_TESTSUITE, ERROR_TEST_SUITE);
+            }
+            for (File resultFile : childrens) {
+                if (resultFile.isFile()) {
+                    testResultFiles.add(resultFile.getName());
+                }
+            }
+        } catch(PhrescoException e) {
+            if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Quality.fetchPerformanceTestResultFiles()"+ FrameworkUtil.getStackTraceAsString(e));
+            }
+        } catch (PhrescoPomException e) {
+            if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Quality.fetchPerformanceTestResultFiles()"+ FrameworkUtil.getStackTraceAsString(e));
+            }
+        }
+        
+        return SUCCESS;
+    }
+	
+    public String fetchPerformanceTestResult() {
+        if (s_debugEnabled) {
+           S_LOGGER.debug("Entering Method Quality.fetchPerformanceTestResult()");
+        }
+        
+        try {
+            System.out.println("inside fetchPerformanceTestResult()....");
+            String showGraphFor = getReqParameter(REQ_SHOW_GRAPH);
             ApplicationInfo appInfo = getApplicationInfo();
 //            String deviceId = getHttpRequest().getParameter("deviceId"); // android device id for display
             String techId = appInfo.getTechInfo().getId();
-               S_LOGGER.debug("Performance test file name " + testResultFile);
-            
-            if (!testResultFile.equals("null")) {
-            	String testResultPath = getTestResultPath(appInfo, testResultFile);
+            if (s_debugEnabled) {
+               S_LOGGER.debug("Performance test file name " + getTestResultFile());
+            }
+            if (StringUtils.isNotEmpty(getTestResultFile())) {
+                System.out.println("inside if in test result file is not empty:::" + getTestResultFile());
+            	String testResultPath = getPerformanceTestResultPath(appInfo, getTestResultFile());
                 Document document = getDocument(new File(testResultPath)); 
                 Map<String, PerformanceTestResult> performanceReport = QualityUtil.getPerformanceReport(document, getHttpRequest(), techId, testResultDeviceId); // need to pass tech id and tag name
-                getHttpRequest().setAttribute(REQ_TEST_RESULT, performanceReport);
+                setReqAttribute(REQ_TEST_RESULT, performanceReport);
 
                 Set<String> keySet = performanceReport.keySet();
                 StringBuilder data = new StringBuilder("[");
@@ -1884,21 +1953,46 @@ public class Quality extends DynamicParameterAction implements Constants {
                 }
                 label.append("]");
                 data.append("]");
-                getHttpRequest().setAttribute(FrameworkConstants.REQ_GRAPH_DATA, data.toString());
-                getHttpRequest().setAttribute(FrameworkConstants.REQ_GRAPH_LABEL, label.toString());
-                getHttpRequest().setAttribute(FrameworkConstants.REQ_GRAPH_ALL_DATA, allMin +", "+ allAvg +", "+ allMax);
-                getHttpRequest().setAttribute(FrameworkConstants.REQ_SHOW_GRAPH, showGraphFor);
-                getHttpRequest().setAttribute(REQ_APP_INFO, appInfo);
+                setReqAttribute(FrameworkConstants.REQ_GRAPH_DATA, data.toString());
+                setReqAttribute(FrameworkConstants.REQ_GRAPH_LABEL, label.toString());
+                setReqAttribute(FrameworkConstants.REQ_GRAPH_ALL_DATA, allMin +", "+ allAvg +", "+ allMax);
+                setReqAttribute(FrameworkConstants.REQ_SHOW_GRAPH, showGraphFor);
+                setReqAttribute(REQ_APP_INFO, appInfo);
             } else {
-                getHttpRequest().setAttribute(REQ_ERROR_TESTSUITE, ERROR_TEST_SUITE);
+                setReqAttribute(REQ_ERROR_TESTSUITE, ERROR_TEST_SUITE);
             }
         } catch (Exception e) {
-        	getHttpRequest().setAttribute(REQ_ERROR_DATA, ERROR_ANDROID_DATA);
+            e.printStackTrace();
+            setReqAttribute(REQ_ERROR_DATA, ERROR_ANDROID_DATA);
+            if (s_debugEnabled) {
                S_LOGGER.error("Entered into catch block of Quality.performanceTestResult()"+ e);
+            }
         }
 
-        getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
-        return "performanceTestResult";
+        return SUCCESS;
+    }
+    
+    private String getPerformanceTestResultPath(ApplicationInfo appInfo, String testResultFile) throws PhrescoException, JAXBException, IOException, PhrescoPomException {
+        if (s_debugEnabled) {
+            S_LOGGER.debug("Entering Method Quality.getFunctionalTestResultPath()");
+        }
+        
+        StringBuilder sb = new StringBuilder(getApplicationHome());
+        
+        //To change the dir_type based on the selected type
+        FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+        String performanceTestReportDir = frameworkUtil.getPerformanceTestReportDir(appInfo);
+        Pattern p = Pattern.compile(TEST_DIRECTORY);
+        Matcher matcher = p.matcher(performanceTestReportDir);
+        if (StringUtils.isNotEmpty(performanceTestReportDir) && matcher.find()) {
+            performanceTestReportDir = matcher.replaceAll(getTestResultsType());
+        }
+        
+        sb.append(performanceTestReportDir);
+        sb.append(File.separator);
+        sb.append(testResultFile);
+        
+        return sb.toString();
     }
 
     public String quality() {
@@ -2232,8 +2326,8 @@ public class Quality extends DynamicParameterAction implements Constants {
 	         FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
 	         StringBuilder builder = new StringBuilder(Utility.getProjectHome());
 	         builder.append(project.getApplicationInfo().getCode());
-	         String performanceTestDir = frameworkUtil.getPerformanceTestDir(project.getApplicationInfo().getTechInfo().getVersion());
-			 builder.append(performanceTestDir);
+//	         String performanceTestDir = frameworkUtil.getPerformanceTestDir(project.getApplicationInfo().getTechInfo().getVersion());
+//			 builder.append(performanceTestDir);
 			 if(WEBSERVICE.equals(jmeterTestAgainst)) {
 				 builder.append(WEBSERVICES_DIR);
 			 } else {
@@ -2386,7 +2480,7 @@ public class Quality extends DynamicParameterAction implements Constants {
             	testDirPath = frameworkUtil.getLoadTestReportDir(appInfo);
             	sb.append(testDirPath);
             } else {
-                testDirPath = frameworkUtil.getPerformanceReportDir("");
+                testDirPath = frameworkUtil.getPerformanceTestReportDir(getApplicationInfo());
                 if (StringUtils.isNotEmpty(testDirPath) && StringUtils.isNotEmpty(settingType)) {
                     Pattern p = Pattern.compile("dir_type");
                     Matcher matcher = p.matcher(testDirPath);
@@ -2409,11 +2503,10 @@ public class Quality extends DynamicParameterAction implements Constants {
                 }
 
             }
-            
         } catch(Exception e) {
                S_LOGGER.error("Entered into catch block of Quality.perTstResultFiles"+ FrameworkUtil.getStackTraceAsString(e));
         }
-        return "success";
+        return SUCCESS;
     }
 	
 	public String devices() {
@@ -2634,7 +2727,7 @@ public class Quality extends DynamicParameterAction implements Constants {
             
             if(!XmlResultsAvailable) {
 	            performanceTestResultAvail();
-	        	if(isAtleastOneFileAvail()) {
+	        	if(isResultFileAvailable()) {
 	        		S_LOGGER.debug("Check on performance for report");
 	        		XmlResultsAvailable = true;
 	        	}
@@ -2930,12 +3023,12 @@ public class Quality extends DynamicParameterAction implements Constants {
 		this.testName = testName;
 	}
 
-	public boolean isAtleastOneFileAvail() {
-		return isAtleastOneFileAvail;
+	public boolean isResultFileAvailable() {
+		return resultFileAvailable;
 	}
 
-	public void setAtleastOneFileAvail(boolean isAtleastOneFileAvail) {
-		this.isAtleastOneFileAvail = isAtleastOneFileAvail;
+	public void setResultFileAvailable(boolean isAtleastOneFileAvail) {
+		this.resultFileAvailable = isAtleastOneFileAvail;
 	}
     
 	public String getShowError() {

@@ -482,6 +482,14 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     public String getLoadTestReportDir(ApplicationInfo appinfo) throws PhrescoPomException, PhrescoException {
     	return getPomProcessor(appinfo.getAppDirName()).getProperty(POM_PROP_KEY_LOADTEST_RPT_DIR);
     }
+    
+    public String getPerformanceTestDir(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
+        return getPomProcessor(appinfo.getAppDirName()).getProperty(POM_PROP_KEY_PERFORMANCETEST_DIR);
+    }
+    
+    public String getPerformanceTestReportDir(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
+        return getPomProcessor(appinfo.getAppDirName()).getProperty(POM_PROP_KEY_PERFORMANCETEST_RPT_DIR);
+    }
 
 	public String getHubConfigFile(ApplicationInfo appInfo) throws PhrescoException, PhrescoPomException {
         StringBuilder sb = new StringBuilder(Utility.getProjectHome());
@@ -495,16 +503,6 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 
     public String getFuncitonalAdaptDir(String technologyId) {
         String key = funcationAdaptMap.get(technologyId);
-        return qualityReportsProp.getProperty(key);
-    }
-    
-    public String getPerformanceTestDir(String technologyId) {
-        String key = performanceTestMap.get(technologyId);
-        return qualityReportsProp.getProperty(key);
-    }
-    
-    public String getPerformanceReportDir(String technologyId) {
-        String key = performanceReportMap.get(technologyId);
         return qualityReportsProp.getProperty(key);
     }
     

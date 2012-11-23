@@ -21,22 +21,19 @@
 
 <%@ page import="java.io.File"%>
 
-<%@ page import="com.photon.phresco.framework.api.Project"%>
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 <%@ page import="com.photon.phresco.util.TechnologyTypes" %>
+<%@ page import="com.photon.phresco.util.Constants"%>
 
 <%@include file="../progress.jsp" %>
 
 <%
 	ApplicationInfo appInfo = (ApplicationInfo)request.getAttribute(FrameworkConstants.REQ_APPINFO);
+	String appId = appInfo.getId();
 	String appDirName = appInfo.getAppDirName();
-    Project project = (Project) request.getAttribute(FrameworkConstants.REQ_PROJECT);
-	String projectCode = (String) request.getAttribute(FrameworkConstants. REQ_PROJECT_CODE); 
-   	String testType = (String) request.getAttribute(FrameworkConstants.REQ_TEST_TYPE);
-   	String testError = (String) request.getAttribute(FrameworkConstants.REQ_ERROR_TESTSUITE);
+	String techId = appInfo.getTechInfo().getId();
 	String path = (String) request.getAttribute(FrameworkConstants.PATH);
-	String techId = project.getApplicationInfo().getTechInfo().getVersion();
 %>
 
 <style>
@@ -56,9 +53,9 @@
 }
 </style>
 	
-<form action="" method="post" autocomplete="off" style="margin-bottom: 0px; height: 100%;">
+<form autocomplete="off" style="margin-bottom: 0px; height: 100%;" id="formPerformance">
 	<div class="operation">
-        <%
+        <%-- <%
         	if ((Boolean)request.getAttribute(FrameworkConstants.REQ_BUILD_WARNING)) {
         %>
 			<div class="alert-message warning display_msg" >
@@ -66,8 +63,8 @@
 	   		</div>
    		<%
            	}
-		%>
-	    <input id="testbtn" type="button" value="<s:text name="label.test"/>" class="primary btn env_btn">
+		%> --%>
+	    <input id="performanceTest" type="button" value="<s:text name='lbl.test'/>" class="btn btn-primary">
 	    <div class="perOpenAndCopyPath">
 	    	<a href="#" id="pdfPopup" style="display: none;"><img id="pdfCreation" src="images/icons/print_pdf.png" title="generate pdf" style="height: 20px; width: 20px;"/></a>
 			<a href="#" id="openFolder"><img id="folderIcon" src="images/icons/open-folder.png" title="Open folder"/></a>
@@ -85,7 +82,7 @@
         <select  class="noTestAvail" id="testResultFile" name="testResultFile">
         </select>
         <%
-        	if(TechnologyTypes.ANDROIDS.contains(techId)) {
+        	if (TechnologyTypes.ANDROIDS.contains(techId)) {
         %>
 	        <strong class="noTestAvail" id="testResultDeviceName"><s:text name="label.device"/></strong> 
 	        <select  class="noTestAvail" id="testResultDeviceId" name="testResultDeviceId" style="width :100px;">
@@ -123,8 +120,6 @@
     <div id="testResultDisplay" class="testSuiteDisplay">
     </div>
 	    
-    <input type="hidden" id="testType" name="testType" value="<%= testType%>">
-	    
 	<div class="perErrorDis" id="noFiles">
 		<div class="alert-message block-message warning" style="margin: 5px 0px 0;">
 			<label Class="errorMsgLabel"><s:text name="performancetest.not.executed"/></label>
@@ -134,8 +129,14 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
+    	hideLoadingIcon();
     	
-    	isResultFileAvailbale();
+    	isResultFileAvailbale();//Check for the performance test result
+    	
+    	$('#performanceTest').click(function() {
+    		$('#popupPage').css("width", "675px");
+    		validateDynamicParam('showPerformanceTestPopUp', '<s:text name="lbl.performance.test"/>', 'runPerformanceTest','<s:text name="lbl.test"/>', '', '<%= Constants.PHASE_PERFORMANCE_TEST  %>');
+    	});
     	
 		$(".noTestAvail").hide();// When there is no result table, it hides everything except test button
 		$("#graphBasedOn").hide();
@@ -168,9 +169,9 @@
 			performanceTestResults($("#testResultsType").val());
 		});
 		
-        $('#testbtn').click(function() {
+        <%-- $('#testbtn').click(function() {
 			generateJmeter('<%= testType %>');
-        });
+        }); --%>
         
         $('#openFolder').click(function() {
             openFolder('<%= appDirName %><%= path %>');
@@ -187,12 +188,12 @@
     	    escPopup();
 	    });
         
-        $('#closeGenerateTest, #closeGenTest').click(function() {
+        <%-- $('#closeGenerateTest, #closeGenTest').click(function() {
         	changeTesting('<%= testType %>');
         	$(".wel_come").show().css("display","none");
         	$('#popup_div').css("display","none");
     		$('#popup_div').empty();
-    	});
+    	}); --%>
         
     });
    
@@ -218,66 +219,36 @@
         
 	}
        
-	function performanceTestResults(testResultsType) {
-		var params = "";
-    	if (!isBlank($('form').serialize())) {
-    		params = $('form').serialize() + "&";
-    	}
-		performAction('performanceTestResult', params, $('#testResultDisplay'));
-		//show print as pdf icon
-		$('#pdfPopup').show();
-    }
-	
+	//To check for the performance test result 
     function isResultFileAvailbale() {
-       	var params = "";
-    	if (!isBlank($('form').serialize())) {
-    		params = $('form').serialize() + "&";
-    	}
-    	params = params.concat('<%= FrameworkConstants.REQ_TEST_TYPE %>' + "=");
-		params = params.concat('<%= testType%>');
-    	performAction('performanceTestResultAvail', params, '', true);
+    	loadContent('performanceTestResultAvail', '', '', getBasicParams(), true);
     }
     
-    function successIsResultFileAvailable(data) {
-       	if (data == false) {
-       		$("#noFiles").show();
-       		testResultNotAvail();
-       		enableScreen();
-		} else {
-       		testResultAvailShowList();
-       		performanceTestResultsFiles();
-       	}
-    }
-    
+	//To get the test result files
     function performanceTestResultsFiles() {
         testResultsType = $("#testResultsType").val();
-        var params = "";
-    	if (!isBlank($('form').serialize())) {
-    		params = $('form').serialize() + "&";
-    	}
-    	params = params.concat('<%= FrameworkConstants.REQ_TEST_TYPE %>' + "=");
-		params = params.concat('<%= testType%>');
-    	performAction('performanceTestResultFiles', params, '', true);
+        loadContent('fetchPerformanceTestResultFiles', $('#formPerformance'), '', getBasicParams(), true);
     }
     
     function successPerfTestResultsFiles(data) {
-		if (data != null && !isBlank(data)) {
+    	var resultFiles = data.testResultFiles;
+		if (resultFiles != null && !isBlank(resultFiles)) {
        		$('#testResultFile').show();
        		$('#testResultFile').empty();
-			for (i in data) {
-            	$('#testResultFile').append($("<option></option>").attr("value",data[i]).text(data[i]));
+			for (i in resultFiles) {
+            	$('#testResultFile').append($("<option></option>").attr("value",resultFiles[i]).text(resultFiles[i]));
             }
             $("#noFiles").hide(); // hides no result found error message when there is test result file
             $("#testResultDisplay").show();
 			<%
-				if(TechnologyTypes.ANDROIDS.contains(techId)) {
+				if (TechnologyTypes.ANDROIDS.contains(techId)) {
 			%>
 				getDevicesName();
 				disableType();
 			<%
 				} else {
 			%>
-				performanceTestResults(testResultsType);
+					performanceTestResults(testResultsType);
 			<%
 				}
 			%>
@@ -287,6 +258,12 @@
        		$('.errorMsgLabel').html("Performance test not yet executed for " + testResultsType);
        		testResultAvailShowList();
        	}
+    }
+    
+    function performanceTestResults() {
+		loadContent('fetchPerformanceTestResult', $('#formPerformance'), $('#testResultDisplay'), getBasicParams());
+		//show print as pdf icon
+		$('#pdfPopup').show();
     }
     
     function testResultAvailShowList() {
@@ -334,18 +311,26 @@
 		$('#testResultsType').css("display","none");
 	}
 	
+	//successEvent actions
 	function successEvent(pageUrl, data) {
-		if(pageUrl == "performanceTestResultAvail") {
-			successIsResultFileAvailable(data);
-		} else if(pageUrl == "performanceTestResultFiles") {
+		if (pageUrl == "performanceTestResultAvail") {
+			if (!data.resultFileAvailable) {
+	       		$("#noFiles").show();
+	       		testResultNotAvail();
+	       		enableScreen();
+			} else {
+	       		testResultAvailShowList();
+	       		performanceTestResultsFiles();
+	       	}
+		} else if (pageUrl == "fetchPerformanceTestResultFiles") {
 			successPerfTestResultsFiles(data);
-		} else if(pageUrl == "getDevices") {
+		} else if (pageUrl == "getDevices") {
 			successGetDeviceName(data);
-		} else if(pageUrl == "tstResultFiles") {
+		} else if (pageUrl == "tstResultFiles") {
 			successLoadTestFiles(data);
-		} else if(pageUrl == "checkForConfigType") {
+		} else if (pageUrl == "checkForConfigType") {
 			successEnvValidation(data);
-		} else if(pageUrl == "getPerfTestJSONData") {
+		} else if (pageUrl == "getPerfTestJSONData") {
 			fillJSONData(data);
 		}
 	}

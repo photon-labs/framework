@@ -634,6 +634,22 @@
 		<action name="stopNode" method="stopNode" class="com.photon.phresco.framework.actions.applications.Quality">
 			<result type="json" />
 		</action>
+		
+		<action name="performance" method="performance" class="com.photon.phresco.framework.actions.applications.Quality">
+        	<result name="performance">/pages/applications/quality/performance.jsp</result>
+		</action>
+		
+		<action name="performanceTestResultAvail" method="performanceTestResultAvail" class="com.photon.phresco.framework.actions.applications.Quality">
+            <result type="json" />
+        </action>
+        
+        <action name="fetchPerformanceTestResultFiles" method="fetchPerformanceTestResultFiles" class="com.photon.phresco.framework.actions.applications.Quality">
+            <result type="json" />
+        </action>
+		
+		<action name="showPerformanceTestPopUp" method="showPerformanceTestPopUp" class="com.photon.phresco.framework.actions.applications.Quality">
+			<result name="success">/pages/applications/dynamic_parameter.jsp</result>
+        </action>
         
         <action name="fetchBuildInfoEnvs" method="fetchBuildInfoEnvs" class="com.photon.phresco.framework.actions.applications.Quality">
             <result type="json" />
@@ -691,16 +707,8 @@
             <result name="loadTestResult">/pages/applications/quality/loadTestResult.jsp</result>
         </action>
         
-        <action name="performanceTestResult" method="performanceTestResult" class="com.photon.phresco.framework.actions.applications.Quality">
-            <result name="performanceTestResult">/pages/applications/quality/performanceTestResult.jsp</result>
-        </action>
-        
-        <action name="performanceTestResultFiles" method="performanceTestResultFiles" class="com.photon.phresco.framework.actions.applications.Quality">
-            <result type="json"><param name="root">testResultFiles</param></result>
-        </action>
-        
-        <action name="performanceTestResultAvail" method="performanceTestResultAvail" class="com.photon.phresco.framework.actions.applications.Quality">
-            <result type="json"><param name="root">atleastOneFileAvail</param></result>
+        <action name="fetchPerformanceTestResult" method="fetchPerformanceTestResult" class="com.photon.phresco.framework.actions.applications.Quality">
+            <result name="success">/pages/applications/quality/performanceTestResult.jsp</result>
         </action>
         
         <!-- <action name="connectionAliveCheck" method="connectionAliveCheck" class="com.photon.phresco.framework.actions.settings.Settings">

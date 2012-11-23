@@ -36,7 +36,6 @@
 	String techId = appInfo.getTechInfo().getId();
 	String path = (String) request.getAttribute(FrameworkConstants.PATH);
 	String functioanlTestTool = (String) request.getAttribute(FrameworkConstants.REQ_FUNCTEST_SELENIUM_TOOL);
-	String fromPage = (String) request.getAttribute(FrameworkConstants.REQ_FROM_PAGE);
 	List<String> projectModules = (List<String>) request.getAttribute(FrameworkConstants.REQ_PROJECT_MODULES);
 %>
 
@@ -141,7 +140,7 @@ $(document).ready(function() {
 	loadTestSuites();
 	
 	$('#functionalTest').click(function() {
-		validateDynamicParam('showFunctionalTestPopUp', '<s:text name="lbl.functional.test"/>', 'runFunctionalTest','<s:text name="lbl.test"/>', '', '<%= Constants.PHASE_FUNCTIONAL_TEST %>');
+		validateDynamicParam('showFunctionalTestPopUp', '<s:text name="lbl.functional.test"/>', 'runFunctionalTest','<s:text name="lbl.test"/>', '', '<%= Constants.PHASE_FUNCTIONAL_TEST + '-' + functioanlTestTool %>');
 	});
 	
 	$('#startHubBtn').click(function() {

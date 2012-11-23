@@ -755,14 +755,14 @@ public class PhrescoReportGeneration extends FrameworkBaseAction {
             StringBuilder sb = new StringBuilder();
             sb.append(Utility.getProjectHome());
             sb.append(project.getApplicationInfo().getCode());
-            String performanceReportDir = reportPaths.getPerformanceReportDir(project.getApplicationInfo().getTechInfo().getVersion());
+            /*String performanceReportDir = reportPaths.getPerformanceReportDir(project.getApplicationInfo().getTechInfo().getVersion());
             
             if (StringUtils.isNotEmpty(performanceReportDir) && StringUtils.isNotEmpty(perType)) {
                 Pattern p = Pattern.compile("dir_type");
                 Matcher matcher = p.matcher(performanceReportDir);
                 performanceReportDir = matcher.replaceAll(perType);
                 sb.append(performanceReportDir); 
-            }
+            }*/
             List<String> testResultFiles = getTestResultFiles(sb.toString());
 			String deviceId = null; // for android alone
 			
@@ -795,10 +795,10 @@ public class PhrescoReportGeneration extends FrameworkBaseAction {
         StringBuilder sb = new StringBuilder();
         sb.append(Utility.getProjectHome());
         sb.append(project.getApplicationInfo().getCode());
-        String performanceReportDir = reportPaths.getPerformanceReportDir(project.getApplicationInfo().getTechInfo().getVersion());
+        /*String performanceReportDir = reportPaths.getPerformanceReportDir(project.getApplicationInfo().getTechInfo().getVersion());
         if (StringUtils.isNotEmpty(performanceReportDir)) {
             sb.append(performanceReportDir); 
-        }
+        }*/
         List<String> testResultFiles = getTestResultFiles(sb.toString());
 		
 		// List of performance test reports
