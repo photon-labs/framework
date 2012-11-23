@@ -16,7 +16,7 @@ public class ParameterModel extends BasicParameterModel {
 	private boolean multiple;
 	private boolean show;
 	private String dependency = "";
-	
+	private String fileType = "";
 	private List<BasicParameterModel> childs = null;
 	
 	public String getValue() {
@@ -83,7 +83,15 @@ public class ParameterModel extends BasicParameterModel {
         this.childs = childs;
     }
 
-    public String toString() {
+    public String getFileType() {
+		return fileType;
+	}
+
+	public void setFileType(String fileType) {
+		this.fileType = fileType;
+	}
+
+	public String toString() {
         return new ToStringBuilder(this,
                 ToStringStyle.DEFAULT_STYLE)
                 .append(super.toString())
