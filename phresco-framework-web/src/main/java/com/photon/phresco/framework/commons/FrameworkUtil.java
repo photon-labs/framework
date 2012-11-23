@@ -1113,9 +1113,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	sb.append("<div class='controls'>")
     	.append("<input type='checkbox' class=\"$class$\" id=\"$id$\" ")
     	.append("name=\"$name$\" value=\"$value$\" $checked$ onchange=\"$onChangeFunction$\" onclick=\"$onClickFunction$\" $additionalParam$/>")
-    	.append("name=\"$name$\" value=\"$value$\" $checked$ onclick=\"$onClickFunction$\" onChange=\"$onChangeFunction$\" $additionalParam$/>")
     	.append("<span class='help-inline' id=\"$ctrlsId$\"></span></div>");
-    	
     	return sb.toString();
     }
     
