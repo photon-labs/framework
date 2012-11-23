@@ -48,9 +48,22 @@ public class DynamicDataBaseImpl implements DynamicParameter, Constants {
         	configManager = new ConfigManagerImpl(new File(configPath)); 
         	configurations = configManager.getConfigurations(envName, Constants.SETTINGS_TEMPLATE_DB);
         	for (Configuration configuration : configurations) {
-        		Value value = new Value();
-        		value.setValue(configuration.getProperties().getProperty("type"));
-        		possibleValues.getValue().add(value);
+        		String dbType = configuration.getProperties().getProperty("type");
+        		List<Value> availableValues = possibleValues.getValue();
+        		boolean alreadyAvailable = false;
+        		if (CollectionUtils.isNotEmpty(availableValues)) {
+        			for (Value availableValue : availableValues) {
+    					if (availableValue.getValue().equalsIgnoreCase(dbType)) {
+    						alreadyAvailable = true;
+    						break;
+    					}
+    				}
+        		}
+        		if (!alreadyAvailable) {
+        			Value value = new Value();
+	        		value.setValue(dbType);
+	        		possibleValues.getValue().add(value);
+        		}
     		}
     	}
     	

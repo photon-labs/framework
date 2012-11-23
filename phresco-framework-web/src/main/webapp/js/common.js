@@ -515,12 +515,20 @@ function accordion() {
 }
 
 function getLoadingImgPath() {
-	var src = "theme/red_blue/images/loading_blue.gif";
-	var theme =localStorage["color"];
-    if (theme == undefined || theme == "theme/red_blue/css/red.css") {
-    	src = "theme/red_blue/images/loading_red.gif";
-    }
-    return src;
+	var localstore = localStorage["color"];
+	var imgSrc = "";
+	
+	if (localstore != null) {
+		if (localstore == "theme/red_blue/css/blue.css") {
+			imgSrc = "theme/red_blue/images/loading_blue.gif";
+		} else if (localstore == "theme/red_blue/css/red.css") {
+			imgSrc = "theme/red_blue/images/loading_red.gif";
+		} 
+	}
+	else {
+		imgSrc = "theme/photon/images/loading_green.gif";
+	}
+	return imgSrc;
 }
 
 function showLoadingIcon() {
@@ -581,26 +589,47 @@ function allowNumHyphenPlus(numbr) {
 	return numbr.replace(/[^0-9\-\+]+/g, '');
 }
 
-function changeTheme() {
-  	if (localStorage["color"] != null) {
-        $("link[title='phresco']").attr("href", localStorage["color"]);
-    } else {
-		$("link[title='phresco']").attr("href", "theme/red_blue/css/red.css");
+function applyTheme() {
+	var theme = localStorage["color"];
+	if (theme != null) {
+		changeTheme(theme);
+		showWelcomeImage(theme);
+	} else {
+		theme = "theme/red_blue/css/photon_theme.css";
+		changeTheme(theme);
+		showWelcomeImage(theme);
+	}
+}
+
+function changeTheme(localstore) {
+	if (localstore == "theme/red_blue/css/red.css") {
+        $("link[title='phresco']").attr("href", localstore);
+        $("link[id='phresco']").attr("href", "theme/red_blue/css/phresco.css");
+        $("link[id='media-query']").attr("href", "theme/red_blue/css/media-queries.css");
+    } else if (localstore == "theme/red_blue/css/blue.css") {
+        $("link[title='phresco']").attr("href", localstore);
+        $("link[id='phresco']").attr("href", "theme/red_blue/css/phresco.css");
+        $("link[id='media-query']").attr("href", "theme/red_blue/css/media-queries.css");
+    } else if (localstore == "theme/photon/css/photon_theme.css") {
+        $("link[title='phresco']").attr("href", localstore);
+        $("link[id='phresco']").attr("href", "theme/photon/css/phresco_default.css");
+        $("link[id='media-query']").attr("href", "theme/photon/css/media-queries.css");
     } 
 }
 
-function showWelcomeImage() {
-	var theme = localStorage['color'];
-	if (theme == "theme/red_blue/css/blue.css") {
-		$("link[id='theme']").attr("href", localStorage["color"]);
+function showWelcomeImage(localstore) {
+	if (localstore == "theme/red_blue/css/blue.css") {
 		$('.headerlogoimg').attr("src","theme/red_blue/images/phresco_header_blue.png");
 		$('.phtaccinno').attr("src","theme/red_blue/images/acc_inov_blue.png");
 		$('.welcomeimg').attr("src","theme/red_blue/images/welcome_photon_blue.png");
-	} else if (theme == null || theme == undefined || theme == "theme/red_blue/css/blue.css") {
-		$("link[id='theme']").attr("href", "theme/red_blue/css/red.css");
+	} else if (localstore == "theme/red_blue/css/red.css") {
 		$('.headerlogoimg').attr("src","theme/red_blue/images/phresco_header_red.png");
 		$('.phtaccinno').attr("src","theme/red_blue/images/acc_inov_red.png");
 		$('.welcomeimg').attr("src","theme/red_blue/images/welcome_photon_red.png");
+	} else if (localstore == "theme/photon/css/photon_theme.css") {
+		$('.headerlogoimg').attr("src","theme/photon/images/photon_phresco_logo.png");
+		/*$('.phtaccinno').attr("src","theme/photon/images/acc_inov_green.png");*/
+		$('.welcomeimg').attr("src","theme/photon/images/welcome_photon_red.png");
 	}
 }
 
@@ -968,23 +997,12 @@ function buttonAdd() {
 	$('#avaliableSourceScript > option:selected').appendTo('#selectedSourceScript');
 }
 	
-function buttonAddAll() {
-	var sqlFiles = "";
-	$('#avaliableSourceScript option').each(function(i, available) {
-		sqlFiles = $(available).val();
-		$('#DbWithSqlFiles').val($('#DbWithSqlFiles').val() + $('#dataBase').val()+ "#VSEP#" + sqlFiles + "#NAME#" + $(available).text() + "#SEP#");
-	});		
-	$('#avaliableSourceScript > option').appendTo('#selectedSourceScript');
-}
-
 function buttonRemove() {
 	updateDbWithVersionsForRemove();
-	$('#selectedSourceScript > option:selected').appendTo('#avaliableSourceScript');
 }
 
 function buttonRemoveAll() {
 	updateDbWithVersionsForRemoveAll();
-	$('#selectedSourceScript > option').appendTo('#avaliableSourceScript');
 }
 
 //To move up the values
@@ -1010,60 +1028,154 @@ function moveDown() {
 	});
 }
 
-function addDbWithVersions() {
-	//creating new data list
-	var sqlFiles = "";
-	$("#avaliableSourceScript :selected").each(function(i, available) {
-		sqlFiles = $(available).val();
-		$('#DbWithSqlFiles').val($('#DbWithSqlFiles').val() + $('#dataBase').val()+ "#VSEP#" + sqlFiles + "#NAME#" + $(available).text() + "#SEP#");
-	});
-}
-
-function addDbWithVersions() {
-	//creating new data list
-	var sqlFiles = "";
-	$("#avaliableSourceScript :selected").each(function(i, available) {
-		sqlFiles = $(available).val();
-		$('#DbWithSqlFiles').val($('#DbWithSqlFiles').val() + $('#dataBase').val()+ "#VSEP#" + sqlFiles + "#NAME#" + $(available).text() + "#SEP#");
-	});
-}
-
-
-function updateDbWithVersionsForRemove() {
-	var toBeUpdatedDbwithVersions = "";
-	$("#selectedSourceScript option:selected").each(function(i, alreadySelected) {
-		var nameSep = new Array();
-		nameSep = $('#DbWithSqlFiles').val().split("#SEP#");
-		for (var i=0; i < nameSep.length - 1; i++) {
-			var addedDbs = nameSep[i].split("#VSEP#");
-			var addedSqlName = addedDbs[1].split("#NAME#");
-			if(($('#dataBase').val() == addedDbs[0]) && $(alreadySelected).val() != addedSqlName[0]) {
-				toBeUpdatedDbwithVersions = toBeUpdatedDbwithVersions + nameSep[i] + "#SEP#";
-			} else if(($('#dataBase').val() != addedDbs[0]) && $(alreadySelected).val() != addedSqlName[0]) {
-				toBeUpdatedDbwithVersions = toBeUpdatedDbwithVersions + nameSep[i] + "#SEP#";
-			}
-		}
-		$('#DbWithSqlFiles').val(toBeUpdatedDbwithVersions);
-	});
-}
-
 function updateDbWithVersionsForRemoveAll() {
-	var toBeUpdatedDbwithVersions = "";
-	$("#selectedSourceScript option").each(function(i, alreadySelected) {
-		var nameSep = new Array();
-		nameSep = $('#DbWithSqlFiles').val().split("#SEP#");
-		for (var i=0; i < nameSep.length - 1; i++) {
-			var addedDbs = nameSep[i].split("#VSEP#");
-			var addedSqlName = addedDbs[1].split("#NAME#");
-			if(($('#dataBase').val() != addedDbs[0]) && $(alreadySelected).val() != addedSqlName[0]) {
-				toBeUpdatedDbwithVersions = toBeUpdatedDbwithVersions + nameSep[i] + "#SEP#";
-			} else if(($('#dataBase').val() == addedDbs[0]) && $(alreadySelected).val() == addedSqlName[0]) {
-				toBeUpdatedDbwithVersions = toBeUpdatedDbwithVersions + nameSep[i] + "#SEP#";
+	var dbType = $('#dataBase').val();
+	$("#selectedSourceScript > option").each(function(i,available) {
+		var availableSource = $(available).val();
+		var availableText = $(available).text();
+		var jsonValue = $('#fetchSql').val();
+		var allFiles = jQuery.parseJSON(jsonValue);
+		var matchType = availableSource.match(dbType);
+		if (matchType == dbType) {
+			$("#selectedSourceScript option[value='"+ availableSource +"']").remove();
+			var alreadyExists = isAvailable(availableSource);
+			if (alreadyExists == false) {
+				$('#avaliableSourceScript').append("<option value="+ availableSource +">" + availableText + "</option>");
 			}
+			$.each(allFiles, function(dbType, value) {
+				 for(i=0; i<allFiles[dbType].length; i++){
+					if(allFiles[dbType][i] === availableSource){
+						allFiles[dbType].splice(i,1);
+					}
+			    }
+			});
+			
+		 var newJsonValue = JSON.stringify(allFiles);
+		 $('#fetchSql').val(newJsonValue);
 		}
-		$('#DbWithSqlFiles').val('');
 	});
 }
+
+
+
+function buttonAddAll() {
+	var dbType = $('#dataBase').val();
+	var jsonValue = $('#fetchSql').val();
+	$("#avaliableSourceScript > option").each(function(i, available) {
+		var sqlFiles = [];
+		sqlFiles.push($(available).val());
+		var selected = $(available).val();
+		var selectedText = $(available).text();
+		var alreadyExists = $("#selectedSourceScript option[value='"+ selected + "']").length > 0;
+		if (alreadyExists == true) {
+			$("#avaliableSourceScript > option").each(function(i, available) {
+				var select = $(available).val();
+				$("#avaliableSourceScript option[value='"+ select +"']").remove();
+			});
+			return false;
+		}
+		
+		$("#avaliableSourceScript option[value='"+ selected +"']").remove();
+		$('#selectedSourceScript').append("<option value="+ selected +">" + selectedText + "</option>");
+		
+		if (jsonValue === undefined || isBlank(jsonValue)) {
+			jsonValue = '{"' + dbType + '" : ["' + sqlFiles.join(',') + '"]}';
+		} else {
+			var allFiles = jQuery.parseJSON(jsonValue);
+			var dbFiles = allFiles[dbType];
+			if (dbFiles !== undefined && !isBlank(dbFiles)) {
+				sqlFiles = dbFiles.concat(sqlFiles);
+				allFiles[dbType] = sqlFiles;
+				jsonValue = JSON.stringify(allFiles);
+			} else {
+				jsonValue = jsonValue.substring(0, jsonValue.length - 1);
+				jsonValue = jsonValue + ', "' + dbType + '" : ["' + sqlFiles.join('","') + '"]}';
+			}
+		}
+	});
+	$('#fetchSql').val(jsonValue);
+	$('#avaliableSourceScript > option:selected').appendTo('#selectedSourceScript');
+}
+
+function addDbWithVersions() {
+	var dbType = $('#dataBase').val();
+	var jsonValue = $('#fetchSql').val();
+	$("#avaliableSourceScript :selected").each(function(i, available) {
+		var sqlFiles = [];
+		sqlFiles.push($(available).val());
+		var selected = $(available).val();
+		
+		var alreadyExists = $("#selectedSourceScript option[value='"+ selected + "']").length > 0;
+		if (alreadyExists == true) {
+			$("#avaliableSourceScript option[value='"+ selected +"']").remove();
+			return false;
+		}
+		
+		if (jsonValue === undefined || isBlank(jsonValue)) {
+			jsonValue = '{"' + dbType + '" : ["' + sqlFiles.join(',') + '"]}';
+		} else {
+			
+			var allFiles = jQuery.parseJSON(jsonValue);
+			var dbFiles = allFiles[dbType];
+			if (dbFiles !== undefined && !isBlank(dbFiles)) {
+				sqlFiles = dbFiles.concat(sqlFiles);
+				allFiles[dbType] = sqlFiles;
+				jsonValue = JSON.stringify(allFiles);
+			} else {
+				jsonValue = jsonValue.substring(0, jsonValue.length - 1);
+				jsonValue = jsonValue + ', "' + dbType + '" : ["' + sqlFiles.join('","') + '"]}';
+			}
+		}
+	});
+	$('#fetchSql').val(jsonValue);
+}
+
+	function updateDbWithVersionsForRemove() {
+		$("#selectedSourceScript option:selected").each(function(i, optionSelected) {
+			var jsonValue = $('#fetchSql').val();
+			var allFiles = [];
+			var selected = $(optionSelected).val();
+			var selectedText = $(optionSelected).text();
+			allFiles = jQuery.parseJSON(jsonValue);
+			var dbType = $('#dataBase').val();
+			var entry = document.getElementById("selectedSourceScript");
+			var selectedSource = entry.options[entry.selectedIndex].value;
+			
+			var matchType = selectedSource.match(dbType);
+			
+			if (dbType == matchType) {
+				var available = isAvailable(selected);
+				if(!available) {
+					$('#avaliableSourceScript').append("<option value="+ selected +">" + selectedText + "</option>");
+				}
+				$("#selectedSourceScript option[value='"+ selected +"']").remove();
+				var flag = isAvailable(selected);
+				if (flag == true) {
+					$.each(allFiles, function(dbType, value) {
+						 for(i=0; i<allFiles[dbType].length; i++){
+							if(allFiles[dbType][i] === selected){
+								allFiles[dbType].splice(i,1);
+							}
+					    }
+					});
+				}
+				var newJsonValue = JSON.stringify(allFiles);
+				 $('#fetchSql').val(newJsonValue);
+				}
+		});
+	}
+	
+	function isAvailable(selected) {
+		var flag = false;
+		$("#avaliableSourceScript > option").each(function() {
+			var availableSource = this.value ;
+			if (availableSource == selected) {
+				flag = true;
+				return false;
+			}
+		});
+		return flag;
+	}
 
 function hideDbWithVersions() {
 	// getting existing data list
