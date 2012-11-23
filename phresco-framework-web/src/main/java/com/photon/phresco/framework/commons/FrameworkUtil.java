@@ -777,6 +777,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     		checkboxElement.setAttribute("value", false);
     	}
     	checkboxElement.setAttribute("onClickFunction", pm.getOnClickFunction());
+    	checkboxElement.setAttribute("onChangeFunction", pm.getOnChangeFunction());
     	if (Boolean.parseBoolean(pm.getValue())) {
     		checkboxElement.setAttribute("checked", "checked");
     	} else {
@@ -1109,7 +1110,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	StringBuilder sb = new StringBuilder();
     	sb.append("<div class='controls'>")
     	.append("<input type='checkbox' class=\"$class$\" id=\"$id$\" ")
-    	.append("name=\"$name$\" value=\"$value$\" $checked$ onclick=\"$onClickFunction$\" $additionalParam$/>")
+    	.append("name=\"$name$\" value=\"$value$\" $checked$ onclick=\"$onClickFunction$\" onChange=\"$onChangeFunction$\" $additionalParam$/>")
     	.append("<span class='help-inline' id=\"$ctrlsId$\"></span></div>");
     	
     	return sb.toString();
@@ -1141,7 +1142,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	.append("<select class='fieldSetSelect' multiple='multiple' name='selectedSourceScript' id='selectedSourceScript'></select>")
     	.append("</td><td class='fldSetRightTd'><img  class='moveUp'  id='up' title='Move up' src='images/icons/top_arrow.png' onclick='moveUp();'><br>")
     	.append("<img class='moveDown' id='down' title='Move down' src='images/icons/btm_arrow.png' onclick='moveDown();'></td></tr></tbody></table>")
-    	.append("<input type='hidden' value='' name='DbWithSqlFiles' id='DbWithSqlFiles'></fieldset>");	
+    	.append("<input type='hidden' value='' name='fetchSql' id='fetchSql'></fieldset>");	
 
     	return sb.toString();
     }

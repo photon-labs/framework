@@ -19,37 +19,70 @@
  */
 package com.photon.phresco.framework.actions.applications;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import javax.xml.parsers.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.apache.commons.collections.*;
-import org.apache.commons.lang.*;
-import org.apache.log4j.*;
-import org.codehaus.plexus.util.cli.*;
-import org.w3c.dom.*;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.codehaus.plexus.util.cli.CommandLineException;
+import org.codehaus.plexus.util.cli.Commandline;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.xml.sax.*;
 
-import com.google.gson.*;
-import com.photon.phresco.commons.model.*;
-import com.photon.phresco.configuration.*;
-import com.photon.phresco.exception.*;
-import com.photon.phresco.framework.*;
-import com.photon.phresco.framework.api.*;
-import com.photon.phresco.framework.commons.*;
-import com.photon.phresco.framework.model.*;
+import com.google.gson.Gson;
+import com.photon.phresco.commons.model.ApplicationInfo;
+import com.photon.phresco.commons.model.BuildInfo;
+import com.photon.phresco.commons.model.ProjectInfo;
+import com.photon.phresco.configuration.ConfigurationInfo;
+import com.photon.phresco.exception.ConfigurationException;
+import com.photon.phresco.exception.PhrescoException;
+import com.photon.phresco.framework.PhrescoFrameworkFactory;
+import com.photon.phresco.framework.api.ActionType;
+import com.photon.phresco.framework.api.ApplicationManager;
+import com.photon.phresco.framework.api.Project;
+import com.photon.phresco.framework.api.ProjectAdministrator;
+import com.photon.phresco.framework.api.ProjectRuntimeManager;
+import com.photon.phresco.framework.commons.DiagnoseUtil;
+import com.photon.phresco.framework.commons.FrameworkUtil;
+import com.photon.phresco.framework.commons.LogErrorReport;
+import com.photon.phresco.framework.model.DependantParameters;
+import com.photon.phresco.framework.model.PluginProperties;
+import com.photon.phresco.framework.model.SettingsInfo;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
-import com.photon.phresco.plugins.util.*;
-import com.photon.phresco.util.*;
-import com.phresco.pom.android.*;
-import com.phresco.pom.exception.*;
-import com.phresco.pom.model.*;
+import com.photon.phresco.plugins.util.MojoProcessor;
+import com.photon.phresco.util.Constants;
+import com.photon.phresco.util.TechnologyTypes;
+import com.photon.phresco.util.Utility;
+import com.phresco.pom.android.AndroidProfile;
+import com.phresco.pom.model.Plugin;
+import com.phresco.pom.model.PluginExecution;
 import com.phresco.pom.model.PluginExecution.Configuration;
 import com.phresco.pom.model.PluginExecution.Goals;
-import com.phresco.pom.util.*;
+import com.phresco.pom.util.AndroidPomProcessor;
+import com.phresco.pom.util.PomProcessor;
 
 public class Build extends DynamicParameterAction implements Constants {
 
@@ -117,7 +150,7 @@ public class Build extends DynamicParameterAction implements Constants {
 	private static Map<String, String> sqlFolderPathMap = new HashMap<String, String>();
 
 	// DbWithSqlFiles
-	private String DbWithSqlFiles = null;
+	private String fetchSql = null;
 	static {
 		initDbPathMap();
 	}
@@ -343,9 +376,6 @@ public class Build extends DynamicParameterAction implements Constants {
 			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(applicationInfo)));
 			
 			persistValuesToXml(mojo, PHASE_DEPLOY);
-			if (StringUtils.isNotEmpty(DbWithSqlFiles)) {
-				configureSqlExecution(applicationInfo);
-			}
 			//To get maven build arguments
 			List<Parameter> parameters = getMojoParameters(mojo, PHASE_DEPLOY);
 			List<String> buildArgCmds = getMavenArgCommands(parameters);
@@ -1229,42 +1259,6 @@ public class Build extends DynamicParameterAction implements Constants {
 		sqlFolderPathMap.put(TechnologyTypes.WORDPRESS, "/source/sql/");
 	}
 
-	public void configureSqlExecution(ApplicationInfo applicationInfo) {
-		Map<String, List<String>> dbsWithSqlFiles = new HashMap<String, List<String>>();
-		String[] dbWithSqlFiles = DbWithSqlFiles.split("#SEP#");
-		for (String dbWithSqlFile : dbWithSqlFiles) {
-			String[] sqlFiles = dbWithSqlFile.split("#VSEP#");
-			String[] sqlFileWithName = sqlFiles[1].split("#NAME#");
-			if (dbsWithSqlFiles.containsKey(sqlFiles[0])) {
-				List<String> sqlFilesList = dbsWithSqlFiles.get(sqlFiles[0]);
-				sqlFilesList.add(sqlFileWithName[0]);
-				dbsWithSqlFiles.put(sqlFiles[0], sqlFilesList);
-			} else {
-				List<String> sqlFilesList = new ArrayList<String>();
-				sqlFilesList.add(sqlFileWithName[0]);
-				dbsWithSqlFiles.put(sqlFiles[0], sqlFilesList);
-			}
-		}
-		FileWriter writer = null;
-		try {
-			File sqlInfoFilePath = new File(Utility.getProjectHome() + applicationInfo.getAppDirName() + Constants.JSON_PATH);
-			String json = new Gson().toJson(dbsWithSqlFiles);
-			writer = new FileWriter(new File(sqlInfoFilePath.getPath()));
-			writer.write(json);
-		} catch (IOException e) {
-			S_LOGGER.error("Entered into catch block of  Build.configureSqlExecution()"
-					+ FrameworkUtil.getStackTraceAsString(e));
-		} finally {
-			try {
-				if (writer != null) {
-					writer.close();
-				}
-			} catch (IOException e) {
-				S_LOGGER.error("Entered into catch block of  Build.configureSqlExecution()"
-						+ FrameworkUtil.getStackTraceAsString(e));
-			}
-		}
-	}
 
 	public InputStream getFileInputStream() {
 		return fileInputStream;
@@ -1550,14 +1544,6 @@ public class Build extends DynamicParameterAction implements Constants {
 		this.databases = databases;
 	}
 
-	public String getDbWithSqlFiles() {
-		return DbWithSqlFiles;
-	}
-
-	public void setDbWithSqlFiles(String dbWithSqlFiles) {
-		DbWithSqlFiles = dbWithSqlFiles;
-	}
-
 	public String getFileType() {
 		return fileType;
 	}
@@ -1668,5 +1654,13 @@ public class Build extends DynamicParameterAction implements Constants {
 
 	public String getFrom() {
 		return from;
+	}
+
+	public String getFetchSql() {
+		return fetchSql;
+	}
+
+	public void setFetchSql(String fetchSql) {
+		this.fetchSql = fetchSql;
 	}
 }
