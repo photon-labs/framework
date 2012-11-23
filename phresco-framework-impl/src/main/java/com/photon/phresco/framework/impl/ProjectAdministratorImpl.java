@@ -427,7 +427,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 			File xmlFile = new File(path, POM_FILE);
 			PomProcessor processor = new PomProcessor(xmlFile);
 			String selectedVersion = info.getTechInfo().getVersion();
-			processor.setProperty(DRUPAL_VERSION, selectedVersion);
+			processor.setProperty(Constants.DRUPAL_VERSION, selectedVersion);
 			processor.save();
 		} catch (PhrescoPomException e) {
 			throw new PhrescoException(e);

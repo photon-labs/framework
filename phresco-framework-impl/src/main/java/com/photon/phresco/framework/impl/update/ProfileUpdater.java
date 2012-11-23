@@ -132,7 +132,7 @@ public class ProfileUpdater implements FrameworkConstants {
 
 	private boolean updateDrupalProperties(PomProcessor pomProcessor) throws PhrescoException {
 		try {
-			pomProcessor.setProperty(DRUPAL_VERSION, DRUPAL_STANDAD_VERSION);
+			pomProcessor.setProperty(Constants.DRUPAL_VERSION, DRUPAL_STANDAD_VERSION);
 			pomProcessor.setProperty(DRUPAL_STANDARD, DRUPAL);
 		} catch (PhrescoPomException e) {
 			throw new PhrescoException(e);

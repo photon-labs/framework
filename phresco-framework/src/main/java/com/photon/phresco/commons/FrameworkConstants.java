@@ -1370,9 +1370,6 @@ public interface FrameworkConstants {
    /* Code validate */
    String CODE_VALIDATE_PARAM = "sonar.branch";
    
-   /* Drupal Version */
-   String DRUPAL_VERSION = "drupal.version";
-   
    /* Site report */
    String REQ_SITE_REPORT = "siteReport";
    String REQ_SITE_REPORT_PATH = "siteReportPath";
