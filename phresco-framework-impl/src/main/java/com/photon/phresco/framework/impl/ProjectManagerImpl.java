@@ -187,83 +187,75 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		return projectInfo;
 	}
 
-	public ProjectInfo update(ProjectInfo projectInfo, ServiceManager serviceManager, List<ArtifactGroup> artifactGroups, String oldAppDirName) throws PhrescoException {
-//		System.out.println("response :::: " + response.getStatus());
+	public ProjectInfo update(ProjectInfo projectInfo, ServiceManager serviceManager,
+			List<ArtifactGroup> artifactGroups, String oldAppDirName) throws PhrescoException {
 		ClientResponse response = serviceManager.updateProject(projectInfo);
 		if (response.getStatus() == 200) {
-		BufferedReader breader = null;
-		try {
-			System.out.println("Project Updated.........................");
-			StringBuilder projectPathSb =  new StringBuilder(Utility.getProjectHome());
-			projectPathSb.append(projectInfo.getAppInfos().get(0).getAppDirName());
-			File projectPath = new File(projectPathSb.toString());
-			
-			StringBuilder oldPhrescoPathSb =  new StringBuilder(Utility.getProjectHome());
-			oldPhrescoPathSb.append(oldAppDirName);
-			File oldProjectPath = new File(oldPhrescoPathSb.toString());
-			oldProjectPath.renameTo(projectPath);
-			extractArchive(response, projectInfo);
-			StringBuilder dotPhrescoPathSb =  new StringBuilder(projectPath.getPath());
-			dotPhrescoPathSb.append(File.separator);
-			dotPhrescoPathSb.append(DOT_PHRESCO_FOLDER);
-			dotPhrescoPathSb.append(File.separator);
-			
-			String customerId = projectInfo.getCustomerIds().get(0);
-			Customer customer = serviceManager.getCustomer(customerId);
-			RepoInfo repoInfo = customer.getRepoInfo();
-			List<ApplicationInfo> appInfos = projectInfo.getAppInfos();
-			for (ApplicationInfo appInfo : appInfos) {
-				StringBuilder pluginInfoPathSb =  new StringBuilder(projectPath.getPath());
-				pluginInfoPathSb.append(File.separator);
-				String pluginInfoFile = dotPhrescoPathSb.toString() +  PHRESCO_PLUGIN_INFO_XML;
-				MojoProcessor mojoProcessor = new MojoProcessor(new File(pluginInfoFile));
-				ApplicationHandler applicationHandler = mojoProcessor.getApplicationHandler();
-				System.out.println("applicationHandler===============> ");
-				if(applicationHandler != null) {
-					List<ArtifactGroup> plugins = setArtifactGroup(applicationHandler);
-				 
-				
-					//Dynamic Class Loading
-					PhrescoDynamicLoader dynamicLoader = new PhrescoDynamicLoader(repoInfo, plugins);
-					ApplicationProcessor applicationProcessor = dynamicLoader.getApplicationProcessor(applicationHandler.getClazz());
-					
-					applicationProcessor.postUpdate(appInfo, artifactGroups);
-				}
-				
-//				
-				File projectInfoPath = new File(dotPhrescoPathSb.toString() + PROJECT_INFO_FILE);
-				ProjectUtils.updateProjectInfo(projectInfo, projectInfoPath);//To update the project.info file
-				
-				updateProjectPOM(projectInfo);
-				
-				createSqlFolder(projectInfo, projectPath, serviceManager);
-				//TODO Define post update object and execute the corresponding technology implementation
-				//				if (TechnologyTypes.WIN_METRO.equalsIgnoreCase(techId)) {
-				//					ItemGroupUpdater.update(projectInfo, projectPath);
-				//				}
-				StringBuilder sb = new StringBuilder();
-				sb.append("mvn");
-				sb.append(" ");
-				sb.append("validate");
-				breader = Utility.executeCommand(sb.toString(), projectPath.getPath());
-				String line = null;
-				while ((line = breader.readLine()) != null) {
-					if (line.startsWith("[ERROR]")) {
-						System.out.println(line);
+			BufferedReader breader = null;
+			try {
+				StringBuilder projectPathSb = new StringBuilder(Utility.getProjectHome());
+				projectPathSb.append(projectInfo.getAppInfos().get(0).getAppDirName());
+				File projectPath = new File(projectPathSb.toString());
+
+				StringBuilder oldPhrescoPathSb = new StringBuilder(Utility.getProjectHome());
+				oldPhrescoPathSb.append(oldAppDirName);
+				File oldProjectPath = new File(oldPhrescoPathSb.toString());
+				oldProjectPath.renameTo(projectPath);
+				extractArchive(response, projectInfo);
+				StringBuilder dotPhrescoPathSb = new StringBuilder(projectPath.getPath());
+				dotPhrescoPathSb.append(File.separator);
+				dotPhrescoPathSb.append(DOT_PHRESCO_FOLDER);
+				dotPhrescoPathSb.append(File.separator);
+
+				String customerId = projectInfo.getCustomerIds().get(0);
+				Customer customer = serviceManager.getCustomer(customerId);
+				RepoInfo repoInfo = customer.getRepoInfo();
+				List<ApplicationInfo> appInfos = projectInfo.getAppInfos();
+				for (ApplicationInfo appInfo : appInfos) {
+					StringBuilder pluginInfoPathSb = new StringBuilder(projectPath.getPath());
+					pluginInfoPathSb.append(File.separator);
+					String pluginInfoFile = dotPhrescoPathSb.toString() + PHRESCO_PLUGIN_INFO_XML;
+					MojoProcessor mojoProcessor = new MojoProcessor(new File(pluginInfoFile));
+					ApplicationHandler applicationHandler = mojoProcessor.getApplicationHandler();
+					if (applicationHandler != null) {
+						List<ArtifactGroup> plugins = setArtifactGroup(applicationHandler);
+
+						// Dynamic Class Loading
+						PhrescoDynamicLoader dynamicLoader = new PhrescoDynamicLoader(repoInfo, plugins);
+						ApplicationProcessor applicationProcessor = dynamicLoader
+								.getApplicationProcessor(applicationHandler.getClazz());
+
+						applicationProcessor.postUpdate(appInfo, artifactGroups);
+					}
+
+					//
+					File projectInfoPath = new File(dotPhrescoPathSb.toString() + PROJECT_INFO_FILE);
+					ProjectUtils.updateProjectInfo(projectInfo, projectInfoPath);// To update the project.info file
+
+					createSqlFolder(projectInfo, projectPath, serviceManager);
+					StringBuilder sb = new StringBuilder();
+					sb.append("mvn");
+					sb.append(" ");
+					sb.append("validate");
+					breader = Utility.executeCommand(sb.toString(), projectPath.getPath());
+					String line = null;
+					while ((line = breader.readLine()) != null) {
+						if (line.startsWith("[ERROR]")) {
+							System.out.println(line);
+						}
 					}
 				}
+			} catch (FileNotFoundException e) {
+				throw new PhrescoException(e);
+			} catch (IOException e) {
+				throw new PhrescoException(e);
+			} finally {
+				Utility.closeStream(breader);
 			}
-		} catch (FileNotFoundException e) {
-			throw new PhrescoException(e); 
-		} catch (IOException e) {
-			throw new PhrescoException(e);
-		}
-		//		} else if(response.getStatus() == 401){
-		//			throw new PhrescoException("Session expired");
-		//		} else {
-		//			throw new PhrescoException("Project updation failed");
-		//		}
-		//		
+		} else if (response.getStatus() == 401) {
+			throw new PhrescoException("Session expired");
+		} else {
+			throw new PhrescoException("Project updation failed");
 		}
 		return null;
 	}
@@ -274,9 +266,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 			ArtifactGroup artifactGroup = new ArtifactGroup();
 			artifactGroup.setGroupId(applicationHandler.getGroupId());
 			artifactGroup.setArtifactId(applicationHandler.getArtifactId());
-			//artifactGroup.setType(Type.FEATURE);
-			//			 
-			//to set version
+			//artifactGroup.setType(Type.FEATURE); to set version
 			List<ArtifactInfo> artifactInfos = new ArrayList<ArtifactInfo>();
 			ArtifactInfo artifactInfo = new ArtifactInfo();
 			artifactInfo.setVersion(applicationHandler.getVersion());
@@ -365,31 +355,6 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		} finally {
 			Utility.closeStream(inputStream);
 			Utility.closeStream(fileOutputStream);
-		}
-	}
-	
-	private void updateProjectPOM(ProjectInfo projectInfo) throws PhrescoException {
-		PomProcessor processor = null;
-		try {
-			List<ApplicationInfo> appInfos = projectInfo.getAppInfos();
-			for (ApplicationInfo applicationInfo : appInfos) {
-				File pomPath = new File(Utility.getProjectHome() + applicationInfo.getAppDirName() + File.separator
-						+ POM_FILE);
-				processor = new PomProcessor(pomPath);
-				Model model = processor.getModel();
-				if (StringUtils.isNotEmpty(applicationInfo.getTechInfo().getVersion())) {
-					model.setVersion(applicationInfo.getTechInfo().getVersion());
-				}
-//				if (StringUtils.isNotEmpty(applicationInfo.getPilotContent().getGroupId())) {
-//					model.setGroupId(applicationInfo.getPilotContent().getGroupId());
-//				}
-//				if (StringUtils.isNotEmpty(applicationInfo.getPilotContent().getArtifactId())) {
-//					model.setArtifactId(applicationInfo.getPilotContent().getArtifactId());
-//				}
-			}
-			processor.save();	
-		} catch (Exception e) {
-			throw new PhrescoException(e);
 		}
 	}
 	

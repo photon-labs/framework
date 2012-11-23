@@ -256,6 +256,7 @@
 					<%= txtMultiInputElement %>
 	<%
 				} else if (FrameworkConstants.TYPE_FILE_BROWSE.equalsIgnoreCase(parameter.getType())) {
+					parameterModel.setFileType(parameter.getFileType());
 					StringTemplate browseFileElement = FrameworkUtil.constructBrowseFileTreeElement(parameterModel);
 	%>
 					<%= browseFileElement %>
@@ -608,8 +609,10 @@
 	
 	function browseFiles(obj) {
 		$('#popupPage').modal('hide');
+		var fileTypes = $(obj).attr("fileTypes");
 		var params = "";
-		params = params.concat("&fileType=jar");
+		params = params.concat("&fileType=");
+		params = params.concat(fileTypes);
 		params = params.concat("&fileOrFolder=All");
 		additionalPopup('openBrowseFileTree', 'Browse', 'jstd', '', '', params, true);
 	}
