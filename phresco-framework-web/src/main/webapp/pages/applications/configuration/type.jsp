@@ -34,14 +34,20 @@
 <%@ page import="com.photon.phresco.commons.model.PropertyTemplate" %>
 <%@ page import="com.photon.phresco.framework.commons.FrameworkUtil" %>
 <%@ page import="com.photon.phresco.framework.commons.ParameterModel" %>
+<%@ page import="com.photon.phresco.commons.model.Element" %>
 
 <form id="configProperties">
 
 <%
 	ApplicationInfo appInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_APPINFO);
 	Properties propertiesInfo = (Properties) request.getAttribute(FrameworkConstants.REQ_PROPERTIES_INFO); 
+		  
 	String selectedType = (String) request.getAttribute(FrameworkConstants.REQ_SELECTED_TYPE);
+	String fromPage = (String) request.getAttribute(FrameworkConstants.REQ_FROM_PAGE);
+	
+	List<String> typeValues  = (List<String>) request.getAttribute(FrameworkConstants.REQ_TYPE_VALUES);
 	List<PropertyTemplate> properties = (List<PropertyTemplate>) request.getAttribute(FrameworkConstants.REQ_PROPERTIES);
+	
 	StringBuilder sb = new StringBuilder();
     for (PropertyTemplate propertyTemplate : properties) {
     	ParameterModel pm = new ParameterModel();
@@ -58,22 +64,29 @@
     		value = propertiesInfo.getProperty(propertyTemplate.getKey());
     	}
         List<String> possibleValues = new ArrayList<String>(8);
-
-         if (FrameworkConstants.SERVER_KEY.equals(propertyTemplate.getKey())) {
-        	if(appInfo != null && CollectionUtils.isNotEmpty(appInfo.getSelectedServers())) {
-            	List<ArtifactGroupInfo> artifactGroupInfos = appInfo.getSelectedServers();
-        		ArtifactGroupInfo artifactGroupInfo = artifactGroupInfos.get(0);
-        		possibleValues = artifactGroupInfo.getArtifactInfoIds();
-        	}
+		if (FrameworkConstants.SERVER_KEY.equals(propertyTemplate.getKey())) {
+			if("addsettings".equals(fromPage)){
+				possibleValues = typeValues;
+			} else {
+       			if(appInfo != null && CollectionUtils.isNotEmpty(appInfo.getSelectedServers())) {
+	            	List<ArtifactGroupInfo> artifactGroupInfos = appInfo.getSelectedServers();
+	        		ArtifactGroupInfo artifactGroupInfo = artifactGroupInfos.get(0);
+	        		possibleValues = artifactGroupInfo.getArtifactInfoIds();
+				}
+			}
     	} else if (FrameworkConstants.DATABASE_KEY.equals(propertyTemplate.getKey())) {
-    		if(appInfo != null && CollectionUtils.isNotEmpty(appInfo.getSelectedDatabases())) {
-        		List<ArtifactGroupInfo> artifactGroupInfos = appInfo.getSelectedDatabases();
-    			ArtifactGroupInfo artifactGroupInfo = artifactGroupInfos.get(0);
-    			possibleValues = artifactGroupInfo.getArtifactInfoIds(); 
-    		}
-    	} else {  
-    		possibleValues = propertyTemplate.getPossibleValues();
-    	 } 
+    		if("addsettings".equals(fromPage)){
+				possibleValues = typeValues;
+			} else {
+	    		if(appInfo != null && CollectionUtils.isNotEmpty(appInfo.getSelectedDatabases())) {
+	        		List<ArtifactGroupInfo> artifactGroupInfos = appInfo.getSelectedDatabases();
+	    			ArtifactGroupInfo artifactGroupInfo = artifactGroupInfos.get(0);
+	    			possibleValues = artifactGroupInfo.getArtifactInfoIds(); 
+	    		}
+			}
+    	} else {
+			possibleValues = propertyTemplate.getPossibleValues();
+    	}
     	
         if (CollectionUtils.isNotEmpty(possibleValues)) {
         	pm.setObjectValue(possibleValues);

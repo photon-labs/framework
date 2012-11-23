@@ -443,8 +443,6 @@ public interface FrameworkConstants {
     String SETTINGS_FROM_TAB = "fromTab";
     String ENVIRONMENT_VALUES = "envs";  
     String DELETABLE_ENVS = "deletableEnvs";
-    String CONFIG_FILE_FAIL = "excep.hdr.config.fail.file";
-    String CONFIG_FAIL_ENVS = "excep.hdr.config.fail.envs";
 
     /*
      * Session Constants
@@ -543,6 +541,7 @@ public interface FrameworkConstants {
     String REQ_CONFIG_INFO = "configInfo";
     String REQ_PROPERTIES_INFO = "propertiesInfo";
     String REQ_SELECTED_TYPE = "selectedType";
+    String REQ_TYPE_VALUES = "typeValues";
     String REQ_CONFIG_TYPE = "configType";
     String REQ_OLD_NAME = "oldName";
     String REQ_ERROR = "error";
@@ -562,6 +561,8 @@ public interface FrameworkConstants {
     String REQ_SETTINGS_NAME = "settingName";
     String REQ_CODE_PREFIX = "codePrefix";
     String REQ_FROM_PAGE = "fromPage";
+    String REQ_SETTINGS_PATH = "settingsPath";
+    String REQ_CONFIG_PATH = "configPath";
     String REQ_APPLICATION_TYPE = "applicationType";
     String REQ_OLD_CONFIG_NAME = "configName";
     String REQ_TEST_TYPE = "testType";
@@ -1600,9 +1601,24 @@ public interface FrameworkConstants {
 		String EXCEPTION_REPORT_CONFIGURE = "excep.hdr.report.configure";
 		String EXCEPTION_REPORT_CREATE_REPORT_CONFIG = "excep.hdr.report.create.report.config";
 		String EXCEPTION_CONFIGURATION_LIST_ENV = "excep.hdr.configuration.list.env";
+		String EXCEPTION_CONFIGURATION_READ_ENV_LIST = "excep.hdr.configuration.read.env.list";
+		String EXCEPTION_SETTINGS_LIST_ENV = "excep.hdr.settings.list.env";
+		String EXCEPTION_CONFIGURATION_FILE_FAIL = "excep.hdr.config.fail.file";
 		String EXCEPTION_CONFIGURATION_LIST_CONFIG = "excep.hdr.configuration.list.config";
+		String EXCEPTION_CONFIGURATION_ENV_LIST = "excep.hdr.configuration.env.list";
+		String EXCEPTION_CONFIGURATION_OPEN_ENV_POPUP = "excep.hdr.configuration.open.env.popup";
+		String EXCEPTION_CONFIGURATION_UPDATE_FAILS = "excep.hdr.config.fail.envs";
+		String EXCEPTION_CONFIGURATION_ADD = "excep.hdr.config.add";
+		String EXCEPTION_CONFIGURATION_SAVE_CONFIG = "excep.hdr.config.save.config";
+		String EXCEPTION_CONFIGURATION_SAVE_SETTINGS = "excep.hdr.config.save.settings";
+		String EXCEPTION_CONFIGURATION_CREATE_ENVIRONMENT = "excep.hdr.config.create.env";
+		String EXCEPTION_SETTINGS_LIST_CONFIG = "excep.hdr.settings.list.config";
 		String EXCEPTION_CONFIGURATION_SHOW_PROPERTIES = "excep.hdr.configuration.show.properties";
 		String EXCEPTION_CONFIGURATION_DELETE_ENVIRONMENT = "excep.hdr.configuration.delete.environment";
+		String EXCEPTION_CONFIGURATION_UPDATE_CONFIG = "excep.hdr.configuration.update.config";
+		String EXCEPTION_CONFIGURATION_UPDATE_SETTINGS = "excep.hdr.configuration.update.settings";
+		String EXCEPTION_CONFIGURATION_EDIT = "excep.hdr.configuration.edit";
+		String EXCEPTION_CONFIGURATION_UPDATE = "excep.hdr.configuration.update";
 		String EXCEPTION_RUNAGNSRC_SERVER_START = "excep.hdr.proj.runagnsrc.server.start";
 		String EXCEPTION_RUNAGNSRC_SERVER_STOP = "excep.hdr.proj.runagssrc.stop";
 		String EXCEPTION_RUNAGNSRC_SERVER_RESTART = "excep.hdr.proj.runagssrc.restart";

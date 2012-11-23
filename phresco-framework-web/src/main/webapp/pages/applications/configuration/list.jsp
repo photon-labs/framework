@@ -47,31 +47,18 @@
 	Gson gson = new Gson();
 	Map<String, String> urls = new HashMap<String, String>();
 	String fromPage = (String) request.getAttribute(FrameworkConstants.REQ_FROM_PAGE);
+	String configPath = (String) request.getAttribute(FrameworkConstants.REQ_CONFIG_PATH);
 	ActionSupport actionSupport = new ActionSupport();
-	String container = "subcontainer"; //load for configuration 
-	if (FrameworkConstants.REQ_SETTINGS.equals(fromPage)) {
-		container = "container";
 %>
-
-<div class="page-header">
-    <h1>
-        Settings
-    </h1>
-</div>
-
-<% } %>
 
 <form id="formConfigList" class="configList">
     
     <div class="operation">
     	<!-- Add Configuration Button --> 
 		<input type="button" class="btn btn-primary" name="configAdd" id="configAdd" 
-	         onclick="loadContent('addConfiguration', $('#formCustomers, #formAppMenu'), $('#<%= container %>'), 'fromPage=add<%=fromPage%>');" 
+	         onclick="loadContent('addConfiguration', $('#formCustomers, #formAppMenu'), $('#subcontainer'), 'fromPage=add<%=fromPage%>&configPath=<%=configPath%>');" 
 		         value="<s:text name='lbl.btn.add'/>"/>
 
-		<%-- <input type="button" class="btn" id="del" id="deleteBtn" disabled value="<s:text name='lbl.delete'/>"
-			onclick="showDeleteConfirmation('<s:text name='lbl.delete'/>');"/> --%>
-			
 		<!-- Delete Configuration Button -->	
 		<input type="button" class="btn" id="deleteBtn" disabled value="<s:text name='lbl.delete'/>" data-toggle="modal" href="#popupPage"/>
 
@@ -90,119 +77,32 @@
 		</s:if>
     </div>
     
+    <div id="loadEnv"> </div>
     
-    <% if (CollectionUtils.isEmpty(envs)) { %>
-		 <div class="alert alert-block">
-			<%= actionSupport.getText("lbl.err.msg.list." + fromPage)%>
-		</div> 
-    <% } else { %>	
-    	<div class="table_div">
-		<% for (Environment env : envs) { 
-			String envJson = gson.toJson(env);
-		%>
-			<div class="theme_accordion_container">
-				<section class="accordion_panel_wid">
-					<div class="accordion_panel_inner">
-						<section class="lft_menus_container">
-							<span class="siteaccordion closereg">
-								<span>
-									<input type="checkbox" value='<%= envJson %>' id="<%=env.getName() %>" class="accordianChkBox" name="checkEnv" onclick="checkAllEvent(this,$('.<%=env.getName() %>'), false);"/>
-									<a class="vAlignSub"><%=env.getName() %></a>
-								</span>
-							</span>
-							<div class="mfbox siteinnertooltiptxt hideContent">
-								<div class="scrollpanel">
-									<section class="scrollpanel_inner">
-								    	<table class="table table-bordered table_border">
-								    		<thead>
-								    			<tr class="header-background">
-								    				<th class="no-left-bottom-border table-pad table-chkbx">
-								    				</th>
-								    				<th class="no-left-bottom-border table-pad">
-								    					<s:label key="lbl.name" cssClass="labelbold"/>
-								    				</th>
-								    				<th class="no-left-bottom-border table-pad">
-								    					<s:label key="lbl.desc" cssClass="labelbold"/>
-								    				</th>
-								    				<th class="no-left-bottom-border table-pad">
-								    					<s:label key="lbl.type" cssClass="labelbold"/>
-								    				</th>
-								    				<th class="no-left-bottom-border table-pad">
-								    					<s:label key="lbl.status" cssClass="labelbold"/>
-								    				</th>
-								    				<th class="no-left-bottom-border table-pad">
-								    					<s:label key="lbl.clone" cssClass="labelbold"/>
-								    				</th>
-								    			</tr> 
-								    		</thead>
-								    		<tbody>
-								    			<%
-														List<Configuration> configurations = env.getConfigurations();
-								    					if (CollectionUtils.isNotEmpty(configurations)) {
-															for (Configuration configuration : configurations) {
-																String configJson = gson.toJson(configuration);
-												%>
-															<tr>
-																<td class="no-left-bottom-border table-pad">
-																	<input type="checkbox" class="check <%=env.getName() %>" name="checkedConfig" value='<%= configJson %>'
-																	onclick="checkboxEvent($('.<%=env.getName() %>'), $('#<%=env.getName() %>'));">
-																</td>
-																<td class="no-left-bottom-border table-pad">
-																	<a href="#" onclick="editConfiguration('<%= env.getName() %>', '<%= configuration.getType() %>','<%= configuration.getName() %>');" 
-																	name="edit"><%= configuration.getName() %>
-																	</a>
-																</td>
-																<td class="no-left-bottom-border table-pad">
-																	<%= configuration.getDesc() %>
-																</td>
-																<td class="no-left-bottom-border table-pad">
-																	<%= configuration.getType() %>
-																</td>
-																<td class="no-left-bottom-border table-pad">
-																	<a href="#" ><img id="<%= configuration.getName()  %>" class="projectUpdate" 
-																		src="images/icons/inprogress.png" title="Update" class="iconSizeinList"/></a>
-																</td>
-																<td class="no-left-bottom-border table-pad">
-																	<a href="#" ><img id="<%= configuration.getName()  %>" class="projectUpdate" 
-																		src="images/icons/clone.png" title="Update" class="iconSizeinList"/></a>
-																</td> 
-															</tr>
-													<%
-																}
-															}
-													%>  
-								    		</tbody>
-										</table>
-									</section>
-								</div>
-							</div>
-						</section>  
-					</div>
-				</section>
-			</div>
-			<% } %>
-		</div>
-	<% } %>
 </form>
+
+
 
 <script type="text/javascript">
 		$('#addEnvironments').click(function() {
-			yesnoPopup('openEnvironmentPopup', '<s:text name="lbl.environment"/>', 'createEnvironment', '', '', 'fromPage=<%=fromPage%>');
+			yesnoPopup('openEnvironmentPopup', '<s:text name="lbl.environment"/>', 'createEnvironment', '', '', 'fromPage=<%=fromPage%>&configPath=<%=configPath%>');
 		});
-	
-    	//yesnoPopup($("#addEnvironments"), 'openEnvironmentPopup', "<s:text name='lbl.environment'/>", 'createEnvironment');
 	
 	confirmDialog($("#deleteBtn"), '<s:text name="lbl.hdr.confirm.dialog"/>', '<s:text name="modal.body.text.del.configuration"/>', 'deleteEnvironment','<s:text name="lbl.btn.ok"/>');
 	
 	$(document).ready(function() {
-		accordion();
 		hideLoadingIcon();//To hide the loading icon
+		var basicParams = getBasicParamsAsJson();
+		var fromPage = "<%= fromPage %>";
+		var configPath = "<%= configPath %>";
+		var params = '{' + basicParams + ', "fromPage" : "' + fromPage + '", "configPath" : "' + configPath + '"}';
+		loadJsonContent('envList', params,  $('#loadEnv'));
 	});
 	
 	 function editConfiguration(currentEnvName, currentConfigType, currentConfigName) {
-			showLoadingIcon();
 		 	var params = getBasicParams();
 		 	var fromPage = "edit<%= fromPage%>";
+		 	var configPath = "<%= configPath%>";
 			params = params.concat("&currentEnvName=");
 			params = params.concat(currentEnvName);
 			params = params.concat("&currentConfigType=");
@@ -211,7 +111,9 @@
 			params = params.concat(currentConfigName);
 			params = params.concat("&fromPage=");
 			params = params.concat(fromPage);
-			loadContent("editConfiguration", $("#formConfigAdd"), $('#<%= container %>'), params);
+			params = params.concat("&configPath=");
+			params = params.concat(configPath);
+			loadContent("editConfiguration", $("#formConfigAdd"), $('#subcontainer'), params);
 	}
 	 
 	function popupOnOk(self) {
@@ -233,9 +135,10 @@
 		
 		var basicParams = getBasicParamsAsJson();
 		var fromPage = "<%= fromPage%>";
-		var params = '{' + basicParams + ', "fromPage" : "' + fromPage + '", "environments": [' + envs.join(',') + '], "selectedEnvirment" : "' + selectedEnv + '", "selectedConfig": [' + selectedConfigData + ']}';
+		var configPath = "<%= configPath %>";
+		var params = '{' + basicParams + ', "configPath" : "' + configPath + '", "fromPage" : "' + fromPage + '", "environments": [' + envs.join(',') + '], "selectedEnvirment" : "' + selectedEnv + '", "selectedConfig": [' + selectedConfigData + ']}';
 		var url = $(self).attr('id');
-			loadJsonContent(url, params, $('#<%= container %>'));
+		loadJsonContent(url, params, $('#loadEnv'));		
 	}
 
 </script>
