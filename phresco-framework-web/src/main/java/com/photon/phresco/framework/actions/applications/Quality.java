@@ -1901,7 +1901,6 @@ public class Quality extends DynamicParameterAction implements Constants {
         }
         
         try {
-            System.out.println("inside fetchPerformanceTestResult()....");
             String showGraphFor = getReqParameter(REQ_SHOW_GRAPH);
             ApplicationInfo appInfo = getApplicationInfo();
 //            String deviceId = getHttpRequest().getParameter("deviceId"); // android device id for display
@@ -1910,7 +1909,6 @@ public class Quality extends DynamicParameterAction implements Constants {
                S_LOGGER.debug("Performance test file name " + getTestResultFile());
             }
             if (StringUtils.isNotEmpty(getTestResultFile())) {
-                System.out.println("inside if in test result file is not empty:::" + getTestResultFile());
             	String testResultPath = getPerformanceTestResultPath(appInfo, getTestResultFile());
                 Document document = getDocument(new File(testResultPath)); 
                 Map<String, PerformanceTestResult> performanceReport = QualityUtil.getPerformanceReport(document, getHttpRequest(), techId, testResultDeviceId); // need to pass tech id and tag name
