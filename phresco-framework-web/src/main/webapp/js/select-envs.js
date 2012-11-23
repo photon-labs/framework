@@ -76,16 +76,16 @@ function fillData(element, data) {
 }
 
 /** To check whether the selected environment has the appropriate configurations * */
-function checkForConfig() {
-	var envs = getSelectedEnvs();
-	var params = "";
-	if (!isBlank($('form').serialize())) {
-		params = $('form').serialize() + "&";
-	}
-	params = params.concat("environments=");
-	params = params.concat(envs);
-	performAction('checkForConfiguration', params, '', true);
-}
+//function checkForConfig() {
+//	var envs = getSelectedEnvs();
+//	var params = "";
+//	if (!isBlank($('form').serialize())) {
+//		params = $('form').serialize() + "&";
+//	}
+//	params = params.concat("environments=");
+//	params = params.concat(envs);
+//	performAction('checkForConfiguration', params, '', true);
+//}
 
 /**
  * To check whether the selected environment has the appropriate configuration
