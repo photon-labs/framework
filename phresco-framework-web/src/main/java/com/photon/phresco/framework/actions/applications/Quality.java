@@ -95,8 +95,6 @@ import com.photon.phresco.framework.commons.LogErrorReport;
 import com.photon.phresco.framework.commons.PBXNativeTarget;
 import com.photon.phresco.framework.commons.QualityUtil;
 import com.photon.phresco.framework.model.DependantParameters;
-import com.photon.phresco.framework.model.HubConfiguration;
-import com.photon.phresco.framework.model.NodeConfiguration;
 import com.photon.phresco.framework.model.PerformanceDetails;
 import com.photon.phresco.framework.model.PerformanceTestResult;
 import com.photon.phresco.framework.model.PropertyInfo;
@@ -109,8 +107,10 @@ import com.photon.phresco.framework.model.TestSuite;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
 import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.util.Constants;
+import com.photon.phresco.util.HubConfiguration;
 import com.photon.phresco.util.IosSdkUtil;
 import com.photon.phresco.util.IosSdkUtil.MacSdkType;
+import com.photon.phresco.util.NodeConfiguration;
 import com.photon.phresco.util.TechnologyTypes;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.exception.PhrescoPomException;
@@ -656,9 +656,7 @@ public class Quality extends DynamicParameterAction implements Constants {
             FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
             String functionalTestDir = frameworkUtil.getFunctionalTestDir(getApplicationInfo());
             StringBuilder sb = new StringBuilder(getApplicationHome());
-            sb.append(functionalTestDir)
-            .append(File.separator)
-            .append("nodeconfig.json");
+            sb.append(functionalTestDir).append(File.separator).append("nodeconfig.json");
             File hubConfigFile = new File(sb.toString());
             Gson gson = new Gson();
             reader = new BufferedReader(new FileReader(hubConfigFile));
