@@ -176,8 +176,17 @@
 					String onChangeFunction = "";
 					if (StringUtils.isNotEmpty(parameter.getDependency())) {
 						onChangeFunction = "selectBoxOnChangeEvent(this,  '"+ parameter.getKey() +"', '"+ parameter.getDependency() +"')";
-					} else if (CollectionUtils.isNotEmpty(psblValues) && psblValues.get(0).getDependency() != null) {
-						onChangeFunction = "selectBoxOnChangeEvent(this,  '"+ parameter.getKey() +"')";
+					} else if (CollectionUtils.isNotEmpty(psblValues)) {
+						boolean addOnChangeEvent = false;
+						for (com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value psblValue : psblValues) {
+							if (psblValue.getDependency() != null) {
+								addOnChangeEvent = true;
+								break;
+							}
+						}
+						if (addOnChangeEvent) {
+							onChangeFunction = "selectBoxOnChangeEvent(this,  '"+ parameter.getKey() +"')";							
+						}
 					}
 					
 					parameterModel.setOnChangeFunction(onChangeFunction);
@@ -246,6 +255,7 @@
 					<%= txtMultiInputElement %>
 	<%
 				} else if (FrameworkConstants.TYPE_FILE_BROWSE.equalsIgnoreCase(parameter.getType())) {
+					parameterModel.setFileType(parameter.getFileType());
 					StringTemplate browseFileElement = FrameworkUtil.constructBrowseFileTreeElement(parameterModel);
 	%>
 					<%= browseFileElement %>
@@ -598,8 +608,10 @@
 	
 	function browseFiles(obj) {
 		$('#popupPage').modal('hide');
+		var fileTypes = $(obj).attr("fileTypes");
 		var params = "";
-		params = params.concat("&fileType=jar");
+		params = params.concat("&fileType=");
+		params = params.concat(fileTypes);
 		params = params.concat("&fileOrFolder=All");
 		additionalPopup('openBrowseFileTree', 'Browse', 'jstd', '', '', params, true);
 	}
