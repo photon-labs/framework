@@ -74,17 +74,18 @@ function progressPopupAsSecPopup(url, appId, actionType, form, additionalParams,
 	readerHandlerSubmit(url, appId, actionType, form, '', additionalParams);
 }
 
-function clickMenu(menu, tag, form) {
+function clickMenu(menu, tag, form, params) {
 	menu.click(function() {
 		showLoadingIcon();
 		inActivateAllMenu(menu);
 		activateMenu($(this));
 		var selectedMenu = $(this).attr("id");
-		var additionalParams = "";
-		var params = $(this).attr('additionalParam');
-		if (params !== undefined && !isBlank(params)) {
-			params = params.concat(additionalParams);
-			params = params.concat("&");
+		if (params === undefined || isBlank(params)) {
+			params = "";
+		} 
+		var additionalParam = $(this).attr('additionalParam');
+		if (additionalParam !== undefined && !isBlank(additionalParam)) {
+			params +=  '&'  + additionalParam;
 		}
 		loadContent(selectedMenu, form, tag, params);
 	});
