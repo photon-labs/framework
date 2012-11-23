@@ -357,12 +357,31 @@
 			
 			</div>
 			<div class="modal-footer">
-				<a href="#" class="btn btn-primary popupClose" data-dismiss="modal" id="" onClick="popupOnClose(this);"><s:text name='lbl.btn.close'/></a>
+				<a href="#" class="btn btn-primary progressPopupClose" data-dismiss="modal" id="" onClick="popupOnClose(this);"><s:text name='lbl.btn.close'/></a>
 				<a href="#" class="btn btn-primary popupStop hideContent" data-dismiss="modal" id="" onClick="popupOnStop(this);"><s:text name='lbl.btn.stop'/></a>
 				<img class="popuploadingIcon" id="popuploadingIcon" src="" />
 			</div>
 		</div>
 	    <!-- Progress Popup Ends-->
+	    
+	    <!-- Additional popup Starts-->
+	    <div id="additionalPopup" class="modal hide fade">
+			<div class="modal-header">
+				<a class="close" data-dismiss="modal" onclick="add_popupCancel();">&times;</a>
+				<h3 id="additional_popupTitle"></h3>
+			</div>
+			<div class="modal-body" id="additional_popup_body">
+			
+			</div>
+			<div class="modal-footer">
+				<input type="text" class="xlarge javastd hideContent" id="browseSelectedLocation" name="browseLocation"/>
+				<a href="#" class="btn btn-primary" data-dismiss="modal" id="add_popupCancel" onclick="add_popupCancel();"><s:text name='lbl.btn.cancel'/></a>
+				<a href="#" class="btn btn-primary add_popupOk" data-dismiss="modal" id="" onClick="add_popupOnOk(this);" ><s:text name='lbl.btn.ok'/></a>
+				<div id="errMsg" class="envErrMsg"></div>
+				<img class="popuploadingIcon" id="popuploadingIcon" src="" />
+			</div>
+		</div>
+	    <!-- Additional Popup Ends-->
 	</body>
 	
 	<script type="text/javascript">

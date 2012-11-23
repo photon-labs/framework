@@ -982,6 +982,27 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	return st;
     }
 
+    public static StringTemplate constructBrowseFileTreeElement(ParameterModel pm) {
+    	StringTemplate controlGroupElement = new StringTemplate(getControlGroupTemplate());
+    	controlGroupElement.setAttribute("ctrlGrpId", pm.getControlGroupId());
+    	
+    	if (!pm.isShow()) {
+    	    controlGroupElement.setAttribute("ctrlGrpClass", "hideContent");
+    	}
+    	
+    	StringTemplate lableElmnt = constructLabelElement(pm.isMandatory(), pm.getLableClass(), pm.getLableText());
+    	StringTemplate inputElement = new StringTemplate(getBrowseFileTreeTemplate());
+    	inputElement.setAttribute("class", pm.getCssClass());
+    	inputElement.setAttribute("id", pm.getId());
+    	inputElement.setAttribute("name", pm.getName());
+    	inputElement.setAttribute("ctrlsId", pm.getControlId());
+    	
+    	controlGroupElement.setAttribute("lable", lableElmnt);
+    	controlGroupElement.setAttribute("controls", inputElement);
+    	
+		return controlGroupElement;
+    }
+    
     private static String getControlGroupTemplate() {
     	StringBuilder sb = new StringBuilder();
     	sb.append("<div class='control-group $ctrlGrpClass$' id=\"$ctrlGrpId$\">")
@@ -1027,6 +1048,17 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	.append("<input type=\"$type$\" class=\"input-xlarge $class$\" id=\"$id$\" ")
     	.append("name=\"$name$\" placeholder=\"$placeholder$\" value=\"$value$\">")
     	.append("<span class='help-inline' id=\"$ctrlsId$\"></span></div>");
+    	
+    	return sb.toString();
+    }
+    
+    private static String getBrowseFileTreeTemplate() {
+    	StringBuilder sb = new StringBuilder();
+    	sb.append("<div class='controls'>")
+    	.append("<input type='text' class=\"$class$\" id='fileLocation'")
+    	.append("name=\"$name$\" >")
+    	.append("<input id='browseButton' class='btn-primary btn_browse browseFileLocation'")
+    	.append("value='Browse' type='button' onclick='browseFiles(this);'></div>");
     	
     	return sb.toString();
     }

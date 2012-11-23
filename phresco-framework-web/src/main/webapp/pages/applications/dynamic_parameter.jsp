@@ -254,6 +254,11 @@
 	%>
 					<%= txtMultiInputElement %>
 	<%
+				} else if (FrameworkConstants.TYPE_FILE_BROWSE.equalsIgnoreCase(parameter.getType())) {
+					StringTemplate browseFileElement = FrameworkUtil.constructBrowseFileTreeElement(parameterModel);
+	%>
+					<%= browseFileElement %>
+	<%			
 				}
 	%>
 			<script type="text/javascript">
@@ -479,13 +484,13 @@
 			}
 		}
 		
-		if ($(obj).attr("type") === 'checkbox') {
-				if (!selectedOption) {
-					var previousDependencyArr = new Array();
-					previousDependencyArr = csvDependencies.split(',');
-					hideControl(previousDependencyArr);
-				}	
-			}
+	  if ($(obj).attr("type") === 'checkbox') {
+			if (!selectedOption) {
+				var previousDependencyArr = new Array();
+				previousDependencyArr = csvDependencies.split(',');
+				hideControl(previousDependencyArr);
+			}	
+		}
 	}
 	
 	//Iterates all the elements in the build form and show the dependency elements
@@ -598,5 +603,13 @@
 		});
 		element = element.concat("</select>");
 		return element;
+	}
+	
+	function browseFiles(obj) {
+		$('#popupPage').modal('hide');
+		var params = "";
+		params = params.concat("&fileType=jar");
+		params = params.concat("&fileOrFolder=All");
+		additionalPopup('openBrowseFileTree', 'Browse', 'jstd', '', '', params, true);
 	}
 </script>

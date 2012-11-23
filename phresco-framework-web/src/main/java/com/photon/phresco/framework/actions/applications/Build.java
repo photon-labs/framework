@@ -917,39 +917,6 @@ public class Build extends DynamicParameterAction implements Constants {
 		return env;
 	}
 
-	private void getValueFromJavaStdAlonePom() throws PhrescoException {
-		try {
-			File file = new File(Utility.getProjectHome() + File.separator + getApplicationInfo().getAppDirName() + File.separator + POM_FILE);
-			PomProcessor pomProcessor = new PomProcessor(file);
-			String finalName = pomProcessor.getFinalName();
-			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-			Document document = dBuilder.parse(file);
-			document.getDocumentElement().normalize();
-			NodeList nodeList = document.getElementsByTagName(JAVA_POM_MANIFEST);
-			String mainClassValue = "";
-			for (int temp = 0; temp < nodeList.getLength(); temp++) {
-				Node node = nodeList.item(temp);
-				if (node.getNodeType() == Node.ELEMENT_NODE) {
-					Element mainClassElement = (Element) node;
-					mainClassValue = mainClassElement.getElementsByTagName(JAVA_POM_MAINCLASS).item(0).getTextContent();
-					break;
-				}
-			}
-			getHttpRequest().setAttribute(FINAL_NAME, finalName);
-			getHttpRequest().setAttribute(MAIN_CLASS_VALUE, mainClassValue);
-
-		} catch (IOException e) {
-			throw new PhrescoException(e);
-		} catch (ParserConfigurationException e) {
-			throw new PhrescoException(e);
-		} catch (SAXException e) {
-			throw new PhrescoException(e);
-		} catch (PhrescoPomException e) {
-			throw new PhrescoException(e);
-		}
-	}
-	
 	/* minification  */
 	public String jsFileBrowser() {
 		try {

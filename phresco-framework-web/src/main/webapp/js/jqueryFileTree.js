@@ -70,7 +70,6 @@ if(jQuery) (function($){
 			if( o.selectedFiles == undefined ) o.selectedFiles = '';
 			$(this).each( function() {
 				
-				
 				function showTree(c, t, fileTypes, fileOrFolder, tech, selectedFiles) {
 					$(c).addClass('wait');
 					$(".jqueryFileTree.start").remove();

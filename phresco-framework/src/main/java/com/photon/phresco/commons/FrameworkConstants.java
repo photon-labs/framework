@@ -1583,6 +1583,10 @@ public interface FrameworkConstants {
 		String EXCEPTION_QUALITY_FUNCTIONAL_START_NODE = "excep.hdr.quality.functional.start.node";
 		String EXCEPTION_QUALITY_FUNCTIONAL_STOP_NODE = "excep.hdr.quality.functional.stop.node";
 		String EXCEPTION_QUALITY_FUNCTIONAL_STOP_HUB = "excep.hdr.quality.functional.stop.hub";
+		String EXCEPTION_QUALITY_FUNCTIONAL_HUB_CONNECTION = "excep.hdr.quality.functional.hub.connection";
+		String EXCEPTION_QUALITY_FUNCTIONAL_NODE_CONNECTION = "excep.hdr.quality.functional.node.connection";
+		String EXCEPTION_QUALITY_FUNCTIONAL_HUB_LOG = "excep.hdr.quality.functional.hub.log";
+		String EXCEPTION_QUALITY_FUNCTIONAL_NODE_LOG = "excep.hdr.quality.functional.node.log";
 		String EXCEPTION_BUILD_POPUP = "excep.hdr.build.popup";
 		String EXCEPTION_DEPLOY_POPUP = "excep.hdr.deploy.popup";
 		String EXCEPTION_BUILD_GENERATE = "excep.hdr.build.generate";
@@ -1622,6 +1626,7 @@ public interface FrameworkConstants {
 		String TEXT_BOX = "text";
 		String TYPE_LIST = "list";
 		String TYPE_MAP = "map";
+		String TYPE_FILE_BROWSE = "fileBrowse";
 		String TYPE_DYNAMIC_PARAMETER = "DynamicParameter";
 		String PHRESCO_PLUGIN_INFO_XML = "phresco-plugin-info.xml";
 		String PLUGIN_PARAMETER_FRAMEWORK = "framework";

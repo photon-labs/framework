@@ -48,7 +48,7 @@ function getBasicParamsAsJson() {
 function progressPopup(pageUrl, appId, actionType, form, callSuccessEvent, additionalParams, stopUrl) {
 	$('#progressPopup').modal('show');//To show the progress popup
 	$('#console_div').empty();
-	$(".popupClose").attr('id', pageUrl); // popup close action mapped to id
+	$(".progressPopupClose").attr('id', pageUrl); // popup close action mapped to id
 	
 	if (stopUrl != undefined && !isBlank(stopUrl)) {
 		$(".popupStop").show();
@@ -63,8 +63,8 @@ function progressPopupAsSecPopup(url, appId, actionType, form, additionalParams,
 		$('#progressPopup').modal('show')
     }, 600);
 	$('#console_div').empty();
-	$(".popupClose").show();
-	$(".popupClose").attr('id', url); // popup close action mapped to id
+	$(".progressPopupClose").show();
+	$(".progressPopupClose").attr('id', url); // popup close action mapped to id
 	
 	if (stopUrl != undefined && !isBlank(stopUrl)) {
 		$(".popupStop").show();
@@ -210,6 +210,48 @@ function yesnoPopup(url, title, okUrl, okLabel, form, additionalParam) {
 	
 	$('#popup_div').empty();
 	$('#popup_div').load(url, data); //url to render the body content for the popup
+}
+
+function additionalPopup(url, title, okUrl, okLabel, form, additionalParam, showLocationBox) {
+	setTimeout(function () {
+		$('#additionalPopup').modal('show');//To show the popup
+    }, 600);
+	
+	$('#additional_popupTitle').html(title); // Title for the popup
+	$('.add_popupClose').hide(); //no need close button since yesno popup
+	$('.add_popupOk, #add_popupCancel').show(); // show ok & cancel button
+
+	$(".add_popupOk").attr('id', okUrl); // popup action mapped to id
+	
+	if (showLocationBox !== undefined && showLocationBox) {//To show selected files location in text box in modal footer(for browse file tree)
+		$('#browseSelectedLocation').show();
+		$('#browseSelectedLocation').val('');
+	} 
+	
+	if (okLabel !== undefined && !isBlank(okLabel)) {
+		$('#' + okUrl).html(okLabel); // label for the ok button
+	}
+	
+	var data = getBasicParams(); //customerid, projectid, appid
+
+	var params = getParameters(form, '');
+	if (!isBlank(params)) {
+		data = data.concat("&");
+		data = data.concat(params);
+	}
+	
+	if (!isBlank(additionalParam)) {
+		data = data.concat("&");
+		data = data.concat(additionalParam);
+	}
+	$('#additional_popup_body').empty();
+	$('#additional_popup_body').load(url, data); //url to render the body content for the popup
+}
+
+function add_popupCancel() {
+	setTimeout(function () {
+		$('#popupPage').modal('show');
+	 }, 600);	
 }
 
 function validateJson(url, form, containerTag, jsonParam, progressText, disabledDiv) {
