@@ -149,13 +149,15 @@
 				} else if (FrameworkConstants.TYPE_BOOLEAN.equalsIgnoreCase(parameter.getType())) {
 					String cssClass = "chckBxAlign";
 					String onClickFunction = "";
+					String onChangeFunction = "";
 					if (StringUtils.isNotEmpty(parameter.getDependency())) {
 						//If current control has dependancy value 
 						onClickFunction = "dependancyChckBoxEvent(this, '"+ parameter.getKey() +"');";
+						onChangeFunction = "changeChckBoxValue(this);";
 					} else {
 						onClickFunction = "changeChckBoxValue(this);";
 					}
-					
+					parameterModel.setOnChangeFunction(onChangeFunction);
 					parameterModel.setOnClickFunction(onClickFunction);
 					parameterModel.setCssClass(cssClass);
 					parameterModel.setValue(parameter.getValue());

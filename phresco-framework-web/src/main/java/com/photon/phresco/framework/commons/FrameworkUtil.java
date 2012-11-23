@@ -771,12 +771,15 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	checkboxElement.setAttribute("class", pm.getCssClass());
     	checkboxElement.setAttribute("id", pm.getId());
     	checkboxElement.setAttribute("name", pm.getName());
+    	checkboxElement.setAttribute("onClickFunction", pm.getOnClickFunction());
+    	checkboxElement.setAttribute("onChangeFunction", pm.getOnChangeFunction());
+    	
     	if (StringUtils.isNotEmpty(pm.getValue())) {
     		checkboxElement.setAttribute("value", pm.getValue());	
     	} else {
     		checkboxElement.setAttribute("value", false);
     	}
-    	checkboxElement.setAttribute("onClickFunction", pm.getOnClickFunction());
+    	
     	if (Boolean.parseBoolean(pm.getValue())) {
     		checkboxElement.setAttribute("checked", "checked");
     	} else {
@@ -1109,7 +1112,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	StringBuilder sb = new StringBuilder();
     	sb.append("<div class='controls'>")
     	.append("<input type='checkbox' class=\"$class$\" id=\"$id$\" ")
-    	.append("name=\"$name$\" value=\"$value$\" $checked$ onclick=\"$onClickFunction$\" $additionalParam$/>")
+    	.append("name=\"$name$\" value=\"$value$\" $checked$ onchange=\"$onChangeFunction$\" onclick=\"$onClickFunction$\" $additionalParam$/>")
     	.append("<span class='help-inline' id=\"$ctrlsId$\"></span></div>");
     	
     	return sb.toString();
