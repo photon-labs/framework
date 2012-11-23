@@ -44,6 +44,7 @@ import com.photon.phresco.framework.api.Project;
 import com.photon.phresco.framework.api.ProjectAdministrator;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.commons.SonarReport;
+import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.TechnologyTypes;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.model.Model;
@@ -51,7 +52,7 @@ import com.phresco.pom.model.Model.Profiles;
 import com.phresco.pom.model.Profile;
 import com.phresco.pom.util.PomProcessor;
 
-public class PhrescoReportGenerationTest extends FrameworkBaseAction implements FrameworkConstants  {
+public class PhrescoReportGenerationTest extends FrameworkBaseAction implements Constants  {
 	
 	/**
 	 * 

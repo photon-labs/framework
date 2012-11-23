@@ -250,7 +250,7 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 			}
 			File projectPath = new File(Utility.getProjectHome() + delta.getCode() + File.separator);
 			if (TechnologyTypes.WIN_METRO.equalsIgnoreCase(techId)) {
-				ItemGroupUpdater.update(appInfo, projectPath);
+//				ItemGroupUpdater.update(appInfo, projectPath);
 			}
 //			ProjectUtils.updateProjectInfo(appInfo, path);
 			updateProjectPOM(appInfo);
@@ -387,25 +387,25 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 				exclusiontoolValue = exclusiontoolValue.substring(0, exclusiontoolValue.lastIndexOf(','));
 			}
 			
-			String pomExclusionValue = processor.getProperty(FrameworkConstants.SONAR_EXCLUSION);
+			String pomExclusionValue = processor.getProperty(SONAR_EXCLUSION);
 			if (!pomExclusionValue.equals("")) {
-				processor.setProperty(FrameworkConstants.SONAR_EXCLUSION, pomExclusionValue + FrameworkConstants.COMMA + exclusionValue);
+				processor.setProperty(SONAR_EXCLUSION, pomExclusionValue + COMMA + exclusionValue);
 			} else if(pomExclusionValue.equals("")) {
-				processor.setProperty(FrameworkConstants.SONAR_EXCLUSION, exclusionValue);
+				processor.setProperty(SONAR_EXCLUSION, exclusionValue);
 			}
 			
-			String pdependExcludeValue = processor.getProperty(FrameworkConstants.SONAR_PHPPDEPEND_ARGUMENTLINE);
+			String pdependExcludeValue = processor.getProperty(SONAR_PHPPDEPEND_ARGUMENTLINE);
 			if (!pdependExcludeValue.equals("")) {
-				processor.setProperty(FrameworkConstants.SONAR_PHPPDEPEND_ARGUMENTLINE, pdependExcludeValue + FrameworkConstants.COMMA + exclusiontoolValue);
+				processor.setProperty(SONAR_PHPPDEPEND_ARGUMENTLINE, pdependExcludeValue + COMMA + exclusiontoolValue);
 			} else 	if (pdependExcludeValue.equals("")) {
-				processor.setProperty(FrameworkConstants.SONAR_PHPPDEPEND_ARGUMENTLINE, FrameworkConstants.IGNORE + exclusiontoolValue);
+				processor.setProperty(SONAR_PHPPDEPEND_ARGUMENTLINE, IGNORE + exclusiontoolValue);
 			}
 			
-			String pmdExcludeValue = processor.getProperty(FrameworkConstants.SONAR_PHPPMD_ARGUMENTLINE);
+			String pmdExcludeValue = processor.getProperty(SONAR_PHPPMD_ARGUMENTLINE);
 			if (!pmdExcludeValue.equals("")) {
-				processor.setProperty(FrameworkConstants.SONAR_PHPPMD_ARGUMENTLINE, pmdExcludeValue + FrameworkConstants.COMMA + exclusiontoolValue);
+				processor.setProperty(SONAR_PHPPMD_ARGUMENTLINE, pmdExcludeValue + COMMA + exclusiontoolValue);
 			} else 	if (pmdExcludeValue.equals("")) {
-				processor.setProperty(FrameworkConstants.SONAR_PHPPMD_ARGUMENTLINE, FrameworkConstants.EXCLUDE + exclusiontoolValue);
+				processor.setProperty(SONAR_PHPPMD_ARGUMENTLINE, EXCLUDE + exclusiontoolValue);
 			}
 			
 			processor.save();

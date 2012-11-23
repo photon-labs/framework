@@ -83,9 +83,9 @@ public class QualityUtil {
 
 			getSettingInfo(serverSettings);
 
-			out.write(host + FrameworkConstants.COMMA);
-			out.write(port + FrameworkConstants.COMMA);
-			out.write(protocol + FrameworkConstants.COMMA);
+			out.write(host + Constants.COMMA);
+			out.write(port + Constants.COMMA);
+			out.write(protocol + Constants.COMMA);
 			out.write(serverContext);
 			out.flush();
 		} catch (IOException e) {

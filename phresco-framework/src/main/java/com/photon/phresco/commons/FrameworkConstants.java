@@ -341,7 +341,6 @@ public interface FrameworkConstants {
     String FILE_EXTENSION_XML = "xml";
     String SEMI_COLON = ";";
     String SQUARE_CLOSE = "]";
-    String COMMA = ",";
     String SQUARE_OPEN = "[";
     String GRAPH_SUMMARY_DATA = "var summaryData = ";
     String GRAPH_VOLUME_DATA = "var volumeData = ";
@@ -361,7 +360,6 @@ public interface FrameworkConstants {
     String MAIN_CLASS_NAME = "mainClassName";
     String ENCRYPT = "encrypt";
     String IPHONE_XCODEPROJ = "/source/Phresco.xcodeproj";
-    String SOURCE_DIR = "source";
     String IPHONE_XCODE_PROJ_EXTN = "xcodeproj";
     String ANDROID_DEVICE = "device";
     String ANDROID_DEVICE_LIST = "deviceList";
@@ -1453,7 +1451,6 @@ public interface FrameworkConstants {
    String REPORT_ELEMENT_SHAREPOINT_SRC_FUNC = "reportElementSharepointSrcFunc";
    String PHRESCO_SOURCE_DIRECTORY = "phresco.source.directory";
    String SONAR_DYNAMIC_ANALYSIS_PROFILE = "sonar.dynamicAnalysis";
-   String SONAR_EXCLUSION = "sonar.exclusions";
    String JS_PATH = "src/main/js";
    String WEBAPP_PATH = "src/main/webapp";
    String JAVA_PATH = "src/main/java";
@@ -1481,8 +1478,6 @@ public interface FrameworkConstants {
 	   String SONAR_PHPCODESNIFFER_TIMEOUT = "sonar.phpCodesniffer.timeout";
 	   String DRUPAL_STANDARD = "sonar.phpCodesniffer.standardArgument";
 	   String WORDPRESS_STANDARD = "sonar.phpCodesniffer.standardArgument";
-	   String SONAR_PHPPDEPEND_ARGUMENTLINE = "sonar.phpDepend.argumentLine";
-	   String SONAR_PHPPMD_ARGUMENTLINE  = "sonar.phpPmd.argumentLine";
 	   String DRUPAL = "Drupal";
 	   String DRUPAL_STANDAD_VERSION = "7.8";
 	   String WORDPRESS = "WordPress";	    
@@ -1492,8 +1487,6 @@ public interface FrameworkConstants {
 	   String SQL_EXCLUDES = "source/sql";
 	   String HTML_EXCLUDES = "source/public_html";
 	   String TEST = "test";
-	   String IGNORE = "--ignore=";
-	   String EXCLUDE = "--exclude ";
 	  
 	   
 	   /* Constants for plugin properties */ 
@@ -1516,28 +1509,17 @@ public interface FrameworkConstants {
 		  String HELLOWORLD = "HelloWorld";
 		  String HELLOWORD_SOLUTIONFILE = "HelloWorld.sln";
 		  String PROPERTYGROUP = "PropertyGroup";
-		  String ITEMGROUP = "ItemGroup";
 		  String ROOTNAMESPACE = "RootNamespace";
 		  String ASSEMBLY_NAME = "AssemblyName";
 		  String CERTIFACTE_KEY = "PackageCertificateKeyFile";
 		  String TEMPORARY_KEY = "_TemporaryKey.pfx";
 		  String NONE = "None";
 		  String NEWLINE = "\n";
-		  String INCLUDE = "Include";
-		  String REFERENCE = "Reference";
-		  String PROJECT = "Project";
 		  String LIBS = "Lib\\";
-		  String DLL = ".dll";
-		  String HINTPATH = "HintPath";
 		  String PROJECT_FILE = ".csproj";
 		  String CONTENT = "Content";
 
-		  String COMMON = "\\Common";
-		  String DOUBLE_DOT  = "..";
-		  String PROJECT_ROOT = "Metro.UI";
 		  String SLN_FILE = "Metro.sln";
-		  String CSPROJ_FILE = ".csproj";
-
 		  
 		  //SettingsTemplate keys for IIS server
 		  String SETTINGS_TEMP_KEY_APP_NAME = "applicationName";

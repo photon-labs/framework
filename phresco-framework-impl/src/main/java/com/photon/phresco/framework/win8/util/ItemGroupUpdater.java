@@ -23,10 +23,12 @@ import org.xml.sax.SAXException;
 
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
+import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.exception.PhrescoException;
+import com.photon.phresco.util.Constants;
 
 
-public class ItemGroupUpdater implements FrameworkConstants {
+public class ItemGroupUpdater implements FrameworkConstants, Constants {
 
 	/**
 	 * 
@@ -70,10 +72,10 @@ public class ItemGroupUpdater implements FrameworkConstants {
 	}
 	
 	 //TODO: Need to handle the way of getting the modules
-	/*private static void createNewItemGroup(Document doc, List<ModuleGroup> modules) {
+	private static void createNewItemGroup(Document doc, List<ArtifactGroup> modules) {
 		Element project = doc.getDocumentElement();
 		Element itemGroup = doc.createElement(ITEMGROUP);
-		for (ModuleGroup module : modules) {
+		for (ArtifactGroup module : modules) {
 			Element reference = doc.createElement(REFERENCE);
 			reference.setAttribute(INCLUDE , module.getName());
 			Element hintPath = doc.createElement(HINTPATH);
@@ -82,24 +84,24 @@ public class ItemGroupUpdater implements FrameworkConstants {
 			itemGroup.appendChild(reference);
 		}
 		project.appendChild(itemGroup);
-	}*/
+	}
 	
 	
 	 //TODO: Need to handle the way of getting the modules
-	/*private static void updateItemGroups(Document doc, List<ModuleGroup> module) {
+	private static void updateItemGroups(Document doc, List<ArtifactGroup> module) {
 	   List<Node> itemGroup = getItemGroup(doc);
 	   updateContent(doc, module, itemGroup, REFERENCE);
-	}*/
+	}
 
 	 //TODO: Need to handle the way of getting the modules
-	/*private static void updateContent(Document doc, List<ModuleGroup> modules,	List<Node> itemGroup, String elementName) {
+	private static void updateContent(Document doc, List<ArtifactGroup> modules,	List<Node> itemGroup, String elementName) {
 		for (Node node : itemGroup) {
 			NodeList childNodes = node.getChildNodes();
 			for (int j = 0; j < childNodes.getLength(); j++) {
 				Node item = childNodes.item(j);
 				if (item.getNodeName().equals(elementName)) {
 					Node parentNode = item.getParentNode();
-					for (ModuleGroup module : modules) {
+					for (ArtifactGroup module : modules) {
 						Element content = doc.createElement(elementName);
 						if (elementName.equalsIgnoreCase(REFERENCE)) {
 							content.setAttribute(INCLUDE, module.getName()+ DLL);
@@ -115,7 +117,7 @@ public class ItemGroupUpdater implements FrameworkConstants {
 				}
 			}
 		}
-	}*/
+	}
 	
 	private static List<Node> getItemGroup(Document doc) {
 		NodeList projects = doc.getElementsByTagName(PROJECT);

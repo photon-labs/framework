@@ -20,6 +20,7 @@ import org.jdom.output.XMLOutputter;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.exception.PhrescoException;
+import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.FileUtil;
 import com.photon.phresco.util.Utility;
 
@@ -31,8 +32,8 @@ public class Win8MetroCofigFileParser implements FrameworkConstants {
 
 	public static void xmlParser(ApplicationInfo info, File path) throws PhrescoException {
 		try {
-			path = new File(path + File.separator + SOURCE_DIR + File.separator + HELLOWORLD + File.separator + HELLOWORD_PROJECT_FILE);
-			File sourcePath = new File(getProjectHome(info) + File.separator + SOURCE_DIR);
+			path = new File(path + File.separator + Constants.SOURCE_DIR + File.separator + HELLOWORLD + File.separator + HELLOWORD_PROJECT_FILE);
+			File sourcePath = new File(getProjectHome(info) + File.separator + Constants.SOURCE_DIR);
 			if (!sourcePath.exists()) {
 				return;
 			}
@@ -41,7 +42,7 @@ public class Win8MetroCofigFileParser implements FrameworkConstants {
 			Element rootNode = doc.getRootElement();
 			Namespace ns = rootNode.getNamespace();
 			elementIdentifier(rootNode, PROPERTYGROUP ,info, ns);
-			elementIdentifier(rootNode, ITEMGROUP,info, ns);
+			elementIdentifier(rootNode, Constants.ITEMGROUP,info, ns);
 			copyLibFolder(info, sourcePath);
 			saveFile(path, doc);
 			changeHellworld(info);
@@ -73,7 +74,7 @@ public class Win8MetroCofigFileParser implements FrameworkConstants {
 		} else if (name.equalsIgnoreCase(CERTIFACTE_KEY)) {
 			rootNamespace.setText(info.getName()+ TEMPORARY_KEY);
 		} else if (name.equalsIgnoreCase(NONE)) {
-			Attribute attribute = rootNamespace.getAttribute(INCLUDE);
+			Attribute attribute = rootNamespace.getAttribute(Constants.INCLUDE);
 			attribute.setValue(info.getName()+ TEMPORARY_KEY);
 		} 
 	}
@@ -93,9 +94,9 @@ public class Win8MetroCofigFileParser implements FrameworkConstants {
 	private static void changeHellworld(ApplicationInfo info) throws PhrescoException {
 		BufferedReader br = null;
 		BufferedWriter bw = null;
-		File path = new File(getProjectHome(info) + File.separator +  SOURCE_DIR + File.separator +  HELLOWORD_SOLUTIONFILE);
-		File tempFile = new File(getProjectHome(info) + File.separator + SOURCE_DIR + File.separator + TEMP_FOLDER);
-		File newFile = new File(getProjectHome(info) +File.separator +  SOURCE_DIR + File.separator + HELLOWORD_SOLUTIONFILE);
+		File path = new File(getProjectHome(info) + File.separator +  Constants.SOURCE_DIR + File.separator +  HELLOWORD_SOLUTIONFILE);
+		File tempFile = new File(getProjectHome(info) + File.separator + Constants.SOURCE_DIR + File.separator + TEMP_FOLDER);
+		File newFile = new File(getProjectHome(info) +File.separator +  Constants.SOURCE_DIR + File.separator + HELLOWORD_SOLUTIONFILE);
 		try {
 			br = new BufferedReader(new FileReader(path));
 			bw = new BufferedWriter(new FileWriter(tempFile));

@@ -13,6 +13,7 @@ import org.w3c.dom.Element;
 
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.exception.PhrescoException;
+import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.TechnologyTypes;
 import com.phresco.pom.exception.PhrescoPomException;
 import com.phresco.pom.util.PomProcessor;
@@ -48,7 +49,7 @@ public class ProfileUpdater implements FrameworkConstants {
 	
 	private boolean updateJsProfile(PomProcessor pomProcessor, File pomPath, String profileId, String techId) throws PhrescoException {
 		List<Element> elements = new ArrayList<Element>();
-		Element sonarExclusionElement = createElement(SONAR_EXCLUSION, LIB);
+		Element sonarExclusionElement = createElement(Constants.SONAR_EXCLUSION, LIB);
 		elements.add(sonarExclusionElement);
 		boolean isJqueryWidget =  techId.equals(TechnologyTypes.HTML5_MULTICHANNEL_JQUERY_WIDGET) || techId.equals(TechnologyTypes.HTML5_JQUERY_MOBILE_WIDGET);
 		if (isJqueryWidget) {

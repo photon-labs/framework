@@ -80,6 +80,7 @@ import com.photon.phresco.framework.model.TestCaseError;
 import com.photon.phresco.framework.model.TestCaseFailure;
 import com.photon.phresco.framework.model.TestResult;
 import com.photon.phresco.framework.model.TestSuite;
+import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.TechnologyTypes;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.util.PomProcessor;
@@ -483,7 +484,7 @@ public class PhrescoReportGeneration extends FrameworkBaseAction {
         	sbuild.append(COLON);
         	sbuild.append(artifactId);
         	
-        	if (StringUtils.isNotEmpty(report) && !SOURCE_DIR.equals(report)) {
+        	if (StringUtils.isNotEmpty(report) && !Constants.SOURCE_DIR.equals(report)) {
         		sbuild.append(COLON);
         		sbuild.append(report);
         	}
