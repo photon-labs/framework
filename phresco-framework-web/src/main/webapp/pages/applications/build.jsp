@@ -276,10 +276,6 @@
 	function popupOnOk(obj) {
  		var okUrl = $(obj).attr("id");
 		if (okUrl === "build") {
-			if ($('input[type=checkbox][name=signing]').is(':checked') && isBlank($('#profileAvailable').val())) {
-				$("#errMsg").html('<%= FrameworkConstants.PROFILE_CREATE_MSG %>');
-				return false;
-			}
 			/* enable text box only if any file selected for minification */
 			$('input[name="jsFileName"]').each(function () {
 				if($(this).val() !== "") {
