@@ -1139,13 +1139,31 @@ background-color: #ffffff;
 	background:#3A090B;	
 }
 
-.userInfo{
-	background:#ffffff;
-	color: #9D261D;
+.userInfo {
+    background:#ffffff;
+    color: #38b865;
 }
 
 .userInfo a {
-	color: #9D261D;
+    color: #38b865;
+    text-decoration: none;
+}
+
+.userInfo ul li {
+    background:#FFF;
+    color: #333333;
+}
+
+.userInfo ul li.theme_change {
+    border-bottom:1px dashed #CCCCCC;
+}
+
+.userInfo ul li a {
+    color:#9D261D;
+}
+
+.userInfo ul li ul li a {
+    color:#313131;
 }
 
 .build_table_data_div {

@@ -42,10 +42,11 @@
 <% } %>
 	
 <script>
-	var localstore = $("link[title='phresco']").attr("href");
-	localStorage["color"] =localstore;
+	/* var localstore = $("link[title='phresco']").attr("href");
+	localStorage["color"] =localstore; */
 	
 	$(document).ready(function() {
+		alert("localStorage             " + localStorage["color"]);
 		hideLoadingIcon();
 	    reloadIframe();
 	    $(".styles").click(function() {
@@ -55,10 +56,16 @@
 	
 	function reloadIframe() {
 		var theme = localStorage["color"];
-	    if (theme == null || theme == undefined || theme == "undefined" || theme == "null" || theme == "themes/photon/css/red.css") {
-	         theme = "themes/photon/css/red.css";
-	    }
-	    
+		if (theme != null) {
+			if (theme == "themes/red_blue/css/red.css") {
+                theme == "themes/red_blue/css/red.css"
+            } else {
+                theme == "themes/red_blue/css/blue.css"
+            }
+		} else {
+			theme = "theme/photon/css/photon_theme.css";
+		}
+		
 	    var source = "";
 	     <% 
 	    	if (StringUtils.isNotEmpty(clangReport)) { 

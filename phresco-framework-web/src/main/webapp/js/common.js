@@ -514,12 +514,20 @@ function accordion() {
 }
 
 function getLoadingImgPath() {
-	var src = "theme/red_blue/images/loading_blue.gif";
-	var theme =localStorage["color"];
-    if (theme == undefined || theme == "theme/red_blue/css/red.css") {
-    	src = "theme/red_blue/images/loading_red.gif";
-    }
-    return src;
+	var localstore = localStorage["color"];
+	var imgSrc = "";
+	
+	if (localstore != null) {
+		if (localstore == "theme/red_blue/css/blue.css") {
+			imgSrc = "theme/red_blue/images/loading_blue.gif";
+		} else if (localstore == "theme/red_blue/css/red.css") {
+			imgSrc = "theme/red_blue/images/loading_red.gif";
+		} 
+	}
+	else {
+		imgSrc = "theme/photon/images/loading_green.gif";
+	}
+	return imgSrc;
 }
 
 function showLoadingIcon() {
@@ -580,26 +588,47 @@ function allowNumHyphenPlus(numbr) {
 	return numbr.replace(/[^0-9\-\+]+/g, '');
 }
 
-function changeTheme() {
-  	if (localStorage["color"] != null) {
-        $("link[title='phresco']").attr("href", localStorage["color"]);
-    } else {
-		$("link[title='phresco']").attr("href", "theme/red_blue/css/red.css");
+function applyTheme() {
+	var theme = localStorage["color"];
+	if (theme != null) {
+		changeTheme(theme);
+		showWelcomeImage(theme);
+	} else {
+		theme = "theme/red_blue/css/photon_theme.css";
+		changeTheme(theme);
+		showWelcomeImage(theme);
+	}
+}
+
+function changeTheme(localstore) {
+	if (localstore == "theme/red_blue/css/red.css") {
+        $("link[title='phresco']").attr("href", localstore);
+        $("link[id='phresco']").attr("href", "theme/red_blue/css/phresco.css");
+        $("link[id='media-query']").attr("href", "theme/red_blue/css/media-queries.css");
+    } else if (localstore == "theme/red_blue/css/blue.css") {
+        $("link[title='phresco']").attr("href", localstore);
+        $("link[id='phresco']").attr("href", "theme/red_blue/css/phresco.css");
+        $("link[id='media-query']").attr("href", "theme/red_blue/css/media-queries.css");
+    } else if (localstore == "theme/photon/css/photon_theme.css") {
+        $("link[title='phresco']").attr("href", localstore);
+        $("link[id='phresco']").attr("href", "theme/photon/css/phresco_default.css");
+        $("link[id='media-query']").attr("href", "theme/photon/css/media-queries.css");
     } 
 }
 
-function showWelcomeImage() {
-	var theme = localStorage['color'];
-	if (theme == "theme/red_blue/css/blue.css") {
-		$("link[id='theme']").attr("href", localStorage["color"]);
+function showWelcomeImage(localstore) {
+	if (localstore == "theme/red_blue/css/blue.css") {
 		$('.headerlogoimg').attr("src","theme/red_blue/images/phresco_header_blue.png");
 		$('.phtaccinno').attr("src","theme/red_blue/images/acc_inov_blue.png");
 		$('.welcomeimg').attr("src","theme/red_blue/images/welcome_photon_blue.png");
-	} else if (theme == null || theme == undefined || theme == "theme/red_blue/css/blue.css") {
-		$("link[id='theme']").attr("href", "theme/red_blue/css/red.css");
+	} else if (localstore == "theme/red_blue/css/red.css") {
 		$('.headerlogoimg').attr("src","theme/red_blue/images/phresco_header_red.png");
 		$('.phtaccinno').attr("src","theme/red_blue/images/acc_inov_red.png");
 		$('.welcomeimg').attr("src","theme/red_blue/images/welcome_photon_red.png");
+	} else if (localstore == "theme/photon/css/photon_theme.css") {
+		$('.headerlogoimg').attr("src","theme/photon/images/photon_phresco_logo.png");
+		/*$('.phtaccinno').attr("src","theme/photon/images/acc_inov_green.png");*/
+		$('.welcomeimg').attr("src","theme/photon/images/welcome_photon_red.png");
 	}
 }
 

@@ -1047,13 +1047,30 @@ label {
 	background:#313131;	
 }
 
-.userInfo{
+.userInfo {
 	background:#ffffff;
 	color: #38b865;
 }
 
 .userInfo a {
 	color: #38b865;
+	text-decoration: none;
+}
+
+.userInfo ul li {
+    background:#FFF;
+}
+
+.userInfo ul li.theme_change {
+    border-bottom:1px dashed #CCCCCC;
+}
+
+.userInfo ul li a {
+    color:#38b865;
+}
+
+.userInfo ul li ul li a {
+    color:#313131;
 }
 
 .build_table_data_div {

@@ -37,10 +37,12 @@
 		<link REL="SHORTCUT ICON" HREF="images/favicon.ico">
 		<link rel="stylesheet" href="css/bootstrap.css">
 
-		<link type="text/css" rel="stylesheet" href="theme/red_blue/css/phresco.css" id="phresco" >
-		<link type="text/css" rel="stylesheet" class="changeme" title="phresco">
+		<!-- <link type="text/css" rel="stylesheet" href="theme/red_blue/css/phresco.css" id="phresco"> -->
+		<link type="text/css" rel="stylesheet" href="theme/photon/css/phresco_default.css" id="phresco">
+
+		<link type="text/css" rel="stylesheet" class="changeme" title="phresco" href="theme/photon/css/photon_theme.css">
 		<!-- media queries css -->
-		<link type="text/css" rel="stylesheet" href="theme/red_blue/css/media-queries.css">
+		<link type="text/css" rel="stylesheet" href="theme/photon/css/media-queries.css" id="media-query">
 		
 		<!-- jquery file tree css starts -->
 		<link type="text/css" rel="stylesheet" href="css/jqueryFileTree.css" media="screen">
@@ -96,38 +98,33 @@
 		<script type="text/javascript" src="js/windowResizer.js"></script>
 		
 		<script type="text/javascript">
-			changeTheme(); 
-		
 		    $(document).ready(function() {
-		    	enableScreen();
-		    	
+		        applyTheme();
+		        
 				$(".styles").click(function() {
-					localStorage.clear();
-		             var value = $(this).attr("rel");
-		             localStorage["color"]= value;
-		             localstore = localStorage["color"];
-		             $("link[title='phresco']").attr("href",localstore);
-		             showWelcomeImage();
-				});
-
+	                 localStorage.clear();
+	                 var value = $(this).attr("rel");
+	                 localStorage["color"]= value;
+	                 applyTheme();
+	            });
+                  
 				// function to show user info in toggle 
-				$('div li.usersettings div').hide(0);
-				$('div li.usersettings').click(function() {
-					$('div li.usersettings div').slideToggle(0);
+				$('div aside.usersettings div').hide(0);
+				$('div aside.usersettings').click(function() {
+					$('div aside.usersettings div').slideToggle(0);
 				});
 
 				// to show user info on mouse over
-				$('#signOut li').mouseenter(function() {
-					$("div li.usersettings div").hide(0);
-					$(this).children("div li.usersettings div").show(0);
+				$('#signOut aside').mouseenter(function() {
+					$("div aside.usersettings div").hide(0);
+					$(this).children("div aside.usersettings div").show(0);
 				}).mouseleave(function() {
-					$("div li.usersettings div").hide(0);
+					$("div aside.usersettings div").hide(0);
 				});
 
 				clickMenu($("a[name='headerMenu']"), $("#container"), $('#formCustomers'));
 				loadContent("home", '', $("#container"));
 				activateMenu($("#home"));
-				showWelcomeImage();
 			});
 		</script>
 	</head>
@@ -160,25 +157,30 @@
 		<header>
 			<div class="header">
 				<div class="Logo">
-					 <a href="#" id="goToHome"><img class="headerlogoimg" src="theme/red_blue/images/phresco_header_red.png" alt="logo"></a>
+					 <a href="#" id="goToHome"><img class="headerlogoimg" src="theme/photon/images/photon_phresco_logo.png" alt="logo"></a>
 				</div>
 				
 				<div id="signOut" class="signOut">
-					<li class="usersettings">
+					<aside class="usersettings">
 						<%= displayName %>
 						<img src="images/downarrow.png" class="arrow">
-                        <div class="userInfo" >&nbsp;&nbsp;<s:text name="lbl.skins" />&nbsp;
-                            <a class="styles" href="#"  rel="theme/red_blue/css/red.css">
-								<img src="images/red_themer.jpg" class="skinImage">
-							</a>&nbsp;
-							<a class="styles" href="#"  rel="theme/red_blue/css/blue.css">
-								<img src="images/blue_themer.jpg" class="skinImage">
-							</a>
+                        <div class="userInfo" >
+                            <ul>
+                            	<li class="theme_change"><a href="#">Themes</a>
+                                	<ul>
+                                    	<li>Photon&nbsp;<a href="#" class="styles" href="#" rel="theme/photon/css/photon_theme.css"><img src="images/photon_theme.png"></a></li>
+                                        <li>Red-Blue&nbsp;
+                                            <a class="styles" href="#" rel="theme/red_blue/css/red.css"><img src="images/red_themer.jpg"></a>
+                                            <a class="styles" href="#" rel="theme/red_blue/css/blue.css"><img src="images/blue_themer.jpg" class="skinImage"></a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li><a href="#"><s:text name="lbl.hdr.help"/></a></li>
+                                <li><a href="#"><s:text name="lbl.abt.phresco"/></a></li>
+                                <li><a href="<s:url action='admin/logout'/>"><s:text name="lbl.signout"/></a></li>
+                            </ul>
                         </div>
-                        <div class="userInfo"><a href="#" class="">&nbsp;&nbsp;<s:text name="lbl.hdr.help"/></a></div>
-                        <div class="userInfo"><a href="#" class="abtPopUp about">&nbsp;&nbsp;<s:text name="lbl.abt.phresco"/></a></div>
-                        <div class="userInfo"><a href="<s:url action='admin/logout'/>" id="signOut">&nbsp;&nbsp;<s:text name="lbl.signout"/></a></div>
-					</li>
+					</aside>
 				</div>
                 
                 <div class="headerInner">
@@ -385,7 +387,6 @@
 	</body>
 	
 	<script type="text/javascript">
-		var refreshIntervalId;
 		if ($.browser.safari && $.browser.version == 530.17) {
 			$(".shortcut_bottom").show().css("float","left");
 		}

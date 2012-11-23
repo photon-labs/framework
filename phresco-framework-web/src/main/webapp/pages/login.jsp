@@ -29,21 +29,20 @@
 
 	<!-- basic js -->
 	<script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
-	<script type="text/javascript" src="js/jquery-ui-1.8.18.custom.min.js"></script>
-
-	<!-- right panel scroll bar -->
-	<script type="text/javascript" src="js/home.js"></script>
 
 	<!-- commons.js -->
 	<script type="text/javascript" src="js/common.js"></script>
 
-	<link type="text/css" rel="stylesheet" href="css/bootstrap.css">
-	<link type="text/css" rel="stylesheet" href="theme/red_blue/css/phresco.css">
-	<link type="text/css" rel="stylesheet" class="changeme" id="theme">
+	<link rel="stylesheet" href="css/bootstrap.css">
+	<link type="text/css" rel="stylesheet" href="theme/photon/css/phresco_default.css" id="phresco">
+	<link type="text/css" rel="stylesheet" class="changeme" title="phresco" href="theme/photon/css/photon_theme.css">
+	<!-- media queries css -->
+	<link type="text/css" rel="stylesheet" href="theme/photon/css/media-queries.css" id="media-query">
 
 <script type="text/javascript">
 $(document).ready(function() {
-	showWelcomeImage();
+	applyTheme();
+    
     <%
 		String cmdLogin = (String) request.getAttribute("cmdLogin");
 		if (cmdLogin != null) {
@@ -75,18 +74,17 @@ $(document).ready(function() {
 </head>
 <body class="lgnBg">
       <div class="logoimg">
-          <img class="logoimage" src="theme/red_blue/images/photon_phresco_logo_red.png">
+          <img class="logoimage" src="theme/photon/images/photon_phresco_logo.png">
       </div>
       <div class="innoimg">
-           <img class="phtaccinno" border="0" alt="" onClick="window.open('http://www.photon.in','_blank');" src="theme/red_blue/images/acc_inov_red.png">
+           <img class="phtaccinno" border="0" alt="" onClick="window.open('http://www.photon.in','_blank');" src="">
       </div>
 	 
       <div class="lgnintro_container lgnContainer">
 	        <div class="welcome" id="welcome">
-                  <img class="welcomeimg" src="theme/red_blue/images/welcome_photon_red.png">
+                  <img class="welcomeimg" src="theme/photon/images/welcome_photon.png">
              </div> 
 	    <div class="lgnintro_container_left">
-	    	<h1 class="l_align">Login</h1>
 	    	<h1 class="lp_align"></h1>    
 			<%
 			     String loginError = (String)request.getAttribute(FrameworkConstants.REQ_LOGIN_ERROR);

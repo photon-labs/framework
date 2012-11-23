@@ -1099,27 +1099,40 @@ table tr {
     color: #9D261D;
 }
 /*** Settigs and Configuration field description end ***/
+.usersettings {
+    background:#049CDB;
+    color: #FFFFFF;
+}
 
 .username {
 	color: #ffffff;
 }
 
-.usersettings {
-    background: #049CDB;
-    color: #ffffff;
-}
-
-.signOut {
-    color: #FFFFFF;
-}
-
 .userInfo {
-	background: #ffffff;
-	color: #A3A3A3;
+    background:#ffffff;
+    color: #38b865;
 }
 
 .userInfo a {
-	color: #A3A3A3;
+    color: #38b865;
+    text-decoration: none;
+}
+
+.userInfo ul li {
+    background:#FFF;
+    color: #666666;
+}
+
+.userInfo ul li.theme_change {
+    border-bottom:1px dashed #CCCCCC;
+}
+
+.userInfo ul li a {
+    color:#313131;
+}
+
+.userInfo ul li ul li a {
+    color:#313131;
 }
 
 .nodejs_startbtn {
