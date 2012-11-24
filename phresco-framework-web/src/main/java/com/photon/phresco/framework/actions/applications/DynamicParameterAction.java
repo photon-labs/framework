@@ -131,7 +131,9 @@ public class DynamicParameterAction extends FrameworkBaseAction {
                         addValueDependToWatcher(watcherMap, parameterKey, dynParamPossibleValues);
                         if (watcherMap.containsKey(parameterKey)) {
                             DependantParameters dependantParameters = (DependantParameters) watcherMap.get(parameterKey);
-                            dependantParameters.setValue(dynParamPossibleValues.get(0).getValue());
+                            if (CollectionUtils.isNotEmpty(dynParamPossibleValues)) {
+                                dependantParameters.setValue(dynParamPossibleValues.get(0).getValue());
+                            }
                         }
                         
                         setReqAttribute(REQ_DYNAMIC_POSSIBLE_VALUES + parameter.getKey(), dynParamPossibleValues);
@@ -143,7 +145,9 @@ public class DynamicParameterAction extends FrameworkBaseAction {
                         }
                         paramBuilder.append(parameterKey);
                         paramBuilder.append("=");
-                        paramBuilder.append(dynParamPossibleValues.get(0).getValue());
+                        if (CollectionUtils.isNotEmpty(dynParamPossibleValues)) {
+                            paramBuilder.append(dynParamPossibleValues.get(0).getValue());
+                        }
                     } else if (parameter.getPossibleValues() != null) { //Possible values
                         List<Value> values = parameter.getPossibleValues().getValue();
                         
@@ -175,7 +179,6 @@ public class DynamicParameterAction extends FrameworkBaseAction {
                 setAvailableParams(paramBuilder.toString());
             }
         } catch (Exception e) {
-            e.printStackTrace();
             // TODO: handle exception
         }
     }
@@ -287,8 +290,7 @@ public class DynamicParameterAction extends FrameworkBaseAction {
 				dynamicParameter = phrescoDynamicLoader.getDynamicParameter(className);
 			} else {
 				//To get repo info from Customer object
-				ServiceManager serviceManager = getServiceManager();
-				Customer customer = serviceManager.getCustomer(getCustomerId());
+				Customer customer = getServiceManager().getCustomer(getCustomerId());
 				RepoInfo repoInfo = customer.getRepoInfo();
 				//To set groupid,artfid,type infos to List<ArtifactGroup>
 				List<ArtifactGroup> artifactGroups = new ArrayList<ArtifactGroup>();
@@ -312,7 +314,6 @@ public class DynamicParameterAction extends FrameworkBaseAction {
 			
 			return dynamicParameter.getValues(watcherMap);
 		} catch (Exception e) {
-		    e.printStackTrace();
 			throw new PhrescoException(e);
 		}
 	}

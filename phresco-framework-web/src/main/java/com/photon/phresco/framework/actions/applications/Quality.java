@@ -796,7 +796,6 @@ public class Quality extends DynamicParameterAction implements Constants {
             return showErrorPopup(e, getText(EXCEPTION_QUALITY_FUNCTIONAL_STOP_NODE));
         } catch (PhrescoPomException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
         }
 
         return APP_PERFORMANCE_TEST;
@@ -1612,7 +1611,6 @@ public class Quality extends DynamicParameterAction implements Constants {
 
              getHttpRequest().setAttribute(REQ_APP_INFO, appInfo);
     	} catch(Exception e){
-    		 e.printStackTrace();
         }
     	
     	return "load";
@@ -1628,7 +1626,6 @@ public class Quality extends DynamicParameterAction implements Constants {
     		getDynamicParameters(appInfo, PHASE_LOAD_TEST);
     		setReqAttribute(REQ_FROM, from);
     	} catch(Exception e) {
-    		e.printStackTrace();
     	}
     	
     	return "Success";
@@ -1650,7 +1647,6 @@ public class Quality extends DynamicParameterAction implements Constants {
             setReqAttribute(REQ_APP_ID, getAppId());
             setReqAttribute(REQ_ACTION_TYPE, LOAD);
     	} catch(Exception e) {
-    		e.printStackTrace();
     	}
     	return APP_ENVIRONMENT_READER;
     }
@@ -1932,7 +1928,6 @@ public class Quality extends DynamicParameterAction implements Constants {
                 setReqAttribute(REQ_ERROR_TESTSUITE, ERROR_TEST_SUITE);
             }
         } catch (Exception e) {
-            e.printStackTrace();
             setReqAttribute(REQ_ERROR_DATA, ERROR_ANDROID_DATA);
             if (s_debugEnabled) {
                S_LOGGER.error("Entered into catch block of Quality.performanceTestResult()"+ e);
@@ -2108,7 +2103,6 @@ public class Quality extends DynamicParameterAction implements Constants {
     			return pomModule.getModule();
     		}
     	} catch (PhrescoPomException e) {
-    		e.printStackTrace();
     	}
     	return null;
     }
@@ -2239,7 +2233,6 @@ public class Quality extends DynamicParameterAction implements Constants {
 	            }
     		}
         } catch (PhrescoException e) {
-            e.printStackTrace();
         	S_LOGGER.error("Entered into catch block of Quality.testSuite()"+ e);
         }
 
@@ -2276,7 +2269,6 @@ public class Quality extends DynamicParameterAction implements Constants {
 					getHttpRequest().setAttribute(REQ_ANDROID_CONN_DEVICES, connAndroidDevices);
 					testType = ANDROID_PERFORMACE;
 				} catch (Exception e) {
-					e.printStackTrace();
 				}
 	        }
         } catch (PhrescoException e) {
