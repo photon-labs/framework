@@ -215,14 +215,16 @@
    
 
 <script type="text/javascript">
-	/* To check whether the divice is ipad or not */
-	if(!isiPad()){
-		/* JQuery scroll bar */
+	//To check whether the device is ipad or not and then apply jquery scrollbar
+	if (!isiPad()) {
 		$(".fixed-table-container-inner").scrollbars();
 		$("#graphicalView").scrollbars();
 	}
 	
 	$(document).ready(function() {
+		changeView ();//Change to graphical/tabular view based on the selection
+		hideLoadingIcon();//To hide the loading icon once the page is loaded
+		canvasInit();//To draw the graph
 		
 		if ($.browser.safari) {
     		$(".th-inner-test").css("top","235px"); 
@@ -238,31 +240,23 @@
             $(".th-inner-testtech").css("top","225px");
         }
 		
-		canvasInit();
-		
-		 $(".styles").click(function() {
-			 canvasInit();
-		 });
-		/*$(".styles").click(function() {
-			 $("iframe").attr({
-	             src: $("iframe").attr("src")
-	         });
-		});*/
-		
-		changeView (); // when graph is loaded base on selection of list box(tabular / list) it do automatically
-		enableScreen();
+		$(".styles").click(function() {
+			canvasInit();
+		});
 	});
 	
 	$('#resultView').change(function() {
 		changeView ();
 	});
 	
+	//To change the graph when based on is changed
 	function changeGraph() {
 // 		showLoadingIcon(); // Loading Icon
 		loadContent('fetchPerformanceTestResult', $('#formPerformance'), $('#testResultDisplay'), getBasicParams());
 		$("#graphicalView").show();
 	}
 	
+	//To change the view to graph/table
 	function changeView() {
 		var resultView = $('#resultView').val();
 		if (resultView == 'graphical') {
@@ -276,6 +270,7 @@
 		}
 	}
 	
+	//To draw the graph based on the graph data
 	function canvasInit() {
         var chartTextColor = "";
         var chartGridColor = "";
@@ -302,7 +297,7 @@
 	        chartAxisColor = "#4C4C4C";
 	        chartBarColor = "#00A8F0";
 	        
-	      //line chart color
+	      	//line chart color
 	      	minColor = "#00A8F0";
 	      	maxColor = "#008000";
 	      	avgColor = "red";
@@ -312,7 +307,7 @@
 	        chartAxisColor = "#323232";
 	        chartBarColor = "#39BC67";
 	        
-	      //line chart color
+	      	//line chart color
 	      	minColor = "#00A8F0";
 	      	maxColor = "#008000";
 	      	avgColor = "red";
@@ -338,7 +333,7 @@
         bar.Draw();
         
         <% 
-        	if (request.getAttribute("showGraphFor").toString().equals("all")) {
+        	if (request.getAttribute(FrameworkConstants.REQ_SHOW_GRAPH).equals(FrameworkConstants.REQ_TEST_SHOW_ALL_GRAPH)) {
         %>
 				var line = new RGraph.Line('allData', <%= graphAllData %>);
 		        line.Set('chart.background.grid', true);
