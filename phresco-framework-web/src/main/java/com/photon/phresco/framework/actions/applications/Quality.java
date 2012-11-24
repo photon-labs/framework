@@ -124,37 +124,37 @@ public class Quality extends DynamicParameterAction implements Constants {
     private static Boolean s_debugEnabled  =S_LOGGER.isDebugEnabled();
     
     private List<SettingsInfo> serverSettings = null;
-    private String showSettings = null;
-    private String testSuite = null;
-    private String failures = null;
-    private String errs = null;
-    private String tests = null;
-    private String setting = null;
-    private String projectCode = null;
-    private String testType = null;
-    private String testResultFile = null;
+    private String showSettings = "";
+    private String testSuite = "";
+    private String failures = "";
+    private String errs = "";
+    private String tests = "";
+    private String setting = "";
+    private String projectCode = "";
+    private String testType = "";
+    private String testResultFile = "";
 	private String techReport = "";
-    private String testModule = null;
-	private String showError = null;
-    private String hideLog = null;
-    private String showDebug = null;
-    private String jarLocation = null;
-    private String testAgainst = null;
-    private String jarName = null;
+    private String testModule = "";
+	private String showError = "";
+    private String hideLog = "";
+    private String showDebug = "";
+    private String jarLocation = "";
+    private String testAgainst = "";
+    private String jarName = "";
     private File systemPath = null;
-    private String resolution = null; 
+    private String resolution = ""; 
     
 	private List<String> configName = null;
 	private List<String> buildInfoEnvs = null;
     
-	private String settingType = null;
-    private String settingName = null;
-    private String caption = null;
+	private String settingType = "";
+    private String settingName = "";
+    private String caption = "";
     private List<String> testResultFiles = new ArrayList<String>();
     private List<TestSuite> testSuites = null;
     private List<String> testSuiteNames = null;
     private boolean validated = false;
-	private String testResultsType = null;
+	private String testResultsType = "";
 
 	//Below variables gets the value of performance test Url, Context and TestName
 	private PerformanceDetails performanceDetails = null;
@@ -163,84 +163,61 @@ public class Quality extends DynamicParameterAction implements Constants {
     private List<String> contextType = null;
     private List<String> contextPostData = null;
     private List<String> encodingType = null;
-    private String testName = null;
+    private String testName = "";
     
     //Below variables get the value of PerformanceTest for Db
     private List<String> dbPerName = null;
-	private String Database = null;
+	private String Database = "";
 	private List<String> queryType = null;
     private List<String> query = null;
 
     //Thread group details
-    private String noOfUsers = null;
-    private String rampUpPeriod = null;
-    private String loopCount = null;
+    private String noOfUsers = "";
+    private String rampUpPeriod = "";
+    private String loopCount = "";
 
     //jmeterTestAgainst radio button value
-    private String jmeterTestAgainst = null;
-    private String technologyId=null;
+    private String jmeterTestAgainst = "";
 
     private boolean resultFileAvailable = false;
 
     // android performance tag name
-    private String testResultDeviceId = null;
+    private String testResultDeviceId = "";
     private Map<String, String> deviceNames = null;
-    private String serialNumber = null;
+    private String serialNumber = "";
     
     // iphone unit test
-    private String sdk = null;
+    private String sdk = "";
 	private String target = "";
 	private String fromPage = "";
 	
 	//perfromance DB
-	private String hostValue = null;
-    private String portNo = null;
-    private String pwd = null;
-    private String dbType = null;
-    private String schema = null;
-    private String uname = null;
-    private String dbUrl = null;
-    private String driver = null;
+	private String hostValue = "";
+    private String portNo = "";
+    private String pwd = "";
+    private String dbType = "";
+    private String schema = "";
+    private String uname = "";
+    private String dbUrl = "";
+    private String driver = "";
+    
+    private String showGraphFor = "";
 	
     // report generation 
-    private String reportName = null;
-    private String reoportLocation = null;
-    private String reportDataType = null;
+    private String reportName = "";
+    private String reoportLocation = "";
+    private String reportDataType = "";
     
     // download report
 	private InputStream fileInputStream;
 	private String fileName = "";
-	private String reportFileName = null;
+	private String reportFileName = "";
 	
 	//ios test type iosTestType
-	private String iosTestType = null;
+	private String iosTestType = "";
 	
 	private String projectModule = "";
 	
-	//Hub configuration
-	private int port;
-	private int newSessionWaitTimeout;
-	private List<String> servlets = new ArrayList<String>();
-	private String prioritizer = "";
-	private String capabilityMatcher = "";
-	private boolean throwOnCapabilityNotPresent = false;
-	private int nodePolling;
-    private int cleanUpCycle;
-    private int timeout;
-    private int browserTimeout;
-    private int maxSession;
-    
-    //Node configuration
-    private String browserName = "";
-    private int maxInstances;
-    private String seleniumProtocol = "";
-    private String proxy = "";
-    private String host = "";
-    private boolean register = false;
-    private int registerCycle;
-    private int hubPort;
-    private String hubHost = "";
-    
     boolean connectionAlive = false;
     
 	private static Map<String, Map<String, NodeList>> testSuiteMap = Collections.synchronizedMap(new HashMap<String, Map<String, NodeList>>(8));
@@ -1848,12 +1825,12 @@ public class Quality extends DynamicParameterAction implements Constants {
         if (s_debugEnabled) {
             S_LOGGER.debug("Entering Method Quality.fetchPerformanceTestResultFiles()");
         }
-        
+
         try {
             StringBuilder sb = new StringBuilder(getApplicationHome());
             FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
             String performanceReportDir = frameworkUtil.getPerformanceTestReportDir(getApplicationInfo());
-            
+
             if (s_debugEnabled) {
                 S_LOGGER.debug("test type performance test Report directory " + performanceReportDir);
             }
@@ -1864,22 +1841,19 @@ public class Quality extends DynamicParameterAction implements Constants {
                 performanceReportDir = matcher.replaceAll(getTestResultsType());
                 sb.append(performanceReportDir);
             }
-            
+
             if (s_debugEnabled) {
                 S_LOGGER.debug("test type performance test Report directory & Type " + sb.toString() + " Type " + getTestResultsType());
             }
 
             File file = new File(sb.toString());
-            File[] childrens = file.listFiles(new XmlNameFileFilter(FILE_EXTENSION_XML));
-            if (!ArrayUtils.isEmpty(childrens)) {
-                QualityUtil.sortResultFile(childrens);
-                setReqAttribute(REQ_JMETER_REPORT_FILES, childrens);
-            } else {
-                setReqAttribute(REQ_ERROR_TESTSUITE, ERROR_TEST_SUITE);
-            }
-            for (File resultFile : childrens) {
-                if (resultFile.isFile()) {
-                    testResultFiles.add(resultFile.getName());
+            File[] resultFiles = file.listFiles(new XmlNameFileFilter(FILE_EXTENSION_XML));
+            if (!ArrayUtils.isEmpty(resultFiles)) {
+                QualityUtil.sortResultFile(resultFiles);
+                for (File resultFile : resultFiles) {
+                    if (resultFile.isFile()) {
+                        testResultFiles.add(resultFile.getName());
+                    }
                 }
             }
         } catch(PhrescoException e) {
@@ -1891,7 +1865,7 @@ public class Quality extends DynamicParameterAction implements Constants {
                 S_LOGGER.error("Entered into catch block of Quality.fetchPerformanceTestResultFiles()"+ FrameworkUtil.getStackTraceAsString(e));
             }
         }
-        
+
         return SUCCESS;
     }
 	
@@ -1901,7 +1875,6 @@ public class Quality extends DynamicParameterAction implements Constants {
         }
         
         try {
-            String showGraphFor = getReqParameter(REQ_SHOW_GRAPH);
             ApplicationInfo appInfo = getApplicationInfo();
 //            String deviceId = getHttpRequest().getParameter("deviceId"); // android device id for display
             String techId = appInfo.getTechInfo().getId();
@@ -1911,30 +1884,29 @@ public class Quality extends DynamicParameterAction implements Constants {
             if (StringUtils.isNotEmpty(getTestResultFile())) {
             	String testResultPath = getPerformanceTestResultPath(appInfo, getTestResultFile());
                 Document document = getDocument(new File(testResultPath)); 
-                Map<String, PerformanceTestResult> performanceReport = QualityUtil.getPerformanceReport(document, getHttpRequest(), techId, testResultDeviceId); // need to pass tech id and tag name
-                setReqAttribute(REQ_TEST_RESULT, performanceReport);
+                Map<String, PerformanceTestResult> performanceTestResultMap = QualityUtil.getPerformanceReport(document, getHttpRequest(), techId, testResultDeviceId); // need to pass tech id and tag name
+                setReqAttribute(REQ_TEST_RESULT, performanceTestResultMap);
 
-                Set<String> keySet = performanceReport.keySet();
-                StringBuilder data = new StringBuilder("[");
+                Set<String> keySet = performanceTestResultMap.keySet();
+                StringBuilder graphData = new StringBuilder("[");
                 StringBuilder label = new StringBuilder("[");
                 
                 List<Float> allMin = new ArrayList<Float>();
                 List<Float> allMax = new ArrayList<Float>();
                 List<Float> allAvg = new ArrayList<Float>();
-                
                 int index = 0;
                 for (String key : keySet) {
-                    PerformanceTestResult performanceTestResult = performanceReport.get(key);
-                    if (REQ_TEST_SHOW_THROUGHPUT_GRAPH.equals(showGraphFor)) {
-                        data.append(performanceTestResult.getThroughtPut());	//for ThroughtPut
-                    } else if (REQ_TEST_SHOW_MIN_RESPONSE_GRAPH.equals(showGraphFor)) {
-                        data.append(performanceTestResult.getMin());	//for min response time
-                    } else if (REQ_TEST_SHOW_MAX_RESPONSE_GRAPH.equals(showGraphFor)) {
-                        data.append(performanceTestResult.getMax());	//for max response time
-                    } else if (REQ_TEST_SHOW_RESPONSE_TIME_GRAPH.equals(showGraphFor)) {
-                   	 	data.append(performanceTestResult.getAvg());	//for responseTime
-                    } else if (REQ_TEST_SHOW_ALL_GRAPH.equals(showGraphFor)) {
-                    	data.append(performanceTestResult.getThroughtPut());	//for ThroughtPut
+                    PerformanceTestResult performanceTestResult = performanceTestResultMap.get(key);
+                    if (REQ_TEST_SHOW_THROUGHPUT_GRAPH.equals(getShowGraphFor())) {
+                        graphData.append(performanceTestResult.getThroughtPut());	//for ThroughtPut
+                    } else if (REQ_TEST_SHOW_MIN_RESPONSE_GRAPH.equals(getShowGraphFor())) {
+                        graphData.append(performanceTestResult.getMin());	//for min response time
+                    } else if (REQ_TEST_SHOW_MAX_RESPONSE_GRAPH.equals(getShowGraphFor())) {
+                        graphData.append(performanceTestResult.getMax());	//for max response time
+                    } else if (REQ_TEST_SHOW_RESPONSE_TIME_GRAPH.equals(getShowGraphFor())) {
+                   	 	graphData.append(performanceTestResult.getAvg());	//for responseTime
+                    } else if (REQ_TEST_SHOW_ALL_GRAPH.equals(getShowGraphFor())) {
+                    	graphData.append(performanceTestResult.getThroughtPut());	//for ThroughtPut
                     	allMin.add((float)performanceTestResult.getMin()/1000);
                     	allMax.add((float)performanceTestResult.getMax()/1000);
                     	allAvg.add((float) (performanceTestResult.getAvg())/1000);
@@ -1943,18 +1915,18 @@ public class Quality extends DynamicParameterAction implements Constants {
                     label.append("'");
                     label.append(performanceTestResult.getLabel());
                     label.append("'");
-                    if (index < performanceReport.size() - 1) {
-                        data.append(",");
+                    if (index < performanceTestResultMap.size() - 1) {
+                        graphData.append(",");
                         label.append(",");
                     }
                     index++;
                 }
                 label.append("]");
-                data.append("]");
-                setReqAttribute(FrameworkConstants.REQ_GRAPH_DATA, data.toString());
-                setReqAttribute(FrameworkConstants.REQ_GRAPH_LABEL, label.toString());
-                setReqAttribute(FrameworkConstants.REQ_GRAPH_ALL_DATA, allMin +", "+ allAvg +", "+ allMax);
-                setReqAttribute(FrameworkConstants.REQ_SHOW_GRAPH, showGraphFor);
+                graphData.append("]");
+                setReqAttribute(REQ_GRAPH_DATA, graphData.toString());
+                setReqAttribute(REQ_GRAPH_LABEL, label.toString());
+                setReqAttribute(REQ_GRAPH_ALL_DATA, allMin +", "+ allAvg +", "+ allMax);
+                setReqAttribute(REQ_SHOW_GRAPH, getShowGraphFor());
                 setReqAttribute(REQ_APP_INFO, appInfo);
             } else {
                 setReqAttribute(REQ_ERROR_TESTSUITE, ERROR_TEST_SUITE);
@@ -3309,171 +3281,19 @@ public class Quality extends DynamicParameterAction implements Constants {
 		this.resolution = resolution;
 	}
 
-    public int getPort() {
-        return port;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
-    }
-
-    public int getNewSessionWaitTimeout() {
-        return newSessionWaitTimeout;
-    }
-
-    public void setNewSessionWaitTimeout(int newSessionWaitTimeout) {
-        this.newSessionWaitTimeout = newSessionWaitTimeout;
-    }
-
-    public List<String> getServlets() {
-        return servlets;
-    }
-
-    public void setServlets(List<String> servlets) {
-        this.servlets = servlets;
-    }
-
-    public String getPrioritizer() {
-        return prioritizer;
-    }
-
-    public void setPrioritizer(String prioritizer) {
-        this.prioritizer = prioritizer;
-    }
-
-    public String getCapabilityMatcher() {
-        return capabilityMatcher;
-    }
-
-    public void setCapabilityMatcher(String capabilityMatcher) {
-        this.capabilityMatcher = capabilityMatcher;
-    }
-
-    public boolean isThrowOnCapabilityNotPresent() {
-        return throwOnCapabilityNotPresent;
-    }
-
-    public void setThrowOnCapabilityNotPresent(boolean throwOnCapabilityNotPresent) {
-        this.throwOnCapabilityNotPresent = throwOnCapabilityNotPresent;
-    }
-
-    public int getNodePolling() {
-        return nodePolling;
-    }
-
-    public void setNodePolling(int nodePolling) {
-        this.nodePolling = nodePolling;
-    }
-
-    public int getCleanUpCycle() {
-        return cleanUpCycle;
-    }
-
-    public void setCleanUpCycle(int cleanUpCycle) {
-        this.cleanUpCycle = cleanUpCycle;
-    }
-
-    public int getTimeout() {
-        return timeout;
-    }
-
-    public void setTimeout(int timeout) {
-        this.timeout = timeout;
-    }
-
-    public int getBrowserTimeout() {
-        return browserTimeout;
-    }
-
-    public void setBrowserTimeout(int browserTimeout) {
-        this.browserTimeout = browserTimeout;
-    }
-
-    public int getMaxSession() {
-        return maxSession;
-    }
-
-    public void setMaxSession(int maxSession) {
-        this.maxSession = maxSession;
-    }
-
-    public String getBrowserName() {
-        return browserName;
-    }
-
-    public void setBrowserName(String browserName) {
-        this.browserName = browserName;
-    }
-
-    public int getMaxInstances() {
-        return maxInstances;
-    }
-
-    public void setMaxInstances(int maxInstances) {
-        this.maxInstances = maxInstances;
-    }
-
-    public String getSeleniumProtocol() {
-        return seleniumProtocol;
-    }
-
-    public void setSeleniumProtocol(String seleniumProtocol) {
-        this.seleniumProtocol = seleniumProtocol;
-    }
-
-    public String getProxy() {
-        return proxy;
-    }
-
-    public void setProxy(String proxy) {
-        this.proxy = proxy;
-    }
-
-    public String getHost() {
-        return host;
-    }
-
-    public void setHost(String host) {
-        this.host = host;
-    }
-
-    public boolean isRegister() {
-        return register;
-    }
-
-    public void setRegister(boolean register) {
-        this.register = register;
-    }
-
-    public int getRegisterCycle() {
-        return registerCycle;
-    }
-
-    public void setRegisterCycle(int registerCycle) {
-        this.registerCycle = registerCycle;
-    }
-
-    public int getHubPort() {
-        return hubPort;
-    }
-
-    public void setHubPort(int hubPort) {
-        this.hubPort = hubPort;
-    }
-
-    public String getHubHost() {
-        return hubHost;
-    }
-
-    public void setHubHost(String hubHost) {
-        this.hubHost = hubHost;
-    }
-
     public boolean isConnectionAlive() {
         return connectionAlive;
     }
 
     public void setConnectionAlive(boolean connectionAlive) {
         this.connectionAlive = connectionAlive;
+    }
+
+    public String getShowGraphFor() {
+        return showGraphFor;
+    }
+
+    public void setShowGraphFor(String showGraphFor) {
+        this.showGraphFor = showGraphFor;
     }
 }

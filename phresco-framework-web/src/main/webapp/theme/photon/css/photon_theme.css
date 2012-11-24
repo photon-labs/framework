@@ -1482,7 +1482,12 @@ label {
     color: white;
     padding-top: 3px;
 }
-
+#navigation ul li a:hover {
+	background:#4F577C;
+}
+#navigation ul li a.active {
+	background:#4F577C;
+}
 .sonar_report {
 	box-shadow : 0 0 2px 2px #ccc;
 }

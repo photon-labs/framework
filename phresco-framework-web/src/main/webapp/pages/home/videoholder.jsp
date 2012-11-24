@@ -91,7 +91,8 @@
     		changeVideo(localStorage.videoname); //To play the selected video.
     	} else {
     		$("div[id='listindex0']").attr("class", "listindex-active"); // To higlight intro video when you login after sign out.
-    		changeVideo("<%= videoInfos.get(0).getName() %>");
+    		//TODO: Need to handle
+<%--     		changeVideo("<%= videoInfos.get(0).getName() %>"); --%>
     	}
         
         

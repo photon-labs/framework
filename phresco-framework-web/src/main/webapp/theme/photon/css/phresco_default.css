@@ -876,10 +876,13 @@ a {
 .userInfo ul li {
     line-height:20px;
     padding-left:7px;
+	padding-right:3px;
 }
 
 .userInfo ul li img {
     margin-left:3px;
+	float:right;
+	margin-top:6px;
 }
 
 .userInfo ul li.theme_change {
