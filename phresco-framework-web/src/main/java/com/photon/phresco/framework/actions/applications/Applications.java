@@ -19,6 +19,7 @@
  */
 package com.photon.phresco.framework.actions.applications;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -49,6 +50,10 @@ import com.photon.phresco.framework.api.ValidationResult;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.commons.LogErrorReport;
 import com.photon.phresco.framework.impl.SCMManagerImpl;
+import com.photon.phresco.plugins.model.Mojos.ApplicationHandler;
+import com.photon.phresco.plugins.util.MojoProcessor;
+import com.photon.phresco.util.Constants;
+import com.photon.phresco.util.Utility;
 import com.phresco.pom.model.Scm;
 import com.phresco.pom.util.PomProcessor;
 
@@ -603,12 +608,19 @@ public class Applications extends FrameworkBaseAction {
 					
 				}
         	}
+        	Gson gson = new Gson();
+        	String artifactGroup = gson.toJson(listArtifactGroup);
+        	File filePath = new File(Utility.getProjectHome() + appInfo.getAppDirName() + File.separator + Constants.DOT_PHRESCO_FOLDER + File.separator + Constants.PHRESCO_PLUGIN_INFO_XML);
+        	MojoProcessor mojo = new MojoProcessor(filePath);
+        	ApplicationHandler applicationHandler = mojo.getApplicationHandler();
+        	applicationHandler.setSelectedFeatures(artifactGroup);
+        	mojo.save();
         	appInfo.setSelectedModules(selectedFeatures);
         	appInfo.setSelectedJSLibs(selectedJsLibs);
         	appInfo.setSelectedComponents(selectedComponents);
     		projectInfo.setAppInfos(Collections.singletonList(appInfo));
     		ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
-    		projectManager.update(projectInfo, getServiceManager(), listArtifactGroup, getOldAppDirName());
+    		projectManager.update(projectInfo, getServiceManager(), getOldAppDirName());
             List<ProjectInfo> projects = projectManager.discover(getCustomerId());
             setReqAttribute(REQ_PROJECTS, projects);
             removeSessionAttribute(getAppId() + SESSION_APPINFO);

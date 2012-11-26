@@ -8,7 +8,9 @@ import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -23,6 +25,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.photon.phresco.api.ApplicationProcessor;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
@@ -183,8 +186,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		return projectInfo;
 	}
 
-	public ProjectInfo update(ProjectInfo projectInfo, ServiceManager serviceManager,
-			List<ArtifactGroup> artifactGroups, String oldAppDirName) throws PhrescoException {
+	public ProjectInfo update(ProjectInfo projectInfo, ServiceManager serviceManager, String oldAppDirName) throws PhrescoException {
 		ClientResponse response = serviceManager.updateProject(projectInfo);
 		if (response.getStatus() == 200) {
 			BufferedReader breader = null;
@@ -216,7 +218,14 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 					ApplicationHandler applicationHandler = mojoProcessor.getApplicationHandler();
 					
 					createSqlFolder(appInfo, projectPath, serviceManager);
+					
 					if (applicationHandler != null) {
+						
+						String selectedFeatures = applicationHandler.getSelectedFeatures();
+						Gson gson = new Gson();
+						Type jsonType = new TypeToken<Collection<ArtifactGroup>>(){}.getType();
+						List<ArtifactGroup> artifactGroups = gson.fromJson(selectedFeatures, jsonType);
+						
 						List<ArtifactGroup> plugins = setArtifactGroup(applicationHandler);
 
 						// Dynamic Class Loading
