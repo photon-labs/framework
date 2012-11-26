@@ -182,10 +182,9 @@
         });
         
         $('#pdfCreation').click(function() {
-    		showPopup();
-    		$('#popup_div').empty();
-    		popup('printAsPdfPopup', '', $('#popup_div'));
-    	    escPopup();
+    		var params = "fromPage=";
+    		params = params.concat("performance");
+    		yesnoPopup('showGeneratePdfPopup', '<s:text name="lbl.app.generatereport"/>', 'printAsPdf','<s:text name="lbl.app.generate"/>', '', params);
 	    });
         
         <%-- $('#closeGenerateTest, #closeGenTest').click(function() {
@@ -332,6 +331,16 @@
 			successEnvValidation(data);
 		} else if (pageUrl == "getPerfTestJSONData") {
 			fillJSONData(data);
+		}
+	}
+	
+	//Handles the ok button click event in the popup
+	function popupOnOk(obj) {
+		var okUrl = $(obj).attr("id");
+		if (okUrl === "printAsPdf") {
+			// show popup loading icon
+			showPopuploadingIcon();
+			loadContent('printAsPdf', $('#generatePdf'), $('#popup_div'), '', false);
 		}
 	}
 </script>

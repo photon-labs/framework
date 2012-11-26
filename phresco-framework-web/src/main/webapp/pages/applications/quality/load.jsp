@@ -182,14 +182,11 @@
 	            copyPath('<%= appDirName %><%= path %>');
 	         });
 	         
-	        <%-- $('#pdfCreation').click(function() {
-	     		showPopup();
-	     		$('#popup_div').empty();
-	 			var params = "testType=";
-	 			params = params.concat('<%= testType %>');
-	     		popup('printAsPdfPopup', params, $('#popup_div'));
-	     	    escPopup();
-	 	    });--%>
+	        $('#pdfCreation').click(function() {
+	    		var params = "fromPage=";
+	    		params = params.concat("load");
+	    		yesnoPopup('showGeneratePdfPopup', '<s:text name="lbl.app.generatereport"/>', 'printAsPdf','<s:text name="lbl.app.generate"/>', '', params);
+	 	    });
 	    });
     
        
@@ -218,7 +215,13 @@
 		//Handles the ok button click event in the popup
 		function popupOnOk(obj) {
 			var okUrl = $(obj).attr("id");
-			var params = getBasicParams();
-			progressPopupAsSecPopup(okUrl, '<%= appId %>', '<%= FrameworkConstants.LOAD %>', $("#generateBuildForm"), params);
+			if (okUrl === "printAsPdf") {
+				// show popup loading icon
+				showPopuploadingIcon();
+				loadContent('printAsPdf', $('#generatePdf'), $('#popup_div'), '', false);
+			} else {
+				var params = getBasicParams();
+				progressPopupAsSecPopup(okUrl, '<%= appId %>', '<%= FrameworkConstants.LOAD %>', $("#generateBuildForm"), params);
+			}
 		}		
     </script>

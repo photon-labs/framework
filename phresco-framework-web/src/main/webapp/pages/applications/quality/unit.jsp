@@ -184,12 +184,8 @@ $(document).ready(function() {
 	});
     
 	$('#pdfCreation').click(function() {
-   		showPopup();
-   		$('#popup_div').empty();
-		var params = "testType=";
-		params = params.concat("unit");
-   		popup('printAsPdfPopup', params, $('#popup_div'));
-   	    escPopup();
+		var params = "fromPage=unit";
+		yesnoPopup('showGeneratePdfPopup', '<s:text name="lbl.app.generatereport"/>', 'printAsPdf','<s:text name="lbl.app.generate"/>', '', params);
     });
        
 	$('#closeGenerateTest, #closeGenTest').click(function() {
@@ -266,8 +262,15 @@ function changeView() {
 //Handles the ok button click event in the popup
 function popupOnOk(obj) {
 	var okUrl = $(obj).attr("id");
-	var params = getBasicParams();
-	progressPopupAsSecPopup(okUrl, '<%= appId %>', '<%= FrameworkConstants.UNIT %>', $("#generateBuildForm"), params);
+	if (okUrl === "printAsPdf") {
+		alert("unit print as pdf ");
+		// show popup loading icon
+		showPopuploadingIcon();
+		loadContent('printAsPdf', $('#generatePdf'), $('#popup_div'), '', false);
+	} else {
+		var params = getBasicParams();
+		progressPopupAsSecPopup(okUrl, '<%= appId %>', '<%= FrameworkConstants.UNIT %>', $("#generateBuildForm"), params);
+	}
 }
 
 // after executing the test. when clicking Progress popup , it will call this methid to load test results

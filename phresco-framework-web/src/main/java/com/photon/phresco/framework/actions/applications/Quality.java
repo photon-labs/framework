@@ -74,6 +74,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 import com.google.gson.Gson;
+import com.itextpdf.text.log.*;
 import com.photon.phresco.commons.FileListFilter;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
@@ -219,8 +220,6 @@ public class Quality extends DynamicParameterAction implements Constants {
 	private String projectModule = "";
 	
     boolean connectionAlive = false;
-	//Dynamic parameter related
-	private String from = "";
 	
 	private static Map<String, Map<String, NodeList>> testSuiteMap = Collections.synchronizedMap(new HashMap<String, Map<String, NodeList>>(8));
 	
@@ -2568,6 +2567,9 @@ public class Quality extends DynamicParameterAction implements Constants {
     	    S_LOGGER.debug(" Xml Results Available ====> " + isReportAvailable);
 			setReqAttribute(REQ_APP_ID, getAppId());
 			setReqAttribute(REQ_PROJECT_ID, getProjectId());
+			setReqAttribute(REQ_CUSTOMER_ID, getCustomerId());
+			
+			setReqAttribute(REQ_FROM_PAGE, getFromPage());
 			
         	getHttpRequest().setAttribute(REQ_TEST_EXE, isReportAvailable);
         	List<String> existingPDFs = getExistingPDFs();
@@ -2575,6 +2577,7 @@ public class Quality extends DynamicParameterAction implements Constants {
     		    getHttpRequest().setAttribute(REQ_PDF_REPORT_FILES, existingPDFs);
     		}
         } catch (Exception e) {
+        	e.printStackTrace();
             S_LOGGER.error("Entered into catch block of Quality.printAsPdfPopup()"+ e);
         }
         getHttpRequest().setAttribute(REQ_TEST_TYPE, testType);
@@ -2743,29 +2746,41 @@ public class Quality extends DynamicParameterAction implements Constants {
     public String printAsPdf () {
         S_LOGGER.debug("Entering Method Quality.printAsPdf()");
         try {
-        	System.out.println("pdf started .... ");
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			ProjectInfo projectInfo = getProjectInfo();
+			
 			ApplicationInfo applicationInfo = getApplicationInfo();
 			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(applicationInfo)));
-			
-			System.out.println("reportDataType =====> " + reportDataType);
-			System.out.println("frmpage Value  =====> " + getFrom());
-			
-			
 			List<Parameter> parameters = getMojoParameters(mojo, PHASE_PDF_REPORT);
+			
+	        if (CollectionUtils.isNotEmpty(parameters)) {
+	            for (Parameter parameter : parameters) {
+	            	String key = parameter.getKey();
+	            	if ("reportType".equals(key)) {
+	            		parameter.setValue(reportDataType);
+	            	} else if ("testType".equals(key)) {
+	            		if (StringUtils.isEmpty(fromPage)) {
+	            			setFromPage("All");
+	            		}
+	            		parameter.setValue(getFromPage());
+	            	}
+	            }
+	        }
+	        mojo.save();
+	        
 			List<String> buildArgCmds = getMavenArgCommands(parameters);
 			String workingDirectory = getAppDirectoryPath(applicationInfo);
-//			BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.PDF_REPORT, buildArgCmds, workingDirectory);
-			
+			BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.PDF_REPORT, buildArgCmds, workingDirectory);
+			String line;
+			line = reader.readLine();
+			while (line != null) {
+				line = reader.readLine();
+				System.out.println("Restart Start Console : " + line);
+			}
 			ApplicationInfo appInfo = getApplicationInfo();
 			setReqAttribute(REQ_APPINFO, appInfo);
-			System.out.println("it should not be done!!!!!");
-//            ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-//            Project project = administrator.getProject(projectCode);
-//            String testType = getHttpRequest().getParameter(REQ_TEST_TYPE);
-//            reportGeneration(project, testType);
-//            getHttpRequest().setAttribute(REQ_REPORT_STATUS, getText(SUCCESS_REPORT_STATUS));
+			setReqAttribute(REQ_FROM_PAGE, getFromPage());
+            setReqAttribute(REQ_REPORT_STATUS, getText(SUCCESS_REPORT_STATUS));
         } catch (Exception e) {
         	e.printStackTrace();
         	S_LOGGER.error("Entered into catch block of Quality.printAsPdf()"+ e);
@@ -2798,18 +2813,22 @@ public class Quality extends DynamicParameterAction implements Constants {
         S_LOGGER.debug("Entering Method Quality.downloadReport()");
         try {
         	String testType = getHttpRequest().getParameter(REQ_TEST_TYPE);
+        	System.out.println("testType ");
         	String pdfLOC = "";
         	if (StringUtils.isEmpty(testType)) { 
-        		pdfLOC = Utility.getProjectHome() + projectCode + File.separator + DO_NOT_CHECKIN_DIR + File.separator + ARCHIVES + File.separator + CUMULATIVE + File.separator + projectCode + UNDERSCORE + reportFileName + DOT + PDF;
+        		pdfLOC = Utility.getProjectHome() + getApplicationInfo().getAppDirName() + File.separator + DO_NOT_CHECKIN_DIR + File.separator + ARCHIVES + File.separator + CUMULATIVE + File.separator + getApplicationInfo().getAppDirName() + UNDERSCORE + reportFileName + DOT + PDF;
         	} else {
-        		pdfLOC = Utility.getProjectHome() + projectCode + File.separator + DO_NOT_CHECKIN_DIR + File.separator + ARCHIVES + File.separator + testType + File.separator + testType + UNDERSCORE + reportFileName + DOT + PDF;
+        		pdfLOC = Utility.getProjectHome() + getApplicationInfo().getAppDirName() + File.separator + DO_NOT_CHECKIN_DIR + File.separator + ARCHIVES + File.separator + testType + File.separator + testType + UNDERSCORE + reportFileName + DOT + PDF;
         	}
+        	
+        	System.out.println("pdfLOC ===> " + pdfLOC);
             File pdfFile = new File(pdfLOC);
             if (pdfFile.isFile()) {
     			fileInputStream = new FileInputStream(pdfFile);
     			fileName = reportFileName.split(UNDERSCORE)[1];
             }
         } catch (Exception e) {
+        	e.printStackTrace();
             S_LOGGER.error("Entered into catch block of Quality.downloadReport()" + e);
         }
         return SUCCESS;
@@ -2821,9 +2840,9 @@ public class Quality extends DynamicParameterAction implements Constants {
         	String testType = getHttpRequest().getParameter(REQ_TEST_TYPE);
         	String pdfLOC = "";
         	if (StringUtils.isEmpty(testType)) { 
-        		pdfLOC = Utility.getProjectHome() + projectCode + File.separator + DO_NOT_CHECKIN_DIR + File.separator + ARCHIVES + File.separator + CUMULATIVE + File.separator + projectCode + UNDERSCORE + reportFileName + DOT + PDF;
+        		pdfLOC = Utility.getProjectHome() + getApplicationInfo().getAppDirName() + File.separator + DO_NOT_CHECKIN_DIR + File.separator + ARCHIVES + File.separator + CUMULATIVE + File.separator + getApplicationInfo().getAppDirName() + UNDERSCORE + reportFileName + DOT + PDF;
         	} else {
-        		pdfLOC = Utility.getProjectHome() + projectCode + File.separator + DO_NOT_CHECKIN_DIR + File.separator + ARCHIVES + File.separator + testType + File.separator + testType + UNDERSCORE + reportFileName + DOT + PDF;
+        		pdfLOC = Utility.getProjectHome() + getApplicationInfo().getAppDirName() + File.separator + DO_NOT_CHECKIN_DIR + File.separator + ARCHIVES + File.separator + testType + File.separator + testType + UNDERSCORE + reportFileName + DOT + PDF;
         	}
             File pdfFile = new File(pdfLOC);
             if (pdfFile.isFile()) {
@@ -3306,13 +3325,6 @@ public class Quality extends DynamicParameterAction implements Constants {
         this.connectionAlive = connectionAlive;
     }
 
-	public String getFrom() {
-		return from;
-	}
-
-	public void setFrom(String from) {
-		this.from = from;
-	}
     public String getShowGraphFor() {
         return showGraphFor;
     }

@@ -126,7 +126,7 @@
 																</td>
 																<td class="no-left-bottom-border table-pad">
 																	<a href="#" id="pdfPopup">
-																		<img id="<%= appInfo.getCode() %>" class="pdfCreation" src="images/icons/print_pdf.png" additionalParam="projectId=<%= project.getId() %>&appId=<%= appInfo.getId() %>&from=All" 
+																		<img id="<%= appInfo.getCode() %>" class="pdfCreation" src="images/icons/print_pdf.png" additionalParam="projectId=<%= project.getId() %>&appId=<%= appInfo.getId() %>&fromPage=All" 
 																			title="Generate Report" class="iconSizeinList"/>
 																	</a>
 																</td>
@@ -208,7 +208,6 @@
  	 		var params = $("#formCustomers").serialize();
  	 		loadContent("deleteProject", $("#formProjectList"), $('#container'), params);
  		} else if (okUrl === "printAsPdf") {
-			console.log("print as pdf ");
 			// show popup loading icon
 			showPopuploadingIcon();
 			loadContent('printAsPdf', $('#generatePdf'), $('#popup_div'), getBasicParams(), false);

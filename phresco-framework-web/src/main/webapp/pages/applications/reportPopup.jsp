@@ -18,6 +18,9 @@
 	String reportDeletionStat = (String)request.getAttribute(FrameworkConstants.REQ_REPORT_DELETE_STATUS);
 	String applicationId = (String)request.getAttribute(FrameworkConstants.REQ_APP_ID);
 	String projectId = (String)request.getAttribute(FrameworkConstants.REQ_PROJECT_ID);
+	String customerId = (String)request.getAttribute(FrameworkConstants.REQ_CUSTOMER_ID);
+	String fromPage = (String)request.getAttribute(FrameworkConstants.REQ_FROM_PAGE);
+	System.out.println("From page => " + fromPage);
 %>
 
 <style>
@@ -26,22 +29,13 @@
 	}
 </style>
 
-<form action="printAsPdf" method="post" autocomplete="off" class="build_form" id="generatePdf">
-<!-- <div class="popup_Modal topFifty"> -->
-<!-- 	<div class="modal-header"> -->
-<!-- 		<h3 id="generateBuildTitle"> -->
-<!-- 			Generate Report -->
-<!-- 		</h3> -->
-<!-- 		<a class="close" href="#" id="close">&times;</a> -->
-<!-- 	</div> -->
-
-<!-- 	<div class="modal-body" style="padding-bottom: 20px;height: 220px;"> -->
+<form action="printAsPdf" method="post" autocomplete="off" class="build_form form-horizontal" id="generatePdf">
 		<%
 			if (CollectionUtils.isNotEmpty(reportFiles)) {
 		%>
-			<div class="tabl-fixed-table-container" style="padding-bottom: 20px;">
+			<div class="tabl-fixed-table-container" style="padding-bottom: 20px; padding-top: 0px; height: auto;">
 	      		<div class="header-background"></div>
-	      		<div id="reportPopupTbl" class="tabl-fixed-table-container-inner validatePopup_tbl" style="height: 200px;overflow-x: hidden; overflow-y: auto;">
+	      		<div id="reportPopupTbl" class="tabl-fixed-table-container-inner validatePopup_tbl" style="height: auto;overflow-x: hidden; overflow-y: auto;">
 			        <table cellspacing="0" class="zebra-striped">
 			          	<thead>
 				            <tr>
@@ -94,7 +88,9 @@
 			              			<div class="pdfType" style="color: #000000;">
 				              			<a href="<s:url action='downloadReport'>
 				              				<s:param name="testType"><%= testType == null ? "" : testType %></s:param>
-				              				<s:param name="projectCode"><%= projectCode %></s:param>
+				              				<s:param name="projectId"><%= projectId %></s:param>
+				              				<s:param name="appId"><%= applicationId %></s:param>
+				              				<s:param name="customerId"><%= customerId %></s:param>
 						          		    <s:param name="reportFileName"><%= reportFile %></s:param>
 						          		    </s:url>">
 						          		     <img src="images/icons/download.png" title="<%= reportFile %>.pdf"/>
@@ -103,7 +99,7 @@
 			              		</td>
 			              		<td>
 			              			<div class="pdfDelete" style="color: #000000;">
-						          		     <img src="images/icons/delete(1).png" id="reportName" class="<%= reportFile %>" title="<%= reportFile %>.pdf"/>
+						          		     <img src="images/icons/delete.png" id="reportName" class="<%= reportFile %>" title="<%= reportFile %>.pdf"/>
 					   				</div>
 			              		</td>
 			            	</tr>
@@ -133,24 +129,12 @@
 		</div>
 		
 		<input type="hidden" name="projectId" value="<%= projectId %>">
+		<% if (!"All".equals(fromPage)) { %>
+		<input type="hidden" name="customerId" value="<%= customerId %>">
+		<% } %>
 		<input type="hidden" name="appId" value="<%= applicationId %>">
+		<input type="hidden" name="fromPage" value="<%= fromPage %>">
 		
-<!-- 	</div> -->
-	
-<!-- 	<div class="modal-footer"> -->
-<!-- 		<div class="reportErrorMsg"> -->
-<!-- 			<div id="reportMsg"></div> -->
-<!-- 			<img class="popupLoadingIcon" style="position: relative;"> -->
-<!-- 		</div> -->
-<!--            <input type="radio" name="reportDataType" value="crisp" checked> -->
-<%--            <span class="popup-span"><s:text name="label.report.overall"/></span> --%>
-<!--            <input type="radio" name="reportDataType" value="detail"> -->
-<%--            <span class="popup-span"><s:text name="label.report.detail"/></span> --%>
-           
-<!-- 		<input type="button" class="btn primary" value="Close" id="cancel"> -->
-<!-- 		<input type="button" id="generateReport" class="btn primary" value="Generate"> -->
-<!-- 	</div> -->
-<!-- </div> -->
 </form>
 
 <script type="text/javascript">
@@ -161,61 +145,33 @@
 	$(document).ready(function() {
 		
 		// when clicking on save button, popup should not hide
+		$('.backdrop > fade > in').attr('dispaly', 'block');
 		$('.popupOk').attr("data-dismiss", "");
 		hidePopuploadingIcon();
 // 		disableScreen();
 		
-		$('#generateReport').click(function() {
-			$('.popupLoadingIcon').show();
-			getCurrentCSS();
-			var params = "";
-	    	if (!isBlank($('form').serialize())) {
-	    		params = $('form').serialize() + "&";
-	    	}
-	    	<%
-				if (StringUtils.isEmpty(testType) && !"performance".equals(testType)) {
-			%>
-	 	    	params = params.concat("&projectCode=");
-		    	params = params.concat('<%= projectCode %>');
-			<%
-				} else if(!"performance".equals(testType)) {
-				
-			%>
-	 	    	params = params.concat("&testType=");
-		    	params = params.concat('<%= testType %>');
-			<%
-				}  	
-	    	%>
-            performAction('printAsPdf', params, $('#popup_div'), '');
-		});
+// 		$('#generateReport').click(function() {
+// 			// show popup loading icon
+// 			showPopuploadingIcon();
+// 			var params = getBasicParams();
+// 			params = params.concat("&fromPage=");
+<%-- 	    	params = params.concat('<%= fromPage %>'); --%>
+// 	    	alert(params);
+// 	    	loadContent('printAsPdf', $('#generatePdf'), $('#popup_div'), params, false);
+            
+// 		});
 		
-		$('.pdfDelete').click(function() {
-			$('.popupLoadingIcon').show();
-			getCurrentCSS();
-			var params = "";
-	    	if (!isBlank($('form').serialize())) {
-	    		params = $('form').serialize() + "&";
-	    	}
-	    	params = params.concat("reportFileName=");
-	    	params = params.concat($('#reportName').attr("class"));
-	    	<%
-				if (StringUtils.isEmpty(testType) && !"performance".equals(testType)) {
-			%>
-	 	    	params = params.concat("&projectCode=");
-		    	params = params.concat('<%= projectCode %>');
-			<%
-				} else if(!"performance".equals(testType)) {
-				
-			%>
-	 	    	params = params.concat("&testType=");
-		    	params = params.concat('<%= testType %>');
-			<%
-				}  	
-	    	%>
-            performAction('deleteReport', params, $('#popup_div'), '');
-		});
+// 		$('.pdfDelete').click(function() {
+// 			showPopuploadingIcon();
+// 			var params = getBasicParams();
+// 	    	params = params.concat("&reportFileName=");
+// 	    	params = params.concat($('#reportName').attr("class"));
+//  	    	params = params.concat("&fromPage=");
+<%-- 	    	params = params.concat('<%= fromPage %>'); --%>
+// 	    	loadContent('deleteReport', $('#generatePdf'), $('#popup_div'), params, false);
+// 		});
 		
-		<%
+<%-- 	<%
 			if (StringUtils.isNotEmpty(reportGenerationStat)) {
 		%>
 			showHidePopupMsg($("#reportMsg"), '<%= reportGenerationStat %>');
@@ -242,7 +198,7 @@
 			enableControl($("#generateReport"), "btn primary");
 		<% 
 			}
-		%>
+		%> --%>
 			
 	});
 	
