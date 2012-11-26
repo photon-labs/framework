@@ -170,8 +170,8 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		techId.equals(TechnologyTypes.HTML5_MOBILE_WIDGET)|| techId.equals(TechnologyTypes.HTML5_MULTICHANNEL_JQUERY_WIDGET);
 		if (flag1) {
 			File pomPath = new File(projectPath,POM_FILE);
-			ServerPluginUtil spUtil = new ServerPluginUtil();
-			spUtil.addServerPlugin(info, pomPath);
+//			ServerPluginUtil spUtil = new ServerPluginUtil();
+//			spUtil.addServerPlugin(info, pomPath);
 		}
 		boolean drupal = techId.equals(TechnologyTypes.PHP_DRUPAL7) || techId.equals(TechnologyTypes.PHP_DRUPAL6);
 		if(drupal) {
@@ -300,9 +300,9 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		techId.equals(TechnologyTypes.ANDROID_HYBRID);
 		if (flag1) {
 			try {
-				ServerPluginUtil spUtil = new ServerPluginUtil();
-				spUtil.deletePluginFromPom(path);
-				spUtil.addServerPlugin(delta, path);
+//				ServerPluginUtil spUtil = new ServerPluginUtil();
+//				spUtil.deletePluginFromPom(path);
+//				spUtil.addServerPlugin(delta, path);
 				updatePomProject(appInfoClone);
 			} catch (Exception e) {
 				throw new PhrescoException(e);

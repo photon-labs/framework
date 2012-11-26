@@ -19,10 +19,12 @@
  */
 package com.photon.phresco.framework.actions.applications;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileExistsException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -35,6 +37,7 @@ import com.google.gson.Gson;
 import com.opensymphony.xwork2.Action;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
+import com.photon.phresco.commons.model.ArtifactGroupInfo;
 import com.photon.phresco.commons.model.DownloadInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.SelectedFeature;
@@ -49,6 +52,10 @@ import com.photon.phresco.framework.api.ValidationResult;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.commons.LogErrorReport;
 import com.photon.phresco.framework.impl.SCMManagerImpl;
+import com.photon.phresco.plugins.model.Mojos.ApplicationHandler;
+import com.photon.phresco.plugins.util.MojoProcessor;
+import com.photon.phresco.util.Constants;
+import com.photon.phresco.util.Utility;
 import com.phresco.pom.model.Scm;
 import com.phresco.pom.util.PomProcessor;
 
@@ -584,6 +591,8 @@ public class Applications extends FrameworkBaseAction {
         	List<String> selectedJsLibs = new ArrayList<String>();
         	List<String> selectedComponents = new ArrayList<String>();
         	List<ArtifactGroup> listArtifactGroup = new ArrayList<ArtifactGroup>();
+        	List<DownloadInfo> selectedServerGroup = new ArrayList<DownloadInfo>();
+        	List<DownloadInfo> selectedDatabaseGroup = new ArrayList<DownloadInfo>();
         	if(jsonData !=null) {
             	for (String string : jsonData) {
 					Gson gson = new Gson();
@@ -603,12 +612,52 @@ public class Applications extends FrameworkBaseAction {
 					
 				}
         	}
+        	Gson gson = new Gson();
+        	String artifactGroup = gson.toJson(listArtifactGroup);
+        	File filePath = new File(Utility.getProjectHome() + appInfo.getAppDirName() + File.separator + Constants.DOT_PHRESCO_FOLDER + File.separator + Constants.PHRESCO_PLUGIN_INFO_XML);
+        	MojoProcessor mojo = new MojoProcessor(filePath);
+        	ApplicationHandler applicationHandler = mojo.getApplicationHandler();
+        	applicationHandler.setSelectedFeatures(artifactGroup);
+        	
+        	//To write selected databases info to phresco-plugin-info.xml
+        	List<ArtifactGroupInfo> selectedDatabases = appInfo.getSelectedDatabases();
+			if (CollectionUtils.isNotEmpty(selectedDatabases)) {
+				for (ArtifactGroupInfo selectedDatabase : selectedDatabases) {
+					DownloadInfo downloadInfo = getServiceManager().getDownloadInfo(selectedDatabase.getArtifactGroupId());
+					selectedDatabaseGroup.add(downloadInfo);
+					String databaseGroup = gson.toJson(selectedDatabaseGroup);
+					applicationHandler.setSelectedDatabase(databaseGroup);
+				}
+			}
+			
+			//To write selected servers info to phresco-plugin-info.xml
+        	List<ArtifactGroupInfo> selectedServers = appInfo.getSelectedServers();
+			if (CollectionUtils.isNotEmpty(selectedServers)) {
+				for (ArtifactGroupInfo selectedservers : selectedServers) {
+					DownloadInfo downloadInfo = getServiceManager().getDownloadInfo(selectedservers.getArtifactGroupId());
+					selectedServerGroup.add(downloadInfo);
+					String serverGroup = gson.toJson(selectedServerGroup);
+					applicationHandler.setSelectedDatabase(serverGroup);
+				}
+			}
+			
+			//To write selected WebServices info to phresco-plugin-info.xml
+        	 List<String> selectedWebservices = appInfo.getSelectedWebservices();
+			if (CollectionUtils.isNotEmpty(selectedServers)) {
+				for (String selectedWebService : selectedWebservices) {
+					WebService webservice = getServiceManager().getWebService(selectedWebService);
+					String serverGroup = gson.toJson(webservice);
+					applicationHandler.setSelectedDatabase(serverGroup);
+				}
+			}
+			
+        	mojo.save();
         	appInfo.setSelectedModules(selectedFeatures);
         	appInfo.setSelectedJSLibs(selectedJsLibs);
         	appInfo.setSelectedComponents(selectedComponents);
     		projectInfo.setAppInfos(Collections.singletonList(appInfo));
     		ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
-    		projectManager.update(projectInfo, getServiceManager(), listArtifactGroup, getOldAppDirName());
+    		projectManager.update(projectInfo, getServiceManager(), getOldAppDirName());
             List<ProjectInfo> projects = projectManager.discover(getCustomerId());
             setReqAttribute(REQ_PROJECTS, projects);
             removeSessionAttribute(getAppId() + SESSION_APPINFO);

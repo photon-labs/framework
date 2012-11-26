@@ -5746,6 +5746,9 @@ ul#display-inline-block-example li:nth-child(5) {
 ul#display-inline-block-example li:nth-child(4) select, ul#display-inline-block-example li:nth-child(6) select {
 	margin-top: 8px !important;
 }
+
+/* unit test table header fixes*/
+
 .qtyTable_view .header-background {
 	height: 0px !important;
 	background: none;
@@ -5854,4 +5857,52 @@ color: #313131;
 	font-weight:bold;
 	font-size:17px;
 	text-decoration:none;
+}
+
+
+
+
+#formCreateProject .content_adder .control-group {
+	width: 45%;
+	margin: auto;
+	margin-bottom: 5px;
+}
+#formCreateProject .content_adder .control-group .controls {
+	margin-left: 120px;
+} 
+/*performance page fixes*/
+#formPerformance select {
+	margin-bottom: 0px !important;
+}
+#formPerformance .operation {
+	margin: 12px 5px 12px 6px !important;
+}
+#formPerformance .perTabularView {
+	top: -40px !important;
+	left: -160px !important;
+}
+#formPerformance strong {
+	color: #333;
+}
+#formPerformance #testResultsType {
+	margin-right: 35px;
+}
+#formPerformance .header-background {
+	height: 0px !important;
+	background: none;
+}
+#formPerformance table thead tr {
+	height: 30px;
+	background: #39BC67;
+	color: white;	
+}
+#formPerformance table thead tr th:first-child {
+	border-radius: 11px 0px 0px 0px;
+}
+#formPerformance table thead tr th:last-child {
+	border-radius: 0px 11px 0px 0px;
+}
+#formPerformance table tr td a {
+	color: #333;
+	vertical-align: middle;
 }
