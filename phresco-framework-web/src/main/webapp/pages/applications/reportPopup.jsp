@@ -161,15 +161,15 @@
             
 // 		});
 		
-// 		$('.pdfDelete').click(function() {
-// 			showPopuploadingIcon();
-// 			var params = getBasicParams();
-// 	    	params = params.concat("&reportFileName=");
-// 	    	params = params.concat($('#reportName').attr("class"));
-//  	    	params = params.concat("&fromPage=");
-<%-- 	    	params = params.concat('<%= fromPage %>'); --%>
-// 	    	loadContent('deleteReport', $('#generatePdf'), $('#popup_div'), params, false);
-// 		});
+		$('.pdfDelete').click(function() {
+			showPopuploadingIcon();
+			var params = getBasicParams();
+	    	params = params.concat("&reportFileName=");
+	    	params = params.concat($('#reportName').attr("class"));
+ 	    	params = params.concat("&fromPage=");
+	    	params = params.concat('<%= fromPage %>');
+	    	loadContent('deleteReport', $('#generatePdf'), $('#popup_div'), params, false);
+		});
 		
 <%-- 	<%
 			if (StringUtils.isNotEmpty(reportGenerationStat)) {

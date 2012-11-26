@@ -2720,13 +2720,14 @@ public class Quality extends DynamicParameterAction implements Constants {
 		// popup showing list of pdf's already created
 		String pdfDirLoc = "";
 		String fileFilterName = "";
-		if (StringUtils.isEmpty(testType)) {
+		if (StringUtils.isEmpty(fromPage) || "All".equals(fromPage)) {
 			pdfDirLoc = Utility.getProjectHome() + getApplicationInfo().getAppDirName() + File.separator + DO_NOT_CHECKIN_DIR + File.separator + ARCHIVES + File.separator + CUMULATIVE;
 			fileFilterName = getApplicationInfo().getAppDirName();
 		} else {
-			pdfDirLoc = Utility.getProjectHome() + getApplicationInfo().getAppDirName() + File.separator + DO_NOT_CHECKIN_DIR + File.separator + ARCHIVES + File.separator + testType;
-			fileFilterName = testType;
+			pdfDirLoc = Utility.getProjectHome() + getApplicationInfo().getAppDirName() + File.separator + DO_NOT_CHECKIN_DIR + File.separator + ARCHIVES + File.separator + fromPage;
+			fileFilterName = fromPage;
 		}
+		System.out.println("looking for files in => " + pdfDirLoc);
 		File pdfFileDir = new File(pdfDirLoc);
 		if(pdfFileDir.isDirectory()) {
 		    File[] children = pdfFileDir.listFiles(new FileNameFileFilter(DOT + PDF, fileFilterName));

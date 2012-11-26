@@ -263,7 +263,6 @@ function changeView() {
 function popupOnOk(obj) {
 	var okUrl = $(obj).attr("id");
 	if (okUrl === "printAsPdf") {
-		alert("unit print as pdf ");
 		// show popup loading icon
 		showPopuploadingIcon();
 		loadContent('printAsPdf', $('#generatePdf'), $('#popup_div'), '', false);
