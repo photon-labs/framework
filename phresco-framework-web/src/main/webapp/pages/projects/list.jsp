@@ -25,6 +25,7 @@
 <%@ page import="org.apache.commons.collections.CollectionUtils"%>
 
 <%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
+<%@ page import="com.photon.phresco.util.Constants"%>
 <%@ page import="com.photon.phresco.commons.model.ProjectInfo"%>
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 
@@ -125,7 +126,7 @@
 																</td>
 																<td class="no-left-bottom-border table-pad">
 																	<a href="#" id="pdfPopup">
-																		<img id="<%= appInfo.getCode() %>" class="pdfCreation" src="images/icons/print_pdf.png"
+																		<img id="<%= appInfo.getCode() %>" class="pdfCreation" src="images/icons/print_pdf.png" additionalParam="projectId=<%= project.getId() %>&appId=<%= appInfo.getId() %>&from=All" 
 																			title="Generate Report" class="iconSizeinList"/>
 																	</a>
 																</td>
@@ -178,6 +179,11 @@
 			yesnoPopup('updateProjectPopup', '<s:text name="lbl.app.update"/>', 'importUpdateAppln','<s:text name="lbl.app.update"/>', '', params);
     	});
 		
+    	$('.pdfCreation').click(function() {
+    		var params = $(this).attr("additionalParam");
+    		yesnoPopup('showGeneratePdfPopup', '<s:text name="lbl.app.generatereport"/>', 'printAsPdf','<s:text name="lbl.app.generate"/>', '', params);
+    	});
+    	
 		//modalObj, url, title, okUrl, okLabel, form
 // 		yesnoPopup($('#importAppln'), 'importAppln', '<s:text name="lbl.app.import"/>', 'importUpdateAppln','<s:text name="lbl.app.import"/>', $('#formProjectList'));
 // 		yesnoPopup($('.projectUpdate'), 'updateProjectPopup', '<s:text name="lbl.app.update"/>', 'importUpdateAppln','<s:text name="lbl.app.update"/>', $('#formProjectList'));
@@ -201,6 +207,19 @@
  		} else if (okUrl == "deleteProject") {
  	 		var params = $("#formCustomers").serialize();
  	 		loadContent("deleteProject", $("#formProjectList"), $('#container'), params);
- 		} 
+ 		} else if (okUrl === "printAsPdf") {
+			console.log("print as pdf ");
+			// show popup loading icon
+			showPopuploadingIcon();
+			loadContent('printAsPdf', $('#generatePdf'), $('#popup_div'), getBasicParams(), false);
+		}
  	}
+ 	
+	function popupOnClose(obj) {
+		console.log("popup on close called ");
+	}
+	
+	function successEvent(pageUrl, data) {
+		console.log("success event called !!! ");
+	}
 </script>

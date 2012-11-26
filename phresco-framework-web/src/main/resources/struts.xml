@@ -819,12 +819,12 @@
         <!-- file or folder browse option ends -->
                 
         <!-- Print pdf operations starts -->
-       	<action name="printAsPdfPopup" method="printAsPdfPopup" class="com.photon.phresco.framework.actions.applications.Quality">
-       		<result name="success">/pages/applications/report_popup.jsp</result>
+       	<action name="showGeneratePdfPopup" method="showGeneratePdfPopup" class="com.photon.phresco.framework.actions.applications.Quality">
+       		<result name="success">/pages/applications/reportPopup.jsp</result>
 		</action>
 		
 		<action name="printAsPdf" method="printAsPdf" class="com.photon.phresco.framework.actions.applications.Quality">
-       		<result name="success">/pages/applications/report_popup.jsp</result>
+       		<result name="success">/pages/applications/reportPopup.jsp</result>
 		</action>
 		
 		<action name="downloadReport" method="downloadReport" class="com.photon.phresco.framework.actions.applications.Quality">
@@ -837,7 +837,7 @@
         </action>
         
         <action name="deleteReport" method="deleteReport" class="com.photon.phresco.framework.actions.applications.Quality">
-        	<result name="success">/pages/applications/report_popup.jsp</result>
+        	<result name="success">/pages/applications/reportPopup.jsp</result>
         </action>
 		<!-- Print pdf operations endss -->
 		

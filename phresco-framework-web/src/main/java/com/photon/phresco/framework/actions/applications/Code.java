@@ -65,7 +65,7 @@ public class Code extends DynamicParameterAction implements Constants {
         	
 			File pomPath = getPOMFile();
 			PomProcessor pomProcessor = new PomProcessor(pomPath);
-			String validateReportUrl = pomProcessor.getProperty(PHRESCO_CODE_VALIDATE_REPORT);
+			String validateReportUrl = pomProcessor.getProperty(POM_PROP_KEY_VALIDATE_REPORT);
 			
 			// when the report url is not available, it is for sonar
 			// if the report url is available, it is for clang report(iphone)
@@ -151,7 +151,7 @@ public class Code extends DynamicParameterAction implements Constants {
         	File pomPath = getPOMFile();
             PomProcessor processor = new PomProcessor(pomPath);
             String validateAgainst = getReqParameter(REQ_VALIDATE_AGAINST); //getHttpRequest().getParameter("validateAgainst");
-            String validateReportUrl = processor.getProperty(PHRESCO_CODE_VALIDATE_REPORT);
+            String validateReportUrl = processor.getProperty(POM_PROP_KEY_VALIDATE_REPORT);
             
             //Check whether iphone Technology or not
 			if (StringUtils.isNotEmpty(validateReportUrl)) {

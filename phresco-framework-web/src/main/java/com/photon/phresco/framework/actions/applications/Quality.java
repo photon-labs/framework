@@ -242,7 +242,9 @@ public class Quality extends DynamicParameterAction implements Constants {
     private String hubHost = "";
     
     boolean connectionAlive = false;
-    
+	//Dynamic parameter related
+	private String from = "";
+	
 	private static Map<String, Map<String, NodeList>> testSuiteMap = Collections.synchronizedMap(new HashMap<String, Map<String, NodeList>>(8));
 	
 	public String unit() {
@@ -2580,24 +2582,29 @@ public class Quality extends DynamicParameterAction implements Constants {
     	return SUCCESS;
     }
     
-    public String printAsPdfPopup () {
+    public String showGeneratePdfPopup() {
         S_LOGGER.debug("Entering Method Quality.printAsPdfPopup()");
         try {
-        	boolean isReportAvailable = false;
-        	ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-        	ApplicationInfo appInfo = getApplicationInfo();
-            FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-            String technology = appInfo.getTechInfo().getId();
-            // is sonar report available
-            isReportAvailable = isSonarReportAvailable(frameworkUtil, technology);
-            
-            // is test report available
-            S_LOGGER.debug("sonar report avail !!!!!!!! " + isReportAvailable);
-    	    if (!isReportAvailable) {
-    	    	isReportAvailable = isTestReportAvailable(frameworkUtil, technology, appInfo);
-    	    }
+        	boolean isReportAvailable = true;
+			ApplicationInfo appInfo = getApplicationInfo();
+			setReqAttribute(REQ_APPINFO, appInfo);
+//        	ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
+//        	ApplicationInfo appInfo = getApplicationInfo();
+//            FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+//            String technology = appInfo.getTechInfo().getId();
+//            // is sonar report available
+//            isReportAvailable = isSonarReportAvailable(frameworkUtil, technology);
+//            
+//            // is test report available
+//            S_LOGGER.debug("sonar report avail !!!!!!!! " + isReportAvailable);
+//    	    if (!isReportAvailable) {
+//    	    	isReportAvailable = isTestReportAvailable(frameworkUtil, technology, appInfo);
+//    	    }
             
     	    S_LOGGER.debug(" Xml Results Available ====> " + isReportAvailable);
+			setReqAttribute(REQ_APP_ID, getAppId());
+			setReqAttribute(REQ_PROJECT_ID, getProjectId());
+			
         	getHttpRequest().setAttribute(REQ_TEST_EXE, isReportAvailable);
         	List<String> existingPDFs = getExistingPDFs();
     		if (existingPDFs != null) {
@@ -2607,7 +2614,6 @@ public class Quality extends DynamicParameterAction implements Constants {
             S_LOGGER.error("Entered into catch block of Quality.printAsPdfPopup()"+ e);
         }
         getHttpRequest().setAttribute(REQ_TEST_TYPE, testType);
-        getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
         return SUCCESS;
     }
 
@@ -2742,16 +2748,16 @@ public class Quality extends DynamicParameterAction implements Constants {
 		return XmlResultsAvailable;
 	}
 
-	private List<String> getExistingPDFs() {
+	private List<String> getExistingPDFs() throws PhrescoException {
 		List<String> pdfFiles = new ArrayList<String>();
 		// popup showing list of pdf's already created
 		String pdfDirLoc = "";
 		String fileFilterName = "";
 		if (StringUtils.isEmpty(testType)) {
-			pdfDirLoc = Utility.getProjectHome() + projectCode + File.separator + DO_NOT_CHECKIN_DIR + File.separator + ARCHIVES + File.separator + CUMULATIVE;
-			fileFilterName = projectCode;
+			pdfDirLoc = Utility.getProjectHome() + getApplicationInfo().getAppDirName() + File.separator + DO_NOT_CHECKIN_DIR + File.separator + ARCHIVES + File.separator + CUMULATIVE;
+			fileFilterName = getApplicationInfo().getAppDirName();
 		} else {
-			pdfDirLoc = Utility.getProjectHome() + projectCode + File.separator + DO_NOT_CHECKIN_DIR + File.separator + ARCHIVES + File.separator + testType;
+			pdfDirLoc = Utility.getProjectHome() + getApplicationInfo().getAppDirName() + File.separator + DO_NOT_CHECKIN_DIR + File.separator + ARCHIVES + File.separator + testType;
 			fileFilterName = testType;
 		}
 		File pdfFileDir = new File(pdfDirLoc);
@@ -2773,20 +2779,39 @@ public class Quality extends DynamicParameterAction implements Constants {
     public String printAsPdf () {
         S_LOGGER.debug("Entering Method Quality.printAsPdf()");
         try {
-            ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-            Project project = administrator.getProject(projectCode);
-            String testType = getHttpRequest().getParameter(REQ_TEST_TYPE);
-            reportGeneration(project, testType);
-            getHttpRequest().setAttribute(REQ_REPORT_STATUS, getText(SUCCESS_REPORT_STATUS));
+        	System.out.println("pdf started .... ");
+			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+			ProjectInfo projectInfo = getProjectInfo();
+			ApplicationInfo applicationInfo = getApplicationInfo();
+			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(applicationInfo)));
+			
+			System.out.println("reportDataType =====> " + reportDataType);
+			System.out.println("frmpage Value  =====> " + getFrom());
+			
+			
+			List<Parameter> parameters = getMojoParameters(mojo, PHASE_PDF_REPORT);
+			List<String> buildArgCmds = getMavenArgCommands(parameters);
+			String workingDirectory = getAppDirectoryPath(applicationInfo);
+//			BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.PDF_REPORT, buildArgCmds, workingDirectory);
+			
+			ApplicationInfo appInfo = getApplicationInfo();
+			setReqAttribute(REQ_APPINFO, appInfo);
+			System.out.println("it should not be done!!!!!");
+//            ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
+//            Project project = administrator.getProject(projectCode);
+//            String testType = getHttpRequest().getParameter(REQ_TEST_TYPE);
+//            reportGeneration(project, testType);
+//            getHttpRequest().setAttribute(REQ_REPORT_STATUS, getText(SUCCESS_REPORT_STATUS));
         } catch (Exception e) {
+        	e.printStackTrace();
         	S_LOGGER.error("Entered into catch block of Quality.printAsPdf()"+ e);
         	if (e.getLocalizedMessage().contains(getText(ERROR_REPORT_MISSISNG_FONT_MSG))) {
-            	getHttpRequest().setAttribute(REQ_REPORT_STATUS, getText(ERROR_REPORT_MISSISNG_FONT));
+        		setReqAttribute(REQ_REPORT_STATUS, getText(ERROR_REPORT_MISSISNG_FONT));
         	} else {
-            	getHttpRequest().setAttribute(REQ_REPORT_STATUS, getText(ERROR_REPORT_STATUS));
+        		setReqAttribute(REQ_REPORT_STATUS, getText(ERROR_REPORT_STATUS));
         	}
         }
-        return printAsPdfPopup();
+        return showGeneratePdfPopup();
     }
 
     public void reportGeneration(Project project, String testType) throws PhrescoException {
@@ -2849,7 +2874,7 @@ public class Quality extends DynamicParameterAction implements Constants {
         } catch (Exception e) {
             S_LOGGER.error("Entered into catch block of Quality.downloadReport()" + e);
         }
-        return printAsPdfPopup();
+        return showGeneratePdfPopup();
     }
     
     public List<SettingsInfo> getServerSettings() {
@@ -3476,4 +3501,12 @@ public class Quality extends DynamicParameterAction implements Constants {
     public void setConnectionAlive(boolean connectionAlive) {
         this.connectionAlive = connectionAlive;
     }
+
+	public String getFrom() {
+		return from;
+	}
+
+	public void setFrom(String from) {
+		this.from = from;
+	}
 }
