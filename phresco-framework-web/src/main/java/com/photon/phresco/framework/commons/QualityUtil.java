@@ -441,7 +441,6 @@ public class QualityUtil {
 	}
 
 	public static Map<String, PerformanceTestResult> getPerformanceReport(Document document, HttpServletRequest request, String techId, String deviceId) throws Exception {  // deviceid is the tag name for android
-//		Document document = getDocument(new File(filePath));
 		String xpath = "/*/*";	// For other technologies
 		String device = "*";
 		if(StringUtils.isNotEmpty(deviceId)) {

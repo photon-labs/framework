@@ -19,19 +19,15 @@
   --%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
-<%@ page import="java.util.List"%>
 <%@ page import="java.util.Map"%>
 <%@ page import="java.util.Set"%>
-<%@ page import="java.util.ArrayList"%>
-<%@ page import="java.util.Arrays"%>
-<%@ page import="java.util.Collection"%>
-<%@ page import="java.util.Iterator"%>
-\
+
+<%@ page import="org.apache.commons.lang.StringUtils"%>
+
 <%@ page import="com.photon.phresco.framework.model.PerformanceTestResult"%>
-<%@ page import="com.photon.phresco.framework.api.Project"%>
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
+<%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 <%@ page import="com.photon.phresco.framework.commons.FrameworkUtil"%>
-<%@ page import="com.photon.phresco.util.TechnologyTypes" %> 
 
 <style type="text/css">
 	.btn.success, .alert-message.success {
@@ -54,13 +50,12 @@
 </style>
 
     <% 
-		Project project = (Project) request.getAttribute(FrameworkConstants.REQ_PROJECT);
-		String projectCode = (String) request.getAttribute(FrameworkConstants.REQ_PROJECT_CODE); 
+    	ApplicationInfo appInfo = (ApplicationInfo)request.getAttribute(FrameworkConstants.REQ_APPINFO);
         String errorDeviceData = (String) request.getAttribute(FrameworkConstants.REQ_ERROR_DATA);
-        if (errorDeviceData != null) {
+        if (StringUtils.isNotEmpty(errorDeviceData)) {
     %>
-    	<div class="alert-message block-message warning">
-            <center class="noDataForAndroid"><%= FrameworkConstants.ERROR_ANDROID_DATA %></center>
+    	<div class="alert alert-block">
+            <%= FrameworkConstants.ERROR_ANDROID_DATA %>
         </div>
     
         <script type="text/javascript">
@@ -77,11 +72,12 @@
     		$(".noTestAvail").show();
 			$("#graphBasedOn").show();
 			$("#noFiles").hide();
-			<%if(TechnologyTypes.ANDROIDS.contains(project.getApplicationInfo().getTechInfo().getVersion())) {%>
+			
+			<%-- <%if(TechnologyTypes.ANDROIDS.contains(project.getApplicationInfo().getTechInfo().getVersion())) {%>
 				disableType();
 			<%
 				}
-			%>
+			%> --%>
 		</script>
     <%
             Map<String, PerformanceTestResult> performanceReport = (Map<String, PerformanceTestResult>) request.getAttribute(FrameworkConstants.REQ_TEST_RESULT);
@@ -219,14 +215,16 @@
    
 
 <script type="text/javascript">
-	/* To check whether the divice is ipad or not */
-	if(!isiPad()){
-		/* JQuery scroll bar */
+	//To check whether the device is ipad or not and then apply jquery scrollbar
+	if (!isiPad()) {
 		$(".fixed-table-container-inner").scrollbars();
 		$("#graphicalView").scrollbars();
 	}
 	
 	$(document).ready(function() {
+		changeView ();//Change to graphical/tabular view based on the selection
+		hideLoadingIcon();//To hide the loading icon once the page is loaded
+		canvasInit();//To draw the graph
 		
 		if ($.browser.safari) {
     		$(".th-inner-test").css("top","235px"); 
@@ -242,41 +240,23 @@
             $(".th-inner-testtech").css("top","225px");
         }
 		
-		canvasInit();
-		
-		 $(".styles").click(function() {
-			 canvasInit();
-		 });
-		/*$(".styles").click(function() {
-			 $("iframe").attr({
-	             src: $("iframe").attr("src")
-	         });
-		});*/
-		
-		changeView (); // when graph is loaded base on selection of list box(tabular / list) it do automatically
-		enableScreen();
+		$(".styles").click(function() {
+			canvasInit();
+		});
 	});
 	
 	$('#resultView').change(function() {
 		changeView ();
 	});
 	
-	/* $('#showGraphFor').change(function() {
-		changeGraph ($(this).val());
-	}); */
-	
-	function changeGraph(showGraphFor) {
-		var testResultFile = $("#testResultFile").val();
-		var testResult = $("#testResultsType").val();
-		var params = "";
-    	if (!isBlank($('form').serialize())) {
-    		params = $('form').serialize() + "&";
-    	}
-		showLoadingIcon($("#testResultDisplay")); // Loading Icon
-		performAction('performanceTestResult', params, $('#testResultDisplay'));
+	//To change the graph when based on is changed
+	function changeGraph() {
+// 		showLoadingIcon(); // Loading Icon
+		loadContent('fetchPerformanceTestResult', $('#formPerformance'), $('#testResultDisplay'), getBasicParams());
 		$("#graphicalView").show();
 	}
 	
+	//To change the view to graph/table
 	function changeView() {
 		var resultView = $('#resultView').val();
 		if (resultView == 'graphical') {
@@ -290,20 +270,18 @@
 		}
 	}
 	
+	//To draw the graph based on the graph data
 	function canvasInit() {
-		var data = <%= graphData %>;
-        var bar = new RGraph.Bar('myCanvas', data);
-        
-		var theme = localStorage["color"];
         var chartTextColor = "";
         var chartGridColor = "";
         var chartAxisColor = "";
         var chartBarColor = "";
-      //line chart color
+      	//line chart color
       	var minColor = "";
       	var maxColor = "";
       	var avgColor = "";
-		if (theme == undefined || theme == "themes/photon/css/red.css") {
+      	var theme = localStorage["color"];
+		if (theme == "theme/red_blue/css/red.css") {
 	        chartTextColor = "white"; // axis text color
 	        chartGridColor = "white"; // grid
 	        chartAxisColor = "white"; // axis color
@@ -313,19 +291,30 @@
 	      	minColor = "#FF9900";
 	      	maxColor = "#B2B2FF";
 	      	avgColor = "red";
-		} else {
+		} else if (theme == "theme/red_blue/css/blue.css") {
 	        chartTextColor = "#4C4C4C";
 	        chartGridColor = "#4C4C4C";
 	        chartAxisColor = "#4C4C4C";
 	        chartBarColor = "#00A8F0";
 	        
-	      //line chart color
+	      	//line chart color
+	      	minColor = "#00A8F0";
+	      	maxColor = "#008000";
+	      	avgColor = "red";
+		} else if (theme == undefined || theme == "theme/photon/css/photon_theme.css") {
+	        chartTextColor = "#4C4C4C";
+	        chartGridColor = "#4F577C";
+	        chartAxisColor = "#323232";
+	        chartBarColor = "#39BC67";
+	        
+	      	//line chart color
 	      	minColor = "#00A8F0";
 	      	maxColor = "#008000";
 	      	avgColor = "red";
 		}
-        
-        //bar2.Set('chart.title', 'Sales in the last 8 months (tooltips)');
+		
+		var data = <%= graphData %>;
+		var bar = new RGraph.Bar('myCanvas', data);
         bar.Set('chart.gutter.left', 70);
         bar.Set('chart.text.color', chartTextColor);
         bar.Set('chart.background.barcolor1', 'transparent');
@@ -344,37 +333,36 @@
         bar.Draw();
         
         <% 
-        	if(request.getAttribute("showGraphFor").toString().equals("all")) {
+        	if (request.getAttribute(FrameworkConstants.REQ_SHOW_GRAPH).equals(FrameworkConstants.REQ_TEST_SHOW_ALL_GRAPH)) {
         %>
-			var line = new RGraph.Line('allData', <%= graphAllData %>);
-	        line.Set('chart.background.grid', true);
-	        line.Set('chart.linewidth', 5);
-	        line.Set('chart.gutter.left', 85);
-	        line.Set('chart.text.color', chartTextColor);
-	        line.Set('chart.hmargin', 5);
-	        if (!document.all || RGraph.isIE9up()) {
-	            line.Set('chart.shadow', true);
-	        }
-	        line.Set('chart.tickmarks', 'endcircle');
-	        line.Set('chart.units.post', 's');
-	        line.Set('chart.colors', [minColor, avgColor, maxColor]);
-	        line.Set('chart.background.grid.autofit', true);
-	        line.Set('chart.background.grid.autofit.numhlines', 10);
-	        line.Set('chart.curvy', true);
-	        line.Set('chart.curvy.factor', 0.5); // This is the default
-	        line.Set('chart.animation.unfold.initial',0);
-	        line.Set('chart.labels',<%= graphLabel %>);
-	        line.Set('chart.title','Response Time');// Title
-	        line.Set('chart.axis.color', chartAxisColor);
-	        line.Set('chart.text.angle', 45);
-	        line.Set('chart.gutter.bottom', 140);
-	        line.Set('chart.key', ['Min','Avg','Max']);
-	        line.Set('chart.background.grid.color', chartGridColor);
-	        line.Set('chart.title.color', chartTextColor);
-	        line.Set('chart.shadow', false);
-	        line.Draw();
+				var line = new RGraph.Line('allData', <%= graphAllData %>);
+		        line.Set('chart.background.grid', true);
+		        line.Set('chart.linewidth', 5);
+		        line.Set('chart.gutter.left', 85);
+		        line.Set('chart.text.color', chartTextColor);
+		        line.Set('chart.hmargin', 5);
+		        if (!document.all || RGraph.isIE9up()) {
+		            line.Set('chart.shadow', true);
+		        }
+		        line.Set('chart.tickmarks', 'endcircle');
+		        line.Set('chart.units.post', 's');
+		        line.Set('chart.colors', [minColor, avgColor, maxColor]);
+		        line.Set('chart.background.grid.autofit', true);
+		        line.Set('chart.background.grid.autofit.numhlines', 10);
+		        line.Set('chart.curvy', true);
+		        line.Set('chart.curvy.factor', 0.5); // This is the default
+		        line.Set('chart.animation.unfold.initial',0);
+		        line.Set('chart.labels',<%= graphLabel %>);
+		        line.Set('chart.title','Response Time');// Title
+		        line.Set('chart.axis.color', chartAxisColor);
+		        line.Set('chart.text.angle', 45);
+		        line.Set('chart.gutter.bottom', 140);
+		        line.Set('chart.key', ['Min','Avg','Max']);
+		        line.Set('chart.background.grid.color', chartGridColor);
+		        line.Set('chart.title.color', chartTextColor);
+		        line.Set('chart.shadow', false);
+		        line.Draw();
         <% } %>
-        
 	}
 <% } %>
 </script>

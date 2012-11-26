@@ -22,6 +22,9 @@ package com.photon.phresco.framework.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
+
 public class PerformanceTestResult {
 
 	int min;
@@ -186,4 +189,28 @@ public class PerformanceTestResult {
 	public void setTotalTime(long totalTime) {
 		this.totalTime = totalTime;
 	}
+	
+	public String toString() {
+        return new ToStringBuilder(this,
+                ToStringStyle.DEFAULT_STYLE)
+                .append("min", getMin())
+                .append("max", getMax())
+                .append("err", getErr())
+                .append("lastTime", getLastTime())
+                .append("avgBytes", getAvgBytes())
+                .append("noOfSamples", getNoOfSamples())
+                .append("totalTime", getTotalTime())
+                .append("totalBytes", getTotalBytes())
+                .append("maxTs", getMaxTs())
+                .append("minTs", getMinTs())
+                .append("avg", getAvg())
+                .append("stdDev", getStdDev())
+                .append("throughtPut", getThroughtPut())
+                .append("kbPerSec", getKbPerSec())
+                .append("label", getLabel())
+                .append("times", getTimes())
+                .append("totalStdDev", getTotalStdDev())
+                .append("totalThroughput", getTotalThroughput())
+                .toString();
+    }
 }

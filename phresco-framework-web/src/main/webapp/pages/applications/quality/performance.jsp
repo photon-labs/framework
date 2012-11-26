@@ -95,10 +95,10 @@
 	<div class="noTestAvail perTabularView" id="dropdownDiv">
 		
 		<div class="resultView" style="float: left;" >
-			<strong class="noTestAvail" id="dropdownDiv"><s:text name="label.test.result.view"/></strong> 
+			<strong class="noTestAvail" id="dropdownDiv"><s:text name="lbl.test.result.view"/></strong> 
 			<select id="resultView" name="resultView232"> 
-				<option value="tabular" >Tabular View</option>
-				<option value="graphical" >Graphical View</option>
+				<option value="tabular" ><s:text name="lbl.test.view.tabular"/></option>
+				<option value="graphical" ><s:text name="lbl.test.view.graphical"/></option>
 			</select>
 		</div>
 	</div>
@@ -108,11 +108,11 @@
 			&nbsp;&nbsp;
 			<strong id="lblType" class="noTestAvail"><s:text name="label.based.on"/></strong>
 			<select  name="showGraphFor" id="showGraphFor" onchange="changeGraph(this.options[this.selectedIndex].value)"  style="width :210px;">
-				<option value="responseTime" >Avg Response Time</option>
-				<option value="throughPut" >Throughput</option>
-				<option value="minResponseTime" >Min Response Time</option>
-				<option value="maxResponseTime" >Max Response Time</option>
-				<option value="all" >All</option>
+				<option value="responseTime"><s:text name="lbl.performance.avg.response.time"/></option>
+				<option value="throughPut"><s:text name="lbl.performance.throughput"/></option>
+				<option value="minResponseTime"><s:text name="lbl.performance.min.res.time"/></option>
+				<option value="maxResponseTime"><s:text name="lbl.performance.max.res.time"/></option>
+				<option value="all"><s:text name="lbl.performance.all"/></option>
 			</select>
 		</div>&nbsp;&nbsp;
 	</div>
@@ -121,8 +121,8 @@
     </div>
 	    
 	<div class="perErrorDis" id="noFiles">
-		<div class="alert-message block-message warning" style="margin: 5px 0px 0;">
-			<label Class="errorMsgLabel"><s:text name="performancetest.not.executed"/></label>
+		<div class="alert alert-block" id="performanceError">
+			<s:text name="performancetest.not.executed"/>
 		</div>
 	</div>
 </form>
@@ -254,8 +254,8 @@
 			%>
        	} else {
        		$("#noFiles").show();       		
-       		$('.errorMsgLabel').empty();
-       		$('.errorMsgLabel').html("Performance test not yet executed for " + testResultsType);
+       		$('#performanceError').empty();
+       		$('#performanceError').html("Performance test not yet executed for " + testResultsType);
        		testResultAvailShowList();
        	}
     }
@@ -300,8 +300,8 @@
 			performanceTestResults(testResultsType);
 		} else {
 			// When there is no result
-       		$('.errorMsgLabel').empty();
-       		$('.errorMsgLabel').html("Performance test not yet executed for " + testResultsType);
+       		$('#performanceError').empty();
+       		$('#performanceError').html("Performance test not yet executed for " + testResultsType);
        		testResultAvailShowList();
 		}
 	}
@@ -334,5 +334,4 @@
 			fillJSONData(data);
 		}
 	}
-	
 </script>
