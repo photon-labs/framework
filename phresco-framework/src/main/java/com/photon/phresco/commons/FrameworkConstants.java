@@ -773,7 +773,6 @@ public interface FrameworkConstants {
     String PHRESCO_SONAR_URL = "phresco.code.sonar.url";
     String PHRESCO_CI_JENKINS_URL = "phresco.ci.jenkins.url";
     String PHRESCO_JFORUM_URL = "phresco.JForum.url";
-    String PHRESCO_CODE_VALIDATE_REPORT = "phresco.code.validate.report";
     
     String REST_APPS_PATH = "/apps";
     String REST_REPORTS = "/reports";

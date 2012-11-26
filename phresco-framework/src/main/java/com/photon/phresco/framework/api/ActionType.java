@@ -25,7 +25,7 @@ public enum ActionType {
 	BUILD("phresco:package"), DEPLOY("phresco:deploy"), UNIT_TEST("phresco:unit-test"), FUNCTIONAL_TEST("phresco:functional-test"), 
 	LOAD_TEST("phresco:load-test"), CODE_VALIDATE("phresco:validate-code"), SITE_REPORT("clean site"), INSTALL("install"), 
 	START("t7:run-forked"), STOP("t7:stop-forked"), RUNAGAINSTSOURCE("phresco:start"), STOPSERVER("phresco:stop"), 
-	START_HUB("phresco:start-hub"), STOP_HUB("phresco:stop-hub"), START_NODE("phresco:start-node"), STOP_NODE("phresco:stop-node");
+	START_HUB("phresco:start-hub"), STOP_HUB("phresco:stop-hub"), START_NODE("phresco:start-node"), STOP_NODE("phresco:stop-node"), PDF_REPORT("phresco:pdf-report");
 	
 	private String actionType;
 

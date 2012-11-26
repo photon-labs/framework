@@ -11,10 +11,13 @@
 
 <%
    	String projectCode = (String)request.getAttribute(FrameworkConstants.REQ_PROJECT_CODE);
+	System.out.println("handle it here !!!! ");
 	String testType = (String) request.getAttribute(FrameworkConstants.REQ_TEST_TYPE);
 	List<String> reportFiles = (List<String>)request.getAttribute(FrameworkConstants.REQ_PDF_REPORT_FILES);
 	String reportGenerationStat = (String)request.getAttribute(FrameworkConstants.REQ_REPORT_STATUS);
 	String reportDeletionStat = (String)request.getAttribute(FrameworkConstants.REQ_REPORT_DELETE_STATUS);
+	String applicationId = (String)request.getAttribute(FrameworkConstants.REQ_APP_ID);
+	String projectId = (String)request.getAttribute(FrameworkConstants.REQ_PROJECT_ID);
 %>
 
 <style>
@@ -24,15 +27,15 @@
 </style>
 
 <form action="printAsPdf" method="post" autocomplete="off" class="build_form" id="generatePdf">
-<div class="popup_Modal topFifty">
-	<div class="modal-header">
-		<h3 id="generateBuildTitle">
-			Generate Report
-		</h3>
-		<a class="close" href="#" id="close">&times;</a>
-	</div>
+<!-- <div class="popup_Modal topFifty"> -->
+<!-- 	<div class="modal-header"> -->
+<!-- 		<h3 id="generateBuildTitle"> -->
+<!-- 			Generate Report -->
+<!-- 		</h3> -->
+<!-- 		<a class="close" href="#" id="close">&times;</a> -->
+<!-- 	</div> -->
 
-	<div class="modal-body" style="padding-bottom: 20px;height: 220px;">
+<!-- 	<div class="modal-body" style="padding-bottom: 20px;height: 220px;"> -->
 		<%
 			if (CollectionUtils.isNotEmpty(reportFiles)) {
 		%>
@@ -109,28 +112,45 @@
 			        </table>
 	      		</div>
     		</div>
+    		
     	<%
 			} else { %>
-    		<div class="alert-message block-message warning" >
-				<center><label Class="errorMsgLabel"><s:text name="label.report.unavailable"/></label></center>
+    		<div class="alert alert-block" >
+				<center><s:text name="label.report.unavailable"/></center>
 			</div>
     	<% } %>
-	</div>
-	
-	<div class="modal-footer">
-		<div class="reportErrorMsg">
-			<div id="reportMsg"></div>
-			<img class="popupLoadingIcon" style="position: relative;">
+    	
+    	 <div class="control-group">
+			<label class="control-label labelbold popupLbl">
+				Report Type
+			</label>
+			<div class="controls">
+				<select name="reportDataType" id="reportDataType" class="input-xlarge ">
+					<option value="crisp"><s:text name="label.report.overall"/></option>
+					<option value="detail"><s:text name="label.report.detail"/></option>
+				</select>
+			</div>
 		</div>
-           <input type="radio" name="reportDataType" value="crisp" checked>
-           <span class="popup-span"><s:text name="label.report.overall"/></span>
-           <input type="radio" name="reportDataType" value="detail">
-           <span class="popup-span"><s:text name="label.report.detail"/></span>
+		
+		<input type="hidden" name="projectId" value="<%= projectId %>">
+		<input type="hidden" name="appId" value="<%= applicationId %>">
+		
+<!-- 	</div> -->
+	
+<!-- 	<div class="modal-footer"> -->
+<!-- 		<div class="reportErrorMsg"> -->
+<!-- 			<div id="reportMsg"></div> -->
+<!-- 			<img class="popupLoadingIcon" style="position: relative;"> -->
+<!-- 		</div> -->
+<!--            <input type="radio" name="reportDataType" value="crisp" checked> -->
+<%--            <span class="popup-span"><s:text name="label.report.overall"/></span> --%>
+<!--            <input type="radio" name="reportDataType" value="detail"> -->
+<%--            <span class="popup-span"><s:text name="label.report.detail"/></span> --%>
            
-		<input type="button" class="btn primary" value="Close" id="cancel">
-		<input type="button" id="generateReport" class="btn primary" value="Generate">
-	</div>
-</div>
+<!-- 		<input type="button" class="btn primary" value="Close" id="cancel"> -->
+<!-- 		<input type="button" id="generateReport" class="btn primary" value="Generate"> -->
+<!-- 	</div> -->
+<!-- </div> -->
 </form>
 
 <script type="text/javascript">
@@ -139,13 +159,12 @@
 // 		$("#reportPopupTbl").scrollbars();
 	}
 	$(document).ready(function() {
-		escPopup();
 		
-		$('#close, #cancel').click(function() {
-			showParentPage();
-		});
+		// when clicking on save button, popup should not hide
+		$('.popupOk').attr("data-dismiss", "");
+		hidePopuploadingIcon();
+// 		disableScreen();
 		
-		// Node js run against source
 		$('#generateReport').click(function() {
 			$('.popupLoadingIcon').show();
 			getCurrentCSS();
