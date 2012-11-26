@@ -138,12 +138,15 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		if (response.getStatus() == 200) {
 			try {
 				extractArchive(response, projectInfo);
+				ProjectUtils projectUtils = new ProjectUtils();
 				 String customerId = projectInfo.getCustomerIds().get(0);
 				 Customer customer = serviceManager.getCustomer(customerId);
 				 RepoInfo repoInfo = customer.getRepoInfo();
 				 List<ApplicationInfo> appInfos = projectInfo.getAppInfos();
 				 for (ApplicationInfo appInfo : appInfos) {
 				 String pluginInfoFile = Utility.getProjectHome() + appInfo.getAppDirName() + File.separator + DOT_PHRESCO_FOLDER +File.separator +  PHRESCO_PLUGIN_INFO_XML;
+				 File path = new File(Utility.getProjectHome() + appInfo.getAppDirName());
+				 projectUtils.updateTestPom(path);
 				 MojoProcessor mojoProcessor = new MojoProcessor(new File(pluginInfoFile));
 				 ApplicationHandler applicationHandler = mojoProcessor.getApplicationHandler();
 				 if(applicationHandler != null) {
@@ -154,13 +157,6 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 				 ApplicationProcessor applicationProcessor = dynamicLoader.getApplicationProcessor(applicationHandler.getClazz());
 				 applicationProcessor.postCreate(appInfo);
 				 }
-//				createSqlFolder(projectInfo, projectPath, serviceManager);
-//				updateProjectPOM(projectInfo);
-				
-				//TODO Define post create object and execute the corresponding technology implementation
-//				if (TechnologyTypes.WIN_METRO.equalsIgnoreCase(techId)) {
-//					ItemGroupUpdater.update(projectInfo, projectPath);
-//				}
 			  }
 			} catch (FileNotFoundException e) {
 				throw new PhrescoException(e); 
@@ -210,13 +206,16 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 				String customerId = projectInfo.getCustomerIds().get(0);
 				Customer customer = serviceManager.getCustomer(customerId);
 				RepoInfo repoInfo = customer.getRepoInfo();
-				List<ApplicationInfo> appInfos = projectInfo.getAppInfos();
-				for (ApplicationInfo appInfo : appInfos) {
+				ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
+				
+//				for (ApplicationInfo appInfo : appInfos) {
 					StringBuilder pluginInfoPathSb = new StringBuilder(projectPath.getPath());
 					pluginInfoPathSb.append(File.separator);
 					String pluginInfoFile = dotPhrescoPathSb.toString() + PHRESCO_PLUGIN_INFO_XML;
 					MojoProcessor mojoProcessor = new MojoProcessor(new File(pluginInfoFile));
 					ApplicationHandler applicationHandler = mojoProcessor.getApplicationHandler();
+					
+					createSqlFolder(appInfo, projectPath, serviceManager);
 					if (applicationHandler != null) {
 						List<ArtifactGroup> plugins = setArtifactGroup(applicationHandler);
 
@@ -226,13 +225,11 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 								.getApplicationProcessor(applicationHandler.getClazz());
 
 						applicationProcessor.postUpdate(appInfo, artifactGroups);
-					}
+//					}
 
-					//
 					File projectInfoPath = new File(dotPhrescoPathSb.toString() + PROJECT_INFO_FILE);
 					ProjectUtils.updateProjectInfo(projectInfo, projectInfoPath);// To update the project.info file
 
-					createSqlFolder(projectInfo, projectPath, serviceManager);
 					StringBuilder sb = new StringBuilder();
 					sb.append("mvn");
 					sb.append(" ");
@@ -358,12 +355,10 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		}
 	}
 	
-	private void createSqlFolder(ProjectInfo projectInfo, File path, ServiceManager serviceManager)
+	private void createSqlFolder(ApplicationInfo appInfo, File path, ServiceManager serviceManager)
 			throws PhrescoException {
 		String dbName = "";
 		try {
-			List<ApplicationInfo> appInfos = projectInfo.getAppInfos();
-			for (ApplicationInfo appInfo : appInfos) {
 			File pomPath = new File(Utility.getProjectHome() + appInfo.getAppDirName() + File.separator + POM_FILE);
 			PomProcessor pompro = new PomProcessor(pomPath);
 			String sqlFolderPath = pompro.getProperty(POM_PROP_KEY_SQL_FILE_DIR);
@@ -379,7 +374,6 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 						mySqlFolderCreation(path, dbName, sqlFolderPath, mysqlVersionFolder, versionIds, artifactGroup);
 					}
 				}
-			}
 		} catch (IOException e) {
 			throw new PhrescoException(e);
 		} catch (PhrescoPomException e) {
