@@ -304,11 +304,11 @@ $(document).ready(function() {
 	});
     
 	$('#startJenkins').click(function() {
-		progressPopup('startJenkins', '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.CI_START %>', '', '', getBasicParams());
+		progressPopup('startJenkins', '<%= appId %>', '<%= FrameworkConstants.CI_START %>', '', '', getBasicParams());
 	});
     
 	$('#stopJenkins').click(function() {
-		progressPopup('stopJenkins', '<s:text name="lbl.progress"/>', '<%= appId %>', '<%= FrameworkConstants.CI_STOP %>', '', '', getBasicParams());
+		progressPopup('stopJenkins', '<%= appId %>', '<%= FrameworkConstants.CI_STOP %>', '', '', getBasicParams());
 	});
     
     confirmDialog($("#deleteBuild"), '<s:text name="lbl.hdr.confirm.dialog"/>', '<s:text name="modal.body.text.del.builds"/>', 'deleteBuild','<s:text name="lbl.btn.ok"/>');

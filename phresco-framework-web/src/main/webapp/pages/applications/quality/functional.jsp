@@ -140,7 +140,7 @@ $(document).ready(function() {
 	loadTestSuites();
 	
 	$('#functionalTest').click(function() {
-		validateDynamicParam('showFunctionalTestPopUp', '<s:text name="lbl.functional.test"/>', 'runFunctionalTest','<s:text name="lbl.test"/>', '', '<%= Constants.PHASE_FUNCTIONAL_TEST + '-' + functioanlTestTool %>');
+		validateDynamicParam('showFunctionalTestPopUp', '<s:text name="lbl.functional.test"/>', 'runFunctionalTest','<s:text name="lbl.test"/>', '', '<%= Constants.PHASE_FUNCTIONAL_TEST + FrameworkConstants.HYPHEN + functioanlTestTool %>');
 	});
 	
 	$('#startHubBtn').click(function() {

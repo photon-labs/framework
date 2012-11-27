@@ -372,28 +372,32 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 			String sqlFolderPath = pompro.getProperty(POM_PROP_KEY_SQL_FILE_DIR);
 			File mysqlFolder = new File(path, sqlFolderPath + Constants.DB_MYSQL);
 			File mysqlVersionFolder = getMysqlVersionFolder(mysqlFolder);
-				List<ArtifactGroupInfo> selectedDatabases = appInfo.getSelectedDatabases();
-				if (CollectionUtils.isNotEmpty(selectedDatabases) && StringUtils.isNotEmpty(sqlFolderPath)) {
-					for (ArtifactGroupInfo selectedDatabase : selectedDatabases) {
-						List<String> versionIds = selectedDatabase.getArtifactInfoIds();
-						DownloadInfo dbInfo = serviceManager.getDownloadInfo(selectedDatabase.getArtifactGroupId());
-						dbName = dbInfo.getName().toLowerCase();
-						ArtifactGroup artifactGroup = dbInfo.getArtifactGroup();
-						mySqlFolderCreation(path, dbName, sqlFolderPath, mysqlVersionFolder, versionIds, artifactGroup);
-					}
+			File pluginInfoFile = new File(Utility.getProjectHome() + appInfo.getAppDirName() + File.separator
+					+ DOT_PHRESCO_FOLDER + File.separator + PHRESCO_PLUGIN_INFO_XML);
+			MojoProcessor mojoProcessor = new MojoProcessor(pluginInfoFile);
+			ApplicationHandler applicationHandler = mojoProcessor.getApplicationHandler();
+			String selectedDatabases = applicationHandler.getSelectedDatabase();
+			if (StringUtils.isNotEmpty(selectedDatabases) && StringUtils.isNotEmpty(sqlFolderPath)) {
+				Gson gson = new Gson();
+				java.lang.reflect.Type jsonType = new TypeToken<Collection<DownloadInfo>>() {
+				}.getType();
+				List<DownloadInfo> dbInfos = gson.fromJson(selectedDatabases, jsonType);
+				for (DownloadInfo dbInfo : dbInfos) {
+					dbName = dbInfo.getName().toLowerCase();
+					ArtifactGroup artifactGroup = dbInfo.getArtifactGroup();
+					mySqlFolderCreation(path, dbName, sqlFolderPath, mysqlVersionFolder, artifactGroup);
 				}
-		} catch (IOException e) {
-			throw new PhrescoException(e);
+			}
 		} catch (PhrescoPomException e) {
 			throw new PhrescoException(e);
 		}
 	}
 
 	private void mySqlFolderCreation(File path, String dbName, String sqlFolderPath, File mysqlVersionFolder,
-			List<String> versionIds, ArtifactGroup artifactGroup) throws IOException {
-		List<ArtifactInfo> versions = artifactGroup.getVersions();
-		for (ArtifactInfo version : versions) {
-			if (versionIds.contains(version.getId())) {
+			ArtifactGroup artifactGroup) throws PhrescoException {
+		try {
+			List<ArtifactInfo> versions = artifactGroup.getVersions();
+			for (ArtifactInfo version : versions) {
 				String dbversion = version.getVersion();
 				String sqlPath = dbName + File.separator + dbversion.trim();
 				File sqlFolder = new File(path, sqlFolderPath + sqlPath);
@@ -408,16 +412,18 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 					}
 				}
 			}
+		} catch (IOException e) {
+			throw new PhrescoException(e);
 		}
 	}
 	 
-	 private File getMysqlVersionFolder(File mysqlFolder) {
-			File[] mysqlFolderFiles = mysqlFolder.listFiles();
-			if (mysqlFolderFiles != null && mysqlFolderFiles.length > 0) {
-				return mysqlFolderFiles[0];
-			}
-			return null;
+	private File getMysqlVersionFolder(File mysqlFolder) {
+		File[] mysqlFolderFiles = mysqlFolder.listFiles();
+		if (mysqlFolderFiles != null && mysqlFolderFiles.length > 0) {
+			return mysqlFolderFiles[0];
 		}
+		return null;
+	}
 	
 	private File createConfigurationXml(String appDirName, ServiceManager serviceManager, Environment defaultEnv) throws PhrescoException {
 		File configFile = new File(getConfigurationPath(appDirName).toString());

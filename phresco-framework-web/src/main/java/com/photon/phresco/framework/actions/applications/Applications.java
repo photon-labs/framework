@@ -613,44 +613,57 @@ public class Applications extends FrameworkBaseAction {
 				}
         	}
         	Gson gson = new Gson();
-        	String artifactGroup = gson.toJson(listArtifactGroup);
-        	File filePath = new File(Utility.getProjectHome() + appInfo.getAppDirName() + File.separator + Constants.DOT_PHRESCO_FOLDER + File.separator + Constants.PHRESCO_PLUGIN_INFO_XML);
-        	MojoProcessor mojo = new MojoProcessor(filePath);
-        	ApplicationHandler applicationHandler = mojo.getApplicationHandler();
-        	applicationHandler.setSelectedFeatures(artifactGroup);
+        	
+			File filePath = new File(Utility.getProjectHome() + appInfo.getAppDirName() + File.separator
+					+ Constants.DOT_PHRESCO_FOLDER + File.separator + Constants.PHRESCO_PLUGIN_INFO_XML);
+			MojoProcessor mojo = new MojoProcessor(filePath);
+			ApplicationHandler applicationHandler = mojo.getApplicationHandler();
+			if (CollectionUtils.isNotEmpty(listArtifactGroup)) {
+				String artifactGroup = gson.toJson(listArtifactGroup);
+				applicationHandler.setSelectedFeatures(artifactGroup);
+			}
+        	
         	
         	//To write selected databases info to phresco-plugin-info.xml
-        	List<ArtifactGroupInfo> selectedDatabases = appInfo.getSelectedDatabases();
+			List<ArtifactGroupInfo> selectedDatabases = appInfo.getSelectedDatabases();
 			if (CollectionUtils.isNotEmpty(selectedDatabases)) {
 				for (ArtifactGroupInfo selectedDatabase : selectedDatabases) {
-					DownloadInfo downloadInfo = getServiceManager().getDownloadInfo(selectedDatabase.getArtifactGroupId());
+					DownloadInfo downloadInfo = getServiceManager().getDownloadInfo(
+							selectedDatabase.getArtifactGroupId());
 					selectedDatabaseGroup.add(downloadInfo);
-					String databaseGroup = gson.toJson(selectedDatabaseGroup);
-					applicationHandler.setSelectedDatabase(databaseGroup);
+					if (CollectionUtils.isNotEmpty(selectedDatabaseGroup)) {
+						String databaseGroup = gson.toJson(selectedDatabaseGroup);
+						applicationHandler.setSelectedDatabase(databaseGroup);
+					}
 				}
 			}
 			
 			//To write selected servers info to phresco-plugin-info.xml
-        	List<ArtifactGroupInfo> selectedServers = appInfo.getSelectedServers();
+			List<ArtifactGroupInfo> selectedServers = appInfo.getSelectedServers();
 			if (CollectionUtils.isNotEmpty(selectedServers)) {
 				for (ArtifactGroupInfo selectedservers : selectedServers) {
-					DownloadInfo downloadInfo = getServiceManager().getDownloadInfo(selectedservers.getArtifactGroupId());
+					DownloadInfo downloadInfo = getServiceManager().getDownloadInfo(
+							selectedservers.getArtifactGroupId());
 					selectedServerGroup.add(downloadInfo);
-					String serverGroup = gson.toJson(selectedServerGroup);
-					applicationHandler.setSelectedDatabase(serverGroup);
+					if (CollectionUtils.isNotEmpty(selectedServerGroup)) {
+						String serverGroup = gson.toJson(selectedServerGroup);
+						applicationHandler.setSelectedServer(serverGroup);
+					}
 				}
 			}
 			
 			//To write selected WebServices info to phresco-plugin-info.xml
-        	 List<String> selectedWebservices = appInfo.getSelectedWebservices();
-			if (CollectionUtils.isNotEmpty(selectedServers)) {
+			List<String> selectedWebservices = appInfo.getSelectedWebservices();
+			if (CollectionUtils.isNotEmpty(selectedWebservices)) {
 				for (String selectedWebService : selectedWebservices) {
 					WebService webservice = getServiceManager().getWebService(selectedWebService);
-					String serverGroup = gson.toJson(webservice);
-					applicationHandler.setSelectedDatabase(serverGroup);
+					if (webservice != null) {
+						String serverGroup = gson.toJson(webservice);
+						applicationHandler.setSelectedWebService(serverGroup);
+					}
 				}
 			}
-			
+
         	mojo.save();
         	appInfo.setSelectedModules(selectedFeatures);
         	appInfo.setSelectedJSLibs(selectedJsLibs);
