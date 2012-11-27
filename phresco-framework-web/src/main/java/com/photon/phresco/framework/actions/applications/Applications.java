@@ -19,13 +19,17 @@
  */
 package com.photon.phresco.framework.actions.applications;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileExistsException;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.jgit.api.errors.InvalidRemoteException;
@@ -34,10 +38,13 @@ import org.tmatesoft.svn.core.SVNAuthenticationException;
 import org.tmatesoft.svn.core.SVNException;
 
 import com.google.gson.Gson;
+import com.itextpdf.text.pdf.spatial.units.Fraction;
 import com.opensymphony.xwork2.Action;
+import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.ArtifactGroupInfo;
+import com.photon.phresco.commons.model.ArtifactInfo;
 import com.photon.phresco.commons.model.DownloadInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.SelectedFeature;
@@ -202,7 +209,6 @@ public class Applications extends FrameworkBaseAction {
 
         return APP_APPINFO;
     }
-
     
    /* public String appInfo() {
         if (s_debugEnabled) {
@@ -668,6 +674,28 @@ public class Applications extends FrameworkBaseAction {
         	appInfo.setSelectedModules(selectedFeatures);
         	appInfo.setSelectedJSLibs(selectedJsLibs);
         	appInfo.setSelectedComponents(selectedComponents);
+
+			List<String> deleteabledbs = new ArrayList<String>();
+			File oldprojectinfo = new File(Utility.getProjectHome() + getOldAppDirName() + File.separator
+					+ Constants.DOT_PHRESCO_FOLDER + File.separator + Constants.PROJECT_INFO_FILE);
+			BufferedReader reader = new BufferedReader(new FileReader(oldprojectinfo));
+			ProjectInfo oldProjectInfo = gson.fromJson(reader, ProjectInfo.class);
+			ApplicationInfo oldappinfos = oldProjectInfo.getAppInfos().get(0);
+			List<ArtifactGroupInfo> oldSelectedDbs = oldappinfos.getSelectedDatabases();
+			if (CollectionUtils.isNotEmpty(oldSelectedDbs)) {
+				for (ArtifactGroupInfo artifactGroupInfo : oldSelectedDbs) {
+					String oldArtifactGroupId = artifactGroupInfo.getArtifactGroupId();
+					if (selectedDatabases.contains(oldArtifactGroupId)) {
+						checkForVersions(oldSelectedDbs, selectedDatabases, oldArtifactGroupId, deleteabledbs, appInfo);
+					} else {
+						DownloadInfo downloadInfo = getServiceManager().getDownloadInfo(oldArtifactGroupId);
+						deleteabledbs.add(downloadInfo.getName());
+						deleteSqlFolder(deleteabledbs, appInfo);
+					}
+				}
+            }
+            
+            
     		projectInfo.setAppInfos(Collections.singletonList(appInfo));
     		ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
     		projectManager.update(projectInfo, getServiceManager(), getOldAppDirName());
@@ -678,11 +706,56 @@ public class Applications extends FrameworkBaseAction {
             removeSessionAttribute(REQ_PILOT_PROJECTS);
 		} catch (PhrescoException e) {
 			return showErrorPopup(e, EXCEPTION_PROJECT_UPDATE);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
         
     	return APP_UPDATE;
     }
-    /*public String delete() {
+
+	private void checkForVersions(List<ArtifactGroupInfo> oldSelectedDbs, List<ArtifactGroupInfo> selectedDatabases,
+			String oldArtifactGroupId, List<String> deleteabledbs, ApplicationInfo appInfo) {
+		try {
+			for (ArtifactGroupInfo artifactGroupInfo : selectedDatabases) {
+				List<String> artifactInfoIds = artifactGroupInfo.getArtifactInfoIds();
+				for (ArtifactGroupInfo oldartifactGroupInfo : oldSelectedDbs) {
+					List<String> oldArtifactInfoIds = oldartifactGroupInfo.getArtifactInfoIds();
+					for (String olddbId : oldArtifactInfoIds) {
+						if (!artifactInfoIds.contains(olddbId)) {
+							DownloadInfo downloadInfo = getServiceManager().getDownloadInfo(oldArtifactGroupId);
+							List<ArtifactInfo> versions = downloadInfo.getArtifactGroup().getVersions();
+							for (ArtifactInfo artifactInfo : versions) {
+								String deleteVersion = "/" + downloadInfo.getName() + "/" + artifactInfo.getVersion();
+								deleteabledbs.add(deleteVersion);
+							}
+						}
+					}
+					 deleteSqlFolder(deleteabledbs, appInfo);
+				}
+			}
+		} catch (PhrescoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+    public void deleteSqlFolder(List<String> dbList , ApplicationInfo appInfo) throws PhrescoException {
+		 try {
+			 FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+			 File sqlPath = new File(Utility.getProjectHome() + File.separator
+					 + appInfo.getAppDirName() + frameworkUtil.getSqlFilePath(appInfo));
+			 if (CollectionUtils.isNotEmpty(dbList)) {
+				 for (String dbVersion : dbList) {
+					 File dbVersionFolder = new File(sqlPath, dbVersion.toLowerCase());
+					 FileUtils.deleteDirectory(dbVersionFolder);
+				 }
+			 }
+		 } catch (Exception e) {
+			 throw new PhrescoException(e);
+		 }
+	 }
+	/*public String delete() {
         S_LOGGER.debug("Entering Method  Applications.delete()");
 
         try {
@@ -1387,7 +1460,6 @@ public class Applications extends FrameworkBaseAction {
 
     public String checkForConfiguration() throws PhrescoException {
         try {
-			System.out.println("inside try check for config()************************");
 			boolean isError = false;
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			ApplicationInfo applicationInfo = applicationManager.getApplicationInfo(getCustomerId(), getProjectId(), getAppId());
@@ -1450,7 +1522,6 @@ public class Applications extends FrameworkBaseAction {
 				}
 			}
 		} catch (Exception e) {
-			System.out.println("inside catch******************");
 			throw new PhrescoException(e);
 		}
 
