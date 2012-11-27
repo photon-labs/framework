@@ -277,11 +277,11 @@ body {
 }
 
 .tblheader {
-    background-color: #39bc67;
+    background-color: #323232;
 }
 
 table th, table td {
-    border-bottom: 1px solid #39bc67;
+    border-bottom: 1px solid #323232;
     /*color: #39bc67;*/
 }
 
@@ -705,7 +705,7 @@ div.vjs-big-play-button span {
 }
 
 .build_table_div {
-	border: 1px solid #39bc67;
+	border: 1px solid #323232;
 }
 
 .settingsList_table_div {
@@ -1410,7 +1410,8 @@ label {
 }
 
 .header-background {
- 	background-color: #39bc67;
+ 	background: #323232;
+    color: white !important;
 }
 
 .validatePopup_tbl {
@@ -1446,7 +1447,7 @@ label {
 }
 
 .table_border {
-	border: 1px solid #39bc67;
+	border: 1px solid #323232;
 }
 .table_border td {
 	line-height:32px !important;
@@ -1464,7 +1465,7 @@ label {
 }
 
 .no-left-bottom-border {
-	border-top: 1px solid #39bc67 !important;
+	border-top: 1px solid #323232 !important;
 }
 
 .table tbody tr:hover td, .table tbody tr:hover th {
@@ -1483,10 +1484,10 @@ label {
     padding-top: 3px;
 }
 #navigation ul li a:hover {
-	background:#4F577C;
+	background:#39BC67;
 }
 #navigation ul li a.active {
-	background:#4F577C;
+	background:#39BC67;
 }
 .sonar_report {
 	box-shadow : 0 0 2px 2px #ccc;

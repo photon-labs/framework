@@ -254,7 +254,7 @@ td {
 }
 
 .th-inner {
-	line-height: 30px;
+	line-height: 38px;
 	margin-left: -5px;
 	padding-left: 5px;
 	position: fixed;
@@ -2905,11 +2905,11 @@ fieldset {
     height: 98%;
     margin-top: 18px;
     position: relative;
-    width: 100%;
+    width: 98%;
 }
 #navigation {
     height:30px;
-    margin: -18px 7px 0px 8px;
+    margin: -18px 7px 0px -14px;
 }
 
 #navigation li {
@@ -2946,6 +2946,9 @@ fieldset {
 #subTabcontainer {
     /* margin-left:3px; */
     height: 90%;
+    border: 1px solid #323232;
+    border-radius: 12px;
+
 }
 /*** Specific testing css ***/
 
@@ -5054,7 +5057,6 @@ div[class*='display_msg'] {
 
 .qtyTable_view {
 	top : 0px !important; 
-	height: 100% !important;
 }
 
 .qtyFixedTblContainer {
@@ -5384,6 +5386,7 @@ a[id='androidSigning']:hover {
 .runagint_source {
 	float: right;
 	width: auto;
+	margin-top: -2px;
 }
 
 /*minification*/
@@ -5599,7 +5602,7 @@ input[class*='chckBxAlign'] {
 
 .build_table_div {
     margin-top: 5px;
-    border-radius: 6px 6px 6px 6px;
+    border-radius: 12px 12px 6px 6px;
     margin-left: 6px;
     margin-right: 6px;
 	height:98%;
@@ -5712,7 +5715,7 @@ input[class*='chckBxAlign'] {
 
 .custom_features {
 	min-height: 72% !important;
-	border: solid 1px #39BC67 !important;
+	border: solid 1px #323232 !important;
 	border-radius: 12px 12px 0 0 !important;
 }
 .feature_heading {
@@ -5755,15 +5758,15 @@ ul#display-inline-block-example li:nth-child(4) select, ul#display-inline-block-
 }
 .qtyTable_view table thead tr {
 	height: 30px;
-	background: #39BC67;
+	background: #323232;
 	color: white;	
 }
-.qtyTable_view table thead tr th:first-child {
+/*.qtyTable_view table thead tr th:first-child {
 	border-radius: 11px 0px 0px 0px;
 }
 .qtyTable_view table thead tr th:last-child {
 	border-radius: 0px 11px 0px 0px;
-}
+}*/
 .qtyTable_view table tr td a {
 	color: #333;
 	vertical-align: middle;
@@ -5835,7 +5838,7 @@ margin-left: 11%;
 color: #313131;
 }
 .custom_features_wrapper_right {
-	border:1px solid #39bc67;
+	border:1px solid #323232;
 }
 .custom_features_wrapper_right label {
 	margin-bottom:0 !important;
@@ -5885,7 +5888,7 @@ color: #313131;
 	color: #333;
 }
 #formPerformance #testResultsType {
-	margin-right: 35px;
+	margin-right: 2%;
 }
 #formPerformance .header-background {
 	height: 0px !important;
@@ -5893,16 +5896,28 @@ color: #313131;
 }
 #formPerformance table thead tr {
 	height: 30px;
-	background: #39BC67;
+	background: #323232;
 	color: white;	
 }
-#formPerformance table thead tr th:first-child {
+/*#formPerformance table thead tr th:first-child {
 	border-radius: 11px 0px 0px 0px;
 }
 #formPerformance table thead tr th:last-child {
 	border-radius: 0px 11px 0px 0px;
-}
+}*/
 #formPerformance table tr td a {
 	color: #333;
 	vertical-align: middle;
+}
+
+#subTabcontent #navigation {
+	background: none !important;	
+}
+.table_div_unit {
+	margin: 0px !important;
+	border: none !important;
+	width: 100% !important;
+}
+.zebra-striped thead tr th div {
+	color: white !important;
 }
