@@ -74,7 +74,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 import com.google.gson.Gson;
-import com.itextpdf.text.log.*;
 import com.photon.phresco.commons.FileListFilter;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
@@ -439,7 +438,7 @@ public class Quality extends DynamicParameterAction implements Constants {
             Map<String, DependantParameters> watcherMap = new HashMap<String, DependantParameters>(8);
 
             MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(appInfo)));
-            List<Parameter> parameters = getMojoParameters(mojo, PHASE_FUNCTIONAL_TEST + seleniumToolType);
+            List<Parameter> parameters = getMojoParameters(mojo, PHASE_FUNCTIONAL_TEST + HYPHEN + seleniumToolType);
 
             setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap);
             setSessionAttribute(appInfo.getId() + PHASE_FUNCTIONAL_TEST + SESSION_WATCHER_MAP, watcherMap);
@@ -475,7 +474,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 	        MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(appInfo)));
 	        FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
             String seleniumToolType = frameworkUtil.getSeleniumToolType(appInfo);
-	        persistValuesToXml(mojo, PHASE_FUNCTIONAL_TEST + seleniumToolType);
+	        persistValuesToXml(mojo, PHASE_FUNCTIONAL_TEST + HYPHEN + seleniumToolType);
 	        ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 	        BufferedReader reader = applicationManager.performAction(getProjectInfo(), ActionType.FUNCTIONAL_TEST, null, workingDirectory.toString());
 	        setSessionAttribute(getAppId() + FUNCTIONAL, reader);
