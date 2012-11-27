@@ -88,7 +88,7 @@
 			yesnoPopup('openEnvironmentPopup', '<s:text name="lbl.environment"/>', 'createEnvironment', '', '', 'fromPage=<%=fromPage%>&configPath=<%=configPath%>');
 		});
 	
-	confirmDialog($("#deleteBtn"), '<s:text name="lbl.hdr.confirm.dialog"/>', '<s:text name="modal.body.text.del.configuration"/>', 'deleteEnvironment','<s:text name="lbl.btn.ok"/>');
+	confirmDialog($("#deleteBtn"), '<s:text name="lbl.hdr.confirm.dialog"/>', '<s:text name="modal.body.text.del.configuration"/>', 'delete','<s:text name="lbl.btn.ok"/>');
 	
 	$(document).ready(function() {
 		hideLoadingIcon();//To hide the loading icon
@@ -172,28 +172,28 @@
 				loadContent("cloneConfiguration", $("#formClonePopup"), $('#loadEnv'), params);
 			 }
 		} else {
-		var envs = [];
-		var selectedEnv;
-		var selectedConfigData = [];
-		$('[name="envNames"]').each(function() {
-			envs.push($(this).val());
-		});
-		
-		$('input[name="checkEnv"]:checked').each(function() {
-			var selectedEnvData = $.parseJSON($(this).val());
-			selectedEnv = selectedEnvData.name;
-		});
-		
-		$('[name="checkedConfig"]:checked').each(function() {
-			selectedConfigData = $(this).val();
-		}); 
-		
-		var basicParams = getBasicParamsAsJson();
-		var fromPage = "<%= fromPage%>";
-		var configPath = "<%= configPath %>";
-		var params = '{' + basicParams + ', "configPath" : "' + configPath + '", "fromPage" : "' + fromPage + '", "environments": [' + envs.join(',') + '], "selectedEnvirment" : "' + selectedEnv + '", "selectedConfig": [' + selectedConfigData + ']}';
-		var url = $(self).attr('id');
-		loadJsonContent(url, params, $('#loadEnv'));	
+			var envs = [];
+			var selectedEnvs = new Array();
+			var selectedConfigData = [];
+			$('[name="envNames"]').each(function() {
+				envs.push($(this).val());
+			});
+			
+			$('input[name="checkEnv"]:checked').each(function() {
+				var selectedEnvData = $.parseJSON($(this).val());
+				selectedEnvs.push(selectedEnvData.name);
+			});
+			
+			$('[name="checkedConfig"]:checked').each(function() {
+				selectedConfigData.push($(this).val());
+			}); 
+			
+			var basicParams = getBasicParamsAsJson();
+			var fromPage = "<%= fromPage%>";
+			var configPath = "<%= configPath%>";
+			var params = '{' + basicParams + ', "configPath" : "' + configPath + '", "fromPage" : "' + fromPage + '", "environments": [' + envs.join(',') + '], "selectedEnvirment" : "' + selectedEnvs + '", "selectedConfigurations": [' + selectedConfigData.join(',') + ']}';
+			var url = $(self).attr('id');
+			loadJsonContent(url, params, $('#loadEnv'));	
 		}
 	}
 

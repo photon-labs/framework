@@ -96,7 +96,7 @@
 			yesnoPopup('openEnvironmentPopup', '<s:text name="lbl.environment"/>', 'createEnvironment', '', '', 'fromPage=<%=fromPage%>&configPath=<%=configPath%>');
 		});
 	
-	confirmDialog($("#deleteBtn"), '<s:text name="lbl.hdr.confirm.dialog"/>', '<s:text name="modal.body.text.del.configuration"/>', 'deleteEnvironment','<s:text name="lbl.btn.ok"/>');
+	confirmDialog($("#deleteBtn"), '<s:text name="lbl.hdr.confirm.dialog"/>', '<s:text name="modal.body.text.del.configuration"/>', 'delete','<s:text name="lbl.btn.ok"/>');
 	
 	$(document).ready(function() {
 		hideLoadingIcon();//To hide the loading icon
@@ -189,7 +189,7 @@
 			 }
 		} else {
 			var envs = [];
-			var selectedEnv;
+			var selectedEnvs = new Array();
 			var selectedConfigData = [];
 			$('[name="envNames"]').each(function() {
 				envs.push($(this).val());
@@ -197,19 +197,19 @@
 			
 			$('input[name="checkEnv"]:checked').each(function() {
 				var selectedEnvData = $.parseJSON($(this).val());
-				selectedEnv = selectedEnvData.name;
+				selectedEnvs.push(selectedEnvData.name);
 			});
 			
 			$('[name="checkedConfig"]:checked').each(function() {
-				selectedConfigData = $(this).val();
+				selectedConfigData.push($(this).val());
 			}); 
 			
 			var basicParams = getBasicParamsAsJson();
 			var fromPage = "<%= fromPage%>";
 			var configPath = "<%= configPath%>";
-			var params = '{' + basicParams + ', "fromPage" : "' + fromPage + '", "configPath" : "' + configPath + '", "environments": [' + envs.join(',') + '], "selectedEnvirment" : "' + selectedEnv + '", "selectedConfig": [' + selectedConfigData + ']}';
+			var params = '{' + basicParams + ', "fromPage" : "' + fromPage + '", "configPath" : "' + configPath + '", "environments": [' + envs.join(',') + '], "selectedEnvirment" : "' + selectedEnvs + '", "selectedConfigurations": [' + selectedConfigData.join(',') + ']}';
 			var url = $(self).attr('id');
-				loadJsonContent(url, params, $('#loadEnv'));			
+			loadJsonContent(url, params, $('#loadEnv'));			
 		}
 	}
 

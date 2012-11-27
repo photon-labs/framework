@@ -733,6 +733,7 @@ public interface FrameworkConstants {
 	String REQ_FEATURES_MODULES = "modules";
 	String REQ_CONFIG = "config";
 	String REQ_ENVIRONMENTS = "environments";
+	String REQ_CONFIGURATIONS = "configurations";
     String REQ_LOG_REPORT = "logReport";
     String REQ_PROJECT_INFO_SERVERS = "projectInfoServers";
     String REQ_PROJECT_INFO_DATABASES = "projectInfoDatabases";
@@ -945,6 +946,7 @@ public interface FrameworkConstants {
 	String CLONE_FROM_ENV_NAME = "cloneFromEnvName";
 	String CLONE_FROM_CONFIG_NAME = "cloneFromConfigName";
 	String TECH_SITE_CORE = "tech-sitecore";
+	String ADD_SETTINGS ="addsettings";
     
     /*
      * Create Environment keys
@@ -1522,6 +1524,7 @@ public interface FrameworkConstants {
 		  String SETTINGS_TEMP_KEY_APP_NAME = "applicationName";
 		  String SETTINGS_TEMP_KEY_SITE_NAME = "siteName";
 		  String SETTINGS_TEMP_SITECORE_INST_PATH = "sitecoreInstPath";
+		  String IIS_SERVER = "IIS";
 		  
 	  /* Resolutions */ 
 		String _1600_900 = "1600*900";

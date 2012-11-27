@@ -63,6 +63,8 @@ public class Configurations extends FrameworkBaseAction {
     
     private List<Environment> environments = new ArrayList<Environment>();
     private List<String> deletableEnvs = new ArrayList<String>();
+    
+    private List<Configuration> selectedConfigurations = new ArrayList<Configuration>();
 
 	private Environment environment = null;
   
@@ -294,7 +296,7 @@ public class Configurations extends FrameworkBaseAction {
 		    if (StringUtils.isNotEmpty(value)) {
 		        properties.put(key, value);
 		    }
-		    if ("server".equals(key) && "IIS".equals(value)) {
+		    if (SERVER_KEY.equals(key) && IIS_SERVER.equals(value)) {
 		    	isIISServer = true;
 		    }
 		}
@@ -340,11 +342,11 @@ public class Configurations extends FrameworkBaseAction {
         for (PropertyTemplate propertyTemplate : properties) {
             String key = propertyTemplate.getKey();
             String value = getActionContextParam(key);
-            if ("server".equals(key) && "IIS".equals(value)) {
+            if (SERVER_KEY.equals(key) && IIS_SERVER.equals(value)) {
             	isIISServer = true;
             }
             
-            if(isIISServer && "context".equals(key)){
+            if(isIISServer && DEPLOY_CONTEXT.equals(key)){
             	propertyTemplate.setRequired(false);
             }
             
@@ -424,12 +426,19 @@ public class Configurations extends FrameworkBaseAction {
     	return envList();
     }
     
-    public String deleteEnvironment() {
+    public String delete() {
     	try {
-    		if(selectedEnvirment != null) {
-    			ConfigManager configManager = getConfigManager(getConfigPath());
-    			configManager.deleteEnvironment(selectedEnvirment);
-    		} 
+    		ConfigManager configManager = getConfigManager(getConfigPath());
+    		if (StringUtils.isNotEmpty(getSelectedEnvirment())) {//To delete the selected environments
+    			String [] deletableEnvs = getSelectedEnvirment().split(",");
+        	    List<String> deletableEnvList = Arrays.asList(deletableEnvs);
+        	    for (String deletableEnv : deletableEnvList) {
+        	    	configManager.deleteEnvironment(deletableEnv);
+    			}
+    		}
+    		if (CollectionUtils.isNotEmpty(getSelectedConfigurations())) {//To delete the selected configurations
+    			configManager.deleteConfigurations(getSelectedConfigurations());
+    		}
     		
     	} catch(Exception e) {
     		 return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_CONFIGURATION_DELETE_ENVIRONMENT));
@@ -1160,12 +1169,13 @@ public class Configurations extends FrameworkBaseAction {
 		this.currentConfigDesc = currentConfigDesc;
 	}
 
-	/*public Configuration getSelectedConfig() {
-		return selectedConfig;
+
+	public List<Configuration> getSelectedConfigurations() {
+		return selectedConfigurations;
 	}
 
-	public void setSelectedConfig(Configuration selectedConfig) {
-		this.selectedConfig = selectedConfig;
-	}*/
 
+	public void setSelectedConfigurations(List<Configuration> selectedConfigurations) {
+		this.selectedConfigurations = selectedConfigurations;
+	}
 }

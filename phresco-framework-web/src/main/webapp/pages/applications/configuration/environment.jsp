@@ -135,19 +135,31 @@ $(document).ready(function() {
         if (setAsDefaultEnvsSize > 1) {
        	 $("#errMsg").html("<s:text name='please.select.only.one.environment'/>");
        	 return false;
-        }
+		}
         
-        $('#multiselect ul li input[type=checkbox]').each( function() {
+		$('#multiselect ul li input[type=checkbox]').each( function() {
 			var env = $.parseJSON($(this).val());
-       	 	env.defaultEnv = "false";
+			env.defaultEnv = "false";
         });
         
        	var setAsDefaultEnvs = new Array();
+       	
+        $('#multiselect :checkbox').each( function() {
+        	var checkboxValue = $(this).val();
+        	var allCheckboxVal = $.parseJSON(checkboxValue);
+        	allCheckboxVal.defaultEnv = "false";
+			var finalEnvData = JSON.stringify(allCheckboxVal);
+			$(this).val(finalEnvData);
+        });
+       	
         $('#multiselect :checked').each( function() {
-			var selectedEnv = $.parseJSON($(this).val());
-				selectedEnv.defaultEnv = "true";
-       			setAsDefaultEnvs.push(selectedEnv.defaultEnv);
-        }); 
+        	var selectedEnvData = $(this).val();
+			var selectedEnv = $.parseJSON(selectedEnvData);
+			selectedEnv.defaultEnv = "true";
+			var finalEnvData = JSON.stringify(selectedEnv);
+			$(this).val(finalEnvData);
+        });
+        
    });
 	
 	//To remove the added Environment value in UI
@@ -159,13 +171,14 @@ $(document).ready(function() {
 			var env = checkedDataObj.defaultEnv; // selected checkbox
 			if(env == true){
 				$("#errMsg").html("<s:text name='you.cant.remove.defaultEnv'/>");
+				return false;
 			} else {
 				$('#multiselect ul li input[type=checkbox]:checked').parent().remove();
 			}			
         });
     });
 	
-  	//To move up the values
+  	/* //To move up the values
 	$('#up').bind('click', function() {
 		selectEnv();
 		$('#multiselect ul li input[type=checkbox]:checked').each( function() {
@@ -173,13 +186,26 @@ $(document).ready(function() {
 			var newPos = $('#multiselect ul li').index(this) -1;
 			if (newPos > -1) {
 				/* $('#multiselect ul li').eq(newPos).before("<li value='"+ checkedDataObj.name +"' checked='checked'>"+$(this).text()+"</li>");
-				$(this).remove(); */
+				$(this).remove(); 
 			} else {
 				$('#multiselect ul li').eq(newPos).before("<li value='"+ checkedDataObj.name +"' checked='checked'>"+$(this).text()+"</li>");
 				$(this).parent().remove();
 			}
 		});
-	}); 
+	}); */ 
+	
+	
+  //To move up the values
+	/* $('#multiselect ul li').change(function() {
+		var indexVal = $('#multiselect ul li').index(this);
+		$('#up').bind('click', function() {
+				var newpos = indexVal - 1;
+				if (newPos > -1) {
+					$('#multiselect ul li').eq(newPos).before("<li value='"+$(this).val()+"' selected='selected'>"+$(this).text()+"</li>");
+					$(this).parent().remove();
+				}
+			 });
+		}); */
 });
 	
 

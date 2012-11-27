@@ -485,7 +485,7 @@
         	<result name="envList">/pages/applications/configuration/envList.jsp</result>
         </action>
         
-        <action name="deleteEnvironment" method="deleteEnvironment" class="com.photon.phresco.framework.actions.applications.Configurations">
+        <action name="delete" method="delete" class="com.photon.phresco.framework.actions.applications.Configurations">
         	<interceptor-ref name="json" />
         	 <result name="envList">/pages/applications/configuration/envList.jsp</result>
         </action>

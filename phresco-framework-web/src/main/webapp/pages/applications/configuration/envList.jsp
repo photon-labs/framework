@@ -73,6 +73,15 @@
 								<div class="scrollpanel">
 									<section class="scrollpanel_inner">
 								    	<table class="table table-bordered table_border">
+								    	<% 
+								    			List<Configuration> configurations = env.getConfigurations();
+								    			if (CollectionUtils.isEmpty(configurations)) {
+								    		%> 
+								    			 <div class="alert alert-block">
+													<%= actionSupport.getText("lbl.err.msg.list.config")%>
+												</div> 
+											<% } else { %>
+								    	
 								    		<thead>
 								    			<tr class="header-background">
 								    				<th class="no-left-bottom-border table-pad table-chkbx">
@@ -94,17 +103,17 @@
 								    				</th>
 								    			</tr> 
 								    		</thead>
+								    		
 								    		<tbody>
-								    			<%
-														List<Configuration> configurations = env.getConfigurations();
-								    					if (CollectionUtils.isNotEmpty(configurations)) {
-															for (Configuration configuration : configurations) {
-																String configJson = gson.toJson(configuration);
-												%>
+								    		<% 
+							    					if (CollectionUtils.isNotEmpty(configurations)) {
+														for (Configuration configuration : configurations) {
+															String configJson = gson.toJson(configuration);
+											%>
 															<tr>
 																<td class="no-left-bottom-border table-pad">
 																	<input type="checkbox" class="check <%=env.getName() %>" name="checkedConfig" value='<%= configJson %>'
-																	onclick="checkboxEvent($('.<%=env.getName() %>'), $('#<%=env.getName() %>'));">
+																		onclick="checkboxEvent($('.<%=env.getName() %>'), $('#<%=env.getName() %>'));">
 																</td>
 																<td class="no-left-bottom-border table-pad">
 																	<a href="#" onclick="editConfiguration('<%= env.getName() %>', '<%= configuration.getType() %>','<%= configuration.getName() %>');" 
@@ -132,6 +141,7 @@
 													<%
 																}
 															}
+														}
 													%>  
 								    		</tbody>
 										</table>
