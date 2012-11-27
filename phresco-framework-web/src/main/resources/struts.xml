@@ -476,7 +476,8 @@
         </action>
         
         <action name="cloneConfiguration" method="cloneConfiguration" class="com.photon.phresco.framework.actions.applications.Configurations">
-            <result type="json" />
+        	<result name="envList">/pages/applications/configuration/envList.jsp</result>
+           <!--  <result type="json" /> -->
         </action>
         
         <action name="createEnvironment" method="createEnvironment" class="com.photon.phresco.framework.actions.applications.Configurations">

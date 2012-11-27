@@ -941,6 +941,7 @@ public interface FrameworkConstants {
     String ENV_NOT_VALID="environment.not.valid";
     String ENV_CLONE_SUCCESS="environment.clone.success";
     String CLONE_FROM_CONFIG_TYPE = "cloneFromConfigType";
+    String CLONE_FROM_CONFIG_DESC = "currentConfigDesc";
 	String CLONE_FROM_ENV_NAME = "cloneFromEnvName";
 	String CLONE_FROM_CONFIG_NAME = "cloneFromConfigName";
 	String TECH_SITE_CORE = "tech-sitecore";
