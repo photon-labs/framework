@@ -116,7 +116,62 @@
 			loadContent("editConfiguration", $("#formConfigAdd"), $('#subcontainer'), params);
 	}
 	 
+	 
+	 function cloneConfiguration(configName, envName, configType, currentConfigDesc) {
+		 	var params = getBasicParams();
+		 	var fromPage = "<%= fromPage%>";
+		 	var configPath = "<%= configPath%>";
+	        params = params.concat("&configName=");
+	        params = params.concat(configName);
+	        params = params.concat("&envName=");
+	        params = params.concat(envName);
+	        params = params.concat("&configType=");
+	        params = params.concat(configType);
+	        params = params.concat("&fromPage=");
+			params = params.concat(fromPage);
+			params = params.concat("&configPath=");
+			params = params.concat(configPath);
+			params = params.concat("&currentConfigDesc=");
+			params = params.concat(currentConfigDesc);
+	        yesnoPopup('cloneConfigPopup', 'Clone Environment', 'cloneConfiguration', '', '', params);
+	}
+	 
 	function popupOnOk(self) {
+		var url = $(self).attr('id');
+		if(url == "cloneConfiguration"){
+			var EnvSelection = $("#created").size();
+			if (EnvSelection == 0 ) {
+				$("#errMsg").html("Please add atleast one Environment");
+			}
+			 else {
+				var params = getBasicParams();
+				var fromPage = "<%= fromPage%>";
+				var configPath = "<%= configPath%>";
+				var copyFromEnvName = $('[name=cloneFromEnvName]').val();
+				var configType = $('[name=cloneFromConfigType]').val();
+				var configName = $('[name=cloneFromConfigName]').val();
+				var currentConfigName = $('#configurationName').val();
+				var currentConfigDesc = $('#configDescription').val();
+				var currentEnvName = $('#configEnv').val();
+				params = params.concat("&copyFromEnvName=");
+		        params = params.concat(copyFromEnvName);
+		       	params = params.concat("&configType=");
+		        params = params.concat(configType);
+		        params = params.concat("&configName=");
+		        params = params.concat(configName);
+				params = params.concat("&fromPage=");
+				params = params.concat(fromPage);
+				params = params.concat("&configPath=");
+				params = params.concat(configPath);
+				params = params.concat("&currentConfigName=");
+		        params = params.concat(currentConfigName);
+				params = params.concat("&currentConfigDesc=");
+				params = params.concat(currentConfigDesc);
+				params = params.concat("&currentEnvName=");
+				params = params.concat(currentEnvName);
+				loadContent("cloneConfiguration", $("#formClonePopup"), $('#loadEnv'), params);
+			 }
+		} else {
 		var envs = [];
 		var selectedEnv;
 		var selectedConfigData = [];
@@ -138,7 +193,8 @@
 		var configPath = "<%= configPath %>";
 		var params = '{' + basicParams + ', "configPath" : "' + configPath + '", "fromPage" : "' + fromPage + '", "environments": [' + envs.join(',') + '], "selectedEnvirment" : "' + selectedEnv + '", "selectedConfig": [' + selectedConfigData + ']}';
 		var url = $(self).attr('id');
-		loadJsonContent(url, params, $('#loadEnv'));		
+		loadJsonContent(url, params, $('#loadEnv'));	
+		}
 	}
 
 </script>

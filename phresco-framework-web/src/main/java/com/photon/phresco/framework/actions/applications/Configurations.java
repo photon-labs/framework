@@ -61,8 +61,10 @@ public class Configurations extends FrameworkBaseAction {
     private static final Logger S_LOGGER = Logger.getLogger(Configurations.class);
     private static Boolean debugEnabled  = S_LOGGER.isDebugEnabled();
     
-    private List<Environment> environments = new ArrayList<Environment>(8);
-    private Environment environment = null;
+    private List<Environment> environments = new ArrayList<Environment>();
+    private List<String> deletableEnvs = new ArrayList<String>();
+
+	private Environment environment = null;
   
 	//private Configuration selectedConfig = null;
     private SettingsTemplate settingTemplate = null;
@@ -73,6 +75,7 @@ public class Configurations extends FrameworkBaseAction {
     private String selectedEnv = null;
 	private String selectedConfigname = null;
 	private String configName = null;
+	private String copyFromEnvName = null;
     private String description = null;
     private String oldName = null;
     private String[] appliesto = null;
@@ -95,7 +98,8 @@ public class Configurations extends FrameworkBaseAction {
 	private String currentEnvName = null;
 	private String currentConfigType = null;
 	private String currentConfigName = null;
-   
+	private String currentConfigDesc = null;
+	
 	// Environemnt delete
     private boolean isEnvDeleteSuceess = true;
     private String envDeleteMsg = null;
@@ -270,15 +274,14 @@ public class Configurations extends FrameworkBaseAction {
     private void save(String configPath) throws ConfigurationException, PhrescoException {
     	if (debugEnabled) {
     		S_LOGGER.debug("Entering Method  Configurations.save()");
-		}  
-        	Configuration config = getConfigInstance();
-            Environment environment = getEnvironment();
-            List<Configuration> configurations = environment.getConfigurations();
-            configurations.add(config);
-            ConfigManager configManager = getConfigManager(configPath);
-            configManager.createConfiguration(environment.getName(), config);
+    	}  
+    	Configuration config = getConfigInstance();
+    	Environment environment = getEnvironment();
+    	List<Configuration> configurations = environment.getConfigurations();
+    	configurations.add(config);
+    	ConfigManager configManager = getConfigManager(configPath);
+    	configManager.createConfiguration(environment.getName(), config);
     }
-
 
 	private Configuration getConfigInstance() throws PhrescoException {
 		boolean isIISServer = false;
@@ -645,17 +648,16 @@ public class Configurations extends FrameworkBaseAction {
     }
     
     public String cloneConfigPopup() {
-    	S_LOGGER.debug("Entering Method  Configurations.cloneConfigPopup()");
+    	if (debugEnabled) {
+			S_LOGGER.debug("Entering Method  Configurations.cloneConfigPopup()");
+		}
     	try {
-    		ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-    		Project project = administrator.getProject(projectCode);
-    		
-    		List<Environment> environments = administrator.getEnvironments(project);
-    		getHttpRequest().setAttribute(REQ_ENVIRONMENTS, environments);
-    		getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
-    		getHttpRequest().setAttribute(CLONE_FROM_CONFIG_NAME, configName);
-    		getHttpRequest().setAttribute(CLONE_FROM_ENV_NAME, envName);
-    		getHttpRequest().setAttribute(CLONE_FROM_CONFIG_TYPE, configType);
+    		List<Environment> environments = getAllEnvironments();
+    		setReqAttribute(REQ_ENVIRONMENTS, environments);
+    		setReqAttribute(CLONE_FROM_CONFIG_NAME, configName);
+    		setReqAttribute(CLONE_FROM_ENV_NAME, envName);
+    		setReqAttribute(CLONE_FROM_CONFIG_TYPE, configType);
+    		setReqAttribute(CLONE_FROM_CONFIG_DESC, currentConfigDesc);
 		} catch (Exception e) {
 			if (debugEnabled) {
 				S_LOGGER.error("Entered into catch block of Configurations.cloneConfigPopup()" + FrameworkUtil.getStackTraceAsString(e));
@@ -665,24 +667,26 @@ public class Configurations extends FrameworkBaseAction {
     }
 
 	public String cloneConfiguration() {
-		S_LOGGER.debug("Entering Method  Configurations.cloneConfiguration()");
+		if (debugEnabled) {
+			S_LOGGER.debug("Entering Method  Configurations.cloneConfiguration()");
+		}
 		try {
-			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-			Project project = administrator.getProject(projectCode);
 			
-			String cloneFromEnvName = getHttpRequest().getParameter(CLONE_FROM_ENV_NAME);
-			String cloneFromConfigType = getHttpRequest().getParameter(CLONE_FROM_CONFIG_TYPE);
-			String cloneFromConfigName = getHttpRequest().getParameter(CLONE_FROM_CONFIG_NAME);
-			
-			boolean configExists = isConfigExists(project, envName, cloneFromConfigType, cloneFromConfigName);
-			if (!configExists) {
-				List<SettingsInfo> configurations = administrator.configurations(project, cloneFromEnvName, cloneFromConfigType, cloneFromConfigName);
-				if (CollectionUtils.isNotEmpty(configurations)) {
-						SettingsInfo settingsInfo = configurations.get(0);
-						settingsInfo.setName(configName);
-						settingsInfo.setDescription(description);
-						administrator.createConfiguration(settingsInfo, envName, project);
+			boolean configExists = isConfigExists(currentEnvName, configType, configName);
+			if (!configExists) { // false to create
+				ConfigManager configManager = getConfigManager(getConfigPath());
+				List<Configuration> configurations = configManager.getConfigurations(copyFromEnvName, configType);
+				Configuration cloneconfig = null;
+				for (Configuration configuration : configurations) {
+					if (configuration.getName().equals(configName)) { // old configuration
+						cloneconfig = configuration;
+						break;
+					}
 				}
+				//new configuration
+				cloneconfig.setName(currentConfigName);
+				cloneconfig.setDesc(currentConfigDesc);
+				configManager.createConfiguration(currentEnvName, cloneconfig);
 				flag = true;
 			} else {
 				setEnvError(getText(CONFIG_ALREADY_EXIST));
@@ -692,18 +696,18 @@ public class Configurations extends FrameworkBaseAction {
 			flag = false;
 			setEnvError(getText(CONFIGURATION_CLONNING_FAILED));
 		}
-		return SUCCESS;
+		return  envList();
 	}
     
-	public boolean isConfigExists(Project project, String envName, String configType, String cloneFromConfigName) throws PhrescoException {
+	
+	public boolean isConfigExists(String envName, String configType, String cloneFromConfigName) throws PhrescoException {
 		try {
 		    if (configType.equals(Constants.SETTINGS_TEMPLATE_SERVER) || configType.equals(Constants.SETTINGS_TEMPLATE_EMAIL)) {
-		    	ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-	            List<SettingsInfo> settingsinfos = administrator.configurations(project, envName, configType, cloneFromConfigName);
-	            if(CollectionUtils.isNotEmpty( settingsinfos)) {
-//	                setTypeError(CONFIG_ALREADY_EXIST);
+	    		ConfigManager configManager = getConfigManager(getConfigPath());
+	    		List<Configuration> configurations = configManager.getConfigurations(envName, configType);
+	    		if(CollectionUtils.isNotEmpty( configurations)) {
 	                return true;
-	            }
+				}
 	    	}
 		    return false;
 		} catch (Exception e) {
@@ -1126,8 +1130,36 @@ public class Configurations extends FrameworkBaseAction {
 	public void setConfigPath(String configPath) {
 		this.configPath = configPath;
 	}
-
 	
+	public List<String> getDeletableEnvs() {
+		return deletableEnvs;
+	}
+
+
+	public void setDeletableEnvs(List<String> deletableEnvs) {
+		this.deletableEnvs = deletableEnvs;
+	}
+
+
+	public String getCopyFromEnvName() {
+		return copyFromEnvName;
+	}
+
+
+	public void setCopyFromEnvName(String copyFromEnvName) {
+		this.copyFromEnvName = copyFromEnvName;
+	}
+
+
+	public String getCurrentConfigDesc() {
+		return currentConfigDesc;
+	}
+
+
+	public void setCurrentConfigDesc(String currentConfigDesc) {
+		this.currentConfigDesc = currentConfigDesc;
+	}
+
 	/*public Configuration getSelectedConfig() {
 		return selectedConfig;
 	}
