@@ -65,8 +65,8 @@ Map<String, Map<String, String>> minifyMap = (Map<String, Map<String, String>>) 
 			  } else { %>
 			<div class="compressJs_Div" id="compressJs_Div">
 				<label for="xlInput" class="xlInput labelbold popupLbl minifyLabel" style="float:left;"><s:text name="build.compress.name"/></label>
-				<input type="button" id="getJsFiles1" class="btn btn-primary" style="float:left;" value="<s:text name="build.minify.browse"/>" onclick="browseFiles(this);">
 				<input type="text" name="minifyFileNames" class="getJsFiles1" id="compNameText" disabled style="float:left;"/>
+				<input type="button" id="getJsFiles1" class="btn btn-primary" style="float:left;" value="<s:text name="build.minify.browse"/>" onclick="browseFiles(this);">
 				<a><img title="" src="images/icons/add_icon.png" id="addJSComp" class="minifyAddIcon" onclick="appendRow();"></a>
 				<a><img class="del imagealign hide" src="images/icons/minus_icon.png" onclick="removeTag(this);"></a>
 				<input type="hidden" tempName="getJsFiles1" name="getJsFiles1" value="" id="">

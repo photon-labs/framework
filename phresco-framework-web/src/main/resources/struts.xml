@@ -871,14 +871,6 @@
 		<action name="minifyBrowseFileTree" method="minifyBrowseFileTree" class="com.photon.phresco.framework.actions.applications.Build">
         	<result name="success">/pages/fileBrowse.jsp</result>
         </action>
-        
-		<action name="jsFileBrowse" method="jsFileBrowser" class="com.photon.phresco.framework.actions.applications.Build">
-        	<result name="success">/pages/fileBrowse.jsp</result>
-        </action>
-        
-        <action name="jsToMinify" method="selectJsFilesToMinify" class="com.photon.phresco.framework.actions.applications.Build">
-        	<result type="json" />
-        </action>
 		<!-- minification ends -->
 		
 		<action name="localJenkinsAliveCheck" method="localJenkinsLocalAlive" class="com.photon.phresco.framework.actions.applications.CI">

@@ -139,12 +139,9 @@ public class Build extends DynamicParameterAction implements Constants {
 	private String compressName = "";
 	private List<String> minifyFileNames = null;
 	private String minifiedFiles = "";
-	private String fileType = null;
-	private String fileorfolder = null;
-	private String selectedJs = null;
-	private String jsFinalName = null;
-	private String browseLocation = null;
-	private String fileLocation = null;
+	private String fileType = "";
+	private String fileorfolder = "";
+	private String browseLocation = "";
 	
 	//iphone family
 	private String family = ""; 
@@ -1035,52 +1032,6 @@ public class Build extends DynamicParameterAction implements Constants {
 		return SUCCESS;
 	}
 	
-	public String selectJsFilesToMinify() {
-		try {
-			String[] jsFiles = getHttpRequest().getParameterValues(REQ_CHECKED_FILE_LIST);
-			StringBuilder sb = new StringBuilder();
-			String sep = "";
-			for (String jsFile : jsFiles) {
-				sb.append(sep);
-				sb.append(jsFile);
-			    sep = ",";
-			}
-
-			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-	        Project project = administrator.getProject(projectCode);
-	        String techId = project.getApplicationInfo().getTechInfo().getVersion();
-	        StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-	        builder.append(project.getApplicationInfo().getCode());
-	        getHttpRequest().setAttribute(REQ_BUILD_FROM, getHttpRequest().getParameter(REQ_BUILD_FROM));
-	        getHttpRequest().setAttribute(REQ_TECHNOLOGY, techId);
-	        setSelectedJs(sb.toString());
-		} catch (Exception e){
-			S_LOGGER.error("Entered into catch block of  Build.selectJsFilesToMinify()"	+ FrameworkUtil.getStackTraceAsString(e));
-		}
-
-		return SUCCESS;
-	}
-	
-	public String jsFileBrowser() {
-		try {
-			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-	        Project project = administrator.getProject(projectCode);
-	        String technology = project.getApplicationInfo().getTechInfo().getVersion();
-	        getHttpRequest().setAttribute(REQ_TECHNOLOGY, technology);
-			getHttpRequest().setAttribute(FILE_TYPES, fileType);
-			getHttpRequest().setAttribute(FILE_BROWSE, fileorfolder);
-			String projectLocation = Utility.getProjectHome() + projectCode;
-			getHttpRequest().setAttribute(REQ_PROJECT_LOCATION, projectLocation.replace(File.separator, FORWARD_SLASH));
-			getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
-			getHttpRequest().setAttribute(REQ_BUILD_FROM, getHttpRequest().getParameter(REQ_BUILD_FROM));
-			getHttpRequest().setAttribute(REQ_COMPRESS_NAME,getHttpRequest().getParameter(REQ_COMPRESS_NAME));
-			getHttpRequest().setAttribute(REQ_SELECTED_FILES,getHttpRequest().getParameter(REQ_SELECTED_FILES));
-		} catch (Exception e){
-			S_LOGGER.error("Entered into catch block of  Build.jsFileBrowser()"	+ FrameworkUtil.getStackTraceAsString(e));
-		}
-		return SUCCESS;
-	}
-	
 	public String doMinification() {
 		try {
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
@@ -1676,36 +1627,12 @@ public class Build extends DynamicParameterAction implements Constants {
 		this.fileorfolder = fileorfolder;
 	}
 	
-	public String getSelectedJs() {
-		return selectedJs;
-	}
-
-	public void setSelectedJs(String selectedJs) {
-		this.selectedJs = selectedJs;
-	}
-
-	public String getJsFinalName() {
-		return jsFinalName;
-	}
-
-	public void setJsFinalName(String jsFinalName) {
-		this.jsFinalName = jsFinalName;
-	}
-
 	public void setBrowseLocation(String browseLocation) {
 		this.browseLocation = browseLocation;
 	}
 
 	public String getBrowseLocation() {
 		return browseLocation;
-	}
-
-	public void setFileLocation(String fileLocation) {
-		this.fileLocation = fileLocation;
-	}
-
-	public String getFileLocation() {
-		return fileLocation;
 	}
 
 	public String getFamily() {

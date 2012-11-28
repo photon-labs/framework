@@ -311,7 +311,6 @@
 				//To enable compress name text boxes only if it has value
 				$('input[name="minifyFileNames"]').each(function () {
 					if($(this).val() !== "") {
-						alert("enable");
 						$(this).attr("disabled", false);
 					}
 				});
