@@ -36,6 +36,7 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 
 import org.antlr.stringtemplate.StringTemplate;
+import org.antlr.stringtemplate.StringTemplateGroup;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
@@ -49,6 +50,7 @@ import com.photon.phresco.framework.FrameworkConfiguration;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
 import com.photon.phresco.framework.api.ProjectAdministrator;
+import com.photon.phresco.framework.model.PerformanceDetails;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.TechnologyTypes;
@@ -1002,6 +1004,22 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	controlGroupElement.setAttribute("controls", inputElement);
     	
 		return controlGroupElement;
+    }
+    
+    public static StringTemplate constructDynamicTemplate() throws IOException {
+        try {
+            StringTemplateGroup group = new StringTemplateGroup("templateGroup", "C:/Documents and Settings/loheswaran_g/workspace/projects/PHP-tech-php/.phresco");
+            StringTemplate stringTemplate = group.getInstanceOf("contextUrls");
+            PerformanceDetails performanceDetails = new PerformanceDetails();
+            performanceDetails.setNoOfUsers(5);
+            performanceDetails.setRampUpPeriod(560);
+            stringTemplate.setAttribute("myObject", performanceDetails);
+            return stringTemplate;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        return null;
     }
     
     private static String getControlGroupTemplate() {

@@ -263,6 +263,11 @@
 	%>
 					<%= browseFileElement %>
 	<%			
+				} else if (FrameworkConstants.TYPE_DYNAMIC_PAGE_PARAMETER.equalsIgnoreCase(parameter.getType())) {
+				    StringTemplate dynamicPageTemplate = FrameworkUtil.constructDynamicTemplate();
+	%>
+					<%= dynamicPageTemplate %>
+	<% 
 				}
 	%>
 			<script type="text/javascript">
@@ -488,7 +493,7 @@
 			}
 		}
 		
-	  if ($(obj).attr("type") === 'checkbox') {
+	  	if ($(obj).attr("type") === 'checkbox') {
 			if (!selectedOption) {
 				var previousDependencyArr = new Array();
 				previousDependencyArr = csvDependencies.split(',');
@@ -617,5 +622,55 @@
 		params = params.concat(fileTypes);
 		params = params.concat("&fileOrFolder=All");
 		additionalPopup('openBrowseFileTree', 'Browse', 'jstd', '', '', params, true);
+	}
+
+	//To add the contexts and the details in the performance test
+	function addContext(contextObj) {
+		$('#generateBuild_Modal').append(contextObj.html());
+	}
+	
+	//To enable the delete btn when any context url check box is checked
+	function enableDelBtn() {
+		var hasChecked = false;
+		$('.check').each(function() {
+			if ($(this).is(':checked')) {
+				hasChecked = true;
+				return false;
+			}
+		});
+		if (hasChecked) {
+			$('#deleteContext').addClass("btn-primary");
+			$('#deleteContext').removeAttr("disabled");
+		} else {
+			$('#deleteContext').removeClass("btn-primary");
+			$('#deleteContext').attr("disabled", true);
+		}
+	}
+	
+	//To remove the selected conext urls
+	function deleteContextUrl() {
+		$('.check').each(function() {
+			if ($(this).is(':checked')) {
+				if ($(this).parents('div').attr('id') != "contextDiv") {
+					$(this).closest('fieldset').remove();
+				}
+			}
+		});
+	}
+
+	function addHeader(obj) {
+		var key = $('input[name=key]').val();
+		var value = $('input[name=value]').val();
+		$(obj).closest('fieldset').append('<div style="background-color: #bbbbbb; width: 40%; margin-bottom:2px; height: auto; border-radius: 6px; '+
+					'padding: 0 0 0 10px; position: relative"><a href="#" style="text-decoration: none; margin-right: 10px; color: #000000; '+
+					'margin-left: 95%;" onclick="removeHeader(this);">&times;</a><div style="cursor: pointer; color: #000000; height: auto; '+
+					'position: relative; width: 90%; line-height: 17px; margin-top: -14px; padding: 0 0 6px 1px;">'+ key + " : " + value + 
+					'</div><input type="hidden" name="headerKey" value="'+key+'"/><input type="hidden" name="headerValue" value="'+value+'"/></div>');
+		$('input[name=key]').val("");
+		$('input[name=value]').val("");
+	}
+	
+	function removeHeader(obj) {
+		$(obj).parent('div').remove();
 	}
 </script>

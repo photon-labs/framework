@@ -1625,6 +1625,7 @@ public interface FrameworkConstants {
 		String TYPE_LIST = "list";
 		String TYPE_MAP = "map";
 		String TYPE_FILE_BROWSE = "fileBrowse";
+		String TYPE_DYNAMIC_PAGE_PARAMETER = "DynamicPageParameter";
 		String TYPE_DYNAMIC_PARAMETER = "DynamicParameter";
 		String PLUGIN_PARAMETER_FRAMEWORK = "framework";
 		String REQ_DYNAMIC_PARAMETERS = "dynamicParameters";
