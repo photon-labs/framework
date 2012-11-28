@@ -588,6 +588,7 @@ public class Applications extends FrameworkBaseAction {
     }*/
 
     public String update() {
+    	BufferedReader reader = null;
     	try {
     		ProjectInfo projectInfo = (ProjectInfo)getSessionAttribute(getAppId() + SESSION_APPINFO);
         	ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
@@ -678,7 +679,7 @@ public class Applications extends FrameworkBaseAction {
 			List<String> deleteabledbs = new ArrayList<String>();
 			File oldprojectinfo = new File(Utility.getProjectHome() + getOldAppDirName() + File.separator
 					+ Constants.DOT_PHRESCO_FOLDER + File.separator + Constants.PROJECT_INFO_FILE);
-			BufferedReader reader = new BufferedReader(new FileReader(oldprojectinfo));
+			 reader = new BufferedReader(new FileReader(oldprojectinfo));
 			ProjectInfo oldProjectInfo = gson.fromJson(reader, ProjectInfo.class);
 			ApplicationInfo oldappinfos = oldProjectInfo.getAppInfos().get(0);
 			List<ArtifactGroupInfo> oldSelectedDbs = oldappinfos.getSelectedDatabases();
@@ -707,15 +708,16 @@ public class Applications extends FrameworkBaseAction {
 		} catch (PhrescoException e) {
 			return showErrorPopup(e, EXCEPTION_PROJECT_UPDATE);
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+			return showErrorPopup(new PhrescoException(e), EXCEPTION_PROJECT_UPDATE);
+		} finally {
+			 Utility.closeStream(reader);
+		 }
         
     	return APP_UPDATE;
     }
 
 	private void checkForVersions(List<ArtifactGroupInfo> oldSelectedDbs, List<ArtifactGroupInfo> selectedDatabases,
-			String oldArtifactGroupId, List<String> deleteabledbs, ApplicationInfo appInfo) {
+			String oldArtifactGroupId, List<String> deleteabledbs, ApplicationInfo appInfo) throws PhrescoException {
 		try {
 			for (ArtifactGroupInfo artifactGroupInfo : selectedDatabases) {
 				List<String> artifactInfoIds = artifactGroupInfo.getArtifactInfoIds();
@@ -735,8 +737,7 @@ public class Applications extends FrameworkBaseAction {
 				}
 			}
 		} catch (PhrescoException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			 throw new PhrescoException(e);
 		}
 	}
 
