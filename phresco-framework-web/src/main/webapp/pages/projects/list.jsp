@@ -23,7 +23,7 @@
 <%@ page import="java.util.List"%>
 
 <%@ page import="org.apache.commons.collections.CollectionUtils"%>
-
+<%@ page import="com.google.gson.Gson"%>
 <%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
 <%@ page import="com.photon.phresco.util.Constants"%>
 <%@ page import="com.photon.phresco.commons.model.ProjectInfo"%>
@@ -31,6 +31,7 @@
 
 <%
 	List<ProjectInfo> projects = (List<ProjectInfo>) request.getAttribute(FrameworkConstants.REQ_PROJECTS);
+	Gson gson = new Gson();
 %>
 
 <div class="page-header">
@@ -110,7 +111,7 @@
 												%>
 															<tr>
 																<td class="no-left-bottom-border table-pad">
-																	<input type="checkbox" class="check <%= project.getId() %>" name="selectedProjectId" value="<%= appInfo.getCode() %>"
+																	<input type="checkbox" class="check <%= project.getId() %>" name="selectedAppInfo" value='<%= gson.toJson(appInfo) %>'
 																		onclick="checkboxEvent($('.<%= project.getId() %>'), $('#<%= project.getId() %>'));">
 																</td>
 																<td class="no-left-bottom-border table-pad">
@@ -166,8 +167,8 @@
 	}
 
 	$(document).ready(function() {
+		hideProgressBar()
 		toDisableCheckAll();
-		
 		hideLoadingIcon();//To hide the loading icon
 		
 		$('#importAppln').click(function() {
@@ -182,6 +183,12 @@
     	$('.pdfCreation').click(function() {
     		var params = $(this).attr("additionalParam");
     		yesnoPopup('showGeneratePdfPopup', '<s:text name="lbl.app.generatereport"/>', 'printAsPdf','<s:text name="lbl.app.generate"/>', '', params);
+    	});
+    	
+    	//To get the list of projects based on the selected customer
+    	
+    	$('select[name=customerId]').change(function() {
+    		loadContent("applications", $('#formCustomers'), $("#container"));
     	});
     	
 		//modalObj, url, title, okUrl, okLabel, form
@@ -204,13 +211,20 @@
  			if(validateImportAppl()) {
  				importUpdateApp();
  			} 			
- 		} else if (okUrl == "deleteProject") {
- 	 		var params = $("#formCustomers").serialize();
- 	 		loadContent("deleteProject", $("#formProjectList"), $('#container'), params);
  		} else if (okUrl === "printAsPdf") {
 			// show popup loading icon
 			showPopuploadingIcon();
 			loadContent('printAsPdf', $('#generatePdf'), $('#popup_div'), getBasicParams(), false);
+		} else if (okUrl === "deleteProject") {
+			// show popup loading icon
+ 			showProgressBar('<s:text name="progress.txt.delete.app"/>');
+ 			var basicParams = getBasicParamsAsJson();
+ 			appInfos = [];
+ 			$('input[name="selectedAppInfo"]:checked').each(function() {
+ 				appInfos.push($(this).val());	
+ 			});
+ 			var params = '{' + basicParams + ', "selectedAppInfos": [' + appInfos.join(',') + ']}';
+ 			loadJsonContent("deleteProject", params, $('#container'));
 		}
  	}
  	

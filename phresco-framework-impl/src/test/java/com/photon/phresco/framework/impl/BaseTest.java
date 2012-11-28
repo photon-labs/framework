@@ -54,7 +54,7 @@ public class BaseTest {
 		return projectInfo;
 	}
 
-	private ApplicationInfo getAppInfo(String dirName, String techId) {
+	protected ApplicationInfo getAppInfo(String dirName, String techId) {
 		ApplicationInfo applicationInfo = new ApplicationInfo();
 		applicationInfo.setId("PHR_Test");
 		List<String> customerIds = new ArrayList<String>();

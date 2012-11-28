@@ -65,8 +65,8 @@ public class Projects extends FrameworkBaseAction {
 
     private List<TechnologyInfo> widgets = new ArrayList<TechnologyInfo>(8);
     private List<String> versions = new ArrayList<String>(8);
-    
-    private List<String> selectedProjectId = new ArrayList<String>(8);
+    private List<ApplicationInfo> selectedAppInfos = new ArrayList<ApplicationInfo>();
+    private String appDirName ="";
 
     private boolean errorFound = false;
     private String projectNameError = "";
@@ -339,29 +339,26 @@ public class Projects extends FrameworkBaseAction {
     /**
      * To delete the selected projects or applications
      * @return
+     * @throws PhrescoException 
      */
     public String delete() {
-        if (s_debugEnabled) {
-            S_LOGGER.debug("Entering Method  Applications.validateForm()");
-        }
-        
-        /*try {
-            ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
-            if (CollectionUtils.isNotEmpty(getSelectedProjectId())) {
-                List<ProjectInfo> deletableProjectInfos = new ArrayList<ProjectInfo>();
-                for (String projectId : getSelectedProjectId()) {
-                    deletableProjectInfos.add(projectManager.getProject(projectId, getCustomerId()));
-                    ProjectInfo projectInfo = projectManager.getProject(projectId, getCustomerId());
-                }
+    	if (s_debugEnabled) {
+    		S_LOGGER.debug("Entering Method  Applications.delete()");
+    	}
+    	
+    	try {
+	    	ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
+	    	projectManager.delete(getSelectedAppInfos());
+	    	addActionMessage(getText(ACT_SUCC_PROJECT_DELETE));
+    	} catch (PhrescoException e) {
+    		if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Projects.delete()" + FrameworkUtil.getStackTraceAsString(e));
             }
-            projectManager.delete(null);
-        } catch (PhrescoException e) {
-
-        }*/
-        
-        return list();
+            return showErrorPopup(e, getText(EXCEPTION_PROJECT_DELETE));
+		}
+    	return list();
     }
-
+   
     /**
      * To validate the form fields
      * @return
@@ -556,14 +553,6 @@ public class Projects extends FrameworkBaseAction {
         this.layerError = layerError;
     }
     
-    public List<String> getSelectedProjectId() {
-        return selectedProjectId;
-    }
-
-    public void setSelectedProjectId(List<String> selectedProject) {
-        this.selectedProjectId = selectedProject;
-    }
-    
     public String getLayerId() {
         return layerId;
     }
@@ -586,5 +575,21 @@ public class Projects extends FrameworkBaseAction {
 
 	public void setStatusFlag(String statusFlag) {
 		this.statusFlag = statusFlag;
+	}
+
+	public String getAppDirName() {
+		return appDirName;
+	}
+
+	public void setAppDirName(String appDirName) {
+		this.appDirName = appDirName;
+	}
+
+	public List<ApplicationInfo> getSelectedAppInfos() {
+		return selectedAppInfos;
+	}
+
+	public void setSelectedAppInfos(List<ApplicationInfo> selectedAppInfos) {
+		this.selectedAppInfos = selectedAppInfos;
 	}
 }

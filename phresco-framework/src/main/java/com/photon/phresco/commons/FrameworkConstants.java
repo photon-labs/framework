@@ -1546,6 +1546,7 @@ public interface FrameworkConstants {
 		String EXCEPTION_PROJECT_LIST = "excep.hdr.proj.list";
 		String EXCEPTION_PROJECT_ADD = "excep.hdr.proj.add";
 		String EXCEPTION_PROJECT_UPDATE = "excep.hdr.proj.update";
+		String EXCEPTION_PROJECT_DELETE = "excep.hdr.proj.delete";
 		String EXCEPTION_APPLICATION_EDIT = "excep.hdr.appInfo.edit";
 		String EXCEPTION_PROJECT_MOB_TECH_VERSIONS = "excep.hdr.proj.mob.tech.versions";
 		String EXCEPTION_DOWNLOADINFOS = "excep.hdr.downloadInfos";
@@ -1611,6 +1612,12 @@ public interface FrameworkConstants {
 		String EXCEPTION_CI_BUILD_DOWNLOAD_NOT_AVAILABLE = "excep.hdr.ci.build.download.not.available";
 		String EXCEPTION_BUILD_DOWNLOAD_NOT_AVAILABLE = "excep.hdr.code.load";
 		
+		/*****************************
+	     * Success Action Messages
+	     * I18N Keys Constants
+	     * String ACT_SUCC_XXX
+	     *****************************/
+		String ACT_SUCC_PROJECT_DELETE = "project.delete.message";
 		
 		/**
 		 * Dynamic Parameter Constants

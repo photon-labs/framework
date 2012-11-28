@@ -31,12 +31,10 @@ import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Para
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
 import com.photon.phresco.plugins.util.MojoProcessor;
-import com.photon.phresco.service.client.api.ServiceManager;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.PhrescoDynamicLoader;
-import com.photon.phresco.util.Utility;
 
-public class DynamicParameterAction extends FrameworkBaseAction {
+public class DynamicParameterAction extends FrameworkBaseAction implements Constants {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -55,20 +53,32 @@ public class DynamicParameterAction extends FrameworkBaseAction {
 	private boolean paramaterAvailable;
     
     private String availableParams = "";
+    private final String PHASE_FUNCTIONAL_TEST_WEBDRIVER = "functional-test-webdriver";
+    private final String PHASE_FUNCTIONAL_TEST_GRID = "functional-test-grid";
+    private final String PHASE_FUNCTIONAL_TEST = "functional-test";
     
     private static Map<String, PhrescoDynamicLoader> pdlMap = new HashMap<String, PhrescoDynamicLoader>();
-	
+    
+   
 	/**
-     * To get path of phresco-plugin-info.xml file
-     * @param applicationInfo
-     * @return 
-     */
-	protected String getPhrescoPluginInfoFilePath(ApplicationInfo applicationInfo) {
-		String filePath = Utility.getProjectHome() + applicationInfo.getAppDirName() + FILE_SEPARATOR
-				+ FOLDER_DOT_PHRESCO + FILE_SEPARATOR
-				+ Constants.PHRESCO_PLUGIN_INFO_XML;
-
-		return filePath;
+	 * To the phresco plugin info file path based on the goal
+	 * @param goal
+	 * @return
+	 * @throws PhrescoException 
+	 */
+	public String getPhrescoPluginInfoFilePath(String goal) throws PhrescoException {
+		StringBuilder sb = new StringBuilder(getApplicationHome());
+		sb.append(File.separator);
+		sb.append(FOLDER_DOT_PHRESCO);
+		sb.append(File.separator);
+		sb.append(PHRESCO_HYPEN);
+		if (PHASE_FUNCTIONAL_TEST_WEBDRIVER.equals(goal) || PHASE_FUNCTIONAL_TEST_GRID.equals(goal)) {
+			sb.append(PHASE_FUNCTIONAL_TEST);
+		} else {
+			sb.append(goal);
+		}
+		sb.append(INFO_XML);
+		return sb.toString();
 	}
     
     
@@ -89,7 +99,7 @@ public class DynamicParameterAction extends FrameworkBaseAction {
 	}
     
     protected List<Parameter> getDynamicParameters(ApplicationInfo appInfo, String goal) throws PhrescoException {
-        MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(appInfo)));
+        MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(goal)));
         com.photon.phresco.plugins.model.Mojos.Mojo.Configuration mojoConfiguration = mojo.getConfiguration(goal);
         List<Parameter> parameters = null;
         if (mojoConfiguration != null) {
@@ -100,7 +110,7 @@ public class DynamicParameterAction extends FrameworkBaseAction {
     }
     
     protected List<Parameter> getDynamicParameters(String goal) throws PhrescoException {
-        MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(getApplicationInfo())));
+        MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(goal)));
         com.photon.phresco.plugins.model.Mojos.Mojo.Configuration mojoConfiguration = mojo.getConfiguration(goal);
         List<Parameter> parameters = null;
         if (mojoConfiguration != null) {
@@ -411,7 +421,7 @@ public class DynamicParameterAction extends FrameworkBaseAction {
         
         try {
             ApplicationInfo applicationInfo = getApplicationInfo();
-            MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(applicationInfo)));
+            MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(getGoal())));
             Map<String, DependantParameters> watcherMap = (Map<String, DependantParameters>) getSessionAttribute(getAppId() + getGoal() + SESSION_WATCHER_MAP);
 
             if (StringUtils.isNotEmpty(getDependency())) {
@@ -436,7 +446,8 @@ public class DynamicParameterAction extends FrameworkBaseAction {
     
     public String validateDynamicParam() {
         try {
-            MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(getApplicationInfo())));
+        	String phrescoPluginInfoFilePath = getPhrescoPluginInfoFilePath(getGoal());
+            MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(getGoal())));
             
             List<Parameter> parameters = getMojoParameters(mojo, getGoal()); //getDynamicParameters(getGoal());
             if (CollectionUtils.isEmpty(parameters)) {

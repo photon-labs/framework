@@ -74,7 +74,7 @@ public class Code extends DynamicParameterAction implements Constants {
 				List<Value> values = getClangReports(appInfo);
 				setReqAttribute(REQ_VALUES, values);
 			} else {
-	        	MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(appInfo)));
+	        	MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_VALIDATE_CODE)));
 				Parameter parameter = mojo.getParameter(PHASE_VALIDATE_CODE, SONAR);
 				PossibleValues possibleValues = parameter.getPossibleValues();
 				List<Value> values = possibleValues.getValue();
@@ -256,7 +256,7 @@ public class Code extends DynamicParameterAction implements Constants {
             setProjModulesInReq();
             Map<String, DependantParameters> watcherMap = new HashMap<String, DependantParameters>(8);
             
-            MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(getApplicationInfo())));
+            MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_VALIDATE_CODE)));
             List<Parameter> parameters = getMojoParameters(mojo, PHASE_VALIDATE_CODE);
             
             setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap);
@@ -287,7 +287,7 @@ public class Code extends DynamicParameterAction implements Constants {
 		try {
 			ProjectInfo projectInfo = getProjectInfo();
 			ApplicationInfo applicationInfo = getApplicationInfo();
-			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(applicationInfo)));
+			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_VALIDATE_CODE)));
 			persistValuesToXml(mojo, PHASE_VALIDATE_CODE);
 			
 			List<Parameter> parameters = getMojoParameters(mojo, PHASE_VALIDATE_CODE);

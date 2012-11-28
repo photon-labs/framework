@@ -19,30 +19,50 @@
  */
 package com.photon.phresco.framework.actions.applications;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStream;
+import java.net.ConnectException;
+import java.net.HttpURLConnection;
+import java.net.InetAddress;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
-import javax.servlet.http.*;
+import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.collections.*;
-import org.apache.commons.lang.*;
-import org.apache.log4j.*;
-import org.quartz.*;
-import org.w3c.dom.*;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.quartz.CronExpression;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
 
-import com.photon.phresco.commons.*;
 import com.photon.phresco.commons.CIPasswordScrambler;
-import com.photon.phresco.commons.model.*;
-import com.photon.phresco.exception.*;
-import com.photon.phresco.framework.*;
-import com.photon.phresco.framework.actions.*;
-import com.photon.phresco.framework.api.*;
-import com.photon.phresco.framework.commons.*;
-import com.photon.phresco.framework.model.*;
+import com.photon.phresco.commons.FrameworkConstants;
+import com.photon.phresco.commons.model.ApplicationInfo;
+import com.photon.phresco.commons.model.ProjectInfo;
+import com.photon.phresco.exception.PhrescoException;
+import com.photon.phresco.framework.PhrescoFrameworkFactory;
+import com.photon.phresco.framework.api.ActionType;
+import com.photon.phresco.framework.api.CIManager;
+import com.photon.phresco.framework.commons.ApplicationsUtil;
+import com.photon.phresco.framework.commons.DiagnoseUtil;
+import com.photon.phresco.framework.commons.FrameworkUtil;
+import com.photon.phresco.framework.model.CIBuild;
+import com.photon.phresco.framework.model.CIJob;
+import com.photon.phresco.framework.model.CIJobStatus;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
-import com.photon.phresco.plugins.util.*;
-import com.photon.phresco.util.*;
+import com.photon.phresco.plugins.util.MojoProcessor;
+import com.photon.phresco.util.Constants;
+import com.photon.phresco.util.Utility;
 
 public class CI extends DynamicParameterAction implements FrameworkConstants {
 
@@ -334,7 +354,7 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 
 			// Build info
 			ApplicationInfo applicationInfo = getApplicationInfo();
-			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(applicationInfo)));
+			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_CI)));
 			persistValuesToXml(mojo, Constants.PHASE_PACKAGE);
 			
 			//To get maven build arguments
@@ -366,7 +386,7 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 			}
 			if (!CollectionUtils.isEmpty(buildArgCmds)) {
 				for (String buildArgCmd : buildArgCmds) {
-					mvncmd = mvncmd + SPACE + buildArgCmd;
+					mvncmd = mvncmd + FrameworkConstants.SPACE + buildArgCmd;
 				}
 			}
 			if (!"clonedWorkspace".equals(svnType) && BUILD.equals(operation)) {

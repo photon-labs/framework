@@ -10,6 +10,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
@@ -23,9 +24,12 @@ public class AndroidLibraryProjectTest extends BaseTest{
 	private static ProjectManager projectManager = null;
 	private static ApplicationManager applicationManager = null;
 	private ProjectInfo projectInfo;	
+	private List<ApplicationInfo> appInfos = new ArrayList<ApplicationInfo>();
 	
 	@Before
 	public void setUp() throws PhrescoException {
+		ApplicationInfo appInfo = getAppInfo("ANDROID_LIBRARY", "tech-android-library");
+		appInfos.add(appInfo);
 		projectInfo = getProjectInfo("tech-android-library", "tech-android-library" , "Sample-androidlibrary-1" , "Sample-androidlibrary-2", "PHR_androidlibrary");
 		if ((projectManager == null) && (applicationManager == null)) {
 			projectManager = PhrescoFrameworkFactory.getProjectManager();
@@ -35,7 +39,7 @@ public class AndroidLibraryProjectTest extends BaseTest{
 	
 	@After
 	public void tearDown() throws PhrescoException {
-		boolean delete = projectManager.delete(projectInfo);
+		boolean delete = projectManager.delete(appInfos);
 		Assert.assertTrue(delete);
 	}
 	

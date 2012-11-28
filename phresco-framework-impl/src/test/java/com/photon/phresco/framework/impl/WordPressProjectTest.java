@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import junit.framework.Assert;
 
+import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
@@ -22,9 +23,12 @@ public class WordPressProjectTest extends BaseTest{
 	private List<ProjectInfo> appList=new ArrayList<ProjectInfo>();
 	private static ProjectManager projectManager = null;
 	private static ApplicationManager applicationManager = null;
+	private List<ApplicationInfo> appInfos = new ArrayList<ApplicationInfo>();
 	private ProjectInfo projectInfo;
 	@Before
 	public void setUp() throws PhrescoException {
+		ApplicationInfo appInfo = getAppInfo("WORDPRESS", "tech-wordpress");
+		appInfos.add(appInfo);
 		projectInfo = getProjectInfo("tech-wordpress", "tech-wordpress" , "Sample-wordpress-1" , "Sample-wordpress-2", "PHR_wordpress");
 		if ((projectManager == null) && (applicationManager == null)) {
 			projectManager = PhrescoFrameworkFactory.getProjectManager();
@@ -34,7 +38,7 @@ public class WordPressProjectTest extends BaseTest{
 	
 	@After
 	public void tearDown() throws PhrescoException {
-		boolean delete = projectManager.delete(projectInfo);
+		boolean delete = projectManager.delete(appInfos);
 		Assert.assertTrue(delete);
 	}
 	

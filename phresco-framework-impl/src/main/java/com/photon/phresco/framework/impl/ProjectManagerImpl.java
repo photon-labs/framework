@@ -281,9 +281,8 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 			return plugins;
 	}
 
-	public boolean delete(ProjectInfo projectInfo) throws PhrescoException {
+	public boolean delete(List<ApplicationInfo> appInfos) throws PhrescoException {
 		boolean deletionSuccess = false;
-		List<ApplicationInfo> appInfos = projectInfo.getAppInfos();
 		String projectsPath = Utility.getProjectHome();
 		for (ApplicationInfo applicationInfo : appInfos) {
 			String appDirName = applicationInfo.getAppDirName();

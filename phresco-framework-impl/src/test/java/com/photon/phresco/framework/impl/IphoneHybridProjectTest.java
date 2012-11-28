@@ -9,6 +9,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
@@ -21,10 +22,13 @@ public class IphoneHybridProjectTest extends BaseTest {
 	private List<ProjectInfo> appList=new ArrayList<ProjectInfo>();
 	private static ProjectManager projectManager = null;
 	private static ApplicationManager applicationManager = null;
+	private List<ApplicationInfo> appInfos = new ArrayList<ApplicationInfo>();
 	private ProjectInfo projectInfo;	
 	
 	@Before
 	public void setUp() throws PhrescoException {
+		ApplicationInfo appInfo = getAppInfo("IPHONE_IPHONE_HYBRID", "tech-iphone-hybrid");
+		appInfos.add(appInfo);
 		projectInfo = getProjectInfo("tech-iphone-hybrid", "tech-iphone-hybrid" , "Sample-iphonehybrid-1" , "Sample-iphonehybrid-2", "PHR_iphonehybrid");
 		if ((projectManager == null) && (applicationManager == null)) {
 			projectManager = PhrescoFrameworkFactory.getProjectManager();
@@ -34,7 +38,7 @@ public class IphoneHybridProjectTest extends BaseTest {
 	
 	@After
 	public void tearDown() throws PhrescoException {
-		boolean delete = projectManager.delete(projectInfo);
+		boolean delete = projectManager.delete(appInfos);
 		Assert.assertTrue(delete);
 	}
 	@Test

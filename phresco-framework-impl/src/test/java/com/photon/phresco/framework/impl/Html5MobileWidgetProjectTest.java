@@ -9,6 +9,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
@@ -21,10 +22,13 @@ public class Html5MobileWidgetProjectTest extends BaseTest {
 	private List<ProjectInfo> appList=new ArrayList<ProjectInfo>();
 	private static ProjectManager projectManager = null;
 	private static ApplicationManager applicationManager = null;
-	private ProjectInfo projectInfo;	
+	private ProjectInfo projectInfo;
+	private List<ApplicationInfo> appInfos = new ArrayList<ApplicationInfo>();
 	
 	@Before
 	public void setUp() throws PhrescoException {
+		ApplicationInfo appInfo = getAppInfo("HTML5-MOBILE-WIDGET", "tech-html5-mobile-widget");
+		appInfos.add(appInfo);
 		projectInfo = getProjectInfo("tech-html5-mobile-widget", "tech-html5-mobile-widget" , "Sample-html5mobilewidget-1" , "Sample-html5mobilewidget-2", "PHR_html5mobilewidget");
 		if ((projectManager == null) && (applicationManager == null)) {
 			projectManager = PhrescoFrameworkFactory.getProjectManager();
@@ -34,7 +38,7 @@ public class Html5MobileWidgetProjectTest extends BaseTest {
 	
 	@After
 	public void tearDown() throws PhrescoException {
-		boolean delete = projectManager.delete(projectInfo);
+		boolean delete = projectManager.delete(appInfos);
 		Assert.assertTrue(delete);
 	}
 

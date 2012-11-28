@@ -233,8 +233,6 @@ public class Quality extends DynamicParameterAction implements Constants {
 	        setReqAttribute(PATH, frameworkUtil.getUnitTestDir(appInfo));
             setReqAttribute(REQ_APPINFO, appInfo);
             setProjModulesInReq();
-            List<Parameter> parameters = getDynamicParameters(appInfo, PHASE_UNIT_TEST);
-            setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
 	    } catch (Exception e) {
             if (s_debugEnabled) {
                 S_LOGGER.error("Entered into catch block of Quality.unit()" + FrameworkUtil.getStackTraceAsString(e));
@@ -305,12 +303,15 @@ public class Quality extends DynamicParameterAction implements Constants {
         }
 	    
 	    try {
-	        ApplicationInfo appInfo = getApplicationInfo();
+	    	ApplicationInfo appInfo = getApplicationInfo();
             removeSessionAttribute(appInfo.getId() + PHASE_UNIT_TEST + SESSION_WATCHER_MAP);
             setProjModulesInReq();
             Map<String, DependantParameters> watcherMap = new HashMap<String, DependantParameters>(8);
-            List<Parameter> parameters = getDynamicParameters(appInfo, PHASE_UNIT_TEST);
-            setPossibleValuesInReq(null, appInfo, parameters, watcherMap);
+
+            MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_UNIT_TEST)));
+            List<Parameter> parameters = getMojoParameters(mojo, PHASE_UNIT_TEST);
+
+            setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap);
             setSessionAttribute(appInfo.getId() + PHASE_UNIT_TEST + SESSION_WATCHER_MAP, watcherMap);
             setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
             setReqAttribute(REQ_GOAL, PHASE_UNIT_TEST);
@@ -342,7 +343,7 @@ public class Quality extends DynamicParameterAction implements Constants {
                 workingDirectory.append(File.separator);
                 workingDirectory.append(getProjectModule());
             }
-            MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(appInfo)));
+            MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_UNIT_TEST)));
             persistValuesToXml(mojo, PHASE_UNIT_TEST);
             ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
             BufferedReader reader = applicationManager.performAction(getProjectInfo(), ActionType.UNIT_TEST, null, workingDirectory.toString());
@@ -428,7 +429,6 @@ public class Quality extends DynamicParameterAction implements Constants {
         if (s_debugEnabled) {
             S_LOGGER.debug("Entering Method Quality.showFunctionalTestPopUp()");
         }
-        
         try {
             ApplicationInfo appInfo = getApplicationInfo();
             FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
@@ -437,7 +437,7 @@ public class Quality extends DynamicParameterAction implements Constants {
             setProjModulesInReq();
             Map<String, DependantParameters> watcherMap = new HashMap<String, DependantParameters>(8);
 
-            MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(appInfo)));
+            MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_FUNCTIONAL_TEST)));
             List<Parameter> parameters = getMojoParameters(mojo, PHASE_FUNCTIONAL_TEST + HYPHEN + seleniumToolType);
 
             setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap);
@@ -471,7 +471,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 	            workingDirectory.append(File.separator);
 	            workingDirectory.append(getProjectModule());
 	        }
-	        MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(appInfo)));
+	        MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_FUNCTIONAL_TEST)));
 	        FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
             String seleniumToolType = frameworkUtil.getSeleniumToolType(appInfo);
 	        persistValuesToXml(mojo, PHASE_FUNCTIONAL_TEST + HYPHEN + seleniumToolType);
@@ -577,7 +577,8 @@ public class Quality extends DynamicParameterAction implements Constants {
         }
         
         try {
-            List<Parameter> parameters = getDynamicParameters(getApplicationInfo(), PHASE_START_HUB);
+        	MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_FUNCTIONAL_TEST)));
+            List<Parameter> parameters = getMojoParameters(mojo, PHASE_START_HUB);
             setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
             setReqAttribute(REQ_GOAL, PHASE_START_HUB);
         } catch (PhrescoException e) {
@@ -597,7 +598,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 
 		try {
 			ApplicationInfo appInfo = getApplicationInfo();
-			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(appInfo)));
+			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_FUNCTIONAL_TEST)));
 			persistValuesToXml(mojo, PHASE_START_HUB);
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			ProjectInfo projectInfo = getProjectInfo();
@@ -719,7 +720,8 @@ public class Quality extends DynamicParameterAction implements Constants {
         }
         
         try {
-            List<Parameter> parameters = getDynamicParameters(getApplicationInfo(), PHASE_START_NODE);
+        	MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_FUNCTIONAL_TEST)));
+            List<Parameter> parameters = getMojoParameters(mojo, PHASE_START_NODE);
             setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
             setReqAttribute(REQ_GOAL, PHASE_START_NODE);
         } catch (PhrescoException e) {
@@ -739,7 +741,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 		
         try {
         	ApplicationInfo appInfo = getApplicationInfo();
-			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(appInfo)));
+			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_FUNCTIONAL_TEST)));
 			persistValuesToXml(mojo, PHASE_START_NODE);
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			ProjectInfo projectInfo = getProjectInfo();
@@ -811,7 +813,7 @@ public class Quality extends DynamicParameterAction implements Constants {
             removeSessionAttribute(appInfo.getId() + PHASE_FUNCTIONAL_TEST + SESSION_WATCHER_MAP);
             Map<String, DependantParameters> watcherMap = new HashMap<String, DependantParameters>(8);
 
-            MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(appInfo)));
+            MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_PERFORMANCE_TEST)));
             List<Parameter> parameters = getMojoParameters(mojo, PHASE_PERFORMANCE_TEST);
 
             setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap);
@@ -1635,11 +1637,10 @@ public class Quality extends DynamicParameterAction implements Constants {
     	if (s_debugEnabled) {
 	        S_LOGGER.debug("Entering Method Quality.runLoadTest()");
 	    } 
-    	
     	try {
     		ApplicationInfo appInfo = getApplicationInfo();
 	        StringBuilder workingDirectory = new StringBuilder(getAppDirectoryPath(appInfo));
-	        MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(appInfo)));
+	        MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_LOAD_TEST)));
             persistValuesToXml(mojo, PHASE_LOAD_TEST);
             ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
             BufferedReader reader = applicationManager.performAction(getProjectInfo(), ActionType.LOAD_TEST, null, workingDirectory.toString());
@@ -2726,7 +2727,6 @@ public class Quality extends DynamicParameterAction implements Constants {
 			pdfDirLoc = Utility.getProjectHome() + getApplicationInfo().getAppDirName() + File.separator + DO_NOT_CHECKIN_DIR + File.separator + ARCHIVES + File.separator + fromPage;
 			fileFilterName = fromPage;
 		}
-		System.out.println("looking for files in => " + pdfDirLoc);
 		File pdfFileDir = new File(pdfDirLoc);
 		if(pdfFileDir.isDirectory()) {
 		    File[] children = pdfFileDir.listFiles(new FileNameFileFilter(DOT + PDF, fileFilterName));
@@ -2750,7 +2750,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 			ProjectInfo projectInfo = getProjectInfo();
 			
 			ApplicationInfo applicationInfo = getApplicationInfo();
-			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(applicationInfo)));
+			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_PDF_REPORT)));
 			List<Parameter> parameters = getMojoParameters(mojo, PHASE_PDF_REPORT);
 			
 	        if (CollectionUtils.isNotEmpty(parameters)) {
@@ -2813,7 +2813,6 @@ public class Quality extends DynamicParameterAction implements Constants {
         S_LOGGER.debug("Entering Method Quality.downloadReport()");
         try {
         	String testType = getHttpRequest().getParameter(REQ_TEST_TYPE);
-        	System.out.println("testType ");
         	String pdfLOC = "";
         	if (StringUtils.isEmpty(testType)) { 
         		pdfLOC = Utility.getProjectHome() + getApplicationInfo().getAppDirName() + File.separator + DO_NOT_CHECKIN_DIR + File.separator + ARCHIVES + File.separator + CUMULATIVE + File.separator + getApplicationInfo().getAppDirName() + UNDERSCORE + reportFileName + DOT + PDF;
@@ -2821,7 +2820,6 @@ public class Quality extends DynamicParameterAction implements Constants {
         		pdfLOC = Utility.getProjectHome() + getApplicationInfo().getAppDirName() + File.separator + DO_NOT_CHECKIN_DIR + File.separator + ARCHIVES + File.separator + testType + File.separator + testType + UNDERSCORE + reportFileName + DOT + PDF;
         	}
         	
-        	System.out.println("pdfLOC ===> " + pdfLOC);
             File pdfFile = new File(pdfLOC);
             if (pdfFile.isFile()) {
     			fileInputStream = new FileInputStream(pdfFile);

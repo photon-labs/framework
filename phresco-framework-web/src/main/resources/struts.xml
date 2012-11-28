@@ -102,6 +102,7 @@
         </action>
         
         <action name="deleteProject" method="delete" class="com.photon.phresco.framework.actions.applications.Projects">
+            <interceptor-ref name="json" />
             <result name="list">/pages/projects/list.jsp</result>
         </action>
         

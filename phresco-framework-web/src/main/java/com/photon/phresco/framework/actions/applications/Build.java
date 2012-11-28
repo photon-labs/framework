@@ -238,7 +238,7 @@ public class Build extends DynamicParameterAction implements Constants {
             Map<String, DependantParameters> watcherMap = new HashMap<String, DependantParameters>(8);
 //            List<Parameter> parameters = getDynamicParameters(appInfo, PHASE_PACKAGE);
             
-            MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(getApplicationInfo())));
+            MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_PACKAGE)));
             List<Parameter> parameters = getMojoParameters(mojo, PHASE_PACKAGE);
             
             setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap);
@@ -265,15 +265,18 @@ public class Build extends DynamicParameterAction implements Constants {
 			S_LOGGER.debug("Entering Method  Build.showrunAgainstSourcePopup()");
 		}
 		try {
-			Map<String, Object> runAgainstSrcMap = new HashMap<String, Object>();
-			ApplicationInfo applicationInfo = getApplicationInfo();
-			runAgainstSrcMap.put(REQ_APP_INFO, applicationInfo);
-			List<Parameter> parameters = getDynamicParameters(applicationInfo, PHASE_RUNGAINST_SRC_START);
-//            setPossibleValuesInReq(parameters, runAgainstSrcMap);
-			
-			setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
-			setReqAttribute(REQ_APPINFO, applicationInfo);
-			setReqAttribute(REQ_FROM, getFrom());
+			ApplicationInfo appInfo = getApplicationInfo();
+            removeSessionAttribute(appInfo.getId() + PHASE_RUNGAINST_SRC_START + SESSION_WATCHER_MAP);
+            setProjModulesInReq();
+            Map<String, DependantParameters> watcherMap = new HashMap<String, DependantParameters>(8);
+
+            MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_RUNGAINST_SRC_START)));
+            List<Parameter> parameters = getMojoParameters(mojo, PHASE_RUNGAINST_SRC_START);
+
+            setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap);
+            setSessionAttribute(appInfo.getId() + PHASE_RUNGAINST_SRC_START + SESSION_WATCHER_MAP, watcherMap);
+            setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
+            setReqAttribute(REQ_GOAL, PHASE_RUNGAINST_SRC_START);
 		} catch (PhrescoException e) {
 			return showErrorPopup(e, getText("excep.hdr.runagainstsource.popup"));
 		}
@@ -295,7 +298,7 @@ public class Build extends DynamicParameterAction implements Constants {
             Map<String, DependantParameters> watcherMap = new HashMap<String, DependantParameters>(8);
 //            List<Parameter> parameters = getDynamicParameters(appInfo, PHASE_DEPLOY);
 
-            MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(getApplicationInfo())));
+            MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_DEPLOY)));
             List<Parameter> parameters = getMojoParameters(mojo, PHASE_DEPLOY);
 
             setPossibleValuesInReq(null, appInfo, parameters, watcherMap);
@@ -343,7 +346,7 @@ public class Build extends DynamicParameterAction implements Constants {
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			ProjectInfo projectInfo = getProjectInfo();
 			ApplicationInfo applicationInfo = getApplicationInfo();
-			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(applicationInfo)));
+			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_PACKAGE)));
 			persistValuesToXml(mojo, PHASE_PACKAGE);
 			
 			//To get maven build arguments
@@ -373,7 +376,7 @@ public class Build extends DynamicParameterAction implements Constants {
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			ProjectInfo projectInfo = getProjectInfo();
 			ApplicationInfo applicationInfo = getApplicationInfo();
-			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(applicationInfo)));
+			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_DEPLOY)));
 			
 			persistValuesToXml(mojo, PHASE_DEPLOY);
 			//To get maven build arguments

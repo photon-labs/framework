@@ -2,6 +2,7 @@ package com.photon.phresco.framework.api;
 
 import java.util.List;
 
+import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.exception.PhrescoException;
@@ -47,7 +48,7 @@ public interface ProjectManager {
 	 * @return boolean - returns true if deletion is success and false if deletion fails.
 	 * @throws PhrescoException
 	 */
-	boolean delete(ProjectInfo projectInfo) throws PhrescoException;
+	boolean delete(List<ApplicationInfo> appInfos) throws PhrescoException;
 	
 	/**
 	 * This method returns the ProjectInfo of the given appId
