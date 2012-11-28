@@ -1627,3 +1627,14 @@ background-color: #ffffff;
 .legendHdr {
 	margin-left: 7px;
 }
+
+.compressNameLbl {
+	 padding-right: 6px !important;
+	 float : left !important;
+	 width: 140px !important;
+}
+
+.compressNameTextBox {
+	float: left !important;
+ 	width: 178px !important;
+}

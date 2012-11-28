@@ -34,7 +34,8 @@
     String fileTypes = request.getParameter("restrictFileTypes");
     String filesOrFolders = request.getParameter("filesOrFolders");
     String fromPage = request.getParameter("fromPage");
-
+    String minifiedFiles = request.getParameter("minifiedFilesList");
+	
     if (dir == null) {
     	return;
     }
@@ -48,7 +49,9 @@
  	dir = java.net.URLDecoder.decode(dir, "UTF-8");	
  	fileTypes = java.net.URLDecoder.decode(fileTypes, "UTF-8");	
  	filesOrFolders = java.net.URLDecoder.decode(filesOrFolders, "UTF-8");	
-	
+ 	minifiedFiles = java.net.URLDecoder.decode(minifiedFiles, "UTF-8");
+ 	List<String> minifiedFilesList = Arrays.asList(minifiedFiles.split(FrameworkConstants.CSV_PATTERN));
+ 	
 	final String[] includeFileTypes = fileTypes.split(",");
 	
     if (new File(dir).exists()) {
@@ -81,7 +84,13 @@
 				    	}
 					}
 					if (StringUtils.isNotEmpty(fromPage) && FrameworkConstants.REQ_MINIFICATION.equals(fromPage)) {
-						out.print("<li><input type=checkbox name=filesToMinify id=\""+file+"\" value=\""+file+"\"><span class=jsmin-span >"
+						String checkedStr = "";
+						if (minifiedFilesList.contains(file)) {
+							checkedStr = "checked";
+						} else {
+							checkedStr = "";
+						}
+						out.print("<li><input type=checkbox name=filesToMinify id=\""+file+"\" value=\""+file+"\" "+checkedStr+"><span class=jsmin-span >"
 								+ file + "</li>"); 
 					} else {
 						out.print("<li class=\"file ext_" + ext + "\"><a href=\"#\" rel=\"" + dir + file + "\">"

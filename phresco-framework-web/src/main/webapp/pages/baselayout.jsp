@@ -377,14 +377,13 @@
 			</div>
 			<div class="modal-footer">
 				<input type="text" class="xlarge javastd hideContent" id="browseSelectedLocation" name="browseLocation"/>
-				<label for="xlInput" class="xlInput popup-label" id="compressNameLbl" style="padding-right: 6px;">
-					<span class="red">*</span>
-							Compressed Name
+				<label for="xlInput" class="labelbold compressNameLbl" id="compressNameLbl">
+					<span class="red">*</span>&nbsp;<s:text name="lbl.compress.name"/>
 				</label>
-				<input type="text" class="xlarge javastd hideContent" id="compressName" name="compressName"/>
+				<input type="text" class="hideContent compressNameTextBox" id="compressName" name="compressName"/>
 				<a href="#" class="btn btn-primary" data-dismiss="modal" id="add_popupCancel" onclick="add_popupCancel();"><s:text name='lbl.btn.cancel'/></a>
-				<a href="#" class="btn btn-primary add_popupOk" data-dismiss="modal" id="" onClick="add_popupOnOk(this);" ><s:text name='lbl.btn.ok'/></a>
-				<div id="errMsg" class="envErrMsg"></div>
+				<a href="#" class="btn btn-primary add_popupOk" id="" onClick="add_popupOnOk(this);" ><s:text name='lbl.btn.ok'/></a>
+				<div id="errMsg" class="envErrMsg add_errorMsg"></div>
 				<img class="popuploadingIcon" id="popuploadingIcon" src="" />
 			</div>
 		</div>

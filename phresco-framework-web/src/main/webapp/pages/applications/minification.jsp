@@ -85,14 +85,18 @@ $(document).ready(function() {
 var textBoxClass = "";
 function browseFiles(obj) {
 	textBoxClass = $(obj).attr("id");
-	//var jsName = $('input[class="'+ textBoxClass +'"]').val();
-	//var jsFiles = $('input[name="'+ jsName +'"]').val();
+	var compressName = $('input[class="'+ textBoxClass +'"]').val();
+	var alreadyMinifiedFiles = $('input[name="'+ compressName +'"]').val();
 	
 	$('#popupPage').modal('hide');
 	var params = "";
 	params = params.concat("&fileType=js");
 	params = params.concat("&fileOrFolder=All");
 	params = params.concat("&from=minification");
+	params = params.concat("&compressName=");
+	params = params.concat(compressName);
+	params = params.concat("&minifiedFiles=");
+	params = params.concat(alreadyMinifiedFiles);
 	additionalPopup('minifyBrowseFileTree', 'Browse', 'filesToMinify', '', '', params, true);
 }
 

@@ -1394,10 +1394,11 @@ public interface FrameworkConstants {
    
    /* Minification */
    
-   String REQ_COMPRESS_NAME = "selectedJsName";
+   String REQ_COMPRESS_NAME = "compressName";
    String REQ_SELECTED_FILES = "selectedJsFiles";
    String REQ_CHECKED_FILE_LIST = "jsMinCheck";
    String REQ_SELECTED_FILE_NAMES = "jsFileName";
+   String REQ_MINIFIED_FILES = "minifiedFiles";
    String REQ_MINIFY_MAP = "minifyMap";
    String REQ_MINIFY = "minify";
    String REQ_MINIFICATION = "minification";

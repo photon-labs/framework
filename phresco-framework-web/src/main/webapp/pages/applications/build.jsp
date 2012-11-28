@@ -308,9 +308,14 @@
 			if (!isChecked && isBlank($("input[name=minifyFileNames]").val())) {
 				$("#errMsg").html("Please Select any option");
 			} else {
-				if (!isBlank($("input[name=minifyFileNames]").val())) {
-					$("input[name=minifyFileNames]").prop("disabled", false);				
-				} 
+				//To enable compress name text boxes only if it has value
+				$('input[name="minifyFileNames"]').each(function () {
+					if($(this).val() !== "") {
+						alert("enable");
+						$(this).attr("disabled", false);
+					}
+				});
+				
 				$('#popupPage').modal('hide');
 				progressPopupAsSecPopup('doMinification', '<%= appId %>', 'minify', $("#minificationForm"), getBasicParams());
 			}	

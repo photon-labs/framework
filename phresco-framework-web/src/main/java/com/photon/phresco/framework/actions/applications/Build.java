@@ -138,6 +138,7 @@ public class Build extends DynamicParameterAction implements Constants {
 	private String selectedFilesToMinify = "";
 	private String compressName = "";
 	private List<String> minifyFileNames = null;
+	private String minifiedFiles = "";
 	private String fileType = null;
 	private String fileorfolder = null;
 	private String selectedJs = null;
@@ -1012,6 +1013,8 @@ public class Build extends DynamicParameterAction implements Constants {
 		setReqAttribute(FILE_TYPES, getFileType());
 		setReqAttribute(FILE_BROWSE, getFileOrFolder());
 		setReqAttribute(REQ_FROM, getFrom());
+		setReqAttribute(REQ_COMPRESS_NAME, getCompressName());
+		setReqAttribute(REQ_MINIFIED_FILES, getMinifiedFiles());
 		ApplicationInfo applicationInfo = getApplicationInfo();
 		setReqAttribute(REQ_PROJECT_LOCATION, getAppDirectoryPath(applicationInfo).replace(File.separator, FORWARD_SLASH));
 
@@ -1807,5 +1810,13 @@ public class Build extends DynamicParameterAction implements Constants {
 
 	public List<String> getMinifyFileNames() {
 		return minifyFileNames;
+	}
+
+	public void setMinifiedFiles(String minifiedFiles) {
+		this.minifiedFiles = minifiedFiles;
+	}
+
+	public String getMinifiedFiles() {
+		return minifiedFiles;
 	}
 }
