@@ -1626,7 +1626,7 @@ public class Quality extends DynamicParameterAction implements Constants {
             setProjModulesInReq();
             Map<String, DependantParameters> watcherMap = new HashMap<String, DependantParameters>(8);
 
-            MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(appInfo)));
+            MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_LOAD_TEST)));
             List<Parameter> parameters = getMojoParameters(mojo, PHASE_LOAD_TEST);
 
             setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap);

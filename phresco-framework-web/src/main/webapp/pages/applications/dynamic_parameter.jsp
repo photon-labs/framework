@@ -81,7 +81,7 @@
     String goal = (String) request.getAttribute(FrameworkConstants.REQ_GOAL);
     String appId  = applicationInfo.getId();
     DynamicParameterAction dpm = new DynamicParameterAction();
-    MojoProcessor mojo = new MojoProcessor(new File(dpm.getPhrescoPluginInfoFilePath(applicationInfo)));
+    MojoProcessor mojo = new MojoProcessor(new File(dpm.getPhrescoPluginInfoFilePath(goal)));
 %>
 
 <form autocomplete="off" class="build_form form-horizontal" id="generateBuildForm">
