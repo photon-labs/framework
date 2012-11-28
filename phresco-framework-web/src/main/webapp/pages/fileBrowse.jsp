@@ -42,7 +42,8 @@
 	String projectLocation = (String) request.getAttribute(FrameworkConstants.REQ_PROJECT_LOCATION);
 	String fileTypes = (String) request.getAttribute(FrameworkConstants.FILE_TYPES);
 	String fileorfolder = (String) request.getAttribute(FrameworkConstants.FILE_BROWSE);
-	
+	String from = (String) request.getAttribute(FrameworkConstants.REQ_FROM);
+
 	boolean isCertAvailable = false;
 	if (request.getAttribute(FrameworkConstants.REQ_RMT_DEP_IS_CERT_AVAIL) != null) {
 		isCertAvailable = (Boolean) request.getAttribute(FrameworkConstants.REQ_RMT_DEP_IS_CERT_AVAIL);
@@ -100,7 +101,8 @@
 				collapseSpeed: 1000,
 				multiFolder: true,
 				fileTypes: '<%= fileTypes %>',
-				fileOrFolder: '<%= fileorfolder %>'
+				fileOrFolder: '<%= fileorfolder %>',
+				from: '<%= from %>'
 			}, function(file) {
 				$('#browseSelectedLocation').val(file);
 			});
@@ -121,6 +123,28 @@
 			return "";
 		} else {
 			return obj;
+		}
+	}
+	
+
+	function add_popupOnOk(obj) {
+		setTimeout(function () {
+			$('#popupPage').modal('show');
+	    }, 600);
+		if ($(obj).attr("id") === "filesToMinify") {
+			var params = "";
+	    	if (!isBlank($('form').serialize())) {
+	    		params = $('form').serialize() + "&";
+	    	}
+	    	params = params.concat("browseLocation=");
+	    	params = params.concat($("#browseSelectedLocation").val());
+	    	params = params.concat("&compressName=");
+	    	params = params.concat($("#compressName").val());
+	    	
+	    	loadContent('filesToMinify', '', '', params, true);
+		} else {
+			alert("else case");
+			$('#fileLocation').val($('#browseSelectedLocation').val());			
 		}
 	}
 </script>

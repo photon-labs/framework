@@ -844,6 +844,22 @@
 		<!-- Print pdf operations endss -->
 		
 		<!-- minification starts -->
+		<action name="minfiyPopup" method="minifyPopup" class="com.photon.phresco.framework.actions.applications.Build">
+        	<result name="success">/pages/applications/minification.jsp</result>
+        </action>
+        
+        <action name="doMinification" method="doMinification" class="com.photon.phresco.framework.actions.applications.Build">
+        	<result name="success">/pages/applications/reader.jsp</result>
+        </action>
+		
+		<action name="filesToMinify" method="selectFilesToMinify" class="com.photon.phresco.framework.actions.applications.Build">
+        	<result type="json" />
+        </action>
+        
+		<action name="minifyBrowseFileTree" method="minifyBrowseFileTree" class="com.photon.phresco.framework.actions.applications.Build">
+        	<result name="success">/pages/fileBrowse.jsp</result>
+        </action>
+        
 		<action name="jsFileBrowse" method="jsFileBrowser" class="com.photon.phresco.framework.actions.applications.Build">
         	<result name="success">/pages/fileBrowse.jsp</result>
         </action>

@@ -18,8 +18,10 @@
   ###
   --%>
 <%@ page import="org.apache.commons.lang.ArrayUtils"%>
+<%@ page import="org.apache.commons.lang.StringUtils" %>
 <%@ page import="java.io.File,java.io.FilenameFilter,java.util.Arrays,java.util.List"%>
 <%@ page import="com.photon.phresco.util.TechnologyTypes"%>
+<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 
 <%
 /**
@@ -31,7 +33,8 @@
     String dir = request.getParameter("dir");
     String fileTypes = request.getParameter("restrictFileTypes");
     String filesOrFolders = request.getParameter("filesOrFolders");
-    
+    String fromPage = request.getParameter("fromPage");
+
     if (dir == null) {
     	return;
     }
@@ -77,20 +80,25 @@
 				    		continue;
 				    	}
 					}
+					if (StringUtils.isNotEmpty(fromPage) && FrameworkConstants.REQ_MINIFICATION.equals(fromPage)) {
+						out.print("<li><input type=checkbox name=filesToMinify id=\""+file+"\" value=\""+file+"\"><span class=jsmin-span >"
+								+ file + "</li>"); 
+					} else {
 						out.print("<li class=\"file ext_" + ext + "\"><a href=\"#\" rel=\"" + dir + file + "\">"
 								+ file + "</a></li>");
-					
-			    	}
+					}
+			    }
 			}
 		}
 		out.print("</ul>");
     }
 %>
 <script type="text/javascript">
-	function add_popupOnOk(obj) {
-		setTimeout(function () {
-			$('#popupPage').modal('show');
-	    }, 600);
-		$('#fileLocation').val($('#browseSelectedLocation').val());
-	}
+	$(document).ready(function() {
+		<% if (FrameworkConstants.REQ_MINIFICATION.equals(fromPage)) {%>
+			$('#browseSelectedLocation').hide();
+			$('#compressName').show();
+			$('#compressNameLbl').show();
+		<% } %>
+	});
 </script>

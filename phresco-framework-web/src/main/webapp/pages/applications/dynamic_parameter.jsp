@@ -433,7 +433,7 @@
 		params = params.concat(getSelectedEnvs());
 		params = params.concat("&DbWithSqlFiles=");
 		params = params.concat($('#DbWithSqlFiles').val()); --%>
-		readerHandlerSubmit(url, '<%= appId %>', actionType, $("#generateBuildForm"), true, getBasicParams());
+		readerHandlerSubmit(url, '<%= appId %>', actionType, $("#generateBuildForm"), true, getBasicParams(), $("#console_div"));
 	}
 	
 	function showAdvSettingsConfigure() {
@@ -571,13 +571,13 @@
 		return dependencies;
 	}
 	
-	function changeChckBoxValue(obj) {
+	/* function changeChckBoxValue(obj) {
 		if ($(obj).is(':checked')) {
 			$(obj).val("true");
 		} else {
 			$(obj).val("false");
 		}
-	}
+	} */
 	
 	function addRow(obj) {
 		var removeIconTd = $(document.createElement('td')).attr("class", "borderForLoad");

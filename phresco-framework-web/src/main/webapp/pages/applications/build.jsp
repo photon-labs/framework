@@ -79,6 +79,7 @@
     	<div class="build_delete_btn_div">
 		    <a id="generateBuild" class="btn btn-primary" additionalParam="from=generateBuild"><s:text name='label.generatebuild'/></a>
 			<input id="deleteButton" type="button" value="<s:text name="label.delete"/>" class="btn" disabled="disabled"/>
+			<input id="minifyButton" type="button" value="<s:text name="lbl.minifier"/>" class="btn btn-primary"/>
 		</div>
 		
 		<div class="runagint_source">
@@ -140,6 +141,9 @@
     		validateDynamicParam('showRunAgainstSourcePopup', '<s:text name="label.runagainstsource"/>', 'startServer','<s:text name="label.run"/>', '', '<%= Constants.PHASE_RUNGAINST_SRC_START %>');
     	});
     	
+    	$('#minifyButton').click(function(){
+    		yesnoPopup('minfiyPopup', '<s:text name="lbl.minification"/>', 'minifier','<s:text name="lbl.minify"/>');
+    	});
 //     	yesnoPopup($('#generateBuild'), 'generateBuild', '<s:text name="label.generatebuild"/>', 'build','<s:text name="lbl.build"/>');
 //     	yesnoPopup($('#runAgainstSourceStart'),'showRunAgainstSourcePopup', '<s:text name="label.runagainstsource"/>', 'startServer','<s:text name="label.run"/>');
 
@@ -261,7 +265,7 @@
  		$("#console_div").html("Server is restarting...");
  		disableButton($("#runAgainstSourceStop"));
 		disableButton($("#runAgainstSourceRestart"));
-		readerHandlerSubmit('restartServer', '<%= appId %>', '<%= FrameworkConstants.REQ_START %>', '', false, getBasicParams());
+		readerHandlerSubmit('restartServer', '<%= appId %>', '<%= FrameworkConstants.REQ_START %>', '', false, getBasicParams(), $("#console_div"));
  	}
  	
  	// when server is stopped in run against source 
@@ -270,7 +274,7 @@
 		$("#console_div").html("Server is stopping...");
 		disableButton($("#runAgainstSourceStop"));
 		disableButton($("#runAgainstSourceRestart"));
-		readerHandlerSubmit('stopServer', '<%= appId %>', '<%= FrameworkConstants.REQ_STOP %>', '', true, getBasicParams());
+		readerHandlerSubmit('stopServer', '<%= appId %>', '<%= FrameworkConstants.REQ_STOP %>', '', true, getBasicParams(), $("#console_div"));
  	}
 	
 	function popupOnOk(obj) {
@@ -298,7 +302,18 @@
 				$("#errMsg").html('<%= FrameworkConstants.SELECT_DB %>');
 				return false;
 			}
-			readerHandlerSubmit('startServer', '<%= appId %>', '<%= FrameworkConstants.REQ_START %>', $("#generateBuildForm"), false, getBasicParams());
+			readerHandlerSubmit('startServer', '<%= appId %>', '<%= FrameworkConstants.REQ_START %>', $("#generateBuildForm"), false, getBasicParams(), $("#console_div"));
+		} else if (okUrl === "minifier") {
+			var isChecked = $("#minifyAll").is(":checked");
+			if (!isChecked && isBlank($("input[name=minifyFileNames]").val())) {
+				$("#errMsg").html("Please Select any option");
+			} else {
+				if (!isBlank($("input[name=minifyFileNames]").val())) {
+					$("input[name=minifyFileNames]").prop("disabled", false);				
+				} 
+				$('#popupPage').modal('hide');
+				progressPopupAsSecPopup('doMinification', '<%= appId %>', 'minify', $("#minificationForm"), getBasicParams());
+			}	
 		}
 	}
 	
@@ -328,6 +343,8 @@
 			hideDbWithVersions();
 		} else if (pageUrl == "jsToMinify") {
 			updateHiddenField(data.jsFinalName, data.selectedJs, data.browseLocation);
+    	} else if (pageUrl == "filesToMinify") {
+    		updateMinifyData(data.compressName, data.selectedFilesToMinify, data.browseLocation);
     	}
     }
 	
@@ -335,6 +352,6 @@
 		var params = getBasicParams();
 		params = params.concat("&");
 		params = params.concat(additionalParam);
-		readerHandlerSubmit('deploy', '<%= appId %>', '<%= FrameworkConstants.REQ_FROM_TAB_DEPLOY %>', $("#generateBuildForm"), false, params);
+		readerHandlerSubmit('deploy', '<%= appId %>', '<%= FrameworkConstants.REQ_FROM_TAB_DEPLOY %>', $("#generateBuildForm"), false, params, $("#console_div"));
     }
 </script>
