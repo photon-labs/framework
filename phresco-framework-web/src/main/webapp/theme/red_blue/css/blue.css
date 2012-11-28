@@ -1531,3 +1531,42 @@ table tr {
 .popupLbl {
 	color: #333333;
 }
+
+/* minification */
+.compressJs_Div {
+	height: 35px !important;
+}
+
+.minifyLabel {
+	 margin-left: 29px;
+    margin-right: 22px;
+}	
+.del {
+	cursor: pointer;
+}
+
+#compNameText {
+	float:left;
+	width:150px; 
+	margin-right:26px;
+}
+
+.minifyAddIcon {
+    cursor: pointer;
+    float: left;
+    margin-left: 17px;
+    margin-right: 17px;
+}
+
+.legendLbl {
+	font-weight: bold;
+	color: #000;
+}
+
+.modal-header {
+	-webkit-border-radius:5px 5px 0px 0px;
+}
+
+.legendHdr {
+	margin-left: 7px;
+}

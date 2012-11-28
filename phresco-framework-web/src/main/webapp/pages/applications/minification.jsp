@@ -37,7 +37,8 @@ Map<String, Map<String, String>> minifyMap = (Map<String, Map<String, String>>) 
 	</div>
 	
 	<fieldset class="popup-fieldset fieldset_center_align minify_popup">
-		<div class="control-group minify_ControlGroup">
+		<legend class="legendHdr"><s:label key="lbl.hdr.js.minification" cssClass="legendLbl"/></legend>
+		<div class="minify_ControlGroup">
 			<% if (minifyMap != null && !minifyMap.isEmpty()) { 
 				String files = "";
 				String location = "";
@@ -51,10 +52,9 @@ Map<String, Map<String, String>> minifyMap = (Map<String, Map<String, String>>) 
 					}
 			%>
 				<div class="compressJs_Div">
-					<label for="xlInput" class="xlInput labelbold popupLbl minifyLabel" style="float:left;"><s:text name="build.js.minification"/></label>
-					<input type="button" id="<%= compressedName %>" class="btn btn-primary" style="float:left;" value="<s:text name="build.minify.browse"/>" onclick="browseFiles(this);">
 					<label for="xlInput" class="xlInput labelbold popupLbl minifyLabel" style="float:left;"><s:text name="build.compress.name"/></label>
 					<input type="text" name="minifyFileNames" class="<%= compressedName %>" id="compNameText" value="<%= compressedName %>" disabled style="float:left;"/>
+					<input type="button" id="<%= compressedName %>" class="btn btn-primary" style="float:left;" value="<s:text name="build.minify.browse"/>" onclick="browseFiles(this);">
 					<a><img title="" src="images/icons/add_icon.png" id="addJSComp" class="minifyAddIcon" onclick="appendRow();"></a>
 					<a><img class="del imagealign hide" src="images/icons/minus_icon.png" onclick="removeTag(this);"></a>
 					<input type="hidden" tempName="<%= compressedName %>" name="<%= compressedName %>" value="<%= files %>" id="">
@@ -64,9 +64,8 @@ Map<String, Map<String, String>> minifyMap = (Map<String, Map<String, String>>) 
 			<% 	}
 			  } else { %>
 			<div class="compressJs_Div" id="compressJs_Div">
-				<label for="xlInput" class="xlInput labelbold popupLbl minifyLabel" style="float:left;"><s:text name="build.js.minification"/></label>
-				<input type="button" id="getJsFiles1" class="btn btn-primary" style="float:left;" value="<s:text name="build.minify.browse"/>" onclick="browseFiles(this);">
 				<label for="xlInput" class="xlInput labelbold popupLbl minifyLabel" style="float:left;"><s:text name="build.compress.name"/></label>
+				<input type="button" id="getJsFiles1" class="btn btn-primary" style="float:left;" value="<s:text name="build.minify.browse"/>" onclick="browseFiles(this);">
 				<input type="text" name="minifyFileNames" class="getJsFiles1" id="compNameText" disabled style="float:left;"/>
 				<a><img title="" src="images/icons/add_icon.png" id="addJSComp" class="minifyAddIcon" onclick="appendRow();"></a>
 				<a><img class="del imagealign hide" src="images/icons/minus_icon.png" onclick="removeTag(this);"></a>
@@ -110,10 +109,9 @@ function appendRow(){
 	var browseId = "getJsFiles"+counter;
 	var locationId = browseId + "_fileLocation";
 	var newMinDiv = $(document.createElement('div')).attr("id", 'compressJs_Div' + counter).attr("class","compressJs_Div");
-	newMinDiv.html("<label for='xlInput' class='xlInput labelbold popupLbl minifyLabel' style='float:left;'><s:text name='build.js.minification'/></label>" +
-		"<input type='button' id='"+ browseId +"' class='btn btn-primary' style='float:left;' value='<s:text name='build.minify.browse'/>' onclick='browseFiles(this);'>" +
-		"<label for='xlInput' class='xlInput labelbold popupLbl minifyLabel' style='float:left;'><s:text name='build.compress.name'/></label>" +
+	newMinDiv.html("<label for='xlInput' class='xlInput labelbold popupLbl minifyLabel' style='float:left;'><s:text name='build.compress.name'/></label>" +
 		"<input type='text' name='minifyFileNames' class='"+ browseId +"' id='compNameText' disabled style='float:left;'/>" + 
+		"<input type='button' id='"+ browseId +"' class='btn btn-primary' style='float:left;' value='<s:text name='build.minify.browse'/>' onclick='browseFiles(this);'>" +
 		"<a><img title='' src='images/icons/add_icon.png' id='addJSComp' class='minifyAddIcon' onclick='appendRow();''></a>" +
 		"<a><img class='del imagealign hide' src='images/icons/minus_icon.png' onclick='removeTag(this);'></a> " +
 		"<input type='hidden' tempName='"+ browseId +"' name='"+ browseId +"' value='' id=''>" +

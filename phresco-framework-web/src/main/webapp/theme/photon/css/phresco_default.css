@@ -5426,8 +5426,9 @@ a[id='androidSigning']:hover {
 }
 
 .minifyAddIcon {
-	float: left; 
-	margin-right:4px;
+	float: left;
+	margin-left:17px; 
+	margin-right:17px;
 	cursor : pointer;
 }
 
@@ -5441,7 +5442,7 @@ a[id='androidSigning']:hover {
 #compNameText {
 	float:left;
 	width:150px; 
-	margin-right:10px;
+	margin-right:26px;
 }
 
 .ciTwoLineLbl {
@@ -5926,13 +5927,26 @@ color: #313131;
 
 /* minification */
 .compressJs_Div {
-	height: 35px;
+	height: 35px !important;
 }
 
 .minifyLabel {
-	margin-left: 5px;
-	margin-right: 5px;
+	 margin-left: 29px;
+    margin-right: 22px;
 }	
 .del {
 	cursor: pointer;
 }
+
+.legendLbl {
+	font-weight: bold;
+	color: #000;
+}
+
+.modal-header {
+	-webkit-border-radius:5px 5px 0px 0px;
+}
+
+.legendHdr {
+	margin-left: 7px;
+}	
