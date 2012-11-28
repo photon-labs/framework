@@ -243,6 +243,7 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
             paramMap.putAll(getDependantParameters(dependantParameters.getParentMap(), watcherMap));
         }
         paramMap.put(DynamicParameter.KEY_APP_INFO, appInfo);
+        paramMap.put("customerId", getCustomerId());
         if (StringUtils.isNotEmpty(getReqParameter(BUILD_NUMBER))) {
         	paramMap.put(DynamicParameter.KEY_BUILD_NO, getReqParameter(BUILD_NUMBER));
         }

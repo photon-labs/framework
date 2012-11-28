@@ -883,7 +883,7 @@ public class Quality extends DynamicParameterAction implements Constants {
         		sb.append(frameworkUtil.getUnitTestReportDir(appInfo));
         	}
         } else if (LOAD.equals(getTestType())) {
-            /*sb.append(frameworkUtil.getLoadReportDir(techId));*/
+        	sb.append(frameworkUtil.getLoadTestReportDir(appInfo));
             sb.append(File.separator);
             sb.append(testResultFile);
         } else if (PERFORMACE.equals(getTestType())) {
@@ -1621,13 +1621,23 @@ public class Quality extends DynamicParameterAction implements Constants {
     public String showLoadTestPopup() throws PhrescoException{
     	
     	try {
-    		String from = getReqParameter(REQ_FROM);
-    		Map<String, Object> loadParamMap = new HashMap<String, Object>();
     		ApplicationInfo appInfo = getApplicationInfo();
-    		loadParamMap.put(REQ_APP_INFO, appInfo);
-    		getDynamicParameters(appInfo, PHASE_LOAD_TEST);
-    		setReqAttribute(REQ_FROM, from);
-    	} catch(Exception e) {
+            removeSessionAttribute(appInfo.getId() + PHASE_LOAD_TEST + SESSION_WATCHER_MAP);
+            setProjModulesInReq();
+            Map<String, DependantParameters> watcherMap = new HashMap<String, DependantParameters>(8);
+
+            MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(appInfo)));
+            List<Parameter> parameters = getMojoParameters(mojo, PHASE_LOAD_TEST);
+
+            setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap);
+            setSessionAttribute(appInfo.getId() + PHASE_LOAD_TEST + SESSION_WATCHER_MAP, watcherMap);
+            setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
+            setReqAttribute(REQ_GOAL, PHASE_LOAD_TEST);
+    	} catch(PhrescoException e) {
+    		if (s_debugEnabled) {
+	    		S_LOGGER.error("Entered into catch block of Quality.showLoadTestPopup()"+ FrameworkUtil.getStackTraceAsString(e));
+	    	}
+			return showErrorPopup(e, getText(EXCEPTION_QUALITY_LOAD_PARAMS));
     	}
     	
     	return "Success";
@@ -1647,7 +1657,11 @@ public class Quality extends DynamicParameterAction implements Constants {
             setSessionAttribute(getAppId() + LOAD, reader);
             setReqAttribute(REQ_APP_ID, getAppId());
             setReqAttribute(REQ_ACTION_TYPE, LOAD);
-    	} catch(Exception e) {
+    	} catch(PhrescoException e) {
+    		if (s_debugEnabled) {
+	    		S_LOGGER.error("Entered into catch block of Quality.runLoadTest()"+ FrameworkUtil.getStackTraceAsString(e));
+	    	}
+			return showErrorPopup(e, getText(EXCEPTION_QUALITY_LOAD_RUN));
     	}
     	return APP_ENVIRONMENT_READER;
     }

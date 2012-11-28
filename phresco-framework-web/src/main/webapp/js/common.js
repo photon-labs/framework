@@ -293,6 +293,7 @@ function loadData(data, tag, pageUrl, callSuccessEvent, callbackFunction) {
 			tag.empty();
 			tag.html(data);
 			setTimeOut();
+			hideLoadingIcon();
 		}
 	}
 }

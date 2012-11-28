@@ -54,10 +54,9 @@
                 <div class="columnStyle">
 	                <div class="table_div_unit">
 	                   <div class="fixed-table-container">
-	      					<div class="header-background"> </div>
-				      		<div class="fixed-table-container-inner">
-						        <table cellspacing="0" class="zebra-striped">
-						          	<thead>
+				      		<div class="fixed-table-container-inner ">
+						        <table cellspacing="0" class="zebra-striped ">
+						          	<thead class="header-background">
 							            <tr>
 											<th class="first"><div class="th-inner-test"><s:text name="label.thread.name"/></div></th>
 							              	<th class="second"><div class="th-inner-test"><s:text name="label.date"/></div></th>

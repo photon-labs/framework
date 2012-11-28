@@ -1578,6 +1578,9 @@ public interface FrameworkConstants {
 		String EXCEPTION_QUALITY_FUNCTIONAL_NODE_CONNECTION = "excep.hdr.quality.functional.node.connection";
 		String EXCEPTION_QUALITY_FUNCTIONAL_HUB_LOG = "excep.hdr.quality.functional.hub.log";
 		String EXCEPTION_QUALITY_FUNCTIONAL_NODE_LOG = "excep.hdr.quality.functional.node.log";
+		String EXCEPTION_QUALITY_LOAD_TESTSUITES = "excep.hdr.quality.load.testsuites";
+		String EXCEPTION_QUALITY_LOAD_PARAMS = "excep.hdr.quality.load.params";
+		String EXCEPTION_QUALITY_LOAD_RUN = "excep.hdr.quality.load.run";
 		String EXCEPTION_BUILD_POPUP = "excep.hdr.build.popup";
 		String EXCEPTION_DEPLOY_POPUP = "excep.hdr.deploy.popup";
 		String EXCEPTION_BUILD_GENERATE = "excep.hdr.build.generate";
