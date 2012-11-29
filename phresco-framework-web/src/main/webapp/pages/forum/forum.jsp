@@ -30,23 +30,24 @@
  %>
 
 <script>
-	
-	$("a[id='home']").attr("class", "inActive");
-	$("a[id='forum']").attr("class", "active");
-
-		$(document).ready(function() {
+	$(document).ready(function() {
+		reloadIframe();
+		$(".styles").click(function() {
 			reloadIframe();
-			$(".styles").click(function() {
-				reloadIframe();
-			});
-
 		});
+	});
 	
 	function reloadIframe() {
 		var theme = localStorage['color'];
-		/*if(theme == undefined) {
-			 theme = "themes/photon/css/red.css";
-		}*/
+		if (theme != null) {
+            if (theme == "themes/red_blue/css/red.css") {
+                theme == "themes/red_blue/css/red.css"
+            } else {
+                theme == "themes/red_blue/css/blue.css"
+            }
+        } else {
+            theme = "theme/photon/css/photon_theme.css";
+        }
 		var source = "<%= jForumUrl %>&css=" + theme;
 		
 		$("iframe").attr({
