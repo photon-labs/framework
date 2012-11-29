@@ -243,7 +243,24 @@
 			showError($("#configTypeControl"), $("#configTypeError"), data.configTypeError);
 		} else {
 			hideError($("#configTypeControl"), $("#configTypeError"));
-		} 
+		}
+		
+		if (!isBlank(data.siteNameError)) {
+			showError($("#siteControl"), $("#siteNameError"), data.siteNameError);
+		} else {
+			hideError($("#siteControl"), $("#siteNameError"));
+		}
+		
+		if (!isBlank(data.appNameError)) {
+			showError($("#appControl"), $("#appNameError"), data.appNameError);
+		} else {
+			hideError($("#appControl"), $("#appNameError"));
+		}
+		
+		if (!isBlank(data.siteCoreInstPathError)) {
+			showError($("#siteCoreControl"), $("#siteCoreInstPathError"), data.siteCoreInstPathError);
+		} else {
+			hideError($("#siteCoreControl"), $("#siteCoreInstPathError"));
+		}
 	}
-	
 </script>

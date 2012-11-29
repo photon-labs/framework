@@ -29,6 +29,7 @@
 <%@ page import="org.antlr.stringtemplate.StringTemplate" %>
 <%@ page import="org.apache.commons.collections.CollectionUtils" %>
 
+<%@ page import="com.photon.phresco.commons.model.SettingsTemplate"%>
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 <%@ page import="com.photon.phresco.commons.model.PropertyTemplate" %>
@@ -41,7 +42,7 @@
 <%
 	ApplicationInfo appInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_APPINFO);
 	Properties propertiesInfo = (Properties) request.getAttribute(FrameworkConstants.REQ_PROPERTIES_INFO); 
-		  
+	SettingsTemplate settingsTemplate = (SettingsTemplate) request.getAttribute(FrameworkConstants.REQ_SETTINGS_TEMPLATE);	  
 	String selectedType = (String) request.getAttribute(FrameworkConstants.REQ_SELECTED_TYPE);
 	String fromPage = (String) request.getAttribute(FrameworkConstants.REQ_FROM_PAGE);
 	
@@ -95,6 +96,7 @@
             StringTemplate dropDownControl = FrameworkUtil.constructSelectElement(pm);
             sb.append(dropDownControl);
         } else if ("Boolean".equals(propertyTemplate.getType())) {
+        	pm.setOnClickFunction("changeChckBoxValue(this)");
         	pm.setPlaceHolder(propertyTemplate.getHelpText());
         	pm.setValue(value);
             StringTemplate inputControl = FrameworkUtil.constructCheckBoxElement(pm);
@@ -105,6 +107,18 @@
         	pm.setValue(value);
             StringTemplate inputControl = FrameworkUtil.constructInputElement(pm);
 			sb.append(inputControl);
+        }
+        if (FrameworkConstants.SERVER_KEY.equals(propertyTemplate.getKey()) || FrameworkConstants.DATABASE_KEY.equals(propertyTemplate.getKey()) ) {
+        	pm.setMandatory(true);
+        	pm.setLableText("Version");
+        	pm.setId("version");
+        	pm.setName("version");
+        	pm.setControlGroupId("versionControl");
+        	pm.setControlId("versionError");
+        	pm.setShow(true);
+        	pm.setObjectValue(null);
+        	StringTemplate dropDownControl = FrameworkUtil.constructSelectElement(pm);
+        	sb.append(dropDownControl);
         }
     }
 %>
@@ -168,7 +182,35 @@
 	<% 	
 		}
 	%>
-
+	
+	<% if ("addsettings".equals(fromPage)) { %>
+		<div class="control-group" id="appliesToControl">
+			<label class="control-label labelbold">
+					<span class="mandatory">*</span>&nbsp;<s:text name='label.applies.to'/>
+			</label>
+			<div class="controls">
+				<div class="settingsTypeFields" id="typefield">
+            		<div class="multilist-scroller multiselect" id='multiselect'>
+					   <ul>
+					   	<% 
+					   		List<Element> appliesToTechs = settingsTemplate.getAppliesToTechs();
+					   			for (Element appliesTo : appliesToTechs) { %>
+								<li>
+									<input type="checkbox" name="appliesTo" class="check appliesToCheck" 
+										value='' title="<%= appliesTo.getDescription() %>" /><%= appliesTo.getName() %>
+								</li>
+							
+						<%		}
+							
+					   	%>
+					   </ul>
+			  	 	</div>
+				</div>
+				<span class="help-inline" id="appliesToError"></span>
+			</div>
+	    </div>
+    <% } %>
+    
 </form>
 
 <script type="text/javascript">
@@ -228,9 +270,11 @@ $("div#certificateControl").hide();
 		var isRemoteChecked = $("input[name='remoteDeployment']").is(":checked");
 		if (isRemoteChecked) {
 			hideDeployDir();
-			/* $("#admin_username label").html('<span class="red">* </span>Admin Username');
-			$("#admin_password label").html('<span class="red">* </span>Admin Password'); */
+			$("#admin_usernameControl label").html('<span class="red">* </span>Admin Username');
+			$("#admin_passwordControl label").html('<span class="red">* </span>Admin Password'); 
 		} else {
+			$("#admin_usernameControl label").html('Admin Username');
+			$("#admin_passwordControl label").html('Admin Password'); 
 			$('#deploy_dirControl').show();
 		}
 	}
@@ -241,7 +285,7 @@ $("div#certificateControl").hide();
 		%>
 				hideDeployDir();
 		<% } %>
-	} 
+	}
 	
 	function hideRemoteDeply() {
 		$('#remoteDeploymentControl').hide();
@@ -261,23 +305,4 @@ $("div#certificateControl").hide();
 		$("input[name='deploy_dir']").val("");
 		$('#deploy_dirControl').hide();
 	}
-	
-	
-	
-//To show the validation error messages
-	/* function findError(data) {
-		if (!isBlank(data.siteNameError)) {
-			showError($("#siteControl"), $("#siteNameError"), data.siteNameError);
-		} else {
-			hideError($("#siteControl"), $("#siteNameError"));
-		}
-		
-		if (!isBlank(data.appNameError)) {
-			showError($("#appControl"), $("#appNameError"), data.appNameError);
-		} else {
-			hideError($("#appControl"), $("#appNameError"));
-		}
-	} */
-
-
 </script>

@@ -518,6 +518,7 @@ public interface FrameworkConstants {
     String REQ_TEST_RESULT = "testResult";
     String REQ_CONFIGURATION = "configuration";
     String REQ_SETTINGS_TEMPLATES = "SettingsTemplates";
+    String REQ_SETTINGS_TEMPLATE = "settingTemplate";
     String REQ_CONFIG_TYPE_OTHER = "Other";
     String REQ_PROPERTIES = "properties";
     String REQ_CONFIG_PROP_KEY = "propertyKey";
@@ -1033,6 +1034,7 @@ public interface FrameworkConstants {
     String ERROR_CONFIG_TYPE = "err.msg.empty.config.type";
     String ERROR_CONFIG_SITE_NAME = "err.msg.empty.config.site.name";
     String ERROR_CONFIG_APP_NAME = "err.msg.empty.config.app.name";
+    String ERROR_SITE_CORE_PATH_MISSING = "err.msg.empty.site.core.path";
     String CLONE_CONFIG_STATUS = "cloneConfigStatus";
     String ERROR_ENV_REMOVE = "Environment {0} is already in use";
     String ERROR_ENVS_REMOVE = "Environment(s) {0} are already in use";
@@ -1534,11 +1536,18 @@ public interface FrameworkConstants {
 
 		  String SLN_FILE = "Metro.sln";
 		  
-		  //SettingsTemplate keys for IIS server
+		  //SettingsTemplate keys 
 		  String SETTINGS_TEMP_KEY_APP_NAME = "applicationName";
 		  String SETTINGS_TEMP_KEY_SITE_NAME = "siteName";
 		  String SETTINGS_TEMP_SITECORE_INST_PATH = "sitecoreInstPath";
+		  String DEPLOY_DIR = "deploy_dir";
+		  String ADMIN_USERNAME = "admin_username";
+		  String ADMIN_PASSWORD = "admin_password";
+		  String REMOTE_DEPLOYMENT = "remoteDeployment";
+		  
+		  //SettingsTemplate values 
 		  String IIS_SERVER = "IIS";
+		  String NODEJS_SERVER = "Nodejs";
 		  
 	  /* Resolutions */ 
 		String _1600_900 = "1600*900";

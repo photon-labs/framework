@@ -169,6 +169,7 @@
 				params = params.concat(currentConfigDesc);
 				params = params.concat("&currentEnvName=");
 				params = params.concat(currentEnvName);
+				$("#popupPage").modal('hide');//To hide popup
 				loadContent("cloneConfiguration", $("#formClonePopup"), $('#loadEnv'), params);
 			 }
 		} else {
@@ -193,6 +194,7 @@
 			var configPath = "<%= configPath%>";
 			var params = '{' + basicParams + ', "configPath" : "' + configPath + '", "fromPage" : "' + fromPage + '", "environments": [' + envs.join(',') + '], "selectedEnvirment" : "' + selectedEnvs + '", "selectedConfigurations": [' + selectedConfigData.join(',') + ']}';
 			var url = $(self).attr('id');
+			$("#popupPage").modal('hide');//To hide popup
 			loadJsonContent(url, params, $('#loadEnv'));	
 		}
 	}

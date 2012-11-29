@@ -35,6 +35,7 @@ import org.apache.log4j.Logger;
 
 import com.photon.phresco.api.ApplicationProcessor;
 import com.photon.phresco.api.ConfigManager;
+import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.Customer;
 import com.photon.phresco.commons.model.Element;
@@ -47,7 +48,6 @@ import com.photon.phresco.exception.ConfigurationException;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
-import com.photon.phresco.framework.api.Project;
 import com.photon.phresco.framework.api.ProjectAdministrator;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.commons.LogErrorReport;
@@ -72,8 +72,6 @@ public class Configurations extends FrameworkBaseAction {
     private List<Configuration> selectedConfigurations = new ArrayList<Configuration>();
 
 	private Environment environment = null;
-  
-	//private Configuration selectedConfig = null;
     private SettingsTemplate settingTemplate = null;
     private String selectedEnvirment = null;
     private String configId = null;
@@ -86,33 +84,27 @@ public class Configurations extends FrameworkBaseAction {
     private String description = null;
     private String oldName = null;
     private String[] appliesto = null;
-    private String projectCode = null;
     private boolean errorFound = false;
 	private String configNameError = null;
 	private String configEnvError = null;
 	private String configTypeError = null;
 	private String nameError = null;
     private String typeError = null;
+    private String appliesToError = null;
     private String portError = null;
     private String dynamicError = "";
-    private boolean isValidated = false;
     private String envName = null;
     private String configType = null;
     private String oldConfigType = null;
 	private String envError = null;
 	private String emailError = null;
-	private String remoteDeploymentChk = null;
 	private String currentEnvName = null;
 	private String currentConfigType = null;
 	private String currentConfigName = null;
 	private String currentConfigDesc = null;
 	
-	// Environemnt delete
-    private boolean isEnvDeleteSuceess = true;
-    private String envDeleteMsg = null;
     private List<String> projectInfoVersions = null;
     
-    // For IIS server
     private String appName = "";
 	private String siteName = "";
 	private String siteCoreInstPath = "";
@@ -120,8 +112,6 @@ public class Configurations extends FrameworkBaseAction {
     private String siteNameError = null;
     private String siteCoreInstPathError = null;
     
-    //set as default envs
-    private String setAsDefaultEnv = "";
     private String fromPage = null;
     private String configPath = null;
     
@@ -325,7 +315,7 @@ public class Configurations extends FrameworkBaseAction {
 		}
 		
 		ApplicationInfo applicationInfo = getApplicationInfo();
-		if (applicationInfo != null && applicationInfo.getTechInfo().getId().equals("tech-sitecore")) {
+		if (applicationInfo != null && applicationInfo.getTechInfo().getId().equals(FrameworkConstants.TECH_SITE_CORE)) {
 			properties.put(SETTINGS_TEMP_SITECORE_INST_PATH, siteCoreInstPath);
 		}
 		
@@ -344,11 +334,13 @@ public class Configurations extends FrameworkBaseAction {
      * To validate the form fields
      * @return
      * @throws PhrescoException 
+     * @throws ConfigurationException 
      */
-    public String validateConfiguration() throws PhrescoException {
+    public String validateConfiguration() throws PhrescoException, ConfigurationException {
     	
     	boolean hasError = false;
     	boolean isIISServer = false;
+    	boolean serverTypeValidation = false;
     	
     	if (StringUtils.isEmpty(getConfigName())) {
     		setConfigNameError(getText(ERROR_NAME));
@@ -360,24 +352,79 @@ public class Configurations extends FrameworkBaseAction {
             hasError = true;
         }
     	
+    	ConfigManager configManager = getConfigManager(configPath);
+    	if(StringUtils.isNotEmpty(configName) && !configName.equals(oldName)) {
+    		List<Configuration> configurations = configManager.getConfigurations(environment.getName(), configType);
+			for (Configuration configuration : configurations) {
+				if(configName.trim().equalsIgnoreCase(configuration.getName())) {
+					setConfigNameError(getText(ERROR_DUPLICATE_NAME));
+					hasError = true;
+				}
+			}
+    	}
+    	
+	    if (configType.equals(Constants.SETTINGS_TEMPLATE_SERVER) || configType.equals(Constants.SETTINGS_TEMPLATE_EMAIL)) {
+        	List<Configuration> configurations = configManager.getConfigurations(environment.getName(), configType);
+            if(CollectionUtils.isNotEmpty( configurations)) {
+            	setConfigTypeError(getText(CONFIG_ALREADY_EXIST));
+                hasError = true;
+            }
+    	}
+    	
+	    
+	    ApplicationInfo applicationInfo = getApplicationInfo();
+        String techId = applicationInfo.getTechInfo().getId();
     	SettingsTemplate configTemplate = getServiceManager().getConfigTemplate(getConfigId(), getCustomerId());
         List<PropertyTemplate> properties = configTemplate.getProperties();
+        boolean remoteDeply = false;
         for (PropertyTemplate propertyTemplate : properties) {
             String key = propertyTemplate.getKey();
             String value = getActionContextParam(key);
+            if (REMOTE_DEPLOYMENT.equals(key)) {
+            	remoteDeply = Boolean.parseBoolean(value);
+            }
+            
             if (SERVER_KEY.equals(key) && IIS_SERVER.equals(value)) {
             	isIISServer = true;
+            }
+            
+            if (SERVER_KEY.equals(key) && NODEJS_SERVER.equals(value)) { //If nodeJs server selected , there should not be validation for deploy dir.
+            	serverTypeValidation = true;
             }
             
             if(isIISServer && DEPLOY_CONTEXT.equals(key)){
             	propertyTemplate.setRequired(false);
             }
             
-            if (propertyTemplate.isRequired() && StringUtils.isEmpty(value)) {
-            	String field = propertyTemplate.getName();
-            	dynamicError += key + ":" + field + " is empty" + ",";
-            }
+    		if (techId.equals(FrameworkConstants.TECH_SITE_CORE) && DEPLOY_DIR.equals(key)) {
+    			propertyTemplate.setRequired(false);
+    		}
+    		
+			if ((serverTypeValidation && DEPLOY_DIR.equals(key))) {
+				 propertyTemplate.setRequired(false);
+			}
+    		 
+    		// validation for UserName & Password for RemoteDeployment
+             if(remoteDeply){
+                if (ADMIN_USERNAME.equals(key) || ADMIN_PASSWORD.equals(key)) {
+                	 propertyTemplate.setRequired(true);
+                }
+				if(DEPLOY_DIR.equals(key)){
+					 propertyTemplate.setRequired(false);
+				}
+             }
+             
+             if (propertyTemplate.isRequired() && StringUtils.isEmpty(value)) {
+             	String field = propertyTemplate.getName();
+             	dynamicError += key + ":" + field + " is empty" + ",";
+             }
         }
+        
+        if (techId.equals(FrameworkConstants.TECH_SITE_CORE) && StringUtils.isEmpty(siteCoreInstPath)) {
+        	setSiteCoreInstPathError(getText(ERROR_SITE_CORE_PATH_MISSING));
+    		hasError = true;
+    	}
+        
         
     	if (isIISServer) {
         	if (StringUtils.isEmpty(getAppName())) {
@@ -416,7 +463,7 @@ public class Configurations extends FrameworkBaseAction {
 		dbDriverMap.put("mongodb", "com.mongodb.jdbc.MongoDriver");
 	}
     
-    private void saveCertificateFile(String path) throws PhrescoException {
+    /*private void saveCertificateFile(String path) throws PhrescoException {
     	try {
     		String host = (String) getHttpRequest().getParameter(SERVER_HOST);
 			int port = Integer.parseInt(getHttpRequest().getParameter(SERVER_PORT));
@@ -433,7 +480,7 @@ public class Configurations extends FrameworkBaseAction {
 		} catch (Exception e) {
 			throw new PhrescoException(e);
 		}
-    }
+    }*/
     
     public String createEnvironment() {
         if (debugEnabled) {
@@ -469,7 +516,7 @@ public class Configurations extends FrameworkBaseAction {
     	return envList();
     }
     
-    public String checkForRemove(){
+    /*public String checkForRemove(){
 		try {
     		ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
     		Project project = administrator.getProject(projectCode);
@@ -492,9 +539,9 @@ public class Configurations extends FrameworkBaseAction {
                 S_LOGGER.error("Entered into catch block of Configurations.checkForRemove()" + FrameworkUtil.getStackTraceAsString(e));
     	}
 		return SUCCESS;
-	}
+	}*/
     
-    public String checkDuplicateEnv() throws PhrescoException {
+   /* public String checkDuplicateEnv() throws PhrescoException {
         try {
             ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
             Project project = administrator.getProject(projectCode);
@@ -516,7 +563,7 @@ public class Configurations extends FrameworkBaseAction {
             throw new PhrescoException(e);
         }
         return SUCCESS;
-    }
+    }*/
     
 	public String edit() {
     	if (debugEnabled) {
@@ -528,7 +575,6 @@ public class Configurations extends FrameworkBaseAction {
         	ConfigManager configManager = getConfigManager(getConfigPath());
         	Configuration selectedConfigInfo = configManager.getConfiguration(currentEnvName, 
         			currentConfigType, currentConfigName);
-        	
         	List<SettingsTemplate> configTemplates = getServiceManager().getconfigTemplates(getCustomerId());
             setReqAttribute(REQ_SETTINGS_TEMPLATES, configTemplates);
         	setReqAttribute(REQ_CONFIG_INFO, selectedConfigInfo);
@@ -593,6 +639,8 @@ public class Configurations extends FrameworkBaseAction {
 		try {
 			
 			ApplicationInfo appInfo = getApplicationInfo();
+			SettingsTemplate settingTemplate = getSettingTemplate();
+            setReqAttribute(REQ_SETTINGS_TEMPLATE, settingTemplate);
 		    List<PropertyTemplate> properties = getSettingTemplate().getProperties();
             setReqAttribute(REQ_PROPERTIES, properties);
             setReqAttribute(REQ_APPINFO, appInfo);
@@ -638,46 +686,6 @@ public class Configurations extends FrameworkBaseAction {
           }
     }*/
     
-    public String setAsDefault() {
-    	S_LOGGER.debug("Entering Method  Configurations.setAsDefault()");
-    	S_LOGGER.debug("SetAsdefault" + setAsDefaultEnv);
-		try {
-			
-			ConfigManager configManager = getConfigManager(getAppConfigPath());
-			configManager.addEnvironments(environments);
-    		/*ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-    		Project project = administrator.getProject(projectCode);
-    		
-    		if (StringUtils.isEmpty(setAsDefaultEnv)) {
-    			setEnvError(getText(SELECT_ENV_TO_SET_AS_DEFAULT));
-    			S_LOGGER.debug("Env value is empty");
-    		}
-    		
-    		//List<Environment> enviroments = getAllEnvironments();
-    		List<Environment> enviroments = administrator.getEnvironments(project);
-    		boolean envAvailable = false;
-    		for (Environment environment : enviroments) {
-				if(environment.getName().equals(setAsDefaultEnv)) {
-					envAvailable = true;
-				}
-			}
-    		
-    		if(!envAvailable) {
-    			setEnvError(getText(ENV_NOT_VALID));
-    			S_LOGGER.debug("unable to find configuration in xml");
-    			return SUCCESS;
-    		}
-	    	administrator.setAsDefaultEnv(setAsDefaultEnv, project);
-	    	setEnvError(getText(ENV_SET_AS_DEFAULT_SUCCESS, Collections.singletonList(setAsDefaultEnv)));*/
-	    	// set flag value to indicate , successfully env set as default
-	    	flag = true;
-	    	S_LOGGER.debug("successfully updated the config xml");
-    	} catch(Exception e) {
-    		setEnvError(getText(ENV_SET_AS_DEFAULT_ERROR));
-            S_LOGGER.error("Entered into catch block of Configurations.setAsDefault()" + FrameworkUtil.getStackTraceAsString(e));
-    	}
-		return SUCCESS;
-    }
     
     public String cloneConfigPopup() {
     	if (debugEnabled) {
@@ -831,14 +839,6 @@ public class Configurations extends FrameworkBaseAction {
 	public void setAppliesto(String[] appliesto) {
 		this.appliesto = appliesto;
 	}
-	
-	public String getProjectCode() {
-        return projectCode;
-    }
-
-    public void setProjectCode(String projectCode) {
-        this.projectCode = projectCode;
-    }
     
     public String getNameError() {
 		return nameError;
@@ -864,14 +864,6 @@ public class Configurations extends FrameworkBaseAction {
 		this.dynamicError = dynamicError;
 	}
 
-	public boolean isValidated() {
-		return isValidated;
-	}
-
-	public void setValidated(boolean isValidated) {
-		this.isValidated = isValidated;
-	}
-	
 	public String getEnvName() {
         return envName;
     }
@@ -894,22 +886,6 @@ public class Configurations extends FrameworkBaseAction {
 
 	public void setEnvError(String envError) {
 		this.envError = envError;
-	}
-
-	public boolean isEnvDeleteSuceess() {
-		return isEnvDeleteSuceess;
-	}
-
-	public void setEnvDeleteSuceess(boolean isEnvDeleteSuceess) {
-		this.isEnvDeleteSuceess = isEnvDeleteSuceess;
-	}
-
-	public String getEnvDeleteMsg() {
-		return envDeleteMsg;
-	}
-
-	public void setEnvDeleteMsg(String envDeleteMsg) {
-		this.envDeleteMsg = envDeleteMsg;
 	}
 	
 	public List<String> getProjectInfoVersions() {
@@ -942,14 +918,6 @@ public class Configurations extends FrameworkBaseAction {
 
 	public void setEmailError(String emailError) {
 		this.emailError = emailError;
-	}
-
-	public String getRemoteDeploymentChk() {
-		return remoteDeploymentChk;
-	}
-
-	public void setRemoteDeploymentChk(String remoteDeploymentChk) {
-		this.remoteDeploymentChk = remoteDeploymentChk;
 	}
 	
 	public String getAppName() {
@@ -990,14 +958,6 @@ public class Configurations extends FrameworkBaseAction {
 
 	public void setSiteCoreInstPathError(String siteCoreInstPathError) {
 		this.siteCoreInstPathError = siteCoreInstPathError;
-	}
-
-	public String getSetAsDefaultEnv() {
-		return setAsDefaultEnv;
-	}
-
-	public void setSetAsDefaultEnv(String setAsDefaultEnv) {
-		this.setAsDefaultEnv = setAsDefaultEnv;
 	}
 
 	public boolean isFlag() {
@@ -1200,5 +1160,15 @@ public class Configurations extends FrameworkBaseAction {
 
 	public void setSelectedConfigurations(List<Configuration> selectedConfigurations) {
 		this.selectedConfigurations = selectedConfigurations;
+	}
+
+
+	public String getAppliesToError() {
+		return appliesToError;
+	}
+
+
+	public void setAppliesToError(String appliesToError) {
+		this.appliesToError = appliesToError;
 	}
 }

@@ -2352,6 +2352,18 @@ fieldset {
     height: 80px;
     width: 254px;
 }
+
+.typeVersion {
+	float: right;
+    margin-right: 585px;
+    margin-top: -33px;
+}
+
+.appinfoTypeVersion {
+	margin-left: -83px;
+	width: 126px;
+}
+
 .tech_select {
     height: 80px;
 }

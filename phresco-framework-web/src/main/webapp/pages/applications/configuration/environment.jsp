@@ -65,13 +65,10 @@
                 <% for (Environment environment : environments ) {
                 	String envJson = gson.toJson(environment);
                 	String disable = "";
-                	/* if (environment.isDefaultEnv() || CollectionUtils.isNotEmpty(environment.getConfigurations())) {
-                		disable = "disabled";
-                	} */
                  %>
 	       			<li>
 						<input type="checkbox" name="envNames" class="check techCheck" 
-							value='<%= envJson %>' title="<%= environment.getDesc() %>" <%-- <%= environment.isDefaultEnv() ? "disabled" : ""%> --%>/><%= environment.getName() %>
+							value='<%= envJson %>' title="<%= environment.getDesc() %>"  envName='<%= environment.getName() %>'/><%= environment.getName() %>
 					</li>
 				<% } %>
 				</ul>
@@ -136,7 +133,7 @@ $(document).ready(function() {
        	 $("#errMsg").html("<s:text name='please.select.only.one.environment'/>");
        	 return false;
 		}
-        
+       
 		$('#multiselect ul li input[type=checkbox]').each( function() {
 			var env = $.parseJSON($(this).val());
 			env.defaultEnv = "false";
@@ -160,55 +157,67 @@ $(document).ready(function() {
 			$(this).val(finalEnvData);
         });
         
+		$("#errMsg").html("<s:text name='select.env.set.as.default'/>");
+        
    });
+	
+	
+	$('input[type=checkbox]').click(function(){
+		if ($(this).prop('checked')) {
+			$(this).parent().attr('class', 'selected');
+		} else {
+			$(this).parent().removeAttr('class');
+		}
+	});
+	
 	
 	//To remove the added Environment value in UI
     $('#remove').click(function() {
     	 selectEnv();
+    	 
     	 // To remove the Environments from the list box which is not in the XML
         $('#multiselect ul li input[type=checkbox]:checked').each( function() {
 			var checkedDataObj = $.parseJSON($(this).val());
+			var envName = checkedDataObj.name;
+			var configLength = checkedDataObj.configurations.length;
 			var env = checkedDataObj.defaultEnv; // selected checkbox
-			if(env == true){
+			
+			if(env == true ){
 				$("#errMsg").html("<s:text name='you.cant.remove.defaultEnv'/>");
 				return false;
-			} else {
+			}
+			
+			if(configLength > 0 ){
+				$("#errMsg").html("<s:text name='config.exists'/>");
+			}
+			
+			if(env == false && configLength <= 0){
 				$('#multiselect ul li input[type=checkbox]:checked').parent().remove();
-			}			
+			}
+			
         });
     });
 	
-  	/* //To move up the values
-	$('#up').bind('click', function() {
-		selectEnv();
-		$('#multiselect ul li input[type=checkbox]:checked').each( function() {
-			var checkedDataObj = $.parseJSON($(this).val());
-			var newPos = $('#multiselect ul li').index(this) -1;
-			if (newPos > -1) {
-				/* $('#multiselect ul li').eq(newPos).before("<li value='"+ checkedDataObj.name +"' checked='checked'>"+$(this).text()+"</li>");
-				$(this).remove(); 
-			} else {
-				$('#multiselect ul li').eq(newPos).before("<li value='"+ checkedDataObj.name +"' checked='checked'>"+$(this).text()+"</li>");
-				$(this).parent().remove();
-			}
+	
+	$('#up').click(function () {
+		$('.selected').each(function() {
+			$(this).prev().before($(this));
 		});
-	}); */ 
+	});
 	
-	
-  //To move up the values
-	/* $('#multiselect ul li').change(function() {
-		var indexVal = $('#multiselect ul li').index(this);
-		$('#up').bind('click', function() {
-				var newpos = indexVal - 1;
-				if (newPos > -1) {
-					$('#multiselect ul li').eq(newPos).before("<li value='"+$(this).val()+"' selected='selected'>"+$(this).text()+"</li>");
-					$(this).parent().remove();
-				}
-			 });
-		}); */
+	$('#down').click(function () {
+		var length = $('.selected').length;
+		$('.selected').each(function() {
+			var element = $(this); 
+			for (var i=0; i<length; i++) {
+				element = element.next(); 
+			}
+			$(element).after($(this));
+		});
+	});
+  
 });
 	
-
 	function addRow() {
 		var value = $('#envName').val();
 		var desc = $('#envDesc').val();
