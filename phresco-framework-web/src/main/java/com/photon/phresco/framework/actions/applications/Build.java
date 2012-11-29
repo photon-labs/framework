@@ -973,34 +973,43 @@ public class Build extends DynamicParameterAction implements Constants {
 	
 	private void includesFiles(Element element, ApplicationInfo applicationInfo) {
 		try {
-			Map<String, Map<String, String>> map = new HashMap<String, Map<String, String>>();
+			Map<String, Map<String, String>> jsMap = new HashMap<String, Map<String, String>>();
+			Map<String, Map<String, String>> cssMap = new HashMap<String, Map<String, String>>();
 			String opFileLoc = "";
 			if (POM_AGGREGATIONS.equals(element.getNodeName())) {
 				NodeList aggregationList = element.getElementsByTagName(POM_AGGREGATION);
 				for (int i = 0; i < aggregationList.getLength(); i++) {
 					Element childNode = (Element) aggregationList.item(i);
 					NodeList includeList = childNode.getElementsByTagName(POM_INCLUDES).item(0).getChildNodes();
-					StringBuilder sb = new StringBuilder(); 
+					StringBuilder csvFileNames = new StringBuilder(); 
 					String sep = "";
 					for (int j = 0; j < includeList.getLength()-1; j++) {
 						Element include = (Element) includeList.item(j);
 						String file = include.getTextContent().substring(include.getTextContent().lastIndexOf("/")+1);
-						sb.append(sep);
-						sb.append(file);
+						csvFileNames.append(sep);
+						csvFileNames.append(file);
 						sep = COMMA;
 					}
 					Element outputElement = (Element) childNode.getElementsByTagName(POM_OUTPUT).item(0);
 					String opFileName = outputElement.getTextContent().substring(outputElement.getTextContent().lastIndexOf("/")+1);
 					String compressName = opFileName.substring(0, opFileName.indexOf("."));
-
+					String compressedExtension = opFileName.substring(opFileName.lastIndexOf(DOT)+1);
 					opFileLoc = outputElement.getTextContent().substring(0, outputElement.getTextContent().lastIndexOf("/")+1);
 					opFileLoc = opFileLoc.replace(MINIFY_OUTPUT_DIRECTORY, getAppDirectoryPath(applicationInfo).replace(File.separator, FORWARD_SLASH));
-					Map<String, String> valuesMap = new HashMap<String, String>();
-					valuesMap.put(sb.toString().replace(HYPHEN_MIN, ""), opFileLoc);
-					map.put(compressName, valuesMap);
+					
+					if (JS.equals(compressedExtension)) {
+						Map<String, String> jsValuesMap = new HashMap<String, String>();
+						jsValuesMap.put(csvFileNames.toString().replace(HYPHEN_MIN, ""), opFileLoc);
+						jsMap.put(compressName, jsValuesMap);	
+					} else {
+						Map<String, String> cssValuesMap = new HashMap<String, String>();
+						cssValuesMap.put(csvFileNames.toString().replace(HYPHEN_MIN, ""), opFileLoc);
+						cssMap.put(compressName, cssValuesMap);
+					}
 				}
 			}
-			getHttpRequest().setAttribute(REQ_MINIFY_MAP, map);
+			getHttpRequest().setAttribute(REQ_JS_MINIFY_MAP, jsMap);
+			getHttpRequest().setAttribute(REQ_CSS_MINIFY_MAP, cssMap);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -1087,21 +1096,24 @@ public class Build extends DynamicParameterAction implements Constants {
 			String dynamicIncludeDir) {
 		Element aggregationsElement = doc.createElement(POM_AGGREGATIONS);
 		for (String file : files) {
+			String newFileName = ""; 
+			String extension = "";
 			String csvJsFile = getHttpRequest().getParameter(file);
-			List<String> jsFiles = Arrays.asList(csvJsFile.split("\\s*,\\s*"));
+			List<String> chosenFiles = Arrays.asList(csvJsFile.split(CSV_PATTERN));
 			Element agrigationElement = appendChildElement(doc, aggregationsElement, POM_AGGREGATION, null);
 			appendChildElement(doc, agrigationElement, POM_INPUTDIR, dynamicIncludeDir);
 			Element includesElement = doc.createElement(POM_INCLUDES);
-			for (String jsFile : jsFiles) {
-				String[] fileName = jsFile.split("\\.");
-				appendChildElement(doc, includesElement, POM_INCLUDE, "**/" + fileName[0] + HYPEN_MIN_JS);
+			for (String chosenFile : chosenFiles) {
+				int lastDot = chosenFile.lastIndexOf(DOT);
+				newFileName = chosenFile.substring(0, lastDot);
+				extension = chosenFile.substring(lastDot + 1, chosenFile.length());
+				appendChildElement(doc, includesElement, POM_INCLUDE, "**/" + newFileName + HYPEN_MIN_DOT + extension);
 				agrigationElement.appendChild(includesElement);
 			}
 			String location = getHttpRequest().getParameter(file + MINIFY_FILE_LOCATION);
 			String[] splitted = location.split(applicationInfo.getAppDirName());
-			String minificationDir = "";
-			minificationDir = splitted[1];
-			appendChildElement(doc, agrigationElement, POM_OUTPUT, MINIFY_OUTPUT_DIRECTORY + minificationDir + file + MINIFY_FILE_EXT);
+			String minificationDir = splitted[1];
+			appendChildElement(doc, agrigationElement, POM_OUTPUT, MINIFY_OUTPUT_DIRECTORY + minificationDir + file + DOT_MIN_DOT + extension);
 		}
 		configList.add(aggregationsElement);
 	}
@@ -1117,10 +1129,12 @@ public class Build extends DynamicParameterAction implements Constants {
 		configList.add(createElement(doc, POM_LINE_BREAK, POM_LINE_MAX_COL_COUNT));
 		
 		Element excludesElement = doc.createElement(POM_EXCLUDES);
-		appendChildElement(doc, excludesElement, POM_EXCLUDE, POM_EXCLUDE_CSS);
+//		appendChildElement(doc, excludesElement, POM_EXCLUDE, POM_EXCLUDE_CSS);
 		appendChildElement(doc, excludesElement, POM_EXCLUDE, POM_EXCLUDE_JS);
 		appendChildElement(doc, excludesElement, POM_EXCLUDE, POM_EXCLUDE_MIN_JS);
 		appendChildElement(doc, excludesElement, POM_EXCLUDE, POM_EXCLUDE_MINIFIED_JS);
+		appendChildElement(doc, excludesElement, POM_EXCLUDE, POM_EXCLUDE_MIN_CSS);
+		appendChildElement(doc, excludesElement, POM_EXCLUDE, POM_EXCLUDE_MINIFIED_CSS);
 		configList.add(excludesElement);
 	}
 	

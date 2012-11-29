@@ -5929,7 +5929,7 @@ color: #313131;
 }
 
 /* minification */
-.compressJs_Div {
+.compressJs_Div, .compressCss_Div {
 	height: 35px !important;
 }
 
@@ -5937,7 +5937,7 @@ color: #313131;
 	 margin-left: 29px;
     margin-right: 22px;
 }	
-.del {
+.del, .cssDel {
 	cursor: pointer;
 }
 

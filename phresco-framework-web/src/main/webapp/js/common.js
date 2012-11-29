@@ -249,6 +249,8 @@ function additionalPopup(url, title, okUrl, okLabel, form, additionalParam, show
 		data = data.concat("&");
 		data = data.concat(additionalParam);
 	}
+	
+	$(".add_errorMsg").empty();//To clear error msg
 	$('#additional_popup_body').empty();
 	$('#additional_popup_body').load(url, data); //url to render the body content for the popup
 }

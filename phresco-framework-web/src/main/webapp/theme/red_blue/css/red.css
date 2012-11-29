@@ -1590,7 +1590,7 @@ background-color: #ffffff;
 }
 
 /* minification */
-.compressJs_Div {
+.compressJs_Div, .compressCss_Div {
 	height: 35px !important;
 }
 
@@ -1598,7 +1598,7 @@ background-color: #ffffff;
 	 margin-left: 29px;
     margin-right: 22px;
 }	
-.del {
+.del, .cssDel {
 	cursor: pointer;
 }
 
@@ -1632,6 +1632,7 @@ background-color: #ffffff;
 	 padding-right: 6px !important;
 	 float : left !important;
 	 width: 140px !important;
+	 color: #333333;
 }
 
 .compressNameTextBox {

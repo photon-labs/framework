@@ -1533,7 +1533,7 @@ table tr {
 }
 
 /* minification */
-.compressJs_Div {
+.compressJs_Div, .compressCss_Div {
 	height: 35px !important;
 }
 
@@ -1541,7 +1541,7 @@ table tr {
 	 margin-left: 29px;
     margin-right: 22px;
 }	
-.del {
+.del, .cssDel {
 	cursor: pointer;
 }
 

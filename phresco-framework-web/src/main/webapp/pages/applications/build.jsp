@@ -278,15 +278,9 @@
  	}
 	
 	function popupOnOk(obj) {
-		$("#popupPage").modal('hide');
  		var okUrl = $(obj).attr("id");
 		if (okUrl === "build") {
-			/* enable text box only if any file selected for minification */
-			$('input[name="jsFileName"]').each(function () {
-				if($(this).val() !== "") {
-					$(this).attr("disabled", false);
-				}
-			});
+			$("#popupPage").modal('hide');
 			buildValidateSuccess("build", '<%= FrameworkConstants.REQ_BUILD %>');
 		} else if (okUrl === "deploy") {
 			var isChecked = $('#importSql').is(":checked");
@@ -294,6 +288,7 @@
 				$("#errMsg").html('<%= FrameworkConstants.SELECT_DB %>');
 				return false;
 			}
+			$("#popupPage").modal('hide');
 			buildValidateSuccess("deploy", '<%= FrameworkConstants.REQ_FROM_TAB_DEPLOY %>');
 		} else if (okUrl === "startServer") {
 			$("#console_div").html("Server is starting...");
@@ -303,10 +298,19 @@
 				$("#errMsg").html('<%= FrameworkConstants.SELECT_DB %>');
 				return false;
 			}
+			$("#popupPage").modal('hide');
 			readerHandlerSubmit('startServer', '<%= appId %>', '<%= FrameworkConstants.REQ_START %>', $("#generateBuildForm"), false, getBasicParams(), $("#console_div"));
 		} else if (okUrl === "minifier") {
 			var isChecked = $("#minifyAll").is(":checked");
-			if (!isChecked && isBlank($("input[name=minifyFileNames]").val())) {
+			
+			var valueAvailable;
+			$('input[name="minifyFileNames"]').each(function () {
+				if($(this).val() !== "") {
+					valueAvailable = true;
+					return false;
+				}
+			});
+			if (!isChecked && !valueAvailable) {
 				$("#errMsg").html("Please Select any option");
 			} else {
 				//To enable compress name text boxes only if it has value

@@ -1399,12 +1399,13 @@ public interface FrameworkConstants {
    String REQ_CHECKED_FILE_LIST = "jsMinCheck";
    String REQ_SELECTED_FILE_NAMES = "jsFileName";
    String REQ_MINIFIED_FILES = "minifiedFiles";
-   String REQ_MINIFY_MAP = "minifyMap";
+   String REQ_JS_MINIFY_MAP = "jsMminifyMap";
+   String REQ_CSS_MINIFY_MAP = "cssMminifyMap";
    String REQ_MINIFY = "minify";
    String REQ_MINIFICATION = "minification";
    String POM_SKIP = "skip";
    String POM_SOURCEDIR = "sourceDirectory";
-   String POM_SOURCE_DIRECTORY = "${phresco.source.directory}";
+   String POM_SOURCE_DIRECTORY = "src/main/webapp";
    String POM_OUTPUTDIR = "outputDirectory";
    String POM_OUTPUT_DIRECTORY = "${project.basedir}/do_not_checkin/target/compressed";
    String POM_FORCE = "force";
@@ -1424,7 +1425,11 @@ public interface FrameworkConstants {
    String POM_EXCLUDE_JS = "**/lib/**/*.js";
    String POM_EXCLUDE_MIN_JS = "**/*-min.js";
    String POM_EXCLUDE_MINIFIED_JS = "**/*.min.js";
+   String POM_EXCLUDE_MIN_CSS = "**/*-min.css";
+   String POM_EXCLUDE_MINIFIED_CSS = "**/*.min.css";
    String HYPEN_MIN_JS = "-min.js";
+   String HYPEN_MIN_DOT = "-min.";
+   String DOT_MIN_DOT = ".min.";
    String HYPHEN_MIN = "-min";
    String MINIFY_FILE_LOCATION = "_fileLocation";
    String FILES_TO_MINIFY = "filesToMinify";
@@ -1465,6 +1470,7 @@ public interface FrameworkConstants {
    String JAVA = "java";
    String WEB = "web";
    String JS = "js";
+   String CSS = "css";
    
    
    /* Constants for Sonar properties */ 
