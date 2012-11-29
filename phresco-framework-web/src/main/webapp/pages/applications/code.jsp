@@ -71,7 +71,8 @@
             <s:label cssClass="sonarLabelWarn" key="sonar.not.started" />
         </div>
     <% } %>
-</form> 
+</form>
+
 <div id="sonar_report" class="sonar_report">
 
 </div>
@@ -124,6 +125,7 @@ $('.control-group').addClass("valReportLbl");
         params = params.concat("validateAgainst=");
         params = params.concat(reportValue);
         loadContent('check', $('#code'), $('#sonar_report'), params);
+        showLoadingIcon();
     }
     
 	function checkObj(obj) {

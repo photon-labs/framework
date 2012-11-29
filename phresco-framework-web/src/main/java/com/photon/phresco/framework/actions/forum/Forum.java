@@ -21,14 +21,14 @@ package com.photon.phresco.framework.actions.forum;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 
+import com.photon.phresco.commons.model.Property;
 import com.photon.phresco.commons.model.User;
-import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
-import com.photon.phresco.framework.api.ProjectAdministrator;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 
 public class Forum extends FrameworkBaseAction {
@@ -43,23 +43,26 @@ public class Forum extends FrameworkBaseAction {
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method Forum.forum()");
 		}
-		
+
 		try {
+			List<Property> properties = getServiceManager().getProperties();
+			String forumUrl = "";
+			for (Property property : properties) {
+				forumUrl = property.getValue();
+			}
 			
-			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-			String serviceUrl= administrator.getJforumPath();
+			User sessionUserInfo = (User) getSessionAttribute(SESSION_USER_INFO);
+			String encodedPwd = (String) getSessionAttribute(SESSION_USER_PASSWORD);
 			
-			User user = (User)getHttpSession().getAttribute(SESSION_USER_INFO);
+			//get the user credentials from session and encoded by Base64
+			String username = sessionUserInfo.getName();
+			byte[] userNameEncoded = Base64.encodeBase64(username.getBytes());
+			String encodedUsername = new String(userNameEncoded);
 			
-			byte[] userNameEncode = Base64.encodeBase64(user.getLoginId().getBytes());
-			String encodedUsername = new String(userNameEncode);
-			getHttpRequest().setAttribute(REQ_USER_NAME, encodedUsername);
+			setReqAttribute(REQ_USER_NAME, encodedUsername);
+			setReqAttribute(REQ_PASSWORD, encodedPwd);
 			
-			String sessionPwd = (String) getHttpSession().getAttribute(SESSION_USER_PASSWORD);
-			byte[] encodedPwd = Base64.encodeBase64(sessionPwd.getBytes());
-			getHttpRequest().setAttribute(REQ_PASSWORD, encodedPwd);
-			
-			URL sonarURL = new URL(serviceUrl);
+			URL sonarURL = new URL(forumUrl);
 			HttpURLConnection connection = (HttpURLConnection) sonarURL.openConnection();
 			int responseCode = connection.getResponseCode();
 			if(responseCode != 200) {
@@ -68,14 +71,13 @@ public class Forum extends FrameworkBaseAction {
 			}
 			
 			StringBuilder sb = new StringBuilder();
-			sb.append(serviceUrl);
+			sb.append(forumUrl);
 			sb.append(JFORUM_PARAMETER_URL);
 			sb.append(JFORUM_USERNAME);
 			sb.append(encodedUsername);
 			sb.append(JFORUM_PASSWORD);
 			sb.append(encodedPwd);
-			
-			getHttpRequest().setAttribute(REQ_JFORUM_URL, sb.toString());
+			setReqAttribute(REQ_JFORUM_URL, sb.toString());
 			
 		} catch (Exception e) {
         	if (debugEnabled) {

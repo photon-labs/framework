@@ -135,6 +135,7 @@
 
 <script type="text/javascript">
 $(document).ready(function() {
+	$("#popupPage").modal('hide');
 	hideLoadingIcon();
 	
 	loadTestSuites();

@@ -196,7 +196,7 @@
 								<li class="wid_set"><a href="#" class="inactive" name="headerMenu" id="settings" additionalParam="fromPage=settings">
 								    <s:label key="lbl.hdr.settings"  theme="simple"/></a>
 								</li>
-								<li class="wid_help"><a href="#" class="inactive" name="headerMenu" id="help">
+								<li class="wid_help"><a href="#" class="inactive" name="headerMenu" id="forum">
 								    <s:label key="lbl.hdr.help"  theme="simple"/></a>
 								</li>
 							</ul>

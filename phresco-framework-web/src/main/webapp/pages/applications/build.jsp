@@ -278,6 +278,7 @@
  	}
 	
 	function popupOnOk(obj) {
+		$("#popupPage").modal('hide');
  		var okUrl = $(obj).attr("id");
 		if (okUrl === "build") {
 			/* enable text box only if any file selected for minification */

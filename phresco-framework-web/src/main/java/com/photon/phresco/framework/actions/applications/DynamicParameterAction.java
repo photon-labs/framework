@@ -463,9 +463,13 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
     
     public String validateDynamicParam() {
         try {
-        	String phrescoPluginInfoFilePath = getPhrescoPluginInfoFilePath(getGoal());
-            MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(getGoal())));
-            
+        	File infoFile = new File(getPhrescoPluginInfoFilePath(getGoal()));
+        	if (!infoFile.exists()) {
+        		setParamaterAvailable(false);
+                return SUCCESS;
+        	}
+        	
+            MojoProcessor mojo = new MojoProcessor(infoFile);
             List<Parameter> parameters = getMojoParameters(mojo, getGoal()); //getDynamicParameters(getGoal());
             if (CollectionUtils.isEmpty(parameters)) {
                 setParamaterAvailable(false);
