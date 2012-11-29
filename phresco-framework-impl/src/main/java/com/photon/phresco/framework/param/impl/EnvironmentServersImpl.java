@@ -31,8 +31,9 @@ public class EnvironmentServersImpl implements DynamicParameter, Constants {
 		PossibleValues possibleValues = new PossibleValues();
     	ApplicationInfo applicationInfo = (ApplicationInfo) paramMap.get(KEY_APP_INFO);
     	String envName = (String) paramMap.get(KEY_ENVIRONMENT);
+    	String customer = (String) paramMap.get("customerId");
     	//To search for server type in settings.xml
-    	ConfigManager configManager = new ConfigManagerImpl(new File(getSettingsPath())); 
+    	ConfigManager configManager = new ConfigManagerImpl(new File(getSettingsPath(customer))); 
     	List<Configuration> configurations = configManager.getConfigurations(envName, Constants.SETTINGS_TEMPLATE_SERVER);
     	for (Configuration configuration : configurations) {
     	    Value value = new Value();
@@ -67,7 +68,7 @@ public class EnvironmentServersImpl implements DynamicParameter, Constants {
 		 return builder;
 	 }
     
-    private String getSettingsPath() {
-    	return Utility.getProjectHome() + SETTINGS_XML;
+    private String getSettingsPath(String customer) {
+    	return Utility.getProjectHome() + customer +"-settings.xml";
     }
 }

@@ -78,10 +78,11 @@
    	List<String> projectModules = (List<String>) request.getAttribute(FrameworkConstants.REQ_PROJECT_MODULES);
     
     ApplicationInfo applicationInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_APP_INFO);
+    
     String goal = (String) request.getAttribute(FrameworkConstants.REQ_GOAL);
     String appId  = applicationInfo.getId();
     DynamicParameterAction dpm = new DynamicParameterAction();
-    MojoProcessor mojo = new MojoProcessor(new File(dpm.getPhrescoPluginInfoFilePath(goal)));
+    MojoProcessor mojo = new MojoProcessor(new File(dpm.getPhrescoPluginInfoXmlFilePath(goal, applicationInfo)));
 %>
 
 <form autocomplete="off" class="build_form form-horizontal" id="generateBuildForm">
@@ -461,14 +462,14 @@
 	var isMultiple = "";
 	var controlType = "";
 	function selectBoxOnChangeEvent(obj, currentParamKey, showHideFlag) {
-		selectBoxOnChangeEvent(obj, currentParamKey);
+		selectBoxOnChangeEvent(obj, currentParamKey, showHideFlag);
 	}
 	
 	function updateDependantValue(data) {
 		constructElements(data, pushToElement, isMultiple, controlType);
 	}
 	
-	function selectBoxOnChangeEvent(obj, currentParamKey) {
+	function selectBoxOnChangeEvent(obj, currentParamKey, showHideFlag) {
 		var selectedOption = $(obj).val();
 		$(obj).blur();//To remove the focus from the current element
 		var dependencyAttr;

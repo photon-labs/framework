@@ -213,6 +213,7 @@
 	}
     
  	function popupOnOk(obj) {
+ 		$("#popupPage").modal('hide');
  		var okUrl = $(obj).attr("id");
  		if (okUrl == "importUpdateAppln") {
  			if(validateImportAppl()) {

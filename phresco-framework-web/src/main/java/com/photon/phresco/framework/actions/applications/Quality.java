@@ -1390,7 +1390,7 @@ public class Quality extends DynamicParameterAction implements Constants {
                 StringBuilder sb = new StringBuilder();
                 sb.append(Utility.getProjectHome());
                 sb.append(appInfo.getAppDirName());
-                getHttpRequest().setAttribute(PATH,	frameworkUtil.getLoadTestDir(appInfo));
+                getHttpRequest().setAttribute(PATH,	frameworkUtil.getLoadTestReportDir(appInfo));
                 sb.append(frameworkUtil.getLoadTestReportDir(appInfo));
                    S_LOGGER.debug("test type load  test Report directory " + sb.toString());
                 File file = new File(sb.toString());
