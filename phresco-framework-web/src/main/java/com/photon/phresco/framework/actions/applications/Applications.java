@@ -38,9 +38,7 @@ import org.tmatesoft.svn.core.SVNAuthenticationException;
 import org.tmatesoft.svn.core.SVNException;
 
 import com.google.gson.Gson;
-import com.itextpdf.text.pdf.spatial.units.Fraction;
 import com.opensymphony.xwork2.Action;
-import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.ArtifactGroupInfo;
@@ -600,29 +598,33 @@ public class Applications extends FrameworkBaseAction {
         	List<ArtifactGroup> listArtifactGroup = new ArrayList<ArtifactGroup>();
         	List<DownloadInfo> selectedServerGroup = new ArrayList<DownloadInfo>();
         	List<DownloadInfo> selectedDatabaseGroup = new ArrayList<DownloadInfo>();
-        	if(jsonData !=null) {
+        	if (CollectionUtils.isNotEmpty(jsonData)) {
             	for (String string : jsonData) {
 					Gson gson = new Gson();
 					SelectedFeature obj = gson.fromJson(string, SelectedFeature.class);
 					String artifactGroupId = obj.getModuleId();
 					ArtifactGroup artifactGroupInfo = getServiceManager().getArtifactGroupInfo(artifactGroupId);
 					listArtifactGroup.add(artifactGroupInfo);
-					if(obj.getType().equals("feature")){
+					if (obj.getType().equals("feature")) {
 						selectedFeatures.add(string);
 					}
-					if(obj.getType().equals("javascript")){
+					if (obj.getType().equals("javascript")) {
 						selectedJsLibs.add(string);
 					}
-					if(obj.getType().equals("component")){
+					if (obj.getType().equals("component")) {
 						selectedComponents.add(string);
 					}
-					
 				}
         	}
         	Gson gson = new Gson();
         	
-			File filePath = new File(Utility.getProjectHome() + appInfo.getAppDirName() + File.separator
-					+ Constants.DOT_PHRESCO_FOLDER + File.separator + Constants.PHRESCO_PLUGIN_INFO_XML);
+        	StringBuilder sb = new StringBuilder(Utility.getProjectHome())
+        	.append(appInfo.getAppDirName())
+        	.append(File.separator)
+        	.append(Constants.DOT_PHRESCO_FOLDER)
+        	.append(File.separator)
+        	.append(Constants.PHRESCO_PLUGIN_INFO_XML);
+			File filePath = new File(sb.toString());
 			MojoProcessor mojo = new MojoProcessor(filePath);
 			ApplicationHandler applicationHandler = mojo.getApplicationHandler();
 			if (CollectionUtils.isNotEmpty(listArtifactGroup)) {
@@ -676,26 +678,31 @@ public class Applications extends FrameworkBaseAction {
         	appInfo.setSelectedJSLibs(selectedJsLibs);
         	appInfo.setSelectedComponents(selectedComponents);
 
-			List<String> deleteabledbs = new ArrayList<String>();
-			File oldprojectinfo = new File(Utility.getProjectHome() + getOldAppDirName() + File.separator
-					+ Constants.DOT_PHRESCO_FOLDER + File.separator + Constants.PROJECT_INFO_FILE);
-			 reader = new BufferedReader(new FileReader(oldprojectinfo));
+			StringBuilder projectInfoPath =new StringBuilder(Utility.getProjectHome())
+			.append(getOldAppDirName())
+			.append(File.separator)
+			.append(Constants.DOT_PHRESCO_FOLDER)
+			.append(File.separator)
+			.append(Constants.PROJECT_INFO_FILE);
+			
+			File oldprojectinfo = new File(projectInfoPath.toString());
+			reader = new BufferedReader(new FileReader(oldprojectinfo));
 			ProjectInfo oldProjectInfo = gson.fromJson(reader, ProjectInfo.class);
 			ApplicationInfo oldappinfos = oldProjectInfo.getAppInfos().get(0);
 			List<ArtifactGroupInfo> oldSelectedDbs = oldappinfos.getSelectedDatabases();
 			if (CollectionUtils.isNotEmpty(oldSelectedDbs)) {
+			    List<String> deletableDbs = new ArrayList<String>();
 				for (ArtifactGroupInfo artifactGroupInfo : oldSelectedDbs) {
 					String oldArtifactGroupId = artifactGroupInfo.getArtifactGroupId();
 					if (selectedDatabases.contains(oldArtifactGroupId)) {
-						checkForVersions(oldSelectedDbs, selectedDatabases, oldArtifactGroupId, deleteabledbs, appInfo);
+						checkForVersions(oldSelectedDbs, selectedDatabases, oldArtifactGroupId, deletableDbs, appInfo);
 					} else {
 						DownloadInfo downloadInfo = getServiceManager().getDownloadInfo(oldArtifactGroupId);
-						deleteabledbs.add(downloadInfo.getName());
-						deleteSqlFolder(deleteabledbs, appInfo);
+						deletableDbs.add(downloadInfo.getName());
 					}
 				}
+				deleteSqlFolder(deletableDbs, appInfo);
             }
-            
             
     		projectInfo.setAppInfos(Collections.singletonList(appInfo));
     		ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
@@ -717,7 +724,7 @@ public class Applications extends FrameworkBaseAction {
     }
 
 	private void checkForVersions(List<ArtifactGroupInfo> oldSelectedDbs, List<ArtifactGroupInfo> selectedDatabases,
-			String oldArtifactGroupId, List<String> deleteabledbs, ApplicationInfo appInfo) throws PhrescoException {
+			String oldArtifactGroupId, List<String> deletableDbs, ApplicationInfo appInfo) throws PhrescoException {
 		try {
 			for (ArtifactGroupInfo artifactGroupInfo : selectedDatabases) {
 				List<String> artifactInfoIds = artifactGroupInfo.getArtifactInfoIds();
@@ -729,11 +736,10 @@ public class Applications extends FrameworkBaseAction {
 							List<ArtifactInfo> versions = downloadInfo.getArtifactGroup().getVersions();
 							for (ArtifactInfo artifactInfo : versions) {
 								String deleteVersion = "/" + downloadInfo.getName() + "/" + artifactInfo.getVersion();
-								deleteabledbs.add(deleteVersion);
+								deletableDbs.add(deleteVersion);
 							}
 						}
 					}
-					 deleteSqlFolder(deleteabledbs, appInfo);
 				}
 			}
 		} catch (PhrescoException e) {

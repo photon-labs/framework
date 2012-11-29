@@ -396,14 +396,9 @@
    		
    		checkDownloadInfoForDatabase();
    		
-   		
-   		$('#features').click(function () {
-   			
-   			featuresPage();
-   		});
-   		
 		$("#name").focus();
         //	changeStyle("appinfo");
+        
         $("input[name='applicationType']").click(function() {
             changeApplication();
         });
@@ -593,7 +588,6 @@
 		$('<div style="color: #000000;" ><input class="check techCheck" type="checkbox" name="'+parentValue+'" value="' + text + '"style="margin-right:5%;">'+ text +'</div>').appendTo(obj);
 	}
 
-	
 	function accordionClick(thisObj, currentChkBoxObj) {
 		var _tempIndex = $('.siteaccordion').index(thisObj);
 			
@@ -611,5 +605,4 @@
 		var params = getBasicParams();
 		loadContent('features', $('#formAppInfo'), $('#subcontainer'), params);
 	}
-	
 </script>

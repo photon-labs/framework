@@ -66,7 +66,6 @@
 			<result name="logError">/pages/errorReport.jsp</result>
 		</global-results>
 
-
         <!--  Home Actions -->
         <action name="home" method="view" class="com.photon.phresco.framework.actions.home.Home">
             <result name="home">/pages/home/videoholder.jsp</result>
@@ -171,11 +170,7 @@
             <result type="json" />
         </action> -->
        
-        <action name="previous" method="editApplication" class="com.photon.phresco.framework.actions.applications.Applications">
-            <result name="appinfo">/pages/applications/appinfo.jsp</result>
-        </action>
-        
-		<!-- <action name="getServers" method="fetchServers" class="com.photon.phresco.framework.actions.applications.Applications">
+        <!-- <action name="getServers" method="fetchServers" class="com.photon.phresco.framework.actions.applications.Applications">
 			<result type="json"/>
         </action>
         
@@ -184,18 +179,20 @@
         </action> -->
         
         <action name="finish" method="update" class="com.photon.phresco.framework.actions.applications.Applications">
-          <result name="updateApplication">/pages/projects/list.jsp</result>
+          	<result name="updateApplication">/pages/projects/list.jsp</result>
         </action>
         
         <action name="features" method="features" class="com.photon.phresco.framework.actions.applications.Features">
             <result name="features">/pages/applications/feature/features.jsp</result>
-            <result name="features_twoClm">/pages/applications/features_twoClm.jsp</result>
-            <result name="features_threeClm">/pages/applications/features_threeClm.jsp</result>
             <result type="json" />
         </action>
         
         <action name="listFeatures" method="listFeatures" class="com.photon.phresco.framework.actions.applications.Features">
-          <result name="featuresList">/pages/applications/feature/list.jsp</result>
+			<result name="featuresList">/pages/applications/feature/list.jsp</result>
+        </action>
+        
+        <action name="showFeatureConfigPopup" method="showFeatureConfigPopup" class="com.photon.phresco.framework.actions.applications.Features">
+          	<result name="success">/pages/applications/feature/list.jsp</result>
         </action>
         
         <!-- <action name="checkDependency" method="checkDependency" class="com.photon.phresco.framework.actions.applications.Features">

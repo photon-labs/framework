@@ -17,11 +17,13 @@
   limitations under the License.
   ###
   --%>
+
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.util.List" %>
 
 <%@ page import="org.apache.commons.collections.CollectionUtils" %>
+<%@ page import="org.apache.commons.lang.StringUtils"%>
 
 <%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
 <%@ page import="com.photon.phresco.commons.model.ArtifactGroup"%>
@@ -57,7 +59,7 @@
 				<div class="mfbox siteinnertooltiptxt">
 					<%
 						String desc = artifactGroup.getDescription();
-						if(desc!=null && !desc.isEmpty()){
+						if (StringUtils.isNotEmpty(desc)){
 					%>
 					    <div class="scrollpanel">
 				        <section class="scrollpanel_inner">

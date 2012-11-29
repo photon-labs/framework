@@ -80,14 +80,16 @@ function clickMenu(menu, tag, form, params) {
 		inActivateAllMenu(menu);
 		activateMenu($(this));
 		var selectedMenu = $(this).attr("id");
-		if (params === undefined || isBlank(params)) {
-			params = "";
-		} 
-		var additionalParam = $(this).attr('additionalParam');
-		if (additionalParam !== undefined && !isBlank(additionalParam)) {
-			params +=  '&'  + additionalParam;
+		if (selectedMenu != "appInfo" && selectedMenu != "features") {
+			if (params === undefined || isBlank(params)) {
+				params = "";
+			}
+			var additionalParam = $(this).attr('additionalParam');
+			if (additionalParam !== undefined && !isBlank(additionalParam)) {
+				params +=  '&'  + additionalParam;
+			}
+			loadContent(selectedMenu, form, tag, params);
 		}
-		loadContent(selectedMenu, form, tag, params);
 	});
 }
 
@@ -109,6 +111,7 @@ function loadContent(pageUrl, form, tag, additionalParams, callSuccessEvent, aja
 		url : pageUrl,
 		data : params,
 		type : "POST",
+		cache : false,
 		success : function(data) {
 			loadData(data, tag, pageUrl, callSuccessEvent, callbackFunction);
 		},
