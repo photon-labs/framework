@@ -42,11 +42,7 @@
 <% } %>
 	
 <script>
-	/* var localstore = $("link[title='phresco']").attr("href");
-	localStorage["color"] =localstore; */
-	
 	$(document).ready(function() {
-		alert("localStorage             " + localStorage["color"]);
 		hideLoadingIcon();
 	    reloadIframe();
 	    $(".styles").click(function() {
@@ -78,10 +74,6 @@
 	    %> 
 	    
 	    $('iframe').attr("src", source);
-	    
-// 	    $('iframe').load(function() {
-// 	        $(".loadingIcon").hide();
-// 	    });
 	}
 	
 </script>
