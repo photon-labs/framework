@@ -5391,9 +5391,11 @@ a[id='androidSigning']:hover {
 
 /*minification*/
 .jsmin-span {
-	color:#000;
-	vertical-align: top;
-	padding-left: 6px;
+	color:#000 !important;
+	vertical-align: top !important;
+	float: none !important;
+	margin-left: 0px !important;
+	padding-left: 6px !important;
 }
 
 #jsErrMsg {
@@ -5424,8 +5426,9 @@ a[id='androidSigning']:hover {
 }
 
 .minifyAddIcon {
-	float: left; 
-	margin-left:4px;
+	float: left;
+	margin-left:17px; 
+	margin-right:17px;
 	cursor : pointer;
 }
 
@@ -5439,7 +5442,7 @@ a[id='androidSigning']:hover {
 #compNameText {
 	float:left;
 	width:150px; 
-	margin-right:10px;
+	margin-right:26px;
 }
 
 .ciTwoLineLbl {
@@ -5926,4 +5929,40 @@ color: #313131;
 }
 .mfbox .header-background tr th {
 	border: none;
+
+/* minification */
+.compressJs_Div {
+	height: 35px !important;
+}
+
+.minifyLabel {
+	 margin-left: 29px;
+    margin-right: 22px;
+}	
+.del {
+	cursor: pointer;
+}
+
+.legendLbl {
+	font-weight: bold;
+	color: #000;
+}
+
+.modal-header {
+	-webkit-border-radius:5px 5px 0px 0px;
+}
+
+.legendHdr {
+	margin-left: 7px;
+}
+
+.compressNameLbl {
+	 padding-right: 6px !important; 
+	 float : left !important;
+	 width: 140px !important;
+}
+
+.compressNameTextBox {
+	float: left !important;
+ 	width: 178px !important;
 }
