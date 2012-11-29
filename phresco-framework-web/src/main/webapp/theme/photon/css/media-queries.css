@@ -72,7 +72,7 @@ Width <= 1024
      }
      
      .custom_features_wrapper_right {
-        border-radius: 6px 6px 6px 6px;
+        border-radius: 12px 12px 6px 6px;
         float: right;
         height: 73.5%;
         /*margin: 1% 1% 1% 0;*/
@@ -568,7 +568,7 @@ Width size <= 1024
      }
      
      .custom_features_wrapper_right {
-        border-radius: 6px 6px 6px 6px;
+        border-radius: 12px 12px 6px 6px;
         float: right;
         height: 79.5%;
         /*margin: 1% 1% 1% 0;*/
@@ -1006,7 +1006,7 @@ Width >= 1025 and < 1151
      }
      
      .custom_features_wrapper_right {
-        border-radius: 6px 6px 6px 6px;
+        border-radius: 12px 12px 6px 6px;
         float: right;
         height: 73.5%;
         /*margin: 1% 1% 1% 0;*/
@@ -1106,7 +1106,7 @@ Width >= 1152 and < 1280
      }
      
      .custom_features_wrapper_right {
-        border-radius: 6px 6px 6px 6px;
+        border-radius: 12px 12px 6px 6px;
         float: right;
         height: 73.5%;
         /*margin: 1% 1% 1% 0;*/
@@ -1454,7 +1454,7 @@ Width <= 1280 and height <= 800
      }
      
      .custom_features_wrapper_right {
-        border-radius: 6px 6px 6px 6px;
+        border-radius: 12px 12px 6px 6px;
         float: right;
         height: 73.5%;
         /*margin: 1% 1% 1% 0;*/
@@ -1915,7 +1915,7 @@ Width >= 1280 and height >= 800
      }
      
      .custom_features_wrapper_right {
-        border-radius: 6px 6px 6px 6px;
+        border-radius: 12px 12px 6px 6px;
         float: right;
         height: 79.5%;
         /*margin: 1% 1% 1% 0;*/
