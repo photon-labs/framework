@@ -42,7 +42,10 @@
 	String projectLocation = (String) request.getAttribute(FrameworkConstants.REQ_PROJECT_LOCATION);
 	String fileTypes = (String) request.getAttribute(FrameworkConstants.FILE_TYPES);
 	String fileorfolder = (String) request.getAttribute(FrameworkConstants.FILE_BROWSE);
-	
+	String from = (String) request.getAttribute(FrameworkConstants.REQ_FROM);
+	String compressName = (String) request.getAttribute(FrameworkConstants.REQ_COMPRESS_NAME);
+	String minifiedFiles = (String) request.getAttribute(FrameworkConstants.REQ_MINIFIED_FILES);
+
 	boolean isCertAvailable = false;
 	if (request.getAttribute(FrameworkConstants.REQ_RMT_DEP_IS_CERT_AVAIL) != null) {
 		isCertAvailable = (Boolean) request.getAttribute(FrameworkConstants.REQ_RMT_DEP_IS_CERT_AVAIL);
@@ -100,7 +103,9 @@
 				collapseSpeed: 1000,
 				multiFolder: true,
 				fileTypes: '<%= fileTypes %>',
-				fileOrFolder: '<%= fileorfolder %>'
+				fileOrFolder: '<%= fileorfolder %>',
+				from: '<%= from %>',
+				minifiedFiles: '<%= minifiedFiles %>'
 			}, function(file) {
 				$('#browseSelectedLocation').val(file);
 			});
@@ -114,6 +119,10 @@
 			}
 		%>
 		
+		//To update compressed name in text box if it exists
+		<% if (FrameworkConstants.REQ_MINIFICATION.equals(from)) { %>
+			$("#compressName").val('<%= compressName %>');
+		<% } %>
 	});
 		
 	function checkObj(obj) {
@@ -121,6 +130,43 @@
 			return "";
 		} else {
 			return obj;
+		}
+	}
+	
+	function showParentPopupPage() {
+		setTimeout(function () {
+			$('#popupPage').modal('show');
+	    }, 600);
+	}
+	
+	function add_popupOnOk(obj) {
+		if ($(obj).attr("id") === "filesToMinify") {
+			if ($("input[name=filesToMinify]:checked").size() !== 0 && $("#compressName").val() != "") {
+				$("#add_errorMsg").empty();
+				$('#additionalPopup').modal('hide');
+				showParentPopupPage();
+				var params = "";
+		    	if (!isBlank($('form').serialize())) {
+		    		params = $('form').serialize() + "&";
+		    	}
+		    	params = params.concat("browseLocation=");
+		    	params = params.concat($("#browseSelectedLocation").val());
+		    	params = params.concat("&compressName=");
+		    	params = params.concat($("#compressName").val());
+		    	
+		    	loadContent('filesToMinify', '', '', params, true);
+			} else {
+				if ($("input[name=filesToMinify]:checked").size() == 0) {
+					$(".add_errorMsg").html("Select atleast one file");					
+				} else {
+					$(".add_errorMsg").html("Enter Compress Name");
+				} 
+				
+			}	
+		} else {
+			$('#additionalPopup').modal('hide');
+			showParentPopupPage();
+			$('#fileLocation').val($('#browseSelectedLocation').val());			
 		}
 	}
 </script>

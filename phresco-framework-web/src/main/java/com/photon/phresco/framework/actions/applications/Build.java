@@ -43,13 +43,13 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.Commandline;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 import com.google.gson.Gson;
 import com.photon.phresco.commons.model.ApplicationInfo;
@@ -77,6 +77,7 @@ import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.TechnologyTypes;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.android.AndroidProfile;
+import com.phresco.pom.exception.PhrescoPomException;
 import com.phresco.pom.model.Plugin;
 import com.phresco.pom.model.PluginExecution;
 import com.phresco.pom.model.PluginExecution.Configuration;
@@ -133,12 +134,14 @@ public class Build extends DynamicParameterAction implements Constants {
 			.synchronizedMap(new HashMap<String, List<String>>(8));
 	
 	/* minify */
-	private String fileType = null;
-	private String fileorfolder = null;
-	private String selectedJs = null;
-	private String jsFinalName = null;
-	private String browseLocation = null;
-	private String fileLocation = null;
+	private String minifyAll = "";
+	private String selectedFilesToMinify = "";
+	private String compressName = "";
+	private List<String> minifyFileNames = null;
+	private String minifiedFiles = "";
+	private String fileType = "";
+	private String fileorfolder = "";
+	private String browseLocation = "";
 	
 	//iphone family
 	private String family = ""; 
@@ -951,113 +954,174 @@ public class Build extends DynamicParameterAction implements Constants {
 	}
 
 	/* minification  */
-	public String jsFileBrowser() {
-		try {
-			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-	        Project project = administrator.getProject(projectCode);
-	        String technology = project.getApplicationInfo().getTechInfo().getVersion();
-	        getHttpRequest().setAttribute(REQ_TECHNOLOGY, technology);
-			getHttpRequest().setAttribute(FILE_TYPES, fileType);
-			getHttpRequest().setAttribute(FILE_BROWSE, fileorfolder);
-			String projectLocation = Utility.getProjectHome() + projectCode;
-			getHttpRequest().setAttribute(REQ_PROJECT_LOCATION, projectLocation.replace(File.separator, FORWARD_SLASH));
-			getHttpRequest().setAttribute(REQ_PROJECT_CODE, projectCode);
-			getHttpRequest().setAttribute(REQ_BUILD_FROM, getHttpRequest().getParameter(REQ_BUILD_FROM));
-			getHttpRequest().setAttribute(REQ_COMPRESS_NAME,getHttpRequest().getParameter(REQ_COMPRESS_NAME));
-			getHttpRequest().setAttribute(REQ_SELECTED_FILES,getHttpRequest().getParameter(REQ_SELECTED_FILES));
-		} catch (Exception e){
-			S_LOGGER.error("Entered into catch block of  Build.jsFileBrowser()"	+ FrameworkUtil.getStackTraceAsString(e));
-		}
-		return SUCCESS;
-	}
-	
-	public String selectJsFilesToMinify() {
-		try {
-			String[] jsFiles = getHttpRequest().getParameterValues(REQ_CHECKED_FILE_LIST);
-			StringBuilder sb = new StringBuilder();
-			String sep = "";
-			for (String jsFile : jsFiles) {
-				sb.append(sep);
-				sb.append(jsFile);
-			    sep = ",";
+	public String minifyPopup() throws PhrescoException, PhrescoPomException {
+		ApplicationInfo applicationInfo = getApplicationInfo();
+		String pomPath = getAppDirectoryPath(applicationInfo) + File.separator + POM_FILE;
+		PomProcessor pomProcessor = new PomProcessor(new File(pomPath));
+		com.phresco.pom.model.Plugin.Configuration pluginConfig = pomProcessor.getPlugin(MINIFY_PLUGIN_GROUPID,MINIFY_PLUGIN_ARTFACTID).getConfiguration();
+		if (pluginConfig != null) {
+			List<Element> elements = pluginConfig.getAny();
+			if (elements != null) {
+				for (Element element : elements) {
+					includesFiles(element, applicationInfo);
+				}
 			}
-
-			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-	        Project project = administrator.getProject(projectCode);
-	        String techId = project.getApplicationInfo().getTechInfo().getVersion();
-	        StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-	        builder.append(project.getApplicationInfo().getCode());
-	        getHttpRequest().setAttribute(REQ_BUILD_FROM, getHttpRequest().getParameter(REQ_BUILD_FROM));
-	        getHttpRequest().setAttribute(REQ_TECHNOLOGY, techId);
-	        setSelectedJs(sb.toString());
-		} catch (Exception e){
-			S_LOGGER.error("Entered into catch block of  Build.selectJsFilesToMinify()"	+ FrameworkUtil.getStackTraceAsString(e));
 		}
+		
+		return SUCCESS;
+	}
+	
+	private void includesFiles(Element element, ApplicationInfo applicationInfo) {
+		try {
+			Map<String, Map<String, String>> map = new HashMap<String, Map<String, String>>();
+			String opFileLoc = "";
+			if (POM_AGGREGATIONS.equals(element.getNodeName())) {
+				NodeList aggregationList = element.getElementsByTagName(POM_AGGREGATION);
+				for (int i = 0; i < aggregationList.getLength(); i++) {
+					Element childNode = (Element) aggregationList.item(i);
+					NodeList includeList = childNode.getElementsByTagName(POM_INCLUDES).item(0).getChildNodes();
+					StringBuilder sb = new StringBuilder(); 
+					String sep = "";
+					for (int j = 0; j < includeList.getLength()-1; j++) {
+						Element include = (Element) includeList.item(j);
+						String file = include.getTextContent().substring(include.getTextContent().lastIndexOf("/")+1);
+						sb.append(sep);
+						sb.append(file);
+						sep = COMMA;
+					}
+					Element outputElement = (Element) childNode.getElementsByTagName(POM_OUTPUT).item(0);
+					String opFileName = outputElement.getTextContent().substring(outputElement.getTextContent().lastIndexOf("/")+1);
+					String compressName = opFileName.substring(0, opFileName.indexOf("."));
+
+					opFileLoc = outputElement.getTextContent().substring(0, outputElement.getTextContent().lastIndexOf("/")+1);
+					opFileLoc = opFileLoc.replace(MINIFY_OUTPUT_DIRECTORY, getAppDirectoryPath(applicationInfo).replace(File.separator, FORWARD_SLASH));
+					Map<String, String> valuesMap = new HashMap<String, String>();
+					valuesMap.put(sb.toString().replace(HYPHEN_MIN, ""), opFileLoc);
+					map.put(compressName, valuesMap);
+				}
+			}
+			getHttpRequest().setAttribute(REQ_MINIFY_MAP, map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public String minifyBrowseFileTree() throws PhrescoException {
+		setReqAttribute(FILE_TYPES, getFileType());
+		setReqAttribute(FILE_BROWSE, getFileOrFolder());
+		setReqAttribute(REQ_FROM, getFrom());
+		setReqAttribute(REQ_COMPRESS_NAME, getCompressName());
+		setReqAttribute(REQ_MINIFIED_FILES, getMinifiedFiles());
+		ApplicationInfo applicationInfo = getApplicationInfo();
+		setReqAttribute(REQ_PROJECT_LOCATION, getAppDirectoryPath(applicationInfo).replace(File.separator, FORWARD_SLASH));
 
 		return SUCCESS;
 	}
 	
-	private void minification(){
+	public String selectFilesToMinify() {
+		String[] selectedFiles = getHttpRequest().getParameterValues(FILES_TO_MINIFY);
+		StringBuilder sb = new StringBuilder();
+		String sep = "";
+		for (String selectedFile : selectedFiles) {
+			sb.append(sep);
+			sb.append(selectedFile);
+		    sep = ",";
+		}
+		setSelectedFilesToMinify(sb.toString());
+		
+		return SUCCESS;
+	}
+	
+	public String doMinification() {
 		try {
-			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-			Project project = administrator.getProject(projectCode);
-			
-			StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-	        builder.append(project.getApplicationInfo().getCode());
-	        File systemPath = new File(builder.toString() + File.separator + POM_FILE);
-	        
-	        PomProcessor processor = new PomProcessor(systemPath);
-	        DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
+			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+			ApplicationInfo applicationInfo = getApplicationInfo();
+			ProjectInfo projectInfo = getProjectInfo();
+			String pomPath = Utility.getProjectHome() + File.separator + applicationInfo.getAppDirName() + File.separator + POM_FILE;
+			PomProcessor pomProcessor = new PomProcessor(new File(pomPath));
+			DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
 			DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
 			Document doc = docBuilder.newDocument();
 			List<Element> configList = new ArrayList<Element>();
-			
-			String[] jsFileNames = getHttpRequest().getParameterValues(REQ_SELECTED_FILE_NAMES);
-
-			if(!ArrayUtils.isEmpty(jsFileNames)) {
-				configList.add(createElement(doc, POM_SOURCEDIR, POM_SOURCE_DIRECTORY));
-				configList.add(createElement(doc, POM_OUTPUTDIR, POM_OUTPUT_DIRECTORY));
-				configList.add(createElement(doc, POM_FORCE, POM_VALUE_TRUE));
-				configList.add(createElement(doc, POM_JS_WARN, POM_VALUE_FALSE));
-				configList.add(createElement(doc, POM_NO_SUFFIX, POM_VALUE_TRUE));
-				configList.add(createElement(doc, POM_LINE_BREAK, POM_LINE_MAX_COL_COUNT));
-				
-				Element excludesElement = doc.createElement(POM_EXCLUDES);
-				appendChildElement(doc, excludesElement, POM_EXCLUDE, POM_EXCLUDE_CSS);
-				appendChildElement(doc, excludesElement, POM_EXCLUDE, POM_EXCLUDE_JS);
-				configList.add(excludesElement);
-				
-				Element aggregationsElement = doc.createElement(POM_AGGREGATIONS);
-				
-				for (String jsFileName : jsFileNames) {
-					String csvJsFile = getHttpRequest().getParameter(jsFileName);
-					List<String> jsFiles = Arrays.asList(csvJsFile.split("\\s*,\\s*"));
-				
-					Element agrigationElement = appendChildElement(doc, aggregationsElement, POM_AGGREGATION, null);
-					appendChildElement(doc, agrigationElement, POM_INPUTDIR, POM_INPUT_DIRECTORY);
-					Element includesElement = doc.createElement(POM_INCLUDES);
-					for (String jsFile : jsFiles) {
-						appendChildElement(doc, includesElement, POM_INCLUDE, "**/" + jsFile);
-						agrigationElement.appendChild(includesElement);
-					}
-					String[] splitted = fileLocation.split(projectCode);
-					String minificationDir = "";
-					minificationDir = splitted[1];
-					appendChildElement(doc, agrigationElement, POM_OUTPUT, MINIFY_OUTPUT_DIRECTORY + minificationDir + jsFileName + MINIFY_FILE_EXT);
+			List<String> files = getMinifyFileNames();
+			createExcludesTagInPom(doc, configList);
+			if (Boolean.parseBoolean(getMinifyAll()) && CollectionUtils.isEmpty(files)) { // Only Minify all is selected
+				configList.add(createElement(doc, POM_OUTPUTDIR, POM_SOURCE_DIRECTORY));
+			} else if (CollectionUtils.isNotEmpty(files)) {
+				String dynamicIncludeDir = "";
+				if (Boolean.parseBoolean(getMinifyAll())) {//if Minify all is selected
+					dynamicIncludeDir = POM_SOURCE_DIRECTORY;
+					configList.add(createElement(doc, POM_OUTPUTDIR, POM_SOURCE_DIRECTORY));
+				} else {//if Minify all not is selected
+					dynamicIncludeDir = POM_OUTPUT_DIRECTORY;
+					configList.add(createElement(doc, POM_OUTPUTDIR, POM_OUTPUT_DIRECTORY));
 				}
-				configList.add(aggregationsElement);
-		        
-			} else {
-				configList.add(createElement(doc, POM_SKIP, POM_VALUE_TRUE));
+				createAggregationTagInPom(applicationInfo, doc, configList, files, dynamicIncludeDir);
 			}
-			processor.addConfiguration(MINIFY_PLUGIN_GROUPID, MINIFY_PLUGIN_ARTFACTID, configList);
-			processor.save();
+			pomProcessor.addConfiguration(MINIFY_PLUGIN_GROUPID, MINIFY_PLUGIN_ARTFACTID, configList);
+			pomProcessor.save();
 			
+			String workingDirectory = getAppDirectoryPath(applicationInfo);
+			
+			BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.MINIFY, null, workingDirectory);
+			setSessionAttribute(getAppId() + REQ_MINIFY, reader);
+			setReqAttribute(REQ_APP_ID, getAppId());
+			setReqAttribute(REQ_ACTION_TYPE, REQ_MINIFY);
 		} catch (Exception e) {
 				S_LOGGER.error("Entered into catch block of Build.minification()"
 						+ FrameworkUtil.getStackTraceAsString(e));
 				new LogErrorReport(e, "Building ");
 			}
+		
+		return SUCCESS;
+	}
+
+	/**
+	 * @param applicationInfo
+	 * @param doc
+	 * @param configList
+	 * @param files
+	 * @param dynamicIncludeDir
+	 */
+	private void createAggregationTagInPom(ApplicationInfo applicationInfo, Document doc, List<Element> configList, List<String> files,
+			String dynamicIncludeDir) {
+		Element aggregationsElement = doc.createElement(POM_AGGREGATIONS);
+		for (String file : files) {
+			String csvJsFile = getHttpRequest().getParameter(file);
+			List<String> jsFiles = Arrays.asList(csvJsFile.split("\\s*,\\s*"));
+			Element agrigationElement = appendChildElement(doc, aggregationsElement, POM_AGGREGATION, null);
+			appendChildElement(doc, agrigationElement, POM_INPUTDIR, dynamicIncludeDir);
+			Element includesElement = doc.createElement(POM_INCLUDES);
+			for (String jsFile : jsFiles) {
+				String[] fileName = jsFile.split("\\.");
+				appendChildElement(doc, includesElement, POM_INCLUDE, "**/" + fileName[0] + HYPEN_MIN_JS);
+				agrigationElement.appendChild(includesElement);
+			}
+			String location = getHttpRequest().getParameter(file + MINIFY_FILE_LOCATION);
+			String[] splitted = location.split(applicationInfo.getAppDirName());
+			String minificationDir = "";
+			minificationDir = splitted[1];
+			appendChildElement(doc, agrigationElement, POM_OUTPUT, MINIFY_OUTPUT_DIRECTORY + minificationDir + file + MINIFY_FILE_EXT);
+		}
+		configList.add(aggregationsElement);
+	}
+
+	/**
+	 * @param doc
+	 * @param configList
+	 */
+	private void createExcludesTagInPom(Document doc, List<Element> configList) {
+		configList.add(createElement(doc, POM_SOURCEDIR, POM_SOURCE_DIRECTORY));
+		configList.add(createElement(doc, POM_FORCE, POM_VALUE_TRUE));
+		configList.add(createElement(doc, POM_JS_WARN, POM_VALUE_FALSE));
+		configList.add(createElement(doc, POM_LINE_BREAK, POM_LINE_MAX_COL_COUNT));
+		
+		Element excludesElement = doc.createElement(POM_EXCLUDES);
+		appendChildElement(doc, excludesElement, POM_EXCLUDE, POM_EXCLUDE_CSS);
+		appendChildElement(doc, excludesElement, POM_EXCLUDE, POM_EXCLUDE_JS);
+		appendChildElement(doc, excludesElement, POM_EXCLUDE, POM_EXCLUDE_MIN_JS);
+		appendChildElement(doc, excludesElement, POM_EXCLUDE, POM_EXCLUDE_MINIFIED_JS);
+		configList.add(excludesElement);
 	}
 	
 	private Element createElement(Document doc, String elementName, String textContent) {
@@ -1563,36 +1627,12 @@ public class Build extends DynamicParameterAction implements Constants {
 		this.fileorfolder = fileorfolder;
 	}
 	
-	public String getSelectedJs() {
-		return selectedJs;
-	}
-
-	public void setSelectedJs(String selectedJs) {
-		this.selectedJs = selectedJs;
-	}
-
-	public String getJsFinalName() {
-		return jsFinalName;
-	}
-
-	public void setJsFinalName(String jsFinalName) {
-		this.jsFinalName = jsFinalName;
-	}
-
 	public void setBrowseLocation(String browseLocation) {
 		this.browseLocation = browseLocation;
 	}
 
 	public String getBrowseLocation() {
 		return browseLocation;
-	}
-
-	public void setFileLocation(String fileLocation) {
-		this.fileLocation = fileLocation;
-	}
-
-	public String getFileLocation() {
-		return fileLocation;
 	}
 
 	public String getFamily() {
@@ -1665,5 +1705,45 @@ public class Build extends DynamicParameterAction implements Constants {
 
 	public void setFetchSql(String fetchSql) {
 		this.fetchSql = fetchSql;
+	}
+
+	public void setMinifyAll(String minifyAll) {
+		this.minifyAll = minifyAll;
+	}
+
+	public String getMinifyAll() {
+		return minifyAll;
+	}
+
+	public String getSelectedFilesToMinify() {
+		return selectedFilesToMinify;
+	}
+
+	public void setSelectedFilesToMinify(String selectedFilesToMinify) {
+		this.selectedFilesToMinify = selectedFilesToMinify;
+	}
+
+	public void setCompressName(String compressName) {
+		this.compressName = compressName;
+	}
+
+	public String getCompressName() {
+		return compressName;
+	}
+
+	public void setMinifyFileNames(List<String> minifyFileNames) {
+		this.minifyFileNames = minifyFileNames;
+	}
+
+	public List<String> getMinifyFileNames() {
+		return minifyFileNames;
+	}
+
+	public void setMinifiedFiles(String minifiedFiles) {
+		this.minifiedFiles = minifiedFiles;
+	}
+
+	public String getMinifiedFiles() {
+		return minifiedFiles;
 	}
 }

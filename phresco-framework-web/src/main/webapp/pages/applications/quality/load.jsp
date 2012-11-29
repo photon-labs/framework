@@ -47,7 +47,7 @@
 	 }
 </style>
 
-<form action="load" method="post" autocomplete="off" class="marginBottomZero">
+<form action="load" method="post" autocomplete="off" class="marginBottomZero" id="form_load">
    <!--  <div class="frame-header frameHeaderPadding btnTestPadding"> -->
      <div class="operation">
 		<input id="loadTestBtn" type="button" value="<s:text name="label.test"/>" class="btn btn-primary env_btn" additionalParam="from=load">
@@ -138,7 +138,6 @@
 	    	params = params.concat('<%= FrameworkConstants.LOAD %>');
 			params = params.concat("&testResultFile=");
 			params = params.concat(testResult);
-	           	
 	        $("#testResultDisplay").empty();
 	        loadContent('loadTestResult','', $('#testResultDisplay'), params);
 	   }    
@@ -220,8 +219,23 @@
 				showPopuploadingIcon();
 				loadContent('printAsPdf', $('#generatePdf'), $('#popup_div'), '', false);
 			} else {
+				$('#popupPage').modal('hide');
 				var params = getBasicParams();
 				progressPopupAsSecPopup(okUrl, '<%= appId %>', '<%= FrameworkConstants.LOAD %>', $("#generateBuildForm"), params);
 			}
 		}		
+		
+		function popupOnClose(obj) {
+			//var closeUrl = $(obj).attr("id");
+			//console.info("closeUrl::::"+closeUrl);
+			loadTestSuites();
+		}
+		
+		//To get the testsuites
+		function loadTestSuites() {
+			var params = getBasicParams();
+			params = params.concat("&testType=");
+			params = params.concat('<%= FrameworkConstants.LOAD%>');
+			loadContent('testType', $('#testResultDisplay'), $("#subTabcontainer"), params);
+		}
     </script>

@@ -47,22 +47,22 @@ function getBasicParamsAsJson() {
 
 function progressPopup(pageUrl, appId, actionType, form, callSuccessEvent, additionalParams, stopUrl) {
 	$('#progressPopup').modal('show');//To show the progress popup
-	$('#console_div').empty();
+	$('#popup_progress_div').empty();
 	$(".progressPopupClose").attr('id', pageUrl); // popup close action mapped to id
 	
 	if (stopUrl != undefined && !isBlank(stopUrl)) {
 		$(".popupStop").show();
 		$(".popupStop").attr('id', stopUrl); // popup stop action mapped to id
 	}
-	
-	readerHandlerSubmit(pageUrl, appId, actionType, form, callSuccessEvent, additionalParams);
+	$("#popup_progress_div").empty();
+	readerHandlerSubmit(pageUrl, appId, actionType, form, callSuccessEvent, additionalParams, $("#popup_progress_div"));
 }
 
 function progressPopupAsSecPopup(url, appId, actionType, form, additionalParams, stopUrl) {
 	setTimeout(function () {
 		$('#progressPopup').modal('show')
     }, 600);
-	$('#console_div').empty();
+	$('#popup_progress_div').empty();
 	$(".progressPopupClose").show();
 	$(".progressPopupClose").attr('id', url); // popup close action mapped to id
 	
@@ -70,8 +70,8 @@ function progressPopupAsSecPopup(url, appId, actionType, form, additionalParams,
 		$(".popupStop").show();
 		$(".popupStop").attr('id', stopUrl); // popup stop action mapped to id
 	}
-	
-	readerHandlerSubmit(url, appId, actionType, form, '', additionalParams);
+	$("#popup_progress_div").empty();
+	readerHandlerSubmit(url, appId, actionType, form, '', additionalParams, $("#popup_progress_div"));
 }
 
 function clickMenu(menu, tag, form, params) {
@@ -80,14 +80,16 @@ function clickMenu(menu, tag, form, params) {
 		inActivateAllMenu(menu);
 		activateMenu($(this));
 		var selectedMenu = $(this).attr("id");
-		if (params === undefined || isBlank(params)) {
-			params = "";
-		} 
-		var additionalParam = $(this).attr('additionalParam');
-		if (additionalParam !== undefined && !isBlank(additionalParam)) {
-			params +=  '&'  + additionalParam;
+		if (selectedMenu != "appInfo" && selectedMenu != "features") {
+			if (params === undefined || isBlank(params)) {
+				params = "";
+			}
+			var additionalParam = $(this).attr('additionalParam');
+			if (additionalParam !== undefined && !isBlank(additionalParam)) {
+				params +=  '&'  + additionalParam;
+			}
+			loadContent(selectedMenu, form, tag, params);
 		}
-		loadContent(selectedMenu, form, tag, params);
 	});
 }
 
@@ -109,6 +111,7 @@ function loadContent(pageUrl, form, tag, additionalParams, callSuccessEvent, aja
 		url : pageUrl,
 		data : params,
 		type : "POST",
+		cache : false,
 		success : function(data) {
 			loadData(data, tag, pageUrl, callSuccessEvent, callbackFunction);
 		},
@@ -209,6 +212,7 @@ function yesnoPopup(url, title, okUrl, okLabel, form, additionalParam) {
 		data = data.concat(additionalParam);
 	}
 	
+	$("#errMsg").empty();
 	$('#popup_div').empty();
 	$('#popup_div').load(url, data); //url to render the body content for the popup
 }
@@ -292,11 +296,12 @@ function loadData(data, tag, pageUrl, callSuccessEvent, callbackFunction) {
 			tag.empty();
 			tag.html(data);
 			setTimeOut();
+			hideLoadingIcon();
 		}
 	}
 }
 
-function readerHandlerSubmit(pageUrl, appId, actionType, form, callSuccessEvent, additionalParams) {
+function readerHandlerSubmit(pageUrl, appId, actionType, form, callSuccessEvent, additionalParams, progressConsoleObj) {
 	var params = getParameters(form, additionalParams);
 //	showParentPage();
 //	enableScreen();
@@ -308,7 +313,7 @@ function readerHandlerSubmit(pageUrl, appId, actionType, form, callSuccessEvent,
         success : function(data) {
         	//if (checkForUserSession(data)) {
             	$("#console_div").empty();
-            	readerHandler(data, appId, actionType, pageUrl);
+            	readerHandler(data, appId, actionType, pageUrl, progressConsoleObj);
             	if (callSuccessEvent != undefined && !isBlank(callSuccessEvent)) {
             		successEvent(pageUrl, data);
             	}
@@ -1217,5 +1222,13 @@ function hideControl(controls) {
 function showControl(controls) {
 	for (i in controls) {
 		$('#' + controls[i] + 'Control').show();
+	}
+}
+
+function changeChckBoxValue(obj) {
+	if ($(obj).is(':checked')) {
+		$(obj).val("true");
+	} else {
+		$(obj).val("false");
 	}
 }

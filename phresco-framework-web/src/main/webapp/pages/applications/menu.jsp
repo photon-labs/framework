@@ -27,6 +27,12 @@
 		loadContent("appInfo", $('#formAppMenu, #formCustomers'), $("#subcontainer"));
 		activateMenu($("#appinfo"));
 	});
+	
+	//To get the appInfo page when the appInfo tab and previous btn in features jsp is clicked
+  	function showAppInfoPage() {
+  		var params = getBasicParams();
+  		loadContent('appInfo', $('#formFeatures'), $('#subcontainer'), params);
+  	}
 </script>
 
 <%
@@ -49,10 +55,10 @@
 <nav>
 	<ul class="tabs">
 		<li>
-			<a href="#" class="active" name="appTab" id="appInfo"><s:label key="lbl.app.menu.appinfo" theme="simple"/></a>
+			<a href="#" class="active" name="appTab" id="appInfo" onclick="showAppInfoPage();"><s:label key="lbl.app.menu.appinfo" theme="simple"/></a>
 		</li>
 		<li>
-			<a href="#" class="inactive" name="appTab" id="features"><s:label key="lbl.app.menu.feature" theme="simple"/></a>
+			<a href="#" class="inactive" name="appTab" id="features" onclick="featuresPage();"><s:label key="lbl.app.menu.feature" theme="simple"/></a>
 		</li>
 		<li>
 			<a href="#" class="inactive" name="appTab" id="code"><s:label key="lbl.app.menu.code" theme="simple"/></a>

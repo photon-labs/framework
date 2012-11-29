@@ -75,7 +75,7 @@
 							<span class="siteaccordion closereg">
 								<span>
 									<input type="checkbox" id="<%= project.getId() %>" class="accordianChkBox" onclick="checkAllEvent(this, $('.<%= project.getId() %>'), false);"/>
-									<a class="vAlignSub"><%= project.getName() %></a>
+									<a class="vAlignSub" onclick="editProject('<%= project.getId() %>');"><%= project.getName() %></a>
 								</span>
 							</span>
 							<div class="mfbox siteinnertooltiptxt hideContent">
@@ -205,7 +205,15 @@
 		loadContent("loadMenu", $("#formCustomers"), $('#container'), params);
 	}
     
+    function editProject(projectId) {
+    	//showLoadingIcon();
+		var params = "projectId=";
+		params = params.concat(projectId);
+		loadContent("editProject", $("#formCustomers"), $('#container'), params);
+	}
+    
  	function popupOnOk(obj) {
+ 		$("#popupPage").modal('hide');
  		var okUrl = $(obj).attr("id");
  		if (okUrl == "importUpdateAppln") {
  			if(validateImportAppl()) {

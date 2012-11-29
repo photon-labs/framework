@@ -18,6 +18,7 @@
   ###
   --%>
 
+<%@page import="org.apache.commons.collections.CollectionUtils"%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.util.List"%>
@@ -84,7 +85,7 @@
 	    
 	<div class="features_actions">
 		<input type="button" id="previous" value="<s:text name="label.previous"/>" class="btn btn-primary" 
-			onclick="showPreviousPage();">
+			onclick="showAppInfoPage();">
 		<input id="finish" type="button" value="<s:text name="label.finish"/>"  class="btn btn-primary"
 			onclick="updateApplication();"/>
 		<input type="button" id="cancel" value="<s:text name="lbl.btn.cancel"/>" class="btn btn-primary" 
@@ -98,49 +99,47 @@
 
 <script type="text/javascript">
 <%	
-	 if(selectFeatures != null) {
-		 for(SelectedFeature features : selectFeatures) {
+	if (CollectionUtils.isNotEmpty(selectFeatures)) {
+		for (SelectedFeature features : selectFeatures) {
 %>
-		constructFeaturesDiv('<%= features.getDispName() %>', '<%= features.getDispValue() %>', '<%= features.getType() %>', '<%= features.getVersionID() %>', '<%= features.getModuleId() %>');
+			constructFeaturesDiv('<%= features.getDispName() %>', '<%= features.getDispValue() %>', '<%= features.getType() %>', '<%= features.getVersionID() %>', '<%= features.getModuleId() %>');
 <%		
 	 	}
 	}
 %>
 
 <%	
-	if(selectedModules != null) {
-			SelectedFeature obj = null;
-			for(String string : selectedModules) {
-				obj = gson.fromJson(string, SelectedFeature.class);
+	if (CollectionUtils.isNotEmpty(selectedModules)) {
+		for (String string : selectedModules) {
+			SelectedFeature obj = gson.fromJson(string, SelectedFeature.class);
 %>
-			constructFeaturesDiv('<%= obj.getDispName() %>', '<%= obj.getDispValue() %>', '<%= obj.getType() %>', '<%= obj.getVersionID() %>', '<%= obj.getModuleId() %>');
-<%		
-	}
-}
-%>
-<%	
-	if(selectedJSLibs != null) {
-			SelectedFeature obj = null;
-			for(String string : selectedJSLibs) {
-			
-			obj = gson.fromJson(string, SelectedFeature.class);
-%>
-			constructFeaturesDiv('<%= obj.getDispName() %>', '<%= obj.getDispValue() %>', '<%= obj.getType() %>', '<%= obj.getVersionID() %>', '<%= obj.getModuleId() %>');
-<%		
-       }
-}
-%>
-<%	
-	if(selectedComponents != null) {
-			SelectedFeature obj = null;
-			for(String string : selectedComponents) {
-			obj = gson.fromJson(string, SelectedFeature.class);
-%>
-			constructFeaturesDiv('<%= obj.getDispName() %>', '<%= obj.getDispValue() %>', '<%= obj.getType() %>', '<%= obj.getVersionID() %>', '<%= obj.getModuleId() %>');
+			constructFeaturesDiv('<%= obj.getDispName() %>', '<%= obj.getDispValue() %>', '<%= obj.getType() %>', '<%= obj.getVersionID() %>', '<%= obj.getModuleId() %>', true);
 <%		
 		}
-}
+	}
 %>
+<%	
+	if (CollectionUtils.isNotEmpty(selectedJSLibs)) {
+		for (String string : selectedJSLibs) {
+		    SelectedFeature obj = gson.fromJson(string, SelectedFeature.class);
+%>
+			constructFeaturesDiv('<%= obj.getDispName() %>', '<%= obj.getDispValue() %>', '<%= obj.getType() %>', '<%= obj.getVersionID() %>', '<%= obj.getModuleId() %>', true);
+<%		
+		}
+	}
+%>
+
+<%	
+	if (CollectionUtils.isNotEmpty(selectedComponents)) {
+		for (String string : selectedComponents) {
+		    SelectedFeature obj = gson.fromJson(string, SelectedFeature.class);
+%>
+			constructFeaturesDiv('<%= obj.getDispName() %>', '<%= obj.getDispValue() %>', '<%= obj.getType() %>', '<%= obj.getVersionID() %>', '<%= obj.getModuleId() %>', true);
+<%		
+		}
+	}
+%>
+
 	inActivateAllMenu($("a[name='appTab']"));
 	activateMenu($('#features'));
 
@@ -148,11 +147,6 @@
         hideLoadingIcon();
         fillHeading();
         getFeature();
-        accordion();
- 		$('#appInfo').click(function () {
-   			
-			showPreviousPage();
-   		});
     });
     
     // Function for the feature list selection
@@ -185,13 +179,18 @@
     }
     
     // Function to construct the hidden fields for selected features
-    function constructFeaturesDiv(dispName, dispValue, hiddenFieldname, hiddenFieldVersion, moduleId) {
+    function constructFeaturesDiv(dispName, dispValue, hiddenFieldname, hiddenFieldVersion, moduleId, showConfigImg) {
 		$("div[id='"+ dispName +"']").remove();
 		$("input[class='"+ dispName +"']").remove();
 		
 		$("#result").append('<input type="hidden" class = "'+dispName+'" value={"dispName":"'+dispName+'","moduleId":"'+moduleId+'","dispValue":"'+dispValue+'","versionID":"'+hiddenFieldVersion+'","type":"'+hiddenFieldname+'"} name="jsonData">');
-		$("#result").append('<div class = "'+dispName+'"id="'+dispName+'">'+dispName+' - '+dispValue+'<a href="#" id="'+dispName+'" onclick="remove(this);">&times;</a></div>');
-		
+		if (showConfigImg) {
+			$("#result").append('<div class = "'+dispName+'"id="'+dispName+'">'+dispName+' - '+dispValue+
+					'<a href="#" id="'+dispName+'" onclick="remove(this);">&nbsp;&times;</a>'+
+					'<a href="#" id="'+dispName+'" onclick="showFeatureConfigPopup(this);"><img src="images/icons/gear.png" title="Configure" style="margin-top: 5px;"/></a></div>');
+		} else {
+			$("#result").append('<div class = "'+dispName+'"id="'+dispName+'">'+dispName+' - '+dispValue+'<a href="#" id="'+dispName+'" onclick="remove(this);">&times;</a></div>');
+		}	
     }
     
     // Function to remove the final features in right tab  
@@ -214,10 +213,8 @@
     	loadContent('finish', $('#formFeatures'), $('#container'), params, false);
     }
   	
-  	//Function for to get the previous page
-  	function showPreviousPage() {
-  		var params = getBasicParams();
-  		loadContent('previous', $('#formFeatures'), $('#subcontainer'), params);
+  	function showFeatureConfigPopup() {
+  		var params = "";
+  		yesnoPopup('showFeatureConfigPopup', '<s:text name="lbl.configure"/>', 'configureFeature', '<s:text name="lbl.configure"/>', '', params);
   	}
-  	
 </script>

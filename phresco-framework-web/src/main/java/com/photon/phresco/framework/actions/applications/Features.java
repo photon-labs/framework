@@ -24,32 +24,19 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
-import com.opensymphony.xwork2.Action;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
-import com.photon.phresco.commons.model.ArtifactGroup.Type;
 import com.photon.phresco.commons.model.ArtifactGroupInfo;
-import com.photon.phresco.commons.model.ArtifactInfo;
 import com.photon.phresco.commons.model.Element;
 import com.photon.phresco.commons.model.ProjectInfo;
-import com.photon.phresco.commons.model.Technology;
 import com.photon.phresco.commons.model.TechnologyInfo;
 import com.photon.phresco.exception.PhrescoException;
-import com.photon.phresco.framework.FrameworkConfiguration;
-import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
-import com.photon.phresco.framework.api.ProjectAdministrator;
-import com.photon.phresco.framework.commons.ApplicationsUtil;
-import com.photon.phresco.framework.commons.FrameworkUtil;
-import com.photon.phresco.framework.commons.LogErrorReport;
 
 public class Features extends FrameworkBaseAction {
 	private static final long serialVersionUID = 6608382760989903186L;
@@ -156,6 +143,11 @@ public class Features extends FrameworkBaseAction {
 		}
     	return appInfo;
 	}
+	
+	public String showFeatureConfigPopup() {
+	    
+	    return SUCCESS;
+	}
 
 	public String listFeatures() throws PhrescoException {
 		List<ArtifactGroup> moduleGroups = getServiceManager().getFeatures(getCustomerId(), getTechnologyId(), getType());
@@ -165,6 +157,7 @@ public class Features extends FrameworkBaseAction {
 		
 		return APP_FEATURES_LIST;
 	}
+	
 	/*public String features1() {
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method  Features.features()");

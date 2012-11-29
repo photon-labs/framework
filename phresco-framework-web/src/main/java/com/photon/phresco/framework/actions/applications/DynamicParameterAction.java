@@ -33,6 +33,7 @@ import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Para
 import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.PhrescoDynamicLoader;
+import com.photon.phresco.util.Utility;
 
 public class DynamicParameterAction extends FrameworkBaseAction implements Constants {
 
@@ -81,7 +82,22 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 		return sb.toString();
 	}
     
-    
+	public String getPhrescoPluginInfoXmlFilePath(String goal, ApplicationInfo appInfo) throws PhrescoException {
+		StringBuilder sb = new StringBuilder(Utility.getProjectHome());
+		sb.append(appInfo.getAppDirName());
+		sb.append(File.separator);
+		sb.append(FOLDER_DOT_PHRESCO);
+		sb.append(File.separator);
+		sb.append(PHRESCO_HYPEN);
+		if (PHASE_FUNCTIONAL_TEST_WEBDRIVER.equals(goal) || PHASE_FUNCTIONAL_TEST_GRID.equals(goal)) {
+			sb.append(PHASE_FUNCTIONAL_TEST);
+		} else {
+			sb.append(goal);
+		}
+		sb.append(INFO_XML);
+		return sb.toString();
+	}
+	
 	/**
      * To get list of parameters from phresco-plugin-info.xml
      * @param applicationInfo
@@ -243,6 +259,7 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
             paramMap.putAll(getDependantParameters(dependantParameters.getParentMap(), watcherMap));
         }
         paramMap.put(DynamicParameter.KEY_APP_INFO, appInfo);
+        paramMap.put("customerId", getCustomerId());
         if (StringUtils.isNotEmpty(getReqParameter(BUILD_NUMBER))) {
         	paramMap.put(DynamicParameter.KEY_BUILD_NO, getReqParameter(BUILD_NUMBER));
         }
