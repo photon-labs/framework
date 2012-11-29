@@ -40,6 +40,7 @@
 
 package com.photon.phresco.framework.actions;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -115,7 +116,12 @@ public class Login extends FrameworkBaseAction {
                 return LOGIN_FAILURE;
             }
             setSessionAttribute(SESSION_USER_INFO, user);
-            setSessionAttribute(SESSION_USER_PASSWORD, getPassword());
+            
+            //encode the password
+            byte[] encodedPwd = Base64.encodeBase64(getPassword().getBytes());
+            String encodedString = new String(encodedPwd);
+            
+            setSessionAttribute(SESSION_USER_PASSWORD, encodedString);
         } catch (PhrescoException e) {
             setReqAttribute(REQ_LOGIN_ERROR, getText(ERROR_EXCEPTION));
 
