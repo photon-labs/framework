@@ -67,14 +67,15 @@ if(jQuery) (function($){
 			if( o.fileTypes == undefined ) o.fileTypes = '.';
 			if( o.fileOrFolder == undefined ) o.fileOrFolder = 'all';
 			if( o.tech == undefined ) o.tech = '';
-			if( o.selectedFiles == undefined ) o.selectedFiles = '';
+			if( o.minifiedFiles == undefined ) o.minifiedFiles = '';
+			if( o.from == undefined ) o.from = '';
 			$(this).each( function() {
 				
-				function showTree(c, t, fileTypes, fileOrFolder, tech, selectedFiles) {
+				function showTree(c, t, fileTypes, fileOrFolder, from, tech, minifiedFiles) {
 					$(c).addClass('wait');
 					$(".jqueryFileTree.start").remove();
 					// posting values to jqueryFileTree.jsp
-					$.post(o.script, { dir: t , restrictFileTypes: fileTypes, filesOrFolders: fileOrFolder, technology : tech, selectedFilesList : selectedFiles}, function(data) {
+					$.post(o.script, { dir: t , restrictFileTypes: fileTypes, filesOrFolders: fileOrFolder, fromPage: from, technology : tech, minifiedFilesList : minifiedFiles}, function(data) {
 						$(c).find('.start').html('');
 						$(c).removeClass('wait').append(data);
 						if( o.root == t ) $(c).find('UL:hidden').show(); else $(c).find('UL:hidden').slideDown({ duration: o.expandSpeed, easing: o.expandEasing });
@@ -92,7 +93,7 @@ if(jQuery) (function($){
 									$(this).parent().parent().find('LI.directory').removeClass('expanded').addClass('collapsed');
 								}
 								$(this).parent().find('UL').remove(); // cleanup
-								showTree( $(this).parent(), escape($(this).attr('rel').match( /.*\// )), escape(o.fileTypes), escape(o.fileOrFolder), escape(o.tech), escape(o.selectedFiles));
+								showTree( $(this).parent(), escape($(this).attr('rel').match( /.*\// )), escape(o.fileTypes), escape(o.fileOrFolder), escape(o.from), escape(o.tech), escape(o.minifiedFiles));
 								$(this).parent().removeClass('collapsed').addClass('expanded');
 							} else {
 								// Collapse
@@ -123,7 +124,7 @@ if(jQuery) (function($){
 				// Loading message
 				$(this).html('<ul class="jqueryFileTree start"><li class="wait">' + o.loadMessage + '<li></ul>');
 				// Get the initial file list
-				showTree( $(this), escape(o.root), escape(o.fileTypes), escape(o.fileOrFolder),  escape(o.tech), escape(o.selectedFiles) );
+				showTree( $(this), escape(o.root), escape(o.fileTypes), escape(o.fileOrFolder), escape(o.from), escape(o.tech), escape(o.minifiedFiles) );
 			});
 		}
 	});

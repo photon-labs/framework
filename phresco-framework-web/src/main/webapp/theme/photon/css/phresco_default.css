@@ -5572,7 +5572,7 @@ input[class*='chckBxAlign'] {
 }
 
 .form-horizontal .control-label {
-   /* width: auto !important;*/
+    width: auto !important;
     /*padding-right: 10px;*/
 }
 
@@ -5924,11 +5924,6 @@ color: #313131;
 .zebra-striped thead tr th div {
 	color: white !important;
 }
-.mfbox .header-background {
-	color: black !important;
-}
-.mfbox .header-background tr th {
-	border: none;
 
 /* minification */
 .compressJs_Div {

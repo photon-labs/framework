@@ -1394,17 +1394,19 @@ public interface FrameworkConstants {
    
    /* Minification */
    
-   String REQ_COMPRESS_NAME = "selectedJsName";
+   String REQ_COMPRESS_NAME = "compressName";
    String REQ_SELECTED_FILES = "selectedJsFiles";
    String REQ_CHECKED_FILE_LIST = "jsMinCheck";
    String REQ_SELECTED_FILE_NAMES = "jsFileName";
-   String REQ_MINIFY_MAP = "jsMap";
-   
+   String REQ_MINIFIED_FILES = "minifiedFiles";
+   String REQ_MINIFY_MAP = "minifyMap";
+   String REQ_MINIFY = "minify";
+   String REQ_MINIFICATION = "minification";
    String POM_SKIP = "skip";
    String POM_SOURCEDIR = "sourceDirectory";
-   String POM_SOURCE_DIRECTORY = "${project.basedir}/src/main/";
+   String POM_SOURCE_DIRECTORY = "${phresco.source.directory}";
    String POM_OUTPUTDIR = "outputDirectory";
-   String POM_OUTPUT_DIRECTORY = "${project.basedir}/compressed";
+   String POM_OUTPUT_DIRECTORY = "${project.basedir}/do_not_checkin/target/compressed";
    String POM_FORCE = "force";
    String POM_JS_WARN = "jswarn";
    String POM_NO_SUFFIX = "nosuffix";
@@ -1420,6 +1422,12 @@ public interface FrameworkConstants {
    String POM_EXCLUDE ="exclude";
    String POM_EXCLUDE_CSS = "**/*.css";
    String POM_EXCLUDE_JS = "**/lib/**/*.js";
+   String POM_EXCLUDE_MIN_JS = "**/*-min.js";
+   String POM_EXCLUDE_MINIFIED_JS = "**/*.min.js";
+   String HYPEN_MIN_JS = "-min.js";
+   String HYPHEN_MIN = "-min";
+   String MINIFY_FILE_LOCATION = "_fileLocation";
+   String FILES_TO_MINIFY = "filesToMinify";
    String POM_OUTPUT = "output";
    String MINIFY_OUTPUT_DIRECTORY = "${project.basedir}";
    String MINIFY_FILE_EXT = ".min.js";
@@ -1571,6 +1579,9 @@ public interface FrameworkConstants {
 		String EXCEPTION_QUALITY_FUNCTIONAL_NODE_CONNECTION = "excep.hdr.quality.functional.node.connection";
 		String EXCEPTION_QUALITY_FUNCTIONAL_HUB_LOG = "excep.hdr.quality.functional.hub.log";
 		String EXCEPTION_QUALITY_FUNCTIONAL_NODE_LOG = "excep.hdr.quality.functional.node.log";
+		String EXCEPTION_QUALITY_LOAD_TESTSUITES = "excep.hdr.quality.load.testsuites";
+		String EXCEPTION_QUALITY_LOAD_PARAMS = "excep.hdr.quality.load.params";
+		String EXCEPTION_QUALITY_LOAD_RUN = "excep.hdr.quality.load.run";
 		String EXCEPTION_BUILD_POPUP = "excep.hdr.build.popup";
 		String EXCEPTION_DEPLOY_POPUP = "excep.hdr.deploy.popup";
 		String EXCEPTION_BUILD_GENERATE = "excep.hdr.build.generate";

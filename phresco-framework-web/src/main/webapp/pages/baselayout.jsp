@@ -341,7 +341,7 @@
 			</div>
 			<div class="modal-footer">
 				<a href="#" class="btn btn-primary" data-dismiss="modal" id="popupCancel"><s:text name='lbl.btn.cancel'/></a>
-				<a href="#" class="btn btn-primary popupOk" data-dismiss="modal" id="" onClick="popupOnOk(this);" ><s:text name='lbl.btn.ok'/></a>
+				<a href="#" class="btn btn-primary popupOk" id="" onClick="popupOnOk(this);" ><s:text name='lbl.btn.ok'/></a>
 				<a href="#" class="btn btn-primary popupClose" data-dismiss="modal" id="" onClick="popupOnClose(this);"><s:text name='lbl.btn.close'/></a>
 				<div id="errMsg" class="envErrMsg"></div>
 				<img class="popuploadingIcon" id="popuploadingIcon" src="" />
@@ -355,7 +355,7 @@
 				<a class="close" data-dismiss="modal" >&times;</a>
 				<h3 id="popupTitle"><s:text name='lbl.progress'/></h3>
 			</div>
-			<div class="modal-body" id="console_div">
+			<div class="modal-body" id="popup_progress_div">
 			
 			</div>
 			<div class="modal-footer">
@@ -377,9 +377,13 @@
 			</div>
 			<div class="modal-footer">
 				<input type="text" class="xlarge javastd hideContent" id="browseSelectedLocation" name="browseLocation"/>
+				<label for="xlInput" class="labelbold compressNameLbl" id="compressNameLbl">
+					<span class="red">*</span>&nbsp;<s:text name="lbl.compress.name"/>
+				</label>
+				<input type="text" class="hideContent compressNameTextBox" id="compressName" name="compressName"/>
 				<a href="#" class="btn btn-primary" data-dismiss="modal" id="add_popupCancel" onclick="add_popupCancel();"><s:text name='lbl.btn.cancel'/></a>
-				<a href="#" class="btn btn-primary add_popupOk" data-dismiss="modal" id="" onClick="add_popupOnOk(this);" ><s:text name='lbl.btn.ok'/></a>
-				<div id="errMsg" class="envErrMsg"></div>
+				<a href="#" class="btn btn-primary add_popupOk" id="" onClick="add_popupOnOk(this);" ><s:text name='lbl.btn.ok'/></a>
+				<div id="errMsg" class="envErrMsg add_errorMsg"></div>
 				<img class="popuploadingIcon" id="popuploadingIcon" src="" />
 			</div>
 		</div>

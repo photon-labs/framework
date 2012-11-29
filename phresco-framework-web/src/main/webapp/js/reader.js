@@ -19,7 +19,7 @@
  */
 // from auto close
 var showSuccessComplete = true;
-function readerHandler(data, appId, actionType, pageUrl) {
+function readerHandler(data, appId, actionType, pageUrl, progressConsoleObj) {
 	// from auto close
 	if($.trim(data) == 'Test is not available for this project') {
 		data = '<b>Test is not available for this project</b>';
@@ -37,7 +37,7 @@ function readerHandler(data, appId, actionType, pageUrl) {
 //	   if(showSuccessComplete) {
 //		   $("#build-output").append("Successfully Completed" + '<br>');
 //	   }
-	   $('#console_div').prop('scrollTop', $('#console_div').prop('scrollHeight'));
+	   progressConsoleObj.prop('scrollTop', progressConsoleObj.prop('scrollHeight'));
 	   
 	   if(actionType == "build") {
 		   refreshTable(appId);
@@ -51,21 +51,21 @@ function readerHandler(data, appId, actionType, pageUrl) {
 				console.info('returning...');
 				return;
 			}
-			$("#console_div").append(data + '<br>');
-			$('#console_div').prop('scrollTop', $('#console_div').prop('scrollHeight')); 
-			asyncHandler(appId, actionType, pageUrl);
+			progressConsoleObj.append(data + '<br>');
+			progressConsoleObj.prop('scrollTop', progressConsoleObj.prop('scrollHeight')); 
+			asyncHandler(appId, actionType, pageUrl, progressConsoleObj);
 		}
 	});
 	
 	// if apps tab is not present proceed async handler
 	if($("a[name='appTab']").length == 0) {
-		  $("#console_div").append(data + '<br>');
-		  $('#console_div').prop('scrollTop', $('#console_div').prop('scrollHeight')); 
-		  asyncHandler(appId, actionType, pageUrl);
+		progressConsoleObj.append(data + '<br>');
+		progressConsoleObj.prop('scrollTop', progressConsoleObj.prop('scrollHeight')); 
+		  asyncHandler(appId, actionType, pageUrl, progressConsoleObj);
 	}
 }
 
-function asyncHandler(appId, actionType, pageUrl) {
+function asyncHandler(appId, actionType, pageUrl, progressConsoleObj) {
    $.ajax({
         url : 'pages/applications/reader.jsp',
         type : "POST",
@@ -82,7 +82,7 @@ function asyncHandler(appId, actionType, pageUrl) {
             		runAgainstSrcServerRunning();
             	}
             }
-            readerHandler(data, appId, actionType, pageUrl); 
+            readerHandler(data, appId, actionType, pageUrl, progressConsoleObj); 
         }
     });
 }

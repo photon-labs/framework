@@ -24,10 +24,13 @@
 <%@ page import="java.util.Map"%>
 <%@ page import="java.util.Arrays"%>
 <%@ page import="java.util.ArrayList"%>
+<%@ page import="java.io.File"%>
 
 <%@ page import="org.apache.commons.lang.StringUtils" %>
 <%@ page import="org.apache.commons.collections.CollectionUtils" %>
 <%@ page import="org.antlr.stringtemplate.StringTemplate" %>
+<%@ page import="com.photon.phresco.plugins.util.MojoProcessor"%>
+<%@ page import="com.photon.phresco.framework.actions.applications.DynamicParameterAction"%>
 
 <%@ page import="com.photon.phresco.configuration.Environment"%>
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
@@ -77,6 +80,8 @@
     ApplicationInfo applicationInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_APP_INFO);
     String goal = (String) request.getAttribute(FrameworkConstants.REQ_GOAL);
     String appId  = applicationInfo.getId();
+    DynamicParameterAction dpm = new DynamicParameterAction();
+    MojoProcessor mojo = new MojoProcessor(new File(dpm.getPhrescoPluginInfoFilePath(goal)));
 %>
 
 <form autocomplete="off" class="build_form form-horizontal" id="generateBuildForm">
@@ -140,7 +145,7 @@
 					FrameworkConstants.TYPE_PASSWORD.equalsIgnoreCase(parameter.getType()) || FrameworkConstants.TYPE_HIDDEN.equalsIgnoreCase(parameter.getType())) {
 					
 					parameterModel.setInputType(parameter.getType());
-					parameterModel.setValue(StringUtils.isNotEmpty(parameter.getValue()) ? parameter.getValue():"");
+					//parameterModel.setValue(StringUtils.isNotEmpty(parameter.getValue()) ? parameter.getValue():"");
 					
 					StringTemplate txtInputElement = FrameworkUtil.constructInputElement(parameterModel);
 	%> 	
@@ -152,7 +157,9 @@
 					String onChangeFunction = "";
 					if (StringUtils.isNotEmpty(parameter.getDependency())) {
 						//If current control has dependancy value 
-						onClickFunction = "dependancyChckBoxEvent(this, '"+ parameter.getKey() +"');";
+						List<String> dependancyList = Arrays.asList(parameter.getDependency().split(FrameworkConstants.CSV_PATTERN));
+						Parameter param = mojo.getParameter(goal, dependancyList.get(0));
+						onClickFunction = "dependancyChckBoxEvent(this, '"+ parameter.getKey() +"', '"+ param.isShow() +"');";
 						onChangeFunction = "changeChckBoxValue(this);";
 					} else {
 						onClickFunction = "changeChckBoxValue(this);";
@@ -433,7 +440,7 @@
 		params = params.concat(getSelectedEnvs());
 		params = params.concat("&DbWithSqlFiles=");
 		params = params.concat($('#DbWithSqlFiles').val()); --%>
-		readerHandlerSubmit(url, '<%= appId %>', actionType, $("#generateBuildForm"), true, getBasicParams());
+		readerHandlerSubmit(url, '<%= appId %>', actionType, $("#generateBuildForm"), true, getBasicParams(), $("#console_div"));
 	}
 	
 	function showAdvSettingsConfigure() {
@@ -446,10 +453,14 @@
 		$("input[name=buildNumber]").val('<%= buildNumber %>');
 	<% } %>
 	
+	function dependancyChckBoxEvent(obj, currentParamKey, showHideFlag) {
+		selectBoxOnChangeEvent(obj, currentParamKey, showHideFlag);
+	}
+	
 	var pushToElement = "";
 	var isMultiple = "";
 	var controlType = "";
-	function dependancyChckBoxEvent(obj, currentParamKey) {
+	function selectBoxOnChangeEvent(obj, currentParamKey, showHideFlag) {
 		selectBoxOnChangeEvent(obj, currentParamKey);
 	}
 	
@@ -493,7 +504,7 @@
 			}
 		}
 		
-	  	if ($(obj).attr("type") === 'checkbox') {
+		if ($(obj).attr("type") === 'checkbox' && showHideFlag === "false") {
 			if (!selectedOption) {
 				var previousDependencyArr = new Array();
 				previousDependencyArr = csvDependencies.split(',');
@@ -571,13 +582,13 @@
 		return dependencies;
 	}
 	
-	function changeChckBoxValue(obj) {
+	/* function changeChckBoxValue(obj) {
 		if ($(obj).is(':checked')) {
 			$(obj).val("true");
 		} else {
 			$(obj).val("false");
 		}
-	}
+	} */
 	
 	function addRow(obj) {
 		var removeIconTd = $(document.createElement('td')).attr("class", "borderForLoad");

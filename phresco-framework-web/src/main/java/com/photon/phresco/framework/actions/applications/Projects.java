@@ -77,6 +77,7 @@ public class Projects extends FrameworkBaseAction {
     private String appTechError = "";
     private String webTechError = "";
     private String statusFlag = "" ;
+    private String id = "";
 
 	/**
      * To get the list of projects
@@ -225,7 +226,24 @@ public class Projects extends FrameworkBaseAction {
 
         return s_technologyGroupMap.get(id);
     }
-
+    
+    public String editProject() {
+    	ProjectInfo projectInfo = null;
+		try {
+			ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
+			projectInfo = projectManager.getProject(getProjectId(), getCustomerId());
+			projectInfo.setId(getProjectId());
+			List<ApplicationType> layers = getServiceManager().getApplicationTypes(getCustomerId());
+	        setReqAttribute(REQ_PROJECT_LAYERS, layers);
+			setReqAttribute(REQ_PROJECT, projectInfo);
+		} catch (PhrescoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return "projectDetails";
+    	
+    }
+    
     /**
      * To create the project with the selected applications
      * @return
@@ -247,6 +265,29 @@ public class Projects extends FrameworkBaseAction {
         return list();
     }
 
+    /**
+     * To update the project with the selected applications
+     * @return
+     */
+    public String updateProject() {
+        if (s_debugEnabled) {
+            S_LOGGER.debug("Entering Method  Applications.updateProject()");
+        }
+
+        try {
+        	ProjectInfo projectInfo = createProjectInfo();
+        	projectInfo.setId(getId());
+            PhrescoFrameworkFactory.getProjectManager().update(projectInfo, getServiceManager(), null);
+        } catch (PhrescoException e) {
+            if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Projects.updateProject()" + FrameworkUtil.getStackTraceAsString(e));
+            }
+            return showErrorPopup(e, getText(EXCEPTION_PROJECT_UPDATE));
+        }
+
+        return list();
+    }
+    
     /**
      * To get the projectInfo with the selected application infos
      * @return
@@ -591,5 +632,13 @@ public class Projects extends FrameworkBaseAction {
 
 	public void setSelectedAppInfos(List<ApplicationInfo> selectedAppInfos) {
 		this.selectedAppInfos = selectedAppInfos;
+	}
+	
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 }

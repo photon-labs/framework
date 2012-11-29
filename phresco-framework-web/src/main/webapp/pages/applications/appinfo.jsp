@@ -182,13 +182,20 @@
 		<!-- pilot project ends -->
 		
 		<!-- servers start -->
+		<%
+		  String checkedServerStr = "";
+		 /*  if(selectedServers != null){
+			  checkedServerStr = "checked";
+		  } */
+		%> 
+		
 		<div class="theme_accordion_container">
 			<section class="accordion_panel_wid">
 				<div class="accordion_panel_inner">
 					<section class="lft_menus_container">
-						<span class="siteaccordion closereg" onclick="accordionClick(this, $('input[value=serverLayer]'));">
+						<span class="siteaccordion closereg" id="serverLayerControl" onclick="accordionClick(this, $('input[value=serverLayer]'));">
 							<span>
-								<input type="checkbox" id="checkAll1" class="accordianChkBox" name="layer" value="serverLayer" 
+								<input type="checkbox" id="checkAll1" class="accordianChkBox" name="layer" value="serverLayer" <%= checkedServerStr %>
 									onclick="getDownloadInfo('<%= DownloadInfo.Category.SERVER.name() %>', $('#1_server'), '<s:text name='lbl.default.opt.select.server'/>')"/>
 								<a  class="vAlignSub"><s:text name='lbl.servers'/></a>
 							</span>
@@ -237,13 +244,19 @@
 		<!-- servers ends -->
 		
 		<!-- databases start -->
+		<% 
+		String checkedDatabaseStr = "";
+		if(selectedDatabases != null){
+			checkedDatabaseStr = "checked";
+		}
+			%>
 		<div class="theme_accordion_container">
 			<section class="accordion_panel_wid">
 				<div class="accordion_panel_inner">
 					<section class="lft_menus_container">
-						<span class="siteaccordion closereg" onclick="accordionClick(this, $('input[value=databaseLayer]'));">
+						<span class="siteaccordion closereg" id="databaseLayerControl" onclick="accordionClick(this, $('input[value=databaseLayer]'));">
 							<span>
-								<input type="checkbox" id="checkAll1" class="accordianChkBox" name="layer" value="databaseLayer"/>
+								<input type="checkbox" id="checkAll1" class="accordianChkBox" name="layer" value="databaseLayer" <%= checkedDatabaseStr %>/>
 								<a class="vAlignSub"><s:text name='lbl.database'/></a>
 							</span>
 						</span>
@@ -291,13 +304,19 @@
 		<!-- databases ends -->
 		
 		<!-- webservice start -->
+		<% 
+		String checkedWebserviceStr = "";
+		if(selectedWebservices != null){
+			checkedWebserviceStr = "checked";
+		}
+			%>
 		<div class="theme_accordion_container">
 			<section class="accordion_panel_wid" >
 				<div class="accordion_panel_inner">
 					<section class="lft_menus_container">
-						<span class="siteaccordion closereg" onclick="accordionClick(this, $('input[value=webserviceLayer]'));">
+						<span class="siteaccordion closereg" id="webserviceLayerControl" onclick="accordionClick(this, $('input[value=webserviceLayer]'));">
 							<span>
-								<input type="checkbox" id="checkAll1" class="accordianChkBox" name="layer" value="webserviceLayer"/>
+								<input type="checkbox" id="checkAll1" class="accordianChkBox" name="layer" value="webserviceLayer" <%= checkedWebserviceStr %>/>
 								<a class="vAlignSub"><s:text name='lbl.webservice'/></a>
 							</span>
 						</span>
@@ -377,6 +396,7 @@
    		
    		checkDownloadInfoForDatabase();
    		
+   		
    		$('#features').click(function () {
    			
    			featuresPage();
@@ -406,12 +426,39 @@
 			//performAction('applications', params, $('#container'));
 		});   */
 		
+		<% if(projectInfo != null) { %>
+		
+		/* $("input[value='serverLayer']:checked").each(
+			    function() {
+			    	accordionOpen('#serverLayerControl', $('input[value=serverLayer]'));
+			    }
+		);
+		 */
+		$("input[value='databaseLayer']:checked").each(
+			    function() {
+			    	accordionOpen('#databaseLayerControl', $('input[value=databaseLayer]'));
+			    }
+		);
+		$("input[value='webserviceLayer']:checked").each(
+			    function() {
+			    	accordionOpen('#webserviceLayerControl', $('input[value=webserviceLayer]'));
+			    }
+		);
+	<% } %>
+	
 		window.setTimeout(function () { document.getElementById('name').focus(); }, 250);
 	});
 	
     function removeTag(currentTag) {
 		$(currentTag).parent().parent().remove();
 	}
+    
+    function accordionOpen(thisObj, currentChkBoxObj) {
+		var _tempIndex = $('.siteaccordion').index(thisObj);
+		var isChecked = currentChkBoxObj;
+		$(thisObj).removeClass('closereg').addClass('openreg');
+		$(thisObj).next('.mfbox').eq(_tempIndex).slideDown(300,function() {});	
+    } 
     
     function getScrollBar(){
     	$(".multilistVersion-scroller").scrollbars();
@@ -458,8 +505,11 @@
 		
     }			
     
-    var databaseCounter = 1;
-    function addDatabase(selectedDatabase, databaseVersions){
+    var databaseCounter = 2;
+    function addDatabase(selectedDatabase, databaseVersions) {
+    	if(databaseCounter == undefined) {
+    		databaseCounter =1;
+    	}
 		var trId = databaseCounter + "_databasedynamicadd";
 		var databaseName = databaseCounter + "_databaseName";
 		var databaseVerson = databaseCounter + "_databaseVersion";
