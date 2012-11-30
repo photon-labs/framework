@@ -57,6 +57,8 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
     private final String PHASE_FUNCTIONAL_TEST_WEBDRIVER = "functional-test-webdriver";
     private final String PHASE_FUNCTIONAL_TEST_GRID = "functional-test-grid";
     private final String PHASE_FUNCTIONAL_TEST = "functional-test";
+    private final String PHASE_RUNAGAINST_SOURCE = "run-against-source";
+    
     
     private static Map<String, PhrescoDynamicLoader> pdlMap = new HashMap<String, PhrescoDynamicLoader>();
     
@@ -75,7 +77,10 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 		sb.append(PHRESCO_HYPEN);
 		if (PHASE_FUNCTIONAL_TEST_WEBDRIVER.equals(goal) || PHASE_FUNCTIONAL_TEST_GRID.equals(goal)) {
 			sb.append(PHASE_FUNCTIONAL_TEST);
-		} else {
+		} else if (PHASE_RUNGAINST_SRC_START.equals(goal)|| PHASE_RUNGAINST_SRC_STOP.equals(goal) ) {
+			sb.append(PHASE_RUNAGAINST_SOURCE);
+		}
+		else {
 			sb.append(goal);
 		}
 		sb.append(INFO_XML);
@@ -91,6 +96,8 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 		sb.append(PHRESCO_HYPEN);
 		if (PHASE_FUNCTIONAL_TEST_WEBDRIVER.equals(goal) || PHASE_FUNCTIONAL_TEST_GRID.equals(goal)) {
 			sb.append(PHASE_FUNCTIONAL_TEST);
+		}else if (PHASE_RUNGAINST_SRC_START.equals(goal)|| PHASE_RUNGAINST_SRC_STOP.equals(goal) ) {
+			sb.append(PHASE_RUNAGAINST_SOURCE);
 		} else {
 			sb.append(goal);
 		}

@@ -730,6 +730,8 @@ public class Build extends DynamicParameterAction implements Constants {
 		BufferedReader reader = null;
 		try {
 			ApplicationInfo applicationInfo = getApplicationInfo();
+			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_RUNGAINST_SRC_START)));
+			persistValuesToXml(mojo, PHASE_RUNGAINST_SRC_START);
 			com.photon.phresco.api.ConfigManager configManager = PhrescoFrameworkFactory
 					.getConfigManager(new File(Utility.getProjectHome() + getApplicationInfo().getAppDirName()
 							+ File.separator + Constants.DOT_PHRESCO_FOLDER + File.separator
