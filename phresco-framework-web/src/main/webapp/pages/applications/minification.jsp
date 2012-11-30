@@ -59,7 +59,7 @@ Map<String, Map<String, String>> cssMinifyMap = (Map<String, Map<String, String>
 					<a><img title="" src="images/icons/add_icon.png" id="addJSComp" class="minifyAddIcon" onclick="appendRow();"></a>
 					<a><img class="del imagealign hide" src="images/icons/minus_icon.png" onclick="removeTag(this);"></a>
 					<input type="hidden" tempName="<%= compressedName %>" name="<%= compressedName %>" value="<%= files %>" id="">
-					<input type="hidden" name="<%= compressedName %>_fileLocation" value="<%= location %>" id="fileLocation">
+					<input type="hidden" name="<%= compressedName %>_fileLocation" value="<%= location %>" id="<%= compressedName %>_fileLocation">
 				</div>
 					
 			<% 	}
