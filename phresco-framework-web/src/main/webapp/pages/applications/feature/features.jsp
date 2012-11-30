@@ -185,13 +185,13 @@
 		$("input[class='"+ dispName +"']").remove();
 		
 		$("#result").append('<input type="hidden" class = "'+dispName+'" value={"dispName":"'+dispName+'","moduleId":"'+moduleId+'","dispValue":"'+dispValue+'","versionID":"'+hiddenFieldVersion+'","type":"'+hiddenFieldname+'"} name="jsonData">');
-		if (showConfigImg) {
-			$("#result").append('<div class = "'+dispName+'"id="'+dispName+'">'+dispName+' - '+dispValue+
-					'<a href="#" id="'+dispName+'" onclick="remove(this);">&nbsp;&times;</a>'+
-					'<a href="#" id="'+dispName+'" onclick="showFeatureConfigPopup(this);"><img src="images/icons/gear.png" title="Configure"/></a></div>');
-		} else {
+// 		if (showConfigImg) {
+// 			$("#result").append('<div class = "'+dispName+'"id="'+dispName+'">'+dispName+' - '+dispValue+
+// 					'<a href="#" id="'+dispName+'" onclick="remove(this);">&nbsp;&times;</a>'+
+// 					'<a href="#" id="'+dispName+'" onclick="showFeatureConfigPopup(this);"><img src="images/icons/gear.png" title="Configure"/></a></div>');
+// 		} else {
 			$("#result").append('<div class = "'+dispName+'"id="'+dispName+'">'+dispName+' - '+dispValue+'<a href="#" id="'+dispName+'" onclick="remove(this);">&times;</a></div>');
-		}	
+// 		}	
     }
     
     // Function to remove the final features in right tab  
