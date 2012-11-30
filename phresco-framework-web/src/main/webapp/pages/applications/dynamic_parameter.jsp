@@ -146,7 +146,7 @@
 					FrameworkConstants.TYPE_PASSWORD.equalsIgnoreCase(parameter.getType()) || FrameworkConstants.TYPE_HIDDEN.equalsIgnoreCase(parameter.getType())) {
 					
 					parameterModel.setInputType(parameter.getType());
-					//parameterModel.setValue(StringUtils.isNotEmpty(parameter.getValue()) ? parameter.getValue():"");
+					parameterModel.setValue(StringUtils.isNotEmpty(parameter.getValue()) ? parameter.getValue():"");
 					
 					StringTemplate txtInputElement = FrameworkUtil.constructInputElement(parameterModel);
 	%> 	
