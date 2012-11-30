@@ -446,7 +446,9 @@
 				</textField>
 			</frame>
 			<frame>
-				<reportElement x="0" y="430" width="555" height="32" isRemoveLineWhenBlank="true"/>
+				<reportElement x="0" y="430" width="555" height="32" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[!$F{directories}.isEmpty()]]></printWhenExpression>
+				</reportElement>
 				<rectangle>
 					<reportElement x="0" y="3" width="555" height="26" isRemoveLineWhenBlank="true"/>
 					<graphicElement>
@@ -496,7 +498,9 @@
 				</textField>
 			</frame>
 			<frame>
-				<reportElement x="0" y="519" width="555" height="30" isRemoveLineWhenBlank="true"/>
+				<reportElement x="0" y="519" width="555" height="30" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[!$F{commentBlankLines}.isEmpty()]]></printWhenExpression>
+				</reportElement>
 				<rectangle>
 					<reportElement x="0" y="0" width="555" height="29" isRemoveLineWhenBlank="true"/>
 					<graphicElement>
