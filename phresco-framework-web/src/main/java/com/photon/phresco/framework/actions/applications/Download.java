@@ -40,13 +40,13 @@ public class Download extends FrameworkBaseAction {
     	}
     	
     	try {
-			String techId = getTechId();
+    	    removeSessionAttribute(getAppId() + SESSION_APPINFO);//To remove the appInfo from the session
 			ServiceManager serviceManager = getServiceManager();
-			setReqAttribute(REQ_SERVER_DOWNLOAD_INFO, serviceManager.getDownloads(getCustomerId(), techId, DownloadInfo.Category.SERVER.name()));
-			setReqAttribute(REQ_DB_DOWNLOAD_INFO, serviceManager.getDownloads(getCustomerId(), techId, DownloadInfo.Category.DATABASE.name()));
-			setReqAttribute(REQ_EDITOR_DOWNLOAD_INFO, serviceManager.getDownloads(getCustomerId(), techId, DownloadInfo.Category.EDITOR.name()));
-			setReqAttribute(REQ_TOOLS_DOWNLOAD_INFO, serviceManager.getDownloads(getCustomerId(), techId, DownloadInfo.Category.TOOLS.name()));
-			setReqAttribute(REQ_OTHERS_DOWNLOAD_INFO, serviceManager.getDownloads(getCustomerId(), techId, DownloadInfo.Category.OTHERS.name()));
+			setReqAttribute(REQ_SERVER_DOWNLOAD_INFO, serviceManager.getDownloads(getCustomerId(), getAppId(), DownloadInfo.Category.SERVER.name()));
+			setReqAttribute(REQ_DB_DOWNLOAD_INFO, serviceManager.getDownloads(getCustomerId(), getAppId(), DownloadInfo.Category.DATABASE.name()));
+			setReqAttribute(REQ_EDITOR_DOWNLOAD_INFO, serviceManager.getDownloads(getCustomerId(), getAppId(), DownloadInfo.Category.EDITOR.name()));
+			setReqAttribute(REQ_TOOLS_DOWNLOAD_INFO, serviceManager.getDownloads(getCustomerId(), getAppId(), DownloadInfo.Category.TOOLS.name()));
+			setReqAttribute(REQ_OTHERS_DOWNLOAD_INFO, serviceManager.getDownloads(getCustomerId(), getAppId(), DownloadInfo.Category.OTHERS.name()));
 		} catch (PhrescoException e) {
 			new LogErrorReport(e, "Listing downloads");
 		}

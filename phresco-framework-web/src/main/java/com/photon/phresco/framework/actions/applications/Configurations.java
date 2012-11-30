@@ -123,6 +123,7 @@ public class Configurations extends FrameworkBaseAction {
 		}
         
     	try {
+    	    removeSessionAttribute(getAppId() + SESSION_APPINFO);//To remove the appInfo from the session
     	    setReqAttribute(REQ_FROM_PAGE, REQ_CONFIG);
     	    setReqAttribute(REQ_CONFIG_PATH, getAppConfigPath().replace(File.separator, FORWARD_SLASH));
             String cloneConfigStatus = getHttpRequest().getParameter(CLONE_CONFIG_STATUS); 

@@ -169,6 +169,7 @@ public class Build extends DynamicParameterAction implements Constants {
 		if (debugEnabled)
 			S_LOGGER.debug("Entering Method  Build.view()");
 		try {
+		    removeSessionAttribute(getAppId() + SESSION_APPINFO);//To remove the appInfo from the session
 		   	ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 		   	ApplicationInfo applicationInfo = applicationManager.getApplicationInfo(getCustomerId(), getProjectId(), getAppId());
 		   	setReqAttribute(REQ_APPINFO, applicationInfo);

@@ -366,7 +366,7 @@
     <!--  Submit and Cancel buttons Starts -->
     <div class="actions">
         <input id="next" type="button" value="<s:text name="label.next"/>" class="btn btn-primary" 
-        	onclick="featuresPage();"/>
+        	onclick="showFeaturesPage();"/>
         <input type="button" id="cancel" value="<s:text name="lbl.btn.cancel"/>" class="btn btn-primary" 
 			onclick="loadContent('applications', $('#formCustomers'), $('#container'));">
     </div>
@@ -600,9 +600,4 @@
 			$('.mfbox').eq(_tempIndex).slideUp(300,function() {});
 		}
     }
-	
-	function featuresPage() {
-		var params = getBasicParams();
-		loadContent('features', $('#formAppInfo'), $('#subcontainer'), params);
-	}
 </script>

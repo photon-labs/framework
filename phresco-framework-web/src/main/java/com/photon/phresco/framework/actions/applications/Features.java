@@ -34,14 +34,18 @@ import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.ArtifactGroupInfo;
 import com.photon.phresco.commons.model.Element;
 import com.photon.phresco.commons.model.ProjectInfo;
+import com.photon.phresco.commons.model.SettingsTemplate;
 import com.photon.phresco.commons.model.TechnologyInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
 
 public class Features extends FrameworkBaseAction {
+    
 	private static final long serialVersionUID = 6608382760989903186L;
+	
 	private static final Logger S_LOGGER = Logger.getLogger(Features.class);
 	private static Boolean debugEnabled = S_LOGGER.isDebugEnabled();
+	
 	private String projectCode = null;
 	private String externalCode = null;
 	private String fromPage = null;
@@ -84,6 +88,8 @@ public class Features extends FrameworkBaseAction {
 	private String customerId = "";
 	private String pilotProject = "";
 	
+	private String configTemplateType = "";
+	
 	public String features() {
 		try {
 			ProjectInfo projectInfo = (ProjectInfo)getSessionAttribute(getAppId() + SESSION_APPINFO);
@@ -111,7 +117,7 @@ public class Features extends FrameworkBaseAction {
     	TechnologyInfo techInfo = new TechnologyInfo();
     	techInfo.setId(getTechnology());
 		appInfo.setTechInfo(techInfo );
-		if(StringUtils.isNotEmpty(getPilotProject())) {
+		if (StringUtils.isNotEmpty(getPilotProject())) {
 			Element element = new Element();
 			element.setId(getPilotProject());
 			appInfo.setPilotInfo(element);
@@ -145,6 +151,28 @@ public class Features extends FrameworkBaseAction {
 	}
 	
 	public String showFeatureConfigPopup() {
+	    try {
+	        List<SettingsTemplate> settingsTemplates = getServiceManager().getconfigTemplates(getCustomerId());
+            setReqAttribute(REQ_SETTINGS_TEMPLATES, settingsTemplates);
+        } catch (PhrescoException e) {
+            // TODO: handle exception
+        }
+	    
+	    return SUCCESS;
+	}
+	
+	public String showConfigProperties() {
+	    try {
+	        List<SettingsTemplate> settingsTemplates = getServiceManager().getconfigTemplates(getCustomerId());
+	        for (SettingsTemplate settingsTemplate : settingsTemplates) {
+                if (settingsTemplate.getId().equals(getConfigTemplateType())) {
+                    setReqAttribute(REQ_PROPERTIES, settingsTemplate.getProperties());
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
 	    
 	    return SUCCESS;
 	}
@@ -870,4 +898,12 @@ public class Features extends FrameworkBaseAction {
 	public void setOldAppDirName(String oldAppDirName) {
 		this.oldAppDirName = oldAppDirName;
 	}
+
+    public String getConfigTemplateType() {
+        return configTemplateType;
+    }
+
+    public void setConfigTemplateType(String configTemplateType) {
+        this.configTemplateType = configTemplateType;
+    }
 }

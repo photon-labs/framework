@@ -76,7 +76,7 @@
 	<input type="button" class="btn btn-primary fea_add_but" onclick="clickToAdd()" value=">>"/>
 	<div class="custom_features_wrapper_right">
 		<div class="tblheader">
-			<label class="feature_heading"><s:text name="lbl.selected.features"/></label></br>
+			<label class="feature_heading"><s:text name="lbl.selected.features"/></label>
 		</div>
 		<div class="theme_accordion_container">
 			<div id="result"></div>
@@ -149,19 +149,19 @@
         //showAvailabelFeature();
         $('#featureselect').ddslick({
         	onSelected: function(data){
-        		featuretype(data.selectedData.value); 
+        		featureType(data.selectedData.value, data.selectedData.text); 
         	}
         });
     });
     
     // Function for the feature list selection
-    function featuretype(selectedType) {
-    	fillHeading(selectedType);
-    	showAvailabelFeature(selectedType);
+    function featureType(selectedFeatureValue, selectedFeatureText) {
+    	fillHeading(selectedFeatureText);
+    	getFeature(selectedFeatureValue);
     }
-  
+
     //Function for to get the list of features
-    function showAvailabelFeature(selectedType) {
+    function getFeature(selectedType) {
     	var params = getBasicParams() + '&type=' + selectedType;
 	    loadContent("listFeatures", $('#formFeatures'), $('#accordianchange'), params);
     }
@@ -188,7 +188,7 @@
 		if (showConfigImg) {
 			$("#result").append('<div class = "'+dispName+'"id="'+dispName+'">'+dispName+' - '+dispValue+
 					'<a href="#" id="'+dispName+'" onclick="remove(this);">&nbsp;&times;</a>'+
-					'<a href="#" id="'+dispName+'" onclick="showFeatureConfigPopup(this);"><img src="images/icons/gear.png" title="Configure" style="margin-top: 5px;"/></a></div>');
+					'<a href="#" id="'+dispName+'" onclick="showFeatureConfigPopup(this);"><img src="images/icons/gear.png" title="Configure"/></a></div>');
 		} else {
 			$("#result").append('<div class = "'+dispName+'"id="'+dispName+'">'+dispName+' - '+dispValue+'<a href="#" id="'+dispName+'" onclick="remove(this);">&times;</a></div>');
 		}	
@@ -206,15 +206,15 @@
     	$("#featuresHeading").text(selectedType)
     }
     
-  	//Function for to get the list of features
+  	//Function to get the list of features
     function updateApplication() {
     	var params = getBasicParams();
     	showProgressBar('<s:text name='progress.txt.update.app'/>');
     	loadContent('finish', $('#formFeatures'), $('#container'), params, false);
     }
   	
-  	function showFeatureConfigPopup() {
-  		var params = "";
+  	function showFeatureConfigPopup(featureName) {
+  		var params = getBasicParams();
   		yesnoPopup('showFeatureConfigPopup', '<s:text name="lbl.configure"/>', 'configureFeature', '<s:text name="lbl.configure"/>', '', params);
   	}
 </script>

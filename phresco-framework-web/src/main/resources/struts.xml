@@ -150,7 +150,11 @@
             <result type="json"/>
         </action> 
         
-       	<action name="appInfo" method="editApplication" class="com.photon.phresco.framework.actions.applications.Applications">
+        <action name="editApplication" method="editApplication" class="com.photon.phresco.framework.actions.applications.Applications">
+            <result name="appinfo">/pages/applications/appinfo.jsp</result>
+        </action>
+        
+       	<action name="appInfo" method="appInfo" class="com.photon.phresco.framework.actions.applications.Applications">
             <result name="appinfo">/pages/applications/appinfo.jsp</result>
         </action>
         
@@ -192,7 +196,11 @@
         </action>
         
         <action name="showFeatureConfigPopup" method="showFeatureConfigPopup" class="com.photon.phresco.framework.actions.applications.Features">
-          	<result name="success">/pages/applications/feature/list.jsp</result>
+          	<result name="success">/pages/applications/feature/config_template.jsp</result>
+        </action>
+        
+        <action name="showConfigProperties" method="showConfigProperties" class="com.photon.phresco.framework.actions.applications.Features">
+          	<result name="success">/pages/applications/feature/config_template_prop.jsp</result>
         </action>
         
         <!-- <action name="checkDependency" method="checkDependency" class="com.photon.phresco.framework.actions.applications.Features">

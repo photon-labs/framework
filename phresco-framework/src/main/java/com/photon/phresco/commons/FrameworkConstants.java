@@ -64,6 +64,8 @@ public interface FrameworkConstants {
     String SERVER_KEY = "server";
     String DATABASE_KEY = "Database";
     
+    String IMPORT = "import";
+    
     String REQ_CUSTOMER_ID = "customerId";
     String REQ_PROJECT_ID = "projectId";
     String REQ_APP_ID = "appId";
