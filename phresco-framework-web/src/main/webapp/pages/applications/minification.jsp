@@ -40,7 +40,7 @@ Map<String, Map<String, String>> cssMinifyMap = (Map<String, Map<String, String>
 	<fieldset class="popup-fieldset fieldset_center_align minify_popup">
 		<legend class="legendHdr"><s:label key="lbl.hdr.js.minification" cssClass="legendLbl"/></legend>
 		<div class="minify_ControlGroup">
-			<% if (jsMinifyMap != null && !jsMinifyMap.isEmpty()) { 
+			<% if (jsMinifyMap != null && !jsMinifyMap.isEmpty()) { //To show already minified JS file details
 				String files = "";
 				String location = "";
 				Set<String> Keys = jsMinifyMap.keySet();
@@ -82,7 +82,7 @@ Map<String, Map<String, String>> cssMinifyMap = (Map<String, Map<String, String>
 	<fieldset class="popup-fieldset fieldset_center_align minify_popup">
 		<legend class="legendHdr"><s:label key="lbl.hdr.css.minification" cssClass="legendLbl"/></legend>
 		<div class="minifyCSS_ControlGroup">
-		<% if (cssMinifyMap != null && !cssMinifyMap.isEmpty()) { 
+		<% if (cssMinifyMap != null && !cssMinifyMap.isEmpty()) { //To show already minified CSS file details
 				String files = "";
 				String location = "";
 				Set<String> Keys = cssMinifyMap.keySet();
@@ -121,11 +121,11 @@ Map<String, Map<String, String>> cssMinifyMap = (Map<String, Map<String, String>
 </form>
 
 <script type="text/javascript">
-
 $(document).ready(function() {
 	showHideMinusIcon($("#addJSComp"));
 	showHideMinusIcon($("#addCSSComp"));
 });
+
 var textBoxClass = "";
 function browseFiles(obj) {
 	textBoxClass = $(obj).attr("id");
@@ -145,6 +145,7 @@ function browseFiles(obj) {
 	additionalPopup('minifyBrowseFileTree', 'Browse', 'filesToMinify', '', '', params, true);
 }
 
+//To update selected files, compressed name and location in hidden field
 function updateMinifyData(compressedName, files, location) {
 	$("."+textBoxClass).val(compressedName);
 	$('input[tempName="'+ textBoxClass +'"]').attr("name", compressedName);
@@ -184,9 +185,9 @@ function appendCssRow() {
 		"<input type='hidden' name='' value='' id='"+ locationId +"'>");
 	newMinDiv.appendTo(".minifyCSS_ControlGroup");
 	counter++;
-	//removeTag();
 	showHideMinusIcon($("#addCSSComp"));
 }
+
 function showHideMinusIcon(obj) {
 	var plusIconId = $(obj).attr("id");
 	var noOfRows = $('img[id='+ plusIconId +']').size();
@@ -226,5 +227,4 @@ function removeCSSTag(currentTag) {
 		$(".cssDel").hide();
 	}
 }
-
 </script>
