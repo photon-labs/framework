@@ -21,8 +21,6 @@ package com.photon.phresco.framework.actions.applications;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -619,7 +617,7 @@ public class Applications extends FrameworkBaseAction {
         	Gson gson = new Gson();
         	
         	StringBuilder sb = new StringBuilder(Utility.getProjectHome())
-        	.append(appInfo.getAppDirName())
+        	.append(getOldAppDirName())
         	.append(File.separator)
         	.append(Constants.DOT_PHRESCO_FOLDER)
         	.append(File.separator)
@@ -678,18 +676,7 @@ public class Applications extends FrameworkBaseAction {
         	appInfo.setSelectedJSLibs(selectedJsLibs);
         	appInfo.setSelectedComponents(selectedComponents);
 
-			StringBuilder projectInfoPath =new StringBuilder(Utility.getProjectHome())
-			.append(getOldAppDirName())
-			.append(File.separator)
-			.append(Constants.DOT_PHRESCO_FOLDER)
-			.append(File.separator)
-			.append(Constants.PROJECT_INFO_FILE);
-			
-			File oldprojectinfo = new File(projectInfoPath.toString());
-			reader = new BufferedReader(new FileReader(oldprojectinfo));
-			ProjectInfo oldProjectInfo = gson.fromJson(reader, ProjectInfo.class);
-			ApplicationInfo oldappinfos = oldProjectInfo.getAppInfos().get(0);
-			List<ArtifactGroupInfo> oldSelectedDbs = oldappinfos.getSelectedDatabases();
+			List<ArtifactGroupInfo> oldSelectedDbs = getApplicationInfo().getSelectedDatabases();
 			if (CollectionUtils.isNotEmpty(oldSelectedDbs)) {
 			    List<String> deletableDbs = new ArrayList<String>();
 				for (ArtifactGroupInfo artifactGroupInfo : oldSelectedDbs) {
@@ -714,8 +701,6 @@ public class Applications extends FrameworkBaseAction {
             removeSessionAttribute(REQ_PILOT_PROJECTS);
 		} catch (PhrescoException e) {
 			return showErrorPopup(e, EXCEPTION_PROJECT_UPDATE);
-		} catch (FileNotFoundException e) {
-			return showErrorPopup(new PhrescoException(e), EXCEPTION_PROJECT_UPDATE);
 		} finally {
 			 Utility.closeStream(reader);
 		 }

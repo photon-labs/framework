@@ -857,7 +857,7 @@
         	<result name="success">/pages/applications/minification.jsp</result>
         </action>
         
-        <action name="doMinification" method="doMinification" class="com.photon.phresco.framework.actions.applications.Build">
+        <action name="minification" method="minification" class="com.photon.phresco.framework.actions.applications.Build">
         	<result name="success">/pages/applications/reader.jsp</result>
         </action>
 		

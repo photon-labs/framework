@@ -56,9 +56,9 @@
 	<div class="form-horizontal featureTypeWidth">
 		<label for="myselect" class="control-label features_cl">Type&nbsp;</label>
 		<select id="featureselect" name="type" onchange="featuretype()">
-			<option value="<%= ArtifactGroup.Type.FEATURE.name() %>"><s:text name="lbl.options.modules"/></option>
-			<option value="<%= ArtifactGroup.Type.JAVASCRIPT.name() %>"><s:text name="lbl.options.js.libs"/></option>
-			<option value="<%= ArtifactGroup.Type.COMPONENT.name() %>"><s:text name="lbl.options.components"/></option>
+			<option value="<%= ArtifactGroup.Type.FEATURE.name() %>" data-imagesrc="images/deploy.png" selected="selected"><s:text name="lbl.options.modules"/></option>
+			<option value="<%= ArtifactGroup.Type.JAVASCRIPT.name() %>" data-imagesrc="images/deploy.png"><s:text name="lbl.options.js.libs"/></option>
+			<option value="<%= ArtifactGroup.Type.COMPONENT.name() %>" data-imagesrc="images/deploy.png"><s:text name="lbl.options.components"/></option>
 		</select>
 	</div>
 	<div class="custom_features">
@@ -145,23 +145,24 @@
 
     $(document).ready(function () {
         hideLoadingIcon();
-        fillHeading();
-        getFeature();
+        //fillHeading();
+        //showAvailabelFeature();
+        $('#featureselect').ddslick({
+        	onSelected: function(data){
+        		featuretype(data.selectedData.value); 
+        	}
+        });
     });
     
     // Function for the feature list selection
-    function featuretype() {
-    	fillHeading();
-    	getFeature();
-        var str = "";
-        $("#featureselect option:selected").each(function () {
-            str += $(this).text();
-        });
+    function featuretype(selectedType) {
+    	fillHeading(selectedType);
+    	showAvailabelFeature(selectedType);
     }
-
+  
     //Function for to get the list of features
-    function getFeature() {
-    	var params = getBasicParams();
+    function showAvailabelFeature(selectedType) {
+    	var params = getBasicParams() + '&type=' + selectedType;
 	    loadContent("listFeatures", $('#formFeatures'), $('#accordianchange'), params);
     }
     
@@ -201,9 +202,8 @@
     }
     
     // Function to fill the heading of the left tab
-    function fillHeading() {
-    	var val = $("#featureselect").val();
-    	$("#featuresHeading").text(val)
+    function fillHeading(selectedType) {
+    	$("#featuresHeading").text(selectedType)
     }
     
   	//Function for to get the list of features

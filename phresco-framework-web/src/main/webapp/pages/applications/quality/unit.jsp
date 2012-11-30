@@ -267,6 +267,7 @@ function popupOnOk(obj) {
 		showPopuploadingIcon();
 		loadContent('printAsPdf', $('#generatePdf'), $('#popup_div'), '', false);
 	} else {
+		$("#popupPage").modal('hide');
 		var params = getBasicParams();
 		progressPopupAsSecPopup(okUrl, '<%= appId %>', '<%= FrameworkConstants.UNIT %>', $("#generateBuildForm"), params);
 	}

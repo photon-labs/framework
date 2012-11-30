@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -190,16 +189,18 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		if (response.getStatus() == 200) {
 			BufferedReader breader = null;
 			try {
-				StringBuilder projectPathSb = new StringBuilder(Utility.getProjectHome());
-				projectPathSb.append(projectInfo.getAppInfos().get(0).getAppDirName());
-				File projectPath = new File(projectPathSb.toString());
-
-				StringBuilder oldPhrescoPathSb = new StringBuilder(Utility.getProjectHome());
-				oldPhrescoPathSb.append(oldAppDirName);
-				File oldProjectPath = new File(oldPhrescoPathSb.toString());
-				oldProjectPath.renameTo(projectPath);
+				StringBuilder oldAppDirSb = new StringBuilder(Utility.getProjectHome());
+				oldAppDirSb.append(oldAppDirName);
+				File oldDir = new File(oldAppDirSb.toString());
+				
+				StringBuilder newAppDirSb = new StringBuilder(Utility.getProjectHome());
+				newAppDirSb.append(projectInfo.getAppInfos().get(0).getAppDirName());
+				File projectInfoFile = new File(newAppDirSb.toString());
+				
+				oldDir.renameTo(projectInfoFile);
+				
 				extractArchive(response, projectInfo);
-				StringBuilder dotPhrescoPathSb = new StringBuilder(projectPath.getPath());
+				StringBuilder dotPhrescoPathSb = new StringBuilder(projectInfoFile.getPath());
 				dotPhrescoPathSb.append(File.separator);
 				dotPhrescoPathSb.append(DOT_PHRESCO_FOLDER);
 				dotPhrescoPathSb.append(File.separator);
@@ -210,13 +211,14 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 				ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
 				
 //				for (ApplicationInfo appInfo : appInfos) {
-					StringBuilder pluginInfoPathSb = new StringBuilder(projectPath.getPath());
-					pluginInfoPathSb.append(File.separator);
+					//StringBuilder pluginInfoPathSb = new StringBuilder(projectPath.getPath());
+					//pluginInfoPathSb.append(File.separator);
+					//System.out.println("pluginInfoPathSb::::"+pluginInfoPathSb);
 					String pluginInfoFile = dotPhrescoPathSb.toString() + PHRESCO_PLUGIN_INFO_XML;
 					MojoProcessor mojoProcessor = new MojoProcessor(new File(pluginInfoFile));
 					ApplicationHandler applicationHandler = mojoProcessor.getApplicationHandler();
 					
-					createSqlFolder(appInfo, projectPath, serviceManager);
+					createSqlFolder(appInfo, projectInfoFile, serviceManager);
 					
 					if (applicationHandler != null) {
 						
@@ -242,7 +244,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 					sb.append("mvn");
 					sb.append(" ");
 					sb.append("validate");
-					breader = Utility.executeCommand(sb.toString(), projectPath.getPath());
+					breader = Utility.executeCommand(sb.toString(), projectInfoFile.getPath());
 					String line = null;
 					while ((line = breader.readLine()) != null) {
 						if (line.startsWith("[ERROR]")) {
@@ -251,8 +253,10 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 					}
 				}
 			} catch (FileNotFoundException e) {
+				e.printStackTrace();
 				throw new PhrescoException(e);
 			} catch (IOException e) {
+				e.printStackTrace();
 				throw new PhrescoException(e);
 			} finally {
 				Utility.closeStream(breader);

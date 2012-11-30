@@ -347,12 +347,15 @@ function popupOnOk(obj) {
 	var okUrl = $(obj).attr("id");
 	if (okUrl === "startHub") {
 		var params = getBasicParams();
+		$("#popupPage").modal('hide');
 		progressPopupAsSecPopup(okUrl, '<%= appId %>', '<%= FrameworkConstants.START_HUB %>', $("#generateBuildForm"), params, 'stopHub');
 	} else if (okUrl === "startNode") {
 		var params = getBasicParams();
+		$("#popupPage").modal('hide');
 		progressPopupAsSecPopup(okUrl, '<%= appId %>', '<%= FrameworkConstants.START_NODE %>', $("#generateBuildForm"), params, 'stopNode');
 	} else if (okUrl === "runFunctionalTest") {
 		var params = getBasicParams();
+		$("#popupPage").modal('hide');
 		progressPopupAsSecPopup(okUrl, '<%= appId %>', '<%= FrameworkConstants.FUNCTIONAL %>', $("#generateBuildForm"), params);
 	} else if (okUrl === "printAsPdf") {
 		// show popup loading icon

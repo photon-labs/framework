@@ -140,7 +140,7 @@ public class Build extends DynamicParameterAction implements Constants {
 	private List<String> minifyFileNames = null;
 	private String minifiedFiles = "";
 	private String fileType = "";
-	private String fileorfolder = "";
+	private String fileOrFolder = "";
 	private String browseLocation = "";
 	
 	//iphone family
@@ -953,17 +953,18 @@ public class Build extends DynamicParameterAction implements Constants {
 		return env;
 	}
 
-	/* minification  */
+	/* minification starts */
 	public String minifyPopup() throws PhrescoException, PhrescoPomException {
 		ApplicationInfo applicationInfo = getApplicationInfo();
 		String pomPath = getAppDirectoryPath(applicationInfo) + File.separator + POM_FILE;
 		PomProcessor pomProcessor = new PomProcessor(new File(pomPath));
 		com.phresco.pom.model.Plugin.Configuration pluginConfig = pomProcessor.getPlugin(MINIFY_PLUGIN_GROUPID,MINIFY_PLUGIN_ARTFACTID).getConfiguration();
+		//To check for availability of minification plugin in pom.xml
 		if (pluginConfig != null) {
 			List<Element> elements = pluginConfig.getAny();
 			if (elements != null) {
 				for (Element element : elements) {
-					includesFiles(element, applicationInfo);
+					includesFiles(element, applicationInfo);//To read already minified details from pom
 				}
 			}
 		}
@@ -983,7 +984,7 @@ public class Build extends DynamicParameterAction implements Constants {
 					NodeList includeList = childNode.getElementsByTagName(POM_INCLUDES).item(0).getChildNodes();
 					StringBuilder csvFileNames = new StringBuilder(); 
 					String sep = "";
-					for (int j = 0; j < includeList.getLength()-1; j++) {
+					for (int j = 0; j < includeList.getLength()-1; j++) {//To convert select files to Comma seperated value
 						Element include = (Element) includeList.item(j);
 						String file = include.getTextContent().substring(include.getTextContent().lastIndexOf("/")+1);
 						csvFileNames.append(sep);
@@ -991,19 +992,20 @@ public class Build extends DynamicParameterAction implements Constants {
 						sep = COMMA;
 					}
 					Element outputElement = (Element) childNode.getElementsByTagName(POM_OUTPUT).item(0);
+					//To get compressed name with extension
 					String opFileName = outputElement.getTextContent().substring(outputElement.getTextContent().lastIndexOf("/")+1);
-					String compressName = opFileName.substring(0, opFileName.indexOf("."));
-					String compressedExtension = opFileName.substring(opFileName.lastIndexOf(DOT)+1);
+					String compressName = opFileName.substring(0, opFileName.indexOf("."));//To get only the compressed name without extension
+					String compressedExtension = opFileName.substring(opFileName.lastIndexOf(DOT)+1);//To get extension of compressed file
 					opFileLoc = outputElement.getTextContent().substring(0, outputElement.getTextContent().lastIndexOf("/")+1);
 					opFileLoc = opFileLoc.replace(MINIFY_OUTPUT_DIRECTORY, getAppDirectoryPath(applicationInfo).replace(File.separator, FORWARD_SLASH));
 					
-					if (JS.equals(compressedExtension)) {
+					if (JS.equals(compressedExtension)) {//if extension is js , add minified details to jsMap
 						Map<String, String> jsValuesMap = new HashMap<String, String>();
-						jsValuesMap.put(csvFileNames.toString().replace(HYPHEN_MIN, ""), opFileLoc);
+						jsValuesMap.put(csvFileNames.toString().replace(HYPHEN_MIN, ""), opFileLoc);//add minifed files list and its location details to jsValuesMap
 						jsMap.put(compressName, jsValuesMap);	
-					} else {
+					} else {//if extension is CSS , add minified details to cssMap
 						Map<String, String> cssValuesMap = new HashMap<String, String>();
-						cssValuesMap.put(csvFileNames.toString().replace(HYPHEN_MIN, ""), opFileLoc);
+						cssValuesMap.put(csvFileNames.toString().replace(HYPHEN_MIN, ""), opFileLoc);//add minifed files list and its location to cssValuesMap
 						cssMap.put(compressName, cssValuesMap);
 					}
 				}
@@ -1029,19 +1031,19 @@ public class Build extends DynamicParameterAction implements Constants {
 	
 	public String selectFilesToMinify() {
 		String[] selectedFiles = getHttpRequest().getParameterValues(FILES_TO_MINIFY);
-		StringBuilder sb = new StringBuilder();
+		StringBuilder files = new StringBuilder();
 		String sep = "";
 		for (String selectedFile : selectedFiles) {
-			sb.append(sep);
-			sb.append(selectedFile);
+			files.append(sep);
+			files.append(selectedFile);
 		    sep = ",";
 		}
-		setSelectedFilesToMinify(sb.toString());
+		setSelectedFilesToMinify(files.toString());
 		
 		return SUCCESS;
 	}
 	
-	public String doMinification() {
+	public String minification() {
 		try {
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			ApplicationInfo applicationInfo = getApplicationInfo();
@@ -1086,6 +1088,7 @@ public class Build extends DynamicParameterAction implements Constants {
 	}
 
 	/**
+	 * To create Aggregations tag in Pom.xml with minification details
 	 * @param applicationInfo
 	 * @param doc
 	 * @param configList
@@ -1119,6 +1122,7 @@ public class Build extends DynamicParameterAction implements Constants {
 	}
 
 	/**
+	 * To create excludes (files to be excluded while minification) tag in Pom.xml
 	 * @param doc
 	 * @param configList
 	 */
@@ -1129,7 +1133,6 @@ public class Build extends DynamicParameterAction implements Constants {
 		configList.add(createElement(doc, POM_LINE_BREAK, POM_LINE_MAX_COL_COUNT));
 		
 		Element excludesElement = doc.createElement(POM_EXCLUDES);
-//		appendChildElement(doc, excludesElement, POM_EXCLUDE, POM_EXCLUDE_CSS);
 		appendChildElement(doc, excludesElement, POM_EXCLUDE, POM_EXCLUDE_JS);
 		appendChildElement(doc, excludesElement, POM_EXCLUDE, POM_EXCLUDE_MIN_JS);
 		appendChildElement(doc, excludesElement, POM_EXCLUDE, POM_EXCLUDE_MINIFIED_JS);
@@ -1151,7 +1154,7 @@ public class Build extends DynamicParameterAction implements Constants {
 		parent.appendChild(childElement);
 		return childElement;
 	}
-	/* minification end */
+	/* minification ends */
 	
 	public String advancedBuildSettings() {
 		S_LOGGER.debug("Entering Method Build.advancedBuildSettings()");
@@ -1633,14 +1636,6 @@ public class Build extends DynamicParameterAction implements Constants {
 		this.fileType = fileType;
 	}
 
-	public String getFileorfolder() {
-		return fileorfolder;
-	}
-
-	public void setFileorfolder(String fileorfolder) {
-		this.fileorfolder = fileorfolder;
-	}
-	
 	public void setBrowseLocation(String browseLocation) {
 		this.browseLocation = browseLocation;
 	}
@@ -1759,5 +1754,13 @@ public class Build extends DynamicParameterAction implements Constants {
 
 	public String getMinifiedFiles() {
 		return minifiedFiles;
+	}
+
+	public String getFileOrFolder() {
+		return fileOrFolder;
+	}
+
+	public void setFileOrFolder(String fileOrFolder) {
+		this.fileOrFolder = fileOrFolder;
 	}
 }
