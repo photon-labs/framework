@@ -373,7 +373,7 @@ public class Configurations extends FrameworkBaseAction {
     	
 	    
 	    ApplicationInfo applicationInfo = getApplicationInfo();
-        String techId = applicationInfo.getTechInfo().getId();
+       // String techId = applicationInfo.getTechInfo().getId();
     	SettingsTemplate configTemplate = getServiceManager().getConfigTemplate(getConfigId(), getCustomerId());
         List<PropertyTemplate> properties = configTemplate.getProperties();
         boolean remoteDeply = false;
@@ -396,9 +396,9 @@ public class Configurations extends FrameworkBaseAction {
             	propertyTemplate.setRequired(false);
             }
             
-    		if (techId.equals(FrameworkConstants.TECH_SITE_CORE) && DEPLOY_DIR.equals(key)) {
+    		/*if (techId.equals(FrameworkConstants.TECH_SITE_CORE) && DEPLOY_DIR.equals(key)) {
     			propertyTemplate.setRequired(false);
-    		}
+    		}*/
     		
 			if ((serverTypeValidation && DEPLOY_DIR.equals(key))) {
 				 propertyTemplate.setRequired(false);
@@ -420,10 +420,10 @@ public class Configurations extends FrameworkBaseAction {
              }
         }
         
-        if (techId.equals(FrameworkConstants.TECH_SITE_CORE) && StringUtils.isEmpty(siteCoreInstPath)) {
+        /*if (techId.equals(FrameworkConstants.TECH_SITE_CORE) && StringUtils.isEmpty(siteCoreInstPath)) {
         	setSiteCoreInstPathError(getText(ERROR_SITE_CORE_PATH_MISSING));
     		hasError = true;
-    	}
+    	}*/
         
         
     	if (isIISServer) {

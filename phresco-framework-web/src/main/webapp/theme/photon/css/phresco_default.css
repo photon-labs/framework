@@ -3470,6 +3470,11 @@ div.submit_input {
     margin: 0 0 12px 34px;
 }
 
+.settingsTypeFields {
+    float: left;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
 
 .selectEqualWidth {
     width:253px;
