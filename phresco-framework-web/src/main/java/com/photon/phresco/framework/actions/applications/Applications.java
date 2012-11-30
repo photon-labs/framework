@@ -632,7 +632,7 @@ public class Applications extends FrameworkBaseAction {
         	.append(File.separator)
         	.append(Constants.DOT_PHRESCO_FOLDER)
         	.append(File.separator)
-        	.append(Constants.PHRESCO_PLUGIN_INFO_XML);
+        	.append(Constants.APPLICATION_HANDLER_INFO_FILE);
 			File filePath = new File(sb.toString());
 			MojoProcessor mojo = new MojoProcessor(filePath);
 			ApplicationHandler applicationHandler = mojo.getApplicationHandler();

@@ -145,7 +145,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 				 RepoInfo repoInfo = customer.getRepoInfo();
 				 List<ApplicationInfo> appInfos = projectInfo.getAppInfos();
 				 for (ApplicationInfo appInfo : appInfos) {
-				 String pluginInfoFile = Utility.getProjectHome() + appInfo.getAppDirName() + File.separator + DOT_PHRESCO_FOLDER +File.separator +  PHRESCO_PLUGIN_INFO_XML;
+				 String pluginInfoFile = Utility.getProjectHome() + appInfo.getAppDirName() + File.separator + DOT_PHRESCO_FOLDER +File.separator +  APPLICATION_HANDLER_INFO_FILE;
 				 File path = new File(Utility.getProjectHome() + appInfo.getAppDirName());
 				 projectUtils.updateTestPom(path);
 				 MojoProcessor mojoProcessor = new MojoProcessor(new File(pluginInfoFile));
@@ -214,7 +214,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 					//StringBuilder pluginInfoPathSb = new StringBuilder(projectPath.getPath());
 					//pluginInfoPathSb.append(File.separator);
 					//System.out.println("pluginInfoPathSb::::"+pluginInfoPathSb);
-					String pluginInfoFile = dotPhrescoPathSb.toString() + PHRESCO_PLUGIN_INFO_XML;
+					String pluginInfoFile = dotPhrescoPathSb.toString() + APPLICATION_HANDLER_INFO_FILE;
 					MojoProcessor mojoProcessor = new MojoProcessor(new File(pluginInfoFile));
 					ApplicationHandler applicationHandler = mojoProcessor.getApplicationHandler();
 					
@@ -376,7 +376,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 			File mysqlFolder = new File(path, sqlFolderPath + Constants.DB_MYSQL);
 			File mysqlVersionFolder = getMysqlVersionFolder(mysqlFolder);
 			File pluginInfoFile = new File(Utility.getProjectHome() + appInfo.getAppDirName() + File.separator
-					+ DOT_PHRESCO_FOLDER + File.separator + PHRESCO_PLUGIN_INFO_XML);
+					+ DOT_PHRESCO_FOLDER + File.separator + APPLICATION_HANDLER_INFO_FILE);
 			MojoProcessor mojoProcessor = new MojoProcessor(pluginInfoFile);
 			ApplicationHandler applicationHandler = mojoProcessor.getApplicationHandler();
 			String selectedDatabases = applicationHandler.getSelectedDatabase();

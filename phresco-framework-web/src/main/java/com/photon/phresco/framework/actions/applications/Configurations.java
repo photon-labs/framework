@@ -266,7 +266,7 @@ public class Configurations extends FrameworkBaseAction {
     	builder.append(File.separator);
     	builder.append(FOLDER_DOT_PHRESCO);
     	builder.append(File.separator);
-    	builder.append(Constants.PHRESCO_PLUGIN_INFO_XML);
+    	builder.append(Constants.APPLICATION_HANDLER_INFO_FILE);
     	return builder.toString();
     }
     
