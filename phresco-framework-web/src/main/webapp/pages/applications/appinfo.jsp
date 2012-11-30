@@ -197,7 +197,7 @@
 							<span>
 								<input type="checkbox" id="checkAll1" class="accordianChkBox" name="layer" value="serverLayer" <%= checkedServerStr %>
 									onclick="getDownloadInfo('<%= DownloadInfo.Category.SERVER.name() %>', $('#1_server'), '<s:text name='lbl.default.opt.select.server'/>')"/>
-								<a  class="vAlignSub"><s:text name='lbl.servers'/></a>
+								<a class="vAlignSub"><s:text name='lbl.servers'/></a>
 							</span>
 						</span>
 						<div class="mfbox siteinnertooltiptxt hideContent">
@@ -219,13 +219,9 @@
 											</select>
 										</td>
 										<td class="noBorder">
-											<%-- <select class="input-medium" id="1_serverVersion" name="serverVersion">
-												<option><s:text name='lbl.default.opt.select.version'/></option>
-											</select> --%>
-											<div class="multilistVersion-scroller " id="1_serverVersion">
-																<!-- <input type="checkbox" id="1_serverVersion" name="serverVersion"
-															class="check techCheck"> -->
-								                </div>
+											<div class="multilistVersion-scroller " id="1_serverVersion" style="height: 51px; color: #333333;">
+												<s:text name='lbl.default.opt.select.version'/>
+							                </div>
 										</td>
 										<td class="noBorder">
 										  	<a>
@@ -256,7 +252,8 @@
 					<section class="lft_menus_container">
 						<span class="siteaccordion closereg" id="databaseLayerControl" onclick="accordionClick(this, $('input[value=databaseLayer]'));">
 							<span>
-								<input type="checkbox" id="checkAll1" class="accordianChkBox" name="layer" value="databaseLayer" <%= checkedDatabaseStr %>/>
+								<input type="checkbox" id="checkAll1" class="accordianChkBox" name="layer" value="databaseLayer" <%= checkedDatabaseStr %>
+									onclick="getDownloadInfo('<%= DownloadInfo.Category.DATABASE.name() %>', $('#1_database'), '<s:text name='lbl.default.opt.select.database'/>')"/>
 								<a class="vAlignSub"><s:text name='lbl.database'/></a>
 							</span>
 						</span>
@@ -272,28 +269,23 @@
 										</tr>
 									</thead>
 									<tbody id="propTempTbodyDatabase">
-										<%-- <tr class=" _databasedynamicadd" >
+										<tr class="noBorder 1__databasedynamicadd">
 											<td class="noBorder">
-												<select class="input-medium" id="1_database" name="database"
-												onchange="getVersions($('#1_database'), $('#1_databaseVersion'));" >
+												<select class="input-medium" id="1_database" name="database" value=""
+													onchange="getVersions($('#1_database'), $('#1_dbVersion'));">
 												</select>
 											</td>
 											<td class="noBorder">
-												<select class="input-medium" id="1_databaseVersion" name="databaseVersion">
-												<option><s:text name='lbl.default.opt.select.version'/></option>
-												</select>
-												 <div class="multilistVersion-scroller " id="1_databaseVersion">
-																<input type="checkbox" id="1_databaseVersion" name="databaseVersion"
-															class="check techCheck">
+												<div class="multilistVersion-scroller " id="1_dbVersion" style="height: 51px; color: #333333;">
+													<s:text name='lbl.default.opt.select.version'/>
 								                </div>
-												
 											</td>
 											<td class="noBorder">
 											  	<a>
 											  		<img class="add imagealign" src="images/icons/add_icon.png" onclick="addDatabase(this);">
-										  		</a>
+									  			</a>
 											</td>
-										</tr> --%>
+										</tr>
 									</tbody>
 							</table>
 						</div>
@@ -381,9 +373,8 @@
 <!--  Form Ends -->
     
 <script type="text/javascript">
-	/* To check whether the divice is ipad or not */
-	if(!isiPad()){
-	    /* JQuery scroll bar */
+	//To check whether the device is ipad or not and then apply jquery scrollbar
+	if (!isiPad()) {
 		$(".appInfoScrollDiv").scrollbars();
 		$(".multilistVersion-scroller").scrollbars();
 	}
@@ -394,52 +385,29 @@
     $(document).ready(function() {
    		hideLoadingIcon();//To hide the loading icon
    		
-   		checkDownloadInfoForDatabase();
+//    		checkDownloadInfoForDatabase();
    		
 		$("#name").focus();
-        //	changeStyle("appinfo");
         
         $("input[name='applicationType']").click(function() {
             changeApplication();
         });
         
         // To restrict the user in typing the special charaters
-        $('#name').bind('input propertychange', function (e) {
+		$('#name').bind('input propertychange', function (e) {
         	var projNname = $(this).val();
         	projNname = checkForSplChr(projNname);
         	$(this).val(projNname);
-         });
+		});
         
-		/*  $('#cancel').click(function() {
-			var params = "";
-	    	if (!isBlank($('form').serialize())) {
-	    		params = $('form').serialize() + "&";
-	    	}
-			params = params.concat("fromPage=");
-			params = params.concat("edit");
-	    	showLoadingIcon($("#tabDiv")); // Loading Icon
-			//performAction('applications', params, $('#container'));
-		});   */
-		
-		<% if(projectInfo != null) { %>
-		
-		/* $("input[value='serverLayer']:checked").each(
-			    function() {
-			    	accordionOpen('#serverLayerControl', $('input[value=serverLayer]'));
-			    }
-		);
-		 */
-		$("input[value='databaseLayer']:checked").each(
-			    function() {
-			    	accordionOpen('#databaseLayerControl', $('input[value=databaseLayer]'));
-			    }
-		);
-		$("input[value='webserviceLayer']:checked").each(
-			    function() {
-			    	accordionOpen('#webserviceLayerControl', $('input[value=webserviceLayer]'));
-			    }
-		);
-	<% } %>
+		<% if (projectInfo != null) { %>
+			$("input[value='databaseLayer']:checked").each(function() {
+		    	accordionOpen('#databaseLayerControl', $('input[value=databaseLayer]'));
+		    });
+			$("input[value='webserviceLayer']:checked").each(function() {
+		    	accordionOpen('#webserviceLayerControl', $('input[value=webserviceLayer]'));
+		    });
+		<% } %>
 	
 		window.setTimeout(function () { document.getElementById('name').focus(); }, 250);
 	});
@@ -459,16 +427,15 @@
     	$(".multilistVersion-scroller").scrollbars();
     }
     
-    function checkDownloadInfoForDatabase() {
-    	<% if (selectedDatabases == null) { %>
-    		addDatabase();
-      	<%} else { %>
-      		selectedDatabasesFromProjectInfo();
-    	 <% } %>
-    }
+//     function checkDownloadInfoForDatabase() {
+<%--     	<% if (selectedDatabases == null) { %> --%>
+//     		addDatabase();
+<%--       	<%} else { %> --%>
+//       		selectedDatabasesFromProjectInfo();
+<%--     	 <% } %> --%>
+//     }
     
 	function selectedDatabasesFromProjectInfo() {
-		
 		<% if (selectedDatabases != null) {
 				for(ArtifactGroupInfo artifactGrpInfo : selectedDatabases) {
 					String database = artifactGrpInfo.getArtifactGroupId();
@@ -585,7 +552,7 @@
 	}
 	
 	function fillVersions(obj, value, text, parentValue) {
-		$('<div style="color: #000000;" ><input class="check techCheck" type="checkbox" name="'+parentValue+'" value="' + text + '"style="margin-right:5%;">'+ text +'</div>').appendTo(obj);
+		$('<div style="color: #000000;"><input class="check techCheck" type="checkbox" name="'+parentValue+'" value="' + text + '"style="margin-right:5%;">'+ text +'</div>').appendTo(obj);
 	}
 
 	function accordionClick(thisObj, currentChkBoxObj) {

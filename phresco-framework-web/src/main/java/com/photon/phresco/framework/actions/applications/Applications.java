@@ -181,7 +181,6 @@ public class Applications extends FrameworkBaseAction {
         try {
         	ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
         	ProjectInfo projectInfo = null;
-        	System.out.println("getSessionAttribute(getAppId() + SESSION_APPINFO):::" + getSessionAttribute(getAppId() + SESSION_APPINFO));
         	if (getSessionAttribute(getAppId() + SESSION_APPINFO) == null) {
         		projectInfo = projectManager.getProject(getProjectId(), getCustomerId(), getAppId());
         		String technologyId = projectInfo.getAppInfos().get(0).getTechInfo().getId();
