@@ -123,6 +123,7 @@ public class Configurations extends FrameworkBaseAction {
 		}
         
     	try {
+    	    removeSessionAttribute(getAppId() + SESSION_APPINFO);//To remove the appInfo from the session
     	    setReqAttribute(REQ_FROM_PAGE, REQ_CONFIG);
     	    setReqAttribute(REQ_CONFIG_PATH, getAppConfigPath().replace(File.separator, FORWARD_SLASH));
             String cloneConfigStatus = getHttpRequest().getParameter(CLONE_CONFIG_STATUS); 
@@ -265,7 +266,7 @@ public class Configurations extends FrameworkBaseAction {
     	builder.append(File.separator);
     	builder.append(FOLDER_DOT_PHRESCO);
     	builder.append(File.separator);
-    	builder.append(Constants.PHRESCO_PLUGIN_INFO_XML);
+    	builder.append(Constants.APPLICATION_HANDLER_INFO_FILE);
     	return builder.toString();
     }
     
@@ -373,7 +374,7 @@ public class Configurations extends FrameworkBaseAction {
     	
 	    
 	    ApplicationInfo applicationInfo = getApplicationInfo();
-        String techId = applicationInfo.getTechInfo().getId();
+       // String techId = applicationInfo.getTechInfo().getId();
     	SettingsTemplate configTemplate = getServiceManager().getConfigTemplate(getConfigId(), getCustomerId());
         List<PropertyTemplate> properties = configTemplate.getProperties();
         boolean remoteDeply = false;
@@ -396,9 +397,9 @@ public class Configurations extends FrameworkBaseAction {
             	propertyTemplate.setRequired(false);
             }
             
-    		if (techId.equals(FrameworkConstants.TECH_SITE_CORE) && DEPLOY_DIR.equals(key)) {
+    		/*if (techId.equals(FrameworkConstants.TECH_SITE_CORE) && DEPLOY_DIR.equals(key)) {
     			propertyTemplate.setRequired(false);
-    		}
+    		}*/
     		
 			if ((serverTypeValidation && DEPLOY_DIR.equals(key))) {
 				 propertyTemplate.setRequired(false);
@@ -420,10 +421,10 @@ public class Configurations extends FrameworkBaseAction {
              }
         }
         
-        if (techId.equals(FrameworkConstants.TECH_SITE_CORE) && StringUtils.isEmpty(siteCoreInstPath)) {
+        /*if (techId.equals(FrameworkConstants.TECH_SITE_CORE) && StringUtils.isEmpty(siteCoreInstPath)) {
         	setSiteCoreInstPathError(getText(ERROR_SITE_CORE_PATH_MISSING));
     		hasError = true;
-    	}
+    	}*/
         
         
     	if (isIISServer) {

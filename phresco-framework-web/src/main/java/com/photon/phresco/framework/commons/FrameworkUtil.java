@@ -870,12 +870,11 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
         		    optionKey = ((com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.Childs.Child.PossibleValues.Value) value).getKey();
         		}
 
-        		if (CollectionUtils.isNotEmpty(selectedValues) && selectedValues.contains(optionValue)) {
+        		if (CollectionUtils.isNotEmpty(selectedValues) && selectedValues.contains(optionKey)) {
         			selectedStr = "selected";
         		} else {
         			selectedStr = "";
         		}
-        		
         		builder.append("<option value='");
         		if (StringUtils.isNotEmpty(optionKey)) {
         		    builder.append(optionKey);

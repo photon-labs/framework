@@ -321,7 +321,7 @@
 				});
 				
 				$('#popupPage').modal('hide');
-				progressPopupAsSecPopup('doMinification', '<%= appId %>', 'minify', $("#minificationForm"), getBasicParams());
+				progressPopupAsSecPopup('minification', '<%= appId %>', 'minify', $("#minificationForm"), getBasicParams());
 			}	
 		}
 	}

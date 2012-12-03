@@ -24,7 +24,7 @@
 <script type="text/javascript">
 	$(document).ready(function() {
 		clickMenu($("a[name='appTab']"), $("#subcontainer"), $('#formAppMenu, #formCustomers'));
-		loadContent("appInfo", $('#formAppMenu, #formCustomers'), $("#subcontainer"));
+		loadContent("editApplication", $('#formAppMenu, #formCustomers'), $("#subcontainer"));
 		activateMenu($("#appinfo"));
 	});
 	
@@ -33,6 +33,12 @@
   		var params = getBasicParams();
   		loadContent('appInfo', $('#formFeatures'), $('#subcontainer'), params);
   	}
+	
+  	//To get the features page when the features tab and next btn in appInfo jsp is clicked
+  	function showFeaturesPage() {
+		var params = getBasicParams();
+		loadContent('features', $('#formAppInfo'), $('#subcontainer'), params);
+	}
 </script>
 
 <%
@@ -58,7 +64,7 @@
 			<a href="#" class="active" name="appTab" id="appInfo" onclick="showAppInfoPage();"><s:label key="lbl.app.menu.appinfo" theme="simple"/></a>
 		</li>
 		<li>
-			<a href="#" class="inactive" name="appTab" id="features" onclick="featuresPage();"><s:label key="lbl.app.menu.feature" theme="simple"/></a>
+			<a href="#" class="inactive" name="appTab" id="features" onclick="showFeaturesPage();"><s:label key="lbl.app.menu.feature" theme="simple"/></a>
 		</li>
 		<li>
 			<a href="#" class="inactive" name="appTab" id="code"><s:label key="lbl.app.menu.code" theme="simple"/></a>

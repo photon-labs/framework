@@ -45,7 +45,7 @@
 	<!--   import from type -->
 	<div id="typeInfo">
 		<div class="control-group" id="typeInfo">
-			<label class="control-label labelbold popupLbl" ">
+			<label class="control-label labelbold popupLbl">
 			<span class="red">* </span> <s:text name='lbl.svn.type' /></label>
 			<div class="controls">
 				<select name="repoType" class="medium" >

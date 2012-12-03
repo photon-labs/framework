@@ -59,6 +59,7 @@ public class Code extends DynamicParameterAction implements Constants {
 			S_LOGGER.debug("Entering Method  Code.code()");
 		}
 		try {
+		    removeSessionAttribute(getAppId() + SESSION_APPINFO);//To remove the appInfo from the session
         	ApplicationInfo appInfo = getApplicationInfo();
         	setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
         	setReqAttribute(REQ_APP_INFO, appInfo);

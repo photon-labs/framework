@@ -1976,11 +1976,11 @@ public class Quality extends DynamicParameterAction implements Constants {
     }
 
     public String quality() {
-        getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
         try {
+            removeSessionAttribute(getAppId() + SESSION_APPINFO);//To remove the appInfo from the session
             ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
             Project project = administrator.getProject(projectCode);
-            getHttpRequest().setAttribute(REQ_PROJECT, project);
+            setReqAttribute(REQ_PROJECT, project);
         } catch (Exception e) {
                S_LOGGER.error("Entered into catch block of Quality.quality()"+ e);
             new LogErrorReport(e, "Quality");

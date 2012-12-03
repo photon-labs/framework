@@ -94,11 +94,9 @@ public class Projects extends FrameworkBaseAction {
             setReqAttribute(REQ_PROJECTS, projects);
             setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
             removeSessionAttribute(projectCode);
-            if(statusFlag.equals("import")){
-            	System.out.println(getText(IMPORT_SUCCESS_PROJECT));
+            if (IMPORT.equals(getStatusFlag())) {
             	addActionMessage(getText(IMPORT_SUCCESS_PROJECT));
-            } else if(statusFlag.equals("update")){
-            	System.out.println(getText(SUCCESS_PROJECT_UPDATE));
+            } else if (UPDATE.equals(getStatusFlag())) {
             	addActionMessage(getText(SUCCESS_PROJECT_UPDATE));
             }
         } catch (PhrescoException e) {

@@ -119,6 +119,7 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 	public String ci() {
 		S_LOGGER.debug("Entering Method CI.ci()");
 		try {
+		    removeSessionAttribute(getAppId() + SESSION_APPINFO);//To remove the appInfo from the session
 			boolean jenkinsAlive = false;
 			// Other methods like build() will call this after triggered build,
 			// it will set trigger_from_ui=true, we need to set value when this

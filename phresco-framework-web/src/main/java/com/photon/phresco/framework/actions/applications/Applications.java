@@ -21,8 +21,6 @@ package com.photon.phresco.framework.actions.applications;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -164,10 +162,20 @@ public class Applications extends FrameworkBaseAction {
 
         return SUCCESS;
     }*/
-
+    
     public String editApplication() {
         if (s_debugEnabled) {
             S_LOGGER.debug("Entering Method  Applications.editApplication()");
+        }
+        
+        removeSessionAttribute(getAppId() + SESSION_APPINFO);
+        
+        return appInfo();
+    }
+
+    public String appInfo() {
+        if (s_debugEnabled) {
+            S_LOGGER.debug("Entering Method  Applications.appInfo()");
         }
 
         try {
@@ -186,7 +194,7 @@ public class Applications extends FrameworkBaseAction {
             
             	List<String> jsonData = getJsonData();
             	List<SelectedFeature> selectedFeatures = new ArrayList<SelectedFeature>();
-            	if(jsonData !=null) {
+            	if (CollectionUtils.isNotEmpty(jsonData)) {
 	            	for (String string : jsonData) {
 						Gson gson = new Gson();
 						SelectedFeature obj = gson.fromJson(string, SelectedFeature.class);
@@ -619,11 +627,11 @@ public class Applications extends FrameworkBaseAction {
         	Gson gson = new Gson();
         	
         	StringBuilder sb = new StringBuilder(Utility.getProjectHome())
-        	.append(appInfo.getAppDirName())
+        	.append(getOldAppDirName())
         	.append(File.separator)
         	.append(Constants.DOT_PHRESCO_FOLDER)
         	.append(File.separator)
-        	.append(Constants.PHRESCO_PLUGIN_INFO_XML);
+        	.append(Constants.APPLICATION_HANDLER_INFO_FILE);
 			File filePath = new File(sb.toString());
 			MojoProcessor mojo = new MojoProcessor(filePath);
 			ApplicationHandler applicationHandler = mojo.getApplicationHandler();
@@ -678,18 +686,7 @@ public class Applications extends FrameworkBaseAction {
         	appInfo.setSelectedJSLibs(selectedJsLibs);
         	appInfo.setSelectedComponents(selectedComponents);
 
-			StringBuilder projectInfoPath =new StringBuilder(Utility.getProjectHome())
-			.append(getOldAppDirName())
-			.append(File.separator)
-			.append(Constants.DOT_PHRESCO_FOLDER)
-			.append(File.separator)
-			.append(Constants.PROJECT_INFO_FILE);
-			
-			File oldprojectinfo = new File(projectInfoPath.toString());
-			reader = new BufferedReader(new FileReader(oldprojectinfo));
-			ProjectInfo oldProjectInfo = gson.fromJson(reader, ProjectInfo.class);
-			ApplicationInfo oldappinfos = oldProjectInfo.getAppInfos().get(0);
-			List<ArtifactGroupInfo> oldSelectedDbs = oldappinfos.getSelectedDatabases();
+			List<ArtifactGroupInfo> oldSelectedDbs = getApplicationInfo().getSelectedDatabases();
 			if (CollectionUtils.isNotEmpty(oldSelectedDbs)) {
 			    List<String> deletableDbs = new ArrayList<String>();
 				for (ArtifactGroupInfo artifactGroupInfo : oldSelectedDbs) {
@@ -714,8 +711,6 @@ public class Applications extends FrameworkBaseAction {
             removeSessionAttribute(REQ_PILOT_PROJECTS);
 		} catch (PhrescoException e) {
 			return showErrorPopup(e, EXCEPTION_PROJECT_UPDATE);
-		} catch (FileNotFoundException e) {
-			return showErrorPopup(new PhrescoException(e), EXCEPTION_PROJECT_UPDATE);
 		} finally {
 			 Utility.closeStream(reader);
 		 }
