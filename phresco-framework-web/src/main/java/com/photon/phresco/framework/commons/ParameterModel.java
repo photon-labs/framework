@@ -10,7 +10,7 @@ public class ParameterModel extends BasicParameterModel {
 	private String value = "";
 	private String onClickFunction = "";
 	private String onChangeFunction = "";
-	
+	private String optionOnclickFunction = "";
 	private List<String> selectedValues = null;
 	
 	private boolean multiple;
@@ -89,6 +89,14 @@ public class ParameterModel extends BasicParameterModel {
 
 	public void setFileType(String fileType) {
 		this.fileType = fileType;
+	}
+
+	public void setOptionOnclickFunction(String optionOnclickFunction) {
+		this.optionOnclickFunction = optionOnclickFunction;
+	}
+
+	public String getOptionOnclickFunction() {
+		return optionOnclickFunction;
 	}
 
 	public String toString() {

@@ -204,10 +204,48 @@
 					parameterModel.setObjectValue(psblValues);
 					parameterModel.setMultiple(Boolean.parseBoolean(parameter.getMultiple()));
 					parameterModel.setDependency(parameter.getDependency());
-					
 					StringTemplate selectElmnt = FrameworkUtil.constructSelectElement(parameterModel);
 	%>
 					<%= selectElmnt %>
+	<% 			
+				} else if (FrameworkConstants.TYPE_EDITABLE_COMBO.equalsIgnoreCase(parameter.getType()) && parameter.getPossibleValues() != null) { //load select list box
+					//To construct select box element if type is list and if possible value exists
+			    	List<com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value> psblValues = parameter.getPossibleValues().getValue();
+			    	if (StringUtils.isNotEmpty(parameter.getValue())) {//To get the previously selected value from the phresco-plugin-info
+						List<String> selectedValList = Arrays.asList(parameter.getValue().split(FrameworkConstants.CSV_PATTERN));	
+						parameterModel.setSelectedValues(selectedValList);
+					}
+			    	
+					String onChangeFunction = "";
+					if (StringUtils.isNotEmpty(parameter.getDependency())) {
+						onChangeFunction = "selectBoxOnChangeEvent(this,  '"+ parameter.getKey() +"', '"+ parameter.getDependency() +"')";
+					} else if (CollectionUtils.isNotEmpty(psblValues)) {
+						boolean addOnChangeEvent = false;
+						for (com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value psblValue : psblValues) {
+							if (psblValue.getDependency() != null) {
+								addOnChangeEvent = true;
+								break;
+							}
+						}
+						if (addOnChangeEvent) {
+							onChangeFunction = "selectBoxOnChangeEvent(this,  '"+ parameter.getKey() +"')";							
+						}
+					}
+					
+					parameterModel.setOnChangeFunction(onChangeFunction);
+					parameterModel.setObjectValue(psblValues);
+					parameterModel.setMultiple(Boolean.parseBoolean(parameter.getMultiple()));
+					parameterModel.setDependency(parameter.getDependency());
+					parameterModel.setOptionOnclickFunction("jecOptionChange();");
+					StringTemplate selectElmnt = FrameworkUtil.constructSelectElement(parameterModel);
+	%>
+					
+					<%= selectElmnt %>
+					<script type="text/javascript">
+						$("#" + '<%= parameter.getKey() %>').jec();
+						$('.jecEditableOption').text("Type or select from the list");
+						$("#"+'<%= parameter.getKey() %>'+" .jecEditableOption").prop("selected", true);
+					</script>
 	<% 			
 				} else if (FrameworkConstants.TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(parameter.getType()) && (!parameter.isSort())) {
 					//To dynamically load values into select box for environmet
@@ -304,9 +342,12 @@
 	var readerSession = "";
 	$(document).ready(function() {
 		showParameters();//To show the parameters based on the dependency
-		
 		// accodion for advanced issue
 // 		accordion();
+
+		$('.jecEditableOption').click(function() {
+	       $('.jecEditableOption').text("");
+	    });
 		
 		$('#importSql').click(function() {
 			var isChecked = $('#importSql').is(":checked");
@@ -352,6 +393,10 @@
 		executeSqlShowHide();
 // 		showHideMinusIcon();
 	});
+	
+	function jecOptionChange() {
+		 $('.jecEditableOption').text("Type or select from the list");
+	}
 	
 	function executeSqlShowHide() {
 		if($('#importSql').is(":checked")) {
@@ -461,9 +506,6 @@
 	var pushToElement = "";
 	var isMultiple = "";
 	var controlType = "";
-	function selectBoxOnChangeEvent(obj, currentParamKey, showHideFlag) {
-		selectBoxOnChangeEvent(obj, currentParamKey, showHideFlag);
-	}
 	
 	function updateDependantValue(data) {
 		constructElements(data, pushToElement, isMultiple, controlType);

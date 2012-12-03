@@ -97,6 +97,9 @@
 		<!-- Window Resizer -->
 		<script type="text/javascript" src="js/windowResizer.js"></script>
 		
+		<!-- jquery editable combobox -->
+		<script src="js/jquery.editable.combobox.js"></script>
+		
 		<script type="text/javascript">
 		    $(document).ready(function() {
 		        applyTheme();
