@@ -22,8 +22,6 @@ package com.photon.phresco.framework.actions.applications;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +35,11 @@ import com.photon.phresco.api.ApplicationProcessor;
 import com.photon.phresco.api.ConfigManager;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
+import com.photon.phresco.commons.model.ArtifactGroup;
+import com.photon.phresco.commons.model.ArtifactGroupInfo;
+import com.photon.phresco.commons.model.ArtifactInfo;
 import com.photon.phresco.commons.model.Customer;
+import com.photon.phresco.commons.model.DownloadInfo;
 import com.photon.phresco.commons.model.Element;
 import com.photon.phresco.commons.model.PropertyTemplate;
 import com.photon.phresco.commons.model.RepoInfo;
@@ -48,11 +50,8 @@ import com.photon.phresco.exception.ConfigurationException;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
-import com.photon.phresco.framework.api.ProjectAdministrator;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.commons.LogErrorReport;
-import com.photon.phresco.framework.model.CertificateInfo;
-import com.photon.phresco.framework.model.SettingsInfo;
 import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.PhrescoDynamicLoader;
@@ -77,13 +76,15 @@ public class Configurations extends FrameworkBaseAction {
     private String configId = null;
     private String selectedConfigId = null;
     private String selectedType = null;
+    private String serverType = null;
+    private String dbType = null;
     private String selectedEnv = null;
 	private String selectedConfigname = null;
 	private String configName = null;
 	private String copyFromEnvName = null;
     private String description = null;
     private String oldName = null;
-    private String[] appliesto = null;
+    private String appliesTos = "";
     private boolean errorFound = false;
 	private String configNameError = null;
 	private String configEnvError = null;
@@ -102,9 +103,6 @@ public class Configurations extends FrameworkBaseAction {
 	private String currentConfigType = null;
 	private String currentConfigName = null;
 	private String currentConfigDesc = null;
-	
-    private List<String> projectInfoVersions = null;
-    
     private String appName = "";
 	private String siteName = "";
 	private String siteCoreInstPath = "";
@@ -116,7 +114,8 @@ public class Configurations extends FrameworkBaseAction {
     private String configPath = null;
     
     private boolean flag = false;
-    
+    private List<String> versions = new ArrayList<String>();
+
 	public String configList() {
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method  Configurations.configList()");
@@ -285,12 +284,11 @@ public class Configurations extends FrameworkBaseAction {
     	return settingsList();
     }
     
-    
-    
     private void save(String configPath) throws ConfigurationException, PhrescoException {
     	if (debugEnabled) {
     		S_LOGGER.debug("Entering Method  Configurations.save()");
-    	}  
+    	}
+
     	Configuration config = getConfigInstance();
     	Environment environment = getEnvironment();
     	List<Configuration> configurations = environment.getConfigurations();
@@ -327,6 +325,7 @@ public class Configurations extends FrameworkBaseAction {
 		
 		Configuration config = new Configuration(getConfigName(), getConfigType());
 		config.setDesc(getDescription());
+		config.setAppliesTo(getAppliesTos());
 		config.setProperties(properties);
 		return config;
 	}
@@ -352,6 +351,13 @@ public class Configurations extends FrameworkBaseAction {
     		setConfigTypeError(getText(ERROR_CONFIG_TYPE));
             hasError = true;
         }
+    	
+    	if (fromPage.equals(FrameworkConstants.ADD_SETTINGS) || fromPage.equals(FrameworkConstants.EDIT_SETTINGS)) {
+	    	if (StringUtils.isEmpty(getAppliesTos())) {
+	    		setAppliesToError(getText(ERROR_APPLIES_TO));
+	            hasError = true;
+	        }
+    	}
     	
     	ConfigManager configManager = getConfigManager(configPath);
     	if(StringUtils.isNotEmpty(configName) && !configName.equals(oldName)) {
@@ -657,6 +663,11 @@ public class Configurations extends FrameworkBaseAction {
 
             
             if (configuration != null) {
+	            String appliesTo = configuration.getAppliesTo();
+	            String [] selectedAppliesTo = appliesTo.split(",");
+	            List<String> selectedAppliesToList = Arrays.asList(selectedAppliesTo);
+	            setReqAttribute(REQ_APPLIES_TO, selectedAppliesToList);
+	            
                 Properties selectedProperties = configuration.getProperties();
                 setReqAttribute(REQ_PROPERTIES_INFO, selectedProperties);
             }
@@ -758,34 +769,72 @@ public class Configurations extends FrameworkBaseAction {
 	
     public String fetchProjectInfoVersions() {
     	try {
-//	    	String configType = getHttpRequest().getParameter("configType");
-//	    	String name = getHttpRequest().getParameter("name");
-//	    	ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-//	    	Project project = administrator.getProject(projectCode);
-	    	//TODO:Need to handle
-	    	/*Technology technology = project.getApplicationInfo().getTechnology();
-	    	if ("Server".equals(configType)) {
-	    		List<Server> servers = technology.getServers();
-	    		if (servers != null && CollectionUtils.isNotEmpty(servers)) {
-	    			for (Server server : servers) {
-						if (server.getName().equals(name)) {
-							setProjectInfoVersions(server.getVersions());
-						}
-					}
-	    		}
-	    	}
-	    	if ("Database".equals(configType)) {
-	    		List<Database> databases = technology.getDatabases();
-	    		if (databases != null && CollectionUtils.isNotEmpty(databases)) {
-	    			for (Database database : databases) {
-						if (database.getName().equals(name)) {
-							setProjectInfoVersions(database.getVersions());
-						}
-					}
-	    		}
-	    	}*/
-    	} catch (Exception e) {
     		
+    		ApplicationInfo appInfo = getApplicationInfo();
+    		if (SERVER.equals(getSelectedType())) {
+    			List<ArtifactGroupInfo> selectedServers = appInfo.getSelectedServers();
+    			for (ArtifactGroupInfo artifactGroupInfos : selectedServers) {
+    				List<String> artifactInfoIds = artifactGroupInfos.getArtifactInfoIds();
+    				ArtifactGroup artifactGroupInfo = getServiceManager().getArtifactGroupInfo(artifactGroupInfos.getArtifactGroupId());
+    				List<ArtifactInfo> artifactInfos = artifactGroupInfo.getVersions();
+    				for (ArtifactInfo artifactInfo : artifactInfos) {
+						if (artifactInfoIds.contains(artifactInfo.getId())) {
+							versions.add(artifactInfo.getVersion());
+						}
+					}
+				}
+    		}
+    		
+    		if (DATABASE.equals(getSelectedType())) {
+    			List<ArtifactGroupInfo> selectedDatabases = appInfo.getSelectedDatabases();
+    			for (ArtifactGroupInfo artifactGroupInfos : selectedDatabases) {
+    				List<String> artifactInfoIds = artifactGroupInfos.getArtifactInfoIds();
+    				ArtifactGroup artifactGroupInfo = getServiceManager().getArtifactGroupInfo(artifactGroupInfos.getArtifactGroupId());
+    				List<ArtifactInfo> artifactInfos = artifactGroupInfo.getVersions();
+    				for (ArtifactInfo artifactInfo : artifactInfos) {
+						if (artifactInfoIds.contains(artifactInfo.getId())) {
+							versions.add(artifactInfo.getVersion());
+						}
+					}
+				}
+    		}
+    		
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    	}
+    	return SUCCESS;
+    }
+    
+    public String fetchSettingProjectInfoVersions() {
+    	try {
+    		if (DATABASE.equals(getSelectedType())) {
+	    		List<DownloadInfo> downloads = getServiceManager().getDownloads(getCustomerId());
+	    		for (DownloadInfo downloadInfo : downloads) {
+	    			ArtifactGroup artifactGroup = downloadInfo.getArtifactGroup();
+	    			if (getDbType().equals(downloadInfo.getName())) {
+	    				List<ArtifactInfo> artifactInfos = artifactGroup.getVersions();
+	    				for (ArtifactInfo artifactInfo : artifactInfos) {
+							versions.add(artifactInfo.getVersion());
+						}
+	    			}
+				}
+    		}
+    		
+    		if (SERVER.equals(getSelectedType())) {
+	    		List<DownloadInfo> downloads = getServiceManager().getDownloads(getCustomerId());
+	    		for (DownloadInfo downloadInfo : downloads) {
+	    			ArtifactGroup artifactGroup = downloadInfo.getArtifactGroup();
+	    			if (getServerType().equals(downloadInfo.getName())) {
+	    				List<ArtifactInfo> artifactInfos = artifactGroup.getVersions();
+	    				for (ArtifactInfo artifactInfo : artifactInfos) {
+							versions.add(artifactInfo.getVersion());
+						}
+	    			}
+				}
+    		}
+    		
+    	} catch (Exception e) {
+    		e.printStackTrace();
     	}
     	return SUCCESS;
     }
@@ -833,14 +882,6 @@ public class Configurations extends FrameworkBaseAction {
         this.oldName = oldName;
     }
 
-	public String[] getAppliesto() {
-		return appliesto;
-	}
-
-	public void setAppliesto(String[] appliesto) {
-		this.appliesto = appliesto;
-	}
-    
     public String getNameError() {
 		return nameError;
 	}
@@ -887,14 +928,6 @@ public class Configurations extends FrameworkBaseAction {
 
 	public void setEnvError(String envError) {
 		this.envError = envError;
-	}
-	
-	public List<String> getProjectInfoVersions() {
-		return projectInfoVersions;
-	}
-
-	public void setProjectInfoVersions(List<String> projectInfoVersions) {
-		this.projectInfoVersions = projectInfoVersions;
 	}
 	
 	public String getOldConfigType() {
@@ -1114,11 +1147,9 @@ public class Configurations extends FrameworkBaseAction {
 		this.fromPage = fromPage;
 	}
 
-
 	public String getConfigPath() {
 		return configPath;
 	}
-
 
 	public void setConfigPath(String configPath) {
 		this.configPath = configPath;
@@ -1128,48 +1159,73 @@ public class Configurations extends FrameworkBaseAction {
 		return deletableEnvs;
 	}
 
-
 	public void setDeletableEnvs(List<String> deletableEnvs) {
 		this.deletableEnvs = deletableEnvs;
 	}
-
 
 	public String getCopyFromEnvName() {
 		return copyFromEnvName;
 	}
 
-
 	public void setCopyFromEnvName(String copyFromEnvName) {
 		this.copyFromEnvName = copyFromEnvName;
 	}
-
 
 	public String getCurrentConfigDesc() {
 		return currentConfigDesc;
 	}
 
-
 	public void setCurrentConfigDesc(String currentConfigDesc) {
 		this.currentConfigDesc = currentConfigDesc;
 	}
-
 
 	public List<Configuration> getSelectedConfigurations() {
 		return selectedConfigurations;
 	}
 
-
 	public void setSelectedConfigurations(List<Configuration> selectedConfigurations) {
 		this.selectedConfigurations = selectedConfigurations;
 	}
-
 
 	public String getAppliesToError() {
 		return appliesToError;
 	}
 
-
 	public void setAppliesToError(String appliesToError) {
 		this.appliesToError = appliesToError;
+	}
+
+	public String getServerType() {
+		return serverType;
+	}
+
+	public void setServerType(String serverType) {
+		this.serverType = serverType;
+	}
+
+	public String getAppliesTos() {
+		return appliesTos;
+	}
+
+	public void setAppliesTos(String appliesTos) {
+		this.appliesTos = appliesTos;
+	}
+	  
+	public List<String> getVersions() {
+		return versions;
+	}
+
+	public void setVersions(List<String> versions) {
+		this.versions = versions;
+	}
+
+
+	public String getDbType() {
+		return dbType;
+	}
+
+
+	public void setDbType(String dbType) {
+		this.dbType = dbType;
 	}
 }

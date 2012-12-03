@@ -735,6 +735,7 @@ public interface FrameworkConstants {
 	String REQ_FEATURES_MODULE_CAT = "moduleCat";
 	String REQ_FEATURES_MODULES = "modules";
 	String REQ_CONFIG = "config";
+	String REQ_VERSION = "version";
 	String REQ_ENVIRONMENTS = "environments";
 	String REQ_CONFIGURATIONS = "configurations";
     String REQ_LOG_REPORT = "logReport";
@@ -950,6 +951,9 @@ public interface FrameworkConstants {
 	String CLONE_FROM_CONFIG_NAME = "cloneFromConfigName";
 	String TECH_SITE_CORE = "tech-sitecore";
 	String ADD_SETTINGS ="addsettings";
+	String EDIT_SETTINGS ="editsettings";
+	String ADD_CONFIG ="addconfig";
+	String EDIT_CONFIG="editconfig";
     
     /*
      * Create Environment keys
@@ -1034,6 +1038,7 @@ public interface FrameworkConstants {
     String ERROR_TECHNOLOGY = "err.msg.empty.technology";
     String ERROR_ENV = "err.msg.empty.environment";
     String ERROR_CONFIG_TYPE = "err.msg.empty.config.type";
+    String ERROR_APPLIES_TO = "err.msg.empty.applies.to";
     String ERROR_CONFIG_SITE_NAME = "err.msg.empty.config.site.name";
     String ERROR_CONFIG_APP_NAME = "err.msg.empty.config.app.name";
     String ERROR_SITE_CORE_PATH_MISSING = "err.msg.empty.site.core.path";
