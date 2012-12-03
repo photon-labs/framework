@@ -5984,7 +5984,7 @@ color: #313131;
 /*features page select box*/
 .featureTypeWidth label:nth-child(1) {
 	text-align: left !important;
-	margin-top: 1.5%;
+	margin-top: 1%;
 	width: 30px !important;
 	font-weight: bold;
 }
@@ -5995,13 +5995,14 @@ color: #313131;
 	font-weight: bold !important;
 }
 .dd-selected-text, .dd-option-text {
-	margin-bottom: 3px !important;
+	margin-bottom: 0px !important;
 }
 .dd-selected, .dd-option {
 	text-decoration: none !important;
+	padding: 3px !important;
 }
 .dd-selected-image, .dd-option-image {
-	margin-top: 5px;
+	margin-top: 2px;
 	margin-right: 7px !important;
 }
 .dd-select {
