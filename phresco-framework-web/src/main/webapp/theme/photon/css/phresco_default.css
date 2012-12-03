@@ -5806,7 +5806,6 @@ ul#display-inline-block-example li:nth-child(4) select, ul#display-inline-block-
 .featureTypeWidth {
 	margin-bottom:10px;
 	text-align:left;
-	padding-left:40%;	
 }
 .feature_content_adder .accordion_panel_inner select {
 	margin:0 !important;
@@ -5983,9 +5982,33 @@ color: #313131;
 }
 
 /*features page select box*/
-.dd-selected, .dd-option {
-	padding: 0px !important;
+.featureTypeWidth label:nth-child(1) {
+	text-align: left !important;
+	margin-top: 1.5%;
+	width: 30px !important;
+	font-weight: bold;
 }
-.dd-selected-image .dd-option-image {
-	margin: 10px 10px 10px 0px !important;
+#featureselect {
+	margin-left: 5%;
+}
+.dd-selected-text, .dd-option-text, .dd-desc {
+	font-weight: bold !important;
+}
+.dd-selected-text, .dd-option-text {
+	margin-bottom: 3px !important;
+}
+.dd-selected, .dd-option {
+	text-decoration: none !important;
+}
+.dd-selected-image, .dd-option-image {
+	margin-top: 5px;
+	margin-right: 7px !important;
+}
+.dd-select {
+	background: #f7f7f7 !important;
+	border: solid 1px #dcdcdc;
+}
+.dd-option-selected, .dd-option:hover {
+	background: #eeeeee !important;
+	border: solid 1px #dcdcdc;
 }

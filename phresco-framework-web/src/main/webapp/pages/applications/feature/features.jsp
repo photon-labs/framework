@@ -54,12 +54,15 @@
 %> 
 <form id="formFeatures" class="featureForm">
 	<div class="form-horizontal featureTypeWidth">
-		<label for="myselect" class="control-label features_cl">Type&nbsp;</label>
-		<select id="featureselect" name="type" onchange="featuretype()">
-			<option value="<%= ArtifactGroup.Type.FEATURE.name() %>" data-imagesrc="images/deploy.png" selected="selected"><s:text name="lbl.options.modules"/></option>
-			<option value="<%= ArtifactGroup.Type.JAVASCRIPT.name() %>" data-imagesrc="images/deploy.png"><s:text name="lbl.options.js.libs"/></option>
-			<option value="<%= ArtifactGroup.Type.COMPONENT.name() %>" data-imagesrc="images/deploy.png"><s:text name="lbl.options.components"/></option>
-		</select>
+		<label for="myselect" class="control-label features_cl">Type&nbsp;:</label>
+		 <select id="featureselect">
+	        <option value="<%= ArtifactGroup.Type.FEATURE.name() %>" selected="selected" data-imagesrc="images/features.png"
+	            data-description="Description with Modules"><s:text name="lbl.options.modules"/></option>
+	        <option value="<%= ArtifactGroup.Type.JAVASCRIPT.name() %>" data-imagesrc="images/libraries.png"
+	            data-description="Description with Javascript"><s:text name="lbl.options.js.libs"/></option>
+	        <option value="<%= ArtifactGroup.Type.COMPONENT.name() %>" data-imagesrc="images/components.png"
+	            data-description="Description with Components"><s:text name="lbl.options.components"/></option>
+	    </select>
 	</div>
 	<div class="custom_features">
 		<div class="tblheader">
@@ -147,6 +150,7 @@
         hideLoadingIcon();
         //fillHeading();
         //showAvailabelFeature();
+        
         $('#featureselect').ddslick({
         	onSelected: function(data){
         		featureType(data.selectedData.value, data.selectedData.text); 
