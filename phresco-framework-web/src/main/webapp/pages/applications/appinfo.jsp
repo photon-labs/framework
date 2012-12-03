@@ -508,6 +508,7 @@
     var map = {};
 	//Success event functions
 	function successEvent(pageUrl, data) {
+		hideLoadingIcon();
 		//To fill the servers/database for the selected 
 		if (pageUrl == "fetchDownloadInfos") {
 			selectBoxobj.empty();

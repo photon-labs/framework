@@ -169,7 +169,7 @@
 	$(document).ready(function() {
 		hideProgressBar()
 		toDisableCheckAll();
-		hideLoadingIcon();//To hide the loading icon
+		//hideLoadingIcon();//To hide the loading icon
 		
 		$('#importAppln').click(function() {
 			yesnoPopup('importAppln', '<s:text name="lbl.app.import"/>', 'importUpdateAppln','<s:text name="lbl.app.import"/>');
