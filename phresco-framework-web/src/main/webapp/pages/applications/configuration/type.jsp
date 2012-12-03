@@ -26,6 +26,7 @@
 <%@ page import="java.util.List"%>
 <%@ page import="java.util.Properties"%>
 
+<%@ page import="com.google.gson.Gson"%>
 <%@ page import="org.antlr.stringtemplate.StringTemplate" %>
 <%@ page import="org.apache.commons.collections.CollectionUtils" %>
 
@@ -37,8 +38,6 @@
 <%@ page import="com.photon.phresco.framework.commons.ParameterModel" %>
 <%@ page import="com.photon.phresco.commons.model.Element" %>
 
-<form id="configProperties">
-
 <%
 	ApplicationInfo appInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_APPINFO);
 	Properties propertiesInfo = (Properties) request.getAttribute(FrameworkConstants.REQ_PROPERTIES_INFO); 
@@ -47,8 +46,50 @@
 	String fromPage = (String) request.getAttribute(FrameworkConstants.REQ_FROM_PAGE);
 	
 	List<String> typeValues  = (List<String>) request.getAttribute(FrameworkConstants.REQ_TYPE_VALUES);
+	List<String> selectedAppliesTos  = (List<String>) request.getAttribute(FrameworkConstants.REQ_APPLIES_TO);
 	List<PropertyTemplate> properties = (List<PropertyTemplate>) request.getAttribute(FrameworkConstants.REQ_PROPERTIES);
+	Gson gson = new Gson(); 
 	
+	if (fromPage.equals(FrameworkConstants.ADD_SETTINGS) || fromPage.equals(FrameworkConstants.EDIT_SETTINGS)) { %>
+		<div class="control-group" id="appliesToControl">
+			<label class="control-label labelbold">
+					<span class="mandatory">*</span>&nbsp;<s:text name='label.applies.to'/>
+			</label>
+			<div class="controls">
+				<div class="settingsTypeFields">
+            		<div class="multilist-scroller multiselect" id='multiselectAppliesTo'>
+					   <ul>
+					   	<% 
+					   		String checkedStr = "";
+					   		List<Element> appliesToTechs = settingsTemplate.getAppliesToTechs();
+				   			for (Element appliesTo : appliesToTechs) {
+				   				if (selectedAppliesTos != null ) {
+					   			for (String selectedAppliesTo : selectedAppliesTos) {
+					   				if (selectedAppliesTos.contains(appliesTo.getName()) ) {
+										checkedStr = "checked";
+									} else {
+										checkedStr = "";
+									}
+					   			}
+				   			}
+					   	%>
+							<li>
+								<input type="checkbox" name="appliesTo" class="check appliesToCheck" 
+									value='<%= appliesTo.getName() %>' title="<%= appliesTo.getDescription() %>"  <%= checkedStr %> /><%= appliesTo.getName() %>
+							</li>
+						<%		
+				   		}
+					%>
+					   </ul>
+			  	 	</div>
+				</div>
+				<span class="help-inline" id="appliesToError"></span>
+			</div>
+	    </div>
+   <% } %>
+   
+   <form id="configProperties">
+   <% 
 	StringBuilder sb = new StringBuilder();
     for (PropertyTemplate propertyTemplate : properties) {
     	ParameterModel pm = new ParameterModel();
@@ -66,7 +107,7 @@
     	}
         List<String> possibleValues = new ArrayList<String>(8);
 		if (FrameworkConstants.SERVER_KEY.equals(propertyTemplate.getKey())) {
-			if("addsettings".equals(fromPage)){
+			if (fromPage.equals(FrameworkConstants.ADD_SETTINGS) || fromPage.equals(FrameworkConstants.EDIT_SETTINGS)) {
 				possibleValues = typeValues;
 			} else {
        			if(appInfo != null && CollectionUtils.isNotEmpty(appInfo.getSelectedServers())) {
@@ -76,7 +117,7 @@
 				}
 			}
     	} else if (FrameworkConstants.DATABASE_KEY.equals(propertyTemplate.getKey())) {
-    		if("addsettings".equals(fromPage)){
+    		if (fromPage.equals(FrameworkConstants.ADD_SETTINGS) || fromPage.equals(FrameworkConstants.EDIT_SETTINGS)) {
 				possibleValues = typeValues;
 			} else {
 	    		if(appInfo != null && CollectionUtils.isNotEmpty(appInfo.getSelectedDatabases())) {
@@ -183,33 +224,6 @@
 		}
 	%>
 	
-	<% if ("addsettings".equals(fromPage)) { %>
-		<div class="control-group" id="appliesToControl">
-			<label class="control-label labelbold">
-					<span class="mandatory">*</span>&nbsp;<s:text name='label.applies.to'/>
-			</label>
-			<div class="controls">
-				<div class="settingsTypeFields" id="typefield">
-            		<div class="multilist-scroller multiselect" id='multiselect'>
-					   <ul>
-					   	<% 
-					   		List<Element> appliesToTechs = settingsTemplate.getAppliesToTechs();
-					   			for (Element appliesTo : appliesToTechs) { %>
-								<li>
-									<input type="checkbox" name="appliesTo" class="check appliesToCheck" 
-										value='' title="<%= appliesTo.getDescription() %>" /><%= appliesTo.getName() %>
-								</li>
-							
-						<%		}
-							
-					   	%>
-					   </ul>
-			  	 	</div>
-				</div>
-				<span class="help-inline" id="appliesToError"></span>
-			</div>
-	    </div>
-    <% } %>
     
 </form>
 
@@ -217,53 +231,62 @@
 $("div#certificateControl").hide();
 	
 	$(document).ready(function() {
+		
+		<% if (fromPage.equals(FrameworkConstants.ADD_CONFIG) || fromPage.equals(FrameworkConstants.EDIT_CONFIG)) { %>
+				getVersions();
+		<% } else {%>
+				getSettingsVersions();
+		<%	} %>
+		
 		var typeData= $.parseJSON($('#type').val());
 		var selectedType = typeData.name;
 		var serverType = $('#server').val();
-		 if(selectedType == "Server"){
+		if(selectedType == "Server"){
 			if (serverType == "IIS") {
 				hideContext();
 				hideRemoteDeply();
 				$('#iisDiv').css("display", "block");
 			}
-		 }
+		}
 		
-		 $("#type").change(function() {
-			 technologyBasedRemoteDeploy();
-		 });
+		$("#type").change(function() {
+			//getVersions();
+			getSettingsVersions();
+			technologyBasedRemoteDeploy();
+		});
 		 
-		 $("#server").change(function() {
-			 if($(this).val() == "Apache Tomcat" || $(this).val() == "Jboss" || $(this).val() == "WebLogic"){
-				 $('#remoteDeploymentControl').show();	 
-				 remoteDeplyChecked();
-		     } else {
-		    	 hideRemoteDeply(); 
-		     }
-			 
-			 if ($(this).val() == "IIS") {
-				 hideContext();
-				 $('#iisDiv').css("display", "block");
-			 } else {
-				 showContext();
-				 $('#iisDiv').css("display", "none");
-			 }
-			 
-			 remoteDeplyChecked();
-			 if( $(this).val() != "Apache Tomcat" || $(this).val() != "JBoss" || $(this).val() != "WebLogic"){
-				 remoteDeplyChecked();
-			 }
-			 if ($(this).val() == "IIS" || $(this).val() == "NodeJS") {
-				 $("input[name='remoteDeployment']").attr("checked",false);
-			 }
-			 
-			 technologyBasedRemoteDeploy();
-		 });
+		$("#server").change(function() {
+			if($(this).val() == "Apache Tomcat" || $(this).val() == "Jboss" || $(this).val() == "WebLogic"){
+			$('#remoteDeploymentControl').show();	 
+			remoteDeplyChecked();
+			  } else {
+			 	 hideRemoteDeply(); 
+			}
+			
+			if ($(this).val() == "IIS") {
+				hideContext();
+				$('#iisDiv').css("display", "block");
+			} else {
+				showContext();
+				$('#iisDiv').css("display", "none");
+			}
+			
+			remoteDeplyChecked();
+			if( $(this).val() != "Apache Tomcat" || $(this).val() != "JBoss" || $(this).val() != "WebLogic"){
+				remoteDeplyChecked();
+			}
+			if ($(this).val() == "IIS" || $(this).val() == "NodeJS") {
+				$("input[name='remoteDeployment']").attr("checked",false);
+			}
+			
+			technologyBasedRemoteDeploy();
+		});
 		 
 		// hide deploy dir if remote Deployment selected
 		$("input[name='remoteDeployment']").change(function() {
 			remoteDeplyChecked(); 
 		});
-		 
+		
 	});
 
 	function remoteDeplyChecked() {
@@ -304,5 +327,40 @@ $("div#certificateControl").hide();
 	function hideDeployDir() {
 		$("input[name='deploy_dir']").val("");
 		$('#deploy_dirControl').hide();
+	}
+	
+	function getVersions() {
+		var typeData= $.parseJSON($('#type').val());
+		var selectedType = typeData.name;
+		var params = getBasicParams();
+		params = params.concat("&selectedType=");
+		params = params.concat(selectedType);
+		loadContent("fetchProjectInfoVersions", $('#configProperties'), '', params, true);
+	}
+	
+	function getSettingsVersions() {
+		var typeData= $.parseJSON($('#type').val());
+		var serverType = $('#server').val();
+		var dbType = $('#Database').val();
+		var selectedType = typeData.name;
+		var params = getBasicParams();
+		params = params.concat("&selectedType=");
+		params = params.concat(selectedType);
+		params = params.concat("&serverType=");
+		params = params.concat(serverType);
+		params = params.concat("&dbType=");
+		params = params.concat(dbType);
+		loadContent("fetchSettingProjectInfoVersions", $('#configProperties'), '', params, true);
+	}
+	
+	function successEvent(pageUrl, data) {
+		//To fill the versions 
+		if (pageUrl == "fetchProjectInfoVersions") {
+			fillSelectbox($("select[name='version']"), data.versions);
+		}
+		
+		if (pageUrl == "fetchSettingProjectInfoVersions") {
+			fillSelectbox($("select[name='version']"), data.versions);
+		}
 	}
 </script>

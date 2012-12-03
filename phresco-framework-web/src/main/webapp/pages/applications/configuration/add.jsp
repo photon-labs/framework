@@ -47,6 +47,7 @@
 	String name = "";
 	String description = "";
 	String selectedType = "";
+	String selectedAppliesTo = "";
 	String error = "";
 	String envName = "";
 	String desc = "";
@@ -61,6 +62,7 @@
 			name = configInfo.getName();
 			description = configInfo.getDesc();
 			selectedType = configInfo.getType();
+			selectedAppliesTo = configInfo.getAppliesTo();
 		}
 	
 		/* if (request.getAttribute(FrameworkConstants.REQ_FROM_PAGE) != null) {
@@ -206,9 +208,13 @@
 		var configId = template.id;
 		var fromPage = "<%= fromPage%>";
 		var configPath = "<%= configPath%>";
-		var jsonParam = '{ ' + getBasicParamsAsJson() + ', "configName": "' + name + '", "description": "' + desc + '", "configType": "' + type 
-								+ '", "configId": "' + configId + '", "oldName": "' + oldName + '", "configPath": "' + configPath + '", "fromPage": "' + fromPage + '", "environment" : ' + env + ', ' + configStr.substring(1);
 		
+		var selectedAppliesTos = new Array();
+		$('input[name="appliesTo"]:checked').each(function() {
+			selectedAppliesTos.push($(this).val());
+		});
+		var jsonParam = '{ ' + getBasicParamsAsJson() + ', "configName": "' + name + '", "description": "' + desc + '", "configType": "' + type
+								+ '", "configId": "' + configId + '", "oldName": "' + oldName + '", "configPath": "' + configPath + '", "fromPage": "' + fromPage + '", "appliesTos": "' + selectedAppliesTos + '", "environment" : ' + env + ', ' + configStr.substring(1);
 		validateJson('<%= pageUrl %>', '', $('#<%= container %>'), jsonParam);
 	});
 	
@@ -261,6 +267,12 @@
 			showError($("#siteCoreControl"), $("#siteCoreInstPathError"), data.siteCoreInstPathError);
 		} else {
 			hideError($("#siteCoreControl"), $("#siteCoreInstPathError"));
+		}
+		
+		if (!isBlank(data.appliesToError)) {
+			showError($("#appliesToControl"), $("#appliesToError"), data.appliesToError);
+		} else {
+			hideError($("#appliesToControl"), $("#appliesToError"));
 		}
 	}
 </script>

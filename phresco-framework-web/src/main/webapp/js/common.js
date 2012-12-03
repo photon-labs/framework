@@ -101,7 +101,7 @@ function clickButton(button, tag) {
 }
 
 function loadContent(pageUrl, form, tag, additionalParams, callSuccessEvent, ajaxCallType, callbackFunction) {
-//	showLoadingIcon(tag);
+	showLoadingIcon();
 	if (ajaxCallType == undefined || ajaxCallType == "") {
 		ajaxCallType = true;
 	}
