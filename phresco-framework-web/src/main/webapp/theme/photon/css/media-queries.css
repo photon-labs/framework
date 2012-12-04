@@ -91,7 +91,7 @@ Width <= 1024
 	    border-radius: 0 0 3px 3px;
 	    float: right;
 	    margin-right: 9px;
-	    margin-top: 4px;
+	    margin-top: 8px;
 	    padding-top: 0;
 	}
 	.wrapper {
@@ -107,7 +107,7 @@ Width <= 1024
 	#container {
 	    z-index: 15004;
 	    width: 99%;
-	    height: 85%;
+	    height: 92%;
 	}
 	
 	.holder {
@@ -596,7 +596,7 @@ Width size <= 1024
 	#container {
 	    z-index: 15004;
 	    width: 100%;
-	    height: 85%;
+	    height: 92%;
 	}
 	
 	.holder {
@@ -1141,7 +1141,7 @@ Width >= 1152 and < 1280
 	#container {
 	    z-index: 15004;
 	    width: 99%;
-	    height: 85%;
+	    height: 92%;
 	}
 	
 	.holder {
@@ -1489,7 +1489,7 @@ Width <= 1280 and height <= 800
 	#container {
 		z-index: 15004;
 		width: 99%;
-		height: 84%;
+		height: 92%;
 	}
 	
 	.headerInner {
@@ -1902,7 +1902,7 @@ Width >= 1280 and height >= 800
 	#container {
 		z-index: 15004;
 		width: 99%;
-		height: 84%;
+		height: 92%;
 	}
 
 	.custom_features {
@@ -1944,8 +1944,7 @@ Width >= 1280 and height >= 800
 	    padding: 17px 20px 18px 150px; */
 	    float: right;
 	    margin-right: 9px;
-	    margin-top: 4px;
-	    padding-top: 3%;
+	    margin-top: 15px;
  	}
 
 	.intro_container {
