@@ -685,9 +685,9 @@
 		if($('#operation').val() == "build") {
 			loadContent('generateBuild','', $('#dynamicConfigLoad'), getBasicParams(), false);
 		} else if($('#operation').val() == "deploy") {
-			loadContent('deploy', '', $('#dynamicConfigLoad'), getBasicParams(), false);
+			loadContent('showDeploy', '', $('#dynamicConfigLoad'), getBasicParams(), false);
 		} else if($('#operation').val() == "functionalTest") {
-			loadContent('generateFunctionalTest', '', $('#dynamicConfigLoad'), getBasicParams(), false);
+			loadContent('showFunctionalTestPopUp', '', $('#dynamicConfigLoad'), getBasicParams(), false);
 		}	
 	}
 	
