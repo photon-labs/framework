@@ -472,6 +472,8 @@ public interface FrameworkConstants {
      * Ex: REQ_XXX
      */
     String REQ_APPINFO	= "appInfo";
+    String REQ_APPINFO_SERVERS = "appinfoServers";
+    String REQ_APPINFO_DBASES = "appinfoDbs";
     String REQ_APP_DIR_NAME  = "appDirName";
 	String REQ_TITLE_ADD_APPLICATION = "Add Application";
     String REQ_BUILD_FROM = "from";

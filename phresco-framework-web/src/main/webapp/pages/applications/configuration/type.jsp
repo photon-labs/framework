@@ -46,6 +46,8 @@
 	String fromPage = (String) request.getAttribute(FrameworkConstants.REQ_FROM_PAGE);
 	
 	List<String> typeValues  = (List<String>) request.getAttribute(FrameworkConstants.REQ_TYPE_VALUES);
+	List<String> appinfoServers  = (List<String>) request.getAttribute(FrameworkConstants.REQ_APPINFO_SERVERS);
+	List<String> appinfoDbases  = (List<String>) request.getAttribute(FrameworkConstants.REQ_APPINFO_DBASES);
 	List<String> selectedAppliesTos  = (List<String>) request.getAttribute(FrameworkConstants.REQ_APPLIES_TO);
 	List<PropertyTemplate> properties = (List<PropertyTemplate>) request.getAttribute(FrameworkConstants.REQ_PROPERTIES);
 	Gson gson = new Gson(); 
@@ -111,9 +113,7 @@
 				possibleValues = typeValues;
 			} else {
        			if(appInfo != null && CollectionUtils.isNotEmpty(appInfo.getSelectedServers())) {
-	            	List<ArtifactGroupInfo> artifactGroupInfos = appInfo.getSelectedServers();
-	        		ArtifactGroupInfo artifactGroupInfo = artifactGroupInfos.get(0);
-	        		possibleValues = artifactGroupInfo.getArtifactInfoIds();
+       				possibleValues = appinfoServers;
 				}
 			}
     	} else if (FrameworkConstants.DATABASE_KEY.equals(propertyTemplate.getKey())) {
@@ -121,9 +121,7 @@
 				possibleValues = typeValues;
 			} else {
 	    		if(appInfo != null && CollectionUtils.isNotEmpty(appInfo.getSelectedDatabases())) {
-	        		List<ArtifactGroupInfo> artifactGroupInfos = appInfo.getSelectedDatabases();
-	    			ArtifactGroupInfo artifactGroupInfo = artifactGroupInfos.get(0);
-	    			possibleValues = artifactGroupInfo.getArtifactInfoIds(); 
+	    			possibleValues = appinfoDbases; 
 	    		}
 			}
     	} else {
@@ -250,7 +248,7 @@ $("div#certificateControl").hide();
 		}
 		
 		$("#type").change(function() {
-			//getVersions();
+			getVersions();
 			getSettingsVersions();
 			technologyBasedRemoteDeploy();
 		});
