@@ -355,7 +355,7 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 
 			// Build info
 			ApplicationInfo applicationInfo = getApplicationInfo();
-			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_CI)));
+			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_PACKAGE)));
 			persistValuesToXml(mojo, Constants.PHASE_PACKAGE);
 			
 			//To get maven build arguments

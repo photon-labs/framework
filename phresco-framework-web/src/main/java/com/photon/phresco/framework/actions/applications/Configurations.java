@@ -646,6 +646,28 @@ public class Configurations extends FrameworkBaseAction {
 		try {
 			
 			ApplicationInfo appInfo = getApplicationInfo();
+			if(appInfo != null && CollectionUtils.isNotEmpty(appInfo.getSelectedServers())) {
+				List<ArtifactGroupInfo> selectedServers = appInfo.getSelectedServers();
+				for (ArtifactGroupInfo selectedServerInfo : selectedServers) {
+					String serverArtifactGroupId = selectedServerInfo.getArtifactGroupId();
+					ArtifactGroup serverArtifactGroup = getServiceManager().getArtifactGroupInfo(serverArtifactGroupId);
+					List<String> appinfoServers = new ArrayList<String>();
+					appinfoServers.add(serverArtifactGroup.getName());
+					setReqAttribute(REQ_APPINFO_SERVERS, appinfoServers);
+				}
+			}
+			
+			if(appInfo != null && CollectionUtils.isNotEmpty(appInfo.getSelectedDatabases())) {
+				List<ArtifactGroupInfo> selectedDbs = appInfo.getSelectedDatabases();
+				for (ArtifactGroupInfo selectedDbInfo : selectedDbs) {
+					String dbArtifactGroupId = selectedDbInfo.getArtifactGroupId();
+					ArtifactGroup dbArtifactGroup = getServiceManager().getArtifactGroupInfo(dbArtifactGroupId);
+					List<String> appinfoDbs = new ArrayList<String>();
+					appinfoDbs.add(dbArtifactGroup.getName());
+					setReqAttribute(REQ_APPINFO_DBASES, appinfoDbs);
+				}
+			}
+			
 			SettingsTemplate settingTemplate = getSettingTemplate();
             setReqAttribute(REQ_SETTINGS_TEMPLATE, settingTemplate);
 		    List<PropertyTemplate> properties = getSettingTemplate().getProperties();
