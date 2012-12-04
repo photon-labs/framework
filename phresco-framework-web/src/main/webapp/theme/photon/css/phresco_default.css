@@ -5844,7 +5844,8 @@ ul#display-inline-block-example li:nth-child(4) select, ul#display-inline-block-
 	margin-bottom:6px;
 }
 .fea_add_but {
-	margin-left:3%;
+	margin-left:2.5%;
+	margin-top: 20%;
 }
 .tblheader br {
 	height:0;
@@ -5982,9 +5983,45 @@ color: #313131;
 }
 
 /*features page select box*/
+.featureTypeWidth label:nth-child(1) {
+	text-align: left !important;
+	margin-top: 0.3%;
+	width: 30px !important;
+	font-weight: bold;
+}
+#featureselect {
+	margin-left: 5%;
+}
+.dd-selected-text, .dd-option-text, .dd-desc {
+	font-weight: bold !important;
+}
+.dd-selected-text, .dd-option-text {
+	margin-bottom: 0px !important;
+	font-size: 12px !important;
+}
+.dd-selected, .dd-option {
+	text-decoration: none !important;
+	padding: 3px !important;
+}
+.dd-selected-image, .dd-option-image {
+	margin-left: 3px;
+	margin-top: 3px;
+	margin-right: 7px !important;
+}
+.dd-select {
+	background: #f7f7f7 !important;
+	border: solid 1px #dcdcdc;
+}
+.dd-option-selected, .dd-option:hover {
+	background: #eeeeee !important;
+	border: solid 1px #dcdcdc;
+}
 .dd-selected, .dd-option {
 	padding: 0px !important;
 }
 .dd-selected-image .dd-option-image {
 	margin: 10px 10px 10px 0px !important;
+}
+.dd-desc {
+	font-size: smaller !important;
 }
