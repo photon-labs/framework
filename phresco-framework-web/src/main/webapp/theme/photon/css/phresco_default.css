@@ -5590,7 +5590,7 @@ input[class*='chckBxAlign'] {
 
 .form-horizontal .control-label {
    /* width: auto !important;*/
-    /*padding-right: 10px;*/
+    padding-right: 10px;
 }
 
 .accordion-control-label {
@@ -6012,4 +6012,10 @@ color: #313131;
 .dd-option-selected, .dd-option:hover {
 	background: #eeeeee !important;
 	border: solid 1px #dcdcdc;
+}
+.dd-selected, .dd-option {
+	padding: 0px !important;
+}
+.dd-selected-image .dd-option-image {
+	margin: 10px 10px 10px 0px !important;
 }
