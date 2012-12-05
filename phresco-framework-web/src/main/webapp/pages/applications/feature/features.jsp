@@ -146,6 +146,7 @@
 	inActivateAllMenu($("a[name='appTab']"));
 	activateMenu($('#features'));
 
+	var selectedType = "";
     $(document).ready(function () {
         hideLoadingIcon();
         //fillHeading();
@@ -153,6 +154,7 @@
         
         $('#featureselect').ddslick({
         	onSelected: function(data){
+        		selectedType = data.selectedData.value;
         		featureType(data.selectedData.value, data.selectedData.text); 
         	}
         });
@@ -173,13 +175,12 @@
     // Function to add the features to the right tab
     function clickToAdd() {
         $('#accordianchange input:checked').each(function () {
-        	var hiddenFieldname = ($('#featureselect').val()).toLowerCase();
         	var dispName = $(this).val();
         	var hiddenFieldVersion = $('select[name='+dispName+']').val();
         	var moduleId = $('select[name='+dispName+']').attr('moduleId');
         	//var myTag = element.attr("myTag");
         	var dispValue = $("#" + dispName + " option:selected").text();
-        	constructFeaturesDiv(dispName, dispValue, hiddenFieldname, hiddenFieldVersion, moduleId);
+        	constructFeaturesDiv(dispName, dispValue, selectedType, hiddenFieldVersion, moduleId);
         });
     }
     
