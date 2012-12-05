@@ -62,7 +62,9 @@ Width <= 1024
 		top: 54px;
 		width: 98%;
 	}
-	
+	.featureForm {
+		height: 84%;
+	}
 	.custom_features {
 		border-radius: 12px 12px 6px 6px;
 		float: left;
@@ -77,19 +79,21 @@ Width <= 1024
 		height: 96%;
 		/*margin: 1% 1% 1% 0;*/
 		width: 45.5%;
-		overflow-x: hidden; 
-		overflow-y: auto;
 	 } 
 		 
 	 .feature_content_adder {
-		height: 87%;
+		height: 88%;
 		overflow-y: auto;
 		overflow-x: hidden;
 		padding-top: 0%;
 		width: 99.5%;
 		overflow-x: hidden;
 	}
-	
+	.custom_features_wrapper_right .theme_accordion_container {
+		height: 88%;
+		overflow-y: auto;
+		overflow-x: hidden;
+	}
 	.features_actions {
 	    border-radius: 0 0 3px 3px;
 	    float: right;
@@ -576,8 +580,6 @@ Width size <= 1024
 		height: 96%;
 		/*margin: 1% 1% 1% 0;*/
 		width: 45.5%;
-		overflow-x: hidden; 
-		overflow-y: auto;
 	 } 
 		 
 	 .feature_content_adder {
@@ -588,7 +590,11 @@ Width size <= 1024
 		width: 99.5%;
 		overflow-x: hidden;
 	}
-	
+	.custom_features_wrapper_right .theme_accordion_container {
+		height: 87%;
+		overflow-y: auto;
+		overflow-x: hidden;
+	}
 	.wrapper {
 		bottom: 48px;
 		height: 100%;
@@ -1019,8 +1025,6 @@ Width >= 1025 and < 1151
 		height: 96%;
 		/*margin: 1% 1% 1% 0;*/
 		width: 45.5%;
-		overflow-x: hidden; 
-		overflow-y: auto;
 	 } 
 		 
 	 .feature_content_adder {
@@ -1031,7 +1035,11 @@ Width >= 1025 and < 1151
 		width: 99.5%;
 		overflow-x: hidden;
 	}
-	
+	.custom_features_wrapper_right .theme_accordion_container {
+		height: 87%;
+		overflow-y: auto;
+		overflow-x: hidden;
+	}
 	.build_detail_div {
 	    float: left;
 	    height: 96%;
@@ -1124,8 +1132,6 @@ Width >= 1152 and < 1280
 		height: 96%;
 		/*margin: 1% 1% 1% 0;*/
 		width: 45.5%;
-		overflow-x: hidden; 
-		overflow-y: auto;
 	 } 
 		 
 	 .feature_content_adder {
@@ -1136,7 +1142,11 @@ Width >= 1152 and < 1280
 		width: 99.5%;
 		overflow-x: hidden;
 	}
-		
+	.custom_features_wrapper_right .theme_accordion_container {
+		height: 89%;
+		overflow-y: auto;
+		overflow-x: hidden;
+	}	
 	.main_wrapper {
 		bottom: 48px;
 		position: absolute;
@@ -1477,8 +1487,6 @@ Width <= 1280 and height <= 800
 		height: 96%;
 		/*margin: 1% 1% 1% 0;*/
 		width: 45.5%;
-		overflow-x: hidden; 
-		overflow-y: auto;
 	 } 
 		 
 	 .feature_content_adder {
@@ -1489,7 +1497,11 @@ Width <= 1280 and height <= 800
 		width: 99.5%;
 		overflow-x: hidden;
 	}
-	
+	.custom_features_wrapper_right .theme_accordion_container {
+		height: 86%;
+		overflow-y: auto;
+		overflow-x: hidden;
+	}
 	.main_wrapper {
 		bottom: 48px;
 		position: absolute;
@@ -1943,8 +1955,6 @@ Width >= 1280 and height >= 800
 		height: 96%;
 		/*margin: 1% 1% 1% 0;*/
 		width: 45.5%;
-		overflow-x: hidden; 
-		overflow-y: auto;
 	 } 
 		 
 	 .feature_content_adder {
@@ -1955,7 +1965,11 @@ Width >= 1280 and height >= 800
 		width: 99.5%;
 		overflow-x: hidden;
 	}
-	
+	.custom_features_wrapper_right .theme_accordion_container {
+		height: 91%;
+		overflow-y: auto;
+		overflow-x: hidden;		
+	}
 	.features_actions {
 	    -webkit-border-radius: 0 0 3px 3px;
 	    -moz-border-radius: 0 0 3px 3px;
@@ -1970,7 +1984,7 @@ Width >= 1280 and height >= 800
 	    padding: 17px 20px 18px 150px; */
 	    float: right;
 	    margin-right: 9px;
-	    margin-top: 4px;
+	    margin-top: 10px;
  	}
 
 	.intro_container {

@@ -138,6 +138,14 @@ div.lgnBtnLabel {
 	margin: 5px 5px 5px 6px;
 }
 
+.operation strong {
+	color: black;
+}
+
+#code .operation strong {
+	margin-left: 10px;
+}
+
 .operation.build{
 	height: 21px;
 }
@@ -1719,7 +1727,7 @@ div.vjs-big-play-button span {
 #container {
     z-index: 15004;
     width: 99%;
-    height: 85%;
+    height: 89%;
 }
 
 .holder {
@@ -2413,7 +2421,7 @@ fieldset {
     padding: 17px 20px 18px 150px; */
     float: right;
     margin-right: 20px;
-    margin-top: 4px;
+    margin-top: 8px;
 }
 /*** app info add end ***/
 
@@ -5158,7 +5166,7 @@ ul#display-inline-block-example li {
 }
 
 .sonarWarning {
-	margin-left: 478px;
+	margin-left: 440px;
 	margin-top: -33px;
 	width: 31%;
 	height: 15px;
@@ -5717,7 +5725,7 @@ input[class*='chckBxAlign'] {
 
 #successmsg {
 	height: 16px;
-    margin-left: 246px;
+    margin-left: 300px;
     margin-top: -34px;
     padding: 6px;
     width: 50%;
