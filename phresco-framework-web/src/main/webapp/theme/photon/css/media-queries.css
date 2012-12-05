@@ -59,7 +59,7 @@ Width <= 1024
 	.main_wrapper {
 		bottom: 48px;
 		position: absolute;
-		top: 74px;
+		top: 54px;
 		width: 98%;
 	}
 	
@@ -555,7 +555,7 @@ Width size <= 1024
 	.main_wrapper {
 		bottom: 48px;
 		position: absolute;
-		top: 74px;
+		top: 54px;
 		width: 98%;
 	}
 	
@@ -1124,7 +1124,7 @@ Width >= 1152 and < 1280
 	.main_wrapper {
 		bottom: 48px;
 		position: absolute;
-		top: 74px;
+		top: 54px;
 		width: 98%;
 	}
 	
@@ -1472,7 +1472,7 @@ Width <= 1280 and height <= 800
 	.main_wrapper {
 		bottom: 48px;
 		position: absolute;
-		top: 74px;
+		top: 54px;
 		width: 98%;
 	}
 	
@@ -2273,7 +2273,7 @@ Width > 1280 and <= 1360
 	 .main_wrapper {
 		bottom: 48px;
 		position: absolute;
-		top: 74px;
+		top: 54px;
 		width: 98%;
 	}
 	
@@ -2705,7 +2705,7 @@ Width > 1360 and <= 1440
 	.main_wrapper {
 		bottom: 48px;
 		position: absolute;
-		top: 74px;
+		top: 54px;
 		width: 98%;
 		margin:auto;
 	}
@@ -3086,7 +3086,7 @@ Width > 1441 and <= 1600
 	.main_wrapper {
 		bottom: 48px;
 		position: absolute;
-		top: 74px;
+		top: 54px;
 		width: 98%;
 	}
 	

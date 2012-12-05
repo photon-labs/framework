@@ -335,7 +335,7 @@ a {
 .main_wrapper {
 	bottom: 48px;
 	position: absolute;
-	top: 74px;
+	top: 54px;
 	width: 98%;
 	left:2%;
 }
@@ -661,7 +661,7 @@ a {
 	margin-right:2%;
 	text-align:right;
 	width:475px;
-	margin-top:68px;
+	margin-top:45px;
 	position:absolute;
 	right:0%;
 }
@@ -839,8 +839,8 @@ a {
 
 .Logo {
 	float: left;
-	width: 13%;
-	margin-top:10px;
+	margin-top:18px;
+	margin-left:3%;
 }
 
 .arrow {
