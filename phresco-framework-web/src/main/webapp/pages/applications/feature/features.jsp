@@ -55,7 +55,7 @@
 <form id="formFeatures" class="featureForm">
 	<div class="form-horizontal featureTypeWidth">
 		<label for="myselect" class="control-label features_cl">Type&nbsp;:</label>
-		 <select id="featureselect">
+		 <select id="featureselect" name="type" onchange="featuretype()">
 	        <option value="<%= ArtifactGroup.Type.FEATURE.name() %>" selected="selected" data-imagesrc="images/features.png"
 	            data-description="Description with Modules"><s:text name="lbl.options.modules"/></option>
 	        <option value="<%= ArtifactGroup.Type.JAVASCRIPT.name() %>" data-imagesrc="images/libraries.png"
@@ -121,6 +121,7 @@
 		}
 	}
 %>
+
 <%	
 	if (CollectionUtils.isNotEmpty(selectedJSLibs)) {
 		for (String string : selectedJSLibs) {
@@ -190,13 +191,13 @@
 		$("input[class='"+ dispName +"']").remove();
 		
 		$("#result").append('<input type="hidden" class = "'+dispName+'" value={"dispName":"'+dispName+'","moduleId":"'+moduleId+'","dispValue":"'+dispValue+'","versionID":"'+hiddenFieldVersion+'","type":"'+hiddenFieldname+'"} name="jsonData">');
-// 		if (showConfigImg) {
-// 			$("#result").append('<div class = "'+dispName+'"id="'+dispName+'">'+dispName+' - '+dispValue+
-// 					'<a href="#" id="'+dispName+'" onclick="remove(this);">&nbsp;&times;</a>'+
-// 					'<a href="#" id="'+dispName+'" onclick="showFeatureConfigPopup(this);"><img src="images/icons/gear.png" title="Configure"/></a></div>');
-// 		} else {
+		if (showConfigImg) {
+			$("#result").append('<div class = "'+dispName+'"id="'+dispName+'">'+dispName+' - '+dispValue+
+					'<a href="#" id="'+dispName+'" onclick="remove(this);">&nbsp;&times;</a>'+
+					'<a href="#" id="'+dispName+'" onclick="showFeatureConfigPopup(this);"><img src="images/icons/gear.png" title="Configure"/></a></div>');
+		} else {
 			$("#result").append('<div class = "'+dispName+'"id="'+dispName+'">'+dispName+' - '+dispValue+'<a href="#" id="'+dispName+'" onclick="remove(this);">&times;</a></div>');
-// 		}	
+		}	
     }
     
     // Function to remove the final features in right tab  
@@ -218,8 +219,12 @@
     	loadContent('finish', $('#formFeatures'), $('#container'), params, false);
     }
   	
-  	function showFeatureConfigPopup(featureName) {
+  	//To show the configuration popup
+  	function showFeatureConfigPopup(obj) {
+  		var featureName = $(obj).attr("id");
   		var params = getBasicParams();
+  		params = params.concat("&featureName=");
+  		params = params.concat(featureName);
   		yesnoPopup('showFeatureConfigPopup', '<s:text name="lbl.configure"/>', 'configureFeature', '<s:text name="lbl.configure"/>', '', params);
   	}
 </script>

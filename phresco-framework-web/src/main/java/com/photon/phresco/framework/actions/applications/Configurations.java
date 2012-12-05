@@ -26,11 +26,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import com.google.gson.Gson;
 import com.photon.phresco.api.ApplicationProcessor;
 import com.photon.phresco.api.ConfigManager;
 import com.photon.phresco.commons.FrameworkConstants;
@@ -38,11 +40,13 @@ import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.ArtifactGroupInfo;
 import com.photon.phresco.commons.model.ArtifactInfo;
+import com.photon.phresco.commons.model.CoreOption;
 import com.photon.phresco.commons.model.Customer;
 import com.photon.phresco.commons.model.DownloadInfo;
 import com.photon.phresco.commons.model.Element;
 import com.photon.phresco.commons.model.PropertyTemplate;
 import com.photon.phresco.commons.model.RepoInfo;
+import com.photon.phresco.commons.model.SelectedFeature;
 import com.photon.phresco.commons.model.SettingsTemplate;
 import com.photon.phresco.configuration.Configuration;
 import com.photon.phresco.configuration.Environment;
@@ -52,6 +56,7 @@ import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.commons.LogErrorReport;
+import com.photon.phresco.plugins.model.Mojos.ApplicationHandler;
 import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.PhrescoDynamicLoader;
@@ -115,6 +120,8 @@ public class Configurations extends FrameworkBaseAction {
     
     private boolean flag = false;
     private List<String> versions = new ArrayList<String>();
+    
+    private String featureName = "";
 
 	public String configList() {
 		if (debugEnabled) {
@@ -219,7 +226,7 @@ public class Configurations extends FrameworkBaseAction {
     	}
         try {
             List<Environment> environments = getAllEnvironments();
-            List<SettingsTemplate> configTemplates = getServiceManager().getconfigTemplates(getCustomerId());
+            List<SettingsTemplate> configTemplates = getServiceManager().getConfigTemplates(getCustomerId());
             setReqAttribute(REQ_SETTINGS_TEMPLATES, configTemplates);
             setReqAttribute(REQ_ENVIRONMENTS, environments);
             setReqAttribute(REQ_FROM_PAGE, getFromPage());
@@ -312,8 +319,13 @@ public class Configurations extends FrameworkBaseAction {
 		boolean isIISServer = false;
 		SettingsTemplate configTemplate = getServiceManager().getConfigTemplate(getConfigId(), getCustomerId());
 		Properties properties = new Properties();
-		List<PropertyTemplate> property = configTemplate.getProperties();
-		for (PropertyTemplate propertyTemplate : property) {
+		List<PropertyTemplate> propertyTemplates = new ArrayList<PropertyTemplate>();
+		if (CONFIG_FEATURES.equals(getConfigId())) {
+		    getTemplateConfigFile(propertyTemplates);
+		} else {
+		    propertyTemplates = configTemplate.getProperties();
+		}
+		for (PropertyTemplate propertyTemplate : propertyTemplates) {
 		    String key = propertyTemplate.getKey();
 		    String value = getActionContextParam(key);
 		    if (StringUtils.isNotEmpty(value)) {
@@ -340,6 +352,78 @@ public class Configurations extends FrameworkBaseAction {
 		config.setProperties(properties);
 		return config;
 	}
+	
+	private void getTemplateConfigFile(List<PropertyTemplate> propertyTemplates) {
+        try {
+            List<Configuration> featureConfigurations = getApplicationProcessor().preFeatureConfiguration(getApplicationInfo(), getFeatureName());
+            for (Configuration featureConfiguration : featureConfigurations) {
+                Properties properties = featureConfiguration.getProperties();
+                Set<Object> keySet = properties.keySet();
+                for (Object key : keySet) {
+                    String keyStr = (String) key;
+                    String value = properties.getProperty(keyStr);
+                    String dispName = keyStr.replace(".", " ");
+                    /*int count = StringUtils.countMatches(keyStr, ".");
+                    String dispName = "";
+                    if (count >= 2) {
+                        int nthOccurrence = nthOccurrence(keyStr, '.', count - 1);
+                        dispName = keyStr.substring(nthOccurrence + 1, keyStr.length());
+                    } else {
+                        dispName = keyStr;
+                    }
+                    dispName = dispName.replace(".", " ");
+                    String dispName = ((String) key).substring(((String) key).lastIndexOf("."), ((String) key).length());*/
+                    PropertyTemplate propertyTemplate = new PropertyTemplate();
+                    propertyTemplate.setKey(keyStr);
+                    propertyTemplate.setName(dispName);
+                    //propertyTemplate.setPossibleValues(Collections.singleton(value));
+                    propertyTemplates.add(propertyTemplate);
+                }
+            }
+        } catch (Exception e) {
+            // TODO: handle exception
+            e.printStackTrace();
+        }
+    }
+	
+	private ApplicationProcessor getApplicationProcessor() {
+        ApplicationProcessor applicationProcessor = null;
+        try {
+            Customer customer = getServiceManager().getCustomer(getCustomerId());
+            RepoInfo repoInfo = customer.getRepoInfo();
+            StringBuilder sb = new StringBuilder(getApplicationHome())
+            .append(File.separator)
+            .append(Constants.DOT_PHRESCO_FOLDER)
+            .append(File.separator)
+            .append(Constants.APPLICATION_HANDLER_INFO_FILE);
+            MojoProcessor mojoProcessor = new MojoProcessor(new File(sb.toString()));
+            ApplicationHandler applicationHandler = mojoProcessor.getApplicationHandler();
+            if (applicationHandler != null) {
+                List<ArtifactGroup> plugins = setArtifactGroup(applicationHandler);
+                PhrescoDynamicLoader dynamicLoader = new PhrescoDynamicLoader(repoInfo, plugins);
+                applicationProcessor = dynamicLoader.getApplicationProcessor(applicationHandler.getClazz());
+            }
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+        
+        return applicationProcessor;
+    }
+    
+    private List<ArtifactGroup> setArtifactGroup(ApplicationHandler applicationHandler) {
+        List<ArtifactGroup> plugins = new ArrayList<ArtifactGroup>();
+        ArtifactGroup artifactGroup = new ArtifactGroup();
+        artifactGroup.setGroupId(applicationHandler.getGroupId());
+        artifactGroup.setArtifactId(applicationHandler.getArtifactId());
+        //artifactGroup.setType(Type.FEATURE); to set version
+        List<ArtifactInfo> artifactInfos = new ArrayList<ArtifactInfo>();
+        ArtifactInfo artifactInfo = new ArtifactInfo();
+        artifactInfo.setVersion(applicationHandler.getVersion());
+        artifactInfos.add(artifactInfo);
+        artifactGroup.setVersions(artifactInfos);
+        plugins.add(artifactGroup);
+        return plugins;
+    }
     
     /**
      * To validate the form fields
@@ -593,7 +677,7 @@ public class Configurations extends FrameworkBaseAction {
         	ConfigManager configManager = getConfigManager(getConfigPath());
         	Configuration selectedConfigInfo = configManager.getConfiguration(currentEnvName, 
         			currentConfigType, currentConfigName);
-        	List<SettingsTemplate> configTemplates = getServiceManager().getconfigTemplates(getCustomerId());
+        	List<SettingsTemplate> configTemplates = getServiceManager().getConfigTemplates(getCustomerId());
             setReqAttribute(REQ_SETTINGS_TEMPLATES, configTemplates);
         	setReqAttribute(REQ_CONFIG_INFO, selectedConfigInfo);
         	setReqAttribute(REQ_FROM_PAGE, getFromPage());
@@ -654,8 +738,8 @@ public class Configurations extends FrameworkBaseAction {
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method  Settings.settingsType()");
 		}
+		
 		try {
-			
 			ApplicationInfo appInfo = getApplicationInfo();
 			if(appInfo != null && CollectionUtils.isNotEmpty(appInfo.getSelectedServers())) {
 				List<ArtifactGroupInfo> selectedServers = appInfo.getSelectedServers();
@@ -680,6 +764,24 @@ public class Configurations extends FrameworkBaseAction {
 			}
 			
 			SettingsTemplate settingTemplate = getSettingTemplate();
+			if (CONFIG_FEATURES.equals(settingTemplate.getId())) {
+			    List<String> custFeatureNames = new ArrayList<String>();
+			    List<String> selectedModules = appInfo.getSelectedModules();
+			    for (String selectedModule : selectedModules) {
+			        Gson gson = new Gson();
+                    SelectedFeature jsonObj = gson.fromJson(selectedModule, SelectedFeature.class);
+                    String artifactGroupId = jsonObj.getModuleId();
+                    ArtifactGroup artifactGroup = getServiceManager().getArtifactGroupInfo(artifactGroupId);
+                    List<CoreOption> appliesTo = artifactGroup.getAppliesTo();
+                    for (CoreOption coreOption : appliesTo) {
+                        if (!coreOption.isCore() && coreOption.getTechId().equals(appInfo.getTechInfo().getId())) {
+                            custFeatureNames.add(jsonObj.getDispName());
+                        }
+                    }
+			    }
+			    setReqAttribute(REQ_FEATURE_NAMES, custFeatureNames);
+			    return SUCCESS;
+			}
             setReqAttribute(REQ_SETTINGS_TEMPLATE, settingTemplate);
 		    List<PropertyTemplate> properties = getSettingTemplate().getProperties();
             setReqAttribute(REQ_PROPERTIES, properties);
@@ -1252,13 +1354,19 @@ public class Configurations extends FrameworkBaseAction {
 		this.versions = versions;
 	}
 
-
 	public String getDbType() {
 		return dbType;
 	}
 
-
 	public void setDbType(String dbType) {
 		this.dbType = dbType;
 	}
+	
+	public void setFeatureName(String featureName) {
+        this.featureName = featureName;
+    }
+
+    public String getFeatureName() {
+        return featureName;
+    }
 }

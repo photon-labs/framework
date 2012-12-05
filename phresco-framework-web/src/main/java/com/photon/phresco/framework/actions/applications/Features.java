@@ -19,29 +19,42 @@
  */
 package com.photon.phresco.framework.actions.applications;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import com.photon.phresco.api.ApplicationProcessor;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.ArtifactGroupInfo;
+import com.photon.phresco.commons.model.ArtifactInfo;
+import com.photon.phresco.commons.model.Customer;
 import com.photon.phresco.commons.model.Element;
 import com.photon.phresco.commons.model.ProjectInfo;
+import com.photon.phresco.commons.model.PropertyTemplate;
+import com.photon.phresco.commons.model.RepoInfo;
 import com.photon.phresco.commons.model.SettingsTemplate;
 import com.photon.phresco.commons.model.TechnologyInfo;
+import com.photon.phresco.configuration.Configuration;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
+import com.photon.phresco.plugins.model.Mojos.ApplicationHandler;
+import com.photon.phresco.plugins.util.MojoProcessor;
+import com.photon.phresco.util.Constants;
+import com.photon.phresco.util.PhrescoDynamicLoader;
 
 public class Features extends FrameworkBaseAction {
     
-	private static final long serialVersionUID = 6608382760989903186L;
+    private static final long serialVersionUID = 6608382760989903186L;
 	
 	private static final Logger S_LOGGER = Logger.getLogger(Features.class);
 	private static Boolean debugEnabled = S_LOGGER.isDebugEnabled();
@@ -89,6 +102,8 @@ public class Features extends FrameworkBaseAction {
 	private String pilotProject = "";
 	
 	private String configTemplateType = "";
+	
+	private String featureName = "";
 	
 	public String features() {
 		try {
@@ -152,8 +167,9 @@ public class Features extends FrameworkBaseAction {
 	
 	public String showFeatureConfigPopup() {
 	    try {
-	        List<SettingsTemplate> settingsTemplates = getServiceManager().getconfigTemplates(getCustomerId());
+	        List<SettingsTemplate> settingsTemplates = getServiceManager().getConfigTemplates(getCustomerId());
             setReqAttribute(REQ_SETTINGS_TEMPLATES, settingsTemplates);
+            setReqAttribute(REQ_FEATURE_NAME, getFeatureName());
         } catch (PhrescoException e) {
             // TODO: handle exception
         }
@@ -163,18 +179,140 @@ public class Features extends FrameworkBaseAction {
 	
 	public String showConfigProperties() {
 	    try {
-	        List<SettingsTemplate> settingsTemplates = getServiceManager().getconfigTemplates(getCustomerId());
-	        for (SettingsTemplate settingsTemplate : settingsTemplates) {
-                if (settingsTemplate.getId().equals(getConfigTemplateType())) {
-                    setReqAttribute(REQ_PROPERTIES, settingsTemplate.getProperties());
-                    break;
+	        List<PropertyTemplate> propertyTemplates = new ArrayList<PropertyTemplate>();
+	        if (CONFIG_FEATURES.equals(getConfigTemplateType())) {
+	            getTemplateConfigFile(propertyTemplates);
+	        } else {
+    	        List<SettingsTemplate> settingsTemplates = getServiceManager().getConfigTemplates(getCustomerId());
+    	        for (SettingsTemplate settingsTemplate : settingsTemplates) {
+                    if (settingsTemplate.getId().equals(getConfigTemplateType())) {
+                        propertyTemplates = settingsTemplate.getProperties();
+                        break;
+                    }
+                }
+	        }
+	        setReqAttribute(REQ_PROPERTIES, propertyTemplates);
+        } catch (Exception e) {
+            // TODO: handle exception
+            e.printStackTrace();
+        }
+	    
+	    return SUCCESS;
+	}
+	
+	public String configureFeature () {
+	    try {
+	        List<PropertyTemplate> propertyTemplates = new ArrayList<PropertyTemplate>();
+            if (CONFIG_FEATURES.equals(getConfigTemplateType())) {
+                getTemplateConfigFile(propertyTemplates);
+            } else {
+                List<SettingsTemplate> settingsTemplates = getServiceManager().getConfigTemplates(getCustomerId());
+                for (SettingsTemplate settingsTemplate : settingsTemplates) {
+                    if (settingsTemplate.getId().equals(getConfigTemplateType())) {
+                        propertyTemplates = settingsTemplate.getProperties();
+                        break;
+                    }
                 }
             }
+            Properties properties = new Properties();
+            for (PropertyTemplate propertyTemplate : propertyTemplates) {
+                String key  = propertyTemplate.getKey();
+                String value = getReqParameter(key);
+                properties.setProperty(key, value);
+            }
+            Configuration configuration = new Configuration();
+            configuration.setName(getFeatureName());
+            configuration.setProperties(properties);
+            List<Configuration> configs = new ArrayList<Configuration>();
+            configs.add(configuration);
+            getApplicationProcessor().postFeatureConfiguration(getApplicationInfo(), configs, getFeatureName());
         } catch (Exception e) {
             // TODO: handle exception
         }
 	    
 	    return SUCCESS;
+	}
+	
+	private void getTemplateConfigFile(List<PropertyTemplate> propertyTemplates) {
+	    try {
+            List<Configuration> featureConfigurations = getApplicationProcessor().preFeatureConfiguration(getApplicationInfo(), getFeatureName());
+            for (Configuration featureConfiguration : featureConfigurations) {
+                Properties properties = featureConfiguration.getProperties();
+                Set<Object> keySet = properties.keySet();
+                for (Object key : keySet) {
+                    String keyStr = (String) key;
+                    String value = properties.getProperty(keyStr);
+                    String dispName = keyStr.replace(".", " ");
+                    /*int count = StringUtils.countMatches(keyStr, ".");
+                    String dispName = "";
+                    if (count >= 2) {
+                        int nthOccurrence = nthOccurrence(keyStr, '.', count - 1);
+                        dispName = keyStr.substring(nthOccurrence + 1, keyStr.length());
+                    } else {
+                        dispName = keyStr;
+                    }
+                    dispName = dispName.replace(".", " ");
+                    String dispName = ((String) key).substring(((String) key).lastIndexOf("."), ((String) key).length());*/
+                    PropertyTemplate propertyTemplate = new PropertyTemplate();
+                    propertyTemplate.setKey(keyStr);
+                    propertyTemplate.setName(dispName);
+                    //propertyTemplate.setPossibleValues(Collections.singleton(value));
+                    propertyTemplates.add(propertyTemplate);
+                }
+            }
+	    } catch (Exception e) {
+	        // TODO: handle exception
+	        e.printStackTrace();
+	    }
+	}
+	
+	/*private static int nthOccurrence(String str, char character, int n) {
+	    int position = str.indexOf(character, 0);
+	    if (n > 1) {
+    	    while (n-- > 0 && position != -1 && n > 0) {
+    	        position = str.indexOf(character, position + 1);
+    	    }
+	    }
+	    return position;
+	}*/
+	
+	private ApplicationProcessor getApplicationProcessor() {
+        ApplicationProcessor applicationProcessor = null;
+        try {
+            Customer customer = getServiceManager().getCustomer(getCustomerId());
+            RepoInfo repoInfo = customer.getRepoInfo();
+            StringBuilder sb = new StringBuilder(getApplicationHome())
+            .append(File.separator)
+            .append(Constants.DOT_PHRESCO_FOLDER)
+            .append(File.separator)
+            .append(Constants.APPLICATION_HANDLER_INFO_FILE);
+            MojoProcessor mojoProcessor = new MojoProcessor(new File(sb.toString()));
+            ApplicationHandler applicationHandler = mojoProcessor.getApplicationHandler();
+            if (applicationHandler != null) {
+                List<ArtifactGroup> plugins = setArtifactGroup(applicationHandler);
+                PhrescoDynamicLoader dynamicLoader = new PhrescoDynamicLoader(repoInfo, plugins);
+                applicationProcessor = dynamicLoader.getApplicationProcessor(applicationHandler.getClazz());
+            }
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+        
+        return applicationProcessor;
+    }
+	
+	private List<ArtifactGroup> setArtifactGroup(ApplicationHandler applicationHandler) {
+	    List<ArtifactGroup> plugins = new ArrayList<ArtifactGroup>();
+	    ArtifactGroup artifactGroup = new ArtifactGroup();
+	    artifactGroup.setGroupId(applicationHandler.getGroupId());
+	    artifactGroup.setArtifactId(applicationHandler.getArtifactId());
+	    //artifactGroup.setType(Type.FEATURE); to set version
+	    List<ArtifactInfo> artifactInfos = new ArrayList<ArtifactInfo>();
+	    ArtifactInfo artifactInfo = new ArtifactInfo();
+	    artifactInfo.setVersion(applicationHandler.getVersion());
+	    artifactInfos.add(artifactInfo);
+	    artifactGroup.setVersions(artifactInfos);
+	    plugins.add(artifactGroup);
+	    return plugins;
 	}
 
 	public String listFeatures() throws PhrescoException {
@@ -905,5 +1043,13 @@ public class Features extends FrameworkBaseAction {
 
     public void setConfigTemplateType(String configTemplateType) {
         this.configTemplateType = configTemplateType;
+    }
+
+    public void setFeatureName(String featureName) {
+        this.featureName = featureName;
+    }
+
+    public String getFeatureName() {
+        return featureName;
     }
 }
