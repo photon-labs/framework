@@ -5932,4 +5932,7 @@ div.control-group.valReportLbl {
 	cursor: pointer; 
 	margin-top: 16px;
 }
+.deploy {
+	cursor: pointer;	
+}
 /* for field set ends*/
