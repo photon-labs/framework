@@ -5853,7 +5853,7 @@ ul#display-inline-block-example li:nth-child(4) select, ul#display-inline-block-
 	margin-bottom:6px;
 }
 .fea_add_but {
-	margin-left:1.5%;
+	margin-left:2%;
 	margin-top: 20%;
 }
 .tblheader br {
@@ -6026,7 +6026,7 @@ color: #313131;
 	border: solid 1px #dcdcdc;
 }
 .dd-selected, .dd-option {
-	padding: 0px !important;
+	padding: 2px !important;
 }
 .dd-selected-image .dd-option-image {
 	margin: 10px 10px 10px 0px !important;
