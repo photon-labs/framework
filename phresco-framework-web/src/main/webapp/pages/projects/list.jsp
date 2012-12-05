@@ -213,7 +213,7 @@
 	}
     
  	function popupOnOk(obj) {
- 		$("#popupPage").modal('hide');
+ 		//$("#popupPage").modal('hide');
  		var okUrl = $(obj).attr("id");
  		if (okUrl == "importUpdateAppln") {
  			if(validateImportAppl()) {
@@ -224,6 +224,7 @@
 			showPopuploadingIcon();
 			loadContent('printAsPdf', $('#generatePdf'), $('#popup_div'), getBasicParams(), false);
 		} else if (okUrl === "deleteProject") {
+			$("#popupPage").modal('hide');
 			// show popup loading icon
  			showProgressBar('<s:text name="progress.txt.delete.app"/>');
  			var basicParams = getBasicParamsAsJson();
