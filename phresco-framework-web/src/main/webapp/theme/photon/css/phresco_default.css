@@ -335,7 +335,7 @@ a {
 .main_wrapper {
 	bottom: 48px;
 	position: absolute;
-	top: 54px;
+	top: 38px;
 	width: 98%;
 	left:2%;
 }
@@ -556,6 +556,7 @@ a {
 	position: relative;
 	height: 100%;
 	overflow: auto;
+	/*border-bottom: 1px solid #DEDEDE !important;*/
 }
 
 .scrollable.paddedtop {
@@ -840,7 +841,7 @@ a {
 .Logo {
 	float: left;
 	margin-top:18px;
-	margin-left:3%;
+	margin-left: 3%;
 }
 
 .arrow {
@@ -2412,7 +2413,7 @@ fieldset {
     padding: 17px 20px 18px 150px; */
     float: right;
     margin-right: 20px;
-    margin-top: 8px;
+    margin-top: 4px;
 }
 /*** app info add end ***/
 
@@ -5883,7 +5884,7 @@ color: #313131;
 }
 
 #formCreateProject .content_adder .control-group {
-	width: 45%;
+	width: 50%;
 	margin: auto;
 	margin-bottom: 5px;
 }
@@ -5990,7 +5991,7 @@ color: #313131;
 	font-weight: bold;
 }
 #featureselect {
-	margin-left: 5%;
+	margin-left: 6%;
 }
 .dd-selected-text, .dd-option-text, .dd-desc {
 	font-weight: bold !important;
@@ -6028,32 +6029,3 @@ color: #313131;
 
 /*fatures form related CSS*/
 
-.featureForm {
- 	height: 90% !important;
- }
-.custom_features {
-	border-radius: 12px 12px 6px 6px !important;
-    float: left;
-    height: 96% !important;
-    /*margin: 1%;*/
-	margin-left:0;
-    width: 45.8%;
- }
- .custom_features_wrapper_right {
-    border-radius: 12px 12px 6px 6px !important;
-    float: right;
-    height: 96% !important;
-    /*margin: 1% 1% 1% 0;*/
-    width: 45.5%;
-    overflow-x: hidden; 
-	overflow-y: auto;
- } 
-     
- .feature_content_adder {
-	height: 89% !important;
-	overflow-y: auto;
-	overflow-x: hidden;
-	padding-top: 0%;
-	width: 99.5%;
-	overflow-x: hidden;
-}

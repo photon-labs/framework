@@ -64,24 +64,27 @@ Width <= 1024
 	}
 	
 	.custom_features {
-		border-radius: 6px 6px 0 0;
-        float: left;
-        height: 73.5%;
-        /*margin: 1%;*/
-        width: 45.8%;
-     }
-     
-     .custom_features_wrapper_right {
-        border-radius: 12px 12px 6px 6px;
-        float: right;
-        height: 73.5%;
-        /*margin: 1% 1% 1% 0;*/
-        width: 43.5%;
-     } 
-         
-     .feature_content_adder {
-		height: 91%;
+		border-radius: 12px 12px 6px 6px;
+		float: left;
+		height: 96%;
+		/*margin: 1%;*/
+		margin-left:0;
+		width: 45.8%;
+	 }
+	 .custom_features_wrapper_right {
+		border-radius: 12px 12px 6px 6px;
+		float: right;
+		height: 96%;
+		/*margin: 1% 1% 1% 0;*/
+		width: 45.5%;
+		overflow-x: hidden; 
 		overflow-y: auto;
+	 } 
+		 
+	 .feature_content_adder {
+		height: 87%;
+		overflow-y: auto;
+		overflow-x: hidden;
 		padding-top: 0%;
 		width: 99.5%;
 		overflow-x: hidden;
@@ -107,7 +110,7 @@ Width <= 1024
 	#container {
 	    z-index: 15004;
 	    width: 99%;
-	    height: 92%;
+	    height: 90%;
 	}
 	
 	.holder {
@@ -560,26 +563,29 @@ Width size <= 1024
 	}
 	
 	.custom_features {
-		border-radius: 6px 6px 0 0;
-        float: left;
-        height: 79.5%;
-        /*margin: 1%;*/
-        width: 45.8%;
-     }
-     
-     .custom_features_wrapper_right {
-        border-radius: 12px 12px 6px 6px;
-        float: right;
-        height: 79.5%;
-        /*margin: 1% 1% 1% 0;*/
-        width: 43.5%;
-     } 
-         
-     .feature_content_adder {
-		height: 91%;
-		overflow-y: auto;
-		padding-top: 0%;
+		border-radius: 12px 12px 6px 6px;
+		float: left;
+		height: 96%;
+		/*margin: 1%;*/
+		margin-left:0;
+		width: 45.8%;
+	 }
+	 .custom_features_wrapper_right {
+		border-radius: 12px 12px 6px 6px;
+		float: right;
+		height: 96%;
+		/*margin: 1% 1% 1% 0;*/
 		width: 45.5%;
+		overflow-x: hidden; 
+		overflow-y: auto;
+	 } 
+		 
+	 .feature_content_adder {
+		height: 87%;
+		overflow-y: auto;
+		overflow-x: hidden;
+		padding-top: 0%;
+		width: 99.5%;
 		overflow-x: hidden;
 	}
 	
@@ -596,7 +602,7 @@ Width size <= 1024
 	#container {
 	    z-index: 15004;
 	    width: 100%;
-	    height: 92%;
+	    height: 90%;
 	}
 	
 	.holder {
@@ -965,7 +971,7 @@ Width >= 1025 and < 1151
 		width: 98%;
 	}
 	#subcontainer {
-		width: 77%;
+		width: 75%;
 		float: right;
 		margin-top: 10px;
 	}
@@ -996,26 +1002,31 @@ Width >= 1025 and < 1151
 	    margin-top: 5px;
 	    width: 100%;
 	}
-	
+	.featureForm {
+		height: 83% !important;
+	}
 	.custom_features {
-		border-radius: 6px 6px 0 0;
-        float: left;
-        height: 73.5%;
-        /*margin: 1%;*/
-        width: 45.8%;
-     }
-     
-     .custom_features_wrapper_right {
-        border-radius: 12px 12px 6px 6px;
-        float: right;
-        height: 73.5%;
-        /*margin: 1% 1% 1% 0;*/
-        width: 43.5%;
-     } 
-         
-     .feature_content_adder {
-		height: 91%;
+		border-radius: 12px 12px 6px 6px;
+		float: left;
+		height: 96%;
+		/*margin: 1%;*/
+		margin-left:0;
+		width: 45.8%;
+	 }
+	 .custom_features_wrapper_right {
+		border-radius: 12px 12px 6px 6px;
+		float: right;
+		height: 96%;
+		/*margin: 1% 1% 1% 0;*/
+		width: 45.5%;
+		overflow-x: hidden; 
 		overflow-y: auto;
+	 } 
+		 
+	 .feature_content_adder {
+		height: 87%;
+		overflow-y: auto;
+		overflow-x: hidden;
 		padding-top: 0%;
 		width: 99.5%;
 		overflow-x: hidden;
@@ -1096,26 +1107,31 @@ Width >= 1152 and < 1280
      	padding: 4px 6px;
      	margin-top: 5px;
      }
-	
+	.featureForm {
+		height: 88% !important;
+	 }
 	.custom_features {
-		border-radius: 6px 6px 0 0;
-        float: left;
-        height: 73.5%;
-        /*margin: 1%;*/
-        width: 45.8%;
-     }
-     
-     .custom_features_wrapper_right {
-        border-radius: 12px 12px 6px 6px;
-        float: right;
-        height: 73.5%;
-        /*margin: 1% 1% 1% 0;*/
-        width: 43.5%;
-     } 
-         
-     .feature_content_adder {
-		height: 91%;
+		border-radius: 12px 12px 6px 6px;
+		float: left;
+		height: 96%;
+		/*margin: 1%;*/
+		margin-left:0;
+		width: 45.8%;
+	 }
+	 .custom_features_wrapper_right {
+		border-radius: 12px 12px 6px 6px;
+		float: right;
+		height: 96%;
+		/*margin: 1% 1% 1% 0;*/
+		width: 45.5%;
+		overflow-x: hidden; 
 		overflow-y: auto;
+	 } 
+		 
+	 .feature_content_adder {
+		height: 89%;
+		overflow-y: auto;
+		overflow-x: hidden;
 		padding-top: 0%;
 		width: 99.5%;
 		overflow-x: hidden;
@@ -1124,7 +1140,7 @@ Width >= 1152 and < 1280
 	.main_wrapper {
 		bottom: 48px;
 		position: absolute;
-		top: 54px;
+		top: 38px;
 		width: 98%;
 	}
 	
@@ -1141,7 +1157,7 @@ Width >= 1152 and < 1280
 	#container {
 	    z-index: 15004;
 	    width: 99%;
-	    height: 92%;
+	    height: 90%;
 	}
 	
 	.holder {
@@ -1444,26 +1460,31 @@ Width <= 1280 and height <= 800
      	padding: 4px 6px;
      	margin-top: 5px;
      }
-     
+     .featureForm {
+		height: 81% !important;
+	 }
      .custom_features {
-		border-radius: 6px 6px 0 0;
-        float: left;
-        height: 73.5%;
-        /*margin: 1%;*/
-        width: 45.8%;
-     }
-     
-     .custom_features_wrapper_right {
-        border-radius: 12px 12px 6px 6px;
-        float: right;
-        height: 73.5%;
-        /*margin: 1% 1% 1% 0;*/
-        width: 43.5%;
-     } 
-         
-     .feature_content_adder {
-		height: 91%;
+		border-radius: 12px 12px 6px 6px;
+		float: left;
+		height: 96%;
+		/*margin: 1%;*/
+		margin-left:0;
+		width: 45.8%;
+	 }
+	 .custom_features_wrapper_right {
+		border-radius: 12px 12px 6px 6px;
+		float: right;
+		height: 96%;
+		/*margin: 1% 1% 1% 0;*/
+		width: 45.5%;
+		overflow-x: hidden; 
 		overflow-y: auto;
+	 } 
+		 
+	 .feature_content_adder {
+		height: 86%;
+		overflow-y: auto;
+		overflow-x: hidden;
 		padding-top: 0%;
 		width: 99.5%;
 		overflow-x: hidden;
@@ -1472,7 +1493,7 @@ Width <= 1280 and height <= 800
 	.main_wrapper {
 		bottom: 48px;
 		position: absolute;
-		top: 54px;
+		top: 38px;
 		width: 98%;
 	}
 	
@@ -1489,7 +1510,7 @@ Width <= 1280 and height <= 800
 	#container {
 		z-index: 15004;
 		width: 99%;
-		height: 92%;
+		height: 90%;
 	}
 	
 	.headerInner {
@@ -1902,29 +1923,34 @@ Width >= 1280 and height >= 800
 	#container {
 		z-index: 15004;
 		width: 99%;
-		height: 92%;
+		height: 90%;
 	}
+	.featureForm {
+		height: 90% !important;
+	 }
 
 	.custom_features {
-		border-radius: 6px 6px 0 0;
-        float: left;
-        height: 79.5%;
-        /*margin: 1%;*/
+		border-radius: 12px 12px 6px 6px;
+		float: left;
+		height: 96%;
+		/*margin: 1%;*/
 		margin-left:0;
-        width: 45.8%;
-     }
-     
-     .custom_features_wrapper_right {
-        border-radius: 12px 12px 6px 6px;
-        float: right;
-        height: 79.5%;
-        /*margin: 1% 1% 1% 0;*/
-        width: 45.5%;
-     } 
-         
-     .feature_content_adder {
+		width: 45.8%;
+	 }
+	 .custom_features_wrapper_right {
+		border-radius: 12px 12px 6px 6px;
+		float: right;
+		height: 96%;
+		/*margin: 1% 1% 1% 0;*/
+		width: 45.5%;
+		overflow-x: hidden; 
+		overflow-y: auto;
+	 } 
+		 
+	 .feature_content_adder {
 		height: 91%;
 		overflow-y: auto;
+		overflow-x: hidden;
 		padding-top: 0%;
 		width: 99.5%;
 		overflow-x: hidden;
@@ -1944,7 +1970,7 @@ Width >= 1280 and height >= 800
 	    padding: 17px 20px 18px 150px; */
 	    float: right;
 	    margin-right: 9px;
-	    margin-top: 15px;
+	    margin-top: 4px;
  	}
 
 	.intro_container {
@@ -2704,7 +2730,7 @@ Width > 1360 and <= 1440
 	.main_wrapper {
 		bottom: 48px;
 		position: absolute;
-		top: 54px;
+		top: 38px;
 		width: 98%;
 		margin:auto;
 	}
@@ -3085,7 +3111,7 @@ Width > 1441 and <= 1600
 	.main_wrapper {
 		bottom: 48px;
 		position: absolute;
-		top: 54px;
+		top: 38px;
 		width: 98%;
 	}
 	
