@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileExistsException;
 import org.apache.commons.io.FileUtils;
@@ -790,6 +791,11 @@ public class Applications extends FrameworkBaseAction {
 			S_LOGGER.debug("Entering Method  Applications.importSVNApplication()");
 		}
 		try {
+			String encodedpassword = (String) getReqAttribute(SESSION_USER_PASSWORD);
+			if (StringUtils.isEmpty(credential)) { //unchecked
+				String decryptedPass = new String(Base64.decodeBase64(encodedpassword));
+				password = decryptedPass;
+			}
 			revision = !HEAD_REVISION.equals(revision) ? revisionVal : revision;
 			SCMManagerImpl scmi = new SCMManagerImpl();
 			scmi.importProject(SVN, repositoryUrl, userName, password, null, revision);

@@ -734,7 +734,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	    StringTemplate childElement = new StringTemplate();
             if (child.getInputType().equalsIgnoreCase(TYPE_LIST)) {
                 childElement = new StringTemplate(getMapSelectElement());
-                StringBuilder options = constructOptions(child.getObjectValue(), null, null);
+                StringBuilder options = constructOptions(child.getObjectValue(), null, null, "");
                 childElement.setAttribute("options", options);
             } else if (child.getInputType().equalsIgnoreCase(TYPE_STRING)) {
                 childElement = new StringTemplate(getMapInputElement());
@@ -818,7 +818,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	StringTemplate lableElmnt = constructLabelElement(pm.isMandatory(), pm.getLableClass(), pm.getLableText());
     	
     	StringTemplate selectElement = new StringTemplate(getSelectTemplate());
-    	StringBuilder options = constructOptions(pm.getObjectValue(), pm.getSelectedValues(), pm.getDependency());
+    	StringBuilder options = constructOptions(pm.getObjectValue(), pm.getSelectedValues(), pm.getDependency(), pm.getOptionOnclickFunction());
     	selectElement.setAttribute("name", pm.getName());
     	selectElement.setAttribute("cssClass", pm.getCssClass());
     	selectElement.setAttribute("options", options);
@@ -857,7 +857,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	return controlGroupElement;
     }
     
-    private static StringBuilder constructOptions(List<? extends Object> values, List<String> selectedValues, String dependency) {
+    private static StringBuilder constructOptions(List<? extends Object> values, List<String> selectedValues, String dependency, String optionsOnclickFunctioin) {
     	StringBuilder builder = new StringBuilder();
     	String selectedStr = "";
     	if (CollectionUtils.isNotEmpty(values)) {
@@ -889,7 +889,9 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
                     builder.append("' ");
                 }
                 builder.append(selectedStr);
-                builder.append(">");
+                builder.append("onclick='");
+                builder.append(optionsOnclickFunctioin);
+                builder.append("'>");
                 builder.append(optionValue);
                 builder.append("</option>");
         	}

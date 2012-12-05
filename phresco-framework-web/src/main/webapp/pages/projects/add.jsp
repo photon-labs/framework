@@ -677,6 +677,7 @@
 	var map = {};
 	//Success event functions
 	function successEvent(pageUrl, data) {
+		hideLoadingIcon();
 		//To fill the versions for the selected mobile technology
 		if (pageUrl == "fetchMobileTechVersions") {
 			fillSelectbox($("select[name='"+ objName +"']"), data.versions, "No Versions available");

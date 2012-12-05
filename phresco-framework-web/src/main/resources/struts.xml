@@ -425,9 +425,9 @@
            <result type="json" />
         </action>
 
-        <!-- <action name="fetchSettingProjectInfoVersions" method="fetchSettingProjectInfoVersions" class="com.photon.phresco.framework.actions.settings.Settings">
+        <action name="fetchSettingProjectInfoVersions" method="fetchSettingProjectInfoVersions" class="com.photon.phresco.framework.actions.applications.Configurations">
            <result type="json" />
-        </action> -->
+        </action>
 
         <action name="checkForRespectiveConfig" method="checkForRespectiveConfig" class="com.photon.phresco.framework.actions.applications.Applications">
             <result type="json" />

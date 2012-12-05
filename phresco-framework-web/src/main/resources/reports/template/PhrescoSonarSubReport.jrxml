@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PhrescoXmlReport" pageWidth="555" pageHeight="842" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PhrescoXmlReport" pageWidth="555" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
@@ -35,9 +35,7 @@
 	<detail>
 		<band height="283">
 			<frame>
-				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="555" height="44" isRemoveLineWhenBlank="true">
-					<printWhenExpression><![CDATA[$P{showDivElement}.equals( "reportElementJsWeb" )  ? true : false]]></printWhenExpression>
-				</reportElement>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="555" height="44" isRemoveLineWhenBlank="true"/>
 				<rectangle>
 					<reportElement x="0" y="3" width="555" height="38" isRemoveLineWhenBlank="true"/>
 					<graphicElement>
@@ -58,63 +56,57 @@
 				</textField>
 			</frame>
 			<frame>
-				<reportElement stretchType="RelativeToBandHeight" x="0" y="44" width="555" height="57" isRemoveLineWhenBlank="true">
-					<printWhenExpression><![CDATA[$P{showDivElement}.equals("reportElementSrcFunc") || $P{showDivElement}.equals("reportElementSharepointSrcFunc") ? true : false]]></printWhenExpression>
-				</reportElement>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="44" width="555" height="57" isRemoveLineWhenBlank="true"/>
 				<rectangle>
-					<reportElement x="0" y="3" width="555" height="50"/>
+					<reportElement x="0" y="3" width="555" height="50" isRemoveLineWhenBlank="true"/>
 					<graphicElement>
 						<pen lineColor="#CCCCCC"/>
 					</graphicElement>
 				</rectangle>
 				<staticText>
-					<reportElement x="17" y="10" width="100" height="20"/>
+					<reportElement x="17" y="10" width="100" height="20" isRemoveLineWhenBlank="true"/>
 					<textElement/>
 					<text><![CDATA[Classes]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="169" y="10" width="100" height="20"/>
+					<reportElement x="169" y="10" width="100" height="20" isRemoveLineWhenBlank="true"/>
 					<textElement/>
 					<textFieldExpression><![CDATA[$P{classes}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="18" y="30" width="100" height="20"/>
+					<reportElement x="18" y="30" width="100" height="20" isRemoveLineWhenBlank="true"/>
 					<textElement/>
 					<text><![CDATA[Functions]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="169" y="30" width="100" height="20"/>
+					<reportElement x="169" y="30" width="100" height="20" isRemoveLineWhenBlank="true"/>
 					<textElement/>
 					<textFieldExpression><![CDATA[$P{functions}]]></textFieldExpression>
 				</textField>
 			</frame>
 			<frame>
-				<reportElement stretchType="RelativeToBandHeight" x="0" y="101" width="555" height="33" isRemoveLineWhenBlank="true">
-					<printWhenExpression><![CDATA[$P{showDivElement}.equals("ReportElementNodeJs") || $P{showDivElement}.equals("reportElementSharepointSrcFunc")]]></printWhenExpression>
-				</reportElement>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="101" width="555" height="33" isRemoveLineWhenBlank="true"/>
 				<rectangle>
-					<reportElement x="0" y="0" width="555" height="33"/>
+					<reportElement x="0" y="0" width="555" height="33" isRemoveLineWhenBlank="true"/>
 					<graphicElement>
 						<pen lineColor="#CCCCCC"/>
 					</graphicElement>
 				</rectangle>
 				<staticText>
-					<reportElement x="14" y="6" width="100" height="20"/>
+					<reportElement x="14" y="6" width="100" height="20" isRemoveLineWhenBlank="true"/>
 					<textElement/>
 					<text><![CDATA[Comment Blank Lines]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="168" y="6" width="100" height="20"/>
+					<reportElement x="168" y="6" width="100" height="20" isRemoveLineWhenBlank="true"/>
 					<textElement/>
 					<textFieldExpression><![CDATA[$P{commentBlankLines}]]></textFieldExpression>
 				</textField>
 			</frame>
 			<frame>
-				<reportElement stretchType="RelativeToBandHeight" x="0" y="134" width="555" height="93" isRemoveLineWhenBlank="true">
-					<printWhenExpression><![CDATA[$P{showDivElement}.equals("reportElementJavaFunc") || $P{showDivElement}.equals("reportElementSharepointSrcFunc")]]></printWhenExpression>
-				</reportElement>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="134" width="555" height="93" isRemoveLineWhenBlank="true"/>
 				<rectangle>
-					<reportElement x="0" y="4" width="555" height="88">
+					<reportElement x="0" y="4" width="555" height="88" isRemoveLineWhenBlank="true">
 						<printWhenExpression><![CDATA[$P{showDivElement}.equals("reportElementSharepointSrcFunc") || $P{showDivElement}.equals("reportElementJavaFunc")]]></printWhenExpression>
 					</reportElement>
 					<graphicElement>
@@ -171,32 +163,30 @@
 				</textField>
 			</frame>
 			<frame>
-				<reportElement stretchType="RelativeToBandHeight" x="0" y="227" width="555" height="54" isRemoveLineWhenBlank="true">
-					<printWhenExpression><![CDATA[$P{showDivElement}.equals("reportElementSharepointSrcFunc")]]></printWhenExpression>
-				</reportElement>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="227" width="555" height="54" isRemoveLineWhenBlank="true"/>
 				<rectangle>
-					<reportElement x="0" y="4" width="555" height="50"/>
+					<reportElement x="0" y="4" width="555" height="50" isRemoveLineWhenBlank="true"/>
 					<graphicElement>
 						<pen lineColor="#CCCCCC"/>
 					</graphicElement>
 				</rectangle>
 				<staticText>
-					<reportElement x="16" y="8" width="100" height="20"/>
+					<reportElement x="16" y="8" width="100" height="20" isRemoveLineWhenBlank="true"/>
 					<textElement/>
 					<text><![CDATA[Coverage]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="168" y="8" width="100" height="20"/>
+					<reportElement x="168" y="8" width="100" height="20" isRemoveLineWhenBlank="true"/>
 					<textElement/>
 					<textFieldExpression><![CDATA[$P{coverage}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="16" y="28" width="100" height="20"/>
+					<reportElement x="16" y="28" width="100" height="20" isRemoveLineWhenBlank="true"/>
 					<textElement/>
 					<text><![CDATA[UncoveredLines]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="168" y="28" width="100" height="20"/>
+					<reportElement x="168" y="28" width="100" height="20" isRemoveLineWhenBlank="true"/>
 					<textElement/>
 					<textFieldExpression><![CDATA[$P{uncoveredLines}]]></textFieldExpression>
 				</textField>
