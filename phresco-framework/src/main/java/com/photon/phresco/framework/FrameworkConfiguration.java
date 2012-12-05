@@ -78,6 +78,18 @@ public class FrameworkConfiguration implements FrameworkConstants {
 		}
 		return serverUrl;
 	}
+	
+	public String getVideoServicePath() throws PhrescoException {
+		List<Configuration> configurations = configurationList("WebService");
+		for (Configuration configuration : configurations) {
+			String protocol = configuration.getProperties().getProperty("protocol");
+			String host = configuration.getProperties().getProperty("host");
+			String port = configuration.getProperties().getProperty("port");
+			String context = configuration.getProperties().getProperty("context");
+			serverUrl = protocol + "://" + host + ":" +  port + "/" + context;
+		}
+		return serverUrl;
+	}
     
 	public String apiKey() throws PhrescoException {
 		List<Configuration> configurations = configurationList("Other");
