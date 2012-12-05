@@ -247,7 +247,18 @@ public class Configurations extends FrameworkBaseAction {
 			String className = mojoProcessor.getApplicationHandler().getClazz();
 			Customer customer = getServiceManager().getCustomer(getCustomerId());
 			RepoInfo repoInfo = customer.getRepoInfo();
-			PhrescoDynamicLoader dynamicLoader = new PhrescoDynamicLoader(repoInfo, null);
+			List<ArtifactGroup> artifactGroups = new ArrayList<ArtifactGroup>();
+			ArtifactGroup artifactGroup = new ArtifactGroup();
+			artifactGroup.setGroupId(mojoProcessor.getApplicationHandler().getGroupId());
+			artifactGroup.setArtifactId(mojoProcessor.getApplicationHandler().getArtifactId());
+			// To set the versions of Artifact Group.
+			List<ArtifactInfo> artifactInfos = new ArrayList<ArtifactInfo>();
+			ArtifactInfo artifactInfo = new ArtifactInfo();
+			artifactInfo.setVersion(mojoProcessor.getApplicationHandler().getVersion());
+			artifactGroup.setVersions(artifactInfos);
+			
+			artifactGroups.add(artifactGroup);
+			PhrescoDynamicLoader dynamicLoader = new PhrescoDynamicLoader(repoInfo, artifactGroups);
 			ApplicationProcessor applicationProcessor = dynamicLoader.getApplicationProcessor(className);
 			applicationProcessor.postConfiguration(getApplicationInfo());
 		} catch (PhrescoException e) {
