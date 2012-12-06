@@ -88,7 +88,7 @@
             <result name="projectDetails">/pages/projects/add.jsp</result>
         </action>
 
-        <action name="fetchMobileTechVersions" method="fetchMobileTechVersions" class="com.photon.phresco.framework.actions.applications.Projects">
+        <action name="fetchTechVersions" method="fetchTechVersions" class="com.photon.phresco.framework.actions.applications.Projects">
 			<result type="json"/>
         </action>
         

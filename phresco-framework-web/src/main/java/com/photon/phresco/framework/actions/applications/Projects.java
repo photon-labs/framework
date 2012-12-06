@@ -135,7 +135,7 @@ public class Projects extends FrameworkBaseAction {
      * To get the selected mobile technology's version
      * @return
      */
-    public String fetchMobileTechVersions() {
+    public String fetchTechVersions() {
         if (s_debugEnabled) {
             S_LOGGER.debug("Entering Method  Applications.fetchMobileTechVersions()");
         }
