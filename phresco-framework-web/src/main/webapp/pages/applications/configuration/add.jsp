@@ -176,7 +176,6 @@
 	
 	/* To check whether the device is ipad or not */
 	$(document).ready(function() {
-		hideLoadingIcon();//To hide the loading icon
 		if (!isiPad()) {
 			$(".content_adder").scrollbars(); //JQuery scroll bar
 		}

@@ -569,20 +569,20 @@
 		<% if(projectInfo != null) { %>
 			
 			$("input[value='app-layer']:checked").each(
-				    function() {
-				    	accordionOpen('#appLayerControl', $('input[value=app-layer]'));
-				    }
+				function() {
+					accordionOpen('#appLayerControl', $('input[value=app-layer]'));
+				}
 			);
 			
 			$("input[value='web-layer']:checked").each(
-				    function() {
-				    	accordionOpen('#webLayerControl', $('input[value=web-layer]'));
-				    }
+				function() {
+					accordionOpen('#webLayerControl', $('input[value=web-layer]'));
+				}
 			);
 			$("input[value='mob-layer']:checked").each(
-				    function() {
-				    	accordionOpen('#mobileLayerControl', $('input[value=mob-layer]'));
-				    }
+				function() {
+					accordionOpen('#mobileLayerControl', $('input[value=mob-layer]'));
+				}
 			);
 		<% } %>
 		

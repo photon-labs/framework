@@ -229,7 +229,7 @@
 $("div#certificateControl").hide();
 	
 	$(document).ready(function() {
-		
+		hideLoadingIcon();//To hide the loading icon
 		<% if (fromPage.equals(FrameworkConstants.ADD_CONFIG) || fromPage.equals(FrameworkConstants.EDIT_CONFIG)) { %>
 				getVersions();
 		<% } else {%>

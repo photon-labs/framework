@@ -89,7 +89,7 @@
 	confirmDialog($("#deleteBtn"), '<s:text name="lbl.hdr.confirm.dialog"/>', '<s:text name="modal.body.text.del.configuration"/>', 'delete','<s:text name="lbl.btn.ok"/>');
 	
 	$(document).ready(function() {
-		hideProgressBar();
+		//hideProgressBar();
 		var basicParams = getBasicParamsAsJson();
 		var fromPage = "<%= fromPage %>";
 		var configPath = "<%= configPath %>";

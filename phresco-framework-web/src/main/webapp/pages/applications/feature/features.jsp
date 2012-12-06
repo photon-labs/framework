@@ -149,6 +149,10 @@
 
 	var selectedType = "";
     $(document).ready(function () {
+    	//To check whether the device is ipad or not and then apply jquery scrollbar
+    	if (!isiPad()) {
+     		$("#accordianchange").scrollbars();  
+    	}
     	showLoadingIcon();
         //fillHeading();
         //showAvailabelFeature();

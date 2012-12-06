@@ -22,6 +22,7 @@ package com.photon.phresco.framework.actions.applications;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -268,7 +269,7 @@ public class Configurations extends FrameworkBaseAction {
 			PhrescoDynamicLoader dynamicLoader = new PhrescoDynamicLoader(repoInfo, artifactGroups);
 			ApplicationProcessor applicationProcessor = dynamicLoader.getApplicationProcessor(className);
 			applicationProcessor.postConfiguration(getApplicationInfo());
-			addActionMessage(getText(ACT_SUCC_CONFIG_ADD));
+			addActionMessage(getText(ACT_SUCC_CONFIG_ADD, Collections.singletonList(getConfigName())));
 		} catch (PhrescoException e) {
 			 return showErrorPopup(e, getText(EXCEPTION_CONFIGURATION_SAVE_CONFIG));
 		} catch (ConfigurationException e) {
@@ -294,7 +295,7 @@ public class Configurations extends FrameworkBaseAction {
 		}
     	try {
     		save(getGlobalSettingsPath());
-    		addActionMessage(getText(ACT_SUCC_SETTINGS_ADD));
+    		addActionMessage(getText(ACT_SUCC_SETTINGS_ADD, Collections.singletonList(getConfigName())));
 		} catch (PhrescoException e) {
 			return showErrorPopup(e, getText(EXCEPTION_CONFIGURATION_SAVE_SETTINGS));
 		} catch (ConfigurationException e) {
@@ -594,7 +595,7 @@ public class Configurations extends FrameworkBaseAction {
     	try {
     	    ConfigManager configManager = getConfigManager(getConfigPath());
 			configManager.addEnvironments(getEnvironments());
-			addActionMessage(getText(ACT_SUCC_ENV_ADD));
+			addActionMessage(getText(ACT_SUCC_ENV_ADD, Collections.singletonList(getEnvName())));
     	} catch(Exception e) {
     	    return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_CONFIGURATION_CREATE_ENVIRONMENT));
     	}
@@ -610,11 +611,11 @@ public class Configurations extends FrameworkBaseAction {
         	    for (String deletableEnv : deletableEnvList) {
         	    	configManager.deleteEnvironment(deletableEnv);
     			}
-        	    addActionMessage(getText(ACT_SUCC_ENV_DELETE));
+        	    addActionMessage(getText(ACT_SUCC_ENV_DELETE, Collections.singletonList(getEnvName())));
     		}
     		if (CollectionUtils.isNotEmpty(getSelectedConfigurations())) {//To delete the selected configurations
     			configManager.deleteConfigurations(getSelectedConfigurations());
-    			addActionMessage(getText(ACT_SUCC_CONFIG_DELETE));
+    			addActionMessage(getText(ACT_SUCC_ENV_DELETE, Collections.singletonList(getConfigName())));
     		}
     		
     	} catch(Exception e) {
@@ -655,7 +656,7 @@ public class Configurations extends FrameworkBaseAction {
 		
 		try {
 			update(getAppConfigPath());
-			addActionMessage(getText(ACT_SUCC_CONFIG_UPDATE));
+			addActionMessage(getText(ACT_SUCC_CONFIG_UPDATE, Collections.singletonList(getConfigName())));
 		} catch (PhrescoException e) {
 			return showErrorPopup(e, getText(EXCEPTION_CONFIGURATION_UPDATE_CONFIG));
          }
@@ -667,7 +668,7 @@ public class Configurations extends FrameworkBaseAction {
 		
 		try {
 			update(getGlobalSettingsPath());
-			addActionMessage(getText(ACT_SUCC_SETTINGS_UPDATE));
+			addActionMessage(getText(ACT_SUCC_SETTINGS_UPDATE, Collections.singletonList(getConfigName())));
 		} catch (PhrescoException e) {
 			return showErrorPopup(e, getText(EXCEPTION_CONFIGURATION_UPDATE_SETTINGS));
          }

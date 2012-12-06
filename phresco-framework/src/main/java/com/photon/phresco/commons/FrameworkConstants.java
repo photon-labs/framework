@@ -1656,14 +1656,15 @@ public interface FrameworkConstants {
 	     * I18N Keys Constants
 	     * String ACT_SUCC_XXX
 	     *****************************/
-		String ACT_SUCC_PROJECT_DELETE = "project.delete.message";
-		String ACT_SUCC_CONFIG_ADD= "config.add.message";
-		String ACT_SUCC_SETTINGS_ADD= "setting.create.success";
-		String ACT_SUCC_CONFIG_UPDATE= "config.update.message";
-		String ACT_SUCC_SETTINGS_UPDATE= "setting.update.success";
-		String ACT_SUCC_ENV_DELETE= "env.delete.message";
-		String ACT_SUCC_CONFIG_DELETE= "config.delete.message";
-		String ACT_SUCC_ENV_ADD= "env.add.message";
+		String ACT_SUCC_PROJECT_CREATE= "succ.project.create";
+		String ACT_SUCC_PROJECT_DELETE = "succ.project.delete";
+		String ACT_SUCC_CONFIG_ADD= "succ.config.create";
+		String ACT_SUCC_CONFIG_UPDATE= "succ.config.update";
+		String ACT_SUCC_CONFIG_DELETE= "succ.config.delete";
+		String ACT_SUCC_SETTINGS_ADD= "succ.setting.create";
+		String ACT_SUCC_SETTINGS_UPDATE= "succ.setting.update";
+		String ACT_SUCC_ENV_ADD= "succ.env.create";
+		String ACT_SUCC_ENV_DELETE= "succ.env.delete";
 		
 		/**
 		 * Dynamic Parameter Constants
