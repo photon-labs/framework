@@ -41,7 +41,7 @@
 	String disabledStr = "";
 	// when this is iphone tech there will be a path in clangReport request
 	if (StringUtils.isEmpty(clangReport) && StringUtils.isNotEmpty(sonarError)) {
-        //disabledStr = "disabled";
+        disabledStr = "disabled";
     }
 %>  
 
