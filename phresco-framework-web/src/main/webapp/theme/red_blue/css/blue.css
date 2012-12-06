@@ -1596,12 +1596,7 @@ table tr {
     color: #555555 !important;
 }
 
-.dd-option:hover {
-    background: #ddd !important;
-    border-top: solid 1px #ccc !important;
-    border-bottom: solid 1px #ccc !important;
-}
-
-.dd-selected {
-    border: 1px solid #ccc;
+.dd-option-selected, .dd-option:hover {
+    background: #eeeeee !important;
+    border: solid 1px #dcdcdc;
 }

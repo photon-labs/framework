@@ -1955,7 +1955,8 @@ h1 {
 }
 
 .featureTypeWidth {
-   width: 30%
+    padding: 3px 10px;
+    width: 30%;
 }
 
 .tblheader {
@@ -5947,27 +5948,20 @@ div.control-group.valReportLbl {
 
 /*features page select box*/
 .featureTypeWidth label:nth-child(1) {
-    font-weight: bold;
-    margin: 0;
-    padding: 5px 10px;
     text-align: left !important;
     width: 30px !important;
+    font-weight: bold;
 }
 
 #featureselect {
-    margin-left: 50px;
+    margin-left: 15%;
 }
 
 .dd-selected-text, .dd-option-text, .dd-desc {
     font-weight: bold !important;
 }
 
-.dd-selected-text {
-    margin-bottom: 0px !important;
-    font-size: 12px !important;
-}
-
-.dd-option-text {
+.dd-selected-text, .dd-option-text {
     margin-bottom: 0px !important;
     font-size: 12px !important;
 }
@@ -5975,7 +5969,6 @@ div.control-group.valReportLbl {
 .dd-selected, .dd-option {
     text-decoration: none !important;
     padding: 3px !important;
-    border-radius: 3px 3px 0 0 !important;
 }
 
 .dd-selected-image, .dd-option-image {
@@ -5984,13 +5977,8 @@ div.control-group.valReportLbl {
     margin-right: 7px !important;
 }
 
-.dd-select {
-    border-radius: 3px 3px 0 0 !important;
-    border : none !important;
-}
-
 .dd-selected, .dd-option {
-    padding: 0px !important;
+    padding: 2px !important;
 }
 
 .dd-selected-image .dd-option-image {
@@ -5999,12 +5987,4 @@ div.control-group.valReportLbl {
 
 .dd-desc {
     font-size: smaller !important;
-}
-
-.dd-click-off-close {
-    width: 258px !important;
-}
-
-.dd-options {
-    box-shadow: none !important;
 }
