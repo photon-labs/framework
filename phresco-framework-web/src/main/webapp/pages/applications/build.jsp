@@ -107,7 +107,7 @@
 			<div class="build_table_div">
     			<!-- Command Display Heading starts -->
 				<div class="tblheader" style="height: 29px;">
-					<table class="zebra-striped" style="height: 29px;"> 
+					<table class="zebra-striped deployPopup" style="height: 29px;"> 
 						<tr class="tr_color">
 		    				<th><s:text name="label.progress"/></th>
 		    				<th><img src="images/icons/clipboard-copy.png" alt="clipboard" id="clipboard" title="Copy to clipboard"/></th>
@@ -142,10 +142,9 @@
     	});
     	
     	$('#minifyButton').click(function(){
+    		hidePopuploadingIcon();
     		yesnoPopup('minfiyPopup', '<s:text name="lbl.minification"/>', 'minifier','<s:text name="lbl.minify"/>');
     	});
-//     	yesnoPopup($('#generateBuild'), 'generateBuild', '<s:text name="label.generatebuild"/>', 'build','<s:text name="lbl.build"/>');
-//     	yesnoPopup($('#runAgainstSourceStart'),'showRunAgainstSourcePopup', '<s:text name="label.runagainstsource"/>', 'startServer','<s:text name="label.run"/>');
 
     	if ($.browser.safari && $.browser.version == 530.17) {
     		$(".buildDiv").show().css("float","left");
@@ -209,41 +208,6 @@
         params = params.concat(data);
         loadContent('copyToClipboard', '', '', params, '', '', '');
 	}
-    
-    function generateBuild(projectCode, from, obj) {
-    	$('#popup_div').empty();
-		showPopup();
-       	var currentId = obj.id;
-       	var idArray = currentId.split('#');
-       	var buildNumber = idArray[1];
-       	var buildName = $(obj).attr("buildName");
-        var params = "from=";
-		params = params.concat(from);
-       	//popup('generateBuild', $('#formAppMenu'), $('#popup_div'), '', '', params);
-       // escPopup();
-    }
-    
-    function deployAndroid(obj){
-    	$('#popup_div').empty();
-    	var currentId = obj.id;
-        var idArray = currentId.split('#');
-        var buildNumber = idArray[1];
-		showPopup();
-       	var params = "buildNumber=";
-		params = params.concat(buildNumber);
-       	popup('deployAndroid', params, $('#popup_div'));
-    }
-   
-    function deployIphone(obj) {
-    	$('#popup_div').empty();
-        var currentId = obj.id;
-        var idArray = currentId.split('#');
-        var buildNumber = idArray[1];
-		showPopup();
-       	var params = "buildNumber=";
-		params = params.concat(buildNumber);
-       	popup('deployIphone', params, $('#popup_div'));
-    }
     
     // When  server is  running disable run against source button
     function runAgainstSrcServerRunning() {
@@ -340,7 +304,7 @@
 		} else if (pageUrl == "getSqlDatabases") {
 			if (isBlank(data.databases)) {
 				$("#errMsg").html('<%= FrameworkConstants.CONFIGURATION_UNAVAILABLE %>'); 
-				hideLoadingIcon();
+				//hideLoadingIcon();
 			} else {
 				fillVersions("databases", data.databases , "");
 				//getting sql files to be executed

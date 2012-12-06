@@ -23,13 +23,12 @@
 <%@ page import="java.util.List"%>
 
 <%@ page import="org.apache.commons.collections.CollectionUtils" %>
-<%@ page import="com.photon.phresco.util.Constants"%>
+<%@ page import="org.apache.commons.lang.StringUtils"%>
 
+<%@ page import="com.photon.phresco.util.Constants"%>
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 <%@ page import="com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value"%>
-
-<%@ include file="progress.jsp" %>
 
 <script src="js/reader.js" ></script>
 
@@ -80,9 +79,7 @@
 <script>
 $('.control-group').addClass("valReportLbl");
     $(document).ready(function() {
-    	hideLoadingIcon();
-    	enableScreen();
-    	
+    	showLoadingIcon();
     	$('#codeValidatePopup').click(function() {
     		validateDynamicParam('showCodeValidatePopup', '<s:text name="popup.hdr.code.validate"/>', 'codeValidate','<s:text name="lbl.validate"/>', '', '<%= Constants.PHASE_VALIDATE_CODE %>');
     	});
@@ -91,6 +88,7 @@ $('.control-group').addClass("valReportLbl");
     	<% if (StringUtils.isNotEmpty(sonarError)) { %>
 	    	$("#codeValidatePopup").removeClass("btn-primary"); 
 	        $("#codeValidatePopup").addClass("btn-disabled");
+	        hideLoadingIcon();
     	<% } else { %>
 	    	$("#codeValidatePopup").addClass("btn-primary"); 
 	        $("#codeValidatePopup").removeClass("btn-disabled");
@@ -115,6 +113,7 @@ $('.control-group').addClass("valReportLbl");
     function popupOnOk(obj) {
     	var okUrl = $(obj).attr("id");
         var params = getBasicParams();
+    	$("#popupPage").modal('hide');//To hide popup
         progressPopupAsSecPopup(okUrl, '<%= appId %>', '<%= FrameworkConstants.REQ_CODE %>', $("#generateBuildForm"), params);
     }
     
@@ -125,7 +124,6 @@ $('.control-group').addClass("valReportLbl");
         params = params.concat("validateAgainst=");
         params = params.concat(reportValue);
         loadContent('check', $('#code'), $('#sonar_report'), params);
-        showLoadingIcon();
     }
     
 	function checkObj(obj) {

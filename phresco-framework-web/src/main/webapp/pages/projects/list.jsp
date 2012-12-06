@@ -42,8 +42,7 @@
 
 <form id="formProjectList" class="projectList">
 	<div class="operation">
-		<input type="button" class="btn btn-primary" name="addProject" id="addProject" value="<s:text name='lbl.projects.add'/>"
-			onclick="loadContent('addProject', $('#formCustomers'), $('#container'));"/>
+		<input type="button" class="btn btn-primary" name="addProject" id="addProject" value="<s:text name='lbl.projects.add'/>"/>
 
 		<input type="button" class="btn btn-primary" name="importAppln" id="importAppln" value="<s:text name='lbl.app.import'/>"/>
 		         
@@ -167,9 +166,9 @@
 	}
 
 	$(document).ready(function() {
-		hideProgressBar()
+		hideLoadingIcon();
+		hideProgressBar();
 		toDisableCheckAll();
-		//hideLoadingIcon();//To hide the loading icon
 		
 		$('#importAppln').click(function() {
 			yesnoPopup('importAppln', '<s:text name="lbl.app.import"/>', 'importUpdateAppln','<s:text name="lbl.app.import"/>');
@@ -188,16 +187,19 @@
     	//To get the list of projects based on the selected customer
     	
     	$('select[name=customerId]').change(function() {
+    		showLoadingIcon();
     		loadContent("applications", $('#formCustomers'), $("#container"));
     	});
     	
-		//modalObj, url, title, okUrl, okLabel, form
-// 		yesnoPopup($('#importAppln'), 'importAppln', '<s:text name="lbl.app.import"/>', 'importUpdateAppln','<s:text name="lbl.app.import"/>', $('#formProjectList'));
-// 		yesnoPopup($('.projectUpdate'), 'updateProjectPopup', '<s:text name="lbl.app.update"/>', 'importUpdateAppln','<s:text name="lbl.app.update"/>', $('#formProjectList'));
+    	//Trigerred when add btn is clicked
+    	$('#addProject').click(function() {
+    		showLoadingIcon();
+    		loadContent('addProject', $('#formCustomers'), $('#container'));		
+    	});
    	});
 	
     function editApplication(projectId, appId) {
-    	//showLoadingIcon();
+    	showLoadingIcon();
 		var params = "projectId=";
 		params = params.concat(projectId);
 		params = params.concat("&appId=");
@@ -206,14 +208,14 @@
 	}
     
     function editProject(projectId) {
-    	//showLoadingIcon();
+    	showLoadingIcon();
 		var params = "projectId=";
 		params = params.concat(projectId);
 		loadContent("editProject", $("#formCustomers"), $('#container'), params);
 	}
     
  	function popupOnOk(obj) {
- 		$("#popupPage").modal('hide');
+ 		//$("#popupPage").modal('hide');
  		var okUrl = $(obj).attr("id");
  		if (okUrl == "importUpdateAppln") {
  			if(validateImportAppl()) {
@@ -224,6 +226,7 @@
 			showPopuploadingIcon();
 			loadContent('printAsPdf', $('#generatePdf'), $('#popup_div'), getBasicParams(), false);
 		} else if (okUrl === "deleteProject") {
+			$("#popupPage").modal('hide');
 			// show popup loading icon
  			showProgressBar('<s:text name="progress.txt.delete.app"/>');
  			var basicParams = getBasicParamsAsJson();

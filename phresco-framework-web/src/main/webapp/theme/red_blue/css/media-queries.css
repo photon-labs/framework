@@ -3017,10 +3017,10 @@ Width > 1441 and <= 1600
 		width: 592px;
 	}
 	.right {
-		height: 87%;
+		height: 84%;
 		overflow: hidden;
 		position: absolute;
-		right: -8px;
+		right: -12px;
 		top: 6%;
 		z-index: 4;
 	}

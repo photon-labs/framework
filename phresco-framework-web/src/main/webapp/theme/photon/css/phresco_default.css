@@ -138,6 +138,14 @@ div.lgnBtnLabel {
 	margin: 5px 5px 5px 6px;
 }
 
+.operation strong {
+	color: black;
+}
+
+#code .operation strong {
+	margin-left: 10px;
+}
+
 .operation.build{
 	height: 21px;
 }
@@ -335,7 +343,7 @@ a {
 .main_wrapper {
 	bottom: 48px;
 	position: absolute;
-	top: 74px;
+	top: 38px;
 	width: 98%;
 	left:2%;
 }
@@ -556,6 +564,7 @@ a {
 	position: relative;
 	height: 100%;
 	overflow: auto;
+	/*border-bottom: 1px solid #DEDEDE !important;*/
 }
 
 .scrollable.paddedtop {
@@ -661,7 +670,7 @@ a {
 	margin-right:2%;
 	text-align:right;
 	width:475px;
-	margin-top:68px;
+	margin-top:45px;
 	position:absolute;
 	right:0%;
 }
@@ -839,8 +848,8 @@ a {
 
 .Logo {
 	float: left;
-	width: 13%;
-	margin-top:10px;
+	margin-top:18px;
+	margin-left: 3%;
 }
 
 .arrow {
@@ -1718,7 +1727,7 @@ div.vjs-big-play-button span {
 #container {
     z-index: 15004;
     width: 99%;
-    height: 85%;
+    height: 89%;
 }
 
 .holder {
@@ -2412,7 +2421,7 @@ fieldset {
     padding: 17px 20px 18px 150px; */
     float: right;
     margin-right: 20px;
-    margin-top: 4px;
+    margin-top: 8px;
 }
 /*** app info add end ***/
 
@@ -5157,7 +5166,7 @@ ul#display-inline-block-example li {
 }
 
 .sonarWarning {
-	margin-left: 478px;
+	margin-left: 440px;
 	margin-top: -33px;
 	width: 31%;
 	height: 15px;
@@ -5716,7 +5725,7 @@ input[class*='chckBxAlign'] {
 
 #successmsg {
 	height: 16px;
-    margin-left: 246px;
+    margin-left: 300px;
     margin-top: -34px;
     padding: 6px;
     width: 50%;
@@ -5844,7 +5853,7 @@ ul#display-inline-block-example li:nth-child(4) select, ul#display-inline-block-
 	margin-bottom:6px;
 }
 .fea_add_but {
-	margin-left:2.5%;
+	margin-left:2%;
 	margin-top: 20%;
 }
 .tblheader br {
@@ -5883,7 +5892,7 @@ color: #313131;
 }
 
 #formCreateProject .content_adder .control-group {
-	width: 45%;
+	width: 50%;
 	margin: auto;
 	margin-bottom: 5px;
 }
@@ -5989,39 +5998,121 @@ color: #313131;
 	width: 30px !important;
 	font-weight: bold;
 }
+
 #featureselect {
-	margin-left: 5%;
+	margin-left: 6%;
 }
+
 .dd-selected-text, .dd-option-text, .dd-desc {
 	font-weight: bold !important;
 }
+
 .dd-selected-text, .dd-option-text {
 	margin-bottom: 0px !important;
 	font-size: 12px !important;
 }
+
 .dd-selected, .dd-option {
 	text-decoration: none !important;
 	padding: 3px !important;
 }
+
 .dd-selected-image, .dd-option-image {
 	margin-left: 3px;
 	margin-top: 3px;
 	margin-right: 7px !important;
 }
+
 .dd-select {
 	background: #f7f7f7 !important;
 	border: solid 1px #dcdcdc;
 }
+
 .dd-option-selected, .dd-option:hover {
 	background: #eeeeee !important;
 	border: solid 1px #dcdcdc;
 }
+
 .dd-selected, .dd-option {
-	padding: 0px !important;
+	padding: 2px !important;
 }
+
 .dd-selected-image .dd-option-image {
 	margin: 10px 10px 10px 0px !important;
 }
+
 .dd-desc {
 	font-size: smaller !important;
 }
+
+/*fatures form related CSS*/
+
+.deploy {
+	cursor: pointer;
+}
+
+.deployPopup {
+	padding: 0;	
+}
+
+/* for field set*/
+.fieldSetClass {
+	padding: 10px; 
+	margin: 10px; 
+	width: auto;
+}
+
+.fieldSetTbl {
+	width: 50%;
+}
+
+.fieldSetTr {
+	border:1px solid #fff;
+}	
+
+.fieldSetTrTd {
+	border-bottom: medium none; 
+	padding: 0px !important;
+}
+
+.fieldSetSelect {
+	height: 150px !important; 
+	width: 195px !important;
+}
+
+.fldSetSelectTd {
+	border-bottom: medium none;
+}
+
+.fldSetUl {
+	list-style: none outside none; 
+	margin-left: 0px;
+}
+
+.fldSetLi {
+	padding-bottom: 5px; 
+	margin-top:10px;
+}
+
+.arrowBtn {
+	width:30px !important;
+}
+
+.fieldsetLi {
+	padding-bottom: 5px;
+}
+
+.fldSetRightTd {
+	border-bottom: medium none; 
+	padding-right: 0px;
+}
+
+.moveUp {
+	cursor: pointer;
+}
+
+.moveDown {
+	cursor: pointer; 
+	margin-top: 16px;
+}
+/* for field ends*/	

@@ -32,8 +32,8 @@
 %>
 <!-- <script type="text/javascript" src="js/windowResizer.js">
 </script> -->
-<div class="video_height">
-	 <div class='holder'>
+    <div class="video_height">
+	    <div class='holder'>
 	 		<div class="video-title">
 	            <div class="video-title-left" id='video-title'><s:text name="label.phresco.video"/></div>
 	            <div class="video-title-right" id=""><s:text name="label.playlist"/></div>
@@ -86,13 +86,13 @@
 	
 	<% if (videoInfos != null) { %>
     $(document).ready(function() {
+    	showLoadingIcon();
     	if (localStorage.index) {
     		$("div[id='listindex"+localStorage.index+"']").attr("class", "listindex-active"); //Highlight which video is selected.
     		changeVideo(localStorage.videoname); //To play the selected video.
     	} else {
     		$("div[id='listindex0']").attr("class", "listindex-active"); // To higlight intro video when you login after sign out.
-    		//TODO: Need to handle
-<%--     		changeVideo("<%= videoInfos.get(0).getName() %>"); --%>
+    		changeVideo("<%= videoInfos.get(0).getName() %>");
     	}
         
         
@@ -113,17 +113,8 @@
 	<% } %>
 	
 	function changeVideo(videoId) {
-        $.ajax({
-            url : 'video',
-            data : {
-                'video' : videoId
-            },
-            type : "POST",
-            success : function(data) {
-                $("#videoPlayer").html(data);
-            }
-        });
+		var params = "video=";
+		params = params.concat(videoId);
+		loadContent('video', '', $("#videoPlayer"), params);
     }
-	
-	
 </script>

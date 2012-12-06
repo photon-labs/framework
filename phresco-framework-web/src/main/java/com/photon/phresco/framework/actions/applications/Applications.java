@@ -614,13 +614,13 @@ public class Applications extends FrameworkBaseAction {
 					String artifactGroupId = obj.getModuleId();
 					ArtifactGroup artifactGroupInfo = getServiceManager().getArtifactGroupInfo(artifactGroupId);
 					listArtifactGroup.add(artifactGroupInfo);
-					if (obj.getType().equals("feature")) {
+					if (obj.getType().equals("FEATURE")) {
 						selectedFeatures.add(string);
 					}
-					if (obj.getType().equals("javascript")) {
+					if (obj.getType().equals("JAVASCRIPT")) {
 						selectedJsLibs.add(string);
 					}
-					if (obj.getType().equals("component")) {
+					if (obj.getType().equals("COMPONENT")) {
 						selectedComponents.add(string);
 					}
 				}

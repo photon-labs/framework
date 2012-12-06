@@ -82,6 +82,7 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
+    	showLoadingIcon();
     	var params = getBasicParams();
     	clickMenu($("a[name='qualityTab']"), $("#subTabcontainer"), '', params);//handles the click event of the quality sub tabs
 		loadContent("unit", '', $("#subTabcontainer"), params);//

@@ -744,6 +744,10 @@ public interface FrameworkConstants {
     String REQ_LOG_REPORT = "logReport";
     String REQ_PROJECT_INFO_SERVERS = "projectInfoServers";
     String REQ_PROJECT_INFO_DATABASES = "projectInfoDatabases";
+    String REQ_FEATURE_NAME = "featureName";
+    String REQ_FEATURE_NAMES = "featureNames";
+    
+    String CONFIG_FEATURES = "config_Features";
 	
 	String REQ_TESTCASE_NAME = "testCaseName";
 	String SCREENSHOT_DIR = "screenshots";
@@ -1653,7 +1657,15 @@ public interface FrameworkConstants {
 	     * I18N Keys Constants
 	     * String ACT_SUCC_XXX
 	     *****************************/
-		String ACT_SUCC_PROJECT_DELETE = "project.delete.message";
+		String ACT_SUCC_PROJECT_CREATE= "succ.project.create";
+		String ACT_SUCC_PROJECT_DELETE = "succ.project.delete";
+		String ACT_SUCC_CONFIG_ADD= "succ.config.create";
+		String ACT_SUCC_CONFIG_UPDATE= "succ.config.update";
+		String ACT_SUCC_CONFIG_DELETE= "succ.config.delete";
+		String ACT_SUCC_SETTINGS_ADD= "succ.setting.create";
+		String ACT_SUCC_SETTINGS_UPDATE= "succ.setting.update";
+		String ACT_SUCC_ENV_ADD= "succ.env.create";
+		String ACT_SUCC_ENV_DELETE= "succ.env.delete";
 		
 		/**
 		 * Dynamic Parameter Constants

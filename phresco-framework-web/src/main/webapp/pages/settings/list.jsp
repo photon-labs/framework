@@ -65,9 +65,7 @@
     
     <div class="operation">
     	<!-- Add Configuration Button --> 
-		<input type="button" class="btn btn-primary" name="configAdd" id="configAdd" 
-	         onclick="loadContent('addConfiguration', $('#formCustomers, #formAppMenu'), $('#container'), 'fromPage=add<%=fromPage%>&configPath=<%=configPath%>');" 
-		         value="<s:text name='lbl.btn.add'/>" <%=disabledStr %>/>
+		<input type="button" class="btn btn-primary" name="configAdd" id="configAdd" value="<s:text name='lbl.btn.add'/>" <%=disabledStr %>/>
 
 		<!-- Delete Configuration Button -->	
 		<input type="button" class="btn" id="deleteBtn" disabled value="<s:text name='lbl.delete'/>" data-toggle="modal" href="#popupPage"/>
@@ -100,7 +98,7 @@
 	
 	$(document).ready(function() {
 		hideLoadingIcon();//To hide the loading icon
-		
+		hideProgressBar();
 		var basicParams = getBasicParamsAsJson();
 		var fromPage = "<%= fromPage%>";
 		var configPath = "<%= configPath%>";
@@ -114,6 +112,12 @@
 				$("#configAdd").addClass("btn-primary"); 
 				$("#configAdd").removeClass("btn-disabled");
     	<% } %>
+    	
+    	//Trigerred when add btn is clicked
+    	$('#configAdd').click(function() {
+    		showLoadingIcon();
+    		loadContent('addConfiguration', $('#formCustomers, #formAppMenu'), $('#container'), 'fromPage=add<%=fromPage%>&configPath=<%=configPath%>');
+    	});
 	});
 	
 	 function editConfiguration(currentEnvName, currentConfigType, currentConfigName) {
@@ -130,6 +134,7 @@
 			params = params.concat(fromPage);
 			params = params.concat("&configPath=");
 			params = params.concat(configPath);
+			showLoadingIcon();
 			loadContent("editConfiguration", $("#formConfigAdd"), $('#container'), params);
 	}
 	 

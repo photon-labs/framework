@@ -240,12 +240,17 @@
 					parameterModel.setOptionOnclickFunction("jecOptionChange();");
 					StringTemplate selectElmnt = FrameworkUtil.constructSelectElement(parameterModel);
 	%>
-					
 					<%= selectElmnt %>
 					<script type="text/javascript">
 						$("#" + '<%= parameter.getKey() %>').jec();
 						$('.jecEditableOption').text("Type or select from the list");
 						$("#"+'<%= parameter.getKey() %>'+" .jecEditableOption").prop("selected", true);
+						$("#" + '<%= parameter.getKey() %>').click(function() {
+							var optionClass = $("#"+'<%= parameter.getKey() %>'+" :selected").attr("class");
+							if (optionClass != undefined && optionClass == "jecEditableOption") {
+								 $('.jecEditableOption').text("");
+							}
+						});
 					</script>
 	<% 			
 				} else if (FrameworkConstants.TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(parameter.getType()) && (!parameter.isSort())) {
@@ -343,9 +348,7 @@
 	var readerSession = "";
 	$(document).ready(function() {
 		showParameters();//To show the parameters based on the dependency
-		// accodion for advanced issue
-// 		accordion();
-
+		hidePopuploadingIcon();
 		$('.jecEditableOption').click(function() {
 	       $('.jecEditableOption').text("");
 	    });
@@ -629,14 +632,6 @@
 		}
 		return dependencies;
 	}
-	
-	/* function changeChckBoxValue(obj) {
-		if ($(obj).is(':checked')) {
-			$(obj).val("true");
-		} else {
-			$(obj).val("false");
-		}
-	} */
 	
 	function addRow(obj) {
 		var removeIconTd = $(document.createElement('td')).attr("class", "borderForLoad");

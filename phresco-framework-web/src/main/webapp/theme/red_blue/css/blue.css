@@ -383,15 +383,24 @@ a {
 }
 
 .custom_features_wrapper_right {
- 	border: 1px solid #006DCF;
+ 	border: 1px solid #ccc;
     border-radius: 6px 6px 6px 6px;
 }
      
 .custom_features {
-    border: 1px solid #006DCF;
+    border: 1px solid #ccc;
 	border-radius: 6px 6px 0 0;
 }   
- 
+
+.closereg a {
+    color : #333;
+}
+
+.openreg a {
+    color : #fff;
+    font-weight: bold;
+}
+
 .version_des {
 	margin-left:12%; 
 	color: #333333;
@@ -1240,7 +1249,7 @@ table tr {
 /** Download starts **/
 
 .theme_accordion_container{
-    border:#049CDB solid 1px;
+    /* border:#049CDB solid 1px; */
 }
 
 .accordion_head{
@@ -1580,4 +1589,14 @@ table tr {
 .compressNameTextBox {
 	float: left !important;
  	width: 178px !important;
+}
+
+/*features page select box*/
+.dd-desc {
+    color: #555555 !important;
+}
+
+.dd-option-selected, .dd-option:hover {
+    background: #eeeeee !important;
+    border: solid 1px #dcdcdc;
 }

@@ -29,8 +29,8 @@ import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.FrameworkConfiguration;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
-import com.photon.phresco.framework.api.ProjectAdministrator;
 import com.photon.phresco.framework.commons.FrameworkActions;
+import com.sun.jersey.api.client.ClientHandlerException;
 
 public class Home extends FrameworkBaseAction implements FrameworkActions {
 	private static final long serialVersionUID = -9002492813622189809L;
@@ -43,14 +43,14 @@ public class Home extends FrameworkBaseAction implements FrameworkActions {
 	
 	public String view() {
 		if (DebugEnabled) {
-			S_LOGGER.debug("Entering Method  Home.view()");
+			S_LOGGER.debug("Entering Method Home.view()");
 		}
 
 	    try {
 			List<VideoInfo> videoInfos = getServiceManager().getVideoInfos();
 			FrameworkConfiguration configuration = PhrescoFrameworkFactory.getFrameworkConfig();
-			getHttpRequest().setAttribute(REQ_SERVER_URL, configuration.getServerPath());
-			getHttpRequest().setAttribute(REQ_VIDEO_INFOS, videoInfos);
+			setReqAttribute(REQ_SERVER_URL, configuration.getVideoServicePath());
+			setReqAttribute(REQ_VIDEO_INFOS, videoInfos);
 		} catch (PhrescoException e) {
 			e.printStackTrace();
 		}
@@ -60,21 +60,55 @@ public class Home extends FrameworkBaseAction implements FrameworkActions {
 
 	public String video() {
 		if (DebugEnabled) {
-			S_LOGGER.debug("Entering Method  Home.video()");
+			S_LOGGER.debug("Entering Method Home.video()");
 		}
 
 
 		try {
-			String videoName = getHttpRequest().getParameter(REQ_VIDEO);
-			ProjectAdministrator projectAdministrator = getProjectAdministrator();
-//			List<VideoType> videoTypes = projectAdministrator.getVideoTypes(videoName);
+			String videoName = getReqParameter(REQ_VIDEO);
+			List<VideoType> videoTypes = getVideoTypes(videoName);
 			FrameworkConfiguration configuration = PhrescoFrameworkFactory.getFrameworkConfig();
-			getHttpRequest().setAttribute(REQ_SERVER_URL, configuration.getServerPath());
-//			getHttpRequest().setAttribute(REQ_VIDEO_TYPES, videoTypes);
+			setReqAttribute(REQ_SERVER_URL, configuration.getVideoServicePath());
+			setReqAttribute(REQ_VIDEO_TYPES, videoTypes);
 		} catch (PhrescoException e) {
 			e.printStackTrace();
 		}
 
 		return HOME_VIDEO;
 	}
+	
+	 public List<VideoInfo> getVideoInfos() throws PhrescoException {
+		if (DebugEnabled) {
+			S_LOGGER.debug("Entering Method Home.getVideoTypeInfos()");
+		}
+
+		try {
+			return getServiceManager().getVideoInfos();
+		} catch (ClientHandlerException ex) {
+			if (DebugEnabled) {
+				S_LOGGER.error(ex.getLocalizedMessage());
+			}
+			throw new PhrescoException(ex);
+		}
+	 }
+	 
+	 public List<VideoType> getVideoTypes(String name) throws PhrescoException {
+		if (DebugEnabled) {
+			S_LOGGER.debug("Entering Method Home.getVideoTypes(String name)");
+		}
+		try {
+			List<VideoInfo> videoInfos = getVideoInfos();
+			for (VideoInfo videoInfo : videoInfos) {
+				if(videoInfo.getName().equals(name)) {
+					return videoInfo.getVideoList();
+				}	
+			}
+		} catch (Exception e) {
+			if (DebugEnabled) {
+				S_LOGGER.debug("Video information is not available");
+			}
+		}
+		
+		return null;
+	 }
 }

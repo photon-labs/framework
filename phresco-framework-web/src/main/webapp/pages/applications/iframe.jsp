@@ -51,6 +51,7 @@
 	});
 	
 	function reloadIframe() {
+		hideLoadingIcon();
 		var theme = localStorage["color"];
 		if (theme != null) {
 			if (theme == "themes/red_blue/css/red.css") {

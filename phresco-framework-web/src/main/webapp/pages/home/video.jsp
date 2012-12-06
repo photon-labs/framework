@@ -23,6 +23,7 @@
 
 <script type="text/javascript">
 	$(document).ready(function() {
+		hideLoadingIcon();
 		VideoJS.setupAllWhenReady();
 	});
 </script>
@@ -38,12 +39,10 @@
 		String codecs = "";
 		for(VideoType videoType : videoTypes) {
 			url = serverUrl + videoType.getUrl();
-			//TODO:Need to handle
-// 			vType = videoType.getType();
-// 			codecs = videoType.getCodecs();
+			vType = videoType.getType();
+			codecs = videoType.getCodec();
 	%>
-	
-		<source id="video" type='video/<%= vType %>' src="<%= url %>"></source>
-		<% }%>
+		<source id="video" src="<%= url %>" type="video/<%= vType %>"></source>
+	<% }%>
 	
 </video>

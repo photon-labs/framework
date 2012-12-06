@@ -1639,3 +1639,64 @@ background-color: #ffffff;
 	float: left !important;
  	width: 178px !important;
 }
+
+/*features page select box*/
+
+.dd-selected-text {
+	color : #fff;
+}
+
+.dd-option-text {
+	color : #222;
+}
+
+.dd-selected-description-truncated {
+    color : #fff !important;
+}
+.dd-selected {
+    background: #C7141C; /* Old browsers */
+    background: -moz-linear-gradient(top,  #C7141C 0%, #B1121D 44%, #9D111E 100%) !important; /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#C7141C), color-stop(44%,#B1121D), color-stop(100%,#9D111E)) !important; /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #C7141C 0%,#B1121D 44%,#9D111E 100%) !important; /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #C7141C 0%,#B1121D 44%,#9D111E 100%) !important; /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #C7141C 0%,#B1121D 44%,#9D111E 100%) !important; /* IE10+ */
+    background: linear-gradient(top,  #C7141C 0%,#B1121D 44%,#9D111E 100%) !important; /* W3C */
+}
+
+.dd-option {
+    background: #efefef; /* Old browsers */
+}
+
+.dd-select {
+	background: #C7141C; /* Old browsers */
+    background: -moz-linear-gradient(top,  #C7141C 0%, #B1121D 44%, #9D111E 100%) !important; /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#C7141C), color-stop(44%,#B1121D), color-stop(100%,#9D111E)) !important; /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #C7141C 0%,#B1121D 44%,#9D111E 100%) !important; /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #C7141C 0%,#B1121D 44%,#9D111E 100%) !important; /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #C7141C 0%,#B1121D 44%,#9D111E 100%) !important; /* IE10+ */
+    background: linear-gradient(top,  #C7141C 0%,#B1121D 44%,#9D111E 100%) !important; /* W3C */
+    border: 1px solid #C7141C !important;
+}
+
+.dd-option-selected {
+    background: #eeeeee !important;
+    border: solid 1px #dcdcdc;
+}
+
+.dd-option:hover {
+    background: #ddd !important;
+    border-top: solid 1px #ccc !important;
+    border-bottom: solid 1px #ccc !important;
+}
+
+.dd-desc {
+    color : #555 !important;
+}
+
+.dd-click-off-close {
+    border: 1px solid red !important;
+}
+
+.dd-selected-description-truncated {
+    color: #ccc !important;
+}

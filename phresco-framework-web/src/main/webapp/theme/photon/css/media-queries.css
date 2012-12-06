@@ -33,11 +33,13 @@ Width <= 1024
 		margin: 0.1% 0%;
 		width: 98% !important;
 	}
+	
 	#subcontainer {width: 74.5%; float:right; }
 	/*.navTopBorder .scroll-content {
 		width:76%;
 		margin-left:220px;
 	}*/
+	
 	.customer_name {
 		right:11.5%;
 	}
@@ -51,7 +53,6 @@ Width <= 1024
 	}
 
 	/* header starts */
-	
 	.app_list_form {
     	height: 95%;
 	}
@@ -59,39 +60,54 @@ Width <= 1024
 	.main_wrapper {
 		bottom: 48px;
 		position: absolute;
-		top: 74px;
+		top: 54px;
 		width: 98%;
 	}
-	
+	.featureForm {
+		height: 83%;
+	}
 	.custom_features {
-		border-radius: 6px 6px 0 0;
-        float: left;
-        height: 73.5%;
-        /*margin: 1%;*/
-        width: 45.8%;
-     }
-     
-     .custom_features_wrapper_right {
-        border-radius: 12px 12px 6px 6px;
-        float: right;
-        height: 73.5%;
-        /*margin: 1% 1% 1% 0;*/
-        width: 43.5%;
-     } 
-         
-     .feature_content_adder {
-		height: 91%;
+		border-radius: 12px 12px 6px 6px;
+		float: left;
+		height: 96%;
+		/*margin: 1%;*/
+		margin-left:0;
+		width: 45.8%;
+	 }
+	 .custom_features_wrapper_right {
+		border-radius: 12px 12px 6px 6px;
+		float: right;
+		height: 96%;
+		/*margin: 1% 1% 1% 0;*/
+		width: 45.5%;
+	 } 
+		 
+	 .feature_content_adder {
+		height: 87%;
 		overflow-y: auto;
+		overflow-x: hidden;
 		padding-top: 0%;
 		width: 99.5%;
 		overflow-x: hidden;
 	}
-	
+	.custom_features_wrapper_right .theme_accordion_container {
+		height: 86%;
+		overflow-y: auto;
+		overflow-x: hidden;
+	}
+	@-moz-document url-prefix() {
+	.featureForm {
+		height: 79% !important;
+	}
+	.feature_content_adder {
+		height: 85%;
+	}
+	}
 	.features_actions {
 	    border-radius: 0 0 3px 3px;
 	    float: right;
 	    margin-right: 9px;
-	    margin-top: 4px;
+	    margin-top: 8px;
 	    padding-top: 0;
 	}
 	.wrapper {
@@ -107,7 +123,7 @@ Width <= 1024
 	#container {
 	    z-index: 15004;
 	    width: 99%;
-	    height: 85%;
+	    height: 89%;
 	}
 	
 	.holder {
@@ -555,31 +571,37 @@ Width size <= 1024
 	.main_wrapper {
 		bottom: 48px;
 		position: absolute;
-		top: 74px;
+		top: 54px;
 		width: 98%;
 	}
 	
 	.custom_features {
-		border-radius: 6px 6px 0 0;
-        float: left;
-        height: 79.5%;
-        /*margin: 1%;*/
-        width: 45.8%;
-     }
-     
-     .custom_features_wrapper_right {
-        border-radius: 12px 12px 6px 6px;
-        float: right;
-        height: 79.5%;
-        /*margin: 1% 1% 1% 0;*/
-        width: 43.5%;
-     } 
-         
-     .feature_content_adder {
-		height: 91%;
-		overflow-y: auto;
-		padding-top: 0%;
+		border-radius: 12px 12px 6px 6px;
+		float: left;
+		height: 96%;
+		/*margin: 1%;*/
+		margin-left:0;
+		width: 45.8%;
+	 }
+	 .custom_features_wrapper_right {
+		border-radius: 12px 12px 6px 6px;
+		float: right;
+		height: 96%;
+		/*margin: 1% 1% 1% 0;*/
 		width: 45.5%;
+	 } 
+		 
+	 .feature_content_adder {
+		height: 87%;
+		overflow-y: auto;
+		overflow-x: hidden;
+		padding-top: 0%;
+		width: 99.5%;
+		overflow-x: hidden;
+	}
+	.custom_features_wrapper_right .theme_accordion_container {
+		height: 87%;
+		overflow-y: auto;
 		overflow-x: hidden;
 	}
 	
@@ -596,7 +618,7 @@ Width size <= 1024
 	#container {
 	    z-index: 15004;
 	    width: 100%;
-	    height: 85%;
+	    height: 89%;
 	}
 	
 	.holder {
@@ -965,7 +987,7 @@ Width >= 1025 and < 1151
 		width: 98%;
 	}
 	#subcontainer {
-		width: 77%;
+		width: 75%;
 		float: right;
 		margin-top: 10px;
 	}
@@ -996,31 +1018,38 @@ Width >= 1025 and < 1151
 	    margin-top: 5px;
 	    width: 100%;
 	}
-	
+	.featureForm {
+		height: 83% !important;
+	}
 	.custom_features {
-		border-radius: 6px 6px 0 0;
-        float: left;
-        height: 73.5%;
-        /*margin: 1%;*/
-        width: 45.8%;
-     }
-     
-     .custom_features_wrapper_right {
-        border-radius: 12px 12px 6px 6px;
-        float: right;
-        height: 73.5%;
-        /*margin: 1% 1% 1% 0;*/
-        width: 43.5%;
-     } 
-         
-     .feature_content_adder {
-		height: 91%;
+		border-radius: 12px 12px 6px 6px;
+		float: left;
+		height: 96%;
+		/*margin: 1%;*/
+		margin-left:0;
+		width: 45.8%;
+	 }
+	 .custom_features_wrapper_right {
+		border-radius: 12px 12px 6px 6px;
+		float: right;
+		height: 96%;
+		/*margin: 1% 1% 1% 0;*/
+		width: 45.5%;
+	 } 
+		 
+	 .feature_content_adder {
+		height: 87%;
 		overflow-y: auto;
+		overflow-x: hidden;
 		padding-top: 0%;
 		width: 99.5%;
 		overflow-x: hidden;
 	}
-	
+	.custom_features_wrapper_right .theme_accordion_container {
+		height: 87%;
+		overflow-y: auto;
+		overflow-x: hidden;
+	}
 	.build_detail_div {
 	    float: left;
 	    height: 96%;
@@ -1096,35 +1125,47 @@ Width >= 1152 and < 1280
      	padding: 4px 6px;
      	margin-top: 5px;
      }
-	
+	.featureForm {
+		height: 88% !important;
+	 }
 	.custom_features {
-		border-radius: 6px 6px 0 0;
-        float: left;
-        height: 73.5%;
-        /*margin: 1%;*/
-        width: 45.8%;
-     }
-     
-     .custom_features_wrapper_right {
-        border-radius: 12px 12px 6px 6px;
-        float: right;
-        height: 73.5%;
-        /*margin: 1% 1% 1% 0;*/
-        width: 43.5%;
-     } 
-         
-     .feature_content_adder {
-		height: 91%;
+		border-radius: 12px 12px 6px 6px;
+		float: left;
+		height: 96%;
+		/*margin: 1%;*/
+		margin-left:0;
+		width: 45.8%;
+	 }
+	 .custom_features_wrapper_right {
+		border-radius: 12px 12px 6px 6px;
+		float: right;
+		height: 96%;
+		/*margin: 1% 1% 1% 0;*/
+		width: 45.5%;
+	 } 
+		 
+	 .feature_content_adder {
+		height: 89%;
 		overflow-y: auto;
+		overflow-x: hidden;
 		padding-top: 0%;
 		width: 99.5%;
 		overflow-x: hidden;
 	}
-		
+	.custom_features_wrapper_right .theme_accordion_container {
+		height: 89%;
+		overflow-y: auto;
+		overflow-x: hidden;
+	}	
+	@-moz-document url-prefix() {
+		.featureForm {
+			height: 86% !important;
+		}
+	}	
 	.main_wrapper {
 		bottom: 48px;
 		position: absolute;
-		top: 74px;
+		top: 38px;
 		width: 98%;
 	}
 	
@@ -1141,7 +1182,7 @@ Width >= 1152 and < 1280
 	#container {
 	    z-index: 15004;
 	    width: 99%;
-	    height: 85%;
+	    height: 89%;
 	}
 	
 	.holder {
@@ -1444,35 +1485,53 @@ Width <= 1280 and height <= 800
      	padding: 4px 6px;
      	margin-top: 5px;
      }
-     
+	 
+     .featureForm {
+		height: 81% !important;
+	 }
+	 
      .custom_features {
-		border-radius: 6px 6px 0 0;
-        float: left;
-        height: 73.5%;
-        /*margin: 1%;*/
-        width: 45.8%;
-     }
-     
-     .custom_features_wrapper_right {
-        border-radius: 12px 12px 6px 6px;
-        float: right;
-        height: 73.5%;
-        /*margin: 1% 1% 1% 0;*/
-        width: 43.5%;
-     } 
-         
-     .feature_content_adder {
-		height: 91%;
+		border-radius: 12px 12px 0px 0px;
+		float: left;
+		height: 96%;
+		/*margin: 1%;*/
+		margin-left:0;
+		width: 45.8%;
+	 }
+	 
+	 .custom_features_wrapper_right {
+		border-radius: 12px 12px 0px 0px;
+		float: right;
+		height: 96%;
+		/*margin: 1% 1% 1% 0;*/
+		width: 45.5%;
+	 } 
+		 
+	 .feature_content_adder {
+		height: 86%;
 		overflow-y: auto;
+		overflow-x: hidden;
 		padding-top: 0%;
 		width: 99.5%;
 		overflow-x: hidden;
 	}
-	
+	.custom_features_wrapper_right .theme_accordion_container {
+		height: 86%;
+		overflow-y: auto;
+		overflow-x: hidden;
+	}
+	@-moz-document url-prefix() {
+	.featureForm {
+		height: 86% !important;
+	}
+	.feature_content_adder {
+		height: 89% !important;
+	}		
+	}
 	.main_wrapper {
 		bottom: 48px;
 		position: absolute;
-		top: 74px;
+		top: 38px;
 		width: 98%;
 	}
 	
@@ -1489,7 +1548,7 @@ Width <= 1280 and height <= 800
 	#container {
 		z-index: 15004;
 		width: 99%;
-		height: 84%;
+		height: 89%;
 	}
 	
 	.headerInner {
@@ -1902,34 +1961,41 @@ Width >= 1280 and height >= 800
 	#container {
 		z-index: 15004;
 		width: 99%;
-		height: 84%;
+		height: 89%;
 	}
-
+	.featureForm {
+		height: 92% !important;
+	 }
+	
 	.custom_features {
-		border-radius: 6px 6px 0 0;
-        float: left;
-        height: 79.5%;
-        /*margin: 1%;*/
+		border-radius: 12px 12px 6px 6px;
+		float: left;
+		height: 96%;
+		/*margin: 1%;*/
 		margin-left:0;
-        width: 45.8%;
-     }
-     
-     .custom_features_wrapper_right {
-        border-radius: 12px 12px 6px 6px;
-        float: right;
-        height: 79.5%;
-        /*margin: 1% 1% 1% 0;*/
-        width: 45.5%;
-     } 
-         
-     .feature_content_adder {
+		width: 45.8%;
+	 }
+	 .custom_features_wrapper_right {
+		border-radius: 12px 12px 6px 6px;
+		float: right;
+		height: 96%;
+		/*margin: 1% 1% 1% 0;*/
+		width: 45.5%;
+	 } 
+		 
+	 .feature_content_adder {
 		height: 91%;
 		overflow-y: auto;
+		overflow-x: hidden;
 		padding-top: 0%;
 		width: 99.5%;
 		overflow-x: hidden;
 	}
-	
+	.custom_features_wrapper_right .theme_accordion_container {
+		height: 91%;
+		overflow-y: auto;
+		overflow-x: hidden;		
+	}
 	.features_actions {
 	    -webkit-border-radius: 0 0 3px 3px;
 	    -moz-border-radius: 0 0 3px 3px;
@@ -1945,7 +2011,6 @@ Width >= 1280 and height >= 800
 	    float: right;
 	    margin-right: 9px;
 	    margin-top: 4px;
-	    padding-top: 3%;
  	}
 
 	.intro_container {
@@ -2273,7 +2338,7 @@ Width > 1280 and <= 1360
 	 .main_wrapper {
 		bottom: 48px;
 		position: absolute;
-		top: 74px;
+		top: 54px;
 		width: 98%;
 	}
 	
@@ -2705,7 +2770,7 @@ Width > 1360 and <= 1440
 	.main_wrapper {
 		bottom: 48px;
 		position: absolute;
-		top: 74px;
+		top: 38px;
 		width: 98%;
 		margin:auto;
 	}
@@ -2955,7 +3020,7 @@ Width > 1360 and <= 1440
 	}
 	
 	.sonar_report {
-		 height: 93.7%;
+		 height: 90.7%;
    		 width: 100%;		
 	}
 	
@@ -3051,6 +3116,14 @@ Width > 1360 and <= 1440
 	.customer_name {
 		right: 8.5% !important;
 	}
+    .featureForm {
+		height: 90% !important;
+	 }
+	 @-moz-document url-prefix() {
+		.featureForm {
+			height: 88% !important;
+		}
+	}
 }
 
 
@@ -3086,7 +3159,7 @@ Width > 1441 and <= 1600
 	.main_wrapper {
 		bottom: 48px;
 		position: absolute;
-		top: 74px;
+		top: 38px;
 		width: 98%;
 	}
 	
@@ -3419,7 +3492,18 @@ Width > 1441 and <= 1600
 	.align-div-center {
 		width: 51%;
 	}
+
 	.customer_name {
 		right: 8.5% !important;
+	}
+
+	.featureForm {
+		height: 90% !important;
+	 }
+
+	@-moz-document url-prefix() {
+		.featureForm {
+			height: 88% !important;
+		}
 	}
 }

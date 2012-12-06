@@ -31,6 +31,7 @@
 
 <script>
 	$(document).ready(function() {
+		hideLoadingIcon();
 		reloadIframe();
 		$(".styles").click(function() {
 			reloadIframe();
@@ -53,9 +54,6 @@
 		$("iframe").attr({
             src: source
         });
-		$('iframe').load(function() {
-			$(".loadingIcon").hide();
-		});
 	}
 
 </script>

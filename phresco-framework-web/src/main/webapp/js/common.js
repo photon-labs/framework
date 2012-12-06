@@ -55,6 +55,7 @@ function progressPopup(pageUrl, appId, actionType, form, callSuccessEvent, addit
 		$(".popupStop").attr('id', stopUrl); // popup stop action mapped to id
 	}
 	$("#popup_progress_div").empty();
+	showPopuploadingIcon();
 	readerHandlerSubmit(pageUrl, appId, actionType, form, callSuccessEvent, additionalParams, $("#popup_progress_div"));
 }
 
@@ -71,12 +72,13 @@ function progressPopupAsSecPopup(url, appId, actionType, form, additionalParams,
 		$(".popupStop").attr('id', stopUrl); // popup stop action mapped to id
 	}
 	$("#popup_progress_div").empty();
+	showPopuploadingIcon();
 	readerHandlerSubmit(url, appId, actionType, form, '', additionalParams, $("#popup_progress_div"));
 }
 
 function clickMenu(menu, tag, form, params) {
 	menu.click(function() {
-//		showLoadingIcon();
+		showLoadingIcon();
 		inActivateAllMenu(menu);
 		activateMenu($(this));
 		var selectedMenu = $(this).attr("id");
@@ -101,7 +103,6 @@ function clickButton(button, tag) {
 }
 
 function loadContent(pageUrl, form, tag, additionalParams, callSuccessEvent, ajaxCallType, callbackFunction) {
-//	showLoadingIcon();
 	if (ajaxCallType == undefined || ajaxCallType == "") {
 		ajaxCallType = true;
 	}
@@ -167,12 +168,14 @@ function validateDynamicParam(successUrl, title, okUrl, okLabel, form, goal, nee
 		data : params,
 		type : "POST",
 		success : function(data) {
+			hidePopuploadingIcon();
 			if (data.paramaterAvailable != undefined && data.paramaterAvailable) {
 				if (successUrl === "showStartHubPopUp") {
 					loadContent("checkForHub", '', '', getBasicParams(), true, '', '');
 				} else if (successUrl === "showStartNodePopUp") {
 					loadContent("checkForNode", '', '', params, true, '', '');
 				} else {
+					//showPopuploadingIcon();
 					yesnoPopup(successUrl, title, okUrl, okLabel, form, additionalParam);
 				}
 			} else if (needProgressPopUp) {
@@ -294,19 +297,15 @@ function loadData(data, tag, pageUrl, callSuccessEvent, callbackFunction) {
 				successEvent(pageUrl, data);
 			}
 		} else {
-			hideProgressBar();
 			tag.empty();
 			tag.html(data);
 			setTimeOut();
-			hideLoadingIcon();
 		}
 	}
 }
 
 function readerHandlerSubmit(pageUrl, appId, actionType, form, callSuccessEvent, additionalParams, progressConsoleObj) {
 	var params = getParameters(form, additionalParams);
-//	showParentPage();
-//	enableScreen();
     $.ajax({
         url : pageUrl,
         data : params,
@@ -337,20 +336,6 @@ function getParameters(form, additionalParams) {
 		params = additionalParams;
 	}
 	return params;
-}
-
-// show loading icon 
-function getCurrentCSS() {
-    var theme =localStorage["color"];
-	$(".popupLoadingIcon").css("display", "block");
-	var loadingRedIcon = "themes/photon/images/loading_red.gif";
-	var loadingBlueIcon = "themes/photon/images/loading_blue.gif";
-    if(theme == undefined || theme == null || theme == "null" || theme == "" || theme == "undefined" || theme == "themes/photon/css/red.css") {
-    	$('.loadingIcon, .popupLoadingIcon').attr("src", loadingRedIcon);
-    }
-    else {
-    	$('.loadingIcon, .popupLoadingIcon').attr("src", loadingBlueIcon);
-    }
 }
 
 function inActivateAllMenu(allLink) {
@@ -525,20 +510,19 @@ function getLoadingImgPath() {
 	var localstore = localStorage["color"];
 	var imgSrc = "";
 	
-	if (localstore != null) {
-		if (localstore == "theme/red_blue/css/blue.css") {
-			imgSrc = "theme/red_blue/images/loading_blue.gif";
-		} else if (localstore == "theme/red_blue/css/red.css") {
-			imgSrc = "theme/red_blue/images/loading_red.gif";
-		} 
-	}
-	else {
+	if (localstore == "theme/red_blue/css/blue.css") {
+		imgSrc = "theme/red_blue/images/loading_blue.gif";
+	} else if (localstore == "theme/red_blue/css/red.css") {
+		imgSrc = "theme/red_blue/images/loading_red.gif";
+	} else {
 		imgSrc = "theme/photon/images/loading_green.gif";
 	}
+	
 	return imgSrc;
 }
 
 function showLoadingIcon() {
+	$("#loadingIconImg").attr("src", "");
     $("#loadingIconDiv").show();
 	$("#loadingIconImg").attr("src", getLoadingImgPath());
     disableScreen();
@@ -551,12 +535,12 @@ function hideLoadingIcon() {
 
 function showPopuploadingIcon() {
 	$("#errMsg").empty(); // remove error message while displaying loading icon
-    $("#popuploadingIcon").show();
-	$("#popuploadingIcon").attr("src", getLoadingImgPath());
+    $(".popuploadingIcon").show();
+	$(".popuploadingIcon").attr("src", getLoadingImgPath());
 }
 
 function hidePopuploadingIcon() {
-	$("#popuploadingIcon").hide();
+	$(".popuploadingIcon").hide();
 }
 
 function showProgressBar(progressText) {
@@ -1210,9 +1194,6 @@ function showSelectedDBWithVersions() {
 			$('#selectedSourceScript').append($("<option></option>").attr("value",addedSqlName[0]).text(addedSqlName[1])); 
 		}
 	}
-	
-	//hiding loading icon..
-	hideLoadingIcon();
 }
 
 function hideControl(controls) {
@@ -1233,4 +1214,16 @@ function changeChckBoxValue(obj) {
 	} else {
 		$(obj).val("false");
 	}
+}
+
+//trim the long content
+function textTrim(obj, maxLength) {
+    var val = $(obj).text();
+    $(obj).attr("title", val);
+    var len = val.length;
+    if(len > maxLength) {
+        val = val.substr(0, maxLength) + "...";
+        return val;
+    }
+    return val;
 }

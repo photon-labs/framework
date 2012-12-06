@@ -19,12 +19,13 @@
  */
 package com.photon.phresco.framework.actions;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 
 import com.photon.phresco.commons.model.LogInfo;
-import com.photon.phresco.framework.PhrescoFrameworkFactory;
-import com.photon.phresco.framework.api.ProjectAdministrator;
-import com.photon.phresco.framework.commons.FrameworkUtil;
+import com.photon.phresco.exception.PhrescoException;
 
 public class ErrorReport extends FrameworkBaseAction {
 	private static final long serialVersionUID = 1L;
@@ -38,26 +39,24 @@ public class ErrorReport extends FrameworkBaseAction {
 	private String trace = null;
 	private String reportStatus = null;
 	
-	public String sendReport() {
+	public String sendReport() throws PhrescoException {
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method  ErrorReport.sendReport() message" + message + " action" + action + " userid" + userid );
 		}
         try {
-            //TODO:Need to handle
-//        	LogInfo loginfo = new LogInfo(message, trace, action, userid);
-        	LogInfo loginfo = null;
-            ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
+        	LogInfo loginfo = new LogInfo(message, trace, action, userid);
+        	List<LogInfo> infos = new ArrayList<LogInfo>();
+        	infos.add(loginfo);
         	if (debugEnabled) {
         		S_LOGGER.debug("Going to send error report to service ");
     		}
-        	reportStatus = administrator.sendReport(loginfo);
+//        	ClientResponse response = getServiceManager().sendErrorReport(infos);
         } catch (Exception e) {
-            if (debugEnabled) {
-               S_LOGGER.error("Entered into catch block of  ErrorReport.sendReport()" + FrameworkUtil.getStackTraceAsString(e));
-            }
+        	throw new PhrescoException(e);
         }
         return "success";
 	}
+	
 	
 	/**
 	 * @return the message
@@ -121,6 +120,5 @@ public class ErrorReport extends FrameworkBaseAction {
 	public void setReportStatus(String reportStatus) {
 		this.reportStatus = reportStatus;
 	}
-	
 
 }

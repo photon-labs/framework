@@ -142,7 +142,7 @@
 
 <script type="text/javascript">
 $(document).ready(function() {
-	hideLoadingIcon();
+	showLoadingIcon();
 	
 	$('#unitTest').click(function() {
 		validateDynamicParam('showUnitTestPopUp', '<s:text name="lbl.unit.test"/>', 'runUnitTest','<s:text name="lbl.test"/>', '', '<%= Constants.PHASE_UNIT_TEST %>', true);
@@ -245,7 +245,7 @@ function validationError(errMsg) {
 	$("#errorDiv").html(errMsg);
 	$("#errorDiv").show();
 	$("#testResultFile, #testSuite, #testSuiteDisplay, #testResultLbl, #resultView").hide();
-	enableScreen();
+	hideLoadingIcon();
 }
 
 function changeView() {
@@ -264,7 +264,7 @@ function popupOnOk(obj) {
 	var okUrl = $(obj).attr("id");
 	if (okUrl === "printAsPdf") {
 		// show popup loading icon
-		showPopuploadingIcon();
+		//showPopuploadingIcon();
 		loadContent('printAsPdf', $('#generatePdf'), $('#popup_div'), '', false);
 	} else {
 		$("#popupPage").modal('hide');

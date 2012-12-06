@@ -146,8 +146,6 @@
 	    <% } %>
 				  	
 			extraInfoDisplay();
-			$("#userName").val("<%= LoginId %>");
-			$("#password").val("<%= (String) session.getAttribute(FrameworkConstants.SESSION_USER_PASSWORD) %>");
 	});
 
 	//base on the repo type credential info need to be displayed
@@ -187,10 +185,10 @@
 			$("#password").val('');
 			localStorage["svnImport"] = "credentials";
 		} else {
-			  $("#userName").val('');
-			  $("#password").val('');
-			  disableSvnFormDet();
-			  localStorage["svnImport"] = "";
+			$("#userName").val("<%= LoginId %>");
+			$("#password").val("<%= (String) session.getAttribute(FrameworkConstants.SESSION_USER_PASSWORD) %>");
+			disableSvnFormDet();
+			localStorage["svnImport"] = "";
 		}
 	}
 
@@ -249,6 +247,7 @@
 		params = params.concat("&appId =");
 		params = params.concat("<%= applicationId %>");
 		params = params.concat("&loginId =");
+		enableSvnFormDet();
 		// show popup loading icon
 		showPopuploadingIcon();
 		loadContent(getAction(), $('#repoDetails'), '', params, true);

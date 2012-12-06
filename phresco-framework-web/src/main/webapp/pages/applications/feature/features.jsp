@@ -55,7 +55,7 @@
 <form id="formFeatures" class="featureForm">
 	<div class="form-horizontal featureTypeWidth">
 		<label for="myselect" class="control-label features_cl">Type&nbsp;:</label>
-		 <select id="featureselect">
+		 <select id="featureselect" name="type" onchange="featuretype()">
 	        <option value="<%= ArtifactGroup.Type.FEATURE.name() %>" selected="selected" data-imagesrc="images/features.png"
 	            data-description="Description with Modules"><s:text name="lbl.options.modules"/></option>
 	        <option value="<%= ArtifactGroup.Type.JAVASCRIPT.name() %>" data-imagesrc="images/libraries.png"
@@ -121,6 +121,7 @@
 		}
 	}
 %>
+
 <%	
 	if (CollectionUtils.isNotEmpty(selectedJSLibs)) {
 		for (String string : selectedJSLibs) {
@@ -146,13 +147,19 @@
 	inActivateAllMenu($("a[name='appTab']"));
 	activateMenu($('#features'));
 
+	var selectedType = "";
     $(document).ready(function () {
-        hideLoadingIcon();
+    	//To check whether the device is ipad or not and then apply jquery scrollbar
+    	if (!isiPad()) {
+     		$("#accordianchange").scrollbars();  
+    	}
+    	showLoadingIcon();
         //fillHeading();
         //showAvailabelFeature();
         
         $('#featureselect').ddslick({
         	onSelected: function(data){
+        		selectedType = data.selectedData.value;
         		featureType(data.selectedData.value, data.selectedData.text); 
         	}
         });
@@ -173,13 +180,12 @@
     // Function to add the features to the right tab
     function clickToAdd() {
         $('#accordianchange input:checked').each(function () {
-        	var hiddenFieldname = ($('#featureselect').val()).toLowerCase();
         	var dispName = $(this).val();
         	var hiddenFieldVersion = $('select[name='+dispName+']').val();
         	var moduleId = $('select[name='+dispName+']').attr('moduleId');
         	//var myTag = element.attr("myTag");
         	var dispValue = $("#" + dispName + " option:selected").text();
-        	constructFeaturesDiv(dispName, dispValue, hiddenFieldname, hiddenFieldVersion, moduleId);
+        	constructFeaturesDiv(dispName, dispValue, selectedType, hiddenFieldVersion, moduleId);
         });
     }
     
@@ -189,13 +195,13 @@
 		$("input[class='"+ dispName +"']").remove();
 		
 		$("#result").append('<input type="hidden" class = "'+dispName+'" value={"dispName":"'+dispName+'","moduleId":"'+moduleId+'","dispValue":"'+dispValue+'","versionID":"'+hiddenFieldVersion+'","type":"'+hiddenFieldname+'"} name="jsonData">');
-// 		if (showConfigImg) {
-// 			$("#result").append('<div class = "'+dispName+'"id="'+dispName+'">'+dispName+' - '+dispValue+
-// 					'<a href="#" id="'+dispName+'" onclick="remove(this);">&nbsp;&times;</a>'+
-// 					'<a href="#" id="'+dispName+'" onclick="showFeatureConfigPopup(this);"><img src="images/icons/gear.png" title="Configure"/></a></div>');
-// 		} else {
+		if (showConfigImg) {
+			$("#result").append('<div class = "'+dispName+'"id="'+dispName+'">'+dispName+' - '+dispValue+
+					'<a href="#" id="'+dispName+'" onclick="remove(this);">&nbsp;&times;</a>'+
+					'<a href="#" id="'+dispName+'" onclick="showFeatureConfigPopup(this);"><img src="images/icons/gear.png" title="Configure"/></a></div>');
+		} else {
 			$("#result").append('<div class = "'+dispName+'"id="'+dispName+'">'+dispName+' - '+dispValue+'<a href="#" id="'+dispName+'" onclick="remove(this);">&times;</a></div>');
-// 		}	
+		}	
     }
     
     // Function to remove the final features in right tab  
@@ -217,8 +223,12 @@
     	loadContent('finish', $('#formFeatures'), $('#container'), params, false);
     }
   	
-  	function showFeatureConfigPopup(featureName) {
+  	//To show the configuration popup
+  	function showFeatureConfigPopup(obj) {
+  		var featureName = $(obj).attr("id");
   		var params = getBasicParams();
+  		params = params.concat("&featureName=");
+  		params = params.concat(featureName);
   		yesnoPopup('showFeatureConfigPopup', '<s:text name="lbl.configure"/>', 'configureFeature', '<s:text name="lbl.configure"/>', '', params);
   	}
 </script>

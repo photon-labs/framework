@@ -210,10 +210,6 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 				RepoInfo repoInfo = customer.getRepoInfo();
 				ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
 				
-//				for (ApplicationInfo appInfo : appInfos) {
-					//StringBuilder pluginInfoPathSb = new StringBuilder(projectPath.getPath());
-					//pluginInfoPathSb.append(File.separator);
-					//System.out.println("pluginInfoPathSb::::"+pluginInfoPathSb);
 					String pluginInfoFile = dotPhrescoPathSb.toString() + APPLICATION_HANDLER_INFO_FILE;
 					MojoProcessor mojoProcessor = new MojoProcessor(new File(pluginInfoFile));
 					ApplicationHandler applicationHandler = mojoProcessor.getApplicationHandler();
@@ -235,7 +231,6 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 								.getApplicationProcessor(applicationHandler.getClazz());
 
 						applicationProcessor.postUpdate(appInfo, artifactGroups);
-//					}
 
 					File projectInfoPath = new File(dotPhrescoPathSb.toString() + PROJECT_INFO_FILE);
 					ProjectUtils.updateProjectInfo(projectInfo, projectInfoPath);// To update the project.info file

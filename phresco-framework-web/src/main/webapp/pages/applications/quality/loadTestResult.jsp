@@ -106,6 +106,8 @@ if(!isiPad()){
 }
 
 $(document).ready(function() {
+	//hideLoadingIcon();//To hide the loading icon
+	
 	if ($.browser.safari) {
 		$(".th-inner-test").css("top", "235px"); 
 	}

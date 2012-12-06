@@ -158,7 +158,7 @@
 				<span class="help-inline" id="configTypeError"></span>
 			</div>
 		</div> <!-- Type -->
-		
+		<div id="featureListContainer"></div>
 		<div id="typeContainer"></div>
 	</div>
 	
@@ -176,7 +176,6 @@
 	
 	/* To check whether the device is ipad or not */
 	$(document).ready(function() {
-		hideLoadingIcon();//To hide the loading icon
 		if (!isiPad()) {
 			$(".content_adder").scrollbars(); //JQuery scroll bar
 		}
@@ -191,17 +190,28 @@
 		var selectedConfigId = typeData.id;
 		var fromPage = "<%= fromPage%>";
 		var configPath = "<%= configPath%>";
+		
 		var params = '{ ' + getBasicParamsAsJson() + ', "settingTemplate": ' + $('#type').val() + ' , "selectedConfigId": "' + selectedConfigId 
-			+ '" , "selectedEnv": "' + selectedEnv + '" , "selectedType": "' + selectedType + '" , "fromPage": "' + fromPage + '", "configPath": "' + configPath + '", "selectedConfigname": "' + selectedConfigname + '"}';
-		loadJsonContent('configType', params,  $('#typeContainer'));
+			+ '" , "selectedEnv": "' + selectedEnv + '" , "selectedType": "' + selectedType + '", "fromPage": "' + fromPage + '", "configPath": "' + configPath + '", "selectedConfigname": "' + selectedConfigname + '"}';
+		if ($(this).text() === "Features") {
+			loadJsonContent('configType', params,  $('#featureListContainer'));
+		} else {
+			loadJsonContent('configType', params,  $('#typeContainer'));
+		}
 	}).triggerHandler("change");
 	
 	$('#<%= pageUrl %>').click(function() {
 		var name = $('#configName').val();
 		var desc = $('#configDesc').val();
 		var env = $('#environment').val();
-		var jsonObject = $('#configProperties').toJSON();
+		var jsonObject = $('#configProperties').toJSON();//formConfigTempProp
 		var configStr = JSON.stringify(jsonObject);
+		if ($.isEmptyObject(jsonObject)) {
+			var $formType = $("#formConfigTempProp");
+			var jsonTypeData = getFormData($formType);
+			configStr = JSON.stringify(jsonTypeData);
+		}
+		
 		var template = $.parseJSON($('#type').val());
 		var type = template.name;
 		var oldName = "<%= name %>";
@@ -213,11 +223,24 @@
 		$('input[name="appliesTo"]:checked').each(function() {
 			selectedAppliesTos.push($(this).val());
 		});
+		
+		var featureName = $('#featureName').val();
+		
 		var jsonParam = '{ ' + getBasicParamsAsJson() + ', "configName": "' + name + '", "description": "' + desc + '", "configType": "' + type
-								+ '", "configId": "' + configId + '", "oldName": "' + oldName + '", "configPath": "' + configPath + '", "fromPage": "' + fromPage + '", "appliesTos": "' + selectedAppliesTos + '", "environment" : ' + env + ', ' + configStr.substring(1);
+								+ '", "configId": "' + configId + '", "featureName": "' + featureName + '", "oldName": "' + oldName + '", "configPath": "' + configPath + '", "fromPage": "' + fromPage + '", "appliesTos": "' + selectedAppliesTos + '", "environment" : ' + env + ', ' + configStr.substring(1);
 		validateJson('<%= pageUrl %>', '', $('#<%= container %>'), jsonParam);
 	});
 	
+	function getFormData($form){
+	    var unindexed_array = $form.serializeArray();
+	    var indexed_array = {};
+
+	    $.map(unindexed_array, function(n, i){
+	        indexed_array[n['name']] = n['value'];
+	    });
+
+	    return indexed_array;
+	}
 	//To show the validation error messages
 	function findError(data) {
 	

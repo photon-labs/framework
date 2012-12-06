@@ -1955,7 +1955,8 @@ h1 {
 }
 
 .featureTypeWidth {
-   width: 30%
+    padding: 3px 10px;
+    width: 30%;
 }
 
 .tblheader {
@@ -4036,9 +4037,17 @@ div.submit_input {
 .accordion_panel_inner {
     width:99.5%;
     float:left;
-    padding: 2px;
+    padding:0 2px;
     overflow-x: hidden;
     overflow-y: auto;
+}
+
+.closereg a {
+    text-transform: capitalize;
+}
+
+.openreg a {
+    font-weight: bold;
 }
 
 .lft_menus_container{
@@ -5932,4 +5941,50 @@ div.control-group.valReportLbl {
 	cursor: pointer; 
 	margin-top: 16px;
 }
+.deploy {
+	cursor: pointer;	
+}
 /* for field set ends*/
+
+/*features page select box*/
+.featureTypeWidth label:nth-child(1) {
+    text-align: left !important;
+    width: 30px !important;
+    font-weight: bold;
+}
+
+#featureselect {
+    margin-left: 15%;
+}
+
+.dd-selected-text, .dd-option-text, .dd-desc {
+    font-weight: bold !important;
+}
+
+.dd-selected-text, .dd-option-text {
+    margin-bottom: 0px !important;
+    font-size: 12px !important;
+}
+
+.dd-selected, .dd-option {
+    text-decoration: none !important;
+    padding: 3px !important;
+}
+
+.dd-selected-image, .dd-option-image {
+    margin-left: 3px;
+    margin-top: 3px;
+    margin-right: 7px !important;
+}
+
+.dd-selected, .dd-option {
+    padding: 2px !important;
+}
+
+.dd-selected-image .dd-option-image {
+    margin: 10px 10px 10px 0px !important;
+}
+
+.dd-desc {
+    font-size: smaller !important;
+}

@@ -135,7 +135,7 @@ public class Projects extends FrameworkBaseAction {
      * To get the selected mobile technology's version
      * @return
      */
-    public String fetchMobileTechVersions() {
+    public String fetchTechVersions() {
         if (s_debugEnabled) {
             S_LOGGER.debug("Entering Method  Applications.fetchMobileTechVersions()");
         }
@@ -253,6 +253,7 @@ public class Projects extends FrameworkBaseAction {
 
         try {
             PhrescoFrameworkFactory.getProjectManager().create(createProjectInfo(), getServiceManager());
+            addActionMessage(getText(ACT_SUCC_PROJECT_CREATE, Collections.singletonList(getProjectName())));
         } catch (PhrescoException e) {
             if (s_debugEnabled) {
                 S_LOGGER.error("Entered into catch block of Projects.createProject()" + FrameworkUtil.getStackTraceAsString(e));
@@ -388,7 +389,7 @@ public class Projects extends FrameworkBaseAction {
     	try {
 	    	ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
 	    	projectManager.delete(getSelectedAppInfos());
-	    	addActionMessage(getText(ACT_SUCC_PROJECT_DELETE));
+	    	addActionMessage(getText(ACT_SUCC_PROJECT_DELETE, Collections.singletonList(getProjectName())));
     	} catch (PhrescoException e) {
     		if (s_debugEnabled) {
                 S_LOGGER.error("Entered into catch block of Projects.delete()" + FrameworkUtil.getStackTraceAsString(e));

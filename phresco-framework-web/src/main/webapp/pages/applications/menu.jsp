@@ -23,6 +23,7 @@
 
 <script type="text/javascript">
 	$(document).ready(function() {
+		showLoadingIcon();
 		clickMenu($("a[name='appTab']"), $("#subcontainer"), $('#formAppMenu, #formCustomers'));
 		loadContent("editApplication", $('#formAppMenu, #formCustomers'), $("#subcontainer"));
 		activateMenu($("#appinfo"));

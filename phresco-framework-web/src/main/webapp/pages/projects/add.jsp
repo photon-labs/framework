@@ -70,7 +70,7 @@
 	String version = "";
 	List<ApplicationInfo> appInfos = null;
 	String disablStr = "";
-	if(projectInfo != null){
+	if (projectInfo != null) {
 		disablStr = "disabled";
 		id = projectInfo.getId();
 		name = projectInfo.getName();
@@ -162,31 +162,29 @@
 	
 		<!-- Application layer accordion starts --> 
 		<% 
-		//String slctStr = "";
-    	String disblStr = "";
-    	String chckdStr = "";
-		if (projectInfo != null) { 
-			
-			if (CollectionUtils.isNotEmpty(appLayerTechGroups)) {
+	    	String disblStr = "";
+	    	String chckdStr = "";
+			if (projectInfo != null) { 
+				if (CollectionUtils.isNotEmpty(appLayerTechGroups)) {
 					for (TechnologyGroup appLayerTechGroup : appLayerTechGroups) {
 					    List<TechnologyInfo> techInfos = appLayerTechGroup.getTechInfos();
 					    if (CollectionUtils.isNotEmpty(techInfos)) {
 					        for (TechnologyInfo techInfo : techInfos) {
-					        	if(appInfos != null) {
-						        	for(ApplicationInfo appInfo: appInfos) {
-						        		if(techInfo.getId().equals(appInfo.getTechInfo().getId())){
+					        	if (CollectionUtils.isNotEmpty(appInfos)) {
+						        	for (ApplicationInfo appInfo: appInfos) {
+						        		if (techInfo.getId().equals(appInfo.getTechInfo().getId())){
 						        			//slctStr = "selected";
 						        			disblStr = "disabled";
 						        			chckdStr = "checked";
 						        		}
-						        	 }
+						        	}
 					        	} 
 					        }
 					    }
 					}
 				}
 		 	} 
-		 %>
+		%>
 		<div class="theme_accordion_container">
 			<section class="accordion_panel_wid">
 				<div class="accordion_panel_inner">
@@ -204,7 +202,7 @@
 									<div class="control-group">
 										<label class="accordion-control-label labelbold"><s:text name='lbl.technology'/></label>
 										<div class="controls">
-											<select class="input-xlarge" name="<%= appLayerId + FrameworkConstants.REQ_PARAM_NAME_TECHNOLOGY%>" value="" <%= disblStr %> >
+											<select class="input-medium" name="<%= appLayerId + FrameworkConstants.REQ_PARAM_NAME_TECHNOLOGY %>" <%= disblStr %> onchange="getAppLayerTechVersions('<%= appLayerId %>', this);">
 												<option value="" selected disabled><s:text name='lbl.default.opt.select.tech'/></option>
 												<% 
 													if (CollectionUtils.isNotEmpty(appLayerTechGroups)) {
@@ -212,22 +210,25 @@
 														    List<TechnologyInfo> techInfos = appLayerTechGroup.getTechInfos();
 														    if (CollectionUtils.isNotEmpty(techInfos)) {
 														        for (TechnologyInfo techInfo : techInfos) {
-														          String slctStr = "";
-														        	if(appInfos != null) {
-															        	for(ApplicationInfo appInfo: appInfos) {
-															        		if(techInfo.getId().equals(appInfo.getTechInfo().getId())){
+																	String slctStr = "";
+														        	if (CollectionUtils.isNotEmpty(appInfos)) {
+															        	for (ApplicationInfo appInfo: appInfos) {
+															        		if (techInfo.getId().equals(appInfo.getTechInfo().getId())){
 															        			slctStr = "selected";
 															        		}
-															        	 }
+															        	}
 														        	} 
 												%>
-																	<option value="<%= techInfo.getId()%>" <%= slctStr%>><%= techInfo.getName() %></option>
+																	<option additionalParam="<%= appLayerTechGroup.getId() %>" value="<%= techInfo.getId()%>" <%= slctStr%>><%= techInfo.getName() %></option>
 												<%
 														        }
 														    }
 														}
 													}
 												%>
+											</select>
+											<select class="input-medium" name="<%= appLayerId %>Version" <%= disblStr %> >
+												<option value="" selected disabled><s:text name='lbl.default.opt.select.version'/></option>
 											</select>
 										</div>
 									</div>
@@ -240,37 +241,36 @@
 		</div>
 		<!-- Application layer accordion ends -->
 		
-	<% 
-		String disableLayer = "";
-		String checkedLayer = "";
-		String selectedStr = "";
-		String techGroup = "";
-		String techName = "";
-		String appInfoVersion = "";
-		if (projectInfo != null) {
-			if (CollectionUtils.isNotEmpty(webLayerTechGroups)) {
-			    for (TechnologyGroup webLayerTechGroup : webLayerTechGroups) {
-			    	List<TechnologyInfo> webInfos1 = webLayerTechGroup.getTechInfos();	
-					if (CollectionUtils.isNotEmpty(webInfos1)) {
-					    for (TechnologyInfo webInfo : webInfos1) {
-					    	for (ApplicationInfo appInfo : appInfos) {
-								if (webInfo.getId().equals(appInfo.getTechInfo().getId())){
-									disableLayer = "disabled";
-									checkedLayer = "checked";
-									selectedStr = "selected";
-									techGroup = webLayerTechGroup.getName();
-									techName = webInfo.getName();
-									appInfoVersion = appInfo.getTechInfo().getVersion();
-								}
-					    	}
-					    }
-			    	}
-			    }
+		<% 
+			String disableLayer = "";
+			String checkedLayer = "";
+			String selectedStr = "";
+			String techGroup = "";
+			String techName = "";
+			String appInfoVersion = "";
+			if (projectInfo != null) {
+				if (CollectionUtils.isNotEmpty(webLayerTechGroups)) {
+				    for (TechnologyGroup webLayerTechGroup : webLayerTechGroups) {
+				    	List<TechnologyInfo> webInfos1 = webLayerTechGroup.getTechInfos();	
+						if (CollectionUtils.isNotEmpty(webInfos1)) {
+						    for (TechnologyInfo webInfo : webInfos1) {
+						    	for (ApplicationInfo appInfo : appInfos) {
+									if (webInfo.getId().equals(appInfo.getTechInfo().getId())){
+										disableLayer = "disabled";
+										checkedLayer = "checked";
+										selectedStr = "selected";
+										techGroup = webLayerTechGroup.getName();
+										techName = webInfo.getName();
+										appInfoVersion = appInfo.getTechInfo().getVersion();
+									}
+						    	}
+						    }
+				    	}
+				    }
+				}
 			}
-		}
-     %>
+		%>
 				
-	
 		<!-- Web layer accordion starts -->
 		<div class="theme_accordion_container">
 			<section class="accordion_panel_wid">
@@ -287,53 +287,26 @@
 							<div class="scrollpanel">
 								<section class="scrollpanel_inner">
 									<div class="align-div-center">
-									
-									<%	
-									//String disableLayer1 = "";
-									//String techGroup = "";
-									//String techName = "";
-									//String appInfoVersion = "";
-									/* if (projectInfo != null) {
-										if (CollectionUtils.isNotEmpty(webLayerTechGroups)) {
-										    for (TechnologyGroup webLayerTechGroup : webLayerTechGroups) {
-										    	List<TechnologyInfo> webInfos1 = webLayerTechGroup.getTechInfos();	
-												if (CollectionUtils.isNotEmpty(webInfos1)) {
-												    for (TechnologyInfo webInfo : webInfos1) {
-												    	for (ApplicationInfo appInfo : appInfos) {
-															if (webInfo.getId().equals(appInfo.getTechInfo().getId())) { 
-																disableLayer1 = "disabled";
-																techGroup = webLayerTechGroup.getName();
-																techName = webInfo.getName();
-																appInfoVersion = appInfo.getTechInfo().getVersion();
-															}
-												    	}
-												    }
-										    	}
-										    }
-										}
-									} */  %>
 										<div class="align-in-row">
 											<label class="control-label autoWidth">
 												<s:text name='lbl.projects.layer.web'/>
 											</label>
 										
-											<select class="input-medium" name="<%= webLayerId + FrameworkConstants.REQ_PARAM_NAME_TECH_GROUP %>" value="" <%= disableLayer%>
+											<select class="input-medium" name="<%= webLayerId + FrameworkConstants.REQ_PARAM_NAME_TECH_GROUP %>" <%= disableLayer%>
 												onchange="getWebLayerWidgets('<%= webLayerId %>', '<%= webLayerId + FrameworkConstants.REQ_PARAM_NAME_TECHNOLOGY %>');">
 												<% if (StringUtils.isNotEmpty(techGroup)) { %>
 													<option value=""><%= techGroup %></option>
-												
 												<% } else { %>
-												
 													<option value="" selected disabled><s:text name='lbl.default.opt.select.weblayer'/></option>
-													<%
+												<%
 														if (CollectionUtils.isNotEmpty(webLayerTechGroups)) {
 														    for (TechnologyGroup webLayerTechGroup : webLayerTechGroups) {
-													%>		
+												%>		
 																<option value="<%= webLayerTechGroup.getId() %>"><%= webLayerTechGroup.getName() %></option>
-													<%			
+												<%			
 														    }
 														}
-												}
+													}
 												%>
 											</select>
 										</div>
@@ -342,12 +315,12 @@
 												<s:text name='lbl.projcts.add.widget'/>
 											</label>
 										
-											<select name="<%= webLayerId + FrameworkConstants.REQ_PARAM_NAME_TECHNOLOGY %>" class="input-medium" value="" <%= disableLayer %> onchange="getWidgetVersions(this, '<%= webLayerId + FrameworkConstants.REQ_PARAM_NAME_VERSION %>');">
-												<% if(StringUtils.isNotEmpty(techName)) { %>
+											<select name="<%= webLayerId + FrameworkConstants.REQ_PARAM_NAME_TECHNOLOGY %>" class="input-medium" <%= disableLayer %> onchange="getWidgetVersions(this, '<%= webLayerId + FrameworkConstants.REQ_PARAM_NAME_VERSION %>');">
+												<% if (StringUtils.isNotEmpty(techName)) { %>
 												
-												<option value="" selected disabled><%= techName %></option>
+													<option value="" selected disabled><%= techName %></option>
 												<% } else { %>
-												<option value="" selected disabled><s:text name='lbl.default.opt.select.widget'/></option>
+													<option value="" selected disabled><s:text name='lbl.default.opt.select.widget'/></option>
 												<% } %>
 											</select>
 										</div>
@@ -356,16 +329,14 @@
 												<s:text name='lbl.version'/>
 											</label>
 										
-											<select name="<%= webLayerId + FrameworkConstants.REQ_PARAM_NAME_VERSION %>" value="" <%= disableLayer%> class="input-medium">
-												<% if(StringUtils.isNotEmpty(appInfoVersion)) { %>
-												
-												<option value="" selected disabled><%= appInfoVersion %></option>
+											<select name="<%= webLayerId + FrameworkConstants.REQ_PARAM_NAME_VERSION %>" <%= disableLayer %> class="input-medium">
+												<% if (StringUtils.isNotEmpty(appInfoVersion)) { %>
+													<option value="" selected disabled><%= appInfoVersion %></option>
 												<% } else { %>
-												<option value="" selected disabled><s:text name='lbl.default.opt.select.version'/></option>
+													<option value="" selected disabled><s:text name='lbl.default.opt.select.version'/></option>
 												<% } %>
 											</select>
 										</div>
-										
 									</div>
 								</section>
 							</div>
@@ -378,26 +349,26 @@
 		
 		<!-- Mobile layer accordion starts -->
 		<% 
-		String checkedWebLayer = "";
-		String selectedWebStr = "";
-		if (projectInfo != null) {
-			if (CollectionUtils.isNotEmpty(mobileLayerTechGroups)) {
-			    for (TechnologyGroup mobileLayerTechGroup : mobileLayerTechGroups) {
-			    	List<TechnologyInfo> mobInfos1 = mobileLayerTechGroup.getTechInfos();	
-					if (CollectionUtils.isNotEmpty(mobInfos1)) {
-					    for (TechnologyInfo mobInfo : mobInfos1) {
-					    	for (ApplicationInfo appInfo : appInfos) {
-								if (mobInfo.getId().equals(appInfo.getTechInfo().getId())){
-									checkedWebLayer = "checked";
-									selectedWebStr = "selected";
-								}
-					    	}
-					    }
-			    	}
-			    }
+			String checkedWebLayer = "";
+			String selectedWebStr = "";
+			if (projectInfo != null) {
+				if (CollectionUtils.isNotEmpty(mobileLayerTechGroups)) {
+				    for (TechnologyGroup mobileLayerTechGroup : mobileLayerTechGroups) {
+				    	List<TechnologyInfo> mobInfos1 = mobileLayerTechGroup.getTechInfos();	
+						if (CollectionUtils.isNotEmpty(mobInfos1)) {
+						    for (TechnologyInfo mobInfo : mobInfos1) {
+						    	for (ApplicationInfo appInfo : appInfos) {
+									if (mobInfo.getId().equals(appInfo.getTechInfo().getId())){
+										checkedWebLayer = "checked";
+										selectedWebStr = "selected";
+									}
+						    	}
+						    }
+				    	}
+				    }
+				}
 			}
-		}
-     %>
+		%>
 		<div class="theme_accordion_container">
 			<section class="accordion_panel_wid">
 				<div class="accordion_panel_inner">
@@ -420,85 +391,67 @@
 									    	String checkedMobLayer = "";
 											String disabledMobLayer = "";
 											String selectedMobLayer = "";
-									    	 if (projectInfo !=null) {
-										    		List<TechnologyInfo> mobileInfos1 = mobileLayerTechGroup.getTechInfos();	
-													if (CollectionUtils.isNotEmpty(mobileInfos1)) {
-														    for (TechnologyInfo mobileInfo1 : mobileInfos1) {
-														    	for (ApplicationInfo appInfo : appInfos) {
-																	if (mobileInfo1.getId().equals(appInfo.getTechInfo().getId())){
-																		checkedMobLayer = "checked";
-																		disabledMobLayer = "disabled";
-																		selectedMobLayer = "selected";
-																		techVersion = appInfo.getTechInfo().getVersion();
-																	}
-													    		}
-										   				 }
+											if (projectInfo != null) {
+												List<TechnologyInfo> mobileInfos = mobileLayerTechGroup.getTechInfos();	
+												if (CollectionUtils.isNotEmpty(mobileInfos)) {
+												    for (TechnologyInfo mobileInfo : mobileInfos) {
+												    	for (ApplicationInfo appInfo : appInfos) {
+															if (mobileInfo.getId().equals(appInfo.getTechInfo().getId())){
+																checkedMobLayer = "checked";
+																disabledMobLayer = "disabled";
+																selectedMobLayer = "selected";
+																techVersion = appInfo.getTechInfo().getVersion();
+															}
+											    		}
 													}
+												}
 									    	} 
-									    
 								%>
-									<div class="align-div-center bottom-space" id="<%= mobileLayerTechGroup.getId() %>LayerDiv">
-									 
-										<div class="align-in-row width">
-											<input type="checkbox" name="<%= mobileLayerId %>TechGroup" value="<%= mobileLayerTechGroup.getId() %>" <%= checkedMobLayer%> <%= disabledMobLayer%> id="<%= mobileLayerTechGroup.getId() %>"/>
-											<span class="vAlignSub">&nbsp;<%= mobileLayerTechGroup.getName() %>&nbsp;</span>
-										</div>
-										<div class="align-in-row">
-											<select class="input-medium" name="<%= mobileLayerTechGroup.getId() + FrameworkConstants.REQ_PARAM_NAME_TECHNOLOGY %>" value="" <%= disabledMobLayer %>
-												onchange="getMobileTechVersions('<%= mobileLayerId %>', '<%= mobileLayerTechGroup.getId() %>', '<%= mobileLayerTechGroup.getId() + FrameworkConstants.REQ_PARAM_NAME_VERSION %>');">
-												<option value="" selected disabled><s:text name='lbl.default.opt.select.type'/></option>
-												<%
-													//String techVersion = "";
-													//String checkedMobLayer1 = "";
-													//String disabledMobLayer1 = "";
-													//String selectedMobLayer1 = "";
-													List<TechnologyInfo> mobileInfos = mobileLayerTechGroup.getTechInfos();	
-													if (CollectionUtils.isNotEmpty(mobileInfos)) {
-													    for (TechnologyInfo mobileInfo : mobileInfos) {
-
-													    	/*  if( projectInfo != null) {
-													    		for (ApplicationInfo appInfo : appInfos) {
-																	if (mobileInfo.getId().equals(appInfo.getTechInfo().getId())){
-																		checkedMobLayer1 = "checked";
-																		disabledMobLayer1 = "disabled";
-																		selectedMobLayer1 = "selected";
-																		techVersion = appInfo.getTechInfo().getVersion();
-																	}
-													    		}
-													    	}  */
-													    	
-												%>
-															<option value="<%= mobileInfo.getId() %>" <%= selectedMobLayer %>><%= mobileInfo.getName() %></option>
-												<%
-														}
-													}
-												%>
-											</select>
-										</div>
-										<div class="align-in-row">
-											<select class="input-medium" name="<%= mobileLayerTechGroup.getId() + FrameworkConstants.REQ_PARAM_NAME_VERSION %>" id="<%= mobileLayerTechGroup.getId() %>" value="" <%= disabledMobLayer %>>
-												<% if(projectInfo == null){ %>
-												<option value="" selected disabled><s:text name='lbl.default.opt.select.version'/></option>
-												<% } else { %>
-												<option value""><%= techVersion %></option>
-												<% } %>
-											</select>
-										</div>
-										<div class="align-in-row width">
-											<input type="checkbox" name="<%= mobileLayerTechGroup.getId() + FrameworkConstants.REQ_PARAM_NAME_PHONE %>" value="true" <%= disabledMobLayer %>/>
-											<span class="vAlignSub">&nbsp;<s:text name='lbl.device.type.phone'/></span>
-										</div>
-										<div class="float-left">
-											<input type="checkbox" name="<%= mobileLayerTechGroup.getId() + FrameworkConstants.REQ_PARAM_NAME_TABLET %>" value="true" <%= disabledMobLayer %>/>
-											<span class="vAlignSub">&nbsp;<s:text name='lbl.device.type.tablet'/></span>
-										</div>
-										
-									</div>
-									<div class="clear"></div>
-									<%
-									    	}
-										}
-									%>
+											<div class="align-div-center bottom-space" id="<%= mobileLayerTechGroup.getId() %>LayerDiv">
+												<div class="align-in-row width">
+													<input type="checkbox" name="<%= mobileLayerId %>TechGroup" value="<%= mobileLayerTechGroup.getId() %>" <%= checkedMobLayer%> <%= disabledMobLayer%> id="<%= mobileLayerTechGroup.getId() %>"/>
+													<span class="vAlignSub">&nbsp;<%= mobileLayerTechGroup.getName() %>&nbsp;</span>
+												</div>
+												<div class="align-in-row">
+													<select class="input-medium" name="<%= mobileLayerTechGroup.getId() + FrameworkConstants.REQ_PARAM_NAME_TECHNOLOGY %>" <%= disabledMobLayer %>
+														onchange="getTechVersions('<%= mobileLayerId %>', '<%= mobileLayerTechGroup.getId() %>', '<%= mobileLayerTechGroup.getId() + FrameworkConstants.REQ_PARAM_NAME_VERSION %>');">
+														<option value="" selected disabled><s:text name='lbl.default.opt.select.type'/></option>
+														<%
+															List<TechnologyInfo> mobileInfos = mobileLayerTechGroup.getTechInfos();	
+															if (CollectionUtils.isNotEmpty(mobileInfos)) {
+															    for (TechnologyInfo mobileInfo : mobileInfos) {
+														%>
+																	<option value="<%= mobileInfo.getId() %>" <%= selectedMobLayer %>><%= mobileInfo.getName() %></option>
+														<%
+																}
+															}
+														%>
+													</select>
+												</div>
+												<div class="align-in-row">
+													<select class="input-medium" name="<%= mobileLayerTechGroup.getId() + FrameworkConstants.REQ_PARAM_NAME_VERSION %>" id="<%= mobileLayerTechGroup.getId() %>" value="" <%= disabledMobLayer %>>
+														<% if(projectInfo == null){ %>
+															<option value="" selected disabled><s:text name='lbl.default.opt.select.version'/></option>
+														<% } else { %>
+															<option value""><%= techVersion %></option>
+														<% } %>
+													</select>
+												</div>
+												<div class="align-in-row width">
+													<input type="checkbox" name="<%= mobileLayerTechGroup.getId() + FrameworkConstants.REQ_PARAM_NAME_PHONE %>" value="true" <%= disabledMobLayer %>/>
+													<span class="vAlignSub">&nbsp;<s:text name='lbl.device.type.phone'/></span>
+												</div>
+												<div class="float-left">
+													<input type="checkbox" name="<%= mobileLayerTechGroup.getId() + FrameworkConstants.REQ_PARAM_NAME_TABLET %>" value="true" <%= disabledMobLayer %>/>
+													<span class="vAlignSub">&nbsp;<s:text name='lbl.device.type.tablet'/></span>
+												</div>
+												
+											</div>
+											<div class="clear"></div>
+								<%
+								    	}
+									}
+								%>
 								</section>
 							</div>
 						</div>
@@ -509,7 +462,7 @@
 		<!-- Mobile layer accordion ends -->
 	</div>	
 		<!-- hidden fields start-->
-		<%if(projectInfo != null) {%>
+		<% if (projectInfo != null) {%>
 			<input type="hidden" name=id value="<%= id %>"/>
 			<input type="hidden" name=projectName value="<%= name %>"/>
 			<input type="hidden" name=projectCode value="<%= projectCode %>"/>
@@ -523,10 +476,10 @@
 
 <!--  Submit and Cancel buttons Starts -->
 <div class="actions">
-	<%if(projectInfo == null) { %>
-	<input type="button" id="createProject" value="<s:text name="lbl.btn.create"/>" class="btn btn-primary">
+	<%if (projectInfo == null) { %>
+		<input type="button" id="createProject" value="<s:text name="lbl.btn.create"/>" class="btn btn-primary">
 	<% } else { %>
-	<input type="button" id="updateProject" value="<s:text name="lbl.btn.update"/>" class="btn btn-primary">
+		<input type="button" id="updateProject" value="<s:text name="lbl.btn.update"/>" class="btn btn-primary">
 	<% } %>
 	<input type="button" id="cancel" value="<s:text name="lbl.btn.cancel"/>" class="btn btn-primary" 
 		onclick="loadContent('applications', $('#formCustomers'), $('#container'));"> 
@@ -535,16 +488,15 @@
 
 <script type="text/javascript">
 	addProjectAccordion();
-	hideLoadingIcon();//To hide the loading icon
 	//openprojectAccordion();
 	
 	//To check whether the device is ipad or not and then apply jquery scrollbar
-	if(!isiPad()) {
+	if (!isiPad()) {
 		$(".projectScrollDiv").scrollbars();
 	}
 
 	$(document).ready(function() {
-		enableScreen();//To enable the page after the full page is rendered
+		hideLoadingIcon();//To hide the loading icon
 		
 		//Will be triggered when the create project button is clicked
 		$('#createProject').click(function() {
@@ -558,32 +510,23 @@
 			validate('updateProject', $('#formCreateProject'), $("#container"), params, '<s:text name='progress.txt.update.proj'/>');
 		});
 		
-		//var cb = $('#appLayerControl').attr('checked')?true:false;
-		//var isChecked = $('#appLayerControl:checked').val()?true:false;
-		//var isChecked = $('#checkAll1').is(':checked');
-		//console.info("isChecked....."+isChecked);
-		//if(isChecked == true) {
-		//	console.info("checking.........");
-		//	accordionOpen('', 'checked');
-		//}
-		
 		<% if(projectInfo != null) { %>
 			
 			$("input[value='app-layer']:checked").each(
-				    function() {
-				    	accordionOpen('#appLayerControl', $('input[value=app-layer]'));
-				    }
+				function() {
+					accordionOpen('#appLayerControl', $('input[value=app-layer]'));
+				}
 			);
 			
 			$("input[value='web-layer']:checked").each(
-				    function() {
-				    	accordionOpen('#webLayerControl', $('input[value=web-layer]'));
-				    }
+				function() {
+					accordionOpen('#webLayerControl', $('input[value=web-layer]'));
+				}
 			);
 			$("input[value='mob-layer']:checked").each(
-				    function() {
-				    	accordionOpen('#mobileLayerControl', $('input[value=mob-layer]'));
-				    }
+				function() {
+					accordionOpen('#mobileLayerControl', $('input[value=mob-layer]'));
+				}
 			);
 		<% } %>
 		
@@ -594,7 +537,7 @@
 	    $('.mfbox').css('display','none');
 	}
 	
-	  function accordionOpen(thisObj, currentChkBoxObj) {
+	function accordionOpen(thisObj, currentChkBoxObj) {
 		var _tempIndex = $('.siteaccordion').index(thisObj);
 		var isChecked = currentChkBoxObj;
 		$(thisObj).removeClass('closereg').addClass('openreg');
@@ -655,18 +598,31 @@
 	
 	var objName; //select box object name
 	//To get the versions of the selected mobile technologies
-	function getMobileTechVersions(layerId, techGroupId, toBeFilledCtrlName) {
+	function getTechVersions(layerId, techGroupId, toBeFilledCtrlName, techId) {
+		showLoadingIcon();
 		objName = toBeFilledCtrlName;
 		var params = getBasicParams();
 		params = params.concat("&layerId=");
 		params = params.concat(layerId);
 		params = params.concat("&techGroupId=");
 		params = params.concat(techGroupId);
-		loadContent("fetchMobileTechVersions", $('#formCreateProject'), '', params, true);
+		if (techId != undefined && !isBlank(techId)) {
+			params = params.concat("&" + techGroupId + "<%= FrameworkConstants.REQ_PARAM_NAME_TECHNOLOGY %>" + "=");
+			params = params.concat(techId);
+		}
+		loadContent("fetchTechVersions", $('#formCreateProject'), '', params, true);
+	}
+	
+	function getAppLayerTechVersions(layerId, obj) {
+		var toBeFilledCtrlName = layerId + "Version";
+		var techGroupId = $('option:selected', obj).attr('additionalParam');
+		var techId = $(obj).val();
+		getTechVersions(layerId, techGroupId, toBeFilledCtrlName, techId);
 	}
 	
 	//To get the widgets of the selected web layer and load in the widget select box 
 	function getWebLayerWidgets(layerId, widgetObjName) {
+		showLoadingIcon();
 		objName = widgetObjName;
 		var params = getBasicParams();
 		params = params.concat("&layerId=");
@@ -679,7 +635,7 @@
 	function successEvent(pageUrl, data) {
 		hideLoadingIcon();
 		//To fill the versions for the selected mobile technology
-		if (pageUrl == "fetchMobileTechVersions") {
+		if (pageUrl == "fetchTechVersions") {
 			fillSelectbox($("select[name='"+ objName +"']"), data.versions, "No Versions available");
 		}
 		
