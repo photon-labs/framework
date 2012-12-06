@@ -66,6 +66,42 @@ public class CIJob {
     private List<String> prebuildStepCommands;
     private List<String> postbuildStepCommands;
     
+    // all the job info
+    // build job info
+    private String buildName ="";
+    private String buildNumber ="1";
+    private String environmentName = "";
+    private String logs = "";
+    private String showSettings = "";
+    
+    private String sdk = "";
+    private String target = "";
+    private String mode = "";
+    private String encrypt = "";
+    private String plistFile = "";
+    
+    private String skipTest = "";
+    private String proguard = "";
+    private String signing = "";
+    private String keystore = "";
+    private String storepass = "";
+    private String keypass = "";
+    private String alias = "";
+    
+    private String minify = "";
+    
+    // deploy job info
+    private String deviceType = "";
+    private String sdkVersion = "";
+    private String family = "";
+
+    private String devices = "";
+    private String serialNumber = "";
+    
+    private String testAgainst = "";
+    private String browser = "";
+    private String resolution = "";
+    
     public CIJob() {
         super();
     }
@@ -325,5 +361,213 @@ public class CIJob {
 
 	public void setPostbuildStepCommands(List<String> postbuildStepCommands) {
 		this.postbuildStepCommands = postbuildStepCommands;
+	}
+
+	public String getBuildName() {
+		return buildName;
+	}
+
+	public void setBuildName(String buildName) {
+		this.buildName = buildName;
+	}
+
+	public String getBuildNumber() {
+		return buildNumber;
+	}
+
+	public void setBuildNumber(String buildNumber) {
+		this.buildNumber = buildNumber;
+	}
+
+	public String getEnvironmentName() {
+		return environmentName;
+	}
+
+	public void setEnvironmentName(String environmentName) {
+		this.environmentName = environmentName;
+	}
+
+	public String getLogs() {
+		return logs;
+	}
+
+	public void setLogs(String logs) {
+		this.logs = logs;
+	}
+
+	public String getSdk() {
+		return sdk;
+	}
+
+	public void setSdk(String sdk) {
+		this.sdk = sdk;
+	}
+
+	public String getTarget() {
+		return target;
+	}
+
+	public void setTarget(String target) {
+		this.target = target;
+	}
+
+	public String getMode() {
+		return mode;
+	}
+
+	public void setMode(String mode) {
+		this.mode = mode;
+	}
+
+	public String getEncrypt() {
+		return encrypt;
+	}
+
+	public void setEncrypt(String encrypt) {
+		this.encrypt = encrypt;
+	}
+
+	public String getPlistFile() {
+		return plistFile;
+	}
+
+	public void setPlistFile(String plistFile) {
+		this.plistFile = plistFile;
+	}
+
+	public String getSkipTest() {
+		return skipTest;
+	}
+
+	public void setSkipTest(String skipTest) {
+		this.skipTest = skipTest;
+	}
+
+	public String getProguard() {
+		return proguard;
+	}
+
+	public void setProguard(String proguard) {
+		this.proguard = proguard;
+	}
+
+	public String getSigning() {
+		return signing;
+	}
+
+	public void setSigning(String signing) {
+		this.signing = signing;
+	}
+
+	public String getKeystore() {
+		return keystore;
+	}
+
+	public void setKeystore(String keystore) {
+		this.keystore = keystore;
+	}
+
+	public String getStorepass() {
+		return storepass;
+	}
+
+	public void setStorepass(String storepass) {
+		this.storepass = storepass;
+	}
+
+	public String getKeypass() {
+		return keypass;
+	}
+
+	public void setKeypass(String keypass) {
+		this.keypass = keypass;
+	}
+
+	public String getAlias() {
+		return alias;
+	}
+
+	public void setAlias(String alias) {
+		this.alias = alias;
+	}
+
+	public String getMinify() {
+		return minify;
+	}
+
+	public void setMinify(String minify) {
+		this.minify = minify;
+	}
+
+	public String getDeviceType() {
+		return deviceType;
+	}
+
+	public void setDeviceType(String deviceType) {
+		this.deviceType = deviceType;
+	}
+
+	public String getSdkVersion() {
+		return sdkVersion;
+	}
+
+	public void setSdkVersion(String sdkVersion) {
+		this.sdkVersion = sdkVersion;
+	}
+
+	public String getFamily() {
+		return family;
+	}
+
+	public void setFamily(String family) {
+		this.family = family;
+	}
+
+	public String getDevices() {
+		return devices;
+	}
+
+	public void setDevices(String devices) {
+		this.devices = devices;
+	}
+
+	public String getSerialNumber() {
+		return serialNumber;
+	}
+
+	public void setSerialNumber(String serialNumber) {
+		this.serialNumber = serialNumber;
+	}
+
+	public String getTestAgainst() {
+		return testAgainst;
+	}
+
+	public void setTestAgainst(String testAgainst) {
+		this.testAgainst = testAgainst;
+	}
+
+	public String getBrowser() {
+		return browser;
+	}
+
+	public void setBrowser(String browser) {
+		this.browser = browser;
+	}
+
+	public String getResolution() {
+		return resolution;
+	}
+
+	public void setResolution(String resolution) {
+		this.resolution = resolution;
+	}
+
+	public String getShowSettings() {
+		return showSettings;
+	}
+
+	public void setShowSettings(String showSettings) {
+		this.showSettings = showSettings;
 	}
 }

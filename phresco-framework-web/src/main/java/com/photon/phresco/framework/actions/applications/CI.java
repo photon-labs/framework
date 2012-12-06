@@ -19,24 +19,17 @@
  */
 package com.photon.phresco.framework.actions.applications;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStream;
+import java.io.*;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.beanutils.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -56,10 +49,9 @@ import com.photon.phresco.framework.api.CIManager;
 import com.photon.phresco.framework.commons.ApplicationsUtil;
 import com.photon.phresco.framework.commons.DiagnoseUtil;
 import com.photon.phresco.framework.commons.FrameworkUtil;
-import com.photon.phresco.framework.model.CIBuild;
-import com.photon.phresco.framework.model.CIJob;
-import com.photon.phresco.framework.model.CIJobStatus;
+import com.photon.phresco.framework.model.*;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
+import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.Childs.*;
 import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.Utility;
@@ -176,7 +168,9 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 					setReqAttribute(CI_BUILD_JENKINS_ALIVE + ciJob.getName(), buildJenkinsAlive);
 					setReqAttribute(CI_BUILD_IS_IN_PROGRESS + ciJob.getName(), isJobCreatingBuild);
 					if (buildJenkinsAlive == true) {
+						System.out.println("getting builds started  ");
 						builds = ciManager.getBuilds(ciJob);
+						System.out.println("getting builds retrived  ");
 					}
 					if (debugEnabled) {
 						S_LOGGER.debug("ciJob.getName() builds .... " + builds);
@@ -191,6 +185,7 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 			}
 			setReqAttribute(CI_NO_OF_JOBS_IN_PROGRESS, numberOfJobsInProgress);
 		} catch (PhrescoException e) {
+			e.printErrorStack();
 			if (debugEnabled) {
 				S_LOGGER.error("Entered into catch block of CI.ci()" + FrameworkUtil.getStackTraceAsString(e));
 			}
@@ -259,6 +254,94 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 		return APP_CI_CONFIGURE;
 	}
 
+	public String dynamicOperationPopup() {
+		try {
+		    ApplicationInfo appInfo = getApplicationInfo();
+            removeSessionAttribute(appInfo.getId() + PHASE_CI + SESSION_WATCHER_MAP);
+            setProjModulesInReq();
+            Map<String, DependantParameters> watcherMap = new HashMap<String, DependantParameters>(8);
+            List<Parameter> parameters = null;
+            MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_CI)));
+            // based on operation it should do it
+            System.out.println("operation !!! => " + operation);
+            if (BUILD.equals(operation)) {
+            	parameters = getMojoParameters(mojo, PHASE_PACKAGE);
+            	System.out.println("parameters => " + parameters);
+            	setReqAttribute(REQ_PHASE, PHASE_PACKAGE);
+            } else if (DEPLOY.equals(operation)) { 
+            	parameters = getMojoParameters(mojo, PHASE_DEPLOY);
+            	setReqAttribute(REQ_PHASE, PHASE_DEPLOY);
+            } else if (FUNCTIONAL_TEST.equals(operation)) {
+            	parameters = getMojoParameters(mojo, Constants.PHASE_FUNCTIONAL_TEST);
+            	setReqAttribute(REQ_PHASE, Constants.PHASE_FUNCTIONAL_TEST);
+            }
+            
+            setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap);
+            setSessionAttribute(appInfo.getId() + PHASE_CI + SESSION_WATCHER_MAP, watcherMap);
+            setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
+            setReqAttribute(REQ_GOAL, PHASE_CI);
+		} catch (PhrescoException e) {
+			return showErrorPopup(e, getText(EXCEPTION_BUILD_POPUP));
+		}
+		return SUCCESS;
+	}
+	
+	private void constructCiJobObj(MojoProcessor mojo, String goal, CIJob cijob) throws PhrescoException {
+	    try {
+	    	BeanUtils bu = new BeanUtils();
+	    	
+	        List<Parameter> parameters = getMojoParameters(mojo, goal);
+	        StringBuilder csParamVal = new StringBuilder();
+	        String sep = "";
+	        if (CollectionUtils.isNotEmpty(parameters)) {
+	            for (Parameter parameter : parameters) {
+	                if (Boolean.parseBoolean(parameter.getMultiple())) {
+	                    String[] parameterValues = getReqParameterValues(parameter.getKey());
+	                    for (String parameterValue : parameterValues) {
+	                        csParamVal.append(sep);
+	                        csParamVal.append(parameterValue);
+	                        sep = ",";
+	                    }
+//	                    parameter.setValue(csParamVal.toString());
+	                    bu.setProperty(cijob, parameter.getKey(), csParamVal.toString());
+	                } else if (TYPE_BOOLEAN.equalsIgnoreCase(parameter.getType())) {
+	                    if (getReqParameter(parameter.getKey()) != null) {
+	                    	bu.setProperty(cijob, parameter.getKey(), getReqParameter(parameter.getKey()));
+//	                        parameter.setValue(getReqParameter(parameter.getKey()));
+	                    } else {
+//	                        parameter.setValue(Boolean.FALSE.toString());
+	                        bu.setProperty(cijob, parameter.getKey(), Boolean.FALSE.toString());
+	                    }
+	                } else if (parameter.getType().equalsIgnoreCase(TYPE_MAP)) {
+	                    List<Child> childs = parameter.getChilds().getChild();
+	                    String[] keys = getReqParameterValues(childs.get(0).getKey());
+	                    String[] values = getReqParameterValues(childs.get(1).getKey());
+	                    Properties properties = new Properties();
+	                    for (int i = 0; i < keys.length; i++) {
+	                        properties.put(keys[i], values[i]);
+	                    }
+	                    StringWriter writer = new StringWriter();
+	                    properties.store(writer, "");
+	                    String value = writer.getBuffer().toString();
+//	                    parameter.setValue(value);
+	                    bu.setProperty(cijob, parameter.getKey(), value);
+	                } else {
+//	                    parameter.setValue(getReqParameter(parameter.getKey()));
+	                    bu.setProperty(cijob, parameter.getKey(), getReqParameter(parameter.getKey()));
+	                }
+	            }
+	        }
+//	        mojo.save();
+	    } catch (Exception e) {
+	        throw new PhrescoException(e);
+	    }
+	}
+	
+	private void setProjModulesInReq() throws PhrescoException {
+        List<String> projectModules = getProjectModules(getApplicationInfo().getAppDirName());
+        setReqAttribute(REQ_PROJECT_MODULES, projectModules);
+    }
+	
 	public String setup() {
 		S_LOGGER.debug("Entering Method  CI.setup()");
 		try {
@@ -355,36 +438,64 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 
 			// Build info
 			ApplicationInfo applicationInfo = getApplicationInfo();
-			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_PACKAGE)));
-			persistValuesToXml(mojo, Constants.PHASE_PACKAGE);
+			List<String> preBuildStepCmds = new ArrayList<String>();
+//			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_PACKAGE)));
 			
-			//To get maven build arguments
-			List<Parameter> parameters = getMojoParameters(mojo, Constants.PHASE_PACKAGE);
-			List<String> buildArgCmds = getMavenArgCommands(parameters);
+			List<Parameter> parameters = null;
 			String mvncmd = "";
 			if (debugEnabled) {
 				S_LOGGER.debug("Operation .... " + operation);
 			}
+			System.out.println("operation => " + operation);
+			
 			if (BUILD.equals(operation)) {
 				if (debugEnabled) {
 					S_LOGGER.debug("Build operation!!!!!!");
 				}
+				
+				MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(Constants.PHASE_CI)));
+				persistValuesToXml(mojo, Constants.PHASE_PACKAGE);
+				constructCiJobObj(mojo, Constants.PHASE_PACKAGE, existJob);
+				
+				//To get maven build arguments
+				parameters = getMojoParameters(mojo, Constants.PHASE_PACKAGE);
 				ActionType actionType = ActionType.BUILD;
 				mvncmd =  actionType.getActionType().toString();
+				preBuildStepCmds.add(CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_PACKAGE);
 			} else if (DEPLOY.equals(operation)) {
 				if (debugEnabled) {
 					S_LOGGER.debug("Deploy operation!!!!!!");
 				}
+				
+				MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(Constants.PHASE_CI)));
+				persistValuesToXml(mojo, Constants.PHASE_DEPLOY);
+				constructCiJobObj(mojo, Constants.PHASE_DEPLOY, existJob);
+				
+				//To get maven build arguments
+				parameters = getMojoParameters(mojo, Constants.PHASE_DEPLOY);
 				ActionType actionType = ActionType.DEPLOY;
 				mvncmd =  actionType.getActionType().toString();
+				
+				preBuildStepCmds.add(CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_DEPLOY);
 			} else if (FUNCTIONAL_TEST.equals(operation)) {
 				if (debugEnabled) {
 					S_LOGGER.debug("Functional test operation!!!!!");
 				}
-//				ActionType actionType = ActionType.FUNCTIONAL_TEST;
-//				System.out.println("build operation command " + actionType);
-//				mvncmd =  actionType.getActionType().toString();
+				
+				MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(Constants.PHASE_CI)));
+				persistValuesToXml(mojo, Constants.PHASE_FUNCTIONAL_TEST);
+				constructCiJobObj(mojo, Constants.PHASE_FUNCTIONAL_TEST, existJob);
+				
+				//To get maven build arguments
+				parameters = getMojoParameters(mojo, Constants.PHASE_FUNCTIONAL_TEST);
+				ActionType actionType = ActionType.FUNCTIONAL_TEST;
+				System.out.println("build operation command " + actionType);
+				mvncmd =  actionType.getActionType().toString();
+				preBuildStepCmds.add(CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_FUNCTIONAL_TEST);
 			}
+			
+			List<String> buildArgCmds = getMavenArgCommands(parameters);
+			
 			if (!CollectionUtils.isEmpty(buildArgCmds)) {
 				for (String buildArgCmd : buildArgCmds) {
 					mvncmd = mvncmd + FrameworkConstants.SPACE + buildArgCmd;
@@ -397,11 +508,10 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 				S_LOGGER.debug("mvn command" + mvncmd);
 			}
 			existJob.setMvnCommand(mvncmd);
-			
+			System.out.println("mvncmd => " + mvncmd);
 			// prebuild step enable
 			existJob.setEnablePreBuildStep(true);
-			List<String> preBuildStepCmds = new ArrayList<String>();
-			preBuildStepCmds.add(CI_PRE_BUILD_STEP);
+			
 			existJob.setPrebuildStepCommands(preBuildStepCmds);
 			
 			// configure job here
@@ -415,7 +525,7 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 				addActionMessage(getText(SUCCESS_UPDATE));
 			}
 
-			restartJenkins(); // reload config
+//			restartJenkins(); // reload config
 
 			setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
 		} catch (Exception e) {

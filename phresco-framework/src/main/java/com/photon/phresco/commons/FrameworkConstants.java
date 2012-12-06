@@ -667,6 +667,7 @@ public interface FrameworkConstants {
     String REQ_HEADER_TYPE = "headerType";
     String REQ_FROM	= "from";
     String REQ_GOAL = "goal";
+    String REQ_PHASE = "phase";
     String REQ_ATTRNAME	= "attrName";
     String SETTINGS_PARAMS = "SETTINGS_PARAMS";
     String REQ_KEY_SUCCESS_EMAILS = "successEmails";

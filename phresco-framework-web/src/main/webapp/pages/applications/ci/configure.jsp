@@ -682,13 +682,17 @@
 	});
 	
 	function showConfigBasedOnTech() {
-		if($('#operation').val() == "build") {
-			loadContent('generateBuild','', $('#dynamicConfigLoad'), getBasicParams(), false);
-		} else if($('#operation').val() == "deploy") {
-			loadContent('showDeploy', '', $('#dynamicConfigLoad'), getBasicParams(), false);
-		} else if($('#operation').val() == "functionalTest") {
-			loadContent('showFunctionalTestPopUp', '', $('#dynamicConfigLoad'), getBasicParams(), false);
-		}	
+		var params = getBasicParams();
+		params = params.concat("&");
+		params = params.concat("operation=");
+	    params = params.concat($("#operation").val());
+// 		if($('#operation').val() == "build") {
+			loadContent('getCiDynamParam','', $('#dynamicConfigLoad'), params, false);
+// 		} else if($('#operation').val() == "deploy") {
+// 			loadContent('showDeploy', '', $('#dynamicConfigLoad'), getBasicParams(), false);
+// 		} else if($('#operation').val() == "functionalTest") {
+// 			loadContent('showFunctionalTestPopUp', '', $('#dynamicConfigLoad'), getBasicParams(), false);
+// 		}	
 	}
 	
 	// after validation success, show loading icon and creates job

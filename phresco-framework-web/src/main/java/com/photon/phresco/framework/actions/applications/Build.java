@@ -249,6 +249,7 @@ public class Build extends DynamicParameterAction implements Constants {
             setSessionAttribute(appInfo.getId() + PHASE_PACKAGE + SESSION_WATCHER_MAP, watcherMap);
             setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
             setReqAttribute(REQ_GOAL, PHASE_PACKAGE);
+            setReqAttribute(REQ_PHASE, PHASE_PACKAGE);
 		} catch (PhrescoException e) {
 			return showErrorPopup(e, getText(EXCEPTION_BUILD_POPUP));
 		}
@@ -281,6 +282,7 @@ public class Build extends DynamicParameterAction implements Constants {
             setSessionAttribute(appInfo.getId() + PHASE_RUNGAINST_SRC_START + SESSION_WATCHER_MAP, watcherMap);
             setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
             setReqAttribute(REQ_GOAL, PHASE_RUNGAINST_SRC_START);
+            setReqAttribute(REQ_PHASE, PHASE_RUNGAINST_SRC_START);
 		} catch (PhrescoException e) {
 			return showErrorPopup(e, getText("excep.hdr.runagainstsource.popup"));
 		}
@@ -311,6 +313,7 @@ public class Build extends DynamicParameterAction implements Constants {
             setReqAttribute(REQ_DEPLOY_BUILD_NUMBER, getReqParameter(BUILD_NUMBER));
             setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
             setReqAttribute(REQ_GOAL, PHASE_DEPLOY);
+            setReqAttribute(REQ_PHASE, PHASE_DEPLOY);
             setProjModulesInReq();
             setReqAttribute(REQ_FROM, getFrom());
 		} catch (PhrescoException e) {

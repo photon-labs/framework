@@ -80,6 +80,7 @@
     ApplicationInfo applicationInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_APP_INFO);
     
     String goal = (String) request.getAttribute(FrameworkConstants.REQ_GOAL);
+    String phase = (String) request.getAttribute(FrameworkConstants.REQ_PHASE);
     String appId  = applicationInfo.getId();
     DynamicParameterAction dpm = new DynamicParameterAction();
     MojoProcessor mojo = new MojoProcessor(new File(dpm.getPhrescoPluginInfoXmlFilePath(goal, applicationInfo)));
@@ -159,7 +160,7 @@
 					if (StringUtils.isNotEmpty(parameter.getDependency())) {
 						//If current control has dependancy value 
 						List<String> dependancyList = Arrays.asList(parameter.getDependency().split(FrameworkConstants.CSV_PATTERN));
-						Parameter param = mojo.getParameter(goal, dependancyList.get(0));
+						Parameter param = mojo.getParameter(phase, dependancyList.get(0));
 						onClickFunction = "dependancyChckBoxEvent(this, '"+ parameter.getKey() +"', '"+ param.isShow() +"');";
 						onChangeFunction = "changeChckBoxValue(this);";
 					} else {
@@ -577,6 +578,8 @@
 		var params = getBasicParams();
 		params = params.concat("&goal=");
 		params = params.concat('<%= goal%>');
+		params = params.concat("&phase=");
+		params = params.concat('<%= phase%>');
 		params = params.concat("&currentParamKey=");
 		params = params.concat(currentParamKey);
 		params = params.concat("&selectedOption=");
@@ -589,6 +592,8 @@
 		var params = getBasicParams();
 		params = params.concat("&goal=");
 		params = params.concat('<%= goal%>');
+		params = params.concat("&phase=");
+		params = params.concat('<%= phase%>');
 		params = params.concat("&dependency=");
 		params = params.concat(dependency);
 		

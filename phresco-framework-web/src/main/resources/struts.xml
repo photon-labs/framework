@@ -796,6 +796,10 @@
             <result type="json"><param name="root">buildInProgress</param></result>
         </action>
         
+        <action name="getCiDynamParam" method="dynamicOperationPopup" class="com.photon.phresco.framework.actions.applications.CI">
+            <result name="success">/pages/applications/dynamic_parameter.jsp</result>
+        </action>
+        
         <action name="getDevices" method="devices" class="com.photon.phresco.framework.actions.applications.Quality">
         	<result type="json"><param name="root">deviceNames</param></result>
         </action>

@@ -353,7 +353,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
             }
         } catch(Exception e) {
         	if (debugEnabled) {
-        		S_LOGGER.debug("Entering Method CIManagerImpl.getCIBuilds(CIJob job)");
+        		S_LOGGER.debug("Entering Method CIManagerImpl.getCIBuilds(CIJob job) " + e.getLocalizedMessage());
         	}
         }
         return ciBuilds;
@@ -484,19 +484,19 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
         
         //enable collabnet file release plugin integration
         if (job.isEnableBuildRelease()) {
-        	S_LOGGER.debug("Enablebling collabnet file release plugin!!!!!");
+        	S_LOGGER.debug("Enablebling collabnet file release plugin ");
         	processor.enableCollabNetBuildReleasePlugin(job);
         }
 
         // use clonned scm
         if(CLONED_WORKSPACE.equals(job.getRepoType())) {
-        	S_LOGGER.debug("using cloned workspace!!!!!");
+        	S_LOGGER.debug("using cloned workspace ");
         	processor.useClonedScm(job.getUsedClonnedWorkspace(), SUCCESSFUL);
         }
         
         // clone workspace for future use
         if (job.isCloneWorkspace()) { 
-        	S_LOGGER.debug("Clonning the workspace!!!!!!");
+        	S_LOGGER.debug("Clonning the workspace ");
             processor.cloneWorkspace(ALL_FILES, SUCCESSFUL, TAR);
         }
         
@@ -598,11 +598,13 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 			 br.close();
 			 return job;
 		 } catch (FileNotFoundException e) {
+			 S_LOGGER.debug(e.getLocalizedMessage());
 			 return null;
 		 } catch (com.google.gson.JsonParseException e) {
-			 S_LOGGER.debug("it is already adpted project !!!!!");
+			 S_LOGGER.debug("it is already adpted project !!!!! " + e.getLocalizedMessage());
 			 return null;
 		 } catch (IOException e) {
+			 S_LOGGER.debug(e.getLocalizedMessage());
 			 return null;
 		 }
 	 }
