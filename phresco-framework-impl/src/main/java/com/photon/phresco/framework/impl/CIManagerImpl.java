@@ -157,9 +157,11 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
             
             String jenkinsTemplateDir = Utility.getJenkinsTemplateDir();
             String configFilePath = jenkinsTemplateDir + job.getRepoType() + HYPHEN + CONFIG_XML;
-            System.out.println("configFilePath ...  " + configFilePath);
+        	if (debugEnabled) {
+        		S_LOGGER.debug("configFilePath ...  " + configFilePath);
+        	}
+        	
             File configFile = new File(configFilePath);
-            
             ConfigProcessor processor = new ConfigProcessor(configFile);
             customizeNodes(processor, job);
             

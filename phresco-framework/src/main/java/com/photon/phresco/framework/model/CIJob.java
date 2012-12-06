@@ -87,6 +87,7 @@ public class CIJob {
     private String storepass = "";
     private String keypass = "";
     private String alias = "";
+    private String projectType = "";
     
     private String minify = "";
     
@@ -569,5 +570,13 @@ public class CIJob {
 
 	public void setShowSettings(String showSettings) {
 		this.showSettings = showSettings;
+	}
+
+	public String getProjectType() {
+		return projectType;
+	}
+
+	public void setProjectType(String projectType) {
+		this.projectType = projectType;
 	}
 }

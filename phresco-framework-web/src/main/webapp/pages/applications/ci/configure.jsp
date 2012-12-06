@@ -686,13 +686,7 @@
 		params = params.concat("&");
 		params = params.concat("operation=");
 	    params = params.concat($("#operation").val());
-// 		if($('#operation').val() == "build") {
-			loadContent('getCiDynamParam','', $('#dynamicConfigLoad'), params, false);
-// 		} else if($('#operation').val() == "deploy") {
-// 			loadContent('showDeploy', '', $('#dynamicConfigLoad'), getBasicParams(), false);
-// 		} else if($('#operation').val() == "functionalTest") {
-// 			loadContent('showFunctionalTestPopUp', '', $('#dynamicConfigLoad'), getBasicParams(), false);
-// 		}	
+		loadContent('getCiDynamParam','', $('#dynamicConfigLoad'), params, false);
 	}
 	
 	// after validation success, show loading icon and creates job
@@ -728,6 +722,7 @@
 			$("#errMsg").html("Enter the Name");
 			$("#name").focus();
 			$("#name").val("");
+			console.log("Name is not specified ");
 			return false;
 		} 
 		
@@ -736,6 +731,7 @@
 				$("#errMsg").html("Enter the URL");
 				$("#svnurl").focus();
 				$("#svnurl").val("");
+				console.log("url is not specified ");
 				return false;
 			}
 			
@@ -743,11 +739,13 @@
 				$("#errMsg").html("Enter UserName");
 				$("#username").focus();
 				$("#username").val("");
+				console.log("usename is not specified ");
 				return false;
 			}
 			if(isBlank(password)) {
 				$("#errMsg").html("Enter Password");
 				$("#password").focus();
+				console.log("password is not specified ");
 				return false;
 			}
 		} 
@@ -757,6 +755,7 @@
 				$("#errMsg").html("Enter the URL");
 				$("#svnurl").focus();
 				$("#svnurl").val("");
+				console.log("Url is not specified ");
 				return false;
 			}
 			
@@ -764,13 +763,15 @@
 				$("#errMsg").html("Enter Branch Name");
 				$("#branch").focus();
 				$("#branch").val("");
+				console.log("branch is not specified ");
 				return false;
 			}
 		} 
 		
 		if($("input:radio[name=svnType][value='clonedWorkspace']").is(':checked')) {
-			if(!$("#usedClonnedWorkspace option:selected").length){
+			if($("select[name=usedClonnedWorkspace] option").length <= 0){
 				$("#errMsg").html("There is no parent project to configure");
+				console.log("parent project is not choosed ");
 				return false;
 			}
 		}
