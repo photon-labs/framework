@@ -191,7 +191,6 @@
 	}
 	
 	$(document).ready(function() {
-		console.info("documentReady inside builds.jsp.....");
 		hideLoadingIcon();//To hide the loading icon
 		
 		$('.deploy').click(function() {

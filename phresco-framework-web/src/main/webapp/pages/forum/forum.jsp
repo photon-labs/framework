@@ -54,9 +54,6 @@
 		$("iframe").attr({
             src: source
         });
-		$('iframe').load(function() {
-			$(".loadingIcon").hide();
-		});
 	}
 
 </script>

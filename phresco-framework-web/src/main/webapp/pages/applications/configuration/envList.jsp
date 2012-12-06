@@ -131,11 +131,9 @@
 																		src="images/icons/inprogress.png" title="Update" class="iconSizeinList"/></a>
 																</td>
 																<td class="no-left-bottom-border table-pad">
-																<a href="#" title="<%= configuration.getName() %>" id="cloneEnvId" onclick="cloneConfiguration(
-																'<%= configuration.getName()%>', '<%= configuration.getEnvName() %>', '<%= configuration.getType() %>', '<%= configuration.getDesc()%>')" >
-																<img src="images/icons/clone.png" alt="Clone"  title="clone configuration"></a>
-																	<%-- <a href="#" ><img id="<%= configuration.getName()  %>" class="projectUpdate" 
-																		src="images/icons/clone.png" title="Update" class="iconSizeinList"/></a> --%>
+																	<a href="#" title="<%= configuration.getName() %>" id="cloneEnvId" onclick="cloneConfiguration(
+																	'<%= configuration.getName()%>', '<%= configuration.getEnvName() %>', '<%= configuration.getType() %>', '<%= configuration.getDesc()%>')" >
+																	<img src="images/icons/clone.png" alt="Clone"  title="clone configuration"></a>
 																</td> 
 															</tr>
 													<%
