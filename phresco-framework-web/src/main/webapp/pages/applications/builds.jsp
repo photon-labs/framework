@@ -185,52 +185,22 @@
 <script src="js/delete.js" ></script>
 
 <script type="text/javascript">
-	/* To check whether the divice is ipad or not */
-	if(!isiPad()){
-		/* JQuery scroll bar */
+	//To check whether the device is ipad or not and then apply jquery scrollbar
+	if (!isiPad()) {
 		$(".fixed-table-container-inner").scrollbars();
 	}
 	
 	$(document).ready(function() {
+		console.info("documentReady inside builds.jsp.....");
 		hideLoadingIcon();//To hide the loading icon
 		
 		$('.deploy').click(function() {
 			var additionalParam = $(this).attr('additionalParam'); //additional params if any
     		validateDynamicParam('showDeploy', '<s:text name="label.deploy"/>', 'deploy','<s:text name="label.deploy"/>', '', '<%= Constants.PHASE_DEPLOY %>', true, additionalParam);
     	});
-		
-// 		yesnoPopup($(".deploy"), 'showDeploy', '<s:text name="label.deploy"/>', 'deploy','<s:text name="label.deploy"/>');
 	});
 	
 	// By default disable all Run buttons under builds
     $(".nodejs_startbtn").attr("class", "btn disabled");
     $(".nodejs_startbtn").attr("disabled", true);
-    
-   <%--  if (<%= TechnologyTypes.NODE_JS_WEBSERVICE.equals(technology) %>) {
-        $('.build_td4').css("width", "18.5%");  
-    } --%>
-    
-   <%--  function startNodeJS(obj) {
-		$("#build-output").empty();
-		$("#build-output").html("Server is starting...");  
-        var params = "buildNumber=";
-        params = params.concat(obj.id);
-        readerHandlerSubmit('startNodeJSServer', '<%=  %>', '', params, true);
-    }
-    
-    function stopNodeJS() {
-    	$("#build-output").empty();
-    	$("#build-output").html("Server is stopping...");
-    	$("#stopbtn").attr("class", "btn disabled");
-       	$("#restartbtn").attr("class", "btn disabled");
-		readerHandlerSubmit('stopNodeJSServer', '<%= projectCode %>', '<%= FrameworkConstants.REQ_READ_LOG_FILE %>', '', true);
-    }
-    
-    function restartNodeJS() {
-		$("#build-output").empty();
-    	$("#build-output").html("Server is restarting...");
-      	$("#stopbtn").attr("class", "btn disabled");
-       	$("#restartbtn").attr("class", "btn disabled");
-        readerHandlerSubmit('restartNodeJSServer', '', '<%= FrameworkConstants.REQ_READ_LOG_FILE %>', '', true);
-    }  --%>
 </script>

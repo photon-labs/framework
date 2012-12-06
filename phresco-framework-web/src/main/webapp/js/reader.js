@@ -30,6 +30,7 @@ function readerHandler(data, appId, actionType, pageUrl, progressConsoleObj) {
 	}
 
    if ($.trim(data) == 'EOF') {
+	   hidePopuploadingIcon();
 	   $("#warningmsg").hide();
 	   $('#loadingDiv').hide();
 	   $('#buildbtn').prop("disabled", false);

@@ -493,6 +493,7 @@
     var selectedDb;
     var selectVer;
     function getDownloadInfo(type, toBeFilledCtrlObj, defaultOptTxt, selectedDatabase, databaseVersions) {
+    	showLoadingIcon();
     	selectedDb = selectedDatabase;
     	selectVer = databaseVersions;
     	defaultOption = defaultOptTxt;

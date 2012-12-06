@@ -129,7 +129,7 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-    	hideLoadingIcon();
+    	showLoadingIcon();
     	
     	isResultFileAvailbale();//Check for the performance test result
     	
@@ -204,7 +204,6 @@
     	if (!isBlank($('form').serialize())) {
     		params = $('form').serialize() + "&";
     	}
-    	getCurrentCSS();
     	showPopup();
 		performAction('generateJmeter', params, $('#popup_div'));
   		$(document).keydown(function(e) {
@@ -316,7 +315,7 @@
 			if (!data.resultFileAvailable) {
 	       		$("#noFiles").show();
 	       		testResultNotAvail();
-	       		enableScreen();
+	       	 	hideLoadingIcon();
 			} else {
 	       		testResultAvailShowList();
 	       		performanceTestResultsFiles();

@@ -138,6 +138,7 @@
     $('#generateBuildForm').hide();
 
 	$(document).ready(function() {
+		hideLoadingIcon();
 		// accodion for advanced issue
 		accordion();
 		

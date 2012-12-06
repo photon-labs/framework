@@ -268,6 +268,7 @@ public class Configurations extends FrameworkBaseAction {
 			PhrescoDynamicLoader dynamicLoader = new PhrescoDynamicLoader(repoInfo, artifactGroups);
 			ApplicationProcessor applicationProcessor = dynamicLoader.getApplicationProcessor(className);
 			applicationProcessor.postConfiguration(getApplicationInfo());
+			addActionMessage(getText(ACT_SUCC_CONFIG_ADD));
 		} catch (PhrescoException e) {
 			 return showErrorPopup(e, getText(EXCEPTION_CONFIGURATION_SAVE_CONFIG));
 		} catch (ConfigurationException e) {
@@ -293,6 +294,7 @@ public class Configurations extends FrameworkBaseAction {
 		}
     	try {
     		save(getGlobalSettingsPath());
+    		addActionMessage(getText(ACT_SUCC_SETTINGS_ADD));
 		} catch (PhrescoException e) {
 			return showErrorPopup(e, getText(EXCEPTION_CONFIGURATION_SAVE_SETTINGS));
 		} catch (ConfigurationException e) {
@@ -592,6 +594,7 @@ public class Configurations extends FrameworkBaseAction {
     	try {
     	    ConfigManager configManager = getConfigManager(getConfigPath());
 			configManager.addEnvironments(getEnvironments());
+			addActionMessage(getText(ACT_SUCC_ENV_ADD));
     	} catch(Exception e) {
     	    return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_CONFIGURATION_CREATE_ENVIRONMENT));
     	}
@@ -607,9 +610,11 @@ public class Configurations extends FrameworkBaseAction {
         	    for (String deletableEnv : deletableEnvList) {
         	    	configManager.deleteEnvironment(deletableEnv);
     			}
+        	    addActionMessage(getText(ACT_SUCC_ENV_DELETE));
     		}
     		if (CollectionUtils.isNotEmpty(getSelectedConfigurations())) {//To delete the selected configurations
     			configManager.deleteConfigurations(getSelectedConfigurations());
+    			addActionMessage(getText(ACT_SUCC_CONFIG_DELETE));
     		}
     		
     	} catch(Exception e) {
@@ -617,55 +622,6 @@ public class Configurations extends FrameworkBaseAction {
     	}
     	return envList();
     }
-    
-    /*public String checkForRemove(){
-		try {
-    		ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-    		Project project = administrator.getProject(projectCode);
-    		String removeItems = getHttpRequest().getParameter(DELETABLE_ENVS);
-    		List<String> unDeletableEnvs = new ArrayList<String>();
-	    	List<String> envs = Arrays.asList(removeItems.split(","));
-	    	for (String env : envs) {
-				// Check if configurations are already exist
-				List<SettingsInfo> configurations = administrator.configurationsByEnvName(env, project);
-                if (CollectionUtils.isNotEmpty(configurations)) {
-                	unDeletableEnvs.add(env);
-                	if(unDeletableEnvs.size() > 1){
-                		setEnvError(getText(ERROR_ENVS_REMOVE, Collections.singletonList(unDeletableEnvs)));
-                	} else{
-                		setEnvError(getText(ERROR_ENV_REMOVE, Collections.singletonList(unDeletableEnvs)));
-                	}
-                }
-			}
-    	} catch(Exception e) {
-                S_LOGGER.error("Entered into catch block of Configurations.checkForRemove()" + FrameworkUtil.getStackTraceAsString(e));
-    	}
-		return SUCCESS;
-	}*/
-    
-   /* public String checkDuplicateEnv() throws PhrescoException {
-        try {
-            ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-            Project project = administrator.getProject(projectCode);
-            String envs = getHttpRequest().getParameter(ENVIRONMENT_VALUES);
-            Collection<String> availableConfigEnvs = administrator.getEnvNames(project);
-            for (String env : availableConfigEnvs) {
-                if(env.equalsIgnoreCase(envs)) {
-                    setEnvError(getText(ERROR_ENV_DUPLICATE, Collections.singletonList(envs)));
-                }
-            }
-            availableConfigEnvs = administrator.getEnvNames();
-            for (String env : availableConfigEnvs) {
-                if(env.equalsIgnoreCase(envs)){
-                    setEnvError(getText(ERROR_DUPLICATE_NAME_IN_SETTINGS, Collections.singletonList(envs)));
-                }
-            }
-
-        } catch(Exception e) {
-            throw new PhrescoException(e);
-        }
-        return SUCCESS;
-    }*/
     
 	public String edit() {
     	if (debugEnabled) {
@@ -699,6 +655,7 @@ public class Configurations extends FrameworkBaseAction {
 		
 		try {
 			update(getAppConfigPath());
+			addActionMessage(getText(ACT_SUCC_CONFIG_UPDATE));
 		} catch (PhrescoException e) {
 			return showErrorPopup(e, getText(EXCEPTION_CONFIGURATION_UPDATE_CONFIG));
          }
@@ -710,6 +667,7 @@ public class Configurations extends FrameworkBaseAction {
 		
 		try {
 			update(getGlobalSettingsPath());
+			addActionMessage(getText(ACT_SUCC_SETTINGS_UPDATE));
 		} catch (PhrescoException e) {
 			return showErrorPopup(e, getText(EXCEPTION_CONFIGURATION_UPDATE_SETTINGS));
          }
@@ -907,28 +865,32 @@ public class Configurations extends FrameworkBaseAction {
     		
     		ApplicationInfo appInfo = getApplicationInfo();
     		if (SERVER.equals(getSelectedType())) {
-    			List<ArtifactGroupInfo> selectedServers = appInfo.getSelectedServers();
-    			for (ArtifactGroupInfo artifactGroupInfos : selectedServers) {
-    				List<String> artifactInfoIds = artifactGroupInfos.getArtifactInfoIds();
-    				ArtifactGroup artifactGroupInfo = getServiceManager().getArtifactGroupInfo(artifactGroupInfos.getArtifactGroupId());
-    				List<ArtifactInfo> artifactInfos = artifactGroupInfo.getVersions();
-    				for (ArtifactInfo artifactInfo : artifactInfos) {
-						if (artifactInfoIds.contains(artifactInfo.getId())) {
-							versions.add(artifactInfo.getVersion());
+    			if(appInfo != null && CollectionUtils.isNotEmpty(appInfo.getSelectedServers())) {
+	    			List<ArtifactGroupInfo> selectedServers = appInfo.getSelectedServers();
+	    			for (ArtifactGroupInfo artifactGroupInfos : selectedServers) {
+	    				List<String> artifactInfoIds = artifactGroupInfos.getArtifactInfoIds();
+	    				ArtifactGroup artifactGroupInfo = getServiceManager().getArtifactGroupInfo(artifactGroupInfos.getArtifactGroupId());
+	    				List<ArtifactInfo> artifactInfos = artifactGroupInfo.getVersions();
+	    				for (ArtifactInfo artifactInfo : artifactInfos) {
+							if (artifactInfoIds.contains(artifactInfo.getId())) {
+								versions.add(artifactInfo.getVersion());
+							}
 						}
 					}
 				}
     		}
     		
     		if (DATABASE.equals(getSelectedType())) {
-    			List<ArtifactGroupInfo> selectedDatabases = appInfo.getSelectedDatabases();
-    			for (ArtifactGroupInfo artifactGroupInfos : selectedDatabases) {
-    				List<String> artifactInfoIds = artifactGroupInfos.getArtifactInfoIds();
-    				ArtifactGroup artifactGroupInfo = getServiceManager().getArtifactGroupInfo(artifactGroupInfos.getArtifactGroupId());
-    				List<ArtifactInfo> artifactInfos = artifactGroupInfo.getVersions();
-    				for (ArtifactInfo artifactInfo : artifactInfos) {
-						if (artifactInfoIds.contains(artifactInfo.getId())) {
-							versions.add(artifactInfo.getVersion());
+    			if(appInfo != null && CollectionUtils.isNotEmpty(appInfo.getSelectedDatabases())) {
+	    			List<ArtifactGroupInfo> selectedDatabases = appInfo.getSelectedDatabases();
+	    			for (ArtifactGroupInfo artifactGroupInfos : selectedDatabases) {
+	    				List<String> artifactInfoIds = artifactGroupInfos.getArtifactInfoIds();
+	    				ArtifactGroup artifactGroupInfo = getServiceManager().getArtifactGroupInfo(artifactGroupInfos.getArtifactGroupId());
+	    				List<ArtifactInfo> artifactInfos = artifactGroupInfo.getVersions();
+	    				for (ArtifactInfo artifactInfo : artifactInfos) {
+							if (artifactInfoIds.contains(artifactInfo.getId())) {
+								versions.add(artifactInfo.getVersion());
+							}
 						}
 					}
 				}

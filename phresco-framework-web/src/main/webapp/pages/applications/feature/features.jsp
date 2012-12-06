@@ -149,7 +149,7 @@
 
 	var selectedType = "";
     $(document).ready(function () {
-        hideLoadingIcon();
+    	showLoadingIcon();
         //fillHeading();
         //showAvailabelFeature();
         

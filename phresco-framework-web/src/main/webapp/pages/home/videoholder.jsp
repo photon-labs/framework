@@ -86,6 +86,7 @@
 	
 	<% if (videoInfos != null) { %>
     $(document).ready(function() {
+    	showLoadingIcon();
     	if (localStorage.index) {
     		$("div[id='listindex"+localStorage.index+"']").attr("class", "listindex-active"); //Highlight which video is selected.
     		changeVideo(localStorage.videoname); //To play the selected video.

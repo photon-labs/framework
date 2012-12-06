@@ -591,8 +591,6 @@
 	loadSchedule(selectedSchedule);
 	
 	$(document).ready(function() {
-// 		accordion();
-		
 		$('.siteaccordion').unbind('click');
 		accordion();
 		

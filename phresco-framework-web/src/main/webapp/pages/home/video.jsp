@@ -23,6 +23,7 @@
 
 <script type="text/javascript">
 	$(document).ready(function() {
+		hideLoadingIcon();
 		VideoJS.setupAllWhenReady();
 	});
 </script>

@@ -87,6 +87,7 @@
 <script type="text/javascript">
 	$(document).ready(function() {
 		hideLoadingIcon();//To hide the loading icon
+		hideProgressBar();
 		accordion();
 	});
 </script>
