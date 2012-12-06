@@ -136,7 +136,7 @@
 <script type="text/javascript">
 $(document).ready(function() {
 	$("#popupPage").modal('hide');
-	hideLoadingIcon();
+	showLoadingIcon();
 	
 	loadTestSuites();
 	
@@ -287,7 +287,7 @@ function validationError(errMsg) {
 	$("#errorDiv").html(errMsg);
 	$("#errorDiv").show();
 	$("#testResultFile, #testSuite, #testSuiteDisplay, #resultView, #testResultLbl, #view").hide();
-	enableScreen();
+	hideLoadingIcon();
 }
 
 function changeView() {

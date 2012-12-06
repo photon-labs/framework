@@ -1657,6 +1657,13 @@ public interface FrameworkConstants {
 	     * String ACT_SUCC_XXX
 	     *****************************/
 		String ACT_SUCC_PROJECT_DELETE = "project.delete.message";
+		String ACT_SUCC_CONFIG_ADD= "config.add.message";
+		String ACT_SUCC_SETTINGS_ADD= "setting.create.success";
+		String ACT_SUCC_CONFIG_UPDATE= "config.update.message";
+		String ACT_SUCC_SETTINGS_UPDATE= "setting.update.success";
+		String ACT_SUCC_ENV_DELETE= "env.delete.message";
+		String ACT_SUCC_CONFIG_DELETE= "config.delete.message";
+		String ACT_SUCC_ENV_ADD= "env.add.message";
 		
 		/**
 		 * Dynamic Parameter Constants

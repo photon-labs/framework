@@ -535,7 +535,6 @@
 
 <script type="text/javascript">
 	addProjectAccordion();
-	hideLoadingIcon();//To hide the loading icon
 	//openprojectAccordion();
 	
 	//To check whether the device is ipad or not and then apply jquery scrollbar
@@ -544,7 +543,7 @@
 	}
 
 	$(document).ready(function() {
-		enableScreen();//To enable the page after the full page is rendered
+		hideLoadingIcon();//To hide the loading icon
 		
 		//Will be triggered when the create project button is clicked
 		$('#createProject').click(function() {
@@ -656,6 +655,7 @@
 	var objName; //select box object name
 	//To get the versions of the selected mobile technologies
 	function getMobileTechVersions(layerId, techGroupId, toBeFilledCtrlName) {
+		showLoadingIcon();
 		objName = toBeFilledCtrlName;
 		var params = getBasicParams();
 		params = params.concat("&layerId=");
@@ -667,6 +667,7 @@
 	
 	//To get the widgets of the selected web layer and load in the widget select box 
 	function getWebLayerWidgets(layerId, widgetObjName) {
+		showLoadingIcon();
 		objName = widgetObjName;
 		var params = getBasicParams();
 		params = params.concat("&layerId=");

@@ -85,8 +85,7 @@
 	
 	
 	<script type="text/javascript">
-		enableScreen();
-		$("#loadingIconDiv").empty();
+		//$("#loadingIconDiv").empty();
 	</script>
 <% } else {
         File[] files = (File[])request.getAttribute(FrameworkConstants.REQ_JMETER_REPORT_FILES); 
@@ -154,6 +153,8 @@
 <script type="text/javascript">
     
 	    $(document).ready(function() {
+	    	hideLoadingIcon();
+	    	//showLoadingIcon();
 	    	$('#loadTestBtn').click(function() {
 	    		validateDynamicParam('showLoadTestPopup', '<s:text name="label.load.test"/>', 'runLoadTest','<s:text name="label.test"/>', '', '<%= Constants.PHASE_LOAD_TEST %>');
 	    	});

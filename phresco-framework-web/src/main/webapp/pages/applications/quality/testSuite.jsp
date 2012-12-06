@@ -89,6 +89,7 @@
 
 		<script>
 		$(document).ready(function() {
+			showLoadingIcon();
 			canvasInit();
 		});
 			

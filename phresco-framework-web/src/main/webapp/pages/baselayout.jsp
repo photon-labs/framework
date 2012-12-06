@@ -124,7 +124,7 @@
 				}).mouseleave(function() {
 					$("div aside.usersettings div").hide(0);
 				});
-
+				showLoadingIcon();
 				clickMenu($("a[name='headerMenu']"), $("#container"), $('#formCustomers'));
 				loadContent("home", '', $("#container"));
 				activateMenu($("#home"));

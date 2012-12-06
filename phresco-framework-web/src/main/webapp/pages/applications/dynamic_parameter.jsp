@@ -347,9 +347,8 @@
 	var readerSession = "";
 	$(document).ready(function() {
 		showParameters();//To show the parameters based on the dependency
-		// accodion for advanced issue
-// 		accordion();
-		$(".jecEditableOption").click(function() {
+		hidePopuploadingIcon();
+		$('.jecEditableOption').click(function() {
 	       $('.jecEditableOption').text("");
 	    });
 		
@@ -628,14 +627,6 @@
 		}
 		return dependencies;
 	}
-	
-	/* function changeChckBoxValue(obj) {
-		if ($(obj).is(':checked')) {
-			$(obj).val("true");
-		} else {
-			$(obj).val("false");
-		}
-	} */
 	
 	function addRow(obj) {
 		var removeIconTd = $(document.createElement('td')).attr("class", "borderForLoad");

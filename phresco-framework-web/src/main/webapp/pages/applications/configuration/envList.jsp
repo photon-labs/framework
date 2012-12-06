@@ -159,7 +159,7 @@
 <script type="text/javascript">
 
 	$(document).ready(function() {
-		$("#loadingIconDiv").hide();
+		hideLoadingIcon();//To hide the loading icon
 		accordion();
 	});
 

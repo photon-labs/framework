@@ -160,6 +160,7 @@
 	}
 	
 	$(document).ready(function() {
+		hideLoadingIcon();
 		if ($('#label').hasClass('techLabel')) {
 			$("#thDiv").removeClass("th-inner-test").addClass("th-inner-testtech");
 			$("#thDiv1").removeClass("th-inner-test").addClass("th-inner-testtech");

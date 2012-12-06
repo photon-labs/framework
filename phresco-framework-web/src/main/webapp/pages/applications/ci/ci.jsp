@@ -87,13 +87,13 @@
 <form action="CIBuildDelete" name="ciBuilds" id="deleteObjects" method="post" class="configurations_list_form ciFormJob">
     <div class="operation ciOperationDiv">
     	<div class="ciOperationEleme">
-	        <input id="setup" type="button" value="<s:text name="lbl.setup"/>" class="btn btn-primary" data-toggle="modal" href="#popupPage" >
-	        <input id="startJenkins" type="button" value="<s:text name="lbl.start"/>" class="btn btn-primary" data-toggle="modal" href="#popupPage" >
-	        <input id="stopJenkins" type="button" value="<s:text name="lbl.stop"/>" class="btn" disabled="disabled" data-toggle="modal" href="#popupPage" >
+	        <input id="setup" type="button" value="<s:text name="lbl.setup"/>" class="btn btn-primary">
+	        <input id="startJenkins" type="button" value="<s:text name="lbl.start"/>" class="btn btn-primary" >
+	        <input id="stopJenkins" type="button" value="<s:text name="lbl.stop"/>" class="btn" disabled="disabled" >
 	        <input id="configure" type="button" value="<s:text name="lbl.configure"/>" class="btn btn-primary">
 	        <input id="build" type="button" value="<s:text name="lbl.build"/>" class="btn" disabled="disabled" onclick="buildCI();">
-	        <input id="deleteBuild" type="button" value="<s:text name="lbl.deletebuild"/>" class="btn" disabled="disabled" data-toggle="modal" href="#popupPage">
-	        <input id="deleteJob" type="button" value="<s:text name="lbl.deletejob"/>" class="btn" disabled="disabled" data-toggle="modal" href="#popupPage">
+	        <input id="deleteBuild" type="button" value="<s:text name="lbl.deletebuild"/>" class="btn" disabled="disabled">
+	        <input id="deleteJob" type="button" value="<s:text name="lbl.deletejob"/>" class="btn" disabled="disabled">
         </div>
     </div>
     
@@ -270,7 +270,6 @@ $(document).ready(function() {
 	// hide popup
 	$('#popupPage').modal('hide');
 
-	enableScreen();
 	hideLoadingIcon();
 	hidePopuploadingIcon();
 	hideProgressBar(); // when deleting builds and jobs
@@ -399,7 +398,6 @@ function successRefreshBuild(data) {
     		console.log("Build trugger completed in jenkins , but UI is blocking ");
 //     		refreshCi = false;
     	} else {
-    		showLoadingIcon(); // Loading Icon
     		loadContent('ci', $('#deleteObjects'), $('#subcontainer'), getBasicParams(), false);
     	}
 	} else {
@@ -441,7 +439,6 @@ function refreshAfterServerUp() {
 function reloadCI() {
 	if ($("a[name='appTab'][class='active']").attr("id") == "ci" && $("#popupPage").css("display") == "none"){
 		console.log("reload CI called and going to refresh the page ");
-    	showLoadingIcon(); // Loading Icon
     	console.log("Server startup completed ..." + isCiRefresh);
 		loadContent('ci',$('#deleteObjects'), $('#subcontainer'), getBasicParams(), false);
 	} else {
@@ -474,6 +471,7 @@ function successLocalJenkinsAliveCheck (data) {
 }
 
 function successEvent(pageUrl, data) {
+	hideLoadingIcon();
 	if (pageUrl == "getNoOfJobsIsInProgress") {
 		successRefreshBuild(data);
 	} else if (pageUrl == "localJenkinsAliveCheck") {
@@ -533,7 +531,6 @@ function isOneJobSelected() {
 function popupOnClose(obj) {
 	var closeUrl = $(obj).attr("id");
 	console.log("handle load content here " + closeUrl);
-	showParentPage();
 	if (closeUrl === "setup") {
 		console.log("setup called ");
 	} else 	if (closeUrl === "startJenkins") {
@@ -547,6 +544,7 @@ function popupOnClose(obj) {
 }
 
 function popupOnOk(obj) {
+		$("#popupPage").modal('hide');
 		var okUrl = $(obj).attr("id");
 		if (okUrl == "saveJob" || okUrl == "updateJob" ) {
 			if (isOneJobSelected()) {
