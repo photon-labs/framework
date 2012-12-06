@@ -598,7 +598,7 @@
 	
 	var objName; //select box object name
 	//To get the versions of the selected mobile technologies
-	function getMobileTechVersions(layerId, techGroupId, toBeFilledCtrlName) {
+	function getTechVersions(layerId, techGroupId, toBeFilledCtrlName, techId) {
 		showLoadingIcon();
 		objName = toBeFilledCtrlName;
 		var params = getBasicParams();
