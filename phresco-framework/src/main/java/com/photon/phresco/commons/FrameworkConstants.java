@@ -743,6 +743,10 @@ public interface FrameworkConstants {
     String REQ_LOG_REPORT = "logReport";
     String REQ_PROJECT_INFO_SERVERS = "projectInfoServers";
     String REQ_PROJECT_INFO_DATABASES = "projectInfoDatabases";
+    String REQ_FEATURE_NAME = "featureName";
+    String REQ_FEATURE_NAMES = "featureNames";
+    
+    String CONFIG_FEATURES = "config_Features";
 	
 	String REQ_TESTCASE_NAME = "testCaseName";
 	String SCREENSHOT_DIR = "screenshots";

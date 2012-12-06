@@ -73,6 +73,7 @@ import com.photon.phresco.framework.model.SettingsInfo;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
 import com.photon.phresco.plugins.util.MojoProcessor;
+import com.photon.phresco.plugins.util.MojoUtil;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.TechnologyTypes;
 import com.photon.phresco.util.Utility;
@@ -736,8 +737,11 @@ public class Build extends DynamicParameterAction implements Constants {
 					.getConfigManager(new File(Utility.getProjectHome() + getApplicationInfo().getAppDirName()
 							+ File.separator + Constants.DOT_PHRESCO_FOLDER + File.separator
 							+ Constants.CONFIGURATION_INFO_FILE));
+			com.photon.phresco.plugins.model.Mojos.Mojo.Configuration configuration = mojo.getConfiguration(PHASE_RUNGAINST_SRC_START);
+			Map<String, String> configs = MojoUtil.getAllValues(configuration);
+			String environmentName = configs.get(ENVIRONMENT_NAME);
 			List<com.photon.phresco.configuration.Configuration> configurations = configManager.getConfigurations(
-					"Production", Constants.SETTINGS_TEMPLATE_SERVER);
+					environmentName, Constants.SETTINGS_TEMPLATE_SERVER);
 			String serverHost = "";
 			String serverProtocol = "";
 			int serverPort = 0;

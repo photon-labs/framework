@@ -107,7 +107,7 @@
 			<div class="build_table_div">
     			<!-- Command Display Heading starts -->
 				<div class="tblheader" style="height: 29px;">
-					<table class="zebra-striped" style="height: 29px;"> 
+					<table class="zebra-striped deployPopup" style="height: 29px;"> 
 						<tr class="tr_color">
 		    				<th><s:text name="label.progress"/></th>
 		    				<th><img src="images/icons/clipboard-copy.png" alt="clipboard" id="clipboard" title="Copy to clipboard"/></th>

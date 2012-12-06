@@ -1234,3 +1234,15 @@ function changeChckBoxValue(obj) {
 		$(obj).val("false");
 	}
 }
+
+//trim the long content
+function textTrim(obj, maxLength) {
+    var val = $(obj).text();
+    $(obj).attr("title", val);
+    var len = val.length;
+    if(len > maxLength) {
+        val = val.substr(0, maxLength) + "...";
+        return val;
+    }
+    return val;
+}

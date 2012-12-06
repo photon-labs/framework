@@ -203,6 +203,10 @@
           	<result name="success">/pages/applications/feature/config_template_prop.jsp</result>
         </action>
         
+        <action name="configureFeature" method="configureFeature" class="com.photon.phresco.framework.actions.applications.Features">
+          	<result name="success">/pages/applications/feature/features.jsp</result>
+        </action>
+        
         <!-- <action name="checkDependency" method="checkDependency" class="com.photon.phresco.framework.actions.applications.Features">
             <result type="json" />
         </action>
@@ -535,6 +539,7 @@
 		<action name="configType" method="showProperties" class="com.photon.phresco.framework.actions.applications.Configurations">
 			<interceptor-ref name="json" />
         	<result name="type">/pages/applications/configuration/type.jsp</result>
+        	<result name="success">/pages/applications/configuration/features.jsp</result>
         </action>
         
         <action name="download" method="list" class="com.photon.phresco.framework.actions.applications.Download">
