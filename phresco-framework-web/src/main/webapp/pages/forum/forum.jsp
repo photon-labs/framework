@@ -31,6 +31,7 @@
 
 <script>
 	$(document).ready(function() {
+		hideLoadingIcon();
 		reloadIframe();
 		$(".styles").click(function() {
 			reloadIframe();
