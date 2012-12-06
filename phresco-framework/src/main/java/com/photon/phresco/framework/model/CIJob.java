@@ -71,6 +71,7 @@ public class CIJob {
     private String buildName ="";
     private String buildNumber ="1";
     private String environmentName = "";
+    private String buildEnvironmentName = "";
     private String logs = "";
     private String showSettings = "";
     
@@ -88,8 +89,12 @@ public class CIJob {
     private String keypass = "";
     private String alias = "";
     private String projectType = "";
-    
+    private String jarName = "";
+    private String mainClassName = "";
+    private String jarLocation = "";
     private String minify = "";
+    
+    private String keyPassword = "";
     
     // deploy job info
     private String deviceType = "";
@@ -102,6 +107,10 @@ public class CIJob {
     private String testAgainst = "";
     private String browser = "";
     private String resolution = "";
+    
+    private String executeSql = "";
+    private String dataBase = "";
+    private String fetchSql = "";
     
     public CIJob() {
         super();
@@ -578,5 +587,69 @@ public class CIJob {
 
 	public void setProjectType(String projectType) {
 		this.projectType = projectType;
+	}
+
+	public String getKeyPassword() {
+		return keyPassword;
+	}
+
+	public void setKeyPassword(String keyPassword) {
+		this.keyPassword = keyPassword;
+	}
+
+	public String getBuildEnvironmentName() {
+		return buildEnvironmentName;
+	}
+
+	public void setBuildEnvironmentName(String buildEnvironmentName) {
+		this.buildEnvironmentName = buildEnvironmentName;
+	}
+
+	public String getExecuteSql() {
+		return executeSql;
+	}
+
+	public void setExecuteSql(String executeSql) {
+		this.executeSql = executeSql;
+	}
+
+	public String getDataBase() {
+		return dataBase;
+	}
+
+	public void setDataBase(String dataBase) {
+		this.dataBase = dataBase;
+	}
+
+	public String getFetchSql() {
+		return fetchSql;
+	}
+
+	public void setFetchSql(String fetchSql) {
+		this.fetchSql = fetchSql;
+	}
+
+	public String getJarName() {
+		return jarName;
+	}
+
+	public void setJarName(String jarName) {
+		this.jarName = jarName;
+	}
+
+	public String getMainClassName() {
+		return mainClassName;
+	}
+
+	public void setMainClassName(String mainClassName) {
+		this.mainClassName = mainClassName;
+	}
+
+	public String getJarLocation() {
+		return jarLocation;
+	}
+
+	public void setJarLocation(String jarLocation) {
+		this.jarLocation = jarLocation;
 	}
 }
