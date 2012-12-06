@@ -33,11 +33,13 @@ Width <= 1024
 		margin: 0.1% 0%;
 		width: 98% !important;
 	}
+	
 	#subcontainer {width: 74.5%; float:right; }
 	/*.navTopBorder .scroll-content {
 		width:76%;
 		margin-left:220px;
 	}*/
+	
 	.customer_name {
 		right:11.5%;
 	}
@@ -51,7 +53,6 @@ Width <= 1024
 	}
 
 	/* header starts */
-	
 	.app_list_form {
     	height: 95%;
 	}
@@ -603,6 +604,7 @@ Width size <= 1024
 		overflow-y: auto;
 		overflow-x: hidden;
 	}
+	
 	.wrapper {
 		bottom: 48px;
 		height: 100%;
@@ -3490,12 +3492,15 @@ Width > 1441 and <= 1600
 	.align-div-center {
 		width: 51%;
 	}
+
 	.customer_name {
 		right: 8.5% !important;
 	}
+
 	.featureForm {
 		height: 90% !important;
 	 }
+
 	@-moz-document url-prefix() {
 		.featureForm {
 			height: 88% !important;
