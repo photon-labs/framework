@@ -5185,6 +5185,9 @@ ul#display-inline-block-example li {
     margin-top: -5px;
 }
 
+#config_warning_icon {
+	margin-bottom: -2px;
+}
 
 .topFifty {
 	top: 50%;

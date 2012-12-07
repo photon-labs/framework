@@ -5260,6 +5260,10 @@ ul#display-inline-block-example li {
     z-index: 1041;
 }
 
+#config_warning_icon {
+	margin-bottom: -2px;
+}
+
 .alert-message.warning.sonar {
 	position:absolute;
     left:34%;

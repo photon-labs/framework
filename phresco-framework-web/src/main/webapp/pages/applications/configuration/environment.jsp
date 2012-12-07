@@ -231,6 +231,7 @@ $(document).ready(function() {
 		} else {
 			$("#multiselect ul li:last").after('<li>' + checkbox + '</li>');
 		}
+		$("#envName").val("");
 	}
 
 	function selectEnv() {

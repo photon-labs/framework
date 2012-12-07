@@ -52,6 +52,7 @@
 
     <% if (CollectionUtils.isEmpty(envs)) { %>
 		 <div class="alert alert-block">
+		 	 <img id="config_warning_icon" src="images/icons/warning_icon.png" />
 			<%= actionSupport.getText("lbl.err.msg.list." + fromPage)%>
 		</div> 
     <% } else { %>	
