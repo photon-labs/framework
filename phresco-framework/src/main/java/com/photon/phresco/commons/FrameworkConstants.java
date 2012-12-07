@@ -1341,6 +1341,8 @@ public interface FrameworkConstants {
     String XPATH_JAVA_WEBSERVICE_TESTCASE = "/testcase";
     String XPATH_NODE_JS_WEBSERVICE_TESTCASE = "/testcase";
     String XPATH_PHP_WEBSERVICE_TESTCASE = "/testcase";
+    String TEST_SLASH_PERFORMANCE = "/test/performance/";
+    String RESULTS_SLASH_JMETER = "/results/jmeter/";
     
     /* CI Keys */
     String SUCCESS_JOB = "ci.create.success";
@@ -1689,6 +1691,7 @@ public interface FrameworkConstants {
 		String TYPE_DYNAMIC_PARAMETER = "DynamicParameter";
 		String PLUGIN_PARAMETER_FRAMEWORK = "framework";
 		String REQ_DYNAMIC_PARAMETERS = "dynamicParameters";
+		String REQ_DYNAMIC_PAGE_PARAMETER  = "dynamicPageParameter";
 		String REQ_DYNAMIC_POSSIBLE_VALUES = "possibleValues";
 		String SESSION_WATCHER_MAP = "sessionDynamicParamMap";
 		

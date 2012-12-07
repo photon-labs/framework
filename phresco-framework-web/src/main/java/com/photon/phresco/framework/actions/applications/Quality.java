@@ -315,6 +315,7 @@ public class Quality extends DynamicParameterAction implements Constants {
             setSessionAttribute(appInfo.getId() + PHASE_UNIT_TEST + SESSION_WATCHER_MAP, watcherMap);
             setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
             setReqAttribute(REQ_GOAL, PHASE_UNIT_TEST);
+            setReqAttribute(REQ_PHASE, PHASE_UNIT_TEST);
     	    setProjModulesInReq();
 	    } catch (PhrescoException e) {
 	        if (s_debugEnabled) {
@@ -443,7 +444,8 @@ public class Quality extends DynamicParameterAction implements Constants {
             setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap);
             setSessionAttribute(appInfo.getId() + PHASE_FUNCTIONAL_TEST + SESSION_WATCHER_MAP, watcherMap);
             setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
-            setReqAttribute(REQ_GOAL, PHASE_FUNCTIONAL_TEST + HYPHEN + seleniumToolType);
+            setReqAttribute(REQ_GOAL, PHASE_FUNCTIONAL_TEST);
+            setReqAttribute(REQ_PHASE, PHASE_FUNCTIONAL_TEST + HYPHEN + seleniumToolType);
         } catch (PhrescoException e) {
             if (s_debugEnabled) {
                 S_LOGGER.error("Entered into catch block of Quality.showFunctionalTestPopUp()" + FrameworkUtil.getStackTraceAsString(e));
@@ -810,16 +812,23 @@ public class Quality extends DynamicParameterAction implements Constants {
         
         try {
             ApplicationInfo appInfo = getApplicationInfo();
-            removeSessionAttribute(appInfo.getId() + PHASE_FUNCTIONAL_TEST + SESSION_WATCHER_MAP);
+            removeSessionAttribute(appInfo.getId() + PHASE_PERFORMANCE_TEST + SESSION_WATCHER_MAP);
             Map<String, DependantParameters> watcherMap = new HashMap<String, DependantParameters>(8);
 
             MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_PERFORMANCE_TEST)));
             List<Parameter> parameters = getMojoParameters(mojo, PHASE_PERFORMANCE_TEST);
-
             setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap);
+            for (Parameter parameter : parameters) {
+            	if(parameter.getType().equalsIgnoreCase(TYPE_DYNAMIC_PAGE_PARAMETER)){
+            		setReqAttribute(REQ_CUSTOMER_ID, getCustomerId());
+            		List<? extends Object> dynamicPageParameter = getDynamicPageParameter(appInfo, watcherMap, parameter);
+            		setReqAttribute(REQ_DYNAMIC_PAGE_PARAMETER + parameter.getKey(), dynamicPageParameter);
+				}
+			}	
             setSessionAttribute(appInfo.getId() + PHASE_PERFORMANCE_TEST + SESSION_WATCHER_MAP, watcherMap);
             setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
             setReqAttribute(REQ_GOAL, PHASE_PERFORMANCE_TEST);
+            setReqAttribute(REQ_PHASE, PHASE_PERFORMANCE_TEST);
         } catch (PhrescoException e) {
             if (s_debugEnabled) {
                 S_LOGGER.error("Entered into catch block of Quality.showFunctionalTestPopUp()" + FrameworkUtil.getStackTraceAsString(e));
@@ -1633,6 +1642,7 @@ public class Quality extends DynamicParameterAction implements Constants {
             setSessionAttribute(appInfo.getId() + PHASE_LOAD_TEST + SESSION_WATCHER_MAP, watcherMap);
             setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
             setReqAttribute(REQ_GOAL, PHASE_LOAD_TEST);
+            setReqAttribute(REQ_PHASE, PHASE_LOAD_TEST);
     	} catch(PhrescoException e) {
     		if (s_debugEnabled) {
 	    		S_LOGGER.error("Entered into catch block of Quality.showLoadTestPopup()"+ FrameworkUtil.getStackTraceAsString(e));

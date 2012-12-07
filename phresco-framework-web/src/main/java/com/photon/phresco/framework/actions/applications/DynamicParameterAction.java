@@ -11,11 +11,13 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import org.antlr.stringtemplate.StringTemplate;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import com.photon.phresco.api.DynamicPageParameter;
 import com.photon.phresco.api.DynamicParameter;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
@@ -24,6 +26,8 @@ import com.photon.phresco.commons.model.Customer;
 import com.photon.phresco.commons.model.RepoInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
+import com.photon.phresco.framework.commons.FrameworkUtil;
+import com.photon.phresco.framework.commons.ParameterModel;
 import com.photon.phresco.framework.model.DependantParameters;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.Childs.Child;
@@ -44,6 +48,7 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
     
     //Dynamic parameter
     private List<Value> dependentValues = null; //Value for dependancy parameters
+    private String dynamicPageParameterDesign = "";
     private String currentParamKey = ""; 
     private String goal = "";
     private String selectedOption = "";
@@ -216,21 +221,17 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
         }
     }
 
-	private void addValueDependToWatcher(Map<String, DependantParameters> watcherMap, String parameterKey,
-			List<Value> values) {
+	private void addValueDependToWatcher(Map<String, DependantParameters> watcherMap, String parameterKey, List<Value> values) {
 		for (Value value : values) {
 		    if (StringUtils.isNotEmpty(value.getDependency())) {
-//                                List<String> dependencyKeys = FrameworkUtil.getCsvAsList(value.getDependency());
-		        addWatcher(watcherMap, value.getDependency(), parameterKey, value.getValue());
+		        addWatcher(watcherMap, value.getDependency(), parameterKey, value.getKey());
 		    }
 		}
 	}
 
-    private void addWatcher(Map<String, DependantParameters> watcherMap, String dependency, String parameterKey,
-            String parameterValue) {
+    private void addWatcher(Map<String, DependantParameters> watcherMap, String dependency, String parameterKey, String parameterValue) {
     	
         if (StringUtils.isNotEmpty(dependency)) {
-//            List<String> dependencyKeys = FrameworkUtil.getCsvAsList(dependency);
             List<String> dependencyKeys = Arrays.asList(dependency.split(CSV_PATTERN));
             for (String dependentKey : dependencyKeys) {
                 DependantParameters dependantParameters;
@@ -246,8 +247,7 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
         }
     }
     
-    private void addParentToWatcher(Map<String, DependantParameters> watcherMap, String parameterKey,
-    		String parameterValue) {
+    private void addParentToWatcher(Map<String, DependantParameters> watcherMap, String parameterKey, String parameterValue) {
     	
     	DependantParameters dependantParameters;
         if (watcherMap.containsKey(parameterKey)) {
@@ -266,7 +266,7 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
             paramMap.putAll(getDependantParameters(dependantParameters.getParentMap(), watcherMap));
         }
         paramMap.put(DynamicParameter.KEY_APP_INFO, appInfo);
-        paramMap.put("customerId", getCustomerId());
+        paramMap.put(REQ_CUSTOMER_ID, getCustomerId());
         if (StringUtils.isNotEmpty(getReqParameter(BUILD_NUMBER))) {
         	paramMap.put(DynamicParameter.KEY_BUILD_NO, getReqParameter(BUILD_NUMBER));
         }
@@ -350,6 +350,41 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 		} catch (Exception e) {
 			throw new PhrescoException(e);
 		}
+	}
+	
+	protected List<? extends Object> getDynamicPageParameter(ApplicationInfo appInfo, Map<String, DependantParameters> watcherMap, Parameter parameter) throws PhrescoException {
+		String parameterKey = parameter.getKey();
+		Map<String, Object> paramsMap = constructMapForDynVals(appInfo, watcherMap, parameterKey);
+		String className = parameter.getDynamicParameter().getClazz();
+		DynamicPageParameter dynamicPageParameter;
+		PhrescoDynamicLoader phrescoDynamicLoader = pdlMap.get(getCustomerId());
+		if (MapUtils.isNotEmpty(pdlMap) && phrescoDynamicLoader != null) {
+			dynamicPageParameter = phrescoDynamicLoader.getDynamicPageParameter(className);
+		} else {
+			//To get repo info from Customer object
+			Customer customer = getServiceManager().getCustomer(getCustomerId());
+			RepoInfo repoInfo = customer.getRepoInfo();
+			//To set groupid,artfid,type infos to List<ArtifactGroup>
+			List<ArtifactGroup> artifactGroups = new ArrayList<ArtifactGroup>();
+			ArtifactGroup artifactGroup = new ArtifactGroup();
+			artifactGroup.setGroupId(parameter.getDynamicParameter().getDependencies().getDependency().getGroupId());
+			artifactGroup.setArtifactId(parameter.getDynamicParameter().getDependencies().getDependency().getArtifactId());
+			artifactGroup.setPackaging(parameter.getDynamicParameter().getDependencies().getDependency().getType());
+			//to set version
+			List<ArtifactInfo> artifactInfos = new ArrayList<ArtifactInfo>();
+	        ArtifactInfo artifactInfo = new ArtifactInfo();
+	        artifactInfo.setVersion(parameter.getDynamicParameter().getDependencies().getDependency().getVersion());
+			artifactInfos.add(artifactInfo);
+	        artifactGroup.setVersions(artifactInfos);
+			artifactGroups.add(artifactGroup);
+			
+			//dynamically loads specified Class
+			phrescoDynamicLoader = new PhrescoDynamicLoader(repoInfo, artifactGroups);
+			dynamicPageParameter = phrescoDynamicLoader.getDynamicPageParameter(className);
+			pdlMap.put(getCustomerId(), phrescoDynamicLoader);
+		}
+		
+		return dynamicPageParameter.getObjects(paramsMap);
 	}
 	
 	/**
@@ -438,7 +473,7 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
         return SUCCESS;
     }
     
-    public String updateDependancy() {
+    public String updateDependancy() throws IOException {
         if (s_debugEnabled) {
             S_LOGGER.debug("Entering Method Quality.updateDependancy()");
         }
@@ -452,13 +487,23 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
                 // Get the values from the dynamic parameter class
                 Parameter dependentParameter = mojo.getParameter(getGoal(), getDependency());
                 if (dependentParameter.getDynamicParameter() != null) {
+                	ApplicationInfo applicationInfo2 = getApplicationInfo();
                     Map<String, Object> constructMapForDynVals = constructMapForDynVals(applicationInfo, watcherMap, getDependency());
-                    List<Value> dependentPossibleValues = getDynamicPossibleValues(constructMapForDynVals, dependentParameter);
-                    setDependentValues(dependentPossibleValues);
-                    if (watcherMap.containsKey(getDependency())) {
-                        DependantParameters dependantParameters = (DependantParameters) watcherMap.get(getDependency());
-                        dependantParameters.setValue(dependentPossibleValues.get(0).getValue());
-                    }
+                    if (TYPE_DYNAMIC_PAGE_PARAMETER.equalsIgnoreCase(dependentParameter.getType())) {
+                    	List<? extends Object> dynamicPageParameter = getDynamicPageParameter(applicationInfo2, watcherMap, dependentParameter);
+                    	FrameworkUtil frameworkUtil = new FrameworkUtil();
+                    	ParameterModel parameterModel = new ParameterModel();
+                    	parameterModel.setName(dependentParameter.getKey());
+                    	StringTemplate constructDynamicTemplate = frameworkUtil.constructDynamicTemplate(getCustomerId(), dependentParameter, parameterModel, dynamicPageParameter);
+                    	setDynamicPageParameterDesign(constructDynamicTemplate.toString());
+                    } else {
+	                    List<Value> dependentPossibleValues = getDynamicPossibleValues(constructMapForDynVals, dependentParameter);
+	                    setDependentValues(dependentPossibleValues);
+	                    if (watcherMap.containsKey(getDependency())) {
+	                        DependantParameters dependantParameters = (DependantParameters) watcherMap.get(getDependency());
+	                        dependantParameters.setValue(dependentPossibleValues.get(0).getValue());
+	                    }
+                    }    
                 }
             }
             return SUCCESS;
@@ -584,5 +629,13 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 
 	public void setFileOrFolder(String fileOrFolder) {
 		this.fileOrFolder = fileOrFolder;
+	}
+
+	public void setDynamicPageParameterDesign(String dynamicPageParameterDesign) {
+		this.dynamicPageParameterDesign = dynamicPageParameterDesign;
+	}
+
+	public String getDynamicPageParameterDesign() {
+		return dynamicPageParameterDesign;
 	}
 }
