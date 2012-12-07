@@ -19,6 +19,8 @@
  */
 package com.photon.phresco.framework.actions.applications;
 
+import static com.photon.phresco.util.Constants.PHASE_FUNCTIONAL_TEST;
+
 import java.io.*;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
@@ -271,16 +273,18 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
             	parameters = getMojoParameters(mojo, PHASE_DEPLOY);
             	setReqAttribute(REQ_PHASE, PHASE_DEPLOY);
             } else if (FUNCTIONAL_TEST.equals(operation)) {
-            	parameters = getMojoParameters(mojo, Constants.PHASE_FUNCTIONAL_TEST);
-            	setReqAttribute(REQ_PHASE, Constants.PHASE_FUNCTIONAL_TEST);
+				FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+				String seleniumToolType = frameworkUtil.getSeleniumToolType(appInfo);
+            	parameters = getMojoParameters(mojo, PHASE_FUNCTIONAL_TEST + HYPHEN + seleniumToolType);
+                setReqAttribute(REQ_PHASE, PHASE_FUNCTIONAL_TEST + HYPHEN + seleniumToolType);
             }
             
             setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap);
             setSessionAttribute(appInfo.getId() + PHASE_CI + SESSION_WATCHER_MAP, watcherMap);
             setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
             setReqAttribute(REQ_GOAL, PHASE_CI);
-		} catch (PhrescoException e) {
-			return showErrorPopup(e, getText(EXCEPTION_BUILD_POPUP));
+		} catch (Exception e) {
+			return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_BUILD_POPUP));
 		}
 		return SUCCESS;
 	}
@@ -437,7 +441,6 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 			// Build info
 			ApplicationInfo applicationInfo = getApplicationInfo();
 			List<String> preBuildStepCmds = new ArrayList<String>();
-//			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_PACKAGE)));
 			
 			List<Parameter> parameters = null;
 			String mvncmd = "";
