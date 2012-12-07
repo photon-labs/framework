@@ -222,6 +222,7 @@
 	}
 	
 	$(document).ready(function() {
+		hideLoadingIcon();
 		changeView ();//Change to graphical/tabular view based on the selection
 		hideLoadingIcon();//To hide the loading icon once the page is loaded
 		canvasInit();//To draw the graph
