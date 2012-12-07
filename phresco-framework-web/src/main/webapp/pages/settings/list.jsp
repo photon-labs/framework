@@ -91,7 +91,7 @@
 
 <script type="text/javascript">
 		$('#addEnvironments').click(function() {
-			yesnoPopup('openEnvironmentPopup', '<s:text name="lbl.environment"/>', 'createEnvironment', '', '', 'fromPage=<%=fromPage%>&configPath=<%=configPath%>');
+			yesnoPopup('openEnvironmentPopup', '<s:text name="lbl.environment"/>', 'createEnvironment', '<s:text name="label.ok"/>', '', 'fromPage=<%=fromPage%>&configPath=<%=configPath%>');
 		});
 	
 	confirmDialog($("#deleteBtn"), '<s:text name="lbl.hdr.confirm.dialog"/>', '<s:text name="modal.body.text.del.configuration"/>', 'delete','<s:text name="lbl.btn.ok"/>');
@@ -154,7 +154,7 @@
 			params = params.concat(configPath);
 			params = params.concat("&currentConfigDesc=");
 			params = params.concat(currentConfigDesc);
-	        yesnoPopup('cloneConfigPopup', 'Clone Environment', 'cloneConfiguration', '', '', params);
+	        yesnoPopup('cloneConfigPopup', 'Clone Environment', 'cloneConfiguration', '<s:text name="lbl.clone"/>', '', params);
 	} 
 	 
 	function popupOnOk(self) {

@@ -82,6 +82,8 @@
     String goal = (String) request.getAttribute(FrameworkConstants.REQ_GOAL);
     String phase = (String) request.getAttribute(FrameworkConstants.REQ_PHASE);
     String appId  = applicationInfo.getId();
+    String customerId = (String) request.getAttribute(FrameworkConstants.REQ_CUSTOMER_ID);
+    FrameworkUtil frameworkUtil = new FrameworkUtil();
     DynamicParameterAction dpm = new DynamicParameterAction();
     MojoProcessor mojo = new MojoProcessor(new File(dpm.getPhrescoPluginInfoXmlFilePath(goal, applicationInfo)));
 %>
@@ -200,7 +202,10 @@
 							onChangeFunction = "selectBoxOnChangeEvent(this,  '"+ parameter.getKey() +"')";							
 						}
 					}
-					
+			
+					if ("edit".equalsIgnoreCase(parameter.getEditable())) {
+						parameterModel.setOptionOnclickFunction("jecOptionChange();");
+					}
 					parameterModel.setOnChangeFunction(onChangeFunction);
 					parameterModel.setObjectValue(psblValues);
 					parameterModel.setMultiple(Boolean.parseBoolean(parameter.getMultiple()));
@@ -208,43 +213,12 @@
 					StringTemplate selectElmnt = FrameworkUtil.constructSelectElement(parameterModel);
 	%>
 					<%= selectElmnt %>
-	<% 			
-				} else if (FrameworkConstants.TYPE_EDITABLE_COMBO.equalsIgnoreCase(parameter.getType()) && parameter.getPossibleValues() != null) { //load select list box
-					//To construct select box element if type is list and if possible value exists
-			    	List<com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value> psblValues = parameter.getPossibleValues().getValue();
-			    	if (StringUtils.isNotEmpty(parameter.getValue())) {//To get the previously selected value from the phresco-plugin-info
-						List<String> selectedValList = Arrays.asList(parameter.getValue().split(FrameworkConstants.CSV_PATTERN));	
-						parameterModel.setSelectedValues(selectedValList);
-					}
-			    	
-					String onChangeFunction = "";
-					if (StringUtils.isNotEmpty(parameter.getDependency())) {
-						onChangeFunction = "selectBoxOnChangeEvent(this,  '"+ parameter.getKey() +"', '"+ parameter.getDependency() +"')";
-					} else if (CollectionUtils.isNotEmpty(psblValues)) {
-						boolean addOnChangeEvent = false;
-						for (com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value psblValue : psblValues) {
-							if (psblValue.getDependency() != null) {
-								addOnChangeEvent = true;
-								break;
-							}
-						}
-						if (addOnChangeEvent) {
-							onChangeFunction = "selectBoxOnChangeEvent(this,  '"+ parameter.getKey() +"')";							
-						}
-					}
-					
-					parameterModel.setOnChangeFunction(onChangeFunction);
-					parameterModel.setObjectValue(psblValues);
-					parameterModel.setMultiple(Boolean.parseBoolean(parameter.getMultiple()));
-					parameterModel.setDependency(parameter.getDependency());
-					parameterModel.setOptionOnclickFunction("jecOptionChange();");
-					StringTemplate selectElmnt = FrameworkUtil.constructSelectElement(parameterModel);
+	<%				if ("edit".equalsIgnoreCase(parameter.getEditable())) {
 	%>
-					<%= selectElmnt %>
 					<script type="text/javascript">
 						$("#" + '<%= parameter.getKey() %>').jec();
 						$('.jecEditableOption').text("Type or select from the list");
-						$("#"+'<%= parameter.getKey() %>'+" .jecEditableOption").prop("selected", true);
+						<%-- $("#"+'<%= parameter.getKey() %>'+" .jecEditableOption").prop("selected", true); --%>
 						$("#" + '<%= parameter.getKey() %>').click(function() {
 							var optionClass = $("#"+'<%= parameter.getKey() %>'+" :selected").attr("class");
 							if (optionClass != undefined && optionClass == "jecEditableOption") {
@@ -252,8 +226,9 @@
 							}
 						});
 					</script>
-	<% 			
-				} else if (FrameworkConstants.TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(parameter.getType()) && (!parameter.isSort())) {
+		
+	<%				}
+				}  else if (FrameworkConstants.TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(parameter.getType()) && (!parameter.isSort())) {
 					//To dynamically load values into select box for environmet
 					List<com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value> dynamicPsblValues = (List<com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value>) request.getAttribute(FrameworkConstants.REQ_DYNAMIC_POSSIBLE_VALUES + parameter.getKey());
 					if (StringUtils.isNotEmpty(parameter.getValue())) {
@@ -266,7 +241,9 @@
 					} else {
 					    onChangeFunction = "";
 					}
-					
+					if ("edit".equalsIgnoreCase(parameter.getEditable())) {
+						parameterModel.setOptionOnclickFunction("jecOptionChange();");
+					}
 					parameterModel.setOnChangeFunction(onChangeFunction);
 					parameterModel.setObjectValue(dynamicPsblValues);
 					parameterModel.setMultiple(Boolean.parseBoolean(parameter.getMultiple()));
@@ -275,7 +252,21 @@
 					StringTemplate selectDynamicElmnt = FrameworkUtil.constructSelectElement(parameterModel);
 	%>				
 		    		<%= selectDynamicElmnt %>
-	<%
+	<%				if ("edit".equalsIgnoreCase(parameter.getEditable())) {
+	%>
+					<script type="text/javascript">
+						$("#" + '<%= parameter.getKey() %>').jec();
+						$('.jecEditableOption').text("Type or select from the list");
+						<%-- $("#"+'<%= parameter.getKey() %>'+" .jecEditableOption").prop("selected", true); --%>
+						$("#" + '<%= parameter.getKey() %>').click(function() {
+							var optionClass = $("#"+'<%= parameter.getKey() %>'+" :selected").attr("class");
+							if (optionClass != undefined && optionClass == "jecEditableOption") {
+								 $('.jecEditableOption').text("");
+							}
+						});
+					</script>
+		
+	<%				}
 				} else if (FrameworkConstants.TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(parameter.getType()) && (parameter.isSort())) {
 					List<com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value> dynamicPsblValues = (List<com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value>) request.getAttribute(FrameworkConstants.REQ_DYNAMIC_POSSIBLE_VALUES + parameter.getKey());
 					parameterModel.setObjectValue(dynamicPsblValues);
@@ -316,7 +307,8 @@
 					<%= browseFileElement %>
 	<%			
 				} else if (FrameworkConstants.TYPE_DYNAMIC_PAGE_PARAMETER.equalsIgnoreCase(parameter.getType())) {
-				    StringTemplate dynamicPageTemplate = FrameworkUtil.constructDynamicTemplate();
+					List<? extends Object> obj = (List<? extends Object>) request.getAttribute(FrameworkConstants.REQ_DYNAMIC_PAGE_PARAMETER + parameter.getKey());
+					StringTemplate dynamicPageTemplate = frameworkUtil.constructDynamicTemplate(customerId, parameter, parameterModel, obj);
 	%>
 					<%= dynamicPageTemplate %>
 	<% 
@@ -352,109 +344,10 @@
 		$('.jecEditableOption').click(function() {
 	       $('.jecEditableOption').text("");
 	    });
-		
-		$('#importSql').click(function() {
-			var isChecked = $('#importSql').is(":checked");
-			if (isChecked) {
-<%-- 				$("#errMsg").html('<%= FrameworkConstants.EXEC_SQL_MSG %>'); --%>
-				// getting database list based on environment and and execute sqk checkbox
-		    } else {
-		    	$('#DbWithSqlFiles').val("");
-		    	$("#errMsg").empty();
-		    }
-			// show hide sql execution fieldset
-			executeSqlShowHide();
-		});
-		
-		$('#hideLog').change(function() {
-			var isChecked = $('#hideLog').is(":checked");
-			if (isChecked) {
-				$("#errMsg").html('<%= FrameworkConstants.HIDE_LOG_MSG %>');
-		    } else {
-		    	$("#errMsg").empty();
-		    }
-		});
-		
-		$('#androidSigning').click(function() {
-// 			if ($(this).is(':checked')) {
-				// remove existing duplicate div
-				$('#advancedSettingsBuildForm').remove();
-				showAdvSettingsConfigure();
-// 			} else {
-// 				removeAdvSettings();
-// 			}
-		})
-		
-		$('#environments').change(function() {
-			if ($("#from").val() != "generateBuild") {
-				
-				$('#DbWithSqlFiles').val("");
-				executeSqlShowHide();
-			}
-		});
-		
-		//execute Sql script
-		executeSqlShowHide();
-// 		showHideMinusIcon();
 	});
 	
 	function jecOptionChange() {
 		 $('.jecEditableOption').text("Type or select from the list");
-	}
-	
-	function executeSqlShowHide() {
-		if($('#importSql').is(":checked")) {
-			loadingIconShow();
-			$('#sqlExecutionContain').show();
-			// after fieldset completed, we have to load db and sql files
-		getDatabases();
-		} else {
-			$('#sqlExecutionContain').hide();
-		}
-	}
-	
-	function getDatabases() {
-		if (!isBlank($("#environments").val())) { 
-			var params = 'environments=';
-		    params = params.concat($("#environments").val());
-		    <%-- params = params.concat("&projectCode=");
-		    params = params.concat('<%= projectCode %>'); --%>
-			performAction("getSqlDatabases", params, '', true);
-		}
-	}
-	
-	$("#databases").change(function() {
-		loadingIconShow();
-		getSQLFiles();
-	});
-	
-	function getSQLFiles() {
-		if(!isBlank($("#databases").val())) {
-			var params = 'selectedDb=';
-		    params = params.concat($("#databases").val());
-		    params =  params.concat('&environments=');
-		    params = params.concat($("#environments").val());
-		   <%--  params = params.concat("&projectCode=");
-		    params = params.concat('<%= projectCode %>'); --%>
-			performAction("fetchSQLFiles", params, '', true);
-		}
-	}
-
-	function loadingIconShow() {
-		$('.popupLoadingIcon').show();
-		getCurrentCSS();
-	}
-	
-	function hideLoadingIcon() {
-		$('.popupLoadingIcon').hide();
-	}
-	
-	function checkObj(obj) {
-		if(obj == "null" || obj == undefined) {
-			return "";
-		} else {
-			return obj;
-		}
 	}
 	
 	function buildValidateSuccess(lclURL, lclReaderSession) {
@@ -485,17 +378,7 @@
 	}
 	
 	function performUrlActions(url, actionType) {
-		<%-- var params = "";
-		params = params.concat("&environments=");
-		params = params.concat(getSelectedEnvs());
-		params = params.concat("&DbWithSqlFiles=");
-		params = params.concat($('#DbWithSqlFiles').val()); --%>
 		readerHandlerSubmit(url, '<%= appId %>', actionType, $("#generateBuildForm"), true, getBasicParams(), $("#console_div"));
-	}
-	
-	function showAdvSettingsConfigure() {
-		showPopup();
-		popup('advancedBuildSettings', '', $('#popup_div'), '', true);
 	}
 	
 	//to update build number in hidden field for deploy popup
@@ -604,6 +487,11 @@
 	}
 	
 	function updateDependancySuccEvent(data) {
+		if (data.dynamicPageParameterDesign != undefined && !isBlank(data.dynamicPageParameterDesign)) {
+			$('#' + data.dependency + "WholeDivId").empty();
+			$('#' + data.dependency + "WholeDivId").append(data.dynamicPageParameterDesign);
+		}
+		
 		if (data.dependency != undefined && !isBlank(data.dependency)) {
 			if (data.dependentValues != undefined && !isBlank(data.dependentValues)) {
 				var isMultiple = $('#' + data.dependency).attr("isMultiple");
@@ -631,23 +519,6 @@
 			}
 		}
 		return dependencies;
-	}
-	
-	function addRow(obj) {
-		var removeIconTd = $(document.createElement('td')).attr("class", "borderForLoad");
-		var removeIconAnchr = $(document.createElement('a'));
-		var removeIcon = $(document.createElement('img')).attr("class", "add imagealign").attr("src", "images/icons/minus_icon.png").attr("onclick", "removeRow(this)");
-		removeIconAnchr.append(removeIcon);
-		removeIconTd.append(removeIconAnchr);
-		var columns = $(obj).closest('table').children('tbody').children('tr:first').html();
-		var newRow = $(document.createElement('tr')).attr("class", "borderForLoad");
-		newRow.append(columns);
-		newRow.append(removeIconTd);
-		newRow.appendTo("#propTempTbodyForHeader");
-	}
-	
-	function removeRow(obj) {
-		$(obj).closest('tr').remove();
 	}
 	
 	function getTextElement(id, name) {

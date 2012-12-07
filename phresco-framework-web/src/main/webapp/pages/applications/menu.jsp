@@ -40,6 +40,18 @@
 		var params = getBasicParams();
 		loadContent('features', $('#formAppInfo'), $('#subcontainer'), params);
 	}
+  	
+  	$('#testmenu').hide();
+  	
+  	$(".tabs li a").click(function() {
+  		if($(this).attr("id")=="quality") {
+        	$("#testmenu").slideDown();
+  		}
+  		else if($(this).attr("name")=="appTab") {
+  	        $("#testmenu").slideUp(); 
+  		}
+      });
+  
 </script>
 
 <%
@@ -78,6 +90,21 @@
 		</li>
 		<li>
 			<a href="#" class="inactive" name="appTab" id="quality"><s:label key="lbl.app.menu.quality" theme="simple"/></a>
+		
+			<ul id="testmenu">
+				<li>
+					<a href="#" class="active" name="qualityTab" id="unit"><s:label key="lbl.quality.menu.unit" theme="simple"/></a>
+				</li>
+				<li>
+					<a href="#" class="inactive" name="qualityTab" id="functional"><s:label key="lbl.quality.menu.funtional" theme="simple"/></a>
+				</li>
+				<li>
+					<a href="#" class="inactive" name="qualityTab" id="performance"><s:label key="lbl.quality.menu.performance" theme="simple"/></a>
+				</li>
+				<li>
+					<a href="#" class="inactive" name="qualityTab" id="load"><s:label key="lbl.quality.menu.load" theme="simple"/></a>
+				</li>
+			</ul>
 		</li>
 		<li>
 			<a href="#" class="inactive" name="appTab" id="ci"><s:label key="lbl.app.menu.ci"  theme="simple"/></a>

@@ -19,9 +19,11 @@
  */
 package com.photon.phresco.framework.commons;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.math.BigDecimal;
@@ -45,14 +47,20 @@ import org.apache.log4j.Logger;
 import org.w3c.dom.Element;
 
 import com.photon.phresco.commons.model.ApplicationInfo;
+import com.photon.phresco.commons.model.ArtifactGroup;
+import com.photon.phresco.commons.model.ArtifactInfo;
+import com.photon.phresco.commons.model.Customer;
+import com.photon.phresco.commons.model.RepoInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.FrameworkConfiguration;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
 import com.photon.phresco.framework.api.ProjectAdministrator;
 import com.photon.phresco.framework.model.PerformanceDetails;
+import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
 import com.photon.phresco.util.Constants;
+import com.photon.phresco.util.PhrescoDynamicLoader;
 import com.photon.phresco.util.TechnologyTypes;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.exception.PhrescoPomException;
@@ -82,7 +90,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     private Properties qualityReportsProp;
     private String fileName = "quality-report.properties";
    
-    private FrameworkUtil() throws PhrescoException {
+    public FrameworkUtil() throws PhrescoException {
         InputStream stream = null;
         stream = this.getClass().getClassLoader().getResourceAsStream(fileName);
         qualityReportsProp = new Properties();
@@ -748,6 +756,32 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 		return controlGroupElement;
     }
 	
+	public static StringTemplate constructCustomParameters() {
+	    StringTemplate controlGroupElement = new StringTemplate(getCustomParamTableTemplate());
+	    
+	    return controlGroupElement;
+	}
+	
+	private static String getCustomParamTableTemplate() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<table>")
+        .append("<tbody id='propTempTbodyForHeader'>")
+        .append("<tr class='borderForLoad'>")
+        .append("<td class=\"noBorder\">")
+        .append("<input type=\"text\" class=\"input-medium\" ")
+        .append("name=\"key\" placeholder=\"Key\" value=\"\">")
+        .append("</td>")
+        .append("<td class=\"noBorder\">")
+        .append("<input type=\"text\" class=\"input-medium\" ")
+        .append("name=\"value\" placeholder=\"Value\" value=\"\">")
+        .append("</td>")
+        .append("<td class='borderForLoad noBorder'>")
+        .append("<a><img class='add imagealign' src='images/icons/add_icon.png' onclick='addRow(this);'></a></td>")
+        .append("</tr></tbody></table>");
+        
+        return sb.toString();
+    }
+	
     private static void updateChildLabels(StringTemplate mapElement, BasicParameterModel child) {
         String keyLabel = (String) mapElement.getAttribute("keyLabel");
         if (StringUtils.isEmpty(keyLabel)) {
@@ -1007,22 +1041,47 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 		return controlGroupElement;
     }
     
-    public static StringTemplate constructDynamicTemplate() throws IOException {
-        try {
-            StringTemplateGroup group = new StringTemplateGroup("templateGroup", "C:/Documents and Settings/loheswaran_g/workspace/projects/PHP-tech-php/.phresco");
-            StringTemplate stringTemplate = group.getInstanceOf("contextUrls");
-            PerformanceDetails performanceDetails = new PerformanceDetails();
-            performanceDetails.setNoOfUsers(5);
-            performanceDetails.setRampUpPeriod(560);
-            stringTemplate.setAttribute("myObject", performanceDetails);
-            return stringTemplate;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        
-        return null;
+    public StringTemplate constructDynamicTemplate(String CustomerId, Parameter parameter,ParameterModel parameterModel, List<? extends Object> obj) throws IOException {
+    	try {
+    		StringBuilder sb = new StringBuilder();
+    		String line;
+    		Customer customer = getServiceManager().getCustomer(CustomerId);
+    		RepoInfo repoInfo = customer.getRepoInfo();
+    		List<ArtifactGroup> artifactGroups = new ArrayList<ArtifactGroup>();
+    		ArtifactGroup artifactGroup = new ArtifactGroup();
+    		artifactGroup.setGroupId(parameter.getDynamicParameter().getDependencies().getDependency().getGroupId());
+    		artifactGroup.setArtifactId(parameter.getDynamicParameter().getDependencies().getDependency().getArtifactId());
+    		artifactGroup.setPackaging(parameter.getDynamicParameter().getDependencies().getDependency().getType());
+    		//to set version
+    		List<ArtifactInfo> artifactInfos = new ArrayList<ArtifactInfo>();
+    		ArtifactInfo artifactInfo = new ArtifactInfo();
+    		artifactInfo.setVersion(parameter.getDynamicParameter().getDependencies().getDependency().getVersion());
+    		artifactInfos.add(artifactInfo);
+    		artifactGroup.setVersions(artifactInfos);
+    		artifactGroups.add(artifactGroup);
+    		//dynamically loads Template Stream 
+    		PhrescoDynamicLoader phrescoDynamicLoader = new PhrescoDynamicLoader(repoInfo, artifactGroups);
+    		InputStream fileStream = phrescoDynamicLoader.getResourceAsStream(parameterModel.getName()+".st");
+    		BufferedReader br = new BufferedReader(new InputStreamReader(fileStream));
+    		while ((line = br.readLine()) != null) {
+    			sb.append(line);
+    		} 
+    		
+    		StringTemplate dynamicTemplateDiv = new StringTemplate(getDynamicTemplateWholeDiv());
+    		dynamicTemplateDiv.setAttribute("templateClass", parameterModel.getName() + "WholeDivClass");
+    		dynamicTemplateDiv.setAttribute("templateId", parameterModel.getName() + "WholeDivId");
+    		StringTemplate stringTemplate = new StringTemplate(sb.toString());
+    		stringTemplate.setAttribute("myObject", obj);
+    		dynamicTemplateDiv.setAttribute("templateDesign", stringTemplate);
+    		
+    		return dynamicTemplateDiv;
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    	}
+
+    	return null;
     }
-    
+   
     private static String getControlGroupTemplate() {
     	StringBuilder sb = new StringBuilder();
     	sb.append("<div class='control-group $ctrlGrpClass$' id=\"$ctrlGrpId$\">")
@@ -1162,6 +1221,13 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	.append("<img class='moveDown' id='down' title='Move down' src='images/icons/btm_arrow.png' onclick='moveDown();'></td></tr></tbody></table>")
     	.append("<input type='hidden' value='' name='fetchSql' id='fetchSql'></fieldset>");	
 
+    	return sb.toString();
+    }
+    
+    private static String getDynamicTemplateWholeDiv() {
+    	StringBuilder sb = new StringBuilder();
+    	sb.append("<div class='$templateClass$' id='$templateId$'> $templateDesign$ </div>");
+    	
     	return sb.toString();
     }
     

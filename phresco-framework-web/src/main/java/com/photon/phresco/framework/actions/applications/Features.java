@@ -29,6 +29,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -116,7 +117,7 @@ public class Features extends FrameworkBaseAction {
 			setReqAttribute(REQ_OLD_APPDIR, getOldAppDirName());
 			setSessionAttribute(getAppId() + SESSION_APPINFO, projectInfo);
 		} catch (Exception e) {
-			e.printStackTrace();
+		    
 		}
     	
 	    return APP_FEATURES;
@@ -187,6 +188,7 @@ public class Features extends FrameworkBaseAction {
     	        for (SettingsTemplate settingsTemplate : settingsTemplates) {
                     if (settingsTemplate.getId().equals(getConfigTemplateType())) {
                         propertyTemplates = settingsTemplate.getProperties();
+                        setReqAttribute(REQ_HAS_CUSTOM_PROPERTY, settingsTemplate.isCustomProp());
                         break;
                     }
                 }
@@ -194,7 +196,6 @@ public class Features extends FrameworkBaseAction {
 	        setReqAttribute(REQ_PROPERTIES, propertyTemplates);
         } catch (Exception e) {
             // TODO: handle exception
-            e.printStackTrace();
         }
 	    
 	    return SUCCESS;
@@ -220,6 +221,13 @@ public class Features extends FrameworkBaseAction {
                 String value = getReqParameter(key);
                 properties.setProperty(key, value);
             }
+            String[] keys = getReqParameterValues(REQ_KEY);
+            String[] values = getReqParameterValues(REQ_VALUE);
+            if (!ArrayUtils.isEmpty(keys) && !ArrayUtils.isEmpty(values)) {
+                for (int i = 0; i < keys.length; i++) {
+                    properties.setProperty(keys[i], values[i]);
+                }
+            }
             Configuration configuration = new Configuration();
             configuration.setName(getFeatureName());
             configuration.setProperties(properties);
@@ -243,38 +251,18 @@ public class Features extends FrameworkBaseAction {
                     String keyStr = (String) key;
                     String value = properties.getProperty(keyStr);
                     String dispName = keyStr.replace(".", " ");
-                    /*int count = StringUtils.countMatches(keyStr, ".");
-                    String dispName = "";
-                    if (count >= 2) {
-                        int nthOccurrence = nthOccurrence(keyStr, '.', count - 1);
-                        dispName = keyStr.substring(nthOccurrence + 1, keyStr.length());
-                    } else {
-                        dispName = keyStr;
-                    }
-                    dispName = dispName.replace(".", " ");
-                    String dispName = ((String) key).substring(((String) key).lastIndexOf("."), ((String) key).length());*/
                     PropertyTemplate propertyTemplate = new PropertyTemplate();
                     propertyTemplate.setKey(keyStr);
                     propertyTemplate.setName(dispName);
                     //propertyTemplate.setPossibleValues(Collections.singleton(value));
                     propertyTemplates.add(propertyTemplate);
                 }
+                setReqAttribute(REQ_HAS_CUSTOM_PROPERTY, true);
             }
 	    } catch (Exception e) {
 	        // TODO: handle exception
-	        e.printStackTrace();
 	    }
 	}
-	
-	/*private static int nthOccurrence(String str, char character, int n) {
-	    int position = str.indexOf(character, 0);
-	    if (n > 1) {
-    	    while (n-- > 0 && position != -1 && n > 0) {
-    	        position = str.indexOf(character, position + 1);
-    	    }
-	    }
-	    return position;
-	}*/
 	
 	private ApplicationProcessor getApplicationProcessor() {
         ApplicationProcessor applicationProcessor = null;

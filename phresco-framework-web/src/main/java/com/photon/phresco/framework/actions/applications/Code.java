@@ -264,6 +264,7 @@ public class Code extends DynamicParameterAction implements Constants {
             setSessionAttribute(appInfo.getId() + PHASE_VALIDATE_CODE + SESSION_WATCHER_MAP, watcherMap);
             setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
             setReqAttribute(REQ_GOAL, PHASE_VALIDATE_CODE);
+            setReqAttribute(REQ_PHASE, PHASE_VALIDATE_CODE);
 		} catch (PhrescoException e) {
 			if (debugEnabled) {
 				S_LOGGER.error("Entered into catch block of Code.showCodeValidatePopup()" + FrameworkUtil.getStackTraceAsString(e));

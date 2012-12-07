@@ -20,7 +20,6 @@
 <%@page import="com.opensymphony.xwork2.ActionSupport"%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
-
 <%@ page import="java.util.List"%>
 <%@ page import="java.util.ArrayList"%>
 <%@ page import="java.util.Collection"%>
@@ -74,18 +73,14 @@
 			</div>
 		</s:if>
     </div>
-    
     <div id="loadEnv"> </div>
-    
 </form>
 
-
-
 <script type="text/javascript">
-		$('#addEnvironments').click(function() {
-			yesnoPopup('openEnvironmentPopup', '<s:text name="lbl.environment"/>', 'createEnvironment', '', '', 'fromPage=<%=fromPage%>&configPath=<%=configPath%>');
-		});
-	
+	$('#addEnvironments').click(function() {
+		yesnoPopup('openEnvironmentPopup', '<s:text name="lbl.environment"/>', 'createEnvironment', '<s:text name="label.ok"/>', '', 'fromPage=<%=fromPage%>&configPath=<%=configPath%>');
+	});
+
 	confirmDialog($("#deleteBtn"), '<s:text name="lbl.hdr.confirm.dialog"/>', '<s:text name="modal.body.text.del.configuration"/>', 'delete','<s:text name="lbl.btn.ok"/>');
 	
 	$(document).ready(function() {
@@ -97,49 +92,48 @@
 		loadJsonContent('envList', params,  $('#loadEnv'));
 		
 		//Trigerred when add btn is clicked
-    	$('#configAdd').click(function() {
-    		showLoadingIcon();
-    		loadContent('addConfiguration', $('#formCustomers, #formAppMenu'), $('#subcontainer'), 'fromPage=add<%=fromPage%>&configPath=<%=configPath%>');
-    	});
-		
+		$('#configAdd').click(function() {
+		showLoadingIcon();
+		loadContent('addConfiguration', $('#formCustomers, #formAppMenu'), $('#subcontainer'), 'fromPage=add<%=fromPage%>&configPath=<%=configPath%>');
+		});
 	});
 	
-	 function editConfiguration(currentEnvName, currentConfigType, currentConfigName) {
-		 	var params = getBasicParams();
-		 	var fromPage = "edit<%= fromPage%>";
-		 	var configPath = "<%= configPath%>";
-			params = params.concat("&currentEnvName=");
-			params = params.concat(currentEnvName);
-			params = params.concat("&currentConfigType=");
-			params = params.concat(currentConfigType);
-			params = params.concat("&currentConfigName=");
-			params = params.concat(currentConfigName);
-			params = params.concat("&fromPage=");
-			params = params.concat(fromPage);
-			params = params.concat("&configPath=");
-			params = params.concat(configPath);
-			showLoadingIcon();
-			loadContent("editConfiguration", $("#formConfigAdd"), $('#subcontainer'), params);
+	function editConfiguration(currentEnvName, currentConfigType, currentConfigName) {
+		var params = getBasicParams();
+		var fromPage = "edit<%= fromPage%>";
+		var configPath = "<%= configPath%>";
+		params = params.concat("&currentEnvName=");
+		params = params.concat(currentEnvName);
+		params = params.concat("&currentConfigType=");
+		params = params.concat(currentConfigType);
+		params = params.concat("&currentConfigName=");
+		params = params.concat(currentConfigName);
+		params = params.concat("&fromPage=");
+		params = params.concat(fromPage);
+		params = params.concat("&configPath=");
+		params = params.concat(configPath);
+		showLoadingIcon();
+		loadContent("editConfiguration", $("#formConfigAdd"), $('#subcontainer'), params);
 	}
 	 
 	 
-	 function cloneConfiguration(configName, envName, configType, currentConfigDesc) {
-		 	var params = getBasicParams();
-		 	var fromPage = "<%= fromPage%>";
-		 	var configPath = "<%= configPath%>";
-	        params = params.concat("&configName=");
-	        params = params.concat(configName);
-	        params = params.concat("&envName=");
-	        params = params.concat(envName);
-	        params = params.concat("&configType=");
-	        params = params.concat(configType);
-	        params = params.concat("&fromPage=");
-			params = params.concat(fromPage);
-			params = params.concat("&configPath=");
-			params = params.concat(configPath);
-			params = params.concat("&currentConfigDesc=");
-			params = params.concat(currentConfigDesc);
-	        yesnoPopup('cloneConfigPopup', 'Clone Environment', 'cloneConfiguration', '', '', params);
+	function cloneConfiguration(configName, envName, configType, currentConfigDesc) {
+		var params = getBasicParams();
+		var fromPage = "<%= fromPage%>";
+		var configPath = "<%= configPath%>";
+		params = params.concat("&configName=");
+		params = params.concat(configName);
+		params = params.concat("&envName=");
+		params = params.concat(envName);
+		params = params.concat("&configType=");
+		params = params.concat(configType);
+		params = params.concat("&fromPage=");
+		params = params.concat(fromPage);
+		params = params.concat("&configPath=");
+		params = params.concat(configPath);
+		params = params.concat("&currentConfigDesc=");
+		params = params.concat(currentConfigDesc);
+		yesnoPopup('cloneConfigPopup', 'Clone Environment', 'cloneConfiguration', '<s:text name="lbl.clone"/>', '', params);
 	}
 	 
 	function popupOnOk(self) {
@@ -149,7 +143,7 @@
 			if (EnvSelection == 0 ) {
 				$("#errMsg").html("Please add atleast one Environment");
 			}
-			 else {
+			else {
 				var params = getBasicParams();
 				var fromPage = "<%= fromPage%>";
 				var configPath = "<%= configPath%>";

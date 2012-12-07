@@ -86,6 +86,9 @@ public interface FrameworkConstants {
     String REQ_FEATURES_TYPE = "type";
     String REQ_FEATURES_MOD_GRP = "moduleGroup";
     
+    String REQ_KEY = "key";
+    String REQ_VALUE = "value";
+    
     String DO_NOT_CHECKIN_DIR = "do_not_checkin";
     String SETTINGS_XML = "settings.xml";
     String ARCHIVES = "archives";
@@ -746,6 +749,7 @@ public interface FrameworkConstants {
     String REQ_PROJECT_INFO_DATABASES = "projectInfoDatabases";
     String REQ_FEATURE_NAME = "featureName";
     String REQ_FEATURE_NAMES = "featureNames";
+    String REQ_HAS_CUSTOM_PROPERTY = "hasCustomProperty";
     
     String CONFIG_FEATURES = "config_Features";
 	
@@ -1337,6 +1341,8 @@ public interface FrameworkConstants {
     String XPATH_JAVA_WEBSERVICE_TESTCASE = "/testcase";
     String XPATH_NODE_JS_WEBSERVICE_TESTCASE = "/testcase";
     String XPATH_PHP_WEBSERVICE_TESTCASE = "/testcase";
+    String TEST_SLASH_PERFORMANCE = "/test/performance/";
+    String RESULTS_SLASH_JMETER = "/results/jmeter/";
     
     /* CI Keys */
     String SUCCESS_JOB = "ci.create.success";
@@ -1685,6 +1691,7 @@ public interface FrameworkConstants {
 		String TYPE_DYNAMIC_PARAMETER = "DynamicParameter";
 		String PLUGIN_PARAMETER_FRAMEWORK = "framework";
 		String REQ_DYNAMIC_PARAMETERS = "dynamicParameters";
+		String REQ_DYNAMIC_PAGE_PARAMETER  = "dynamicPageParameter";
 		String REQ_DYNAMIC_POSSIBLE_VALUES = "possibleValues";
 		String SESSION_WATCHER_MAP = "sessionDynamicParamMap";
 		
