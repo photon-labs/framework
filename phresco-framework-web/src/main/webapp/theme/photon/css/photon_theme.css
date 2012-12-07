@@ -842,6 +842,7 @@ li {
 
 .tabs li a.active label  {
 	color: #FFFFFF;
+	font-weight: bold;
 }
 
 .tabs li a.active  {
