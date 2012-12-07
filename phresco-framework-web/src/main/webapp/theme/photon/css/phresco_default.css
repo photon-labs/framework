@@ -1285,7 +1285,7 @@ p.p_align {
     float:left; 
     position: relative; 
     margin: 0; 
-    padding: 3px 0 3px 0;
+    padding: 3px 0 3px 7px;
 }
 
 video.video-js {
@@ -1784,7 +1784,7 @@ div.vjs-big-play-button span {
     float: right;
     height: 326px;
     overflow: auto;
-    width: 127px;
+    width: 135px;
     margin-left: 0px;
     /* margin-right: 5px; */
     overflow-x: hidden;
@@ -2402,7 +2402,7 @@ fieldset {
     text-align: right;
     background: transparent;*/
     float: right;
-    margin-right: 20px;
+    margin-right: 25px;
     margin-top: 4px;
     padding: 0 0px 0px 00px; 
 }
@@ -5739,7 +5739,7 @@ input[class*='chckBxAlign'] {
 	overflow: auto;
 	height: 300px;
 }
-#subcontainer { width:85%; float:right; margin-right:15px; margin-top:10px; }
+#subcontainer { width:85%; float:right; margin-right:5px; margin-top:10px; }
 
 
 
