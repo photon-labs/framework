@@ -240,6 +240,9 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 			
 			if (existJob != null) {
 				existJob.setPassword(CIPasswordScrambler.unmask(existJob.getPassword()));
+				
+				// restore values in popup
+				restoreValues(existJob, appInfo);
 			}
 			setReqAttribute(REQ_EXISTING_JOB, existJob);
 			setReqAttribute(REQ_EXISTING_JOBS_NAMES, existingJobsNames);
@@ -253,6 +256,49 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 		return APP_CI_CONFIGURE;
 	}
 
+	private void restoreValues(CIJob ciJob, ApplicationInfo appInfo) throws PhrescoException {
+		try {
+			// restore values
+			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(Constants.PHASE_CI)));
+			String phase = "";
+			String operation = ciJob.getOperation();
+			if (BUILD.equals(operation)) {
+				phase = PHASE_PACKAGE;
+	        	restoreValuesToXml(mojo, phase, ciJob);
+	        } else if (DEPLOY.equals(operation)) { 
+	        	phase = PHASE_DEPLOY;
+	        	restoreValuesToXml(mojo, phase, ciJob);
+	        } else if (FUNCTIONAL_TEST.equals(operation)) {
+				FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+				String seleniumToolType = frameworkUtil.getSeleniumToolType(appInfo);
+				phase =  PHASE_FUNCTIONAL_TEST + HYPHEN + seleniumToolType;
+	        	restoreValuesToXml(mojo, phase, ciJob);
+	        }
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+	}
+	
+	private void restoreValuesToXml(MojoProcessor mojo, String phase, CIJob ciJob) throws PhrescoException {
+	    try {
+	        List<Parameter> parameters = getMojoParameters(mojo, phase);
+	        if (CollectionUtils.isNotEmpty(parameters)) {
+	        	BeanUtils bu = new BeanUtils();
+	            for (Parameter parameter : parameters) {
+	                if (parameter != null) {
+	                	String value = bu.getProperty(ciJob, parameter.getKey());
+	                	if (StringUtils.isNotEmpty(value)) {
+	                		parameter.setValue(value);
+	                	}
+	                }
+	            }
+	        }
+	        mojo.save();
+	    } catch (Exception e) {
+	        throw new PhrescoException(e);
+	    }
+	}
+	
 	public String dynamicOperationPopup() {
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method  CI.dynamicOperationPopup()");
