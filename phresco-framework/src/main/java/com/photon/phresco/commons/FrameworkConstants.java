@@ -1043,6 +1043,7 @@ public interface FrameworkConstants {
     String ERROR_DUPLICATE_ENV_IN_SETTINGS = "Environment {0} already exists in global settings";
     String ERROR_NO_CONFIG = "environment.config.not.available";
     String ERROR_NAME = "err.msg.empty.name";
+    String ERROR_NAME_EXISTS = "err.msg.project.name.exists";
     String ERROR_CODE = "err.msg.empty.code";
     String ERROR_VERSION = "err.msg.empty.version";
     String ERROR_LAYER = "err.msg.empty.layer";
