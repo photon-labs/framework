@@ -6142,22 +6142,22 @@ color: #313131;
 	list-style: none;
 }
 
-#testmenu li {
-	border-bottom: 1px solid #A7A7A7;
-}
-
 #testmenu li:last-child {
 	border-bottom: none;
 }
 
+#testmenu li:first-child {
+	border-top : 1px solid #656565;
+}
+
 #testmenu li a.active, #testmenu li a:hover {
-	background: #4F577C;
+	background: #39BC67;
 }
 
 #testmenu li a {
 	text-decoration: none;
 	background: #545454;
 	display: block;
-	padding-left: 12px;
+	padding-left: 12%;
 }
 
