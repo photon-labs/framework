@@ -402,13 +402,33 @@ public class Projects extends FrameworkBaseAction {
     /**
      * To validate the form fields
      * @return
+     * @throws PhrescoException 
      */
-    public String validateForm() {
+    public String validateForm() throws PhrescoException {
         if (s_debugEnabled) {
             S_LOGGER.debug("Entering Method  Applications.validateForm()");
         }
 
         boolean hasError = false;
+        //check project name is already exists or not
+        ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
+        List<ProjectInfo> projects = projectManager.discover(getCustomerId());
+        String newProjectName = "";
+        String oldProjectName = "";
+        if(StringUtils.isNotEmpty(getProjectName())) {
+        	newProjectName = getProjectName();
+        	for(ProjectInfo project : projects) {
+        		if(project.getName().equals(newProjectName)) {
+        			oldProjectName = project.getName();
+        		}
+        	}
+        }
+        
+        if(StringUtils.equals(newProjectName, oldProjectName)) {
+        	 setProjectNameError(getText(ERROR_NAME_EXISTS));
+             hasError = true;
+        }
+        
         //empty validation for name
         if (StringUtils.isEmpty(getProjectName())) {
             setProjectNameError(getText(ERROR_NAME));

@@ -513,7 +513,7 @@ function accordion() {
     });
 }
 
-function getLoadingImgPath() {
+function getLoadingImgPath(imageFor) {
 	var localstore = localStorage["color"];
 	var imgSrc = "";
 	
@@ -521,6 +521,8 @@ function getLoadingImgPath() {
 		imgSrc = "theme/red_blue/images/loading_blue.gif";
 	} else if (localstore == "theme/red_blue/css/red.css") {
 		imgSrc = "theme/red_blue/images/loading_red.gif";
+	} else if (imageFor != undefined && !isBlank(imageFor) && imageFor === "popup") {
+		imgSrc = "theme/photon/images/loading_green_popUp.gif";
 	} else {
 		imgSrc = "theme/photon/images/loading_green.gif";
 	}
@@ -543,7 +545,7 @@ function hideLoadingIcon() {
 function showPopuploadingIcon() {
 	$("#errMsg").empty(); // remove error message while displaying loading icon
     $(".popuploadingIcon").show();
-	$(".popuploadingIcon").attr("src", getLoadingImgPath());
+	$(".popuploadingIcon").attr("src", getLoadingImgPath("popup"));
 }
 
 function hidePopuploadingIcon() {

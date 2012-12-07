@@ -31,15 +31,7 @@ Width <= 1024
 	.app_add_form .theme_accordion_container {
 		float: left;
 		margin: 0.1% 0%;
-		width: 98% !important;
 	}
-	
-	#subcontainer {width: 74.5%; float:right; }
-	/*.navTopBorder .scroll-content {
-		width:76%;
-		margin-left:220px;
-	}*/
-	
 	.customer_name {
 		right:11.5%;
 	}
@@ -53,6 +45,7 @@ Width <= 1024
 	}
 
 	/* header starts */
+	
 	.app_list_form {
     	height: 95%;
 	}
@@ -63,9 +56,7 @@ Width <= 1024
 		top: 54px;
 		width: 98%;
 	}
-	.featureForm {
-		height: 83%;
-	}
+	
 	.custom_features {
 		border-radius: 12px 12px 6px 6px;
 		float: left;
@@ -350,11 +341,6 @@ Width <= 1024
 	    left: 71%;
 	}
 	
-	.sonar_report {
-		height: 81.5%;
-   		width: 100%;		
-	}
-	
 	.iframe_container_forum {
 		background:transparent;
 		width:100%;
@@ -475,6 +461,33 @@ Width <= 1024
 	.align-div-center {
 		width: 78%;
 	}
+
+	.tabs li label {
+		margin:0;
+		line-height:35px !important;
+		padding-left:12px;
+	}	
+
+	#subcontainer {width: 75.5%; float:right; }
+	/*.navTopBorder .scroll-content {
+		width:76%;
+		margin-left:220px;
+	}*/
+
+	.featureForm {
+		height: 83%;
+		width: 98.5%;
+	}
+
+	.sonar_report {
+		height: 81.5%;
+   		width: 98.5%;		
+	}
+	
+	.configList,.build_form,#subTabcontent,.ciFormJob,.reportList {
+		width: 98.5%;
+	}
+
 }
 
 /***********************************************************************************
@@ -518,15 +531,18 @@ Width size <= 1024
 	.app_add_form .theme_accordion_container {
 		float: left;
 		margin: 0.1% 0%;
-		width: 98% !important;
 	}
-	#subcontainer { width:68% !important; float:right; margin-right: 0px !important;}
+
+	#subcontainer { width:69% !important; float:right; margin-right: 0px !important;}
+
 	ul#display-inline-block-example li:nth-child(5) {
 		margin-left: 21.5% !important;
 	}
+
 	ul#display-inline-block-example li:nth-child(3) {
 		width: 24% !important;
 	}
+
 	.build_detail_div {
 	    float: left;
 	    height: 47% !important;
@@ -604,7 +620,6 @@ Width size <= 1024
 		overflow-y: auto;
 		overflow-x: hidden;
 	}
-	
 	.wrapper {
 		bottom: 48px;
 		height: 100%;
@@ -984,7 +999,6 @@ Width >= 1025 and < 1151
 	.app_add_form .theme_accordion_container {
 		float: left;
 		margin: 0.1% 0%;
-		width: 98%;
 	}
 	#subcontainer {
 		width: 75%;
@@ -1018,9 +1032,7 @@ Width >= 1025 and < 1151
 	    margin-top: 5px;
 	    width: 100%;
 	}
-	.featureForm {
-		height: 83% !important;
-	}
+	
 	.custom_features {
 		border-radius: 12px 12px 6px 6px;
 		float: left;
@@ -1090,6 +1102,10 @@ Width >= 1025 and < 1151
 	.align-div-center {
 		width: 70%;
 	}
+	.featureForm {
+		height: 83% !important;
+	}
+
 }
 
 /************************************************************************************
@@ -1099,13 +1115,8 @@ Width >= 1152 and < 1280
 	.app_add_form .theme_accordion_container {
 		float: left;
 		margin: 0.1% 0%;
-		width: 98%;
 	}
-	#subcontainer {
-		width: 79%;
-		float: right;
-		margin-top: 10px;
-	}
+	
 	.content_adder {
 		height: 88%;
 	}
@@ -1125,9 +1136,7 @@ Width >= 1152 and < 1280
      	padding: 4px 6px;
      	margin-top: 5px;
      }
-	.featureForm {
-		height: 88% !important;
-	 }
+	
 	.custom_features {
 		border-radius: 12px 12px 6px 6px;
 		float: left;
@@ -1346,11 +1355,6 @@ Width >= 1152 and < 1280
 	    left: 63%;
 	}
 	
-	.sonar_report {
-		height: 85.5%;
-   		width: 100%;		
-	}
-	
 	.iframe_container_forum {
 		background:transparent;
 		width:100%;
@@ -1445,6 +1449,25 @@ Width >= 1152 and < 1280
 	.align-div-center {
 		width: 70%;
 	}
+	#subcontainer {
+		width: 78.5%;
+		float: right;
+		margin-top: 10px;
+	}
+
+	.sonar_report {
+		height: 85.5%;
+   		width: 98.5%;		
+	}
+
+	.featureForm {
+		height: 88% !important;
+		width: 99%;
+	 }
+
+	 .configList,.build_form,#subTabcontent,.ciFormJob,.reportList {
+		width: 99%;
+	}
 }
 
 /************************************************************************************
@@ -1454,13 +1477,8 @@ Width <= 1280 and height <= 800
 	.app_add_form .theme_accordion_container {
 		float: left;
 		margin: 0.1% 0%;
-		width: 98%;
 	}
-	#subcontainer {
-		width: 79%;
-		float: right;
-		margin-top: 10px;
-	}
+	
 	.formClass {
 		height: 95%;
 		margin: 0;
@@ -1485,10 +1503,6 @@ Width <= 1280 and height <= 800
      	padding: 4px 6px;
      	margin-top: 5px;
      }
-	 
-     .featureForm {
-		height: 81% !important;
-	 }
 	 
      .custom_features {
 		border-radius: 12px 12px 0px 0px;
@@ -1814,11 +1828,6 @@ Width <= 1280 and height <= 800
 	    left: 57%;
 	}
 	
-	.sonar_report {
-		height: 82.4%;
-   		width: 100%;		
-	}
-	
 	.iframe_container_forum {
 		background:transparent;
 		width:100%;
@@ -1918,6 +1927,27 @@ Width <= 1280 and height <= 800
 	.align-div-center {
 		width: 63%;
 	}
+
+	#subcontainer {
+		width: 80.5%;
+		float: right;
+		margin-top: 10px;
+	}
+
+	.featureForm {
+		height: 81% !important;
+		width: 99%;
+	 }
+
+	.sonar_report {
+		height: 82.4%;
+   		width: 99%;		
+	}
+
+	 .configList,.build_form,#subTabcontent,.ciFormJob,.reportList {
+		width: 99%;
+	}
+
 }
 
 /************************************************************************************
@@ -1927,13 +1957,8 @@ Width >= 1280 and height >= 800
 	.app_add_form .theme_accordion_container {
 		float: left;
 		margin: 0.1% 0%;
-		width: 98%;
 	}
-	#subcontainer {
-		width: 79%;
-		float: right;
-		margin-top: 10px;
-	}
+	
 	.formClass {
 		height: 97%;
 		margin: 0;
@@ -1963,9 +1988,6 @@ Width >= 1280 and height >= 800
 		width: 99%;
 		height: 89%;
 	}
-	.featureForm {
-		height: 92% !important;
-	 }
 	
 	.custom_features {
 		border-radius: 12px 12px 6px 6px;
@@ -2205,11 +2227,6 @@ Width >= 1280 and height >= 800
 	    left: 57%;
 	}
 	
-	.sonar_report {
-		height: 89%;
-   		width: 100%;		
-	}
-	
 	.iframe_container_forum {
 	    background: none repeat scroll 0 0 transparent;
 	    height: 95.5%;
@@ -2310,6 +2327,28 @@ Width >= 1280 and height >= 800
 	.align-div-center {
 		width: 70%;
 	}
+
+	 #subcontainer {
+		width: 80.5%;
+		float: right;
+		margin-top: 10px;
+	}
+
+	.featureForm {
+		height: 92% !important;
+		width: 99%;
+	 }
+
+	.sonar_report {
+		height: 89%;
+   		width: 99%;		
+	}
+	
+	 .configList,.build_form,#subTabcontent,.ciFormJob,.reportList {
+		width: 99%;
+	}
+
+	 
 }
 
 /************************************************************************************
@@ -2319,13 +2358,8 @@ Width > 1280 and <= 1360
 	.app_add_form .theme_accordion_container {
 		float: left;
 		margin: 0.1% 0%;
-		width: 98%;
 	}
-	#subcontainer {
-		width: 79%;
-		float: right;
-		margin-top: 10px;
-	}
+	
 	.content_adder {
 		height: 84%;
 	}
@@ -2534,7 +2568,7 @@ Width > 1280 and <= 1360
 	    background: none repeat scroll 0 0 transparent;
 	    border-radius: 0 0 3px 3px;
 	}
-	
+
 	.custom_features_wrapper {
 	    border-radius: 6px 6px 6px 6px;
 	    float: left;
@@ -2636,11 +2670,6 @@ Width > 1280 and <= 1360
 	
 	.twipsy {
 	    left: 54%;
-	}
-	
-	.sonar_report {
-		height: 81.2%;
-   		width: 100%;		
 	}
 	
 	.iframe_container_forum {
@@ -2746,6 +2775,36 @@ Width > 1280 and <= 1360
 	.align-div-center {
 		width: 59%;
 	}
+
+	@-moz-document url-prefix() {
+		.features_actions {
+			margin-top: 5px !important;
+		}
+		.feature_content_adder {
+		height: 86% !important;
+		}		
+	}
+
+	#subcontainer {
+		width: 81.5%;
+		float: right;
+		margin-top: 10px;
+	}
+
+	.featureForm {
+		height: 81% !important;
+		width: 99%;
+	 }
+
+	.sonar_report {
+		height: 81.2%;
+   		width: 99%;		
+	}
+	
+	.configList,.build_form,#subTabcontent,.ciFormJob,.reportList {
+		width: 99%;
+	}
+
 }
 
 /************************************************************************************
@@ -2755,13 +2814,8 @@ Width > 1360 and <= 1440
 	.app_add_form .theme_accordion_container {
 		float: left;
 		margin: 0.1% 0%;
-		width: 98%;
 	}
-	#subcontainer {
-		width: 82%;
-		float: right;
-		margin-top: 10px;
-	}
+	
 	.app_list_form {
     	height: 91%;
 	}
@@ -3019,11 +3073,6 @@ Width > 1360 and <= 1440
 	    left: 46%;
 	}
 	
-	.sonar_report {
-		 height: 90.7%;
-   		 width: 100%;		
-	}
-	
 	.iframe_container_forum {
 		background:transparent;
 		width:100%;
@@ -3116,14 +3165,33 @@ Width > 1360 and <= 1440
 	.customer_name {
 		right: 8.5% !important;
 	}
-    .featureForm {
-		height: 90% !important;
-	 }
+    
 	 @-moz-document url-prefix() {
 		.featureForm {
 			height: 88% !important;
 		}
 	}
+
+	#subcontainer {
+		width: 82.5%;
+		float: right;
+		margin-top: 10px;
+	}
+
+	.featureForm {
+		height: 90% !important;
+		width: 99% !important;
+	 }
+
+	.sonar_report {
+		 height: 90.7%;
+   		 width: 99%;		
+	}
+
+	.configList,.build_form,#subTabcontent,.ciFormJob,.reportList {
+		width: 99%;
+	}
+
 }
 
 
@@ -3134,13 +3202,8 @@ Width > 1441 and <= 1600
 	.app_add_form .theme_accordion_container {
 		float: left;
 		margin: 0.1% 0%;
-		width: 98%;
 	}
-	#subcontainer {
-		width: 83%;
-		float: right;
-		margin-top: 10px;
-	}
+	
 	/* header starts */
 	.app_list_form {
     	height: 90%;
@@ -3408,11 +3471,6 @@ Width > 1441 and <= 1600
 	    left: 46%;
 	}
 	
-	.sonar_report {
-		 height: 86.3%;
-   		 width: 100%;		
-	}
-	
 	.iframe_container_forum {
 		background:transparent;
 		width:100%;
@@ -3492,18 +3550,32 @@ Width > 1441 and <= 1600
 	.align-div-center {
 		width: 51%;
 	}
-
 	.customer_name {
 		right: 8.5% !important;
 	}
-
 	.featureForm {
 		height: 90% !important;
+		width: 99%;
 	 }
-
 	@-moz-document url-prefix() {
 		.featureForm {
 			height: 88% !important;
 		}
 	}
+
+	#subcontainer {
+		width: 84%;
+		float: right;
+		margin-top: 10px;
+	}
+
+	.sonar_report {
+		 height: 86.3%;
+   		 width: 99%;		
+	}
+	
+	.configList,.build_form,#subTabcontent,.ciFormJob,.reportList {
+		width: 99%;
+	}
+
 }
