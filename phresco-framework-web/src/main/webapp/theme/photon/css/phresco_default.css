@@ -3952,7 +3952,7 @@ div.submit_input {
 
  .downloadContent {
 	height: 200px;
-	overflow-y: auto;
+	overflow-y: hidden;
 } 
 
 .siteaccordion {
