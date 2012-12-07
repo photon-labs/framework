@@ -489,6 +489,7 @@ public interface FrameworkConstants {
     String REQ_SELECTED_TAB = "selectedTab";
     String REQ_SELECTED_MENU = "selectedHeader";
     String REQ_PROJECTS = "Projects";
+    String REQ_OPTION_ID = "optionId";
     String REQ_TOTAL_THROUGHPUT = "totalThroughput";
     String REQ_TOTAL_STD_DEV = "totalStdDev";
     String REQ_TECHNOLOGY = "technology";

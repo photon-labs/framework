@@ -19,6 +19,9 @@
   --%>
 <%@ taglib uri="/struts-tags" prefix="s" %>
 
+<%@ page import="java.util.ArrayList"%>
+<%@ page import="java.util.List"%>
+
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 
 <script type="text/javascript">
@@ -56,6 +59,12 @@
 	String projectId = (String) request.getAttribute(FrameworkConstants.REQ_PROJECT_ID);
 	String appId = (String) request.getAttribute(FrameworkConstants.REQ_APP_ID);
 	String currentAppName = (String) request.getAttribute(FrameworkConstants.REQ_CURRENT_APP_NAME);
+	Object optionsObj = session.getAttribute(FrameworkConstants.REQ_OPTION_ID);
+	System.out.println("Options obj = > " + optionsObj);
+	List<String> optionIds  = null;
+	if (optionsObj != null) {
+		optionIds  = (List<String>) optionsObj;
+	}
 %>
 <form id="formAppMenu">
 	<!-- Hidden Fields -->
@@ -77,36 +86,68 @@
 		<li>
 			<a href="#" class="inactive" name="appTab" id="features" onclick="showFeaturesPage();"><s:label key="lbl.app.menu.feature" theme="simple"/></a>
 		</li>
+		<%
+			if(optionIds.contains("Code")) {
+		%>
 		<li>
 			<a href="#" class="inactive" name="appTab" id="code"><s:label key="lbl.app.menu.code" theme="simple"/></a>
 		</li>
+		<% 
+			}
+		%>
 		<li>
 			<a href="#" class="inactive" name="appTab" id="configuration" additionalParam="fromPage=config"><s:label key="lbl.app.menu.config" theme="simple"/></a>
 		</li>
+		<%
+			if(optionIds.contains("Build")) {
+		%>
 		<li>
 			<a href="#" class="inactive" name="appTab" id="buildView"><s:label key="lbl.app.menu.build" theme="simple"/></a>
 		</li>
+		<%
+			}
+		%>
 		<li>
 			<a href="#" class="inactive" name="appTab" id="quality"><s:label key="lbl.app.menu.quality" theme="simple"/></a>
-		<!-- left sub menu for quality tab--> 
-			<ul id="testmenu" class="testmenu">
+			<ul id="testmenu">
+				<%
+					if(optionIds.contains("Unit_Test")) {
+				%>
 				<li>
 					<a href="#" class="active" name="qualityTab" id="unit"><s:label key="lbl.quality.menu.unit" theme="simple"/></a>
 				</li>
+				<%
+					} if(optionIds.contains("Functional_Test")) {
+				%>
 				<li>
 					<a href="#" class="inactive" name="qualityTab" id="functional"><s:label key="lbl.quality.menu.funtional" theme="simple"/></a>
 				</li>
+				<%
+					} if(optionIds.contains("Perfomance_Test")) {
+				%>
 				<li>
 					<a href="#" class="inactive" name="qualityTab" id="performance"><s:label key="lbl.quality.menu.performance" theme="simple"/></a>
 				</li>
+				<%
+					} if(optionIds.contains("Load_Test")) {
+				%>
 				<li>
 					<a href="#" class="inactive" name="qualityTab" id="load"><s:label key="lbl.quality.menu.load" theme="simple"/></a>
 				</li>
+				<%
+					}
+				%>
 			</ul>
 		</li>
+		<%
+			 if(optionIds.contains("CI")) {
+		%>
 		<li>
 			<a href="#" class="inactive" name="appTab" id="ci"><s:label key="lbl.app.menu.ci"  theme="simple"/></a>
 		</li>
+		<%
+			}
+		%>
 		<li>
 			<a href="#" class="inactive" name="appTab" id="veiwSiteReport"><s:label key="lbl.app.menu.report"  theme="simple"/></a>
 		</li>
