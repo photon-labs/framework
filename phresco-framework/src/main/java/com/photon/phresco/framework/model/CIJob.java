@@ -93,7 +93,7 @@ public class CIJob {
     private String mainClassName = "";
     private String jarLocation = "";
     private String minify = "";
-    
+    private String configuration = "";
     private String keyPassword = "";
     
     // deploy job info
@@ -651,5 +651,13 @@ public class CIJob {
 
 	public void setJarLocation(String jarLocation) {
 		this.jarLocation = jarLocation;
+	}
+
+	public String getConfiguration() {
+		return configuration;
+	}
+
+	public void setConfiguration(String configuration) {
+		this.configuration = configuration;
 	}
 }
