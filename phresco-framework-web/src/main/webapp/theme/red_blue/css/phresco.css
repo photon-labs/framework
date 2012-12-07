@@ -380,7 +380,7 @@ a {
 
 .shortcut_top {
 	height: 38px;
-	margin-bottom: 3px;
+	/* margin-bottom: 3px; */
 	position: relative;
 	top: 0;
 	width: 100%;
@@ -408,7 +408,7 @@ a {
 .shortcut_bottom {
 	height: 38px;
 	bottom: -5px;
-	margin-top: -3px;
+	/* margin-top: -3px; */
 	position: relative;
 	width: 100%;
 }
@@ -1729,7 +1729,7 @@ div.vjs-big-play-button span {
 #container {
     z-index: 15004;
     width: 94%;
-    height: 85%;
+    /* height: 85%; */
 }
 
 .holder {
@@ -5991,4 +5991,8 @@ div.control-group.valReportLbl {
 
 .dd-desc {
     font-size: smaller !important;
+}
+
+ul.testmenu {
+    display: none !important; 
 }
