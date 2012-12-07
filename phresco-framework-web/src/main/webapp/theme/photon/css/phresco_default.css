@@ -2967,7 +2967,6 @@ fieldset {
 #subTabcontainer {
     /* margin-left:3px; */
     height: 90%;
-    border: 1px solid #323232;
     border-radius: 12px;
 
 }
@@ -5737,7 +5736,7 @@ input[class*='chckBxAlign'] {
 	overflow: auto;
 	height: 300px;
 }
-#subcontainer { width:85%; float:right; margin-right:5px; margin-top:10px; }
+#subcontainer { width:85%; float:right; margin-right:15px; margin-top:10px; }
 
 
 
@@ -5998,49 +5997,42 @@ color: #313131;
 	width: 30px !important;
 	font-weight: bold;
 }
-
 #featureselect {
 	margin-left: 6%;
 }
+.dd-options {
 
+}
 .dd-selected-text, .dd-option-text, .dd-desc {
 	font-weight: bold !important;
 }
-
 .dd-selected-text, .dd-option-text {
 	margin-bottom: 0px !important;
 	font-size: 12px !important;
 }
-
 .dd-selected, .dd-option {
 	text-decoration: none !important;
 	padding: 3px !important;
 }
-
 .dd-selected-image, .dd-option-image {
 	margin-left: 3px;
 	margin-top: 3px;
 	margin-right: 7px !important;
 }
-
 .dd-select {
 	background: #f7f7f7 !important;
 	border: solid 1px #dcdcdc;
 }
-
 .dd-option-selected, .dd-option:hover {
 	background: #eeeeee !important;
 	border: solid 1px #dcdcdc;
 }
-
 .dd-selected, .dd-option {
 	padding: 2px !important;
 }
-
 .dd-selected-image .dd-option-image {
 	margin: 10px 10px 10px 0px !important;
 }
-
 .dd-desc {
 	font-size: smaller !important;
 }
@@ -6116,3 +6108,53 @@ color: #313131;
 	margin-top: 16px;
 }
 /* for field ends*/	
+
+/*css related to version select*/
+
+.multilistVersion-scroller {
+	height: 51px;
+	width: 100%;
+	margin-top: 3%;
+	padding-top: 1%;
+	padding-left: 2%;
+	background-color: rgba(19, 131, 58, 0.34);
+	border-radius: 3px;
+	overflow-y: auto;
+	width: 114px;
+	color: white;
+}
+.multilistVersion-scroller .scroll-content {
+	padding-left: 5%;
+}
+
+/*CSS related to Quality menu tabs*/
+
+.qualitymenutabs {
+	display: none !important;
+}
+
+#testmenu {
+	margin: 0px !important;
+	padding: 0;
+	list-style: none;
+}
+
+#testmenu li {
+	border-bottom: 1px solid #A7A7A7;
+}
+
+#testmenu li:last-child {
+	border-bottom: none;
+}
+
+#testmenu li a.active, #testmenu li a:hover {
+	background: #4F577C;
+}
+
+#testmenu li a {
+	text-decoration: none;
+	background: #545454;
+	display: block;
+	padding-left: 12px;
+}
+
