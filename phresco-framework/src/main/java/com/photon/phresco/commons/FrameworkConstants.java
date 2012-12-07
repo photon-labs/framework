@@ -1658,21 +1658,24 @@ public interface FrameworkConstants {
 		String EXCEPTION_CI_BUILD_DELETION = "excep.hdr.ci.build.deletion.failed";
 		String EXCEPTION_CI_BUILD_DOWNLOAD_NOT_AVAILABLE = "excep.hdr.ci.build.download.not.available";
 		String EXCEPTION_BUILD_DOWNLOAD_NOT_AVAILABLE = "excep.hdr.code.load";
+		String EXCEPTION_FEATURE_MANIFEST_NOT_AVAILABLE = "excep.hdr.feature.manifest.not.available";
+		String EXCEPTION_FEATURE_CONFIGURATION = "excep.hdr.feature.configuration";
 		
 		/*****************************
 	     * Success Action Messages
 	     * I18N Keys Constants
 	     * String ACT_SUCC_XXX
 	     *****************************/
-		String ACT_SUCC_PROJECT_CREATE= "succ.project.create";
+		String ACT_SUCC_PROJECT_CREATE = "succ.project.create";
 		String ACT_SUCC_PROJECT_DELETE = "succ.project.delete";
-		String ACT_SUCC_CONFIG_ADD= "succ.config.create";
-		String ACT_SUCC_CONFIG_UPDATE= "succ.config.update";
-		String ACT_SUCC_CONFIG_DELETE= "succ.config.delete";
-		String ACT_SUCC_SETTINGS_ADD= "succ.setting.create";
-		String ACT_SUCC_SETTINGS_UPDATE= "succ.setting.update";
-		String ACT_SUCC_ENV_ADD= "succ.env.create";
-		String ACT_SUCC_ENV_DELETE= "succ.env.delete";
+		String ACT_SUCC_CONFIG_ADD = "succ.config.create";
+		String ACT_SUCC_CONFIG_UPDATE = "succ.config.update";
+		String ACT_SUCC_CONFIG_DELETE = "succ.config.delete";
+		String ACT_SUCC_SETTINGS_ADD = "succ.setting.create";
+		String ACT_SUCC_SETTINGS_UPDATE = "succ.setting.update";
+		String ACT_SUCC_ENV_ADD = "succ.env.create";
+		String ACT_SUCC_ENV_DELETE = "succ.env.delete";
+		String ACT_SUCC_FEATURE_CONFIGURE = "succ.feature.configure";
 		
 		/**
 		 * Dynamic Parameter Constants

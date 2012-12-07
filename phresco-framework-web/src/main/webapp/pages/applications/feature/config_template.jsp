@@ -67,15 +67,11 @@
     	loadContent('showConfigProperties', $('#formFeatureConfig'), $('#propertiesDiv'), params, true);
 	}
 	
-	function successEvent(pageUrl, data) {
-		$('#propertiesDiv').empty();
-		$('#propertiesDiv').html(data);
-	}
-	
 	function popupOnOk(obj) {
+		showLoadingIcon();
 		$('#popupPage').modal('hide');//To hide the popup
 		var params = getBasicParams();
 		var url = $(obj).attr("id");
-		loadContent(url, $('#formFeatureConfig, #formConfigTempProp'), $('#propertiesDiv'), params);
+		loadContent(url, $('#formFeatureConfig, #formConfigTempProp'), $("#subcontainer"), params, true);
 	}
 </script>

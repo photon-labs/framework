@@ -20,15 +20,8 @@
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.util.List"%>
-<%@ page import="java.util.Map"%>
-<%@ page import="java.util.List"%>
-<%@ page import="java.util.ArrayList"%>
-<%@ page import="java.util.Collection"%>
-<%@ page import="java.util.Iterator"%>
 
 <%@ page import="com.google.gson.Gson"%>
-<%@ page import="org.apache.commons.lang.StringUtils" %>
-<%@ page import="org.apache.commons.collections.MapUtils" %>
 <%@ page import="org.apache.commons.collections.CollectionUtils"%>
 
 <%@ page import="com.photon.phresco.commons.model.SettingsTemplate"%>
@@ -37,10 +30,6 @@
 <%@ page import="com.photon.phresco.configuration.Environment" %>
 <%@ page import="com.photon.phresco.configuration.Configuration" %>
 <%@ page import="com.photon.phresco.framework.actions.util.FrameworkActionUtil"%>
-<%@ page import="com.photon.phresco.framework.api.Project" %>
-<%@ page import="com.photon.phresco.framework.model.PropertyInfo"%>
-<%@ page import="com.photon.phresco.framework.model.SettingsInfo"%>
-<%@ page import="com.photon.phresco.util.Constants"%>
 
 <%
     String selectedStr = "";
@@ -57,17 +46,17 @@
     Configuration configInfo = (Configuration) request.getAttribute(FrameworkConstants.REQ_CONFIG_INFO);
     String configPath = (String) request.getAttribute(FrameworkConstants.REQ_CONFIG_PATH);
 	
-		if (configInfo != null) {
-		    envName = configInfo.getEnvName();
-			name = configInfo.getName();
-			description = configInfo.getDesc();
-			selectedType = configInfo.getType();
-			selectedAppliesTo = configInfo.getAppliesTo();
-		}
+	if (configInfo != null) {
+	    envName = configInfo.getEnvName();
+		name = configInfo.getName();
+		description = configInfo.getDesc();
+		selectedType = configInfo.getType();
+		selectedAppliesTo = configInfo.getAppliesTo();
+	}
 	
-		/* if (request.getAttribute(FrameworkConstants.REQ_FROM_PAGE) != null) {
-			fromPage = (String) request.getAttribute(FrameworkConstants.REQ_FROM_PAGE);
-		} */
+	/* if (request.getAttribute(FrameworkConstants.REQ_FROM_PAGE) != null) {
+		fromPage = (String) request.getAttribute(FrameworkConstants.REQ_FROM_PAGE);
+	} */
 		
 	List<Environment> environments = (List<Environment>) request.getAttribute(FrameworkConstants.REQ_ENVIRONMENTS);
 	List<SettingsTemplate> settingsTemplates = (List<SettingsTemplate>) request.getAttribute(FrameworkConstants.REQ_SETTINGS_TEMPLATES);
@@ -79,30 +68,34 @@
 	
 	Gson gson = new Gson();
 	String container = "subcontainer"; //load for configuration
+%>
+<%
 	if (fromPage.contains(FrameworkConstants.REQ_SETTINGS)) {
 		container = "container";
 %>
-<div class="page-header">
-    <h1>
-       <%= title %> 
-    </h1>
-</div>
-<% } else { %>
-	<h4>
-		<%= title %> 
-	</h4>
-<% } %>
+		<div class="page-header">
+		    <h1>
+		       <%= title %> 
+		    </h1>
+		</div>
+<% 
+	} else { %>
+		<h4>
+			<%= title %> 
+		</h4>
+<% 
+	}
+%>
 
 <form id="formConfigAdd" class="form-horizontal formClass">
-	
 	<div class="content_adder">
 		<div class="control-group" id="configNameControl">
 			<label class="control-label labelbold">
 				<span class="mandatory">*</span>&nbsp;<s:text name='lbl.name'/>
 			</label>
 			<div class="controls">
-				<input id="configName" placeholder="<s:text name='place.hldr.config.name'/>" 
-					value="<%= name %>" maxlength="30" title="<s:text name='title.30.chars'/>" class="input-xlarge" type="text" name="name">
+				<input id="configName" placeholder="<s:text name='place.hldr.config.name'/>" value="<%= name %>" 
+					maxlength="30" title="<s:text name='title.30.chars'/>" class="input-xlarge" type="text" name="name">
 				<span class="help-inline" id="configNameError"></span>
 			</div>
 		</div> <!-- Name -->
@@ -126,13 +119,13 @@
 				<% for (Environment env : environments) {
 						if (env.getName().equals(envName)) {
 							selectedStr = "selected";
-							} else {
-								selectedStr = "";
-							}
+						} else {
+							selectedStr = "";
+						}
 				%>
-					<option value='<%= gson.toJson(env) %>' <%= selectedStr %>><%= env.getName() %></option>
+						<option value='<%= gson.toJson(env) %>' <%= selectedStr %>><%= env.getName() %></option>
                 <% 		 
-                	} 
+                	}
                 %>
 				</select>
 				<span class="help-inline" id="configEnvError"></span>
@@ -145,14 +138,15 @@
 			</label>	
 			<div class="controls">
 				<select id="type" name="type">
-				<% for (SettingsTemplate settingsTemplate : settingsTemplates) { 
-					if(settingsTemplate.getName().equals(selectedType)) {
-						selectedStr = "selected";
-							} else {
-								selectedStr = "";
-							}	
+				<% 
+					for (SettingsTemplate settingsTemplate : settingsTemplates) { 
+						if (settingsTemplate.getName().equals(selectedType)) {
+							selectedStr = "selected";
+						} else {
+							selectedStr = "";
+						}	
 				%>	
-					<option value='<%= gson.toJson(settingsTemplate) %>' <%= selectedStr %>><%= settingsTemplate.getName() %></option>
+						<option value='<%= gson.toJson(settingsTemplate) %>' <%= selectedStr %>><%= settingsTemplate.getName() %></option>
                 <% } %>
 				</select>
 				<span class="help-inline" id="configTypeError"></span>
@@ -173,7 +167,6 @@
 </form>
 
 <script type="text/javascript">
-	
 	/* To check whether the device is ipad or not */
 	$(document).ready(function() {
 		if (!isiPad()) {
@@ -204,12 +197,21 @@
 		var name = $('#configName').val();
 		var desc = $('#configDesc').val();
 		var env = $('#environment').val();
-		var jsonObject = $('#configProperties').toJSON();//formConfigTempProp
+		var jsonObject = $('#configProperties').toJSON();
 		var configStr = JSON.stringify(jsonObject);
-		if ($.isEmptyObject(jsonObject)) {
+		if ($.isEmptyObject(jsonObject)) {//It will be used for getting the features template values
 			var $formType = $("#formConfigTempProp");
-			var jsonTypeData = getFormData($formType);
-			configStr = JSON.stringify(jsonTypeData);
+			jsonObject = getFormData($formType);
+			var keys = [];
+			$('#formConfigTempProp').find('input[name="key"]').each(function() {
+				keys.push(this.value);
+			});
+			var values = [];
+			$('#formConfigTempProp').find('input[name="value"]').each(function() {
+			    values.push(this.value);
+			});
+			jsonObject.key = keys;
+			jsonObject.value = values;
 		}
 		
 		var template = $.parseJSON($('#type').val());
@@ -226,24 +228,36 @@
 		
 		var featureName = $('#featureName').val();
 		
-		var jsonParam = '{ ' + getBasicParamsAsJson() + ', "configName": "' + name + '", "description": "' + desc + '", "configType": "' + type
-								+ '", "configId": "' + configId + '", "featureName": "' + featureName + '", "oldName": "' + oldName + '", "configPath": "' + configPath + '", "fromPage": "' + fromPage + '", "appliesTos": "' + selectedAppliesTos + '", "environment" : ' + env + ', ' + configStr.substring(1);
+		var jsonParamObj = getBasicParamsAsJsonObj();
+		jsonParamObj.configName = name;
+		jsonParamObj.description = desc;
+		jsonParamObj.configType = type;
+		jsonParamObj.configId = configId;
+		jsonParamObj.featureName = featureName;
+		jsonParamObj.oldName = oldName;
+		jsonParamObj.configPath = configPath;
+		jsonParamObj.fromPage = fromPage;
+		jsonParamObj.appliesTos = selectedAppliesTos;
+		env = jQuery.parseJSON(env);
+		jsonParamObj.environment = env;
+		jsonParamObj = $.extend(jsonParamObj, jsonObject);
+		var jsonParam = JSON.stringify(jsonParamObj);
 		validateJson('<%= pageUrl %>', '', $('#<%= container %>'), jsonParam);
 	});
 	
-	function getFormData($form){
-	    var unindexed_array = $form.serializeArray();
+	function getFormData($form) {
+	    var unindexed_array = $form.find('input:not([name="key"]),input:not([name="value"]').serializeArray();
 	    var indexed_array = {};
 
-	    $.map(unindexed_array, function(n, i){
+	    $.map(unindexed_array, function(n, i) {
 	        indexed_array[n['name']] = n['value'];
 	    });
 
 	    return indexed_array;
 	}
+	
 	//To show the validation error messages
 	function findError(data) {
-	
 		if (!isBlank(data.configNameError)) {
 			showError($("#configNameControl"), $("#configNameError"), data.configNameError);
 		} else {

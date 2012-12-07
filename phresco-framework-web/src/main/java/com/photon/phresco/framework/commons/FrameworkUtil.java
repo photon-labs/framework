@@ -29,6 +29,7 @@ import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -1258,5 +1259,15 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
         }
         
         return list;
+    }
+    
+    public static String listToCsv(List<?> list) {
+        Iterator<?> iter = list.iterator();
+        String csvString = "";
+        while (iter.hasNext()) {
+            csvString += iter.next() + ",";
+        }
+
+        return csvString;
     }
 }

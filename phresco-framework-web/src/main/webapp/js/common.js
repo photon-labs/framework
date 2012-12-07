@@ -467,13 +467,13 @@ function hideErrorInAccordion(tag, headingObj, span) {
 function setTimeOut() {
 	setTimeout(function() {
 		$('#successmsg').fadeOut("slow", function () {
-			$('#successmsg').remove();
+			$('#successmsg').hide();
 		});
 	}, 2000);
 	
 	setTimeout(function() {
 		$('#errormsg').fadeOut("slow", function () {
-			$('#errormsg').remove();
+			$('#errormsg').hide();
 		});
 	}, 2000);
 }
