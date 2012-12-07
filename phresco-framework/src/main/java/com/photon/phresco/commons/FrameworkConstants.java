@@ -86,6 +86,9 @@ public interface FrameworkConstants {
     String REQ_FEATURES_TYPE = "type";
     String REQ_FEATURES_MOD_GRP = "moduleGroup";
     
+    String REQ_KEY = "key";
+    String REQ_VALUE = "value";
+    
     String DO_NOT_CHECKIN_DIR = "do_not_checkin";
     String SETTINGS_XML = "settings.xml";
     String ARCHIVES = "archives";
@@ -746,6 +749,7 @@ public interface FrameworkConstants {
     String REQ_PROJECT_INFO_DATABASES = "projectInfoDatabases";
     String REQ_FEATURE_NAME = "featureName";
     String REQ_FEATURE_NAMES = "featureNames";
+    String REQ_HAS_CUSTOM_PROPERTY = "hasCustomProperty";
     
     String CONFIG_FEATURES = "config_Features";
 	

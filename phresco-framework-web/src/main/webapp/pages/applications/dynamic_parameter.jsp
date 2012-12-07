@@ -633,23 +633,6 @@
 		return dependencies;
 	}
 	
-	function addRow(obj) {
-		var removeIconTd = $(document.createElement('td')).attr("class", "borderForLoad");
-		var removeIconAnchr = $(document.createElement('a'));
-		var removeIcon = $(document.createElement('img')).attr("class", "add imagealign").attr("src", "images/icons/minus_icon.png").attr("onclick", "removeRow(this)");
-		removeIconAnchr.append(removeIcon);
-		removeIconTd.append(removeIconAnchr);
-		var columns = $(obj).closest('table').children('tbody').children('tr:first').html();
-		var newRow = $(document.createElement('tr')).attr("class", "borderForLoad");
-		newRow.append(columns);
-		newRow.append(removeIconTd);
-		newRow.appendTo("#propTempTbodyForHeader");
-	}
-	
-	function removeRow(obj) {
-		$(obj).closest('tr').remove();
-	}
-	
 	function getTextElement(id, name) {
 		var element = "<input type='text' class='input-mini' id='"+id+"' name='"+name+"' value=''>";
 		element = element.concat("<span class='help-inline' id=''></span>");

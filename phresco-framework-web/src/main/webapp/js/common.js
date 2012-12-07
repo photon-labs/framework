@@ -45,6 +45,13 @@ function getBasicParamsAsJson() {
 	return '"customerId": "' + jsonObject.customerId + '", "projectId": "' + jsonObject.projectId + '", "appId": "' + jsonObject.appId + '"'; 
 }
 
+function getBasicParamsAsJsonObj() {
+	var customersJson = $('#formCustomers').toJSON();
+	var appMenuJson = $('#formAppMenu').toJSON();
+	var jsonObject = $.extend(customersJson, appMenuJson);
+	return jsonObject; 
+}
+
 function progressPopup(pageUrl, appId, actionType, form, callSuccessEvent, additionalParams, stopUrl) {
 	$('#progressPopup').modal('show');//To show the progress popup
 	$('#popup_progress_div').empty();
@@ -1226,4 +1233,23 @@ function textTrim(obj, maxLength) {
         return val;
     }
     return val;
+}
+
+//triggered when the plus btn is clicked to add a new row
+function addRow(obj) {
+	var removeIconTd = $(document.createElement('td')).attr("class", "borderForLoad noBorder");
+	var removeIconAnchr = $(document.createElement('a'));
+	var removeIcon = $(document.createElement('img')).attr("class", "add imagealign").attr("src", "images/icons/minus_icon.png").attr("onclick", "removeRow(this)");
+	removeIconAnchr.append(removeIcon);
+	removeIconTd.append(removeIconAnchr);
+	var columns = $(obj).closest('table').children('tbody').children('tr:first').html();
+	var newRow = $(document.createElement('tr')).attr("class", "borderForLoad");
+	newRow.append(columns);
+	newRow.append(removeIconTd);
+	newRow.appendTo("#propTempTbodyForHeader");
+}
+
+//triggered when the minus btn is clicked to add a remove the current row
+function removeRow(obj) {
+	$(obj).closest('tr').remove();
 }

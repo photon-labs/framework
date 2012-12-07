@@ -641,7 +641,6 @@ public class Applications extends FrameworkBaseAction {
 				applicationHandler.setSelectedFeatures(artifactGroup);
 			}
         	
-        	
         	//To write selected databases info to phresco-plugin-info.xml
 			List<ArtifactGroupInfo> selectedDatabases = appInfo.getSelectedDatabases();
 			if (CollectionUtils.isNotEmpty(selectedDatabases)) {

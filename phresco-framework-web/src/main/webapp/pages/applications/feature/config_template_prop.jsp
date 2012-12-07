@@ -29,17 +29,21 @@
 <%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
 <%@ page import="com.photon.phresco.commons.model.SettingsTemplate"%>
 <%@ page import="com.photon.phresco.commons.model.ArtifactGroupInfo"%>
+<%@ page import="com.photon.phresco.commons.model.PropertyTemplate"%>
+<%@ page import="com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.Childs.Child"%>
+<%@ page import="com.photon.phresco.framework.commons.BasicParameterModel"%>
 <%@ page import="com.photon.phresco.framework.commons.FrameworkUtil"%>
 <%@ page import="com.photon.phresco.framework.commons.ParameterModel"%>
-<%@ page import="com.photon.phresco.commons.model.PropertyTemplate"%>
 
 <form id="formConfigTempProp">
 <% 
+	boolean hasCustomProperty = (Boolean) request.getAttribute(FrameworkConstants.REQ_HAS_CUSTOM_PROPERTY);
 	List<PropertyTemplate> properties = (List<PropertyTemplate>)request.getAttribute(FrameworkConstants.REQ_PROPERTIES);
+	ParameterModel pm = null;
+	StringBuilder sb = new StringBuilder();
 	if (CollectionUtils.isNotEmpty(properties)) {
-		StringBuilder sb = new StringBuilder();
 	    for (PropertyTemplate property : properties) {
-	    	ParameterModel pm = new ParameterModel();
+	    	pm = new ParameterModel();
 	    	pm.setMandatory(property.isRequired());
 	    	pm.setLableText(property.getName());
 	    	pm.setLableClass("control-label popupLbl");
@@ -67,11 +71,13 @@
 				sb.append(inputControl);
 	        }
 	    }
-%>
-		<%= sb.toString() %>
-<%
+	}
+	if (hasCustomProperty) {
+		StringTemplate customParamElement = FrameworkUtil.constructCustomParameters();
+		sb.append(customParamElement);
 	}
 %>
+	<%= sb.toString() %>
 </form>
 
 <script type="text/javascript">

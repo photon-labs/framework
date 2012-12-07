@@ -744,8 +744,35 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
             mapElement.setAttribute("mapControls", childElement);
         }
     	controlGroupElement.setAttribute("lable", mapElement);
+    	System.out.println("controlGroupElement::::" + controlGroupElement);
     	
 		return controlGroupElement;
+    }
+	
+	public static StringTemplate constructCustomParameters() {
+	    StringTemplate controlGroupElement = new StringTemplate(getCustomParamTableTemplate());
+	    
+	    return controlGroupElement;
+	}
+	
+	private static String getCustomParamTableTemplate() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<table>")
+        .append("<tbody id='propTempTbodyForHeader'>")
+        .append("<tr class='borderForLoad'>")
+        .append("<td class=\"noBorder\">")
+        .append("<input type=\"text\" class=\"input-medium\" ")
+        .append("name=\"key\" placeholder=\"Key\" value=\"\">")
+        .append("</td>")
+        .append("<td class=\"noBorder\">")
+        .append("<input type=\"text\" class=\"input-medium\" ")
+        .append("name=\"value\" placeholder=\"Value\" value=\"\">")
+        .append("</td>")
+        .append("<td class='borderForLoad noBorder'>")
+        .append("<a><img class='add imagealign' src='images/icons/add_icon.png' onclick='addRow(this);'></a></td>")
+        .append("</tr></tbody></table>");
+        
+        return sb.toString();
     }
 	
     private static void updateChildLabels(StringTemplate mapElement, BasicParameterModel child) {
