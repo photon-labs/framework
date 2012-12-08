@@ -175,6 +175,7 @@
 	});
 	
 	$('#type').change(function() {
+		showLoadingIcon();//To hide the loading icon
 		var selectedConfigname = $('#configName').val();
 		var envData = $.parseJSON($('#environment').val());
 		var selectedEnv = envData.name;

@@ -45,6 +45,8 @@ import com.photon.phresco.commons.model.ArtifactInfo;
 import com.photon.phresco.commons.model.DownloadInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.SelectedFeature;
+import com.photon.phresco.commons.model.Technology;
+import com.photon.phresco.commons.model.TechnologyOptions;
 import com.photon.phresco.commons.model.WebService;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
@@ -135,6 +137,14 @@ public class Applications extends FrameworkBaseAction {
         }
 
         try {
+        	ApplicationInfo applicationInfo = getApplicationInfo();
+			String techId = applicationInfo.getTechInfo().getId();
+			Technology technology = getServiceManager().getArcheType(techId, getCustomerId());
+			List<String> optionIds = technology.getOptions();
+			if (CollectionUtils.isNotEmpty(optionIds)) {
+				setSessionAttribute(REQ_OPTION_ID, optionIds);
+			}
+			
             setReqAttribute(REQ_CURRENT_APP_NAME, getApplicationInfo().getName());
             setReqAttribute(REQ_PROJECT_ID, getProjectId());
             setReqAttribute(REQ_APP_ID, getAppId());

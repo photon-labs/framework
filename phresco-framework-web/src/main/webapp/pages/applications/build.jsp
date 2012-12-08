@@ -62,6 +62,11 @@
  		serverStatus = session.getAttribute(appId + FrameworkConstants.SESSION_SERVER_STATUS).toString().equals("true") ? true : false;
  	}
 	String runAgsSrcLog = (String) request.getAttribute(FrameworkConstants.REQ_SERVER_LOG);
+	Object optionsObj = session.getAttribute(FrameworkConstants.REQ_OPTION_ID);
+	List<String> optionIds  = null;
+	if (optionsObj != null) {
+		optionIds  = (List<String>) optionsObj;
+	}
 %>
 
 <s:if test="hasActionMessages()">
@@ -79,15 +84,27 @@
     	<div class="build_delete_btn_div">
 		    <a id="generateBuild" class="btn btn-primary" additionalParam="from=generateBuild"><s:text name='label.generatebuild'/></a>
 			<input id="deleteButton" type="button" value="<s:text name="label.delete"/>" class="btn" disabled="disabled"/>
+			<%
+				if (optionIds.contains("Minification")) {
+			%>
 			<input id="minifyButton" type="button" value="<s:text name="lbl.minifier"/>" class="btn btn-primary"/>
+			<%
+				}
+			%>
 		</div>
 		
-		<div class="runagint_source">
+		<div class="runagint_source" id="runagainst_source">
+			<%
+				if (optionIds.contains("Run_Against_Source")) {
+			%>
 			<div id="nodeJS_btndiv" class="nodeJS_div">
 				<input type="button" class="btn btn-primary" id="runAgainstSourceStart" value="<s:text name='label.runagainsrc'/>"/>
 		    	<input type="button" class="btn" id="runAgainstSourceStop" value="<s:text name='lbl.stop'/>" disabled onclick="stopServer();"/>
 		    	<input type="button" class="btn" id="runAgainstSourceRestart" value="<s:text name='label.restart'/>" disabled onclick="restartServer();"/>
 			</div>
+			<% 
+				}
+			%>
 		    <div class="icon_div">
 				<a href="#" id="openFolder"><img id="folderIcon" src="images/icons/open-folder.png" title="Open folder" /></a>
 				<a href="#" id="copyPath"><img src="images/icons/copy-path.png" title="Copy path"/></a>

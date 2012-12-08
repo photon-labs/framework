@@ -55,6 +55,11 @@
     if (applicationInfo != null) {
     	appDirectory = applicationInfo.getAppDirName(); 
     }
+    Object optionsObj = session.getAttribute(FrameworkConstants.REQ_OPTION_ID);
+	List<String> optionIds  = null;
+	if (optionsObj != null) {
+		optionIds  = (List<String>) optionsObj;
+	}
 %>
 
 <% if (CollectionUtils.isEmpty(buildInfos)) { %>
@@ -83,9 +88,15 @@
 				              	<th class="third">
 				                	<div class="th-inner"><s:text name="lbl.download"/></div>
 				              	</th>
-				              	<th class="third">
+				              	<%
+									if (optionIds.contains("Deploy")) {
+								%>
+				              	<th class="third" id="th_deploy">
 				                	<div class="th-inner"><s:text name="label.deploy"></s:text></div>
 				              	</th>
+				              	<%
+									}
+				              	%>
 				            </tr>
 			          	</thead>
 			
