@@ -18,10 +18,12 @@
   ###
   --%>
 
-<%@page import="org.apache.commons.collections.CollectionUtils"%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.util.List"%>
+
+<%@ page import="org.apache.commons.collections.CollectionUtils"%>
+
 <%@ page import="com.google.gson.Gson" %>
 
 <%@ page import="com.photon.phresco.commons.model.ArtifactGroup.Type"%>
@@ -63,6 +65,9 @@
 	        <option value="<%= ArtifactGroup.Type.COMPONENT.name() %>" data-imagesrc="images/components.png"
 	            data-description="Description with Components"><s:text name="lbl.options.components"/></option>
 	    </select>
+	    <div class="alert alert-success alert-message hideContent" id="successmsg">
+			<s:text name="succ.feature.configure"/>
+		</div>
 	</div>
 	<div class="custom_features">
 		<div class="tblheader">
@@ -230,5 +235,16 @@
   		params = params.concat("&featureName=");
   		params = params.concat(featureName);
   		yesnoPopup('showFeatureConfigPopup', '<s:text name="lbl.configure"/>', 'configureFeature', '<s:text name="lbl.configure"/>', '', params);
+  	}
+  	
+  	function successEvent(url, data) {
+  		if (url === "showConfigProperties") {
+  			$('#propertiesDiv').empty();
+  			$('#propertiesDiv').html(data);
+  		} else if (url === "configureFeature") {
+  			hideLoadingIcon();
+  			$("#successmsg").show();
+  			setTimeOut();
+  		}
   	}
 </script>

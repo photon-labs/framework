@@ -84,7 +84,6 @@
 	confirmDialog($("#deleteBtn"), '<s:text name="lbl.hdr.confirm.dialog"/>', '<s:text name="modal.body.text.del.configuration"/>', 'delete','<s:text name="lbl.btn.ok"/>');
 	
 	$(document).ready(function() {
-		//hideProgressBar();
 		var basicParams = getBasicParamsAsJson();
 		var fromPage = "<%= fromPage %>";
 		var configPath = "<%= configPath %>";
@@ -93,8 +92,8 @@
 		
 		//Trigerred when add btn is clicked
 		$('#configAdd').click(function() {
-		showLoadingIcon();
-		loadContent('addConfiguration', $('#formCustomers, #formAppMenu'), $('#subcontainer'), 'fromPage=add<%=fromPage%>&configPath=<%=configPath%>');
+			showLoadingIcon();
+			loadContent('addConfiguration', $('#formCustomers, #formAppMenu'), $('#subcontainer'), 'fromPage=add<%=fromPage%>&configPath=<%=configPath%>');
 		});
 	});
 	

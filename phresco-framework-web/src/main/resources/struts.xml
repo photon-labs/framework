@@ -204,7 +204,7 @@
         </action>
         
         <action name="configureFeature" method="configureFeature" class="com.photon.phresco.framework.actions.applications.Features">
-          	<result name="success">/pages/applications/feature/features.jsp</result>
+          	<result type="json" />
         </action>
         
         <!-- <action name="checkDependency" method="checkDependency" class="com.photon.phresco.framework.actions.applications.Features">

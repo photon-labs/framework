@@ -19,7 +19,6 @@
  */
 package com.photon.phresco.framework.actions.applications;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -33,25 +32,17 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
-import com.photon.phresco.api.ApplicationProcessor;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.ArtifactGroupInfo;
-import com.photon.phresco.commons.model.ArtifactInfo;
-import com.photon.phresco.commons.model.Customer;
 import com.photon.phresco.commons.model.Element;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.PropertyTemplate;
-import com.photon.phresco.commons.model.RepoInfo;
 import com.photon.phresco.commons.model.SettingsTemplate;
 import com.photon.phresco.commons.model.TechnologyInfo;
 import com.photon.phresco.configuration.Configuration;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
-import com.photon.phresco.plugins.model.Mojos.ApplicationHandler;
-import com.photon.phresco.plugins.util.MojoProcessor;
-import com.photon.phresco.util.Constants;
-import com.photon.phresco.util.PhrescoDynamicLoader;
 
 public class Features extends FrameworkBaseAction {
     
@@ -111,6 +102,8 @@ public class Features extends FrameworkBaseAction {
 			ProjectInfo projectInfo = (ProjectInfo)getSessionAttribute(getAppId() + SESSION_APPINFO);
 			ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
 			if (appInfo == null) {
+                appInfo = getApplicationInfo();
+            } else if (appInfo == null) {
 				appInfo = new ApplicationInfo();
 			}
 			projectInfo.setAppInfos(Collections.singletonList(createApplicationInfo(appInfo)));
@@ -194,8 +187,8 @@ public class Features extends FrameworkBaseAction {
                 }
 	        }
 	        setReqAttribute(REQ_PROPERTIES, propertyTemplates);
-        } catch (Exception e) {
-            // TODO: handle exception
+        } catch (PhrescoException e) {
+            return showErrorPopup(e, getText(EXCEPTION_FEATURE_MANIFEST_NOT_AVAILABLE));
         }
 	    
 	    return SUCCESS;
@@ -234,14 +227,14 @@ public class Features extends FrameworkBaseAction {
             List<Configuration> configs = new ArrayList<Configuration>();
             configs.add(configuration);
             getApplicationProcessor().postFeatureConfiguration(getApplicationInfo(), configs, getFeatureName());
-        } catch (Exception e) {
-            // TODO: handle exception
+        } catch (PhrescoException  e) {
+            return showErrorPopup(e, getText(EXCEPTION_FEATURE_MANIFEST_NOT_AVAILABLE));
         }
 	    
 	    return SUCCESS;
 	}
 	
-	private void getTemplateConfigFile(List<PropertyTemplate> propertyTemplates) {
+	private void getTemplateConfigFile(List<PropertyTemplate> propertyTemplates) throws PhrescoException {
 	    try {
             List<Configuration> featureConfigurations = getApplicationProcessor().preFeatureConfiguration(getApplicationInfo(), getFeatureName());
             for (Configuration featureConfiguration : featureConfigurations) {
@@ -259,50 +252,11 @@ public class Features extends FrameworkBaseAction {
                 }
                 setReqAttribute(REQ_HAS_CUSTOM_PROPERTY, true);
             }
-	    } catch (Exception e) {
-	        // TODO: handle exception
+	    } catch (PhrescoException e) {
+	        throw new PhrescoException();
 	    }
 	}
 	
-	private ApplicationProcessor getApplicationProcessor() {
-        ApplicationProcessor applicationProcessor = null;
-        try {
-            Customer customer = getServiceManager().getCustomer(getCustomerId());
-            RepoInfo repoInfo = customer.getRepoInfo();
-            StringBuilder sb = new StringBuilder(getApplicationHome())
-            .append(File.separator)
-            .append(Constants.DOT_PHRESCO_FOLDER)
-            .append(File.separator)
-            .append(Constants.APPLICATION_HANDLER_INFO_FILE);
-            MojoProcessor mojoProcessor = new MojoProcessor(new File(sb.toString()));
-            ApplicationHandler applicationHandler = mojoProcessor.getApplicationHandler();
-            if (applicationHandler != null) {
-                List<ArtifactGroup> plugins = setArtifactGroup(applicationHandler);
-                PhrescoDynamicLoader dynamicLoader = new PhrescoDynamicLoader(repoInfo, plugins);
-                applicationProcessor = dynamicLoader.getApplicationProcessor(applicationHandler.getClazz());
-            }
-        } catch (Exception e) {
-            // TODO: handle exception
-        }
-        
-        return applicationProcessor;
-    }
-	
-	private List<ArtifactGroup> setArtifactGroup(ApplicationHandler applicationHandler) {
-	    List<ArtifactGroup> plugins = new ArrayList<ArtifactGroup>();
-	    ArtifactGroup artifactGroup = new ArtifactGroup();
-	    artifactGroup.setGroupId(applicationHandler.getGroupId());
-	    artifactGroup.setArtifactId(applicationHandler.getArtifactId());
-	    //artifactGroup.setType(Type.FEATURE); to set version
-	    List<ArtifactInfo> artifactInfos = new ArrayList<ArtifactInfo>();
-	    ArtifactInfo artifactInfo = new ArtifactInfo();
-	    artifactInfo.setVersion(applicationHandler.getVersion());
-	    artifactInfos.add(artifactInfo);
-	    artifactGroup.setVersions(artifactInfos);
-	    plugins.add(artifactGroup);
-	    return plugins;
-	}
-
 	public String listFeatures() throws PhrescoException {
 		List<ArtifactGroup> moduleGroups = getServiceManager().getFeatures(getCustomerId(), getTechnologyId(), getType());
 		setReqAttribute(REQ_FEATURES_MOD_GRP, moduleGroups);

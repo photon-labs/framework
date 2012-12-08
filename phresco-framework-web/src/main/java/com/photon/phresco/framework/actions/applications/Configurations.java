@@ -57,7 +57,6 @@ import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.commons.LogErrorReport;
-import com.photon.phresco.plugins.model.Mojos.ApplicationHandler;
 import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.PhrescoDynamicLoader;
@@ -90,7 +89,7 @@ public class Configurations extends FrameworkBaseAction {
 	private String copyFromEnvName = null;
     private String description = null;
     private String oldName = null;
-    private String appliesTos = "";
+    private List<String> appliesTos = null;
     private boolean errorFound = false;
 	private String configNameError = null;
 	private String configEnvError = null;
@@ -123,6 +122,9 @@ public class Configurations extends FrameworkBaseAction {
     private List<String> versions = new ArrayList<String>();
     
     private String featureName = "";
+    
+    List<String> key = new ArrayList<String>();
+    List<String> value = new ArrayList<String>();
 
 	public String configList() {
 		if (debugEnabled) {
@@ -241,8 +243,6 @@ public class Configurations extends FrameworkBaseAction {
         return APP_CONFIG_ADD;
     }
     
-    
-    
     public String saveConfiguration() {
     	if (debugEnabled) {
     		S_LOGGER.debug("Entering Method  Configurations.saveConfiguration()");
@@ -332,12 +332,19 @@ public class Configurations extends FrameworkBaseAction {
 		    String key = propertyTemplate.getKey();
 		    String value = getActionContextParam(key);
 		    if (StringUtils.isNotEmpty(value)) {
-		        properties.put(key, value);
+		        properties.setProperty(key, value);
 		    }
 		    if (SERVER_KEY.equals(key) && IIS_SERVER.equals(value)) {
 		    	isIISServer = true;
 		    }
 		}
+		
+		//To get the custom properties
+        if (CollectionUtils.isNotEmpty(getKey()) && CollectionUtils.isNotEmpty(getValue())) {
+            for (int i = 0; i < getKey().size(); i++) {
+                properties.setProperty(getKey().get(i), getValue().get(i));
+            }
+        }
 		
 		ApplicationInfo applicationInfo = getApplicationInfo();
 		if (applicationInfo != null && applicationInfo.getTechInfo().getId().equals(FrameworkConstants.TECH_SITE_CORE)) {
@@ -351,7 +358,7 @@ public class Configurations extends FrameworkBaseAction {
 		
 		Configuration config = new Configuration(getConfigName(), getConfigType());
 		config.setDesc(getDescription());
-		config.setAppliesTo(getAppliesTos());
+		config.setAppliesTo(FrameworkUtil.listToCsv(getAppliesTos()));
 		config.setProperties(properties);
 		return config;
 	}
@@ -366,16 +373,6 @@ public class Configurations extends FrameworkBaseAction {
                     String keyStr = (String) key;
                     String value = properties.getProperty(keyStr);
                     String dispName = keyStr.replace(".", " ");
-                    /*int count = StringUtils.countMatches(keyStr, ".");
-                    String dispName = "";
-                    if (count >= 2) {
-                        int nthOccurrence = nthOccurrence(keyStr, '.', count - 1);
-                        dispName = keyStr.substring(nthOccurrence + 1, keyStr.length());
-                    } else {
-                        dispName = keyStr;
-                    }
-                    dispName = dispName.replace(".", " ");
-                    String dispName = ((String) key).substring(((String) key).lastIndexOf("."), ((String) key).length());*/
                     PropertyTemplate propertyTemplate = new PropertyTemplate();
                     propertyTemplate.setKey(keyStr);
                     propertyTemplate.setName(dispName);
@@ -389,45 +386,6 @@ public class Configurations extends FrameworkBaseAction {
         }
     }
 	
-	private ApplicationProcessor getApplicationProcessor() {
-        ApplicationProcessor applicationProcessor = null;
-        try {
-            Customer customer = getServiceManager().getCustomer(getCustomerId());
-            RepoInfo repoInfo = customer.getRepoInfo();
-            StringBuilder sb = new StringBuilder(getApplicationHome())
-            .append(File.separator)
-            .append(Constants.DOT_PHRESCO_FOLDER)
-            .append(File.separator)
-            .append(Constants.APPLICATION_HANDLER_INFO_FILE);
-            MojoProcessor mojoProcessor = new MojoProcessor(new File(sb.toString()));
-            ApplicationHandler applicationHandler = mojoProcessor.getApplicationHandler();
-            if (applicationHandler != null) {
-                List<ArtifactGroup> plugins = setArtifactGroup(applicationHandler);
-                PhrescoDynamicLoader dynamicLoader = new PhrescoDynamicLoader(repoInfo, plugins);
-                applicationProcessor = dynamicLoader.getApplicationProcessor(applicationHandler.getClazz());
-            }
-        } catch (Exception e) {
-            // TODO: handle exception
-        }
-        
-        return applicationProcessor;
-    }
-    
-    private List<ArtifactGroup> setArtifactGroup(ApplicationHandler applicationHandler) {
-        List<ArtifactGroup> plugins = new ArrayList<ArtifactGroup>();
-        ArtifactGroup artifactGroup = new ArtifactGroup();
-        artifactGroup.setGroupId(applicationHandler.getGroupId());
-        artifactGroup.setArtifactId(applicationHandler.getArtifactId());
-        //artifactGroup.setType(Type.FEATURE); to set version
-        List<ArtifactInfo> artifactInfos = new ArrayList<ArtifactInfo>();
-        ArtifactInfo artifactInfo = new ArtifactInfo();
-        artifactInfo.setVersion(applicationHandler.getVersion());
-        artifactInfos.add(artifactInfo);
-        artifactGroup.setVersions(artifactInfos);
-        plugins.add(artifactGroup);
-        return plugins;
-    }
-    
     /**
      * To validate the form fields
      * @return
@@ -435,7 +393,6 @@ public class Configurations extends FrameworkBaseAction {
      * @throws ConfigurationException 
      */
     public String validateConfiguration() throws PhrescoException, ConfigurationException {
-    	
     	boolean hasError = false;
     	boolean isIISServer = false;
     	boolean serverTypeValidation = false;
@@ -451,7 +408,7 @@ public class Configurations extends FrameworkBaseAction {
         }
     	
     	if (fromPage.equals(FrameworkConstants.ADD_SETTINGS) || fromPage.equals(FrameworkConstants.EDIT_SETTINGS)) {
-	    	if (StringUtils.isEmpty(getAppliesTos())) {
+	    	if (CollectionUtils.isEmpty(getAppliesTos())) {
 	    		setAppliesToError(getText(ERROR_APPLIES_TO));
 	            hasError = true;
 	        }
@@ -475,7 +432,6 @@ public class Configurations extends FrameworkBaseAction {
                 hasError = true;
             }
     	}
-    	
 	    
 	    ApplicationInfo applicationInfo = getApplicationInfo();
        // String techId = applicationInfo.getTechInfo().getId();
@@ -509,15 +465,15 @@ public class Configurations extends FrameworkBaseAction {
 				 propertyTemplate.setRequired(false);
 			}
     		 
-    		// validation for UserName & Password for RemoteDeployment
-             if(remoteDeply){
-                if (ADMIN_USERNAME.equals(key) || ADMIN_PASSWORD.equals(key)) {
-                	 propertyTemplate.setRequired(true);
-                }
-				if(DEPLOY_DIR.equals(key)){
-					 propertyTemplate.setRequired(false);
-				}
-             }
+			// validation for UserName & Password for RemoteDeployment
+			if(remoteDeply){
+			    if (ADMIN_USERNAME.equals(key) || ADMIN_PASSWORD.equals(key)) {
+			        propertyTemplate.setRequired(true);
+			    }
+			    if(DEPLOY_DIR.equals(key)){
+			        propertyTemplate.setRequired(false);
+			    }
+			}
              
              if (propertyTemplate.isRequired() && StringUtils.isEmpty(value)) {
              	String field = propertyTemplate.getName();
@@ -529,7 +485,6 @@ public class Configurations extends FrameworkBaseAction {
         	setSiteCoreInstPathError(getText(ERROR_SITE_CORE_PATH_MISSING));
     		hasError = true;
     	}*/
-        
         
     	if (isIISServer) {
         	if (StringUtils.isEmpty(getAppName())) {
@@ -553,20 +508,6 @@ public class Configurations extends FrameworkBaseAction {
         
         return SUCCESS;
     }
-    
-    
-    private String getDbDriver(String dbtype) {
-		return dbDriverMap.get(dbtype);
-	}
-    
-    private void initDriverMap() {
-		dbDriverMap.put("mysql", "com.mysql.jdbc.Driver");
-		dbDriverMap.put("oracle", "oracle.jdbc.OracleDriver");
-		dbDriverMap.put("hsql", "org.hsql.jdbcDriver");
-		dbDriverMap.put("mssql", "com.microsoft.sqlserver.jdbc.SQLServerDriver");
-		dbDriverMap.put("db2", "com.ibm.db2.jcc.DB2Driver");
-		dbDriverMap.put("mongodb", "com.mongodb.jdbc.MongoDriver");
-	}
     
     /*private void saveCertificateFile(String path) throws PhrescoException {
     	try {
@@ -665,15 +606,14 @@ public class Configurations extends FrameworkBaseAction {
 	}
 	
 	public String updateSettings(){
-		
-		try {
-			update(getGlobalSettingsPath());
-			addActionMessage(getText(ACT_SUCC_SETTINGS_UPDATE, Collections.singletonList(getConfigName())));
-		} catch (PhrescoException e) {
-			return showErrorPopup(e, getText(EXCEPTION_CONFIGURATION_UPDATE_SETTINGS));
-         }
-		
-		return settingsList();
+	    try {
+	        update(getGlobalSettingsPath());
+	        addActionMessage(getText(ACT_SUCC_SETTINGS_UPDATE, Collections.singletonList(getConfigName())));
+	    } catch (PhrescoException e) {
+	        return showErrorPopup(e, getText(EXCEPTION_CONFIGURATION_UPDATE_SETTINGS));
+	    }
+
+	    return settingsList();
 	}
     
     private void update(String configPath) {
@@ -752,9 +692,7 @@ public class Configurations extends FrameworkBaseAction {
 			}
             
             ConfigManager configManager = getConfigManager(getConfigPath());
-            Configuration configuration = configManager.getConfiguration(selectedEnv, 
-            		selectedType, selectedConfigname);
-
+            Configuration configuration = configManager.getConfiguration(selectedEnv, selectedType, selectedConfigname);
             
             if (configuration != null) {
 	            String appliesTo = configuration.getAppliesTo();
@@ -844,26 +782,24 @@ public class Configurations extends FrameworkBaseAction {
 		}
 		return  envList();
 	}
-    
 	
 	public boolean isConfigExists(String envName, String configType, String cloneFromConfigName) throws PhrescoException {
-		try {
-		    if (configType.equals(Constants.SETTINGS_TEMPLATE_SERVER) || configType.equals(Constants.SETTINGS_TEMPLATE_EMAIL)) {
-	    		ConfigManager configManager = getConfigManager(getConfigPath());
-	    		List<Configuration> configurations = configManager.getConfigurations(envName, configType);
-	    		if(CollectionUtils.isNotEmpty( configurations)) {
+	    try {
+	        if (configType.equals(Constants.SETTINGS_TEMPLATE_SERVER) || configType.equals(Constants.SETTINGS_TEMPLATE_EMAIL)) {
+	            ConfigManager configManager = getConfigManager(getConfigPath());
+	            List<Configuration> configurations = configManager.getConfigurations(envName, configType);
+	            if(CollectionUtils.isNotEmpty( configurations)) {
 	                return true;
-				}
-	    	}
-		    return false;
-		} catch (Exception e) {
-			throw new PhrescoException(e);
-		}
+	            }
+	        }
+	        return false;
+	    } catch (Exception e) {
+	        throw new PhrescoException(e);
+	    }
 	}
 	
     public String fetchProjectInfoVersions() {
     	try {
-    		
     		ApplicationInfo appInfo = getApplicationInfo();
     		if (SERVER.equals(getSelectedType())) {
     			if(appInfo != null && CollectionUtils.isNotEmpty(appInfo.getSelectedServers())) {
@@ -930,7 +866,6 @@ public class Configurations extends FrameworkBaseAction {
 	    			}
 				}
     		}
-    		
     	} catch (Exception e) {
     		e.printStackTrace();
     	}
@@ -1124,14 +1059,13 @@ public class Configurations extends FrameworkBaseAction {
 		this.configTypeError = configTypeError;
 	}
 
-	 public boolean isErrorFound() {
-		return errorFound;
+	public boolean isErrorFound() {
+	    return errorFound;
 	}
 	
 	public void setErrorFound(boolean errorFound) {
 		this.errorFound = errorFound;
 	}
-	
     
     public List<Environment> getEnvironments() {
         return environments;
@@ -1301,11 +1235,11 @@ public class Configurations extends FrameworkBaseAction {
 		this.serverType = serverType;
 	}
 
-	public String getAppliesTos() {
+	public List<String> getAppliesTos() {
 		return appliesTos;
 	}
 
-	public void setAppliesTos(String appliesTos) {
+	public void setAppliesTos(List<String> appliesTos) {
 		this.appliesTos = appliesTos;
 	}
 	  
@@ -1331,5 +1265,24 @@ public class Configurations extends FrameworkBaseAction {
 
     public String getFeatureName() {
         return featureName;
+    }
+
+    public List<String> getKey() {
+        return key;
+    }
+
+
+    public void setKey(List<String> key) {
+        this.key = key;
+    }
+
+
+    public List<String> getValue() {
+        return value;
+    }
+
+
+    public void setValue(List<String> value) {
+        this.value = value;
     }
 }
