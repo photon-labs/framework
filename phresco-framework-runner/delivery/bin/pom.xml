@@ -13,7 +13,6 @@
 		<sonar.version>3.1.1</sonar.version>
 		<jmeter.version>2.5.1</jmeter.version>
 		<checker.version>0.1</checker.version>
-		<
 		<device.deploy.version>1.0</device.deploy.version>
 		<phantomjs.version>1.5.0</phantomjs.version>
 	</properties>
