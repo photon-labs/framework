@@ -82,6 +82,7 @@
 
 <script type="text/javascript">
 	$(document).ready(function() {
+		hideLoadingIcon();
 		$(".popupLbl").text(function(index) {
 	        return textTrim($(this), 18);
 	    });
