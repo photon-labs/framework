@@ -200,6 +200,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 				oldDir.renameTo(projectInfoFile);
 				
 				extractArchive(response, projectInfo);
+				updateProjectPom(projectInfo, newAppDirSb.toString());
 				StringBuilder dotPhrescoPathSb = new StringBuilder(projectInfoFile.getPath());
 				dotPhrescoPathSb.append(File.separator);
 				dotPhrescoPathSb.append(DOT_PHRESCO_FOLDER);
@@ -265,6 +266,21 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 	}
 	
 	
+	private void updateProjectPom(ProjectInfo projectInfo, String newAppDirSb) throws PhrescoException {
+		File pomFile = new File(newAppDirSb, "pom.xml");
+		PomProcessor pomProcessor;
+		try {
+			pomProcessor = new PomProcessor(pomFile);
+			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
+			pomProcessor.setArtifactId(applicationInfo.getName());
+			pomProcessor.setName(applicationInfo.getName());
+			pomProcessor.setVersion(projectInfo.getVersion());
+			pomProcessor.save();
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
+		}
+	}
+
 	private List<ArtifactGroup> setArtifactGroup(ApplicationHandler applicationHandler) {
 			List<ArtifactGroup> plugins = new ArrayList<ArtifactGroup>();
 			ArtifactGroup artifactGroup = new ArtifactGroup();
