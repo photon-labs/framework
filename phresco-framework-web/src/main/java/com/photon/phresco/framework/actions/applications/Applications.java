@@ -21,11 +21,14 @@ package com.photon.phresco.framework.actions.applications;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
+import com.google.gson.reflect.TypeToken;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileExistsException;
 import org.apache.commons.io.FileUtils;
@@ -141,10 +144,8 @@ public class Applications extends FrameworkBaseAction {
 			String techId = applicationInfo.getTechInfo().getId();
 			Technology technology = getServiceManager().getArcheType(techId, getCustomerId());
 			List<String> optionIds = technology.getOptions();
-			if (CollectionUtils.isNotEmpty(optionIds)) {
-				setSessionAttribute(REQ_OPTION_ID, optionIds);
-			}
 			
+			setSessionAttribute(REQ_OPTION_ID, optionIds);
             setReqAttribute(REQ_CURRENT_APP_NAME, getApplicationInfo().getName());
             setReqAttribute(REQ_PROJECT_ID, getProjectId());
             setReqAttribute(REQ_APP_ID, getAppId());
@@ -603,7 +604,45 @@ public class Applications extends FrameworkBaseAction {
 
         return APP_APPLICATION;
     }*/
+    
+    
+    private List<ArtifactGroup> getRemovedModules(ApplicationInfo appInfo, List<String> jsonData) throws PhrescoException {
+    	List<String> selectedFeaturesJson = appInfo.getSelectedModules();
+    	List<String> selectedJSLibsJson = appInfo.getSelectedJSLibs();
+    	List<String> selectedComponentsJson = appInfo.getSelectedComponents();
+    	Gson gson = new Gson();
+    	List<String> newlySelectedModuleGrpIds = new ArrayList<String>();
+    	if (CollectionUtils.isNotEmpty(jsonData)) {
+    		for (String string : jsonData) {
+    			SelectedFeature obj = gson.fromJson(string, SelectedFeature.class);
+    			newlySelectedModuleGrpIds.add(obj.getModuleId());
+    		}
+    	}
+    	List<ArtifactGroup> artifactGroups = new ArrayList<ArtifactGroup>();
+    	if(CollectionUtils.isNotEmpty(selectedFeaturesJson)) {
+    		addArtifactGroups(selectedFeaturesJson, gson, newlySelectedModuleGrpIds, artifactGroups);
+    	}
+    	if(CollectionUtils.isNotEmpty(selectedJSLibsJson)) {
+    		addArtifactGroups(selectedJSLibsJson, gson, newlySelectedModuleGrpIds, artifactGroups);
+    	}
+    	if(CollectionUtils.isNotEmpty(selectedComponentsJson)) {
+    		addArtifactGroups(selectedComponentsJson, gson, newlySelectedModuleGrpIds, artifactGroups);
+    	}
+    	return artifactGroups;
+    }
 
+    private void addArtifactGroups(List<String> selectedFeaturesJson, Gson gson,
+    		List<String> newlySelectedModuleGrpIds,
+    		List<ArtifactGroup> artifactGroups) throws PhrescoException {
+    	for (String selectedfeatures : selectedFeaturesJson) {
+    		SelectedFeature selectedFeature = gson.fromJson(selectedfeatures, SelectedFeature.class);
+    		if (!newlySelectedModuleGrpIds.contains(selectedFeature.getModuleId())) {
+    			ArtifactGroup artifactGroupInfo = getServiceManager().getArtifactGroupInfo(selectedFeature.getModuleId());
+    			artifactGroups.add(artifactGroupInfo);
+    		}
+    	}
+    }
+    
     public String update() {
     	BufferedReader reader = null;
     	try {
@@ -649,6 +688,15 @@ public class Applications extends FrameworkBaseAction {
 			if (CollectionUtils.isNotEmpty(listArtifactGroup)) {
 				String artifactGroup = gson.toJson(listArtifactGroup);
 				applicationHandler.setSelectedFeatures(artifactGroup);
+			}
+			
+			if (CollectionUtils.isNotEmpty(jsonData)) {
+				List<ArtifactGroup> removedModules = getRemovedModules(appInfo, jsonData);
+				if(CollectionUtils.isNotEmpty(removedModules)) {
+					Type jsonType = new TypeToken<Collection<ArtifactGroup>>(){}.getType();
+					String deletedFeatures = gson.toJson(removedModules, jsonType);
+					applicationHandler.setDeletedFeatures(deletedFeatures);
+				}
 			}
         	
         	//To write selected databases info to phresco-plugin-info.xml

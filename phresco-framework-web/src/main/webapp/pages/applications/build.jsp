@@ -85,7 +85,7 @@
 		    <a id="generateBuild" class="btn btn-primary" additionalParam="from=generateBuild"><s:text name='label.generatebuild'/></a>
 			<input id="deleteButton" type="button" value="<s:text name="label.delete"/>" class="btn" disabled="disabled"/>
 			<%
-				if (optionIds.contains("Minification")) {
+				if (optionIds != null && optionIds.contains(FrameworkConstants.MINIFICATION_KEY)) {
 			%>
 			<input id="minifyButton" type="button" value="<s:text name="lbl.minifier"/>" class="btn btn-primary"/>
 			<%
@@ -95,7 +95,7 @@
 		
 		<div class="runagint_source" id="runagainst_source">
 			<%
-				if (optionIds.contains("Run_Against_Source")) {
+				if (optionIds != null && optionIds.contains(FrameworkConstants.RUN_AGAINST_KEY)) {
 			%>
 			<div id="nodeJS_btndiv" class="nodeJS_div">
 				<input type="button" class="btn btn-primary" id="runAgainstSourceStart" value="<s:text name='label.runagainsrc'/>"/>
