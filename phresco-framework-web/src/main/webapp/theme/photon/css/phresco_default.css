@@ -106,7 +106,12 @@ div.lgnBtnLabel {
 }
 
 .input-xlarge,input.xlarge,textarea.xlarge,select.xlarge {
-	width: 291px;
+	width: 291px !important;
+}
+
+input[type="password"] {
+	border: 1px solid #ccc !important;
+	padding: 2px 0px 7px 4px !important;
 }
 
 .l_align {
@@ -2317,7 +2322,7 @@ fieldset {
 }
 
 .input-xlarge, input.xlarge, textarea.xlarge, select.xlarge {
-    width: 290px;
+    width: 290px !important;
 }
 
 .textarea_span {
