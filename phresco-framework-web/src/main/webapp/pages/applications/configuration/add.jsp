@@ -54,10 +54,6 @@
 		selectedAppliesTo = configInfo.getAppliesTo();
 	}
 	
-	/* if (request.getAttribute(FrameworkConstants.REQ_FROM_PAGE) != null) {
-		fromPage = (String) request.getAttribute(FrameworkConstants.REQ_FROM_PAGE);
-	} */
-		
 	List<Environment> environments = (List<Environment>) request.getAttribute(FrameworkConstants.REQ_ENVIRONMENTS);
 	List<SettingsTemplate> settingsTemplates = (List<SettingsTemplate>) request.getAttribute(FrameworkConstants.REQ_SETTINGS_TEMPLATES);
 	String fromPage = request.getParameter(FrameworkConstants.REQ_FROM_PAGE);
@@ -65,6 +61,7 @@
 	String title = FrameworkActionUtil.getTitle(FrameworkConstants.CONFIG, fromPage);
 	String buttonLbl = FrameworkActionUtil.getButtonLabel(fromPage);
 	String pageUrl = FrameworkActionUtil.getPageUrl(FrameworkConstants.CONFIG, fromPage);
+	String progessTxt = FrameworkActionUtil.getProgressTxt(FrameworkConstants.CONFIG, fromPage);
 	
 	Gson gson = new Gson();
 	String container = "subcontainer"; //load for configuration
@@ -243,7 +240,7 @@
 		jsonParamObj.environment = env;
 		jsonParamObj = $.extend(jsonParamObj, jsonObject);
 		var jsonParam = JSON.stringify(jsonParamObj);
-		validateJson('<%= pageUrl %>', '', $('#<%= container %>'), jsonParam);
+		validateJson('<%= pageUrl %>', '', $('#<%= container %>'), jsonParam, '<%= progessTxt %>');
 	});
 	
 	function getFormData($form) {

@@ -536,7 +536,7 @@ public class Configurations extends FrameworkBaseAction {
     	try {
     	    ConfigManager configManager = getConfigManager(getConfigPath());
 			configManager.addEnvironments(getEnvironments());
-			addActionMessage(getText(ACT_SUCC_ENV_ADD, Collections.singletonList(getEnvName())));
+			addActionMessage(getText(ACT_SUCC_ENV_ADD));
     	} catch(Exception e) {
     	    return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_CONFIGURATION_CREATE_ENVIRONMENT));
     	}
@@ -544,7 +544,11 @@ public class Configurations extends FrameworkBaseAction {
     }
     
     public String delete() {
+    	if (debugEnabled) {
+    		S_LOGGER.debug("Entering Method  Configurations.delete()");
+    	}
     	try {
+    		
     		ConfigManager configManager = getConfigManager(getConfigPath());
     		if (StringUtils.isNotEmpty(getSelectedEnvirment())) {//To delete the selected environments
     			String [] deletableEnvs = getSelectedEnvirment().split(",");
@@ -552,11 +556,14 @@ public class Configurations extends FrameworkBaseAction {
         	    for (String deletableEnv : deletableEnvList) {
         	    	configManager.deleteEnvironment(deletableEnv);
     			}
-        	    addActionMessage(getText(ACT_SUCC_ENV_DELETE, Collections.singletonList(getEnvName())));
+        	    addActionMessage(getText(ACT_SUCC_ENV_DELETE, Collections.singletonList(getSelectedEnvirment())));
     		}
     		if (CollectionUtils.isNotEmpty(getSelectedConfigurations())) {//To delete the selected configurations
     			configManager.deleteConfigurations(getSelectedConfigurations());
-    			addActionMessage(getText(ACT_SUCC_ENV_DELETE, Collections.singletonList(getConfigName())));
+    			List<Configuration> selectedConfigurations = getSelectedConfigurations();
+        		for (Configuration configuration : selectedConfigurations) {
+        			addActionMessage(getText(ACT_SUCC_CONFIG_DELETE, Collections.singletonList(configuration.getName())));
+    			}
     		}
     		
     	} catch(Exception e) {

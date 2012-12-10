@@ -18,7 +18,10 @@
  * ###
  */
 
-function loadJsonContent(url, jsonParam, containerTag) {
+function loadJsonContent(url, jsonParam, containerTag, progressText) {
+	if (progressText !== undefined) {
+		showProgressBar(progressText);
+	} 
 	$.ajax({
 		url : url,
 		data : jsonParam,
@@ -285,7 +288,7 @@ function validateJson(url, form, containerTag, jsonParam, progressText, disabled
 			if (data.errorFound != undefined && data.errorFound) {
 				findError(data);
 			} else {
-				loadJsonContent(url, jsonParam, containerTag);
+				loadJsonContent(url, jsonParam, containerTag, progressText);
 			}
 		}
 	});

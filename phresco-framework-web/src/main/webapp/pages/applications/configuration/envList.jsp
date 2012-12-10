@@ -48,6 +48,7 @@
 	Map<String, String> urls = new HashMap<String, String>();
 	String fromPage = (String) request.getAttribute(FrameworkConstants.REQ_FROM_PAGE);
 	ActionSupport actionSupport = new ActionSupport();
+	List<Configuration> configurations = null;
 %>
 
     <% if (CollectionUtils.isEmpty(envs)) { %>
@@ -55,8 +56,18 @@
 		 	 <img id="config_warning_icon" src="images/icons/warning_icon.png" />
 			<%= actionSupport.getText("lbl.err.msg.list." + fromPage)%>
 		</div> 
-    <% } else { %>	
+    <% } else { %>
     	<div class="table_div" >
+    		<s:if test="hasActionMessages()">
+			<div class="alert alert-success alert-message" id="envSuccessmsg">
+				<s:actionmessage />
+			</div>
+			</s:if>
+			<s:if test="hasActionErrors()">
+				<div class="alert alert-error"  id="errormsg">
+					<s:actionerror />
+				</div>
+			</s:if>
 		<% for (Environment env : envs) { 
 			String envJson = gson.toJson(env);
 		%>
@@ -75,7 +86,7 @@
 									<section class="scrollpanel_inner">
 								    	<table class="table table-bordered table_border">
 								    	<% 
-								    			List<Configuration> configurations = env.getConfigurations();
+								    			configurations = env.getConfigurations();
 								    			if (CollectionUtils.isEmpty(configurations)) {
 								    		%> 
 								    			 <div class="alert alert-block">
@@ -159,7 +170,18 @@
 
 	$(document).ready(function() {
 		hideLoadingIcon();//To hide the loading icon
+		hideProgressBar();
 		accordion();
+		
+		<% if (CollectionUtils.isEmpty(envs)) { %>
+			$("input[name=configAdd]").attr("disabled", "disabled");
+			$("#configAdd").removeClass("btn-primary"); 
+	        $("#configAdd").addClass("btn-disabled");
+		<% } else { %>
+		  	$("input[name=configAdd]").removeAttr("disabled");
+		  	$("#configAdd").addClass("btn-primary"); 
+			$("#configAdd").removeClass("btn-disabled");
+		<% } %>
 	});
 
 </script>
