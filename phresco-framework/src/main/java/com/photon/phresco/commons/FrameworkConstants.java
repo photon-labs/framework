@@ -39,7 +39,7 @@ public interface FrameworkConstants {
     String LBL = "lbl.";
     String LBL_BTN = "lbl.btn";
     String LBL_URL = "lbl.pageurl.";
-    String LBL_PROG_TXT = "lbl.prog.txt.";
+    String LBL_PROG_TXT = "progress.txt.";
     String FROM_PAGE_EDIT = "edit";
     String FROM_PAGE_ADD = "add";
     
