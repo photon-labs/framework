@@ -59,7 +59,7 @@
 
 	<div class="page-header">
 	    <h1>
-	        Settings
+	        <%= FrameworkConstants.SETTINGS_HEADER %>
 	    </h1>
 	</div>
     

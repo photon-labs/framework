@@ -343,6 +343,7 @@ public interface FrameworkConstants {
     String PHRESCO_FILE_SERVER_PORT_NO = "phresco.file.server.port";
     String APPLICATIONS = "applications";
     String SETTINGS = "settings";
+    String SETTINGS_HEADER = "Settings";
     String FILE_EXTENSION_XML = "xml";
     String SEMI_COLON = ";";
     String SQUARE_CLOSE = "]";
@@ -394,6 +395,20 @@ public interface FrameworkConstants {
     String CONNECTION_URL = "connectionUrl";
 	String USER_NAME = "username";
 	String SCM_SVN = "scm:svn:";
+	
+	/*
+	 * Technology based Key
+	 */
+	String CODE_KEY = "Code";
+	String BUILD_KEY = "Build";
+	String UNIT_TEST_KEY = "Unit_Test";
+	String FUNCTIONAL_TEST_KEY = "Functional_Test";
+	String PERFORMANCE_TEST_KEY = "Performance_Test";
+	String LOAD_TEST_KEY = "Load_Test";
+	String CI_KEY = "CI";
+	String MINIFICATION_KEY = "Minification";
+	String RUN_AGAINST_KEY = "Run_Against_Source";
+	String DEPLOY_KEY = "Deploy";
     
 	/*
 	 * Dynamic parameters

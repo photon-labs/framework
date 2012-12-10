@@ -144,10 +144,8 @@ public class Applications extends FrameworkBaseAction {
 			String techId = applicationInfo.getTechInfo().getId();
 			Technology technology = getServiceManager().getArcheType(techId, getCustomerId());
 			List<String> optionIds = technology.getOptions();
-			if (CollectionUtils.isNotEmpty(optionIds)) {
-				setSessionAttribute(REQ_OPTION_ID, optionIds);
-			}
 			
+			setSessionAttribute(REQ_OPTION_ID, optionIds);
             setReqAttribute(REQ_CURRENT_APP_NAME, getApplicationInfo().getName());
             setReqAttribute(REQ_PROJECT_ID, getProjectId());
             setReqAttribute(REQ_APP_ID, getAppId());
