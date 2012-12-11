@@ -180,7 +180,7 @@
                                 </li>
                                 <li><a href="#"><s:text name="lbl.hdr.help"/></a></li>
                                 <li><a href="#"><s:text name="lbl.abt.phresco"/></a></li>
-                                <li><a href="<s:url action='admin/logout'/>"><s:text name="lbl.signout"/></a></li>
+                                <li><a href="<s:url action='logout'/>"><s:text name="lbl.signout"/></a></li>
                             </ul>
                         </div>
 					</aside>
