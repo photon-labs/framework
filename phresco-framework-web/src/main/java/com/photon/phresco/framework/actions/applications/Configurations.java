@@ -23,9 +23,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
@@ -56,7 +54,6 @@ import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
 import com.photon.phresco.framework.commons.FrameworkUtil;
-import com.photon.phresco.framework.commons.LogErrorReport;
 import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.PhrescoDynamicLoader;
@@ -65,10 +62,8 @@ import com.photon.phresco.util.Utility;
 public class Configurations extends FrameworkBaseAction {
     private static final long serialVersionUID = -4883865658298200459L;
     
-    private Map<String, String> dbDriverMap = new HashMap<String, String>(8);
-    
     private static final Logger S_LOGGER = Logger.getLogger(Configurations.class);
-    private static Boolean debugEnabled  = S_LOGGER.isDebugEnabled();
+    private static Boolean s_debugEnabled  = S_LOGGER.isDebugEnabled();
     
     private List<Environment> environments = new ArrayList<Environment>();
     private List<String> deletableEnvs = new ArrayList<String>();
@@ -127,8 +122,8 @@ public class Configurations extends FrameworkBaseAction {
     List<String> value = new ArrayList<String>();
 
 	public String configList() {
-		if (debugEnabled) {
-			S_LOGGER.debug("Entering Method  Configurations.configList()");
+		if (s_debugEnabled) {
+			S_LOGGER.debug("Entering Method Configurations.configList()");
 		}
         
     	try {
@@ -140,6 +135,9 @@ public class Configurations extends FrameworkBaseAction {
             	addActionMessage(getText(ENV_CLONE_SUCCESS));
             }
         } catch (PhrescoException e) {
+        	 if (s_debugEnabled) {
+                 S_LOGGER.error("Entered into catch block of Configurations.configList()" + FrameworkUtil.getStackTraceAsString(e));
+             }
         	return showErrorPopup(e,  getText(EXCEPTION_CONFIGURATION_LIST_ENV));
         }
         
@@ -148,9 +146,10 @@ public class Configurations extends FrameworkBaseAction {
 	
 	
 	public String settingsList() {
-		if (debugEnabled) {
-			S_LOGGER.debug("Entering Method  Configurations.settingsList()");
+		if (s_debugEnabled) {
+			S_LOGGER.debug("Entering Method Configurations.settingsList()");
 		}
+		
 		try {
 			setConfigPath(getGlobalSettingsPath().replace(File.separator, FORWARD_SLASH));
 			List<Environment> environments = getAllEnvironments();
@@ -162,6 +161,9 @@ public class Configurations extends FrameworkBaseAction {
             	addActionMessage(getText(ENV_CLONE_SUCCESS));
             }
         } catch (PhrescoException e) {
+        	if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Configurations.settingsList()" + FrameworkUtil.getStackTraceAsString(e));
+            }
         	return showErrorPopup(e,  getText(EXCEPTION_SETTINGS_LIST_ENV));
         } catch (ConfigurationException e) {
         	return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_SETTINGS_LIST_CONFIG));
@@ -171,8 +173,8 @@ public class Configurations extends FrameworkBaseAction {
 	}
 
 	public String envList() {
-		if (debugEnabled) {
-    		S_LOGGER.debug("Entering Method  Configurations.envList()");
+		if (s_debugEnabled) {
+    		S_LOGGER.debug("Entering Method Configurations.envList()");
 		}  
         
     	try {
@@ -184,6 +186,9 @@ public class Configurations extends FrameworkBaseAction {
             	addActionMessage(getText(ENV_CLONE_SUCCESS));
             }
         } catch (PhrescoException e) {
+        	if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Configurations.envList()" + FrameworkUtil.getStackTraceAsString(e));
+            }
         	return showErrorPopup(e,  getText(EXCEPTION_CONFIGURATION_READ_ENV_LIST));
         } catch (ConfigurationException e) {
         	  return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_CONFIGURATION_ENV_LIST));
@@ -203,9 +208,16 @@ public class Configurations extends FrameworkBaseAction {
 	}
 
 	public String openEnvironmentPopup() {
+		if (s_debugEnabled) {
+			S_LOGGER.debug("Entering Method Configurations.openEnvironmentPopup()");
+		}
+		
         try {
             setReqAttribute(REQ_ENVIRONMENTS, getAllEnvironments());
         } catch (PhrescoException e) {
+        	if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Configurations.openEnvironmentPopup()" + FrameworkUtil.getStackTraceAsString(e));
+            }
             return showErrorPopup(e, getText(EXCEPTION_CONFIGURATION_OPEN_ENV_POPUP));
         } catch (ConfigurationException e) {
             return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_CONFIGURATION_UPDATE_FAILS));
@@ -224,9 +236,10 @@ public class Configurations extends FrameworkBaseAction {
     }
     
     public String add() {
-    	if (debugEnabled) {
-    		S_LOGGER.debug("Entering Method  Configurations.add()");
+    	if (s_debugEnabled) {
+    		S_LOGGER.debug("Entering Method Configurations.add()");
     	}
+    	
         try {
             List<Environment> environments = getAllEnvironments();
             List<SettingsTemplate> configTemplates = getServiceManager().getConfigTemplates(getCustomerId());
@@ -235,6 +248,9 @@ public class Configurations extends FrameworkBaseAction {
             setReqAttribute(REQ_FROM_PAGE, getFromPage());
             setReqAttribute(REQ_CONFIG_PATH, getConfigPath());
         } catch (PhrescoException e) {
+        	if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Configurations.add()" + FrameworkUtil.getStackTraceAsString(e));
+            }
             return showErrorPopup(e, getText(EXCEPTION_CONFIGURATION_ADD));
         } catch (ConfigurationException e) {
         	return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_CONFIGURATION_UPDATE_FAILS));
@@ -244,8 +260,8 @@ public class Configurations extends FrameworkBaseAction {
     }
     
     public String saveConfiguration() {
-    	if (debugEnabled) {
-    		S_LOGGER.debug("Entering Method  Configurations.saveConfiguration()");
+    	if (s_debugEnabled) {
+    		S_LOGGER.debug("Entering Method Configurations.saveConfiguration()");
 		}
     	
     	try {
@@ -271,7 +287,10 @@ public class Configurations extends FrameworkBaseAction {
 			applicationProcessor.postConfiguration(getApplicationInfo());
 			addActionMessage(getText(ACT_SUCC_CONFIG_ADD, Collections.singletonList(getConfigName())));
 		} catch (PhrescoException e) {
-			 return showErrorPopup(e, getText(EXCEPTION_CONFIGURATION_SAVE_CONFIG));
+			if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Configurations.saveConfiguration()" + FrameworkUtil.getStackTraceAsString(e));
+            }
+			return showErrorPopup(e, getText(EXCEPTION_CONFIGURATION_SAVE_CONFIG));
 		} catch (ConfigurationException e) {
 			return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_CONFIGURATION_UPDATE_FAILS));
 		}
@@ -290,13 +309,16 @@ public class Configurations extends FrameworkBaseAction {
     }
     
     public String saveSettings() {
-    	if (debugEnabled) {
-    		S_LOGGER.debug("Entering Method  Configurations.saveSettings()");
+    	if (s_debugEnabled) {
+    		S_LOGGER.debug("Entering Method Configurations.saveSettings()");
 		}
     	try {
     		save(getGlobalSettingsPath());
     		addActionMessage(getText(ACT_SUCC_SETTINGS_ADD, Collections.singletonList(getConfigName())));
 		} catch (PhrescoException e) {
+			if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Configurations.saveSettings()" + FrameworkUtil.getStackTraceAsString(e));
+            }
 			return showErrorPopup(e, getText(EXCEPTION_CONFIGURATION_SAVE_SETTINGS));
 		} catch (ConfigurationException e) {
 			return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_CONFIGURATION_UPDATE_FAILS));
@@ -306,8 +328,8 @@ public class Configurations extends FrameworkBaseAction {
     }
     
     private void save(String configPath) throws ConfigurationException, PhrescoException {
-    	if (debugEnabled) {
-    		S_LOGGER.debug("Entering Method  Configurations.save()");
+    	if (s_debugEnabled) {
+    		S_LOGGER.debug("Entering Method Configurations.save()");
     	}
 
     	Configuration config = getConfigInstance();
@@ -364,6 +386,10 @@ public class Configurations extends FrameworkBaseAction {
 	}
 	
 	private void getTemplateConfigFile(List<PropertyTemplate> propertyTemplates) {
+		if (s_debugEnabled) {
+    		S_LOGGER.debug("Entering Method Configurations.getTemplateConfigFile()");
+    	}
+		
         try {
             List<Configuration> featureConfigurations = getApplicationProcessor().preFeatureConfiguration(getApplicationInfo(), getFeatureName());
             for (Configuration featureConfiguration : featureConfigurations) {
@@ -381,7 +407,9 @@ public class Configurations extends FrameworkBaseAction {
                 }
             }
         } catch (Exception e) {
-            // TODO: handle exception
+        	if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Configurations.getTemplateConfigFile()" + FrameworkUtil.getStackTraceAsString(e));
+            }
             e.printStackTrace();
         }
     }
@@ -529,21 +557,28 @@ public class Configurations extends FrameworkBaseAction {
     }*/
     
     public String createEnvironment() {
-        if (debugEnabled) {
+        if (s_debugEnabled) {
             S_LOGGER.debug("Entered into Configurations.createEnvironment()");
         }
         
     	try {
     	    ConfigManager configManager = getConfigManager(getConfigPath());
 			configManager.addEnvironments(getEnvironments());
-			addActionMessage(getText(ACT_SUCC_ENV_ADD, Collections.singletonList(getEnvName())));
+			addActionMessage(getText(ACT_SUCC_ENV_ADD));
     	} catch(Exception e) {
+    		if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Configurations.createEnvironment()" + FrameworkUtil.getStackTraceAsString(e));
+            }
     	    return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_CONFIGURATION_CREATE_ENVIRONMENT));
     	}
     	return envList();
     }
     
     public String delete() {
+    	if (s_debugEnabled) {
+    		S_LOGGER.debug("Entering Method Configurations.delete()");
+    	}
+    	
     	try {
     		ConfigManager configManager = getConfigManager(getConfigPath());
     		if (StringUtils.isNotEmpty(getSelectedEnvirment())) {//To delete the selected environments
@@ -552,23 +587,30 @@ public class Configurations extends FrameworkBaseAction {
         	    for (String deletableEnv : deletableEnvList) {
         	    	configManager.deleteEnvironment(deletableEnv);
     			}
-        	    addActionMessage(getText(ACT_SUCC_ENV_DELETE, Collections.singletonList(getEnvName())));
+        	    addActionMessage(getText(ACT_SUCC_ENV_DELETE, Collections.singletonList(getSelectedEnvirment())));
     		}
     		if (CollectionUtils.isNotEmpty(getSelectedConfigurations())) {//To delete the selected configurations
     			configManager.deleteConfigurations(getSelectedConfigurations());
-    			addActionMessage(getText(ACT_SUCC_ENV_DELETE, Collections.singletonList(getConfigName())));
+    			List<Configuration> selectedConfigurations = getSelectedConfigurations();
+        		for (Configuration configuration : selectedConfigurations) {
+        			addActionMessage(getText(ACT_SUCC_CONFIG_DELETE, Collections.singletonList(configuration.getName())));
+    			}
     		}
     		
     	} catch(Exception e) {
-    		 return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_CONFIGURATION_DELETE_ENVIRONMENT));
+    		if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Configurations.delete()" + FrameworkUtil.getStackTraceAsString(e));
+            }
+    		return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_CONFIGURATION_DELETE_ENVIRONMENT));
     	}
     	return envList();
     }
     
 	public String edit() {
-    	if (debugEnabled) {
-    		S_LOGGER.debug("Entering Method  Configurations.edit()");
+    	if (s_debugEnabled) {
+    		S_LOGGER.debug("Entering Method Configurations.edit()");
     	}
+    	
         try {
         	List<Environment> environments = getAllEnvironments();
         	setReqAttribute(REQ_ENVIRONMENTS, environments);
@@ -581,6 +623,9 @@ public class Configurations extends FrameworkBaseAction {
         	setReqAttribute(REQ_FROM_PAGE, getFromPage());
         	
         } catch (PhrescoException e) {
+        	if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Configurations.edit()" + FrameworkUtil.getStackTraceAsString(e));
+            }
         	return showErrorPopup(e, getText(EXCEPTION_CONFIGURATION_EDIT));
         } catch (ConfigurationException e) {
         	return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_CONFIGURATION_UPDATE_FAILS));
@@ -591,14 +636,17 @@ public class Configurations extends FrameworkBaseAction {
     }
 	
 	public String updateConfiguration(){
-		if (debugEnabled) {
-    		S_LOGGER.debug("Entering Method  Configurations.updateConfiguration()");
+		if (s_debugEnabled) {
+    		S_LOGGER.debug("Entering Method Configurations.updateConfiguration()");
 		}  
 		
 		try {
 			update(getAppConfigPath());
 			addActionMessage(getText(ACT_SUCC_CONFIG_UPDATE, Collections.singletonList(getConfigName())));
 		} catch (PhrescoException e) {
+			if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Configurations.updateConfiguration()" + FrameworkUtil.getStackTraceAsString(e));
+            }
 			return showErrorPopup(e, getText(EXCEPTION_CONFIGURATION_UPDATE_CONFIG));
          }
 		
@@ -606,10 +654,17 @@ public class Configurations extends FrameworkBaseAction {
 	}
 	
 	public String updateSettings(){
+		if (s_debugEnabled) {
+    		S_LOGGER.debug("Entering Method Configurations.updateSettings()");
+		}  
+		
 	    try {
 	        update(getGlobalSettingsPath());
 	        addActionMessage(getText(ACT_SUCC_SETTINGS_UPDATE, Collections.singletonList(getConfigName())));
 	    } catch (PhrescoException e) {
+	    	if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Configurations.updateSettings()" + FrameworkUtil.getStackTraceAsString(e));
+            }
 	        return showErrorPopup(e, getText(EXCEPTION_CONFIGURATION_UPDATE_SETTINGS));
 	    }
 
@@ -617,9 +672,10 @@ public class Configurations extends FrameworkBaseAction {
 	}
     
     private void update(String configPath) {
-    	if (debugEnabled) {
-    		S_LOGGER.debug("Entering Method  Configurations.update()");
-		}  
+    	if (s_debugEnabled) {
+    		S_LOGGER.debug("Entering Method Configurations.update()");
+		}
+    	
         try {
         	Environment env = getEnvironment();
         	ConfigManager configManager = getConfigManager(configPath);
@@ -627,15 +683,17 @@ public class Configurations extends FrameworkBaseAction {
         	configManager.updateConfiguration(env.getName(), oldName, config);
         	
         } catch (PhrescoException e) {
-        	new LogErrorReport(e, "Configurations update");
+        	if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Configurations.update()" + FrameworkUtil.getStackTraceAsString(e));
+            }
         } catch (ConfigurationException e) {
 			e.printStackTrace();
 		}
     }
     
     public String showProperties() {
-		if (debugEnabled) {
-			S_LOGGER.debug("Entering Method  Settings.settingsType()");
+		if (s_debugEnabled) {
+			S_LOGGER.debug("Entering Method Configurations.showProperties()");
 		}
 		
 		try {
@@ -708,6 +766,9 @@ public class Configurations extends FrameworkBaseAction {
             setReqAttribute(REQ_TYPE_VALUES, typeValues);
             setReqAttribute(REQ_SELECTED_TYPE, selectedType);
 		} catch (PhrescoException e) {
+			if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Configurations.showProperties()" + FrameworkUtil.getStackTraceAsString(e));
+            }
         	return showErrorPopup(e,  getText(EXCEPTION_CONFIGURATION_SHOW_PROPERTIES));
 		} catch (ConfigurationException e) {
 			e.printStackTrace();
@@ -732,9 +793,10 @@ public class Configurations extends FrameworkBaseAction {
     
     
     public String cloneConfigPopup() {
-    	if (debugEnabled) {
+    	if (s_debugEnabled) {
 			S_LOGGER.debug("Entering Method  Configurations.cloneConfigPopup()");
 		}
+    	
     	try {
     		List<Environment> environments = getAllEnvironments();
     		setReqAttribute(REQ_ENVIRONMENTS, environments);
@@ -743,7 +805,7 @@ public class Configurations extends FrameworkBaseAction {
     		setReqAttribute(CLONE_FROM_CONFIG_TYPE, configType);
     		setReqAttribute(CLONE_FROM_CONFIG_DESC, currentConfigDesc);
 		} catch (Exception e) {
-			if (debugEnabled) {
+			if (s_debugEnabled) {
 				S_LOGGER.error("Entered into catch block of Configurations.cloneConfigPopup()" + FrameworkUtil.getStackTraceAsString(e));
 	    	}
 		}
@@ -751,9 +813,10 @@ public class Configurations extends FrameworkBaseAction {
     }
 
 	public String cloneConfiguration() {
-		if (debugEnabled) {
-			S_LOGGER.debug("Entering Method  Configurations.cloneConfiguration()");
+		if (s_debugEnabled) {
+			S_LOGGER.debug("Entering Method Configurations.cloneConfiguration()");
 		}
+		
 		try {
 			
 			boolean configExists = isConfigExists(currentEnvName, configType, configName);
@@ -784,6 +847,10 @@ public class Configurations extends FrameworkBaseAction {
 	}
 	
 	public boolean isConfigExists(String envName, String configType, String cloneFromConfigName) throws PhrescoException {
+		if (s_debugEnabled) {
+			S_LOGGER.debug("Entering Method Configurations.isConfigExists()");
+		}
+		
 	    try {
 	        if (configType.equals(Constants.SETTINGS_TEMPLATE_SERVER) || configType.equals(Constants.SETTINGS_TEMPLATE_EMAIL)) {
 	            ConfigManager configManager = getConfigManager(getConfigPath());
@@ -794,11 +861,18 @@ public class Configurations extends FrameworkBaseAction {
 	        }
 	        return false;
 	    } catch (Exception e) {
+	    	if (s_debugEnabled) {
+				S_LOGGER.error("Entered into catch block of Configurations.isConfigExists()" + FrameworkUtil.getStackTraceAsString(e));
+	    	}
 	        throw new PhrescoException(e);
 	    }
 	}
 	
     public String fetchProjectInfoVersions() {
+    	if (s_debugEnabled) {
+			S_LOGGER.debug("Entering Method Configurations.fetchProjectInfoVersions()");
+		}
+    	
     	try {
     		ApplicationInfo appInfo = getApplicationInfo();
     		if (SERVER.equals(getSelectedType())) {
@@ -833,13 +907,19 @@ public class Configurations extends FrameworkBaseAction {
 				}
     		}
     		
-    	} catch (Exception e) {
-    		e.printStackTrace();
+    	} catch (PhrescoException e) {
+    		if (s_debugEnabled) {
+				S_LOGGER.error("Entered into catch block of Configurations.fetchProjectInfoVersions()" + FrameworkUtil.getStackTraceAsString(e));
+	    	}
     	}
     	return SUCCESS;
     }
     
     public String fetchSettingProjectInfoVersions() {
+    	if (s_debugEnabled) {
+			S_LOGGER.debug("Entering Method Configurations.fetchSettingProjectInfoVersions()");
+		}
+    	
     	try {
     		if (DATABASE.equals(getSelectedType())) {
 	    		List<DownloadInfo> downloads = getServiceManager().getDownloads(getCustomerId());
@@ -867,7 +947,9 @@ public class Configurations extends FrameworkBaseAction {
 				}
     		}
     	} catch (Exception e) {
-    		e.printStackTrace();
+    		if (s_debugEnabled) {
+				S_LOGGER.error("Entered into catch block of Configurations.fetchSettingProjectInfoVersions()" + FrameworkUtil.getStackTraceAsString(e));
+	    	}
     	}
     	return SUCCESS;
     }

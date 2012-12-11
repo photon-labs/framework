@@ -329,7 +329,7 @@
 		} else if(pageUrl == "checkDependency") {
 			successDependencyCall(data);
 		} else if(pageUrl == "fetchDefaultModules") {
-			chkDefaultModules(data.defaultModules);
+			chkDefaultModules(data.depArtifactGroupNames, data.depArtifactInfoIds);
 		}
 	}
 	

@@ -21,11 +21,14 @@ package com.photon.phresco.framework.actions.applications;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
+import com.google.gson.reflect.TypeToken;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileExistsException;
 import org.apache.commons.io.FileUtils;
@@ -95,7 +98,6 @@ public class Applications extends FrameworkBaseAction {
     private List<String> javascript= null;
     private String oldAppDirName = "";
 
-    private String repositoryUrl = "";
     private String userName = "";
     private String password = "";
     private String revision = "";
@@ -109,6 +111,7 @@ public class Applications extends FrameworkBaseAction {
     private String credential = "";
     // import from git
     private String repoType = "";
+    private String repoUrl = "";
 
     private String applicationType = "";
 
@@ -128,6 +131,10 @@ public class Applications extends FrameworkBaseAction {
     public boolean errorFlag;
 
     private SelectedFeature selectFeature;
+    private String selectedDownloadInfo = "";
+    private String downloadInfoType = "";
+    private String selectedDownloadInfoVersion = "";
+    private String selectBoxId = "";
     
     private List<String> jsonData = null;
     
@@ -141,10 +148,8 @@ public class Applications extends FrameworkBaseAction {
 			String techId = applicationInfo.getTechInfo().getId();
 			Technology technology = getServiceManager().getArcheType(techId, getCustomerId());
 			List<String> optionIds = technology.getOptions();
-			if (CollectionUtils.isNotEmpty(optionIds)) {
-				setSessionAttribute(REQ_OPTION_ID, optionIds);
-			}
 			
+			setSessionAttribute(REQ_OPTION_ID, optionIds);
             setReqAttribute(REQ_CURRENT_APP_NAME, getApplicationInfo().getName());
             setReqAttribute(REQ_PROJECT_ID, getProjectId());
             setReqAttribute(REQ_APP_ID, getAppId());
@@ -280,6 +285,13 @@ public class Applications extends FrameworkBaseAction {
         try {
             String type = getHttpRequest().getParameter(REQ_TYPE);
             String techId = getHttpRequest().getParameter(REQ_PARAM_NAME_TECH__ID);
+            String selectedDb = getHttpRequest().getParameter("selectedDownloadInfo");
+            String selectedDbVer = getHttpRequest().getParameter("selectedDownloadInfoVersion");
+            String selectBoxId = getHttpRequest().getParameter("selectBoxId");
+            setDownloadInfoType(type);
+            setSelectedDownloadInfo(selectedDb);
+            setSelectedDownloadInfoVersion(selectedDbVer);
+            setSelectBoxId(selectBoxId);
             List<DownloadInfo> downloadInfos = getServiceManager().getDownloads(getCustomerId(), techId, type);
 			setDownloadInfos(downloadInfos);
         } catch (PhrescoException e) {
@@ -603,7 +615,45 @@ public class Applications extends FrameworkBaseAction {
 
         return APP_APPLICATION;
     }*/
+    
+    
+    private List<ArtifactGroup> getRemovedModules(ApplicationInfo appInfo, List<String> jsonData) throws PhrescoException {
+    	List<String> selectedFeaturesJson = appInfo.getSelectedModules();
+    	List<String> selectedJSLibsJson = appInfo.getSelectedJSLibs();
+    	List<String> selectedComponentsJson = appInfo.getSelectedComponents();
+    	Gson gson = new Gson();
+    	List<String> newlySelectedModuleGrpIds = new ArrayList<String>();
+    	if (CollectionUtils.isNotEmpty(jsonData)) {
+    		for (String string : jsonData) {
+    			SelectedFeature obj = gson.fromJson(string, SelectedFeature.class);
+    			newlySelectedModuleGrpIds.add(obj.getModuleId());
+    		}
+    	}
+    	List<ArtifactGroup> artifactGroups = new ArrayList<ArtifactGroup>();
+    	if(CollectionUtils.isNotEmpty(selectedFeaturesJson)) {
+    		addArtifactGroups(selectedFeaturesJson, gson, newlySelectedModuleGrpIds, artifactGroups);
+    	}
+    	if(CollectionUtils.isNotEmpty(selectedJSLibsJson)) {
+    		addArtifactGroups(selectedJSLibsJson, gson, newlySelectedModuleGrpIds, artifactGroups);
+    	}
+    	if(CollectionUtils.isNotEmpty(selectedComponentsJson)) {
+    		addArtifactGroups(selectedComponentsJson, gson, newlySelectedModuleGrpIds, artifactGroups);
+    	}
+    	return artifactGroups;
+    }
 
+    private void addArtifactGroups(List<String> selectedFeaturesJson, Gson gson,
+    		List<String> newlySelectedModuleGrpIds,
+    		List<ArtifactGroup> artifactGroups) throws PhrescoException {
+    	for (String selectedfeatures : selectedFeaturesJson) {
+    		SelectedFeature selectedFeature = gson.fromJson(selectedfeatures, SelectedFeature.class);
+    		if (!newlySelectedModuleGrpIds.contains(selectedFeature.getModuleId())) {
+    			ArtifactGroup artifactGroupInfo = getServiceManager().getArtifactGroupInfo(selectedFeature.getModuleId());
+    			artifactGroups.add(artifactGroupInfo);
+    		}
+    	}
+    }
+    
     public String update() {
     	BufferedReader reader = null;
     	try {
@@ -646,12 +696,18 @@ public class Applications extends FrameworkBaseAction {
 			File filePath = new File(sb.toString());
 			MojoProcessor mojo = new MojoProcessor(filePath);
 			ApplicationHandler applicationHandler = mojo.getApplicationHandler();
-			if (CollectionUtils.isNotEmpty(listArtifactGroup)) {
-				String artifactGroup = gson.toJson(listArtifactGroup);
-				applicationHandler.setSelectedFeatures(artifactGroup);
-			}
+			
+			//To write selected Features into phresco-application-Handler-info.xml
+			String artifactGroup = gson.toJson(listArtifactGroup);
+			applicationHandler.setSelectedFeatures(artifactGroup);
+
+			//To write Deleted Features into phresco-application-Handler-info.xml
+			List<ArtifactGroup> removedModules = getRemovedModules(appInfo, jsonData);
+			Type jsonType = new TypeToken<Collection<ArtifactGroup>>(){}.getType();
+			String deletedFeatures = gson.toJson(removedModules, jsonType);
+			applicationHandler.setDeletedFeatures(deletedFeatures);
         	
-        	//To write selected databases info to phresco-plugin-info.xml
+			//To write selected Database into phresco-application-Handler-info.xml
 			List<ArtifactGroupInfo> selectedDatabases = appInfo.getSelectedDatabases();
 			if (CollectionUtils.isNotEmpty(selectedDatabases)) {
 				for (ArtifactGroupInfo selectedDatabase : selectedDatabases) {
@@ -665,7 +721,7 @@ public class Applications extends FrameworkBaseAction {
 				}
 			}
 			
-			//To write selected servers info to phresco-plugin-info.xml
+			//To write selected Servers into phresco-application-Handler-info.xml
 			List<ArtifactGroupInfo> selectedServers = appInfo.getSelectedServers();
 			if (CollectionUtils.isNotEmpty(selectedServers)) {
 				for (ArtifactGroupInfo selectedservers : selectedServers) {
@@ -807,7 +863,7 @@ public class Applications extends FrameworkBaseAction {
 			}
 			revision = !HEAD_REVISION.equals(revision) ? revisionVal : revision;
 			SCMManagerImpl scmi = new SCMManagerImpl();
-			scmi.importProject(SVN, repositoryUrl, userName, password, null, revision);
+			scmi.importProject(SVN, repoUrl, userName, password, null, revision);
 			errorString = getText(IMPORT_SUCCESS_PROJECT);
 			errorFlag = true;
 		} catch (SVNAuthenticationException e) {
@@ -856,7 +912,7 @@ public class Applications extends FrameworkBaseAction {
 		}
 		SCMManagerImpl scmi = new SCMManagerImpl();
 		try {
-			scmi.importProject(GIT, repositoryUrl, userName, password, MASTER ,revision);
+			scmi.importProject(GIT, repoUrl, userName, password, MASTER ,revision);
 			errorString = getText(IMPORT_SUCCESS_PROJECT);
 			errorFlag = true;
 		} catch (SVNAuthenticationException e) {	//Will not occur for GIT
@@ -937,7 +993,7 @@ public class Applications extends FrameworkBaseAction {
 		try {
 			ApplicationInfo applicationInfo = getApplicationInfo();
 			String appDirName = applicationInfo.getAppDirName();
-			scmi.updateProject(GIT, repositoryUrl, userName, password, MASTER , null, appDirName);
+			scmi.updateProject(GIT, repoUrl, userName, password, MASTER , null, appDirName);
 			errorString = getText(SUCCESS_PROJECT_UPDATE);
 			errorFlag = true;
 		} catch (InvalidRemoteException e) {
@@ -1000,7 +1056,7 @@ public class Applications extends FrameworkBaseAction {
 		try {
 			ApplicationInfo applicationInfo = getApplicationInfo();
 			String appDirName = applicationInfo.getAppDirName();
-			scmi.updateProject(SVN, repositoryUrl, userName, password, null, revision, appDirName);
+			scmi.updateProject(SVN, repoUrl, userName, password, null, revision, appDirName);
 			errorString = getText(SUCCESS_PROJECT_UPDATE);
 			errorFlag = true;
 		} catch (InvalidRemoteException e) {
@@ -1684,14 +1740,6 @@ public class Applications extends FrameworkBaseAction {
         this.fromPage = fromPage;
     }
 
-    public String getRepourl() {
-        return repositoryUrl;
-    }
-
-    public void setRepourl(String repourl) {
-        this.repositoryUrl = repourl;
-    }
-
     public String getUsername() {
         return userName;
     }
@@ -2014,5 +2062,44 @@ public class Applications extends FrameworkBaseAction {
 
 	public void setOldAppDirName(String oldAppDirName) {
 		this.oldAppDirName = oldAppDirName;
+	}
+
+	public String getRepoUrl() {
+		return repoUrl;
+	}
+
+	public void setRepoUrl(String repoUrl) {
+		this.repoUrl = repoUrl;
+	}
+	public String getSelectedDownloadInfo() {
+		return selectedDownloadInfo;
+	}
+
+	public void setSelectedDownloadInfo(String selectedDownloadInfo) {
+		this.selectedDownloadInfo = selectedDownloadInfo;
+	}
+
+	public String getSelectBoxId() {
+		return selectBoxId;
+	}
+
+	public void setSelectBoxId(String selectBoxId) {
+		this.selectBoxId = selectBoxId;
+	}
+
+	public String getSelectedDownloadInfoVersion() {
+		return selectedDownloadInfoVersion;
+	}
+
+	public void setSelectedDownloadInfoVersion(String selectedDownloadInfoVersion) {
+		this.selectedDownloadInfoVersion = selectedDownloadInfoVersion;
+	}
+
+	public String getDownloadInfoType() {
+		return downloadInfoType;
+	}
+
+	public void setDownloadInfoType(String downloadInfoType) {
+		this.downloadInfoType = downloadInfoType;
 	}
 }

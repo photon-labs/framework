@@ -204,17 +204,19 @@
 										<div class="controls">
 											<select class="input-medium" name="<%= appLayerId + FrameworkConstants.REQ_PARAM_NAME_TECHNOLOGY %>" <%= disblStr %> onchange="getAppLayerTechVersions('<%= appLayerId %>', this);">
 												<option value="" selected disabled><s:text name='lbl.default.opt.select.tech'/></option>
-												<% 
+												<% String techIdVersion = "";
 													if (CollectionUtils.isNotEmpty(appLayerTechGroups)) {
 														for (TechnologyGroup appLayerTechGroup : appLayerTechGroups) {
 														    List<TechnologyInfo> techInfos = appLayerTechGroup.getTechInfos();
 														    if (CollectionUtils.isNotEmpty(techInfos)) {
 														        for (TechnologyInfo techInfo : techInfos) {
 																	String slctStr = "";
+																	
 														        	if (CollectionUtils.isNotEmpty(appInfos)) {
 															        	for (ApplicationInfo appInfo: appInfos) {
 															        		if (techInfo.getId().equals(appInfo.getTechInfo().getId())){
 															        			slctStr = "selected";
+															        			techIdVersion = appInfo.getTechInfo().getVersion();
 															        		}
 															        	}
 														        	} 
@@ -227,9 +229,15 @@
 													}
 												%>
 											</select>
+										<%if (CollectionUtils.isNotEmpty(appInfos)) { %>
+											<select class="input-medium" name="<%= appLayerId %>Version" <%= disblStr %> >
+											<option value="" selected disabled><%= techIdVersion %></option>
+											</select>
+							        	<%	} else { %>
 											<select class="input-medium" name="<%= appLayerId %>Version" <%= disblStr %> >
 												<option value="" selected disabled><s:text name='lbl.default.opt.select.version'/></option>
 											</select>
+											<% } %>
 										</div>
 									</div>
 								</section>

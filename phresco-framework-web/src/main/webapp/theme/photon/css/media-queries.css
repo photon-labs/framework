@@ -3284,6 +3284,11 @@ Width > 1441 and <= 1600
 		padding: 0px;
 		width: 592px;
 	}
+	
+	#container {
+		height: 91%;
+	}
+	
 	.right {
 		height: 87%;
 		overflow: hidden;

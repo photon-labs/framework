@@ -95,7 +95,7 @@
 		<script type="text/javascript" src="js/jquery-tojson.js" ></script>
 		<script type="text/javascript" src="js/ddslick.js" ></script>
 		<!-- Window Resizer -->
-		<script type="text/javascript" src="js/windowResizer.js"></script>
+		<script type="text/javascript" src="js/windowResizer_default.js" id="windowResizer"></script>
 		
 		<!-- jquery editable combobox -->
 		<script src="js/jquery.editable.combobox.js"></script>
@@ -180,7 +180,7 @@
                                 </li>
                                 <li><a href="#"><s:text name="lbl.hdr.help"/></a></li>
                                 <li><a href="#"><s:text name="lbl.abt.phresco"/></a></li>
-                                <li><a href="<s:url action='admin/logout'/>"><s:text name="lbl.signout"/></a></li>
+                                <li><a href="<s:url action='logout'/>"><s:text name="lbl.signout"/></a></li>
                             </ul>
                         </div>
 					</aside>
@@ -399,13 +399,13 @@
 		}
 		
 		/** To include the js based on the device **/
-		var body = document.getElementsByTagName('body')[0];
+		/* var body = document.getElementsByTagName('body')[0];
 		var script = document.createElement('script');
 		if (isiPad()) {
 			script.src = 'js/windowResizer-ipad.js';
 		} else {
 			script.src = 'js/windowResizer.js';
 		}
-		body.appendChild(script);
+		body.appendChild(script); */
 	</script>
 </html>

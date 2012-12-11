@@ -428,7 +428,7 @@ function refreshAfterServerUp() {
 	   	$(".errorMsgLbl").text('<%= FrameworkConstants.CI_BUILD_LOADED_SHORTLY%>');
 	   	
 		console.log("I ll wait till jenkins gets ready!!!");
-		window.setTimeout(refreshAfterServerUp, 15000); // wait for 15 sec
+		window.setTimeout(refreshAfterServerUp, 10000); // wait for 10 sec
 	} else {
 		isCiRefresh = false;
 		console.log("Server started successfully!");
@@ -544,7 +544,6 @@ function popupOnClose(obj) {
 }
 
 function popupOnOk(obj) {
-		$("#popupPage").modal('hide');
 		var okUrl = $(obj).attr("id");
 		if (okUrl == "saveJob" || okUrl == "updateJob" ) {
 			if (isOneJobSelected()) {
@@ -560,14 +559,16 @@ function popupOnOk(obj) {
 				if(collabNetValidation()) {
 					console.log("create job with collabnet plugin ");
 					configureJob(okUrl);
+					// show popup loading icon
+					showPopuploadingIcon();
 				}
 			} else if (validation) {
 				console.log("create job with out collabnet plugin ");
 				configureJob(okUrl);
+				// show popup loading icon
+				showPopuploadingIcon();
 			}
 			
-			// show popup loading icon
-			showPopuploadingIcon();
 		} else if (okUrl == "deleteBuild" ) {
 			deleteCIBuild();
 		}  else if (okUrl == "deleteJob" ) {

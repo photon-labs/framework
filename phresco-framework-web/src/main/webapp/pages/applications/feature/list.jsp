@@ -25,27 +25,31 @@
 <%@ page import="org.apache.commons.collections.CollectionUtils" %>
 <%@ page import="org.apache.commons.lang.StringUtils"%>
 
+<%@ page import="com.google.gson.Gson"%>
+
 <%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
 <%@ page import="com.photon.phresco.commons.model.ArtifactGroup"%>
 <%@ page import="com.photon.phresco.commons.model.ArtifactInfo"%>
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 <%@ page import="com.photon.phresco.commons.model.ProjectInfo"%>
 
-<% 
+<%
+	Gson gson = new Gson();
+	String techId = (String) request.getAttribute(FrameworkConstants.REQ_TECHNOLOGY);
 	String appId = (String) request.getAttribute(FrameworkConstants.REQ_APP_ID);
-	List<ArtifactGroup> moduleGroups = (List<ArtifactGroup>)request.getAttribute(FrameworkConstants.REQ_FEATURES_MOD_GRP);
+	List<ArtifactGroup> artifactGroups = (List<ArtifactGroup>)request.getAttribute(FrameworkConstants.REQ_FEATURES_MOD_GRP);
 	String type = (String) request.getAttribute(FrameworkConstants.REQ_FEATURES_TYPE);
-	if (CollectionUtils.isNotEmpty(moduleGroups)) {
-		for(ArtifactGroup artifactGroup : moduleGroups) {
+	if (CollectionUtils.isNotEmpty(artifactGroups)) {
+		for (ArtifactGroup artifactGroup : artifactGroups) {
 %>
 		<div  class="accordion_panel_inner">
 		    <section class="lft_menus_container">	
 				<span class="siteaccordion">
 					<span>
-						<input class="feature_checkbox" type="checkbox" value=<%=artifactGroup.getName() %> id="checkAll1"/>
-						<a style="float: left; margin-left:2%;" href="#"><%=artifactGroup.getName() %></a>
+						<input class="feature_checkbox" type="checkbox" value=<%= artifactGroup.getName() %> id="checkAll1"/>
+						<a style="float: left; margin-left:2%;" href="#"><%= artifactGroup.getName() %></a>
 						
-						<select class="input-mini features_ver_sel" id="<%=artifactGroup.getName() %>" moduleId="<%= artifactGroup.getId()%>" name="<%=artifactGroup.getName() %>" >
+						<select class="input-mini features_ver_sel" id="<%= artifactGroup.getName() %>" moduleId="<%= artifactGroup.getId() %>" name="<%=artifactGroup.getName() %>" >
 							<%
 								List<ArtifactInfo> artifactInfos = artifactGroup.getVersions();
 								for (ArtifactInfo artifactInfo : artifactInfos) {
@@ -59,7 +63,7 @@
 				<div class="mfbox siteinnertooltiptxt">
 					<%
 						String desc = artifactGroup.getDescription();
-						if (StringUtils.isNotEmpty(desc)){
+						if (StringUtils.isNotEmpty(desc)) {
 					%>
 					    <div class="scrollpanel">
 				        <section class="scrollpanel_inner">
@@ -87,7 +91,45 @@
 <script type="text/javascript">
 	$(document).ready(function() {
 		hideLoadingIcon();//To hide the loading icon
-		hideProgressBar();
 		accordion();
+		getDefaultModules();
+		hideProgressBar();
 	});
+	
+	function getDefaultModules() {
+		var jsonObjectParam = {};
+		var jsonObject = <%= gson.toJson(artifactGroups) %>;
+		jsonObjectParam.artifactGroups = jsonObject;
+		var jsonString = JSON.stringify(jsonObjectParam);
+		loadJsonContent("fetchDefaultModules", jsonString, '', '', true);
+	}
+	
+	//To check the default Features and the corressponding version
+	function chkDefaultModules(defaultModules, depArtifactInfoIds) {
+		for (i in defaultModules) {  //To check the default feature
+			$("input:checkbox[value='" + defaultModules[i] + "']").attr('checked', true);
+		}
+		for (i in defaultModules) {  //To select the default version
+			var featureName = defaultModules[i];
+			$("select[name='"+ featureName + "'] option").each(function() {
+				var currentVal = $(this).val();
+				if (($.inArray(currentVal, depArtifactInfoIds)) > -1) {
+					$(this).attr("selected", "selected");
+					return false;
+				}
+			});
+		}
+		clickToAdd();
+	}
+	
+	 function clickToAdd() {
+	        $('#accordianchange input:checked').each(function () {
+	        	var dispName = $(this).val();
+	        	var hiddenFieldVersion = $('select[name='+dispName+']').val();
+	        	var moduleId = $('select[name='+dispName+']').attr('moduleId');
+	        	var dispValue = $("#" + dispName + " option:selected").text();
+	        	constructFeaturesDiv(dispName, dispValue, selectedType, hiddenFieldVersion, moduleId);
+	        });
+	    }
+	
 </script>

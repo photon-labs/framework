@@ -375,7 +375,7 @@ a {
 
 .navTopBorder {
 	background: none repeat scroll 0 0 transparent;
-	height: 93%;
+	height: 89%;
 }
 
 .shortcut_top {
@@ -5856,6 +5856,19 @@ input[class*='chckBxAlign'] {
     margin-bottom: 0px;
 }
 
+#envSuccessmsg {
+	height: 16px;
+	margin-left: 226px;
+	margin-top: -8px;
+	padding: 6px;
+	width: 50%;
+	text-align: center;
+	margin-bottom: 0px;
+	float: right;
+	position: absolute;
+	margin-top: -34px;
+}
+
 .fieldSetClassForHeader {
 	padding: 10px; 
 	margin: 10px; 
@@ -5993,6 +6006,6 @@ div.control-group.valReportLbl {
     font-size: smaller !important;
 }
 
-ul.testmenu {
+ul#testmenu {
     display: none !important; 
 }

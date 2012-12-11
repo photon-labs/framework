@@ -89,7 +89,7 @@
 				                	<div class="th-inner"><s:text name="lbl.download"/></div>
 				              	</th>
 				              	<%
-									if (optionIds.contains("Deploy")) {
+									if (optionIds != null && optionIds.contains(FrameworkConstants.DEPLOY_KEY)) {
 								%>
 				              	<th class="third" id="th_deploy">
 				                	<div class="th-inner"><s:text name="label.deploy"></s:text></div>

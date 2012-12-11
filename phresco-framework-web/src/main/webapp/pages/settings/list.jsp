@@ -59,7 +59,7 @@
 
 	<div class="page-header">
 	    <h1>
-	        Settings
+	        <%= FrameworkConstants.SETTINGS_HEADER %>
 	    </h1>
 	</div>
     
@@ -105,14 +105,6 @@
 		var params = '{' + basicParams + ', "fromPage" : "' + fromPage + '", "configPath" : "' + configPath + '"}';
 		loadJsonContent('envList', params,  $('#loadEnv'));
 		
-		<%	if (CollectionUtils.isEmpty(envs)) { %>
-				$("#configAdd").removeClass("btn-primary"); 
-		        $("#configAdd").addClass("btn-disabled");
-		<% } else { %>
-				$("#configAdd").addClass("btn-primary"); 
-				$("#configAdd").removeClass("btn-disabled");
-    	<% } %>
-    	
     	//Trigerred when add btn is clicked
     	$('#configAdd').click(function() {
     		showLoadingIcon();

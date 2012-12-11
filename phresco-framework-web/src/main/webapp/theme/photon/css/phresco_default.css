@@ -106,7 +106,12 @@ div.lgnBtnLabel {
 }
 
 .input-xlarge,input.xlarge,textarea.xlarge,select.xlarge {
-	width: 291px;
+	width: 291px !important;
+}
+
+input[type="password"] {
+	border: 1px solid #ccc !important;
+	padding: 2px 0px 7px 4px !important;
 }
 
 .l_align {
@@ -2317,7 +2322,7 @@ fieldset {
 }
 
 .input-xlarge, input.xlarge, textarea.xlarge, select.xlarge {
-    width: 290px;
+    width: 290px !important;
 }
 
 .textarea_span {
@@ -5735,6 +5740,19 @@ input[class*='chckBxAlign'] {
     margin-bottom: 0px;
 }
 
+#envSuccessmsg {
+	height: 16px;
+	margin-left: 226px;
+	margin-top: -8px;
+	padding: 6px;
+	width: 50%;
+	text-align: center;
+	margin-bottom: 0px;
+	float: right;
+	position: absolute;
+	margin-top: -34px;
+}
+
 .modal-body {
 	overflow: auto;
 	height: 300px;
@@ -5810,6 +5828,12 @@ ul#display-inline-block-example li:nth-child(4) select, ul#display-inline-block-
 }
 .table_for_downloadInfos .header-background {
 	background: none;
+}
+.table_for_downloadInfos .header-background {
+	background: #323232;
+}
+.table_for_downloadInfos .header-background tr th {
+	color: white !important;
 }
 .navTopBorder .mfbox {
 	border:1px solid #39bc67;
