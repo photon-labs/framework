@@ -453,12 +453,14 @@ public class Configurations extends FrameworkBaseAction {
 			}
     	}
     	
-	    if (configType.equals(Constants.SETTINGS_TEMPLATE_SERVER) || configType.equals(Constants.SETTINGS_TEMPLATE_EMAIL)) {
-        	List<Configuration> configurations = configManager.getConfigurations(environment.getName(), configType);
-            if(CollectionUtils.isNotEmpty( configurations)) {
-            	setConfigTypeError(getText(CONFIG_ALREADY_EXIST));
-                hasError = true;
-            }
+    	if (StringUtils.isEmpty(fromPage) || (StringUtils.isNotEmpty(fromPage) && !configType.equals(oldConfigType))) {
+		    if (configType.equals(Constants.SETTINGS_TEMPLATE_SERVER) || configType.equals(Constants.SETTINGS_TEMPLATE_EMAIL)) {
+	        	List<Configuration> configurations = configManager.getConfigurations(environment.getName(), configType);
+	            if(CollectionUtils.isNotEmpty( configurations)) {
+	            	setConfigTypeError(getText(CONFIG_ALREADY_EXIST));
+	                hasError = true;
+	            }
+	    	}
     	}
 	    
 	    ApplicationInfo applicationInfo = getApplicationInfo();

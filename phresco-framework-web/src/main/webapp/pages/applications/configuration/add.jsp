@@ -161,6 +161,7 @@
 	<!-- Hidden Fields -->
     <input type="hidden" name="fromPage" value="<%= fromPage %>"/>
     <input type="hidden" name="oldName" value="<%= name %>"/>
+    <input type="hidden" name="oldConfigType" value="<%= selectedType %>"/>
 </form>
 
 <script type="text/javascript">
@@ -218,6 +219,7 @@
 		var configId = template.id;
 		var fromPage = "<%= fromPage%>";
 		var configPath = "<%= configPath%>";
+		var oldConfigType = "<%= selectedType%>";
 		
 		var selectedAppliesTos = new Array();
 		$('input[name="appliesTo"]:checked').each(function() {
@@ -233,6 +235,7 @@
 		jsonParamObj.configId = configId;
 		jsonParamObj.featureName = featureName;
 		jsonParamObj.oldName = oldName;
+		jsonParamObj.oldConfigType = oldConfigType;
 		jsonParamObj.configPath = configPath;
 		jsonParamObj.fromPage = fromPage;
 		jsonParamObj.appliesTos = selectedAppliesTos;
