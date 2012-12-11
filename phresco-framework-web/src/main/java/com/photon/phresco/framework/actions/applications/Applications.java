@@ -696,21 +696,18 @@ public class Applications extends FrameworkBaseAction {
 			File filePath = new File(sb.toString());
 			MojoProcessor mojo = new MojoProcessor(filePath);
 			ApplicationHandler applicationHandler = mojo.getApplicationHandler();
-			if (CollectionUtils.isNotEmpty(listArtifactGroup)) {
-				String artifactGroup = gson.toJson(listArtifactGroup);
-				applicationHandler.setSelectedFeatures(artifactGroup);
-			}
 			
-			if (CollectionUtils.isNotEmpty(jsonData)) {
-				List<ArtifactGroup> removedModules = getRemovedModules(appInfo, jsonData);
-				if(CollectionUtils.isNotEmpty(removedModules)) {
-					Type jsonType = new TypeToken<Collection<ArtifactGroup>>(){}.getType();
-					String deletedFeatures = gson.toJson(removedModules, jsonType);
-					applicationHandler.setDeletedFeatures(deletedFeatures);
-				}
-			}
+			//To write selected Features into phresco-application-Handler-info.xml
+			String artifactGroup = gson.toJson(listArtifactGroup);
+			applicationHandler.setSelectedFeatures(artifactGroup);
+
+			//To write Deleted Features into phresco-application-Handler-info.xml
+			List<ArtifactGroup> removedModules = getRemovedModules(appInfo, jsonData);
+			Type jsonType = new TypeToken<Collection<ArtifactGroup>>(){}.getType();
+			String deletedFeatures = gson.toJson(removedModules, jsonType);
+			applicationHandler.setDeletedFeatures(deletedFeatures);
         	
-        	//To write selected databases info to phresco-plugin-info.xml
+			//To write selected Database into phresco-application-Handler-info.xml
 			List<ArtifactGroupInfo> selectedDatabases = appInfo.getSelectedDatabases();
 			if (CollectionUtils.isNotEmpty(selectedDatabases)) {
 				for (ArtifactGroupInfo selectedDatabase : selectedDatabases) {
@@ -724,7 +721,7 @@ public class Applications extends FrameworkBaseAction {
 				}
 			}
 			
-			//To write selected servers info to phresco-plugin-info.xml
+			//To write selected Servers into phresco-application-Handler-info.xml
 			List<ArtifactGroupInfo> selectedServers = appInfo.getSelectedServers();
 			if (CollectionUtils.isNotEmpty(selectedServers)) {
 				for (ArtifactGroupInfo selectedservers : selectedServers) {
