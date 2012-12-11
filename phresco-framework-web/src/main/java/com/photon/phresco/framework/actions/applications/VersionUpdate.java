@@ -56,7 +56,7 @@ public class VersionUpdate extends FrameworkBaseAction {
 			versionInfo = new VersionInfo();
 			UpgradeManager updateManager = PhrescoFrameworkFactory.getUpdateManager();
 			currentVersion = updateManager.getCurrentVersion();
-			versionInfo = updateManager.checkForUpdate(currentVersion);
+			versionInfo = updateManager.checkForUpdate(getServiceManager(), currentVersion);
 			message = versionInfo.getMessage();
 			latestVersion = versionInfo.getFrameworkVersion();
 			isUpdateAvail = versionInfo.isUpdateAvailable();
@@ -77,7 +77,7 @@ public class VersionUpdate extends FrameworkBaseAction {
 			UpgradeManager updateManager = PhrescoFrameworkFactory.getUpdateManager();
 			HttpServletRequest request = getHttpRequest();
 			String newVersion = (String) getHttpRequest().getAttribute(REQ_LATEST_VERSION);
-			updateManager.doUpdate(newVersion);
+			updateManager.doUpdate(getServiceManager(), newVersion, getCustomerId());
 			request.setAttribute(REQ_UPDATED_MESSAGE, getText(ABOUT_SUCCESS_UPDATE));
 		} catch (Exception e) {
 			getHttpRequest().setAttribute(REQ_UPDATED_MESSAGE, getText(ABOUT_FAILURE_FAILURE));
