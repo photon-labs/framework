@@ -891,5 +891,10 @@
         	<result type="json"/>
 <!--         	<param name="root">localJenkinsAlive</param> -->
         </action>
+        
+		<action name="fetchDefaultModules" method="fetchDefaultModules" class="com.photon.phresco.framework.actions.applications.Features">
+        	<result type="json"/>
+        </action>
+		
     </package>
 </struts>

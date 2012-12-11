@@ -98,7 +98,6 @@ public class Applications extends FrameworkBaseAction {
     private List<String> javascript= null;
     private String oldAppDirName = "";
 
-    private String repositoryUrl = "";
     private String userName = "";
     private String password = "";
     private String revision = "";
@@ -112,6 +111,7 @@ public class Applications extends FrameworkBaseAction {
     private String credential = "";
     // import from git
     private String repoType = "";
+    private String repoUrl = "";
 
     private String applicationType = "";
 
@@ -131,6 +131,10 @@ public class Applications extends FrameworkBaseAction {
     public boolean errorFlag;
 
     private SelectedFeature selectFeature;
+    private String selectedDownloadInfo = "";
+    private String downloadInfoType = "";
+    private String selectedDownloadInfoVersion = "";
+    private String selectBoxId = "";
     
     private List<String> jsonData = null;
     
@@ -281,6 +285,13 @@ public class Applications extends FrameworkBaseAction {
         try {
             String type = getHttpRequest().getParameter(REQ_TYPE);
             String techId = getHttpRequest().getParameter(REQ_PARAM_NAME_TECH__ID);
+            String selectedDb = getHttpRequest().getParameter("selectedDownloadInfo");
+            String selectedDbVer = getHttpRequest().getParameter("selectedDownloadInfoVersion");
+            String selectBoxId = getHttpRequest().getParameter("selectBoxId");
+            setDownloadInfoType(type);
+            setSelectedDownloadInfo(selectedDb);
+            setSelectedDownloadInfoVersion(selectedDbVer);
+            setSelectBoxId(selectBoxId);
             List<DownloadInfo> downloadInfos = getServiceManager().getDownloads(getCustomerId(), techId, type);
 			setDownloadInfos(downloadInfos);
         } catch (PhrescoException e) {
@@ -855,7 +866,7 @@ public class Applications extends FrameworkBaseAction {
 			}
 			revision = !HEAD_REVISION.equals(revision) ? revisionVal : revision;
 			SCMManagerImpl scmi = new SCMManagerImpl();
-			scmi.importProject(SVN, repositoryUrl, userName, password, null, revision);
+			scmi.importProject(SVN, repoUrl, userName, password, null, revision);
 			errorString = getText(IMPORT_SUCCESS_PROJECT);
 			errorFlag = true;
 		} catch (SVNAuthenticationException e) {
@@ -904,7 +915,7 @@ public class Applications extends FrameworkBaseAction {
 		}
 		SCMManagerImpl scmi = new SCMManagerImpl();
 		try {
-			scmi.importProject(GIT, repositoryUrl, userName, password, MASTER ,revision);
+			scmi.importProject(GIT, repoUrl, userName, password, MASTER ,revision);
 			errorString = getText(IMPORT_SUCCESS_PROJECT);
 			errorFlag = true;
 		} catch (SVNAuthenticationException e) {	//Will not occur for GIT
@@ -985,7 +996,7 @@ public class Applications extends FrameworkBaseAction {
 		try {
 			ApplicationInfo applicationInfo = getApplicationInfo();
 			String appDirName = applicationInfo.getAppDirName();
-			scmi.updateProject(GIT, repositoryUrl, userName, password, MASTER , null, appDirName);
+			scmi.updateProject(GIT, repoUrl, userName, password, MASTER , null, appDirName);
 			errorString = getText(SUCCESS_PROJECT_UPDATE);
 			errorFlag = true;
 		} catch (InvalidRemoteException e) {
@@ -1048,7 +1059,7 @@ public class Applications extends FrameworkBaseAction {
 		try {
 			ApplicationInfo applicationInfo = getApplicationInfo();
 			String appDirName = applicationInfo.getAppDirName();
-			scmi.updateProject(SVN, repositoryUrl, userName, password, null, revision, appDirName);
+			scmi.updateProject(SVN, repoUrl, userName, password, null, revision, appDirName);
 			errorString = getText(SUCCESS_PROJECT_UPDATE);
 			errorFlag = true;
 		} catch (InvalidRemoteException e) {
@@ -1732,14 +1743,6 @@ public class Applications extends FrameworkBaseAction {
         this.fromPage = fromPage;
     }
 
-    public String getRepourl() {
-        return repositoryUrl;
-    }
-
-    public void setRepourl(String repourl) {
-        this.repositoryUrl = repourl;
-    }
-
     public String getUsername() {
         return userName;
     }
@@ -2062,5 +2065,44 @@ public class Applications extends FrameworkBaseAction {
 
 	public void setOldAppDirName(String oldAppDirName) {
 		this.oldAppDirName = oldAppDirName;
+	}
+
+	public String getRepoUrl() {
+		return repoUrl;
+	}
+
+	public void setRepoUrl(String repoUrl) {
+		this.repoUrl = repoUrl;
+	}
+	public String getSelectedDownloadInfo() {
+		return selectedDownloadInfo;
+	}
+
+	public void setSelectedDownloadInfo(String selectedDownloadInfo) {
+		this.selectedDownloadInfo = selectedDownloadInfo;
+	}
+
+	public String getSelectBoxId() {
+		return selectBoxId;
+	}
+
+	public void setSelectBoxId(String selectBoxId) {
+		this.selectBoxId = selectBoxId;
+	}
+
+	public String getSelectedDownloadInfoVersion() {
+		return selectedDownloadInfoVersion;
+	}
+
+	public void setSelectedDownloadInfoVersion(String selectedDownloadInfoVersion) {
+		this.selectedDownloadInfoVersion = selectedDownloadInfoVersion;
+	}
+
+	public String getDownloadInfoType() {
+		return downloadInfoType;
+	}
+
+	public void setDownloadInfoType(String downloadInfoType) {
+		this.downloadInfoType = downloadInfoType;
 	}
 }
