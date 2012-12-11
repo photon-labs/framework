@@ -61,7 +61,7 @@
 			<span class="red">*</span> <s:text name="label.repository.url"/>
 		</label>
 		<div class="controls">
-			<input type="text" name="repourl" id="repoUrl" value="<%= StringUtils.isEmpty(repoUrl) ? "http://" : repoUrl %>">&nbsp;&nbsp;<span id="missingURL" class="missingData"></span>
+			<input type="text" name="repoUrl" id="repoUrl" value="<%= StringUtils.isEmpty(repoUrl) ? "http://" : repoUrl %>">&nbsp;&nbsp;<span id="missingURL" class="missingData"></span>
 		</div>
 	</div>
 	
@@ -118,7 +118,7 @@
 		}
 			
 		$("#repoUrl").keyup(function(event) {
-	       var repoUrl = $("input[name='repourl']").val();
+	       var repoUrl = $("input[name='repoUrl']").val();
 		});
 
 		$('#revision').click(function() {
@@ -168,7 +168,7 @@
 	}
 
 	function urlBasedAction() {
-        var repoUrl = $("input[name='repourl']").val();
+        var repoUrl = $("input[name='repoUrl']").val();
     	if (repoUrl.indexOf('insight.photoninfotech.com') != -1) {
 			$('#credentials').attr("checked", false);
 	        svnCredentialMark();
@@ -204,7 +204,7 @@
 	
 	function validateImportAppl() {
 // 		When isValidUrl returns false URL is missing information is displayed
-		var repoUrl = $("input[name='repourl']").val();
+		var repoUrl = $("input[name='repoUrl']").val();
 		if(isValidUrl(repoUrl)){
 			$("#errMsg").html("URL is missing");
 			$("#repoUrl").focus();
