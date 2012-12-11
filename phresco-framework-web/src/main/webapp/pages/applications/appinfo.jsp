@@ -184,9 +184,9 @@
 		<!-- servers start -->
 		<%
 		  String checkedServerStr = "";
-		 /*  if(selectedServers != null){
+		  if(selectedServers != null){
 			  checkedServerStr = "checked";
-		  } */
+		  } 
 		%> 
 		
 		<div class="theme_accordion_container">
@@ -195,8 +195,7 @@
 					<section class="lft_menus_container">
 						<span class="siteaccordion closereg" id="serverLayerControl" onclick="accordionClick(this, $('input[value=serverLayer]'));">
 							<span>
-								<input type="checkbox" id="checkAll1" class="accordianChkBox" name="layer" value="serverLayer" <%= checkedServerStr %>
-									onclick="getDownloadInfo('<%= DownloadInfo.Category.SERVER.name() %>', $('#1_server'), '<s:text name='lbl.default.opt.select.server'/>')"/>
+								<input type="checkbox" id="checkAll1" class="accordianChkBox" name="layer" value="serverLayer" <%= checkedServerStr %>/>
 								<a class="vAlignSub"><s:text name='lbl.servers'/></a>
 							</span>
 						</span>
@@ -204,7 +203,7 @@
 							<table class="table_for_downloadInfos table_borderForDownloadInfos" align="center">
 								<thead class="header-background">
 									<tr class="noBorder">
-										<th class="table_header noBorder"><s:text name='lbl.servers'/></th>
+										<th class="noBorder"><s:text name='lbl.servers'/></th>
 										<th class="noBorder"><s:text name='lbl.version'/></th>
 										<th></th>
 										<th></th>
@@ -212,7 +211,7 @@
 									</tr>
 								</thead>
 								<tbody id="propTempTbody">
-									<tr class="noBorder 1_serverdynamicadd">
+									<%-- <tr class="noBorder 1_serverdynamicadd">
 										<td class="noBorder">
 											<select class="input-medium" id="1_server" name="server" value=""
 												onchange="getVersions($('#1_server'), $('#1_serverVersion'));">
@@ -228,7 +227,7 @@
 										  		<img class="add imagealign" src="images/icons/add_icon.png" onclick="addServer(this);">
 								  			</a>
 										</td>
-									</tr>
+									</tr> --%>
 								</tbody>
 							</table>
 						</div>
@@ -252,8 +251,7 @@
 					<section class="lft_menus_container">
 						<span class="siteaccordion closereg" id="databaseLayerControl" onclick="accordionClick(this, $('input[value=databaseLayer]'));">
 							<span>
-								<input type="checkbox" id="checkAll1" class="accordianChkBox" name="layer" value="databaseLayer" <%= checkedDatabaseStr %>
-									onclick="getDownloadInfo('<%= DownloadInfo.Category.DATABASE.name() %>', $('#1_database'), '<s:text name='lbl.default.opt.select.database'/>')"/>
+								<input type="checkbox" id="checkAll1" class="accordianChkBox" name="layer" value="databaseLayer" <%= checkedDatabaseStr %>/>
 								<a class="vAlignSub"><s:text name='lbl.database'/></a>
 							</span>
 						</span>
@@ -261,7 +259,7 @@
 							<table class="table_for_downloadInfos table_borderForDownloadInfos"  align="center">
 									<thead class ="header-background">
 										<tr >
-											<th class="table_header noBorder"><s:text name='lbl.database'/></th>
+											<th class="noBorder"><s:text name='lbl.database'/></th>
 											<th class="noBorder"><s:text name='lbl.version'/></th>
 											<th></th>
 											<th></th>
@@ -269,7 +267,7 @@
 										</tr>
 									</thead>
 									<tbody id="propTempTbodyDatabase">
-										<tr class="noBorder 1__databasedynamicadd">
+										<%-- <tr class="noBorder 1__databasedynamicadd">
 											<td class="noBorder">
 												<select class="input-medium" id="1_database" name="database" value=""
 													onchange="getVersions($('#1_database'), $('#1_dbVersion'));">
@@ -285,7 +283,7 @@
 											  		<img class="add imagealign" src="images/icons/add_icon.png" onclick="addDatabase(this);">
 									  			</a>
 											</td>
-										</tr>
+										</tr> --%>
 									</tbody>
 							</table>
 						</div>
@@ -385,7 +383,8 @@
     $(document).ready(function() {
    		hideLoadingIcon();//To hide the loading icon
    		
-//    		checkDownloadInfoForDatabase();
+   		checkDownloadInfoForServer();
+   		checkDownloadInfoForDatabase();
    		
 		$("#name").focus();
         
@@ -401,9 +400,14 @@
 		});
         
 		<% if (projectInfo != null) { %>
+			$("input[value='serverLayer']:checked").each(function() {
+		    	accordionOpen('#serverLayerControl', $('input[value=serverLayer]'));
+		    });
+			
 			$("input[value='databaseLayer']:checked").each(function() {
 		    	accordionOpen('#databaseLayerControl', $('input[value=databaseLayer]'));
 		    });
+			
 			$("input[value='webserviceLayer']:checked").each(function() {
 		    	accordionOpen('#webserviceLayerControl', $('input[value=webserviceLayer]'));
 		    });
@@ -427,13 +431,34 @@
     	$(".multilistVersion-scroller").scrollbars();
     }
     
-//     function checkDownloadInfoForDatabase() {
-<%--     	<% if (selectedDatabases == null) { %> --%>
-//     		addDatabase();
-<%--       	<%} else { %> --%>
-//       		selectedDatabasesFromProjectInfo();
-<%--     	 <% } %> --%>
-//     }
+    function checkDownloadInfoForServer() {
+    	<% if (selectedServers == null) { %> 
+     		addServer();
+       	<%} else { %> 
+      		selectedServersFromProjectInfo();
+     	 <% } %> 
+    }
+    
+    function checkDownloadInfoForDatabase() {
+    	<% if (selectedDatabases == null) { %> 
+     		addDatabase();
+       	<%} else { %> 
+      		selectedDatabasesFromProjectInfo();
+     	 <% } %> 
+    }
+    
+    function selectedServersFromProjectInfo() {
+		<% if (selectedServers != null) {
+				for(ArtifactGroupInfo artifactGrpInfo : selectedServers) {
+					String server = artifactGrpInfo.getArtifactGroupId();
+					List<String> serverVersions = artifactGrpInfo.getArtifactInfoIds();
+		%>
+					addServer('<%= server%>', '<%=serverVersions%>');
+		<%
+			    }
+		    }
+		%>
+	}
     
 	function selectedDatabasesFromProjectInfo() {
 		<% if (selectedDatabases != null) {
@@ -448,8 +473,14 @@
 		%>
 	}
 	
-    var serverCounter = 2;
-    function addServer(){
+    var serverCounter = 1;
+    <% if(selectedServers != null) {%>
+    		serverCounter = <%= selectedServers.size() %> +1;
+	<% } %>
+    function addServer(selectedServer, serverVersions) {
+    	if(serverCounter == undefined) {
+    		serverCounter = 1;
+    	}
 		var trId = serverCounter + "_serverdynamicadd";
 		var servrName = serverCounter + "_serverName";
 		var servrVerson = serverCounter + "_serverVersion";
@@ -463,11 +494,14 @@
 	 	newPropTempRow.appendTo("#propTempTbody");		
 		serverCounter++;
 		getScrollBar();
-		getDownloadInfo('<%= DownloadInfo.Category.SERVER.name() %>', $("select[id='"+ servrName +"']"),'<s:text name='label.select.server'/>');
+		getDownloadInfo('<%= DownloadInfo.Category.SERVER.name() %>', $("select[id='"+ servrName +"']"),'<s:text name='label.select.server'/>', selectedServer, serverVersions, servrName);
 		
     }			
     
-    var databaseCounter = 2;
+    var databaseCounter = 1;
+    <% if(selectedDatabases != null) {%>
+    		databaseCounter = <%= selectedDatabases.size() %> +1;
+    <% } %>
     function addDatabase(selectedDatabase, databaseVersions) {
     	if(databaseCounter == undefined) {
     		databaseCounter =1;
@@ -485,14 +519,14 @@
 	 	newPropTempRow.appendTo("#propTempTbodyDatabase");		
 		databaseCounter++;
 		getScrollBar();
-		getDownloadInfo('<%= DownloadInfo.Category.DATABASE.name() %>', $("select[id='"+ databaseName +"']"), '<s:text name='label.select.db'/>', selectedDatabase, databaseVersions);
+		getDownloadInfo('<%= DownloadInfo.Category.DATABASE.name() %>', $("select[id='"+ databaseName +"']"), '<s:text name='label.select.db'/>', selectedDatabase, databaseVersions, databaseName);
     }		
     
     var selectBoxobj;
     var defaultOption;
     var selectedDb;
     var selectVer;
-    function getDownloadInfo(type, toBeFilledCtrlObj, defaultOptTxt, selectedDatabase, databaseVersions) {
+    function getDownloadInfo(type, toBeFilledCtrlObj, defaultOptTxt, selectedDatabase, databaseVersions, databaseName) {
     	showLoadingIcon();
     	selectedDb = selectedDatabase;
     	selectVer = databaseVersions;
@@ -503,27 +537,55 @@
 		params = params.concat(type);
 		params = params.concat("&techId=");
 		params = params.concat('<%= technologyId %>');
+		params = params.concat("&selectedDownloadInfo=");
+		params = params.concat(selectedDb);
+		params = params.concat("&selectedDownloadInfoVersion=");
+		params = params.concat(selectVer);
+		params = params.concat("&selectBoxId=");
+		params = params.concat(databaseName);
 		loadContent("fetchDownloadInfos", '', '', params, true);
 	}
     
     var map = {};
+    var selectedData;
+    var selectedDataVersion = new Array();
+    var selectedDataId;
+    var downloadInfoType;
 	//Success event functions
 	function successEvent(pageUrl, data) {
 		hideLoadingIcon();
 		//To fill the servers/database for the selected 
 		if (pageUrl == "fetchDownloadInfos") {
+			
+			selectBoxobj = $('#'+ data.selectBoxId);
+			
 			selectBoxobj.empty();
 			selectBoxobj.append($("<option value='' selected disabled></option>").text(defaultOption));
+			
+			downloadInfoType = data.downloadInfoType;
+			
+			selectedData = data.selectedDownloadInfo;
+			selectedDataVersion = data.selectedDownloadInfoVersion;
+			
 			for (i in data.downloadInfos) {
 				fillOptions(selectBoxobj, data.downloadInfos[i].id, data.downloadInfos[i].name);
 				var versions = data.downloadInfos[i].artifactGroup.versions;
 				map[data.downloadInfos[i].id] = versions;
 			}
-			if (selectedDb != undefined) {
+			if (selectedData != undefined && downloadInfoType==="DATABASE") {
 				selectBoxobj.find('option').each(function() {
- 					if (selectedDb === $(this).val()) {
+ 					if (selectedData === $(this).val()) {
  						$(this).attr("selected", "selected");
- 						getDatabaseVersions(selectBoxobj);
+ 						getDatabaseVersions(selectBoxobj, selectedDataVersion);
+ 						return false;
+ 					}
+ 				});
+			}
+			if (selectedData != undefined && downloadInfoType==="SERVER") {
+				selectBoxobj.find('option').each(function() {
+ 					if (selectedData === $(this).val()) {
+ 						$(this).attr("selected", "selected");
+ 						getServerVersions(selectBoxobj, selectedDataVersion);
  						return false;
  					}
  				});
@@ -531,32 +593,58 @@
 		}
 	}
 	
-	function getServerVersions(obj) {
+	function getServerVersions(obj, selectedDataVersion) {
 		var id = $(obj).attr("tempId");
 		var toObj = $("#" + id + "_serverVersion");
-		getVersions($(obj), toObj);
+		getVersions($(obj), toObj, selectedDataVersion);
 	}
 	
-	function getDatabaseVersions(obj) {
+	function getDatabaseVersions(obj, selectedDataVersion) {
 		var id = $(obj).attr("tempId");
 		var toObj = $("#" + id + "_databaseVersion");
-		getVersions($(obj), toObj);
+		getVersions($(obj), toObj, selectedDataVersion);
 	}
 	
 	//To get the versions of the selected server/Db
-	function getVersions(obj, toBeFilledCtrlObj) {
+	function getVersions(obj, toBeFilledCtrlObj, selectedDataVersion) {
 		toBeFilledCtrlObj.empty();
 		var id = obj.val();
 		var versions = map[id];
 		for (i in versions) {
-			fillVersions(toBeFilledCtrlObj, versions[i].id, versions[i].version, id);
+			fillVersions(toBeFilledCtrlObj, versions[i].id, versions[i].version, id, selectedDataVersion);
 		}
 	}
 	
-	function fillVersions(obj, value, text, parentValue) {
-		$('<div style="color: #000000;"><input class="check techCheck" type="checkbox" name="'+parentValue+'" value="' + text + '"style="margin-right:5%;">'+ text +'</div>').appendTo(obj);
+	function fillVersions(obj, value, text, parentValue, selectedDataVersion) {
+		var checkedStr = "";
+		var version;
+		
+		if(selectedDataVersion != undefined) {
+			var arrayVersions = new Array();
+			if (selectedDataVersion.indexOf(",") != -1) {
+				version = trim(selectedDataVersion);
+				arrayVersions = version.split(",");
+				for(var i=0;i<arrayVersions.length;i++) {
+					var ver = arrayVersions[i].replace(/\s/g,'');  
+					if(ver === text) {
+						checkedStr = "checked";
+					}
+				}
+			} else {
+				arrayVersions[0] = trim(selectedDataVersion);
+				if(text === arrayVersions[0]) {
+					checkedStr = "checked";
+				}
+			}
+			
+		} 
+		$('<div style="color: #000000;"><input class="check techCheck" type="checkbox" name="'+parentValue+'" value="' + text + '" '+checkedStr+' style="margin-right:5%;">'+ text +'</div>').appendTo(obj);
 	}
 
+	function trim(stringToTrim) {
+		return stringToTrim.replace(/\[|\]/g,'');
+	}
+	
 	function accordionClick(thisObj, currentChkBoxObj) {
 		var _tempIndex = $('.siteaccordion').index(thisObj);
 			

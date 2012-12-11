@@ -131,6 +131,10 @@ public class Applications extends FrameworkBaseAction {
     public boolean errorFlag;
 
     private SelectedFeature selectFeature;
+    private String selectedDownloadInfo = "";
+    private String downloadInfoType = "";
+    private String selectedDownloadInfoVersion = "";
+    private String selectBoxId = "";
     
     private List<String> jsonData = null;
     
@@ -281,6 +285,13 @@ public class Applications extends FrameworkBaseAction {
         try {
             String type = getHttpRequest().getParameter(REQ_TYPE);
             String techId = getHttpRequest().getParameter(REQ_PARAM_NAME_TECH__ID);
+            String selectedDb = getHttpRequest().getParameter("selectedDownloadInfo");
+            String selectedDbVer = getHttpRequest().getParameter("selectedDownloadInfoVersion");
+            String selectBoxId = getHttpRequest().getParameter("selectBoxId");
+            setDownloadInfoType(type);
+            setSelectedDownloadInfo(selectedDb);
+            setSelectedDownloadInfoVersion(selectedDbVer);
+            setSelectBoxId(selectBoxId);
             List<DownloadInfo> downloadInfos = getServiceManager().getDownloads(getCustomerId(), techId, type);
 			setDownloadInfos(downloadInfos);
         } catch (PhrescoException e) {
@@ -2062,5 +2073,36 @@ public class Applications extends FrameworkBaseAction {
 
 	public void setRepoUrl(String repoUrl) {
 		this.repoUrl = repoUrl;
+	}
+	public String getSelectedDownloadInfo() {
+		return selectedDownloadInfo;
+	}
+
+	public void setSelectedDownloadInfo(String selectedDownloadInfo) {
+		this.selectedDownloadInfo = selectedDownloadInfo;
+	}
+
+	public String getSelectBoxId() {
+		return selectBoxId;
+	}
+
+	public void setSelectBoxId(String selectBoxId) {
+		this.selectBoxId = selectBoxId;
+	}
+
+	public String getSelectedDownloadInfoVersion() {
+		return selectedDownloadInfoVersion;
+	}
+
+	public void setSelectedDownloadInfoVersion(String selectedDownloadInfoVersion) {
+		this.selectedDownloadInfoVersion = selectedDownloadInfoVersion;
+	}
+
+	public String getDownloadInfoType() {
+		return downloadInfoType;
+	}
+
+	public void setDownloadInfoType(String downloadInfoType) {
+		this.downloadInfoType = downloadInfoType;
 	}
 }

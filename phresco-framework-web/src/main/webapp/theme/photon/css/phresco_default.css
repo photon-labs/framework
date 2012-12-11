@@ -5829,6 +5829,12 @@ ul#display-inline-block-example li:nth-child(4) select, ul#display-inline-block-
 .table_for_downloadInfos .header-background {
 	background: none;
 }
+.table_for_downloadInfos .header-background {
+	background: #323232;
+}
+.table_for_downloadInfos .header-background tr th {
+	color: white !important;
+}
 .navTopBorder .mfbox {
 	border:1px solid #39bc67;
 }

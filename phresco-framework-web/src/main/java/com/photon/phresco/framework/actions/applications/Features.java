@@ -143,12 +143,14 @@ public class Features extends FrameworkBaseAction {
 		List<ArtifactGroupInfo> selectedServers = new ArrayList<ArtifactGroupInfo>();
 		if (CollectionUtils.isNotEmpty(getServer())) {
 			for (String serverId : getServer()) {
-				ArtifactGroupInfo artifactGroupInfo = new ArtifactGroupInfo();
-				artifactGroupInfo.setArtifactGroupId(serverId);
-				artifactGroupInfo.setArtifactInfoIds(Arrays.asList(getReqParameterValues(serverId)));
-				selectedServers.add(artifactGroupInfo);
+				if(StringUtils.isNotEmpty(serverId)) {
+					ArtifactGroupInfo artifactGroupInfo = new ArtifactGroupInfo();
+					artifactGroupInfo.setArtifactGroupId(serverId);
+					artifactGroupInfo.setArtifactInfoIds(Arrays.asList(getReqParameterValues(serverId)));
+					selectedServers.add(artifactGroupInfo);
+					appInfo.setSelectedServers(selectedServers);
+				}
 			}
-			appInfo.setSelectedServers(selectedServers);
 		}
     	
     	
