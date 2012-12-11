@@ -110,7 +110,7 @@
 				<span class="mandatory">*</span>&nbsp;<s:text name='label.code' />
 			</label>
 			<div class="controls">
-				<input placeholder='<s:text name="place.hldr.proj.add.code"/>' class="input-xlarge" type="text" 
+				<input placeholder='<s:text name="place.hldr.proj.add.code"/>' class="input-xlarge" type="text" id="projectCode"
 					value="<%= StringUtils.isNotEmpty(projectCode) ? projectCode : "" %>"<%= disablStr %>  name="projectCode" maxlength="12" 
 					title="<s:text name="title.12.chars"/>">
 				<span class="help-inline" id="projectCodeError"></span>
@@ -505,6 +505,14 @@
 
 	$(document).ready(function() {
 		hideLoadingIcon();//To hide the loading icon
+		
+		// To restrict the user in typing the special charaters in projectCode and projectVersion
+		$('#projectCode, #projVersion').bind('input propertychange', function (e) {
+			var str = $(this).val();
+			str = checkForSplChrExceptDot(str);
+			str = removeSpaces(str);
+        	$(this).val(str);
+		});
 		
 		//Will be triggered when the create project button is clicked
 		$('#createProject').click(function() {

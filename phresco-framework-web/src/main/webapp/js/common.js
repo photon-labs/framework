@@ -592,6 +592,11 @@ function allowNumHyphenPlus(numbr) {
 	return numbr.replace(/[^0-9\-\+]+/g, '');
 }
 
+//It removes all empty spaces
+function removeSpaces(str) {
+	return str.replace(/\s+/g, '');
+}
+
 function applyTheme() {
 	var theme = localStorage["color"];
 	if (theme != null) {

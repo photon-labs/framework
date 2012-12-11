@@ -53,7 +53,7 @@ public class Features extends FrameworkBaseAction {
     private static final long serialVersionUID = 6608382760989903186L;
 	
 	private static final Logger S_LOGGER = Logger.getLogger(Features.class);
-	private static Boolean debugEnabled = S_LOGGER.isDebugEnabled();
+	private static Boolean s_debugEnabled = S_LOGGER.isDebugEnabled();
 	
 	private String projectCode = null;
 	private String externalCode = null;
@@ -61,7 +61,6 @@ public class Features extends FrameworkBaseAction {
 	
 	private String application = null;
 	private List<String> techVersion = null;
-	private String nameError = null;
 	private String moduleId = null;
 	private String version = null;
 	private String moduleType = null;
@@ -97,6 +96,10 @@ public class Features extends FrameworkBaseAction {
 	private String customerId = "";
 	private String pilotProject = "";
 	
+	private String nameError = "";
+	private String codeError = "";
+	private boolean errorFound = false;
+	
 	private String configTemplateType = "";
 	
 	private String featureName = "";
@@ -123,6 +126,34 @@ public class Features extends FrameworkBaseAction {
     	
 	    return APP_FEATURES;
 	}
+	
+	/**
+     * To validate the form fields
+     * @return
+     * @throws PhrescoException 
+     */
+    public String validateForm() throws PhrescoException {
+    	if (s_debugEnabled) {
+            S_LOGGER.debug("Entering Method Features.validateForm()");
+        }
+    	
+    	boolean hasError = false;
+    	if (StringUtils.isEmpty(getName())) {
+    		 setNameError(getText(ERROR_NAME));
+             hasError = true;
+    	}
+    	
+    	if (StringUtils.isEmpty(getCode())) {
+    		setCodeError(getText(ERROR_CODE));
+            hasError = true;
+    	}
+    	
+    	if (hasError) {
+            setErrorFound(true);
+        }
+    	
+    	return SUCCESS;
+    }
 	
 	private ApplicationInfo createApplicationInfo(ApplicationInfo appInfo) {
     	appInfo.setId(getAppId());
@@ -1048,5 +1079,21 @@ public class Features extends FrameworkBaseAction {
 
 	public void setDepArtifactInfoIds(List<String> depArtifactInfoIds) {
 		this.depArtifactInfoIds = depArtifactInfoIds;
+	}
+
+	public String getCodeError() {
+		return codeError;
+	}
+
+	public void setCodeError(String codeError) {
+		this.codeError = codeError;
+	}
+
+	public boolean isErrorFound() {
+		return errorFound;
+	}
+
+	public void setErrorFound(boolean errorFound) {
+		this.errorFound = errorFound;
 	}
 }

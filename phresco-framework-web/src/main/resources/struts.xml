@@ -186,9 +186,12 @@
           	<result name="updateApplication">/pages/projects/list.jsp</result>
         </action>
         
+        <action name="featuresValidate" method="validateForm" class="com.photon.phresco.framework.actions.applications.Features">
+            <result type="json" />
+        </action>
+        
         <action name="features" method="features" class="com.photon.phresco.framework.actions.applications.Features">
             <result name="features">/pages/applications/feature/features.jsp</result>
-            <result type="json" />
         </action>
         
         <action name="listFeatures" method="listFeatures" class="com.photon.phresco.framework.actions.applications.Features">
