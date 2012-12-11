@@ -20,7 +20,7 @@
 // JavaScript Document
 $(document).ready(function() {
 	$(window).bind("resize", resizeWindow);
-	var heightDiff_MainWrpr = $(window).height() - ($(".main_wrapper").height() - 10);
+	var heightDiff_MainWrpr = $(window).height() - $(".main_wrapper").height();
 	var heightDiff_Wrpr = $(".main_wrapper").height()- $(".wrapper").height();
 	var heightDiff_Content = $(".wrapper").height()- $("#container").height();
 	//var heightDiff_tablediv = $("#container").height()- $(".table_div").height();
@@ -36,7 +36,7 @@ $(document).ready(function() {
 		$(".wrapper").css("height",newHeight_MainWrpr - heightDiff_Wrpr);
 		
 		var newHeight_content = $(".wrapper").height();
-		$("#container").css("height", (newHeight_content - heightDiff_Content - 12);
+		$("#container").css("height", newHeight_content - heightDiff_Content);
 		
 		var newHeight_addinfodiv = $("#container").height();
 		$(".appInfoTabDiv").css("height",newHeight_addinfodiv - 66);

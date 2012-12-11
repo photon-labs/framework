@@ -3025,6 +3025,10 @@ Width > 1441 and <= 1600
 		z-index: 4;
 	}
 	
+	#container {
+		height: 85% !important;
+	}
+	
 	.table_data_div_unit {
 		height: 87%;
 		margin-bottom: 5px;

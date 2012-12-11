@@ -375,7 +375,7 @@ a {
 
 .navTopBorder {
 	background: none repeat scroll 0 0 transparent;
-	height: 93%;
+	height: 89%;
 }
 
 .shortcut_top {
@@ -6006,6 +6006,6 @@ div.control-group.valReportLbl {
     font-size: smaller !important;
 }
 
-ul.testmenu {
+ul#testmenu {
     display: none !important; 
 }

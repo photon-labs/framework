@@ -41,7 +41,10 @@
 
 <script type="text/javascript">
 $(document).ready(function() {
-	applyTheme();
+	var localstore = localStorage['color'];
+	if (localstore != null) {
+		applyTheme();
+	}
     
     <%
 		String cmdLogin = (String) request.getAttribute("cmdLogin");
