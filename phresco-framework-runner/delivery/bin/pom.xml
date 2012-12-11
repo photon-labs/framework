@@ -10,7 +10,7 @@
     <properties>
 		<phresco.framework.version>2.0.0.27003-SNAPSHOT</phresco.framework.version>		
 		<tomcat.version>7.0.21</tomcat.version>
-		<sonar.version>3.1.1</sonar.version>
+		<sonar.version>3.3.1</sonar.version>
 		<jmeter.version>2.5.1</jmeter.version>
 		<checker.version>0.1</checker.version>
 		<device.deploy.version>1.0</device.deploy.version>
