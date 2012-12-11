@@ -272,7 +272,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		try {
 			pomProcessor = new PomProcessor(pomFile);
 			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
-			pomProcessor.setArtifactId(applicationInfo.getName());
+			pomProcessor.setArtifactId(applicationInfo.getAppDirName());
 			pomProcessor.setName(applicationInfo.getName());
 			pomProcessor.setVersion(projectInfo.getVersion());
 			pomProcessor.save();
