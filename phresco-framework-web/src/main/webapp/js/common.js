@@ -18,7 +18,7 @@
  * ###
  */
 
-function loadJsonContent(url, jsonParam, containerTag, progressText) {
+function loadJsonContent(url, jsonParam, containerTag, progressText, callSuccessEvent) {
 	if (progressText !== undefined) {
 		showProgressBar(progressText);
 	} 
@@ -28,7 +28,7 @@ function loadJsonContent(url, jsonParam, containerTag, progressText) {
 		type : "POST",
 		contentType: "application/json; charset=utf-8",
 		success : function(data) {
-			loadData(data, containerTag);
+			loadData(data, containerTag, url, callSuccessEvent);
 		}
 	});	
 }

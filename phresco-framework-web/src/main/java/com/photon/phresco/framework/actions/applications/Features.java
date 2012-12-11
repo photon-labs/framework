@@ -32,12 +32,16 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.ArtifactGroupInfo;
+import com.photon.phresco.commons.model.ArtifactInfo;
 import com.photon.phresco.commons.model.Element;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.PropertyTemplate;
+import com.photon.phresco.commons.model.RequiredOption;
 import com.photon.phresco.commons.model.SettingsTemplate;
 import com.photon.phresco.commons.model.TechnologyInfo;
 import com.photon.phresco.configuration.Configuration;
@@ -96,6 +100,10 @@ public class Features extends FrameworkBaseAction {
 	private String configTemplateType = "";
 	
 	private String featureName = "";
+	
+	private List<ArtifactGroup> artifactGroups = new ArrayList<ArtifactGroup>();
+	List<String> depArtifactGroupNames = new ArrayList<String>();
+	List<String> depArtifactInfoIds = new ArrayList<String>();
 	
 	public String features() {
 		try {
@@ -262,8 +270,29 @@ public class Features extends FrameworkBaseAction {
 		setReqAttribute(REQ_FEATURES_MOD_GRP, moduleGroups);
 		setReqAttribute(REQ_FEATURES_TYPE, getType());
 		setReqAttribute(REQ_APP_ID, getAppId());
+		setReqAttribute(REQ_TECHNOLOGY, getTechnologyId());
 		
 		return APP_FEATURES_LIST;
+	}
+	
+	public String fetchDefaultModules() {
+		Gson gson = new Gson();
+		String json = gson.toJson(getArtifactGroups());
+		List<ArtifactGroup> ArtifactGroups = gson.fromJson(json, new TypeToken<List<ArtifactGroup>>(){}.getType());
+		for (ArtifactGroup artifactGroup : ArtifactGroups) {
+			List<ArtifactInfo> versions = artifactGroup.getVersions();
+			for (ArtifactInfo artifactInfo : versions) {
+				List<RequiredOption> appliesTo = artifactInfo.getAppliesTo();
+				for (RequiredOption requiredOption : appliesTo) {
+					if (requiredOption.isRequired()) {
+						depArtifactGroupNames.add(artifactGroup.getName());
+						depArtifactInfoIds.add(artifactInfo.getId());
+					}
+				}
+				
+			}
+		}
+		return SUCCESS;
 	}
 	
 	/*public String features1() {
@@ -994,4 +1023,28 @@ public class Features extends FrameworkBaseAction {
     public String getFeatureName() {
         return featureName;
     }
+
+	public List<ArtifactGroup> getArtifactGroups() {
+		return artifactGroups;
+	}
+
+	public void setArtifactGroups(List<ArtifactGroup> artifactGroups) {
+		this.artifactGroups = artifactGroups;
+	}
+
+	public List<String> getDepArtifactGroupNames() {
+		return depArtifactGroupNames;
+	}
+
+	public List<String> getDepArtifactInfoIds() {
+		return depArtifactInfoIds;
+	}
+
+	public void setDepArtifactGroupNames(List<String> depArtifactGroupNames) {
+		this.depArtifactGroupNames = depArtifactGroupNames;
+	}
+
+	public void setDepArtifactInfoIds(List<String> depArtifactInfoIds) {
+		this.depArtifactInfoIds = depArtifactInfoIds;
+	}
 }

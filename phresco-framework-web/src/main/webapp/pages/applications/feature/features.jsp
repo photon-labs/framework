@@ -245,6 +245,8 @@
   			hideLoadingIcon();
   			$("#successmsg").show();
   			setTimeOut();
-  		}
+  		} else if (url === "fetchDefaultModules") {
+			chkDefaultModules(data.depArtifactGroupNames, data.depArtifactInfoIds);
+		}
   	}
 </script>
