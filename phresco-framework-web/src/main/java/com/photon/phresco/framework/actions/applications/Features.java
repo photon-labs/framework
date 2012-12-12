@@ -83,7 +83,8 @@ public class Features extends FrameworkBaseAction {
 	private String description = "";
 	private String appDir = "";
 	private String oldAppDirName = "";
-	private String technology = null;
+	private String technology = "";
+	private String technologyVersion = "";
 	private String applicationVersion = "";
 	private String appId = "";
 	private List<String> server = null;
@@ -164,6 +165,7 @@ public class Features extends FrameworkBaseAction {
     	appInfo.setVersion(getApplicationVersion());
     	TechnologyInfo techInfo = new TechnologyInfo();
     	techInfo.setId(getTechnology());
+    	techInfo.setVersion(getTechnologyVersion());
 		appInfo.setTechInfo(techInfo );
 		if (StringUtils.isNotEmpty(getPilotProject())) {
 			Element element = new Element();
@@ -1104,5 +1106,13 @@ public class Features extends FrameworkBaseAction {
 
 	public void setSelectedType(String selectedType) {
 		this.selectedType = selectedType;
+	}
+
+	public String getTechnologyVersion() {
+		return technologyVersion;
+	}
+
+	public void setTechnologyVersion(String technologyVersion) {
+		this.technologyVersion = technologyVersion;
 	}
 }

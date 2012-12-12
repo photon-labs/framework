@@ -49,6 +49,7 @@
 	String version = "";
 	String pilotInfo = "";
 	String technologyId = "";
+	String technologyVersion = "";
 	String oldAppDirName = "";
 	List<String> feature = null;
 	List<String> selectedWebservices = null;
@@ -57,6 +58,7 @@
 	if (projectInfo != null) {
 		ApplicationInfo selectedInfo = projectInfo.getAppInfos().get(0);
 		technologyId = selectedInfo.getTechInfo().getId();
+		technologyVersion = selectedInfo.getTechInfo().getVersion();
 		id = selectedInfo.getId();
 		name = selectedInfo.getName();
 		code = selectedInfo.getCode();
@@ -130,7 +132,7 @@
 		    <div class="controls">
 		        <textarea class="appinfo-desc input-xlarge" maxlength="150" title="<s:text name="title.150.chars"/>" class="xlarge" 
 		        	id="textarea" placeholder="<s:text name="label.description.placeholder"/>"
-		        	name="description" value="<%= StringUtils.isNotEmpty(description) ? description : "" %>"></textarea>
+		        	name="description"><%= StringUtils.isNotEmpty(description) ? description : "" %></textarea>
 		    </div>
 		</div>
 		<!--  Description Ends -->
@@ -152,6 +154,8 @@
 			<div class="controls">
 				<input type="text" class="input-xlarge" value="<%= technologyId %>" disabled="disabled"/>
 				<input type="hidden" name="technology" value="<%= technologyId %>"/>
+				<input type="text" class="input-medium" value="<%= technologyVersion %>" disabled="disabled"/>
+				<input type="hidden" name="technologyVersion" value="<%= technologyVersion %>"/>
 			</div>
 		</div>
 		<!-- Technology version ends -->
@@ -503,9 +507,9 @@
 		%>
 	}
 	
-    var serverCounter = 1;
+    var serverCounter = 2;
     <% if(selectedServers != null) {%>
-    		serverCounter = <%= selectedServers.size() %> +1;
+    		serverCounter = <%= selectedServers.size() %> +<%= selectedServers.size() %>+1;
 	<% } %>
     function addServer(selectedServer, serverVersions) {
     	if(serverCounter == undefined) {
@@ -528,9 +532,9 @@
 		
     }			
     
-    var databaseCounter = 1;
+    var databaseCounter = 2;
     <% if(selectedDatabases != null) {%>
-    		databaseCounter = <%= selectedDatabases.size() %> +1;
+    		databaseCounter = <%= selectedDatabases.size() %> +<%= selectedDatabases.size() %>+1;
     <% } %>
     function addDatabase(selectedDatabase, databaseVersions) {
     	if(databaseCounter == undefined) {
@@ -653,8 +657,8 @@
 			if (selectedDataVersion.indexOf(",") != -1) {
 				version = trim(selectedDataVersion);
 				arrayVersions = version.split(",");
-				for(var i=0;i<arrayVersions.length;i++) {
-					var ver = arrayVersions[i].replace(/\s/g,'');  
+				for (var i=0; i<arrayVersions.length; i++) {
+					var ver = removeSpaces(arrayVersions[i]);  
 					if(ver === value) {
 						checkedStr = "checked";
 					}

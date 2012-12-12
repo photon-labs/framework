@@ -414,7 +414,7 @@ public class Projects extends FrameworkBaseAction {
         }
 
         boolean hasError = false;
-        //check project name is already exists or not
+       /* //check project name is already exists or not
         ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
         List<ProjectInfo> projects = projectManager.discover(getCustomerId());
         String newProjectName = "";
@@ -431,7 +431,7 @@ public class Projects extends FrameworkBaseAction {
         if(StringUtils.equals(newProjectName, oldProjectName)) {
         	 setProjectNameError(getText(ERROR_NAME_EXISTS));
              hasError = true;
-        }
+        }*/
         
         //empty validation for name
         if (StringUtils.isEmpty(getProjectName())) {

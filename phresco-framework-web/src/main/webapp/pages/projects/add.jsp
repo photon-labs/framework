@@ -124,8 +124,8 @@
 			</label>
 			<div class="controls">
 				<textarea id="projDesc" class="input-xlarge" placeholder='<s:text name="place.hldr.proj.add.desc"/>' 
-					rows="3" value="<%= StringUtils.isNotEmpty(description) ? description : "" %>" name="projectDesc" maxlength="150" 
-					title="<s:text name="title.150.chars"/>"></textarea>
+					rows="3" name="projectDesc" maxlength="150" 
+					title="<s:text name="title.150.chars"/>"><%= StringUtils.isNotEmpty(description) ? description : "" %></textarea>
 			</div>
 		</div>
 		<!-- Description Ends -->
