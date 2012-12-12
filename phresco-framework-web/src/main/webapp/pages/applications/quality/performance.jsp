@@ -130,7 +130,6 @@
 <script type="text/javascript">
     $(document).ready(function() {
     	showLoadingIcon();
-    	
     	isResultFileAvailbale();//Check for the performance test result
     	
     	$('#performanceTest').click(function() {
@@ -340,6 +339,10 @@
 			// show popup loading icon
 			showPopuploadingIcon();
 			loadContent('printAsPdf', $('#generatePdf'), $('#popup_div'), '', false);
+		} else if (okUrl === "runPerformanceTest") {
+			$('#popupPage').modal('hide');
+			var params = getBasicParams();
+			progressPopupAsSecPopup('performanceTest', '<%= appId %>', "performance-test", $('#generateBuildForm'), params, ''); 
 		}
 	}
 </script>

@@ -162,7 +162,7 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
                 StringBuilder paramBuilder = new StringBuilder();
                 for (Parameter parameter : parameters) {
                     String parameterKey = parameter.getKey();
-                    if (parameter.getDynamicParameter() != null) { //Dynamic parameter
+                    if (TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(parameter.getType()) && parameter.getDynamicParameter() != null) { //Dynamic parameter
                         Map<String, Object> constructMapForDynVals = constructMapForDynVals(appInfo, watcherMap, parameterKey);
                         
                         // Get the values from the dynamic parameter class
@@ -213,7 +213,14 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
                         paramBuilder.append(parameterKey);
                         paramBuilder.append("=");
                         paramBuilder.append("");
-                    }
+                    } else if(TYPE_DYNAMIC_PAGE_PARAMETER.equalsIgnoreCase(parameter.getType())) {
+            			setReqAttribute(REQ_CUSTOMER_ID, getCustomerId());
+            			Map<String, Object> dynamicPageParameterMap = getDynamicPageParameter(appInfo, watcherMap, parameter);
+            			List<? extends Object> dynamicPageParameter = (List<? extends Object>) dynamicPageParameterMap.get(REQ_VALUES_FROM_JSON);
+            			String className = (String) dynamicPageParameterMap.get(REQ_CLASS_NAME);
+            			setReqAttribute(REQ_CLASS_NAME, className);
+            			setReqAttribute(REQ_DYNAMIC_PAGE_PARAMETER + parameter.getKey(), dynamicPageParameter);
+            		}
                 }
                 setAvailableParams(paramBuilder.toString());
             }
@@ -353,7 +360,7 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 		}
 	}
 	
-	protected List<? extends Object> getDynamicPageParameter(ApplicationInfo appInfo, Map<String, DependantParameters> watcherMap, Parameter parameter) throws PhrescoException {
+	protected Map<String, Object> getDynamicPageParameter(ApplicationInfo appInfo, Map<String, DependantParameters> watcherMap, Parameter parameter) throws PhrescoException {
 		String parameterKey = parameter.getKey();
 		Map<String, Object> paramsMap = constructMapForDynVals(appInfo, watcherMap, parameterKey);
 		String className = parameter.getDynamicParameter().getClazz();
@@ -426,7 +433,7 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 	                    String value = writer.getBuffer().toString();
 	                    parameter.setValue(value);
 	                } else {
-	                    parameter.setValue(getReqParameter(parameter.getKey()));
+	                    parameter.setValue(StringUtils.isNotEmpty(getReqParameter(parameter.getKey())) ? (String)getReqParameter(parameter.getKey()) : "");
 	                }
 	            }
 	        }
@@ -491,11 +498,13 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
                 	ApplicationInfo applicationInfo2 = getApplicationInfo();
                     Map<String, Object> constructMapForDynVals = constructMapForDynVals(applicationInfo, watcherMap, getDependency());
                     if (TYPE_DYNAMIC_PAGE_PARAMETER.equalsIgnoreCase(dependentParameter.getType())) {
-                    	List<? extends Object> dynamicPageParameter = getDynamicPageParameter(applicationInfo2, watcherMap, dependentParameter);
+            			Map<String, Object> dynamicPageParameterMap = getDynamicPageParameter(applicationInfo2, watcherMap, dependentParameter);
+            			List<? extends Object> dynamicPageParameter = (List<? extends Object>) dynamicPageParameterMap.get(REQ_VALUES_FROM_JSON);
+            			String className = (String) dynamicPageParameterMap.get(REQ_CLASS_NAME);
                     	FrameworkUtil frameworkUtil = new FrameworkUtil();
                     	ParameterModel parameterModel = new ParameterModel();
                     	parameterModel.setName(dependentParameter.getKey());
-                    	StringTemplate constructDynamicTemplate = frameworkUtil.constructDynamicTemplate(getCustomerId(), dependentParameter, parameterModel, dynamicPageParameter);
+                    	StringTemplate constructDynamicTemplate = frameworkUtil.constructDynamicTemplate(getCustomerId(), dependentParameter, parameterModel, dynamicPageParameter, className);
                     	setDynamicPageParameterDesign(constructDynamicTemplate.toString());
                     } else {
 	                    List<Value> dependentPossibleValues = getDynamicPossibleValues(constructMapForDynVals, dependentParameter);

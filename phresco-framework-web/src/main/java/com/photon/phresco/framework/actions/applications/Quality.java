@@ -19,6 +19,9 @@
  */
 package com.photon.phresco.framework.actions.applications;
 
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,12 +36,15 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.Writer;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -61,6 +67,7 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.ArrayUtils;
@@ -74,6 +81,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonIOException;
 import com.photon.phresco.commons.FileListFilter;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
@@ -811,31 +819,24 @@ public class Quality extends DynamicParameterAction implements Constants {
         }
         
         try {
-            ApplicationInfo appInfo = getApplicationInfo();
-            removeSessionAttribute(appInfo.getId() + PHASE_PERFORMANCE_TEST + SESSION_WATCHER_MAP);
-            Map<String, DependantParameters> watcherMap = new HashMap<String, DependantParameters>(8);
+        	ApplicationInfo appInfo = getApplicationInfo();
+        	removeSessionAttribute(appInfo.getId() + PHASE_PERFORMANCE_TEST + SESSION_WATCHER_MAP);
+        	Map<String, DependantParameters> watcherMap = new HashMap<String, DependantParameters>(8);
 
-            MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_PERFORMANCE_TEST)));
-            List<Parameter> parameters = getMojoParameters(mojo, PHASE_PERFORMANCE_TEST);
-            setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap);
-            for (Parameter parameter : parameters) {
-            	if(parameter.getType().equalsIgnoreCase(TYPE_DYNAMIC_PAGE_PARAMETER)){
-            		setReqAttribute(REQ_CUSTOMER_ID, getCustomerId());
-            		List<? extends Object> dynamicPageParameter = getDynamicPageParameter(appInfo, watcherMap, parameter);
-            		setReqAttribute(REQ_DYNAMIC_PAGE_PARAMETER + parameter.getKey(), dynamicPageParameter);
-				}
-			}	
-            setSessionAttribute(appInfo.getId() + PHASE_PERFORMANCE_TEST + SESSION_WATCHER_MAP, watcherMap);
-            setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
-            setReqAttribute(REQ_GOAL, PHASE_PERFORMANCE_TEST);
-            setReqAttribute(REQ_PHASE, PHASE_PERFORMANCE_TEST);
+        	MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_PERFORMANCE_TEST)));
+        	List<Parameter> parameters = getMojoParameters(mojo, PHASE_PERFORMANCE_TEST);
+        	setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap);
+        	setSessionAttribute(appInfo.getId() + PHASE_PERFORMANCE_TEST + SESSION_WATCHER_MAP, watcherMap);
+        	setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
+        	setReqAttribute(REQ_GOAL, PHASE_PERFORMANCE_TEST);
+        	setReqAttribute(REQ_PHASE, PHASE_PERFORMANCE_TEST);
         } catch (PhrescoException e) {
-            if (s_debugEnabled) {
-                S_LOGGER.error("Entered into catch block of Quality.showFunctionalTestPopUp()" + FrameworkUtil.getStackTraceAsString(e));
-            }
-            return showErrorPopup(e, getText(EXCEPTION_QUALITY_FUNCTIONAL_PARAMS));
+        	if (s_debugEnabled) {
+        		S_LOGGER.error("Entered into catch block of Quality.showFunctionalTestPopUp()" + FrameworkUtil.getStackTraceAsString(e));
+        	}
+        	return showErrorPopup(e, getText(EXCEPTION_QUALITY_FUNCTIONAL_PARAMS));
         }
-        
+
         return SUCCESS;
     }
 	
@@ -1435,7 +1436,7 @@ public class Quality extends DynamicParameterAction implements Constants {
         return APP_UNIT_TEST;
     }
 
-    public String performanceTest() {
+    public String performanceTesting() {
         
            S_LOGGER.debug("Entering Method Quality.performance()");
         
@@ -1566,11 +1567,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 	            }
 	            
 	            String filepath = builder.toString() + File.separator + testName + ".json";
-	            PerformanceDetails perform = new PerformanceDetails(jmeterTestAgainst, showSettings, setting, testName, name, context, contextType, contextPostData,  encodingType,dbPerName,queryType, query,Integer.parseInt(noOfUsers),Integer.parseInt(rampUpPeriod), Integer.parseInt(loopCount));
-	            Gson gson = new Gson();
-	            writer = new OutputStreamWriter(new FileOutputStream(filepath));
-	            gson.toJson(perform,writer);
-	            writer.close();
+	            
             }
 //            actionType.setWorkingDirectory(builder.toString());
             ProjectRuntimeManager runtimeManager = PhrescoFrameworkFactory.getProjectRuntimeManager();
@@ -1599,6 +1596,76 @@ public class Quality extends DynamicParameterAction implements Constants {
         }
         getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
         return APP_ENVIRONMENT_READER;
+    }
+    
+    public String performanceTest() throws PhrescoException {
+    	try {
+    		ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+    		ProjectInfo projectInfo = getProjectInfo();
+    		ApplicationInfo applicationInfo = getApplicationInfo();
+    		MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_PERFORMANCE_TEST)));
+    		persistValuesToXml(mojo, PHASE_PERFORMANCE_TEST);
+
+    		//To get maven build arguments
+    		List<Parameter> parameters = getMojoParameters(mojo, PHASE_PERFORMANCE_TEST);
+    		List<String> buildArgCmds = getMavenArgCommands(parameters);
+    		String workingDirectory = getAppDirectoryPath(applicationInfo);
+
+    		Writer writer = null;
+    		StringBuilder filepath = new StringBuilder(Utility.getProjectHome());
+    		filepath.append(applicationInfo.getAppDirName()).append(File.separator).append(TEST_SLASH_PERFORMANCE).append(getTestAgainst())
+    		.append(File.separator).append(getTestName()).append(DOT_JSON);
+    		String className = getHttpRequest().getParameter(REQ_OBJECT_CLASS);//get the bean class
+    		ClassLoader classLoader = Quality.class.getClassLoader();
+    		Class<?> loadClass = classLoader.loadClass(className);//loads the bean class
+    		Object newInstance = Class.forName(className).newInstance();//create instance of the loaded class
+    		for(PropertyDescriptor propertyDescriptor : Introspector.getBeanInfo(loadClass).getPropertyDescriptors()) {
+    			Method getterMethod = propertyDescriptor.getReadMethod();
+    			getterMethod.getName().replace(TYPE_GET, "");
+    			String key = getterMethod.getName().replace(TYPE_GET, "").substring(0,1).toLowerCase() + 
+    			getterMethod.getName().replace(TYPE_GET, "").substring(1);//to get fields in the respective bean class
+    			String returnType = getterMethod.getReturnType().getName();
+    			if (ARRAY_LIST.equals(returnType)) {//if the field is List<String>
+    				List<String> value = new ArrayList<String>();
+    				if (getHttpRequest().getParameterValues(key) == null) {
+    					value.add("");
+    				} else {
+    					value = (List<String>)Arrays.asList((getHttpRequest().getParameterValues(key)));
+    				}
+    				BeanUtils.setProperty(newInstance, key, value);
+    			} else {//if the field is string or other type
+    				String value = (StringUtils.isNotEmpty(getReqParameter(key))) ? (String)getReqParameter(key) : "";
+    				BeanUtils.setProperty(newInstance, key, value);
+    			}
+    		}
+    		Gson gson = new Gson();
+    		writer = new OutputStreamWriter(new FileOutputStream(filepath.toString()));
+    		gson.toJson(newInstance, writer);
+    		writer.close();
+
+    		BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.PERFORMANCE_TEST, buildArgCmds, workingDirectory);
+    		setSessionAttribute(getAppId() + PERFORMANCE_TEST, reader);
+    		setReqAttribute(REQ_APP_ID, getAppId());
+    		setReqAttribute(REQ_ACTION_TYPE, PERFORMANCE_TEST);
+    	} catch (JsonIOException e) {
+    		throw new PhrescoException(e);
+    	} catch (FileNotFoundException e) {
+    		throw new PhrescoException(e);
+    	} catch (ClassNotFoundException e) {
+    		throw new PhrescoException(e);
+    	} catch (InstantiationException e) {
+    		throw new PhrescoException(e);
+    	} catch (IllegalAccessException e) {
+    		throw new PhrescoException(e);
+    	} catch (IntrospectionException e) {
+    		throw new PhrescoException(e);
+    	} catch (InvocationTargetException e) {
+    		throw new PhrescoException(e);
+    	} catch (IOException e) {
+    		throw new PhrescoException(e);
+    	}
+
+    	return SUCCESS;
     }
     
     public String load() throws JAXBException, IOException, PhrescoPomException {

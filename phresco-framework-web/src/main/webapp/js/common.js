@@ -71,7 +71,7 @@ function progressPopup(pageUrl, appId, actionType, form, callSuccessEvent, addit
 
 function progressPopupAsSecPopup(url, appId, actionType, form, additionalParams, stopUrl) {
 	setTimeout(function () {
-		$('#progressPopup').modal('show')
+		$('#progressPopup').modal('show');
     }, 600);
 	$('#popup_progress_div').empty();
 	$(".progressPopupClose").show();

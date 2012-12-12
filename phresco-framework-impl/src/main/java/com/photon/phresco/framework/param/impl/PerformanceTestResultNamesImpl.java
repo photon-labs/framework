@@ -24,19 +24,20 @@ public class PerformanceTestResultNamesImpl implements DynamicParameter, Constan
 	@Override
 	public PossibleValues getValues(Map<String, Object> paramMap) throws IOException, ParserConfigurationException, SAXException, ConfigurationException, PhrescoException {
 		PossibleValues possibleValues = new PossibleValues();
-    	ApplicationInfo applicationInfo = (ApplicationInfo) paramMap.get(KEY_APP_INFO);
-    	String testAgainst = (String) paramMap.get(KEY_TEST_AGAINST);
-    	String testDirPath = getTestDirPath(applicationInfo.getAppDirName(), "server");
-    	 File file = new File(testDirPath);
-    	 File[] testFiles = file.listFiles(new XmlNameFileFilter(FrameworkConstants.XML));
-    	 for (File testFile : testFiles) {
-			int lastDot = testFile.getName().lastIndexOf(".");
-			String newFileName = testFile.getName().substring(0, lastDot); 
-			Value value = new Value();
-			value.setValue(newFileName);
-			possibleValues.getValue().add(value);
+		ApplicationInfo applicationInfo = (ApplicationInfo) paramMap.get(KEY_APP_INFO);
+		String testAgainst = (String) paramMap.get(KEY_TEST_AGAINST);
+		String testDirPath = getTestDirPath(applicationInfo.getAppDirName(), "server");
+		File file = new File(testDirPath);
+		File[] testFiles = file.listFiles(new XmlNameFileFilter(FrameworkConstants.XML));
+		if (testFiles.length != 0) {
+			for (File testFile : testFiles) {
+				int lastDot = testFile.getName().lastIndexOf(".");
+				String newFileName = testFile.getName().substring(0, lastDot); 
+				Value value = new Value();
+				value.setValue(newFileName);
+				possibleValues.getValue().add(value);
+			}
 		}
-    	
 		// TODO Auto-generated method stub
 		return possibleValues;
 	}

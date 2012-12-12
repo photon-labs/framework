@@ -83,6 +83,7 @@
     String phase = (String) request.getAttribute(FrameworkConstants.REQ_PHASE);
     String appId  = applicationInfo.getId();
     String customerId = (String) request.getAttribute(FrameworkConstants.REQ_CUSTOMER_ID);
+    String className = "";//For performance
     FrameworkUtil frameworkUtil = new FrameworkUtil();
     DynamicParameterAction dpm = new DynamicParameterAction();
     MojoProcessor mojo = new MojoProcessor(new File(dpm.getPhrescoPluginInfoXmlFilePath(goal, applicationInfo)));
@@ -308,7 +309,8 @@
 	<%			
 				} else if (FrameworkConstants.TYPE_DYNAMIC_PAGE_PARAMETER.equalsIgnoreCase(parameter.getType())) {
 					List<? extends Object> obj = (List<? extends Object>) request.getAttribute(FrameworkConstants.REQ_DYNAMIC_PAGE_PARAMETER + parameter.getKey());
-					StringTemplate dynamicPageTemplate = frameworkUtil.constructDynamicTemplate(customerId, parameter, parameterModel, obj);
+					className = (String) request.getAttribute(FrameworkConstants.REQ_CLASS_NAME);
+					StringTemplate dynamicPageTemplate = frameworkUtil.constructDynamicTemplate(customerId, parameter, parameterModel, obj, className);
 	%>
 					<%= dynamicPageTemplate %>
 	<% 
@@ -488,8 +490,8 @@
 	
 	function updateDependancySuccEvent(data) {
 		if (data.dynamicPageParameterDesign != undefined && !isBlank(data.dynamicPageParameterDesign)) {
-			$('#' + data.dependency + "WholeDivId").empty();
-			$('#' + data.dependency + "WholeDivId").append(data.dynamicPageParameterDesign);
+			$('#' + data.dependency + "DivId").empty();
+			$('#' + data.dependency + "DivId").append(data.dynamicPageParameterDesign);
 		}
 		
 		if (data.dependency != undefined && !isBlank(data.dependency)) {
@@ -550,8 +552,17 @@
 	}
 
 	//To add the contexts and the details in the performance test
+	var i = 1;
+	var contextUrlsRowId = "";
 	function addContext(contextObj) {
-		$('#generateBuild_Modal').append(contextObj.html());
+		var html = $("#" + contextObj).html();
+		contextUrlsRowId = contextObj + i;
+		var contextUrlRow = $(document.createElement('div')).attr("id", contextUrlsRowId);
+		contextUrlRow.html(html);
+		$('#generateBuild_Modal').append(contextUrlRow);
+		$(':input:not(:button)', $("#"+contextUrlsRowId)).val('');
+		$("#"+contextUrlsRowId).find('div[id=headerkeyId]').remove();
+		i++;
 	}
 	
 	//To enable the delete btn when any context url check box is checked
@@ -563,7 +574,7 @@
 				return false;
 			}
 		});
-		if (hasChecked) {
+		if (hasChecked && $('.check').size() != 1) {
 			$('#deleteContext').addClass("btn-primary");
 			$('#deleteContext').removeAttr("disabled");
 		} else {
@@ -581,18 +592,21 @@
 				}
 			}
 		});
+		enableDelBtn();
 	}
 
 	function addHeader(obj) {
-		var key = $('input[name=key]').val();
-		var value = $('input[name=value]').val();
-		$(obj).closest('fieldset').append('<div style="background-color: #bbbbbb; width: 40%; margin-bottom:2px; height: auto; border-radius: 6px; '+
-					'padding: 0 0 0 10px; position: relative"><a href="#" style="text-decoration: none; margin-right: 10px; color: #000000; '+
-					'margin-left: 95%;" onclick="removeHeader(this);">&times;</a><div style="cursor: pointer; color: #000000; height: auto; '+
-					'position: relative; width: 90%; line-height: 17px; margin-top: -14px; padding: 0 0 6px 1px;">'+ key + " : " + value + 
-					'</div><input type="hidden" name="headerKey" value="'+key+'"/><input type="hidden" name="headerValue" value="'+value+'"/></div>');
-		$('input[name=key]').val("");
-		$('input[name=value]').val("");
+		var	key = $(obj).parents('fieldset').find($('input[name=key]')).val();
+		var	value = $(obj).parents('fieldset').find($('input[name=value]')).val();
+		if ((key!= undefined && !isBlank(key)) && (value!= undefined && !isBlank(value))) {
+			$(obj).closest('fieldset').append('<div id="headerkeyId" style="background-color: #bbbbbb; width: 40%; margin-bottom:2px; height: auto; border-radius: 6px; '+
+						'padding: 0 0 0 10px; position: relative"><a href="#" style="text-decoration: none; margin-right: 10px; color: #000000; '+
+						'margin-left: 95%;" onclick="removeHeader(this);">&times;</a><div style="cursor: pointer; color: #000000; height: auto; '+
+						'position: relative; width: 90%; line-height: 17px; margin-top: -14px; padding: 0 0 6px 1px;">'+ key + " : " + value + 
+						'</div><input type="hidden" name="headerKey" value="'+key+'"/><input type="hidden" name="headerValue" value="'+value+'"/></div>');
+			$('input[name=key]').val("");
+			$('input[name=value]').val("");
+		}
 	}
 	
 	function removeHeader(obj) {

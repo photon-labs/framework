@@ -1042,7 +1042,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 		return controlGroupElement;
     }
     
-    public StringTemplate constructDynamicTemplate(String CustomerId, Parameter parameter,ParameterModel parameterModel, List<? extends Object> obj) throws IOException {
+    public StringTemplate constructDynamicTemplate(String CustomerId, Parameter parameter,ParameterModel parameterModel, List<? extends Object> obj, String className) throws IOException {
     	try {
     		StringBuilder sb = new StringBuilder();
     		String line;
@@ -1069,10 +1069,15 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     		} 
     		
     		StringTemplate dynamicTemplateDiv = new StringTemplate(getDynamicTemplateWholeDiv());
-    		dynamicTemplateDiv.setAttribute("templateClass", parameterModel.getName() + "WholeDivClass");
-    		dynamicTemplateDiv.setAttribute("templateId", parameterModel.getName() + "WholeDivId");
+    		dynamicTemplateDiv.setAttribute("templateClass", parameterModel.getName() + "DivClass");
+    		dynamicTemplateDiv.setAttribute("templateId", parameterModel.getName() + "DivId");
     		StringTemplate stringTemplate = new StringTemplate(sb.toString());
-    		stringTemplate.setAttribute("myObject", obj);
+    		dynamicTemplateDiv.setAttribute("className", className);
+    		if (CollectionUtils.isNotEmpty(obj)) {
+    			stringTemplate.setAttribute("myObject", obj);
+    		} else {
+    			stringTemplate.setAttribute("myObject", "");
+    		}
     		dynamicTemplateDiv.setAttribute("templateDesign", stringTemplate);
     		
     		return dynamicTemplateDiv;
@@ -1227,7 +1232,8 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     
     private static String getDynamicTemplateWholeDiv() {
     	StringBuilder sb = new StringBuilder();
-    	sb.append("<div class='$templateClass$' id='$templateId$'> $templateDesign$ </div>");
+    	sb.append("<div class='$templateClass$' id='$templateId$'> $templateDesign$")
+    	.append("<input type='hidden' name='objectClass' value='$className$'/></div>");
     	
     	return sb.toString();
     }

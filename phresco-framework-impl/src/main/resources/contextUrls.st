@@ -1,10 +1,17 @@
-<input type="button" value="Add Context" class="btn btn-primary">
-<input type="button" value="Delete" class="btn" id="deleteContext" disabled>
+<div style="background-color: #323232;color: #FFFFFF;">
+     <table class="zebra-striped">
+         <tr>
+             <th class="" style="padding:8px 0 5px 9px">Context URLs</th>
+         </tr>
+     </table>
+</div>
+<input type="button" style="margin-top:4px;" value="Add Context" class="btn btn-primary" onclick="addContext('contextDiv');">
+<input type="button" style="margin-top:4px;" value="Delete" class="btn" id="deleteContext" disabled onclick="deleteContextUrl();">
 $myObject:{ obj |
 	<div id="contextDiv">
 		<fieldset class="popup-fieldset fieldsetBottom perFieldSet perContextUrlFieldset" id="context">
-			<legend class="fieldSetLegend" style="width: 105px;">
-				<input type="checkbox" class="check" onclick="enableDelBtn();"> Context URLs
+			<legend class="fieldSetLegend">
+				<input type="checkbox" class="check" onclick="enableDelBtn();">
 			</legend>
 			
 			<table style="line-height: 0px;">
@@ -55,7 +62,7 @@ $myObject:{ obj |
 				</table>
 			</fieldset>
 			
-			<textarea placeholder="Request body" title="JSON data" class="input-xlarge" style="margin: 2px 5px 0 0; width: 40%; float: right;"></textarea>
+			<textarea placeholder="Request body" title="JSON data" class="" style="margin: 2px 5px 0 0; width: 40%; float: right;"></textarea>
 		</fieldset>
 	</div>
 }$
