@@ -26,13 +26,12 @@
 
 <%@ page import="com.google.gson.Gson" %>
 
+<%@ page import="com.photon.phresco.commons.model.ArtifactGroup"%>
 <%@ page import="com.photon.phresco.commons.model.ArtifactGroup.Type"%>
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 <%@ page import="com.photon.phresco.commons.model.SelectedFeature"%>
-<%@ page import="com.photon.phresco.commons.model.ArtifactGroup"%>
-<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
-
 <%@ page import="com.photon.phresco.commons.model.ProjectInfo"%>
+<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 
 <%
 	List<SelectedFeature> selectFeatures = (List<SelectedFeature>)session.getAttribute(FrameworkConstants.REQ_SELECTED_FEATURES);
@@ -51,7 +50,6 @@
 		selectedModules = appInfo.getSelectedModules();
 		selectedJSLibs = appInfo.getSelectedJSLibs();
 		selectedComponents = appInfo.getSelectedComponents();
-		
 	}
 %> 
 <form id="formFeatures" class="featureForm">
@@ -159,11 +157,9 @@
      		$("#accordianchange").scrollbars();  
     	}
     	showLoadingIcon();
-        //fillHeading();
-        //showAvailabelFeature();
         
         $('#featureselect').ddslick({
-        	onSelected: function(data){
+        	onSelected: function(data) {
         		selectedType = data.selectedData.value;
         		featureType(data.selectedData.value, data.selectedData.text); 
         	}
@@ -182,14 +178,14 @@
 	    loadContent("listFeatures", $('#formFeatures'), $('#accordianchange'), params);
     }
     
-    // Function to add the features to the right tab
+    //Function to add the features to the right tab
     function clickToAdd() {
         $('#accordianchange input:checked').each(function () {
         	var dispName = $(this).val();
-        	var hiddenFieldVersion = $('select[name='+dispName+']').val();
-        	var moduleId = $('select[name='+dispName+']').attr('moduleId');
-        	//var myTag = element.attr("myTag");
-        	var dispValue = $("#" + dispName + " option:selected").text();
+        	var id = removeSpaces(dispName);
+        	var hiddenFieldVersion = $('#'+id).val();
+        	var moduleId = $('#'+id).attr('moduleId');
+        	var dispValue = $("#" + id + " option:selected").text();
         	constructFeaturesDiv(dispName, dispValue, selectedType, hiddenFieldVersion, moduleId);
         });
     }
@@ -199,14 +195,23 @@
 		$("div[id='"+ dispName +"']").remove();
 		$("input[class='"+ dispName +"']").remove();
 		
-		$("#result").append('<input type="hidden" class = "'+dispName+'" value={"dispName":"'+dispName+'","moduleId":"'+moduleId+'","dispValue":"'+dispValue+'","versionID":"'+hiddenFieldVersion+'","type":"'+hiddenFieldname+'"} name="jsonData">');
+		var jsonParamObj = {};
+		jsonParamObj.dispName = dispName;
+		jsonParamObj.moduleId = moduleId;
+		jsonParamObj.dispValue = dispValue;
+		jsonParamObj.versionID = hiddenFieldVersion;
+		jsonParamObj.type = hiddenFieldname;
+		var jsonParam = JSON.stringify(jsonParamObj);
+		var ctrlClass = removeSpaces(dispName);
+		$("#result").append('<input type="hidden" class="'+ctrlClass+'" name="jsonData">');
+		$("."+ctrlClass).val(jsonParam);
 		if (showConfigImg) {
-			$("#result").append('<div class = "'+dispName+'"id="'+dispName+'">'+dispName+' - '+dispValue+
+			$("#result").append('<div>'+dispName+' - '+dispValue+
 					'<a href="#" id="'+dispName+'" onclick="remove(this);">&nbsp;&times;</a>'+
 					'<a href="#" id="'+dispName+'" onclick="showFeatureConfigPopup(this);"><img src="images/icons/gear.png" title="Configure"/></a></div>');
 		} else {
 			$("#result").append('<div class = "'+dispName+'"id="'+dispName+'">'+dispName+' - '+dispValue+'<a href="#" id="'+dispName+'" onclick="remove(this);">&times;</a></div>');
-		}	
+		}
     }
     
     // Function to remove the final features in right tab  

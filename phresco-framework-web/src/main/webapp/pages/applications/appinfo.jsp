@@ -649,7 +649,7 @@
 		var checkedStr = "";
 		var version;
 		
-		if(selectedDataVersion != undefined) {
+		if (selectedDataVersion != undefined) {
 			var arrayVersions = new Array();
 			if (selectedDataVersion.indexOf(",") != -1) {
 				version = trim(selectedDataVersion);

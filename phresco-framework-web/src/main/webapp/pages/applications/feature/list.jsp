@@ -41,15 +41,16 @@
 	String type = (String) request.getAttribute(FrameworkConstants.REQ_FEATURES_TYPE);
 	if (CollectionUtils.isNotEmpty(artifactGroups)) {
 		for (ArtifactGroup artifactGroup : artifactGroups) {
+		    String artifactGrpName = artifactGroup.getName().replaceAll("\\s","");
 %>
 		<div  class="accordion_panel_inner">
 		    <section class="lft_menus_container">	
 				<span class="siteaccordion">
 					<span>
-						<input class="feature_checkbox" type="checkbox" value=<%= artifactGroup.getName() %> id="checkAll1"/>
+						<input class="feature_checkbox" type="checkbox" value="<%= artifactGroup.getName() %>" id="checkAll1"/>
 						<a style="float: left; margin-left:2%;" href="#"><%= artifactGroup.getName() %></a>
 						
-						<select class="input-mini features_ver_sel" id="<%= artifactGroup.getName() %>" moduleId="<%= artifactGroup.getId() %>" name="<%=artifactGroup.getName() %>" >
+						<select class="input-mini features_ver_sel" id="<%= artifactGrpName %>" moduleId="<%= artifactGroup.getId() %>" name="<%=artifactGroup.getName() %>" >
 							<%
 								List<ArtifactInfo> artifactInfos = artifactGroup.getVersions();
 								for (ArtifactInfo artifactInfo : artifactInfos) {
@@ -121,15 +122,4 @@
 		}
 		clickToAdd();
 	}
-	
-	 function clickToAdd() {
-	        $('#accordianchange input:checked').each(function () {
-	        	var dispName = $(this).val();
-	        	var hiddenFieldVersion = $('select[name='+dispName+']').val();
-	        	var moduleId = $('select[name='+dispName+']').attr('moduleId');
-	        	var dispValue = $("#" + dispName + " option:selected").text();
-	        	constructFeaturesDiv(dispName, dispValue, selectedType, hiddenFieldVersion, moduleId);
-	        });
-	    }
-	
 </script>
