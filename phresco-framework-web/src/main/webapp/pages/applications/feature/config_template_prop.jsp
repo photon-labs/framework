@@ -38,6 +38,7 @@
 <form id="formConfigTempProp">
 <% 
 	boolean hasCustomProperty = (Boolean) request.getAttribute(FrameworkConstants.REQ_HAS_CUSTOM_PROPERTY);
+	String selectedType = (String) request.getAttribute(FrameworkConstants.REQ_SELECTED_TYPE);
 	List<PropertyTemplate> properties = (List<PropertyTemplate>)request.getAttribute(FrameworkConstants.REQ_PROPERTIES);
 	ParameterModel pm = null;
 	StringBuilder sb = new StringBuilder();
@@ -82,7 +83,9 @@
 
 <script type="text/javascript">
 	$(document).ready(function() {
-		hideLoadingIcon();
+		<% if (FrameworkConstants.CONFIG_TYPE_FEATURES.equals(selectedType)) { %>
+			hideLoadingIcon();
+		<% } %>
 		$(".popupLbl").text(function(index) {
 	        return textTrim($(this), 18);
 	    });

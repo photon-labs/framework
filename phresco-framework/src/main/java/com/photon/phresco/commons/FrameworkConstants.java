@@ -45,7 +45,8 @@ public interface FrameworkConstants {
     
     String CONFIG = "config";
     
-	String FEATURES = "features"; 
+	String FEATURES = "features";
+	String CONFIG_TYPE_FEATURES = "Features";
     int JOB_STATUS_NOTOK = -1;
     String FOLDER_DOT_PHRESCO = ".phresco";
     String PHRESCO_HOME = "PHRESCO_HOME";

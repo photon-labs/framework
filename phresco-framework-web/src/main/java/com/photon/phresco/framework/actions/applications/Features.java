@@ -58,7 +58,7 @@ public class Features extends FrameworkBaseAction {
 	private String projectCode = null;
 	private String externalCode = null;
 	private String fromPage = null;
-	
+	private String selectedType = null;
 	private String application = null;
 	private List<String> techVersion = null;
 	private String moduleId = null;
@@ -227,6 +227,7 @@ public class Features extends FrameworkBaseAction {
                     }
                 }
 	        }
+	        setReqAttribute(REQ_SELECTED_TYPE, selectedType);
 	        setReqAttribute(REQ_PROPERTIES, propertyTemplates);
         } catch (PhrescoException e) {
             return showErrorPopup(e, getText(EXCEPTION_FEATURE_MANIFEST_NOT_AVAILABLE));
@@ -1095,5 +1096,13 @@ public class Features extends FrameworkBaseAction {
 
 	public void setErrorFound(boolean errorFound) {
 		this.errorFound = errorFound;
+	}
+	
+	public String getSelectedType() {
+		return selectedType;
+	}
+
+	public void setSelectedType(String selectedType) {
+		this.selectedType = selectedType;
 	}
 }

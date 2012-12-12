@@ -738,6 +738,7 @@ public class Configurations extends FrameworkBaseAction {
                         }
                     }
 			    }
+			    setReqAttribute(REQ_SELECTED_TYPE, selectedType);
 			    setReqAttribute(REQ_FEATURE_NAMES, custFeatureNames);
 			    return SUCCESS;
 			}

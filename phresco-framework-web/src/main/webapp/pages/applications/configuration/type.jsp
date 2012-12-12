@@ -52,7 +52,7 @@
 	List<PropertyTemplate> properties = (List<PropertyTemplate>) request.getAttribute(FrameworkConstants.REQ_PROPERTIES);
 	Gson gson = new Gson(); 
 	
-	if (fromPage.equals(FrameworkConstants.ADD_SETTINGS) || fromPage.equals(FrameworkConstants.EDIT_SETTINGS)) { %>
+	if (FrameworkConstants.ADD_SETTINGS.equals(fromPage) || FrameworkConstants.EDIT_SETTINGS.equals(fromPage)) { %>
 		<div class="control-group" id="appliesToControl">
 			<label class="control-label labelbold">
 					<span class="mandatory">*</span>&nbsp;<s:text name='label.applies.to'/>
@@ -109,7 +109,7 @@
     	}
         List<String> possibleValues = new ArrayList<String>(8);
 		if (FrameworkConstants.SERVER_KEY.equals(propertyTemplate.getKey())) {
-			if (fromPage.equals(FrameworkConstants.ADD_SETTINGS) || fromPage.equals(FrameworkConstants.EDIT_SETTINGS)) {
+			if (FrameworkConstants.ADD_SETTINGS.equals(fromPage) || FrameworkConstants.EDIT_SETTINGS.equals(fromPage)) {
 				possibleValues = typeValues;
 			} else {
        			if(appInfo != null && CollectionUtils.isNotEmpty(appInfo.getSelectedServers())) {
@@ -117,7 +117,7 @@
 				}
 			}
     	} else if (FrameworkConstants.DATABASE_KEY.equals(propertyTemplate.getKey())) {
-    		if (fromPage.equals(FrameworkConstants.ADD_SETTINGS) || fromPage.equals(FrameworkConstants.EDIT_SETTINGS)) {
+    		if (FrameworkConstants.ADD_SETTINGS.equals(fromPage) || FrameworkConstants.EDIT_SETTINGS.equals(fromPage)) {
 				possibleValues = typeValues;
 			} else {
 	    		if(appInfo != null && CollectionUtils.isNotEmpty(appInfo.getSelectedDatabases())) {
@@ -230,7 +230,7 @@ $("div#certificateControl").hide();
 	
 	$(document).ready(function() {
 		hideLoadingIcon();//To hide the loading icon
-		<% if (fromPage.equals(FrameworkConstants.ADD_CONFIG) || fromPage.equals(FrameworkConstants.EDIT_CONFIG)) { %>
+		<% if (FrameworkConstants.ADD_CONFIG.equals(fromPage) || FrameworkConstants.EDIT_CONFIG.equals(fromPage)) { %>
 				getVersions();
 		<% } else {%>
 				getSettingsVersions();
