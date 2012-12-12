@@ -432,6 +432,7 @@
     
   //To show the validation error messages
 	function findError(data) {
+		hideLoadingIcon();
 		if (!isBlank(data.nameError)) {
 			showError($("#nameControl"), $("#nameError"), data.nameError);
 		} else {
