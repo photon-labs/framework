@@ -648,7 +648,6 @@
 	function fillVersions(obj, value, text, parentValue, selectedDataVersion) {
 		var checkedStr = "";
 		var version;
-		
 		if (selectedDataVersion != undefined) {
 			var arrayVersions = new Array();
 			if (selectedDataVersion.indexOf(",") != -1) {
@@ -656,19 +655,19 @@
 				arrayVersions = version.split(",");
 				for(var i=0;i<arrayVersions.length;i++) {
 					var ver = arrayVersions[i].replace(/\s/g,'');  
-					if(ver === text) {
+					if(ver === value) {
 						checkedStr = "checked";
 					}
 				}
 			} else {
 				arrayVersions[0] = trim(selectedDataVersion);
-				if(text === arrayVersions[0]) {
+				if (value === arrayVersions[0]) {
 					checkedStr = "checked";
 				}
 			}
 			
-		} 
-		$('<div style="color: #000000;"><input class="check techCheck" type="checkbox" name="'+parentValue+'" value="' + text + '" '+checkedStr+' style="margin-right:5%;">'+ text +'</div>').appendTo(obj);
+		}
+		$('<div style="color: #000000;"><input class="check techCheck" type="checkbox" name="'+parentValue+'" value="' + value + '" '+checkedStr+' style="margin-right:5%;">'+ text +'</div>').appendTo(obj);
 	}
 
 	function trim(stringToTrim) {
