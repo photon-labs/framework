@@ -19,7 +19,7 @@
  */
 
 function loadJsonContent(url, jsonParam, containerTag, progressText, callSuccessEvent) {
-	if (progressText !== undefined) {
+	if (progressText !== undefined && !isBlank(progressText)) {
 		showProgressBar(progressText);
 	} 
 	$.ajax({

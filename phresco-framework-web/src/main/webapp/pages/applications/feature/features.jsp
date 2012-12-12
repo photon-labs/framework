@@ -250,8 +250,10 @@
   			hideLoadingIcon();
   			$("#successmsg").show();
   			setTimeOut();
-  		} else if (url === "fetchDefaultModules") {
+  		} else if (url === "fetchDefaultFeatures") {
 			chkDefaultModules(data.depArtifactGroupNames, data.depArtifactInfoIds);
+		}else if (url === "fetchDependentFeatures") {
+			chkDefaultModules(data.depArtifactGroupNames, data.dependencyIds);
 		}
   	}
 </script>

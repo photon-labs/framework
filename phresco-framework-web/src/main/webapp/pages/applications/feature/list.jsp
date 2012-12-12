@@ -97,12 +97,24 @@
 		hideProgressBar();
 	});
 	
+	$("input:checkbox").click(function() {
+		var jsonObjectParam = {};
+		var jsonObject = <%= gson.toJson(artifactGroups) %>;
+		jsonObjectParam.artifactGroups = jsonObject;
+		var selectedValue = $(this).val();	
+		var moduleId = $("select[name='"+ selectedValue + "']").val();
+		jsonObjectParam.moduleId = moduleId;
+		var jsonString = JSON.stringify(jsonObjectParam);
+		loadJsonContent("fetchDependentFeatures", jsonString, '', '', true);
+	});
+	
+
 	function getDefaultModules() {
 		var jsonObjectParam = {};
 		var jsonObject = <%= gson.toJson(artifactGroups) %>;
 		jsonObjectParam.artifactGroups = jsonObject;
 		var jsonString = JSON.stringify(jsonObjectParam);
-		loadJsonContent("fetchDefaultModules", jsonString, '', '', true);
+		loadJsonContent("fetchDefaultFeatures", jsonString, '', '', true);
 	}
 	
 	//To check the default Features and the corressponding version
