@@ -25,11 +25,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Collections;
-import java.util.List;
-
-import javax.ws.rs.core.MediaType;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.log4j.Logger;
 import org.codehaus.plexus.util.FileUtils;
@@ -37,42 +32,26 @@ import org.codehaus.plexus.util.FileUtils;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.VersionInfo;
 import com.photon.phresco.exception.PhrescoException;
-import com.photon.phresco.framework.FrameworkConfiguration;
-import com.photon.phresco.framework.PhrescoFrameworkFactory;
-import com.photon.phresco.framework.api.Project;
-import com.photon.phresco.framework.api.ProjectAdministrator;
 import com.photon.phresco.framework.api.UpgradeManager;
-import com.photon.phresco.framework.impl.update.ProfileUpdater;
+import com.photon.phresco.service.client.api.ServiceManager;
 import com.photon.phresco.util.ArchiveUtil;
 import com.photon.phresco.util.ArchiveUtil.ArchiveType;
 import com.photon.phresco.util.FileUtil;
-import com.photon.phresco.util.TechnologyTypes;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.exception.PhrescoPomException;
 import com.phresco.pom.util.PomProcessor;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
 
 public class UpgradeManagerImpl implements UpgradeManager, FrameworkConstants   {
 	VersionInfo version = null;
-	String previousVersion = "";
 	private static final Logger S_LOGGER = Logger.getLogger(UpgradeManagerImpl.class);
 	private static Boolean DebugEnabled = S_LOGGER.isDebugEnabled();
 
-	public VersionInfo checkForUpdate(String versionNo) throws PhrescoException {
+	public VersionInfo checkForUpdate(ServiceManager serviceManager, String versionNo) throws PhrescoException {
 		if (DebugEnabled) {
 			S_LOGGER.debug("Entering Method UpdateManagerImpl.checkForUpdate(String versionNo)");
 			S_LOGGER.debug("checkForUpdate() Version Number = " + versionNo);
 		}
-		previousVersion = versionNo;
-		Client client = Client.create();
-		FrameworkConfiguration configuration = PhrescoFrameworkFactory.getFrameworkConfig();
-		WebResource resource = client.resource(configuration.getServerPath() + "/" + FrameworkConstants.VERSION_SERVICE_PATH);
-		resource = resource.queryParam(FrameworkConstants.VERSION_SERVICE_PATH, versionNo);
-		ClientResponse response = resource.accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
-		VersionInfo version = response.getEntity(VersionInfo.class);
-		return version;
+		return serviceManager.getVersionInfo(versionNo);
 	}
 
 	public String getCurrentVersion() throws PhrescoException {
@@ -90,7 +69,7 @@ public class UpgradeManagerImpl implements UpgradeManager, FrameworkConstants   
 		}
 	}
 
-	public void doUpdate(String newVersion) throws PhrescoException {
+	public void doUpdate(ServiceManager serviceManager, String newVersion, String customerId) throws PhrescoException {
 		if (DebugEnabled) {
 			S_LOGGER.debug("Entering Method UpdateManagerImpl.doUpdate(String newVersion)");
 		}
@@ -99,8 +78,7 @@ public class UpgradeManagerImpl implements UpgradeManager, FrameworkConstants   
 		File tempFile = null;
 		try {
 			createBackUp();
-			//TODO:Need to handle
-//			latestVersionZip = PhrescoFrameworkFactory.getServiceManager().getLatestVersionPom();
+			latestVersionZip = serviceManager.getUpdateVersionContent(customerId).getEntityInputStream();
 			tempFile = new File(Utility.getPhrescoTemp(), FrameworkConstants.TEMP_ZIP_FILE);
 			outPutFile = new FileOutputStream(tempFile);
 			 
@@ -112,17 +90,8 @@ public class UpgradeManagerImpl implements UpgradeManager, FrameworkConstants   
 			}
 			
 			extractUpdate(tempFile);
-			//TODO:Need to handle
-			try {
-                updateSonarProfile();
-            } catch (PhrescoPomException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
 			markVersionUpdated(newVersion);
 		} catch (IOException e) {
-			throw new PhrescoException(e);
-		} catch (ParserConfigurationException e) {
 			throw new PhrescoException(e);
 		} finally {
 			Utility.closeStream(latestVersionZip);
@@ -130,36 +99,6 @@ public class UpgradeManagerImpl implements UpgradeManager, FrameworkConstants   
 		}
 	}
 
-	private void updateSonarProfile() throws PhrescoException, ParserConfigurationException, PhrescoPomException {
-		ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-		List<Project> projects = administrator.discover(Collections.singletonList(new File(Utility.getProjectHome())));
-		for (Project project : projects) {
-			String code = project.getApplicationInfo().getCode();
-			String techId = project.getApplicationInfo().getTechInfo().getVersion();
-			ProfileUpdater profileUpdater = new ProfileUpdater();
-			boolean sonarProfileUpdateRequired = techId.equals(TechnologyTypes.JAVA_WEBSERVICE)
-					|| techId.equals(TechnologyTypes.HTML5_WIDGET)
-					|| techId.equals(TechnologyTypes.HTML5_MOBILE_WIDGET)
-					|| techId.equals(TechnologyTypes.HTML5_MULTICHANNEL_JQUERY_WIDGET)
-					|| techId.equals(TechnologyTypes.HTML5_JQUERY_MOBILE_WIDGET);
-			File sourcePom = new File(Utility.getProjectHome() + File.separator + code + File.separator + POM_XML);
-			if (sonarProfileUpdateRequired) {
-				profileUpdater.updateSonarProfile(sourcePom, techId);
-				profileUpdater.updatePlugin(sourcePom, techId);
-			}
-			boolean sonarPropertiesUpdateRequired = techId.equals(TechnologyTypes.PHP)
-					|| techId.equals(TechnologyTypes.PHP_DRUPAL6)
-					|| techId.equals(TechnologyTypes.PHP_DRUPAL7)
-					|| techId.equals(TechnologyTypes.WORDPRESS);
-			File functionalPom = new File(Utility.getProjectHome() + File.separator + code + File.separator + TEST
-					+ File.separator + FUNCTIONAL + File.separator + POM_XML);
-			if (sonarPropertiesUpdateRequired) {
-				profileUpdater.addSonarProperties(functionalPom, techId);
-			}
-		}
-	}
-
-	
 	private void extractUpdate(File tempFile) throws PhrescoException {
 		ArchiveUtil.extractArchive(tempFile.getPath(), FrameworkConstants.PREV_DIR, ArchiveType.ZIP);
 		FileUtil.delete(tempFile);
@@ -187,7 +126,7 @@ public class UpgradeManagerImpl implements UpgradeManager, FrameworkConstants   
 			fileBackups.mkdir();
 		}
 		ArchiveUtil.createArchive(tempFile, 
-				new File(FrameworkConstants.BACKUP_DIRNAME + File.separator + previousVersion + FrameworkConstants.ARCHIVE_EXTENSION), ArchiveType.ZIP);
+				new File(FrameworkConstants.BACKUP_DIRNAME + File.separator + getCurrentVersion() + FrameworkConstants.ARCHIVE_EXTENSION), ArchiveType.ZIP);
 		FileUtil.delete(tempFile);
 	}
 

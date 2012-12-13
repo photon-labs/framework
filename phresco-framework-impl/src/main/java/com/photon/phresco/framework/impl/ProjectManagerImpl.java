@@ -132,7 +132,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 			S_LOGGER.debug("Entering Method ProjectManagerImpl.create(ProjectInfo projectInfo)");
 		}
 		ClientResponse response = serviceManager.createProject(projectInfo);
-		
+
 		if (isDebugEnabled) {
 			S_LOGGER.debug("createProject response code " + response.getStatus());
 		}
@@ -140,25 +140,24 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 			try {
 				extractArchive(response, projectInfo);
 				ProjectUtils projectUtils = new ProjectUtils();
-				 String customerId = projectInfo.getCustomerIds().get(0);
-				 Customer customer = serviceManager.getCustomer(customerId);
-				 RepoInfo repoInfo = customer.getRepoInfo();
-				 List<ApplicationInfo> appInfos = projectInfo.getAppInfos();
-				 for (ApplicationInfo appInfo : appInfos) {
-				 String pluginInfoFile = Utility.getProjectHome() + appInfo.getAppDirName() + File.separator + DOT_PHRESCO_FOLDER +File.separator +  APPLICATION_HANDLER_INFO_FILE;
-				 File path = new File(Utility.getProjectHome() + appInfo.getAppDirName());
-				 projectUtils.updateTestPom(path);
-				 MojoProcessor mojoProcessor = new MojoProcessor(new File(pluginInfoFile));
-				 ApplicationHandler applicationHandler = mojoProcessor.getApplicationHandler();
-				 if(applicationHandler != null) {
-				 List<ArtifactGroup> plugins = setArtifactGroup(applicationHandler);
-				 
-				 //Dynamic Class Loading
-				 PhrescoDynamicLoader dynamicLoader = new PhrescoDynamicLoader(repoInfo, plugins);
-				 ApplicationProcessor applicationProcessor = dynamicLoader.getApplicationProcessor(applicationHandler.getClazz());
-				 applicationProcessor.postCreate(appInfo);
-				 }
-			  }
+				String customerId = projectInfo.getCustomerIds().get(0);
+				Customer customer = serviceManager.getCustomer(customerId);
+				RepoInfo repoInfo = customer.getRepoInfo();
+				List<ApplicationInfo> appInfos = projectInfo.getAppInfos();
+				for (ApplicationInfo appInfo : appInfos) {
+					String pluginInfoFile = Utility.getProjectHome() + appInfo.getAppDirName() + File.separator + DOT_PHRESCO_FOLDER +File.separator +  APPLICATION_HANDLER_INFO_FILE;
+					File path = new File(Utility.getProjectHome() + appInfo.getAppDirName());
+					projectUtils.updateTestPom(path);
+					MojoProcessor mojoProcessor = new MojoProcessor(new File(pluginInfoFile));
+					ApplicationHandler applicationHandler = mojoProcessor.getApplicationHandler();
+					if (applicationHandler != null) {
+						List<ArtifactGroup> plugins = setArtifactGroup(applicationHandler);
+						//Dynamic Class Loading
+						PhrescoDynamicLoader dynamicLoader = new PhrescoDynamicLoader(repoInfo, plugins);
+						ApplicationProcessor applicationProcessor = dynamicLoader.getApplicationProcessor(applicationHandler.getClazz());
+						applicationProcessor.postCreate(appInfo);
+					}
+				}
 			} catch (FileNotFoundException e) {
 				throw new PhrescoException(e); 
 			} catch (IOException e) {
@@ -272,7 +271,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		try {
 			pomProcessor = new PomProcessor(pomFile);
 			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
-			pomProcessor.setArtifactId(applicationInfo.getAppDirName());
+			pomProcessor.setArtifactId(applicationInfo.getCode());
 			pomProcessor.setName(applicationInfo.getName());
 			pomProcessor.setVersion(projectInfo.getVersion());
 			pomProcessor.save();

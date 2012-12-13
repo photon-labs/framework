@@ -109,7 +109,7 @@ public class Configurations extends FrameworkBaseAction {
     private String appNameError = null;
     private String siteNameError = null;
     private String siteCoreInstPathError = null;
-    
+    private String connectionAlive = "false";
     private String fromPage = null;
     private String configPath = null;
     
@@ -453,12 +453,14 @@ public class Configurations extends FrameworkBaseAction {
 			}
     	}
     	
-	    if (configType.equals(Constants.SETTINGS_TEMPLATE_SERVER) || configType.equals(Constants.SETTINGS_TEMPLATE_EMAIL)) {
-        	List<Configuration> configurations = configManager.getConfigurations(environment.getName(), configType);
-            if(CollectionUtils.isNotEmpty( configurations)) {
-            	setConfigTypeError(getText(CONFIG_ALREADY_EXIST));
-                hasError = true;
-            }
+    	if (StringUtils.isEmpty(fromPage) || (StringUtils.isNotEmpty(fromPage) && !configType.equals(oldConfigType))) {
+		    if (configType.equals(Constants.SETTINGS_TEMPLATE_SERVER) || configType.equals(Constants.SETTINGS_TEMPLATE_EMAIL)) {
+	        	List<Configuration> configurations = configManager.getConfigurations(environment.getName(), configType);
+	            if(CollectionUtils.isNotEmpty( configurations)) {
+	            	setConfigTypeError(getText(CONFIG_ALREADY_EXIST));
+	                hasError = true;
+	            }
+	    	}
     	}
 	    
 	    ApplicationInfo applicationInfo = getApplicationInfo();
@@ -736,6 +738,7 @@ public class Configurations extends FrameworkBaseAction {
                         }
                     }
 			    }
+			    setReqAttribute(REQ_SELECTED_TYPE, selectedType);
 			    setReqAttribute(REQ_FEATURE_NAMES, custFeatureNames);
 			    return SUCCESS;
 			}
@@ -953,6 +956,28 @@ public class Configurations extends FrameworkBaseAction {
     	}
     	return SUCCESS;
     }
+
+    /*public String connectionAliveCheck() {
+		if (s_debugEnabled) {
+			S_LOGGER.debug("Entering Method  Configurations.connectionAliveCheck()");
+		}
+		try {
+			connectionAlive = "false";
+			String url = (String) getReqAttribute(REQ_SERVER_STATUS_URL);
+			String[] results = url.split(",");
+			String lprotocol = results[0];
+			String lhost = results[1];
+			int lport = Integer.parseInt(results[2]);
+			boolean tempConnectionAlive = isConnectionAlive(lprotocol, lhost, lport);
+			connectionAlive = tempConnectionAlive == true ? "true" : "false";
+		} catch (Exception e) {
+        	if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Configurations.connectionAliveCheck()" + FrameworkUtil.getStackTraceAsString(e));
+    		}
+			addActionError(e.getLocalizedMessage());
+		}
+		return SUCCESS;
+	}*/
     
     private String getGlobalSettingsPath() throws PhrescoException {
     	StringBuilder builder = new StringBuilder(Utility.getProjectHome());

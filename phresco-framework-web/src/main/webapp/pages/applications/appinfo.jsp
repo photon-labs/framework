@@ -49,6 +49,7 @@
 	String version = "";
 	String pilotInfo = "";
 	String technologyId = "";
+	String technologyVersion = "";
 	String oldAppDirName = "";
 	List<String> feature = null;
 	List<String> selectedWebservices = null;
@@ -57,6 +58,7 @@
 	if (projectInfo != null) {
 		ApplicationInfo selectedInfo = projectInfo.getAppInfos().get(0);
 		technologyId = selectedInfo.getTechInfo().getId();
+		technologyVersion = selectedInfo.getTechInfo().getVersion();
 		id = selectedInfo.getId();
 		name = selectedInfo.getName();
 		code = selectedInfo.getCode();
@@ -89,25 +91,24 @@
     <div class="appInfoScrollDiv">
               
 		<!--  Name Starts -->
-		<div class="control-group" id="nameErrDiv">
-		    <label class="accordion-control-label labelbold"><span class="red">*</span> <s:text name="lbl.name"/></label>
+		<div class="control-group" id="nameControl">
+		    <label class="accordion-control-label labelbold"><span class="red">*</span>&nbsp;<s:text name="lbl.name"/></label>
 		    <div class="controls">
 		        <input class="input-xlarge" id="name" name="name" maxlength="30" title="<s:text name="title.30.chars"/>"
 		            type="text"  value ="<%= name %>" autofocus="autofocus" placeholder="<s:text name="label.name.placeholder"/>" />
-		        <span class="help-inline" id="nameErrMsg">
-		           
-		        </span>
+		        <span class="help-inline" id="nameError"></span>
 		    </div>
 		</div>
 		<!--  Name Ends -->
 	
 		<!--  Code Starts -->
-		<div class="control-group">
-		    <label class="accordion-control-label labelbold"><s:text name='lbl.code'/></label>
+		<div class="control-group" id="codeControl">
+		    <label class="accordion-control-label labelbold"><span class="red">*</span>&nbsp;<s:text name='lbl.code'/></label>
 		    <div class="controls">
-				<input class="input-xlarge" id="externalCode" name="code"
+				<input class="input-xlarge" id="code" name="code"
 		            type="text" maxlength="12" value ="<%= StringUtils.isNotEmpty(code) ? code : "" %>" title="<s:text name="title.12.chars"/>" 
-		            placeholder="<s:text name="label.code.placeholder"/>"/>
+		            placeholder="<s:text name="place.hldr.app.edit.code"/>"/>
+	            <span class="help-inline" id="codeError"></span>
 		    </div>
 		</div>
 		<!--  Code Ends -->
@@ -131,7 +132,7 @@
 		    <div class="controls">
 		        <textarea class="appinfo-desc input-xlarge" maxlength="150" title="<s:text name="title.150.chars"/>" class="xlarge" 
 		        	id="textarea" placeholder="<s:text name="label.description.placeholder"/>"
-		        	name="description" value="<%= StringUtils.isNotEmpty(description) ? description : "" %>"></textarea>
+		        	name="description"><%= StringUtils.isNotEmpty(description) ? description : "" %></textarea>
 		    </div>
 		</div>
 		<!--  Description Ends -->
@@ -140,7 +141,7 @@
 		<div class="control-group">
 		    <label class="accordion-control-label labelbold"><s:text name='lbl.version'/></label>
 		    <div class="controls">
-				<input class="input-xlarge" id="projectVersion" placeholder="<s:text name="label.project.version.placeholder"/>"
+				<input class="input-xlarge" id="applicationVersion" placeholder="<s:text name="place.hldr.app.edit.version"/>"
 					name="applicationVersion" maxlength="20" title="<s:text name="title.20.chars"/>"
 					type="text"  value ="<%= StringUtils.isNotEmpty(version) ? version : "" %>"/>
 		    </div>
@@ -153,6 +154,8 @@
 			<div class="controls">
 				<input type="text" class="input-xlarge" value="<%= technologyId %>" disabled="disabled"/>
 				<input type="hidden" name="technology" value="<%= technologyId %>"/>
+				<input type="text" class="input-medium" value="<%= technologyVersion %>" disabled="disabled"/>
+				<input type="hidden" name="technologyVersion" value="<%= technologyVersion %>"/>
 			</div>
 		</div>
 		<!-- Technology version ends -->
@@ -399,6 +402,21 @@
         	$(this).val(projNname);
 		});
         
+		// To restrict the user in typing the special charaters in projectCode and projectVersion
+		$('#code, #applicationVersion').bind('input propertychange', function (e) {
+			var str = $(this).val();
+			str = checkForSplChrExceptDot(str);
+			str = removeSpaces(str);
+        	$(this).val(str);
+		});
+		
+		// To restrict the user in typing the special charaters in app dir
+		$('#appDir').bind('input propertychange', function (e) {
+			var str = $(this).val();
+			str = checkForSplChrExceptDot(str);
+        	$(this).val(str);
+		});
+        
 		<% if (projectInfo != null) { %>
 			$("input[value='serverLayer']:checked").each(function() {
 		    	accordionOpen('#serverLayerControl', $('input[value=serverLayer]'));
@@ -415,6 +433,22 @@
 	
 		window.setTimeout(function () { document.getElementById('name').focus(); }, 250);
 	});
+    
+  //To show the validation error messages
+	function findError(data) {
+		hideLoadingIcon();
+		if (!isBlank(data.nameError)) {
+			showError($("#nameControl"), $("#nameError"), data.nameError);
+		} else {
+			hideError($("#nameControl"), $("#nameError"));
+		}
+		
+		if (!isBlank(data.codeError)) {
+			showError($("#codeControl"), $("#codeError"), data.codeError);
+		} else {
+			hideError($("#codeControl"), $("#codeError"));
+		}
+	}
 	
     function removeTag(currentTag) {
 		$(currentTag).parent().parent().remove();
@@ -473,9 +507,9 @@
 		%>
 	}
 	
-    var serverCounter = 1;
+    var serverCounter = 2;
     <% if(selectedServers != null) {%>
-    		serverCounter = <%= selectedServers.size() %> +1;
+    		serverCounter = <%= selectedServers.size() %> +<%= selectedServers.size() %>+1;
 	<% } %>
     function addServer(selectedServer, serverVersions) {
     	if(serverCounter == undefined) {
@@ -498,9 +532,9 @@
 		
     }			
     
-    var databaseCounter = 1;
+    var databaseCounter = 2;
     <% if(selectedDatabases != null) {%>
-    		databaseCounter = <%= selectedDatabases.size() %> +1;
+    		databaseCounter = <%= selectedDatabases.size() %> +<%= selectedDatabases.size() %>+1;
     <% } %>
     function addDatabase(selectedDatabase, databaseVersions) {
     	if(databaseCounter == undefined) {
@@ -618,27 +652,26 @@
 	function fillVersions(obj, value, text, parentValue, selectedDataVersion) {
 		var checkedStr = "";
 		var version;
-		
-		if(selectedDataVersion != undefined) {
+		if (selectedDataVersion != undefined) {
 			var arrayVersions = new Array();
 			if (selectedDataVersion.indexOf(",") != -1) {
 				version = trim(selectedDataVersion);
 				arrayVersions = version.split(",");
-				for(var i=0;i<arrayVersions.length;i++) {
-					var ver = arrayVersions[i].replace(/\s/g,'');  
-					if(ver === text) {
+				for (var i=0; i<arrayVersions.length; i++) {
+					var ver = removeSpaces(arrayVersions[i]);  
+					if(ver === value) {
 						checkedStr = "checked";
 					}
 				}
 			} else {
 				arrayVersions[0] = trim(selectedDataVersion);
-				if(text === arrayVersions[0]) {
+				if (value === arrayVersions[0]) {
 					checkedStr = "checked";
 				}
 			}
 			
-		} 
-		$('<div style="color: #000000;"><input class="check techCheck" type="checkbox" name="'+parentValue+'" value="' + text + '" '+checkedStr+' style="margin-right:5%;">'+ text +'</div>').appendTo(obj);
+		}
+		$('<div style="color: #000000;"><input class="check techCheck" type="checkbox" name="'+parentValue+'" value="' + value + '" '+checkedStr+' style="margin-right:5%;">'+ text +'</div>').appendTo(obj);
 	}
 
 	function trim(stringToTrim) {

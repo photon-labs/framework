@@ -186,13 +186,24 @@
           	<result name="updateApplication">/pages/projects/list.jsp</result>
         </action>
         
+        <action name="featuresValidate" method="validateForm" class="com.photon.phresco.framework.actions.applications.Features">
+            <result type="json" />
+        </action>
+        
         <action name="features" method="features" class="com.photon.phresco.framework.actions.applications.Features">
             <result name="features">/pages/applications/feature/features.jsp</result>
-            <result type="json" />
         </action>
         
         <action name="listFeatures" method="listFeatures" class="com.photon.phresco.framework.actions.applications.Features">
 			<result name="featuresList">/pages/applications/feature/list.jsp</result>
+        </action>
+        
+        <action name="fetchDefaultFeatures" method="fetchDefaultFeatures" class="com.photon.phresco.framework.actions.applications.Features">
+        	<result type="json"/>
+        </action>
+		
+		<action name="fetchDependentFeatures" method="fetchDependentFeatures" class="com.photon.phresco.framework.actions.applications.Features">
+        	<result type="json"/>
         </action>
         
         <action name="showFeatureConfigPopup" method="showFeatureConfigPopup" class="com.photon.phresco.framework.actions.applications.Features">
@@ -542,6 +553,10 @@
         	<result name="success">/pages/applications/configuration/features.jsp</result>
         </action>
         
+		<!-- <action name="connectionAliveCheck" method="connectionAliveCheck" class="com.photon.phresco.framework.actions.applications.Configurations">
+        	<result type="json"><param name="root">connectionAlive</param></result>
+        </action> -->
+        
         <action name="download" method="list" class="com.photon.phresco.framework.actions.applications.Download">
             <result name="download">/pages/applications/download.jsp</result>
         </action>
@@ -679,8 +694,8 @@
             <result type="json" />
         </action>
         
-        <action name="performanceTest" method="performance" class="com.photon.phresco.framework.actions.applications.Quality">
-            <result name="reader">/pages/applications/reader.jsp</result>
+        <action name="performanceTest" method="performanceTest" class="com.photon.phresco.framework.actions.applications.Quality">
+            <result name="success">/pages/applications/reader.jsp</result>
         </action>
         
         <action name="perTest" method="performanceTest" class="com.photon.phresco.framework.actions.applications.Quality">
@@ -891,10 +906,5 @@
         	<result type="json"/>
 <!--         	<param name="root">localJenkinsAlive</param> -->
         </action>
-        
-		<action name="fetchDefaultModules" method="fetchDefaultModules" class="com.photon.phresco.framework.actions.applications.Features">
-        	<result type="json"/>
-        </action>
-		
     </package>
 </struts>

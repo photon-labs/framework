@@ -53,15 +53,14 @@ public class Features extends FrameworkBaseAction {
     private static final long serialVersionUID = 6608382760989903186L;
 	
 	private static final Logger S_LOGGER = Logger.getLogger(Features.class);
-	private static Boolean debugEnabled = S_LOGGER.isDebugEnabled();
+	private static Boolean s_debugEnabled = S_LOGGER.isDebugEnabled();
 	
 	private String projectCode = null;
 	private String externalCode = null;
 	private String fromPage = null;
-	
+	private String selectedType = null;
 	private String application = null;
 	private List<String> techVersion = null;
-	private String nameError = null;
 	private String moduleId = null;
 	private String version = null;
 	private String moduleType = null;
@@ -84,7 +83,8 @@ public class Features extends FrameworkBaseAction {
 	private String description = "";
 	private String appDir = "";
 	private String oldAppDirName = "";
-	private String technology = null;
+	private String technology = "";
+	private String technologyVersion = "";
 	private String applicationVersion = "";
 	private String appId = "";
 	private List<String> server = null;
@@ -97,6 +97,10 @@ public class Features extends FrameworkBaseAction {
 	private String customerId = "";
 	private String pilotProject = "";
 	
+	private String nameError = "";
+	private String codeError = "";
+	private boolean errorFound = false;
+	
 	private String configTemplateType = "";
 	
 	private String featureName = "";
@@ -104,6 +108,8 @@ public class Features extends FrameworkBaseAction {
 	private List<ArtifactGroup> artifactGroups = new ArrayList<ArtifactGroup>();
 	List<String> depArtifactGroupNames = new ArrayList<String>();
 	List<String> depArtifactInfoIds = new ArrayList<String>();
+	List<String> dependencyIds = new ArrayList<String>();
+	boolean dependency = false;
 	
 	public String features() {
 		try {
@@ -124,6 +130,34 @@ public class Features extends FrameworkBaseAction {
 	    return APP_FEATURES;
 	}
 	
+	/**
+     * To validate the form fields
+     * @return
+     * @throws PhrescoException 
+     */
+    public String validateForm() throws PhrescoException {
+    	if (s_debugEnabled) {
+            S_LOGGER.debug("Entering Method Features.validateForm()");
+        }
+    	
+    	boolean hasError = false;
+    	if (StringUtils.isEmpty(getName())) {
+    		 setNameError(getText(ERROR_NAME));
+             hasError = true;
+    	}
+    	
+    	if (StringUtils.isEmpty(getCode())) {
+    		setCodeError(getText(ERROR_CODE));
+            hasError = true;
+    	}
+    	
+    	if (hasError) {
+            setErrorFound(true);
+        }
+    	
+    	return SUCCESS;
+    }
+	
 	private ApplicationInfo createApplicationInfo(ApplicationInfo appInfo) {
     	appInfo.setId(getAppId());
     	appInfo.setName(getName());
@@ -133,6 +167,7 @@ public class Features extends FrameworkBaseAction {
     	appInfo.setVersion(getApplicationVersion());
     	TechnologyInfo techInfo = new TechnologyInfo();
     	techInfo.setId(getTechnology());
+    	techInfo.setVersion(getTechnologyVersion());
 		appInfo.setTechInfo(techInfo );
 		if (StringUtils.isNotEmpty(getPilotProject())) {
 			Element element = new Element();
@@ -196,6 +231,7 @@ public class Features extends FrameworkBaseAction {
                     }
                 }
 	        }
+	        setReqAttribute(REQ_SELECTED_TYPE, selectedType);
 	        setReqAttribute(REQ_PROPERTIES, propertyTemplates);
         } catch (PhrescoException e) {
             return showErrorPopup(e, getText(EXCEPTION_FEATURE_MANIFEST_NOT_AVAILABLE));
@@ -277,7 +313,7 @@ public class Features extends FrameworkBaseAction {
 		return APP_FEATURES_LIST;
 	}
 	
-	public String fetchDefaultModules() {
+	public String fetchDefaultFeatures() {
 		Gson gson = new Gson();
 		String json = gson.toJson(getArtifactGroups());
 		List<ArtifactGroup> ArtifactGroups = gson.fromJson(json, new TypeToken<List<ArtifactGroup>>(){}.getType());
@@ -294,6 +330,40 @@ public class Features extends FrameworkBaseAction {
 				
 			}
 		}
+		return SUCCESS;
+	}
+	
+	public String fetchDependentFeatures() {
+		Gson gson = new Gson();
+		String json = gson.toJson(getArtifactGroups());
+		List<ArtifactGroup> artifactGroups = gson.fromJson(json, new TypeToken<List<ArtifactGroup>>(){}.getType());
+		for (ArtifactGroup artifactGroup : artifactGroups) {
+			List<ArtifactInfo> versions = artifactGroup.getVersions();
+			for (ArtifactInfo artifactInfo : versions) {
+				if (artifactInfo.getId().equals(getModuleId())) {
+				    List<String> dependencyIds = artifactInfo.getDependencyIds();
+				    if (CollectionUtils.isNotEmpty(artifactInfo.getDependencyIds())) {
+				        dependencyIds.addAll(artifactInfo.getDependencyIds());
+				    }
+				}
+			}
+		}
+		
+		//To get the artifactgroup name for the dependent artifactInfo ids
+		if (CollectionUtils.isNotEmpty(getDependencyIds())) {
+    		for (String dependencyId : getDependencyIds()) {
+    			for (ArtifactGroup artifactGroup : artifactGroups) {
+    				List<ArtifactInfo> versions = artifactGroup.getVersions();
+    				for (ArtifactInfo artifactInfo : versions) {
+    					if (artifactInfo.getId().equals(dependencyId)) {
+    						depArtifactGroupNames.add(artifactGroup.getName());
+    					}
+    				}
+    			}
+    		}
+    		setDependency(true);
+		}
+		
 		return SUCCESS;
 	}
 	
@@ -1049,4 +1119,44 @@ public class Features extends FrameworkBaseAction {
 	public void setDepArtifactInfoIds(List<String> depArtifactInfoIds) {
 		this.depArtifactInfoIds = depArtifactInfoIds;
 	}
+
+	public String getCodeError() {
+		return codeError;
+	}
+
+	public boolean isErrorFound() {
+		return errorFound;
+	}
+
+	public void setCodeError(String codeError) {
+		this.codeError = codeError;
+	}
+
+	public void setErrorFound(boolean errorFound) {
+		this.errorFound = errorFound;
+	}
+
+	public String getTechnologyVersion() {
+		return technologyVersion;
+	}
+
+	public void setTechnologyVersion(String technologyVersion) {
+		this.technologyVersion = technologyVersion;
+	}
+
+	public List<String> getDependencyIds() {
+		return dependencyIds;
+	}
+
+	public void setDependencyIds(List<String> dependencyIds) {
+		this.dependencyIds = dependencyIds;
+	}
+
+    public boolean isDependency() {
+        return dependency;
+    }
+
+    public void setDependency(boolean dependency) {
+        this.dependency = dependency;
+    }
 }

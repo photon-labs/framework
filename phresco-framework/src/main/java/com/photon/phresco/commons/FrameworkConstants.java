@@ -45,7 +45,8 @@ public interface FrameworkConstants {
     
     String CONFIG = "config";
     
-	String FEATURES = "features"; 
+	String FEATURES = "features";
+	String CONFIG_TYPE_FEATURES = "Features";
     int JOB_STATUS_NOTOK = -1;
     String FOLDER_DOT_PHRESCO = ".phresco";
     String PHRESCO_HOME = "PHRESCO_HOME";
@@ -414,6 +415,17 @@ public interface FrameworkConstants {
 	 * Dynamic parameters
 	 */
 	String KEY_APP_INFO = "applicationInfo";
+	
+	/**
+	 * Performance related
+	 */
+	String TYPE_GET = "get";
+	String ARRAY_LIST = "java.util.List";
+	String REQ_OBJECT_CLASS = "objectClass";
+	String REQ_CLASS_NAME = "className";
+	String REQ_VALUES_FROM_JSON = "valuesFromJson";
+	String PERFORMANCE_TEST = "performance-test";
+
 	
     /*
      *  File Types for Browse in Functional

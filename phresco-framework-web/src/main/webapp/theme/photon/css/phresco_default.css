@@ -71,7 +71,7 @@ footer {
 
 #welcome {
 	text-align: center;
-	margin-left: -64px !important;
+	margin-left: -40px !important;
 }
 
 
@@ -3159,7 +3159,7 @@ fieldset {
 
 /*** login starts ***/
 .lgnintro_container {
-    padding:28px 0px 10px 43px;
+    padding:28px 0px 10px 32px;
     margin:0px;
     width:100%;
     display: block;
@@ -3175,7 +3175,7 @@ fieldset {
 .lgnintro_container_left {
     padding:0px 0px 0px 0px;
     margin:auto;
-    width:325px;
+    width:297px;
 }
 .lgnintro_container_left span {
 	display:none;
@@ -5626,7 +5626,7 @@ input[class*='chckBxAlign'] {
 }
 
 .builds-list-table .th-inner {
-	top: 195px;
+	top: 160px;
 }	
 /*new css for 2.0 ends*/
 

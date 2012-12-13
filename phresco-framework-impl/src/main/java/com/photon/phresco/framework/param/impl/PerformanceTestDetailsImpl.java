@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,22 +23,30 @@ import com.phresco.pom.util.PomProcessor;
 public class PerformanceTestDetailsImpl implements DynamicPageParameter, Constants {
     
 	@Override
-    public List<? extends Object> getObjects(Map<String, Object> paramsMap) throws PhrescoException {
+    public Map<String, Object> getObjects(Map<String, Object> paramsMap) throws PhrescoException {
 		 Reader read = null;
         try {
+        	Map<String, Object> resultMap = new HashMap<String, Object>();
             ApplicationInfo applicationInfo = (ApplicationInfo) paramsMap.get(KEY_APP_INFO);
             String testAgainst = (String) paramsMap.get(KEY_TEST_AGAINST);
             String testResultName = (String) paramsMap.get(KEY_TEST_RESULT_NAME);
             String testResultJsonFile = testResultJsonFile(applicationInfo.getAppDirName(), testAgainst, testResultName);
             Gson gson = new Gson();
-            read = new InputStreamReader(new FileInputStream(testResultJsonFile));
+            File file = new File(testResultJsonFile);
             List<PerformanceDetails> performanceDetails = new ArrayList<PerformanceDetails>();
-            
-		    PerformanceDetails performanceDetail = gson.fromJson(read, PerformanceDetails.class);
-		    performanceDetails.add(performanceDetail);
-		    return performanceDetails;
+            PerformanceDetails performanceDetail = new PerformanceDetails();
+            if (file.exists()) {
+            	read = new InputStreamReader(new FileInputStream(testResultJsonFile));
+            	performanceDetail = gson.fromJson(read, PerformanceDetails.class);
+            	if (performanceDetail != null) {
+            		performanceDetails.add(performanceDetail);
+            	}
+            }
+            resultMap.put("className", performanceDetail.getClass().getName());
+            resultMap.put("valuesFromJson", performanceDetails);
+
+            return resultMap;
 		 } catch(Exception e){
-			 e.printStackTrace();
 		 } finally {
 			 if (read != null) {
 				 try {
@@ -59,8 +68,7 @@ public class PerformanceTestDetailsImpl implements DynamicPageParameter, Constan
         builder.append(File.separator);
         builder.append("server".toLowerCase());
         builder.append(File.separator);
-        builder.append(testResultName);
-        builder.append(DOT_JSON);
+        builder.append(testResultName + DOT_JSON);
         
         return builder.toString();
     }

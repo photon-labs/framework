@@ -466,6 +466,10 @@ Width <= 1024
 		margin:0;
 		line-height:35px !important;
 		padding-left:12px;
+	}
+
+	.builds-list-table .th-inner {
+		top: 175px;
 	}	
 
 	#subcontainer {width: 75.5%; float:right; }
@@ -558,7 +562,7 @@ Width size <= 1024
 	    height: 47% !important;
 	}
 	.builds-list-table .th-inner {
-		top: 235px;
+		top: 183px;
 	}
 	.runagint_source {
 		float: left;
@@ -1976,7 +1980,7 @@ Width >= 1280 and height >= 800
 	#warningmsg {
      	display: none;
      	width: auto; 
-     	left : 29.8%; 
+     	left : 33.6%; 
      	position: absolute; 
      	text-align: center;
      	padding: 4px 6px;

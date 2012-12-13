@@ -154,13 +154,14 @@
 	</div>
 	
 	<div class="bottom_button">
-		<input type="button" id="<%= pageUrl %>" class="btn btn-primary" value='<%= buttonLbl %>' />	
-		<input type="button" id="downloadCancel" class="btn btn-primary" value="<s:text name='lbl.btn.cancel'/>" />
+		<input type="button" id="<%= pageUrl %>" class="btn btn-primary" value='<%= buttonLbl %>' />
+		<input type="button" id="cancel" class="btn btn-primary" value="<s:text name='lbl.btn.cancel'/>" /> 
 	</div>
 	
 	<!-- Hidden Fields -->
     <input type="hidden" name="fromPage" value="<%= fromPage %>"/>
     <input type="hidden" name="oldName" value="<%= name %>"/>
+    <input type="hidden" name="oldConfigType" value="<%= selectedType %>"/>
 </form>
 
 <script type="text/javascript">
@@ -169,6 +170,17 @@
 		if (!isiPad()) {
 			$(".content_adder").scrollbars(); //JQuery scroll bar
 		}
+	});
+	
+	$('#cancel').click(function() {
+		var fromPage = "<%= fromPage%>";
+		var configPath = "<%= configPath%>";
+		var params = '{ ' + getBasicParamsAsJson() + ', "fromPage": "' + fromPage + '", "configPath": "' + configPath + '" }';
+		<% if (FrameworkConstants.ADD_CONFIG.equals(fromPage) || FrameworkConstants.EDIT_CONFIG.equals(fromPage)) { %>
+			loadJsonContent('configuration', params,  $('#subcontainer'));
+		<% } else { %>
+			loadJsonContent('settings', params,  $('#container'));
+		<%	} %>
 	});
 	
 	$('#type').change(function() {
@@ -218,6 +230,7 @@
 		var configId = template.id;
 		var fromPage = "<%= fromPage%>";
 		var configPath = "<%= configPath%>";
+		var oldConfigType = "<%= selectedType%>";
 		
 		var selectedAppliesTos = new Array();
 		$('input[name="appliesTo"]:checked').each(function() {
@@ -233,6 +246,7 @@
 		jsonParamObj.configId = configId;
 		jsonParamObj.featureName = featureName;
 		jsonParamObj.oldName = oldName;
+		jsonParamObj.oldConfigType = oldConfigType;
 		jsonParamObj.configPath = configPath;
 		jsonParamObj.fromPage = fromPage;
 		jsonParamObj.appliesTos = selectedAppliesTos;

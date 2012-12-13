@@ -29,6 +29,7 @@
 
 <%
 	List<String> featureNames = (List<String>)request.getAttribute(FrameworkConstants.REQ_FEATURE_NAMES);
+	String selectedType = (String) request.getAttribute(FrameworkConstants.REQ_SELECTED_TYPE);
 	if (CollectionUtils.isNotEmpty(featureNames)) {
 %>
 		<div class="control-group" id="nameErrDiv">
@@ -56,7 +57,10 @@
 	});
 	
 	function getProperties() {
-		var params = getBasicParams();
+		var selectedType =  "<%= selectedType %>";
+  		var params = getBasicParams();
+  		params = params.concat("&selectedType=");
+  		params = params.concat(selectedType);
     	loadContent('showConfigProperties', $('#formConfigAdd'), '', params, true);
 	}
 

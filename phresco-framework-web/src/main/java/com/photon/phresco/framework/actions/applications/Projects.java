@@ -330,7 +330,9 @@ public class Projects extends FrameworkBaseAction {
                 String version = getHttpRequest().getParameter(techGroupId + REQ_PARAM_NAME_VERSION);
                 boolean phoneEnabled = Boolean.parseBoolean(getReqParameter(techGroupId + REQ_PARAM_NAME_PHONE));
                 boolean tabletEnabled = Boolean.parseBoolean(getReqParameter(techGroupId + REQ_PARAM_NAME_TABLET));
-                appInfos.add(getAppInfo(getProjectName() + HYPHEN + techGroupId, techId, version, phoneEnabled, tabletEnabled));
+                String dirName = getProjectCode().replaceAll("[^\\sA-Za-z0-9_.-]", "");
+                dirName = dirName + HYPHEN + techGroupId;
+                appInfos.add(getAppInfo(dirName, techId, version, phoneEnabled, tabletEnabled));
             }
         }
 
@@ -347,14 +349,15 @@ public class Projects extends FrameworkBaseAction {
     private List<ApplicationInfo> getOtherLayerAppInfos(List<ApplicationInfo> appInfos, String layerId) throws PhrescoException {
         String techId = getReqParameter(layerId + REQ_PARAM_NAME_TECHNOLOGY);
         String version = getReqParameter(layerId + REQ_PARAM_NAME_VERSION);
-        appInfos.add(getAppInfo(getProjectName() + HYPHEN + techId, techId, version, false, false));
+        String dirName = getProjectCode().replaceAll("[^\\sA-Za-z0-9_.-]", "");
+        dirName = dirName + HYPHEN + techId;
+        appInfos.add(getAppInfo(dirName, techId, version, false, false));
 
         return appInfos;
     }
 
     /**
      * To get the single application info for the given technology
-     * @param dirName
      * @param techId
      * @param version
      * @param phoneEnabled
@@ -362,14 +365,15 @@ public class Projects extends FrameworkBaseAction {
      * @return
      * @throws PhrescoException
      */
-    private ApplicationInfo getAppInfo(String dirName, String techId, String version, boolean phoneEnabled, boolean tabletEnabled) throws PhrescoException {
+    private ApplicationInfo getAppInfo(String appDir, String techId, String version, boolean phoneEnabled, boolean tabletEnabled) throws PhrescoException {
         ApplicationInfo applicationInfo = new ApplicationInfo();
         TechnologyInfo techInfo = new TechnologyInfo();
         techInfo.setId(techId);
         techInfo.setVersion(version);
         applicationInfo.setTechInfo(techInfo);
-        applicationInfo.setName(dirName);
-        applicationInfo.setAppDirName(dirName);
+        applicationInfo.setName(appDir);
+        applicationInfo.setCode(appDir);
+        applicationInfo.setAppDirName(appDir);
         applicationInfo.setPhoneEnabled(phoneEnabled);
         applicationInfo.setTabletEnabled(tabletEnabled);
 
@@ -410,7 +414,7 @@ public class Projects extends FrameworkBaseAction {
         }
 
         boolean hasError = false;
-        //check project name is already exists or not
+       /* //check project name is already exists or not
         ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
         List<ProjectInfo> projects = projectManager.discover(getCustomerId());
         String newProjectName = "";
@@ -427,7 +431,7 @@ public class Projects extends FrameworkBaseAction {
         if(StringUtils.equals(newProjectName, oldProjectName)) {
         	 setProjectNameError(getText(ERROR_NAME_EXISTS));
              hasError = true;
-        }
+        }*/
         
         //empty validation for name
         if (StringUtils.isEmpty(getProjectName())) {
@@ -439,9 +443,9 @@ public class Projects extends FrameworkBaseAction {
             setProjectCodeError(getText(ERROR_CODE));
             hasError = true;
         }
-      //empty validation for projectVersion
+        //empty validation for projectVersion
         if (StringUtils.isEmpty(getProjectVersion())) {
-            setProjectVersionError(getText(ERROR_CODE));
+            setProjectVersionError(getText(ERROR_VERSION));
             hasError = true;
         }
         //validate if none of the layer is selected

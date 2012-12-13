@@ -21,12 +21,13 @@ package com.photon.phresco.framework.api;
 
 import com.photon.phresco.commons.model.VersionInfo;
 import com.photon.phresco.exception.PhrescoException;
+import com.photon.phresco.service.client.api.ServiceManager;
 
 public interface UpgradeManager {
 
-	  VersionInfo checkForUpdate(String versionNo) throws PhrescoException;
+	  VersionInfo checkForUpdate(ServiceManager serviceManager, String versionNo) throws PhrescoException;
 
-	  void doUpdate(String newVersion) throws PhrescoException;
+	  void doUpdate(ServiceManager serviceManager, String newVersion, String customerId) throws PhrescoException;
 	 
 	  String getCurrentVersion() throws PhrescoException;
 

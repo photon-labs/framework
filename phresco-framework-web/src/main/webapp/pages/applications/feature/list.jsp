@@ -41,15 +41,16 @@
 	String type = (String) request.getAttribute(FrameworkConstants.REQ_FEATURES_TYPE);
 	if (CollectionUtils.isNotEmpty(artifactGroups)) {
 		for (ArtifactGroup artifactGroup : artifactGroups) {
+		    String artifactGrpName = artifactGroup.getName().replaceAll("\\s","");
 %>
 		<div  class="accordion_panel_inner">
 		    <section class="lft_menus_container">	
 				<span class="siteaccordion">
 					<span>
-						<input class="feature_checkbox" type="checkbox" value=<%= artifactGroup.getName() %> id="checkAll1"/>
+						<input class="feature_checkbox" type="checkbox" value="<%= artifactGroup.getName() %>" id="checkAll1"/>
 						<a style="float: left; margin-left:2%;" href="#"><%= artifactGroup.getName() %></a>
 						
-						<select class="input-mini features_ver_sel" id="<%= artifactGroup.getName() %>" moduleId="<%= artifactGroup.getId() %>" name="<%=artifactGroup.getName() %>" >
+						<select class="input-mini features_ver_sel" id="<%= artifactGrpName %>" moduleId="<%= artifactGroup.getId() %>" name="<%=artifactGroup.getName() %>" >
 							<%
 								List<ArtifactInfo> artifactInfos = artifactGroup.getVersions();
 								for (ArtifactInfo artifactInfo : artifactInfos) {
@@ -92,20 +93,33 @@
 	$(document).ready(function() {
 		hideLoadingIcon();//To hide the loading icon
 		accordion();
-		getDefaultModules();
+		getDefaultFeatures();
 		hideProgressBar();
 	});
 	
-	function getDefaultModules() {
+	//To get the dependent features
+	$("input:checkbox").click(function() {
+		var jsonObjectParam = {};
+		var jsonObject = <%= gson.toJson(artifactGroups) %>;
+		jsonObjectParam.artifactGroups = jsonObject;
+		var selectedValue = $(this).val();	
+		var moduleId = $("select[name='"+ selectedValue + "']").val();
+		jsonObjectParam.moduleId = moduleId;
+		var jsonString = JSON.stringify(jsonObjectParam);
+		loadJsonContent("fetchDependentFeatures", jsonString, '', '', true);
+	});
+
+	//To get the default features
+	function getDefaultFeatures() {
 		var jsonObjectParam = {};
 		var jsonObject = <%= gson.toJson(artifactGroups) %>;
 		jsonObjectParam.artifactGroups = jsonObject;
 		var jsonString = JSON.stringify(jsonObjectParam);
-		loadJsonContent("fetchDefaultModules", jsonString, '', '', true);
+		loadJsonContent("fetchDefaultFeatures", jsonString, '', '', true);
 	}
 	
-	//To check the default Features and the corressponding version
-	function chkDefaultModules(defaultModules, depArtifactInfoIds) {
+	//To check the Features and the corressponding version
+	function makeFeaturesSelected(defaultModules, depArtifactInfoIds) {
 		for (i in defaultModules) {  //To check the default feature
 			$("input:checkbox[value='" + defaultModules[i] + "']").attr('checked', true);
 		}
@@ -121,15 +135,4 @@
 		}
 		clickToAdd();
 	}
-	
-	 function clickToAdd() {
-	        $('#accordianchange input:checked').each(function () {
-	        	var dispName = $(this).val();
-	        	var hiddenFieldVersion = $('select[name='+dispName+']').val();
-	        	var moduleId = $('select[name='+dispName+']').attr('moduleId');
-	        	var dispValue = $("#" + dispName + " option:selected").text();
-	        	constructFeaturesDiv(dispName, dispValue, selectedType, hiddenFieldVersion, moduleId);
-	        });
-	    }
-	
 </script>
