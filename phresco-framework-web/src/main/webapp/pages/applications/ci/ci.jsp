@@ -310,6 +310,14 @@ $(document).ready(function() {
 		progressPopup('stopJenkins', '<%= appId %>', '<%= FrameworkConstants.CI_STOP %>', '', '', getBasicParams());
 	});
     
+	$('#deleteBuild').click(function() {
+		deleteCIBuild();
+	});
+	
+	$('#deleteJob').click(function() {
+		deleteCIJob();
+	});
+	
     confirmDialog($("#deleteBuild"), '<s:text name="lbl.hdr.confirm.dialog"/>', '<s:text name="modal.body.text.del.builds"/>', 'deleteBuild','<s:text name="lbl.btn.ok"/>');
     confirmDialog($("#deleteJob"), '<s:text name="lbl.hdr.confirm.dialog"/>', '<s:text name="modal.body.text.del.jobs"/>', 'deleteJob','<s:text name="lbl.btn.ok"/>');
     

@@ -82,9 +82,15 @@
 %>
 
 <div class="page-header">
+	<% if (projectInfo == null) {  %>
 	<h1>
 		<s:text name="lbl.projects.add"/> <small><span class="mandatory">*</span>&nbsp;<s:text name="lbl.mandatory.text"/></small>
 	</h1>
+	<% } else { %>
+	<h1>
+		<s:text name="lbl.projects.edit"/> <small><span class="mandatory">*</span>&nbsp;<s:text name="lbl.mandatory.text"/></small>
+	</h1>
+	<% } %>
 </div>
 
 <div class="projectScrollDiv ">
