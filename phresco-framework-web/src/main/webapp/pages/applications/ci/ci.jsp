@@ -256,8 +256,6 @@ if(!isiPad()){
 	$(".accordion_panel_inner").scrollbars();
 }
 
-var isCiRefresh = false; // for ci page use - this should be global : kalees
-
 // buildSize to refresh ci after build completed
 var refreshCi = false;
 var isJenkinsAlive = false;
