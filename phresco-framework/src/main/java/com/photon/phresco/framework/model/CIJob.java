@@ -95,6 +95,7 @@ public class CIJob {
     private String minify = "";
     private String configuration = "";
     private String keyPassword = "";
+    private String packMinifiedFiles = "";
     
     // deploy job info
     private String deviceType = "";
@@ -659,5 +660,13 @@ public class CIJob {
 
 	public void setConfiguration(String configuration) {
 		this.configuration = configuration;
+	}
+
+	public void setPackMinifiedFiles(String packMinifiedFiles) {
+		this.packMinifiedFiles = packMinifiedFiles;
+	}
+
+	public String getPackMinifiedFiles() {
+		return packMinifiedFiles;
 	}
 }

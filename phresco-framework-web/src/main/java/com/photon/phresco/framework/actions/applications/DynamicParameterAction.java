@@ -406,13 +406,17 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 	        if (CollectionUtils.isNotEmpty(parameters)) {
 	            for (Parameter parameter : parameters) {
 	                if (Boolean.parseBoolean(parameter.getMultiple())) {
-	                    String[] parameterValues = getReqParameterValues(parameter.getKey());
-	                    for (String parameterValue : parameterValues) {
-	                        csParamVal.append(sep);
-	                        csParamVal.append(parameterValue);
-	                        sep = ",";
-	                    }
-	                    parameter.setValue(csParamVal.toString());
+	                	if (getReqParameterValues(parameter.getKey()) == null) {
+	                		parameter.setValue("");
+	                	} else {
+	                		String[] parameterValues = getReqParameterValues(parameter.getKey());
+		                    for (String parameterValue : parameterValues) {
+		                        csParamVal.append(sep);
+		                        csParamVal.append(parameterValue);
+		                        sep = ",";
+		                    }
+		                    parameter.setValue(csParamVal.toString());
+	                	}
 	                } else if (TYPE_BOOLEAN.equalsIgnoreCase(parameter.getType())) {
 	                    if (getReqParameter(parameter.getKey()) != null) {
 	                        parameter.setValue(getReqParameter(parameter.getKey()));
