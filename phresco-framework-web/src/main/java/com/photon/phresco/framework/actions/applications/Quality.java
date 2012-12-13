@@ -587,7 +587,7 @@ public class Quality extends DynamicParameterAction implements Constants {
         }
         
         try {
-        	MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_FUNCTIONAL_TEST)));
+        	MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_START_HUB)));
             List<Parameter> parameters = getMojoParameters(mojo, PHASE_START_HUB);
             setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
             setReqAttribute(REQ_GOAL, PHASE_START_HUB);
@@ -608,7 +608,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 
 		try {
 			ApplicationInfo appInfo = getApplicationInfo();
-			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_FUNCTIONAL_TEST)));
+			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_START_HUB)));
 			persistValuesToXml(mojo, PHASE_START_HUB);
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			ProjectInfo projectInfo = getProjectInfo();
@@ -730,7 +730,7 @@ public class Quality extends DynamicParameterAction implements Constants {
         }
         
         try {
-        	MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_FUNCTIONAL_TEST)));
+        	MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_START_NODE)));
             List<Parameter> parameters = getMojoParameters(mojo, PHASE_START_NODE);
             setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
             setReqAttribute(REQ_GOAL, PHASE_START_NODE);
@@ -751,7 +751,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 		
         try {
         	ApplicationInfo appInfo = getApplicationInfo();
-			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_FUNCTIONAL_TEST)));
+			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_START_NODE)));
 			persistValuesToXml(mojo, PHASE_START_NODE);
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			ProjectInfo projectInfo = getProjectInfo();
