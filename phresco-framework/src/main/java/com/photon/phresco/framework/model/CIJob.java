@@ -111,6 +111,7 @@ public class CIJob {
     private String executeSql = "";
     private String dataBase = "";
     private String fetchSql = "";
+    private String triggerSimulator = "false";
     
     public CIJob() {
         super();
@@ -659,5 +660,13 @@ public class CIJob {
 
 	public void setConfiguration(String configuration) {
 		this.configuration = configuration;
+	}
+
+	public String getTriggerSimulator() {
+		return triggerSimulator;
+	}
+
+	public void setTriggerSimulator(String triggerSimulator) {
+		this.triggerSimulator = triggerSimulator;
 	}
 }

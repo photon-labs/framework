@@ -422,6 +422,18 @@
 									<div class="controls">
 										<select id="downstreamProject" name="downstreamProject" class="input-xlarge">
 											<option value="">-</option>
+											<% 
+												if (existingJobsNames != null) {
+													for(String existJobName : existingJobsNames) {
+														if(existingJob != null && existingJob.getName().equals(existJobName)) {
+															continue;
+														}
+											%>
+												<option value="<%= existJobName %>"><%= existJobName %></option>
+											<% 
+													}
+												}
+											%>
 										</select>
 									</div>
 								</div>

@@ -53,6 +53,9 @@
 			$("#testmenu").slideUp();
 		}
     });
+  	
+  	var isCiRefresh = false; // for ci page use - this should be global
+  	
 </script>
 
 <%
