@@ -108,6 +108,8 @@ public class Features extends FrameworkBaseAction {
 	private List<ArtifactGroup> artifactGroups = new ArrayList<ArtifactGroup>();
 	List<String> depArtifactGroupNames = new ArrayList<String>();
 	List<String> depArtifactInfoIds = new ArrayList<String>();
+	List<String> dependencyIds = new ArrayList<String>();
+	boolean dependency = false;
 	
 	public String features() {
 		try {
@@ -311,7 +313,7 @@ public class Features extends FrameworkBaseAction {
 		return APP_FEATURES_LIST;
 	}
 	
-	public String fetchDefaultModules() {
+	public String fetchDefaultFeatures() {
 		Gson gson = new Gson();
 		String json = gson.toJson(getArtifactGroups());
 		List<ArtifactGroup> ArtifactGroups = gson.fromJson(json, new TypeToken<List<ArtifactGroup>>(){}.getType());
@@ -328,6 +330,40 @@ public class Features extends FrameworkBaseAction {
 				
 			}
 		}
+		return SUCCESS;
+	}
+	
+	public String fetchDependentFeatures() {
+		Gson gson = new Gson();
+		String json = gson.toJson(getArtifactGroups());
+		List<ArtifactGroup> artifactGroups = gson.fromJson(json, new TypeToken<List<ArtifactGroup>>(){}.getType());
+		for (ArtifactGroup artifactGroup : artifactGroups) {
+			List<ArtifactInfo> versions = artifactGroup.getVersions();
+			for (ArtifactInfo artifactInfo : versions) {
+				if (artifactInfo.getId().equals(getModuleId())) {
+				    List<String> dependencyIds = artifactInfo.getDependencyIds();
+				    if (CollectionUtils.isNotEmpty(artifactInfo.getDependencyIds())) {
+				        dependencyIds.addAll(artifactInfo.getDependencyIds());
+				    }
+				}
+			}
+		}
+		
+		//To get the artifactgroup name for the dependent artifactInfo ids
+		if (CollectionUtils.isNotEmpty(getDependencyIds())) {
+    		for (String dependencyId : getDependencyIds()) {
+    			for (ArtifactGroup artifactGroup : artifactGroups) {
+    				List<ArtifactInfo> versions = artifactGroup.getVersions();
+    				for (ArtifactInfo artifactInfo : versions) {
+    					if (artifactInfo.getId().equals(dependencyId)) {
+    						depArtifactGroupNames.add(artifactGroup.getName());
+    					}
+    				}
+    			}
+    		}
+    		setDependency(true);
+		}
+		
 		return SUCCESS;
 	}
 	
@@ -1088,24 +1124,16 @@ public class Features extends FrameworkBaseAction {
 		return codeError;
 	}
 
-	public void setCodeError(String codeError) {
-		this.codeError = codeError;
-	}
-
 	public boolean isErrorFound() {
 		return errorFound;
 	}
 
-	public void setErrorFound(boolean errorFound) {
-		this.errorFound = errorFound;
-	}
-	
-	public String getSelectedType() {
-		return selectedType;
+	public void setCodeError(String codeError) {
+		this.codeError = codeError;
 	}
 
-	public void setSelectedType(String selectedType) {
-		this.selectedType = selectedType;
+	public void setErrorFound(boolean errorFound) {
+		this.errorFound = errorFound;
 	}
 
 	public String getTechnologyVersion() {
@@ -1115,4 +1143,20 @@ public class Features extends FrameworkBaseAction {
 	public void setTechnologyVersion(String technologyVersion) {
 		this.technologyVersion = technologyVersion;
 	}
+
+	public List<String> getDependencyIds() {
+		return dependencyIds;
+	}
+
+	public void setDependencyIds(List<String> dependencyIds) {
+		this.dependencyIds = dependencyIds;
+	}
+
+    public boolean isDependency() {
+        return dependency;
+    }
+
+    public void setDependency(boolean dependency) {
+        this.dependency = dependency;
+    }
 }

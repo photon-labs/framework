@@ -30,6 +30,8 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.net.URL;
+import java.net.URLConnection;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -203,6 +205,18 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
 			throw new PhrescoException(e);
 		}
     }
+    
+	public static boolean isConnectionAlive(String protocol, String host, int port) {
+		boolean isAlive = true;
+		try {
+			URL url = new URL(protocol, host, port, "");
+			URLConnection connection = url.openConnection();
+			connection.connect();
+		} catch (Exception e) {
+			isAlive = false;
+		}
+		return isAlive;
+	}
     
     protected String showErrorPopup(PhrescoException e, String action) {
         StringWriter sw = null;

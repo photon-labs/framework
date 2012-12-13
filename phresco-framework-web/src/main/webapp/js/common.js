@@ -19,7 +19,7 @@
  */
 
 function loadJsonContent(url, jsonParam, containerTag, progressText, callSuccessEvent) {
-	if (progressText !== undefined) {
+	if (progressText !== undefined && !isBlank(progressText)) {
 		showProgressBar(progressText);
 	} 
 	$.ajax({
@@ -71,7 +71,7 @@ function progressPopup(pageUrl, appId, actionType, form, callSuccessEvent, addit
 
 function progressPopupAsSecPopup(url, appId, actionType, form, additionalParams, stopUrl) {
 	setTimeout(function () {
-		$('#progressPopup').modal('show')
+		$('#progressPopup').modal('show');
     }, 600);
 	$('#popup_progress_div').empty();
 	$(".progressPopupClose").show();

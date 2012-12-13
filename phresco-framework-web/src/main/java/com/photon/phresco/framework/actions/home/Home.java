@@ -37,6 +37,7 @@ public class Home extends FrameworkBaseAction implements FrameworkActions {
 	
 	private static final Logger S_LOGGER   = Logger.getLogger(Home.class);
 	private static Boolean DebugEnabled = S_LOGGER.isDebugEnabled();
+	
 	public String welcome() {
         return HOME_WELCOME;
     }

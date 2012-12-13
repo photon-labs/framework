@@ -416,6 +416,17 @@ public interface FrameworkConstants {
 	 */
 	String KEY_APP_INFO = "applicationInfo";
 	
+	/**
+	 * Performance related
+	 */
+	String TYPE_GET = "get";
+	String ARRAY_LIST = "java.util.List";
+	String REQ_OBJECT_CLASS = "objectClass";
+	String REQ_CLASS_NAME = "className";
+	String REQ_VALUES_FROM_JSON = "valuesFromJson";
+	String PERFORMANCE_TEST = "performance-test";
+
+	
     /*
      *  File Types for Browse in Functional
      */

@@ -93,20 +93,33 @@
 	$(document).ready(function() {
 		hideLoadingIcon();//To hide the loading icon
 		accordion();
-		getDefaultModules();
+		getDefaultFeatures();
 		hideProgressBar();
 	});
 	
-	function getDefaultModules() {
+	//To get the dependent features
+	$("input:checkbox").click(function() {
+		var jsonObjectParam = {};
+		var jsonObject = <%= gson.toJson(artifactGroups) %>;
+		jsonObjectParam.artifactGroups = jsonObject;
+		var selectedValue = $(this).val();	
+		var moduleId = $("select[name='"+ selectedValue + "']").val();
+		jsonObjectParam.moduleId = moduleId;
+		var jsonString = JSON.stringify(jsonObjectParam);
+		loadJsonContent("fetchDependentFeatures", jsonString, '', '', true);
+	});
+
+	//To get the default features
+	function getDefaultFeatures() {
 		var jsonObjectParam = {};
 		var jsonObject = <%= gson.toJson(artifactGroups) %>;
 		jsonObjectParam.artifactGroups = jsonObject;
 		var jsonString = JSON.stringify(jsonObjectParam);
-		loadJsonContent("fetchDefaultModules", jsonString, '', '', true);
+		loadJsonContent("fetchDefaultFeatures", jsonString, '', '', true);
 	}
 	
-	//To check the default Features and the corressponding version
-	function chkDefaultModules(defaultModules, depArtifactInfoIds) {
+	//To check the Features and the corressponding version
+	function makeFeaturesSelected(defaultModules, depArtifactInfoIds) {
 		for (i in defaultModules) {  //To check the default feature
 			$("input:checkbox[value='" + defaultModules[i] + "']").attr('checked', true);
 		}

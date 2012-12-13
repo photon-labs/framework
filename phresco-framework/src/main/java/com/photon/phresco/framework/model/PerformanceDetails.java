@@ -35,7 +35,9 @@ public class PerformanceDetails
     private List<String> encodingType;
     private List<String> dbPerName;
     private List<String> queryType;
-    private List<String> query;
+	private List<String> query;
+	private List<String> headerKey;
+	private List<String> headerValue;
     private int noOfUsers;
 	private int rampUpPeriod;
 	private int loopCount;
@@ -65,26 +67,26 @@ public class PerformanceDetails
 	 }
 	 
 	 public String getTestAgainst() {
-	     return testAgainst;
+		 return testAgainst;
 	 }
-	 
-	 public void setTestAgainst() {
+
+	 public void setTestAgainst(String testAgainst) {
 		 this.testAgainst = testAgainst;
 	 }
 	 
 	 public String getShowSettings() {
 		 return showSettings;
 	 }
-	 
-	 public void setShowSettings() {
+
+	 public void setShowSettings(String showSettings) {
 		 this.showSettings = showSettings;
 	 }
-	 
+
 	 public String getSetting() {
-	     return setting;
+		 return setting;
 	 }
-	 
-	 public void setSetting() {
+
+	 public void setSetting(String setting) {
 		 this.setting = setting;
 	 }
 	 
@@ -183,9 +185,25 @@ public class PerformanceDetails
    public void setLoopCount(int loopCount) {
 	   this.loopCount = loopCount;
    }
-   
-   public String toString() {
-       return String.format("testAgainst:%s,showSettings:%s,setting:%s,testName:%s,name:%s,context:%s,contextType:%s,contextPostData:%s,encodingType:%s,noOfUsers:%d,rampUpPeriod:%d,loopCount:%d",testAgainst,showSettings,setting,testName,name,context,contextPostData,encodingType,noOfUsers,rampUpPeriod,loopCount);
+
+   public List<String> getHeaderKey() {
+	return headerKey;
+}
+
+public void setHeaderKey(List<String> headerKey) {
+	this.headerKey = headerKey;
+}
+
+public List<String> getHeaderValue() {
+	return headerValue;
+}
+
+public void setHeaderValue(List<String> headerValue) {
+	this.headerValue = headerValue;
+}
+
+public String toString() {
+	   return String.format("testAgainst:%s,showSettings:%s,setting:%s,testName:%s,name:%s,context:%s,contextType:%s,contextPostData:%s,encodingType:%s,noOfUsers:%d,rampUpPeriod:%d,loopCount:%d",testAgainst,showSettings,setting,testName,name,context,contextPostData,encodingType,noOfUsers,rampUpPeriod,loopCount);
    }
 }
 

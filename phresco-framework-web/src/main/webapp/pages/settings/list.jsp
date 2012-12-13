@@ -147,7 +147,28 @@
 			params = params.concat("&currentConfigDesc=");
 			params = params.concat(currentConfigDesc);
 	        yesnoPopup('cloneConfigPopup', 'Clone Environment', 'cloneConfiguration', '<s:text name="lbl.clone"/>', '', params);
-	} 
+	}
+	 
+	function isConnectionAlive(url, id) {
+	       $.ajax({
+	       	url : 'connectionAliveCheck',
+	       	data : {
+	       		'url' : url,
+	       	},
+	       	type : "get",
+	       	datatype : "json",
+	       	success : function(data) {
+	       		if($.trim(data) == 'true') {
+	       			$('#isAlive' + id).attr("src","images/icons/status-up.png");
+	       			$('#isAlive' + id).attr("title","Alive");
+	       		}
+				if($.trim(data) == 'false') {
+					$('#isAlive' + id).attr("src","images/icons/status-down.png");
+					$('#isAlive' + id).attr("title","Down");
+	       		}
+	       	}
+	       });
+	}
 	 
 	function popupOnOk(self) {
 		var url = $(self).attr('id');

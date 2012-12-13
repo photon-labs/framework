@@ -250,8 +250,12 @@
   			hideLoadingIcon();
   			$("#successmsg").show();
   			setTimeOut();
-  		} else if (url === "fetchDefaultModules") {
-			chkDefaultModules(data.depArtifactGroupNames, data.depArtifactInfoIds);
+  		} else if (url === "fetchDefaultFeatures") {
+			makeFeaturesSelected(data.depArtifactGroupNames, data.depArtifactInfoIds);
+		} else if (url === "fetchDependentFeatures") {
+			if (data.dependency) {
+				makeFeaturesSelected(data.depArtifactGroupNames, data.dependencyIds);
+			}
 		}
   	}
 </script>
