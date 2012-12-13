@@ -108,7 +108,7 @@
     		value = propertiesInfo.getProperty(propertyTemplate.getKey());
     	}
         List<String> possibleValues = new ArrayList<String>(8);
-		if (FrameworkConstants.SERVER_KEY.equals(propertyTemplate.getKey())) {
+		if (FrameworkConstants.SERVER.equals(settingsTemplate.getName()) && FrameworkConstants.CONFIG_TYPE.equals(propertyTemplate.getKey())) {
 			if (FrameworkConstants.ADD_SETTINGS.equals(fromPage) || FrameworkConstants.EDIT_SETTINGS.equals(fromPage)) {
 				possibleValues = typeValues;
 			} else {
@@ -116,7 +116,7 @@
        				possibleValues = appinfoServers;
 				}
 			}
-    	} else if (FrameworkConstants.DATABASE_KEY.equals(propertyTemplate.getKey())) {
+    	} else if (FrameworkConstants.DATABASE.equals(settingsTemplate.getName()) && FrameworkConstants.CONFIG_TYPE.equals(propertyTemplate.getKey())) {
     		if (FrameworkConstants.ADD_SETTINGS.equals(fromPage) || FrameworkConstants.EDIT_SETTINGS.equals(fromPage)) {
 				possibleValues = typeValues;
 			} else {
@@ -147,7 +147,7 @@
             StringTemplate inputControl = FrameworkUtil.constructInputElement(pm);
 			sb.append(inputControl);
         }
-        if (FrameworkConstants.SERVER_KEY.equals(propertyTemplate.getKey()) || FrameworkConstants.DATABASE_KEY.equals(propertyTemplate.getKey()) ) {
+        if (FrameworkConstants.CONFIG_TYPE.equals(propertyTemplate.getKey())) {
         	pm.setMandatory(true);
         	pm.setLableText("Version");
         	pm.setId("version");
@@ -236,9 +236,9 @@ $("div#certificateControl").hide();
 				getSettingsVersions();
 		<%	} %>
 		
-		var typeData= $.parseJSON($('#type').val());
+		var typeData= $.parseJSON($('#templateType').val());
 		var selectedType = typeData.name;
-		var serverType = $('#server').val();
+		var serverType = $('#type').val();
 		if(selectedType == "Server"){
 			if (serverType == "IIS") {
 				hideContext();
@@ -247,13 +247,13 @@ $("div#certificateControl").hide();
 			}
 		}
 		
-		$("#type").change(function() {
+		$("#templateType").change(function() {
 			getVersions();
 			getSettingsVersions();
 			technologyBasedRemoteDeploy();
 		});
 		 
-		$("#server").change(function() {
+		$("#type").change(function() {
 			if($(this).val() == "Apache Tomcat" || $(this).val() == "Jboss" || $(this).val() == "WebLogic"){
 			$('#remoteDeploymentControl').show();	 
 			remoteDeplyChecked();
@@ -328,7 +328,7 @@ $("div#certificateControl").hide();
 	}
 	
 	function getVersions() {
-		var typeData= $.parseJSON($('#type').val());
+		var typeData= $.parseJSON($('#templateType').val());
 		var selectedType = typeData.name;
 		var params = getBasicParams();
 		params = params.concat("&selectedType=");
@@ -337,17 +337,14 @@ $("div#certificateControl").hide();
 	}
 	
 	function getSettingsVersions() {
-		var typeData= $.parseJSON($('#type').val());
-		var serverType = $('#server').val();
-		var dbType = $('#Database').val();
+		var typeData= $.parseJSON($('#templateType').val());
+		var propType = $('#type').val();
 		var selectedType = typeData.name;
 		var params = getBasicParams();
 		params = params.concat("&selectedType=");
 		params = params.concat(selectedType);
-		params = params.concat("&serverType=");
-		params = params.concat(serverType);
-		params = params.concat("&dbType=");
-		params = params.concat(dbType);
+		params = params.concat("&propType=");
+		params = params.concat(propType);
 		loadContent("fetchSettingProjectInfoVersions", $('#configProperties'), '', params, true);
 	}
 	

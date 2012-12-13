@@ -27,6 +27,7 @@
 <%@ page import="java.util.HashMap"%>
 <%@ page import="java.util.Iterator"%>
 <%@ page import="java.util.Map"%>
+<%@ page import="java.util.Properties"%>
 <%@ page import="java.util.Iterator"%>
 <%@ page import="java.util.regex.*"%>
 
@@ -139,8 +140,22 @@
 																	<%= configuration.getType() %>
 																</td>
 																<td class="no-left-bottom-border table-pad">
-																	<a href="#" ><img id="<%= configuration.getName()  %>" class="projectUpdate" 
-																		src="images/icons/inprogress.png" title="Update" class="iconSizeinList"/></a>
+																	<% 
+																		Properties Properties = configuration.getProperties();
+													    				String host = "";
+													    				String port = "";
+													    				String protocol = "";
+													    				host = Properties.getProperty("host");
+												    					port = Properties.getProperty("port");
+												    					protocol = Properties.getProperty("protocol");
+													    				String configName = configuration.getName() + configuration.getEnvName();
+													    				Pattern pattern = Pattern.compile("\\s+");
+													    				Matcher matcher = pattern.matcher(configName);
+													    				boolean check = matcher.find();
+													    				String configNameForId = matcher.replaceAll("");
+													    				urls.put(configNameForId, protocol +","+ host + "," + port);
+																	%> 
+																		<img src="images/icons/inprogress.png" alt="status-up" title="Loading" id="isAlive<%= configNameForId %>">
 																</td>
 																<td class="no-left-bottom-border table-pad">
 																	<a href="#" title="<%= configuration.getName() %>" id="cloneEnvId" onclick="cloneConfiguration(
@@ -182,6 +197,40 @@
 		  	$("#configAdd").addClass("btn-primary"); 
 			$("#configAdd").removeClass("btn-disabled");
 		<% } %>
+		
+		<% 
+			if(urls != null) {
+	    	Iterator iterator = urls.keySet().iterator();  
+				while (iterator.hasNext()) {
+				String id = iterator.next().toString();  
+				String url = urls.get(id).toString();
+	 	%>
+				isConnectionAlive('<%= url%>', '<%= id%>');
+		<%
+		    	}
+			}
+		%>
 	});
 
+	function isConnectionAlive(url, id) {
+	    $.ajax({
+	    	url : 'connectionAliveCheck',
+	    	data : {
+	    		'url' : url,
+	    	},
+	    	type : "get",
+	    	datatype : "json",
+	    	success : function(data) {
+	    		if($.trim(data) == 'true') {
+	    			$('#isAlive' + id).attr("src","images/icons/status-up.png");
+	    			$('#isAlive' + id).attr("title","Alive");
+	    		}
+				if($.trim(data) == 'false') {
+					$('#isAlive' + id).attr("src","images/icons/status-down.png");
+					$('#isAlive' + id).attr("title","Down");
+				}
+			}
+		});
+	}
+	
 </script>

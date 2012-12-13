@@ -76,8 +76,7 @@ public class Configurations extends FrameworkBaseAction {
     private String configId = null;
     private String selectedConfigId = null;
     private String selectedType = null;
-    private String serverType = null;
-    private String dbType = null;
+    private String propType = null;
     private String selectedEnv = null;
 	private String selectedConfigname = null;
 	private String configName = null;
@@ -107,11 +106,14 @@ public class Configurations extends FrameworkBaseAction {
 	private String siteName = "";
 	private String siteCoreInstPath = "";
     private String appNameError = null;
+    private String versionError = null;
     private String siteNameError = null;
     private String siteCoreInstPathError = null;
-    private String connectionAlive = "false";
-    private String fromPage = null;
+    private boolean connectionAlive = false;
+	private String fromPage = null;
     private String configPath = null;
+    private String url = "";
+    private String version = "";
     
     private boolean flag = false;
     private List<String> versions = new ArrayList<String>();
@@ -353,12 +355,22 @@ public class Configurations extends FrameworkBaseAction {
 		for (PropertyTemplate propertyTemplate : propertyTemplates) {
 		    String key = propertyTemplate.getKey();
 		    String value = getActionContextParam(key);
+		    
+		    if (REMOTE_DEPLOYMENT.equals(key) && StringUtils.isEmpty(value)) {
+		    	value = "false";
+		    }
+		    
 		    if (StringUtils.isNotEmpty(value)) {
 		        properties.setProperty(key, value);
 		    }
-		    if (SERVER_KEY.equals(key) && IIS_SERVER.equals(value)) {
+		    
+		    if (CONFIG_TYPE.equals(key) && IIS_SERVER.equals(value)) {
 		    	isIISServer = true;
 		    }
+		    
+		    if (CONFIG_TYPE.equals(key)) {
+				properties.put(TYPE_VERSION, getVersion());
+			}
 		}
 		
 		//To get the custom properties
@@ -370,12 +382,12 @@ public class Configurations extends FrameworkBaseAction {
 		
 		ApplicationInfo applicationInfo = getApplicationInfo();
 		if (applicationInfo != null && applicationInfo.getTechInfo().getId().equals(FrameworkConstants.TECH_SITE_CORE)) {
-			properties.put(SETTINGS_TEMP_SITECORE_INST_PATH, siteCoreInstPath);
+			properties.put(SETTINGS_TEMP_SITECORE_INST_PATH, getSiteCoreInstPath());
 		}
 		
 		if (isIISServer) {
-			properties.put(SETTINGS_TEMP_KEY_APP_NAME, appName);
-			properties.put(SETTINGS_TEMP_KEY_SITE_NAME, siteName);
+			properties.put(SETTINGS_TEMP_KEY_APP_NAME, getAppName());
+			properties.put(SETTINGS_TEMP_KEY_SITE_NAME, getSiteName());
 		}
 		
 		Configuration config = new Configuration(getConfigName(), getConfigType());
@@ -475,11 +487,11 @@ public class Configurations extends FrameworkBaseAction {
             	remoteDeply = Boolean.parseBoolean(value);
             }
             
-            if (SERVER_KEY.equals(key) && IIS_SERVER.equals(value)) {
+            if (CONFIG_TYPE.equals(key) && IIS_SERVER.equals(value)) {
             	isIISServer = true;
             }
             
-            if (SERVER_KEY.equals(key) && NODEJS_SERVER.equals(value)) { //If nodeJs server selected , there should not be validation for deploy dir.
+            if (CONFIG_TYPE.equals(key) && NODEJS_SERVER.equals(value)) { //If nodeJs server selected , there should not be validation for deploy dir.
             	serverTypeValidation = true;
             }
             
@@ -515,6 +527,13 @@ public class Configurations extends FrameworkBaseAction {
         	setSiteCoreInstPathError(getText(ERROR_SITE_CORE_PATH_MISSING));
     		hasError = true;
     	}*/
+        
+        if (CONFIG_TYPE.equals(key)) {
+        	if (StringUtils.isEmpty(getVersion())) {
+        		setVersionError(getText(ERROR_CONFIG_VERSION));
+        		hasError = true;
+        	}
+		}        
         
     	if (isIISServer) {
         	if (StringUtils.isEmpty(getAppName())) {
@@ -928,7 +947,7 @@ public class Configurations extends FrameworkBaseAction {
 	    		List<DownloadInfo> downloads = getServiceManager().getDownloads(getCustomerId());
 	    		for (DownloadInfo downloadInfo : downloads) {
 	    			ArtifactGroup artifactGroup = downloadInfo.getArtifactGroup();
-	    			if (getDbType().equals(downloadInfo.getName())) {
+	    			if (getPropType().equals(downloadInfo.getName())) {
 	    				List<ArtifactInfo> artifactInfos = artifactGroup.getVersions();
 	    				for (ArtifactInfo artifactInfo : artifactInfos) {
 							versions.add(artifactInfo.getVersion());
@@ -941,7 +960,7 @@ public class Configurations extends FrameworkBaseAction {
 	    		List<DownloadInfo> downloads = getServiceManager().getDownloads(getCustomerId());
 	    		for (DownloadInfo downloadInfo : downloads) {
 	    			ArtifactGroup artifactGroup = downloadInfo.getArtifactGroup();
-	    			if (getServerType().equals(downloadInfo.getName())) {
+	    			if (getPropType().equals(downloadInfo.getName())) {
 	    				List<ArtifactInfo> artifactInfos = artifactGroup.getVersions();
 	    				for (ArtifactInfo artifactInfo : artifactInfos) {
 							versions.add(artifactInfo.getVersion());
@@ -957,19 +976,18 @@ public class Configurations extends FrameworkBaseAction {
     	return SUCCESS;
     }
 
-    /*public String connectionAliveCheck() {
+    public String connectionAliveCheck() {
 		if (s_debugEnabled) {
 			S_LOGGER.debug("Entering Method  Configurations.connectionAliveCheck()");
 		}
 		try {
-			connectionAlive = "false";
-			String url = (String) getReqAttribute(REQ_SERVER_STATUS_URL);
+			connectionAlive = false;
 			String[] results = url.split(",");
 			String lprotocol = results[0];
 			String lhost = results[1];
 			int lport = Integer.parseInt(results[2]);
 			boolean tempConnectionAlive = isConnectionAlive(lprotocol, lhost, lport);
-			connectionAlive = tempConnectionAlive == true ? "true" : "false";
+			connectionAlive = tempConnectionAlive == true ? true : false;
 		} catch (Exception e) {
         	if (s_debugEnabled) {
                 S_LOGGER.error("Entered into catch block of Configurations.connectionAliveCheck()" + FrameworkUtil.getStackTraceAsString(e));
@@ -977,7 +995,7 @@ public class Configurations extends FrameworkBaseAction {
 			addActionError(e.getLocalizedMessage());
 		}
 		return SUCCESS;
-	}*/
+	}
     
     private String getGlobalSettingsPath() throws PhrescoException {
     	StringBuilder builder = new StringBuilder(Utility.getProjectHome());
@@ -1334,14 +1352,6 @@ public class Configurations extends FrameworkBaseAction {
 		this.appliesToError = appliesToError;
 	}
 
-	public String getServerType() {
-		return serverType;
-	}
-
-	public void setServerType(String serverType) {
-		this.serverType = serverType;
-	}
-
 	public List<String> getAppliesTos() {
 		return appliesTos;
 	}
@@ -1357,14 +1367,6 @@ public class Configurations extends FrameworkBaseAction {
 	public void setVersions(List<String> versions) {
 		this.versions = versions;
 	}
-
-	public String getDbType() {
-		return dbType;
-	}
-
-	public void setDbType(String dbType) {
-		this.dbType = dbType;
-	}
 	
 	public void setFeatureName(String featureName) {
         this.featureName = featureName;
@@ -1378,18 +1380,55 @@ public class Configurations extends FrameworkBaseAction {
         return key;
     }
 
-
     public void setKey(List<String> key) {
         this.key = key;
     }
-
 
     public List<String> getValue() {
         return value;
     }
 
-
     public void setValue(List<String> value) {
         this.value = value;
     }
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+	
+	public boolean isConnectionAlive() {
+		return connectionAlive;
+	}
+	
+	public void setConnectionAlive(boolean connectionAlive) {
+		this.connectionAlive = connectionAlive;
+	}
+
+	public String getPropType() {
+		return propType;
+	}
+
+	public void setPropType(String propType) {
+		this.propType = propType;
+	}
+
+	public String getVersion() {
+		return version;
+	}
+
+	public void setVersion(String version) {
+		this.version = version;
+	}
+
+	public String getVersionError() {
+		return versionError;
+	}
+
+	public void setVersionError(String versionError) {
+		this.versionError = versionError;
+	}
 }
