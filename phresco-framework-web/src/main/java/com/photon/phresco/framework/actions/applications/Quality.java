@@ -393,7 +393,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 	
 	public String fetchFunctionalTestSuites() {
         if (s_debugEnabled) {
-            S_LOGGER.debug("Entering Method Quality.fillUnitTestSuites");
+            S_LOGGER.debug("Entering Method Quality.fetchFunctionalTestSuites()");
         }
         
         try {
@@ -418,18 +418,25 @@ public class Quality extends DynamicParameterAction implements Constants {
         return SUCCESS;
     }
 	
-	private String getFunctionalTestResultPath(ApplicationInfo appInfo, String testResultFile) throws PhrescoException, JAXBException, IOException, PhrescoPomException {
+	private String getFunctionalTestResultPath(ApplicationInfo appInfo, String testResultFile) throws PhrescoException {
         if (s_debugEnabled) {
             S_LOGGER.debug("Entering Method Quality.getFunctionalTestResultPath()");
         }
         
-        StringBuilder sb = new StringBuilder(getApplicationHome());
-        if (StringUtils.isNotEmpty(getProjectModule())) {
-            sb.append(File.separatorChar);
-            sb.append(getProjectModule());
+        StringBuilder sb = new StringBuilder();
+        try {
+            sb.append(getApplicationHome());
+            if (StringUtils.isNotEmpty(getProjectModule())) {
+                sb.append(File.separatorChar);
+                sb.append(getProjectModule());
+            }
+            FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+            sb.append(frameworkUtil.getFunctionalTestReportDir(appInfo));
+        } catch (PhrescoException e) {
+            throw new PhrescoException(e);
+        } catch (PhrescoPomException e) {
+            throw new PhrescoException(e);
         }
-        FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-        sb.append(frameworkUtil.getFunctionalTestReportDir(appInfo));
         
         return sb.toString();
     }
