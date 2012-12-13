@@ -443,9 +443,9 @@ public class Projects extends FrameworkBaseAction {
             setProjectCodeError(getText(ERROR_CODE));
             hasError = true;
         }
-      //empty validation for projectVersion
+        //empty validation for projectVersion
         if (StringUtils.isEmpty(getProjectVersion())) {
-            setProjectVersionError(getText(ERROR_CODE));
+            setProjectVersionError(getText(ERROR_VERSION));
             hasError = true;
         }
         //validate if none of the layer is selected

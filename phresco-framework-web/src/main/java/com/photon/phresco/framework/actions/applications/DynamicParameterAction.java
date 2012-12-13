@@ -85,8 +85,7 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 			sb.append(PHASE_FUNCTIONAL_TEST);
 		} else if (PHASE_RUNGAINST_SRC_START.equals(goal)|| PHASE_RUNGAINST_SRC_STOP.equals(goal) ) {
 			sb.append(PHASE_RUNAGAINST_SOURCE);
-		}
-		else {
+		} else {
 			sb.append(goal);
 		}
 		sb.append(INFO_XML);

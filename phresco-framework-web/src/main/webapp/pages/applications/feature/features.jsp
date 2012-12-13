@@ -251,9 +251,11 @@
   			$("#successmsg").show();
   			setTimeOut();
   		} else if (url === "fetchDefaultFeatures") {
-			chkDefaultModules(data.depArtifactGroupNames, data.depArtifactInfoIds);
-		}else if (url === "fetchDependentFeatures") {
-			chkDefaultModules(data.depArtifactGroupNames, data.dependencyIds);
+			makeFeaturesSelected(data.depArtifactGroupNames, data.depArtifactInfoIds);
+		} else if (url === "fetchDependentFeatures") {
+			if (data.dependency) {
+				makeFeaturesSelected(data.depArtifactGroupNames, data.dependencyIds);
+			}
 		}
   	}
 </script>

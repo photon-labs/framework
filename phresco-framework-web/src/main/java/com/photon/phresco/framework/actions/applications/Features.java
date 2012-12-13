@@ -109,6 +109,7 @@ public class Features extends FrameworkBaseAction {
 	List<String> depArtifactGroupNames = new ArrayList<String>();
 	List<String> depArtifactInfoIds = new ArrayList<String>();
 	List<String> dependencyIds = new ArrayList<String>();
+	boolean dependency = false;
 	
 	public String features() {
 		try {
@@ -340,21 +341,27 @@ public class Features extends FrameworkBaseAction {
 			List<ArtifactInfo> versions = artifactGroup.getVersions();
 			for (ArtifactInfo artifactInfo : versions) {
 				if (artifactInfo.getId().equals(getModuleId())) {
-					dependencyIds.addAll(artifactInfo.getDependencyIds());
+				    List<String> dependencyIds = artifactInfo.getDependencyIds();
+				    if (CollectionUtils.isNotEmpty(artifactInfo.getDependencyIds())) {
+				        dependencyIds.addAll(artifactInfo.getDependencyIds());
+				    }
 				}
 			}
 		}
 		
 		//To get the artifactgroup name for the dependent artifactInfo ids
-		for (String dependencyId : getDependencyIds()) {
-			for (ArtifactGroup artifactGroup : artifactGroups) {
-				List<ArtifactInfo> versions = artifactGroup.getVersions();
-				for (ArtifactInfo artifactInfo : versions) {
-					if (artifactInfo.getId().equals(dependencyId)) {
-						depArtifactGroupNames.add(artifactGroup.getName());
-					}
-				}
-			}
+		if (CollectionUtils.isNotEmpty(getDependencyIds())) {
+    		for (String dependencyId : getDependencyIds()) {
+    			for (ArtifactGroup artifactGroup : artifactGroups) {
+    				List<ArtifactInfo> versions = artifactGroup.getVersions();
+    				for (ArtifactInfo artifactInfo : versions) {
+    					if (artifactInfo.getId().equals(dependencyId)) {
+    						depArtifactGroupNames.add(artifactGroup.getName());
+    					}
+    				}
+    			}
+    		}
+    		setDependency(true);
 		}
 		
 		return SUCCESS;
@@ -1144,4 +1151,12 @@ public class Features extends FrameworkBaseAction {
 	public void setDependencyIds(List<String> dependencyIds) {
 		this.dependencyIds = dependencyIds;
 	}
+
+    public boolean isDependency() {
+        return dependency;
+    }
+
+    public void setDependency(boolean dependency) {
+        this.dependency = dependency;
+    }
 }
