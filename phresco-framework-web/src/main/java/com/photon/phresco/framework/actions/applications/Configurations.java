@@ -520,20 +520,20 @@ public class Configurations extends FrameworkBaseAction {
              if (propertyTemplate.isRequired() && StringUtils.isEmpty(value)) {
              	String field = propertyTemplate.getName();
              	dynamicError += key + ":" + field + " is empty" + ",";
-             }
+            }
+             
+            if (CONFIG_TYPE.equals(key)) {
+             	if (StringUtils.isEmpty(getVersion())) {
+             		setVersionError(getText(ERROR_CONFIG_VERSION));
+             		hasError = true;
+             	}
+     		}
         }
         
         /*if (techId.equals(FrameworkConstants.TECH_SITE_CORE) && StringUtils.isEmpty(siteCoreInstPath)) {
         	setSiteCoreInstPathError(getText(ERROR_SITE_CORE_PATH_MISSING));
     		hasError = true;
     	}*/
-        
-        if (CONFIG_TYPE.equals(key)) {
-        	if (StringUtils.isEmpty(getVersion())) {
-        		setVersionError(getText(ERROR_CONFIG_VERSION));
-        		hasError = true;
-        	}
-		}        
         
     	if (isIISServer) {
         	if (StringUtils.isEmpty(getAppName())) {
@@ -551,6 +551,7 @@ public class Configurations extends FrameworkBaseAction {
 	        setDynamicError(dynamicError);
 	        hasError = true;
 	   	}
+        
         if (hasError) {
             setErrorFound(true);
         }
