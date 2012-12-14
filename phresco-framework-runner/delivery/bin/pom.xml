@@ -405,6 +405,17 @@
 							</target>
 						</configuration>
 					</execution>
+                    <execution>
+                  <phase>compile</phase>
+                    <configuration>
+                      <tasks>
+                        <chmod file="../workspace/tools/ocunit2junit" perm="777"/>
+                      </tasks>
+                    </configuration>
+                    <goals>
+                      <goal>run</goal>
+                    </goals>
+                  </execution> 
 				</executions>
 			</plugin>
 			
