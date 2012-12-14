@@ -19,45 +19,59 @@
  */
 package com.photon.phresco.framework.actions.applications;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.InetAddress;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
-import org.apache.commons.lang.*;
-import org.apache.log4j.*;
+import javax.xml.parsers.ParserConfigurationException;
 
-import com.photon.phresco.commons.model.*;
-import com.photon.phresco.exception.*;
-import com.photon.phresco.framework.*;
-import com.photon.phresco.framework.api.*;
-import com.photon.phresco.framework.commons.*;
-import com.photon.phresco.framework.model.*;
-import com.photon.phresco.framework.param.impl.*;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.xml.sax.SAXException;
+
+import com.photon.phresco.commons.model.ApplicationInfo;
+import com.photon.phresco.commons.model.ProjectInfo;
+import com.photon.phresco.exception.ConfigurationException;
+import com.photon.phresco.exception.PhrescoException;
+import com.photon.phresco.framework.FrameworkConfiguration;
+import com.photon.phresco.framework.PhrescoFrameworkFactory;
+import com.photon.phresco.framework.api.ActionType;
+import com.photon.phresco.framework.api.ApplicationManager;
+import com.photon.phresco.framework.commons.FrameworkUtil;
+import com.photon.phresco.framework.commons.LogErrorReport;
+import com.photon.phresco.framework.model.DependantParameters;
+import com.photon.phresco.framework.param.impl.IosTargetParameterImpl;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
-import com.photon.phresco.plugins.util.*;
-import com.photon.phresco.util.*;
-import com.phresco.pom.util.*;
+import com.photon.phresco.plugins.util.MojoProcessor;
+import com.photon.phresco.util.Constants;
+import com.phresco.pom.exception.PhrescoPomException;
+import com.phresco.pom.util.PomProcessor;
 
 public class Code extends DynamicParameterAction implements Constants {
-	private static final long serialVersionUID = 8217209827121703596L;
-    private static final Logger S_LOGGER = Logger.getLogger(Code.class);
-    private static Boolean debugEnabled = S_LOGGER.isDebugEnabled();
     
-	private String skipTest = null;
-    private String codeTechnology = null;
-    private String report = null;
-    private String validateAgainst = null;
-	private String target = null;
+	private static final long serialVersionUID = 8217209827121703596L;
 	
-	/*
+    private static final Logger S_LOGGER = Logger.getLogger(Code.class);
+    private static Boolean s_debugEnabled = S_LOGGER.isDebugEnabled();
+    
+	/**
 	 * populate drop down with targets or list of code validation(js, web)
+	 * @return
 	 */
 	public String code() {
-		if (debugEnabled) {
-			S_LOGGER.debug("Entering Method  Code.code()");
+		if (s_debugEnabled) {
+			S_LOGGER.debug("Entering Method Code.code()");
 		}
+		
 		try {
 		    removeSessionAttribute(getAppId() + SESSION_APPINFO);//To remove the appInfo from the session
         	ApplicationInfo appInfo = getApplicationInfo();
@@ -73,37 +87,53 @@ public class Code extends DynamicParameterAction implements Constants {
 			if (StringUtils.isNotEmpty(validateReportUrl)) {
 				setReqAttribute(CLANG_REPORT, validateReportUrl);
 				List<Value> values = getClangReports(appInfo);
-				setReqAttribute(REQ_VALUES, values);
+				setReqAttribute(REQ_SOURCE_VALUES, values);
 			} else {
 	        	MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_VALIDATE_CODE)));
-				Parameter parameter = mojo.getParameter(PHASE_VALIDATE_CODE, SONAR);
-				PossibleValues possibleValues = parameter.getPossibleValues();
-				List<Value> values = possibleValues.getValue();
-				setReqAttribute(REQ_VALUES, values);
+				Parameter valdAgnstParam = mojo.getParameter(PHASE_VALIDATE_CODE, SONAR);
+				PossibleValues valdAgnstPsbleValues = valdAgnstParam.getPossibleValues();
+				List<Value> valdAgnstValues = valdAgnstPsbleValues.getValue();
+				setReqAttribute(REQ_VALIDATE_AGAINST_VALUES, valdAgnstValues);
+				Parameter sourceParam = mojo.getParameter(PHASE_VALIDATE_CODE, SOURCE);
+				if (sourceParam != null) {
+                    PossibleValues sourcePsbleValues = sourceParam.getPossibleValues();
+                    List<Value> sourceValues = sourcePsbleValues.getValue();
+                    setReqAttribute(REQ_SOURCE_VALUES, sourceValues);
+				}
 				setSonarServerStatus();
 			}
-    	} catch (Exception e) {
-    		if (debugEnabled) {
+    	} catch (PhrescoException e) {
+    		if (s_debugEnabled) {
     			S_LOGGER.error("Entered into catch block of Code.code()"+ FrameworkUtil.getStackTraceAsString(e));
     		}
-    		return showErrorPopup(new PhrescoException(e), getText("excep.hdr.code.load"));
+    		return showErrorPopup(e, getText("excep.hdr.code.load"));
+        } catch (PhrescoPomException e) {
+            if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Code.code()"+ FrameworkUtil.getStackTraceAsString(e));
+            }
+            return showErrorPopup(new PhrescoException(e), getText("excep.hdr.code.load"));
         }
+        
 		return APP_CODE;
 	}
 
 	private File getPOMFile() throws PhrescoException {
-		StringBuilder builder = new StringBuilder(getApplicationHome());
-		builder.append(File.separator);
-		builder.append(POM_XML);
-		File pomPath = new File(builder.toString());
-		return pomPath;
+		try {
+            StringBuilder builder = new StringBuilder(getApplicationHome());
+            builder.append(File.separator);
+            builder.append(POM_XML);
+            File pomPath = new File(builder.toString());
+            return pomPath;
+        } catch (PhrescoException e) {
+            throw new PhrescoException(e);
+        }
 	}
 
 	private void setSonarServerStatus() throws PhrescoException {
 		String serverUrl;
 		FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
 		serverUrl = frameworkUtil.getSonarURL();
-		if (debugEnabled) {
+		if (s_debugEnabled) {
 			S_LOGGER.debug("sonar home url to check server status " + serverUrl);
 		}
 		try {
@@ -127,22 +157,31 @@ public class Code extends DynamicParameterAction implements Constants {
 			PossibleValues possibleValues = targetImpl.getValues(paramMap);
 			List<Value> values = possibleValues.getValue();
 			return values;
-		} catch (Exception e) {
-			throw new PhrescoException(e);
-		}
+		} catch (IOException e) {
+           throw new PhrescoException(e);
+        } catch (ParserConfigurationException e) {
+            throw new PhrescoException(e);
+        } catch (SAXException e) {
+            throw new PhrescoException(e);
+        } catch (ConfigurationException e) {
+            throw new PhrescoException(e);
+        } catch (PhrescoException e) {
+            throw new PhrescoException(e);
+        }
 	}
 	
-	/*
+	/**
 	 * show code validation report
 	 */
 	public String check() {
-		if (debugEnabled) {
+		if (s_debugEnabled) {
 			S_LOGGER.debug("Entering Method Code.check()");
 		}
+		
 		StringBuilder sb = new StringBuilder();
     	try {
 	        Properties sysProps = System.getProperties();
-	        if (debugEnabled) {
+	        if (s_debugEnabled) {
 	        	S_LOGGER.debug( "Phresco FileServer Value of " + PHRESCO_FILE_SERVER_PORT_NO + " is " + sysProps.getProperty(PHRESCO_FILE_SERVER_PORT_NO) );
 			}
 	        String phrescoFileServerNumber = sysProps.getProperty(PHRESCO_FILE_SERVER_PORT_NO);
@@ -176,7 +215,6 @@ public class Code extends DynamicParameterAction implements Constants {
                 	sb.append(validateAgainst);
                 	sb.append(FORWARD_SLASH);
                 	sb.append(INDEX_HTML);
-//                	sb.append(codeValidatePath.toString().replace(File.separator, FORWARD_SLASH));
                 	S_LOGGER.debug("File server path " + sb.toString());
              	} else {
              		setReqAttribute(REQ_ERROR, getText(FAILURE_CODE_REVIEW));
@@ -209,13 +247,13 @@ public class Code extends DynamicParameterAction implements Constants {
 	        		sb.append(validateAgainst);
 	        	}
 	    		try {
-	    			if (debugEnabled) {
+	    			if (s_debugEnabled) {
 	    				S_LOGGER.debug("Url to access API " + sb.toString());
 	    			}
 					URL sonarURL = new URL(sb.toString());
 					HttpURLConnection connection = (HttpURLConnection) sonarURL.openConnection();
 					int responseCode = connection.getResponseCode();
-					if (debugEnabled) {
+					if (s_debugEnabled) {
 	    				S_LOGGER.debug("Response code value " + responseCode);
 		    		}
 					if (responseCode != 200) {
@@ -223,7 +261,7 @@ public class Code extends DynamicParameterAction implements Constants {
 					    return APP_CODE;
 		            }
 				} catch (Exception e) {
-					if (debugEnabled) {
+					if (s_debugEnabled) {
 						S_LOGGER.error("Entered into catch block of Code.check()"+ FrameworkUtil.getStackTraceAsString(e));
 		    		}
 					new LogErrorReport(e, "Code review");
@@ -232,25 +270,28 @@ public class Code extends DynamicParameterAction implements Constants {
 				}
         	}
     	} catch (Exception e) {
-    		if (debugEnabled) {
+    		if (s_debugEnabled) {
     			S_LOGGER.error("Entered into catch block of Code.check()"+ FrameworkUtil.getStackTraceAsString(e));
     		}
     		return showErrorPopup(new PhrescoException(e), getText("excep.hdr.code.load.report"));
     	}
-    	if (debugEnabled) {
+    	if (s_debugEnabled) {
     		S_LOGGER.debug("Sonar final report path " + sb.toString());
     	}
     	setReqAttribute(REQ_SONAR_PATH, sb.toString());
+    	
         return APP_CODE;
     }
 	
-	/*
-	 * code validate popup
+	/**
+	 * To show code validation popup
+	 * @return
 	 */
 	public String showCodeValidatePopup() {
-		if (debugEnabled) {
+		if (s_debugEnabled) {
 			S_LOGGER.debug("Entering Method  Code.showCodeValidatePopup()");
 		}
+		
 		try {
 		    ApplicationInfo appInfo = getApplicationInfo();
             removeSessionAttribute(appInfo.getId() + PHASE_VALIDATE_CODE + SESSION_WATCHER_MAP);
@@ -266,26 +307,33 @@ public class Code extends DynamicParameterAction implements Constants {
             setReqAttribute(REQ_GOAL, PHASE_VALIDATE_CODE);
             setReqAttribute(REQ_PHASE, PHASE_VALIDATE_CODE);
 		} catch (PhrescoException e) {
-			if (debugEnabled) {
+			if (s_debugEnabled) {
 				S_LOGGER.error("Entered into catch block of Code.showCodeValidatePopup()" + FrameworkUtil.getStackTraceAsString(e));
 			}
 			return showErrorPopup(new PhrescoException(e), getText("excep.hdr.code.load.validate.popup"));
 		}
+		
 		return SHOW_CODE_VALIDATE_POPUP;
 	}
 	
 	private void setProjModulesInReq() throws PhrescoException {
-        List<String> projectModules = getProjectModules(getApplicationInfo().getAppDirName());
-        setReqAttribute(REQ_PROJECT_MODULES, projectModules);
+        try {
+            List<String> projectModules = getProjectModules(getApplicationInfo().getAppDirName());
+            setReqAttribute(REQ_PROJECT_MODULES, projectModules);
+        } catch (PhrescoException e) {
+            throw new PhrescoException(e);
+        }
     }
 	
-	/*
-	 * code validate progress
+	/**
+	 * To run the code validation
+	 * @return
 	 */
 	public String codeValidate() {
-		if (debugEnabled) {
+		if (s_debugEnabled) {
 			S_LOGGER.debug("Entering Method Code.codeValidate()");
 		}
+		
 		try {
 			ProjectInfo projectInfo = getProjectInfo();
 			ApplicationInfo applicationInfo = getApplicationInfo();
@@ -302,52 +350,12 @@ public class Code extends DynamicParameterAction implements Constants {
 			setReqAttribute(REQ_APP_ID, getAppId());
 			setReqAttribute(REQ_ACTION_TYPE, REQ_CODE);
 		} catch (PhrescoException e) {
-    		if (debugEnabled) {
+    		if (s_debugEnabled) {
     			S_LOGGER.error("Entered into catch block of Code.code()"+ FrameworkUtil.getStackTraceAsString(e));
     		}
     		return showErrorPopup(new PhrescoException(e), getText("excep.hdr.code.trigger.validate"));
 		}
 		
 		return APP_ENVIRONMENT_READER;
-	}
-	
-	public String getCodeTechnology() {
-		return codeTechnology;
-	}
-
-	public void setCodeTechnology(String codeTechnology) {
-		this.codeTechnology = codeTechnology;
-	}
-
-	public String getReport() {
-		return report;
-	}
-
-	public void setReport(String report) {
-		this.report = report;
-	}
-
-	public String getTarget() {
-		return target;
-	}
-
-	public void setTarget(String target) {
-		this.target = target;
-	}
-	
-	public String getSkipTest() {
-		return skipTest;
-	}
-
-	public void setSkipTest(String skipTest) {
-		this.skipTest = skipTest;
-	}
-	
-	public String getValidateAgainst() {
-		return validateAgainst;
-	}
-
-	public void setValidateAgainst(String validateAgainst) {
-		this.validateAgainst = validateAgainst;
 	}
 }

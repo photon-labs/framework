@@ -35,7 +35,8 @@
  <%
 	ApplicationInfo appInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_APP_INFO);
 	String appId = (String) appInfo.getId();
-	List<Value> techReports = (List<Value>) request.getAttribute(FrameworkConstants.REQ_VALUES);
+	List<Value> validateAgainstValues = (List<Value>) request.getAttribute(FrameworkConstants.REQ_VALIDATE_AGAINST_VALUES);
+	List<Value> sourceValues = (List<Value>) request.getAttribute(FrameworkConstants.REQ_SOURCE_VALUES);
 	String sonarError = (String) request.getAttribute(FrameworkConstants.REQ_ERROR);
 	String clangReport =  (String) request.getAttribute(FrameworkConstants.CLANG_REPORT);
 	String disabledStr = "";
@@ -51,22 +52,34 @@
            
         <strong id="validateType" class="validateType"><s:text name="lbl.sonar.report"/></strong>&nbsp;
         <select id="validateAgainst" name="validateAgainst">
-        
             <%
-                if (CollectionUtils.isNotEmpty(techReports)) {
-                	for (Value value : techReports) {
+                if (CollectionUtils.isNotEmpty(validateAgainstValues) && CollectionUtils.isNotEmpty(sourceValues)) {
+			%>
+					<optgroup label="<%= validateAgainstValues.get(0).getValue() %>">
+			<%
+                	for (Value value : sourceValues) {
             %>
-                   <option value="<%= value.getKey() %>" ><%= value.getValue() %></option>
+						<option value="<%= value.getKey() %>" ><%= value.getValue() %></option>
             <%
                 	}
-                } 
+			%>
+					</optgroup>
+					<option value="<%= validateAgainstValues.get(1).getKey() %>"><%= validateAgainstValues.get(1).getValue() %></option>
+			<%
+                } else if (CollectionUtils.isNotEmpty(validateAgainstValues)) {
+                    for (Value value : validateAgainstValues) {
+            %>
+            			<option value="<%= value.getKey() %>"><%= value.getValue() %></option>
+            <%
+                    }
+                }
             %>
 		</select>
 	</div>
 	
-	 <% if (StringUtils.isNotEmpty(sonarError)) { %>
+	<% if (StringUtils.isNotEmpty(sonarError)) { %>
 		<div class="alert alert-block sonarWarning">
-            <img id="warning_icon" src="images/icons/warning_icon.png" />
+			<img id="warning_icon" src="images/icons/warning_icon.png" />
             <s:label cssClass="sonarLabelWarn" key="sonar.not.started" />
         </div>
     <% } %>
@@ -80,6 +93,7 @@
 $('.control-group').addClass("valReportLbl");
     $(document).ready(function() {
     	showLoadingIcon();
+    	
     	$('#codeValidatePopup').click(function() {
     		validateDynamicParam('showCodeValidatePopup', '<s:text name="popup.hdr.code.validate"/>', 'codeValidate','<s:text name="lbl.validate"/>', '', '<%= Constants.PHASE_VALIDATE_CODE %>');
     	});
@@ -95,18 +109,8 @@ $('.control-group').addClass("valReportLbl");
 	        sonarReport();
     	<% } %>
     	
-<%--     	<% if (StringUtils.isNotEmpty(clangReport)) { %> --%>
-//     		$("#validateType").html("<s:text name='lbl.target'/>");
-<%--     	<% } %> --%>
-    	
 		$('#validateAgainst').change(function() {
 			sonarReport();
-  		});
-  
-		$('#closeGenTest, #closeGenerateTest').click(function() {
- 			closePopup();
- 			sonarReport();
- 			$('#popup_div').empty();
   		});
     });
     

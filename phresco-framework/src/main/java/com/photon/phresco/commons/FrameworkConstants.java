@@ -61,6 +61,7 @@ public interface FrameworkConstants {
     String PROJECT_INFO = "project.info";
     String GIT_IMPORT_TEMP_DIR = "gitImportTemp";
     String SONAR = "sonar";
+    String SOURCE = "src";
     String FROM_PAGE_LOGIN = "login";
     String CONFIG_TYPE = "type";
     
@@ -958,6 +959,8 @@ public interface FrameworkConstants {
 	String REQ_VALIDATE_AGAINST = "validateAgainst";
 	String CHECK_IPHONE = "checkIphone";
 	String CLANG_REPORT = "clangReport";
+	String REQ_VALIDATE_AGAINST_VALUES = "validateAgainstValues";
+	String REQ_SOURCE_VALUES = "sourceValues";
     
     /*
      * Application Redirection keys
