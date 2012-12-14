@@ -295,6 +295,7 @@
 									<groupId>softwares.iphone.files</groupId>
 									<artifactId>ocunit2junit</artifactId>
 									<version>1.0</version>
+                                    <classifier>${ocunit2junit.classifier}</classifier>
 									<type>zip</type>
 									<overWrite>false</overWrite>
 									<outputDirectory>../workspace/tools</outputDirectory>
@@ -434,6 +435,7 @@
                     <waxsim.classifier>windows</waxsim.classifier>
                     <chief.classifier>windows</chief.classifier>
                     <checkers.classifier>windows</checkers.classifier>
+                    <ocunit2junit.classifier>windows</ocunit2junit.classifier>
                 </properties>
             </profile>
             <profile>
@@ -450,6 +452,7 @@
                     <waxsim.classifier>windows</waxsim.classifier>
                     <chief.classifier>windows</chief.classifier>
                     <checkers.classifier>windows</checkers.classifier>
+                    <ocunit2junit.classifier>windows</ocunit2junit.classifier>
                 </properties>
             </profile>
             <profile>
@@ -466,6 +469,7 @@
                     <waxsim.classifier>windows</waxsim.classifier>
                     <chief.classifier>windows</chief.classifier>
                     <checkers.classifier>windows</checkers.classifier>
+                    <ocunit2junit.classifier>windows</ocunit2junit.classifier>
                 </properties>
             </profile>
             <profile>
@@ -480,6 +484,7 @@
                     <waxsim.classifier>mac</waxsim.classifier>
                     <chief.classifier>mac</chief.classifier>
                     <checkers.classifier>mac</checkers.classifier>
+                    <ocunit2junit.classifier>mac</ocunit2junit.classifier>
                 </properties>
             </profile>
         </profiles>
