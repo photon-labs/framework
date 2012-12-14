@@ -135,6 +135,7 @@ public class Applications extends FrameworkBaseAction {
     private String downloadInfoType = "";
     private String selectedDownloadInfoVersion = "";
     private String selectBoxId = "";
+    private String defaultOptTxt = "";
     
     private List<String> jsonData = null;
     
@@ -288,6 +289,8 @@ public class Applications extends FrameworkBaseAction {
             String selectedDb = getHttpRequest().getParameter("selectedDownloadInfo");
             String selectedDbVer = getHttpRequest().getParameter("selectedDownloadInfoVersion");
             String selectBoxId = getHttpRequest().getParameter("selectBoxId");
+            String defaultOptTxt = getHttpRequest().getParameter("defaultOptTxt");
+            setDefaultOptTxt(defaultOptTxt);
             setDownloadInfoType(type);
             setSelectedDownloadInfo(selectedDb);
             setSelectedDownloadInfoVersion(selectedDbVer);
@@ -2101,5 +2104,13 @@ public class Applications extends FrameworkBaseAction {
 
 	public void setDownloadInfoType(String downloadInfoType) {
 		this.downloadInfoType = downloadInfoType;
+	}
+
+	public String getDefaultOptTxt() {
+		return defaultOptTxt;
+	}
+
+	public void setDefaultOptTxt(String defaultOptTxt) {
+		this.defaultOptTxt = defaultOptTxt;
 	}
 }

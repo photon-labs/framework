@@ -53,6 +53,8 @@
 	String oldAppDirName = "";
 	List<String> feature = null;
 	List<String> selectedWebservices = null;
+	List<ArtifactGroupInfo> pilotServers = null;
+	List<ArtifactGroupInfo> pilotDatabases = null;
 	List<ArtifactGroupInfo> selectedServers = null;
 	List<ArtifactGroupInfo> selectedDatabases = null;
 	if (projectInfo != null) {
@@ -164,7 +166,7 @@
 		<div class="control-group">
 			<label class="accordion-control-label labelbold"><s:text name='lbl.pilot.project'/></label>
 			<div class="controls">
-				<select class="input-xlarge appinfoTech" name="pilotProject">
+				<select class="input-xlarge appinfoTech" name="pilotProject" onchange="showPilotProjectInfo(this);">
 					<option value="" selected disabled>Select Pilot Projects</option>
 						<%
 	                        if (CollectionUtils.isNotEmpty(pilotProjects)) {
@@ -450,6 +452,52 @@
 		}
 	}
 	
+	/* function getPilotProject(obj) {
+    	var piltProject = $(obj).val();
+    	pilotProjectData(piltProject);
+    } */
+    
+    function showPilotProjectInfo(obj) {
+ 		var piltProject = $(obj).val();
+	    <%	for (ApplicationInfo appInfo : pilotProjects) { %>
+				if (piltProject == '<%= appInfo.getId()%>') {
+				<% 	pilotServers = appInfo.getSelectedServers();
+					pilotDatabases = appInfo.getSelectedDatabases();		
+				%>
+					showPilotSelectedDownloadInfo();
+				}
+		<%
+			}
+        %>
+    }
+    
+    function showPilotSelectedDownloadInfo() {
+   		
+ 	<% 	if (pilotServers != null) {
+			for(ArtifactGroupInfo artifactGrpInfo : pilotServers) {
+				String server = artifactGrpInfo.getArtifactGroupId();
+				List<String> serverVersions = artifactGrpInfo.getArtifactInfoIds();
+	%>	
+				accordionOpen('#serverLayerControl', $('input[value=serverLayer]'));
+				addServer('<%= server%>', '<%=serverVersions%>');
+	<%
+		    }
+	    }
+	%>
+	
+	<% 	if (pilotDatabases != null) {
+			for(ArtifactGroupInfo artifactGrpInfo : pilotDatabases) {
+				String database = artifactGrpInfo.getArtifactGroupId();
+				List<String> databaseVersions = artifactGrpInfo.getArtifactInfoIds();
+	%>
+				accordionOpen('#databaseLayerControl', $('input[value=databaseLayer]'));
+				addDatabase('<%= database%>', '<%=databaseVersions%>');
+	<%
+		    }
+    	}
+	%>
+    }
+    
     function removeTag(currentTag) {
 		$(currentTag).parent().parent().remove();
 	}
@@ -557,14 +605,12 @@
     }		
     
     var selectBoxobj;
-    var defaultOption;
     var selectedDb;
     var selectVer;
     function getDownloadInfo(type, toBeFilledCtrlObj, defaultOptTxt, selectedDatabase, databaseVersions, databaseName) {
     	showLoadingIcon();
     	selectedDb = selectedDatabase;
     	selectVer = databaseVersions;
-    	defaultOption = defaultOptTxt;
     	selectBoxobj = toBeFilledCtrlObj;
 		var params = getBasicParams();
 		params = params.concat("&type=");
@@ -577,6 +623,8 @@
 		params = params.concat(selectVer);
 		params = params.concat("&selectBoxId=");
 		params = params.concat(databaseName);
+		params = params.concat("&defaultOptTxt=");
+		params = params.concat(defaultOptTxt);
 		loadContent("fetchDownloadInfos", '', '', params, true);
 	}
     
@@ -585,6 +633,7 @@
     var selectedDataVersion = new Array();
     var selectedDataId;
     var downloadInfoType;
+    var defaultOption;
 	//Success event functions
 	function successEvent(pageUrl, data) {
 		hideLoadingIcon();
@@ -593,6 +642,7 @@
 			
 			selectBoxobj = $('#'+ data.selectBoxId);
 			
+			defaultOption = data.defaultOptTxt;
 			selectBoxobj.empty();
 			selectBoxobj.append($("<option value='' selected disabled></option>").text(defaultOption));
 			
