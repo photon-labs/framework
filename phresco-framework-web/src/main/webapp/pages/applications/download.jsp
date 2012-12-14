@@ -23,7 +23,9 @@
 <%@ page import="java.util.Arrays"%>
 <%@ page import="java.util.List"%>
 
+<%@ page import="org.apache.commons.lang.StringUtils" %>
 <%@ page import="org.apache.commons.collections.CollectionUtils"%>
+
 <%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
 <%@ page import="com.photon.phresco.commons.model.ArtifactInfo"%>
 <%@ page import="com.photon.phresco.commons.model.DownloadInfo"%>
@@ -42,7 +44,7 @@
         <div class="accordion_panel_inner">
             <section class="lft_menus_container">
             	<% 
-            	if (CollectionUtils.isNotEmpty(serverDownloadInfos)) {
+            		if (CollectionUtils.isNotEmpty(serverDownloadInfos)) {
             	%>
                 <span class="siteaccordion closereg"><span><s:text name="lbl.servers"/></span></span>
                 <div class="mfbox siteinnertooltiptxt downloadContent">
@@ -60,24 +62,28 @@
 	                            
 	                        	<tbody>
 		                    	<%
-		                    	for (DownloadInfo serverDownloadInfo : serverDownloadInfos) {
-	                    			 List<ArtifactInfo> infos = serverDownloadInfo.getArtifactGroup().getVersions();
-	                    			 if (CollectionUtils.isNotEmpty(infos)) {
-	                    				 for (ArtifactInfo info : infos) {
+									for (DownloadInfo serverDownloadInfo : serverDownloadInfos) {
+	                    			List<ArtifactInfo> infos = serverDownloadInfo.getArtifactGroup().getVersions();
+										if(CollectionUtils.isNotEmpty(infos)) {
+											for (ArtifactInfo info : infos) {
+												if(StringUtils.isNotEmpty(info.getDownloadURL())) {
 	                    		%> 
-		                    		<tr>
-		                    			<td><%= serverDownloadInfo.getName() %></td>
-		                    			<td><%= info.getVersion() %></td>
-		                    			<td><%= info.getFileSize() %></td>
-		                    			<td class="label_center">
-		                    				<a href="#"> 
-		                    					<img src="images/icons/download.png" title="<%=serverDownloadInfo.getName() %>" />
-		                    				</a>
-		                    			</td> 
-		                    		</tr>
-	                    		<%	}
-	                    		}
-	                    	} %> 
+					                    		<tr>
+					                    			<td><%= serverDownloadInfo.getName() %></td>
+					                    			<td><%= info.getVersion() %></td>
+					                    			<td><%= info.getFileSize() %></td>
+					                    			<td class="label_center">
+					                    				<a href="<%= info.getDownloadURL()%>"> 
+					                    					<img src="images/icons/download.png" title="<%=serverDownloadInfo.getName() %>" />
+					                    				</a>
+					                    			</td> 
+					                    		</tr>
+		                    	<%	
+												}
+											}
+		                    			}
+		                    		} 
+		                    	%> 
                         	</table>
                         </section>
                     </div>
@@ -101,34 +107,35 @@
 	                            
 	                        	<tbody>
 		                    	<%
-		                    		for (DownloadInfo dbDownloadInfo : dbDownloadInfos) {
-		                    			List<ArtifactInfo> infos = dbDownloadInfo.getArtifactGroup().getVersions();
-		                    			 if (CollectionUtils.isNotEmpty(infos)) {
-		                    				 for (ArtifactInfo info : infos) { 
+									for (DownloadInfo dbDownloadInfo : dbDownloadInfos) {
+		                    		List<ArtifactInfo> infos = dbDownloadInfo.getArtifactGroup().getVersions();
+										if (CollectionUtils.isNotEmpty(infos)) {
+											for (ArtifactInfo info : infos) { 
+												if(StringUtils.isNotEmpty(info.getDownloadURL())) {
 		                    	%>
-		                    	
-		                    		<tr>
-		                    			<!-- TODO:Need to handle -->
-		                    			 <td><%= dbDownloadInfo.getName() %></td>
-		                    			<td><%= info.getVersion() %></td>
-		                    			<td><%= info.getFileSize() %></td>
-		                    			<td class="label_center">
-		                    				<a href="#">
-		                    					<img src="images/icons/download.png" title="<%=dbDownloadInfo.getName()%>"/>
-		                    				</a>
-		                    			</td>
-		                    		</tr>
-	                    		<%	}
-		                    	}
-		                    }
-		                  %>
+					                    		<tr>
+					                    			<td><%= dbDownloadInfo.getName() %></td>
+					                    			<td><%= info.getVersion() %></td>
+					                    			<td><%= info.getFileSize() %></td>
+					                    			<td class="label_center">
+					                    				<a href="<%= info.getDownloadURL()%>"> 
+					                    					<img src="images/icons/download.png" title="<%=dbDownloadInfo.getName()%>"/>
+					                    				</a>
+					                    			</td>
+					                    		</tr>
+								<%	
+				                    			}
+											}
+				                    	}
+				                    }
+								%>
 	                    		</tbody>
                         	</table>
                         </section>
                     </div>
                 </div>
                 <% 
-                	}  if(CollectionUtils.isNotEmpty(editorDownloadInfos)) { 
+                	} if (CollectionUtils.isNotEmpty(editorDownloadInfos)) { 
                 %>
                 <span class="siteaccordion closereg"><span><s:text name="lbl.editors"/></span></span>
                 <div class="mfbox siteinnertooltiptxt downloadContent">
@@ -146,25 +153,28 @@
 	                        	
 	                        	<tbody>
 		                    	<%
-		                    		for (DownloadInfo editorDownloadInfo : editorDownloadInfos) {
-		                    			List<ArtifactInfo> infos = editorDownloadInfo.getArtifactGroup().getVersions();
-		                    			 if (CollectionUtils.isNotEmpty(infos)) {
-		                    				 for (ArtifactInfo info : infos) {
+									for (DownloadInfo editorDownloadInfo : editorDownloadInfos) {
+									List<ArtifactInfo> infos = editorDownloadInfo.getArtifactGroup().getVersions();
+										if (CollectionUtils.isNotEmpty(infos)) {
+											for (ArtifactInfo info : infos) {
+												if(StringUtils.isNotEmpty(info.getDownloadURL())) {
 		                    	%> 
-		                    		<tr>
-		                    			<!-- TODO:Need to handle -->
-		                    			<td><%= editorDownloadInfo.getName() %></td>
-		                    			<td><%= info.getVersion() %></td>
-		                    			<td><%= info.getFileSize() %></td>
-		                    			<td class="label_center">
-		                    				<a href="#">
-		                    					<img src="images/icons/download.png" title="<%= editorDownloadInfo.getName()%>"/>
-		                    				</a>
-		                    			</td> 
-		                    		</tr>
-	                    		<%	}
-		                    	}
-		                    } %>
+					                    		<tr>
+					                    			<td><%= editorDownloadInfo.getName() %></td>
+					                    			<td><%= info.getVersion() %></td>
+					                    			<td><%= info.getFileSize() %></td>
+					                    			<td class="label_center">
+					                    				<a href= "<%= info.getDownloadURL() %>">
+					                    					<img src="images/icons/download.png" title="<%= editorDownloadInfo.getName()%>"/>
+					                    				</a>
+					                    			</td> 
+					                    		</tr>
+								<%	
+												}
+											} 
+										}
+									} 
+								%>
 	                    		</tbody>
                         	</table>
                         </section>
@@ -172,7 +182,7 @@
                 </div>
                 
                 <% 
-                	} if(CollectionUtils.isNotEmpty(toolsDownloadInfos)) { 
+                	} if (CollectionUtils.isNotEmpty(toolsDownloadInfos)) { 
                 %>
                 <span class="siteaccordion closereg"><span><s:text name="lbl.tools"/></span></span>
                 <div class="mfbox siteinnertooltiptxt downloadContent">
@@ -190,26 +200,28 @@
 	                            
 	                        	<tbody>
 		                    	<%
-		                    		for (DownloadInfo toolsDownloadInfo : toolsDownloadInfos) {
-		                    			List<ArtifactInfo> infos = toolsDownloadInfo.getArtifactGroup().getVersions();
-		                    			 if (CollectionUtils.isNotEmpty(infos)) {
-		                    				 for (ArtifactInfo info : infos) {
+									for (DownloadInfo toolsDownloadInfo : toolsDownloadInfos) {
+									List<ArtifactInfo> infos = toolsDownloadInfo.getArtifactGroup().getVersions();
+										if (CollectionUtils.isNotEmpty(infos)) {
+											for (ArtifactInfo info : infos) {
+												if(StringUtils.isNotEmpty(info.getDownloadURL())) {
 		                    	%> 
-		                    		<tr>
-		                    			<!-- TODO:Need to handle -->
-		                    			 <td><%= toolsDownloadInfo.getName() %></td>
-		                    			<td><%= info.getVersion() %></td>
-		                    			<td><%= info.getFileSize() %></td>
-		                    			<td class="label_center">
-		                    				<a href="#">
-		                    					<img src="images/icons/download.png" title="<%=toolsDownloadInfo.getName() %>"/>
-		                    				</a>
-		                    			</td> 
-		                    		</tr>
-	                    		<%	}
-		                    	}
-		                    }
-		                   %>
+					                    		<tr>
+					                    			<td><%= toolsDownloadInfo.getName() %></td>
+					                    			<td><%= info.getVersion() %></td>
+					                    			<td><%= info.getFileSize() %></td>
+					                    			<td class="label_center">
+					                    				<a href= "<%= info.getDownloadURL() %>">
+					                    					<img src="images/icons/download.png" title="<%=toolsDownloadInfo.getName() %>"/>
+					                    				</a>
+					                    			</td> 
+					                    		</tr>
+	                    		<%	
+												}
+											}
+										}
+									}
+								%>
 	                    		</tbody>
                         	</table>
                         </section>
@@ -217,7 +229,7 @@
                 </div>
                 
                 <% 
-                	} if(CollectionUtils.isNotEmpty(othersDownloadInfos)) { 
+                	} if (CollectionUtils.isNotEmpty(othersDownloadInfos)) {
                 %>
                 <span class="siteaccordion closereg"><span><s:text name="lbl.others"/></span></span>
                 <div class="mfbox siteinnertooltiptxt downloadContent">
@@ -235,32 +247,36 @@
 	                            
 	                        	<tbody>
 		                    	<%
-		                    		for (DownloadInfo otherDownloadInfo : othersDownloadInfos) {
-		                    			List<ArtifactInfo> infos = otherDownloadInfo.getArtifactGroup().getVersions();
-	                    				 if (CollectionUtils.isNotEmpty(infos)) {
-	                    				 for (ArtifactInfo info : infos) {
+									for (DownloadInfo otherDownloadInfo : othersDownloadInfos) {
+									List<ArtifactInfo> infos = otherDownloadInfo.getArtifactGroup().getVersions();
+										if (CollectionUtils.isNotEmpty(infos)) {
+											for (ArtifactInfo info : infos) {
+												if(StringUtils.isNotEmpty(info.getDownloadURL())) {
 	                    		%> 
-		                    		<tr>
-		                    			<!-- TODO:Need to handle -->
-		                    			<td><%= otherDownloadInfo.getName() %></td>
-		                    			<td><%= info.getVersion() %></td>
-		                    			<td><%= info.getFileSize() %></td>
-		                    			<td class="label_center">
-		                    				<a href="#">
-		                    					<img src="images/icons/download.png" title="<%= otherDownloadInfo.getName() %>"/>
-		                    				</a>
-		                    			</td> 
-		                    		</tr>
-	                    		<%	}
-	                    		}
-	                    	} %>
+					                    		<tr>
+					                    			<td><%= otherDownloadInfo.getName() %></td>
+					                    			<td><%= info.getVersion() %></td>
+					                    			<td><%= info.getFileSize() %></td>
+					                    			<td class="label_center">
+					                    				<a href= "<%= info.getDownloadURL() %>">
+					                    					<img src="images/icons/download.png" title="<%= otherDownloadInfo.getName() %>"/>
+					                    				</a>
+					                    			</td> 
+					                    		</tr>
+								<%	
+												}
+											}
+										}
+									} 
+								%>
 	                    		</tbody>
                         	</table>
                         </section>
                     </div>
                 </div>
-                
-                <% } %>
+                <% 
+					}
+                %>
             </section>  
         </div>
     </section>

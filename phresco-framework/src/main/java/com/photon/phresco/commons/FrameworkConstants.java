@@ -62,8 +62,7 @@ public interface FrameworkConstants {
     String GIT_IMPORT_TEMP_DIR = "gitImportTemp";
     String SONAR = "sonar";
     String FROM_PAGE_LOGIN = "login";
-    String SERVER_KEY = "server";
-    String DATABASE_KEY = "Database";
+    String CONFIG_TYPE = "type";
     
     String IMPORT = "import";
     
@@ -1081,6 +1080,7 @@ public interface FrameworkConstants {
     String ERROR_APPLIES_TO = "err.msg.empty.applies.to";
     String ERROR_CONFIG_SITE_NAME = "err.msg.empty.config.site.name";
     String ERROR_CONFIG_APP_NAME = "err.msg.empty.config.app.name";
+    String ERROR_CONFIG_VERSION = "err.msg.empty.config.version";
     String ERROR_SITE_CORE_PATH_MISSING = "err.msg.empty.site.core.path";
     String CLONE_CONFIG_STATUS = "cloneConfigStatus";
     String ERROR_ENV_REMOVE = "Environment {0} is already in use";
@@ -1593,6 +1593,7 @@ public interface FrameworkConstants {
 		  String ADMIN_USERNAME = "admin_username";
 		  String ADMIN_PASSWORD = "admin_password";
 		  String REMOTE_DEPLOYMENT = "remoteDeployment";
+		  String TYPE_VERSION = "version";
 		  
 		  //SettingsTemplate values 
 		  String IIS_SERVER = "IIS";
