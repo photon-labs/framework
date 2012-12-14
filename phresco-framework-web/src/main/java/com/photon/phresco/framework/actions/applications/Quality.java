@@ -227,6 +227,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 	private String projectModule = "";
 	
     boolean connectionAlive = false;
+    boolean updateCache;
 	
 	private static Map<String, Map<String, NodeList>> testSuiteMap = Collections.synchronizedMap(new HashMap<String, Map<String, NodeList>>(8));
 	
@@ -845,7 +846,7 @@ public class Quality extends DynamicParameterAction implements Constants {
         String testSuitesMapKey = getAppId() + getTestType() + getProjectModule() + getTechReport();
         Map<String, NodeList> testResultNameMap = testSuiteMap.get(testSuitesMapKey);
         List<String> resultTestSuiteNames = null;
-        if (MapUtils.isEmpty(testResultNameMap)) {
+        if (MapUtils.isEmpty(testResultNameMap) || updateCache) { //  || StringUtils.isNotEmpty(fromPage) when the user clicks on close button, newly generated report shoud be displayed
             File[] resultFiles = getTestResultFiles(testResultPath);
             if (!ArrayUtils.isEmpty(resultFiles)) {
                 QualityUtil.sortResultFile(resultFiles);
@@ -1073,6 +1074,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 			}
 		}
 	    String testSuitesKey = getAppId() + getTestType() + getProjectModule() + getTechReport();
+	    
 		testSuiteMap.put(testSuitesKey, mapTestSuites);
     }
     
@@ -2904,13 +2906,14 @@ public class Quality extends DynamicParameterAction implements Constants {
         S_LOGGER.debug("Entering Method Quality.downloadReport()");
         try {
         	String testType = getHttpRequest().getParameter(REQ_TEST_TYPE);
+        	System.out.println("testType => " + testType);
         	String pdfLOC = "";
         	if (StringUtils.isEmpty(testType)) { 
         		pdfLOC = Utility.getProjectHome() + getApplicationInfo().getAppDirName() + File.separator + DO_NOT_CHECKIN_DIR + File.separator + ARCHIVES + File.separator + CUMULATIVE + File.separator + getApplicationInfo().getAppDirName() + UNDERSCORE + reportFileName + DOT + PDF;
         	} else {
         		pdfLOC = Utility.getProjectHome() + getApplicationInfo().getAppDirName() + File.separator + DO_NOT_CHECKIN_DIR + File.separator + ARCHIVES + File.separator + testType + File.separator + testType + UNDERSCORE + reportFileName + DOT + PDF;
         	}
-        	
+        	System.out.println(" pdfLOC => " + pdfLOC);
             File pdfFile = new File(pdfLOC);
             if (pdfFile.isFile()) {
     			fileInputStream = new FileInputStream(pdfFile);
@@ -3421,4 +3424,12 @@ public class Quality extends DynamicParameterAction implements Constants {
     public void setShowGraphFor(String showGraphFor) {
         this.showGraphFor = showGraphFor;
     }
+
+	public boolean isUpdateCache() {
+		return updateCache;
+	}
+
+	public void setUpdateCache(boolean updateCache) {
+		this.updateCache = updateCache;
+	}
 }

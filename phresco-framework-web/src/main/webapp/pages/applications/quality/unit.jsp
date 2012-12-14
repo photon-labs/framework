@@ -205,10 +205,14 @@ $(document).ready(function() {
 });
 
 //To get the testsuites
-function loadTestSuites() {
+function loadTestSuites(updateCahe) {
 	var params = getBasicParams();
 	params = params.concat("&testType=");
 	params = params.concat('<%= FrameworkConstants.UNIT %>');
+	if (updateCahe !== undefined && !isBlank(updateCahe)) {
+		params = params.concat("&updateCache=");
+		params = params.concat(updateCahe);
+	}
 	loadContent('fetchUnitTestSuites', $('#form_test'), '', params, true);
 }
 
@@ -276,7 +280,7 @@ function popupOnOk(obj) {
 // after executing the test. when clicking Progress popup , it will call this methid to load test results
 function popupOnClose(obj) {
 	var closeUrl = $(obj).attr("id");
-	loadTestSuites();
+	loadTestSuites("true");
 }
 
 //This method will be called when there is no dynamic param

@@ -217,10 +217,14 @@ $(document).ready(function() {
 });
 			
 //To get the testsuites
-function loadTestSuites() {
+function loadTestSuites(updateCahe) {
 	var params = getBasicParams();
 	params = params.concat("&testType=");
 	params = params.concat('<%= FrameworkConstants.FUNCTIONAL %>');
+	if (updateCahe !== undefined && !isBlank(updateCahe)) {
+		params = params.concat("&updateCache=");
+		params = params.concat(updateCahe);
+	}
 	loadContent('fetchFunctionalTestSuites', $('#form_test'), '', params, true);
 }
 
@@ -367,6 +371,6 @@ function popupOnOk(obj) {
 //after executing the test. when clicking Progress popup , it will call this methid to load test results
 function popupOnClose(obj) {
 	var closeUrl = $(obj).attr("id");
-	loadTestSuites();
+	loadTestSuites("true");
 }
 </script> 
