@@ -346,8 +346,8 @@
 				<a href="#" class="btn btn-primary" data-dismiss="modal" id="popupCancel"><s:text name='lbl.btn.cancel'/></a>
 				<a href="#" class="btn btn-primary popupOk" id="" onClick="popupOnOk(this);" ><s:text name='lbl.btn.ok'/></a>
 				<a href="#" class="btn btn-primary popupClose" data-dismiss="modal" id="" onClick="popupOnClose(this);"><s:text name='lbl.btn.close'/></a>
-				<div id="errMsg" class="envErrMsg"></div>
 				<img class="popuploadingIcon" id="popuploadingIcon" src="" />
+				<div id="errMsg" class="envErrMsg"></div>
 			</div>
 		</div>
 	    <!-- Popup Ends -->

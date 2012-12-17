@@ -196,8 +196,9 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
                         
                         addValueDependToWatcher(watcherMap, parameterKey, values);
                         if (CollectionUtils.isNotEmpty(values)) {
-                            addWatcher(watcherMap, parameter.getDependency(), parameterKey, values.get(0).getValue());
+                            addWatcher(watcherMap, parameter.getDependency(), parameterKey, values.get(0).getKey());
                         }
+                        
                         if (StringUtils.isNotEmpty(paramBuilder.toString())) {
                             paramBuilder.append("&");
                         }
@@ -241,7 +242,7 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
         if (StringUtils.isNotEmpty(dependency)) {
             List<String> dependencyKeys = Arrays.asList(dependency.split(CSV_PATTERN));
             for (String dependentKey : dependencyKeys) {
-                DependantParameters dependantParameters;
+            	DependantParameters dependantParameters;
                 if (watcherMap.containsKey(dependentKey)) {
                     dependantParameters = (DependantParameters) watcherMap.get(dependentKey);
                 } else {
@@ -493,7 +494,6 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
             ApplicationInfo applicationInfo = getApplicationInfo();
             MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(getGoal())));
             Map<String, DependantParameters> watcherMap = (Map<String, DependantParameters>) getSessionAttribute(getAppId() + getGoal() + SESSION_WATCHER_MAP);
-
             if (StringUtils.isNotEmpty(getDependency())) {
                 // Get the values from the dynamic parameter class
                 Parameter dependentParameter = mojo.getParameter(getGoal(), getDependency());

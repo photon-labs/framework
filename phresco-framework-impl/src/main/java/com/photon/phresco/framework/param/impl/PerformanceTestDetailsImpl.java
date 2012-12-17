@@ -66,7 +66,7 @@ public class PerformanceTestDetailsImpl implements DynamicPageParameter, Constan
         String performDir = processor.getProperty(POM_PROP_KEY_PERFORMANCETEST_DIR);
         builder.append(performDir);
         builder.append(File.separator);
-        builder.append("server".toLowerCase());
+        builder.append(testAgainst.toLowerCase());
         builder.append(File.separator);
         builder.append(testResultName + DOT_JSON);
         

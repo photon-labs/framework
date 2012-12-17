@@ -201,7 +201,7 @@ function validateDynamicParam(successUrl, title, okUrl, okLabel, form, goal, nee
 
 function yesnoPopup(url, title, okUrl, okLabel, form, additionalParam) {
 	$('#popupPage').modal('show');//To show the popup
-	
+	showPopuploadingIcon();
 	$('.popupClose').hide();
 	$('#popupTitle').html(title); // Title for the popup
 	$('.popupClose').hide(); //no need close button since yesno popup
@@ -548,6 +548,7 @@ function hideLoadingIcon() {
 function showPopuploadingIcon() {
 	$("#errMsg").empty(); // remove error message while displaying loading icon
     $(".popuploadingIcon").show();
+    $(".popuploadingIcon").css("float", "left");
 	$(".popuploadingIcon").attr("src", getLoadingImgPath("popup"));
 }
 
