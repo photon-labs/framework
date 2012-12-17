@@ -26,6 +26,7 @@
 
 <%@ page import="org.apache.commons.collections.CollectionUtils"%>
 
+<%@page import="com.photon.phresco.commons.model.Customer"%>
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.commons.model.User"%>
 
@@ -248,10 +249,10 @@
 					                <%
 					                	User user = (User) session.getAttribute(FrameworkConstants.SESSION_USER_INFO);
 					                    if (user != null) {
-					                    	List<String> customerIds = user.getCustomerIds();
-								            for (String customerId : customerIds) { 
+					                    	List<Customer> customerIds = user.getCustomers();
+								            for (Customer customer : customerIds) { 
 								    %>
-					                            <option value="<%= customerId %>"><%= customerId %></option>
+					                            <option value="<%= customer.getId() %>"><%= customer.getName() %></option>
 									<% 
 								            }
 								        } 
