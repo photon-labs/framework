@@ -142,6 +142,7 @@
 
 <script type="text/javascript">
 	$(document).ready(function() {
+		hidePopuploadingIcon();
 		$(".report_scroll").scrollbars(); // jquery scroll bar
 		accordion();
 		indexHandler();

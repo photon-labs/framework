@@ -94,6 +94,7 @@
 <script type="text/javascript">
 
 $(document).ready(function() {
+	hidePopuploadingIcon();
 	$('#errMsg').empty();
 	
 	$('#add').click(function() {
