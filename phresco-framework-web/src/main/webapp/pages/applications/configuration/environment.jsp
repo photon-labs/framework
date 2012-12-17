@@ -128,37 +128,34 @@ $(document).ready(function() {
 		$('#errMsg').empty();
 		selectEnv();
 		var setAsDefaultEnvsSize = $('#multiselect :checked').size();
-        
         if (setAsDefaultEnvsSize > 1) {
-       	 $("#errMsg").html("<s:text name='please.select.only.one.environment'/>");
-       	 return false;
+			$("#errMsg").html("<s:text name='please.select.only.one.environment'/>");
+       	 	return false;
+		}  
+        if (setAsDefaultEnvsSize == 1) {
+			$('#multiselect ul li input[type=checkbox]').each( function() {
+				var env = $.parseJSON($(this).val());
+				env.defaultEnv = "false";
+	        });
+	        
+	       	var setAsDefaultEnvs = new Array();
+	        $('#multiselect :checkbox').each( function() {
+	        	var checkboxValue = $(this).val();
+	        	var allCheckboxVal = $.parseJSON(checkboxValue);
+	        	allCheckboxVal.defaultEnv = "false";
+				var finalEnvData = JSON.stringify(allCheckboxVal);
+				$(this).val(finalEnvData);
+	        });
+	       	
+	        $('#multiselect :checked').each( function() {
+	        	var selectedEnvData = $(this).val();
+				var selectedEnv = $.parseJSON(selectedEnvData);
+				selectedEnv.defaultEnv = "true";
+				var finalEnvData = JSON.stringify(selectedEnv);
+				$(this).val(finalEnvData);
+	        });
+			$("#errMsg").html("<s:text name='select.env.set.as.default'/>");
 		}
-       
-		$('#multiselect ul li input[type=checkbox]').each( function() {
-			var env = $.parseJSON($(this).val());
-			env.defaultEnv = "false";
-        });
-        
-       	var setAsDefaultEnvs = new Array();
-       	
-        $('#multiselect :checkbox').each( function() {
-        	var checkboxValue = $(this).val();
-        	var allCheckboxVal = $.parseJSON(checkboxValue);
-        	allCheckboxVal.defaultEnv = "false";
-			var finalEnvData = JSON.stringify(allCheckboxVal);
-			$(this).val(finalEnvData);
-        });
-       	
-        $('#multiselect :checked').each( function() {
-        	var selectedEnvData = $(this).val();
-			var selectedEnv = $.parseJSON(selectedEnvData);
-			selectedEnv.defaultEnv = "true";
-			var finalEnvData = JSON.stringify(selectedEnv);
-			$(this).val(finalEnvData);
-        });
-        
-		$("#errMsg").html("<s:text name='select.env.set.as.default'/>");
-        
    });
 	
 	
@@ -182,19 +179,18 @@ $(document).ready(function() {
 			var configLength = checkedDataObj.configurations.length;
 			var env = checkedDataObj.defaultEnv; // selected checkbox
 			
-			if(env == true ){
+			if(env == true ) {
 				$("#errMsg").html("<s:text name='you.cant.remove.defaultEnv'/>");
 				return false;
 			}
 			
-			if(configLength > 0 ){
+			if(configLength > 0 ) {
 				$("#errMsg").html("<s:text name='config.exists'/>");
 			}
 			
-			if(env == false && configLength <= 0){
+			if(env == false && configLength <= 0) {
 				$('#multiselect ul li input[type=checkbox]:checked').parent().remove();
 			}
-			
         });
     });
 	

@@ -18,8 +18,6 @@
   ###
   --%>
   
-<%@page import="com.photon.phresco.commons.model.ArtifactGroupInfo"%>
-<%@page import="com.itextpdf.text.log.SysoLogger"%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.util.ArrayList"%>
@@ -91,7 +89,7 @@
    <% } %>
    
    <form id="configProperties">
-   <% 
+<% 
 	StringBuilder sb = new StringBuilder();
     for (PropertyTemplate propertyTemplate : properties) {
     	ParameterModel pm = new ParameterModel();
@@ -166,14 +164,14 @@
 <div id="iisDiv" class="hideContent">
 	<div class="control-group" id="siteControl">
 		<label class="control-label labelbold">
-				<span class="mandatory">*</span>&nbsp;<s:text name='label.site.name'/>
+			<span class="mandatory">*</span>&nbsp;<s:text name='label.site.name'/>
 		</label>
 		<div class="controls">
 			<%
-					String siteName = "";
-					if (propertiesInfo != null && propertiesInfo.getProperty(FrameworkConstants.SETTINGS_TEMP_KEY_SITE_NAME) != null) {
-						siteName = propertiesInfo.getProperty(FrameworkConstants.SETTINGS_TEMP_KEY_SITE_NAME);							
-					}
+				String siteName = "";
+				if (propertiesInfo != null && propertiesInfo.getProperty(FrameworkConstants.SETTINGS_TEMP_KEY_SITE_NAME) != null) {
+					siteName = propertiesInfo.getProperty(FrameworkConstants.SETTINGS_TEMP_KEY_SITE_NAME);							
+				}
 			%> 
 			<input class="xlarge settings_text" id="siteName" placeholder="<s:text name='placeholder.site.name'/>" 
 				value="<%= siteName %>" type="text" name="siteName">
@@ -187,10 +185,10 @@
 		</label>
 		<div class="controls">
 			<%
-					String appName = "";
-					if (propertiesInfo != null && propertiesInfo.getProperty(FrameworkConstants.SETTINGS_TEMP_KEY_APP_NAME) != null) {
-						appName = propertiesInfo.getProperty(FrameworkConstants.SETTINGS_TEMP_KEY_APP_NAME);							
-					}
+				String appName = "";
+				if (propertiesInfo != null && propertiesInfo.getProperty(FrameworkConstants.SETTINGS_TEMP_KEY_APP_NAME) != null) {
+					appName = propertiesInfo.getProperty(FrameworkConstants.SETTINGS_TEMP_KEY_APP_NAME);							
+				}
 			%> 
 			<input class="xlarge settings_text" id="appName" name="appName" type="text" placeholder="<s:text name="placeholder.app.name"/>"
 				value="<%= appName %>"/>
@@ -199,43 +197,44 @@
     </div>
 </div>
 
-	<% 
+<% 
 	if (appInfo != null && appInfo.getTechInfo().getId().equals("tech-sitecore") && selectedType.equals("Server")) { 
-	%>
+%>
 	<div class="control-group" id="siteCoreControl">
 		<label class="control-label labelbold">
-				<span class="mandatory">*</span>&nbsp;<s:text name='label.sitecore.inst.path'/>
+			<span class="mandatory">*</span>&nbsp;<s:text name='label.sitecore.inst.path'/>
 		</label>
 		<div class="controls">
-				<%
-					String siteCoreInstPath = "";
-					if (propertiesInfo != null && propertiesInfo.getProperty(FrameworkConstants.SETTINGS_TEMP_SITECORE_INST_PATH) != null) {
-						siteCoreInstPath = propertiesInfo.getProperty(FrameworkConstants.SETTINGS_TEMP_SITECORE_INST_PATH);							
-					}
-				%> 
-				<input class="xlarge settings_text" id="siteCoreInstPath" name="siteCoreInstPath" type="text" placeholder="<s:text name="placeholder.sitecore.inst.path"/>" 
-					value="<%= siteCoreInstPath %>"/>
-				<span class="help-inline" id="siteCoreInstPathError"></span>
+			<%
+				String siteCoreInstPath = "";
+				if (propertiesInfo != null && propertiesInfo.getProperty(FrameworkConstants.SETTINGS_TEMP_SITECORE_INST_PATH) != null) {
+					siteCoreInstPath = propertiesInfo.getProperty(FrameworkConstants.SETTINGS_TEMP_SITECORE_INST_PATH);							
+				}
+			%> 
+			<input class="xlarge settings_text" id="siteCoreInstPath" name="siteCoreInstPath" type="text" placeholder="<s:text name="placeholder.sitecore.inst.path"/>" 
+				value="<%= siteCoreInstPath %>"/>
+			<span class="help-inline" id="siteCoreInstPathError"></span>
 		</div>
 	  </div>
 	<% 	
 		}
 	%>
-	
-    
 </form>
 
 <script type="text/javascript">
-$("div#certificateControl").hide();
+	$("div#certificateControl").hide();
 	
 	$(document).ready(function() {
+		remoteDeplyChecked();
 		hideLoadingIcon();//To hide the loading icon
+		technologyBasedRemoteDeploy();
+		
 		<% if (FrameworkConstants.ADD_CONFIG.equals(fromPage) || FrameworkConstants.EDIT_CONFIG.equals(fromPage)) { %>
 				getVersions();
-		<% } else {%>
+		<% } else { %>
 				getSettingsVersions();
-		<%	} %>
-		
+		<% } %>
+			
 		var typeData= $.parseJSON($('#templateType').val());
 		var selectedType = typeData.name;
 		var serverType = $('#type').val();
@@ -246,18 +245,12 @@ $("div#certificateControl").hide();
 				$('#iisDiv').css("display", "block");
 			}
 		}
-		
-		$("#templateType").change(function() {
-			getVersions();
-			getSettingsVersions();
-			technologyBasedRemoteDeploy();
-		});
 		 
 		$("#type").change(function() {
-			if($(this).val() == "Apache Tomcat" || $(this).val() == "Jboss" || $(this).val() == "WebLogic"){
-			$('#remoteDeploymentControl').show();	 
-			remoteDeplyChecked();
-			  } else {
+			if ($(this).val() == "Apache Tomcat" || $(this).val() == "Jboss" || $(this).val() == "WebLogic"){
+				$('#remoteDeploymentControl').show();	 
+				remoteDeplyChecked();
+			} else {
 			 	 hideRemoteDeply(); 
 			}
 			
@@ -270,21 +263,26 @@ $("div#certificateControl").hide();
 			}
 			
 			remoteDeplyChecked();
-			if( $(this).val() != "Apache Tomcat" || $(this).val() != "JBoss" || $(this).val() != "WebLogic"){
+			if ($(this).val() != "Apache Tomcat" || $(this).val() != "JBoss" || $(this).val() != "WebLogic") {
 				remoteDeplyChecked();
 			}
-			if ($(this).val() == "IIS" || $(this).val() == "NodeJS") {
+			if ($(this).val() == "IIS" || $(this).val() == "Nodejs") {
 				$("input[name='remoteDeployment']").attr("checked",false);
 			}
 			
 			technologyBasedRemoteDeploy();
+			
+			<% if (FrameworkConstants.ADD_CONFIG.equals(fromPage) || FrameworkConstants.EDIT_CONFIG.equals(fromPage)) { %>
+					getVersions();
+			<% } else { %>
+					getSettingsVersions();
+			<% } %>
 		});
 		 
 		// hide deploy dir if remote Deployment selected
 		$("input[name='remoteDeployment']").change(function() {
 			remoteDeplyChecked(); 
 		});
-		
 	});
 
 	function remoteDeplyChecked() {
@@ -301,8 +299,8 @@ $("div#certificateControl").hide();
 	}
 	
 	function technologyBasedRemoteDeploy() {
-		<% 
-		if (appInfo != null && appInfo.getTechInfo().getId().equals("tech-sitecore")) { 
+		<%
+			if (appInfo != null && appInfo.getTechInfo().getId().equals("tech-sitecore")) { 
 		%>
 				hideDeployDir();
 		<% } %>

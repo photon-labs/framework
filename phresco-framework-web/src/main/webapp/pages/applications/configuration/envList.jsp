@@ -54,22 +54,18 @@
 
     <% if (CollectionUtils.isEmpty(envs)) { %>
 		 <div class="alert alert-block">
-		 	 <img id="config_warning_icon" src="images/icons/warning_icon.png" />
+			<img id="config_warning_icon" src="images/icons/warning_icon.png" />
 			<%= actionSupport.getText("lbl.err.msg.list." + fromPage)%>
 		</div> 
     <% } else { %>
     	<div class="table_div" >
     		<s:if test="hasActionMessages()">
-			<div class="alert alert-success alert-message" id="envSuccessmsg">
-				<s:actionmessage />
-			</div>
-			</s:if>
-			<s:if test="hasActionErrors()">
-				<div class="alert alert-error"  id="errormsg">
-					<s:actionerror />
+				<div class="alert alert-success alert-message" id="envSuccessmsg">
+					<s:actionmessage />
 				</div>
 			</s:if>
-		<% for (Environment env : envs) { 
+		<% 
+			for (Environment env : envs) { 
 			String envJson = gson.toJson(env);
 		%>
 			<div class="theme_accordion_container">

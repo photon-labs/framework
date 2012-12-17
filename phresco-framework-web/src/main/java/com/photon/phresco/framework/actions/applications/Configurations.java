@@ -114,9 +114,10 @@ public class Configurations extends FrameworkBaseAction {
     private String configPath = null;
     private String url = "";
     private String version = "";
+    private boolean remoteDeployment;
     
     private boolean flag = false;
-    private List<String> versions = new ArrayList<String>();
+    private List<String> versions = null;
     
     private String featureName = "";
     
@@ -360,7 +361,7 @@ public class Configurations extends FrameworkBaseAction {
 		    	value = "false";
 		    }
 		    
-		    if (StringUtils.isNotEmpty(value)) {
+		    if (StringUtils.isNotEmpty(key)) {
 		        properties.setProperty(key, value);
 		    }
 		    
@@ -478,14 +479,13 @@ public class Configurations extends FrameworkBaseAction {
 	    ApplicationInfo applicationInfo = getApplicationInfo();
        // String techId = applicationInfo.getTechInfo().getId();
     	SettingsTemplate configTemplate = getServiceManager().getConfigTemplate(getConfigId(), getCustomerId());
+    	
+    	
+    	
         List<PropertyTemplate> properties = configTemplate.getProperties();
-        boolean remoteDeply = false;
         for (PropertyTemplate propertyTemplate : properties) {
             String key = propertyTemplate.getKey();
             String value = getActionContextParam(key);
-            if (REMOTE_DEPLOYMENT.equals(key)) {
-            	remoteDeply = Boolean.parseBoolean(value);
-            }
             
             if (CONFIG_TYPE.equals(key) && IIS_SERVER.equals(value)) {
             	isIISServer = true;
@@ -508,16 +508,17 @@ public class Configurations extends FrameworkBaseAction {
 			}
     		 
 			// validation for UserName & Password for RemoteDeployment
-			if(remoteDeply){
+			boolean isRequired = propertyTemplate.isRequired();
+			if(remoteDeployment){
 			    if (ADMIN_USERNAME.equals(key) || ADMIN_PASSWORD.equals(key)) {
-			        propertyTemplate.setRequired(true);
+			    	isRequired = true;
 			    }
 			    if(DEPLOY_DIR.equals(key)){
-			        propertyTemplate.setRequired(false);
+			    	isRequired = false;
 			    }
 			}
-             
-             if (propertyTemplate.isRequired() && StringUtils.isEmpty(value)) {
+
+			if (isRequired && StringUtils.isEmpty(value)) {
              	String field = propertyTemplate.getName();
              	dynamicError += key + ":" + field + " is empty" + ",";
             }
@@ -744,22 +745,26 @@ public class Configurations extends FrameworkBaseAction {
 			
 			SettingsTemplate settingTemplate = getSettingTemplate();
 			if (CONFIG_FEATURES.equals(settingTemplate.getId())) {
-			    List<String> custFeatureNames = new ArrayList<String>();
 			    List<String> selectedModules = appInfo.getSelectedModules();
-			    for (String selectedModule : selectedModules) {
-			        Gson gson = new Gson();
-                    SelectedFeature jsonObj = gson.fromJson(selectedModule, SelectedFeature.class);
-                    String artifactGroupId = jsonObj.getModuleId();
-                    ArtifactGroup artifactGroup = getServiceManager().getArtifactGroupInfo(artifactGroupId);
-                    List<CoreOption> appliesTo = artifactGroup.getAppliesTo();
-                    for (CoreOption coreOption : appliesTo) {
-                        if (!coreOption.isCore() && coreOption.getTechId().equals(appInfo.getTechInfo().getId())) {
-                            custFeatureNames.add(jsonObj.getDispName());
-                        }
-                    }
+			    if (CollectionUtils.isNotEmpty(selectedModules)) {
+				    List<String> custFeatureNames = new ArrayList<String>();
+				    for (String selectedModule : selectedModules) {
+				        Gson gson = new Gson();
+	                    SelectedFeature jsonObj = gson.fromJson(selectedModule, SelectedFeature.class);
+	                    String artifactGroupId = jsonObj.getModuleId();
+	                    ArtifactGroup artifactGroup = getServiceManager().getArtifactGroupInfo(artifactGroupId);
+	                    List<CoreOption> appliesTo = artifactGroup.getAppliesTo();
+	                    for (CoreOption coreOption : appliesTo) {
+	                        if (!coreOption.isCore() && coreOption.getTechId().equals(appInfo.getTechInfo().getId())) {
+	                            custFeatureNames.add(jsonObj.getDispName());
+	                        }
+	                    }
+				    }
+				    setReqAttribute(REQ_SELECTED_TYPE, getSelectedType());
+				    setReqAttribute(REQ_FEATURE_NAMES, custFeatureNames);
+			    } else {
+			    	setReqAttribute(REQ_FEATURE_NAMES, Collections.EMPTY_LIST);
 			    }
-			    setReqAttribute(REQ_SELECTED_TYPE, selectedType);
-			    setReqAttribute(REQ_FEATURE_NAMES, custFeatureNames);
 			    return SUCCESS;
 			}
             setReqAttribute(REQ_SETTINGS_TEMPLATE, settingTemplate);
@@ -773,28 +778,30 @@ public class Configurations extends FrameworkBaseAction {
 			}
             
             ConfigManager configManager = getConfigManager(getConfigPath());
-            Configuration configuration = configManager.getConfiguration(selectedEnv, selectedType, selectedConfigname);
+            Configuration configuration = configManager.getConfiguration(getSelectedEnv(), getSelectedType(), getSelectedConfigname());
             
             if (configuration != null) {
 	            String appliesTo = configuration.getAppliesTo();
 	            String [] selectedAppliesTo = appliesTo.split(",");
 	            List<String> selectedAppliesToList = Arrays.asList(selectedAppliesTo);
 	            setReqAttribute(REQ_APPLIES_TO, selectedAppliesToList);
-	            
                 Properties selectedProperties = configuration.getProperties();
                 setReqAttribute(REQ_PROPERTIES_INFO, selectedProperties);
             }
             
-            setReqAttribute(REQ_FROM_PAGE, fromPage);
+            setReqAttribute(REQ_FROM_PAGE, getFromPage());
             setReqAttribute(REQ_TYPE_VALUES, typeValues);
-            setReqAttribute(REQ_SELECTED_TYPE, selectedType);
+            setReqAttribute(REQ_SELECTED_TYPE, getSelectedType());
 		} catch (PhrescoException e) {
 			if (s_debugEnabled) {
                 S_LOGGER.error("Entered into catch block of Configurations.showProperties()" + FrameworkUtil.getStackTraceAsString(e));
             }
         	return showErrorPopup(e,  getText(EXCEPTION_CONFIGURATION_SHOW_PROPERTIES));
 		} catch (ConfigurationException e) {
-			e.printStackTrace();
+			if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Configurations.showProperties()" + FrameworkUtil.getStackTraceAsString(e));
+            }
+        	return showErrorPopup(new PhrescoException(e),  getText(EXCEPTION_CONFIGURATION_SHOW_PROPERTIES));
 		}
 		return SETTINGS_TYPE;
 	}
@@ -897,6 +904,7 @@ public class Configurations extends FrameworkBaseAction {
 		}
     	
     	try {
+    		versions = new ArrayList<String>();
     		ApplicationInfo appInfo = getApplicationInfo();
     		if (SERVER.equals(getSelectedType())) {
     			if(appInfo != null && CollectionUtils.isNotEmpty(appInfo.getSelectedServers())) {
@@ -929,7 +937,6 @@ public class Configurations extends FrameworkBaseAction {
 					}
 				}
     		}
-    		
     	} catch (PhrescoException e) {
     		if (s_debugEnabled) {
 				S_LOGGER.error("Entered into catch block of Configurations.fetchProjectInfoVersions()" + FrameworkUtil.getStackTraceAsString(e));
@@ -944,6 +951,7 @@ public class Configurations extends FrameworkBaseAction {
 		}
     	
     	try {
+    		versions = new ArrayList<String>();
     		if (DATABASE.equals(getSelectedType())) {
 	    		List<DownloadInfo> downloads = getServiceManager().getDownloads(getCustomerId());
 	    		for (DownloadInfo downloadInfo : downloads) {
@@ -969,11 +977,12 @@ public class Configurations extends FrameworkBaseAction {
 	    			}
 				}
     		}
-    	} catch (Exception e) {
+    	} catch (PhrescoException e) {
     		if (s_debugEnabled) {
 				S_LOGGER.error("Entered into catch block of Configurations.fetchSettingProjectInfoVersions()" + FrameworkUtil.getStackTraceAsString(e));
 	    	}
     	}
+    	
     	return SUCCESS;
     }
 
@@ -1432,4 +1441,16 @@ public class Configurations extends FrameworkBaseAction {
 	public void setVersionError(String versionError) {
 		this.versionError = versionError;
 	}
+
+
+	public boolean isRemoteDeployment() {
+		return remoteDeployment;
+	}
+
+
+	public void setRemoteDeployment(boolean remoteDeployment) {
+		this.remoteDeployment = remoteDeployment;
+	}
+
+
 }

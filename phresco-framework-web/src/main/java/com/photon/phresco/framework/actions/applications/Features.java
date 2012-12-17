@@ -240,7 +240,7 @@ public class Features extends FrameworkBaseAction {
 	    return SUCCESS;
 	}
 	
-	public String configureFeature () {
+	public String configureFeature() {
 	    try {
 	        List<PropertyTemplate> propertyTemplates = new ArrayList<PropertyTemplate>();
             if (CONFIG_FEATURES.equals(getConfigTemplateType())) {
@@ -299,7 +299,7 @@ public class Features extends FrameworkBaseAction {
                 setReqAttribute(REQ_HAS_CUSTOM_PROPERTY, true);
             }
 	    } catch (PhrescoException e) {
-	        throw new PhrescoException();
+	        throw new PhrescoException(e);
 	    }
 	}
 	
