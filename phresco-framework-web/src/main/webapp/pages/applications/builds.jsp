@@ -124,6 +124,9 @@
 					          		     </s:url>"><img src="images/icons/download.png" title="<%= buildInfo.getBuildName()%>"/>
 		                            </a>
 			              		</td>
+			              		<%
+									if (optionIds != null && optionIds.contains(FrameworkConstants.DEPLOY_KEY)) {
+								%>
 		              			<td>
 		              				<a class="deploy" additionalParam="from=deploy&buildNumber=<%= buildInfo.getBuildNo() %>">
 		              				 	<img src="images/icons/deploy.png" />
@@ -132,6 +135,9 @@
 	                                    <img src="images/icons/deploy.png" />
 	                                </a> --%>
 			              		</td>
+			              		<%
+									}
+				              	%>
 			              	</tr>	
 			              		<%-- <td style="width: 40%;">
 			              				<% if (TechnologyTypes.JAVA_STANDALONE.contains(technology)) { %>
