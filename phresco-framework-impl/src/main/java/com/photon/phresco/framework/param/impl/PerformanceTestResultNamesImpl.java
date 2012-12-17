@@ -26,7 +26,7 @@ public class PerformanceTestResultNamesImpl implements DynamicParameter, Constan
 		PossibleValues possibleValues = new PossibleValues();
 		ApplicationInfo applicationInfo = (ApplicationInfo) paramMap.get(KEY_APP_INFO);
 		String testAgainst = (String) paramMap.get(KEY_TEST_AGAINST);
-		String testDirPath = getTestDirPath(applicationInfo.getAppDirName(), "server");
+		String testDirPath = getTestDirPath(applicationInfo.getAppDirName(), testAgainst.toLowerCase());
 		File file = new File(testDirPath);
 		File[] testFiles = file.listFiles(new XmlNameFileFilter(FrameworkConstants.XML));
 		if (testFiles.length != 0) {

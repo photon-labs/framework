@@ -26,6 +26,7 @@
 
 <%@ page import="org.apache.commons.collections.CollectionUtils"%>
 
+<%@page import="com.photon.phresco.commons.model.Customer"%>
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.commons.model.User"%>
 
@@ -248,10 +249,10 @@
 					                <%
 					                	User user = (User) session.getAttribute(FrameworkConstants.SESSION_USER_INFO);
 					                    if (user != null) {
-					                    	List<String> customerIds = user.getCustomerIds();
-								            for (String customerId : customerIds) { 
+					                    	List<Customer> customerIds = user.getCustomers();
+								            for (Customer customer : customerIds) { 
 								    %>
-					                            <option value="<%= customerId %>"><%= customerId %></option>
+					                            <option value="<%= customer.getId() %>"><%= customer.getName() %></option>
 									<% 
 								            }
 								        } 
@@ -346,8 +347,8 @@
 				<a href="#" class="btn btn-primary" data-dismiss="modal" id="popupCancel"><s:text name='lbl.btn.cancel'/></a>
 				<a href="#" class="btn btn-primary popupOk" id="" onClick="popupOnOk(this);" ><s:text name='lbl.btn.ok'/></a>
 				<a href="#" class="btn btn-primary popupClose" data-dismiss="modal" id="" onClick="popupOnClose(this);"><s:text name='lbl.btn.close'/></a>
-				<div id="errMsg" class="envErrMsg"></div>
 				<img class="popuploadingIcon" id="popuploadingIcon" src="" />
+				<div id="errMsg" class="envErrMsg"></div>
 			</div>
 		</div>
 	    <!-- Popup Ends -->

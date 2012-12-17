@@ -32,9 +32,11 @@ import org.apache.log4j.Logger;
 
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ApplicationType;
+import com.photon.phresco.commons.model.Customer;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.TechnologyGroup;
 import com.photon.phresco.commons.model.TechnologyInfo;
+import com.photon.phresco.commons.model.User;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
@@ -119,13 +121,19 @@ public class Projects extends FrameworkBaseAction {
         }
 
         try {
-            List<ApplicationType> layers = getServiceManager().getApplicationTypes(getCustomerId());
-            setReqAttribute(REQ_PROJECT_LAYERS, layers);
-        } catch (PhrescoException e) {
+        	User user = (User) getSessionAttribute(SESSION_USER_INFO);
+        	List<Customer> customers = user.getCustomers();
+        	for (Customer customer : customers) {
+				if (customer.getId().equals(getCustomerId())) {
+					setReqAttribute(REQ_PROJECT_LAYERS, customer.getApplicableAppTypes());
+					break;
+				}
+			}
+        } catch (Exception e) {
             if (s_debugEnabled) {
                 S_LOGGER.error("Entered into catch block of Projects.addProject()" + FrameworkUtil.getStackTraceAsString(e));
             }
-            return showErrorPopup(e, getText(EXCEPTION_PROJECT_ADD));
+            return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_PROJECT_ADD));
         }
 
         return APP_APPLICATION_DETAILS;
@@ -195,16 +203,23 @@ public class Projects extends FrameworkBaseAction {
      * @throws PhrescoException 
      */
     private ApplicationType filterLayer(String layerId) throws PhrescoException {
-        if (s_layerMap.get(layerId) == null) {
-            List<ApplicationType> layers = getServiceManager().getApplicationTypes(getCustomerId());
-            if (CollectionUtils.isNotEmpty(layers)) {
-                for (ApplicationType layer : layers) {
-                    s_layerMap.put(layer.getId(), layer);
-                }
-            }
-        }
+    	if (s_layerMap.get(layerId) == null) {
+    		User user = (User) getSessionAttribute(SESSION_USER_INFO);
+    		List<Customer> customers = user.getCustomers();
+    		for (Customer customer : customers) {
+    			if (customer.getId().equals(getCustomerId())) {
+    				List<ApplicationType> layers = customer.getApplicableAppTypes();
+    				if (CollectionUtils.isNotEmpty(layers)) {
+    					for (ApplicationType layer : layers) {
+    						s_layerMap.put(layer.getId(), layer);
+    					}
+    				}
+    				break;
+    			}
+    		}
+    	}
 
-        return s_layerMap.get(layerId);
+    	return s_layerMap.get(layerId);
     }
 
     /**
