@@ -81,13 +81,12 @@ public class Code extends DynamicParameterAction implements Constants {
 			File pomPath = getPOMFile();
 			PomProcessor pomProcessor = new PomProcessor(pomPath);
 			String validateReportUrl = pomProcessor.getProperty(POM_PROP_KEY_VALIDATE_REPORT);
-			
 			// when the report url is not available, it is for sonar
 			// if the report url is available, it is for clang report(iphone)
 			if (StringUtils.isNotEmpty(validateReportUrl)) {
 				setReqAttribute(CLANG_REPORT, validateReportUrl);
 				List<Value> values = getClangReports(appInfo);
-				setReqAttribute(REQ_SOURCE_VALUES, values);
+				setReqAttribute(REQ_VALIDATE_AGAINST_VALUES, values);
 			} else {
 	        	MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_VALIDATE_CODE)));
 				Parameter valdAgnstParam = mojo.getParameter(PHASE_VALIDATE_CODE, SONAR);
