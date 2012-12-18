@@ -154,7 +154,7 @@
 		    	params = params.concat("&compressName=");
 		    	params = params.concat($("#compressName").val());
 		    	
-		    	loadContent('filesToMinify', '', '', params, true);
+		    	loadContent('filesToMinify', '', '', params, true, true);
 			} else {
 				if ($("input[name=filesToMinify]:checked").size() == 0) {
 					$(".add_errorMsg").html("Select atleast one file");					

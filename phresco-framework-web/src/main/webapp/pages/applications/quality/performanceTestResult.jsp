@@ -253,7 +253,7 @@
 	//To change the graph when based on is changed
 	function changeGraph() {
 // 		showLoadingIcon(); // Loading Icon
-		loadContent('fetchPerformanceTestResult', $('#formPerformance'), $('#testResultDisplay'), getBasicParams());
+		loadContent('fetchPerformanceTestResult', $('#formPerformance'), $('#testResultDisplay'), getBasicParams(), '', true);
 		$("#graphicalView").show();
 	}
 	

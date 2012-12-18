@@ -113,9 +113,9 @@ function clickButton(button, tag) {
 }
 
 function loadContent(pageUrl, form, tag, additionalParams, callSuccessEvent, ajaxCallType, callbackFunction) {
-	if (ajaxCallType == undefined || ajaxCallType == "") {
+	/*if (ajaxCallType == undefined || ajaxCallType == "") {
 		ajaxCallType = true;
-	}
+	}*/
 	
 	var params = getParameters(form, additionalParams);
 	$.ajax({
@@ -227,6 +227,7 @@ function yesnoPopup(url, title, okUrl, okLabel, form, additionalParam) {
 	
 	$("#errMsg").empty();
 	$('#popup_div').empty();
+	$('#popup_div').css("height", "300px");
 	$('#popup_div').load(url, data); //url to render the body content for the popup
 }
 
@@ -271,7 +272,7 @@ function additionalPopup(url, title, okUrl, okLabel, form, additionalParam, show
 function add_popupCancel() {
 	setTimeout(function () {
 		$('#popupPage').modal('show');
-	 }, 600);	
+	}, 600);	
 }
 
 function validateJson(url, form, containerTag, jsonParam, progressText, disabledDiv) {
@@ -790,12 +791,12 @@ function fillOptions(obj, value, text, selectTxt) {
 
 function confirmDialog(obj, title, bodyText, okUrl, okLabel) {
 	obj.click(function() {
-//		disableScreen();
 		$('#popupTitle').html(title); // Title for the popup
 		$('.popupClose').hide();
 		
 		$(".popupOk").attr('id', okUrl);
 	
+		$('#popup_div').css("height", "43px");
 		$('#popup_div').html(bodyText);
 		
 		if (okLabel !== undefined && !isBlank(okLabel)) {
@@ -838,8 +839,14 @@ function constructSingleSelectOptions(dependentValues, pushToElement) {
 	var control = $('#'+ pushToElement + ' option:selected');
 	var selected = control.val();
 	var additionalParam = control.attr('additionalParam'); 
+	var editbleComboClass = $('#'+ pushToElement + ' option').attr('class');
 	$("#" + pushToElement).empty();
 	var selectedStr = "";
+	var dynamicFirstValue = dependentValues[0].value;
+	if (editbleComboClass == "jecEditableOption") {//convert to editable combobox
+		var optionElement = "<option class='jecEditableOption'>Type or Select from list</option>";
+		$("#" + pushToElement).append(optionElement);
+	}
 	for(i in dependentValues) {
 		if(dependentValues[i].value == selected) {
 			selectedStr = "selected";
@@ -848,6 +855,7 @@ function constructSingleSelectOptions(dependentValues, pushToElement) {
 		}
 		$("<option></option>", {value: dependentValues[i].value, text: dependentValues[i].value, additionalParam: additionalParam}).appendTo("#" + pushToElement);
 	}
+	$('#'+ pushToElement + ' option[value="'+ dynamicFirstValue +'"]').prop("selected","selected");//To preselect select first value
 }
 
 /**
@@ -1222,12 +1230,14 @@ function showSelectedDBWithVersions() {
 function hideControl(controls) {
 	for (i in controls) {
 		$('#' + controls[i] + 'Control').hide();
+		$('.' + controls[i] + 'PerformanceDivClass').hide();
 	}
 }
 
 function showControl(controls) {
 	for (i in controls) {
 		$('#' + controls[i] + 'Control').show();
+		$('.' + controls[i] + 'PerformanceDivClass').show();//for performance context urls
 	}
 }
 

@@ -363,7 +363,7 @@
         <input id="next" type="button" value="<s:text name="label.next"/>" class="btn btn-primary" 
         	onclick="showFeaturesPage();"/>
         <input type="button" id="cancel" value="<s:text name="lbl.btn.cancel"/>" class="btn btn-primary" 
-			onclick="loadContent('applications', $('#formCustomers'), $('#container'));">
+			onclick="loadContent('applications', $('#formCustomers'), $('#container'), '', '', true);">
     </div>
     <!--  Submit and Cancel buttons Ends -->
     
@@ -625,7 +625,7 @@
 		params = params.concat(databaseName);
 		params = params.concat("&defaultOptTxt=");
 		params = params.concat(defaultOptTxt);
-		loadContent("fetchDownloadInfos", '', '', params, true);
+		loadContent("fetchDownloadInfos", '', '', params, true, true);
 	}
     
     var map = {};

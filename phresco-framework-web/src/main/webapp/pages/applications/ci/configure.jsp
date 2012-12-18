@@ -696,7 +696,7 @@
 		params = params.concat("&");
 		params = params.concat("operation=");
 	    params = params.concat($("#operation").val());
-		loadContent('getCiDynamParam','', $('#dynamicConfigLoad'), params, false);
+		loadContent('getCiDynamParam','', $('#dynamicConfigLoad'), params, false, true);
 	}
 	
 	// after validation success, show loading icon and creates job
@@ -706,7 +706,7 @@
 // 		$('.popupLoadingIcon').css("display","block");
 // 		var url = $("#configureForm").attr("action");
 		$('#configureForm :input').attr('disabled', false);
-		loadContent(url, $('#configureForm, #generateBuildForm'), $('#subcontainer'), getBasicParams(), false);
+		loadContent(url, $('#configureForm, #generateBuildForm'), $('#subcontainer'), getBasicParams(), false, true);
 	}
 	
 	function enableDisableCollabNet() {
@@ -956,7 +956,7 @@
 		var params = getBasicParams();
 		params = params.concat("&");
 		params = params.concat(additionalParams);
-    	loadContent('cronValidation','', $('#cronValidation'), params, false);
+    	loadContent('cronValidation','', $('#cronValidation'), params, false, true);
     	
     }
 </script>
