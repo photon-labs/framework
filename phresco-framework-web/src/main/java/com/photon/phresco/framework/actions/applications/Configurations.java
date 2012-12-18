@@ -491,7 +491,7 @@ public class Configurations extends FrameworkBaseAction {
             	isIISServer = true;
             }
             
-            if (CONFIG_TYPE.equals(key) && NODEJS_SERVER.equals(value)) { //If nodeJs server selected , there should not be validation for deploy dir.
+            if (CONFIG_TYPE.equals(key) && NODEJS_SERVER.equals(value) || NODEJS_MAC_SERVER.equals(value)) { //If nodeJs server selected , there should not be validation for deploy dir.
             	serverTypeValidation = true;
             }
             
