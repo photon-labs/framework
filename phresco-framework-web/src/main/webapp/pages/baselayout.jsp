@@ -127,7 +127,7 @@
 				});
 				showLoadingIcon();
 				clickMenu($("a[name='headerMenu']"), $("#container"), $('#formCustomers'));
-				loadContent("home", '', $("#container"));
+				loadContent("home", '', $("#container"), '', '', true);
 				activateMenu($("#home"));
 			});
 		</script>

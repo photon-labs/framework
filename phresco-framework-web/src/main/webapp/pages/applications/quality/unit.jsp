@@ -213,14 +213,14 @@ function loadTestSuites(updateCahe) {
 		params = params.concat("&updateCache=");
 		params = params.concat(updateCahe);
 	}
-	loadContent('fetchUnitTestSuites', $('#form_test'), '', params, true);
+	loadContent('fetchUnitTestSuites', $('#form_test'), '', params, true, true);
 }
 
 function testReport() {
 	var params = getBasicParams();
 	params = params.concat("&testType=");
 	params = params.concat('<%= FrameworkConstants.UNIT %>');
-	loadContent('fetchUnitTestReport', $('#form_test'), $('#testSuiteDisplay'), params);
+	loadContent('fetchUnitTestReport', $('#form_test'), $('#testSuiteDisplay'), params, '', true);
 	//show print as pdf icon
 	$('#pdfPopup').show();
 }
@@ -269,7 +269,7 @@ function popupOnOk(obj) {
 	if (okUrl === "printAsPdf") {
 		// show popup loading icon
 		//showPopuploadingIcon();
-		loadContent('printAsPdf', $('#generatePdf'), $('#popup_div'), '', false);
+		loadContent('printAsPdf', $('#generatePdf'), $('#popup_div'), '', false, true);
 	} else {
 		$("#popupPage").modal('hide');
 		var params = getBasicParams();

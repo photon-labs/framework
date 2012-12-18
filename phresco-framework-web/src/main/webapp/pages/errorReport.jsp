@@ -51,6 +51,6 @@
 		params = params.concat("<%= log.getAction() %>");
 		params = params.concat("&userid=");
 		params = params.concat("<%= log.getUserId() %>"); 
-		loadContent("sendReport", "", "", params, "");  
+		loadContent("sendReport", "", "", params, "", true);  
 	}
 </script>

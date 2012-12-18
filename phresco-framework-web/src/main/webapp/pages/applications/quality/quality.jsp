@@ -85,7 +85,7 @@
     	showLoadingIcon();
     	var params = getBasicParams();
     	clickMenu($("a[name='qualityTab']"), $("#subTabcontainer"), '', params);//handles the click event of the quality sub tabs
-		loadContent("unit", '', $("#subTabcontainer"), params);//
+		loadContent("unit", '', $("#subTabcontainer"), params, '', true);//
 		activateMenu($("#unit"));
 		
     	//Must be removed

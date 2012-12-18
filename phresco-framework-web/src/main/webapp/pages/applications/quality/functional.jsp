@@ -225,14 +225,14 @@ function loadTestSuites(updateCahe) {
 		params = params.concat("&updateCache=");
 		params = params.concat(updateCahe);
 	}
-	loadContent('fetchFunctionalTestSuites', $('#form_test'), '', params, true);
+	loadContent('fetchFunctionalTestSuites', $('#form_test'), '', params, true, true);
 }
 
 function testReport() {
 	var params = getBasicParams();
 	params = params.concat("&testType=");
 	params = params.concat('<%= FrameworkConstants.FUNCTIONAL %>');
-	loadContent('fetchFunctionalTestReport', $('#form_test'), $('#testSuiteDisplay'), params);
+	loadContent('fetchFunctionalTestReport', $('#form_test'), $('#testSuiteDisplay'), params, '', true);
 	//show print as pdf icon
 	$('#pdfPopup').show();
 }
@@ -283,7 +283,7 @@ function popupOnStop(obj) {
 	var url = $(obj).attr("id");
 	var params = getBasicParams();
 	if (url === "stopHub" || url === "stopNode") {
-		loadContent(url, '', '', params, true);
+		loadContent(url, '', '', params, true, true);
 	}
 }
 
@@ -364,7 +364,7 @@ function popupOnOk(obj) {
 	} else if (okUrl === "printAsPdf") {
 		// show popup loading icon
 		showPopuploadingIcon();
-		loadContent('printAsPdf', $('#generatePdf'), $('#popup_div'), '', false);
+		loadContent('printAsPdf', $('#generatePdf'), $('#popup_div'), '', false, true);
 	}
 }
 

@@ -168,7 +168,7 @@
 	    	params = params.concat($('#reportName').attr("class"));
  	    	params = params.concat("&fromPage=");
 	    	params = params.concat('<%= fromPage %>');
-	    	loadContent('deleteReport', $('#generatePdf'), $('#popup_div'), params, false);
+	    	loadContent('deleteReport', $('#generatePdf'), $('#popup_div'), params, false, true);
 		});
 		
 <%-- 	<%
