@@ -127,7 +127,7 @@ $('.control-group').addClass("valReportLbl");
         var params = getBasicParams() + '&';
         params = params.concat("validateAgainst=");
         params = params.concat(reportValue);
-        loadContent('check', $('#code'), $('#sonar_report'), params);
+        loadContent('check', $('#code'), $('#sonar_report'), params, '', true);
     }
     
 	function checkObj(obj) {
@@ -140,6 +140,6 @@ $('.control-group').addClass("valReportLbl");
 	
 	function popupOnClose(obj) {
 		var closeUrl = $(obj).attr("id");
-		loadContent("code", '', $("#subcontainer"), getBasicParams());
+		loadContent("code", '', $("#subcontainer"), getBasicParams(), '', true);
 	}
 </script>

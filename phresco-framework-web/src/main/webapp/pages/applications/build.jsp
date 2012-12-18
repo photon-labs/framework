@@ -223,7 +223,7 @@
     function copyToClipboard(data) {
         var params = "copyToClipboard=";
         params = params.concat(data);
-        loadContent('copyToClipboard', '', '', params, '', '', '');
+        loadContent('copyToClipboard', '', '', params, '', true, '');
 	}
     
     // When  server is  running disable run against source button

@@ -637,12 +637,15 @@
 		});
 		
 		show(selectedSchedule);
+		
 		<% 
-			if(existingJob != null && existingJob.getTriggers() != null) {
-				for(String trigger : existingJob.getTriggers()) {
+			if(existingJob != null) {
+				if (existingJob.getTriggers() != null) {
+					for(String trigger : existingJob.getTriggers()) {
 		%>
-					$("input[value='<%= trigger%>']").prop("checked", true);
+						$("input[value='<%= trigger%>']").prop("checked", true);
 		<%
+					}
 				}
 		%>
 			//based on svn type radio button have to be selected
@@ -693,7 +696,7 @@
 		params = params.concat("&");
 		params = params.concat("operation=");
 	    params = params.concat($("#operation").val());
-		loadContent('getCiDynamParam','', $('#dynamicConfigLoad'), params, false);
+		loadContent('getCiDynamParam','', $('#dynamicConfigLoad'), params, false, true);
 	}
 	
 	// after validation success, show loading icon and creates job
@@ -703,7 +706,7 @@
 // 		$('.popupLoadingIcon').css("display","block");
 // 		var url = $("#configureForm").attr("action");
 		$('#configureForm :input').attr('disabled', false);
-		loadContent(url, $('#configureForm, #generateBuildForm'), $('#subcontainer'), getBasicParams(), false);
+		loadContent(url, $('#configureForm, #generateBuildForm'), $('#subcontainer'), getBasicParams(), false, true);
 	}
 	
 	function enableDisableCollabNet() {
@@ -953,7 +956,7 @@
 		var params = getBasicParams();
 		params = params.concat("&");
 		params = params.concat(additionalParams);
-    	loadContent('cronValidation','', $('#cronValidation'), params, false);
+    	loadContent('cronValidation','', $('#cronValidation'), params, false, true);
     	
     }
 </script>

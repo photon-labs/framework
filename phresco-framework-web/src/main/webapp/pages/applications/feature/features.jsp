@@ -95,7 +95,7 @@
 		<input id="finish" type="button" value="<s:text name="label.finish"/>"  class="btn btn-primary"
 			onclick="updateApplication();"/>
 		<input type="button" id="cancel" value="<s:text name="lbl.btn.cancel"/>" class="btn btn-primary" 
-			onclick="loadContent('applications', $('#formCustomers'), $('#container'));">
+			onclick="loadContent('applications', $('#formCustomers'), $('#container'), '', '', true);">
 	</div>
 	
 	 <!-- Hidden fields --> 
@@ -175,7 +175,7 @@
     //Function for to get the list of features
     function getFeature(selectedType) {
     	var params = getBasicParams() + '&type=' + selectedType;
-	    loadContent("listFeatures", $('#formFeatures'), $('#accordianchange'), params);
+	    loadContent("listFeatures", $('#formFeatures'), $('#accordianchange'), params, '', true);
     }
     
     //Function to add the features to the right tab
@@ -230,7 +230,7 @@
     function updateApplication() {
     	var params = getBasicParams();
     	showProgressBar('<s:text name='progress.txt.update.app'/>');
-    	loadContent('finish', $('#formFeatures'), $('#container'), params, false);
+    	loadContent('finish', $('#formFeatures'), $('#container'), params, false, true);
     }
   	
   	//To show the configuration popup

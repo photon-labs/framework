@@ -188,13 +188,13 @@
     	
     	$('select[name=customerId]').change(function() {
     		showLoadingIcon();
-    		loadContent("applications", $('#formCustomers'), $("#container"));
+    		loadContent("applications", $('#formCustomers'), $("#container"), '', '', true);
     	});
     	
     	//Trigerred when add btn is clicked
     	$('#addProject').click(function() {
     		showLoadingIcon();
-    		loadContent('addProject', $('#formCustomers'), $('#container'));		
+    		loadContent('addProject', $('#formCustomers'), $('#container'), '', '', true);		
     	});
    	});
 	
@@ -204,14 +204,14 @@
 		params = params.concat(projectId);
 		params = params.concat("&appId=");
 		params = params.concat(appId);
-		loadContent("loadMenu", $("#formCustomers"), $('#container'), params);
+		loadContent("loadMenu", $("#formCustomers"), $('#container'), params, '', true);
 	}
     
     function editProject(projectId) {
     	showLoadingIcon();
 		var params = "projectId=";
 		params = params.concat(projectId);
-		loadContent("editProject", $("#formCustomers"), $('#container'), params);
+		loadContent("editProject", $("#formCustomers"), $('#container'), params, '', true);
 	}
     
  	function popupOnOk(obj) {
@@ -224,7 +224,7 @@
  		} else if (okUrl === "printAsPdf") {
 			// show popup loading icon
 			showPopuploadingIcon();
-			loadContent('printAsPdf', $('#generatePdf'), $('#popup_div'), getBasicParams(), false);
+			loadContent('printAsPdf', $('#generatePdf'), $('#popup_div'), getBasicParams(), false, true);
 		} else if (okUrl === "deleteProject") {
 			$("#popupPage").modal('hide');
 			// show popup loading icon

@@ -77,7 +77,7 @@
   		var params = getBasicParams();
   		params = params.concat("&selectedType=");
   		params = params.concat(selectedType);
-    	loadContent('showConfigProperties', $('#formConfigAdd'), '', params, true);
+    	loadContent('showConfigProperties', $('#formConfigAdd'), '', params, true, true);
 	}
 
 	function successEvent(pageUrl, data) {

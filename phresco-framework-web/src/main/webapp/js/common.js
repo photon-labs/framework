@@ -113,9 +113,9 @@ function clickButton(button, tag) {
 }
 
 function loadContent(pageUrl, form, tag, additionalParams, callSuccessEvent, ajaxCallType, callbackFunction) {
-	if (ajaxCallType == undefined || ajaxCallType == "") {
+	/*if (ajaxCallType == undefined || ajaxCallType == "") {
 		ajaxCallType = true;
-	}
+	}*/
 	
 	var params = getParameters(form, additionalParams);
 	$.ajax({
@@ -839,8 +839,14 @@ function constructSingleSelectOptions(dependentValues, pushToElement) {
 	var control = $('#'+ pushToElement + ' option:selected');
 	var selected = control.val();
 	var additionalParam = control.attr('additionalParam'); 
+	var editbleComboClass = $('#'+ pushToElement + ' option').attr('class');
 	$("#" + pushToElement).empty();
 	var selectedStr = "";
+	var dynamicFirstValue = dependentValues[0].value;
+	if (editbleComboClass == "jecEditableOption") {//convert to editable combobox
+		var optionElement = "<option class='jecEditableOption'>Type or Select from list</option>";
+		$("#" + pushToElement).append(optionElement);
+	}
 	for(i in dependentValues) {
 		if(dependentValues[i].value == selected) {
 			selectedStr = "selected";
@@ -849,6 +855,7 @@ function constructSingleSelectOptions(dependentValues, pushToElement) {
 		}
 		$("<option></option>", {value: dependentValues[i].value, text: dependentValues[i].value, additionalParam: additionalParam}).appendTo("#" + pushToElement);
 	}
+	$('#'+ pushToElement + ' option[value="'+ dynamicFirstValue +'"]').prop("selected","selected");//To preselect select first value
 }
 
 /**
@@ -1223,12 +1230,14 @@ function showSelectedDBWithVersions() {
 function hideControl(controls) {
 	for (i in controls) {
 		$('#' + controls[i] + 'Control').hide();
+		$('.' + controls[i] + 'PerformanceDivClass').hide();
 	}
 }
 
 function showControl(controls) {
 	for (i in controls) {
 		$('#' + controls[i] + 'Control').show();
+		$('.' + controls[i] + 'PerformanceDivClass').show();//for performance context urls
 	}
 }
 

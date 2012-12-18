@@ -115,6 +115,6 @@
 	function changeVideo(videoId) {
 		var params = "video=";
 		params = params.concat(videoId);
-		loadContent('video', '', $("#videoPlayer"), params);
+		loadContent('video', '', $("#videoPlayer"), params, '', true);
     }
 </script>

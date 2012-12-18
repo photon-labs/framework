@@ -359,7 +359,7 @@
 	}
 	
 	function checkForConfig() {
-		loadContent('checkForConfiguration', $("#generateBuildForm"), '', getBasicParams(), true);
+		loadContent('checkForConfiguration', $("#generateBuildForm"), '', getBasicParams(), true, true);
 	}
 	
 	function successEnvValidation(data) {
@@ -432,6 +432,7 @@
 			dependencyArr = csvDependencies.split(',');
 			for (var i = 0; i < dependencyArr.length; i+=1) {
 				$('#' + $.trim(dependencyArr[i]) + 'Control').show();
+				$('.' + $.trim(dependencyArr[i]) + 'PerformanceDivClass').show();//for performance context urls
 				updateDependancy(dependencyArr[i]);
 			}
 		}
@@ -490,8 +491,8 @@
 	
 	function updateDependancySuccEvent(data) {
 		if (data.dynamicPageParameterDesign != undefined && !isBlank(data.dynamicPageParameterDesign)) {
-			$('#' + data.dependency + "DivId").empty();
-			$('#' + data.dependency + "DivId").append(data.dynamicPageParameterDesign);
+			$('.' + data.dependency + "PerformanceDivClass").empty();
+			$('.' + data.dependency + "PerformanceDivClass").append(data.dynamicPageParameterDesign);
 		}
 		
 		if (data.dependency != undefined && !isBlank(data.dependency)) {
@@ -587,7 +588,7 @@
 	function deleteContextUrl() {
 		$('.check').each(function() {
 			if ($(this).is(':checked')) {
-				if ($(this).parents('div').attr('id') != "contextDiv") {
+				if ($(this).parents('div').attr('id') != "contextDiv" && $(this).parents('div').attr('id') != "dbContextDiv") {
 					$(this).closest('fieldset').remove();
 				}
 			}
@@ -598,7 +599,7 @@
 	function addHeader(obj) {
 		var	key = $(obj).parents('fieldset').find($('input[name=key]')).val();
 		var	value = $(obj).parents('fieldset').find($('input[name=value]')).val();
-		if ((key!= undefined && !isBlank(key)) && (value!= undefined && !isBlank(value))) {
+		if ((key != undefined && !isBlank(key)) && (value != undefined && !isBlank(value))) {
 			$(obj).closest('fieldset').append('<div id="headerkeyId" style="background-color: #bbbbbb; width: 40%; margin-bottom:2px; height: auto; border-radius: 6px; '+
 						'padding: 0 0 0 10px; position: relative"><a href="#" style="text-decoration: none; margin-right: 10px; color: #000000; '+
 						'margin-left: 95%;" onclick="removeHeader(this);">&times;</a><div style="cursor: pointer; color: #000000; height: auto; '+
