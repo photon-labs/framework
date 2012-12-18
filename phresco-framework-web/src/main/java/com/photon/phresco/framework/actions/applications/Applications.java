@@ -866,9 +866,14 @@ public class Applications extends FrameworkBaseAction {
 			}
 			revision = !HEAD_REVISION.equals(revision) ? revisionVal : revision;
 			SCMManagerImpl scmi = new SCMManagerImpl();
-			scmi.importProject(SVN, repoUrl, userName, password, null, revision);
-			errorString = getText(IMPORT_SUCCESS_PROJECT);
-			errorFlag = true;
+			boolean importProject = scmi.importProject(SVN, repoUrl, userName, password, null, revision);
+			if (importProject) {
+				errorString = getText(IMPORT_SUCCESS_PROJECT);
+				errorFlag = true;
+			} else {
+				errorString = getText(INVALID_FOLDER);
+				errorFlag = false;
+			}
 		} catch (SVNAuthenticationException e) {
 			if(s_debugEnabled){
 				S_LOGGER.error(e.getLocalizedMessage());
@@ -915,9 +920,14 @@ public class Applications extends FrameworkBaseAction {
 		}
 		SCMManagerImpl scmi = new SCMManagerImpl();
 		try {
-			scmi.importProject(GIT, repoUrl, userName, password, MASTER ,revision);
-			errorString = getText(IMPORT_SUCCESS_PROJECT);
-			errorFlag = true;
+			boolean importProject = scmi.importProject(GIT, repoUrl, userName, password, MASTER ,revision);
+			if (importProject) {
+				errorString = getText(IMPORT_SUCCESS_PROJECT);
+				errorFlag = true;
+			} else {
+				errorString = getText(INVALID_FOLDER);
+				errorFlag = false;
+			}
 		} catch (SVNAuthenticationException e) {	//Will not occur for GIT
 			if(s_debugEnabled){
 				S_LOGGER.error(e.getLocalizedMessage());

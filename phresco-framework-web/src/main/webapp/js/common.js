@@ -791,6 +791,7 @@ function fillOptions(obj, value, text, selectTxt) {
 
 function confirmDialog(obj, title, bodyText, okUrl, okLabel) {
 	obj.click(function() {
+		$("#errMsg").empty();
 		$('#popupTitle').html(title); // Title for the popup
 		$('.popupClose').hide();
 		
