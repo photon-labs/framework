@@ -637,12 +637,15 @@
 		});
 		
 		show(selectedSchedule);
+		
 		<% 
-			if(existingJob != null && existingJob.getTriggers() != null) {
-				for(String trigger : existingJob.getTriggers()) {
+			if(existingJob != null) {
+				if (existingJob.getTriggers() != null) {
+					for(String trigger : existingJob.getTriggers()) {
 		%>
-					$("input[value='<%= trigger%>']").prop("checked", true);
+						$("input[value='<%= trigger%>']").prop("checked", true);
 		<%
+					}
 				}
 		%>
 			//based on svn type radio button have to be selected
