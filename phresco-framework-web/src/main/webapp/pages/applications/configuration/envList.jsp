@@ -144,7 +144,7 @@
 													    				host = Properties.getProperty("host");
 												    					port = Properties.getProperty("port");
 												    					protocol = Properties.getProperty("protocol");
-													    				String configName = configuration.getName() + configuration.getEnvName();
+													    				String configName = configuration.getName() + configuration.getType() + configuration.getEnvName();
 													    				Pattern pattern = Pattern.compile("\\s+");
 													    				Matcher matcher = pattern.matcher(configName);
 													    				boolean check = matcher.find();

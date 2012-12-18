@@ -6185,3 +6185,6 @@ color: #313131;
 	padding-left: 12%;
 }
 
+#envDesc {
+	resize: none;
+}
