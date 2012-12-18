@@ -360,17 +360,17 @@ $(document).ready(function() {
 });
 
 function buildCI() {
-	loadContent('buildCI',$('#deleteObjects'), $('#subcontainer'), getBasicParams(), false);
+	loadContent('buildCI',$('#deleteObjects'), $('#subcontainer'), getBasicParams(), false, true);
 }
 
 function deleteCIBuild() {
 	showProgressBar("Deleting Build (s)");
-	loadContent('CIBuildDelete',$('#deleteObjects'), $('#subcontainer'), getBasicParams(), false);
+	loadContent('CIBuildDelete',$('#deleteObjects'), $('#subcontainer'), getBasicParams(), false, true);
 }
 	
 function deleteCIJob(){
 	showProgressBar("Deleting job (s)");
-	loadContent('CIJobDelete',$('#deleteObjects'), $('#subcontainer'), getBasicParams(), false);
+	loadContent('CIJobDelete',$('#deleteObjects'), $('#subcontainer'), getBasicParams(), false, true);
 }
 
 function enableStart() {
@@ -388,7 +388,7 @@ function refreshBuild() {
 	console.log("refresh build method called value " + refreshCi);
 	if(refreshCi) {
 		console.log("Going to get no of jobs in progress " + refreshCi);	
-		loadContent('getNoOfJobsIsInProgress',$('#deleteObjects'), '', getBasicParams(), true);
+		loadContent('getNoOfJobsIsInProgress',$('#deleteObjects'), '', getBasicParams(), true, true);
 	}
 }
 
@@ -404,7 +404,7 @@ function successRefreshBuild(data) {
     		console.log("Build trugger completed in jenkins , but UI is blocking ");
 //     		refreshCi = false;
     	} else {
-    		loadContent('ci', $('#deleteObjects'), $('#subcontainer'), getBasicParams(), false);
+    		loadContent('ci', $('#deleteObjects'), $('#subcontainer'), getBasicParams(), false, true);
     	}
 	} else {
 		window.setTimeout(refreshBuild, 15000); // wait for 15 sec
@@ -446,7 +446,7 @@ function reloadCI() {
 	if ($("a[name='appTab'][class='active']").attr("id") == "ci" && $("#popupPage").css("display") == "none"){
 		console.log("reload CI called and going to refresh the page ");
     	console.log("Server startup completed ..." + isCiRefresh);
-		loadContent('ci',$('#deleteObjects'), $('#subcontainer'), getBasicParams(), false);
+		loadContent('ci',$('#deleteObjects'), $('#subcontainer'), getBasicParams(), false, true);
 	} else {
 		console.log("reload CI : It is not in CI tab or popup available ");
 		$(".errorMsgLbl").text('<%= FrameworkConstants.CI_NO_JOBS_AVAILABLE%>');
@@ -455,7 +455,7 @@ function reloadCI() {
 
 function localJenkinsAliveCheck () {
 	console.log("local jenkins alive check called ");
-	loadContent('localJenkinsAliveCheck',$('#deleteObjects'), '', getBasicParams(), true, false);
+	loadContent('localJenkinsAliveCheck',$('#deleteObjects'), '', getBasicParams(), true, false, true);
 }
 
 function successLocalJenkinsAliveCheck (data) {

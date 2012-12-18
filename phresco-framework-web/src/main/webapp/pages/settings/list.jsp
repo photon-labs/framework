@@ -108,7 +108,7 @@
     	//Trigerred when add btn is clicked
     	$('#configAdd').click(function() {
     		showLoadingIcon();
-    		loadContent('addConfiguration', $('#formCustomers, #formAppMenu'), $('#container'), 'fromPage=add<%=fromPage%>&configPath=<%=configPath%>');
+    		loadContent('addConfiguration', $('#formCustomers, #formAppMenu'), $('#container'), 'fromPage=add<%=fromPage%>&configPath=<%=configPath%>', '', true);
     	});
 	});
 	
@@ -127,7 +127,7 @@
 			params = params.concat("&configPath=");
 			params = params.concat(configPath);
 			showLoadingIcon();
-			loadContent("editConfiguration", $("#formConfigAdd"), $('#container'), params);
+			loadContent("editConfiguration", $("#formConfigAdd"), $('#container'), params, '', true);
 	}
 	 
 	 function cloneConfiguration(configName, envName, configType, currentConfigDesc) {
@@ -183,7 +183,7 @@
 				params = params.concat("&currentEnvName=");
 				params = params.concat(currentEnvName);
 				$("#popupPage").modal('hide');//To hide popup
-				loadContent("cloneConfiguration", $("#formClonePopup"), $('#loadEnv'), params);
+				loadContent("cloneConfiguration", $("#formClonePopup"), $('#loadEnv'), params, '', true);
 			 }
 		} else {
 			var envs = [];

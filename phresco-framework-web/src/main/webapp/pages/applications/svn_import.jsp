@@ -250,7 +250,7 @@
 		enableSvnFormDet();
 		// show popup loading icon
 		showPopuploadingIcon();
-		loadContent(getAction(), $('#repoDetails'), '', params, true);
+		loadContent(getAction(), $('#repoDetails'), '', params, true, true);
 	}
 	
 	function successEvent(pageUrl, data){
@@ -275,7 +275,7 @@
 			params = params.concat("statusFlag=");
 			params = params.concat(statusFlag);
 			$('#popupPage').modal('hide');
-			loadContent("applications", $('#formProjectList'), $("#container"), params);
+			loadContent("applications", $('#formProjectList'), $("#container"), params, '', true);
 		}
 	}
 // 			alert("fetching...");

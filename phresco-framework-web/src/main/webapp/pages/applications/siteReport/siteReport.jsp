@@ -87,7 +87,7 @@
    	function checkForSiteReport() {
     	$("#site_report").empty();
     	 var params = getBasicParams();
-    	loadContent('checkForSiteReport', '', $('#site_report'), params);
+    	loadContent('checkForSiteReport', '', $('#site_report'), params, '', true);
     } 
     
     function popupOnOk(obj) {
@@ -97,7 +97,7 @@
 		    $('input:checkbox[value="index"]').removeAttr('disabled', true);
 		    var params = getBasicParams();
 			$("#popupPage").modal('hide');//To hide popup
-		    loadContent('createReportConfig',$('#formConfigureList'), $('#subcontainer'), params);
+		    loadContent('createReportConfig',$('#formConfigureList'), $('#subcontainer'), params, '', true);
 		}
 	}
     
@@ -105,7 +105,7 @@
     	showParentPage();
 		if (closeUrl === "generateReport") {
 		    var params = getBasicParams();
-		    loadContent('veiwSiteReport',$('#formConfigureList'), $('#subcontainer'), params);
+		    loadContent('veiwSiteReport',$('#formConfigureList'), $('#subcontainer'), params, '', true);
 		}
 	}
     

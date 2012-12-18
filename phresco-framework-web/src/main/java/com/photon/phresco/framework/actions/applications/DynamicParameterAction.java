@@ -507,6 +507,7 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
                     	FrameworkUtil frameworkUtil = new FrameworkUtil();
                     	ParameterModel parameterModel = new ParameterModel();
                     	parameterModel.setName(dependentParameter.getKey());
+                    	parameterModel.setShow(true);
                     	StringTemplate constructDynamicTemplate = frameworkUtil.constructDynamicTemplate(getCustomerId(), dependentParameter, parameterModel, dynamicPageParameter, className);
                     	setDynamicPageParameterDesign(constructDynamicTemplate.toString());
                     } else {

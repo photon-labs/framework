@@ -23,7 +23,7 @@
     $(document).ready(function() {
     	var params = getBasicParams();
     	clickMenu($("a[name='qualityTab']"), $("#subTabcontainer"), $('#formAppMenu, #formCustomers'));//handles the click event of the quality sub tabs
-		loadContent("unit", '', $("#subTabcontainer"), params);
+		loadContent("unit", '', $("#subTabcontainer"), params, '', true);
 		activateMenu($("#unit"));
 	});
 </script>

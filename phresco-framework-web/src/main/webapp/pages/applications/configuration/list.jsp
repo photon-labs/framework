@@ -93,7 +93,7 @@
 		//Trigerred when add btn is clicked
 		$('#configAdd').click(function() {
 			showLoadingIcon();
-			loadContent('addConfiguration', $('#formCustomers, #formAppMenu'), $('#subcontainer'), 'fromPage=add<%=fromPage%>&configPath=<%=configPath%>');
+			loadContent('addConfiguration', $('#formCustomers, #formAppMenu'), $('#subcontainer'), 'fromPage=add<%=fromPage%>&configPath=<%=configPath%>', '', true);
 		});
 	});
 	
@@ -112,7 +112,7 @@
 		params = params.concat("&configPath=");
 		params = params.concat(configPath);
 		showLoadingIcon();
-		loadContent("editConfiguration", $("#formConfigAdd"), $('#subcontainer'), params);
+		loadContent("editConfiguration", $("#formConfigAdd"), $('#subcontainer'), params, '', true);
 	}
 	 
 	 
@@ -170,7 +170,7 @@
 				params = params.concat(currentEnvName);
 				$("#popupPage").modal('hide');//To hide popup
 				showLoadingIcon();
-				loadContent("cloneConfiguration", $("#formClonePopup"), $('#loadEnv'), params);
+				loadContent("cloneConfiguration", $("#formClonePopup"), $('#loadEnv'), params, '', true);
 			 }
 		} else {
 			var envs = [];

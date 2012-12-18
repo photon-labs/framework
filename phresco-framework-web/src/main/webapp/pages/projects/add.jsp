@@ -507,7 +507,7 @@
 		<input type="button" id="updateProject" value="<s:text name="lbl.btn.update"/>" class="btn btn-primary">
 	<% } %>
 	<input type="button" id="cancel" value="<s:text name="lbl.btn.cancel"/>" class="btn btn-primary" 
-		onclick="loadContent('applications', $('#formCustomers'), $('#container'));"> 
+		onclick="loadContent('applications', $('#formCustomers'), $('#container'), '', '', true);"> 
 </div>
 <!--  Submit and Cancel buttons Ends -->
 
@@ -643,7 +643,7 @@
 			params = params.concat("&" + techGroupId + "<%= FrameworkConstants.REQ_PARAM_NAME_TECHNOLOGY %>" + "=");
 			params = params.concat(techId);
 		}
-		loadContent("fetchTechVersions", $('#formCreateProject'), '', params, true);
+		loadContent("fetchTechVersions", $('#formCreateProject'), '', params, true, true);
 	}
 	
 	function getAppLayerTechVersions(layerId, obj) {
@@ -660,7 +660,7 @@
 		var params = getBasicParams();
 		params = params.concat("&layerId=");
 		params = params.concat(layerId);
-		loadContent("fetchWebLayerWidgets", $('#formCreateProject'), '', params, true);
+		loadContent("fetchWebLayerWidgets", $('#formCreateProject'), '', params, true, true);
 	}
 	
 	var map = {};

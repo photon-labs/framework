@@ -331,7 +331,7 @@
 		var params = getBasicParams();
 		params = params.concat("&selectedType=");
 		params = params.concat(selectedType);
-		loadContent("fetchProjectInfoVersions", $('#configProperties'), '', params, true);
+		loadContent("fetchProjectInfoVersions", $('#configProperties'), '', params, true, true);
 	}
 	
 	function getSettingsVersions() {
@@ -343,7 +343,7 @@
 		params = params.concat(selectedType);
 		params = params.concat("&propType=");
 		params = params.concat(propType);
-		loadContent("fetchSettingProjectInfoVersions", $('#configProperties'), '', params, true);
+		loadContent("fetchSettingProjectInfoVersions", $('#configProperties'), '', params, true, true);
 	}
 	
 	function successEvent(pageUrl, data) {

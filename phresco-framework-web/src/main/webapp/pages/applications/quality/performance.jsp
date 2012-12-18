@@ -218,13 +218,13 @@
        
 	//To check for the performance test result 
     function isResultFileAvailbale() {
-    	loadContent('performanceTestResultAvail', '', '', getBasicParams(), true);
+    	loadContent('performanceTestResultAvail', '', '', getBasicParams(), true, true);
     }
     
 	//To get the test result files
     function performanceTestResultsFiles() {
         testResultsType = $("#testResultsType").val();
-        loadContent('fetchPerformanceTestResultFiles', $('#formPerformance'), '', getBasicParams(), true);
+        loadContent('fetchPerformanceTestResultFiles', $('#formPerformance'), '', getBasicParams(), true, true);
     }
     
     function successPerfTestResultsFiles(data) {
@@ -258,7 +258,7 @@
     }
     
     function performanceTestResults() {
-		loadContent('fetchPerformanceTestResult', $('#formPerformance'), $('#testResultDisplay'), getBasicParams());
+		loadContent('fetchPerformanceTestResult', $('#formPerformance'), $('#testResultDisplay'), getBasicParams(), '', true);
 		//show print as pdf icon
 		$('#pdfPopup').show();
     }
@@ -338,7 +338,7 @@
 		if (okUrl === "printAsPdf") {
 			// show popup loading icon
 			showPopuploadingIcon();
-			loadContent('printAsPdf', $('#generatePdf'), $('#popup_div'), '', false);
+			loadContent('printAsPdf', $('#generatePdf'), $('#popup_div'), '', false, true);
 		} else if (okUrl === "runPerformanceTest") {
 			$('#popupPage').modal('hide');
 			var params = getBasicParams();

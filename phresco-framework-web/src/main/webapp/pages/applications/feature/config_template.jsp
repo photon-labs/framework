@@ -64,7 +64,7 @@
 	
 	function getProperties() {
 		var params = getBasicParams();
-    	loadContent('showConfigProperties', $('#formFeatureConfig'), $('#propertiesDiv'), params, true);
+    	loadContent('showConfigProperties', $('#formFeatureConfig'), $('#propertiesDiv'), params, true, true);
 	}
 	
 	function popupOnOk(obj) {
@@ -72,6 +72,6 @@
 		$('#popupPage').modal('hide');//To hide the popup
 		var params = getBasicParams();
 		var url = $(obj).attr("id");
-		loadContent(url, $('#formFeatureConfig, #formConfigTempProp'), $("#subcontainer"), params, true);
+		loadContent(url, $('#formFeatureConfig, #formConfigTempProp'), $("#subcontainer"), params, true, true);
 	}
 </script>
