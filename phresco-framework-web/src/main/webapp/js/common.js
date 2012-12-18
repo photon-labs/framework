@@ -227,6 +227,7 @@ function yesnoPopup(url, title, okUrl, okLabel, form, additionalParam) {
 	
 	$("#errMsg").empty();
 	$('#popup_div').empty();
+	$('#popup_div').css("height", "300px");
 	$('#popup_div').load(url, data); //url to render the body content for the popup
 }
 
@@ -271,7 +272,7 @@ function additionalPopup(url, title, okUrl, okLabel, form, additionalParam, show
 function add_popupCancel() {
 	setTimeout(function () {
 		$('#popupPage').modal('show');
-	 }, 600);	
+	}, 600);	
 }
 
 function validateJson(url, form, containerTag, jsonParam, progressText, disabledDiv) {
@@ -790,12 +791,12 @@ function fillOptions(obj, value, text, selectTxt) {
 
 function confirmDialog(obj, title, bodyText, okUrl, okLabel) {
 	obj.click(function() {
-//		disableScreen();
 		$('#popupTitle').html(title); // Title for the popup
 		$('.popupClose').hide();
 		
 		$(".popupOk").attr('id', okUrl);
 	
+		$('#popup_div').css("height", "43px");
 		$('#popup_div').html(bodyText);
 		
 		if (okLabel !== undefined && !isBlank(okLabel)) {

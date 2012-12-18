@@ -180,21 +180,20 @@ $(document).ready(function() {
 			var configLength = checkedDataObj.configurations.length;
 			var env = checkedDataObj.defaultEnv; // selected checkbox
 			
-			if(env == true ) {
+			if (env) {
 				$("#errMsg").html("<s:text name='you.cant.remove.defaultEnv'/>");
 				return false;
 			}
 			
-			if(configLength > 0 ) {
+			if (configLength > 0 ) {
 				$("#errMsg").html("<s:text name='config.exists'/>");
 			}
 			
-			if(env == false && configLength <= 0) {
+			if (!env && configLength <= 0) {
 				$('#multiselect ul li input[type=checkbox]:checked').parent().remove();
 			}
         });
     });
-	
 	
 	$('#up').click(function () {
 		$('.selected').each(function() {
@@ -212,7 +211,6 @@ $(document).ready(function() {
 			$(element).after($(this));
 		});
 	});
-  
 });
 	
 	function addRow() {
