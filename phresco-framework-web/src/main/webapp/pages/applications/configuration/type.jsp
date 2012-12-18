@@ -245,6 +245,10 @@
 				$('#iisDiv').css("display", "block");
 			}
 		}
+		
+		if (serverType == "NodeJs" || serverType == "NodeJs Mac") {
+			$("#deploy_dirControl label").html('Deploy Directory');
+		}
 		 
 		$("#type").change(function() {
 			if ($(this).val() == "Apache Tomcat" || $(this).val() == "Jboss" || $(this).val() == "WebLogic"){
@@ -266,7 +270,7 @@
 			if ($(this).val() != "Apache Tomcat" || $(this).val() != "JBoss" || $(this).val() != "WebLogic") {
 				remoteDeplyChecked();
 			}
-			if ($(this).val() == "IIS" || $(this).val() == "Nodejs") {
+			if ($(this).val() == "IIS" || $(this).val() == "NodeJs") {
 				$("input[name='remoteDeployment']").attr("checked",false);
 			}
 			

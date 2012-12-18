@@ -1600,7 +1600,8 @@ public interface FrameworkConstants {
 		  
 		  //SettingsTemplate values 
 		  String IIS_SERVER = "IIS";
-		  String NODEJS_SERVER = "Nodejs";
+		  String NODEJS_SERVER = "NodeJs";
+		  String NODEJS_MAC_SERVER = "NodeJs Mac";
 		  
 	  /* Resolutions */ 
 		String _1600_900 = "1600*900";
