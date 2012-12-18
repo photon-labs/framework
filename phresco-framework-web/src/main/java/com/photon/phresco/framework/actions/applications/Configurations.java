@@ -377,7 +377,7 @@ public class Configurations extends FrameworkBaseAction {
 		//To get the custom properties
         if (CollectionUtils.isNotEmpty(getKey()) && CollectionUtils.isNotEmpty(getValue())) {
             for (int i = 0; i < getKey().size(); i++) {
-                properties.setProperty(getKey().get(i), getValue().get(i));
+        		properties.setProperty(getKey().get(i), getValue().get(i));
             }
         }
 		
@@ -456,7 +456,7 @@ public class Configurations extends FrameworkBaseAction {
     	}
     	
     	ConfigManager configManager = getConfigManager(configPath);
-    	if(StringUtils.isNotEmpty(configName) && !configName.equals(oldName)) {
+    	if (StringUtils.isNotEmpty(configName) && !configName.equals(oldName)) {
     		List<Configuration> configurations = configManager.getConfigurations(environment.getName(), configType);
 			for (Configuration configuration : configurations) {
 				if(configName.trim().equalsIgnoreCase(configuration.getName())) {
@@ -744,7 +744,8 @@ public class Configurations extends FrameworkBaseAction {
 			}
 			
 			SettingsTemplate settingTemplate = getSettingTemplate();
-			if (CONFIG_FEATURES.equals(settingTemplate.getId())) {
+			if (CONFIG_FEATURES.equals(settingTemplate.getId()) && (ADD_CONFIG.equals(getFromPage()) ||
+					EDIT_CONFIG.equals(getFromPage()))) {
 			    List<String> selectedModules = appInfo.getSelectedModules();
 			    if (CollectionUtils.isNotEmpty(selectedModules)) {
 				    List<String> custFeatureNames = new ArrayList<String>();
