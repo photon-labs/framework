@@ -63,6 +63,7 @@ import com.photon.phresco.framework.api.ActionType;
 import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.api.Project;
 import com.photon.phresco.framework.api.ProjectAdministrator;
+import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.framework.api.ProjectRuntimeManager;
 import com.photon.phresco.framework.commons.DiagnoseUtil;
 import com.photon.phresco.framework.commons.FrameworkUtil;
@@ -143,6 +144,7 @@ public class Build extends DynamicParameterAction implements Constants {
 	private String fileType = "";
 	private String fileOrFolder = "";
 	private String browseLocation = "";
+	private String projectId = "";
 	
 	//iphone family
 	private String family = ""; 
@@ -508,11 +510,8 @@ public class Build extends DynamicParameterAction implements Constants {
 			S_LOGGER.debug("Entering Method  Build.delete()");
 		}
 
-		String[] buildNumbers = getHttpRequest().getParameterValues(REQ_BUILD_NUMBER);
-		if (buildNumbers == null || buildNumbers.length == 0) {
-			// TODO: Warn the user
-		}
-
+		String[] buildNumbers = getReqParameterValues(REQ_BUILD_NUMBER);
+		
 		int[] buildInts = new int[buildNumbers.length];
 		for (int i = 0; i < buildNumbers.length; i++) {
 			if (debugEnabled) {
@@ -522,10 +521,12 @@ public class Build extends DynamicParameterAction implements Constants {
 		}
 
 		try {
-			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-			Project project = administrator.getProject(projectCode);
-			administrator.deleteBuildInfos(project, buildInts);
-			getHttpRequest().setAttribute(REQ_PROJECT, project);
+			ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
+			ProjectInfo project = projectManager.getProject(getProjectId(), getCustomerId(), getAppId());
+			
+			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+			applicationManager.deleteBuildInfos(project, buildInts);
+			setReqAttribute(REQ_PROJECT, project);
 			addActionMessage(getText(SUCCESS_BUILD_DELETE));
 		} catch (PhrescoException e) {
 			if (debugEnabled) {
@@ -534,7 +535,7 @@ public class Build extends DynamicParameterAction implements Constants {
 			new LogErrorReport(e, "Deleting build");
 		}
 
-		getHttpRequest().setAttribute(REQ_SELECTED_MENU, APPLICATIONS);
+		setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
 		return view();
 	}
 
@@ -543,7 +544,7 @@ public class Build extends DynamicParameterAction implements Constants {
 			S_LOGGER.debug("Entering Method Build.download()");
 		}
 		try {
-			String buildNumber = getHttpRequest().getParameter(REQ_DEPLOY_BUILD_NUMBER);
+			String buildNumber = getReqParameter(REQ_DEPLOY_BUILD_NUMBER);
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			ApplicationInfo applicationInfo = getApplicationInfo();
 			if (StringUtils.isEmpty(buildNumber)) {
@@ -1772,5 +1773,13 @@ public class Build extends DynamicParameterAction implements Constants {
 
 	public void setFileOrFolder(String fileOrFolder) {
 		this.fileOrFolder = fileOrFolder;
+	}
+
+	public String getProjectId() {
+		return projectId;
+	}
+
+	public void setProjectId(String projectId) {
+		this.projectId = projectId;
 	}
 }

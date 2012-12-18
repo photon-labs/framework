@@ -55,4 +55,6 @@ public interface ApplicationManager {
 
 	BuildInfo getBuildInfo(int buildNumber, String buildInfoFileDirectory) throws PhrescoException;
 
+	void deleteBuildInfos(ProjectInfo project, int[] buildNumbers) throws PhrescoException;
+
 }

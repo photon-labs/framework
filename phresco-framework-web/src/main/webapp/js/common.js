@@ -844,9 +844,11 @@ function constructSingleSelectOptions(dependentValues, pushToElement) {
 	$("#" + pushToElement).empty();
 	var selectedStr = "";
 	var dynamicFirstValue = dependentValues[0].value;
+	var isEditableCombo = false;
 	if (editbleComboClass == "jecEditableOption") {//convert to editable combobox
 		var optionElement = "<option class='jecEditableOption'>Type or Select from list</option>";
 		$("#" + pushToElement).append(optionElement);
+		isEditableCombo = true;
 	}
 	for(i in dependentValues) {
 		if(dependentValues[i].value == selected) {
@@ -856,7 +858,10 @@ function constructSingleSelectOptions(dependentValues, pushToElement) {
 		}
 		$("<option></option>", {value: dependentValues[i].value, text: dependentValues[i].value, additionalParam: additionalParam}).appendTo("#" + pushToElement);
 	}
-	$('#'+ pushToElement + ' option[value="'+ dynamicFirstValue +'"]').prop("selected","selected");//To preselect select first value
+	
+	if (isEditableCombo) {// execute only for jec combo box
+		$('#'+ pushToElement + ' option[value="'+ dynamicFirstValue +'"]').prop("selected","selected");//To preselect select first value
+	}
 }
 
 /**

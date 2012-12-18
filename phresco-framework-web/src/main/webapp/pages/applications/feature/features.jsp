@@ -203,22 +203,21 @@
 		jsonParamObj.type = hiddenFieldname;
 		var jsonParam = JSON.stringify(jsonParamObj);
 		var ctrlClass = removeSpaces(dispName);
-		$("#result").append('<input type="hidden" class="'+ctrlClass+'" name="jsonData">');
-		$("."+ctrlClass).val(jsonParam);
 		if (showConfigImg) {
 			$("#result").append('<div>'+dispName+' - '+dispValue+
 					'<a href="#" id="'+dispName+'" onclick="remove(this);">&nbsp;&times;</a>'+
+					'<input type="hidden" class="'+ctrlClass+'" name="jsonData">' +
 					'<a href="#" id="'+dispName+'" onclick="showFeatureConfigPopup(this);"><img src="images/icons/gear.png" title="Configure"/></a></div>');
 		} else {
-			$("#result").append('<div class = "'+dispName+'"id="'+dispName+'">'+dispName+' - '+dispValue+'<a href="#" id="'+dispName+'" onclick="remove(this);">&times;</a></div>');
+			$("#result").append('<div class = "'+dispName+'"id="'+dispName+'">'+dispName+' - '+dispValue+'<a href="#" id="'+dispName+'" onclick="remove(this);">&times;</a></div>' + 
+					'<input type="hidden" class="'+ctrlClass+'" name="jsonData">');
 		}
+		$("."+ctrlClass).val(jsonParam);
     }
     
     // Function to remove the final features in right tab  
     function remove(thisObj) {
-    	var id = $(thisObj).attr("id");
-    	$("." + id).remove();
-    	$("." + id).remove();
+    	$(thisObj).closest('div').remove();
     }
     
     // Function to fill the heading of the left tab

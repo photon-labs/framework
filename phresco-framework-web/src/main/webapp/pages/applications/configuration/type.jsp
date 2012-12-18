@@ -53,7 +53,7 @@
 	if (FrameworkConstants.ADD_SETTINGS.equals(fromPage) || FrameworkConstants.EDIT_SETTINGS.equals(fromPage)) { %>
 		<div class="control-group" id="appliesToControl">
 			<label class="control-label labelbold">
-					<span class="mandatory">*</span>&nbsp;<s:text name='label.applies.to'/>
+				<span class="mandatory">*</span>&nbsp;<s:text name='label.applies.to'/>
 			</label>
 			<div class="controls">
 				<div class="settingsTypeFields">

@@ -401,6 +401,7 @@
 	}
 	
 	function selectBoxOnChangeEvent(obj, currentParamKey, showHideFlag) {
+		var jecClass = obj.options[obj.selectedIndex].getAttribute('class'); 
 		var selectedOption = $(obj).val();
 		$(obj).blur();//To remove the focus from the current element
 		var dependencyAttr;
@@ -419,7 +420,9 @@
 				var csvDependencies = getAllDependencies(csvPreviousDependency);
 				var previousDependencyArr = new Array();
 				previousDependencyArr = csvDependencies.split(',');
-				hideControl(previousDependencyArr);
+				if (jecClass != 'jecEditableOption') {
+					hideControl(previousDependencyArr);					
+				}
 			}
 		}
 		var csvDependencies;
