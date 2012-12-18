@@ -796,7 +796,7 @@ function confirmDialog(obj, title, bodyText, okUrl, okLabel) {
 		
 		$(".popupOk").attr('id', okUrl);
 	
-		$('#popup_div').css("height", "43px");
+		$('#popup_div').css("height", "50px");
 		$('#popup_div').html(bodyText);
 		
 		if (okLabel !== undefined && !isBlank(okLabel)) {
