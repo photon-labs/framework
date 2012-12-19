@@ -605,7 +605,7 @@ function applyTheme() {
 		changeTheme(theme);
 		showWelcomeImage(theme);
 	} else {
-		theme = "theme/red_blue/css/photon_theme.css";
+		theme = "theme/photon/css/photon_theme.css";
 		changeTheme(theme);
 		showWelcomeImage(theme);
 	}
@@ -791,12 +791,13 @@ function fillOptions(obj, value, text, selectTxt) {
 
 function confirmDialog(obj, title, bodyText, okUrl, okLabel) {
 	obj.click(function() {
+		$("#errMsg").empty();
 		$('#popupTitle').html(title); // Title for the popup
 		$('.popupClose').hide();
 		
 		$(".popupOk").attr('id', okUrl);
 	
-		$('#popup_div').css("height", "43px");
+		$('#popup_div').css("height", "50px");
 		$('#popup_div').html(bodyText);
 		
 		if (okLabel !== undefined && !isBlank(okLabel)) {
@@ -843,9 +844,11 @@ function constructSingleSelectOptions(dependentValues, pushToElement) {
 	$("#" + pushToElement).empty();
 	var selectedStr = "";
 	var dynamicFirstValue = dependentValues[0].value;
+	var isEditableCombo = false;
 	if (editbleComboClass == "jecEditableOption") {//convert to editable combobox
 		var optionElement = "<option class='jecEditableOption'>Type or Select from list</option>";
 		$("#" + pushToElement).append(optionElement);
+		isEditableCombo = true;
 	}
 	for(i in dependentValues) {
 		if(dependentValues[i].value == selected) {
@@ -855,7 +858,10 @@ function constructSingleSelectOptions(dependentValues, pushToElement) {
 		}
 		$("<option></option>", {value: dependentValues[i].value, text: dependentValues[i].value, additionalParam: additionalParam}).appendTo("#" + pushToElement);
 	}
-	$('#'+ pushToElement + ' option[value="'+ dynamicFirstValue +'"]').prop("selected","selected");//To preselect select first value
+	
+	if (isEditableCombo) {// execute only for jec combo box
+		$('#'+ pushToElement + ' option[value="'+ dynamicFirstValue +'"]').prop("selected","selected");//To preselect select first value
+	}
 }
 
 /**

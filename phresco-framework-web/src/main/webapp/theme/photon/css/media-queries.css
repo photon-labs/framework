@@ -491,7 +491,9 @@ Width <= 1024
 	.configList,.build_form,#subTabcontent,.ciFormJob,.reportList {
 		width: 98.5%;
 	}
-
+	.graph_div {
+		zoom: 0.67;
+	}
 }
 
 /***********************************************************************************

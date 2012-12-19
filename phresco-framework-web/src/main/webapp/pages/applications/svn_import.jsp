@@ -75,14 +75,14 @@
 	</div>
 	
 	<div class="control-group">
-		<label  class="control-label labelbold popupLbl"><span class="red">*</span> <s:text name="lbl.username"/></label> 
+		<label  class="control-label labelbold popupLbl"><span class="red mandatory">*</span> <s:text name="lbl.username"/></label> 
 		<div class="controls">
 			<input type="text" name="username" id="userName" maxlength="63" title="63 Characters only" >&nbsp;&nbsp;<span id="missingUsername" class="missingData"></span> 
 		</div>
 	</div>
 	
 	<div class="control-group">
-		<label  class="control-label labelbold popupLbl"><span class="red">*</span> <s:text name="lbl.password"/></label> 
+		<label  class="control-label labelbold popupLbl"><span class="red mandatory">*</span> <s:text name="lbl.password"/></label> 
 		<div class="controls">
 			<input type="password" name="password" id="password" maxlength="63" title="63 Characters only">&nbsp;&nbsp;<span id="missingPassword" class="missingData"></span> 
 		</div>
@@ -106,7 +106,7 @@
 
 <script type="text/javascript">
 	$(document).ready(function() {
-		
+		hidePopuploadingIcon();
 		$("#repoUrl").focus();
 		 // when clicking on save button, popup should not hide
         $('.popupOk').attr("data-dismiss", "");
@@ -137,6 +137,11 @@
 			 
 	  	$('[name=repoType]').change(function() {
 		  	extraInfoDisplay();
+		  	if ($("[name=repoType]").val() == 'svn') {
+		  		$(".mandatory").show();
+		  	} else if($("[name=repoType]").val() == 'git') {
+		  		$(".mandatory").hide();
+		  	}
 		});
 			  
 		<% if (StringUtils.isNotEmpty(repoUrl) && repoUrl.contains(FrameworkConstants.GIT)) {%>

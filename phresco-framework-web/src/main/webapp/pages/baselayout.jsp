@@ -26,9 +26,10 @@
 
 <%@ page import="org.apache.commons.collections.CollectionUtils"%>
 
-<%@page import="com.photon.phresco.commons.model.Customer"%>
+<%@ page import="com.photon.phresco.util.ServiceConstants"%>
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.commons.model.User"%>
+<%@ page import="com.photon.phresco.commons.model.Customer"%>
 
 <html>
 	<head>
@@ -100,7 +101,8 @@
 		
 		<!-- jquery editable combobox -->
 		<script src="js/jquery.editable.combobox.js"></script>
-		
+		<script src="js/jss.min.js"></script>
+
 		<script type="text/javascript">
 		    $(document).ready(function() {
 		        applyTheme();
@@ -161,7 +163,7 @@
 		<header>
 			<div class="header">
 				<div class="Logo">
-					 <a href="#" id="goToHome"><img class="headerlogoimg" src="theme/photon/images/photon_phresco_logo.png" alt="logo"></a>
+					 <a href="#" id="goToHome"><img class="headerlogoimg" id="logoImg" src="" alt="logo"></a>
 				</div>
 				
 				<div id="signOut" class="signOut">
@@ -249,10 +251,10 @@
 					                <%
 					                	User user = (User) session.getAttribute(FrameworkConstants.SESSION_USER_INFO);
 					                    if (user != null) {
-					                    	List<Customer> customerIds = user.getCustomers();
-								            for (Customer customer : customerIds) { 
+					                    	List<Customer> customers = user.getCustomers();
+					                    	for (Customer customer: customers) {
 								    %>
-					                            <option value="<%= customer.getId() %>"><%= customer.getName() %></option>
+					                       <option value="<%= customer.getId() %>"><%= customer.getName()%></option>
 									<% 
 								            }
 								        } 
@@ -339,7 +341,7 @@
 			<div class="modal-header">
 				<a class="close" data-dismiss="modal" >&times;</a>
 				<h3 id="popupTitle"></h3>
-			</div>
+	    </div>
 			<div class="modal-body" id="popup_div">
 			
 			</div>
@@ -395,18 +397,137 @@
 	</body>
 	
 	<script type="text/javascript">
-		if ($.browser.safari && $.browser.version == 530.17) {
-			$(".shortcut_bottom").show().css("float","left");
-		}
+	 $(document).ready(function() {
+		applyTheme();
+		getLogoImgUrl();
+	        
+		$(".styles").click(function() {
+			localStorage.clear();
+			var value = $(this).attr("rel");
+			localStorage["color"]= value;
+			applyTheme();
+		});
+           
+		// function to show user info in toggle 
+		$('div aside.usersettings div').hide(0);
+		$('div aside.usersettings').click(function() {
+			$('div aside.usersettings div').slideToggle(0);
+		});
+
+		// to show user info on mouse over
+		$('#signOut aside').mouseenter(function() {
+			$("div aside.usersettings div").hide(0);
+			$(this).children("div aside.usersettings div").show(0);
+		}).mouseleave(function() {
+			$("div aside.usersettings div").hide(0);
+		});
 		
-		/** To include the js based on the device **/
-		/* var body = document.getElementsByTagName('body')[0];
-		var script = document.createElement('script');
-		if (isiPad()) {
-			script.src = 'js/windowResizer-ipad.js';
+		showLoadingIcon();
+		clickMenu($("a[name='headerMenu']"), $("#container"), $('#formCustomers'));
+		loadContent("home", '', $("#container"), '', '', true);
+		activateMenu($("#home"));
+		
+		//To get the list of projects based on the selected customer
+    	$('select[name=customerId]').change(function() {
+    		getLogoImgUrl();
+    		showLoadingIcon();
+    		loadContent("applications", $('#formCustomers'), $("#container"), '', '', true);
+    	});
+		
+	});
+	
+	if ($.browser.safari && $.browser.version == 530.17) {
+		$(".shortcut_bottom").show().css("float","left");
+	}
+	
+	function getLogoImgUrl() {
+		var currentCustomerId = $('select[name=customerId]').val();
+		if (currentCustomerId === "<%= ServiceConstants.DEFAULT_CUSTOMER_NAME %>") {
+			applyTheme();
+			changeColorScheme("#38B865");
 		} else {
-			script.src = 'js/windowResizer.js';
+			loadContent("fetchLogoImgUrl", $('#formCustomers'), '', '', true, true, 'changeLogo');
 		}
-		body.appendChild(script); */
-	</script>
+	}
+
+	function changeLogo(data) {
+		$('#logoImg').attr("src", data.logoImgUrl);
+		$("#brandingColor").val(data.brandingColor);
+		changeColorScheme(data.brandingColor);
+	}
+	
+	function changeColorScheme(brandingColor) {
+		JSS.css({
+			'.openreg': {
+				'background': brandingColor
+			},
+			
+			'.closereg': {
+				'background': brandingColor
+			},
+			
+			'.siteinnertooltiptxt': {
+				'border-color': brandingColor
+			},
+						
+			'.headerInnerTop li a.active label': {
+				'color': brandingColor + " !important"
+			},
+			
+			'.tabs li a.active': {
+				'background': brandingColor + " !important"
+			},
+			
+			'.tabs > li > a:hover': {
+				'background': "none repeat scroll 0 0" + brandingColor
+			},
+			
+			'.modal-header': {
+				'background': "none repeat scroll 0 0" + brandingColor
+			},
+
+			'.video-title': {
+				'background': "none repeat scroll 0 0" + brandingColor
+			},
+			
+			'.listindex-active': {
+				'background': "none repeat scroll 0 0" + brandingColor
+			},
+			
+			'.listindex:hover': {
+				'background': "none repeat scroll 0 0" + brandingColor
+			},
+			
+			'.listindex': {
+				'color': brandingColor
+			},
+			
+			'#testmenu li a.active, #testmenu li a:hover': {
+				'background': brandingColor
+			},
+			
+			'#indicator': {
+				'background': brandingColor
+			},
+			
+			'#progressbar': {
+				'border-color': brandingColor
+			},
+			
+			'.userInfo ul li a': {
+				'color': brandingColor
+			}
+		});
+	}
+	
+	/** To include the js based on the device **/
+	/* var body = document.getElementsByTagName('body')[0];
+	var script = document.createElement('script');
+	if (isiPad()) {
+		script.src = 'js/windowResizer-ipad.js';
+	} else {
+		script.src = 'js/windowResizer.js';
+	}
+	body.appendChild(script); */
+</script>
 </html>

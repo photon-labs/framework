@@ -31,6 +31,7 @@
 <%@ page import="java.util.Iterator"%>
 <%@ page import="java.util.regex.*"%>
 
+<%@ page import="org.apache.commons.lang.StringUtils" %>
 <%@ page import="org.apache.commons.collections.CollectionUtils"%>
 
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
@@ -144,7 +145,10 @@
 													    				host = Properties.getProperty("host");
 												    					port = Properties.getProperty("port");
 												    					protocol = Properties.getProperty("protocol");
-													    				String configName = configuration.getName() + configuration.getEnvName();
+												    					if(StringUtils.isEmpty(protocol)){
+												    						protocol = "http";
+												    					}
+													    				String configName = configuration.getName() + configuration.getType() + configuration.getEnvName();
 													    				Pattern pattern = Pattern.compile("\\s+");
 													    				Matcher matcher = pattern.matcher(configName);
 													    				boolean check = matcher.find();

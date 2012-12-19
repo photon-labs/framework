@@ -3,12 +3,15 @@ package com.photon.phresco.framework.impl;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -17,7 +20,9 @@ import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.Commandline;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
+import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.BuildInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
@@ -25,9 +30,12 @@ import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.api.ActionType;
 import com.photon.phresco.framework.api.ApplicationManager;
+import com.photon.phresco.framework.api.Project;
 import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.service.client.api.ServiceManager;
 import com.photon.phresco.util.Constants;
+import com.photon.phresco.util.TechnologyTypes;
+import com.photon.phresco.util.Utility;
 import com.sun.jersey.api.client.ClientResponse;
 
 public class ApplicationManagerImpl implements ApplicationManager {
@@ -177,4 +185,104 @@ public class ApplicationManagerImpl implements ApplicationManager {
 
 		 return buildInfos;
 	 }
+	
+	 @Override
+	 public void deleteBuildInfos(ProjectInfo project, int[] buildNumbers) throws PhrescoException {
+		 S_LOGGER.debug("Entering Method ApplicationManagerImpl.deleteBuildInfos(ProjectInfo project, int[] buildNumbers)");
+
+		 String buildInfoFile = getBuildInfoFilePath(project);
+		 
+		 List<BuildInfo> totalBuildInfos = getBuildInfos(new File(buildInfoFile));
+		 List<BuildInfo> buildInfos = new CopyOnWriteArrayList<BuildInfo>();
+		 BuildInfo buildInfo;
+		 for (int i = 0; i < buildNumbers.length; i++) {
+			 buildInfo = getBuildInfo(buildNumbers[i], buildInfoFile);
+			 buildInfos.add(buildInfo);
+		 }
+		 
+		 //Delete the build archives
+		 try {
+			 deleteBuildArchive(project, buildInfos);
+		 } catch (IOException e) {
+			 throw new PhrescoException(e);
+		 }
+		 //Delete the entry from build.info
+		 
+		 Iterator<BuildInfo> iterator = totalBuildInfos.iterator();
+		 for (BuildInfo selectedInfo : buildInfos) {
+			 while (iterator.hasNext()) {
+				 BuildInfo bi = iterator.next();
+				 if (bi.getBuildNo() == selectedInfo.getBuildNo()) {
+					 iterator.remove();
+					 break;
+				 }
+			 }
+		 }
+		 
+		 try {
+			 writeBuildInfo(totalBuildInfos, new File(buildInfoFile));
+		 } catch (IOException e) {
+			 throw new PhrescoException(e);
+		 }
+	 }
+	 
+	 private void deleteBuildArchive(ProjectInfo project, List<BuildInfo> selectedInfos) throws IOException {
+		 S_LOGGER.debug("Entering Method AppliacationmanagerImpl.deleteBuildArchive(ProjectInfo project, List<BuildInfo> selectedInfos)");
+		 File file = null;
+		 String delFilename = null;
+		 for (BuildInfo selectedInfo : selectedInfos) {
+			 //Delete zip file
+			 delFilename = selectedInfo.getBuildName();
+			 file = new File(getBuildInfoHome(project) + delFilename);
+			 file.delete();
+		 }
+	 }
+	 
+	 private String getBuildInfoHome(ProjectInfo project) {
+		 StringBuilder builder = new StringBuilder(Utility.getProjectHome());
+		 builder.append(project.getAppInfos().get(0).getAppDirName())
+		 .append(File.separator)
+		 .append(FrameworkConstants.BUILD_DIR)
+		 .append(File.separator);
+		 
+		 return builder.toString();
+	 }
+	 
+	 private String getBuildInfoFilePath(ProjectInfo project) {
+		 StringBuilder builder = new StringBuilder(Utility.getProjectHome());
+		 builder.append(project.getAppInfos().get(0).getAppDirName())
+		 .append(File.separator)
+		 .append(FrameworkConstants.BUILD_DIR)
+		 .append(File.separator)
+		 .append(FrameworkConstants.BUILD_INFO_FILE_NAME);
+		 
+		 return builder.toString();
+	 }
+	 
+	 private void writeBuildInfo(List<BuildInfo> buildInfos, File path) throws IOException {
+		 Gson gson = new Gson();
+		 String buildInfoJson = gson.toJson(buildInfos);
+		 writeJson(buildInfoJson, path);
+	 }
+	 
+	 private void writeJson(String json, File path) throws IOException {
+		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.writeJson(String json, File path)");
+		 FileWriter writer = null;
+		 try {
+			 S_LOGGER.debug("writeJson()  File path = " +path.getPath());
+			 writer = new FileWriter(path);
+			 writer.write(json);
+			 writer.flush();
+		 } finally {
+			 if (writer != null) {
+				 try {
+					 writer.close();
+				 } catch (IOException e) {
+					 S_LOGGER.warn("writeJson() > error inside finally");
+
+				 }
+			 }
+		 }
+	 }
+	 
 }

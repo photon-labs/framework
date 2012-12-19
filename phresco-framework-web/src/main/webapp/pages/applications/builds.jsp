@@ -103,8 +103,7 @@
 			
 			          	<tbody>
 			          	<%
-			        		Collections.reverse(buildInfos);
-			          		for (BuildInfo buildInfo : buildInfos) {
+			        		for (BuildInfo buildInfo : buildInfos) {
 						%>
 			            	<tr>
 			              		<td class="checkbox_list">

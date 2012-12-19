@@ -190,13 +190,11 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		}
 		try {
 			PomProcessor processor = getPomProcessor(projCode);
-			if (processor.getSCM() == null) {
 				if(debugEnabled){
 					S_LOGGER.debug("processor.getSCM() exists and repo url "+ repoUrl);
 				}
 				processor.setSCM(repoUrl, "", "", "");
 				processor.save();
-			}
 		} catch (Exception e) {
 			if(debugEnabled){
 				S_LOGGER.error("Entering catch block of updateSCMConnection()"+ e.getLocalizedMessage());

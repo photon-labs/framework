@@ -73,6 +73,10 @@ public interface FrameworkConstants {
     String REQ_PILOT_PROJECTS = "pilotProjects";
     String REQ_CURRENT_APP_NAME = "currentAppName";
     String REQ_SELECTED_FEATURES = "selectedFeatures";
+    String REQ_SELECTED_DOWNLOADINFO = "selectedDownloadInfo";
+    String REQ_SELECTED_DOWNLOADINFO_VERSION = "selectedDownloadInfoVersion";
+    String REQ_CURRENT_SELECTBOX_ID = "selectBoxId";
+    String REQ_DEFAULT_OPTION = "defaultOptTxt";
     String REQ_PROJECT_FEATURES = "projectInfoFeatures";
     String REQ_PROJECT_LAYERS = "layers";
     String REQ_PARAM_NAME_TECH_GROUP = "TechGroup";
@@ -1738,5 +1742,14 @@ public interface FrameworkConstants {
 		String REQ_DYNAMIC_PAGE_PARAMETER  = "dynamicPageParameter";
 		String REQ_DYNAMIC_POSSIBLE_VALUES = "possibleValues";
 		String SESSION_WATCHER_MAP = "sessionDynamicParamMap";
+		
+		/**
+		 * Constants for Changing Logo 
+		 */
+		
+		String IMAGES	 = "images";
+		String CUSTOMERS = "customers";
+		String PNG       = ".png";
+		
 		
 }

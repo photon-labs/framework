@@ -185,6 +185,8 @@
 	        $('#pdfCreation').click(function() {
 	    		var params = "fromPage=";
 	    		params = params.concat("load");
+	    		params = params.concat("&testType=");
+	            params = params.concat('<%= FrameworkConstants.LOAD %>');
 	    		yesnoPopup('showGeneratePdfPopup', '<s:text name="lbl.app.generatereport"/>', 'printAsPdf','<s:text name="lbl.app.generate"/>', '', params);
 	 	    });
 	    });
