@@ -1732,4 +1732,13 @@ public interface FrameworkConstants {
 		String REQ_DYNAMIC_POSSIBLE_VALUES = "possibleValues";
 		String SESSION_WATCHER_MAP = "sessionDynamicParamMap";
 		
+		/**
+		 * Constants for Changing Logo 
+		 */
+		
+		String IMAGES	 = "images";
+		String CUSTOMERS = "customers";
+		String PNG       = ".png";
+		
+		
 }

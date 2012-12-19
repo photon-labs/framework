@@ -66,6 +66,10 @@
 			<result name="logError">/pages/errorReport.jsp</result>
 		</global-results>
 
+    	<action name="fetchLogoImgUrl" method="fetchLogoImgUrl" class="com.photon.phresco.framework.actions.Login">
+			<result type="json"/>
+        </action>
+    	
         <!--  Home Actions -->
         <action name="home" method="view" class="com.photon.phresco.framework.actions.home.Home">
             <result name="home">/pages/home/videoholder.jsp</result>

@@ -605,7 +605,7 @@ function applyTheme() {
 		changeTheme(theme);
 		showWelcomeImage(theme);
 	} else {
-		theme = "theme/red_blue/css/photon_theme.css";
+		theme = "theme/photon/css/photon_theme.css";
 		changeTheme(theme);
 		showWelcomeImage(theme);
 	}

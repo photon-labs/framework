@@ -184,13 +184,6 @@
     		yesnoPopup('showGeneratePdfPopup', '<s:text name="lbl.app.generatereport"/>', 'printAsPdf','<s:text name="lbl.app.generate"/>', '', params);
     	});
     	
-    	//To get the list of projects based on the selected customer
-    	
-    	$('select[name=customerId]').change(function() {
-    		showLoadingIcon();
-    		loadContent("applications", $('#formCustomers'), $("#container"), '', '', true);
-    	});
-    	
     	//Trigerred when add btn is clicked
     	$('#addProject').click(function() {
     		showLoadingIcon();
