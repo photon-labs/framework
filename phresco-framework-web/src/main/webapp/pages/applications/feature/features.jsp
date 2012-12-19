@@ -34,7 +34,7 @@
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 
 <%
-	List<SelectedFeature> selectFeatures = (List<SelectedFeature>)session.getAttribute(FrameworkConstants.REQ_SELECTED_FEATURES);
+	List<SelectedFeature> features = (List<SelectedFeature>)request.getAttribute(FrameworkConstants.REQ_SELECTED_FEATURES);
 	String oldAppDirName = (String) request.getAttribute(FrameworkConstants.REQ_OLD_APPDIR);
 	String appId = (String) request.getAttribute(FrameworkConstants.REQ_APP_ID);
 	List<ArtifactGroup> selectedFeatures = (List<ArtifactGroup>) request.getAttribute(FrameworkConstants.REQ_PROJECT_FEATURES);
@@ -47,9 +47,6 @@
 	if (projectInfo != null) {
 		ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
 		technologyId = appInfo.getTechInfo().getId();
-		selectedModules = appInfo.getSelectedModules();
-		selectedJSLibs = appInfo.getSelectedJSLibs();
-		selectedComponents = appInfo.getSelectedComponents();
 	}
 %> 
 <form id="formFeatures" class="featureForm">
@@ -105,45 +102,12 @@
 
 <script type="text/javascript">
 <%	
-	if (CollectionUtils.isNotEmpty(selectFeatures)) {
-		for (SelectedFeature features : selectFeatures) {
+	if (CollectionUtils.isNotEmpty(features)) {
+		for (SelectedFeature feature : features) {
 %>
-			constructFeaturesDiv('<%= features.getDispName() %>', '<%= features.getDispValue() %>', '<%= features.getType() %>', '<%= features.getVersionID() %>', '<%= features.getModuleId() %>');
+			constructFeaturesDiv('<%= feature.getDispName() %>', '<%= feature.getDispValue() %>', '<%= feature.getType() %>', '<%= feature.getVersionID() %>', '<%= feature.getModuleId() %>');
 <%		
 	 	}
-	}
-%>
-
-<%	
-	if (CollectionUtils.isNotEmpty(selectedModules)) {
-		for (String string : selectedModules) {
-			SelectedFeature obj = gson.fromJson(string, SelectedFeature.class);
-%>
-			constructFeaturesDiv('<%= obj.getDispName() %>', '<%= obj.getDispValue() %>', '<%= obj.getType() %>', '<%= obj.getVersionID() %>', '<%= obj.getModuleId() %>', true);
-<%		
-		}
-	}
-%>
-
-<%	
-	if (CollectionUtils.isNotEmpty(selectedJSLibs)) {
-		for (String string : selectedJSLibs) {
-		    SelectedFeature obj = gson.fromJson(string, SelectedFeature.class);
-%>
-			constructFeaturesDiv('<%= obj.getDispName() %>', '<%= obj.getDispValue() %>', '<%= obj.getType() %>', '<%= obj.getVersionID() %>', '<%= obj.getModuleId() %>', true);
-<%		
-		}
-	}
-%>
-
-<%	
-	if (CollectionUtils.isNotEmpty(selectedComponents)) {
-		for (String string : selectedComponents) {
-		    SelectedFeature obj = gson.fromJson(string, SelectedFeature.class);
-%>
-			constructFeaturesDiv('<%= obj.getDispName() %>', '<%= obj.getDispValue() %>', '<%= obj.getType() %>', '<%= obj.getVersionID() %>', '<%= obj.getModuleId() %>', true);
-<%		
-		}
 	}
 %>
 
@@ -218,6 +182,8 @@
     // Function to remove the final features in right tab  
     function remove(thisObj) {
     	$(thisObj).closest('div').remove();
+    	var id = $(thisObj).attr("id");
+    	$("." + id).remove();
     }
     
     // Function to fill the heading of the left tab

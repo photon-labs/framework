@@ -42,6 +42,7 @@ import com.photon.phresco.commons.model.Element;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.PropertyTemplate;
 import com.photon.phresco.commons.model.RequiredOption;
+import com.photon.phresco.commons.model.SelectedFeature;
 import com.photon.phresco.commons.model.SettingsTemplate;
 import com.photon.phresco.commons.model.TechnologyInfo;
 import com.photon.phresco.configuration.Configuration;
@@ -120,6 +121,32 @@ public class Features extends FrameworkBaseAction {
             } else if (appInfo == null) {
 				appInfo = new ApplicationInfo();
 			}
+			List<String> selectedModules = appInfo.getSelectedModules();
+			List<SelectedFeature> listFeatures = new ArrayList<SelectedFeature>();
+			if (CollectionUtils.isNotEmpty(selectedModules)) {
+				for (String selectedModule : selectedModules) {
+					SelectedFeature selectFeature = createArtifactInformation(selectedModule);
+					listFeatures.add(selectFeature);
+				}
+			}
+			
+			List<String> selectedJSLibs = appInfo.getSelectedJSLibs();
+			if (CollectionUtils.isNotEmpty(selectedJSLibs)) {
+				for (String selectedJSLib : selectedJSLibs) {
+					SelectedFeature selectFeature = createArtifactInformation(selectedJSLib);
+					listFeatures.add(selectFeature);
+				}
+			}
+			
+			List<String> selectedComponents = appInfo.getSelectedComponents();
+			if (CollectionUtils.isNotEmpty(selectedComponents))	{
+				for (String selectedComponent : selectedComponents) {
+					SelectedFeature selectFeature = createArtifactInformation(selectedComponent);
+					listFeatures.add(selectFeature);
+				}
+			}
+			
+			setReqAttribute(REQ_SELECTED_FEATURES, listFeatures);
 			projectInfo.setAppInfos(Collections.singletonList(createApplicationInfo(appInfo)));
 			setReqAttribute(REQ_OLD_APPDIR, getOldAppDirName());
 			setSessionAttribute(getAppId() + SESSION_APPINFO, projectInfo);
@@ -130,6 +157,24 @@ public class Features extends FrameworkBaseAction {
 	    return APP_FEATURES;
 	}
 	
+	private SelectedFeature createArtifactInformation(String selectedModule) throws PhrescoException {
+		
+		SelectedFeature slctFeature = new SelectedFeature();
+		ArtifactInfo artifactInfo = getServiceManager().getArtifactInfo(selectedModule);
+		
+		slctFeature.setDispName(artifactInfo.getName());
+		slctFeature.setDispValue(artifactInfo.getVersion());
+		slctFeature.setVersionID(artifactInfo.getId());
+		slctFeature.setModuleId(artifactInfo.getArtifactGroupId());
+		
+		String artifactGroupId = artifactInfo.getArtifactGroupId();
+		ArtifactGroup artifactGroupInfo = getServiceManager().getArtifactGroupInfo(artifactGroupId);
+		slctFeature.setType(artifactGroupInfo.getType().name());
+		
+		return slctFeature;
+		
+	}
+
 	/**
      * To validate the form fields
      * @return

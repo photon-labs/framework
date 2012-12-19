@@ -51,7 +51,6 @@
 	String technologyId = "";
 	String technologyVersion = "";
 	String oldAppDirName = "";
-	List<String> feature = null;
 	List<String> selectedWebservices = null;
 	List<ArtifactGroupInfo> pilotServers = null;
 	List<ArtifactGroupInfo> pilotDatabases = null;
@@ -67,7 +66,6 @@
 		oldAppDirName = selectedInfo.getAppDirName();
 		description = selectedInfo.getDescription();
 		version = selectedInfo.getVersion();
-		feature = projectInfo.getAppInfos().get(0).getSelectedModules();
 		if (selectedInfo.getPilotInfo() != null) {
 		pilotInfo = selectedInfo.getPilotInfo().getId();
 		}
@@ -369,7 +367,6 @@
     
     <!-- Hidden Field -->
 	<%-- <input type="hidden" name="appId" value="<%= id %>"/> --%>
-	<input type="hidden" id="feature" name="feature" value="<%= feature %>"/>
 	<input type="hidden" name="techId" value="<%= technologyId %>"/>
 	<input type="hidden" name="oldAppDirName" value="<%= oldAppDirName %>"/>
 </form> 
