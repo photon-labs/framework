@@ -25,6 +25,7 @@
 
 <%@ page import="org.antlr.stringtemplate.StringTemplate"%>
 <%@ page import="org.apache.commons.collections.CollectionUtils" %>
+<%@ page import="org.apache.commons.lang.StringUtils"%>
 
 <%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
 <%@ page import="com.photon.phresco.commons.model.SettingsTemplate"%>
@@ -35,8 +36,9 @@
 <%@ page import="com.photon.phresco.framework.commons.FrameworkUtil"%>
 <%@ page import="com.photon.phresco.framework.commons.ParameterModel"%>
 
-<form id="formConfigTempProp">
+<form id="formConfigTempProp" class="form-horizontal">
 <% 
+	String featureName = (String) request.getAttribute(FrameworkConstants.REQ_FEATURE_NAME);
 	boolean hasCustomProperty = (Boolean) request.getAttribute(FrameworkConstants.REQ_HAS_CUSTOM_PROPERTY);
 	String selectedType = (String) request.getAttribute(FrameworkConstants.REQ_SELECTED_TYPE);
 	List<PropertyTemplate> properties = (List<PropertyTemplate>)request.getAttribute(FrameworkConstants.REQ_PROPERTIES);
@@ -79,15 +81,32 @@
 	}
 %>
 	<%= sb.toString() %>
+	
+	<!-- Hidden Fields -->
+	<% if (StringUtils.isNotEmpty(featureName)) { %>
+		<input type="hidden" name="featureName" value="<%= featureName %>">
+	<% } %>
 </form>
 
 <script type="text/javascript">
 	$(document).ready(function() {
 		<% if (FrameworkConstants.CONFIG_TYPE_FEATURES.equals(selectedType)) { %>
 			hideLoadingIcon();
+		<% } else { %>
+			hidePopuploadingIcon();
 		<% } %>
 		$(".popupLbl").text(function(index) {
 	        return textTrim($(this), 18);
 	    });
 	});
+	
+	function popupOnOk(obj) {
+		var url = $(obj).attr("id");
+		if (url === "configureFeature") {
+			showLoadingIcon();
+			$('#popupPage').modal('hide');//To hide the popup
+			var params = getBasicParams();
+			loadContent(url, $('#formConfigTempProp'), $("#subcontainer"), params, true);
+		}
+	}
 </script>

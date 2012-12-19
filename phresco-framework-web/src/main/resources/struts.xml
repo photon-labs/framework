@@ -211,11 +211,7 @@
         </action>
         
         <action name="showFeatureConfigPopup" method="showFeatureConfigPopup" class="com.photon.phresco.framework.actions.applications.Features">
-          	<result name="success">/pages/applications/feature/config_template.jsp</result>
-        </action>
-        
-        <action name="showConfigProperties" method="showConfigProperties" class="com.photon.phresco.framework.actions.applications.Features">
-          	<result name="success">/pages/applications/feature/config_template_prop.jsp</result>
+          	<result name="success">/pages/applications/feature/configuration.jsp</result>
         </action>
         
         <action name="configureFeature" method="configureFeature" class="com.photon.phresco.framework.actions.applications.Features">

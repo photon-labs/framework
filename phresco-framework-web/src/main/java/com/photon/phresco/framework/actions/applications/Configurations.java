@@ -377,7 +377,9 @@ public class Configurations extends FrameworkBaseAction {
 		//To get the custom properties
         if (CollectionUtils.isNotEmpty(getKey()) && CollectionUtils.isNotEmpty(getValue())) {
             for (int i = 0; i < getKey().size(); i++) {
-        		properties.setProperty(getKey().get(i), getValue().get(i));
+                if (StringUtils.isNotEmpty(getKey().get(i)) && StringUtils.isNotEmpty(getValue().get(i))) {
+                    properties.setProperty(getKey().get(i), getValue().get(i));
+                }
             }
         }
 		
@@ -423,7 +425,6 @@ public class Configurations extends FrameworkBaseAction {
         	if (s_debugEnabled) {
                 S_LOGGER.error("Entered into catch block of Configurations.getTemplateConfigFile()" + FrameworkUtil.getStackTraceAsString(e));
             }
-            e.printStackTrace();
         }
     }
 	

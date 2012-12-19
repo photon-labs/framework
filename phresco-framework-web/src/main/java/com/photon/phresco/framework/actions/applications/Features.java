@@ -249,56 +249,19 @@ public class Features extends FrameworkBaseAction {
     	return appInfo;
 	}
 	
-	public String showFeatureConfigPopup() {
-	    try {
-	        List<SettingsTemplate> settingsTemplates = getServiceManager().getConfigTemplates(getCustomerId());
-            setReqAttribute(REQ_SETTINGS_TEMPLATES, settingsTemplates);
-            setReqAttribute(REQ_FEATURE_NAME, getFeatureName());
-        } catch (PhrescoException e) {
-            // TODO: handle exception
-        }
-	    
-	    return SUCCESS;
-	}
-	
-	public String showConfigProperties() {
-	    try {
-	        List<PropertyTemplate> propertyTemplates = new ArrayList<PropertyTemplate>();
-	        if (CONFIG_FEATURES.equals(getConfigTemplateType())) {
-	            getTemplateConfigFile(propertyTemplates);
-	        } else {
-    	        List<SettingsTemplate> settingsTemplates = getServiceManager().getConfigTemplates(getCustomerId());
-    	        for (SettingsTemplate settingsTemplate : settingsTemplates) {
-                    if (settingsTemplate.getId().equals(getConfigTemplateType())) {
-                        propertyTemplates = settingsTemplate.getProperties();
-                        setReqAttribute(REQ_HAS_CUSTOM_PROPERTY, settingsTemplate.isCustomProp());
-                        break;
-                    }
-                }
-	        }
-	        setReqAttribute(REQ_SELECTED_TYPE, selectedType);
-	        setReqAttribute(REQ_PROPERTIES, propertyTemplates);
-        } catch (PhrescoException e) {
-            return showErrorPopup(e, getText(EXCEPTION_FEATURE_MANIFEST_NOT_AVAILABLE));
-        }
-	    
+	public String showFeatureConfigPopup() throws PhrescoException {
+	    setConfigTemplateType(CONFIG_FEATURES);
+        setReqAttribute(REQ_FEATURE_NAME, getFeatureName());
+        List<PropertyTemplate> propertyTemplates = getTemplateConfigFile();
+        setReqAttribute(REQ_PROPERTIES, propertyTemplates);
+        setReqAttribute(REQ_SELECTED_TYPE, getSelectedType());
+        
 	    return SUCCESS;
 	}
 	
 	public String configureFeature() {
 	    try {
-	        List<PropertyTemplate> propertyTemplates = new ArrayList<PropertyTemplate>();
-            if (CONFIG_FEATURES.equals(getConfigTemplateType())) {
-                getTemplateConfigFile(propertyTemplates);
-            } else {
-                List<SettingsTemplate> settingsTemplates = getServiceManager().getConfigTemplates(getCustomerId());
-                for (SettingsTemplate settingsTemplate : settingsTemplates) {
-                    if (settingsTemplate.getId().equals(getConfigTemplateType())) {
-                        propertyTemplates = settingsTemplate.getProperties();
-                        break;
-                    }
-                }
-            }
+            List<PropertyTemplate> propertyTemplates = getTemplateConfigFile();
             Properties properties = new Properties();
             for (PropertyTemplate propertyTemplate : propertyTemplates) {
                 String key  = propertyTemplate.getKey();
@@ -309,7 +272,9 @@ public class Features extends FrameworkBaseAction {
             String[] values = getReqParameterValues(REQ_VALUE);
             if (!ArrayUtils.isEmpty(keys) && !ArrayUtils.isEmpty(values)) {
                 for (int i = 0; i < keys.length; i++) {
-                    properties.setProperty(keys[i], values[i]);
+                    if (StringUtils.isNotEmpty(keys[i]) && StringUtils.isNotEmpty(values[i])) {
+                        properties.setProperty(keys[i], values[i]);
+                    }
                 }
             }
             Configuration configuration = new Configuration();
@@ -325,7 +290,8 @@ public class Features extends FrameworkBaseAction {
 	    return SUCCESS;
 	}
 	
-	private void getTemplateConfigFile(List<PropertyTemplate> propertyTemplates) throws PhrescoException {
+	private List<PropertyTemplate> getTemplateConfigFile() throws PhrescoException {
+	    List<PropertyTemplate> propertyTemplates = new ArrayList<PropertyTemplate>();
 	    try {
             List<Configuration> featureConfigurations = getApplicationProcessor().preFeatureConfiguration(getApplicationInfo(), getFeatureName());
             for (Configuration featureConfiguration : featureConfigurations) {
@@ -346,6 +312,8 @@ public class Features extends FrameworkBaseAction {
 	    } catch (PhrescoException e) {
 	        throw new PhrescoException(e);
 	    }
+	    
+	    return propertyTemplates;
 	}
 	
 	public String listFeatures() throws PhrescoException {
@@ -1203,5 +1171,13 @@ public class Features extends FrameworkBaseAction {
 
     public void setDependency(boolean dependency) {
         this.dependency = dependency;
+    }
+
+    public String getSelectedType() {
+        return selectedType;
+    }
+
+    public void setSelectedType(String selectedType) {
+        this.selectedType = selectedType;
     }
 }

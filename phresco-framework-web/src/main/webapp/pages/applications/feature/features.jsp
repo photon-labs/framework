@@ -201,8 +201,7 @@
   	//To show the configuration popup
   	function showFeatureConfigPopup(obj) {
   		var featureName = $(obj).attr("id");
-  		var params = getBasicParams();
-  		params = params.concat("&featureName=");
+  		var params = "&featureName=";
   		params = params.concat(featureName);
   		yesnoPopup('showFeatureConfigPopup', '<s:text name="lbl.configure"/>', 'configureFeature', '<s:text name="lbl.configure"/>', '', params);
   	}
