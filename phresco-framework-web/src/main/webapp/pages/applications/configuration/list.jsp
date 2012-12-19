@@ -137,12 +137,22 @@
 	
 	function popupOnOk(self) {
 		var url = $(self).attr('id');
+		var returnVal = true;
 		if(url == "cloneConfiguration"){
-			var EnvSelection = $("#created").size();
-			if (EnvSelection == 0 ) {
-				$("#errMsg").html("Please add atleast one Environment");
+			var EnvSelection = $("#configEnv").val();
+			if (EnvSelection == null ) {
+				$("#errMsg").html("<s:text name='please.add.env'/>");
+				returnVal = false;
 			}
-			else {
+			var cloneConfigName = $('#configurationName').val();
+			if(cloneConfigName== "") {
+				$("#errMsg").html("<s:text name='enter.config.name'/>");
+				$("#configurationName").focus();
+				$("#configurationName").val("");
+				returnVal = false;
+			}
+			
+			if(returnVal) {
 				var params = getBasicParams();
 				var fromPage = "<%= fromPage%>";
 				var configPath = "<%= configPath%>";
