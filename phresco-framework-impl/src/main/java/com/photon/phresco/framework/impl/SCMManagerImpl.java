@@ -16,10 +16,7 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ListBranchCommand.ListMode;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
-import org.tmatesoft.svn.core.SVNDepth;
-import org.tmatesoft.svn.core.SVNDirEntry;
-import org.tmatesoft.svn.core.SVNNodeKind;
-import org.tmatesoft.svn.core.SVNURL;
+import org.tmatesoft.svn.core.*;
 import org.tmatesoft.svn.core.auth.ISVNAuthenticationManager;
 import org.tmatesoft.svn.core.internal.io.dav.DAVRepositoryFactory;
 import org.tmatesoft.svn.core.internal.io.fs.FSRepositoryFactory;
@@ -376,7 +373,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 
 	private ProjectInfo getGitAppInfo(File directory)throws PhrescoException {
 		if(debugEnabled){
-			S_LOGGER.debug("Entering Method  Applications.getGitAppInfo()");
+			S_LOGGER.debug("Entering Method  SCMManagerImpl.getGitAppInfo()");
 		}
 		BufferedReader reader = null;
 		try {
@@ -400,9 +397,9 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		}
 	}
 
-	private ProjectInfo getSvnAppInfo(String revision, SVNURL svnURL)throws Exception {
+	private ProjectInfo getSvnAppInfo(String revision, SVNURL svnURL) throws Exception {
 		if(debugEnabled){
-			S_LOGGER.debug("Entering Method  Applications.getSvnAppInfo()");
+			S_LOGGER.debug("Entering Method  SCMManagerImpl.getSvnAppInfo()");
 		}
 		BufferedReader reader = null;
 		File tempDir = new File(Utility.getSystemTemp(), SVN_CHECKOUT_TEMP);
@@ -427,5 +424,39 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				FileUtil.delete(tempDir);
 			}
 		}
+	}
+
+	public boolean importToRepo(String type, String url, String username,
+			String password, String branch, String revision, File dir, String commitMessage) throws Exception {
+		if(debugEnabled){
+			S_LOGGER.debug("Entering Method  SCMManagerImpl.importToRepo()");
+		}
+		try {
+			if (SVN.equals(type)) {
+				importDirectoryContentToSubversion(url, dir.getPath(), username, password, commitMessage);
+			} else if (GIT.equals(type)) {
+				importToGITRepo();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+		return false;
+	}
+	
+	public static SVNCommitInfo importDirectoryContentToSubversion(final String repositoryURL, final String subVersionedDirectory, final String userName, final String hashedPassword, final String commitMessage) throws SVNException {
+		if(debugEnabled){
+			S_LOGGER.debug("Entering Method  SCMManagerImpl.importDirectoryContentToSubversion()");
+		}
+		setupLibrary();
+        final SVNClientManager cm = SVNClientManager.newInstance(new DefaultSVNOptions(), userName, hashedPassword);
+        return cm.getCommitClient().doImport(new File(subVersionedDirectory), SVNURL.parseURIEncoded(repositoryURL), "<import> " + commitMessage, null, false, true, SVNDepth.fromRecurse(true));
+    }
+	
+	private void importToGITRepo() throws Exception {
+		if(debugEnabled){
+			S_LOGGER.debug("Entering Method  SCMManagerImpl.importToGITRepo()");
+		}
+		// TODO :: Need to implement
 	}
 }

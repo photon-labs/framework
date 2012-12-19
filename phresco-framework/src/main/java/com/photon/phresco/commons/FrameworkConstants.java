@@ -937,6 +937,13 @@ public interface FrameworkConstants {
     String INVALID_REVISION = "import.invalid.revision";
     String NO_POM_XML = "project.pom.not.exist";
     String POM_URL_FAIL = "project.pomurlupdate.fail";
+    
+    /*
+     * Project add keys
+     */
+    String ADD_PROJECT_SUCCESS ="add.project.success";
+    String ADD_PROJECT_FAIL ="add.project.fail";
+    
     /*
      * Delete Build keys
      */

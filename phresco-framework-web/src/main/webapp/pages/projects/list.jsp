@@ -133,7 +133,11 @@
 																<td class="no-left-bottom-border table-pad">
 																	<a href="#" id="projectUpdate">
 																		<img id="<%= appInfo.getCode() %>" class="projectUpdate" src="images/icons/refresh.png"
-																			 additionalParam="projectId=<%= project.getId() %>&appId=<%= appInfo.getId() %>" title="Update" class="iconSizeinList"/>
+																			 additionalParam="projectId=<%= project.getId() %>&appId=<%= appInfo.getId() %>&action=update" title="Update" class="iconSizeinList"/>
+																	</a>
+																	<a href="#" id="repoImport">
+																		<img id="<%= appInfo.getCode() %>" class="projectUpdate" src="images/icons/add_icon.png"
+																			 additionalParam="projectId=<%= project.getId() %>&appId=<%= appInfo.getId() %>&action=add" title="Add to repo" class="iconSizeinList"/>
 																	</a>
 																</td>
 															</tr>
@@ -171,11 +175,13 @@
 		toDisableCheckAll();
 		
 		$('#importAppln').click(function() {
-			yesnoPopup('importAppln', '<s:text name="lbl.app.import"/>', 'importUpdateAppln','<s:text name="lbl.app.import"/>');
+			var params = "action=import";
+			yesnoPopup('importAppln', '<s:text name="lbl.app.import"/>', 'importUpdateAppln','<s:text name="lbl.app.import"/>', '', params);
     	});
 		
 		$('.projectUpdate').click(function() {
 			var params = $(this).attr("additionalParam");
+// 			lbl.app.add.to.repo
 			yesnoPopup('updateProjectPopup', '<s:text name="lbl.app.update"/>', 'importUpdateAppln','<s:text name="lbl.app.update"/>', '', params);
     	});
 		

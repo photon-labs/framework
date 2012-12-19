@@ -31,7 +31,9 @@
 	String fromTab = (String)request.getAttribute(FrameworkConstants.REQ_FROM_TAB);
 	String applicationId = (String)request.getAttribute(FrameworkConstants.REQ_APP_ID);
 	String projectId = (String)request.getAttribute(FrameworkConstants.REQ_PROJECT_ID);
-	String action = StringUtils.isEmpty(fromTab) ? "import" : "update";
+	String action = (String)request.getAttribute(FrameworkConstants.REQ_ACTION);
+	System.out.println("action value => " + action);
+// 	String action = StringUtils.isEmpty(fromTab) ? "import" : "update";
 	String customerId = (String)request.getAttribute(FrameworkConstants.REQ_CUSTOMER_ID);
 	User userInfo = (User)session.getAttribute(FrameworkConstants.SESSION_USER_INFO);
     String LoginId = "";
@@ -255,6 +257,7 @@
 	
 	function successEvent(pageUrl, data){
 		if(pageUrl == "importSVNProject" || pageUrl == "importGITProject" || pageUrl == "updateSVNProject" || pageUrl == "updateGITProject"){
+			alert("handle");
 			checkError(pageUrl, data);
 		}
 	}
@@ -266,6 +269,7 @@
 		if (!data.errorFlag) {
 			$("#errMsg").html(data.errorString);
 		} else if(data.errorFlag) {
+			alert("handle");
 			if ((pageUrl == "importGITProject" )||( pageUrl == "importSVNProject")){
 				 statusFlag = "import";
 			} else if((pageUrl == "updateGITProject" )||( pageUrl == "updateSVNProject")){
