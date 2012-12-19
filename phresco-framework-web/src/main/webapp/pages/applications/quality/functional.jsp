@@ -204,6 +204,8 @@ $(document).ready(function() {
 	$('#pdfCreation').click(function() {
 		var params = "fromPage=";
 		params = params.concat("functional");
+		params = params.concat("&testType=");
+        params = params.concat('<%= FrameworkConstants.FUNCTIONAL %>');
 		yesnoPopup('showGeneratePdfPopup', '<s:text name="lbl.app.generatereport"/>', 'printAsPdf','<s:text name="lbl.app.generate"/>', '', params);
     });
 		        

@@ -185,6 +185,8 @@ $(document).ready(function() {
     
 	$('#pdfCreation').click(function() {
 		var params = "fromPage=unit";
+		params = params.concat("&testType=");
+	    params = params.concat('<%= FrameworkConstants.UNIT %>');
 		yesnoPopup('showGeneratePdfPopup', '<s:text name="lbl.app.generatereport"/>', 'printAsPdf','<s:text name="lbl.app.generate"/>', '', params);
     });
        
@@ -268,8 +270,8 @@ function popupOnOk(obj) {
 	var okUrl = $(obj).attr("id");
 	if (okUrl === "printAsPdf") {
 		// show popup loading icon
-		//showPopuploadingIcon();
-		loadContent('printAsPdf', $('#generatePdf'), $('#popup_div'), '', false, true);
+		showPopuploadingIcon();
+		loadContent('printAsPdf', $('#generatePdf'), $('#popup_div'), '', false);
 	} else {
 		$("#popupPage").modal('hide');
 		var params = getBasicParams();

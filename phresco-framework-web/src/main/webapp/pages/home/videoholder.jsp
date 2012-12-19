@@ -30,8 +30,7 @@
     List<VideoInfo> videoInfos = (List<VideoInfo>) request.getAttribute(FrameworkConstants.REQ_VIDEO_INFOS);
     String serverUrl = (String) request.getAttribute(FrameworkConstants.REQ_SERVER_URL);
 %>
-<!-- <script type="text/javascript" src="js/windowResizer.js">
-</script> -->
+
     <div class="video_height">
 	    <div class='holder'>
 	 		<div class="video-title">
@@ -95,8 +94,6 @@
     		changeVideo("<%= videoInfos.get(0).getName() %>");
     	}
         
-        
-
         <%  int j = 0;
             for(VideoInfo videoDetail : videoInfos) {
         %>      
