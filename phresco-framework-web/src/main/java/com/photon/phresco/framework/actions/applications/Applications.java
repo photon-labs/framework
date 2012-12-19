@@ -1147,7 +1147,6 @@ public class Applications extends FrameworkBaseAction {
 			S_LOGGER.debug("Entering Method  Applications.addSVNProject()");
 		}
 		try {
-			System.out.println("add to report ...... ");
 			SCMManagerImpl scmi = new SCMManagerImpl();
 			String applicationHome = getApplicationHome();
 			File appDir = new File(applicationHome);
