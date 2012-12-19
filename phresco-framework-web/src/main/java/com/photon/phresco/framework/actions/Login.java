@@ -40,10 +40,18 @@
 
 package com.photon.phresco.framework.actions;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import com.photon.phresco.commons.model.Customer;
 import com.photon.phresco.commons.model.User;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.util.Credentials;
@@ -59,7 +67,10 @@ public class Login extends FrameworkBaseAction {
     private String password = null;
     private boolean loginFirst = true;
     
-    public String login() {
+    private String logoImgUrl = "";
+    private String brandingColor = "";
+    
+    public String login() throws IOException {
         if (isDebugEnabled) {
             S_LOGGER.debug("Entering Method  Login.login()");
         }
@@ -96,7 +107,7 @@ public class Login extends FrameworkBaseAction {
         return SUCCESS;
     }
     
-    private String authenticate() {
+    private String authenticate() throws IOException {
         if (isDebugEnabled) {
             S_LOGGER.debug("Entering Method  Login.authenticate()");
         }
@@ -124,7 +135,6 @@ public class Login extends FrameworkBaseAction {
             setSessionAttribute(SESSION_USER_PASSWORD, encodedString);
         } catch (PhrescoException e) {
             setReqAttribute(REQ_LOGIN_ERROR, getText(ERROR_EXCEPTION));
-
             return LOGIN_FAILURE;
         }
             
@@ -146,6 +156,58 @@ public class Login extends FrameworkBaseAction {
         }
         
         return true;
+    }
+    
+    public String fetchLogoImgUrl() {
+    	FileOutputStream fileOutputStream = null;
+    	InputStream fileInputStream = null;
+    	try {
+    		StringBuilder sb = new StringBuilder(IMAGES)
+    		.append(FORWARD_SLASH)
+    		.append(CUSTOMERS)
+    		.append(FORWARD_SLASH)
+    		.append(getCustomerId())
+    		.append(PNG);
+    		String path = getHttpRequest().getSession().getServletContext().getRealPath(sb.toString());
+    		File imageFilePath = new File(path);
+    		if (!imageFilePath.exists()) {
+    			fileOutputStream =  new FileOutputStream(imageFilePath);
+        		byte[] imagebyte = new byte[1024];
+        		int length;
+        		fileInputStream = getServiceManager().getIcon(getCustomerId());
+        		while ((length = fileInputStream.read(imagebyte)) != -1) {
+        			fileOutputStream.write(imagebyte, 0, length);
+        		}
+    		}
+    		setLogoImgUrl(sb.toString());
+    		User user = (User) getSessionAttribute(SESSION_USER_INFO);
+    		List<Customer> customers = user.getCustomers();
+    		for (Customer customer : customers) {
+				if (customer.getId().equals(getCustomerId())) {
+					setBrandingColor(customer.getBrandingColor());
+					break;
+				}
+			}
+    	} catch (PhrescoException e) {
+    		return showErrorPopup(e, getText(""));
+    	} catch (FileNotFoundException e) {
+    		return showErrorPopup(new PhrescoException(e), getText(""));
+		} catch (IOException e) {
+			return showErrorPopup(new PhrescoException(e), getText(""));
+		} finally {
+    		try {
+    			if (fileOutputStream != null) {
+    				fileOutputStream.close();
+    			}
+    			if (fileInputStream != null) {
+    				fileInputStream.close();
+    			}
+			} catch (IOException e) {
+				return showErrorPopup(new PhrescoException(e), getText(""));
+			}
+    	}
+    	
+    	return SUCCESS;
     }
     
     public String getUsername() {
@@ -171,4 +233,20 @@ public class Login extends FrameworkBaseAction {
     public void setLoginFirst(boolean loginFirst) {
         this.loginFirst = loginFirst;
     }
+
+	public String getLogoImgUrl() {
+		return logoImgUrl;
+	}
+
+	public void setLogoImgUrl(String logoImgUrl) {
+		this.logoImgUrl = logoImgUrl;
+	}
+
+	public String getBrandingColor() {
+		return brandingColor;
+	}
+
+	public void setBrandingColor(String brandingColor) {
+		this.brandingColor = brandingColor;
+	}
 }
