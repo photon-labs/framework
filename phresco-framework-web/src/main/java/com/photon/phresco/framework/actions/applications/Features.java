@@ -194,13 +194,13 @@ public class Features extends FrameworkBaseAction {
 		SelectedFeature slctFeature = new SelectedFeature();
 		ArtifactInfo artifactInfo = getServiceManager().getArtifactInfo(selectedModule);
 		
-		slctFeature.setDispName(artifactInfo.getName());
 		slctFeature.setDispValue(artifactInfo.getVersion());
 		slctFeature.setVersionID(artifactInfo.getId());
 		slctFeature.setModuleId(artifactInfo.getArtifactGroupId());
 		
 		String artifactGroupId = artifactInfo.getArtifactGroupId();
 		ArtifactGroup artifactGroupInfo = getServiceManager().getArtifactGroupInfo(artifactGroupId);
+		slctFeature.setDispName(artifactGroupInfo.getName());
 		slctFeature.setType(artifactGroupInfo.getType().name());
 		
 		return slctFeature;
