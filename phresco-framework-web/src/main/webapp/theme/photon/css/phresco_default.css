@@ -2016,7 +2016,8 @@ h1 {
 .graph_div {
     height:100%;
     float:right;
-    width:454px;
+	width: 45% !important;
+	margin-left: 2%;
 }
 
 #graphicalView {
@@ -5810,6 +5811,10 @@ ul#display-inline-block-example li:nth-child(4) select, ul#display-inline-block-
 	background: #323232;
 	color: white;	
 }
+.qtyTable_view table {
+	border-left: 1px solid #323232;
+	border-right: 1px solid #323232;
+}
 /*.qtyTable_view table thead tr th:first-child {
 	border-radius: 11px 0px 0px 0px;
 }
@@ -5968,7 +5973,8 @@ color: #313131;
 .table_div_unit {
 	margin: 0px !important;
 	border: none !important;
-	width: 100% !important;
+	width: 52% !important;
+	margin-top: 2% !important;
 }
 .zebra-striped thead tr th div {
 	color: white !important;
@@ -6187,4 +6193,25 @@ color: #313131;
 
 #envDesc {
 	resize: none;
+}
+
+/*CSS related to Load Test*/
+
+.columns .fixed-table-container {
+	border: 1px solid #323232;
+}
+.testSuiteDisplay table thead tr {
+	height: 30px;
+	background: #323232;
+	color: white;
+}
+.testSuiteList {
+	padding-left: 5%;
+	margin-top: -7px !important;
+}
+.testSuiteList strong {
+	color: black;
+}
+.testSuiteList select {
+	margin: 5px 0px 5px 5px;
 }
