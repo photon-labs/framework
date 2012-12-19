@@ -146,6 +146,38 @@ public class Features extends FrameworkBaseAction {
 				}
 			}
 			
+			if (StringUtils.isNotEmpty(getPilotProject())) {
+				String id = getPilotProject();
+				List<ApplicationInfo> pilotProjects = (List<ApplicationInfo>)getSessionAttribute(REQ_PILOT_PROJECTS);
+				for (ApplicationInfo applicationInfo : pilotProjects) {
+					if(applicationInfo.getId().equals(id)) {
+						List<String> pilotModules = applicationInfo.getSelectedModules();
+						if (CollectionUtils.isNotEmpty(pilotModules)) {
+							for (String pilotModule : pilotModules) {
+								SelectedFeature selectFeature = createArtifactInformation(pilotModule);
+								listFeatures.add(selectFeature);
+							}
+						}
+						
+						List<String> pilotJSLibs = applicationInfo.getSelectedJSLibs();
+						if (CollectionUtils.isNotEmpty(pilotJSLibs)) {
+							for (String pilotJSLib : pilotJSLibs) {
+								SelectedFeature selectFeature = createArtifactInformation(pilotJSLib);
+								listFeatures.add(selectFeature);
+							}
+						}
+						
+						List<String> pilotComponents = applicationInfo.getSelectedComponents();
+						if (CollectionUtils.isNotEmpty(pilotComponents))	{
+							for (String pilotComponent : pilotComponents) {
+								SelectedFeature selectFeature = createArtifactInformation(pilotComponent);
+								listFeatures.add(selectFeature);
+							}
+						}
+					}
+				}
+			}
+			
 			setReqAttribute(REQ_SELECTED_FEATURES, listFeatures);
 			projectInfo.setAppInfos(Collections.singletonList(createApplicationInfo(appInfo)));
 			setReqAttribute(REQ_OLD_APPDIR, getOldAppDirName());
