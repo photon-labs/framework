@@ -95,7 +95,7 @@
 			onclick="loadContent('applications', $('#formCustomers'), $('#container'), '', '', true);">
 	</div>
 	
-	 <!-- Hidden fields --> 
+	<!-- Hidden fields --> 
 	<input type="hidden" name="technologyId" value="<%= technologyId %>">
 	<input type="hidden" name="oldAppDirName" value="<%= oldAppDirName %>">
 </form>
@@ -105,7 +105,7 @@
 	if (CollectionUtils.isNotEmpty(features)) {
 		for (SelectedFeature feature : features) {
 %>
-			constructFeaturesDiv('<%= feature.getDispName() %>', '<%= feature.getDispValue() %>', '<%= feature.getType() %>', '<%= feature.getVersionID() %>', '<%= feature.getModuleId() %>');
+			constructFeaturesDiv('<%= feature.getDispName() %>', '<%= feature.getDispValue() %>', '<%= feature.getType() %>', '<%= feature.getVersionID() %>', '<%= feature.getModuleId() %>', true);
 <%		
 	 	}
 	}
@@ -156,9 +156,6 @@
     
     // Function to construct the hidden fields for selected features
     function constructFeaturesDiv(dispName, dispValue, hiddenFieldname, hiddenFieldVersion, moduleId, showConfigImg) {
-		$("div[id='"+ dispName +"']").remove();
-		$("input[class='"+ dispName +"']").remove();
-		
 		var jsonParamObj = {};
 		jsonParamObj.dispName = dispName;
 		jsonParamObj.moduleId = moduleId;
@@ -167,14 +164,17 @@
 		jsonParamObj.type = hiddenFieldname;
 		var jsonParam = JSON.stringify(jsonParamObj);
 		var ctrlClass = removeSpaces(dispName);
+		$("div[id='"+ ctrlClass +"Div']").remove();
 		if (showConfigImg) {
-			$("#result").append('<div>'+dispName+' - '+dispValue+
-					'<a href="#" id="'+dispName+'" onclick="remove(this);">&nbsp;&times;</a>'+
+			$("#result").append('<div id="'+ctrlClass+'Div">'+dispName+' - '+dispValue+
+					'<a href="#" onclick="remove(this);">&nbsp;&times;</a>'+
 					'<input type="hidden" class="'+ctrlClass+'" name="jsonData">' +
-					'<a href="#" id="'+dispName+'" onclick="showFeatureConfigPopup(this);"><img src="images/icons/gear.png" title="Configure"/></a></div>');
+					'<a href="#" id="'+dispName+'" onclick="showFeatureConfigPopup(this);">'+
+					'<img src="images/icons/gear.png" title="Configure"/></a></div>');
 		} else {
-			$("#result").append('<div class = "'+dispName+'"id="'+dispName+'">'+dispName+' - '+dispValue+'<a href="#" id="'+dispName+'" onclick="remove(this);">&times;</a></div>' + 
-					'<input type="hidden" class="'+ctrlClass+'" name="jsonData">');
+			$("#result").append('<div id="'+ctrlClass+'Div">'+dispName+' - '+dispValue+
+					'<a href="#" onclick="remove(this);">&times;</a>'+
+					'<input type="hidden" class="'+ctrlClass+'" name="jsonData"></div>');
 		}
 		$("."+ctrlClass).val(jsonParam);
     }
@@ -182,8 +182,6 @@
     // Function to remove the final features in right tab  
     function remove(thisObj) {
     	$(thisObj).closest('div').remove();
-    	var id = $(thisObj).attr("id");
-    	$("." + id).remove();
     }
     
     // Function to fill the heading of the left tab

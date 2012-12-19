@@ -478,9 +478,10 @@
 			for(ArtifactGroupInfo artifactGrpInfo : pilotServers) {
 				String server = artifactGrpInfo.getArtifactGroupId();
 				List<String> serverVersions = artifactGrpInfo.getArtifactInfoIds();
-	%>	
+	%>			
+				var pilotsrver = '<%= server %>';
 				accordionOpen('#serverLayerControl', $('input[value=serverLayer]'));
-				addServer('<%= server%>', '<%=serverVersions%>');
+				addServer('<%= server %>', '<%= serverVersions %>', pilotsrver);
 	<%
 		    }
 	    }
@@ -558,7 +559,7 @@
 		%>
 	}
 	
-    function addServer(selectedServer, serverVersions) {
+    function addServer(selectedServer, serverVersions, pilotsrver) {
     	
 		var trId = serverCounter + "_serverdynamicadd";
 		var servrName = serverCounter + "_serverName";
@@ -571,6 +572,14 @@
 		 			" temp='"+ servrName +"' src='images/icons/add_icon.png' onclick='addServer(this);'></a></td><td class='noBorder'><img id='deleteIcon' class = 'del imagealign'" + 
 		 			"src='images/icons/minus_icon.png' onclick='removeTag(this);'></td>")
 	 	newPropTempRow.appendTo("#propTempTbody");		
+		if (pilotsrver != undefined) {
+			var noOfServers = $('select[name=server]').size();
+			var trId1 = (serverCounter-1) + "_serverdynamicadd";
+			var selectVal = $('#'+trId1+' :selected').val();
+			if (selectVal == undefined || isBlank(selectVal)) {
+			 $('#'+trId1).closest('tr').remove();
+			}
+		}
 		serverCounter++;
 		chkForServerCount();
 		getScrollBar();
