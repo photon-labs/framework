@@ -138,6 +138,7 @@ public class Applications extends FrameworkBaseAction {
     private String defaultOptTxt = "";
     private String action = "";
     private List<String> jsonData = null;
+    private String commitMessage = "";
     
     public String loadMenu() {
         if (s_debugEnabled) {
@@ -1146,14 +1147,15 @@ public class Applications extends FrameworkBaseAction {
 			S_LOGGER.debug("Entering Method  Applications.addSVNProject()");
 		}
 		try {
-			System.out.println("add svn project !!!!! ");
-			
+			System.out.println("add to report ...... ");
+			SCMManagerImpl scmi = new SCMManagerImpl();
+			String applicationHome = getApplicationHome();
+			File appDir = new File(applicationHome);
+			scmi.importToRepo(SVN, repoUrl, userName, password, null, null, appDir, commitMessage);
 			errorString = getText(ADD_PROJECT_SUCCESS);
 			errorFlag = true;
-			
 		} catch (Exception e) {
-			e.printStackTrace();
-			errorString = getText(ADD_PROJECT_FAIL);
+			errorString = e.getLocalizedMessage();
 			errorFlag = false;
 		}
 		return SUCCESS;
@@ -1164,8 +1166,7 @@ public class Applications extends FrameworkBaseAction {
 			S_LOGGER.debug("Entering Method  Applications.addGITProject()");
 		}
 		try {
-			System.out.println("add git project !!!!! ");
-			
+			// TODO : need to handle
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -2177,5 +2178,13 @@ public class Applications extends FrameworkBaseAction {
 
 	public void setAction(String action) {
 		this.action = action;
+	}
+
+	public String getCommitMessage() {
+		return commitMessage;
+	}
+
+	public void setCommitMessage(String commitMessage) {
+		this.commitMessage = commitMessage;
 	}
 }

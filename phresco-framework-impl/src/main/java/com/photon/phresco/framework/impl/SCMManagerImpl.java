@@ -432,6 +432,8 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		try {
 			if (SVN.equals(type)) {
 				importDirectoryContentToSubversion(url, dir.getPath(), username, password, commitMessage);
+				// checkout to get .svn folder
+				checkoutImportedApp(url, dir.getPath(), username, password);
 			} else if (GIT.equals(type)) {
 				importToGITRepo();
 			}
@@ -450,6 +452,26 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
         final SVNClientManager cm = SVNClientManager.newInstance(new DefaultSVNOptions(), userName, hashedPassword);
         return cm.getCommitClient().doImport(new File(subVersionedDirectory), SVNURL.parseURIEncoded(repositoryURL), "<import> " + commitMessage, null, false, true, SVNDepth.fromRecurse(true));
     }
+	
+	private void checkoutImportedApp(String repositoryURL, String subVersionedDirectory, String userName, String password) throws Exception {
+		if(debugEnabled){
+			S_LOGGER.debug("Entering Method  SCMManagerImpl.checkoutImportedApp()");
+		}
+		DefaultSVNOptions options = new DefaultSVNOptions();
+		SVNClientManager cm = SVNClientManager.newInstance(options, userName, password);
+		SVNUpdateClient uc = cm.getUpdateClient();
+		SVNURL svnURL = SVNURL.parseURIEncoded(repositoryURL);
+		if(debugEnabled){
+			S_LOGGER.debug("Checking out...");
+		}
+		File subVersDir = new File(subVersionedDirectory);
+		uc.doCheckout(SVNURL.parseURIEncoded(repositoryURL), subVersDir, SVNRevision.UNDEFINED, SVNRevision.parse(HEAD_REVISION), SVNDepth.UNKNOWN, true);
+		if(debugEnabled){
+			S_LOGGER.debug("updating pom.xml");
+		}
+		// update connection url in pom.xml
+		updateSCMConnection(subVersDir.getName(), svnURL.toDecodedString());
+	}
 	
 	private void importToGITRepo() throws Exception {
 		if(debugEnabled){

@@ -32,8 +32,6 @@
 	String applicationId = (String)request.getAttribute(FrameworkConstants.REQ_APP_ID);
 	String projectId = (String)request.getAttribute(FrameworkConstants.REQ_PROJECT_ID);
 	String action = (String)request.getAttribute(FrameworkConstants.REQ_ACTION);
-	System.out.println("action value => " + action);
-// 	String action = StringUtils.isEmpty(fromTab) ? "import" : "update";
 	String customerId = (String)request.getAttribute(FrameworkConstants.REQ_CUSTOMER_ID);
 	User userInfo = (User)session.getAttribute(FrameworkConstants.SESSION_USER_INFO);
     String LoginId = "";
@@ -52,7 +50,9 @@
 			<div class="controls">
 				<select name="repoType" class="medium" >
 					<option value="<s:text name="lbl.repo.type.svn"/>" selected ><s:text name="lbl.repo.type.svn"/></option>
-					<option value="<s:text name="lbl.repo.type.git"/>"><s:text name="lbl.repo.type.git"/></option>
+					<% if (!FrameworkConstants.FROM_PAGE_ADD.equals(action)) { %>
+						<option value="<s:text name="lbl.repo.type.git"/>"><s:text name="lbl.repo.type.git"/></option>
+					<% } %>
 			    </select>
 			</div>
 		</div>
@@ -88,6 +88,7 @@
 		</div>
 	</div>
 	
+	<% if (!FrameworkConstants.FROM_PAGE_ADD.equals(action)) { %>
 	<div id="svnRevisionInfo">
 		<div class="control-group">
 			<label  class="control-label labelbold popupLbl"><span class="red">*</span> <s:text name="label.revision"/></label> 
@@ -102,6 +103,17 @@
 			</div>
 		</div>
 	</div>
+	<% } %>
+	
+	<% if (FrameworkConstants.FROM_PAGE_ADD.equals(action)) { %>
+		<div class="control-group">
+			<label  class="control-label labelbold popupLbl"><s:text name="lbl.commit.message"/></label> 
+			<div class="controls">
+				 <textarea class="appinfo-desc input-xlarge" maxlength="150" title="<s:text name="title.150.chars"/>" class="xlarge" 
+		        	id="textarea" name="commitMessage"></textarea> 
+			</div>
+		</div>
+	<% } %>
 </form>
 
 <script type="text/javascript">
@@ -260,9 +272,9 @@
 		loadContent(getAction(), $('#repoDetails'), '', params, true, true);
 	}
 	
-	function successEvent(pageUrl, data){
-		if(pageUrl == "importSVNProject" || pageUrl == "importGITProject" || pageUrl == "updateSVNProject" || pageUrl == "updateGITProject"){
-			alert("handle");
+	function successEvent(pageUrl, data) {
+		if(pageUrl == "importSVNProject" || pageUrl == "importGITProject" || pageUrl == "updateSVNProject" || pageUrl == "updateGITProject"
+			|| pageUrl == "addSVNProject" || pageUrl == "addGITProject") {
 			checkError(pageUrl, data);
 		}
 	}
@@ -274,11 +286,12 @@
 		if (!data.errorFlag) {
 			$("#errMsg").html(data.errorString);
 		} else if(data.errorFlag) {
-			alert("handle");
-			if ((pageUrl == "importGITProject" )||( pageUrl == "importSVNProject")){
+			if ((pageUrl == "importGITProject" )||( pageUrl == "importSVNProject")) {
 				 statusFlag = "import";
-			} else if((pageUrl == "updateGITProject" )||( pageUrl == "updateSVNProject")){
+			} else if((pageUrl == "updateGITProject" )||( pageUrl == "updateSVNProject")) {
 				 statusFlag = "update";
+			} else if((pageUrl == "addGITProject" )||( pageUrl == "addSVNProject")) {
+				 statusFlag = "add";
 			}
 			var params = getBasicParams();
 			params = params.concat("statusFlag=");

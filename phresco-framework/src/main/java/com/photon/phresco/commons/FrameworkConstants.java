@@ -144,6 +144,7 @@ public interface FrameworkConstants {
     String SVN = "svn";
     String MASTER = "master";
     String UPDATE = "update";
+    String ADD = "add";
     String REPO_URL = "repoUrl";
     String PROJECT_UPDATE_POPUP = "projectUpdatePopup";
     String CLONED_WORKSPACE = "clonedWorkspace";
@@ -926,6 +927,7 @@ public interface FrameworkConstants {
      */
     String SUCCESS_PROJECT_DELETE = "Projects deleted successfully";
     String SUCCESS_PROJECT_UPDATE = "update.project.success";
+    String SUCCESS_PROJECT_ADD = "add.project.success";
     String FAILURE_PROJECT_UPDATE = "update.project.fail";
     String FAILURE_PROJECT_DELETE = "Projects deletion failed";
     /*
