@@ -67,6 +67,10 @@ footer {
 	width: 100%;
 }
 
+.modal-backdrop, .modal-backdrop.fade.in {
+	 opacity: 0.7;
+}
+
 /** login **/
 
 #welcome {
@@ -877,7 +881,7 @@ a {
 	top: -3px;
 	width: auto;
 	padding: 4px;
-	z-index: 3000;
+	z-index: 100;
 	cursor: pointer;
 }
 

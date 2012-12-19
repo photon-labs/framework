@@ -48,6 +48,11 @@
 		ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
 		technologyId = appInfo.getTechInfo().getId();
 	}
+	Object optionsObj = session.getAttribute(FrameworkConstants.REQ_OPTION_ID);
+	List<String> optionIds  = null;
+	if (optionsObj != null) {
+		optionIds  = (List<String>) optionsObj;
+	}
 %> 
 <form id="formFeatures" class="featureForm">
 	<div class="form-horizontal featureTypeWidth">
@@ -169,8 +174,15 @@
 			$("#result").append('<div id="'+ctrlClass+'Div">'+dispName+' - '+dispValue+
 					'<a href="#" onclick="remove(this);">&nbsp;&times;</a>'+
 					'<input type="hidden" class="'+ctrlClass+'" name="jsonData">' +
-					'<a href="#" id="'+dispName+'" onclick="showFeatureConfigPopup(this);">'+
-					'<img src="images/icons/gear.png" title="Configure"/></a></div>');
+					<%
+						if (optionIds != null && optionIds.contains(FrameworkConstants.FEATURES_KEY)) {
+					%>
+						'<a href="#" id="'+dispName+'" onclick="showFeatureConfigPopup(this);">'+ 
+						'<img src="images/icons/gear.png" title="Configure"/></a>' +
+					<% 
+						}
+					%>
+					'</div>');
 		} else {
 			$("#result").append('<div id="'+ctrlClass+'Div">'+dispName+' - '+dispValue+
 					'<a href="#" onclick="remove(this);">&times;</a>'+

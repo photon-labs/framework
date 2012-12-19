@@ -589,9 +589,9 @@ function allowAlphaNum(inputStr) {
 	return inputStr.replace(/[^a-zA-Z 0-9]+/g, '');
 }
 
-//It allows 0-9,- and +
-function allowNumHyphenPlus(numbr) {
-	return numbr.replace(/[^0-9\-\+]+/g, '');
+//It allows 0-9,- 
+function allowNumHyphen(numbr) {
+	return numbr.replace(/[^0-9\-]+/g, '');
 }
 
 //It removes all empty spaces

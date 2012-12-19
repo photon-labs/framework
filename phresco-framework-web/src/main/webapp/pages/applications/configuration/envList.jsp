@@ -194,9 +194,19 @@
 	        $("#configAdd").addClass("btn-disabled");
 		<% } else { %>
 		  	$("input[name=configAdd]").removeAttr("disabled");
-		  	$("#configAdd").addClass("btn-primary"); 
+		  	$("#configAdd").addClass("btn-primary");
 			$("#configAdd").removeClass("btn-disabled");
 		<% } %>
+		
+		if ($('.table_div').find("input[type='checkbox']:checked").length < 1) {
+			$("input[name=deleteBtn]").attr("disabled", "disabled");
+			$("#deleteBtn").removeClass("btn-primary"); 
+	        $("#deleteBtn").addClass("btn-disabled");
+		} else {
+			$("input[name=deleteBtn]").removeAttr("disabled");
+			$("#deleteBtn").addClass("btn-primary");
+			$("#deleteBtn").removeClass("btn-disabled");
+		}
 		
 		<% 
 			if(urls != null) {

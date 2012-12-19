@@ -67,12 +67,11 @@
 						<%
 						   for(Environment env : envInfoValues ) {
 							   if(!env.getName().equals(copyFromEnvName) ) {
-							   
 	                    %>
 	                       <option value="<%= env.getName() %>" title="<%= env.getDesc() %>" id="created"><%= env.getName() %></option>
 	                    <% 
 							   }
-						}
+							}
 	                    %>
                     </select>
                    </div>
