@@ -143,8 +143,17 @@
         	pm.setPlaceHolder(propertyTemplate.getHelpText());
         	pm.setValue(value);
             StringTemplate inputControl = FrameworkUtil.constructInputElement(pm);
-			sb.append(inputControl);
-        }
+			sb.append(inputControl); 
+		%>
+			<script type="text/javascript">
+				$('input[name="<%= propertyTemplate.getKey() %>"]').live('input propertychange',function(e) {
+					var value = $(this).val();
+					var type = '<%= propertyTemplate.getType() %>';
+					var txtBoxName = '<%= propertyTemplate.getKey() %>';
+					validateInput(value, type, txtBoxName);
+				}); 
+			</script>	
+       <% } 
         if (FrameworkConstants.CONFIG_TYPE.equals(propertyTemplate.getKey())) {
         	pm.setMandatory(true);
         	pm.setLableText("Version");
@@ -327,6 +336,18 @@
 	function hideDeployDir() {
 		$("input[name='deploy_dir']").val("");
 		$('#deploy_dirControl').hide();
+	}
+	
+	function validateInput(value, type, txtBoxName) {
+		var newVal = "";
+		if(type == "String") {
+			newVal = removeSpaces(checkForSplChrForString(value));
+		} else if(type == "Number") {
+			newVal = removeSpaces(allowNumHyphen(value));
+		} else {
+			newVal = removeSpaces(value);
+		}
+		$("#"+txtBoxName).val(newVal);
 	}
 	
 	function getVersions() {

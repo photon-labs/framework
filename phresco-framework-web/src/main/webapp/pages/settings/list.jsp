@@ -68,7 +68,7 @@
 		<input type="button" class="btn btn-primary" name="configAdd" id="configAdd" value="<s:text name='lbl.btn.add'/>" <%=disabledStr %>/>
 
 		<!-- Delete Configuration Button -->	
-		<input type="button" class="btn" id="deleteBtn" disabled value="<s:text name='lbl.delete'/>" data-toggle="modal" href="#popupPage"/>
+		<input type="button" class="btn" name="deleteBtn" id="deleteBtn" disabled value="<s:text name='lbl.delete'/>" data-toggle="modal" href="#popupPage"/>
 
 		<!-- Environment Buttton -->
 	    <a id="addEnvironments" class="btn btn-primary"><s:text name='lbl.app.config.environments'/></a>
@@ -78,11 +78,7 @@
 				<s:actionmessage />
 			</div>
 		</s:if>
-		<s:if test="hasActionErrors()">
-			<div class="alert alert-error"  id="errormsg">
-				<s:actionerror />
-			</div>
-		</s:if>
+		
     </div>
     
 </form>
