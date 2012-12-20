@@ -26,7 +26,13 @@ public class PerformanceTestResultNamesImpl implements DynamicParameter, Constan
 		PossibleValues possibleValues = new PossibleValues();
 		ApplicationInfo applicationInfo = (ApplicationInfo) paramMap.get(KEY_APP_INFO);
 		String testAgainst = (String) paramMap.get(KEY_TEST_AGAINST);
-		String testDirPath = getTestDirPath(applicationInfo.getAppDirName(), testAgainst.toLowerCase());
+		String testDirPath = getTestDirPath(applicationInfo.getAppDirName(), testAgainst);
+		String dependencyStr = "";
+		if ("database".equalsIgnoreCase(testAgainst)) {
+			dependencyStr = "dbContextUrls";
+		} else {
+			dependencyStr = "contextUrls";
+		}
 		File file = new File(testDirPath);
 		File[] testFiles = file.listFiles(new XmlNameFileFilter(FrameworkConstants.XML));
 		if (testFiles.length != 0) {
@@ -34,7 +40,9 @@ public class PerformanceTestResultNamesImpl implements DynamicParameter, Constan
 				int lastDot = testFile.getName().lastIndexOf(".");
 				String newFileName = testFile.getName().substring(0, lastDot); 
 				Value value = new Value();
+				value.setKey(newFileName);
 				value.setValue(newFileName);
+				value.setDependency(dependencyStr);
 				possibleValues.getValue().add(value);
 			}
 		}
@@ -46,7 +54,7 @@ public class PerformanceTestResultNamesImpl implements DynamicParameter, Constan
 		 StringBuilder builder = new StringBuilder(Utility.getProjectHome());
 		 builder.append(AppDirName)
 		 .append(FrameworkConstants.TEST_SLASH_PERFORMANCE)
-		 .append(testAgainst)
+		 .append(testAgainst.toString())
 		 .append(FrameworkConstants.RESULTS_SLASH_JMETER);
 		 
 		return builder.toString();

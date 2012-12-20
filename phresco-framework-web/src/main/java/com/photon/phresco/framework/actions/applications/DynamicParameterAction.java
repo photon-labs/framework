@@ -238,7 +238,6 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 	}
 
     private void addWatcher(Map<String, DependantParameters> watcherMap, String dependency, String parameterKey, String parameterValue) {
-    	
         if (StringUtils.isNotEmpty(dependency)) {
             List<String> dependencyKeys = Arrays.asList(dependency.split(CSV_PATTERN));
             for (String dependentKey : dependencyKeys) {
@@ -249,10 +248,10 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
                     dependantParameters = new DependantParameters();
                 }
                 dependantParameters.getParentMap().put(parameterKey, parameterValue);
-                addParentToWatcher(watcherMap, parameterKey, parameterValue);
                 watcherMap.put(dependentKey, dependantParameters);
             }
         }
+        addParentToWatcher(watcherMap, parameterKey, parameterValue);
     }
     
     private void addParentToWatcher(Map<String, DependantParameters> watcherMap, String parameterKey, String parameterValue) {
@@ -278,7 +277,7 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
         if (StringUtils.isNotEmpty(getReqParameter(BUILD_NUMBER))) {
         	paramMap.put(DynamicParameter.KEY_BUILD_NO, getReqParameter(BUILD_NUMBER));
         }
-
+        
         return paramMap;
     }
     
@@ -474,7 +473,6 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
         
         Map<String, DependantParameters> watcherMap = (Map<String, DependantParameters>) 
                 getSessionAttribute(getAppId() + getGoal() + SESSION_WATCHER_MAP);
-        
         DependantParameters currentParameters = watcherMap.get(getCurrentParamKey());
         if (currentParameters == null) {
             currentParameters = new DependantParameters();
@@ -508,7 +506,8 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
                     	ParameterModel parameterModel = new ParameterModel();
                     	parameterModel.setName(dependentParameter.getKey());
                     	parameterModel.setShow(true);
-                    	StringTemplate constructDynamicTemplate = frameworkUtil.constructDynamicTemplate(getCustomerId(), dependentParameter, parameterModel, dynamicPageParameter, className);
+                    	StringTemplate constructDynamicTemplate = frameworkUtil.constructDynamicTemplate(getCustomerId(), dependentParameter, 
+                    			parameterModel, dynamicPageParameter, className);
                     	setDynamicPageParameterDesign(constructDynamicTemplate.toString());
                     } else {
 	                    List<Value> dependentPossibleValues = getDynamicPossibleValues(constructMapForDynVals, dependentParameter);
@@ -517,7 +516,14 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 	                        DependantParameters dependantParameters = (DependantParameters) watcherMap.get(getDependency());
 	                        dependantParameters.setValue(dependentPossibleValues.get(0).getValue());
 	                    }
-                    }    
+	                    if (watcherMap.containsKey(dependentPossibleValues.get(0).getDependency())) {
+	                        addValueDependToWatcher(watcherMap, dependentParameter.getKey(), dependentPossibleValues);
+	                        if (CollectionUtils.isNotEmpty(dependentPossibleValues)) {
+	                        	addWatcher(watcherMap, dependentParameter.getDependency(), 
+	                        			dependentParameter.getKey(), dependentPossibleValues.get(0).getValue());
+	                        }
+	                    }
+                    }   
                 }
             }
             return SUCCESS;

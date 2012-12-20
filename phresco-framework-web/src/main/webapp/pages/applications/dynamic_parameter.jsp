@@ -46,26 +46,6 @@
 <script src="js/select-envs.js"></script>
 
 <%
-    /* String defaultEnv = "";
-   	String testType = (String) request.getAttribute(FrameworkConstants.REQ_TEST_TYPE);
-   	String importSqlPro  = (String) request.getAttribute(FrameworkConstants.REQ_IMPORT_SQL);
-   	String finalName = (String) request.getAttribute(FrameworkConstants.FINAL_NAME);
-   	String mainClassValue = (String) request.getAttribute(FrameworkConstants.MAIN_CLASS_VALUE);
-   	String checkImportSql = "";
-   	if (importSqlPro != null && Boolean.parseBoolean(importSqlPro)) {
-   	    checkImportSql = "checked";
-   	} */
-   	
-   	//xcode targets
-   	/* List<PBXNativeTarget> xcodeConfigs = (List<PBXNativeTarget>) request.getAttribute(FrameworkConstants.REQ_XCODE_CONFIGS);
-   	List<String> buildInfoEnvs = (List<String>) request.getAttribute(FrameworkConstants.BUILD_INFO_ENVS);
-   	List<Environment> environments = (List<Environment>) request.getAttribute(FrameworkConstants.REQ_ENVIRONMENTS); */
-   	// mac sdks
-   /* 	List<String> macSdks = (List<String>) request.getAttribute(FrameworkConstants.REQ_IPHONE_SDKS);
-   	
-   	Map<String, String> jsMap = (Map<String, String>) request.getAttribute(FrameworkConstants.REQ_MINIFY_MAP);
-   	String fileLoc = (String) request.getAttribute("fileLocation"); */
-   	
    	String from = (String) request.getAttribute(FrameworkConstants.REQ_BUILD_FROM);
    	String buildNumber = "";
    	if (FrameworkConstants.REQ_DEPLOY.equals(from)) {
@@ -237,7 +217,9 @@
 						parameterModel.setSelectedValues(selectedValList);
 					}
 					String onChangeFunction = ""; 
-					if(!Boolean.parseBoolean(parameter.getMultiple()) && StringUtils.isNotEmpty(parameter.getDependency())) {
+					if (CollectionUtils.isNotEmpty(dynamicPsblValues) &&StringUtils.isNotEmpty(dynamicPsblValues.get(0).getDependency())) {
+						onChangeFunction = "selectBoxOnChangeEvent(this, '"+ parameter.getKey() +"')";
+					} else if(!Boolean.parseBoolean(parameter.getMultiple()) && StringUtils.isNotEmpty(parameter.getDependency())) {
 					    onChangeFunction = "selectBoxOnChangeEvent(this, '"+ parameter.getKey() +"')";
 					} else {
 					    onChangeFunction = "";
