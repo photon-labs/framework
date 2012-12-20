@@ -1,15 +1,12 @@
 package com.photon.phresco.framework.impl;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.UUID;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.*;
 import org.apache.log4j.Logger;
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.Git;
@@ -446,7 +443,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		}
 		setupLibrary();
         final SVNClientManager cm = SVNClientManager.newInstance(new DefaultSVNOptions(), userName, hashedPassword);
-        return cm.getCommitClient().doImport(new File(subVersionedDirectory), SVNURL.parseURIEncoded(repositoryURL), "<import> " + commitMessage, null, false, true, SVNDepth.fromRecurse(true));
+        return cm.getCommitClient().doImport(new File(subVersionedDirectory), SVNURL.parseURIEncoded(repositoryURL), commitMessage, null, true, true, SVNDepth.fromRecurse(true));
     }
 	
 	private void checkoutImportedApp(String repositoryURL, String subVersionedDirectory, String userName, String password) throws Exception {
@@ -461,7 +458,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			S_LOGGER.debug("Checking out...");
 		}
 		File subVersDir = new File(subVersionedDirectory);
-		uc.doCheckout(SVNURL.parseURIEncoded(repositoryURL), subVersDir, SVNRevision.UNDEFINED, SVNRevision.parse(HEAD_REVISION), SVNDepth.UNKNOWN, true);
+		uc.doCheckout(SVNURL.parseURIEncoded(repositoryURL), subVersDir, SVNRevision.UNDEFINED, SVNRevision.parse(HEAD_REVISION), SVNDepth.INFINITY, true);
 		if(debugEnabled){
 			S_LOGGER.debug("updating pom.xml");
 		}
@@ -492,7 +489,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		return true;
 	}
 	
-	private SVNCommitInfo commitDirectoryContentToSubversion(final String repositoryURL, final String subVersionedDirectory, final String userName, final String hashedPassword, final String commitMessage) throws SVNException {
+	private SVNCommitInfo commitDirectoryContentToSubversion(String repositoryURL, String subVersionedDirectory, String userName, String hashedPassword, String commitMessage) throws SVNException {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.commitDirectoryContentToSubversion()");
 		}
@@ -502,8 +499,28 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		SVNWCClient wcClient = cm.getWCClient();
 		File subVerDir = new File(subVersionedDirectory);
 		// This one recursively adds an existing local item under version control (schedules for addition)
-//		wcClient.doAdd(dir , false , false , false , true );
 		wcClient.doAdd(subVerDir, true, false, false, SVNDepth.INFINITY, false, false);
-		return cm.getCommitClient().doCommit(new File[]{subVerDir}, false, "<commit> " + commitMessage, null, null, false, true, SVNDepth.INFINITY);
+		return cm.getCommitClient().doCommit(new File[]{subVerDir}, false, commitMessage, null, null, false, true, SVNDepth.INFINITY);
+    }
+	
+	public SVNCommitInfo deleteDirectoryInSubversion(String repositoryURL, String subVersionedDirectory, String userName, String password, String commitMessage) throws SVNException, IOException {
+		if(debugEnabled){
+			S_LOGGER.debug("Entering Method  SCMManagerImpl.commitDirectoryContentToSubversion()");
+		}
+		setupLibrary();
+		
+		File subVerDir = new File(subVersionedDirectory);		
+		final SVNClientManager cm = SVNClientManager.newInstance(new DefaultSVNOptions(), userName, password);
+		
+		SVNWCClient wcClient = cm.getWCClient();
+		//wcClient.doDelete(subVerDir, true, false);
+		FileUtils.listFiles(subVerDir, TrueFileFilter.TRUE, FileFilterUtils.makeSVNAware(null));
+		for (File child : subVerDir.listFiles()) {
+			if (!(DOT+SVN).equals(child.getName())) {
+				wcClient.doDelete(child, true, true, false);
+			}
+		}
+		
+		return cm.getCommitClient().doCommit(new File[]{subVerDir}, false, commitMessage, null, null, false, true, SVNDepth.INFINITY);
     }
 }
