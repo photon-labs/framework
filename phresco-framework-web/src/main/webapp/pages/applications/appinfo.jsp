@@ -39,7 +39,7 @@
 
 <%
 	String appId = (String)request.getAttribute(FrameworkConstants.REQ_APP_ID);
-	Technology technology = (Technology) session.getAttribute("technology");
+	Technology technology = (Technology) session.getAttribute(FrameworkConstants.REQ_TECHNOLOGY);
 	List<ApplicationInfo> pilotProjects = (List<ApplicationInfo>) session.getAttribute(FrameworkConstants.REQ_PILOT_PROJECTS);
 	ProjectInfo projectInfo = (ProjectInfo) session.getAttribute(appId + FrameworkConstants.SESSION_APPINFO);
 	List<WebService> webservices = (List<WebService>)request.getAttribute(FrameworkConstants.REQ_WEBSERVICES);
@@ -465,18 +465,76 @@
     
     function showPilotProjectInfo(obj) {
  		var piltProject = $(obj).val();
-	    <%	for (ApplicationInfo appInfo : pilotProjects) { %>
-				if (piltProject == '<%= appInfo.getId()%>') {
-				<% 	pilotServers = appInfo.getSelectedServers();
-					pilotDatabases = appInfo.getSelectedDatabases();	
-					pilotWebservices = appInfo.getSelectedWebservices();
-				%>
-					showPilotSelectedDownloadInfo();
+ 		if (isBlank(piltProject)) {
+ 			deletePilots();
+ 		} else {
+    <% 			for (ApplicationInfo appInfo : pilotProjects) {
+   	%>
+					if (piltProject == '<%= appInfo.getId()%>') {
+    <% 					pilotServers = appInfo.getSelectedServers();
+						pilotDatabases = appInfo.getSelectedDatabases();	
+						pilotWebservices = appInfo.getSelectedWebservices();
+	%>
+						showPilotSelectedDownloadInfo();
+					}
+	<%
 				}
-		<%
-			}
-        %>
+    %>
+ 		}
     }
+    
+	function deletePilots() {
+		<%-- <% if(pilotProjects != null) { %>
+		$('select[name=server]').each(function () {
+	  		var server = $(this).val();
+	   		if(server == '<%=pilotServers.get(0).getArtifactGroupId()%>') {
+			   	var serverId = $(this).attr("id");
+			   	$('#'+serverId).closest('tr').remove();
+			   	chkForServerCount();
+		   }	
+	    });
+		var noOfRows = $('select[name=server]').size();
+		if(noOfRows == 0) {
+			addServer();
+			$('#serverLayerControl').each(function () {
+			document.getElementById("checkAll1").checked=false
+		  	});
+			accordionClose('#serverLayerControl', $('input[value=serverLayer]'));
+		}
+		
+		$('select[name=database]').each(function () {
+	  		var database = $(this).val();
+	   		if(database == '<%=pilotDatabases.get(0).getArtifactGroupId()%>') {
+			   	var databaseId = $(this).attr("id");
+			   	$('#'+databaseId).closest('tr').remove();
+			   	chkForDBCount();
+		   }	
+	    });
+		var noOfDatabase = $('select[name=database]').size();
+		if(noOfDatabase == 0) {
+			addDatabase();
+			$('#databaseLayerControl').each(function () {
+			document.getElementById("checkAll2").checked=false
+		  	});
+			accordionClose('#databaseLayerControl', $('input[value=databaseLayer]'));
+		} 
+	
+		selectDelselectWebService(false);
+		$('#webserviceLayerControl').each(function () {
+			document.getElementById("checkAll3").checked = false;
+       	});
+		accordionClose('#webserviceLayerControl', $('input[value=webserviceLayer]'));
+		$('input[name=webservice]').each(function () {
+	 		var webservice = $(this).val();
+	 			if ($(this).attr("checked") == "checked") {
+	 				$('#webserviceLayerControl').each(function () {
+	 					document.getElementById("checkAll3").checked = true;
+	 		       	});
+	 				accordionOpen('#webserviceLayerControl', $('input[value=webserviceLayer]'));
+	 			}
+       	});
+		<% } %> --%>
+	}	
     
     function showPilotSelectedDownloadInfo() {
    		
@@ -512,23 +570,36 @@
 		    }
     	}
 	%>
-	
-	<% if (pilotWebservices != null) { %>
+	<% 
+		if (pilotWebservices != null) {
+	%>	
 			accordionOpen('#webserviceLayerControl', $('input[value=webserviceLayer]'));
+
 			$('#webserviceLayerControl').each(function () {
-				document.getElementById("checkAll3").checked=true
-        	});
-			<% for (String webservice : pilotWebservices) { %>
-			
-				$('input[name=webservice]').each(function () {
-			 		var webservice = $(this).val();
-			 		if('<%= webservice %>' === webservice) {
-			 			$(this).attr("checked", true);
-			 		}
-	        	});
-				
-	<%    }
-		} %>
+				document.getElementById("checkAll3").checked = true;
+	       	});
+			selectDelselectWebService(true);
+	<%
+		}
+	%>
+    }
+    
+    function selectDelselectWebService(checkedStr) {
+    	<% 
+			if (pilotWebservices != null) {
+				for (String webservice : pilotWebservices) {
+		%>
+					$('input[name=webservice]').each(function () {
+				 		var webservice = $(this).val();
+				 		if ('<%= webservice %>' === webservice) {
+				 			$(this).attr("checked", checkedStr);
+				 		}
+			       	});
+		<%
+				}
+			}
+		%>
+		
     }
     
     function removeTag(currentTag) {
@@ -542,6 +613,13 @@
 		var isChecked = currentChkBoxObj;
 		$(thisObj).removeClass('closereg').addClass('openreg');
 		$(thisObj).next('.mfbox').eq(_tempIndex).slideDown(300,function() {});	
+    } 
+    
+    function accordionClose(thisObj, currentChkBoxObj) {
+    	var _tempIndex = $('.siteaccordion').index(thisObj);
+    	var isChecked = currentChkBoxObj;
+    	$(thisObj).removeClass('openreg').addClass('closereg');
+    	$(thisObj).next('.mfbox').eq(_tempIndex).slideUp(300,function() {});	
     } 
     
     function getScrollBar(){

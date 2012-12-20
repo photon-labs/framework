@@ -205,7 +205,7 @@ public class Applications extends FrameworkBaseAction {
         		String technologyId = projectInfo.getAppInfos().get(0).getTechInfo().getId();
         		List<ApplicationInfo> pilotProjects = getServiceManager().getPilotProjects(getCustomerId(), technologyId);
         		Technology technologyInfo = getServiceManager().getTechnology(technologyId);
-        		setSessionAttribute("technology", technologyInfo);
+        		setSessionAttribute(REQ_TECHNOLOGY, technologyInfo);
         		setSessionAttribute(REQ_PILOT_PROJECTS, pilotProjects);
         		setSessionAttribute(getAppId() + SESSION_APPINFO, projectInfo);
         		setReqAttribute(REQ_OLD_APPDIR, projectInfo.getAppInfos().get(0).getName());

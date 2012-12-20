@@ -40,14 +40,12 @@
 
 package com.photon.phresco.framework.actions;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -159,27 +157,15 @@ public class Login extends FrameworkBaseAction {
     }
     
     public String fetchLogoImgUrl() {
-    	FileOutputStream fileOutputStream = null;
     	InputStream fileInputStream = null;
     	try {
-    		StringBuilder sb = new StringBuilder(IMAGES)
-    		.append(FORWARD_SLASH)
-    		.append(CUSTOMERS)
-    		.append(FORWARD_SLASH)
-    		.append(getCustomerId())
-    		.append(PNG);
-    		String path = getHttpRequest().getSession().getServletContext().getRealPath(sb.toString());
-    		File imageFilePath = new File(path);
-    		if (!imageFilePath.exists()) {
-    			fileOutputStream =  new FileOutputStream(imageFilePath);
-        		byte[] imagebyte = new byte[1024];
-        		int length;
-        		fileInputStream = getServiceManager().getIcon(getCustomerId());
-        		while ((length = fileInputStream.read(imagebyte)) != -1) {
-        			fileOutputStream.write(imagebyte, 0, length);
-        		}
-    		}
-    		setLogoImgUrl(sb.toString());
+    		fileInputStream = getServiceManager().getIcon(getCustomerId());
+    		byte[] imgByte = null;
+    		imgByte = IOUtils.toByteArray(fileInputStream);
+    	    byte[] encodedImage = Base64.encodeBase64(imgByte);
+            String encodeImg = new String(encodedImage);
+            setLogoImgUrl(encodeImg);
+    		
     		User user = (User) getSessionAttribute(SESSION_USER_INFO);
     		List<Customer> customers = user.getCustomers();
     		for (Customer customer : customers) {
@@ -190,15 +176,10 @@ public class Login extends FrameworkBaseAction {
 			}
     	} catch (PhrescoException e) {
     		return showErrorPopup(e, getText(""));
-    	} catch (FileNotFoundException e) {
-    		return showErrorPopup(new PhrescoException(e), getText(""));
-		} catch (IOException e) {
-			return showErrorPopup(new PhrescoException(e), getText(""));
+    	} catch (IOException e) {
+			// TODO Auto-generated catch block
 		} finally {
     		try {
-    			if (fileOutputStream != null) {
-    				fileOutputStream.close();
-    			}
     			if (fileInputStream != null) {
     				fileInputStream.close();
     			}
