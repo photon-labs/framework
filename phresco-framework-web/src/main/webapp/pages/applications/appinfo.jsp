@@ -171,7 +171,7 @@
 			<label class="accordion-control-label labelbold"><s:text name='lbl.pilot.project'/></label>
 			<div class="controls">
 				<select class="input-xlarge appinfoTech" name="pilotProject" onchange="showPilotProjectInfo(this);">
-					<option value=""><s:text name='lbl.default.opt.select.pilot'/></option>
+					<option value="" selected disabled><s:text name='lbl.default.opt.select.pilot'/></option>
 						<%
 	                        if (CollectionUtils.isNotEmpty(pilotProjects)) {
 								for (ApplicationInfo appInfo : pilotProjects) {
@@ -484,6 +484,7 @@
     }
     
 	function deletePilots() {
+		<%-- <% if(pilotProjects != null) { %>
 		$('select[name=server]').each(function () {
 	  		var server = $(this).val();
 	   		if(server == '<%=pilotServers.get(0).getArtifactGroupId()%>') {
@@ -501,7 +502,7 @@
 			accordionClose('#serverLayerControl', $('input[value=serverLayer]'));
 		}
 		
-		<%-- $('select[name=database]').each(function () {
+		$('select[name=database]').each(function () {
 	  		var database = $(this).val();
 	   		if(database == '<%=pilotDatabases.get(0).getArtifactGroupId()%>') {
 			   	var databaseId = $(this).attr("id");
@@ -516,7 +517,7 @@
 			document.getElementById("checkAll2").checked=false
 		  	});
 			accordionClose('#databaseLayerControl', $('input[value=databaseLayer]'));
-		} --%>
+		} 
 	
 		selectDelselectWebService(false);
 		$('#webserviceLayerControl').each(function () {
@@ -532,7 +533,7 @@
 	 				accordionOpen('#webserviceLayerControl', $('input[value=webserviceLayer]'));
 	 			}
        	});
-		
+		<% } %> --%>
 	}	
     
     function showPilotSelectedDownloadInfo() {
