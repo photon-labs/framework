@@ -67,6 +67,12 @@
 				<s:actionmessage />
 			</div>
 		</s:if>
+		<s:if test="hasActionErrors()">
+			<div class="alert alert-error alert-message"  id="errormsg">
+				<s:actionerror />
+			</div>
+		</s:if>
+		
     </div>
     <div id="loadEnv"> </div>
 </form>

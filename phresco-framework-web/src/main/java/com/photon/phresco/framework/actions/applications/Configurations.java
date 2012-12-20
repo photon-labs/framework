@@ -867,8 +867,9 @@ public class Configurations extends FrameworkBaseAction {
 				cloneconfig.setDesc(currentConfigDesc);
 				configManager.createConfiguration(currentEnvName, cloneconfig);
 				flag = true;
+				addActionMessage(getText(ACT_SUCC_CONFIG_CLONE, Collections.singletonList(getConfigName())));
 			} else {
-				setEnvError(getText(CONFIG_ALREADY_EXIST));
+				addActionMessage(getText(CONFIG_ALREADY_EXIST));
 				flag = false;
 			}
 		} catch (Exception e) {

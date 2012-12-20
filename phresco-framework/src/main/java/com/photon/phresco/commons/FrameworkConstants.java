@@ -35,6 +35,7 @@ public interface FrameworkConstants {
     String LAYER_WEB_ID = "web-layer";
     
     String JAVASCRIPT = "javascript";
+    String APP_INFO = "appInfo";
 
     String LBL = "lbl.";
     String LBL_BTN = "lbl.btn";
@@ -417,6 +418,7 @@ public interface FrameworkConstants {
 	String RUN_AGAINST_KEY = "Run_Against_Source";
 	String DEPLOY_KEY = "Deploy";
 	String FEATURES_KEY = "Feature_Config";
+	String COMPONENT_CONFIG = "Component_Config";
     
 	/*
 	 * Dynamic parameters
@@ -1727,6 +1729,7 @@ public interface FrameworkConstants {
 		String ACT_SUCC_ENV_ADD = "succ.env.create";
 		String ACT_SUCC_ENV_DELETE = "succ.env.delete";
 		String ACT_SUCC_FEATURE_CONFIGURE = "succ.feature.configure";
+		String ACT_SUCC_CONFIG_CLONE = "succ.config.clone";
 		
 		/**
 		 * Dynamic Parameter Constants

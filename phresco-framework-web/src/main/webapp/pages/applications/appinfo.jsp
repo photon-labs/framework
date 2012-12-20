@@ -18,6 +18,7 @@
   ###
   --%>
 
+
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.util.Collection" %>
@@ -29,6 +30,7 @@
 <%@ page import="org.apache.commons.collections.MapUtils" %>
 
 <%@ page import="com.photon.phresco.commons.model.ArtifactGroupInfo"%>
+<%@ page import="com.photon.phresco.commons.model.Technology"%>
 <%@ page import="com.photon.phresco.commons.model.ProjectInfo"%>
 <%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
@@ -37,6 +39,7 @@
 
 <%
 	String appId = (String)request.getAttribute(FrameworkConstants.REQ_APP_ID);
+	Technology technology = (Technology) session.getAttribute("technology");
 	List<ApplicationInfo> pilotProjects = (List<ApplicationInfo>) session.getAttribute(FrameworkConstants.REQ_PILOT_PROJECTS);
 	ProjectInfo projectInfo = (ProjectInfo) session.getAttribute(appId + FrameworkConstants.SESSION_APPINFO);
 	List<WebService> webservices = (List<WebService>)request.getAttribute(FrameworkConstants.REQ_WEBSERVICES);
@@ -54,6 +57,7 @@
 	List<String> selectedWebservices = null;
 	List<ArtifactGroupInfo> pilotServers = null;
 	List<ArtifactGroupInfo> pilotDatabases = null;
+	List<String> pilotWebservices = null;
 	List<ArtifactGroupInfo> selectedServers = null;
 	List<ArtifactGroupInfo> selectedDatabases = null;
 	if (projectInfo != null) {
@@ -152,9 +156,11 @@
 		<div class="control-group">
 			<label class="accordion-control-label labelbold"><s:text name='lbl.technology'/></label>
 			<div class="controls">
-				<input type="text" class="input-xlarge" value="<%= technologyId %>" disabled="disabled"/>
+				<input type="text" class="input-xlarge" value="<%= technology.getName() %>" disabled="disabled"/>
 				<input type="hidden" name="technology" value="<%= technologyId %>"/>
-				<input type="text" class="input-medium" value="<%= technologyVersion %>" disabled="disabled"/>
+				<% if (technologyVersion != null && !technologyVersion.isEmpty()) {%>
+					<input type="text" class="input-medium" value="<%= technologyVersion %>" disabled="disabled"/>
+				<% } %>
 				<input type="hidden" name="technologyVersion" value="<%= technologyVersion %>"/>
 			</div>
 		</div>
@@ -165,11 +171,11 @@
 			<label class="accordion-control-label labelbold"><s:text name='lbl.pilot.project'/></label>
 			<div class="controls">
 				<select class="input-xlarge appinfoTech" name="pilotProject" onchange="showPilotProjectInfo(this);">
-					<option value="" selected disabled>Select Pilot Projects</option>
+					<option value="" selected disabled><s:text name='lbl.default.opt.select.pilot'/></option>
 						<%
 	                        if (CollectionUtils.isNotEmpty(pilotProjects)) {
 								for (ApplicationInfo appInfo : pilotProjects) {
-									String selectedStr= "";
+									String selectedStr = "";
 									if (appInfo.getId().equals(pilotInfo)) {
 										selectedStr = "selected";
 									}
@@ -254,7 +260,7 @@
 					<section class="lft_menus_container">
 						<span class="siteaccordion closereg" id="databaseLayerControl" onclick="accordionClick(this, $('input[value=databaseLayer]'));">
 							<span>
-								<input type="checkbox" id="checkAll1" class="accordianChkBox" name="layer" value="databaseLayer" <%= checkedDatabaseStr %>/>
+								<input type="checkbox" id="checkAll2" class="accordianChkBox" name="layer" value="databaseLayer" <%= checkedDatabaseStr %>/>
 								<a class="vAlignSub"><s:text name='lbl.database'/></a>
 							</span>
 						</span>
@@ -309,14 +315,13 @@
 					<section class="lft_menus_container">
 						<span class="siteaccordion closereg" id="webserviceLayerControl" onclick="accordionClick(this, $('input[value=webserviceLayer]'));">
 							<span>
-								<input type="checkbox" id="checkAll1" class="accordianChkBox" name="layer" value="webserviceLayer" <%= checkedWebserviceStr %>/>
+								<input type="checkbox" id="checkAll3" class="accordianChkBox" name="layer" value="webserviceLayer" <%= checkedWebserviceStr %>/>
 								<a class="vAlignSub"><s:text name='lbl.webservice'/></a>
 							</span>
 						</span>
 						<div class="mfbox siteinnertooltiptxt hideContent">
 							<div class="control-group autoWidthForWebservice">
-					            <div class="controls">
-					            	<div class="typeFields">
+					            <div class="controls typeFields">
 						                <div class="multilist-scroller multiselct multiselectForWebservice">
 							                <ul>
 							                    <%
@@ -341,7 +346,6 @@
 												%> 
 											</ul>
 						                </div>
-									</div>
 								</div>
 				                <span class="help-inline applyerror" id="techError"></span>
 					        </div>
@@ -369,6 +373,7 @@
 	<%-- <input type="hidden" name="appId" value="<%= id %>"/> --%>
 	<input type="hidden" name="techId" value="<%= technologyId %>"/>
 	<input type="hidden" name="oldAppDirName" value="<%= oldAppDirName %>"/>
+	<input type="hidden" name="fromTab" value="appInfo">
 </form> 
 <!--  Form Ends -->
     
@@ -463,7 +468,8 @@
 	    <%	for (ApplicationInfo appInfo : pilotProjects) { %>
 				if (piltProject == '<%= appInfo.getId()%>') {
 				<% 	pilotServers = appInfo.getSelectedServers();
-					pilotDatabases = appInfo.getSelectedDatabases();		
+					pilotDatabases = appInfo.getSelectedDatabases();	
+					pilotWebservices = appInfo.getSelectedWebservices();
 				%>
 					showPilotSelectedDownloadInfo();
 				}
@@ -481,6 +487,10 @@
 	%>			
 				var pilotsrver = '<%= server %>';
 				accordionOpen('#serverLayerControl', $('input[value=serverLayer]'));
+				$('#serverLayerControl').each(function () {
+					document.getElementById("checkAll1").checked=true
+	        	});
+				
 				addServer('<%= server %>', '<%= serverVersions %>', pilotsrver);
 	<%
 		    }
@@ -492,12 +502,33 @@
 				String database = artifactGrpInfo.getArtifactGroupId();
 				List<String> databaseVersions = artifactGrpInfo.getArtifactInfoIds();
 	%>
+				var pilotDb = '<%= database %>';
 				accordionOpen('#databaseLayerControl', $('input[value=databaseLayer]'));
-				addDatabase('<%= database%>', '<%=databaseVersions%>');
+				$('#databaseLayerControl').each(function () {
+					document.getElementById("checkAll2").checked=true
+	        	});
+				addDatabase('<%= database%>', '<%=databaseVersions%>', pilotDb);
 	<%
 		    }
     	}
 	%>
+	
+	<% if (pilotWebservices != null) { %>
+			accordionOpen('#webserviceLayerControl', $('input[value=webserviceLayer]'));
+			$('#webserviceLayerControl').each(function () {
+				document.getElementById("checkAll3").checked=true
+        	});
+			<% for (String webservice : pilotWebservices) { %>
+			
+				$('input[name=webservice]').each(function () {
+			 		var webservice = $(this).val();
+			 		if('<%= webservice %>' === webservice) {
+			 			$(this).attr("checked", true);
+			 		}
+	        	});
+				
+	<%    }
+		} %>
     }
     
     function removeTag(currentTag) {
@@ -574,10 +605,14 @@
 	 	newPropTempRow.appendTo("#propTempTbody");		
 		if (pilotsrver != undefined) {
 			var noOfServers = $('select[name=server]').size();
+			var value = $('select[name=server]').val();
 			var trId1 = (serverCounter-1) + "_serverdynamicadd";
 			var selectVal = $('#'+trId1+' :selected').val();
 			if (selectVal == undefined || isBlank(selectVal)) {
 			 $('#'+trId1).closest('tr').remove();
+			}
+			if (value == pilotsrver) {
+				$('#'+trId1).closest('tr').remove();
 			}
 		}
 		serverCounter++;
@@ -587,7 +622,7 @@
 		
     }			
     
-    function addDatabase(selectedDatabase, databaseVersions) {
+    function addDatabase(selectedDatabase, databaseVersions, pilotDb) {
 		var trId = databaseCounter + "_databasedynamicadd";
 		var databaseName = databaseCounter + "_databaseName";
 		var databaseVerson = databaseCounter + "_databaseVersion";
@@ -598,7 +633,15 @@
 				"<td class='noBorder'><a ><img class='add imagealign' " + 
 		 			" temp='"+ databaseName +"' src='images/icons/add_icon.png' onclick='addDatabase(this);'></a></td><td class='noBorder'><img id='deleteImgIcon' class = 'del imagealign'" + 
 		 			"src='images/icons/minus_icon.png' onclick='removeTag(this);'></td>")
-	 	newPropTempRow.appendTo("#propTempTbodyDatabase");		
+	 	newPropTempRow.appendTo("#propTempTbodyDatabase");	
+		if (pilotDb != undefined) {
+			var noOfDatabase = $('select[name=database]').size();
+			var trId1 = (databaseCounter-1) + "_databasedynamicadd";
+			var selectVal = $('#'+trId1+' :selected').val();
+			if (selectVal == undefined || isBlank(selectVal)) {
+			 $('#'+trId1).closest('tr').remove();
+			}
+		}
 		databaseCounter++;
 		chkForDBCount();
 		getScrollBar();
