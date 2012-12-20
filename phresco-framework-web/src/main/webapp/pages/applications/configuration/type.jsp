@@ -341,10 +341,11 @@
 	function validateInput(value, type, txtBoxName) {
 		var newVal = "";
 		if(type == "String") {
-			newVal = removeSpaces(allowAlpha(value));
-		}
-		if(type == "Number") {
+			newVal = removeSpaces(checkForSplChrForString(value));
+		} else if(type == "Number") {
 			newVal = removeSpaces(allowNumHyphen(value));
+		} else {
+			newVal = removeSpaces(value);
 		}
 		$("#"+txtBoxName).val(newVal);
 	}
