@@ -102,6 +102,8 @@ public class Projects extends FrameworkBaseAction {
             	addActionMessage(getText(SUCCESS_PROJECT_UPDATE));
             } else if (ADD.equals(getStatusFlag())) {
             	addActionMessage(getText(SUCCESS_PROJECT_ADD));
+            } else if (COMMIT.equals(getStatusFlag())) {
+            	addActionMessage(getText(SUCCESS_PROJECT_COMMIT));
             }
         } catch (PhrescoException e) {
             if (s_debugEnabled) {

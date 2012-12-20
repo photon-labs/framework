@@ -88,7 +88,7 @@
 		</div>
 	</div>
 	
-	<% if (!FrameworkConstants.FROM_PAGE_ADD.equals(action)) { %>
+	<% if (!FrameworkConstants.FROM_PAGE_ADD.equals(action) && !FrameworkConstants.COMMIT.equals(action)) { %>
 	<div id="svnRevisionInfo">
 		<div class="control-group">
 			<label  class="control-label labelbold popupLbl"><span class="red">*</span> <s:text name="label.revision"/></label> 
@@ -105,7 +105,7 @@
 	</div>
 	<% } %>
 	
-	<% if (FrameworkConstants.FROM_PAGE_ADD.equals(action)) { %>
+	<% if (FrameworkConstants.FROM_PAGE_ADD.equals(action) || FrameworkConstants.COMMIT.equals(action)) { %>
 		<div class="control-group">
 			<label  class="control-label labelbold popupLbl"><s:text name="lbl.commit.message"/></label> 
 			<div class="controls">
@@ -274,7 +274,7 @@
 	
 	function successEvent(pageUrl, data) {
 		if(pageUrl == "importSVNProject" || pageUrl == "importGITProject" || pageUrl == "updateSVNProject" || pageUrl == "updateGITProject"
-			|| pageUrl == "addSVNProject" || pageUrl == "addGITProject") {
+			|| pageUrl == "addSVNProject" || pageUrl == "addGITProject" || pageUrl == "commitSVNProject" || pageUrl == "commitGITProject") {
 			checkError(pageUrl, data);
 		}
 	}
@@ -286,12 +286,14 @@
 		if (!data.errorFlag) {
 			$("#errMsg").html(data.errorString);
 		} else if(data.errorFlag) {
-			if ((pageUrl == "importGITProject" )||( pageUrl == "importSVNProject")) {
+			if ((pageUrl == "importGITProject") || (pageUrl == "importSVNProject")) {
 				 statusFlag = "import";
-			} else if((pageUrl == "updateGITProject" )||( pageUrl == "updateSVNProject")) {
+			} else if((pageUrl == "updateGITProject") || (pageUrl == "updateSVNProject")) {
 				 statusFlag = "update";
-			} else if((pageUrl == "addGITProject" )||( pageUrl == "addSVNProject")) {
+			} else if((pageUrl == "addGITProject") || (pageUrl == "addSVNProject")) {
 				 statusFlag = "add";
+			}  else if((pageUrl == "commitGITProject") || ( pageUrl == "commitSVNProject")) {
+				 statusFlag = "commit";
 			}
 			var params = getBasicParams();
 			params = params.concat("statusFlag=");
@@ -300,21 +302,6 @@
 			loadContent("applications", $('#formProjectList'), $("#container"), params, '', true);
 		}
 	}
-// 			alert("fetching...");
-// 		$("#errMsg").empty();
-// 		$('.popupLoadingIcon').hide();
-<%-- 		if(data.svnImportMsg == "<%= FrameworkConstants.IMPORT_SUCCESS_PROJECT%>") { --%>
-// 		$("#reportMsg").html(data.svnImportMsg);
-// 		} else {
-// 		$("#errMsg").html(data.svnImportMsg);
-// 		}
-// 		performAction('applications', '', $("#container"));
-// 		setTimeout(function(){ $("#popup_div").hide(); }, 200);
-// 		} else{ // Import Project Fails
-// 		$("#errMsg").empty();
-// 		$('.popupLoadingIcon').hide();
-// 		$("#errMsg").html(data.svnImportMsg);
-// 		}
 
 	function getAction() {
 		var action = "<%= action %>";

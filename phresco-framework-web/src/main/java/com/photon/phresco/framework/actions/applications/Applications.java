@@ -1172,6 +1172,24 @@ public class Applications extends FrameworkBaseAction {
 		return SUCCESS;
 	}
 	
+	public String commitSVNProject() {
+		if(s_debugEnabled){
+			S_LOGGER.debug("Entering Method  Applications.commitSVNProject()");
+		}
+		try {
+			SCMManagerImpl scmi = new SCMManagerImpl();
+			String applicationHome = getApplicationHome();
+			File appDir = new File(applicationHome);
+			scmi.commitToRepo(SVN, repoUrl, userName, password,  null, null, appDir, commitMessage);
+			errorString = getText(COMMIT_PROJECT_SUCCESS);
+			errorFlag = true;
+		} catch (Exception e) {
+			errorString = e.getLocalizedMessage();
+			errorFlag = false;
+		}
+		return SUCCESS;
+	}
+	
     //TODO: No need the validator remove all validator
     public String validateFramework() {
         S_LOGGER.debug("Entering Method  Applications.validateFramework()");

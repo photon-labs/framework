@@ -135,10 +135,14 @@
 																		<img id="<%= appInfo.getCode() %>" class="projectUpdate" src="images/icons/refresh.png"
 																			 additionalParam="projectId=<%= project.getId() %>&appId=<%= appInfo.getId() %>&action=update" title="Update" class="iconSizeinList"/>
 																	</a>
-<!-- 																	<a href="#" id="repoImport"> -->
-<%-- 																		<img id="<%= appInfo.getCode() %>" class="addProject" src="images/icons/add_icon.png" --%>
-<%-- 																			 additionalParam="projectId=<%= project.getId() %>&appId=<%= appInfo.getId() %>&action=add" title="Add to repo" class="iconSizeinList"/> --%>
-<!-- 																	</a> -->
+																	<a href="#" id="repoImport">
+																		<img id="<%= appInfo.getCode() %>" class="addProject" src="images/icons/add_icon.png"
+																			 additionalParam="projectId=<%= project.getId() %>&appId=<%= appInfo.getId() %>&action=add" title="Add to repo" class="iconSizeinList"/>
+																	</a>
+																	<a href="#" id="repoImport">
+																		<img id="<%= appInfo.getCode() %>" class="commitProject" src="images/icons/commit_icon.png"
+																			 additionalParam="projectId=<%= project.getId() %>&appId=<%= appInfo.getId() %>&action=commit" title="Commit" class="iconSizeinList"/>
+																	</a>
 																</td>
 															</tr>
 													<%
@@ -187,6 +191,11 @@
 		$('.addProject').click(function() {
 			var params = $(this).attr("additionalParam");
 			yesnoPopup('updateProjectPopup', '<s:text name="lbl.app.add.to.repo"/>', 'importUpdateAppln','<s:text name="lbl.app.add.to.repo"/>', '', params);
+    	});
+		
+		$('.commitProject').click(function() {
+			var params = $(this).attr("additionalParam");
+			yesnoPopup('updateProjectPopup', '<s:text name="lbl.app.commit"/>', 'importUpdateAppln','<s:text name="lbl.app.commit"/>', '', params);
     	});
 		
     	$('.pdfCreation').click(function() {
