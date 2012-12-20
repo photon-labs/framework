@@ -33,19 +33,19 @@
 			<frame>
 				<reportElement x="0" y="0" width="554" height="24"/>
 				<rectangle radius="10">
-					<reportElement x="0" y="0" width="510" height="20"/>
+					<reportElement x="0" y="0" width="554" height="20" backcolor="#DDFCDD"/>
 				</rectangle>
 				<staticText>
-					<reportElement x="13" y="3" width="59" height="15"/>
+					<reportElement x="13" y="3" width="75" height="15" forecolor="#333333"/>
 					<textElement>
-						<font fontName="Times New Roman" size="12" isBold="true"/>
+						<font fontName="Tahoma" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[File Name :]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="72" y="3" width="425" height="15"/>
+					<reportElement x="88" y="3" width="456" height="15" forecolor="#333333"/>
 					<textElement>
-						<font fontName="Times New Roman" size="12" isBold="true"/>
+						<font fontName="Tahoma" size="12" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{fileName}]]></textFieldExpression>
 				</textField>

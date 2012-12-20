@@ -1730,6 +1730,15 @@ public interface FrameworkConstants {
 		String ACT_SUCC_ENV_DELETE = "succ.env.delete";
 		String ACT_SUCC_FEATURE_CONFIGURE = "succ.feature.configure";
 		String ACT_SUCC_CONFIG_CLONE = "succ.config.clone";
+
+		/*****************************
+	     * Error Action Messages
+	     * I18N Keys Constants
+	     * String ACT_ERR_XXX
+	     *****************************/
+		
+		String ACT_ERR_CONFIG_CLONE_EXISTS = "err.config.clone.exists";
+		
 		
 		/**
 		 * Dynamic Parameter Constants

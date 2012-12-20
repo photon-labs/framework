@@ -40,37 +40,40 @@
 		<variableExpression><![CDATA[str("Error")]]></variableExpression>
 	</variable>
 	<title>
-		<band height="24">
+		<band height="28">
 			<frame>
-				<reportElement style="Row" mode="Opaque" x="0" y="0" width="555" height="24" backcolor="#FFFFFF"/>
+				<reportElement style="Row" mode="Opaque" x="0" y="0" width="555" height="28" backcolor="#FFFFFF"/>
 				<rectangle>
-					<reportElement x="0" y="3" width="555" height="20"/>
+					<reportElement x="0" y="0" width="555" height="28" backcolor="#DDFCDD"/>
+					<graphicElement>
+						<pen lineColor="#999999"/>
+					</graphicElement>
 				</rectangle>
 				<staticText>
-					<reportElement x="18" y="5" width="75" height="18"/>
+					<reportElement x="15" y="7" width="75" height="16" forecolor="#333333"/>
 					<textElement>
-						<font fontName="Times New Roman" size="14" isBold="true"/>
+						<font fontName="Tahoma" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Name]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="203" y="5" width="75" height="18"/>
+					<reportElement x="203" y="7" width="75" height="16" forecolor="#333333"/>
 					<textElement>
-						<font fontName="Times New Roman" size="14" isBold="true"/>
+						<font fontName="Tahoma" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Class]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="393" y="6" width="75" height="18"/>
+					<reportElement x="393" y="7" width="75" height="16" forecolor="#333333"/>
 					<textElement>
-						<font fontName="Times New Roman" size="14" isBold="true"/>
+						<font fontName="Tahoma" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Time]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="480" y="5" width="75" height="18"/>
+					<reportElement x="480" y="7" width="75" height="16" forecolor="#333333"/>
 					<textElement>
-						<font fontName="Times New Roman" size="14" isBold="true"/>
+						<font fontName="Tahoma" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Status]]></text>
 				</staticText>
@@ -83,87 +86,99 @@
 				<reportElement mode="Opaque" x="0" y="0" width="555" height="22" forecolor="#000000" backcolor="#FFFFFF"/>
 				<rectangle>
 					<reportElement x="0" y="0" width="555" height="20"/>
+					<graphicElement>
+						<pen lineColor="#999999"/>
+					</graphicElement>
 				</rectangle>
 				<textField>
-					<reportElement x="18" y="4" width="175" height="15"/>
+					<reportElement x="15" y="4" width="175" height="16" forecolor="#333333"/>
 					<textElement>
-						<font fontName="Times New Roman" size="12"/>
+						<font fontName="Tahoma" size="12"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="203" y="4" width="185" height="15"/>
-					<textElement/>
+					<reportElement x="203" y="4" width="185" height="16" forecolor="#333333"/>
+					<textElement>
+						<font fontName="Tahoma" size="12"/>
+					</textElement>
 					<textFieldExpression><![CDATA[$F{testClass}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="393" y="3" width="86" height="15"/>
-					<textElement/>
+					<reportElement x="393" y="3" width="86" height="16" forecolor="#333333"/>
+					<textElement>
+						<font fontName="Tahoma" size="12"/>
+					</textElement>
 					<textFieldExpression><![CDATA[$F{time}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="480" y="3" width="75" height="16"/>
-					<textElement/>
+					<reportElement x="480" y="3" width="75" height="16" forecolor="#333333"/>
+					<textElement>
+						<font fontName="Tahoma" size="12"/>
+					</textElement>
 					<textFieldExpression><![CDATA[( $F{testCaseFailure} != null ? "Failure" : ($F{testCaseError} != null ? "Error" : "Success") )]]></textFieldExpression>
 				</textField>
 			</frame>
 		</band>
 	</detail>
 	<lastPageFooter>
-		<band height="271">
+		<band height="295">
 			<frame>
-				<reportElement mode="Opaque" x="0" y="0" width="555" height="50" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement mode="Opaque" x="0" y="0" width="555" height="35" forecolor="#000000" backcolor="#FFFFFF"/>
 				<rectangle radius="10">
 					<reportElement x="0" y="14" width="555" height="20"/>
+					<graphicElement>
+						<pen lineColor="#999999"/>
+					</graphicElement>
 				</rectangle>
 				<textField evaluationTime="Report">
-					<reportElement x="103" y="16" width="61" height="20"/>
+					<reportElement x="112" y="16" width="61" height="16"/>
 					<textElement textAlignment="Center" verticalAlignment="Top">
-						<font fontName="Times New Roman" size="12"/>
+						<font fontName="Tahoma" size="12"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{NoOfSuccess}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Report">
-					<reportElement x="290" y="16" width="53" height="20"/>
+					<reportElement x="295" y="16" width="53" height="16"/>
 					<textElement textAlignment="Center" verticalAlignment="Top">
-						<font fontName="Times New Roman" size="12"/>
+						<font fontName="Tahoma" size="12"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{NoOfFailure}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Report">
-					<reportElement x="473" y="14" width="52" height="20"/>
+					<reportElement x="475" y="16" width="52" height="16"/>
 					<textElement textAlignment="Center">
-						<font fontName="Times New Roman" size="12"/>
+						<font fontName="Tahoma" size="12"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{NoOfError}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="21" y="16" width="82" height="20"/>
+					<reportElement x="15" y="16" width="97" height="16"/>
 					<textElement>
-						<font fontName="Times New Roman" size="12" isBold="true"/>
+						<font fontName="Tahoma" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[No of Success  :]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="203" y="16" width="87" height="20"/>
+					<reportElement x="203" y="16" width="92" height="16"/>
 					<textElement>
-						<font fontName="Times New Roman" size="12" isBold="true"/>
+						<font fontName="Tahoma" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[No of Failures :]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="393" y="14" width="80" height="20"/>
+					<reportElement x="393" y="16" width="82" height="16"/>
 					<textElement>
-						<font fontName="Times New Roman" size="12" isBold="true"/>
+						<font fontName="Tahoma" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[No of Errors :]]></text>
 				</staticText>
 			</frame>
 			<frame>
-				<reportElement mode="Opaque" x="0" y="50" width="555" height="188" forecolor="#000000" backcolor="#FFFFFF"/>
-				<pieChart>
-					<chart theme="default">
-						<reportElement x="91" y="0" width="342" height="188"/>
+				<reportElement mode="Opaque" x="0" y="35" width="555" height="256" forecolor="#000000" backcolor="#FFFFFF"/>
+				<pie3DChart>
+					<chart>
+						<reportElement x="48" y="12" width="447" height="228"/>
 						<chartTitle/>
 						<chartSubtitle/>
 						<chartLegend/>
@@ -176,24 +191,24 @@
 						</pieSeries>
 						<pieSeries>
 							<keyExpression><![CDATA["Failure"]]></keyExpression>
-							<valueExpression><![CDATA[$V{NoOfFailure}]]></valueExpression>
+							<valueExpression><![CDATA[$V{NoOfSuccess}]]></valueExpression>
 							<labelExpression><![CDATA["Failure"]]></labelExpression>
 						</pieSeries>
 						<pieSeries>
 							<keyExpression><![CDATA["Error"]]></keyExpression>
-							<valueExpression><![CDATA[$V{NoOfError}]]></valueExpression>
+							<valueExpression><![CDATA[$V{NoOfSuccess}]]></valueExpression>
 							<labelExpression><![CDATA["Error"]]></labelExpression>
 						</pieSeries>
 					</pieDataset>
-					<piePlot>
+					<pie3DPlot isCircular="false">
 						<plot>
 							<seriesColor seriesOrder="0" color="#66FF66"/>
-							<seriesColor seriesOrder="1" color="#FFA500"/>
-							<seriesColor seriesOrder="2" color="#FF0505"/>
+							<seriesColor seriesOrder="1" color="#FF9933"/>
+							<seriesColor seriesOrder="2" color="#FF0000"/>
 						</plot>
 						<itemLabel/>
-					</piePlot>
-				</pieChart>
+					</pie3DPlot>
+				</pie3DChart>
 			</frame>
 		</band>
 	</lastPageFooter>

@@ -33,33 +33,33 @@
 					<printWhenExpression><![CDATA[$P{reportsDataType}.equals("detail")]]></printWhenExpression>
 				</reportElement>
 				<rectangle>
-					<reportElement x="0" y="3" width="555" height="20"/>
+					<reportElement x="0" y="3" width="555" height="20" backcolor="#DDFCDD"/>
 				</rectangle>
 				<staticText>
-					<reportElement x="375" y="5" width="100" height="15"/>
+					<reportElement x="375" y="5" width="100" height="15" forecolor="#333333"/>
 					<textElement>
-						<font fontName="Times New Roman" size="12" isBold="true"/>
+						<font fontName="Tahoma" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Elapsed Time]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="248" y="5" width="117" height="15"/>
+					<reportElement x="248" y="5" width="117" height="15" forecolor="#333333"/>
 					<textElement>
-						<font fontName="Times New Roman" size="12" isBold="true"/>
+						<font fontName="Tahoma" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Date]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="26" y="5" width="101" height="15"/>
+					<reportElement x="26" y="5" width="101" height="15" forecolor="#333333"/>
 					<textElement>
-						<font fontName="Times New Roman" size="12" isBold="true"/>
+						<font fontName="Tahoma" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Thread Name]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="486" y="5" width="54" height="15"/>
+					<reportElement x="486" y="5" width="54" height="15" forecolor="#333333"/>
 					<textElement>
-						<font fontName="Times New Roman" size="12" isBold="true"/>
+						<font fontName="Tahoma" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Status]]></text>
 				</staticText>
@@ -75,23 +75,29 @@
 				<textField isStretchWithOverflow="true">
 					<reportElement x="27" y="5" width="209" height="15"/>
 					<textElement>
-						<font fontName="Times New Roman" size="12"/>
+						<font fontName="Tahoma" size="12"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{threadName}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true">
 					<reportElement x="248" y="5" width="117" height="15"/>
-					<textElement/>
+					<textElement>
+						<font fontName="Tahoma" size="12"/>
+					</textElement>
 					<textFieldExpression><![CDATA[$F{timeStamp}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="375" y="5" width="100" height="15"/>
-					<textElement/>
+					<textElement>
+						<font fontName="Tahoma" size="12"/>
+					</textElement>
 					<textFieldExpression><![CDATA[$F{time}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="485" y="5" width="70" height="16"/>
-					<textElement/>
+					<textElement>
+						<font fontName="Tahoma" size="12"/>
+					</textElement>
 					<textFieldExpression><![CDATA[""+$F{success}]]></textFieldExpression>
 				</textField>
 			</frame>
@@ -117,33 +123,33 @@
 			<frame>
 				<reportElement mode="Opaque" x="0" y="0" width="555" height="38" forecolor="#000000" backcolor="#FFFFFF"/>
 				<rectangle radius="10">
-					<reportElement x="11" y="8" width="529" height="20"/>
+					<reportElement x="1" y="8" width="554" height="20" backcolor="#DDFCDD"/>
 				</rectangle>
 				<textField evaluationTime="Report">
-					<reportElement x="176" y="10" width="50" height="20"/>
+					<reportElement x="176" y="10" width="50" height="20" forecolor="#333333"/>
 					<textElement textAlignment="Left" verticalAlignment="Top">
-						<font fontName="Times New Roman" size="12" isBold="true"/>
+						<font fontName="Tahoma" size="12" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{NoOfSuccess}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Report">
-					<reportElement x="409" y="10" width="50" height="20"/>
+					<reportElement x="409" y="10" width="50" height="20" forecolor="#333333"/>
 					<textElement textAlignment="Left" verticalAlignment="Top">
-						<font fontName="Times New Roman" size="12" isBold="true"/>
+						<font fontName="Tahoma" size="12" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{NoOfFailure}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="80" y="10" width="85" height="20"/>
+					<reportElement x="80" y="10" width="85" height="20" forecolor="#333333"/>
 					<textElement>
-						<font fontName="Times New Roman" size="12" isBold="true"/>
+						<font fontName="Tahoma" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[No of Success :]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="313" y="10" width="85" height="20"/>
+					<reportElement x="313" y="10" width="85" height="20" forecolor="#333333"/>
 					<textElement>
-						<font fontName="Times New Roman" size="12" isBold="true"/>
+						<font fontName="Tahoma" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[No of Failures :]]></text>
 				</staticText>
@@ -152,7 +158,7 @@
 				<reportElement mode="Opaque" x="0" y="48" width="555" height="188" forecolor="#000000" backcolor="#FFFFFF"/>
 				<lineChart>
 					<chart>
-						<reportElement x="0" y="2" width="555" height="186"/>
+						<reportElement x="11" y="2" width="529" height="175"/>
 						<chartTitle/>
 						<chartSubtitle/>
 						<chartLegend/>

@@ -281,8 +281,20 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 							S_LOGGER.debug("AppInfo " + projectInfo);
 						}
 						SVNUpdateClient uc = cm.getUpdateClient();
-						ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
-						
+						if (projectInfo == null) {
+							if(debugEnabled){
+								S_LOGGER.debug("ProjectInfo is Empty");
+							}
+							throw new PhrescoException(INVALID_FOLDER);
+						}
+						List<ApplicationInfo> appInfos = projectInfo.getAppInfos();
+						if (appInfos == null) {
+							if(debugEnabled){
+								S_LOGGER.debug("AppInfo is Empty");
+							}
+							throw new PhrescoException(INVALID_FOLDER);
+						}
+						ApplicationInfo appInfo = appInfos.get(0);
 						File file = new File(Utility.getProjectHome(), appInfo.getAppDirName());
 						if (file.exists()) {
 							throw new PhrescoException(PROJECT_ALREADY);
@@ -347,7 +359,20 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			if(debugEnabled){
 				S_LOGGER.debug("appInfo " + projectInfo);
 			}
-			ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
+			if (projectInfo == null) {
+				if(debugEnabled){
+					S_LOGGER.debug("ProjectInfo is Empty");
+				}
+				throw new PhrescoException(INVALID_FOLDER);
+			}
+			List<ApplicationInfo> appInfos = projectInfo.getAppInfos();
+			if (appInfos == null) {
+				if(debugEnabled){
+					S_LOGGER.debug("AppInfo is Empty");
+				}
+				throw new PhrescoException(INVALID_FOLDER);
+			}
+			ApplicationInfo appInfo = appInfos.get(0);
 			if (appInfo != null) {
 				importToWorkspace(appDir, Utility.getProjectHome(),	appInfo.getAppDirName());
 				if(debugEnabled){

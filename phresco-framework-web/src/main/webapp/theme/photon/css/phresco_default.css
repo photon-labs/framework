@@ -6217,3 +6217,8 @@ color: #313131;
 .testSuiteList select {
 	margin: 5px 0px 5px 5px;
 }
+
+.repo_form input[type="password"] {
+	border: 1px solid #CCCCCC !important;
+	width: 215px ;
+}

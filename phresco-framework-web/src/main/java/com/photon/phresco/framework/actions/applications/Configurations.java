@@ -857,7 +857,7 @@ public class Configurations extends FrameworkBaseAction {
 				List<Configuration> configurations = configManager.getConfigurations(copyFromEnvName, configType);
 				Configuration cloneconfig = null;
 				for (Configuration configuration : configurations) {
-					if (configuration.getName().equals(configName)) { // old configuration
+					if (configuration.getName().equals(getConfigName())) { // old configuration
 						cloneconfig = configuration;
 						break;
 					}
@@ -869,7 +869,7 @@ public class Configurations extends FrameworkBaseAction {
 				flag = true;
 				addActionMessage(getText(ACT_SUCC_CONFIG_CLONE, Collections.singletonList(getConfigName())));
 			} else {
-				addActionMessage(getText(CONFIG_ALREADY_EXIST));
+        		addActionMessage(getText(ACT_ERR_CONFIG_CLONE_EXISTS));
 				flag = false;
 			}
 		} catch (Exception e) {
@@ -885,12 +885,20 @@ public class Configurations extends FrameworkBaseAction {
 		}
 		
 	    try {
+	    	ConfigManager configManager = getConfigManager(getConfigPath());
 	        if (configType.equals(Constants.SETTINGS_TEMPLATE_SERVER) || configType.equals(Constants.SETTINGS_TEMPLATE_EMAIL)) {
-	            ConfigManager configManager = getConfigManager(getConfigPath());
 	            List<Configuration> configurations = configManager.getConfigurations(envName, configType);
 	            if(CollectionUtils.isNotEmpty( configurations)) {
 	                return true;
 	            }
+	        } else {
+	            List<Configuration> configurations = configManager.getConfigurations(envName, configType);
+	            for (Configuration configuration : configurations) {
+	            	String oldConfigName = configuration.getName();
+	            	if (oldConfigName.equals(getConfigName())) { 
+	            		 return true;
+	            	}
+				}
 	        }
 	        return false;
 	    } catch (Exception e) {
