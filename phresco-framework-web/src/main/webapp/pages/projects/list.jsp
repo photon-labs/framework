@@ -135,14 +135,14 @@
 																		<img id="<%= appInfo.getCode() %>" class="projectUpdate" src="images/icons/refresh.png"
 																			 additionalParam="projectId=<%= project.getId() %>&appId=<%= appInfo.getId() %>&action=update" title="Update" class="iconSizeinList"/>
 																	</a>
-																	<a href="#" id="repoImport">
-																		<img id="<%= appInfo.getCode() %>" class="addProject" src="images/icons/add_icon.png"
-																			 additionalParam="projectId=<%= project.getId() %>&appId=<%= appInfo.getId() %>&action=add" title="Add to repo" class="iconSizeinList"/>
-																	</a>
-																	<a href="#" id="repoImport">
-																		<img id="<%= appInfo.getCode() %>" class="commitProject" src="images/icons/commit_icon.png"
-																			 additionalParam="projectId=<%= project.getId() %>&appId=<%= appInfo.getId() %>&action=commit" title="Commit" class="iconSizeinList"/>
-																	</a>
+<!-- 																	<a href="#" id="repoImport"> -->
+<%-- 																		<img id="<%= appInfo.getCode() %>" class="addProject" src="images/icons/add_icon.png" --%>
+<%-- 																			 additionalParam="projectId=<%= project.getId() %>&appId=<%= appInfo.getId() %>&action=add" title="Add to repo" class="iconSizeinList"/> --%>
+<!-- 																	</a> -->
+<!-- 																	<a href="#" id="repoImport"> -->
+<%-- 																		<img id="<%= appInfo.getCode() %>" class="commitProject" src="images/icons/commit_icon.png" --%>
+<%-- 																			 additionalParam="projectId=<%= project.getId() %>&appId=<%= appInfo.getId() %>&action=commit" title="Commit" class="iconSizeinList"/> --%>
+<!-- 																	</a> -->
 																</td>
 															</tr>
 													<%
