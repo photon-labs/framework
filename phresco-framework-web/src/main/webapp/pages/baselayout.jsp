@@ -451,7 +451,7 @@
 	}
 
 	function changeLogo(data) {
-		$('#logoImg').attr("src", data.logoImgUrl);
+		$('#logoImg').attr("src",  "data:image/png;base64," + data.logoImgUrl);
 		$("#brandingColor").val(data.brandingColor);
 		changeColorScheme(data.brandingColor);
 	}
