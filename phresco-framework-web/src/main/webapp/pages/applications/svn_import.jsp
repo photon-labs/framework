@@ -50,9 +50,9 @@
 			<div class="controls">
 				<select name="repoType" class="medium" >
 					<option value="<s:text name="lbl.repo.type.svn"/>" selected ><s:text name="lbl.repo.type.svn"/></option>
-					<% if (!FrameworkConstants.FROM_PAGE_ADD.equals(action)) { %>
+<%-- 					<% if (!FrameworkConstants.FROM_PAGE_ADD.equals(action)) { %> --%>
 						<option value="<s:text name="lbl.repo.type.git"/>"><s:text name="lbl.repo.type.git"/></option>
-					<% } %>
+<%-- 					<% } %> --%>
 			    </select>
 			</div>
 		</div>
