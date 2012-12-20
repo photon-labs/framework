@@ -175,7 +175,7 @@
 					'<a href="#" onclick="remove(this);">&nbsp;&times;</a>'+
 					'<input type="hidden" class="'+ctrlClass+'" name="jsonData">' +
 					<%
-						if (optionIds != null && optionIds.contains(FrameworkConstants.FEATURES_KEY)) {
+						if (optionIds != null && optionIds.contains(FrameworkConstants.FEATURES_KEY) || optionIds.contains(FrameworkConstants.COMPONENT_CONFIG)) {
 					%>
 						'<a href="#" id="'+dispName+'" onclick="showFeatureConfigPopup(this);">'+ 
 						'<img src="images/icons/gear.png" title="Configure"/></a>' +
