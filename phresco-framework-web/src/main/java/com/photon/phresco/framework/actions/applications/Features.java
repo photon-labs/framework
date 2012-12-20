@@ -43,11 +43,12 @@ import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.PropertyTemplate;
 import com.photon.phresco.commons.model.RequiredOption;
 import com.photon.phresco.commons.model.SelectedFeature;
-import com.photon.phresco.commons.model.SettingsTemplate;
 import com.photon.phresco.commons.model.TechnologyInfo;
 import com.photon.phresco.configuration.Configuration;
 import com.photon.phresco.exception.PhrescoException;
+import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
+import com.photon.phresco.framework.api.ProjectManager;
 
 public class Features extends FrameworkBaseAction {
     
@@ -114,15 +115,50 @@ public class Features extends FrameworkBaseAction {
 	
 	public String features() {
 		try {
-			ProjectInfo projectInfo = (ProjectInfo)getSessionAttribute(getAppId() + SESSION_APPINFO);
+			ProjectInfo projectInfo = null;
+			if (APP_INFO.equals(getFromTab())) {
+				projectInfo = (ProjectInfo)getSessionAttribute(getAppId() + SESSION_APPINFO);
+			} else {
+				ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
+				projectInfo = projectManager.getProject(getProjectId(), getCustomerId(), getAppId());
+			}
 			ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
+			/*if (appInfo == null) {
+				appInfo = new ApplicationInfo();
+			}*/
 			if (appInfo == null) {
                 appInfo = getApplicationInfo();
             } else if (appInfo == null) {
 				appInfo = new ApplicationInfo();
 			}
-			List<String> selectedModules = appInfo.getSelectedModules();
+			
 			List<SelectedFeature> listFeatures = new ArrayList<SelectedFeature>();
+			setFeatures(appInfo, listFeatures);
+			if (StringUtils.isNotEmpty(getPilotProject())) {
+				String id = getPilotProject();
+				List<ApplicationInfo> pilotProjects = (List<ApplicationInfo>)getSessionAttribute(REQ_PILOT_PROJECTS);
+				for (ApplicationInfo applicationInfo : pilotProjects) {
+					if (applicationInfo.getId().equals(id)) {
+						setFeatures(applicationInfo, listFeatures);
+					}
+				}
+			}
+			setReqAttribute(REQ_SELECTED_FEATURES, listFeatures);
+			if (APP_INFO.equals(getFromTab())) {
+				projectInfo.setAppInfos(Collections.singletonList(createApplicationInfo(appInfo)));
+			}
+			setReqAttribute(REQ_OLD_APPDIR, getOldAppDirName());
+			setSessionAttribute(getAppId() + SESSION_APPINFO, projectInfo);
+		} catch (Exception e) {
+		    
+		}
+    	
+	    return APP_FEATURES;
+	}
+	
+	private void setFeatures(ApplicationInfo appInfo, List<SelectedFeature> listFeatures) {
+		try {
+			List<String> selectedModules = appInfo.getSelectedModules();
 			if (CollectionUtils.isNotEmpty(selectedModules)) {
 				for (String selectedModule : selectedModules) {
 					SelectedFeature selectFeature = createArtifactInformation(selectedModule);
@@ -145,48 +181,9 @@ public class Features extends FrameworkBaseAction {
 					listFeatures.add(selectFeature);
 				}
 			}
-			
-			if (StringUtils.isNotEmpty(getPilotProject())) {
-				String id = getPilotProject();
-				List<ApplicationInfo> pilotProjects = (List<ApplicationInfo>)getSessionAttribute(REQ_PILOT_PROJECTS);
-				for (ApplicationInfo applicationInfo : pilotProjects) {
-					if(applicationInfo.getId().equals(id)) {
-						List<String> pilotModules = applicationInfo.getSelectedModules();
-						if (CollectionUtils.isNotEmpty(pilotModules)) {
-							for (String pilotModule : pilotModules) {
-								SelectedFeature selectFeature = createArtifactInformation(pilotModule);
-								listFeatures.add(selectFeature);
-							}
-						}
-						
-						List<String> pilotJSLibs = applicationInfo.getSelectedJSLibs();
-						if (CollectionUtils.isNotEmpty(pilotJSLibs)) {
-							for (String pilotJSLib : pilotJSLibs) {
-								SelectedFeature selectFeature = createArtifactInformation(pilotJSLib);
-								listFeatures.add(selectFeature);
-							}
-						}
-						
-						List<String> pilotComponents = applicationInfo.getSelectedComponents();
-						if (CollectionUtils.isNotEmpty(pilotComponents))	{
-							for (String pilotComponent : pilotComponents) {
-								SelectedFeature selectFeature = createArtifactInformation(pilotComponent);
-								listFeatures.add(selectFeature);
-							}
-						}
-					}
-				}
-			}
-			
-			setReqAttribute(REQ_SELECTED_FEATURES, listFeatures);
-			projectInfo.setAppInfos(Collections.singletonList(createApplicationInfo(appInfo)));
-			setReqAttribute(REQ_OLD_APPDIR, getOldAppDirName());
-			setSessionAttribute(getAppId() + SESSION_APPINFO, projectInfo);
 		} catch (Exception e) {
-		    
+			
 		}
-    	
-	    return APP_FEATURES;
 	}
 	
 	private SelectedFeature createArtifactInformation(String selectedModule) throws PhrescoException {
@@ -218,20 +215,21 @@ public class Features extends FrameworkBaseAction {
         }
     	
     	boolean hasError = false;
-    	if (StringUtils.isEmpty(getName())) {
-    		 setNameError(getText(ERROR_NAME));
-             hasError = true;
+    	if (APP_INFO.equals(getFromTab())) {
+	    	if (StringUtils.isEmpty(getName().trim())) {
+	    		 setNameError(getText(ERROR_NAME));
+	             hasError = true;
+	    	}
+	    	
+	    	if (StringUtils.isEmpty(getCode().trim())) {
+	    		setCodeError(getText(ERROR_CODE));
+	            hasError = true;
+	    	}
+	    	
+	    	if (hasError) {
+	            setErrorFound(true);
+	        }
     	}
-    	
-    	if (StringUtils.isEmpty(getCode())) {
-    		setCodeError(getText(ERROR_CODE));
-            hasError = true;
-    	}
-    	
-    	if (hasError) {
-            setErrorFound(true);
-        }
-    	
     	return SUCCESS;
     }
 	

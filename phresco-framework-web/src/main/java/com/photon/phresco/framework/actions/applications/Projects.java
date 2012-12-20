@@ -449,17 +449,17 @@ public class Projects extends FrameworkBaseAction {
         }*/
         
         //empty validation for name
-        if (StringUtils.isEmpty(getProjectName())) {
+        if (StringUtils.isEmpty(getProjectName().trim())) {
             setProjectNameError(getText(ERROR_NAME));
             hasError = true;
         }
         //empty validation for projectCode
-        if (StringUtils.isEmpty(getProjectCode())) {
+        if (StringUtils.isEmpty(getProjectCode().trim())) {
             setProjectCodeError(getText(ERROR_CODE));
             hasError = true;
         }
         //empty validation for projectVersion
-        if (StringUtils.isEmpty(getProjectVersion())) {
+        if (StringUtils.isEmpty(getProjectVersion().trim())) {
             setProjectVersionError(getText(ERROR_VERSION));
             hasError = true;
         }

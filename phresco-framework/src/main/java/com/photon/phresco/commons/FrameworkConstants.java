@@ -35,6 +35,7 @@ public interface FrameworkConstants {
     String LAYER_WEB_ID = "web-layer";
     
     String JAVASCRIPT = "javascript";
+    String APP_INFO = "appInfo";
 
     String LBL = "lbl.";
     String LBL_BTN = "lbl.btn";

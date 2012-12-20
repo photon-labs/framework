@@ -202,9 +202,11 @@ public class Applications extends FrameworkBaseAction {
         		projectInfo = projectManager.getProject(getProjectId(), getCustomerId(), getAppId());
         		String technologyId = projectInfo.getAppInfos().get(0).getTechInfo().getId();
         		List<ApplicationInfo> pilotProjects = getServiceManager().getPilotProjects(getCustomerId(), technologyId);
+        		Technology technologyInfo = getServiceManager().getTechnology(technologyId);
+        		setSessionAttribute("technology", technologyInfo);
         		setSessionAttribute(REQ_PILOT_PROJECTS, pilotProjects);
         		setSessionAttribute(getAppId() + SESSION_APPINFO, projectInfo);
-        		setReqAttribute(REQ_OLD_APPDIR,projectInfo.getAppInfos().get(0).getName());
+        		setReqAttribute(REQ_OLD_APPDIR, projectInfo.getAppInfos().get(0).getName());
         	} else {
         		projectInfo = (ProjectInfo)getSessionAttribute(getAppId() + SESSION_APPINFO);
             	ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
