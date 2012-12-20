@@ -45,6 +45,7 @@ import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.ArtifactGroupInfo;
 import com.photon.phresco.commons.model.ArtifactInfo;
+import com.photon.phresco.commons.model.CoreOption;
 import com.photon.phresco.commons.model.DownloadInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.SelectedFeature;
@@ -692,8 +693,15 @@ public class Applications extends FrameworkBaseAction {
 					Gson gson = new Gson();
 					SelectedFeature obj = gson.fromJson(string, SelectedFeature.class);
 					String artifactGroupId = obj.getModuleId();
-					ArtifactGroup artifactGroupInfo = getServiceManager().getArtifactGroupInfo(artifactGroupId);
-					listArtifactGroup.add(artifactGroupInfo);
+					ArtifactGroup artifactGroup = getServiceManager().getArtifactGroupInfo(artifactGroupId);
+					List<CoreOption> appliesTo = artifactGroup.getAppliesTo();
+					for (CoreOption coreOption : appliesTo) {
+						if (coreOption.getTechId().equals(appInfo.getTechInfo().getId())) {
+							artifactGroup.setAppliesTo(Collections.singletonList(coreOption));
+							listArtifactGroup.add(artifactGroup);
+							break;
+						}
+					}
 					if (obj.getType().equals(ArtifactGroup.Type.FEATURE.name())) {
 						selectedFeatures.add(obj.getVersionID());
 					}
