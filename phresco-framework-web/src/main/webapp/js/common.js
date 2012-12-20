@@ -856,7 +856,12 @@ function constructSingleSelectOptions(dependentValues, pushToElement) {
 		} else {
 			selectedStr = "";
 		}
-		$("<option></option>", {value: dependentValues[i].value, text: dependentValues[i].value, additionalParam: additionalParam}).appendTo("#" + pushToElement);
+		if (dependentValues[i].dependency != undefined && !isBlank(dependentValues[i].dependency)) {
+			var dynamicDependency = "dependency=" + dependentValues[i].dependency;
+			$("<option></option>", {value: dependentValues[i].value, text: dependentValues[i].value, additionalParam: dynamicDependency}).appendTo("#" + pushToElement);	
+		} else {
+			$("<option></option>", {value: dependentValues[i].value, text: dependentValues[i].value, additionalParam: additionalParam}).appendTo("#" + pushToElement);			
+		}
 	}
 	
 	if (isEditableCombo) {// execute only for jec combo box
