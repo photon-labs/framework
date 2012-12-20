@@ -351,7 +351,8 @@ public class Projects extends FrameworkBaseAction {
                 boolean tabletEnabled = Boolean.parseBoolean(getReqParameter(techGroupId + REQ_PARAM_NAME_TABLET));
                 String dirName = getProjectCode().replaceAll("[^\\sA-Za-z0-9_.-]", "");
                 dirName = dirName + HYPHEN + techGroupId;
-                appInfos.add(getAppInfo(dirName, techId, version, phoneEnabled, tabletEnabled));
+                String projectName = getProjectName() + HYPHEN + techGroupId;
+                appInfos.add(getAppInfo(projectName, dirName, techId, version, phoneEnabled, tabletEnabled));
             }
         }
 
@@ -370,7 +371,8 @@ public class Projects extends FrameworkBaseAction {
         String version = getReqParameter(layerId + REQ_PARAM_NAME_VERSION);
         String dirName = getProjectCode().replaceAll("[^\\sA-Za-z0-9_.-]", "");
         dirName = dirName + HYPHEN + techId;
-        appInfos.add(getAppInfo(dirName, techId, version, false, false));
+        String projectName = getProjectName() + HYPHEN + techId;
+        appInfos.add(getAppInfo(projectName, dirName, techId, version, false, false));
 
         return appInfos;
     }
@@ -384,13 +386,13 @@ public class Projects extends FrameworkBaseAction {
      * @return
      * @throws PhrescoException
      */
-    private ApplicationInfo getAppInfo(String appDir, String techId, String version, boolean phoneEnabled, boolean tabletEnabled) throws PhrescoException {
+    private ApplicationInfo getAppInfo(String projectName, String appDir, String techId, String version, boolean phoneEnabled, boolean tabletEnabled) throws PhrescoException {
         ApplicationInfo applicationInfo = new ApplicationInfo();
         TechnologyInfo techInfo = new TechnologyInfo();
         techInfo.setId(techId);
         techInfo.setVersion(version);
         applicationInfo.setTechInfo(techInfo);
-        applicationInfo.setName(appDir);
+        applicationInfo.setName(projectName);
         applicationInfo.setCode(appDir);
         applicationInfo.setAppDirName(appDir);
         applicationInfo.setPhoneEnabled(phoneEnabled);

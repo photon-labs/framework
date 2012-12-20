@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PhrescoXmlReport" pageWidth="555" pageHeight="842" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isTitleNewPage="true">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="44"/>
+	<property name="ireport.y" value="226"/>
 	<style name="Title" forecolor="#FFFFFF" fontName="Times New Roman" fontSize="50" isBold="false" pdfFontName="Times-Bold"/>
 	<style name="SubTitle" forecolor="#CCCCCC" fontName="Times New Roman" fontSize="18" isBold="false" pdfFontName="Times-Roman"/>
 	<style name="Column header" forecolor="#666666" fontName="Times New Roman" fontSize="14" isBold="true" pdfFontName="Times-Roman"/>
@@ -60,18 +60,18 @@
 	<pageHeader>
 		<band height="24">
 			<frame>
-				<reportElement mode="Opaque" x="0" y="0" width="555" height="24" isRemoveLineWhenBlank="true" forecolor="#D0B48E" backcolor="#FFCCCC"/>
+				<reportElement mode="Opaque" x="0" y="0" width="555" height="24" isRemoveLineWhenBlank="true" forecolor="#D0B48E" backcolor="#00CC66"/>
 				<staticText>
-					<reportElement x="15" y="3" width="100" height="20"/>
+					<reportElement x="5" y="4" width="92" height="15" forecolor="#FFFFFF"/>
 					<textElement>
-						<font fontName="Times New Roman" size="14" isBold="true"/>
+						<font fontName="Tahoma" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Sonar Report -]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="115" y="4" width="100" height="16"/>
+					<reportElement x="98" y="4" width="100" height="15" forecolor="#000000"/>
 					<textElement>
-						<font fontName="SansSerif" size="12" isBold="true" isItalic="true"/>
+						<font fontName="Tahoma" size="12" isBold="true" isItalic="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{reportType}]]></textFieldExpression>
 				</textField>
@@ -89,9 +89,9 @@
 					</graphicElement>
 				</rectangle>
 				<staticText>
-					<reportElement x="15" y="10" width="100" height="15"/>
+					<reportElement x="15" y="10" width="100" height="18" forecolor="#000000"/>
 					<textElement>
-						<font fontName="Times New Roman" size="13" isBold="true" isUnderline="true"/>
+						<font fontName="Arial" size="14" isBold="true" isUnderline="true"/>
 					</textElement>
 					<text><![CDATA[Lines of Code(Loc)]]></text>
 				</staticText>
@@ -192,9 +192,9 @@
 					<textFieldExpression><![CDATA[$F{duplicatedBlocks}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="283" y="10" width="100" height="16"/>
+					<reportElement x="283" y="10" width="100" height="18" forecolor="#000000"/>
 					<textElement>
-						<font fontName="Times New Roman" size="13" isBold="true" isUnderline="true"/>
+						<font fontName="Arial" size="14" isBold="true" isUnderline="true"/>
 					</textElement>
 					<text><![CDATA[Duplications]]></text>
 				</staticText>
@@ -217,9 +217,9 @@
 					</graphicElement>
 				</rectangle>
 				<staticText>
-					<reportElement x="15" y="138" width="100" height="19"/>
+					<reportElement x="15" y="138" width="100" height="18" forecolor="#000000"/>
 					<textElement>
-						<font fontName="Times New Roman" size="13" isBold="true" isUnderline="true"/>
+						<font fontName="Arial" size="14" isBold="true" isUnderline="true"/>
 					</textElement>
 					<text><![CDATA[Complexity]]></text>
 				</staticText>
@@ -254,9 +254,9 @@
 					</graphicElement>
 				</rectangle>
 				<staticText>
-					<reportElement x="15" y="213" width="100" height="19"/>
+					<reportElement x="15" y="213" width="100" height="19" forecolor="#000000"/>
 					<textElement>
-						<font fontName="Times New Roman" size="13" isBold="true" isUnderline="true"/>
+						<font fontName="Arial" size="14" isBold="true" isUnderline="true"/>
 					</textElement>
 					<text><![CDATA[Violations]]></text>
 				</staticText>
@@ -273,9 +273,9 @@
 					<textFieldExpression><![CDATA[$F{violationsDensity}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="15" y="265" width="100" height="20"/>
+					<reportElement x="15" y="265" width="100" height="20" forecolor="#000000"/>
 					<textElement>
-						<font fontName="Times New Roman" size="13" isBold="true" isUnderline="true"/>
+						<font fontName="Arial" size="14" isBold="true" isUnderline="true"/>
 					</textElement>
 					<text><![CDATA[Rules Compliance]]></text>
 				</staticText>
@@ -498,11 +498,11 @@
 				</textField>
 			</frame>
 			<frame>
-				<reportElement x="0" y="519" width="555" height="30" isRemoveLineWhenBlank="true">
+				<reportElement x="0" y="519" width="555" height="28" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[!$F{commentBlankLines}.isEmpty()]]></printWhenExpression>
 				</reportElement>
 				<rectangle>
-					<reportElement x="0" y="0" width="555" height="29" isRemoveLineWhenBlank="true"/>
+					<reportElement x="0" y="0" width="555" height="28" isRemoveLineWhenBlank="true"/>
 					<graphicElement>
 						<pen lineColor="#CCCCCC"/>
 					</graphicElement>
@@ -519,7 +519,7 @@
 				</textField>
 			</frame>
 			<frame>
-				<reportElement x="0" y="549" width="555" height="93" isRemoveLineWhenBlank="true"/>
+				<reportElement x="0" y="551" width="555" height="93" isRemoveLineWhenBlank="true"/>
 				<rectangle>
 					<reportElement x="0" y="4" width="555" height="88" isRemoveLineWhenBlank="true">
 						<printWhenExpression><![CDATA[$F{showDivElement}.equals("reportElementSharepointSrcFunc") || $F{showDivElement}.equals("reportElementJavaFunc")]]></printWhenExpression>

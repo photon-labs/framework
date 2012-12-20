@@ -28,11 +28,11 @@
 		<band splitType="Stretch"/>
 	</background>
 	<pageHeader>
-		<band height="23">
+		<band height="25">
 			<staticText>
-				<reportElement x="10" y="0" width="111" height="20"/>
+				<reportElement x="10" y="4" width="111" height="18"/>
 				<textElement>
-					<font fontName="Times New Roman" size="14" isBold="true" isItalic="true" isUnderline="true"/>
+					<font fontName="Arial" size="14" isBold="true" isItalic="false" isUnderline="true"/>
 				</textElement>
 				<text><![CDATA[Detailed Report]]></text>
 			</staticText>
@@ -43,19 +43,22 @@
 			<frame>
 				<reportElement mode="Opaque" x="0" y="0" width="555" height="30" forecolor="#000000" backcolor="#FFFFFF"/>
 				<rectangle radius="10">
-					<reportElement x="0" y="3" width="554" height="20"/>
+					<reportElement x="0" y="3" width="555" height="20" backcolor="#DDFCDD"/>
+					<graphicElement>
+						<pen lineColor="#999999"/>
+					</graphicElement>
 				</rectangle>
 				<staticText>
-					<reportElement x="10" y="5" width="101" height="15"/>
+					<reportElement x="15" y="5" width="101" height="15" forecolor="#333333"/>
 					<textElement>
-						<font fontName="Times New Roman" size="13" isBold="true"/>
+						<font fontName="Tahoma" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Testsuite Name :]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="124" y="5" width="410" height="15"/>
+					<reportElement x="124" y="5" width="410" height="15" forecolor="#333333"/>
 					<textElement>
-						<font fontName="Times New Roman" size="13" isBold="true"/>
+						<font fontName="Tahoma" size="12" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
 				</textField>
