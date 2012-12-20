@@ -223,34 +223,41 @@
 	function validateImportAppl() {
 // 		When isValidUrl returns false URL is missing information is displayed
 		var repoUrl = $("input[name='repoUrl']").val();
-		if(isValidUrl(repoUrl)){
+		
+		if (isBlank(repoUrl)) {
 			$("#errMsg").html("URL is missing");
 			$("#repoUrl").focus();
 			return false;
 		}
 		
-		if($("[name=repoType]").val() == 'svn') {
+		if (isValidUrl(repoUrl)) {
+			$("#errMsg").html("Invalid URL");
+			$("#repoUrl").focus();
+			return false;
+		}
+		
+		if ($("[name=repoType]").val() == 'svn') {
 			if(isBlank($.trim($("input[name='username']").val()))){
 				$("#errMsg").html("Username is missing");
 				$("#userName").focus();
 				$("#userName").val("");
 				return false;
-			}
+		}
 			
-			if(isBlank($.trim($("input[name='password']").val()))){
+		if (isBlank($.trim($("input[name='password']").val()))) {
 				$("#errMsg").html("Password is missing");
 				$("#password").focus();
 				$("#password").val("");
 				return false;
-			}
+		}
 			
 // 			the revision have to be validated
-			if($('input:radio[name=revision]:checked').val() == "revision" && (isBlank($.trim($('#revisionVal').val())))) {
+		if ($('input:radio[name=revision]:checked').val() == "revision" && (isBlank($.trim($('#revisionVal').val())))) {
 				$("#errMsg").html("Revision is missing");
 				$("#revisionVal").focus();
 				$("#revisionVal").val("");
 				return false;
-			}
+		}
 
 // 			before form submit enable textboxes
 // 			enableSvnFormDet();
