@@ -2020,8 +2020,7 @@ h1 {
 .graph_div {
     height:100%;
     float:right;
-	width: 45% !important;
-	margin-left: 2%;
+	width: 28% !important;
 }
 
 #graphicalView {
@@ -5977,7 +5976,6 @@ color: #313131;
 .table_div_unit {
 	margin: 0px !important;
 	border: none !important;
-	width: 52% !important;
 	margin-top: 2% !important;
 }
 .zebra-striped thead tr th div {
@@ -6154,7 +6152,7 @@ color: #313131;
 	margin-top: 3%;
 	padding-top: 1%;
 	padding-left: 2%;
-	background-color: rgba(19, 131, 58, 0.34);
+	border: 1px solid #38B865;
 	border-radius: 3px;
 	overflow-y: auto;
 	width: 114px;

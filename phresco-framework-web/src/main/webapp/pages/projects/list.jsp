@@ -133,8 +133,16 @@
 																<td class="no-left-bottom-border table-pad">
 																	<a href="#" id="projectUpdate">
 																		<img id="<%= appInfo.getCode() %>" class="projectUpdate" src="images/icons/refresh.png"
-																			 additionalParam="projectId=<%= project.getId() %>&appId=<%= appInfo.getId() %>" title="Update" class="iconSizeinList"/>
+																			 additionalParam="projectId=<%= project.getId() %>&appId=<%= appInfo.getId() %>&action=update" title="Update" class="iconSizeinList"/>
 																	</a>
+<!-- 																	<a href="#" id="repoImport"> -->
+<%-- 																		<img id="<%= appInfo.getCode() %>" class="addProject" src="images/icons/add_icon.png" --%>
+<%-- 																			 additionalParam="projectId=<%= project.getId() %>&appId=<%= appInfo.getId() %>&action=add" title="Add to repo" class="iconSizeinList"/> --%>
+<!-- 																	</a> -->
+<!-- 																	<a href="#" id="repoImport"> -->
+<%-- 																		<img id="<%= appInfo.getCode() %>" class="commitProject" src="images/icons/commit_icon.png" --%>
+<%-- 																			 additionalParam="projectId=<%= project.getId() %>&appId=<%= appInfo.getId() %>&action=commit" title="Commit" class="iconSizeinList"/> --%>
+<!-- 																	</a> -->
 																</td>
 															</tr>
 													<%
@@ -171,12 +179,23 @@
 		toDisableCheckAll();
 		
 		$('#importAppln').click(function() {
-			yesnoPopup('importAppln', '<s:text name="lbl.app.import"/>', 'importUpdateAppln','<s:text name="lbl.app.import"/>');
+			var params = "action=import";
+			yesnoPopup('importAppln', '<s:text name="lbl.app.import"/>', 'importUpdateAppln','<s:text name="lbl.app.import"/>', '', params);
     	});
 		
 		$('.projectUpdate').click(function() {
 			var params = $(this).attr("additionalParam");
 			yesnoPopup('updateProjectPopup', '<s:text name="lbl.app.update"/>', 'importUpdateAppln','<s:text name="lbl.app.update"/>', '', params);
+    	});
+		
+		$('.addProject').click(function() {
+			var params = $(this).attr("additionalParam");
+			yesnoPopup('updateProjectPopup', '<s:text name="lbl.app.add.to.repo"/>', 'importUpdateAppln','<s:text name="lbl.app.add.to.repo"/>', '', params);
+    	});
+		
+		$('.commitProject').click(function() {
+			var params = $(this).attr("additionalParam");
+			yesnoPopup('updateProjectPopup', '<s:text name="lbl.app.commit"/>', 'importUpdateAppln','<s:text name="lbl.app.commit"/>', '', params);
     	});
 		
     	$('.pdfCreation').click(function() {

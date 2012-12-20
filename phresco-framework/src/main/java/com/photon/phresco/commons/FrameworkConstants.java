@@ -43,6 +43,7 @@ public interface FrameworkConstants {
     String LBL_PROG_TXT = "progress.txt.";
     String FROM_PAGE_EDIT = "edit";
     String FROM_PAGE_ADD = "add";
+    String COMMIT = "commit";
     
     String CONFIG = "config";
     
@@ -145,6 +146,7 @@ public interface FrameworkConstants {
     String SVN = "svn";
     String MASTER = "master";
     String UPDATE = "update";
+    String ADD = "add";
     String REPO_URL = "repoUrl";
     String PROJECT_UPDATE_POPUP = "projectUpdatePopup";
     String CLONED_WORKSPACE = "clonedWorkspace";
@@ -928,6 +930,8 @@ public interface FrameworkConstants {
      */
     String SUCCESS_PROJECT_DELETE = "Projects deleted successfully";
     String SUCCESS_PROJECT_UPDATE = "update.project.success";
+    String SUCCESS_PROJECT_ADD = "add.project.success";
+    String SUCCESS_PROJECT_COMMIT = "commit.project.success";
     String FAILURE_PROJECT_UPDATE = "update.project.fail";
     String FAILURE_PROJECT_DELETE = "Projects deletion failed";
     /*
@@ -943,6 +947,15 @@ public interface FrameworkConstants {
     String INVALID_REVISION = "import.invalid.revision";
     String NO_POM_XML = "project.pom.not.exist";
     String POM_URL_FAIL = "project.pomurlupdate.fail";
+    
+    /*
+     * Project add keys
+     */
+    String ADD_PROJECT_SUCCESS ="add.project.success";
+    String ADD_PROJECT_FAIL ="add.project.fail";
+    String COMMIT_PROJECT_SUCCESS ="commit.project.success";
+    String COMMIT_PROJECT_FAIL ="commit.project.fail";
+    
     /*
      * Delete Build keys
      */

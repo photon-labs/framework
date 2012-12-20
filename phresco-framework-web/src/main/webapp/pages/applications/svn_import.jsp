@@ -31,7 +31,7 @@
 	String fromTab = (String)request.getAttribute(FrameworkConstants.REQ_FROM_TAB);
 	String applicationId = (String)request.getAttribute(FrameworkConstants.REQ_APP_ID);
 	String projectId = (String)request.getAttribute(FrameworkConstants.REQ_PROJECT_ID);
-	String action = StringUtils.isEmpty(fromTab) ? "import" : "update";
+	String action = (String)request.getAttribute(FrameworkConstants.REQ_ACTION);
 	String customerId = (String)request.getAttribute(FrameworkConstants.REQ_CUSTOMER_ID);
 	User userInfo = (User)session.getAttribute(FrameworkConstants.SESSION_USER_INFO);
     String LoginId = "";
@@ -50,7 +50,9 @@
 			<div class="controls">
 				<select name="repoType" class="medium" >
 					<option value="<s:text name="lbl.repo.type.svn"/>" selected ><s:text name="lbl.repo.type.svn"/></option>
-					<option value="<s:text name="lbl.repo.type.git"/>"><s:text name="lbl.repo.type.git"/></option>
+					<% if (!FrameworkConstants.FROM_PAGE_ADD.equals(action)) { %>
+						<option value="<s:text name="lbl.repo.type.git"/>"><s:text name="lbl.repo.type.git"/></option>
+					<% } %>
 			    </select>
 			</div>
 		</div>
@@ -86,6 +88,7 @@
 		</div>
 	</div>
 	
+	<% if (!FrameworkConstants.FROM_PAGE_ADD.equals(action) && !FrameworkConstants.COMMIT.equals(action)) { %>
 	<div id="svnRevisionInfo">
 		<div class="control-group">
 			<label  class="control-label labelbold popupLbl"><span class="red">*</span> <s:text name="label.revision"/></label> 
@@ -100,6 +103,17 @@
 			</div>
 		</div>
 	</div>
+	<% } %>
+	
+	<% if (FrameworkConstants.FROM_PAGE_ADD.equals(action) || FrameworkConstants.COMMIT.equals(action)) { %>
+		<div class="control-group">
+			<label  class="control-label labelbold popupLbl"><s:text name="lbl.commit.message"/></label> 
+			<div class="controls">
+				 <textarea class="appinfo-desc input-xlarge" maxlength="150" title="<s:text name="title.150.chars"/>" class="xlarge" 
+		        	id="textarea" name="commitMessage"></textarea> 
+			</div>
+		</div>
+	<% } %>
 </form>
 
 <script type="text/javascript">
@@ -258,8 +272,9 @@
 		loadContent(getAction(), $('#repoDetails'), '', params, true, true);
 	}
 	
-	function successEvent(pageUrl, data){
-		if(pageUrl == "importSVNProject" || pageUrl == "importGITProject" || pageUrl == "updateSVNProject" || pageUrl == "updateGITProject"){
+	function successEvent(pageUrl, data) {
+		if(pageUrl == "importSVNProject" || pageUrl == "importGITProject" || pageUrl == "updateSVNProject" || pageUrl == "updateGITProject"
+			|| pageUrl == "addSVNProject" || pageUrl == "addGITProject" || pageUrl == "commitSVNProject" || pageUrl == "commitGITProject") {
 			checkError(pageUrl, data);
 		}
 	}
@@ -271,10 +286,14 @@
 		if (!data.errorFlag) {
 			$("#errMsg").html(data.errorString);
 		} else if(data.errorFlag) {
-			if ((pageUrl == "importGITProject" )||( pageUrl == "importSVNProject")){
+			if ((pageUrl == "importGITProject") || (pageUrl == "importSVNProject")) {
 				 statusFlag = "import";
-			} else if((pageUrl == "updateGITProject" )||( pageUrl == "updateSVNProject")){
+			} else if((pageUrl == "updateGITProject") || (pageUrl == "updateSVNProject")) {
 				 statusFlag = "update";
+			} else if((pageUrl == "addGITProject") || (pageUrl == "addSVNProject")) {
+				 statusFlag = "add";
+			}  else if((pageUrl == "commitGITProject") || ( pageUrl == "commitSVNProject")) {
+				 statusFlag = "commit";
 			}
 			var params = getBasicParams();
 			params = params.concat("statusFlag=");
@@ -283,21 +302,6 @@
 			loadContent("applications", $('#formProjectList'), $("#container"), params, '', true);
 		}
 	}
-// 			alert("fetching...");
-// 		$("#errMsg").empty();
-// 		$('.popupLoadingIcon').hide();
-<%-- 		if(data.svnImportMsg == "<%= FrameworkConstants.IMPORT_SUCCESS_PROJECT%>") { --%>
-// 		$("#reportMsg").html(data.svnImportMsg);
-// 		} else {
-// 		$("#errMsg").html(data.svnImportMsg);
-// 		}
-// 		performAction('applications', '', $("#container"));
-// 		setTimeout(function(){ $("#popup_div").hide(); }, 200);
-// 		} else{ // Import Project Fails
-// 		$("#errMsg").empty();
-// 		$('.popupLoadingIcon').hide();
-// 		$("#errMsg").html(data.svnImportMsg);
-// 		}
 
 	function getAction() {
 		var action = "<%= action %>";

@@ -142,6 +142,22 @@
             <result type="json"/>
         </action>
         
+        <action name="addSVNProject" method="addSVNProject" class="com.photon.phresco.framework.actions.applications.Applications">
+            <result type="json"/>
+        </action>
+        
+        <action name="addGITProject" method="addGitProject" class="com.photon.phresco.framework.actions.applications.Applications">
+            <result type="json"/>
+        </action>
+        
+        <action name="commitSVNProject" method="commitSVNProject" class="com.photon.phresco.framework.actions.applications.Applications">
+            <result type="json"/>
+        </action>
+        
+        <action name="commitGITProject" method="commitGitProject" class="com.photon.phresco.framework.actions.applications.Applications">
+            <result type="json"/>
+        </action>
+        
         <action name="updateProjectPopup" method="updateProjectPopup" class="com.photon.phresco.framework.actions.applications.Applications">
             <result name="updateApplication">/pages/applications/svn_import.jsp</result>
         </action>

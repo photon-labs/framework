@@ -136,8 +136,9 @@ public class Applications extends FrameworkBaseAction {
     private String selectedDownloadInfoVersion = "";
     private String selectBoxId = "";
     private String defaultOptTxt = "";
-    
+    private String action = "";
     private List<String> jsonData = null;
+    private String commitMessage = "";
     
     public String loadMenu() {
         if (s_debugEnabled) {
@@ -985,6 +986,7 @@ public class Applications extends FrameworkBaseAction {
 	}
 
 	public String importAppln() {
+		setReqAttribute(REQ_ACTION, action);
 		return APP_IMPORT;
 	}
 
@@ -1005,6 +1007,7 @@ public class Applications extends FrameworkBaseAction {
 			setReqAttribute(REQ_CUSTOMER_ID, getCustomerId());
 			setReqAttribute(REPO_URL, connectionUrl);
 			setReqAttribute(REQ_FROM_TAB, UPDATE);
+			setReqAttribute(REQ_ACTION, action);
 			setReqAttribute(REQ_APP_INFO, applicationInfo);
 		} catch (PhrescoException e) {
 			if(s_debugEnabled){
@@ -1141,6 +1144,54 @@ public class Applications extends FrameworkBaseAction {
 		return SUCCESS;
 	}
 
+	public String addSVNProject() {
+		if(s_debugEnabled){
+			S_LOGGER.debug("Entering Method  Applications.addSVNProject()");
+		}
+		try {
+			SCMManagerImpl scmi = new SCMManagerImpl();
+			String applicationHome = getApplicationHome();
+			File appDir = new File(applicationHome);
+			scmi.importToRepo(SVN, repoUrl, userName, password, null, null, appDir, commitMessage);
+			errorString = getText(ADD_PROJECT_SUCCESS);
+			errorFlag = true;
+		} catch (Exception e) {
+			errorString = e.getLocalizedMessage();
+			errorFlag = false;
+		}
+		return SUCCESS;
+	}
+	
+	public String addGITProject() {
+		if(s_debugEnabled){
+			S_LOGGER.debug("Entering Method  Applications.addGITProject()");
+		}
+		try {
+			// TODO : need to handle
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return SUCCESS;
+	}
+	
+	public String commitSVNProject() {
+		if(s_debugEnabled){
+			S_LOGGER.debug("Entering Method  Applications.commitSVNProject()");
+		}
+		try {
+			SCMManagerImpl scmi = new SCMManagerImpl();
+			String applicationHome = getApplicationHome();
+			File appDir = new File(applicationHome);
+			scmi.commitToRepo(SVN, repoUrl, userName, password,  null, null, appDir, commitMessage);
+			errorString = getText(COMMIT_PROJECT_SUCCESS);
+			errorFlag = true;
+		} catch (Exception e) {
+			errorString = e.getLocalizedMessage();
+			errorFlag = false;
+		}
+		return SUCCESS;
+	}
+	
     //TODO: No need the validator remove all validator
     public String validateFramework() {
         S_LOGGER.debug("Entering Method  Applications.validateFramework()");
@@ -2138,5 +2189,21 @@ public class Applications extends FrameworkBaseAction {
 
 	public void setDefaultOptTxt(String defaultOptTxt) {
 		this.defaultOptTxt = defaultOptTxt;
+	}
+
+	public String getAction() {
+		return action;
+	}
+
+	public void setAction(String action) {
+		this.action = action;
+	}
+
+	public String getCommitMessage() {
+		return commitMessage;
+	}
+
+	public void setCommitMessage(String commitMessage) {
+		this.commitMessage = commitMessage;
 	}
 }
