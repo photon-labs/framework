@@ -949,6 +949,8 @@ public interface FrameworkConstants {
      */
     String ADD_PROJECT_SUCCESS ="add.project.success";
     String ADD_PROJECT_FAIL ="add.project.fail";
+    String COMMIT_PROJECT_SUCCESS ="commit.project.success";
+    String COMMIT_PROJECT_FAIL ="commit.project.fail";
     
     /*
      * Delete Build keys
