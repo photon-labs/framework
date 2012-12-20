@@ -63,7 +63,7 @@
 			<span class="red">*</span> <s:text name="label.repository.url"/>
 		</label>
 		<div class="controls">
-			<input type="text" name="repoUrl" id="repoUrl" value="<%= StringUtils.isEmpty(repoUrl) ? "http://" : repoUrl %>">&nbsp;&nbsp;<span id="missingURL" class="missingData"></span>
+			<input type="text" name="repoUrl" class="input-xlarge" id="repoUrl" value="<%= StringUtils.isEmpty(repoUrl) ? "http://" : repoUrl %>">&nbsp;&nbsp;<span id="missingURL" class="missingData"></span>
 		</div>
 	</div>
 	
@@ -77,14 +77,14 @@
 	<div class="control-group">
 		<label  class="control-label labelbold popupLbl"><span class="red mandatory">*</span> <s:text name="lbl.username"/></label> 
 		<div class="controls">
-			<input type="text" name="username" id="userName" maxlength="63" title="63 Characters only" >&nbsp;&nbsp;<span id="missingUsername" class="missingData"></span> 
+			<input type="text" name="username" class="input-large" id="userName" maxlength="63" title="63 Characters only" >&nbsp;&nbsp;<span id="missingUsername" class="missingData"></span> 
 		</div>
 	</div>
 	
 	<div class="control-group">
 		<label  class="control-label labelbold popupLbl"><span class="red mandatory">*</span> <s:text name="lbl.password"/></label> 
 		<div class="controls">
-			<input type="password" name="password" id="password" maxlength="63" title="63 Characters only">&nbsp;&nbsp;<span id="missingPassword" class="missingData"></span> 
+			<input type="password" name="password" class="input-large" id="password" maxlength="63" title="63 Characters only">&nbsp;&nbsp;<span id="missingPassword" class="missingData"></span> 
 		</div>
 	</div>
 	
@@ -130,11 +130,12 @@
 		} else {
 			svnCredentialMark();
 		}
-			
-		$("#repoUrl").keyup(function(event) {
-	       var repoUrl = $("input[name='repoUrl']").val();
-		});
 
+		$("#repoUrl").blur(function(event) {
+	       var repoUrl = $("input[name='repoUrl']").val();
+	       urlBasedAction();
+		});
+		
 		$('#revision').click(function() {
 			$("#revisionVal").removeAttr("disabled");
 		});
@@ -175,8 +176,6 @@
 			$('#svnRevisionInfo').show();
 			  // hide other credential checkbox
 			$('#otherCredentialInfo').show();
-			  // to make check box untick (fill with insight username and password)
-			urlBasedAction();
 		} else if($("[name=repoType]").val() == 'git') {
 			$('.credentialDet').hide();
 			$('#svnRevisionInfo').hide();
@@ -212,13 +211,13 @@
 	}
 
 	function enableSvnFormDet() {
-	  	enableControl($("input[name='password']"), "");
-	    enableControl($("input[name='username']"), "");
+		enableCtrl($("input[name='password']"));
+		enableCtrl($("input[name='username']"));
 	}
 
 	function disableSvnFormDet() {
-	    disableControl($("input[name='password']"), "");
-	    disableControl($("input[name='username']"), "");
+ 		disableCtrl($("input[name='password']"));
+ 		disableCtrl($("input[name='username']"));
 	}
 	
 	function validateImportAppl() {

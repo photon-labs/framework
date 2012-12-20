@@ -974,7 +974,7 @@ label {
 	background:#1dae4b;
 	line-height:24px;
 }
-.lgnContainer input[type="text"], input[type="password"] {
+.lgnContainer input[type="text"], .lgnContainer input[type="password"] {
 	/*background:url(../images/txt_bg.png) repeat;*/
 	background:#FFFFFF;
 	border:none;
