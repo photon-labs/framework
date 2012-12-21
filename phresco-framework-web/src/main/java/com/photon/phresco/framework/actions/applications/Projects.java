@@ -82,6 +82,7 @@ public class Projects extends FrameworkBaseAction {
     private String webTechError = "";
     private String statusFlag = "" ;
     private String id = "";
+    private String fromTab = "";
 
 	/**
      * To get the list of projects
@@ -455,24 +456,32 @@ public class Projects extends FrameworkBaseAction {
         }
 
         boolean hasError = false;
-       /* //check project name is already exists or not
-        ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
-        List<ProjectInfo> projects = projectManager.discover(getCustomerId());
-        String newProjectName = "";
-        String oldProjectName = "";
-        if(StringUtils.isNotEmpty(getProjectName())) {
-        	newProjectName = getProjectName();
-        	for(ProjectInfo project : projects) {
-        		if(project.getName().equals(newProjectName)) {
-        			oldProjectName = project.getName();
-        		}
-        	}
-        }
-        
-        if(StringUtils.equals(newProjectName, oldProjectName)) {
-        	 setProjectNameError(getText(ERROR_NAME_EXISTS));
-             hasError = true;
-        }*/
+        if (FROM_PAGE_ADD.equals(getFromTab())) {
+  	       	//check project name is already exists or not
+  	        ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
+  	        List<ProjectInfo> projects = projectManager.discover(getCustomerId());
+  	        if(StringUtils.isNotEmpty(getProjectName())) {
+  	        	for(ProjectInfo project : projects) {
+  	        		if(project.getName().equals(getProjectName())) {
+  	    	       	 	setProjectNameError(getText(ERROR_NAME_EXISTS));
+  	    	            hasError = true;
+  	    	            break;
+  	        		}
+  	        	}
+  	        }
+  	        
+  	        //check project code is already exists or not
+  	        if(StringUtils.isNotEmpty(getProjectCode())) {
+  	        	for(ProjectInfo project : projects) {
+  	        		if(project.getProjectCode().equals(getProjectCode())) {
+  	    	        	setProjectCodeError(getText(ERROR_CODE_EXISTS));
+  	    	            hasError = true;
+  	    	            break;
+  	        		}
+  	        	}
+  	        }	
+          }
+         
         
         //empty validation for name
         if (StringUtils.isEmpty(getProjectName().trim())) {
@@ -704,5 +713,13 @@ public class Projects extends FrameworkBaseAction {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public String getFromTab() {
+		return fromTab;
+	}
+
+	public void setFromTab(String fromTab) {
+		this.fromTab = fromTab;
 	}
 }

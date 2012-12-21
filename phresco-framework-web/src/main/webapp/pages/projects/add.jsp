@@ -492,8 +492,9 @@
 			<input type="hidden" name=projectName value="<%= name %>"/>
 			<input type="hidden" name=projectCode value="<%= projectCode %>"/>
 			<input type="hidden" name=projectVersion value="<%= version %>"/>
+		<% } else {%>
+			<input type="hidden" name="fromTab" value="add">
 		<% } %>
-		
 		<!-- hidden fields end -->
 	</form>
 	<!--  Form Ends -->
