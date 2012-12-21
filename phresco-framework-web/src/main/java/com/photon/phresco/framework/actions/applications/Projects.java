@@ -480,6 +480,47 @@ public class Projects extends FrameworkBaseAction {
   	        		}
   	        	}
   	        }	
+  	      //validate if none of the layer is selected
+  	        if (CollectionUtils.isEmpty(getLayer())) {
+  	            setAppTechError(getText(ERROR_TECHNOLOGY));
+  	            setWebTechError(getText(ERROR_TECHNOLOGY));
+  	            setMobTechError(getText(ERROR_TECHNOLOGY));
+  	            hasError = true;
+  	        }
+  	        //empty validation for technology in the selected layer
+  	        if (CollectionUtils.isNotEmpty(getLayer())) {
+  	            for (String layerId : getLayer()) {
+  	                String techId = getReqParameter(layerId + REQ_PARAM_NAME_TECHNOLOGY);
+  	                if (LAYER_APP_ID.equals(layerId)) {//for application layer
+  	                    if (StringUtils.isEmpty(techId)) {
+  	                        setAppTechError(getText(ERROR_TECHNOLOGY));
+  	                        hasError = true;
+  	                    }
+  	                }
+  	                if (LAYER_WEB_ID.equals(layerId)) {//for web layer
+  	                    if (StringUtils.isEmpty(techId)) {
+  	                        setWebTechError(getText(ERROR_TECHNOLOGY));
+  	                        hasError = true;
+  	                    }
+  	                }
+  	                if (LAYER_MOB_ID.equals(layerId)) {//for mobile layer
+  	                    String[] techGroupIds = getReqParameterValues(layerId + REQ_PARAM_NAME_TECH_GROUP);
+  	                    if (ArrayUtils.isEmpty(techGroupIds)) {//empty validation for technology group
+  	                        setMobTechError(getText(ERROR_TECHNOLOGY));
+  	                        hasError = true;
+  	                    } else {
+  	                        for (String techGroupId : techGroupIds) {//empty validation for technology in the selected technology group
+  	                            techId = getReqParameter(techGroupId + REQ_PARAM_NAME_TECHNOLOGY);
+  	                            if (StringUtils.isEmpty(techId)) {
+  	                                setMobTechError(getText(ERROR_LAYER));
+  	                                hasError = true;
+  	                                break;
+  	                            }
+  	                        }
+  	                    }
+  	                }
+  	            }
+  	        }
           }
          
         
@@ -498,47 +539,7 @@ public class Projects extends FrameworkBaseAction {
             setProjectVersionError(getText(ERROR_VERSION));
             hasError = true;
         }
-        //validate if none of the layer is selected
-        if (CollectionUtils.isEmpty(getLayer())) {
-            setAppTechError(getText(ERROR_TECHNOLOGY));
-            setWebTechError(getText(ERROR_TECHNOLOGY));
-            setMobTechError(getText(ERROR_TECHNOLOGY));
-            hasError = true;
-        }
-        //empty validation for technology in the selected layer
-        if (CollectionUtils.isNotEmpty(getLayer())) {
-            for (String layerId : getLayer()) {
-                String techId = getReqParameter(layerId + REQ_PARAM_NAME_TECHNOLOGY);
-                if (LAYER_APP_ID.equals(layerId)) {//for application layer
-                    if (StringUtils.isEmpty(techId)) {
-                        setAppTechError(getText(ERROR_TECHNOLOGY));
-                        hasError = true;
-                    }
-                }
-                if (LAYER_WEB_ID.equals(layerId)) {//for web layer
-                    if (StringUtils.isEmpty(techId)) {
-                        setWebTechError(getText(ERROR_TECHNOLOGY));
-                        hasError = true;
-                    }
-                }
-                if (LAYER_MOB_ID.equals(layerId)) {//for mobile layer
-                    String[] techGroupIds = getReqParameterValues(layerId + REQ_PARAM_NAME_TECH_GROUP);
-                    if (ArrayUtils.isEmpty(techGroupIds)) {//empty validation for technology group
-                        setMobTechError(getText(ERROR_TECHNOLOGY));
-                        hasError = true;
-                    } else {
-                        for (String techGroupId : techGroupIds) {//empty validation for technology in the selected technology group
-                            techId = getReqParameter(techGroupId + REQ_PARAM_NAME_TECHNOLOGY);
-                            if (StringUtils.isEmpty(techId)) {
-                                setMobTechError(getText(ERROR_LAYER));
-                                hasError = true;
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-        }
+       
 
         if (hasError) {
             setErrorFound(true);
