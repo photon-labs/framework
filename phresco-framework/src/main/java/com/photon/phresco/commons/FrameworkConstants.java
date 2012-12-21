@@ -676,8 +676,9 @@ public interface FrameworkConstants {
     String REQ_GRAPH_ALL_DATA = "GRAPH_ALL_DATA";
     String REQ_SHOW_GRAPH = "showGraphFor";
     String REQ_TEST_SHOW_ALL_GRAPH = "all";
-    String REQ_ACTION="action";
-    String REQ_BUILD_TEST="build";
+    String REQ_ACTION= "action";
+    String REQ_COMMITABLE_FILES= "commitableFiles";
+    String REQ_BUILD_TEST= "build";
     String REQ_DEPLOY = "deploy";
     String REQ_OLD_APPDIR = "oldAppDirName";
     String REQ_ANDROID_CONN_DEVICES = "connAndroidDevices";
@@ -933,19 +934,21 @@ public interface FrameworkConstants {
     String SUCCESS_PROJECT_UPDATE = "update.project.success";
     String SUCCESS_PROJECT_ADD = "add.project.success";
     String SUCCESS_PROJECT_COMMIT = "commit.project.success";
-    String FAILURE_PROJECT_UPDATE = "update.project.fail";
     String FAILURE_PROJECT_DELETE = "Projects deletion failed";
     /*
      * Project Import keys
      */
     String IMPORT_PROJECT_FAIL ="import.project.fail";
+    String UPDATE_PROJECT_FAIL ="update.project.fail";
     String INVALID_CREDENTIALS = "import.invalid.credential";
     String INVALID_FOLDER = "import.invalid.folder";
     String PROJECT_ALREADY = "import.project.already";
     String SVN_FAILED ="failed";
     String SVN_INTERNAL ="Internal";
+    String SVN_IS_NOT_WORKING_COPY ="is not a working copy";
     String INVALID_URL = "import.invalid.url";
     String INVALID_REVISION = "import.invalid.revision";
+    String NOT_WORKING_COPY = "not.working.dir";
     String NO_POM_XML = "project.pom.not.exist";
     String POM_URL_FAIL = "project.pomurlupdate.fail";
     

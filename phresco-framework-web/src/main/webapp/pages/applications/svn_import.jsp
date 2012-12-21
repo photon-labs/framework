@@ -21,8 +21,12 @@
 
 <%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
 <%@ page import="org.apache.commons.lang.StringUtils"%>
-
+<%@ page import="org.apache.commons.collections.CollectionUtils" %>
+<%@ page import="java.io.File"%>
+<%@ page import="java.util.List"%>
 <%@ page import="com.photon.phresco.commons.model.User"%>
+<%@ page import="org.tmatesoft.svn.core.wc.SVNStatus"%>
+<%@ page import="org.tmatesoft.svn.core.wc.SVNStatusType"%>
 
 <% 
 	User user = (User)session.getAttribute(FrameworkConstants.SESSION_USER_INFO);
@@ -34,6 +38,12 @@
 	String action = (String)request.getAttribute(FrameworkConstants.REQ_ACTION);
 	String customerId = (String)request.getAttribute(FrameworkConstants.REQ_CUSTOMER_ID);
 	User userInfo = (User)session.getAttribute(FrameworkConstants.SESSION_USER_INFO);
+	Object commitableFilesObj = request.getAttribute(FrameworkConstants.REQ_COMMITABLE_FILES);
+	List<SVNStatus> commitableFiles = null;
+	if (commitableFilesObj != null) {
+		commitableFiles = (List<SVNStatus>) commitableFilesObj;
+	}
+	
     String LoginId = "";
     if (userInfo != null) {
         LoginId = userInfo.getName();
@@ -42,6 +52,57 @@
 
 
 <form id="repoDetails" name="repoDetails" action="import" method="post" autocomplete="off" class="repo_form form-horizontal">
+
+		<%
+ 			if (FrameworkConstants.COMMIT.equals(action) && CollectionUtils.isNotEmpty(commitableFiles)) {
+ 		%>
+			<div class="validate-container" style="padding-top: 0px;padding-bottom: 10px;">
+	      		<div class="header-background"> </div>
+	      		<div class="validate-container-inner validatePopup_tbl">
+			        <table cellspacing="0" class="zebra-striped">
+			          	<thead>
+				            <tr>
+				            	<th class="first validate_tblHdr">
+				                	<div class="th-inner-validate"><input type="checkbox" id="selectAll"/></div>
+				              	</th>
+								<th class="first validate_tblHdr">
+				                	<div class="th-inner-validate"><s:text name="lbl.file"/></div>
+				              	</th>
+				              	<th class="second validate_tblHdr">
+				                	<div class="th-inner-validate"><s:text name="label.status"/></div>
+				              	</th>
+				            </tr>
+			          	</thead>
+			
+			          	<tbody>
+			          		<% 
+			          			for(SVNStatus commitableFile : commitableFiles) {
+			          				SVNStatusType statusType = commitableFile.getContentsStatus();
+			          		%>
+			            	<tr>
+			            		<td>
+			            			<input type="checkbox" class="check" name="commitableFiles" value="<%= commitableFile.getFile() %>"/>
+			            		</td>
+			              		<td>
+				              		<div class = "validateMsg" style="color: #000000; width: 350px;">
+				              			<%= commitableFile.getFile() %>
+				              		</div>
+			              		</td>
+			              		<td>
+			              		<div class = "validateStatus" style="color: #000000;">
+			              				<%=  statusType.getCode() %>
+					   				</div>
+			              		</td>
+			            	</tr>
+			            <%
+ 							}
+ 						%>
+			          	</tbody>
+			        </table>
+	      		</div>
+    		</div>
+	    <% } %> 
+ 			
 	<!--   import from type -->
 	<div id="typeInfo">
 		<div class="control-group" id="typeInfo">
@@ -165,7 +226,44 @@
 		 	$('#typeInfo').show();
 	    <% } %>
 				  	
-			extraInfoDisplay();
+		extraInfoDisplay();
+			
+		// add multiple select / deselect functionality
+	    $("#repoDetails #selectAll").click(function () {
+			$('#repoDetails .check').attr('checked', this.checked);
+			if($('#repoDetails #selectAll').is(':checked')) {
+				enableButton($("#importUpdateAppln"));
+			} else {
+				disableButton($("#importUpdateAppln"));
+			}
+	    });
+
+	    // if all checkbox are selected, check the selectAll checkbox
+	    // and viceversa
+	    $("#repoDetails .check").click(function() {
+			if($("#repoDetails .check").length == $("#repoDetails .check:checked").length) {
+	            $("#repoDetails #selectAll").attr("checked", "checked");
+	        } else {
+	            $("#repoDetails #selectAll").removeAttr("checked");
+	        }
+			
+			if($("#repoDetails .check:checked").length > 0) {
+				enableButton($(".popupOk"));
+			} else {
+				disableButton($(".popupOk"));
+			}
+	    });
+	    
+	    // by default for commit opeartion disable button
+	    <% if (FrameworkConstants.COMMIT.equals(action)) { %> 
+	    	disableButton($(".popupOk"));
+	    <% } %>
+	    
+		<%
+			if (FrameworkConstants.COMMIT.equals(action) && CollectionUtils.isEmpty(commitableFiles)) {
+		%>
+				$("#errMsg").html("<s:text name='lbl.no.change'/>");
+		<% } %>
 	});
 
 	//base on the repo type credential info need to be displayed
