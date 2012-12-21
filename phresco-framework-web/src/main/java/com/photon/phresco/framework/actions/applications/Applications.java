@@ -887,10 +887,6 @@ public class Applications extends FrameworkBaseAction {
 		}
 		try {
 			String encodedpassword = (String) getReqAttribute(SESSION_USER_PASSWORD);
-			if (StringUtils.isEmpty(credential)) { //unchecked
-				String decryptedPass = new String(Base64.decodeBase64(encodedpassword));
-				password = decryptedPass;
-			}
 			revision = !HEAD_REVISION.equals(revision) ? revisionVal : revision;
 			SCMManagerImpl scmi = new SCMManagerImpl();
 			boolean importProject = scmi.importProject(SVN, repoUrl, userName, password, null, revision);

@@ -27,6 +27,7 @@
 <%@ page import="com.photon.phresco.commons.model.User"%>
 <%@ page import="org.tmatesoft.svn.core.wc.SVNStatus"%>
 <%@ page import="org.tmatesoft.svn.core.wc.SVNStatusType"%>
+<%@ page import="org.apache.commons.codec.binary.Base64"%>
 
 <% 
 	User user = (User)session.getAttribute(FrameworkConstants.SESSION_USER_INFO);
@@ -302,7 +303,11 @@
 			localStorage["svnImport"] = "credentials";
 		} else {
 			$("#userName").val("<%= LoginId %>");
-			$("#password").val("<%= (String) session.getAttribute(FrameworkConstants.SESSION_USER_PASSWORD) %>");
+			<%
+				String encodedpassword = (String) session.getAttribute(FrameworkConstants.SESSION_USER_PASSWORD);
+				String decryptedPass = new String(Base64.decodeBase64(encodedpassword));
+			%>
+			$("#password").val("<%= decryptedPass %>");
 			disableSvnFormDet();
 			localStorage["svnImport"] = "";
 		}
