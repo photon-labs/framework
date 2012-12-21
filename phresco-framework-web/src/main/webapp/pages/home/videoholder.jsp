@@ -83,6 +83,8 @@
 		$("#video-list-holder").scrollbars();
 	}
 	
+	$('#customerList').hide();
+	
 	<% if (videoInfos != null) { %>
     $(document).ready(function() {
     	showLoadingIcon();

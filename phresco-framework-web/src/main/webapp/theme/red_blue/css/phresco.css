@@ -4016,6 +4016,8 @@ div.submit_input {
 .theme_accordion_container{
     float: left;
     width: 99.6%;
+   	height: 94%;
+    overflow-x: hidden !important;
 }
 
 .accordion_head{
