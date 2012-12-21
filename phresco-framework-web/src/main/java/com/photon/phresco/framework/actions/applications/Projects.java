@@ -34,6 +34,7 @@ import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ApplicationType;
 import com.photon.phresco.commons.model.Customer;
 import com.photon.phresco.commons.model.ProjectInfo;
+import com.photon.phresco.commons.model.Technology;
 import com.photon.phresco.commons.model.TechnologyGroup;
 import com.photon.phresco.commons.model.TechnologyInfo;
 import com.photon.phresco.commons.model.User;
@@ -345,13 +346,14 @@ public class Projects extends FrameworkBaseAction {
         String[] techGroupIds = getReqParameterValues(layerId + REQ_PARAM_NAME_TECH_GROUP);
         if (!ArrayUtils.isEmpty(techGroupIds)) {
             for (String techGroupId : techGroupIds) {
-                String techId = getHttpRequest().getParameter(techGroupId + REQ_PARAM_NAME_TECHNOLOGY);
-                String version = getHttpRequest().getParameter(techGroupId + REQ_PARAM_NAME_VERSION);
+                String techId = getReqParameter(techGroupId + REQ_PARAM_NAME_TECHNOLOGY);
+                String version = getReqParameter(techGroupId + REQ_PARAM_NAME_VERSION);
                 boolean phoneEnabled = Boolean.parseBoolean(getReqParameter(techGroupId + REQ_PARAM_NAME_PHONE));
                 boolean tabletEnabled = Boolean.parseBoolean(getReqParameter(techGroupId + REQ_PARAM_NAME_TABLET));
-                String dirName = getProjectCode().replaceAll("[^\\sA-Za-z0-9_.-]", "");
-                dirName = dirName + HYPHEN + techGroupId;
-                String projectName = getProjectName() + HYPHEN + techGroupId;
+                Technology technology = getServiceManager().getTechnology(techId);
+                String techName = technology.getName().replaceAll("\\s", "").toLowerCase();
+                String dirName = getProjectCode() + HYPHEN + techName;
+                String projectName = getProjectName() + HYPHEN + techName;
                 appInfos.add(getAppInfo(projectName, dirName, techId, version, phoneEnabled, tabletEnabled));
             }
         }
@@ -369,9 +371,10 @@ public class Projects extends FrameworkBaseAction {
     private List<ApplicationInfo> getOtherLayerAppInfos(List<ApplicationInfo> appInfos, String layerId) throws PhrescoException {
         String techId = getReqParameter(layerId + REQ_PARAM_NAME_TECHNOLOGY);
         String version = getReqParameter(layerId + REQ_PARAM_NAME_VERSION);
-        String dirName = getProjectCode().replaceAll("[^\\sA-Za-z0-9_.-]", "");
-        dirName = dirName + HYPHEN + techId;
-        String projectName = getProjectName() + HYPHEN + techId;
+        Technology technology = getServiceManager().getTechnology(techId);
+        String techName = technology.getName().replaceAll("\\s", "").toLowerCase();
+        String dirName = getProjectCode() + HYPHEN + techName;
+        String projectName = getProjectName() + HYPHEN + techName;
         appInfos.add(getAppInfo(projectName, dirName, techId, version, false, false));
 
         return appInfos;
