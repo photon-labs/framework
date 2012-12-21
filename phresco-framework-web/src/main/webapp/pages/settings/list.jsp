@@ -90,15 +90,16 @@
 <div id="loadEnv"> </div>
 
 <script type="text/javascript">
-		$('#addEnvironments').click(function() {
-			yesnoPopup('openEnvironmentPopup', '<s:text name="lbl.environment"/>', 'createEnvironment', '<s:text name="label.ok"/>', '', 'fromPage=<%=fromPage%>&configPath=<%=configPath%>');
-		});
+	$('#addEnvironments').click(function() {
+		yesnoPopup('openEnvironmentPopup', '<s:text name="lbl.environment"/>', 'createEnvironment', '<s:text name="label.ok"/>', '', 'fromPage=<%=fromPage%>&configPath=<%=configPath%>');
+	});
 	
 	confirmDialog($("#deleteBtn"), '<s:text name="lbl.hdr.confirm.dialog"/>', '<s:text name="modal.body.text.del.configuration"/>', 'delete','<s:text name="lbl.btn.ok"/>');
 	
 	$(document).ready(function() {
 		hideLoadingIcon();//To hide the loading icon
 		hideProgressBar();
+		$('#customerList').show();
 		var basicParams = getBasicParamsAsJson();
 		var fromPage = "<%= fromPage%>";
 		var configPath = "<%= configPath%>";

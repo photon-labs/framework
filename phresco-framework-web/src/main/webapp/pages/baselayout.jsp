@@ -172,7 +172,7 @@
 						<img src="images/downarrow.png" class="arrow">
                         <div class="userInfo" >
                             <ul>
-                            	<li class="theme_change"><a href="#">Themes</a>
+                            	<li id="themeContainer" class="theme_change"><a href="#">Themes</a>
                                 	<ul>
                                     	<li>Photon&nbsp;<a href="#" class="styles" href="#" rel="theme/photon/css/photon_theme.css"><img src="images/photon_theme.png"></a></li>
                                         <li>Red-Blue&nbsp;
@@ -197,7 +197,7 @@
 								    <s:label key="lbl.hdr.home"  theme="simple"/></a>
                                 </li>
 								<li class="wid_app"><a href="#" class="inactive" name="headerMenu" id="applications">
-								    <s:label key="lbl.hdr.applications" theme="simple"/></a>
+								    <s:label key="lbl.hdr.projects" theme="simple"/></a>
 								</li>
 								<li class="wid_set"><a href="#" class="inactive" name="headerMenu" id="settings" additionalParam="fromPage=settings">
 								    <s:label key="lbl.hdr.settings"  theme="simple"/></a>
@@ -239,12 +239,12 @@
 							class="arrow_links_top">
 							<span class="shortcutRed" id=""></span>
 							<span class="shortcutWh" id="">
-							<s:text name="lbl.hdr.applications"/></span>
+							<s:text name="lbl.hdr.projects"/></span>
 						</a>
 					</div>
 					
 					<form id="formCustomers" class="form">
-						<div class="control-group customer_name">
+						<div id="customerList" class="control-group customer_name">
 							<s:label key="lbl.customer" cssClass="control-label custom_label labelbold" theme="simple"/>
 							<div class="controls customer_select_div">
 								<select name="customerId" class="customer_listbox">
@@ -400,6 +400,7 @@
 	 $(document).ready(function() {
 		applyTheme();
 		getLogoImgUrl();
+		showHideTheme();
 	        
 		$(".styles").click(function() {
 			localStorage.clear();
@@ -426,11 +427,12 @@
 		clickMenu($("a[name='headerMenu']"), $("#container"), $('#formCustomers'));
 		loadContent("home", '', $("#container"), '', '', true);
 		activateMenu($("#home"));
-		
+				
 		//To get the list of projects based on the selected customer
     	$('select[name=customerId]').change(function() {
     		getLogoImgUrl();
     		showLoadingIcon();
+    		showHideTheme();
     		loadContent("applications", $('#formCustomers'), $("#container"), '', '', true);
     	});
 		
@@ -518,6 +520,16 @@
 				'color': brandingColor
 			}
 		});
+	}
+	
+	//To hide themes for customers other than photon
+	function showHideTheme() {
+		var customerId = $('select[name=customerId]').val();
+		if (customerId != "<%= ServiceConstants.DEFAULT_CUSTOMER_NAME %>") {
+			$('#themeContainer').hide();
+		} else if (customerId === "<%= ServiceConstants.DEFAULT_CUSTOMER_NAME %>"){
+			$('#themeContainer').show();
+		}
 	}
 	
 	/** To include the js based on the device **/
