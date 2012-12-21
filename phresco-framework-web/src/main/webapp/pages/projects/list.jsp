@@ -180,6 +180,8 @@
 		hideProgressBar();
 		toDisableCheckAll();
 		
+		$('#customerList').show();
+		
 		$('#importAppln').click(function() {
 			var params = "action=import";
 			yesnoPopup('importAppln', '<s:text name="lbl.app.import"/>', 'importUpdateAppln','<s:text name="lbl.app.import"/>', '', params);

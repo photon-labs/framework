@@ -547,26 +547,20 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		return cm.getCommitClient().doCommit(new File[]{subVerDir}, false, commitMessage, null, null, false, true, SVNDepth.INFINITY);
     }
 	
-	public List<File> getCommitableFiles(File path, SVNRevision revision) throws SVNException {
-		System.out.println("getting files !!!! ");
+	public List<SVNStatus> getCommitableFiles(File path, String revision) throws SVNException {
 	    SVNClientManager svnClientManager = SVNClientManager.newInstance();
-	    final List<File> fileList = new ArrayList<File>();
-	    final List<SVNStatus> AllSVNStatus = new ArrayList<SVNStatus>();
-	    svnClientManager.getStatusClient().doStatus(path, revision, SVNDepth.INFINITY, false, false, false, false, new ISVNStatusHandler() {
+	    final List<SVNStatus> allSVNStatus = new ArrayList<SVNStatus>();
+	    svnClientManager.getStatusClient().doStatus(path, SVNRevision.parse(revision), SVNDepth.INFINITY, false, false, false, false, new ISVNStatusHandler() {
 	        public void handleStatus(SVNStatus status) throws SVNException {
 	            SVNStatusType statusType = status.getContentsStatus();
-	            AllSVNStatus.add(status);
 	            if (statusType != SVNStatusType.STATUS_NONE && statusType != SVNStatusType.STATUS_NORMAL
 	                    && statusType != SVNStatusType.STATUS_IGNORED) {
-	            	System.out.println("getting status !!!!!! ");
-		            System.out.println("Status File => " + status.getFile());
-		            System.out.println("Status Type => " + statusType);
-	                fileList.add(status.getFile());
+		            allSVNStatus.add(status);
 	            }
 	        }
 	    }, null);
 	    
-	    return fileList;
+	    return allSVNStatus;
 	}
 	
 	public SVNCommitInfo commitSpecifiedFiles(List<File> listModifiedFiles, String username, String password, String commitMessage) throws Exception {
@@ -576,17 +570,10 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		
 		final SVNClientManager cm = SVNClientManager.newInstance(new DefaultSVNOptions(), username, password);
 		SVNWCClient wcClient = cm.getWCClient();
-		File[] comittableFiles = (File[]) listModifiedFiles.toArray();
+		File[] comittableFiles = listModifiedFiles.toArray(new File[listModifiedFiles.size()]);
 		
-//		for (File lastModifiedFile : listModifiedFiles) {
-			System.out.println("lastModifiedFile => " + listModifiedFiles);
-//			wcClient.doAdd(comittableFiles, true, false, false, SVNDepth.INFINITY, false, false);
-			wcClient.doAdd(comittableFiles, true, false, false, SVNDepth.INFINITY, false, false, false);
-			SVNCommitInfo commitInfo = cm.getCommitClient().doCommit(comittableFiles, false, commitMessage, null, null, false, true, SVNDepth.INFINITY);
-			System.out.println("commitInfo => " + commitInfo.getAuthor());
-			System.out.println("commitInfo revision => " + commitInfo.getNewRevision());
-//			break;
-//		}
+		wcClient.doAdd(comittableFiles, true, false, false, SVNDepth.INFINITY, false, false, false);
+		SVNCommitInfo commitInfo = cm.getCommitClient().doCommit(comittableFiles, false, commitMessage, null, null, false, true, SVNDepth.INFINITY);
 		return commitInfo;
 	}
 }

@@ -36,6 +36,7 @@
 		$(".styles").click(function() {
 			reloadIframe();
 		});
+		$('#customerList').hide();
 	});
 	
 	function reloadIframe() {
