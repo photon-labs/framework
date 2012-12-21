@@ -47,6 +47,10 @@ public interface FrameworkConstants {
     
     String CONFIG = "config";
     
+    String X_FILE_NAME = "X-File-Name";
+    String SUCCESS_FALSE = "{\"success\": false}";
+    String SUCCESS_TRUE = "{\"success\": true}";
+    
 	String FEATURES = "features";
 	String CONFIG_TYPE_FEATURES = "Features";
     int JOB_STATUS_NOTOK = -1;
@@ -1753,6 +1757,7 @@ public interface FrameworkConstants {
 		String TYPE_PASSWORD  = "password";
 		String TYPE_NUMBER = "number";
 		String TYPE_BOOLEAN = "boolean";
+		String TYPE_FILE = "FileType";
 		String TEXT_BOX = "text";
 		String TYPE_LIST = "list";
 		String TYPE_EDITABLE_COMBO = "editableList";

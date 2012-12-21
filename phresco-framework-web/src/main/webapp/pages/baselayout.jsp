@@ -95,7 +95,13 @@
 		<script type="text/javascript" src="js/loading.js"></script>
 		<script type="text/javascript" src="js/reader.js" ></script>
 		<script type="text/javascript" src="js/jquery-tojson.js" ></script>
-		<script type="text/javascript" src="js/ddslick.js" ></script>
+		
+		<script type="text/javascript" src="js/ddslick.js"></script>
+		
+		<!-- File upload -->
+		<script type="text/javascript" src="js/fileuploader.js"></script>
+		<link type="text/css" rel="stylesheet" href="css/fileuploader.css"/>
+		
 		<!-- Window Resizer -->
 		<script type="text/javascript" src="js/windowResizer_default.js" id="windowResizer"></script>
 		

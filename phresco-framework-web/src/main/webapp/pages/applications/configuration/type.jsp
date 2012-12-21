@@ -125,8 +125,14 @@
     	} else {
 			possibleValues = propertyTemplate.getPossibleValues();
     	}
-    	
-        if (CollectionUtils.isNotEmpty(possibleValues)) {
+		
+		if (FrameworkConstants.TYPE_FILE.equals(propertyTemplate.getType())) {
+    %>
+   			<script type="text/javascript">
+   				createFileUploader('<%= propertyTemplate.getName() %>');
+   			</script>
+	<%
+		} else if (CollectionUtils.isNotEmpty(possibleValues)) {
         	pm.setObjectValue(possibleValues);
         	//pm.setSelectedValues(value);
         	pm.setMultiple(false);
@@ -225,9 +231,24 @@
 			<span class="help-inline" id="siteCoreInstPathError"></span>
 		</div>
 	  </div>
-	<% 	
-		}
-	%>
+<% 	
+	}
+%>
+
+	<div class="control-group hideContent" id="fileControl">
+		<label class="control-label labelbold" id="fileControlLabel"> 
+		 	
+		</label>
+		<div class="controls">
+			<div id="file-uploader" class="file-uploader">
+				<noscript>
+					<p>Please enable JavaScript to use file uploader.</p>s
+					<!-- or put a simple form for upload here -->
+				</noscript>
+			</div>
+		</div>
+		<span class="help-inline fileError" id="fileError"></span>
+	</div>
 </form>
 
 <script type="text/javascript">
@@ -379,6 +400,48 @@
 		
 		if (pageUrl == "fetchSettingProjectInfoVersions") {
 			fillSelectbox($("select[name='version']"), data.versions);
+		}
+	}
+	
+	function createFileUploader(controlLabel) {
+		$('#fileControlLabel').html(controlLabel);
+		$('#fileControl').show();
+		var imgUploader = new qq.FileUploader ({
+            element : document.getElementById('file-uploader'),
+            action : 'uploadFile',
+            multiple : false,
+            allowedExtensions : ["zip"],
+            buttonLabel : '<s:text name="lbl.upload" />',
+            typeError : '<s:text name="err.invalid.file.type" />',
+            debug: true
+        });
+	}
+	
+	function removeUploadedJar(obj, btnId) {
+		$(obj).parent().remove();
+		
+		var params = "fileName=";
+		params = params.concat($(obj).attr("id"));
+		$.ajax({
+			url : "removeConfigFile",
+			data : params,
+			type : "POST",
+			success : function(data) {
+			}
+		});
+	}
+	
+	function fileError(data, type) {
+		var controlObj;
+		var msgObj;
+		if (type == "customerImageFile") {
+			controlObj = $("#fileControl");
+			msgObj = $("#fileError");
+		}
+		if (data != undefined && !isBlank(data)) {
+			showError(controlObj, msgObj, data);
+		} else {
+			hideError(controlObj, msgObj);
 		}
 	}
 </script>

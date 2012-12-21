@@ -20,14 +20,20 @@
 package com.photon.phresco.framework.actions.applications;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -123,6 +129,8 @@ public class Configurations extends FrameworkBaseAction {
     
     List<String> key = new ArrayList<String>();
     List<String> value = new ArrayList<String>();
+    
+    private static Map<String, byte[]> inputStreamMap = new HashMap<String, byte[]>();
 
 	public String configList() {
 		if (s_debugEnabled) {
@@ -146,7 +154,6 @@ public class Configurations extends FrameworkBaseAction {
         
         return APP_LIST;
     }
-	
 	
 	public String settingsList() {
 		if (s_debugEnabled) {
@@ -267,7 +274,37 @@ public class Configurations extends FrameworkBaseAction {
     		S_LOGGER.debug("Entering Method Configurations.saveConfiguration()");
 		}
     	
+    	FileOutputStream fos = null;
     	try {
+    	    if (MapUtils.isNotEmpty(inputStreamMap)) {
+    	        SettingsTemplate configTemplate = getServiceManager().getConfigTemplate(getConfigId(), getCustomerId());
+    	        List<PropertyTemplate> properties = configTemplate.getProperties();
+    	        String targetDir = "";
+    	        for (PropertyTemplate propertyTemplate : properties) {
+                    List<String> possibleValues = propertyTemplate.getPossibleValues();
+                    targetDir = possibleValues.get(0);
+                    break;
+                }
+    	        StringBuilder sb = new StringBuilder(Utility.getProjectHome())
+    	        .append(File.separator)
+    	        .append(getApplicationInfo().getAppDirName())
+    	        .append(File.separator)
+    	        .append(targetDir);
+    	        File file = new File(sb.toString());
+    	        if (!file.exists()) {
+    	            file.mkdir();
+    	        }
+    	        Set<String> keySet = inputStreamMap.keySet();
+    	        if (CollectionUtils.isNotEmpty(keySet)) {
+    	            sb.append(File.separator);
+    	            for (String key : keySet) {
+    	                String path = sb.toString() + key;
+    	                fos = new FileOutputStream(path);
+                        fos.write(inputStreamMap.get(key));
+                        fos.close();
+                    }
+    	        }
+    	    }
 			save(getAppConfigPath());
 			String pluginInfoFile = getPluginInfoPath();
 			MojoProcessor mojoProcessor = new MojoProcessor(new File(pluginInfoFile));
@@ -296,7 +333,10 @@ public class Configurations extends FrameworkBaseAction {
 			return showErrorPopup(e, getText(EXCEPTION_CONFIGURATION_SAVE_CONFIG));
 		} catch (ConfigurationException e) {
 			return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_CONFIGURATION_UPDATE_FAILS));
-		}
+		} catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     	
     	return configList();
     }
@@ -354,24 +394,26 @@ public class Configurations extends FrameworkBaseAction {
 		    propertyTemplates = configTemplate.getProperties();
 		}
 		for (PropertyTemplate propertyTemplate : propertyTemplates) {
-		    String key = propertyTemplate.getKey();
-		    String value = getActionContextParam(key);
-		    
-		    if (REMOTE_DEPLOYMENT.equals(key) && StringUtils.isEmpty(value)) {
-		    	value = "false";
+		    if (!TYPE_FILE.equals(propertyTemplate.getType())) {
+    		    String key = propertyTemplate.getKey();
+    		    String value = getActionContextParam(key);
+    		    
+    		    if (REMOTE_DEPLOYMENT.equals(key) && StringUtils.isEmpty(value)) {
+    		    	value = "false";
+    		    }
+    		    
+    		    if (StringUtils.isNotEmpty(key)) {
+    		        properties.setProperty(key, value);
+    		    }
+    		    
+    		    if (CONFIG_TYPE.equals(key) && IIS_SERVER.equals(value)) {
+    		    	isIISServer = true;
+    		    }
+    		    
+    		    if (CONFIG_TYPE.equals(key)) {
+    				properties.put(TYPE_VERSION, getVersion());
+    			}
 		    }
-		    
-		    if (StringUtils.isNotEmpty(key)) {
-		        properties.setProperty(key, value);
-		    }
-		    
-		    if (CONFIG_TYPE.equals(key) && IIS_SERVER.equals(value)) {
-		    	isIISServer = true;
-		    }
-		    
-		    if (CONFIG_TYPE.equals(key)) {
-				properties.put(TYPE_VERSION, getVersion());
-			}
 		}
 		
 		//To get the custom properties
@@ -808,21 +850,36 @@ public class Configurations extends FrameworkBaseAction {
 		return SETTINGS_TYPE;
 	}
     
-   /* private void setDynamicParameter(String fieldName) {
-        Class aClass = this.getClass();
-        Class[] paramTypes = new Class[1]; 
-            paramTypes[0] = String.class; // get the actual param type
-
-        String methodName = "set"+fieldName; // fieldName String
-        Method m = null;
-              try {
-                m = aClass.getMethod(methodName, paramTypes);
-             }
-             catch (NoSuchMethodException nsme) {
-           nsme.printStackTrace();
-          }
-    }*/
+    public String uploadFile() {
+        if (s_debugEnabled) {
+            S_LOGGER.debug("Entering Method Configurations.uploadFile()");
+        }
+        PrintWriter writer = null;
+        try {
+            byte[] byteArray = getByteArray();
+            inputStreamMap.put(getFileName(), byteArray);
+            writer = getHttpResponse().getWriter();
+            writer.print(SUCCESS_TRUE);
+            writer.flush();
+            writer.close();
+        } catch (Exception e) { //If upload fails it will be shown in UI, so need not to throw error popup
+            getHttpResponse().setStatus(getHttpResponse().SC_INTERNAL_SERVER_ERROR);
+            writer.print(SUCCESS_FALSE);
+        }
+        
+        return SUCCESS;
+    }
     
+    public String removeConfigFile() {
+        if (s_debugEnabled) {
+            S_LOGGER.debug("Entering Method Configurations.removeConfigFile()");
+        }
+        
+        System.out.println("getFileName():::" + getFileName());
+        inputStreamMap.remove(getFileName());
+        
+        return SUCCESS;
+    }
     
     public String cloneConfigPopup() {
     	if (s_debugEnabled) {
