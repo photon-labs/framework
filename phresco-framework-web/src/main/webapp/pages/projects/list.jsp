@@ -28,8 +28,10 @@
 <%@ page import="com.photon.phresco.util.Constants"%>
 <%@ page import="com.photon.phresco.commons.model.ProjectInfo"%>
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
+<%@ page import="com.photon.phresco.framework.actions.applications.Projects"%>
 
 <%
+    Projects projectsObj = new Projects(); 
 	List<ProjectInfo> projects = (List<ProjectInfo>) request.getAttribute(FrameworkConstants.REQ_PROJECTS);
 	Gson gson = new Gson();
 %>
@@ -122,7 +124,7 @@
 																	<%= project.getDescription() %>
 																</td>
 																<td class="no-left-bottom-border table-pad">
-																	<%= appInfo.getTechInfo().getId() %>
+																	<%= projectsObj.getTechNamefromTechId(appInfo.getTechInfo().getId()) %>
 																</td>
 																<td class="no-left-bottom-border table-pad">
 																	<a href="#" id="pdfPopup">

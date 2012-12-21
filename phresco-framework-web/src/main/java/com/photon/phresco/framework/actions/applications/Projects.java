@@ -42,6 +42,7 @@ import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
 import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.framework.commons.FrameworkUtil;
+import com.photon.phresco.commons.model.Technology;
 
 /**
  * Struts Action class for Handling Project related operations 
@@ -304,6 +305,22 @@ public class Projects extends FrameworkBaseAction {
         }
 
         return list();
+    }
+    
+    /**
+     * 
+     * @param techId
+     * To get Technology Name based on corresponding Technology Id
+     * @throws PhrescoException
+     */
+    public String getTechNamefromTechId(String techId) throws PhrescoException {
+    	if (s_debugEnabled) {
+    		S_LOGGER.debug("Entering Method  Applications.getTechNamefromTechId()");
+    	}
+
+    	Technology technology = getServiceManager().getTechnology(techId);
+
+    	return technology.getName(); 
     }
     
     /**
