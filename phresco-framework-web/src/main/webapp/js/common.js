@@ -206,6 +206,7 @@ function yesnoPopup(url, title, okUrl, okLabel, form, additionalParam) {
 	$('#popupTitle').html(title); // Title for the popup
 	$('.popupClose').hide(); //no need close button since yesno popup
 	$('.popupOk, #popupCancel').show(); // show ok & cancel button
+	enableButton($(".popupOk")); // enable button
 
 	$(".popupOk").attr('id', okUrl); // popup action mapped to id
 	if (okLabel !== undefined && !isBlank(okLabel)) {

@@ -37,7 +37,7 @@ public class DynamicDataBaseImpl implements DynamicParameter, Constants {
     	List<Configuration> configurations = configManager.getConfigurations(envName, Constants.SETTINGS_TEMPLATE_DB);
     	for (Configuration configuration : configurations) {
     		Value value = new Value();
-    		value.setValue(configuration.getProperties().getProperty("type"));
+    		value.setValue(configuration.getProperties().getProperty("type").toLowerCase());
     		possibleValues.getValue().add(value);
 		}
     	
@@ -61,7 +61,7 @@ public class DynamicDataBaseImpl implements DynamicParameter, Constants {
         		}
         		if (!alreadyAvailable) {
         			Value value = new Value();
-	        		value.setValue(dbType);
+	        		value.setValue(dbType.toLowerCase());
 	        		possibleValues.getValue().add(value);
         		}
     		}

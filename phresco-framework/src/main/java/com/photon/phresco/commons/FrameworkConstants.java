@@ -47,6 +47,10 @@ public interface FrameworkConstants {
     
     String CONFIG = "config";
     
+    String X_FILE_NAME = "X-File-Name";
+    String SUCCESS_FALSE = "{\"success\": false}";
+    String SUCCESS_TRUE = "{\"success\": true}";
+    
 	String FEATURES = "features";
 	String CONFIG_TYPE_FEATURES = "Features";
     int JOB_STATUS_NOTOK = -1;
@@ -676,8 +680,9 @@ public interface FrameworkConstants {
     String REQ_GRAPH_ALL_DATA = "GRAPH_ALL_DATA";
     String REQ_SHOW_GRAPH = "showGraphFor";
     String REQ_TEST_SHOW_ALL_GRAPH = "all";
-    String REQ_ACTION="action";
-    String REQ_BUILD_TEST="build";
+    String REQ_ACTION= "action";
+    String REQ_COMMITABLE_FILES= "commitableFiles";
+    String REQ_BUILD_TEST= "build";
     String REQ_DEPLOY = "deploy";
     String REQ_OLD_APPDIR = "oldAppDirName";
     String REQ_ANDROID_CONN_DEVICES = "connAndroidDevices";
@@ -933,19 +938,21 @@ public interface FrameworkConstants {
     String SUCCESS_PROJECT_UPDATE = "update.project.success";
     String SUCCESS_PROJECT_ADD = "add.project.success";
     String SUCCESS_PROJECT_COMMIT = "commit.project.success";
-    String FAILURE_PROJECT_UPDATE = "update.project.fail";
     String FAILURE_PROJECT_DELETE = "Projects deletion failed";
     /*
      * Project Import keys
      */
     String IMPORT_PROJECT_FAIL ="import.project.fail";
+    String UPDATE_PROJECT_FAIL ="update.project.fail";
     String INVALID_CREDENTIALS = "import.invalid.credential";
     String INVALID_FOLDER = "import.invalid.folder";
     String PROJECT_ALREADY = "import.project.already";
     String SVN_FAILED ="failed";
     String SVN_INTERNAL ="Internal";
+    String SVN_IS_NOT_WORKING_COPY ="is not a working copy";
     String INVALID_URL = "import.invalid.url";
     String INVALID_REVISION = "import.invalid.revision";
+    String NOT_WORKING_COPY = "not.working.dir";
     String NO_POM_XML = "project.pom.not.exist";
     String POM_URL_FAIL = "project.pomurlupdate.fail";
     
@@ -1094,6 +1101,7 @@ public interface FrameworkConstants {
     String ERROR_NO_CONFIG = "environment.config.not.available";
     String ERROR_NAME = "err.msg.empty.name";
     String ERROR_NAME_EXISTS = "err.msg.project.name.exists";
+    String ERROR_CODE_EXISTS = "err.msg.project.code.exists";
     String ERROR_CODE = "err.msg.empty.code";
     String ERROR_VERSION = "err.msg.empty.version";
     String ERROR_LAYER = "err.msg.empty.layer";
@@ -1749,6 +1757,7 @@ public interface FrameworkConstants {
 		String TYPE_PASSWORD  = "password";
 		String TYPE_NUMBER = "number";
 		String TYPE_BOOLEAN = "boolean";
+		String TYPE_FILE = "FileType";
 		String TEXT_BOX = "text";
 		String TYPE_LIST = "list";
 		String TYPE_EDITABLE_COMBO = "editableList";

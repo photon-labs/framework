@@ -38,6 +38,7 @@ import org.eclipse.jgit.api.errors.InvalidRemoteException;
 import org.eclipse.jgit.api.errors.TransportException;
 import org.tmatesoft.svn.core.SVNAuthenticationException;
 import org.tmatesoft.svn.core.SVNException;
+import org.tmatesoft.svn.core.wc.*;
 
 import com.google.gson.Gson;
 import com.opensymphony.xwork2.Action;
@@ -140,6 +141,7 @@ public class Applications extends FrameworkBaseAction {
     private String action = "";
     private List<String> jsonData = null;
     private String commitMessage = "";
+    private List<String> commitableFiles = null;
     
     public String loadMenu() {
         if (s_debugEnabled) {
@@ -885,10 +887,6 @@ public class Applications extends FrameworkBaseAction {
 		}
 		try {
 			String encodedpassword = (String) getReqAttribute(SESSION_USER_PASSWORD);
-			if (StringUtils.isEmpty(credential)) { //unchecked
-				String decryptedPass = new String(Base64.decodeBase64(encodedpassword));
-				password = decryptedPass;
-			}
 			revision = !HEAD_REVISION.equals(revision) ? revisionVal : revision;
 			SCMManagerImpl scmi = new SCMManagerImpl();
 			boolean importProject = scmi.importProject(SVN, repoUrl, userName, password, null, revision);
@@ -994,7 +992,14 @@ public class Applications extends FrameworkBaseAction {
 	}
 
 	public String importAppln() {
-		setReqAttribute(REQ_ACTION, action);
+		try {
+			setReqAttribute(REQ_ACTION, action);
+		} catch (Exception e) {
+			if(s_debugEnabled){
+				S_LOGGER.error(e.getLocalizedMessage());
+			}
+			return showErrorPopup(new PhrescoException(e), "Import Application");
+		}
 		return APP_IMPORT;
 	}
 
@@ -1010,6 +1015,12 @@ public class Applications extends FrameworkBaseAction {
 			if (scm != null) {
 				connectionUrl = scm.getConnection();
 			}
+			
+			List<SVNStatus> commitableFiles = null;
+			if (COMMIT.equals(action)) {
+				commitableFiles = svnCommitableFiles();
+			}
+			setReqAttribute(REQ_COMMITABLE_FILES, commitableFiles);
 			setReqAttribute(REQ_APP_ID, getAppId());
 			setReqAttribute(REQ_PROJECT_ID, getProjectId());
 			setReqAttribute(REQ_CUSTOMER_ID, getCustomerId());
@@ -1082,7 +1093,7 @@ public class Applications extends FrameworkBaseAction {
 			if(s_debugEnabled){
 				S_LOGGER.error(e.getLocalizedMessage());
 			}
-			errorString = getText(FAILURE_PROJECT_UPDATE);
+			errorString = getText(UPDATE_PROJECT_FAIL);
 			errorFlag = false;
 		}
 
@@ -1127,8 +1138,10 @@ public class Applications extends FrameworkBaseAction {
 				errorString = getText(INVALID_URL);
 			} else if (e.getMessage().indexOf(SVN_INTERNAL) != -1) {
 				errorString = getText(INVALID_REVISION);
+			} else if (e.getMessage().indexOf(SVN_IS_NOT_WORKING_COPY) != -1) {
+				errorString = getText(NOT_WORKING_COPY);
 			} else {
-				errorString = getText(IMPORT_PROJECT_FAIL);
+				errorString = getText(UPDATE_PROJECT_FAIL);
 			}
 		} catch (FileExistsException e) {
 			if(s_debugEnabled){
@@ -1146,7 +1159,7 @@ public class Applications extends FrameworkBaseAction {
 			if(s_debugEnabled){
 				S_LOGGER.error(e.getLocalizedMessage());
 			}
-			errorString = getText(IMPORT_PROJECT_FAIL);
+			errorString = getText(UPDATE_PROJECT_FAIL);
 			errorFlag = false;
 		}
 		return SUCCESS;
@@ -1182,15 +1195,39 @@ public class Applications extends FrameworkBaseAction {
 		return SUCCESS;
 	}
 	
+	public List<SVNStatus> svnCommitableFiles() throws PhrescoException {
+		if(s_debugEnabled){
+			S_LOGGER.debug("Entering Method  Applications.getCommitableFiles()");
+		}
+		List<SVNStatus> commitableFiles = null;
+		try {
+			SCMManagerImpl scmi = new SCMManagerImpl();
+			String applicationHome = getApplicationHome();
+			File appDir = new File(applicationHome);
+			revision = HEAD_REVISION;
+			commitableFiles = scmi.getCommitableFiles(appDir, revision);
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+		return commitableFiles;
+	}
+	
 	public String commitSVNProject() {
 		if(s_debugEnabled){
 			S_LOGGER.debug("Entering Method  Applications.commitSVNProject()");
 		}
 		try {
-			SCMManagerImpl scmi = new SCMManagerImpl();
-			String applicationHome = getApplicationHome();
-			File appDir = new File(applicationHome);
-			scmi.commitToRepo(SVN, repoUrl, userName, password,  null, null, appDir, commitMessage);
+			if (CollectionUtils.isNotEmpty(commitableFiles)) {
+				List<File> listModifiedFiles = new ArrayList<File>(commitableFiles.size());
+				for (String commitableFile : commitableFiles) {
+					listModifiedFiles.add(new File(commitableFile));
+				}
+				SCMManagerImpl scmi = new SCMManagerImpl();
+				String applicationHome = getApplicationHome();
+				File appDir = new File(applicationHome);
+//				scmi.commitToRepo(SVN, repoUrl, userName, password,  null, null, appDir, commitMessage);
+				scmi.commitSpecifiedFiles(listModifiedFiles, userName, password, commitMessage);
+			}
 			errorString = getText(COMMIT_PROJECT_SUCCESS);
 			errorFlag = true;
 		} catch (Exception e) {
@@ -2213,5 +2250,9 @@ public class Applications extends FrameworkBaseAction {
 
 	public void setCommitMessage(String commitMessage) {
 		this.commitMessage = commitMessage;
+	}
+
+	public void setCommitableFiles(List<String> commitableFiles) {
+		this.commitableFiles = commitableFiles;
 	}
 }

@@ -28,7 +28,7 @@
     
     <package name="login" extends="struts-default,json-default">
     
-    	 <!--  Login Page Action -->
+		<!--  Login Page Action -->
         <action name="login" method="login" class="com.photon.phresco.framework.actions.Login">
             <result name="success">/pages/baselayout.jsp</result>
             <result name="failure">/pages/login.jsp</result>
@@ -450,6 +450,14 @@
         
         <action name="addConfiguration" method="add" class="com.photon.phresco.framework.actions.applications.Configurations">
             <result name="addConfiguration">/pages/applications/configuration/add.jsp</result>
+        </action>
+        
+        <action name="uploadFile" class="com.photon.phresco.framework.actions.applications.Configurations" method="uploadFile">
+            <result type="json" />
+        </action>
+        
+        <action name="removeConfigFile" class="com.photon.phresco.framework.actions.applications.Configurations" method="removeConfigFile">
+            <result type="json" />
         </action>
         
         <action name="fetchProjectInfoVersions" method="fetchProjectInfoVersions" class="com.photon.phresco.framework.actions.applications.Configurations">
