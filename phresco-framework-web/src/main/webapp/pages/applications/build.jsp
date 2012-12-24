@@ -87,7 +87,7 @@
 			<%
 				if (optionIds != null && optionIds.contains(FrameworkConstants.MINIFICATION_KEY)) {
 			%>
-			<input id="minifyButton" type="button" value="<s:text name="lbl.minifier"/>" class="btn btn-primary"/>
+				<input id="minifyButton" type="button" value="<s:text name="lbl.minifier"/>" class="btn btn-primary"/>
 			<%
 				}
 			%>

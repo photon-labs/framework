@@ -80,7 +80,7 @@
 			<img src="images/icons/btm_arrow.png" title="<s:text name='lbl.title.movedown'/>" id="down" class="imagedown">
 		</div>
 		<div class="defaultButton">
-			<input type="button" value="<s:text name='lbl.btn.set.default' />" tabindex=5 id="setAsDefault" class="btn btn-primary">
+			<input type="button" class="btn" disabled value="<s:text name='lbl.btn.set.default'/>" tabindex=5 id="setAsDefault" name="setAsDefault">
 		</div>
 	</fieldset>
 </form>
@@ -96,6 +96,7 @@
 $(document).ready(function() {
 	hidePopuploadingIcon();
 	$('#errMsg').empty();
+	setAsDefaultBtnStatus();
 	
 	$('#add').click(function() {
 		$('#errMsg').html("");
@@ -129,6 +130,7 @@ $(document).ready(function() {
 		$('#errMsg').empty();
 		selectEnv();
 		var setAsDefaultEnvsSize = $('#multiselect :checked').size();
+		
         if (setAsDefaultEnvsSize > 1) {
 			$("#errMsg").html("<s:text name='please.select.only.one.environment'/>");
        	 	return false;
@@ -171,28 +173,41 @@ $(document).ready(function() {
 	
 	//To remove the added Environment value in UI
     $('#remove').click(function() {
+    	$('#errMsg').empty();
     	 selectEnv();
+    	 
+    	 var checkBoxSize = $('#multiselect :checkbox').size();
+    	 if(checkBoxSize < 1) {
+    		 $("#errMsg").html("<s:text name='please.add.env.to.delete'/>");
+    	 }
     	 
     	 // To remove the Environments from the list box which is not in the XML
         $('#multiselect ul li input[type=checkbox]:checked').each( function() {
 			var checkedDataObj = $.parseJSON($(this).val());
 			var envName = checkedDataObj.name;
-			var configLength = checkedDataObj.configurations.length;
+			var configLength = "";
 			var env = checkedDataObj.defaultEnv; // selected checkbox
+			if(checkedDataObj.configurations == undefined) {
+				$(this).parent().remove();
+			}
+			
+			if( checkedDataObj.configurations != null) {
+				configLength = checkedDataObj.configurations.length;
+			} 
 			
 			if (env) {
 				$("#errMsg").html("<s:text name='you.cant.remove.defaultEnv'/>");
-				return false;
-			}
+			} 
 			
 			if (configLength > 0 ) {
 				$("#errMsg").html("<s:text name='config.exists'/>");
 			}
 			
 			if (!env && configLength <= 0) {
-				$('#multiselect ul li input[type=checkbox]:checked').parent().remove();
+				$(this).parent().remove();
 			}
         });
+        setAsDefaultBtnStatus(); 
     });
 	
 	$('#up').click(function () {
@@ -217,7 +232,7 @@ $(document).ready(function() {
 		var value = $('#envName').val();
 		var desc = $('#envDesc').val();
 		var checkValue = '{"name": "' + value + '", "desc": "' + desc
-				+ '", "defaultEnv": "false" }';
+				+ '", "defaultEnv": false }';
 		var checkbox = '<input type="checkbox" name="envNames" class="check techCheck" value=\'' + checkValue + '\' title="' + desc + '" />'
 				+ value;
 
@@ -228,6 +243,7 @@ $(document).ready(function() {
 		}
 		$("#envName").val("");
 		$("#envDesc").val("");
+		setAsDefaultBtnStatus();
 	}
 
 	function selectEnv() {
@@ -235,6 +251,18 @@ $(document).ready(function() {
 		if (checkedEnvsSize < 1) {
 			$("#errMsg").html("<s:text name='please.select.one.environment'/>");
 			return false;
+		}
+	}
+	
+	function setAsDefaultBtnStatus() {
+		if ( $('#multiselect :checkbox').size() < 1) {
+			$("input[name=setAsDefault]").attr("disabled", "disabled");
+			$("#setAsDefault").removeClass("btn-primary"); 
+	        $("#setAsDefault").addClass("btn-disabled");
+		} else {
+			$("input[name=setAsDefault]").removeAttr("disabled");
+			$("#setAsDefault").addClass("btn-primary");
+			$("#setAsDefault").removeClass("btn-disabled");
 		}
 	}
 </script>

@@ -4073,6 +4073,10 @@ div.submit_input {
     line-height: 25px;
 }
 
+#reportList {
+	 padding-left:5%;
+}
+
 .closereg_empty {
     width:100%;
     float:left;
