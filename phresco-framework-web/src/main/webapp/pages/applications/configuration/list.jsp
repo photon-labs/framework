@@ -142,12 +142,12 @@
 		if(url == "cloneConfiguration"){
 			var EnvSelection = $("#configEnv").val();
 			if (EnvSelection == null ) {
-				$("#errMsg").html("<s:text name='please.add.env'/>");
+				$("#errMsg").html("<s:text name='popup.err.msg.add.env'/>");
 				returnVal = false;
 			}
 			var cloneConfigName = $('#configurationName').val();
 			if(cloneConfigName== "") {
-				$("#errMsg").html("<s:text name='enter.config.name'/>");
+				$("#errMsg").html("<s:text name='popup.err.msg.empty.config.name'/>");
 				$("#configurationName").focus();
 				$("#configurationName").val("");
 				returnVal = false;
