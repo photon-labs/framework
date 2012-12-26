@@ -494,6 +494,10 @@ Width <= 1024
 	.graph_div {
 		zoom: 0.37;
 	}
+	
+	.qq-upload-list {
+		margin-left: 16% !important;
+	}
 }
 
 /***********************************************************************************
@@ -531,6 +535,10 @@ Width size <= 1024
 	}
 	.customer_name {
 		right:15%;
+	}
+	
+	.qq-upload-list {
+		margin-left: 16% !important;
 	}
 }
 @media screen and (max-width : 768px) {
@@ -572,6 +580,10 @@ Width size <= 1024
 	}
 	.customer_name {
 		right:15%;
+	}
+	
+	.qq-upload-list {
+		margin-left: 16% !important;
 	}
 }
 
@@ -992,6 +1004,10 @@ Width size <= 1024
 	.align-div-center {
 		width: 70%;
 	}
+	
+	.qq-upload-list {
+		margin-left: 16% !important;
+	}
 }
 
 /************************************************************************************
@@ -1112,6 +1128,9 @@ Width >= 1025 and < 1151
 		height: 83% !important;
 	}
 
+	.qq-upload-list {
+		margin-left: 16% !important;
+	}
 }
 
 /************************************************************************************
@@ -1473,6 +1492,10 @@ Width >= 1152 and < 1280
 
 	 .configList,.build_form,#subTabcontent,.ciFormJob,.reportList {
 		width: 99%;
+	}
+	
+	.qq-upload-list {
+		margin-left: 18.5% !important;
 	}
 }
 
@@ -1957,6 +1980,10 @@ Width <= 1280 and height <= 800
 	.graph_div {
 		width: 42% !important;
 	}
+	
+	.qq-upload-list {
+		margin-left: 20.3% !important;
+	}
 }
 
 /************************************************************************************
@@ -2360,6 +2387,10 @@ Width >= 1280 and height >= 800
 	 .graph_div {
 		zoom: 0.6;
 		width: 32% !important;
+	}
+	
+	.qq-upload-list {
+		margin-left: 16% !important;
 	}
 }
 
@@ -2817,6 +2848,9 @@ Width > 1280 and <= 1360
 		width: 99%;
 	}
 
+	.qq-upload-list {
+		margin-left: 21.2% !important;
+	}
 }
 
 /************************************************************************************
@@ -3206,6 +3240,10 @@ Width > 1360 and <= 1440
 	.graph_div {
 		zoom: 1;
 		width: 38% !important;
+	}
+	
+	.qq-upload-list {
+		margin-left: 16% !important;
 	}
 }
 
@@ -3601,5 +3639,9 @@ Width > 1441 and <= 1600
 	.graph_div {
 		zoom: 1;
 		width: 38% !important;
+	}
+	
+	.qq-upload-list {
+		margin-left: 23% !important;
 	}
 }

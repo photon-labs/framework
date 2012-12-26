@@ -27,6 +27,9 @@ public interface FrameworkConstants {
      * Common constants
      */
     String HYPHEN = "-";
+    
+    String PHRESCO_DOT = "phresco.";
+    String DOT_TARGET_DIR = ".target.dir";
 
 	String CSV_PATTERN = "\\s*,\\s*";
     
@@ -48,6 +51,7 @@ public interface FrameworkConstants {
     String CONFIG = "config";
     
     String X_FILE_NAME = "X-File-Name";
+    String CONFIG_TEMP_TYPE = "Config-Temp-Type";
     String SUCCESS_FALSE = "{\"success\": false}";
     String SUCCESS_TRUE = "{\"success\": true}";
     

@@ -417,11 +417,15 @@
         });
 	}
 	
-	function removeUploadedJar(obj, btnId) {
+	function removeUploadedFile(obj) {
 		$(obj).parent().remove();
 		
 		var params = "fileName=";
-		params = params.concat($(obj).attr("id"));
+		params = params.concat($(obj).attr("filename"));
+		params = params.concat("&");
+		params = params.concat(getBasicParams());
+		params = params.concat("&configTempType=");
+		params = params.concat($("#templateType option:selected").text());
 		$.ajax({
 			url : "removeConfigFile",
 			data : params,

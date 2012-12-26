@@ -93,6 +93,7 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
     private String appId = "";
     private Map<String, Object> map = null;
     private String fileName = "";
+    private String configTempType = "";
     
     private static ServiceManager serviceManager = null;
     
@@ -417,7 +418,11 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
         byte[] byteArray = null;
         try {
             writer = getHttpResponse().getWriter();
-            fileName = getHttpRequest().getHeader(X_FILE_NAME);
+            setFileName(getHttpRequest().getHeader(X_FILE_NAME));
+            setConfigTempType(getHttpRequest().getHeader(CONFIG_TEMP_TYPE));
+            setProjectId(getHttpRequest().getHeader(REQ_PROJECT_ID));
+            setAppId(getHttpRequest().getHeader(REQ_APP_ID));
+            setCustomerId(getHttpRequest().getHeader(REQ_CUSTOMER_ID));
             InputStream is = getHttpRequest().getInputStream();
             byteArray = IOUtils.toByteArray(is);
         } catch (Exception e) {
@@ -474,5 +479,13 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    public String getConfigTempType() {
+        return configTempType;
+    }
+
+    public void setConfigTempType(String configTempType) {
+        this.configTempType = configTempType;
     }
 }
