@@ -586,39 +586,36 @@ public class Build extends DynamicParameterAction implements Constants {
 	}
 
 	public String downloadIpa() throws PhrescoException {
-
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method Build.downloadIPA()");
 		}
-		String buildNumber = getHttpRequest().getParameter(REQ_DEPLOY_BUILD_NUMBER);
 		try {
-//			ActionType actionType = ActionType.IPHONE_DOWNLOADIPA_COMMAND;
-			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-			ProjectRuntimeManager runtimeManager = PhrescoFrameworkFactory.getProjectRuntimeManager();
-			Project project = administrator.getProject(projectCode);
-			StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-			builder.append(project.getApplicationInfo().getCode());
-			builder.append(File.separator);
-			builder.append(BUILD_DIR);
-			builder.append(File.separator);
-			builder.append(administrator.getBuildInfo(project, Integer.parseInt(buildNumber)).getBuildName());
-			String buildName = administrator.getBuildInfo(project, Integer.parseInt(buildNumber)).getBuildName();
+			String buildNumber = getReqParameter(REQ_DEPLOY_BUILD_NUMBER);
+			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+			ProjectInfo projectInfo = getProjectInfo();
+			ApplicationInfo applicationInfo = getApplicationInfo();
+			if (StringUtils.isEmpty(buildNumber)) {
+				throw new PhrescoException("Build Number is empty ");
+			}
+			String ipaFileName = applicationInfo.getName();
+			String buildName = applicationManager.getBuildInfo(Integer.parseInt(buildNumber), getBuildInfosFilePath(applicationInfo)).getBuildName();
+			String workingDirectory = getAppDirectoryPath(applicationInfo);
 			String buildNameSubstring = buildName.substring(0, buildName.lastIndexOf("/"));
 			String appBuildName = buildNameSubstring.substring(buildNameSubstring.lastIndexOf("/") + 1);
-			Map<String, String> valuesMap = new HashMap<String, String>(2);
-			valuesMap.put("application.name", projectCode);
-			valuesMap
-					.put("app.path", administrator.getBuildInfo(project, Integer.parseInt(buildNumber)).getBuildName());
-			valuesMap.put("build.name", appBuildName);
-//			BufferedReader reader = runtimeManager.performAction(project, actionType, valuesMap, null);
-//			while (reader.readLine() != null) {
-//			}
-			String ipaPath = administrator.getBuildInfo(project, Integer.parseInt(buildNumber)).getBuildName();
-			ipaPath = ipaPath.substring(0, ipaPath.lastIndexOf("/")) + FILE_SEPARATOR + projectCode + ".ipa";
+			
+			List<String> buildArgCmds = new ArrayList<String>();
+			buildArgCmds.add("-Dapplication.name=" + ipaFileName);
+			buildArgCmds.add("-Dapp.path=" + buildName);
+			buildArgCmds.add("-Dbuild.name=" + appBuildName);
+			BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.IPA_DOWNLOAD, buildArgCmds, workingDirectory);
+			while (reader.readLine() != null) {
+				System.out.println(reader.readLine());
+			}
+			String ipaPath = applicationManager.getBuildInfo(Integer.parseInt(buildNumber), getBuildInfosFilePath(applicationInfo)).getBuildName();
+			ipaPath = ipaPath.substring(0, ipaPath.lastIndexOf("/")) + FILE_SEPARATOR + ipaFileName + ".ipa";
 			fileInputStream = new FileInputStream(new File(ipaPath));
-			fileName = projectCode + ".ipa";
+			fileName = ipaFileName + ".ipa";
 			return SUCCESS;
-
 		} catch (FileNotFoundException e) {
 			if (debugEnabled) {
 				S_LOGGER.error("Entered into catch block of Build.download()" + e);
