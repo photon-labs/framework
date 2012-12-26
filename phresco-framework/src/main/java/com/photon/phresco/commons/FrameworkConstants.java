@@ -421,6 +421,7 @@ public interface FrameworkConstants {
 	String MINIFICATION_KEY = "Minification";
 	String RUN_AGAINST_KEY = "Run_Against_Source";
 	String DEPLOY_KEY = "Deploy";
+	String EXE_DOWNLOAD_KEY = "Exe_Download";
 	String FEATURES_KEY = "Feature_Config";
 	String COMPONENT_CONFIG = "Component_Config";
     
