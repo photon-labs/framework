@@ -123,11 +123,11 @@
 					          		     </s:url>"><img src="images/icons/download.png" title="<%= buildInfo.getBuildName()%>"/>
 		                            </a>
 		                            <%
-										if (optionIds != null && optionIds.contains("Exe Download")) {
+										if (optionIds != null && optionIds.contains(FrameworkConstants.EXE_DOWNLOAD)) {
 			                            	boolean createIpa = false;
 			                            	boolean deviceDeploy = false;
-		                            		createIpa = MapUtils.getBooleanValue(buildInfo.getOptions(), "canCreateIpa");
-		                            		deviceDeploy = MapUtils.getBooleanValue(buildInfo.getOptions(), "deviceDeploy");
+		                            		createIpa = MapUtils.getBooleanValue(buildInfo.getOptions(), FrameworkConstants.CAN_CREATE_IPA);
+		                            		deviceDeploy = MapUtils.getBooleanValue(buildInfo.getOptions(), FrameworkConstants.DEPLOY_TO_DEVICE);
 			                            	if (createIpa && deviceDeploy)  {
 									%>
 												<a href="<s:url action='downloadBuildIpa'> 

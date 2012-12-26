@@ -600,8 +600,8 @@ public class Build extends DynamicParameterAction implements Constants {
 			String ipaFileName = applicationInfo.getName();
 			String buildName = applicationManager.getBuildInfo(Integer.parseInt(buildNumber), getBuildInfosFilePath(applicationInfo)).getBuildName();
 			String workingDirectory = getAppDirectoryPath(applicationInfo);
-			String buildNameSubstring = buildName.substring(0, buildName.lastIndexOf("/"));
-			String appBuildName = buildNameSubstring.substring(buildNameSubstring.lastIndexOf("/") + 1);
+			String buildNameSubstring = buildName.substring(0, buildName.lastIndexOf(FILE_SEPARATOR));
+			String appBuildName = buildNameSubstring.substring(buildNameSubstring.lastIndexOf(FILE_SEPARATOR) + 1);
 			
 			List<String> buildArgCmds = new ArrayList<String>();
 			buildArgCmds.add("-Dapplication.name=" + ipaFileName);
@@ -612,9 +612,9 @@ public class Build extends DynamicParameterAction implements Constants {
 				System.out.println(reader.readLine());
 			}
 			String ipaPath = applicationManager.getBuildInfo(Integer.parseInt(buildNumber), getBuildInfosFilePath(applicationInfo)).getBuildName();
-			ipaPath = ipaPath.substring(0, ipaPath.lastIndexOf("/")) + FILE_SEPARATOR + ipaFileName + ".ipa";
+			ipaPath = ipaPath.substring(0, ipaPath.lastIndexOf(FILE_SEPARATOR)) + FILE_SEPARATOR + ipaFileName + IPA_FORMAT;
 			fileInputStream = new FileInputStream(new File(ipaPath));
-			fileName = ipaFileName + ".ipa";
+			fileName = ipaFileName + IPA_FORMAT;
 			return SUCCESS;
 		} catch (FileNotFoundException e) {
 			if (debugEnabled) {
@@ -994,17 +994,17 @@ public class Build extends DynamicParameterAction implements Constants {
 					String sep = "";
 					for (int j = 0; j < includeList.getLength()-1; j++) {//To convert select files to Comma seperated value
 						Element include = (Element) includeList.item(j);
-						String file = include.getTextContent().substring(include.getTextContent().lastIndexOf("/")+1);
+						String file = include.getTextContent().substring(include.getTextContent().lastIndexOf(FILE_SEPARATOR)+1);
 						csvFileNames.append(sep);
 						csvFileNames.append(file);
 						sep = COMMA;
 					}
 					Element outputElement = (Element) childNode.getElementsByTagName(POM_OUTPUT).item(0);
 					//To get compressed name with extension
-					String opFileName = outputElement.getTextContent().substring(outputElement.getTextContent().lastIndexOf("/")+1);
+					String opFileName = outputElement.getTextContent().substring(outputElement.getTextContent().lastIndexOf(FILE_SEPARATOR)+1);
 					String compressName = opFileName.substring(0, opFileName.indexOf("."));//To get only the compressed name without extension
 					String compressedExtension = opFileName.substring(opFileName.lastIndexOf(DOT)+1);//To get extension of compressed file
-					opFileLoc = outputElement.getTextContent().substring(0, outputElement.getTextContent().lastIndexOf("/")+1);
+					opFileLoc = outputElement.getTextContent().substring(0, outputElement.getTextContent().lastIndexOf(FILE_SEPARATOR)+1);
 					opFileLoc = opFileLoc.replace(MINIFY_OUTPUT_DIRECTORY, getAppDirectoryPath(applicationInfo).replace(File.separator, FORWARD_SLASH));
 					
 					if (JS.equals(compressedExtension)) {//if extension is js , add minified details to jsMap

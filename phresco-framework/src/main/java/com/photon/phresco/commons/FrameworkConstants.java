@@ -61,6 +61,7 @@ public interface FrameworkConstants {
     String ARCHIVE_FORMAT = ".zip";
     String IPHONE_FORMAT = ".app";
     String ANDROID_FORMAT = ".apk";
+    String IPA_FORMAT = ".ipa";
     String SETTINGS_INFO_FILE_NAME = "settings.xml";
     String CONFIGURATION_INFO_FILE_NAME = "phresco-env-config.xml";
     String BUILD_INFO_FILE_NAME = "build.info";
@@ -70,7 +71,7 @@ public interface FrameworkConstants {
     String SOURCE = "src";
     String FROM_PAGE_LOGIN = "login";
     String CONFIG_TYPE = "type";
-    
+    String EXE_DOWNLOAD = "Exe Download";
     String IMPORT = "import";
     
     String REQ_CUSTOMER_ID = "customerId";
