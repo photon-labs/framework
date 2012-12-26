@@ -122,6 +122,26 @@
 										<s:param name="projectId"><%= projectId %></s:param>
 					          		     </s:url>"><img src="images/icons/download.png" title="<%= buildInfo.getBuildName()%>"/>
 		                            </a>
+		                            <%
+										if (optionIds != null && optionIds.contains("Exe Download")) {
+			                            	boolean createIpa = false;
+			                            	boolean deviceDeploy = false;
+		                            		createIpa = MapUtils.getBooleanValue(buildInfo.getOptions(), "canCreateIpa");
+		                            		deviceDeploy = MapUtils.getBooleanValue(buildInfo.getOptions(), "deviceDeploy");
+			                            	if (createIpa && deviceDeploy)  {
+									%>
+												<a href="<s:url action='downloadBuildIpa'> 
+							          		    <s:param name="buildNumber"><%= buildInfo.getBuildNo() %></s:param>
+							          		    <s:param name="appDirectory"><%= appDirectory %></s:param>
+							          		    <s:param name="appId"><%= applicationInfo.getId() %></s:param>
+												<s:param name="customerId"><%= customerId %></s:param>
+												<s:param name="projectId"><%= projectId %></s:param>
+		                                        </s:url>"><img src="images/icons/downloadipa.jpg" title="ipa Download"/>
+		                                    	</a>
+									<% 
+			                            	}
+			                            }
+									%>
 			              		</td>
 			              		<%
 									if (optionIds != null && optionIds.contains(FrameworkConstants.DEPLOY_KEY)) {
