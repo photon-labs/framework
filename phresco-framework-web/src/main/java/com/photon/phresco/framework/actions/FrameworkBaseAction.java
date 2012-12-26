@@ -25,18 +25,21 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.net.URL;
-import java.net.URLConnection;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
@@ -89,6 +92,7 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
     private String projectId = "";
     private String appId = "";
     private Map<String, Object> map = null;
+    private String fileName = "";
     
     private static ServiceManager serviceManager = null;
     
@@ -364,6 +368,10 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
         return getHttpSession().getAttribute(key);
     }
     
+    protected HttpServletResponse getHttpResponse() {
+        return (HttpServletResponse) ActionContext.getContext().get(ServletActionContext.HTTP_RESPONSE);
+    }
+    
     protected ApplicationProcessor getApplicationProcessor() throws PhrescoException {
         ApplicationProcessor applicationProcessor = null;
         try {
@@ -401,6 +409,23 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
         artifactGroup.setVersions(artifactInfos);
         plugins.add(artifactGroup);
         return plugins;
+    }
+    
+    //To get byte array of uploaded jar
+    protected byte[] getByteArray() throws PhrescoException {
+        PrintWriter writer = null;
+        byte[] byteArray = null;
+        try {
+            writer = getHttpResponse().getWriter();
+            fileName = getHttpRequest().getHeader(X_FILE_NAME);
+            InputStream is = getHttpRequest().getInputStream();
+            byteArray = IOUtils.toByteArray(is);
+        } catch (Exception e) {
+            getHttpResponse().setStatus(getHttpResponse().SC_INTERNAL_SERVER_ERROR);
+            writer.print(SUCCESS_FALSE);
+            throw new PhrescoException(e);
+        }
+        return byteArray;
     }
 
     public String getPath() {
@@ -442,5 +467,12 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
     public void setAppId(String appId) {
         this.appId = appId;
     }
+    
+    public String getFileName() {
+        return fileName;
+    }
 
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
 }

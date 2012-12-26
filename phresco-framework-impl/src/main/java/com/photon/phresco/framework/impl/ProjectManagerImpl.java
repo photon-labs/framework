@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -184,82 +185,99 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 	}
 
 	public ProjectInfo update(ProjectInfo projectInfo, ServiceManager serviceManager, String oldAppDirName) throws PhrescoException {
-		ClientResponse response = serviceManager.updateProject(projectInfo);
-		if (response.getStatus() == 200) {
-			BufferedReader breader = null;
-			try {
-				StringBuilder oldAppDirSb = new StringBuilder(Utility.getProjectHome());
-				oldAppDirSb.append(oldAppDirName);
-				File oldDir = new File(oldAppDirSb.toString());
-				
-				StringBuilder newAppDirSb = new StringBuilder(Utility.getProjectHome());
-				newAppDirSb.append(projectInfo.getAppInfos().get(0).getAppDirName());
-				File projectInfoFile = new File(newAppDirSb.toString());
-				
-				oldDir.renameTo(projectInfoFile);
-				
-				extractArchive(response, projectInfo);
-				updateProjectPom(projectInfo, newAppDirSb.toString());
-				StringBuilder dotPhrescoPathSb = new StringBuilder(projectInfoFile.getPath());
-				dotPhrescoPathSb.append(File.separator);
-				dotPhrescoPathSb.append(DOT_PHRESCO_FOLDER);
-				dotPhrescoPathSb.append(File.separator);
-
-				String customerId = projectInfo.getCustomerIds().get(0);
-				Customer customer = serviceManager.getCustomer(customerId);
-				RepoInfo repoInfo = customer.getRepoInfo();
-				ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
-				
+		if (projectInfo.getNoOfApps() == 0 && CollectionUtils.isEmpty(projectInfo.getAppInfos())) {
+			ProjectInfo availableProjectInfo = getProject(projectInfo.getId(), projectInfo.getCustomerIds().get(0));
+			List<ApplicationInfo> appInfos = availableProjectInfo.getAppInfos();
+			for (ApplicationInfo applicationInfo : appInfos) {
+				projectInfo.setAppInfos(Collections.singletonList(applicationInfo));
+				StringBuilder sb = new StringBuilder(Utility.getProjectHome())
+				.append(applicationInfo.getAppDirName())
+				.append(File.separator)
+				.append(DOT_PHRESCO_FOLDER)
+				.append(File.separator)
+				.append(PROJECT_INFO_FILE);
+				ProjectUtils.updateProjectInfo(projectInfo, new File(sb.toString()));// To update the project.info file
+			}
+		} else {
+			ClientResponse response = serviceManager.updateProject(projectInfo);
+			if (response.getStatus() == 200) {
+				BufferedReader breader = null;
+				try {
+					//application path with old app dir
+					StringBuilder oldAppDirSb = new StringBuilder(Utility.getProjectHome());
+					oldAppDirSb.append(oldAppDirName);
+					File oldDir = new File(oldAppDirSb.toString());
+					
+					//application path with new app dir
+					StringBuilder newAppDirSb = new StringBuilder(Utility.getProjectHome());
+					newAppDirSb.append(projectInfo.getAppInfos().get(0).getAppDirName());
+					File projectInfoFile = new File(newAppDirSb.toString());
+					
+					//rename to application app dir
+					oldDir.renameTo(projectInfoFile);
+					
+					extractArchive(response, projectInfo);
+					updateProjectPom(projectInfo, newAppDirSb.toString());
+					StringBuilder dotPhrescoPathSb = new StringBuilder(projectInfoFile.getPath());
+					dotPhrescoPathSb.append(File.separator);
+					dotPhrescoPathSb.append(DOT_PHRESCO_FOLDER);
+					dotPhrescoPathSb.append(File.separator);
+	
+					String customerId = projectInfo.getCustomerIds().get(0);
+					Customer customer = serviceManager.getCustomer(customerId);
+					RepoInfo repoInfo = customer.getRepoInfo();
+					ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
+					
 					String pluginInfoFile = dotPhrescoPathSb.toString() + APPLICATION_HANDLER_INFO_FILE;
 					MojoProcessor mojoProcessor = new MojoProcessor(new File(pluginInfoFile));
 					ApplicationHandler applicationHandler = mojoProcessor.getApplicationHandler();
 					
 					createSqlFolder(appInfo, projectInfoFile, serviceManager);
-					
-					if (applicationHandler != null) {
 						
+					if (applicationHandler != null) {
 						String selectedFeatures = applicationHandler.getSelectedFeatures();
 						Gson gson = new Gson();
 						Type jsonType = new TypeToken<Collection<ArtifactGroup>>(){}.getType();
 						List<ArtifactGroup> artifactGroups = gson.fromJson(selectedFeatures, jsonType);
 						
 						List<ArtifactGroup> plugins = setArtifactGroup(applicationHandler);
-
+	
 						// Dynamic Class Loading
 						PhrescoDynamicLoader dynamicLoader = new PhrescoDynamicLoader(repoInfo, plugins);
 						ApplicationProcessor applicationProcessor = dynamicLoader
 								.getApplicationProcessor(applicationHandler.getClazz());
-
+	
 						applicationProcessor.postUpdate(appInfo, artifactGroups);
-
-					File projectInfoPath = new File(dotPhrescoPathSb.toString() + PROJECT_INFO_FILE);
-					ProjectUtils.updateProjectInfo(projectInfo, projectInfoPath);// To update the project.info file
-
-					StringBuilder sb = new StringBuilder();
-					sb.append("mvn");
-					sb.append(" ");
-					sb.append("validate");
-					breader = Utility.executeCommand(sb.toString(), projectInfoFile.getPath());
-					String line = null;
-					while ((line = breader.readLine()) != null) {
-						if (line.startsWith("[ERROR]")) {
-							System.out.println(line);
+	
+						File projectInfoPath = new File(dotPhrescoPathSb.toString() + PROJECT_INFO_FILE);
+						ProjectUtils.updateProjectInfo(projectInfo, projectInfoPath);// To update the project.info file
+	
+						StringBuilder sb = new StringBuilder();
+						sb.append("mvn");
+						sb.append(" ");
+						sb.append("validate");
+						breader = Utility.executeCommand(sb.toString(), projectInfoFile.getPath());
+						String line = null;
+						while ((line = breader.readLine()) != null) {
+							if (line.startsWith("[ERROR]")) {
+								System.out.println(line);
+							}
 						}
 					}
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+					throw new PhrescoException(e);
+				} catch (IOException e) {
+					e.printStackTrace();
+					throw new PhrescoException(e);
+				} finally {
+					Utility.closeStream(breader);
 				}
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-				throw new PhrescoException(e);
-			} catch (IOException e) {
-				e.printStackTrace();
-				throw new PhrescoException(e);
-			} finally {
-				Utility.closeStream(breader);
+			} else if (response.getStatus() == 401) {
+				throw new PhrescoException("Session expired");
+			} else {
+				throw new PhrescoException("Project updation failed");
 			}
-		} else if (response.getStatus() == 401) {
-			throw new PhrescoException("Session expired");
-		} else {
-			throw new PhrescoException("Project updation failed");
 		}
 		return null;
 	}

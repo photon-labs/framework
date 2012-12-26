@@ -35,6 +35,7 @@ public interface FrameworkConstants {
     String LAYER_WEB_ID = "web-layer";
     
     String JAVASCRIPT = "javascript";
+    String APP_INFO = "appInfo";
 
     String LBL = "lbl.";
     String LBL_BTN = "lbl.btn";
@@ -42,8 +43,13 @@ public interface FrameworkConstants {
     String LBL_PROG_TXT = "progress.txt.";
     String FROM_PAGE_EDIT = "edit";
     String FROM_PAGE_ADD = "add";
+    String COMMIT = "commit";
     
     String CONFIG = "config";
+    
+    String X_FILE_NAME = "X-File-Name";
+    String SUCCESS_FALSE = "{\"success\": false}";
+    String SUCCESS_TRUE = "{\"success\": true}";
     
 	String FEATURES = "features";
 	String CONFIG_TYPE_FEATURES = "Features";
@@ -61,9 +67,9 @@ public interface FrameworkConstants {
     String PROJECT_INFO = "project.info";
     String GIT_IMPORT_TEMP_DIR = "gitImportTemp";
     String SONAR = "sonar";
+    String SOURCE = "src";
     String FROM_PAGE_LOGIN = "login";
-    String SERVER_KEY = "server";
-    String DATABASE_KEY = "Database";
+    String CONFIG_TYPE = "type";
     
     String IMPORT = "import";
     
@@ -73,6 +79,10 @@ public interface FrameworkConstants {
     String REQ_PILOT_PROJECTS = "pilotProjects";
     String REQ_CURRENT_APP_NAME = "currentAppName";
     String REQ_SELECTED_FEATURES = "selectedFeatures";
+    String REQ_SELECTED_DOWNLOADINFO = "selectedDownloadInfo";
+    String REQ_SELECTED_DOWNLOADINFO_VERSION = "selectedDownloadInfoVersion";
+    String REQ_CURRENT_SELECTBOX_ID = "selectBoxId";
+    String REQ_DEFAULT_OPTION = "defaultOptTxt";
     String REQ_PROJECT_FEATURES = "projectInfoFeatures";
     String REQ_PROJECT_LAYERS = "layers";
     String REQ_PARAM_NAME_TECH_GROUP = "TechGroup";
@@ -140,6 +150,7 @@ public interface FrameworkConstants {
     String SVN = "svn";
     String MASTER = "master";
     String UPDATE = "update";
+    String ADD = "add";
     String REPO_URL = "repoUrl";
     String PROJECT_UPDATE_POPUP = "projectUpdatePopup";
     String CLONED_WORKSPACE = "clonedWorkspace";
@@ -410,6 +421,8 @@ public interface FrameworkConstants {
 	String MINIFICATION_KEY = "Minification";
 	String RUN_AGAINST_KEY = "Run_Against_Source";
 	String DEPLOY_KEY = "Deploy";
+	String FEATURES_KEY = "Feature_Config";
+	String COMPONENT_CONFIG = "Component_Config";
     
 	/*
 	 * Dynamic parameters
@@ -667,8 +680,9 @@ public interface FrameworkConstants {
     String REQ_GRAPH_ALL_DATA = "GRAPH_ALL_DATA";
     String REQ_SHOW_GRAPH = "showGraphFor";
     String REQ_TEST_SHOW_ALL_GRAPH = "all";
-    String REQ_ACTION="action";
-    String REQ_BUILD_TEST="build";
+    String REQ_ACTION= "action";
+    String REQ_COMMITABLE_FILES= "commitableFiles";
+    String REQ_BUILD_TEST= "build";
     String REQ_DEPLOY = "deploy";
     String REQ_OLD_APPDIR = "oldAppDirName";
     String REQ_ANDROID_CONN_DEVICES = "connAndroidDevices";
@@ -922,21 +936,34 @@ public interface FrameworkConstants {
      */
     String SUCCESS_PROJECT_DELETE = "Projects deleted successfully";
     String SUCCESS_PROJECT_UPDATE = "update.project.success";
-    String FAILURE_PROJECT_UPDATE = "update.project.fail";
+    String SUCCESS_PROJECT_ADD = "add.project.success";
+    String SUCCESS_PROJECT_COMMIT = "commit.project.success";
     String FAILURE_PROJECT_DELETE = "Projects deletion failed";
     /*
      * Project Import keys
      */
     String IMPORT_PROJECT_FAIL ="import.project.fail";
+    String UPDATE_PROJECT_FAIL ="update.project.fail";
     String INVALID_CREDENTIALS = "import.invalid.credential";
     String INVALID_FOLDER = "import.invalid.folder";
     String PROJECT_ALREADY = "import.project.already";
     String SVN_FAILED ="failed";
     String SVN_INTERNAL ="Internal";
+    String SVN_IS_NOT_WORKING_COPY ="is not a working copy";
     String INVALID_URL = "import.invalid.url";
     String INVALID_REVISION = "import.invalid.revision";
+    String NOT_WORKING_COPY = "not.working.dir";
     String NO_POM_XML = "project.pom.not.exist";
     String POM_URL_FAIL = "project.pomurlupdate.fail";
+    
+    /*
+     * Project add keys
+     */
+    String ADD_PROJECT_SUCCESS ="add.project.success";
+    String ADD_PROJECT_FAIL ="add.project.fail";
+    String COMMIT_PROJECT_SUCCESS ="commit.project.success";
+    String COMMIT_PROJECT_FAIL ="commit.project.fail";
+    
     /*
      * Delete Build keys
      */
@@ -959,6 +986,8 @@ public interface FrameworkConstants {
 	String REQ_VALIDATE_AGAINST = "validateAgainst";
 	String CHECK_IPHONE = "checkIphone";
 	String CLANG_REPORT = "clangReport";
+	String REQ_VALIDATE_AGAINST_VALUES = "validateAgainstValues";
+	String REQ_SOURCE_VALUES = "sourceValues";
     
     /*
      * Application Redirection keys
@@ -1072,6 +1101,7 @@ public interface FrameworkConstants {
     String ERROR_NO_CONFIG = "environment.config.not.available";
     String ERROR_NAME = "err.msg.empty.name";
     String ERROR_NAME_EXISTS = "err.msg.project.name.exists";
+    String ERROR_CODE_EXISTS = "err.msg.project.code.exists";
     String ERROR_CODE = "err.msg.empty.code";
     String ERROR_VERSION = "err.msg.empty.version";
     String ERROR_LAYER = "err.msg.empty.layer";
@@ -1081,6 +1111,7 @@ public interface FrameworkConstants {
     String ERROR_APPLIES_TO = "err.msg.empty.applies.to";
     String ERROR_CONFIG_SITE_NAME = "err.msg.empty.config.site.name";
     String ERROR_CONFIG_APP_NAME = "err.msg.empty.config.app.name";
+    String ERROR_CONFIG_VERSION = "err.msg.empty.config.version";
     String ERROR_SITE_CORE_PATH_MISSING = "err.msg.empty.site.core.path";
     String CLONE_CONFIG_STATUS = "cloneConfigStatus";
     String ERROR_ENV_REMOVE = "Environment {0} is already in use";
@@ -1593,10 +1624,12 @@ public interface FrameworkConstants {
 		  String ADMIN_USERNAME = "admin_username";
 		  String ADMIN_PASSWORD = "admin_password";
 		  String REMOTE_DEPLOYMENT = "remoteDeployment";
+		  String TYPE_VERSION = "version";
 		  
 		  //SettingsTemplate values 
 		  String IIS_SERVER = "IIS";
-		  String NODEJS_SERVER = "Nodejs";
+		  String NODEJS_SERVER = "NodeJs";
+		  String NODEJS_MAC_SERVER = "NodeJs Mac";
 		  
 	  /* Resolutions */ 
 		String _1600_900 = "1600*900";
@@ -1704,6 +1737,16 @@ public interface FrameworkConstants {
 		String ACT_SUCC_ENV_ADD = "succ.env.create";
 		String ACT_SUCC_ENV_DELETE = "succ.env.delete";
 		String ACT_SUCC_FEATURE_CONFIGURE = "succ.feature.configure";
+		String ACT_SUCC_CONFIG_CLONE = "succ.config.clone";
+
+		/*****************************
+	     * Error Action Messages
+	     * I18N Keys Constants
+	     * String ACT_ERR_XXX
+	     *****************************/
+		
+		String ACT_ERR_CONFIG_CLONE_EXISTS = "err.config.clone.exists";
+		
 		
 		/**
 		 * Dynamic Parameter Constants
@@ -1714,6 +1757,7 @@ public interface FrameworkConstants {
 		String TYPE_PASSWORD  = "password";
 		String TYPE_NUMBER = "number";
 		String TYPE_BOOLEAN = "boolean";
+		String TYPE_FILE = "FileType";
 		String TEXT_BOX = "text";
 		String TYPE_LIST = "list";
 		String TYPE_EDITABLE_COMBO = "editableList";
@@ -1726,5 +1770,14 @@ public interface FrameworkConstants {
 		String REQ_DYNAMIC_PAGE_PARAMETER  = "dynamicPageParameter";
 		String REQ_DYNAMIC_POSSIBLE_VALUES = "possibleValues";
 		String SESSION_WATCHER_MAP = "sessionDynamicParamMap";
+		
+		/**
+		 * Constants for Changing Logo 
+		 */
+		
+		String IMAGES	 = "images";
+		String CUSTOMERS = "customers";
+		String PNG       = ".png";
+		
 		
 }

@@ -22,23 +22,34 @@ import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Para
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.Utility;
 
-public class DynamicDataBaseImpl implements DynamicParameter, Constants {
-
-	private static final long serialVersionUID = 1L;
+public class PerformanceConfigurationsImpl implements DynamicParameter, Constants {
 
 	@Override
 	public PossibleValues getValues(Map<String, Object> paramMap) throws IOException, ParserConfigurationException, SAXException, ConfigurationException, PhrescoException {
 		PossibleValues possibleValues = new PossibleValues();
     	ApplicationInfo applicationInfo = (ApplicationInfo) paramMap.get(KEY_APP_INFO);
     	String envName = (String) paramMap.get(KEY_ENVIRONMENT);
+    	String customer = (String) paramMap.get("customerId");
+    	String testAgainst = (String) paramMap.get(KEY_TEST_AGAINST);
+    	String configurationType = "";
+    	
+//    	System.out.println("testAgainst-----PerformanceConfigurationsImpl---------"+testAgainst);
+    	if (Constants.SETTINGS_TEMPLATE_SERVER.equalsIgnoreCase(testAgainst)) {
+    		configurationType = Constants.SETTINGS_TEMPLATE_SERVER;
+    	} else if ("webservices".equalsIgnoreCase(testAgainst)) {
+    		configurationType = Constants.SETTINGS_TEMPLATE_WEBSERVICE;
+    	} else if (Constants.SETTINGS_TEMPLATE_DB.equalsIgnoreCase(testAgainst)) {
+    		configurationType = Constants.SETTINGS_TEMPLATE_DB;
+    	}
+    	
+//    	System.out.println("configurationType------PerformanceConfigurationsImpl--------"+configurationType);
     	//To search for db type in settings.xml
-    	String settingsPath = getSettingsPath();
-    	ConfigManager configManager = new ConfigManagerImpl(new File(settingsPath)); 
-    	List<Configuration> configurations = configManager.getConfigurations(envName, Constants.SETTINGS_TEMPLATE_DB);
+    	ConfigManager configManager = new ConfigManagerImpl(new File(getSettingsPath(customer))); 
+    	List<Configuration> configurations = configManager.getConfigurations(envName, configurationType);
     	for (Configuration configuration : configurations) {
-    		Value value = new Value();
-    		value.setValue(configuration.getProperties().getProperty("type").toLowerCase());
-    		possibleValues.getValue().add(value);
+    	    Value value = new Value();
+            value.setValue(configuration.getName());
+            possibleValues.getValue().add(value);
 		}
     	
     	//To search for db type in phresco-env-config.xml if it doesn't exist in settings.xml
@@ -46,31 +57,18 @@ public class DynamicDataBaseImpl implements DynamicParameter, Constants {
     		String appDirectory = applicationInfo.getAppDirName();
     		String configPath = getConfigurationPath(appDirectory).toString();
         	configManager = new ConfigManagerImpl(new File(configPath)); 
-        	configurations = configManager.getConfigurations(envName, Constants.SETTINGS_TEMPLATE_DB);
+        	configurations = configManager.getConfigurations(envName, configurationType);
         	for (Configuration configuration : configurations) {
-        		String dbType = configuration.getProperties().getProperty("type");
-        		List<Value> availableValues = possibleValues.getValue();
-        		boolean alreadyAvailable = false;
-        		if (CollectionUtils.isNotEmpty(availableValues)) {
-        			for (Value availableValue : availableValues) {
-    					if (availableValue.getValue().equalsIgnoreCase(dbType)) {
-    						alreadyAvailable = true;
-    						break;
-    					}
-    				}
-        		}
-        		if (!alreadyAvailable) {
-        			Value value = new Value();
-	        		value.setValue(dbType.toLowerCase());
-	        		possibleValues.getValue().add(value);
-        		}
+        	    Value value = new Value();
+        	    value.setValue(configuration.getName());
+        	    possibleValues.getValue().add(value);
     		}
     	}
     	
     	return possibleValues;
-    }
-    
-    private StringBuilder getConfigurationPath(String projectDirectory) {
+	}
+	
+	private StringBuilder getConfigurationPath(String projectDirectory) {
 		 StringBuilder builder = new StringBuilder(Utility.getProjectHome());
 		 builder.append(projectDirectory);
 		 builder.append(File.separator);
@@ -80,8 +78,8 @@ public class DynamicDataBaseImpl implements DynamicParameter, Constants {
 		 
 		 return builder;
 	 }
-    
-    private String getSettingsPath() {
-    	return Utility.getProjectHome() + SETTINGS_XML;
-    }
+   
+   private String getSettingsPath(String customer) {
+	   return Utility.getProjectHome() + customer +"-settings.xml";
+   }
 }

@@ -1,25 +1,17 @@
 package com.photon.phresco.framework.impl;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.UUID;
+import java.io.*;
+import java.util.*;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.*;
 import org.apache.log4j.Logger;
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ListBranchCommand.ListMode;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
-import org.tmatesoft.svn.core.SVNDepth;
-import org.tmatesoft.svn.core.SVNDirEntry;
-import org.tmatesoft.svn.core.SVNNodeKind;
-import org.tmatesoft.svn.core.SVNURL;
+import org.tmatesoft.svn.core.*;
 import org.tmatesoft.svn.core.auth.ISVNAuthenticationManager;
 import org.tmatesoft.svn.core.internal.io.dav.DAVRepositoryFactory;
 import org.tmatesoft.svn.core.internal.io.fs.FSRepositoryFactory;
@@ -27,10 +19,7 @@ import org.tmatesoft.svn.core.internal.io.svn.SVNRepositoryFactoryImpl;
 import org.tmatesoft.svn.core.internal.wc.DefaultSVNOptions;
 import org.tmatesoft.svn.core.io.SVNRepository;
 import org.tmatesoft.svn.core.io.SVNRepositoryFactory;
-import org.tmatesoft.svn.core.wc.SVNClientManager;
-import org.tmatesoft.svn.core.wc.SVNRevision;
-import org.tmatesoft.svn.core.wc.SVNUpdateClient;
-import org.tmatesoft.svn.core.wc.SVNWCUtil;
+import org.tmatesoft.svn.core.wc.*;
 
 import com.google.gson.Gson;
 import com.photon.phresco.commons.FrameworkConstants;
@@ -193,13 +182,11 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		}
 		try {
 			PomProcessor processor = getPomProcessor(projCode);
-			if (processor.getSCM() == null) {
 				if(debugEnabled){
 					S_LOGGER.debug("processor.getSCM() exists and repo url "+ repoUrl);
 				}
 				processor.setSCM(repoUrl, "", "", "");
 				processor.save();
-			}
 		} catch (Exception e) {
 			if(debugEnabled){
 				S_LOGGER.error("Entering catch block of updateSCMConnection()"+ e.getLocalizedMessage());
@@ -294,8 +281,20 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 							S_LOGGER.debug("AppInfo " + projectInfo);
 						}
 						SVNUpdateClient uc = cm.getUpdateClient();
-						ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
-						
+						if (projectInfo == null) {
+							if(debugEnabled){
+								S_LOGGER.debug("ProjectInfo is Empty");
+							}
+							throw new PhrescoException(INVALID_FOLDER);
+						}
+						List<ApplicationInfo> appInfos = projectInfo.getAppInfos();
+						if (appInfos == null) {
+							if(debugEnabled){
+								S_LOGGER.debug("AppInfo is Empty");
+							}
+							throw new PhrescoException(INVALID_FOLDER);
+						}
+						ApplicationInfo appInfo = appInfos.get(0);
 						File file = new File(Utility.getProjectHome(), appInfo.getAppDirName());
 						if (file.exists()) {
 							throw new PhrescoException(PROJECT_ALREADY);
@@ -360,7 +359,20 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			if(debugEnabled){
 				S_LOGGER.debug("appInfo " + projectInfo);
 			}
-			ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
+			if (projectInfo == null) {
+				if(debugEnabled){
+					S_LOGGER.debug("ProjectInfo is Empty");
+				}
+				throw new PhrescoException(INVALID_FOLDER);
+			}
+			List<ApplicationInfo> appInfos = projectInfo.getAppInfos();
+			if (appInfos == null) {
+				if(debugEnabled){
+					S_LOGGER.debug("AppInfo is Empty");
+				}
+				throw new PhrescoException(INVALID_FOLDER);
+			}
+			ApplicationInfo appInfo = appInfos.get(0);
 			if (appInfo != null) {
 				importToWorkspace(appDir, Utility.getProjectHome(),	appInfo.getAppDirName());
 				if(debugEnabled){
@@ -376,7 +388,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 
 	private ProjectInfo getGitAppInfo(File directory)throws PhrescoException {
 		if(debugEnabled){
-			S_LOGGER.debug("Entering Method  Applications.getGitAppInfo()");
+			S_LOGGER.debug("Entering Method  SCMManagerImpl.getGitAppInfo()");
 		}
 		BufferedReader reader = null;
 		try {
@@ -400,9 +412,9 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		}
 	}
 
-	private ProjectInfo getSvnAppInfo(String revision, SVNURL svnURL)throws Exception {
+	private ProjectInfo getSvnAppInfo(String revision, SVNURL svnURL) throws Exception {
 		if(debugEnabled){
-			S_LOGGER.debug("Entering Method  Applications.getSvnAppInfo()");
+			S_LOGGER.debug("Entering Method  SCMManagerImpl.getSvnAppInfo()");
 		}
 		BufferedReader reader = null;
 		File tempDir = new File(Utility.getSystemTemp(), SVN_CHECKOUT_TEMP);
@@ -427,5 +439,141 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				FileUtil.delete(tempDir);
 			}
 		}
+	}
+
+	public boolean importToRepo(String type, String url, String username,
+			String password, String branch, String revision, File dir, String commitMessage) throws Exception {
+		if(debugEnabled){
+			S_LOGGER.debug("Entering Method  SCMManagerImpl.importToRepo()");
+		}
+		try {
+			if (SVN.equals(type)) {
+				importDirectoryContentToSubversion(url, dir.getPath(), username, password, commitMessage);
+				// checkout to get .svn folder
+				checkoutImportedApp(url, dir.getPath(), username, password);
+			} else if (GIT.equals(type)) {
+				importToGITRepo();
+			}
+		} catch (Exception e) {
+			throw e;
+		}
+		return true;
+	}
+	
+	private SVNCommitInfo importDirectoryContentToSubversion(final String repositoryURL, final String subVersionedDirectory, final String userName, final String hashedPassword, final String commitMessage) throws SVNException {
+		if(debugEnabled){
+			S_LOGGER.debug("Entering Method  SCMManagerImpl.importDirectoryContentToSubversion()");
+		}
+		setupLibrary();
+        final SVNClientManager cm = SVNClientManager.newInstance(new DefaultSVNOptions(), userName, hashedPassword);
+        return cm.getCommitClient().doImport(new File(subVersionedDirectory), SVNURL.parseURIEncoded(repositoryURL), commitMessage, null, true, true, SVNDepth.fromRecurse(true));
+    }
+	
+	private void checkoutImportedApp(String repositoryURL, String subVersionedDirectory, String userName, String password) throws Exception {
+		if(debugEnabled){
+			S_LOGGER.debug("Entering Method  SCMManagerImpl.checkoutImportedApp()");
+		}
+		DefaultSVNOptions options = new DefaultSVNOptions();
+		SVNClientManager cm = SVNClientManager.newInstance(options, userName, password);
+		SVNUpdateClient uc = cm.getUpdateClient();
+		SVNURL svnURL = SVNURL.parseURIEncoded(repositoryURL);
+		if(debugEnabled){
+			S_LOGGER.debug("Checking out...");
+		}
+		File subVersDir = new File(subVersionedDirectory);
+		uc.doCheckout(SVNURL.parseURIEncoded(repositoryURL), subVersDir, SVNRevision.UNDEFINED, SVNRevision.parse(HEAD_REVISION), SVNDepth.INFINITY, true);
+		if(debugEnabled){
+			S_LOGGER.debug("updating pom.xml");
+		}
+		// update connection url in pom.xml
+		updateSCMConnection(subVersDir.getName(), svnURL.toDecodedString());
+	}
+	
+	private void importToGITRepo() throws Exception {
+		if(debugEnabled){
+			S_LOGGER.debug("Entering Method  SCMManagerImpl.importToGITRepo()");
+		}
+		// TODO :: Need to implement
+	}
+
+	public boolean commitToRepo(String type, String url, String username, String password, String branch, String revision, File dir, String commitMessage) throws Exception {
+		if(debugEnabled) {
+			S_LOGGER.debug("Entering Method  SCMManagerImpl.commitToRepo()");
+		}
+		try {
+			if (SVN.equals(type)) {
+				commitDirectoryContentToSubversion(url, dir.getPath(), username, password, commitMessage);
+			} else if (GIT.equals(type)) {
+				importToGITRepo();
+			}
+		} catch (Exception e) {
+			throw e;
+		}
+		return true;
+	}
+	
+	private SVNCommitInfo commitDirectoryContentToSubversion(String repositoryURL, String subVersionedDirectory, String userName, String hashedPassword, String commitMessage) throws SVNException {
+		if(debugEnabled){
+			S_LOGGER.debug("Entering Method  SCMManagerImpl.commitDirectoryContentToSubversion()");
+		}
+		setupLibrary();
+		
+		final SVNClientManager cm = SVNClientManager.newInstance(new DefaultSVNOptions(), userName, hashedPassword);
+		SVNWCClient wcClient = cm.getWCClient();
+		File subVerDir = new File(subVersionedDirectory);
+		// This one recursively adds an existing local item under version control (schedules for addition)
+		wcClient.doAdd(subVerDir, true, false, false, SVNDepth.INFINITY, false, false);
+		return cm.getCommitClient().doCommit(new File[]{subVerDir}, false, commitMessage, null, null, false, true, SVNDepth.INFINITY);
+    }
+	
+	public SVNCommitInfo deleteDirectoryInSubversion(String repositoryURL, String subVersionedDirectory, String userName, String password, String commitMessage) throws SVNException, IOException {
+		if(debugEnabled){
+			S_LOGGER.debug("Entering Method  SCMManagerImpl.commitDirectoryContentToSubversion()");
+		}
+		setupLibrary();
+		
+		File subVerDir = new File(subVersionedDirectory);		
+		final SVNClientManager cm = SVNClientManager.newInstance(new DefaultSVNOptions(), userName, password);
+		
+		SVNWCClient wcClient = cm.getWCClient();
+		//wcClient.doDelete(subVerDir, true, false);
+		FileUtils.listFiles(subVerDir, TrueFileFilter.TRUE, FileFilterUtils.makeSVNAware(null));
+		for (File child : subVerDir.listFiles()) {
+			if (!(DOT+SVN).equals(child.getName())) {
+				wcClient.doDelete(child, true, true, false);
+			}
+		}
+		
+		return cm.getCommitClient().doCommit(new File[]{subVerDir}, false, commitMessage, null, null, false, true, SVNDepth.INFINITY);
+    }
+	
+	public List<SVNStatus> getCommitableFiles(File path, String revision) throws SVNException {
+	    SVNClientManager svnClientManager = SVNClientManager.newInstance();
+	    final List<SVNStatus> allSVNStatus = new ArrayList<SVNStatus>();
+	    svnClientManager.getStatusClient().doStatus(path, SVNRevision.parse(revision), SVNDepth.INFINITY, false, false, false, false, new ISVNStatusHandler() {
+	        public void handleStatus(SVNStatus status) throws SVNException {
+	            SVNStatusType statusType = status.getContentsStatus();
+	            if (statusType != SVNStatusType.STATUS_NONE && statusType != SVNStatusType.STATUS_NORMAL
+	                    && statusType != SVNStatusType.STATUS_IGNORED) {
+		            allSVNStatus.add(status);
+	            }
+	        }
+	    }, null);
+	    
+	    return allSVNStatus;
+	}
+	
+	public SVNCommitInfo commitSpecifiedFiles(List<File> listModifiedFiles, String username, String password, String commitMessage) throws Exception {
+		DAVRepositoryFactory.setup();
+		SVNRepositoryFactoryImpl.setup();
+		FSRepositoryFactory.setup();
+		
+		final SVNClientManager cm = SVNClientManager.newInstance(new DefaultSVNOptions(), username, password);
+		SVNWCClient wcClient = cm.getWCClient();
+		File[] comittableFiles = listModifiedFiles.toArray(new File[listModifiedFiles.size()]);
+		
+		wcClient.doAdd(comittableFiles, true, false, false, SVNDepth.INFINITY, false, false, false);
+		SVNCommitInfo commitInfo = cm.getCommitClient().doCommit(comittableFiles, false, commitMessage, null, null, false, true, SVNDepth.INFINITY);
+		return commitInfo;
 	}
 }

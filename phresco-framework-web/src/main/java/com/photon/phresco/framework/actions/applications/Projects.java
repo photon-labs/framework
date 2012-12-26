@@ -32,14 +32,18 @@ import org.apache.log4j.Logger;
 
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ApplicationType;
+import com.photon.phresco.commons.model.Customer;
 import com.photon.phresco.commons.model.ProjectInfo;
+import com.photon.phresco.commons.model.Technology;
 import com.photon.phresco.commons.model.TechnologyGroup;
 import com.photon.phresco.commons.model.TechnologyInfo;
+import com.photon.phresco.commons.model.User;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
 import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.framework.commons.FrameworkUtil;
+import com.photon.phresco.commons.model.Technology;
 
 /**
  * Struts Action class for Handling Project related operations 
@@ -78,6 +82,7 @@ public class Projects extends FrameworkBaseAction {
     private String webTechError = "";
     private String statusFlag = "" ;
     private String id = "";
+    private String fromTab = "";
 
 	/**
      * To get the list of projects
@@ -98,6 +103,10 @@ public class Projects extends FrameworkBaseAction {
             	addActionMessage(getText(IMPORT_SUCCESS_PROJECT));
             } else if (UPDATE.equals(getStatusFlag())) {
             	addActionMessage(getText(SUCCESS_PROJECT_UPDATE));
+            } else if (ADD.equals(getStatusFlag())) {
+            	addActionMessage(getText(SUCCESS_PROJECT_ADD));
+            } else if (COMMIT.equals(getStatusFlag())) {
+            	addActionMessage(getText(SUCCESS_PROJECT_COMMIT));
             }
         } catch (PhrescoException e) {
             if (s_debugEnabled) {
@@ -119,13 +128,19 @@ public class Projects extends FrameworkBaseAction {
         }
 
         try {
-            List<ApplicationType> layers = getServiceManager().getApplicationTypes(getCustomerId());
-            setReqAttribute(REQ_PROJECT_LAYERS, layers);
-        } catch (PhrescoException e) {
+        	User user = (User) getSessionAttribute(SESSION_USER_INFO);
+        	List<Customer> customers = user.getCustomers();
+        	for (Customer customer : customers) {
+				if (customer.getId().equals(getCustomerId())) {
+					setReqAttribute(REQ_PROJECT_LAYERS, customer.getApplicableAppTypes());
+					break;
+				}
+			}
+        } catch (Exception e) {
             if (s_debugEnabled) {
                 S_LOGGER.error("Entered into catch block of Projects.addProject()" + FrameworkUtil.getStackTraceAsString(e));
             }
-            return showErrorPopup(e, getText(EXCEPTION_PROJECT_ADD));
+            return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_PROJECT_ADD));
         }
 
         return APP_APPLICATION_DETAILS;
@@ -195,16 +210,23 @@ public class Projects extends FrameworkBaseAction {
      * @throws PhrescoException 
      */
     private ApplicationType filterLayer(String layerId) throws PhrescoException {
-        if (s_layerMap.get(layerId) == null) {
-            List<ApplicationType> layers = getServiceManager().getApplicationTypes(getCustomerId());
-            if (CollectionUtils.isNotEmpty(layers)) {
-                for (ApplicationType layer : layers) {
-                    s_layerMap.put(layer.getId(), layer);
-                }
-            }
-        }
+    	if (s_layerMap.get(layerId) == null) {
+    		User user = (User) getSessionAttribute(SESSION_USER_INFO);
+    		List<Customer> customers = user.getCustomers();
+    		for (Customer customer : customers) {
+    			if (customer.getId().equals(getCustomerId())) {
+    				List<ApplicationType> layers = customer.getApplicableAppTypes();
+    				if (CollectionUtils.isNotEmpty(layers)) {
+    					for (ApplicationType layer : layers) {
+    						s_layerMap.put(layer.getId(), layer);
+    					}
+    				}
+    				break;
+    			}
+    		}
+    	}
 
-        return s_layerMap.get(layerId);
+    	return s_layerMap.get(layerId);
     }
 
     /**
@@ -288,6 +310,22 @@ public class Projects extends FrameworkBaseAction {
     }
     
     /**
+     * 
+     * @param techId
+     * To get Technology Name based on corresponding Technology Id
+     * @throws PhrescoException
+     */
+    public String getTechNamefromTechId(String techId) throws PhrescoException {
+    	if (s_debugEnabled) {
+    		S_LOGGER.debug("Entering Method  Applications.getTechNamefromTechId()");
+    	}
+
+    	Technology technology = getServiceManager().getTechnology(techId);
+
+    	return technology.getName(); 
+    }
+    
+    /**
      * To get the projectInfo with the selected application infos
      * @return
      * @throws PhrescoException
@@ -326,13 +364,15 @@ public class Projects extends FrameworkBaseAction {
         String[] techGroupIds = getReqParameterValues(layerId + REQ_PARAM_NAME_TECH_GROUP);
         if (!ArrayUtils.isEmpty(techGroupIds)) {
             for (String techGroupId : techGroupIds) {
-                String techId = getHttpRequest().getParameter(techGroupId + REQ_PARAM_NAME_TECHNOLOGY);
-                String version = getHttpRequest().getParameter(techGroupId + REQ_PARAM_NAME_VERSION);
+                String techId = getReqParameter(techGroupId + REQ_PARAM_NAME_TECHNOLOGY);
+                String version = getReqParameter(techGroupId + REQ_PARAM_NAME_VERSION);
                 boolean phoneEnabled = Boolean.parseBoolean(getReqParameter(techGroupId + REQ_PARAM_NAME_PHONE));
                 boolean tabletEnabled = Boolean.parseBoolean(getReqParameter(techGroupId + REQ_PARAM_NAME_TABLET));
-                String dirName = getProjectCode().replaceAll("[^\\sA-Za-z0-9_.-]", "");
-                dirName = dirName + HYPHEN + techGroupId;
-                appInfos.add(getAppInfo(dirName, techId, version, phoneEnabled, tabletEnabled));
+                Technology technology = getServiceManager().getTechnology(techId);
+                String techName = technology.getName().replaceAll("\\s", "").toLowerCase();
+                String dirName = getProjectCode() + HYPHEN + techName;
+                String projectName = getProjectName() + HYPHEN + techName;
+                appInfos.add(getAppInfo(projectName, dirName, techId, version, phoneEnabled, tabletEnabled));
             }
         }
 
@@ -349,9 +389,11 @@ public class Projects extends FrameworkBaseAction {
     private List<ApplicationInfo> getOtherLayerAppInfos(List<ApplicationInfo> appInfos, String layerId) throws PhrescoException {
         String techId = getReqParameter(layerId + REQ_PARAM_NAME_TECHNOLOGY);
         String version = getReqParameter(layerId + REQ_PARAM_NAME_VERSION);
-        String dirName = getProjectCode().replaceAll("[^\\sA-Za-z0-9_.-]", "");
-        dirName = dirName + HYPHEN + techId;
-        appInfos.add(getAppInfo(dirName, techId, version, false, false));
+        Technology technology = getServiceManager().getTechnology(techId);
+        String techName = technology.getName().replaceAll("\\s", "").toLowerCase();
+        String dirName = getProjectCode() + HYPHEN + techName;
+        String projectName = getProjectName() + HYPHEN + techName;
+        appInfos.add(getAppInfo(projectName, dirName, techId, version, false, false));
 
         return appInfos;
     }
@@ -365,13 +407,13 @@ public class Projects extends FrameworkBaseAction {
      * @return
      * @throws PhrescoException
      */
-    private ApplicationInfo getAppInfo(String appDir, String techId, String version, boolean phoneEnabled, boolean tabletEnabled) throws PhrescoException {
+    private ApplicationInfo getAppInfo(String projectName, String appDir, String techId, String version, boolean phoneEnabled, boolean tabletEnabled) throws PhrescoException {
         ApplicationInfo applicationInfo = new ApplicationInfo();
         TechnologyInfo techInfo = new TechnologyInfo();
         techInfo.setId(techId);
         techInfo.setVersion(version);
         applicationInfo.setTechInfo(techInfo);
-        applicationInfo.setName(appDir);
+        applicationInfo.setName(projectName);
         applicationInfo.setCode(appDir);
         applicationInfo.setAppDirName(appDir);
         applicationInfo.setPhoneEnabled(phoneEnabled);
@@ -414,81 +456,90 @@ public class Projects extends FrameworkBaseAction {
         }
 
         boolean hasError = false;
-       /* //check project name is already exists or not
-        ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
-        List<ProjectInfo> projects = projectManager.discover(getCustomerId());
-        String newProjectName = "";
-        String oldProjectName = "";
-        if(StringUtils.isNotEmpty(getProjectName())) {
-        	newProjectName = getProjectName();
-        	for(ProjectInfo project : projects) {
-        		if(project.getName().equals(newProjectName)) {
-        			oldProjectName = project.getName();
-        		}
-        	}
-        }
-        
-        if(StringUtils.equals(newProjectName, oldProjectName)) {
-        	 setProjectNameError(getText(ERROR_NAME_EXISTS));
-             hasError = true;
-        }*/
+        if (FROM_PAGE_ADD.equals(getFromTab())) {
+  	       	//check project name is already exists or not
+  	        ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
+  	        List<ProjectInfo> projects = projectManager.discover(getCustomerId());
+  	        if(StringUtils.isNotEmpty(getProjectName())) {
+  	        	for(ProjectInfo project : projects) {
+  	        		if(project.getName().equals(getProjectName())) {
+  	    	       	 	setProjectNameError(getText(ERROR_NAME_EXISTS));
+  	    	            hasError = true;
+  	    	            break;
+  	        		}
+  	        	}
+  	        }
+  	        
+  	        //check project code is already exists or not
+  	        if(StringUtils.isNotEmpty(getProjectCode())) {
+  	        	for(ProjectInfo project : projects) {
+  	        		if(project.getProjectCode().equals(getProjectCode())) {
+  	    	        	setProjectCodeError(getText(ERROR_CODE_EXISTS));
+  	    	            hasError = true;
+  	    	            break;
+  	        		}
+  	        	}
+  	        }	
+  	      //validate if none of the layer is selected
+  	        if (CollectionUtils.isEmpty(getLayer())) {
+  	            setAppTechError(getText(ERROR_TECHNOLOGY));
+  	            setWebTechError(getText(ERROR_TECHNOLOGY));
+  	            setMobTechError(getText(ERROR_TECHNOLOGY));
+  	            hasError = true;
+  	        }
+  	        //empty validation for technology in the selected layer
+  	        if (CollectionUtils.isNotEmpty(getLayer())) {
+  	            for (String layerId : getLayer()) {
+  	                String techId = getReqParameter(layerId + REQ_PARAM_NAME_TECHNOLOGY);
+  	                if (LAYER_APP_ID.equals(layerId)) {//for application layer
+  	                    if (StringUtils.isEmpty(techId)) {
+  	                        setAppTechError(getText(ERROR_TECHNOLOGY));
+  	                        hasError = true;
+  	                    }
+  	                }
+  	                if (LAYER_WEB_ID.equals(layerId)) {//for web layer
+  	                    if (StringUtils.isEmpty(techId)) {
+  	                        setWebTechError(getText(ERROR_TECHNOLOGY));
+  	                        hasError = true;
+  	                    }
+  	                }
+  	                if (LAYER_MOB_ID.equals(layerId)) {//for mobile layer
+  	                    String[] techGroupIds = getReqParameterValues(layerId + REQ_PARAM_NAME_TECH_GROUP);
+  	                    if (ArrayUtils.isEmpty(techGroupIds)) {//empty validation for technology group
+  	                        setMobTechError(getText(ERROR_TECHNOLOGY));
+  	                        hasError = true;
+  	                    } else {
+  	                        for (String techGroupId : techGroupIds) {//empty validation for technology in the selected technology group
+  	                            techId = getReqParameter(techGroupId + REQ_PARAM_NAME_TECHNOLOGY);
+  	                            if (StringUtils.isEmpty(techId)) {
+  	                                setMobTechError(getText(ERROR_LAYER));
+  	                                hasError = true;
+  	                                break;
+  	                            }
+  	                        }
+  	                    }
+  	                }
+  	            }
+  	        }
+          }
+         
         
         //empty validation for name
-        if (StringUtils.isEmpty(getProjectName())) {
+        if (StringUtils.isEmpty(getProjectName().trim())) {
             setProjectNameError(getText(ERROR_NAME));
             hasError = true;
         }
         //empty validation for projectCode
-        if (StringUtils.isEmpty(getProjectCode())) {
+        if (StringUtils.isEmpty(getProjectCode().trim())) {
             setProjectCodeError(getText(ERROR_CODE));
             hasError = true;
         }
         //empty validation for projectVersion
-        if (StringUtils.isEmpty(getProjectVersion())) {
+        if (StringUtils.isEmpty(getProjectVersion().trim())) {
             setProjectVersionError(getText(ERROR_VERSION));
             hasError = true;
         }
-        //validate if none of the layer is selected
-        if (CollectionUtils.isEmpty(getLayer())) {
-            setAppTechError(getText(ERROR_TECHNOLOGY));
-            setWebTechError(getText(ERROR_TECHNOLOGY));
-            setMobTechError(getText(ERROR_TECHNOLOGY));
-            hasError = true;
-        }
-        //empty validation for technology in the selected layer
-        if (CollectionUtils.isNotEmpty(getLayer())) {
-            for (String layerId : getLayer()) {
-                String techId = getReqParameter(layerId + REQ_PARAM_NAME_TECHNOLOGY);
-                if (LAYER_APP_ID.equals(layerId)) {//for application layer
-                    if (StringUtils.isEmpty(techId)) {
-                        setAppTechError(getText(ERROR_TECHNOLOGY));
-                        hasError = true;
-                    }
-                }
-                if (LAYER_WEB_ID.equals(layerId)) {//for web layer
-                    if (StringUtils.isEmpty(techId)) {
-                        setWebTechError(getText(ERROR_TECHNOLOGY));
-                        hasError = true;
-                    }
-                }
-                if (LAYER_MOB_ID.equals(layerId)) {//for mobile layer
-                    String[] techGroupIds = getReqParameterValues(layerId + REQ_PARAM_NAME_TECH_GROUP);
-                    if (ArrayUtils.isEmpty(techGroupIds)) {//empty validation for technology group
-                        setMobTechError(getText(ERROR_TECHNOLOGY));
-                        hasError = true;
-                    } else {
-                        for (String techGroupId : techGroupIds) {//empty validation for technology in the selected technology group
-                            techId = getReqParameter(techGroupId + REQ_PARAM_NAME_TECHNOLOGY);
-                            if (StringUtils.isEmpty(techId)) {
-                                setMobTechError(getText(ERROR_LAYER));
-                                hasError = true;
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-        }
+       
 
         if (hasError) {
             setErrorFound(true);
@@ -663,5 +714,13 @@ public class Projects extends FrameworkBaseAction {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public String getFromTab() {
+		return fromTab;
+	}
+
+	public void setFromTab(String fromTab) {
+		this.fromTab = fromTab;
 	}
 }

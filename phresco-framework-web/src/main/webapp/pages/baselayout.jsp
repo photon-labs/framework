@@ -26,8 +26,10 @@
 
 <%@ page import="org.apache.commons.collections.CollectionUtils"%>
 
+<%@ page import="com.photon.phresco.util.ServiceConstants"%>
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.commons.model.User"%>
+<%@ page import="com.photon.phresco.commons.model.Customer"%>
 
 <html>
 	<head>
@@ -93,13 +95,20 @@
 		<script type="text/javascript" src="js/loading.js"></script>
 		<script type="text/javascript" src="js/reader.js" ></script>
 		<script type="text/javascript" src="js/jquery-tojson.js" ></script>
-		<script type="text/javascript" src="js/ddslick.js" ></script>
+		
+		<script type="text/javascript" src="js/ddslick.js"></script>
+		
+		<!-- File upload -->
+		<script type="text/javascript" src="js/fileuploader.js"></script>
+		<link type="text/css" rel="stylesheet" href="css/fileuploader.css"/>
+		
 		<!-- Window Resizer -->
 		<script type="text/javascript" src="js/windowResizer_default.js" id="windowResizer"></script>
 		
 		<!-- jquery editable combobox -->
 		<script src="js/jquery.editable.combobox.js"></script>
-		
+		<script src="js/jss.min.js"></script>
+
 		<script type="text/javascript">
 		    $(document).ready(function() {
 		        applyTheme();
@@ -126,7 +135,7 @@
 				});
 				showLoadingIcon();
 				clickMenu($("a[name='headerMenu']"), $("#container"), $('#formCustomers'));
-				loadContent("home", '', $("#container"));
+				loadContent("home", '', $("#container"), '', '', true);
 				activateMenu($("#home"));
 			});
 		</script>
@@ -160,7 +169,7 @@
 		<header>
 			<div class="header">
 				<div class="Logo">
-					 <a href="#" id="goToHome"><img class="headerlogoimg" src="theme/photon/images/photon_phresco_logo.png" alt="logo"></a>
+					 <a href="#" id="goToHome"><img class="headerlogoimg" id="logoImg" src="" alt="logo"></a>
 				</div>
 				
 				<div id="signOut" class="signOut">
@@ -169,7 +178,7 @@
 						<img src="images/downarrow.png" class="arrow">
                         <div class="userInfo" >
                             <ul>
-                            	<li class="theme_change"><a href="#">Themes</a>
+                            	<li id="themeContainer" class="theme_change"><a href="#">Themes</a>
                                 	<ul>
                                     	<li>Photon&nbsp;<a href="#" class="styles" href="#" rel="theme/photon/css/photon_theme.css"><img src="images/photon_theme.png"></a></li>
                                         <li>Red-Blue&nbsp;
@@ -194,7 +203,7 @@
 								    <s:label key="lbl.hdr.home"  theme="simple"/></a>
                                 </li>
 								<li class="wid_app"><a href="#" class="inactive" name="headerMenu" id="applications">
-								    <s:label key="lbl.hdr.applications" theme="simple"/></a>
+								    <s:label key="lbl.hdr.projects" theme="simple"/></a>
 								</li>
 								<li class="wid_set"><a href="#" class="inactive" name="headerMenu" id="settings" additionalParam="fromPage=settings">
 								    <s:label key="lbl.hdr.settings"  theme="simple"/></a>
@@ -236,22 +245,22 @@
 							class="arrow_links_top">
 							<span class="shortcutRed" id=""></span>
 							<span class="shortcutWh" id="">
-							<s:text name="lbl.hdr.applications"/></span>
+							<s:text name="lbl.hdr.projects"/></span>
 						</a>
 					</div>
 					
 					<form id="formCustomers" class="form">
-						<div class="control-group customer_name">
+						<div id="customerList" class="control-group customer_name">
 							<s:label key="lbl.customer" cssClass="control-label custom_label labelbold" theme="simple"/>
 							<div class="controls customer_select_div">
 								<select name="customerId" class="customer_listbox">
 					                <%
 					                	User user = (User) session.getAttribute(FrameworkConstants.SESSION_USER_INFO);
 					                    if (user != null) {
-					                    	List<String> customerIds = user.getCustomerIds();
-								            for (String customerId : customerIds) { 
+					                    	List<Customer> customers = user.getCustomers();
+					                    	for (Customer customer: customers) {
 								    %>
-					                            <option value="<%= customerId %>"><%= customerId %></option>
+					                       <option value="<%= customer.getId() %>"><%= customer.getName()%></option>
 									<% 
 								            }
 								        } 
@@ -338,16 +347,19 @@
 			<div class="modal-header">
 				<a class="close" data-dismiss="modal" >&times;</a>
 				<h3 id="popupTitle"></h3>
-			</div>
+	    </div>
 			<div class="modal-body" id="popup_div">
 			
 			</div>
 			<div class="modal-footer">
-				<a href="#" class="btn btn-primary" data-dismiss="modal" id="popupCancel"><s:text name='lbl.btn.cancel'/></a>
-				<a href="#" class="btn btn-primary popupOk" id="" onClick="popupOnOk(this);" ><s:text name='lbl.btn.ok'/></a>
-				<a href="#" class="btn btn-primary popupClose" data-dismiss="modal" id="" onClick="popupOnClose(this);"><s:text name='lbl.btn.close'/></a>
-				<div id="errMsg" class="envErrMsg"></div>
+<%-- 				<a href="#" class="btn btn-primary" data-dismiss="modal" id="popupCancel"><s:text name='lbl.btn.cancel'/></a> --%>
+				<input type="button" class="btn btn-primary" id="popupCancel" value="<s:text name='lbl.btn.cancel'/>" data-dismiss="modal" href="#"/>
+<%-- 				<a href="#" class="btn btn-primary popupOk" id="" onClick="popupOnOk(this);" ><s:text name='lbl.btn.ok'/></a> --%>
+				<input type="button" class="btn btn-primary popupOk" id="" onClick="popupOnOk(this);" value="<s:text name='lbl.btn.ok'/>" href="#"/>
+<%-- 				<a href="#" class="btn btn-primary popupClose" data-dismiss="modal" id="" onClick="popupOnClose(this);"><s:text name='lbl.btn.close'/></a> --%>
+				<input type="button" class="btn btn-primary popupClose" id=""  onClick="popupOnClose(this);" value="<s:text name='lbl.btn.close'/>" data-dismiss="modal" href="#"/>
 				<img class="popuploadingIcon" id="popuploadingIcon" src="" />
+				<div id="errMsg" class="envErrMsg"></div>
 			</div>
 		</div>
 	    <!-- Popup Ends -->
@@ -394,18 +406,149 @@
 	</body>
 	
 	<script type="text/javascript">
-		if ($.browser.safari && $.browser.version == 530.17) {
-			$(".shortcut_bottom").show().css("float","left");
-		}
+	 $(document).ready(function() {
+		applyTheme();
+		getLogoImgUrl();
+		showHideTheme();
+	        
+		$(".styles").click(function() {
+			localStorage.clear();
+			var value = $(this).attr("rel");
+			localStorage["color"]= value;
+			applyTheme();
+		});
+           
+		// function to show user info in toggle 
+		$('div aside.usersettings div').hide(0);
+		$('div aside.usersettings').click(function() {
+			$('div aside.usersettings div').slideToggle(0);
+		});
+
+		// to show user info on mouse over
+		$('#signOut aside').mouseenter(function() {
+			$("div aside.usersettings div").hide(0);
+			$(this).children("div aside.usersettings div").show(0);
+		}).mouseleave(function() {
+			$("div aside.usersettings div").hide(0);
+		});
 		
-		/** To include the js based on the device **/
-		/* var body = document.getElementsByTagName('body')[0];
-		var script = document.createElement('script');
-		if (isiPad()) {
-			script.src = 'js/windowResizer-ipad.js';
+		showLoadingIcon();
+		clickMenu($("a[name='headerMenu']"), $("#container"), $('#formCustomers'));
+		loadContent("home", '', $("#container"), '', '', true);
+		activateMenu($("#home"));
+				
+		//To get the list of projects based on the selected customer
+    	$('select[name=customerId]').change(function() {
+    		getLogoImgUrl();
+    		showLoadingIcon();
+    		showHideTheme();
+    		loadContent("applications", $('#formCustomers'), $("#container"), '', '', true);
+    	});
+		
+	});
+	
+	if ($.browser.safari && $.browser.version == 530.17) {
+		$(".shortcut_bottom").show().css("float","left");
+	}
+	
+	function getLogoImgUrl() {
+		var currentCustomerId = $('select[name=customerId]').val();
+		if (currentCustomerId === "<%= ServiceConstants.DEFAULT_CUSTOMER_NAME %>") {
+			applyTheme();
+			changeColorScheme("#38B865");
 		} else {
-			script.src = 'js/windowResizer.js';
+			loadContent("fetchLogoImgUrl", $('#formCustomers'), '', '', true, true, 'changeLogo');
 		}
-		body.appendChild(script); */
-	</script>
+	}
+
+	function changeLogo(data) {
+		$('#logoImg').attr("src",  "data:image/png;base64," + data.logoImgUrl);
+		$("#brandingColor").val(data.brandingColor);
+		changeColorScheme(data.brandingColor);
+	}
+	
+	function changeColorScheme(brandingColor) {
+		JSS.css({
+			'.openreg': {
+				'background': brandingColor
+			},
+			
+			'.closereg': {
+				'background': brandingColor
+			},
+			
+			'.siteinnertooltiptxt': {
+				'border-color': brandingColor
+			},
+						
+			'.headerInnerTop li a.active label': {
+				'color': brandingColor + " !important"
+			},
+			
+			'.tabs li a.active': {
+				'background': brandingColor + " !important"
+			},
+			
+			'.tabs > li > a:hover': {
+				'background': "none repeat scroll 0 0" + brandingColor
+			},
+			
+			'.modal-header': {
+				'background': "none repeat scroll 0 0" + brandingColor
+			},
+
+			'.video-title': {
+				'background': "none repeat scroll 0 0" + brandingColor
+			},
+			
+			'.listindex-active': {
+				'background': "none repeat scroll 0 0" + brandingColor
+			},
+			
+			'.listindex:hover': {
+				'background': "none repeat scroll 0 0" + brandingColor
+			},
+			
+			'.listindex': {
+				'color': brandingColor
+			},
+			
+			'#testmenu li a.active, #testmenu li a:hover': {
+				'background': brandingColor
+			},
+			
+			'#indicator': {
+				'background': brandingColor
+			},
+			
+			'#progressbar': {
+				'border-color': brandingColor
+			},
+			
+			'.userInfo ul li a': {
+				'color': brandingColor
+			}
+		});
+	}
+	
+	//To hide themes for customers other than photon
+	function showHideTheme() {
+		var customerId = $('select[name=customerId]').val();
+		if (customerId != "<%= ServiceConstants.DEFAULT_CUSTOMER_NAME %>") {
+			$('#themeContainer').hide();
+		} else if (customerId === "<%= ServiceConstants.DEFAULT_CUSTOMER_NAME %>"){
+			$('#themeContainer').show();
+		}
+	}
+	
+	/** To include the js based on the device **/
+	/* var body = document.getElementsByTagName('body')[0];
+	var script = document.createElement('script');
+	if (isiPad()) {
+		script.src = 'js/windowResizer-ipad.js';
+	} else {
+		script.src = 'js/windowResizer.js';
+	}
+	body.appendChild(script); */
+</script>
 </html>

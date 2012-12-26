@@ -18,6 +18,7 @@
   ###
   --%>
 
+
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.util.Collection" %>
@@ -29,6 +30,7 @@
 <%@ page import="org.apache.commons.collections.MapUtils" %>
 
 <%@ page import="com.photon.phresco.commons.model.ArtifactGroupInfo"%>
+<%@ page import="com.photon.phresco.commons.model.Technology"%>
 <%@ page import="com.photon.phresco.commons.model.ProjectInfo"%>
 <%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
@@ -37,6 +39,7 @@
 
 <%
 	String appId = (String)request.getAttribute(FrameworkConstants.REQ_APP_ID);
+	Technology technology = (Technology) session.getAttribute(FrameworkConstants.REQ_TECHNOLOGY);
 	List<ApplicationInfo> pilotProjects = (List<ApplicationInfo>) session.getAttribute(FrameworkConstants.REQ_PILOT_PROJECTS);
 	ProjectInfo projectInfo = (ProjectInfo) session.getAttribute(appId + FrameworkConstants.SESSION_APPINFO);
 	List<WebService> webservices = (List<WebService>)request.getAttribute(FrameworkConstants.REQ_WEBSERVICES);
@@ -51,8 +54,10 @@
 	String technologyId = "";
 	String technologyVersion = "";
 	String oldAppDirName = "";
-	List<String> feature = null;
 	List<String> selectedWebservices = null;
+	List<ArtifactGroupInfo> pilotServers = null;
+	List<ArtifactGroupInfo> pilotDatabases = null;
+	List<String> pilotWebservices = null;
 	List<ArtifactGroupInfo> selectedServers = null;
 	List<ArtifactGroupInfo> selectedDatabases = null;
 	if (projectInfo != null) {
@@ -65,7 +70,6 @@
 		oldAppDirName = selectedInfo.getAppDirName();
 		description = selectedInfo.getDescription();
 		version = selectedInfo.getVersion();
-		feature = projectInfo.getAppInfos().get(0).getSelectedModules();
 		if (selectedInfo.getPilotInfo() != null) {
 		pilotInfo = selectedInfo.getPilotInfo().getId();
 		}
@@ -152,9 +156,11 @@
 		<div class="control-group">
 			<label class="accordion-control-label labelbold"><s:text name='lbl.technology'/></label>
 			<div class="controls">
-				<input type="text" class="input-xlarge" value="<%= technologyId %>" disabled="disabled"/>
+				<input type="text" class="input-xlarge" value="<%= technology.getName() %>" disabled="disabled"/>
 				<input type="hidden" name="technology" value="<%= technologyId %>"/>
-				<input type="text" class="input-medium" value="<%= technologyVersion %>" disabled="disabled"/>
+				<% if (technologyVersion != null && !technologyVersion.isEmpty()) {%>
+					<input type="text" class="input-medium" value="<%= technologyVersion %>" disabled="disabled"/>
+				<% } %>
 				<input type="hidden" name="technologyVersion" value="<%= technologyVersion %>"/>
 			</div>
 		</div>
@@ -164,12 +170,12 @@
 		<div class="control-group">
 			<label class="accordion-control-label labelbold"><s:text name='lbl.pilot.project'/></label>
 			<div class="controls">
-				<select class="input-xlarge appinfoTech" name="pilotProject">
-					<option value="" selected disabled>Select Pilot Projects</option>
+				<select class="input-xlarge appinfoTech" name="pilotProject" onchange="showPilotProjectInfo(this);">
+					<option value="" selected disabled><s:text name='lbl.default.opt.select.pilot'/></option>
 						<%
 	                        if (CollectionUtils.isNotEmpty(pilotProjects)) {
 								for (ApplicationInfo appInfo : pilotProjects) {
-									String selectedStr= "";
+									String selectedStr = "";
 									if (appInfo.getId().equals(pilotInfo)) {
 										selectedStr = "selected";
 									}
@@ -254,7 +260,7 @@
 					<section class="lft_menus_container">
 						<span class="siteaccordion closereg" id="databaseLayerControl" onclick="accordionClick(this, $('input[value=databaseLayer]'));">
 							<span>
-								<input type="checkbox" id="checkAll1" class="accordianChkBox" name="layer" value="databaseLayer" <%= checkedDatabaseStr %>/>
+								<input type="checkbox" id="checkAll2" class="accordianChkBox" name="layer" value="databaseLayer" <%= checkedDatabaseStr %>/>
 								<a class="vAlignSub"><s:text name='lbl.database'/></a>
 							</span>
 						</span>
@@ -309,14 +315,13 @@
 					<section class="lft_menus_container">
 						<span class="siteaccordion closereg" id="webserviceLayerControl" onclick="accordionClick(this, $('input[value=webserviceLayer]'));">
 							<span>
-								<input type="checkbox" id="checkAll1" class="accordianChkBox" name="layer" value="webserviceLayer" <%= checkedWebserviceStr %>/>
+								<input type="checkbox" id="checkAll3" class="accordianChkBox" name="layer" value="webserviceLayer" <%= checkedWebserviceStr %>/>
 								<a class="vAlignSub"><s:text name='lbl.webservice'/></a>
 							</span>
 						</span>
 						<div class="mfbox siteinnertooltiptxt hideContent">
 							<div class="control-group autoWidthForWebservice">
-					            <div class="controls">
-					            	<div class="typeFields">
+					            <div class="controls typeFields">
 						                <div class="multilist-scroller multiselct multiselectForWebservice">
 							                <ul>
 							                    <%
@@ -341,7 +346,6 @@
 												%> 
 											</ul>
 						                </div>
-									</div>
 								</div>
 				                <span class="help-inline applyerror" id="techError"></span>
 					        </div>
@@ -361,15 +365,15 @@
         <input id="next" type="button" value="<s:text name="label.next"/>" class="btn btn-primary" 
         	onclick="showFeaturesPage();"/>
         <input type="button" id="cancel" value="<s:text name="lbl.btn.cancel"/>" class="btn btn-primary" 
-			onclick="loadContent('applications', $('#formCustomers'), $('#container'));">
+			onclick="loadContent('applications', $('#formCustomers'), $('#container'), '', '', true);">
     </div>
     <!--  Submit and Cancel buttons Ends -->
     
     <!-- Hidden Field -->
 	<%-- <input type="hidden" name="appId" value="<%= id %>"/> --%>
-	<input type="hidden" id="feature" name="feature" value="<%= feature %>"/>
 	<input type="hidden" name="techId" value="<%= technologyId %>"/>
 	<input type="hidden" name="oldAppDirName" value="<%= oldAppDirName %>"/>
+	<input type="hidden" name="fromTab" value="appInfo">
 </form> 
 <!--  Form Ends -->
     
@@ -383,9 +387,13 @@
 	inActivateAllMenu($("a[name='appTab']"));
 	activateMenu($('#appInfo'));
 	
-    $(document).ready(function() {
+	var serverCounter = 1;
+	var databaseCounter = 1;
+
+	$(document).ready(function() {
    		hideLoadingIcon();//To hide the loading icon
-   		
+   		chkForServerCount();
+   		chkForDBCount();
    		checkDownloadInfoForServer();
    		checkDownloadInfoForDatabase();
    		
@@ -450,8 +458,154 @@
 		}
 	}
 	
+	/* function getPilotProject(obj) {
+    	var piltProject = $(obj).val();
+    	pilotProjectData(piltProject);
+    } */
+    
+    function showPilotProjectInfo(obj) {
+ 		var piltProject = $(obj).val();
+ 		if (isBlank(piltProject)) {
+ 			deletePilots();
+ 		} else {
+    <% 			for (ApplicationInfo appInfo : pilotProjects) {
+   	%>
+					if (piltProject == '<%= appInfo.getId()%>') {
+    <% 					pilotServers = appInfo.getSelectedServers();
+						pilotDatabases = appInfo.getSelectedDatabases();	
+						pilotWebservices = appInfo.getSelectedWebservices();
+	%>
+						showPilotSelectedDownloadInfo();
+					}
+	<%
+				}
+    %>
+ 		}
+    }
+    
+	function deletePilots() {
+		<%-- <% if(pilotProjects != null) { %>
+		$('select[name=server]').each(function () {
+	  		var server = $(this).val();
+	   		if(server == '<%=pilotServers.get(0).getArtifactGroupId()%>') {
+			   	var serverId = $(this).attr("id");
+			   	$('#'+serverId).closest('tr').remove();
+			   	chkForServerCount();
+		   }	
+	    });
+		var noOfRows = $('select[name=server]').size();
+		if(noOfRows == 0) {
+			addServer();
+			$('#serverLayerControl').each(function () {
+			document.getElementById("checkAll1").checked=false
+		  	});
+			accordionClose('#serverLayerControl', $('input[value=serverLayer]'));
+		}
+		
+		$('select[name=database]').each(function () {
+	  		var database = $(this).val();
+	   		if(database == '<%=pilotDatabases.get(0).getArtifactGroupId()%>') {
+			   	var databaseId = $(this).attr("id");
+			   	$('#'+databaseId).closest('tr').remove();
+			   	chkForDBCount();
+		   }	
+	    });
+		var noOfDatabase = $('select[name=database]').size();
+		if(noOfDatabase == 0) {
+			addDatabase();
+			$('#databaseLayerControl').each(function () {
+			document.getElementById("checkAll2").checked=false
+		  	});
+			accordionClose('#databaseLayerControl', $('input[value=databaseLayer]'));
+		} 
+	
+		selectDelselectWebService(false);
+		$('#webserviceLayerControl').each(function () {
+			document.getElementById("checkAll3").checked = false;
+       	});
+		accordionClose('#webserviceLayerControl', $('input[value=webserviceLayer]'));
+		$('input[name=webservice]').each(function () {
+	 		var webservice = $(this).val();
+	 			if ($(this).attr("checked") == "checked") {
+	 				$('#webserviceLayerControl').each(function () {
+	 					document.getElementById("checkAll3").checked = true;
+	 		       	});
+	 				accordionOpen('#webserviceLayerControl', $('input[value=webserviceLayer]'));
+	 			}
+       	});
+		<% } %> --%>
+	}	
+    
+    function showPilotSelectedDownloadInfo() {
+   		
+ 	<% 	if (pilotServers != null) {
+			for(ArtifactGroupInfo artifactGrpInfo : pilotServers) {
+				String server = artifactGrpInfo.getArtifactGroupId();
+				List<String> serverVersions = artifactGrpInfo.getArtifactInfoIds();
+	%>			
+				var pilotsrver = '<%= server %>';
+				accordionOpen('#serverLayerControl', $('input[value=serverLayer]'));
+				$('#serverLayerControl').each(function () {
+					document.getElementById("checkAll1").checked=true
+	        	});
+				
+				addServer('<%= server %>', '<%= serverVersions %>', pilotsrver);
+	<%
+		    }
+	    }
+	%>
+	
+	<% 	if (pilotDatabases != null) {
+			for(ArtifactGroupInfo artifactGrpInfo : pilotDatabases) {
+				String database = artifactGrpInfo.getArtifactGroupId();
+				List<String> databaseVersions = artifactGrpInfo.getArtifactInfoIds();
+	%>
+				var pilotDb = '<%= database %>';
+				accordionOpen('#databaseLayerControl', $('input[value=databaseLayer]'));
+				$('#databaseLayerControl').each(function () {
+					document.getElementById("checkAll2").checked=true
+	        	});
+				addDatabase('<%= database%>', '<%=databaseVersions%>', pilotDb);
+	<%
+		    }
+    	}
+	%>
+	<% 
+		if (pilotWebservices != null) {
+	%>	
+			accordionOpen('#webserviceLayerControl', $('input[value=webserviceLayer]'));
+
+			$('#webserviceLayerControl').each(function () {
+				document.getElementById("checkAll3").checked = true;
+	       	});
+			selectDelselectWebService(true);
+	<%
+		}
+	%>
+    }
+    
+    function selectDelselectWebService(checkedStr) {
+    	<% 
+			if (pilotWebservices != null) {
+				for (String webservice : pilotWebservices) {
+		%>
+					$('input[name=webservice]').each(function () {
+				 		var webservice = $(this).val();
+				 		if ('<%= webservice %>' === webservice) {
+				 			$(this).attr("checked", checkedStr);
+				 		}
+			       	});
+		<%
+				}
+			}
+		%>
+		
+    }
+    
     function removeTag(currentTag) {
 		$(currentTag).parent().parent().remove();
+		chkForServerCount();
+    	chkForDBCount();
 	}
     
     function accordionOpen(thisObj, currentChkBoxObj) {
@@ -459,6 +613,13 @@
 		var isChecked = currentChkBoxObj;
 		$(thisObj).removeClass('closereg').addClass('openreg');
 		$(thisObj).next('.mfbox').eq(_tempIndex).slideDown(300,function() {});	
+    } 
+    
+    function accordionClose(thisObj, currentChkBoxObj) {
+    	var _tempIndex = $('.siteaccordion').index(thisObj);
+    	var isChecked = currentChkBoxObj;
+    	$(thisObj).removeClass('openreg').addClass('closereg');
+    	$(thisObj).next('.mfbox').eq(_tempIndex).slideUp(300,function() {});	
     } 
     
     function getScrollBar(){
@@ -507,14 +668,8 @@
 		%>
 	}
 	
-    var serverCounter = 2;
-    <% if(selectedServers != null) {%>
-    		serverCounter = <%= selectedServers.size() %> +<%= selectedServers.size() %>+1;
-	<% } %>
-    function addServer(selectedServer, serverVersions) {
-    	if(serverCounter == undefined) {
-    		serverCounter = 1;
-    	}
+    function addServer(selectedServer, serverVersions, pilotsrver) {
+    	
 		var trId = serverCounter + "_serverdynamicadd";
 		var servrName = serverCounter + "_serverName";
 		var servrVerson = serverCounter + "_serverVersion";
@@ -523,23 +678,29 @@
 		newPropTempRow.html("<td class='noBorder'><select class='input-medium' tempId='"+ serverCounter +"' id='"+ servrName +"'  name='server' onchange='getServerVersions(this);'><option>Select Server</option></select></td>" +
 				"<td class='noBorder'><div class=' multilistVersion-scroller ' id='"+ servrVerson +"'></div>"+
 				"<td class='noBorder'><a ><img class='add imagealign' " + 
-		 			" temp='"+ servrName +"' src='images/icons/add_icon.png' onclick='addServer(this);'></a></td><td class='noBorder'><img class = 'del imagealign'" + 
+		 			" temp='"+ servrName +"' src='images/icons/add_icon.png' onclick='addServer(this);'></a></td><td class='noBorder'><img id='deleteIcon' class = 'del imagealign'" + 
 		 			"src='images/icons/minus_icon.png' onclick='removeTag(this);'></td>")
 	 	newPropTempRow.appendTo("#propTempTbody");		
+		if (pilotsrver != undefined) {
+			var noOfServers = $('select[name=server]').size();
+			var value = $('select[name=server]').val();
+			var trId1 = (serverCounter-1) + "_serverdynamicadd";
+			var selectVal = $('#'+trId1+' :selected').val();
+			if (selectVal == undefined || isBlank(selectVal)) {
+			 $('#'+trId1).closest('tr').remove();
+			}
+			if (value == pilotsrver) {
+				$('#'+trId1).closest('tr').remove();
+			}
+		}
 		serverCounter++;
+		chkForServerCount();
 		getScrollBar();
 		getDownloadInfo('<%= DownloadInfo.Category.SERVER.name() %>', $("select[id='"+ servrName +"']"),'<s:text name='label.select.server'/>', selectedServer, serverVersions, servrName);
 		
     }			
     
-    var databaseCounter = 2;
-    <% if(selectedDatabases != null) {%>
-    		databaseCounter = <%= selectedDatabases.size() %> +<%= selectedDatabases.size() %>+1;
-    <% } %>
-    function addDatabase(selectedDatabase, databaseVersions) {
-    	if(databaseCounter == undefined) {
-    		databaseCounter =1;
-    	}
+    function addDatabase(selectedDatabase, databaseVersions, pilotDb) {
 		var trId = databaseCounter + "_databasedynamicadd";
 		var databaseName = databaseCounter + "_databaseName";
 		var databaseVerson = databaseCounter + "_databaseVersion";
@@ -548,23 +709,48 @@
 		newPropTempRow.html("<td class='noBorder'><select class='input-medium' tempId='"+databaseCounter+"' id='"+ databaseName +"'  name='database' onchange='getDatabaseVersions(this);'><option>Select Database</option></select></td>" +
 				"<td class='noBorder'><div class='multilistVersion-scroller ' id='"+ databaseVerson +"'></div>"+
 				"<td class='noBorder'><a ><img class='add imagealign' " + 
-		 			" temp='"+ databaseName +"' src='images/icons/add_icon.png' onclick='addDatabase(this);'></a></td><td class='noBorder'><img class = 'del imagealign'" + 
+		 			" temp='"+ databaseName +"' src='images/icons/add_icon.png' onclick='addDatabase(this);'></a></td><td class='noBorder'><img id='deleteImgIcon' class = 'del imagealign'" + 
 		 			"src='images/icons/minus_icon.png' onclick='removeTag(this);'></td>")
-	 	newPropTempRow.appendTo("#propTempTbodyDatabase");		
+	 	newPropTempRow.appendTo("#propTempTbodyDatabase");	
+		if (pilotDb != undefined) {
+			var noOfDatabase = $('select[name=database]').size();
+			var trId1 = (databaseCounter-1) + "_databasedynamicadd";
+			var selectVal = $('#'+trId1+' :selected').val();
+			if (selectVal == undefined || isBlank(selectVal)) {
+			 $('#'+trId1).closest('tr').remove();
+			}
+		}
 		databaseCounter++;
+		chkForDBCount();
 		getScrollBar();
 		getDownloadInfo('<%= DownloadInfo.Category.DATABASE.name() %>', $("select[id='"+ databaseName +"']"), '<s:text name='label.select.db'/>', selectedDatabase, databaseVersions, databaseName);
-    }		
+    }
+    
+    function chkForServerCount() {
+    	var noOfRows = $('select[name=server]').size();
+		if(noOfRows > 1){
+			$("#deleteIcon").show();
+		}else{
+			$("#deleteIcon").hide();
+		}
+    }  
+    
+    function chkForDBCount() {
+		var noOfRows = $('select[name=database]').size();
+		if(noOfRows > 1){
+			$("#deleteImgIcon").show();
+		}else{
+			$("#deleteImgIcon").hide();
+		}
+    }
     
     var selectBoxobj;
-    var defaultOption;
     var selectedDb;
     var selectVer;
     function getDownloadInfo(type, toBeFilledCtrlObj, defaultOptTxt, selectedDatabase, databaseVersions, databaseName) {
     	showLoadingIcon();
     	selectedDb = selectedDatabase;
     	selectVer = databaseVersions;
-    	defaultOption = defaultOptTxt;
     	selectBoxobj = toBeFilledCtrlObj;
 		var params = getBasicParams();
 		params = params.concat("&type=");
@@ -577,7 +763,9 @@
 		params = params.concat(selectVer);
 		params = params.concat("&selectBoxId=");
 		params = params.concat(databaseName);
-		loadContent("fetchDownloadInfos", '', '', params, true);
+		params = params.concat("&defaultOptTxt=");
+		params = params.concat(defaultOptTxt);
+		loadContent("fetchDownloadInfos", '', '', params, true, true);
 	}
     
     var map = {};
@@ -585,6 +773,7 @@
     var selectedDataVersion = new Array();
     var selectedDataId;
     var downloadInfoType;
+    var defaultOption;
 	//Success event functions
 	function successEvent(pageUrl, data) {
 		hideLoadingIcon();
@@ -593,6 +782,7 @@
 			
 			selectBoxobj = $('#'+ data.selectBoxId);
 			
+			defaultOption = data.defaultOptTxt;
 			selectBoxobj.empty();
 			selectBoxobj.append($("<option value='' selected disabled></option>").text(defaultOption));
 			

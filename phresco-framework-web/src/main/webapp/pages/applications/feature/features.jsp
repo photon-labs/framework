@@ -34,7 +34,7 @@
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 
 <%
-	List<SelectedFeature> selectFeatures = (List<SelectedFeature>)session.getAttribute(FrameworkConstants.REQ_SELECTED_FEATURES);
+	List<SelectedFeature> features = (List<SelectedFeature>)request.getAttribute(FrameworkConstants.REQ_SELECTED_FEATURES);
 	String oldAppDirName = (String) request.getAttribute(FrameworkConstants.REQ_OLD_APPDIR);
 	String appId = (String) request.getAttribute(FrameworkConstants.REQ_APP_ID);
 	List<ArtifactGroup> selectedFeatures = (List<ArtifactGroup>) request.getAttribute(FrameworkConstants.REQ_PROJECT_FEATURES);
@@ -47,9 +47,11 @@
 	if (projectInfo != null) {
 		ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
 		technologyId = appInfo.getTechInfo().getId();
-		selectedModules = appInfo.getSelectedModules();
-		selectedJSLibs = appInfo.getSelectedJSLibs();
-		selectedComponents = appInfo.getSelectedComponents();
+	}
+	Object optionsObj = session.getAttribute(FrameworkConstants.REQ_OPTION_ID);
+	List<String> optionIds  = null;
+	if (optionsObj != null) {
+		optionIds  = (List<String>) optionsObj;
 	}
 %> 
 <form id="formFeatures" class="featureForm">
@@ -95,55 +97,22 @@
 		<input id="finish" type="button" value="<s:text name="label.finish"/>"  class="btn btn-primary"
 			onclick="updateApplication();"/>
 		<input type="button" id="cancel" value="<s:text name="lbl.btn.cancel"/>" class="btn btn-primary" 
-			onclick="loadContent('applications', $('#formCustomers'), $('#container'));">
+			onclick="loadContent('applications', $('#formCustomers'), $('#container'), '', '', true);">
 	</div>
 	
-	 <!-- Hidden fields --> 
+	<!-- Hidden fields --> 
 	<input type="hidden" name="technologyId" value="<%= technologyId %>">
 	<input type="hidden" name="oldAppDirName" value="<%= oldAppDirName %>">
 </form>
 
 <script type="text/javascript">
 <%	
-	if (CollectionUtils.isNotEmpty(selectFeatures)) {
-		for (SelectedFeature features : selectFeatures) {
+	if (CollectionUtils.isNotEmpty(features)) {
+		for (SelectedFeature feature : features) {
 %>
-			constructFeaturesDiv('<%= features.getDispName() %>', '<%= features.getDispValue() %>', '<%= features.getType() %>', '<%= features.getVersionID() %>', '<%= features.getModuleId() %>');
+			constructFeaturesDiv('<%= feature.getDispName() %>', '<%= feature.getDispValue() %>', '<%= feature.getType() %>', '<%= feature.getVersionID() %>', '<%= feature.getModuleId() %>', true);
 <%		
 	 	}
-	}
-%>
-
-<%	
-	if (CollectionUtils.isNotEmpty(selectedModules)) {
-		for (String string : selectedModules) {
-			SelectedFeature obj = gson.fromJson(string, SelectedFeature.class);
-%>
-			constructFeaturesDiv('<%= obj.getDispName() %>', '<%= obj.getDispValue() %>', '<%= obj.getType() %>', '<%= obj.getVersionID() %>', '<%= obj.getModuleId() %>', true);
-<%		
-		}
-	}
-%>
-
-<%	
-	if (CollectionUtils.isNotEmpty(selectedJSLibs)) {
-		for (String string : selectedJSLibs) {
-		    SelectedFeature obj = gson.fromJson(string, SelectedFeature.class);
-%>
-			constructFeaturesDiv('<%= obj.getDispName() %>', '<%= obj.getDispValue() %>', '<%= obj.getType() %>', '<%= obj.getVersionID() %>', '<%= obj.getModuleId() %>', true);
-<%		
-		}
-	}
-%>
-
-<%	
-	if (CollectionUtils.isNotEmpty(selectedComponents)) {
-		for (String string : selectedComponents) {
-		    SelectedFeature obj = gson.fromJson(string, SelectedFeature.class);
-%>
-			constructFeaturesDiv('<%= obj.getDispName() %>', '<%= obj.getDispValue() %>', '<%= obj.getType() %>', '<%= obj.getVersionID() %>', '<%= obj.getModuleId() %>', true);
-<%		
-		}
 	}
 %>
 
@@ -175,7 +144,7 @@
     //Function for to get the list of features
     function getFeature(selectedType) {
     	var params = getBasicParams() + '&type=' + selectedType;
-	    loadContent("listFeatures", $('#formFeatures'), $('#accordianchange'), params);
+	    loadContent("listFeatures", $('#formFeatures'), $('#accordianchange'), params, '', true);
     }
     
     //Function to add the features to the right tab
@@ -192,9 +161,6 @@
     
     // Function to construct the hidden fields for selected features
     function constructFeaturesDiv(dispName, dispValue, hiddenFieldname, hiddenFieldVersion, moduleId, showConfigImg) {
-		$("div[id='"+ dispName +"']").remove();
-		$("input[class='"+ dispName +"']").remove();
-		
 		var jsonParamObj = {};
 		jsonParamObj.dispName = dispName;
 		jsonParamObj.moduleId = moduleId;
@@ -203,22 +169,31 @@
 		jsonParamObj.type = hiddenFieldname;
 		var jsonParam = JSON.stringify(jsonParamObj);
 		var ctrlClass = removeSpaces(dispName);
-		$("#result").append('<input type="hidden" class="'+ctrlClass+'" name="jsonData">');
-		$("."+ctrlClass).val(jsonParam);
+		$("div[id='"+ ctrlClass +"Div']").remove();
 		if (showConfigImg) {
-			$("#result").append('<div>'+dispName+' - '+dispValue+
-					'<a href="#" id="'+dispName+'" onclick="remove(this);">&nbsp;&times;</a>'+
-					'<a href="#" id="'+dispName+'" onclick="showFeatureConfigPopup(this);"><img src="images/icons/gear.png" title="Configure"/></a></div>');
+			$("#result").append('<div id="'+ctrlClass+'Div">'+dispName+' - '+dispValue+
+					'<a href="#" onclick="remove(this);">&nbsp;&times;</a>'+
+					'<input type="hidden" class="'+ctrlClass+'" name="jsonData">' +
+					<%
+						if (optionIds != null && optionIds.contains(FrameworkConstants.FEATURES_KEY) || optionIds.contains(FrameworkConstants.COMPONENT_CONFIG)) {
+					%>
+						'<a href="#" id="'+dispName+'" onclick="showFeatureConfigPopup(this);">'+ 
+						'<img src="images/icons/gear.png" title="Configure"/></a>' +
+					<% 
+						}
+					%>
+					'</div>');
 		} else {
-			$("#result").append('<div class = "'+dispName+'"id="'+dispName+'">'+dispName+' - '+dispValue+'<a href="#" id="'+dispName+'" onclick="remove(this);">&times;</a></div>');
+			$("#result").append('<div id="'+ctrlClass+'Div">'+dispName+' - '+dispValue+
+					'<a href="#" onclick="remove(this);">&times;</a>'+
+					'<input type="hidden" class="'+ctrlClass+'" name="jsonData"></div>');
 		}
+		$("."+ctrlClass).val(jsonParam);
     }
     
     // Function to remove the final features in right tab  
     function remove(thisObj) {
-    	var id = $(thisObj).attr("id");
-    	$("." + id).remove();
-    	$("." + id).remove();
+    	$(thisObj).closest('div').remove();
     }
     
     // Function to fill the heading of the left tab
@@ -230,14 +205,13 @@
     function updateApplication() {
     	var params = getBasicParams();
     	showProgressBar('<s:text name='progress.txt.update.app'/>');
-    	loadContent('finish', $('#formFeatures'), $('#container'), params, false);
+    	loadContent('finish', $('#formFeatures'), $('#container'), params, false, true);
     }
   	
   	//To show the configuration popup
   	function showFeatureConfigPopup(obj) {
   		var featureName = $(obj).attr("id");
-  		var params = getBasicParams();
-  		params = params.concat("&featureName=");
+  		var params = "&featureName=";
   		params = params.concat(featureName);
   		yesnoPopup('showFeatureConfigPopup', '<s:text name="lbl.configure"/>', 'configureFeature', '<s:text name="lbl.configure"/>', '', params);
   	}

@@ -28,7 +28,7 @@
     
     <package name="login" extends="struts-default,json-default">
     
-    	 <!--  Login Page Action -->
+		<!--  Login Page Action -->
         <action name="login" method="login" class="com.photon.phresco.framework.actions.Login">
             <result name="success">/pages/baselayout.jsp</result>
             <result name="failure">/pages/login.jsp</result>
@@ -66,6 +66,10 @@
 			<result name="logError">/pages/errorReport.jsp</result>
 		</global-results>
 
+    	<action name="fetchLogoImgUrl" method="fetchLogoImgUrl" class="com.photon.phresco.framework.actions.Login">
+			<result type="json"/>
+        </action>
+    	
         <!--  Home Actions -->
         <action name="home" method="view" class="com.photon.phresco.framework.actions.home.Home">
             <result name="home">/pages/home/videoholder.jsp</result>
@@ -138,6 +142,22 @@
             <result type="json"/>
         </action>
         
+        <action name="addSVNProject" method="addSVNProject" class="com.photon.phresco.framework.actions.applications.Applications">
+            <result type="json"/>
+        </action>
+        
+        <action name="addGITProject" method="addGitProject" class="com.photon.phresco.framework.actions.applications.Applications">
+            <result type="json"/>
+        </action>
+        
+        <action name="commitSVNProject" method="commitSVNProject" class="com.photon.phresco.framework.actions.applications.Applications">
+            <result type="json"/>
+        </action>
+        
+        <action name="commitGITProject" method="commitGitProject" class="com.photon.phresco.framework.actions.applications.Applications">
+            <result type="json"/>
+        </action>
+        
         <action name="updateProjectPopup" method="updateProjectPopup" class="com.photon.phresco.framework.actions.applications.Applications">
             <result name="updateApplication">/pages/applications/svn_import.jsp</result>
         </action>
@@ -207,11 +227,7 @@
         </action>
         
         <action name="showFeatureConfigPopup" method="showFeatureConfigPopup" class="com.photon.phresco.framework.actions.applications.Features">
-          	<result name="success">/pages/applications/feature/config_template.jsp</result>
-        </action>
-        
-        <action name="showConfigProperties" method="showConfigProperties" class="com.photon.phresco.framework.actions.applications.Features">
-          	<result name="success">/pages/applications/feature/config_template_prop.jsp</result>
+          	<result name="success">/pages/applications/feature/configuration.jsp</result>
         </action>
         
         <action name="configureFeature" method="configureFeature" class="com.photon.phresco.framework.actions.applications.Features">
@@ -436,6 +452,14 @@
             <result name="addConfiguration">/pages/applications/configuration/add.jsp</result>
         </action>
         
+        <action name="uploadFile" class="com.photon.phresco.framework.actions.applications.Configurations" method="uploadFile">
+            <result type="json" />
+        </action>
+        
+        <action name="removeConfigFile" class="com.photon.phresco.framework.actions.applications.Configurations" method="removeConfigFile">
+            <result type="json" />
+        </action>
+        
         <action name="fetchProjectInfoVersions" method="fetchProjectInfoVersions" class="com.photon.phresco.framework.actions.applications.Configurations">
            <result type="json" />
         </action>
@@ -553,9 +577,9 @@
         	<result name="success">/pages/applications/configuration/features.jsp</result>
         </action>
         
-		<!-- <action name="connectionAliveCheck" method="connectionAliveCheck" class="com.photon.phresco.framework.actions.applications.Configurations">
+		<action name="connectionAliveCheck" method="connectionAliveCheck" class="com.photon.phresco.framework.actions.applications.Configurations">
         	<result type="json"><param name="root">connectionAlive</param></result>
-        </action> -->
+        </action>
         
         <action name="download" method="list" class="com.photon.phresco.framework.actions.applications.Download">
             <result name="download">/pages/applications/download.jsp</result>

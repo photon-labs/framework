@@ -196,8 +196,9 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
                         
                         addValueDependToWatcher(watcherMap, parameterKey, values);
                         if (CollectionUtils.isNotEmpty(values)) {
-                            addWatcher(watcherMap, parameter.getDependency(), parameterKey, values.get(0).getValue());
+                            addWatcher(watcherMap, parameter.getDependency(), parameterKey, values.get(0).getKey());
                         }
+                        
                         if (StringUtils.isNotEmpty(paramBuilder.toString())) {
                             paramBuilder.append("&");
                         }
@@ -237,21 +238,20 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 	}
 
     private void addWatcher(Map<String, DependantParameters> watcherMap, String dependency, String parameterKey, String parameterValue) {
-    	
         if (StringUtils.isNotEmpty(dependency)) {
             List<String> dependencyKeys = Arrays.asList(dependency.split(CSV_PATTERN));
             for (String dependentKey : dependencyKeys) {
-                DependantParameters dependantParameters;
+            	DependantParameters dependantParameters;
                 if (watcherMap.containsKey(dependentKey)) {
                     dependantParameters = (DependantParameters) watcherMap.get(dependentKey);
                 } else {
                     dependantParameters = new DependantParameters();
                 }
                 dependantParameters.getParentMap().put(parameterKey, parameterValue);
-                addParentToWatcher(watcherMap, parameterKey, parameterValue);
                 watcherMap.put(dependentKey, dependantParameters);
             }
         }
+        addParentToWatcher(watcherMap, parameterKey, parameterValue);
     }
     
     private void addParentToWatcher(Map<String, DependantParameters> watcherMap, String parameterKey, String parameterValue) {
@@ -277,7 +277,7 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
         if (StringUtils.isNotEmpty(getReqParameter(BUILD_NUMBER))) {
         	paramMap.put(DynamicParameter.KEY_BUILD_NO, getReqParameter(BUILD_NUMBER));
         }
-
+        
         return paramMap;
     }
     
@@ -406,13 +406,17 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 	        if (CollectionUtils.isNotEmpty(parameters)) {
 	            for (Parameter parameter : parameters) {
 	                if (Boolean.parseBoolean(parameter.getMultiple())) {
-	                    String[] parameterValues = getReqParameterValues(parameter.getKey());
-	                    for (String parameterValue : parameterValues) {
-	                        csParamVal.append(sep);
-	                        csParamVal.append(parameterValue);
-	                        sep = ",";
-	                    }
-	                    parameter.setValue(csParamVal.toString());
+	                	if (getReqParameterValues(parameter.getKey()) == null) {
+	                		parameter.setValue("");
+	                	} else {
+	                		String[] parameterValues = getReqParameterValues(parameter.getKey());
+		                    for (String parameterValue : parameterValues) {
+		                        csParamVal.append(sep);
+		                        csParamVal.append(parameterValue);
+		                        sep = ",";
+		                    }
+		                    parameter.setValue(csParamVal.toString());
+	                	}
 	                } else if (TYPE_BOOLEAN.equalsIgnoreCase(parameter.getType())) {
 	                    if (getReqParameter(parameter.getKey()) != null) {
 	                        parameter.setValue(getReqParameter(parameter.getKey()));
@@ -469,7 +473,6 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
         
         Map<String, DependantParameters> watcherMap = (Map<String, DependantParameters>) 
                 getSessionAttribute(getAppId() + getGoal() + SESSION_WATCHER_MAP);
-        
         DependantParameters currentParameters = watcherMap.get(getCurrentParamKey());
         if (currentParameters == null) {
             currentParameters = new DependantParameters();
@@ -489,7 +492,6 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
             ApplicationInfo applicationInfo = getApplicationInfo();
             MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(getGoal())));
             Map<String, DependantParameters> watcherMap = (Map<String, DependantParameters>) getSessionAttribute(getAppId() + getGoal() + SESSION_WATCHER_MAP);
-
             if (StringUtils.isNotEmpty(getDependency())) {
                 // Get the values from the dynamic parameter class
                 Parameter dependentParameter = mojo.getParameter(getGoal(), getDependency());
@@ -503,7 +505,9 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
                     	FrameworkUtil frameworkUtil = new FrameworkUtil();
                     	ParameterModel parameterModel = new ParameterModel();
                     	parameterModel.setName(dependentParameter.getKey());
-                    	StringTemplate constructDynamicTemplate = frameworkUtil.constructDynamicTemplate(getCustomerId(), dependentParameter, parameterModel, dynamicPageParameter, className);
+                    	parameterModel.setShow(true);
+                    	StringTemplate constructDynamicTemplate = frameworkUtil.constructDynamicTemplate(getCustomerId(), dependentParameter, 
+                    			parameterModel, dynamicPageParameter, className);
                     	setDynamicPageParameterDesign(constructDynamicTemplate.toString());
                     } else {
 	                    List<Value> dependentPossibleValues = getDynamicPossibleValues(constructMapForDynVals, dependentParameter);
@@ -512,7 +516,14 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 	                        DependantParameters dependantParameters = (DependantParameters) watcherMap.get(getDependency());
 	                        dependantParameters.setValue(dependentPossibleValues.get(0).getValue());
 	                    }
-                    }    
+	                    if (watcherMap.containsKey(dependentPossibleValues.get(0).getDependency())) {
+	                        addValueDependToWatcher(watcherMap, dependentParameter.getKey(), dependentPossibleValues);
+	                        if (CollectionUtils.isNotEmpty(dependentPossibleValues)) {
+	                        	addWatcher(watcherMap, dependentParameter.getDependency(), 
+	                        			dependentParameter.getKey(), dependentPossibleValues.get(0).getValue());
+	                        }
+	                    }
+                    }   
                 }
             }
             return SUCCESS;

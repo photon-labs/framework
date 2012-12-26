@@ -68,7 +68,7 @@
 		<input type="button" class="btn btn-primary" name="configAdd" id="configAdd" value="<s:text name='lbl.btn.add'/>" <%=disabledStr %>/>
 
 		<!-- Delete Configuration Button -->	
-		<input type="button" class="btn" id="deleteBtn" disabled value="<s:text name='lbl.delete'/>" data-toggle="modal" href="#popupPage"/>
+		<input type="button" class="btn" name="deleteBtn" id="deleteBtn" disabled value="<s:text name='lbl.delete'/>" data-toggle="modal" href="#popupPage"/>
 
 		<!-- Environment Buttton -->
 	    <a id="addEnvironments" class="btn btn-primary"><s:text name='lbl.app.config.environments'/></a>
@@ -79,7 +79,7 @@
 			</div>
 		</s:if>
 		<s:if test="hasActionErrors()">
-			<div class="alert alert-error"  id="errormsg">
+			<div class="alert alert-error alert-message"  id="errormsg">
 				<s:actionerror />
 			</div>
 		</s:if>
@@ -90,15 +90,16 @@
 <div id="loadEnv"> </div>
 
 <script type="text/javascript">
-		$('#addEnvironments').click(function() {
-			yesnoPopup('openEnvironmentPopup', '<s:text name="lbl.environment"/>', 'createEnvironment', '<s:text name="label.ok"/>', '', 'fromPage=<%=fromPage%>&configPath=<%=configPath%>');
-		});
+	$('#addEnvironments').click(function() {
+		yesnoPopup('openEnvironmentPopup', '<s:text name="lbl.environment"/>', 'createEnvironment', '<s:text name="label.ok"/>', '', 'fromPage=<%=fromPage%>&configPath=<%=configPath%>');
+	});
 	
 	confirmDialog($("#deleteBtn"), '<s:text name="lbl.hdr.confirm.dialog"/>', '<s:text name="modal.body.text.del.configuration"/>', 'delete','<s:text name="lbl.btn.ok"/>');
 	
 	$(document).ready(function() {
 		hideLoadingIcon();//To hide the loading icon
 		hideProgressBar();
+		$('#customerList').show();
 		var basicParams = getBasicParamsAsJson();
 		var fromPage = "<%= fromPage%>";
 		var configPath = "<%= configPath%>";
@@ -108,7 +109,7 @@
     	//Trigerred when add btn is clicked
     	$('#configAdd').click(function() {
     		showLoadingIcon();
-    		loadContent('addConfiguration', $('#formCustomers, #formAppMenu'), $('#container'), 'fromPage=add<%=fromPage%>&configPath=<%=configPath%>');
+    		loadContent('addConfiguration', $('#formCustomers, #formAppMenu'), $('#container'), 'fromPage=add<%=fromPage%>&configPath=<%=configPath%>', '', true);
     	});
 	});
 	
@@ -127,7 +128,7 @@
 			params = params.concat("&configPath=");
 			params = params.concat(configPath);
 			showLoadingIcon();
-			loadContent("editConfiguration", $("#formConfigAdd"), $('#container'), params);
+			loadContent("editConfiguration", $("#formConfigAdd"), $('#container'), params, '', true);
 	}
 	 
 	 function cloneConfiguration(configName, envName, configType, currentConfigDesc) {
@@ -149,35 +150,24 @@
 	        yesnoPopup('cloneConfigPopup', 'Clone Environment', 'cloneConfiguration', '<s:text name="lbl.clone"/>', '', params);
 	}
 	 
-	function isConnectionAlive(url, id) {
-	       $.ajax({
-	       	url : 'connectionAliveCheck',
-	       	data : {
-	       		'url' : url,
-	       	},
-	       	type : "get",
-	       	datatype : "json",
-	       	success : function(data) {
-	       		if($.trim(data) == 'true') {
-	       			$('#isAlive' + id).attr("src","images/icons/status-up.png");
-	       			$('#isAlive' + id).attr("title","Alive");
-	       		}
-				if($.trim(data) == 'false') {
-					$('#isAlive' + id).attr("src","images/icons/status-down.png");
-					$('#isAlive' + id).attr("title","Down");
-	       		}
-	       	}
-	       });
-	}
-	 
 	function popupOnOk(self) {
 		var url = $(self).attr('id');
+		var returnVal = true;
 		if(url == "cloneConfiguration"){
-			var EnvSelection = $("#created").size();
-			if (EnvSelection == 0 ) {
-				$("#errMsg").html("Please add atleast one Environment");
+			var EnvSelection = $("#configEnv").val();
+			if (EnvSelection == null ) {
+				$("#errMsg").html("<s:text name='popup.err.msg.add.env'/>");
+				returnVal = false;
 			}
-			 else {
+			var cloneConfigName = $('#configurationName').val();
+			if(cloneConfigName== "") {
+				$("#errMsg").html("<s:text name='popup.err.msg.empty.config.name'/>");
+				$("#configurationName").focus();
+				$("#configurationName").val("");
+				returnVal = false;
+			}
+			
+			if(returnVal) {
 				var params = getBasicParams();
 				var fromPage = "<%= fromPage%>";
 				var configPath = "<%= configPath%>";
@@ -204,7 +194,7 @@
 				params = params.concat("&currentEnvName=");
 				params = params.concat(currentEnvName);
 				$("#popupPage").modal('hide');//To hide popup
-				loadContent("cloneConfiguration", $("#formClonePopup"), $('#loadEnv'), params);
+				loadContent("cloneConfiguration", $("#formClonePopup"), $('#loadEnv'), params, '', true);
 			 }
 		} else {
 			var envs = [];

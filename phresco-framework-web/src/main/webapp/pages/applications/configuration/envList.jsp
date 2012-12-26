@@ -27,9 +27,11 @@
 <%@ page import="java.util.HashMap"%>
 <%@ page import="java.util.Iterator"%>
 <%@ page import="java.util.Map"%>
+<%@ page import="java.util.Properties"%>
 <%@ page import="java.util.Iterator"%>
 <%@ page import="java.util.regex.*"%>
 
+<%@ page import="org.apache.commons.lang.StringUtils" %>
 <%@ page import="org.apache.commons.collections.CollectionUtils"%>
 
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
@@ -53,22 +55,18 @@
 
     <% if (CollectionUtils.isEmpty(envs)) { %>
 		 <div class="alert alert-block">
-		 	 <img id="config_warning_icon" src="images/icons/warning_icon.png" />
+			<img id="config_warning_icon" src="images/icons/warning_icon.png" />
 			<%= actionSupport.getText("lbl.err.msg.list." + fromPage)%>
 		</div> 
     <% } else { %>
     	<div class="table_div" >
     		<s:if test="hasActionMessages()">
-			<div class="alert alert-success alert-message" id="envSuccessmsg">
-				<s:actionmessage />
-			</div>
-			</s:if>
-			<s:if test="hasActionErrors()">
-				<div class="alert alert-error"  id="errormsg">
-					<s:actionerror />
+				<div class="alert alert-success alert-message" id="envSuccessmsg">
+					<s:actionmessage />
 				</div>
 			</s:if>
-		<% for (Environment env : envs) { 
+		<% 
+			for (Environment env : envs) { 
 			String envJson = gson.toJson(env);
 		%>
 			<div class="theme_accordion_container">
@@ -139,8 +137,25 @@
 																	<%= configuration.getType() %>
 																</td>
 																<td class="no-left-bottom-border table-pad">
-																	<a href="#" ><img id="<%= configuration.getName()  %>" class="projectUpdate" 
-																		src="images/icons/inprogress.png" title="Update" class="iconSizeinList"/></a>
+																	<% 
+																		Properties Properties = configuration.getProperties();
+													    				String host = "";
+													    				String port = "";
+													    				String protocol = "";
+													    				host = Properties.getProperty("host");
+												    					port = Properties.getProperty("port");
+												    					protocol = Properties.getProperty("protocol");
+												    					if(StringUtils.isEmpty(protocol)){
+												    						protocol = "http";
+												    					}
+													    				String configName = configuration.getName() + configuration.getType() + configuration.getEnvName();
+													    				Pattern pattern = Pattern.compile("\\s+");
+													    				Matcher matcher = pattern.matcher(configName);
+													    				boolean check = matcher.find();
+													    				String configNameForId = matcher.replaceAll("");
+													    				urls.put(configNameForId, protocol +","+ host + "," + port);
+																	%> 
+																		<img src="images/icons/inprogress.png" alt="status-up" title="Loading" id="isAlive<%= configNameForId %>">
 																</td>
 																<td class="no-left-bottom-border table-pad">
 																	<a href="#" title="<%= configuration.getName() %>" id="cloneEnvId" onclick="cloneConfiguration(
@@ -179,9 +194,53 @@
 	        $("#configAdd").addClass("btn-disabled");
 		<% } else { %>
 		  	$("input[name=configAdd]").removeAttr("disabled");
-		  	$("#configAdd").addClass("btn-primary"); 
+		  	$("#configAdd").addClass("btn-primary");
 			$("#configAdd").removeClass("btn-disabled");
 		<% } %>
+		
+		if ($('.table_div').find("input[type='checkbox']:checked").length < 1) {
+			$("input[name=deleteBtn]").attr("disabled", "disabled");
+			$("#deleteBtn").removeClass("btn-primary"); 
+	        $("#deleteBtn").addClass("btn-disabled");
+		} else {
+			$("input[name=deleteBtn]").removeAttr("disabled");
+			$("#deleteBtn").addClass("btn-primary");
+			$("#deleteBtn").removeClass("btn-disabled");
+		}
+		
+		<% 
+			if(urls != null) {
+	    	Iterator iterator = urls.keySet().iterator();  
+				while (iterator.hasNext()) {
+				String id = iterator.next().toString();  
+				String url = urls.get(id).toString();
+	 	%>
+				isConnectionAlive('<%= url%>', '<%= id%>');
+		<%
+		    	}
+			}
+		%>
 	});
 
+	function isConnectionAlive(url, id) {
+	    $.ajax({
+	    	url : 'connectionAliveCheck',
+	    	data : {
+	    		'url' : url,
+	    	},
+	    	type : "get",
+	    	datatype : "json",
+	    	success : function(data) {
+	    		if($.trim(data) == 'true') {
+	    			$('#isAlive' + id).attr("src","images/icons/status-up.png");
+	    			$('#isAlive' + id).attr("title","Alive");
+	    		}
+				if($.trim(data) == 'false') {
+					$('#isAlive' + id).attr("src","images/icons/status-down.png");
+					$('#isAlive' + id).attr("title","Down");
+				}
+			}
+		});
+	}
+	
 </script>

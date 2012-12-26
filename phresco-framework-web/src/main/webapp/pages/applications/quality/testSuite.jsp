@@ -181,7 +181,7 @@
 												<textarea class="hideContent" name="<%= testCase.getName().replace("\\", "") %>_Desc">
 													<%= testCase.getTestCaseFailure().getDescription()%>
 												</textarea>
-												<a class="testCaseFailOrErr" name="<%= testCase.getName() %>" href="#"><img src="images/icons/log.png" alt="logo"> </a>
+												<a class="testCaseFailOrErr" onClick="showLogMsg('<%= testCase.getName() %>');" name="<%= testCase.getName() %>" href="#"><img src="images/icons/log.png" alt="logo"> </a>
 											<% } else if (error != null) { %>
 												<textarea class="hideContent" name="<%= testCase.getName().replace("\\", "") %>_Type">
 													<%= testCase.getTestCaseError().getErrorType()%>
@@ -237,7 +237,7 @@
 	</div>
 	<div class="modal-footer">
 		<div class="action abt_action">
-			<input type="button" class="btn primary" value="<s:text name="lbl.close"/>" id="closeDialog">
+			<input type="button" class="btn primary" value="<s:text name="label.close"/>" id="closeDialog">
 		</div>
 	</div>
 </div>

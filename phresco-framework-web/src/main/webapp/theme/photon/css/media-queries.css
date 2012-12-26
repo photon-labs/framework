@@ -491,7 +491,9 @@ Width <= 1024
 	.configList,.build_form,#subTabcontent,.ciFormJob,.reportList {
 		width: 98.5%;
 	}
-
+	.graph_div {
+		zoom: 0.37;
+	}
 }
 
 /***********************************************************************************
@@ -1952,6 +1954,9 @@ Width <= 1280 and height <= 800
 		width: 99%;
 	}
 
+	.graph_div {
+		width: 42% !important;
+	}
 }
 
 /************************************************************************************
@@ -2352,7 +2357,10 @@ Width >= 1280 and height >= 800
 		width: 99%;
 	}
 
-	 
+	 .graph_div {
+		zoom: 0.6;
+		width: 32% !important;
+	}
 }
 
 /************************************************************************************
@@ -3195,7 +3203,10 @@ Width > 1360 and <= 1440
 	.configList,.build_form,#subTabcontent,.ciFormJob,.reportList {
 		width: 99%;
 	}
-
+	.graph_div {
+		zoom: 1;
+		width: 38% !important;
+	}
 }
 
 
@@ -3587,4 +3598,8 @@ Width > 1441 and <= 1600
 		width: 99%;
 	}
 
+	.graph_div {
+		zoom: 1;
+		width: 38% !important;
+	}
 }

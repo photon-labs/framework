@@ -113,9 +113,9 @@ function clickButton(button, tag) {
 }
 
 function loadContent(pageUrl, form, tag, additionalParams, callSuccessEvent, ajaxCallType, callbackFunction) {
-	if (ajaxCallType == undefined || ajaxCallType == "") {
+	/*if (ajaxCallType == undefined || ajaxCallType == "") {
 		ajaxCallType = true;
-	}
+	}*/
 	
 	var params = getParameters(form, additionalParams);
 	$.ajax({
@@ -201,15 +201,16 @@ function validateDynamicParam(successUrl, title, okUrl, okLabel, form, goal, nee
 
 function yesnoPopup(url, title, okUrl, okLabel, form, additionalParam) {
 	$('#popupPage').modal('show');//To show the popup
-	
+	showPopuploadingIcon();
 	$('.popupClose').hide();
 	$('#popupTitle').html(title); // Title for the popup
 	$('.popupClose').hide(); //no need close button since yesno popup
 	$('.popupOk, #popupCancel').show(); // show ok & cancel button
+	enableButton($(".popupOk")); // enable button
 
 	$(".popupOk").attr('id', okUrl); // popup action mapped to id
 	if (okLabel !== undefined && !isBlank(okLabel)) {
-		$('#' + okUrl).html(okLabel); // label for the ok button
+		$('#' + okUrl).val(okLabel); // label for the ok button
 	}
 	
 	var data = getBasicParams(); //customerid, projectid, appid
@@ -227,6 +228,7 @@ function yesnoPopup(url, title, okUrl, okLabel, form, additionalParam) {
 	
 	$("#errMsg").empty();
 	$('#popup_div').empty();
+	$('#popup_div').css("height", "300px");
 	$('#popup_div').load(url, data); //url to render the body content for the popup
 }
 
@@ -247,7 +249,7 @@ function additionalPopup(url, title, okUrl, okLabel, form, additionalParam, show
 	} 
 	
 	if (okLabel !== undefined && !isBlank(okLabel)) {
-		$('#' + okUrl).html(okLabel); // label for the ok button
+		$('#' + okUrl).val(okLabel); // label for the ok button
 	}
 	
 	var data = getBasicParams(); //customerid, projectid, appid
@@ -271,7 +273,7 @@ function additionalPopup(url, title, okUrl, okLabel, form, additionalParam, show
 function add_popupCancel() {
 	setTimeout(function () {
 		$('#popupPage').modal('show');
-	 }, 600);	
+	}, 600);	
 }
 
 function validateJson(url, form, containerTag, jsonParam, progressText, disabledDiv) {
@@ -469,7 +471,7 @@ function hideErrorInAccordion(tag, headingObj, span) {
 
 function setTimeOut() {
 	setTimeout(function() {
-		$('#successmsg').fadeOut("slow", function () {
+		$('#successmsg, #envSuccessmsg').fadeOut("slow", function () {
 			$('#successmsg').hide();
 		});
 	}, 2000);
@@ -548,6 +550,7 @@ function hideLoadingIcon() {
 function showPopuploadingIcon() {
 	$("#errMsg").empty(); // remove error message while displaying loading icon
     $(".popuploadingIcon").show();
+    $(".popuploadingIcon").css("float", "left");
 	$(".popuploadingIcon").attr("src", getLoadingImgPath("popup"));
 }
 
@@ -577,6 +580,11 @@ function allowAlpha(state) {
 	return state.replace(/[^a-zA-Z]+/g, '');
 }
 
+//It allows A-Z, a-z, 0-9, - , _ , ., /, \, :
+function checkForSplChrForString(inputStr) {
+	return inputStr.replace(/[^a-zA-Z 0-9\.\-\_\/\:\\]+/g, '');
+}
+
 //It allows A-Z, a-z, 0-9, - , _ and .
 function checkForSplChrExceptDot(inputStr) {
 	return inputStr.replace(/[^a-zA-Z 0-9\.\-\_]+/g, '');
@@ -587,9 +595,9 @@ function allowAlphaNum(inputStr) {
 	return inputStr.replace(/[^a-zA-Z 0-9]+/g, '');
 }
 
-//It allows 0-9,- and +
-function allowNumHyphenPlus(numbr) {
-	return numbr.replace(/[^0-9\-\+]+/g, '');
+//It allows 0-9,- 
+function allowNumHyphen(numbr) {
+	return numbr.replace(/[^0-9\-]+/g, '');
 }
 
 //It removes all empty spaces
@@ -603,7 +611,7 @@ function applyTheme() {
 		changeTheme(theme);
 		showWelcomeImage(theme);
 	} else {
-		theme = "theme/red_blue/css/photon_theme.css";
+		theme = "theme/photon/css/photon_theme.css";
 		changeTheme(theme);
 		showWelcomeImage(theme);
 	}
@@ -789,12 +797,13 @@ function fillOptions(obj, value, text, selectTxt) {
 
 function confirmDialog(obj, title, bodyText, okUrl, okLabel) {
 	obj.click(function() {
-//		disableScreen();
+		$("#errMsg").empty();
 		$('#popupTitle').html(title); // Title for the popup
 		$('.popupClose').hide();
 		
 		$(".popupOk").attr('id', okUrl);
 	
+		$('#popup_div').css("height", "50px");
 		$('#popup_div').html(bodyText);
 		
 		if (okLabel !== undefined && !isBlank(okLabel)) {
@@ -837,15 +846,32 @@ function constructSingleSelectOptions(dependentValues, pushToElement) {
 	var control = $('#'+ pushToElement + ' option:selected');
 	var selected = control.val();
 	var additionalParam = control.attr('additionalParam'); 
+	var editbleComboClass = $('#'+ pushToElement + ' option').attr('class');
 	$("#" + pushToElement).empty();
 	var selectedStr = "";
+	var dynamicFirstValue = dependentValues[0].value;
+	var isEditableCombo = false;
+	if (editbleComboClass == "jecEditableOption") {//convert to editable combobox
+		var optionElement = "<option class='jecEditableOption'>Type or Select from list</option>";
+		$("#" + pushToElement).append(optionElement);
+		isEditableCombo = true;
+	}
 	for(i in dependentValues) {
 		if(dependentValues[i].value == selected) {
 			selectedStr = "selected";
 		} else {
 			selectedStr = "";
 		}
-		$("<option></option>", {value: dependentValues[i].value, text: dependentValues[i].value, additionalParam: additionalParam}).appendTo("#" + pushToElement);
+		if (dependentValues[i].dependency != undefined && !isBlank(dependentValues[i].dependency)) {
+			var dynamicDependency = "dependency=" + dependentValues[i].dependency;
+			$("<option></option>", {value: dependentValues[i].value, text: dependentValues[i].value, additionalParam: dynamicDependency}).appendTo("#" + pushToElement);	
+		} else {
+			$("<option></option>", {value: dependentValues[i].value, text: dependentValues[i].value, additionalParam: additionalParam}).appendTo("#" + pushToElement);			
+		}
+	}
+	
+	if (isEditableCombo) {// execute only for jec combo box
+		$('#'+ pushToElement + ' option[value="'+ dynamicFirstValue +'"]').prop("selected","selected");//To preselect select first value
 	}
 }
 
@@ -1221,12 +1247,14 @@ function showSelectedDBWithVersions() {
 function hideControl(controls) {
 	for (i in controls) {
 		$('#' + controls[i] + 'Control').hide();
+		$('.' + controls[i] + 'PerformanceDivClass').hide();
 	}
 }
 
 function showControl(controls) {
 	for (i in controls) {
 		$('#' + controls[i] + 'Control').show();
+		$('.' + controls[i] + 'PerformanceDivClass').show();//for performance context urls
 	}
 }
 

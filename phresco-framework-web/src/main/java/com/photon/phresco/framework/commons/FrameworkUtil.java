@@ -1069,8 +1069,13 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     		} 
     		
     		StringTemplate dynamicTemplateDiv = new StringTemplate(getDynamicTemplateWholeDiv());
-    		dynamicTemplateDiv.setAttribute("templateClass", parameterModel.getName() + "DivClass");
-    		dynamicTemplateDiv.setAttribute("templateId", parameterModel.getName() + "DivId");
+    		if (parameterModel.isShow()) {
+    			dynamicTemplateDiv.setAttribute("templateClass", parameterModel.getName() + "PerformanceDivClass");
+    		} else {
+    			dynamicTemplateDiv.setAttribute("templateClass", parameterModel.getName() + "PerformanceDivClass  hideContent");
+    		}
+    		
+    		//dynamicTemplateDiv.setAttribute("templateId", parameterModel.getName() + "DivId");
     		StringTemplate stringTemplate = new StringTemplate(sb.toString());
     		dynamicTemplateDiv.setAttribute("className", className);
     		if (CollectionUtils.isNotEmpty(obj)) {

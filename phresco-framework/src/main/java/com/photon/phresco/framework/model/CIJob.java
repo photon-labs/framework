@@ -95,6 +95,7 @@ public class CIJob {
     private String minify = "";
     private String configuration = "";
     private String keyPassword = "";
+    private String packMinifiedFiles = "";
     
     // deploy job info
     private String deviceType = "";
@@ -111,6 +112,7 @@ public class CIJob {
     private String executeSql = "";
     private String dataBase = "";
     private String fetchSql = "";
+    private String triggerSimulator = "false";
     
     public CIJob() {
         super();
@@ -659,5 +661,21 @@ public class CIJob {
 
 	public void setConfiguration(String configuration) {
 		this.configuration = configuration;
+	}
+
+	public String getTriggerSimulator() {
+		return triggerSimulator;
+	}
+
+	public void setTriggerSimulator(String triggerSimulator) {
+		this.triggerSimulator = triggerSimulator;
+	}
+	
+	public void setPackMinifiedFiles(String packMinifiedFiles) {
+		this.packMinifiedFiles = packMinifiedFiles;
+	}
+
+	public String getPackMinifiedFiles() {
+		return packMinifiedFiles;
 	}
 }

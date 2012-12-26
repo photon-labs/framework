@@ -83,11 +83,11 @@
     <div class="operation build">
     	<div class="build_delete_btn_div">
 		    <a id="generateBuild" class="btn btn-primary" additionalParam="from=generateBuild"><s:text name='label.generatebuild'/></a>
-			<input id="deleteButton" type="button" value="<s:text name="label.delete"/>" class="btn" disabled="disabled"/>
+			<input id="deleteButton" type="button" value="<s:text name="label.delete"/>" class="btn" disabled="disabled" data-toggle="modal" href="#popupPage"/>
 			<%
 				if (optionIds != null && optionIds.contains(FrameworkConstants.MINIFICATION_KEY)) {
 			%>
-			<input id="minifyButton" type="button" value="<s:text name="lbl.minifier"/>" class="btn btn-primary"/>
+				<input id="minifyButton" type="button" value="<s:text name="lbl.minifier"/>" class="btn btn-primary"/>
 			<%
 				}
 			%>
@@ -150,6 +150,9 @@
 	}
 	
     $(document).ready(function() {
+    	hideProgressBar();
+    	confirmDialog($("#deleteButton"), '<s:text name="lbl.hdr.confirm.dialog"/>', '<s:text name="modal.body.text.del.builds"/>', 'deleteBuild','<s:text name="lbl.btn.ok"/>');
+    	
     	$('#generateBuild').click(function() {
     		validateDynamicParam('generateBuild', '<s:text name="label.generatebuild"/>', 'build','<s:text name="lbl.build"/>', '', '<%= Constants.PHASE_PACKAGE %>');
     	});
@@ -178,11 +181,11 @@
             $('.build_form').submit();
         });
         
-        $('#deleteButton').click(function() {
+        /* $('#deleteButton').click(function() {
 			$("#confirmationText").html("Do you want to delete the selected build(s)");
 		    dialog('block');
 		    escBlockPopup();
-        });
+        }); */
         
         $('form').submit(function() {
 			showProgessBar("Deleting Build (s)", 100);
@@ -223,7 +226,7 @@
     function copyToClipboard(data) {
         var params = "copyToClipboard=";
         params = params.concat(data);
-        loadContent('copyToClipboard', '', '', params, '', '', '');
+        loadContent('copyToClipboard', '', '', params, '', true, '');
 	}
     
     // When  server is  running disable run against source button
@@ -304,6 +307,12 @@
 				$('#popupPage').modal('hide');
 				progressPopupAsSecPopup('minification', '<%= appId %>', 'minify', $("#minificationForm"), getBasicParams());
 			}	
+		} else if(okUrl === "deleteBuild") {
+			$("#popupPage").modal('hide');
+			// show popup loading icon
+ 			showProgressBar('<s:text name="progress.txt.delete.build"/>');
+			var params = getBasicParams();
+			loadContent("deleteBuild", $('#deleteObjects'), $("#subcontainer"), params, '', true);
 		}
 	}
 	

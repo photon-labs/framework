@@ -30,7 +30,18 @@
 <%
 	List<String> featureNames = (List<String>)request.getAttribute(FrameworkConstants.REQ_FEATURE_NAMES);
 	String selectedType = (String) request.getAttribute(FrameworkConstants.REQ_SELECTED_TYPE);
-	if (CollectionUtils.isNotEmpty(featureNames)) {
+	if (CollectionUtils.isEmpty(featureNames)) {
+%>
+		<div class="control-group" id="nameErrDiv">
+		    <label class="control-label labelbold"><s:text name="lbl.cust.feature"/></label>
+		    <div class="controls">
+				<select id="featureName" name="featureName" class="input-xlarge">
+					<option value="">No Features Available</option>
+				</select>	        
+		    </div>
+		</div>
+<%
+	} else {
 %>
 		<div class="control-group" id="nameErrDiv">
 		    <label class="control-label labelbold"><s:text name="lbl.cust.feature"/></label>
@@ -53,7 +64,12 @@
 
 <script type="text/javascript">
 	$(document).ready(function() {
-		getProperties();
+		var featureName = $('#featureName').val();
+		if (featureName != undefined && !isBlank(featureName)) {
+			getProperties();
+		} else {
+			hideLoadingIcon();
+		}
 	});
 	
 	function getProperties() {
@@ -61,7 +77,7 @@
   		var params = getBasicParams();
   		params = params.concat("&selectedType=");
   		params = params.concat(selectedType);
-    	loadContent('showConfigProperties', $('#formConfigAdd'), '', params, true);
+    	loadContent('showFeatureConfigPopup', $('#formConfigAdd'), '', params, true, true);
 	}
 
 	function successEvent(pageUrl, data) {

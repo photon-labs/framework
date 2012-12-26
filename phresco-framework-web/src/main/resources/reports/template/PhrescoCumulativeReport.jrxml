@@ -1,21 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PhrescoXmlReport" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PhrescoXmlReport" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.100000000000001"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
-	<style name="Title" forecolor="#FFFFFF" fontName="Times New Roman" fontSize="50" isBold="false" pdfFontName="Times-Bold"/>
-	<style name="SubTitle" forecolor="#CCCCCC" fontName="Times New Roman" fontSize="18" isBold="false" pdfFontName="Times-Roman"/>
-	<style name="Column header" forecolor="#666666" fontName="Times New Roman" fontSize="14" isBold="true" pdfFontName="Times-Roman"/>
-	<style name="Detail" mode="Transparent" fontName="Times New Roman" pdfFontName="Times-Roman"/>
-	<style name="Row" mode="Transparent" fontName="Times New Roman" pdfFontName="Times-Roman">
-		<conditionalStyle>
-			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
-			<style mode="Opaque" backcolor="#F0EFEF"/>
-		</conditionalStyle>
-	</style>
-	<parameter name="projectCode" class="java.lang.String" isForPrompting="false"/>
+	<property name="ireport.y" value="45"/>
+	<parameter name="projectCode" class="java.lang.String"/>
 	<parameter name="reportsDataType" class="java.lang.String"/>
-	<parameter name="performanceSpecialHandle" class="java.lang.Boolean"/>
+	<parameter name="performanceSpecialHandle" class="java.lang.String"/>
 	<parameter name="unitTestReports" class="java.util.Collection">
 		<defaultValueExpression><![CDATA[!$P{unitTestReports}.isEmpty()]]></defaultValueExpression>
 	</parameter>
@@ -27,177 +17,163 @@
 	<parameter name="projectName" class="java.lang.String"/>
 	<parameter name="techName" class="java.lang.String"/>
 	<parameter name="sonarReport" class="java.util.Collection"/>
-	<queryString language="SQL">
-		<![CDATA[]]>
-	</queryString>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="132" splitType="Stretch">
+		<band height="124" splitType="Stretch">
 			<frame>
-				<reportElement mode="Opaque" x="0" y="0" width="555" height="129" forecolor="#FFFFFF" backcolor="#FFFFFF"/>
-				<rectangle radius="10">
-					<reportElement stretchType="RelativeToTallestObject" x="2" y="6" width="553" height="123" backcolor="#E81A1A"/>
+				<reportElement x="0" y="0" width="555" height="120"/>
+				<rectangle radius="3">
+					<reportElement x="0" y="2" width="555" height="115" backcolor="#00CC66"/>
 				</rectangle>
-				<textField pattern="EEEEE dd MMMMM yyyy">
-					<reportElement x="396" y="105" width="144" height="20" forecolor="#FFFFFF"/>
-					<textElement textAlignment="Left">
-						<font fontName="SansSerif" size="13" isUnderline="false"/>
-					</textElement>
-					<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
-				</textField>
+				<rectangle radius="10">
+					<reportElement x="176" y="5" width="376" height="108"/>
+					<graphicElement>
+						<pen lineColor="#33CC00"/>
+					</graphicElement>
+				</rectangle>
 				<staticText>
-					<reportElement x="20" y="76" width="85" height="20" forecolor="#FFFFFF"/>
-					<textElement>
-						<font fontName="Times New Roman" size="13" isBold="true"/>
+					<reportElement x="20" y="27" width="55" height="18"/>
+					<textElement verticalAlignment="Bottom">
+						<font size="13" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Photon]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="18" y="38" width="158" height="41" forecolor="#FFFFFF"/>
+					<textElement verticalAlignment="Top" rotation="None">
+						<font size="28" isBold="true"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[PHRESCO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="176" y="9" width="112" height="20"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Project Name :]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="true">
-					<reportElement stretchType="RelativeToTallestObject" x="108" y="76" width="175" height="20" forecolor="#FFFFFF"/>
-					<textElement>
-						<font fontName="Times New Roman" size="13" isBold="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$P{projectName}]]></textFieldExpression>
-				</textField>
 				<staticText>
-					<reportElement style="Title" x="20" y="9" width="162" height="28"/>
-					<textElement>
-						<font size="24" isBold="true"/>
+					<reportElement x="176" y="29" width="112" height="20"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="12" isBold="true"/>
 					</textElement>
-					<text><![CDATA[Photon Phresco]]></text>
+					<text><![CDATA[Application Name :]]></text>
 				</staticText>
 				<staticText>
-					<reportElement style="SubTitle" x="105" y="36" width="161" height="19"/>
-					<textElement>
-						<font size="16" isBold="false" isItalic="false"/>
-					</textElement>
-					<text><![CDATA[Accelerating Innovation]]></text>
-				</staticText>
-				<staticText>
-					<reportElement x="20" y="105" width="85" height="20" forecolor="#FFFFFF"/>
-					<textElement>
-						<font fontName="Times New Roman" size="13" isBold="true"/>
-					</textElement>
-					<text><![CDATA[Project Code  :]]></text>
-				</staticText>
-				<staticText>
-					<reportElement x="314" y="105" width="75" height="20" forecolor="#FFFFFF"/>
-					<textElement>
-						<font fontName="Times New Roman" size="13" isBold="true"/>
-					</textElement>
-					<text><![CDATA[Date            :]]></text>
-				</staticText>
-				<staticText>
-					<reportElement x="314" y="76" width="75" height="20" forecolor="#FFFFFF"/>
-					<textElement>
-						<font fontName="Times New Roman" size="13" isBold="true"/>
+					<reportElement x="176" y="49" width="112" height="20"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Technology :]]></text>
 				</staticText>
+				<staticText>
+					<reportElement x="176" y="69" width="112" height="20"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Version :]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="176" y="89" width="112" height="20"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Date :]]></text>
+				</staticText>
 				<textField>
-					<reportElement stretchType="RelativeToTallestObject" x="108" y="105" width="185" height="20" forecolor="#FFFFFF"/>
-					<textElement>
-						<font fontName="Times New Roman" size="13" isBold="true"/>
+					<reportElement x="290" y="9" width="257" height="20" forecolor="#333333"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="11" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{projectName}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="290" y="29" width="257" height="20" forecolor="#333333"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="11" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{projectCode}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="396" y="76" width="144" height="20" forecolor="#FFFFFF"/>
-					<textElement>
-						<font fontName="Times New Roman" size="13" isBold="true"/>
+					<reportElement x="290" y="49" width="257" height="20" forecolor="#333333"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="11" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{techName}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="290" y="89" width="257" height="20" forecolor="#333333"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="11" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 				</textField>
 			</frame>
 		</band>
 	</title>
 	<detail>
-		<band height="40">
+		<band height="50" splitType="Stretch">
 			<printWhenExpression><![CDATA[!$P{unitTestReports}.isEmpty()]]></printWhenExpression>
 			<frame>
-				<reportElement x="0" y="0" width="555" height="37" isRemoveLineWhenBlank="true"/>
+				<reportElement x="0" y="0" width="555" height="50"/>
 				<subreport>
-					<reportElement x="0" y="1" width="555" height="36" isRemoveLineWhenBlank="true"/>
-					<subreportParameter name="testType">
-						<subreportParameterExpression><![CDATA["unit"]]></subreportParameterExpression>
-					</subreportParameter>
-					<subreportParameter name="reportsDataType">
-						<subreportParameterExpression><![CDATA[$P{reportsDataType}]]></subreportParameterExpression>
-					</subreportParameter>
+					<reportElement x="0" y="0" width="555" height="50"/>
 					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{unitTestReports})]]></dataSourceExpression>
 					<subreportExpression><![CDATA["UnitCumulativeReport.jasper"]]></subreportExpression>
 				</subreport>
 			</frame>
 		</band>
-		<band height="40">
+		<band height="50">
 			<printWhenExpression><![CDATA[!$P{functionalTestReports}.isEmpty()]]></printWhenExpression>
 			<frame>
-				<reportElement x="0" y="0" width="555" height="37" isRemoveLineWhenBlank="true"/>
+				<reportElement x="0" y="0" width="555" height="50"/>
 				<subreport>
-					<reportElement x="0" y="1" width="555" height="36" isRemoveLineWhenBlank="true"/>
-					<subreportParameter name="testType">
-						<subreportParameterExpression><![CDATA["functional"]]></subreportParameterExpression>
-					</subreportParameter>
-					<subreportParameter name="reportsDataType">
-						<subreportParameterExpression><![CDATA[$P{reportsDataType}]]></subreportParameterExpression>
-					</subreportParameter>
+					<reportElement x="0" y="0" width="555" height="50"/>
 					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{functionalTestReports})]]></dataSourceExpression>
 					<subreportExpression><![CDATA["FunctionalCumulativeReport.jasper"]]></subreportExpression>
 				</subreport>
 			</frame>
 		</band>
-		<band height="40">
+		<band height="50">
+			<printWhenExpression><![CDATA[!$P{loadTestReports}.isEmpty()]]></printWhenExpression>
 			<frame>
-				<reportElement x="2" y="0" width="555" height="37" isRemoveLineWhenBlank="true"/>
+				<reportElement x="0" y="0" width="555" height="50"/>
 				<subreport>
-					<reportElement x="0" y="1" width="555" height="36" isRemoveLineWhenBlank="true"/>
-					<subreportParameter name="reportsDataType">
-						<subreportParameterExpression><![CDATA[$P{reportsDataType}]]></subreportParameterExpression>
-					</subreportParameter>
+					<reportElement x="0" y="0" width="555" height="50"/>
 					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{loadTestReports})]]></dataSourceExpression>
 					<subreportExpression><![CDATA["PhrescoLoadCumulativeTest.jasper"]]></subreportExpression>
 				</subreport>
 			</frame>
 		</band>
-		<band height="40">
-			<printWhenExpression><![CDATA[!$P{performanceSpecialHandle}.booleanValue()]]></printWhenExpression>
+		<band height="50">
 			<frame>
-				<reportElement x="0" y="0" width="555" height="37" isRemoveLineWhenBlank="true"/>
+				<reportElement x="0" y="0" width="555" height="50"/>
 				<subreport>
-					<reportElement x="0" y="1" width="555" height="36" isRemoveLineWhenBlank="true"/>
-					<subreportParameter name="reportsDataType">
-						<subreportParameterExpression><![CDATA[$P{reportsDataType}]]></subreportParameterExpression>
-					</subreportParameter>
+					<reportElement x="0" y="0" width="555" height="50"/>
 					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{performanceTestReports})]]></dataSourceExpression>
 					<subreportExpression><![CDATA["PhrescoPerfCumulativeReport.jasper"]]></subreportExpression>
 				</subreport>
 			</frame>
 		</band>
-		<band height="38">
-			<printWhenExpression><![CDATA[$P{performanceSpecialHandle}.booleanValue()]]></printWhenExpression>
+		<band height="50">
 			<frame>
-				<reportElement x="2" y="0" width="555" height="37" isRemoveLineWhenBlank="true"/>
+				<reportElement x="0" y="0" width="555" height="50"/>
 				<subreport>
-					<reportElement x="0" y="1" width="555" height="36" isRemoveLineWhenBlank="true"/>
-					<subreportParameter name="reportsDataType">
-						<subreportParameterExpression><![CDATA[$P{reportsDataType}]]></subreportParameterExpression>
-					</subreportParameter>
+					<reportElement x="0" y="0" width="555" height="50"/>
 					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{performanceTestReports})]]></dataSourceExpression>
 					<subreportExpression><![CDATA["PhrescoAndroidPerfCumulativeReport.jasper"]]></subreportExpression>
 				</subreport>
 			</frame>
 		</band>
-		<band height="39">
+		<band height="50">
 			<printWhenExpression><![CDATA[!$P{sonarReport}.isEmpty()]]></printWhenExpression>
 			<frame>
-				<reportElement x="0" y="0" width="555" height="38" isRemoveLineWhenBlank="true"/>
+				<reportElement x="0" y="0" width="555" height="50"/>
 				<subreport>
-					<reportElement x="0" y="1" width="555" height="36" isRemoveLineWhenBlank="true"/>
-					<subreportParameter name="reportsDataType">
-						<subreportParameterExpression><![CDATA[$P{reportsDataType}]]></subreportParameterExpression>
-					</subreportParameter>
+					<reportElement x="0" y="0" width="555" height="50"/>
 					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{sonarReport})]]></dataSourceExpression>
 					<subreportExpression><![CDATA["SonarJavaJsWebReport.jasper"]]></subreportExpression>
 				</subreport>
@@ -205,31 +181,31 @@
 		</band>
 	</detail>
 	<pageFooter>
-		<band height="25" splitType="Stretch">
-			<frame>
-				<reportElement mode="Opaque" x="0" y="1" width="555" height="24" forecolor="#D0B48E" backcolor="#000000"/>
-				<textField evaluationTime="Report">
-					<reportElement style="Column header" x="513" y="0" width="40" height="20" forecolor="#FFFFFF"/>
-					<textElement verticalAlignment="Middle">
-						<font size="10" isBold="false"/>
-					</textElement>
-					<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
-				</textField>
-				<textField>
-					<reportElement style="Column header" x="433" y="0" width="80" height="20" forecolor="#FFFFFF"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="10" isBold="false"/>
-					</textElement>
-					<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
-				</textField>
-				<staticText>
-					<reportElement x="2" y="4" width="191" height="16" forecolor="#FFFFFF" backcolor="#000000"/>
-					<textElement>
-						<font fontName="Times New Roman"/>
-					</textElement>
-					<text><![CDATA[© Copyright 2012 Photon Infotech Pvt.Ltd]]></text>
-				</staticText>
-			</frame>
+		<band height="29" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="3" width="555" height="25" forecolor="#FFFFFF" backcolor="#333333"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="14" y="3" width="194" height="25" forecolor="#FFFFFF"/>
+				<textElement verticalAlignment="Middle">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[© Copyright 2012 Photon Infotech Pvt.Ltd]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="490" y="5" width="25" height="22" forecolor="#00CC66"/>
+				<textElement verticalAlignment="Middle">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="428" y="5" width="64" height="22" forecolor="#00CC66"/>
+				<textElement verticalAlignment="Middle">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
 		</band>
 	</pageFooter>
 </jasperReport>

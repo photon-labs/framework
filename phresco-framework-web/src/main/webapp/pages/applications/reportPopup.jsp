@@ -145,9 +145,16 @@
 	$(document).ready(function() {
 		
 		// when clicking on save button, popup should not hide
-		$('.backdrop > fade > in').attr('dispaly', 'block');
+		$('.backdrop > fade > in').attr('display', 'block');
 		$('.popupOk').attr("data-dismiss", "");
 		hidePopuploadingIcon();
+		<%
+		    if (StringUtils.isNotEmpty(reportDeletionStat)) {
+        %>
+               $("#errMsg").html("<s:text name='label.report.delete.success'/>");
+		<%
+            }
+        %>
 // 		disableScreen();
 		
 // 		$('#generateReport').click(function() {
@@ -163,12 +170,14 @@
 		
 		$('.pdfDelete').click(function() {
 			showPopuploadingIcon();
-			var params = getBasicParams();
-	    	params = params.concat("&reportFileName=");
+			var params = ""; 
+	    	params = params.concat("reportFileName=");
 	    	params = params.concat($('#reportName').attr("class"));
  	    	params = params.concat("&fromPage=");
 	    	params = params.concat('<%= fromPage %>');
-	    	loadContent('deleteReport', $('#generatePdf'), $('#popup_div'), params, false);
+			params = params.concat('&testType=');
+	    	params = params.concat('<%= testType %>');
+	    	loadContent('deleteReport', $('#generatePdf'), $('#popup_div'), params, false, true);
 		});
 		
 <%-- 	<%

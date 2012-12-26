@@ -38,6 +38,7 @@ import org.eclipse.jgit.api.errors.InvalidRemoteException;
 import org.eclipse.jgit.api.errors.TransportException;
 import org.tmatesoft.svn.core.SVNAuthenticationException;
 import org.tmatesoft.svn.core.SVNException;
+import org.tmatesoft.svn.core.wc.*;
 
 import com.google.gson.Gson;
 import com.opensymphony.xwork2.Action;
@@ -45,6 +46,7 @@ import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.ArtifactGroupInfo;
 import com.photon.phresco.commons.model.ArtifactInfo;
+import com.photon.phresco.commons.model.CoreOption;
 import com.photon.phresco.commons.model.DownloadInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.SelectedFeature;
@@ -135,8 +137,11 @@ public class Applications extends FrameworkBaseAction {
     private String downloadInfoType = "";
     private String selectedDownloadInfoVersion = "";
     private String selectBoxId = "";
-    
+    private String defaultOptTxt = "";
+    private String action = "";
     private List<String> jsonData = null;
+    private String commitMessage = "";
+    private List<String> commitableFiles = null;
     
     public String loadMenu() {
         if (s_debugEnabled) {
@@ -201,23 +206,38 @@ public class Applications extends FrameworkBaseAction {
         		projectInfo = projectManager.getProject(getProjectId(), getCustomerId(), getAppId());
         		String technologyId = projectInfo.getAppInfos().get(0).getTechInfo().getId();
         		List<ApplicationInfo> pilotProjects = getServiceManager().getPilotProjects(getCustomerId(), technologyId);
+        		Technology technologyInfo = getServiceManager().getTechnology(technologyId);
+        		setSessionAttribute(REQ_TECHNOLOGY, technologyInfo);
         		setSessionAttribute(REQ_PILOT_PROJECTS, pilotProjects);
         		setSessionAttribute(getAppId() + SESSION_APPINFO, projectInfo);
-        		setReqAttribute(REQ_OLD_APPDIR,projectInfo.getAppInfos().get(0).getName());
+        		setReqAttribute(REQ_OLD_APPDIR, projectInfo.getAppInfos().get(0).getName());
         	} else {
         		projectInfo = (ProjectInfo)getSessionAttribute(getAppId() + SESSION_APPINFO);
             	ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
             
             	List<String> jsonData = getJsonData();
-            	List<SelectedFeature> selectedFeatures = new ArrayList<SelectedFeature>();
+            	List<String> selectedFeatures = new ArrayList<String>();
+            	List<String> selectedJsLibs = new ArrayList<String>();
+            	List<String> selectedComponents = new ArrayList<String>();
             	if (CollectionUtils.isNotEmpty(jsonData)) {
-	            	for (String string : jsonData) {
-						Gson gson = new Gson();
-						SelectedFeature obj = gson.fromJson(string, SelectedFeature.class);
-						selectedFeatures.add(obj);
-					}
+                	for (String string : jsonData) {
+    					Gson gson = new Gson();
+    					SelectedFeature obj = gson.fromJson(string, SelectedFeature.class);
+    					if (obj.getType().equals(ArtifactGroup.Type.FEATURE.name())) {
+    						selectedFeatures.add(obj.getVersionID());
+    					}
+    					if (obj.getType().equals(ArtifactGroup.Type.JAVASCRIPT.name())) {
+    						selectedJsLibs.add(obj.getVersionID());
+    					}
+    					if (obj.getType().equals(ArtifactGroup.Type.COMPONENT.name())) {
+    						selectedComponents.add(obj.getVersionID());
+    					}
+    				}
             	}
-            	setSessionAttribute(REQ_SELECTED_FEATURES, selectedFeatures);
+            	appInfo.setSelectedModules(selectedFeatures);
+            	appInfo.setSelectedJSLibs(selectedJsLibs);
+            	appInfo.setSelectedComponents(selectedComponents);
+            	
         		projectInfo.setAppInfos(Collections.singletonList(appInfo));
         		setSessionAttribute(getAppId() + SESSION_APPINFO, projectInfo);
         		setReqAttribute(REQ_OLD_APPDIR, getOldAppDirName());
@@ -283,11 +303,13 @@ public class Applications extends FrameworkBaseAction {
         }
 
         try {
-            String type = getHttpRequest().getParameter(REQ_TYPE);
-            String techId = getHttpRequest().getParameter(REQ_PARAM_NAME_TECH__ID);
-            String selectedDb = getHttpRequest().getParameter("selectedDownloadInfo");
-            String selectedDbVer = getHttpRequest().getParameter("selectedDownloadInfoVersion");
-            String selectBoxId = getHttpRequest().getParameter("selectBoxId");
+            String type = getReqParameter(REQ_TYPE);
+            String techId = getReqParameter(REQ_PARAM_NAME_TECH__ID);
+            String selectedDb = getReqParameter(REQ_SELECTED_DOWNLOADINFO);
+            String selectedDbVer = getReqParameter(REQ_SELECTED_DOWNLOADINFO_VERSION);
+            String selectBoxId = getReqParameter(REQ_CURRENT_SELECTBOX_ID);
+            String defaultOptTxt = getReqParameter(REQ_DEFAULT_OPTION);
+            setDefaultOptTxt(defaultOptTxt);
             setDownloadInfoType(type);
             setSelectedDownloadInfo(selectedDb);
             setSelectedDownloadInfoVersion(selectedDbVer);
@@ -618,9 +640,9 @@ public class Applications extends FrameworkBaseAction {
     
     
     private List<ArtifactGroup> getRemovedModules(ApplicationInfo appInfo, List<String> jsonData) throws PhrescoException {
-    	List<String> selectedFeaturesJson = appInfo.getSelectedModules();
-    	List<String> selectedJSLibsJson = appInfo.getSelectedJSLibs();
-    	List<String> selectedComponentsJson = appInfo.getSelectedComponents();
+    	List<String> selectedFeaturesId = appInfo.getSelectedModules();
+    	List<String> selectedJSLibsId = appInfo.getSelectedJSLibs();
+    	List<String> selectedComponentsId = appInfo.getSelectedComponents();
     	Gson gson = new Gson();
     	List<String> newlySelectedModuleGrpIds = new ArrayList<String>();
     	if (CollectionUtils.isNotEmpty(jsonData)) {
@@ -630,25 +652,26 @@ public class Applications extends FrameworkBaseAction {
     		}
     	}
     	List<ArtifactGroup> artifactGroups = new ArrayList<ArtifactGroup>();
-    	if(CollectionUtils.isNotEmpty(selectedFeaturesJson)) {
-    		addArtifactGroups(selectedFeaturesJson, gson, newlySelectedModuleGrpIds, artifactGroups);
+    	if(CollectionUtils.isNotEmpty(selectedFeaturesId)) {
+    		addArtifactGroups(selectedFeaturesId, gson, newlySelectedModuleGrpIds, artifactGroups);
     	}
-    	if(CollectionUtils.isNotEmpty(selectedJSLibsJson)) {
-    		addArtifactGroups(selectedJSLibsJson, gson, newlySelectedModuleGrpIds, artifactGroups);
+    	if(CollectionUtils.isNotEmpty(selectedJSLibsId)) {
+    		addArtifactGroups(selectedJSLibsId, gson, newlySelectedModuleGrpIds, artifactGroups);
     	}
-    	if(CollectionUtils.isNotEmpty(selectedComponentsJson)) {
-    		addArtifactGroups(selectedComponentsJson, gson, newlySelectedModuleGrpIds, artifactGroups);
+    	if(CollectionUtils.isNotEmpty(selectedComponentsId)) {
+    		addArtifactGroups(selectedComponentsId, gson, newlySelectedModuleGrpIds, artifactGroups);
     	}
     	return artifactGroups;
     }
 
-    private void addArtifactGroups(List<String> selectedFeaturesJson, Gson gson,
+    private void addArtifactGroups(List<String> selectedFeaturesIds, Gson gson,
     		List<String> newlySelectedModuleGrpIds,
     		List<ArtifactGroup> artifactGroups) throws PhrescoException {
-    	for (String selectedfeatures : selectedFeaturesJson) {
-    		SelectedFeature selectedFeature = gson.fromJson(selectedfeatures, SelectedFeature.class);
-    		if (!newlySelectedModuleGrpIds.contains(selectedFeature.getModuleId())) {
-    			ArtifactGroup artifactGroupInfo = getServiceManager().getArtifactGroupInfo(selectedFeature.getModuleId());
+    	for (String selectedfeatures : selectedFeaturesIds) {
+    		ArtifactInfo artifactInfo = getServiceManager().getArtifactInfo(selectedfeatures);
+    		//SelectedFeature selectedFeature = gson.fromJson(selectedfeatures, SelectedFeature.class);
+    		if (!newlySelectedModuleGrpIds.contains(artifactInfo.getArtifactGroupId())) {
+    			ArtifactGroup artifactGroupInfo = getServiceManager().getArtifactGroupInfo(artifactInfo.getArtifactGroupId());
     			artifactGroups.add(artifactGroupInfo);
     		}
     	}
@@ -672,16 +695,23 @@ public class Applications extends FrameworkBaseAction {
 					Gson gson = new Gson();
 					SelectedFeature obj = gson.fromJson(string, SelectedFeature.class);
 					String artifactGroupId = obj.getModuleId();
-					ArtifactGroup artifactGroupInfo = getServiceManager().getArtifactGroupInfo(artifactGroupId);
-					listArtifactGroup.add(artifactGroupInfo);
-					if (obj.getType().equals("FEATURE")) {
-						selectedFeatures.add(string);
+					ArtifactGroup artifactGroup = getServiceManager().getArtifactGroupInfo(artifactGroupId);
+					List<CoreOption> appliesTo = artifactGroup.getAppliesTo();
+					for (CoreOption coreOption : appliesTo) {
+						if (coreOption.getTechId().equals(appInfo.getTechInfo().getId())) {
+							artifactGroup.setAppliesTo(Collections.singletonList(coreOption));
+							listArtifactGroup.add(artifactGroup);
+							break;
+						}
 					}
-					if (obj.getType().equals("JAVASCRIPT")) {
-						selectedJsLibs.add(string);
+					if (obj.getType().equals(ArtifactGroup.Type.FEATURE.name())) {
+						selectedFeatures.add(obj.getVersionID());
 					}
-					if (obj.getType().equals("COMPONENT")) {
-						selectedComponents.add(string);
+					if (obj.getType().equals(ArtifactGroup.Type.JAVASCRIPT.name())) {
+						selectedJsLibs.add(obj.getVersionID());
+					}
+					if (obj.getType().equals(ArtifactGroup.Type.COMPONENT.name())) {
+						selectedComponents.add(obj.getVersionID());
 					}
 				}
         	}
@@ -857,15 +887,16 @@ public class Applications extends FrameworkBaseAction {
 		}
 		try {
 			String encodedpassword = (String) getReqAttribute(SESSION_USER_PASSWORD);
-			if (StringUtils.isEmpty(credential)) { //unchecked
-				String decryptedPass = new String(Base64.decodeBase64(encodedpassword));
-				password = decryptedPass;
-			}
 			revision = !HEAD_REVISION.equals(revision) ? revisionVal : revision;
 			SCMManagerImpl scmi = new SCMManagerImpl();
-			scmi.importProject(SVN, repoUrl, userName, password, null, revision);
-			errorString = getText(IMPORT_SUCCESS_PROJECT);
-			errorFlag = true;
+			boolean importProject = scmi.importProject(SVN, repoUrl, userName, password, null, revision);
+			if (importProject) {
+				errorString = getText(IMPORT_SUCCESS_PROJECT);
+				errorFlag = true;
+			} else {
+				errorString = getText(INVALID_FOLDER);
+				errorFlag = false;
+			}
 		} catch (SVNAuthenticationException e) {
 			if(s_debugEnabled){
 				S_LOGGER.error(e.getLocalizedMessage());
@@ -912,9 +943,14 @@ public class Applications extends FrameworkBaseAction {
 		}
 		SCMManagerImpl scmi = new SCMManagerImpl();
 		try {
-			scmi.importProject(GIT, repoUrl, userName, password, MASTER ,revision);
-			errorString = getText(IMPORT_SUCCESS_PROJECT);
-			errorFlag = true;
+			boolean importProject = scmi.importProject(GIT, repoUrl, userName, password, MASTER ,revision);
+			if (importProject) {
+				errorString = getText(IMPORT_SUCCESS_PROJECT);
+				errorFlag = true;
+			} else {
+				errorString = getText(INVALID_FOLDER);
+				errorFlag = false;
+			}
 		} catch (SVNAuthenticationException e) {	//Will not occur for GIT
 			if(s_debugEnabled){
 				S_LOGGER.error(e.getLocalizedMessage());
@@ -956,6 +992,14 @@ public class Applications extends FrameworkBaseAction {
 	}
 
 	public String importAppln() {
+		try {
+			setReqAttribute(REQ_ACTION, action);
+		} catch (Exception e) {
+			if(s_debugEnabled){
+				S_LOGGER.error(e.getLocalizedMessage());
+			}
+			return showErrorPopup(new PhrescoException(e), "Import Application");
+		}
 		return APP_IMPORT;
 	}
 
@@ -971,11 +1015,18 @@ public class Applications extends FrameworkBaseAction {
 			if (scm != null) {
 				connectionUrl = scm.getConnection();
 			}
+			
+			List<SVNStatus> commitableFiles = null;
+			if (COMMIT.equals(action)) {
+				commitableFiles = svnCommitableFiles();
+			}
+			setReqAttribute(REQ_COMMITABLE_FILES, commitableFiles);
 			setReqAttribute(REQ_APP_ID, getAppId());
 			setReqAttribute(REQ_PROJECT_ID, getProjectId());
 			setReqAttribute(REQ_CUSTOMER_ID, getCustomerId());
 			setReqAttribute(REPO_URL, connectionUrl);
 			setReqAttribute(REQ_FROM_TAB, UPDATE);
+			setReqAttribute(REQ_ACTION, action);
 			setReqAttribute(REQ_APP_INFO, applicationInfo);
 		} catch (PhrescoException e) {
 			if(s_debugEnabled){
@@ -1042,7 +1093,7 @@ public class Applications extends FrameworkBaseAction {
 			if(s_debugEnabled){
 				S_LOGGER.error(e.getLocalizedMessage());
 			}
-			errorString = getText(FAILURE_PROJECT_UPDATE);
+			errorString = getText(UPDATE_PROJECT_FAIL);
 			errorFlag = false;
 		}
 
@@ -1087,8 +1138,10 @@ public class Applications extends FrameworkBaseAction {
 				errorString = getText(INVALID_URL);
 			} else if (e.getMessage().indexOf(SVN_INTERNAL) != -1) {
 				errorString = getText(INVALID_REVISION);
+			} else if (e.getMessage().indexOf(SVN_IS_NOT_WORKING_COPY) != -1) {
+				errorString = getText(NOT_WORKING_COPY);
 			} else {
-				errorString = getText(IMPORT_PROJECT_FAIL);
+				errorString = getText(UPDATE_PROJECT_FAIL);
 			}
 		} catch (FileExistsException e) {
 			if(s_debugEnabled){
@@ -1106,12 +1159,84 @@ public class Applications extends FrameworkBaseAction {
 			if(s_debugEnabled){
 				S_LOGGER.error(e.getLocalizedMessage());
 			}
-			errorString = getText(IMPORT_PROJECT_FAIL);
+			errorString = getText(UPDATE_PROJECT_FAIL);
 			errorFlag = false;
 		}
 		return SUCCESS;
 	}
 
+	public String addSVNProject() {
+		if(s_debugEnabled){
+			S_LOGGER.debug("Entering Method  Applications.addSVNProject()");
+		}
+		try {
+			SCMManagerImpl scmi = new SCMManagerImpl();
+			String applicationHome = getApplicationHome();
+			File appDir = new File(applicationHome);
+			scmi.importToRepo(SVN, repoUrl, userName, password, null, null, appDir, commitMessage);
+			errorString = getText(ADD_PROJECT_SUCCESS);
+			errorFlag = true;
+		} catch (Exception e) {
+			errorString = e.getLocalizedMessage();
+			errorFlag = false;
+		}
+		return SUCCESS;
+	}
+	
+	public String addGITProject() {
+		if(s_debugEnabled){
+			S_LOGGER.debug("Entering Method  Applications.addGITProject()");
+		}
+		try {
+			// TODO : need to handle
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return SUCCESS;
+	}
+	
+	public List<SVNStatus> svnCommitableFiles() throws PhrescoException {
+		if(s_debugEnabled){
+			S_LOGGER.debug("Entering Method  Applications.getCommitableFiles()");
+		}
+		List<SVNStatus> commitableFiles = null;
+		try {
+			SCMManagerImpl scmi = new SCMManagerImpl();
+			String applicationHome = getApplicationHome();
+			File appDir = new File(applicationHome);
+			revision = HEAD_REVISION;
+			commitableFiles = scmi.getCommitableFiles(appDir, revision);
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+		return commitableFiles;
+	}
+	
+	public String commitSVNProject() {
+		if(s_debugEnabled){
+			S_LOGGER.debug("Entering Method  Applications.commitSVNProject()");
+		}
+		try {
+			if (CollectionUtils.isNotEmpty(commitableFiles)) {
+				List<File> listModifiedFiles = new ArrayList<File>(commitableFiles.size());
+				for (String commitableFile : commitableFiles) {
+					listModifiedFiles.add(new File(commitableFile));
+				}
+				SCMManagerImpl scmi = new SCMManagerImpl();
+				String applicationHome = getApplicationHome();
+				File appDir = new File(applicationHome);
+//				scmi.commitToRepo(SVN, repoUrl, userName, password,  null, null, appDir, commitMessage);
+				scmi.commitSpecifiedFiles(listModifiedFiles, userName, password, commitMessage);
+			}
+			errorString = getText(COMMIT_PROJECT_SUCCESS);
+			errorFlag = true;
+		} catch (Exception e) {
+			errorString = e.getLocalizedMessage();
+			errorFlag = false;
+		}
+		return SUCCESS;
+	}
+	
     //TODO: No need the validator remove all validator
     public String validateFramework() {
         S_LOGGER.debug("Entering Method  Applications.validateFramework()");
@@ -2101,5 +2226,33 @@ public class Applications extends FrameworkBaseAction {
 
 	public void setDownloadInfoType(String downloadInfoType) {
 		this.downloadInfoType = downloadInfoType;
+	}
+
+	public String getDefaultOptTxt() {
+		return defaultOptTxt;
+	}
+
+	public void setDefaultOptTxt(String defaultOptTxt) {
+		this.defaultOptTxt = defaultOptTxt;
+	}
+
+	public String getAction() {
+		return action;
+	}
+
+	public void setAction(String action) {
+		this.action = action;
+	}
+
+	public String getCommitMessage() {
+		return commitMessage;
+	}
+
+	public void setCommitMessage(String commitMessage) {
+		this.commitMessage = commitMessage;
+	}
+
+	public void setCommitableFiles(List<String> commitableFiles) {
+		this.commitableFiles = commitableFiles;
 	}
 }

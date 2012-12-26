@@ -185,6 +185,8 @@ $(document).ready(function() {
     
 	$('#pdfCreation').click(function() {
 		var params = "fromPage=unit";
+		params = params.concat("&testType=");
+	    params = params.concat('<%= FrameworkConstants.UNIT %>');
 		yesnoPopup('showGeneratePdfPopup', '<s:text name="lbl.app.generatereport"/>', 'printAsPdf','<s:text name="lbl.app.generate"/>', '', params);
     });
        
@@ -205,18 +207,22 @@ $(document).ready(function() {
 });
 
 //To get the testsuites
-function loadTestSuites() {
+function loadTestSuites(updateCahe) {
 	var params = getBasicParams();
 	params = params.concat("&testType=");
 	params = params.concat('<%= FrameworkConstants.UNIT %>');
-	loadContent('fetchUnitTestSuites', $('#form_test'), '', params, true);
+	if (updateCahe !== undefined && !isBlank(updateCahe)) {
+		params = params.concat("&updateCache=");
+		params = params.concat(updateCahe);
+	}
+	loadContent('fetchUnitTestSuites', $('#form_test'), '', params, true, true);
 }
 
 function testReport() {
 	var params = getBasicParams();
 	params = params.concat("&testType=");
 	params = params.concat('<%= FrameworkConstants.UNIT %>');
-	loadContent('fetchUnitTestReport', $('#form_test'), $('#testSuiteDisplay'), params);
+	loadContent('fetchUnitTestReport', $('#form_test'), $('#testSuiteDisplay'), params, '', true);
 	//show print as pdf icon
 	$('#pdfPopup').show();
 }
@@ -264,7 +270,7 @@ function popupOnOk(obj) {
 	var okUrl = $(obj).attr("id");
 	if (okUrl === "printAsPdf") {
 		// show popup loading icon
-		//showPopuploadingIcon();
+		showPopuploadingIcon();
 		loadContent('printAsPdf', $('#generatePdf'), $('#popup_div'), '', false);
 	} else {
 		$("#popupPage").modal('hide');
@@ -276,7 +282,7 @@ function popupOnOk(obj) {
 // after executing the test. when clicking Progress popup , it will call this methid to load test results
 function popupOnClose(obj) {
 	var closeUrl = $(obj).attr("id");
-	loadTestSuites();
+	loadTestSuites("true");
 }
 
 //This method will be called when there is no dynamic param

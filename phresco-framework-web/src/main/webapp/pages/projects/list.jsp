@@ -28,8 +28,10 @@
 <%@ page import="com.photon.phresco.util.Constants"%>
 <%@ page import="com.photon.phresco.commons.model.ProjectInfo"%>
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
+<%@ page import="com.photon.phresco.framework.actions.applications.Projects"%>
 
 <%
+    Projects projectsObj = new Projects(); 
 	List<ProjectInfo> projects = (List<ProjectInfo>) request.getAttribute(FrameworkConstants.REQ_PROJECTS);
 	Gson gson = new Gson();
 %>
@@ -98,7 +100,7 @@
 								    					<s:label key="lbl.print" cssClass="labelbold"/>
 								    				</th>
 								    				<th class="no-left-bottom-border table-pad">
-								    					<s:label key="lbl.update" cssClass="labelbold"/>
+								    					<s:label key="lbl.repository" cssClass="labelbold"/>
 								    				</th>
 								    			</tr>
 								    		</thead>
@@ -122,7 +124,7 @@
 																	<%= project.getDescription() %>
 																</td>
 																<td class="no-left-bottom-border table-pad">
-																	<%= appInfo.getTechInfo().getId() %>
+																	<%= projectsObj.getTechNamefromTechId(appInfo.getTechInfo().getId()) %>
 																</td>
 																<td class="no-left-bottom-border table-pad">
 																	<a href="#" id="pdfPopup">
@@ -131,9 +133,17 @@
 																	</a>
 																</td>
 																<td class="no-left-bottom-border table-pad">
+																	<a href="#" id="repoImport">
+																		<img id="<%= appInfo.getCode() %>" class="addProject" src="images/icons/add_icon.png"
+																			 additionalParam="projectId=<%= project.getId() %>&appId=<%= appInfo.getId() %>&action=add" title="Add to repo" class="iconSizeinList"/>
+																	</a>
+																	<a href="#" id="repoImport">
+																		<img id="<%= appInfo.getCode() %>" class="commitProject" src="images/icons/commit_icon.png"
+																			 additionalParam="projectId=<%= project.getId() %>&appId=<%= appInfo.getId() %>&action=commit" title="Commit" class="iconSizeinList"/>
+																	</a>
 																	<a href="#" id="projectUpdate">
 																		<img id="<%= appInfo.getCode() %>" class="projectUpdate" src="images/icons/refresh.png"
-																			 additionalParam="projectId=<%= project.getId() %>&appId=<%= appInfo.getId() %>" title="Update" class="iconSizeinList"/>
+																			 additionalParam="projectId=<%= project.getId() %>&appId=<%= appInfo.getId() %>&action=update" title="Update" class="iconSizeinList"/>
 																	</a>
 																</td>
 															</tr>
@@ -170,8 +180,11 @@
 		hideProgressBar();
 		toDisableCheckAll();
 		
+		$('#customerList').show();
+		
 		$('#importAppln').click(function() {
-			yesnoPopup('importAppln', '<s:text name="lbl.app.import"/>', 'importUpdateAppln','<s:text name="lbl.app.import"/>');
+			var params = "action=import";
+			yesnoPopup('importAppln', '<s:text name="lbl.app.import"/>', 'importUpdateAppln','<s:text name="lbl.app.import"/>', '', params);
     	});
 		
 		$('.projectUpdate').click(function() {
@@ -179,22 +192,25 @@
 			yesnoPopup('updateProjectPopup', '<s:text name="lbl.app.update"/>', 'importUpdateAppln','<s:text name="lbl.app.update"/>', '', params);
     	});
 		
+		$('.addProject').click(function() {
+			var params = $(this).attr("additionalParam");
+			yesnoPopup('updateProjectPopup', '<s:text name="lbl.app.add.to.repo"/>', 'importUpdateAppln','<s:text name="lbl.app.add.to.repo"/>', '', params);
+    	});
+		
+		$('.commitProject').click(function() {
+			var params = $(this).attr("additionalParam");
+			yesnoPopup('updateProjectPopup', '<s:text name="lbl.app.commit"/>', 'importUpdateAppln','<s:text name="lbl.app.commit"/>', '', params);
+    	});
+		
     	$('.pdfCreation').click(function() {
     		var params = $(this).attr("additionalParam");
     		yesnoPopup('showGeneratePdfPopup', '<s:text name="lbl.app.generatereport"/>', 'printAsPdf','<s:text name="lbl.app.generate"/>', '', params);
     	});
     	
-    	//To get the list of projects based on the selected customer
-    	
-    	$('select[name=customerId]').change(function() {
-    		showLoadingIcon();
-    		loadContent("applications", $('#formCustomers'), $("#container"));
-    	});
-    	
     	//Trigerred when add btn is clicked
     	$('#addProject').click(function() {
     		showLoadingIcon();
-    		loadContent('addProject', $('#formCustomers'), $('#container'));		
+    		loadContent('addProject', $('#formCustomers'), $('#container'), '', '', true);		
     	});
    	});
 	
@@ -204,14 +220,14 @@
 		params = params.concat(projectId);
 		params = params.concat("&appId=");
 		params = params.concat(appId);
-		loadContent("loadMenu", $("#formCustomers"), $('#container'), params);
+		loadContent("loadMenu", $("#formCustomers"), $('#container'), params, '', true);
 	}
     
     function editProject(projectId) {
     	showLoadingIcon();
 		var params = "projectId=";
 		params = params.concat(projectId);
-		loadContent("editProject", $("#formCustomers"), $('#container'), params);
+		loadContent("editProject", $("#formCustomers"), $('#container'), params, '', true);
 	}
     
  	function popupOnOk(obj) {
@@ -224,7 +240,7 @@
  		} else if (okUrl === "printAsPdf") {
 			// show popup loading icon
 			showPopuploadingIcon();
-			loadContent('printAsPdf', $('#generatePdf'), $('#popup_div'), getBasicParams(), false);
+			loadContent('printAsPdf', $('#generatePdf'), $('#popup_div'), getBasicParams(), false, true);
 		} else if (okUrl === "deleteProject") {
 			$("#popupPage").modal('hide');
 			// show popup loading icon

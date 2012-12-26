@@ -138,7 +138,7 @@
 			params = params.concat("&testResultFile=");
 			params = params.concat(testResult);
 	        $("#testResultDisplay").empty();
-	        loadContent('loadTestResult','', $('#testResultDisplay'), params);
+	        loadContent('loadTestResult','', $('#testResultDisplay'), params, '', true);
 	   }    
      	    
 			
@@ -185,6 +185,8 @@
 	        $('#pdfCreation').click(function() {
 	    		var params = "fromPage=";
 	    		params = params.concat("load");
+	    		params = params.concat("&testType=");
+	            params = params.concat('<%= FrameworkConstants.LOAD %>');
 	    		yesnoPopup('showGeneratePdfPopup', '<s:text name="lbl.app.generatereport"/>', 'printAsPdf','<s:text name="lbl.app.generate"/>', '', params);
 	 	    });
 	    });
@@ -218,7 +220,7 @@
 			if (okUrl === "printAsPdf") {
 				// show popup loading icon
 				showPopuploadingIcon();
-				loadContent('printAsPdf', $('#generatePdf'), $('#popup_div'), '', false);
+				loadContent('printAsPdf', $('#generatePdf'), $('#popup_div'), '', false, true);
 			} else {
 				$('#popupPage').modal('hide');
 				var params = getBasicParams();
@@ -237,6 +239,6 @@
 			var params = getBasicParams();
 			params = params.concat("&testType=");
 			params = params.concat('<%= FrameworkConstants.LOAD%>');
-			loadContent('testType', $('#testResultDisplay'), $("#subTabcontainer"), params);
+			loadContent('testType', $('#testResultDisplay'), $("#subTabcontainer"), params, '', true);
 		}
     </script>

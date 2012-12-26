@@ -30,8 +30,7 @@
     List<VideoInfo> videoInfos = (List<VideoInfo>) request.getAttribute(FrameworkConstants.REQ_VIDEO_INFOS);
     String serverUrl = (String) request.getAttribute(FrameworkConstants.REQ_SERVER_URL);
 %>
-<!-- <script type="text/javascript" src="js/windowResizer.js">
-</script> -->
+
     <div class="video_height">
 	    <div class='holder'>
 	 		<div class="video-title">
@@ -84,6 +83,8 @@
 		$("#video-list-holder").scrollbars();
 	}
 	
+	$('#customerList').hide();
+	
 	<% if (videoInfos != null) { %>
     $(document).ready(function() {
     	showLoadingIcon();
@@ -95,8 +96,6 @@
     		changeVideo("<%= videoInfos.get(0).getName() %>");
     	}
         
-        
-
         <%  int j = 0;
             for(VideoInfo videoDetail : videoInfos) {
         %>      
@@ -115,6 +114,6 @@
 	function changeVideo(videoId) {
 		var params = "video=";
 		params = params.concat(videoId);
-		loadContent('video', '', $("#videoPlayer"), params);
+		loadContent('video', '', $("#videoPlayer"), params, '', true);
     }
 </script>

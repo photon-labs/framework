@@ -204,6 +204,8 @@ $(document).ready(function() {
 	$('#pdfCreation').click(function() {
 		var params = "fromPage=";
 		params = params.concat("functional");
+		params = params.concat("&testType=");
+        params = params.concat('<%= FrameworkConstants.FUNCTIONAL %>');
 		yesnoPopup('showGeneratePdfPopup', '<s:text name="lbl.app.generatereport"/>', 'printAsPdf','<s:text name="lbl.app.generate"/>', '', params);
     });
 		        
@@ -217,18 +219,22 @@ $(document).ready(function() {
 });
 			
 //To get the testsuites
-function loadTestSuites() {
+function loadTestSuites(updateCahe) {
 	var params = getBasicParams();
 	params = params.concat("&testType=");
 	params = params.concat('<%= FrameworkConstants.FUNCTIONAL %>');
-	loadContent('fetchFunctionalTestSuites', $('#form_test'), '', params, true);
+	if (updateCahe !== undefined && !isBlank(updateCahe)) {
+		params = params.concat("&updateCache=");
+		params = params.concat(updateCahe);
+	}
+	loadContent('fetchFunctionalTestSuites', $('#form_test'), '', params, true, true);
 }
 
 function testReport() {
 	var params = getBasicParams();
 	params = params.concat("&testType=");
 	params = params.concat('<%= FrameworkConstants.FUNCTIONAL %>');
-	loadContent('fetchFunctionalTestReport', $('#form_test'), $('#testSuiteDisplay'), params);
+	loadContent('fetchFunctionalTestReport', $('#form_test'), $('#testSuiteDisplay'), params, '', true);
 	//show print as pdf icon
 	$('#pdfPopup').show();
 }
@@ -279,7 +285,7 @@ function popupOnStop(obj) {
 	var url = $(obj).attr("id");
 	var params = getBasicParams();
 	if (url === "stopHub" || url === "stopNode") {
-		loadContent(url, '', '', params, true);
+		loadContent(url, '', '', params, true, true);
 	}
 }
 
@@ -360,13 +366,13 @@ function popupOnOk(obj) {
 	} else if (okUrl === "printAsPdf") {
 		// show popup loading icon
 		showPopuploadingIcon();
-		loadContent('printAsPdf', $('#generatePdf'), $('#popup_div'), '', false);
+		loadContent('printAsPdf', $('#generatePdf'), $('#popup_div'), '', false, true);
 	}
 }
 
 //after executing the test. when clicking Progress popup , it will call this methid to load test results
 function popupOnClose(obj) {
 	var closeUrl = $(obj).attr("id");
-	loadTestSuites();
+	loadTestSuites("true");
 }
 </script> 

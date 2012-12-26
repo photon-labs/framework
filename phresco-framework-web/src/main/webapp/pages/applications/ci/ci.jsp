@@ -256,8 +256,6 @@ if(!isiPad()){
 	$(".accordion_panel_inner").scrollbars();
 }
 
-var isCiRefresh = false; // for ci page use - this should be global : kalees
-
 // buildSize to refresh ci after build completed
 var refreshCi = false;
 var isJenkinsAlive = false;
@@ -295,7 +293,10 @@ $(document).ready(function() {
 	});
 	
 	$('#configure').click(function() {
-		yesnoPopup('configure', '<s:text name="lbl.configure"/>', 'saveJob','<s:text name="lbl.save"/>', $('#deleteObjects'));
+		var showPopup = repopulateConfiurePopup(true);
+		if (showPopup) {
+			yesnoPopup('configure', '<s:text name="lbl.configure"/>', 'saveJob','<s:text name="lbl.save"/>', $('#deleteObjects'));	
+		}
 	});
     
     $('#setup').click(function() {
@@ -310,6 +311,14 @@ $(document).ready(function() {
 		progressPopup('stopJenkins', '<%= appId %>', '<%= FrameworkConstants.CI_STOP %>', '', '', getBasicParams());
 	});
     
+	$('#deleteBuild').click(function() {
+		deleteCIBuild();
+	});
+	
+	$('#deleteJob').click(function() {
+		deleteCIJob();
+	});
+	
     confirmDialog($("#deleteBuild"), '<s:text name="lbl.hdr.confirm.dialog"/>', '<s:text name="modal.body.text.del.builds"/>', 'deleteBuild','<s:text name="lbl.btn.ok"/>');
     confirmDialog($("#deleteJob"), '<s:text name="lbl.hdr.confirm.dialog"/>', '<s:text name="modal.body.text.del.jobs"/>', 'deleteJob','<s:text name="lbl.btn.ok"/>');
     
@@ -326,22 +335,13 @@ $(document).ready(function() {
     
 	// when checking on more than one job, configure button should be disabled. it can not show already created job info for more than one job
 	$("input[type=checkbox][name='Jobs']").click(function() {
-		if (isMoreThanOneJobSelected()) {
-			$(".ciAlertMsg").show();
-			$(".ciAlertMsg").html('<%= FrameworkConstants.CI_ONE_JOB_REQUIRED%>');
-			disableButton($("#configure"));
-		} else {
-			$(".ciAlertMsg").hide();
-			$(".ciAlertMsg").html("");
-			enableButton($("#configure"));
-		}
+		 repopulateConfiurePopup();
 	});
 	
 	// if build is in progress disable configure button
     if (<%= isAtleastOneJobIsInProgress %> || <%= isBuildTriggeredFromUI %>) {
     	console.log("build is in progress, disable configure button ");
     	disableButton($("#configure"));
-    	disableButton($("#build"));
     	refreshCi = true;
     	console.log("at least one job is in progres...");
     	refreshBuild();
@@ -353,18 +353,44 @@ $(document).ready(function() {
 	
 });
 
+function repopulateConfiurePopup(showText) {
+	if (isMoreThanOneJobSelected()) {
+		if (showText) {
+			disableButton($("#configure"));
+			$(".ciAlertMsg").show();
+			$(".ciAlertMsg").html('<%= FrameworkConstants.CI_ONE_JOB_REQUIRED%>');			
+		}
+		return false;
+	} else {
+		$(".ciAlertMsg").hide();
+		$(".ciAlertMsg").html("");
+		// when jenkins is getting ready
+		if (isCiRefresh) {
+			jenkinsGettingReady();
+		}
+		
+		// when build is in progress, user should not configure
+		if (refreshCi) {
+			disableButton($("#configure"));
+		}
+		
+		enableButton($("#configure"));
+		return true;
+	}
+}
+
 function buildCI() {
-	loadContent('buildCI',$('#deleteObjects'), $('#subcontainer'), getBasicParams(), false);
+	loadContent('buildCI',$('#deleteObjects'), $('#subcontainer'), getBasicParams(), false, true);
 }
 
 function deleteCIBuild() {
 	showProgressBar("Deleting Build (s)");
-	loadContent('CIBuildDelete',$('#deleteObjects'), $('#subcontainer'), getBasicParams(), false);
+	loadContent('CIBuildDelete',$('#deleteObjects'), $('#subcontainer'), getBasicParams(), false, true);
 }
 	
 function deleteCIJob(){
 	showProgressBar("Deleting job (s)");
-	loadContent('CIJobDelete',$('#deleteObjects'), $('#subcontainer'), getBasicParams(), false);
+	loadContent('CIJobDelete',$('#deleteObjects'), $('#subcontainer'), getBasicParams(), false, true);
 }
 
 function enableStart() {
@@ -382,7 +408,7 @@ function refreshBuild() {
 	console.log("refresh build method called value " + refreshCi);
 	if(refreshCi) {
 		console.log("Going to get no of jobs in progress " + refreshCi);	
-		loadContent('getNoOfJobsIsInProgress',$('#deleteObjects'), '', getBasicParams(), true);
+		loadContent('getNoOfJobsIsInProgress',$('#deleteObjects'), '', getBasicParams(), true, true);
 	}
 }
 
@@ -398,7 +424,7 @@ function successRefreshBuild(data) {
     		console.log("Build trugger completed in jenkins , but UI is blocking ");
 //     		refreshCi = false;
     	} else {
-    		loadContent('ci', $('#deleteObjects'), $('#subcontainer'), getBasicParams(), false);
+    		loadContent('ci', $('#deleteObjects'), $('#subcontainer'), getBasicParams(), false, true);
     	}
 	} else {
 		window.setTimeout(refreshBuild, 15000); // wait for 15 sec
@@ -409,7 +435,6 @@ function successRefreshBuild(data) {
 function refreshAfterServerUp() {
 	console.log("Server startup Refreshed...." + isCiRefresh);
 	// after configured job , jenkins will take some time to load. In that case after jenkins started(fully up and running), we have to enable this
-// 	$("#warningmsg").show();
 	
    	localJenkinsAliveCheck (); // checks jenkins status and updates the variable
 	
@@ -422,9 +447,8 @@ function refreshAfterServerUp() {
 		reloadCI();
 	} else if(isCiRefresh && (!isJenkinsAlive || !isJenkinsReady)) { // when start is clicked it will come here
 		//till page is reloaded disable these buttons.
-	   	disableButton($("#configure"));
-	   	disableButton($("#build"));
-	   	disableButton($("#deleteJob"));
+		// when jenkins is getting ready, disable the buttons
+		jenkinsGettingReady();
 	   	$(".errorMsgLbl").text('<%= FrameworkConstants.CI_BUILD_LOADED_SHORTLY%>');
 	   	
 		console.log("I ll wait till jenkins gets ready!!!");
@@ -436,11 +460,18 @@ function refreshAfterServerUp() {
 	}
 }
 
+function jenkinsGettingReady() {
+   	disableButton($("#configure"));
+   	disableButton($("#build"));
+   	disableButton($("#deleteJob"));
+   	disableButton($("#deleteBuild"));
+}
+
 function reloadCI() {
 	if ($("a[name='appTab'][class='active']").attr("id") == "ci" && $("#popupPage").css("display") == "none"){
 		console.log("reload CI called and going to refresh the page ");
     	console.log("Server startup completed ..." + isCiRefresh);
-		loadContent('ci',$('#deleteObjects'), $('#subcontainer'), getBasicParams(), false);
+		loadContent('ci',$('#deleteObjects'), $('#subcontainer'), getBasicParams(), false, true);
 	} else {
 		console.log("reload CI : It is not in CI tab or popup available ");
 		$(".errorMsgLbl").text('<%= FrameworkConstants.CI_NO_JOBS_AVAILABLE%>');
@@ -449,7 +480,7 @@ function reloadCI() {
 
 function localJenkinsAliveCheck () {
 	console.log("local jenkins alive check called ");
-	loadContent('localJenkinsAliveCheck',$('#deleteObjects'), '', getBasicParams(), true, false);
+	loadContent('localJenkinsAliveCheck',$('#deleteObjects'), '', getBasicParams(), true, false, true);
 }
 
 function successLocalJenkinsAliveCheck (data) {

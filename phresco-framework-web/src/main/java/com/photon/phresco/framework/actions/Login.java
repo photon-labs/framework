@@ -40,10 +40,16 @@
 
 package com.photon.phresco.framework.actions;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import com.photon.phresco.commons.model.Customer;
 import com.photon.phresco.commons.model.User;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.util.Credentials;
@@ -59,7 +65,10 @@ public class Login extends FrameworkBaseAction {
     private String password = null;
     private boolean loginFirst = true;
     
-    public String login() {
+    private String logoImgUrl = "";
+    private String brandingColor = "";
+    
+    public String login() throws IOException {
         if (isDebugEnabled) {
             S_LOGGER.debug("Entering Method  Login.login()");
         }
@@ -96,7 +105,7 @@ public class Login extends FrameworkBaseAction {
         return SUCCESS;
     }
     
-    private String authenticate() {
+    private String authenticate() throws IOException {
         if (isDebugEnabled) {
             S_LOGGER.debug("Entering Method  Login.authenticate()");
         }
@@ -124,7 +133,6 @@ public class Login extends FrameworkBaseAction {
             setSessionAttribute(SESSION_USER_PASSWORD, encodedString);
         } catch (PhrescoException e) {
             setReqAttribute(REQ_LOGIN_ERROR, getText(ERROR_EXCEPTION));
-
             return LOGIN_FAILURE;
         }
             
@@ -146,6 +154,41 @@ public class Login extends FrameworkBaseAction {
         }
         
         return true;
+    }
+    
+    public String fetchLogoImgUrl() {
+    	InputStream fileInputStream = null;
+    	try {
+    		fileInputStream = getServiceManager().getIcon(getCustomerId());
+    		byte[] imgByte = null;
+    		imgByte = IOUtils.toByteArray(fileInputStream);
+    	    byte[] encodedImage = Base64.encodeBase64(imgByte);
+            String encodeImg = new String(encodedImage);
+            setLogoImgUrl(encodeImg);
+    		
+    		User user = (User) getSessionAttribute(SESSION_USER_INFO);
+    		List<Customer> customers = user.getCustomers();
+    		for (Customer customer : customers) {
+				if (customer.getId().equals(getCustomerId())) {
+					setBrandingColor(customer.getBrandingColor());
+					break;
+				}
+			}
+    	} catch (PhrescoException e) {
+    		return showErrorPopup(e, getText(""));
+    	} catch (IOException e) {
+			// TODO Auto-generated catch block
+		} finally {
+    		try {
+    			if (fileInputStream != null) {
+    				fileInputStream.close();
+    			}
+			} catch (IOException e) {
+				return showErrorPopup(new PhrescoException(e), getText(""));
+			}
+    	}
+    	
+    	return SUCCESS;
     }
     
     public String getUsername() {
@@ -171,4 +214,20 @@ public class Login extends FrameworkBaseAction {
     public void setLoginFirst(boolean loginFirst) {
         this.loginFirst = loginFirst;
     }
+
+	public String getLogoImgUrl() {
+		return logoImgUrl;
+	}
+
+	public void setLogoImgUrl(String logoImgUrl) {
+		this.logoImgUrl = logoImgUrl;
+	}
+
+	public String getBrandingColor() {
+		return brandingColor;
+	}
+
+	public void setBrandingColor(String brandingColor) {
+		this.brandingColor = brandingColor;
+	}
 }

@@ -28,14 +28,14 @@
 	$(document).ready(function() {
 		showLoadingIcon();
 		clickMenu($("a[name='appTab']"), $("#subcontainer"), $('#formAppMenu, #formCustomers'));
-		loadContent("editApplication", $('#formAppMenu, #formCustomers'), $("#subcontainer"));
+		loadContent("editApplication", $('#formAppMenu, #formCustomers'), $("#subcontainer"), '', '', true);
 		activateMenu($("#appinfo"));
 	});
 	
 	//To get the appInfo page when the appInfo tab and previous btn in features jsp is clicked
   	function showAppInfoPage() {
   		var params = getBasicParams();
-  		loadContent('appInfo', $('#formFeatures'), $('#subcontainer'), params);
+  		loadContent('appInfo', $('#formFeatures'), $('#subcontainer'), params, '', true);
   	}
 	
   	//To get the features page when the features tab and next btn in appInfo jsp is clicked
@@ -53,6 +53,9 @@
 			$("#testmenu").slideUp();
 		}
     });
+  	
+  	var isCiRefresh = false; // for ci page use - this should be global
+  	
 </script>
 
 <%

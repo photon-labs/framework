@@ -46,26 +46,6 @@
 <script src="js/select-envs.js"></script>
 
 <%
-    /* String defaultEnv = "";
-   	String testType = (String) request.getAttribute(FrameworkConstants.REQ_TEST_TYPE);
-   	String importSqlPro  = (String) request.getAttribute(FrameworkConstants.REQ_IMPORT_SQL);
-   	String finalName = (String) request.getAttribute(FrameworkConstants.FINAL_NAME);
-   	String mainClassValue = (String) request.getAttribute(FrameworkConstants.MAIN_CLASS_VALUE);
-   	String checkImportSql = "";
-   	if (importSqlPro != null && Boolean.parseBoolean(importSqlPro)) {
-   	    checkImportSql = "checked";
-   	} */
-   	
-   	//xcode targets
-   	/* List<PBXNativeTarget> xcodeConfigs = (List<PBXNativeTarget>) request.getAttribute(FrameworkConstants.REQ_XCODE_CONFIGS);
-   	List<String> buildInfoEnvs = (List<String>) request.getAttribute(FrameworkConstants.BUILD_INFO_ENVS);
-   	List<Environment> environments = (List<Environment>) request.getAttribute(FrameworkConstants.REQ_ENVIRONMENTS); */
-   	// mac sdks
-   /* 	List<String> macSdks = (List<String>) request.getAttribute(FrameworkConstants.REQ_IPHONE_SDKS);
-   	
-   	Map<String, String> jsMap = (Map<String, String>) request.getAttribute(FrameworkConstants.REQ_MINIFY_MAP);
-   	String fileLoc = (String) request.getAttribute("fileLocation"); */
-   	
    	String from = (String) request.getAttribute(FrameworkConstants.REQ_BUILD_FROM);
    	String buildNumber = "";
    	if (FrameworkConstants.REQ_DEPLOY.equals(from)) {
@@ -237,7 +217,9 @@
 						parameterModel.setSelectedValues(selectedValList);
 					}
 					String onChangeFunction = ""; 
-					if(!Boolean.parseBoolean(parameter.getMultiple()) && StringUtils.isNotEmpty(parameter.getDependency())) {
+					if (CollectionUtils.isNotEmpty(dynamicPsblValues) &&StringUtils.isNotEmpty(dynamicPsblValues.get(0).getDependency())) {
+						onChangeFunction = "selectBoxOnChangeEvent(this, '"+ parameter.getKey() +"')";
+					} else if(!Boolean.parseBoolean(parameter.getMultiple()) && StringUtils.isNotEmpty(parameter.getDependency())) {
 					    onChangeFunction = "selectBoxOnChangeEvent(this, '"+ parameter.getKey() +"')";
 					} else {
 					    onChangeFunction = "";
@@ -359,7 +341,7 @@
 	}
 	
 	function checkForConfig() {
-		loadContent('checkForConfiguration', $("#generateBuildForm"), '', getBasicParams(), true);
+		loadContent('checkForConfiguration', $("#generateBuildForm"), '', getBasicParams(), true, true);
 	}
 	
 	function successEnvValidation(data) {
@@ -401,6 +383,7 @@
 	}
 	
 	function selectBoxOnChangeEvent(obj, currentParamKey, showHideFlag) {
+		var jecClass = obj.options[obj.selectedIndex].getAttribute('class'); 
 		var selectedOption = $(obj).val();
 		$(obj).blur();//To remove the focus from the current element
 		var dependencyAttr;
@@ -419,7 +402,9 @@
 				var csvDependencies = getAllDependencies(csvPreviousDependency);
 				var previousDependencyArr = new Array();
 				previousDependencyArr = csvDependencies.split(',');
-				hideControl(previousDependencyArr);
+				if (jecClass != 'jecEditableOption') {
+					hideControl(previousDependencyArr);					
+				}
 			}
 		}
 		var csvDependencies;
@@ -432,6 +417,7 @@
 			dependencyArr = csvDependencies.split(',');
 			for (var i = 0; i < dependencyArr.length; i+=1) {
 				$('#' + $.trim(dependencyArr[i]) + 'Control').show();
+				$('.' + $.trim(dependencyArr[i]) + 'PerformanceDivClass').show();//for performance context urls
 				updateDependancy(dependencyArr[i]);
 			}
 		}
@@ -490,8 +476,8 @@
 	
 	function updateDependancySuccEvent(data) {
 		if (data.dynamicPageParameterDesign != undefined && !isBlank(data.dynamicPageParameterDesign)) {
-			$('#' + data.dependency + "DivId").empty();
-			$('#' + data.dependency + "DivId").append(data.dynamicPageParameterDesign);
+			$('.' + data.dependency + "PerformanceDivClass").empty();
+			$('.' + data.dependency + "PerformanceDivClass").append(data.dynamicPageParameterDesign);
 		}
 		
 		if (data.dependency != undefined && !isBlank(data.dependency)) {
@@ -587,7 +573,7 @@
 	function deleteContextUrl() {
 		$('.check').each(function() {
 			if ($(this).is(':checked')) {
-				if ($(this).parents('div').attr('id') != "contextDiv") {
+				if ($(this).parents('div').attr('id') != "contextDiv" && $(this).parents('div').attr('id') != "dbContextDiv") {
 					$(this).closest('fieldset').remove();
 				}
 			}
@@ -598,7 +584,7 @@
 	function addHeader(obj) {
 		var	key = $(obj).parents('fieldset').find($('input[name=key]')).val();
 		var	value = $(obj).parents('fieldset').find($('input[name=value]')).val();
-		if ((key!= undefined && !isBlank(key)) && (value!= undefined && !isBlank(value))) {
+		if ((key != undefined && !isBlank(key)) && (value != undefined && !isBlank(value))) {
 			$(obj).closest('fieldset').append('<div id="headerkeyId" style="background-color: #bbbbbb; width: 40%; margin-bottom:2px; height: auto; border-radius: 6px; '+
 						'padding: 0 0 0 10px; position: relative"><a href="#" style="text-decoration: none; margin-right: 10px; color: #000000; '+
 						'margin-left: 95%;" onclick="removeHeader(this);">&times;</a><div style="cursor: pointer; color: #000000; height: auto; '+

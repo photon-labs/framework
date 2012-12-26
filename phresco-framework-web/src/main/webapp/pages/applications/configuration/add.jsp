@@ -134,7 +134,7 @@
 				<span class="mandatory">*</span>&nbsp;<s:text name='lbl.type'/>
 			</label>	
 			<div class="controls">
-				<select id="type" name="type">
+				<select id="templateType" name="templateType">
 				<% 
 					for (SettingsTemplate settingsTemplate : settingsTemplates) { 
 						if (settingsTemplate.getName().equals(selectedType)) {
@@ -183,18 +183,18 @@
 		<%	} %>
 	});
 	
-	$('#type').change(function() {
+	$('#templateType').change(function() {
 		showLoadingIcon();//To hide the loading icon
 		var selectedConfigname = $('#configName').val();
 		var envData = $.parseJSON($('#environment').val());
 		var selectedEnv = envData.name;
-		var typeData= $.parseJSON($('#type').val());
+		var typeData= $.parseJSON($('#templateType').val());
 		var selectedType = typeData.name;
 		var selectedConfigId = typeData.id;
 		var fromPage = "<%= fromPage%>";
 		var configPath = "<%= configPath%>";
 		
-		var params = '{ ' + getBasicParamsAsJson() + ', "settingTemplate": ' + $('#type').val() + ' , "selectedConfigId": "' + selectedConfigId 
+		var params = '{ ' + getBasicParamsAsJson() + ', "settingTemplate": ' + $('#templateType').val() + ' , "selectedConfigId": "' + selectedConfigId 
 			+ '" , "selectedEnv": "' + selectedEnv + '" , "selectedType": "' + selectedType + '", "fromPage": "' + fromPage + '", "configPath": "' + configPath + '", "selectedConfigname": "' + selectedConfigname + '"}';
 		if ($(this).text() === "Features") {
 			loadJsonContent('configType', params,  $('#featureListContainer'));
@@ -224,7 +224,7 @@
 			jsonObject.value = values;
 		}
 		
-		var template = $.parseJSON($('#type').val());
+		var template = $.parseJSON($('#templateType').val());
 		var type = template.name;
 		var oldName = "<%= name %>";
 		var configId = template.id;
@@ -322,6 +322,12 @@
 			showError($("#appliesToControl"), $("#appliesToError"), data.appliesToError);
 		} else {
 			hideError($("#appliesToControl"), $("#appliesToError"));
+		}
+		
+		if (!isBlank(data.versionError)) {
+			showError($("#versionControl"), $("#versionError"), data.versionError);
+		} else {
+			hideError($("#versionControl"), $("#versionError"));
 		}
 	}
 </script>

@@ -17,13 +17,15 @@
   limitations under the License.
   ###
   --%>
-
+<%@page import="com.opensymphony.xwork2.ActionSupport"%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.util.Arrays"%>
 <%@ page import="java.util.List"%>
 
+<%@ page import="org.apache.commons.lang.StringUtils" %>
 <%@ page import="org.apache.commons.collections.CollectionUtils"%>
+
 <%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
 <%@ page import="com.photon.phresco.commons.model.ArtifactInfo"%>
 <%@ page import="com.photon.phresco.commons.model.DownloadInfo"%>
@@ -35,6 +37,12 @@
 	List<DownloadInfo> editorDownloadInfos = (List<DownloadInfo>) request.getAttribute(FrameworkConstants.REQ_EDITOR_DOWNLOAD_INFO);
 	List<DownloadInfo> toolsDownloadInfos = (List<DownloadInfo>) request.getAttribute(FrameworkConstants.REQ_TOOLS_DOWNLOAD_INFO);
 	List<DownloadInfo> othersDownloadInfos = (List<DownloadInfo>) request.getAttribute(FrameworkConstants.REQ_OTHERS_DOWNLOAD_INFO);
+	ActionSupport actionSupport = new ActionSupport();
+	boolean serverDownloadUrl = false;
+	boolean dbDownloadUrl = false;
+	boolean editorDownloadUrl = false;
+	boolean toolsDownloadUrl = false;
+	boolean othersDownloadUrl = false;
 %>
 
 <div class="theme_accordion_container">
@@ -42,226 +50,330 @@
         <div class="accordion_panel_inner">
             <section class="lft_menus_container">
             	<% 
-            	if (CollectionUtils.isNotEmpty(serverDownloadInfos)) {
+            		if (CollectionUtils.isNotEmpty(serverDownloadInfos)) {
+            			serverDownloadUrl = false;
+            			for (DownloadInfo serverDownloadInfo : serverDownloadInfos) {
+                			List<ArtifactInfo> infos = serverDownloadInfo.getArtifactGroup().getVersions();
+							if (CollectionUtils.isNotEmpty(infos)) {
+								for (ArtifactInfo info : infos) {
+									if (StringUtils.isNotEmpty(info.getDownloadURL())) {
+										serverDownloadUrl = true;
+										break;
+									}
+								}
+							}
+							if (serverDownloadUrl) {
+								break;
+							}
+            			}
+            		if (serverDownloadUrl) { 
             	%>
-                <span class="siteaccordion closereg"><span><s:text name="lbl.servers"/></span></span>
-                <div class="mfbox siteinnertooltiptxt downloadContent">
-                    <div class="scrollpanel">
-                        <section class="scrollpanel_inner">
-                        	<table class="download_tbl">
-	                        	<thead>
-	                            	<tr class="download_tbl_header">
-                            			<th><s:text name="lbl.name"/></th>
-                            			<th><s:text name="lbl.version"/></th>
-                            			<th><s:text name="lbl.size"/></th>
-                            			<th class="label_center"><s:text name="lbl.download"/></th>
-                            		</tr>
-	                            </thead>
-	                            
-	                        	<tbody>
-		                    	<%
-		                    	for (DownloadInfo serverDownloadInfo : serverDownloadInfos) {
-	                    			 List<ArtifactInfo> infos = serverDownloadInfo.getArtifactGroup().getVersions();
-	                    			 if (CollectionUtils.isNotEmpty(infos)) {
-	                    				 for (ArtifactInfo info : infos) {
-	                    		%> 
-		                    		<tr>
-		                    			<td><%= serverDownloadInfo.getName() %></td>
-		                    			<td><%= info.getVersion() %></td>
-		                    			<td><%= info.getFileSize() %></td>
-		                    			<td class="label_center">
-		                    				<a href="#"> 
-		                    					<img src="images/icons/download.png" title="<%=serverDownloadInfo.getName() %>" />
-		                    				</a>
-		                    			</td> 
-		                    		</tr>
-	                    		<%	}
-	                    		}
-	                    	} %> 
-                        	</table>
-                        </section>
-                    </div>
-                </div>
+	                <span class="siteaccordion closereg"><span><s:text name="lbl.servers"/></span></span>
+	                <div class="mfbox siteinnertooltiptxt downloadContent">
+	                    <div class="scrollpanel">
+	                        <section class="scrollpanel_inner">
+	                        	<table class="download_tbl">
+		                        	<thead>
+		                            	<tr class="download_tbl_header">
+	                            			<th><s:text name="lbl.name"/></th>
+	                            			<th><s:text name="lbl.version"/></th>
+	                            			<th><s:text name="lbl.size"/></th>
+	                            			<th class="label_center"><s:text name="lbl.download"/></th>
+	                            		</tr>
+		                            </thead>
+		                            
+		                        	<tbody>
+			                    	<%
+										for (DownloadInfo serverDownloadInfo : serverDownloadInfos) {
+		                    			List<ArtifactInfo> infos = serverDownloadInfo.getArtifactGroup().getVersions();
+											if(CollectionUtils.isNotEmpty(infos)) {
+												for (ArtifactInfo info : infos) {
+													if (StringUtils.isNotEmpty(info.getDownloadURL())) {
+		                    		%> 
+						                    		<tr>
+						                    			<td><%= serverDownloadInfo.getName() %></td>
+						                    			<td><%= info.getVersion() %></td>
+						                    			<td><%= info.getFileSize() %></td>
+						                    			<td class="label_center">
+						                    				<a href="<%= info.getDownloadURL()%>"> 
+						                    					<img src="images/icons/download.png" title="<%=serverDownloadInfo.getName() %>" />
+						                    				</a>
+						                    			</td> 
+						                    		</tr>
+			                    	<%	
+													}
+												}
+			                    			}
+			                    		} 
+			                    	%> 
+	                        	</table>
+	                        </section>
+	                    </div>
+	                </div>
                 <% 
-                	} if (CollectionUtils.isNotEmpty(dbDownloadInfos)) { 
+                	}
+           		} if (CollectionUtils.isNotEmpty(dbDownloadInfos)) { 
+						dbDownloadUrl = false;
+	        			for (DownloadInfo dbDownloadInfo : dbDownloadInfos) {
+	            			List<ArtifactInfo> infos = dbDownloadInfo.getArtifactGroup().getVersions();
+							if (CollectionUtils.isNotEmpty(infos)) {
+								for (ArtifactInfo info : infos) {
+									if (StringUtils.isNotEmpty(info.getDownloadURL())) {
+										dbDownloadUrl = true;
+										break;
+									}
+								}
+							}
+							if (dbDownloadUrl) {
+								break;
+							}
+	        			}
+	        		if (dbDownloadUrl) { 
                 %>
-                <span class="siteaccordion closereg"><span><s:text name="lbl.database"/></span></span>
-                <div class="mfbox siteinnertooltiptxt downloadContent">
-                    <div class="scrollpanel">
-                        <section class="scrollpanel_inner">
-                        	<table class="download_tbl">
-	                        	<thead>
-	                            	<tr class="download_tbl_header">
-                            			<th><s:text name="lbl.name"/></th>
-                            			<th><s:text name="lbl.version"/></th>
-                            			<th><s:text name="lbl.size"/></th>
-                            			<th class="label_center"><s:text name="lbl.download"/></th>
-                            		</tr>	
-	                            </thead>
-	                            
-	                        	<tbody>
-		                    	<%
-		                    		for (DownloadInfo dbDownloadInfo : dbDownloadInfos) {
-		                    			List<ArtifactInfo> infos = dbDownloadInfo.getArtifactGroup().getVersions();
-		                    			 if (CollectionUtils.isNotEmpty(infos)) {
-		                    				 for (ArtifactInfo info : infos) { 
-		                    	%>
-		                    	
-		                    		<tr>
-		                    			<!-- TODO:Need to handle -->
-		                    			 <td><%= dbDownloadInfo.getName() %></td>
-		                    			<td><%= info.getVersion() %></td>
-		                    			<td><%= info.getFileSize() %></td>
-		                    			<td class="label_center">
-		                    				<a href="#">
-		                    					<img src="images/icons/download.png" title="<%=dbDownloadInfo.getName()%>"/>
-		                    				</a>
-		                    			</td>
-		                    		</tr>
-	                    		<%	}
-		                    	}
-		                    }
-		                  %>
-	                    		</tbody>
-                        	</table>
-                        </section>
-                    </div>
-                </div>
+	                <span class="siteaccordion closereg"><span><s:text name="lbl.database"/></span></span>
+	                <div class="mfbox siteinnertooltiptxt downloadContent">
+	                    <div class="scrollpanel">
+	                        <section class="scrollpanel_inner">
+	                        	<table class="download_tbl">
+		                        	<thead>
+		                            	<tr class="download_tbl_header">
+	                            			<th><s:text name="lbl.name"/></th>
+	                            			<th><s:text name="lbl.version"/></th>
+	                            			<th><s:text name="lbl.size"/></th>
+	                            			<th class="label_center"><s:text name="lbl.download"/></th>
+	                            		</tr>	
+		                            </thead>
+		                            
+		                        	<tbody>
+			                    	<%
+										for (DownloadInfo dbDownloadInfo : dbDownloadInfos) {
+			                    		List<ArtifactInfo> infos = dbDownloadInfo.getArtifactGroup().getVersions();
+											if (CollectionUtils.isNotEmpty(infos)) {
+												for (ArtifactInfo info : infos) { 
+													if(StringUtils.isNotEmpty(info.getDownloadURL())) {
+			                    	%>
+						                    		<tr>
+						                    			<td><%= dbDownloadInfo.getName() %></td>
+						                    			<td><%= info.getVersion() %></td>
+						                    			<td><%= info.getFileSize() %></td>
+						                    			<td class="label_center">
+						                    				<a href="<%= info.getDownloadURL()%>"> 
+						                    					<img src="images/icons/download.png" title="<%=dbDownloadInfo.getName()%>"/>
+						                    				</a>
+						                    			</td>
+						                    		</tr>
+									<%	
+					                    			}
+												}
+					                    	}
+					                    }
+									%>
+		                    		</tbody>
+	                        	</table>
+	                        </section>
+	                    </div>
+	                </div>
                 <% 
-                	}  if(CollectionUtils.isNotEmpty(editorDownloadInfos)) { 
+						}                	
+					} if (CollectionUtils.isNotEmpty(editorDownloadInfos)) {
+						editorDownloadUrl = false;
+	        			for (DownloadInfo editorDownloadInfo : editorDownloadInfos) {
+	            			List<ArtifactInfo> infos = editorDownloadInfo.getArtifactGroup().getVersions();
+							if (CollectionUtils.isNotEmpty(infos)) {
+								for (ArtifactInfo info : infos) {
+									if (StringUtils.isNotEmpty(info.getDownloadURL())) {
+										editorDownloadUrl = true;
+										break;
+									}
+								}
+							}
+							if (editorDownloadUrl) {
+								break;
+							}
+	        			}
+					if (editorDownloadUrl) {
                 %>
-                <span class="siteaccordion closereg"><span><s:text name="lbl.editors"/></span></span>
-                <div class="mfbox siteinnertooltiptxt downloadContent">
-                    <div class="scrollpanel">
-                        <section class="scrollpanel_inner">
-                        	<table class="download_tbl">
-	                        	<thead>
-	                            	<tr class="download_tbl_header">
-                            			<th><s:text name="lbl.name"/></th>
-                            			<th><s:text name="lbl.version"/></th>
-                            			<th><s:text name="lbl.size"/></th>
-                            			<th class="label_center"><s:text name="lbl.download"/></th>
-                            		</tr>
-	                            </thead>
-	                        	
-	                        	<tbody>
-		                    	<%
-		                    		for (DownloadInfo editorDownloadInfo : editorDownloadInfos) {
-		                    			List<ArtifactInfo> infos = editorDownloadInfo.getArtifactGroup().getVersions();
-		                    			 if (CollectionUtils.isNotEmpty(infos)) {
-		                    				 for (ArtifactInfo info : infos) {
-		                    	%> 
-		                    		<tr>
-		                    			<!-- TODO:Need to handle -->
-		                    			<td><%= editorDownloadInfo.getName() %></td>
-		                    			<td><%= info.getVersion() %></td>
-		                    			<td><%= info.getFileSize() %></td>
-		                    			<td class="label_center">
-		                    				<a href="#">
-		                    					<img src="images/icons/download.png" title="<%= editorDownloadInfo.getName()%>"/>
-		                    				</a>
-		                    			</td> 
-		                    		</tr>
-	                    		<%	}
-		                    	}
-		                    } %>
-	                    		</tbody>
-                        	</table>
-                        </section>
-                    </div>
-                </div>
+		                <span class="siteaccordion closereg"><span><s:text name="lbl.editors"/></span></span>
+		                <div class="mfbox siteinnertooltiptxt downloadContent">
+		                    <div class="scrollpanel">
+		                        <section class="scrollpanel_inner">
+		                        	<table class="download_tbl">
+			                        	<thead>
+			                            	<tr class="download_tbl_header">
+		                            			<th><s:text name="lbl.name"/></th>
+		                            			<th><s:text name="lbl.version"/></th>
+		                            			<th><s:text name="lbl.size"/></th>
+		                            			<th class="label_center"><s:text name="lbl.download"/></th>
+		                            		</tr>
+			                            </thead>
+			                        	
+			                        	<tbody>
+				                    	<%
+											for (DownloadInfo editorDownloadInfo : editorDownloadInfos) {
+											List<ArtifactInfo> infos = editorDownloadInfo.getArtifactGroup().getVersions();
+												if (CollectionUtils.isNotEmpty(infos)) {
+													for (ArtifactInfo info : infos) {
+														if(StringUtils.isNotEmpty(info.getDownloadURL())) {
+				                    	%> 
+							                    		<tr>
+							                    			<td><%= editorDownloadInfo.getName() %></td>
+							                    			<td><%= info.getVersion() %></td>
+							                    			<td><%= info.getFileSize() %></td>
+							                    			<td class="label_center">
+							                    				<a href= "<%= info.getDownloadURL() %>">
+							                    					<img src="images/icons/download.png" title="<%= editorDownloadInfo.getName()%>"/>
+							                    				</a>
+							                    			</td> 
+							                    		</tr>
+										<%	
+														}
+													} 
+												}
+											} 
+										%>
+			                    		</tbody>
+		                        	</table>
+		                        </section>
+		                    </div>
+		                </div>
                 
                 <% 
-                	} if(CollectionUtils.isNotEmpty(toolsDownloadInfos)) { 
+						}
+					} if (CollectionUtils.isNotEmpty(toolsDownloadInfos)) {
+						toolsDownloadUrl = false;
+							for (DownloadInfo toolsDownloadInfo : toolsDownloadInfos) {
+								List<ArtifactInfo> infos = toolsDownloadInfo.getArtifactGroup().getVersions();
+								if (CollectionUtils.isNotEmpty(infos)) {
+									for (ArtifactInfo info : infos) {
+										if (StringUtils.isNotEmpty(info.getDownloadURL())) {
+											toolsDownloadUrl = true;
+											break;
+										}
+									}
+								}
+							if (toolsDownloadUrl) {
+								break;
+								}
+							}
+					if (toolsDownloadUrl) {
                 %>
-                <span class="siteaccordion closereg"><span><s:text name="lbl.tools"/></span></span>
-                <div class="mfbox siteinnertooltiptxt downloadContent">
-                    <div class="scrollpanel">
-                        <section class="scrollpanel_inner">
-                        	<table class="download_tbl">
-	                        	<thead>
-	                            	<tr class="download_tbl_header">
-                            			<th><s:text name="lbl.name"/></th>
-                            			<th><s:text name="lbl.version"/></th>
-                            			<th><s:text name="lbl.size"/></th>
-                            			<th class="label_center"><s:text name="lbl.download"/></th>
-                            		</tr>	
-	                            </thead>
-	                            
-	                        	<tbody>
-		                    	<%
-		                    		for (DownloadInfo toolsDownloadInfo : toolsDownloadInfos) {
-		                    			List<ArtifactInfo> infos = toolsDownloadInfo.getArtifactGroup().getVersions();
-		                    			 if (CollectionUtils.isNotEmpty(infos)) {
-		                    				 for (ArtifactInfo info : infos) {
-		                    	%> 
-		                    		<tr>
-		                    			<!-- TODO:Need to handle -->
-		                    			 <td><%= toolsDownloadInfo.getName() %></td>
-		                    			<td><%= info.getVersion() %></td>
-		                    			<td><%= info.getFileSize() %></td>
-		                    			<td class="label_center">
-		                    				<a href="#">
-		                    					<img src="images/icons/download.png" title="<%=toolsDownloadInfo.getName() %>"/>
-		                    				</a>
-		                    			</td> 
-		                    		</tr>
-	                    		<%	}
-		                    	}
-		                    }
-		                   %>
-	                    		</tbody>
-                        	</table>
-                        </section>
-                    </div>
-                </div>
+	                <span class="siteaccordion closereg"><span><s:text name="lbl.tools"/></span></span>
+	                <div class="mfbox siteinnertooltiptxt downloadContent">
+	                    <div class="scrollpanel">
+	                        <section class="scrollpanel_inner">
+	                        	<table class="download_tbl">
+		                        	<thead>
+		                            	<tr class="download_tbl_header">
+	                            			<th><s:text name="lbl.name"/></th>
+	                            			<th><s:text name="lbl.version"/></th>
+	                            			<th><s:text name="lbl.size"/></th>
+	                            			<th class="label_center"><s:text name="lbl.download"/></th>
+	                            		</tr>	
+		                            </thead>
+		                            
+		                        	<tbody>
+			                    	<%
+										for (DownloadInfo toolsDownloadInfo : toolsDownloadInfos) {
+										List<ArtifactInfo> infos = toolsDownloadInfo.getArtifactGroup().getVersions();
+											if (CollectionUtils.isNotEmpty(infos)) {
+												for (ArtifactInfo info : infos) {
+													if(StringUtils.isNotEmpty(info.getDownloadURL())) {
+			                    	%> 
+						                    		<tr>
+						                    			<td><%= toolsDownloadInfo.getName() %></td>
+						                    			<td><%= info.getVersion() %></td>
+						                    			<td><%= info.getFileSize() %></td>
+						                    			<td class="label_center">
+						                    				<a href= "<%= info.getDownloadURL() %>">
+						                    					<img src="images/icons/download.png" title="<%=toolsDownloadInfo.getName() %>"/>
+						                    				</a>
+						                    			</td> 
+						                    		</tr>
+		                    		<%	
+													}
+												}
+											}
+										}
+									%>
+		                    		</tbody>
+	                        	</table>
+	                        </section>
+	                    </div>
+	                </div>
                 
                 <% 
-                	} if(CollectionUtils.isNotEmpty(othersDownloadInfos)) { 
+						}
+                	} if (CollectionUtils.isNotEmpty(othersDownloadInfos)) {
+                		othersDownloadUrl = false;
+						for (DownloadInfo othersDownloadInfo : othersDownloadInfos) {
+							List<ArtifactInfo> infos = othersDownloadInfo.getArtifactGroup().getVersions();
+							if (CollectionUtils.isNotEmpty(infos)) {
+								for (ArtifactInfo info : infos) {
+									if (StringUtils.isNotEmpty(info.getDownloadURL())) {
+										othersDownloadUrl = true;
+										break;
+									}
+								}
+							}
+						if (othersDownloadUrl) {
+							break;
+							}
+						}
+				if (othersDownloadUrl) {
                 %>
-                <span class="siteaccordion closereg"><span><s:text name="lbl.others"/></span></span>
-                <div class="mfbox siteinnertooltiptxt downloadContent">
-                    <div class="scrollpanel">
-                        <section class="scrollpanel_inner">
-                        	<table class="download_tbl">
-	                        	<thead>
-	                            	<tr class="download_tbl_header">
-                            			<th><s:text name="lbl.name"/></th>
-                            			<th><s:text name="lbl.version"/></th>
-                            			<th><s:text name="lbl.size"/></th>
-                            			<th class="label_center"><s:text name="lbl.download"/></th>
-                            		</tr>	
-	                            </thead>
-	                            
-	                        	<tbody>
-		                    	<%
-		                    		for (DownloadInfo otherDownloadInfo : othersDownloadInfos) {
-		                    			List<ArtifactInfo> infos = otherDownloadInfo.getArtifactGroup().getVersions();
-	                    				 if (CollectionUtils.isNotEmpty(infos)) {
-	                    				 for (ArtifactInfo info : infos) {
-	                    		%> 
-		                    		<tr>
-		                    			<!-- TODO:Need to handle -->
-		                    			<td><%= otherDownloadInfo.getName() %></td>
-		                    			<td><%= info.getVersion() %></td>
-		                    			<td><%= info.getFileSize() %></td>
-		                    			<td class="label_center">
-		                    				<a href="#">
-		                    					<img src="images/icons/download.png" title="<%= otherDownloadInfo.getName() %>"/>
-		                    				</a>
-		                    			</td> 
-		                    		</tr>
-	                    		<%	}
-	                    		}
-	                    	} %>
-	                    		</tbody>
-                        	</table>
-                        </section>
-                    </div>
-                </div>
-                
-                <% } %>
+	                <span class="siteaccordion closereg"><span><s:text name="lbl.others"/></span></span>
+	                <div class="mfbox siteinnertooltiptxt downloadContent">
+	                    <div class="scrollpanel">
+	                        <section class="scrollpanel_inner">
+	                        	<table class="download_tbl">
+		                        	<thead>
+		                            	<tr class="download_tbl_header">
+	                            			<th><s:text name="lbl.name"/></th>
+	                            			<th><s:text name="lbl.version"/></th>
+	                            			<th><s:text name="lbl.size"/></th>
+	                            			<th class="label_center"><s:text name="lbl.download"/></th>
+	                            		</tr>	
+		                            </thead>
+		                            
+		                        	<tbody>
+			                    	<%
+										for (DownloadInfo otherDownloadInfo : othersDownloadInfos) {
+										List<ArtifactInfo> infos = otherDownloadInfo.getArtifactGroup().getVersions();
+											if (CollectionUtils.isNotEmpty(infos)) {
+												for (ArtifactInfo info : infos) {
+													if(StringUtils.isNotEmpty(info.getDownloadURL())) {
+		                    		%> 
+						                    		<tr>
+						                    			<td><%= otherDownloadInfo.getName() %></td>
+						                    			<td><%= info.getVersion() %></td>
+						                    			<td><%= info.getFileSize() %></td>
+						                    			<td class="label_center">
+						                    				<a href= "<%= info.getDownloadURL() %>">
+						                    					<img src="images/icons/download.png" title="<%= otherDownloadInfo.getName() %>"/>
+						                    				</a>
+						                    			</td> 
+						                    		</tr>
+									<%	
+													}
+												}
+											}
+										} 
+									%>
+		                    		</tbody>
+	                        	</table>
+	                        </section>
+	                    </div>
+	                </div>
+                <% 
+						}
+					}
+                %>
             </section>  
+			<% if (serverDownloadUrl == false && dbDownloadUrl == false && editorDownloadUrl == false && toolsDownloadUrl == false && othersDownloadUrl == false) {%>
+					<div class="alert alert-block">
+						<%= actionSupport.getText("lbl.err.msg.list.downloads") %>
+					</div> 
+			<% } %>
         </div>
     </section>
 </div>

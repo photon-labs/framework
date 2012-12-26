@@ -67,6 +67,10 @@ footer {
 	width: 100%;
 }
 
+.modal-backdrop, .modal-backdrop.fade.in {
+	 opacity: 0.7;
+}
+
 /** login **/
 .lgnContainer {
 	left: 50%;
@@ -881,7 +885,7 @@ a {
 	top: -3px;
 	width: auto;
 	padding: 4px;
-	z-index: 3000;
+	z-index: 100;
 }
 
 .userInfo ul {
@@ -4012,6 +4016,8 @@ div.submit_input {
 .theme_accordion_container{
     float: left;
     width: 99.6%;
+   	height: 94%;
+    overflow-x: hidden !important;
 }
 
 .accordion_head{
