@@ -455,7 +455,6 @@
 		var currentCustomerId = $('select[name=customerId]').val();
 		if (currentCustomerId === "<%= ServiceConstants.DEFAULT_CUSTOMER_NAME %>") {
 			applyTheme();
-			changeColorScheme("#38B865");
 		} else {
 			loadContent("fetchLogoImgUrl", $('#formCustomers'), '', '', true, true, 'changeLogo');
 		}

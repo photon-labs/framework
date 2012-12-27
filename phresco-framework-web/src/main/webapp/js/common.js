@@ -618,6 +618,7 @@ function applyTheme() {
 }
 
 function changeTheme(localstore) {
+	$("#app_stylesheet").remove();
 	if (localstore == "theme/red_blue/css/red.css") {
         $("link[title='phresco']").attr("href", localstore);
         $("link[id='phresco']").attr("href", "theme/red_blue/css/phresco.css");
