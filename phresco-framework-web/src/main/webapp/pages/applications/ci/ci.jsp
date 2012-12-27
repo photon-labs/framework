@@ -480,7 +480,7 @@ function reloadCI() {
 
 function localJenkinsAliveCheck () {
 	console.log("local jenkins alive check called ");
-	loadContent('localJenkinsAliveCheck',$('#deleteObjects'), '', getBasicParams(), true, false, true);
+	loadContent('localJenkinsAliveCheck',$('#deleteObjects'), '', getBasicParams(), true, false);
 }
 
 function successLocalJenkinsAliveCheck (data) {
