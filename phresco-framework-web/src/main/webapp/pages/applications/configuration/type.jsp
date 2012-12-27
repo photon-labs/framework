@@ -166,7 +166,9 @@
 					var value = $(this).val();
 					var type = '<%= propertyTemplate.getType() %>';
 					var txtBoxName = '<%= propertyTemplate.getKey() %>';
-					validateInput(value, type, txtBoxName);
+					if(txtBoxName != '<%= FrameworkConstants.EMAIL_ID %>') {
+						validateInput(value, type, txtBoxName);
+					}
 				}); 
 			</script>	
 	<%

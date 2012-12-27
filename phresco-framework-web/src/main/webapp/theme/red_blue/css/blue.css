@@ -993,13 +993,24 @@ li {
 
 /*** quality tab starts ***/
 #navigation {
-    background-color:#FFFFFF;
+    background-color: #F5F5F5;
     border-bottom: 1px solid #0064CD;
 }
 
-#navigation ul li a {
-    color:#004366;
-    background:#FFFFFF;
+#subTabcontent {
+    height: 98%;
+    margin-top: 1px;
+    overflow: hidden;
+    position: relative;
+    top: -2px;
+    width: 100%;
+}
+
+#navigation {
+    height: 28px;
+    margin-top: -3px;
+    padding-left: 50%;
+    padding-top: 2px;
 }
 
 #navigation ul li a:hover, #navigation ul li a.selected {

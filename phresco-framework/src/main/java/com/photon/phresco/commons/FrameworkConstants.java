@@ -49,6 +49,7 @@ public interface FrameworkConstants {
     String COMMIT = "commit";
     
     String CONFIG = "config";
+    String EMAIL_ID = "emailid";
     
     String X_FILE_NAME = "X-File-Name";
     String CONFIG_TEMP_TYPE = "Config-Temp-Type";
@@ -1114,6 +1115,8 @@ public interface FrameworkConstants {
     String ERROR_NAME_EXISTS = "err.msg.project.name.exists";
     String ERROR_CODE_EXISTS = "err.msg.project.code.exists";
     String ERROR_CODE = "err.msg.empty.code";
+    String ERROR_EMAIL_ID = "err.msg.invalid.email";
+    String ERROR_EMAIL_ID_EMPTY = "err.msg.empty.email";
     String ERROR_VERSION = "err.msg.empty.version";
     String ERROR_LAYER = "err.msg.empty.layer";
     String ERROR_TECHNOLOGY = "err.msg.empty.technology";

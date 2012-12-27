@@ -329,5 +329,12 @@
 		} else {
 			hideError($("#versionControl"), $("#versionError"));
 		}
+		
+		if (!isBlank(data.emailError)) {
+			showError($("#emailidControl"), $("#emailidError"), data.emailError);
+		} else {
+			hideError($("#emailidControl"), $("#emailidError"));
+		}
 	}
+	
 </script>

@@ -32,6 +32,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -91,6 +93,7 @@ public class Configurations extends FrameworkBaseAction {
 	private String selectedConfigname = null;
 	private String configName = null;
 	private String copyFromEnvName = null;
+	private String emailid ="";
     private String description = null;
     private String oldName = null;
     private List<String> appliesTos = null;
@@ -467,6 +470,14 @@ public class Configurations extends FrameworkBaseAction {
             hasError = true;
         }
     	
+    	if (StringUtils.isNotEmpty(getEmailid())) {
+            hasError = emailIdFormatValidation(hasError); 
+        }
+    	
+    	if (StringUtils.isEmpty(getEmailid())) {
+    		hasError = emailValidation(hasError); 
+    	}
+    	
     	if (fromPage.equals(FrameworkConstants.ADD_SETTINGS) || fromPage.equals(FrameworkConstants.EDIT_SETTINGS)) {
 	    	if (CollectionUtils.isEmpty(getAppliesTos())) {
 	    		setAppliesToError(getText(ERROR_APPLIES_TO));
@@ -578,6 +589,27 @@ public class Configurations extends FrameworkBaseAction {
         
         return SUCCESS;
     }
+    
+    public boolean emailIdFormatValidation(boolean isError) {
+		if (StringUtils.isNotEmpty(getEmailid())) {
+			Pattern p = Pattern.compile("^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
+			Matcher m = p.matcher(getEmailid());
+			boolean b = m.matches();
+			if (!b) {
+				setEmailError(getText(ERROR_EMAIL_ID));
+				isError = true;
+			}
+		}
+		return isError;
+	}
+    
+    public boolean emailValidation(boolean isError) {
+		if (StringUtils.isEmpty(getEmailid())) {
+			setEmailError(getText(ERROR_EMAIL_ID_EMPTY));
+			isError = true;
+		}
+		return isError;
+	}
     
     /*private void saveCertificateFile(String path) throws PhrescoException {
     	try {
@@ -1601,5 +1633,12 @@ public class Configurations extends FrameworkBaseAction {
 		this.remoteDeployment = remoteDeployment;
 	}
 
+	public String getEmailid() {
+		return emailid;
+	}
+
+	public void setEmailid(String emailid) {
+		this.emailid = emailid;
+	}
 
 }
