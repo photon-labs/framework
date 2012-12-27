@@ -32,6 +32,8 @@
 <%@ page import="com.photon.phresco.commons.model.ArtifactInfo"%>
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 <%@ page import="com.photon.phresco.commons.model.ProjectInfo"%>
+<%@ page import="com.photon.phresco.commons.model.ArtifactGroup.Type"%>
+<%@ page import="com.photon.phresco.commons.model.CoreOption"%>
 
 <%
 	Gson gson = new Gson();
@@ -41,13 +43,24 @@
 	String type = (String) request.getAttribute(FrameworkConstants.REQ_FEATURES_TYPE);
 	if (CollectionUtils.isNotEmpty(artifactGroups)) {
 		for (ArtifactGroup artifactGroup : artifactGroups) {
+		    List<CoreOption> coreOptions = artifactGroup.getAppliesTo();
+		    boolean canConfigure = false;
+		    for (CoreOption coreOption : coreOptions) {
+		        if (coreOption.getTechId().equals(techId) && !coreOption.isCore()) {
+		            canConfigure = true;
+		            break;
+		        }
+		    }
+		    if (Type.COMPONENT.equals(artifactGroup.getType())) {
+		        canConfigure = true;
+		    }
 		    String artifactGrpName = artifactGroup.getName().replaceAll("\\s","");
 %>
 		<div  class="accordion_panel_inner">
 		    <section class="lft_menus_container">	
 				<span class="siteaccordion">
 					<span>
-						<input class="feature_checkbox" type="checkbox" value="<%= artifactGroup.getName() %>" id="checkAll1"/>
+						<input class="feature_checkbox" type="checkbox" canConfigure="<%= canConfigure %>" value="<%= artifactGroup.getName() %>" id="checkAll1"/>
 						<a style="float: left; margin-left:2%;" href="#"><%= artifactGroup.getName() %></a>
 						
 						<select class="input-mini features_ver_sel" id="<%= artifactGrpName %>" moduleId="<%= artifactGroup.getId() %>" name="<%=artifactGroup.getName() %>" >

@@ -109,8 +109,12 @@
 <%	
 	if (CollectionUtils.isNotEmpty(features)) {
 		for (SelectedFeature feature : features) {
+		    boolean showImage = false;
+		    if (feature.isCanConfigure()) {
+		        showImage = true;
+		    }
 %>
-			constructFeaturesDiv('<%= feature.getDispName() %>', '<%= feature.getDispValue() %>', '<%= feature.getType() %>', '<%= feature.getVersionID() %>', '<%= feature.getModuleId() %>', true);
+			constructFeaturesDiv('<%= feature.getDispName() %>', '<%= feature.getDispValue() %>', '<%= feature.getType() %>', '<%= feature.getVersionID() %>', '<%= feature.getModuleId() %>', <%= feature.isCanConfigure() %>, <%= showImage %>);
 <%		
 	 	}
 	}
@@ -155,40 +159,45 @@
         	var hiddenFieldVersion = $('#'+id).val();
         	var moduleId = $('#'+id).attr('moduleId');
         	var dispValue = $("#" + id + " option:selected").text();
-        	constructFeaturesDiv(dispName, dispValue, selectedType, hiddenFieldVersion, moduleId);
+        	var canConfigure = Boolean($(this).attr("canConfigure"));
+        	constructFeaturesDiv(dispName, dispValue, selectedType, hiddenFieldVersion, moduleId, canConfigure);
         });
     }
     
     // Function to construct the hidden fields for selected features
-    function constructFeaturesDiv(dispName, dispValue, hiddenFieldname, hiddenFieldVersion, moduleId, showConfigImg) {
+    function constructFeaturesDiv(dispName, dispValue, hiddenFieldname, hiddenFieldVersion, moduleId, canConfigure, showImage) {
 		var jsonParamObj = {};
 		jsonParamObj.dispName = dispName;
 		jsonParamObj.moduleId = moduleId;
 		jsonParamObj.dispValue = dispValue;
 		jsonParamObj.versionID = hiddenFieldVersion;
 		jsonParamObj.type = hiddenFieldname;
+		jsonParamObj.canConfigure = canConfigure;
 		var jsonParam = JSON.stringify(jsonParamObj);
 		var ctrlClass = removeSpaces(dispName);
-		$("div[id='"+ ctrlClass +"Div']").remove();
-		if (showConfigImg) {
-			$("#result").append('<div id="'+ctrlClass+'Div">'+dispName+' - '+dispValue+
-					'<a href="#" onclick="remove(this);">&nbsp;&times;</a>'+
-					'<input type="hidden" class="'+ctrlClass+'" name="jsonData">' +
-					<%
-						if (optionIds != null && optionIds.contains(FrameworkConstants.FEATURES_KEY) || optionIds.contains(FrameworkConstants.COMPONENT_CONFIG)) {
-					%>
-						'<a href="#" id="'+dispName+'" onclick="showFeatureConfigPopup(this);">'+ 
-						'<img src="images/icons/gear.png" title="Configure"/></a>' +
-					<% 
-						}
-					%>
-					'</div>');
-		} else {
-			$("#result").append('<div id="'+ctrlClass+'Div">'+dispName+' - '+dispValue+
-					'<a href="#" onclick="remove(this);">&times;</a>'+
-					'<input type="hidden" class="'+ctrlClass+'" name="jsonData"></div>');
+		var elementsSize = $("#" + ctrlClass + "Div").size();
+// 		$("div[id='"+ ctrlClass +"Div']").remove();
+		if (elementsSize === 0) {
+			if (showImage) {
+				$("#result").append('<div id="'+ctrlClass+'Div">'+dispName+' - '+dispValue+
+						'<a href="#" onclick="remove(this);">&nbsp;&times;</a>'+
+						'<input type="hidden" class="'+ctrlClass+'" name="jsonData">' +
+						<%
+							if (optionIds != null && optionIds.contains(FrameworkConstants.FEATURES_KEY) || optionIds.contains(FrameworkConstants.COMPONENT_CONFIG)) {
+						%>
+							'<a href="#" id="'+dispName+'" onclick="showFeatureConfigPopup(this);">'+ 
+							'<img src="images/icons/gear.png" title="Configure"/></a>' +
+						<% 
+							}
+						%>
+						'</div>');
+			} else {
+				$("#result").append('<div id="'+ctrlClass+'Div">'+dispName+' - '+dispValue+
+						'<a href="#" onclick="remove(this);">&times;</a>'+
+						'<input type="hidden" class="'+ctrlClass+'" name="jsonData"></div>');
+			}
+			$("."+ctrlClass).val(jsonParam);
 		}
-		$("."+ctrlClass).val(jsonParam);
     }
     
     // Function to remove the final features in right tab  

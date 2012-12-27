@@ -67,6 +67,8 @@
     FrameworkUtil frameworkUtil = new FrameworkUtil();
     DynamicParameterAction dpm = new DynamicParameterAction();
     MojoProcessor mojo = new MojoProcessor(new File(dpm.getPhrescoPluginInfoXmlFilePath(goal, applicationInfo)));
+    StringBuilder stFileFunction = new StringBuilder();
+    String sep = "";
 %>
 
 <form autocomplete="off" class="build_form form-horizontal" id="generateBuildForm">
@@ -290,6 +292,9 @@
 					<%= browseFileElement %>
 	<%			
 				} else if (FrameworkConstants.TYPE_DYNAMIC_PAGE_PARAMETER.equalsIgnoreCase(parameter.getType())) {
+					stFileFunction.append(sep);
+					stFileFunction.append(parameter.getKey());
+					sep = ",";
 					List<? extends Object> obj = (List<? extends Object>) request.getAttribute(FrameworkConstants.REQ_DYNAMIC_PAGE_PARAMETER + parameter.getKey());
 					className = (String) request.getAttribute(FrameworkConstants.REQ_CLASS_NAME);
 					StringTemplate dynamicPageTemplate = frameworkUtil.constructDynamicTemplate(customerId, parameter, parameterModel, obj, className);
@@ -312,6 +317,8 @@
 	%>
 	<!-- dynamic parameters ends -->
 </div>
+<input type="hidden" name="stFileFunction" id="stFileFunction" value="<%= StringUtils.isNotEmpty(stFileFunction.toString()) ? stFileFunction.toString() : "" %>"/>
+<input type="hidden" name="resultJson" id="resultJson" value=""/>
 </form>
 
 <script type="text/javascript">
@@ -582,16 +589,16 @@
 	}
 
 	function addHeader(obj) {
-		var	key = $(obj).parents('fieldset').find($('input[name=key]')).val();
-		var	value = $(obj).parents('fieldset').find($('input[name=value]')).val();
+		var	key = $(obj).parents('fieldset').find($('input[class*=key]')).val();
+		var	value = $(obj).parents('fieldset').find($('input[class*=value]')).val();
 		if ((key != undefined && !isBlank(key)) && (value != undefined && !isBlank(value))) {
-			$(obj).closest('fieldset').append('<div id="headerkeyId" style="background-color: #bbbbbb; width: 40%; margin-bottom:2px; height: auto; border-radius: 6px; '+
+			$(obj).closest('fieldset').append('<div id="headerkeyId" class="headers" style="background-color: #bbbbbb; width: 40%; margin-bottom:2px; height: auto; border-radius: 6px; '+
 						'padding: 0 0 0 10px; position: relative"><a href="#" style="text-decoration: none; margin-right: 10px; color: #000000; '+
-						'margin-left: 95%;" onclick="removeHeader(this);">&times;</a><div style="cursor: pointer; color: #000000; height: auto; '+
+						'margin-left: 92%;" onclick="removeHeader(this);">&times;</a><div style="cursor: pointer; color: #000000; height: auto; '+
 						'position: relative; width: 90%; line-height: 17px; margin-top: -14px; padding: 0 0 6px 1px;">'+ key + " : " + value + 
 						'</div><input type="hidden" name="headerKey" value="'+key+'"/><input type="hidden" name="headerValue" value="'+value+'"/></div>');
-			$('input[name=key]').val("");
-			$('input[name=value]').val("");
+			$('input[class*=key]').val("");
+			$('input[class*=value]').val("");
 		}
 	}
 	

@@ -38,6 +38,7 @@ import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.ArtifactGroupInfo;
 import com.photon.phresco.commons.model.ArtifactInfo;
+import com.photon.phresco.commons.model.CoreOption;
 import com.photon.phresco.commons.model.Element;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.PropertyTemplate;
@@ -158,10 +159,11 @@ public class Features extends FrameworkBaseAction {
 	
 	private void setFeatures(ApplicationInfo appInfo, List<SelectedFeature> listFeatures) {
 		try {
+		    String techId = appInfo.getTechInfo().getId();
 			List<String> selectedModules = appInfo.getSelectedModules();
 			if (CollectionUtils.isNotEmpty(selectedModules)) {
 				for (String selectedModule : selectedModules) {
-					SelectedFeature selectFeature = createArtifactInformation(selectedModule);
+					SelectedFeature selectFeature = createArtifactInformation(selectedModule, techId);
 					listFeatures.add(selectFeature);
 				}
 			}
@@ -169,7 +171,7 @@ public class Features extends FrameworkBaseAction {
 			List<String> selectedJSLibs = appInfo.getSelectedJSLibs();
 			if (CollectionUtils.isNotEmpty(selectedJSLibs)) {
 				for (String selectedJSLib : selectedJSLibs) {
-					SelectedFeature selectFeature = createArtifactInformation(selectedJSLib);
+					SelectedFeature selectFeature = createArtifactInformation(selectedJSLib, techId);
 					listFeatures.add(selectFeature);
 				}
 			}
@@ -177,7 +179,7 @@ public class Features extends FrameworkBaseAction {
 			List<String> selectedComponents = appInfo.getSelectedComponents();
 			if (CollectionUtils.isNotEmpty(selectedComponents))	{
 				for (String selectedComponent : selectedComponents) {
-					SelectedFeature selectFeature = createArtifactInformation(selectedComponent);
+					SelectedFeature selectFeature = createArtifactInformation(selectedComponent, techId);
 					listFeatures.add(selectFeature);
 				}
 			}
@@ -186,7 +188,7 @@ public class Features extends FrameworkBaseAction {
 		}
 	}
 	
-	private SelectedFeature createArtifactInformation(String selectedModule) throws PhrescoException {
+	private SelectedFeature createArtifactInformation(String selectedModule, String techId) throws PhrescoException {
 		
 		SelectedFeature slctFeature = new SelectedFeature();
 		ArtifactInfo artifactInfo = getServiceManager().getArtifactInfo(selectedModule);
@@ -199,6 +201,12 @@ public class Features extends FrameworkBaseAction {
 		ArtifactGroup artifactGroupInfo = getServiceManager().getArtifactGroupInfo(artifactGroupId);
 		slctFeature.setDispName(artifactGroupInfo.getName());
 		slctFeature.setType(artifactGroupInfo.getType().name());
+		List<CoreOption> appliesTo = artifactGroupInfo.getAppliesTo();
+		for (CoreOption coreOption : appliesTo) {
+		    if (coreOption.getTechId().equals(techId) && !coreOption.isCore()) {
+		        slctFeature.setCanConfigure(true);
+		    }
+		}
 		
 		return slctFeature;
 		
@@ -280,12 +288,16 @@ public class Features extends FrameworkBaseAction {
 	}
 	
 	public String showFeatureConfigPopup() throws PhrescoException {
-	    setConfigTemplateType(CONFIG_FEATURES);
-        setReqAttribute(REQ_FEATURE_NAME, getFeatureName());
-        List<PropertyTemplate> propertyTemplates = getTemplateConfigFile();
-        setReqAttribute(REQ_PROPERTIES, propertyTemplates);
-        setReqAttribute(REQ_SELECTED_TYPE, getSelectedType());
-        
+	    try {
+	        setConfigTemplateType(CONFIG_FEATURES);
+	        setReqAttribute(REQ_FEATURE_NAME, getFeatureName());
+	        List<PropertyTemplate> propertyTemplates = getTemplateConfigFile();
+	        setReqAttribute(REQ_PROPERTIES, propertyTemplates);
+	        setReqAttribute(REQ_SELECTED_TYPE, getSelectedType());
+	    } catch (PhrescoException e) {
+//	        return showErrorPopup(e, getText(EXCEPTION_FEATURE_MANIFEST_NOT_AVAILABLE));
+	    }
+	    
 	    return SUCCESS;
 	}
 	
@@ -323,26 +335,28 @@ public class Features extends FrameworkBaseAction {
 	private List<PropertyTemplate> getTemplateConfigFile() throws PhrescoException {
 	    List<PropertyTemplate> propertyTemplates = new ArrayList<PropertyTemplate>();
 	    try {
-            List<Configuration> featureConfigurations = getApplicationProcessor().preFeatureConfiguration(getApplicationInfo(), getFeatureName());
-            for (Configuration featureConfiguration : featureConfigurations) {
-                Properties properties = featureConfiguration.getProperties();
-                Set<Object> keySet = properties.keySet();
-                for (Object key : keySet) {
-                    String keyStr = (String) key;
-                    String value = properties.getProperty(keyStr);
-                    String dispName = keyStr.replace(".", " ");
-                    PropertyTemplate propertyTemplate = new PropertyTemplate();
-                    propertyTemplate.setKey(keyStr);
-                    propertyTemplate.setName(dispName);
-                    //propertyTemplate.setPossibleValues(Collections.singleton(value));
-                    propertyTemplates.add(propertyTemplate);
-                }
-                setReqAttribute(REQ_HAS_CUSTOM_PROPERTY, true);
-            }
+	        List<Configuration> featureConfigurations = getApplicationProcessor().preFeatureConfiguration(getApplicationInfo(), getFeatureName());
+	        if (CollectionUtils.isNotEmpty(featureConfigurations)) {
+	            for (Configuration featureConfiguration : featureConfigurations) {
+	                Properties properties = featureConfiguration.getProperties();
+	                Set<Object> keySet = properties.keySet();
+	                for (Object key : keySet) {
+	                    String keyStr = (String) key;
+	                    String value = properties.getProperty(keyStr);
+	                    String dispName = keyStr.replace(".", " ");
+	                    PropertyTemplate propertyTemplate = new PropertyTemplate();
+	                    propertyTemplate.setKey(keyStr);
+	                    propertyTemplate.setName(dispName);
+	                    //propertyTemplate.setPossibleValues(Collections.singleton(value));
+	                    propertyTemplates.add(propertyTemplate);
+	                }
+	            }
+	        }
+	        setReqAttribute(REQ_HAS_CUSTOM_PROPERTY, true);
 	    } catch (PhrescoException e) {
 	        throw new PhrescoException(e);
 	    }
-	    
+
 	    return propertyTemplates;
 	}
 	
