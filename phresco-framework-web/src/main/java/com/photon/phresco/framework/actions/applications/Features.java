@@ -280,12 +280,16 @@ public class Features extends FrameworkBaseAction {
 	}
 	
 	public String showFeatureConfigPopup() throws PhrescoException {
-	    setConfigTemplateType(CONFIG_FEATURES);
-        setReqAttribute(REQ_FEATURE_NAME, getFeatureName());
-        List<PropertyTemplate> propertyTemplates = getTemplateConfigFile();
-        setReqAttribute(REQ_PROPERTIES, propertyTemplates);
-        setReqAttribute(REQ_SELECTED_TYPE, getSelectedType());
-        
+	    try {
+	        setConfigTemplateType(CONFIG_FEATURES);
+	        setReqAttribute(REQ_FEATURE_NAME, getFeatureName());
+	        List<PropertyTemplate> propertyTemplates = getTemplateConfigFile();
+	        setReqAttribute(REQ_PROPERTIES, propertyTemplates);
+	        setReqAttribute(REQ_SELECTED_TYPE, getSelectedType());
+	    } catch (PhrescoException e) {
+	        return showErrorPopup(e, getText(EXCEPTION_FEATURE_MANIFEST_NOT_AVAILABLE));
+	    }
+	    
 	    return SUCCESS;
 	}
 	

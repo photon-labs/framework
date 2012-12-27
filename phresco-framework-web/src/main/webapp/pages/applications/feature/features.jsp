@@ -169,26 +169,29 @@
 		jsonParamObj.type = hiddenFieldname;
 		var jsonParam = JSON.stringify(jsonParamObj);
 		var ctrlClass = removeSpaces(dispName);
-		$("div[id='"+ ctrlClass +"Div']").remove();
-		if (showConfigImg) {
-			$("#result").append('<div id="'+ctrlClass+'Div">'+dispName+' - '+dispValue+
-					'<a href="#" onclick="remove(this);">&nbsp;&times;</a>'+
-					'<input type="hidden" class="'+ctrlClass+'" name="jsonData">' +
-					<%
-						if (optionIds != null && optionIds.contains(FrameworkConstants.FEATURES_KEY) || optionIds.contains(FrameworkConstants.COMPONENT_CONFIG)) {
-					%>
-						'<a href="#" id="'+dispName+'" onclick="showFeatureConfigPopup(this);">'+ 
-						'<img src="images/icons/gear.png" title="Configure"/></a>' +
-					<% 
-						}
-					%>
-					'</div>');
-		} else {
-			$("#result").append('<div id="'+ctrlClass+'Div">'+dispName+' - '+dispValue+
-					'<a href="#" onclick="remove(this);">&times;</a>'+
-					'<input type="hidden" class="'+ctrlClass+'" name="jsonData"></div>');
+		var elementsSize = $("#" + ctrlClass + "Div").size();
+// 		$("div[id='"+ ctrlClass +"Div']").remove();
+		if (elementsSize === 0) {
+			if (showConfigImg) {
+				$("#result").append('<div id="'+ctrlClass+'Div">'+dispName+' - '+dispValue+
+						'<a href="#" onclick="remove(this);">&nbsp;&times;</a>'+
+						'<input type="hidden" class="'+ctrlClass+'" name="jsonData">' +
+						<%
+							if (optionIds != null && optionIds.contains(FrameworkConstants.FEATURES_KEY) || optionIds.contains(FrameworkConstants.COMPONENT_CONFIG)) {
+						%>
+							'<a href="#" id="'+dispName+'" onclick="showFeatureConfigPopup(this);">'+ 
+							'<img src="images/icons/gear.png" title="Configure"/></a>' +
+						<% 
+							}
+						%>
+						'</div>');
+			} else {
+				$("#result").append('<div id="'+ctrlClass+'Div">'+dispName+' - '+dispValue+
+						'<a href="#" onclick="remove(this);">&times;</a>'+
+						'<input type="hidden" class="'+ctrlClass+'" name="jsonData"></div>');
+			}
+			$("."+ctrlClass).val(jsonParam);
 		}
-		$("."+ctrlClass).val(jsonParam);
     }
     
     // Function to remove the final features in right tab  
