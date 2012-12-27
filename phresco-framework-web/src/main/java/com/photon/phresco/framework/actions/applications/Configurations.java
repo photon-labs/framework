@@ -33,7 +33,6 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -61,9 +60,13 @@ import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.plugins.util.MojoProcessor;
+import com.photon.phresco.util.ArchiveUtil;
+import com.photon.phresco.util.ArchiveUtil.ArchiveType;
 import com.photon.phresco.util.Constants;
+import com.photon.phresco.util.FileUtil;
 import com.photon.phresco.util.PhrescoDynamicLoader;
 import com.photon.phresco.util.Utility;
+import com.phresco.pom.exception.PhrescoPomException;
 
 public class Configurations extends FrameworkBaseAction {
     private static final long serialVersionUID = -4883865658298200459L;
@@ -251,8 +254,13 @@ public class Configurations extends FrameworkBaseAction {
     	}
     	
         try {
+            String techId = "";
+            ApplicationInfo applicationInfo = getApplicationInfo();
+            if (applicationInfo != null) {
+                techId = applicationInfo.getTechInfo().getId();
+            }
             List<Environment> environments = getAllEnvironments();
-            List<SettingsTemplate> configTemplates = getServiceManager().getConfigTemplates(getCustomerId());
+            List<SettingsTemplate> configTemplates = getServiceManager().getConfigTemplates(getCustomerId(), techId);
             setReqAttribute(REQ_SETTINGS_TEMPLATES, configTemplates);
             setReqAttribute(REQ_ENVIRONMENTS, environments);
             setReqAttribute(REQ_FROM_PAGE, getFromPage());
@@ -274,37 +282,7 @@ public class Configurations extends FrameworkBaseAction {
     		S_LOGGER.debug("Entering Method Configurations.saveConfiguration()");
 		}
     	
-    	FileOutputStream fos = null;
     	try {
-    	    if (MapUtils.isNotEmpty(inputStreamMap)) {
-    	        SettingsTemplate configTemplate = getServiceManager().getConfigTemplate(getConfigId(), getCustomerId());
-    	        List<PropertyTemplate> properties = configTemplate.getProperties();
-    	        String targetDir = "";
-    	        for (PropertyTemplate propertyTemplate : properties) {
-                    List<String> possibleValues = propertyTemplate.getPossibleValues();
-                    targetDir = possibleValues.get(0);
-                    break;
-                }
-    	        StringBuilder sb = new StringBuilder(Utility.getProjectHome())
-    	        .append(File.separator)
-    	        .append(getApplicationInfo().getAppDirName())
-    	        .append(File.separator)
-    	        .append(targetDir);
-    	        File file = new File(sb.toString());
-    	        if (!file.exists()) {
-    	            file.mkdir();
-    	        }
-    	        Set<String> keySet = inputStreamMap.keySet();
-    	        if (CollectionUtils.isNotEmpty(keySet)) {
-    	            sb.append(File.separator);
-    	            for (String key : keySet) {
-    	                String path = sb.toString() + key;
-    	                fos = new FileOutputStream(path);
-                        fos.write(inputStreamMap.get(key));
-                        fos.close();
-                    }
-    	        }
-    	    }
 			save(getAppConfigPath());
 			String pluginInfoFile = getPluginInfoPath();
 			MojoProcessor mojoProcessor = new MojoProcessor(new File(pluginInfoFile));
@@ -333,10 +311,7 @@ public class Configurations extends FrameworkBaseAction {
 			return showErrorPopup(e, getText(EXCEPTION_CONFIGURATION_SAVE_CONFIG));
 		} catch (ConfigurationException e) {
 			return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_CONFIGURATION_UPDATE_FAILS));
-		} catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+		}
     	
     	return configList();
     }
@@ -683,11 +658,15 @@ public class Configurations extends FrameworkBaseAction {
         	ConfigManager configManager = getConfigManager(getConfigPath());
         	Configuration selectedConfigInfo = configManager.getConfiguration(currentEnvName, 
         			currentConfigType, currentConfigName);
-        	List<SettingsTemplate> configTemplates = getServiceManager().getConfigTemplates(getCustomerId());
+        	String techId = "";
+            ApplicationInfo applicationInfo = getApplicationInfo();
+            if (applicationInfo != null) {
+                techId = applicationInfo.getTechInfo().getId();
+            }
+        	List<SettingsTemplate> configTemplates = getServiceManager().getConfigTemplates(getCustomerId(), techId);
             setReqAttribute(REQ_SETTINGS_TEMPLATES, configTemplates);
         	setReqAttribute(REQ_CONFIG_INFO, selectedConfigInfo);
         	setReqAttribute(REQ_FROM_PAGE, getFromPage());
-        	
         } catch (PhrescoException e) {
         	if (s_debugEnabled) {
                 S_LOGGER.error("Entered into catch block of Configurations.edit()" + FrameworkUtil.getStackTraceAsString(e));
@@ -854,31 +833,74 @@ public class Configurations extends FrameworkBaseAction {
         if (s_debugEnabled) {
             S_LOGGER.debug("Entering Method Configurations.uploadFile()");
         }
+
         PrintWriter writer = null;
+        FileOutputStream fos = null;
+        StringBuilder tempPath = null;
         try {
             byte[] byteArray = getByteArray();
-            inputStreamMap.put(getFileName(), byteArray);
+            StringBuilder sb = getTargetDir();
+            File file = new File(sb.toString());
+            if (!file.exists()) {
+                file.mkdirs();
+            }
+            sb.append(File.separator);
+            
+            //To write the zip file inputstream in phresco temp location
+            tempPath = new StringBuilder(Utility.getPhrescoTemp())
+            .append(getFileName());
+            fos = new FileOutputStream(tempPath.toString());
+            fos.write(byteArray);
+            
+            //To extract the zip file from the temp location to the specified location
+            ArchiveUtil.extractArchive(tempPath.toString(), sb.toString(), ArchiveType.ZIP);
+            
             writer = getHttpResponse().getWriter();
             writer.print(SUCCESS_TRUE);
             writer.flush();
             writer.close();
-        } catch (Exception e) { //If upload fails it will be shown in UI, so need not to throw error popup
+        } catch (Exception e) { //If upload fails it will be shown in UI, so no need to throw error popup
             getHttpResponse().setStatus(getHttpResponse().SC_INTERNAL_SERVER_ERROR);
             writer.print(SUCCESS_FALSE);
+        } finally {
+            try {
+                fos.close();
+                FileUtil.delete(new File(tempPath.toString()));
+            } catch (IOException e) {
+                getHttpResponse().setStatus(getHttpResponse().SC_INTERNAL_SERVER_ERROR);
+                writer.print(SUCCESS_FALSE);
+            }
         }
-        
+
         return SUCCESS;
     }
-    
+
     public String removeConfigFile() {
         if (s_debugEnabled) {
             S_LOGGER.debug("Entering Method Configurations.removeConfigFile()");
         }
-        
-        System.out.println("getFileName():::" + getFileName());
-        inputStreamMap.remove(getFileName());
-        
+
+        try {
+            StringBuilder sb = getTargetDir()
+            .append(File.separator)
+            .append(getFileName().substring(0, getFileName().lastIndexOf(DOT)));
+            FileUtil.delete(new File(sb.toString()));
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+
         return SUCCESS;
+    }
+    
+    private StringBuilder getTargetDir() throws PhrescoException, PhrescoPomException {
+        String appDirName = getApplicationInfo().getAppDirName();
+        FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+        String dynamicType = getConfigTempType().toLowerCase().replaceAll("\\s", "");
+        String targetDir = frameworkUtil.getPomProcessor(appDirName).getProperty(PHRESCO_DOT + dynamicType + DOT_TARGET_DIR);
+        StringBuilder sb = new StringBuilder(Utility.getProjectHome())
+        .append(getApplicationInfo().getAppDirName())
+        .append(targetDir);
+        return sb;
     }
     
     public String cloneConfigPopup() {

@@ -586,39 +586,36 @@ public class Build extends DynamicParameterAction implements Constants {
 	}
 
 	public String downloadIpa() throws PhrescoException {
-
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method Build.downloadIPA()");
 		}
-		String buildNumber = getHttpRequest().getParameter(REQ_DEPLOY_BUILD_NUMBER);
 		try {
-//			ActionType actionType = ActionType.IPHONE_DOWNLOADIPA_COMMAND;
-			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-			ProjectRuntimeManager runtimeManager = PhrescoFrameworkFactory.getProjectRuntimeManager();
-			Project project = administrator.getProject(projectCode);
-			StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-			builder.append(project.getApplicationInfo().getCode());
-			builder.append(File.separator);
-			builder.append(BUILD_DIR);
-			builder.append(File.separator);
-			builder.append(administrator.getBuildInfo(project, Integer.parseInt(buildNumber)).getBuildName());
-			String buildName = administrator.getBuildInfo(project, Integer.parseInt(buildNumber)).getBuildName();
-			String buildNameSubstring = buildName.substring(0, buildName.lastIndexOf("/"));
-			String appBuildName = buildNameSubstring.substring(buildNameSubstring.lastIndexOf("/") + 1);
-			Map<String, String> valuesMap = new HashMap<String, String>(2);
-			valuesMap.put("application.name", projectCode);
-			valuesMap
-					.put("app.path", administrator.getBuildInfo(project, Integer.parseInt(buildNumber)).getBuildName());
-			valuesMap.put("build.name", appBuildName);
-//			BufferedReader reader = runtimeManager.performAction(project, actionType, valuesMap, null);
-//			while (reader.readLine() != null) {
-//			}
-			String ipaPath = administrator.getBuildInfo(project, Integer.parseInt(buildNumber)).getBuildName();
-			ipaPath = ipaPath.substring(0, ipaPath.lastIndexOf("/")) + FILE_SEPARATOR + projectCode + ".ipa";
+			String buildNumber = getReqParameter(REQ_DEPLOY_BUILD_NUMBER);
+			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+			ProjectInfo projectInfo = getProjectInfo();
+			ApplicationInfo applicationInfo = getApplicationInfo();
+			if (StringUtils.isEmpty(buildNumber)) {
+				throw new PhrescoException("Build Number is empty ");
+			}
+			String ipaFileName = applicationInfo.getName();
+			String buildName = applicationManager.getBuildInfo(Integer.parseInt(buildNumber), getBuildInfosFilePath(applicationInfo)).getBuildName();
+			String workingDirectory = getAppDirectoryPath(applicationInfo);
+			String buildNameSubstring = buildName.substring(0, buildName.lastIndexOf(FILE_SEPARATOR));
+			String appBuildName = buildNameSubstring.substring(buildNameSubstring.lastIndexOf(FILE_SEPARATOR) + 1);
+			
+			List<String> buildArgCmds = new ArrayList<String>();
+			buildArgCmds.add("-Dapplication.name=" + ipaFileName);
+			buildArgCmds.add("-Dapp.path=" + buildName);
+			buildArgCmds.add("-Dbuild.name=" + appBuildName);
+			BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.IPA_DOWNLOAD, buildArgCmds, workingDirectory);
+			while (reader.readLine() != null) {
+				System.out.println(reader.readLine());
+			}
+			String ipaPath = applicationManager.getBuildInfo(Integer.parseInt(buildNumber), getBuildInfosFilePath(applicationInfo)).getBuildName();
+			ipaPath = ipaPath.substring(0, ipaPath.lastIndexOf(FILE_SEPARATOR)) + FILE_SEPARATOR + ipaFileName + IPA_FORMAT;
 			fileInputStream = new FileInputStream(new File(ipaPath));
-			fileName = projectCode + ".ipa";
+			fileName = ipaFileName + IPA_FORMAT;
 			return SUCCESS;
-
 		} catch (FileNotFoundException e) {
 			if (debugEnabled) {
 				S_LOGGER.error("Entered into catch block of Build.download()" + e);
@@ -997,17 +994,17 @@ public class Build extends DynamicParameterAction implements Constants {
 					String sep = "";
 					for (int j = 0; j < includeList.getLength()-1; j++) {//To convert select files to Comma seperated value
 						Element include = (Element) includeList.item(j);
-						String file = include.getTextContent().substring(include.getTextContent().lastIndexOf("/")+1);
+						String file = include.getTextContent().substring(include.getTextContent().lastIndexOf(FILE_SEPARATOR)+1);
 						csvFileNames.append(sep);
 						csvFileNames.append(file);
 						sep = COMMA;
 					}
 					Element outputElement = (Element) childNode.getElementsByTagName(POM_OUTPUT).item(0);
 					//To get compressed name with extension
-					String opFileName = outputElement.getTextContent().substring(outputElement.getTextContent().lastIndexOf("/")+1);
+					String opFileName = outputElement.getTextContent().substring(outputElement.getTextContent().lastIndexOf(FILE_SEPARATOR)+1);
 					String compressName = opFileName.substring(0, opFileName.indexOf("."));//To get only the compressed name without extension
 					String compressedExtension = opFileName.substring(opFileName.lastIndexOf(DOT)+1);//To get extension of compressed file
-					opFileLoc = outputElement.getTextContent().substring(0, outputElement.getTextContent().lastIndexOf("/")+1);
+					opFileLoc = outputElement.getTextContent().substring(0, outputElement.getTextContent().lastIndexOf(FILE_SEPARATOR)+1);
 					opFileLoc = opFileLoc.replace(MINIFY_OUTPUT_DIRECTORY, getAppDirectoryPath(applicationInfo).replace(File.separator, FORWARD_SLASH));
 					
 					if (JS.equals(compressedExtension)) {//if extension is js , add minified details to jsMap

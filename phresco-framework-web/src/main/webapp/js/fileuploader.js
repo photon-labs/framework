@@ -480,8 +480,11 @@ qq.FileUploaderBasic.prototype = {
  * Class that creates upload widget with drag-and-drop and file list
  * @inherits qq.FileUploaderBasic
  */
-var modName = "";
 var urlAction = "";
+var configTempType = "";
+var projectId = "";
+var appId = "";
+var customerId = "";
 qq.FileUploader = function(o){
 	var type = o.type || o.fileType;
 	var btnId = o.element.getAttribute('id');
@@ -506,7 +509,7 @@ qq.FileUploader = function(o){
                 '<span class="qq-upload-size"></span>' +
                 '<a class="qq-upload-cancel" href="#">Cancel</a>' +
                 '<span class="qq-upload-failed-text">Failed</span>' +
-                '<img class="qq-upload-remove" src="images/icons/delete.png" style="cursor:pointer;" alt="Remove" tempAttr="'+ type +'"  onclick="removeUploadedJar(this,\'' + btnId + '\');"/>' +
+                '<img class="qq-upload-remove" src="images/icons/delete.png" style="cursor:pointer;" alt="Remove" tempAttr="'+ type +'"  onclick="removeUploadedFile(this,\'' + btnId + '\');"/>' +
             '</li>',        
         
         classes: {
@@ -602,7 +605,10 @@ qq.extend(qq.FileUploader.prototype, {
     },
     _onSubmit: function(id, fileName){
     	//For zip file extract
-    	modName = $('#featureName').val();
+    	configTempType = $("#templateType option:selected").text();
+    	projectId = $('input[name=projectId]').val();
+    	appId = $('input[name=appId]').val();
+    	customerId = $('select[name=customerId]').val();
         qq.FileUploaderBasic.prototype._onSubmit.apply(this, arguments);
         this._addToList(id, fileName);  
     },
@@ -1217,8 +1223,11 @@ qq.extend(qq.UploadHandlerXhr.prototype, {
         xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
         xhr.setRequestHeader("X-File-Name", encodeURIComponent(name));
         xhr.setRequestHeader("Content-Type", "application/octet-stream");
-        //for extract zip file validate feature name
-        xhr.setRequestHeader("Module-Name", modName);
+        
+        xhr.setRequestHeader("Config-Temp-Type", configTempType);
+        xhr.setRequestHeader("projectId", projectId);
+        xhr.setRequestHeader("appId", appId);
+        xhr.setRequestHeader("customerId", customerId);
         xhr.send(file);
     },
     _onComplete: function(id, xhr){

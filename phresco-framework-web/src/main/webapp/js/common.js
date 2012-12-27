@@ -210,7 +210,7 @@ function yesnoPopup(url, title, okUrl, okLabel, form, additionalParam) {
 
 	$(".popupOk").attr('id', okUrl); // popup action mapped to id
 	if (okLabel !== undefined && !isBlank(okLabel)) {
-		$('#' + okUrl).html(okLabel); // label for the ok button
+		$('#' + okUrl).val(okLabel); // label for the ok button
 	}
 	
 	var data = getBasicParams(); //customerid, projectid, appid
@@ -249,7 +249,7 @@ function additionalPopup(url, title, okUrl, okLabel, form, additionalParam, show
 	} 
 	
 	if (okLabel !== undefined && !isBlank(okLabel)) {
-		$('#' + okUrl).html(okLabel); // label for the ok button
+		$('#' + okUrl).val(okLabel); // label for the ok button
 	}
 	
 	var data = getBasicParams(); //customerid, projectid, appid

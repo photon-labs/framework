@@ -104,7 +104,7 @@ $(document).ready(function() {
 		name =($.trim($('#envName').val()));
 		desc = $("#envDesc").val();
 		if(name == "") {
-			$("#errMsg").html("<s:text name='enter.environment.name'/>");
+			$("#errMsg").html("<s:text name='popup.err.msg.empty.env.name'/>");
 			$("#envName").focus();
 			$("#envName").val("");
 			returnVal = false;
@@ -114,7 +114,7 @@ $(document).ready(function() {
 				var envs = $.parseJSON(jsonData);
 				var envName = envs.name;
 				if (name.trim().toLowerCase() == envName.trim().toLowerCase()) {
-					$("#errMsg").html("<s:text name='environment.name.already.exists'/>");
+					$("#errMsg").html("<s:text name='popup.err.msg.env.name.exists'/>");
 					returnVal = false;
 					return false;
 				}
@@ -132,7 +132,7 @@ $(document).ready(function() {
 		var setAsDefaultEnvsSize = $('#multiselect :checked').size();
 		
         if (setAsDefaultEnvsSize > 1) {
-			$("#errMsg").html("<s:text name='please.select.only.one.environment'/>");
+			$("#errMsg").html("<s:text name='popup.err.msg.select.only.one.env'/>");
        	 	return false;
 		}  
         if (setAsDefaultEnvsSize == 1) {
@@ -157,7 +157,7 @@ $(document).ready(function() {
 				var finalEnvData = JSON.stringify(selectedEnv);
 				$(this).val(finalEnvData);
 	        });
-			$("#errMsg").html("<s:text name='select.env.set.as.default'/>");
+			$("#errMsg").html("<s:text name='popup.err.msg.env.set.as.default'/>");
 		}
    });
 	
@@ -178,7 +178,7 @@ $(document).ready(function() {
     	 
     	 var checkBoxSize = $('#multiselect :checkbox').size();
     	 if(checkBoxSize < 1) {
-    		 $("#errMsg").html("<s:text name='please.add.env.to.delete'/>");
+    		 $("#errMsg").html("<s:text name='popup.err.msg.add.env.to.remove'/>");
     	 }
     	 
     	 // To remove the Environments from the list box which is not in the XML
@@ -196,11 +196,11 @@ $(document).ready(function() {
 			} 
 			
 			if (env) {
-				$("#errMsg").html("<s:text name='you.cant.remove.defaultEnv'/>");
+				$("#errMsg").html("<s:text name='popup.err.msg.cant.remove.defaultEnv'/>");
 			} 
 			
 			if (configLength > 0 ) {
-				$("#errMsg").html("<s:text name='config.exists'/>");
+				$("#errMsg").html("<s:text name='popup.err.msg.config.exists'/>");
 			}
 			
 			if (!env && configLength <= 0) {
@@ -249,7 +249,7 @@ $(document).ready(function() {
 	function selectEnv() {
 		var checkedEnvsSize = $('#multiselect :checked').size();
 		if (checkedEnvsSize < 1) {
-			$("#errMsg").html("<s:text name='please.select.one.environment'/>");
+			$("#errMsg").html("<s:text name='popup.err.msg.select.one.env'/>");
 			return false;
 		}
 	}
