@@ -842,6 +842,21 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     		return constructSingleSelectElement(pm);
     	}
     }
+    
+    public static StringTemplate constructActionsElement(ParameterModel pm) {
+        StringTemplate controlGroupElement = new StringTemplate(getControlGroupTemplate());
+        controlGroupElement.setAttribute("ctrlGrpId", pm.getControlGroupId());
+        StringTemplate lableElmnt = constructLabelElement(pm.isMandatory(), pm.getLableClass(), "");
+        
+        StringTemplate actionsElement = new StringTemplate(getActionsTemplate());
+        actionsElement.setAttribute("value", pm.getLableText());
+        actionsElement.setAttribute("id", pm.getId());
+        actionsElement.setAttribute("onClickFunction", pm.getOnClickFunction());
+        
+        controlGroupElement.setAttribute("lable", lableElmnt);
+        controlGroupElement.setAttribute("controls", actionsElement);
+        return controlGroupElement;
+    }
 
     public static StringTemplate constructSingleSelectElement(ParameterModel pm) {
     	StringTemplate controlGroupElement = new StringTemplate(getControlGroupTemplate());
@@ -1202,6 +1217,15 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	.append("name=\"$name$\" value=\"$value$\" $checked$ onchange=\"$onChangeFunction$\" onclick=\"$onClickFunction$\" $additionalParam$/>")
     	.append("<span class='help-inline' id=\"$ctrlsId$\"></span></div>");
     	return sb.toString();
+    }
+    
+    private static String getActionsTemplate() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<div class='controls'>")
+        .append("<input type='button' class=\"btn btn-primary $class$\" id=\"$id$\" ")
+        .append("name=\"$name$\" value=\"$value$\" $checked$ onclick=\"$onClickFunction$\" $additionalParam$/>")
+        .append("<span class='help-inline' id=\"$ctrlsId$\"></span></div>");
+        return sb.toString();
     }
     
     private static String getMultiSelectTemplate() {

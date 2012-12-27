@@ -38,6 +38,10 @@
 
 <%
 	ApplicationInfo appInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_APPINFO);
+	String appId = "";
+	if (appInfo != null) {
+	    appId = appInfo.getId();
+	}
 	Properties propertiesInfo = (Properties) request.getAttribute(FrameworkConstants.REQ_PROPERTIES_INFO); 
 	SettingsTemplate settingsTemplate = (SettingsTemplate) request.getAttribute(FrameworkConstants.REQ_SETTINGS_TEMPLATE);	  
 	String selectedType = (String) request.getAttribute(FrameworkConstants.REQ_SELECTED_TYPE);
@@ -132,6 +136,12 @@
    				createFileUploader('<%= propertyTemplate.getName() %>');
    			</script>
 	<%
+		} else if (FrameworkConstants.TYPE_ACTIONS.equals(propertyTemplate.getType())) {
+	%>
+            <script type="text/javascript">
+            	constructBtnElement('<%= pm.getLableText() %>', '<%= pm.getId() %>');
+			</script>
+	<%
 		} else if (CollectionUtils.isNotEmpty(possibleValues)) {
         	pm.setObjectValue(possibleValues);
         	//pm.setSelectedValues(value);
@@ -150,7 +160,7 @@
         	pm.setValue(value);
             StringTemplate inputControl = FrameworkUtil.constructInputElement(pm);
 			sb.append(inputControl); 
-		%>
+	%>
 			<script type="text/javascript">
 				$('input[name="<%= propertyTemplate.getKey() %>"]').live('input propertychange',function(e) {
 					var value = $(this).val();
@@ -159,7 +169,8 @@
 					validateInput(value, type, txtBoxName);
 				}); 
 			</script>	
-       <% } 
+	<%
+		}
         if (FrameworkConstants.CONFIG_TYPE.equals(propertyTemplate.getKey())) {
         	pm.setMandatory(true);
         	pm.setLableText("Version");
@@ -171,7 +182,7 @@
         	pm.setObjectValue(null);
         	StringTemplate dropDownControl = FrameworkUtil.constructSelectElement(pm);
         	sb.append(dropDownControl);
-        }
+		}
     }
 %>
 	<%= sb.toString() %>
@@ -230,12 +241,12 @@
 				value="<%= siteCoreInstPath %>"/>
 			<span class="help-inline" id="siteCoreInstPathError"></span>
 		</div>
-	  </div>
+	</div>
 <% 	
 	}
 %>
 
-	<div class="control-group hideContent" id="fileControl">
+	<div class="control-group hideContent" id="fileControl" style="margin-bottom: -19px;">
 		<label class="control-label labelbold" id="fileControlLabel"> 
 		 	
 		</label>
@@ -447,5 +458,19 @@
 		} else {
 			hideError(controlObj, msgObj);
 		}
+	}
+	
+	function constructBtnElement(btnVal, btnId) {
+		var ctrlGroup = "<div class='control-group'><label for='xlInput' class='control-label labelbold'></label>" +
+						"<div class='controls'><input type='button' class='btn btn-primary' onclick='performBtnEvent(this)'" + 
+						"id='"+ btnId +"' value='"+ btnVal +"'/></div></div>";
+		$('#configProperties').append(ctrlGroup);
+						
+	}
+	
+	function performBtnEvent(obj) {
+		var url = $(obj).attr("id");
+		var params = getBasicParams();
+		progressPopupAsSecPopup(url, '<%= appId %>', url, $("#generateBuildForm"), params);
 	}
 </script>

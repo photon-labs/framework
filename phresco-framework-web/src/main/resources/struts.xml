@@ -460,6 +460,22 @@
             <result type="json" />
         </action>
         
+        <action name="validateTheme" class="com.photon.phresco.framework.actions.applications.Configurations" method="validateTheme">
+            <result name="reader">/pages/applications/reader.jsp</result>
+        </action>
+        
+        <action name="validateContent" class="com.photon.phresco.framework.actions.applications.Configurations" method="validateContent">
+            <result name="reader">/pages/applications/reader.jsp</result>
+        </action>
+        
+        <action name="convertTheme" class="com.photon.phresco.framework.actions.applications.Configurations" method="convertTheme">
+            <result name="reader">/pages/applications/reader.jsp</result>
+        </action>
+        
+        <action name="convertContent" class="com.photon.phresco.framework.actions.applications.Configurations" method="convertContent">
+            <result name="reader">/pages/applications/reader.jsp</result>
+        </action>
+        
         <action name="fetchProjectInfoVersions" method="fetchProjectInfoVersions" class="com.photon.phresco.framework.actions.applications.Configurations">
            <result type="json" />
         </action>

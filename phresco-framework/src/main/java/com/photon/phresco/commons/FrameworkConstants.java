@@ -55,6 +55,11 @@ public interface FrameworkConstants {
     String SUCCESS_FALSE = "{\"success\": false}";
     String SUCCESS_TRUE = "{\"success\": true}";
     
+    String VALIDATE_THEME = "validateTheme";
+    String VALIDATE_CONTENT = "validateContent";
+    String CONVERT_THEME = "convertTheme";
+    String CONVERT_CONTENT = "convertContent";
+    
 	String FEATURES = "features";
 	String CONFIG_TYPE_FEATURES = "Features";
     int JOB_STATUS_NOTOK = -1;
@@ -1764,6 +1769,7 @@ public interface FrameworkConstants {
 		String TYPE_NUMBER = "number";
 		String TYPE_BOOLEAN = "boolean";
 		String TYPE_FILE = "FileType";
+		String TYPE_ACTIONS = "Actions";
 		String TEXT_BOX = "text";
 		String TYPE_LIST = "list";
 		String TYPE_EDITABLE_COMBO = "editableList";
