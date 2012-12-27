@@ -456,6 +456,8 @@
 		if (currentCustomerId === "<%= ServiceConstants.DEFAULT_CUSTOMER_NAME %>") {
 			applyTheme();
 		} else {
+			localStorage["color"] = "theme/photon/css/photon_theme.css";
+			applyTheme();
 			loadContent("fetchLogoImgUrl", $('#formCustomers'), '', '', true, true, 'changeLogo');
 		}
 	}
