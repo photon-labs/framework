@@ -36,7 +36,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
-import com.google.gson.Gson;
 import com.photon.phresco.api.ApplicationProcessor;
 import com.photon.phresco.api.ConfigManager;
 import com.photon.phresco.commons.FrameworkConstants;
@@ -50,7 +49,6 @@ import com.photon.phresco.commons.model.DownloadInfo;
 import com.photon.phresco.commons.model.Element;
 import com.photon.phresco.commons.model.PropertyTemplate;
 import com.photon.phresco.commons.model.RepoInfo;
-import com.photon.phresco.commons.model.SelectedFeature;
 import com.photon.phresco.commons.model.SettingsTemplate;
 import com.photon.phresco.configuration.Configuration;
 import com.photon.phresco.configuration.Environment;
@@ -772,14 +770,12 @@ public class Configurations extends FrameworkBaseAction {
 			    if (CollectionUtils.isNotEmpty(selectedModules)) {
 				    List<String> custFeatureNames = new ArrayList<String>();
 				    for (String selectedModule : selectedModules) {
-				        Gson gson = new Gson();
-	                    SelectedFeature jsonObj = gson.fromJson(selectedModule, SelectedFeature.class);
-	                    String artifactGroupId = jsonObj.getModuleId();
-	                    ArtifactGroup artifactGroup = getServiceManager().getArtifactGroupInfo(artifactGroupId);
+				        ArtifactInfo artifactInfo = getServiceManager().getArtifactInfo(selectedModule);
+				        ArtifactGroup artifactGroup = getServiceManager().getArtifactGroupInfo(artifactInfo.getArtifactGroupId());
 	                    List<CoreOption> appliesTo = artifactGroup.getAppliesTo();
 	                    for (CoreOption coreOption : appliesTo) {
-	                        if (!coreOption.isCore() && coreOption.getTechId().equals(appInfo.getTechInfo().getId())) {
-	                            custFeatureNames.add(jsonObj.getDispName());
+	                        if (coreOption.getTechId().equals(appInfo.getTechInfo().getId()) && !coreOption.isCore()) {
+	                            custFeatureNames.add(artifactGroup.getName());
 	                        }
 	                    }
 				    }
