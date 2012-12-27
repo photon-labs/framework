@@ -765,7 +765,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 	
 	private static String getCustomParamTableTemplate() {
         StringBuilder sb = new StringBuilder();
-        sb.append("<table>")
+        sb.append("<table class='custParamTable'>")
         .append("<tbody id='propTempTbodyForHeader'>")
         .append("<tr class='borderForLoad'>")
         .append("<td class=\"noBorder\">")

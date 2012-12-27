@@ -9,7 +9,7 @@
 <input type="button" style="margin-top:4px;" value="Delete" class="btn" id="deleteContext" disabled onclick="deleteContextUrl();">
 $myObject:{ obj |
 	<div id="dbContextDiv">
-		<fieldset class="popup-fieldset fieldsetBottom perFieldSet perContextUrlFieldset" id="context">
+		<fieldset class="popup-fieldset fieldsetBottom perFieldSet perDBContextUrlFieldset" id="context">
 			<legend class="fieldSetLegend">
 				<input type="checkbox" class="check" onclick="enableDelBtn();">
 			</legend>
@@ -28,16 +28,28 @@ $myObject:{ obj |
 							<input type="text" name="name" class="input-small" title="Name" maxlength="20" value="$obj.name$" class="screenName">
 						</td>
 						<td class="noBorder">
-							<select name="queryType" class="input-small" style="width:140px;">
+							<select name="queryType" id="queryType" class="input-small" style="width:140px;">
 								<option value="Select Statement">Select Statement</option>
 								<option value="Update Statement">Update Statement</option>
 							</select>
 						</td>
 						<td class="noBorder">
-							<textarea placeholder="" title="JSON data" name="query" class="" style="margin: 2px 5px 0 0; width: 140%; float: left;"></textarea>
+							<textarea placeholder="" title="JSON data" name="query" id="query" class="" style="margin: 2px 5px 0 0; width: 140%; float: left;"></textarea>
 						</td>
 					</tr>
 				</tbody>
 			</table>
 	</div>
+	<script type="text/javascript">
+		function dbContextUrls() {
+			var dbContextUrls = [];
+			jQuery('.perDBContextUrlFieldset').each(function() {
+				var jsonObject = jQuery(this).toJSON();
+				var dbContexts = JSON.stringify(jsonObject);
+				dbContextUrls.push(dbContexts);
+			});
+			var jsonStrFromTemplate = '"dbContextUrls":[' + dbContextUrls + ']';
+			return jsonStrFromTemplate;
+		}
+	</script>
 }$

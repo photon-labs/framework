@@ -19,9 +19,6 @@
  */
 package com.photon.phresco.framework.actions.applications;
 
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -32,19 +29,15 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.Writer;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -67,7 +60,6 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.ArrayUtils;
@@ -165,6 +157,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 	private String testResultsType = "";
 
 	//Below variables gets the value of performance test Url, Context and TestName
+	private String resultJson = "";
 	private PerformanceDetails performanceDetails = null;
 	private List<String> name = null;
     private List<String> context = null;
@@ -1609,6 +1602,7 @@ public class Quality extends DynamicParameterAction implements Constants {
     
     public String performanceTest() throws PhrescoException {
     	try {
+    		FileOutputStream fop = null;
     		ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
     		ProjectInfo projectInfo = getProjectInfo();
     		ApplicationInfo applicationInfo = getApplicationInfo();
@@ -1620,38 +1614,21 @@ public class Quality extends DynamicParameterAction implements Constants {
     		List<String> buildArgCmds = getMavenArgCommands(parameters);
     		String workingDirectory = getAppDirectoryPath(applicationInfo);
 
-    		Writer writer = null;
     		StringBuilder filepath = new StringBuilder(Utility.getProjectHome());
     		filepath.append(applicationInfo.getAppDirName()).append(File.separator).append(TEST_SLASH_PERFORMANCE).append(getTestAgainst())
     		.append(File.separator).append(getTestName()).append(DOT_JSON);
-    		String className = getHttpRequest().getParameter(REQ_OBJECT_CLASS);//get the bean class
-    		ClassLoader classLoader = Quality.class.getClassLoader();
-    		Class<?> loadClass = classLoader.loadClass(className);//loads the bean class
-    		Object newInstance = Class.forName(className).newInstance();//create instance of the loaded class
-    		for(PropertyDescriptor propertyDescriptor : Introspector.getBeanInfo(loadClass).getPropertyDescriptors()) {
-    			Method getterMethod = propertyDescriptor.getReadMethod();
-    			getterMethod.getName().replace(TYPE_GET, "");
-    			String key = getterMethod.getName().replace(TYPE_GET, "").substring(0,1).toLowerCase() + 
-    			getterMethod.getName().replace(TYPE_GET, "").substring(1);//to get fields in the respective bean class
-    			String returnType = getterMethod.getReturnType().getName();
-    			if (ARRAY_LIST.equals(returnType)) {//if the field is List<String>
-    				List<String> value = new ArrayList<String>();
-    				if (getHttpRequest().getParameterValues(key) == null) {
-    					value.add("");
-    				} else {
-    					value = (List<String>)Arrays.asList((getHttpRequest().getParameterValues(key)));
-    				}
-    				BeanUtils.setProperty(newInstance, key, value);
-    			} else {//if the field is string or other type
-    				String value = (StringUtils.isNotEmpty(getReqParameter(key))) ? (String)getReqParameter(key) : "";
-    				BeanUtils.setProperty(newInstance, key, value);
-    			}
-    		}
-    		Gson gson = new Gson();
-    		writer = new OutputStreamWriter(new FileOutputStream(filepath.toString()));
-    		gson.toJson(newInstance, writer);
-    		writer.close();
-
+    		/*String className = getHttpRequest().getParameter(REQ_OBJECT_CLASS);//get the bean class
+    		ClassLoader classLoader = Quality.class.getClassLoader();*/
+    		File file = new File(filepath.toString());
+			fop = new FileOutputStream(file);
+			if (!file.exists()) {
+				file.createNewFile();
+			}
+			byte[] contentInBytes = getResultJson().getBytes();
+			 
+			fop.write(contentInBytes);
+			fop.flush();
+			fop.close();	
     		BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.PERFORMANCE_TEST, buildArgCmds, workingDirectory);
     		setSessionAttribute(getAppId() + PERFORMANCE_TEST, reader);
     		setReqAttribute(REQ_APP_ID, getAppId());
@@ -1660,18 +1637,8 @@ public class Quality extends DynamicParameterAction implements Constants {
     		throw new PhrescoException(e);
     	} catch (FileNotFoundException e) {
     		throw new PhrescoException(e);
-    	} catch (ClassNotFoundException e) {
-    		throw new PhrescoException(e);
-    	} catch (InstantiationException e) {
-    		throw new PhrescoException(e);
-    	} catch (IllegalAccessException e) {
-    		throw new PhrescoException(e);
-    	} catch (IntrospectionException e) {
-    		throw new PhrescoException(e);
-    	} catch (InvocationTargetException e) {
-    		throw new PhrescoException(e);
     	} catch (IOException e) {
-    		throw new PhrescoException(e);
+    		throw new PhrescoException(e); 
     	}
 
     	return SUCCESS;
@@ -3436,5 +3403,13 @@ public class Quality extends DynamicParameterAction implements Constants {
 
 	public void setUpdateCache(boolean updateCache) {
 		this.updateCache = updateCache;
+	}
+
+	public void setResultJson(String resultJson) {
+		this.resultJson = resultJson;
+	}
+
+	public String getResultJson() {
+		return resultJson;
 	}
 }

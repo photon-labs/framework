@@ -441,11 +441,20 @@
 															onchange="getTechVersions('<%= mobileLayerId %>', '<%= mobileLayerTechGroup.getId() %>', '<%= mobileLayerTechGroup.getId() + FrameworkConstants.REQ_PARAM_NAME_VERSION %>');">
 															<option value="" selected disabled><s:text name='lbl.default.opt.select.type'/></option>
 															<%
+																String selectTech = "";
 																List<TechnologyInfo> mobileInfos = mobileLayerTechGroup.getTechInfos();	
 																if (CollectionUtils.isNotEmpty(mobileInfos)) {
 																    for (TechnologyInfo mobileInfo : mobileInfos) {
+																    	selectTech = "";
+																    	if (CollectionUtils.isNotEmpty(appInfos)) {
+																	    	for (ApplicationInfo appInfo : appInfos) {
+																				if (mobileInfo.getId().equals(appInfo.getTechInfo().getId())){
+																					selectTech = "selected";
+																				}
+																    		}
+																    	}
 															%>
-																		<option value="<%= mobileInfo.getId() %>" <%= selectedMobLayer %>><%= mobileInfo.getName() %></option>
+																		<option value="<%= mobileInfo.getId() %>" <%= selectTech %>><%= mobileInfo.getName() %></option>
 															<%
 																	}
 																}

@@ -142,12 +142,13 @@
 		<!--  Description Ends -->
 		
 		<!--  Version Starts -->
-		<div class="control-group">
-		    <label class="accordion-control-label labelbold"><s:text name='lbl.version'/></label>
+		<div class="control-group" id="versionControl">
+		    <label class="accordion-control-label labelbold"><span class="red">*</span>&nbsp;<s:text name='lbl.version'/></label>
 		    <div class="controls">
 				<input class="input-xlarge" id="applicationVersion" placeholder="<s:text name="place.hldr.app.edit.version"/>"
 					name="applicationVersion" maxlength="20" title="<s:text name="title.20.chars"/>"
 					type="text"  value ="<%= StringUtils.isNotEmpty(version) ? version : "" %>"/>
+					<span class="help-inline" id="applicationVersionError"></span>
 		    </div>
 		</div>
 		<!--  Version Ends -->
@@ -455,6 +456,12 @@
 			showError($("#codeControl"), $("#codeError"), data.codeError);
 		} else {
 			hideError($("#codeControl"), $("#codeError"));
+		}
+		
+		if (!isBlank(data.applicationVersionError)) {
+			showError($("#versionControl"), $("#applicationVersionError"), data.applicationVersionError);
+		} else {
+			hideError($("#versionControl"), $("#applicationVersionError"));
 		}
 	}
 	

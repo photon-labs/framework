@@ -498,6 +498,10 @@ Width <= 1024
 	.qq-upload-list {
 		margin-left: 16% !important;
 	}
+	
+	.custParamTable {
+		margin-left: 6.5% !important;
+	}
 }
 
 /***********************************************************************************
@@ -539,6 +543,10 @@ Width size <= 1024
 	
 	.qq-upload-list {
 		margin-left: 16% !important;
+	}
+	
+	.custParamTable {
+		margin-left: 25% !important;
 	}
 }
 @media screen and (max-width : 768px) {
@@ -584,6 +592,10 @@ Width size <= 1024
 	
 	.qq-upload-list {
 		margin-left: 16% !important;
+	}
+	
+	.custParamTable {
+		margin-left: 25% !important;
 	}
 }
 
@@ -1008,6 +1020,10 @@ Width size <= 1024
 	.qq-upload-list {
 		margin-left: 16% !important;
 	}
+	
+	.custParamTable {
+		margin-left: 25% !important;
+	}
 }
 
 /************************************************************************************
@@ -1130,6 +1146,10 @@ Width >= 1025 and < 1151
 
 	.qq-upload-list {
 		margin-left: 16% !important;
+	}
+	
+	.custParamTable {
+		margin-left: 25% !important;
 	}
 }
 
@@ -1496,6 +1516,10 @@ Width >= 1152 and < 1280
 	
 	.qq-upload-list {
 		margin-left: 18.5% !important;
+	}
+	
+	.custParamTable {
+		margin-left: 10.1% !important;
 	}
 }
 
@@ -1984,6 +2008,10 @@ Width <= 1280 and height <= 800
 	.qq-upload-list {
 		margin-left: 20.3% !important;
 	}
+	
+	.custParamTable {
+		margin-left: 12.6% !important;
+	}
 }
 
 /************************************************************************************
@@ -2391,6 +2419,10 @@ Width >= 1280 and height >= 800
 	
 	.qq-upload-list {
 		margin-left: 16% !important;
+	}
+	
+	.custParamTable {
+		margin-left: 12.6% !important;
 	}
 }
 
@@ -2851,6 +2883,10 @@ Width > 1280 and <= 1360
 	.qq-upload-list {
 		margin-left: 21.2% !important;
 	}
+	
+	.custParamTable {
+		margin-left: 14% !important;
+	}
 }
 
 /************************************************************************************
@@ -3244,6 +3280,10 @@ Width > 1360 and <= 1440
 	
 	.qq-upload-list {
 		margin-left: 16% !important;
+	}
+	
+	.custParamTable {
+		margin-left: 25% !important;
 	}
 }
 
@@ -3643,5 +3683,9 @@ Width > 1441 and <= 1600
 	
 	.qq-upload-list {
 		margin-left: 23% !important;
+	}
+	
+	.custParamTable {
+		margin-left: 17% !important;
 	}
 }

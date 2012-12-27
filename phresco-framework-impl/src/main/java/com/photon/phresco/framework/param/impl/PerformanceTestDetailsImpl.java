@@ -80,5 +80,4 @@ public class PerformanceTestDetailsImpl implements DynamicPageParameter, Constan
         .append(POM_NAME);
         return new File(builder.toString());
     }
-
 }
