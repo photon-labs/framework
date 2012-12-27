@@ -390,7 +390,10 @@
 	}
 	
 	function selectBoxOnChangeEvent(obj, currentParamKey, showHideFlag) {
-		var jecClass = obj.options[obj.selectedIndex].getAttribute('class'); 
+		var jecClass = "";
+		if (obj.options != undefined || obj.options != null) {
+			jecClass = obj.options[obj.selectedIndex].getAttribute('class');
+		}
 		var selectedOption = $(obj).val();
 		$(obj).blur();//To remove the focus from the current element
 		var dependencyAttr;

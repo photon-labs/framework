@@ -103,6 +103,7 @@ public class Features extends FrameworkBaseAction {
 	private String nameError = "";
 	private String codeError = "";
 	private boolean errorFound = false;
+	private String applicationVersionError = "";
 	
 	private String configTemplateType = "";
 	
@@ -231,6 +232,11 @@ public class Features extends FrameworkBaseAction {
 	    	
 	    	if (StringUtils.isEmpty(getCode().trim())) {
 	    		setCodeError(getText(ERROR_CODE));
+	            hasError = true;
+	    	}
+	    	
+	    	if (StringUtils.isEmpty(getApplicationVersion())) {
+	    		setApplicationVersionError(getText(ERROR_VERSION));
 	            hasError = true;
 	    	}
 	    	
@@ -1224,4 +1230,12 @@ public class Features extends FrameworkBaseAction {
     public void setSelectedType(String selectedType) {
         this.selectedType = selectedType;
     }
+
+	public String getApplicationVersionError() {
+		return applicationVersionError;
+	}
+
+	public void setApplicationVersionError(String applicationVersionError) {
+		this.applicationVersionError = applicationVersionError;
+	}
 }
