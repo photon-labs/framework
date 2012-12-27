@@ -19,6 +19,7 @@
  */
 package com.photon.phresco.framework.actions.applications;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -56,6 +57,8 @@ import com.photon.phresco.exception.ConfigurationException;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
+import com.photon.phresco.framework.api.ActionType;
+import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.util.ArchiveUtil;
@@ -897,6 +900,66 @@ public class Configurations extends FrameworkBaseAction {
         .append(getApplicationInfo().getAppDirName())
         .append(targetDir);
         return sb;
+    }
+    
+    public String validateTheme() {
+        try {
+            StringBuilder workingDirectory = new StringBuilder(getAppDirectoryPath(getApplicationInfo()));
+            ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+            BufferedReader reader = applicationManager.performAction(getProjectInfo(), ActionType.THEME_VALIDATOR, null, workingDirectory.toString());
+            setSessionAttribute(getAppId() + VALIDATE_THEME, reader);
+            setReqAttribute(REQ_APP_ID, getAppId());
+            setReqAttribute(REQ_ACTION_TYPE, VALIDATE_THEME);
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+        
+        return APP_ENVIRONMENT_READER;
+    }
+
+    public String validateContent() {
+        try {
+            StringBuilder workingDirectory = new StringBuilder(getAppDirectoryPath(getApplicationInfo()));
+            ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+            BufferedReader reader = applicationManager.performAction(getProjectInfo(), ActionType.CONTENT_VALIDATOR, null, workingDirectory.toString());
+            setSessionAttribute(getAppId() + VALIDATE_CONTENT, reader);
+            setReqAttribute(REQ_APP_ID, getAppId());
+            setReqAttribute(REQ_ACTION_TYPE, VALIDATE_CONTENT);
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+        
+        return APP_ENVIRONMENT_READER;
+    }
+
+    public String convertTheme() {
+        try {
+            StringBuilder workingDirectory = new StringBuilder(getAppDirectoryPath(getApplicationInfo()));
+            ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+            BufferedReader reader = applicationManager.performAction(getProjectInfo(), ActionType.THEME_CONVERTOR, null, workingDirectory.toString());
+            setSessionAttribute(getAppId() + CONVERT_THEME, reader);
+            setReqAttribute(REQ_APP_ID, getAppId());
+            setReqAttribute(REQ_ACTION_TYPE, CONVERT_THEME);
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+        
+        return APP_ENVIRONMENT_READER;
+    }
+
+    public String convertContent() {
+        try {
+            StringBuilder workingDirectory = new StringBuilder(getAppDirectoryPath(getApplicationInfo()));
+            ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+            BufferedReader reader = applicationManager.performAction(getProjectInfo(), ActionType.CONTENT_CONVERTOR, null, workingDirectory.toString());
+            setSessionAttribute(getAppId() + CONVERT_CONTENT, reader);
+            setReqAttribute(REQ_APP_ID, getAppId());
+            setReqAttribute(REQ_ACTION_TYPE, CONVERT_CONTENT);
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+        
+        return APP_ENVIRONMENT_READER;
     }
     
     public String cloneConfigPopup() {
