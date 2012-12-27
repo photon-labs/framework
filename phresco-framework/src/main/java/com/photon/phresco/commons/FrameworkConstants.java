@@ -27,6 +27,9 @@ public interface FrameworkConstants {
      * Common constants
      */
     String HYPHEN = "-";
+    
+    String PHRESCO_DOT = "phresco.";
+    String DOT_TARGET_DIR = ".target.dir";
 
 	String CSV_PATTERN = "\\s*,\\s*";
     
@@ -48,6 +51,7 @@ public interface FrameworkConstants {
     String CONFIG = "config";
     
     String X_FILE_NAME = "X-File-Name";
+    String CONFIG_TEMP_TYPE = "Config-Temp-Type";
     String SUCCESS_FALSE = "{\"success\": false}";
     String SUCCESS_TRUE = "{\"success\": true}";
     
@@ -61,6 +65,7 @@ public interface FrameworkConstants {
     String ARCHIVE_FORMAT = ".zip";
     String IPHONE_FORMAT = ".app";
     String ANDROID_FORMAT = ".apk";
+    String IPA_FORMAT = ".ipa";
     String SETTINGS_INFO_FILE_NAME = "settings.xml";
     String CONFIGURATION_INFO_FILE_NAME = "phresco-env-config.xml";
     String BUILD_INFO_FILE_NAME = "build.info";
@@ -70,7 +75,7 @@ public interface FrameworkConstants {
     String SOURCE = "src";
     String FROM_PAGE_LOGIN = "login";
     String CONFIG_TYPE = "type";
-    
+    String EXE_DOWNLOAD = "Exe Download";
     String IMPORT = "import";
     
     String REQ_CUSTOMER_ID = "customerId";
@@ -421,6 +426,7 @@ public interface FrameworkConstants {
 	String MINIFICATION_KEY = "Minification";
 	String RUN_AGAINST_KEY = "Run_Against_Source";
 	String DEPLOY_KEY = "Deploy";
+	String EXE_DOWNLOAD_KEY = "Exe_Download";
 	String FEATURES_KEY = "Feature_Config";
 	String COMPONENT_CONFIG = "Component_Config";
     
