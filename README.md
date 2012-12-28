@@ -96,14 +96,17 @@ Continuous Integration and Remote Deployment.
 	height="15px" style="text-align:center"></img></td>
 	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
 	height="15px" style="text-align:center"></img></td>
-	<td style="text-align:center"></td>
-	<td style="text-align:center"></td>
-	<td style="text-align:center"></td>
 	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
 	height="15px" style="text-align:center"></img></td>
 	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
 	height="15px" style="text-align:center"></img></td>
-	<td style="text-align:center"&nbsp;</img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"></img></td>
 </tr>
 
 <tr>
@@ -111,9 +114,12 @@ Continuous Integration and Remote Deployment.
 	<td style="text-align:center"></td>
 	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
 	height="15px" style="text-align:center"></img></td>
-	<td style="text-align:center"></td>
-	<td style="text-align:center"></td>
-	<td style="text-align:center"></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
 	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
 	height="15px" style="text-align:center"></img></td>
 	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
@@ -129,8 +135,10 @@ Continuous Integration and Remote Deployment.
 	height="15px" style="text-align:center"></img></td>
 	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
 	height="15px" style="text-align:center"></img></td>
-	<td style="text-align:center"></td>
-	<td style="text-align:center"></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
 	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
 	height="15px" style="text-align:center"></img></td>
 	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
@@ -161,8 +169,10 @@ Continuous Integration and Remote Deployment.
 	height="15px" style="text-align:center"></img></td>
 	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
 	height="15px" style="text-align:center"></img></td>
-	<td style="text-align:center"></td>
-	<td style="text-align:center"></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
 	<td style="text-align:center"><b>NA</b></img></td>
 	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
 	height="15px" style="text-align:center"></img></td>
@@ -176,7 +186,8 @@ Continuous Integration and Remote Deployment.
 	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
 	height="15px" style="text-align:center"></img></td>
 	<td style="text-align:center"><b>NA</b></td>
-	<td style="text-align:center"></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
 	<td style="text-align:center"><b>NA</b></td>
 	<td style="text-align:center"><b>NA</b></td>
 	<td style="text-align:center"></td>
@@ -193,7 +204,8 @@ Continuous Integration and Remote Deployment.
 	<td style="text-align:center"><b>NA</b></td>
 	<td style="text-align:center"><b>NA</b></td>
 	<td style="text-align:center"><b>NA</b></td>
-	<td style="text-align:center"></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
 	<td style="text-align:center"></td>
 </tr>
 
@@ -252,11 +264,14 @@ Continuous Integration and Remote Deployment.
 	height="15px" style="text-align:center"></img></td>
 	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
 	height="15px" style="text-align:center"></img></td>
-	<td style="text-align:center"></td>
-	<td style="text-align:center"></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
 	<td style="text-align:center"><b>NA</b></td>
 	<td style="text-align:center"><b>NA</b></td>
-	<td style="text-align:center"></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
 	<td style="text-align:center"&nbsp;</img></td>
 </tr>	
 
@@ -268,8 +283,10 @@ Continuous Integration and Remote Deployment.
 	height="15px" style="text-align:center"></img></td>
 	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
 	height="15px" style="text-align:center"></img></td>
-	<td style="text-align:center"></td>
-	<td style="text-align:center"></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
 	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
 	height="15px" style="text-align:center"></img></td>
 	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
@@ -302,7 +319,8 @@ Continuous Integration and Remote Deployment.
 	<td style="text-align:center"><b>NA</b></td>
 	<td style="text-align:center"><b>NA</b></td>
 	<td style="text-align:center"><b>NA</b></td>
-	<td style="text-align:center"></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
 	<td style="text-align:center"><b>NA</b></td>
 </tr>
 
@@ -312,11 +330,15 @@ Continuous Integration and Remote Deployment.
 	height="15px" style="text-align:center"></img></td>
 	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
 	height="15px" style="text-align:center"></img></td>
-	<td style="text-align:center"></td>
-	<td style="text-align:center"></td>
-	<td style="text-align:center"></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
 	<td style="text-align:center">&nbsp;</td>
-	<td style="text-align:center"></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
 	<td style="text-align:center"&nbsp;</img></td>
 </tr>
 
@@ -326,11 +348,15 @@ Continuous Integration and Remote Deployment.
 	height="15px" style="text-align:center"></img></td>
 	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
 	height="15px" style="text-align:center"></img></td>
-	<td style="text-align:center"></td>
-	<td style="text-align:center"></td>
-	<td style="text-align:center"></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
 	<td style="text-align:center">&nbsp;</td>
-	<td style="text-align:center"></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
 	<td style="text-align:center"&nbsp;</img></td>
 </tr>
 
