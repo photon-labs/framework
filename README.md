@@ -31,7 +31,6 @@ Continuous Integration and Remote Deployment.
 	<td style="text-align:center"><b>Load Test</b></td>
 	<td style="text-align:center"><b>Continuous Integration</b></td>
 	<td style="text-align:center"><b>Remote Deployment</b></td>
-	<td style="text-align:center"><b>Run Against Source</b></td>
 </tr>
 
 <tr>
