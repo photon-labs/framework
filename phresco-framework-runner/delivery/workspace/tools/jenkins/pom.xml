@@ -56,6 +56,12 @@
 			  <type>hpi</type>
 		</dependency>
         
+		<dependency>
+              <groupId>jenkins.clone.workspace.scm.plugin</groupId>
+              <artifactId>clone.workspace.scm</artifactId>
+              <version>0.4</version>
+              <type>hpi</type>
+		</dependency>
 
 	</dependencies>
 	
