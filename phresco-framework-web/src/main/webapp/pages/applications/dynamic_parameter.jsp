@@ -553,9 +553,10 @@
 	function addContext(contextObj) {
 		var html = $("#" + contextObj).html();
 		contextUrlsRowId = contextObj + i;
-		var contextUrlRow = $(document.createElement('div')).attr("id", contextUrlsRowId);
+		var contextUrlRow = $(document.createElement('div')).attr("id", contextUrlsRowId).css('margin-bottom','5px');
 		contextUrlRow.html(html);
-		$('#generateBuild_Modal').append(contextUrlRow);
+		//$('#generateBuild_Modal').append(contextUrlRow);
+		$("#" + contextObj + "Parent").append(contextUrlRow);
 		$(':input:not(:button)', $("#"+contextUrlsRowId)).val('');
 		$("#"+contextUrlsRowId).find('div[id=headerkeyId]').remove();
 		i++;
