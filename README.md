@@ -53,16 +53,12 @@ Continuous Integration and Remote Deployment.
 <tr>
 	<td style="text-align:left"><b>JQuery Widget</b></td>
 	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" 
-	width="15px" 
-	height="15px" style="text-align:center"></img></td>
+	width="15px" height="15px" style="text-align:center"></img></td>
 	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
 	height="15px" style="text-align:center"></img></td>
-	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
-	height="15px" style="text-align:center"></img></td>
-	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
-	height="15px" style="text-align:center"></img></td>
-	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
-	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"></td>
+	<td style="text-align:center"></td>
+	<td style="text-align:center"></td>
 	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
 	height="15px" style="text-align:center"></img></td>
 	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
@@ -74,17 +70,13 @@ Continuous Integration and Remote Deployment.
 <tr>
 	<td style="text-align:left"><b>Node JS WebService</b></td>
 	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" 
-	width="15px" 
-	height="15px" style="text-align:center"></img></td>
+	width="15px" height="15px" style="text-align:center"></img></td>
 	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
 	height="15px" style="text-align:center"></img></td>
 	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" 
-	width="15px" 
-	height="15px" style="text-align:center"></img></td>
-	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
-	height="15px" style="text-align:center"></img></td>
-	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
-	height="15px" style="text-align:center"></img></td>
+	width="15px" height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"></td>
+	<td style="text-align:center"></td>
 	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
 	height="15px" style="text-align:center"></img></td>
 	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
