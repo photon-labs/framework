@@ -474,9 +474,9 @@ public class Configurations extends FrameworkBaseAction {
             hasError = emailIdFormatValidation(hasError); 
         }
     	
-    	if (StringUtils.isEmpty(getEmailid())) {
+    	/*if (StringUtils.isEmpty(getEmailid())) {
     		hasError = emailValidation(hasError); 
-    	}
+    	}*/
     	
     	if (fromPage.equals(FrameworkConstants.ADD_SETTINGS) || fromPage.equals(FrameworkConstants.EDIT_SETTINGS)) {
 	    	if (CollectionUtils.isEmpty(getAppliesTos())) {
