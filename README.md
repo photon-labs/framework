@@ -20,27 +20,23 @@ Continuous Integration and Remote Deployment.
 
 <b>In the technology matrix below, the list of technologies and the availability of tools for the critical stages of project development are illustrated.</b> 
 
-<table Border="1" cellpadding="2" cellspacing="2" style="text-align:center" width="100%">
+<table Border="1" cellpadding="2" cellspacing=5 style="text-align:center" width="100%">
 <tr>
-   <td style="text-align:center"><b>Supported Technologies</b></td>
-  <td style="text-align:center"><b>Code Validation</b></td>
+	<td style="text-align:center"><b>Supported Technologies</b></td>
+  	<td style="text-align:center"><b>Code Validation</b></td>
+  	<td style="text-align:center"><b>Build & Deploy</b></td>
 	<td style="text-align:center"><b>Unit Test</b></td>
 	<td style="text-align:center"><b>Functional Test</b></td>
 	<td style="text-align:center"><b>Performance Test</b></td>
 	<td style="text-align:center"><b>Load Test</b></td>
-	<td style="text-align:center"><b>Build & Deploy</b></td>
 	<td style="text-align:center"><b>Continuous Integration</b></td>
 	<td style="text-align:center"><b>Remote Deployment</b></td>
 </tr>
 
+
 <tr>
-	<td style="text-align:left"><b>iPhone</b></td>
-	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
-	height="15px" style="text-align:center"></img></td>
-	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
-	height="15px" style="text-align:center"></img></td>
-	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
-	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:left"><b>YUI Widget</b></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" height="15px" style="text-align:center"></img></td>
 	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
 	height="15px" style="text-align:center"></img></td>
 	<td style="text-align:center"&nbsp;</img></td>
@@ -50,47 +46,10 @@ Continuous Integration and Remote Deployment.
 	height="15px" style="text-align:center"></img></td>
 	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
 	height="15px" style="text-align:center"></img></td>
-</tr>
-
-<tr>
-	<td style="text-align:left"><b>Android</b></td>
 	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
 	height="15px" style="text-align:center"></img></td>
 	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
 	height="15px" style="text-align:center"></img></td>
-	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
-	height="15px" style="text-align:center"></img></td>
-	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
-	height="15px" style="text-align:center"></img></td>
-	<td style="text-align:center"&nbsp;</img></td>
-	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
-	height="15px" style="text-align:center"></img></td>
-	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
-	height="15px" style="text-align:center"></img></td>
-	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
-	height="15px" style="text-align:center"></img></td>
-</tr>
-
-
-<tr>
-	<td style="text-align:left"><b>Node JS</b></td>
-	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" 
-	width="15px" 
-	height="15px" style="text-align:center"></img></td>
-	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" 
-	width="15px" 
-	height="15px" style="text-align:center"></img></td>
-	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
-	height="15px" style="text-align:center"></img></td>
-	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
-	height="15px" style="text-align:center"></img></td>
-	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
-	height="15px" style="text-align:center"></img></td>
-	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
-	height="15px" style="text-align:center"></img></td>
-	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
-	height="15px" style="text-align:center"></img></td>
-	<td style="text-align:center"&nbsp;</img></td>
 </tr>
 
 <tr>
@@ -115,44 +74,24 @@ Continuous Integration and Remote Deployment.
 </tr>
 
 <tr>
-	<td style="text-align:left"><b>YUI Widget</b></td>
-	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" height="15px" style="text-align:center"></img></td>
+	<td style="text-align:left"><b>Node JS WebService</b></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" 
+	width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" 
+	width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
 	<td style="text-align:center"&nbsp;</img></td>
-	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
-	height="15px" style="text-align:center"></img></td>
-	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
-	height="15px" style="text-align:center"></img></td>
-	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
-	height="15px" style="text-align:center"></img></td>
-	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
-	height="15px" style="text-align:center"></img></td>
-	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
-	height="15px" style="text-align:center"></img></td>
-	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
-	height="15px" style="text-align:center"></img></td>
-</tr>
-
-<tr>
-	<td style="text-align:left"><b>JAVA</b></td>
-	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
-	height="15px" style="text-align:center"></img></td>
-	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
-	height="15px" style="text-align:center"></img></td>
-	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
-	height="15px" style="text-align:center"></img></td>
-	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" 
-	width="15px" 
-	height="15px" style="text-align:center"></img></td>
-	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" 
-	width="15px" 
-	height="15px" style="text-align:center"></img></td>
-	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
-	height="15px" style="text-align:center"></img></td>
-	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
-	height="15px" style="text-align:center"></img></td>
-	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" 
-	width="15px" 
-	height="15px" style="text-align:center"></img></td>
 </tr>
 
 <tr>
@@ -178,9 +117,9 @@ Continuous Integration and Remote Deployment.
 	<td style="text-align:left"><b>WordPress</b></td>
 	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
 	height="15px" style="text-align:center"></img></td>
-	<td style="text-align:center"></td>
 	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
 	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"></td>
 	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
 	height="15px" style="text-align:center"></img></td>
 	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
@@ -191,7 +130,6 @@ Continuous Integration and Remote Deployment.
 	height="15px" style="text-align:center"></img></td>
 	<td style="text-align:center"&nbsp;</img></td>
 </tr>
-
 
 <tr>
 	<td style="text-align:left"><b>PHP</b></td>
@@ -232,6 +170,120 @@ Continuous Integration and Remote Deployment.
 </tr>
 
 <tr>
+	<td style="text-align:left"><b>Android Native</b></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"&nbsp;</img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+</tr>
+
+<tr>
+	<td style="text-align:left"><b>Android Hybrid</b></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"&nbsp;</img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+</tr>
+
+<tr>
+	<td style="text-align:left"><b>Android Library</b></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"&nbsp;</img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+</tr>
+
+<tr>
+	<td style="text-align:left"><b>iPhone Native</b></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"&nbsp;</img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+</tr>
+
+<tr>
+	<td style="text-align:left"><b>iPhone Hybrid</b></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"&nbsp;</img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+</tr>
+
+<tr>
+	<td style="text-align:left"><b>iPhone Library</b></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"&nbsp;</img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+</tr>
+
+<tr>
 	<td style="text-align:left"><b>ASP .NET</b></td>
 	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
 	height="15px" style="text-align:center"></img></td>
@@ -241,69 +293,89 @@ Continuous Integration and Remote Deployment.
 	height="15px" style="text-align:center"></img></td>
 	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
 	height="15px" style="text-align:center"></img></td>
-	<td style="text-align:center">&nbsp;</td>
 	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
 	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center">&nbsp;</td>
 	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
 	height="15px" style="text-align:center"></img></td>
 	<td style="text-align:center"&nbsp;</img></td>
-	
-	<tr>
+</tr>	
+
+<tr>
+	<td style="text-align:left"><b>JAVA</b></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" 
+	width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" 
+	width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" 
+	width="15px" 
+	height="15px" style="text-align:center"></img></td>
+</tr>
+
+<tr>
 	<td style="text-align:left"><b>Site Core</b></td>
 	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
 	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></img></td>
 	<td style="text-align:center"></td>
 	<td style="text-align:center"></td>
 	<td style="text-align:center"></td>
 	<td style="text-align:center">&nbsp;</td>
-	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
-	height="15px" style="text-align:center"></img></img></td>
 	<td style="text-align:center"></img></td>
 	<td style="text-align:center"&nbsp;</img></td>
 </tr>
 
-	<tr>
-	<td style="text-align:left"><b>Blackberry Hybrid</b></td>
+<tr>
+	<td style="text-align:left"><b>Blackberry </b></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
 	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
 	height="15px" style="text-align:center"></img></td>
 	<td style="text-align:center"></td>
 	<td style="text-align:center"></td>
 	<td style="text-align:center"></td>
 	<td style="text-align:center">&nbsp;</td>
-	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
-	height="15px" style="text-align:center"></img></td>
 	<td style="text-align:center"></td>
 	<td style="text-align:center"&nbsp;</img></td>
 </tr>
 
-</tr>
-
-	<tr>
+<tr>
 	<td style="text-align:left"><b>Windows Metro</b></td>
 	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
 	height="15px" style="text-align:center"></img></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
 	<td style="text-align:center"></td>
 	<td style="text-align:center"></td>
 	<td style="text-align:center"></td>
 	<td style="text-align:center">&nbsp;</td>
-	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
-	height="15px" style="text-align:center"></img></td>
 	<td style="text-align:center"></td>
 	<td style="text-align:center"&nbsp;</img></td>
 </tr>
 
-</tr>
-
-	<tr>
+<tr>
 	<td style="text-align:left"><b>Windows Phone</b></td>
+	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
+	height="15px" style="text-align:center"></img></td>
 	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
 	height="15px" style="text-align:center"></img></td>
 	<td style="text-align:center"></td>
 	<td style="text-align:center"></td>
 	<td style="text-align:center"></td>
 	<td style="text-align:center">&nbsp;</td>
-	<td style="text-align:center"><img src="http://findicons.com/files//icons/42/basic/32/tick.png" width="15px" 
-	height="15px" style="text-align:center"></img></td>
 	<td style="text-align:center"></td>
 	<td style="text-align:center"&nbsp;</img></td>
 </tr>
