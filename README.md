@@ -20,9 +20,9 @@ Continuous Integration and Remote Deployment.
 
 <b>In the technology matrix below, the list of technologies and the availability of tools for the critical stages of project development are illustrated.</b> 
 
-<table Border="1" cellpadding="2" cellspacing=5 style="text-align:center" width="100%">
+<table Border="1" cellpadding="2" cellspacing="2" style="text-align:center" width="100%">
 <tr>
-	<td style="text-align:center"><b>Supported Technologies</b></td>
+	<td style="text-align:center"><b><font size="10">Supported Technologies</font></b></td>
   	<td style="text-align:center"><b>Code Validation</b></td>
   	<td style="text-align:center"><b>Build & Deploy</b></td>
 	<td style="text-align:center"><b>Unit Test</b></td>
