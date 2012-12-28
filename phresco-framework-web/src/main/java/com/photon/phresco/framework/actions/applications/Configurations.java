@@ -36,6 +36,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -373,10 +374,12 @@ public class Configurations extends FrameworkBaseAction {
 		    propertyTemplates = configTemplate.getProperties();
 		}
 		for (PropertyTemplate propertyTemplate : propertyTemplates) {
-		    if (!TYPE_FILE.equals(propertyTemplate.getType())) {
+		    if (!TYPE_ACTIONS.equals(propertyTemplate.getType())) {
     		    String key = propertyTemplate.getKey();
     		    String value = getActionContextParam(key);
-    		    
+    		    if (TYPE_FILE.equals(propertyTemplate.getType())) {
+    		        value = FilenameUtils.removeExtension(getActionContextParam("fileName"));
+                }
     		    if (REMOTE_DEPLOYMENT.equals(key) && StringUtils.isEmpty(value)) {
     		    	value = "false";
     		    }
@@ -866,8 +869,6 @@ public class Configurations extends FrameworkBaseAction {
         }
 
         PrintWriter writer = null;
-        FileOutputStream fos = null;
-        StringBuilder tempPath = null;
         try {
             byte[] byteArray = getByteArray();
             StringBuilder sb = getTargetDir();
@@ -877,14 +878,16 @@ public class Configurations extends FrameworkBaseAction {
             }
             sb.append(File.separator);
             
-            //To write the zip file inputstream in phresco temp location
-            tempPath = new StringBuilder(Utility.getPhrescoTemp())
-            .append(getFileName());
-            fos = new FileOutputStream(tempPath.toString());
-            fos.write(byteArray);
-            
-            //To extract the zip file from the temp location to the specified location
-            ArchiveUtil.extractArchive(tempPath.toString(), sb.toString(), ArchiveType.ZIP);
+            FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+            String dynamicType = getConfigTempType().toLowerCase().replaceAll("\\s", "");
+            String appDirName = getApplicationInfo().getAppDirName();
+            boolean needToExtract = Boolean.valueOf(frameworkUtil.getPomProcessor(appDirName).getProperty(PHRESCO_DOT_EXTRACT_DOT + dynamicType + ARCHIVE_FORMAT));
+            //Check for the property in the pom.xml and then upload as said in the pom.xml
+            if (needToExtract) {
+                extractTheZip(byteArray, sb.toString());
+            } else {
+                uploadAsZip(byteArray, sb.toString());
+            }
             
             writer = getHttpResponse().getWriter();
             writer.print(SUCCESS_TRUE);
@@ -893,17 +896,44 @@ public class Configurations extends FrameworkBaseAction {
         } catch (Exception e) { //If upload fails it will be shown in UI, so no need to throw error popup
             getHttpResponse().setStatus(getHttpResponse().SC_INTERNAL_SERVER_ERROR);
             writer.print(SUCCESS_FALSE);
-        } finally {
-            try {
-                fos.close();
-                FileUtil.delete(new File(tempPath.toString()));
-            } catch (IOException e) {
-                getHttpResponse().setStatus(getHttpResponse().SC_INTERNAL_SERVER_ERROR);
-                writer.print(SUCCESS_FALSE);
-            }
         }
 
         return SUCCESS;
+    }
+    
+    private void extractTheZip(byte[] byteArray, String targetDir) throws IOException, PhrescoException {
+        StringBuilder tempPath = null;
+        FileOutputStream fos = null;
+        try {
+          //To write the zip file inputstream in phresco temp location
+            tempPath = new StringBuilder(Utility.getPhrescoTemp())
+            .append(getFileName());
+            fos = new FileOutputStream(tempPath.toString());
+            fos.write(byteArray);
+            
+            //To extract the zip file from the temp location to the specified location
+            ArchiveUtil.extractArchive(tempPath.toString(), targetDir, ArchiveType.ZIP);
+        } catch (Exception e) {
+            throw new PhrescoException(e);
+        } finally {
+            fos.close();
+            FileUtil.delete(new File(tempPath.toString()));
+        }
+    }
+    
+    private void uploadAsZip(byte[] byteArray, String targetDir) throws IOException, PhrescoException {
+        FileOutputStream fos = null;
+        try {
+            StringBuilder sb = new StringBuilder(targetDir)
+            .append(File.separator)
+            .append(getFileName());
+            fos = new FileOutputStream(sb.toString());
+            fos.write(byteArray);
+        } catch (Exception e) {
+           throw new PhrescoException(e);
+        } finally {
+            fos.close();
+        }
     }
 
     public String removeConfigFile() {
@@ -914,7 +944,7 @@ public class Configurations extends FrameworkBaseAction {
         try {
             StringBuilder sb = getTargetDir()
             .append(File.separator)
-            .append(getFileName().substring(0, getFileName().lastIndexOf(DOT)));
+            .append(FilenameUtils.removeExtension(getFileName()));
             FileUtil.delete(new File(sb.toString()));
         } catch (Exception e) {
             // TODO: handle exception
