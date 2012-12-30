@@ -273,7 +273,12 @@ qq.FileUploaderBasic = function(o){
         	
         },
         onComplete: function(id, fileName, responseJSON){
-			fileError('', o.type);
+        	if (!responseJSON.success) {
+        		fileError();
+        		enableUploadButton($(o.element));
+        	} else if (responseJSON.success) {
+        		disableUploadButton($(o.element));
+        	}
     	},
         onCancel: function(id, fileName){},
         // messages                
@@ -509,7 +514,7 @@ qq.FileUploader = function(o){
                 '<span class="qq-upload-size"></span>' +
                 '<a class="qq-upload-cancel" href="#">Cancel</a>' +
                 '<span class="qq-upload-failed-text">Failed</span>' +
-                '<img class="qq-upload-remove" src="images/icons/delete.png" style="cursor:pointer;" alt="Remove" tempAttr="'+ type +'"  onclick="removeUploadedFile(this,\'' + btnId + '\');"/>' +
+                '<img class="qq-upload-remove" src="images/icons/delete.png" style="cursor:pointer;" alt="Remove" eleAttr="'+ btnId +'" tempAttr="'+ type +'"  onclick="removeUploadedFile(this);"/>' +
             '</li>',        
         
         classes: {

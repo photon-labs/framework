@@ -27,9 +27,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -37,6 +35,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -135,11 +134,11 @@ public class Configurations extends FrameworkBaseAction {
     
     private String featureName = "";
     
-    List<String> key = new ArrayList<String>();
-    List<String> value = new ArrayList<String>();
+    private List<String> key = new ArrayList<String>();
+    private List<String> value = new ArrayList<String>();
     
-    private static Map<String, byte[]> inputStreamMap = new HashMap<String, byte[]>();
-
+    private List<String> uploadedFiles = new ArrayList<String>();
+    
 	public String configList() {
 		if (s_debugEnabled) {
 			S_LOGGER.debug("Entering Method Configurations.configList()");
@@ -149,7 +148,7 @@ public class Configurations extends FrameworkBaseAction {
     	    removeSessionAttribute(getAppId() + SESSION_APPINFO);//To remove the appInfo from the session
     	    setReqAttribute(REQ_FROM_PAGE, REQ_CONFIG);
     	    setReqAttribute(REQ_CONFIG_PATH, getAppConfigPath().replace(File.separator, FORWARD_SLASH));
-            String cloneConfigStatus = getHttpRequest().getParameter(CLONE_CONFIG_STATUS); 
+            String cloneConfigStatus = getReqParameter(CLONE_CONFIG_STATUS); 
             if (cloneConfigStatus != null) {
             	addActionMessage(getText(ENV_CLONE_SUCCESS));
             }
@@ -481,27 +480,27 @@ public class Configurations extends FrameworkBaseAction {
     		hasError = emailValidation(hasError); 
     	}*/
     	
-    	if (fromPage.equals(FrameworkConstants.ADD_SETTINGS) || fromPage.equals(FrameworkConstants.EDIT_SETTINGS)) {
+    	if (FrameworkConstants.ADD_SETTINGS.equals(getFromPage()) || FrameworkConstants.EDIT_SETTINGS.equals(getFromPage())) {
 	    	if (CollectionUtils.isEmpty(getAppliesTos())) {
 	    		setAppliesToError(getText(ERROR_APPLIES_TO));
 	            hasError = true;
 	        }
     	}
     	
-    	ConfigManager configManager = getConfigManager(configPath);
-    	if (StringUtils.isNotEmpty(configName) && !configName.equals(oldName)) {
-    		List<Configuration> configurations = configManager.getConfigurations(environment.getName(), configType);
+    	ConfigManager configManager = getConfigManager(getConfigPath());
+    	if (StringUtils.isNotEmpty(getConfigName()) && !getConfigName().equals(getOldName())) {
+    		List<Configuration> configurations = configManager.getConfigurations(getEnvironment().getName(), getConfigType());
 			for (Configuration configuration : configurations) {
-				if(configName.trim().equalsIgnoreCase(configuration.getName())) {
+				if(getConfigName().trim().equalsIgnoreCase(configuration.getName())) {
 					setConfigNameError(getText(ERROR_DUPLICATE_NAME));
 					hasError = true;
 				}
 			}
     	}
     	
-    	if (StringUtils.isEmpty(fromPage) || (StringUtils.isNotEmpty(fromPage) && !configType.equals(oldConfigType))) {
-		    if (configType.equals(Constants.SETTINGS_TEMPLATE_SERVER) || configType.equals(Constants.SETTINGS_TEMPLATE_EMAIL)) {
-	        	List<Configuration> configurations = configManager.getConfigurations(environment.getName(), configType);
+    	if (StringUtils.isEmpty(getFromPage()) || (StringUtils.isNotEmpty(getFromPage()) && !getConfigType().equals(getOldConfigType()))) {
+		    if (Constants.SETTINGS_TEMPLATE_SERVER.equals(getConfigType()) || Constants.SETTINGS_TEMPLATE_EMAIL.equals(getConfigType())) {
+	        	List<Configuration> configurations = configManager.getConfigurations(getEnvironment().getName(), getConfigType());
 	            if(CollectionUtils.isNotEmpty( configurations)) {
 	            	setConfigTypeError(getText(CONFIG_ALREADY_EXIST));
 	                hasError = true;
@@ -509,12 +508,7 @@ public class Configurations extends FrameworkBaseAction {
 	    	}
     	}
 	    
-	    ApplicationInfo applicationInfo = getApplicationInfo();
-       // String techId = applicationInfo.getTechInfo().getId();
     	SettingsTemplate configTemplate = getServiceManager().getConfigTemplate(getConfigId(), getCustomerId());
-    	
-    	
-    	
         List<PropertyTemplate> properties = configTemplate.getProperties();
         for (PropertyTemplate propertyTemplate : properties) {
             String key = propertyTemplate.getKey();
@@ -542,7 +536,7 @@ public class Configurations extends FrameworkBaseAction {
     		 
 			// validation for UserName & Password for RemoteDeployment
 			boolean isRequired = propertyTemplate.isRequired();
-			if(remoteDeployment){
+			if(isRemoteDeployment()){
 			    if (ADMIN_USERNAME.equals(key) || ADMIN_PASSWORD.equals(key)) {
 			    	isRequired = true;
 			    }
@@ -896,6 +890,30 @@ public class Configurations extends FrameworkBaseAction {
         } catch (Exception e) { //If upload fails it will be shown in UI, so no need to throw error popup
             getHttpResponse().setStatus(getHttpResponse().SC_INTERNAL_SERVER_ERROR);
             writer.print(SUCCESS_FALSE);
+        }
+
+        return SUCCESS;
+    }
+    
+    /**
+     * 
+     * @return
+     */
+    public String listUploadedFiles() {
+        try {
+            System.out.println("inside listUploadedFiles()...");
+            File uploadedFile = new File(getTargetDir().toString());
+            System.out.println("uploadedFile:::"+ uploadedFile.getPath());
+            String[] dirs = uploadedFile.list();
+            if (!ArrayUtils.isEmpty(dirs)) {
+                System.out.println("inside files not empty...");
+                for (String file : dirs) {
+                    System.out.println("file:::" + file);
+                    uploadedFiles.add(file);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         return SUCCESS;
@@ -1653,7 +1671,6 @@ public class Configurations extends FrameworkBaseAction {
 		this.versionError = versionError;
 	}
 
-
 	public boolean isRemoteDeployment() {
 		return remoteDeployment;
 	}
@@ -1671,4 +1688,11 @@ public class Configurations extends FrameworkBaseAction {
 		this.emailid = emailid;
 	}
 
+    public List<String> getUploadedFiles() {
+        return uploadedFiles;
+    }
+
+    public void setUploadedFiles(List<String> uploadedFiles) {
+        this.uploadedFiles = uploadedFiles;
+    }
 }

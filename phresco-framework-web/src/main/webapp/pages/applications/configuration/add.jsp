@@ -192,7 +192,7 @@
 		var selectedType = typeData.name;
 		var selectedConfigId = typeData.id;
 		var fromPage = "<%= fromPage%>";
-		var configPath = "<%= configPath%>";
+		var configPath = "<%= configPath %>";
 		
 		var params = '{ ' + getBasicParamsAsJson() + ', "settingTemplate": ' + $('#templateType').val() + ' , "selectedConfigId": "' + selectedConfigId 
 			+ '" , "selectedEnv": "' + selectedEnv + '" , "selectedType": "' + selectedType + '", "fromPage": "' + fromPage + '", "configPath": "' + configPath + '", "selectedConfigname": "' + selectedConfigname + '"}';

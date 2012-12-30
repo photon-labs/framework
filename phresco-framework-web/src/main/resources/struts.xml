@@ -476,6 +476,10 @@
             <result name="reader">/pages/applications/reader.jsp</result>
         </action>
         
+        <action name="listUploadedFiles" class="com.photon.phresco.framework.actions.applications.Configurations" method="listUploadedFiles">
+            <result type="json" />
+        </action>
+        
         <action name="fetchProjectInfoVersions" method="fetchProjectInfoVersions" class="com.photon.phresco.framework.actions.applications.Configurations">
            <result type="json" />
         </action>
