@@ -355,7 +355,7 @@
 			</div>
 			<div class="modal-footer">
 				<input type="text" class="xlarge javastd hideContent" id="browseSelectedLocation" name="browseLocation"/>
-				<label for="xlInput" class="labelbold compressNameLbl" id="compressNameLbl">
+				<label for="xlInput" class="labelbold compressNameLbl hideContent" id="compressNameLbl">
 					<span class="red">*</span>&nbsp;<s:text name="lbl.compress.name"/>
 				</label>
 				<input type="text" class="hideContent compressNameTextBox" id="compressName" name="compressName"/>

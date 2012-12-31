@@ -1164,7 +1164,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     private static String getBrowseFileTreeTemplate(String fileTypes) {
     	StringBuilder sb = new StringBuilder();
     	sb.append("<div class='controls'>")
-    	.append("<input type='text' class=\"$class$\" id='fileLocation'")
+    	.append("<input type='text' class=\"$class$\" id='fileLocation' style='margin-right:5px;'")
     	.append("name=\"$name$\" >")
     	.append("<input id='browseButton' class='btn-primary btn_browse browseFileLocation'")
     	.append("value='Browse' type='button' fileTypes="+fileTypes+" onclick='browseFiles(this);'></div>");
