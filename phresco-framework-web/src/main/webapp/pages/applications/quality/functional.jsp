@@ -246,9 +246,7 @@ function successEvent(pageUrl, data) {
    		successEnvValidation(data);
    	} else if (pageUrl == "fetchBuildInfoEnvs") {
    		fillVersions("environments", data.buildInfoEnvs);
-   	} else if (pageUrl === "changeEveDependancyListener") {
-		showHideAndUpdateData(data);
-	} else if (pageUrl === "checkForHub") { 
+   	} else if (pageUrl === "checkForHub") { 
 		if (data.connectionAlive) {
 			progressPopup('showStartedHubLog', '<%= appId %>', '<%= FrameworkConstants.START_HUB %>', '', '', getBasicParams(), 'stopHub');
 		} else {

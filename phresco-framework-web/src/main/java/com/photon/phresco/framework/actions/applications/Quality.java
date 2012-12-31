@@ -451,10 +451,10 @@ public class Quality extends DynamicParameterAction implements Constants {
             List<Parameter> parameters = getMojoParameters(mojo, PHASE_FUNCTIONAL_TEST + HYPHEN + seleniumToolType);
 
             setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap);
-            setSessionAttribute(appInfo.getId() + PHASE_FUNCTIONAL_TEST + SESSION_WATCHER_MAP, watcherMap);
+            setSessionAttribute(appInfo.getId() + PHASE_FUNCTIONAL_TEST + HYPHEN + seleniumToolType + SESSION_WATCHER_MAP, watcherMap);
             setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
-            setReqAttribute(REQ_GOAL, PHASE_FUNCTIONAL_TEST);
-            setReqAttribute(REQ_PHASE, PHASE_FUNCTIONAL_TEST + HYPHEN + seleniumToolType);
+            setReqAttribute(REQ_PHASE, PHASE_FUNCTIONAL_TEST);
+            setReqAttribute(REQ_GOAL, PHASE_FUNCTIONAL_TEST + HYPHEN + seleniumToolType);
         } catch (PhrescoException e) {
             if (s_debugEnabled) {
                 S_LOGGER.error("Entered into catch block of Quality.showFunctionalTestPopUp()" + FrameworkUtil.getStackTraceAsString(e));
