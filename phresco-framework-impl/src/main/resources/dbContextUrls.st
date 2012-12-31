@@ -6,7 +6,7 @@
      </table>
 </div>
 <input type="button" style="margin-top:4px;" value="Add Context" class="btn btn-primary" onclick="addContext('dbContextDiv');">
-<input type="button" style="margin-top:4px, margin-left:4px;" value="Delete" class="btn" id="deleteContext" disabled onclick="deleteContextUrl();">
+<input type="button" style="margin-top:4px; margin-left:4px;" value="Delete" class="btn" id="deleteContext" disabled onclick="deleteContextUrl();">
 <script type="text/javascript">
 	var dbJsonFlag = true;
 </script>

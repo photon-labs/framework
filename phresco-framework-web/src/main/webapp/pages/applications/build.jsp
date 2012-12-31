@@ -264,16 +264,9 @@
 	function popupOnOk(obj) {
  		var okUrl = $(obj).attr("id");
 		if (okUrl === "build") {
-			$("#popupPage").modal('hide');
-			buildValidateSuccess("build", '<%= FrameworkConstants.REQ_BUILD %>');
+			mandatoryValidation("build", $("#generateBuildForm"), '', 'package', 'package', '<%= FrameworkConstants.REQ_BUILD %>');
 		} else if (okUrl === "deploy") {
-			var isChecked = $('#importSql').is(":checked");
-			if ($('#importSql').is(":checked") && $('#selectedSourceScript option').length == 0) {
-				$("#errMsg").html('<%= FrameworkConstants.SELECT_DB %>');
-				return false;
-			}
-			$("#popupPage").modal('hide');
-			buildValidateSuccess("deploy", '<%= FrameworkConstants.REQ_FROM_TAB_DEPLOY %>');
+			mandatoryValidation("deploy", $("#generateBuildForm"), '', 'deploy', 'deploy', '<%= FrameworkConstants.REQ_FROM_TAB_DEPLOY %>');
 		} else if (okUrl === "startServer") {
 			$("#console_div").html("Server is starting...");
 			disableButton($("#runAgainstSourceStart"));

@@ -32,6 +32,7 @@ import com.photon.phresco.framework.model.DependantParameters;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.Childs.Child;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.MavenCommands.MavenCommand;
+import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.Name;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
 import com.photon.phresco.plugins.util.MojoProcessor;
@@ -57,6 +58,9 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
     private String fileOrFolder = ""; //for file browse
     	
 	private boolean paramaterAvailable;
+	private boolean errorFound;
+	private String phase = "";
+	private String errorMsg = "";
     
     private String availableParams = "";
     private final String PHASE_FUNCTIONAL_TEST_WEBDRIVER = "functional-test-webdriver";
@@ -446,6 +450,78 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 	    }
 	}
 
+	public String mandatoryValidation() {
+		try {
+			File infoFile = new File(getPhrescoPluginInfoFilePath(getPhase()));
+			MojoProcessor mojo = new MojoProcessor(infoFile);
+			List<Parameter> parameters = getMojoParameters(mojo, getGoal());
+			if (CollectionUtils.isNotEmpty(parameters)) {
+				for (Parameter parameter : parameters) {
+					if (Boolean.parseBoolean(parameter.getRequired())) {
+						String lableTxt =  getParameterLabel(parameter);
+						//for text box,single select list box 
+						if (TYPE_STRING.equalsIgnoreCase(parameter.getType()) || TYPE_NUMBER.equalsIgnoreCase(parameter.getType())
+								|| TYPE_PASSWORD.equalsIgnoreCase(parameter.getType())
+								|| TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(parameter.getType()) && !Boolean.parseBoolean(parameter.getMultiple())
+								|| (TYPE_LIST.equalsIgnoreCase(parameter.getType()) && Boolean.parseBoolean(parameter.getMultiple()))) {
+							if (StringUtils.isEmpty(getReqParameter(parameter.getKey()))) {
+								setErrorFound(true);
+								setErrorMsg(lableTxt + " " +getText(EXCEPTION_MANDAOTRY_MSG));
+								break;
+							}
+						} else if (TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(parameter.getType()) && Boolean.parseBoolean(parameter.getMultiple()) || 
+								(TYPE_LIST.equalsIgnoreCase(parameter.getType()) && Boolean.parseBoolean(parameter.getMultiple()))) {
+							if (getReqParameterValues(parameter.getKey()) == null) {//for multi select list box
+								setErrorFound(true);
+								setErrorMsg(lableTxt + " " +getText(EXCEPTION_MANDAOTRY_MSG));
+								break;
+							}
+						} else if (parameter.getType().equalsIgnoreCase(TYPE_MAP)) {//for type map
+							List<Child> childs = parameter.getChilds().getChild();
+							String[] keys = getReqParameterValues(childs.get(0).getKey());
+							String[] values = getReqParameterValues(childs.get(1).getKey());
+							String childLabel = "";
+							for (int i = 0; i < keys.length; i++) {
+								if (StringUtils.isEmpty(keys[i]) && Boolean.parseBoolean(childs.get(0).getRequired())) {
+									childLabel = childs.get(0).getName().getValue().getValue();
+									setErrorFound(true);
+									setErrorMsg(childLabel + " " +getText(EXCEPTION_MANDAOTRY_MSG));
+									break;
+								} else if (StringUtils.isEmpty(values[i]) && Boolean.parseBoolean(childs.get(1).getRequired())) {
+									childLabel = childs.get(1).getName().getValue().getValue();
+									setErrorFound(true);
+									setErrorMsg(childLabel + " " +getText(EXCEPTION_MANDAOTRY_MSG));
+									break;
+								}
+							}
+						}
+					}
+				}
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+
+		return SUCCESS;
+	}
+
+	/**
+	 * @param parameter
+	 * @param lableTxt
+	 * @return
+	 */
+	private String getParameterLabel(Parameter parameter) {
+		String lableTxt = "";
+		List<com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.Name.Value> labels = parameter.getName().getValue();
+		for (com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.Name.Value label : labels) {
+			if (label.getLang().equals("en")) {	//to get label of parameter
+				lableTxt = label.getValue();
+			    break;
+			}
+		}
+		return lableTxt;
+	}
+	
 	/**
 	 * To get list of maven command arguments
 	 * @param parameters
@@ -657,5 +733,29 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 
 	public String getDynamicPageParameterDesign() {
 		return dynamicPageParameterDesign;
+	}
+
+	public boolean isErrorFound() {
+		return errorFound;
+	}
+
+	public void setErrorFound(boolean errorFound) {
+		this.errorFound = errorFound;
+	}
+
+	public void setErrorMsg(String errorMsg) {
+		this.errorMsg = errorMsg;
+	}
+
+	public String getErrorMsg() {
+		return errorMsg;
+	}
+
+	public void setPhase(String phase) {
+		this.phase = phase;
+	}
+
+	public String getPhase() {
+		return phase;
 	}
 }

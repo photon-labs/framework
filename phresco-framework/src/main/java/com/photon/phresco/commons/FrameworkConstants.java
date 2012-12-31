@@ -1737,6 +1737,7 @@ public interface FrameworkConstants {
 		String EXCEPTION_BUILD_DOWNLOAD_NOT_AVAILABLE = "excep.hdr.code.load";
 		String EXCEPTION_FEATURE_MANIFEST_NOT_AVAILABLE = "excep.hdr.feature.manifest.not.available";
 		String EXCEPTION_FEATURE_CONFIGURATION = "excep.hdr.feature.configuration";
+		String EXCEPTION_MANDAOTRY_MSG = "except.mandatory.msg";
 		
 		/*****************************
 	     * Success Action Messages

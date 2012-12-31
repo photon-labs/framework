@@ -145,6 +145,40 @@ function clickSave(pageUrl, params, tag, progressText) {
 	});
 }
 
+function mandatoryValidation(pageUrl, form, additionalParams, phase, goal, actionType, appId, stopBtnAction) {
+	var params = getBasicParams();
+	params = params.concat("&phase=");
+	params = params.concat(phase);
+	params = params.concat("&goal=");
+	params = params.concat(goal);
+	params = params.concat("&");
+	params = params.concat(getParameters(form, additionalParams));
+	$.ajax({
+		url : "dynamciParamMandatoryCheck",
+		data : params,
+		type : "POST",
+		async: false,
+		success : function(data) {
+			if (data.errorFound != undefined && data.errorFound) {
+				$(".yesNoPopupErr").html(data.errorMsg);
+			} else {
+				$(".yesNoPopupErr").empty();
+				if (pageUrl == "build" || pageUrl == "deploy") {//build,deploy
+					buildValidateSuccess(pageUrl, actionType);
+				} else if (pageUrl == "startNode" || pageUrl == "startHub") {//start-hub, start-node
+					$("#popupPage").modal('hide');
+					progressPopupAsSecPopup(pageUrl, appId, actionType, form, params, stopBtnAction);
+				} else if (pageUrl == "codeValidate" || pageUrl == "runLoadTest" || pageUrl == "runFunctionalTest") {//codevalidate, loadtest,functional test
+					$("#popupPage").modal('hide');
+					progressPopupAsSecPopup(pageUrl, appId, actionType, form, params);
+				} else if (pageUrl == "runPerformanceTest") {//performance test
+					runPerformanceTest();
+				}
+			}
+		}
+	});
+}
+
 function validate(pageUrl, form, tag, additionalParams, progressText, disabledDiv) {
 	if (disabledDiv != undefined && disabledDiv != "") {
 		enableDivCtrls(disabledDiv);

@@ -737,6 +737,10 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	}
     	
     	StringTemplate mapElement = new StringTemplate(getMapTemplate());
+    	if (pm.isMandatory()) {
+    		mapElement.setAttribute("mandatory", getMandatoryTemplate());
+    	}
+    	
     	mapElement.setAttribute("legendHeader", pm.getLableText());
     	List<BasicParameterModel> childs = pm.getChilds();
     	for (BasicParameterModel child : childs) {
@@ -1171,19 +1175,19 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     private static String getMapTemplate() {
     	StringBuilder sb = new StringBuilder();
     	sb.append("<fieldset class='mfbox siteinnertooltiptxt popup-fieldset fieldSetClassForHeader'>")
-    	.append("<legend class='fieldSetLegend'>$legendHeader$</legend>")
+    	.append("<legend class='fieldSetLegend'>$mandatory$ $legendHeader$</legend>")
     	.append("<table align='center'>")
     	.append("<thead class='header-background'>")
     	.append("<tr class='borderForLoad'>")
-    	.append("<th class='borderForLoad'>$keyLabel$</th>")
-    	.append("<th class='borderForLoad'>$valueLabel$</th><th></th><th></th></tr></thead>")
+    	.append("<th class='borderForLoad'>$keyMandatory$$keyLabel$</th>")
+    	.append("<th class='borderForLoad'>$valueMandatory$$valueLabel$</th><th></th><th></th></tr></thead>")
     	.append("<tbody id='propTempTbodyForHeader'>")
     	.append("<tr class='borderForLoad'>")
     	.append("$mapControls$")
     	.append("<td class='borderForLoad'>")
     	.append("<a><img class='add imagealign' src='images/icons/add_icon.png' onclick='addRow(this);'></a></td>")
     	.append("</tr></tbody></table></fieldset>");
-    	
+
     	return sb.toString();
     }
     

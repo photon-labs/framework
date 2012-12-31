@@ -20,7 +20,6 @@
 <!DOCTYPE struts PUBLIC
 "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
 "http://struts.apache.org/dtds/struts-2.0.dtd">
-
 <struts>
 
     <constant name="struts.custom.i18n.resources" value="framework" />
@@ -400,7 +399,7 @@
         <action name="deploy" method="deploy" class="com.photon.phresco.framework.actions.applications.Build">
             <result name="reader">/pages/applications/reader.jsp</result>
         </action>
-                
+        
         <action name="startServer" method="runAgainstSource" class="com.photon.phresco.framework.actions.applications.Build">
             <result name="reader">/pages/applications/reader.jsp</result>
         </action>
@@ -738,7 +737,7 @@
             <result type="json" />
         </action>
         
-        <action name="performanceTest" method="performanceTest" class="com.photon.phresco.framework.actions.applications.Quality">
+        <action name="runPerformanceTest" method="performanceTest" class="com.photon.phresco.framework.actions.applications.Quality">
             <result name="success">/pages/applications/reader.jsp</result>
         </action>
         
@@ -950,5 +949,11 @@
         	<result type="json"/>
 <!--         	<param name="root">localJenkinsAlive</param> -->
         </action>
+        
+        <!--  dynamic parameter mandatory validation starts -->
+         <action name="dynamciParamMandatoryCheck" method="mandatoryValidation" class="com.photon.phresco.framework.actions.applications.DynamicParameterAction">
+            <result type="json" />
+        </action>
+        <!--  dynamic parameter mandatory validation ends -->
     </package>
 </struts>

@@ -359,9 +359,11 @@
 			$("#console_div").empty();
 			//showParentPage();
 			if(url == "build") {
+				$("#popupPage").modal('hide');
 				$("#warningmsg").show();
 				$("#console_div").html("Generating build...");
 			} else if(url == "deploy") {
+				$("#popupPage").modal('hide');
 				$("#console_div").html("Deploying project...");
 			}
 			performUrlActions(url, readerSession);
