@@ -43,6 +43,7 @@
 	boolean editorDownloadUrl = false;
 	boolean toolsDownloadUrl = false;
 	boolean othersDownloadUrl = false;
+	Long fileSize = null;
 %>
 
 <div class="theme_accordion_container">
@@ -89,11 +90,13 @@
 											if(CollectionUtils.isNotEmpty(infos)) {
 												for (ArtifactInfo info : infos) {
 													if (StringUtils.isNotEmpty(info.getDownloadURL())) {
+														fileSize = info.getFileSize();
+														String size = Long.toString(fileSize/1048576) + FrameworkConstants.MEGABYTE;
 		                    		%> 
 						                    		<tr>
 						                    			<td><%= serverDownloadInfo.getName() %></td>
 						                    			<td><%= info.getVersion() %></td>
-						                    			<td><%= info.getFileSize() %></td>
+						                    			<td><%= size %></td>
 						                    			<td class="label_center">
 						                    				<a href="<%= info.getDownloadURL()%>"> 
 						                    					<img src="images/icons/download.png" title="<%=serverDownloadInfo.getName() %>" />
@@ -151,13 +154,18 @@
 											if (CollectionUtils.isNotEmpty(infos)) {
 												for (ArtifactInfo info : infos) { 
 													if(StringUtils.isNotEmpty(info.getDownloadURL())) {
+														fileSize = info.getFileSize();
+														String size = Long.toString(fileSize/1048576) + FrameworkConstants.MEGABYTE;
 			                    	%>
 						                    		<tr>
 						                    			<td><%= dbDownloadInfo.getName() %></td>
 						                    			<td><%= info.getVersion() %></td>
-						                    			<td><%= info.getFileSize() %></td>
+						                    			<td><%= size %></td>
 						                    			<td class="label_center">
-						                    				<a href="<%= info.getDownloadURL()%>"> 
+						                    				<a href="<%= 
+						                    					info.getDownloadURL()
+						                    					
+						                    				%>"> 
 						                    					<img src="images/icons/download.png" title="<%=dbDownloadInfo.getName()%>"/>
 						                    				</a>
 						                    			</td>
@@ -214,11 +222,13 @@
 												if (CollectionUtils.isNotEmpty(infos)) {
 													for (ArtifactInfo info : infos) {
 														if(StringUtils.isNotEmpty(info.getDownloadURL())) {
+															fileSize = info.getFileSize();
+															String size = Long.toString(fileSize/1048576) + FrameworkConstants.MEGABYTE;
 				                    	%> 
 							                    		<tr>
 							                    			<td><%= editorDownloadInfo.getName() %></td>
 							                    			<td><%= info.getVersion() %></td>
-							                    			<td><%= info.getFileSize() %></td>
+							                    			<td><%= size %></td>
 							                    			<td class="label_center">
 							                    				<a href= "<%= info.getDownloadURL() %>">
 							                    					<img src="images/icons/download.png" title="<%= editorDownloadInfo.getName()%>"/>
@@ -278,11 +288,13 @@
 											if (CollectionUtils.isNotEmpty(infos)) {
 												for (ArtifactInfo info : infos) {
 													if(StringUtils.isNotEmpty(info.getDownloadURL())) {
+														fileSize = info.getFileSize();
+														String size = Long.toString(fileSize/1048576) + FrameworkConstants.MEGABYTE;
 			                    	%> 
 						                    		<tr>
 						                    			<td><%= toolsDownloadInfo.getName() %></td>
 						                    			<td><%= info.getVersion() %></td>
-						                    			<td><%= info.getFileSize() %></td>
+						                    			<td><%= size %></td>
 						                    			<td class="label_center">
 						                    				<a href= "<%= info.getDownloadURL() %>">
 						                    					<img src="images/icons/download.png" title="<%=toolsDownloadInfo.getName() %>"/>
@@ -342,11 +354,13 @@
 											if (CollectionUtils.isNotEmpty(infos)) {
 												for (ArtifactInfo info : infos) {
 													if(StringUtils.isNotEmpty(info.getDownloadURL())) {
+														fileSize = info.getFileSize();
+														String size = Long.toString(fileSize/1048576) + FrameworkConstants.MEGABYTE;
 		                    		%> 
 						                    		<tr>
 						                    			<td><%= otherDownloadInfo.getName() %></td>
 						                    			<td><%= info.getVersion() %></td>
-						                    			<td><%= info.getFileSize() %></td>
+						                    			<td><%= size %></td>
 						                    			<td class="label_center">
 						                    				<a href= "<%= info.getDownloadURL() %>">
 						                    					<img src="images/icons/download.png" title="<%= otherDownloadInfo.getName() %>"/>

@@ -384,13 +384,14 @@ public class Features extends FrameworkBaseAction {
 			List<ArtifactInfo> versions = artifactGroup.getVersions();
 			for (ArtifactInfo artifactInfo : versions) {
 				List<RequiredOption> appliesTo = artifactInfo.getAppliesTo();
-				for (RequiredOption requiredOption : appliesTo) {
-					if (requiredOption.isRequired()) {
-						depArtifactGroupNames.add(artifactGroup.getName());
-						depArtifactInfoIds.add(artifactInfo.getId());
+				if(CollectionUtils.isNotEmpty(appliesTo)) {
+					for (RequiredOption requiredOption : appliesTo) {
+						if (requiredOption.isRequired()) {
+							depArtifactGroupNames.add(artifactGroup.getName());
+							depArtifactInfoIds.add(artifactInfo.getId());
+						}
 					}
 				}
-				
 			}
 		}
 		return SUCCESS;
