@@ -462,7 +462,7 @@ public class Configurations extends FrameworkBaseAction {
     	boolean isIISServer = false;
     	boolean serverTypeValidation = false;
     	
-    	if (StringUtils.isEmpty(getConfigName())) {
+    	if (StringUtils.isEmpty(getConfigName().trim())) {
     		setConfigNameError(getText(ERROR_NAME));
             hasError = true;
         }
@@ -472,13 +472,14 @@ public class Configurations extends FrameworkBaseAction {
             hasError = true;
         }
     	
-    	if (StringUtils.isNotEmpty(getEmailid())) {
-            hasError = emailIdFormatValidation(hasError); 
-        }
-    	
-    	/*if (StringUtils.isEmpty(getEmailid())) {
-    		hasError = emailValidation(hasError); 
-    	}*/
+    	if (getConfigType().equals(FrameworkConstants.EMAIL)) {
+    		if (StringUtils.isEmpty(getEmailid().trim())) {
+    			setEmailError(getText(ERROR_EMAIL_ID_EMPTY));
+    			hasError = true; 
+    		} else {
+    			hasError = emailIdFormatValidation(); 
+    		}
+    	}
     	
     	if (FrameworkConstants.ADD_SETTINGS.equals(getFromPage()) || FrameworkConstants.EDIT_SETTINGS.equals(getFromPage())) {
 	    	if (CollectionUtils.isEmpty(getAppliesTos())) {
@@ -536,11 +537,11 @@ public class Configurations extends FrameworkBaseAction {
     		 
 			// validation for UserName & Password for RemoteDeployment
 			boolean isRequired = propertyTemplate.isRequired();
-			if(isRemoteDeployment()){
+			if (isRemoteDeployment()) {
 			    if (ADMIN_USERNAME.equals(key) || ADMIN_PASSWORD.equals(key)) {
 			    	isRequired = true;
 			    }
-			    if(DEPLOY_DIR.equals(key)){
+			    if (DEPLOY_DIR.equals(key)) {
 			    	isRequired = false;
 			    }
 			}
@@ -587,25 +588,18 @@ public class Configurations extends FrameworkBaseAction {
         return SUCCESS;
     }
     
-    public boolean emailIdFormatValidation(boolean isError) {
+    private boolean emailIdFormatValidation() {
 		if (StringUtils.isNotEmpty(getEmailid())) {
 			Pattern p = Pattern.compile("^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
 			Matcher m = p.matcher(getEmailid());
 			boolean b = m.matches();
 			if (!b) {
 				setEmailError(getText(ERROR_EMAIL_ID));
-				isError = true;
+				return true;
 			}
 		}
-		return isError;
-	}
-    
-    public boolean emailValidation(boolean isError) {
-		if (StringUtils.isEmpty(getEmailid())) {
-			setEmailError(getText(ERROR_EMAIL_ID_EMPTY));
-			isError = true;
-		}
-		return isError;
+		
+		return false;
 	}
     
     /*private void saveCertificateFile(String path) throws PhrescoException {

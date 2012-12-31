@@ -413,6 +413,7 @@ public class Projects extends FrameworkBaseAction {
         techInfo.setId(techId);
         techInfo.setVersion(version);
         applicationInfo.setTechInfo(techInfo);
+        applicationInfo.setVersion(getProjectVersion());
         applicationInfo.setName(projectName);
         applicationInfo.setCode(appDir);
         applicationInfo.setAppDirName(appDir);
