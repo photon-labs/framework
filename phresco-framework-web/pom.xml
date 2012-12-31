@@ -184,7 +184,7 @@
        <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>itextpdf</artifactId>
-            <version>5.1.2</version>
+            <version>${itextpdf.version}</version>
        	</dependency>
        	
 		<dependency>
@@ -202,7 +202,7 @@
 		<dependency>
             <groupId>org.xhtmlrenderer</groupId>
             <artifactId>core-renderer</artifactId>
-            <version>R8pre2</version>
+            <version>R8</version>
         </dependency>
         
         <dependency>
@@ -232,7 +232,7 @@
 		<dependency>
 			<groupId>com.lowagie</groupId>
 			<artifactId>itext</artifactId>
-			<version>2.0.8</version>
+			<version>${itext.version}</version>
 		</dependency>
 		
 		<dependency>
