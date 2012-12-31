@@ -192,7 +192,7 @@
 		var selectedType = typeData.name;
 		var selectedConfigId = typeData.id;
 		var fromPage = "<%= fromPage%>";
-		var configPath = "<%= configPath%>";
+		var configPath = "<%= configPath %>";
 		
 		var params = '{ ' + getBasicParamsAsJson() + ', "settingTemplate": ' + $('#templateType').val() + ' , "selectedConfigId": "' + selectedConfigId 
 			+ '" , "selectedEnv": "' + selectedEnv + '" , "selectedType": "' + selectedType + '", "fromPage": "' + fromPage + '", "configPath": "' + configPath + '", "selectedConfigname": "' + selectedConfigname + '"}';
@@ -238,6 +238,7 @@
 		});
 		
 		var featureName = $('#featureName').val();
+		var fileName = $('.qq-upload-file').text();//To get the uploaded file name
 		
 		var jsonParamObj = getBasicParamsAsJsonObj();
 		jsonParamObj.configName = name;
@@ -253,6 +254,7 @@
 		env = jQuery.parseJSON(env);
 		jsonParamObj.environment = env;
 		jsonParamObj = $.extend(jsonParamObj, jsonObject);
+		jsonParamObj.fileName = fileName;
 		var jsonParam = JSON.stringify(jsonParamObj);
 		validateJson('<%= pageUrl %>', '', $('#<%= container %>'), jsonParam, '<%= progessTxt %>');
 	});
@@ -336,5 +338,4 @@
 			hideError($("#emailidControl"), $("#emailidError"));
 		}
 	}
-	
 </script>

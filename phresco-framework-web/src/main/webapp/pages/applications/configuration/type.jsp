@@ -409,10 +409,21 @@
 		//To fill the versions 
 		if (pageUrl == "fetchProjectInfoVersions") {
 			fillSelectbox($("select[name='version']"), data.versions);
-		}
-		
-		if (pageUrl == "fetchSettingProjectInfoVersions") {
+		} else if (pageUrl == "fetchSettingProjectInfoVersions") {
 			fillSelectbox($("select[name='version']"), data.versions);
+		} else if (pageUrl == "listUploadedFiles") {
+			if (data.uploadedFiles != undefined && !isBlank(data.uploadedFiles)) {
+				disableUploadButton($("#file-uploader"));
+				for (i in data.uploadedFiles) {
+					var fileName = data.uploadedFiles[i];
+					var ul = '<ul class="qq-upload-list"><li>' +
+				                '<span class="qq-upload-file">' + fileName + '</span>' +
+				                '<img class="qq-upload-remove" src="images/icons/delete.png" style="cursor:pointer;" alt="Remove" '+
+				                'eleAttr="file-uploader" fileName="'+ fileName +'" onclick="removeUploadedFile(this);"/>' +
+			            		'</li></ul>';
+					$('#file-uploader').append(ul);
+				}
+			}
 		}
 	}
 	
@@ -428,9 +439,13 @@
             typeError : '<s:text name="err.invalid.file.type" />',
             debug: true
         });
+		listUploadedFiles();
 	}
 	
 	function removeUploadedFile(obj) {
+		var eleAttr = $(obj).attr("eleAttr");
+		enableUploadButton($("#" + eleAttr));
+		
 		$(obj).parent().remove();
 		
 		var params = "fileName=";
@@ -449,17 +464,7 @@
 	}
 	
 	function fileError(data, type) {
-		var controlObj;
-		var msgObj;
-		if (type == "customerImageFile") {
-			controlObj = $("#fileControl");
-			msgObj = $("#fileError");
-		}
-		if (data != undefined && !isBlank(data)) {
-			showError(controlObj, msgObj, data);
-		} else {
-			hideError(controlObj, msgObj);
-		}
+		
 	}
 	
 	function constructBtnElement(btnVal, btnId) {
@@ -474,5 +479,12 @@
 		var url = $(obj).attr("id");
 		var params = getBasicParams();
 		progressPopupAsSecPopup(url, '<%= appId %>', url, $("#generateBuildForm"), params);
+	}
+	
+	function listUploadedFiles() {
+		var params = getBasicParams();
+		params = params.concat("&configTempType=");
+		params = params.concat($("#templateType option:selected").text());
+		loadContent("listUploadedFiles", '', '', params, true, true);
 	}
 </script>

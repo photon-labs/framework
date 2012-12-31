@@ -108,45 +108,11 @@
 		<!-- jquery editable combobox -->
 		<script src="js/jquery.editable.combobox.js"></script>
 		<script src="js/jss.min.js"></script>
-
-		<script type="text/javascript">
-		    $(document).ready(function() {
-		        applyTheme();
-		        
-				$(".styles").click(function() {
-	                 localStorage.clear();
-	                 var value = $(this).attr("rel");
-	                 localStorage["color"]= value;
-	                 applyTheme();
-	            });
-                  
-				// function to show user info in toggle 
-				$('div aside.usersettings div').hide(0);
-				$('div aside.usersettings').click(function() {
-					$('div aside.usersettings div').slideToggle(0);
-				});
-
-				// to show user info on mouse over
-				$('#signOut aside').mouseenter(function() {
-					$("div aside.usersettings div").hide(0);
-					$(this).children("div aside.usersettings div").show(0);
-				}).mouseleave(function() {
-					$("div aside.usersettings div").hide(0);
-				});
-				showLoadingIcon();
-				clickMenu($("a[name='headerMenu']"), $("#container"), $('#formCustomers'));
-				loadContent("home", '', $("#container"), '', '', true);
-				activateMenu($("#home"));
-			});
-		</script>
 	</head>
 	<body>
         <%
-            User userInfo = (User) session.getAttribute(FrameworkConstants.SESSION_USER_INFO);
-            String displayName = "";
-            if (userInfo != null) {
-                displayName = userInfo.getDisplayName();
-            }
+            User user = (User) session.getAttribute(FrameworkConstants.SESSION_USER_INFO);
+            String displayName = user.getDisplayName();
         %>
 		<div class="modal-backdrop fade in popupalign"></div>
 	    
@@ -255,15 +221,12 @@
 							<div class="controls customer_select_div">
 								<select name="customerId" class="customer_listbox">
 					                <%
-					                	User user = (User) session.getAttribute(FrameworkConstants.SESSION_USER_INFO);
-					                    if (user != null) {
-					                    	List<Customer> customers = user.getCustomers();
-					                    	for (Customer customer: customers) {
+				                    	List<Customer> customers = user.getCustomers();
+				                    	for (Customer customer: customers) {
 								    %>
 					                       <option value="<%= customer.getId() %>"><%= customer.getName()%></option>
 									<% 
-								            }
-								        } 
+							            }
 								    %>
 								</select>
 							</div>
