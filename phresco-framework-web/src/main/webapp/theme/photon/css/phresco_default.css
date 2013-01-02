@@ -2962,6 +2962,13 @@ fieldset {
 	text-align:left;
 }
 
+.updateMsg {
+	float:left;
+	padding-top:7px;
+	width:62%;
+	text-align:left;
+}
+
 #navigation ul li a {
    display: block;
    text-decoration: none;

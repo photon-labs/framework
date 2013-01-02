@@ -798,11 +798,11 @@
         </action> -->
 		
 		<action name="updateVersion" method="update" class="com.photon.phresco.framework.actions.applications.VersionUpdate">
-			<result name="success">/pages/updatedInfo.jsp</result>
+			<result type="json"/>
 		</action>
         
         <action name="about" method="about" class="com.photon.phresco.framework.actions.applications.VersionUpdate">
-        	<result name="about">about.jsp</result>
+        	<result name="about">/pages/about.jsp</result>
         </action>
         
         <action name="versionInfo" method="versionInfo" class="com.photon.phresco.framework.actions.applications.VersionUpdate">
