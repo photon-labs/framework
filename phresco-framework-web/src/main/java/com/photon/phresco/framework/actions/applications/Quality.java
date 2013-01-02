@@ -208,6 +208,7 @@ public class Quality extends DynamicParameterAction implements Constants {
     private String reportName = "";
     private String reoportLocation = "";
     private String reportDataType = "";
+    private String sonarUrl = "";
     
     // download report
 	private InputStream fileInputStream;
@@ -2618,6 +2619,9 @@ public class Quality extends DynamicParameterAction implements Constants {
         	boolean isReportAvailable = true;
 			ApplicationInfo appInfo = getApplicationInfo();
 			setReqAttribute(REQ_APPINFO, appInfo);
+			String sonarUrl = "";
+			FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+			sonarUrl = frameworkUtil.getSonarURL();
 //        	ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
 //        	ApplicationInfo appInfo = getApplicationInfo();
 //            FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
@@ -2637,6 +2641,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 			setReqAttribute(REQ_CUSTOMER_ID, getCustomerId());
 			setReqAttribute(REQ_FROM_PAGE, getFromPage());
 			setReqAttribute(REQ_TEST_EXE, isReportAvailable);
+			setReqAttribute(REQ_SONAR_URL, sonarUrl);
         	List<String> existingPDFs = getExistingPDFs();
     		if (existingPDFs != null) {
     			setReqAttribute(REQ_PDF_REPORT_FILES, existingPDFs);
@@ -2786,7 +2791,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 		// popup showing list of pdf's already created
 		String pdfDirLoc = "";
 		String fileFilterName = "";
-		if (StringUtils.isEmpty(fromPage) || "All".equals(fromPage)) {
+		if (StringUtils.isEmpty(fromPage) || FROMPAGE_ALL.equals(fromPage)) {
 			pdfDirLoc = Utility.getProjectHome() + getApplicationInfo().getAppDirName() + File.separator + DO_NOT_CHECKIN_DIR + File.separator + ARCHIVES + File.separator + CUMULATIVE;
 			fileFilterName = getApplicationInfo().getAppDirName();
 		} else {
@@ -2818,17 +2823,19 @@ public class Quality extends DynamicParameterAction implements Constants {
 			ApplicationInfo applicationInfo = getApplicationInfo();
 			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_PDF_REPORT)));
 			List<Parameter> parameters = getMojoParameters(mojo, PHASE_PDF_REPORT);
-			
+			String sonarUrl = (String) getReqAttribute(REQ_SONAR_URL);
 	        if (CollectionUtils.isNotEmpty(parameters)) {
 	            for (Parameter parameter : parameters) {
 	            	String key = parameter.getKey();
-	            	if ("reportType".equals(key)) {
+	            	if (REQ_REPORT_TYPE.equals(key)) {
 	            		parameter.setValue(reportDataType);
-	            	} else if ("testType".equals(key)) {
+	            	} else if (REQ_TEST_TYPE.equals(key)) {
 	            		if (StringUtils.isEmpty(fromPage)) {
-	            			setFromPage("All");
+	            			setFromPage(FROMPAGE_ALL);
 	            		}
 	            		parameter.setValue(getFromPage());
+	            	} else if (REQ_SONAR_URL.equals(key)) {
+	            		parameter.setValue(sonarUrl);
 	            	}
 	            }
 	        }
@@ -3084,6 +3091,14 @@ public class Quality extends DynamicParameterAction implements Constants {
     public void setJmeterTestAgainst(String jmeterTestAgainst) {
         this.jmeterTestAgainst = jmeterTestAgainst;
     }
+    
+    public String getSonarUrl() {
+		return sonarUrl;
+	}
+
+	public void setSonarUrl(String sonarUrl) {
+		this.sonarUrl = sonarUrl;
+	}
 
 	public String getTestName() {
 		return testName;

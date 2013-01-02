@@ -627,6 +627,8 @@ public interface FrameworkConstants {
     String REQ_APPLICATION_TYPE = "applicationType";
     String REQ_OLD_CONFIG_NAME = "configName";
     String REQ_TEST_TYPE = "testType";
+    String REQ_SONAR_URL = "sonarUrl";
+	String REQ_REPORT_TYPE = "reportType";
     String REQ_ACTION_TYPE = "actionType";
     String REQ_TEST_EXE = "testExecuted";
     String REQ_REPORT_STATUS = "reportStatus";
@@ -1598,7 +1600,7 @@ public interface FrameworkConstants {
 	   String SQL_EXCLUDES = "source/sql";
 	   String HTML_EXCLUDES = "source/public_html";
 	   String TEST = "test";
-	  
+	   String FROMPAGE_ALL = "All";
 	   
 	   /* Constants for plugin properties */ 
 	   String SKIP = "skip";

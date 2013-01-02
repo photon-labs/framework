@@ -19,6 +19,7 @@
 	String projectId = (String)request.getAttribute(FrameworkConstants.REQ_PROJECT_ID);
 	String customerId = (String)request.getAttribute(FrameworkConstants.REQ_CUSTOMER_ID);
 	String fromPage = (String)request.getAttribute(FrameworkConstants.REQ_FROM_PAGE);
+	String sonarUrl = (String)request.getAttribute(FrameworkConstants.REQ_SONAR_URL);
 %>
 
 	<style>
@@ -129,6 +130,7 @@
 	<input type="hidden" name="appId" value="<%= applicationId %>">
 	<input type="hidden" name="projectId" value="<%= projectId %>">
 	<input type="hidden" name="customerId" value="<%= customerId %>">
+    <input type="hidden" name="sonarUrl" value="<%= sonarUrl %>">
 </form>
 
 <script type="text/javascript">
