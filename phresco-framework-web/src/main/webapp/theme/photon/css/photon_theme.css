@@ -1389,6 +1389,10 @@ label {
 	color:red;
 }
 
+#successMsg {
+	color:green;
+}
+
 #logimErrMesg {
 	color: #FF0000;
     float: left;

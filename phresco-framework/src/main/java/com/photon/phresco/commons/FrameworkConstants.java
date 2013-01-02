@@ -306,7 +306,7 @@ public interface FrameworkConstants {
     String DEPLOY_WEBSERVICE_PARAM = "webServiceName";
     String TEST_PARAM = "test=";
     String TEST_PARAM_VALUE = "AllTest";
-    String ALL_TEST_SUITES = "All";
+    String ALL = "All";
     String KEY_QUOTES = "\"";
     String DEPLOY_BUILD_NAME = "buildName";
     String IPHONE_BUILD_NAME = "application.path";

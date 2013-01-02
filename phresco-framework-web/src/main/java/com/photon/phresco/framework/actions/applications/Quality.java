@@ -2230,7 +2230,7 @@ public class Quality extends DynamicParameterAction implements Constants {
     		String testSuitesMapKey = getAppId() + getTestType() + getProjectModule() + getTechReport();
         	Map<String, NodeList> testResultNameMap = testSuiteMap.get(testSuitesMapKey);
             NodeList testSuites = testResultNameMap.get(getTestSuite());
-    		if (ALL_TEST_SUITES.equals(getTestSuite())) {
+    		if (ALL.equals(getTestSuite())) {
     			Map<String, String> testSuitesResultMap = new HashMap<String, String>();
     			float totalTestSuites = 0;
     			float successTestSuites = 0;
@@ -2645,7 +2645,7 @@ public class Quality extends DynamicParameterAction implements Constants {
         	e.printStackTrace();
             S_LOGGER.error("Entered into catch block of Quality.printAsPdfPopup()"+ e);
         }
-        setReqAttribute(REQ_TEST_TYPE, testType);
+        setReqAttribute(REQ_TEST_TYPE, fromPage);
         return SUCCESS;
     }
 
@@ -2877,13 +2877,13 @@ public class Quality extends DynamicParameterAction implements Constants {
     public String downloadReport() {
         S_LOGGER.debug("Entering Method Quality.downloadReport()");
         try {
-        	String testType = getReqParameter(REQ_TEST_TYPE);
+        	String fromPage = getReqParameter(REQ_FROM_PAGE);
         	String pdfLOC = "";
-        	String semiPath = getApplicationHome() + File.separator + DO_NOT_CHECKIN_DIR + File.separator + ARCHIVES + File.separator;
-        	if (StringUtils.isEmpty(testType)) {
-        		pdfLOC = semiPath + CUMULATIVE + File.separator + getApplicationInfo().getAppDirName() + UNDERSCORE + reportFileName + DOT + PDF;
+        	String archivePath = getApplicationHome() + File.separator + DO_NOT_CHECKIN_DIR + File.separator + ARCHIVES + File.separator;
+        	if ((FrameworkConstants.ALL).equals(fromPage)) {
+        		pdfLOC = archivePath + CUMULATIVE + File.separator + getApplicationInfo().getAppDirName() + UNDERSCORE + reportFileName + DOT + PDF;
         	} else {
-        		pdfLOC = semiPath + testType + File.separator + testType + UNDERSCORE + reportFileName + DOT + PDF;
+        		pdfLOC = archivePath + fromPage + File.separator + fromPage + UNDERSCORE + reportFileName + DOT + PDF;
         	}
             File pdfFile = new File(pdfLOC);
             if (pdfFile.isFile()) {
@@ -2900,13 +2900,13 @@ public class Quality extends DynamicParameterAction implements Constants {
     public String deleteReport() {
         S_LOGGER.debug("Entering Method Quality.deleteReport()");
         try {
-        	String testType = getReqParameter(REQ_TEST_TYPE);
+        	String fromPage = getReqParameter(REQ_FROM_PAGE);
         	String pdfLOC = "";
-        	String semiPath = getApplicationHome() + File.separator + DO_NOT_CHECKIN_DIR + File.separator + ARCHIVES + File.separator;
-        	if (StringUtils.isEmpty(testType)) {
-        		pdfLOC = semiPath + CUMULATIVE + File.separator + getApplicationInfo().getAppDirName() + UNDERSCORE + reportFileName + DOT + PDF;
+        	String archivePath = getApplicationHome() + File.separator + DO_NOT_CHECKIN_DIR + File.separator + ARCHIVES + File.separator;
+        	if ((FrameworkConstants.ALL).equals(fromPage)) {
+        		pdfLOC = archivePath + CUMULATIVE + File.separator + getApplicationInfo().getAppDirName() + UNDERSCORE + reportFileName + DOT + PDF;
         	} else {
-        		pdfLOC = semiPath + testType + File.separator + testType + UNDERSCORE + reportFileName + DOT + PDF;
+        		pdfLOC = archivePath + fromPage + File.separator + fromPage + UNDERSCORE + reportFileName + DOT + PDF;
         	}
             File pdfFile = new File(pdfLOC);
             if (pdfFile.isFile()) {

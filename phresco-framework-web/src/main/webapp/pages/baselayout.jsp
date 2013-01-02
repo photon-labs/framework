@@ -323,6 +323,7 @@
 				<input type="button" class="btn btn-primary popupClose" id=""  onClick="popupOnClose(this);" value="<s:text name='lbl.btn.close'/>" data-dismiss="modal" href="#"/>
 				<img class="popuploadingIcon" id="popuploadingIcon" src="" />
 				<div id="errMsg" class="envErrMsg yesNoPopupErr"></div>
+				<div id="successMsg" class="envErrMsg yesNoPopupErr"></div>
 			</div>
 		</div>
 	    <!-- Popup Ends -->
