@@ -404,21 +404,20 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 	protected void persistValuesToXml(MojoProcessor mojo, String goal) throws PhrescoException {
 	    try {
 	        List<Parameter> parameters = getMojoParameters(mojo, goal);
-	        StringBuilder csParamVal = new StringBuilder();
-	        String sep = "";
 	        if (CollectionUtils.isNotEmpty(parameters)) {
 	            for (Parameter parameter : parameters) {
+	                StringBuilder csParamVal = new StringBuilder();
 	                if (Boolean.parseBoolean(parameter.getMultiple())) {
 	                	if (getReqParameterValues(parameter.getKey()) == null) {
 	                		parameter.setValue("");
 	                	} else {
 	                		String[] parameterValues = getReqParameterValues(parameter.getKey());
 		                    for (String parameterValue : parameterValues) {
-		                        csParamVal.append(sep);
 		                        csParamVal.append(parameterValue);
-		                        sep = ",";
+		                        csParamVal.append(",");
 		                    }
-		                    parameter.setValue(csParamVal.toString());
+		                    String csvVal = csParamVal.toString();
+		                    parameter.setValue(csvVal.toString().substring(0, csvVal.lastIndexOf(",")));
 	                	}
 	                } else if (TYPE_BOOLEAN.equalsIgnoreCase(parameter.getType())) {
 	                    if (getReqParameter(parameter.getKey()) != null) {

@@ -981,7 +981,13 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     		} else {
     			checkedStr = "";
     		}
-    		builder.append("<li><input type='checkbox' class='popUpChckBox' value=\"");
+    		String additionalParam = getAdditionalParam(value, "");
+    		String onClickFunction = "";
+    		if (StringUtils.isNotEmpty(additionalParam)) {
+    		    onClickFunction = "updateDepdForMultSelect(this)";
+    		}
+    		
+    		builder.append("<li><input type='checkbox' additionalParam=\"dependency="+ additionalParam + "\" onclick=\""+ onClickFunction + "\" class='popUpChckBox' value=\"");
     		builder.append(optionValue + "\" name=\""+ name + "\" " + checkedStr + ">" + optionValue + "</li>");
     	}
 

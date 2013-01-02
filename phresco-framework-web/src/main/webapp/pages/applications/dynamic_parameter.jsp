@@ -29,6 +29,7 @@
 <%@ page import="org.apache.commons.lang.StringUtils" %>
 <%@ page import="org.apache.commons.collections.CollectionUtils" %>
 <%@ page import="org.antlr.stringtemplate.StringTemplate" %>
+
 <%@ page import="com.photon.phresco.plugins.util.MojoProcessor"%>
 <%@ page import="com.photon.phresco.framework.actions.applications.DynamicParameterAction"%>
 
@@ -493,6 +494,7 @@
 		}
 		
 		if (data.dependency != undefined && !isBlank(data.dependency)) {
+			
 			if (data.dependentValues != undefined && !isBlank(data.dependentValues)) {
 				var isMultiple = $('#' + data.dependency).attr("isMultiple");
 				var controlType = $('#' + data.dependency).attr('type');
@@ -610,5 +612,18 @@
 	
 	function removeHeader(obj) {
 		$(obj).parent('div').remove();
+	}
+	
+	function updateDepdForMultSelect(obj) {
+		var checkBoxName = $(obj).attr("name");
+		var dependencyAttr = $(obj).attr("additionalParam").split('=');
+		var dependency = dependencyAttr[1];
+		var csvValue = "";
+		$('input[name='+ checkBoxName +']:checked').each(function() {
+			csvValue = $(this).val() + "," + csvValue;
+		});
+		csvValue = csvValue.substring(0, csvValue.lastIndexOf(","));
+		changeEveDependancyListener(csvValue, checkBoxName);
+		updateDependancy(dependency);
 	}
 </script>

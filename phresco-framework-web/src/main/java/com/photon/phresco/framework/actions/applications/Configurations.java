@@ -882,6 +882,7 @@ public class Configurations extends FrameworkBaseAction {
             writer.flush();
             writer.close();
         } catch (Exception e) { //If upload fails it will be shown in UI, so no need to throw error popup
+            e.printStackTrace();
             getHttpResponse().setStatus(getHttpResponse().SC_INTERNAL_SERVER_ERROR);
             writer.print(SUCCESS_FALSE);
         }
@@ -890,19 +891,15 @@ public class Configurations extends FrameworkBaseAction {
     }
     
     /**
-     * 
+     * To list the uploaded files
      * @return
      */
     public String listUploadedFiles() {
         try {
-            System.out.println("inside listUploadedFiles()...");
             File uploadedFile = new File(getTargetDir().toString());
-            System.out.println("uploadedFile:::"+ uploadedFile.getPath());
             String[] dirs = uploadedFile.list();
             if (!ArrayUtils.isEmpty(dirs)) {
-                System.out.println("inside files not empty...");
                 for (String file : dirs) {
-                    System.out.println("file:::" + file);
                     uploadedFiles.add(file);
                 }
             }
@@ -972,6 +969,7 @@ public class Configurations extends FrameworkBaseAction {
         String targetDir = frameworkUtil.getPomProcessor(appDirName).getProperty(PHRESCO_DOT + dynamicType + DOT_TARGET_DIR);
         StringBuilder sb = new StringBuilder(Utility.getProjectHome())
         .append(getApplicationInfo().getAppDirName())
+        .append(File.separator)
         .append(targetDir);
         return sb;
     }
