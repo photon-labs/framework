@@ -386,7 +386,7 @@ public class Features extends FrameworkBaseAction {
 				List<RequiredOption> appliesTo = artifactInfo.getAppliesTo();
 				if(CollectionUtils.isNotEmpty(appliesTo)) {
 					for (RequiredOption requiredOption : appliesTo) {
-						if (requiredOption.isRequired()) {
+						if (requiredOption.isRequired() && requiredOption.getTechId().equals(getTechnology())) {
 							depArtifactGroupNames.add(artifactGroup.getName());
 							depArtifactInfoIds.add(artifactInfo.getId());
 						}

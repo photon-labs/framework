@@ -127,6 +127,7 @@
 		var jsonObjectParam = {};
 		var jsonObject = <%= gson.toJson(artifactGroups) %>;
 		jsonObjectParam.artifactGroups = jsonObject;
+		jsonObjectParam.technology = '<%= techId %>';
 		var jsonString = JSON.stringify(jsonObjectParam);
 		loadJsonContent("fetchDefaultFeatures", jsonString, '', '', true);
 	}
