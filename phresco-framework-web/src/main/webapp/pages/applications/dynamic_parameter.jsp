@@ -67,7 +67,7 @@
     String className = "";//For performance
     FrameworkUtil frameworkUtil = new FrameworkUtil();
     DynamicParameterAction dpm = new DynamicParameterAction();
-    MojoProcessor mojo = new MojoProcessor(new File(dpm.getPhrescoPluginInfoXmlFilePath(goal, applicationInfo)));
+    MojoProcessor mojo = new MojoProcessor(new File(dpm.getPhrescoPluginInfoXmlFilePath(phase, applicationInfo)));
     StringBuilder stFileFunction = new StringBuilder();
     String sep = "";
 %>
@@ -146,7 +146,7 @@
 					if (StringUtils.isNotEmpty(parameter.getDependency())) {
 						//If current control has dependancy value 
 						List<String> dependancyList = Arrays.asList(parameter.getDependency().split(FrameworkConstants.CSV_PATTERN));
-						Parameter param = mojo.getParameter(phase, dependancyList.get(0));
+						Parameter param = mojo.getParameter(goal, dependancyList.get(0));
 						onClickFunction = "dependancyChckBoxEvent(this, '"+ parameter.getKey() +"', '"+ param.isShow() +"');";
 						onChangeFunction = "changeChckBoxValue(this);";
 					} else {
