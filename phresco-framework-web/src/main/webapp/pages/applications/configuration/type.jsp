@@ -134,12 +134,42 @@
     %>
    			<script type="text/javascript">
    				createFileUploader('<%= propertyTemplate.getName() %>');
+   				
+   				function createFileUploader(controlLabel) {
+   					$('#fileControlLabel').html(controlLabel);
+   					$('#fileControl').show();
+   					var imgUploader = new qq.FileUploader ({
+   			            element : document.getElementById('file-uploader'),
+   			            action : 'uploadFile',
+   			            multiple : false,
+   			            allowedExtensions : ["zip"],
+   			            buttonLabel : '<s:text name="lbl.upload" />',
+   			            typeError : '<s:text name="err.invalid.file.type" />',
+   			            debug: true
+   			        });
+   					listUploadedFiles();
+   				}
+   				
+   				function listUploadedFiles() {
+   					var params = getBasicParams();
+   					params = params.concat("&configTempType=");
+   					params = params.concat($("#templateType option:selected").text());
+   					loadContent("listUploadedFiles", '', '', params, true, true);
+   				}
    			</script>
 	<%
 		} else if (FrameworkConstants.TYPE_ACTIONS.equals(propertyTemplate.getType())) {
 	%>
             <script type="text/javascript">
             	constructBtnElement('<%= pm.getLableText() %>', '<%= pm.getId() %>');
+            	
+            	function constructBtnElement(btnVal, btnId) {
+   					var ctrlGroup = "<div class='control-group'><label for='xlInput' class='control-label labelbold'></label>" +
+   									"<div class='controls'><input type='button' class='btn btn-primary' onclick='performBtnEvent(this)'" + 
+   									"id='"+ btnId +"' value='"+ btnVal +"'/></div></div>";
+   					$('#configProperties').append(ctrlGroup);
+   									
+   				}
 			</script>
 	<%
 		} else if (CollectionUtils.isNotEmpty(possibleValues)) {
@@ -427,21 +457,6 @@
 		}
 	}
 	
-	function createFileUploader(controlLabel) {
-		$('#fileControlLabel').html(controlLabel);
-		$('#fileControl').show();
-		var imgUploader = new qq.FileUploader ({
-            element : document.getElementById('file-uploader'),
-            action : 'uploadFile',
-            multiple : false,
-            allowedExtensions : ["zip"],
-            buttonLabel : '<s:text name="lbl.upload" />',
-            typeError : '<s:text name="err.invalid.file.type" />',
-            debug: true
-        });
-		listUploadedFiles();
-	}
-	
 	function removeUploadedFile(obj) {
 		var eleAttr = $(obj).attr("eleAttr");
 		enableUploadButton($("#" + eleAttr));
@@ -467,24 +482,9 @@
 		
 	}
 	
-	function constructBtnElement(btnVal, btnId) {
-		var ctrlGroup = "<div class='control-group'><label for='xlInput' class='control-label labelbold'></label>" +
-						"<div class='controls'><input type='button' class='btn btn-primary' onclick='performBtnEvent(this)'" + 
-						"id='"+ btnId +"' value='"+ btnVal +"'/></div></div>";
-		$('#configProperties').append(ctrlGroup);
-						
-	}
-	
 	function performBtnEvent(obj) {
 		var url = $(obj).attr("id");
 		var params = getBasicParams();
 		progressPopupAsSecPopup(url, '<%= appId %>', url, $("#generateBuildForm"), params);
-	}
-	
-	function listUploadedFiles() {
-		var params = getBasicParams();
-		params = params.concat("&configTempType=");
-		params = params.concat($("#templateType option:selected").text());
-		loadContent("listUploadedFiles", '', '', params, true, true);
 	}
 </script>

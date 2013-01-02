@@ -320,10 +320,11 @@
 <%-- 				<a href="#" class="btn btn-primary popupOk" id="" onClick="popupOnOk(this);" ><s:text name='lbl.btn.ok'/></a> --%>
 				<input type="button" class="btn btn-primary popupOk" id="" onClick="popupOnOk(this);" value="<s:text name='lbl.btn.ok'/>" href="#"/>
 <%-- 				<a href="#" class="btn btn-primary popupClose" data-dismiss="modal" id="" onClick="popupOnClose(this);"><s:text name='lbl.btn.close'/></a> --%>
-				<input type="button" class="btn btn-primary popupClose" id=""  onClick="popupOnClose(this);" value="<s:text name='lbl.btn.close'/>" data-dismiss="modal" href="#"/>
+				<input type="button" class="btn btn-primary popupClose" id="" onClick="popupOnClose(this);" value="<s:text name='lbl.btn.close'/>" data-dismiss="modal" href="#"/>
 				<img class="popuploadingIcon" id="popuploadingIcon" src="" />
 				<div id="errMsg" class="envErrMsg yesNoPopupErr"></div>
 				<div id="successMsg" class="envErrMsg yesNoPopupErr"></div>
+				<div id="updateMsg" class="updateMsg"></div>
 			</div>
 		</div>
 	    <!-- Popup Ends -->
@@ -409,6 +410,13 @@
     		loadContent("applications", $('#formCustomers'), $("#container"), '', '', true);
     	});
 		
+		$("#forum").click(function() {
+			loadContent("forum", $('#formCustomers'), $("#container"), '', '', true);
+		});
+		
+		$("#about").click(function() {
+			yesnoPopup('about', 'About Phresco', 'updateAvailable', 'Update Available');
+		});
 	});
 	
 	if ($.browser.safari && $.browser.version == 530.17) {

@@ -260,6 +260,7 @@ function yesnoPopup(url, title, okUrl, okLabel, form, additionalParam) {
 		data = data.concat(additionalParam);
 	}
 	
+	$("#updateMsg").empty();
 	$("#errMsg").empty();
 	$('#popup_div').empty();
 	$('#popup_div').css("height", "300px");

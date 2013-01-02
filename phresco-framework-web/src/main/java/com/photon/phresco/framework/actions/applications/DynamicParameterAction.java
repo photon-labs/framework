@@ -32,7 +32,6 @@ import com.photon.phresco.framework.model.DependantParameters;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.Childs.Child;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.MavenCommands.MavenCommand;
-import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.Name;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
 import com.photon.phresco.plugins.util.MojoProcessor;
@@ -455,45 +454,22 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 			File infoFile = new File(getPhrescoPluginInfoFilePath(getPhase()));
 			MojoProcessor mojo = new MojoProcessor(infoFile);
 			List<Parameter> parameters = getMojoParameters(mojo, getGoal());
+			List<String> checkBoxDependencies = new ArrayList<String>();
 			if (CollectionUtils.isNotEmpty(parameters)) {
 				for (Parameter parameter : parameters) {
-					if (Boolean.parseBoolean(parameter.getRequired())) {
-						String lableTxt =  getParameterLabel(parameter);
-						//for text box,single select list box 
-						if (TYPE_STRING.equalsIgnoreCase(parameter.getType()) || TYPE_NUMBER.equalsIgnoreCase(parameter.getType())
-								|| TYPE_PASSWORD.equalsIgnoreCase(parameter.getType())
-								|| TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(parameter.getType()) && !Boolean.parseBoolean(parameter.getMultiple())
-								|| (TYPE_LIST.equalsIgnoreCase(parameter.getType()) && Boolean.parseBoolean(parameter.getMultiple()))) {
-							if (StringUtils.isEmpty(getReqParameter(parameter.getKey()))) {
-								setErrorFound(true);
-								setErrorMsg(lableTxt + " " +getText(EXCEPTION_MANDAOTRY_MSG));
-								break;
-							}
-						} else if (TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(parameter.getType()) && Boolean.parseBoolean(parameter.getMultiple()) || 
-								(TYPE_LIST.equalsIgnoreCase(parameter.getType()) && Boolean.parseBoolean(parameter.getMultiple()))) {
-							if (getReqParameterValues(parameter.getKey()) == null) {//for multi select list box
-								setErrorFound(true);
-								setErrorMsg(lableTxt + " " +getText(EXCEPTION_MANDAOTRY_MSG));
-								break;
-							}
-						} else if (parameter.getType().equalsIgnoreCase(TYPE_MAP)) {//for type map
-							List<Child> childs = parameter.getChilds().getChild();
-							String[] keys = getReqParameterValues(childs.get(0).getKey());
-							String[] values = getReqParameterValues(childs.get(1).getKey());
-							String childLabel = "";
-							for (int i = 0; i < keys.length; i++) {
-								if (StringUtils.isEmpty(keys[i]) && Boolean.parseBoolean(childs.get(0).getRequired())) {
-									childLabel = childs.get(0).getName().getValue().getValue();
-									setErrorFound(true);
-									setErrorMsg(childLabel + " " +getText(EXCEPTION_MANDAOTRY_MSG));
-									break;
-								} else if (StringUtils.isEmpty(values[i]) && Boolean.parseBoolean(childs.get(1).getRequired())) {
-									childLabel = childs.get(1).getName().getValue().getValue();
-									setErrorFound(true);
-									setErrorMsg(childLabel + " " +getText(EXCEPTION_MANDAOTRY_MSG));
+					if (TYPE_BOOLEAN.equalsIgnoreCase(parameter.getType()) && StringUtils.isNotEmpty(parameter.getDependency())) {
+						checkBoxDependencies = Arrays.asList(parameter.getDependency().split(CSV_PATTERN));
+						if (getReqParameter(parameter.getKey()) != null) {
+							for (String checkBoxDependencyKey : checkBoxDependencies) {
+								Parameter dependencyParameter = mojo.getParameter(getGoal(), checkBoxDependencyKey);
+								if (Boolean.parseBoolean(dependencyParameter.getRequired()) && paramsMandatoryCheck(dependencyParameter)) {
 									break;
 								}
 							}
+						}
+					} else if (Boolean.parseBoolean(parameter.getRequired())) {
+						if ((parameter.isShow() || !checkBoxDependencies.contains(parameter.getKey())) && paramsMandatoryCheck(parameter)) {
+							break;
 						}
 					}
 				}
@@ -504,7 +480,88 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 
 		return SUCCESS;
 	}
+	
+	private boolean paramsMandatoryCheck (Parameter parameter) {
+		boolean returnFlag = false; 
+		String lableTxt =  getParameterLabel(parameter);
+		if (TYPE_STRING.equalsIgnoreCase(parameter.getType()) || TYPE_NUMBER.equalsIgnoreCase(parameter.getType())
+				|| TYPE_PASSWORD.equalsIgnoreCase(parameter.getType())
+				|| TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(parameter.getType()) && !Boolean.parseBoolean(parameter.getMultiple())
+				|| (TYPE_LIST.equalsIgnoreCase(parameter.getType()) && Boolean.parseBoolean(parameter.getMultiple()))
+				|| (TYPE_FILE_BROWSE.equalsIgnoreCase(parameter.getType()))) {
+			returnFlag = textSingleSelectValidate(parameter, returnFlag,lableTxt);//for text box,single select list box,file browse
+		} else if (TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(parameter.getType()) && Boolean.parseBoolean(parameter.getMultiple()) || 
+				(TYPE_LIST.equalsIgnoreCase(parameter.getType()) && Boolean.parseBoolean(parameter.getMultiple()))) {
+			returnFlag = multiSelectValidate(parameter, returnFlag, lableTxt);//for multi select list box
+		} else if (parameter.getType().equalsIgnoreCase(TYPE_MAP)) {
+			returnFlag = mapControlValidate(parameter, returnFlag);//for type map
+		}
+		
+		return returnFlag;
+	}
 
+	/**
+	 * @param parameter
+	 * @param returnFlag
+	 * @return
+	 */
+	private boolean mapControlValidate(Parameter parameter, boolean returnFlag) {
+		List<Child> childs = parameter.getChilds().getChild();
+		String[] keys = getReqParameterValues(childs.get(0).getKey());
+		String[] values = getReqParameterValues(childs.get(1).getKey());
+		String childLabel = "";
+		for (int i = 0; i < keys.length; i++) {
+			if (StringUtils.isEmpty(keys[i]) && Boolean.parseBoolean(childs.get(0).getRequired())) {
+				childLabel = childs.get(0).getName().getValue().getValue();
+				setErrorFound(true);
+				setErrorMsg(childLabel + " " +getText(EXCEPTION_MANDAOTRY_MSG));
+				returnFlag = true;
+				break;
+			} else if (StringUtils.isEmpty(values[i]) && Boolean.parseBoolean(childs.get(1).getRequired())) {
+				childLabel = childs.get(1).getName().getValue().getValue();
+				setErrorFound(true);
+				setErrorMsg(childLabel + " " +getText(EXCEPTION_MANDAOTRY_MSG));
+				returnFlag = true;
+				break;
+			}
+		}
+		return returnFlag;
+	}
+
+	/**
+	 * @param parameter
+	 * @param returnFlag
+	 * @param lableTxt
+	 * @return
+	 */
+	private boolean multiSelectValidate(Parameter parameter,
+			boolean returnFlag, String lableTxt) {
+		if (getReqParameterValues(parameter.getKey()) == null) {//for multi select list box
+			setErrorFound(true);
+			setErrorMsg(lableTxt + " " +getText(EXCEPTION_MANDAOTRY_MSG));
+			returnFlag = true;
+			//break;
+		}
+		return returnFlag;
+	}
+
+	/**
+	 * @param parameter
+	 * @param returnFlag
+	 * @param lableTxt
+	 * @return
+	 */
+	private boolean textSingleSelectValidate(Parameter parameter,
+			boolean returnFlag, String lableTxt) {
+		if (StringUtils.isEmpty(getReqParameter(parameter.getKey()))) {
+			setErrorFound(true);
+			setErrorMsg(lableTxt + " " +getText(EXCEPTION_MANDAOTRY_MSG));
+			returnFlag = true;
+			//break;
+		}
+		return returnFlag;
+	}
+	
 	/**
 	 * @param parameter
 	 * @param lableTxt

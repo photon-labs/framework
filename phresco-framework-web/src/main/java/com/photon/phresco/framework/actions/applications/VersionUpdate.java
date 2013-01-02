@@ -28,18 +28,22 @@ import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
 import com.photon.phresco.framework.api.UpgradeManager;
 import com.photon.phresco.framework.commons.FrameworkUtil;
+import com.photon.phresco.util.Constants;
+import com.photon.phresco.util.ServiceConstants;
 
 public class VersionUpdate extends FrameworkBaseAction {
 	private static final long serialVersionUID = 1L;
 
 	private static final Logger S_LOGGER = Logger.getLogger(VersionUpdate.class);
 	private static Boolean debugEnabled = S_LOGGER.isDebugEnabled();
-	private VersionInfo versionInfo = null;
 	// current version
-	private String latestVersion = null;
-	private String currentVersion = null;
-	private String message = null;
-	private boolean isUpdateAvail;
+	private String latestVersion = "";
+	private String currentVersion = "";
+		
+	private boolean updateVersionStatus = false;
+	private String updateVersionMessage = "";
+	private String message = "";
+	private boolean updateAvail;
 
 	public String about() {
 		if (debugEnabled) {
@@ -53,19 +57,19 @@ public class VersionUpdate extends FrameworkBaseAction {
 			S_LOGGER.debug("Entering Method VersionUpdate.versionInfo()");
 		}
 		try {
-			versionInfo = new VersionInfo();
 			UpgradeManager updateManager = PhrescoFrameworkFactory.getUpdateManager();
-			currentVersion = updateManager.getCurrentVersion();
-			versionInfo = updateManager.checkForUpdate(getServiceManager(), currentVersion);
-			message = versionInfo.getMessage();
-			latestVersion = versionInfo.getFrameworkVersion();
-			isUpdateAvail = versionInfo.isUpdateAvailable();
+			setCurrentVersion(updateManager.getCurrentVersion());
+			VersionInfo versionInfo = updateManager.checkForUpdate(getServiceManager(), getCurrentVersion());
+			setMessage(versionInfo.getMessage());
+			setLatestVersion(versionInfo.getFrameworkVersion());
+			setUpdateAvail(versionInfo.isUpdateAvailable());
 		} catch (Exception e) {
 			if (debugEnabled) {
 				S_LOGGER.error("Entered into catch block of VersionUpdate.versionInfo()"
 						+ FrameworkUtil.getStackTraceAsString(e));
 			}
 		}
+		
 		return SUCCESS;
 	}
 
@@ -75,26 +79,18 @@ public class VersionUpdate extends FrameworkBaseAction {
 		}
 		try {
 			UpgradeManager updateManager = PhrescoFrameworkFactory.getUpdateManager();
-			HttpServletRequest request = getHttpRequest();
-			String newVersion = (String) getHttpRequest().getAttribute(REQ_LATEST_VERSION);
-			updateManager.doUpdate(getServiceManager(), newVersion, getCustomerId());
-			request.setAttribute(REQ_UPDATED_MESSAGE, getText(ABOUT_SUCCESS_UPDATE));
+			updateManager.doUpdate(getServiceManager(), getLatestVersion(), ServiceConstants.DEFAULT_CUSTOMER_NAME);
+			setUpdateVersionStatus(true);
+			setUpdateVersionMessage(getText(ABOUT_SUCCESS_UPDATE));
 		} catch (Exception e) {
-			getHttpRequest().setAttribute(REQ_UPDATED_MESSAGE, getText(ABOUT_FAILURE_FAILURE));
+			setUpdateVersionStatus(false);
+			setUpdateVersionMessage(getText(ABOUT_FAILURE_FAILURE));
 			if (debugEnabled) {
 				S_LOGGER.error("Entered into catch block of VersionUpdate.update()"
 						+ FrameworkUtil.getStackTraceAsString(e));
 			}
 		}
 		return SUCCESS;
-	}
-
-	public VersionInfo getVersionInfo() {
-		return versionInfo;
-	}
-
-	public void setVersionInfo(VersionInfo versionInfo) {
-		this.versionInfo = versionInfo;
 	}
 
 	public String getLatestVersion() {
@@ -122,11 +118,26 @@ public class VersionUpdate extends FrameworkBaseAction {
 	}
 
 	public boolean isUpdateAvail() {
-		return isUpdateAvail;
+		return updateAvail;
 	}
 
-	public void setUpdateAvail(boolean isUpdateAvail) {
-		this.isUpdateAvail = isUpdateAvail;
+	public void setUpdateAvail(boolean updateAvail) {
+		this.updateAvail = updateAvail;
 	}
 
+	public void setUpdateVersionStatus(boolean updateVersionStatus) {
+		this.updateVersionStatus = updateVersionStatus;
+	}
+
+	public boolean getUpdateVersionStatus() {
+		return updateVersionStatus;
+	}
+
+	public void setUpdateVersionMessage(String updateVersionMessage) {
+		this.updateVersionMessage = updateVersionMessage;
+	}
+
+	public String getUpdateVersionMessage() {
+		return updateVersionMessage;
+	}
 }
