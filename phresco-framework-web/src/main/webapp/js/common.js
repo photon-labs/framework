@@ -262,6 +262,7 @@ function yesnoPopup(url, title, okUrl, okLabel, form, additionalParam) {
 	
 	$("#updateMsg").empty();
 	$("#errMsg").empty();
+	$('#successMsg').empty();
 	$('#popup_div').empty();
 	$('#popup_div').css("height", "300px");
 	$('#popup_div').load(url, data); //url to render the body content for the popup
@@ -430,6 +431,11 @@ function checkboxEvent(childChkbxObj, parentChkbxObj) {
 	} else {
 		parentChkbxObj.prop('checked', false);
 	}
+}
+
+function envCheckboxEvent(childChkbxObj, parentChkbxObj) {
+	var chkboxStatus = childChkbxObj.is(':checked');
+	buttonStatus(chkboxStatus);
 }
 
 function buttonStatus(checkAll) {
@@ -844,7 +850,7 @@ function confirmDialog(obj, title, bodyText, okUrl, okLabel) {
 		
 		if (okLabel !== undefined && !isBlank(okLabel)) {
 			$('a [class ~= "popupOk"]').attr('id', okUrl);
-			$('#' + okUrl).html(okLabel); // label for the ok button 
+			$('#' + okUrl).val(okLabel); // label for the ok button
 		}
 	});
 	
@@ -1089,7 +1095,6 @@ function moveUp() {
 			$(this).remove();
 		}
 	});
-//	deployScripts();
 }
 
 //To move down the values
@@ -1102,20 +1107,6 @@ function moveDown() {
 			$(this).remove();
 		}
 	});
-//	deployScripts();
-}
-
-function deployScripts() {
-	var scriptsObj = {};
-	var dbType = $('#dataBase').val();
-	var sqls = [];
-	$("#selectedSourceScript option").each(function(i, optionSelected) {
-		var selectedScript = $(optionSelected).val();
-		sqls.push(selectedScript);
-	});
-	scriptsObj[dbType] = sqls;
-    console.log("testObj string " + JSON.stringify(scriptsObj));
-    $('#fetchSql').val(JSON.stringify(scriptsObj));
 }
 
 function updateDbWithVersionsForRemoveAll() {
@@ -1139,6 +1130,7 @@ function updateDbWithVersionsForRemoveAll() {
 					}
 			    }
 			});
+			
 		 var newJsonValue = JSON.stringify(allFiles);
 		 $('#fetchSql').val(newJsonValue);
 		}
@@ -1216,6 +1208,7 @@ function addDbWithVersions() {
 			}
 		}
 	});
+	$('#fetchSql').val(jsonValue);
 }
 
 	function updateDbWithVersionsForRemove() {
