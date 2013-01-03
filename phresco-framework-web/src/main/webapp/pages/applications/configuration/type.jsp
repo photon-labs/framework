@@ -320,7 +320,7 @@
 		}
 		
 		if (serverType == "NodeJs" || serverType == "NodeJs Mac") {
-			$("#deploy_dirControl label").html('Deploy Directory');
+			hideDeployDir();
 		}
 		 
 		$("#type").change(function() {

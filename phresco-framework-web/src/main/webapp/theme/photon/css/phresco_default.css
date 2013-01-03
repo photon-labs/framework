@@ -4088,7 +4088,7 @@ div.submit_input {
     width:100%;
     float:left;
     margin:0px;
-    padding:0px;
+    padding:4px 0;
     font-weight: bold;
 }
 
@@ -5345,9 +5345,9 @@ a[id='androidSigning']:hover {
 	width :28%;
 }
 
-.report_scroll { 
+.report_scroll {
 	overflow: auto; 
-	height: 181px;
+	height: 231px;
 }
 
 #availableReports { 
