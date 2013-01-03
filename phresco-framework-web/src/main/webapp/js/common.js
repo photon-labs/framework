@@ -433,6 +433,11 @@ function checkboxEvent(childChkbxObj, parentChkbxObj) {
 	}
 }
 
+function envCheckboxEvent(childChkbxObj, parentChkbxObj) {
+	var chkboxStatus = childChkbxObj.is(':checked');
+	buttonStatus(chkboxStatus);
+}
+
 function buttonStatus(checkAll) {
 	$('#deleteBtn').attr('disabled', !checkAll);
 	if (checkAll) {

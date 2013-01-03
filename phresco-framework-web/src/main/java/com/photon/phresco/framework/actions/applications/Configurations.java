@@ -665,10 +665,13 @@ public class Configurations extends FrameworkBaseAction {
     		}
     		if (CollectionUtils.isNotEmpty(getSelectedConfigurations())) {//To delete the selected configurations
     			configManager.deleteConfigurations(getSelectedConfigurations());
+    			List<String> configToDelete = new ArrayList<String>();
     			List<Configuration> selectedConfigurations = getSelectedConfigurations();
         		for (Configuration configuration : selectedConfigurations) {
-        			addActionMessage(getText(ACT_SUCC_CONFIG_DELETE, Collections.singletonList(configuration.getName())));
+        			configToDelete.add(configuration.getName());
     			}
+        		String deleteableItem = StringUtils.join(configToDelete.toArray(), ", ");
+        		addActionMessage(getText(ACT_SUCC_CONFIG_DELETE, Collections.singletonList(deleteableItem)));
     		}
     		
     	} catch(Exception e) {
