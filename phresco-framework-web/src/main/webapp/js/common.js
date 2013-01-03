@@ -262,6 +262,7 @@ function yesnoPopup(url, title, okUrl, okLabel, form, additionalParam) {
 	
 	$("#updateMsg").empty();
 	$("#errMsg").empty();
+	$('#successMsg').empty();
 	$('#popup_div').empty();
 	$('#popup_div').css("height", "300px");
 	$('#popup_div').load(url, data); //url to render the body content for the popup
