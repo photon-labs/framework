@@ -446,8 +446,8 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 		testCasePathMap.put(TechnologyTypes.JAVA_STANDALONE, XPATH_JAVA_WEBSERVICE_TESTCASE);
 	}
 	
-	public String getSqlFilePath(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
-		return getPomProcessor(appinfo.getAppDirName()).getProperty("phresco.sql.path");
+	public String getSqlFilePath(String oldAppDirName) throws PhrescoException, PhrescoPomException {
+		return getPomProcessor(oldAppDirName).getProperty("phresco.sql.path");
 	}
 	
     public String getUnitTestDir(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
