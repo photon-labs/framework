@@ -696,6 +696,10 @@ public class Applications extends FrameworkBaseAction {
 					SelectedFeature obj = gson.fromJson(string, SelectedFeature.class);
 					String artifactGroupId = obj.getModuleId();
 					ArtifactGroup artifactGroup = getServiceManager().getArtifactGroupInfo(artifactGroupId);
+					ArtifactInfo artifactInfo = getServiceManager().getArtifactInfo(obj.getVersionID());
+					if(artifactInfo != null) {
+						artifactGroup.setVersions(Collections.singletonList(artifactInfo));
+					}
 					List<CoreOption> appliesTo = artifactGroup.getAppliesTo();
 					for (CoreOption coreOption : appliesTo) {
 						if (coreOption.getTechId().equals(appInfo.getTechInfo().getId())) {
