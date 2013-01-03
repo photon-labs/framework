@@ -845,7 +845,7 @@ function confirmDialog(obj, title, bodyText, okUrl, okLabel) {
 		
 		if (okLabel !== undefined && !isBlank(okLabel)) {
 			$('a [class ~= "popupOk"]').attr('id', okUrl);
-			$('#' + okUrl).html(okLabel); // label for the ok button 
+			$('#' + okUrl).val(okLabel); // label for the ok button
 		}
 	});
 	
