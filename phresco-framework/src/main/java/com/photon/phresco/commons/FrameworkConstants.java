@@ -130,6 +130,8 @@ public interface FrameworkConstants {
     String INDEX_HTML = "index.html";
 	String WAR = "war";
 	String PATH_SUREFIRE_REPORTS = "/target/surefire-reports";
+	String APKLIB  = "apklib";
+	String APK  = "apk";
     
     String JENKINS_HOME = "JENKINS_HOME";
     String CI_BUILD_NAME = "PHR_ci_build";

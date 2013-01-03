@@ -201,7 +201,6 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		} else {
 			ClientResponse response = serviceManager.updateProject(projectInfo);
 			if (response.getStatus() == 200) {
-				BufferedReader breader = null;
 				try {
 					//application path with old app dir
 					StringBuilder oldAppDirSb = new StringBuilder(Utility.getProjectHome());
@@ -252,17 +251,6 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 						File projectInfoPath = new File(dotPhrescoPathSb.toString() + PROJECT_INFO_FILE);
 						ProjectUtils.updateProjectInfo(projectInfo, projectInfoPath);// To update the project.info file
 	
-						StringBuilder sb = new StringBuilder();
-						sb.append("mvn");
-						sb.append(" ");
-						sb.append("validate");
-						breader = Utility.executeCommand(sb.toString(), projectInfoFile.getPath());
-						String line = null;
-						while ((line = breader.readLine()) != null) {
-							if (line.startsWith("[ERROR]")) {
-								System.out.println(line);
-							}
-						}
 					}
 				} catch (FileNotFoundException e) {
 					e.printStackTrace();
@@ -270,9 +258,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 				} catch (IOException e) {
 					e.printStackTrace();
 					throw new PhrescoException(e);
-				} finally {
-					Utility.closeStream(breader);
-				}
+				} 
 			} else if (response.getStatus() == 401) {
 				throw new PhrescoException("Session expired");
 			} else {

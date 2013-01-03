@@ -262,6 +262,7 @@ function yesnoPopup(url, title, okUrl, okLabel, form, additionalParam) {
 	
 	$("#updateMsg").empty();
 	$("#errMsg").empty();
+	$('#successMsg').empty();
 	$('#popup_div').empty();
 	$('#popup_div').css("height", "300px");
 	$('#popup_div').load(url, data); //url to render the body content for the popup
@@ -430,6 +431,11 @@ function checkboxEvent(childChkbxObj, parentChkbxObj) {
 	} else {
 		parentChkbxObj.prop('checked', false);
 	}
+}
+
+function envCheckboxEvent(childChkbxObj, parentChkbxObj) {
+	var chkboxStatus = childChkbxObj.is(':checked');
+	buttonStatus(chkboxStatus);
 }
 
 function buttonStatus(checkAll) {
@@ -844,7 +850,7 @@ function confirmDialog(obj, title, bodyText, okUrl, okLabel) {
 		
 		if (okLabel !== undefined && !isBlank(okLabel)) {
 			$('a [class ~= "popupOk"]').attr('id', okUrl);
-			$('#' + okUrl).html(okLabel); // label for the ok button 
+			$('#' + okUrl).val(okLabel); // label for the ok button
 		}
 	});
 	

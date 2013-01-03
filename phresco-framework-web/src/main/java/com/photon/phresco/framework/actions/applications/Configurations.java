@@ -461,6 +461,7 @@ public class Configurations extends FrameworkBaseAction {
     	boolean hasError = false;
     	boolean isIISServer = false;
     	boolean serverTypeValidation = false;
+    	String techId = "";
     	
     	if (StringUtils.isEmpty(getConfigName().trim())) {
     		setConfigNameError(getText(ERROR_NAME));
@@ -527,9 +528,15 @@ public class Configurations extends FrameworkBaseAction {
             	propertyTemplate.setRequired(false);
             }
             
-    		/*if (techId.equals(FrameworkConstants.TECH_SITE_CORE) && DEPLOY_DIR.equals(key)) {
-    			propertyTemplate.setRequired(false);
-    		}*/
+        	if (FrameworkConstants.ADD_CONFIG.equals(getFromPage()) || FrameworkConstants.EDIT_CONFIG.equals(getFromPage())) {
+        		ApplicationInfo applicationInfo = getApplicationInfo();
+            	techId = applicationInfo.getTechInfo().getId();
+	    		if (applicationInfo != null && techId.equals(FrameworkConstants.TECH_SITE_CORE)) {
+	    			if (techId.equals(FrameworkConstants.TECH_SITE_CORE) && DEPLOY_DIR.equals(key)) {
+	        			propertyTemplate.setRequired(false);
+	        		}
+	    		}
+        	}
     		
 			if ((serverTypeValidation && DEPLOY_DIR.equals(key))) {
 				 propertyTemplate.setRequired(false);
@@ -559,10 +566,12 @@ public class Configurations extends FrameworkBaseAction {
      		}
         }
         
-        /*if (techId.equals(FrameworkConstants.TECH_SITE_CORE) && StringUtils.isEmpty(siteCoreInstPath)) {
-        	setSiteCoreInstPathError(getText(ERROR_SITE_CORE_PATH_MISSING));
-    		hasError = true;
-    	}*/
+        if (FrameworkConstants.ADD_CONFIG.equals(getFromPage()) || FrameworkConstants.EDIT_CONFIG.equals(getFromPage())) {
+	        if (techId.equals(FrameworkConstants.TECH_SITE_CORE) && StringUtils.isEmpty(siteCoreInstPath)) {
+	        	setSiteCoreInstPathError(getText(ERROR_SITE_CORE_PATH_MISSING));
+	    		hasError = true;
+	    	}
+        }
         
     	if (isIISServer) {
         	if (StringUtils.isEmpty(getAppName())) {
@@ -656,10 +665,13 @@ public class Configurations extends FrameworkBaseAction {
     		}
     		if (CollectionUtils.isNotEmpty(getSelectedConfigurations())) {//To delete the selected configurations
     			configManager.deleteConfigurations(getSelectedConfigurations());
+    			List<String> configToDelete = new ArrayList<String>();
     			List<Configuration> selectedConfigurations = getSelectedConfigurations();
         		for (Configuration configuration : selectedConfigurations) {
-        			addActionMessage(getText(ACT_SUCC_CONFIG_DELETE, Collections.singletonList(configuration.getName())));
+        			configToDelete.add(configuration.getName());
     			}
+        		String deleteableItem = StringUtils.join(configToDelete.toArray(), ", ");
+        		addActionMessage(getText(ACT_SUCC_CONFIG_DELETE, Collections.singletonList(deleteableItem)));
     		}
     		
     	} catch(Exception e) {

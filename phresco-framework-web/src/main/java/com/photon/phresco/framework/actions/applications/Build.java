@@ -569,7 +569,12 @@ public class Build extends DynamicParameterAction implements Constants {
 			} else {
 				builder.append(buildInfo.getDeliverables());
 				fileName = fileName.substring(fileName.lastIndexOf(FORWARD_SLASH) + 1);
-				fileName = fileName.split(SPLIT_DOT)[0] + ARCHIVE_FORMAT;
+				boolean status = fileName.endsWith(APKLIB) || fileName.endsWith(APK);
+				if (status) {
+					fileName = fileName.substring(0, fileName.lastIndexOf(".")) + ARCHIVE_FORMAT ;
+				} else {
+					fileName = fileName.split(SPLIT_DOT)[0] + ARCHIVE_FORMAT;
+				}
 			}
 			if (debugEnabled) {
 				S_LOGGER.debug("Download build number " + buildNumber + " Download location " + builder.toString());
