@@ -201,6 +201,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		} else {
 			ClientResponse response = serviceManager.updateProject(projectInfo);
 			if (response.getStatus() == 200) {
+				BufferedReader breader = null;
 				try {
 					//application path with old app dir
 					StringBuilder oldAppDirSb = new StringBuilder(Utility.getProjectHome());
@@ -402,10 +403,14 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 				List<ArtifactGroupInfo> newSelectedDatabases = appInfo.getSelectedDatabases();
 				for (ArtifactGroupInfo artifactGroupInfo : newSelectedDatabases) {
 					List<String> artifactInfoIds = artifactGroupInfo.getArtifactInfoIds();
+					for (String artifactId : artifactInfoIds) {
+					ArtifactInfo artifactInfo = serviceManager.getArtifactInfo(artifactId);
+					String selectedVersion = artifactInfo.getVersion();
 				for (DownloadInfo dbInfo : dbInfos) {
 					dbName = dbInfo.getName().toLowerCase();
 					ArtifactGroup artifactGroup = dbInfo.getArtifactGroup();
-					mySqlFolderCreation(path, dbName, sqlFolderPath, mysqlVersionFolder,artifactInfoIds, artifactGroup);
+					mySqlFolderCreation(path, dbName, sqlFolderPath, mysqlVersionFolder,selectedVersion, artifactGroup);
+				}
 				}
 				}
 			}
@@ -414,12 +419,12 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		}
 	}
 
-	private void mySqlFolderCreation(File path, String dbName, String sqlFolderPath, File mysqlVersionFolder, List<String> artifactInfoIds,
+	private void mySqlFolderCreation(File path, String dbName, String sqlFolderPath, File mysqlVersionFolder, String selectedVersion,
 			ArtifactGroup artifactGroup) throws PhrescoException {
 		try {
 			List<ArtifactInfo> versions = artifactGroup.getVersions();
 			for (ArtifactInfo version : versions) {
-			if (artifactInfoIds.contains(version.getVersion())) {
+			if (selectedVersion.equals(version.getVersion())) {
 				String dbversion = version.getVersion();
 				String sqlPath = dbName + File.separator + dbversion.trim();
 				File sqlFolder = new File(path, sqlFolderPath + sqlPath);

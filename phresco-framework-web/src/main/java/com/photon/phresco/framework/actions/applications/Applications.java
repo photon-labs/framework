@@ -21,14 +21,15 @@ package com.photon.phresco.framework.actions.applications;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.codec.binary.Base64;
-import com.google.gson.reflect.TypeToken;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileExistsException;
 import org.apache.commons.io.FileUtils;
@@ -38,9 +39,10 @@ import org.eclipse.jgit.api.errors.InvalidRemoteException;
 import org.eclipse.jgit.api.errors.TransportException;
 import org.tmatesoft.svn.core.SVNAuthenticationException;
 import org.tmatesoft.svn.core.SVNException;
-import org.tmatesoft.svn.core.wc.*;
+import org.tmatesoft.svn.core.wc.SVNStatus;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.opensymphony.xwork2.Action;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
@@ -51,7 +53,6 @@ import com.photon.phresco.commons.model.DownloadInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.SelectedFeature;
 import com.photon.phresco.commons.model.Technology;
-import com.photon.phresco.commons.model.TechnologyOptions;
 import com.photon.phresco.commons.model.WebService;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
@@ -67,6 +68,7 @@ import com.photon.phresco.plugins.model.Mojos.ApplicationHandler;
 import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.Utility;
+import com.phresco.pom.exception.PhrescoPomException;
 import com.phresco.pom.model.Scm;
 import com.phresco.pom.util.PomProcessor;
 
@@ -93,7 +95,7 @@ public class Applications extends FrameworkBaseAction {
     private boolean hasConfiguration = false;
     private String configServerNames = "";
     private String configDbNames = "";
-    List<String> deletableDbs = new ArrayList<String>();
+//    List<String> deletableDbs = new ArrayList<String>();
     private String fromTab = "";
     private List<String> feature= null;
     private List<String> component= null;
@@ -669,7 +671,6 @@ public class Applications extends FrameworkBaseAction {
     		List<ArtifactGroup> artifactGroups) throws PhrescoException {
     	for (String selectedfeatures : selectedFeaturesIds) {
     		ArtifactInfo artifactInfo = getServiceManager().getArtifactInfo(selectedfeatures);
-    		//SelectedFeature selectedFeature = gson.fromJson(selectedfeatures, SelectedFeature.class);
     		if (!newlySelectedModuleGrpIds.contains(artifactInfo.getArtifactGroupId())) {
     			ArtifactGroup artifactGroupInfo = getServiceManager().getArtifactGroupInfo(artifactInfo.getArtifactGroupId());
     			artifactGroups.add(artifactGroupInfo);
@@ -678,7 +679,7 @@ public class Applications extends FrameworkBaseAction {
     }
     
     public String update() {
-    	BufferedReader reader = null;
+    	BufferedReader bufferedReader = null;
     	try {
     		ProjectInfo projectInfo = (ProjectInfo)getSessionAttribute(getAppId() + SESSION_APPINFO);
         	ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
@@ -785,22 +786,16 @@ public class Applications extends FrameworkBaseAction {
         	appInfo.setSelectedModules(selectedFeatures);
         	appInfo.setSelectedJSLibs(selectedJsLibs);
         	appInfo.setSelectedComponents(selectedComponents);
-
-			List<ArtifactGroupInfo> oldSelectedDbs = getApplicationInfo().getSelectedDatabases();
-			if (CollectionUtils.isNotEmpty(oldSelectedDbs)) {
-			    List<String> deletableDbs = new ArrayList<String>();
-				for (ArtifactGroupInfo artifactGroupInfo : oldSelectedDbs) {
-					String oldArtifactGroupId = artifactGroupInfo.getArtifactGroupId();
-					if (selectedDatabases.contains(oldArtifactGroupId)) {
-						checkForVersions(oldSelectedDbs, selectedDatabases, oldArtifactGroupId, deletableDbs, appInfo);
-					} else {
-						DownloadInfo downloadInfo = getServiceManager().getDownloadInfo(oldArtifactGroupId);
-						deletableDbs.add(downloadInfo.getName());
-					}
-				}
-				deleteSqlFolder(deletableDbs, appInfo);
-            }
-            
+        	   
+			StringBuilder sbs = new StringBuilder(Utility.getProjectHome()).append(getOldAppDirName()).append(
+					File.separator).append(Constants.DOT_PHRESCO_FOLDER).append(File.separator).append("project.info");
+			bufferedReader = new BufferedReader(new FileReader(sbs.toString()));
+			Type type = new TypeToken<ProjectInfo>() {}.getType();
+			ProjectInfo projectinfo = gson.fromJson(bufferedReader, type);
+			ApplicationInfo applicationInfo = projectinfo.getAppInfos().get(0);
+			
+			deleteSqlFolder(applicationInfo, selectedDatabases);
+			
     		projectInfo.setAppInfos(Collections.singletonList(appInfo));
     		ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
     		projectManager.update(projectInfo, getServiceManager(), getOldAppDirName());
@@ -811,52 +806,72 @@ public class Applications extends FrameworkBaseAction {
             removeSessionAttribute(REQ_PILOT_PROJECTS);
 		} catch (PhrescoException e) {
 			return showErrorPopup(e, EXCEPTION_PROJECT_UPDATE);
+		} catch (FileNotFoundException e) {
+			return showErrorPopup(new PhrescoException(e), EXCEPTION_PROJECT_UPDATE);
 		} finally {
-			 Utility.closeStream(reader);
+			 Utility.closeReader(bufferedReader);
 		 }
         
     	return APP_UPDATE;
     }
 
-	private void checkForVersions(List<ArtifactGroupInfo> oldSelectedDbs, List<ArtifactGroupInfo> selectedDatabases,
-			String oldArtifactGroupId, List<String> deletableDbs, ApplicationInfo appInfo) throws PhrescoException {
-		try {
-			for (ArtifactGroupInfo artifactGroupInfo : selectedDatabases) {
-				List<String> artifactInfoIds = artifactGroupInfo.getArtifactInfoIds();
-				for (ArtifactGroupInfo oldartifactGroupInfo : oldSelectedDbs) {
-					List<String> oldArtifactInfoIds = oldartifactGroupInfo.getArtifactInfoIds();
-					for (String olddbId : oldArtifactInfoIds) {
-						if (!artifactInfoIds.contains(olddbId)) {
-							DownloadInfo downloadInfo = getServiceManager().getDownloadInfo(oldArtifactGroupId);
-							List<ArtifactInfo> versions = downloadInfo.getArtifactGroup().getVersions();
-							for (ArtifactInfo artifactInfo : versions) {
-								String deleteVersion = "/" + downloadInfo.getName() + "/" + artifactInfo.getVersion();
-								deletableDbs.add(deleteVersion);
-							}
-						}
+    public void checkForVersions(String newArtifactid, String oldArtifactGroupId) throws PhrescoException {
+    	try {
+    		FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+    		File sqlPath = new File(Utility.getProjectHome() + File.separator + oldAppDirName + frameworkUtil.getSqlFilePath(oldAppDirName));
+			DownloadInfo oldDownloadInfo = getServiceManager().getDownloadInfo(oldArtifactGroupId);
+			DownloadInfo newDownloadInfo = getServiceManager().getDownloadInfo(newArtifactid);
+			List<ArtifactInfo> oldVersions = oldDownloadInfo.getArtifactGroup().getVersions();
+			List<ArtifactInfo> newVersions = newDownloadInfo.getArtifactGroup().getVersions();
+			for (ArtifactInfo artifactInfo : oldVersions) {
+				for (ArtifactInfo newartifactInfo : newVersions) {
+					if(!newartifactInfo.getVersion().equals(artifactInfo.getVersion())) {
+						String deleteVersion = "/" + oldDownloadInfo.getName() + "/" + artifactInfo.getVersion();
+						 FileUtils.deleteDirectory(new File(sqlPath,deleteVersion));
 					}
 				}
 			}
 		} catch (PhrescoException e) {
-			 throw new PhrescoException(e);
+			throw new PhrescoException(e);
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
+		} catch (IOException e) {
+			throw new PhrescoException(e);
+		}
+    }
+
+	public void deleteSqlFolder(ApplicationInfo applicationInfo, List<ArtifactGroupInfo> selectedDatabases)
+			throws PhrescoException {
+		try {
+			FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+			List<String> dbListToDelete = new ArrayList<String>();
+			List<ArtifactGroupInfo> existingDBList = applicationInfo.getSelectedDatabases();
+			if (CollectionUtils.isEmpty(existingDBList)) {
+				return;
+			}
+			for (ArtifactGroupInfo artifactGroupInfo : existingDBList) {
+				String oldArtifactGroupId = artifactGroupInfo.getArtifactGroupId();
+				for (ArtifactGroupInfo newArtifactGroupInfo : selectedDatabases) {
+					String newArtifactid = newArtifactGroupInfo.getArtifactGroupId();
+					if (newArtifactid.equals(oldArtifactGroupId)) {
+						checkForVersions(newArtifactid, oldArtifactGroupId);
+						break;
+					} else {
+						DownloadInfo downloadInfo = getServiceManager().getDownloadInfo(oldArtifactGroupId);
+							dbListToDelete.add(downloadInfo.getName());
+					}
+				}
+			}
+			File sqlPath = new File(Utility.getProjectHome() + File.separator + oldAppDirName
+					+ frameworkUtil.getSqlFilePath(oldAppDirName));
+				for (String dbVersion : dbListToDelete) {
+					File dbVersionFolder = new File(sqlPath, dbVersion.toLowerCase());
+					FileUtils.deleteDirectory(dbVersionFolder.getParentFile());
+			}
+		} catch (Exception e) {
+			throw new PhrescoException(e);
 		}
 	}
-
-    public void deleteSqlFolder(List<String> dbList , ApplicationInfo appInfo) throws PhrescoException {
-		 try {
-			 FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-			 File sqlPath = new File(Utility.getProjectHome() + File.separator
-					 + appInfo.getAppDirName() + frameworkUtil.getSqlFilePath(appInfo));
-			 if (CollectionUtils.isNotEmpty(dbList)) {
-				 for (String dbVersion : dbList) {
-					 File dbVersionFolder = new File(sqlPath, dbVersion.toLowerCase());
-					 FileUtils.deleteDirectory(dbVersionFolder);
-				 }
-			 }
-		 } catch (Exception e) {
-			 throw new PhrescoException(e);
-		 }
-	 }
 	/*public String delete() {
         S_LOGGER.debug("Entering Method  Applications.delete()");
 
