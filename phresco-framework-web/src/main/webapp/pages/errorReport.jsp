@@ -34,8 +34,9 @@
 <script>
 	$('document').ready(function() {
 		$('#popupTitle').html("Error Report"); // Title for the popup
+		$('.hideClipBoardImage').show();
 		$('.popupClose').hide(); //no need close button since yesno popup
-		$(".popupOk").html("<s:text name="label.sent.report"/>");
+		$(".popupOk").attr("value", "<s:text name="label.sent.report"/>");
 		$('.popupOk, #popupCancel').show(); // show ok & cancel button
 		$('.modal-body').html($('#trace').html());
 		$('#popupPage').modal('show');
@@ -50,7 +51,31 @@
 		params = params.concat("&action=");
 		params = params.concat("<%= log.getAction() %>");
 		params = params.concat("&userid=");
-		params = params.concat("<%= log.getUserId() %>"); 
-		loadContent("sendReport", "", "", params, "", true);  
+		params = params.concat("<%= log.getUserId() %>");
+		loadContent("sendReport", '', '', params, true, true);  
 	}
+	
+	function successEvent(pageUrl, data) {
+		if (pageUrl == "sendReport") {
+			if (data.sendReportStatus != undefined && !isBlank(data.sendReportStatus) && data.sendReportStatus) {
+				$("#successMsg").html(data.sendReportMsg);
+				$(".popupOk").attr("disabled", true);
+				$(".popupOk").removeClass("btn-primary");
+			} 
+		}
+	}
+	
+	$('#clipboard').click(function() {
+		copyToClipboard($('#popup_div').text());
+	});
+	
+	$("#popupCancel, .close").click(function() {
+		var params = getBasicParams(); 
+		loadContent('applications','', $('#container'), params);
+		$("#successMsg").empty();
+		$(".popupOk").attr("disabled", false);
+		$(".popupOk").addClass("btn-primary");
+		$('.hideClipBoardImage').hide();
+    });
+	
 </script>

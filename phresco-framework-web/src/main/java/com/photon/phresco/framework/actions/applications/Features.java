@@ -102,6 +102,7 @@ public class Features extends FrameworkBaseAction {
 	
 	private String nameError = "";
 	private String codeError = "";
+	private String appDirError = "";
 	private boolean errorFound = false;
 	private String applicationVersionError = "";
 	
@@ -223,6 +224,8 @@ public class Features extends FrameworkBaseAction {
             S_LOGGER.debug("Entering Method Features.validateForm()");
         }
     	
+    	ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
+    	List<ProjectInfo> projects = projectManager.discover(getCustomerId());
     	boolean hasError = false;
     	if (APP_INFO.equals(getFromTab())) {
 	    	if (StringUtils.isEmpty(getName().trim())) {
@@ -234,6 +237,19 @@ public class Features extends FrameworkBaseAction {
 	    		setCodeError(getText(ERROR_CODE));
 	            hasError = true;
 	    	}
+	    	
+	    	if(StringUtils.isNotEmpty(getAppDir())) {
+		    	for(ProjectInfo project : projects) {
+		    		List<ApplicationInfo> appInfos = project.getAppInfos();
+		    		for (ApplicationInfo applicationInfo : appInfos) {
+		    			if(applicationInfo.getAppDirName().equals(getAppDir()) && !applicationInfo.getId().equals(getAppId())) {
+						 	setAppDirError(getText(ERROR_APP_DIR_EXISTS));
+						    hasError = true;
+						    break;
+						}
+					}
+		    	}
+			}
 	    	
 	    	if (StringUtils.isEmpty(getApplicationVersion())) {
 	    		setApplicationVersionError(getText(ERROR_VERSION));
@@ -1238,5 +1254,13 @@ public class Features extends FrameworkBaseAction {
 
 	public void setApplicationVersionError(String applicationVersionError) {
 		this.applicationVersionError = applicationVersionError;
+	}
+	
+	public String getAppDirError() {
+		return appDirError;
+	}
+
+	public void setAppDirError(String appDirError) {
+		this.appDirError = appDirError;
 	}
 }

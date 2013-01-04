@@ -236,7 +236,7 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
             log.setMessage(e.getLocalizedMessage());
             log.setTrace(stacktrace);
             log.setAction(action);
-            log.setUserId(userInfo.getLoginId());
+            log.setUserId(userInfo.getId());
             setReqAttribute(REQ_LOG_REPORT, log);
         } finally {
             if (pw != null) {
