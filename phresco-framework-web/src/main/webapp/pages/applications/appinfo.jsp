@@ -118,12 +118,12 @@
 		<!--  Code Ends -->
 	         
 		<!--  AppDirectory Starts -->
-		<div class="control-group">
+		<div class="control-group" id="appDirControl">
 		    <label class="accordion-control-label labelbold"><s:text name='lbl.AppDir'/></label>
 		    <div class="controls">
 				 <input class="input-xlarge" id="appDir" name="appDir" maxlength="30" title="<s:text name="title.30.chars"/>"
 		            type="text"  value ="<%= oldAppDirName %>" autofocus="autofocus" placeholder="<s:text name="label.name.placeholder"/>" />
-		        <span class="help-inline" id="nameErrMsg">
+		        <span class="help-inline" id="appDirError">
 		           
 		        </span>
 		    </div>
@@ -462,6 +462,12 @@
 			showError($("#versionControl"), $("#applicationVersionError"), data.applicationVersionError);
 		} else {
 			hideError($("#versionControl"), $("#applicationVersionError"));
+		}
+		
+		if (!isBlank(data.appDirError)) {
+			showError($("#appDirControl"), $("#appDirError"), data.appDirError);
+		} else {
+			hideError($("#appDirControl"), $("#appDirError"));
 		}
 	}
 	

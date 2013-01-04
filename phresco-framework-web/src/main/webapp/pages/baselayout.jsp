@@ -309,6 +309,7 @@
 	    <div id="popupPage" class="modal hide fade">
 			<div class="modal-header">
 				<a class="close" data-dismiss="modal" >&times;</a>
+				<img id="clipboard" class="hideClipBoardImage" title="<s:text name="title.copy.to.clipBoard"/>" src="images/icons/clipboard-copy.png">
 				<h3 id="popupTitle"></h3>
 	    </div>
 			<div class="modal-body" id="popup_div">

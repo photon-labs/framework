@@ -5028,6 +5028,10 @@ textarea.xxlarge {
 	display: none;
 }
 
+.hideClipBoardImage {
+	display: none;
+}
+
 /** To show the content **/
 .showContent {
 	display: block;
