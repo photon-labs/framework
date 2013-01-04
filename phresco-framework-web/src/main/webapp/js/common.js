@@ -1120,7 +1120,6 @@ function deployScripts() {
 		sqls.push(selectedScript);
 	});
 	scriptsObj[dbType] = sqls;
-    console.log("testObj string " + JSON.stringify(scriptsObj));
     $('#fetchSql').val(JSON.stringify(scriptsObj));
 }
 
