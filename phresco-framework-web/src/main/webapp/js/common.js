@@ -1095,6 +1095,7 @@ function moveUp() {
 			$(this).remove();
 		}
 	});
+	deployScripts();
 }
 
 //To move down the values
@@ -1107,6 +1108,20 @@ function moveDown() {
 			$(this).remove();
 		}
 	});
+	deployScripts();
+}
+
+function deployScripts() {
+	var scriptsObj = {};
+	var dbType = $('#dataBase').val();
+	var sqls = [];
+	$("#selectedSourceScript option").each(function(i, optionSelected) {
+		var selectedScript = $(optionSelected).val();
+		sqls.push(selectedScript);
+	});
+	scriptsObj[dbType] = sqls;
+    console.log("testObj string " + JSON.stringify(scriptsObj));
+    $('#fetchSql').val(JSON.stringify(scriptsObj));
 }
 
 function updateDbWithVersionsForRemoveAll() {
