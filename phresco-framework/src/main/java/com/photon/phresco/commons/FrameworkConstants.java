@@ -1126,6 +1126,8 @@ public interface FrameworkConstants {
     String ERROR_EMAIL_ID = "err.msg.invalid.email";
     String ERROR_EMAIL_ID_EMPTY = "err.msg.empty.email";
     String ERROR_VERSION = "err.msg.empty.version";
+    String ERROR_SERV_VER_MISSING = "err.serv.ver.missing";
+    String ERROR_DB_VER_MISSING = "err.db.ver.missing";
     String ERROR_LAYER = "err.msg.empty.layer";
     String ERROR_TECHNOLOGY = "err.msg.empty.technology";
     String ERROR_ENV = "err.msg.empty.environment";

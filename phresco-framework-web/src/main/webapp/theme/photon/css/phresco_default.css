@@ -6244,3 +6244,10 @@ color: #313131;
 	border: 1px solid #CCCCCC !important;
 	width: 215px ;
 }
+
+.errorNotification {
+	color: red;
+ 	float: right;
+    margin-top: -22px;
+    padding-right: 10px;
+}
