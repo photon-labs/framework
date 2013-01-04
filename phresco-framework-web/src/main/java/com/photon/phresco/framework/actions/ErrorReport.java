@@ -26,6 +26,7 @@ import org.apache.log4j.Logger;
 
 import com.photon.phresco.commons.model.LogInfo;
 import com.photon.phresco.exception.PhrescoException;
+import com.sun.jersey.api.client.ClientResponse;
 
 public class ErrorReport extends FrameworkBaseAction {
 	private static final long serialVersionUID = 1L;
@@ -33,11 +34,12 @@ public class ErrorReport extends FrameworkBaseAction {
 	private static final Logger S_LOGGER = Logger.getLogger(ErrorReport.class);
 	private static Boolean debugEnabled  = S_LOGGER.isDebugEnabled();
 	
-	private String message = null;
-	private String action = null;
-	private String userid = null;
-	private String trace = null;
-	private String reportStatus = null;
+	private String message = "";
+	private String action = "";
+	private String userid = "";
+	private String trace = "";
+	private boolean sendReportStatus; 
+	private String sendReportMsg = "";
 	
 	public String sendReport() throws PhrescoException {
 		if (debugEnabled) {
@@ -50,11 +52,16 @@ public class ErrorReport extends FrameworkBaseAction {
         	if (debugEnabled) {
         		S_LOGGER.debug("Going to send error report to service ");
     		}
-//        	ClientResponse response = getServiceManager().sendErrorReport(infos);
+        	ClientResponse reportStatus = getServiceManager().sendErrorReport(infos);
+        	if (reportStatus.getStatus()== 200) {
+	        	setSendReportStatus(true);
+	        	setSendReportMsg(SUCCESS_SEND_ERROR_REPORT);
+        	}
         } catch (Exception e) {
         	throw new PhrescoException(e);
         }
-        return "success";
+
+        return SUCCESS;
 	}
 	
 	
@@ -107,18 +114,23 @@ public class ErrorReport extends FrameworkBaseAction {
 		this.trace = trace;
 	}
 
-	/**
-	 * @return the reportStatus
-	 */
-	public String getReportStatus() {
-		return reportStatus;
+	public String getSendReportMsg() {
+		return sendReportMsg;
 	}
 
-	/**
-	 * @param reportStatus the reportStatus to set
-	 */
-	public void setReportStatus(String reportStatus) {
-		this.reportStatus = reportStatus;
+
+	public void setSendReportMsg(String sendReportMsg) {
+		this.sendReportMsg = sendReportMsg;
+	}
+
+
+	public boolean getSendReportStatus() {
+		return sendReportStatus;
+	}
+
+
+	public void setSendReportStatus(boolean sendReportStatus) {
+		this.sendReportStatus = sendReportStatus;
 	}
 
 }

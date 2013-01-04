@@ -118,12 +118,12 @@
 		<!--  Code Ends -->
 	         
 		<!--  AppDirectory Starts -->
-		<div class="control-group">
+		<div class="control-group" id="appDirControl">
 		    <label class="accordion-control-label labelbold"><s:text name='lbl.AppDir'/></label>
 		    <div class="controls">
 				 <input class="input-xlarge" id="appDir" name="appDir" maxlength="30" title="<s:text name="title.30.chars"/>"
 		            type="text"  value ="<%= oldAppDirName %>" autofocus="autofocus" placeholder="<s:text name="label.name.placeholder"/>" />
-		        <span class="help-inline" id="nameErrMsg">
+		        <span class="help-inline" id="appDirError">
 		           
 		        </span>
 		    </div>
@@ -199,7 +199,7 @@
 		  } 
 		%> 
 		
-		<div class="theme_accordion_container">
+		<div class="theme_accordion_container" id="serverControl">
 			<section class="accordion_panel_wid">
 				<div class="accordion_panel_inner">
 					<section class="lft_menus_container">
@@ -208,8 +208,10 @@
 								<input type="checkbox" id="checkAll1" class="accordianChkBox" name="layer" value="serverLayer" <%= checkedServerStr %>/>
 								<a class="vAlignSub"><s:text name='lbl.servers'/></a>
 							</span>
+							<p id="serverError" class="accordion-error-txt errorNotification"></p>
 						</span>
-						<div class="mfbox siteinnertooltiptxt hideContent">
+						
+						<div class="mfbox siteinnertooltiptxt hideContent" id="technologyControl">
 							<table class="table_for_downloadInfos table_borderForDownloadInfos" align="center">
 								<thead class="header-background">
 									<tr class="noBorder">
@@ -255,7 +257,7 @@
 			checkedDatabaseStr = "checked";
 		}
 			%>
-		<div class="theme_accordion_container">
+		<div class="theme_accordion_container" id="databaseControl">
 			<section class="accordion_panel_wid">
 				<div class="accordion_panel_inner">
 					<section class="lft_menus_container">
@@ -264,6 +266,7 @@
 								<input type="checkbox" id="checkAll2" class="accordianChkBox" name="layer" value="databaseLayer" <%= checkedDatabaseStr %>/>
 								<a class="vAlignSub"><s:text name='lbl.database'/></a>
 							</span>
+							<p id="databaseError" class="accordion-error-txt errorNotification"></p> 
 						</span>
 						<div class="mfbox siteinnertooltiptxt hideContent">
 							<table class="table_for_downloadInfos table_borderForDownloadInfos"  align="center">
@@ -348,8 +351,8 @@
 											</ul>
 						                </div>
 								</div>
-				                <span class="help-inline applyerror" id="techError"></span>
 					        </div>
+					        <span class="help-inline applyerror"></span>
 						</div>
 					</section>  
 				</div>
@@ -463,6 +466,25 @@
 		} else {
 			hideError($("#versionControl"), $("#applicationVersionError"));
 		}
+		
+		if (!isBlank(data.appDirError)) {
+			showError($("#appDirControl"), $("#appDirError"), data.appDirError);
+		} else {
+			hideError($("#appDirControl"), $("#appDirError"));
+		}
+        
+        if(!isBlank(data.serverError)) {
+			showError($("#" + $(this).attr("id")), $("#serverError"),'<s:text name='err.serv.ver.missing'/> ' + data.serverName);
+		} else {
+			hideError($("#serverLayerControl") , $("#serverError"));
+		}
+		
+		if(!isBlank(data.databaseError)) {
+			showError($("#" + $(this).attr("id")), $("#databaseError"),'<s:text name='err.db.ver.missing'/> ' + data.databaseName);
+		} else {
+			hideError($("#databaseLayerControl") , $("#databaseError"));
+		}
+       
 	}
 	
 	/* function getPilotProject(obj) {

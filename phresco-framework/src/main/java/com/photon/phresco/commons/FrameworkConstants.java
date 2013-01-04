@@ -920,6 +920,7 @@ public interface FrameworkConstants {
     String MSG_PROJECT_INFORMATION_EMPTY = "Project information should not be empty";
     String MSG_FILE_PATH_EMPTY = "File path should not be empty";
     String SUCCESS_REPORT_STATUS = "label.report.success";
+    String SUCCESS_SEND_ERROR_REPORT = "Report Submitted Successfully";
     String ERROR_REPORT_STATUS = "label.report.failure";
     String ERROR_REPORT_MISSISNG_FONT = "label.report.failure.missing.font";
     String ERROR_REPORT_MISSISNG_FONT_MSG = "label.report.failure.missiong.font.msg";
@@ -1118,12 +1119,15 @@ public interface FrameworkConstants {
     String ERROR_DUPLICATE_ENV_IN_SETTINGS = "Environment {0} already exists in global settings";
     String ERROR_NO_CONFIG = "environment.config.not.available";
     String ERROR_NAME = "err.msg.empty.name";
+    String ERROR_APP_DIR_EXISTS = "err.msg.app.dir.exists";
     String ERROR_NAME_EXISTS = "err.msg.project.name.exists";
     String ERROR_CODE_EXISTS = "err.msg.project.code.exists";
     String ERROR_CODE = "err.msg.empty.code";
     String ERROR_EMAIL_ID = "err.msg.invalid.email";
     String ERROR_EMAIL_ID_EMPTY = "err.msg.empty.email";
     String ERROR_VERSION = "err.msg.empty.version";
+    String ERROR_SERV_VER_MISSING = "err.serv.ver.missing";
+    String ERROR_DB_VER_MISSING = "err.db.ver.missing";
     String ERROR_LAYER = "err.msg.empty.layer";
     String ERROR_TECHNOLOGY = "err.msg.empty.technology";
     String ERROR_ENV = "err.msg.empty.environment";

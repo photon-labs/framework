@@ -5028,6 +5028,10 @@ textarea.xxlarge {
 	display: none;
 }
 
+.hideClipBoardImage {
+	display: none;
+}
+
 /** To show the content **/
 .showContent {
 	display: block;
@@ -6239,4 +6243,11 @@ color: #313131;
 .repo_form input[type="password"] {
 	border: 1px solid #CCCCCC !important;
 	width: 215px ;
+}
+
+.errorNotification {
+	color: red;
+ 	float: right;
+    margin-top: -22px;
+    padding-right: 10px;
 }
