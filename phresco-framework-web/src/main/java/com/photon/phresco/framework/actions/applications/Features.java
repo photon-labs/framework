@@ -39,6 +39,7 @@ import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.ArtifactGroupInfo;
 import com.photon.phresco.commons.model.ArtifactInfo;
 import com.photon.phresco.commons.model.CoreOption;
+import com.photon.phresco.commons.model.DownloadInfo;
 import com.photon.phresco.commons.model.Element;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.PropertyTemplate;
@@ -105,6 +106,10 @@ public class Features extends FrameworkBaseAction {
 	private String appDirError = "";
 	private boolean errorFound = false;
 	private String applicationVersionError = "";
+	private String serverError = "";
+	private String databaseError = "";
+	private String serverName = "";
+	private String databaseName = "";
 	
 	private String configTemplateType = "";
 	
@@ -256,6 +261,32 @@ public class Features extends FrameworkBaseAction {
 	            hasError = true;
 	    	}
 	    	
+	    	if (CollectionUtils.isNotEmpty(getServer())) {
+				for (String serverId : getServer()) {
+					if(StringUtils.isNotEmpty(serverId)) {
+						if(ArrayUtils.isEmpty(getReqParameterValues(serverId))) {
+							DownloadInfo downloadInfo = getServiceManager().getDownloadInfo(serverId);
+							setServerName(downloadInfo.getName());
+							setServerError(getText(ERROR_SERV_VER_MISSING, downloadInfo.getName()));
+							hasError=true;
+						}
+					}
+				}
+			}
+	    	
+	    	if (CollectionUtils.isNotEmpty(getDatabase())) {
+				for (String databaeId : getDatabase()) {
+					if(StringUtils.isNotEmpty(databaeId)) {
+						if(ArrayUtils.isEmpty(getReqParameterValues(databaeId))) {
+							DownloadInfo downloadInfo = getServiceManager().getDownloadInfo(databaeId);
+							setDatabaseName(downloadInfo.getName());
+							setDatabaseError(getText(ERROR_DB_VER_MISSING, downloadInfo.getName()));
+							hasError=true;
+						}
+					}
+				}
+			}
+	    	   	
 	    	if (hasError) {
 	            setErrorFound(true);
 	        }
@@ -1263,4 +1294,38 @@ public class Features extends FrameworkBaseAction {
 	public void setAppDirError(String appDirError) {
 		this.appDirError = appDirError;
 	}
+	
+	public void setServerError(String serverError) {
+		this.serverError = serverError;
+	}
+
+	public String getServerError() {
+		return serverError;
+	}
+
+	public void setDatabaseError(String databaseError) {
+		this.databaseError = databaseError;
+	}
+
+	public String getDatabaseError() {
+		return databaseError;
+    }
+
+	public void setServerName(String serverName) {
+		this.serverName = serverName;
+	}
+
+	public String getServerName() {
+		return serverName;
+	}
+
+	public void setDatabaseName(String databaseName) {
+		this.databaseName = databaseName;
+	}
+
+	public String getDatabaseName() {
+		return databaseName;
+	}
+
+	
 }
