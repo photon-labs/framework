@@ -338,6 +338,11 @@
 	    });
 	});
 	
+	//to update build number in hidden field for deploy popup
+	<% if (FrameworkConstants.REQ_DEPLOY.equals(from)) { %>
+		$("input[name=buildNumber]").val('<%= buildNumber %>');
+	<% } %>
+	
 	function jecOptionChange() {
 		 $('.jecEditableOption').text("Type or select from the list");
 	}
@@ -374,11 +379,6 @@
 	function performUrlActions(url, actionType) {
 		readerHandlerSubmit(url, '<%= appId %>', actionType, $("#generateBuildForm"), true, getBasicParams(), $("#console_div"));
 	}
-	
-	//to update build number in hidden field for deploy popup
-	<% if (FrameworkConstants.REQ_DEPLOY.equals(from)) { %>
-		$("input[name=buildNumber]").val('<%= buildNumber %>');
-	<% } %>
 	
 	function dependancyChckBoxEvent(obj, currentParamKey, showHideFlag) {
 		selectBoxOnChangeEvent(obj, currentParamKey, showHideFlag);
@@ -448,7 +448,8 @@
 	function showParameters() {
 		$(':input', '#generateBuildForm').each(function() {
 			var currentObjType = $(this).prop('tagName');
-			if (currentObjType === "SELECT" && this.options[this.selectedIndex] !== undefined) {
+			var multipleAttr = $(this).attr('multiple');
+			if (currentObjType === "SELECT" && multipleAttr === undefined && this.options[this.selectedIndex] !== undefined ) {
 				var dependencyAttr =  this.options[this.selectedIndex].getAttribute('additionalparam');
 				if (dependencyAttr !== null) {
 					var csvDependencies = dependencyAttr.substring(dependencyAttr.indexOf('=') + 1);
