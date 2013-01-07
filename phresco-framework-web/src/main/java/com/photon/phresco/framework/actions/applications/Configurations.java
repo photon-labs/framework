@@ -306,7 +306,7 @@ public class Configurations extends FrameworkBaseAction {
 			artifactGroups.add(artifactGroup);
 			PhrescoDynamicLoader dynamicLoader = new PhrescoDynamicLoader(repoInfo, artifactGroups);
 			ApplicationProcessor applicationProcessor = dynamicLoader.getApplicationProcessor(className);
-			applicationProcessor.postConfiguration(getApplicationInfo());
+			applicationProcessor.postConfiguration(getApplicationInfo(), Collections.singletonList(getConfigInstance()));
 			addActionMessage(getText(ACT_SUCC_CONFIG_ADD, Collections.singletonList(getConfigName())));
 		} catch (PhrescoException e) {
 			if (s_debugEnabled) {
