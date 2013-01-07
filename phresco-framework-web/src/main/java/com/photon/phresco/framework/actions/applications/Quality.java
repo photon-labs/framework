@@ -37,14 +37,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -236,6 +229,8 @@ public class Quality extends DynamicParameterAction implements Constants {
 	        setReqAttribute(PATH, frameworkUtil.getUnitTestDir(appInfo));
             setReqAttribute(REQ_APPINFO, appInfo);
             setProjModulesInReq();
+            // get unit test report options
+            setUnitReportOptions();
 	    } catch (Exception e) {
             if (s_debugEnabled) {
                 S_LOGGER.error("Entered into catch block of Quality.unit()" + FrameworkUtil.getStackTraceAsString(e));
@@ -244,6 +239,26 @@ public class Quality extends DynamicParameterAction implements Constants {
         }
 	    
 	    return APP_UNIT_TEST;
+	}
+	
+	private void setUnitReportOptions() throws PhrescoException {
+        if (s_debugEnabled) {
+            S_LOGGER.debug("Entering Method Quality.setUnitReportOptions");
+        }
+		try {
+	        ApplicationInfo appInfo = getApplicationInfo();
+	        FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+	        String unitTestReportOptions = frameworkUtil.getUnitTestReportOptions(appInfo);
+	        if (StringUtils.isNotEmpty(unitTestReportOptions)) {
+	        	List<String> asList = Arrays.asList(unitTestReportOptions.split(","));
+	        	setReqAttribute(REQ_UNIT_TEST_REPORT_OPTIONS, asList);
+	        }
+		} catch (Exception e) {
+            if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Quality.setUnitReportOptions()" + FrameworkUtil.getStackTraceAsString(e));
+            }
+			throw new PhrescoException(e);
+		}
 	}
 	
 	public String fetchUnitTestSuites() {
@@ -255,7 +270,12 @@ public class Quality extends DynamicParameterAction implements Constants {
             ApplicationInfo appInfo = getApplicationInfo();
             String testResultPath = getUnitTestResultPath(appInfo, null);
             FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-            String testSuitePath = frameworkUtil.getUnitTestSuitePath(appInfo);
+            String testSuitePath = "";
+            if (StringUtils.isNotEmpty(getTechReport())) {
+            	testSuitePath = frameworkUtil.getUnitTestSuitePath(appInfo, getTechReport());
+		    } else {
+		    	testSuitePath = frameworkUtil.getUnitTestSuitePath(appInfo);
+		    }
             List<String> resultTestSuiteNames = getTestSuiteNames(testResultPath, testSuitePath);
             if (CollectionUtils.isEmpty(resultTestSuiteNames)) {
                 setValidated(true);
@@ -283,6 +303,7 @@ public class Quality extends DynamicParameterAction implements Constants {
             sb.append(File.separatorChar);
             sb.append(getProjectModule());
         }
+        // TODO Need to change this
         StringBuilder tempsb = new StringBuilder(sb);
         if (JAVASCRIPT.equals(getTechReport())) {
             tempsb.append(UNIT_TEST_QUNIT_REPORT_DIR);
@@ -294,9 +315,12 @@ public class Quality extends DynamicParameterAction implements Constants {
             }
         } else {
             FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-            sb.append(frameworkUtil.getUnitTestReportDir(appInfo));
+            if (StringUtils.isNotEmpty(getTechReport())) {
+            	sb.append(frameworkUtil.getUnitTestReportDir(appInfo, getTechReport()));
+            } else {
+            	sb.append(frameworkUtil.getUnitTestReportDir(appInfo));
+            }
         }
-        
         return sb.toString();
     }
     
@@ -892,7 +916,11 @@ public class Quality extends DynamicParameterAction implements Constants {
                 	sb.append(UNIT_TEST_JASMINE_REPORT_DIR);
                 }
         	} else {
-        		sb.append(frameworkUtil.getUnitTestReportDir(appInfo));
+                if (StringUtils.isNotEmpty(getTechReport())) {
+                	sb.append(frameworkUtil.getUnitTestReportDir(appInfo, getTechReport()));
+		        } else {
+		         	sb.append(frameworkUtil.getUnitTestReportDir(appInfo));
+		        }
         	}
         } else if (LOAD.equals(getTestType())) {
         	sb.append(frameworkUtil.getLoadTestReportDir(appInfo));
@@ -909,7 +937,6 @@ public class Quality extends DynamicParameterAction implements Constants {
             sb.append(File.separator);
             sb.append(testResultFile);
         }
-
         return sb.toString();
     }
 
@@ -2199,9 +2226,18 @@ public class Quality extends DynamicParameterAction implements Constants {
         try {
             ApplicationInfo appInfo = getApplicationInfo();
             FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-            String testSuitePath = frameworkUtil.getUnitTestSuitePath(appInfo);
-            String testCasePath = frameworkUtil.getUnitTestCasePath(appInfo);
-            
+            String testSuitePath = "";
+            if (StringUtils.isNotEmpty(getTechReport())) {
+            	testSuitePath = frameworkUtil.getUnitTestSuitePath(appInfo, getTechReport());
+		    } else {
+		    	testSuitePath = frameworkUtil.getUnitTestSuitePath(appInfo);
+		    }
+            String testCasePath = "";
+            if (StringUtils.isNotEmpty(getTechReport())) {
+            	testSuitePath = frameworkUtil.getUnitTestCasePath(appInfo, getTechReport());
+		    } else {
+		    	testSuitePath = frameworkUtil.getUnitTestCasePath(appInfo);
+		    }
             return testReport(testSuitePath, testCasePath);
         } catch (PhrescoException e) {
             // TODO: handle exception
@@ -2647,7 +2683,6 @@ public class Quality extends DynamicParameterAction implements Constants {
     			setReqAttribute(REQ_PDF_REPORT_FILES, existingPDFs);
     		}
         } catch (Exception e) {
-        	e.printStackTrace();
             S_LOGGER.error("Entered into catch block of Quality.printAsPdfPopup()"+ e);
         }
         setReqAttribute(REQ_TEST_TYPE, fromPage);
@@ -2750,7 +2785,15 @@ public class Quality extends DynamicParameterAction implements Constants {
 		boolean XmlResultsAvailable = false;
             if(!XmlResultsAvailable) {
             	S_LOGGER.debug("Unit dir " + sb.toString() + frameworkUtil.getUnitTestReportDir(appInfo));
-	            File file = new File(sb.toString() + frameworkUtil.getUnitTestReportDir(appInfo));
+            	File file = null;
+            	if (StringUtils.isNotEmpty(getTechReport())) {
+//            		sb.append(frameworkUtil.getUnitTestReportDir(appInfo, getTechReport()));
+            		file = new File(sb.toString() + frameworkUtil.getUnitTestReportDir(appInfo, getTechReport()));
+            	} else {
+            		file = new File(sb.toString() + frameworkUtil.getUnitTestReportDir(appInfo));
+            		sb.append(frameworkUtil.getUnitTestReportDir(appInfo));
+            	}
+                
 	            File[] children = file.listFiles(new XmlNameFileFilter(FILE_EXTENSION_XML));
 	            if(children != null && children.length > 0) {
 	            	XmlResultsAvailable = true;
@@ -2854,7 +2897,6 @@ public class Quality extends DynamicParameterAction implements Constants {
 			setReqAttribute(REQ_FROM_PAGE, getFromPage());
             setReqAttribute(REQ_REPORT_STATUS, getText(SUCCESS_REPORT_STATUS));
         } catch (Exception e) {
-        	e.printStackTrace();
         	S_LOGGER.error("Entered into catch block of Quality.printAsPdf()"+ e);
         	if (e.getLocalizedMessage().contains(getText(ERROR_REPORT_MISSISNG_FONT_MSG))) {
         		setReqAttribute(REQ_REPORT_STATUS, getText(ERROR_REPORT_MISSISNG_FONT));
@@ -2898,7 +2940,6 @@ public class Quality extends DynamicParameterAction implements Constants {
     			fileName = reportFileName.split(UNDERSCORE)[1];
             }
         } catch (Exception e) {
-        	e.printStackTrace();
             S_LOGGER.error("Entered into catch block of Quality.downloadReport()" + e);
         }
         return SUCCESS;

@@ -652,6 +652,7 @@ public interface FrameworkConstants {
     String REQ_TEST_TYPE_SELECTED = "testTypeSelected";
     String REQ_TEST_UNIT = "unit";
     String REQ_PROJECT_MODULES = "projectModules";
+    String REQ_UNIT_TEST_REPORT_OPTIONS = "unitTestReportOptions";
     String REQ_TEST_FUNCTIONAL = "functional";
     String REQ_TEST_PERFORMANCE = "performance";
     String PERFORMANCE_TEST_REPORTS = "performanceTestReports";
