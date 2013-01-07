@@ -229,6 +229,10 @@
           	<result name="success">/pages/applications/feature/configuration.jsp</result>
         </action>
         
+        <action name="showFeatureConfigs" method="showFeatureConfigs" class="com.photon.phresco.framework.actions.applications.Configurations">
+          	<result name="success">/pages/applications/feature/configuration.jsp</result>
+        </action>
+        
         <action name="configureFeature" method="configureFeature" class="com.photon.phresco.framework.actions.applications.Features">
           	<result type="json" />
         </action>

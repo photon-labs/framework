@@ -389,22 +389,22 @@ public class Features extends FrameworkBaseAction {
 	    List<PropertyTemplate> propertyTemplates = new ArrayList<PropertyTemplate>();
 	    try {
 	        List<Configuration> featureConfigurations = getApplicationProcessor().preFeatureConfiguration(getApplicationInfo(), getFeatureName());
+	        Properties properties = null;
 	        if (CollectionUtils.isNotEmpty(featureConfigurations)) {
 	            for (Configuration featureConfiguration : featureConfigurations) {
-	                Properties properties = featureConfiguration.getProperties();
+	                properties = featureConfiguration.getProperties();
 	                Set<Object> keySet = properties.keySet();
 	                for (Object key : keySet) {
 	                    String keyStr = (String) key;
-	                    String value = properties.getProperty(keyStr);
 	                    String dispName = keyStr.replace(".", " ");
 	                    PropertyTemplate propertyTemplate = new PropertyTemplate();
 	                    propertyTemplate.setKey(keyStr);
 	                    propertyTemplate.setName(dispName);
-	                    //propertyTemplate.setPossibleValues(Collections.singleton(value));
 	                    propertyTemplates.add(propertyTemplate);
 	                }
 	            }
 	        }
+	        setReqAttribute(REQ_PROPERTIES_INFO, properties);
 	        setReqAttribute(REQ_HAS_CUSTOM_PROPERTY, true);
 	    } catch (PhrescoException e) {
 	        throw new PhrescoException(e);
