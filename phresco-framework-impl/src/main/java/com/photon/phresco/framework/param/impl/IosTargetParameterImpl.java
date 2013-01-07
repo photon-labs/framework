@@ -51,9 +51,11 @@ public class IosTargetParameterImpl implements DynamicParameter {
             PomProcessor pomProcessor = new PomProcessor(pomPath);
             File sourceDir = null;
             String sourceDirectory = pomProcessor.getSourceDirectory();
-			if (sourceDirectory.startsWith("${project.basedir}") || sourceDirectory.startsWith("/source")) {
-				sourceDirectory = sourceDirectory.substring("${project.basedir}".length() + 1);
-            	sourceDir = new File(builder.toString() + File.separatorChar + sourceDirectory);
+			if (sourceDirectory.startsWith("${project.basedir}")) {
+				sourceDirectory = sourceDirectory.substring("${project.basedir}".length());
+            	sourceDir = new File(builder.toString() + sourceDirectory);
+			} else if (sourceDirectory.startsWith("/source")) {
+				sourceDir = new File(builder.toString() + File.separatorChar + sourceDirectory);
 			} else {
 				sourceDir = new File(sourceDirectory);
 			}
