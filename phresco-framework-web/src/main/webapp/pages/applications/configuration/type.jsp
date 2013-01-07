@@ -174,7 +174,9 @@
 	<%
 		} else if (CollectionUtils.isNotEmpty(possibleValues)) {
         	pm.setObjectValue(possibleValues);
-        	//pm.setSelectedValues(value);
+        	List<String> alreadySelectedValue = new ArrayList<String>();
+        	alreadySelectedValue.add(value);
+        	pm.setSelectedValues(alreadySelectedValue);
         	pm.setMultiple(false);
             StringTemplate dropDownControl = FrameworkUtil.constructSelectElement(pm);
             sb.append(dropDownControl);
