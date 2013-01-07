@@ -64,6 +64,7 @@ public interface FrameworkConstants {
     
 	String FEATURES = "features";
 	String CONFIG_TYPE_FEATURES = "Features";
+	String CONFIG_TYPE_COMPONENTS = "Components";
     int JOB_STATUS_NOTOK = -1;
     String FOLDER_DOT_PHRESCO = ".phresco";
     String PHRESCO_HOME = "PHRESCO_HOME";
@@ -812,6 +813,7 @@ public interface FrameworkConstants {
     String REQ_HAS_CUSTOM_PROPERTY = "hasCustomProperty";
     
     String CONFIG_FEATURES = "config_Features";
+    String CONFIG_COMPONENTS = "config_Components";
 	
 	String REQ_TESTCASE_NAME = "testCaseName";
 	String SCREENSHOT_DIR = "screenshots";

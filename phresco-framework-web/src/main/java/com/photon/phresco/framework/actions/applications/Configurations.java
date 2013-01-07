@@ -139,6 +139,8 @@ public class Configurations extends FrameworkBaseAction {
     
     private List<String> uploadedFiles = new ArrayList<String>();
     
+    private String configTemplateType = "";
+    
 	public String configList() {
 		if (s_debugEnabled) {
 			S_LOGGER.debug("Entering Method Configurations.configList()");
@@ -367,8 +369,11 @@ public class Configurations extends FrameworkBaseAction {
 		SettingsTemplate configTemplate = getServiceManager().getConfigTemplate(getConfigId(), getCustomerId());
 		Properties properties = new Properties();
 		List<PropertyTemplate> propertyTemplates = new ArrayList<PropertyTemplate>();
-		if (CONFIG_FEATURES.equals(getConfigId())) {
-		    getTemplateConfigFile(propertyTemplates);
+		if (CONFIG_FEATURES.equals(getConfigId()) || CONFIG_COMPONENTS.equals(getConfigId())) {
+		    setEnvName(getEnvironment().getName());
+		    propertyTemplates = getPropTemplateFromConfigFile();
+		    
+		    properties.setProperty(REQ_FEATURE_NAME, getActionContextParam(REQ_FEATURE_NAME));
 		} else {
 		    propertyTemplates = configTemplate.getProperties();
 		}
@@ -419,37 +424,10 @@ public class Configurations extends FrameworkBaseAction {
 		Configuration config = new Configuration(getConfigName(), getConfigType());
 		config.setDesc(getDescription());
 		config.setAppliesTo(FrameworkUtil.listToCsv(getAppliesTos()));
+		config.setEnvName(getEnvironment().getName());
 		config.setProperties(properties);
 		return config;
 	}
-	
-	private void getTemplateConfigFile(List<PropertyTemplate> propertyTemplates) {
-		if (s_debugEnabled) {
-    		S_LOGGER.debug("Entering Method Configurations.getTemplateConfigFile()");
-    	}
-		
-        try {
-            List<Configuration> featureConfigurations = getApplicationProcessor().preFeatureConfiguration(getApplicationInfo(), getFeatureName());
-            for (Configuration featureConfiguration : featureConfigurations) {
-                Properties properties = featureConfiguration.getProperties();
-                Set<Object> keySet = properties.keySet();
-                for (Object key : keySet) {
-                    String keyStr = (String) key;
-                    String value = properties.getProperty(keyStr);
-                    String dispName = keyStr.replace(".", " ");
-                    PropertyTemplate propertyTemplate = new PropertyTemplate();
-                    propertyTemplate.setKey(keyStr);
-                    propertyTemplate.setName(dispName);
-                    //propertyTemplate.setPossibleValues(Collections.singleton(value));
-                    propertyTemplates.add(propertyTemplate);
-                }
-            }
-        } catch (Exception e) {
-        	if (s_debugEnabled) {
-                S_LOGGER.error("Entered into catch block of Configurations.getTemplateConfigFile()" + FrameworkUtil.getStackTraceAsString(e));
-            }
-        }
-    }
 	
     /**
      * To validate the form fields
@@ -802,27 +780,14 @@ public class Configurations extends FrameworkBaseAction {
 			}
 			
 			SettingsTemplate settingTemplate = getSettingTemplate();
-			if (CONFIG_FEATURES.equals(settingTemplate.getId()) && (ADD_CONFIG.equals(getFromPage()) ||
-					EDIT_CONFIG.equals(getFromPage()))) {
-			    List<String> selectedModules = appInfo.getSelectedModules();
-			    if (CollectionUtils.isNotEmpty(selectedModules)) {
-				    List<String> custFeatureNames = new ArrayList<String>();
-				    for (String selectedModule : selectedModules) {
-				        ArtifactInfo artifactInfo = getServiceManager().getArtifactInfo(selectedModule);
-				        ArtifactGroup artifactGroup = getServiceManager().getArtifactGroupInfo(artifactInfo.getArtifactGroupId());
-	                    List<CoreOption> appliesTo = artifactGroup.getAppliesTo();
-	                    for (CoreOption coreOption : appliesTo) {
-	                        if (coreOption.getTechId().equals(appInfo.getTechInfo().getId()) && !coreOption.isCore()) {
-	                            custFeatureNames.add(artifactGroup.getName());
-	                        }
-	                    }
-				    }
-				    setReqAttribute(REQ_SELECTED_TYPE, getSelectedType());
-				    setReqAttribute(REQ_FEATURE_NAMES, custFeatureNames);
-			    } else {
-			    	setReqAttribute(REQ_FEATURE_NAMES, Collections.EMPTY_LIST);
+			if ((ADD_CONFIG.equals(getFromPage()) || EDIT_CONFIG.equals(getFromPage()))) {
+			    if (CONFIG_FEATURES.equals(settingTemplate.getId())) {
+			        setCustomModNamesInReq(appInfo);
+			        return SUCCESS;
+			    } else if (CONFIG_COMPONENTS.equals(settingTemplate.getId())) {
+			        setComponentNamesInReq(appInfo);
+			        return SUCCESS;
 			    }
-			    return SUCCESS;
 			}
             setReqAttribute(REQ_SETTINGS_TEMPLATE, settingTemplate);
 		    List<PropertyTemplate> properties = getSettingTemplate().getProperties();
@@ -862,6 +827,95 @@ public class Configurations extends FrameworkBaseAction {
 		}
 		return SETTINGS_TYPE;
 	}
+    
+    private void setCustomModNamesInReq(ApplicationInfo appInfo) {
+        try {
+            List<String> selectedModules = appInfo.getSelectedModules();
+            if (CollectionUtils.isNotEmpty(selectedModules)) {
+                List<String> custFeatureNames = new ArrayList<String>();
+                for (String selectedModule : selectedModules) {
+                    ArtifactInfo artifactInfo = getServiceManager().getArtifactInfo(selectedModule);
+                    ArtifactGroup artifactGroup = getServiceManager().getArtifactGroupInfo(artifactInfo.getArtifactGroupId());
+                    List<CoreOption> appliesTo = artifactGroup.getAppliesTo();
+                    for (CoreOption coreOption : appliesTo) {
+                        if (coreOption.getTechId().equals(appInfo.getTechInfo().getId()) && !coreOption.isCore()) {
+                            custFeatureNames.add(artifactGroup.getName());
+                        }
+                    }
+                }
+                setReqAttribute(REQ_SELECTED_TYPE, getSelectedType());
+                setReqAttribute(REQ_FEATURE_NAMES, custFeatureNames);
+            }
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+    }
+    
+    private void setComponentNamesInReq(ApplicationInfo appInfo) {
+        try {
+            List<String> selectedComponents = appInfo.getSelectedComponents();
+            if (CollectionUtils.isNotEmpty(selectedComponents)) {
+                List<String> componentNames = new ArrayList<String>();
+                for (String selectedComponent : selectedComponents) {
+                    ArtifactInfo artifactInfo = getServiceManager().getArtifactInfo(selectedComponent);
+                    ArtifactGroup artifactGroup = getServiceManager().getArtifactGroupInfo(artifactInfo.getArtifactGroupId());
+                    List<CoreOption> appliesTo = artifactGroup.getAppliesTo();
+                    for (CoreOption coreOption : appliesTo) {
+                        if (coreOption.getTechId().equals(appInfo.getTechInfo().getId())) {
+                            componentNames.add(artifactGroup.getName());
+                        }
+                    }
+                }
+                setReqAttribute(REQ_SELECTED_TYPE, getSelectedType());
+                setReqAttribute(REQ_FEATURE_NAMES, componentNames);
+            }
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+    }
+    
+    public String showFeatureConfigs() throws PhrescoException {
+        try {
+            setConfigTemplateType(CONFIG_FEATURES);
+            setReqAttribute(REQ_FEATURE_NAME, getFeatureName());
+            List<PropertyTemplate> propertyTemplates = getPropTemplateFromConfigFile();
+            setReqAttribute(REQ_PROPERTIES, propertyTemplates);
+            setReqAttribute(REQ_SELECTED_TYPE, getSelectedType());
+        } catch (PhrescoException e) {
+            e.printStackTrace();
+//          return showErrorPopup(e, getText(EXCEPTION_FEATURE_MANIFEST_NOT_AVAILABLE));
+        }
+        
+        return SUCCESS;
+    }
+    
+    private List<PropertyTemplate> getPropTemplateFromConfigFile() throws PhrescoException {
+        List<PropertyTemplate> propertyTemplates = new ArrayList<PropertyTemplate>();
+        try {
+            List<Configuration> featureConfigurations = getApplicationProcessor().preConfiguration(getApplicationInfo(), getFeatureName(), getEnvName());
+            Properties properties = null;
+            if (CollectionUtils.isNotEmpty(featureConfigurations)) {
+                for (Configuration featureConfiguration : featureConfigurations) {
+                    properties = featureConfiguration.getProperties();
+                    Set<Object> keySet = properties.keySet();
+                    for (Object key : keySet) {
+                        String keyStr = (String) key;
+                        String dispName = keyStr.replace(".", " ");
+                        PropertyTemplate propertyTemplate = new PropertyTemplate();
+                        propertyTemplate.setKey(keyStr);
+                        propertyTemplate.setName(dispName);
+                        propertyTemplates.add(propertyTemplate);
+                    }
+                }
+            }
+            setReqAttribute(REQ_HAS_CUSTOM_PROPERTY, true);
+            setReqAttribute(REQ_PROPERTIES_INFO, properties);
+        } catch (PhrescoException e) {
+            throw new PhrescoException(e);
+        }
+
+        return propertyTemplates;
+    }
     
     public String uploadFile() {
         if (s_debugEnabled) {
@@ -1698,5 +1752,13 @@ public class Configurations extends FrameworkBaseAction {
 
     public void setUploadedFiles(List<String> uploadedFiles) {
         this.uploadedFiles = uploadedFiles;
+    }
+    
+    public String getConfigTemplateType() {
+        return configTemplateType;
+    }
+
+    public void setConfigTemplateType(String configTemplateType) {
+        this.configTemplateType = configTemplateType;
     }
 }
