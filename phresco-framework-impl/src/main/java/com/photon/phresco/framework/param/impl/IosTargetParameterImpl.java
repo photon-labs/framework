@@ -9,6 +9,7 @@ import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.collections.*;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.plexus.util.cli.Commandline;
 import org.xml.sax.SAXException;
@@ -82,7 +83,10 @@ public class IosTargetParameterImpl implements DynamicParameter {
             
             while ((line = reader.readLine()) != null) {       
                 if (line.trim().equals(XCODE_PROJECT_TARGETS) || line.trim().equals(XCODE_WORKSPACE_TARGETS)) { // getting only target
-                    isTarget = true;
+                	// For iphone projects both targets and Schemes will be displayed, If target is avilable, take target alone else schemes
+                	if (CollectionUtils.isEmpty(possibleValues.getValue())) {
+                		isTarget = true;
+                	}
                 } else if (line.trim().contains(":")) { // omitt all other configurations
                     isTarget = false;
                 }
