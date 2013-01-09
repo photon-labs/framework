@@ -110,6 +110,7 @@ public interface FrameworkConstants {
     String REQ_FEATURES_TYPE = "type";
     String REQ_FEATURES_MOD_GRP = "moduleGroup";
     String MEGABYTE = "MB";
+    String KILOBYTE = "KB";
     
     String REQ_KEY = "key";
     String REQ_VALUE = "value";
