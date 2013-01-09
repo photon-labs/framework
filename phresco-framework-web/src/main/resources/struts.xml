@@ -220,7 +220,11 @@
         <action name="fetchDefaultFeatures" method="fetchDefaultFeatures" class="com.photon.phresco.framework.actions.applications.Features">
         	<result type="json"/>
         </action>
-		
+
+		<action name="fetchSelectedFeatures" method="fetchSelectedFeatures" class="com.photon.phresco.framework.actions.applications.Features">
+        	<result type="json"/>
+        </action>
+        		
 		<action name="fetchDependentFeatures" method="fetchDependentFeatures" class="com.photon.phresco.framework.actions.applications.Features">
         	<result type="json"/>
         </action>

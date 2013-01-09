@@ -722,13 +722,24 @@ public class Applications extends FrameworkBaseAction {
         	}
         	Gson gson = new Gson();
         	
-        	StringBuilder sb = new StringBuilder(Utility.getProjectHome())
-        	.append(getOldAppDirName())
-        	.append(File.separator)
-        	.append(Constants.DOT_PHRESCO_FOLDER)
-        	.append(File.separator)
-        	.append(Constants.APPLICATION_HANDLER_INFO_FILE);
-			File filePath = new File(sb.toString());
+        	File filePath = null;
+        	if (StringUtils.isNotEmpty(getOldAppDirName())) {
+	        	StringBuilder sb = new StringBuilder(Utility.getProjectHome())
+	        	.append(getOldAppDirName())
+	        	.append(File.separator)
+	        	.append(Constants.DOT_PHRESCO_FOLDER)
+	        	.append(File.separator)
+	        	.append(Constants.APPLICATION_HANDLER_INFO_FILE);
+				filePath = new File(sb.toString());
+        	} else {
+        		StringBuilder sb = new StringBuilder(Utility.getProjectHome())
+	        	.append(appInfo.getAppDirName())
+	        	.append(File.separator)
+	        	.append(Constants.DOT_PHRESCO_FOLDER)
+	        	.append(File.separator)
+	        	.append(Constants.APPLICATION_HANDLER_INFO_FILE);
+				filePath = new File(sb.toString());
+        	}
 			MojoProcessor mojo = new MojoProcessor(filePath);
 			ApplicationHandler applicationHandler = mojo.getApplicationHandler();
 			
@@ -786,9 +797,15 @@ public class Applications extends FrameworkBaseAction {
         	appInfo.setSelectedModules(selectedFeatures);
         	appInfo.setSelectedJSLibs(selectedJsLibs);
         	appInfo.setSelectedComponents(selectedComponents);
-        	   
-			StringBuilder sbs = new StringBuilder(Utility.getProjectHome()).append(getOldAppDirName()).append(
+        	
+        	StringBuilder sbs = null;
+        	if(StringUtils.isNotEmpty(getOldAppDirName())) {
+        		sbs = new StringBuilder(Utility.getProjectHome()).append(getOldAppDirName()).append(
 					File.separator).append(Constants.DOT_PHRESCO_FOLDER).append(File.separator).append("project.info");
+        	} else {
+        		sbs = new StringBuilder(Utility.getProjectHome()).append(appInfo.getAppDirName()).append(
+    					File.separator).append(Constants.DOT_PHRESCO_FOLDER).append(File.separator).append("project.info");
+        	}
 			bufferedReader = new BufferedReader(new FileReader(sbs.toString()));
 			Type type = new TypeToken<ProjectInfo>() {}.getType();
 			ProjectInfo projectinfo = gson.fromJson(bufferedReader, type);
@@ -862,8 +879,14 @@ public class Applications extends FrameworkBaseAction {
 					}
 				}
 			}
-			File sqlPath = new File(Utility.getProjectHome() + File.separator + oldAppDirName
+			File sqlPath = null;
+			if (StringUtils.isNotEmpty(oldAppDirName)) {
+				sqlPath = new File(Utility.getProjectHome() + File.separator + oldAppDirName
 					+ frameworkUtil.getSqlFilePath(oldAppDirName));
+			} else {
+				sqlPath = new File(Utility.getProjectHome() + File.separator + applicationInfo.getAppDirName()
+						+ frameworkUtil.getSqlFilePath(applicationInfo.getAppDirName()));
+			}
 				for (String dbVersion : dbListToDelete) {
 					File dbVersionFolder = new File(sqlPath, dbVersion.toLowerCase());
 					FileUtils.deleteDirectory(dbVersionFolder.getParentFile());
