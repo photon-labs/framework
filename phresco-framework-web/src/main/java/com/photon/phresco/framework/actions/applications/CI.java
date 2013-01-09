@@ -313,22 +313,25 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
             MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_CI)));
             // based on operation it should do it
             if (BUILD.equals(operation)) {
-            	parameters = getMojoParameters(mojo, PHASE_PACKAGE);
-            	setReqAttribute(REQ_PHASE, PHASE_PACKAGE);
+                parameters = getMojoParameters(mojo, PHASE_PACKAGE);
+                setReqAttribute(REQ_PHASE, PHASE_CI);
+                setReqAttribute(REQ_GOAL, PHASE_PACKAGE);
             } else if (DEPLOY.equals(operation)) { 
-            	parameters = getMojoParameters(mojo, PHASE_DEPLOY);
-            	setReqAttribute(REQ_PHASE, PHASE_DEPLOY);
+                parameters = getMojoParameters(mojo, PHASE_DEPLOY);
+                setReqAttribute(REQ_PHASE, PHASE_CI);
+                setReqAttribute(REQ_GOAL, PHASE_DEPLOY);
             } else if (FUNCTIONAL_TEST.equals(operation)) {
-				FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-				String seleniumToolType = frameworkUtil.getSeleniumToolType(appInfo);
-            	parameters = getMojoParameters(mojo, PHASE_FUNCTIONAL_TEST + HYPHEN + seleniumToolType);
-                setReqAttribute(REQ_PHASE, PHASE_FUNCTIONAL_TEST + HYPHEN + seleniumToolType);
+                FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+                String seleniumToolType = frameworkUtil.getSeleniumToolType(appInfo);
+                parameters = getMojoParameters(mojo, PHASE_FUNCTIONAL_TEST + HYPHEN + seleniumToolType);
+                 setReqAttribute(REQ_PHASE, PHASE_CI);
+                 setReqAttribute(REQ_GOAL, PHASE_FUNCTIONAL_TEST + HYPHEN + seleniumToolType);
             }
             
             setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap);
             setSessionAttribute(appInfo.getId() + PHASE_CI + SESSION_WATCHER_MAP, watcherMap);
             setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
-            setReqAttribute(REQ_GOAL, PHASE_CI);
+            setReqAttribute(REQ_APP_INFO, appInfo);
 		} catch (Exception e) {
 			return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_BUILD_POPUP));
 		}
