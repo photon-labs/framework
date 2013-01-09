@@ -369,4 +369,8 @@
 		var params = getBasicParams();
 		progressPopupAsSecPopup('runPerformanceTest', '<%= appId %>', "performance-test", $('#generateBuildForm'), params, '');
 	}
+	
+	function popupOnClose(obj) {
+		isResultFileAvailbale();
+	}
 </script>
