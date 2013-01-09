@@ -1,14 +1,9 @@
 package com.photon.phresco.framework.param.impl;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
 
 import com.photon.phresco.api.DynamicParameter;
 import com.photon.phresco.commons.model.ApplicationInfo;
@@ -27,29 +22,21 @@ public class Html5ThemesListImpl implements DynamicParameter, Constants {
 	    try {
 	        PossibleValues possibleValues = new PossibleValues();
 	        ApplicationInfo applicationInfo = (ApplicationInfo) paramMap.get(KEY_APP_INFO);
-	        String csvParam = (String) paramMap.get("themes");
-	        List<String> selectedThemes = new ArrayList<String>();
-	        if (StringUtils.isNotEmpty(csvParam)) {
-	            selectedThemes = Arrays.asList(csvParam.split(","));
-	        }
 	        File file = new File(getResourcesPath(applicationInfo.getAppDirName()).toString());
 	        if (file.exists()) {
 	            File[] listFiles = file.listFiles();
 	            if (!ArrayUtils.isEmpty(listFiles)) {
 	                for (File listFile : listFiles) {
-	                    if (CollectionUtils.isNotEmpty(selectedThemes) && selectedThemes.contains(listFile.getName())) {
+	                    if (!listFile.getName().startsWith(".")) {
 	                        Value value = new Value();
 	                        value.setValue(listFile.getName());
-	                        possibleValues.getValue().add(value);
-	                    } else if (CollectionUtils.isEmpty(selectedThemes)) {
-	                        Value value = new Value();
-	                        value.setValue(listFile.getName());
-	                        value.setDependency("deafultTheme");
+	                        value.setDependency("defaultTheme");
 	                        possibleValues.getValue().add(value);
 	                    }
 	                }
 	            }
 	        }
+	        
 	        return possibleValues;
 	    } catch (Exception e) {
 	        throw new PhrescoException(e);
