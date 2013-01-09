@@ -57,7 +57,6 @@ public class IosDeployValidationImpl implements DynamicParameter {
             }
             
 		} catch (Exception e) {
-			e.printStackTrace();
 			throw new PhrescoException(e);
 		}
 		return possibleValues;

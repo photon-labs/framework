@@ -83,7 +83,7 @@ public interface FrameworkConstants {
     String SOURCE = "src";
     String FROM_PAGE_LOGIN = "login";
     String CONFIG_TYPE = "type";
-    String EXE_DOWNLOAD = "Exe Download";
+    String EXE_DOWNLOAD = "Exe_Download";
     String IMPORT = "import";
     
     String REQ_CUSTOMER_ID = "customerId";

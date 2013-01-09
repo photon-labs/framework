@@ -567,7 +567,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
         }
         try {
             int status = cli.execute(argList);
-            String message = deleteType + " deletion started in jenkins";
+            String message = deleteType + " has successfully deleted in jenkins";
             if (status == FrameworkConstants.JOB_STATUS_NOTOK) {
             	deleteType = deleteType.substring(0, 1).toLowerCase() + deleteType.substring(1);
                 message = "Error while deleting " + deleteType +" in jenkins";
