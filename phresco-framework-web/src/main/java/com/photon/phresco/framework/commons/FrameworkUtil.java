@@ -39,7 +39,6 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 
 import org.antlr.stringtemplate.StringTemplate;
-import org.antlr.stringtemplate.StringTemplateGroup;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
@@ -57,7 +56,6 @@ import com.photon.phresco.framework.FrameworkConfiguration;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
 import com.photon.phresco.framework.api.ProjectAdministrator;
-import com.photon.phresco.framework.model.PerformanceDetails;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
 import com.photon.phresco.util.Constants;
@@ -516,6 +514,10 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     
     public String getPerformanceTestReportDir(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
         return getPomProcessor(appinfo.getAppDirName()).getProperty(POM_PROP_KEY_PERFORMANCETEST_RPT_DIR);
+    }
+    
+    public String getEmbedAppTargetDir(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
+        return getPomProcessor(appinfo.getAppDirName()).getProperty(POM_PROP_KEY_EMBED_APP_TARGET_DIR);
     }
 
 	public String getHubConfigFile(ApplicationInfo appInfo) throws PhrescoException, PhrescoPomException {

@@ -109,6 +109,7 @@ public interface FrameworkConstants {
     String REQ_FEATURES_TYPE_MODULE = "FEATURE";
     String REQ_FEATURES_TYPE = "type";
     String REQ_FEATURES_MOD_GRP = "moduleGroup";
+    String REQ_WEB_LAYER_APPINFO = "weblayerAppinfo";
     String MEGABYTE = "MB";
     String KILOBYTE = "KB";
     

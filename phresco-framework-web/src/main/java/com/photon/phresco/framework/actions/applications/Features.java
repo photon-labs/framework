@@ -81,6 +81,8 @@ public class Features extends FrameworkBaseAction {
 	private String configDbNames = null;
 	private String fromTab = null;
 	private List<String> defaultModules =  null;
+	private String embedAppId = "";
+	private String appTypeId = "";
 	
 	private String name = "";
 	private String code = "";
@@ -311,9 +313,11 @@ public class Features extends FrameworkBaseAction {
     	appInfo.setCode(getCode());
     	appInfo.setDescription(getDescription());
     	appInfo.setVersion(getApplicationVersion());
+    	appInfo.setEmbedAppId(getEmbedAppId());
     	TechnologyInfo techInfo = new TechnologyInfo();
     	techInfo.setId(getTechnology());
     	techInfo.setVersion(getTechnologyVersion());
+    	techInfo.setAppTypeId(getAppTypeId());
 		appInfo.setTechInfo(techInfo );
 		if (StringUtils.isNotEmpty(getPilotProject())) {
 			Element element = new Element();
@@ -1387,5 +1391,19 @@ public class Features extends FrameworkBaseAction {
 		this.selArtifactInfoIds = selArtifactInfoIds;
 	}
 
-	
+	public String getEmbedAppId() {
+        return embedAppId;
+    }
+
+    public void setEmbedAppId(String embedAppId) {
+        this.embedAppId = embedAppId;
+    }
+
+    public String getAppTypeId() {
+        return appTypeId;
+    }
+
+    public void setAppTypeId(String appTypeId) {
+        this.appTypeId = appTypeId;
+    }
 }

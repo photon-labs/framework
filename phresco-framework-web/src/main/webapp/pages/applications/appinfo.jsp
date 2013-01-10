@@ -44,6 +44,7 @@
 	ProjectInfo projectInfo = (ProjectInfo) session.getAttribute(appId + FrameworkConstants.SESSION_APPINFO);
 	List<WebService> webservices = (List<WebService>)request.getAttribute(FrameworkConstants.REQ_WEBSERVICES);
 	String appDir = (String) request.getAttribute(FrameworkConstants.REQ_OLD_APPDIR);
+	ApplicationInfo webLayerAppInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_WEB_LAYER_APPINFO);
 	
 	String id = "";
 	String name = "";
@@ -54,6 +55,8 @@
 	String technologyId = "";
 	String technologyVersion = "";
 	String oldAppDirName = "";
+	String embedAppId = "";
+	String appTypeId = "";
 	List<String> selectedWebservices = null;
 	List<ArtifactGroupInfo> pilotServers = null;
 	List<ArtifactGroupInfo> pilotDatabases = null;
@@ -70,8 +73,10 @@
 		oldAppDirName = selectedInfo.getAppDirName();
 		description = selectedInfo.getDescription();
 		version = selectedInfo.getVersion();
+		embedAppId = selectedInfo.getEmbedAppId();
+		appTypeId = selectedInfo.getTechInfo().getAppTypeId();
 		if (selectedInfo.getPilotInfo() != null) {
-		pilotInfo = selectedInfo.getPilotInfo().getId();
+			pilotInfo = selectedInfo.getPilotInfo().getId();
 		}
 		
 		if (selectedInfo.getSelectedWebservices() != null) {
@@ -181,7 +186,7 @@
 										selectedStr = "selected";
 									}
 	                    %>
-                   					<option value = "<%=appInfo.getId() %>" <%= selectedStr %>><%=appInfo.getName() %></option>
+                   					<option value = "<%= appInfo.getId() %>" <%= selectedStr %>><%= appInfo.getName() %></option>
 						<% 	 
 								}
 							}
@@ -190,6 +195,24 @@
 			</div>
 		</div>
 		<!-- pilot project ends -->
+		
+		<!-- Technology version start -->
+		<%
+			if (webLayerAppInfo != null) {
+			    String checkedStr = "";
+			    if (webLayerAppInfo.getId().equals(embedAppId)) {
+			        checkedStr = "checked";
+			    }
+		%>
+			<div class="control-group">
+				<label class="accordion-control-label labelbold"><s:text name='lbl.embed'/></label>
+				<div class="controls">
+					<input type="checkbox" name="embedAppId" value="<%= webLayerAppInfo.getId() %>" <%= checkedStr %>/>
+					<%= webLayerAppInfo.getName() %>
+				</div>
+			</div>
+		<% } %>
+		<!-- Technology version ends -->
 		
 		<!-- servers start -->
 		<%
@@ -374,10 +397,11 @@
     <!--  Submit and Cancel buttons Ends -->
     
     <!-- Hidden Field -->
-	<%-- <input type="hidden" name="appId" value="<%= id %>"/> --%>
+	<input type="hidden" name="appTypeId" value="<%= appTypeId %>"/>
 	<input type="hidden" name="techId" value="<%= technologyId %>"/>
 	<input type="hidden" name="oldAppDirName" value="<%= oldAppDirName %>"/>
 	<input type="hidden" name="fromTab" value="appInfo">
+	
 </form> 
 <!--  Form Ends -->
     
@@ -628,7 +652,6 @@
 				}
 			}
 		%>
-		
     }
     
     function removeTag(currentTag) {

@@ -91,6 +91,8 @@
   		params = params.concat(selectedType);
   		params = params.concat("&envName=");
   		params = params.concat(envName);
+  		params = params.concat("&featureName=");
+  		params = params.concat($('#featureName').val());
     	loadContent('showFeatureConfigs', '', '', params, true, true);
 	}
 

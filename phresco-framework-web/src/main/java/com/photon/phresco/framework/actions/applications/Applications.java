@@ -206,6 +206,18 @@ public class Applications extends FrameworkBaseAction {
         	ProjectInfo projectInfo = null;
         	if (getSessionAttribute(getAppId() + SESSION_APPINFO) == null) {
         		projectInfo = projectManager.getProject(getProjectId(), getCustomerId(), getAppId());
+        		ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
+        		if (LAYER_MOB_ID.equals(appInfo.getTechInfo().getAppTypeId())) {
+                    ProjectInfo project = projectManager.getProject(getProjectId(), getCustomerId());
+                    List<ApplicationInfo> appInfos = project.getAppInfos();
+                    for (ApplicationInfo applicationInfo : appInfos) {
+                        if (LAYER_WEB_ID.equals(applicationInfo.getTechInfo().getAppTypeId())) {
+                            setReqAttribute(REQ_WEB_LAYER_APPINFO, applicationInfo);
+                            break;
+                        }
+                    }
+                }
+        		
         		String technologyId = projectInfo.getAppInfos().get(0).getTechInfo().getId();
         		List<ApplicationInfo> pilotProjects = getServiceManager().getPilotProjects(getCustomerId(), technologyId);
         		Technology technologyInfo = getServiceManager().getTechnology(technologyId);
@@ -239,7 +251,6 @@ public class Applications extends FrameworkBaseAction {
             	appInfo.setSelectedModules(selectedFeatures);
             	appInfo.setSelectedJSLibs(selectedJsLibs);
             	appInfo.setSelectedComponents(selectedComponents);
-            	
         		projectInfo.setAppInfos(Collections.singletonList(appInfo));
         		setSessionAttribute(getAppId() + SESSION_APPINFO, projectInfo);
         		setReqAttribute(REQ_OLD_APPDIR, getOldAppDirName());
