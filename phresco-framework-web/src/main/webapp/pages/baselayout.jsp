@@ -437,11 +437,23 @@
 
 	function changeLogo(data) {
 		$('#logoImg').attr("src",  "data:image/png;base64," + data.logoImgUrl);
-		$("#brandingColor").val(data.brandingColor);
-		changeColorScheme(data.brandingColor);
+		changeColorScheme(data);
 	}
 	
-	function changeColorScheme(brandingColor) {
+	function changeColorScheme(data) {
+		var brandingColor = data.brandingColor;
+		var bodyBackGroundColor = data.bodyBackGroundColor;
+		var accordionBackGroundColor= data.accordionBackGroundColor;
+		var menuBackGround = data.menuBackGround;
+		var menufontColor = data.menufontColor;
+		var buttonColor = data.buttonColor;
+		var backGroundGradientColor = data.backGroundGradientColor;
+		var labelColor = data.labelColor;
+		var copyRightColor = data.copyRightColor;
+	
+		var buttonGradientColor = buttonColor;
+		var labelActiveColor = buttonColor;
+		
 		JSS.css({
 			'.openreg': {
 				'background': brandingColor
@@ -455,20 +467,21 @@
 				'border-color': brandingColor
 			},
 						
-			'.headerInnerTop li a.active label': {
-				'color': brandingColor + " !important"
+			'.headerInnerTop li a.active label': { 
+				'color': labelColor + "!important",
 			},
 			
 			'.tabs li a.active': {
-				'background': brandingColor + " !important"
+				'background': "none repeat scroll 0 0 " + bodyBackGroundColor 
 			},
 			
-			'.tabs > li > a:hover': {
-				'background': "none repeat scroll 0 0" + brandingColor
+			'.tabs li a.inactive:hover label ': {
+				'background' : bodyBackGroundColor + "! important",
+				'color': brandingColor + "! important",
 			},
 			
 			'.modal-header': {
-				'background': "none repeat scroll 0 0" + brandingColor
+				'background': "none repeat scroll 0 0" + menuBackGround
 			},
 
 			'.video-title': {
@@ -488,7 +501,15 @@
 			},
 			
 			'#testmenu li a.active, #testmenu li a:hover': {
-				'background': brandingColor
+				'background': "none repeat scroll 0 0" +  bodyBackGroundColor
+			},
+			
+			'#testmenu li a': {
+				'background': "none repeat scroll 0 0" +  bodyBackGroundColor
+			},
+			
+			'#testmenu li:first-child': {
+				'border-top' : "1px solid" + bodyBackGroundColor
 			},
 			
 			'#indicator': {
@@ -501,7 +522,123 @@
 			
 			'.userInfo ul li a': {
 				'color': brandingColor
+			},
+				
+			'.btn-primary': {
+			'background': buttonColor , /* Old browsers */
+			'background': "-moz-linear-gradient(top, "+buttonColor +" 0%, "+buttonGradientColor+" 100%)" ,/* FF3.6+ */
+			'background': "-webkit-gradient(linear, left top, left bottom, color-stop(0%,"+buttonColor +"), color-stop(100%,"+buttonGradientColor+"))", /* Chrome,Safari4+ */
+			'background': "-webkit-linear-gradient(top, "+buttonColor +" 0%,"+buttonGradientColor+" 100%)", /* Chrome10+,Safari5.1+ */
+			'background': "-o-linear-gradient(top, "+buttonColor +" 0%,"+buttonGradientColor+" 100%)", /* Opera 11.10+ */
+			'background': "-ms-linear-gradient(top, "+buttonColor +" 0%,"+buttonGradientColor+" 100%)", /* IE10+ */
+			'background': "linear-gradient(to bottom, "+buttonColor +" 0%,"+buttonGradientColor+" 100%)", /* W3C */
+			'filter': "progid:DXImageTransform.Microsoft.gradient( startColorstr='"+buttonColor +"', endColorstr='"+buttonGradientColor+"',GradientType=0 )" /* IE6-9 */
+			},
+			
+			'.btn-primary:hover': {
+				'background': "none repeat scroll 0 0" + labelColor
+			},
+			
+			'body': {
+				'background': bodyBackGroundColor,
+			},
+			
+			'.navTopBorder .mfbox' : {
+				'border': "1px solid" + accordionBackGroundColor
+			},
+			
+			'.multilistVersion-scroller' : {
+				'border': "1px solid" + accordionBackGroundColor
+			},
+			
+			'.headerInnerTop ul': {
+				'background': "none repeat scroll 0 0" + menuBackGround
+			},
+			
+			'.tabs > li > a, .pills > li > a': {
+				'background' : bodyBackGroundColor,
+			},
+			
+			'.tabs > li > a > label:hover': {
+				'background' : bodyBackGroundColor + "! important",
+				'color': brandingColor + "! important",
+			},
+			
+			'.tabs li, .pills > li': {
+				'border-bottom': "1px solid" +  bodyBackGroundColor
+			},
+			
+			'.mfbox .header-background': {
+				'background' : accordionBackGroundColor
+			},
+			
+			'.multiselectForWebservice' : {
+				'background' : accordionBackGroundColor
+			},
+			
+			'.page-header': {
+				'background' : menuBackGround
+			},
+					
+			'.multilist-scroller ul li': {
+				'color': "#FFFFFF ! important"
+			},
+			
+			'label': {
+				'color': labelActiveColor + "! important"
+			},
+			
+			'li a.active label': {
+				'color': brandingColor + "! important"
+			},
+			
+			'.headerInnerTop li a label': {
+				'color': menufontColor + "! important"
+			},
+
+			'label : hover': {
+				'color': brandingColor + "! important"
+			},
+			
+			'.custom_features_wrapper_right .theme_accordion_container div div': {
+				'border-bottom' : "1px solid" + accordionBackGroundColor
+			},
+
+			'.custom_features_wrapper_right .theme_accordion_container div div': {
+				'border-bottom' : "1px solid" + accordionBackGroundColor
+			},
+			
+			'.copyrit a ': {
+				'color': copyRightColor
+			},
+			
+			'.copyrit a:hover': {
+				'color': copyRightColor
+			},
+			
+			'.custom_features_wrapper_right .theme_accordion_container div div a' : {
+				'color': buttonColor
+			},
+			
+			'.download_tbl_header': {
+				'background': accordionBackGroundColor
+			},
+			
+			'.download_tbl': {
+				'border' : "1px solid" + accordionBackGroundColor
+			},
+			'.tblheader' : {
+				'background': accordionBackGroundColor
+			},
+			
+			'.video-js-box .vjs-controls > div' : {
+				'background': "none repeat scroll 0 0" + brandingColor
+			},
+			
+			'label, input, button, select, textarea' : {
+				'font-weight': "bold"
 			}
+			
 		});
 	}
 	

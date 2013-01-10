@@ -1810,4 +1810,14 @@ public interface FrameworkConstants {
 		String PNG       = ".png";
 		
 		
+		/**
+		 * Constants for Error in Changing Logo and Theme 
+		 */
+		
+		String EXCEPTION_FETCHLOGO_IMAGE = "changecustomer.exception.message.fetchlogo";
+		String EXCEPTION_FRAMEWORK_THEME = "changecustomer.exception.message.themechange";
+		String EXCEPTION_FRAMEWORKSTREAM = "changecustomer.exception.message.stream";
+		
+		
+		
 }
