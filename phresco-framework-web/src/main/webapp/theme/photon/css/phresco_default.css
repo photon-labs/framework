@@ -2962,6 +2962,20 @@ fieldset {
 	text-align:left;
 }
 
+.envSuccessMsg {
+	float:left;
+	padding-top:7px;
+	width:62%;
+	text-align:left;
+}
+
+.updateMsg {
+	float:left;
+	padding-top:7px;
+	width:62%;
+	text-align:left;
+}
+
 #navigation ul li a {
    display: block;
    text-decoration: none;
@@ -4081,7 +4095,7 @@ div.submit_input {
     width:100%;
     float:left;
     margin:0px;
-    padding:0px;
+    padding:4px 0;
     font-weight: bold;
 }
 
@@ -5014,6 +5028,10 @@ textarea.xxlarge {
 	display: none;
 }
 
+.hideClipBoardImage {
+	display: none;
+}
+
 /** To show the content **/
 .showContent {
 	display: block;
@@ -5338,9 +5356,9 @@ a[id='androidSigning']:hover {
 	width :28%;
 }
 
-.report_scroll { 
+.report_scroll {
 	overflow: auto; 
-	height: 181px;
+	height: 231px;
 }
 
 #availableReports { 
@@ -6225,4 +6243,11 @@ color: #313131;
 .repo_form input[type="password"] {
 	border: 1px solid #CCCCCC !important;
 	width: 215px ;
+}
+
+.errorNotification {
+	color: red;
+ 	float: right;
+    margin-top: -22px;
+    padding-right: 10px;
 }

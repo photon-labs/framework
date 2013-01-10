@@ -446,8 +446,12 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 		testCasePathMap.put(TechnologyTypes.JAVA_STANDALONE, XPATH_JAVA_WEBSERVICE_TESTCASE);
 	}
 	
-	public String getSqlFilePath(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
-		return getPomProcessor(appinfo.getAppDirName()).getProperty("phresco.sql.path");
+	public String getSqlFilePath(String oldAppDirName) throws PhrescoException, PhrescoPomException {
+		return getPomProcessor(oldAppDirName).getProperty("phresco.sql.path");
+	}
+	
+	public String getUnitTestReportOptions(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
+		return getPomProcessor(appinfo.getAppDirName()).getProperty("phresco.unitTest");
 	}
 	
     public String getUnitTestDir(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
@@ -457,13 +461,25 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     public String getUnitTestReportDir(ApplicationInfo appInfo) throws PhrescoPomException, PhrescoException {
         return getPomProcessor(appInfo.getAppDirName()).getProperty(POM_PROP_KEY_UNITTEST_RPT_DIR);
     }
+    
+    public String getUnitTestReportDir(ApplicationInfo appInfo, String option) throws PhrescoPomException, PhrescoException {
+        return getPomProcessor(appInfo.getAppDirName()).getProperty(POM_PROP_KEY_UNITTEST_RPT_DIR_START + option + POM_PROP_KEY_UNITTEST_RPT_DIR_END);
+    }
 
 	public String getUnitTestSuitePath(ApplicationInfo appInfo) throws PhrescoException, PhrescoPomException {
         return getPomProcessor(appInfo.getAppDirName()).getProperty(POM_PROP_KEY_UNITTEST_TESTSUITE_XPATH);
     }
+	
+	public String getUnitTestSuitePath(ApplicationInfo appInfo, String option) throws PhrescoException, PhrescoPomException {
+        return getPomProcessor(appInfo.getAppDirName()).getProperty(POM_PROP_KEY_UNITTEST_TESTSUITE_XPATH_START + option + POM_PROP_KEY_UNITTEST_TESTSUITE_XPATH_END);
+    }
     
     public  String getUnitTestCasePath(ApplicationInfo appInfo) throws PhrescoException, PhrescoPomException {
         return getPomProcessor(appInfo.getAppDirName()).getProperty(POM_PROP_KEY_UNITTEST_TESTCASE_PATH);
+    }
+    
+    public  String getUnitTestCasePath(ApplicationInfo appInfo, String option) throws PhrescoException, PhrescoPomException {
+        return getPomProcessor(appInfo.getAppDirName()).getProperty(POM_PROP_KEY_UNITTEST_TESTCASE_PATH_START + option + POM_PROP_KEY_UNITTEST_TESTCASE_PATH_END);
     }
     
     public String getSeleniumToolType(ApplicationInfo appInfo) throws PhrescoException, PhrescoPomException {
@@ -737,6 +753,10 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	}
     	
     	StringTemplate mapElement = new StringTemplate(getMapTemplate());
+    	if (pm.isMandatory()) {
+    		mapElement.setAttribute("mandatory", getMandatoryTemplate());
+    	}
+    	
     	mapElement.setAttribute("legendHeader", pm.getLableText());
     	List<BasicParameterModel> childs = pm.getChilds();
     	for (BasicParameterModel child : childs) {
@@ -842,6 +862,21 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     		return constructSingleSelectElement(pm);
     	}
     }
+    
+    public static StringTemplate constructActionsElement(ParameterModel pm) {
+        StringTemplate controlGroupElement = new StringTemplate(getControlGroupTemplate());
+        controlGroupElement.setAttribute("ctrlGrpId", pm.getControlGroupId());
+        StringTemplate lableElmnt = constructLabelElement(pm.isMandatory(), pm.getLableClass(), "");
+        
+        StringTemplate actionsElement = new StringTemplate(getActionsTemplate());
+        actionsElement.setAttribute("value", pm.getLableText());
+        actionsElement.setAttribute("id", pm.getId());
+        actionsElement.setAttribute("onClickFunction", pm.getOnClickFunction());
+        
+        controlGroupElement.setAttribute("lable", lableElmnt);
+        controlGroupElement.setAttribute("controls", actionsElement);
+        return controlGroupElement;
+    }
 
     public static StringTemplate constructSingleSelectElement(ParameterModel pm) {
     	StringTemplate controlGroupElement = new StringTemplate(getControlGroupTemplate());
@@ -905,7 +940,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
         		    optionKey = ((com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.Childs.Child.PossibleValues.Value) value).getKey();
         		}
 
-        		if (CollectionUtils.isNotEmpty(selectedValues) && selectedValues.contains(optionKey)) {
+        		if (CollectionUtils.isNotEmpty(selectedValues) && (selectedValues.contains(optionKey) || selectedValues.contains(optionValue))) {
         			selectedStr = "selected";
         		} else {
         			selectedStr = "";
@@ -924,6 +959,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
                     builder.append("' ");
                 }
                 builder.append(selectedStr);
+                builder.append(" ");
                 builder.append("onclick='");
                 builder.append(optionsOnclickFunctioin);
                 builder.append("'>");
@@ -962,7 +998,13 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     		} else {
     			checkedStr = "";
     		}
-    		builder.append("<li><input type='checkbox' class='popUpChckBox' value=\"");
+    		String additionalParam = getAdditionalParam(value, "");
+    		String onClickFunction = "";
+    		if (StringUtils.isNotEmpty(additionalParam)) {
+    		    onClickFunction = "updateDepdForMultSelect(this)";
+    		}
+    		
+    		builder.append("<li><input type='checkbox' additionalParam=\"dependency="+ additionalParam + "\" onclick=\""+ onClickFunction + "\" class='popUpChckBox' value=\"");
     		builder.append(optionValue + "\" name=\""+ name + "\" " + checkedStr + ">" + optionValue + "</li>");
     	}
 
@@ -1145,7 +1187,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     private static String getBrowseFileTreeTemplate(String fileTypes) {
     	StringBuilder sb = new StringBuilder();
     	sb.append("<div class='controls'>")
-    	.append("<input type='text' class=\"$class$\" id='fileLocation'")
+    	.append("<input type='text' class=\"$class$\" id='fileLocation' style='margin-right:5px;'")
     	.append("name=\"$name$\" >")
     	.append("<input id='browseButton' class='btn-primary btn_browse browseFileLocation'")
     	.append("value='Browse' type='button' fileTypes="+fileTypes+" onclick='browseFiles(this);'></div>");
@@ -1156,19 +1198,19 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     private static String getMapTemplate() {
     	StringBuilder sb = new StringBuilder();
     	sb.append("<fieldset class='mfbox siteinnertooltiptxt popup-fieldset fieldSetClassForHeader'>")
-    	.append("<legend class='fieldSetLegend'>$legendHeader$</legend>")
+    	.append("<legend class='fieldSetLegend'>$mandatory$ $legendHeader$</legend>")
     	.append("<table align='center'>")
     	.append("<thead class='header-background'>")
     	.append("<tr class='borderForLoad'>")
-    	.append("<th class='borderForLoad'>$keyLabel$</th>")
-    	.append("<th class='borderForLoad'>$valueLabel$</th><th></th><th></th></tr></thead>")
+    	.append("<th class='borderForLoad'>$keyMandatory$$keyLabel$</th>")
+    	.append("<th class='borderForLoad'>$valueMandatory$$valueLabel$</th><th></th><th></th></tr></thead>")
     	.append("<tbody id='propTempTbodyForHeader'>")
     	.append("<tr class='borderForLoad'>")
     	.append("$mapControls$")
     	.append("<td class='borderForLoad'>")
     	.append("<a><img class='add imagealign' src='images/icons/add_icon.png' onclick='addRow(this);'></a></td>")
     	.append("</tr></tbody></table></fieldset>");
-    	
+
     	return sb.toString();
     }
     
@@ -1202,6 +1244,15 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	.append("name=\"$name$\" value=\"$value$\" $checked$ onchange=\"$onChangeFunction$\" onclick=\"$onClickFunction$\" $additionalParam$/>")
     	.append("<span class='help-inline' id=\"$ctrlsId$\"></span></div>");
     	return sb.toString();
+    }
+    
+    private static String getActionsTemplate() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<div class='controls'>")
+        .append("<input type='button' class=\"btn btn-primary $class$\" id=\"$id$\" ")
+        .append("name=\"$name$\" value=\"$value$\" $checked$ onclick=\"$onClickFunction$\" $additionalParam$/>")
+        .append("<span class='help-inline' id=\"$ctrlsId$\"></span></div>");
+        return sb.toString();
     }
     
     private static String getMultiSelectTemplate() {

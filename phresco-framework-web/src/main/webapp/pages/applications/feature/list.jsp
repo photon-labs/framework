@@ -37,6 +37,7 @@
 
 <%
 	Gson gson = new Gson();
+	boolean defaultModule = false;
 	String techId = (String) request.getAttribute(FrameworkConstants.REQ_TECHNOLOGY);
 	String appId = (String) request.getAttribute(FrameworkConstants.REQ_APP_ID);
 	List<ArtifactGroup> artifactGroups = (List<ArtifactGroup>)request.getAttribute(FrameworkConstants.REQ_FEATURES_MOD_GRP);
@@ -60,7 +61,7 @@
 		    <section class="lft_menus_container">	
 				<span class="siteaccordion">
 					<span>
-						<input class="feature_checkbox" type="checkbox" canConfigure="<%= canConfigure %>" value="<%= artifactGroup.getName() %>" id="checkAll1"/>
+						<input class="feature_checkbox" type="checkbox" defaultModule="<%= defaultModule %>" canConfigure="<%= canConfigure %>" value="<%= artifactGroup.getName() %>" id="checkAll1"/>
 						<a style="float: left; margin-left:2%;" href="#"><%= artifactGroup.getName() %></a>
 						
 						<select class="input-mini features_ver_sel" id="<%= artifactGrpName %>" moduleId="<%= artifactGroup.getId() %>" name="<%=artifactGroup.getName() %>" >
@@ -106,6 +107,7 @@
 	$(document).ready(function() {
 		hideLoadingIcon();//To hide the loading icon
 		accordion();
+		getSelectedFeatures();
 		getDefaultFeatures();
 		hideProgressBar();
 	});
@@ -127,14 +129,28 @@
 		var jsonObjectParam = {};
 		var jsonObject = <%= gson.toJson(artifactGroups) %>;
 		jsonObjectParam.artifactGroups = jsonObject;
+		jsonObjectParam.technology = '<%= techId %>';
 		var jsonString = JSON.stringify(jsonObjectParam);
 		loadJsonContent("fetchDefaultFeatures", jsonString, '', '', true);
 	}
 	
+	//To get the selected features
+	function getSelectedFeatures() {
+		var params = getBasicParams();
+		params = params.concat("&type=");
+		params = params.concat('<%= type%>');
+		params = params.concat("&techId=");
+		params = params.concat('<%= techId %>');
+		loadContent("fetchSelectedFeatures", '', '', params, true, true);
+	}
+	
 	//To check the Features and the corressponding version
-	function makeFeaturesSelected(defaultModules, depArtifactInfoIds) {
+	function makeFeaturesSelected(defaultModules, depArtifactInfoIds, from) {
 		for (i in defaultModules) {  //To check the default feature
 			$("input:checkbox[value='" + defaultModules[i] + "']").attr('checked', true);
+			if (from != undefined && !isBlank(from) && from === "defaultFeature") {
+				$("input:checkbox[value='" + defaultModules[i] + "']").attr('defaultModule', true);
+			}
 		}
 		for (i in defaultModules) {  //To select the default version
 			var featureName = defaultModules[i];
@@ -146,6 +162,9 @@
 				}
 			});
 		}
-		clickToAdd();
+		if (from != "fetchSelectedFeatures") {
+			clickToAdd();
+		} 
 	}
+	
 </script>

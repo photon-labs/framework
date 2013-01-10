@@ -255,10 +255,6 @@ body {
 	background: linear-gradient(top, rgba(70,11,13,1) 0%,rgba(0,0,0,1) 44%,rgba(100,15,17,1) 100%); W3C */
 }
 
-#about{
-	color: #9D261D;
-}
-
 .btn-primary {
 	background: #4f577c; /* Old browsers */
 }
@@ -1387,6 +1383,10 @@ label {
 
 #errMsg, #advSettingsErrMsg, #jsErrMsg {
 	color:red;
+}
+
+#successMsg {
+	color:green;
 }
 
 #logimErrMesg {

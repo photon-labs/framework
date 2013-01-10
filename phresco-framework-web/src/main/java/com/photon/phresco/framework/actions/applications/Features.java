@@ -39,6 +39,7 @@ import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.ArtifactGroupInfo;
 import com.photon.phresco.commons.model.ArtifactInfo;
 import com.photon.phresco.commons.model.CoreOption;
+import com.photon.phresco.commons.model.DownloadInfo;
 import com.photon.phresco.commons.model.Element;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.PropertyTemplate;
@@ -102,8 +103,13 @@ public class Features extends FrameworkBaseAction {
 	
 	private String nameError = "";
 	private String codeError = "";
+	private String appDirError = "";
 	private boolean errorFound = false;
 	private String applicationVersionError = "";
+	private String serverError = "";
+	private String databaseError = "";
+	private String serverName = "";
+	private String databaseName = "";
 	
 	private String configTemplateType = "";
 	
@@ -112,6 +118,8 @@ public class Features extends FrameworkBaseAction {
 	private List<ArtifactGroup> artifactGroups = new ArrayList<ArtifactGroup>();
 	List<String> depArtifactGroupNames = new ArrayList<String>();
 	List<String> depArtifactInfoIds = new ArrayList<String>();
+	List<String> selArtifactGroupNames = new ArrayList<String>();
+	List<String> selArtifactInfoIds = new ArrayList<String>();
 	List<String> dependencyIds = new ArrayList<String>();
 	boolean dependency = false;
 	
@@ -208,6 +216,14 @@ public class Features extends FrameworkBaseAction {
 		        slctFeature.setCanConfigure(true);
 		    }
 		}
+		List<RequiredOption> appliesToReqird = artifactInfo.getAppliesTo();
+		if (CollectionUtils.isNotEmpty(appliesToReqird)) {
+			for (RequiredOption requiredOption : appliesToReqird) {
+				if (requiredOption.isRequired() && requiredOption.getTechId().equals(techId)) {
+					slctFeature.setDefaultModule(true);
+				}
+			}
+		}
 		
 		return slctFeature;
 		
@@ -223,6 +239,8 @@ public class Features extends FrameworkBaseAction {
             S_LOGGER.debug("Entering Method Features.validateForm()");
         }
     	
+    	ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
+    	List<ProjectInfo> projects = projectManager.discover(getCustomerId());
     	boolean hasError = false;
     	if (APP_INFO.equals(getFromTab())) {
 	    	if (StringUtils.isEmpty(getName().trim())) {
@@ -235,11 +253,50 @@ public class Features extends FrameworkBaseAction {
 	            hasError = true;
 	    	}
 	    	
+	    	if(StringUtils.isNotEmpty(getAppDir())) {
+		    	for(ProjectInfo project : projects) {
+		    		List<ApplicationInfo> appInfos = project.getAppInfos();
+		    		for (ApplicationInfo applicationInfo : appInfos) {
+		    			if(applicationInfo.getAppDirName().equals(getAppDir()) && !applicationInfo.getId().equals(getAppId())) {
+						 	setAppDirError(getText(ERROR_APP_DIR_EXISTS));
+						    hasError = true;
+						    break;
+						}
+					}
+		    	}
+			}
+	    	
 	    	if (StringUtils.isEmpty(getApplicationVersion())) {
 	    		setApplicationVersionError(getText(ERROR_VERSION));
 	            hasError = true;
 	    	}
 	    	
+	    	if (CollectionUtils.isNotEmpty(getServer())) {
+				for (String serverId : getServer()) {
+					if(StringUtils.isNotEmpty(serverId)) {
+						if(ArrayUtils.isEmpty(getReqParameterValues(serverId))) {
+							DownloadInfo downloadInfo = getServiceManager().getDownloadInfo(serverId);
+							setServerName(downloadInfo.getName());
+							setServerError(getText(ERROR_SERV_VER_MISSING, downloadInfo.getName()));
+							hasError=true;
+						}
+					}
+				}
+			}
+	    	
+	    	if (CollectionUtils.isNotEmpty(getDatabase())) {
+				for (String databaeId : getDatabase()) {
+					if(StringUtils.isNotEmpty(databaeId)) {
+						if(ArrayUtils.isEmpty(getReqParameterValues(databaeId))) {
+							DownloadInfo downloadInfo = getServiceManager().getDownloadInfo(databaeId);
+							setDatabaseName(downloadInfo.getName());
+							setDatabaseError(getText(ERROR_DB_VER_MISSING, downloadInfo.getName()));
+							hasError=true;
+						}
+					}
+				}
+			}
+	    	   	
 	    	if (hasError) {
 	            setErrorFound(true);
 	        }
@@ -342,22 +399,22 @@ public class Features extends FrameworkBaseAction {
 	    List<PropertyTemplate> propertyTemplates = new ArrayList<PropertyTemplate>();
 	    try {
 	        List<Configuration> featureConfigurations = getApplicationProcessor().preFeatureConfiguration(getApplicationInfo(), getFeatureName());
+	        Properties properties = null;
 	        if (CollectionUtils.isNotEmpty(featureConfigurations)) {
 	            for (Configuration featureConfiguration : featureConfigurations) {
-	                Properties properties = featureConfiguration.getProperties();
+	                properties = featureConfiguration.getProperties();
 	                Set<Object> keySet = properties.keySet();
 	                for (Object key : keySet) {
 	                    String keyStr = (String) key;
-	                    String value = properties.getProperty(keyStr);
 	                    String dispName = keyStr.replace(".", " ");
 	                    PropertyTemplate propertyTemplate = new PropertyTemplate();
 	                    propertyTemplate.setKey(keyStr);
 	                    propertyTemplate.setName(dispName);
-	                    //propertyTemplate.setPossibleValues(Collections.singleton(value));
 	                    propertyTemplates.add(propertyTemplate);
 	                }
 	            }
 	        }
+	        setReqAttribute(REQ_PROPERTIES_INFO, properties);
 	        setReqAttribute(REQ_HAS_CUSTOM_PROPERTY, true);
 	    } catch (PhrescoException e) {
 	        throw new PhrescoException(e);
@@ -384,16 +441,51 @@ public class Features extends FrameworkBaseAction {
 			List<ArtifactInfo> versions = artifactGroup.getVersions();
 			for (ArtifactInfo artifactInfo : versions) {
 				List<RequiredOption> appliesTo = artifactInfo.getAppliesTo();
-				for (RequiredOption requiredOption : appliesTo) {
-					if (requiredOption.isRequired()) {
-						depArtifactGroupNames.add(artifactGroup.getName());
-						depArtifactInfoIds.add(artifactInfo.getId());
+				if(CollectionUtils.isNotEmpty(appliesTo)) {
+					for (RequiredOption requiredOption : appliesTo) {
+						if (requiredOption.isRequired() && requiredOption.getTechId().equals(getTechnology())) {
+							depArtifactGroupNames.add(artifactGroup.getName());
+							depArtifactInfoIds.add(artifactInfo.getId());
+						}
 					}
 				}
-				
 			}
 		}
+		
 		return SUCCESS;
+	}
+	
+	public String fetchSelectedFeatures() throws PhrescoException {
+		ProjectInfo projectInfo = (ProjectInfo)getSessionAttribute(getAppId() + SESSION_APPINFO);
+		List<String> selectedModules = projectInfo.getAppInfos().get(0).getSelectedModules();
+		List<String> selectedJSLibs = projectInfo.getAppInfos().get(0).getSelectedJSLibs();
+		List<String> selectedComponents = projectInfo.getAppInfos().get(0).getSelectedComponents();
+		List<ArtifactGroup> artifactGroups = getServiceManager().getFeatures(getCustomerId(), getTechId(), getType());
+		if (CollectionUtils.isNotEmpty(selectedModules)) {
+			getSelectedFeatures(selectedModules, artifactGroups);
+		}
+		if (CollectionUtils.isNotEmpty(selectedJSLibs)) {
+			getSelectedFeatures(selectedJSLibs, artifactGroups);
+		}
+		if (CollectionUtils.isNotEmpty(selectedComponents)) {
+			getSelectedFeatures(selectedComponents, artifactGroups);
+		}
+		
+		return SUCCESS;
+	}
+	
+	private void getSelectedFeatures(List<String> selectedFeatues, List<ArtifactGroup> artifactGroups) {
+		for (String selectedModule : selectedFeatues) {
+			for (ArtifactGroup artifactGroup : artifactGroups) {
+				List<ArtifactInfo> versions = artifactGroup.getVersions();
+				for (ArtifactInfo artifactInfo : versions) {
+					if(artifactInfo.getId().equals(selectedModule)) {
+						selArtifactGroupNames.add(artifactGroup.getName());
+						selArtifactInfoIds.add(artifactInfo.getId());
+					}
+				}
+			}
+		}
 	}
 	
 	public String fetchDependentFeatures() {
@@ -1238,4 +1330,62 @@ public class Features extends FrameworkBaseAction {
 	public void setApplicationVersionError(String applicationVersionError) {
 		this.applicationVersionError = applicationVersionError;
 	}
+	
+	public String getAppDirError() {
+		return appDirError;
+	}
+
+	public void setAppDirError(String appDirError) {
+		this.appDirError = appDirError;
+	}
+	
+	public void setServerError(String serverError) {
+		this.serverError = serverError;
+	}
+
+	public String getServerError() {
+		return serverError;
+	}
+
+	public void setDatabaseError(String databaseError) {
+		this.databaseError = databaseError;
+	}
+
+	public String getDatabaseError() {
+		return databaseError;
+    }
+
+	public void setServerName(String serverName) {
+		this.serverName = serverName;
+	}
+
+	public String getServerName() {
+		return serverName;
+	}
+
+	public void setDatabaseName(String databaseName) {
+		this.databaseName = databaseName;
+	}
+
+	public String getDatabaseName() {
+		return databaseName;
+	}
+
+	public List<String> getSelArtifactGroupNames() {
+		return selArtifactGroupNames;
+	}
+
+	public void setSelArtifactGroupNames(List<String> selArtifactGroupNames) {
+		this.selArtifactGroupNames = selArtifactGroupNames;
+	}
+
+	public List<String> getSelArtifactInfoIds() {
+		return selArtifactInfoIds;
+	}
+
+	public void setSelArtifactInfoIds(List<String> selArtifactInfoIds) {
+		this.selArtifactInfoIds = selArtifactInfoIds;
+	}
+
+	
 }

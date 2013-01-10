@@ -114,7 +114,7 @@
 		        showImage = true;
 		    }
 %>
-			constructFeaturesDiv('<%= feature.getDispName() %>', '<%= feature.getDispValue() %>', '<%= feature.getType() %>', '<%= feature.getVersionID() %>', '<%= feature.getModuleId() %>', <%= feature.isCanConfigure() %>, <%= showImage %>);
+			constructFeaturesDiv('<%= feature.getDispName() %>', '<%= feature.getDispValue() %>', '<%= feature.getType() %>', '<%= feature.getVersionID() %>', '<%= feature.getModuleId() %>', <%= feature.isCanConfigure() %>, <%= showImage %>, <%= feature.isDefaultModule()%>); 
 <%		
 	 	}
 	}
@@ -160,12 +160,14 @@
         	var moduleId = $('#'+id).attr('moduleId');
         	var dispValue = $("#" + id + " option:selected").text();
         	var canConfigure = Boolean($(this).attr("canConfigure"));
-        	constructFeaturesDiv(dispName, dispValue, selectedType, hiddenFieldVersion, moduleId, canConfigure);
+        	var defaultModule =$(this).attr("defaultModule");
+        	var isDefault = defaultModule.toLowerCase()=="true"?true:false;
+        	constructFeaturesDiv(dispName, dispValue, selectedType, hiddenFieldVersion, moduleId, canConfigure,'', isDefault);
         });
     }
     
     // Function to construct the hidden fields for selected features
-    function constructFeaturesDiv(dispName, dispValue, hiddenFieldname, hiddenFieldVersion, moduleId, canConfigure, showImage) {
+    function constructFeaturesDiv(dispName, dispValue, hiddenFieldname, hiddenFieldVersion, moduleId, canConfigure, showImage, isDefault) {
 		var jsonParamObj = {};
 		jsonParamObj.dispName = dispName;
 		jsonParamObj.moduleId = moduleId;
@@ -173,14 +175,22 @@
 		jsonParamObj.versionID = hiddenFieldVersion;
 		jsonParamObj.type = hiddenFieldname;
 		jsonParamObj.canConfigure = canConfigure;
+		jsonParamObj.defaultModule = isDefault;
 		var jsonParam = JSON.stringify(jsonParamObj);
 		var ctrlClass = removeSpaces(dispName);
 		var elementsSize = $("#" + ctrlClass + "Div").size();
 // 		$("div[id='"+ ctrlClass +"Div']").remove();
 		if (elementsSize === 0) {
+			var removeImg = "";
+			if(isDefault=== false) {
+				removeImg = "&nbsp;&times;";
+			} else {
+				removeImg = "";
+			}
+			
 			if (showImage) {
 				$("#result").append('<div id="'+ctrlClass+'Div">'+dispName+' - '+dispValue+
-						'<a href="#" onclick="remove(this);">&nbsp;&times;</a>'+
+						'<a href="#" onclick="remove(this);">'+ removeImg +'</a>'+
 						'<input type="hidden" class="'+ctrlClass+'" name="jsonData">' +
 						<%
 							if (optionIds != null && optionIds.contains(FrameworkConstants.FEATURES_KEY) || optionIds.contains(FrameworkConstants.COMPONENT_CONFIG)) {
@@ -193,7 +203,7 @@
 						'</div>');
 			} else {
 				$("#result").append('<div id="'+ctrlClass+'Div">'+dispName+' - '+dispValue+
-						'<a href="#" onclick="remove(this);">&times;</a>'+
+						'<a href="#" onclick="remove(this);">'+ removeImg +'</a>'+
 						'<input type="hidden" class="'+ctrlClass+'" name="jsonData"></div>');
 			}
 			$("."+ctrlClass).val(jsonParam);
@@ -234,11 +244,14 @@
   			$("#successmsg").show();
   			setTimeOut();
   		} else if (url === "fetchDefaultFeatures") {
-			makeFeaturesSelected(data.depArtifactGroupNames, data.depArtifactInfoIds);
+			makeFeaturesSelected(data.depArtifactGroupNames, data.depArtifactInfoIds, "defaultFeature");
+  		} else if (url === "fetchSelectedFeatures") {
+  			makeFeaturesSelected(data.selArtifactGroupNames, data.selArtifactInfoIds, "fetchSelectedFeatures");
 		} else if (url === "fetchDependentFeatures") {
 			if (data.dependency) {
 				makeFeaturesSelected(data.depArtifactGroupNames, data.dependencyIds);
 			}
 		}
   	}
+  	
 </script>

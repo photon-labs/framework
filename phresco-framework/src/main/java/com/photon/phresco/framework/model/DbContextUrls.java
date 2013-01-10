@@ -2,26 +2,18 @@ package com.photon.phresco.framework.model;
 
 
 public class DbContextUrls {
-	private String dbPerName;
+	private String name;
 	private String queryType;
 	private String query;
 	
 	public DbContextUrls() {
 	}
 
-	public DbContextUrls(String dbPerName, String queryType, String query) {
+	public DbContextUrls(String name, String queryType, String query) {
 		super();
-		this.dbPerName = dbPerName;
+		this.name = name;
 		this.queryType = queryType;
 		this.query = query;
-	}
-
-	public String getDbPerName() {
-		return dbPerName;
-	}
-
-	public void setDbPerName(String dbPerName) {
-		this.dbPerName = dbPerName;
 	}
 
 	public String getQueryType() {
@@ -38,6 +30,14 @@ public class DbContextUrls {
 
 	public void setQuery(String query) {
 		this.query = query;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getName() {
+		return name;
 	}
 
 }

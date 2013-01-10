@@ -145,6 +145,40 @@ function clickSave(pageUrl, params, tag, progressText) {
 	});
 }
 
+function mandatoryValidation(pageUrl, form, additionalParams, phase, goal, actionType, appId, stopBtnAction) {
+	var params = getBasicParams();
+	params = params.concat("&phase=");
+	params = params.concat(phase);
+	params = params.concat("&goal=");
+	params = params.concat(goal);
+	params = params.concat("&");
+	params = params.concat(getParameters(form, additionalParams));
+	$.ajax({
+		url : "dynamciParamMandatoryCheck",
+		data : params,
+		type : "POST",
+		async: false,
+		success : function(data) {
+			if (data.errorFound != undefined && data.errorFound) {
+				$(".yesNoPopupErr").html(data.errorMsg);
+			} else {
+				$(".yesNoPopupErr").empty();
+				if (pageUrl == "build" || pageUrl == "deploy") {//build,deploy
+					buildValidateSuccess(pageUrl, actionType);
+				} else if (pageUrl == "startNode" || pageUrl == "startHub") {//start-hub, start-node
+					$("#popupPage").modal('hide');
+					progressPopupAsSecPopup(pageUrl, appId, actionType, form, params, stopBtnAction);
+				} else if (pageUrl == "codeValidate" || pageUrl == "runLoadTest" || pageUrl == "runFunctionalTest") {//codevalidate, loadtest,functional test
+					$("#popupPage").modal('hide');
+					progressPopupAsSecPopup(pageUrl, appId, actionType, form, params);
+				} else if (pageUrl == "runPerformanceTest") {//performance test
+					runPerformanceTest();
+				}
+			}
+		}
+	});
+}
+
 function validate(pageUrl, form, tag, additionalParams, progressText, disabledDiv) {
 	if (disabledDiv != undefined && disabledDiv != "") {
 		enableDivCtrls(disabledDiv);
@@ -226,7 +260,9 @@ function yesnoPopup(url, title, okUrl, okLabel, form, additionalParam) {
 		data = data.concat(additionalParam);
 	}
 	
+	$("#updateMsg").empty();
 	$("#errMsg").empty();
+	$('#successMsg').empty();
 	$('#popup_div').empty();
 	$('#popup_div').css("height", "300px");
 	$('#popup_div').load(url, data); //url to render the body content for the popup
@@ -395,6 +431,11 @@ function checkboxEvent(childChkbxObj, parentChkbxObj) {
 	} else {
 		parentChkbxObj.prop('checked', false);
 	}
+}
+
+function envCheckboxEvent(childChkbxObj, parentChkbxObj) {
+	var chkboxStatus = childChkbxObj.is(':checked');
+	buttonStatus(chkboxStatus);
 }
 
 function buttonStatus(checkAll) {
@@ -809,7 +850,7 @@ function confirmDialog(obj, title, bodyText, okUrl, okLabel) {
 		
 		if (okLabel !== undefined && !isBlank(okLabel)) {
 			$('a [class ~= "popupOk"]').attr('id', okUrl);
-			$('#' + okUrl).html(okLabel); // label for the ok button 
+			$('#' + okUrl).val(okLabel); // label for the ok button
 		}
 	});
 	
@@ -1054,6 +1095,7 @@ function moveUp() {
 			$(this).remove();
 		}
 	});
+	deployScripts();
 }
 
 //To move down the values
@@ -1066,6 +1108,19 @@ function moveDown() {
 			$(this).remove();
 		}
 	});
+	deployScripts();
+}
+
+function deployScripts() {
+	var scriptsObj = {};
+	var dbType = $('#dataBase').val();
+	var sqls = [];
+	$("#selectedSourceScript option").each(function(i, optionSelected) {
+		var selectedScript = $(optionSelected).val();
+		sqls.push(selectedScript);
+	});
+	scriptsObj[dbType] = sqls;
+    $('#fetchSql').val(JSON.stringify(scriptsObj));
 }
 
 function updateDbWithVersionsForRemoveAll() {
@@ -1296,4 +1351,14 @@ function addRow(obj) {
 //triggered when the minus btn is clicked to add a remove the current row
 function removeRow(obj) {
 	$(obj).closest('tr').remove();
+}
+
+function disableUploadButton(controlObj) {
+	controlObj.find("input[type='file']").attr('disabled', 'disabled');
+	controlObj.find($(".qq-upload-button")).removeClass("btn-primary qq-upload-button").addClass("disabled");
+}
+
+function enableUploadButton(controlObj) {
+	controlObj.find("input[type='file']").attr('disabled', false);
+	controlObj.find($(".btn")).removeClass("disabled").addClass("btn-primary qq-upload-button");
 }

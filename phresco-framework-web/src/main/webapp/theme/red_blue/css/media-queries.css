@@ -1795,6 +1795,26 @@ Width >= 1280 and height >= 800
         width: 45.8%;
      }
      
+     .customer_listbox {
+	    height: 22px;
+	    padding: 0;
+	    float: right;
+	    left: 8%;
+	    margin-bottom: 0;
+	    position: absolute;
+	    top: 0px;
+	    width: 100px;
+	}
+	
+	.customer_name {
+	    float: right;
+	    left: 73%;
+	    margin-bottom: 0;
+	    position: absolute;
+	    top: 10px;
+	    width: 73%;
+	}
+	
      .custom_features_wrapper_right {
         border-radius: 6px 6px 6px 6px;
         float: right;
@@ -2151,6 +2171,25 @@ Width > 1280 and <= 1360
 		width: 98.2%;
 	}
 	
+	.customer_listbox {
+	    height: 22px;
+	    padding: 0;
+	    float: right;
+	    left: 97%;
+	    margin-bottom: 0;
+	    position: absolute;
+	    top: 0px;
+	    width: 100px;
+	}
+	
+	.customer_name {
+	    float: right;
+	    left: 73%;
+	    margin-bottom: 0;
+	    position: absolute;
+	    top: 10px;
+	    width: auto;
+	}
 	.intro_container {
 		left: 20%;
 		position: absolute;

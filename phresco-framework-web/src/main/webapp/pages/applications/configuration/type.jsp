@@ -38,6 +38,10 @@
 
 <%
 	ApplicationInfo appInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_APPINFO);
+	String appId = "";
+	if (appInfo != null) {
+	    appId = appInfo.getId();
+	}
 	Properties propertiesInfo = (Properties) request.getAttribute(FrameworkConstants.REQ_PROPERTIES_INFO); 
 	SettingsTemplate settingsTemplate = (SettingsTemplate) request.getAttribute(FrameworkConstants.REQ_SETTINGS_TEMPLATE);	  
 	String selectedType = (String) request.getAttribute(FrameworkConstants.REQ_SELECTED_TYPE);
@@ -130,11 +134,49 @@
     %>
    			<script type="text/javascript">
    				createFileUploader('<%= propertyTemplate.getName() %>');
+   				
+   				function createFileUploader(controlLabel) {
+   					$('#fileControlLabel').html(controlLabel);
+   					$('#fileControl').show();
+   					var imgUploader = new qq.FileUploader ({
+   			            element : document.getElementById('file-uploader'),
+   			            action : 'uploadFile',
+   			            multiple : false,
+   			            allowedExtensions : ["zip"],
+   			            buttonLabel : '<s:text name="lbl.upload" />',
+   			            typeError : '<s:text name="err.invalid.file.type" />',
+   			            debug: true
+   			        });
+   					listUploadedFiles();
+   				}
+   				
+   				function listUploadedFiles() {
+   					var params = getBasicParams();
+   					params = params.concat("&configTempType=");
+   					params = params.concat($("#templateType option:selected").text());
+   					loadContent("listUploadedFiles", '', '', params, true, true);
+   				}
    			</script>
+	<%
+		} else if (FrameworkConstants.TYPE_ACTIONS.equals(propertyTemplate.getType())) {
+	%>
+            <script type="text/javascript">
+            	constructBtnElement('<%= pm.getLableText() %>', '<%= pm.getId() %>');
+            	
+            	function constructBtnElement(btnVal, btnId) {
+   					var ctrlGroup = "<div class='control-group'><label for='xlInput' class='control-label labelbold'></label>" +
+   									"<div class='controls'><input type='button' class='btn btn-primary' onclick='performBtnEvent(this)'" + 
+   									"id='"+ btnId +"' value='"+ btnVal +"'/></div></div>";
+   					$('#configProperties').append(ctrlGroup);
+   									
+   				}
+			</script>
 	<%
 		} else if (CollectionUtils.isNotEmpty(possibleValues)) {
         	pm.setObjectValue(possibleValues);
-        	//pm.setSelectedValues(value);
+        	List<String> alreadySelectedValue = new ArrayList<String>();
+        	alreadySelectedValue.add(value);
+        	pm.setSelectedValues(alreadySelectedValue);
         	pm.setMultiple(false);
             StringTemplate dropDownControl = FrameworkUtil.constructSelectElement(pm);
             sb.append(dropDownControl);
@@ -150,16 +192,19 @@
         	pm.setValue(value);
             StringTemplate inputControl = FrameworkUtil.constructInputElement(pm);
 			sb.append(inputControl); 
-		%>
+	%>
 			<script type="text/javascript">
 				$('input[name="<%= propertyTemplate.getKey() %>"]').live('input propertychange',function(e) {
 					var value = $(this).val();
 					var type = '<%= propertyTemplate.getType() %>';
 					var txtBoxName = '<%= propertyTemplate.getKey() %>';
-					validateInput(value, type, txtBoxName);
+					if(txtBoxName != '<%= FrameworkConstants.EMAIL_ID %>') {
+						validateInput(value, type, txtBoxName);
+					}
 				}); 
 			</script>	
-       <% } 
+	<%
+		}
         if (FrameworkConstants.CONFIG_TYPE.equals(propertyTemplate.getKey())) {
         	pm.setMandatory(true);
         	pm.setLableText("Version");
@@ -171,7 +216,7 @@
         	pm.setObjectValue(null);
         	StringTemplate dropDownControl = FrameworkUtil.constructSelectElement(pm);
         	sb.append(dropDownControl);
-        }
+		}
     }
 %>
 	<%= sb.toString() %>
@@ -230,12 +275,12 @@
 				value="<%= siteCoreInstPath %>"/>
 			<span class="help-inline" id="siteCoreInstPathError"></span>
 		</div>
-	  </div>
+	</div>
 <% 	
 	}
 %>
 
-	<div class="control-group hideContent" id="fileControl">
+	<div class="control-group hideContent" id="fileControl" style="margin-bottom: -19px;">
 		<label class="control-label labelbold" id="fileControlLabel"> 
 		 	
 		</label>
@@ -277,7 +322,7 @@
 		}
 		
 		if (serverType == "NodeJs" || serverType == "NodeJs Mac") {
-			$("#deploy_dirControl label").html('Deploy Directory');
+			hideDeployDir();
 		}
 		 
 		$("#type").change(function() {
@@ -362,7 +407,7 @@
 	function validateInput(value, type, txtBoxName) {
 		var newVal = "";
 		if(type == "String") {
-			newVal = removeSpaces(checkForSplChrForString(value));
+			newVal = checkForSplChrForString(value);
 		} else if(type == "Number") {
 			newVal = removeSpaces(allowNumHyphen(value));
 		} else {
@@ -396,28 +441,28 @@
 		//To fill the versions 
 		if (pageUrl == "fetchProjectInfoVersions") {
 			fillSelectbox($("select[name='version']"), data.versions);
-		}
-		
-		if (pageUrl == "fetchSettingProjectInfoVersions") {
+		} else if (pageUrl == "fetchSettingProjectInfoVersions") {
 			fillSelectbox($("select[name='version']"), data.versions);
+		} else if (pageUrl == "listUploadedFiles") {
+			if (data.uploadedFiles != undefined && !isBlank(data.uploadedFiles)) {
+				disableUploadButton($("#file-uploader"));
+				for (i in data.uploadedFiles) {
+					var fileName = data.uploadedFiles[i];
+					var ul = '<ul class="qq-upload-list"><li>' +
+				                '<span class="qq-upload-file">' + fileName + '</span>' +
+				                '<img class="qq-upload-remove" src="images/icons/delete.png" style="cursor:pointer;" alt="Remove" '+
+				                'eleAttr="file-uploader" fileName="'+ fileName +'" onclick="removeUploadedFile(this);"/>' +
+			            		'</li></ul>';
+					$('#file-uploader').append(ul);
+				}
+			}
 		}
-	}
-	
-	function createFileUploader(controlLabel) {
-		$('#fileControlLabel').html(controlLabel);
-		$('#fileControl').show();
-		var imgUploader = new qq.FileUploader ({
-            element : document.getElementById('file-uploader'),
-            action : 'uploadFile',
-            multiple : false,
-            allowedExtensions : ["zip"],
-            buttonLabel : '<s:text name="lbl.upload" />',
-            typeError : '<s:text name="err.invalid.file.type" />',
-            debug: true
-        });
 	}
 	
 	function removeUploadedFile(obj) {
+		var eleAttr = $(obj).attr("eleAttr");
+		enableUploadButton($("#" + eleAttr));
+		
 		$(obj).parent().remove();
 		
 		var params = "fileName=";
@@ -436,16 +481,12 @@
 	}
 	
 	function fileError(data, type) {
-		var controlObj;
-		var msgObj;
-		if (type == "customerImageFile") {
-			controlObj = $("#fileControl");
-			msgObj = $("#fileError");
-		}
-		if (data != undefined && !isBlank(data)) {
-			showError(controlObj, msgObj, data);
-		} else {
-			hideError(controlObj, msgObj);
-		}
+		
+	}
+	
+	function performBtnEvent(obj) {
+		var url = $(obj).attr("id");
+		var params = getBasicParams();
+		progressPopupAsSecPopup(url, '<%= appId %>', url, $("#generateBuildForm"), params);
 	}
 </script>

@@ -222,9 +222,7 @@
 				showPopuploadingIcon();
 				loadContent('printAsPdf', $('#generatePdf'), $('#popup_div'), '', false, true);
 			} else {
-				$('#popupPage').modal('hide');
-				var params = getBasicParams();
-				progressPopupAsSecPopup(okUrl, '<%= appId %>', '<%= FrameworkConstants.LOAD %>', $("#generateBuildForm"), params);
+				mandatoryValidation(okUrl, $("#generateBuildForm"), '', 'load-test', 'load-test', '<%= FrameworkConstants.LOAD %>', '<%= appId %>');
 			}
 		}		
 		

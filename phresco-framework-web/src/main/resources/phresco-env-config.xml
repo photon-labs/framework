@@ -17,11 +17,11 @@
 	
 		<WebService desc="" name="Webservice">
 			<protocol>http</protocol>
-			<host>172.16.18.178</host>
-			<port>2020</port>
+			<host>23.21.45.193</host>
+			<port>80</port>
 			<username/>
 			<password/>
-			<context>service-testing</context>
+			<context>service-2.0</context>
 			<additional_context>/rest/api</additional_context>
 		</WebService>
                  
@@ -62,7 +62,7 @@
         
     </environment>
     
-    <environment default="false" name="Testing">
+    <environment default="true" name="Testing">
 	 <Server appliesTo="tech-html5-widget" desc="" name="server">
             <protocol>http</protocol>
             <host>localhost</host>
@@ -80,8 +80,8 @@
 	
 	<WebService desc="" name="webservice">
             <protocol>http</protocol>
-            <host>23.21.183.219</host>
-            <port>8080</port>
+            <host>172.16.17.116</host>
+            <port>7070</port>
             <username/>
             <password/>
             <context>service-testing</context>

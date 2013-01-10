@@ -123,7 +123,7 @@
 															<tr>
 																<td class="no-left-bottom-border table-pad">
 																	<input type="checkbox" class="check <%=env.getName() %>" name="checkedConfig" value='<%= configJson %>'
-																		onclick="checkboxEvent($('.<%=env.getName() %>'), $('#<%=env.getName() %>'));">
+																		onclick="envCheckboxEvent($('.<%=env.getName() %>'), $('#<%=env.getName() %>'));">
 																</td>
 																<td class="no-left-bottom-border table-pad">
 																	<a href="#" onclick="editConfiguration('<%= env.getName() %>', '<%= configuration.getType() %>','<%= configuration.getName() %>');" 
@@ -187,6 +187,17 @@
 		hideLoadingIcon();//To hide the loading icon
 		hideProgressBar();
 		accordion();
+		deleteButtonStatus();
+		
+		$('.mfbox').find("input[type='checkbox']").change(function() {
+			if ($('.mfbox').find("input[type='checkbox']").length != $('.mfbox').find("input[type='checkbox']:checked").length) {
+				$('.accordianChkBox').prop('checked', false);
+			}
+		});
+		
+		$('.table_div').find("input[type='checkbox']").change(function() {
+			deleteButtonStatus();
+		});
 		
 		<% if (CollectionUtils.isEmpty(envs)) { %>
 			$("input[name=configAdd]").attr("disabled", "disabled");
@@ -197,16 +208,6 @@
 		  	$("#configAdd").addClass("btn-primary");
 			$("#configAdd").removeClass("btn-disabled");
 		<% } %>
-		
-		if ($('.table_div').find("input[type='checkbox']:checked").length < 1) {
-			$("input[name=deleteBtn]").attr("disabled", "disabled");
-			$("#deleteBtn").removeClass("btn-primary"); 
-	        $("#deleteBtn").addClass("btn-disabled");
-		} else {
-			$("input[name=deleteBtn]").removeAttr("disabled");
-			$("#deleteBtn").addClass("btn-primary");
-			$("#deleteBtn").removeClass("btn-disabled");
-		}
 		
 		<% 
 			if(urls != null) {
@@ -221,7 +222,19 @@
 			}
 		%>
 	});
-
+	
+	function deleteButtonStatus() {
+		if ($('.table_div').find("input[type='checkbox']:checked").length < 1) {
+			$("input[name=deleteBtn]").attr("disabled", "disabled");
+			$("#deleteBtn").removeClass("btn-primary"); 
+	        $("#deleteBtn").addClass("btn-disabled");
+		} else {
+			$("input[name=deleteBtn]").removeAttr("disabled");
+			$("#deleteBtn").addClass("btn-primary");
+			$("#deleteBtn").removeClass("btn-disabled");
+		}
+	};
+	
 	function isConnectionAlive(url, id) {
 	    $.ajax({
 	    	url : 'connectionAliveCheck',

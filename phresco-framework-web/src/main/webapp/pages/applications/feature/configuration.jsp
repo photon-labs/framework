@@ -18,6 +18,7 @@
   ###
   --%>
 
+<%@page import="java.util.Properties"%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.util.List" %>
@@ -42,6 +43,7 @@
 	boolean hasCustomProperty = (Boolean) request.getAttribute(FrameworkConstants.REQ_HAS_CUSTOM_PROPERTY);
 	String selectedType = (String) request.getAttribute(FrameworkConstants.REQ_SELECTED_TYPE);
 	List<PropertyTemplate> properties = (List<PropertyTemplate>)request.getAttribute(FrameworkConstants.REQ_PROPERTIES);
+	Properties valueProperties = (Properties)request.getAttribute(FrameworkConstants.REQ_PROPERTIES_INFO);
 	ParameterModel pm = null;
 	StringBuilder sb = new StringBuilder();
 	if (CollectionUtils.isNotEmpty(properties)) {
@@ -70,6 +72,7 @@
 	        } else {
 	        	pm.setInputType(property.getType());
 	        	pm.setPlaceHolder(property.getHelpText());
+	        	pm.setValue((String) valueProperties.get(property.getKey()));
 	            StringTemplate inputControl = FrameworkUtil.constructInputElement(pm);
 				sb.append(inputControl);
 	        }
@@ -90,7 +93,7 @@
 
 <script type="text/javascript">
 	$(document).ready(function() {
-		<% if (FrameworkConstants.CONFIG_TYPE_FEATURES.equals(selectedType)) { %>
+		<% if (FrameworkConstants.CONFIG_TYPE_FEATURES.equals(selectedType) || FrameworkConstants.CONFIG_TYPE_COMPONENTS.equals(selectedType)) { %>
 			hideLoadingIcon();
 		<% } else { %>
 			hidePopuploadingIcon();

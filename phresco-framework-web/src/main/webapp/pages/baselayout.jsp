@@ -108,45 +108,11 @@
 		<!-- jquery editable combobox -->
 		<script src="js/jquery.editable.combobox.js"></script>
 		<script src="js/jss.min.js"></script>
-
-		<script type="text/javascript">
-		    $(document).ready(function() {
-		        applyTheme();
-		        
-				$(".styles").click(function() {
-	                 localStorage.clear();
-	                 var value = $(this).attr("rel");
-	                 localStorage["color"]= value;
-	                 applyTheme();
-	            });
-                  
-				// function to show user info in toggle 
-				$('div aside.usersettings div').hide(0);
-				$('div aside.usersettings').click(function() {
-					$('div aside.usersettings div').slideToggle(0);
-				});
-
-				// to show user info on mouse over
-				$('#signOut aside').mouseenter(function() {
-					$("div aside.usersettings div").hide(0);
-					$(this).children("div aside.usersettings div").show(0);
-				}).mouseleave(function() {
-					$("div aside.usersettings div").hide(0);
-				});
-				showLoadingIcon();
-				clickMenu($("a[name='headerMenu']"), $("#container"), $('#formCustomers'));
-				loadContent("home", '', $("#container"), '', '', true);
-				activateMenu($("#home"));
-			});
-		</script>
 	</head>
 	<body>
         <%
-            User userInfo = (User) session.getAttribute(FrameworkConstants.SESSION_USER_INFO);
-            String displayName = "";
-            if (userInfo != null) {
-                displayName = userInfo.getDisplayName();
-            }
+            User user = (User) session.getAttribute(FrameworkConstants.SESSION_USER_INFO);
+            String displayName = user.getDisplayName();
         %>
 		<div class="modal-backdrop fade in popupalign"></div>
 	    
@@ -187,8 +153,8 @@
                                         </li>
                                     </ul>
                                 </li>
-                                <li><a href="#"><s:text name="lbl.hdr.help"/></a></li>
-                                <li><a href="#"><s:text name="lbl.abt.phresco"/></a></li>
+                                <li><a href="#" id="forum" ><s:text name="lbl.hdr.help"/></a></li>
+                                <li><a href="#" id="about" ><s:text name="lbl.abt.phresco"/></a></li>
                                 <li><a href="<s:url action='logout'/>"><s:text name="lbl.signout"/></a></li>
                             </ul>
                         </div>
@@ -255,15 +221,12 @@
 							<div class="controls customer_select_div">
 								<select name="customerId" class="customer_listbox">
 					                <%
-					                	User user = (User) session.getAttribute(FrameworkConstants.SESSION_USER_INFO);
-					                    if (user != null) {
-					                    	List<Customer> customers = user.getCustomers();
-					                    	for (Customer customer: customers) {
+				                    	List<Customer> customers = user.getCustomers();
+				                    	for (Customer customer: customers) {
 								    %>
 					                       <option value="<%= customer.getId() %>"><%= customer.getName()%></option>
 									<% 
-								            }
-								        } 
+							            }
 								    %>
 								</select>
 							</div>
@@ -346,6 +309,7 @@
 	    <div id="popupPage" class="modal hide fade">
 			<div class="modal-header">
 				<a class="close" data-dismiss="modal" >&times;</a>
+				<img id="clipboard" class="hideClipBoardImage" title="<s:text name="title.copy.to.clipBoard"/>" src="images/icons/clipboard-copy.png">
 				<h3 id="popupTitle"></h3>
 	    </div>
 			<div class="modal-body" id="popup_div">
@@ -357,9 +321,11 @@
 <%-- 				<a href="#" class="btn btn-primary popupOk" id="" onClick="popupOnOk(this);" ><s:text name='lbl.btn.ok'/></a> --%>
 				<input type="button" class="btn btn-primary popupOk" id="" onClick="popupOnOk(this);" value="<s:text name='lbl.btn.ok'/>" href="#"/>
 <%-- 				<a href="#" class="btn btn-primary popupClose" data-dismiss="modal" id="" onClick="popupOnClose(this);"><s:text name='lbl.btn.close'/></a> --%>
-				<input type="button" class="btn btn-primary popupClose" id=""  onClick="popupOnClose(this);" value="<s:text name='lbl.btn.close'/>" data-dismiss="modal" href="#"/>
+				<input type="button" class="btn btn-primary popupClose" id="" onClick="popupOnClose(this);" value="<s:text name='lbl.btn.close'/>" data-dismiss="modal" href="#"/>
 				<img class="popuploadingIcon" id="popuploadingIcon" src="" />
-				<div id="errMsg" class="envErrMsg"></div>
+				<div id="errMsg" class="envErrMsg yesNoPopupErr"></div>
+				<div id="successMsg" class="envSuccessMsg"></div>
+				<div id="updateMsg" class="updateMsg"></div>
 			</div>
 		</div>
 	    <!-- Popup Ends -->
@@ -392,7 +358,7 @@
 			</div>
 			<div class="modal-footer">
 				<input type="text" class="xlarge javastd hideContent" id="browseSelectedLocation" name="browseLocation"/>
-				<label for="xlInput" class="labelbold compressNameLbl" id="compressNameLbl">
+				<label for="xlInput" class="labelbold compressNameLbl hideContent" id="compressNameLbl">
 					<span class="red">*</span>&nbsp;<s:text name="lbl.compress.name"/>
 				</label>
 				<input type="text" class="hideContent compressNameTextBox" id="compressName" name="compressName"/>
@@ -445,6 +411,13 @@
     		loadContent("applications", $('#formCustomers'), $("#container"), '', '', true);
     	});
 		
+		$("#forum").click(function() {
+			loadContent("forum", $('#formCustomers'), $("#container"), '', '', true);
+		});
+		
+		$("#about").click(function() {
+			yesnoPopup('about', 'About Phresco', 'updateAvailable', 'Update Available');
+		});
 	});
 	
 	if ($.browser.safari && $.browser.version == 530.17) {

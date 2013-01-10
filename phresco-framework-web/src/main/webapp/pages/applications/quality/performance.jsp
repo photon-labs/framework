@@ -342,27 +342,35 @@
 			showPopuploadingIcon();
 			loadContent('printAsPdf', $('#generatePdf'), $('#popup_div'), '', false, true);
 		} else if (okUrl === "runPerformanceTest") {
-			var formJsonObject = $('#generateBuildForm').toJSON();
-			var formJsonStr = JSON.stringify(formJsonObject);
-			var templateFunction = new Array();
-			var templateCsvFn = $("#stFileFunction").val();
-			var jsonStr = "";
-			var templJsonStr = "";
-			var sep = "";
-			if (templateCsvFn != undefined && !isBlank(templateCsvFn)) {
-				templateFunction = templateCsvFn.split(",");
-				for (i = 0; i < templateFunction.length; ++i) {
-					jsonStr = window[templateFunction[i]]();
-					templJsonStr = templJsonStr + sep + jsonStr;
-					sep = ",";
-				}
-			}
-			formJsonStr = formJsonStr.slice(0,formJsonStr.length-1);
-			formJsonStr = formJsonStr + ',' + templJsonStr + '}';
-			$("#resultJson").val(formJsonStr);
-			$('#popupPage').modal('hide');
-			var params = getBasicParams();
-			progressPopupAsSecPopup('performanceTest', '<%= appId %>', "performance-test", $('#generateBuildForm'), params, ''); 
+			mandatoryValidation(okUrl, $("#generateBuildForm"), '', 'performance-test', 'performance-test');
 		}
+	}
+	
+	function runPerformanceTest() {
+		var formJsonObject = $('#generateBuildForm').toJSON();
+		var formJsonStr = JSON.stringify(formJsonObject);
+		var templateFunction = new Array();
+		var templateCsvFn = $("#stFileFunction").val();
+		var jsonStr = "";
+		var templJsonStr = "";
+		var sep = "";
+		if (templateCsvFn != undefined && !isBlank(templateCsvFn)) {
+			templateFunction = templateCsvFn.split(",");
+			for (i = 0; i < templateFunction.length; ++i) {
+				jsonStr = window[templateFunction[i]]();
+				templJsonStr = templJsonStr + sep + jsonStr;
+				sep = ",";
+			}
+		}
+		formJsonStr = formJsonStr.slice(0,formJsonStr.length-1);
+		formJsonStr = formJsonStr + ',' + templJsonStr + '}';
+		$("#resultJson").val(formJsonStr);
+		$('#popupPage').modal('hide');
+		var params = getBasicParams();
+		progressPopupAsSecPopup('runPerformanceTest', '<%= appId %>', "performance-test", $('#generateBuildForm'), params, '');
+	}
+	
+	function popupOnClose(obj) {
+		isResultFileAvailbale();
 	}
 </script>

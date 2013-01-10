@@ -246,9 +246,7 @@ function successEvent(pageUrl, data) {
    		successEnvValidation(data);
    	} else if (pageUrl == "fetchBuildInfoEnvs") {
    		fillVersions("environments", data.buildInfoEnvs);
-   	} else if (pageUrl === "changeEveDependancyListener") {
-		showHideAndUpdateData(data);
-	} else if (pageUrl === "checkForHub") { 
+   	} else if (pageUrl === "checkForHub") { 
 		if (data.connectionAlive) {
 			progressPopup('showStartedHubLog', '<%= appId %>', '<%= FrameworkConstants.START_HUB %>', '', '', getBasicParams(), 'stopHub');
 		} else {
@@ -352,17 +350,12 @@ function iphone_HybridTest() {
 function popupOnOk(obj) {
 	var okUrl = $(obj).attr("id");
 	if (okUrl === "startHub") {
-		var params = getBasicParams();
-		$("#popupPage").modal('hide');
-		progressPopupAsSecPopup(okUrl, '<%= appId %>', '<%= FrameworkConstants.START_HUB %>', $("#generateBuildForm"), params, 'stopHub');
+		mandatoryValidation(okUrl, $("#generateBuildForm"), '', 'start-hub', 'start-hub', '<%= FrameworkConstants.START_HUB %>', '<%= appId %>', 'stopHub');
 	} else if (okUrl === "startNode") {
-		var params = getBasicParams();
-		$("#popupPage").modal('hide');
-		progressPopupAsSecPopup(okUrl, '<%= appId %>', '<%= FrameworkConstants.START_NODE %>', $("#generateBuildForm"), params, 'stopNode');
+		mandatoryValidation(okUrl, $("#generateBuildForm"), '', 'start-node', 'start-node', '<%= FrameworkConstants.START_NODE %>', '<%= appId %>', 'stopNode');
 	} else if (okUrl === "runFunctionalTest") {
-		var params = getBasicParams();
-		$("#popupPage").modal('hide');
-		progressPopupAsSecPopup(okUrl, '<%= appId %>', '<%= FrameworkConstants.FUNCTIONAL %>', $("#generateBuildForm"), params);
+		var goal = 'functional-test-' + '<%= functioanlTestTool %>';
+		mandatoryValidation(okUrl, $("#generateBuildForm"), '', 'functional-test', goal, '<%= FrameworkConstants.FUNCTIONAL %>', '<%= appId %>');
 	} else if (okUrl === "printAsPdf") {
 		// show popup loading icon
 		showPopuploadingIcon();

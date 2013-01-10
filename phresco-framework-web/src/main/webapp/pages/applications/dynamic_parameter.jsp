@@ -29,6 +29,7 @@
 <%@ page import="org.apache.commons.lang.StringUtils" %>
 <%@ page import="org.apache.commons.collections.CollectionUtils" %>
 <%@ page import="org.antlr.stringtemplate.StringTemplate" %>
+
 <%@ page import="com.photon.phresco.plugins.util.MojoProcessor"%>
 <%@ page import="com.photon.phresco.framework.actions.applications.DynamicParameterAction"%>
 
@@ -66,7 +67,7 @@
     String className = "";//For performance
     FrameworkUtil frameworkUtil = new FrameworkUtil();
     DynamicParameterAction dpm = new DynamicParameterAction();
-    MojoProcessor mojo = new MojoProcessor(new File(dpm.getPhrescoPluginInfoXmlFilePath(goal, applicationInfo)));
+    MojoProcessor mojo = new MojoProcessor(new File(dpm.getPhrescoPluginInfoXmlFilePath(phase, applicationInfo)));
     StringBuilder stFileFunction = new StringBuilder();
     String sep = "";
 %>
@@ -145,7 +146,7 @@
 					if (StringUtils.isNotEmpty(parameter.getDependency())) {
 						//If current control has dependancy value 
 						List<String> dependancyList = Arrays.asList(parameter.getDependency().split(FrameworkConstants.CSV_PATTERN));
-						Parameter param = mojo.getParameter(phase, dependancyList.get(0));
+						Parameter param = mojo.getParameter(goal, dependancyList.get(0));
 						onClickFunction = "dependancyChckBoxEvent(this, '"+ parameter.getKey() +"', '"+ param.isShow() +"');";
 						onChangeFunction = "changeChckBoxValue(this);";
 					} else {
@@ -337,6 +338,11 @@
 	    });
 	});
 	
+	//to update build number in hidden field for deploy popup
+	<% if (FrameworkConstants.REQ_DEPLOY.equals(from)) { %>
+		$("input[name=buildNumber]").val('<%= buildNumber %>');
+	<% } %>
+	
 	function jecOptionChange() {
 		 $('.jecEditableOption').text("Type or select from the list");
 	}
@@ -359,9 +365,11 @@
 			$("#console_div").empty();
 			//showParentPage();
 			if(url == "build") {
+				$("#popupPage").modal('hide');
 				$("#warningmsg").show();
 				$("#console_div").html("Generating build...");
 			} else if(url == "deploy") {
+				$("#popupPage").modal('hide');
 				$("#console_div").html("Deploying project...");
 			}
 			performUrlActions(url, readerSession);
@@ -371,11 +379,6 @@
 	function performUrlActions(url, actionType) {
 		readerHandlerSubmit(url, '<%= appId %>', actionType, $("#generateBuildForm"), true, getBasicParams(), $("#console_div"));
 	}
-	
-	//to update build number in hidden field for deploy popup
-	<% if (FrameworkConstants.REQ_DEPLOY.equals(from)) { %>
-		$("input[name=buildNumber]").val('<%= buildNumber %>');
-	<% } %>
 	
 	function dependancyChckBoxEvent(obj, currentParamKey, showHideFlag) {
 		selectBoxOnChangeEvent(obj, currentParamKey, showHideFlag);
@@ -445,7 +448,8 @@
 	function showParameters() {
 		$(':input', '#generateBuildForm').each(function() {
 			var currentObjType = $(this).prop('tagName');
-			if (currentObjType === "SELECT" && this.options[this.selectedIndex] !== undefined) {
+			var multipleAttr = $(this).attr('multiple');
+			if (currentObjType === "SELECT" && multipleAttr === undefined && this.options[this.selectedIndex] !== undefined ) {
 				var dependencyAttr =  this.options[this.selectedIndex].getAttribute('additionalparam');
 				if (dependencyAttr !== null) {
 					var csvDependencies = dependencyAttr.substring(dependencyAttr.indexOf('=') + 1);
@@ -491,6 +495,7 @@
 		}
 		
 		if (data.dependency != undefined && !isBlank(data.dependency)) {
+			
 			if (data.dependentValues != undefined && !isBlank(data.dependentValues)) {
 				var isMultiple = $('#' + data.dependency).attr("isMultiple");
 				var controlType = $('#' + data.dependency).attr('type');
@@ -553,9 +558,10 @@
 	function addContext(contextObj) {
 		var html = $("#" + contextObj).html();
 		contextUrlsRowId = contextObj + i;
-		var contextUrlRow = $(document.createElement('div')).attr("id", contextUrlsRowId);
+		var contextUrlRow = $(document.createElement('div')).attr("id", contextUrlsRowId).css('margin-bottom','5px');
 		contextUrlRow.html(html);
-		$('#generateBuild_Modal').append(contextUrlRow);
+		//$('#generateBuild_Modal').append(contextUrlRow);
+		$("#" + contextObj + "Parent").append(contextUrlRow);
 		$(':input:not(:button)', $("#"+contextUrlsRowId)).val('');
 		$("#"+contextUrlsRowId).find('div[id=headerkeyId]').remove();
 		i++;
@@ -607,5 +613,18 @@
 	
 	function removeHeader(obj) {
 		$(obj).parent('div').remove();
+	}
+	
+	function updateDepdForMultSelect(obj) {
+		var checkBoxName = $(obj).attr("name");
+		var dependencyAttr = $(obj).attr("additionalParam").split('=');
+		var dependency = dependencyAttr[1];
+		var csvValue = "";
+		$('input[name='+ checkBoxName +']:checked').each(function() {
+			csvValue = $(this).val() + "," + csvValue;
+		});
+		csvValue = csvValue.substring(0, csvValue.lastIndexOf(","));
+		changeEveDependancyListener(csvValue, checkBoxName);
+		updateDependancy(dependency);
 	}
 </script>

@@ -20,7 +20,6 @@
 <!DOCTYPE struts PUBLIC
 "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
 "http://struts.apache.org/dtds/struts-2.0.dtd">
-
 <struts>
 
     <constant name="struts.custom.i18n.resources" value="framework" />
@@ -221,12 +220,20 @@
         <action name="fetchDefaultFeatures" method="fetchDefaultFeatures" class="com.photon.phresco.framework.actions.applications.Features">
         	<result type="json"/>
         </action>
-		
+
+		<action name="fetchSelectedFeatures" method="fetchSelectedFeatures" class="com.photon.phresco.framework.actions.applications.Features">
+        	<result type="json"/>
+        </action>
+        		
 		<action name="fetchDependentFeatures" method="fetchDependentFeatures" class="com.photon.phresco.framework.actions.applications.Features">
         	<result type="json"/>
         </action>
         
         <action name="showFeatureConfigPopup" method="showFeatureConfigPopup" class="com.photon.phresco.framework.actions.applications.Features">
+          	<result name="success">/pages/applications/feature/configuration.jsp</result>
+        </action>
+        
+        <action name="showFeatureConfigs" method="showFeatureConfigs" class="com.photon.phresco.framework.actions.applications.Configurations">
           	<result name="success">/pages/applications/feature/configuration.jsp</result>
         </action>
         
@@ -400,7 +407,7 @@
         <action name="deploy" method="deploy" class="com.photon.phresco.framework.actions.applications.Build">
             <result name="reader">/pages/applications/reader.jsp</result>
         </action>
-                
+        
         <action name="startServer" method="runAgainstSource" class="com.photon.phresco.framework.actions.applications.Build">
             <result name="reader">/pages/applications/reader.jsp</result>
         </action>
@@ -457,6 +464,26 @@
         </action>
         
         <action name="removeConfigFile" class="com.photon.phresco.framework.actions.applications.Configurations" method="removeConfigFile">
+            <result type="json" />
+        </action>
+        
+        <action name="validateTheme" class="com.photon.phresco.framework.actions.applications.Configurations" method="validateTheme">
+            <result name="reader">/pages/applications/reader.jsp</result>
+        </action>
+        
+        <action name="validateContent" class="com.photon.phresco.framework.actions.applications.Configurations" method="validateContent">
+            <result name="reader">/pages/applications/reader.jsp</result>
+        </action>
+        
+        <action name="convertTheme" class="com.photon.phresco.framework.actions.applications.Configurations" method="convertTheme">
+            <result name="reader">/pages/applications/reader.jsp</result>
+        </action>
+        
+        <action name="convertContent" class="com.photon.phresco.framework.actions.applications.Configurations" method="convertContent">
+            <result name="reader">/pages/applications/reader.jsp</result>
+        </action>
+        
+        <action name="listUploadedFiles" class="com.photon.phresco.framework.actions.applications.Configurations" method="listUploadedFiles">
             <result type="json" />
         </action>
         
@@ -718,7 +745,7 @@
             <result type="json" />
         </action>
         
-        <action name="performanceTest" method="performanceTest" class="com.photon.phresco.framework.actions.applications.Quality">
+        <action name="runPerformanceTest" method="performanceTest" class="com.photon.phresco.framework.actions.applications.Quality">
             <result name="success">/pages/applications/reader.jsp</result>
         </action>
         
@@ -779,11 +806,11 @@
         </action> -->
 		
 		<action name="updateVersion" method="update" class="com.photon.phresco.framework.actions.applications.VersionUpdate">
-			<result name="success">/pages/updatedInfo.jsp</result>
+			<result type="json"/>
 		</action>
         
         <action name="about" method="about" class="com.photon.phresco.framework.actions.applications.VersionUpdate">
-        	<result name="about">about.jsp</result>
+        	<result name="about">/pages/about.jsp</result>
         </action>
         
         <action name="versionInfo" method="versionInfo" class="com.photon.phresco.framework.actions.applications.VersionUpdate">
@@ -930,5 +957,11 @@
         	<result type="json"/>
 <!--         	<param name="root">localJenkinsAlive</param> -->
         </action>
+        
+        <!--  dynamic parameter mandatory validation starts -->
+         <action name="dynamciParamMandatoryCheck" method="mandatoryValidation" class="com.photon.phresco.framework.actions.applications.DynamicParameterAction">
+            <result type="json" />
+        </action>
+        <!--  dynamic parameter mandatory validation ends -->
     </package>
 </struts>
