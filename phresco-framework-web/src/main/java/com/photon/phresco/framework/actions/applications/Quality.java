@@ -617,6 +617,7 @@ public class Quality extends DynamicParameterAction implements Constants {
             List<Parameter> parameters = getMojoParameters(mojo, PHASE_START_HUB);
             setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
             setReqAttribute(REQ_GOAL, PHASE_START_HUB);
+            setReqAttribute(REQ_PHASE, PHASE_START_HUB);
         } catch (PhrescoException e) {
         	if (s_debugEnabled) {
 	    		S_LOGGER.error("Entered into catch block of Quality.showStartHubPopUp()"+ FrameworkUtil.getStackTraceAsString(e));
@@ -760,6 +761,7 @@ public class Quality extends DynamicParameterAction implements Constants {
             List<Parameter> parameters = getMojoParameters(mojo, PHASE_START_NODE);
             setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
             setReqAttribute(REQ_GOAL, PHASE_START_NODE);
+            setReqAttribute(REQ_PHASE, PHASE_START_NODE);
         } catch (PhrescoException e) {
         	if (s_debugEnabled) {
 	    		S_LOGGER.error("Entered into catch block of Quality.showStartNodePopUp()"+ FrameworkUtil.getStackTraceAsString(e));
