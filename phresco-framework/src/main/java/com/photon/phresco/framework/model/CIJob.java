@@ -113,6 +113,7 @@ public class CIJob {
     private String dataBase = "";
     private String fetchSql = "";
     private String triggerSimulator = "false";
+    private String deviceId = "";
     
     public CIJob() {
         super();
@@ -677,5 +678,13 @@ public class CIJob {
 
 	public String getPackMinifiedFiles() {
 		return packMinifiedFiles;
+	}
+
+	public String getDeviceId() {
+		return deviceId;
+	}
+
+	public void setDeviceId(String deviceId) {
+		this.deviceId = deviceId;
 	}
 }
