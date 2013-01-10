@@ -91,7 +91,12 @@
 												for (ArtifactInfo info : infos) {
 													if (StringUtils.isNotEmpty(info.getDownloadURL())) {
 														fileSize = info.getFileSize();
-														String size = Long.toString(fileSize/1048576) + FrameworkConstants.MEGABYTE;
+														String size = "";
+														if(fileSize > 1048576) {
+															size = Long.toString(fileSize/1048576) + FrameworkConstants.MEGABYTE;
+														} else {
+															size = Long.toString(fileSize/1024) + FrameworkConstants.KILOBYTE;
+														}
 		                    		%> 
 						                    		<tr>
 						                    			<td><%= serverDownloadInfo.getName() %></td>
@@ -155,7 +160,12 @@
 												for (ArtifactInfo info : infos) { 
 													if(StringUtils.isNotEmpty(info.getDownloadURL())) {
 														fileSize = info.getFileSize();
-														String size = Long.toString(fileSize/1048576) + FrameworkConstants.MEGABYTE;
+														String size = "";
+														if(fileSize > 1048576) {
+															size = Long.toString(fileSize/1048576) + FrameworkConstants.MEGABYTE;
+														} else {
+															size = Long.toString(fileSize/1024) + FrameworkConstants.KILOBYTE;
+														}
 			                    	%>
 						                    		<tr>
 						                    			<td><%= dbDownloadInfo.getName() %></td>
@@ -223,7 +233,13 @@
 													for (ArtifactInfo info : infos) {
 														if(StringUtils.isNotEmpty(info.getDownloadURL())) {
 															fileSize = info.getFileSize();
-															String size = Long.toString(fileSize/1048576) + FrameworkConstants.MEGABYTE;
+															String size = "";
+															if(fileSize > 1048576) {
+																size = Long.toString(fileSize/1048576) + FrameworkConstants.MEGABYTE;
+															} else {
+																size = Long.toString(fileSize/1024) + FrameworkConstants.KILOBYTE;
+																
+															}
 				                    	%> 
 							                    		<tr>
 							                    			<td><%= editorDownloadInfo.getName() %></td>
@@ -289,7 +305,13 @@
 												for (ArtifactInfo info : infos) {
 													if(StringUtils.isNotEmpty(info.getDownloadURL())) {
 														fileSize = info.getFileSize();
-														String size = Long.toString(fileSize/1048576) + FrameworkConstants.MEGABYTE;
+														String size = "";
+														if(fileSize > 1048576) {
+															size = Long.toString(fileSize/1048576) + FrameworkConstants.MEGABYTE;
+														} else {
+															size = Long.toString(fileSize/1024) + FrameworkConstants.KILOBYTE;
+															
+														}
 			                    	%> 
 						                    		<tr>
 						                    			<td><%= toolsDownloadInfo.getName() %></td>
@@ -355,7 +377,13 @@
 												for (ArtifactInfo info : infos) {
 													if(StringUtils.isNotEmpty(info.getDownloadURL())) {
 														fileSize = info.getFileSize();
-														String size = Long.toString(fileSize/1048576) + FrameworkConstants.MEGABYTE;
+														String size = "";
+														if(fileSize > 1048576) {
+															size = Long.toString(fileSize/1048576) + FrameworkConstants.MEGABYTE;
+														} else {
+															size = Long.toString(fileSize/1024) + FrameworkConstants.KILOBYTE;
+															
+														}
 		                    		%> 
 						                    		<tr>
 						                    			<td><%= otherDownloadInfo.getName() %></td>

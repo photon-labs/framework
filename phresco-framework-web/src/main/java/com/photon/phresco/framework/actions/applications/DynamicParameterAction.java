@@ -158,13 +158,15 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
      * @param goal
      * @throws PhrescoException
      */
-    protected void setPossibleValuesInReq(MojoProcessor mojo, ApplicationInfo appInfo, List<Parameter> parameters, Map<String, DependantParameters> watcherMap) throws PhrescoException {
+    protected void setPossibleValuesInReq(MojoProcessor mojo, ApplicationInfo appInfo, List<Parameter> parameters, 
+    		Map<String, DependantParameters> watcherMap) throws PhrescoException {
         try {
             if (CollectionUtils.isNotEmpty(parameters)) {
                 StringBuilder paramBuilder = new StringBuilder();
                 for (Parameter parameter : parameters) {
                     String parameterKey = parameter.getKey();
-                    if (TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(parameter.getType()) && parameter.getDynamicParameter() != null) { //Dynamic parameter
+                    if (TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(parameter.getType()) && parameter.getDynamicParameter() != null) { 
+                    	//Dynamic parameter
                         Map<String, Object> constructMapForDynVals = constructMapForDynVals(appInfo, watcherMap, parameterKey);
                         
                         // Get the values from the dynamic parameter class
@@ -208,7 +210,8 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
                         paramBuilder.append(parameterKey);
                         paramBuilder.append("=");
                         paramBuilder.append("");
-                    } else if (parameter.getType().equalsIgnoreCase(TYPE_BOOLEAN) && StringUtils.isNotEmpty(parameter.getDependency())) { //Checkbox
+                    } else if (parameter.getType().equalsIgnoreCase(TYPE_BOOLEAN) && StringUtils.isNotEmpty(parameter.getDependency())) {
+                    	//Checkbox
                         addWatcher(watcherMap, parameter.getDependency(), parameterKey, parameter.getValue());
                         if (StringUtils.isNotEmpty(paramBuilder.toString())) {
                             paramBuilder.append("&");
@@ -453,21 +456,44 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 			File infoFile = new File(getPhrescoPluginInfoFilePath(getPhase()));
 			MojoProcessor mojo = new MojoProcessor(infoFile);
 			List<Parameter> parameters = getMojoParameters(mojo, getGoal());
-			List<String> checkBoxDependencies = new ArrayList<String>();
+			List<String> eventDependencies = new ArrayList<String>();
+			List<String> dropDownDependencies = null;
+			Map<String, List<String>> validateMap = new HashMap<String, List<String>>();
 			if (CollectionUtils.isNotEmpty(parameters)) {
 				for (Parameter parameter : parameters) {
 					if (TYPE_BOOLEAN.equalsIgnoreCase(parameter.getType()) && StringUtils.isNotEmpty(parameter.getDependency())) {
-						checkBoxDependencies = Arrays.asList(parameter.getDependency().split(CSV_PATTERN));
-						if (getReqParameter(parameter.getKey()) != null) {
-							for (String checkBoxDependencyKey : checkBoxDependencies) {
-								Parameter dependencyParameter = mojo.getParameter(getGoal(), checkBoxDependencyKey);
-								if (Boolean.parseBoolean(dependencyParameter.getRequired()) && paramsMandatoryCheck(dependencyParameter)) {
+						//To validate check box dependency controls
+						eventDependencies = Arrays.asList(parameter.getDependency().split(CSV_PATTERN));
+						validateMap.put(parameter.getKey(), eventDependencies);//add checkbox dependency keys to map
+						if (getReqParameter(parameter.getKey()) != null && dependentParamMandatoryChk(mojo, eventDependencies)) {
+							break;//break from loop if error exists
+						}
+					} else if (TYPE_LIST.equalsIgnoreCase(parameter.getType()) &&  !Boolean.parseBoolean(parameter.getMultiple())
+							&& parameter.getPossibleValues() != null) {
+						//To validate (Parameter type - LIST) single select list box dependency controls
+						if (StringUtils.isNotEmpty(getReqParameter(parameter.getKey()))) {
+							List<Value> values = parameter.getPossibleValues().getValue();
+							String allPossibleValueDependencies = fetchAllPossibleValueDependencies(values);
+							eventDependencies = Arrays.asList(allPossibleValueDependencies.toString().split(CSV_PATTERN));
+							validateMap.put(parameter.getKey(), eventDependencies);//add psbl value dependency keys to map
+							for (Value value : values) {
+								dropDownDependencies = new ArrayList<String>();
+								if (value.getKey().equalsIgnoreCase(getReqParameter(parameter.getKey())) 
+										&& StringUtils.isNotEmpty(value.getDependency())) {
+									//get currently selected option's dependency keys to validate and break from loop
+									dropDownDependencies = Arrays.asList(value.getDependency().split(CSV_PATTERN));
 									break;
 								}
 							}
+							if (dependentParamMandatoryChk(mojo, dropDownDependencies)) {
+								//break from loop if error exists
+								break;
+							}
 						}
 					} else if (Boolean.parseBoolean(parameter.getRequired())) {
-						if ((parameter.isShow() || !checkBoxDependencies.contains(parameter.getKey())) && paramsMandatoryCheck(parameter)) {
+						//comes here for other controls
+						boolean alreadyValidated = fetchAlreadyValidatedKeys(validateMap, parameter);
+						if ((parameter.isShow() || !alreadyValidated) && paramsMandatoryCheck(parameter)) {
 							break;
 						}
 					}
@@ -479,6 +505,64 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 
 		return SUCCESS;
 	}
+
+	/**
+	 * To get all dependency keys from map
+	 * @param validateMap
+	 * @param parameter
+	 * @param alreadyValidated
+	 * @return
+	 */
+	private boolean fetchAlreadyValidatedKeys(Map<String, List<String>> validateMap, Parameter parameter) {
+		boolean alreadyValidated = false;
+		Set<String> keySet = validateMap.keySet();
+		for (String key : keySet) {
+			List<String> valueList = validateMap.get(key);
+			if (valueList.contains(parameter.getKey())) {
+				alreadyValidated = true;
+			}
+		}
+		return alreadyValidated;
+	}
+
+	/**
+	 * To get all each possible value's dependency keys 
+	 * @param values
+	 * @param sb
+	 * @param sep
+	 */
+	private String fetchAllPossibleValueDependencies(List<Value> values) {
+		StringBuilder sb = new StringBuilder();
+		String sep = "";
+		for (Value value : values) {
+			if (StringUtils.isNotEmpty(value.getDependency())) {
+				sb.append(sep);
+				sb.append(value.getDependency());
+				sep = COMMA;
+			}
+		}
+
+		return sb.toString();
+	}
+
+	/**
+	 * To validate currently selected option's dependency keys
+	 * @param mojo
+	 * @param eventDependencies
+	 */
+	private boolean dependentParamMandatoryChk(MojoProcessor mojo, List<String> eventDependencies) {
+		boolean flag = false;
+		if (CollectionUtils.isNotEmpty(eventDependencies)) {
+			for (String eventDependency : eventDependencies) {
+				Parameter dependencyParameter = mojo.getParameter(getGoal(), eventDependency);
+				if (Boolean.parseBoolean(dependencyParameter.getRequired()) && paramsMandatoryCheck(dependencyParameter)) {
+					flag = true;
+					break;
+				}
+			}
+		}
+		return flag;
+	}
 	
 	private boolean paramsMandatoryCheck (Parameter parameter) {
 		boolean returnFlag = false; 
@@ -486,7 +570,7 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 		if (TYPE_STRING.equalsIgnoreCase(parameter.getType()) || TYPE_NUMBER.equalsIgnoreCase(parameter.getType())
 				|| TYPE_PASSWORD.equalsIgnoreCase(parameter.getType())
 				|| TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(parameter.getType()) && !Boolean.parseBoolean(parameter.getMultiple())
-				|| (TYPE_LIST.equalsIgnoreCase(parameter.getType()) && Boolean.parseBoolean(parameter.getMultiple()))
+				|| (TYPE_LIST.equalsIgnoreCase(parameter.getType()) && !Boolean.parseBoolean(parameter.getMultiple()))
 				|| (TYPE_FILE_BROWSE.equalsIgnoreCase(parameter.getType()))) {
 			returnFlag = textSingleSelectValidate(parameter, returnFlag,lableTxt);//for text box,single select list box,file browse
 		} else if (TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(parameter.getType()) && Boolean.parseBoolean(parameter.getMultiple()) || 
@@ -500,6 +584,7 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 	}
 
 	/**
+	 * To validate key value pair control
 	 * @param parameter
 	 * @param returnFlag
 	 * @return
@@ -528,6 +613,7 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 	}
 
 	/**
+	 * To validate multi select list box
 	 * @param parameter
 	 * @param returnFlag
 	 * @param lableTxt
@@ -539,12 +625,13 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 			setErrorFound(true);
 			setErrorMsg(lableTxt + " " +getText(EXCEPTION_MANDAOTRY_MSG));
 			returnFlag = true;
-			//break;
 		}
+		
 		return returnFlag;
 	}
 
 	/**
+	 * To validate text box and single select list box
 	 * @param parameter
 	 * @param returnFlag
 	 * @param lableTxt
@@ -556,12 +643,13 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 			setErrorFound(true);
 			setErrorMsg(lableTxt + " " +getText(EXCEPTION_MANDAOTRY_MSG));
 			returnFlag = true;
-			//break;
 		}
+		
 		return returnFlag;
 	}
 	
 	/**
+	 * To get parameter's label
 	 * @param parameter
 	 * @param lableTxt
 	 * @return

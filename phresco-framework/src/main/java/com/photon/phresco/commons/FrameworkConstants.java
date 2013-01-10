@@ -110,6 +110,7 @@ public interface FrameworkConstants {
     String REQ_FEATURES_TYPE = "type";
     String REQ_FEATURES_MOD_GRP = "moduleGroup";
     String MEGABYTE = "MB";
+    String KILOBYTE = "KB";
     
     String REQ_KEY = "key";
     String REQ_VALUE = "value";
@@ -1807,6 +1808,16 @@ public interface FrameworkConstants {
 		String IMAGES	 = "images";
 		String CUSTOMERS = "customers";
 		String PNG       = ".png";
+		
+		
+		/**
+		 * Constants for Error in Changing Logo and Theme 
+		 */
+		
+		String EXCEPTION_FETCHLOGO_IMAGE = "changecustomer.exception.message.fetchlogo";
+		String EXCEPTION_FRAMEWORK_THEME = "changecustomer.exception.message.themechange";
+		String EXCEPTION_FRAMEWORKSTREAM = "changecustomer.exception.message.stream";
+		
 		
 		
 }

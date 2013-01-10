@@ -118,6 +118,8 @@ public class Features extends FrameworkBaseAction {
 	private List<ArtifactGroup> artifactGroups = new ArrayList<ArtifactGroup>();
 	List<String> depArtifactGroupNames = new ArrayList<String>();
 	List<String> depArtifactInfoIds = new ArrayList<String>();
+	List<String> selArtifactGroupNames = new ArrayList<String>();
+	List<String> selArtifactInfoIds = new ArrayList<String>();
 	List<String> dependencyIds = new ArrayList<String>();
 	boolean dependency = false;
 	
@@ -213,6 +215,14 @@ public class Features extends FrameworkBaseAction {
 		    if (coreOption.getTechId().equals(techId) && !coreOption.isCore()) {
 		        slctFeature.setCanConfigure(true);
 		    }
+		}
+		List<RequiredOption> appliesToReqird = artifactInfo.getAppliesTo();
+		if (CollectionUtils.isNotEmpty(appliesToReqird)) {
+			for (RequiredOption requiredOption : appliesToReqird) {
+				if (requiredOption.isRequired() && requiredOption.getTechId().equals(techId)) {
+					slctFeature.setDefaultModule(true);
+				}
+			}
 		}
 		
 		return slctFeature;
@@ -441,7 +451,41 @@ public class Features extends FrameworkBaseAction {
 				}
 			}
 		}
+		
 		return SUCCESS;
+	}
+	
+	public String fetchSelectedFeatures() throws PhrescoException {
+		ProjectInfo projectInfo = (ProjectInfo)getSessionAttribute(getAppId() + SESSION_APPINFO);
+		List<String> selectedModules = projectInfo.getAppInfos().get(0).getSelectedModules();
+		List<String> selectedJSLibs = projectInfo.getAppInfos().get(0).getSelectedJSLibs();
+		List<String> selectedComponents = projectInfo.getAppInfos().get(0).getSelectedComponents();
+		List<ArtifactGroup> artifactGroups = getServiceManager().getFeatures(getCustomerId(), getTechId(), getType());
+		if (CollectionUtils.isNotEmpty(selectedModules)) {
+			getSelectedFeatures(selectedModules, artifactGroups);
+		}
+		if (CollectionUtils.isNotEmpty(selectedJSLibs)) {
+			getSelectedFeatures(selectedJSLibs, artifactGroups);
+		}
+		if (CollectionUtils.isNotEmpty(selectedComponents)) {
+			getSelectedFeatures(selectedComponents, artifactGroups);
+		}
+		
+		return SUCCESS;
+	}
+	
+	private void getSelectedFeatures(List<String> selectedFeatues, List<ArtifactGroup> artifactGroups) {
+		for (String selectedModule : selectedFeatues) {
+			for (ArtifactGroup artifactGroup : artifactGroups) {
+				List<ArtifactInfo> versions = artifactGroup.getVersions();
+				for (ArtifactInfo artifactInfo : versions) {
+					if(artifactInfo.getId().equals(selectedModule)) {
+						selArtifactGroupNames.add(artifactGroup.getName());
+						selArtifactInfoIds.add(artifactInfo.getId());
+					}
+				}
+			}
+		}
 	}
 	
 	public String fetchDependentFeatures() {
@@ -1325,6 +1369,22 @@ public class Features extends FrameworkBaseAction {
 
 	public String getDatabaseName() {
 		return databaseName;
+	}
+
+	public List<String> getSelArtifactGroupNames() {
+		return selArtifactGroupNames;
+	}
+
+	public void setSelArtifactGroupNames(List<String> selArtifactGroupNames) {
+		this.selArtifactGroupNames = selArtifactGroupNames;
+	}
+
+	public List<String> getSelArtifactInfoIds() {
+		return selArtifactInfoIds;
+	}
+
+	public void setSelArtifactInfoIds(List<String> selArtifactInfoIds) {
+		this.selArtifactInfoIds = selArtifactInfoIds;
 	}
 
 	
