@@ -581,7 +581,7 @@
 			},
 					
 			'.multilist-scroller ul li': {
-				'color': "#FFFFFF ! important"
+				'color': labelColor + " ! important"
 			},
 			
 			'label': {
