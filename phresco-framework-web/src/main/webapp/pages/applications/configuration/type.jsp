@@ -23,8 +23,11 @@
 <%@ page import="java.util.ArrayList"%>
 <%@ page import="java.util.List"%>
 <%@ page import="java.util.Properties"%>
+<%@ page import="java.util.Enumeration"%>
 
 <%@ page import="com.google.gson.Gson"%>
+
+<%@ page import="org.apache.commons.lang.StringUtils" %>
 <%@ page import="org.antlr.stringtemplate.StringTemplate" %>
 <%@ page import="org.apache.commons.collections.CollectionUtils" %>
 
@@ -43,9 +46,10 @@
 	    appId = appInfo.getId();
 	}
 	Properties propertiesInfo = (Properties) request.getAttribute(FrameworkConstants.REQ_PROPERTIES_INFO); 
-	SettingsTemplate settingsTemplate = (SettingsTemplate) request.getAttribute(FrameworkConstants.REQ_SETTINGS_TEMPLATE);	  
+	SettingsTemplate settingsTemplate = (SettingsTemplate) request.getAttribute(FrameworkConstants.REQ_SETTINGS_TEMPLATE);	
 	String selectedType = (String) request.getAttribute(FrameworkConstants.REQ_SELECTED_TYPE);
 	String fromPage = (String) request.getAttribute(FrameworkConstants.REQ_FROM_PAGE);
+	List<Element> allTechnologies  = (List<Element>) request.getAttribute(FrameworkConstants.REQ_ALL_TECHNOLOGIES);
 	
 	List<String> typeValues  = (List<String>) request.getAttribute(FrameworkConstants.REQ_TYPE_VALUES);
 	List<String> appinfoServers  = (List<String>) request.getAttribute(FrameworkConstants.REQ_APPINFO_SERVERS);
@@ -65,24 +69,31 @@
 					   <ul>
 					   	<% 
 					   		String checkedStr = "";
-					   		List<Element> appliesToTechs = settingsTemplate.getAppliesToTechs();
-				   			for (Element appliesTo : appliesToTechs) {
-				   				if (selectedAppliesTos != null ) {
-					   			for (String selectedAppliesTo : selectedAppliesTos) {
-					   				if (selectedAppliesTos.contains(appliesTo.getName()) ) {
-										checkedStr = "checked";
-									} else {
-										checkedStr = "";
-									}
+					   		List<Element> appliesToTechs = null; 
+					   		if (FrameworkConstants.REQ_CONFIG_TYPE_OTHER.equals(selectedType)) {
+					   			appliesToTechs = allTechnologies;
+					   		} else {
+					   		 	appliesToTechs = settingsTemplate.getAppliesToTechs();
+					   		}
+					   		if (CollectionUtils.isNotEmpty(appliesToTechs)) {
+					   			for (Element appliesTo : appliesToTechs) {
+					   				if (selectedAppliesTos != null ) {
+						   			for (String selectedAppliesTo : selectedAppliesTos) {
+						   				if (selectedAppliesTos.contains(appliesTo.getName()) ) {
+											checkedStr = "checked";
+										} else {
+											checkedStr = "";
+										}
+						   			}
 					   			}
-				   			}
-					   	%>
-							<li>
-								<input type="checkbox" name="appliesTo" class="check appliesToCheck" 
-									value='<%= appliesTo.getName() %>' title="<%= appliesTo.getDescription() %>"  <%= checkedStr %> /><%= appliesTo.getName() %>
-							</li>
-						<%		
-				   		}
+						   	%>
+								<li>
+									<input type="checkbox" name="appliesTo" class="check appliesToCheck" 
+										value='<%= appliesTo.getName() %>' title="<%= appliesTo.getDescription() %>"  <%= checkedStr %> /><%= appliesTo.getName() %>
+								</li>
+							<%		
+					   			}
+					   		}
 					%>
 					   </ul>
 			  	 	</div>
@@ -95,129 +106,162 @@
    <form id="configProperties">
 <% 
 	StringBuilder sb = new StringBuilder();
-    for (PropertyTemplate propertyTemplate : properties) {
-    	ParameterModel pm = new ParameterModel();
-    	pm.setMandatory(propertyTemplate.isRequired());
-    	pm.setLableText(propertyTemplate.getName());
-    	pm.setId(propertyTemplate.getKey());
-    	pm.setName(propertyTemplate.getKey());
-    	pm.setControlGroupId(propertyTemplate.getKey() + "Control");
-    	pm.setControlId(propertyTemplate.getKey() + "Error");
-    	pm.setShow(true);
-
-    	String value = "";
-    	if (propertiesInfo != null) {
-    		value = propertiesInfo.getProperty(propertyTemplate.getKey());
-    	}
-        List<String> possibleValues = new ArrayList<String>(8);
-		if (FrameworkConstants.SERVER.equals(settingsTemplate.getName()) && FrameworkConstants.CONFIG_TYPE.equals(propertyTemplate.getKey())) {
-			if (FrameworkConstants.ADD_SETTINGS.equals(fromPage) || FrameworkConstants.EDIT_SETTINGS.equals(fromPage)) {
-				possibleValues = typeValues;
-			} else {
-       			if(appInfo != null && CollectionUtils.isNotEmpty(appInfo.getSelectedServers())) {
-       				possibleValues = appinfoServers;
-				}
-			}
-    	} else if (FrameworkConstants.DATABASE.equals(settingsTemplate.getName()) && FrameworkConstants.CONFIG_TYPE.equals(propertyTemplate.getKey())) {
-    		if (FrameworkConstants.ADD_SETTINGS.equals(fromPage) || FrameworkConstants.EDIT_SETTINGS.equals(fromPage)) {
-				possibleValues = typeValues;
-			} else {
-	    		if(appInfo != null && CollectionUtils.isNotEmpty(appInfo.getSelectedDatabases())) {
-	    			possibleValues = appinfoDbases; 
-	    		}
-			}
-    	} else {
-			possibleValues = propertyTemplate.getPossibleValues();
-    	}
-		
-		if (FrameworkConstants.TYPE_FILE.equals(propertyTemplate.getType())) {
-    %>
-   			<script type="text/javascript">
-   				createFileUploader('<%= propertyTemplate.getName() %>');
-   				
-   				function createFileUploader(controlLabel) {
-   					$('#fileControlLabel').html(controlLabel);
-   					$('#fileControl').show();
-   					var imgUploader = new qq.FileUploader ({
-   			            element : document.getElementById('file-uploader'),
-   			            action : 'uploadFile',
-   			            multiple : false,
-   			            allowedExtensions : ["zip"],
-   			            buttonLabel : '<s:text name="lbl.upload" />',
-   			            typeError : '<s:text name="err.invalid.file.type" />',
-   			            debug: true
-   			        });
-   					listUploadedFiles();
-   				}
-   				
-   				function listUploadedFiles() {
-   					var params = getBasicParams();
-   					params = params.concat("&configTempType=");
-   					params = params.concat($("#templateType option:selected").text());
-   					loadContent("listUploadedFiles", '', '', params, true, true);
-   				}
-   			</script>
-	<%
-		} else if (FrameworkConstants.TYPE_ACTIONS.equals(propertyTemplate.getType())) {
-	%>
-            <script type="text/javascript">
-            	constructBtnElement('<%= pm.getLableText() %>', '<%= pm.getId() %>');
-            	
-            	function constructBtnElement(btnVal, btnId) {
-   					var ctrlGroup = "<div class='control-group'><label for='xlInput' class='control-label labelbold'></label>" +
-   									"<div class='controls'><input type='button' class='btn btn-primary' onclick='performBtnEvent(this)'" + 
-   									"id='"+ btnId +"' value='"+ btnVal +"'/></div></div>";
-   					$('#configProperties').append(ctrlGroup);
-   									
-   				}
-			</script>
-	<%
-		} else if (CollectionUtils.isNotEmpty(possibleValues)) {
-        	pm.setObjectValue(possibleValues);
-        	List<String> alreadySelectedValue = new ArrayList<String>();
-        	alreadySelectedValue.add(value);
-        	pm.setSelectedValues(alreadySelectedValue);
-        	pm.setMultiple(false);
-            StringTemplate dropDownControl = FrameworkUtil.constructSelectElement(pm);
-            sb.append(dropDownControl);
-        } else if ("Boolean".equals(propertyTemplate.getType())) {
-        	pm.setOnClickFunction("changeChckBoxValue(this)");
-        	pm.setPlaceHolder(propertyTemplate.getHelpText());
-        	pm.setValue(value);
-            StringTemplate inputControl = FrameworkUtil.constructCheckBoxElement(pm);
-			sb.append(inputControl);
-        } else {
-        	pm.setInputType(propertyTemplate.getType());
-        	pm.setPlaceHolder(propertyTemplate.getHelpText());
-        	pm.setValue(value);
-            StringTemplate inputControl = FrameworkUtil.constructInputElement(pm);
-			sb.append(inputControl); 
-	%>
-			<script type="text/javascript">
-				$('input[name="<%= propertyTemplate.getKey() %>"]').live('input propertychange',function(e) {
-					var value = $(this).val();
-					var type = '<%= propertyTemplate.getType() %>';
-					var txtBoxName = '<%= propertyTemplate.getKey() %>';
-					if(txtBoxName != '<%= FrameworkConstants.EMAIL_ID %>') {
-						validateInput(value, type, txtBoxName);
+	if (CollectionUtils.isNotEmpty(properties)) {
+	    for (PropertyTemplate propertyTemplate : properties) {
+	    	ParameterModel pm = new ParameterModel();
+	    	pm.setMandatory(propertyTemplate.isRequired());
+	    	pm.setLableText(propertyTemplate.getName());
+	    	pm.setId(propertyTemplate.getKey());
+	    	pm.setName(propertyTemplate.getKey());
+	    	pm.setControlGroupId(propertyTemplate.getKey() + "Control");
+	    	pm.setControlId(propertyTemplate.getKey() + "Error");
+	    	pm.setShow(true);
+	
+	    	String value = "";
+	    	
+	    	if (!FrameworkConstants.REQ_CONFIG_TYPE_OTHER.equals(propertyTemplate.getType())) {
+		    	if (propertiesInfo != null) {
+		    		value = propertiesInfo.getProperty(propertyTemplate.getKey());
+		    	}
+	    	}
+	    	
+	        List<String> possibleValues = new ArrayList<String>(8);
+			if (FrameworkConstants.SERVER.equals(settingsTemplate.getName()) && FrameworkConstants.CONFIG_TYPE.equals(propertyTemplate.getKey())) {
+				if (FrameworkConstants.ADD_SETTINGS.equals(fromPage) || FrameworkConstants.EDIT_SETTINGS.equals(fromPage)) {
+					possibleValues = typeValues;
+				} else {
+	       			if(appInfo != null && CollectionUtils.isNotEmpty(appInfo.getSelectedServers())) {
+	       				possibleValues = appinfoServers;
 					}
-				}); 
-			</script>	
-	<%
-		}
-        if (FrameworkConstants.CONFIG_TYPE.equals(propertyTemplate.getKey())) {
-        	pm.setMandatory(true);
-        	pm.setLableText("Version");
-        	pm.setId("version");
-        	pm.setName("version");
-        	pm.setControlGroupId("versionControl");
-        	pm.setControlId("versionError");
-        	pm.setShow(true);
-        	pm.setObjectValue(null);
-        	StringTemplate dropDownControl = FrameworkUtil.constructSelectElement(pm);
-        	sb.append(dropDownControl);
-		}
-    }
+				}
+	    	} else if (FrameworkConstants.DATABASE.equals(settingsTemplate.getName()) && FrameworkConstants.CONFIG_TYPE.equals(propertyTemplate.getKey())) {
+	    		if (FrameworkConstants.ADD_SETTINGS.equals(fromPage) || FrameworkConstants.EDIT_SETTINGS.equals(fromPage)) {
+					possibleValues = typeValues;
+				} else {
+		    		if(appInfo != null && CollectionUtils.isNotEmpty(appInfo.getSelectedDatabases())) {
+		    			possibleValues = appinfoDbases; 
+		    		}
+				}
+	    	} else {
+				possibleValues = propertyTemplate.getPossibleValues();
+	    	}
+			
+			if (FrameworkConstants.TYPE_FILE.equals(propertyTemplate.getType())) {
+	    %>
+	   			<script type="text/javascript">
+	   				createFileUploader('<%= propertyTemplate.getName() %>');
+	   				
+	   				function createFileUploader(controlLabel) {
+	   					$('#fileControlLabel').html(controlLabel);
+	   					$('#fileControl').show();
+	   					var imgUploader = new qq.FileUploader ({
+	   			            element : document.getElementById('file-uploader'),
+	   			            action : 'uploadFile',
+	   			            multiple : false,
+	   			            allowedExtensions : ["zip"],
+	   			            buttonLabel : '<s:text name="lbl.upload" />',
+	   			            typeError : '<s:text name="err.invalid.file.type" />',
+	   			            debug: true
+	   			        });
+	   					listUploadedFiles();
+	   				}
+	   				
+	   				function listUploadedFiles() {
+	   					var params = getBasicParams();
+	   					params = params.concat("&configTempType=");
+	   					params = params.concat($("#templateType option:selected").text());
+	   					loadContent("listUploadedFiles", '', '', params, true, true);
+	   				}
+	   			</script>
+		<%
+			} else if (FrameworkConstants.TYPE_ACTIONS.equals(propertyTemplate.getType())) {
+		%>
+	            <script type="text/javascript">
+	            	constructBtnElement('<%= pm.getLableText() %>', '<%= pm.getId() %>');
+	            	
+	            	function constructBtnElement(btnVal, btnId) {
+	   					var ctrlGroup = "<div class='control-group'><label for='xlInput' class='control-label labelbold'></label>" +
+	   									"<div class='controls'><input type='button' class='btn btn-primary' onclick='performBtnEvent(this)'" + 
+	   									"id='"+ btnId +"' value='"+ btnVal +"'/></div></div>";
+	   					$('#configProperties').append(ctrlGroup);
+	   				}
+				</script>
+		<%
+			} else if (FrameworkConstants.REQ_CONFIG_TYPE_OTHER.equals(propertyTemplate.getType())) {
+				if (propertiesInfo == null) {
+					pm.setValue("");
+					List<Object> values = new ArrayList<Object>();
+					values.add("");
+					pm.setObjectValue(values);
+					StringTemplate customParamElement = FrameworkUtil.constructCustomParameters(pm);
+					sb.append(customParamElement);
+				} else {
+					Enumeration em = propertiesInfo.keys();
+					boolean firstRow = true;
+					while(em.hasMoreElements()) {
+						String otherKey = (String)em.nextElement();
+						Object otherValue = propertiesInfo.get(otherKey);
+						pm.setValue(otherKey);
+						List<Object> values = new ArrayList<Object>();
+						values.add(otherValue);
+						pm.setObjectValue(values);
+						if (firstRow) {
+							pm.setShowMinusIcon(false);							
+						} else {
+							pm.setShowMinusIcon(true);
+						}
+						StringTemplate customParamElement = FrameworkUtil.constructCustomParameters(pm);
+						sb.append(customParamElement);
+						firstRow = false;
+					}
+				}
+	        } else if (CollectionUtils.isNotEmpty(possibleValues)) {
+	        	pm.setObjectValue(possibleValues);
+	        	List<String> alreadySelectedValue = new ArrayList<String>();
+	        	alreadySelectedValue.add(value);
+	        	pm.setSelectedValues(alreadySelectedValue);
+	        	pm.setMultiple(false);
+	            StringTemplate dropDownControl = FrameworkUtil.constructSelectElement(pm);
+	            sb.append(dropDownControl);
+	        } else if ("Boolean".equals(propertyTemplate.getType())) {
+	        	pm.setOnClickFunction("changeChckBoxValue(this)");
+	        	pm.setPlaceHolder(propertyTemplate.getHelpText());
+	        	pm.setValue(value);
+	            StringTemplate inputControl = FrameworkUtil.constructCheckBoxElement(pm);
+				sb.append(inputControl);
+	        } else {
+	        	pm.setInputType(propertyTemplate.getType());
+	        	pm.setPlaceHolder(propertyTemplate.getHelpText());
+	        	pm.setValue(value);
+	            StringTemplate inputControl = FrameworkUtil.constructInputElement(pm);
+				sb.append(inputControl); 
+		%>
+				<script type="text/javascript">
+					$('input[name="<%= propertyTemplate.getKey() %>"]').live('input propertychange',function(e) {
+						var value = $(this).val();
+						var type = '<%= propertyTemplate.getType() %>';
+						var txtBoxName = '<%= propertyTemplate.getKey() %>';
+						if(txtBoxName != '<%= FrameworkConstants.EMAIL_ID %>') {
+							validateInput(value, type, txtBoxName);
+						}
+					}); 
+				</script>	
+		<%
+			}
+	        if (FrameworkConstants.CONFIG_TYPE.equals(propertyTemplate.getKey())) {
+	        	pm.setMandatory(true);
+	        	pm.setLableText("Version");
+	        	pm.setId("version");
+	        	pm.setName("version");
+	        	pm.setControlGroupId("versionControl");
+	        	pm.setControlId("versionError");
+	        	pm.setShow(true);
+	        	pm.setObjectValue(null);
+	        	StringTemplate dropDownControl = FrameworkUtil.constructSelectElement(pm);
+	        	sb.append(dropDownControl);
+			}
+	    }
+	}
 %>
 	<%= sb.toString() %>
 	
@@ -300,19 +344,26 @@
 	$("div#certificateControl").hide();
 	
 	$(document).ready(function() {
+		
+		$("#multiselectAppliesTo").scrollbars(); //JQuery scroll bar
+		
 		remoteDeplyChecked();
 		hideLoadingIcon();//To hide the loading icon
 		technologyBasedRemoteDeploy();
+		var typeData= $.parseJSON($('#templateType').val());
+		var selectedType = typeData.name;
+		var serverType = $('#type').val();
 		
 		<% if (FrameworkConstants.ADD_CONFIG.equals(fromPage) || FrameworkConstants.EDIT_CONFIG.equals(fromPage)) { %>
 				getVersions();
 		<% } else { %>
+				if(selectedType == "Other") {
+					$("#configProperties table").removeClass('custParamTable');
+					$("#configProperties table").addClass('otherCustParamTable');
+				}
 				getSettingsVersions();
 		<% } %>
 			
-		var typeData= $.parseJSON($('#templateType').val());
-		var selectedType = typeData.name;
-		var serverType = $('#type').val();
 		if(selectedType == "Server"){
 			if (serverType == "IIS") {
 				hideContext();

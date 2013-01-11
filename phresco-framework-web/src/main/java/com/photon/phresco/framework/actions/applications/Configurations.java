@@ -53,6 +53,7 @@ import com.photon.phresco.commons.model.Element;
 import com.photon.phresco.commons.model.PropertyTemplate;
 import com.photon.phresco.commons.model.RepoInfo;
 import com.photon.phresco.commons.model.SettingsTemplate;
+import com.photon.phresco.commons.model.Technology;
 import com.photon.phresco.configuration.Configuration;
 import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.ConfigurationException;
@@ -84,22 +85,22 @@ public class Configurations extends FrameworkBaseAction {
 
 	private Environment environment = null;
     private SettingsTemplate settingTemplate = null;
-    private String selectedEnvirment = null;
-    private String configId = null;
-    private String selectedConfigId = null;
-    private String selectedType = null;
-    private String propType = null;
-    private String selectedEnv = null;
-	private String selectedConfigname = null;
-	private String configName = null;
-	private String copyFromEnvName = null;
+    private String selectedEnvirment = "";
+    private String configId = "";
+    private String selectedConfigId = "";
+    private String selectedType = "";
+    private String propType = "";
+    private String selectedEnv = "";
+	private String selectedConfigname = "";
+	private String configName = "";
+	private String copyFromEnvName = "";
 	private String emailid ="";
-    private String description = null;
-    private String oldName = null;
+    private String description = "";
+    private String oldName = "";
     private List<String> appliesTos = null;
     private boolean errorFound = false;
-	private String configNameError = null;
-	private String configEnvError = null;
+	private String configNameError = "";
+	private String configEnvError = "";
 	private String configTypeError = null;
 	private String nameError = null;
     private String typeError = null;
@@ -365,68 +366,70 @@ public class Configurations extends FrameworkBaseAction {
     }
 
 	private Configuration getConfigInstance() throws PhrescoException {
-		boolean isIISServer = false;
-		SettingsTemplate configTemplate = getServiceManager().getConfigTemplate(getConfigId(), getCustomerId());
-		Properties properties = new Properties();
-		List<PropertyTemplate> propertyTemplates = new ArrayList<PropertyTemplate>();
-		if (CONFIG_FEATURES.equals(getConfigId()) || CONFIG_COMPONENTS.equals(getConfigId())) {
-		    setEnvName(getEnvironment().getName());
-		    propertyTemplates = getPropTemplateFromConfigFile();
-		    
-		    properties.setProperty(REQ_FEATURE_NAME, getActionContextParam(REQ_FEATURE_NAME));
-		} else {
-		    propertyTemplates = configTemplate.getProperties();
-		}
-		for (PropertyTemplate propertyTemplate : propertyTemplates) {
-		    if (!TYPE_ACTIONS.equals(propertyTemplate.getType())) {
-    		    String key = propertyTemplate.getKey();
-    		    String value = getActionContextParam(key);
-    		    if (TYPE_FILE.equals(propertyTemplate.getType())) {
-    		        value = FilenameUtils.removeExtension(getActionContextParam("fileName"));
-                }
-    		    if (REMOTE_DEPLOYMENT.equals(key) && StringUtils.isEmpty(value)) {
-    		    	value = "false";
-    		    }
-    		    
-    		    if (StringUtils.isNotEmpty(key)) {
-    		        properties.setProperty(key, value);
-    		    }
-    		    
-    		    if (CONFIG_TYPE.equals(key) && IIS_SERVER.equals(value)) {
-    		    	isIISServer = true;
-    		    }
-    		    
-    		    if (CONFIG_TYPE.equals(key)) {
-    				properties.put(TYPE_VERSION, getVersion());
-    			}
-		    }
-		}
-		
-		//To get the custom properties
-        if (CollectionUtils.isNotEmpty(getKey()) && CollectionUtils.isNotEmpty(getValue())) {
-            for (int i = 0; i < getKey().size(); i++) {
-                if (StringUtils.isNotEmpty(getKey().get(i)) && StringUtils.isNotEmpty(getValue().get(i))) {
-                    properties.setProperty(getKey().get(i), getValue().get(i));
-                }
-            }
-        }
-		
-		ApplicationInfo applicationInfo = getApplicationInfo();
-		if (applicationInfo != null && applicationInfo.getTechInfo().getId().equals(FrameworkConstants.TECH_SITE_CORE)) {
-			properties.put(SETTINGS_TEMP_SITECORE_INST_PATH, getSiteCoreInstPath());
-		}
-		
-		if (isIISServer) {
-			properties.put(SETTINGS_TEMP_KEY_APP_NAME, getAppName());
-			properties.put(SETTINGS_TEMP_KEY_SITE_NAME, getSiteName());
-		}
-		
-		Configuration config = new Configuration(getConfigName(), getConfigType());
-		config.setDesc(getDescription());
-		config.setAppliesTo(FrameworkUtil.listToCsv(getAppliesTos()));
-		config.setEnvName(getEnvironment().getName());
-		config.setProperties(properties);
-		return config;
+			boolean isIISServer = false;
+			Properties properties = new Properties();
+			List<PropertyTemplate> propertyTemplates = new ArrayList<PropertyTemplate>();
+			if (CONFIG_FEATURES.equals(getConfigId()) || CONFIG_COMPONENTS.equals(getConfigId())) {
+			    setEnvName(getEnvironment().getName());
+			    propertyTemplates = getPropTemplateFromConfigFile();
+			    properties.setProperty(REQ_FEATURE_NAME, getActionContextParam(REQ_FEATURE_NAME));
+			} else if(!REQ_CONFIG_TYPE_OTHER.equals(getConfigType())) {
+				SettingsTemplate configTemplate = getServiceManager().getConfigTemplate(getConfigId(), getCustomerId());
+				propertyTemplates = configTemplate.getProperties();
+			}
+			
+			if (CollectionUtils.isNotEmpty(propertyTemplates)) {
+				for (PropertyTemplate propertyTemplate : propertyTemplates) {
+					if (!TYPE_ACTIONS.equals(propertyTemplate.getType())) {
+						String key = propertyTemplate.getKey();
+						String value = getActionContextParam(key);
+						if (TYPE_FILE.equals(propertyTemplate.getType())) {
+							value = FilenameUtils.removeExtension(getActionContextParam("fileName"));
+						}
+						if (REMOTE_DEPLOYMENT.equals(key) && StringUtils.isEmpty(value)) {
+							value = "false";
+						}
+						
+						if (StringUtils.isNotEmpty(key)) {
+							properties.setProperty(key, value);
+						}
+						
+						if (CONFIG_TYPE.equals(key) && IIS_SERVER.equals(value)) {
+							isIISServer = true;
+						}
+
+						if (CONFIG_TYPE.equals(key)) {
+							properties.put(TYPE_VERSION, getVersion());
+						}
+					}
+				}
+			}
+			
+			//To get the custom properties
+	        if (CollectionUtils.isNotEmpty(getKey()) && CollectionUtils.isNotEmpty(getValue())) {
+	            for (int i = 0; i < getKey().size(); i++) {
+	                if (StringUtils.isNotEmpty(getKey().get(i)) && StringUtils.isNotEmpty(getValue().get(i))) {
+	            		properties.setProperty(getKey().get(i), getValue().get(i));
+	                }
+	            }
+	        }
+			
+			ApplicationInfo applicationInfo = getApplicationInfo();
+			if (applicationInfo != null && applicationInfo.getTechInfo().getId().equals(FrameworkConstants.TECH_SITE_CORE)) {
+				properties.put(SETTINGS_TEMP_SITECORE_INST_PATH, getSiteCoreInstPath());
+			}
+			
+			if (isIISServer) {
+				properties.put(SETTINGS_TEMP_KEY_APP_NAME, getAppName());
+				properties.put(SETTINGS_TEMP_KEY_SITE_NAME, getSiteName());
+			}
+			
+			Configuration config = new Configuration(getConfigName(), getConfigType());
+			config.setDesc(getDescription());
+			config.setAppliesTo(FrameworkUtil.listToCsv(getAppliesTos()));
+			config.setEnvName(getEnvironment().getName());
+			config.setProperties(properties);
+			return config;
 	}
 	
     /**
@@ -487,81 +490,83 @@ public class Configurations extends FrameworkBaseAction {
 	            }
 	    	}
     	}
-	    
-    	SettingsTemplate configTemplate = getServiceManager().getConfigTemplate(getConfigId(), getCustomerId());
-        List<PropertyTemplate> properties = configTemplate.getProperties();
-        for (PropertyTemplate propertyTemplate : properties) {
-            String key = propertyTemplate.getKey();
-            String value = getActionContextParam(key);
-            
-            if (CONFIG_TYPE.equals(key) && IIS_SERVER.equals(value)) {
-            	isIISServer = true;
-            }
-            
-            if (CONFIG_TYPE.equals(key) && NODEJS_SERVER.equals(value) || NODEJS_MAC_SERVER.equals(value)) { //If nodeJs server selected , there should not be validation for deploy dir.
-            	serverTypeValidation = true;
-            }
-            
-            if(isIISServer && DEPLOY_CONTEXT.equals(key)){
-            	propertyTemplate.setRequired(false);
-            }
-            
-        	if (FrameworkConstants.ADD_CONFIG.equals(getFromPage()) || FrameworkConstants.EDIT_CONFIG.equals(getFromPage())) {
-        		ApplicationInfo applicationInfo = getApplicationInfo();
-            	techId = applicationInfo.getTechInfo().getId();
-	    		if (applicationInfo != null && techId.equals(FrameworkConstants.TECH_SITE_CORE)) {
-	    			if (techId.equals(FrameworkConstants.TECH_SITE_CORE) && DEPLOY_DIR.equals(key)) {
-	        			propertyTemplate.setRequired(false);
-	        		}
-	    		}
-        	}
-    		
-			if ((serverTypeValidation && DEPLOY_DIR.equals(key))) {
-				 propertyTemplate.setRequired(false);
-			}
-    		 
-			// validation for UserName & Password for RemoteDeployment
-			boolean isRequired = propertyTemplate.isRequired();
-			if (isRemoteDeployment()) {
-			    if (ADMIN_USERNAME.equals(key) || ADMIN_PASSWORD.equals(key)) {
-			    	isRequired = true;
-			    }
-			    if (DEPLOY_DIR.equals(key)) {
-			    	isRequired = false;
-			    }
-			}
-
-			if (isRequired && StringUtils.isEmpty(value)) {
-             	String field = propertyTemplate.getName();
-             	dynamicError += key + ":" + field + " is empty" + ",";
-            }
-             
-            if (CONFIG_TYPE.equals(key)) {
-             	if (StringUtils.isEmpty(getVersion())) {
-             		setVersionError(getText(ERROR_CONFIG_VERSION));
-             		hasError = true;
-             	}
-     		}
-        }
-        
-        if (FrameworkConstants.ADD_CONFIG.equals(getFromPage()) || FrameworkConstants.EDIT_CONFIG.equals(getFromPage())) {
-	        if (techId.equals(FrameworkConstants.TECH_SITE_CORE) && StringUtils.isEmpty(siteCoreInstPath)) {
-	        	setSiteCoreInstPathError(getText(ERROR_SITE_CORE_PATH_MISSING));
-	    		hasError = true;
-	    	}
-        }
-        
-    	if (isIISServer) {
-        	if (StringUtils.isEmpty(getAppName())) {
-        		setAppNameError(getText(ERROR_CONFIG_APP_NAME ));
-        		 hasError = true;
-        	}
-        	if (StringUtils.isEmpty(getSiteName())) {
-        		setSiteNameError(getText(ERROR_CONFIG_SITE_NAME));
-        		 hasError = true;
-        	}
-        }
-        
+		    
+    	if (!REQ_CONFIG_TYPE_OTHER.equals(getConfigType())) {	
+	    	SettingsTemplate configTemplate = getServiceManager().getConfigTemplate(getConfigId(), getCustomerId());
+	        List<PropertyTemplate> properties = configTemplate.getProperties();
+	        for (PropertyTemplate propertyTemplate : properties) {
+	            String key = propertyTemplate.getKey();
+	            String value = getActionContextParam(key);
+	            
+	            if (CONFIG_TYPE.equals(key) && IIS_SERVER.equals(value)) {
+	            	isIISServer = true;
+	            }
+	            
+	            if (CONFIG_TYPE.equals(key) && NODEJS_SERVER.equals(value) || NODEJS_MAC_SERVER.equals(value)) { //If nodeJs server selected , there should not be validation for deploy dir.
+	            	serverTypeValidation = true;
+	            }
+	            
+	            if(isIISServer && DEPLOY_CONTEXT.equals(key)){
+	            	propertyTemplate.setRequired(false);
+	            }
+	            
+	        	if (FrameworkConstants.ADD_CONFIG.equals(getFromPage()) || FrameworkConstants.EDIT_CONFIG.equals(getFromPage())) {
+	        		ApplicationInfo applicationInfo = getApplicationInfo();
+	            	techId = applicationInfo.getTechInfo().getId();
+		    		if (applicationInfo != null && techId.equals(FrameworkConstants.TECH_SITE_CORE)) {
+		    			if (techId.equals(FrameworkConstants.TECH_SITE_CORE) && DEPLOY_DIR.equals(key)) {
+		        			propertyTemplate.setRequired(false);
+		        		}
+		    		}
+	        	}
+	    		
+				if ((serverTypeValidation && DEPLOY_DIR.equals(key))) {
+					 propertyTemplate.setRequired(false);
+				}
+	    		 
+				// validation for UserName & Password for RemoteDeployment
+				boolean isRequired = propertyTemplate.isRequired();
+				if (isRemoteDeployment()) {
+				    if (ADMIN_USERNAME.equals(key) || ADMIN_PASSWORD.equals(key)) {
+				    	isRequired = true;
+				    }
+				    if (DEPLOY_DIR.equals(key)) {
+				    	isRequired = false;
+				    }
+				}
+	
+				if (isRequired && StringUtils.isEmpty(value)) {
+	             	String field = propertyTemplate.getName();
+	             	dynamicError += key + ":" + field + " is empty" + ",";
+	            }
+	             
+	            if (CONFIG_TYPE.equals(key)) {
+	             	if (StringUtils.isEmpty(getVersion())) {
+	             		setVersionError(getText(ERROR_CONFIG_VERSION));
+	             		hasError = true;
+	             	}
+	     		}
+	        }
+	        
+	        if (FrameworkConstants.ADD_CONFIG.equals(getFromPage()) || FrameworkConstants.EDIT_CONFIG.equals(getFromPage())) {
+		        if (techId.equals(FrameworkConstants.TECH_SITE_CORE) && StringUtils.isEmpty(siteCoreInstPath)) {
+		        	setSiteCoreInstPathError(getText(ERROR_SITE_CORE_PATH_MISSING));
+		    		hasError = true;
+		    	}
+	        }
+	        
+	    	if (isIISServer) {
+	        	if (StringUtils.isEmpty(getAppName())) {
+	        		setAppNameError(getText(ERROR_CONFIG_APP_NAME ));
+	        		 hasError = true;
+	        	}
+	        	if (StringUtils.isEmpty(getSiteName())) {
+	        		setSiteNameError(getText(ERROR_CONFIG_SITE_NAME));
+	        		 hasError = true;
+	        	}
+	        }
+    	}
+	        
         if (StringUtils.isNotEmpty(dynamicError)) {
 	        dynamicError = dynamicError.substring(0, dynamicError.length() - 1);
 	        setDynamicError(dynamicError);
@@ -571,7 +576,7 @@ public class Configurations extends FrameworkBaseAction {
         if (hasError) {
             setErrorFound(true);
         }
-        
+    	
         return SUCCESS;
     }
     
@@ -756,6 +761,7 @@ public class Configurations extends FrameworkBaseAction {
 		}
 		
 		try {
+			
 			ApplicationInfo appInfo = getApplicationInfo();
 			if(appInfo != null && CollectionUtils.isNotEmpty(appInfo.getSelectedServers())) {
 				List<ArtifactGroupInfo> selectedServers = appInfo.getSelectedServers();
@@ -777,6 +783,11 @@ public class Configurations extends FrameworkBaseAction {
 					appinfoDbs.add(dbArtifactGroup.getName());
 				}
 				setReqAttribute(REQ_APPINFO_DBASES, appinfoDbs);
+			}
+			
+			if (REQ_CONFIG_TYPE_OTHER.equals(getSelectedType())) {
+				othersType();
+				return SETTINGS_TYPE;
 			}
 			
 			SettingsTemplate settingTemplate = getSettingTemplate();
@@ -827,6 +838,39 @@ public class Configurations extends FrameworkBaseAction {
 		}
 		return SETTINGS_TYPE;
 	}
+    
+    private void othersType () {
+    	
+		try {
+			PropertyTemplate propertyTemplate = new PropertyTemplate();
+	    	propertyTemplate.setType(REQ_CONFIG_TYPE_OTHER);
+	    	List<PropertyTemplate> properties = new ArrayList<PropertyTemplate>();
+	    	properties.add(propertyTemplate);
+	    	List<Technology> archeTypes = getServiceManager().getArcheTypes(getCustomerId());
+	    	List<Element> allTechnologies = new ArrayList<Element>();
+	    	for (Technology technology : archeTypes) {
+	    		String technologies = technology.getName();
+	    		Element techName = new Element();
+	    		techName.setName(technologies);
+	    		allTechnologies.add(techName);
+			}
+    		setReqAttribute(REQ_ALL_TECHNOLOGIES, allTechnologies);
+	    	setReqAttribute(REQ_PROPERTIES, properties);
+	    	setReqAttribute(REQ_FROM_PAGE, getFromPage());
+	    	setReqAttribute(REQ_SELECTED_TYPE, getSelectedType());
+			
+			ConfigManager configManager = getConfigManager(getConfigPath());
+			Configuration configuration = configManager.getConfiguration(getSelectedEnv(), getSelectedType(), getSelectedConfigname());
+			if (configuration != null) {
+				Properties selectedProperties = configuration.getProperties();
+				setReqAttribute(REQ_PROPERTIES_INFO, selectedProperties);
+			}
+		} catch (PhrescoException e) {
+			//e.printStackTrace();
+		} catch (ConfigurationException e) {
+			//e.printStackTrace();
+		}
+    }
     
     private void setCustomModNamesInReq(ApplicationInfo appInfo) {
         try {

@@ -779,28 +779,30 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 		return controlGroupElement;
     }
 	
-	public static StringTemplate constructCustomParameters() {
-	    StringTemplate controlGroupElement = new StringTemplate(getCustomParamTableTemplate());
-	    
+	public static StringTemplate constructCustomParameters(ParameterModel pm) {
+	    StringTemplate controlGroupElement = new StringTemplate(getCustomParamTableTemplate(pm.getValue(), pm.getObjectValue(), pm.isShowMinusIcon()));
 	    return controlGroupElement;
 	}
 	
-	private static String getCustomParamTableTemplate() {
+	private static String getCustomParamTableTemplate(String otherKey, List<? extends Object> otherValue, boolean showMinus) {
         StringBuilder sb = new StringBuilder();
         sb.append("<table class='custParamTable'>")
         .append("<tbody id='propTempTbodyForHeader'>")
         .append("<tr class='borderForLoad'>")
         .append("<td class=\"noBorder\">")
         .append("<input type=\"text\" class=\"input-medium\" ")
-        .append("name=\"key\" placeholder=\"Key\" value=\"\">")
+        .append("name=\"key\" placeholder=\"Key\" value="+otherKey+">")
         .append("</td>")
         .append("<td class=\"noBorder\">")
         .append("<input type=\"text\" class=\"input-medium\" ")
-        .append("name=\"value\" placeholder=\"Value\" value=\"\">")
+        .append("name=\"value\" placeholder=\"Value\" value="+otherValue.get(0)+">")
         .append("</td>")
         .append("<td class='borderForLoad noBorder'>")
-        .append("<a><img class='add imagealign' src='images/icons/add_icon.png' onclick='addRow(this);'></a></td>")
-        .append("</tr></tbody></table>");
+        .append("<a><img class='add imagealign' src='images/icons/add_icon.png' onclick='addRow(this);'></a></td>");
+        if (showMinus) {
+        	sb.append("<td class='borderForLoad noBorder'><a><img class='add imagealign' src='images/icons/minus_icon.png' onclick='removeRow(this)'></a></td>");
+        }
+        sb.append("</tr></tbody></table>");
         
         return sb.toString();
     }

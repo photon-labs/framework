@@ -20,14 +20,17 @@
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.util.List"%>
+<%@ page import="java.util.Properties"%>
 
 <%@ page import="com.google.gson.Gson"%>
 <%@ page import="org.apache.commons.collections.CollectionUtils"%>
+<%@ page import="org.antlr.stringtemplate.StringTemplate"%>
 
 <%@ page import="com.photon.phresco.commons.model.SettingsTemplate"%>
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.configuration.Environment" %>
+<%@ page import="com.photon.phresco.framework.commons.FrameworkUtil" %>
 <%@ page import="com.photon.phresco.configuration.Configuration" %>
 <%@ page import="com.photon.phresco.framework.actions.util.FrameworkActionUtil"%>
 
@@ -45,7 +48,7 @@
     String currentEnv = (String) request.getAttribute(FrameworkConstants.REQ_CURRENTENV);
     Configuration configInfo = (Configuration) request.getAttribute(FrameworkConstants.REQ_CONFIG_INFO);
     String configPath = (String) request.getAttribute(FrameworkConstants.REQ_CONFIG_PATH);
-	
+    StringBuilder sb = new StringBuilder();
 	if (configInfo != null) {
 	    envName = configInfo.getEnvName();
 		name = configInfo.getName();
@@ -137,7 +140,7 @@
 				<select id="templateType" name="templateType">
 				<% 
 					for (SettingsTemplate settingsTemplate : settingsTemplates) { 
-						if (settingsTemplate.getName().equals(selectedType)) {
+						if (settingsTemplate.getName().equals(selectedType) || FrameworkConstants.REQ_CONFIG_TYPE_OTHER.equals(selectedType)) {
 							selectedStr = "selected";
 						} else {
 							selectedStr = "";
@@ -145,6 +148,7 @@
 				%>	
 						<option value='<%= gson.toJson(settingsTemplate) %>' <%= selectedStr %>><%= settingsTemplate.getName() %></option>
                 <% } %>
+                		<option value="Other" <%= selectedStr %>>Other</option>
 				</select>
 				<span class="help-inline" id="configTypeError"></span>
 			</div>
@@ -183,12 +187,19 @@
 		<%	} %>
 	});
 	
+	$('#templateType option[value="Other"]').each(function() {
+		var otherJson = {};
+		otherJson["name"] = $(this).val();
+	    var finalJsonVal = JSON.stringify(otherJson);
+	    $(this).val(finalJsonVal);
+	});
+	
 	$('#templateType').change(function() {
 		showLoadingIcon();//To hide the loading icon
 		var selectedConfigname = $('#configName').val();
 		var envData = $.parseJSON($('#environment').val());
 		var selectedEnv = envData.name;
-		var typeData= $.parseJSON($('#templateType').val());
+		var typeData = $.parseJSON($('#templateType').val());
 		var selectedType = typeData.name;
 		var selectedConfigId = typeData.id;
 		var fromPage = "<%= fromPage%>";
@@ -196,11 +207,7 @@
 		
 		var params = '{ ' + getBasicParamsAsJson() + ', "settingTemplate": ' + $('#templateType').val() + ' , "selectedConfigId": "' + selectedConfigId 
 			+ '" , "selectedEnv": "' + selectedEnv + '" , "selectedType": "' + selectedType + '", "fromPage": "' + fromPage + '", "configPath": "' + configPath + '", "selectedConfigname": "' + selectedConfigname + '"}';
-		if ($(this).text() === "Features") {
-			loadJsonContent('configType', params,  $('#featureListContainer'));
-		} else {
-			loadJsonContent('configType', params,  $('#typeContainer'));
-		}
+		loadJsonContent('configType', params,  $('#typeContainer'));
 	}).triggerHandler("change");
 	
 	$('#<%= pageUrl %>').click(function() {
@@ -209,6 +216,21 @@
 		var env = $('#environment').val();
 		var jsonObject = $('#configProperties').toJSON();
 		var configStr = JSON.stringify(jsonObject);
+		var typeData = $.parseJSON($('#templateType').val());
+		var selectedType = typeData.name;
+		if(selectedType == "Other") {
+			var keys = [];
+			$('#configProperties').find('input[name="key"]').each(function() {
+				keys.push(this.value);
+			});
+			var values = [];
+			$('#configProperties').find('input[name="value"]').each(function() {
+				values.push(this.value);
+			});
+			jsonObject.key = keys;
+			jsonObject.value = values;
+		}
+		
 		if ($.isEmptyObject(jsonObject)) {//It will be used for getting the features template values
 			var $formType = $("#formConfigTempProp");
 			jsonObject = getFormData($formType);
@@ -218,7 +240,7 @@
 			});
 			var values = [];
 			$('#formConfigTempProp').find('input[name="value"]').each(function() {
-			    values.push(this.value);
+				values.push(this.value);
 			});
 			jsonObject.key = keys;
 			jsonObject.value = values;
@@ -264,7 +286,7 @@
 	    var indexed_array = {};
 
 	    $.map(unindexed_array, function(n, i) {
-	        indexed_array[n['name']] = n['value'];
+			indexed_array[n['name']] = n['value'];
 	    });
 
 	    return indexed_array;

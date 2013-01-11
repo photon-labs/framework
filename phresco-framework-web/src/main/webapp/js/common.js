@@ -1344,7 +1344,11 @@ function addRow(obj) {
 	var columns = $(obj).closest('table').children('tbody').children('tr:first').html();
 	var newRow = $(document.createElement('tr')).attr("class", "borderForLoad");
 	newRow.append(columns);
-	newRow.append(removeIconTd);
+	var columnsTag = columns;
+	var minusIcon = "images/icons/minus_icon.png";
+	if(!(columnsTag.indexOf(minusIcon) != -1)) {
+		newRow.append(removeIconTd);
+	}
 	newRow.appendTo("#propTempTbodyForHeader");
 }
 

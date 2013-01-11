@@ -502,6 +502,10 @@ Width <= 1024
 	.custParamTable {
 		margin-left: 6.5% !important;
 	}
+	
+	.otherCustParamTable {
+		margin-left: 12.5% !important;
+	} 
 }
 
 /***********************************************************************************
@@ -547,6 +551,10 @@ Width size <= 1024
 	
 	.custParamTable {
 		margin-left: 25% !important;
+	}
+	
+	.otherCustParamTable {
+		margin-left: 12.5% !important;
 	}
 }
 @media screen and (max-width : 768px) {
@@ -596,6 +604,10 @@ Width size <= 1024
 	
 	.custParamTable {
 		margin-left: 25% !important;
+	}
+	
+	.otherCustParamTable {
+		margin-left: 12.5% !important;
 	}
 }
 
@@ -1024,6 +1036,10 @@ Width size <= 1024
 	.custParamTable {
 		margin-left: 25% !important;
 	}
+	
+	.otherCustParamTable {
+		margin-left: 12.5% !important;
+	}
 }
 
 /************************************************************************************
@@ -1150,6 +1166,10 @@ Width >= 1025 and < 1151
 	
 	.custParamTable {
 		margin-left: 25% !important;
+	}
+	
+	.otherCustParamTable {
+		margin-left: 12.5% !important;
 	}
 }
 
@@ -1520,6 +1540,10 @@ Width >= 1152 and < 1280
 	
 	.custParamTable {
 		margin-left: 10.1% !important;
+	}
+	
+	.otherCustParamTable {
+		margin-left: 14.6% !important;
 	}
 }
 
@@ -2012,6 +2036,10 @@ Width <= 1280 and height <= 800
 	.custParamTable {
 		margin-left: 12.6% !important;
 	}
+	
+	.otherCustParamTable {
+		margin-left: 16.2% !important;
+	}
 }
 
 /************************************************************************************
@@ -2423,6 +2451,10 @@ Width >= 1280 and height >= 800
 	
 	.custParamTable {
 		margin-left: 12.6% !important;
+	}
+	
+	.otherCustParamTable {
+		margin-left: 16.2% !important;
 	}
 }
 
@@ -2887,6 +2919,10 @@ Width > 1280 and <= 1360
 	.custParamTable {
 		margin-left: 14% !important;
 	}
+	
+	.otherCustParamTable {
+		margin-left: 17.1% !important;
+	}
 }
 
 /************************************************************************************
@@ -3284,6 +3320,10 @@ Width > 1360 and <= 1440
 	
 	.custParamTable {
 		margin-left: 25% !important;
+	}
+	
+	.otherCustParamTable {
+		margin-left: 12.5% !important;
 	}
 }
 
@@ -3687,5 +3727,9 @@ Width > 1441 and <= 1600
 	
 	.custParamTable {
 		margin-left: 17% !important;
+	}
+	
+	.otherCustParamTable {
+		margin-left: 19.1% !important;
 	}
 }

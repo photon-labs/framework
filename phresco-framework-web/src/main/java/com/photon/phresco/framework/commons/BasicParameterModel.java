@@ -17,6 +17,7 @@ public class BasicParameterModel {
     private String controlGroupId = "";
     private String controlId = "";
     private boolean mandatory;
+    private boolean showMinusIcon;
     private List<? extends Object> objectValue = null;
     
     public BasicParameterModel() {
@@ -110,7 +111,15 @@ public class BasicParameterModel {
         return mandatory;
     }
     
-    public String toString() {
+    public boolean isShowMinusIcon() {
+		return showMinusIcon;
+	}
+
+	public void setShowMinusIcon(boolean showMinusIcon) {
+		this.showMinusIcon = showMinusIcon;
+	}
+
+	public String toString() {
         return new ToStringBuilder(this,
                 ToStringStyle.DEFAULT_STYLE)
                 .append("lableText", getLableText())
