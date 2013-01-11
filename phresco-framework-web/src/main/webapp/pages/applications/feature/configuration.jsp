@@ -79,7 +79,7 @@
 	    }
 	}
 	if (hasCustomProperty) {
-		StringTemplate customParamElement = FrameworkUtil.constructCustomParameters();
+		StringTemplate customParamElement = FrameworkUtil.constructCustomParameters(pm);
 		sb.append(customParamElement);
 	}
 %>
