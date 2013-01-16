@@ -326,6 +326,9 @@ function validateJson(url, form, containerTag, jsonParam, progressText, disabled
 			if (data.errorFound != undefined && data.errorFound) {
 				findError(data);
 			} else {
+				if(url == 'createEnvironment') {
+					$("#popupPage").modal('hide');
+				}
 				loadJsonContent(url, jsonParam, containerTag, progressText);
 			}
 		}

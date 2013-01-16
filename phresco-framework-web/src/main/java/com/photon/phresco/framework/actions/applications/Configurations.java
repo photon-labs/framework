@@ -38,6 +38,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.tools.ant.Project;
 
 import com.photon.phresco.api.ApplicationProcessor;
 import com.photon.phresco.api.ConfigManager;
@@ -50,6 +51,7 @@ import com.photon.phresco.commons.model.CoreOption;
 import com.photon.phresco.commons.model.Customer;
 import com.photon.phresco.commons.model.DownloadInfo;
 import com.photon.phresco.commons.model.Element;
+import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.PropertyTemplate;
 import com.photon.phresco.commons.model.RepoInfo;
 import com.photon.phresco.commons.model.SettingsTemplate;
@@ -432,6 +434,62 @@ public class Configurations extends FrameworkBaseAction {
 			return config;
 	}
 	
+	/**
+     * To validate the Environment Name
+     * @return
+     * @throws PhrescoException 
+     * @throws ConfigurationException 
+     */
+	
+	public String validateEnvironment() throws PhrescoException, ConfigurationException {
+		
+		boolean hasError = false;
+		
+		List<Environment> envs = getEnvironments();
+		String envName = null;
+		for (Environment env : envs) {
+			envName= env.getName();
+		}
+		
+		if (FrameworkConstants.CONFIG.equals(getFromPage())) {
+			setConfigPath(getGlobalSettingsPath().replace(File.separator, FORWARD_SLASH));
+			List<Environment> allEnvironments = getAllEnvironments();
+			for (Environment environment : allEnvironments) {
+				if(environment.getName().equalsIgnoreCase(envName)) {
+					setConfigNameError(getText(ERROR_DUPLICATE_NAME_IN_SETTINGS));
+					hasError = true;
+				}
+			}
+		} else {
+			List<ProjectInfo> projectInfo = PhrescoFrameworkFactory.getProjectManager().discover(getCustomerId());
+			for (ProjectInfo project : projectInfo) {
+				List<ApplicationInfo> appInfos = project.getAppInfos();
+				for (ApplicationInfo applicationInfo : appInfos) {
+					StringBuilder builder = new StringBuilder(Utility.getProjectHome());
+			    	builder.append(applicationInfo.getAppDirName());
+			    	builder.append(FORWARD_SLASH);
+			    	builder.append(FOLDER_DOT_PHRESCO);
+			    	builder.append(FORWARD_SLASH);
+			    	builder.append(CONFIGURATION_INFO_FILE_NAME);
+				setConfigPath(builder.toString());
+				List<Environment> allEnvironments = getAllEnvironments();
+					for (Environment environment : allEnvironments) {
+						if(environment.getName().equalsIgnoreCase(envName)) {
+							setConfigNameError(getText(ERROR_DUPLICATE_NAME_IN_CONFIGURATIONS, Collections.singletonList(project.getName())));
+							hasError = true;
+						}
+					}
+				}
+			}
+		}
+		
+		if (hasError) {
+            setErrorFound(true);
+        }
+		
+		return SUCCESS;
+	}
+	
     /**
      * To validate the form fields
      * @return
@@ -479,7 +537,7 @@ public class Configurations extends FrameworkBaseAction {
 					hasError = true;
 				}
 			}
-    	}
+    	} 
     	
     	if (StringUtils.isEmpty(getFromPage()) || (StringUtils.isNotEmpty(getFromPage()) && !getConfigType().equals(getOldConfigType()))) {
 		    if (Constants.SETTINGS_TEMPLATE_SERVER.equals(getConfigType()) || Constants.SETTINGS_TEMPLATE_EMAIL.equals(getConfigType())) {

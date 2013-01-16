@@ -574,17 +574,14 @@
         	 <result name="envList">/pages/applications/configuration/envList.jsp</result>
         </action>
         
-        <action name="checkDuplicateEnv" method="checkDuplicateEnv" class="com.photon.phresco.framework.actions.applications.Configurations">
+        <action name="createEnvironmentValidate" method="validateEnvironment" class="com.photon.phresco.framework.actions.applications.Configurations">
+        <interceptor-ref name="json" />
             <result type="json" />
         </action>
         
          <action name="checkForRemove" method="checkForRemove" class="com.photon.phresco.framework.actions.applications.Configurations">
             <result type="json" />
         </action>
-        
-         <!-- <action name="checkForRemoveSettings" method="checkForRemoveSettings" class="com.photon.phresco.framework.actions.settings.Settings">
-            <result type="json" />
-        </action> -->
         
         <action name="checkForConfiguration" method="checkForConfiguration" class="com.photon.phresco.framework.actions.applications.Build">
             <result type="json" />
