@@ -447,196 +447,202 @@
 		var menuBackGround = data.menuBackGround;
 		var menufontColor = data.menufontColor;
 		var buttonColor = data.buttonColor;
-		var backGroundGradientColor = data.backGroundGradientColor;
+		var pageHeaderColor = data.pageHeaderColor;
 		var labelColor = data.labelColor;
 		var copyRightColor = data.copyRightColor;
 	
 		var buttonGradientColor = buttonColor;
 		var labelActiveColor = buttonColor;
 		
+		
 		JSS.css({
-			'.openreg': {
-				'background': brandingColor
-			},
-			
-			'.closereg': {
-				'background': brandingColor
-			},
-			
-			'.siteinnertooltiptxt': {
-				'border-color': brandingColor
-			},
-						
-			'.headerInnerTop li a.active label': { 
-				'color': labelColor + "!important",
-			},
-			
-			'.tabs li a.active': {
-				'background': "none repeat scroll 0 0 " + bodyBackGroundColor 
-			},
-			
-			'.tabs li a.inactive:hover label ': {
-				'background' : bodyBackGroundColor + "! important",
-				'color': brandingColor + "! important",
+
+			'.page-header': {
+				'background' : pageHeaderColor                               // Page Header in appinfo page 
 			},
 			
 			'.modal-header': {
-				'background': "none repeat scroll 0 0" + menuBackGround
-			},
-
-			'.video-title': {
-				'background': "none repeat scroll 0 0" + brandingColor
-			},
-			
-			'.listindex-active': {
-				'background': "none repeat scroll 0 0" + brandingColor
-			},
-			
-			'.listindex:hover': {
-				'background': "none repeat scroll 0 0" + brandingColor
-			},
-			
-			'.listindex': {
-				'color': brandingColor
-			},
-			
-			'#testmenu li a.active, #testmenu li a:hover': {
-				'background': "none repeat scroll 0 0" +  bodyBackGroundColor
-			},
-			
-			'#testmenu li a': {
-				'background': "none repeat scroll 0 0" +  bodyBackGroundColor
-			},
-			
-			'#testmenu li:first-child': {
-				'border-top' : "1px solid" + bodyBackGroundColor
-			},
-			
-			'#indicator': {
-				'background': brandingColor
-			},
-			
-			'#progressbar': {
-				'border-color': brandingColor
-			},
-			
-			'.userInfo ul li a': {
-				'color': brandingColor
-			},
-				
-			'.btn-primary': {
-			'background': buttonColor , /* Old browsers */
-			'background': "-moz-linear-gradient(top, "+buttonColor +" 0%, "+buttonGradientColor+" 100%)" ,/* FF3.6+ */
-			'background': "-webkit-gradient(linear, left top, left bottom, color-stop(0%,"+buttonColor +"), color-stop(100%,"+buttonGradientColor+"))", /* Chrome,Safari4+ */
-			'background': "-webkit-linear-gradient(top, "+buttonColor +" 0%,"+buttonGradientColor+" 100%)", /* Chrome10+,Safari5.1+ */
-			'background': "-o-linear-gradient(top, "+buttonColor +" 0%,"+buttonGradientColor+" 100%)", /* Opera 11.10+ */
-			'background': "-ms-linear-gradient(top, "+buttonColor +" 0%,"+buttonGradientColor+" 100%)", /* IE10+ */
-			'background': "linear-gradient(to bottom, "+buttonColor +" 0%,"+buttonGradientColor+" 100%)", /* W3C */
-			'filter': "progid:DXImageTransform.Microsoft.gradient( startColorstr='"+buttonColor +"', endColorstr='"+buttonGradientColor+"',GradientType=0 )" /* IE6-9 */
-			},
-			
-			'.btn-primary:hover': {
-				'background': "none repeat scroll 0 0" + labelColor
-			},
-			
-			'body': {
-				'background': bodyBackGroundColor,
-			},
-			
-			'.navTopBorder .mfbox' : {
-				'border': "1px solid" + accordionBackGroundColor
-			},
-			
-			'.multilistVersion-scroller' : {
-				'border': "1px solid" + accordionBackGroundColor
+				'background': "none repeat scroll 0 0" + brandingColor      // Generate pop up header color *
 			},
 			
 			'.headerInnerTop ul': {
-				'background': "none repeat scroll 0 0" + menuBackGround
+				'background': "none repeat scroll 0 0" + menuBackGround      // menu background color
+			},
+			
+			'.headerInnerTop li a.active label': { 
+				'color': brandingColor + "!important",                          // Active Menu label color in  Appinfo page 
+			},
+			
+			'.headerInnerTop li a label': {
+				'color': labelColor + "! important"            // Inactive Label color in menu tab in appinfo page  
+			},
+
+			'.multilist-scroller ul li': {
+				'color': brandingColor + " ! important"                     // Envirinoment (ex : production) color
+			},
+			
+			'table th, table td' : {
+				'border-bottom' : "1px solid" + brandingColor               // Table border bottom color in Download server, database ,Tools tab *
+			},
+			
+			'.closereg': {
+				'background': brandingColor                                  // project Strip color when closed
+			},
+			
+			'.openreg': {
+				'background': brandingColor                                   //  project Strip color when opened
+			},
+			
+			'.video-title': {
+				'background': "none repeat scroll 0 0" + brandingColor       // Video Box Title Color in Home Page
+			},
+			
+			'.listindex-active': {
+				'background': "none repeat scroll 0 0" + brandingColor          // Small video background color in Home page
+			},
+			
+			'.listindex:hover': {
+				'background': "none repeat scroll 0 0" + brandingColor         // Small video1 background color when Mouse over in Home page
+			},
+			
+			'.listindex': {
+				'color': brandingColor                                       // Change the color in List of video 3
+			},
+
+			'.siteinnertooltiptxt': {
+				'border-color': brandingColor     // border color in download option in server ,database , webservice
+			},
+			
+			'#indicator': {
+				'background': brandingColor    // progress bar color
+			},
+			
+			'#progressbar': {
+				'border-color': brandingColor   // progress bar boder color
+			},
+			
+			'.userInfo ul li a': {
+				'color': brandingColor    //  Color when going for Theme change in about phresco
+			},
+
+			'li a.active label': {
+				'color': brandingColor + "! important"     // Active menu label color in Appinfo Left side
+			},
+
+			'label : hover': {
+				'color': brandingColor + "! important"           // change the label color when the mouse over label
+			},
+			
+			'.video-js-box .vjs-controls > div' : {
+				'background': "none repeat scroll 0 0" + brandingColor  // Video Bottom menu color
+			},
+			
+			'.table_border' : {
+				'border' : "1px solid #000000"           // table border color in project 
+			},
+			
+			 '.tabs li a.active': {
+					'background': "none repeat scroll 0 0 " + bodyBackGroundColor  // Left Menus color Active color ** 
+			},
+			 
+			'.tabs li a.inactive:hover label ': {
+				'background' : bodyBackGroundColor + "! important",   // label color when mouse over in left side menu
+				'color': brandingColor + "! important",
+			},
+			
+			'#testmenu li a.active, #testmenu li a:hover': {
+				'background': "none repeat scroll 0 0" +  bodyBackGroundColor // change the Left side menu background color in Quality tab selection ex: click unit ,functional , performance
+			},
+			
+			'#testmenu li a': {
+				'background': "none repeat scroll 0 0" +  bodyBackGroundColor // change the Left side menu background color in Quality tab selection ex: click unit ,functional , performance
+			},
+			
+			'#testmenu li:first-child': {
+				'border-top' : "1px solid" + bodyBackGroundColor              // change the left side menu background upper side border color under Quality tab  
 			},
 			
 			'.tabs > li > a, .pills > li > a': {
-				'background' : bodyBackGroundColor,
+				'background' : bodyBackGroundColor,                   // left side menu background 
 			},
 			
 			'.tabs > li > a > label:hover': {
-				'background' : bodyBackGroundColor + "! important",
+				'background' : bodyBackGroundColor + "! important",   // left side menu background when mouse over
 				'color': brandingColor + "! important",
 			},
 			
 			'.tabs li, .pills > li': {
-				'border-bottom': "1px solid" +  bodyBackGroundColor
+				'border-bottom': "1px solid" +  bodyBackGroundColor  // left side menu  border-bottom color when mouse over
+			},
+			
+			'body': {
+				'background': bodyBackGroundColor,   // body background color
+			},
+			
+			'.navTopBorder .mfbox' : {
+				'border': "1px solid" + brandingColor     // border color of Web service in appinfo page * (accordionBackGroundColor)
+			},
+			
+			'.multilistVersion-scroller' : {
+				'border': "1px solid" + pageHeaderColor     // In appinfo Server page Version border color * (accordionBackGroundColor )
 			},
 			
 			'.mfbox .header-background': {
-				'background' : accordionBackGroundColor
+				'background' :  pageHeaderColor      // background color for server, database, webservice * (accordionBackGroundColor)
 			},
 			
 			'.multiselectForWebservice' : {
-				'background' : accordionBackGroundColor
+				'background' : accordionBackGroundColor            // change the background color when selecting webservice in appinfo page * (accordionBackGroundColor) 
 			},
 			
-			'.page-header': {
-				'background' : menuBackGround
-			},
-					
-			'.multilist-scroller ul li': {
-				'color': labelColor + " ! important"
-			},
-			
-			'label': {
-				'color': labelActiveColor + "! important"
-			},
-			
-			'li a.active label': {
-				'color': brandingColor + "! important"
-			},
-			
-			'.headerInnerTop li a label': {
-				'color': menufontColor + "! important"
-			},
-
-			'label : hover': {
-				'color': brandingColor + "! important"
-			},
-			
-			'.custom_features_wrapper_right .theme_accordion_container div div': {
-				'border-bottom' : "1px solid" + accordionBackGroundColor
-			},
-
-			'.custom_features_wrapper_right .theme_accordion_container div div': {
-				'border-bottom' : "1px solid" + accordionBackGroundColor
-			},
-			
-			'.copyrit a ': {
-				'color': copyRightColor
-			},
-			
-			'.copyrit a:hover': {
-				'color': copyRightColor
-			},
-			
-			'.custom_features_wrapper_right .theme_accordion_container div div a' : {
-				'color': buttonColor
+			'.custom_features_wrapper_right .theme_accordion_container div div': {    // Feature border color when more than omne feature selected * (accordionBackGroundColor)
+				'border-bottom' : "1px solid" + brandingColor
 			},
 			
 			'.download_tbl_header': {
-				'background': accordionBackGroundColor
+				'background': accordionBackGroundColor                            // table header background color in when viewing  ex: server in download tab 
 			},
 			
 			'.download_tbl': {
-				'border' : "1px solid" + accordionBackGroundColor
+				'border' : "1px solid" + accordionBackGroundColor                    // border color in when viewing  ex: server in download tab 
 			},
 			'.tblheader' : {
-				'background': accordionBackGroundColor
+				'background':  pageHeaderColor                           // table background color  * (accordionBackGroundColor)
 			},
 			
-			'.video-js-box .vjs-controls > div' : {
-				'background': "none repeat scroll 0 0" + brandingColor
+			'.copyrit a ': {
+				'color': copyRightColor                                  // Copy right color
+			},
+			
+			'.copyrit a:hover': {
+				'color': copyRightColor                                 // Copy right color when mouse over
+			},
+			
+			'.custom_features_wrapper_right .theme_accordion_container div div a' : {   // Feature Deletion cross mark color
+				'color': buttonColor
+			},
+			
+			'.btn-primary': {                                        // button Color                         
+				'background': buttonColor , /* Old browsers */
+				'background': "-moz-linear-gradient(top, "+buttonColor +" 0%, "+buttonGradientColor+" 100%)" ,/* FF3.6+ */
+				'background': "-webkit-gradient(linear, left top, left bottom, color-stop(0%,"+buttonColor +"), color-stop(100%,"+buttonGradientColor+"))", /* Chrome,Safari4+ */
+				'background': "-webkit-linear-gradient(top, "+buttonColor +" 0%,"+buttonGradientColor+" 100%)", /* Chrome10+,Safari5.1+ */
+				'background': "-o-linear-gradient(top, "+buttonColor +" 0%,"+buttonGradientColor+" 100%)", /* Opera 11.10+ */
+				'background': "-ms-linear-gradient(top, "+buttonColor +" 0%,"+buttonGradientColor+" 100%)", /* IE10+ */
+				'background': "linear-gradient(to bottom, "+buttonColor +" 0%,"+buttonGradientColor+" 100%)", /* W3C */
+				'filter': "progid:DXImageTransform.Microsoft.gradient( startColorstr='"+buttonColor +"', endColorstr='"+buttonGradientColor+"',GradientType=0 )" /* IE6-9 */
+			},
+			
+			'.btn-primary:hover': {
+				'background': "none repeat scroll 0 0" + buttonColor          // button color when mouse over
+			},
+
+			'label': {
+				'color': labelActiveColor + "! important"         // label color 
 			},
 			
 			'label, input, button, select, textarea' : {
-				'font-weight': "bold"
+				'font-weight': "bold"                                  // label color weight in the Left side Menu options
 			}
 			
 		});

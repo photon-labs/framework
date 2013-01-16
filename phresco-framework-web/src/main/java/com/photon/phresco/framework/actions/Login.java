@@ -72,7 +72,7 @@ public class Login extends FrameworkBaseAction {
 	private String menuBackGround = "";
 	private String menufontColor = "";
 	private String buttonColor = "";
-	private String backGroundGradientColor = "";
+	private String pageHeaderColor = "";
 	private String labelColor = "";
 	private String copyRightColor = "";
     
@@ -182,7 +182,7 @@ public class Login extends FrameworkBaseAction {
 					setAccordionBackGroundColor(customer.getFrameworkTheme().getAccordionBackGroundColor());
 					setBodyBackGroundColor(customer.getFrameworkTheme().getBodyBackGroundColor());
 					setButtonColor(customer.getFrameworkTheme().getButtonColor());
-					setBackGroundGradientColor(customer.getFrameworkTheme().getBackGroundGradientColor());
+					setPageHeaderColor(customer.getFrameworkTheme().getPageHeaderColor());
 					setCopyRightColor(customer.getFrameworkTheme().getCopyRightColor());
 					setLabelColor(customer.getFrameworkTheme().getLabelColor());
 					setMenuBackGround(customer.getFrameworkTheme().getMenuBackGround());
@@ -267,10 +267,6 @@ public class Login extends FrameworkBaseAction {
 		return buttonColor;
 	}
 
-	public String getBackGroundGradientColor() {
-		return backGroundGradientColor;
-	}
-
 	public String getLabelColor() {
 		return labelColor;
 	}
@@ -307,7 +303,12 @@ public class Login extends FrameworkBaseAction {
 		this.copyRightColor = copyRightColor;
 	}
 
-	public void setBackGroundGradientColor(String backGroundGradientColor) {
-		this.backGroundGradientColor = backGroundGradientColor;
+	public String getPageHeaderColor() {
+		return pageHeaderColor;
 	}
+
+	public void setPageHeaderColor(String pageHeaderColor) {
+		this.pageHeaderColor = pageHeaderColor;
+	}
+
 }
