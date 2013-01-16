@@ -474,7 +474,7 @@
 														<input type="checkbox" name="<%= mobileLayerTechGroup.getId() + FrameworkConstants.REQ_PARAM_NAME_PHONE %>" value="true" <%= disabledMobLayer %>/>
 														<span class="vAlignSub">&nbsp;<s:text name='lbl.device.type.phone'/></span>
 													</div>
-													<div class="float-left">
+													<div class="float-left element-width">
 														<input type="checkbox" name="<%= mobileLayerTechGroup.getId() + FrameworkConstants.REQ_PARAM_NAME_TABLET %>" value="true" <%= disabledMobLayer %>/>
 														<span class="vAlignSub">&nbsp;<s:text name='lbl.device.type.tablet'/></span>
 													</div>

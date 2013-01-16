@@ -5810,6 +5810,10 @@ input[class*='chckBxAlign'] {
 	float: left;
 }
 
+.element-width {
+	width: 15%;
+}
+
 .float-right {
 	float: right;
 }
