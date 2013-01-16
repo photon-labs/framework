@@ -1586,8 +1586,8 @@ public class Quality extends DynamicParameterAction implements Constants {
 //               builder.append(performanceTestDir);
                S_LOGGER.debug("Performance test directory path " + builder.toString());
             if (!TechnologyTypes.ANDROIDS.contains(techId)) {
-            	if ("WebService".equals(jmeterTestAgainst)) {
-            		jmeterTestAgainst = "webservices";
+            	if (SETTINGS_TEMPLATE_WEBSERVICE.equalsIgnoreCase(jmeterTestAgainst)) {
+            		jmeterTestAgainst = "webservice";
             	}
 	            builder.append(jmeterTestAgainst.toLowerCase());
 	            QualityUtil.changeTestName(builder.toString(), testName);

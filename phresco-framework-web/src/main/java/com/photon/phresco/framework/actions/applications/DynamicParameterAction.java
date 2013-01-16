@@ -171,17 +171,25 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
                         
                         // Get the values from the dynamic parameter class
                         List<Value> dynParamPossibleValues = getDynamicPossibleValues(constructMapForDynVals, parameter);
-                        addValueDependToWatcher(watcherMap, parameterKey, dynParamPossibleValues);
+                        addValueDependToWatcher(watcherMap, parameterKey, dynParamPossibleValues, parameter.getValue());
                         if (watcherMap.containsKey(parameterKey)) {
                             DependantParameters dependantParameters = (DependantParameters) watcherMap.get(parameterKey);
                             if (CollectionUtils.isNotEmpty(dynParamPossibleValues)) {
-                                dependantParameters.setValue(dynParamPossibleValues.get(0).getValue());
+                            	if (StringUtils.isNotEmpty(parameter.getValue())) {
+                                	dependantParameters.setValue(parameter.getValue());
+                                } else {
+                                	dependantParameters.setValue(dynParamPossibleValues.get(0).getValue());
+                                }
                             }
                         }
                         
                         setReqAttribute(REQ_DYNAMIC_POSSIBLE_VALUES + parameter.getKey(), dynParamPossibleValues);
                         if (CollectionUtils.isNotEmpty(dynParamPossibleValues)) {
-                        	addWatcher(watcherMap, parameter.getDependency(), parameterKey, dynParamPossibleValues.get(0).getValue());
+                        	if (StringUtils.isNotEmpty(parameter.getValue())) {
+                        		addWatcher(watcherMap, parameter.getDependency(), parameterKey, parameter.getValue());
+                        	} else {
+                        		addWatcher(watcherMap, parameter.getDependency(), parameterKey, dynParamPossibleValues.get(0).getValue());
+                        	}
                         }
                         if (StringUtils.isNotEmpty(paramBuilder.toString())) {
                             paramBuilder.append("&");
@@ -196,12 +204,20 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
                         
                         if (watcherMap.containsKey(parameterKey)) {
                             DependantParameters dependantParameters = (DependantParameters) watcherMap.get(parameterKey);
-                            dependantParameters.setValue(values.get(0).getValue());
+                            if (StringUtils.isNotEmpty(parameter.getValue())) {
+                            	dependantParameters.setValue(parameter.getValue());
+                            } else {
+                            	dependantParameters.setValue(values.get(0).getValue());
+                            }
                         }
                         
-                        addValueDependToWatcher(watcherMap, parameterKey, values);
+                        addValueDependToWatcher(watcherMap, parameterKey, values, parameter.getValue());
                         if (CollectionUtils.isNotEmpty(values)) {
-                            addWatcher(watcherMap, parameter.getDependency(), parameterKey, values.get(0).getKey());
+                        	if (StringUtils.isNotEmpty(parameter.getValue())) {
+                            	addWatcher(watcherMap, parameter.getDependency(), parameterKey, parameter.getValue());
+                            } else {
+                            	addWatcher(watcherMap, parameter.getDependency(), parameterKey, values.get(0).getKey());
+                            }
                         }
                         
                         if (StringUtils.isNotEmpty(paramBuilder.toString())) {
@@ -235,10 +251,14 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
         }
     }
 
-	private void addValueDependToWatcher(Map<String, DependantParameters> watcherMap, String parameterKey, List<Value> values) {
+	private void addValueDependToWatcher(Map<String, DependantParameters> watcherMap, String parameterKey, List<Value> values, String previousValue) {
 		for (Value value : values) {
 		    if (StringUtils.isNotEmpty(value.getDependency())) {
-		        addWatcher(watcherMap, value.getDependency(), parameterKey, value.getKey());
+		    	if (StringUtils.isNotEmpty(previousValue)) {
+		    		addWatcher(watcherMap, value.getDependency(), parameterKey, previousValue);
+		    	} else {
+		    		addWatcher(watcherMap, value.getDependency(), parameterKey, value.getKey());
+		    	}
 		    }
 		}
 	}
@@ -257,6 +277,7 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
                 watcherMap.put(dependentKey, dependantParameters);
             }
         }
+       
         addParentToWatcher(watcherMap, parameterKey, parameterValue);
     }
     
@@ -296,7 +317,6 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
                 paramMap.put(key, value);
             }
         }
-
         return paramMap;
     }
 
@@ -732,12 +752,15 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
                     } else {
 	                    List<Value> dependentPossibleValues = getDynamicPossibleValues(constructMapForDynVals, dependentParameter);
 	                    setDependentValues(dependentPossibleValues);
-	                    if (watcherMap.containsKey(getDependency())) {
+                    	if (CollectionUtils.isNotEmpty(dependentPossibleValues) && watcherMap.containsKey(getDependency())) {
 	                        DependantParameters dependantParameters = (DependantParameters) watcherMap.get(getDependency());
 	                        dependantParameters.setValue(dependentPossibleValues.get(0).getValue());
+	                    } else {
+	                    	 DependantParameters dependantParameters = (DependantParameters) watcherMap.get(getDependency());
+		                     dependantParameters.setValue("");
 	                    }
-	                    if (watcherMap.containsKey(dependentPossibleValues.get(0).getDependency())) {
-	                        addValueDependToWatcher(watcherMap, dependentParameter.getKey(), dependentPossibleValues);
+	                    if (CollectionUtils.isNotEmpty(dependentPossibleValues) && watcherMap.containsKey(dependentPossibleValues.get(0).getDependency())) {
+	                        addValueDependToWatcher(watcherMap, dependentParameter.getKey(), dependentPossibleValues, "");
 	                        if (CollectionUtils.isNotEmpty(dependentPossibleValues)) {
 	                        	addWatcher(watcherMap, dependentParameter.getDependency(), 
 	                        			dependentParameter.getKey(), dependentPossibleValues.get(0).getValue());

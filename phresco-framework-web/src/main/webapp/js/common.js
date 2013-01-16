@@ -915,7 +915,7 @@ function constructSingleSelectOptions(dependentValues, pushToElement) {
 		}
 	}
 	
-	if (isEditableCombo) {// execute only for jec combo box
+	if (isEditableCombo && !isBlank(dynamicFirstValue)) {// execute only for jec combo box
 		$('#'+ pushToElement + ' option[value="'+ dynamicFirstValue +'"]').prop("selected","selected");//To preselect select first value
 	}
 }

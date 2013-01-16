@@ -556,45 +556,43 @@
 	var i = 1;
 	var contextUrlsRowId = "";
 	function addContext(contextObj) {
-		var html = $("#" + contextObj).html();
+		var html = $('.'+contextObj+'Class').html();//to get designs
 		contextUrlsRowId = contextObj + i;
-		var contextUrlRow = $(document.createElement('div')).attr("id", contextUrlsRowId).css('margin-bottom','5px');
+		var contextUrlRow = $(document.createElement('div')).attr("id", contextUrlsRowId).attr("class", contextObj+'Class').css('margin-bottom','5px');
 		contextUrlRow.html(html);
-		//$('#generateBuild_Modal').append(contextUrlRow);
-		$("#" + contextObj + "Parent").append(contextUrlRow);
-		$(':input:not(:button)', $("#"+contextUrlsRowId)).val('');
-		$("#"+contextUrlsRowId).find('div[id=headerkeyId]').remove();
+		$("#" + contextObj + "Parent").append(contextUrlRow);//append to a parent div
+		$(':input:not(:button)', $("#"+contextUrlsRowId)).val('');//to clear already inputed value
+		$("#"+contextUrlsRowId).find('div[id=headerkeyId]').remove();//to clear header key value design
 		i++;
 	}
 	
 	//To enable the delete btn when any context url check box is checked
-	function enableDelBtn() {
+	function enableDelBtn(checkBoxClass) {
 		var hasChecked = false;
-		$('.check').each(function() {
+		$('.'+checkBoxClass).each(function() {
 			if ($(this).is(':checked')) {
 				hasChecked = true;
 				return false;
 			}
 		});
-		if (hasChecked && $('.check').size() != 1) {
-			$('#deleteContext').addClass("btn-primary");
-			$('#deleteContext').removeAttr("disabled");
+		if (hasChecked && $('.'+checkBoxClass).size() != 1) {
+			$('#'+checkBoxClass+'Del').addClass("btn-primary");
+			$('#'+checkBoxClass+'Del').removeAttr("disabled");
 		} else {
-			$('#deleteContext').removeClass("btn-primary");
-			$('#deleteContext').attr("disabled", true);
+			$('#'+checkBoxClass+'Del').removeClass("btn-primary");
+			$('#'+checkBoxClass+'Del').attr("disabled", true);
 		}
 	}
 	
 	//To remove the selected conext urls
-	function deleteContextUrl() {
-		$('.check').each(function() {
-			if ($(this).is(':checked')) {
-				if ($(this).parents('div').attr('id') != "contextDiv" && $(this).parents('div').attr('id') != "dbContextDiv") {
-					$(this).closest('fieldset').remove();
-				}
-			}
+	function deleteContextUrl(checkBoxClass) {
+		$('.'+checkBoxClass).each(function() {
+			var size = $('.'+checkBoxClass).size();
+			if (size > 1 && $(this).is(':checked')) {
+				$(this).closest('fieldset').parent().remove();
+			} 
 		});
-		enableDelBtn();
+		enableDelBtn(checkBoxClass);
 	}
 
 	function addHeader(obj) {
