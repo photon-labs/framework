@@ -2026,7 +2026,7 @@ Width <= 1280 and height <= 800
 	}
 
 	.graph_div {
-		width: 42% !important;
+		width: 100% !important;
 	}
 	
 	.qq-upload-list {
@@ -2442,7 +2442,7 @@ Width >= 1280 and height >= 800
 
 	 .graph_div {
 		zoom: 0.6;
-		width: 32% !important;
+		width: 100% !important;
 	}
 	
 	.qq-upload-list {
@@ -3311,7 +3311,7 @@ Width > 1360 and <= 1440
 	}
 	.graph_div {
 		zoom: 1;
-		width: 38% !important;
+		width: 100% !important;
 	}
 	
 	.qq-upload-list {
@@ -3718,7 +3718,7 @@ Width > 1441 and <= 1600
 
 	.graph_div {
 		zoom: 1;
-		width: 38% !important;
+		width: 100% !important;
 	}
 	
 	.qq-upload-list {
