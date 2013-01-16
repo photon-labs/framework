@@ -551,10 +551,6 @@
             <result name="environment">/pages/applications/configuration/environment.jsp</result>
         </action>
         
-        <action name="setAsDefault" method="setAsDefault" class="com.photon.phresco.framework.actions.applications.Configurations">
-            <result type="json" />
-        </action>
-        
         <action name="cloneConfigPopup" method="cloneConfigPopup" class="com.photon.phresco.framework.actions.applications.Configurations">
             <result name="success">/pages/applications/configuration/cloneConfigPopup.jsp</result>
         </action>
