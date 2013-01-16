@@ -643,6 +643,10 @@
 			
 			'label, input, button, select, textarea' : {
 				'font-weight': "bold"                                  // label color weight in the Left side Menu options
+			},
+			
+			'div.vjs-big-play-button:hover' : {
+				'background' : "none repeat scroll 0 0" + brandingColor  // Change The video Run button color when mouse over
 			}
 			
 		});
