@@ -33,7 +33,7 @@ Width <= 1024
 		margin: 0.1% 0%;
 	}
 	.customer_name {
-		right:11.5%;
+		right:2.5%;
 	}
 
 	.content_adder {
@@ -3689,7 +3689,7 @@ Width > 1441 and <= 1600
 		width: 51%;
 	}
 	.customer_name {
-		right: 8.5% !important;
+		right: 1.5% !important;
 	}
 	.featureForm {
 		height: 90% !important;

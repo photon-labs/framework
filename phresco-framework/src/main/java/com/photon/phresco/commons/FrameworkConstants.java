@@ -1776,7 +1776,7 @@ public interface FrameworkConstants {
 	     *****************************/
 		
 		String ACT_ERR_CONFIG_CLONE_EXISTS = "err.config.clone.exists";
-		
+		String ACT_ERR_CONFIG_DEFAULT_ENV = "err.config.default.env";
 		
 		/**
 		 * Dynamic Parameter Constants

@@ -1611,3 +1611,17 @@ table tr {
     background: #eeeeee !important;
     border: solid 1px #dcdcdc;
 }
+
+.customer_select_div {
+	height: 34px;
+    margin-left: 77px;
+}
+
+#customerSelect {
+    margin-top: 31px;
+    width: 260px;
+}
+
+#lbl_customer {
+	margin-top: 31px;
+}

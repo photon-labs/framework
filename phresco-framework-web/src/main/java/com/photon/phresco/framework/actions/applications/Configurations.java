@@ -81,6 +81,7 @@ public class Configurations extends FrameworkBaseAction {
     private static Boolean s_debugEnabled  = S_LOGGER.isDebugEnabled();
     
     private List<Environment> environments = new ArrayList<Environment>();
+    private List<Environment> environmentsInfo = new ArrayList<Environment>();
     private List<String> deletableEnvs = new ArrayList<String>();
     
     private List<Configuration> selectedConfigurations = new ArrayList<Configuration>();
@@ -695,15 +696,25 @@ public class Configurations extends FrameworkBaseAction {
     	}
     	
     	try {
+    		boolean defaultEnv = false;
+    		List<Environment> environments = getEnvironmentsInfo();
     		ConfigManager configManager = getConfigManager(getConfigPath());
-    		if (StringUtils.isNotEmpty(getSelectedEnvirment())) {//To delete the selected environments
-    			String [] deletableEnvs = getSelectedEnvirment().split(",");
-        	    List<String> deletableEnvList = Arrays.asList(deletableEnvs);
-        	    for (String deletableEnv : deletableEnvList) {
-        	    	configManager.deleteEnvironment(deletableEnv);
-    			}
-        	    addActionMessage(getText(ACT_SUCC_ENV_DELETE, Collections.singletonList(getSelectedEnvirment())));
+    		String msg = "";
+    		List<String> deletedEnvs = new ArrayList<String>(environments.size());
+    		for (Environment environment : environments) {
+    			defaultEnv = environment.isDefaultEnv();
+        		if(!defaultEnv) { // deleteable env
+        	    	configManager.deleteEnvironment(environment.getName());
+        	    	deletedEnvs.add(environment.getName());
+        		} else { // default env
+        			msg = msg + " " + getText(ACT_ERR_CONFIG_DEFAULT_ENV, Collections.singletonList(environment.getName()));
+        		}
+			}
+    		
+    		if (CollectionUtils.isNotEmpty(deletedEnvs)) {
+    			msg = msg + " " + getText(ACT_SUCC_ENV_DELETE, Collections.singletonList(deletedEnvs.get(0)));
     		}
+    		
     		if (CollectionUtils.isNotEmpty(getSelectedConfigurations())) {//To delete the selected configurations
     			configManager.deleteConfigurations(getSelectedConfigurations());
     			List<String> configToDelete = new ArrayList<String>();
@@ -712,9 +723,9 @@ public class Configurations extends FrameworkBaseAction {
         			configToDelete.add(configuration.getName());
     			}
         		String deleteableItem = StringUtils.join(configToDelete.toArray(), ", ");
-        		addActionMessage(getText(ACT_SUCC_CONFIG_DELETE, Collections.singletonList(deleteableItem)));
+        		msg = msg +  " " + getText(ACT_SUCC_CONFIG_DELETE, Collections.singletonList(deleteableItem));
     		}
-    		
+    		addActionMessage(msg);
     	} catch(Exception e) {
     		if (s_debugEnabled) {
                 S_LOGGER.error("Entered into catch block of Configurations.delete()" + FrameworkUtil.getStackTraceAsString(e));
@@ -920,6 +931,10 @@ public class Configurations extends FrameworkBaseAction {
 			ConfigManager configManager = getConfigManager(getConfigPath());
 			Configuration configuration = configManager.getConfiguration(getSelectedEnv(), getSelectedType(), getSelectedConfigname());
 			if (configuration != null) {
+				String appliesTo = configuration.getAppliesTo();
+	            String [] selectedAppliesTo = appliesTo.split(",");
+	            List<String> selectedAppliesToList = Arrays.asList(selectedAppliesTo);
+	            setReqAttribute(REQ_APPLIES_TO, selectedAppliesToList);
 				Properties selectedProperties = configuration.getProperties();
 				setReqAttribute(REQ_PROPERTIES_INFO, selectedProperties);
 			}
@@ -1863,4 +1878,12 @@ public class Configurations extends FrameworkBaseAction {
     public void setConfigTemplateType(String configTemplateType) {
         this.configTemplateType = configTemplateType;
     }
+
+	public List<Environment> getEnvironmentsInfo() {
+		return environmentsInfo;
+	}
+
+	public void setEnvironmentsInfo(List<Environment> environmentsInfo) {
+		this.environmentsInfo = environmentsInfo;
+	}
 }

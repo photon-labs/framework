@@ -68,6 +68,13 @@
 		<% 
 			for (Environment env : envs) { 
 			String envJson = gson.toJson(env);
+			String checkedStr = "";
+			if (env.isDefaultEnv()) {
+        		checkedStr = "checked";
+			} else {
+				checkedStr = "";
+			}
+			
 		%>
 			<div class="theme_accordion_container">
 				<section class="accordion_panel_wid">
@@ -75,7 +82,7 @@
 						<section class="lft_menus_container">
 							<span class="siteaccordion closereg">
 								<span>
-									<input type="checkbox" value='<%= envJson %>' id="<%=env.getName() %>" class="accordianChkBox" name="checkEnv" onclick="checkAllEvent(this,$('.<%=env.getName() %>'), false);"/>
+									<input type="checkbox" value='<%= envJson %>' id="<%=env.getName() %>" <%= checkedStr %> class="accordianChkBox" name="checkEnv" onclick="checkAllEvent(this,$('.<%=env.getName() %>'), false);"/>
 									<a class="vAlignSub"><%=env.getName() %></a>
 								</span>
 							</span>

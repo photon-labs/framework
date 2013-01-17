@@ -1712,3 +1712,17 @@ background-color: #ffffff;
 .dd-selected-description-truncated {
     color: #ccc !important;
 }
+
+.customer_select_div {
+	height: 34px;
+    margin-left: 77px;
+}
+
+#customerSelect {
+    margin-top: 32px;
+    width: 260px;
+}
+
+#lbl_customer {
+	margin-top: 31px;
+}

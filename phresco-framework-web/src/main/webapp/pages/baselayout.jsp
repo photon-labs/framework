@@ -219,16 +219,17 @@
 						<div id="customerList" class="control-group customer_name">
 							<s:label key="lbl.customer" cssClass="control-label custom_label labelbold" theme="simple"/>
 							<div class="controls customer_select_div">
-								<select name="customerId" class="customer_listbox">
+								<select id="customerSelect" name="customerSelect" class="customer_listbox">
 					                <%
 				                    	List<Customer> customers = user.getCustomers();
 				                    	for (Customer customer: customers) {
 								    %>
-					                       <option value="<%= customer.getId() %>"><%= customer.getName()%></option>
+					                       <option value="<%= customer.getId() %>" ><%= customer.getName()%></option>
 									<% 
 							            }
 								    %>
 								</select>
+								<input type="hidden" id="customerId" name="customerId" value=""/>
 							</div>
 						</div>
 					</form>
@@ -374,9 +375,10 @@
 	<script type="text/javascript">
 	 $(document).ready(function() {
 		applyTheme();
-		getLogoImgUrl();
+		//getLogoImgUrl();
 		showHideTheme();
-	        
+		var selectedId = "";
+		
 		$(".styles").click(function() {
 			localStorage.clear();
 			var value = $(this).attr("rel");
@@ -403,14 +405,39 @@
 		loadContent("home", '', $("#container"), '', '', true);
 		activateMenu($("#home"));
 				
-		//To get the list of projects based on the selected customer
-    	$('select[name=customerId]').change(function() {
-    		getLogoImgUrl();
-    		showLoadingIcon();
-    		showHideTheme();
-    		loadContent("applications", $('#formCustomers'), $("#container"), '', '', true);
-    	});
+		$('select[name=customerSelect]').ddslick({
+		 	onSelected: function(data) {
+		 		selectedId = data.selectedData.value;
+		 		onSelectCustomer(selectedId);
+		 	}
+		});
 		
+        function onSelectCustomer(selectedId) {
+        	$('#customerId').val(selectedId);
+       		$('a[name="headerMenu"]').each(function() {
+       			if ($(this).hasClass('active')) {
+       				doPageLoad($(this), $('a[name="headerMenu"]'));
+       			}
+       		});
+       			
+       		/* $("a[name='headerMenu']").click(function() {
+       			doPageLoad($(this), $('a[name="headerMenu"]'));
+       		}); */
+        }
+        
+        function doPageLoad(currentObj, allObjects) {
+        	showLoadingIcon();
+        	showHideTheme();
+    		inActivateAllMenu(allObjects);
+    		activateMenu(currentObj);
+    		loadContent(currentObj.attr('id'), $('#formCustomers'), $("#container"), '', '', true);
+   			if(selectedId == "<%= ServiceConstants.DEFAULT_CUSTOMER_NAME %>") {
+   				applyTheme();
+   			} else {
+   				getLogoImgUrl();
+   			}
+        }
+
 		$("#forum").click(function() {
 			loadContent("forum", $('#formCustomers'), $("#container"), '', '', true);
 		});
@@ -425,7 +452,7 @@
 	}
 	
 	function getLogoImgUrl() {
-		var currentCustomerId = $('select[name=customerId]').val();
+		var currentCustomerId = $('input[name=customerId]').val();
 		if (currentCustomerId === "<%= ServiceConstants.DEFAULT_CUSTOMER_NAME %>") {
 			applyTheme();
 		} else {
@@ -654,7 +681,7 @@
 	
 	//To hide themes for customers other than photon
 	function showHideTheme() {
-		var customerId = $('select[name=customerId]').val();
+		var customerId = $('input[name=customerId]').val();
 		if (customerId != "<%= ServiceConstants.DEFAULT_CUSTOMER_NAME %>") {
 			$('#themeContainer').hide();
 		} else if (customerId === "<%= ServiceConstants.DEFAULT_CUSTOMER_NAME %>"){
