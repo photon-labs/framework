@@ -46,6 +46,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Element;
 
+import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.ArtifactInfo;
@@ -1336,4 +1337,26 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 
         return csvString;
     }
+    
+	public static String findPlatform() {
+		String osName = System.getProperty(OS_NAME);
+		String osBit = System.getProperty(OS_ARCH);
+		if (osName.contains(WINDOWS)) {
+			osName = WINDOWS;
+		} else if (osName.contains(LINUX)) {
+			osName = LINUX;
+		} else if (osName.contains(MAC)) {
+			osName = MAC;
+		} else if (osName.contains(SERVER)) {
+			osName = SERVER;
+		} else if (osName.contains(WINDOWS7)) {
+			osName = WINDOWS7.replace(" ", "");
+		}
+		if (osBit.contains(OS_BIT64)) {
+			osBit = OS_BIT64;
+		} else {
+			osBit = OS_BIT86;
+		}
+		return osName.concat(osBit);
+	}
 }

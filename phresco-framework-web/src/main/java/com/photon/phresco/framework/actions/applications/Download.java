@@ -25,6 +25,7 @@ import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.DownloadInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
+import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.commons.LogErrorReport;
 import com.photon.phresco.service.client.api.ServiceManager;
 
@@ -45,11 +46,12 @@ public class Download extends FrameworkBaseAction {
 			ServiceManager serviceManager = getServiceManager();
 			ApplicationInfo appInfo = getApplicationInfo();
 			String techId = appInfo.getTechInfo().getId();
-			setReqAttribute(REQ_SERVER_DOWNLOAD_INFO, serviceManager.getDownloads(getCustomerId(), techId, DownloadInfo.Category.SERVER.name()));
-			setReqAttribute(REQ_DB_DOWNLOAD_INFO, serviceManager.getDownloads(getCustomerId(), techId, DownloadInfo.Category.DATABASE.name()));
-			setReqAttribute(REQ_EDITOR_DOWNLOAD_INFO, serviceManager.getDownloads(getCustomerId(), techId, DownloadInfo.Category.EDITOR.name()));
-			setReqAttribute(REQ_TOOLS_DOWNLOAD_INFO, serviceManager.getDownloads(getCustomerId(), techId, DownloadInfo.Category.TOOLS.name()));
-			setReqAttribute(REQ_OTHERS_DOWNLOAD_INFO, serviceManager.getDownloads(getCustomerId(), techId, DownloadInfo.Category.OTHERS.name()));
+			String platform = FrameworkUtil.findPlatform();
+			setReqAttribute(REQ_SERVER_DOWNLOAD_INFO, serviceManager.getDownloads(getCustomerId(), techId, DownloadInfo.Category.SERVER.name(), platform));
+			setReqAttribute(REQ_DB_DOWNLOAD_INFO, serviceManager.getDownloads(getCustomerId(), techId, DownloadInfo.Category.DATABASE.name(), platform));
+			setReqAttribute(REQ_EDITOR_DOWNLOAD_INFO, serviceManager.getDownloads(getCustomerId(), techId, DownloadInfo.Category.EDITOR.name(), platform));
+			setReqAttribute(REQ_TOOLS_DOWNLOAD_INFO, serviceManager.getDownloads(getCustomerId(), techId, DownloadInfo.Category.TOOLS.name(), platform));
+			setReqAttribute(REQ_OTHERS_DOWNLOAD_INFO, serviceManager.getDownloads(getCustomerId(), techId, DownloadInfo.Category.OTHERS.name(), platform));
 		} catch (PhrescoException e) {
 			new LogErrorReport(e, "Listing downloads");
 		}

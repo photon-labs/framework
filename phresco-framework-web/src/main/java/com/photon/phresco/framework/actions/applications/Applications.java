@@ -327,7 +327,7 @@ public class Applications extends FrameworkBaseAction {
             setSelectedDownloadInfo(selectedDb);
             setSelectedDownloadInfoVersion(selectedDbVer);
             setSelectBoxId(selectBoxId);
-            List<DownloadInfo> downloadInfos = getServiceManager().getDownloads(getCustomerId(), techId, type);
+            List<DownloadInfo> downloadInfos = getServiceManager().getDownloads(getCustomerId(), techId, type, FrameworkUtil.findPlatform());
 			setDownloadInfos(downloadInfos);
         } catch (PhrescoException e) {
             return showErrorPopup(e, getText(EXCEPTION_DOWNLOADINFOS));
