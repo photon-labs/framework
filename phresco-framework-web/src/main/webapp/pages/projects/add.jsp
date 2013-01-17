@@ -470,11 +470,11 @@
 															<% } %>
 														</select>
 													</div>
-													<div class="align-in-row width">
+													<div class="align-in-row width" id="<%= mobileLayerTechGroup.getId() + FrameworkConstants.REQ_PARAM_NAME_PHONE %>">
 														<input type="checkbox" name="<%= mobileLayerTechGroup.getId() + FrameworkConstants.REQ_PARAM_NAME_PHONE %>" value="true" <%= disabledMobLayer %>/>
 														<span class="vAlignSub">&nbsp;<s:text name='lbl.device.type.phone'/></span>
 													</div>
-													<div class="float-left element-width">
+													<div class="float-left" id="<%= mobileLayerTechGroup.getId() + FrameworkConstants.REQ_PARAM_NAME_TABLET %>">
 														<input type="checkbox" name="<%= mobileLayerTechGroup.getId() + FrameworkConstants.REQ_PARAM_NAME_TABLET %>" value="true" <%= disabledMobLayer %>/>
 														<span class="vAlignSub">&nbsp;<s:text name='lbl.device.type.tablet'/></span>
 													</div>
@@ -532,6 +532,15 @@
 
 	$(document).ready(function() {
 		hideLoadingIcon();//To hide the loading icon
+		
+		<% if (appInfos != null) {
+			for (ApplicationInfo appInfo : appInfos) {
+				if (appInfo.getTechInfo().getId().equalsIgnoreCase("tech-iphone-library")) { %>
+					$("#iphonePhone").hide();
+		 			$("#iphoneTablet").hide();
+			<%	}
+    		}
+		}%>
 		
 		// To restrict the user in typing the special charaters in projectCode and projectVersion
 		$('#projectCode, #projVersion').bind('input propertychange', function (e) {
@@ -643,7 +652,16 @@
 	//To get the versions of the selected mobile technologies
 	function getTechVersions(layerId, techGroupId, toBeFilledCtrlName, techId) {
 		showLoadingIcon();
+		$("#"+techGroupId+"<%= FrameworkConstants.REQ_PARAM_NAME_PHONE %>").show();
+		$("#"+techGroupId+"<%= FrameworkConstants.REQ_PARAM_NAME_TABLET %>").show();
 		objName = toBeFilledCtrlName;
+		$('select[name="'+techGroupId+'<%= FrameworkConstants.REQ_PARAM_NAME_TECHNOLOGY %>"]').each(function () {
+	 		var id = $(this).val();
+	 		if (id === "tech-iphone-library") {
+	 			$("#"+techGroupId+"<%= FrameworkConstants.REQ_PARAM_NAME_PHONE %>").hide();
+	 			$("#"+techGroupId+"<%= FrameworkConstants.REQ_PARAM_NAME_TABLET %>").hide();
+	 		}
+       	});
 		var params = getBasicParams();
 		params = params.concat("&layerId=");
 		params = params.concat(layerId);

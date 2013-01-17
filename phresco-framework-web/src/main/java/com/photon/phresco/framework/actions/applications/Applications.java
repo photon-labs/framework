@@ -689,7 +689,7 @@ public class Applications extends FrameworkBaseAction {
     	}
     }
     
-    public String update() {
+    public String update() throws IOException {
     	BufferedReader bufferedReader = null;
     	try {
     		ProjectInfo projectInfo = (ProjectInfo)getSessionAttribute(getAppId() + SESSION_APPINFO);
@@ -822,6 +822,7 @@ public class Applications extends FrameworkBaseAction {
 			ProjectInfo projectinfo = gson.fromJson(bufferedReader, type);
 			ApplicationInfo applicationInfo = projectinfo.getAppInfos().get(0);
 			
+			bufferedReader.close();
 			deleteSqlFolder(applicationInfo, selectedDatabases);
 			
     		projectInfo.setAppInfos(Collections.singletonList(appInfo));
