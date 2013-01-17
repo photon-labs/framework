@@ -1586,8 +1586,8 @@ public class Quality extends DynamicParameterAction implements Constants {
 //               builder.append(performanceTestDir);
                S_LOGGER.debug("Performance test directory path " + builder.toString());
             if (!TechnologyTypes.ANDROIDS.contains(techId)) {
-            	if ("WebService".equals(jmeterTestAgainst)) {
-            		jmeterTestAgainst = "webservices";
+            	if (SETTINGS_TEMPLATE_WEBSERVICE.equalsIgnoreCase(jmeterTestAgainst)) {
+            		jmeterTestAgainst = "webservice";
             	}
 	            builder.append(jmeterTestAgainst.toLowerCase());
 	            QualityUtil.changeTestName(builder.toString(), testName);
@@ -2234,11 +2234,12 @@ public class Quality extends DynamicParameterAction implements Constants {
 		    } else {
 		    	testSuitePath = frameworkUtil.getUnitTestSuitePath(appInfo);
 		    }
+            
             String testCasePath = "";
             if (StringUtils.isNotEmpty(getTechReport())) {
-            	testSuitePath = frameworkUtil.getUnitTestCasePath(appInfo, getTechReport());
+            	testCasePath = frameworkUtil.getUnitTestCasePath(appInfo, getTechReport());
 		    } else {
-		    	testSuitePath = frameworkUtil.getUnitTestCasePath(appInfo);
+		    	testCasePath = frameworkUtil.getUnitTestCasePath(appInfo);
 		    }
             return testReport(testSuitePath, testCasePath);
         } catch (PhrescoException e) {
@@ -2795,7 +2796,7 @@ public class Quality extends DynamicParameterAction implements Constants {
             		file = new File(sb.toString() + frameworkUtil.getUnitTestReportDir(appInfo));
             		sb.append(frameworkUtil.getUnitTestReportDir(appInfo));
             	}
-                
+            	
 	            File[] children = file.listFiles(new XmlNameFileFilter(FILE_EXTENSION_XML));
 	            if(children != null && children.length > 0) {
 	            	XmlResultsAvailable = true;

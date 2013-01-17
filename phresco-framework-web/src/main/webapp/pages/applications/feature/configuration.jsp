@@ -79,6 +79,11 @@
 	    }
 	}
 	if (hasCustomProperty) {
+		pm = new ParameterModel();
+		pm.setValue("");
+		List<Object> values = new ArrayList<Object>();
+		values.add("");
+		pm.setObjectValue(values);
 		StringTemplate customParamElement = FrameworkUtil.constructCustomParameters(pm);
 		sb.append(customParamElement);
 	}

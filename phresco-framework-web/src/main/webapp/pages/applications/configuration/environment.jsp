@@ -265,4 +265,12 @@ $(document).ready(function() {
 			$("#setAsDefault").removeClass("btn-disabled");
 		}
 	}
+	
+	function findError(data) {
+		if (!isBlank(data.configNameError)) {
+			$(".yesNoPopupErr").html(data.configNameError);
+		} else {
+			$(".yesNoPopupErr").empty();
+		}
+	}	
 </script>

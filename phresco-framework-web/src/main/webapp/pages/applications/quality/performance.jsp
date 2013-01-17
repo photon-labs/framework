@@ -75,7 +75,7 @@
     	<select class="noTestAvail" id="testResultsType" name="testResultsType" style="width :100px;"> 
 			<option value="server" ><s:text name="label.application.server"/></option>
 			<option value="database" ><s:text name="label.database"/></option>
-			<option value="webservices" ><s:text name="label.webservices"/></option>
+			<option value="webservice" ><s:text name="label.webservices"/></option>
 		</select>&nbsp;
 		
     	<strong class="noTestAvail" id="testResultFileTitle"><s:text name="label.test.results"/></strong> 

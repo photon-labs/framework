@@ -326,6 +326,9 @@ function validateJson(url, form, containerTag, jsonParam, progressText, disabled
 			if (data.errorFound != undefined && data.errorFound) {
 				findError(data);
 			} else {
+				if(url == 'createEnvironment') {
+					$("#popupPage").modal('hide');
+				}
 				loadJsonContent(url, jsonParam, containerTag, progressText);
 			}
 		}
@@ -912,7 +915,7 @@ function constructSingleSelectOptions(dependentValues, pushToElement) {
 		}
 	}
 	
-	if (isEditableCombo) {// execute only for jec combo box
+	if (isEditableCombo && !isBlank(dynamicFirstValue)) {// execute only for jec combo box
 		$('#'+ pushToElement + ' option[value="'+ dynamicFirstValue +'"]').prop("selected","selected");//To preselect select first value
 	}
 }

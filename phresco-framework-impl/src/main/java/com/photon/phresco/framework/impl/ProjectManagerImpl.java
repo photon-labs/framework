@@ -237,9 +237,11 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 						
 					if (applicationHandler != null) {
 						String selectedFeatures = applicationHandler.getSelectedFeatures();
+						String deletedFeatures = applicationHandler.getDeletedFeatures();
 						Gson gson = new Gson();
 						Type jsonType = new TypeToken<Collection<ArtifactGroup>>(){}.getType();
 						List<ArtifactGroup> artifactGroups = gson.fromJson(selectedFeatures, jsonType);
+						List<ArtifactGroup> deletedArtifacts = gson.fromJson(deletedFeatures, jsonType);
 						
 						List<ArtifactGroup> plugins = setArtifactGroup(applicationHandler);
 	
@@ -248,7 +250,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 						ApplicationProcessor applicationProcessor = dynamicLoader
 								.getApplicationProcessor(applicationHandler.getClazz());
 	
-						applicationProcessor.postUpdate(appInfo, artifactGroups);
+						applicationProcessor.postUpdate(appInfo, artifactGroups, deletedArtifacts);
 	
 						File projectInfoPath = new File(dotPhrescoPathSb.toString() + PROJECT_INFO_FILE);
 						ProjectUtils.updateProjectInfo(projectInfo, projectInfoPath);// To update the project.info file

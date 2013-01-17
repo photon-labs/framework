@@ -32,17 +32,14 @@ public class PerformanceConfigurationsImpl implements DynamicParameter, Constant
     	String customer = (String) paramMap.get("customerId");
     	String testAgainst = (String) paramMap.get(KEY_TEST_AGAINST);
     	String configurationType = "";
-    	
-//    	System.out.println("testAgainst-----PerformanceConfigurationsImpl---------"+testAgainst);
     	if (Constants.SETTINGS_TEMPLATE_SERVER.equalsIgnoreCase(testAgainst)) {
     		configurationType = Constants.SETTINGS_TEMPLATE_SERVER;
-    	} else if ("webservices".equalsIgnoreCase(testAgainst)) {
+    	} else if (Constants.SETTINGS_TEMPLATE_WEBSERVICE.equalsIgnoreCase(testAgainst)) {
     		configurationType = Constants.SETTINGS_TEMPLATE_WEBSERVICE;
     	} else if (Constants.SETTINGS_TEMPLATE_DB.equalsIgnoreCase(testAgainst)) {
     		configurationType = Constants.SETTINGS_TEMPLATE_DB;
     	}
     	
-//    	System.out.println("configurationType------PerformanceConfigurationsImpl--------"+configurationType);
     	//To search for db type in settings.xml
     	ConfigManager configManager = new ConfigManagerImpl(new File(getSettingsPath(customer))); 
     	List<Configuration> configurations = configManager.getConfigurations(envName, configurationType);

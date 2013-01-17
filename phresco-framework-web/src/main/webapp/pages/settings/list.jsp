@@ -218,8 +218,12 @@
 			var configPath = "<%= configPath%>";
 			var params = '{' + basicParams + ', "fromPage" : "' + fromPage + '", "configPath" : "' + configPath + '", "environments": [' + envs.join(',') + '], "selectedEnvirment" : "' + selectedEnvs + '", "selectedConfigurations": [' + selectedConfigData.join(',') + ']}';
 			var url = $(self).attr('id');
-			$("#popupPage").modal('hide');//To hide popup
-			loadJsonContent(url, params, $('#loadEnv'));			
+			if(url == 'createEnvironment') {
+				validateJson(url, '', $('#loadEnv'), params, '');
+			} else {
+				$("#popupPage").modal('hide');
+				loadJsonContent(url, params, $('#loadEnv'));
+			}		
 		}
 	}
 

@@ -6,7 +6,7 @@
      </table>
 </div>
 <input type="button" style="margin-top:4px;" value="Add Context" class="btn btn-primary" onclick="addContext('contextDiv');">
-<input type="button" style="margin-top:4px; margin-left:4px;" value="Delete" class="btn" id="deleteContext" disabled onclick="deleteContextUrl();">
+<input type="button" style="margin-top:4px; margin-left:4px;" value="Delete" class="btn" id="ctxUrlCheckDel" disabled onclick="deleteContextUrl('ctxUrlCheck');">
 <script type="text/javascript">
 	var jsonFlag = true;
 </script>
@@ -16,10 +16,10 @@ $myObject:{ obj |
 	<script type="text/javascript">
 		jsonFlag = false;
 	</script>
-	<div id="contextDiv" style="margin-bottom:5px;">
+	<div id="contextDiv" class="contextDivClass" style="margin-bottom:5px;">
 		<fieldset class="popup-fieldset fieldsetBottom perFieldSet perContextUrlFieldset" id="context">
 			<legend class="fieldSetLegend">
-				<input type="checkbox" class="check" onclick="enableDelBtn();">
+				<input type="checkbox" class="check ctxUrlCheck" onclick="enableDelBtn('ctxUrlCheck');">
 			</legend>
 			
 			<table style="line-height: 0px;">
@@ -84,9 +84,9 @@ $myObject:{ obj |
 </div>
 <script type="text/javascript">
 	if (jsonFlag) {
-		var newTextBoxDiv = jQuery(document.createElement('div')).attr('id', 'contextDiv').css('margin-bottom','5px');
+		var newTextBoxDiv = jQuery(document.createElement('div')).attr('id', 'contextDiv').attr('class','contextDivClass').css('margin-bottom','5px');
 		newTextBoxDiv.html("<fieldset class='popup-fieldset fieldsetBottom perFieldSet perContextUrlFieldset' id='context'>
-			<legend class='fieldSetLegend'><input type='checkbox' class='check' onclick='enableDelBtn();'></legend><table style='line-height: 0px;'><thead><tr><td class='noBorder' style='color: #333333; font-weight: bold;'><span class='red'>*</span>&nbsp;Name</td><td class='noBorder' style='color: #333333; font-weight: bold;'><span class='red'>*</span>&nbsp;Context</td><td class='noBorder' style='color: #333333; font-weight: bold;'>Type</td><td class='noBorder' style='color: #333333; font-weight: bold;'>Encoding</td></tr></thead><tbody><tr><td class='noBorder'><input type='text' name='name' class='input-small' title='Name' maxlength='20' value='' class='screenName'></td><td class='noBorder'><input type='text' name='context' title='Context' value='' class='input-medium'></td><td class='noBorder'><select name='contextType' id='contextType' class='input-small'><option value='GET'>GET</option><option value='POST'>POST</option><option value='PUT'>PUT</option><option value='DELETE'>DELETE</option></select></td><td class='noBorder'><select name='encodingType' id='encodingType' class='input-small'><option value='UTF-8'>UTF-8</option><option value='UTF-16'>UTF-16</option></select></td></tr></tbody>
+			<legend class='fieldSetLegend'><input type='checkbox' class='ctxUrlCheck' onclick='enableDelBtn('ctxUrlCheck');'></legend><table style='line-height: 0px;'><thead><tr><td class='noBorder' style='color: #333333; font-weight: bold;'><span class='red'>*</span>&nbsp;Name</td><td class='noBorder' style='color: #333333; font-weight: bold;'><span class='red'>*</span>&nbsp;Context</td><td class='noBorder' style='color: #333333; font-weight: bold;'>Type</td><td class='noBorder' style='color: #333333; font-weight: bold;'>Encoding</td></tr></thead><tbody><tr><td class='noBorder'><input type='text' name='name' class='input-small' title='Name' maxlength='20' value='' class='screenName'></td><td class='noBorder'><input type='text' name='context' title='Context' value='' class='input-medium'></td><td class='noBorder'><select name='contextType' id='contextType' class='input-small'><option value='GET'>GET</option><option value='POST'>POST</option><option value='PUT'>PUT</option><option value='DELETE'>DELETE</option></select></td><td class='noBorder'><select name='encodingType' id='encodingType' class='input-small'><option value='UTF-8'>UTF-8</option><option value='UTF-16'>UTF-16</option></select></td></tr></tbody>
 			</table><fieldset class='popup-fieldset perContentFieldsetDiv' style='padding: 0; margin-bottom: 0; width: 55%; float: left;' id='headerLegend'><legend class='fieldSetLegend'>Headers</legend><table><tr><td class='noBorder' style='color: #333333; font-weight: bold;'>Key</td><td class='noBorder'><input type='text' class='input-mini key'/></td><td class='noBorder' style='color: #333333; font-weight: bold;''>Value</td><td class='noBorder'><input type='text' class='input-mini value'/></td><td class='noBorder'><input type='button' class='btn btn-primary' value='Add' onclick='addHeader(this);'/></td></tr></table></fieldset><textarea placeholder='Request body' name='contextPostData' id='contextPostData' title='JSON data' class='' style='margin: 14px 5px 0 0; width: 40%; float: right;'></textarea></fieldset></div>");
 		newTextBoxDiv.appendTo("#contextDivParent");	
 	}
