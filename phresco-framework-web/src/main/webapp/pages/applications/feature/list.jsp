@@ -77,7 +77,7 @@
 				</span>
 				<div class="mfbox siteinnertooltiptxt">
 					<%
-						String desc = artifactGroup.getDescription();
+						String desc = artifactGroup.getHelpText();
 						if (StringUtils.isNotEmpty(desc)) {
 					%>
 					    <div class="scrollpanel">
