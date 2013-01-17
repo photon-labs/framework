@@ -18,84 +18,106 @@
 	<parameter name="reportsDataType" class="java.lang.String"/>
 	<parameter name="projectName" class="java.lang.String"/>
 	<parameter name="techName" class="java.lang.String"/>
+	<parameter name="version" class="java.lang.String"/>
 	<field name="fileName" class="java.lang.String"/>
 	<field name="testResults" class="java.util.List"/>
 	<title>
-		<band height="134" splitType="Stretch">
+		<band height="124" splitType="Stretch">
 			<frame>
-				<reportElement mode="Opaque" x="0" y="0" width="555" height="129" forecolor="#FFFFFF" backcolor="#FFFFFF"/>
-				<rectangle radius="10">
-					<reportElement x="2" y="6" width="553" height="123" backcolor="#E81A1A"/>
+				<reportElement x="0" y="0" width="555" height="120"/>
+				<rectangle radius="3">
+					<reportElement x="0" y="2" width="555" height="115" backcolor="#00CC66"/>
 				</rectangle>
-				<textField pattern="EEEEE dd MMMMM yyyy">
-					<reportElement x="396" y="105" width="144" height="20" forecolor="#FFFFFF"/>
-					<textElement textAlignment="Left">
-						<font size="14"/>
-					</textElement>
-					<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
-				</textField>
+				<rectangle radius="10">
+					<reportElement x="176" y="5" width="376" height="108"/>
+					<graphicElement>
+						<pen lineColor="#33CC00"/>
+					</graphicElement>
+				</rectangle>
 				<staticText>
-					<reportElement x="20" y="76" width="94" height="20" forecolor="#FFFFFF"/>
-					<textElement>
-						<font fontName="Times New Roman" size="14" isBold="true"/>
+					<reportElement x="20" y="27" width="55" height="18"/>
+					<textElement verticalAlignment="Bottom">
+						<font size="13" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Photon]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="18" y="38" width="158" height="41" forecolor="#FFFFFF"/>
+					<textElement verticalAlignment="Top" rotation="None">
+						<font size="28" isBold="true"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[PHRESCO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="176" y="9" width="112" height="20"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Project Name :]]></text>
 				</staticText>
-				<textField>
-					<reportElement x="115" y="76" width="158" height="20" forecolor="#FFFFFF"/>
-					<textElement>
-						<font fontName="Times New Roman" size="14" isBold="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$P{projectName}]]></textFieldExpression>
-				</textField>
 				<staticText>
-					<reportElement style="Title" x="20" y="6" width="208" height="36"/>
-					<textElement>
-						<font size="30" isBold="false"/>
+					<reportElement x="176" y="29" width="112" height="20"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="12" isBold="true"/>
 					</textElement>
-					<text><![CDATA[Photon Phresco]]></text>
+					<text><![CDATA[Application Name :]]></text>
 				</staticText>
 				<staticText>
-					<reportElement style="SubTitle" x="228" y="42" width="156" height="21"/>
-					<textElement>
-						<font size="16" isBold="false"/>
-					</textElement>
-					<text><![CDATA[Accelerating Innovation]]></text>
-				</staticText>
-				<staticText>
-					<reportElement x="20" y="105" width="94" height="20" forecolor="#FFFFFF"/>
-					<textElement>
-						<font fontName="Times New Roman" size="14" isBold="true"/>
-					</textElement>
-					<text><![CDATA[Project Code  :]]></text>
-				</staticText>
-				<staticText>
-					<reportElement x="314" y="105" width="81" height="20" forecolor="#FFFFFF"/>
-					<textElement>
-						<font fontName="Times New Roman" size="14" isBold="true"/>
-					</textElement>
-					<text><![CDATA[Date            :]]></text>
-				</staticText>
-				<staticText>
-					<reportElement x="314" y="76" width="81" height="20" forecolor="#FFFFFF"/>
-					<textElement>
-						<font fontName="Times New Roman" size="14" isBold="true"/>
+					<reportElement x="176" y="49" width="112" height="20"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Technology :]]></text>
 				</staticText>
+				<staticText>
+					<reportElement x="176" y="69" width="112" height="20"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Version :]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="176" y="89" width="112" height="20"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Date :]]></text>
+				</staticText>
 				<textField>
-					<reportElement x="115" y="105" width="158" height="20" forecolor="#FFFFFF"/>
-					<textElement>
-						<font fontName="Times New Roman" size="14" isBold="true"/>
+					<reportElement x="290" y="9" width="257" height="20" forecolor="#333333"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="11" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{projectName}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="290" y="29" width="257" height="20" forecolor="#333333"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="11" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{projectCode}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="396" y="76" width="144" height="20" forecolor="#FFFFFF"/>
-					<textElement>
-						<font fontName="Times New Roman" size="14" isBold="true"/>
+					<reportElement x="290" y="49" width="257" height="20" forecolor="#333333"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="11" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{techName}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="290" y="89" width="257" height="20" forecolor="#333333"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="11" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="290" y="69" width="100" height="20" forecolor="#333333"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="11" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{version}]]></textFieldExpression>
 				</textField>
 			</frame>
 		</band>
@@ -105,7 +127,7 @@
 			<frame>
 				<reportElement x="0" y="0" width="555" height="26" isRemoveLineWhenBlank="true"/>
 				<rectangle radius="10">
-					<reportElement x="2" y="3" width="500" height="20"/>
+					<reportElement x="2" y="3" width="545" height="20"/>
 				</rectangle>
 				<staticText>
 					<reportElement x="18" y="5" width="77" height="20" forecolor="#000000"/>
@@ -115,7 +137,7 @@
 					<text><![CDATA[File Name :]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="95" y="5" width="400" height="18"/>
+					<reportElement x="95" y="5" width="439" height="18"/>
 					<textElement>
 						<font fontName="Times New Roman" size="14" isBold="true"/>
 					</textElement>
@@ -125,7 +147,7 @@
 			<frame>
 				<reportElement x="2" y="26" width="555" height="37"/>
 				<subreport>
-					<reportElement x="2" y="0" width="553" height="36" isRemoveLineWhenBlank="true"/>
+					<reportElement x="0" y="0" width="555" height="36" isRemoveLineWhenBlank="true"/>
 					<subreportParameter name="reportsDataType">
 						<subreportParameterExpression><![CDATA[$P{reportsDataType}]]></subreportParameterExpression>
 					</subreportParameter>
@@ -138,27 +160,27 @@
 	<pageFooter>
 		<band height="25" splitType="Stretch">
 			<frame>
-				<reportElement mode="Opaque" x="0" y="1" width="555" height="24" forecolor="#D0B48E" backcolor="#000000"/>
+				<reportElement mode="Opaque" x="0" y="1" width="555" height="24" forecolor="#D0B48E" backcolor="#333333"/>
 				<textField evaluationTime="Report">
-					<reportElement style="Column header" x="513" y="0" width="40" height="20" forecolor="#FFFFFF"/>
+					<reportElement style="Column header" x="513" y="0" width="40" height="24" forecolor="#FFFFFF"/>
 					<textElement verticalAlignment="Middle">
-						<font size="10" isBold="false"/>
+						<font fontName="Tahoma" size="11" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement style="Column header" x="433" y="0" width="80" height="20" forecolor="#FFFFFF"/>
+					<reportElement style="Column header" x="433" y="0" width="80" height="24" forecolor="#FFFFFF"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="10" isBold="false"/>
+						<font fontName="Tahoma" size="11" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="4" y="5" width="191" height="16" forecolor="#FFFFFF" backcolor="#000000"/>
-					<textElement>
-						<font fontName="Times New Roman"/>
+					<reportElement x="4" y="0" width="191" height="24" forecolor="#FFFFFF" backcolor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="11" isBold="true"/>
 					</textElement>
-					<text><![CDATA[© Copyright Photon Infotech Pvt Ltd 2012.]]></text>
+					<text><![CDATA[© 2012. Photon Infotech Pvt Ltd.]]></text>
 				</staticText>
 			</frame>
 		</band>
