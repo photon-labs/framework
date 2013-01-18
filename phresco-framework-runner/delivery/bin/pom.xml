@@ -63,6 +63,24 @@
         </dependency>
    
          <!-- Sonar plungins dependencies -->
+         
+        <dependency>
+            <groupId>sonar.plugin</groupId>
+            <artifactId>sonar-w3c-markup-validation-plugin</artifactId>
+            <version>0.1</version>
+        </dependency>
+        
+        <dependency>
+          <groupId>sonar.plugin</groupId>
+          <artifactId>sonar-web-plugin</artifactId>
+          <version>1.2</version>
+        </dependency>
+        
+        <dependency>
+          <groupId>sonar.plugin</groupId>
+          <artifactId>w3cmarkupvalidationfilter</artifactId>
+          <version>1.0.2</version>
+        </dependency>
 
         <dependency>
           <groupId>sonar.plugin</groupId>
