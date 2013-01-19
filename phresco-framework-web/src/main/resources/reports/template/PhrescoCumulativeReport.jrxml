@@ -5,7 +5,7 @@
 	<property name="ireport.y" value="0"/>
 	<parameter name="projectCode" class="java.lang.String"/>
 	<parameter name="reportsDataType" class="java.lang.String"/>
-	<parameter name="performanceSpecialHandle" class="java.lang.String"/>
+	<parameter name="performanceSpecialHandle" class="java.lang.Boolean"/>
 	<parameter name="unitTestReports" class="java.util.Collection">
 		<defaultValueExpression><![CDATA[!$P{unitTestReports}.isEmpty()]]></defaultValueExpression>
 	</parameter>
@@ -172,6 +172,7 @@
 			</frame>
 		</band>
 		<band height="50">
+			<printWhenExpression><![CDATA[!$P{performanceSpecialHandle}.booleanValue()]]></printWhenExpression>
 			<frame>
 				<reportElement x="0" y="0" width="555" height="50"/>
 				<subreport>
@@ -185,6 +186,7 @@
 			</frame>
 		</band>
 		<band height="50">
+			<printWhenExpression><![CDATA[$P{performanceSpecialHandle}.booleanValue()]]></printWhenExpression>
 			<frame>
 				<reportElement x="0" y="0" width="555" height="50"/>
 				<subreport>
