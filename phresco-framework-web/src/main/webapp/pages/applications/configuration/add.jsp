@@ -138,17 +138,27 @@
 			</label>	
 			<div class="controls">
 				<select id="templateType" name="templateType">
-				<% 
-					for (SettingsTemplate settingsTemplate : settingsTemplates) { 
-						if (settingsTemplate.getName().equals(selectedType) || FrameworkConstants.REQ_CONFIG_TYPE_OTHER.equals(selectedType)) {
-							selectedStr = "selected";
-						} else {
-							selectedStr = "";
-						}	
+				<%
+					if (CollectionUtils.isNotEmpty(settingsTemplates)) {
+						for (SettingsTemplate settingsTemplate : settingsTemplates) {
+							if (settingsTemplate.getName().equals(selectedType)) {
+								selectedStr = "selected";
+							} else {
+								selectedStr = "";
+							}	
 				%>	
-						<option value='<%= gson.toJson(settingsTemplate) %>' <%= selectedStr %>><%= settingsTemplate.getName() %></option>
-                <% } %>
-                		<option value="Other" <%= selectedStr %>>Other</option>
+							<option value='<%= gson.toJson(settingsTemplate) %>' <%= selectedStr %>><%= settingsTemplate.getName() %></option>
+						
+                <% 
+                		}
+					}
+					if (FrameworkConstants.REQ_CONFIG_TYPE_OTHER.equals(selectedType)) {
+						selectedStr = "selected";
+					} else {
+						selectedStr = "";
+					}
+				%>
+						<option value="Other" <%= selectedStr %>><%= FrameworkConstants.REQ_CONFIG_TYPE_OTHER %></option>
 				</select>
 				<span class="help-inline" id="configTypeError"></span>
 			</div>
