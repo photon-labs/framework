@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PhrescoXmlReport" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.100000000000001"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="53"/>
+	<property name="ireport.y" value="0"/>
 	<parameter name="projectCode" class="java.lang.String"/>
 	<parameter name="reportsDataType" class="java.lang.String"/>
 	<parameter name="performanceSpecialHandle" class="java.lang.String"/>
@@ -129,6 +129,12 @@
 				<reportElement x="0" y="0" width="555" height="50"/>
 				<subreport>
 					<reportElement x="0" y="0" width="555" height="50"/>
+					<subreportParameter name="testType">
+						<subreportParameterExpression><![CDATA["unit"]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="reportsDataType">
+						<subreportParameterExpression><![CDATA[$P{reportsDataType}]]></subreportParameterExpression>
+					</subreportParameter>
 					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{unitTestReports})]]></dataSourceExpression>
 					<subreportExpression><![CDATA["UnitCumulativeReport.jasper"]]></subreportExpression>
 				</subreport>
@@ -140,6 +146,12 @@
 				<reportElement x="0" y="0" width="555" height="50"/>
 				<subreport>
 					<reportElement x="0" y="0" width="555" height="50"/>
+					<subreportParameter name="testType">
+						<subreportParameterExpression><![CDATA["functional"]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="reportsDataType">
+						<subreportParameterExpression><![CDATA[$P{reportsDataType}]]></subreportParameterExpression>
+					</subreportParameter>
 					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{functionalTestReports})]]></dataSourceExpression>
 					<subreportExpression><![CDATA["FunctionalCumulativeReport.jasper"]]></subreportExpression>
 				</subreport>
@@ -151,6 +163,9 @@
 				<reportElement x="0" y="0" width="555" height="50"/>
 				<subreport>
 					<reportElement x="0" y="0" width="555" height="50"/>
+					<subreportParameter name="reportsDataType">
+						<subreportParameterExpression><![CDATA[$P{reportsDataType}]]></subreportParameterExpression>
+					</subreportParameter>
 					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{loadTestReports})]]></dataSourceExpression>
 					<subreportExpression><![CDATA["PhrescoLoadCumulativeTest.jasper"]]></subreportExpression>
 				</subreport>
@@ -161,6 +176,9 @@
 				<reportElement x="0" y="0" width="555" height="50"/>
 				<subreport>
 					<reportElement x="0" y="0" width="555" height="50"/>
+					<subreportParameter name="reportsDataType">
+						<subreportParameterExpression><![CDATA[$P{reportsDataType}]]></subreportParameterExpression>
+					</subreportParameter>
 					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{performanceTestReports})]]></dataSourceExpression>
 					<subreportExpression><![CDATA["PhrescoPerfCumulativeReport.jasper"]]></subreportExpression>
 				</subreport>
@@ -171,6 +189,9 @@
 				<reportElement x="0" y="0" width="555" height="50"/>
 				<subreport>
 					<reportElement x="0" y="0" width="555" height="50"/>
+					<subreportParameter name="reportsDataType">
+						<subreportParameterExpression><![CDATA[$P{reportsDataType}]]></subreportParameterExpression>
+					</subreportParameter>
 					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{performanceTestReports})]]></dataSourceExpression>
 					<subreportExpression><![CDATA["PhrescoAndroidPerfCumulativeReport.jasper"]]></subreportExpression>
 				</subreport>
@@ -182,6 +203,9 @@
 				<reportElement x="0" y="0" width="555" height="50"/>
 				<subreport>
 					<reportElement x="0" y="0" width="555" height="50"/>
+					<subreportParameter name="reportsDataType">
+						<subreportParameterExpression><![CDATA[$P{reportsDataType}]]></subreportParameterExpression>
+					</subreportParameter>
 					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{sonarReport})]]></dataSourceExpression>
 					<subreportExpression><![CDATA["SonarJavaJsWebReport.jasper"]]></subreportExpression>
 				</subreport>
