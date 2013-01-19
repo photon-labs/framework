@@ -285,7 +285,10 @@
     	if (!isBlank($('form').serialize())) {
     		params = $('form').serialize() + "&";
     	}
-    	performAction('getDevices', params, '', true);
+    	params = params.concat("testType=");
+	    params = params.concat('<%= FrameworkConstants.PERFORMACE %>');
+
+    	loadContent('getDevices', '', '', params, true, true, false);
 	}
 	
 	function successGetDeviceName(data) {

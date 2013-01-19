@@ -506,6 +506,14 @@ Width <= 1024
 	.otherCustParamTable {
 		margin-left: 12.5% !important;
 	} 
+	#formPerformance .operation {
+		margin: 12px 5px 12px 6px !important;
+		padding-bottom: 15px;
+	}
+	.perTabularView {
+		top: -21px !important;
+		left: -110px !important;
+	}
 }
 
 /***********************************************************************************
@@ -1545,6 +1553,16 @@ Width >= 1152 and < 1280
 	.otherCustParamTable {
 		margin-left: 14.6% !important;
 	}
+	#formPerformance #testResultDeviceId {
+		width: 118px !important;
+	}
+	#formPerformance #testResultFile {
+		margin-right: 1%;
+		width: 102px;
+	}
+	.perTabularView {
+		top: -40px !important;
+	}
 }
 
 /************************************************************************************
@@ -2040,6 +2058,10 @@ Width <= 1280 and height <= 800
 	.otherCustParamTable {
 		margin-left: 16.2% !important;
 	}
+	
+	.perTabularView {
+		top: -40px !important;
+	}
 }
 
 /************************************************************************************
@@ -2455,6 +2477,10 @@ Width >= 1280 and height >= 800
 	
 	.otherCustParamTable {
 		margin-left: 16.2% !important;
+	}
+	
+	.perTabularView {
+		top: -41px !important;
 	}
 }
 
@@ -2923,6 +2949,10 @@ Width > 1280 and <= 1360
 	.otherCustParamTable {
 		margin-left: 17.1% !important;
 	}
+	.perTabularView {
+		top: -40px !important;
+		left: -120px !important;
+	}
 }
 
 /************************************************************************************
@@ -3324,6 +3354,10 @@ Width > 1360 and <= 1440
 	
 	.otherCustParamTable {
 		margin-left: 12.5% !important;
+	}
+	.perTabularView {
+		top: -40px !important;
+		left: -120px !important;
 	}
 }
 
@@ -3731,5 +3765,9 @@ Width > 1441 and <= 1600
 	
 	.otherCustParamTable {
 		margin-left: 19.1% !important;
+	}
+	.perTabularView {
+		top: -40px !important;
+		left: -120px !important;
 	}
 }

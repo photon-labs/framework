@@ -157,7 +157,7 @@
 		</div>
 		<!-- Version Starts -->
 		
-		<!-- PreBuild/Build it myself Starts -->
+		<!-- Build it myself Starts -->
 		<div class="control-group">
 			<label class="control-label labelbold"></label>
 			<div class="controls">
@@ -165,8 +165,6 @@
 					<li> 
 						<input type="radio" name="buildType" value="buildItMyself" checked="checked"/> 
 						<span class="vAlignMiddle buildTypeSpan"><s:text name="lbl.projects.build.type.myself"/></span>
-						<input type="radio" name="buildType" value="preBuild" disabled/> 
-						<span class="vAlignMiddle"><s:text name="lbl.projects.build.type.prebuilt"/></span>
 					</li>
 				</ul>
 			</div>
@@ -203,7 +201,10 @@
 					<div class="accordion_panel_inner">
 						<section class="lft_menus_container" id="appSec">
 							<span class="siteaccordion closereg" id="appLayerControl" onclick="accordionClick(this, $('input[value=<%= appLayerId %>]'));">
-								<span>
+								<span class="mandatory">
+									<% if(layers.size()<=1) { %>
+									*&nbsp;
+									<% } %>
 									<input type="checkbox" id="checkAll1" class="accordianChkBox" name="layer" value="<%= appLayerId %>" <%= chckdStr%> <%= disblStr%>/>
 									<a id="appLayerHeading" class="vAlignSub"><%= appLayerName %></a>
 									<p id="appLayerError" class="accordion-error-txt"></p>
@@ -299,7 +300,10 @@
 					<div class="accordion_panel_inner">
 						<section class="lft_menus_container" id="webSec">
 							<span class="siteaccordion closereg" id="webLayerControl" onclick="accordionClick(this, $('input[value=<%= webLayerId %>]'));">
-								<span>
+								<span class="mandatory">
+									<% if(layers.size()<=1) { %>
+									*&nbsp;
+									<% } %>
 									<input type="checkbox" id="checkAll1" class="accordianChkBox" name="layer" value="<%= webLayerId %>" <%= checkedLayer%> <%= disableLayer %>/>
 									<a id="webLayerHeading" class="vAlignSub"><%= webLayerName %></a>
 									<p id="webLayerError" class="accordion-error-txt"></p>
@@ -398,7 +402,10 @@
 					<div class="accordion_panel_inner">
 						<section class="lft_menus_container" id="mobSec">
 							<span class="siteaccordion closereg" id="mobileLayerControl" onclick="accordionClick(this, $('input[value=<%= mobileLayerId %>]'));">
-								<span>
+								<span class="mandatory">
+									<% if(layers.size()<=1) { %>
+									*&nbsp;
+									<% } %>
 									<input type="checkbox" id="checkAll1" class="accordianChkBox" name="layer" value="<%= mobileLayerId %>" <%= checkedWebLayer%>/>
 									<a id="mobileLayerHeading" class="vAlignSub"><%= mobileLayerName %></a>
 									<p id="mobileLayerError" class="accordion-error-txt"></p>

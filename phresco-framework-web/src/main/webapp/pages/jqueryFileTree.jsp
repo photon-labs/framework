@@ -40,11 +40,13 @@
     	return;
     }
 	
-	if (dir.charAt(dir.length()-1) == '\\') {
-    	dir = dir.substring(0, dir.length()-1) + "/";
-	} else if (dir.charAt(dir.length()-1) != '/') {
-	    dir += "/";
-	}
+    if (!"funcTestAgaistJar".equals(fromPage)) {
+    	if (dir != "" && dir.charAt(dir.length()-1) == '\\') {
+        	dir = dir.substring(0, dir.length()-1) + "/";
+    	} else if (dir != "" && dir.charAt(dir.length()-1) != '/') {
+    	    dir += "/";
+    	} 
+    }
 	
  	dir = java.net.URLDecoder.decode(dir, "UTF-8");	
  	fileTypes = java.net.URLDecoder.decode(fileTypes, "UTF-8");	
@@ -54,7 +56,17 @@
  	
 	final String[] includeFileTypes = fileTypes.split(",");
 	
-    if (new File(dir).exists()) {
+   if( !new File(dir).exists()) {
+		 File[] roots = File.listRoots();
+		 for (int i=0; i < roots.length; i++) {
+		out.print("<ul class=\"jqueryFileTree\" style=\"display: none;\">");
+		out.print("<li class=\"directory collapsed\"><a href=\"#\" rel=\"" + dir + roots[i].toString() + "/\">"
+				+ roots[i].toString() + "</a></li>");
+		out.print("</ul>");
+		 }
+	}
+	 
+     if (new File(dir).exists()) {
 		String[] files = new File(dir).list(new FilenameFilter() {
 		    public boolean accept(File dir, String name) {
 				return name.charAt(0) != '.';
@@ -108,6 +120,9 @@
 			$('#browseSelectedLocation').hide();
 			$('#compressName').show();
 			$('#compressNameLbl').show();
+		<% } else { %>
+		$('#compressName').hide();
+		$('#compressNameLbl').hide();
 		<% } %>
 	});
 </script>

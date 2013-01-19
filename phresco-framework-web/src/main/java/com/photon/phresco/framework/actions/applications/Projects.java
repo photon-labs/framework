@@ -252,8 +252,14 @@ public class Projects extends FrameworkBaseAction {
 			ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
 			projectInfo = projectManager.getProject(getProjectId(), getCustomerId());
 			projectInfo.setId(getProjectId());
-			List<ApplicationType> layers = getServiceManager().getApplicationTypes(getCustomerId());
-	        setReqAttribute(REQ_PROJECT_LAYERS, layers);
+			User user = (User) getSessionAttribute(SESSION_USER_INFO);
+        	List<Customer> customers = user.getCustomers();
+        	for (Customer customer : customers) {
+				if (customer.getId().equals(getCustomerId())) {
+					setReqAttribute(REQ_PROJECT_LAYERS, customer.getApplicableAppTypes());
+					break;
+				}
+			}
 			setReqAttribute(REQ_PROJECT, projectInfo);
 		} catch (PhrescoException e) {
 			// TODO Auto-generated catch block
