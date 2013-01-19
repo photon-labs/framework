@@ -128,9 +128,9 @@
 			params = params.concat(testResult);
 			getCurrentCSS();
 	        $('.popupLoadingIcon').show(); 
-			performAction('loadTestResult', params, $('#testResultDisplay'));
+			performAction('loadTestResult', params, $('#testResultDisplay'));--%>
 			//show print as pdf icon
-			$('#pdfPopup').show();  --%>
+			$('#pdfPopup').show();
 	    	var params = getBasicParams();
 	    	var testResult = $("#testResults").val();
 	    	params = params.concat("&testType=");
