@@ -114,6 +114,7 @@ public class CIJob {
     private String fetchSql = "";
     private String triggerSimulator = "false";
     private String deviceId = "";
+    private String theme = "";
     
     public CIJob() {
         super();
@@ -686,5 +687,13 @@ public class CIJob {
 
 	public void setDeviceId(String deviceId) {
 		this.deviceId = deviceId;
+	}
+
+	public String getTheme() {
+		return theme;
+	}
+
+	public void setTheme(String theme) {
+		this.theme = theme;
 	}
 }
