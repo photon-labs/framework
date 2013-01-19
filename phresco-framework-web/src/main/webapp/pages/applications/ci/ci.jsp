@@ -72,6 +72,7 @@
     String jenkinsAlive = request.getAttribute(FrameworkConstants.CI_JENKINS_ALIVE).toString();
     boolean isAtleastOneJobIsInProgress = false;
     String isBuildTriggeredFromUI = request.getAttribute(FrameworkConstants.CI_BUILD_TRIGGERED_FROM_UI).toString();
+    String functioanlTestTool = (String) request.getAttribute(FrameworkConstants.REQ_FUNCTEST_SELENIUM_TOOL);
 %>
 
 <s:if test="hasActionMessages()">
@@ -573,9 +574,11 @@ function popupOnClose(obj) {
 	
 	refreshAfterServerUp();
 }
-
+var validation = false;
+var okUrl;
 function popupOnOk(obj) {
-		var okUrl = $(obj).attr("id");
+		var operation=$("#operation").val();
+		okUrl = $(obj).attr("id");
 		if (okUrl == "saveJob" || okUrl == "updateJob" ) {
 			if (isOneJobSelected()) {
 				console.log("update job validation ");
@@ -584,26 +587,39 @@ function popupOnOk(obj) {
 				console.log("This is save job ");
 			}
 			// do the validation for collabNet info only if the user selects git radio button
-			var validation = configureJobValidation();
-			// when validation is true
-			if (validation && $("input:radio[name=enableBuildRelease][value='true']").is(':checked')) {
-				if(collabNetValidation()) {
-					console.log("create job with collabnet plugin ");
-					configureJob(okUrl);
-					// show popup loading icon
-					showPopuploadingIcon();
-				}
-			} else if (validation) {
-				console.log("create job with out collabnet plugin ");
-				configureJob(okUrl);
-				// show popup loading icon
-				showPopuploadingIcon();
-			}
+			validation = configureJobValidation();
 			
+			if (validation) {
+				var ciGoal = "";
+				if(operation == "build") {
+					ciGoal = "package";
+				} else if (operation == "deploy" ) {
+					ciGoal = "deploy";
+				} else if (operation == "functionalTest") {
+					ciGoal = "functional-"+'<%= functioanlTestTool%>';
+				}
+				mandatoryValidation(okUrl, $("#generateBuildForm"), '', 'ci', ciGoal);
+			}
 		} else if (okUrl == "deleteBuild" ) {
 			deleteCIBuild();
 		}  else if (okUrl == "deleteJob" ) {
 			deleteCIJob();
 		}
+}
+
+function redirectCiConfigure() {
+	if (validation && $("input:radio[name=enableBuildRelease][value='true']").is(':checked')) {
+		if(collabNetValidation()) {
+			console.log("create job with collabnet plugin ");
+				configureJob(okUrl);
+			// show popup loading icon
+			showPopuploadingIcon();
+		}
+	} else if (validation) {
+		console.log("create job with out collabnet plugin ");
+			configureJob(okUrl);
+		// show popup loading icon
+		showPopuploadingIcon();
+	}
 }
 </script>

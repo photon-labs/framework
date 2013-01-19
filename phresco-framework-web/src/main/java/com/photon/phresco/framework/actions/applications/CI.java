@@ -57,6 +57,7 @@ import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Para
 import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.Utility;
+import com.phresco.pom.exception.PhrescoPomException;
 
 public class CI extends DynamicParameterAction implements FrameworkConstants {
 
@@ -184,11 +185,18 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 				S_LOGGER.debug("numberOfJobsInProgress " + numberOfJobsInProgress);
 			}
 			setReqAttribute(CI_NO_OF_JOBS_IN_PROGRESS, numberOfJobsInProgress);
+			FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+			setReqAttribute(REQ_FUNCTEST_SELENIUM_TOOL, frameworkUtil.getSeleniumToolType(appInfo));
 		} catch (PhrescoException e) {
 			if (debugEnabled) {
 				S_LOGGER.error("Entered into catch block of CI.ci()" + FrameworkUtil.getStackTraceAsString(e));
 			}
 			return showErrorPopup(e, getText(EXCEPTION_CI_JOB_LIST));
+		} catch (PhrescoPomException e) {
+			if (debugEnabled) {
+				S_LOGGER.error("Entered into catch block of CI.ci()" + FrameworkUtil.getStackTraceAsString(e));
+			}
+			return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_CI_JOB_LIST));
 		}
 		return APP_CI;
 	}

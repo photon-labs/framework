@@ -173,6 +173,8 @@ function mandatoryValidation(pageUrl, form, additionalParams, phase, goal, actio
 					progressPopupAsSecPopup(pageUrl, appId, actionType, form, params);
 				} else if (pageUrl == "runPerformanceTest") {//performance test
 					runPerformanceTest();
+				} else if (pageUrl == "saveJob" || pageUrl == "updateJob") {
+					redirectCiConfigure();
 				}
 			}
 		}
