@@ -200,15 +200,17 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 				ProjectUtils.updateProjectInfo(projectInfo, new File(sb.toString()));// To update the project.info file
 			}
 		} else {
+			
 			ClientResponse response = serviceManager.updateProject(projectInfo);
 			if (response.getStatus() == 200) {
 				BufferedReader breader = null;
+				File backUpProjectInfoFile = null;
 				try {
 					//application path with old app dir
 					StringBuilder oldAppDirSb = new StringBuilder(Utility.getProjectHome());
 					oldAppDirSb.append(oldAppDirName);
 					File oldDir = new File(oldAppDirSb.toString());
-					
+					backUpProjectInfoFile = backUpProjectInfoFile(oldDir.getPath());
 					//application path with new app dir
 					StringBuilder newAppDirSb = new StringBuilder(Utility.getProjectHome());
 					newAppDirSb.append(projectInfo.getAppInfos().get(0).getAppDirName());
@@ -249,7 +251,6 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 						PhrescoDynamicLoader dynamicLoader = new PhrescoDynamicLoader(repoInfo, plugins);
 						ApplicationProcessor applicationProcessor = dynamicLoader
 								.getApplicationProcessor(applicationHandler.getClazz());
-	
 						applicationProcessor.postUpdate(appInfo, artifactGroups, deletedArtifacts);
 	
 						File projectInfoPath = new File(dotPhrescoPathSb.toString() + PROJECT_INFO_FILE);
@@ -262,7 +263,9 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 				} catch (IOException e) {
 					e.printStackTrace();
 					throw new PhrescoException(e);
-				} 
+				} finally {
+					FileUtil.delete(backUpProjectInfoFile);
+				}
 			} else if (response.getStatus() == 401) {
 				throw new PhrescoException("Session expired");
 			} else {
@@ -272,6 +275,20 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		return null;
 	}
 	
+	private File backUpProjectInfoFile(String oldDirPath) throws PhrescoException {
+		StringBuilder oldDotPhrescoPathSb = new StringBuilder(oldDirPath);
+		oldDotPhrescoPathSb.append(File.separator);
+		oldDotPhrescoPathSb.append(DOT_PHRESCO_FOLDER);
+		oldDotPhrescoPathSb.append(File.separator);
+		File projectInfoFile = new File(oldDotPhrescoPathSb.toString() + PROJECT_INFO_FILE);
+		File backUpInfoFile = new File(oldDotPhrescoPathSb.toString() + PROJECT_INFO_BACKUP_FILE);
+		try {
+			FileUtils.copyFile(projectInfoFile, backUpInfoFile);
+			return backUpInfoFile;
+		} catch (IOException e) {
+			throw new PhrescoException(e);
+		}
+	}
 	
 	private void updateProjectPom(ProjectInfo projectInfo, String newAppDirSb) throws PhrescoException {
 		File pomFile = new File(newAppDirSb, "pom.xml");
