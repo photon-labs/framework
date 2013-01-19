@@ -55,12 +55,19 @@
   	sbBuildPath.append(FrameworkConstants.BUILD_PATH);
     
   	boolean serverStatus = false;
-//	boolean serverStatus = Boolean.parseBoolean((String) session.getAttribute(appId + FrameworkConstants.SESSION_SERVER_STATUS));
+	boolean logFileExists = false;
  	if (session.getAttribute(appId + FrameworkConstants.SESSION_SERVER_STATUS) == null) {
 		serverStatus = false;
-		} else {
+	} else {
  		serverStatus = session.getAttribute(appId + FrameworkConstants.SESSION_SERVER_STATUS).toString().equals("true") ? true : false;
  	}
+ 	
+	if (request.getAttribute(FrameworkConstants.REQ_LOG_FILE_EXISTS) == null) {
+		logFileExists = false;
+	} else {
+		logFileExists = (Boolean) request.getAttribute(FrameworkConstants.REQ_LOG_FILE_EXISTS);
+ 	}
+ 	
 	String runAgsSrcLog = (String) request.getAttribute(FrameworkConstants.REQ_SERVER_LOG);
 	Object optionsObj = session.getAttribute(FrameworkConstants.REQ_OPTION_ID);
 	List<String> optionIds  = null;
@@ -143,7 +150,7 @@
 </form>
 
 <script type="text/javascript">
-	if (<%=serverStatus%>) {
+	if (<%=serverStatus%> && <%=logFileExists%> ) {
 		runAgainstSrcServerRunning();
 	} else {
 		runAgainstSrcServerDown();

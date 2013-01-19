@@ -209,10 +209,14 @@ public class Build extends DynamicParameterAction implements Constants {
 				}
 				if (tempConnectionAlive) {
 					readLogFile = readRunAgsSrcLogFile();
+					File runAgsLogfile = new File(getLogFolderPath() + File.separator + RUN_AGS_LOG_FILE) ;
+					if (runAgsLogfile.exists()) {
+						setReqAttribute(REQ_LOG_FILE_EXISTS, true);
+					}
 				} else {
 					deleteLogFile();
 					readLogFile = "";
-
+					setReqAttribute(REQ_LOG_FILE_EXISTS, false);
 				}
 				setReqAttribute(REQ_SERVER_LOG, readLogFile);
 
@@ -824,6 +828,7 @@ public class Build extends DynamicParameterAction implements Constants {
 			if (readData) {
 				while (StringUtils.isNotEmpty(reader.readLine())) {}
 			}
+			deleteLogFile();
 		} catch (Exception e) {
 			if (debugEnabled) {
 				S_LOGGER.error("Entered into catch block of Build.handleStopServer()"
@@ -863,7 +868,7 @@ public class Build extends DynamicParameterAction implements Constants {
 			Utility.closeReader(reader);
 		}
 		
-		return null;
+		return "";
 	}
 
 	
