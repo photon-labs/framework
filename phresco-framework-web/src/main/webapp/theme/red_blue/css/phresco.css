@@ -186,6 +186,11 @@ div.lgnBtnLabel {
 	overflow-x: hidden;
 }
 
+.checkAllFeatures {
+	float: left !important; 
+	margin: 9px 5px !important;
+}
+
 /*** page header ends***/
 /* .table_div {
 	border-radius: 6px 6px 6px 6px;

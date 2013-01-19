@@ -72,7 +72,11 @@
 	<div class="custom_features">
 		<div class="tblheader">
 		   	<label>
-		   		<label class="feature_heading" id="featuresHeading"></label>
+		   		<label>
+		   			<input class="checkAllFeatures" type="checkbox" value="" id="checkAllAuto" 
+		   				onclick="checkAllEvent($('#checkAllAuto'), $('.feature_checkbox'))"/>
+			   		<label class="feature_heading" id="featuresHeading"></label>
+	   			</label>
 	   		</label>
 		</div>
 		<div id="accordianchange"  class="feature_content_adder">

@@ -44,14 +44,17 @@ import org.tmatesoft.svn.core.wc.SVNStatus;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.opensymphony.xwork2.Action;
+import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.ArtifactGroupInfo;
 import com.photon.phresco.commons.model.ArtifactInfo;
 import com.photon.phresco.commons.model.CoreOption;
 import com.photon.phresco.commons.model.DownloadInfo;
+import com.photon.phresco.commons.model.Element;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.SelectedFeature;
+import com.photon.phresco.commons.model.SettingsTemplate;
 import com.photon.phresco.commons.model.Technology;
 import com.photon.phresco.commons.model.WebService;
 import com.photon.phresco.exception.PhrescoException;
@@ -204,6 +207,7 @@ public class Applications extends FrameworkBaseAction {
         try {
         	ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
         	ProjectInfo projectInfo = null;
+        	String technologyId = "";
         	if (getSessionAttribute(getAppId() + SESSION_APPINFO) == null) {
         		projectInfo = projectManager.getProject(getProjectId(), getCustomerId(), getAppId());
         		ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
@@ -218,7 +222,7 @@ public class Applications extends FrameworkBaseAction {
                     }
                 }
         		
-        		String technologyId = projectInfo.getAppInfos().get(0).getTechInfo().getId();
+        		technologyId = projectInfo.getAppInfos().get(0).getTechInfo().getId();
         		List<ApplicationInfo> pilotProjects = getServiceManager().getPilotProjects(getCustomerId(), technologyId);
         		Technology technologyInfo = getServiceManager().getTechnology(technologyId);
         		setSessionAttribute(REQ_TECHNOLOGY, technologyInfo);
@@ -255,6 +259,45 @@ public class Applications extends FrameworkBaseAction {
         		setSessionAttribute(getAppId() + SESSION_APPINFO, projectInfo);
         		setReqAttribute(REQ_OLD_APPDIR, getOldAppDirName());
         	}
+        	
+        	technologyId = projectInfo.getAppInfos().get(0).getTechInfo().getId();
+        	//To check whether the selected technology has servers
+        	
+        	SettingsTemplate serverConfigTemplate = getServiceManager().getConfigTemplate(FrameworkConstants.TECH_SERVER_ID);
+        	List<Element> serverAppliesToTechs = serverConfigTemplate.getAppliesToTechs();
+        	boolean hasServer = false;
+        	for (Element serverAppliesToTech : serverAppliesToTechs) {
+        		if(serverAppliesToTech.getId().equals(technologyId)) {
+        			hasServer = true;
+        			break;
+        		}
+			}
+        	setReqAttribute(REQ_TECH_HAS_SERVER, hasServer);
+
+        	//To check whether the selected technology has databases
+        	boolean hasDb = false;
+        	SettingsTemplate dbConfigTemplate = getServiceManager().getConfigTemplate(FrameworkConstants.TECH_DATABASE_ID);
+        	List<Element> dbAppliesToTechs = dbConfigTemplate.getAppliesToTechs();
+        	for (Element dbAppliesToTech : dbAppliesToTechs) {
+        		if(dbAppliesToTech.getId().equals(technologyId)) {
+        			hasDb = true;
+        			break;
+        		}
+			}
+        	setReqAttribute(REQ_TECH_HAS_DB, hasDb);
+        	
+        	//To check whether the selected technology has webservices
+        	boolean hasWebservice = false;
+        	SettingsTemplate webserviceConfigTemplate = getServiceManager().getConfigTemplate(FrameworkConstants.TECH_WEBSERVICE_ID);
+        	List<Element> webServiceAppliesToTechs = webserviceConfigTemplate.getAppliesToTechs();
+        	for (Element webServiceAppliesToTech : webServiceAppliesToTechs) {
+				if (webServiceAppliesToTech.getId().equals(technologyId)) {
+					hasWebservice = true;
+					break;
+				}
+			}
+        	setReqAttribute(REQ_TECH_HAS_WEBSERVICE, hasWebservice);
+        	
             List<WebService> webServices = getServiceManager().getWebServices();
             setReqAttribute(REQ_WEBSERVICES, webServices);
             setReqAttribute(REQ_APP_ID, getAppId());

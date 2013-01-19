@@ -112,6 +112,9 @@ public interface FrameworkConstants {
     String REQ_WEB_LAYER_APPINFO = "weblayerAppinfo";
     String MEGABYTE = "MB";
     String KILOBYTE = "KB";
+    String TECH_SERVER_ID = "config_Server";
+    String TECH_DATABASE_ID = "config_Database";
+    String TECH_WEBSERVICE_ID = "config_WebService";
     
     String REQ_KEY = "key";
     String REQ_VALUE = "value";
@@ -552,6 +555,9 @@ public interface FrameworkConstants {
     String REQ_TOTAL_THROUGHPUT = "totalThroughput";
     String REQ_TOTAL_STD_DEV = "totalStdDev";
     String REQ_TECHNOLOGY = "technology";
+    String REQ_TECH_HAS_SERVER = "hasServer";
+    String REQ_TECH_HAS_DB = "hasDb";
+    String REQ_TECH_HAS_WEBSERVICE = "hasWebservice";
     String REQ_SELECTED_TECHNOLOGY = "SelectedTechnology";
     String REQ_NAME = "name";
     String REQ_CODE = "code";
