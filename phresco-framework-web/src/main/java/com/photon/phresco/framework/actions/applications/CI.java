@@ -21,17 +21,27 @@ package com.photon.phresco.framework.actions.applications;
 
 import static com.photon.phresco.util.Constants.PHASE_FUNCTIONAL_TEST;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStream;
+import java.io.StringWriter;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.beanutils.*;
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -49,11 +59,13 @@ import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.api.ActionType;
 import com.photon.phresco.framework.api.CIManager;
 import com.photon.phresco.framework.commons.ApplicationsUtil;
-import com.photon.phresco.framework.commons.DiagnoseUtil;
 import com.photon.phresco.framework.commons.FrameworkUtil;
-import com.photon.phresco.framework.model.*;
+import com.photon.phresco.framework.model.CIBuild;
+import com.photon.phresco.framework.model.CIJob;
+import com.photon.phresco.framework.model.CIJobStatus;
+import com.photon.phresco.framework.model.DependantParameters;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
-import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.Childs.*;
+import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.Childs.Child;
 import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.Utility;
@@ -142,7 +154,7 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 			setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
 			setReqAttribute(CI_JENKINS_ALIVE, jenkinsAlive);
 
-			jenkinsAlive = DiagnoseUtil.isConnectionAlive(HTTP_PROTOCOL, LOCALHOST,	Integer.parseInt(getPortNo(Utility.getJenkinsHome())));
+			jenkinsAlive = Utility.isConnectionAlive(HTTP_PROTOCOL, LOCALHOST,	Integer.parseInt(getPortNo(Utility.getJenkinsHome())));
 			if (debugEnabled) {
 				S_LOGGER.debug("jenkins Alive " + jenkinsAlive);
 			}
@@ -161,7 +173,7 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 					boolean isJobCreatingBuild = false;
 					List<CIBuild> builds = null;
 					buildInProgress = false;
-					buildJenkinsAlive = DiagnoseUtil.isConnectionAlive(HTTP_PROTOCOL, ciJob.getJenkinsUrl(), Integer.parseInt(ciJob.getJenkinsPort()));
+					buildJenkinsAlive = Utility.isConnectionAlive(HTTP_PROTOCOL, ciJob.getJenkinsUrl(), Integer.parseInt(ciJob.getJenkinsPort()));
 					isJobCreatingBuild = ciManager.isJobCreatingBuild(ciJob);
 					if (debugEnabled) {
 						S_LOGGER.debug("ciJob.getName() ... " + ciJob.getName());

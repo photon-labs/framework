@@ -93,11 +93,15 @@ public class Features extends FrameworkBaseAction {
 	private String technologyVersion = "";
 	private String applicationVersion = "";
 	private String appId = "";
+	private String serverLayer = "";
+	private String dbLayer = "";
+	private String webserviceLayer = "";
 	private List<String> server = null;
 	private List<String> database = null;
 	private List<String> serverVersion = null;
     private List<String> databaseVersion = null;
     private List<String> webservice = null;
+    private String webServiceError = "";
 	private String technologyId = "";
 	private String type = "";
 	private String customerId = "";
@@ -273,27 +277,42 @@ public class Features extends FrameworkBaseAction {
 	            hasError = true;
 	    	}
 	    	
-	    	if (CollectionUtils.isNotEmpty(getServer())) {
+	    	if (StringUtils.isNotEmpty(getWebserviceLayer()) && CollectionUtils.isEmpty(getWebservice())) {
+				setWebServiceError(getText(ERROR_WS_MISSING));
+				hasError = true;
+			}
+	    	
+	    	if (StringUtils.isNotEmpty(getDbLayer()) && CollectionUtils.isNotEmpty(getDatabase()) && StringUtils.isEmpty(getDatabase().get(0))) {
+				setDatabaseError(getText(ERROR_DB_MISSING));
+				hasError = true;
+			}
+	    	
+	    	if (StringUtils.isNotEmpty(getServerLayer()) && CollectionUtils.isNotEmpty(getServer()) && StringUtils.isEmpty(getServer().get(0))) {
+				setServerError(getText(ERROR_SERV_MISSING));
+				hasError = true;
+			}
+	    	
+	    	if (StringUtils.isNotEmpty(getServerLayer()) && CollectionUtils.isNotEmpty(getServer())) {
 				for (String serverId : getServer()) {
-					if(StringUtils.isNotEmpty(serverId)) {
-						if(ArrayUtils.isEmpty(getReqParameterValues(serverId))) {
+					if (StringUtils.isNotEmpty(serverId)) {
+						if (ArrayUtils.isEmpty(getReqParameterValues(serverId))) {
 							DownloadInfo downloadInfo = getServiceManager().getDownloadInfo(serverId);
 							setServerName(downloadInfo.getName());
 							setServerError(getText(ERROR_SERV_VER_MISSING, downloadInfo.getName()));
-							hasError=true;
+							hasError = true;
 						}
 					}
 				}
 			}
 	    	
-	    	if (CollectionUtils.isNotEmpty(getDatabase())) {
+	    	if (StringUtils.isNotEmpty(getDbLayer()) && CollectionUtils.isNotEmpty(getDatabase())) {
 				for (String databaeId : getDatabase()) {
-					if(StringUtils.isNotEmpty(databaeId)) {
-						if(ArrayUtils.isEmpty(getReqParameterValues(databaeId))) {
+					if (StringUtils.isNotEmpty(databaeId)) {
+						if (ArrayUtils.isEmpty(getReqParameterValues(databaeId))) {
 							DownloadInfo downloadInfo = getServiceManager().getDownloadInfo(databaeId);
 							setDatabaseName(downloadInfo.getName());
 							setDatabaseError(getText(ERROR_DB_VER_MISSING, downloadInfo.getName()));
-							hasError=true;
+							hasError = true;
 						}
 					}
 				}
@@ -324,9 +343,13 @@ public class Features extends FrameworkBaseAction {
 			element.setId(getPilotProject());
 			appInfo.setPilotInfo(element);
 		}
-		appInfo.setSelectedWebservices(getWebservice());
+
+		if (CollectionUtils.isNotEmpty(appInfo.getSelectedServers())) {
+			appInfo.getSelectedServers().clear();
+		}
+		
 		List<ArtifactGroupInfo> selectedServers = new ArrayList<ArtifactGroupInfo>();
-		if (CollectionUtils.isNotEmpty(getServer())) {
+		if (StringUtils.isNotEmpty(getServerLayer()) && CollectionUtils.isNotEmpty(getServer())) {
 			for (String serverId : getServer()) {
 				if(StringUtils.isNotEmpty(serverId)) {
 					ArtifactGroupInfo artifactGroupInfo = new ArtifactGroupInfo();
@@ -338,10 +361,12 @@ public class Features extends FrameworkBaseAction {
 			}
 		}
     	
-    	
+		if (CollectionUtils.isNotEmpty(appInfo.getSelectedDatabases())) {
+			appInfo.getSelectedDatabases().clear();
+		}
+		
     	List<ArtifactGroupInfo> selectedDatabases = new ArrayList<ArtifactGroupInfo>();
-    	if (CollectionUtils.isNotEmpty(getDatabase())) {
-    		
+    	if (StringUtils.isNotEmpty(getDbLayer()) && CollectionUtils.isNotEmpty(getDatabase())) {
 			for (String databaseId : getDatabase()) {
 				ArtifactGroupInfo artifactGroupInfo = new ArtifactGroupInfo();
 				artifactGroupInfo.setArtifactGroupId(databaseId);
@@ -351,6 +376,15 @@ public class Features extends FrameworkBaseAction {
 			}
 			
 		}
+    	
+    	if (CollectionUtils.isNotEmpty(appInfo.getSelectedWebservices())) {
+			appInfo.getSelectedWebservices().clear();
+		}
+		
+    	if (StringUtils.isNotEmpty(getWebserviceLayer()) && CollectionUtils.isNotEmpty(getWebservice())) {
+			appInfo.setSelectedWebservices(getWebservice());
+		}
+    	
     	return appInfo;
 	}
 	
@@ -1406,4 +1440,36 @@ public class Features extends FrameworkBaseAction {
     public void setAppTypeId(String appTypeId) {
         this.appTypeId = appTypeId;
     }
+
+	public String getServerLayer() {
+		return serverLayer;
+	}
+
+	public void setServerLayer(String serverLayer) {
+		this.serverLayer = serverLayer;
+	}
+
+	public String getDbLayer() {
+		return dbLayer;
+	}
+
+	public void setDbLayer(String dbLayer) {
+		this.dbLayer = dbLayer;
+	}
+
+	public void setWebserviceLayer(String webserviceLayer) {
+		this.webserviceLayer = webserviceLayer;
+	}
+
+	public String getWebserviceLayer() {
+		return webserviceLayer;
+	}
+
+	public void setWebServiceError(String webServiceError) {
+		this.webServiceError = webServiceError;
+	}
+
+	public String getWebServiceError() {
+		return webServiceError;
+	}
 }

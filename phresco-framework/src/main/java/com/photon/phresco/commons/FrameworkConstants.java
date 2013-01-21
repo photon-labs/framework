@@ -115,6 +115,7 @@ public interface FrameworkConstants {
     String TECH_SERVER_ID = "config_Server";
     String TECH_DATABASE_ID = "config_Database";
     String TECH_WEBSERVICE_ID = "config_WebService";
+    String REQ_HUB_STATUS = "hubStatus";
     
     String REQ_KEY = "key";
     String REQ_VALUE = "value";
@@ -304,6 +305,7 @@ public interface FrameworkConstants {
 	String FUNCTIONAL_TEST = "functionalTest";
 	String REQ_FUNCTEST_SELENIUM_TOOL = "functionalTestSeleniumTool";
 	String SELENIUM_GRID = "grid";
+	String SELENIUM_WEBDRIVER = "webdriver";
 	String BUILD = "build";
     String DEPLOY = "deploy";
     String BUILD_INFO_ENVS = "buildInfoEnvs";
@@ -801,6 +803,8 @@ public interface FrameworkConstants {
 	
 	String START_NODE = "startNode";
 	String START_HUB = "startHub";
+	String STOP_NODE = "stopNode";
+    String STOP_HUB = "stopHub";
 	
 	String REQ_EXTERNAL_FEATURES = "External Features";
 	String REQ_CUSTOM_FEATURES = "Custom Features";
@@ -1139,7 +1143,10 @@ public interface FrameworkConstants {
     String ERROR_EMAIL_ID_EMPTY = "err.msg.empty.email";
     String ERROR_VERSION = "err.msg.empty.version";
     String ERROR_SERV_VER_MISSING = "err.serv.ver.missing";
+    String ERROR_SERV_MISSING = "err.serv.missing";
     String ERROR_DB_VER_MISSING = "err.db.ver.missing";
+    String ERROR_DB_MISSING = "err.db.missing";
+    String ERROR_WS_MISSING = "err.ws.missing";
     String ERROR_LAYER = "err.msg.empty.layer";
     String ERROR_TECHNOLOGY = "err.msg.empty.technology";
     String ERROR_ENV = "err.msg.empty.environment";

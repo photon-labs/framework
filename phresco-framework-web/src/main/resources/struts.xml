@@ -695,7 +695,7 @@
 		</action>
 		
 		<action name="stopHub" method="stopHub" class="com.photon.phresco.framework.actions.applications.Quality">
-			<result type="json" />
+			<result name="reader">/pages/applications/reader.jsp</result>
 		</action>
 		
 		<action name="checkForNode" method="checkForNode" class="com.photon.phresco.framework.actions.applications.Quality">
@@ -715,7 +715,7 @@
 		</action>
 		
 		<action name="stopNode" method="stopNode" class="com.photon.phresco.framework.actions.applications.Quality">
-			<result type="json" />
+			<result name="reader">/pages/applications/reader.jsp</result>
 		</action>
 		
 		<action name="performance" method="performance" class="com.photon.phresco.framework.actions.applications.Quality">
