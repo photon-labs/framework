@@ -115,8 +115,8 @@ public class CIJob {
     private String triggerSimulator = "false";
     private String deviceId = "";
     private String theme = "";
-    private String DeviceKeyPassword = "";
-    private String EmulatorKeyPassword = "";
+    private String deviceKeyPassword = "";
+    private String emulatorKeyPassword = "";
     
     public CIJob() {
         super();
@@ -700,18 +700,18 @@ public class CIJob {
 	}
 
 	public String getDeviceKeyPassword() {
-		return DeviceKeyPassword;
+		return deviceKeyPassword;
 	}
 
 	public void setDeviceKeyPassword(String deviceKeyPassword) {
-		DeviceKeyPassword = deviceKeyPassword;
+		this.deviceKeyPassword = deviceKeyPassword;
 	}
 
 	public String getEmulatorKeyPassword() {
-		return EmulatorKeyPassword;
+		return emulatorKeyPassword;
 	}
 
 	public void setEmulatorKeyPassword(String emulatorKeyPassword) {
-		EmulatorKeyPassword = emulatorKeyPassword;
+		this.emulatorKeyPassword = emulatorKeyPassword;
 	}
 }
