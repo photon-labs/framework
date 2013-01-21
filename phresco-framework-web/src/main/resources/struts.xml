@@ -952,9 +952,13 @@
         </action>
         
         <!--  dynamic parameter mandatory validation starts -->
-         <action name="dynamciParamMandatoryCheck" method="mandatoryValidation" class="com.photon.phresco.framework.actions.applications.DynamicParameterAction">
+        <action name="dynamciParamMandatoryCheck" method="mandatoryValidation" class="com.photon.phresco.framework.actions.applications.DynamicParameterAction">
             <result type="json" />
         </action>
         <!--  dynamic parameter mandatory validation ends -->
+        
+        <action name="removeReaderFromSession" method="removeReaderFromSession" class="com.photon.phresco.framework.actions.applications.Applications">
+            <result type="json" />
+        </action>
     </package>
 </struts>

@@ -148,6 +148,8 @@ public class Applications extends FrameworkBaseAction {
     private String commitMessage = "";
     private List<String> commitableFiles = null;
     
+    private String actionType = "";
+    
     public String loadMenu() {
         if (s_debugEnabled) {
             S_LOGGER.debug("Entering Method  Applications.loadMenu()");
@@ -1430,6 +1432,16 @@ public class Applications extends FrameworkBaseAction {
 
         return APP_SHOW_PROJECT_VLDT_RSLT;
     }
+    
+	/**
+	 * To remove the reader from the session
+	 * @return
+	 */
+    public String removeReaderFromSession() {
+        removeSessionAttribute(getAppId() + getActionType());
+        
+        return SUCCESS;
+    }
 
   /*  private String discover() {
         if (s_debugEnabled) {
@@ -2352,4 +2364,12 @@ public class Applications extends FrameworkBaseAction {
 	public void setCommitableFiles(List<String> commitableFiles) {
 		this.commitableFiles = commitableFiles;
 	}
+
+    public void setActionType(String actionType) {
+        this.actionType = actionType;
+    }
+
+    public String getActionType() {
+        return actionType;
+    }
 }
