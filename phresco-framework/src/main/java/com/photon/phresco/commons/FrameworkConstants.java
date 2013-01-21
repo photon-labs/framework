@@ -115,6 +115,7 @@ public interface FrameworkConstants {
     String TECH_SERVER_ID = "config_Server";
     String TECH_DATABASE_ID = "config_Database";
     String TECH_WEBSERVICE_ID = "config_WebService";
+    String REQ_HUB_STATUS = "hubStatus";
     
     String REQ_KEY = "key";
     String REQ_VALUE = "value";
@@ -304,6 +305,7 @@ public interface FrameworkConstants {
 	String FUNCTIONAL_TEST = "functionalTest";
 	String REQ_FUNCTEST_SELENIUM_TOOL = "functionalTestSeleniumTool";
 	String SELENIUM_GRID = "grid";
+	String SELENIUM_WEBDRIVER = "webdriver";
 	String BUILD = "build";
     String DEPLOY = "deploy";
     String BUILD_INFO_ENVS = "buildInfoEnvs";
@@ -801,6 +803,8 @@ public interface FrameworkConstants {
 	
 	String START_NODE = "startNode";
 	String START_HUB = "startHub";
+	String STOP_NODE = "stopNode";
+    String STOP_HUB = "stopHub";
 	
 	String REQ_EXTERNAL_FEATURES = "External Features";
 	String REQ_CUSTOM_FEATURES = "Custom Features";

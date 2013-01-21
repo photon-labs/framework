@@ -68,7 +68,6 @@ import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.api.Project;
 import com.photon.phresco.framework.api.ProjectAdministrator;
 import com.photon.phresco.framework.api.ProjectManager;
-import com.photon.phresco.framework.commons.DiagnoseUtil;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.commons.LogErrorReport;
 import com.photon.phresco.framework.model.DependantParameters;
@@ -208,7 +207,7 @@ public class Build extends DynamicParameterAction implements Constants {
 				}
 				
 				if (StringUtils.isNotEmpty(serverProtocol) && StringUtils.isNotEmpty(serverHost) && serverPort != 0) {
-					tempConnectionAlive = DiagnoseUtil.isConnectionAlive(serverProtocol, serverHost, serverPort);
+					tempConnectionAlive = Utility.isConnectionAlive(serverProtocol, serverHost, serverPort);
 					setSessionAttribute(getAppId() + SESSION_SERVER_STATUS, tempConnectionAlive);
 				}
 				if (tempConnectionAlive) {
@@ -776,7 +775,7 @@ public class Build extends DynamicParameterAction implements Constants {
 			ProjectInfo projectInfo = getProjectInfo();
 			String workingDirectory = getAppDirectoryPath(applicationInfo);
 			reader = applicationManager.performAction(projectInfo, ActionType.RUNAGAINSTSOURCE, null, workingDirectory);
-			boolean connectionAlive = DiagnoseUtil.isConnectionAlive(serverProtocol, serverHost, serverPort);
+			boolean connectionAlive = Utility.isConnectionAlive(serverProtocol, serverHost, serverPort);
 			setSessionAttribute(getAppId() + SESSION_SERVER_STATUS, connectionAlive);
 			setSessionAttribute(getAppId() + SESSION_SERVER_PROTOCOL_VALUE, serverProtocol);
 			setSessionAttribute(getAppId() + SESSION_SERVER_HOST_VALUE, serverHost);
