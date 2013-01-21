@@ -82,15 +82,15 @@
 			pilotInfo = selectedInfo.getPilotInfo().getId();
 		}
 		
-		if (selectedInfo.getSelectedWebservices() != null) {
+		if (CollectionUtils.isNotEmpty(selectedInfo.getSelectedWebservices())) {
 			selectedWebservices = selectedInfo.getSelectedWebservices();
 		}
 		
-		if (selectedInfo.getSelectedServers() !=null) {
+		if (CollectionUtils.isNotEmpty(selectedInfo.getSelectedServers())) {
 			selectedServers = selectedInfo.getSelectedServers();
 		}
 		
-		if (selectedInfo.getSelectedDatabases() !=null) {
+		if (CollectionUtils.isNotEmpty(selectedInfo.getSelectedDatabases())) {
 			selectedDatabases = selectedInfo.getSelectedDatabases();
 		}
 	} else {
@@ -235,7 +235,7 @@
 							<section class="lft_menus_container">
 								<span class="siteaccordion closereg" id="serverLayerControl" onclick="accordionClick(this, $('input[value=serverLayer]'));">
 									<span>
-										<input type="checkbox" id="checkAll1" class="accordianChkBox" name="layer" value="serverLayer" <%= checkedServerStr %>/>
+										<input type="checkbox" id="checkAll1" class="accordianChkBox" name="serverLayer" value="serverLayer" <%= checkedServerStr %>/>
 										<a class="vAlignSub"><s:text name='lbl.servers'/></a>
 									</span>
 									<p id="serverError" class="accordion-error-txt errorNotification"></p>
@@ -280,7 +280,7 @@
 							<section class="lft_menus_container">
 								<span class="siteaccordion closereg" id="databaseLayerControl" onclick="accordionClick(this, $('input[value=databaseLayer]'));">
 									<span>
-										<input type="checkbox" id="checkAll2" class="accordianChkBox" name="layer" value="databaseLayer" <%= checkedDatabaseStr %>/>
+										<input type="checkbox" id="checkAll2" class="accordianChkBox" name="dbLayer" value="databaseLayer" <%= checkedDatabaseStr %>/>
 										<a class="vAlignSub"><s:text name='lbl.database'/></a>
 									</span>
 									<p id="databaseError" class="accordion-error-txt errorNotification"></p> 
@@ -324,9 +324,10 @@
 							<section class="lft_menus_container">
 								<span class="siteaccordion closereg" id="webserviceLayerControl" onclick="accordionClick(this, $('input[value=webserviceLayer]'));">
 									<span>
-										<input type="checkbox" id="checkAll3" class="accordianChkBox" name="layer" value="webserviceLayer" <%= checkedWebserviceStr %>/>
+										<input type="checkbox" id="checkAll3" class="accordianChkBox" name="webserviceLayer" value="webserviceLayer" <%= checkedWebserviceStr %>/>
 										<a class="vAlignSub"><s:text name='lbl.webservice'/></a>
 									</span>
+									<p id="webserviceError" class="accordion-error-txt errorNotification"></p> 
 								</span>
 								<div class="mfbox siteinnertooltiptxt hideContent">
 									<div class="control-group autoWidthForWebservice">
@@ -483,15 +484,21 @@
 		}
         
         if(!isBlank(data.serverError)) {
-			showError($("#" + $(this).attr("id")), $("#serverError"),'<s:text name='err.serv.ver.missing'/> ' + data.serverName);
+			showError($("#" + $(this).attr("id")), $("#serverError"), data.serverError + " " + data.serverName);
 		} else {
 			hideError($("#serverLayerControl") , $("#serverError"));
 		}
 		
 		if(!isBlank(data.databaseError)) {
-			showError($("#" + $(this).attr("id")), $("#databaseError"),'<s:text name='err.db.ver.missing'/> ' + data.databaseName);
+			showError($("#" + $(this).attr("id")), $("#databaseError"), data.databaseError + " " + data.databaseName);
 		} else {
 			hideError($("#databaseLayerControl") , $("#databaseError"));
+		}
+		
+		if(!isBlank(data.webServiceError)) {
+			showError($("#" + $(this).attr("id")), $("#webserviceError"), data.webServiceError);
+		} else {
+			hideError($("#webserviceLayerControl") , $("#webserviceError"));
 		}
        
 	}

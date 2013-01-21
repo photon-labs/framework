@@ -281,7 +281,7 @@ public class NodeJSUtil {
 						serverConfigFile));
 				ServerInfo serverInfo = gson.fromJson(serverInStream, ServerInfo.class);
 				int port = Integer.parseInt(serverInfo.getPort());
-				boolean tempConnectionAlive = DiagnoseUtil.isConnectionAlive(serverInfo.getProtocol(), serverInfo.getHost(), port);
+				boolean tempConnectionAlive = Utility.isConnectionAlive(serverInfo.getProtocol(), serverInfo.getHost(), port);
 				session.setAttribute(projectCode + "_NodeJSServerStatus", tempConnectionAlive);
 				status = String.valueOf(tempConnectionAlive);
 			}
