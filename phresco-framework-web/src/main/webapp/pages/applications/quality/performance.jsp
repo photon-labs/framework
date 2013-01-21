@@ -75,7 +75,7 @@
     	<select class="noTestAvail" id="testResultsType" name="testResultsType" style="width :100px;"> 
 			<option value="server" ><s:text name="label.application.server"/></option>
 			<option value="database" ><s:text name="label.database"/></option>
-			<option value="webservices" ><s:text name="label.webservices"/></option>
+			<option value="webservice" ><s:text name="label.webservices"/></option>
 		</select>&nbsp;
 		
     	<strong class="noTestAvail" id="testResultFileTitle"><s:text name="label.test.results"/></strong> 
@@ -285,7 +285,10 @@
     	if (!isBlank($('form').serialize())) {
     		params = $('form').serialize() + "&";
     	}
-    	performAction('getDevices', params, '', true);
+    	params = params.concat("testType=");
+	    params = params.concat('<%= FrameworkConstants.PERFORMACE %>');
+
+    	loadContent('getDevices', '', '', params, true, true, false);
 	}
 	
 	function successGetDeviceName(data) {
@@ -342,9 +345,35 @@
 			showPopuploadingIcon();
 			loadContent('printAsPdf', $('#generatePdf'), $('#popup_div'), '', false, true);
 		} else if (okUrl === "runPerformanceTest") {
-			$('#popupPage').modal('hide');
-			var params = getBasicParams();
-			progressPopupAsSecPopup('performanceTest', '<%= appId %>', "performance-test", $('#generateBuildForm'), params, ''); 
+			mandatoryValidation(okUrl, $("#generateBuildForm"), '', 'performance-test', 'performance-test');
 		}
+	}
+	
+	function runPerformanceTest() {
+		var formJsonObject = $('#generateBuildForm').toJSON();
+		var formJsonStr = JSON.stringify(formJsonObject);
+		var templateFunction = new Array();
+		var templateCsvFn = $("#stFileFunction").val();
+		var jsonStr = "";
+		var templJsonStr = "";
+		var sep = "";
+		if (templateCsvFn != undefined && !isBlank(templateCsvFn)) {
+			templateFunction = templateCsvFn.split(",");
+			for (i = 0; i < templateFunction.length; ++i) {
+				jsonStr = window[templateFunction[i]]();
+				templJsonStr = templJsonStr + sep + jsonStr;
+				sep = ",";
+			}
+		}
+		formJsonStr = formJsonStr.slice(0,formJsonStr.length-1);
+		formJsonStr = formJsonStr + ',' + templJsonStr + '}';
+		$("#resultJson").val(formJsonStr);
+		$('#popupPage').modal('hide');
+		var params = getBasicParams();
+		progressPopupAsSecPopup('runPerformanceTest', '<%= appId %>', "performance-test", $('#generateBuildForm'), params, '');
+	}
+	
+	function popupOnClose(obj) {
+		isResultFileAvailbale();
 	}
 </script>

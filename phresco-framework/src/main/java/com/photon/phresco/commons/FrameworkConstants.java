@@ -30,6 +30,7 @@ public interface FrameworkConstants {
     
     String PHRESCO_DOT = "phresco.";
     String DOT_TARGET_DIR = ".target.dir";
+    String PHRESCO_DOT_EXTRACT_DOT = "phresco.extract.";
 
 	String CSV_PATTERN = "\\s*,\\s*";
     
@@ -49,14 +50,21 @@ public interface FrameworkConstants {
     String COMMIT = "commit";
     
     String CONFIG = "config";
+    String EMAIL_ID = "emailid";
     
     String X_FILE_NAME = "X-File-Name";
     String CONFIG_TEMP_TYPE = "Config-Temp-Type";
     String SUCCESS_FALSE = "{\"success\": false}";
     String SUCCESS_TRUE = "{\"success\": true}";
     
+    String VALIDATE_THEME = "validateTheme";
+    String VALIDATE_CONTENT = "validateContent";
+    String CONVERT_THEME = "convertTheme";
+    String CONVERT_CONTENT = "convertContent";
+    
 	String FEATURES = "features";
 	String CONFIG_TYPE_FEATURES = "Features";
+	String CONFIG_TYPE_COMPONENTS = "Components";
     int JOB_STATUS_NOTOK = -1;
     String FOLDER_DOT_PHRESCO = ".phresco";
     String PHRESCO_HOME = "PHRESCO_HOME";
@@ -75,7 +83,7 @@ public interface FrameworkConstants {
     String SOURCE = "src";
     String FROM_PAGE_LOGIN = "login";
     String CONFIG_TYPE = "type";
-    String EXE_DOWNLOAD = "Exe Download";
+    String EXE_DOWNLOAD = "Exe_Download";
     String IMPORT = "import";
     
     String REQ_CUSTOMER_ID = "customerId";
@@ -101,6 +109,12 @@ public interface FrameworkConstants {
     String REQ_FEATURES_TYPE_MODULE = "FEATURE";
     String REQ_FEATURES_TYPE = "type";
     String REQ_FEATURES_MOD_GRP = "moduleGroup";
+    String REQ_WEB_LAYER_APPINFO = "weblayerAppinfo";
+    String MEGABYTE = "MB";
+    String KILOBYTE = "KB";
+    String TECH_SERVER_ID = "config_Server";
+    String TECH_DATABASE_ID = "config_Database";
+    String TECH_WEBSERVICE_ID = "config_WebService";
     
     String REQ_KEY = "key";
     String REQ_VALUE = "value";
@@ -122,6 +136,8 @@ public interface FrameworkConstants {
     String INDEX_HTML = "index.html";
 	String WAR = "war";
 	String PATH_SUREFIRE_REPORTS = "/target/surefire-reports";
+	String APKLIB  = "apklib";
+	String APK  = "apk";
     
     String JENKINS_HOME = "JENKINS_HOME";
     String CI_BUILD_NAME = "PHR_ci_build";
@@ -298,7 +314,7 @@ public interface FrameworkConstants {
     String DEPLOY_WEBSERVICE_PARAM = "webServiceName";
     String TEST_PARAM = "test=";
     String TEST_PARAM_VALUE = "AllTest";
-    String ALL_TEST_SUITES = "All";
+    String ALL = "All";
     String KEY_QUOTES = "\"";
     String DEPLOY_BUILD_NAME = "buildName";
     String IPHONE_BUILD_NAME = "application.path";
@@ -539,6 +555,9 @@ public interface FrameworkConstants {
     String REQ_TOTAL_THROUGHPUT = "totalThroughput";
     String REQ_TOTAL_STD_DEV = "totalStdDev";
     String REQ_TECHNOLOGY = "technology";
+    String REQ_TECH_HAS_SERVER = "hasServer";
+    String REQ_TECH_HAS_DB = "hasDb";
+    String REQ_TECH_HAS_WEBSERVICE = "hasWebservice";
     String REQ_SELECTED_TECHNOLOGY = "SelectedTechnology";
     String REQ_NAME = "name";
     String REQ_CODE = "code";
@@ -619,6 +638,8 @@ public interface FrameworkConstants {
     String REQ_APPLICATION_TYPE = "applicationType";
     String REQ_OLD_CONFIG_NAME = "configName";
     String REQ_TEST_TYPE = "testType";
+    String REQ_SONAR_URL = "sonarUrl";
+	String REQ_REPORT_TYPE = "reportType";
     String REQ_ACTION_TYPE = "actionType";
     String REQ_TEST_EXE = "testExecuted";
     String REQ_REPORT_STATUS = "reportStatus";
@@ -640,6 +661,7 @@ public interface FrameworkConstants {
     String REQ_TEST_TYPE_SELECTED = "testTypeSelected";
     String REQ_TEST_UNIT = "unit";
     String REQ_PROJECT_MODULES = "projectModules";
+    String REQ_UNIT_TEST_REPORT_OPTIONS = "unitTestReportOptions";
     String REQ_TEST_FUNCTIONAL = "functional";
     String REQ_TEST_PERFORMANCE = "performance";
     String PERFORMANCE_TEST_REPORTS = "performanceTestReports";
@@ -724,6 +746,7 @@ public interface FrameworkConstants {
     String REQ_KEY_SUCCESS_EMAILS = "successEmails";
     String REQ_KEY_FAILURE_EMAILS = "failureEmails";
     String REQ_SERVER_LOG = "serverLog";
+    String REQ_LOG_FILE_EXISTS = "logFilexists";
     String REQ_REPORT_CRISP="crisp";
     String REQ_REPORT_DETAILED="detail";
     String REQ_REPORTS_DATA_TYPE = "reportsDataType";
@@ -800,6 +823,7 @@ public interface FrameworkConstants {
     String REQ_HAS_CUSTOM_PROPERTY = "hasCustomProperty";
     
     String CONFIG_FEATURES = "config_Features";
+    String CONFIG_COMPONENTS = "config_Components";
 	
 	String REQ_TESTCASE_NAME = "testCaseName";
 	String SCREENSHOT_DIR = "screenshots";
@@ -908,6 +932,7 @@ public interface FrameworkConstants {
     String MSG_PROJECT_INFORMATION_EMPTY = "Project information should not be empty";
     String MSG_FILE_PATH_EMPTY = "File path should not be empty";
     String SUCCESS_REPORT_STATUS = "label.report.success";
+    String SUCCESS_SEND_ERROR_REPORT = "Report Submitted Successfully";
     String ERROR_REPORT_STATUS = "label.report.failure";
     String ERROR_REPORT_MISSISNG_FONT = "label.report.failure.missing.font";
     String ERROR_REPORT_MISSISNG_FONT_MSG = "label.report.failure.missiong.font.msg";
@@ -1106,10 +1131,15 @@ public interface FrameworkConstants {
     String ERROR_DUPLICATE_ENV_IN_SETTINGS = "Environment {0} already exists in global settings";
     String ERROR_NO_CONFIG = "environment.config.not.available";
     String ERROR_NAME = "err.msg.empty.name";
+    String ERROR_APP_DIR_EXISTS = "err.msg.app.dir.exists";
     String ERROR_NAME_EXISTS = "err.msg.project.name.exists";
     String ERROR_CODE_EXISTS = "err.msg.project.code.exists";
     String ERROR_CODE = "err.msg.empty.code";
+    String ERROR_EMAIL_ID = "err.msg.invalid.email";
+    String ERROR_EMAIL_ID_EMPTY = "err.msg.empty.email";
     String ERROR_VERSION = "err.msg.empty.version";
+    String ERROR_SERV_VER_MISSING = "err.serv.ver.missing";
+    String ERROR_DB_VER_MISSING = "err.db.ver.missing";
     String ERROR_LAYER = "err.msg.empty.layer";
     String ERROR_TECHNOLOGY = "err.msg.empty.technology";
     String ERROR_ENV = "err.msg.empty.environment";
@@ -1588,7 +1618,7 @@ public interface FrameworkConstants {
 	   String SQL_EXCLUDES = "source/sql";
 	   String HTML_EXCLUDES = "source/public_html";
 	   String TEST = "test";
-	  
+	   String FROMPAGE_ALL = "All";
 	   
 	   /* Constants for plugin properties */ 
 	   String SKIP = "skip";
@@ -1727,6 +1757,7 @@ public interface FrameworkConstants {
 		String EXCEPTION_BUILD_DOWNLOAD_NOT_AVAILABLE = "excep.hdr.code.load";
 		String EXCEPTION_FEATURE_MANIFEST_NOT_AVAILABLE = "excep.hdr.feature.manifest.not.available";
 		String EXCEPTION_FEATURE_CONFIGURATION = "excep.hdr.feature.configuration";
+		String EXCEPTION_MANDAOTRY_MSG = "except.mandatory.msg";
 		
 		/*****************************
 	     * Success Action Messages
@@ -1752,7 +1783,7 @@ public interface FrameworkConstants {
 	     *****************************/
 		
 		String ACT_ERR_CONFIG_CLONE_EXISTS = "err.config.clone.exists";
-		
+		String ACT_ERR_CONFIG_DEFAULT_ENV = "err.config.default.env";
 		
 		/**
 		 * Dynamic Parameter Constants
@@ -1764,6 +1795,7 @@ public interface FrameworkConstants {
 		String TYPE_NUMBER = "number";
 		String TYPE_BOOLEAN = "boolean";
 		String TYPE_FILE = "FileType";
+		String TYPE_ACTIONS = "Actions";
 		String TEXT_BOX = "text";
 		String TYPE_LIST = "list";
 		String TYPE_EDITABLE_COMBO = "editableList";
@@ -1784,6 +1816,16 @@ public interface FrameworkConstants {
 		String IMAGES	 = "images";
 		String CUSTOMERS = "customers";
 		String PNG       = ".png";
+		
+		
+		/**
+		 * Constants for Error in Changing Logo and Theme 
+		 */
+		
+		String EXCEPTION_FETCHLOGO_IMAGE = "changecustomer.exception.message.fetchlogo";
+		String EXCEPTION_FRAMEWORK_THEME = "changecustomer.exception.message.themechange";
+		String EXCEPTION_FRAMEWORKSTREAM = "changecustomer.exception.message.stream";
+		
 		
 		
 }

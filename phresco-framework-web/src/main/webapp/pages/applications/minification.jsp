@@ -122,6 +122,7 @@ Map<String, Map<String, String>> cssMinifyMap = (Map<String, Map<String, String>
 
 <script type="text/javascript">
 $(document).ready(function() {
+	hidePopuploadingIcon();
 	showHideMinusIcon($("#addJSComp"));
 	showHideMinusIcon($("#addCSSComp"));
 });

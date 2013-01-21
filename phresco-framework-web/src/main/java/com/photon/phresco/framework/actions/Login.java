@@ -67,6 +67,14 @@ public class Login extends FrameworkBaseAction {
     
     private String logoImgUrl = "";
     private String brandingColor = "";
+    private String bodyBackGroundColor = "";
+	private String accordionBackGroundColor = "";
+	private String menuBackGround = "";
+	private String menufontColor = "";
+	private String buttonColor = "";
+	private String pageHeaderColor = "";
+	private String labelColor = "";
+	private String copyRightColor = "";
     
     public String login() throws IOException {
         if (isDebugEnabled) {
@@ -170,21 +178,29 @@ public class Login extends FrameworkBaseAction {
     		List<Customer> customers = user.getCustomers();
     		for (Customer customer : customers) {
 				if (customer.getId().equals(getCustomerId())) {
-					setBrandingColor(customer.getBrandingColor());
+					setBrandingColor(customer.getFrameworkTheme().getBrandingColor());
+					setAccordionBackGroundColor(customer.getFrameworkTheme().getAccordionBackGroundColor());
+					setBodyBackGroundColor(customer.getFrameworkTheme().getBodyBackGroundColor());
+					setButtonColor(customer.getFrameworkTheme().getButtonColor());
+					setPageHeaderColor(customer.getFrameworkTheme().getPageHeaderColor());
+					setCopyRightColor(customer.getFrameworkTheme().getCopyRightColor());
+					setLabelColor(customer.getFrameworkTheme().getLabelColor());
+					setMenuBackGround(customer.getFrameworkTheme().getMenuBackGround());
+					setMenufontColor(customer.getFrameworkTheme().getMenufontColor());
 					break;
 				}
 			}
     	} catch (PhrescoException e) {
-    		return showErrorPopup(e, getText(""));
+    		return showErrorPopup(e, getText(EXCEPTION_FETCHLOGO_IMAGE));
     	} catch (IOException e) {
-			// TODO Auto-generated catch block
+    		return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_FRAMEWORK_THEME));
 		} finally {
     		try {
     			if (fileInputStream != null) {
     				fileInputStream.close();
     			}
 			} catch (IOException e) {
-				return showErrorPopup(new PhrescoException(e), getText(""));
+				return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_FRAMEWORKSTREAM));
 			}
     	}
     	
@@ -230,4 +246,69 @@ public class Login extends FrameworkBaseAction {
 	public void setBrandingColor(String brandingColor) {
 		this.brandingColor = brandingColor;
 	}
+
+	public String getBodyBackGroundColor() {
+		return bodyBackGroundColor;
+	}
+
+	public String getAccordionBackGroundColor() {
+		return accordionBackGroundColor;
+	}
+
+	public String getMenuBackGround() {
+		return menuBackGround;
+	}
+
+	public String getMenufontColor() {
+		return menufontColor;
+	}
+
+	public String getButtonColor() {
+		return buttonColor;
+	}
+
+	public String getLabelColor() {
+		return labelColor;
+	}
+
+	public String getCopyRightColor() {
+		return copyRightColor;
+	}
+
+	public void setBodyBackGroundColor(String bodyBackGroundColor) {
+		this.bodyBackGroundColor = bodyBackGroundColor;
+	}
+
+	public void setAccordionBackGroundColor(String accordionBackGroundColor) {
+		this.accordionBackGroundColor = accordionBackGroundColor;
+	}
+
+	public void setMenuBackGround(String menuBackGround) {
+		this.menuBackGround = menuBackGround;
+	}
+
+	public void setMenufontColor(String menufontColor) {
+		this.menufontColor = menufontColor;
+	}
+
+	public void setButtonColor(String buttonColor) {
+		this.buttonColor = buttonColor;
+	}
+
+	public void setLabelColor(String labelColor) {
+		this.labelColor = labelColor;
+	}
+
+	public void setCopyRightColor(String copyRightColor) {
+		this.copyRightColor = copyRightColor;
+	}
+
+	public String getPageHeaderColor() {
+		return pageHeaderColor;
+	}
+
+	public void setPageHeaderColor(String pageHeaderColor) {
+		this.pageHeaderColor = pageHeaderColor;
+	}
+
 }

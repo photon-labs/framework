@@ -1046,8 +1046,20 @@ label {
     border-bottom: 1px solid #C7141C;
 }
 
-#navigation ul li a {
-    background:#3A090B;
+#subTabcontent {
+    height: 98%;
+    margin-top: 1px;
+    overflow: hidden;
+    position: relative;
+    top: -2px;
+    width: 100%;
+}
+
+#navigation {
+    height: 28px;
+    margin-top: -3px;
+    padding-left: 50%;
+    padding-top: 2px;
 }
 
 #navigation ul li a.inactive label:hover, #navigation ul li a.active label{
@@ -1699,4 +1711,18 @@ background-color: #ffffff;
 
 .dd-selected-description-truncated {
     color: #ccc !important;
+}
+
+.customer_select_div {
+	height: 34px;
+    margin-left: 77px;
+}
+
+#customerSelect {
+    margin-top: 32px;
+    width: 260px;
+}
+
+#lbl_customer {
+	margin-top: 31px;
 }

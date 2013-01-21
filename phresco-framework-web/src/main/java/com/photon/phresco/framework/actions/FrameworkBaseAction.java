@@ -236,7 +236,7 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
             log.setMessage(e.getLocalizedMessage());
             log.setTrace(stacktrace);
             log.setAction(action);
-            log.setUserId(userInfo.getLoginId());
+            log.setUserId(userInfo.getId());
             setReqAttribute(REQ_LOG_REPORT, log);
         } finally {
             if (pw != null) {
@@ -274,7 +274,7 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
     
 	protected ProjectInfo getProjectInfo() throws PhrescoException {
 		ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
-		ProjectInfo projectInfo = projectManager.getProject(getProjectId(), getCustomerId());
+		ProjectInfo projectInfo = projectManager.getProject(getProjectId(), getCustomerId(), getAppId());
 		return projectInfo;
 	}
 	

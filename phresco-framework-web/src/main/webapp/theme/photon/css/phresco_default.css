@@ -126,7 +126,7 @@ input[type="password"] {
 /*** page header starts ***/
 .page-header {
 	border-bottom: medium none;
-	height: 20px;
+	height: 23px;
 	margin: 0;
 	width: 100%;
 	padding: 3px 0 3px 3px;
@@ -182,6 +182,11 @@ input[type="password"] {
 	padding-top: 0px;
 	width: 100%;
 	overflow-x: hidden;
+}
+
+.checkAllFeatures {
+	float: left !important; 
+	margin: 13px 5px !important;
 }
 
 /*** page header ends***/
@@ -2962,6 +2967,20 @@ fieldset {
 	text-align:left;
 }
 
+.envSuccessMsg {
+	float:left;
+	padding-top:7px;
+	width:62%;
+	text-align:left;
+}
+
+.updateMsg {
+	float:left;
+	padding-top:7px;
+	width:62%;
+	text-align:left;
+}
+
 #navigation ul li a {
    display: block;
    text-decoration: none;
@@ -4081,7 +4100,7 @@ div.submit_input {
     width:100%;
     float:left;
     margin:0px;
-    padding:0px;
+    padding:4px 0;
     font-weight: bold;
 }
 
@@ -5014,6 +5033,10 @@ textarea.xxlarge {
 	display: none;
 }
 
+.hideClipBoardImage {
+	display: none;
+}
+
 /** To show the content **/
 .showContent {
 	display: block;
@@ -5338,9 +5361,9 @@ a[id='androidSigning']:hover {
 	width :28%;
 }
 
-.report_scroll { 
+.report_scroll {
 	overflow: auto; 
-	height: 181px;
+	height: 231px;
 }
 
 #availableReports { 
@@ -5528,10 +5551,10 @@ a[id='androidSigning']:hover {
     position: absolute;
     top: 49px;
     width: auto;
-	right:10.5%;
+	right:2.5%;
 }
 .customer_name label {
-	color:#FFFFFF !important;
+	color: #555555;
 }
 
 .customer_listbox {
@@ -5551,6 +5574,12 @@ a[id='androidSigning']:hover {
     width: 62px;
     padding-top: 3px;
 }
+
+.customer_select_div {
+	height: 34px;
+    margin-left: 77px;
+}
+
 /* Customer list box ends */
 
 /* css for dynamic params starts*/
@@ -5946,13 +5975,20 @@ color: #313131;
 }
 #formPerformance .perTabularView {
 	top: -40px !important;
-	left: -160px !important;
+	left: -96px !important;
 }
 #formPerformance strong {
 	color: #333;
 }
 #formPerformance #testResultsType {
-	margin-right: 2%;
+	margin-right: 1%;
+}
+#formPerformance #testResultFile {
+	margin-right: 1%;
+	width: 120px;
+}
+#formPerformance #testResultDeviceId {
+	width:140px !important;	
 }
 #formPerformance .header-background {
 	height: 0px !important;
@@ -6061,13 +6097,17 @@ color: #313131;
 .dd-select {
 	background: #f7f7f7 !important;
 	border: solid 1px #dcdcdc;
+	background: none repeat scroll 0 0 #EEEEEE;
+    height: 36px;
+    margin-top: -6px;
+    width: 261px;
 }
 .dd-option-selected, .dd-option:hover {
 	background: #eeeeee !important;
 	border: solid 1px #dcdcdc;
 }
 .dd-selected, .dd-option {
-	padding: 2px !important;
+	padding: 7px !important;
 }
 .dd-selected-image .dd-option-image {
 	margin: 10px 10px 10px 0px !important;
@@ -6225,4 +6265,17 @@ color: #313131;
 .repo_form input[type="password"] {
 	border: 1px solid #CCCCCC !important;
 	width: 215px ;
+}
+.errorNotification {
+	color: red;
+ 	float: right;
+    margin-top: -22px;
+    padding-right: 10px;
+}
+.dd-selected-text {
+	margin-top: -2px;
+}
+
+.dd-selected-description {
+	margin-top: -2px;
 }

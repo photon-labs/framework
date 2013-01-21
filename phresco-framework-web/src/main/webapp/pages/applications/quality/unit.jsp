@@ -29,6 +29,7 @@
 <%@ page import="com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter"%>
 <%@ page import="com.photon.phresco.util.TechnologyTypes" %>
 <%@ page import="com.photon.phresco.util.Constants"%>
+<%@ page import="org.apache.commons.collections.CollectionUtils"%>
 
 <script src="js/reader.js" ></script>
 
@@ -40,6 +41,7 @@
 	String path = (String) request.getAttribute(FrameworkConstants.PATH);
 	String fromPage = (String) request.getAttribute(FrameworkConstants.REQ_FROM_PAGE);
 	List<String> projectModules = (List<String>) request.getAttribute(FrameworkConstants.REQ_PROJECT_MODULES);
+	List<String> unitTestReportOptions = (List<String>) request.getAttribute(FrameworkConstants.REQ_UNIT_TEST_REPORT_OPTIONS);
 	List<Parameter> parameters = (List<Parameter>) request.getAttribute(FrameworkConstants.REQ_DYNAMIC_PARAMETERS);
 %>
 
@@ -88,17 +90,23 @@
 
 			<%  
 				}
-				if (TechnologyTypes.HTML5_MULTICHANNEL_JQUERY_WIDGET.contains(techId) || TechnologyTypes.HTML5_WIDGET.contains(techId) || 
-					TechnologyTypes.HTML5_MOBILE_WIDGET.contains(techId) || TechnologyTypes.JAVA_WEBSERVICE.contains(techId)) {
+// 				if (TechnologyTypes.HTML5_MULTICHANNEL_JQUERY_WIDGET.contains(techId) || TechnologyTypes.HTML5_WIDGET.contains(techId) || 
+// 					TechnologyTypes.HTML5_MOBILE_WIDGET.contains(techId) || TechnologyTypes.JAVA_WEBSERVICE.contains(techId)) {
+				if (CollectionUtils.isNotEmpty(unitTestReportOptions)) {
 					buttonRow = true;
 			%>
 			<li id="label" class="techLabel">
 				&nbsp;<strong><s:text name="label.technolgies"/></strong> 
 			</li>
 			<li>
+<%-- 				<select id="techReport" name="techReport">  --%>
+<!-- 					<option value="java" id="java" >Java</option> -->
+<!-- 				  	<option value="javascript" id="javascript" >Java Script</option> -->
+<%-- 				</select> --%>
 				<select id="techReport" name="techReport"> 
-					<option value="java" id="java" >Java</option>
-				  	<option value="javascript" id="javascript" >Java Script</option>
+					<% for (String unitTestReportOption : unitTestReportOptions) { %>
+						<option value="<%= unitTestReportOption %>" id="<%= unitTestReportOption %>" ><%= unitTestReportOption %></option>
+				  	<% } %>
 				</select>
 			</li>
 			<% 	

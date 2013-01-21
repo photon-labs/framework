@@ -68,6 +68,13 @@
 		<% 
 			for (Environment env : envs) { 
 			String envJson = gson.toJson(env);
+			String checkedStr = "";
+			if (env.isDefaultEnv()) {
+        		checkedStr = "checked";
+			} else {
+				checkedStr = "";
+			}
+			
 		%>
 			<div class="theme_accordion_container">
 				<section class="accordion_panel_wid">
@@ -75,7 +82,7 @@
 						<section class="lft_menus_container">
 							<span class="siteaccordion closereg">
 								<span>
-									<input type="checkbox" value='<%= envJson %>' id="<%=env.getName() %>" class="accordianChkBox" name="checkEnv" onclick="checkAllEvent(this,$('.<%=env.getName() %>'), false);"/>
+									<input type="checkbox" value='<%= envJson %>' id="<%=env.getName() %>" <%= checkedStr %> class="accordianChkBox" name="checkEnv" onclick="checkAllEvent(this,$('.<%=env.getName() %>'), false);"/>
 									<a class="vAlignSub"><%=env.getName() %></a>
 								</span>
 							</span>
@@ -123,7 +130,7 @@
 															<tr>
 																<td class="no-left-bottom-border table-pad">
 																	<input type="checkbox" class="check <%=env.getName() %>" name="checkedConfig" value='<%= configJson %>'
-																		onclick="checkboxEvent($('.<%=env.getName() %>'), $('#<%=env.getName() %>'));">
+																		onclick="envCheckboxEvent($('.<%=env.getName() %>'), $('#<%=env.getName() %>'));">
 																</td>
 																<td class="no-left-bottom-border table-pad">
 																	<a href="#" onclick="editConfiguration('<%= env.getName() %>', '<%= configuration.getType() %>','<%= configuration.getName() %>');" 
@@ -187,6 +194,17 @@
 		hideLoadingIcon();//To hide the loading icon
 		hideProgressBar();
 		accordion();
+		deleteButtonStatus();
+		
+		$('.mfbox').find("input[type='checkbox']").change(function() {
+			if ($('.mfbox').find("input[type='checkbox']").length != $('.mfbox').find("input[type='checkbox']:checked").length) {
+				$('.accordianChkBox').prop('checked', false);
+			}
+		});
+		
+		$('.table_div').find("input[type='checkbox']").change(function() {
+			deleteButtonStatus();
+		});
 		
 		<% if (CollectionUtils.isEmpty(envs)) { %>
 			$("input[name=configAdd]").attr("disabled", "disabled");
@@ -197,16 +215,6 @@
 		  	$("#configAdd").addClass("btn-primary");
 			$("#configAdd").removeClass("btn-disabled");
 		<% } %>
-		
-		if ($('.table_div').find("input[type='checkbox']:checked").length < 1) {
-			$("input[name=deleteBtn]").attr("disabled", "disabled");
-			$("#deleteBtn").removeClass("btn-primary"); 
-	        $("#deleteBtn").addClass("btn-disabled");
-		} else {
-			$("input[name=deleteBtn]").removeAttr("disabled");
-			$("#deleteBtn").addClass("btn-primary");
-			$("#deleteBtn").removeClass("btn-disabled");
-		}
 		
 		<% 
 			if(urls != null) {
@@ -221,7 +229,19 @@
 			}
 		%>
 	});
-
+	
+	function deleteButtonStatus() {
+		if ($('.table_div').find("input[type='checkbox']:checked").length < 1) {
+			$("input[name=deleteBtn]").attr("disabled", "disabled");
+			$("#deleteBtn").removeClass("btn-primary"); 
+	        $("#deleteBtn").addClass("btn-disabled");
+		} else {
+			$("input[name=deleteBtn]").removeAttr("disabled");
+			$("#deleteBtn").addClass("btn-primary");
+			$("#deleteBtn").removeClass("btn-disabled");
+		}
+	};
+	
 	function isConnectionAlive(url, id) {
 	    $.ajax({
 	    	url : 'connectionAliveCheck',

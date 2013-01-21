@@ -186,6 +186,11 @@ div.lgnBtnLabel {
 	overflow-x: hidden;
 }
 
+.checkAllFeatures {
+	float: left !important; 
+	margin: 9px 5px !important;
+}
+
 /*** page header ends***/
 /* .table_div {
 	border-radius: 6px 6px 6px 6px;
@@ -477,7 +482,7 @@ a {
 	width: 20px;
 	height: 99%;
 	top: 0;
-	z-index: 1100;
+	z-index: 99;
 	overflow: hidden;
 	border: 1px solid;
 }
@@ -5111,6 +5116,10 @@ textarea.xxlarge {
 	display: none;
 }
 
+.hideClipBoardImage {
+	display: none;
+}
+
 /** To show the content **/
 .showContent {
 	display: block;
@@ -5620,18 +5629,18 @@ a[id='androidSigning']:hover {
 /* Customer list box starts */
 .customer_name {
     float: right;
-    left: 73%;
+    left: 60%;
     margin-bottom: 0;
     position: absolute;
     top: 10px;
-    width: auto;
+    width: 73%;
 }
 
 .customer_listbox {
     height: 22px;
     padding: 0;
     float: right;
-    left: 97%;
+    left: 8%;
     margin-bottom: 0;
     position: absolute;
     top: 0px;
@@ -5804,6 +5813,10 @@ input[class*='chckBxAlign'] {
 
 .float-left {
 	float: left;
+}
+
+.element-width {
+	width: 15%;
 }
 
 .float-right {

@@ -42,36 +42,36 @@
 	<title>
 		<band height="28">
 			<frame>
-				<reportElement style="Row" mode="Opaque" x="0" y="0" width="555" height="28" backcolor="#FFFFFF"/>
+				<reportElement style="Row" mode="Opaque" x="0" y="0" width="555" height="25" backcolor="#FFFFFF"/>
 				<rectangle>
-					<reportElement x="0" y="0" width="555" height="28" backcolor="#DDFCDD"/>
+					<reportElement x="0" y="0" width="555" height="25" backcolor="#DDFCDD"/>
 					<graphicElement>
 						<pen lineColor="#999999"/>
 					</graphicElement>
 				</rectangle>
 				<staticText>
-					<reportElement x="15" y="7" width="75" height="16" forecolor="#333333"/>
+					<reportElement x="15" y="5" width="75" height="16" forecolor="#333333"/>
 					<textElement>
 						<font fontName="Tahoma" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Name]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="203" y="7" width="75" height="16" forecolor="#333333"/>
+					<reportElement x="195" y="5" width="75" height="16" forecolor="#333333"/>
 					<textElement>
 						<font fontName="Tahoma" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Class]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="393" y="7" width="75" height="16" forecolor="#333333"/>
+					<reportElement x="380" y="5" width="75" height="16" forecolor="#333333"/>
 					<textElement>
 						<font fontName="Tahoma" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Time]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="480" y="7" width="75" height="16" forecolor="#333333"/>
+					<reportElement x="466" y="5" width="75" height="16" forecolor="#333333"/>
 					<textElement>
 						<font fontName="Tahoma" size="12" isBold="true"/>
 					</textElement>
@@ -91,28 +91,28 @@
 					</graphicElement>
 				</rectangle>
 				<textField>
-					<reportElement x="15" y="4" width="175" height="16" forecolor="#333333"/>
+					<reportElement x="15" y="4" width="170" height="16" forecolor="#333333"/>
 					<textElement>
 						<font fontName="Tahoma" size="12"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="203" y="4" width="185" height="16" forecolor="#333333"/>
+					<reportElement x="195" y="4" width="185" height="16" forecolor="#333333"/>
 					<textElement>
 						<font fontName="Tahoma" size="12"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{testClass}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="393" y="3" width="86" height="16" forecolor="#333333"/>
+					<reportElement x="380" y="3" width="86" height="16" forecolor="#333333"/>
 					<textElement>
 						<font fontName="Tahoma" size="12"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{time}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="480" y="3" width="75" height="16" forecolor="#333333"/>
+					<reportElement x="466" y="3" width="75" height="16" forecolor="#333333"/>
 					<textElement>
 						<font fontName="Tahoma" size="12"/>
 					</textElement>
@@ -132,22 +132,22 @@
 					</graphicElement>
 				</rectangle>
 				<textField evaluationTime="Report">
-					<reportElement x="112" y="16" width="61" height="16"/>
-					<textElement textAlignment="Center" verticalAlignment="Top">
+					<reportElement x="112" y="16" width="30" height="16"/>
+					<textElement textAlignment="Left" verticalAlignment="Top">
 						<font fontName="Tahoma" size="12"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{NoOfSuccess}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Report">
-					<reportElement x="295" y="16" width="53" height="16"/>
-					<textElement textAlignment="Center" verticalAlignment="Top">
+					<reportElement x="295" y="16" width="30" height="16"/>
+					<textElement textAlignment="Left" verticalAlignment="Top">
 						<font fontName="Tahoma" size="12"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{NoOfFailure}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Report">
-					<reportElement x="475" y="16" width="52" height="16"/>
-					<textElement textAlignment="Center">
+					<reportElement x="475" y="16" width="30" height="16"/>
+					<textElement textAlignment="Left">
 						<font fontName="Tahoma" size="12"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{NoOfError}]]></textFieldExpression>

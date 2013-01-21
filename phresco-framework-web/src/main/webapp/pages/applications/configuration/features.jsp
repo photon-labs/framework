@@ -36,7 +36,11 @@
 		    <label class="control-label labelbold"><s:text name="lbl.cust.feature"/></label>
 		    <div class="controls">
 				<select id="featureName" name="featureName" class="input-xlarge">
-					<option value="">No Features Available</option>
+					<% if (FrameworkConstants.CONFIG_TYPE_FEATURES.equals(selectedType)) { %>
+				    	<option value=""><s:text name="lbl.no.features"/></option>
+			    	<% } else if (FrameworkConstants.CONFIG_TYPE_COMPONENTS.equals(selectedType)) { %>
+			    		<option value=""><s:text name="lbl.no.components"/></option>
+			    	<% } %>
 				</select>	        
 		    </div>
 		</div>
@@ -44,7 +48,13 @@
 	} else {
 %>
 		<div class="control-group" id="nameErrDiv">
-		    <label class="control-label labelbold"><s:text name="lbl.cust.feature"/></label>
+		    <label class="control-label labelbold">
+	    	<% if (FrameworkConstants.CONFIG_TYPE_FEATURES.equals(selectedType)) { %>
+		    	<s:text name="lbl.cust.feature"/>
+	    	<% } else if (FrameworkConstants.CONFIG_TYPE_COMPONENTS.equals(selectedType)) { %>
+	    		<s:text name="lbl.component"/>
+	    	<% } %>
+	    	</label>
 		    <div class="controls">
 				<select id = "featureName" name="featureName" class="input-xlarge" onchange="getProperties();">
 					<% for (String featureName : featureNames) { %>
@@ -74,10 +84,16 @@
 	
 	function getProperties() {
 		var selectedType =  "<%= selectedType %>";
+		var envData = $.parseJSON($('#environment').val());
+		var envName = envData.name;
   		var params = getBasicParams();
   		params = params.concat("&selectedType=");
   		params = params.concat(selectedType);
-    	loadContent('showFeatureConfigPopup', $('#formConfigAdd'), '', params, true, true);
+  		params = params.concat("&envName=");
+  		params = params.concat(envName);
+  		params = params.concat("&featureName=");
+  		params = params.concat($('#featureName').val());
+    	loadContent('showFeatureConfigs', '', '', params, true, true);
 	}
 
 	function successEvent(pageUrl, data) {

@@ -185,6 +185,7 @@
 			 }
 		} else {
 			var envs = [];
+			var envInfo = [];
 			var selectedEnvs = new Array();
 			var selectedConfigData = [];
 			$('[name="envNames"]').each(function() {
@@ -192,6 +193,7 @@
 			});
 			
 			$('input[name="checkEnv"]:checked').each(function() {
+				envInfo.push($(this).val());
 				var selectedEnvData = $.parseJSON($(this).val());
 				selectedEnvs.push(selectedEnvData.name);
 			});
@@ -203,10 +205,15 @@
 			var basicParams = getBasicParamsAsJson();
 			var fromPage = "<%= fromPage%>";
 			var configPath = "<%= configPath%>";
-			var params = '{' + basicParams + ', "configPath" : "' + configPath + '", "fromPage" : "' + fromPage + '", "environments": [' + envs.join(',') + '], "selectedEnvirment" : "' + selectedEnvs + '", "selectedConfigurations": [' + selectedConfigData.join(',') + ']}';
+			var params = '{' + basicParams + ', "configPath" : "' + configPath + '", "fromPage" : "' + fromPage + '", "environmentsInfo": [' + envInfo.join(',') + '], "environments": [' + envs.join(',') + '], "selectedEnvirment" : "' + selectedEnvs + '", "selectedConfigurations": [' + selectedConfigData.join(',') + ']}';
 			var url = $(self).attr('id');
-			$("#popupPage").modal('hide');//To hide popup
-			loadJsonContent(url, params, $('#loadEnv'));	
+			if(url == 'createEnvironment') {
+				validateJson(url, '', $('#loadEnv'), params, '');
+			} else {
+				$("#popupPage").modal('hide');
+				loadJsonContent(url, params, $('#loadEnv'));
+			}
 		}
 	}
+	
 </script>

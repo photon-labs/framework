@@ -273,10 +273,13 @@ under the License.
                 <sonar.jdbc.username>root</sonar.jdbc.username>
                 <sonar.jdbc.password>root</sonar.jdbc.password>
 				-->
-
+<!-- 
 				<sonar.jdbc.url>jdbc:derby://localhost:1527/sonar;create=true</sonar.jdbc.url>
 				<sonar.jdbc.driverClassName>org.apache.derby.jdbc.ClientDriver</sonar.jdbc.driverClassName>
 				
+				<sonar.jdbc.url>jdbc:derby://localhost:1527/sonar;create=true</sonar.jdbc.url>
+				<sonar.jdbc.driverClassName>org.apache.derby.jdbc.ClientDriver</sonar.jdbc.driverClassName>
+				 -->
                 <!-- optional URL to server. Default value is http://localhost:9000 -->
                 <sonar.host.url>
                   http://localhost:2468/sonar

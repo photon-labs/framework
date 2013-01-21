@@ -30,9 +30,13 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -64,7 +68,6 @@ import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.api.Project;
 import com.photon.phresco.framework.api.ProjectAdministrator;
 import com.photon.phresco.framework.api.ProjectManager;
-import com.photon.phresco.framework.api.ProjectRuntimeManager;
 import com.photon.phresco.framework.commons.DiagnoseUtil;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.commons.LogErrorReport;
@@ -210,10 +213,14 @@ public class Build extends DynamicParameterAction implements Constants {
 				}
 				if (tempConnectionAlive) {
 					readLogFile = readRunAgsSrcLogFile();
+					File runAgsLogfile = new File(getLogFolderPath() + File.separator + RUN_AGS_LOG_FILE) ;
+					if (runAgsLogfile.exists()) {
+						setReqAttribute(REQ_LOG_FILE_EXISTS, true);
+					}
 				} else {
 					deleteLogFile();
 					readLogFile = "";
-
+					setReqAttribute(REQ_LOG_FILE_EXISTS, false);
 				}
 				setReqAttribute(REQ_SERVER_LOG, readLogFile);
 
@@ -333,7 +340,11 @@ public class Build extends DynamicParameterAction implements Constants {
 		try {
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			ApplicationInfo applicationInfo = getApplicationInfo();
+			
 			List<BuildInfo> builds = applicationManager.getBuildInfos(new File(getBuildInfosFilePath(applicationInfo)));
+			
+			Collections.sort(builds, new BuildComparator());
+
 			setReqAttribute(REQ_CUSTOMER_ID, getCustomerId());
 			setReqAttribute(REQ_PROJECT_ID, getProjectId());
 			setReqAttribute(REQ_BUILD, builds);
@@ -347,7 +358,7 @@ public class Build extends DynamicParameterAction implements Constants {
 		
 		return APP_BUILDS;
 	}
-
+	
 	public String build() throws PhrescoException {
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method  Build.build()");
@@ -569,7 +580,12 @@ public class Build extends DynamicParameterAction implements Constants {
 			} else {
 				builder.append(buildInfo.getDeliverables());
 				fileName = fileName.substring(fileName.lastIndexOf(FORWARD_SLASH) + 1);
-				fileName = fileName.split(SPLIT_DOT)[0] + ARCHIVE_FORMAT;
+				boolean status = fileName.endsWith(APKLIB) || fileName.endsWith(APK);
+				if (status) {
+					fileName = fileName.substring(0, fileName.lastIndexOf(".")) + ARCHIVE_FORMAT ;
+				} else {
+					fileName = fileName.split(SPLIT_DOT)[0] + ARCHIVE_FORMAT;
+				}
 			}
 			if (debugEnabled) {
 				S_LOGGER.debug("Download build number " + buildNumber + " Download location " + builder.toString());
@@ -820,6 +836,7 @@ public class Build extends DynamicParameterAction implements Constants {
 			if (readData) {
 				while (StringUtils.isNotEmpty(reader.readLine())) {}
 			}
+			deleteLogFile();
 		} catch (Exception e) {
 			if (debugEnabled) {
 				S_LOGGER.error("Entered into catch block of Build.handleStopServer()"
@@ -859,7 +876,7 @@ public class Build extends DynamicParameterAction implements Constants {
 			Utility.closeReader(reader);
 		}
 		
-		return null;
+		return "";
 	}
 
 	
@@ -1339,6 +1356,8 @@ public class Build extends DynamicParameterAction implements Constants {
 		}
 	}
 	
+	
+
 	private static void initDbPathMap() {
 		sqlFolderPathMap.put(TechnologyTypes.PHP, "/source/sql/");
 		sqlFolderPathMap.put(TechnologyTypes.PHP_DRUPAL6, "/source/sql/");
@@ -1778,5 +1797,20 @@ public class Build extends DynamicParameterAction implements Constants {
 
 	public void setProjectId(String projectId) {
 		this.projectId = projectId;
+	}
+}
+
+class BuildComparator implements Comparator<BuildInfo> {
+	public int compare(BuildInfo buildInfo1, BuildInfo buildInfo2) {
+		DateFormat formatter = new SimpleDateFormat("dd/MMM/yyyy hh:mm:ss");
+		Date  buildTime1 = new Date();
+		Date buildTime2 = new Date();
+		try {
+			buildTime1 = (Date)formatter.parse(buildInfo1.getTimeStamp());
+			buildTime2 = (Date)formatter.parse(buildInfo2.getTimeStamp());
+		} catch (ParseException e) {
+		}
+		
+		return buildTime2.compareTo(buildTime1);
 	}
 }

@@ -145,6 +145,42 @@ function clickSave(pageUrl, params, tag, progressText) {
 	});
 }
 
+function mandatoryValidation(pageUrl, form, additionalParams, phase, goal, actionType, appId, stopBtnAction) {
+	var params = getBasicParams();
+	params = params.concat("&phase=");
+	params = params.concat(phase);
+	params = params.concat("&goal=");
+	params = params.concat(goal);
+	params = params.concat("&");
+	params = params.concat(getParameters(form, additionalParams));
+	$.ajax({
+		url : "dynamciParamMandatoryCheck",
+		data : params,
+		type : "POST",
+		async: false,
+		success : function(data) {
+			if (data.errorFound != undefined && data.errorFound) {
+				$(".yesNoPopupErr").html(data.errorMsg);
+			} else {
+				$(".yesNoPopupErr").empty();
+				if (pageUrl == "build" || pageUrl == "deploy") {//build,deploy
+					buildValidateSuccess(pageUrl, actionType);
+				} else if (pageUrl == "startNode" || pageUrl == "startHub") {//start-hub, start-node
+					$("#popupPage").modal('hide');
+					progressPopupAsSecPopup(pageUrl, appId, actionType, form, params, stopBtnAction);
+				} else if (pageUrl == "codeValidate" || pageUrl == "runLoadTest" || pageUrl == "runFunctionalTest") {//codevalidate, loadtest,functional test
+					$("#popupPage").modal('hide');
+					progressPopupAsSecPopup(pageUrl, appId, actionType, form, params);
+				} else if (pageUrl == "runPerformanceTest") {//performance test
+					runPerformanceTest();
+				} else if (pageUrl == "saveJob" || pageUrl == "updateJob") {
+					redirectCiConfigure();
+				}
+			}
+		}
+	});
+}
+
 function validate(pageUrl, form, tag, additionalParams, progressText, disabledDiv) {
 	if (disabledDiv != undefined && disabledDiv != "") {
 		enableDivCtrls(disabledDiv);
@@ -226,7 +262,9 @@ function yesnoPopup(url, title, okUrl, okLabel, form, additionalParam) {
 		data = data.concat(additionalParam);
 	}
 	
+	$("#updateMsg").empty();
 	$("#errMsg").empty();
+	$('#successMsg').empty();
 	$('#popup_div').empty();
 	$('#popup_div').css("height", "300px");
 	$('#popup_div').load(url, data); //url to render the body content for the popup
@@ -290,6 +328,9 @@ function validateJson(url, form, containerTag, jsonParam, progressText, disabled
 			if (data.errorFound != undefined && data.errorFound) {
 				findError(data);
 			} else {
+				if(url == 'createEnvironment') {
+					$("#popupPage").modal('hide');
+				}
 				loadJsonContent(url, jsonParam, containerTag, progressText);
 			}
 		}
@@ -395,6 +436,11 @@ function checkboxEvent(childChkbxObj, parentChkbxObj) {
 	} else {
 		parentChkbxObj.prop('checked', false);
 	}
+}
+
+function envCheckboxEvent(childChkbxObj, parentChkbxObj) {
+	var chkboxStatus = childChkbxObj.is(':checked');
+	buttonStatus(chkboxStatus);
 }
 
 function buttonStatus(checkAll) {
@@ -618,6 +664,7 @@ function applyTheme() {
 }
 
 function changeTheme(localstore) {
+	$("#app_stylesheet").remove();
 	if (localstore == "theme/red_blue/css/red.css") {
         $("link[title='phresco']").attr("href", localstore);
         $("link[id='phresco']").attr("href", "theme/red_blue/css/phresco.css");
@@ -808,7 +855,7 @@ function confirmDialog(obj, title, bodyText, okUrl, okLabel) {
 		
 		if (okLabel !== undefined && !isBlank(okLabel)) {
 			$('a [class ~= "popupOk"]').attr('id', okUrl);
-			$('#' + okUrl).html(okLabel); // label for the ok button 
+			$('#' + okUrl).val(okLabel); // label for the ok button
 		}
 	});
 	
@@ -870,7 +917,7 @@ function constructSingleSelectOptions(dependentValues, pushToElement) {
 		}
 	}
 	
-	if (isEditableCombo) {// execute only for jec combo box
+	if (isEditableCombo && !isBlank(dynamicFirstValue)) {// execute only for jec combo box
 		$('#'+ pushToElement + ' option[value="'+ dynamicFirstValue +'"]').prop("selected","selected");//To preselect select first value
 	}
 }
@@ -1053,6 +1100,7 @@ function moveUp() {
 			$(this).remove();
 		}
 	});
+	deployScripts();
 }
 
 //To move down the values
@@ -1065,6 +1113,19 @@ function moveDown() {
 			$(this).remove();
 		}
 	});
+	deployScripts();
+}
+
+function deployScripts() {
+	var scriptsObj = {};
+	var dbType = $('#dataBase').val();
+	var sqls = [];
+	$("#selectedSourceScript option").each(function(i, optionSelected) {
+		var selectedScript = $(optionSelected).val();
+		sqls.push(selectedScript);
+	});
+	scriptsObj[dbType] = sqls;
+    $('#fetchSql').val(JSON.stringify(scriptsObj));
 }
 
 function updateDbWithVersionsForRemoveAll() {
@@ -1288,11 +1349,25 @@ function addRow(obj) {
 	var columns = $(obj).closest('table').children('tbody').children('tr:first').html();
 	var newRow = $(document.createElement('tr')).attr("class", "borderForLoad");
 	newRow.append(columns);
-	newRow.append(removeIconTd);
+	var columnsTag = columns;
+	var minusIcon = "images/icons/minus_icon.png";
+	if(!(columnsTag.indexOf(minusIcon) != -1)) {
+		newRow.append(removeIconTd);
+	}
 	newRow.appendTo("#propTempTbodyForHeader");
 }
 
 //triggered when the minus btn is clicked to add a remove the current row
 function removeRow(obj) {
 	$(obj).closest('tr').remove();
+}
+
+function disableUploadButton(controlObj) {
+	controlObj.find("input[type='file']").attr('disabled', 'disabled');
+	controlObj.find($(".qq-upload-button")).removeClass("btn-primary qq-upload-button").addClass("disabled");
+}
+
+function enableUploadButton(controlObj) {
+	controlObj.find("input[type='file']").attr('disabled', false);
+	controlObj.find($(".btn")).removeClass("disabled").addClass("btn-primary qq-upload-button");
 }

@@ -29,6 +29,7 @@
 <%@ page import="org.apache.commons.lang.StringUtils" %>
 <%@ page import="org.apache.commons.collections.CollectionUtils" %>
 <%@ page import="org.antlr.stringtemplate.StringTemplate" %>
+
 <%@ page import="com.photon.phresco.plugins.util.MojoProcessor"%>
 <%@ page import="com.photon.phresco.framework.actions.applications.DynamicParameterAction"%>
 
@@ -66,7 +67,9 @@
     String className = "";//For performance
     FrameworkUtil frameworkUtil = new FrameworkUtil();
     DynamicParameterAction dpm = new DynamicParameterAction();
-    MojoProcessor mojo = new MojoProcessor(new File(dpm.getPhrescoPluginInfoXmlFilePath(goal, applicationInfo)));
+    MojoProcessor mojo = new MojoProcessor(new File(dpm.getPhrescoPluginInfoXmlFilePath(phase, applicationInfo)));
+    StringBuilder stFileFunction = new StringBuilder();
+    String sep = "";
 %>
 
 <form autocomplete="off" class="build_form form-horizontal" id="generateBuildForm">
@@ -143,7 +146,7 @@
 					if (StringUtils.isNotEmpty(parameter.getDependency())) {
 						//If current control has dependancy value 
 						List<String> dependancyList = Arrays.asList(parameter.getDependency().split(FrameworkConstants.CSV_PATTERN));
-						Parameter param = mojo.getParameter(phase, dependancyList.get(0));
+						Parameter param = mojo.getParameter(goal, dependancyList.get(0));
 						onClickFunction = "dependancyChckBoxEvent(this, '"+ parameter.getKey() +"', '"+ param.isShow() +"');";
 						onChangeFunction = "changeChckBoxValue(this);";
 					} else {
@@ -290,6 +293,9 @@
 					<%= browseFileElement %>
 	<%			
 				} else if (FrameworkConstants.TYPE_DYNAMIC_PAGE_PARAMETER.equalsIgnoreCase(parameter.getType())) {
+					stFileFunction.append(sep);
+					stFileFunction.append(parameter.getKey());
+					sep = ",";
 					List<? extends Object> obj = (List<? extends Object>) request.getAttribute(FrameworkConstants.REQ_DYNAMIC_PAGE_PARAMETER + parameter.getKey());
 					className = (String) request.getAttribute(FrameworkConstants.REQ_CLASS_NAME);
 					StringTemplate dynamicPageTemplate = frameworkUtil.constructDynamicTemplate(customerId, parameter, parameterModel, obj, className);
@@ -312,6 +318,8 @@
 	%>
 	<!-- dynamic parameters ends -->
 </div>
+<input type="hidden" name="stFileFunction" id="stFileFunction" value="<%= StringUtils.isNotEmpty(stFileFunction.toString()) ? stFileFunction.toString() : "" %>"/>
+<input type="hidden" name="resultJson" id="resultJson" value=""/>
 </form>
 
 <script type="text/javascript">
@@ -329,6 +337,11 @@
 	       $('.jecEditableOption').text("");
 	    });
 	});
+	
+	//to update build number in hidden field for deploy popup
+	<% if (FrameworkConstants.REQ_DEPLOY.equals(from)) { %>
+		$("input[name=buildNumber]").val('<%= buildNumber %>');
+	<% } %>
 	
 	function jecOptionChange() {
 		 $('.jecEditableOption').text("Type or select from the list");
@@ -352,9 +365,11 @@
 			$("#console_div").empty();
 			//showParentPage();
 			if(url == "build") {
+				$("#popupPage").modal('hide');
 				$("#warningmsg").show();
 				$("#console_div").html("Generating build...");
 			} else if(url == "deploy") {
+				$("#popupPage").modal('hide');
 				$("#console_div").html("Deploying project...");
 			}
 			performUrlActions(url, readerSession);
@@ -364,11 +379,6 @@
 	function performUrlActions(url, actionType) {
 		readerHandlerSubmit(url, '<%= appId %>', actionType, $("#generateBuildForm"), true, getBasicParams(), $("#console_div"));
 	}
-	
-	//to update build number in hidden field for deploy popup
-	<% if (FrameworkConstants.REQ_DEPLOY.equals(from)) { %>
-		$("input[name=buildNumber]").val('<%= buildNumber %>');
-	<% } %>
 	
 	function dependancyChckBoxEvent(obj, currentParamKey, showHideFlag) {
 		selectBoxOnChangeEvent(obj, currentParamKey, showHideFlag);
@@ -383,7 +393,10 @@
 	}
 	
 	function selectBoxOnChangeEvent(obj, currentParamKey, showHideFlag) {
-		var jecClass = obj.options[obj.selectedIndex].getAttribute('class'); 
+		var jecClass = "";
+		if (obj.options != undefined || obj.options != null) {
+			jecClass = obj.options[obj.selectedIndex].getAttribute('class');
+		}
 		var selectedOption = $(obj).val();
 		$(obj).blur();//To remove the focus from the current element
 		var dependencyAttr;
@@ -435,7 +448,8 @@
 	function showParameters() {
 		$(':input', '#generateBuildForm').each(function() {
 			var currentObjType = $(this).prop('tagName');
-			if (currentObjType === "SELECT" && this.options[this.selectedIndex] !== undefined) {
+			var multipleAttr = $(this).attr('multiple');
+			if (currentObjType === "SELECT" && multipleAttr === undefined && this.options[this.selectedIndex] !== undefined ) {
 				var dependencyAttr =  this.options[this.selectedIndex].getAttribute('additionalparam');
 				if (dependencyAttr !== null) {
 					var csvDependencies = dependencyAttr.substring(dependencyAttr.indexOf('=') + 1);
@@ -481,6 +495,7 @@
 		}
 		
 		if (data.dependency != undefined && !isBlank(data.dependency)) {
+			
 			if (data.dependentValues != undefined && !isBlank(data.dependentValues)) {
 				var isMultiple = $('#' + data.dependency).attr("isMultiple");
 				var controlType = $('#' + data.dependency).attr('type');
@@ -541,61 +556,73 @@
 	var i = 1;
 	var contextUrlsRowId = "";
 	function addContext(contextObj) {
-		var html = $("#" + contextObj).html();
+		var html = $('.'+contextObj+'Class').html();//to get designs
 		contextUrlsRowId = contextObj + i;
-		var contextUrlRow = $(document.createElement('div')).attr("id", contextUrlsRowId);
+		var contextUrlRow = $(document.createElement('div')).attr("id", contextUrlsRowId).attr("class", contextObj+'Class').css('margin-bottom','5px');
 		contextUrlRow.html(html);
-		$('#generateBuild_Modal').append(contextUrlRow);
-		$(':input:not(:button)', $("#"+contextUrlsRowId)).val('');
-		$("#"+contextUrlsRowId).find('div[id=headerkeyId]').remove();
+		$("#" + contextObj + "Parent").append(contextUrlRow);//append to a parent div
+		$(':input:not(:button)', $("#"+contextUrlsRowId)).val('');//to clear already inputed value
+		$("#"+contextUrlsRowId).find('div[id=headerkeyId]').remove();//to clear header key value design
 		i++;
 	}
 	
 	//To enable the delete btn when any context url check box is checked
-	function enableDelBtn() {
+	function enableDelBtn(checkBoxClass) {
 		var hasChecked = false;
-		$('.check').each(function() {
+		$('.'+checkBoxClass).each(function() {
 			if ($(this).is(':checked')) {
 				hasChecked = true;
 				return false;
 			}
 		});
-		if (hasChecked && $('.check').size() != 1) {
-			$('#deleteContext').addClass("btn-primary");
-			$('#deleteContext').removeAttr("disabled");
+		if (hasChecked && $('.'+checkBoxClass).size() != 1) {
+			$('#'+checkBoxClass+'Del').addClass("btn-primary");
+			$('#'+checkBoxClass+'Del').removeAttr("disabled");
 		} else {
-			$('#deleteContext').removeClass("btn-primary");
-			$('#deleteContext').attr("disabled", true);
+			$('#'+checkBoxClass+'Del').removeClass("btn-primary");
+			$('#'+checkBoxClass+'Del').attr("disabled", true);
 		}
 	}
 	
 	//To remove the selected conext urls
-	function deleteContextUrl() {
-		$('.check').each(function() {
-			if ($(this).is(':checked')) {
-				if ($(this).parents('div').attr('id') != "contextDiv" && $(this).parents('div').attr('id') != "dbContextDiv") {
-					$(this).closest('fieldset').remove();
-				}
-			}
+	function deleteContextUrl(checkBoxClass) {
+		$('.'+checkBoxClass).each(function() {
+			var size = $('.'+checkBoxClass).size();
+			if (size > 1 && $(this).is(':checked')) {
+				$(this).closest('fieldset').parent().remove();
+			} 
 		});
-		enableDelBtn();
+		enableDelBtn(checkBoxClass);
 	}
 
 	function addHeader(obj) {
-		var	key = $(obj).parents('fieldset').find($('input[name=key]')).val();
-		var	value = $(obj).parents('fieldset').find($('input[name=value]')).val();
+		var	key = $(obj).parents('fieldset').find($('input[class*=key]')).val();
+		var	value = $(obj).parents('fieldset').find($('input[class*=value]')).val();
 		if ((key != undefined && !isBlank(key)) && (value != undefined && !isBlank(value))) {
-			$(obj).closest('fieldset').append('<div id="headerkeyId" style="background-color: #bbbbbb; width: 40%; margin-bottom:2px; height: auto; border-radius: 6px; '+
+			$(obj).closest('fieldset').append('<div id="headerkeyId" class="headers" style="background-color: #bbbbbb; width: 40%; margin-bottom:2px; height: auto; border-radius: 6px; '+
 						'padding: 0 0 0 10px; position: relative"><a href="#" style="text-decoration: none; margin-right: 10px; color: #000000; '+
-						'margin-left: 95%;" onclick="removeHeader(this);">&times;</a><div style="cursor: pointer; color: #000000; height: auto; '+
+						'margin-left: 92%;" onclick="removeHeader(this);">&times;</a><div style="cursor: pointer; color: #000000; height: auto; '+
 						'position: relative; width: 90%; line-height: 17px; margin-top: -14px; padding: 0 0 6px 1px;">'+ key + " : " + value + 
 						'</div><input type="hidden" name="headerKey" value="'+key+'"/><input type="hidden" name="headerValue" value="'+value+'"/></div>');
-			$('input[name=key]').val("");
-			$('input[name=value]').val("");
+			$('input[class*=key]').val("");
+			$('input[class*=value]').val("");
 		}
 	}
 	
 	function removeHeader(obj) {
 		$(obj).parent('div').remove();
+	}
+	
+	function updateDepdForMultSelect(obj) {
+		var checkBoxName = $(obj).attr("name");
+		var dependencyAttr = $(obj).attr("additionalParam").split('=');
+		var dependency = dependencyAttr[1];
+		var csvValue = "";
+		$('input[name='+ checkBoxName +']:checked').each(function() {
+			csvValue = $(this).val() + "," + csvValue;
+		});
+		csvValue = csvValue.substring(0, csvValue.lastIndexOf(","));
+		changeEveDependancyListener(csvValue, checkBoxName);
+		updateDependancy(dependency);
 	}
 </script>

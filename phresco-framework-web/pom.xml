@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.photon.phresco.framework</groupId>
         <artifactId>phresco-framework-root</artifactId>
-        <version>2.0.0.29002-SNAPSHOT</version>
+        <version>2.0.0.33001-SNAPSHOT</version>
         <relativePath>../</relativePath>
     </parent>
    
@@ -230,9 +230,9 @@
 		</dependency>
 		
 		<dependency>
-		    <groupId>com.lowagie</groupId>
-		    <artifactId>itext</artifactId>
-		    <version>${itext.version}</version>
+			<groupId>com.lowagie</groupId>
+			<artifactId>itext</artifactId>
+			<version>${itext.version}</version>
 		</dependency>
 		
 		<dependency>

@@ -19,9 +19,6 @@
  */
 package com.photon.phresco.framework.actions.applications;
 
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -32,26 +29,15 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.Writer;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -67,7 +53,6 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.ArrayUtils;
@@ -165,6 +150,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 	private String testResultsType = "";
 
 	//Below variables gets the value of performance test Url, Context and TestName
+	private String resultJson = "";
 	private PerformanceDetails performanceDetails = null;
 	private List<String> name = null;
     private List<String> context = null;
@@ -215,6 +201,7 @@ public class Quality extends DynamicParameterAction implements Constants {
     private String reportName = "";
     private String reoportLocation = "";
     private String reportDataType = "";
+    private String sonarUrl = "";
     
     // download report
 	private InputStream fileInputStream;
@@ -242,6 +229,8 @@ public class Quality extends DynamicParameterAction implements Constants {
 	        setReqAttribute(PATH, frameworkUtil.getUnitTestDir(appInfo));
             setReqAttribute(REQ_APPINFO, appInfo);
             setProjModulesInReq();
+            // get unit test report options
+            setUnitReportOptions();
 	    } catch (Exception e) {
             if (s_debugEnabled) {
                 S_LOGGER.error("Entered into catch block of Quality.unit()" + FrameworkUtil.getStackTraceAsString(e));
@@ -250,6 +239,26 @@ public class Quality extends DynamicParameterAction implements Constants {
         }
 	    
 	    return APP_UNIT_TEST;
+	}
+	
+	private void setUnitReportOptions() throws PhrescoException {
+        if (s_debugEnabled) {
+            S_LOGGER.debug("Entering Method Quality.setUnitReportOptions");
+        }
+		try {
+	        ApplicationInfo appInfo = getApplicationInfo();
+	        FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+	        String unitTestReportOptions = frameworkUtil.getUnitTestReportOptions(appInfo);
+	        if (StringUtils.isNotEmpty(unitTestReportOptions)) {
+	        	List<String> asList = Arrays.asList(unitTestReportOptions.split(","));
+	        	setReqAttribute(REQ_UNIT_TEST_REPORT_OPTIONS, asList);
+	        }
+		} catch (Exception e) {
+            if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Quality.setUnitReportOptions()" + FrameworkUtil.getStackTraceAsString(e));
+            }
+			throw new PhrescoException(e);
+		}
 	}
 	
 	public String fetchUnitTestSuites() {
@@ -261,7 +270,12 @@ public class Quality extends DynamicParameterAction implements Constants {
             ApplicationInfo appInfo = getApplicationInfo();
             String testResultPath = getUnitTestResultPath(appInfo, null);
             FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-            String testSuitePath = frameworkUtil.getUnitTestSuitePath(appInfo);
+            String testSuitePath = "";
+            if (StringUtils.isNotEmpty(getTechReport())) {
+            	testSuitePath = frameworkUtil.getUnitTestSuitePath(appInfo, getTechReport());
+		    } else {
+		    	testSuitePath = frameworkUtil.getUnitTestSuitePath(appInfo);
+		    }
             List<String> resultTestSuiteNames = getTestSuiteNames(testResultPath, testSuitePath);
             if (CollectionUtils.isEmpty(resultTestSuiteNames)) {
                 setValidated(true);
@@ -289,6 +303,7 @@ public class Quality extends DynamicParameterAction implements Constants {
             sb.append(File.separatorChar);
             sb.append(getProjectModule());
         }
+        // TODO Need to change this
         StringBuilder tempsb = new StringBuilder(sb);
         if (JAVASCRIPT.equals(getTechReport())) {
             tempsb.append(UNIT_TEST_QUNIT_REPORT_DIR);
@@ -300,9 +315,12 @@ public class Quality extends DynamicParameterAction implements Constants {
             }
         } else {
             FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-            sb.append(frameworkUtil.getUnitTestReportDir(appInfo));
+            if (StringUtils.isNotEmpty(getTechReport())) {
+            	sb.append(frameworkUtil.getUnitTestReportDir(appInfo, getTechReport()));
+            } else {
+            	sb.append(frameworkUtil.getUnitTestReportDir(appInfo));
+            }
         }
-        
         return sb.toString();
     }
     
@@ -458,10 +476,10 @@ public class Quality extends DynamicParameterAction implements Constants {
             List<Parameter> parameters = getMojoParameters(mojo, PHASE_FUNCTIONAL_TEST + HYPHEN + seleniumToolType);
 
             setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap);
-            setSessionAttribute(appInfo.getId() + PHASE_FUNCTIONAL_TEST + SESSION_WATCHER_MAP, watcherMap);
+            setSessionAttribute(appInfo.getId() + PHASE_FUNCTIONAL_TEST + HYPHEN + seleniumToolType + SESSION_WATCHER_MAP, watcherMap);
             setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
-            setReqAttribute(REQ_GOAL, PHASE_FUNCTIONAL_TEST);
-            setReqAttribute(REQ_PHASE, PHASE_FUNCTIONAL_TEST + HYPHEN + seleniumToolType);
+            setReqAttribute(REQ_PHASE, PHASE_FUNCTIONAL_TEST);
+            setReqAttribute(REQ_GOAL, PHASE_FUNCTIONAL_TEST + HYPHEN + seleniumToolType);
         } catch (PhrescoException e) {
             if (s_debugEnabled) {
                 S_LOGGER.error("Entered into catch block of Quality.showFunctionalTestPopUp()" + FrameworkUtil.getStackTraceAsString(e));
@@ -599,6 +617,7 @@ public class Quality extends DynamicParameterAction implements Constants {
             List<Parameter> parameters = getMojoParameters(mojo, PHASE_START_HUB);
             setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
             setReqAttribute(REQ_GOAL, PHASE_START_HUB);
+            setReqAttribute(REQ_PHASE, PHASE_START_HUB);
         } catch (PhrescoException e) {
         	if (s_debugEnabled) {
 	    		S_LOGGER.error("Entered into catch block of Quality.showStartHubPopUp()"+ FrameworkUtil.getStackTraceAsString(e));
@@ -742,6 +761,7 @@ public class Quality extends DynamicParameterAction implements Constants {
             List<Parameter> parameters = getMojoParameters(mojo, PHASE_START_NODE);
             setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
             setReqAttribute(REQ_GOAL, PHASE_START_NODE);
+            setReqAttribute(REQ_PHASE, PHASE_START_NODE);
         } catch (PhrescoException e) {
         	if (s_debugEnabled) {
 	    		S_LOGGER.error("Entered into catch block of Quality.showStartNodePopUp()"+ FrameworkUtil.getStackTraceAsString(e));
@@ -898,7 +918,11 @@ public class Quality extends DynamicParameterAction implements Constants {
                 	sb.append(UNIT_TEST_JASMINE_REPORT_DIR);
                 }
         	} else {
-        		sb.append(frameworkUtil.getUnitTestReportDir(appInfo));
+                if (StringUtils.isNotEmpty(getTechReport())) {
+                	sb.append(frameworkUtil.getUnitTestReportDir(appInfo, getTechReport()));
+		        } else {
+		         	sb.append(frameworkUtil.getUnitTestReportDir(appInfo));
+		        }
         	}
         } else if (LOAD.equals(getTestType())) {
         	sb.append(frameworkUtil.getLoadTestReportDir(appInfo));
@@ -915,7 +939,6 @@ public class Quality extends DynamicParameterAction implements Constants {
             sb.append(File.separator);
             sb.append(testResultFile);
         }
-
         return sb.toString();
     }
 
@@ -1563,8 +1586,8 @@ public class Quality extends DynamicParameterAction implements Constants {
 //               builder.append(performanceTestDir);
                S_LOGGER.debug("Performance test directory path " + builder.toString());
             if (!TechnologyTypes.ANDROIDS.contains(techId)) {
-            	if ("WebService".equals(jmeterTestAgainst)) {
-            		jmeterTestAgainst = "webservices";
+            	if (SETTINGS_TEMPLATE_WEBSERVICE.equalsIgnoreCase(jmeterTestAgainst)) {
+            		jmeterTestAgainst = "webservice";
             	}
 	            builder.append(jmeterTestAgainst.toLowerCase());
 	            QualityUtil.changeTestName(builder.toString(), testName);
@@ -1609,6 +1632,7 @@ public class Quality extends DynamicParameterAction implements Constants {
     
     public String performanceTest() throws PhrescoException {
     	try {
+    		FileOutputStream fop = null;
     		ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
     		ProjectInfo projectInfo = getProjectInfo();
     		ApplicationInfo applicationInfo = getApplicationInfo();
@@ -1620,38 +1644,21 @@ public class Quality extends DynamicParameterAction implements Constants {
     		List<String> buildArgCmds = getMavenArgCommands(parameters);
     		String workingDirectory = getAppDirectoryPath(applicationInfo);
 
-    		Writer writer = null;
     		StringBuilder filepath = new StringBuilder(Utility.getProjectHome());
     		filepath.append(applicationInfo.getAppDirName()).append(File.separator).append(TEST_SLASH_PERFORMANCE).append(getTestAgainst())
     		.append(File.separator).append(getTestName()).append(DOT_JSON);
-    		String className = getHttpRequest().getParameter(REQ_OBJECT_CLASS);//get the bean class
-    		ClassLoader classLoader = Quality.class.getClassLoader();
-    		Class<?> loadClass = classLoader.loadClass(className);//loads the bean class
-    		Object newInstance = Class.forName(className).newInstance();//create instance of the loaded class
-    		for(PropertyDescriptor propertyDescriptor : Introspector.getBeanInfo(loadClass).getPropertyDescriptors()) {
-    			Method getterMethod = propertyDescriptor.getReadMethod();
-    			getterMethod.getName().replace(TYPE_GET, "");
-    			String key = getterMethod.getName().replace(TYPE_GET, "").substring(0,1).toLowerCase() + 
-    			getterMethod.getName().replace(TYPE_GET, "").substring(1);//to get fields in the respective bean class
-    			String returnType = getterMethod.getReturnType().getName();
-    			if (ARRAY_LIST.equals(returnType)) {//if the field is List<String>
-    				List<String> value = new ArrayList<String>();
-    				if (getHttpRequest().getParameterValues(key) == null) {
-    					value.add("");
-    				} else {
-    					value = (List<String>)Arrays.asList((getHttpRequest().getParameterValues(key)));
-    				}
-    				BeanUtils.setProperty(newInstance, key, value);
-    			} else {//if the field is string or other type
-    				String value = (StringUtils.isNotEmpty(getReqParameter(key))) ? (String)getReqParameter(key) : "";
-    				BeanUtils.setProperty(newInstance, key, value);
-    			}
-    		}
-    		Gson gson = new Gson();
-    		writer = new OutputStreamWriter(new FileOutputStream(filepath.toString()));
-    		gson.toJson(newInstance, writer);
-    		writer.close();
-
+    		/*String className = getHttpRequest().getParameter(REQ_OBJECT_CLASS);//get the bean class
+    		ClassLoader classLoader = Quality.class.getClassLoader();*/
+    		File file = new File(filepath.toString());
+			fop = new FileOutputStream(file);
+			if (!file.exists()) {
+				file.createNewFile();
+			}
+			byte[] contentInBytes = getResultJson().getBytes();
+			 
+			fop.write(contentInBytes);
+			fop.flush();
+			fop.close();	
     		BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.PERFORMANCE_TEST, buildArgCmds, workingDirectory);
     		setSessionAttribute(getAppId() + PERFORMANCE_TEST, reader);
     		setReqAttribute(REQ_APP_ID, getAppId());
@@ -1660,18 +1667,8 @@ public class Quality extends DynamicParameterAction implements Constants {
     		throw new PhrescoException(e);
     	} catch (FileNotFoundException e) {
     		throw new PhrescoException(e);
-    	} catch (ClassNotFoundException e) {
-    		throw new PhrescoException(e);
-    	} catch (InstantiationException e) {
-    		throw new PhrescoException(e);
-    	} catch (IllegalAccessException e) {
-    		throw new PhrescoException(e);
-    	} catch (IntrospectionException e) {
-    		throw new PhrescoException(e);
-    	} catch (InvocationTargetException e) {
-    		throw new PhrescoException(e);
     	} catch (IOException e) {
-    		throw new PhrescoException(e);
+    		throw new PhrescoException(e); 
     	}
 
     	return SUCCESS;
@@ -2231,9 +2228,19 @@ public class Quality extends DynamicParameterAction implements Constants {
         try {
             ApplicationInfo appInfo = getApplicationInfo();
             FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-            String testSuitePath = frameworkUtil.getUnitTestSuitePath(appInfo);
-            String testCasePath = frameworkUtil.getUnitTestCasePath(appInfo);
+            String testSuitePath = "";
+            if (StringUtils.isNotEmpty(getTechReport())) {
+            	testSuitePath = frameworkUtil.getUnitTestSuitePath(appInfo, getTechReport());
+		    } else {
+		    	testSuitePath = frameworkUtil.getUnitTestSuitePath(appInfo);
+		    }
             
+            String testCasePath = "";
+            if (StringUtils.isNotEmpty(getTechReport())) {
+            	testCasePath = frameworkUtil.getUnitTestCasePath(appInfo, getTechReport());
+		    } else {
+		    	testCasePath = frameworkUtil.getUnitTestCasePath(appInfo);
+		    }
             return testReport(testSuitePath, testCasePath);
         } catch (PhrescoException e) {
             // TODO: handle exception
@@ -2263,7 +2270,7 @@ public class Quality extends DynamicParameterAction implements Constants {
     		String testSuitesMapKey = getAppId() + getTestType() + getProjectModule() + getTechReport();
         	Map<String, NodeList> testResultNameMap = testSuiteMap.get(testSuitesMapKey);
             NodeList testSuites = testResultNameMap.get(getTestSuite());
-    		if (ALL_TEST_SUITES.equals(getTestSuite())) {
+    		if (ALL.equals(getTestSuite())) {
     			Map<String, String> testSuitesResultMap = new HashMap<String, String>();
     			float totalTestSuites = 0;
     			float successTestSuites = 0;
@@ -2651,6 +2658,9 @@ public class Quality extends DynamicParameterAction implements Constants {
         	boolean isReportAvailable = true;
 			ApplicationInfo appInfo = getApplicationInfo();
 			setReqAttribute(REQ_APPINFO, appInfo);
+			String sonarUrl = "";
+			FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+			sonarUrl = frameworkUtil.getSonarURL();
 //        	ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
 //        	ApplicationInfo appInfo = getApplicationInfo();
 //            FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
@@ -2670,15 +2680,15 @@ public class Quality extends DynamicParameterAction implements Constants {
 			setReqAttribute(REQ_CUSTOMER_ID, getCustomerId());
 			setReqAttribute(REQ_FROM_PAGE, getFromPage());
 			setReqAttribute(REQ_TEST_EXE, isReportAvailable);
+			setReqAttribute(REQ_SONAR_URL, sonarUrl);
         	List<String> existingPDFs = getExistingPDFs();
     		if (existingPDFs != null) {
     			setReqAttribute(REQ_PDF_REPORT_FILES, existingPDFs);
     		}
         } catch (Exception e) {
-        	e.printStackTrace();
             S_LOGGER.error("Entered into catch block of Quality.printAsPdfPopup()"+ e);
         }
-        setReqAttribute(REQ_TEST_TYPE, testType);
+        setReqAttribute(REQ_TEST_TYPE, fromPage);
         return SUCCESS;
     }
 
@@ -2778,7 +2788,15 @@ public class Quality extends DynamicParameterAction implements Constants {
 		boolean XmlResultsAvailable = false;
             if(!XmlResultsAvailable) {
             	S_LOGGER.debug("Unit dir " + sb.toString() + frameworkUtil.getUnitTestReportDir(appInfo));
-	            File file = new File(sb.toString() + frameworkUtil.getUnitTestReportDir(appInfo));
+            	File file = null;
+            	if (StringUtils.isNotEmpty(getTechReport())) {
+//            		sb.append(frameworkUtil.getUnitTestReportDir(appInfo, getTechReport()));
+            		file = new File(sb.toString() + frameworkUtil.getUnitTestReportDir(appInfo, getTechReport()));
+            	} else {
+            		file = new File(sb.toString() + frameworkUtil.getUnitTestReportDir(appInfo));
+            		sb.append(frameworkUtil.getUnitTestReportDir(appInfo));
+            	}
+            	
 	            File[] children = file.listFiles(new XmlNameFileFilter(FILE_EXTENSION_XML));
 	            if(children != null && children.length > 0) {
 	            	XmlResultsAvailable = true;
@@ -2819,7 +2837,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 		// popup showing list of pdf's already created
 		String pdfDirLoc = "";
 		String fileFilterName = "";
-		if (StringUtils.isEmpty(fromPage) || "All".equals(fromPage)) {
+		if (StringUtils.isEmpty(fromPage) || FROMPAGE_ALL.equals(fromPage)) {
 			pdfDirLoc = Utility.getProjectHome() + getApplicationInfo().getAppDirName() + File.separator + DO_NOT_CHECKIN_DIR + File.separator + ARCHIVES + File.separator + CUMULATIVE;
 			fileFilterName = getApplicationInfo().getAppDirName();
 		} else {
@@ -2851,17 +2869,19 @@ public class Quality extends DynamicParameterAction implements Constants {
 			ApplicationInfo applicationInfo = getApplicationInfo();
 			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_PDF_REPORT)));
 			List<Parameter> parameters = getMojoParameters(mojo, PHASE_PDF_REPORT);
-			
+			String sonarUrl = (String) getReqAttribute(REQ_SONAR_URL);
 	        if (CollectionUtils.isNotEmpty(parameters)) {
 	            for (Parameter parameter : parameters) {
 	            	String key = parameter.getKey();
-	            	if ("reportType".equals(key)) {
+	            	if (REQ_REPORT_TYPE.equals(key)) {
 	            		parameter.setValue(reportDataType);
-	            	} else if ("testType".equals(key)) {
+	            	} else if (REQ_TEST_TYPE.equals(key)) {
 	            		if (StringUtils.isEmpty(fromPage)) {
-	            			setFromPage("All");
+	            			setFromPage(FROMPAGE_ALL);
 	            		}
 	            		parameter.setValue(getFromPage());
+	            	} else if (REQ_SONAR_URL.equals(key)) {
+	            		parameter.setValue(sonarUrl);
 	            	}
 	            }
 	        }
@@ -2880,7 +2900,6 @@ public class Quality extends DynamicParameterAction implements Constants {
 			setReqAttribute(REQ_FROM_PAGE, getFromPage());
             setReqAttribute(REQ_REPORT_STATUS, getText(SUCCESS_REPORT_STATUS));
         } catch (Exception e) {
-        	e.printStackTrace();
         	S_LOGGER.error("Entered into catch block of Quality.printAsPdf()"+ e);
         	if (e.getLocalizedMessage().contains(getText(ERROR_REPORT_MISSISNG_FONT_MSG))) {
         		setReqAttribute(REQ_REPORT_STATUS, getText(ERROR_REPORT_MISSISNG_FONT));
@@ -2910,13 +2929,13 @@ public class Quality extends DynamicParameterAction implements Constants {
     public String downloadReport() {
         S_LOGGER.debug("Entering Method Quality.downloadReport()");
         try {
-        	String testType = getReqParameter(REQ_TEST_TYPE);
+        	String fromPage = getReqParameter(REQ_FROM_PAGE);
         	String pdfLOC = "";
-        	String semiPath = getApplicationHome() + File.separator + DO_NOT_CHECKIN_DIR + File.separator + ARCHIVES + File.separator;
-        	if (StringUtils.isEmpty(testType)) {
-        		pdfLOC = semiPath + CUMULATIVE + File.separator + getApplicationInfo().getAppDirName() + UNDERSCORE + reportFileName + DOT + PDF;
+        	String archivePath = getApplicationHome() + File.separator + DO_NOT_CHECKIN_DIR + File.separator + ARCHIVES + File.separator;
+        	if ((FrameworkConstants.ALL).equals(fromPage)) {
+        		pdfLOC = archivePath + CUMULATIVE + File.separator + getApplicationInfo().getAppDirName() + UNDERSCORE + reportFileName + DOT + PDF;
         	} else {
-        		pdfLOC = semiPath + testType + File.separator + testType + UNDERSCORE + reportFileName + DOT + PDF;
+        		pdfLOC = archivePath + fromPage + File.separator + fromPage + UNDERSCORE + reportFileName + DOT + PDF;
         	}
             File pdfFile = new File(pdfLOC);
             if (pdfFile.isFile()) {
@@ -2924,7 +2943,6 @@ public class Quality extends DynamicParameterAction implements Constants {
     			fileName = reportFileName.split(UNDERSCORE)[1];
             }
         } catch (Exception e) {
-        	e.printStackTrace();
             S_LOGGER.error("Entered into catch block of Quality.downloadReport()" + e);
         }
         return SUCCESS;
@@ -2933,13 +2951,13 @@ public class Quality extends DynamicParameterAction implements Constants {
     public String deleteReport() {
         S_LOGGER.debug("Entering Method Quality.deleteReport()");
         try {
-        	String testType = getReqParameter(REQ_TEST_TYPE);
+        	String fromPage = getReqParameter(REQ_FROM_PAGE);
         	String pdfLOC = "";
-        	String semiPath = getApplicationHome() + File.separator + DO_NOT_CHECKIN_DIR + File.separator + ARCHIVES + File.separator;
-        	if (StringUtils.isEmpty(testType)) {
-        		pdfLOC = semiPath + CUMULATIVE + File.separator + getApplicationInfo().getAppDirName() + UNDERSCORE + reportFileName + DOT + PDF;
+        	String archivePath = getApplicationHome() + File.separator + DO_NOT_CHECKIN_DIR + File.separator + ARCHIVES + File.separator;
+        	if ((FrameworkConstants.ALL).equals(fromPage)) {
+        		pdfLOC = archivePath + CUMULATIVE + File.separator + getApplicationInfo().getAppDirName() + UNDERSCORE + reportFileName + DOT + PDF;
         	} else {
-        		pdfLOC = semiPath + testType + File.separator + testType + UNDERSCORE + reportFileName + DOT + PDF;
+        		pdfLOC = archivePath + fromPage + File.separator + fromPage + UNDERSCORE + reportFileName + DOT + PDF;
         	}
             File pdfFile = new File(pdfLOC);
             if (pdfFile.isFile()) {
@@ -3117,6 +3135,14 @@ public class Quality extends DynamicParameterAction implements Constants {
     public void setJmeterTestAgainst(String jmeterTestAgainst) {
         this.jmeterTestAgainst = jmeterTestAgainst;
     }
+    
+    public String getSonarUrl() {
+		return sonarUrl;
+	}
+
+	public void setSonarUrl(String sonarUrl) {
+		this.sonarUrl = sonarUrl;
+	}
 
 	public String getTestName() {
 		return testName;
@@ -3436,5 +3462,13 @@ public class Quality extends DynamicParameterAction implements Constants {
 
 	public void setUpdateCache(boolean updateCache) {
 		this.updateCache = updateCache;
+	}
+
+	public void setResultJson(String resultJson) {
+		this.resultJson = resultJson;
+	}
+
+	public String getResultJson() {
+		return resultJson;
 	}
 }

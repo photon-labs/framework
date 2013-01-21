@@ -43,7 +43,6 @@ import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
 import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.framework.commons.FrameworkUtil;
-import com.photon.phresco.commons.model.Technology;
 
 /**
  * Struts Action class for Handling Project related operations 
@@ -253,8 +252,14 @@ public class Projects extends FrameworkBaseAction {
 			ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
 			projectInfo = projectManager.getProject(getProjectId(), getCustomerId());
 			projectInfo.setId(getProjectId());
-			List<ApplicationType> layers = getServiceManager().getApplicationTypes(getCustomerId());
-	        setReqAttribute(REQ_PROJECT_LAYERS, layers);
+			User user = (User) getSessionAttribute(SESSION_USER_INFO);
+        	List<Customer> customers = user.getCustomers();
+        	for (Customer customer : customers) {
+				if (customer.getId().equals(getCustomerId())) {
+					setReqAttribute(REQ_PROJECT_LAYERS, customer.getApplicableAppTypes());
+					break;
+				}
+			}
 			setReqAttribute(REQ_PROJECT, projectInfo);
 		} catch (PhrescoException e) {
 			// TODO Auto-generated catch block
@@ -372,7 +377,7 @@ public class Projects extends FrameworkBaseAction {
                 String techName = technology.getName().replaceAll("\\s", "").toLowerCase();
                 String dirName = getProjectCode() + HYPHEN + techName;
                 String projectName = getProjectName() + HYPHEN + techName;
-                appInfos.add(getAppInfo(projectName, dirName, techId, version, phoneEnabled, tabletEnabled));
+                appInfos.add(getAppInfo(projectName, dirName, techId, version, phoneEnabled, tabletEnabled, technology.getAppTypeId()));
             }
         }
 
@@ -393,7 +398,7 @@ public class Projects extends FrameworkBaseAction {
         String techName = technology.getName().replaceAll("\\s", "").toLowerCase();
         String dirName = getProjectCode() + HYPHEN + techName;
         String projectName = getProjectName() + HYPHEN + techName;
-        appInfos.add(getAppInfo(projectName, dirName, techId, version, false, false));
+        appInfos.add(getAppInfo(projectName, dirName, techId, version, false, false, technology.getAppTypeId()));
 
         return appInfos;
     }
@@ -407,12 +412,15 @@ public class Projects extends FrameworkBaseAction {
      * @return
      * @throws PhrescoException
      */
-    private ApplicationInfo getAppInfo(String projectName, String appDir, String techId, String version, boolean phoneEnabled, boolean tabletEnabled) throws PhrescoException {
+    private ApplicationInfo getAppInfo(String projectName, String appDir, String techId, String version,
+            boolean phoneEnabled, boolean tabletEnabled, String appTypeId) throws PhrescoException {
         ApplicationInfo applicationInfo = new ApplicationInfo();
         TechnologyInfo techInfo = new TechnologyInfo();
         techInfo.setId(techId);
         techInfo.setVersion(version);
+        techInfo.setAppTypeId(appTypeId);
         applicationInfo.setTechInfo(techInfo);
+        applicationInfo.setVersion(getProjectVersion());
         applicationInfo.setName(projectName);
         applicationInfo.setCode(appDir);
         applicationInfo.setAppDirName(appDir);

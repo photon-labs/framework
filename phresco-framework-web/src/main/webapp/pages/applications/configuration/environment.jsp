@@ -64,11 +64,11 @@
                 <ul>
                 <% for (Environment environment : environments ) {
                 	String envJson = gson.toJson(environment);
-                	String disable = "";
+                	
                  %>
 	       			<li>
 						<input type="checkbox" name="envNames" class="check techCheck" 
-							value='<%= envJson %>' title="<%= environment.getDesc() %>"  envName='<%= environment.getName() %>'/><%= environment.getName() %>
+							value='<%= envJson %>' title="<%= environment.getDesc() %>"  <%= environment.isDefaultEnv() ? "disabled" : "" %> envName='<%= environment.getName() %>'/><%= environment.getName() %>
 					</li>
 				<% } %>
 				</ul>
@@ -265,4 +265,12 @@ $(document).ready(function() {
 			$("#setAsDefault").removeClass("btn-disabled");
 		}
 	}
+	
+	function findError(data) {
+		if (!isBlank(data.configNameError)) {
+			$(".yesNoPopupErr").html(data.configNameError);
+		} else {
+			$(".yesNoPopupErr").empty();
+		}
+	}	
 </script>

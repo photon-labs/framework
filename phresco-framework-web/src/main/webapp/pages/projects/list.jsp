@@ -240,7 +240,7 @@
  		} else if (okUrl === "printAsPdf") {
 			// show popup loading icon
 			showPopuploadingIcon();
-			loadContent('printAsPdf', $('#generatePdf'), $('#popup_div'), getBasicParams(), false, true);
+			loadContent('printAsPdf', $('#generatePdf'), $('#popup_div'), '', false, true);
 		} else if (okUrl === "deleteProject") {
 			$("#popupPage").modal('hide');
 			// show popup loading icon

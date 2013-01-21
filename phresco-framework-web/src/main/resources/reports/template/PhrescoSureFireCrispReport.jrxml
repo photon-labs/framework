@@ -40,7 +40,7 @@
 			<frame>
 				<reportElement mode="Opaque" x="0" y="0" width="555" height="48" backcolor="#FFFFFF"/>
 				<rectangle>
-					<reportElement x="0" y="23" width="555" height="24" backcolor="#DDFCDD"/>
+					<reportElement x="0" y="24" width="555" height="24" backcolor="#DDFCDD"/>
 					<graphicElement>
 						<pen lineColor="#999999"/>
 					</graphicElement>
@@ -139,7 +139,7 @@
 		</band>
 	</detail>
 	<lastPageFooter>
-		<band height="224">
+		<band height="229">
 			<frame>
 				<reportElement mode="Opaque" x="0" y="0" width="555" height="26" forecolor="#000000" backcolor="#FFFFFF"/>
 				<rectangle>
@@ -186,9 +186,9 @@
 			</frame>
 			<frame>
 				<reportElement x="0" y="28" width="555" height="194"/>
-				<stackedBar3DChart>
-					<chart renderType="svg" theme="default">
-						<reportElement x="0" y="14" width="555" height="180"/>
+				<bar3DChart>
+					<chart>
+						<reportElement x="10" y="10" width="535" height="184"/>
 						<chartTitle/>
 						<chartSubtitle/>
 						<chartLegend/>
@@ -216,7 +216,7 @@
 						</categorySeries>
 					</categoryDataset>
 					<bar3DPlot>
-						<plot labelRotation="30.0">
+						<plot labelRotation="20.0">
 							<seriesColor seriesOrder="0" color="#66FF66"/>
 							<seriesColor seriesOrder="1" color="#FF0000"/>
 							<seriesColor seriesOrder="2" color="#0099FF"/>
@@ -224,7 +224,7 @@
 						</plot>
 						<itemLabel/>
 					</bar3DPlot>
-				</stackedBar3DChart>
+				</bar3DChart>
 			</frame>
 		</band>
 	</lastPageFooter>

@@ -993,13 +993,24 @@ li {
 
 /*** quality tab starts ***/
 #navigation {
-    background-color:#FFFFFF;
+    background-color: #F5F5F5;
     border-bottom: 1px solid #0064CD;
 }
 
-#navigation ul li a {
-    color:#004366;
-    background:#FFFFFF;
+#subTabcontent {
+    height: 98%;
+    margin-top: 1px;
+    overflow: hidden;
+    position: relative;
+    top: -2px;
+    width: 100%;
+}
+
+#navigation {
+    height: 28px;
+    margin-top: -3px;
+    padding-left: 50%;
+    padding-top: 2px;
 }
 
 #navigation ul li a:hover, #navigation ul li a.selected {
@@ -1599,4 +1610,18 @@ table tr {
 .dd-option-selected, .dd-option:hover {
     background: #eeeeee !important;
     border: solid 1px #dcdcdc;
+}
+
+.customer_select_div {
+	height: 34px;
+    margin-left: 77px;
+}
+
+#customerSelect {
+    margin-top: 31px;
+    width: 260px;
+}
+
+#lbl_customer {
+	margin-top: 31px;
 }

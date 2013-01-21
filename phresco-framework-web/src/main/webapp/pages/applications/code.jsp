@@ -117,8 +117,7 @@ $('.control-group').addClass("valReportLbl");
     function popupOnOk(obj) {
     	var okUrl = $(obj).attr("id");
         var params = getBasicParams();
-    	$("#popupPage").modal('hide');//To hide popup
-        progressPopupAsSecPopup(okUrl, '<%= appId %>', '<%= FrameworkConstants.REQ_CODE %>', $("#generateBuildForm"), params);
+    	mandatoryValidation(okUrl, $("#generateBuildForm"), '', 'validate-code', 'validate-code', '<%= FrameworkConstants.REQ_CODE %>', '<%= appId %>');
     }
     
     function sonarReport() {

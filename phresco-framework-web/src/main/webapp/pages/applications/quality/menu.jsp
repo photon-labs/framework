@@ -36,7 +36,7 @@
 
 <div id="subTabcontent">
 	<div id="navigation" class="qualitymenutabs">
-		<ul>
+		<ul class="tabs">
 			<li>
 				<a href="#" class="active" name="qualityTab" id="unit"><s:label key="lbl.quality.menu.unit" theme="simple"/></a>
 			</li>

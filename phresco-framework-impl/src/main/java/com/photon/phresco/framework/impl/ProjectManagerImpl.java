@@ -80,11 +80,12 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 	        if (appDir.isDirectory()) { // Only check the folders not files
 	            File[] dotPhrescoFolders = appDir.listFiles(new PhrescoFileNameFilter(FOLDER_DOT_PHRESCO));
 	            if (ArrayUtils.isEmpty(dotPhrescoFolders)) {
-	                throw new PhrescoException(".phresco folder not found in project " + appDir.getName());
+	            	continue;
+//	                throw new PhrescoException(".phresco folder not found in project " + appDir.getName());
 	            }
 	            File[] dotProjectFiles = dotPhrescoFolders[0].listFiles(new PhrescoFileNameFilter(PROJECT_INFO_FILE));
 	            if (ArrayUtils.isEmpty(dotProjectFiles)) {
-	                throw new PhrescoException("project.info file not found in .phresco of project "+dotPhrescoFolders[0].getParent());
+	                throw new PhrescoException("project.info file not found in .phresco of project " + dotPhrescoFolders[0].getParent());
 	            }
 	            fillProjects(dotProjectFiles[0], projectInfos, customerId);
 	        }
@@ -199,15 +200,17 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 				ProjectUtils.updateProjectInfo(projectInfo, new File(sb.toString()));// To update the project.info file
 			}
 		} else {
+			
 			ClientResponse response = serviceManager.updateProject(projectInfo);
 			if (response.getStatus() == 200) {
 				BufferedReader breader = null;
+				File backUpProjectInfoFile = null;
 				try {
 					//application path with old app dir
 					StringBuilder oldAppDirSb = new StringBuilder(Utility.getProjectHome());
 					oldAppDirSb.append(oldAppDirName);
 					File oldDir = new File(oldAppDirSb.toString());
-					
+					backUpProjectInfoFile = backUpProjectInfoFile(oldDir.getPath());
 					//application path with new app dir
 					StringBuilder newAppDirSb = new StringBuilder(Utility.getProjectHome());
 					newAppDirSb.append(projectInfo.getAppInfos().get(0).getAppDirName());
@@ -236,9 +239,11 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 						
 					if (applicationHandler != null) {
 						String selectedFeatures = applicationHandler.getSelectedFeatures();
+						String deletedFeatures = applicationHandler.getDeletedFeatures();
 						Gson gson = new Gson();
 						Type jsonType = new TypeToken<Collection<ArtifactGroup>>(){}.getType();
 						List<ArtifactGroup> artifactGroups = gson.fromJson(selectedFeatures, jsonType);
+						List<ArtifactGroup> deletedArtifacts = gson.fromJson(deletedFeatures, jsonType);
 						
 						List<ArtifactGroup> plugins = setArtifactGroup(applicationHandler);
 	
@@ -246,23 +251,11 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 						PhrescoDynamicLoader dynamicLoader = new PhrescoDynamicLoader(repoInfo, plugins);
 						ApplicationProcessor applicationProcessor = dynamicLoader
 								.getApplicationProcessor(applicationHandler.getClazz());
-	
-						applicationProcessor.postUpdate(appInfo, artifactGroups);
+						applicationProcessor.postUpdate(appInfo, artifactGroups, deletedArtifacts);
 	
 						File projectInfoPath = new File(dotPhrescoPathSb.toString() + PROJECT_INFO_FILE);
 						ProjectUtils.updateProjectInfo(projectInfo, projectInfoPath);// To update the project.info file
 	
-						StringBuilder sb = new StringBuilder();
-						sb.append("mvn");
-						sb.append(" ");
-						sb.append("validate");
-						breader = Utility.executeCommand(sb.toString(), projectInfoFile.getPath());
-						String line = null;
-						while ((line = breader.readLine()) != null) {
-							if (line.startsWith("[ERROR]")) {
-								System.out.println(line);
-							}
-						}
 					}
 				} catch (FileNotFoundException e) {
 					e.printStackTrace();
@@ -271,7 +264,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 					e.printStackTrace();
 					throw new PhrescoException(e);
 				} finally {
-					Utility.closeStream(breader);
+					FileUtil.delete(backUpProjectInfoFile);
 				}
 			} else if (response.getStatus() == 401) {
 				throw new PhrescoException("Session expired");
@@ -282,6 +275,20 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		return null;
 	}
 	
+	private File backUpProjectInfoFile(String oldDirPath) throws PhrescoException {
+		StringBuilder oldDotPhrescoPathSb = new StringBuilder(oldDirPath);
+		oldDotPhrescoPathSb.append(File.separator);
+		oldDotPhrescoPathSb.append(DOT_PHRESCO_FOLDER);
+		oldDotPhrescoPathSb.append(File.separator);
+		File projectInfoFile = new File(oldDotPhrescoPathSb.toString() + PROJECT_INFO_FILE);
+		File backUpInfoFile = new File(oldDotPhrescoPathSb.toString() + PROJECT_INFO_BACKUP_FILE);
+		try {
+			FileUtils.copyFile(projectInfoFile, backUpInfoFile);
+			return backUpInfoFile;
+		} catch (IOException e) {
+			throw new PhrescoException(e);
+		}
+	}
 	
 	private void updateProjectPom(ProjectInfo projectInfo, String newAppDirSb) throws PhrescoException {
 		File pomFile = new File(newAppDirSb, "pom.xml");
@@ -416,10 +423,14 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 				List<ArtifactGroupInfo> newSelectedDatabases = appInfo.getSelectedDatabases();
 				for (ArtifactGroupInfo artifactGroupInfo : newSelectedDatabases) {
 					List<String> artifactInfoIds = artifactGroupInfo.getArtifactInfoIds();
+					for (String artifactId : artifactInfoIds) {
+					ArtifactInfo artifactInfo = serviceManager.getArtifactInfo(artifactId);
+					String selectedVersion = artifactInfo.getVersion();
 				for (DownloadInfo dbInfo : dbInfos) {
 					dbName = dbInfo.getName().toLowerCase();
 					ArtifactGroup artifactGroup = dbInfo.getArtifactGroup();
-					mySqlFolderCreation(path, dbName, sqlFolderPath, mysqlVersionFolder,artifactInfoIds, artifactGroup);
+					mySqlFolderCreation(path, dbName, sqlFolderPath, mysqlVersionFolder,selectedVersion, artifactGroup);
+				}
 				}
 				}
 			}
@@ -428,12 +439,12 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		}
 	}
 
-	private void mySqlFolderCreation(File path, String dbName, String sqlFolderPath, File mysqlVersionFolder, List<String> artifactInfoIds,
+	private void mySqlFolderCreation(File path, String dbName, String sqlFolderPath, File mysqlVersionFolder, String selectedVersion,
 			ArtifactGroup artifactGroup) throws PhrescoException {
 		try {
 			List<ArtifactInfo> versions = artifactGroup.getVersions();
 			for (ArtifactInfo version : versions) {
-			if (artifactInfoIds.contains(version.getVersion())) {
+			if (selectedVersion.equals(version.getVersion())) {
 				String dbversion = version.getVersion();
 				String sqlPath = dbName + File.separator + dbversion.trim();
 				File sqlFolder = new File(path, sqlFolderPath + sqlPath);

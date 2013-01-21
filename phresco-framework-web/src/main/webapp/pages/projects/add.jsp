@@ -157,7 +157,7 @@
 		</div>
 		<!-- Version Starts -->
 		
-		<!-- PreBuild/Build it myself Starts -->
+		<!-- Build it myself Starts -->
 		<div class="control-group">
 			<label class="control-label labelbold"></label>
 			<div class="controls">
@@ -165,8 +165,6 @@
 					<li> 
 						<input type="radio" name="buildType" value="buildItMyself" checked="checked"/> 
 						<span class="vAlignMiddle buildTypeSpan"><s:text name="lbl.projects.build.type.myself"/></span>
-						<input type="radio" name="buildType" value="preBuild" disabled/> 
-						<span class="vAlignMiddle"><s:text name="lbl.projects.build.type.prebuilt"/></span>
 					</li>
 				</ul>
 			</div>
@@ -203,7 +201,10 @@
 					<div class="accordion_panel_inner">
 						<section class="lft_menus_container" id="appSec">
 							<span class="siteaccordion closereg" id="appLayerControl" onclick="accordionClick(this, $('input[value=<%= appLayerId %>]'));">
-								<span>
+								<span class="mandatory">
+									<% if(layers.size()<=1) { %>
+									*&nbsp;
+									<% } %>
 									<input type="checkbox" id="checkAll1" class="accordianChkBox" name="layer" value="<%= appLayerId %>" <%= chckdStr%> <%= disblStr%>/>
 									<a id="appLayerHeading" class="vAlignSub"><%= appLayerName %></a>
 									<p id="appLayerError" class="accordion-error-txt"></p>
@@ -299,7 +300,10 @@
 					<div class="accordion_panel_inner">
 						<section class="lft_menus_container" id="webSec">
 							<span class="siteaccordion closereg" id="webLayerControl" onclick="accordionClick(this, $('input[value=<%= webLayerId %>]'));">
-								<span>
+								<span class="mandatory">
+									<% if(layers.size()<=1) { %>
+									*&nbsp;
+									<% } %>
 									<input type="checkbox" id="checkAll1" class="accordianChkBox" name="layer" value="<%= webLayerId %>" <%= checkedLayer%> <%= disableLayer %>/>
 									<a id="webLayerHeading" class="vAlignSub"><%= webLayerName %></a>
 									<p id="webLayerError" class="accordion-error-txt"></p>
@@ -398,7 +402,10 @@
 					<div class="accordion_panel_inner">
 						<section class="lft_menus_container" id="mobSec">
 							<span class="siteaccordion closereg" id="mobileLayerControl" onclick="accordionClick(this, $('input[value=<%= mobileLayerId %>]'));">
-								<span>
+								<span class="mandatory">
+									<% if(layers.size()<=1) { %>
+									*&nbsp;
+									<% } %>
 									<input type="checkbox" id="checkAll1" class="accordianChkBox" name="layer" value="<%= mobileLayerId %>" <%= checkedWebLayer%>/>
 									<a id="mobileLayerHeading" class="vAlignSub"><%= mobileLayerName %></a>
 									<p id="mobileLayerError" class="accordion-error-txt"></p>
@@ -441,11 +448,20 @@
 															onchange="getTechVersions('<%= mobileLayerId %>', '<%= mobileLayerTechGroup.getId() %>', '<%= mobileLayerTechGroup.getId() + FrameworkConstants.REQ_PARAM_NAME_VERSION %>');">
 															<option value="" selected disabled><s:text name='lbl.default.opt.select.type'/></option>
 															<%
+																String selectTech = "";
 																List<TechnologyInfo> mobileInfos = mobileLayerTechGroup.getTechInfos();	
 																if (CollectionUtils.isNotEmpty(mobileInfos)) {
 																    for (TechnologyInfo mobileInfo : mobileInfos) {
+																    	selectTech = "";
+																    	if (CollectionUtils.isNotEmpty(appInfos)) {
+																	    	for (ApplicationInfo appInfo : appInfos) {
+																				if (mobileInfo.getId().equals(appInfo.getTechInfo().getId())){
+																					selectTech = "selected";
+																				}
+																    		}
+																    	}
 															%>
-																		<option value="<%= mobileInfo.getId() %>" <%= selectedMobLayer %>><%= mobileInfo.getName() %></option>
+																		<option value="<%= mobileInfo.getId() %>" <%= selectTech %>><%= mobileInfo.getName() %></option>
 															<%
 																	}
 																}
@@ -461,11 +477,11 @@
 															<% } %>
 														</select>
 													</div>
-													<div class="align-in-row width">
+													<div class="align-in-row width" id="<%= mobileLayerTechGroup.getId() + FrameworkConstants.REQ_PARAM_NAME_PHONE %>">
 														<input type="checkbox" name="<%= mobileLayerTechGroup.getId() + FrameworkConstants.REQ_PARAM_NAME_PHONE %>" value="true" <%= disabledMobLayer %>/>
 														<span class="vAlignSub">&nbsp;<s:text name='lbl.device.type.phone'/></span>
 													</div>
-													<div class="float-left">
+													<div class="float-left" id="<%= mobileLayerTechGroup.getId() + FrameworkConstants.REQ_PARAM_NAME_TABLET %>">
 														<input type="checkbox" name="<%= mobileLayerTechGroup.getId() + FrameworkConstants.REQ_PARAM_NAME_TABLET %>" value="true" <%= disabledMobLayer %>/>
 														<span class="vAlignSub">&nbsp;<s:text name='lbl.device.type.tablet'/></span>
 													</div>
@@ -523,6 +539,15 @@
 
 	$(document).ready(function() {
 		hideLoadingIcon();//To hide the loading icon
+		
+		<% if (appInfos != null) {
+			for (ApplicationInfo appInfo : appInfos) {
+				if (appInfo.getTechInfo().getId().equalsIgnoreCase("tech-iphone-library")) { %>
+					$("#iphonePhone").hide();
+		 			$("#iphoneTablet").hide();
+			<%	}
+    		}
+		}%>
 		
 		// To restrict the user in typing the special charaters in projectCode and projectVersion
 		$('#projectCode, #projVersion').bind('input propertychange', function (e) {
@@ -634,7 +659,16 @@
 	//To get the versions of the selected mobile technologies
 	function getTechVersions(layerId, techGroupId, toBeFilledCtrlName, techId) {
 		showLoadingIcon();
+		$("#"+techGroupId+"<%= FrameworkConstants.REQ_PARAM_NAME_PHONE %>").show();
+		$("#"+techGroupId+"<%= FrameworkConstants.REQ_PARAM_NAME_TABLET %>").show();
 		objName = toBeFilledCtrlName;
+		$('select[name="'+techGroupId+'<%= FrameworkConstants.REQ_PARAM_NAME_TECHNOLOGY %>"]').each(function () {
+	 		var id = $(this).val();
+	 		if (id === "tech-iphone-library") {
+	 			$("#"+techGroupId+"<%= FrameworkConstants.REQ_PARAM_NAME_PHONE %>").hide();
+	 			$("#"+techGroupId+"<%= FrameworkConstants.REQ_PARAM_NAME_TABLET %>").hide();
+	 		}
+       	});
 		var params = getBasicParams();
 		params = params.concat("&layerId=");
 		params = params.concat(layerId);

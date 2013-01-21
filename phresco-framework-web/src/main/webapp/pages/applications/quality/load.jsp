@@ -128,9 +128,9 @@
 			params = params.concat(testResult);
 			getCurrentCSS();
 	        $('.popupLoadingIcon').show(); 
-			performAction('loadTestResult', params, $('#testResultDisplay'));
+			performAction('loadTestResult', params, $('#testResultDisplay'));--%>
 			//show print as pdf icon
-			$('#pdfPopup').show();  --%>
+			$('#pdfPopup').show();
 	    	var params = getBasicParams();
 	    	var testResult = $("#testResults").val();
 	    	params = params.concat("&testType=");
@@ -222,9 +222,7 @@
 				showPopuploadingIcon();
 				loadContent('printAsPdf', $('#generatePdf'), $('#popup_div'), '', false, true);
 			} else {
-				$('#popupPage').modal('hide');
-				var params = getBasicParams();
-				progressPopupAsSecPopup(okUrl, '<%= appId %>', '<%= FrameworkConstants.LOAD %>', $("#generateBuildForm"), params);
+				mandatoryValidation(okUrl, $("#generateBuildForm"), '', 'load-test', 'load-test', '<%= FrameworkConstants.LOAD %>', '<%= appId %>');
 			}
 		}		
 		

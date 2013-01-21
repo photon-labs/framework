@@ -44,6 +44,10 @@
 	ProjectInfo projectInfo = (ProjectInfo) session.getAttribute(appId + FrameworkConstants.SESSION_APPINFO);
 	List<WebService> webservices = (List<WebService>)request.getAttribute(FrameworkConstants.REQ_WEBSERVICES);
 	String appDir = (String) request.getAttribute(FrameworkConstants.REQ_OLD_APPDIR);
+	ApplicationInfo webLayerAppInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_WEB_LAYER_APPINFO);
+	boolean hasServer = (Boolean) request.getAttribute(FrameworkConstants.REQ_TECH_HAS_SERVER);
+	boolean hasDb = (Boolean) request.getAttribute(FrameworkConstants.REQ_TECH_HAS_DB);
+	boolean hasWebservice = (Boolean) request.getAttribute(FrameworkConstants.REQ_TECH_HAS_WEBSERVICE);
 	
 	String id = "";
 	String name = "";
@@ -54,6 +58,8 @@
 	String technologyId = "";
 	String technologyVersion = "";
 	String oldAppDirName = "";
+	String embedAppId = "";
+	String appTypeId = "";
 	List<String> selectedWebservices = null;
 	List<ArtifactGroupInfo> pilotServers = null;
 	List<ArtifactGroupInfo> pilotDatabases = null;
@@ -70,8 +76,10 @@
 		oldAppDirName = selectedInfo.getAppDirName();
 		description = selectedInfo.getDescription();
 		version = selectedInfo.getVersion();
+		embedAppId = selectedInfo.getEmbedAppId();
+		appTypeId = selectedInfo.getTechInfo().getAppTypeId();
 		if (selectedInfo.getPilotInfo() != null) {
-		pilotInfo = selectedInfo.getPilotInfo().getId();
+			pilotInfo = selectedInfo.getPilotInfo().getId();
 		}
 		
 		if (selectedInfo.getSelectedWebservices() != null) {
@@ -118,12 +126,12 @@
 		<!--  Code Ends -->
 	         
 		<!--  AppDirectory Starts -->
-		<div class="control-group">
+		<div class="control-group" id="appDirControl">
 		    <label class="accordion-control-label labelbold"><s:text name='lbl.AppDir'/></label>
 		    <div class="controls">
 				 <input class="input-xlarge" id="appDir" name="appDir" maxlength="30" title="<s:text name="title.30.chars"/>"
 		            type="text"  value ="<%= oldAppDirName %>" autofocus="autofocus" placeholder="<s:text name="label.name.placeholder"/>" />
-		        <span class="help-inline" id="nameErrMsg">
+		        <span class="help-inline" id="appDirError">
 		           
 		        </span>
 		    </div>
@@ -142,12 +150,13 @@
 		<!--  Description Ends -->
 		
 		<!--  Version Starts -->
-		<div class="control-group">
-		    <label class="accordion-control-label labelbold"><s:text name='lbl.version'/></label>
+		<div class="control-group" id="versionControl">
+		    <label class="accordion-control-label labelbold"><span class="red">*</span>&nbsp;<s:text name='lbl.version'/></label>
 		    <div class="controls">
 				<input class="input-xlarge" id="applicationVersion" placeholder="<s:text name="place.hldr.app.edit.version"/>"
 					name="applicationVersion" maxlength="20" title="<s:text name="title.20.chars"/>"
 					type="text"  value ="<%= StringUtils.isNotEmpty(version) ? version : "" %>"/>
+					<span class="help-inline" id="applicationVersionError"></span>
 		    </div>
 		</div>
 		<!--  Version Ends -->
@@ -167,193 +176,196 @@
 		<!-- Technology version ends -->
 		
 		<!-- pilot project start -->
-		<div class="control-group">
-			<label class="accordion-control-label labelbold"><s:text name='lbl.pilot.project'/></label>
-			<div class="controls">
-				<select class="input-xlarge appinfoTech" name="pilotProject" onchange="showPilotProjectInfo(this);">
-					<option value="" selected disabled><s:text name='lbl.default.opt.select.pilot'/></option>
-						<%
-	                        if (CollectionUtils.isNotEmpty(pilotProjects)) {
+		<% 
+		  	if (CollectionUtils.isNotEmpty(pilotProjects)) {
+		%>
+			<div class="control-group">
+				<label class="accordion-control-label labelbold"><s:text name='lbl.pilot.project'/></label>
+				<div class="controls">
+					<select class="input-xlarge appinfoTech" name="pilotProject" onchange="showPilotProjectInfo(this);">
+						<option value="" selected disabled><s:text name='lbl.default.opt.select.pilot'/></option>
+							<%
 								for (ApplicationInfo appInfo : pilotProjects) {
 									String selectedStr = "";
 									if (appInfo.getId().equals(pilotInfo)) {
 										selectedStr = "selected";
 									}
-	                    %>
-                   					<option value = "<%=appInfo.getId() %>" <%= selectedStr %>><%=appInfo.getName() %></option>
-						<% 	 
-								}
-							}
-						%> 
-				</select>
+		                    %>
+	                   					<option value = "<%= appInfo.getId() %>" <%= selectedStr %>><%= appInfo.getName() %></option>
+							<% 	 
+									}
+							%> 
+					</select>
+				</div>
 			</div>
-		</div>
+		<% 
+			}
+		%>
 		<!-- pilot project ends -->
+		
+		<!-- Technology version start -->
+		<%
+			if (webLayerAppInfo != null) {
+			    String checkedStr = "";
+			    if (webLayerAppInfo.getId().equals(embedAppId)) {
+			        checkedStr = "checked";
+			    }
+		%>
+			<div class="control-group">
+				<label class="accordion-control-label labelbold"><s:text name='lbl.embed'/></label>
+				<div class="controls">
+					<input type="checkbox" name="embedAppId" value="<%= webLayerAppInfo.getId() %>" <%= checkedStr %>/>
+					<%= webLayerAppInfo.getName() %>
+				</div>
+			</div>
+		<% } %>
+		<!-- Technology version ends -->
 		
 		<!-- servers start -->
 		<%
-		  String checkedServerStr = "";
-		  if(selectedServers != null){
-			  checkedServerStr = "checked";
-		  } 
+			if (hasServer) {
+				String checkedServerStr = "";
+			  	if (CollectionUtils.isNotEmpty(selectedServers)) {
+					checkedServerStr = "checked";
+			  	} 
 		%> 
-		
-		<div class="theme_accordion_container">
-			<section class="accordion_panel_wid">
-				<div class="accordion_panel_inner">
-					<section class="lft_menus_container">
-						<span class="siteaccordion closereg" id="serverLayerControl" onclick="accordionClick(this, $('input[value=serverLayer]'));">
-							<span>
-								<input type="checkbox" id="checkAll1" class="accordianChkBox" name="layer" value="serverLayer" <%= checkedServerStr %>/>
-								<a class="vAlignSub"><s:text name='lbl.servers'/></a>
-							</span>
-						</span>
-						<div class="mfbox siteinnertooltiptxt hideContent">
-							<table class="table_for_downloadInfos table_borderForDownloadInfos" align="center">
-								<thead class="header-background">
-									<tr class="noBorder">
-										<th class="noBorder"><s:text name='lbl.servers'/></th>
-										<th class="noBorder"><s:text name='lbl.version'/></th>
-										<th></th>
-										<th></th>
-										<th></th>
-									</tr>
-								</thead>
-								<tbody id="propTempTbody">
-									<%-- <tr class="noBorder 1_serverdynamicadd">
-										<td class="noBorder">
-											<select class="input-medium" id="1_server" name="server" value=""
-												onchange="getVersions($('#1_server'), $('#1_serverVersion'));">
-											</select>
-										</td>
-										<td class="noBorder">
-											<div class="multilistVersion-scroller " id="1_serverVersion" style="height: 51px; color: #333333;">
-												<s:text name='lbl.default.opt.select.version'/>
-							                </div>
-										</td>
-										<td class="noBorder">
-										  	<a>
-										  		<img class="add imagealign" src="images/icons/add_icon.png" onclick="addServer(this);">
-								  			</a>
-										</td>
-									</tr> --%>
-								</tbody>
-							</table>
+				<div class="theme_accordion_container" id="serverControl">
+					<section class="accordion_panel_wid">
+						<div class="accordion_panel_inner">
+							<section class="lft_menus_container">
+								<span class="siteaccordion closereg" id="serverLayerControl" onclick="accordionClick(this, $('input[value=serverLayer]'));">
+									<span>
+										<input type="checkbox" id="checkAll1" class="accordianChkBox" name="layer" value="serverLayer" <%= checkedServerStr %>/>
+										<a class="vAlignSub"><s:text name='lbl.servers'/></a>
+									</span>
+									<p id="serverError" class="accordion-error-txt errorNotification"></p>
+								</span>
+								
+								<div class="mfbox siteinnertooltiptxt hideContent" id="technologyControl">
+									<table class="table_for_downloadInfos table_borderForDownloadInfos" align="center">
+										<thead class="header-background">
+											<tr class="noBorder">
+												<th class="noBorder"><s:text name='lbl.servers'/></th>
+												<th class="noBorder"><s:text name='lbl.version'/></th>
+												<th></th>
+												<th></th>
+												<th></th>
+											</tr>
+										</thead>
+										<tbody id="propTempTbody">
+											
+										</tbody>
+									</table>
+								</div>
+							</section>  
 						</div>
-					</section>  
+					</section>
 				</div>
-			</section>
-		</div>
-		
+		<%
+			}
+		%>
 		<!-- servers ends -->
 		
 		<!-- databases start -->
-		<% 
-		String checkedDatabaseStr = "";
-		if(selectedDatabases != null){
-			checkedDatabaseStr = "checked";
-		}
-			%>
-		<div class="theme_accordion_container">
-			<section class="accordion_panel_wid">
-				<div class="accordion_panel_inner">
-					<section class="lft_menus_container">
-						<span class="siteaccordion closereg" id="databaseLayerControl" onclick="accordionClick(this, $('input[value=databaseLayer]'));">
-							<span>
-								<input type="checkbox" id="checkAll2" class="accordianChkBox" name="layer" value="databaseLayer" <%= checkedDatabaseStr %>/>
-								<a class="vAlignSub"><s:text name='lbl.database'/></a>
-							</span>
-						</span>
-						<div class="mfbox siteinnertooltiptxt hideContent">
-							<table class="table_for_downloadInfos table_borderForDownloadInfos"  align="center">
-									<thead class ="header-background">
-										<tr >
-											<th class="noBorder"><s:text name='lbl.database'/></th>
-											<th class="noBorder"><s:text name='lbl.version'/></th>
-											<th></th>
-											<th></th>
-											<th></th>
-										</tr>
-									</thead>
-									<tbody id="propTempTbodyDatabase">
-										<%-- <tr class="noBorder 1__databasedynamicadd">
-											<td class="noBorder">
-												<select class="input-medium" id="1_database" name="database" value=""
-													onchange="getVersions($('#1_database'), $('#1_dbVersion'));">
-												</select>
-											</td>
-											<td class="noBorder">
-												<div class="multilistVersion-scroller " id="1_dbVersion" style="height: 51px; color: #333333;">
-													<s:text name='lbl.default.opt.select.version'/>
-								                </div>
-											</td>
-											<td class="noBorder">
-											  	<a>
-											  		<img class="add imagealign" src="images/icons/add_icon.png" onclick="addDatabase(this);">
-									  			</a>
-											</td>
-										</tr> --%>
-									</tbody>
-							</table>
+		<%
+			if (hasDb) {
+				String checkedDatabaseStr = "";
+				if (CollectionUtils.isNotEmpty(selectedDatabases)) {
+					checkedDatabaseStr = "checked";
+				}
+		%>
+				<div class="theme_accordion_container" id="databaseControl">
+					<section class="accordion_panel_wid">
+						<div class="accordion_panel_inner">
+							<section class="lft_menus_container">
+								<span class="siteaccordion closereg" id="databaseLayerControl" onclick="accordionClick(this, $('input[value=databaseLayer]'));">
+									<span>
+										<input type="checkbox" id="checkAll2" class="accordianChkBox" name="layer" value="databaseLayer" <%= checkedDatabaseStr %>/>
+										<a class="vAlignSub"><s:text name='lbl.database'/></a>
+									</span>
+									<p id="databaseError" class="accordion-error-txt errorNotification"></p> 
+								</span>
+								<div class="mfbox siteinnertooltiptxt hideContent">
+									<table class="table_for_downloadInfos table_borderForDownloadInfos"  align="center">
+											<thead class ="header-background">
+												<tr >
+													<th class="noBorder"><s:text name='lbl.database'/></th>
+													<th class="noBorder"><s:text name='lbl.version'/></th>
+													<th></th>
+													<th></th>
+													<th></th>
+												</tr>
+											</thead>
+											<tbody id="propTempTbodyDatabase">
+												
+											</tbody>
+									</table>
+								</div>
+							</section>  
 						</div>
-					</section>  
+					</section>
 				</div>
-			</section>
-		</div>
+		<%
+			}
+		%>
 		<!-- databases ends -->
 		
 		<!-- webservice start -->
 		<% 
-		String checkedWebserviceStr = "";
-		if(selectedWebservices != null){
-			checkedWebserviceStr = "checked";
-		}
-			%>
-		<div class="theme_accordion_container">
-			<section class="accordion_panel_wid" >
-				<div class="accordion_panel_inner">
-					<section class="lft_menus_container">
-						<span class="siteaccordion closereg" id="webserviceLayerControl" onclick="accordionClick(this, $('input[value=webserviceLayer]'));">
-							<span>
-								<input type="checkbox" id="checkAll3" class="accordianChkBox" name="layer" value="webserviceLayer" <%= checkedWebserviceStr %>/>
-								<a class="vAlignSub"><s:text name='lbl.webservice'/></a>
-							</span>
-						</span>
-						<div class="mfbox siteinnertooltiptxt hideContent">
-							<div class="control-group autoWidthForWebservice">
-					            <div class="controls typeFields">
-						                <div class="multilist-scroller multiselct multiselectForWebservice">
-							                <ul>
-							                    <%
-							                        if (CollectionUtils.isNotEmpty(webservices)) {
-					   									for (WebService webservice : webservices) {
-					   										String selectedStr= "";
-					   										 if(selectedWebservices != null){
-					   											for(String string : selectedWebservices){
-					   												if (webservice.getId().equals(string)) {
-					   													selectedStr = "checked";
-					   												} 
-					   											}
-					   										 }
-							                    %>
-						                   			<li>
-														<input type="checkbox" name="webservice" value="<%= webservice.getId() %>" <%= selectedStr%>
-															class="check techCheck"><%= webservice.getName() %>
-													</li>
-												<% 	 
+			if(hasWebservice) {
+				String checkedWebserviceStr = "";
+				if (CollectionUtils.isNotEmpty(selectedWebservices)) {
+					checkedWebserviceStr = "checked";
+				}
+		%>
+				<div class="theme_accordion_container">
+					<section class="accordion_panel_wid" >
+						<div class="accordion_panel_inner">
+							<section class="lft_menus_container">
+								<span class="siteaccordion closereg" id="webserviceLayerControl" onclick="accordionClick(this, $('input[value=webserviceLayer]'));">
+									<span>
+										<input type="checkbox" id="checkAll3" class="accordianChkBox" name="layer" value="webserviceLayer" <%= checkedWebserviceStr %>/>
+										<a class="vAlignSub"><s:text name='lbl.webservice'/></a>
+									</span>
+								</span>
+								<div class="mfbox siteinnertooltiptxt hideContent">
+									<div class="control-group autoWidthForWebservice">
+							            <div class="controls typeFields">
+							                <div class="multilist-scroller multiselct multiselectForWebservice">
+								                <ul>
+								                    <%
+								                        if (CollectionUtils.isNotEmpty(webservices)) {
+						   									for (WebService webservice : webservices) {
+						   										String selectedStr= "";
+						   										if (CollectionUtils.isNotEmpty(selectedWebservices)) {
+						   											for (String string : selectedWebservices) {
+						   												if (webservice.getId().equals(string)) {
+						   													selectedStr = "checked";
+						   												} 
+						   											}
 																}
+								                    %>
+									                   			<li>
+																	<input type="checkbox" name="webservice" value="<%= webservice.getId() %>" <%= selectedStr%>
+																		class="check techCheck"><%= webservice.getName() %>
+																</li>
+													<% 	 
 															}
-												%> 
-											</ul>
-						                </div>
+														}
+													%> 
+												</ul>
+							                </div>
+										</div>
+							        </div>
+							        <span class="help-inline applyerror"></span>
 								</div>
-				                <span class="help-inline applyerror" id="techError"></span>
-					        </div>
+							</section>  
 						</div>
-					</section>  
+					</section>
 				</div>
-			</section>
-		</div>
+		<%
+			}
+		%>
 		<!-- webservice ends -->
 	                    
 		<!--  Dependecies are loaded -->
@@ -370,10 +382,11 @@
     <!--  Submit and Cancel buttons Ends -->
     
     <!-- Hidden Field -->
-	<%-- <input type="hidden" name="appId" value="<%= id %>"/> --%>
+	<input type="hidden" name="appTypeId" value="<%= appTypeId %>"/>
 	<input type="hidden" name="techId" value="<%= technologyId %>"/>
 	<input type="hidden" name="oldAppDirName" value="<%= oldAppDirName %>"/>
 	<input type="hidden" name="fromTab" value="appInfo">
+	
 </form> 
 <!--  Form Ends -->
     
@@ -456,6 +469,31 @@
 		} else {
 			hideError($("#codeControl"), $("#codeError"));
 		}
+		
+		if (!isBlank(data.applicationVersionError)) {
+			showError($("#versionControl"), $("#applicationVersionError"), data.applicationVersionError);
+		} else {
+			hideError($("#versionControl"), $("#applicationVersionError"));
+		}
+		
+		if (!isBlank(data.appDirError)) {
+			showError($("#appDirControl"), $("#appDirError"), data.appDirError);
+		} else {
+			hideError($("#appDirControl"), $("#appDirError"));
+		}
+        
+        if(!isBlank(data.serverError)) {
+			showError($("#" + $(this).attr("id")), $("#serverError"),'<s:text name='err.serv.ver.missing'/> ' + data.serverName);
+		} else {
+			hideError($("#serverLayerControl") , $("#serverError"));
+		}
+		
+		if(!isBlank(data.databaseError)) {
+			showError($("#" + $(this).attr("id")), $("#databaseError"),'<s:text name='err.db.ver.missing'/> ' + data.databaseName);
+		} else {
+			hideError($("#databaseLayerControl") , $("#databaseError"));
+		}
+       
 	}
 	
 	/* function getPilotProject(obj) {
@@ -599,7 +637,6 @@
 				}
 			}
 		%>
-		
     }
     
     function removeTag(currentTag) {

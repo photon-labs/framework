@@ -2,7 +2,7 @@
   ###
   Framework Web Archive
   
-  Copyright (C) 1999 - 2012 Photon Infotech Inc.
+  Copyright (C) 1999 - 2013 Photon Infotech Inc.
   
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -108,45 +108,11 @@
 		<!-- jquery editable combobox -->
 		<script src="js/jquery.editable.combobox.js"></script>
 		<script src="js/jss.min.js"></script>
-
-		<script type="text/javascript">
-		    $(document).ready(function() {
-		        applyTheme();
-		        
-				$(".styles").click(function() {
-	                 localStorage.clear();
-	                 var value = $(this).attr("rel");
-	                 localStorage["color"]= value;
-	                 applyTheme();
-	            });
-                  
-				// function to show user info in toggle 
-				$('div aside.usersettings div').hide(0);
-				$('div aside.usersettings').click(function() {
-					$('div aside.usersettings div').slideToggle(0);
-				});
-
-				// to show user info on mouse over
-				$('#signOut aside').mouseenter(function() {
-					$("div aside.usersettings div").hide(0);
-					$(this).children("div aside.usersettings div").show(0);
-				}).mouseleave(function() {
-					$("div aside.usersettings div").hide(0);
-				});
-				showLoadingIcon();
-				clickMenu($("a[name='headerMenu']"), $("#container"), $('#formCustomers'));
-				loadContent("home", '', $("#container"), '', '', true);
-				activateMenu($("#home"));
-			});
-		</script>
 	</head>
 	<body>
         <%
-            User userInfo = (User) session.getAttribute(FrameworkConstants.SESSION_USER_INFO);
-            String displayName = "";
-            if (userInfo != null) {
-                displayName = userInfo.getDisplayName();
-            }
+            User user = (User) session.getAttribute(FrameworkConstants.SESSION_USER_INFO);
+            String displayName = user.getDisplayName();
         %>
 		<div class="modal-backdrop fade in popupalign"></div>
 	    
@@ -187,8 +153,8 @@
                                         </li>
                                     </ul>
                                 </li>
-                                <li><a href="#"><s:text name="lbl.hdr.help"/></a></li>
-                                <li><a href="#"><s:text name="lbl.abt.phresco"/></a></li>
+                                <li><a href="#" id="forum" ><s:text name="lbl.hdr.help"/></a></li>
+                                <li><a href="#" id="about" ><s:text name="lbl.abt.phresco"/></a></li>
                                 <li><a href="<s:url action='logout'/>"><s:text name="lbl.signout"/></a></li>
                             </ul>
                         </div>
@@ -253,19 +219,21 @@
 						<div id="customerList" class="control-group customer_name">
 							<s:label key="lbl.customer" cssClass="control-label custom_label labelbold" theme="simple"/>
 							<div class="controls customer_select_div">
-								<select name="customerId" class="customer_listbox">
+								<select id="customerSelect" name="customerSelect" class="customer_listbox">
 					                <%
-					                	User user = (User) session.getAttribute(FrameworkConstants.SESSION_USER_INFO);
-					                    if (user != null) {
-					                    	List<Customer> customers = user.getCustomers();
-					                    	for (Customer customer: customers) {
+				                    	List<Customer> customers = user.getCustomers();
+				                    	for (Customer customer: customers) {
+				                    		String selectedStr= "";
+						            		 if (customer.getName().equalsIgnoreCase(ServiceConstants.DEFAULT_CUSTOMER_NAME)) {
+						            			 selectedStr = "selected";
+						            	 	}
 								    %>
-					                       <option value="<%= customer.getId() %>"><%= customer.getName()%></option>
+					                       <option value="<%= customer.getId() %>"  <%= selectedStr %>><%= customer.getName()%></option>
 									<% 
-								            }
-								        } 
+							            }
 								    %>
 								</select>
+								<input type="hidden" id="customerId" name="customerId" value=""/>
 							</div>
 						</div>
 					</form>
@@ -338,7 +306,7 @@
 		
 		<!-- Footer Starts Here -->
 		<footer>
-			<address class="copyrit">&copy; 2012.Photon Infotech Pvt Ltd. |<a href="http://www.photon.in"> www.photon.in</a></address>
+			<address class="copyrit">&copy; 2013.Photon Infotech Pvt Ltd. |<a href="http://www.photon.in"> www.photon.in</a></address>
 		</footer>
 		<!-- Footer Ends Here -->
 		
@@ -346,6 +314,7 @@
 	    <div id="popupPage" class="modal hide fade">
 			<div class="modal-header">
 				<a class="close" data-dismiss="modal" >&times;</a>
+				<img id="clipboard" class="hideClipBoardImage" title="<s:text name="title.copy.to.clipBoard"/>" src="images/icons/clipboard-copy.png">
 				<h3 id="popupTitle"></h3>
 	    </div>
 			<div class="modal-body" id="popup_div">
@@ -357,9 +326,11 @@
 <%-- 				<a href="#" class="btn btn-primary popupOk" id="" onClick="popupOnOk(this);" ><s:text name='lbl.btn.ok'/></a> --%>
 				<input type="button" class="btn btn-primary popupOk" id="" onClick="popupOnOk(this);" value="<s:text name='lbl.btn.ok'/>" href="#"/>
 <%-- 				<a href="#" class="btn btn-primary popupClose" data-dismiss="modal" id="" onClick="popupOnClose(this);"><s:text name='lbl.btn.close'/></a> --%>
-				<input type="button" class="btn btn-primary popupClose" id=""  onClick="popupOnClose(this);" value="<s:text name='lbl.btn.close'/>" data-dismiss="modal" href="#"/>
+				<input type="button" class="btn btn-primary popupClose" id="" onClick="popupOnClose(this);" value="<s:text name='lbl.btn.close'/>" data-dismiss="modal" href="#"/>
 				<img class="popuploadingIcon" id="popuploadingIcon" src="" />
-				<div id="errMsg" class="envErrMsg"></div>
+				<div id="errMsg" class="envErrMsg yesNoPopupErr"></div>
+				<div id="successMsg" class="envSuccessMsg"></div>
+				<div id="updateMsg" class="updateMsg"></div>
 			</div>
 		</div>
 	    <!-- Popup Ends -->
@@ -392,7 +363,7 @@
 			</div>
 			<div class="modal-footer">
 				<input type="text" class="xlarge javastd hideContent" id="browseSelectedLocation" name="browseLocation"/>
-				<label for="xlInput" class="labelbold compressNameLbl" id="compressNameLbl">
+				<label for="xlInput" class="labelbold compressNameLbl hideContent" id="compressNameLbl">
 					<span class="red">*</span>&nbsp;<s:text name="lbl.compress.name"/>
 				</label>
 				<input type="text" class="hideContent compressNameTextBox" id="compressName" name="compressName"/>
@@ -408,9 +379,10 @@
 	<script type="text/javascript">
 	 $(document).ready(function() {
 		applyTheme();
-		getLogoImgUrl();
+		//getLogoImgUrl();
 		showHideTheme();
-	        
+		var selectedId = "";
+		
 		$(".styles").click(function() {
 			localStorage.clear();
 			var value = $(this).attr("rel");
@@ -437,14 +409,46 @@
 		loadContent("home", '', $("#container"), '', '', true);
 		activateMenu($("#home"));
 				
-		//To get the list of projects based on the selected customer
-    	$('select[name=customerId]').change(function() {
-    		getLogoImgUrl();
-    		showLoadingIcon();
-    		showHideTheme();
-    		loadContent("applications", $('#formCustomers'), $("#container"), '', '', true);
-    	});
+		$('select[name=customerSelect]').ddslick({
+		 	onSelected: function(data) {
+		 		selectedId = data.selectedData.value;
+		 		onSelectCustomer(selectedId);
+		 	}
+		});
 		
+        function onSelectCustomer(selectedId) {
+        	$('#customerId').val(selectedId);
+       		$('a[name="headerMenu"]').each(function() {
+       			if ($(this).hasClass('active')) {
+       				doPageLoad($(this), $('a[name="headerMenu"]'));
+       			}
+       		});
+       			
+       		/* $("a[name='headerMenu']").click(function() {
+       			doPageLoad($(this), $('a[name="headerMenu"]'));
+       		}); */
+        }
+        
+        function doPageLoad(currentObj, allObjects) {
+        	showLoadingIcon();
+        	showHideTheme();
+    		inActivateAllMenu(allObjects);
+    		activateMenu(currentObj);
+    		loadContent(currentObj.attr('id'), $('#formCustomers'), $("#container"), '', '', true);
+   			if(selectedId == "<%= ServiceConstants.DEFAULT_CUSTOMER_NAME %>") {
+   				applyTheme();
+   			} else {
+   				getLogoImgUrl();
+   			}
+        }
+
+		$("#forum").click(function() {
+			loadContent("forum", $('#formCustomers'), $("#container"), '', '', true);
+		});
+		
+		$("#about").click(function() {
+			yesnoPopup('about', 'About Phresco', 'updateAvailable', 'Update Available');
+		});
 	});
 	
 	if ($.browser.safari && $.browser.version == 530.17) {
@@ -452,88 +456,236 @@
 	}
 	
 	function getLogoImgUrl() {
-		var currentCustomerId = $('select[name=customerId]').val();
+		var currentCustomerId = $('input[name=customerId]').val();
 		if (currentCustomerId === "<%= ServiceConstants.DEFAULT_CUSTOMER_NAME %>") {
 			applyTheme();
-			changeColorScheme("#38B865");
 		} else {
+			localStorage["color"] = "theme/photon/css/photon_theme.css";
+			applyTheme();
 			loadContent("fetchLogoImgUrl", $('#formCustomers'), '', '', true, true, 'changeLogo');
 		}
 	}
 
 	function changeLogo(data) {
 		$('#logoImg').attr("src",  "data:image/png;base64," + data.logoImgUrl);
-		$("#brandingColor").val(data.brandingColor);
-		changeColorScheme(data.brandingColor);
+		changeColorScheme(data);
 	}
 	
-	function changeColorScheme(brandingColor) {
+	function changeColorScheme(data) {
+		var brandingColor = data.brandingColor;
+		var bodyBackGroundColor = data.bodyBackGroundColor;
+		var accordionBackGroundColor= data.accordionBackGroundColor;
+		var menuBackGround = data.menuBackGround;
+		var menufontColor = data.menufontColor;
+		var buttonColor = data.buttonColor;
+		var pageHeaderColor = data.pageHeaderColor;
+		var labelColor = data.labelColor;
+		var copyRightColor = data.copyRightColor;
+	
+		var buttonGradientColor = buttonColor;
+		var labelActiveColor = buttonColor;
+		
+		
 		JSS.css({
-			'.openreg': {
-				'background': brandingColor
-			},
-			
-			'.closereg': {
-				'background': brandingColor
-			},
-			
-			'.siteinnertooltiptxt': {
-				'border-color': brandingColor
-			},
-						
-			'.headerInnerTop li a.active label': {
-				'color': brandingColor + " !important"
-			},
-			
-			'.tabs li a.active': {
-				'background': brandingColor + " !important"
-			},
-			
-			'.tabs > li > a:hover': {
-				'background': "none repeat scroll 0 0" + brandingColor
+
+			'.page-header': {
+				'background' : pageHeaderColor                               // Page Header in appinfo page 
 			},
 			
 			'.modal-header': {
-				'background': "none repeat scroll 0 0" + brandingColor
+				'background': "none repeat scroll 0 0" + brandingColor      // Generate pop up header color *
+			},
+			
+			'.headerInnerTop ul': {
+				'background': "none repeat scroll 0 0" + menuBackGround      // menu background color
+			},
+			
+			'.headerInnerTop li a.active label': { 
+				'color': brandingColor + "!important",                          // Active Menu label color in  Appinfo page 
+			},
+			
+			'.headerInnerTop li a label': {
+				'color': labelColor + "! important"            // Inactive Label color in menu tab in appinfo page  
 			},
 
+			'.multilist-scroller ul li': {
+				'color': brandingColor + " ! important"                     // Envirinoment (ex : production) color
+			},
+			
+			'table th, table td' : {
+				'border-bottom' : "1px solid" + brandingColor               // Table border bottom color in Download server, database ,Tools tab *
+			},
+			
+			'.closereg': {
+				'background': brandingColor                                  // project Strip color when closed
+			},
+			
+			'.openreg': {
+				'background': brandingColor                                   //  project Strip color when opened
+			},
+			
 			'.video-title': {
-				'background': "none repeat scroll 0 0" + brandingColor
+				'background': "none repeat scroll 0 0" + brandingColor       // Video Box Title Color in Home Page
 			},
 			
 			'.listindex-active': {
-				'background': "none repeat scroll 0 0" + brandingColor
+				'background': "none repeat scroll 0 0" + brandingColor          // Small video background color in Home page
 			},
 			
 			'.listindex:hover': {
-				'background': "none repeat scroll 0 0" + brandingColor
+				'background': "none repeat scroll 0 0" + brandingColor         // Small video1 background color when Mouse over in Home page
 			},
 			
 			'.listindex': {
-				'color': brandingColor
+				'color': brandingColor                                       // Change the color in List of video 3
 			},
-			
-			'#testmenu li a.active, #testmenu li a:hover': {
-				'background': brandingColor
+
+			'.siteinnertooltiptxt': {
+				'border-color': brandingColor     // border color in download option in server ,database , webservice
 			},
 			
 			'#indicator': {
-				'background': brandingColor
+				'background': brandingColor    // progress bar color
 			},
 			
 			'#progressbar': {
-				'border-color': brandingColor
+				'border-color': brandingColor   // progress bar boder color
 			},
 			
 			'.userInfo ul li a': {
-				'color': brandingColor
+				'color': brandingColor    //  Color when going for Theme change in about phresco
+			},
+
+			'li a.active label': {
+				'color': brandingColor + "! important"     // Active menu label color in Appinfo Left side
+			},
+
+			'label : hover': {
+				'color': brandingColor + "! important"           // change the label color when the mouse over label
+			},
+			
+			'.video-js-box .vjs-controls > div' : {
+				'background': "none repeat scroll 0 0" + brandingColor  // Video Bottom menu color
+			},
+			
+			'.table_border' : {
+				'border' : "1px solid #000000"           // table border color in project 
+			},
+			
+			 '.tabs li a.active': {
+					'background': "none repeat scroll 0 0 " + bodyBackGroundColor  // Left Menus color Active color ** 
+			},
+			 
+			'.tabs li a.inactive:hover label ': {
+				'background' : bodyBackGroundColor + "! important",   // label color when mouse over in left side menu
+				'color': brandingColor + "! important",
+			},
+			
+			'#testmenu li a.active, #testmenu li a:hover': {
+				'background': "none repeat scroll 0 0" +  bodyBackGroundColor // change the Left side menu background color in Quality tab selection ex: click unit ,functional , performance
+			},
+			
+			'#testmenu li a': {
+				'background': "none repeat scroll 0 0" +  bodyBackGroundColor // change the Left side menu background color in Quality tab selection ex: click unit ,functional , performance
+			},
+			
+			'#testmenu li:first-child': {
+				'border-top' : "1px solid" + bodyBackGroundColor              // change the left side menu background upper side border color under Quality tab  
+			},
+			
+			'.tabs > li > a, .pills > li > a': {
+				'background' : bodyBackGroundColor,                   // left side menu background 
+			},
+			
+			'.tabs > li > a > label:hover': {
+				'background' : bodyBackGroundColor + "! important",   // left side menu background when mouse over
+				'color': brandingColor + "! important",
+			},
+			
+			'.tabs li, .pills > li': {
+				'border-bottom': "1px solid" +  bodyBackGroundColor  // left side menu  border-bottom color when mouse over
+			},
+			
+			'body': {
+				'background': bodyBackGroundColor,   // body background color
+			},
+			
+			'.navTopBorder .mfbox' : {
+				'border': "1px solid" + brandingColor     // border color of Web service in appinfo page * (accordionBackGroundColor)
+			},
+			
+			'.multilistVersion-scroller' : {
+				'border': "1px solid" + pageHeaderColor     // In appinfo Server page Version border color * (accordionBackGroundColor )
+			},
+			
+			'.mfbox .header-background': {
+				'background' :  pageHeaderColor      // background color for server, database, webservice * (accordionBackGroundColor)
+			},
+			
+			'.multiselectForWebservice' : {
+				'background' : accordionBackGroundColor            // change the background color when selecting webservice in appinfo page * (accordionBackGroundColor) 
+			},
+			
+			'.custom_features_wrapper_right .theme_accordion_container div div': {    // Feature border color when more than omne feature selected * (accordionBackGroundColor)
+				'border-bottom' : "1px solid" + brandingColor
+			},
+			
+			'.download_tbl_header': {
+				'background': accordionBackGroundColor                            // table header background color in when viewing  ex: server in download tab 
+			},
+			
+			'.download_tbl': {
+				'border' : "1px solid" + accordionBackGroundColor                    // border color in when viewing  ex: server in download tab 
+			},
+			'.tblheader' : {
+				'background':  pageHeaderColor                           // table background color  * (accordionBackGroundColor)
+			},
+			
+			'.copyrit a ': {
+				'color': copyRightColor                                  // Copy right color
+			},
+			
+			'.copyrit a:hover': {
+				'color': copyRightColor                                 // Copy right color when mouse over
+			},
+			
+			'.custom_features_wrapper_right .theme_accordion_container div div a' : {   // Feature Deletion cross mark color
+				'color': buttonColor
+			},
+			
+			'.btn-primary': {                                        // button Color                         
+				'background': buttonColor , /* Old browsers */
+				'background': "-moz-linear-gradient(top, "+buttonColor +" 0%, "+buttonGradientColor+" 100%)" ,/* FF3.6+ */
+				'background': "-webkit-gradient(linear, left top, left bottom, color-stop(0%,"+buttonColor +"), color-stop(100%,"+buttonGradientColor+"))", /* Chrome,Safari4+ */
+				'background': "-webkit-linear-gradient(top, "+buttonColor +" 0%,"+buttonGradientColor+" 100%)", /* Chrome10+,Safari5.1+ */
+				'background': "-o-linear-gradient(top, "+buttonColor +" 0%,"+buttonGradientColor+" 100%)", /* Opera 11.10+ */
+				'background': "-ms-linear-gradient(top, "+buttonColor +" 0%,"+buttonGradientColor+" 100%)", /* IE10+ */
+				'background': "linear-gradient(to bottom, "+buttonColor +" 0%,"+buttonGradientColor+" 100%)", /* W3C */
+				'filter': "progid:DXImageTransform.Microsoft.gradient( startColorstr='"+buttonColor +"', endColorstr='"+buttonGradientColor+"',GradientType=0 )" /* IE6-9 */
+			},
+			
+			'.btn-primary:hover': {
+				'background': "none repeat scroll 0 0" + buttonColor          // button color when mouse over
+			},
+
+			'label': {
+				'color': labelActiveColor + "! important"         // label color 
+			},
+			
+			'label, input, button, select, textarea' : {
+				'font-weight': "bold"                                  // label color weight in the Left side Menu options
+			},
+			
+			'div.vjs-big-play-button:hover' : {
+				'background' : "none repeat scroll 0 0" + brandingColor  // Change The video Run button color when mouse over
 			}
+			
 		});
 	}
 	
 	//To hide themes for customers other than photon
 	function showHideTheme() {
-		var customerId = $('select[name=customerId]').val();
+		var customerId = $('input[name=customerId]').val();
 		if (customerId != "<%= ServiceConstants.DEFAULT_CUSTOMER_NAME %>") {
 			$('#themeContainer').hide();
 		} else if (customerId === "<%= ServiceConstants.DEFAULT_CUSTOMER_NAME %>"){
