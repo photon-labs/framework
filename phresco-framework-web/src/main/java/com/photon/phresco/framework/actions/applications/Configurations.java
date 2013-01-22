@@ -712,7 +712,8 @@ public class Configurations extends FrameworkBaseAction {
 			}
     		
     		if (CollectionUtils.isNotEmpty(deletedEnvs)) {
-    			msg = msg + " " + getText(ACT_SUCC_ENV_DELETE, Collections.singletonList(deletedEnvs.get(0)));
+    			String deletedEnv = StringUtils.join(deletedEnvs.toArray(), ", ");
+    			msg = msg + " " + getText(ACT_SUCC_ENV_DELETE, Collections.singletonList(deletedEnv));
     		}
     		
     		if (CollectionUtils.isNotEmpty(getSelectedConfigurations())) {//To delete the selected configurations
@@ -1314,16 +1315,18 @@ public class Configurations extends FrameworkBaseAction {
     			if(appInfo != null && CollectionUtils.isNotEmpty(appInfo.getSelectedServers())) {
 	    			List<ArtifactGroupInfo> selectedServers = appInfo.getSelectedServers();
 	    			for (ArtifactGroupInfo artifactGroupInfos : selectedServers) {
-	    				List<String> artifactInfoIds = artifactGroupInfos.getArtifactInfoIds();
+	    				List<String> appInfoArtifactInfoIds = artifactGroupInfos.getArtifactInfoIds();
+	    				System.out.println("appInfoArtifactInfoIds:::" + appInfoArtifactInfoIds);
 	    				ArtifactGroup artifactGroupInfo = getServiceManager().getArtifactGroupInfo(artifactGroupInfos.getArtifactGroupId());
 	    				List<ArtifactInfo> artifactInfos = artifactGroupInfo.getVersions();
 	    				for (ArtifactInfo artifactInfo : artifactInfos) {
-							if (artifactInfoIds.contains(artifactInfo.getId())) {
+							if (appInfoArtifactInfoIds.contains(artifactInfo.getId())) {
 								versions.add(artifactInfo.getVersion());
 							}
 						}
 					}
 				}
+    			System.out.println("versions in ser ver-------" + versions);
     		}
     		
     		if (DATABASE.equals(getSelectedType())) {
