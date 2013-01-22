@@ -21,6 +21,7 @@
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.util.ArrayList"%>
+<%@ page import="java.util.Arrays"%>
 <%@ page import="java.util.List"%>
 <%@ page import="java.util.Properties"%>
 <%@ page import="java.util.Enumeration"%>
@@ -215,7 +216,7 @@
 						firstRow = false;
 					}
 				}
-	        } else if (CollectionUtils.isNotEmpty(possibleValues)) {
+	        } else if (!propertyTemplate.isMultiple() && CollectionUtils.isNotEmpty(possibleValues)) {
 	        	pm.setObjectValue(possibleValues);
 	        	List<String> alreadySelectedValue = new ArrayList<String>();
 	        	alreadySelectedValue.add(value);
@@ -229,7 +230,14 @@
 	        	pm.setValue(value);
 	            StringTemplate inputControl = FrameworkUtil.constructCheckBoxElement(pm);
 				sb.append(inputControl);
-	        } else {
+	        } else if (propertyTemplate.isMultiple() && CollectionUtils.isNotEmpty(possibleValues)) {
+	        	List<String> selectedValList = Arrays.asList(value.split(FrameworkConstants.CSV_PATTERN));	
+	        	pm.setSelectedValues(selectedValList);
+	        	pm.setMultiple(true);
+	        	pm.setObjectValue(possibleValues);
+	        	StringTemplate multiSelectBox = FrameworkUtil.constructConfigMultiSelectBox(pm);
+	        	sb.append(multiSelectBox);
+	        }  else {
 	        	pm.setInputType(propertyTemplate.getType());
 	        	pm.setPlaceHolder(propertyTemplate.getHelpText());
 	        	pm.setValue(value);
@@ -244,7 +252,7 @@
 						if(txtBoxName != '<%= FrameworkConstants.EMAIL_ID %>') {
 							validateInput(value, type, txtBoxName);
 						}
-					}); 
+					});
 				</script>	
 		<%
 			}
@@ -539,5 +547,16 @@
 		var url = $(obj).attr("id");
 		var params = getBasicParams();
 		progressPopupAsSecPopup(url, '<%= appId %>', url, $("#generateBuildForm"), params);
+	}
+	
+	//To update the hidden field for the config property whose type is multiple
+	function updateHdnFieldForMultType(obj) {
+		var key = $(obj).attr("class");
+		var hiddenFieldValue = "";
+		$('input[class="'+ key +'"]:checked').each(function() {
+			hiddenFieldValue = $(this).val() + ',' + hiddenFieldValue;
+		});
+		hiddenFieldValue = hiddenFieldValue.substring(0, hiddenFieldValue.length - 1);
+		$('input[name="'+ key +'"]').val(hiddenFieldValue);
 	}
 </script>

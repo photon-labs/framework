@@ -46,7 +46,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Element;
 
-import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.ArtifactInfo;
@@ -868,6 +867,26 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	}
     }
     
+    public static StringTemplate constructConfigMultiSelectBox(ParameterModel pm) {
+    	StringTemplate controlGroupElement = new StringTemplate(getControlGroupTemplate());
+    	controlGroupElement.setAttribute("ctrlGrpId", pm.getControlGroupId());
+    	
+    	StringTemplate lableElmnt = constructLabelElement(pm.isMandatory(), pm.getLableClass(), pm.getLableText());
+    	
+    	StringTemplate multiSelectElement = new StringTemplate(getConfigMultiSelectTemplate());
+    	multiSelectElement.setAttribute("cssClass", pm.getCssClass());
+    	multiSelectElement.setAttribute("id", pm.getId());
+    	multiSelectElement.setAttribute("name", pm.getId());
+    	
+    	StringBuilder multiSelectOptions = constructConfigMultiSelectOptions(pm.getName(), pm.getObjectValue(), pm.getSelectedValues(), pm.getId());
+    	multiSelectElement.setAttribute("multiSelectOptions", multiSelectOptions);
+    	multiSelectElement.setAttribute("ctrlsId", pm.getControlId());
+    	controlGroupElement.setAttribute("lable", lableElmnt);
+    	controlGroupElement.setAttribute("controls", multiSelectElement);
+    	
+    	return controlGroupElement;
+    }
+    
     public static StringTemplate constructActionsElement(ParameterModel pm) {
         StringTemplate controlGroupElement = new StringTemplate(getControlGroupTemplate());
         controlGroupElement.setAttribute("ctrlGrpId", pm.getControlGroupId());
@@ -1015,6 +1034,28 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 
     	return builder;
     }
+    
+    private static StringBuilder constructConfigMultiSelectOptions(String name, List<? extends Object> values, List<String> selectedValues, String key) {
+    	StringBuilder builder = new StringBuilder();
+    	
+    	String className = key;
+    	String checkedStr = "";
+    	for (Object value : values) {
+    		String optionValue = getValue(value);
+    		if (selectedValues != null && selectedValues.contains(optionValue)) {
+    			checkedStr = "checked";
+    		} else {
+    			checkedStr = "";
+    		}
+    		String additionalParam = getAdditionalParam(value, "");
+    		
+    		builder.append("<li><input type='checkbox' additionalParam=\"dependency="+ additionalParam + "\" onclick='updateHdnFieldForMultType(this)' class=\""+ className + "\" value=\"");
+    		builder.append(optionValue + "\" " + checkedStr + ">" + optionValue + "</li>");
+    	}
+
+    	return builder;
+    }
+    
     
 	/**
 	 * @param value
@@ -1266,6 +1307,17 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	.append("<div class='multilist-scroller multiselect multiSelHeight $class$' id=\"$id$\"")
     	.append(" additionalParam=\"dependency=$additionalParam$\"><ul>$multiSelectOptions$</ul>")
     	.append("</div><span class='help-inline' id=\"$ctrlsId$\"></span></div></div>");
+    	
+    	return sb.toString();
+    }
+    
+    private static String getConfigMultiSelectTemplate() {
+    	StringBuilder sb = new StringBuilder()
+    	.append("<div class='controls'><div class='multiSelectBorder'>")
+    	.append("<div class='multilist-scroller multiselect multiSelHeight $class$' id=\"$id$\"")
+    	.append(" additionalParam=\"dependency=$additionalParam$\"><ul>$multiSelectOptions$</ul>")
+    	.append("</div><span class='help-inline' id=\"$ctrlsId$\"></span></div>")
+    	.append("<input type='hidden' value='' name=\"$name$\"></div>");
     	
     	return sb.toString();
     }
