@@ -67,6 +67,7 @@ public interface FrameworkConstants {
 	String CONFIG_TYPE_COMPONENTS = "Components";
     int JOB_STATUS_NOTOK = -1;
     String FOLDER_DOT_PHRESCO = ".phresco";
+    String RUNAGNSRC_INFO_FILE = "runagainstsource.info";
     String PHRESCO_HOME = "PHRESCO_HOME";
     String USER_HOME = "user.home";
     String PROJECTS_HOME = "projects";
@@ -306,6 +307,7 @@ public interface FrameworkConstants {
 	String REQ_FUNCTEST_SELENIUM_TOOL = "functionalTestSeleniumTool";
 	String SELENIUM_GRID = "grid";
 	String SELENIUM_WEBDRIVER = "webdriver";
+	String SELENIUM_UIAUTOMATION = "UIAutomation";
 	String BUILD = "build";
     String DEPLOY = "deploy";
     String BUILD_INFO_ENVS = "buildInfoEnvs";
@@ -1788,14 +1790,13 @@ public interface FrameworkConstants {
 	     * I18N Keys Constants
 	     * String ACT_ERR_XXX
 	     *****************************/
-		
 		String ACT_ERR_CONFIG_CLONE_EXISTS = "err.config.clone.exists";
 		String ACT_ERR_CONFIG_DEFAULT_ENV = "err.config.default.env";
+		String ACT_ERR_RUNAGNSRC_IN_PROGRESS = "err.runagnsrc.in.progress";
 		
 		/**
 		 * Dynamic Parameter Constants
 		 */
-		
 		String TYPE_STRING = "string";
 		String TYPE_HIDDEN = "hidden";
 		String TYPE_PASSWORD  = "password";
@@ -1819,7 +1820,6 @@ public interface FrameworkConstants {
 		/**
 		 * Constants for Changing Logo 
 		 */
-		
 		String IMAGES	 = "images";
 		String CUSTOMERS = "customers";
 		String PNG       = ".png";
@@ -1828,11 +1828,7 @@ public interface FrameworkConstants {
 		/**
 		 * Constants for Error in Changing Logo and Theme 
 		 */
-		
 		String EXCEPTION_FETCHLOGO_IMAGE = "changecustomer.exception.message.fetchlogo";
 		String EXCEPTION_FRAMEWORK_THEME = "changecustomer.exception.message.themechange";
 		String EXCEPTION_FRAMEWORKSTREAM = "changecustomer.exception.message.stream";
-		
-		
-		
 }

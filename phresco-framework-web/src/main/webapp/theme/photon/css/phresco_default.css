@@ -3822,6 +3822,16 @@ div.submit_input {
 	margin-left: 0px;
 }
 
+.errorMessage li {
+    list-style: none;
+    color: #000000;
+    font-weight: bold;
+}
+
+.errorMessage {
+	margin-left: 0px;
+}
+
 .twipsy.bootstrap-right .twipsy-arrow {
 	top: 50%;
 	left: 0;
@@ -5769,6 +5779,16 @@ input[class*='chckBxAlign'] {
 }
 
 #successmsg {
+	height: 16px;
+    margin-left: 300px;
+    margin-top: -34px;
+    padding: 6px;
+    width: 50%;
+    text-align: center;
+    margin-bottom: 0px;
+}
+
+#errormsg {
 	height: 16px;
     margin-left: 300px;
     margin-top: -34px;
