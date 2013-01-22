@@ -1316,7 +1316,6 @@ public class Configurations extends FrameworkBaseAction {
 	    			List<ArtifactGroupInfo> selectedServers = appInfo.getSelectedServers();
 	    			for (ArtifactGroupInfo artifactGroupInfos : selectedServers) {
 	    				List<String> appInfoArtifactInfoIds = artifactGroupInfos.getArtifactInfoIds();
-	    				System.out.println("appInfoArtifactInfoIds:::" + appInfoArtifactInfoIds);
 	    				ArtifactGroup artifactGroupInfo = getServiceManager().getArtifactGroupInfo(artifactGroupInfos.getArtifactGroupId());
 	    				List<ArtifactInfo> artifactInfos = artifactGroupInfo.getVersions();
 	    				for (ArtifactInfo artifactInfo : artifactInfos) {
@@ -1326,7 +1325,6 @@ public class Configurations extends FrameworkBaseAction {
 						}
 					}
 				}
-    			System.out.println("versions in ser ver-------" + versions);
     		}
     		
     		if (DATABASE.equals(getSelectedType())) {
