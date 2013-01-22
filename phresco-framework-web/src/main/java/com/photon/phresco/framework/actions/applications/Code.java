@@ -300,7 +300,7 @@ public class Code extends DynamicParameterAction implements Constants {
             MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_VALIDATE_CODE)));
             List<Parameter> parameters = getMojoParameters(mojo, PHASE_VALIDATE_CODE);
             
-            setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap);
+            setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap, PHASE_VALIDATE_CODE);
             setSessionAttribute(appInfo.getId() + PHASE_VALIDATE_CODE + SESSION_WATCHER_MAP, watcherMap);
             setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
             setReqAttribute(REQ_GOAL, PHASE_VALIDATE_CODE);

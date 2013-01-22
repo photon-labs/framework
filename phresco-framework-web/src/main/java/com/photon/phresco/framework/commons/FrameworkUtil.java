@@ -46,6 +46,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Element;
 
+import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.ArtifactInfo;
@@ -1248,8 +1249,8 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	.append("<table align='center'>")
     	.append("<thead class='header-background'>")
     	.append("<tr class='borderForLoad'>")
-    	.append("<th class='borderForLoad'>$keyMandatory$$keyLabel$</th>")
-    	.append("<th class='borderForLoad'>$valueMandatory$$valueLabel$</th><th></th><th></th></tr></thead>")
+    	.append("<th class='borderForLoad mapHeading'>$keyMandatory$$keyLabel$</th>")
+    	.append("<th class='borderForLoad mapHeading'>$valueMandatory$$valueLabel$</th><th></th><th></th></tr></thead>")
     	.append("<tbody id='propTempTbodyForHeader'>")
     	.append("<tr class='borderForLoad'>")
     	.append("$mapControls$")

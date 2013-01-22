@@ -254,7 +254,7 @@ public class Build extends DynamicParameterAction implements Constants {
             MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_PACKAGE)));
             List<Parameter> parameters = getMojoParameters(mojo, PHASE_PACKAGE);
             
-            setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap);
+            setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap, PHASE_PACKAGE);
             setSessionAttribute(appInfo.getId() + PHASE_PACKAGE + SESSION_WATCHER_MAP, watcherMap);
             setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
             setReqAttribute(REQ_GOAL, PHASE_PACKAGE);
@@ -287,7 +287,7 @@ public class Build extends DynamicParameterAction implements Constants {
             MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_RUNGAINST_SRC_START)));
             List<Parameter> parameters = getMojoParameters(mojo, PHASE_RUNGAINST_SRC_START);
 
-            setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap);
+            setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap, PHASE_RUNGAINST_SRC_START);
             setSessionAttribute(appInfo.getId() + PHASE_RUNGAINST_SRC_START + SESSION_WATCHER_MAP, watcherMap);
             setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
             setReqAttribute(REQ_GOAL, PHASE_RUNGAINST_SRC_START);
@@ -316,7 +316,7 @@ public class Build extends DynamicParameterAction implements Constants {
             MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_DEPLOY)));
             List<Parameter> parameters = getMojoParameters(mojo, PHASE_DEPLOY);
 
-            setPossibleValuesInReq(null, appInfo, parameters, watcherMap);
+            setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap, PHASE_DEPLOY);
             
             setSessionAttribute(appInfo.getId() + PHASE_DEPLOY + SESSION_WATCHER_MAP, watcherMap);
             setReqAttribute(REQ_DEPLOY_BUILD_NUMBER, getReqParameter(BUILD_NUMBER));

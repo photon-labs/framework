@@ -320,12 +320,12 @@
 				}
 	%>
 			<script type="text/javascript">
-				<%-- $('input[name="<%= parameter.getKey() %>"]').live('input propertychange',function(e) {
-					var name = $(this).val();
+				$('input[name="<%= parameter.getKey() %>"]').live('input propertychange',function(e) {
+					var value = $(this).val();
 					var type = '<%= parameter.getType() %>';
-					var txtBoxName = '<%= parameter.getKey() %>';
-					validateInput(name, type, txtBoxName);
-				}); --%>
+					var txtBoxId = '<%= parameter.getKey() %>';
+					validateInput(value, type, txtBoxId);
+				});
 			</script>
 	<% 
 			}
@@ -352,6 +352,13 @@
 	       $('.jecEditableOption').text("");
 	    });
 	});
+	
+	//To focus first control in popup
+	<% if (CollectionUtils.isNotEmpty(parameters)) { 
+		String focusKey = parameters.get(0).getKey();
+	%>
+		$("#"+'<%= focusKey %>').focus();
+	<% } %>
 	
 	//to update build number in hidden field for deploy popup
 	<% if (FrameworkConstants.REQ_DEPLOY.equals(from)) { %>
@@ -488,7 +495,7 @@
 		params = params.concat("&selectedOption=");
 		params = params.concat(selectedOption);
 		
-		loadContent('changeEveDependancyListener', '', '', params, true, false);
+		loadContent('changeEveDependancyListener', '', '', params, false, false);
 	}
 	
 	function updateDependancy(dependency) {
@@ -639,5 +646,11 @@
 		csvValue = csvValue.substring(0, csvValue.lastIndexOf(","));
 		changeEveDependancyListener(csvValue, checkBoxName);
 		updateDependancy(dependency);
+	}
+	
+	function validateInput(value, type, txtBoxId) {
+		if (type == "Number") {
+			$("#" + txtBoxId).val(removeSpaces(checkForNumber(value)));
+		}
 	}
 </script>

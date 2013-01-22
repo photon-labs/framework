@@ -159,7 +159,7 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
      * @throws PhrescoException
      */
     protected void setPossibleValuesInReq(MojoProcessor mojo, ApplicationInfo appInfo, List<Parameter> parameters, 
-    		Map<String, DependantParameters> watcherMap) throws PhrescoException {
+    		Map<String, DependantParameters> watcherMap, String goal) throws PhrescoException {
         try {
             if (CollectionUtils.isNotEmpty(parameters)) {
                 StringBuilder paramBuilder = new StringBuilder();
@@ -168,7 +168,8 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
                     if (TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(parameter.getType()) && parameter.getDynamicParameter() != null) { 
                     	//Dynamic parameter
                         Map<String, Object> constructMapForDynVals = constructMapForDynVals(appInfo, watcherMap, parameterKey);
-                        
+                        constructMapForDynVals.put(REQ_MOJO, mojo);
+                        constructMapForDynVals.put(REQ_GOAL, goal);
                         // Get the values from the dynamic parameter class
                         List<Value> dynParamPossibleValues = getDynamicPossibleValues(constructMapForDynVals, parameter);
                         addValueDependToWatcher(watcherMap, parameterKey, dynParamPossibleValues, parameter.getValue());
@@ -750,6 +751,8 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
                     			parameterModel, dynamicPageParameter, className);
                     	setDynamicPageParameterDesign(constructDynamicTemplate.toString());
                     } else {
+                    	constructMapForDynVals.put(REQ_MOJO, mojo);
+                        constructMapForDynVals.put(REQ_GOAL, getGoal());
 	                    List<Value> dependentPossibleValues = getDynamicPossibleValues(constructMapForDynVals, dependentParameter);
 	                    setDependentValues(dependentPossibleValues);
                     	if (CollectionUtils.isNotEmpty(dependentPossibleValues) && watcherMap.containsKey(getDependency())) {
@@ -801,7 +804,7 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
             }
             if (!hasShow) {
                 Map<String, DependantParameters> watcherMap = new HashMap<String, DependantParameters>(8);
-                setPossibleValuesInReq(mojo, getApplicationInfo(), parameters, watcherMap);
+                setPossibleValuesInReq(mojo, getApplicationInfo(), parameters, watcherMap, getGoal());
                 if (watcherMap != null && !watcherMap.isEmpty()) {
                     setParamaterAvailable(true);
                 }
