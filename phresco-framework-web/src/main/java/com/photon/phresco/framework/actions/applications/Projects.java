@@ -19,6 +19,10 @@
  */
 package com.photon.phresco.framework.actions.applications;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -30,6 +34,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import com.google.gson.Gson;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ApplicationType;
 import com.photon.phresco.commons.model.Customer;
@@ -38,11 +43,13 @@ import com.photon.phresco.commons.model.Technology;
 import com.photon.phresco.commons.model.TechnologyGroup;
 import com.photon.phresco.commons.model.TechnologyInfo;
 import com.photon.phresco.commons.model.User;
+import com.photon.phresco.configuration.ConfigurationInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
 import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.framework.commons.FrameworkUtil;
+import com.photon.phresco.util.Utility;
 
 /**
  * Struts Action class for Handling Project related operations 
@@ -439,9 +446,31 @@ public class Projects extends FrameworkBaseAction {
     	if (s_debugEnabled) {
     		S_LOGGER.debug("Entering Method  Applications.delete()");
     	}
-    	
+    	BufferedReader reader = null;
     	try {
 	    	ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
+	    	if (CollectionUtils.isNotEmpty(getSelectedAppInfos())) {
+	    	    for (ApplicationInfo appInfo : getSelectedAppInfos()) {
+	    	        StringBuilder sb = new StringBuilder(Utility.getProjectHome())
+	    	        .append(appInfo.getAppDirName())
+	    	        .append(File.separator)
+	    	        .append(FOLDER_DOT_PHRESCO)
+	    	        .append(File.separator)
+	    	        .append(RUNAGNSRC_INFO_FILE);
+	    	        File file = new File(sb.toString());
+	    	        if (file.exists()) {
+	    	            Gson gson = new Gson();
+	    	            reader = new BufferedReader(new FileReader(file));
+	    	            ConfigurationInfo configInfo = gson.fromJson(reader, ConfigurationInfo.class);
+	    	            int port = Integer.parseInt(configInfo.getServerPort());
+	    	            boolean connectionAlive = Utility.isConnectionAlive(HTTP_PROTOCOL, LOCALHOST, port);
+	    	            if (connectionAlive) {
+	    	                addActionError(getText(ACT_ERR_RUNAGNSRC_IN_PROGRESS, Collections.singletonList(appInfo.getName())));
+	    	                return list();
+	    	            }
+	    	        }
+	    	    }
+	    	}
 	    	projectManager.delete(getSelectedAppInfos());
 	    	addActionMessage(getText(ACT_SUCC_PROJECT_DELETE, Collections.singletonList(getProjectName())));
     	} catch (PhrescoException e) {
@@ -449,7 +478,13 @@ public class Projects extends FrameworkBaseAction {
                 S_LOGGER.error("Entered into catch block of Projects.delete()" + FrameworkUtil.getStackTraceAsString(e));
             }
             return showErrorPopup(e, getText(EXCEPTION_PROJECT_DELETE));
-		}
+		} catch (FileNotFoundException e) {
+		    if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Projects.delete()" + FrameworkUtil.getStackTraceAsString(e));
+            }
+            return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_PROJECT_DELETE));
+        }
+    	
     	return list();
     }
    

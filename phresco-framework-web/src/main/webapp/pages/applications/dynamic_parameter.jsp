@@ -219,10 +219,25 @@
 						List<String> selectedValList = Arrays.asList(parameter.getValue().split(FrameworkConstants.CSV_PATTERN));	
 						parameterModel.setSelectedValues(selectedValList);
 					}
+					
+					// when atleast there is a dependency option available, enable on change event
+					boolean enableOnchangeFunction = false;
+					if (CollectionUtils.isNotEmpty(dynamicPsblValues)) {
+						for (com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value dynamicPsblValue : dynamicPsblValues) {
+							String psblValDependency = dynamicPsblValue.getDependency();
+							if (StringUtils.isNotEmpty(psblValDependency)) {
+								enableOnchangeFunction = true;
+								break;
+							}
+						}
+					}
+					
 					String onChangeFunction = ""; 
-					if (CollectionUtils.isNotEmpty(dynamicPsblValues) &&StringUtils.isNotEmpty(dynamicPsblValues.get(0).getDependency())) {
+					if (CollectionUtils.isNotEmpty(dynamicPsblValues) && StringUtils.isNotEmpty(dynamicPsblValues.get(0).getDependency())) {
 						onChangeFunction = "selectBoxOnChangeEvent(this, '"+ parameter.getKey() +"')";
 					} else if(!Boolean.parseBoolean(parameter.getMultiple()) && StringUtils.isNotEmpty(parameter.getDependency())) {
+					    onChangeFunction = "selectBoxOnChangeEvent(this, '"+ parameter.getKey() +"')";
+					} else if(enableOnchangeFunction) {
 					    onChangeFunction = "selectBoxOnChangeEvent(this, '"+ parameter.getKey() +"')";
 					} else {
 					    onChangeFunction = "";
@@ -423,7 +438,7 @@
 		var csvDependencies;
 		changeEveDependancyListener(selectedOption, currentParamKey); // update the watcher while changing the drop down
 		
-		if (dependencyAttr !== undefined) {
+		if (dependencyAttr !== undefined && dependencyAttr != null) {
 			csvDependencies = dependencyAttr.substring(dependencyAttr.indexOf('=') + 1);
 			csvDependencies = getAllDependencies(csvDependencies);
 			var dependencyArr = new Array();

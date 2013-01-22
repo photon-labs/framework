@@ -82,7 +82,7 @@
      		$('#LatestVersion').html(data.latestVersion);
 			$('input[name=latestVersion]').val(data.latestVersion);
      		$('#updateAvailableInfo').html(data.message);
-  		 	$("#popupTitle").html("Phresco " + data.latestVersion);
+  		 	$("#popupTitle").html("Phresco " + data.currentVersion);
   		 	if (data.updateAvail) {
 				enableButton($("#updateAvailable"));
 			} else {

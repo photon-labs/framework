@@ -38,6 +38,8 @@ import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.RepoInfo;
 import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.PhrescoException;
+import com.photon.phresco.framework.PhrescoFrameworkFactory;
+import com.photon.phresco.framework.api.DocumentGenerator;
 import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.plugins.model.Mojos.ApplicationHandler;
 import com.photon.phresco.plugins.util.MojoProcessor;
@@ -150,6 +152,10 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 					String pluginInfoFile = Utility.getProjectHome() + appInfo.getAppDirName() + File.separator + DOT_PHRESCO_FOLDER +File.separator +  APPLICATION_HANDLER_INFO_FILE;
 					File path = new File(Utility.getProjectHome() + appInfo.getAppDirName());
 					projectUtils.updateTestPom(path);
+					//For Pdf Document Creation In Docs Folder
+					DocumentGenerator documentGenerator = PhrescoFrameworkFactory.getDocumentGenerator();
+					documentGenerator.generate(appInfo, path, null, serviceManager);
+					
 					MojoProcessor mojoProcessor = new MojoProcessor(new File(pluginInfoFile));
 					ApplicationHandler applicationHandler = mojoProcessor.getApplicationHandler();
 					if (applicationHandler != null) {
@@ -246,7 +252,9 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 						List<ArtifactGroup> deletedArtifacts = gson.fromJson(deletedFeatures, jsonType);
 						
 						List<ArtifactGroup> plugins = setArtifactGroup(applicationHandler);
-	
+						//For Pdf Document Creation In Docs Folder
+						DocumentGenerator documentGenerator = PhrescoFrameworkFactory.getDocumentGenerator();
+						documentGenerator.generate(appInfo, projectInfoFile, artifactGroups, serviceManager);
 						// Dynamic Class Loading
 						PhrescoDynamicLoader dynamicLoader = new PhrescoDynamicLoader(repoInfo, plugins);
 						ApplicationProcessor applicationProcessor = dynamicLoader
