@@ -1317,12 +1317,14 @@ public class Configurations extends FrameworkBaseAction {
 	    			for (ArtifactGroupInfo artifactGroupInfos : selectedServers) {
 	    				List<String> appInfoArtifactInfoIds = artifactGroupInfos.getArtifactInfoIds();
 	    				ArtifactGroup artifactGroupInfo = getServiceManager().getArtifactGroupInfo(artifactGroupInfos.getArtifactGroupId());
-	    				List<ArtifactInfo> artifactInfos = artifactGroupInfo.getVersions();
-	    				for (ArtifactInfo artifactInfo : artifactInfos) {
-							if (appInfoArtifactInfoIds.contains(artifactInfo.getId())) {
-								versions.add(artifactInfo.getVersion());
-							}
-						}
+	    				if (artifactGroupInfo.getName().equals(getPropType())) {
+	    					List<ArtifactInfo> artifactInfos = artifactGroupInfo.getVersions();
+	    					for (ArtifactInfo artifactInfo : artifactInfos) {
+	    						if (appInfoArtifactInfoIds.contains(artifactInfo.getId())) {
+	    							versions.add(artifactInfo.getVersion());
+	    						}
+	    					}
+	    				}
 					}
 				}
     		}
@@ -1333,12 +1335,14 @@ public class Configurations extends FrameworkBaseAction {
 	    			for (ArtifactGroupInfo artifactGroupInfos : selectedDatabases) {
 	    				List<String> artifactInfoIds = artifactGroupInfos.getArtifactInfoIds();
 	    				ArtifactGroup artifactGroupInfo = getServiceManager().getArtifactGroupInfo(artifactGroupInfos.getArtifactGroupId());
-	    				List<ArtifactInfo> artifactInfos = artifactGroupInfo.getVersions();
-	    				for (ArtifactInfo artifactInfo : artifactInfos) {
-							if (artifactInfoIds.contains(artifactInfo.getId())) {
-								versions.add(artifactInfo.getVersion());
-							}
-						}
+	    				if (artifactGroupInfo.getName().equals(getPropType())) {
+	    					List<ArtifactInfo> artifactInfos = artifactGroupInfo.getVersions();
+	    					for (ArtifactInfo artifactInfo : artifactInfos) {
+	    						if (artifactInfoIds.contains(artifactInfo.getId())) {
+	    							versions.add(artifactInfo.getVersion());
+	    						}
+	    					}
+	    				}
 					}
 				}
     		}
