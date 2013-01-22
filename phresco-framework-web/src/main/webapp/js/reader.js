@@ -19,7 +19,13 @@
  */
 // from auto close
 var showSuccessComplete = true;
+var sessionParam = "";
 function readerHandler(data, appId, actionType, pageUrl, progressConsoleObj) {
+	sessionParam = "appId=";
+	sessionParam = sessionParam.concat(appId);
+	sessionParam = sessionParam.concat('&actionType=');
+	sessionParam = sessionParam.concat(actionType);
+	
 	// from auto close
 	if($.trim(data) == 'Test is not available for this project') {
 		data = '<b>Test is not available for this project</b>';
@@ -28,23 +34,22 @@ function readerHandler(data, appId, actionType, pageUrl, progressConsoleObj) {
 	if($.trim(data) == '[INFO] ... tomcatProcess stopped. ReturnValue:1') { // When CI server starts it wont give EOF, forced it.
 		data = 'EOF';
 	}
-
-   if ($.trim(data) == 'EOF') {
-	   hidePopuploadingIcon();
-	   $("#warningmsg").hide();
-	   $('#loadingDiv').hide();
-	   $('#buildbtn').prop("disabled", false);
+	if ($.trim(data) == 'EOF') {
+		hidePopuploadingIcon();
+		$("#warningmsg").hide();
+		$('#loadingDiv').hide();
+		$('#buildbtn').prop("disabled", false);
 	   // from auto close
 //	   if(showSuccessComplete) {
 //		   $("#build-output").append("Successfully Completed" + '<br>');
 //	   }
-	   progressConsoleObj.prop('scrollTop', progressConsoleObj.prop('scrollHeight'));
+		progressConsoleObj.prop('scrollTop', progressConsoleObj.prop('scrollHeight'));
 	   
-	   if(actionType == "build") {
-		   refreshTable(appId);
-	   }
-	   return;
-   }
+		if(actionType == "build") {
+			refreshTable(appId);
+		}
+		return;
+	}
 	
 	$("a[name='appTab']").each(function() {
 		if ($(this).attr('class') === 'active') {
@@ -90,4 +95,15 @@ function asyncHandler(appId, actionType, pageUrl, progressConsoleObj) {
 
 function refreshTable() {
 	loadContent('builds', '', $('#build-body-container'), getBasicParams());
- }
+}
+
+$('.progressPopupClose, .close').bind('click', function () {
+	loadContent("removeReaderFromSession", '', '', sessionParam, true, true, '');
+});
+
+document.onkeydown = function(evt) {
+    evt = evt || window.event;
+    if (evt.keyCode == 27) {
+    	loadContent("removeReaderFromSession", '', '', sessionParam, true, true, '');
+    }
+};

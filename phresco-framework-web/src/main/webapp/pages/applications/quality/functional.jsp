@@ -54,23 +54,38 @@
 		</div>
 		
 		<ul id="display-inline-block-example">
-			<li id="first" style="width: auto;">
-				<input type="button" id="functionalTest" class="btn btn-primary" value="<s:text name='lbl.test'/>">
-			</li>
-			<% if (FrameworkConstants.SELENIUM_GRID.equals(functioanlTestTool)) { %>
-				<li id="first" style="width: auto;">
-					<input type="button" id="startHubBtn" class="btn btn-primary" value="<s:text name='lbl.functional.start.hub'/>">
-				</li>
-				<li id="first">
-					<input type="button" id="startNodeBtn" class="btn btn-primary" value="<s:text name='lbl.functional.start.node'/>">
-				</li>
+			<%
+				if (FrameworkConstants.SELENIUM_WEBDRIVER.equalsIgnoreCase(functioanlTestTool) || 
+				        FrameworkConstants.SELENIUM_UIAUTOMATION.equalsIgnoreCase(functioanlTestTool)) {
+			%>
+					<li id="first" style="width: auto;">
+						<input type="button" id="functionalTest" class="btn btn-primary" value="<s:text name='lbl.test'/>">
+					</li>
+			<%
+				} else if (FrameworkConstants.SELENIUM_GRID.equalsIgnoreCase(functioanlTestTool)) {
+					boolean hubStatus = (Boolean) request.getAttribute(FrameworkConstants.REQ_HUB_STATUS);
+					String disabledStr = "disabled";
+					if (hubStatus) {
+					    disabledStr = "";
+					}
+			%>
+					<li id="first" style="width: auto;">
+						<input type="button" id="functionalTest" class="btn <%= StringUtils.isNotEmpty(disabledStr) ? "" : "btn-primary"%>" 
+							<%= disabledStr %> value="<s:text name='lbl.test'/>">
+					</li>
+					<li id="first" style="width: auto;">
+						<input type="button" id="startHubBtn" class="btn btn-primary" value="<s:text name='lbl.functional.start.hub'/>">
+					</li>
+					<li id="first">
+						<input type="button" id="startNodeBtn" class="btn btn-primary" value="<s:text name='lbl.functional.start.node'/>">
+					</li>
 			<%
 				}
 	  	 		String testError = (String) request.getAttribute(FrameworkConstants.REQ_ERROR_TESTSUITE);
        			if (StringUtils.isNotEmpty(testError)) {
     		%>
 		    	<div class="alert-message block-message warning hideContent" id="errorDiv" style="margin: 5px 0 0 0;">
-						<%= testError %>
+					<%= testError %>
 				</div>
 			<% 
 				} else {
@@ -258,6 +273,9 @@ function successEvent(pageUrl, data) {
 		} else {
 			yesnoPopup('showStartNodePopUp', '<s:text name="lbl.functional.start.node"/>', 'startNode', '<s:text name="lbl.start"/>');
 		}
+	} else if (pageUrl === "stopHub") {
+		hideLoadingIcon();
+		reloadFunctionalPage();
 	} else {
    		if ((data != undefined || !isBlank(data)) && data != "") {
 			if (data.validated != undefined && data.validated) {
@@ -282,8 +300,16 @@ function successEvent(pageUrl, data) {
 function popupOnStop(obj) {
 	var url = $(obj).attr("id");
 	var params = getBasicParams();
-	if (url === "stopHub" || url === "stopNode") {
-		loadContent(url, '', '', params, true, true);
+	if (url === "stopHub") {
+		$(".popupStop").hide();
+		$("#popup_progress_div").empty();
+		showPopuploadingIcon();
+		readerHandlerSubmit(url, '<%= appId %>', '<%= FrameworkConstants.STOP_HUB %>', '', '', params, $("#popup_progress_div"));
+	} else if (url === "stopNode") {
+		$(".popupStop").hide();
+		$("#popup_progress_div").empty();
+		showPopuploadingIcon();
+		readerHandlerSubmit(url, '<%= appId %>', '<%= FrameworkConstants.STOP_NODE %>', '', '', params, $("#popup_progress_div"));
 	}
 }
 
@@ -337,9 +363,9 @@ function generateTest(urlAction, container, event) {
 	params = params.concat(selectedTestResultFile);
 	showLoadingIcon($('#'+ container)); // Loading Icon
 	performAction(urlAction, params, $('#'+ container));
-    escPopup()
+    escPopup();
 }
-			    
+
 function iphone_HybridTest() {
 	$("#popup_div").css("display","none");
 	showConsoleProgress('block');
@@ -357,15 +383,24 @@ function popupOnOk(obj) {
 		var goal = 'functional-test-' + '<%= functioanlTestTool %>';
 		mandatoryValidation(okUrl, $("#generateBuildForm"), '', 'functional-test', goal, '<%= FrameworkConstants.FUNCTIONAL %>', '<%= appId %>');
 	} else if (okUrl === "printAsPdf") {
-		// show popup loading icon
-		showPopuploadingIcon();
+		showPopuploadingIcon();// show popup loading icon
 		loadContent('printAsPdf', $('#generatePdf'), $('#popup_div'), '', false, true);
 	}
 }
 
-//after executing the test. when clicking Progress popup , it will call this methid to load test results
+//after executing the test. when clicking Progress popup, it will call this methid to load test results
 function popupOnClose(obj) {
 	var closeUrl = $(obj).attr("id");
-	loadTestSuites("true");
+	if (closeUrl === "startHub" || closeUrl === "showStartedHubLog") {
+		showLoadingIcon();
+		reloadFunctionalPage();
+	} else {
+		loadTestSuites("true");
+	}
+}
+
+function reloadFunctionalPage() {
+	var params = getBasicParams();
+	loadContent("functional", '', $("#subTabcontainer"), params, '', true);
 }
 </script> 

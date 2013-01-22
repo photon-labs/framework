@@ -225,7 +225,6 @@
 		var desc = $('#configDesc').val();
 		var env = $('#environment').val();
 		var jsonObject = $('#configProperties').toJSON();
-		var configStr = JSON.stringify(jsonObject);
 		var typeData = $.parseJSON($('#templateType').val());
 		var selectedType = typeData.name;
 		if(selectedType == "Other") {

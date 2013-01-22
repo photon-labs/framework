@@ -20,6 +20,7 @@
 package com.photon.phresco.framework.actions.applications;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -37,7 +38,15 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -82,7 +91,6 @@ import com.photon.phresco.framework.api.Project;
 import com.photon.phresco.framework.api.ProjectAdministrator;
 import com.photon.phresco.framework.api.ProjectRuntimeManager;
 import com.photon.phresco.framework.commons.ApplicationsUtil;
-import com.photon.phresco.framework.commons.DiagnoseUtil;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.commons.LogErrorReport;
 import com.photon.phresco.framework.commons.PBXNativeTarget;
@@ -103,6 +111,7 @@ import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.HubConfiguration;
 import com.photon.phresco.util.IosSdkUtil;
 import com.photon.phresco.util.IosSdkUtil.MacSdkType;
+import com.photon.phresco.util.NodeConfig;
 import com.photon.phresco.util.NodeConfiguration;
 import com.photon.phresco.util.TechnologyTypes;
 import com.photon.phresco.util.Utility;
@@ -117,7 +126,6 @@ public class Quality extends DynamicParameterAction implements Constants {
     private static Boolean s_debugEnabled  =S_LOGGER.isDebugEnabled();
     
     private List<SettingsInfo> serverSettings = null;
-    private String showSettings = "";
     private String testSuite = "";
     private String failures = "";
     private String errs = "";
@@ -133,8 +141,6 @@ public class Quality extends DynamicParameterAction implements Constants {
     private String showDebug = "";
     private String jarLocation = "";
     private String testAgainst = "";
-    private String jarName = "";
-    private File systemPath = null;
     private String resolution = ""; 
     
 	private List<String> configName = null;
@@ -397,10 +403,25 @@ public class Quality extends DynamicParameterAction implements Constants {
             ApplicationInfo appInfo = getApplicationInfo();
             setProjModulesInReq();
             FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+            String seleniumToolType = frameworkUtil.getSeleniumToolType(appInfo);
             setReqAttribute(PATH, frameworkUtil.getFunctionalTestDir(appInfo));
-            setReqAttribute(REQ_FUNCTEST_SELENIUM_TOOL, frameworkUtil.getSeleniumToolType(appInfo));
+            setReqAttribute(REQ_FUNCTEST_SELENIUM_TOOL, seleniumToolType);
             setReqAttribute(REQ_APPINFO, appInfo);
-        } catch (Exception e) {
+            if (SELENIUM_GRID.equalsIgnoreCase(seleniumToolType)) {
+                HubConfiguration hubConfig = getHubConfig();
+                if (hubConfig != null) {
+                    String host = hubConfig.getHost();
+                    int port = hubConfig.getPort();
+                    boolean isConnectionAlive = Utility.isConnectionAlive(HTTP_PROTOCOL, host, port);
+                    setReqAttribute(REQ_HUB_STATUS, isConnectionAlive);
+                }
+            }
+        } catch (PhrescoException e) {
+            if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Quality.functional()" + FrameworkUtil.getStackTraceAsString(e));
+            }
+            return showErrorPopup(e, getText(EXCEPTION_QUALITY_FUNCTIONAL_LOAD));
+        } catch (PhrescoPomException e) {
             if (s_debugEnabled) {
                 S_LOGGER.error("Entered into catch block of Quality.functional()" + FrameworkUtil.getStackTraceAsString(e));
             }
@@ -536,44 +557,76 @@ public class Quality extends DynamicParameterAction implements Constants {
             S_LOGGER.debug("Entering Method Quality.checkForHub()");
         }
 	    
+	    try {
+	        HubConfiguration hubConfig = getHubConfig();
+            if (hubConfig != null) {
+                String host = hubConfig.getHost();
+                int port = hubConfig.getPort();
+                setConnectionAlive(Utility.isConnectionAlive(HTTP_PROTOCOL, host, port));
+            }
+        } catch (Exception e) {
+            if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Quality.checkForHub()"+ FrameworkUtil.getStackTraceAsString(e));
+            }
+            return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_QUALITY_FUNCTIONAL_HUB_CONNECTION));
+        }
+	    
+	    return SUCCESS;
+	}
+	
+	private HubConfiguration getHubConfig() throws PhrescoException {
 	    BufferedReader reader = null;
+	    HubConfiguration hubConfig = null;
 	    try {
 	        FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
 	        String functionalTestDir = frameworkUtil.getFunctionalTestDir(getApplicationInfo());
 	        StringBuilder sb = new StringBuilder(getApplicationHome());
 	        sb.append(functionalTestDir)
 	        .append(File.separator)
-	        .append("hubconfig.json");
+	        .append(Constants.HUB_CONFIG_JSON);
 	        File hubConfigFile = new File(sb.toString());
 	        Gson gson = new Gson();
-            reader = new BufferedReader(new FileReader(hubConfigFile));
-            HubConfiguration hubConfig = gson.fromJson(reader, HubConfiguration.class);
-            if (hubConfig != null) {
-                String host = hubConfig.getHost();
-                int port = hubConfig.getPort();
-                setConnectionAlive(DiagnoseUtil.isConnectionAlive(HTTP_PROTOCOL, host, port));
-            }
-        } catch (PhrescoException e) {
-            if (s_debugEnabled) {
-                S_LOGGER.error("Entered into catch block of Quality.checkForHub()"+ FrameworkUtil.getStackTraceAsString(e));
-            }
-            return showErrorPopup(e, getText(EXCEPTION_QUALITY_FUNCTIONAL_HUB_CONNECTION));
-        } catch (PhrescoPomException e) {
-            if (s_debugEnabled) {
-                S_LOGGER.error("Entered into catch block of Quality.checkForHub()"+ FrameworkUtil.getStackTraceAsString(e));
-            }
-            return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_QUALITY_FUNCTIONAL_HUB_CONNECTION));
-        } catch (FileNotFoundException e) {
-            if (s_debugEnabled) {
-                S_LOGGER.error("Entered into catch block of Quality.checkForHub()"+ FrameworkUtil.getStackTraceAsString(e));
-            }
-            return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_QUALITY_FUNCTIONAL_HUB_CONNECTION));
-        } finally {
-            Utility.closeStream(reader);
-        }
-	    
-	    return SUCCESS;
+	        reader = new BufferedReader(new FileReader(hubConfigFile));
+	        hubConfig = gson.fromJson(reader, HubConfiguration.class);
+	    } catch (PhrescoException e) {
+	        throw new PhrescoException(e);
+	    } catch (PhrescoPomException e) {
+	        throw new PhrescoException(e);
+	    } catch (FileNotFoundException e) {
+	        throw new PhrescoException(e);
+	    } finally {
+	        Utility.closeReader(reader);
+	    }
+
+	    return hubConfig;
 	}
+	
+	private NodeConfiguration getNodeConfig() throws PhrescoException {
+        BufferedReader reader = null;
+        NodeConfiguration nodeConfig = null;
+        try {
+            FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+            String functionalTestDir = frameworkUtil.getFunctionalTestDir(getApplicationInfo());
+            StringBuilder sb = new StringBuilder(getApplicationHome());
+            sb.append(functionalTestDir)
+            .append(File.separator)
+            .append(Constants.NODE_CONFIG_JSON);
+            File hubConfigFile = new File(sb.toString());
+            Gson gson = new Gson();
+            reader = new BufferedReader(new FileReader(hubConfigFile));
+            nodeConfig = gson.fromJson(reader, NodeConfiguration.class);
+        } catch (PhrescoException e) {
+            throw new PhrescoException(e);
+        } catch (PhrescoPomException e) {
+            throw new PhrescoException(e);
+        } catch (FileNotFoundException e) {
+            throw new PhrescoException(e);
+        } finally {
+            Utility.closeReader(reader);
+        }
+
+        return nodeConfig;
+    }
 	
 	public String showStartedHubLog() {
 	    if (s_debugEnabled) {
@@ -581,14 +634,12 @@ public class Quality extends DynamicParameterAction implements Constants {
         }
 	    
 	    try {
-	        StringBuilder sb = new StringBuilder(getApplicationHome());
-	        sb.append(File.separator)
-	        .append(DO_NOT_CHECKIN_DIR)
-	        .append(File.separator)
-	        .append(LOG_DIR)
-	        .append(File.separator)
-	        .append(HUB_LOG);
-	        BufferedReader reader = new BufferedReader(new FileReader(sb.toString()));
+	        HubConfiguration hubConfig = getHubConfig();
+	        String host = hubConfig.getHost();
+	        int port = hubConfig.getPort();
+	        String str = "Hub is already running in " + host + ":" + port;
+	        InputStream is = new ByteArrayInputStream(str.getBytes());
+	        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 	        setSessionAttribute(getAppId() + START_HUB, reader);
 	        setReqAttribute(REQ_APP_ID, getAppId());
 	        setReqAttribute(REQ_ACTION_TYPE, START_HUB);
@@ -597,11 +648,6 @@ public class Quality extends DynamicParameterAction implements Constants {
                 S_LOGGER.error("Entered into catch block of Quality.showStartedHubLog()"+ FrameworkUtil.getStackTraceAsString(e));
             }
             return showErrorPopup(e, getText(EXCEPTION_QUALITY_FUNCTIONAL_HUB_LOG));
-        } catch (FileNotFoundException e) {
-            if (s_debugEnabled) {
-                S_LOGGER.error("Entered into catch block of Quality.showStartedHubLog()"+ FrameworkUtil.getStackTraceAsString(e));
-            }
-            return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_QUALITY_FUNCTIONAL_HUB_LOG));
         }
 	    
 	    return APP_ENVIRONMENT_READER;
@@ -664,7 +710,10 @@ public class Quality extends DynamicParameterAction implements Constants {
             ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
             ProjectInfo projectInfo = getProjectInfo();
             String workingDirectory = getAppDirectoryPath(appInfo);
-            applicationManager.performAction(projectInfo, ActionType.STOP_HUB, null, workingDirectory);
+            BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.STOP_HUB, null, workingDirectory);
+            setSessionAttribute(getAppId() + STOP_HUB, reader);
+            setReqAttribute(REQ_APP_ID, getAppId());
+            setReqAttribute(REQ_ACTION_TYPE, STOP_HUB);
         } catch (PhrescoException e) {
             if (s_debugEnabled) {
                 S_LOGGER.error("Entered into catch block of Quality.stopHub()"+ FrameworkUtil.getStackTraceAsString(e));
@@ -672,7 +721,7 @@ public class Quality extends DynamicParameterAction implements Constants {
             return showErrorPopup(e, getText(EXCEPTION_QUALITY_FUNCTIONAL_STOP_HUB));
         }
 
-        return SUCCESS;
+        return APP_ENVIRONMENT_READER;
     }
 	
 	public String checkForNode() {
@@ -695,7 +744,7 @@ public class Quality extends DynamicParameterAction implements Constants {
             if (nodeConfiguration != null) {
                 String host = nodeConfiguration.getConfiguration().getHost();
                 int port = nodeConfiguration.getConfiguration().getPort();
-                setConnectionAlive(DiagnoseUtil.isConnectionAlive(HTTP_PROTOCOL, host, port));
+                setConnectionAlive(Utility.isConnectionAlive(HTTP_PROTOCOL, host, port));
             }
         } catch (PhrescoException e) {
             if (s_debugEnabled) {
@@ -725,14 +774,13 @@ public class Quality extends DynamicParameterAction implements Constants {
         }
         
         try {
-            StringBuilder sb = new StringBuilder(getApplicationHome());
-            sb.append(File.separator)
-            .append(DO_NOT_CHECKIN_DIR)
-            .append(File.separator)
-            .append(LOG_DIR)
-            .append(File.separator)
-            .append(Constants.NODE_LOG);
-            BufferedReader reader = new BufferedReader(new FileReader(sb.toString()));
+            NodeConfiguration nodeConfig = getNodeConfig();
+            NodeConfig configuration = nodeConfig.getConfiguration();
+            String host = configuration.getHost();
+            int port = configuration.getPort();
+            String str = "Node is already running in " + host + COLON + port;
+            InputStream is = new ByteArrayInputStream(str.getBytes());
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
             setSessionAttribute(getAppId() + START_NODE, reader);
             setReqAttribute(REQ_APP_ID, getAppId());
             setReqAttribute(REQ_ACTION_TYPE, START_NODE);
@@ -741,11 +789,6 @@ public class Quality extends DynamicParameterAction implements Constants {
                 S_LOGGER.error("Entered into catch block of Quality.showStartedNodeLog()"+ FrameworkUtil.getStackTraceAsString(e));
             }
             return showErrorPopup(e, getText(EXCEPTION_QUALITY_FUNCTIONAL_NODE_LOG));
-        } catch (FileNotFoundException e) {
-            if (s_debugEnabled) {
-                S_LOGGER.error("Entered into catch block of Quality.showStartedNodeLog()"+ FrameworkUtil.getStackTraceAsString(e));
-            }
-            return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_QUALITY_FUNCTIONAL_NODE_LOG));
         }
         
         return APP_ENVIRONMENT_READER;
@@ -808,7 +851,10 @@ public class Quality extends DynamicParameterAction implements Constants {
             ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
             ProjectInfo projectInfo = getProjectInfo();
             String workingDirectory = getAppDirectoryPath(appInfo);
-            applicationManager.performAction(projectInfo, ActionType.STOP_NODE, null, workingDirectory);
+            BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.STOP_NODE, null, workingDirectory);
+            setSessionAttribute(getAppId() + STOP_NODE, reader);
+            setReqAttribute(REQ_APP_ID, getAppId());
+            setReqAttribute(REQ_ACTION_TYPE, STOP_NODE);
         } catch (PhrescoException e) {
             if (s_debugEnabled) {
                 S_LOGGER.error("Entered into catch block of Quality.stopNode()"+ FrameworkUtil.getStackTraceAsString(e));
@@ -816,7 +862,7 @@ public class Quality extends DynamicParameterAction implements Constants {
             return showErrorPopup(e, getText(EXCEPTION_QUALITY_FUNCTIONAL_STOP_NODE));
         }
 
-        return SUCCESS;
+        return APP_ENVIRONMENT_READER;
     }
 	
     public String performance() {

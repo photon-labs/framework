@@ -67,6 +67,7 @@ public interface FrameworkConstants {
 	String CONFIG_TYPE_COMPONENTS = "Components";
     int JOB_STATUS_NOTOK = -1;
     String FOLDER_DOT_PHRESCO = ".phresco";
+    String RUNAGNSRC_INFO_FILE = "runagainstsource.info";
     String PHRESCO_HOME = "PHRESCO_HOME";
     String USER_HOME = "user.home";
     String PROJECTS_HOME = "projects";
@@ -115,6 +116,7 @@ public interface FrameworkConstants {
     String TECH_SERVER_ID = "config_Server";
     String TECH_DATABASE_ID = "config_Database";
     String TECH_WEBSERVICE_ID = "config_WebService";
+    String REQ_HUB_STATUS = "hubStatus";
     
     String REQ_KEY = "key";
     String REQ_VALUE = "value";
@@ -304,6 +306,8 @@ public interface FrameworkConstants {
 	String FUNCTIONAL_TEST = "functionalTest";
 	String REQ_FUNCTEST_SELENIUM_TOOL = "functionalTestSeleniumTool";
 	String SELENIUM_GRID = "grid";
+	String SELENIUM_WEBDRIVER = "webdriver";
+	String SELENIUM_UIAUTOMATION = "UIAutomation";
 	String BUILD = "build";
     String DEPLOY = "deploy";
     String BUILD_INFO_ENVS = "buildInfoEnvs";
@@ -801,6 +805,8 @@ public interface FrameworkConstants {
 	
 	String START_NODE = "startNode";
 	String START_HUB = "startHub";
+	String STOP_NODE = "stopNode";
+    String STOP_HUB = "stopHub";
 	
 	String REQ_EXTERNAL_FEATURES = "External Features";
 	String REQ_CUSTOM_FEATURES = "Custom Features";
@@ -1139,7 +1145,10 @@ public interface FrameworkConstants {
     String ERROR_EMAIL_ID_EMPTY = "err.msg.empty.email";
     String ERROR_VERSION = "err.msg.empty.version";
     String ERROR_SERV_VER_MISSING = "err.serv.ver.missing";
+    String ERROR_SERV_MISSING = "err.serv.missing";
     String ERROR_DB_VER_MISSING = "err.db.ver.missing";
+    String ERROR_DB_MISSING = "err.db.missing";
+    String ERROR_WS_MISSING = "err.ws.missing";
     String ERROR_LAYER = "err.msg.empty.layer";
     String ERROR_TECHNOLOGY = "err.msg.empty.technology";
     String ERROR_ENV = "err.msg.empty.environment";
@@ -1781,14 +1790,13 @@ public interface FrameworkConstants {
 	     * I18N Keys Constants
 	     * String ACT_ERR_XXX
 	     *****************************/
-		
 		String ACT_ERR_CONFIG_CLONE_EXISTS = "err.config.clone.exists";
 		String ACT_ERR_CONFIG_DEFAULT_ENV = "err.config.default.env";
+		String ACT_ERR_RUNAGNSRC_IN_PROGRESS = "err.runagnsrc.in.progress";
 		
 		/**
 		 * Dynamic Parameter Constants
 		 */
-		
 		String TYPE_STRING = "string";
 		String TYPE_HIDDEN = "hidden";
 		String TYPE_PASSWORD  = "password";
@@ -1812,7 +1820,6 @@ public interface FrameworkConstants {
 		/**
 		 * Constants for Changing Logo 
 		 */
-		
 		String IMAGES	 = "images";
 		String CUSTOMERS = "customers";
 		String PNG       = ".png";
@@ -1821,11 +1828,7 @@ public interface FrameworkConstants {
 		/**
 		 * Constants for Error in Changing Logo and Theme 
 		 */
-		
 		String EXCEPTION_FETCHLOGO_IMAGE = "changecustomer.exception.message.fetchlogo";
 		String EXCEPTION_FRAMEWORK_THEME = "changecustomer.exception.message.themechange";
 		String EXCEPTION_FRAMEWORKSTREAM = "changecustomer.exception.message.stream";
-		
-		
-		
 }
