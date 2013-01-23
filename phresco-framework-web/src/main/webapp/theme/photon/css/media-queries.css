@@ -93,6 +93,10 @@ Width <= 1024
 	.feature_content_adder {
 		height: 85%;
 	}
+	.tabs {
+		height: 415px !important;
+		overflow-y: auto;
+	}
 	}
 	.features_actions {
 	    border-radius: 0 0 3px 3px;
@@ -1243,6 +1247,10 @@ Width >= 1152 and < 1280
 		.featureForm {
 			height: 86% !important;
 		}
+		.tabs {
+			height: 508px !important;
+			overflow-y: auto;
+		}
 	}	
 	.main_wrapper {
 		bottom: 48px;
@@ -1568,6 +1576,18 @@ Width >= 1152 and < 1280
 /************************************************************************************
 Width <= 1280 and height <= 800
 *************************************************************************************/
+@media screen and (min-width : 1280px) and (max-width : 1359px) and (max-height : 800px) {
+	@-moz-document url-prefix() {
+	.tabs {
+			height: 430px !important;
+			overflow-y: auto;
+		}
+	}
+	.tabs {
+		height: 494px !important;
+		overflow-y: auto;
+	}
+}
 @media screen and (min-width : 1280px) and (max-height : 800px) {
 	.app_add_form .theme_accordion_container {
 		float: left;
@@ -1635,7 +1655,7 @@ Width <= 1280 and height <= 800
 	}
 	.feature_content_adder {
 		height: 89% !important;
-	}		
+	}
 	}
 	.main_wrapper {
 		bottom: 48px;
@@ -2954,7 +2974,18 @@ Width > 1280 and <= 1360
 		left: -120px !important;
 	}
 }
-
+@media only screen and (min-width : 1360px) and (max-width : 1439px) and (max-height : 800px) {
+	@-moz-document url-prefix() {
+	.tabs {
+			height: 416px !important;
+			overflow-y: auto;
+		}
+	}
+	.tabs {
+		height: 480px;
+		overflow-y: auto;
+	}
+}
 /************************************************************************************
 Width > 1360 and <= 1440
 *************************************************************************************/

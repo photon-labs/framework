@@ -820,6 +820,11 @@ h1 small {
 	float:left;
 	width:210px;
 }
+@-moz-document url-prefix() {
+	.dd-options {
+		top: 22px;
+	}
+}	
 
 li {
     color: #313131;

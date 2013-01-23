@@ -2962,14 +2962,12 @@ fieldset {
 
 .envErrMsg {
 	float:left;
-	padding-top:7px;
 	width:62%;
 	text-align:left;
 }
 
 .envSuccessMsg {
 	float:left;
-	padding-top:7px;
 	width:62%;
 	text-align:left;
 }
@@ -6112,7 +6110,7 @@ color: #313131;
 }
 .dd-selected-image, .dd-option-image {
 	margin-left: 3px;
-	margin-top: 3px;
+	margin-top: 0px;
 	margin-right: 7px !important;
 }
 .dd-select {
@@ -6331,4 +6329,10 @@ color: #313131;
 }
 .mapHeading {
 	color:#FFFFFF !important;
+}
+.controls select {
+	width: 300px !important;
+}
+.controls #password {
+	width: 295px !important;
 }
