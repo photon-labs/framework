@@ -503,10 +503,12 @@ function successLocalJenkinsAliveCheck (data) {
 }
 
 function successEvent(pageUrl, data) {
-	hideLoadingIcon();
+	
 	if (pageUrl == "getNoOfJobsIsInProgress") {
+		hideLoadingIcon();
 		successRefreshBuild(data);
 	} else if (pageUrl == "localJenkinsAliveCheck") {
+		hideLoadingIcon();
 		console.log("success jenkins alive check called ");
 		successLocalJenkinsAliveCheck(data);
 	}
