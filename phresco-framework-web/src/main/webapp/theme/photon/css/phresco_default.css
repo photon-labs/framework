@@ -6299,3 +6299,7 @@ color: #313131;
 .dd-selected-description {
 	margin-top: -2px;
 }
+
+.mapHeading {
+	color:#FFFFFF !important;
+}	

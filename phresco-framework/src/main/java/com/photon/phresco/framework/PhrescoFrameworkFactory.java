@@ -27,6 +27,7 @@ import com.photon.phresco.api.ConfigManager;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.api.CIManager;
+import com.photon.phresco.framework.api.DocumentGenerator;
 import com.photon.phresco.framework.api.ProjectAdministrator;
 import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.framework.api.ProjectRuntimeManager;
@@ -50,14 +51,16 @@ public class PhrescoFrameworkFactory {
     private static final String CONFIG_MANAGER_IMPL = "com.photon.phresco.impl.ConfigManagerImpl";
     private static final String CI_MANAGER_IMPL = "com.photon.phresco.framework.impl.CIManagerImpl";
     private static final String UPDATE_MANAGER_IMPL = "com.photon.phresco.framework.impl.UpgradeManagerImpl";
-
+    private static final String DOCUMENT_GEN_IMPL = "com.photon.phresco.framework.impl.DocumentGeneratorImpl";
+    
     private static FrameworkConfiguration frameworkConfig = null;
     private static ProjectManager projectManager = null;
     private static ApplicationManager applicationManager = null;
     private static ConfigManager configManager = null;
     private static CIManager ciManager = null;
     private static UpgradeManager updateManager = null;
-
+    private static DocumentGenerator documentGenerator = null;
+    
     private static ProjectAdministrator administrator = null;
     private static ProjectRuntimeManager runtimeManager = null;
     private static ServiceManager serviceManager = null;
@@ -140,7 +143,14 @@ public class PhrescoFrameworkFactory {
     	}
     	return serviceManager;
     }
-
+    
+    public static DocumentGenerator getDocumentGenerator() throws PhrescoException {
+    	if (documentGenerator == null) {
+    		documentGenerator = (DocumentGenerator) constructClass(DOCUMENT_GEN_IMPL);
+    	}
+    	return documentGenerator;
+    }
+    
     private static Object constructClass(String className) throws PhrescoException {
         try {
             @SuppressWarnings("rawtypes")

@@ -1427,9 +1427,9 @@ label {
 }
 
 .table_borderForDownloadInfos {
-    border: 1px solid #3A090B;
-    margin-top: 0.5%;
-	margin-bottom: 0.5%;
+    border: 1px solid #3A090B !important;
+    margin-top: 0.5% !important;
+	margin-bottom: 0.5% !important;
 }
 
 .validatePopup_tbl {
