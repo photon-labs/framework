@@ -2965,10 +2965,12 @@ public class Quality extends DynamicParameterAction implements Constants {
         try {
             InputStream fileInputStream = null;
             fileInputStream = getServiceManager().getIcon(getCustomerId());
-            byte[] imgByte = null;
-            imgByte = IOUtils.toByteArray(fileInputStream);
-            byte[] encodedImage = Base64.encodeBase64(imgByte);
-            encodeImg = new String(encodedImage);
+            if (fileInputStream != null) {
+                byte[] imgByte = null;
+                imgByte = IOUtils.toByteArray(fileInputStream);
+                byte[] encodedImage = Base64.encodeBase64(imgByte);
+                encodeImg = new String(encodedImage);
+            }
         } catch (Exception e) {
             throw new PhrescoException(e);
         }
@@ -2983,8 +2985,10 @@ public class Quality extends DynamicParameterAction implements Constants {
             for (Customer customer : customers) {
                 if (customer.getId().equals(getCustomerId())) {
                     FrameWorkTheme frameworkTheme = customer.getFrameworkTheme();
-                    Gson gson = new Gson();
-                    themeJsonStr = gson.toJson(frameworkTheme);
+                    if (frameworkTheme != null) {
+                        Gson gson = new Gson();
+                        themeJsonStr = gson.toJson(frameworkTheme);
+                    }
                 }
             }
         } catch (Exception e) {
