@@ -58,7 +58,7 @@
 			<img id="config_warning_icon" src="images/icons/warning_icon.png" />
 			<%= actionSupport.getText("lbl.err.msg.list." + fromPage)%>
 		</div> 
-    <% } else { %>
+    <% } %>
     	<div class="table_div" >
     		<s:if test="hasActionMessages()">
 				<div class="alert alert-success alert-message" id="envSuccessmsg">
@@ -66,14 +66,15 @@
 				</div>
 			</s:if>
 		<% 
-			for (Environment env : envs) { 
-			String envJson = gson.toJson(env);
-			String checkedStr = "";
-			if (env.isDefaultEnv()) {
-        		checkedStr = "checked";
-			} else {
-				checkedStr = "";
-			}
+			if (CollectionUtils.isNotEmpty(envs)) {
+				for (Environment env : envs) { 
+				String envJson = gson.toJson(env);
+				String checkedStr = "";
+				if (env.isDefaultEnv()) {
+	        		checkedStr = "checked";
+				} else {
+					checkedStr = "";
+				}
 			
 		%>
 			<div class="theme_accordion_container">
@@ -210,6 +211,7 @@
 			$("input[name=configAdd]").attr("disabled", "disabled");
 			$("#configAdd").removeClass("btn-primary"); 
 	        $("#configAdd").addClass("btn-disabled");
+	        $('#envSuccessmsg').css("margin-top", "-86px");
 		<% } else { %>
 		  	$("input[name=configAdd]").removeAttr("disabled");
 		  	$("#configAdd").addClass("btn-primary");

@@ -42,6 +42,7 @@ package com.photon.phresco.framework.actions;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.ConnectException;
 import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
@@ -52,6 +53,7 @@ import org.apache.log4j.Logger;
 import com.photon.phresco.commons.model.Customer;
 import com.photon.phresco.commons.model.User;
 import com.photon.phresco.exception.PhrescoException;
+import com.photon.phresco.exception.PhrescoWebServiceException;
 import com.photon.phresco.util.Credentials;
 
 public class Login extends FrameworkBaseAction {
@@ -113,7 +115,7 @@ public class Login extends FrameworkBaseAction {
         return SUCCESS;
     }
     
-    private String authenticate() throws IOException {
+    private String authenticate()  {
         if (isDebugEnabled) {
             S_LOGGER.debug("Entering Method  Login.authenticate()");
         }
@@ -139,11 +141,15 @@ public class Login extends FrameworkBaseAction {
             String encodedString = new String(encodedPwd);
             
             setSessionAttribute(SESSION_USER_PASSWORD, encodedString);
-        } catch (PhrescoException e) {
-            setReqAttribute(REQ_LOGIN_ERROR, getText(ERROR_EXCEPTION));
-            return LOGIN_FAILURE;
-        }
-            
+        } catch (PhrescoWebServiceException e) {
+        	if(e.getResponse().getStatus() == 204) {
+				setReqAttribute(REQ_LOGIN_ERROR, getText(ERROR_LOGIN_INVALID_USER));
+				return LOGIN_FAILURE;
+			} else {
+				setReqAttribute(REQ_LOGIN_ERROR, getText(ERROR_EXCEPTION));
+				return LOGIN_FAILURE;
+			}
+        } 
         return SUCCESS;
     }
 

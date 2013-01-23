@@ -3822,6 +3822,16 @@ div.submit_input {
 	margin-left: 0px;
 }
 
+.errorMessage li {
+    list-style: none;
+    color: #000000;
+    font-weight: bold;
+}
+
+.errorMessage {
+	margin-left: 0px;
+}
+
 .twipsy.bootstrap-right .twipsy-arrow {
 	top: 50%;
 	left: 0;
@@ -5778,6 +5788,16 @@ input[class*='chckBxAlign'] {
     margin-bottom: 0px;
 }
 
+#errormsg {
+	height: 16px;
+    margin-left: 300px;
+    margin-top: -34px;
+    padding: 6px;
+    width: 50%;
+    text-align: center;
+    margin-bottom: 0px;
+}
+
 #envSuccessmsg {
 	height: 16px;
 	margin-left: 226px;
@@ -6279,3 +6299,7 @@ color: #313131;
 .dd-selected-description {
 	margin-top: -2px;
 }
+
+.mapHeading {
+	color:#FFFFFF !important;
+}	

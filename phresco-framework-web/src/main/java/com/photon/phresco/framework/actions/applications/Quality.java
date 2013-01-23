@@ -344,7 +344,7 @@ public class Quality extends DynamicParameterAction implements Constants {
             MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_UNIT_TEST)));
             List<Parameter> parameters = getMojoParameters(mojo, PHASE_UNIT_TEST);
 
-            setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap);
+            setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap, PHASE_UNIT_TEST);
             setSessionAttribute(appInfo.getId() + PHASE_UNIT_TEST + SESSION_WATCHER_MAP, watcherMap);
             setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
             setReqAttribute(REQ_GOAL, PHASE_UNIT_TEST);
@@ -495,8 +495,8 @@ public class Quality extends DynamicParameterAction implements Constants {
 
             MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_FUNCTIONAL_TEST)));
             List<Parameter> parameters = getMojoParameters(mojo, PHASE_FUNCTIONAL_TEST + HYPHEN + seleniumToolType);
-
-            setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap);
+            
+            setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap, PHASE_FUNCTIONAL_TEST + HYPHEN + seleniumToolType);
             setSessionAttribute(appInfo.getId() + PHASE_FUNCTIONAL_TEST + HYPHEN + seleniumToolType + SESSION_WATCHER_MAP, watcherMap);
             setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
             setReqAttribute(REQ_PHASE, PHASE_FUNCTIONAL_TEST);
@@ -899,7 +899,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 
         	MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_PERFORMANCE_TEST)));
         	List<Parameter> parameters = getMojoParameters(mojo, PHASE_PERFORMANCE_TEST);
-        	setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap);
+        	setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap, PHASE_PERFORMANCE_TEST);
         	setSessionAttribute(appInfo.getId() + PHASE_PERFORMANCE_TEST + SESSION_WATCHER_MAP, watcherMap);
         	setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
         	setReqAttribute(REQ_GOAL, PHASE_PERFORMANCE_TEST);
@@ -1757,7 +1757,7 @@ public class Quality extends DynamicParameterAction implements Constants {
             MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_LOAD_TEST)));
             List<Parameter> parameters = getMojoParameters(mojo, PHASE_LOAD_TEST);
 
-            setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap);
+            setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap, PHASE_LOAD_TEST);
             setSessionAttribute(appInfo.getId() + PHASE_LOAD_TEST + SESSION_WATCHER_MAP, watcherMap);
             setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
             setReqAttribute(REQ_GOAL, PHASE_LOAD_TEST);

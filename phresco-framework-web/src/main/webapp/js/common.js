@@ -646,6 +646,12 @@ function allowNumHyphen(numbr) {
 	return numbr.replace(/[^0-9\-]+/g, '');
 }
 
+//It allows 0-9
+function checkForNumber(inputStr) {
+	newNo = inputStr.replace(/[^0-9]+/g, '');
+	return newNo;
+}
+
 //It removes all empty spaces
 function removeSpaces(str) {
 	return str.replace(/\s+/g, '');

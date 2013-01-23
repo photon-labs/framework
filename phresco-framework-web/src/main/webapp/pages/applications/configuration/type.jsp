@@ -478,9 +478,12 @@
 	function getVersions() {
 		var typeData= $.parseJSON($('#templateType').val());
 		var selectedType = typeData.name;
+		var propType = $('#type').val();
 		var params = getBasicParams();
 		params = params.concat("&selectedType=");
 		params = params.concat(selectedType);
+		params = params.concat("&propType=");
+		params = params.concat(propType);
 		loadContent("fetchProjectInfoVersions", $('#configProperties'), '', params, true, true);
 	}
 	
