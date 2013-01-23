@@ -29,7 +29,7 @@ public class PerformanceTestResult {
 
 	int min;
 	int max;
-	int err;
+	double err;
 	int lastTime;
 	double avgBytes;
 	int noOfSamples;
@@ -134,11 +134,11 @@ public class PerformanceTestResult {
 		this.stdDev = stdDev;
 	}
 	
-	public int getErr() {
+	public double getErr() {
 		return err;
 	}
 	
-	public void setErr(int err) {
+	public void setErr(double err) {
 		this.err = err;
 	}
 	
