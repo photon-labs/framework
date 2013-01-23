@@ -118,7 +118,7 @@
 		        showImage = true;
 		    }
 %>
-			constructFeaturesDiv('<%= feature.getDispName() %>', '<%= feature.getDispValue() %>', '<%= feature.getType() %>', '<%= feature.getVersionID() %>', '<%= feature.getModuleId() %>', <%= feature.isCanConfigure() %>, <%= showImage %>, <%= feature.isDefaultModule()%>); 
+			constructFeaturesDiv('<%= feature.getDispName() %>', '<%= feature.getDispValue() %>', '<%= feature.getType() %>', '<%= feature.getVersionID() %>', '<%= feature.getModuleId() %>', <%= feature.isCanConfigure() %>, <%= showImage %>, <%= feature.isDefaultModule()%>, '<%= feature.getArtifactGroupId()%>');  
 <%		
 	 	}
 	}
@@ -161,27 +161,29 @@
         	var dispName = $(this).val();
         	var id = removeSpaces(dispName);
         	var hiddenFieldVersion = $('#'+id).val();
+        	var artifactGroupId = $('#'+id).attr('artifactGroupId');
         	var moduleId = $('#'+id).attr('moduleId');
         	var dispValue = $("#" + id + " option:selected").text();
         	var canConfigure = Boolean($(this).attr("canConfigure"));
         	var defaultModule =$(this).attr("defaultModule");
         	var isDefault = defaultModule.toLowerCase()=="true"?true:false;
-        	constructFeaturesDiv(dispName, dispValue, selectedType, hiddenFieldVersion, moduleId, canConfigure,'', isDefault);
+        	constructFeaturesDiv(dispName, dispValue, selectedType, hiddenFieldVersion, moduleId, canConfigure,'', isDefault, artifactGroupId);
         });
     }
     
     // Function to construct the hidden fields for selected features
-    function constructFeaturesDiv(dispName, dispValue, hiddenFieldname, hiddenFieldVersion, moduleId, canConfigure, showImage, isDefault) {
+    function constructFeaturesDiv(dispName, dispValue, hiddenFieldname, hiddenFieldVersion, moduleId, canConfigure, showImage, isDefault, artifactGroupId) {
 		var jsonParamObj = {};
 		jsonParamObj.dispName = dispName;
 		jsonParamObj.moduleId = moduleId;
 		jsonParamObj.dispValue = dispValue;
 		jsonParamObj.versionID = hiddenFieldVersion;
 		jsonParamObj.type = hiddenFieldname;
+		jsonParamObj.artifactGroupId = artifactGroupId;
 		jsonParamObj.canConfigure = canConfigure;
 		jsonParamObj.defaultModule = isDefault;
 		var jsonParam = JSON.stringify(jsonParamObj);
-		var ctrlClass = removeSpaces(dispName);
+		var ctrlClass = removeSpaces(artifactGroupId);
 		var elementsSize = $("#" + ctrlClass + "Div").size();
 // 		$("div[id='"+ ctrlClass +"Div']").remove();
 		if (elementsSize === 0) {
