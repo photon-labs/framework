@@ -1266,7 +1266,7 @@ public class PhrescoReportGeneration extends FrameworkBaseAction {
   		int min = 0;
   		int max = 0;
   		double StdDev = 0;
-  		int Err = 0;
+  		double Err = 0;
   		double KbPerSec = 0;
   		double sumOfBytes = 0;
   		int i = 1;
@@ -1346,7 +1346,7 @@ public class PhrescoReportGeneration extends FrameworkBaseAction {
 			}
 			performanceTestResult.setStdDev((float) Math.sqrt(totalMean / performanceTestResult.getNoOfSamples()));
 
-			performanceTestResult.setErr((performanceTestResult.getErr() / performanceTestResult.getNoOfSamples()) * 100);
+			performanceTestResult.setErr((float) (100 * performanceTestResult.getErr()) / performanceTestResult.getNoOfSamples());
 		}
 
 		//Total Std.Dev calculation
