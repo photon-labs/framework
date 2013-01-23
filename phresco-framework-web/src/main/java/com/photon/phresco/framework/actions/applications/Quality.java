@@ -62,8 +62,10 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.codec.binary.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.io.*;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -78,9 +80,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
 import com.photon.phresco.commons.FileListFilter;
 import com.photon.phresco.commons.FrameworkConstants;
-import com.photon.phresco.commons.model.ApplicationInfo;
-import com.photon.phresco.commons.model.BuildInfo;
-import com.photon.phresco.commons.model.ProjectInfo;
+import com.photon.phresco.commons.model.*;
 import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.FrameworkConfiguration;
@@ -2928,7 +2928,11 @@ public class Quality extends DynamicParameterAction implements Constants {
 	            		parameter.setValue(getFromPage());
 	            	} else if (REQ_SONAR_URL.equals(key)) {
 	            		parameter.setValue(sonarUrl);
-	            	}
+	            	} else if ("logo".equals(key)) {
+                        parameter.setValue(getLogoImageString());
+                    } else if ("theme".equals(key)) {
+                        parameter.setValue(getThemeColorJson());
+                    }
 	            }
 	        }
 	        mojo.save();
@@ -2956,6 +2960,39 @@ public class Quality extends DynamicParameterAction implements Constants {
         return showGeneratePdfPopup();
     }
 
+    private String getLogoImageString() throws PhrescoException {
+        String encodeImg = "";
+        try {
+            InputStream fileInputStream = null;
+            fileInputStream = getServiceManager().getIcon(getCustomerId());
+            byte[] imgByte = null;
+            imgByte = IOUtils.toByteArray(fileInputStream);
+            byte[] encodedImage = Base64.encodeBase64(imgByte);
+            encodeImg = new String(encodedImage);
+        } catch (Exception e) {
+            throw new PhrescoException(e);
+        }
+        return encodeImg;
+    }
+    
+    private String getThemeColorJson() throws PhrescoException {
+        String themeJsonStr = "";
+        try {
+            User user = (User) getSessionAttribute(SESSION_USER_INFO);
+            List<Customer> customers = user.getCustomers();
+            for (Customer customer : customers) {
+                if (customer.getId().equals(getCustomerId())) {
+                    FrameWorkTheme frameworkTheme = customer.getFrameworkTheme();
+                    Gson gson = new Gson();
+                    themeJsonStr = gson.toJson(frameworkTheme);
+                }
+            }
+        } catch (Exception e) {
+            throw new PhrescoException(e);
+        }
+        return themeJsonStr;
+    }
+    
     public void reportGeneration(Project project, String testType) throws PhrescoException {
     	S_LOGGER.debug("Entering Method Quality.reportGeneration()");
     	try {
