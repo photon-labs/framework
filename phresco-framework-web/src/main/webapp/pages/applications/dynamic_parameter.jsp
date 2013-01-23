@@ -495,7 +495,7 @@
 		params = params.concat("&selectedOption=");
 		params = params.concat(selectedOption);
 		
-		loadContent('changeEveDependancyListener', '', '', params, false, false);
+		loadContent('changeEveDependancyListener', '', '', params, true, false);
 	}
 	
 	function updateDependancy(dependency) {
