@@ -1,51 +1,98 @@
-Introduction
-------------
-	Phresco Framework can be run on any platform. It requires Java to be present on the machine. Check if JAVA_HOME (JDK path Ex:- c:\Program Files\Java\jdk1.6.0_18) is set and Java bin is included in the PATH (c:\Program Files\Java\jdk1.6.0_18\bin)
+Introduction:
 
-Steps to start the Phresco Application
+---------------
+
+Phresco framework can be run on any platform. It requires Java to be present on the machine. Check if JAVA_HOME (JDK path Ex:- c:\Program Files\Java\jdk1.6.0_18) is set and Java bin is included in the PATH (c:\Program Files\Java\jdk1.6.0_18\bin).
+
+
+Steps to start the Phresco Framework
+
+-------------------------------------
+
 In Windows,
-    1. Unzip the phresco-framework-<version>.zip to c:/phresco
-    2. Open a command prompt and run c:/phresco/phresco-framework/bin/start-framework-server.bat
+
+	1.Unzip Phresco-build-<version>.zip containing Service war, Mongo DB dump and Phresco Framework -<version>.zip  
+	2.Unzip the Phresco-framework -<version>.zip
+	2.Open the command prompt and run the batch script , c:/phresco/phresco-framework/bin/start-framework-server.bat
+        to start the framework.
 
 In Mac or Linux,
-    1. Unzip the phresco-framework-<version>.zip to /Users/admin/phresco
-    2. Open a Terminal and run "sh /Users/admin/phresco/phresco-framework/bin/start-framework-server.sh"
+
+	1.Unzip Phresco-build-<version>.zip containing Service war, Mongo DB dump and Phresco Framework -<version>.zip  
+	2.Unzip the Phresco-framework -<version>.zip
+	2. Open the terminal and run the shell script , i.e., "sh /Users/admin/phresco/phresco-framework/bin/start-framework        -server.sh" to start the framework
 
 For Android development,
-    Install Android SDK and ANDROID_HOME to the android installation. Also add ANDROID_HOME/tools, ANDROID_HOME/platform-tools to the PATH
 
-For Node JS development,
-    Install the correct version of node js from the phresco downloads.
+	1. Install Android SDK.
+	2. Set ANDROID_HOME ., C:\Program Files\Android\android-sdk
+	3. PATH : %ANDROID_HOME%\platform-tools;%ANDROID_HOME%\tools;
 
-For iPhone development,
-    Install Xcode
 
+For Nodejs development,
+
+	Install the correct version of nodejs from the phresco downloads.
+
+For Iphone development,
+
+	Install Xcode.
+
+For Blackberry:
+
+	Refer to section "5.17 Blackberry prerequisites" in the Phresco Framework 2.0 user guide.
 	
-           \************************************ Steps for Installing Pear Setup ***************************************/
+For Windows Phone:
 
-The  pear setup is  used for php,drupal and wordpress project code validation.the setup file can be download from the following:
+	Refer to section "5.18 Prerequisites for Windows Phone " in the Phresco Framework 2.0 user guide.
+
+For Windows Metro:
+
+	Refer to section "5.19 Prerequisites for Windows Metro" in the Phresco Framework 2.0 user guide.
+	
+
+Pear Setup:
+
+Pear is used for performing code validation for PHP , Drupal and Wordpress projects. The setup can be downloaded from the below:
 
 In Windows,
-	1.go to the Download tab option
-	2.click the Others dropdown List
-	3.For Wamp 
-		3.1 Download Php_Drupal_code_validation_WAMP_setup file and unzip in to local directory
-		3.2 just follow the instruction in instruction.txt file
-	4.For Xampp
-		4.1 Download php-drupal-validation-Xamp_setup file and unzip in to local directory
-		4.2 just follow the instruction in instruction.txt file
-		
-In Mac and Linux	,	
-	1.For Mac
-		1 Download php-drupal-code-validation-mac-setup file and unzip in to local directory
-		2 just follow the instruction in instruction.txt file
-	
-If already pear is installed in the system just download the using version 1.0 just download the durpalStandard and WordpressStandard from the option(applicable for both windows and Mac)
 
-InWindows,
-	1.For Wamp
-		just Unzip and follwing folder is placed in "C:\wamp\bin\php\php5.3.5\PEAR\PHP\CodeSniffer\Standards" 
-	2.for Xampp
-		just Unzip and follwing folder is placed in "C:\xampp\php\PEAR\PHP\CodeSniffer\Standards" 
-In Mac
-	just Unzip and follwing folder is placed in "/usr/local/pear/share/pear/PHP/CodeSniffer/Standards" 
+	1. Go to the Download tab option.
+	2. click the Others dropdown List.
+	3. For Wamp,
+	         3.1 Download Php_Drupal_code_validation_WAMP_setup file and unzip in to local directory
+		 3.2 just follow the instruction in instruction.txt file
+	4. For Xampp,
+		 4.1 Download php-drupal-validation-Xamp_setup file and unzip in to local directory
+		 4.2 Just follow the instruction in instruction.txt file.
+
+In Mac & Linux,
+
+
+	1. Download php-drupal-code-validation-mac-setup file and unzip in to local directory.
+	2. just follow the instruction in instruction.txt file.
+
+Drupal & Wordpress Standards:
+
+	1. Go to phresco downloads and download Drupal & Wordpress standards which is mandatory for performing code validation. This is applicable for both Windows and Mac.
+
+In Windows,
+
+	1. For Wamp,
+
+		Unzip and place the folder in "C:\wamp\bin\php\php5.3.5\PEAR\PHP\CodeSniffer\Standards" 
+	2. For Xampp,
+
+		Unzip and place the folder in "C:\xampp\php\PEAR\PHP\CodeSniffer\Standards" 
+
+
+In Mac,
+
+
+	1. Unzip and place the folder in "/usr/local/pear/share/pear/PHP/CodeSniffer/Standards" 
+
+
+
+
+
+
+
