@@ -567,7 +567,7 @@ public class QualityUtil {
 			}
 			performanceTestResult.setStdDev((float) Math.sqrt(totalMean / performanceTestResult.getNoOfSamples()));
 
-			performanceTestResult.setErr((performanceTestResult.getErr() / performanceTestResult.getNoOfSamples()) * 100);
+			performanceTestResult.setErr((float) (100 * performanceTestResult.getErr()) / performanceTestResult.getNoOfSamples());
 		}
 
 		//Total Std.Dev calculation
