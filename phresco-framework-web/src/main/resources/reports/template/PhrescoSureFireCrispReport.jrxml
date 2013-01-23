@@ -4,16 +4,18 @@
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<import value="java.util.*"/>
-	<style name="Title" forecolor="#FFFFFF" fontName="Times New Roman" fontSize="50" isBold="false" pdfFontName="Times-Bold"/>
-	<style name="SubTitle" forecolor="#CCCCCC" fontName="Times New Roman" fontSize="18" isBold="false" pdfFontName="Times-Roman"/>
-	<style name="Column header" forecolor="#666666" fontName="Times New Roman" fontSize="14" isBold="true" pdfFontName="Times-Roman"/>
-	<style name="Detail" mode="Transparent" fontName="Times New Roman" pdfFontName="Times-Roman"/>
-	<style name="Row" mode="Transparent" fontName="Times New Roman" pdfFontName="Times-Roman">
-		<conditionalStyle>
-			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
-			<style mode="Opaque" backcolor="#F0EFEF"/>
-		</conditionalStyle>
-	</style>
+	<style name="PSFCRTitle"/>
+	<style name="PSFCRTitleRect"/>
+	<style name="PSFCRTitleRectLogo"/>
+	<style name="PSFCRTitleRectDetail"/>
+	<style name="PSFCRTitleLabel"/>
+	<style name="PSFCRTitleLabelValue"/>
+	<style name="PSFCRHeading"/>
+	<style name="PSFCRHeadingLabel"/>
+	<style name="PSFCRHeadingLabelValue"/>
+	<style name="PSFCRTHeadingRow"/>
+	<style name="PSFCRTHeadingRowLabel"/>
+	<style name="PSFCRTHeadingRowLabelValue"/>
 	<field name="testSuiteName" class="java.lang.String"/>
 	<field name="total" class="java.lang.Float"/>
 	<field name="success" class="java.lang.Float"/>
@@ -40,41 +42,41 @@
 			<frame>
 				<reportElement mode="Opaque" x="0" y="0" width="555" height="48" backcolor="#FFFFFF"/>
 				<rectangle>
-					<reportElement x="0" y="24" width="555" height="24" backcolor="#DDFCDD"/>
+					<reportElement style="PSFCRTHeadingRow" x="0" y="24" width="555" height="24"/>
 					<graphicElement>
 						<pen lineColor="#999999"/>
 					</graphicElement>
 				</rectangle>
 				<staticText>
-					<reportElement x="15" y="28" width="100" height="16" forecolor="#333333"/>
+					<reportElement style="PSFCRTHeadingRowLabel" x="15" y="28" width="100" height="16"/>
 					<textElement>
 						<font fontName="Tahoma" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Testsuite Name]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="268" y="28" width="60" height="16" forecolor="#333333"/>
+					<reportElement style="PSFCRTHeadingRowLabel" x="268" y="28" width="60" height="16"/>
 					<textElement>
 						<font fontName="Tahoma" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Total]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="340" y="28" width="60" height="16" forecolor="#333333"/>
+					<reportElement style="PSFCRTHeadingRowLabel" x="340" y="28" width="60" height="16"/>
 					<textElement>
 						<font fontName="Tahoma" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Success]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="414" y="28" width="60" height="16" forecolor="#333333"/>
+					<reportElement style="PSFCRTHeadingRowLabel" x="414" y="28" width="60" height="16"/>
 					<textElement>
 						<font fontName="Tahoma" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Failure]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="485" y="28" width="60" height="16" forecolor="#333333"/>
+					<reportElement style="PSFCRTHeadingRowLabel" x="485" y="28" width="60" height="16"/>
 					<textElement>
 						<font fontName="Tahoma" size="12" isBold="true"/>
 					</textElement>
@@ -143,41 +145,41 @@
 			<frame>
 				<reportElement mode="Opaque" x="0" y="0" width="555" height="26" forecolor="#000000" backcolor="#FFFFFF"/>
 				<rectangle>
-					<reportElement x="0" y="0" width="555" height="25" backcolor="#DDFCDD"/>
+					<reportElement style="PSFCRTHeadingRow" x="0" y="0" width="555" height="25"/>
 					<graphicElement>
 						<pen lineColor="#999999"/>
 					</graphicElement>
 				</rectangle>
 				<staticText>
-					<reportElement x="15" y="5" width="100" height="16" forecolor="#333333"/>
+					<reportElement style="PSFCRTHeadingRowLabelValue" x="15" y="5" width="100" height="16"/>
 					<textElement>
 						<font fontName="Tahoma" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Total]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="268" y="5" width="60" height="16" forecolor="#333333"/>
+					<reportElement style="PSFCRTHeadingRowLabelValue" x="268" y="5" width="60" height="16"/>
 					<textElement>
 						<font fontName="Tahoma" size="12" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{totalTestSuites}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="340" y="5" width="60" height="16" forecolor="#333333"/>
+					<reportElement style="PSFCRTHeadingRowLabelValue" x="340" y="5" width="60" height="16"/>
 					<textElement>
 						<font fontName="Tahoma" size="12" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{noOfSuccess}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="414" y="5" width="60" height="16" forecolor="#333333"/>
+					<reportElement style="PSFCRTHeadingRowLabelValue" x="414" y="5" width="60" height="16"/>
 					<textElement>
 						<font fontName="Tahoma" size="12" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{noOfFailure}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="485" y="5" width="60" height="16" forecolor="#333333"/>
+					<reportElement style="PSFCRTHeadingRowLabelValue" x="485" y="5" width="60" height="16"/>
 					<textElement>
 						<font fontName="Tahoma" size="12" isBold="true"/>
 					</textElement>
