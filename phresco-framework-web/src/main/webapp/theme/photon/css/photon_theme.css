@@ -72,8 +72,9 @@ a:focus {
 /*** application list page css starts ***/
 .page-header {
 	background: #000000;
-    border: 1px solid #FFF;
-	padding:7px 0;
+    height: 24px;
+	margin: 2px;
+	padding: 0px !important;
 }
 
 #container {
@@ -819,6 +820,11 @@ h1 small {
 	float:left;
 	width:210px;
 }
+@-moz-document url-prefix() {
+	.dd-options {
+		top: 22px;
+	}
+}	
 
 li {
     color: #313131;

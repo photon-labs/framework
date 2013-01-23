@@ -2962,14 +2962,12 @@ fieldset {
 
 .envErrMsg {
 	float:left;
-	padding-top:7px;
 	width:62%;
 	text-align:left;
 }
 
 .envSuccessMsg {
 	float:left;
-	padding-top:7px;
 	width:62%;
 	text-align:left;
 }
@@ -5559,12 +5557,12 @@ a[id='androidSigning']:hover {
     float: right;
     margin-bottom: 0;
     position: absolute;
-    top: 49px;
+    top: 45px;
     width: auto;
 	right:2.5%;
 }
 .customer_name label {
-	color: #555555;
+	color: #ccc;
 }
 
 .customer_listbox {
@@ -5582,7 +5580,8 @@ a[id='androidSigning']:hover {
     float: left;
     margin-right: 10px;
     width: 62px;
-    padding-top: 3px;
+    padding-top: 1px;
+	margin-left: 66px;
 }
 
 .customer_select_div {
@@ -6111,7 +6110,7 @@ color: #313131;
 }
 .dd-selected-image, .dd-option-image {
 	margin-left: 3px;
-	margin-top: 3px;
+	margin-top: 0px;
 	margin-right: 7px !important;
 }
 .dd-select {
@@ -6300,6 +6299,40 @@ color: #313131;
 	margin-top: -2px;
 }
 
+.customer_select_div  .dd-select {
+	width: 180px !important;
+	background: #39BC67 !important;
+	padding: 0px 8px;
+	border: 0px !important;
+	border-radius: 0px !important;
+	float: right;
+	height: auto !important;
+	margin-top: 0px;
+}
+.customer_select_div  .dd-options {
+	width: 196px !important;
+	background: #323232 !important;
+	padding: 0px 0px;
+	border: 0px !important;
+	height: auto;
+	overflow-y: none;
+	left: 3px;
+	position: relative;
+}
+.customer_select_div .dd-select a,.customer_select_div .dd-option {
+	overflow: initial;
+	padding: 3px !important;
+	text-decoration: none !important;
+}
+.customer_select_div .dd-option-text:hover {
+	color: black;
+}
 .mapHeading {
 	color:#FFFFFF !important;
-}	
+}
+.controls select {
+	width: 300px !important;
+}
+.controls #password {
+	width: 295px !important;
+}

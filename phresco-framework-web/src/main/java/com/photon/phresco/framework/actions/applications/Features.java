@@ -216,6 +216,7 @@ public class Features extends FrameworkBaseAction {
 		ArtifactGroup artifactGroupInfo = getServiceManager().getArtifactGroupInfo(artifactGroupId);
 		slctFeature.setDispName(artifactGroupInfo.getName());
 		slctFeature.setType(artifactGroupInfo.getType().name());
+		slctFeature.setArtifactGroupId(artifactGroupInfo.getId());
 		List<CoreOption> appliesTo = artifactGroupInfo.getAppliesTo();
 		for (CoreOption coreOption : appliesTo) {
 		    if (coreOption.getTechId().equals(techId) && !coreOption.isCore()) {
