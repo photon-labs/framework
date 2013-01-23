@@ -1104,6 +1104,7 @@ public interface FrameworkConstants {
     String ERROR_LOGIN_INVALID_USERNAME = "login.error.username";
     String ERROR_LOGIN_INVALID_PASSWORD = "login.error.password";
     String ERROR_LOGIN_ACCESS_DENIED = "login.error.access.denied.message";
+    String ERROR_LOGIN_INVALID_USER = "login.error.invalid.user";
     String ERROR_EXCEPTION = "login.exception.message";
     String SUCCESS_LOGOUT = "logout.success.message";
     String SESSION_EXPIRED = "session.expired.message";
