@@ -219,10 +219,25 @@
 						List<String> selectedValList = Arrays.asList(parameter.getValue().split(FrameworkConstants.CSV_PATTERN));	
 						parameterModel.setSelectedValues(selectedValList);
 					}
+					
+					// when atleast there is a dependency option available, enable on change event
+					boolean enableOnchangeFunction = false;
+					if (CollectionUtils.isNotEmpty(dynamicPsblValues)) {
+						for (com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value dynamicPsblValue : dynamicPsblValues) {
+							String psblValDependency = dynamicPsblValue.getDependency();
+							if (StringUtils.isNotEmpty(psblValDependency)) {
+								enableOnchangeFunction = true;
+								break;
+							}
+						}
+					}
+					
 					String onChangeFunction = ""; 
-					if (CollectionUtils.isNotEmpty(dynamicPsblValues) &&StringUtils.isNotEmpty(dynamicPsblValues.get(0).getDependency())) {
+					if (CollectionUtils.isNotEmpty(dynamicPsblValues) && StringUtils.isNotEmpty(dynamicPsblValues.get(0).getDependency())) {
 						onChangeFunction = "selectBoxOnChangeEvent(this, '"+ parameter.getKey() +"')";
 					} else if(!Boolean.parseBoolean(parameter.getMultiple()) && StringUtils.isNotEmpty(parameter.getDependency())) {
+					    onChangeFunction = "selectBoxOnChangeEvent(this, '"+ parameter.getKey() +"')";
+					} else if(enableOnchangeFunction) {
 					    onChangeFunction = "selectBoxOnChangeEvent(this, '"+ parameter.getKey() +"')";
 					} else {
 					    onChangeFunction = "";
@@ -305,12 +320,12 @@
 				}
 	%>
 			<script type="text/javascript">
-				<%-- $('input[name="<%= parameter.getKey() %>"]').live('input propertychange',function(e) {
-					var name = $(this).val();
+				$('input[name="<%= parameter.getKey() %>"]').live('input propertychange',function(e) {
+					var value = $(this).val();
 					var type = '<%= parameter.getType() %>';
-					var txtBoxName = '<%= parameter.getKey() %>';
-					validateInput(name, type, txtBoxName);
-				}); --%>
+					var txtBoxId = '<%= parameter.getKey() %>';
+					validateInput(value, type, txtBoxId);
+				});
 			</script>
 	<% 
 			}
@@ -337,6 +352,13 @@
 	       $('.jecEditableOption').text("");
 	    });
 	});
+	
+	//To focus first control in popup
+	<% if (CollectionUtils.isNotEmpty(parameters)) { 
+		String focusKey = parameters.get(0).getKey();
+	%>
+		$("#"+'<%= focusKey %>').focus();
+	<% } %>
 	
 	//to update build number in hidden field for deploy popup
 	<% if (FrameworkConstants.REQ_DEPLOY.equals(from)) { %>
@@ -423,7 +445,7 @@
 		var csvDependencies;
 		changeEveDependancyListener(selectedOption, currentParamKey); // update the watcher while changing the drop down
 		
-		if (dependencyAttr !== undefined) {
+		if (dependencyAttr !== undefined && dependencyAttr != null) {
 			csvDependencies = dependencyAttr.substring(dependencyAttr.indexOf('=') + 1);
 			csvDependencies = getAllDependencies(csvDependencies);
 			var dependencyArr = new Array();
@@ -473,7 +495,7 @@
 		params = params.concat("&selectedOption=");
 		params = params.concat(selectedOption);
 		
-		loadContent('changeEveDependancyListener', '', '', params, true, false);
+		loadContent('changeEveDependancyListener', '', '', params, false, false);
 	}
 	
 	function updateDependancy(dependency) {
@@ -624,5 +646,11 @@
 		csvValue = csvValue.substring(0, csvValue.lastIndexOf(","));
 		changeEveDependancyListener(csvValue, checkBoxName);
 		updateDependancy(dependency);
+	}
+	
+	function validateInput(value, type, txtBoxId) {
+		if (type == "Number") {
+			$("#" + txtBoxId).val(removeSpaces(checkForNumber(value)));
+		}
 	}
 </script>

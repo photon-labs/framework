@@ -820,10 +820,9 @@
     var defaultOption;
 	//Success event functions
 	function successEvent(pageUrl, data) {
-		hideLoadingIcon();
 		//To fill the servers/database for the selected 
 		if (pageUrl == "fetchDownloadInfos") {
-			
+			hideLoadingIcon();
 			selectBoxobj = $('#'+ data.selectBoxId);
 			
 			defaultOption = data.defaultOptTxt;

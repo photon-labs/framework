@@ -67,7 +67,7 @@
                 	
                  %>
 	       			<li>
-						<input type="checkbox" name="envNames" class="check techCheck" 
+						<input type="checkbox" name="envNames" onclick="checkboxClickEvent(this)" class="check techCheck" 
 							value='<%= envJson %>' title="<%= environment.getDesc() %>"  <%= environment.isDefaultEnv() ? "disabled" : "" %> envName='<%= environment.getName() %>'/><%= environment.getName() %>
 					</li>
 				<% } %>
@@ -161,16 +161,6 @@ $(document).ready(function() {
 		}
    });
 	
-	
-	$('input[type=checkbox]').click(function(){
-		if ($(this).prop('checked')) {
-			$(this).parent().attr('class', 'selected');
-		} else {
-			$(this).parent().removeAttr('class');
-		}
-	});
-	
-	
 	//To remove the added Environment value in UI
     $('#remove').click(function() {
     	$('#errMsg').empty();
@@ -228,12 +218,21 @@ $(document).ready(function() {
 	});
 });
 	
+	function checkboxClickEvent(obj) {
+		if ($(obj).prop('checked')) {
+			$(obj).parent().attr('class', 'selected');
+		} else {
+			$(obj).parent().removeAttr('class');
+		}
+	}
+	
+
 	function addRow() {
 		var value = $('#envName').val();
 		var desc = $('#envDesc').val();
 		var checkValue = '{"name": "' + value + '", "desc": "' + desc
 				+ '", "defaultEnv": false }';
-		var checkbox = '<input type="checkbox" name="envNames" class="check techCheck" value=\'' + checkValue + '\' title="' + desc + '" />'
+		var checkbox = '<input type="checkbox" name="envNames" onclick="checkboxClickEvent(this);" class="check techCheck" value=\'' + checkValue + '\' title="' + desc + '" />'
 				+ value;
 
 		if ($("#multiselect ul").has("li").length === 0) {

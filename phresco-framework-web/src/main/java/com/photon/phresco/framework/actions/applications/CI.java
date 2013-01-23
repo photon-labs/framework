@@ -331,24 +331,28 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
             Map<String, DependantParameters> watcherMap = new HashMap<String, DependantParameters>(8);
             List<Parameter> parameters = null;
             MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_CI)));
+            String goal = "";
             // based on operation it should do it
             if (BUILD.equals(operation)) {
                 parameters = getMojoParameters(mojo, PHASE_PACKAGE);
+                goal = PHASE_PACKAGE;
                 setReqAttribute(REQ_PHASE, PHASE_CI);
-                setReqAttribute(REQ_GOAL, PHASE_PACKAGE);
+                setReqAttribute(REQ_GOAL, goal);
             } else if (DEPLOY.equals(operation)) { 
                 parameters = getMojoParameters(mojo, PHASE_DEPLOY);
                 setReqAttribute(REQ_PHASE, PHASE_CI);
-                setReqAttribute(REQ_GOAL, PHASE_DEPLOY);
+                goal = PHASE_DEPLOY;
+                setReqAttribute(REQ_GOAL, goal);
             } else if (FUNCTIONAL_TEST.equals(operation)) {
                 FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
                 String seleniumToolType = frameworkUtil.getSeleniumToolType(appInfo);
                 parameters = getMojoParameters(mojo, PHASE_FUNCTIONAL_TEST + HYPHEN + seleniumToolType);
                  setReqAttribute(REQ_PHASE, PHASE_CI);
-                 setReqAttribute(REQ_GOAL, PHASE_FUNCTIONAL_TEST + HYPHEN + seleniumToolType);
+                 goal = PHASE_FUNCTIONAL_TEST + HYPHEN + seleniumToolType;
+                 setReqAttribute(REQ_GOAL, goal);
             }
             
-            setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap);
+            setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap, goal);
             setSessionAttribute(appInfo.getId() + PHASE_CI + SESSION_WATCHER_MAP, watcherMap);
             setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
             setReqAttribute(REQ_APP_INFO, appInfo);
