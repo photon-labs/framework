@@ -3,16 +3,18 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<style name="Title" forecolor="#FFFFFF" fontName="Times New Roman" fontSize="50" isBold="false" pdfFontName="Times-Bold"/>
-	<style name="SubTitle" forecolor="#CCCCCC" fontName="Times New Roman" fontSize="18" isBold="false" pdfFontName="Times-Roman"/>
-	<style name="Column header" forecolor="#666666" fontName="Times New Roman" fontSize="14" isBold="true" pdfFontName="Times-Roman"/>
-	<style name="Detail" mode="Transparent" fontName="Times New Roman" pdfFontName="Times-Roman"/>
-	<style name="Row" mode="Transparent" fontName="Times New Roman" pdfFontName="Times-Roman">
-		<conditionalStyle>
-			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
-			<style mode="Opaque" backcolor="#F0EFEF"/>
-		</conditionalStyle>
-	</style>
+	<style name="PLTDTitle"/>
+	<style name="PLTDTitleRect"/>
+	<style name="PLTDTitleRectLogo"/>
+	<style name="PLTDTitleRectDetail"/>
+	<style name="PLTDTitleLabel"/>
+	<style name="PLTDTitleLabelValue"/>
+	<style name="PLTDHeading"/>
+	<style name="PLTDHeadingLabel"/>
+	<style name="PLTDHeadingLabelValue"/>
+	<style name="PLTDHeadingRow"/>
+	<style name="PLTDHeadingRowLabel"/>
+	<style name="PLTDHeadingRowLabelValue"/>
 	<parameter name="reportsDataType" class="java.lang.String"/>
 	<field name="time" class="java.lang.Integer"/>
 	<field name="latencyTime" class="java.lang.Integer"/>
@@ -33,31 +35,31 @@
 					<printWhenExpression><![CDATA[$P{reportsDataType}.equals("detail")]]></printWhenExpression>
 				</reportElement>
 				<rectangle>
-					<reportElement x="0" y="3" width="555" height="20" backcolor="#DDFCDD"/>
+					<reportElement style="PLTDHeadingRow" x="0" y="3" width="555" height="20"/>
 				</rectangle>
 				<staticText>
-					<reportElement x="375" y="5" width="100" height="15" forecolor="#333333"/>
+					<reportElement style="PLTDHeadingRowLabel" x="375" y="5" width="100" height="15"/>
 					<textElement>
 						<font fontName="Tahoma" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Elapsed Time]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="248" y="5" width="117" height="15" forecolor="#333333"/>
+					<reportElement style="PLTDHeadingRowLabel" x="248" y="5" width="117" height="15"/>
 					<textElement>
 						<font fontName="Tahoma" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Date]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="26" y="5" width="101" height="15" forecolor="#333333"/>
+					<reportElement style="PLTDHeadingRowLabel" x="26" y="5" width="101" height="15"/>
 					<textElement>
 						<font fontName="Tahoma" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Thread Name]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="486" y="5" width="54" height="15" forecolor="#333333"/>
+					<reportElement style="PLTDHeadingRowLabel" x="486" y="5" width="54" height="15"/>
 					<textElement>
 						<font fontName="Tahoma" size="12" isBold="true"/>
 					</textElement>
@@ -123,31 +125,31 @@
 			<frame>
 				<reportElement mode="Opaque" x="0" y="0" width="555" height="38" forecolor="#000000" backcolor="#FFFFFF"/>
 				<rectangle radius="10">
-					<reportElement x="1" y="8" width="554" height="20" backcolor="#DDFCDD"/>
+					<reportElement style="PLTDHeadingRow" x="1" y="8" width="554" height="20"/>
 				</rectangle>
 				<textField evaluationTime="Report">
-					<reportElement x="176" y="10" width="50" height="20" forecolor="#333333"/>
+					<reportElement style="PLTDHeadingRowLabel" x="176" y="10" width="50" height="20"/>
 					<textElement textAlignment="Left" verticalAlignment="Top">
 						<font fontName="Tahoma" size="12" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{NoOfSuccess}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Report">
-					<reportElement x="409" y="10" width="50" height="20" forecolor="#333333"/>
+					<reportElement style="PLTDHeadingRowLabel" x="409" y="10" width="50" height="20"/>
 					<textElement textAlignment="Left" verticalAlignment="Top">
 						<font fontName="Tahoma" size="12" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{NoOfFailure}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="80" y="10" width="85" height="20" forecolor="#333333"/>
+					<reportElement style="PLTDHeadingRowLabel" x="80" y="10" width="85" height="20"/>
 					<textElement>
 						<font fontName="Tahoma" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[No of Success :]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="313" y="10" width="85" height="20" forecolor="#333333"/>
+					<reportElement style="PLTDHeadingRowLabel" x="313" y="10" width="85" height="20"/>
 					<textElement>
 						<font fontName="Tahoma" size="12" isBold="true"/>
 					</textElement>

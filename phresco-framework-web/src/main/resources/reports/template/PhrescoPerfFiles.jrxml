@@ -3,16 +3,18 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<style name="Title" forecolor="#FFFFFF" fontName="Times New Roman" fontSize="50" isBold="false" pdfFontName="Times-Bold"/>
-	<style name="SubTitle" forecolor="#CCCCCC" fontName="Times New Roman" fontSize="18" isBold="false" pdfFontName="Times-Roman"/>
-	<style name="Column header" forecolor="#666666" fontName="Times New Roman" fontSize="14" isBold="true" pdfFontName="Times-Roman"/>
-	<style name="Detail" mode="Transparent" fontName="Times New Roman" pdfFontName="Times-Roman"/>
-	<style name="Row" mode="Transparent" fontName="Times New Roman" pdfFontName="Times-Roman">
-		<conditionalStyle>
-			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
-			<style mode="Opaque" backcolor="#F0EFEF"/>
-		</conditionalStyle>
-	</style>
+	<style name="PPFTitle"/>
+	<style name="PPFTitleRect"/>
+	<style name="PPFTitleRectLogo"/>
+	<style name="PPFTitleRectDetail"/>
+	<style name="PPFTitleLabel"/>
+	<style name="PPFTitleLabelValue"/>
+	<style name="PPFHeading"/>
+	<style name="PPFHeadingLabel"/>
+	<style name="PPFHeadingLabelValue"/>
+	<style name="PPFTHeadingRow"/>
+	<style name="PPFTHeadingRowLabel"/>
+	<style name="PPFTHeadingRowLabelValue"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["/Users/kaleeswaran/root/branches/agra/framework/trunk/phresco-framework-web/src/main/resources/reports/template/"]]></defaultValueExpression>
 	</parameter>
@@ -33,17 +35,17 @@
 			<frame>
 				<reportElement x="0" y="0" width="554" height="24"/>
 				<rectangle radius="10">
-					<reportElement x="0" y="0" width="554" height="20" backcolor="#DDFCDD"/>
+					<reportElement style="PPFTHeadingRow" x="0" y="0" width="554" height="20"/>
 				</rectangle>
 				<staticText>
-					<reportElement x="13" y="3" width="75" height="15" forecolor="#333333"/>
+					<reportElement style="PPFTHeadingRowLabel" x="13" y="3" width="75" height="15"/>
 					<textElement>
 						<font fontName="Tahoma" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[File Name :]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="88" y="3" width="456" height="15" forecolor="#333333"/>
+					<reportElement style="PPFTHeadingRowLabelValue" x="88" y="3" width="456" height="15"/>
 					<textElement>
 						<font fontName="Tahoma" size="12" isBold="true"/>
 					</textElement>

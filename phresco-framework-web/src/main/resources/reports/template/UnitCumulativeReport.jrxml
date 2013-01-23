@@ -3,16 +3,15 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<style name="Title" forecolor="#FFFFFF" fontName="Times New Roman" fontSize="50" isBold="false" pdfFontName="Times-Bold"/>
-	<style name="SubTitle" forecolor="#CCCCCC" fontName="Times New Roman" fontSize="18" isBold="false" pdfFontName="Times-Roman"/>
-	<style name="Column header" forecolor="#666666" fontName="Times New Roman" fontSize="14" isBold="true" pdfFontName="Times-Roman"/>
-	<style name="Detail" mode="Transparent" fontName="Times New Roman" pdfFontName="Times-Roman"/>
-	<style name="Row" mode="Transparent" fontName="Times New Roman" pdfFontName="Times-Roman">
-		<conditionalStyle>
-			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
-			<style mode="Opaque" backcolor="#F0EFEF"/>
-		</conditionalStyle>
-	</style>
+	<style name="UCRTitle"/>
+	<style name="UCRTitleRect"/>
+	<style name="UCRTitleRectLogo"/>
+	<style name="UCRTitleRectDetail"/>
+	<style name="UCRTitleLabel"/>
+	<style name="UCRTitleLabelValue"/>
+	<style name="UCRHeading"/>
+	<style name="UCRHeadingLabel"/>
+	<style name="UCRHeadingLabelValue"/>
 	<parameter name="reportsDataType" class="java.lang.String"/>
 	<parameter name="testType" class="java.lang.String"/>
 	<field name="testSuites" class="java.util.List"/>
@@ -28,7 +27,7 @@
 		<band height="24">
 			<printWhenExpression><![CDATA[$P{testType}.contains("unit")]]></printWhenExpression>
 			<frame>
-				<reportElement mode="Opaque" x="0" y="0" width="555" height="24" isRemoveLineWhenBlank="true" forecolor="#D0B48E" backcolor="#00CC66">
+				<reportElement style="UCRHeading" mode="Opaque" x="0" y="0" width="555" height="24" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[$P{testType}.equals("unit") && !$F{testSuites}.isEmpty() || $P{testType}.contains("unit") && !$F{allTestSuites}.isEmpty()]]></printWhenExpression>
 				</reportElement>
 				<staticText>

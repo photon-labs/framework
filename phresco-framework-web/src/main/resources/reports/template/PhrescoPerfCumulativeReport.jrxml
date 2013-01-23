@@ -3,16 +3,18 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<style name="Title" forecolor="#FFFFFF" fontName="Times New Roman" fontSize="50" isBold="false" pdfFontName="Times-Bold"/>
-	<style name="SubTitle" forecolor="#CCCCCC" fontName="Times New Roman" fontSize="18" isBold="false" pdfFontName="Times-Roman"/>
-	<style name="Column header" forecolor="#666666" fontName="Times New Roman" fontSize="14" isBold="true" pdfFontName="Times-Roman"/>
-	<style name="Detail" mode="Transparent" fontName="Times New Roman" pdfFontName="Times-Roman"/>
-	<style name="Row" mode="Transparent" fontName="Times New Roman" pdfFontName="Times-Roman">
-		<conditionalStyle>
-			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
-			<style mode="Opaque" backcolor="#F0EFEF"/>
-		</conditionalStyle>
-	</style>
+	<style name="PPCRTitle"/>
+	<style name="PPCRTitleRect"/>
+	<style name="PPCRTitleRectLogo"/>
+	<style name="PPCRTitleRectDetail"/>
+	<style name="PPCRTitleLabel"/>
+	<style name="PPCRTitleLabelValue"/>
+	<style name="PPCRHeading"/>
+	<style name="PPCRHeadingLabel"/>
+	<style name="PPCRHeadingLabelValue"/>
+	<style name="PPCRHeadingRow"/>
+	<style name="PPCRHeadingRowLabel"/>
+	<style name="PPCRHeadingRowLabelValue"/>
 	<parameter name="testType" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="projectCode" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="reportsDataType" class="java.lang.String"/>
@@ -21,7 +23,7 @@
 	<pageHeader>
 		<band height="24">
 			<frame>
-				<reportElement mode="Opaque" x="0" y="0" width="555" height="24" isRemoveLineWhenBlank="true" forecolor="#D0B48E" backcolor="#00CC66"/>
+				<reportElement style="PPCRHeading" mode="Opaque" x="0" y="0" width="555" height="24" isRemoveLineWhenBlank="true"/>
 				<staticText>
 					<reportElement x="5" y="4" width="190" height="15" forecolor="#FFFFFF"/>
 					<textElement>
@@ -39,13 +41,13 @@
 					<printWhenExpression><![CDATA[!$F{fileReport}.isEmpty()]]></printWhenExpression>
 				</reportElement>
 				<rectangle radius="10">
-					<reportElement x="0" y="3" width="553" height="20" backcolor="#DDFCDD"/>
+					<reportElement style="PPCRHeadingRow" x="0" y="3" width="553" height="20"/>
 					<graphicElement>
 						<pen lineColor="#999999"/>
 					</graphicElement>
 				</rectangle>
 				<staticText>
-					<reportElement x="15" y="5" width="68" height="15" forecolor="#333333"/>
+					<reportElement style="PPCRHeadingRowLabel" x="15" y="5" width="68" height="15"/>
 					<textElement>
 						<font fontName="Tahoma" size="12" isBold="true"/>
 					</textElement>
@@ -62,7 +64,7 @@
 					<subreportExpression><![CDATA["PhrescoPerfFiles.jasper"]]></subreportExpression>
 				</subreport>
 				<textField>
-					<reportElement x="84" y="5" width="466" height="15" forecolor="#333333"/>
+					<reportElement style="PPCRHeadingRowLabelValue" x="84" y="5" width="466" height="15"/>
 					<textElement>
 						<font fontName="Tahoma" size="12" isBold="true"/>
 					</textElement>
