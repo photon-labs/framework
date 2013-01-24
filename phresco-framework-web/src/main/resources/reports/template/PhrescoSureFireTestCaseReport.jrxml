@@ -124,7 +124,7 @@
 		</band>
 	</detail>
 	<lastPageFooter>
-		<band height="295">
+		<band height="288">
 			<frame>
 				<reportElement mode="Opaque" x="0" y="0" width="555" height="35" forecolor="#000000" backcolor="#FFFFFF"/>
 				<rectangle radius="10">
@@ -177,10 +177,10 @@
 				</staticText>
 			</frame>
 			<frame>
-				<reportElement mode="Opaque" x="0" y="35" width="555" height="256" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement mode="Opaque" x="0" y="35" width="555" height="246" forecolor="#000000" backcolor="#FFFFFF"/>
 				<pie3DChart>
 					<chart>
-						<reportElement x="48" y="12" width="447" height="228"/>
+						<reportElement x="37" y="12" width="468" height="228"/>
 						<chartTitle/>
 						<chartSubtitle/>
 						<chartLegend/>
@@ -193,20 +193,20 @@
 						</pieSeries>
 						<pieSeries>
 							<keyExpression><![CDATA["Failure"]]></keyExpression>
-							<valueExpression><![CDATA[$V{NoOfSuccess}]]></valueExpression>
+							<valueExpression><![CDATA[$V{NoOfFailure}]]></valueExpression>
 							<labelExpression><![CDATA["Failure"]]></labelExpression>
 						</pieSeries>
 						<pieSeries>
 							<keyExpression><![CDATA["Error"]]></keyExpression>
-							<valueExpression><![CDATA[$V{NoOfSuccess}]]></valueExpression>
+							<valueExpression><![CDATA[$V{NoOfError}]]></valueExpression>
 							<labelExpression><![CDATA["Error"]]></labelExpression>
 						</pieSeries>
 					</pieDataset>
 					<pie3DPlot isCircular="false">
 						<plot>
 							<seriesColor seriesOrder="0" color="#66FF66"/>
-							<seriesColor seriesOrder="1" color="#FF9933"/>
-							<seriesColor seriesOrder="2" color="#FF0000"/>
+							<seriesColor seriesOrder="1" color="#FF0000"/>
+							<seriesColor seriesOrder="2" color="#FF9933"/>
 						</plot>
 						<itemLabel/>
 					</pie3DPlot>
