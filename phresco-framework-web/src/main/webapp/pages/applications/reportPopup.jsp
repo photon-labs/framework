@@ -1,3 +1,4 @@
+<%@page import="org.apache.xalan.xsltc.compiler.sym"%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.util.List"%>
@@ -15,6 +16,7 @@
 	List<String> reportFiles = (List<String>)request.getAttribute(FrameworkConstants.REQ_PDF_REPORT_FILES);
 	String reportGenerationStat = (String)request.getAttribute(FrameworkConstants.REQ_REPORT_STATUS);
 	String reportDeletionStat = (String)request.getAttribute(FrameworkConstants.REQ_REPORT_DELETE_STATUS);
+	System.out.println("reportDeletionStat ... " + reportDeletionStat);
 	String applicationId = (String)request.getAttribute(FrameworkConstants.REQ_APP_ID);
 	String projectId = (String)request.getAttribute(FrameworkConstants.REQ_PROJECT_ID);
 	String customerId = (String)request.getAttribute(FrameworkConstants.REQ_CUSTOMER_ID);
@@ -147,7 +149,8 @@
 		<%
 		    if (StringUtils.isNotEmpty(reportDeletionStat)) {
         %>
-               $("#successMsg").html("<s:text name='label.report.delete.success'/>");
+               $("#successMsg").css("display", "block");
+               $("#successMsg").html("<s:text name='label.report.delete.success'/>").fadeOut(5000);
 		<%
             }
         %>
