@@ -147,7 +147,8 @@
 		<%
 		    if (StringUtils.isNotEmpty(reportDeletionStat)) {
         %>
-               $("#successMsg").html("<s:text name='label.report.delete.success'/>");
+               $("#successMsg").css("display", "block");
+               $("#successMsg").html("<s:text name='label.report.delete.success'/>").fadeOut(5000);
 		<%
             }
         %>
