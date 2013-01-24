@@ -1935,7 +1935,7 @@ public class Quality extends DynamicParameterAction implements Constants {
             List<String> testResultsTypes = new ArrayList<String>();
             testResultsTypes.add("server");
             testResultsTypes.add("database");
-            testResultsTypes.add("webservices");
+            testResultsTypes.add("webservice");
             for (String testResultsType: testResultsTypes) {
                 StringBuilder sb = new StringBuilder(getApplicationHome());
                 String performanceReportDir = frameworkUtil.getPerformanceTestReportDir(getApplicationInfo());

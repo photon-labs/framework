@@ -89,6 +89,11 @@ public class Projects extends FrameworkBaseAction {
     private String statusFlag = "" ;
     private String id = "";
     private String fromTab = "";
+    
+    public void clearMap() {
+    	s_layerMap.clear();
+    	s_technologyGroupMap.clear();
+	}
 
 	/**
      * To get the list of projects
@@ -162,9 +167,9 @@ public class Projects extends FrameworkBaseAction {
         }
 
         try {
-            List<TechnologyGroup> techGroups = filterLayer(getLayerId()).getTechGroups();
-            TechnologyGroup technologyGroup = filterTechnologyGroup(techGroups, getTechGroupId());
-            String techId = getReqParameter(technologyGroup.getId() + REQ_PARAM_NAME_TECHNOLOGY);
+            List<TechnologyGroup> techGroups = filterLayer(getLayerId()).getTechGroups();            
+            TechnologyGroup technologyGroup = filterTechnologyGroup(techGroups, getTechGroupId());            
+            String techId = getReqParameter(technologyGroup.getId() + REQ_PARAM_NAME_TECHNOLOGY);            
             List<TechnologyInfo> techInfos = technologyGroup.getTechInfos();
             if (CollectionUtils.isNotEmpty(techInfos)) {
                 for (TechnologyInfo techInfo : techInfos) {
@@ -195,7 +200,7 @@ public class Projects extends FrameworkBaseAction {
 
         try {
             String techGroupId = getReqParameter(getLayerId() + REQ_PARAM_NAME_TECH_GROUP);
-            List<TechnologyGroup> techGroups = filterLayer(getLayerId()).getTechGroups();
+            List<TechnologyGroup> techGroups = filterLayer(getLayerId()).getTechGroups();            
             TechnologyGroup technologyGroup = filterTechnologyGroup(techGroups, techGroupId);
             setWidgets(technologyGroup.getTechInfos());
         } catch (PhrescoException e) {
@@ -223,13 +228,13 @@ public class Projects extends FrameworkBaseAction {
     			if (customer.getId().equals(getCustomerId())) {
     				List<ApplicationType> layers = customer.getApplicableAppTypes();
     				if (CollectionUtils.isNotEmpty(layers)) {
-    					for (ApplicationType layer : layers) {
+    					for (ApplicationType layer : layers) {    						
     						s_layerMap.put(layer.getId(), layer);
     					}
     				}
     				break;
     			}
-    		}
+    		}    		
     	}
 
     	return s_layerMap.get(layerId);
@@ -241,10 +246,10 @@ public class Projects extends FrameworkBaseAction {
      * @param id
      * @return
      */
-    private TechnologyGroup filterTechnologyGroup(List<TechnologyGroup> technologyGroups, String id) {
+    private TechnologyGroup filterTechnologyGroup(List<TechnologyGroup> technologyGroups, String id) {    
         if (CollectionUtils.isNotEmpty(technologyGroups)) {
             if (s_technologyGroupMap.get(id) == null) {
-                for (TechnologyGroup technologyGroup : technologyGroups) {
+                for (TechnologyGroup technologyGroup : technologyGroups) {                
                     s_technologyGroupMap.put(technologyGroup.getId(), technologyGroup);
                 }
             }
@@ -257,7 +262,7 @@ public class Projects extends FrameworkBaseAction {
     	ProjectInfo projectInfo = null;
 		try {
 			ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
-			projectInfo = projectManager.getProject(getProjectId(), getCustomerId());
+			projectInfo = projectManager.getProject(getProjectId(), getCustomerId());			
 			projectInfo.setId(getProjectId());
 			User user = (User) getSessionAttribute(SESSION_USER_INFO);
         	List<Customer> customers = user.getCustomers();
@@ -333,7 +338,6 @@ public class Projects extends FrameworkBaseAction {
     	}
 
     	Technology technology = getServiceManager().getTechnology(techId);
-
     	return technology.getName(); 
     }
     

@@ -72,9 +72,8 @@ a:focus {
 /*** application list page css starts ***/
 .page-header {
 	background: #000000;
-    height: 24px;
+    height: 20px;
 	margin: 2px;
-	padding: 0px !important;
 }
 
 #container {

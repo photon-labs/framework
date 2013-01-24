@@ -3341,8 +3341,9 @@ Width > 1360 and <= 1440
      .align-div-center {
 		width: 70%;
 	}
+
 	.customer_name {
-		right: 8.5% !important;
+		right: 3.5% !important;
 	}
     
 	 @-moz-document url-prefix() {
