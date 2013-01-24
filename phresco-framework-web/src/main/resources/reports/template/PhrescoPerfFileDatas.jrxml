@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PhrescoJmeterResultSubReport" pageWidth="555" pageHeight="802" columnWidth="535" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
 	<property name="ireport.zoom" value="1.1000000000000005"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="195"/>
 	<import value="java.util.*"/>
 	<style name="PPFDTitle"/>
 	<style name="PPFDTitleRect"/>
@@ -282,9 +282,9 @@
 		<band height="2"/>
 	</lastPageFooter>
 	<summary>
-		<band height="712">
+		<band height="705">
 			<frame>
-				<reportElement mode="Opaque" x="0" y="25" width="555" height="232" isRemoveLineWhenBlank="true" backcolor="#FFFFFF">
+				<reportElement mode="Opaque" x="0" y="13" width="555" height="208" isRemoveLineWhenBlank="true" backcolor="#FFFFFF">
 					<printWhenExpression><![CDATA[$P{reportsDataType}.equals("detail")]]></printWhenExpression>
 				</reportElement>
 				<rectangle radius="10">
@@ -299,7 +299,7 @@
 				</staticText>
 				<bar3DChart>
 					<chart>
-						<reportElement x="13" y="28" width="516" height="160"/>
+						<reportElement x="13" y="28" width="516" height="180"/>
 						<chartTitle/>
 						<chartSubtitle/>
 						<chartLegend/>
@@ -320,7 +320,7 @@
 				</bar3DChart>
 			</frame>
 			<frame>
-				<reportElement mode="Opaque" x="0" y="257" width="555" height="227" isRemoveLineWhenBlank="true" backcolor="#FFFFFF">
+				<reportElement mode="Opaque" x="0" y="237" width="555" height="211" isRemoveLineWhenBlank="true" backcolor="#FFFFFF">
 					<printWhenExpression><![CDATA[$P{reportsDataType}.equals("detail")]]></printWhenExpression>
 				</reportElement>
 				<rectangle radius="10">
@@ -335,7 +335,7 @@
 				</staticText>
 				<bar3DChart>
 					<chart>
-						<reportElement x="13" y="30" width="516" height="160"/>
+						<reportElement x="13" y="30" width="516" height="180"/>
 						<chartTitle/>
 						<chartSubtitle/>
 						<chartLegend/>
@@ -356,7 +356,7 @@
 				</bar3DChart>
 			</frame>
 			<frame>
-				<reportElement positionType="Float" mode="Opaque" x="0" y="484" width="555" height="227" backcolor="#FFFFFF"/>
+				<reportElement positionType="Float" mode="Opaque" x="0" y="484" width="555" height="212" backcolor="#FFFFFF"/>
 				<rectangle radius="10">
 					<reportElement style="PPFDHeadingRow" x="12" y="0" width="113" height="20"/>
 				</rectangle>
@@ -369,7 +369,7 @@
 				</staticText>
 				<bar3DChart>
 					<chart>
-						<reportElement x="13" y="32" width="516" height="160"/>
+						<reportElement x="13" y="32" width="516" height="180"/>
 						<chartTitle/>
 						<chartSubtitle/>
 						<chartLegend/>

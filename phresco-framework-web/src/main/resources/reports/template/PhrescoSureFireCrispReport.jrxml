@@ -197,14 +197,14 @@
 					</chart>
 					<categoryDataset>
 						<categorySeries>
-							<seriesExpression><![CDATA["Success"]]></seriesExpression>
-							<categoryExpression><![CDATA[$F{testSuiteName}]]></categoryExpression>
-							<valueExpression><![CDATA[$F{success}]]></valueExpression>
-						</categorySeries>
-						<categorySeries>
 							<seriesExpression><![CDATA["Total"]]></seriesExpression>
 							<categoryExpression><![CDATA[$F{testSuiteName}]]></categoryExpression>
 							<valueExpression><![CDATA[$F{total}]]></valueExpression>
+						</categorySeries>
+						<categorySeries>
+							<seriesExpression><![CDATA["Success"]]></seriesExpression>
+							<categoryExpression><![CDATA[$F{testSuiteName}]]></categoryExpression>
+							<valueExpression><![CDATA[$F{success}]]></valueExpression>
 						</categorySeries>
 						<categorySeries>
 							<seriesExpression><![CDATA["Failure"]]></seriesExpression>
@@ -219,9 +219,9 @@
 					</categoryDataset>
 					<bar3DPlot>
 						<plot labelRotation="20.0">
-							<seriesColor seriesOrder="0" color="#66FF66"/>
-							<seriesColor seriesOrder="1" color="#FF0000"/>
-							<seriesColor seriesOrder="2" color="#0099FF"/>
+							<seriesColor seriesOrder="0" color="#0099FF"/>
+							<seriesColor seriesOrder="1" color="#66FF66"/>
+							<seriesColor seriesOrder="2" color="#FF0000"/>
 							<seriesColor seriesOrder="3" color="#FF9933"/>
 						</plot>
 						<itemLabel/>
