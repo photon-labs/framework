@@ -1877,7 +1877,7 @@ div.vjs-big-play-button span {
 .page-header {
     border-bottom: medium none;
     margin-bottom: 0;
-    width: 99.8%;
+    width: 99.3%;
 }
 
 .page-header h1 {
@@ -6307,7 +6307,7 @@ color: #313131;
 	border-radius: 0px !important;
 	float: right;
 	height: auto !important;
-	margin-top: 0px;
+	margin-top: 1px;
 }
 .customer_select_div  .dd-options {
 	width: 196px !important;
