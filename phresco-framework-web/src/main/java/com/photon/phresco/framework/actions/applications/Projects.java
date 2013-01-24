@@ -89,6 +89,11 @@ public class Projects extends FrameworkBaseAction {
     private String statusFlag = "" ;
     private String id = "";
     private String fromTab = "";
+    
+    public void clearMap() {
+    	s_layerMap.clear();
+    	s_technologyGroupMap.clear();
+	}
 
 	/**
      * To get the list of projects
