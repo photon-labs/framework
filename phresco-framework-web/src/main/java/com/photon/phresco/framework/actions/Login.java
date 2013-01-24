@@ -54,6 +54,7 @@ import com.photon.phresco.commons.model.Customer;
 import com.photon.phresco.commons.model.User;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.exception.PhrescoWebServiceException;
+import com.photon.phresco.framework.actions.applications.Projects;
 import com.photon.phresco.util.Credentials;
 
 public class Login extends FrameworkBaseAction {
@@ -111,6 +112,8 @@ public class Login extends FrameworkBaseAction {
             setReqAttribute(REQ_LOGIN_ERROR, getText(SUCCESS_LOGOUT));
         }
         removeSessionAttribute(REQ_LOGIN_ERROR);
+        Projects projects = new Projects();
+        projects.clearMap();
         
         return SUCCESS;
     }
