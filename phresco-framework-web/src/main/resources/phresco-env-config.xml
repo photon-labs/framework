@@ -1,5 +1,5 @@
 <environments>
-    <environment default="false" name="Production">
+    <environment default="true" name="Production">
 		 <Server appliesTo="tech-html5-widget" desc="" name="server">
             <protocol>http</protocol>
             <host>localhost</host>
@@ -21,7 +21,7 @@
 			<port>80</port>
 			<username/>
 			<password/>
-			<context>service-2.0</context>
+			<context>testing-2.0</context>
 			<additional_context>/rest/api</additional_context>
 		</WebService>
                  
@@ -62,7 +62,7 @@
         
     </environment>
     
-    <environment default="true" name="Testing">
+    <environment default="false" name="Testing">
 	 <Server appliesTo="tech-html5-widget" desc="" name="server">
             <protocol>http</protocol>
             <host>localhost</host>
@@ -80,7 +80,7 @@
 	
 	<WebService desc="" name="webservice">
             <protocol>http</protocol>
-            <host>172.16.18.178</host>
+            <host>localhost</host>
             <port>2020</port>
             <username/>
             <password/>
