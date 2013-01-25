@@ -2064,7 +2064,13 @@ Width <= 1280 and height <= 800
 	}
 
 	.graph_div {
-		width: 100% !important;
+		width: 42% !important;
+	}
+	
+	@-moz-document url-prefix() {
+		.graph_div {
+			width: 85% !important;
+		}
 	}
 	
 	.qq-upload-list {
@@ -2484,7 +2490,14 @@ Width >= 1280 and height >= 800
 
 	 .graph_div {
 		zoom: 0.6;
-		width: 100% !important;
+		width: 32% !important;
+	}
+	
+	@-moz-document url-prefix() {
+		 .graph_div {
+			zoom: 0.6;
+			width: 85% !important;
+		}
 	}
 	
 	.qq-upload-list {
@@ -3373,7 +3386,7 @@ Width > 1360 and <= 1440
 	}
 	.graph_div {
 		zoom: 1;
-		width: 100% !important;
+		width: 38% !important;
 	}
 	
 	.qq-upload-list {
@@ -3784,7 +3797,14 @@ Width > 1441 and <= 1600
 
 	.graph_div {
 		zoom: 1;
-		width: 100% !important;
+		width: 38% !important;
+	}
+	
+	@-moz-document url-prefix() {
+		.graph_div {
+			zoom: 1;
+			width: 75% !important;
+		}	
 	}
 	
 	.qq-upload-list {
