@@ -613,7 +613,7 @@ qq.extend(qq.FileUploader.prototype, {
     	configTempType = $("#templateType option:selected").text();
     	projectId = $('input[name=projectId]').val();
     	appId = $('input[name=appId]').val();
-    	customerId = $('select[name=customerId]').val();
+    	customerId = $('input[name=customerId]').val();
         qq.FileUploaderBasic.prototype._onSubmit.apply(this, arguments);
         this._addToList(id, fileName);  
     },

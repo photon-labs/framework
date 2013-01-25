@@ -820,8 +820,8 @@ public class Configurations extends FrameworkBaseAction {
                 S_LOGGER.error("Entered into catch block of Configurations.update()" + FrameworkUtil.getStackTraceAsString(e));
             }
         } catch (ConfigurationException e) {
-			e.printStackTrace();
-		}
+
+        }
     }
     
     public String showProperties() {
@@ -909,7 +909,6 @@ public class Configurations extends FrameworkBaseAction {
 	}
     
     private void othersType () {
-    	
 		try {
 			PropertyTemplate propertyTemplate = new PropertyTemplate();
 	    	propertyTemplate.setType(REQ_CONFIG_TYPE_OTHER);
@@ -939,9 +938,9 @@ public class Configurations extends FrameworkBaseAction {
 				setReqAttribute(REQ_PROPERTIES_INFO, selectedProperties);
 			}
 		} catch (PhrescoException e) {
-			//e.printStackTrace();
+			
 		} catch (ConfigurationException e) {
-			//e.printStackTrace();
+			
 		}
     }
     
@@ -999,7 +998,6 @@ public class Configurations extends FrameworkBaseAction {
             setReqAttribute(REQ_PROPERTIES, propertyTemplates);
             setReqAttribute(REQ_SELECTED_TYPE, getSelectedType());
         } catch (PhrescoException e) {
-            e.printStackTrace();
 //          return showErrorPopup(e, getText(EXCEPTION_FEATURE_MANIFEST_NOT_AVAILABLE));
         }
         
@@ -1042,6 +1040,12 @@ public class Configurations extends FrameworkBaseAction {
         PrintWriter writer = null;
         try {
             byte[] byteArray = getByteArray();
+            if (getTargetDir() == null) {
+            	getHttpResponse().setStatus(getHttpResponse().SC_INTERNAL_SERVER_ERROR);
+            	writer = getHttpResponse().getWriter();
+                writer.print(SUCCESS_FALSE);
+                return SUCCESS;
+            }
             StringBuilder sb = getTargetDir();
             File file = new File(sb.toString());
             if (!file.exists()) {
@@ -1063,11 +1067,11 @@ public class Configurations extends FrameworkBaseAction {
             writer = getHttpResponse().getWriter();
             writer.print(SUCCESS_TRUE);
             writer.flush();
-            writer.close();
         } catch (Exception e) { //If upload fails it will be shown in UI, so no need to throw error popup
-            e.printStackTrace();
             getHttpResponse().setStatus(getHttpResponse().SC_INTERNAL_SERVER_ERROR);
             writer.print(SUCCESS_FALSE);
+        } finally {
+        	writer.close();
         }
 
         return SUCCESS;
@@ -1079,15 +1083,17 @@ public class Configurations extends FrameworkBaseAction {
      */
     public String listUploadedFiles() {
         try {
-            File uploadedFile = new File(getTargetDir().toString());
-            String[] dirs = uploadedFile.list();
-            if (!ArrayUtils.isEmpty(dirs)) {
-                for (String file : dirs) {
-                    uploadedFiles.add(file);
-                }
-            }
+        	if (getTargetDir() != null) {
+        		File uploadedFile = new File(getTargetDir().toString());
+        		String[] dirs = uploadedFile.list();
+        		if (!ArrayUtils.isEmpty(dirs)) {
+        			for (String file : dirs) {
+        				uploadedFiles.add(file);
+        			}
+        		}
+        	}
         } catch (Exception e) {
-            e.printStackTrace();
+        	
         }
 
         return SUCCESS;
@@ -1134,10 +1140,13 @@ public class Configurations extends FrameworkBaseAction {
         }
 
         try {
-            StringBuilder sb = getTargetDir()
-            .append(File.separator)
-            .append(FilenameUtils.removeExtension(getFileName()));
-            FileUtil.delete(new File(sb.toString()));
+        	if (getTargetDir() != null) {
+        		StringBuilder sb = getTargetDir()
+                .append(File.separator)
+                .append(FilenameUtils.removeExtension(getFileName()));
+        		System.out.println("delete path::" + sb.toString());
+                FileUtil.delete(new File(sb.toString()));
+        	}
         } catch (Exception e) {
             // TODO: handle exception
         }
@@ -1150,6 +1159,9 @@ public class Configurations extends FrameworkBaseAction {
         FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
         String dynamicType = getConfigTempType().toLowerCase().replaceAll("\\s", "");
         String targetDir = frameworkUtil.getPomProcessor(appDirName).getProperty(PHRESCO_DOT + dynamicType + DOT_TARGET_DIR);
+        if (StringUtils.isEmpty(targetDir)) {
+        	return null;
+        }
         StringBuilder sb = new StringBuilder(Utility.getProjectHome())
         .append(getApplicationInfo().getAppDirName())
         .append(File.separator)
