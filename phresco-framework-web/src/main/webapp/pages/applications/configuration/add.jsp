@@ -226,8 +226,9 @@
 		var env = $('#environment').val();
 		var jsonObject = $('#configProperties').toJSON();
 		var typeData = $.parseJSON($('#templateType').val());
+		var customPropStatus = typeData.customProp;
 		var selectedType = typeData.name;
-		if(selectedType == "Other") {
+		if(selectedType == "Other" || customPropStatus) {
 			var keys = [];
 			$('#configProperties').find('input[name="key"]').each(function() {
 				keys.push(this.value);

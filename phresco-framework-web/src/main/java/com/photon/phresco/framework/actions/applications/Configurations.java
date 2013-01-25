@@ -39,7 +39,6 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
-
 import com.photon.phresco.api.ApplicationProcessor;
 import com.photon.phresco.api.ConfigManager;
 import com.photon.phresco.commons.FrameworkConstants;
@@ -418,7 +417,7 @@ public class Configurations extends FrameworkBaseAction {
 	        }
 			
 			ApplicationInfo applicationInfo = getApplicationInfo();
-			if (applicationInfo != null && applicationInfo.getTechInfo().getId().equals(FrameworkConstants.TECH_SITE_CORE)) {
+			if (applicationInfo != null && applicationInfo.getTechInfo().getId().equals(FrameworkConstants.TECH_SITE_CORE) && SERVER.equals(getConfigType())) {
 				properties.put(SETTINGS_TEMP_SITECORE_INST_PATH, getSiteCoreInstPath());
 			}
 			
@@ -608,7 +607,7 @@ public class Configurations extends FrameworkBaseAction {
 	        }
 	        
 	        if (FrameworkConstants.ADD_CONFIG.equals(getFromPage()) || FrameworkConstants.EDIT_CONFIG.equals(getFromPage())) {
-		        if (techId.equals(FrameworkConstants.TECH_SITE_CORE) && StringUtils.isEmpty(siteCoreInstPath)) {
+		        if (techId.equals(FrameworkConstants.TECH_SITE_CORE) && StringUtils.isEmpty(siteCoreInstPath) && SERVER.equals(getConfigType())) {
 		        	setSiteCoreInstPathError(getText(ERROR_SITE_CORE_PATH_MISSING));
 		    		hasError = true;
 		    	}
