@@ -239,7 +239,7 @@
 					</form>
 					
 					<div class="righttopnav">
-						<a href="JavaScript:void(0);" class="abtPopUp" class="arrow_links_top"><span
+						<a href="JavaScript:void(0);" id="abtPopUp" class="abtPopUp arrow_links_top"><span
 							class="shortcutRed" id=""></span><span class="shortcutWh"
 							id="">
 							<s:text name="lbl.aboutus"/></span>
@@ -446,7 +446,7 @@
 			loadContent("forum", $('#formCustomers'), $("#container"), '', '', true);
 		});
 		
-		$("#about").click(function() {
+		$("#about, #abtPopUp").click(function() {
 			yesnoPopup('about', 'About Phresco', 'updateAvailable', 'Update Available');
 		});
 	});

@@ -1726,3 +1726,7 @@ background-color: #ffffff;
 #lbl_customer {
 	margin-top: 31px;
 }
+
+.updateMsg {
+	float: left !important;
+}
