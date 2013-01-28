@@ -357,6 +357,18 @@ Width <= 1024
 	    width:394px;
 	}
 	
+	@-moz-document url-prefix() {
+		.graph_div .jm_canvas_div iframe html body {
+			margin: 0;
+			padding: 0;
+		}
+		
+		.graph_div {
+			overflow-x: auto;
+			width: 200px !important;
+		}
+	}
+	
 	#tabularView {	
 		position: relative;
 	    top: -27px;
@@ -514,9 +526,9 @@ Width <= 1024
 		margin: 12px 5px 12px 6px !important;
 		padding-bottom: 15px;
 	}
-	.perTabularView {
+	#formPerformance  .perTabularView {
 		top: -21px !important;
-		left: -110px !important;
+		left: -119px !important;
 	}
 }
 
@@ -1570,6 +1582,19 @@ Width >= 1152 and < 1280
 	}
 	.perTabularView {
 		top: -40px !important;
+		margin-right: -7px !important;
+	}
+	
+	.graph_div {
+		width: 36% !important;
+		overflow-x: auto !important;
+		height: 93% !important;
+	}
+
+	@-moz-document url-prefix() {
+		.graph_div {
+		width: 74% !important;
+	}			
 	}
 }
 
@@ -2491,12 +2516,14 @@ Width >= 1280 and height >= 800
 	 .graph_div {
 		zoom: 0.6;
 		width: 32% !important;
+		height: 93% !important;
 	}
 	
 	@-moz-document url-prefix() {
 		 .graph_div {
 			zoom: 0.6;
-			width: 85% !important;
+			width: 61% !important;
+			overflow-x: auto;
 		}
 	}
 	

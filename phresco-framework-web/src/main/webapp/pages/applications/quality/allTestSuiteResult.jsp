@@ -144,7 +144,7 @@
 			</div>
 		</div>
 		
-		<div class="graph_div" id="graphicalView" style="padding-left: 15px; display:none; text-align: center;">
+		<div class="" id="graphicalView" style="padding-left: 15px; display:none; text-align: center;">
 			<canvas id="bar" width="620" height="400">[No canvas support]</canvas>               
 		</div>
 <%
