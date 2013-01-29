@@ -224,7 +224,9 @@
 		var name = $('#configName').val();
 		var desc = $('#configDesc').val();
 		var env = $('#environment').val();
-		var jsonObject = $('#configProperties').toJSON();
+		// convert form to json, toJson function is not passing filed names with dot.
+		var jsonObject = getFormAsJson($('#configProperties'));
+		
 		var typeData = $.parseJSON($('#templateType').val());
 		var customPropStatus = typeData.customProp;
 		var selectedType = typeData.name;

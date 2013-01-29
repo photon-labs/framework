@@ -410,7 +410,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 	}
 	
 	private void createSqlFolder(ApplicationInfo appInfo, File path, ServiceManager serviceManager)
-			throws PhrescoException {
+	throws PhrescoException {
 		String dbName = "";
 		try {
 			File pomPath = new File(Utility.getProjectHome() + appInfo.getAppDirName() + File.separator + POM_FILE);
@@ -429,17 +429,19 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 				}.getType();
 				List<DownloadInfo> dbInfos = gson.fromJson(selectedDatabases, jsonType);
 				List<ArtifactGroupInfo> newSelectedDatabases = appInfo.getSelectedDatabases();
-				for (ArtifactGroupInfo artifactGroupInfo : newSelectedDatabases) {
-					List<String> artifactInfoIds = artifactGroupInfo.getArtifactInfoIds();
-					for (String artifactId : artifactInfoIds) {
-					ArtifactInfo artifactInfo = serviceManager.getArtifactInfo(artifactId);
-					String selectedVersion = artifactInfo.getVersion();
-				for (DownloadInfo dbInfo : dbInfos) {
-					dbName = dbInfo.getName().toLowerCase();
-					ArtifactGroup artifactGroup = dbInfo.getArtifactGroup();
-					mySqlFolderCreation(path, dbName, sqlFolderPath, mysqlVersionFolder,selectedVersion, artifactGroup);
-				}
-				}
+				if(CollectionUtils.isNotEmpty(newSelectedDatabases)) {
+					for (ArtifactGroupInfo artifactGroupInfo : newSelectedDatabases) {
+						List<String> artifactInfoIds = artifactGroupInfo.getArtifactInfoIds();
+						for (String artifactId : artifactInfoIds) {
+							ArtifactInfo artifactInfo = serviceManager.getArtifactInfo(artifactId);
+							String selectedVersion = artifactInfo.getVersion();
+							for (DownloadInfo dbInfo : dbInfos) {
+								dbName = dbInfo.getName().toLowerCase();
+								ArtifactGroup artifactGroup = dbInfo.getArtifactGroup();
+								mySqlFolderCreation(path, dbName, sqlFolderPath, mysqlVersionFolder,selectedVersion, artifactGroup);
+							}
+						}
+					}
 				}
 			}
 		} catch (PhrescoPomException e) {
@@ -452,21 +454,21 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		try {
 			List<ArtifactInfo> versions = artifactGroup.getVersions();
 			for (ArtifactInfo version : versions) {
-			if (selectedVersion.equals(version.getVersion())) {
-				String dbversion = version.getVersion();
-				String sqlPath = dbName + File.separator + dbversion.trim();
-				File sqlFolder = new File(path, sqlFolderPath + sqlPath);
-				sqlFolder.mkdirs();
-				if (dbName.equals(Constants.DB_MYSQL) && mysqlVersionFolder != null
-						&& !(mysqlVersionFolder.getPath().equals(sqlFolder.getPath()))) {
-					FileUtils.copyDirectory(mysqlVersionFolder, sqlFolder);
-				} else {
-					File sqlFile = new File(sqlFolder, Constants.SITE_SQL);
-					if (!sqlFile.exists()) {
-						sqlFile.createNewFile();
+				if (selectedVersion.equals(version.getVersion())) {
+					String dbversion = version.getVersion();
+					String sqlPath = dbName + File.separator + dbversion.trim();
+					File sqlFolder = new File(path, sqlFolderPath + sqlPath);
+					sqlFolder.mkdirs();
+					if (dbName.equals(Constants.DB_MYSQL) && mysqlVersionFolder != null
+							&& !(mysqlVersionFolder.getPath().equals(sqlFolder.getPath()))) {
+						FileUtils.copyDirectory(mysqlVersionFolder, sqlFolder);
+					} else {
+						File sqlFile = new File(sqlFolder, Constants.SITE_SQL);
+						if (!sqlFile.exists()) {
+							sqlFile.createNewFile();
+						}
 					}
 				}
-			}
 			}
 		} catch (IOException e) {
 			throw new PhrescoException(e);

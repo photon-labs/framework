@@ -3,6 +3,7 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
+	<import value="org.apache.commons.codec.binary.Base64"/>
 	<style name="PAPCTitle"/>
 	<style name="PAPCTitleRect"/>
 	<style name="PAPCTitleRectLogo"/>
@@ -17,6 +18,10 @@
 	<parameter name="projectName" class="java.lang.String"/>
 	<parameter name="techName" class="java.lang.String"/>
 	<parameter name="version" class="java.lang.String"/>
+	<parameter name="logo" class="java.lang.String"/>
+	<parameter name="logoBase64Img" class="java.io.InputStream">
+		<defaultValueExpression><![CDATA[new ByteArrayInputStream(new Base64().decodeBase64($P{logo}.getBytes("UTF-8")))]]></defaultValueExpression>
+	</parameter>
 	<field name="fileName" class="java.lang.String"/>
 	<field name="deviceReport" class="java.util.List"/>
 	<background>
@@ -33,14 +38,18 @@
 					<reportElement style="PAPCTitleRectDetail" x="176" y="5" width="376" height="108"/>
 				</rectangle>
 				<staticText>
-					<reportElement style="PAPCTitleLabel" x="20" y="27" width="55" height="18"/>
+					<reportElement style="PAPCTitleLabel" x="20" y="27" width="55" height="18">
+						<printWhenExpression><![CDATA[$P{logo}.equals("")]]></printWhenExpression>
+					</reportElement>
 					<textElement verticalAlignment="Bottom">
 						<font size="13" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Photon]]></text>
 				</staticText>
 				<staticText>
-					<reportElement style="PAPCTitleLabel" x="18" y="38" width="158" height="41"/>
+					<reportElement style="PAPCTitleLabel" x="18" y="38" width="158" height="41">
+						<printWhenExpression><![CDATA[$P{logo}.equals("")]]></printWhenExpression>
+					</reportElement>
 					<textElement verticalAlignment="Top" rotation="None">
 						<font size="28" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
@@ -117,6 +126,10 @@
 					</textElement>
 					<textFieldExpression><![CDATA[$P{version}]]></textFieldExpression>
 				</textField>
+				<image hAlign="Center" vAlign="Middle" onErrorType="Blank">
+					<reportElement x="2" y="5" width="170" height="108"/>
+					<imageExpression><![CDATA[$P{logoBase64Img}]]></imageExpression>
+				</image>
 			</frame>
 		</band>
 	</title>
