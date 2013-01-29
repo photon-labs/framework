@@ -78,6 +78,7 @@ public class Login extends FrameworkBaseAction {
 	private String pageHeaderColor = "";
 	private String labelColor = "";
 	private String copyRightColor = "";
+	private String disabledLabelColor = "";
     
     public String login() throws IOException {
         if (isDebugEnabled) {
@@ -196,6 +197,7 @@ public class Login extends FrameworkBaseAction {
 					setLabelColor(customer.getFrameworkTheme().getLabelColor());
 					setMenuBackGround(customer.getFrameworkTheme().getMenuBackGround());
 					setMenufontColor(customer.getFrameworkTheme().getMenufontColor());
+					setDisabledLabelColor(customer.getFrameworkTheme().getDisabledLabelColor());
 					break;
 				}
 			}
@@ -310,6 +312,14 @@ public class Login extends FrameworkBaseAction {
 
 	public void setCopyRightColor(String copyRightColor) {
 		this.copyRightColor = copyRightColor;
+	}
+
+	public String getDisabledLabelColor() {
+		return disabledLabelColor;
+	}
+
+	public void setDisabledLabelColor(String disabledLabelColor) {
+		this.disabledLabelColor = disabledLabelColor;
 	}
 
 	public String getPageHeaderColor() {
