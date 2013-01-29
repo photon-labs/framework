@@ -821,7 +821,10 @@ h1 small {
 }
 @-moz-document url-prefix() {
 	.dd-options {
-		top: 22px;
+		top: 38px;
+	}
+	.customer_select_div .dd-options {
+		top: 24px !important;
 	}
 }	
 
@@ -1428,7 +1431,7 @@ label {
     margin-top: 9px;
     overflow-y: hidden;
     width: 250px;
-    background-color: rgba(19, 131, 58, 0.34);
+    border: 1px solid #38b865;
 }
 
 .table_borderForDownloadInfos {

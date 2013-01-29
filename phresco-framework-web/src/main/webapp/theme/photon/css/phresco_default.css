@@ -2004,7 +2004,11 @@ h1 {
 }
 
 .table_for_downloadInfos {
-	width: 40% !important;
+	width: 55% !important;
+}
+
+.table_for_downloadInfos thead tr th {
+	padding: 8px !important;
 }
 
 .settingsList_table_div {
@@ -2942,7 +2946,7 @@ fieldset {
 
 #subTabcontent {
     height: 98%;
-    margin-top: 18px;
+    /* margin-top: 18px; */
     position: relative;
     width: 98%;
 }
@@ -5161,7 +5165,7 @@ ul#display-inline-block-example li#first {
 
 ul#display-inline-block-example li#label {
 	display: inline-block;
-	width: 12%;
+	width: 10%;
 	min-height: 12%;
 	text-align: right;
 	 
@@ -5818,7 +5822,7 @@ input[class*='chckBxAlign'] {
 	overflow: auto;
 	height: 300px;
 }
-#subcontainer { width:85%; float:right; margin-right:5px; margin-top:10px; }
+#subcontainer { width:85%; float:right; margin-right:5px; margin-top:0px !important; }
 
 
 
@@ -5854,9 +5858,9 @@ ul#display-inline-block-example li#label strong {
 	color: #333;
 }
 ul#display-inline-block-example li:nth-child(5) {
-	margin-left: 5% !important;
+	margin-left: 0% !important;
 }
-ul#display-inline-block-example li:nth-child(4) select, ul#display-inline-block-example li:nth-child(6) select {
+ul#display-inline-block-example li:nth-child(4) select, ul#display-inline-block-example li:nth-child(6) select, ul#display-inline-block-example li:nth-child(8) select{
 	margin-top: 8px !important;
 }
 
@@ -6039,7 +6043,7 @@ color: #313131;
 .table_div_unit {
 	margin: 0px !important;
 	border: none !important;
-	margin-top: 2% !important;
+	margin-top: 0% !important;
 }
 .zebra-striped thead tr th div {
 	color: white !important;
@@ -6122,7 +6126,7 @@ color: #313131;
 	border: solid 1px #dcdcdc;
 	background: none repeat scroll 0 0 #EEEEEE;
     height: 36px;
-    margin-top: -6px;
+    margin-top: 6px;
     width: 261px;
 }
 .dd-option-selected, .dd-option:hover {
@@ -6310,7 +6314,7 @@ color: #313131;
 	border-radius: 0px !important;
 	float: right;
 	height: auto !important;
-	margin-top: 1px;
+	margin-top: 3px;
 }
 .customer_select_div  .dd-options {
 	width: 196px !important;
@@ -6324,7 +6328,7 @@ color: #313131;
 }
 .customer_select_div .dd-select a,.customer_select_div .dd-option {
 	overflow: initial;
-	padding: 3px !important;
+	padding: 1px !important;
 	text-decoration: none !important;
 }
 .customer_select_div .dd-option-text:hover {
