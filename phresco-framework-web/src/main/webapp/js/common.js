@@ -1377,3 +1377,19 @@ function enableUploadButton(controlObj) {
 	controlObj.find("input[type='file']").attr('disabled', false);
 	controlObj.find($(".btn")).removeClass("disabled").addClass("btn-primary qq-upload-button");
 }
+
+function getFormAsJson(obj) {
+	var o = {};
+	var a = obj.serializeArray();
+	$.each(a, function() {
+	     if (o[this.name]) {
+	          if (!o[this.name].push) {
+	              o[this.name] = [o[this.name]];
+	          }
+	          o[this.name].push(this.value || '');
+	      } else {
+	          o[this.name] = this.value || '';
+	      }
+	});
+	return o;
+}
