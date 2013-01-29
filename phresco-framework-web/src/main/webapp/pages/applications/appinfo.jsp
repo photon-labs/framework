@@ -249,7 +249,6 @@
 												<th class="noBorder"><s:text name='lbl.version'/></th>
 												<th></th>
 												<th></th>
-												<th></th>
 											</tr>
 										</thead>
 										<tbody id="propTempTbody">
@@ -291,7 +290,6 @@
 												<tr >
 													<th class="noBorder"><s:text name='lbl.database'/></th>
 													<th class="noBorder"><s:text name='lbl.version'/></th>
-													<th></th>
 													<th></th>
 													<th></th>
 												</tr>
