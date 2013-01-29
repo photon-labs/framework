@@ -1628,4 +1628,12 @@ table tr {
 
 .updateMsg {
 	float: left !important;
-}	
+}
+
+.dd-options {
+    width: 175px !important;
+}
+
+.dd-select {
+    width: 175px !important;
+}
