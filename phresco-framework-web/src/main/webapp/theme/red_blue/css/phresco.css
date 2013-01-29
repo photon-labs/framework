@@ -5867,8 +5867,10 @@ input[class*='chckBxAlign'] {
 
 #successmsg {
 	height: 16px;
-    margin-left: 246px;
-    margin-top: -34px;
+    /* margin-left: 246px;
+    margin-top: -34px; */
+    margin-left: 291px;
+    margin-top: -32px;
     padding: 6px;
     width: 50%;
     text-align: center;

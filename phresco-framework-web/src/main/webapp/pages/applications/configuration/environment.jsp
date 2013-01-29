@@ -53,11 +53,11 @@
 		<div class="controls">
 			<textarea name="envDesc" id="envDesc" class="input-xlarge" 
 				 maxlength="150" title="<s:text name='title.150.chars'/>" placeholder="<s:text name='place.hldr.env.desc'/>"></textarea>
-			<input type="button" value="<s:text name='lbl.btn.add'/>" tabindex=3 id="add" class="btn btn-primary addButton">
+			<input type="button" name="addBtn" value="<s:text name='lbl.btn.add'/>" tabindex=3 id="add" class="btn btn-primary addButton">
 		</div>
 	</div>
 
-	<fieldset class="popup-fieldset">
+	<fieldset class="popup-fieldset envFieldset">
 		<legend class="fieldSetLegend" ><s:text name="lbl.added.environments"/></legend>
 		<div class="popupTypeFields" id="typefield">
             <div class="multilist-scroller multiselect" id='multiselect'>
@@ -68,7 +68,8 @@
                  %>
 	       			<li>
 						<input type="checkbox" name="envNames" onclick="checkboxClickEvent(this)" class="check techCheck" 
-							value='<%= envJson %>' title="<%= environment.getDesc() %>"  <%= environment.isDefaultEnv() ? "disabled" : "" %> envName='<%= environment.getName() %>'/><%= environment.getName() %>
+							value='<%= envJson %>' title="<%= environment.getDesc() %>"  <%= environment.isDefaultEnv() ? "disabled" : "" %> envName='<%= environment.getName() %>'/>
+							<label class="envLabel" ><%= environment.getName() %></label>
 					</li>
 				<% } %>
 				</ul>
@@ -97,6 +98,19 @@ $(document).ready(function() {
 	hidePopuploadingIcon();
 	$('#errMsg').empty();
 	setAsDefaultBtnStatus();
+	
+	$('input[name="envNames"]').change(function() {
+		if ($(this).is(':checked')) {
+			$('input[name="addBtn"]').val("<s:text name='lbl.btn.update'/>");
+			var envData= $.parseJSON($(this).val());
+			$("#envName").val(envData.name);
+			$("#envDesc").val(envData.desc);
+		} else {
+			$('input[name="addBtn"]').val("<s:text name='lbl.btn.add'/>");
+			$("#envName").val("");
+			$("#envDesc").val("");
+		}
+	});
 	
 	$('#add').click(function() {
 		$('#errMsg').html("");
@@ -129,12 +143,8 @@ $(document).ready(function() {
 	$('#setAsDefault').click(function() {
 		$('#errMsg').empty();
 		selectEnv();
+		toSelectOnlyOneEnv(); 
 		var setAsDefaultEnvsSize = $('#multiselect :checked').size();
-		
-        if (setAsDefaultEnvsSize > 1) {
-			$("#errMsg").html("<s:text name='popup.err.msg.select.only.one.env'/>");
-       	 	return false;
-		}  
         if (setAsDefaultEnvsSize == 1) {
 			$('#multiselect ul li input[type=checkbox]').each( function() {
 				var env = $.parseJSON($(this).val());
@@ -226,20 +236,36 @@ $(document).ready(function() {
 		}
 	}
 	
-
 	function addRow() {
 		var value = $('#envName').val();
 		var desc = $('#envDesc').val();
-		var checkValue = '{"name": "' + value + '", "desc": "' + desc
-				+ '", "defaultEnv": false }';
-		var checkbox = '<input type="checkbox" name="envNames" onclick="checkboxClickEvent(this);" class="check techCheck" value=\'' + checkValue + '\' title="' + desc + '" />'
-				+ value;
-
-		if ($("#multiselect ul").has("li").length === 0) {
-			$("#multiselect ul").append('<li>' + checkbox + '</li>');
-		} else {
-			$("#multiselect ul li:last").after('<li>' + checkbox + '</li>');
+		toSelectOnlyOneEnv();
+		var selecedEnvsSize = $('#multiselect :checked').size();
+		if(selecedEnvsSize == 1) {
+			var currentChckBoxObj = $('input[name="envNames"]:checked');
+			var checkedVal = $.parseJSON($('input[name="envNames"]:checked').val());
+			var value = $('#envName').val();
+			var desc = $('#envDesc').val();
+			var selectedText = $('.envLabel').text();
+			checkedVal.name = value;
+			checkedVal.desc = desc;
+			currentChckBoxObj.val(JSON.stringify(checkedVal));
+			currentChckBoxObj.parent().find($('.envLabel')).text(value);
 		}
+		
+		if(selecedEnvsSize == 0) {
+			var checkValue = '{"name": "' + value + '", "desc": "' + desc
+					+ '", "defaultEnv": false }';
+			var checkbox = '<input type="checkbox" name="envNames" onclick="checkboxClickEvent(this);" class="check techCheck" value=\'' + checkValue + '\' title="' + desc + '" />'
+					+ '<label class="envLabel">' + value + '</label>';
+	
+			if ($("#multiselect ul").has("li").length === 0) {
+				$("#multiselect ul").append('<li>' + checkbox + '</li>');
+			} else {
+				$("#multiselect ul li:last").after('<li>' + checkbox + '</li>');
+			}
+		}
+		
 		$("#envName").val("");
 		$("#envDesc").val("");
 		setAsDefaultBtnStatus();
@@ -250,6 +276,14 @@ $(document).ready(function() {
 		if (checkedEnvsSize < 1) {
 			$("#errMsg").html("<s:text name='popup.err.msg.select.one.env'/>");
 			return false;
+		}
+	}
+	
+	function toSelectOnlyOneEnv() {
+		var selecedEnvsSize = $('#multiselect :checked').size();
+        if (selecedEnvsSize > 1) {
+			$("#errMsg").html("<s:text name='popup.err.msg.select.only.one.env'/>");
+       	 	return false;
 		}
 	}
 	
