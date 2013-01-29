@@ -144,7 +144,7 @@ input[type="password"] {
 }
 
 .operation {
-	margin: 5px 5px 5px 6px;
+	margin: 5px 5px 5px 0px;
 }
 
 .operation strong {
@@ -357,9 +357,9 @@ a {
 .main_wrapper {
 	bottom: 48px;
 	position: absolute;
-	top: 38px;
-	width: 98%;
-	left:2%;
+	top: 40px !important;
+	width: 98% !important;
+	left:1%;
 }
 
 .wrapper {
@@ -369,7 +369,7 @@ a {
 	overflow: hidden;
 	position: relative;
 	top: 0;
-	width: 98%;
+	width: 100% !important;
 }
 
 #container {
@@ -780,12 +780,12 @@ a {
 .headerInnerTop li {
 	float: left;
 	list-style: none outside none;
-	margin-right:9%;
+	margin-left:9%;
 	padding: 4px 0 0;
 	font-weight: bold;
 }
 .headerInnerTop li:last-child {
-	margin:0;
+	margin-left:9%;
 }
 
 .wid_home {
@@ -863,7 +863,7 @@ a {
 .Logo {
 	float: left;
 	margin-top:18px;
-	margin-left: 3%;
+	margin-left: 2%;
 }
 
 .arrow {
@@ -942,7 +942,7 @@ a {
 }
 
 .tabs,.pills {
-	margin: 0 0 1px 7px;
+	margin: 0 0 1px 2px;
 	padding-top: 3px;
 	width:210px;
 	float:left;
@@ -1740,8 +1740,9 @@ div.vjs-big-play-button span {
 
 #container {
     z-index: 15004;
-    width: 99%;
+    width: 100% !important;
     height: 89%;
+	margin-left: 0px !important;
 }
 
 .holder {
@@ -1978,6 +1979,12 @@ h1 {
 .projectList {
 	height: 94%;
     padding-top: 6px;
+}
+
+.projectList .theme_accordion_container{
+    float: left;
+    margin: 1px 0px;
+    width: 100%;
 }
 
 .table_data_div {
@@ -5165,7 +5172,7 @@ ul#display-inline-block-example li#first {
 
 ul#display-inline-block-example li#label {
 	display: inline-block;
-	width: 10%;
+	width: 13%;
 	min-height: 12%;
 	text-align: right;
 	 
@@ -5822,7 +5829,7 @@ input[class*='chckBxAlign'] {
 	overflow: auto;
 	height: 300px;
 }
-#subcontainer { width:85%; float:right; margin-right:5px; margin-top:0px !important; }
+#subcontainer { width:85%; float:right; margin-top:0px !important; }
 
 
 
@@ -5862,6 +5869,7 @@ ul#display-inline-block-example li:nth-child(5) {
 }
 ul#display-inline-block-example li:nth-child(4) select, ul#display-inline-block-example li:nth-child(6) select, ul#display-inline-block-example li:nth-child(8) select{
 	margin-top: 8px !important;
+	width: 120px;
 }
 
 /* unit test table header fixes*/
@@ -5998,7 +6006,7 @@ color: #313131;
 	margin-bottom: 0px !important;
 }
 #formPerformance .operation {
-	margin: 12px 5px 12px 6px !important;
+	margin: 12px 5px 12px 0px !important;
 }
 #formPerformance .perTabularView {
 	top: -40px !important;
@@ -6314,7 +6322,7 @@ color: #313131;
 	border-radius: 0px !important;
 	float: right;
 	height: auto !important;
-	margin-top: 3px;
+	margin-top: 2px;
 }
 .customer_select_div  .dd-options {
 	width: 196px !important;
@@ -6349,3 +6357,11 @@ color: #313131;
     margin-top: -22px;
     position: relative;
 } 
+
+#formPerformance .table_div_unit table {
+	border: 1px solid #323232;
+}
+
+#subcontainer .theme_accordion_container {
+	margin: 1px 0px !important;
+}

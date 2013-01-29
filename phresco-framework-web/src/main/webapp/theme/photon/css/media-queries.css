@@ -102,7 +102,7 @@ Width <= 1024
 	    border-radius: 0 0 3px 3px;
 	    float: right;
 	    margin-right: 9px;
-	    margin-top: 8px;
+	    margin-top: 22px;
 	    padding-top: 0;
 	}
 	.wrapper {
@@ -233,7 +233,7 @@ Width <= 1024
 		overflow-x: hidden;
 		overflow-y: auto;
 		position: relative;
-		height: 83% !important;
+		height: 96% !important;
 	}
 	
 	.featuresScrollDiv {
@@ -488,7 +488,7 @@ Width <= 1024
 		top: 175px;
 	}	
 
-	#subcontainer {width: 75.5%; float:right; }
+	#subcontainer {width: 77.5%; float:right; }
 	/*.navTopBorder .scroll-content {
 		width:76%;
 		margin-left:220px;
@@ -523,12 +523,15 @@ Width <= 1024
 		margin-left: 12.5% !important;
 	} 
 	#formPerformance .operation {
-		margin: 12px 5px 12px 6px !important;
+		margin: 12px 5px 12px 5px !important;
 		padding-bottom: 15px;
 	}
 	#formPerformance  .perTabularView {
-		top: -21px !important;
+		top: -54px !important;
 		left: -119px !important;
+	}
+	ul#display-inline-block-example li:nth-child(7) {
+		margin-left: -14%;
 	}
 }
 
@@ -1543,7 +1546,7 @@ Width >= 1152 and < 1280
 		width: 70%;
 	}
 	#subcontainer {
-		width: 78.5%;
+		width: 80%;
 		float: right;
 		margin-top: 10px;
 	}
@@ -1595,6 +1598,9 @@ Width >= 1152 and < 1280
 		.graph_div {
 		width: 74% !important;
 	}			
+	}
+	ul#display-inline-block-example li:nth-child(7) {
+		margin-left: -10%;
 	}
 }
 
@@ -2069,7 +2075,7 @@ Width <= 1280 and height <= 800
 	}
 
 	#subcontainer {
-		width: 80.5%;
+		width: 82%;
 		float: right;
 		margin-top: 10px;
 	}
@@ -2112,6 +2118,9 @@ Width <= 1280 and height <= 800
 	
 	.perTabularView {
 		top: -40px !important;
+	}
+	ul#display-inline-block-example li:nth-child(7) {
+		margin-left: -10%;
 	}
 }
 
@@ -2494,7 +2503,7 @@ Width >= 1280 and height >= 800
 	}
 
 	 #subcontainer {
-		width: 80.5%;
+		width: 82%;
 		float: right;
 		margin-top: 10px;
 	}
@@ -2541,6 +2550,9 @@ Width >= 1280 and height >= 800
 	
 	.perTabularView {
 		top: -41px !important;
+	}
+	ul#display-inline-block-example li:nth-child(7) {
+		margin-left: -10%;
 	}
 }
 
@@ -2979,7 +2991,7 @@ Width > 1280 and <= 1360
 	}
 
 	#subcontainer {
-		width: 81.5%;
+		width: 83%;
 		float: right;
 		margin-top: 10px;
 	}
@@ -3024,6 +3036,9 @@ Width > 1280 and <= 1360
 	.tabs {
 		height: 480px;
 		overflow-y: auto;
+	}
+	ul#display-inline-block-example li:nth-child(7) {
+		margin-left: -10%;
 	}
 }
 /************************************************************************************
@@ -3393,7 +3408,7 @@ Width > 1360 and <= 1440
 	}
 
 	#subcontainer {
-		width: 82.5%;
+		width: 84%;
 		float: right;
 		margin-top: 10px;
 	}
@@ -3430,6 +3445,9 @@ Width > 1360 and <= 1440
 	.perTabularView {
 		top: -40px !important;
 		left: -120px !important;
+	}
+	ul#display-inline-block-example li:nth-child(7) {
+		margin-left: -10%;
 	}
 }
 
@@ -3808,7 +3826,7 @@ Width > 1441 and <= 1600
 	}
 
 	#subcontainer {
-		width: 84%;
+		width: 85.5%;
 		float: right;
 		margin-top: 10px;
 	}
@@ -3848,5 +3866,11 @@ Width > 1441 and <= 1600
 	.perTabularView {
 		top: -40px !important;
 		left: -120px !important;
+	}
+	.headerInnerTop li:last-child {
+		margin-left: 7%;
+	}
+	ul#display-inline-block-example li:nth-child(7) {
+		margin-left: -10%;
 	}
 }

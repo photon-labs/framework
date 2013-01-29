@@ -77,7 +77,6 @@ a:focus {
 }
 
 #container {
-    border: 1px solid #dedede;
 	background:url(../images/content_bg.png) repeat;
 	padding-bottom:8px;
 }
@@ -815,7 +814,6 @@ h1 small {
 	position:relative;
 	z-index:100;
 	clear:right;
-	margin-top:3px;
 	float:left;
 	width:210px;
 }
@@ -1330,7 +1328,7 @@ label {
 
 /** download table **/
 .download_tbl_header{
-    background: #39BC67;
+    background: #323232;
     color: white !important;
 }
 
