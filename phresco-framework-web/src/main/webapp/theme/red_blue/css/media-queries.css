@@ -21,7 +21,6 @@
 Width <= 1024
 *************************************************************************************/
 @media screen and (max-width : 1024px) {
-
 	.content_adder {
 		height: 84%;
 	}
@@ -89,7 +88,7 @@ Width <= 1024
 	#container {
 	    z-index: 15004;
 	    width: 94%;
-	    height: 85%;
+	    height: 488px !important;
 	}
 	
 	.holder {
@@ -1033,7 +1032,7 @@ Width >= 1152 and < 1280
 	#container {
 	    z-index: 15004;
 	    width: 93%;
-	    height: 85%;
+	    height: 588px !important;
 	}
 	
 	.holder {
@@ -1377,7 +1376,7 @@ Width <= 1280 and height <= 800
 	#container {
 		z-index: 15004;
 		width: 94%;
-		height: 84%;
+		height: 503px !important;
 	}
 	
 	.headerInner {
@@ -1784,7 +1783,7 @@ Width >= 1280 and height >= 800
 	#container {
 		z-index: 15004;
 		width: 93%;
-		height: 84%;
+		height: 694px !important;
 	}
 
 	.custom_features {
@@ -1808,7 +1807,6 @@ Width >= 1280 and height >= 800
 	
 	.customer_name {
 	    float: right;
-	    left: 73%;
 	    margin-bottom: 0;
 	    position: absolute;
 	    top: 10px;
@@ -2153,6 +2151,10 @@ Width > 1280 and <= 1360
 *************************************************************************************/
 @media screen and (min-width : 1281px) and (max-width : 1360px) {
 	
+	#container {
+		height: 495px !important;
+	}
+
 	.content_adder {
 		height: 84%;
 	}
@@ -2184,7 +2186,6 @@ Width > 1280 and <= 1360
 	
 	.customer_name {
 	    float: right;
-	    left: 73%;
 	    margin-bottom: 0;
 	    position: absolute;
 	    top: 10px;
@@ -2604,6 +2605,9 @@ Width > 1360 and <= 1440
 *************************************************************************************/
 @media only screen and (min-width : 1361px) and (max-width : 1440px) {
 	
+	#container {
+		height: 628px !important;
+	}
 	.app_list_form {
     	height: 91%;
 	}
@@ -3065,7 +3069,7 @@ Width > 1441 and <= 1600
 	}
 	
 	#container {
-		height: 85% !important;
+		height: 630px !important;
 	}
 	
 	.table_data_div_unit {
