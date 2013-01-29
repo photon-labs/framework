@@ -65,6 +65,25 @@ $myObject:{ obj |
 		newTextBoxDiv.appendTo("#dbContextDivParent");	
 	}
 	
+	function dbContextUrlsMandatoryVal() {
+		var redirect = true;
+		jQuery('.perDBContextUrlFieldset').each(function() {
+			if (jQuery(this).find(jQuery('input[name=name]')).val() == "" || isBlank(jQuery(this).find(jQuery('input[name=name]')).val())) {
+				redirect = false;
+				jQuery('.yesNoPopupErr').text('Name is missing');
+				jQuery(this).find(jQuery('input[name=name]')).val('');
+				jQuery(this).find(jQuery('input[name=name]')).focus();
+			} else if (jQuery(this).find(jQuery('textarea[name=query]')).val() == "" || isBlank(jQuery(this).find(jQuery('textarea[name=query]')).val())) {
+				redirect = false;
+				jQuery('.yesNoPopupErr').text('Query is missing');
+				jQuery(this).find(jQuery('textarea[name=query]')).val('');
+				jQuery(this).find(jQuery('textarea[name=query]')).focus();
+			} 
+		});
+		
+		return redirect;
+	}
+	
 	function dbContextUrls() {
 		var dbContextUrls = [];
 		jQuery('.perDBContextUrlFieldset').each(function() {

@@ -91,6 +91,25 @@ $myObject:{ obj |
 		newTextBoxDiv.appendTo("#contextDivParent");	
 	}
 	
+	function contextUrlsMandatoryVal() {
+		var redirect = true;
+		jQuery('.perContextUrlFieldset').each(function() {
+			if (jQuery(this).find(jQuery('input[name=name]')).val() == "" || isBlank(jQuery(this).find(jQuery('input[name=name]')).val())) {
+				redirect = false;
+				jQuery('.yesNoPopupErr').text('Name is missing');
+				jQuery(this).find(jQuery('input[name=name]')).val('');
+				jQuery(this).find(jQuery('input[name=name]')).focus();
+			} else if (jQuery(this).find(jQuery('input[name=context]')).val() == "" || isBlank(jQuery(this).find(jQuery('input[name=context]')).val())) {
+				redirect = false;
+				jQuery('.yesNoPopupErr').text('Context is missing');
+				jQuery(this).find(jQuery('input[name=context]')).val('');
+				jQuery(this).find(jQuery('input[name=context]')).focus();
+			} 
+		});
+		
+		return redirect;
+	}
+	
 	function contextUrls() {
 		var contextUrls = [];
 		var contexts = "";
