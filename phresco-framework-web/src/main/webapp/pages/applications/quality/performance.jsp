@@ -349,6 +349,21 @@
 		}
 	}
 	
+	function templateMandatoryVal() {
+		var testAgainst = $("#testAgainst").val();
+		var redirect;
+		if (testAgainst == "server" || testAgainst == "webservice") {
+			redirect = contextUrlsMandatoryVal();
+		} else {
+			redirect = dbContextUrlsMandatoryVal();
+		}
+		
+		if (redirect) {
+			$('.yesNoPopupErr').empty();
+			runPerformanceTest();
+		}
+	}
+	
 	function runPerformanceTest() {
 		var formJsonObject = $('#generateBuildForm').toJSON();
 		var formJsonStr = JSON.stringify(formJsonObject);

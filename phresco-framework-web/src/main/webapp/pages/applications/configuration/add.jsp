@@ -95,7 +95,7 @@
 			</label>
 			<div class="controls">
 				<input id="configName" placeholder="<s:text name='place.hldr.config.name'/>" value="<%= name %>" 
-					maxlength="30" title="<s:text name='title.30.chars'/>" class="input-xlarge" type="text" name="name">
+					maxlength="30" title="<s:text name='title.30.chars'/>" class="input-xlarge" type="text" name="configName">
 				<span class="help-inline" id="configNameError"></span>
 			</div>
 		</div> <!-- Name -->

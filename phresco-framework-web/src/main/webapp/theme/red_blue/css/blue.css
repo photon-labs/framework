@@ -1625,3 +1625,15 @@ table tr {
 #lbl_customer {
 	margin-top: 31px;
 }
+
+.updateMsg {
+	float: left !important;
+}
+
+.dd-options {
+    width: 175px !important;
+}
+
+.dd-select {
+    width: 175px !important;
+}

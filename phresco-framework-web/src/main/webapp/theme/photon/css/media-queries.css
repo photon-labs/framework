@@ -21,6 +21,13 @@
 Width <= 1024
 *************************************************************************************/
 @media screen and (max-width : 1024px) {
+	
+	div.site_report {
+		height: 70%;
+	    position: absolute;
+	    width: 74%;
+	}
+	
 	.accordion_panel_inner {
 		width:99%;
 	}
@@ -357,6 +364,18 @@ Width <= 1024
 	    width:394px;
 	}
 	
+	@-moz-document url-prefix() {
+		.graph_div .jm_canvas_div iframe html body {
+			margin: 0;
+			padding: 0;
+		}
+		
+		.graph_div {
+			overflow-x: auto;
+			width: 200px !important;
+		}
+	}
+	
 	#tabularView {	
 		position: relative;
 	    top: -27px;
@@ -514,9 +533,9 @@ Width <= 1024
 		margin: 12px 5px 12px 6px !important;
 		padding-bottom: 15px;
 	}
-	.perTabularView {
+	#formPerformance  .perTabularView {
 		top: -21px !important;
-		left: -110px !important;
+		left: -119px !important;
 	}
 }
 
@@ -1058,6 +1077,13 @@ Width size <= 1024
 Width >= 1025 and < 1151
 *************************************************************************************/
 @media screen and (min-width : 1025px) and (max-width : 1151px) {
+	
+	div.site_report {
+	    height: 80%;
+	    position: absolute;
+	    width: 77%;
+	}
+	
 	.scrollpanel{
 	    width:99.78% !important;
 	    float:left;
@@ -1189,6 +1215,13 @@ Width >= 1025 and < 1151
 Width >= 1152 and < 1280
 *************************************************************************************/
 @media screen and (min-width : 1152px) and (max-width : 1279px) {
+	
+	div.site_report {
+	    height: 80%;
+	    position: absolute;
+	    width: 78%;
+	}
+	
 	.app_add_form .theme_accordion_container {
 		float: left;
 		margin: 0.1% 0%;
@@ -1570,6 +1603,19 @@ Width >= 1152 and < 1280
 	}
 	.perTabularView {
 		top: -40px !important;
+		margin-right: -7px !important;
+	}
+	
+	.graph_div {
+		width: 36% !important;
+		overflow-x: auto !important;
+		height: 93% !important;
+	}
+
+	@-moz-document url-prefix() {
+		.graph_div {
+		width: 74% !important;
+	}			
 	}
 }
 
@@ -1589,6 +1635,13 @@ Width <= 1280 and height <= 800
 	}
 }
 @media screen and (min-width : 1280px) and (max-height : 800px) {
+	
+	div.site_report {
+	    height: 78%;
+	    position: absolute;
+	    width: 80%;
+	}
+	
 	.app_add_form .theme_accordion_container {
 		float: left;
 		margin: 0.1% 0%;
@@ -2094,6 +2147,13 @@ Width <= 1280 and height <= 800
 Width >= 1280 and height >= 800
 *************************************************************************************/
 @media screen and (min-width : 1280px) and (min-height : 801px) {
+	
+	div.site_report {
+	    height: 83%;
+	    position: absolute;
+	    width: 80%;
+	}
+	
 	.app_add_form .theme_accordion_container {
 		float: left;
 		margin: 0.1% 0%;
@@ -2491,12 +2551,14 @@ Width >= 1280 and height >= 800
 	 .graph_div {
 		zoom: 0.6;
 		width: 32% !important;
+		height: 93% !important;
 	}
 	
 	@-moz-document url-prefix() {
 		 .graph_div {
 			zoom: 0.6;
-			width: 85% !important;
+			width: 61% !important;
+			overflow-x: auto;
 		}
 	}
 	
@@ -2521,6 +2583,13 @@ Width >= 1280 and height >= 800
 Width > 1280 and <= 1360
 *************************************************************************************/
 @media screen and (min-width : 1281px) and (max-width : 1360px) {
+	
+	div.site_report {
+		height: 77%;
+		position: absolute;
+		width: 78%;
+	}
+	
 	.app_add_form .theme_accordion_container {
 		float: left;
 		margin: 0.1% 0%;
@@ -3003,6 +3072,13 @@ Width > 1280 and <= 1360
 Width > 1360 and <= 1440
 *************************************************************************************/
 @media only screen and (min-width : 1361px) and (max-width : 1440px) {
+	
+	div.site_report {
+		height: 79%;
+		position: absolute;
+		width: 81%;
+	}
+	
 	.app_add_form .theme_accordion_container {
 		float: left;
 		margin: 0.1% 0%;
@@ -3411,6 +3487,12 @@ Width > 1360 and <= 1440
 Width > 1441 and <= 1600
 *************************************************************************************/
 @media only screen and (min-width : 1441px) and (max-width : 1600px) {
+	div.site_report {
+		height: 81%;
+		position: absolute;
+		width: 83.5%;
+	}
+	
 	.app_add_form .theme_accordion_container {
 		float: left;
 		margin: 0.1% 0%;

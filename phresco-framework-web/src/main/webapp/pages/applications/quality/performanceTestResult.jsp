@@ -202,7 +202,7 @@
 		      		</div>
     			</div>
     		</div>
-            <div class="graph_div" id="graphicalView" style="margin-left: 15px;">
+            <div class="" id="graphicalView" style="margin-left: 15px;">
                 <!--<div class="jm_canvas_div">
                     <iframe src="<%= request.getContextPath() %>/pages/applications/quality/jmeter_graph.jsp"  frameborder="0" width="100%" height="100%"></iframe>
                 </div>-->

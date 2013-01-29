@@ -1384,10 +1384,12 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     public static String listToCsv(List<?> list) {
         Iterator<?> iter = list.iterator();
         String csvString = "";
+        String sep = "";
         while (iter.hasNext()) {
-            csvString += iter.next() + ",";
+            csvString += sep + iter.next();
+            sep = ",";
         }
-
+        
         return csvString;
     }
     

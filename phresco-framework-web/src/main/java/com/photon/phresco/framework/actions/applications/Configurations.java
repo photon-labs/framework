@@ -596,7 +596,7 @@ public class Configurations extends FrameworkBaseAction {
 	
 				if (isRequired && StringUtils.isEmpty(value)) {
 	             	String field = propertyTemplate.getName();
-	             	dynamicError += key + ":" + field + " is empty" + ",";
+	             	dynamicError += key + Constants.STR_COLON + field + PROP_TEMP_MISSING + Constants.STR_COMMA;
 	            }
 	             
 	            if (CONFIG_TYPE.equals(key)) {
