@@ -158,7 +158,7 @@
 		<!-- Version Starts -->
 		
 		<!-- Build it myself Starts -->
-		<div class="control-group">
+		<%-- <div class="control-group">
 			<label class="control-label labelbold"></label>
 			<div class="controls">
 				 <ul class="inputs-list">
@@ -168,7 +168,7 @@
 					</li>
 				</ul>
 			</div>
-		</div>
+		</div> --%>
 		<!-- PreBuild/Build it myself ends -->
 	
 		<!-- Application layer accordion starts --> 

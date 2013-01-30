@@ -59,6 +59,13 @@ Width <= 1024
         width: 45.8%;
      }
      
+     .featureImage {
+		float: right;
+	    position: absolute;
+	    right: 13%;
+	    top: 22%;
+	 }
+     
      .custom_features_wrapper_right {
         border-radius: 6px 6px 6px 6px;
         float: right;
@@ -1005,6 +1012,13 @@ Width >= 1152 and < 1280
      	margin-top: 5px;
      }
 	
+	.featureImage {
+		float: right;
+	    position: absolute;
+	    right: 13%;
+	    top: 19%;
+	}
+	
 	.custom_features {
 		border-radius: 6px 6px 0 0;
         float: left;
@@ -1583,6 +1597,13 @@ Width <= 1280 and height <= 800
 	    width: 100%;
 	}
 	
+	.featureImage {
+		float: right;
+	    position: absolute;
+	    right: 13%;
+	    top: 22%;
+	}
+	
 	.actions {
 	    background: none repeat scroll 0 0 transparent;
 	    border-radius: 0 0 3px 3px;
@@ -1790,6 +1811,13 @@ Width >= 1280 and height >= 800
 	.formClass {
 		height: 97%;
 		margin: 0;
+	}
+	
+	.featureImage {
+		float: right;
+	    position: absolute;
+	    right: 13%;
+	    top: 15%;
 	}
 	
 	.content_adder {

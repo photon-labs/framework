@@ -191,6 +191,50 @@ a:hover {
 	color:#b3b3b3;
 }
 
+.bubbleAll {
+	background: none repeat scroll 0 0 #B5131B;
+	border-radius: 3px 3px 3px 3px;
+	color: #FFFFFF;
+	font: bold 0.6em Tahoma,Arial,Helvetica;
+	padding: 1px 2px;
+	position: relative;
+	right: 8px;
+	top: -24px;
+}
+
+.bubbleModule {
+	background: none repeat scroll 0 0 #B5131B;
+	border-radius: 3px 3px 3px 3px;
+	color: #FFFFFF;
+	font: bold 0.6em Tahoma,Arial,Helvetica;
+	padding: 1px 2px;
+	position: relative;
+	right: 8px;
+	top: -24px;
+}
+
+.bubbleJsLibs {
+	background: none repeat scroll 0 0 #B5131B;
+	border-radius: 3px 3px 3px 3px;
+	color: #FFFFFF;
+	font: bold 0.6em Tahoma,Arial,Helvetica;
+	padding: 1px 2px;
+	position: relative;
+	right: 8px;
+	top: -24px;
+}
+
+.bubbleComponenet {
+	background: none repeat scroll 0 0 #B5131B;
+	border-radius: 3px 3px 3px 3px;
+	color: #FFFFFF;
+	font: bold 0.6em Tahoma,Arial,Helvetica;
+	padding: 1px 2px;
+	position: relative;
+	right: 8px;
+	top: -24px;
+}
+
 .right_barcont { 
 	background-color:#000; 
 	border:5px solid #1e1b1b; 

@@ -34,7 +34,9 @@
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 
 <%
-	List<SelectedFeature> features = (List<SelectedFeature>)request.getAttribute(FrameworkConstants.REQ_SELECTED_FEATURES);
+	List<SelectedFeature> features = (List<SelectedFeature>)session.getAttribute(FrameworkConstants.REQ_SELECTED_FEATURES);
+	
+	List<SelectedFeature> defaultfeatures = (List<SelectedFeature>)request.getAttribute(FrameworkConstants.REQ_DEFAULT_FEATURES);
 	String oldAppDirName = (String) request.getAttribute(FrameworkConstants.REQ_OLD_APPDIR);
 	String appId = (String) request.getAttribute(FrameworkConstants.REQ_APP_ID);
 	List<ArtifactGroup> selectedFeatures = (List<ArtifactGroup>) request.getAttribute(FrameworkConstants.REQ_PROJECT_FEATURES);
@@ -68,6 +70,16 @@
 	    <div class="alert alert-success alert-message hideContent" id="successmsg">
 			<s:text name="succ.feature.configure"/>
 		</div>
+		<div class="featureImage">
+			<img id="allFeatures" title="<s:text name="title.selected.modules"/>" src="images/all.png">
+			<span class="bubbleAll"></span>
+			<img id="selectModules" title="<s:text name="title.selected.modules"/>" src="images/features.png">
+			<span class="bubbleModule"></span>
+			<img id="selectJsLibs" title="<s:text name="title.selected.jsLibs"/>" src="images/libraries.png">
+			<span class="bubbleJsLibs"></span>
+			<img id="selectComponents" title="<s:text name="title.selected.components"/>" src="images/components.png">
+			<span class="bubbleComponenet"></span>
+		</div>
 	</div>
 	<div class="custom_features">
 		<div class="tblheader">
@@ -89,6 +101,7 @@
 	<div class="custom_features_wrapper_right">
 		<div class="tblheader">
 			<label class="feature_heading"><s:text name="lbl.selected.features"/></label>
+			
 		</div>
 		<div class="theme_accordion_container">
 			<div id="result"></div>
@@ -124,6 +137,20 @@
 	}
 %>
 
+<%	
+if (CollectionUtils.isNotEmpty(defaultfeatures)) {
+	for (SelectedFeature feature : defaultfeatures) {
+	    boolean showImage = false;
+	    if (feature.isCanConfigure()) {
+	        showImage = true;
+	    }
+%>
+		constructFeaturesDiv('<%= feature.getDispName() %>', '<%= feature.getDispValue() %>', '<%= feature.getType() %>', '<%= feature.getVersionID() %>', '<%= feature.getModuleId() %>', <%= feature.isCanConfigure() %>, <%= showImage %>, <%= feature.isDefaultModule()%>, '<%= feature.getArtifactGroupId()%>'); 
+<%		
+ 	}
+}
+%>
+
 	inActivateAllMenu($("a[name='appTab']"));
 	activateMenu($('#features'));
 
@@ -141,6 +168,15 @@
         		featureType(data.selectedData.value, data.selectedData.text); 
         	}
         });
+        
+        $('#clipboard').click(function() {
+    		copyToClipboard($('#popup_div').text());
+    	});
+        
+        $('#clipboard').click(function() {
+    		copyToClipboard($('#popup_div').text());
+    	});
+        
     });
     
     // Function for the feature list selection
@@ -185,6 +221,7 @@
 		var jsonParam = JSON.stringify(jsonParamObj);
 		var ctrlClass = removeSpaces(artifactGroupId);
 		var elementsSize = $("#" + ctrlClass + "Div").size();
+		var divName = hiddenFieldname.toLowerCase();;
 // 		$("div[id='"+ ctrlClass +"Div']").remove();
 		if (elementsSize === 0) {
 			var removeImg = "";
@@ -195,7 +232,7 @@
 			}
 			
 			if (showImage) {
-				$("#result").append('<div id="'+ctrlClass+'Div">'+dispName+' - '+dispValue+
+				$("#result").append('<div id="'+ctrlClass+'Div" class="'+divName+'">'+dispName+' - '+dispValue+
 						'<a href="#" onclick="remove(this);">'+ removeImg +'</a>'+
 						'<input type="hidden" class="'+ctrlClass+'" name="jsonData">' +
 						<%
@@ -208,17 +245,20 @@
 						%>
 						'</div>');
 			} else {
-				$("#result").append('<div id="'+ctrlClass+'Div">'+dispName+' - '+dispValue+
+				$("#result").append('<div id="'+ctrlClass+'Div" class="'+divName+'">'+dispName+' - '+dispValue+
 						'<a href="#" onclick="remove(this);">'+ removeImg +'</a>'+
 						'<input type="hidden" class="'+ctrlClass+'" name="jsonData"></div>');
 			}
 			$("."+ctrlClass).val(jsonParam);
+			//featureNotification();
+			updateFeatureNotification();
 		}
     }
     
     // Function to remove the final features in right tab  
     function remove(thisObj) {
     	$(thisObj).closest('div').remove();
+    	updateFeatureNotification();
     }
     
     // Function to fill the heading of the left tab
@@ -255,9 +295,64 @@
   			makeFeaturesSelected(data.selArtifactGroupNames, data.selArtifactInfoIds, "fetchSelectedFeatures");
 		} else if (url === "fetchDependentFeatures") {
 			if (data.dependency) {
-				makeFeaturesSelected(data.depArtifactGroupNames, data.dependencyIds);
+				makeFeaturesSelected(data.depArtifactGroupNames, data.dependencyIds, "fetchDependentFeatures");
 			}
 		}
   	}
   	
+  	$('#allFeatures').click(function() {
+  		$(".feature").show();
+  		$(".javascript").show();
+  		$(".component").show();
+	});
+  	
+  	$('#selectModules').click(function() {
+  		$(".feature").show();
+  		$(".javascript").hide();
+  		$(".component").hide();
+	});
+    
+    $('#selectJsLibs').click(function() {
+    	$(".feature").hide();
+    	$(".javascript").show();
+  		$(".component").hide();
+	});
+    
+    $('#selectComponents').click(function() {
+    	$(".javascript").hide();
+  		$(".feature").hide();
+  		$(".component").show();
+	});
+    
+    featureNotification();
+    
+    function featureNotification() {
+	    var total = $(".feature:visible").length + $(".javascript:visible").length+ $(".component:visible").length;
+	    var counterValue = parseInt(total); 
+		$('.bubbleAll').html(counterValue); 
+	
+	    var counterValue = parseInt($(".feature:visible").length); 
+		$('.bubbleModule').html(counterValue); 
+	
+		var counterValue = parseInt($(".javascript:visible").length); 
+		$('.bubbleJsLibs').html(counterValue);
+			
+		var counterValue = parseInt($(".component:visible").length); 
+		$('.bubbleComponenet').html(counterValue);
+    }
+    
+    function updateFeatureNotification() {
+    	var total = $(".feature").length + $(".javascript").length+ $(".component").length;
+	    var counterValue = parseInt(total); 
+		$('.bubbleAll').html(counterValue); 
+	
+	    var counterValue = parseInt($(".feature").length); 
+		$('.bubbleModule').html(counterValue); 
+	
+		var counterValue = parseInt($(".javascript").length); 
+		$('.bubbleJsLibs').html(counterValue);
+			
+		var counterValue = parseInt($(".component").length); 
+		$('.bubbleComponenet').html(counterValue);
+    }
 </script>

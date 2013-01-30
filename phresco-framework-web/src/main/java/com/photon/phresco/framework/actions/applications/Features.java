@@ -159,7 +159,23 @@ public class Features extends FrameworkBaseAction {
 					}
 				}
 			}
-			setReqAttribute(REQ_SELECTED_FEATURES, listFeatures);
+			List<SelectedFeature> defaultFeatures = new ArrayList<SelectedFeature>();
+			List<ArtifactGroup> moduleGroups = getServiceManager().getFeatures(getCustomerId(), getTechnology(), ArtifactGroup.Type.FEATURE.name());
+			if (CollectionUtils.isNotEmpty(moduleGroups)) {
+				createArtifactInfoForDefault(moduleGroups, defaultFeatures);
+			}
+			
+			List<ArtifactGroup> jsLibsGroups = getServiceManager().getFeatures(getCustomerId(), getTechnology(), ArtifactGroup.Type.JAVASCRIPT.name());
+			if (CollectionUtils.isNotEmpty(jsLibsGroups)) {
+				createArtifactInfoForDefault(jsLibsGroups, defaultFeatures);
+			}
+			
+			List<ArtifactGroup> componentGroups = getServiceManager().getFeatures(getCustomerId(), getTechnology(), ArtifactGroup.Type.COMPONENT.name());
+			if (CollectionUtils.isNotEmpty(componentGroups)) {
+				createArtifactInfoForDefault(componentGroups, defaultFeatures);
+			}
+			setReqAttribute(REQ_DEFAULT_FEATURES, defaultFeatures);
+			setSessionAttribute(REQ_SELECTED_FEATURES, listFeatures);
 			if (APP_INFO.equals(getFromTab())) {
 				projectInfo.setAppInfos(Collections.singletonList(createApplicationInfo(appInfo)));
 			}
@@ -170,6 +186,62 @@ public class Features extends FrameworkBaseAction {
 		}
     	
 	    return APP_FEATURES;
+	}
+
+	private void createArtifactInfoForDefault(List<ArtifactGroup> moduleGroups, List<SelectedFeature> defaultFeatures) {
+		for (ArtifactGroup artifactGroup : moduleGroups) {
+			List<ArtifactInfo> versions = artifactGroup.getVersions();
+			for (ArtifactInfo artifactInfo : versions) {
+				List<RequiredOption> appliesTo = artifactInfo.getAppliesTo();
+				if (CollectionUtils.isNotEmpty(appliesTo)) {
+					for (RequiredOption requiredOption : appliesTo) {
+						if (requiredOption.isRequired() && requiredOption.getTechId().equals(getTechnology())) {
+							SelectedFeature selectFeature = new SelectedFeature();
+							selectFeature.setDispValue(artifactInfo.getVersion());
+							selectFeature.setVersionID(artifactInfo.getId());
+							selectFeature.setModuleId(artifactInfo.getArtifactGroupId());
+							selectFeature.setDispName(artifactGroup.getName());
+							selectFeature.setType(artifactGroup.getType().name());
+							selectFeature.setArtifactGroupId(artifactGroup.getId());
+							selectFeature.setDefaultModule(true);
+							getDefaultDependentFeatures(moduleGroups, defaultFeatures, artifactInfo);
+						    defaultFeatures.add(selectFeature);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	private void getDefaultDependentFeatures(List<ArtifactGroup> moduleGroups, List<SelectedFeature> defaultFeatures, ArtifactInfo artifactInfo) {
+		dependencyIds = artifactInfo.getDependencyIds();
+		if (CollectionUtils.isNotEmpty(artifactInfo.getDependencyIds())) {
+		    dependencyIds.addAll(artifactInfo.getDependencyIds());
+		}
+		
+		if (CollectionUtils.isNotEmpty(getDependencyIds())) {
+			for (String dependencyId : getDependencyIds()) {
+				for (ArtifactGroup artifatGroup : moduleGroups) {
+					List<ArtifactInfo> versins = artifatGroup.getVersions();
+					for (ArtifactInfo artifatInfo : versins) {
+						if (artifatInfo.getId().equals(dependencyId)) {
+							SelectedFeature dependntFeature = new SelectedFeature();
+							dependntFeature.setDispValue(artifatInfo.getVersion());
+							dependntFeature.setVersionID(artifatInfo.getId());
+							dependntFeature.setModuleId(artifatInfo.getArtifactGroupId());
+							dependntFeature.setDispName(artifatGroup.getName());
+							dependntFeature.setType(artifatGroup.getType().name());
+							dependntFeature.setArtifactGroupId(artifatGroup.getId());
+							dependntFeature.setDefaultModule(true);
+							defaultFeatures.add(dependntFeature);	
+							if (CollectionUtils.isNotEmpty(artifatInfo.getDependencyIds())) {
+								getDefaultDependentFeatures(moduleGroups, defaultFeatures, artifatInfo);
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 	
 	private void setFeatures(ApplicationInfo appInfo, List<SelectedFeature> listFeatures) {
@@ -485,6 +557,9 @@ public class Features extends FrameworkBaseAction {
 						if (requiredOption.isRequired() && requiredOption.getTechId().equals(getTechnology())) {
 							depArtifactGroupNames.add(artifactGroup.getName());
 							depArtifactInfoIds.add(artifactInfo.getId());
+							if(CollectionUtils.isNotEmpty(artifactInfo.getDependencyIds())) {
+								getDependentForDefaultFeatures(ArtifactGroups, artifactInfo);
+							}
 						}
 					}
 				}
@@ -493,32 +568,38 @@ public class Features extends FrameworkBaseAction {
 		
 		return SUCCESS;
 	}
+
+	private void getDependentForDefaultFeatures(List<ArtifactGroup> artifactGroups, ArtifactInfo artifactInfo) {
+		for (String dependentId : artifactInfo.getDependencyIds()) {
+			for (ArtifactGroup dependentArtifactGroup : artifactGroups) {
+				List<ArtifactInfo> depdntVersions = dependentArtifactGroup.getVersions();
+				for (ArtifactInfo depdntArtifactInfo : depdntVersions) {
+					if (depdntArtifactInfo.getId().equals(dependentId)) {
+						depArtifactGroupNames.add(dependentArtifactGroup.getName());
+						depArtifactInfoIds.add(depdntArtifactInfo.getId());
+						if (CollectionUtils.isNotEmpty(depdntArtifactInfo.getDependencyIds())) {
+							getDependentForDefaultFeatures(artifactGroups, depdntArtifactInfo);
+						}
+					}
+				}
+			}
+		}
+	}
 	
 	public String fetchSelectedFeatures() throws PhrescoException {
-		ProjectInfo projectInfo = (ProjectInfo)getSessionAttribute(getAppId() + SESSION_APPINFO);
-		List<String> selectedModules = projectInfo.getAppInfos().get(0).getSelectedModules();
-		List<String> selectedJSLibs = projectInfo.getAppInfos().get(0).getSelectedJSLibs();
-		List<String> selectedComponents = projectInfo.getAppInfos().get(0).getSelectedComponents();
+		List<SelectedFeature> allFeatures = (List<SelectedFeature>)getSessionAttribute(REQ_SELECTED_FEATURES);
 		List<ArtifactGroup> artifactGroups = getServiceManager().getFeatures(getCustomerId(), getTechId(), getType());
-		if (CollectionUtils.isNotEmpty(selectedModules)) {
-			getSelectedFeatures(selectedModules, artifactGroups);
-		}
-		if (CollectionUtils.isNotEmpty(selectedJSLibs)) {
-			getSelectedFeatures(selectedJSLibs, artifactGroups);
-		}
-		if (CollectionUtils.isNotEmpty(selectedComponents)) {
-			getSelectedFeatures(selectedComponents, artifactGroups);
-		}
+		getSelectedFeatures(allFeatures, artifactGroups);
 		
 		return SUCCESS;
 	}
 	
-	private void getSelectedFeatures(List<String> selectedFeatues, List<ArtifactGroup> artifactGroups) {
-		for (String selectedModule : selectedFeatues) {
+	private void getSelectedFeatures(List<SelectedFeature> selectedFeatues, List<ArtifactGroup> artifactGroups) {
+		for (SelectedFeature selectedModule : selectedFeatues) {
 			for (ArtifactGroup artifactGroup : artifactGroups) {
 				List<ArtifactInfo> versions = artifactGroup.getVersions();
 				for (ArtifactInfo artifactInfo : versions) {
-					if(artifactInfo.getId().equals(selectedModule)) {
+					if(artifactInfo.getId().equals(selectedModule.getVersionID())) {
 						selArtifactGroupNames.add(artifactGroup.getName());
 						selArtifactInfoIds.add(artifactInfo.getId());
 					}
@@ -535,14 +616,13 @@ public class Features extends FrameworkBaseAction {
 			List<ArtifactInfo> versions = artifactGroup.getVersions();
 			for (ArtifactInfo artifactInfo : versions) {
 				if (artifactInfo.getId().equals(getModuleId())) {
-				    List<String> dependencyIds = artifactInfo.getDependencyIds();
+				    dependencyIds = artifactInfo.getDependencyIds();
 				    if (CollectionUtils.isNotEmpty(artifactInfo.getDependencyIds())) {
 				        dependencyIds.addAll(artifactInfo.getDependencyIds());
 				    }
 				}
 			}
 		}
-		
 		//To get the artifactgroup name for the dependent artifactInfo ids
 		if (CollectionUtils.isNotEmpty(getDependencyIds())) {
     		for (String dependencyId : getDependencyIds()) {
@@ -551,6 +631,9 @@ public class Features extends FrameworkBaseAction {
     				for (ArtifactInfo artifactInfo : versions) {
     					if (artifactInfo.getId().equals(dependencyId)) {
     						depArtifactGroupNames.add(artifactGroup.getName());
+    						if(CollectionUtils.isNotEmpty(artifactInfo.getDependencyIds())) {
+    							getDependentForDefaultFeatures(artifactGroups, artifactInfo);
+    						}
     					}
     				}
     			}

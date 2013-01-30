@@ -179,6 +179,7 @@
 		hideLoadingIcon();
 		hideProgressBar();
 		toDisableCheckAll();
+		deleteButtonStatus();
 		
 		$('#customerList').show();
 		
@@ -212,7 +213,20 @@
     		showLoadingIcon();
     		loadContent('addProject', $('#formCustomers'), $('#container'), '', '', true);		
     	});
+    	
+    	$('.table_div').find("input[type='checkbox']").change(function() {
+			deleteButtonStatus();
+		});
    	});
+	
+	function deleteButtonStatus() {
+		if ($('.table_div').find("input[type='checkbox']:checked").length < 1) {
+			$("input[id=deleteBtn]").attr("disabled", "disabled");
+		} else {
+			$("input[id=deleteBtn]").attr("disabled", false);
+			$("#deleteBtn").addClass("btn-primary");
+		}
+	};
 	
     function editApplication(projectId, appId) {
     	showLoadingIcon();
