@@ -349,20 +349,24 @@
 		}
 	}
 	
-	function templateMandatoryVal() {
+	 function templateMandatoryVal() {
 		var testAgainst = $("#testAgainst").val();
-		var redirect;
-		if (testAgainst == "server" || testAgainst == "webservice") {
-			redirect = contextUrlsMandatoryVal();
-		} else {
-			redirect = dbContextUrlsMandatoryVal();
-		}
+		var redirect = false;
 		
+		if (testAgainst != undefined && (testAgainst == "server" || testAgainst == "webservice")) {
+			redirect = contextUrlsMandatoryVal();
+		} else if (testAgainst != undefined && testAgainst == "database") {
+			redirect = dbContextUrlsMandatoryVal();
+		} else if (testAgainst == undefined) {
+			$('.yesNoPopupErr').empty();
+			runPerformanceTest();
+		}
+	
 		if (redirect) {
 			$('.yesNoPopupErr').empty();
 			runPerformanceTest();
 		}
-	}
+	} 
 	
 	function runPerformanceTest() {
 		var formJsonObject = $('#generateBuildForm').toJSON();
