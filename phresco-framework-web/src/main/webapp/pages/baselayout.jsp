@@ -239,7 +239,7 @@
 					</form>
 					
 					<div class="righttopnav">
-						<a href="JavaScript:void(0);" class="abtPopUp" class="arrow_links_top"><span
+						<a href="JavaScript:void(0);" id="abtPopUp" class="abtPopUp arrow_links_top"><span
 							class="shortcutRed" id=""></span><span class="shortcutWh"
 							id="">
 							<s:text name="lbl.aboutus"/></span>
@@ -446,7 +446,7 @@
 			loadContent("forum", $('#formCustomers'), $("#container"), '', '', true);
 		});
 		
-		$("#about").click(function() {
+		$("#about, #abtPopUp").click(function() {
 			yesnoPopup('about', 'About Phresco', 'updateAvailable', 'Update Available');
 		});
 	});
@@ -481,37 +481,54 @@
 		var pageHeaderColor = data.pageHeaderColor;
 		var labelColor = data.labelColor;
 		var copyRightColor = data.copyRightColor;
-	
 		var buttonGradientColor = buttonColor;
-		var labelActiveColor = buttonColor;
+		var inActiveLabelColor = data.disabledLabelColor;
 		
 		
 		JSS.css({
 
 			'.page-header': {
-				'background' : pageHeaderColor                               // Page Header in appinfo page 
+				'background' : pageHeaderColor  + "! important"    // Page Header in appinfo page 
+			},
+			
+			'.multilistVersion-scroller' : {
+				'border': "1px solid" + pageHeaderColor     // In appinfo Server page Version border color * (accordionBackGroundColor )
+			},
+			
+			'.mfbox .header-background': {
+				'background' :  pageHeaderColor      // background color for server, database, webservice * (accordionBackGroundColor)
+			},
+			
+			'.tblheader' : {
+				'background':  pageHeaderColor       // table background color  * (accordionBackGroundColor)
+			},
+			
+			'.tabs > li > a > label:hover': {
+				'background' : brandingColor + "! important",   // left side menu background when mouse over
+				'color': menufontColor + "! important",
+			},
+			
+			'.tabs li a.inactive:hover label ': {
+				'background' : brandingColor + "! important",   // label color when mouse over in left side menu
+				'color': menufontColor + "! important",
+			},
+			
+			 '.tabs li a.active': {
+					'background': "none repeat scroll 0 0 " + brandingColor  // Left Menus color Active color ** 
+			},
+			
+			'#testmenu li a.active, #testmenu li a:hover': {
+				'background': "none repeat scroll 0 0" +  brandingColor // change the Left side menu background color in Quality tab selection ex: click unit ,functional , performance
 			},
 			
 			'.modal-header': {
-				'background': "none repeat scroll 0 0" + brandingColor      // Generate pop up header color *
-			},
-			
-			'.headerInnerTop ul': {
-				'background': "none repeat scroll 0 0" + menuBackGround      // menu background color
-			},
-			
-			'.headerInnerTop li a.active label': { 
-				'color': brandingColor + "!important",                          // Active Menu label color in  Appinfo page 
+				'background': "none repeat scroll 0 0" + brandingColor    // Generate pop up header color *
 			},
 			
 			'.headerInnerTop li a label': {
-				'color': labelColor + "! important"            // Inactive Label color in menu tab in appinfo page  
+				'color': inActiveLabelColor + "! important"            // Inactive Label color in menu tab in appinfo page  
 			},
 
-			'.multilist-scroller ul li': {
-				'color': brandingColor + " ! important"                     // Envirinoment (ex : production) color
-			},
-			
 			'table th, table td' : {
 				'border-bottom' : "1px solid" + brandingColor               // Table border bottom color in Download server, database ,Tools tab *
 			},
@@ -568,25 +585,25 @@
 				'background': "none repeat scroll 0 0" + brandingColor  // Video Bottom menu color
 			},
 			
+
+			'.navTopBorder .mfbox' : {
+				'border': "1px solid" + brandingColor     // border color of Web service in appinfo page * (accordionBackGroundColor)
+			},
+			
+			'div.vjs-big-play-button:hover' : {
+				'background' : "none repeat scroll 0 0" + brandingColor  // Change The video Run button color when mouse over
+			},
+			
+			'.table_borderForDownloadInfos' : {
+				'border' : "1px solid" + brandingColor
+			},
+			
+			'.custom_features_wrapper_right .theme_accordion_container div div': {    // Feature border color when more than omne feature selected * (accordionBackGroundColor)
+				'border-bottom' : "1px solid" + brandingColor
+			},
+			
 			'.table_border' : {
 				'border' : "1px solid #000000"           // table border color in project 
-			},
-			
-			 '.tabs li a.active': {
-					'background': "none repeat scroll 0 0 " + bodyBackGroundColor  // Left Menus color Active color ** 
-			},
-			 
-			'.tabs li a.inactive:hover label ': {
-				'background' : bodyBackGroundColor + "! important",   // label color when mouse over in left side menu
-				'color': brandingColor + "! important",
-			},
-			
-			'#testmenu li a.active, #testmenu li a:hover': {
-				'background': "none repeat scroll 0 0" +  bodyBackGroundColor // change the Left side menu background color in Quality tab selection ex: click unit ,functional , performance
-			},
-			
-			'#testmenu li a': {
-				'background': "none repeat scroll 0 0" +  bodyBackGroundColor // change the Left side menu background color in Quality tab selection ex: click unit ,functional , performance
 			},
 			
 			'#testmenu li:first-child': {
@@ -623,22 +640,15 @@
 			},
 			
 			'.multiselectForWebservice' : {
-				'background' : accordionBackGroundColor            // change the background color when selecting webservice in appinfo page * (accordionBackGroundColor) 
-			},
-			
-			'.custom_features_wrapper_right .theme_accordion_container div div': {    // Feature border color when more than omne feature selected * (accordionBackGroundColor)
-				'border-bottom' : "1px solid" + brandingColor
+				'background' : "none repeat scroll 0 0 " + accordionBackGroundColor  // change the background color when selecting webservice in appinfo page * (accordionBackGroundColor) 
 			},
 			
 			'.download_tbl_header': {
-				'background': accordionBackGroundColor                            // table header background color in when viewing  ex: server in download tab 
+				'background': accordionBackGroundColor            // table header background color in when viewing  ex: server in download tab 
 			},
 			
 			'.download_tbl': {
-				'border' : "1px solid" + accordionBackGroundColor                    // border color in when viewing  ex: server in download tab 
-			},
-			'.tblheader' : {
-				'background':  pageHeaderColor                           // table background color  * (accordionBackGroundColor)
+				'border' : "1px solid" + accordionBackGroundColor        // border color in when viewing  ex: server in download tab 
 			},
 			
 			'.copyrit a ': {
@@ -669,17 +679,48 @@
 			},
 
 			'label': {
-				'color': labelActiveColor + "! important"         // label color 
+				'color': labelColor + "! important"         // label color 
+			},
+
+			'.labelbold' : {
+				'color' : labelColor + "! important"           // label color in appinfo page and customer list option
+			},
+			
+			'.multilist-scroller ul li': {
+				'color': labelColor + " ! important"                     // Envirinoment (ex : production) color
 			},
 			
 			'label, input, button, select, textarea' : {
-				'font-weight': "bold"                                  // label color weight in the Left side Menu options
+				'font-weight': "bold"                        // label color weight in the Left side Menu options
 			},
 			
-			'div.vjs-big-play-button:hover' : {
-				'background' : "none repeat scroll 0 0" + brandingColor  // Change The video Run button color when mouse over
-			}
+			'.tabs > li > a, .pills > li > a': {
+				'background' : menuBackGround,                   // left side menu background 
+			},
+
+			'.headerInnerTop ul': {
+				'background': "none repeat scroll 0 0" + menuBackGround      // menu background color
+			},
 			
+			'#testmenu li a': {
+				'background': "none repeat scroll 0 0" +  menuBackGround // change the Left side menu background color in Quality tab selection ex: click unit ,functional , performance
+			},
+			
+			'.tabs li a.inactive label' : {
+				'color' : menufontColor + "! important"       // inactive menu label color in appinfo Leftside
+			},
+
+			'li a.active label': {
+				'color': menufontColor + "! important"     // Active menu label color in Appinfo Left side
+			},
+			
+			'.headerInnerTop li a.active label': { 
+				'color': menufontColor + "!important",       // Active Menu label color in  Appinfo page 
+			},
+			
+			'.tabs li a.active label' : {
+				'color': menufontColor + " ! important"        // active Label color in leftside menu
+			}
 		});
 	}
 	

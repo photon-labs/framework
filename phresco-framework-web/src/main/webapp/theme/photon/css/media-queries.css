@@ -21,6 +21,13 @@
 Width <= 1024
 *************************************************************************************/
 @media screen and (max-width : 1024px) {
+	
+	div.site_report {
+		height: 70%;
+	    position: absolute;
+	    width: 74%;
+	}
+	
 	.accordion_panel_inner {
 		width:99%;
 	}
@@ -33,7 +40,7 @@ Width <= 1024
 		margin: 0.1% 0%;
 	}
 	.customer_name {
-		right:2.5%;
+		right:0.7%;
 	}
 
 	.content_adder {
@@ -93,12 +100,16 @@ Width <= 1024
 	.feature_content_adder {
 		height: 85%;
 	}
+	.tabs {
+		height: 415px !important;
+		overflow-y: auto;
+	}
 	}
 	.features_actions {
 	    border-radius: 0 0 3px 3px;
 	    float: right;
 	    margin-right: 9px;
-	    margin-top: 8px;
+	    margin-top: 22px;
 	    padding-top: 0;
 	}
 	.wrapper {
@@ -229,7 +240,7 @@ Width <= 1024
 		overflow-x: hidden;
 		overflow-y: auto;
 		position: relative;
-		height: 83% !important;
+		height: 96% !important;
 	}
 	
 	.featuresScrollDiv {
@@ -353,6 +364,18 @@ Width <= 1024
 	    width:394px;
 	}
 	
+	@-moz-document url-prefix() {
+		.graph_div .jm_canvas_div iframe html body {
+			margin: 0;
+			padding: 0;
+		}
+		
+		.graph_div {
+			overflow-x: auto;
+			width: 200px !important;
+		}
+	}
+	
 	#tabularView {	
 		position: relative;
 	    top: -27px;
@@ -469,10 +492,10 @@ Width <= 1024
 	}
 
 	.builds-list-table .th-inner {
-		top: 175px;
+		top: 145px;
 	}	
 
-	#subcontainer {width: 75.5%; float:right; }
+	#subcontainer {width: 77.5%; float:right; }
 	/*.navTopBorder .scroll-content {
 		width:76%;
 		margin-left:220px;
@@ -507,12 +530,15 @@ Width <= 1024
 		margin-left: 12.5% !important;
 	} 
 	#formPerformance .operation {
-		margin: 12px 5px 12px 6px !important;
+		margin: 12px 5px 12px 5px !important;
 		padding-bottom: 15px;
 	}
-	.perTabularView {
-		top: -21px !important;
-		left: -110px !important;
+	#formPerformance  .perTabularView {
+		top: -54px !important;
+		left: -119px !important;
+	}
+	ul#display-inline-block-example li:nth-child(7) {
+		margin-left: -14%;
 	}
 }
 
@@ -1054,6 +1080,13 @@ Width size <= 1024
 Width >= 1025 and < 1151
 *************************************************************************************/
 @media screen and (min-width : 1025px) and (max-width : 1151px) {
+	
+	div.site_report {
+	    height: 80%;
+	    position: absolute;
+	    width: 77%;
+	}
+	
 	.scrollpanel{
 	    width:99.78% !important;
 	    float:left;
@@ -1185,6 +1218,13 @@ Width >= 1025 and < 1151
 Width >= 1152 and < 1280
 *************************************************************************************/
 @media screen and (min-width : 1152px) and (max-width : 1279px) {
+	
+	div.site_report {
+	    height: 80%;
+	    position: absolute;
+	    width: 78%;
+	}
+	
 	.app_add_form .theme_accordion_container {
 		float: left;
 		margin: 0.1% 0%;
@@ -1242,6 +1282,10 @@ Width >= 1152 and < 1280
 	@-moz-document url-prefix() {
 		.featureForm {
 			height: 86% !important;
+		}
+		.tabs {
+			height: 508px !important;
+			overflow-y: auto;
 		}
 	}	
 	.main_wrapper {
@@ -1523,7 +1567,7 @@ Width >= 1152 and < 1280
 		width: 70%;
 	}
 	#subcontainer {
-		width: 78.5%;
+		width: 80%;
 		float: right;
 		margin-top: 10px;
 	}
@@ -1562,13 +1606,48 @@ Width >= 1152 and < 1280
 	}
 	.perTabularView {
 		top: -40px !important;
+		margin-right: -7px !important;
+	}
+	
+	.graph_div {
+		width: 36% !important;
+		overflow-x: auto !important;
+		height: 93% !important;
+	}
+
+	@-moz-document url-prefix() {
+		.graph_div {
+		width: 74% !important;
+	}			
+	}
+	ul#display-inline-block-example li:nth-child(7) {
+		margin-left: -10%;
 	}
 }
 
 /************************************************************************************
 Width <= 1280 and height <= 800
 *************************************************************************************/
+@media screen and (min-width : 1280px) and (max-width : 1359px) and (max-height : 800px) {
+	@-moz-document url-prefix() {
+	.tabs {
+			height: 430px !important;
+			overflow-y: auto;
+		}
+	}
+	.tabs {
+		height: 494px !important;
+		overflow-y: auto;
+	}
+}
 @media screen and (min-width : 1280px) and (max-height : 800px) {
+	
+	div.site_report {
+	    height: 78%;
+	    position: absolute;
+	    width: 80%;
+	}
+	
 	.app_add_form .theme_accordion_container {
 		float: left;
 		margin: 0.1% 0%;
@@ -1635,7 +1714,7 @@ Width <= 1280 and height <= 800
 	}
 	.feature_content_adder {
 		height: 89% !important;
-	}		
+	}
 	}
 	.main_wrapper {
 		bottom: 48px;
@@ -2024,7 +2103,7 @@ Width <= 1280 and height <= 800
 	}
 
 	#subcontainer {
-		width: 80.5%;
+		width: 82%;
 		float: right;
 		margin-top: 10px;
 	}
@@ -2044,7 +2123,13 @@ Width <= 1280 and height <= 800
 	}
 
 	.graph_div {
-		width: 100% !important;
+		width: 42% !important;
+	}
+	
+	@-moz-document url-prefix() {
+		.graph_div {
+			width: 85% !important;
+		}
 	}
 	
 	.qq-upload-list {
@@ -2062,12 +2147,22 @@ Width <= 1280 and height <= 800
 	.perTabularView {
 		top: -40px !important;
 	}
+	ul#display-inline-block-example li:nth-child(7) {
+		margin-left: -10%;
+	}
 }
 
 /************************************************************************************
 Width >= 1280 and height >= 800
 *************************************************************************************/
 @media screen and (min-width : 1280px) and (min-height : 801px) {
+	
+	div.site_report {
+	    height: 83%;
+	    position: absolute;
+	    width: 80%;
+	}
+	
 	.app_add_form .theme_accordion_container {
 		float: left;
 		margin: 0.1% 0%;
@@ -2443,7 +2538,7 @@ Width >= 1280 and height >= 800
 	}
 
 	 #subcontainer {
-		width: 80.5%;
+		width: 82%;
 		float: right;
 		margin-top: 10px;
 	}
@@ -2464,7 +2559,16 @@ Width >= 1280 and height >= 800
 
 	 .graph_div {
 		zoom: 0.6;
-		width: 100% !important;
+		width: 32% !important;
+		height: 93% !important;
+	}
+	
+	@-moz-document url-prefix() {
+		 .graph_div {
+			zoom: 0.6;
+			width: 61% !important;
+			overflow-x: auto;
+		}
 	}
 	
 	.qq-upload-list {
@@ -2482,12 +2586,22 @@ Width >= 1280 and height >= 800
 	.perTabularView {
 		top: -41px !important;
 	}
+	ul#display-inline-block-example li:nth-child(7) {
+		margin-left: -10%;
+	}
 }
 
 /************************************************************************************
 Width > 1280 and <= 1360
 *************************************************************************************/
 @media screen and (min-width : 1281px) and (max-width : 1360px) {
+	
+	div.site_report {
+		height: 77%;
+		position: absolute;
+		width: 78%;
+	}
+	
 	.app_add_form .theme_accordion_container {
 		float: left;
 		margin: 0.1% 0%;
@@ -2919,7 +3033,7 @@ Width > 1280 and <= 1360
 	}
 
 	#subcontainer {
-		width: 81.5%;
+		width: 83%;
 		float: right;
 		margin-top: 10px;
 	}
@@ -2954,11 +3068,32 @@ Width > 1280 and <= 1360
 		left: -120px !important;
 	}
 }
-
+@media only screen and (min-width : 1360px) and (max-width : 1439px) and (max-height : 800px) {
+	@-moz-document url-prefix() {
+	.tabs {
+			height: 416px !important;
+			overflow-y: auto;
+		}
+	}
+	.tabs {
+		height: 480px;
+		overflow-y: auto;
+	}
+	ul#display-inline-block-example li:nth-child(7) {
+		margin-left: -10%;
+	}
+}
 /************************************************************************************
 Width > 1360 and <= 1440
 *************************************************************************************/
 @media only screen and (min-width : 1361px) and (max-width : 1440px) {
+	
+	div.site_report {
+		height: 79%;
+		position: absolute;
+		width: 81%;
+	}
+	
 	.app_add_form .theme_accordion_container {
 		float: left;
 		margin: 0.1% 0%;
@@ -3310,8 +3445,9 @@ Width > 1360 and <= 1440
      .align-div-center {
 		width: 70%;
 	}
+
 	.customer_name {
-		right: 8.5% !important;
+		right: 0.7% !important;
 	}
     
 	 @-moz-document url-prefix() {
@@ -3321,7 +3457,7 @@ Width > 1360 and <= 1440
 	}
 
 	#subcontainer {
-		width: 82.5%;
+		width: 84%;
 		float: right;
 		margin-top: 10px;
 	}
@@ -3341,7 +3477,7 @@ Width > 1360 and <= 1440
 	}
 	.graph_div {
 		zoom: 1;
-		width: 100% !important;
+		width: 38% !important;
 	}
 	
 	.qq-upload-list {
@@ -3359,6 +3495,9 @@ Width > 1360 and <= 1440
 		top: -40px !important;
 		left: -120px !important;
 	}
+	ul#display-inline-block-example li:nth-child(7) {
+		margin-left: -10%;
+	}
 }
 
 
@@ -3366,6 +3505,12 @@ Width > 1360 and <= 1440
 Width > 1441 and <= 1600
 *************************************************************************************/
 @media only screen and (min-width : 1441px) and (max-width : 1600px) {
+	div.site_report {
+		height: 81%;
+		position: absolute;
+		width: 83.5%;
+	}
+	
 	.app_add_form .theme_accordion_container {
 		float: left;
 		margin: 0.1% 0%;
@@ -3736,7 +3881,7 @@ Width > 1441 and <= 1600
 	}
 
 	#subcontainer {
-		width: 84%;
+		width: 85.5%;
 		float: right;
 		margin-top: 10px;
 	}
@@ -3752,7 +3897,14 @@ Width > 1441 and <= 1600
 
 	.graph_div {
 		zoom: 1;
-		width: 100% !important;
+		width: 38% !important;
+	}
+	
+	@-moz-document url-prefix() {
+		.graph_div {
+			zoom: 1;
+			width: 75% !important;
+		}	
 	}
 	
 	.qq-upload-list {
@@ -3769,5 +3921,11 @@ Width > 1441 and <= 1600
 	.perTabularView {
 		top: -40px !important;
 		left: -120px !important;
+	}
+	.headerInnerTop li:last-child {
+		margin-left: 7%;
+	}
+	ul#display-inline-block-example li:nth-child(7) {
+		margin-left: -10%;
 	}
 }

@@ -42,6 +42,7 @@ package com.photon.phresco.framework.actions;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.ConnectException;
 import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
@@ -52,6 +53,8 @@ import org.apache.log4j.Logger;
 import com.photon.phresco.commons.model.Customer;
 import com.photon.phresco.commons.model.User;
 import com.photon.phresco.exception.PhrescoException;
+import com.photon.phresco.exception.PhrescoWebServiceException;
+import com.photon.phresco.framework.actions.applications.Projects;
 import com.photon.phresco.util.Credentials;
 
 public class Login extends FrameworkBaseAction {
@@ -75,6 +78,7 @@ public class Login extends FrameworkBaseAction {
 	private String pageHeaderColor = "";
 	private String labelColor = "";
 	private String copyRightColor = "";
+	private String disabledLabelColor = "";
     
     public String login() throws IOException {
         if (isDebugEnabled) {
@@ -109,11 +113,13 @@ public class Login extends FrameworkBaseAction {
             setReqAttribute(REQ_LOGIN_ERROR, getText(SUCCESS_LOGOUT));
         }
         removeSessionAttribute(REQ_LOGIN_ERROR);
+        Projects projects = new Projects();
+        projects.clearMap();
         
         return SUCCESS;
     }
     
-    private String authenticate() throws IOException {
+    private String authenticate()  {
         if (isDebugEnabled) {
             S_LOGGER.debug("Entering Method  Login.authenticate()");
         }
@@ -139,11 +145,15 @@ public class Login extends FrameworkBaseAction {
             String encodedString = new String(encodedPwd);
             
             setSessionAttribute(SESSION_USER_PASSWORD, encodedString);
-        } catch (PhrescoException e) {
-            setReqAttribute(REQ_LOGIN_ERROR, getText(ERROR_EXCEPTION));
-            return LOGIN_FAILURE;
-        }
-            
+        } catch (PhrescoWebServiceException e) {
+        	if(e.getResponse().getStatus() == 204) {
+				setReqAttribute(REQ_LOGIN_ERROR, getText(ERROR_LOGIN_INVALID_USER));
+				return LOGIN_FAILURE;
+			} else {
+				setReqAttribute(REQ_LOGIN_ERROR, getText(ERROR_EXCEPTION));
+				return LOGIN_FAILURE;
+			}
+        } 
         return SUCCESS;
     }
 
@@ -187,6 +197,7 @@ public class Login extends FrameworkBaseAction {
 					setLabelColor(customer.getFrameworkTheme().getLabelColor());
 					setMenuBackGround(customer.getFrameworkTheme().getMenuBackGround());
 					setMenufontColor(customer.getFrameworkTheme().getMenufontColor());
+					setDisabledLabelColor(customer.getFrameworkTheme().getDisabledLabelColor());
 					break;
 				}
 			}
@@ -301,6 +312,14 @@ public class Login extends FrameworkBaseAction {
 
 	public void setCopyRightColor(String copyRightColor) {
 		this.copyRightColor = copyRightColor;
+	}
+
+	public String getDisabledLabelColor() {
+		return disabledLabelColor;
+	}
+
+	public void setDisabledLabelColor(String disabledLabelColor) {
+		this.disabledLabelColor = disabledLabelColor;
 	}
 
 	public String getPageHeaderColor() {

@@ -3,22 +3,31 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<style name="Title" forecolor="#FFFFFF" fontName="Times New Roman" fontSize="50" isBold="false" pdfFontName="Times-Bold"/>
-	<style name="SubTitle" forecolor="#CCCCCC" fontName="Times New Roman" fontSize="18" isBold="false" pdfFontName="Times-Roman"/>
-	<style name="Column header" forecolor="#666666" fontName="Times New Roman" fontSize="14" isBold="true" pdfFontName="Times-Roman"/>
-	<style name="Detail" mode="Transparent" fontName="Times New Roman" pdfFontName="Times-Roman"/>
-	<style name="Row" mode="Transparent" fontName="Times New Roman" pdfFontName="Times-Roman">
-		<conditionalStyle>
-			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
-			<style mode="Opaque" backcolor="#F0EFEF"/>
-		</conditionalStyle>
-	</style>
+	<import value="org.apache.commons.codec.binary.Base64"/>
+	<style name="PLTCTitle"/>
+	<style name="PLTCTitleRect"/>
+	<style name="PLTCTitleRectLogo"/>
+	<style name="PLTCTitleRectDetail"/>
+	<style name="PLTCTitleLabel"/>
+	<style name="PLTCTitleLabelValue"/>
+	<style name="PLTCHeading"/>
+	<style name="PLTCHeadingLabel"/>
+	<style name="PLTCHeadingLabelValue"/>
+	<style name="PLTCHeadingRow"/>
+	<style name="PLTCHeadingRowLabel"/>
+	<style name="PLTCHeadingRowLabelValue"/>
+	<style name="PLTCCopyRight"/>
+	<style name="PLTCCopyRightPageNo"/>
 	<parameter name="testType" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="projectCode" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="reportsDataType" class="java.lang.String"/>
 	<parameter name="projectName" class="java.lang.String"/>
 	<parameter name="techName" class="java.lang.String"/>
 	<parameter name="version" class="java.lang.String"/>
+	<parameter name="logo" class="java.lang.String"/>
+	<parameter name="logoBase64Img" class="java.io.InputStream">
+		<defaultValueExpression><![CDATA[new ByteArrayInputStream(new Base64().decodeBase64($P{logo}.getBytes("UTF-8")))]]></defaultValueExpression>
+	</parameter>
 	<field name="fileName" class="java.lang.String"/>
 	<field name="testResults" class="java.util.List"/>
 	<title>
@@ -26,23 +35,24 @@
 			<frame>
 				<reportElement x="0" y="0" width="555" height="120"/>
 				<rectangle radius="3">
-					<reportElement x="0" y="2" width="555" height="115" backcolor="#00CC66"/>
+					<reportElement style="PLTCTitleRectLogo" x="0" y="2" width="555" height="115"/>
 				</rectangle>
 				<rectangle radius="10">
-					<reportElement x="176" y="5" width="376" height="108"/>
-					<graphicElement>
-						<pen lineColor="#33CC00"/>
-					</graphicElement>
+					<reportElement style="PLTCTitleRectDetail" x="176" y="5" width="376" height="108"/>
 				</rectangle>
 				<staticText>
-					<reportElement x="20" y="27" width="55" height="18"/>
+					<reportElement style="PLTCTitleLabel" x="20" y="27" width="55" height="18">
+						<printWhenExpression><![CDATA[$P{logo}.equals("")]]></printWhenExpression>
+					</reportElement>
 					<textElement verticalAlignment="Bottom">
 						<font size="13" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Photon]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="18" y="38" width="158" height="41" forecolor="#FFFFFF"/>
+					<reportElement style="PLTCTitleLabel" x="18" y="38" width="158" height="41">
+						<printWhenExpression><![CDATA[$P{logo}.equals("")]]></printWhenExpression>
+					</reportElement>
 					<textElement verticalAlignment="Top" rotation="None">
 						<font size="28" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
@@ -50,75 +60,79 @@
 					<text><![CDATA[PHRESCO]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="176" y="9" width="112" height="20"/>
+					<reportElement style="PLTCTitleLabel" x="176" y="9" width="112" height="20"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Arial" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Project Name :]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="176" y="29" width="112" height="20"/>
+					<reportElement style="PLTCTitleLabel" x="176" y="29" width="112" height="20"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Arial" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Application Name :]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="176" y="49" width="112" height="20"/>
+					<reportElement style="PLTCTitleLabel" x="176" y="49" width="112" height="20"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Arial" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Technology :]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="176" y="69" width="112" height="20"/>
+					<reportElement style="PLTCTitleLabel" x="176" y="69" width="112" height="20"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Arial" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Version :]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="176" y="89" width="112" height="20"/>
+					<reportElement style="PLTCTitleLabel" x="176" y="89" width="112" height="20"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Arial" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Date :]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="290" y="9" width="257" height="20" forecolor="#333333"/>
+					<reportElement style="PLTCTitleLabelValue" x="290" y="9" width="257" height="20"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" size="11" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{projectName}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="290" y="29" width="257" height="20" forecolor="#333333"/>
+					<reportElement style="PLTCTitleLabelValue" x="290" y="29" width="257" height="20"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" size="11" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{projectCode}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="290" y="49" width="257" height="20" forecolor="#333333"/>
+					<reportElement style="PLTCTitleLabelValue" x="290" y="49" width="257" height="20"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" size="11" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{techName}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="290" y="89" width="257" height="20" forecolor="#333333"/>
+					<reportElement style="PLTCTitleLabelValue" x="290" y="89" width="257" height="20"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" size="11" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="290" y="69" width="100" height="20" forecolor="#333333"/>
+					<reportElement style="PLTCTitleLabelValue" x="290" y="69" width="100" height="20"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" size="11" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{version}]]></textFieldExpression>
 				</textField>
+				<image hAlign="Center" vAlign="Middle" onErrorType="Blank">
+					<reportElement x="4" y="5" width="170" height="108"/>
+					<imageExpression><![CDATA[$P{logoBase64Img}]]></imageExpression>
+				</image>
 			</frame>
 		</band>
 	</title>
@@ -127,17 +141,17 @@
 			<frame>
 				<reportElement x="0" y="0" width="555" height="26" isRemoveLineWhenBlank="true"/>
 				<rectangle radius="10">
-					<reportElement x="2" y="3" width="545" height="20"/>
+					<reportElement style="PLTCHeadingRow" x="2" y="3" width="545" height="20"/>
 				</rectangle>
 				<staticText>
-					<reportElement x="18" y="5" width="77" height="20" forecolor="#000000"/>
+					<reportElement style="PLTCHeadingRowLabel" x="18" y="5" width="77" height="20" forecolor="#000000"/>
 					<textElement>
 						<font fontName="Times New Roman" size="14" isBold="true"/>
 					</textElement>
 					<text><![CDATA[File Name :]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="95" y="5" width="439" height="18"/>
+					<reportElement style="PLTCHeadingRowLabelValue" x="95" y="5" width="439" height="18"/>
 					<textElement>
 						<font fontName="Times New Roman" size="14" isBold="true"/>
 					</textElement>
@@ -160,16 +174,16 @@
 	<pageFooter>
 		<band height="25" splitType="Stretch">
 			<frame>
-				<reportElement mode="Opaque" x="0" y="1" width="555" height="24" forecolor="#D0B48E" backcolor="#333333"/>
+				<reportElement style="PLTCCopyRight" mode="Opaque" x="0" y="1" width="555" height="24"/>
 				<textField evaluationTime="Report">
-					<reportElement style="Column header" x="513" y="0" width="40" height="24" forecolor="#FFFFFF"/>
+					<reportElement style="PLTCCopyRightPageNo" x="513" y="0" width="40" height="24"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" size="11" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement style="Column header" x="433" y="0" width="80" height="24" forecolor="#FFFFFF"/>
+					<reportElement style="PLTCCopyRightPageNo" x="433" y="0" width="80" height="24"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Tahoma" size="11" isBold="true"/>
 					</textElement>

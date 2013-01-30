@@ -349,6 +349,25 @@
 		}
 	}
 	
+	 function templateMandatoryVal() {
+		var testAgainst = $("#testAgainst").val();
+		var redirect = false;
+		
+		if (testAgainst != undefined && (testAgainst == "server" || testAgainst == "webservice")) {
+			redirect = contextUrlsMandatoryVal();
+		} else if (testAgainst != undefined && testAgainst == "database") {
+			redirect = dbContextUrlsMandatoryVal();
+		} else if (testAgainst == undefined) {
+			$('.yesNoPopupErr').empty();
+			runPerformanceTest();
+		}
+	
+		if (redirect) {
+			$('.yesNoPopupErr').empty();
+			runPerformanceTest();
+		}
+	} 
+	
 	function runPerformanceTest() {
 		var formJsonObject = $('#generateBuildForm').toJSON();
 		var formJsonStr = JSON.stringify(formJsonObject);

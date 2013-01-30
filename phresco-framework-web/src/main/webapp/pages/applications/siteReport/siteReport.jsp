@@ -52,7 +52,7 @@
 			</div>
 	</s:if>
 
-	<div id="site_report">
+	<div id="site_report" class="site_report">
 		
 	</div>
 </form>
@@ -101,11 +101,12 @@
 		}
 	}
     
-   	function popupClose(closeUrl) {
+   	function popupOnClose(obj) {
+   		var closeUrl = $(obj).attr("id");
     	showParentPage();
 		if (closeUrl === "generateReport") {
-		    var params = getBasicParams();
-		    loadContent('veiwSiteReport',$('#formConfigureList'), $('#subcontainer'), params, '', true);
+ 		    var params = getBasicParams();
+		    loadContent('veiwSiteReport', $('#formReportList'), $('#subcontainer'), params, '', true);
 		}
 	}
     

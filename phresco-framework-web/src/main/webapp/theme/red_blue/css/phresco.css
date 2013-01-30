@@ -5629,11 +5629,10 @@ a[id='androidSigning']:hover {
 /* Customer list box starts */
 .customer_name {
     float: right;
-    left: 60%;
     margin-bottom: 0;
     position: absolute;
     top: 10px;
-    width: 73%;
+    right: 0%;
 }
 
 .customer_listbox {
@@ -5867,8 +5866,10 @@ input[class*='chckBxAlign'] {
 
 #successmsg {
 	height: 16px;
-    margin-left: 246px;
-    margin-top: -34px;
+    /* margin-left: 246px;
+    margin-top: -34px; */
+    margin-left: 291px;
+    margin-top: -32px;
     padding: 6px;
     width: 50%;
     text-align: center;

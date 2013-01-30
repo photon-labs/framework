@@ -593,9 +593,14 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 				|| TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(parameter.getType()) && !Boolean.parseBoolean(parameter.getMultiple())
 				|| (TYPE_LIST.equalsIgnoreCase(parameter.getType()) && !Boolean.parseBoolean(parameter.getMultiple()))
 				|| (TYPE_FILE_BROWSE.equalsIgnoreCase(parameter.getType()))) {
-			returnFlag = textSingleSelectValidate(parameter, returnFlag,lableTxt);//for text box,single select list box,file browse
+			if (FROM_PAGE_EDIT.equalsIgnoreCase(parameter.getEditable())) {//For editable combo box
+				returnFlag = editableComboValidate(parameter, returnFlag,lableTxt);
+			} else {//for text box,non editable single select list box,file browse
+				returnFlag = textSingleSelectValidate(parameter, returnFlag,lableTxt);
+			}
 		} else if (TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(parameter.getType()) && Boolean.parseBoolean(parameter.getMultiple()) || 
 				(TYPE_LIST.equalsIgnoreCase(parameter.getType()) && Boolean.parseBoolean(parameter.getMultiple()))) {
+			
 			returnFlag = multiSelectValidate(parameter, returnFlag, lableTxt);//for multi select list box
 		} else if (parameter.getType().equalsIgnoreCase(TYPE_MAP)) {
 			returnFlag = mapControlValidate(parameter, returnFlag);//for type map
@@ -661,6 +666,18 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 	private boolean textSingleSelectValidate(Parameter parameter,
 			boolean returnFlag, String lableTxt) {
 		if (StringUtils.isEmpty(getReqParameter(parameter.getKey()))) {
+			setErrorFound(true);
+			setErrorMsg(lableTxt + " " +getText(EXCEPTION_MANDAOTRY_MSG));
+			returnFlag = true;
+		}
+		
+		return returnFlag;
+	}
+	
+	private boolean editableComboValidate(Parameter parameter,
+			boolean returnFlag, String lableTxt) {
+		if (StringUtils.isEmpty(getReqParameter(parameter.getKey())) || 
+				"Type or select from the list".equalsIgnoreCase(getReqParameter(parameter.getKey()))) {
 			setErrorFound(true);
 			setErrorMsg(lableTxt + " " +getText(EXCEPTION_MANDAOTRY_MSG));
 			returnFlag = true;

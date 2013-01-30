@@ -191,6 +191,50 @@ a:hover {
 	color:#b3b3b3;
 }
 
+.bubbleAll {
+	background: none repeat scroll 0 0 #B5131B;
+	border-radius: 3px 3px 3px 3px;
+	color: #FFFFFF;
+	font: bold 0.6em Tahoma,Arial,Helvetica;
+	padding: 1px 2px;
+	position: relative;
+	right: 8px;
+	top: -24px;
+}
+
+.bubbleModule {
+	background: none repeat scroll 0 0 #B5131B;
+	border-radius: 3px 3px 3px 3px;
+	color: #FFFFFF;
+	font: bold 0.6em Tahoma,Arial,Helvetica;
+	padding: 1px 2px;
+	position: relative;
+	right: 8px;
+	top: -24px;
+}
+
+.bubbleJsLibs {
+	background: none repeat scroll 0 0 #B5131B;
+	border-radius: 3px 3px 3px 3px;
+	color: #FFFFFF;
+	font: bold 0.6em Tahoma,Arial,Helvetica;
+	padding: 1px 2px;
+	position: relative;
+	right: 8px;
+	top: -24px;
+}
+
+.bubbleComponenet {
+	background: none repeat scroll 0 0 #B5131B;
+	border-radius: 3px 3px 3px 3px;
+	color: #FFFFFF;
+	font: bold 0.6em Tahoma,Arial,Helvetica;
+	padding: 1px 2px;
+	position: relative;
+	right: 8px;
+	top: -24px;
+}
+
 .right_barcont { 
 	background-color:#000; 
 	border:5px solid #1e1b1b; 
@@ -1679,6 +1723,9 @@ background-color: #ffffff;
     background: #efefef; /* Old browsers */
 }
 
+.dd-options {
+    width: 175px !important;
+}
 .dd-select {
 	background: #C7141C; /* Old browsers */
     background: -moz-linear-gradient(top,  #C7141C 0%, #B1121D 44%, #9D111E 100%) !important; /* FF3.6+ */
@@ -1688,6 +1735,7 @@ background-color: #ffffff;
     background: -ms-linear-gradient(top,  #C7141C 0%,#B1121D 44%,#9D111E 100%) !important; /* IE10+ */
     background: linear-gradient(top,  #C7141C 0%,#B1121D 44%,#9D111E 100%) !important; /* W3C */
     border: 1px solid #C7141C !important;
+    width: 175px !important;
 }
 
 .dd-option-selected {
@@ -1725,4 +1773,8 @@ background-color: #ffffff;
 
 #lbl_customer {
 	margin-top: 31px;
+}
+
+.updateMsg {
+	float: left !important;
 }

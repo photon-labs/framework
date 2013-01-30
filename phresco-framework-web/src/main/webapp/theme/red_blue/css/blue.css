@@ -230,6 +230,50 @@ footer {
     border: 1px solid #cccccc;
 }
 
+.bubbleAll {
+	background: none repeat scroll 0 0 #006DCC;
+	border-radius: 3px 3px 3px 3px;
+	color: #FFFFFF;
+	font: bold 0.6em Tahoma,Arial,Helvetica;
+	padding: 1px 2px;
+	position: relative;
+	right: 8px;
+	top: -24px;
+}
+
+.bubbleModule {
+	background: none repeat scroll 0 0 #006DCC;
+	border-radius: 3px 3px 3px 3px;
+	color: #FFFFFF;
+	font: bold 0.6em Tahoma,Arial,Helvetica;
+	padding: 1px 2px;
+	position: relative;
+	right: 8px;
+	top: -24px;
+}
+
+.bubbleJsLibs {
+	background: none repeat scroll 0 0 #006DCC;
+	border-radius: 3px 3px 3px 3px;
+	color: #FFFFFF;
+	font: bold 0.6em Tahoma,Arial,Helvetica;
+	padding: 1px 2px;
+	position: relative;
+	right: 8px;
+	top: -24px;
+}
+
+.bubbleComponenet {
+	background: none repeat scroll 0 0 #006DCC;
+	border-radius: 3px 3px 3px 3px;
+	color: #FFFFFF;
+	font: bold 0.6em Tahoma,Arial,Helvetica;
+	padding: 1px 2px;
+	position: relative;
+	right: 8px;
+	top: -24px;
+}
+
 .intro_container_left {
     float:left;
     padding:0px 0px 0px 0px;
@@ -1624,4 +1668,16 @@ table tr {
 
 #lbl_customer {
 	margin-top: 31px;
+}
+
+.updateMsg {
+	float: left !important;
+}
+
+.dd-options {
+    width: 175px !important;
+}
+
+.dd-select {
+    width: 175px !important;
 }

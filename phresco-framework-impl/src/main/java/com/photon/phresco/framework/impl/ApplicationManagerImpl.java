@@ -204,8 +204,9 @@ public class ApplicationManagerImpl implements ApplicationManager {
 		 }
 		 //Delete the entry from build.info
 		 
-		 Iterator<BuildInfo> iterator = totalBuildInfos.iterator();
+		 
 		 for (BuildInfo selectedInfo : buildInfos) {
+			 Iterator<BuildInfo> iterator = totalBuildInfos.iterator();
 			 while (iterator.hasNext()) {
 				 BuildInfo bi = iterator.next();
 				 if (bi.getBuildNo() == selectedInfo.getBuildNo()) {

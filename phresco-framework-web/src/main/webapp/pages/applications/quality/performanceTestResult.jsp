@@ -137,7 +137,7 @@
 					          		int min = 0;
 					          		int max = 0;
 					          		double StdDev = 0;
-					          		int Err = 0;
+					          		double Err = 0;
 					          		double KbPerSec = 0;
 					          		double sumOfBytes = 0;
 					          		int i = 1;
@@ -167,7 +167,7 @@
 					              		<td style="width: 8%;"><%= performanceTestResult.getMin() %></td>
 					              		<td style="width: 8%;"><%= performanceTestResult.getMax() %></td>
 					              		<td style="width: 8%;"><%= FrameworkUtil.roundFloat(2, performanceTestResult.getStdDev()) %></td>
-					              		<td style="width: 8%;"><%= performanceTestResult.getErr() %> %</td>
+					              		<td style="width: 8%;"><%= String.format("%.2f", performanceTestResult.getErr()) %> %</td>
 					              		<td style="width: 12%;"><%= FrameworkUtil.roundFloat(1, performanceTestResult.getThroughtPut()) %></td>
 					              		<td style="width: 10%;"><%= FrameworkUtil.roundFloat(2, performanceTestResult.getKbPerSec()) %></td>
 					              		<td style="width: 10%;"><%= performanceTestResult.getAvgBytes() %></td>
@@ -188,7 +188,7 @@
 							              <td style="width: 8%;font-weight: bold"><%= min %></td>
 							              <td style="width: 8%;font-weight: bold"><%= max %></td>
 							              <td style="width: 8%;font-weight: bold"><%= FrameworkUtil.roundFloat(2,totalStdDev) %></td>
-							              <td style="width: 8%;font-weight: bold"><%= Err/totalValue %> %</td>
+							              <td style="width: 8%;font-weight: bold"><%= String.format("%.2f", Err/totalValue) %> %</td>
 							              <td style="width: 12%;font-weight: bold"><%= FrameworkUtil.roundFloat(1,totalThroughput) %></td>
 							              <td style="width: 10%;font-weight: bold"><%= FrameworkUtil.roundFloat(2,KbPerSec) %></td>
 							              <td style="width: 10%;font-weight: bold"><%= FrameworkUtil.roundFloat(2,avgBytes) %></td>
@@ -202,7 +202,7 @@
 		      		</div>
     			</div>
     		</div>
-            <div class="graph_div" id="graphicalView" style="margin-left: 15px;">
+            <div class="" id="graphicalView" style="margin-left: 15px;">
                 <!--<div class="jm_canvas_div">
                     <iframe src="<%= request.getContextPath() %>/pages/applications/quality/jmeter_graph.jsp"  frameborder="0" width="100%" height="100%"></iframe>
                 </div>-->

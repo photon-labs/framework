@@ -94,6 +94,7 @@ public interface FrameworkConstants {
     String REQ_CURRENT_APP_NAME = "currentAppName";
     String REQ_SELECTED_FEATURES = "selectedFeatures";
     String REQ_SELECTED_DOWNLOADINFO = "selectedDownloadInfo";
+    String REQ_DEFAULT_FEATURES = "defaultFeatures";
     String REQ_SELECTED_DOWNLOADINFO_VERSION = "selectedDownloadInfoVersion";
     String REQ_CURRENT_SELECTBOX_ID = "selectBoxId";
     String REQ_DEFAULT_OPTION = "defaultOptTxt";
@@ -1105,6 +1106,7 @@ public interface FrameworkConstants {
     String ERROR_LOGIN_INVALID_USERNAME = "login.error.username";
     String ERROR_LOGIN_INVALID_PASSWORD = "login.error.password";
     String ERROR_LOGIN_ACCESS_DENIED = "login.error.access.denied.message";
+    String ERROR_LOGIN_INVALID_USER = "login.error.invalid.user";
     String ERROR_EXCEPTION = "login.exception.message";
     String SUCCESS_LOGOUT = "logout.success.message";
     String SESSION_EXPIRED = "session.expired.message";
@@ -1138,6 +1140,7 @@ public interface FrameworkConstants {
     String ERROR_DUPLICATE_ENV_IN_SETTINGS = "Environment {0} already exists in global settings";
     String ERROR_NO_CONFIG = "environment.config.not.available";
     String ERROR_NAME = "err.msg.empty.name";
+    String PROP_TEMP_MISSING = " is missing";
     String ERROR_APP_DIR_EXISTS = "err.msg.app.dir.exists";
     String ERROR_NAME_EXISTS = "err.msg.project.name.exists";
     String ERROR_CODE_EXISTS = "err.msg.project.code.exists";

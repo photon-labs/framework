@@ -65,7 +65,7 @@
 							value="<%= artifactGroup.getName() %>" onclick="checkboxEvent($('.feature_checkbox'), $('#checkAllAuto'));"/>
 						<a style="float: left; margin-left:2%;" href="#"><%= artifactGroup.getName() %></a>
 						
-						<select class="input-mini features_ver_sel" id="<%= artifactGrpName %>" moduleId="<%= artifactGroup.getId() %>" name="<%=artifactGroup.getName() %>" >
+						<select class="input-mini features_ver_sel" id="<%= artifactGrpName %>" artifactGroupId="<%= artifactGroup.getId() %>" moduleId="<%= artifactGroup.getId() %>" name="<%=artifactGroup.getName() %>" >
 							<%
 								List<ArtifactInfo> artifactInfos = artifactGroup.getVersions();
 								for (ArtifactInfo artifactInfo : artifactInfos) {
@@ -113,13 +113,19 @@
 		hideProgressBar();
 	});
 	
+	var unCheck;
 	//To get the dependent features
-	$("input:checkbox").click(function() {
+	$("input:checkbox").change(function() {
 		var jsonObjectParam = {};
 		var jsonObject = <%= gson.toJson(artifactGroups) %>;
 		jsonObjectParam.artifactGroups = jsonObject;
 		var selectedValue = $(this).val();	
 		var moduleId = $("select[name='"+ selectedValue + "']").val();
+		unCheck = false;
+		var status = $(this).attr("checked");
+		if (status != "checked") {
+			unCheck = true;
+		}
 		jsonObjectParam.moduleId = moduleId;
 		var jsonString = JSON.stringify(jsonObjectParam);
 		loadJsonContent("fetchDependentFeatures", jsonString, '', '', true);
@@ -163,10 +169,25 @@
 				}
 			});
 		}
+		if(unCheck) {
+			for (i in defaultModules) {  //To check the default feature
+				$("input:checkbox[value='" + defaultModules[i] + "']").attr('checked', false);
+			}
+			for (i in defaultModules) {  //To select the default version
+				var featureName = defaultModules[i];
+				$("select[name='"+ featureName + "'] option").each(function() {
+					var currentVal = $(this).val();
+					if (($.inArray(currentVal, depArtifactInfoIds)) > -1) {
+						$(this).attr("selected", false);
+						return false;
+					}
+				});
+			}
+		}
 		checkboxEvent($('.feature_checkbox'), $('#checkAllAuto'));
-		if (from != "fetchSelectedFeatures") {
+		/* if (from != "fetchSelectedFeatures") {
 			clickToAdd();
-		} 
+		}  */
 	}
 	
 </script>

@@ -785,18 +785,18 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 	    return controlGroupElement;
 	}
 	
-	private static String getCustomParamTableTemplate(String otherKey, List<? extends Object> otherValue, boolean showMinus) {
+	private static String getCustomParamTableTemplate(String key, List<? extends Object> value, boolean showMinus) {
         StringBuilder sb = new StringBuilder();
         sb.append("<table class='custParamTable'>")
         .append("<tbody id='propTempTbodyForHeader'>")
         .append("<tr class='borderForLoad'>")
         .append("<td class=\"noBorder\">")
         .append("<input type=\"text\" class=\"input-medium\" ")
-        .append("name=\"key\" placeholder=\"Key\" value="+otherKey+">")
+        .append("name=\"key\" placeholder=\"Key\" value="+key+">")
         .append("</td>")
         .append("<td class=\"noBorder\">")
         .append("<input type=\"text\" class=\"input-medium\" ")
-        .append("name=\"value\" placeholder=\"Value\" value="+otherValue.get(0)+">")
+        .append("name=\"value\" placeholder=\"Value\" value="+value.get(0)+">")
         .append("</td>")
         .append("<td class='borderForLoad noBorder'>")
         .append("<a><img class='add imagealign' src='images/icons/add_icon.png' onclick='addRow(this);'></a></td>");
@@ -1384,10 +1384,12 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     public static String listToCsv(List<?> list) {
         Iterator<?> iter = list.iterator();
         String csvString = "";
+        String sep = "";
         while (iter.hasNext()) {
-            csvString += iter.next() + ",";
+            csvString += sep + iter.next();
+            sep = ",";
         }
-
+        
         return csvString;
     }
     

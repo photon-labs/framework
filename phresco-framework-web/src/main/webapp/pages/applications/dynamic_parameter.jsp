@@ -495,7 +495,7 @@
 		params = params.concat("&selectedOption=");
 		params = params.concat(selectedOption);
 		
-		loadContent('changeEveDependancyListener', '', '', params, false, false);
+		loadContent('changeEveDependancyListener', '', '', params, true, false);
 	}
 	
 	function updateDependancy(dependency) {
@@ -626,8 +626,8 @@
 						'margin-left: 92%;" onclick="removeHeader(this);">&times;</a><div style="cursor: pointer; color: #000000; height: auto; '+
 						'position: relative; width: 90%; line-height: 17px; margin-top: -14px; padding: 0 0 6px 1px;">'+ key + " : " + value + 
 						'</div><input type="hidden" name="headerKey" value="'+key+'"/><input type="hidden" name="headerValue" value="'+value+'"/></div>');
-			$('input[class*=key]').val("");
-			$('input[class*=value]').val("");
+			$(obj).parents('fieldset').find($('input[class*=key]')).val("");
+			$(obj).parents('fieldset').find($('input[class*=value]')).val("");
 		}
 	}
 	

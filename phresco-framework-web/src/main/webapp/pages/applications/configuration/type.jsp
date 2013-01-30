@@ -107,9 +107,9 @@
    <form id="configProperties">
 <% 
 	StringBuilder sb = new StringBuilder();
+	ParameterModel pm = new ParameterModel();
 	if (CollectionUtils.isNotEmpty(properties)) {
 	    for (PropertyTemplate propertyTemplate : properties) {
-	    	ParameterModel pm = new ParameterModel();
 	    	pm.setMandatory(propertyTemplate.isRequired());
 	    	pm.setLableText(propertyTemplate.getName());
 	    	pm.setId(propertyTemplate.getKey());
@@ -271,7 +271,6 @@
 	    }
 	}
 %>
-	<%= sb.toString() %>
 	
 <div id="iisDiv" class="hideContent">
 	<div class="control-group" id="siteControl">
@@ -310,7 +309,7 @@
 </div>
 
 <% 
-	if (appInfo != null && appInfo.getTechInfo().getId().equals("tech-sitecore") && selectedType.equals("Server")) { 
+	if (appInfo != null && FrameworkConstants.TECH_SITE_CORE.equals(appInfo.getTechInfo().getId()) && FrameworkConstants.SERVER.equals(selectedType)) { 
 %>
 	<div class="control-group" id="siteCoreControl">
 		<label class="control-label labelbold">
@@ -339,13 +338,57 @@
 		<div class="controls">
 			<div id="file-uploader" class="file-uploader">
 				<noscript>
-					<p>Please enable JavaScript to use file uploader.</p>s
+					<p>Please enable JavaScript to use file uploader.</p>
 					<!-- or put a simple form for upload here -->
 				</noscript>
 			</div>
 		</div>
 		<span class="help-inline fileError" id="fileError"></span>
 	</div>
+	
+	<%
+		List<String> propKeys = new ArrayList<String>();
+	 	for (PropertyTemplate propertyTemplate : properties) {
+	 		String propKey = propertyTemplate.getKey();
+	 		propKeys.add(propKey);
+	 	}
+		if(settingsTemplate.isCustomProp()) {
+			if (propertiesInfo == null) {
+				pm.setValue("");
+				List<Object> values = new ArrayList<Object>();
+				values.add("");
+				pm.setObjectValue(values);
+				StringTemplate customParamElement = FrameworkUtil.constructCustomParameters(pm);
+				sb.append(customParamElement);
+			} else {
+				Enumeration em = propertiesInfo.keys();
+				boolean firstRow = true;
+				while(em.hasMoreElements()) {
+					String key = (String)em.nextElement();
+					if(propKeys.contains(key) || FrameworkConstants.REQ_VERSION_INFO.equals(key) || FrameworkConstants.SETTINGS_TEMP_SITECORE_INST_PATH.equals(key) || FrameworkConstants.SETTINGS_TEMP_KEY_APP_NAME.equals(key) || FrameworkConstants.SETTINGS_TEMP_KEY_SITE_NAME.equals(key)) {
+						
+					} else {
+						Object value = propertiesInfo.get(key);
+						pm.setValue(key);
+						List<Object> values = new ArrayList<Object>();
+						values.add(value);
+						pm.setObjectValue(values);
+						if (firstRow) {
+							pm.setShowMinusIcon(false);							
+						} else {
+							pm.setShowMinusIcon(true);
+						}
+						StringTemplate customParamElement = FrameworkUtil.constructCustomParameters(pm);
+						sb.append(customParamElement);
+						firstRow = false;
+					}
+				}
+			}
+		}
+	%>
+	
+	<%= sb.toString() %>
+	
 </form>
 
 <script type="text/javascript">
@@ -360,12 +403,13 @@
 		technologyBasedRemoteDeploy();
 		var typeData= $.parseJSON($('#templateType').val());
 		var selectedType = typeData.name;
+		var customPropStatus = typeData.customProp;
 		var serverType = $('#type').val();
 		
 		<% if (FrameworkConstants.ADD_CONFIG.equals(fromPage) || FrameworkConstants.EDIT_CONFIG.equals(fromPage)) { %>
 				getVersions();
 		<% } else { %>
-				if(selectedType == "Other") {
+				if(selectedType == "Other" || customPropStatus) {
 					$("#configProperties table").removeClass('custParamTable');
 					$("#configProperties table").addClass('otherCustParamTable');
 				}
@@ -438,7 +482,7 @@
 	
 	function technologyBasedRemoteDeploy() {
 		<%
-			if (appInfo != null && appInfo.getTechInfo().getId().equals("tech-sitecore")) { 
+			if (appInfo != null && FrameworkConstants.TECH_SITE_CORE.equals(appInfo.getTechInfo().getId())) { 
 		%>
 				hideDeployDir();
 		<% } %>

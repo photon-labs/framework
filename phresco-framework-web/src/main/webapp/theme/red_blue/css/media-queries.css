@@ -21,7 +21,13 @@
 Width <= 1024
 *************************************************************************************/
 @media screen and (max-width : 1024px) {
-
+	
+	div.site_report {
+		height: 70%;
+	    position: absolute;
+	    width: 74%;
+	}
+	
 	.content_adder {
 		height: 84%;
 	}
@@ -52,6 +58,13 @@ Width <= 1024
         margin: 1%;
         width: 45.8%;
      }
+     
+     .featureImage {
+		float: right;
+	    position: absolute;
+	    right: 13%;
+	    top: 22%;
+	 }
      
      .custom_features_wrapper_right {
         border-radius: 6px 6px 6px 6px;
@@ -89,7 +102,7 @@ Width <= 1024
 	#container {
 	    z-index: 15004;
 	    width: 94%;
-	    height: 85%;
+	    height: 488px !important;
 	}
 	
 	.holder {
@@ -868,6 +881,12 @@ Width >= 1025 and < 1151
 *************************************************************************************/
 @media screen and (min-width : 1025px) and (max-width : 1151px) {
 	
+	div.site_report {
+	    height: 80%;
+	    position: absolute;
+	    width: 77%;
+	}
+	
 	.content_adder {
 		height: 86%;
 	}
@@ -967,6 +986,12 @@ Width >= 1152 and < 1280
 *************************************************************************************/
 @media screen and (min-width : 1152px) and (max-width : 1279px) {
 	
+	div.site_report {
+	    height: 80%;
+	    position: absolute;
+	    width: 78%;
+	}
+	
 	.content_adder {
 		height: 88%;
 	}
@@ -986,6 +1011,13 @@ Width >= 1152 and < 1280
      	padding: 4px 6px;
      	margin-top: 5px;
      }
+	
+	.featureImage {
+		float: right;
+	    position: absolute;
+	    right: 13%;
+	    top: 19%;
+	}
 	
 	.custom_features {
 		border-radius: 6px 6px 0 0;
@@ -1033,7 +1065,7 @@ Width >= 1152 and < 1280
 	#container {
 	    z-index: 15004;
 	    width: 93%;
-	    height: 85%;
+	    height: 588px !important;
 	}
 	
 	.holder {
@@ -1306,6 +1338,12 @@ Width <= 1280 and height <= 800
 *************************************************************************************/
 @media screen and (min-width : 1280px) and (max-height : 800px) {
 	
+	div.site_report {
+	    height: 78%;
+	    position: absolute;
+	    width: 80%;
+	}
+	
 	.formClass {
 		height: 95%;
 		margin: 0;
@@ -1377,7 +1415,7 @@ Width <= 1280 and height <= 800
 	#container {
 		z-index: 15004;
 		width: 94%;
-		height: 84%;
+		height: 503px !important;
 	}
 	
 	.headerInner {
@@ -1557,6 +1595,13 @@ Width <= 1280 and height <= 800
 	.settings_div {
 	    height: 90.5%;
 	    width: 100%;
+	}
+	
+	.featureImage {
+		float: right;
+	    position: absolute;
+	    right: 13%;
+	    top: 22%;
 	}
 	
 	.actions {
@@ -1757,9 +1802,22 @@ Width >= 1280 and height >= 800
 *************************************************************************************/
 @media screen and (min-width : 1280px) and (min-height : 801px) {
 	
+	div.site_report {
+	    height: 83%;
+	    position: absolute;
+	    width: 80%;
+	}
+	
 	.formClass {
 		height: 97%;
 		margin: 0;
+	}
+	
+	.featureImage {
+		float: right;
+	    position: absolute;
+	    right: 13%;
+	    top: 15%;
 	}
 	
 	.content_adder {
@@ -1784,7 +1842,7 @@ Width >= 1280 and height >= 800
 	#container {
 		z-index: 15004;
 		width: 93%;
-		height: 84%;
+		height: 694px !important;
 	}
 
 	.custom_features {
@@ -1808,7 +1866,6 @@ Width >= 1280 and height >= 800
 	
 	.customer_name {
 	    float: right;
-	    left: 73%;
 	    margin-bottom: 0;
 	    position: absolute;
 	    top: 10px;
@@ -2153,6 +2210,16 @@ Width > 1280 and <= 1360
 *************************************************************************************/
 @media screen and (min-width : 1281px) and (max-width : 1360px) {
 	
+	div.site_report {
+		height: 77%;
+		position: absolute;
+		width: 78%;
+	}
+	
+	#container {
+		height: 495px !important;
+	}
+
 	.content_adder {
 		height: 84%;
 	}
@@ -2184,7 +2251,6 @@ Width > 1280 and <= 1360
 	
 	.customer_name {
 	    float: right;
-	    left: 73%;
 	    margin-bottom: 0;
 	    position: absolute;
 	    top: 10px;
@@ -2604,6 +2670,15 @@ Width > 1360 and <= 1440
 *************************************************************************************/
 @media only screen and (min-width : 1361px) and (max-width : 1440px) {
 	
+	div.site_report {
+		height: 79%;
+		position: absolute;
+		width: 81%;
+	}
+	
+	#container {
+		height: 628px !important;
+	}
 	.app_list_form {
     	height: 91%;
 	}
@@ -2971,6 +3046,12 @@ Width > 1360 and <= 1440
 Width > 1441 and <= 1600
 *************************************************************************************/
 @media only screen and (min-width : 1441px) and (max-width : 1600px) {
+	div.site_report {
+		height: 81%;
+		position: absolute;
+		width: 83.5%;
+	}
+	
 	/* header starts */
 	.app_list_form {
     	height: 90%;
@@ -3065,7 +3146,7 @@ Width > 1441 and <= 1600
 	}
 	
 	#container {
-		height: 85% !important;
+		height: 630px !important;
 	}
 	
 	.table_data_div_unit {

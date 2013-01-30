@@ -147,7 +147,7 @@
 										<s:text name='lbl.sender.mail' />
 									</label>
 									<div class="controls">
-										<input type="text" name="senderEmailId" class="input-xlarge" value="<%= existingJob == null ? "" : existingJob.getSenderEmailId()%>">
+										<input type="text" name="senderEmailId" id="senderEmailId" class="input-xlarge" value="<%= existingJob == null ? "" : existingJob.getSenderEmailId()%>">
 									</div>
 								</div>
 								
@@ -728,6 +728,7 @@
 		var svnurl= $("#svnurl").val();
 		var username= $("#username").val();
 		var password= $("#password").val();
+		var senderEmailId = $("#senderEmailId").val();
 		if(isBlank(name)) {
 			$("#errMsg").html("Enter the Name");
 			$("#name").focus();
@@ -735,6 +736,15 @@
 			console.log("Name is not specified ");
 			return false;
 		} 
+		
+		if(!isBlank(senderEmailId)) {
+			if(isValidEmail(senderEmailId)) {
+				$("#errMsg").html("Enter Valid Email");
+				$("#senderEmailId").focus();
+				console.log("Email is not valid ");
+				return false;
+			}
+		}
 		
 		if($("input:radio[name=svnType][value='svn']").is(':checked')) {
 			if(isValidUrl(svnurl)){

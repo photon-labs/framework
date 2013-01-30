@@ -144,7 +144,7 @@ input[type="password"] {
 }
 
 .operation {
-	margin: 5px 5px 5px 6px;
+	margin: 5px 5px 5px 0px;
 }
 
 .operation strong {
@@ -187,6 +187,56 @@ input[type="password"] {
 .checkAllFeatures {
 	float: left !important; 
 	margin: 13px 5px !important;
+}
+
+.featureImage {
+	float: right;
+    margin: -21px 113px;
+    margin-top: -30px;
+}
+
+.bubbleAll {
+	background: none repeat scroll 0 0 #39BC67;
+	border-radius: 3px 3px 3px 3px;
+	color: #FFFFFF;
+	font: bold 0.6em Tahoma,Arial,Helvetica;
+	padding: 1px 2px;
+	position: relative;
+	right: 8px;
+	top: -24px;
+}
+
+.bubbleModule {
+	background: none repeat scroll 0 0 #39BC67;
+	border-radius: 3px 3px 3px 3px;
+	color: #FFFFFF;
+	font: bold 0.6em Tahoma,Arial,Helvetica;
+	padding: 1px 2px;
+	position: relative;
+	right: 8px;
+	top: -24px;
+}
+
+.bubbleJsLibs {
+	background: none repeat scroll 0 0 #39BC67;
+	border-radius: 3px 3px 3px 3px;
+	color: #FFFFFF;
+	font: bold 0.6em Tahoma,Arial,Helvetica;
+	padding: 1px 2px;
+	position: relative;
+	right: 8px;
+	top: -24px;
+}
+
+.bubbleComponenet {
+	background: none repeat scroll 0 0 #39BC67;
+	border-radius: 3px 3px 3px 3px;
+	color: #FFFFFF;
+	font: bold 0.6em Tahoma,Arial,Helvetica;
+	padding: 1px 2px;
+	position: relative;
+	right: 8px;
+	top: -24px;
 }
 
 /*** page header ends***/
@@ -357,9 +407,9 @@ a {
 .main_wrapper {
 	bottom: 48px;
 	position: absolute;
-	top: 38px;
-	width: 98%;
-	left:2%;
+	top: 40px !important;
+	width: 98% !important;
+	left:1%;
 }
 
 .wrapper {
@@ -369,7 +419,7 @@ a {
 	overflow: hidden;
 	position: relative;
 	top: 0;
-	width: 98%;
+	width: 100% !important;
 }
 
 #container {
@@ -780,12 +830,12 @@ a {
 .headerInnerTop li {
 	float: left;
 	list-style: none outside none;
-	margin-right:9%;
+	margin-left:9%;
 	padding: 4px 0 0;
 	font-weight: bold;
 }
 .headerInnerTop li:last-child {
-	margin:0;
+	margin-left:9%;
 }
 
 .wid_home {
@@ -863,7 +913,7 @@ a {
 .Logo {
 	float: left;
 	margin-top:18px;
-	margin-left: 3%;
+	margin-left: 2%;
 }
 
 .arrow {
@@ -942,7 +992,7 @@ a {
 }
 
 .tabs,.pills {
-	margin: 0 0 1px 7px;
+	margin: 0 0 1px 2px;
 	padding-top: 3px;
 	width:210px;
 	float:left;
@@ -1740,8 +1790,9 @@ div.vjs-big-play-button span {
 
 #container {
     z-index: 15004;
-    width: 99%;
+    width: 100% !important;
     height: 89%;
+	margin-left: 0px !important;
 }
 
 .holder {
@@ -1877,7 +1928,7 @@ div.vjs-big-play-button span {
 .page-header {
     border-bottom: medium none;
     margin-bottom: 0;
-    width: 99.8%;
+    width: 99.3%;
 }
 
 .page-header h1 {
@@ -1980,6 +2031,12 @@ h1 {
     padding-top: 6px;
 }
 
+.projectList .theme_accordion_container{
+    float: left;
+    margin: 1px 0px;
+    width: 100%;
+}
+
 .table_data_div {
 	height: 90%;
     margin-bottom: 5px;
@@ -2004,7 +2061,11 @@ h1 {
 }
 
 .table_for_downloadInfos {
-	width: 40% !important;
+	width: 55% !important;
+}
+
+.table_for_downloadInfos thead tr th {
+	padding: 8px !important;
 }
 
 .settingsList_table_div {
@@ -2065,7 +2126,7 @@ input, select, textarea {
 }
 
 #resultView{
-	width: 120px;
+	width: 110px;
 }
 
 .app_list_th2 {
@@ -2911,6 +2972,10 @@ fieldset {
     width: 100%;
 }
 
+.envFieldset {
+	margin-top: 25px;
+}
+
 .multiselectForWebservice {
 	height: 95px; 
 	width:250px; 
@@ -2938,7 +3003,7 @@ fieldset {
 
 #subTabcontent {
     height: 98%;
-    margin-top: 18px;
+    /* margin-top: 18px; */
     position: relative;
     width: 98%;
 }
@@ -2962,14 +3027,12 @@ fieldset {
 
 .envErrMsg {
 	float:left;
-	padding-top:7px;
 	width:62%;
 	text-align:left;
 }
 
 .envSuccessMsg {
 	float:left;
-	padding-top:7px;
 	width:62%;
 	text-align:left;
 }
@@ -5159,7 +5222,7 @@ ul#display-inline-block-example li#first {
 
 ul#display-inline-block-example li#label {
 	display: inline-block;
-	width: 12%;
+	width: 13%;
 	min-height: 12%;
 	text-align: right;
 	 
@@ -5559,12 +5622,12 @@ a[id='androidSigning']:hover {
     float: right;
     margin-bottom: 0;
     position: absolute;
-    top: 49px;
+    top: 45px;
     width: auto;
-	right:2.5%;
+	right:0.7%;
 }
 .customer_name label {
-	color: #555555;
+	color: #ccc;
 }
 
 .customer_listbox {
@@ -5582,7 +5645,8 @@ a[id='androidSigning']:hover {
     float: left;
     margin-right: 10px;
     width: 62px;
-    padding-top: 3px;
+    padding-top: 1px;
+	margin-left: 66px;
 }
 
 .customer_select_div {
@@ -5674,7 +5738,7 @@ input[class*='chckBxAlign'] {
 }
 
 .builds-list-table .th-inner {
-	top: 160px;
+	top: 145px;
 }	
 /*new css for 2.0 ends*/
 
@@ -5815,7 +5879,7 @@ input[class*='chckBxAlign'] {
 	overflow: auto;
 	height: 300px;
 }
-#subcontainer { width:85%; float:right; margin-right:5px; margin-top:10px; }
+#subcontainer { width:85%; float:right; margin-top:0px !important; }
 
 
 
@@ -5838,23 +5902,24 @@ input[class*='chckBxAlign'] {
 	margin-left: 100px;
 }	
 #formEnvironment #envName {
-	width: 385px;
+	width: 290px;
 }
 #formEnvironment #envDesc {
-	min-width: 385px;
+	min-width: 290px;
 }
 #formEnvironment .controls #add {
-	margin-top: 3%;
-    margin-left: 32%;
+	margin-top: 8%;
+    margin-left: 5%;
 }
 ul#display-inline-block-example li#label strong {
 	color: #333;
 }
 ul#display-inline-block-example li:nth-child(5) {
-	margin-left: 5% !important;
+	margin-left: 0% !important;
 }
-ul#display-inline-block-example li:nth-child(4) select, ul#display-inline-block-example li:nth-child(6) select {
+ul#display-inline-block-example li:nth-child(4) select, ul#display-inline-block-example li:nth-child(6) select, ul#display-inline-block-example li:nth-child(8) select{
 	margin-top: 8px !important;
+	width: 120px;
 }
 
 /* unit test table header fixes*/
@@ -5991,7 +6056,7 @@ color: #313131;
 	margin-bottom: 0px !important;
 }
 #formPerformance .operation {
-	margin: 12px 5px 12px 6px !important;
+	margin: 12px 5px 12px 0px !important;
 }
 #formPerformance .perTabularView {
 	top: -40px !important;
@@ -6036,7 +6101,7 @@ color: #313131;
 .table_div_unit {
 	margin: 0px !important;
 	border: none !important;
-	margin-top: 2% !important;
+	margin-top: 0% !important;
 }
 .zebra-striped thead tr th div {
 	color: white !important;
@@ -6111,7 +6176,7 @@ color: #313131;
 }
 .dd-selected-image, .dd-option-image {
 	margin-left: 3px;
-	margin-top: 3px;
+	margin-top: 0px;
 	margin-right: 7px !important;
 }
 .dd-select {
@@ -6119,7 +6184,7 @@ color: #313131;
 	border: solid 1px #dcdcdc;
 	background: none repeat scroll 0 0 #EEEEEE;
     height: 36px;
-    margin-top: -6px;
+    margin-top: 6px;
     width: 261px;
 }
 .dd-option-selected, .dd-option:hover {
@@ -6300,6 +6365,53 @@ color: #313131;
 	margin-top: -2px;
 }
 
+.customer_select_div  .dd-select {
+	width: 180px !important;
+	padding: 0px 8px;
+	border: 0px !important;
+	border-radius: 0px !important;
+	float: right;
+	height: auto !important;
+	margin-top: 2px;
+}
+.customer_select_div  .dd-options {
+	width: 196px !important;
+	background: #323232 !important;
+	padding: 0px 0px;
+	border: 0px !important;
+	height: auto;
+	overflow-y: none;
+	left: 3px;
+	position: relative;
+}
+.customer_select_div .dd-select a,.customer_select_div .dd-option {
+	overflow: initial;
+	padding: 1px !important;
+	text-decoration: none !important;
+}
+.customer_select_div .dd-option-text:hover {
+	color: black;
+}
 .mapHeading {
 	color:#FFFFFF !important;
-}	
+}
+.controls select {
+	width: 300px !important;
+}
+.controls #password {
+	width: 295px !important;
+}
+
+.envLabel {
+	margin-left: 20px;
+    margin-top: -22px;
+    position: relative;
+} 
+
+#formPerformance .table_div_unit table {
+	border: 1px solid #323232;
+}
+
+#subcontainer .theme_accordion_container {
+	margin: 1px 0px !important;
+}

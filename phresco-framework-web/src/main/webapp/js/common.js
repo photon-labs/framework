@@ -172,7 +172,7 @@ function mandatoryValidation(pageUrl, form, additionalParams, phase, goal, actio
 					$("#popupPage").modal('hide');
 					progressPopupAsSecPopup(pageUrl, appId, actionType, form, params);
 				} else if (pageUrl == "runPerformanceTest") {//performance test
-					runPerformanceTest();
+					templateMandatoryVal();
 				} else if (pageUrl == "saveJob" || pageUrl == "updateJob") {
 					redirectCiConfigure();
 				}
@@ -988,6 +988,14 @@ function isValidUrl(url) {
     }   
 }
 
+function isValidEmail(senderEmailId) {
+	if (/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})?$/i.test(senderEmailId)) {
+    	return false;
+    } else {
+    	return true;
+    }
+}
+
 //Used for the dynamic parameter
 //To set the previous dependency for the control in onfocus
 function setPreviousDependent(self) {
@@ -1376,4 +1384,20 @@ function disableUploadButton(controlObj) {
 function enableUploadButton(controlObj) {
 	controlObj.find("input[type='file']").attr('disabled', false);
 	controlObj.find($(".btn")).removeClass("disabled").addClass("btn-primary qq-upload-button");
+}
+
+function getFormAsJson(obj) {
+	var o = {};
+	var a = obj.serializeArray();
+	$.each(a, function() {
+	     if (o[this.name]) {
+	          if (!o[this.name].push) {
+	              o[this.name] = [o[this.name]];
+	          }
+	          o[this.name].push(this.value || '');
+	      } else {
+	          o[this.name] = this.value || '';
+	      }
+	});
+	return o;
 }
