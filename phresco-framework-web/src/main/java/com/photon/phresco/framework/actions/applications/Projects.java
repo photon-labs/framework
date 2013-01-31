@@ -25,6 +25,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -107,6 +108,7 @@ public class Projects extends FrameworkBaseAction {
         try {
             ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
             List<ProjectInfo> projects = projectManager.discover(getCustomerId());
+            Collections.sort(projects, sortByName());
             setReqAttribute(REQ_PROJECTS, projects);
             setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
             removeSessionAttribute(projectCode);
@@ -129,6 +131,16 @@ public class Projects extends FrameworkBaseAction {
         return APP_LIST;
     }
 
+    private Comparator sortByName() {
+		return new Comparator(){
+		    public int compare(Object firstObject, Object secondObject) {
+		    	ProjectInfo projectInfo1 = (ProjectInfo) firstObject;
+		    	ProjectInfo projectInfo2 = (ProjectInfo) secondObject;
+		       return projectInfo1.getName().compareToIgnoreCase(projectInfo2.getName());
+		    }
+		};
+	}
+    
     /**
      * To get the add project page
      * @return
