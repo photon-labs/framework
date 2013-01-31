@@ -388,6 +388,32 @@ public class Build extends DynamicParameterAction implements Constants {
 		return APP_ENVIRONMENT_READER;
 	}
 	
+	public String processBuild() {
+		if (debugEnabled) {
+			S_LOGGER.debug("Entering Method  processBuild()");
+		}
+		try {
+			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+			ProjectInfo projectInfo = getProjectInfo();
+			ApplicationInfo applicationInfo = getApplicationInfo();
+			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_PROCESS_BUILD)));
+			persistValuesToXml(mojo, PHASE_PROCESS_BUILD);
+			
+			String workingDirectory = getAppDirectoryPath(applicationInfo);
+			BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.PROCESS_BUILD, null, workingDirectory);
+			setSessionAttribute(getAppId() + REQ_PROCESS_BUILD, reader);
+			setReqAttribute(REQ_APP_ID, getAppId());
+			setReqAttribute(REQ_ACTION_TYPE, REQ_PROCESS_BUILD);
+		} catch (PhrescoException e) {
+			if (debugEnabled) {
+				S_LOGGER.error("Entered into catch block of buildProcess()" + FrameworkUtil.getStackTraceAsString(e));
+			}
+			return showErrorPopup(e, getText(EXCEPTION_BUILD_GENERATE));
+		}
+
+		return APP_ENVIRONMENT_READER;
+	}
+	
 	public String deploy() throws PhrescoException {
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method  Build.deploy()");
