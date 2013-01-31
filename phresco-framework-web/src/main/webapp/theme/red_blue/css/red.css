@@ -1768,7 +1768,7 @@ background-color: #ffffff;
 
 #customerSelect {
     margin-top: 32px;
-    width: 260px;
+    width: 232px !important;
 }
 
 #lbl_customer {

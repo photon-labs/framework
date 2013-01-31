@@ -408,7 +408,7 @@ a {
 	bottom: 48px;
 	position: absolute;
 	top: 40px !important;
-	width: 98% !important;
+	width: 98.3% !important;
 	left:1%;
 }
 
@@ -462,7 +462,7 @@ a {
 }
 
 .shortcut_bottom {
-	display:none;
+	display:none !important;
 	height: 38px;
 	bottom: -5px;
 	margin-top: -3px;
@@ -1125,6 +1125,7 @@ a {
     padding-top: 6px;
     text-align: center;
 	margin-top: 10px;
+	z-index: 100000;
 }
 
 /*welcome start*/
@@ -6414,4 +6415,16 @@ color: #313131;
 
 #subcontainer .theme_accordion_container {
 	margin: 1px 0px !important;
+}
+.testresultdevice {
+	height: 22px;
+	margin: 8px 0px 0px 44px;
+}
+.testresultdevice select {
+	width: 146px !important;
+}
+
+.configList #loadEnv {
+	height: 350px;
+	overflow-y: auto;
 }
