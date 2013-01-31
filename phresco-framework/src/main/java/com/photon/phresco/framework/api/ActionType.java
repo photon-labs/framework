@@ -27,7 +27,7 @@ public enum ActionType {
 	START("t7:run-forked"), STOP("t7:stop-forked"), RUNAGAINSTSOURCE("phresco:start"), STOPSERVER("phresco:stop"), 
 	START_HUB("phresco:start-hub"), STOP_HUB("phresco:stop-hub"), START_NODE("phresco:start-node"), STOP_NODE("phresco:stop-node"), PDF_REPORT("phresco:pdf-report"),
 	MINIFY("yuicompressor:compress"), IPA_DOWNLOAD("xcode:ipaBuilder"), THEME_VALIDATOR("phresco:theme-validator"), CONTENT_VALIDATOR("phresco:content-validator"),
-	THEME_CONVERTOR("phresco:theme-convertor"), CONTENT_CONVERTOR("phresco:content-convertor");
+	THEME_CONVERTOR("phresco:theme-convertor"), CONTENT_CONVERTOR("phresco:content-convertor"), PROCESS_BUILD("phresco:process-build");
 	
 	private String actionType;
 
