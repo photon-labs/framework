@@ -420,6 +420,7 @@
 		
         function onSelectCustomer(selectedId) {
         	$('#customerId').val(selectedId);
+        	localStorage["selectedCustomerId"] = selectedId;
        		$('a[name="headerMenu"]').each(function() {
        			if ($(this).hasClass('active')) {
        				doPageLoad($(this), $('a[name="headerMenu"]'));
