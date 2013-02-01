@@ -129,7 +129,6 @@ public final class DocumentUtil {
 				paragraph.setAlignment(Element.ALIGN_RIGHT);
 				paragraph.setFont(DocConstants.DESC_FONT);
 				paragraph.setFirstLineIndent(MAGICNUMBER.BLANKLINESEIGHT);
-				paragraph.add("Done Kumar");
 				docu.add(paragraph);
 
 			}
@@ -212,7 +211,6 @@ public final class DocumentUtil {
         }
         try {
 			if(CollectionUtils.isNotEmpty(modules)){
-				System.out.println("Found Modules " + modules.size());
 			    com.itextpdf.text.Document docu = new com.itextpdf.text.Document();
 			    ByteArrayOutputStream os = new ByteArrayOutputStream();
 			    PdfWriter writer = PdfWriter.getInstance(docu, os);
