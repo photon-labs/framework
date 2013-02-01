@@ -17,7 +17,7 @@
 	
 		<WebService desc="" name="Webservice">
 			<protocol>http</protocol>
-			<host>172.16.18.178</host>
+			<host>localhost</host>
 			<port>2020</port>
 			<username/>
 			<password/>
@@ -80,7 +80,7 @@
 	
 	<WebService desc="" name="webservice">
             <protocol>http</protocol>
-            <host>23.21.183.219</host>
+            <host>localhost</host>
             <port>80</port>
             <username/>
             <password/>
@@ -111,7 +111,7 @@
 
                  <WebService desc="" name="webservice">
             <protocol>http</protocol>
-            <host>172.16.18.178</host>
+            <host>localhost</host>
             <port>8280</port>
             <username/>
             <password/>
