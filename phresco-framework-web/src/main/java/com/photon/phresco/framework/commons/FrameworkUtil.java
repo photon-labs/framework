@@ -963,6 +963,8 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
         		    optionKey = ((Value) value).getKey();
         		} else if (value instanceof com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.Childs.Child.PossibleValues.Value) {
         		    optionKey = ((com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.Childs.Child.PossibleValues.Value) value).getKey();
+        		} else if (value instanceof com.photon.phresco.plugins.model.Module.Configurations.Configuration.Parameter.PossibleValues.Value) {
+        			optionKey = ((com.photon.phresco.plugins.model.Module.Configurations.Configuration.Parameter.PossibleValues.Value) value).getKey();	
         		}
 
         		if (CollectionUtils.isNotEmpty(selectedValues) && (selectedValues.contains(optionKey) || selectedValues.contains(optionValue))) {
@@ -1068,6 +1070,8 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 			optionValue = ((Value) value).getValue();
 		} else if (value instanceof com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.Childs.Child.PossibleValues.Value) {
 		    optionValue = ((com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.Childs.Child.PossibleValues.Value) value).getValue();
+		} else if (value instanceof com.photon.phresco.plugins.model.Module.Configurations.Configuration.Parameter.PossibleValues.Value) {
+			optionValue = ((com.photon.phresco.plugins.model.Module.Configurations.Configuration.Parameter.PossibleValues.Value) value).getValue();	
 		} else {
 			optionValue = (String) value;
 		}

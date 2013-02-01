@@ -285,7 +285,7 @@ if (CollectionUtils.isNotEmpty(defaultfeatures)) {
   		if (url === "showConfigProperties") {
   			$('#propertiesDiv').empty();
   			$('#propertiesDiv').html(data);
-  		} else if (url === "configureFeature") {
+  		} else if (url === "configureFeature" || url === "configureFeatureParam") {
   			hideLoadingIcon();
   			$("#successmsg").show();
   			setTimeOut();

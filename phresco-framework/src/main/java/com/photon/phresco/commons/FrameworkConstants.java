@@ -50,6 +50,7 @@ public interface FrameworkConstants {
     String COMMIT = "commit";
     
     String CONFIG = "config";
+    String FEATURE = "feature";
     String EMAIL_ID = "emailid";
     
     String X_FILE_NAME = "X-File-Name";
@@ -87,6 +88,7 @@ public interface FrameworkConstants {
     String EXE_DOWNLOAD = "Exe_Download";
     String PROCESS_BUILD = "Process_Build";
     String IMPORT = "import";
+    String FEATURE_CONFIG = "FeatureConfig"; 
     
     String REQ_CUSTOMER_ID = "customerId";
     String REQ_PROJECT_ID = "projectId";

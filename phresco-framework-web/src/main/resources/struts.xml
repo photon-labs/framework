@@ -229,8 +229,9 @@
         	<result type="json"/>
         </action>
         
-        <action name="showFeatureConfigPopup" method="showFeatureConfigPopup" class="com.photon.phresco.framework.actions.applications.Features">
-          	<result name="success">/pages/applications/feature/configuration.jsp</result>
+         <action name="showFeatureConfigPopup" method="showFeatureConfigPopup" class="com.photon.phresco.framework.actions.applications.Features">
+    	    <result name="feature">/pages/applications/dynamic_parameter_Modules.jsp</result>
+          	<result name="config">/pages/applications/feature/configuration.jsp</result>
         </action>
         
         <action name="showFeatureConfigs" method="showFeatureConfigs" class="com.photon.phresco.framework.actions.applications.Configurations">
@@ -239,6 +240,10 @@
         
         <action name="configureFeature" method="configureFeature" class="com.photon.phresco.framework.actions.applications.Features">
           	<result type="json" />
+        </action>
+        
+        <action name="configureFeatureParam" method="configureFeatureparam" class="com.photon.phresco.framework.actions.applications.Features">
+       		<result name="success">/pages/applications/feature/features.jsp</result>
         </action>
         
         <!-- <action name="checkDependency" method="checkDependency" class="com.photon.phresco.framework.actions.applications.Features">

@@ -307,6 +307,7 @@ public class Configurations extends FrameworkBaseAction {
 			List<ArtifactInfo> artifactInfos = new ArrayList<ArtifactInfo>();
 			ArtifactInfo artifactInfo = new ArtifactInfo();
 			artifactInfo.setVersion(mojoProcessor.getApplicationHandler().getVersion());
+			artifactInfos.add(artifactInfo);
 			artifactGroup.setVersions(artifactInfos);
 			
 			artifactGroups.add(artifactGroup);

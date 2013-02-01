@@ -19,11 +19,14 @@
  */
 package com.photon.phresco.framework.actions.applications;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
@@ -34,6 +37,7 @@ import org.apache.log4j.Logger;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.photon.phresco.api.ConfigManager;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.ArtifactGroupInfo;
@@ -47,12 +51,22 @@ import com.photon.phresco.commons.model.RequiredOption;
 import com.photon.phresco.commons.model.SelectedFeature;
 import com.photon.phresco.commons.model.TechnologyInfo;
 import com.photon.phresco.configuration.Configuration;
+import com.photon.phresco.configuration.Environment;
+import com.photon.phresco.exception.ConfigurationException;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
 import com.photon.phresco.framework.api.ProjectManager;
+import com.photon.phresco.framework.model.DependantParameters;
+import com.photon.phresco.plugins.model.Module.Configurations.Configuration.Parameter;
+import com.photon.phresco.plugins.model.Module.Configurations.Configuration.Parameter.Name;
+import com.photon.phresco.plugins.util.ModulesProcessor;
+import com.photon.phresco.util.Constants;
+import com.photon.phresco.util.Utility;
+import com.phresco.pom.exception.PhrescoPomException;
+import com.phresco.pom.util.PomProcessor;
 
-public class Features extends FrameworkBaseAction {
+public class Features extends DynamicParameterModule {
     
     private static final long serialVersionUID = 6608382760989903186L;
 	
@@ -182,7 +196,7 @@ public class Features extends FrameworkBaseAction {
 			setReqAttribute(REQ_OLD_APPDIR, getOldAppDirName());
 			setSessionAttribute(getAppId() + SESSION_APPINFO, projectInfo);
 		} catch (Exception e) {
-		    
+			return showErrorPopup(new PhrescoException(e), getText("Feature Not Available"));
 		}
     	
 	    return APP_FEATURES;
@@ -244,7 +258,7 @@ public class Features extends FrameworkBaseAction {
 		}
 	}
 	
-	private void setFeatures(ApplicationInfo appInfo, List<SelectedFeature> listFeatures) {
+	private void setFeatures(ApplicationInfo appInfo, List<SelectedFeature> listFeatures) throws PhrescoException {
 		try {
 		    String techId = appInfo.getTechInfo().getId();
 			List<String> selectedModules = appInfo.getSelectedModules();
@@ -271,7 +285,7 @@ public class Features extends FrameworkBaseAction {
 				}
 			}
 		} catch (Exception e) {
-			
+			throw new PhrescoException(e);
 		}
 	}
 	
@@ -463,20 +477,68 @@ public class Features extends FrameworkBaseAction {
 	
 	public String showFeatureConfigPopup() throws PhrescoException {
 	    try {
-	        setConfigTemplateType(CONFIG_FEATURES);
-	        setReqAttribute(REQ_FEATURE_NAME, getFeatureName());
-	        List<PropertyTemplate> propertyTemplates = getTemplateConfigFile();
-	        setReqAttribute(REQ_PROPERTIES, propertyTemplates);
-	        setReqAttribute(REQ_SELECTED_TYPE, getSelectedType());
+	    	boolean returnStatus = populateFeatureConfigPopup();
+	    	if(!returnStatus) {
+		        setConfigTemplateType(CONFIG_FEATURES);
+		        setReqAttribute(REQ_FEATURE_NAME, getFeatureName());
+		        List<PropertyTemplate> propertyTemplates = getTemplateConfigFile();
+		        setReqAttribute(REQ_PROPERTIES, propertyTemplates);
+		        setReqAttribute(REQ_SELECTED_TYPE, getSelectedType());
+		        return CONFIG;
+	    	}
+	    	return FEATURE;
 	    } catch (PhrescoException e) {
-//	        return showErrorPopup(e, getText(EXCEPTION_FEATURE_MANIFEST_NOT_AVAILABLE));
+	        return showErrorPopup(e, getText(EXCEPTION_FEATURE_MANIFEST_NOT_AVAILABLE));
 	    }
-	    
-	    return SUCCESS;
+	}
+	
+	public boolean populateFeatureConfigPopup() throws PhrescoException {
+	    try {
+	    	ApplicationInfo appInfo = getApplicationInfo();
+            removeSessionAttribute(appInfo.getId() + FEATURE_CONFIG + SESSION_WATCHER_MAP);
+            Map<String, DependantParameters> watcherMap = new HashMap<String, DependantParameters>(8);
+            File featureManifest = new File(getManifest(appInfo, featureName));
+            ModulesProcessor module = new ModulesProcessor(new File(featureManifest.getPath()));
+            List<Parameter> parameters = module.getParameters();
+            if (CollectionUtils.isNotEmpty(parameters) && parameters.get(0) != null) {
+	            setPossibleValuesInReq(module, appInfo, parameters, watcherMap);
+	            setSessionAttribute(appInfo.getId() + FEATURE_CONFIG + SESSION_WATCHER_MAP, watcherMap);
+	            setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
+	            setReqAttribute(REQ_FEATURE_NAME, featureName);
+	            setReqAttribute(REQ_APP_INFO, appInfo);
+	        	return true;
+            }
+	    } catch (PhrescoException e) {
+	    	throw e;
+	    }
+		return false;
+	}
+	
+	public String getThirdPartyFolder(ApplicationInfo appInfo) throws PhrescoException { 
+		File pomPath = new File(Utility.getProjectHome() + appInfo.getAppDirName() + File.separator + Constants.POM_NAME);
+		try {
+			PomProcessor processor = new PomProcessor(pomPath);
+			String property = processor.getProperty(Constants.POM_PROP_KEY_MODULE_SOURCE_DIR);
+			if(StringUtils.isNotEmpty(property)) {
+				return property;
+			}
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
+		}
+		return "";
+	}
+	
+	public String getManifest(ApplicationInfo appInfo, String FeatureName) throws PhrescoException {
+		try {
+			return Utility.getProjectHome() + appInfo.getAppDirName() + getThirdPartyFolder(appInfo) + File.separator + FeatureName + File.separator + "feature-manifest" + DOT + XML;
+		} catch (PhrescoException e) {
+			throw e;
+		}
 	}
 	
 	public String configureFeature() {
 	    try {
+	    	ApplicationInfo appInfo = getApplicationInfo();
             List<PropertyTemplate> propertyTemplates = getTemplateConfigFile();
             Properties properties = new Properties();
             for (PropertyTemplate propertyTemplate : propertyTemplates) {
@@ -495,16 +557,88 @@ public class Features extends FrameworkBaseAction {
             }
             Configuration configuration = new Configuration();
             configuration.setName(getFeatureName());
+            List<Environment> allEnvironments = getAllEnvironments(appInfo);
+	        for (Environment environment : allEnvironments) {
+	        	if(environment.isDefaultEnv()) {
+	        		configuration.setEnvName(environment.getName());
+	        	}
+	        }
             configuration.setProperties(properties);
             List<Configuration> configs = new ArrayList<Configuration>();
             configs.add(configuration);
             getApplicationProcessor().postFeatureConfiguration(getApplicationInfo(), configs, getFeatureName());
         } catch (PhrescoException  e) {
             return showErrorPopup(e, getText(EXCEPTION_FEATURE_MANIFEST_NOT_AVAILABLE));
-        }
+        } catch (ConfigurationException e) {
+        	return showErrorPopup(new PhrescoException(e), getText("Environments Not Available"));
+		}
 	    
 	    return SUCCESS;
 	}
+	
+	public String configureFeatureparam() {
+		try {
+			ApplicationInfo appInfo = getApplicationInfo();
+	        File featureManifest = new File(getManifest(appInfo, featureName));
+	        ModulesProcessor module = new ModulesProcessor(new File(featureManifest.getPath()));
+	        List<Parameter> parameters = module.getParameters();
+	        Properties properties = new Properties();
+	        for(Parameter parameter : parameters) {
+	        	String type = parameter.getType();
+	        	String paramName = parameter.getName().getValue().getValue();
+		    	String key  = parameter.getKey();
+		        String value = getReqParameter(key);
+		        if(TYPE_BOOLEAN.equalsIgnoreCase(type)) {
+		        	value = (StringUtils.isNotEmpty(value) ? value : FALSE);
+		        } else {
+		        	value = (StringUtils.isNotEmpty(value)? value : " ");
+		        }
+		        String configName = module.getConfigName(paramName);
+		        properties.setProperty(configName, value);
+	    	}
+	        
+	        String[] keys = getReqParameterValues(REQ_KEY);
+	        String[] values = getReqParameterValues(REQ_VALUE);
+	        if (!ArrayUtils.isEmpty(keys) && !ArrayUtils.isEmpty(values)) {
+	            for (int i = 0; i < keys.length; i++) {
+	                if (StringUtils.isNotEmpty(keys[i]) && StringUtils.isNotEmpty(values[i])) {
+	                    properties.setProperty(keys[i], values[i]);
+	                }
+	            }
+	        }
+	        
+	        
+	        Configuration configuration = new Configuration();
+	        configuration.setName(getFeatureName());
+	        List<Environment> allEnvironments = getAllEnvironments(appInfo);
+	        for (Environment environment : allEnvironments) {
+	        	if(environment.isDefaultEnv()) {
+	        		configuration.setEnvName(environment.getName());
+	        	}
+	        }
+	        configuration.setProperties(properties);
+	        List<Configuration> configs = new ArrayList<Configuration>();
+	        configs.add(configuration);
+	        getApplicationProcessor().postFeatureConfiguration(getApplicationInfo(), configs, getFeatureName());
+		} catch(PhrescoException e ){
+			return showErrorPopup(e, getText(EXCEPTION_FEATURE_MANIFEST_NOT_AVAILABLE));
+		} catch (ConfigurationException e) {
+			return showErrorPopup(new PhrescoException(e), getText("Environments Not Available"));
+		}
+		
+		return SUCCESS;
+	}
+	
+	private List<Environment> getAllEnvironments(ApplicationInfo appInfo) throws PhrescoException, ConfigurationException {
+		String configPath = Utility.getProjectHome() + appInfo.getAppDirName() + File.separator + FOLDER_DOT_PHRESCO + File.separator + CONFIGURATION_INFO_FILE_NAME ;
+		ConfigManager configManager = getConfigManager(configPath);
+		return configManager.getEnvironments();
+	}
+	
+	private ConfigManager getConfigManager(String configPath) throws PhrescoException {
+	        File appDir = new File(configPath);
+	        return PhrescoFrameworkFactory.getConfigManager(appDir);
+    }
 	
 	private List<PropertyTemplate> getTemplateConfigFile() throws PhrescoException {
 	    List<PropertyTemplate> propertyTemplates = new ArrayList<PropertyTemplate>();
@@ -528,7 +662,7 @@ public class Features extends FrameworkBaseAction {
 	        setReqAttribute(REQ_PROPERTIES_INFO, properties);
 	        setReqAttribute(REQ_HAS_CUSTOM_PROPERTY, true);
 	    } catch (PhrescoException e) {
-	        throw new PhrescoException(e);
+	        throw e;
 	    }
 
 	    return propertyTemplates;
