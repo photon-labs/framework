@@ -461,7 +461,7 @@ Width <= 1024
     	margin-left:17px;
 	}
 	
-	 #warningmsg, .actionMessage li {
+	 #warningmsg {
      	display: none;
      	width: auto; 
      	left: 54.7%; 
@@ -1240,7 +1240,7 @@ Width >= 1152 and < 1280
 	
 	/* header starts */
 
-	#warningmsg, .actionMessage li {
+	#warningmsg {
      	display: none;
      	width: auto; 
      	left : 25.7%; 
@@ -1668,7 +1668,7 @@ Width <= 1280 and height <= 800
 	
 	/* header starts */
 	
-	#warningmsg, .actionMessage li {
+	#warningmsg {
      	display: none;
      	width: auto; 
      	left : 29.7%; 
@@ -2182,7 +2182,7 @@ Width >= 1280 and height >= 800
 	}
 	
 	/* header starts */
-	#warningmsg , .actionMessage li{
+	#warningmsg {
      	display: none;
      	width: auto; 
      	left : 33.6%; 
@@ -2999,7 +2999,7 @@ Width > 1280 and <= 1360
 		top: 26%
 	}
 	
-	#warningmsg, .actionMessage li {
+	#warningmsg {
      	display: none;
      	width: auto; 
      	left : 39%; 
@@ -3432,7 +3432,7 @@ Width > 1360 and <= 1440
 		top: 14%
 	}
 	
-	#warningmsg, .actionMessage li {
+	#warningmsg {
      	display: none;
      	width: auto; 
      	left : 35%; 
@@ -3521,7 +3521,7 @@ Width > 1441 and <= 1600
     	height: 90%;
 	}
 
-	#warningmsg ,.actionMessage li {
+	#warningmsg {
      	display: none;
      	width: auto; 
      	left : 35%; 
