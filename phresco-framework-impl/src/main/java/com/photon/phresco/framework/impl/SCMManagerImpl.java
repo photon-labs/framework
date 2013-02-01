@@ -1,17 +1,32 @@
 package com.photon.phresco.framework.impl;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.UUID;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.*;
+import org.apache.commons.io.filefilter.FileFilterUtils;
+import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.log4j.Logger;
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ListBranchCommand.ListMode;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
-import org.tmatesoft.svn.core.*;
+import org.tmatesoft.svn.core.SVNCommitInfo;
+import org.tmatesoft.svn.core.SVNDepth;
+import org.tmatesoft.svn.core.SVNDirEntry;
+import org.tmatesoft.svn.core.SVNException;
+import org.tmatesoft.svn.core.SVNNodeKind;
+import org.tmatesoft.svn.core.SVNURL;
 import org.tmatesoft.svn.core.auth.ISVNAuthenticationManager;
 import org.tmatesoft.svn.core.internal.io.dav.DAVRepositoryFactory;
 import org.tmatesoft.svn.core.internal.io.fs.FSRepositoryFactory;
@@ -19,7 +34,14 @@ import org.tmatesoft.svn.core.internal.io.svn.SVNRepositoryFactoryImpl;
 import org.tmatesoft.svn.core.internal.wc.DefaultSVNOptions;
 import org.tmatesoft.svn.core.io.SVNRepository;
 import org.tmatesoft.svn.core.io.SVNRepositoryFactory;
-import org.tmatesoft.svn.core.wc.*;
+import org.tmatesoft.svn.core.wc.ISVNStatusHandler;
+import org.tmatesoft.svn.core.wc.SVNClientManager;
+import org.tmatesoft.svn.core.wc.SVNRevision;
+import org.tmatesoft.svn.core.wc.SVNStatus;
+import org.tmatesoft.svn.core.wc.SVNStatusType;
+import org.tmatesoft.svn.core.wc.SVNUpdateClient;
+import org.tmatesoft.svn.core.wc.SVNWCClient;
+import org.tmatesoft.svn.core.wc.SVNWCUtil;
 
 import com.google.gson.Gson;
 import com.photon.phresco.commons.FrameworkConstants;
@@ -30,6 +52,7 @@ import com.photon.phresco.framework.api.SCMManager;
 import com.photon.phresco.util.FileUtil;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.util.PomProcessor;
+
 
 public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 
@@ -43,18 +66,21 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.importProject()");
 		}
-			SVNURL svnURL = SVNURL.parseURIEncoded(url);
-			DAVRepositoryFactory.setup();
-			DefaultSVNOptions options = new DefaultSVNOptions();
-			cm = SVNClientManager.newInstance(options, username, password);
+		
 		if (SVN.equals(type)) {
 			if(debugEnabled){
 				S_LOGGER.debug("SVN type");
 			}
+			
+			SVNURL svnURL = SVNURL.parseURIEncoded(url);
+	        DAVRepositoryFactory.setup();
+	        DefaultSVNOptions options = new DefaultSVNOptions();
+	        cm = SVNClientManager.newInstance(options, username, password);
 			boolean valid = checkOutFilter(url, username, password, revision, svnURL);
 			if(debugEnabled){
 				S_LOGGER.debug("Completed");
 			}
+			
 			return valid;
 		} else if (GIT.equals(type)) {
 			if(debugEnabled){
@@ -88,8 +114,12 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			if(debugEnabled){
 				S_LOGGER.debug("Completed");
 			}
+			
 			return valid;
+		} else if (BITKEEPER.equals(type)) {
+		    return importFromBitKeeper(url);
 		}
+		
 		return false;
 	}
 
@@ -348,6 +378,43 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		            S_LOGGER.debug("(standard): cloned branch " + b.getName());
 		        }
 		        repo.getRepository().close();
+	}
+	
+	private boolean importFromBitKeeper(String repoUrl) throws PhrescoException {
+	    BufferedReader reader = null;
+	    File file = new File(Utility.getPhrescoTemp() + "bitkeeper.info");
+	    boolean isImported = false;
+	    try {
+	        String command = "bk clone bk://" + repoUrl;
+	        Utility.executeStreamconsumer(Utility.getProjectHome(), command, new FileOutputStream(file));
+	        reader = new BufferedReader(new FileReader(file));
+	        String strLine;
+	        while ((strLine = reader.readLine()) != null) {
+	            if (strLine.contains("OK")) {
+	                isImported = true;
+	                break;
+	            } else if (strLine.contains("exists and is not empty")) {
+	                throw new PhrescoException("Project already imported");
+	            } else if (strLine.contains("FAILED")) {
+	                throw new PhrescoException("Failed to import project");
+	            }
+	        }
+	    } catch (IOException e) {
+	        throw new PhrescoException(e);
+	    } finally {
+	        if (reader != null) {
+	            try {
+	                reader.close();
+	            } catch (IOException e) {
+	                throw new PhrescoException(e);
+	            }
+	        }
+	        if (file.exists()) {
+	            file.delete();
+	        }
+	    }
+
+	    return isImported;
 	}
 
 	private boolean cloneFilter(File appDir, String url, boolean recursive)throws Exception {

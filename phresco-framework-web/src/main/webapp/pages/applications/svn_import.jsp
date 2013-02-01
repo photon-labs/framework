@@ -115,6 +115,7 @@
 <%-- 					<% if (!FrameworkConstants.FROM_PAGE_ADD.equals(action)) { %> --%>
 						<option value="<s:text name="lbl.repo.type.git"/>"><s:text name="lbl.repo.type.git"/></option>
 <%-- 					<% } %> --%>
+					<option value="<s:text name="lbl.repo.type.bitkeeper"/>"><s:text name="lbl.repo.type.bitkeeper"/></option>
 			    </select>
 			</div>
 		</div>
@@ -214,9 +215,13 @@
 		  	extraInfoDisplay();
 		  	if ($("[name=repoType]").val() == 'svn') {
 		  		$(".mandatory").show();
-		  	} else if($("[name=repoType]").val() == 'git') {
+		  	} else if($("[name=repoType]").val() == 'git' || $("[name=repoType]").val() == 'bitkeeper') {
 		  		$(".mandatory").hide();
 		  	}
+		  	
+		  	if ($("[name=repoType]").val() == 'bitkeeper') {
+		  		$("#repoUrl").val('');
+			}
 		});
 			  
 		<% if (StringUtils.isNotEmpty(repoUrl) && repoUrl.contains(FrameworkConstants.GIT)) {%>
@@ -275,7 +280,7 @@
 			$('#svnRevisionInfo').show();
 			  // hide other credential checkbox
 			$('#otherCredentialInfo').show();
-		} else if($("[name=repoType]").val() == 'git') {
+		} else if($("[name=repoType]").val() == 'git' || $("[name=repoType]").val() == 'bitkeeper') {
 			$('.credentialDet').hide();
 			$('#svnRevisionInfo').hide();
 			  // hide other credential checkbox
@@ -333,7 +338,7 @@
 			return false;
 		}
 		
-		if (isValidUrl(repoUrl)) {
+		if ($("[name=repoType]").val() != 'bitkeeper' && isValidUrl(repoUrl)) {
 			$("#errMsg").html("Invalid URL");
 			$("#repoUrl").focus();
 			return false;
@@ -382,7 +387,7 @@
 	}
 	
 	function successEvent(pageUrl, data) {
-		if(pageUrl == "importSVNProject" || pageUrl == "importGITProject" || pageUrl == "updateSVNProject" || pageUrl == "updateGITProject"
+		if(pageUrl == "importSVNProject" || pageUrl == "importGITProject" || pageUrl == "importBitKeeperProject" || pageUrl == "updateSVNProject" || pageUrl == "updateGITProject"
 			|| pageUrl == "addSVNProject" || pageUrl == "addGITProject" || pageUrl == "commitSVNProject" || pageUrl == "commitGITProject") {
 			checkError(pageUrl, data);
 		}
@@ -419,6 +424,8 @@
 			actionUrl = action + "SVNProject";
 		} else if ($("[name=repoType]").val() == 'git') {
 			actionUrl = action + "GITProject";
+		} else if ($("[name=repoType]").val() == 'bitkeeper') {
+			actionUrl = action + "BitKeeperProject";
 		}
 		return actionUrl;
 	}

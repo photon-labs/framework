@@ -206,6 +206,7 @@ public interface FrameworkConstants {
 	String XPATH_ROOT_NODE = "xpathRootNode";
 	String ANY = "Any";
     String GIT = "git";
+    String BITKEEPER = "bitkeeper";
     String REPO_TYPE = "repoType";
     String UPDATE_SVN_PROJECT = "updateProject";
     String SVN_TYPE = "svnType";

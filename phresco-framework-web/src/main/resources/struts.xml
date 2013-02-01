@@ -167,7 +167,11 @@
         
         <action name="importGITProject" method="importGITApplication" class="com.photon.phresco.framework.actions.applications.Applications">
             <result type="json"/>
-        </action> 
+        </action>
+        
+        <action name="importBitKeeperProject" method="importBitKeeperApplication" class="com.photon.phresco.framework.actions.applications.Applications">
+            <result type="json"/>
+        </action>
         
         <action name="editApplication" method="editApplication" class="com.photon.phresco.framework.actions.applications.Applications">
             <result name="appinfo">/pages/applications/appinfo.jsp</result>

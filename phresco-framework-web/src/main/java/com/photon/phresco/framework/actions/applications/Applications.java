@@ -1089,6 +1089,35 @@ public class Applications extends FrameworkBaseAction {
 		}
 		return SUCCESS;
 	}
+	
+	public String importBitKeeperApplication() {
+        if(s_debugEnabled){
+            S_LOGGER.debug("Entering Method  Applications.importBitkeeperApplication()");
+        }
+        
+        try {
+            SCMManagerImpl scmi = new SCMManagerImpl();
+            boolean importProject = scmi.importProject(BITKEEPER, repoUrl, userName, password, null , null);
+            if (importProject) {
+                errorString = getText(IMPORT_SUCCESS_PROJECT);
+                errorFlag = true;
+            }
+        } catch (Exception e) {
+            if (s_debugEnabled) {
+                S_LOGGER.error(e.getLocalizedMessage());
+            }
+            if ("Project already imported".equals(e.getLocalizedMessage())) {
+                errorString = getText(e.getLocalizedMessage());
+            } else  if ("Failed to import project".equals(e.getLocalizedMessage())) {
+                errorString = getText(e.getLocalizedMessage());
+            } else {
+                errorString = getText(IMPORT_PROJECT_FAIL);
+                errorFlag = false;
+            }
+        }
+        
+        return SUCCESS;
+	}
 
 	public String importAppln() {
 		try {
