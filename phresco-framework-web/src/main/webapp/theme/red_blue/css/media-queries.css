@@ -102,7 +102,7 @@ Width <= 1024
 	#container {
 	    z-index: 15004;
 	    width: 94%;
-	    height: 488px !important;
+	    height: 83% !important;
 	}
 	
 	.holder {
@@ -1065,7 +1065,7 @@ Width >= 1152 and < 1280
 	#container {
 	    z-index: 15004;
 	    width: 93%;
-	    height: 588px !important;
+	    height: 85% !important;
 	}
 	
 	.holder {
@@ -1415,7 +1415,7 @@ Width <= 1280 and height <= 800
 	#container {
 		z-index: 15004;
 		width: 94%;
-		height: 503px !important;
+		height: 83% !important;
 	}
 	
 	.headerInner {
@@ -1451,7 +1451,7 @@ Width <= 1280 and height <= 800
 	}
 	
 	.holder {
-		height: 353px;
+		height: 345px;
 		margin: 3.5% 24%;
 		padding: 0px;
 		width: 592px;
@@ -1842,7 +1842,7 @@ Width >= 1280 and height >= 800
 	#container {
 		z-index: 15004;
 		width: 93%;
-		height: 694px !important;
+		height: 87% !important;
 	}
 
 	.custom_features {
@@ -1869,7 +1869,6 @@ Width >= 1280 and height >= 800
 	    margin-bottom: 0;
 	    position: absolute;
 	    top: 10px;
-	    width: 73%;
 	}
 	
      .custom_features_wrapper_right {
@@ -2217,7 +2216,7 @@ Width > 1280 and <= 1360
 	}
 	
 	#container {
-		height: 495px !important;
+		height: 83% !important;
 	}
 
 	.content_adder {
@@ -2254,7 +2253,6 @@ Width > 1280 and <= 1360
 	    margin-bottom: 0;
 	    position: absolute;
 	    top: 10px;
-	    width: auto;
 	}
 	.intro_container {
 		left: 20%;
@@ -2677,7 +2675,7 @@ Width > 1360 and <= 1440
 	}
 	
 	#container {
-		height: 628px !important;
+		height: 85% !important;
 	}
 	.app_list_form {
     	height: 91%;

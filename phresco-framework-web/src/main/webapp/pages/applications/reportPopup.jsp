@@ -146,6 +146,8 @@
 		$('.backdrop > fade > in').attr('display', 'block');
 		$('.popupOk').attr("data-dismiss", "");
 		hidePopuploadingIcon();
+		$('#printAsPdf').removeAttr("disabled");
+	    $('#printAsPdf').addClass("btn-primary");
 		<%
 		    if (StringUtils.isNotEmpty(reportDeletionStat)) {
         %>

@@ -50,6 +50,10 @@
 <%
     List<BuildInfo> buildInfos = (List<BuildInfo>) request.getAttribute(FrameworkConstants.REQ_BUILD);
     ApplicationInfo applicationInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_APPINFO);
+	String appId = "";
+	if (applicationInfo != null) {
+		appId = applicationInfo.getId();
+	}
 	String customerId = (String)request.getAttribute(FrameworkConstants.REQ_CUSTOMER_ID);
 	String projectId = (String)request.getAttribute(FrameworkConstants.REQ_PROJECT_ID);
     String appDirectory = "";
@@ -142,6 +146,16 @@
 			                            	}
 			                            }
 									%>
+									
+									<%
+ 										if (optionIds != null && optionIds.contains(FrameworkConstants.PROCESS_BUILD)) {
+									%>
+												<a class="processBuild" href="#" additionalParam=buildNumber=<%= buildInfo.getBuildNo() %>&appDirectory=<%= appDirectory %>><img src="images/icons/commit_icon.png" title="process build"/>
+		                                    	</a>
+									<% 
+ 			                            }
+									%>
+									
 			              		</td>
 			              		<%
 									if (optionIds != null && optionIds.contains(FrameworkConstants.DEPLOY_KEY)) {
@@ -234,6 +248,14 @@
 		$('.deploy').click(function() {
 			var additionalParam = $(this).attr('additionalParam'); //additional params if any
     		validateDynamicParam('showDeploy', '<s:text name="label.deploy"/>', 'deploy','<s:text name="label.deploy"/>', '', '<%= Constants.PHASE_DEPLOY %>', true, additionalParam);
+    	});
+		
+		$('.processBuild').click(function() {
+			var additionalParam = $(this).attr('additionalParam'); //additional params if any
+			var params = getBasicParams();
+			params = params.concat("&");
+			params = params.concat(additionalParam);
+			readerHandlerSubmit('processBuild', '<%= appId %>', '<%= FrameworkConstants.REQ_PROCESS_BUILD %>', '', false, params, $("#console_div"));
     	});
 	});
 	

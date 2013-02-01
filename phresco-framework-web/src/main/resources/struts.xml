@@ -438,6 +438,10 @@
             </result>
         </action>
 
+        <action name="processBuild" method="processBuild" class="com.photon.phresco.framework.actions.applications.Build">
+            <result name="reader">/pages/applications/reader.jsp</result>
+        </action>
+        
 		<action name="configuration" method="configList" class="com.photon.phresco.framework.actions.applications.Configurations">
             <result name="list">/pages/applications/configuration/list.jsp</result>
         </action>

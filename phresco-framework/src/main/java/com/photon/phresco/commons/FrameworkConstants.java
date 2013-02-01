@@ -85,6 +85,7 @@ public interface FrameworkConstants {
     String FROM_PAGE_LOGIN = "login";
     String CONFIG_TYPE = "type";
     String EXE_DOWNLOAD = "Exe_Download";
+    String PROCESS_BUILD = "Process_Build";
     String IMPORT = "import";
     
     String REQ_CUSTOMER_ID = "customerId";
@@ -629,6 +630,7 @@ public interface FrameworkConstants {
     String REQ_SELECTED_ALL_BUILDS_LIST = "allBuilds";
     String REQ_SETTINGS = "settings";
     String REQ_BUILD = "build";
+    String REQ_PROCESS_BUILD = "processBuild";
     String REQ_RELEASE = "release";
     String REQ_JAR = "jar";
     String REQ_SELECTED_APP_TYPE = "selectedAppType";

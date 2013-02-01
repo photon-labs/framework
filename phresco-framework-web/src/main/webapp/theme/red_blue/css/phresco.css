@@ -377,7 +377,7 @@ a {
 }
 
 #container {
-	height: 83%;
+	height: 85% !important;
 	width: 94%;
 	margin: 0 auto;
 }
@@ -2084,8 +2084,12 @@ h1 {
 }
 
 .table_for_downloadInfos {
-	width: 40% !important;
+	width: 55% !important;
 	margin-top: 0.5%;
+}
+
+.table_for_downloadInfos thead tr th {
+	padding: 8px !important;
 }
 
 .settingsList_table_div {

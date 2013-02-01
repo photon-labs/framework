@@ -587,10 +587,15 @@
 				List<String> serverVersions = artifactGrpInfo.getArtifactInfoIds();
 	%>			
 				var pilotsrver = '<%= server %>';
-				accordionOpen('#serverLayerControl', $('input[value=serverLayer]'));
-				$('#serverLayerControl').each(function () {
-					document.getElementById("checkAll1").checked=true
-	        	});
+				$('select[name=server] option').each(function () {
+			 		var server = $(this).val();
+			 		if (pilotsrver === server) {
+			 			accordionOpen('#serverLayerControl', $('input[value=serverLayer]'));
+			 			$('#serverLayerControl').each(function () {
+							document.getElementById("checkAll1").checked=true
+			        	});
+			 		}
+			   	});
 				
 				addServer('<%= server %>', '<%= serverVersions %>', pilotsrver);
 	<%
@@ -604,10 +609,15 @@
 				List<String> databaseVersions = artifactGrpInfo.getArtifactInfoIds();
 	%>
 				var pilotDb = '<%= database %>';
-				accordionOpen('#databaseLayerControl', $('input[value=databaseLayer]'));
-				$('#databaseLayerControl').each(function () {
-					document.getElementById("checkAll2").checked=true
-	        	});
+				$('select[name=database] option').each(function () {
+			 		var database = $(this).val();
+			 		if (pilotDb === database) {
+			 			accordionOpen('#databaseLayerControl', $('input[value=databaseLayer]'));
+						$('#databaseLayerControl').each(function () {
+							document.getElementById("checkAll2").checked=true
+			        	});
+			 		}
+			   	});
 				addDatabase('<%= database%>', '<%=databaseVersions%>', pilotDb);
 	<%
 		    }

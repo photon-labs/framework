@@ -382,6 +382,8 @@
 		//getLogoImgUrl();
 		showHideTheme();
 		var selectedId = "";
+		var customerId = localStorage["selectedCustomerId"];
+		$("#customerSelect").val(customerId);
 		
 		$(".styles").click(function() {
 			localStorage.clear();
@@ -418,6 +420,7 @@
 		
         function onSelectCustomer(selectedId) {
         	$('#customerId').val(selectedId);
+        	localStorage["selectedCustomerId"] = selectedId;
        		$('a[name="headerMenu"]').each(function() {
        			if ($(this).hasClass('active')) {
        				doPageLoad($(this), $('a[name="headerMenu"]'));
@@ -720,7 +723,31 @@
 			
 			'.tabs li a.active label' : {
 				'color': menufontColor + " ! important"        // active Label color in leftside menu
+			},
+
+			'.control-label.custom_label.labelbold' : {
+				'color': "#FFFFFF ! important"
+			},
+						
+			'.control-label.custom_label.labelbold' : {
+				'color' : "#FFFFFF !important"
+			},
+			'.customer_select_div .dd-selected-text, .customer_select_div  .dd-options li a .dd-option-text':{
+				'color' : "#000000 !important"
+			},
+			
+			'.customer_select_div .dd-options' : {
+				'background': "none repeat scroll 0 0 #FFFFFF !important"
+			},
+			
+			'.customer_select_div  .dd-options' : {
+				'border': "1px solid #000000 !important"
+			},
+			
+			'.customer_select_div  .dd-options li' : {
+				'border-bottom': "1px solid #000000 !important"
 			}
+						
 		});
 	}
 	
