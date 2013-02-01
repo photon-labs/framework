@@ -119,6 +119,7 @@ public class CIJob {
     private String emulatorKeyPassword = "";
     private String type = "";
     private String platform = "";
+    private String projectModule = "";
     
     public CIJob() {
         super();
@@ -731,5 +732,13 @@ public class CIJob {
 
 	public void setPlatform(String platform) {
 		this.platform = platform;
+	}
+
+	public String getProjectModule() {
+		return projectModule;
+	}
+
+	public void setProjectModule(String projectModule) {
+		this.projectModule = projectModule;
 	}
 }

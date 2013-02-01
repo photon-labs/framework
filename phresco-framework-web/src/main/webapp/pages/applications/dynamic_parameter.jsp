@@ -79,7 +79,7 @@
 	%>
 		<div class="control-group">
 			<label class="control-label labelbold popupLbl">
-				<s:text name='lbl.name' />
+				<s:text name='lbl.module' />
 			</label>
 			<div class="controls">
 				<select name="projectModule" class="xlarge" >

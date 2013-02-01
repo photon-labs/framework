@@ -372,6 +372,7 @@ public class Build extends DynamicParameterAction implements Constants {
 			//To get maven build arguments
 			List<Parameter> parameters = getMojoParameters(mojo, PHASE_PACKAGE);
 			List<String> buildArgCmds = getMavenArgCommands(parameters);
+			buildArgCmds.add("-N");
 			String workingDirectory = getAppDirectoryPath(applicationInfo);
 			getApplicationProcessor().preBuild(getApplicationInfo());
 			BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.BUILD, buildArgCmds, workingDirectory);
