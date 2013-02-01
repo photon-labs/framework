@@ -17,6 +17,7 @@
   limitations under the License.
   ###
   --%>
+<%@page import="org.xhtmlrenderer.css.parser.property.PrimitivePropertyBuilders.Width"%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.io.File"%>
@@ -129,6 +130,14 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
+			<%
+    		boolean isAndroid = TechnologyTypes.ANDROIDS.contains(techId); 
+			%>
+			var themeselected = localStorage["color"];
+				if(<%= isAndroid %> && $(window).width() <= 1024) {
+				    $('.perTabularView').css("margin","40px 50px -15px 0"); 
+				}
+				
     	showLoadingIcon();
     	isResultFileAvailbale();//Check for the performance test result
     	
