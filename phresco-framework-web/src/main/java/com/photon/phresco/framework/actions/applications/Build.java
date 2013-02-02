@@ -372,7 +372,7 @@ public class Build extends DynamicParameterAction implements Constants {
 			//To get maven build arguments
 			List<Parameter> parameters = getMojoParameters(mojo, PHASE_PACKAGE);
 			List<String> buildArgCmds = getMavenArgCommands(parameters);
-			buildArgCmds.add("-N");
+			buildArgCmds.add(HYPHEN_N);
 			String workingDirectory = getAppDirectoryPath(applicationInfo);
 			getApplicationProcessor().preBuild(getApplicationInfo());
 			BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.BUILD, buildArgCmds, workingDirectory);
@@ -429,6 +429,7 @@ public class Build extends DynamicParameterAction implements Constants {
 			//To get maven build arguments
 			List<Parameter> parameters = getMojoParameters(mojo, PHASE_DEPLOY);
 			List<String> buildArgCmds = getMavenArgCommands(parameters);
+			buildArgCmds.add(HYPHEN_N);
 			String workingDirectory = getAppDirectoryPath(applicationInfo);
 			BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.DEPLOY, buildArgCmds, workingDirectory);
 			setSessionAttribute(getAppId() + REQ_FROM_TAB_DEPLOY, reader);

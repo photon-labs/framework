@@ -338,7 +338,6 @@ public class Quality extends DynamicParameterAction implements Constants {
 	    try {
 	    	ApplicationInfo appInfo = getApplicationInfo();
             removeSessionAttribute(appInfo.getId() + PHASE_UNIT_TEST + SESSION_WATCHER_MAP);
-            setProjModulesInReq();
             Map<String, DependantParameters> watcherMap = new HashMap<String, DependantParameters>(8);
 
             MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_UNIT_TEST)));
@@ -373,14 +372,13 @@ public class Quality extends DynamicParameterAction implements Constants {
         try {
             ApplicationInfo appInfo = getApplicationInfo();
             StringBuilder workingDirectory = new StringBuilder(getAppDirectoryPath(appInfo));
-            if (StringUtils.isNotEmpty(getProjectModule())) {
-                workingDirectory.append(File.separator);
-                workingDirectory.append(getProjectModule());
-            }
             MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_UNIT_TEST)));
             persistValuesToXml(mojo, PHASE_UNIT_TEST);
+            List<Parameter> parameters = getMojoParameters(mojo, PHASE_UNIT_TEST);
+            List<String> buildArgCmds = getMavenArgCommands(parameters);
+            buildArgCmds.add(HYPHEN_N);
             ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-            BufferedReader reader = applicationManager.performAction(getProjectInfo(), ActionType.UNIT_TEST, null, workingDirectory.toString());
+            BufferedReader reader = applicationManager.performAction(getProjectInfo(), ActionType.UNIT_TEST, buildArgCmds, workingDirectory.toString());
             setSessionAttribute(getAppId() + UNIT, reader);
             setReqAttribute(REQ_APP_ID, getAppId());
             setReqAttribute(REQ_ACTION_TYPE, UNIT);

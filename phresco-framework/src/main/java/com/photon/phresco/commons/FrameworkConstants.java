@@ -31,6 +31,8 @@ public interface FrameworkConstants {
     String PHRESCO_DOT = "phresco.";
     String DOT_TARGET_DIR = ".target.dir";
     String PHRESCO_DOT_EXTRACT_DOT = "phresco.extract.";
+    
+    String HYPHEN_N = "-N";
 
 	String CSV_PATTERN = "\\s*,\\s*";
     
