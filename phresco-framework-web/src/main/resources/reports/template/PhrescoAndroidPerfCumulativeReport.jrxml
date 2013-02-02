@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PhrescoXmlReport" pageWidth="555" pageHeight="842" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isTitleNewPage="true">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PhrescoXmlReport" pageWidth="555" pageHeight="842" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
 	<property name="ireport.zoom" value="1.4641000000000006"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
@@ -30,7 +30,7 @@
 				<staticText>
 					<reportElement x="5" y="4" width="191" height="15" forecolor="#FFFFFF"/>
 					<textElement>
-						<font fontName="Tahoma" size="12" isBold="true"/>
+						<font fontName="Times New Roman" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Performance Test Report]]></text>
 				</staticText>
@@ -50,7 +50,7 @@
 				<staticText>
 					<reportElement style="PAPCRHeadingRowLabel" x="15" y="8" width="70" height="15"/>
 					<textElement>
-						<font fontName="Tahoma" size="12" isBold="true"/>
+						<font fontName="Times New Roman" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[File Name :]]></text>
 				</staticText>
@@ -65,7 +65,7 @@
 				<textField>
 					<reportElement style="PAPCRHeadingRowLabelValue" x="85" y="8" width="462" height="15"/>
 					<textElement>
-						<font fontName="Tahoma" size="12" isBold="true"/>
+						<font fontName="Times New Roman" size="12" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{fileName}]]></textFieldExpression>
 				</textField>

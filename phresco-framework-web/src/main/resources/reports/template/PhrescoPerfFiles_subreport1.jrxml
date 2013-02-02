@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PhrescoPerfFiles_subreport1" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="19"/>
+	<style name="PPFDTitle"/>
+	<style name="PPFDTitleRect"/>
+	<style name="PPFDTitleRectLogo"/>
+	<style name="PPFDTitleRectDetail"/>
+	<style name="PPFDTitleLabel"/>
+	<style name="PPFDTitleLabelValue"/>
+	<style name="PPFDHeading"/>
+	<style name="PPFDHeadingLabel"/>
+	<style name="PPFDHeadingLabelValue"/>
+	<style name="PPFDHeadingRow"/>
+	<style name="PPFDHeadingRowLabel"/>
+	<style name="PPFDHeadingRowLabelValue"/>
+	<parameter name="reportsDataType" class="java.lang.String"/>
+	<field name="label" class="java.lang.String"/>
+	<field name="noOfSamples" class="java.lang.Integer"/>
+	<field name="avg" class="java.lang.Double"/>
+	<field name="min" class="java.lang.Integer"/>
+	<field name="max" class="java.lang.Integer"/>
+	<field name="stdDev" class="java.lang.Double"/>
+	<field name="err" class="java.lang.Integer"/>
+	<field name="throughtPut" class="java.lang.Double"/>
+	<field name="kbPerSec" class="java.lang.Double"/>
+	<field name="avgBytes" class="java.lang.Double"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<summary>
+		<band height="684" splitType="Stretch">
+			<frame>
+				<reportElement mode="Opaque" x="0" y="15" width="555" height="208" isRemoveLineWhenBlank="true" backcolor="#FFFFFF">
+					<printWhenExpression><![CDATA[$P{reportsDataType}.equals("detail")]]></printWhenExpression>
+				</reportElement>
+				<rectangle radius="10">
+					<reportElement style="PPFDHeadingRow" x="13" y="0" width="100" height="20"/>
+				</rectangle>
+				<staticText>
+					<reportElement style="PPFDHeadingRowLabel" x="30" y="4" width="67" height="15"/>
+					<textElement>
+						<font fontName="Times New Roman" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Throughput]]></text>
+				</staticText>
+				<bar3DChart>
+					<chart>
+						<reportElement x="13" y="28" width="516" height="180"/>
+						<chartTitle/>
+						<chartSubtitle/>
+						<chartLegend/>
+					</chart>
+					<categoryDataset>
+						<categorySeries>
+							<seriesExpression><![CDATA["Throughtput"]]></seriesExpression>
+							<categoryExpression><![CDATA[$F{label}]]></categoryExpression>
+							<valueExpression><![CDATA[$F{throughtPut}]]></valueExpression>
+						</categorySeries>
+					</categoryDataset>
+					<bar3DPlot>
+						<plot labelRotation="30.0">
+							<seriesColor seriesOrder="0" color="#66FF66"/>
+						</plot>
+						<itemLabel/>
+					</bar3DPlot>
+				</bar3DChart>
+			</frame>
+			<frame>
+				<reportElement mode="Opaque" x="0" y="223" width="555" height="211" isRemoveLineWhenBlank="true" backcolor="#FFFFFF">
+					<printWhenExpression><![CDATA[$P{reportsDataType}.equals("detail")]]></printWhenExpression>
+				</reportElement>
+				<rectangle radius="10">
+					<reportElement style="PPFDHeadingRow" x="12" y="0" width="113" height="20"/>
+				</rectangle>
+				<staticText>
+					<reportElement style="PPFDHeadingRowLabel" x="20" y="4" width="100" height="15"/>
+					<textElement>
+						<font fontName="Times New Roman" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Min Response Time]]></text>
+				</staticText>
+				<bar3DChart>
+					<chart>
+						<reportElement x="13" y="30" width="516" height="180"/>
+						<chartTitle/>
+						<chartSubtitle/>
+						<chartLegend/>
+					</chart>
+					<categoryDataset>
+						<categorySeries>
+							<seriesExpression><![CDATA["Min Response Time"]]></seriesExpression>
+							<categoryExpression><![CDATA[$F{label}]]></categoryExpression>
+							<valueExpression><![CDATA[$F{min}]]></valueExpression>
+						</categorySeries>
+					</categoryDataset>
+					<bar3DPlot>
+						<plot labelRotation="30.0">
+							<seriesColor seriesOrder="0" color="#66FF66"/>
+						</plot>
+						<itemLabel/>
+					</bar3DPlot>
+				</bar3DChart>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" mode="Opaque" x="0" y="472" width="555" height="212" backcolor="#FFFFFF"/>
+				<rectangle radius="10">
+					<reportElement style="PPFDHeadingRow" x="12" y="0" width="113" height="20"/>
+				</rectangle>
+				<staticText>
+					<reportElement style="PPFDHeadingRowLabel" x="22" y="4" width="100" height="15"/>
+					<textElement>
+						<font fontName="Times New Roman" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Max Response Time]]></text>
+				</staticText>
+				<bar3DChart>
+					<chart>
+						<reportElement x="13" y="32" width="516" height="180"/>
+						<chartTitle/>
+						<chartSubtitle/>
+						<chartLegend/>
+					</chart>
+					<categoryDataset>
+						<categorySeries>
+							<seriesExpression><![CDATA["Max Response Time"]]></seriesExpression>
+							<categoryExpression><![CDATA[$F{label}]]></categoryExpression>
+							<valueExpression><![CDATA[$F{max}]]></valueExpression>
+						</categorySeries>
+					</categoryDataset>
+					<bar3DPlot>
+						<plot labelRotation="30.0">
+							<seriesColor seriesOrder="0" color="#66FF66"/>
+						</plot>
+						<itemLabel/>
+					</bar3DPlot>
+				</bar3DChart>
+			</frame>
+		</band>
+	</summary>
+</jasperReport>

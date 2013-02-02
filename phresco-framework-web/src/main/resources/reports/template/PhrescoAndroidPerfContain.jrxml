@@ -42,7 +42,7 @@
 						<printWhenExpression><![CDATA[$P{logo}.equals("")]]></printWhenExpression>
 					</reportElement>
 					<textElement verticalAlignment="Bottom">
-						<font size="13" isBold="true"/>
+						<font fontName="Times New Roman" size="13" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Photon]]></text>
 				</staticText>
@@ -51,7 +51,7 @@
 						<printWhenExpression><![CDATA[$P{logo}.equals("")]]></printWhenExpression>
 					</reportElement>
 					<textElement verticalAlignment="Top" rotation="None">
-						<font size="28" isBold="true"/>
+						<font fontName="Times New Roman" size="28" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<text><![CDATA[PHRESCO]]></text>
@@ -59,70 +59,70 @@
 				<staticText>
 					<reportElement style="PAPCTitleLabel" x="176" y="9" width="112" height="20"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="12" isBold="true"/>
+						<font fontName="Times New Roman" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Project Name :]]></text>
 				</staticText>
 				<staticText>
 					<reportElement style="PAPCTitleLabel" x="176" y="29" width="112" height="20"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="12" isBold="true"/>
+						<font fontName="Times New Roman" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Application Name :]]></text>
 				</staticText>
 				<staticText>
 					<reportElement style="PAPCTitleLabel" x="176" y="49" width="112" height="20"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="12" isBold="true"/>
+						<font fontName="Times New Roman" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Technology :]]></text>
 				</staticText>
 				<staticText>
 					<reportElement style="PAPCTitleLabel" x="176" y="69" width="112" height="20"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="12" isBold="true"/>
+						<font fontName="Times New Roman" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Version :]]></text>
 				</staticText>
 				<staticText>
 					<reportElement style="PAPCTitleLabel" x="176" y="89" width="112" height="20"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="12" isBold="true"/>
+						<font fontName="Times New Roman" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Date :]]></text>
 				</staticText>
 				<textField>
 					<reportElement style="PAPCTitleLabelValue" x="290" y="9" width="257" height="20"/>
 					<textElement verticalAlignment="Middle">
-						<font fontName="Tahoma" size="11" isBold="true"/>
+						<font fontName="Times New Roman" size="11" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{projectName}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement style="PAPCTitleLabelValue" x="290" y="29" width="257" height="20"/>
 					<textElement verticalAlignment="Middle">
-						<font fontName="Tahoma" size="11" isBold="true"/>
+						<font fontName="Times New Roman" size="11" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{projectCode}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement style="PAPCTitleLabelValue" x="290" y="49" width="257" height="20"/>
 					<textElement verticalAlignment="Middle">
-						<font fontName="Tahoma" size="11" isBold="true"/>
+						<font fontName="Times New Roman" size="11" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{techName}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement style="PAPCTitleLabelValue" x="290" y="89" width="257" height="20"/>
 					<textElement verticalAlignment="Middle">
-						<font fontName="Tahoma" size="11" isBold="true"/>
+						<font fontName="Times New Roman" size="11" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement style="PAPCTitleLabelValue" x="290" y="69" width="100" height="20"/>
 					<textElement verticalAlignment="Middle">
-						<font fontName="Tahoma" size="11" isBold="true"/>
+						<font fontName="Times New Roman" size="11" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{version}]]></textFieldExpression>
 				</textField>
@@ -169,23 +169,23 @@
 				<textField evaluationTime="Report">
 					<reportElement style="PAPCCopyRightPageNo" x="513" y="0" width="40" height="24"/>
 					<textElement verticalAlignment="Middle">
-						<font fontName="Tahoma" size="11" isBold="true"/>
+						<font fontName="Times New Roman" size="11" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement style="PAPCCopyRightPageNo" x="433" y="0" width="80" height="24"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Tahoma" size="11" isBold="true"/>
+						<font fontName="Times New Roman" size="11" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+					<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of "]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="2" y="0" width="191" height="24" forecolor="#FFFFFF" backcolor="#000000"/>
 					<textElement verticalAlignment="Middle">
-						<font fontName="Tahoma" size="11" isBold="true"/>
+						<font fontName="Times New Roman" size="11" isBold="true"/>
 					</textElement>
-					<text><![CDATA[© 2012. Photon Infotech Pvt Ltd.]]></text>
+					<text><![CDATA[© 2013. Photon Infotech Pvt Ltd.]]></text>
 				</staticText>
 			</frame>
 		</band>

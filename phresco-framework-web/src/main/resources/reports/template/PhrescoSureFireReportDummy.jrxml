@@ -72,14 +72,14 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="10" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+					<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of "]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="2" y="4" width="191" height="16" forecolor="#FFFFFF" backcolor="#000000"/>
 					<textElement>
 						<font fontName="Times New Roman"/>
 					</textElement>
-					<text><![CDATA[© Copyright Photon Infotech Pvt Ltd 2012.]]></text>
+					<text><![CDATA[© Copyright Photon Infotech Pvt Ltd 2013.]]></text>
 				</staticText>
 			</frame>
 		</band>

@@ -28,12 +28,12 @@
 			<printWhenExpression><![CDATA[$P{testType}.contains("unit")]]></printWhenExpression>
 			<frame>
 				<reportElement style="UCRHeading" mode="Opaque" x="0" y="0" width="555" height="24" isRemoveLineWhenBlank="true">
-					<printWhenExpression><![CDATA[$P{testType}.equals("unit") && !$F{testSuites}.isEmpty() || $P{testType}.contains("unit") && !$F{allTestSuites}.isEmpty()]]></printWhenExpression>
+					<printWhenExpression><![CDATA[($P{testType}.equals("unit") && !$F{testSuites}.isEmpty()) || ($P{testType}.equals("unit") && !$F{allTestSuites}.isEmpty())]]></printWhenExpression>
 				</reportElement>
 				<staticText>
 					<reportElement x="5" y="4" width="110" height="15" forecolor="#FFFFFF" backcolor="#FFFFFF"/>
 					<textElement>
-						<font fontName="Tahoma" size="12" isBold="true"/>
+						<font fontName="Times New Roman" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Unit Test Report]]></text>
 				</staticText>
@@ -41,23 +41,30 @@
 		</band>
 	</pageHeader>
 	<detail>
-		<band height="344" splitType="Stretch">
+		<band height="422" splitType="Stretch">
 			<printWhenExpression><![CDATA[$P{testType}.contains("unit")]]></printWhenExpression>
 			<frame>
-				<reportElement x="0" y="0" width="555" height="307" isRemoveLineWhenBlank="true"/>
+				<reportElement x="0" y="0" width="555" height="211" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$P{testType}.contains("unit") && !$F{allTestSuites}.isEmpty()]]></printWhenExpression>
+				</reportElement>
 				<subreport>
-					<reportElement x="0" y="0" width="555" height="307" isRemoveLineWhenBlank="true"/>
+					<reportElement x="0" y="0" width="555" height="211" isRemoveLineWhenBlank="true"/>
+					<subreportParameter name="allTestSuites">
+						<subreportParameterExpression><![CDATA[$F{allTestSuites}]]></subreportParameterExpression>
+					</subreportParameter>
 					<subreportParameter name="reportsDataType">
 						<subreportParameterExpression><![CDATA[$P{reportsDataType}]]></subreportParameterExpression>
 					</subreportParameter>
-					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{allTestSuites})]]></dataSourceExpression>
-					<subreportExpression><![CDATA["PhrescoSureFireCrispReport.jasper"]]></subreportExpression>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource()]]></dataSourceExpression>
+					<subreportExpression><![CDATA["PhrescoSureFireReport_subreport1.jasper"]]></subreportExpression>
 				</subreport>
 			</frame>
 			<frame>
-				<reportElement x="0" y="307" width="555" height="37" isRemoveLineWhenBlank="true"/>
+				<reportElement x="0" y="211" width="555" height="211" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$P{testType}.contains("unit") && !$F{testSuites}.isEmpty()]]></printWhenExpression>
+				</reportElement>
 				<subreport>
-					<reportElement x="0" y="0" width="555" height="36" isRemoveLineWhenBlank="true">
+					<reportElement x="0" y="0" width="555" height="211" isRemoveLineWhenBlank="true">
 						<printWhenExpression><![CDATA[$P{reportsDataType}.equals("detail")]]></printWhenExpression>
 					</reportElement>
 					<subreportParameter name="reportsDataType">

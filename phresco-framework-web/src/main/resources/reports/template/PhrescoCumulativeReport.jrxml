@@ -52,7 +52,7 @@
 						<printWhenExpression><![CDATA[$P{logo}.equals("")]]></printWhenExpression>
 					</reportElement>
 					<textElement verticalAlignment="Bottom">
-						<font size="13" isBold="true"/>
+						<font fontName="Times New Roman" size="13" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Photon]]></text>
 				</staticText>
@@ -61,7 +61,7 @@
 						<printWhenExpression><![CDATA[$P{logo}.equals("")]]></printWhenExpression>
 					</reportElement>
 					<textElement verticalAlignment="Top" rotation="None">
-						<font size="28" isBold="true"/>
+						<font fontName="Times New Roman" size="28" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<text><![CDATA[PHRESCO]]></text>
@@ -69,70 +69,70 @@
 				<staticText>
 					<reportElement style="PCRTitleLabel" x="176" y="9" width="112" height="20"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="12" isBold="true"/>
+						<font fontName="Times New Roman" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Project Name :]]></text>
 				</staticText>
 				<staticText>
 					<reportElement style="PCRTitleLabel" x="176" y="29" width="112" height="20"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="12" isBold="true"/>
+						<font fontName="Times New Roman" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Application Name :]]></text>
 				</staticText>
 				<staticText>
 					<reportElement style="PCRTitleLabel" x="176" y="49" width="112" height="20"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="12" isBold="true"/>
+						<font fontName="Times New Roman" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Technology :]]></text>
 				</staticText>
 				<staticText>
 					<reportElement style="PCRTitleLabel" x="176" y="69" width="112" height="20"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="12" isBold="true"/>
+						<font fontName="Times New Roman" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Version :]]></text>
 				</staticText>
 				<staticText>
 					<reportElement style="PCRTitleLabel" x="176" y="89" width="112" height="20"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="12" isBold="true"/>
+						<font fontName="Times New Roman" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Date :]]></text>
 				</staticText>
 				<textField>
 					<reportElement style="PCRTitleLabelValue" x="290" y="9" width="257" height="20"/>
 					<textElement verticalAlignment="Middle">
-						<font fontName="Tahoma" size="11" isBold="true"/>
+						<font fontName="Times New Roman" size="11" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{projectName}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement style="PCRTitleLabelValue" x="290" y="29" width="257" height="20"/>
 					<textElement verticalAlignment="Middle">
-						<font fontName="Tahoma" size="11" isBold="true"/>
+						<font fontName="Times New Roman" size="11" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{projectCode}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement style="PCRTitleLabelValue" x="290" y="49" width="257" height="20"/>
 					<textElement verticalAlignment="Middle">
-						<font fontName="Tahoma" size="11" isBold="true"/>
+						<font fontName="Times New Roman" size="11" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{techName}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement style="PCRTitleLabelValue" x="290" y="89" width="257" height="20"/>
 					<textElement verticalAlignment="Middle">
-						<font fontName="Tahoma" size="11" isBold="true"/>
+						<font fontName="Times New Roman" size="11" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement style="PCRTitleLabelValue" x="290" y="69" width="100" height="20"/>
 					<textElement verticalAlignment="Middle">
-						<font fontName="Tahoma" size="11" isBold="true"/>
+						<font fontName="Times New Roman" size="11" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{version}]]></textFieldExpression>
 				</textField>
@@ -144,12 +144,16 @@
 		</band>
 	</title>
 	<detail>
-		<band height="50" splitType="Stretch">
+		<band height="50">
 			<printWhenExpression><![CDATA[!$P{unitTestReports}.isEmpty()]]></printWhenExpression>
 			<frame>
-				<reportElement x="0" y="0" width="555" height="50"/>
+				<reportElement x="0" y="0" width="555" height="50" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[!$P{unitTestReports}.isEmpty()]]></printWhenExpression>
+				</reportElement>
 				<subreport>
-					<reportElement x="0" y="0" width="555" height="50"/>
+					<reportElement x="0" y="0" width="555" height="50" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[!$P{unitTestReports}.isEmpty()]]></printWhenExpression>
+					</reportElement>
 					<subreportParameter name="testType">
 						<subreportParameterExpression><![CDATA["unit"]]></subreportParameterExpression>
 					</subreportParameter>
@@ -164,9 +168,13 @@
 		<band height="50">
 			<printWhenExpression><![CDATA[!$P{functionalTestReports}.isEmpty()]]></printWhenExpression>
 			<frame>
-				<reportElement x="0" y="0" width="555" height="50"/>
+				<reportElement x="0" y="0" width="555" height="50" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[!$P{functionalTestReports}.isEmpty()]]></printWhenExpression>
+				</reportElement>
 				<subreport>
-					<reportElement x="0" y="0" width="555" height="50"/>
+					<reportElement x="0" y="0" width="555" height="50" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[!$P{functionalTestReports}.isEmpty()]]></printWhenExpression>
+					</reportElement>
 					<subreportParameter name="testType">
 						<subreportParameterExpression><![CDATA["functional"]]></subreportParameterExpression>
 					</subreportParameter>
@@ -181,9 +189,9 @@
 		<band height="50">
 			<printWhenExpression><![CDATA[!$P{loadTestReports}.isEmpty()]]></printWhenExpression>
 			<frame>
-				<reportElement x="0" y="0" width="555" height="50"/>
+				<reportElement x="0" y="0" width="555" height="50" isRemoveLineWhenBlank="true"/>
 				<subreport>
-					<reportElement x="0" y="0" width="555" height="50"/>
+					<reportElement x="0" y="0" width="555" height="50" isRemoveLineWhenBlank="true"/>
 					<subreportParameter name="reportsDataType">
 						<subreportParameterExpression><![CDATA[$P{reportsDataType}]]></subreportParameterExpression>
 					</subreportParameter>
@@ -243,23 +251,23 @@
 			<staticText>
 				<reportElement x="14" y="3" width="194" height="25" forecolor="#FFFFFF"/>
 				<textElement verticalAlignment="Middle">
-					<font size="11" isBold="true"/>
+					<font fontName="Times New Roman" size="11" isBold="true"/>
 				</textElement>
-				<text><![CDATA[© 2012 Photon Infotech Pvt.Ltd]]></text>
+				<text><![CDATA[© 2013 Photon Infotech Pvt.Ltd]]></text>
 			</staticText>
 			<textField evaluationTime="Report">
 				<reportElement style="PCRCopyRightPageNo" x="490" y="5" width="25" height="22"/>
 				<textElement verticalAlignment="Middle">
-					<font size="11" isBold="true"/>
+					<font fontName="Times New Roman" size="11" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="PCRCopyRightPageNo" x="428" y="5" width="64" height="22"/>
-				<textElement verticalAlignment="Middle">
-					<font size="11" isBold="true"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of "]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>

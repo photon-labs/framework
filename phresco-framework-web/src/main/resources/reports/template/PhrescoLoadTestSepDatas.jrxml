@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PhrescoXmlReport" pageWidth="555" pageHeight="842" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="PLTSDTitle"/>
+	<style name="PLTSDTitleRect"/>
+	<style name="PLTSDTitleRectLogo"/>
+	<style name="PLTSDTitleRectDetail"/>
+	<style name="PLTSDTitleLabel"/>
+	<style name="PLTSDTitleLabelValue"/>
+	<style name="PLTSDHeading"/>
+	<style name="PLTSDHeadingLabel"/>
+	<style name="PLTSDHeadingLabelValue"/>
+	<style name="PLTSDHeadingRow"/>
+	<style name="PLTSDHeadingRowLabel"/>
+	<style name="PLTSDHeadingRowLabelValue"/>
+	<style name="table" fontName="Times New Roman" fontSize="12">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" fontName="Times New Roman" fontSize="12">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" fontName="Times New Roman" fontSize="12">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" fontName="Times New Roman" fontSize="12">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH_Label"/>
+	<style name="table_CH_Label"/>
+	<style name="table_TD_Label"/>
+	<subDataset name="Table Dataset 1">
+		<parameter name="reportsDataType" class="java.lang.String"/>
+		<field name="time" class="java.lang.Integer"/>
+		<field name="latencyTime" class="java.lang.Integer"/>
+		<field name="timeStamp" class="java.lang.String"/>
+		<field name="success" class="java.lang.Boolean"/>
+		<field name="label" class="java.lang.String"/>
+		<field name="threadName" class="java.lang.String"/>
+	</subDataset>
+	<parameter name="reportsDataType" class="java.lang.String"/>
+	<parameter name="testResults" class="java.util.List"/>
+	<detail>
+		<band height="82" splitType="Stretch">
+			<printWhenExpression><![CDATA[$P{reportsDataType}.equals("detail")]]></printWhenExpression>
+			<frame>
+				<reportElement x="0" y="0" width="555" height="78"/>
+				<componentElement>
+					<reportElement key="table" x="0" y="5" width="555" height="73"/>
+					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+						<datasetRun subDataset="Table Dataset 1">
+							<datasetParameter name="reportsDataType">
+								<datasetParameterExpression><![CDATA[$P{reportsDataType}]]></datasetParameterExpression>
+							</datasetParameter>
+							<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{testResults})]]></dataSourceExpression>
+						</datasetRun>
+						<jr:column width="233">
+							<jr:columnHeader style="table_CH" height="30" rowSpan="1">
+								<staticText>
+									<reportElement style="table_CH_Label" x="0" y="0" width="233" height="30"/>
+									<textElement verticalAlignment="Middle">
+										<font fontName="Times New Roman" size="12" isBold="true"/>
+										<paragraph leftIndent="3"/>
+									</textElement>
+									<text><![CDATA[Thread Name]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table_TD" height="30" rowSpan="1">
+								<textField isStretchWithOverflow="true">
+									<reportElement style="table_TD_Label" x="0" y="0" width="233" height="20"/>
+									<textElement verticalAlignment="Middle">
+										<font fontName="Times New Roman" size="12"/>
+										<paragraph leftIndent="3"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{threadName}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="141">
+							<jr:columnHeader style="table_CH" height="30" rowSpan="1">
+								<staticText>
+									<reportElement style="table_CH_Label" x="0" y="0" width="141" height="30"/>
+									<textElement verticalAlignment="Middle">
+										<font fontName="Times New Roman" size="12" isBold="true"/>
+										<paragraph leftIndent="3"/>
+									</textElement>
+									<text><![CDATA[Date]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table_TD" height="30" rowSpan="1">
+								<textField isStretchWithOverflow="true">
+									<reportElement style="table_TD_Label" x="0" y="0" width="141" height="20"/>
+									<textElement verticalAlignment="Middle">
+										<font fontName="Times New Roman" size="12"/>
+										<paragraph leftIndent="3"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{timeStamp}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="90">
+							<jr:columnHeader style="table_CH" height="30" rowSpan="1">
+								<staticText>
+									<reportElement style="table_CH_Label" x="0" y="0" width="90" height="30"/>
+									<textElement verticalAlignment="Middle">
+										<font fontName="Times New Roman" size="12" isBold="true"/>
+										<paragraph leftIndent="3"/>
+									</textElement>
+									<text><![CDATA[Elapsed Time]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table_TD" height="30" rowSpan="1">
+								<textField>
+									<reportElement style="table_TD_Label" x="0" y="0" width="90" height="20"/>
+									<textElement verticalAlignment="Middle">
+										<font fontName="Times New Roman" size="12"/>
+										<paragraph leftIndent="3"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{time}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="90">
+							<jr:columnHeader style="table_CH" height="30" rowSpan="1">
+								<staticText>
+									<reportElement style="table_CH_Label" x="0" y="0" width="90" height="30"/>
+									<textElement verticalAlignment="Middle">
+										<font fontName="Times New Roman" size="12" isBold="true"/>
+										<paragraph leftIndent="3"/>
+									</textElement>
+									<text><![CDATA[Status]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table_TD" height="30" rowSpan="1">
+								<textField>
+									<reportElement style="table_TD_Label" x="0" y="0" width="90" height="20"/>
+									<textElement verticalAlignment="Middle">
+										<font fontName="Times New Roman" size="12"/>
+										<paragraph leftIndent="3"/>
+									</textElement>
+									<textFieldExpression><![CDATA[""+$F{success}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+					</jr:table>
+				</componentElement>
+			</frame>
+		</band>
+	</detail>
+	<summary>
+		<band height="183">
+			<frame>
+				<reportElement x="0" y="0" width="555" height="183"/>
+				<subreport>
+					<reportElement x="0" y="0" width="555" height="183" isRemoveLineWhenBlank="true"/>
+					<subreportParameter name="reportsDataType">
+						<subreportParameterExpression><![CDATA[$P{reportsDataType}]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{testResults})]]></dataSourceExpression>
+					<subreportExpression><![CDATA["PhrescoLoadTestDatas.jasper"]]></subreportExpression>
+				</subreport>
+			</frame>
+		</band>
+	</summary>
+</jasperReport>

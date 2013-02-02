@@ -16,7 +16,7 @@
 	<style name="PPFTHeadingRowLabel"/>
 	<style name="PPFTHeadingRowLabelValue"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA["/Users/kaleeswaran/root/branches/agra/framework/trunk/phresco-framework-web/src/main/resources/reports/template/"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
 	<parameter name="reportsDataType" class="java.lang.String"/>
 	<field name="fileName" class="java.lang.String"/>
@@ -31,7 +31,7 @@
 	<field name="totalAvgBytes" class="java.lang.String"/>
 	<field name="jmeterTestResult" class="java.util.List"/>
 	<detail>
-		<band height="63" splitType="Stretch">
+		<band height="82" splitType="Stretch">
 			<frame>
 				<reportElement x="0" y="0" width="554" height="24"/>
 				<rectangle radius="10">
@@ -40,22 +40,22 @@
 				<staticText>
 					<reportElement style="PPFTHeadingRowLabel" x="13" y="3" width="75" height="15"/>
 					<textElement>
-						<font fontName="Tahoma" size="12" isBold="true"/>
+						<font fontName="Times New Roman" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[File Name :]]></text>
 				</staticText>
 				<textField>
 					<reportElement style="PPFTHeadingRowLabelValue" x="88" y="3" width="456" height="15"/>
 					<textElement>
-						<font fontName="Tahoma" size="12" isBold="true"/>
+						<font fontName="Times New Roman" size="12" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{fileName}]]></textFieldExpression>
 				</textField>
 			</frame>
 			<frame>
-				<reportElement positionType="Float" stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="24" width="555" height="39" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement mode="Opaque" x="0" y="24" width="555" height="58" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF"/>
 				<subreport>
-					<reportElement positionType="Float" x="0" y="0" width="555" height="39"/>
+					<reportElement x="0" y="0" width="555" height="57"/>
 					<subreportParameter name="min">
 						<subreportParameterExpression><![CDATA[$F{min}]]></subreportParameterExpression>
 					</subreportParameter>
@@ -65,11 +65,14 @@
 					<subreportParameter name="totalAvgBytes">
 						<subreportParameterExpression><![CDATA[$F{totalAvgBytes}]]></subreportParameterExpression>
 					</subreportParameter>
+					<subreportParameter name="totalKbPerSec">
+						<subreportParameterExpression><![CDATA[$F{totalKbPerSec}]]></subreportParameterExpression>
+					</subreportParameter>
 					<subreportParameter name="totalThroughput">
 						<subreportParameterExpression><![CDATA[$F{totalThroughput}]]></subreportParameterExpression>
 					</subreportParameter>
-					<subreportParameter name="totalKbPerSec">
-						<subreportParameterExpression><![CDATA[$F{totalKbPerSec}]]></subreportParameterExpression>
+					<subreportParameter name="jmeterTestResult">
+						<subreportParameterExpression><![CDATA[$F{jmeterTestResult}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter name="totalStdDev">
 						<subreportParameterExpression><![CDATA[$F{totalStdDev}]]></subreportParameterExpression>
@@ -80,16 +83,19 @@
 					<subreportParameter name="reportsDataType">
 						<subreportParameterExpression><![CDATA[$P{reportsDataType}]]></subreportParameterExpression>
 					</subreportParameter>
-					<subreportParameter name="totalNoOfSample">
-						<subreportParameterExpression><![CDATA[$F{totalNoOfSample}]]></subreportParameterExpression>
-					</subreportParameter>
 					<subreportParameter name="totalAvg">
 						<subreportParameterExpression><![CDATA[$F{totalAvg}]]></subreportParameterExpression>
 					</subreportParameter>
-					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{jmeterTestResult})]]></dataSourceExpression>
+					<subreportParameter name="totalNoOfSample">
+						<subreportParameterExpression><![CDATA[$F{totalNoOfSample}]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource()]]></dataSourceExpression>
 					<subreportExpression><![CDATA["PhrescoPerfFileDatas.jasper"]]></subreportExpression>
 				</subreport>
 			</frame>
 		</band>
 	</detail>
+	<summary>
+		<band height="3"/>
+	</summary>
 </jasperReport>

@@ -22,6 +22,9 @@
 	<parameter name="logoBase64Img" class="java.io.InputStream">
 		<defaultValueExpression><![CDATA[new ByteArrayInputStream(new Base64().decodeBase64($P{logo}.getBytes("UTF-8")))]]></defaultValueExpression>
 	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/Users/kaleeswaran/work/master-plugin/report-phresco-plugin/src/main/resources/"]]></defaultValueExpression>
+	</parameter>
 	<field name="testSuites" class="java.util.List"/>
 	<field name="allTestSuites" class="java.util.List"/>
 	<background>
@@ -42,7 +45,7 @@
 						<printWhenExpression><![CDATA[$P{logo}.equals("")]]></printWhenExpression>
 					</reportElement>
 					<textElement verticalAlignment="Bottom">
-						<font size="13" isBold="true"/>
+						<font fontName="Times New Roman" size="13" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Photon]]></text>
 				</staticText>
@@ -51,7 +54,7 @@
 						<printWhenExpression><![CDATA[$P{logo}.equals("")]]></printWhenExpression>
 					</reportElement>
 					<textElement verticalAlignment="Top" rotation="None">
-						<font size="28" isBold="true"/>
+						<font fontName="Times New Roman" size="28" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<text><![CDATA[PHRESCO]]></text>
@@ -59,70 +62,70 @@
 				<staticText>
 					<reportElement style="PSFRTitleLabel" x="176" y="9" width="112" height="20"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="12" isBold="true"/>
+						<font fontName="Times New Roman" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Project Name :]]></text>
 				</staticText>
 				<staticText>
 					<reportElement style="PSFRTitleLabel" x="176" y="29" width="112" height="20"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="12" isBold="true"/>
+						<font fontName="Times New Roman" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Application Name :]]></text>
 				</staticText>
 				<staticText>
 					<reportElement style="PSFRTitleLabel" x="176" y="49" width="112" height="20"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="12" isBold="true"/>
+						<font fontName="Times New Roman" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Technology :]]></text>
 				</staticText>
 				<staticText>
 					<reportElement style="PSFRTitleLabel" x="176" y="69" width="112" height="20"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="12" isBold="true"/>
+						<font fontName="Times New Roman" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Version :]]></text>
 				</staticText>
 				<staticText>
 					<reportElement style="PSFRTitleLabel" x="176" y="89" width="112" height="20"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="12" isBold="true"/>
+						<font fontName="Times New Roman" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Date :]]></text>
 				</staticText>
 				<textField>
 					<reportElement style="PSFRTitleLabelValue" x="290" y="9" width="257" height="20"/>
 					<textElement verticalAlignment="Middle">
-						<font fontName="Tahoma" size="11" isBold="true"/>
+						<font fontName="Times New Roman" size="11" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{projectName}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement style="PSFRTitleLabelValue" x="290" y="29" width="257" height="20"/>
 					<textElement verticalAlignment="Middle">
-						<font fontName="Tahoma" size="11" isBold="true"/>
+						<font fontName="Times New Roman" size="11" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{projectCode}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement style="PSFRTitleLabelValue" x="290" y="49" width="257" height="20"/>
 					<textElement verticalAlignment="Middle">
-						<font fontName="Tahoma" size="11" isBold="true"/>
+						<font fontName="Times New Roman" size="11" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{techName}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement style="PSFRTitleLabelValue" x="290" y="89" width="257" height="20"/>
 					<textElement verticalAlignment="Middle">
-						<font fontName="Tahoma" size="11" isBold="true"/>
+						<font fontName="Times New Roman" size="11" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement style="PSFRTitleLabelValue" x="290" y="69" width="100" height="20"/>
 					<textElement verticalAlignment="Middle">
-						<font fontName="Tahoma" size="11" isBold="true"/>
+						<font fontName="Times New Roman" size="11" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{version}]]></textFieldExpression>
 				</textField>
@@ -137,25 +140,24 @@
 		<band splitType="Stretch"/>
 	</pageHeader>
 	<detail>
-		<band height="344" splitType="Stretch">
+		<band height="423" splitType="Stretch">
 			<frame>
-				<reportElement x="0" y="0" width="555" height="307">
-					<printWhenExpression><![CDATA[!$F{allTestSuites}.isEmpty()]]></printWhenExpression>
-				</reportElement>
+				<reportElement x="0" y="0" width="555" height="211"/>
 				<subreport>
-					<reportElement x="0" y="0" width="555" height="307">
-						<printWhenExpression><![CDATA[!$F{allTestSuites}.isEmpty()]]></printWhenExpression>
-					</reportElement>
-					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{allTestSuites})]]></dataSourceExpression>
-					<subreportExpression><![CDATA["PhrescoSureFireCrispReport.jasper"]]></subreportExpression>
+					<reportElement x="0" y="0" width="555" height="211"/>
+					<subreportParameter name="allTestSuites">
+						<subreportParameterExpression><![CDATA[$F{allTestSuites}]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource()]]></dataSourceExpression>
+					<subreportExpression><![CDATA["PhrescoSureFireReport_subreport1.jasper"]]></subreportExpression>
 				</subreport>
 			</frame>
 			<frame>
-				<reportElement x="0" y="307" width="555" height="37">
+				<reportElement x="0" y="211" width="555" height="209">
 					<printWhenExpression><![CDATA[!$F{testSuites}.isEmpty()]]></printWhenExpression>
 				</reportElement>
 				<subreport>
-					<reportElement positionType="Float" x="2" y="0" width="553" height="36">
+					<reportElement positionType="Float" x="0" y="0" width="555" height="209">
 						<printWhenExpression><![CDATA[$P{reportsDataType}.equals("detail")]]></printWhenExpression>
 					</reportElement>
 					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{testSuites})]]></dataSourceExpression>
@@ -171,23 +173,23 @@
 				<textField evaluationTime="Report">
 					<reportElement style="PSFRCopyRightPageNo" x="513" y="0" width="40" height="24"/>
 					<textElement verticalAlignment="Middle">
-						<font fontName="Tahoma" size="11" isBold="true"/>
+						<font fontName="Times New Roman" size="11" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement style="PSFRCopyRightPageNo" x="433" y="0" width="80" height="24"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Tahoma" size="11" isBold="true"/>
+						<font fontName="Times New Roman" size="11" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of "]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="4" y="0" width="191" height="24" forecolor="#FFFFFF" backcolor="#000000"/>
 					<textElement verticalAlignment="Middle">
-						<font fontName="Tahoma" size="11" isBold="true"/>
+						<font fontName="Times New Roman" size="11" isBold="true"/>
 					</textElement>
-					<text><![CDATA[© 2012. Photon Infotech Pvt Ltd.]]></text>
+					<text><![CDATA[© 2013. Photon Infotech Pvt Ltd.]]></text>
 				</staticText>
 			</frame>
 		</band>

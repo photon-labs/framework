@@ -15,6 +15,9 @@
 	<style name="PSFDRTHeadingRow"/>
 	<style name="PSFDRTHeadingRowLabel"/>
 	<style name="PSFDRTHeadingRowLabelValue"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/Users/kaleeswaran/work/master-plugin/report-phresco-plugin/src/main/resources/"]]></defaultValueExpression>
+	</parameter>
 	<field name="name" class="java.lang.String"/>
 	<field name="file" class="java.lang.String"/>
 	<field name="assertions" class="java.lang.String"/>
@@ -30,18 +33,13 @@
 		<band splitType="Stretch"/>
 	</background>
 	<detail>
-		<band height="100" splitType="Stretch">
+		<band height="323" splitType="Stretch">
 			<frame>
-				<reportElement mode="Opaque" x="0" y="5" width="555" height="95" forecolor="#000000" backcolor="#FFFFFF"/>
-				<subreport>
-					<reportElement x="0" y="45" width="555" height="37"/>
-					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{testCases})]]></dataSourceExpression>
-					<subreportExpression><![CDATA["PhrescoSureFireTestCaseReport.jasper"]]></subreportExpression>
-				</subreport>
+				<reportElement mode="Opaque" x="0" y="5" width="555" height="43" forecolor="#000000" backcolor="#FFFFFF"/>
 				<staticText>
 					<reportElement x="8" y="0" width="111" height="18"/>
 					<textElement>
-						<font fontName="Arial" size="14" isBold="true" isItalic="false" isUnderline="true"/>
+						<font fontName="Times New Roman" size="14" isBold="true" isItalic="false" isUnderline="true"/>
 					</textElement>
 					<text><![CDATA[Detailed Report]]></text>
 				</staticText>
@@ -54,17 +52,28 @@
 				<staticText>
 					<reportElement style="PSFDRTHeadingRowLabel" x="10" y="22" width="109" height="15"/>
 					<textElement>
-						<font fontName="Tahoma" size="12" isBold="true"/>
+						<font fontName="Times New Roman" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Testsuite Name :]]></text>
 				</staticText>
 				<textField>
 					<reportElement style="PSFDRTHeadingRowLabelValue" x="119" y="22" width="410" height="15"/>
 					<textElement>
-						<font fontName="Tahoma" size="12" isBold="true"/>
+						<font fontName="Times New Roman" size="12" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
 				</textField>
+			</frame>
+			<frame>
+				<reportElement x="0" y="50" width="555" height="272"/>
+				<subreport>
+					<reportElement x="0" y="0" width="555" height="272"/>
+					<subreportParameter name="testCases">
+						<subreportParameterExpression><![CDATA[$F{testCases}]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource()]]></dataSourceExpression>
+					<subreportExpression><![CDATA["PhrescoSureFireDetailReport_subreport1.jasper"]]></subreportExpression>
+				</subreport>
 			</frame>
 		</band>
 	</detail>
