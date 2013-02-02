@@ -21,7 +21,9 @@
 Width <= 1024
 *************************************************************************************/
 @media screen and (max-width : 1024px) {
-	
+	.perTabularView {
+		margin: -10px 0px !important;
+	}
 	div.site_report {
 		height: 70%;
 	    position: absolute;
