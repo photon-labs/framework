@@ -502,7 +502,7 @@
 				'background' :  pageHeaderColor      // background color for server, database, webservice * (accordionBackGroundColor)
 			},
 			
-			'.tblheader' : {
+			'.tblheader, .header-backgroundTheme' : {
 				'background':  pageHeaderColor       // table background color  * (accordionBackGroundColor)
 			},
 			

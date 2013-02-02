@@ -74,7 +74,7 @@
 <% } else { %>
 		<div class="build_table_div">
 			<div class="fixed-table-container">
-	      		<div class="header-background"> </div>
+	      		<div class="header-background header-backgroundTheme"> </div>
 	      		<div class="fixed-table-container-inner builds-list-table">
 			        <table cellspacing="0" class="zebra-striped">
 			          	<thead>
