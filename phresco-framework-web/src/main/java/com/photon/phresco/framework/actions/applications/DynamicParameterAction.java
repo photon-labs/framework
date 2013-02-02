@@ -802,10 +802,16 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
         	if (!infoFile.exists()) {
         		setParamaterAvailable(false);
                 return SUCCESS;
+        	} else if (getGoal().equals(PHASE_UNIT_TEST)) {
+        	    List<String> projectModules = getProjectModules(getApplicationInfo().getAppDirName());
+        	    if (CollectionUtils.isNotEmpty(projectModules)) {
+        	        setParamaterAvailable(true);
+        	        return SUCCESS;
+        	    }
         	}
         	
             MojoProcessor mojo = new MojoProcessor(infoFile);
-            List<Parameter> parameters = getMojoParameters(mojo, getGoal()); //getDynamicParameters(getGoal());
+            List<Parameter> parameters = getMojoParameters(mojo, getGoal());
             if (CollectionUtils.isEmpty(parameters)) {
                 setParamaterAvailable(false);
                 return SUCCESS;

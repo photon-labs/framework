@@ -39,6 +39,7 @@
 	List<Value> sourceValues = (List<Value>) request.getAttribute(FrameworkConstants.REQ_SOURCE_VALUES);
 	String sonarError = (String) request.getAttribute(FrameworkConstants.REQ_ERROR);
 	String clangReport =  (String) request.getAttribute(FrameworkConstants.CLANG_REPORT);
+	List<String> projectModules = (List<String>) request.getAttribute(FrameworkConstants.REQ_PROJECT_MODULES);
 	String disabledStr = "";
 	// when this is iphone tech there will be a path in clangReport request
 	if (StringUtils.isEmpty(clangReport) && StringUtils.isNotEmpty(sonarError)) {
@@ -49,7 +50,20 @@
 <form id="code" class="codeList">
 	<div class="operation">
         <input type="button" id="codeValidatePopup" class="btn btn-primary" <%= disabledStr %> style=" float: left;" value="<s:text name='lbl.validate'/>" />
-           
+		
+		<%
+			if (CollectionUtils.isNotEmpty(projectModules)) {
+		%>
+			<strong class="validateType"><s:text name="lbl.module"/></strong>&nbsp;
+        	<select id="projectModule">
+        		<% for (String projectModule : projectModules) { %>
+        			<option value="<%= projectModule %>"><%= projectModule %></option>
+        		<% } %>
+        	</select>
+       	<%
+			}
+       	%>
+		
         <strong id="validateType" class="validateType"><s:text name="lbl.sonar.report"/></strong>&nbsp;
         <select id="validateAgainst" name="validateAgainst">
             <%
@@ -109,7 +123,7 @@ $('.control-group').addClass("valReportLbl");
 	        sonarReport();
     	<% } %>
     	
-		$('#validateAgainst').change(function() {
+		$('#validateAgainst, #projectModule').change(function() {
 			sonarReport();
   		});
     });
@@ -123,9 +137,14 @@ $('.control-group').addClass("valReportLbl");
     function sonarReport() {
         $("#sonar_report").empty();
         var reportValue = $('#validateAgainst').val();
+        var selectedModule = $('#projectModule').val();
         var params = getBasicParams() + '&';
         params = params.concat("validateAgainst=");
         params = params.concat(reportValue);
+        if (selectedModule != undefined && !isBlank(selectedModule)) {
+        	params = params.concat("&selectedModule=");
+        	params = params.concat(selectedModule);
+        }
         loadContent('check', $('#code'), $('#sonar_report'), params, '', true);
     }
     

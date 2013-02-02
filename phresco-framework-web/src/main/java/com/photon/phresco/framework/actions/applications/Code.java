@@ -63,6 +63,8 @@ public class Code extends DynamicParameterAction implements Constants {
     private static final Logger S_LOGGER = Logger.getLogger(Code.class);
     private static Boolean s_debugEnabled = S_LOGGER.isDebugEnabled();
     
+    private String selectedModule = "";
+    
 	/**
 	 * populate drop down with targets or list of code validation(js, web)
 	 * @return
@@ -99,6 +101,7 @@ public class Code extends DynamicParameterAction implements Constants {
                     List<Value> sourceValues = sourcePsbleValues.getValue();
                     setReqAttribute(REQ_SOURCE_VALUES, sourceValues);
 				}
+				setProjModulesInReq();
 				setSonarServerStatus();
 			}
     	} catch (PhrescoException e) {
@@ -224,7 +227,10 @@ public class Code extends DynamicParameterAction implements Constants {
 	    		FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
 	    		serverUrl = frameworkUtil.getSonarHomeURL();
 				StringBuilder reportPath = new StringBuilder(getApplicationHome());
-
+				if (StringUtils.isNotEmpty(getSelectedModule())) {
+				    reportPath.append(File.separatorChar);
+                    reportPath.append(getSelectedModule());
+                }
 				if (StringUtils.isNotEmpty(validateAgainst) && FUNCTIONALTEST.equals(validateAgainst)) {
 					reportPath.append(frameworkUtil.getFunctionalTestDir(applicationInfo));
                 }
@@ -341,6 +347,7 @@ public class Code extends DynamicParameterAction implements Constants {
 			
 			List<Parameter> parameters = getMojoParameters(mojo, PHASE_VALIDATE_CODE);
 			List<String> buildArgCmds = getMavenArgCommands(parameters);
+			buildArgCmds.add(HYPHEN_N);
 			String workingDirectory = getAppDirectoryPath(applicationInfo);
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			
@@ -357,4 +364,12 @@ public class Code extends DynamicParameterAction implements Constants {
 		
 		return APP_ENVIRONMENT_READER;
 	}
+
+    public void setSelectedModule(String selectedModule) {
+        this.selectedModule = selectedModule;
+    }
+
+    public String getSelectedModule() {
+        return selectedModule;
+    }
 }
