@@ -1276,11 +1276,11 @@ public class ProjectAdministratorImpl implements ProjectAdministrator, Framework
 		 S_LOGGER.debug("filterSettingsInfo() Type = "+type);
 
 		 List<SettingsInfo> filteredList = new ArrayList<SettingsInfo>();
-		 for (SettingsInfo settingsInfo : infos) {
+		/* for (SettingsInfo settingsInfo : infos) {
 			 if (settingsInfo.getType().equals(type) && settingsInfo.getAppliesTo().contains(technolgoyType)) {
 				 filteredList.add(settingsInfo);
 			 }
-		 }
+		 }*/
 
 		//TODO:need to handle
 //		 Collections.sort(filteredList, new SettingsInfoComparator());

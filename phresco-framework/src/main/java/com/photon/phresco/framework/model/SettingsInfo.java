@@ -37,7 +37,6 @@ public class SettingsInfo {
     private String type;
     private String envName;
 	private List<PropertyInfo> propertyInfos;
-    private List<String> appliesTo;
     private boolean status;
 
 	public SettingsInfo(Configuration config) {
@@ -46,7 +45,6 @@ public class SettingsInfo {
 		this.envName = config.getEnvName();
 		this.type = config.getType();
 		setPropertyInfoValues(config.getProperties());
-		setAppliesToValues(config.getAppliesTo());
 	}
 
 	public SettingsInfo(String name, String description, String type) {
@@ -60,7 +58,6 @@ public class SettingsInfo {
 		this.description = description;
 		this.type = type;
 		this.propertyInfos = propertyInfos;
-		this.appliesTo = appliesTo;
 	}
 
 	private void setPropertyInfoValues(Properties properties) {
@@ -73,14 +70,6 @@ public class SettingsInfo {
 		setPropertyInfo (propInfos);
 	}
 
-	private void setAppliesToValues(String appliesTos) {
-		String[] split = appliesTos.split(",");
-		setAppliesTo (split);
-	}
-
-    public void setAppliesTo (String[] split) {
-        this.appliesTo = Arrays.asList(split);
-    }
     public void setPropertyInfo (List<PropertyInfo> propInfos){
         this.propertyInfos = propInfos;
     }
@@ -134,14 +123,6 @@ public class SettingsInfo {
 
         return null;
     }
-
-    public List<String> getAppliesTo() {
-		return appliesTo;
-	}
-
-	public void setAppliesTo(List<String> appliesTo) {
-		this.appliesTo = appliesTo;
-	}
 
     public boolean isStatus() {
 		return status;

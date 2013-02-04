@@ -96,7 +96,7 @@ public class ProjectAdministratorTest implements FrameworkConstants {
 //        assertEquals(initialSize - 1, finalSize);
 //    }
 
-    @Test
+/*    @Test
 	public void createEnvironment() throws PhrescoException {
     	List<Environment> totalEnvironments = administrator.getEnvironments();
     	
@@ -106,16 +106,16 @@ public class ProjectAdministratorTest implements FrameworkConstants {
     	}
     	
 		List<Environment> environments = new ArrayList<Environment>();
-    	environments.add(new Environment("testEnvironment", "description", false));
+    	environments.add(new Environment("testEnvironment", "description", false);
     	administrator.createEnvironments(environments);
         
     	List<Environment> totalEnvironment = administrator.getEnvironments();
         int finalSize = totalEnvironment.size();
         assertEquals(initialSize + 1, finalSize);
-	}
+	}*/
 
 //    @Test
-	public void createSetting() throws PhrescoException {
+/*	public void createSetting() throws PhrescoException {
 		List<SettingsInfo> settingsInfos = administrator.getSettingsInfos();
 		int initialSize = 0;
     	if (CollectionUtils.isNotEmpty(settingsInfos)) {
@@ -141,10 +141,10 @@ public class ProjectAdministratorTest implements FrameworkConstants {
 	    List<SettingsInfo> afterSettingsInfo = administrator.getSettingsInfos();
         int finalSize = afterSettingsInfo.size();
         assertEquals(initialSize + 1, finalSize);
-	}
+	}*/
     
 //    @Test
-    public void updateSetting() throws PhrescoException {
+/*    public void updateSetting() throws PhrescoException {
         SettingsTemplate selectedSettingTemplate = administrator.getSettingsTemplate("Server");
         SettingsInfo settingsInfo = new SettingsInfo("SampleServer", "serverCreation", "Server");
     	List<PropertyInfo> propertyInfoList = new ArrayList<PropertyInfo>(10);
@@ -160,7 +160,7 @@ public class ProjectAdministratorTest implements FrameworkConstants {
         settingsInfo.setAppliesTo(Arrays.asList("tech-phpdru6"));
         settingsInfo.setPropertyInfos(propertyInfoList);
         administrator.updateSetting("testEnvironment", "TestServer", settingsInfo);
-    }
+    }*/
     
 	//@Test
 	public void testFrameworkConfiguration() throws PhrescoException {

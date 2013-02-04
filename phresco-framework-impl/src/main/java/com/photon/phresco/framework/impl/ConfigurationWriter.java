@@ -66,6 +66,11 @@ public class ConfigurationWriter extends ConfigWriter {
 			envNode.setAttribute("name", env.getName());
 			envNode.setAttribute("desc", env.getDesc());
 			envNode.setAttribute("default", Boolean.toString(env.isDefaultEnv()));
+			List<String> appliesTo = env.getAppliesTo();
+			if (CollectionUtils.isNotEmpty(appliesTo)) {
+				String appliesToAsStr = getAppliesToAsStr(appliesTo);
+				envNode.setAttribute("appliesTo", appliesToAsStr);
+			}
 			getRootElement().appendChild(envNode);
 		}
 	}
@@ -230,11 +235,6 @@ public class ConfigurationWriter extends ConfigWriter {
 		Element configNode = getDocument().createElement(settingsInfo.getType());
 		configNode.setAttribute("name", settingsInfo.getName());
 		configNode.setAttribute("desc", settingsInfo.getDescription());
-		List<String> appliesTo = settingsInfo.getAppliesTo();
-		if (CollectionUtils.isNotEmpty(appliesTo)) {
-			String appliesToAsStr = getAppliesToAsStr(appliesTo);
-			configNode.setAttribute("appliesTo", appliesToAsStr);
-		}
 		createProperties(configNode, settingsInfo.getPropertyInfos());
 		return configNode;
 	}

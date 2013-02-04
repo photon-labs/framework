@@ -47,11 +47,14 @@ public class ConfigurationReader extends ConfigReader {
 	public List<Environment> getEnvironments() {
 		Collection<Element> enviroments = super.getEnviroments().values();
 		List<Environment> envs = new ArrayList<Environment>(enviroments.size());
+		List<String> envAppliesToList = new ArrayList<String>();
 		for (Element envElement : enviroments) {
 			String envName = envElement.getAttribute("name");
 			String envDesc = envElement.getAttribute("desc");
 			String defaultEnv = envElement.getAttribute("default");
-			Environment environment = new Environment(envName, envDesc, Boolean.parseBoolean(defaultEnv));
+			String envAppliesTo = envElement.getAttribute("appliesTo");
+			envAppliesToList.add(envAppliesTo);
+			Environment environment = new Environment(envName, envDesc, Boolean.parseBoolean(defaultEnv), envAppliesToList);
 			environment.setDelete(canDelete(envElement));
 			envs.add(environment);
 		}
@@ -99,9 +102,6 @@ public class ConfigurationReader extends ConfigReader {
 			File configXml = new File("/Users/bharatkumarradha/Desktop/config.xml");
 			ConfigurationReader reader = new ConfigurationReader(configXml);
 			List<Environment> environments = reader.getEnvironments();
-			for (Environment environment : environments) {
-				System.out.println("Name = " + environment.getName() + " delete = " + environment.canDelete());
-			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

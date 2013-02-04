@@ -39,7 +39,6 @@
 	String name = "";
 	String description = "";
 	String selectedType = "";
-	String selectedAppliesTo = "";
 	String error = "";
 	String envName = "";
 	String desc = "";
@@ -54,7 +53,6 @@
 		name = configInfo.getName();
 		description = configInfo.getDesc();
 		selectedType = configInfo.getType();
-		selectedAppliesTo = configInfo.getAppliesTo();
 	}
 	
 	List<Environment> environments = (List<Environment>) request.getAttribute(FrameworkConstants.REQ_ENVIRONMENTS);
@@ -266,11 +264,6 @@
 		var configPath = "<%= configPath%>";
 		var oldConfigType = "<%= selectedType%>";
 		
-		var selectedAppliesTos = new Array();
-		$('input[name="appliesTo"]:checked').each(function() {
-			selectedAppliesTos.push($(this).val());
-		});
-		
 		var featureName = $('#featureName').val();
 		var fileName = $('.qq-upload-file').text();//To get the uploaded file name
 		
@@ -284,7 +277,6 @@
 		jsonParamObj.oldConfigType = oldConfigType;
 		jsonParamObj.configPath = configPath;
 		jsonParamObj.fromPage = fromPage;
-		jsonParamObj.appliesTos = selectedAppliesTos;
 		env = jQuery.parseJSON(env);
 		jsonParamObj.environment = env;
 		jsonParamObj = $.extend(jsonParamObj, jsonObject);
@@ -352,12 +344,6 @@
 			showError($("#siteCoreControl"), $("#siteCoreInstPathError"), data.siteCoreInstPathError);
 		} else {
 			hideError($("#siteCoreControl"), $("#siteCoreInstPathError"));
-		}
-		
-		if (!isBlank(data.appliesToError)) {
-			showError($("#appliesToControl"), $("#appliesToError"), data.appliesToError);
-		} else {
-			hideError($("#appliesToControl"), $("#appliesToError"));
 		}
 		
 		if (!isBlank(data.versionError)) {

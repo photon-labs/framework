@@ -29,10 +29,15 @@
 
 <%@ page import="com.photon.phresco.configuration.Environment" %>
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
+<%@ page import="com.photon.phresco.commons.model.Technology" %>
 
 <% 
    	List<Environment> environments = (List<Environment>) request.getAttribute(FrameworkConstants.REQ_ENVIRONMENTS);
+	List<Technology> allTechnologies  = (List<Technology>) request.getAttribute(FrameworkConstants.REQ_ALL_TECHNOLOGIES);
+	String fromPage = (String) request.getAttribute(FrameworkConstants.REQ_FROM_PAGE);
+	String configPath = (String) request.getAttribute(FrameworkConstants.REQ_CONFIG_PATH);
 	Gson gson = new Gson();
+	List<String> selectedappliesToTechs = null;
 %>
 
 <form id="formEnvironment" class="form-horizontal">
@@ -53,10 +58,41 @@
 		<div class="controls">
 			<textarea name="envDesc" id="envDesc" class="input-xlarge" 
 				 maxlength="150" title="<s:text name='title.150.chars'/>" placeholder="<s:text name='place.hldr.env.desc'/>"></textarea>
-			<input type="button" name="addBtn" value="<s:text name='lbl.btn.add'/>" tabindex=3 id="add" class="btn btn-primary addButton">
 		</div>
 	</div>
-
+	
+	<% if (FrameworkConstants.SETTINGS.equals(fromPage)) { %>
+		<div class="control-group" id="appliesToControl">
+			<label class="control-label labelbold">
+				<span class="mandatory">*</span>&nbsp;<s:text name='label.applies.to'/>
+			</label>
+			<div class="controls">
+				<div class="settingsTypeFields">
+            		<div class="multilist-scroller multiselect" id='multiselectAppliesTo'>
+					   <ul>
+					   	<% 
+					   		if (CollectionUtils.isNotEmpty(allTechnologies)) {
+					   			for (Technology appliesTo : allTechnologies) {
+						   	%>
+								<li>
+									<input type="checkbox" name="appliesTo" class="check appliesToCheck" 
+										value='<%= appliesTo.getId()%>' title="<%= appliesTo.getDescription() %>" /><%= appliesTo.getName() %>
+								</li>
+							<%		
+					   				}
+					   			}
+						%>
+					   </ul>
+			  	 	</div>
+				</div>
+				<span class="help-inline" id="appliesToError"></span>
+			</div>
+	    </div>
+   <% } %>
+   	<div class="controls">
+		<input type="button" name="addBtn" value="<s:text name='lbl.btn.add'/>" tabindex=3 id="add" class="btn btn-primary addButton">
+	</div>
+	
 	<fieldset class="popup-fieldset envFieldset">
 		<legend class="fieldSetLegend" ><s:text name="lbl.added.environments"/></legend>
 		<div class="popupTypeFields" id="typefield">
@@ -95,6 +131,9 @@
 <script type="text/javascript">
 
 $(document).ready(function() {
+	
+	$("#multiselectAppliesTo").scrollbars(); //JQuery scroll bar
+	
 	hidePopuploadingIcon();
 	$('#errMsg').empty();
 	setAsDefaultBtnStatus();
@@ -102,13 +141,23 @@ $(document).ready(function() {
 	$('input[name="envNames"]').change(function() {
 		if ($(this).is(':checked')) {
 			$('input[name="addBtn"]').val("<s:text name='lbl.btn.update'/>");
-			var envData= $.parseJSON($(this).val());
+			var envData = $.parseJSON($(this).val());
+			var appliesTos = envData.appliesTo;
+			$('#multiselectAppliesTo ul li input[type=checkbox]').each(function() {
+				if ($.inArray($(this).val(), appliesTos) != -1) {
+					$(this).attr("checked", true);
+				}
+			});
+
 			$("#envName").val(envData.name);
 			$("#envDesc").val(envData.desc);
 		} else {
 			$('input[name="addBtn"]').val("<s:text name='lbl.btn.add'/>");
 			$("#envName").val("");
 			$("#envDesc").val("");
+			$('#multiselectAppliesTo ul li input[type=checkbox]').each(function() {
+				$(this).attr("checked", false);
+			});
 		}
 	});
 	
@@ -134,6 +183,13 @@ $(document).ready(function() {
 				}
 			});
 		}
+		<% if (FrameworkConstants.SETTINGS.equals(fromPage)) { %>
+				var selecedAppliesToSize = $('#multiselectAppliesTo :checked').size();
+				if (selecedAppliesToSize < 1) {
+					$("#errMsg").html("<s:text name='popup.err.msg.select.one.appliesTo'/>");
+					return false;
+				}
+        <% } %>
 		
 		if (returnVal) {
 			addRow();		
@@ -239,23 +295,32 @@ $(document).ready(function() {
 	function addRow() {
 		var value = $('#envName').val();
 		var desc = $('#envDesc').val();
+		var checkedAppliesTo = [];
 		toSelectOnlyOneEnv();
 		var selecedEnvsSize = $('#multiselect :checked').size();
 		if(selecedEnvsSize == 1) {
 			var currentChckBoxObj = $('input[name="envNames"]:checked');
 			var checkedVal = $.parseJSON($('input[name="envNames"]:checked').val());
-			var value = $('#envName').val();
-			var desc = $('#envDesc').val();
+			$('#multiselectAppliesTo input[type="checkbox"]:checked').each(function() {
+				checkedAppliesTo.push($(this).val());
+			});
 			var selectedText = $('.envLabel').text();
 			checkedVal.name = value;
 			checkedVal.desc = desc;
+			checkedVal.appliesTo = checkedAppliesTo;
 			currentChckBoxObj.val(JSON.stringify(checkedVal));
 			currentChckBoxObj.parent().find($('.envLabel')).text(value);
 		}
 		
 		if(selecedEnvsSize == 0) {
+			
+			$('#multiselectAppliesTo input[type="checkbox"]:checked').each(function() {
+				checkedAppliesTo.push("\"" + $(this).val() + "\"");
+			});
+			
 			var checkValue = '{"name": "' + value + '", "desc": "' + desc
-					+ '", "defaultEnv": false }';
+					+ '", "appliesTo": [' + checkedAppliesTo +'], "defaultEnv": false}';
+					
 			var checkbox = '<input type="checkbox" name="envNames" onclick="checkboxClickEvent(this);" class="check techCheck" value=\'' + checkValue + '\' title="' + desc + '" />'
 					+ '<label class="envLabel">' + value + '</label>';
 	

@@ -2973,10 +2973,6 @@ fieldset {
     width: 100%;
 }
 
-.envFieldset {
-	margin-top: 25px;
-}
-
 .multiselectForWebservice {
 	height: 95px; 
 	width:250px; 
@@ -5909,8 +5905,8 @@ input[class*='chckBxAlign'] {
 	min-width: 290px;
 }
 #formEnvironment .controls #add {
-	margin-top: 8%;
-    margin-left: 5%;
+	margin-left: 84%;
+    margin-top: -13%;
 }
 ul#display-inline-block-example li#label strong {
 	color: #333;

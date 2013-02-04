@@ -50,60 +50,13 @@
 	SettingsTemplate settingsTemplate = (SettingsTemplate) request.getAttribute(FrameworkConstants.REQ_SETTINGS_TEMPLATE);	
 	String selectedType = (String) request.getAttribute(FrameworkConstants.REQ_SELECTED_TYPE);
 	String fromPage = (String) request.getAttribute(FrameworkConstants.REQ_FROM_PAGE);
-	List<Element> allTechnologies  = (List<Element>) request.getAttribute(FrameworkConstants.REQ_ALL_TECHNOLOGIES);
-	
 	List<String> typeValues  = (List<String>) request.getAttribute(FrameworkConstants.REQ_TYPE_VALUES);
 	List<String> appinfoServers  = (List<String>) request.getAttribute(FrameworkConstants.REQ_APPINFO_SERVERS);
 	List<String> appinfoDbases  = (List<String>) request.getAttribute(FrameworkConstants.REQ_APPINFO_DBASES);
-	List<String> selectedAppliesTos  = (List<String>) request.getAttribute(FrameworkConstants.REQ_APPLIES_TO);
 	List<PropertyTemplate> properties = (List<PropertyTemplate>) request.getAttribute(FrameworkConstants.REQ_PROPERTIES);
 	Gson gson = new Gson(); 
 	
-	if (FrameworkConstants.ADD_SETTINGS.equals(fromPage) || FrameworkConstants.EDIT_SETTINGS.equals(fromPage)) { %>
-		<div class="control-group" id="appliesToControl">
-			<label class="control-label labelbold">
-				<span class="mandatory">*</span>&nbsp;<s:text name='label.applies.to'/>
-			</label>
-			<div class="controls">
-				<div class="settingsTypeFields">
-            		<div class="multilist-scroller multiselect" id='multiselectAppliesTo'>
-					   <ul>
-					   	<% 
-					   		String checkedStr = "";
-					   		List<Element> appliesToTechs = null; 
-					   		if (FrameworkConstants.REQ_CONFIG_TYPE_OTHER.equals(selectedType)) {
-					   			appliesToTechs = allTechnologies;
-					   		} else {
-					   		 	appliesToTechs = settingsTemplate.getAppliesToTechs();
-					   		}
-					   		if (CollectionUtils.isNotEmpty(appliesToTechs)) {
-					   			for (Element appliesTo : appliesToTechs) {
-					   				if (selectedAppliesTos != null ) {
-						   			for (String selectedAppliesTo : selectedAppliesTos) {
-						   				if (selectedAppliesTos.contains(appliesTo.getName()) ) {
-											checkedStr = "checked";
-										} else {
-											checkedStr = "";
-										}
-						   			}
-					   			}
-						   	%>
-								<li>
-									<input type="checkbox" name="appliesTo" class="check appliesToCheck" 
-										value='<%= appliesTo.getName() %>' title="<%= appliesTo.getDescription() %>"  <%= checkedStr %> /><%= appliesTo.getName() %>
-								</li>
-							<%		
-					   			}
-					   		}
-					%>
-					   </ul>
-			  	 	</div>
-				</div>
-				<span class="help-inline" id="appliesToError"></span>
-			</div>
-	    </div>
-   <% } %>
-   
+ %>
    <form id="configProperties">
 <% 
 	StringBuilder sb = new StringBuilder();
@@ -395,9 +348,6 @@
 	$("div#certificateControl").hide();
 	
 	$(document).ready(function() {
-		
-		$("#multiselectAppliesTo").scrollbars(); //JQuery scroll bar
-		
 		remoteDeplyChecked();
 		hideLoadingIcon();//To hide the loading icon
 		technologyBasedRemoteDeploy();

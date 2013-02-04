@@ -111,7 +111,7 @@
 	<div class="features_actions">
 		<input type="button" id="previous" value="<s:text name="label.previous"/>" class="btn btn-primary" 
 			onclick="showAppInfoPage();">
-		<input id="finish" type="button" value="<s:text name="label.finish"/>"  class="btn btn-primary"
+		<input id="finish" type="button" value="<s:text name="lbl.update"/>"  class="btn btn-primary"
 			onclick="updateApplication();"/>
 		<input type="button" id="cancel" value="<s:text name="lbl.btn.cancel"/>" class="btn btn-primary" 
 			onclick="loadContent('applications', $('#formCustomers'), $('#container'), '', '', true);">
