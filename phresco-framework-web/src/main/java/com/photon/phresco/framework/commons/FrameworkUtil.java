@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -33,6 +34,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -747,38 +749,102 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 		return type;
 	}
     
-	public static StringTemplate constructMapElement(ParameterModel pm) {
+	public static StringTemplate constructMapElement(ParameterModel pm) throws IOException {
     	StringTemplate controlGroupElement = new StringTemplate(getControlGroupTemplate());
     	controlGroupElement.setAttribute("ctrlGrpId", pm.getControlGroupId());
+    	Properties properties = new Properties();
+		StringReader reader = new StringReader(pm.getValue());
+		properties.load(reader);
+		Set<Object> keySet = properties.keySet();
     	
     	if (!pm.isShow()) {
     	    controlGroupElement.setAttribute("ctrlGrpClass", "hideContent");
     	}
-    	
-    	StringTemplate mapElement = new StringTemplate(getMapTemplate());
-    	if (pm.isMandatory()) {
-    		mapElement.setAttribute("mandatory", getMandatoryTemplate());
-    	}
-    	
-    	mapElement.setAttribute("legendHeader", pm.getLableText());
-    	List<BasicParameterModel> childs = pm.getChilds();
-    	for (BasicParameterModel child : childs) {
+    	if (pm.getValue().isEmpty()) {
+	    	StringTemplate mapElement = new StringTemplate(getMapTemplate());
+	    	if (pm.isMandatory()) {
+	    		mapElement.setAttribute("mandatory", getMandatoryTemplate());
+	    	}
+	    	
+	    	mapElement.setAttribute("legendHeader", pm.getLableText());
+	    	List<BasicParameterModel> childs = pm.getChilds();
+	    	for (BasicParameterModel child : childs) {
+	    	    StringTemplate childElement = new StringTemplate();
+	            if (child.getInputType().equalsIgnoreCase(TYPE_LIST)) {
+	                childElement = new StringTemplate(getMapSelectElement());
+	                StringBuilder options = constructOptions(child.getObjectValue(), null, null, "");
+	                childElement.setAttribute("options", options);
+	            } else if (child.getInputType().equalsIgnoreCase(TYPE_STRING)) {
+	                childElement = new StringTemplate(getMapInputElement());
+	            }
+	            childElement.setAttribute("name", child.getName());
+	            updateChildLabels(mapElement, child);
+	            mapElement.setAttribute("mapControls", childElement);
+	        }
+	    	controlGroupElement.setAttribute("lable", mapElement);
+    	} else {
+    		StringTemplate mapElmnt = new StringTemplate(getMapTemplatesForValues());
+	    	if (pm.isMandatory()) {
+	    		mapElmnt.setAttribute("mandatory", getMandatoryTemplate());
+	    	}
+	    	
+	    	mapElmnt.setAttribute("legendHeader", pm.getLableText());
+	    	List<BasicParameterModel> childs = pm.getChilds();
+			
     	    StringTemplate childElement = new StringTemplate();
-            if (child.getInputType().equalsIgnoreCase(TYPE_LIST)) {
-                childElement = new StringTemplate(getMapSelectElement());
-                StringBuilder options = constructOptions(child.getObjectValue(), null, null, "");
-                childElement.setAttribute("options", options);
-            } else if (child.getInputType().equalsIgnoreCase(TYPE_STRING)) {
-                childElement = new StringTemplate(getMapInputElement());
-            }
-            childElement.setAttribute("name", child.getName());
-            updateChildLabels(mapElement, child);
-            mapElement.setAttribute("mapControls", childElement);
-        }
-    	controlGroupElement.setAttribute("lable", mapElement);
-    	
+    	    
+	    	for (Object object : keySet) {
+    			String key =(String)object;
+    			String value = properties.getProperty(key);
+    			StringTemplate parentTr = new StringTemplate(getMapTableRowElement());
+    			//For left side controls
+	            if (childs.get(0).getInputType().equalsIgnoreCase(TYPE_LIST)) {
+	                childElement = new StringTemplate(getMapSelectElement());
+	                List<String> selectedKeys = new ArrayList<String>();
+	                selectedKeys.add(key);
+	                StringBuilder options = constructOptions(childs.get(0).getObjectValue(), selectedKeys, null, "");
+	                childElement.setAttribute("options", options);
+	                childElement.setAttribute("value", key);
+	                childElement.setAttribute("name", childs.get(0).getName());
+	                parentTr.setAttribute("mapTdContrls", childElement);
+	            } else if (childs.get(0).getInputType().equalsIgnoreCase(TYPE_STRING)) {
+	                childElement = new StringTemplate(getMapInputElement());
+	                childElement.setAttribute("value", key);
+	                childElement.setAttribute("name", childs.get(0).getName());
+	                parentTr.setAttribute("mapTdContrls", childElement);
+	            }
+	          //For right side controls  with plus, minus icons
+	            if (childs.get(1).getInputType().equalsIgnoreCase(TYPE_LIST)) {
+	                childElement = new StringTemplate(getMapSelectElement());
+	                List<String> selectedValues = new ArrayList<String>();
+	                selectedValues.add(value);
+	                StringBuilder options = constructOptions(childs.get(1).getObjectValue(), selectedValues, null, "");
+	                childElement.setAttribute("options", options);
+	                childElement.setAttribute("name", childs.get(1).getName());
+	                parentTr.setAttribute("mapTdContrls", childElement);
+	                childElement = new StringTemplate(getMapPlusMinusIconElement(keySet.size()));
+	                parentTr.setAttribute("mapTdContrls", childElement);
+	                childElement.setAttribute("value", value);
+	            } else if (childs.get(1).getInputType().equalsIgnoreCase(TYPE_STRING)) {
+	                childElement = new StringTemplate(getMapInputElement());
+	                childElement.setAttribute("value", value);
+	                childElement.setAttribute("name", childs.get(1).getName());
+	                parentTr.setAttribute("mapTdContrls", childElement);
+                	childElement = new StringTemplate(getMapPlusMinusIconElement(keySet.size()));
+	                parentTr.setAttribute("mapTdContrls", childElement);
+	            }
+	            
+	            mapElmnt.setAttribute("mapTrContrls", parentTr);
+	        }
+            updateChildLabels(mapElmnt, childs.get(0));
+            
+            
+            updateChildLabels(mapElmnt, childs.get(1));
+            
+	    	controlGroupElement.setAttribute("lable", mapElmnt);
+         }
 		return controlGroupElement;
-    }
+	}
 	
 	public static StringTemplate constructCustomParameters(ParameterModel pm) {
 	    StringTemplate controlGroupElement = new StringTemplate(getCustomParamTableTemplate(pm.getValue(), pm.getObjectValue(), pm.isShowMinusIcon()));
@@ -1265,6 +1331,22 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	return sb.toString();
     }
     
+    private static String getMapTemplatesForValues() {
+    	StringBuilder sb = new StringBuilder();
+    	sb.append("<fieldset class='mfbox siteinnertooltiptxt popup-fieldset fieldSetClassForHeader'>")
+    	.append("<legend class='fieldSetLegend'>$mandatory$ $legendHeader$</legend>")
+    	.append("<table align='center'>")
+    	.append("<thead class='header-background'>")
+    	.append("<tr class='borderForLoad'>")
+    	.append("<th class='borderForLoad mapHeading'>$keyMandatory$$keyLabel$</th>")
+    	.append("<th class='borderForLoad mapHeading'>$valueMandatory$$valueLabel$</th><th></th><th></th></tr></thead>")
+    	.append("<tbody id='propTempTbodyForHeader'>")
+    	.append("$mapTrContrls$")
+    	.append("</tbody></table></fieldset>");
+
+    	return sb.toString();
+    }
+	
     private static String getMapSelectElement() {
         StringBuilder sb = new StringBuilder();
         sb.append("<td class='borderForLoad'>")
@@ -1281,12 +1363,37 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
         StringBuilder sb = new StringBuilder();
         sb.append("<td class='borderForLoad'>")
         .append("<input type='text' class='input-mini' id=\"$id$\" ")
-        .append("name=\"$name$\" placeholder=\"$valuePlaceholder$\" />")
+        .append("name=\"$name$\" value=\"$value$\" placeholder=\"$valuePlaceholder$\" />")
         .append("<span class='help-inline' id=\"$ctrlsId$\"></span>")
         .append("</td>");
         
         return sb.toString();
     }
+    
+    private static String getMapPlusMinusIconElement(int size) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<td class='borderForLoad addImage' name='addImage'>")
+    	.append("<a><img class='add imagealign' src='images/icons/add_icon.png' style='cursor:pointer' onclick='addRow(this);'></a></td>");
+        if (size == 1) {
+        	sb.append("<td class='borderForLoad removeImage hideContent' >");
+        	sb.append("<a><img class='add imagealign' src='images/icons/minus_icon.png' style='cursor:pointer' onclick='removeRow(this);'></a></td>");
+        } else {
+        	sb.append("<td class='borderForLoad removeImage'>");
+        	sb.append("<a><img class='add imagealign' src='images/icons/minus_icon.png' style='cursor:pointer' onclick='removeRow(this);'></a></td>");
+        }
+        
+        return sb.toString();
+    }
+    
+    private static String getMapTableRowElement() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<tr class='borderForLoad'>")
+    	.append("$mapTdContrls$")
+        .append("</tr>");
+        
+        return sb.toString();
+    }
+   
    
     private static String getCheckBoxTemplate() {
     	StringBuilder sb = new StringBuilder();

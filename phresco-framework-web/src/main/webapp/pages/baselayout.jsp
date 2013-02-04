@@ -264,7 +264,7 @@
 					</div>
 					<div class="rightbotnav">
 						<a href="JavaScript:void(0);" id="settings" name="headerMenu"
-							class="arrow_links_bottom"><span class="shortcutRed" id="lf_tp1"></span><span
+							class="arrow_links_bottom"><span class="shortcutRed" id="lf_tp2"></span><span
 							class="shortcutWh" id="lf_tp2"><s:text name="lbl.hdr.settings"/></span>
 						</a>
 					</div>
@@ -339,6 +339,7 @@
 	    <div id="progressPopup" class="modal hide fade">
 			<div class="modal-header">
 				<a class="close" data-dismiss="modal" >&times;</a>
+				<img id="copyToClipBrd" class="copyToClipboard" title="<s:text name="title.copy.to.clipBoard"/>" src="images/icons/clipboard-copy.png">
 				<h3 id="popupTitle"><s:text name='lbl.progress'/></h3>
 			</div>
 			<div class="modal-body" id="popup_progress_div">
@@ -418,6 +419,16 @@
 		 	}
 		});
 		
+		$('#copyToClipBrd').click(function() {
+			copyToClipboard($('#popup_progress_div').text().replace("%", ""));
+		});
+		
+		 function copyToClipboard(data) {
+	        var params = "copyToClipboard=";
+	        params = params.concat(data);
+	        loadContent('copyToClipboard', '', '', params, '', true, '');
+		}
+		 
         function onSelectCustomer(selectedId) {
         	$('#customerId').val(selectedId);
         	localStorage["selectedCustomerId"] = selectedId;

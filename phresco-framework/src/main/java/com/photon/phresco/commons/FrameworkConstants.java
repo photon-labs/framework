@@ -50,6 +50,9 @@ public interface FrameworkConstants {
     String FROM_PAGE_EDIT = "edit";
     String FROM_PAGE_ADD = "add";
     String COMMIT = "commit";
+    String CI_BUILD = "Build";
+    String CI_DEPLOY = "Deploy";
+    String CI_FUNCTIONAL_TEST = "Functional_Test";
     
     String CONFIG = "config";
     String FEATURE = "feature";

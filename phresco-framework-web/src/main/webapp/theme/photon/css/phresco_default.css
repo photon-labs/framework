@@ -5511,6 +5511,14 @@ a[id='androidSigning']:hover {
     margin-right: 10px;
 }
 
+.copyToClipboard {
+    height: 21px; 
+    width: 21px; 
+    cursor: pointer;
+    float: right;
+    margin-right: 10px;
+}
+
 .pdfDelete {
 	text-align: left;
 	margin-left: 16%;

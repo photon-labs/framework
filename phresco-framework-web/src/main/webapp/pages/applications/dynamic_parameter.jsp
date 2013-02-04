@@ -296,6 +296,7 @@
 				        childs.add(child);
 				    }
 					parameterModel.setChilds(childs);
+					parameterModel.setValue(parameter.getValue());
 					
 					StringTemplate txtMultiInputElement = FrameworkUtil.constructMapElement(parameterModel);
 	%>

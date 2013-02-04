@@ -1369,11 +1369,20 @@ function addRow(obj) {
 		newRow.append(removeIconTd);
 	}
 	newRow.appendTo("#propTempTbodyForHeader");
+	$(newRow).find($('input[name=headerKey]')).val("");
+	$(newRow).find($('input[name=headerValue]')).val("");
+	$(".removeImage").show();
 }
 
 //triggered when the minus btn is clicked to add a remove the current row
 function removeRow(obj) {
 	$(obj).closest('tr').remove();
+	var noOfRows = $('td[name=addImage]').size();
+	if(noOfRows > 1){
+		$(".removeImage").show();
+	}else{
+		$(".removeImage").hide();
+	}
 }
 
 function disableUploadButton(controlObj) {

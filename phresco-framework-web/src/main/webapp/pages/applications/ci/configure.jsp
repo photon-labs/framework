@@ -51,6 +51,11 @@
     existingJob = (existingJob == null || StringUtils.isEmpty(existingJob.getRepoType())) ? null : existingJob; // when we setup it ll have only jenkins url and port in that case we have to check svnUrl and make null
     List<String> existingClonedWorkspaces = (List<String>) request.getAttribute(FrameworkConstants.REQ_EXISTING_CLONNED_JOBS);
     List<String> existingJobsNames = (List<String>) request.getAttribute(FrameworkConstants.REQ_EXISTING_JOBS_NAMES);
+    Object optionsObj = session.getAttribute(FrameworkConstants.REQ_OPTION_ID);
+	List<String> optionIds  = null;
+	if (optionsObj != null) {
+		optionIds  = (List<String>) optionsObj;
+	}
 %>
 <form id="configureForm" name="ciDetails" action="<%= actionStr %>" method="post" class="ci_form form-horizontal">
 	<div class="theme_accordion_container clearfix" style="float: none;">
@@ -475,9 +480,15 @@
 									</label>
 									<div class="controls">
 										<select id="operation" name="operation" class="input-xlarge">
+										<% if (optionIds.contains(FrameworkConstants.CI_BUILD)) { %>
 									        <option value="build">Build</option>
+									    <% }
+										   if (optionIds.contains(FrameworkConstants.CI_DEPLOY)) {%>
 									        <option value="deploy">Deploy</option>
+									    <% } 
+									       if (optionIds.contains(FrameworkConstants.CI_FUNCTIONAL_TEST)) {%>
 									        <option value="functionalTest">Functional Test</option>
+									    <% } %>
 										</select>
 									</div>
 								</div>
