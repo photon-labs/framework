@@ -6005,6 +6005,7 @@ div.control-group.valReportLbl {
 .dd-selected-text, .dd-option-text {
     margin-bottom: 0px !important;
     font-size: 12px !important;
+	padding-left : 34px;
 }
 
 .dd-selected, .dd-option {
@@ -6032,4 +6033,20 @@ div.control-group.valReportLbl {
 
 ul#testmenu {
     display: none !important; 
+}
+
+.customer_select_div .dd-selected-text {
+	padding-left: 0px !important;
+}
+
+.customer_select_div .dd-option-text {
+	padding-left: 7px !important;
+}
+
+.customer_select_div .dd-select, .customer_select_div .dd-options {
+	width: 175px !important;
+}
+
+.dd-select, .dd-options {
+	width: 260px !important;
 }

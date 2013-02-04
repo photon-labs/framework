@@ -1723,9 +1723,6 @@ background-color: #ffffff;
     background: #efefef; /* Old browsers */
 }
 
-.dd-options {
-    width: 175px !important;
-}
 .dd-select {
 	background: #C7141C; /* Old browsers */
     background: -moz-linear-gradient(top,  #C7141C 0%, #B1121D 44%, #9D111E 100%) !important; /* FF3.6+ */
@@ -1735,7 +1732,6 @@ background-color: #ffffff;
     background: -ms-linear-gradient(top,  #C7141C 0%,#B1121D 44%,#9D111E 100%) !important; /* IE10+ */
     background: linear-gradient(top,  #C7141C 0%,#B1121D 44%,#9D111E 100%) !important; /* W3C */
     border: 1px solid #C7141C !important;
-    width: 175px !important;
 }
 
 .dd-option-selected {
