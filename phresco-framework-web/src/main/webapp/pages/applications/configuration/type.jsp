@@ -102,12 +102,17 @@
 	    	}
 			
 			if (FrameworkConstants.TYPE_FILE.equals(propertyTemplate.getType())) {
+				String mandatoryStr = "";
+				if (propertyTemplate.isRequired()) {
+					mandatoryStr = "<span class=mandatory>*</span>&nbsp;";
+				}
+				
 	    %>
 	   			<script type="text/javascript">
-	   				createFileUploader('<%= propertyTemplate.getName() %>');
+	   				createFileUploader('<%= mandatoryStr %>', '<%= propertyTemplate.getName() %>');
 	   				
-	   				function createFileUploader(controlLabel) {
-	   					$('#fileControlLabel').html(controlLabel);
+	   				function createFileUploader(mandatory, controlLabel) {
+	   					$('#fileControlLabel').html(mandatory + controlLabel);
 	   					$('#fileControl').show();
 	   					var imgUploader = new qq.FileUploader ({
 	   			            element : document.getElementById('file-uploader'),

@@ -6052,6 +6052,9 @@ color: #313131;
 #formPerformance select {
 	margin-bottom: 0px !important;
 }
+#form_load select {
+	margin-bottom: 0px !important;
+}
 #formPerformance .operation {
 	margin: 12px 5px 12px 0px !important;
 }
@@ -6063,6 +6066,9 @@ color: #313131;
 	color: #333;
 }
 #formPerformance #testResultsType {
+	margin-right: 1%;
+}
+#form_load #testResultsType {
 	margin-right: 1%;
 }
 #formPerformance #testResultFile {

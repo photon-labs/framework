@@ -33,6 +33,18 @@
 
 <%@include file="../progress.jsp" %>
 
+<%
+	ApplicationInfo appInfo = (ApplicationInfo)request.getAttribute(FrameworkConstants.REQ_APP_INFO);
+	String appId = appInfo.getId();
+	String appDirName = appInfo.getAppDirName();
+	String techId = appInfo.getTechInfo().getId();
+	String fromPage = (String) request.getAttribute(FrameworkConstants.REQ_FROM_PAGE);
+	//Must be Removed
+	Boolean popup = Boolean.FALSE;
+	String path = (String) request.getAttribute(FrameworkConstants.PATH); 
+%>
+
+
 <style type="text/css">
 	.testSuiteDisplay {
 	    height: 98%;
@@ -57,123 +69,52 @@
 			<a href="#" id="copyPath"><img src="images/icons/copy-path.png" title="Copy path"/></a>
 		</div>
 		 
-    </div>
-</form>
-
-<!-- load test button ends -->
-<%
-	ApplicationInfo appInfo = (ApplicationInfo)request.getAttribute(FrameworkConstants.REQ_APP_INFO);
-	String appId = appInfo.getId();
-	String appDirName = appInfo.getAppDirName();
-	String techId = appInfo.getTechInfo().getId();
-	String fromPage = (String) request.getAttribute(FrameworkConstants.REQ_FROM_PAGE);
-	List<Parameter> parameters = (List<Parameter>) request.getAttribute(FrameworkConstants.REQ_DYNAMIC_PARAMETERS);
-	//Must be Removed
-	Boolean popup = Boolean.FALSE;
-	/* Project project = (Project)request.getAttribute(FrameworkConstants.REQ_PROJECT);
-	String projectCode = (String)request.getAttribute(FrameworkConstants.REQ_PROJECT_CODE); */
-	
-   	String testError = (String) request.getAttribute(FrameworkConstants.REQ_ERROR_TESTSUITE);
-    /* String technology =  project.getApplicationInfo().getTechInfo().getVersion();
-	if (TechnologyTypes.ANDROIDS.contains(technology)) {
-		popup = Boolean.TRUE;
-	} */
-	String path = (String) request.getAttribute(FrameworkConstants.PATH); 
-   	if (testError != null) { 
-%>
-    <div class="alert alert-block" id="errorDiv" style="margin-left: 1px; margin-top: 5px;"><%= testError %></div> 
-	
-	
-	<script type="text/javascript">
-		//$("#loadingIconDiv").empty();
-	</script>
-<% } else {
-        File[] files = (File[])request.getAttribute(FrameworkConstants.REQ_JMETER_REPORT_FILES); 
-%>
-    
-    <div class="functional_header testSuiteList testSuiteListAdj"><strong><s:text name="label.test.results"/></strong> 
-        <select id="testResults" name="testResults" class="testList"> 
-            <% 
-            if(files != null) {
-                for(File file : files) {
-            %>
-              <option value="<%= file.getName() %>" ><%= file.getName() %> </option>
-            <% 
-                }
-            }
-            %>
+		<strong id="lblType" class="noTestAvail"><s:text name="label.types"/></strong>&nbsp;
+    	<select class="noTestAvail" id="testResultsType" name="testResultsType" style="width :100px;"> 
+			<option value="server" ><s:text name="label.application.server"/></option>
+			<option value="webservice" ><s:text name="label.webservices"/></option>
+		</select>&nbsp; 
+		
+		<strong class="noTestAvail" id="testResultFileTitle"><s:text name="label.test.results"/></strong> 
+        <select  class="noTestAvail" id="testResultFile" name="testResultFile">
         </select>
     </div>
-    
-    <div id="testResultDisplay" class="testSuiteDisplay">
-    </div>
-    
-	<script type="text/javascript">
-		$(document).ready(function() {
-	    	loadTestResults();
-	    	
-	    	$('#testResults').change(function() {
-	    		loadTestResults();
-	    	});
-	    });
-	
-	    function loadTestResults() {
-	    	<%-- var params = "";
-	    	if (!isBlank($('form').serialize())) {
-	    		params = $('form').serialize() + "&";
-	    	}
-	 		params = params.concat("testType=");
-			params = params.concat('<%= testType%>');
-			params = params.concat("&testResultFile=");
-			params = params.concat(testResult);
-			getCurrentCSS();
-	        $('.popupLoadingIcon').show(); 
-			performAction('loadTestResult', params, $('#testResultDisplay'));--%>
-			//show print as pdf icon
-			$('#pdfPopup').show();
-	    	var params = getBasicParams();
-	    	var testResult = $("#testResults").val();
-	    	params = params.concat("&testType=");
-	    	params = params.concat('<%= FrameworkConstants.LOAD %>');
-			params = params.concat("&testResultFile=");
-			params = params.concat(testResult);
-	        $("#testResultDisplay").empty();
-	        loadContent('loadTestResult','', $('#testResultDisplay'), params, '', true);
-	   }    
-     	    
-			
-	    
-	</script>
-<% } %>
+    <div class="perErrorDis" id="noFiles">
+		<div class="alert alert-block" id="loadError">
+			<s:text name="loadtest.not.executed"/>
+		</div>
+	</div>
+</form>
+<!-- load test button ends -->
 
-<!-- <div class="popup_div" id="generateJmeter">
-</div> -->
+<div id="testResultDisplay" class="testSuiteDisplay" style="margin-top:44px;">
+</div>
+
+
 	
 
 <script type="text/javascript">
     
 	    $(document).ready(function() {
+	    	isLoadResultFileAvailbale(); //check for load result files;
 	    	hideLoadingIcon();
-	    	//showLoadingIcon();
 	    	$('#loadTestBtn').click(function() {
 	    		validateDynamicParam('showLoadTestPopup', '<s:text name="label.load.test"/>', 'runLoadTest','<s:text name="label.test"/>', '', '<%= Constants.PHASE_LOAD_TEST %>');
 	    	});
-	    	
-//     		yesnoPopup($('#loadTestBtn'),'showLoadTestPopup', '<s:text name="label.load.test"/>', 'runLoadTest','<s:text name="label.test"/>');
 	    	
 	    	//Disable test button for load
 	    	if(<%= popup %>){
 	    		disableControl($("#testbtn"), "btn disabled");	
 	    	}
 	    	
-	        <%-- $('#testbtn').click(function() {
-	        	$("#popup_div").empty(); // remove perfromance html data and to avoid name conflict with load test
-			 	if(<%= popup %>){
-					openAndroidPopup();
-				} else {
-					generateJmeter('<%= testType %>');
-				}
-	        });--%>
+	        $('#testResultsType').change(function() {
+	        	loadTestResultsFiles();
+			});
+	        
+	        $('#testResultFile').change(function() {
+	        	loadTestResults();
+	        });
+	        
 	        $('#openFolder').click(function() {
 	             openFolder('<%= appDirName %><%= path %>');
 	         });
@@ -190,8 +131,76 @@
 	    		yesnoPopup('showGeneratePdfPopup', '<s:text name="lbl.app.generatereport"/>', 'printAsPdf','<s:text name="lbl.app.generate"/>', '', params);
 	 	    });
 	    });
-    
-       
+    	var testResultsType = "";
+	    function isLoadResultFileAvailbale() {
+	    	loadContent('loadTestResultAvail', '', '', getBasicParams(), true, true);
+	    }
+	    
+	    function successEvent(pageUrl, data) {
+	    	if (pageUrl == "loadTestResultAvail") {
+				if (!data.resultFileAvailable) {
+		       		$("#noFiles").show();
+		       		loadTestResultNotAvail();
+		       	 	hideLoadingIcon();
+				} else {
+		       		loadTestResultsFiles();
+		       	}
+			} else if (pageUrl == "fetchLoadTestResultFiles") {
+				successLoadTestResultsFiles(data);
+			}
+	    }
+	    
+	    function loadTestResultNotAvail() {
+	    	$("#testResultFile").hide();
+	    	$("#testResultFileTitle").hide();
+	    	$("#lblType").hide();
+	    	$("#testResultsType").hide();
+	    	$("#testResultDisplay").empty(); 
+			$("#testResultDisplay").hide();
+	    }
+	    
+	    function successLoadTestResultsFiles(data) {
+	    	var resultFiles = data.testResultFiles;
+			if (resultFiles != null && !isBlank(resultFiles)) {
+	       		$('#testResultFile').show();
+	       		$('#testResultFile').empty();
+				for (i in resultFiles) {
+	            	$('#testResultFile').append($("<option></option>").attr("value",resultFiles[i]).text(resultFiles[i]));
+	            }
+	            $("#noFiles").hide(); // hides no result found error message when there is test result file
+	            $("#testResultDisplay").show();
+	            loadTestResults();
+	       	} else {
+	       		$("#noFiles").show();    
+	       		$("#testResultFile").hide();
+		    	$("#testResultFileTitle").hide();
+	       		$("#testResultDisplay").empty(); 
+	    		$("#testResultDisplay").hide();
+	       		$('#loadError').empty();
+	       		$('#loadError').html("Load test not yet executed for " + testResultsType);
+	       		testResultAvailShowList();
+	       	}
+	    }
+	    
+	    function loadTestResults() {
+			//show print as pdf icon
+			$('#pdfPopup').show();
+	    	var params = getBasicParams();
+	    	var testResult = $("#testResultFile").val();
+	    	params = params.concat("&testType=");
+	    	params = params.concat('<%= FrameworkConstants.LOAD %>');
+			params = params.concat("&testResultFile=");
+			params = params.concat(testResult);
+	        $("#testResultDisplay").empty();
+	        loadContent('loadTestResult', $('#form_load'), $('#testResultDisplay'), params, '', true);
+	   } 
+	    
+	  //To get the test result files
+	    function loadTestResultsFiles() {
+	    	testResultsType = $("#testResultsType").val();
+	        loadContent('fetchLoadTestResultFiles', $('#form_load'), '', getBasicParams(), true, true);
+	    }
+	  
 	    function generateJmeter(testType) {
 			showPopup();
 			$('#popup_div').empty();
@@ -200,11 +209,6 @@
 			popup('generateJmeter', params, $('#popup_div'));
 			escPopup();
         }
-        
-        <%-- $('#closeGenerateTest, #closeGenTest').click(function() {
-			changeTesting('<%= testType %>');
-			enableScreen();
-		}); --%>
         
 		function openAndroidPopup(){
 			$('#popup_div').empty();
