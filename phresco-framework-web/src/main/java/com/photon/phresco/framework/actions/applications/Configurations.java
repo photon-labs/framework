@@ -25,7 +25,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
@@ -38,7 +37,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-
 
 import com.photon.phresco.api.ApplicationProcessor;
 import com.photon.phresco.api.ConfigManager;
@@ -100,14 +98,12 @@ public class Configurations extends FrameworkBaseAction {
 	private String emailid ="";
     private String description = "";
     private String oldName = "";
-    private List<String> appliesTos = null;
     private boolean errorFound = false;
 	private String configNameError = "";
 	private String configEnvError = "";
 	private String configTypeError = null;
 	private String nameError = null;
     private String typeError = null;
-    private String appliesToError = null;
     private String portError = null;
     private String dynamicError = "";
     private String envName = null;
@@ -236,7 +232,11 @@ public class Configurations extends FrameworkBaseAction {
 		}
 		
         try {
+        	List<Technology> archeTypes = getServiceManager().getArcheTypes(getCustomerId());
+    		setReqAttribute(REQ_ALL_TECHNOLOGIES, archeTypes);
             setReqAttribute(REQ_ENVIRONMENTS, getAllEnvironments());
+            setReqAttribute(REQ_FROM_PAGE,  getFromPage());
+            setReqAttribute(REQ_CONFIG_PATH, getConfigPath());
         } catch (PhrescoException e) {
         	if (s_debugEnabled) {
                 S_LOGGER.error("Entered into catch block of Configurations.openEnvironmentPopup()" + FrameworkUtil.getStackTraceAsString(e));
@@ -430,7 +430,6 @@ public class Configurations extends FrameworkBaseAction {
 			
 			Configuration config = new Configuration(getConfigName(), getConfigType());
 			config.setDesc(getDescription());
-			config.setAppliesTo(FrameworkUtil.listToCsv(getAppliesTos()));
 			config.setEnvName(getEnvironment().getName());
 			config.setProperties(properties);
 			return config;
@@ -521,13 +520,6 @@ public class Configurations extends FrameworkBaseAction {
     		} else {
     			hasError = emailIdFormatValidation(); 
     		}
-    	}
-    	
-    	if (FrameworkConstants.ADD_SETTINGS.equals(getFromPage()) || FrameworkConstants.EDIT_SETTINGS.equals(getFromPage())) {
-	    	if (CollectionUtils.isEmpty(getAppliesTos())) {
-	    		setAppliesToError(getText(ERROR_APPLIES_TO));
-	            hasError = true;
-	        }
     	}
     	
     	ConfigManager configManager = getConfigManager(getConfigPath());
@@ -885,10 +877,6 @@ public class Configurations extends FrameworkBaseAction {
             Configuration configuration = configManager.getConfiguration(getSelectedEnv(), getSelectedType(), getSelectedConfigname());
             
             if (configuration != null) {
-	            String appliesTo = configuration.getAppliesTo();
-	            String [] selectedAppliesTo = appliesTo.split(",");
-	            List<String> selectedAppliesToList = Arrays.asList(selectedAppliesTo);
-	            setReqAttribute(REQ_APPLIES_TO, selectedAppliesToList);
                 Properties selectedProperties = configuration.getProperties();
                 setReqAttribute(REQ_PROPERTIES_INFO, selectedProperties);
             }
@@ -916,15 +904,6 @@ public class Configurations extends FrameworkBaseAction {
 	    	propertyTemplate.setType(REQ_CONFIG_TYPE_OTHER);
 	    	List<PropertyTemplate> properties = new ArrayList<PropertyTemplate>();
 	    	properties.add(propertyTemplate);
-	    	List<Technology> archeTypes = getServiceManager().getArcheTypes(getCustomerId());
-	    	List<Element> allTechnologies = new ArrayList<Element>();
-	    	for (Technology technology : archeTypes) {
-	    		String technologies = technology.getName();
-	    		Element techName = new Element();
-	    		techName.setName(technologies);
-	    		allTechnologies.add(techName);
-			}
-    		setReqAttribute(REQ_ALL_TECHNOLOGIES, allTechnologies);
 	    	setReqAttribute(REQ_PROPERTIES, properties);
 	    	setReqAttribute(REQ_FROM_PAGE, getFromPage());
 	    	setReqAttribute(REQ_SELECTED_TYPE, getSelectedType());
@@ -932,10 +911,6 @@ public class Configurations extends FrameworkBaseAction {
 			ConfigManager configManager = getConfigManager(getConfigPath());
 			Configuration configuration = configManager.getConfiguration(getSelectedEnv(), getSelectedType(), getSelectedConfigname());
 			if (configuration != null) {
-				String appliesTo = configuration.getAppliesTo();
-	            String [] selectedAppliesTo = appliesTo.split(",");
-	            List<String> selectedAppliesToList = Arrays.asList(selectedAppliesTo);
-	            setReqAttribute(REQ_APPLIES_TO, selectedAppliesToList);
 				Properties selectedProperties = configuration.getProperties();
 				setReqAttribute(REQ_PROPERTIES_INFO, selectedProperties);
 			}
@@ -1146,7 +1121,6 @@ public class Configurations extends FrameworkBaseAction {
         		StringBuilder sb = getTargetDir()
                 .append(File.separator)
                 .append(FilenameUtils.removeExtension(getFileName()));
-        		System.out.println("delete path::" + sb.toString());
                 FileUtil.delete(new File(sb.toString()));
         	}
         } catch (Exception e) {
@@ -1774,22 +1748,6 @@ public class Configurations extends FrameworkBaseAction {
 
 	public void setSelectedConfigurations(List<Configuration> selectedConfigurations) {
 		this.selectedConfigurations = selectedConfigurations;
-	}
-
-	public String getAppliesToError() {
-		return appliesToError;
-	}
-
-	public void setAppliesToError(String appliesToError) {
-		this.appliesToError = appliesToError;
-	}
-
-	public List<String> getAppliesTos() {
-		return appliesTos;
-	}
-
-	public void setAppliesTos(List<String> appliesTos) {
-		this.appliesTos = appliesTos;
 	}
 	  
 	public List<String> getVersions() {

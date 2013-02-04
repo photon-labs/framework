@@ -1842,4 +1842,18 @@ public interface FrameworkConstants {
 		String EXCEPTION_FETCHLOGO_IMAGE = "changecustomer.exception.message.fetchlogo";
 		String EXCEPTION_FRAMEWORK_THEME = "changecustomer.exception.message.themechange";
 		String EXCEPTION_FRAMEWORKSTREAM = "changecustomer.exception.message.stream";
+		
+		/**
+		 * Constants for Changing sonar theme colors
+		 */
+		String PHOTON = "photon";
+		String CUST_DISABLED_LABEL_COLOR = "disabledLabelColor";
+		String CUST_LABEL_COLOR = "labelColor";
+		String CUST_MENUFONT_COLOR = "menufontColor";
+		String CUST_MENU_BACK_GROUND = "menuBackGround";
+		String CUST_BRANDING_COLOR = "brandingColor";
+		String CUST_BODY_BACK_GROUND_COLOR = "bodyBackGroundColor";
+		String CUST_FRAMEWORK_THEME = "frameworkTheme";
+		
+		
 }
