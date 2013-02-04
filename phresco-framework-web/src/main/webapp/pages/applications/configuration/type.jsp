@@ -54,6 +54,7 @@
 	List<String> appinfoServers  = (List<String>) request.getAttribute(FrameworkConstants.REQ_APPINFO_SERVERS);
 	List<String> appinfoDbases  = (List<String>) request.getAttribute(FrameworkConstants.REQ_APPINFO_DBASES);
 	List<PropertyTemplate> properties = (List<PropertyTemplate>) request.getAttribute(FrameworkConstants.REQ_PROPERTIES);
+	List<String> options = (List<String>) request.getAttribute(FrameworkConstants.REQ_TECH_OPTIONS);
 	Gson gson = new Gson(); 
 	
  %>
@@ -372,7 +373,15 @@
 				hideRemoteDeply();
 				$('#iisDiv').css("display", "block");
 			}
+			
 		}
+		
+		<% if (CollectionUtils.isNotEmpty(options)) {
+			if (! options.contains("Remote_Deployment")) { %>
+			hideRemoteDeply();
+		<%	}
+		}
+		%>
 		
 		if (serverType == "NodeJs" || serverType == "NodeJs Mac") {
 			hideDeployDir();

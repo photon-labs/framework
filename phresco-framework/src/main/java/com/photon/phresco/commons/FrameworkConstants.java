@@ -625,6 +625,7 @@ public interface FrameworkConstants {
     String REQ_PROPERTIES_INFO = "propertiesInfo";
     String REQ_SELECTED_TYPE = "selectedType";
     String REQ_TYPE_VALUES = "typeValues";
+    String REQ_TECH_OPTIONS = "options";
     String REQ_CONFIG_TYPE = "configType";
     String REQ_OLD_NAME = "oldName";
     String REQ_ERROR = "error";

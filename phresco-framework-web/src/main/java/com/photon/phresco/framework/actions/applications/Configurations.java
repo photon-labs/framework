@@ -880,7 +880,8 @@ public class Configurations extends FrameworkBaseAction {
                 Properties selectedProperties = configuration.getProperties();
                 setReqAttribute(REQ_PROPERTIES_INFO, selectedProperties);
             }
-            
+            Technology technology = getServiceManager().getTechnology(getTechId());
+            setReqAttribute(REQ_TECH_OPTIONS, technology.getOptions());
             setReqAttribute(REQ_FROM_PAGE, getFromPage());
             setReqAttribute(REQ_TYPE_VALUES, typeValues);
             setReqAttribute(REQ_SELECTED_TYPE, getSelectedType());
