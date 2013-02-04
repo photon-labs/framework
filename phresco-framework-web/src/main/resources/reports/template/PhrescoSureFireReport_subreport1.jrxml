@@ -87,6 +87,16 @@
 							<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{allTestSuites})]]></dataSourceExpression>
 						</datasetRun>
 						<jr:column width="193">
+							<jr:tableFooter style="table_CH" height="30" rowSpan="1">
+								<staticText>
+									<reportElement style="table_CH_Label" x="0" y="0" width="193" height="30"/>
+									<textElement verticalAlignment="Middle">
+										<font fontName="Times New Roman" isBold="true"/>
+										<paragraph leftIndent="3"/>
+									</textElement>
+									<text><![CDATA[Total]]></text>
+								</staticText>
+							</jr:tableFooter>
 							<jr:columnHeader style="table_CH" height="30" rowSpan="1">
 								<staticText>
 									<reportElement style="table_CH_Label" x="0" y="0" width="193" height="30"/>
@@ -97,16 +107,6 @@
 									<text><![CDATA[Testsuite Name]]></text>
 								</staticText>
 							</jr:columnHeader>
-							<jr:columnFooter style="table_CH" height="30" rowSpan="1">
-								<staticText>
-									<reportElement style="table_CH_Label" x="0" y="0" width="193" height="30"/>
-									<textElement verticalAlignment="Middle">
-										<font fontName="Times New Roman" size="12" isBold="true"/>
-										<paragraph leftIndent="3"/>
-									</textElement>
-									<text><![CDATA[Total]]></text>
-								</staticText>
-							</jr:columnFooter>
 							<jr:detailCell style="table_TD" height="23" rowSpan="1">
 								<textField isStretchWithOverflow="true">
 									<reportElement style="table_TD_Label" stretchType="RelativeToBandHeight" x="0" y="0" width="193" height="20"/>
@@ -119,6 +119,16 @@
 							</jr:detailCell>
 						</jr:column>
 						<jr:column width="90">
+							<jr:tableFooter style="table_CH" height="30" rowSpan="1">
+								<textField isStretchWithOverflow="true">
+									<reportElement style="table_CH_Label" x="0" y="0" width="90" height="30"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Times New Roman" isBold="true"/>
+										<paragraph leftIndent="2"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$V{totalTestSuites}]]></textFieldExpression>
+								</textField>
+							</jr:tableFooter>
 							<jr:columnHeader style="table_CH" height="30" rowSpan="1">
 								<staticText>
 									<reportElement style="table_CH_Label" x="0" y="0" width="90" height="30"/>
@@ -129,16 +139,6 @@
 									<text><![CDATA[Total]]></text>
 								</staticText>
 							</jr:columnHeader>
-							<jr:columnFooter style="table_CH" height="30" rowSpan="1">
-								<textField isStretchWithOverflow="true">
-									<reportElement style="table_CH_Label" x="0" y="0" width="90" height="30"/>
-									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Times New Roman" size="12" isBold="true"/>
-										<paragraph leftIndent="2"/>
-									</textElement>
-									<textFieldExpression><![CDATA[$V{totalTestSuites}]]></textFieldExpression>
-								</textField>
-							</jr:columnFooter>
 							<jr:detailCell style="table_TD" height="23" rowSpan="1">
 								<textField pattern="###0">
 									<reportElement style="table_TD_Label" x="0" y="0" width="90" height="20"/>
@@ -150,6 +150,16 @@
 							</jr:detailCell>
 						</jr:column>
 						<jr:column width="90">
+							<jr:tableFooter style="table_CH" height="30" rowSpan="1">
+								<textField isStretchWithOverflow="true">
+									<reportElement style="table_CH_Label" x="0" y="0" width="90" height="30"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Times New Roman" isBold="true"/>
+										<paragraph leftIndent="2"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$V{noOfSuccess}]]></textFieldExpression>
+								</textField>
+							</jr:tableFooter>
 							<jr:columnHeader style="table_CH" height="30" rowSpan="1">
 								<staticText>
 									<reportElement style="table_CH_Label" x="0" y="0" width="90" height="30"/>
@@ -160,16 +170,6 @@
 									<text><![CDATA[Success]]></text>
 								</staticText>
 							</jr:columnHeader>
-							<jr:columnFooter style="table_CH" height="30" rowSpan="1">
-								<textField isStretchWithOverflow="true">
-									<reportElement style="table_CH_Label" x="0" y="0" width="90" height="30"/>
-									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Times New Roman" size="12" isBold="true"/>
-										<paragraph leftIndent="2"/>
-									</textElement>
-									<textFieldExpression><![CDATA[$V{noOfSuccess}]]></textFieldExpression>
-								</textField>
-							</jr:columnFooter>
 							<jr:detailCell style="table_TD" height="23" rowSpan="1">
 								<textField pattern="###0">
 									<reportElement style="table_TD_Label" x="0" y="0" width="90" height="20"/>
@@ -181,6 +181,16 @@
 							</jr:detailCell>
 						</jr:column>
 						<jr:column width="90">
+							<jr:tableFooter style="table_CH" height="30" rowSpan="1">
+								<textField isStretchWithOverflow="true">
+									<reportElement style="table_CH_Label" x="0" y="0" width="90" height="30"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Times New Roman" isBold="true"/>
+										<paragraph leftIndent="2"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$V{noOfFailure}]]></textFieldExpression>
+								</textField>
+							</jr:tableFooter>
 							<jr:columnHeader style="table_CH" height="30" rowSpan="1">
 								<staticText>
 									<reportElement style="table_CH_Label" x="0" y="0" width="90" height="30"/>
@@ -191,16 +201,6 @@
 									<text><![CDATA[Failure]]></text>
 								</staticText>
 							</jr:columnHeader>
-							<jr:columnFooter style="table_CH" height="30" rowSpan="1">
-								<textField isStretchWithOverflow="true">
-									<reportElement style="table_CH_Label" x="0" y="0" width="90" height="30"/>
-									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Times New Roman" size="12" isBold="true"/>
-										<paragraph leftIndent="2"/>
-									</textElement>
-									<textFieldExpression><![CDATA[$V{noOfFailure}]]></textFieldExpression>
-								</textField>
-							</jr:columnFooter>
 							<jr:detailCell style="table_TD" height="23" rowSpan="1">
 								<textField pattern="###0">
 									<reportElement style="table_TD_Label" x="0" y="0" width="90" height="20"/>
@@ -212,6 +212,16 @@
 							</jr:detailCell>
 						</jr:column>
 						<jr:column width="91">
+							<jr:tableFooter style="table_CH" height="30" rowSpan="1">
+								<textField isStretchWithOverflow="true">
+									<reportElement style="table_CH_Label" x="0" y="0" width="91" height="30"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Times New Roman" isBold="true"/>
+										<paragraph leftIndent="2"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$V{noOfError}]]></textFieldExpression>
+								</textField>
+							</jr:tableFooter>
 							<jr:columnHeader style="table_CH" height="30" rowSpan="1">
 								<staticText>
 									<reportElement style="table_CH_Label" x="0" y="0" width="91" height="30"/>
@@ -222,16 +232,6 @@
 									<text><![CDATA[Error]]></text>
 								</staticText>
 							</jr:columnHeader>
-							<jr:columnFooter style="table_CH" height="30" rowSpan="1">
-								<textField isStretchWithOverflow="true">
-									<reportElement style="table_CH_Label" x="0" y="0" width="91" height="30"/>
-									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Times New Roman" size="12" isBold="true"/>
-										<paragraph leftIndent="2"/>
-									</textElement>
-									<textFieldExpression><![CDATA[$V{noOfError}]]></textFieldExpression>
-								</textField>
-							</jr:columnFooter>
 							<jr:detailCell style="table_TD" height="23" rowSpan="1">
 								<textField pattern="###0">
 									<reportElement style="table_TD_Label" x="0" y="0" width="91" height="20"/>

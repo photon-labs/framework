@@ -140,7 +140,7 @@
 		<band splitType="Stretch"/>
 	</pageHeader>
 	<detail>
-		<band height="423" splitType="Stretch">
+		<band height="213">
 			<frame>
 				<reportElement x="0" y="0" width="555" height="211"/>
 				<subreport>
@@ -152,12 +152,14 @@
 					<subreportExpression><![CDATA["PhrescoSureFireReport_subreport1.jasper"]]></subreportExpression>
 				</subreport>
 			</frame>
+		</band>
+		<band height="211">
 			<frame>
-				<reportElement x="0" y="211" width="555" height="209">
+				<reportElement x="0" y="0" width="555" height="209">
 					<printWhenExpression><![CDATA[!$F{testSuites}.isEmpty()]]></printWhenExpression>
 				</reportElement>
 				<subreport>
-					<reportElement positionType="Float" x="0" y="0" width="555" height="209">
+					<reportElement x="0" y="0" width="555" height="209">
 						<printWhenExpression><![CDATA[$P{reportsDataType}.equals("detail")]]></printWhenExpression>
 					</reportElement>
 					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{testSuites})]]></dataSourceExpression>

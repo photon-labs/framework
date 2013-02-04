@@ -24,7 +24,7 @@
 		<band splitType="Stretch"/>
 	</background>
 	<pageHeader>
-		<band height="24">
+		<band height="28">
 			<frame>
 				<reportElement style="FCRHeading" mode="Opaque" x="0" y="0" width="555" height="24" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[$P{testType}.contains("functional") && !$F{testSuites}.isEmpty() || $P{testType}.contains("functional") && !$F{allTestSuites}.isEmpty()]]></printWhenExpression>

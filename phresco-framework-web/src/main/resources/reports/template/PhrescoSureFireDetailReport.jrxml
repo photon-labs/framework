@@ -37,7 +37,7 @@
 			<frame>
 				<reportElement mode="Opaque" x="0" y="5" width="555" height="43" forecolor="#000000" backcolor="#FFFFFF"/>
 				<staticText>
-					<reportElement x="8" y="0" width="111" height="18"/>
+					<reportElement x="8" y="0" width="169" height="18"/>
 					<textElement>
 						<font fontName="Times New Roman" size="14" isBold="true" isItalic="false" isUnderline="true"/>
 					</textElement>
@@ -50,14 +50,14 @@
 					</graphicElement>
 				</rectangle>
 				<staticText>
-					<reportElement style="PSFDRTHeadingRowLabel" x="10" y="22" width="109" height="15"/>
+					<reportElement style="PSFDRTHeadingRowLabel" x="10" y="22" width="91" height="15"/>
 					<textElement>
 						<font fontName="Times New Roman" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Testsuite Name :]]></text>
 				</staticText>
 				<textField>
-					<reportElement style="PSFDRTHeadingRowLabelValue" x="119" y="22" width="410" height="15"/>
+					<reportElement style="PSFDRTHeadingRowLabelValue" x="101" y="22" width="441" height="15"/>
 					<textElement>
 						<font fontName="Times New Roman" size="12" isBold="true"/>
 					</textElement>

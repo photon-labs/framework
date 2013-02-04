@@ -24,7 +24,7 @@
 		<band splitType="Stretch"/>
 	</background>
 	<pageHeader>
-		<band height="24">
+		<band height="27">
 			<printWhenExpression><![CDATA[$P{testType}.contains("unit")]]></printWhenExpression>
 			<frame>
 				<reportElement style="UCRHeading" mode="Opaque" x="0" y="0" width="555" height="24" isRemoveLineWhenBlank="true">
@@ -41,7 +41,7 @@
 		</band>
 	</pageHeader>
 	<detail>
-		<band height="422" splitType="Stretch">
+		<band height="213" splitType="Stretch">
 			<printWhenExpression><![CDATA[$P{testType}.contains("unit")]]></printWhenExpression>
 			<frame>
 				<reportElement x="0" y="0" width="555" height="211" isRemoveLineWhenBlank="true">
@@ -59,8 +59,10 @@
 					<subreportExpression><![CDATA["PhrescoSureFireReport_subreport1.jasper"]]></subreportExpression>
 				</subreport>
 			</frame>
+		</band>
+		<band height="217">
 			<frame>
-				<reportElement x="0" y="211" width="555" height="211" isRemoveLineWhenBlank="true">
+				<reportElement x="0" y="5" width="555" height="211" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[$P{testType}.contains("unit") && !$F{testSuites}.isEmpty()]]></printWhenExpression>
 				</reportElement>
 				<subreport>
