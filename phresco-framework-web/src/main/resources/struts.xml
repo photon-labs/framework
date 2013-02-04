@@ -799,6 +799,14 @@
             <result type="json" />
         </action>
         
+        <action name="loadTestResultAvail" method="loadTestResultAvail" class="com.photon.phresco.framework.actions.applications.Quality">
+            <result type="json" />
+        </action>
+        
+        <action name="fetchLoadTestResultFiles" method="fetchLoadTestResultFiles" class="com.photon.phresco.framework.actions.applications.Quality">
+            <result type="json" />
+        </action>
+        
         <action name="loadTestResult" method="loadTestResult" class="com.photon.phresco.framework.actions.applications.Quality">
             <result name="loadTestResult">/pages/applications/quality/loadTestResult.jsp</result>
         </action>

@@ -54,6 +54,7 @@
 	List<String> appinfoServers  = (List<String>) request.getAttribute(FrameworkConstants.REQ_APPINFO_SERVERS);
 	List<String> appinfoDbases  = (List<String>) request.getAttribute(FrameworkConstants.REQ_APPINFO_DBASES);
 	List<PropertyTemplate> properties = (List<PropertyTemplate>) request.getAttribute(FrameworkConstants.REQ_PROPERTIES);
+	List<String> options = (List<String>) request.getAttribute(FrameworkConstants.REQ_TECH_OPTIONS);
 	Gson gson = new Gson(); 
 	
  %>
@@ -101,12 +102,17 @@
 	    	}
 			
 			if (FrameworkConstants.TYPE_FILE.equals(propertyTemplate.getType())) {
+				String mandatoryStr = "";
+				if (propertyTemplate.isRequired()) {
+					mandatoryStr = "<span class=mandatory>*</span>&nbsp;";
+				}
+				
 	    %>
 	   			<script type="text/javascript">
-	   				createFileUploader('<%= propertyTemplate.getName() %>');
+	   				createFileUploader('<%= mandatoryStr %>', '<%= propertyTemplate.getName() %>');
 	   				
-	   				function createFileUploader(controlLabel) {
-	   					$('#fileControlLabel').html(controlLabel);
+	   				function createFileUploader(mandatory, controlLabel) {
+	   					$('#fileControlLabel').html(mandatory + controlLabel);
 	   					$('#fileControl').show();
 	   					var imgUploader = new qq.FileUploader ({
 	   			            element : document.getElementById('file-uploader'),
@@ -372,7 +378,15 @@
 				hideRemoteDeply();
 				$('#iisDiv').css("display", "block");
 			}
+			
 		}
+		
+		<% if (CollectionUtils.isNotEmpty(options)) {
+			if (! options.contains("Remote_Deployment")) { %>
+			hideRemoteDeply();
+		<%	}
+		}
+		%>
 		
 		if (serverType == "NodeJs" || serverType == "NodeJs Mac") {
 			hideDeployDir();

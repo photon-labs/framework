@@ -871,7 +871,7 @@ public class Quality extends DynamicParameterAction implements Constants {
         try {
             ApplicationInfo appInfo = getApplicationInfo();
             FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-            getHttpRequest().setAttribute(PATH, frameworkUtil.getPerformanceTestDir(appInfo));
+            setReqAttribute(PATH, frameworkUtil.getPerformanceTestDir(appInfo));
             setReqAttribute(REQ_APPINFO, appInfo);
         } catch (PhrescoException e) {
             if (s_debugEnabled) {
@@ -969,9 +969,15 @@ public class Quality extends DynamicParameterAction implements Constants {
 		        }
         	}
         } else if (LOAD.equals(getTestType())) {
-        	sb.append(frameworkUtil.getLoadTestReportDir(appInfo));
-            sb.append(File.separator);
-            sb.append(testResultFile);
+        	 String loadTestReportDir = frameworkUtil.getLoadTestReportDir(appInfo);
+             Pattern p = Pattern.compile(TEST_DIRECTORY);
+             Matcher matcher = p.matcher(loadTestReportDir);
+             if (StringUtils.isNotEmpty(loadTestReportDir) && matcher.find()) {
+            	 loadTestReportDir = matcher.replaceAll(getTestResultsType());
+             }
+             sb.append(loadTestReportDir);
+             sb.append(File.separator);
+             sb.append(testResultFile);
         } else if (PERFORMACE.equals(getTestType())) {
             String performanceTestReportDir = frameworkUtil.getPerformanceTestReportDir(appInfo);
             Pattern p = Pattern.compile(TEST_DIRECTORY);
@@ -1728,20 +1734,94 @@ public class Quality extends DynamicParameterAction implements Constants {
     		 ApplicationInfo appInfo = getApplicationInfo();	
     		 FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
              setReqAttribute(PATH, frameworkUtil.getLoadTestDir(appInfo));
-             File file = new File(Utility.getProjectHome() + appInfo.getAppDirName()+ frameworkUtil.getLoadTestReportDir(appInfo));
-             File[] children = file.listFiles(new XmlNameFileFilter(FILE_EXTENSION_XML));
-             if(children != null) {
-             	QualityUtil.sortResultFile(children);
-                 getHttpRequest().setAttribute(REQ_JMETER_REPORT_FILES, children);
-             } else {
-                 getHttpRequest().setAttribute(REQ_ERROR_TESTSUITE, getText(ERROR_LOAD_TEST));
-             }
-
-             getHttpRequest().setAttribute(REQ_APP_INFO, appInfo);
+             setReqAttribute(REQ_APP_INFO, appInfo);
     	} catch(Exception e){
         }
     	
-    	return "load";
+    	return APP_LOAD_TEST;
+    }
+    
+    public String loadTestResultAvail() {
+        if (s_debugEnabled) {
+            S_LOGGER.debug("Entering Method Quality.performanceTestResultAvail()");
+        }
+
+        try {
+            FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+            List<String> testResultsTypes = new ArrayList<String>();
+            testResultsTypes.add("server");
+            testResultsTypes.add("webservice");
+            for (String testResultsType: testResultsTypes) {
+                StringBuilder sb = new StringBuilder(getApplicationHome());
+                String loadReportDir = frameworkUtil.getLoadTestReportDir(getApplicationInfo());
+                if (StringUtils.isNotEmpty(loadReportDir) && StringUtils.isNotEmpty(testResultsType)) {
+                    Pattern p = Pattern.compile("dir_type");
+                    Matcher matcher = p.matcher(loadReportDir);
+                    loadReportDir = matcher.replaceAll(testResultsType);
+                    sb.append(loadReportDir); 
+                }
+                File file = new File(sb.toString());
+                File[] children = file.listFiles(new XmlNameFileFilter(FILE_EXTENSION_XML));
+                if (!ArrayUtils.isEmpty(children)) {
+                    setResultFileAvailable(true);
+                    break;
+                }
+            }
+        } catch(Exception e) {
+            if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Quality.loadTestResultAvail()"+ FrameworkUtil.getStackTraceAsString(e));
+            }
+        }
+
+        return SUCCESS;
+    }
+    
+    public String fetchLoadTestResultFiles() {
+        if (s_debugEnabled) {
+            S_LOGGER.debug("Entering Method Quality.fetchLoadTestResultFiles()");
+        }
+
+        try {
+            StringBuilder sb = new StringBuilder(getApplicationHome());
+            FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+            String loadReportDir = frameworkUtil.getLoadTestReportDir(getApplicationInfo());
+
+            if (s_debugEnabled) {
+                S_LOGGER.debug("test type performance test Report directory " + loadReportDir);
+            }
+
+            if (StringUtils.isNotEmpty(loadReportDir) && StringUtils.isNotEmpty(getTestResultsType())) {
+                Pattern p = Pattern.compile(TEST_DIRECTORY);
+                Matcher matcher = p.matcher(loadReportDir);
+                loadReportDir = matcher.replaceAll(getTestResultsType());
+                sb.append(loadReportDir);
+            }
+
+            if (s_debugEnabled) {
+                S_LOGGER.debug("test type performance test Report directory & Type " + sb.toString() + " Type " + getTestResultsType());
+            }
+
+            File file = new File(sb.toString());
+            File[] resultFiles = file.listFiles(new XmlNameFileFilter(FILE_EXTENSION_XML));
+            if (!ArrayUtils.isEmpty(resultFiles)) {
+                QualityUtil.sortResultFile(resultFiles);
+                for (File resultFile : resultFiles) {
+                    if (resultFile.isFile()) {
+                        testResultFiles.add(resultFile.getName());
+                    }
+                }
+            }
+        } catch(PhrescoException e) {
+            if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Quality.fetchPerformanceTestResultFiles()"+ FrameworkUtil.getStackTraceAsString(e));
+            }
+        } catch (PhrescoPomException e) {
+            if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Quality.fetchPerformanceTestResultFiles()"+ FrameworkUtil.getStackTraceAsString(e));
+            }
+        }
+
+        return SUCCESS;
     }
     
     public String showLoadTestPopup() throws PhrescoException{
