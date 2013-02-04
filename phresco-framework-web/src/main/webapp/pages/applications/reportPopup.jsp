@@ -16,7 +16,6 @@
 	List<String> reportFiles = (List<String>)request.getAttribute(FrameworkConstants.REQ_PDF_REPORT_FILES);
 	String reportGenerationStat = (String)request.getAttribute(FrameworkConstants.REQ_REPORT_STATUS);
 	String reportDeletionStat = (String)request.getAttribute(FrameworkConstants.REQ_REPORT_DELETE_STATUS);
-	System.out.println("reportDeletionStat ... " + reportDeletionStat);
 	String applicationId = (String)request.getAttribute(FrameworkConstants.REQ_APP_ID);
 	String projectId = (String)request.getAttribute(FrameworkConstants.REQ_PROJECT_ID);
 	String customerId = (String)request.getAttribute(FrameworkConstants.REQ_CUSTOMER_ID);
