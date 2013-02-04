@@ -122,7 +122,8 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 	private String downstreamProject = "";
 	// whether we want to clone this workspace
 	private boolean cloneWorkspace = false;
-
+	private String projectModule = "";
+	
 	public String ci() {
 		S_LOGGER.debug("Entering Method CI.ci()");
 		try {
@@ -327,13 +328,13 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 		try {
 		    ApplicationInfo appInfo = getApplicationInfo();
             removeSessionAttribute(appInfo.getId() + PHASE_CI + SESSION_WATCHER_MAP);
-            setProjModulesInReq();
             Map<String, DependantParameters> watcherMap = new HashMap<String, DependantParameters>(8);
             List<Parameter> parameters = null;
             MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_CI)));
             String goal = "";
             // based on operation it should do it
             if (BUILD.equals(operation)) {
+            	setProjModulesInReq();
                 parameters = getMojoParameters(mojo, PHASE_PACKAGE);
                 goal = PHASE_PACKAGE;
                 setReqAttribute(REQ_PHASE, PHASE_CI);
@@ -510,6 +511,7 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 			existJob.setUsedClonnedWorkspace(usedClonnedWorkspace);
 			existJob.setDownStreamProject(downstreamProject);
 			existJob.setOperation(operation);
+			existJob.setProjectModule(projectModule);
 
 			// Build info
 			ApplicationInfo applicationInfo = getApplicationInfo();
@@ -534,7 +536,10 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 				parameters = getMojoParameters(mojo, Constants.PHASE_PACKAGE);
 				ActionType actionType = ActionType.BUILD;
 				mvncmd =  actionType.getActionType().toString();
-				preBuildStepCmds.add(CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_PACKAGE);
+				String buildPrebuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_PACKAGE;
+				// To handle multi module project
+				buildPrebuildCmd = buildPrebuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
+				preBuildStepCmds.add(buildPrebuildCmd);
 			} else if (DEPLOY.equals(operation)) {
 				if (debugEnabled) {
 					S_LOGGER.debug("Deploy operation!!!!!!");
@@ -549,7 +554,10 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 				ActionType actionType = ActionType.DEPLOY;
 				mvncmd =  actionType.getActionType().toString();
 				
-				preBuildStepCmds.add(CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_DEPLOY);
+				String deployPreBuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_DEPLOY;
+				// To handle multi module project
+				deployPreBuildCmd = deployPreBuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
+				preBuildStepCmds.add(deployPreBuildCmd);
 			} else if (FUNCTIONAL_TEST.equals(operation)) {
 				if (debugEnabled) {
 					S_LOGGER.debug("Functional test operation!!!!!");
@@ -568,7 +576,10 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 				parameters = getMojoParameters(mojo, Constants.PHASE_FUNCTIONAL_TEST + HYPHEN + seleniumToolType);
 				ActionType actionType = ActionType.FUNCTIONAL_TEST;
 				mvncmd =  actionType.getActionType().toString();
-				preBuildStepCmds.add(CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_FUNCTIONAL_TEST);
+				String functionalTestPrebuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_FUNCTIONAL_TEST;
+				// To handle multi module project
+				functionalTestPrebuildCmd = functionalTestPrebuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
+				preBuildStepCmds.add(functionalTestPrebuildCmd);
 			}
 			
 			List<String> buildArgCmds = getMavenArgCommands(parameters);
@@ -584,6 +595,9 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 			if (debugEnabled) {
 				S_LOGGER.debug("mvn command" + mvncmd);
 			}
+			
+			// To handle multi module project
+			mvncmd = mvncmd + FrameworkConstants.SPACE + HYPHEN_N;
 			existJob.setMvnCommand(mvncmd);
 			// prebuild step enable
 			existJob.setEnablePreBuildStep(true);
@@ -1339,5 +1353,13 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 
 	public void setCloneWorkspace(boolean cloneWorkspace) {
 		this.cloneWorkspace = cloneWorkspace;
+	}
+
+	public String getProjectModule() {
+		return projectModule;
+	}
+
+	public void setProjectModule(String projectModule) {
+		this.projectModule = projectModule;
 	}
 }

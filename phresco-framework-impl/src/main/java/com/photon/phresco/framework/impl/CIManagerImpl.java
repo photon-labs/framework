@@ -515,7 +515,6 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
         }
         
         if (job.isEnablePostBuildStep()) {
-        	System.out.println("java stanalone technology with functional test enabled!!!!!!!");
         	String mvnCommand = job.getMvnCommand();
 			String[] ciAdapted = mvnCommand.split(CI_FUNCTIONAL_ADAPT); // java stanalone functional test alone
 			for (String ciCommand : ciAdapted) {
@@ -526,7 +525,6 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
         }
         
         if (job.isEnablePreBuildStep()) {
-        	System.out.println("java stanalone technology with functional test enabled!!!!!!!");
         	//iterate over loop
         	List<String> prebuildStepCommands = job.getPrebuildStepCommands();
         	for (String prebuildStepCommand : prebuildStepCommands) {
