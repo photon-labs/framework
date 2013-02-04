@@ -25,21 +25,26 @@
 <%
 	String error = (String) request.getAttribute(FrameworkConstants.REQ_ERROR);
 	String clangReport =  (String) request.getAttribute(FrameworkConstants.CLANG_REPORT);
-		  
+	
+	String bodyBackGroundColor = (String) request.getAttribute(FrameworkConstants.CUST_BODY_BACK_GROUND_COLOR);
+	String brandingColor = (String) request.getAttribute(FrameworkConstants.CUST_BRANDING_COLOR);
+	String menuBackGround = (String) request.getAttribute(FrameworkConstants.CUST_MENU_BACK_GROUND);
+	String menufontColor = (String) request.getAttribute(FrameworkConstants.CUST_MENUFONT_COLOR);
+	String labelColor = (String) request.getAttribute(FrameworkConstants.CUST_LABEL_COLOR);
+	String disabledLabelColor = (String) request.getAttribute(FrameworkConstants.CUST_DISABLED_LABEL_COLOR);
+	String customerId = (String) request.getAttribute(FrameworkConstants.REQ_CUSTOMER_ID);
 	String sonarPath = "";
 	
 	if (StringUtils.isNotEmpty(error)) {
-%>      
+    %>      
         <div class="alert alert-block">
 			<%= error %>
 		</div>
-<% 
-    } else { 
+    <% } else { 
 		sonarPath = (String) request.getAttribute(FrameworkConstants.REQ_SONAR_PATH);
-%>
+    %>
 		 <iframe src="" frameBorder="0" class="iframe_container"></iframe>
-		
-<% } %>
+    <% } %>
 	
 <script>
 	$(document).ready(function() {
@@ -66,14 +71,16 @@
 	    var source = "";
 	     <% 
 	    	if (StringUtils.isNotEmpty(clangReport)) { 
-	    %>
+	     %>
 	    	source = "<%= sonarPath %>";
-	    <% } else { %>
-	    	source = "<%= sonarPath %>?css=" + theme;
-		<%	
-	    	} 
-	    %> 
-	    
+	    <% } else { 
+	         if(customerId == null) { %>
+	              source = "<%= sonarPath %>?css=" + theme;
+	         <% } else { %>
+	              source = "<%= sonarPath %>?&css=" + theme + "&customerStyle=customerStyle.css&brandingColor=" + '<%=brandingColor %>'+ "&bodyBackGroundColor="+'<%= bodyBackGroundColor%>' + "&menuBackGround=" +'<%=menuBackGround %>'+ "&menufontColor=" + '<%=menufontColor %>'+ "&labelColor=" +'<%=labelColor %>'+ "&disabledLabelColor=" +'<%=disabledLabelColor%>';
+	         <% }
+	      } %>
+	   
 	    $('iframe').attr("src", source);
 	}
 	

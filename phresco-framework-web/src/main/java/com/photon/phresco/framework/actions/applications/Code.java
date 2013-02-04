@@ -37,6 +37,8 @@ import org.apache.log4j.Logger;
 import org.xml.sax.SAXException;
 
 import com.photon.phresco.commons.model.ApplicationInfo;
+import com.photon.phresco.commons.model.Customer;
+import com.photon.phresco.commons.model.FrameWorkTheme;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.exception.ConfigurationException;
 import com.photon.phresco.exception.PhrescoException;
@@ -223,6 +225,21 @@ public class Code extends DynamicParameterAction implements Constants {
              	}
              	setReqAttribute(CLANG_REPORT, validateReportUrl);
         	} else {
+				Customer customer = getServiceManager().getCustomer(getCustomerId());
+				FrameWorkTheme frameworkTheme = customer.getFrameworkTheme();
+				if (frameworkTheme !=  null) {
+					setReqAttribute(CUST_BODY_BACK_GROUND_COLOR, frameworkTheme.getBodyBackGroundColor());
+					setReqAttribute(CUST_BRANDING_COLOR, frameworkTheme.getBrandingColor());
+					setReqAttribute(CUST_MENU_BACK_GROUND, frameworkTheme.getMenuBackGround());
+					setReqAttribute(CUST_MENUFONT_COLOR, frameworkTheme.getMenufontColor());
+					setReqAttribute(CUST_LABEL_COLOR, frameworkTheme.getLabelColor());
+					setReqAttribute(CUST_DISABLED_LABEL_COLOR, frameworkTheme.getDisabledLabelColor());
+					setReqAttribute(CUST_FRAMEWORK_THEME, frameworkTheme);
+					S_LOGGER.debug("Framework theme for customer==> " + getCustomerId());
+				} else {
+					setReqAttribute(REQ_CUSTOMER_ID, PHOTON);
+				}
+				
 	        	String serverUrl = "";
 	    		FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
 	    		serverUrl = frameworkUtil.getSonarHomeURL();
