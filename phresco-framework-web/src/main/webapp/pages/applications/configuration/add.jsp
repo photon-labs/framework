@@ -23,6 +23,7 @@
 <%@ page import="java.util.Properties"%>
 
 <%@ page import="com.google.gson.Gson"%>
+<%@ page import="org.apache.commons.lang.StringUtils" %>
 <%@ page import="org.apache.commons.collections.CollectionUtils"%>
 <%@ page import="org.antlr.stringtemplate.StringTemplate"%>
 
@@ -145,7 +146,7 @@
 								selectedStr = "";
 							}	
 				%>	
-							<option value='<%= gson.toJson(settingsTemplate) %>' <%= selectedStr %>><%= settingsTemplate.getName() %></option>
+							<option value='<%= gson.toJson(settingsTemplate) %>' <%= selectedStr %>><%= StringUtils.isEmpty(settingsTemplate.getDisplayName()) ? settingsTemplate.getName() : settingsTemplate.getDisplayName() %></option>
 						
                 <% 
                 		}
@@ -224,7 +225,6 @@
 		var env = $('#environment').val();
 		// convert form to json, toJson function is not passing filed names with dot.
 		var jsonObject = getFormAsJson($('#configProperties'));
-		
 		var typeData = $.parseJSON($('#templateType').val());
 		var customPropStatus = typeData.customProp;
 		var selectedType = typeData.name;
