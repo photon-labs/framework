@@ -871,6 +871,8 @@ public class Quality extends DynamicParameterAction implements Constants {
         try {
             ApplicationInfo appInfo = getApplicationInfo();
             FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+            String performanceTestShowDevice = frameworkUtil.getPerformanceTestShowDevice(appInfo);
+            setReqAttribute(SHOW_ANDROID_DEVICE, performanceTestShowDevice);
             setReqAttribute(PATH, frameworkUtil.getPerformanceTestDir(appInfo));
             setReqAttribute(REQ_APPINFO, appInfo);
         } catch (PhrescoException e) {

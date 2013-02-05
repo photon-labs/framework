@@ -515,6 +515,10 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
         return getPomProcessor(appinfo.getAppDirName()).getProperty(POM_PROP_KEY_PERFORMANCETEST_DIR);
     }
     
+    public String getPerformanceTestShowDevice(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
+        return getPomProcessor(appinfo.getAppDirName()).getProperty(POM_PROP_KEY_PERF_SHOW_DEVICE);
+    }
+    
     public String getPerformanceTestReportDir(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
         return getPomProcessor(appinfo.getAppDirName()).getProperty(POM_PROP_KEY_PERFORMANCETEST_RPT_DIR);
     }

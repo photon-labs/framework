@@ -34,6 +34,7 @@
 	String appId = appInfo.getId();
 	String appDirName = appInfo.getAppDirName();
 	String techId = appInfo.getTechInfo().getId();
+	String showDevice = (String) request.getAttribute(FrameworkConstants.SHOW_ANDROID_DEVICE);
 	String path = (String) request.getAttribute(FrameworkConstants.PATH);
 %>
 
@@ -83,7 +84,7 @@
         <select  class="noTestAvail" id="testResultFile" name="testResultFile">
         </select>
         <%
-        	if (TechnologyTypes.ANDROIDS.contains(techId)) {
+        if (StringUtils.isNotEmpty(showDevice) && Boolean.parseBoolean(showDevice)) {
         %>
 	        <strong class="noTestAvail" id="testResultDeviceName"><s:text name="label.device"/></strong> 
 	        <select  class="noTestAvail" id="testResultDeviceId" name="testResultDeviceId" style="width :100px;">
@@ -131,7 +132,10 @@
 <script type="text/javascript">
     $(document).ready(function() {
 			<%
-    		boolean isAndroid = TechnologyTypes.ANDROIDS.contains(techId); 
+    		boolean isAndroid = false;
+			if (StringUtils.isNotEmpty(showDevice) && Boolean.parseBoolean(showDevice)) {
+				isAndroid = true;	
+			}	
 			%>
 			var themeselected = localStorage["color"];
 				if(<%= isAndroid %> && $(window).width() <= 1024) {
@@ -161,7 +165,7 @@
 		
 		$('#testResultFile').change(function() {
 			<%
-				if(TechnologyTypes.ANDROIDS.contains(techId)) {
+			if (StringUtils.isNotEmpty(showDevice) && Boolean.parseBoolean(showDevice)) {
 			%>
 				getDevicesName();
 			<%
@@ -249,7 +253,7 @@
             $("#noFiles").hide(); // hides no result found error message when there is test result file
             $("#testResultDisplay").show();
 			<%
-				if (TechnologyTypes.ANDROIDS.contains(techId)) {
+			if (StringUtils.isNotEmpty(showDevice) && Boolean.parseBoolean(showDevice)) {
 			%>
 				getDevicesName();
 				disableType();
