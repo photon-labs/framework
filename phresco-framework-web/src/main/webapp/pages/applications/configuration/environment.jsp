@@ -135,6 +135,8 @@ $(document).ready(function() {
 	$("#multiselectAppliesTo").scrollbars(); //JQuery scroll bar
 	
 	hidePopuploadingIcon();
+	document.getElementById('createEnvironment').disabled = true; 
+	$("#createEnvironment").removeClass("btn-primary");
 	$('#errMsg').empty();
 	setAsDefaultBtnStatus();
 	
@@ -170,6 +172,7 @@ $(document).ready(function() {
 			$("#errMsg").html("<s:text name='popup.err.msg.empty.env.name'/>");
 			$("#envName").focus();
 			$("#envName").val("");
+			setTimeOut();
 			returnVal = false;
 		} else {
 			$('#multiselect ul li input[type=checkbox]').each(function() {
@@ -178,16 +181,29 @@ $(document).ready(function() {
 				var envName = envs.name;
 				if (name.trim().toLowerCase() == envName.trim().toLowerCase()) {
 					$("#errMsg").html("<s:text name='popup.err.msg.env.name.exists'/>");
+					setTimeOut();
 					returnVal = false;
 					return false;
 				}
+				document.getElementById('createEnvironment').disabled = false;
+				$("#createEnvironment").addClass("btn-primary");
 			});
 		}
 		<% if (FrameworkConstants.SETTINGS.equals(fromPage)) { %>
 				var selecedAppliesToSize = $('#multiselectAppliesTo :checked').size();
-				if (selecedAppliesToSize < 1) {
+				document.getElementById('createEnvironment').disabled = true;
+				$("#createEnvironment").removeClass("btn-primary");
+				if(name == "") {
+					document.getElementById('createEnvironment').disabled = true;
+					$("#createEnvironment").removeClass("btn-primary");
+					setTimeOut();
+				} else if (selecedAppliesToSize < 1) {
 					$("#errMsg").html("<s:text name='popup.err.msg.select.one.appliesTo'/>");
+					setTimeOut();
 					return false;
+				} else {
+					document.getElementById('createEnvironment').disabled = false;
+					$("#createEnvironment").addClass("btn-primary");
 				}
         <% } %>
 		
@@ -214,6 +230,8 @@ $(document).ready(function() {
 	        	allCheckboxVal.defaultEnv = "false";
 				var finalEnvData = JSON.stringify(allCheckboxVal);
 				$(this).val(finalEnvData);
+				document.getElementById('createEnvironment').disabled = false;
+				$("#createEnvironment").addClass("btn-primary");
 	        });
 	       	
 	        $('#multiselect :checked').each( function() {
@@ -222,8 +240,10 @@ $(document).ready(function() {
 				selectedEnv.defaultEnv = "true";
 				var finalEnvData = JSON.stringify(selectedEnv);
 				$(this).val(finalEnvData);
+				
 	        });
 			$("#errMsg").html("<s:text name='popup.err.msg.env.set.as.default'/>");
+			setTimeOut();
 		}
    });
 	
@@ -262,12 +282,16 @@ $(document).ready(function() {
 			if (!env && configLength <= 0) {
 				$(this).parent().remove();
 			}
+			document.getElementById('createEnvironment').disabled = false;
+			$("#createEnvironment").addClass("btn-primary");
         });
         setAsDefaultBtnStatus(); 
     });
 	
 	$('#up').click(function () {
 		$('.selected').each(function() {
+			document.getElementById('createEnvironment').disabled = false;
+			$("#createEnvironment").addClass("btn-primary");
 			$(this).prev().before($(this));
 		});
 	});
@@ -275,6 +299,8 @@ $(document).ready(function() {
 	$('#down').click(function () {
 		var length = $('.selected').length;
 		$('.selected').each(function() {
+			document.getElementById('createEnvironment').disabled = false;
+			$("#createEnvironment").addClass("btn-primary");
 			var element = $(this); 
 			for (var i=0; i<length; i++) {
 				element = element.next(); 
@@ -340,6 +366,7 @@ $(document).ready(function() {
 		var checkedEnvsSize = $('#multiselect :checked').size();
 		if (checkedEnvsSize < 1) {
 			$("#errMsg").html("<s:text name='popup.err.msg.select.one.env'/>");
+			setTimeOut();
 			return false;
 		}
 	}

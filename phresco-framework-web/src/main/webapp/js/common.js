@@ -161,6 +161,7 @@ function mandatoryValidation(pageUrl, form, additionalParams, phase, goal, actio
 		success : function(data) {
 			if (data.errorFound != undefined && data.errorFound) {
 				$(".yesNoPopupErr").html(data.errorMsg);
+				setTimeOut();
 			} else {
 				$(".yesNoPopupErr").empty();
 				if (pageUrl == "build" || pageUrl == "deploy") {//build,deploy
@@ -525,6 +526,11 @@ function setTimeOut() {
 	setTimeout(function() {
 		$('#errormsg').fadeOut("slow", function () {
 			$('#errormsg').hide();
+		});
+	}, 2000);
+
+	setTimeout(function() {
+		$('.yesNoPopupErr').empty("slow", function () {
 		});
 	}, 2000);
 }

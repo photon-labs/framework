@@ -118,7 +118,7 @@
 		    <label class="accordion-control-label labelbold"><span class="red">*</span>&nbsp;<s:text name='lbl.code'/></label>
 		    <div class="controls">
 				<input class="input-xlarge" id="code" name="code"
-		            type="text" maxlength="12" value ="<%= StringUtils.isNotEmpty(code) ? code : "" %>" title="<s:text name="title.12.chars"/>" 
+		            type="text" maxlength="30" value ="<%= StringUtils.isNotEmpty(code) ? code : "" %>" title="<s:text name="title.30.chars"/>" 
 		            placeholder="<s:text name="place.hldr.app.edit.code"/>"/>
 	            <span class="help-inline" id="codeError"></span>
 		    </div>
