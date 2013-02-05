@@ -3016,6 +3016,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 	        mojo.save();
 	        
 			List<String> buildArgCmds = getMavenArgCommands(parameters);
+			buildArgCmds.add(HYPHEN_N);
 			String workingDirectory = getAppDirectoryPath(applicationInfo);
 			BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.PDF_REPORT, buildArgCmds, workingDirectory);
 			String line;
