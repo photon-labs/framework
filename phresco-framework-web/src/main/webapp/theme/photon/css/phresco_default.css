@@ -6448,3 +6448,7 @@ color: #313131;
 	height: 450px;
 	overflow-y: auto;
 }
+
+.jobBuildsList  tr td a{
+	color: black;
+}
