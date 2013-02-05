@@ -68,6 +68,8 @@ public class PerformanceTestDetailsImpl implements DynamicPageParameter, Constan
         builder.append(File.separator);
         builder.append(testAgainst.toLowerCase());
         builder.append(File.separator);
+        builder.append(FOLDER_JSON);
+        builder.append(File.separator);
         builder.append(testResultName + DOT_JSON);
         
         return builder.toString();

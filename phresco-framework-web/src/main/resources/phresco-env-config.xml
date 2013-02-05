@@ -81,7 +81,7 @@
 	<WebService desc="" name="webservice">
             <protocol>http</protocol>
             <host>localhost</host>
-            <port>3030</port>
+            <port>2020</port>
             <username/>
             <password/>
             <context>service-testing</context>

@@ -1693,22 +1693,34 @@ public class Quality extends DynamicParameterAction implements Constants {
     		List<Parameter> parameters = getMojoParameters(mojo, PHASE_PERFORMANCE_TEST);
     		List<String> buildArgCmds = getMavenArgCommands(parameters);
     		String workingDirectory = getAppDirectoryPath(applicationInfo);
-
-    		StringBuilder filepath = new StringBuilder(Utility.getProjectHome());
-    		filepath.append(applicationInfo.getAppDirName()).append(File.separator).append(TEST_SLASH_PERFORMANCE).append(getTestAgainst())
-    		.append(File.separator).append(getTestName()).append(DOT_JSON);
-    		/*String className = getHttpRequest().getParameter(REQ_OBJECT_CLASS);//get the bean class
-    		ClassLoader classLoader = Quality.class.getClassLoader();*/
-    		File file = new File(filepath.toString());
-			fop = new FileOutputStream(file);
-			if (!file.exists()) {
-				file.createNewFile();
-			}
-			byte[] contentInBytes = getResultJson().getBytes();
-			 
-			fop.write(contentInBytes);
-			fop.flush();
-			fop.close();	
+    		
+    		PomProcessor processor = new PomProcessor(getPOMFile(applicationInfo.getAppDirName()));
+            String performTestDir = processor.getProperty(POM_PROP_KEY_PERFORMANCETEST_DIR);
+            
+    		
+            StringBuilder filepath = new StringBuilder(Utility.getProjectHome())
+    		.append(applicationInfo.getAppDirName())
+    		.append(performTestDir)
+    		.append(File.separator)
+    		.append(getTestAgainst())
+    		.append(File.separator)
+    		.append(Constants.FOLDER_JSON);
+    		if (new File(filepath.toString()).exists()) {
+    			filepath.append(File.separator)
+        		.append(getTestName())
+        		.append(DOT_JSON);
+        		File file = new File(filepath.toString());
+    			fop = new FileOutputStream(file);
+    			if (!file.exists()) {
+    				file.createNewFile();
+    			}
+    			byte[] contentInBytes = getResultJson().getBytes();
+    			 
+    			fop.write(contentInBytes);
+    			fop.flush();
+    			fop.close();
+    		}
+    			
     		BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.PERFORMANCE_TEST, buildArgCmds, workingDirectory);
     		setSessionAttribute(getAppId() + PERFORMANCE_TEST, reader);
     		setReqAttribute(REQ_APP_ID, getAppId());
@@ -1719,9 +1731,19 @@ public class Quality extends DynamicParameterAction implements Constants {
     		throw new PhrescoException(e);
     	} catch (IOException e) {
     		throw new PhrescoException(e); 
+    	} catch (PhrescoPomException e) {
+    		throw new PhrescoException(e); 
     	}
 
     	return SUCCESS;
+    }
+    
+    private File getPOMFile(String appDirName) {
+        StringBuilder builder = new StringBuilder(Utility.getProjectHome())
+        .append(appDirName)
+        .append(File.separatorChar)
+        .append(POM_NAME);
+        return new File(builder.toString());
     }
     
     public String load() throws JAXBException, IOException, PhrescoPomException {
@@ -3016,6 +3038,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 	        mojo.save();
 	        
 			List<String> buildArgCmds = getMavenArgCommands(parameters);
+			buildArgCmds.add(HYPHEN_N);
 			String workingDirectory = getAppDirectoryPath(applicationInfo);
 			BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.PDF_REPORT, buildArgCmds, workingDirectory);
 			String line;
