@@ -1695,8 +1695,8 @@ public class Quality extends DynamicParameterAction implements Constants {
     		String workingDirectory = getAppDirectoryPath(applicationInfo);
 
     		StringBuilder filepath = new StringBuilder(Utility.getProjectHome());
-    		filepath.append(applicationInfo.getAppDirName()).append(File.separator).append(TEST_SLASH_PERFORMANCE).append(getTestAgainst())
-    		.append(File.separator).append(getTestName()).append(DOT_JSON);
+    		filepath.append(applicationInfo.getAppDirName()).append(TEST_SLASH_PERFORMANCE).append(getTestAgainst())
+    		.append(File.separator).append(Constants.FOLDER_JSON).append(File.separator).append(getTestName()).append(DOT_JSON);
     		/*String className = getHttpRequest().getParameter(REQ_OBJECT_CLASS);//get the bean class
     		ClassLoader classLoader = Quality.class.getClassLoader();*/
     		File file = new File(filepath.toString());
