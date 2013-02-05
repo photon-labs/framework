@@ -2,7 +2,7 @@ Introduction:
 
 ---------------
 
-Phresco framework can be run on any platform. It requires Java to be present on the machine. Check if JAVA_HOME (JDK path Ex:- c:\Program Files\Java\jdk1.6.0_18) is set and Java bin is included in the PATH (c:\Program Files\Java\jdk1.6.0_18\bin).
+Phresco framework can be run on any platform. It requires Java to be present on the machine. Check if JAVA_HOME ( E.g., Dir:\Java\jdk1.6.0_18) is set and Java bin is included in the PATH (Dir:\Java\jdk1.6.0_18\bin).
 
 
 Steps to start the Phresco Framework
@@ -13,7 +13,7 @@ In Windows,
 
 	1.Unzip Phresco-build-<version>.zip containing Service war, Mongo DB dump and Phresco Framework -<version>.zip  
 	2.Unzip the Phresco-framework -<version>.zip
-	2.Open the command prompt and run the batch script , c:/phresco/phresco-framework/bin/start-framework-server.bat
+	2.Open the command prompt and run the batch script , Dir:\phresco\phresco-framework\bin>start-framework-server.bat
         to start the framework.
 
 In Mac or Linux,
@@ -25,7 +25,7 @@ In Mac or Linux,
 For Android development,
 
 	1. Install Android SDK.
-	2. Set ANDROID_HOME ., C:\Program Files\Android\android-sdk
+	2. Set ANDROID_HOME ., Dir:\Android\android-sdk
 	3. PATH : %ANDROID_HOME%\platform-tools;%ANDROID_HOME%\tools;
 
 
@@ -79,10 +79,10 @@ In Windows,
 
 	1. For Wamp,
 
-		Unzip and place the folder in "C:\wamp\bin\php\php5.3.5\PEAR\PHP\CodeSniffer\Standards" 
+		Unzip and place the folder in "Dir:\wamp\bin\php\php5.3.5\PEAR\PHP\CodeSniffer\Standards" 
 	2. For Xampp,
 
-		Unzip and place the folder in "C:\xampp\php\PEAR\PHP\CodeSniffer\Standards" 
+		Unzip and place the folder in "Dir:\xampp\php\PEAR\PHP\CodeSniffer\Standards" 
 
 
 In Mac,
