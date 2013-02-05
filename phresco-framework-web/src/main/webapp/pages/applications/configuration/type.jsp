@@ -381,11 +381,13 @@
 			
 		}
 		
-		<% if (CollectionUtils.isNotEmpty(options)) {
-			if (! options.contains("Remote_Deployment")) { %>
-			hideRemoteDeply();
-		<%	}
-		}
+		<% if (CollectionUtils.isNotEmpty(options) && FrameworkConstants.ADD_CONFIG.equals(fromPage) || FrameworkConstants.EDIT_CONFIG.equals(fromPage)) {
+				if (!options.contains("Remote_Deployment")) { 
+		%>
+				hideRemoteDeply();
+		<%	
+				}
+			}
 		%>
 		
 		if (serverType == "NodeJs" || serverType == "NodeJs Mac") {
