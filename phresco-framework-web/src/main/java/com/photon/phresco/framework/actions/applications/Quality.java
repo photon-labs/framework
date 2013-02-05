@@ -1698,21 +1698,29 @@ public class Quality extends DynamicParameterAction implements Constants {
             String performTestDir = processor.getProperty(POM_PROP_KEY_PERFORMANCETEST_DIR);
             
     		
-            StringBuilder filepath = new StringBuilder(Utility.getProjectHome());
-    		filepath.append(applicationInfo.getAppDirName()).append(performTestDir).append(File.separator).append(getTestAgainst())
-    		.append(File.separator).append(Constants.FOLDER_JSON).append(File.separator).append(getTestName()).append(DOT_JSON);
-    		/*String className = getHttpRequest().getParameter(REQ_OBJECT_CLASS);//get the bean class
-    		ClassLoader classLoader = Quality.class.getClassLoader();*/
-    		File file = new File(filepath.toString());
-			fop = new FileOutputStream(file);
-			if (!file.exists()) {
-				file.createNewFile();
-			}
-			byte[] contentInBytes = getResultJson().getBytes();
-			 
-			fop.write(contentInBytes);
-			fop.flush();
-			fop.close();	
+            StringBuilder filepath = new StringBuilder(Utility.getProjectHome())
+    		.append(applicationInfo.getAppDirName())
+    		.append(performTestDir)
+    		.append(File.separator)
+    		.append(getTestAgainst())
+    		.append(File.separator)
+    		.append(Constants.FOLDER_JSON);
+    		if (new File(filepath.toString()).exists()) {
+    			filepath.append(File.separator)
+        		.append(getTestName())
+        		.append(DOT_JSON);
+        		File file = new File(filepath.toString());
+    			fop = new FileOutputStream(file);
+    			if (!file.exists()) {
+    				file.createNewFile();
+    			}
+    			byte[] contentInBytes = getResultJson().getBytes();
+    			 
+    			fop.write(contentInBytes);
+    			fop.flush();
+    			fop.close();
+    		}
+    			
     		BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.PERFORMANCE_TEST, buildArgCmds, workingDirectory);
     		setSessionAttribute(getAppId() + PERFORMANCE_TEST, reader);
     		setReqAttribute(REQ_APP_ID, getAppId());
