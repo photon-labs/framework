@@ -498,6 +498,10 @@ public class Features extends DynamicParameterModule {
             removeSessionAttribute(appInfo.getId() + FEATURE_CONFIG + SESSION_WATCHER_MAP);
             Map<String, DependantParameters> watcherMap = new HashMap<String, DependantParameters>(8);
             File featureManifest = new File(getManifest(appInfo, featureName));
+            //If Xml does not exist, return false
+            if(!featureManifest.exists()) {
+            	return false;
+            }
             ModulesProcessor module = new ModulesProcessor(new File(featureManifest.getPath()));
             List<Parameter> parameters = module.getParameters();
             if (CollectionUtils.isNotEmpty(parameters) && parameters.get(0) != null) {
