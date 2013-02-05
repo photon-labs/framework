@@ -628,11 +628,6 @@
 				'background' : bodyBackGroundColor,                   // left side menu background 
 			},
 			
-			'.tabs > li > a > label:hover': {
-				'background' : bodyBackGroundColor + "! important",   // left side menu background when mouse over
-				'color': brandingColor + "! important",
-			},
-			
 			'.tabs li, .pills > li': {
 				'border-bottom': "1px solid" +  bodyBackGroundColor  // left side menu  border-bottom color when mouse over
 			},

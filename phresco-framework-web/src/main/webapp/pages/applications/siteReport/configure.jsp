@@ -184,6 +184,14 @@
 			}
 		});
 		
+		$('.parentCheck').click(function() {
+			if($('#reports-div input:checkbox').length == $('#reports-div input:checked').length) {
+				$('#checkAllReports').attr("checked", true);
+			} else {
+				$('#checkAllReports').attr("checked", false);
+			}
+		});
+		
 	});
 	
 	function checkAllReports(checkStatus) {
