@@ -18,6 +18,8 @@ import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Para
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.Utility;
+import com.phresco.pom.exception.PhrescoPomException;
+import com.phresco.pom.util.PomProcessor;
 
 public class PerformanceTestResultNamesImpl implements DynamicParameter, Constants {
 
@@ -55,15 +57,29 @@ public class PerformanceTestResultNamesImpl implements DynamicParameter, Constan
 		return possibleValues;
 	}
 	
-	private String getTestDirPath(String AppDirName, String testAgainst) {
-		 StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-		 builder.append(AppDirName)
-		 .append(FrameworkConstants.TEST_SLASH_PERFORMANCE)
-		 .append(testAgainst.toString())
-		 .append(FrameworkConstants.RESULTS_SLASH_JMETER);
-		 
-		return builder.toString();
+	private String getTestDirPath(String AppDirName, String testAgainst) throws PhrescoException {
+		StringBuilder builder = new StringBuilder(Utility.getProjectHome());
+		try {
+			PomProcessor processor = new PomProcessor(getPOMFile(AppDirName));
+			String performDir = processor.getProperty(POM_PROP_KEY_PERFORMANCETEST_DIR);
+			builder.append(AppDirName)
+			.append(performDir)
+			.append(File.separator)
+			.append(testAgainst.toString())
+			.append(FrameworkConstants.RESULTS_SLASH_JMETER);
+			return builder.toString();
+		} catch (PhrescoPomException e) {
+    		throw new PhrescoException(e); 
+    	}
 	}
+	
+	private File getPOMFile(String appDirName) {
+        StringBuilder builder = new StringBuilder(Utility.getProjectHome())
+        .append(appDirName)
+        .append(File.separatorChar)
+        .append(POM_NAME);
+        return new File(builder.toString());
+    }
 	
 	 public class XmlNameFileFilter implements FilenameFilter {
 	        private String filter_;

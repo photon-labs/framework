@@ -1693,9 +1693,13 @@ public class Quality extends DynamicParameterAction implements Constants {
     		List<Parameter> parameters = getMojoParameters(mojo, PHASE_PERFORMANCE_TEST);
     		List<String> buildArgCmds = getMavenArgCommands(parameters);
     		String workingDirectory = getAppDirectoryPath(applicationInfo);
-
-    		StringBuilder filepath = new StringBuilder(Utility.getProjectHome());
-    		filepath.append(applicationInfo.getAppDirName()).append(TEST_SLASH_PERFORMANCE).append(getTestAgainst())
+    		
+    		PomProcessor processor = new PomProcessor(getPOMFile(applicationInfo.getAppDirName()));
+            String performTestDir = processor.getProperty(POM_PROP_KEY_PERFORMANCETEST_DIR);
+            
+    		
+            StringBuilder filepath = new StringBuilder(Utility.getProjectHome());
+    		filepath.append(applicationInfo.getAppDirName()).append(performTestDir).append(File.separator).append(getTestAgainst())
     		.append(File.separator).append(Constants.FOLDER_JSON).append(File.separator).append(getTestName()).append(DOT_JSON);
     		/*String className = getHttpRequest().getParameter(REQ_OBJECT_CLASS);//get the bean class
     		ClassLoader classLoader = Quality.class.getClassLoader();*/
@@ -1719,9 +1723,19 @@ public class Quality extends DynamicParameterAction implements Constants {
     		throw new PhrescoException(e);
     	} catch (IOException e) {
     		throw new PhrescoException(e); 
+    	} catch (PhrescoPomException e) {
+    		throw new PhrescoException(e); 
     	}
 
     	return SUCCESS;
+    }
+    
+    private File getPOMFile(String appDirName) {
+        StringBuilder builder = new StringBuilder(Utility.getProjectHome())
+        .append(appDirName)
+        .append(File.separatorChar)
+        .append(POM_NAME);
+        return new File(builder.toString());
     }
     
     public String load() throws JAXBException, IOException, PhrescoPomException {
