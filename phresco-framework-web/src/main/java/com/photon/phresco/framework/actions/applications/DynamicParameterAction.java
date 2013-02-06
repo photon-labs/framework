@@ -710,7 +710,10 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 	 * @return
 	 */
 	protected List<String> getMavenArgCommands(List<Parameter> parameters) {
-		List<String> buildArgCmds = new ArrayList<String>();			
+		List<String> buildArgCmds = new ArrayList<String>();	
+		if(CollectionUtils.isEmpty(parameters)) {
+			return buildArgCmds;
+		}
 		for (Parameter parameter : parameters) {
 			if (parameter.getPluginParameter()!= null && PLUGIN_PARAMETER_FRAMEWORK.equalsIgnoreCase(parameter.getPluginParameter())) {
 				List<MavenCommand> mavenCommand = parameter.getMavenCommands().getMavenCommand();
