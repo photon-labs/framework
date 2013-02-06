@@ -131,7 +131,7 @@
 															<tr>
 																<td class="no-left-bottom-border table-pad">
 																	<input type="checkbox" class="check <%=env.getName() %>" name="checkedConfig" value='<%= configJson %>'
-																		onclick="envCheckboxEvent($('.<%=env.getName() %>'), $('#<%=env.getName() %>'));">
+																		onclick="envCheckboxEvent($('.<%=env.getName() %>'), $('#<%=env.getName() %>'), false);">
 																</td>
 																<td class="no-left-bottom-border table-pad">
 																	<a href="#" onclick="editConfiguration('<%= env.getName() %>', '<%= configuration.getType() %>','<%= configuration.getName() %>');" 

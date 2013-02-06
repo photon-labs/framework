@@ -70,17 +70,20 @@
 				<div class="settingsTypeFields">
             		<div class="multilist-scroller multiselect" id='multiselectAppliesTo'>
 					   <ul>
+					   		<li>
+								<input type="checkbox" value="" id="checkAllAuto" name="" onclick="checkAllEvent(this, $('.appliesToCheck'));" style="margin: 3px 8px 6px 0;">All
+							</li>
 					   	<% 
 					   		if (CollectionUtils.isNotEmpty(allTechnologies)) {
 					   			for (Technology appliesTo : allTechnologies) {
-						   	%>
+						%>
 								<li>
 									<input type="checkbox" name="appliesTo" class="check appliesToCheck" 
-										value='<%= appliesTo.getId()%>' title="<%= appliesTo.getDescription() %>" /><%= appliesTo.getName() %>
+										onclick= "checkboxEvent($('.appliesToCheck'), $('#checkAllAuto'))" value='<%= appliesTo.getId()%>' title="<%= appliesTo.getDescription() %>" /><%= appliesTo.getName() %>
 								</li>
-							<%		
-					   				}
-					   			}
+						<%		
+				   				}
+				   			}
 						%>
 					   </ul>
 			  	 	</div>

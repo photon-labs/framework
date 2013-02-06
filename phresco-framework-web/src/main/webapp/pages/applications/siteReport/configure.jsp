@@ -147,15 +147,15 @@
 		
 		/** Accordian starts **/
 		var showContent = 0;
-	    $('.siteaccordion').bind('click',function(e) {
-	        var _tempIndex = $('.siteaccordion').index(this);
-	            $('.siteaccordion').removeClass('openreg').addClass('closereg_empty');
+	    $('.closereg').bind('click',function(e) {
+	        var _tempIndex = $('.closereg').index(this);
+	            $('.closereg').removeClass('openreg').addClass('closereg_empty');
 	            $('.mfbox').each(function(e){
 	                if($(this).css('display')=='block'){
 	                    $(this).find('.scrollpanel').slideUp('300');
 	                    $(this).slideUp('300');
 	                }
-	            })
+	            });
 	        if($('.mfbox').eq(_tempIndex).css('display')=='none'){
 	            $(this).removeClass('closereg_empty').addClass('openreg');
 	            $('.mfbox').eq(_tempIndex).slideDown(300,function(){

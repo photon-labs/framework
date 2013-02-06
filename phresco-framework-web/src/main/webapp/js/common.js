@@ -402,14 +402,13 @@ function activateMenu(selectedMenu) {
 
 function checkAllHandler(parentCheckBox, childCheckBox) {
 	 // add multiple select / deselect functionality
-    $(parentCheckBox).click(function () {
+    $(parentCheckBox).click(function() {
           $(childCheckBox).attr('checked', this.checked);
     });
  
     // if all checkbox are selected, check the selectall checkbox
     // and viceversa
     $(childCheckBox).click(function(){
- 
         if($(childCheckBox).length == $(childCheckBox + ":checked").length) {
             $(parentCheckBox).attr("checked", "checked");
         } else {
@@ -422,16 +421,18 @@ function checkAllHandler(parentCheckBox, childCheckBox) {
 function checkAllEvent(currentCheckbox, childCheckBox, disable) {
 	var checkAll = $(currentCheckbox).prop('checked');
 	childCheckBox.prop('checked', checkAll);
-	buttonStatus(checkAll);
+	buttonStatus(checkAll, disable);
 	if (!checkAll) {
 		disable = false;
 	}
 	toDisableAllCheckbox(currentCheckbox,childCheckBox, disable);
 }
 
-function checkboxEvent(childChkbxObj, parentChkbxObj) {
+function checkboxEvent(childChkbxObj, parentChkbxObj, disablebtn) {
 	var chkboxStatus = childChkbxObj.is(':checked');
-	buttonStatus(chkboxStatus);
+	if(!isBlank(disablebtn) || disablebtn != undefined) {
+		buttonStatus("", chkboxStatus);
+	}
 	if (childChkbxObj.length == childChkbxObj.filter(':checked').length) {
 		parentChkbxObj.prop('checked', true);
 	} else {
@@ -439,17 +440,21 @@ function checkboxEvent(childChkbxObj, parentChkbxObj) {
 	}
 }
 
-function envCheckboxEvent(childChkbxObj, parentChkbxObj) {
+function envCheckboxEvent(childChkbxObj, parentChkbxObj, disablebtn) {
 	var chkboxStatus = childChkbxObj.is(':checked');
-	buttonStatus(chkboxStatus);
+	if(!isBlank(disablebtn) || disablebtn != undefined) {
+		buttonStatus("", chkboxStatus);
+	}
 }
 
-function buttonStatus(checkAll) {
-	$('#deleteBtn').attr('disabled', !checkAll);
-	if (checkAll) {
-		$('#deleteBtn').addClass('btn-primary');
-	} else {
-		$('#deleteBtn').removeClass('btn-primary');
+function buttonStatus(checkAll, disable) {
+	if(!isBlank(disable) || disable != undefined) {
+		$('#deleteBtn').attr('disabled', !checkAll);
+		if (checkAll) {
+			$('#deleteBtn').addClass('btn-primary');
+		} else {
+			$('#deleteBtn').removeClass('btn-primary');
+		}
 	}
 }
 
