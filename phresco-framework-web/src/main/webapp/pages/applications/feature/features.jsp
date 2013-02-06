@@ -233,7 +233,7 @@ if (CollectionUtils.isNotEmpty(defaultfeatures)) {
 			
 			if (showImage) {
 				$("#result").append('<div id="'+ctrlClass+'Div" class="'+divName+'">'+dispName+' - '+dispValue+
-						'<a href="#" onclick="remove(this);">'+ removeImg +'</a>'+
+						'<a href="#" onclick="removed(this);">'+ removeImg +'</a>'+
 						'<input type="hidden" class="'+ctrlClass+'" name="jsonData">' +
 						<%
 							if (optionIds != null && optionIds.contains(FrameworkConstants.FEATURES_KEY) || optionIds.contains(FrameworkConstants.COMPONENT_CONFIG)) {
@@ -246,7 +246,7 @@ if (CollectionUtils.isNotEmpty(defaultfeatures)) {
 						'</div>');
 			} else {
 				$("#result").append('<div id="'+ctrlClass+'Div" class="'+divName+'">'+dispName+' - '+dispValue+
-						'<a href="#" onclick="remove(this);">'+ removeImg +'</a>'+
+						'<a href="#" onclick="removed(this);">'+ removeImg +'</a>'+
 						'<input type="hidden" class="'+ctrlClass+'" name="jsonData"></div>');
 			}
 			$("."+ctrlClass).val(jsonParam);
@@ -256,7 +256,7 @@ if (CollectionUtils.isNotEmpty(defaultfeatures)) {
     }
     
     // Function to remove the final features in right tab  
-    function remove(thisObj) {
+    function removed(thisObj) {
     	$(thisObj).closest('div').remove();
     	updateFeatureNotification();
     }

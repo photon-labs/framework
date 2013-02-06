@@ -143,9 +143,11 @@ $(document).ready(function() {
 	$('#errMsg').empty();
 	setAsDefaultBtnStatus();
 	
+	var update = false;
 	$('input[name="envNames"]').change(function() {
 		if ($(this).is(':checked')) {
 			$('input[name="addBtn"]').val("<s:text name='lbl.btn.update'/>");
+			update = true;
 			var envData = $.parseJSON($(this).val());
 			var appliesTos = envData.appliesTo;
 			$('#multiselectAppliesTo ul li input[type=checkbox]').each(function() {
@@ -182,11 +184,13 @@ $(document).ready(function() {
 				var jsonData = $(this).val();
 				var envs = $.parseJSON(jsonData);
 				var envName = envs.name;
-				if (name.trim().toLowerCase() == envName.trim().toLowerCase()) {
-					$("#errMsg").html("<s:text name='popup.err.msg.env.name.exists'/>");
-					setTimeOut();
-					returnVal = false;
-					return false;
+				if(!update) {
+					if (name.trim().toLowerCase() == envName.trim().toLowerCase()) {
+						$("#errMsg").html("<s:text name='popup.err.msg.env.name.exists'/>");
+						setTimeOut();
+						returnVal = false;
+						return false;
+					}
 				}
 				document.getElementById('createEnvironment').disabled = false;
 				$("#createEnvironment").addClass("btn-primary");
