@@ -94,9 +94,8 @@
 		<antcall target="open-browser"/> 
 		
 		<echo message="Started deploying sonar "/>
-		<copy todir="${tomcat.home}/webapps/sonar">
-			<fileset dir="${sonar.war.dir}"/>
-		</copy>
+		<unwar src="${phresco.home}/workspace/repo/sonar/sonar/${sonar.version}/sonar-${sonar.version}.war" dest="${tomcat.home}/webapps/sonar"/>
+		<echo message="Loading Sonar"/>
 		
 	</target>
 	

@@ -267,16 +267,6 @@
 									<outputDirectory>../workspace/tools/war/phresco.war</outputDirectory>
 								</artifactItem>
 
-								<!-- extracting sonar war file -->
-								<artifactItem>
-									<groupId>sonar</groupId>
-									<artifactId>sonar</artifactId>
-									<version>${sonar.version}</version>
-									<type>war</type>
-									<overWrite>false</overWrite>
-									<outputDirectory>../workspace/tools/war/sonar.war</outputDirectory>
-								</artifactItem>
-
 								<!-- extracting sonar zip file -->
 								<artifactItem>
 									<groupId>sonar</groupId>
