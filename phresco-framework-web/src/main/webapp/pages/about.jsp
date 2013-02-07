@@ -19,16 +19,13 @@
   --%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
-<div id="versionInfo" class="hideContent">
-	<div class="abt_logo">
+<div id="versionInfo">
+	 <div class="abt_logo">
 		<img src="images/phresco.png" alt="logo" class="abt_logo_img">
-	</div>
-	
+	</div>	
+
 	<div class="abt_content">
-	Phresco is a next-generation development framework of 
-	frameworks.It is a platform for creating next generation
-	web,mobile and multi-channel presences leveraging existing
-	investments combined with accepted industry best practices.
+		Phresco is a next-generation development framework of frameworks.It is a platform for creating next generation web,mobile and multi channel presences leveraging existing investments combined with accepted industry best practices		
 	</div>
 </div>
 
