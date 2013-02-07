@@ -1860,5 +1860,21 @@ public interface FrameworkConstants {
 		String CUST_BODY_BACK_GROUND_COLOR = "bodyBackGroundColor";
 		String CUST_FRAMEWORK_THEME = "frameworkTheme";
 		
+		/**
+		 * Framework theme color keys
+		 */
+		
+		String BRANDING_COLOR =  "brandingColor";
+	    String ACCORDION_BACKGROUND_COLOR = "accordionBackGroundColor";
+	    String BODYBACKGROUND_COLOR = "bodyBackGroundColor";
+	    String BUTTON_COLOR = "ButtonColor";
+	    String PAGEHEADER_COLOR = "PageHeaderColor";
+	    String COPYRIGHT_COLOR = "CopyRightColor";
+	    String LABEL_COLOR = "LabelColor";
+	    String MENU_FONT_COLOR = "MenufontColor"; 
+	    String MENU_BACKGROUND_COLOR = "MenuBackGround";
+	    String COPYRIGHT = "CopyRight";
+	    String DISABLED_LABEL_COLOR = "DisabledLabelColor";
+		
 		
 }
