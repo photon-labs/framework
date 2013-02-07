@@ -32,13 +32,13 @@ import java.util.Properties;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.xml.sax.SAXException;
 
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.Customer;
-import com.photon.phresco.commons.model.FrameWorkTheme;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.exception.ConfigurationException;
 import com.photon.phresco.exception.PhrescoException;
@@ -226,15 +226,14 @@ public class Code extends DynamicParameterAction implements Constants {
              	setReqAttribute(CLANG_REPORT, validateReportUrl);
         	} else {
 				Customer customer = getServiceManager().getCustomer(getCustomerId());
-				FrameWorkTheme frameworkTheme = customer.getFrameworkTheme();
-				if (frameworkTheme !=  null) {
-					setReqAttribute(CUST_BODY_BACK_GROUND_COLOR, frameworkTheme.getBodyBackGroundColor());
-					setReqAttribute(CUST_BRANDING_COLOR, frameworkTheme.getBrandingColor());
-					setReqAttribute(CUST_MENU_BACK_GROUND, frameworkTheme.getMenuBackGround());
-					setReqAttribute(CUST_MENUFONT_COLOR, frameworkTheme.getMenufontColor());
-					setReqAttribute(CUST_LABEL_COLOR, frameworkTheme.getLabelColor());
-					setReqAttribute(CUST_DISABLED_LABEL_COLOR, frameworkTheme.getDisabledLabelColor());
-					setReqAttribute(CUST_FRAMEWORK_THEME, frameworkTheme);
+				Map<String, String> theme = customer.getFrameworkTheme();
+				if (MapUtils.isNotEmpty(theme)) {
+					setReqAttribute(CUST_BODY_BACK_GROUND_COLOR, theme.get("bodyBackGroundColor"));
+					setReqAttribute(CUST_BRANDING_COLOR, theme.get("brandingColor"));
+					setReqAttribute(CUST_MENU_BACK_GROUND, theme.get("MenuBackGround"));
+					setReqAttribute(CUST_MENUFONT_COLOR, theme.get("MenufontColor"));
+					setReqAttribute(CUST_LABEL_COLOR, theme.get("LabelColor"));
+					setReqAttribute(CUST_DISABLED_LABEL_COLOR, theme.get("DisabledLabelColor"));
 					S_LOGGER.debug("Framework theme for customer==> " + getCustomerId());
 				} else {
 					setReqAttribute(REQ_CUSTOMER_ID, PHOTON);

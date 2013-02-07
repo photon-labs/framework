@@ -62,10 +62,10 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.apache.commons.codec.binary.*;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.io.*;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -80,7 +80,11 @@ import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
 import com.photon.phresco.commons.FileListFilter;
 import com.photon.phresco.commons.FrameworkConstants;
-import com.photon.phresco.commons.model.*;
+import com.photon.phresco.commons.model.ApplicationInfo;
+import com.photon.phresco.commons.model.BuildInfo;
+import com.photon.phresco.commons.model.Customer;
+import com.photon.phresco.commons.model.ProjectInfo;
+import com.photon.phresco.commons.model.User;
 import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.FrameworkConfiguration;
@@ -3087,7 +3091,7 @@ public class Quality extends DynamicParameterAction implements Constants {
     		List<Customer> customers = user.getCustomers();
     		for (Customer customer : customers) {
 				if (customer.getId().equals(getCustomerId())) {
-					FrameWorkTheme frameworkTheme = customer.getFrameworkTheme();
+					Map<String, String> frameworkTheme = customer.getFrameworkTheme();
 					if (frameworkTheme != null) {
 						Gson gson = new Gson();
 						themeJsonStr = gson.toJson(frameworkTheme);

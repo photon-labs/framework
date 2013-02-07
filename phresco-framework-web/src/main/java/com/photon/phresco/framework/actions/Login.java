@@ -40,22 +40,31 @@
 
 package com.photon.phresco.framework.actions;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.ConnectException;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.photon.phresco.commons.model.Customer;
 import com.photon.phresco.commons.model.User;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.exception.PhrescoWebServiceException;
 import com.photon.phresco.framework.actions.applications.Projects;
 import com.photon.phresco.util.Credentials;
+import com.photon.phresco.util.Utility;
 
 public class Login extends FrameworkBaseAction {
 
@@ -69,6 +78,7 @@ public class Login extends FrameworkBaseAction {
     private boolean loginFirst = true;
     
     private String logoImgUrl = "";
+    private Map<String, String> frameworkTheme = null;
     private String brandingColor = "";
     private String bodyBackGroundColor = "";
 	private String accordionBackGroundColor = "";
@@ -78,7 +88,9 @@ public class Login extends FrameworkBaseAction {
 	private String pageHeaderColor = "";
 	private String labelColor = "";
 	private String copyRightColor = "";
+	private String copyRight = "";
 	private String disabledLabelColor = "";
+	private String customerId = "";
     
     public String login() throws IOException {
         if (isDebugEnabled) {
@@ -119,7 +131,7 @@ public class Login extends FrameworkBaseAction {
         return SUCCESS;
     }
     
-    private String authenticate()  {
+    private String authenticate() throws FileNotFoundException  {
         if (isDebugEnabled) {
             S_LOGGER.debug("Entering Method  Login.authenticate()");
         }
@@ -145,6 +157,15 @@ public class Login extends FrameworkBaseAction {
             String encodedString = new String(encodedPwd);
             
             setSessionAttribute(SESSION_USER_PASSWORD, encodedString);
+            
+            File tempPath = new File(Utility.getProjectHome() + File.separator + "temp.json");
+            if (tempPath.exists()) {
+	            JsonParser parser = new JsonParser();
+	            JsonObject customerObj = parser.parse(new FileReader(tempPath)).getAsJsonObject();
+	            String customerId = customerObj.get(REQ_CUSTOMER_ID).getAsString();
+	            setReqAttribute(REQ_CUSTOMER_ID, customerId);
+            }
+            
         } catch (PhrescoWebServiceException e) {
         	if(e.getResponse().getStatus() == 204) {
 				setReqAttribute(REQ_LOGIN_ERROR, getText(ERROR_LOGIN_INVALID_USER));
@@ -153,7 +174,9 @@ public class Login extends FrameworkBaseAction {
 				setReqAttribute(REQ_LOGIN_ERROR, getText(ERROR_EXCEPTION));
 				return LOGIN_FAILURE;
 			}
-        } 
+        } catch (IOException e) {
+        	return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_FRAMEWORKSTREAM));
+		} 
         return SUCCESS;
     }
 
@@ -188,16 +211,18 @@ public class Login extends FrameworkBaseAction {
     		List<Customer> customers = user.getCustomers();
     		for (Customer customer : customers) {
 				if (customer.getId().equals(getCustomerId())) {
-					setBrandingColor(customer.getFrameworkTheme().getBrandingColor());
-					setAccordionBackGroundColor(customer.getFrameworkTheme().getAccordionBackGroundColor());
-					setBodyBackGroundColor(customer.getFrameworkTheme().getBodyBackGroundColor());
-					setButtonColor(customer.getFrameworkTheme().getButtonColor());
-					setPageHeaderColor(customer.getFrameworkTheme().getPageHeaderColor());
-					setCopyRightColor(customer.getFrameworkTheme().getCopyRightColor());
-					setLabelColor(customer.getFrameworkTheme().getLabelColor());
-					setMenuBackGround(customer.getFrameworkTheme().getMenuBackGround());
-					setMenufontColor(customer.getFrameworkTheme().getMenufontColor());
-					setDisabledLabelColor(customer.getFrameworkTheme().getDisabledLabelColor());
+					Map<String, String> theme = customer.getFrameworkTheme();
+					setBrandingColor(theme.get(BRANDING_COLOR));
+					setAccordionBackGroundColor(theme.get(ACCORDION_BACKGROUND_COLOR));
+					setBodyBackGroundColor(theme.get(BODYBACKGROUND_COLOR));
+					setButtonColor(theme.get(BUTTON_COLOR));
+					setPageHeaderColor(theme.get(PAGEHEADER_COLOR));
+					setCopyRightColor(theme.get(COPYRIGHT_COLOR));
+					setLabelColor(theme.get(LABEL_COLOR));
+					setMenuBackGround(theme.get(MENU_BACKGROUND_COLOR));
+					setMenufontColor(theme.get(MENU_FONT_COLOR));
+					setDisabledLabelColor(theme.get(DISABLED_LABEL_COLOR));
+					setCopyRight(theme.get(COPYRIGHT));
 					break;
 				}
 			}
@@ -215,6 +240,23 @@ public class Login extends FrameworkBaseAction {
 			}
     	}
     	
+    	return SUCCESS;
+    }
+    
+    
+    public String fetchCustomerId() {
+    	try {
+			File tempPath = new File(Utility.getProjectHome() + File.separator + "temp.json");
+			FileWriter  writer = new FileWriter(tempPath);
+			JsonObject customerObj = new JsonObject();
+			String customerId = getCustomerId();
+			customerObj.addProperty(REQ_CUSTOMER_ID, customerId);
+			String Id = customerObj.toString();
+			writer.write(Id);
+			writer.close();
+		} catch (IOException e) {
+			return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_FRAMEWORKSTREAM));
+		}
     	return SUCCESS;
     }
     
@@ -260,6 +302,14 @@ public class Login extends FrameworkBaseAction {
 
 	public String getBodyBackGroundColor() {
 		return bodyBackGroundColor;
+	}
+
+	public Map<String, String> getFrameworkTheme() {
+		return frameworkTheme;
+	}
+
+	public void setFrameworkTheme(Map<String, String> frameworkTheme) {
+		this.frameworkTheme = frameworkTheme;
 	}
 
 	public String getAccordionBackGroundColor() {
@@ -308,6 +358,22 @@ public class Login extends FrameworkBaseAction {
 
 	public void setLabelColor(String labelColor) {
 		this.labelColor = labelColor;
+	}
+
+	public String getCustomerId() {
+		return customerId;
+	}
+
+	public void setCustomerId(String customerId) {
+		this.customerId = customerId;
+	}
+
+	public String getCopyRight() {
+		return copyRight;
+	}
+
+	public void setCopyRight(String copyRight) {
+		this.copyRight = copyRight;
 	}
 
 	public void setCopyRightColor(String copyRightColor) {
