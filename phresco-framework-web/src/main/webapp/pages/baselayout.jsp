@@ -112,6 +112,7 @@
 	<body>
         <%
             User user = (User) session.getAttribute(FrameworkConstants.SESSION_USER_INFO);
+        	String customerIds = (String)request.getAttribute(FrameworkConstants.REQ_CUSTOMER_ID);
             String displayName = user.getDisplayName();
         %>
 		<div class="modal-backdrop fade in popupalign"></div>
@@ -383,8 +384,7 @@
 		//getLogoImgUrl();
 		showHideTheme();
 		var selectedId = "";
-		var customerId = localStorage["selectedCustomerId"];
-		$("#customerSelect").val(customerId);
+		$("#customerSelect").val('<%= customerIds %>');
 		
 		$(".styles").click(function() {
 			localStorage.clear();
@@ -431,7 +431,7 @@
 		 
         function onSelectCustomer(selectedId) {
         	$('#customerId').val(selectedId);
-        	localStorage["selectedCustomerId"] = selectedId;
+    		 loadContent("fetchCustomerId", $('#formCustomers'), '', '', true, true, '');
        		$('a[name="headerMenu"]').each(function() {
        			if ($(this).hasClass('active')) {
        				doPageLoad($(this), $('a[name="headerMenu"]'));
@@ -497,7 +497,7 @@
 		var copyRightColor = data.copyRightColor;
 		var buttonGradientColor = buttonColor;
 		var inActiveLabelColor = data.disabledLabelColor;
-		
+		var copyright = data.copyRight;
 		
 		JSS.css({
 
@@ -542,7 +542,7 @@
 			'.headerInnerTop li a label': {
 				'color': inActiveLabelColor + "! important"            // Inactive Label color in menu tab in appinfo page  
 			},
-
+						
 			'table th, table td' : {
 				'border-bottom' : "1px solid" + brandingColor               // Table border bottom color in Download server, database ,Tools tab *
 			},
@@ -734,10 +734,7 @@
 			'.control-label.custom_label.labelbold' : {
 				'color': "#FFFFFF ! important"
 			},
-						
-			'.control-label.custom_label.labelbold' : {
-				'color' : "#FFFFFF !important"
-			},
+			
 			'.customer_select_div .dd-selected-text, .customer_select_div  .dd-options li a .dd-option-text':{
 				'color' : "#000000 !important"
 			},
@@ -751,7 +748,7 @@
 			},
 			
 			'.customer_select_div  .dd-options li' : {
-				'border-bottom': "1px solid #000000 !important"
+				'border-bottom': "1px solid #000000 !important"   // Customer Selection border bottom color
 			}
 						
 		});
