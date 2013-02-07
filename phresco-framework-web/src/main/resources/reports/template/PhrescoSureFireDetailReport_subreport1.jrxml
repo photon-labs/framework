@@ -73,7 +73,7 @@
 	<detail>
 		<band height="55" splitType="Stretch">
 			<frame>
-				<reportElement x="0" y="0" width="555" height="55"/>
+				<reportElement x="0" y="0" width="555" height="55" isRemoveLineWhenBlank="true"/>
 				<componentElement>
 					<reportElement key="table" style="table" x="0" y="0" width="555" height="55"/>
 					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
@@ -176,7 +176,7 @@
 	<summary>
 		<band height="194">
 			<frame>
-				<reportElement x="0" y="0" width="555" height="191"/>
+				<reportElement x="0" y="0" width="555" height="191" isRemoveLineWhenBlank="true"/>
 				<subreport>
 					<reportElement x="0" y="0" width="555" height="191"/>
 					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{testCases})]]></dataSourceExpression>

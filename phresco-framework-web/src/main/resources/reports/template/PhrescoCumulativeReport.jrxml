@@ -34,6 +34,8 @@
 	<parameter name="logoBase64Img" class="java.io.InputStream">
 		<defaultValueExpression><![CDATA[new ByteArrayInputStream(new Base64().decodeBase64($P{logo}.getBytes("UTF-8")))]]></defaultValueExpression>
 	</parameter>
+	<parameter name="isMultiModuleProject" class="java.lang.Boolean"/>
+	<parameter name="multiModuleUnitTestReports" class="java.util.List"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -145,7 +147,26 @@
 	</title>
 	<detail>
 		<band height="50">
-			<printWhenExpression><![CDATA[!$P{unitTestReports}.isEmpty()]]></printWhenExpression>
+			<printWhenExpression><![CDATA[$P{isMultiModuleProject}.booleanValue()]]></printWhenExpression>
+			<frame>
+				<reportElement x="0" y="0" width="555" height="50" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[!$P{multiModuleUnitTestReports}.isEmpty()]]></printWhenExpression>
+				</reportElement>
+				<subreport>
+					<reportElement x="0" y="0" width="555" height="50" isRemoveLineWhenBlank="true"/>
+					<subreportParameter name="multiModuleUnitTestReports">
+						<subreportParameterExpression><![CDATA[$P{multiModuleUnitTestReports}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="reportsDataType">
+						<subreportParameterExpression><![CDATA[$P{reportsDataType}]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{multiModuleUnitTestReports})]]></dataSourceExpression>
+					<subreportExpression><![CDATA["PhrescoModuleSureFireAllReport.jasper"]]></subreportExpression>
+				</subreport>
+			</frame>
+		</band>
+		<band height="50">
+			<printWhenExpression><![CDATA[!$P{unitTestReports}.isEmpty() && !$P{isMultiModuleProject}.booleanValue()]]></printWhenExpression>
 			<frame>
 				<reportElement x="0" y="0" width="555" height="50" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[!$P{unitTestReports}.isEmpty()]]></printWhenExpression>
