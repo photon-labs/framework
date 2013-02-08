@@ -2319,8 +2319,7 @@ input, select, textarea {
     float:right;
     overflow-x: hidden; 
     overflow-y: auto; 
-    height: 110px;
-    text-align: justify;
+    height: 110px;   
 }
 
 .abt_modal-body {

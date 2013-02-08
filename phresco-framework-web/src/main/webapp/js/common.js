@@ -76,10 +76,12 @@ function progressPopupAsSecPopup(url, appId, actionType, form, additionalParams,
 	$('#popup_progress_div').empty();
 	$(".progressPopupClose").show();
 	$(".progressPopupClose").attr('id', url); // popup close action mapped to id
-	
 	if (stopUrl != undefined && !isBlank(stopUrl)) {
 		$(".popupStop").show();
 		$(".popupStop").attr('id', stopUrl); // popup stop action mapped to id
+	} else {
+		$(".popupStop").hide();
+		$(".popupStop").attr('id', "");
 	}
 	$("#popup_progress_div").empty();
 	showPopuploadingIcon();
