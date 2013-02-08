@@ -71,7 +71,7 @@ public class IosTargetParameterImpl implements DynamicParameter {
             } else if (listFiles[0].getName().contains(IPHONE_XCODE_PROJ_EXTN)) {
                 cmdBuilder.append(IPHONE_XCODE_PROJECT);
             }
-            cmdBuilder.append(listFiles[0].getName());
+            cmdBuilder.append(listFiles[0].getName().replace(" ", "\\ "));
             
             Commandline cl = new Commandline(cmdBuilder.toString());
             cl.setWorkingDirectory(sourceDir);
@@ -81,7 +81,7 @@ public class IosTargetParameterImpl implements DynamicParameter {
             String line = null;
             boolean isTarget = false;
             
-            while ((line = reader.readLine()) != null) {       
+            while ((line = reader.readLine()) != null) {   
                 if (line.trim().equals(XCODE_PROJECT_TARGETS) || line.trim().equals(XCODE_WORKSPACE_TARGETS)) { // getting only target
                 	// For iphone projects both targets and Schemes will be displayed, If target is avilable, take target alone else schemes
                 	if (CollectionUtils.isEmpty(possibleValues.getValue())) {
