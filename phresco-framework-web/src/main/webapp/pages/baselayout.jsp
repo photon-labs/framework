@@ -409,7 +409,7 @@
 		
 		showLoadingIcon();
 		clickMenu($("a[name='headerMenu']"), $("#container"), $('#formCustomers'));
-		loadContent("home", '', $("#container"), '', '', true);
+// 		loadContent("home", '', $("#container"), '', '', true);
 		activateMenu($("#home"));
 				
 		$('select[name=customerSelect]').ddslick({
