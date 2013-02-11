@@ -405,6 +405,7 @@ a {
 	float: right;
 	height: 34px;
 	width: 35px;
+	position: relative;
 }
 
 .table_data_div {

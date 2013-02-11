@@ -864,7 +864,7 @@ function confirmDialog(obj, title, bodyText, okUrl, okLabel) {
 		$("#errMsg").empty();
 		$('#popupTitle').html(title); // Title for the popup
 		$('.popupClose').hide();
-		
+		hidePopuploadingIcon();
 		$(".popupOk").attr('id', okUrl);
 	
 		$('#popup_div').css("height", "50px");
