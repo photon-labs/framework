@@ -835,6 +835,8 @@ public interface FrameworkConstants {
 	String REQ_VERSION = "version";
 	String REQ_ENVIRONMENTS = "environments";
 	String REQ_CONFIGURATIONS = "configurations";
+	String REQ_SCHEDULER = "Scheduler";
+	String REQ_SCHEDULER_KEY = "schedulerKey";
     String REQ_LOG_REPORT = "logReport";
     String REQ_PROJECT_INFO_SERVERS = "projectInfoServers";
     String REQ_PROJECT_INFO_DATABASES = "projectInfoDatabases";
@@ -1820,6 +1822,7 @@ public interface FrameworkConstants {
 		String TYPE_BOOLEAN = "boolean";
 		String TYPE_FILE = "FileType";
 		String TYPE_ACTIONS = "Actions";
+		String TYPE_SCHEDULER = "Scheduler";
 		String TEXT_BOX = "text";
 		String TYPE_LIST = "list";
 		String TYPE_EDITABLE_COMBO = "editableList";

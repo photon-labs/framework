@@ -477,6 +477,10 @@
             <result name="addConfiguration">/pages/applications/configuration/add.jsp</result>
         </action>
         
+        <action name="calcCron" method="cronExpression" class="com.photon.phresco.framework.actions.applications.Configurations">
+            <result name="success">/pages/applications/configuration/scheduler.jsp</result>
+        </action>
+        
         <action name="uploadFile" class="com.photon.phresco.framework.actions.applications.Configurations" method="uploadFile">
             <result type="json" />
         </action>

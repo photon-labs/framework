@@ -572,4 +572,14 @@
 		hiddenFieldValue = hiddenFieldValue.substring(0, hiddenFieldValue.length - 1);
 		$('input[name="'+ key +'"]').val(hiddenFieldValue);
 	}
+	
+	function callCron(obj) {
+		var param = "schedulerKey="
+		param = param.concat($(obj).attr("connector"));
+		yesnoPopup('calcCron', 'Cron Expression', 'Copy', 'Copy', '', param);
+	}
+	
+	function popupOnOk(self) {
+		$('#'+schedulerKey).val($('#cronExpression').val());
+	}
 </script>
