@@ -128,6 +128,7 @@ public class Configurations extends FrameworkBaseAction {
     private String url = "";
     private String version = "";
     private boolean remoteDeployment;
+    private String schedulerKey = "";
     
     private boolean flag = false;
     private List<String> versions = null;
@@ -1423,6 +1424,11 @@ public class Configurations extends FrameworkBaseAction {
     	builder.append(CONFIGURATION_INFO_FILE_NAME);
     	return builder.toString();
     }
+
+	public String cronExpression() {
+		setReqAttribute(REQ_SCHEDULER_KEY, schedulerKey);
+		return SUCCESS;
+	}
     
     public String getConfigName() {
 		return configName;
@@ -1864,5 +1870,13 @@ public class Configurations extends FrameworkBaseAction {
 
 	public void setEnvironmentsInfo(List<Environment> environmentsInfo) {
 		this.environmentsInfo = environmentsInfo;
+	}
+
+	public String getSchedulerKey() {
+		return schedulerKey;
+	}
+
+	public void setSchedulerKey(String schedulerKey) {
+		this.schedulerKey = schedulerKey;
 	}
 }

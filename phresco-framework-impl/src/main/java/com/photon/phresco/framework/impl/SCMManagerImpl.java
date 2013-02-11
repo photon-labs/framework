@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
@@ -515,9 +516,11 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		}
 		try {
 			if (SVN.equals(type)) {
-				importDirectoryContentToSubversion(url, dir.getPath(), username, password, commitMessage);
+				String tail = addAppFolderToSVN(url, dir, username, password, commitMessage);
+				String appendedUrl = url + FORWARD_SLASH + tail;
+				importDirectoryContentToSubversion(appendedUrl, dir.getPath(), username, password, commitMessage);
 				// checkout to get .svn folder
-				checkoutImportedApp(url, dir.getPath(), username, password);
+				checkoutImportedApp(appendedUrl, dir.getPath(), username, password);
 			} else if (GIT.equals(type)) {
 				importToGITRepo();
 			}
@@ -527,7 +530,46 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		return true;
 	}
 	
-	private SVNCommitInfo importDirectoryContentToSubversion(final String repositoryURL, final String subVersionedDirectory, final String userName, final String hashedPassword, final String commitMessage) throws SVNException {
+	private String addAppFolderToSVN(String url, final File dir, final String username, final String password, final String commitMessage) throws PhrescoException {
+		if(debugEnabled){
+			S_LOGGER.debug("Entering Method  SCMManagerImpl.addAppFolderToSVN()");
+		}
+		try {
+			//get DirName
+			ProjectInfo projectInfo;
+			projectInfo = getGitAppInfo(dir);
+			List<ApplicationInfo> appInfos = projectInfo.getAppInfos();
+			String appDirName = "";
+			if (CollectionUtils.isNotEmpty(appInfos)) {
+				ApplicationInfo appInfo = appInfos.get(0);
+				appDirName = appInfo.getAppDirName();
+			}
+			
+			//CreateTempFolder
+			File temp = new File(dir, TEMP_FOLDER);
+			if (temp.exists()) {
+				FileUtils.deleteDirectory(temp);
+			}
+			temp.mkdir();
+			
+			File folderName = new File(temp, appDirName);
+			folderName.mkdir();
+			
+			//Checkin rootFolder
+			importDirectoryContentToSubversion(url, temp.getPath(), username, password, commitMessage);
+			
+			//deleteing temp
+			if (temp.exists()) {
+				FileUtils.deleteDirectory(temp);
+			}
+			
+			return appDirName;
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		} 
+	}
+	
+	private SVNCommitInfo importDirectoryContentToSubversion(String repositoryURL, final String subVersionedDirectory, final String userName, final String hashedPassword, final String commitMessage) throws SVNException {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.importDirectoryContentToSubversion()");
 		}

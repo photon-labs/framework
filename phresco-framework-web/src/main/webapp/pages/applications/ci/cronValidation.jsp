@@ -31,7 +31,7 @@
 <!-- Cron Expression Pattern starts -->	
 <div id="Pattern" class="modal abtDialog">
 	<div class="modal-header">
-		<div class="TestType"><s:text name="label.cronvalidate.title"/></div><a id="closePatternPopup" href="#" class="close" style="top: 5px;">&times;</a>
+		<div class="TestType"><s:text name="lbl.cronvalidate.title"/></div><a id="closePatternPopup" href="#" class="close" style="top: 5px;">&times;</a>
 	</div>
 	<div class="abt_div">
 		<div id="testCaseDesc" class="testCaseDesc">

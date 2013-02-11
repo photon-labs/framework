@@ -721,7 +721,12 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	
     	StringTemplate lableElmnt = constructLabelElement(pm.isMandatory(), pm.getLableClass(), pm.getLableText());
     	String type = getInputType(pm.getInputType());
-    	StringTemplate inputElement = new StringTemplate(getInputTemplate());
+    	StringTemplate inputElement = null;
+    	if(TYPE_SCHEDULER.equals(type)) {
+    		inputElement = new StringTemplate(getSchedulerTemplate());
+    	} else if(!TYPE_SCHEDULER.equals(type)) {
+    		inputElement = new StringTemplate(getInputTemplate());
+    	}
     	inputElement.setAttribute("type", type);
     	inputElement.setAttribute("class", pm.getCssClass());
     	inputElement.setAttribute("id", pm.getId());
@@ -746,6 +751,8 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     		type = TYPE_PASSWORD;
 		}  else if (TYPE_HIDDEN.equalsIgnoreCase(inputType)) {
 			type = TYPE_HIDDEN;
+		} else if (TYPE_SCHEDULER.equalsIgnoreCase(inputType)) {
+			type = TYPE_SCHEDULER;
 		} else {
 			type = TEXT_BOX;
 		}
@@ -1300,6 +1307,17 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	sb.append("<div class='controls'>")
     	.append("<input type=\"$type$\" class=\"input-xlarge $class$\" id=\"$id$\" ")
     	.append("name=\"$name$\" placeholder=\"$placeholder$\" value=\"$value$\">")
+    	.append("<span class='help-inline' id=\"$ctrlsId$\"></span></div>");
+    	
+    	return sb.toString();
+    }
+    
+    private static String getSchedulerTemplate() {
+    	StringBuilder sb = new StringBuilder();
+    	sb.append("<div class='controls'>")
+    	.append("<input type=\"$type$\" class=\"input-xlarge $class$\" id=\"$id$\" ")
+    	.append("name=\"$name$\" placeholder=\"$placeholder$\" value=\"$value$\">")
+    	.append("<span class='help-inline'><img class='add imagealign' src='images/icons/gear.png' style='cursor:pointer' connector=\"$id$\" onclick='callCron(this);'></span>")
     	.append("<span class='help-inline' id=\"$ctrlsId$\"></span></div>");
     	
     	return sb.toString();

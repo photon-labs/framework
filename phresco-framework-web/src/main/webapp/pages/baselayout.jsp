@@ -431,7 +431,7 @@
 		 
         function onSelectCustomer(selectedId) {
         	$('#customerId').val(selectedId);
-    		 loadContent("fetchCustomerId", $('#formCustomers'), '', '', true, true, '');
+    		 loadContent("fetchCustomerId", $('#formCustomers'), '', '', false, true, '');
        		$('a[name="headerMenu"]').each(function() {
        			if ($(this).hasClass('active')) {
        				doPageLoad($(this), $('a[name="headerMenu"]'));
