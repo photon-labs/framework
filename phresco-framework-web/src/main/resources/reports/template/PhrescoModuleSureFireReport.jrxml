@@ -31,6 +31,7 @@
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
+	<parameter name="copyRights" class="java.lang.String"/>
 	<field name="moduleOrTechName" class="java.lang.String"/>
 	<field name="moduleOrTechLabel" class="java.lang.String"/>
 	<field name="sureFireReport" class="java.util.List"/>
@@ -209,13 +210,13 @@
 					</textElement>
 					<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of "]]></textFieldExpression>
 				</textField>
-				<staticText>
-					<reportElement x="4" y="0" width="191" height="24" forecolor="#FFFFFF" backcolor="#000000"/>
+				<textField>
+					<reportElement style="PMSFRCopyRight" x="4" y="0" width="419" height="24"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Times New Roman" size="11" isBold="true"/>
 					</textElement>
-					<text><![CDATA[© 2013. Photon Infotech Pvt Ltd.]]></text>
-				</staticText>
+					<textFieldExpression><![CDATA[$P{copyRights}]]></textFieldExpression>
+				</textField>
 			</frame>
 		</band>
 	</pageFooter>
