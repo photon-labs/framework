@@ -36,6 +36,7 @@
 	</parameter>
 	<parameter name="isMultiModuleProject" class="java.lang.Boolean"/>
 	<parameter name="multiModuleUnitTestReports" class="java.util.List"/>
+	<parameter name="copyRights" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -269,13 +270,6 @@
 			<rectangle>
 				<reportElement style="PCRCopyRight" x="0" y="3" width="555" height="25"/>
 			</rectangle>
-			<staticText>
-				<reportElement x="14" y="3" width="194" height="25" forecolor="#FFFFFF"/>
-				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="11" isBold="true"/>
-				</textElement>
-				<text><![CDATA[© 2013 Photon Infotech Pvt.Ltd]]></text>
-			</staticText>
 			<textField evaluationTime="Report">
 				<reportElement style="PCRCopyRightPageNo" x="490" y="5" width="25" height="22"/>
 				<textElement verticalAlignment="Middle">
@@ -289,6 +283,13 @@
 					<font fontName="Times New Roman" size="11" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of "]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="PCRCopyRight" x="4" y="5" width="414" height="22"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{copyRights}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>
