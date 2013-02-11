@@ -63,7 +63,7 @@
 	
 	<% if (FrameworkConstants.SETTINGS.equals(fromPage)) { %>
 		<div class="control-group" id="appliesToControl">
-			<label class="control-label labelbold">
+			<label class="control-label labelbold modallbl-color">
 				<span class="mandatory">*</span>&nbsp;<s:text name='label.applies.to'/>
 			</label>
 			<div class="controls">

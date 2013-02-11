@@ -372,7 +372,7 @@
 				getSettingsVersions();
 		<% } %>
 			
-		if(selectedType == "Server"){
+		if(selectedType == "Server") {
 			if (serverType == "IIS") {
 				hideContext();
 				hideRemoteDeply();
@@ -381,8 +381,8 @@
 			
 		}
 		
-		<% if (CollectionUtils.isNotEmpty(options) && FrameworkConstants.ADD_CONFIG.equals(fromPage) || FrameworkConstants.EDIT_CONFIG.equals(fromPage)) {
-				if (!options.contains("Remote_Deployment")) { 
+		<% if (FrameworkConstants.ADD_CONFIG.equals(fromPage) || FrameworkConstants.EDIT_CONFIG.equals(fromPage)) {
+				if (CollectionUtils.isNotEmpty(options) && !options.contains(FrameworkConstants.REMOTE_DEPLOYMENT)) { 
 		%>
 				hideRemoteDeply();
 		<%	

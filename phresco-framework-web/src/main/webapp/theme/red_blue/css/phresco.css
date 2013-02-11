@@ -5184,11 +5184,23 @@ textarea.xxlarge {
 	height: 16px;
 }
 
+.settingsTypeFields {
+    float: left;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
 .environment_list {
 	color:#808080; 
 	margin: 6px 0 0 -18px; 
 	list-style-type: none; 
 	height: 16px;
+}
+
+.envLabel {
+	margin-left: 20px;
+    margin-top: -22px;
+    position: relative;
+    color : #000000;
 }
 
 .config_tab {
