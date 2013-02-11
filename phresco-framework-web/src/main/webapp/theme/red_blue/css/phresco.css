@@ -3568,7 +3568,7 @@ div.submit_input {
     -webkit-column-count: 1;
     -webkit-column-rule: 0px;
     -webkit-column-width: 50%;
-    -moz-column-count: 2;
+    /* -moz-column-count: 2; */
     -moz-column-rule: 0px;
     -moz-column-width: 50%;
     column-count: 2;
@@ -3581,7 +3581,22 @@ div.submit_input {
     height: 100%;
 }
 
+#form_load select {
+	margin-bottom: 0px !important;
+	width: 124px;
+}
 
+#loadDropdownDiv {
+	margin: 0px 0px 0px 0px !important;
+}	
+
+#loadResultTable {
+	width: 99% !important;
+}
+
+.graph_div {
+	width: 99% !important;
+}	
 /*** testcase log end ***/
 
 /*** Settigs and Configuration field description start ***/

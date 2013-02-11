@@ -2085,11 +2085,15 @@ h1 {
 }
 
 .graph_div {
+	margin-top: 25px;
     height:100%;
-    float:right;
-	width: 28% !important;
+    /* float:right;
+	width: 28% !important; */
 }
 
+#loadResultTable {
+	width: 99%;
+}	
 #graphicalView {
 	float:left;
 	width:98%;
@@ -3532,7 +3536,7 @@ div.submit_input {
     -webkit-column-count: 1;
     -webkit-column-rule: 0px;
     -webkit-column-width: 50%;
-    -moz-column-count: 2;
+   /*  -moz-column-count: 2; */
     -moz-column-rule: 0px;
     -moz-column-width: 50%;
     column-count: 2;
@@ -6061,6 +6065,7 @@ color: #313131;
 }
 #form_load select {
 	margin-bottom: 0px !important;
+	width: 124px;
 }
 #formPerformance .operation {
 	margin: 12px 5px 12px 0px !important;

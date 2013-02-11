@@ -322,7 +322,7 @@ Width <= 1024
 	    margin-left: 6px;
 	    margin-right: 6px;
 	    float: left;
-	    width: 500px;
+	    /* width: 500px; */
 	}
 	
 	.canvasDiv {
@@ -360,20 +360,6 @@ Width <= 1024
 	
 	.graph_div {
 	    height:90%;
-	    float:right;
-	    width:394px;
-	}
-	
-	@-moz-document url-prefix() {
-		.graph_div .jm_canvas_div iframe html body {
-			margin: 0;
-			padding: 0;
-		}
-		
-		.graph_div {
-			overflow-x: auto;
-			width: 200px !important;
-		}
 	}
 	
 	#tabularView {	
@@ -514,9 +500,6 @@ Width <= 1024
 	.configList,.build_form,#subTabcontent,.ciFormJob,.reportList {
 		width: 98.5%;
 	}
-	.graph_div {
-		zoom: 0.37;
-	}
 	
 	.qq-upload-list {
 		margin-left: 16% !important;
@@ -539,6 +522,10 @@ Width <= 1024
 	}
 	ul#display-inline-block-example li:nth-child(7) {
 		margin-left: -14%;
+	}
+	
+	#form_load select {
+		width: 124px;
 	}
 }
 
@@ -907,7 +894,7 @@ Width size <= 1024
 	    height: 97%;
 	    margin-left: 6px;
 	    margin-right: 6px;
-	    width: 390px;
+	    /* width: 390px; */
 	    overflow-x:hidden;
 	}
 	
@@ -958,8 +945,6 @@ Width size <= 1024
 	
 	.graph_div {
 	    height:100%;
-	    float:right;
-	    width:330px;
 	}
 	
 	.jm_canvas_div {
@@ -1422,7 +1407,7 @@ Width >= 1152 and < 1280
 	    margin-left: 6px;
 	    margin-right: 6px;
 	    float: left;
-	    width: 518px;
+	    /* width: 518px; */
 	}
 	
 	.settings_add_form {
@@ -1610,16 +1595,9 @@ Width >= 1152 and < 1280
 	}
 	
 	.graph_div {
-		width: 36% !important;
-		overflow-x: auto !important;
 		height: 93% !important;
 	}
 
-	@-moz-document url-prefix() {
-		.graph_div {
-		width: 74% !important;
-	}			
-	}
 	ul#display-inline-block-example li:nth-child(7) {
 		margin-left: -10%;
 	}
@@ -1844,7 +1822,7 @@ Width <= 1280 and height <= 800
 		height: 93%;
 		margin-left: 6px;
 		margin-right: 6px;
-		width: 650px;
+		/* width: 650px; */
 		float: left;
 	}
 	
@@ -1979,7 +1957,7 @@ Width <= 1280 and height <= 800
 	    height: 98%;
 	    margin-left: 6px;
 	    margin-right: 6px;
-	    width: 518px;
+	  /*   width: 518px; */
 	    float: left;
 	}
 	
@@ -2010,8 +1988,6 @@ Width <= 1280 and height <= 800
 	
 	.graph_div {
 	    height: 86%;
-	    float: right;
-	    width: 416px;
 	}
 	
 	#tabularView {	
@@ -2122,16 +2098,6 @@ Width <= 1280 and height <= 800
 		width: 99%;
 	}
 
-	.graph_div {
-		width: 42% !important;
-	}
-	
-	@-moz-document url-prefix() {
-		.graph_div {
-			width: 85% !important;
-		}
-	}
-	
 	.qq-upload-list {
 		margin-left: 20.3% !important;
 	}
@@ -2354,7 +2320,7 @@ Width >= 1280 and height >= 800
 		margin-left: 6px;
 		margin-right: 6px;
 		float: left;
-		width: 650px;
+		/* width: 650px; */
 	}
 	
 	.table_data_div_unit {
@@ -2558,17 +2524,7 @@ Width >= 1280 and height >= 800
 	}
 
 	 .graph_div {
-		zoom: 0.6;
-		width: 32% !important;
 		height: 93% !important;
-	}
-	
-	@-moz-document url-prefix() {
-		 .graph_div {
-			zoom: 0.6;
-			width: 61% !important;
-			overflow-x: auto;
-		}
 	}
 	
 	.qq-upload-list {
@@ -2750,7 +2706,7 @@ Width > 1280 and <= 1360
 	    margin-left: 6px;
 	    margin-right: 6px;
 	    float: left;
-	    width: 550px;
+	  /*   width: 550px; */
 	}
 	
 	.table_data_div_unit {
@@ -3317,7 +3273,7 @@ Width > 1360 and <= 1440
 	    margin-left: 6px;
 	    margin-right: 6px;
 	    float: left; 
-	    width: 650px;
+	   /*  width: 650px; */
 	}
 	
 	.build_progress_div {
@@ -3474,10 +3430,6 @@ Width > 1360 and <= 1440
 
 	.configList,.build_form,#subTabcontent,.ciFormJob,.reportList {
 		width: 99%;
-	}
-	.graph_div {
-		zoom: 1;
-		width: 38% !important;
 	}
 	
 	.qq-upload-list {
@@ -3749,7 +3701,7 @@ Width > 1441 and <= 1600
 	    margin-left: 6px;
 	    margin-right: 6px;
 	    float: left; 
-	    width: 650px;
+	   /*  width: 650px; */
 	}
 	
 	.build_progress_div {
@@ -3895,18 +3847,6 @@ Width > 1441 and <= 1600
 		width: 99%;
 	}
 
-	.graph_div {
-		zoom: 1;
-		width: 38% !important;
-	}
-	
-	@-moz-document url-prefix() {
-		.graph_div {
-			zoom: 1;
-			width: 75% !important;
-		}	
-	}
-	
 	.qq-upload-list {
 		margin-left: 23% !important;
 	}

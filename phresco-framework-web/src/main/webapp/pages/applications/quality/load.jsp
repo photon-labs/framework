@@ -78,6 +78,17 @@
 		<strong class="noTestAvail" id="testResultFileTitle"><s:text name="label.test.results"/></strong> 
         <select  class="noTestAvail" id="testResultFile" name="testResultFile">
         </select>
+        
+        
+        <div class="noTestAvail perTabularView" id="loadDropdownDiv">
+			<div class="resultView" style="float: left;" >
+				<strong class="noTestAvail" id="dropdownDiv"><s:text name="lbl.test.result.view"/></strong> 
+				<select id="loadResultView" name="resultView232"> 
+					<option value="tabular" ><s:text name="lbl.test.view.tabular"/></option>
+					<option value="graphical" ><s:text name="lbl.test.view.graphical"/></option>
+				</select>
+			</div>
+		</div>
     </div>
     <div class="perErrorDis" id="noFiles">
 		<div class="alert alert-block" id="loadError">
@@ -157,12 +168,14 @@
 	    	$("#testResultsType").hide();
 	    	$("#testResultDisplay").empty(); 
 			$("#testResultDisplay").hide();
+			$(".perTabularView").hide();
 	    }
 	    
 	    function successLoadTestResultsFiles(data) {
 	    	var resultFiles = data.testResultFiles;
 			if (resultFiles != null && !isBlank(resultFiles)) {
 	       		$('#testResultFile').show();
+	       		$('.perTabularView').show();
 	       		$('#testResultFile').empty();
 				for (i in resultFiles) {
 	            	$('#testResultFile').append($("<option></option>").attr("value",resultFiles[i]).text(resultFiles[i]));
@@ -177,6 +190,7 @@
 	       		$("#testResultDisplay").empty(); 
 	    		$("#testResultDisplay").hide();
 	       		$('#loadError').empty();
+	       		$('.perTabularView').hide();
 	       		$('#loadError').html("Load test not yet executed for " + testResultsType);
 	       		testResultAvailShowList();
 	       	}

@@ -345,7 +345,7 @@ Width <= 1024
 	.graph_div {
 	    height:90%;
 	    float:right;
-	    width:394px;
+	    /* width:394px; */
 	}
 	
 	#tabularView {	
@@ -773,7 +773,7 @@ Width size <= 1024
 	.graph_div {
 	    height:100%;
 	    float:right;
-	    width:330px;
+	    /* width:330px; */
 	}
 	
 	.jm_canvas_div {
@@ -1707,7 +1707,7 @@ Width <= 1280 and height <= 800
 	.graph_div {
 	    height: 86%;
 	    float: right;
-	    width: 416px;
+	    /* width: 416px; */
 	}
 	
 	#tabularView {	

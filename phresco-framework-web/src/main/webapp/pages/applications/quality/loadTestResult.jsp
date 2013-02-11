@@ -52,7 +52,7 @@
     %>
             <div class="columns columnStyle">
                 <div class="columnStyle">
-	                <div class="table_div_unit">
+	                <div class="table_div_unit" id="loadResultTable">
 	                   <div class="fixed-table-container">
 				      		<div class="fixed-table-container-inner ">
 						        <table cellspacing="0" class="zebra-striped ">
@@ -90,7 +90,7 @@
     					</div> 
 	                </div><!-- End column 1 -->
 	    
-	                <div class="graph_div">
+	                <div class="graph_div" style="display:none">
 	                    <div class="jm_canvas_div">
 	                        <iframe src="<%= request.getContextPath() %>/pages/applications/quality/jmeter_graph.jsp"  frameborder="0" width="500px" height="100%" style="overflow: hidden;"></iframe>
 	                    </div>
@@ -107,7 +107,7 @@ if(!isiPad()){
 
 $(document).ready(function() {
 	//hideLoadingIcon();//To hide the loading icon
-	
+	loadResultView();
 	if ($.browser.safari) {
 		$(".th-inner-test").css("top", "235px"); 
 	}
@@ -135,9 +135,30 @@ $(document).ready(function() {
 	$(".jm_canvas_div").show().css("margin-top","54px");
 	}
 	$(".styles").click(function() {
+		var source = '<%= request.getContextPath() %>/pages/applications/quality/jmeter_graph.jsp';
 		 $("iframe").attr({
-             src: $("iframe").attr("src")
+             src: source
          });
 	});
 });
+
+$('#loadResultView').change(function() {
+	var source = '<%= request.getContextPath() %>/pages/applications/quality/jmeter_graph.jsp';
+	$("iframe").attr({
+        src: source
+    });
+	loadResultView();	
+});
+
+
+function loadResultView() {
+	var resultView = $('#loadResultView').val();
+	if (resultView == 'graphical') {
+		$('.graph_div').show();
+		$('#loadResultTable').hide();
+	} else  {
+		$('.graph_div').hide();
+		$('#loadResultTable').show();
+	}
+}
 </script>
