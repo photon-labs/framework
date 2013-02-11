@@ -115,10 +115,6 @@ function clickButton(button, tag) {
 }
 
 function loadContent(pageUrl, form, tag, additionalParams, callSuccessEvent, ajaxCallType, callbackFunction) {
-	/*if (ajaxCallType == undefined || ajaxCallType == "") {
-		ajaxCallType = true;
-	}*/
-	
 	var params = getParameters(form, additionalParams);
 	$.ajax({
 		url : pageUrl,
@@ -353,8 +349,10 @@ function loadData(data, tag, pageUrl, callSuccessEvent, callbackFunction) {
 				successEvent(pageUrl, data);
 			}
 		} else {
-			tag.empty();
-			tag.html(data);
+			if (tag != undefined && !isBlank(tag)) {
+				tag.empty();
+				tag.html(data);
+			}
 			setTimeOut();
 		}
 	}
