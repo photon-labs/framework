@@ -57,7 +57,7 @@ public class ImgStreaming extends FrameworkBaseAction implements FrameworkConsta
             S_LOGGER.debug("Entering Method Quality.screenshotImageDisplay()");
         }
     	try {
-	    	String testCaseName = getHttpRequest().getParameter(REQ_TESTCASE_NAME);
+	    	String testCaseName = getReqParameter(REQ_TESTCASE_NAME);
 	    	String screenshotImgSrc = getScreenshotPath(testCaseName);
 			imageInBytes = imageStream(screenshotImgSrc);
 	    	contentType = CONTENT_TYPE; 
@@ -72,7 +72,7 @@ public class ImgStreaming extends FrameworkBaseAction implements FrameworkConsta
 			response.getOutputStream().flush();
 	    	
     	} catch (Exception e) {
-            if (debugEnabled) {
+    		if (debugEnabled) {
                 S_LOGGER.error("Entered into catch block of Quality.screenshotImageDisplay()"+ e);
             }
 		}
@@ -90,21 +90,25 @@ public class ImgStreaming extends FrameworkBaseAction implements FrameworkConsta
     }
     
     private String getScreenshotPath(String testCaseName)  throws PhrescoException, PhrescoPomException {
-        if (debugEnabled) {
-            S_LOGGER.debug("Entering Method Quality.getScreenShotPath()");
-         }
-        
-        ApplicationInfo applicationInfo = getApplicationInfo();
-        FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+    	if (debugEnabled) {
+    		S_LOGGER.debug("Entering Method Quality.getScreenShotPath()");
+    	}
+
     	StringBuilder sbuilder = new StringBuilder();
-    	sbuilder.append(Utility.getProjectHome());
-    	sbuilder.append(applicationInfo.getAppDirName());
-    	sbuilder.append(frameworkUtil.getFunctionalTestReportDir(applicationInfo));
-    	sbuilder.append(File.separator);
-    	sbuilder.append(SCREENSHOT_DIR);
-    	sbuilder.append(File.separator);
-    	sbuilder.append(testCaseName);
-    	sbuilder.append(DOT + IMG_PNG_TYPE);
+    	try {
+    		ApplicationInfo applicationInfo = getApplicationInfo();
+    		FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+    		sbuilder.append(Utility.getProjectHome());
+    		sbuilder.append(applicationInfo.getAppDirName());
+    		sbuilder.append(frameworkUtil.getFunctionalTestReportDir(applicationInfo));
+    		sbuilder.append(File.separator);
+    		sbuilder.append(SCREENSHOT_DIR);
+    		sbuilder.append(File.separator);
+    		sbuilder.append(testCaseName);
+    		sbuilder.append(DOT + IMG_PNG_TYPE);
+    	} catch (PhrescoException e) {
+    		throw new PhrescoException(e);
+    	}
     	return sbuilder.toString();
     }
     

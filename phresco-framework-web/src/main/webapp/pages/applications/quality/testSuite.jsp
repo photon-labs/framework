@@ -17,6 +17,7 @@
   limitations under the License.
   ###
   --%>
+
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.util.List"%>
@@ -25,6 +26,7 @@
 <%@ page import="com.photon.phresco.framework.model.TestCaseFailure"%>
 <%@ page import="com.photon.phresco.framework.model.TestCaseError"%>
 <%@ page import="com.photon.phresco.framework.model.TestCase"%>
+<%@ page import="com.photon.phresco.commons.model.ProjectInfo"%>
 
 <style type="text/css">
    	table th {
@@ -42,7 +44,17 @@
 	}
 </style>
 
-<% 
+<%
+	ProjectInfo projectInfo = (ProjectInfo) request.getAttribute(FrameworkConstants.REQ_PROJECT_INFO);
+	String customerId = "";
+	String projectId = "";
+	String appId = "";
+	if (projectInfo != null) {
+		customerId = projectInfo.getCustomerIds().get(0);
+		projectId = projectInfo.getId();
+		appId = projectInfo.getAppInfos().get(0).getId();
+	}
+	
 	List<TestCase> testCases = (List<TestCase>) request.getAttribute(FrameworkConstants.REQ_TESTCASES);
 	String testSuiteName = (String) request.getAttribute(FrameworkConstants.REQ_TESTSUITE_NAME);
 	float failures = Float.parseFloat((String) request.getAttribute(FrameworkConstants.REQ_TESTSUITE_FAILURES));
@@ -195,11 +207,11 @@
 											<% } %>
 					              		</td>
 					             		<% 
-						              		if (FrameworkConstants.FUNCTIONAL.equals(testType)) { 
+						              		if (FrameworkConstants.FUNCTIONAL.equals(testType)) {
 						              	%>
 						            		<td class="width-ten-percent">
 						            			<% 
-						            				if ((failure != null && failure.isHasFailureImg()) || (error != null && error.isHasErrorImg()))  { 
+						            				if ((failure != null && failure.isHasFailureImg()) || (error != null && error.isHasErrorImg())) { 
 						            			%>
 						            				<a class="testCaseScreenShot" name="<%= testCase.getName() %>" href="#"><img src="images/icons/screenshot.png" alt="logo"> </a>
 						            			<% 
@@ -207,7 +219,7 @@
 						            			%>
 						              		</td>
 					             		<% 
-						              		} 
+						              		}
 						              	%>
 					            	</tr>
 					            <%
@@ -244,27 +256,22 @@
 <!-- Test case error or Test case failure starts -->
 
 <!-- Screen shot pop-up starts -->
-<div id="testCaseScreenShotPopUp" class="modal screenShotDialog">
+<div id=testCaseScreenShotPopUp class="modal hide fade">
 	<div class="modal-header">
-		<div class="screenShotTCName"></div>
-		<a id="closeTCScreenShotPopup" href="#" class="close">&times;</a>
-	</div>
-	<div class="abt_div">
-		<div id="testCaseDesc" class="testCaseImg">
-			<div id="imgNotFoundErr" class="hideContent">
-				<b>Screenshot is not available</b>
-			</div>
-			<img class="testCaseImg" id="screenShotImgSrc" src="" title="screenShot"  height= "100px" width= "100px"></img>
-		</div>
+		<a class="close" data-dismiss="modal" >&times;</a>
+		<img id="clipboard" class="hideClipBoardImage" title="<s:text name="title.copy.to.clipBoard"/>" src="images/icons/clipboard-copy.png">
+		<h3 id="popupTitle"></h3>
+    </div>
+	<div class="modal-body" id="funcpopup_div">
+		<img class="testCaseImg" id="screenShotImgSrc" src="" title="screenShot" height= "100px" width= "100px"></img>
+		<div id="log-div"></div>
 	</div>
 	<div class="modal-footer">
-		<div class="action abt_action">
-			<input type="button" class="btn primary" value="<s:text name="label.close"/>" id="closeTCScreenShotPopupDlg">
-		</div>
+		<input type="button" class="btn btn-primary popupClose" value="<s:text name='lbl.btn.close'/>" data-dismiss="modal" href="#"/>
 	</div>
 </div>
 <!-- Screen shot pop-up ends -->
-	
+
 <script type="text/javascript">
 	/* To check whether the divice is ipad or not */
 	if(!isiPad()) {
@@ -293,7 +300,7 @@
     	
     	var OSName="Unknown OS";
         if (navigator.appVersion.indexOf("Mac")!=-1) {
-	       	  OSName="MacOS";
+			OSName="MacOS";
 	    }
         
         if (OSName == "MacOS") { 
@@ -316,34 +323,21 @@
             return textTrim($(this));
         });
         
-    	$('#closeTestCasePopup').click(function() {
-    		funcPopUp('none', 'testCaseErrOrFail');
-    	});
-    	
     	$('#closeDialog').click(function() {
     		$(".wel_come").show().css("display", "none");
     		$("#testCaseErrOrFail").show().css("display", "none");
     	});
     	
     	$(".testCaseScreenShot").click(function() {
-    		// Before screen shot loading , have to hide No Screenshot available message
+    		$("#testCaseScreenShotPopUp").modal("show");
     		$("#screenShotImgSrc").attr("src", "");
-    		hideImageIsNotLoaded();
-    		
     		// This code loads image
     		var testCaseName = $(this).attr('name');
-			$('.screenShotTCName').html(testCaseName);
-			$("#screenShotImgSrc").attr("src", "<%= request.getContextPath()%>/getScreenshot.action?projectCode=<%= (String) request.getAttribute(FrameworkConstants.REQ_PROJECT_CODE)%>&testCaseName=" + testCaseName);
-			funcPopUp('block', 'testCaseScreenShotPopUp');
-			
-			// Based on screenshot loading , have to call methods
-			$(".testCaseImg").load(function() { hideImageIsNotLoaded(); })
-		    .error(function() { showImageIsNotLoaded(); });
-    	});
-    	
-    	$('#closeTCScreenShotPopup, #closeTCScreenShotPopupDlg').click(function() {
-    		funcPopUp('none', 'testCaseScreenShotPopUp');
-    	});
+    		$('#popupTitle').html(testCaseName);
+    		$("#screenShotImgSrc").empty();
+			$("#screenShotImgSrc").attr("src", "<%= request.getContextPath()%>/getScreenshot.action?appId=<%= appId %>&projectId=<%= projectId %>&customerId=<%= customerId %>&testCaseName=" + testCaseName);
+			$("#log-div").empty();
+		});
     	
     	// table resizing
 		var tblheight = (($("#subTabcontainer").height() - $("#form_test").height()));
@@ -355,19 +349,6 @@
 		// jquery affects pie chart responsive
 		window.setTimeout(function () { $(".scroll-content").css("width", "100%"); }, 350);
     });
-    
-    function showImageIsNotLoaded() {
-    	$("#imgNotFoundErr").css("display", "block");
-    }
-    
-    function hideImageIsNotLoaded() {
-    	$("#imgNotFoundErr").css("display", "none");	
-    }
-    
-    function funcPopUp(enableProp, popup) {
-    	$(".wel_come").show().css("display", enableProp);
-    	$("#" + popup).show().css("display", enableProp);
-    }
     
     function textTrim(obj) {
         var val = $(obj).text();
@@ -381,10 +362,11 @@
     }
     
     function showLogMsg(testCaseName) {
-	   	var testCaseErrorOrFailName = $('textarea[name="'+ testCaseName +'_Type"]').val();
+    	$("#testCaseScreenShotPopUp").modal("show");
+		var testCaseErrorOrFailName = $('textarea[name="'+ testCaseName +'_Type"]').val();
 	   	var testCaseErrorOrFailDesc = $('textarea[name="'+ testCaseName +'_Desc"]').val();
-	   	$('.TestType').html(testCaseErrorOrFailName);
-	   	$('.testCaseDesc').text(testCaseErrorOrFailDesc);
-	   	funcPopUp('block', 'testCaseErrOrFail');
+	   	$('#popupTitle').html(testCaseErrorOrFailName);
+	   	$("#log-div").html(testCaseErrorOrFailDesc);
+	   	$("#screenShotImgSrc").attr("src", "");
 	}
 </script>
