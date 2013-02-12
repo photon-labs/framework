@@ -18,19 +18,19 @@
 		<WebService desc="" name="Webservice">
 			<protocol>http</protocol>
 			<host>localhost</host>
-			<port>2020</port>
+			<port>3030</port>
 			<username/>
 			<password/>
-			<context>service-testing</context>
+			<context>service</context>
 			<additional_context>/rest/api</additional_context>
 		</WebService>
                  
         <Other appliesTo="tech-html5-widget" desc="" name="Apikey">
             <apiKey>Bearer TXuk45IV_fFoCou1pzu15l2jEgka</apiKey>
         </Other>
-</environment>
+    </environment>
     
-	 <environment default="false" name="Development">
+	<environment default="false" name="Development">
         <Server appliesTo="tech-html5-widget" desc="" name="server">
             <protocol>http</protocol>
             <host>localhost</host>
@@ -80,11 +80,11 @@
 	
 	<WebService desc="" name="webservice">
             <protocol>http</protocol>
-            <host>23.21.45.193</host>
-            <port>80</port>
+            <host>localhost</host>
+            <port>3030</port>
             <username/>
             <password/>
-            <context>testing-2.0</context>
+            <context>service</context>
 	    <additional_context>/rest/api</additional_context>
         </WebService>
         
@@ -93,7 +93,7 @@
         </Other>
     </environment>
 
-     <environment default="false" name="Testing-ws">
+    <environment default="false" name="Testing-ws">
                  <Server appliesTo="tech-html5-widget" desc="" name="server">
             <protocol>http</protocol>
             <host>localhost</host>
@@ -112,10 +112,10 @@
                  <WebService desc="" name="webservice">
             <protocol>http</protocol>
             <host>localhost</host>
-            <port>8280</port>
+            <port>3030</port>
             <username/>
             <password/>
-            <context>service-testing/2.0</context>
+            <context>service</context>
                         <additional_context>/rest/api</additional_context>
         </WebService>
 
