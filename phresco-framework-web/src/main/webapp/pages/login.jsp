@@ -99,16 +99,28 @@ $(document).ready(function() {
 				<!--  UserName starts -->
 				<div class="clearfix" >
 				     <label class="labellg" for="xlInput" class="lgnfieldLb1">Username:</label>
-				     <input class="xlarge settings_text lgnField" id="xlInput" id="username" name="username" type="text" 
-				     	autofocus="" maxlength="63" title="63 Characters only" placeholder="Enter the username" />
+						<%
+							String userName = (String)request.getAttribute(FrameworkConstants.REQ_USER_NAME);
+						%>
+				    <input class="xlarge settings_text lgnField" id="xlInput" id="username" name="username" type="text" 
+				     	autofocus maxlength="63" value="<%= StringUtils.isNotEmpty(userName) ? userName : "" %>" title="63 Characters only" placeholder="Enter the username" />
 			    </div>
 				<!--  UserName ends -->
 		              
 	            <!--  Password starts -->
 	            <div class="clearfix" >
 	                <label class="labellg" for="xlInput" class="lgnFieldLbl">Password:</label>
+		                <%
+							String password = (String)request.getAttribute(FrameworkConstants.REQ_PASSWORD);
+						%>
 	                <input class="xlarge settings_text lgnField" id="xlInput" id="password" name="password" type="password"
 	                	maxlength="63" title="63 Characters only" value ="" placeholder="Enter the password"/>
+	               	
+					<script type="text/javascript">
+						<% if (StringUtils.isNotEmpty(userName) && StringUtils.isEmpty(password)) { %>
+								$('input[name="password"]').focus();
+						<% } %>	
+					</script>
 	            </div>
 	            <!--  Password ends -->
 		              

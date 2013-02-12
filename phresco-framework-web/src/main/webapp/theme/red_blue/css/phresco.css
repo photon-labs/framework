@@ -2915,6 +2915,30 @@ fieldset {
 	margin-left:6px;
 }
 
+#formEnvironment .control-label {
+	width: 20%;
+	margin-left: 18px;
+	padding-right: 10px;
+	text-align: left;
+}
+
+#formEnvironment .controls {
+	margin-left: 100px;
+}	
+
+#formEnvironment #envName {
+	width: 290px;
+}
+
+#formEnvironment #envDesc {
+	min-width: 290px;
+}
+
+#formEnvironment .controls #add {
+	margin-left: 84%;
+    margin-top: -13%;
+}
+
 .popupimage {
 	float: left;
 	margin-left: 5px;
@@ -5944,7 +5968,6 @@ input[class*='chckBxAlign'] {
 div.control-group.valReportLbl {
 	float: left;
     margin-left: 20px;
-    width: 80%;
 }
 
 .validateType {
