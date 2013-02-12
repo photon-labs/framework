@@ -219,13 +219,13 @@
 												<select class="input-medium" name="<%= appLayerId + FrameworkConstants.REQ_PARAM_NAME_TECHNOLOGY %>" <%= disblStr %> onchange="getAppLayerTechVersions('<%= appLayerId %>', this);">
 													<option value="" selected disabled><s:text name='lbl.default.opt.select.tech'/></option>
 													<% String techIdVersion = "";
-														String slctStr = "";
 														String singleTechVersion = "";
 														if (CollectionUtils.isNotEmpty(appLayerTechGroups)) {
 															for (TechnologyGroup appLayerTechGroup : appLayerTechGroups) {
 															    List<TechnologyInfo> techInfos = appLayerTechGroup.getTechInfos();
 															    if (CollectionUtils.isNotEmpty(techInfos)) {
 															        for (TechnologyInfo techInfo : techInfos) {
+															        	String slctStr = "";
 															        	List<String> techVersions = techInfo.getTechVersions();
 															        	//If Layer contains single technology and version ,it should be selected as default
 													        			if (appLayerTechGroups.size() == 1 && techInfos.size() == 1 && techVersions.size() == 1 && layers.size() == 1) {
@@ -511,11 +511,11 @@
 															onchange="getTechVersions('<%= mobileLayerId %>', '<%= mobileLayerTechGroup.getId() %>', '<%= mobileLayerTechGroup.getId() + FrameworkConstants.REQ_PARAM_NAME_VERSION %>');">
 															<option value="" selected disabled><s:text name='lbl.default.opt.select.type'/></option>
 															<%
-																String selectTech = "";
 																String singleTechVersion = "";
 																List<TechnologyInfo> mobileInfos = mobileLayerTechGroup.getTechInfos();	
 																if (CollectionUtils.isNotEmpty(mobileInfos)) {
 																    for (TechnologyInfo mobileInfo : mobileInfos) {
+																    	String selectTech = "";
 																    	List<String> mobileVersions = mobileInfo.getTechVersions();
 																    	if(mobileLayerTechGroups.size() == 1 && mobileInfos.size() == 1 && layers.size() <= 1 ) {
 																    		if(CollectionUtils.isNotEmpty(mobileVersions) && mobileVersions.size() == 1) {
