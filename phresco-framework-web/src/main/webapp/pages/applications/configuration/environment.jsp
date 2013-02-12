@@ -101,7 +101,7 @@
 		<div class="popupTypeFields" id="typefield">
             <div class="multilist-scroller multiselect" id='multiselect'>
                 <ul>
-                <% for (Environment environment : environments ) {
+                <% for (Environment environment : environments) {
                 	String envJson = gson.toJson(environment);
                 	
                  %>
@@ -119,9 +119,11 @@
 			<img src="images/icons/delete.png"" title="<s:text name='lbl.title.remove'/>" id="remove" class="imageremove"><br>
 			<img src="images/icons/btm_arrow.png" title="<s:text name='lbl.title.movedown'/>" id="down" class="imagedown">
 		</div>
-		<div class="defaultButton">
-			<input type="button" class="btn" disabled value="<s:text name='lbl.btn.set.default'/>" tabindex=5 id="setAsDefault" name="setAsDefault">
-		</div>
+		<% if (FrameworkConstants.CONFIG.equals(fromPage)) { %>
+			<div class="defaultButton">
+				<input type="button" class="btn" disabled value="<s:text name='lbl.btn.set.default'/>" tabindex=5 id="setAsDefault" name="setAsDefault">
+			</div>
+		<% } %>
 	</fieldset>
 </form>
 
@@ -141,7 +143,10 @@ $(document).ready(function() {
 	document.getElementById('createEnvironment').disabled = true; 
 	$("#createEnvironment").removeClass("btn-primary");
 	$('#errMsg').empty();
-	setAsDefaultBtnStatus();
+	
+	<% if (FrameworkConstants.CONFIG.equals(fromPage)) { %>
+		setAsDefaultBtnStatus();
+	<% } %>
 	
 	var update = false;
 	$('input[name="envNames"]').change(function() {
@@ -292,7 +297,9 @@ $(document).ready(function() {
 			document.getElementById('createEnvironment').disabled = false;
 			$("#createEnvironment").addClass("btn-primary");
         });
-        setAsDefaultBtnStatus(); 
+        <% if (FrameworkConstants.CONFIG.equals(fromPage)) { %>
+        	setAsDefaultBtnStatus(); 
+        <% } %>
     });
 	
 	$('#up').click(function () {
@@ -366,7 +373,10 @@ $(document).ready(function() {
 		
 		$("#envName").val("");
 		$("#envDesc").val("");
-		setAsDefaultBtnStatus();
+		
+		<% if (FrameworkConstants.CONFIG.equals(fromPage)) { %>
+			setAsDefaultBtnStatus();
+		<% } %>
 	}
 
 	function selectEnv() {
