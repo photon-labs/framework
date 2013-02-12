@@ -463,6 +463,13 @@
 		$("#about, #abtPopUp").click(function() {
 			yesnoPopup('about', 'About Phresco', 'updateAvailable', 'Update Available');
 		});
+		
+		$("#goToHome").click(function() {
+    		var custId = $(".dd-selected-value").val();
+    		if ('photon' == custId) {
+    			window.open("http://www.photon.in", '_blank');
+    		}
+    	});
 	});
 	
 	if ($.browser.safari && $.browser.version == 530.17) {
