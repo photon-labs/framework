@@ -217,19 +217,6 @@
 		copyToClipboard($('#console_div').text());
 	});
     
- 	// Its used by iphone alone
-    function deploy(obj) {
-    	$('#popup_div').empty();
-        $("#build-output").empty();
-        $("#build-output").html('<%= FrameworkConstants.MSG_IPHONE_DEPLOY %>');
-        var currentId = obj.id;
-        var idArray = currentId.split('#');
-        var buildNumber = idArray[1];
-        var params = "buildNumber=";
-        params = params.concat(buildNumber);
-		<%-- readerHandlerSubmit('deploy', '<%= projectCode %>', 'Deploy', params); --%>
-    }
- 	
     function copyToClipboard(data) {
         var params = "copyToClipboard=";
         params = params.concat(data);
@@ -351,6 +338,6 @@
 		var params = getBasicParams();
 		params = params.concat("&");
 		params = params.concat(additionalParam);
-		readerHandlerSubmit('deploy', '<%= appId %>', '<%= FrameworkConstants.REQ_FROM_TAB_DEPLOY %>', $("#generateBuildForm"), false, params, $("#console_div"));
+		readerHandlerSubmit('deploy', '<%= appId %>', '<%= FrameworkConstants.REQ_FROM_TAB_DEPLOY %>', '', false, params, $("#console_div"));
     }
 </script>
