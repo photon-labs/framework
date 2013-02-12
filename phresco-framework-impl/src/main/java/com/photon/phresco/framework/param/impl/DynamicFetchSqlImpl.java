@@ -5,6 +5,8 @@ import java.io.FilenameFilter;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
+
 import com.photon.phresco.api.ConfigManager;
 import com.photon.phresco.api.DynamicParameter;
 import com.photon.phresco.commons.model.ApplicationInfo;
@@ -24,42 +26,58 @@ public class DynamicFetchSqlImpl implements DynamicParameter, Constants {
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public PossibleValues getValues(Map<String, Object> map) throws PhrescoException, ConfigurationException {
+	public PossibleValues getValues(Map<String, Object> map) throws PhrescoException {
 		PossibleValues possibleValues = new PossibleValues();
 		try {
-			String dbVersion = "";
-			String sqlFileName = "";
-			String path = "";
 			ApplicationInfo applicationInfo = (ApplicationInfo) map.get(KEY_APP_INFO);
 			String sqlFilePath = getSqlFilePath(applicationInfo);
 			String appDirectory = applicationInfo.getAppDirName();
-	    	String configPath = getConfigurationPath(appDirectory).toString();
-	    	String envName = (String) map.get(KEY_ENVIRONMENT);
-	    	String dbname = (String) map.get(KEY_DATABASE);
-	    	ConfigManager configManager = new ConfigManagerImpl(new File(configPath));
-			List<Configuration> configurations = configManager.getConfigurations(envName, SETTINGS_TEMPLATE_DB);
-			for (Configuration configuration : configurations) {
-				String dbType = configuration.getProperties().getProperty(DB_TYPE).toLowerCase();
-				if (dbname.equals(dbType)) { 
-					dbVersion =configuration.getProperties().getProperty(DB_VERSION);
-					File[] dbSqlFiles = new File(Utility.getProjectHome() + applicationInfo.getAppDirName() + sqlFilePath + dbname
-							+ File.separator + dbVersion).listFiles(new DumpFileNameFilter());
-					for (int i = 0; i < dbSqlFiles.length; i++) {
-						if (!dbSqlFiles[i].isDirectory()) {
-						Value value = new Value();
-						sqlFileName = dbSqlFiles[i].getName();
-						path = sqlFilePath + dbname + "/" +  dbVersion + "#SEP#" +  sqlFileName ;
-						value.setValue(path);
-			    		possibleValues.getValue().add(value);
-					}
-				  }
-				}
+			String configPath = getConfigurationPath(appDirectory).toString();
+			String envName = (String) map.get(KEY_ENVIRONMENT);
+			String dbname = (String) map.get(KEY_DATABASE);
+			String customer = (String) map.get(KEY_CUSTOMER_ID);
+			String settingsPath = getSettingsPath(customer);
+			ConfigManager configManager = new ConfigManagerImpl(new File(settingsPath)); 
+			List<Configuration> settingsconfig = configManager.getConfigurations(envName, Constants.SETTINGS_TEMPLATE_DB);
+			if(CollectionUtils.isNotEmpty(settingsconfig)) {
+				fetchSqlFilePath(possibleValues, applicationInfo, sqlFilePath, dbname, settingsconfig);
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+			configManager = new ConfigManagerImpl(new File(configPath));
+			List<Configuration> configurations = configManager.getConfigurations(envName, SETTINGS_TEMPLATE_DB);
+			if(CollectionUtils.isNotEmpty(configurations)) {
+			fetchSqlFilePath(possibleValues, applicationInfo, sqlFilePath, dbname, configurations);
+			}
+			return possibleValues;
+
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
+		} catch (ConfigurationException e) {
+			throw new PhrescoException(e);
 		}
-		
-		return possibleValues;
+	}
+
+	private void fetchSqlFilePath(PossibleValues possibleValues, ApplicationInfo applicationInfo, String sqlFilePath,
+			String dbname, List<Configuration> configurations) {
+		String dbVersion = "";
+		String sqlFileName = "";
+		String path = "";
+		for (Configuration configuration : configurations) {
+			String dbType = configuration.getProperties().getProperty(DB_TYPE).toLowerCase();
+			if (dbname.equals(dbType)) { 
+				dbVersion =configuration.getProperties().getProperty(DB_VERSION);
+				File[] dbSqlFiles = new File(Utility.getProjectHome() + applicationInfo.getAppDirName() + sqlFilePath + dbname
+						+ File.separator + dbVersion).listFiles(new DumpFileNameFilter());
+				for (int i = 0; i < dbSqlFiles.length; i++) {
+					if (!dbSqlFiles[i].isDirectory()) {
+					Value value = new Value();
+					sqlFileName = dbSqlFiles[i].getName();
+					path = sqlFilePath + dbname + "/" +  dbVersion + "#SEP#" +  sqlFileName ;
+					value.setValue(path);
+		    		possibleValues.getValue().add(value);
+				}
+			  }
+			}
+		}
 	}
 	
 	class DumpFileNameFilter implements FilenameFilter {
@@ -86,4 +104,8 @@ public class DynamicFetchSqlImpl implements DynamicParameter, Constants {
 
 		return sqlFilePath;
 	}
+	
+	 private String getSettingsPath(String customer) {
+	    	return Utility.getProjectHome() + customer + Constants.SETTINGS_XML;
+	    }
 }
