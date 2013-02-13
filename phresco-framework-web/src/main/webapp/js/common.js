@@ -421,42 +421,34 @@ function checkAllHandler(parentCheckBox, childCheckBox) {
 function checkAllEvent(currentCheckbox, childCheckBox, disable) {
 	var checkAll = $(currentCheckbox).prop('checked');
 	childCheckBox.prop('checked', checkAll);
-	buttonStatus(checkAll, disable);
 	if (!checkAll) {
-		disable = false;
+		$('#deleteBtn').attr('disabled', !checkAll);
+		$('#deleteBtn').removeClass('btn-primary');
 	}
+	deleteButtonStatus();
 	toDisableAllCheckbox(currentCheckbox,childCheckBox, disable);
 }
 
-function checkboxEvent(childChkbxObj, parentChkbxObj, disablebtn) {
-	var chkboxStatus = childChkbxObj.is(':checked');
-	if(!isBlank(disablebtn) || disablebtn != undefined) {
-		buttonStatus("", chkboxStatus);
-	}
+function checkboxEvent(childChkbxObj, parentChkbxObj) {
 	if (childChkbxObj.length == childChkbxObj.filter(':checked').length) {
 		parentChkbxObj.prop('checked', true);
 	} else {
 		parentChkbxObj.prop('checked', false);
 	}
+	deleteButtonStatus();
 }
 
-function envCheckboxEvent(childChkbxObj, parentChkbxObj, disablebtn) {
-	var chkboxStatus = childChkbxObj.is(':checked');
-	if(!isBlank(disablebtn) || disablebtn != undefined) {
-		buttonStatus("", chkboxStatus);
-	}
-}
-
-function buttonStatus(checkAll, disable) {
-	if(!isBlank(disable) || disable != undefined) {
-		$('#deleteBtn').attr('disabled', !checkAll);
-		if (checkAll) {
-			$('#deleteBtn').addClass('btn-primary');
+function deleteButtonStatus() {
+	$('.table_div input:checkbox').each(function() {
+		if ($('.table_div input:checkbox').is(':checked')) {
+			$("input[id=deleteBtn]").attr("disabled", false);
+			$("#deleteBtn").addClass("btn-primary");
 		} else {
-			$('#deleteBtn').removeClass('btn-primary');
+			$("input[id=deleteBtn]").attr("disabled", "disabled");
+			$("#deleteBtn").removeClass("btn-primary");
 		}
-	}
-}
+	});
+};
 
 function toDisableCheckAll() {
 	if ($(".check:checkbox").length > 0 ) {
@@ -978,18 +970,6 @@ function constructMultiSelectOptions(dependentValues, pushToElement) {
 	}
 	//See step 7
 	$("#"+pushToElement).append(ulElement);
-}
-
-//To disable the given button object 
-function disableButton(buttonObj) {
-    buttonObj.removeClass('btn-primary');
-    buttonObj.attr("disabled", true);
-}
-
-//To enable the given button object
-function enableButton(buttonObj) {
-    buttonObj.addClass('btn-primary');
-    buttonObj.attr("disabled", false);
 }
 
 //To check whether the url is valid or not

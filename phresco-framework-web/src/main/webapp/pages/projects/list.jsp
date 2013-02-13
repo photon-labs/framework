@@ -113,7 +113,7 @@
 															<tr>
 																<td class="no-left-bottom-border table-pad">
 																	<input type="checkbox" class="check <%= project.getId() %>" name="selectedAppInfo" value='<%= gson.toJson(appInfo) %>'
-																		onclick="checkboxEvent($('.<%= project.getId() %>'), $('#<%= project.getId() %>'), false);">
+																		onclick="checkboxEvent($('.<%= project.getId() %>'), $('#<%= project.getId() %>'));">
 																</td>
 																<td class="no-left-bottom-border table-pad">
 																	<a href="#" onclick="editApplication('<%= project.getId() %>', '<%= appInfo.getId() %>');" name="edit">
