@@ -820,19 +820,17 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
                 return SUCCESS;
             }
             
-            boolean hasShow = false;
+            // for iphone technology device deployment popup should not be shown
+            // when device deployment deployment, show parameter will not be available. In that scenario need to be handled
+            if (getGoal().equals(PHASE_DEPLOY)) {
+            	Map<String, DependantParameters> watcherMap = new HashMap<String, DependantParameters>(8);
+                setPossibleValuesInReq(mojo, getApplicationInfo(), parameters, watcherMap, getGoal());
+            }
+            
             for (Parameter parameter : parameters) {
                 if (parameter.isShow()) {
-                    hasShow = true;
                     setParamaterAvailable(true);
                     return SUCCESS;
-                }
-            }
-            if (!hasShow) {
-                Map<String, DependantParameters> watcherMap = new HashMap<String, DependantParameters>(8);
-                setPossibleValuesInReq(mojo, getApplicationInfo(), parameters, watcherMap, getGoal());
-                if (watcherMap != null && !watcherMap.isEmpty()) {
-                    setParamaterAvailable(true);
                 }
             }
         } catch (Exception e) {
