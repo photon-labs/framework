@@ -185,9 +185,9 @@
 			}
 		}
 		checkboxEvent($('.feature_checkbox'), $('#checkAllAuto'), false);
-		/* if (from != "fetchSelectedFeatures") {
+		 if (from != "fetchSelectedFeatures") {
 			clickToAdd();
-		}  */
+		}  
 	}
 	
 </script>

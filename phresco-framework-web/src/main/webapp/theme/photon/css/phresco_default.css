@@ -191,8 +191,8 @@ input[type="password"] {
 
 .featureImage {
 	float: right;
-    margin: -21px 113px;
-    margin-top: -30px;
+    margin: -30px -6px -21px;
+    cursor: pointer;
 }
 
 .bubbleAll {
@@ -5775,7 +5775,7 @@ input[class*='chckBxAlign'] {
 }
 
 .vAlignSub {
-	vertical-align: sub !important;
+	vertical-align: middle !important;
 }
 
 .buildTypeSpan {

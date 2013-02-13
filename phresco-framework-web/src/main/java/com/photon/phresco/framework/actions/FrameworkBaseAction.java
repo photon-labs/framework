@@ -330,7 +330,7 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
     }
     
     protected String getSettingsPath() {
-    	return Utility.getProjectHome() + SETTINGS_XML;
+    	return Utility.getProjectHome() + getCustomerId() +  SETTINGS_XML;
     }
 
     protected void setReqAttribute(String key, Object value) {

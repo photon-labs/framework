@@ -405,6 +405,7 @@ a {
 	float: right;
 	height: 34px;
 	width: 35px;
+	position: relative;
 }
 
 .table_data_div {
@@ -2914,6 +2915,30 @@ fieldset {
 	margin-left:6px;
 }
 
+#formEnvironment .control-label {
+	width: 20%;
+	margin-left: 18px;
+	padding-right: 10px;
+	text-align: left;
+}
+
+#formEnvironment .controls {
+	margin-left: 100px;
+}	
+
+#formEnvironment #envName {
+	width: 290px;
+}
+
+#formEnvironment #envDesc {
+	min-width: 290px;
+}
+
+#formEnvironment .controls #add {
+	margin-left: 84%;
+    margin-top: -13%;
+}
+
 .popupimage {
 	float: left;
 	margin-left: 5px;
@@ -5184,11 +5209,23 @@ textarea.xxlarge {
 	height: 16px;
 }
 
+.settingsTypeFields {
+    float: left;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
 .environment_list {
 	color:#808080; 
 	margin: 6px 0 0 -18px; 
 	list-style-type: none; 
 	height: 16px;
+}
+
+.envLabel {
+	margin-left: 20px;
+    margin-top: -22px;
+    position: relative;
+    color : #000000;
 }
 
 .config_tab {
@@ -5931,7 +5968,6 @@ input[class*='chckBxAlign'] {
 div.control-group.valReportLbl {
 	float: left;
     margin-left: 20px;
-    width: 80%;
 }
 
 .validateType {

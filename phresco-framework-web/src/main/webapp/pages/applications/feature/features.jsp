@@ -61,11 +61,11 @@
 		<label for="myselect" class="control-label features_cl">Type&nbsp;:</label>
 		 <select id="featureselect" name="type" onchange="featuretype()">
 	        <option value="<%= ArtifactGroup.Type.FEATURE.name() %>" selected="selected" data-imagesrc="images/features.png"
-	            data-description="Description with Modules"><s:text name="lbl.options.modules"/></option>
+	            data-description="An independent self-contained unit of a spacecraft"><s:text name="lbl.options.modules"/></option>
 	        <option value="<%= ArtifactGroup.Type.JAVASCRIPT.name() %>" data-imagesrc="images/libraries.png"
-	            data-description="Description with Javascript"><s:text name="lbl.options.js.libs"/></option>
+	            data-description="Library of pre-written JavaScript to develop JavaScript-based applications"><s:text name="lbl.options.js.libs"/></option>
 	        <option value="<%= ArtifactGroup.Type.COMPONENT.name() %>" data-imagesrc="images/components.png"
-	            data-description="Description with Components"><s:text name="lbl.options.components"/></option>
+	            data-description="Single piece which forms part of a larger unit"><s:text name="lbl.options.components"/></option>
 	    </select>
 	    <div class="alert alert-success alert-message hideContent" id="successmsg">
 			<s:text name="succ.feature.configure"/>

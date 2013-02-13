@@ -193,7 +193,8 @@ public class Login extends FrameworkBaseAction {
             setReqAttribute(REQ_LOGIN_ERROR, getText(ERROR_LOGIN_INVALID_PASSWORD));
             return false;
         }
-        
+        setReqAttribute(REQ_USER_NAME, getUsername());
+        setReqAttribute(REQ_PASSWORD, getPassword());
         return true;
     }
     

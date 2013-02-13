@@ -864,12 +864,14 @@ function confirmDialog(obj, title, bodyText, okUrl, okLabel) {
 		$("#errMsg").empty();
 		$('#popupTitle').html(title); // Title for the popup
 		$('.popupClose').hide();
-		
+		hidePopuploadingIcon();
 		$(".popupOk").attr('id', okUrl);
 	
 		$('#popup_div').css("height", "50px");
 		$('#popup_div').html(bodyText);
 		
+		$('.popupOk').addClass("btn-primary");
+		document.getElementById(okUrl).disabled = false;
 		if (okLabel !== undefined && !isBlank(okLabel)) {
 			$('a [class ~= "popupOk"]').attr('id', okUrl);
 			$('#' + okUrl).val(okLabel); // label for the ok button

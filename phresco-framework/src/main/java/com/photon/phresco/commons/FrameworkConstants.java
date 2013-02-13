@@ -131,7 +131,7 @@ public interface FrameworkConstants {
     String REQ_VALUE = "value";
     
     String DO_NOT_CHECKIN_DIR = "do_not_checkin";
-    String SETTINGS_XML = "settings.xml";
+    String SETTINGS_XML = "-settings.xml";
     String ARCHIVES = "archives";
     String CUMULATIVE = "cumulativeReports";
     String BUILD_DIR = DO_NOT_CHECKIN_DIR + File.separator + "build";
