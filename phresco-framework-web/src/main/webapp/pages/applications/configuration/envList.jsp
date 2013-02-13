@@ -130,8 +130,7 @@
 											%>
 															<tr>
 																<td class="no-left-bottom-border table-pad">
-																	<input type="checkbox" class="check <%=env.getName() %>" name="checkedConfig" value='<%= configJson %>'
-																		onclick="envCheckboxEvent($('.<%=env.getName() %>'), $('#<%=env.getName() %>'), false);">
+																	<input type="checkbox" class="check <%=env.getName() %>" name="checkedConfig" value='<%= configJson %>'>
 																</td>
 																<td class="no-left-bottom-border table-pad">
 																	<a href="#" onclick="editConfiguration('<%= env.getName() %>', '<%= configuration.getType() %>','<%= configuration.getName() %>');" 
@@ -231,18 +230,6 @@
 			}
 		%>
 	});
-	
-	function deleteButtonStatus() {
-		if ($('.table_div').find("input[type='checkbox']:checked").length < 1) {
-			$("input[name=deleteBtn]").attr("disabled", "disabled");
-			$("#deleteBtn").removeClass("btn-primary"); 
-	        $("#deleteBtn").addClass("btn-disabled");
-		} else {
-			$("input[name=deleteBtn]").removeAttr("disabled");
-			$("#deleteBtn").addClass("btn-primary");
-			$("#deleteBtn").removeClass("btn-disabled");
-		}
-	};
 	
 	function isConnectionAlive(url, id) {
 	    $.ajax({

@@ -1687,6 +1687,7 @@ public interface FrameworkConstants {
 		  String ADMIN_USERNAME = "admin_username";
 		  String ADMIN_PASSWORD = "admin_password";
 		  String REMOTE_DEPLOYMENT = "remoteDeployment";
+		  String REMOTE_DEPLOYMENT_OPTION = "Remote_Deployment";
 		  String TYPE_VERSION = "version";
 		  
 		  //SettingsTemplate values 

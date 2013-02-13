@@ -62,7 +62,7 @@
 				<span class="siteaccordion">
 					<span>
 						<input class="feature_checkbox" type="checkbox" defaultModule="<%= defaultModule %>" canConfigure="<%= canConfigure %>" 
-							value="<%= artifactGroup.getName() %>" onclick="checkboxEvent($('.feature_checkbox'), $('#checkAllAuto'), false);"/>
+							value="<%= artifactGroup.getName() %>" onclick="checkboxEvent($('.feature_checkbox'), $('#checkAllAuto'));"/>
 						<a style="float: left; margin-left:2%;" href="#"><%= artifactGroup.getName() %></a>
 						
 						<select class="input-mini features_ver_sel" id="<%= artifactGrpName %>" artifactGroupId="<%= artifactGroup.getId() %>" moduleId="<%= artifactGroup.getId() %>" name="<%=artifactGroup.getName() %>" >
@@ -184,7 +184,7 @@
 				});
 			}
 		}
-		checkboxEvent($('.feature_checkbox'), $('#checkAllAuto'), false);
+		checkboxEvent($('.feature_checkbox'), $('#checkAllAuto'));
 		 if (from != "fetchSelectedFeatures") {
 			clickToAdd();
 		}  

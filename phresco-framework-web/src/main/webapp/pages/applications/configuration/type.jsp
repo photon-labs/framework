@@ -382,7 +382,7 @@
 		}
 		
 		<% if (FrameworkConstants.ADD_CONFIG.equals(fromPage) || FrameworkConstants.EDIT_CONFIG.equals(fromPage)) {
-				if (CollectionUtils.isNotEmpty(options) && !options.contains(FrameworkConstants.REMOTE_DEPLOYMENT)) { 
+				if (CollectionUtils.isNotEmpty(options) && !options.contains(FrameworkConstants.REMOTE_DEPLOYMENT_OPTION)) { 
 		%>
 				hideRemoteDeply();
 		<%	

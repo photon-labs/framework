@@ -113,7 +113,7 @@
 															<tr>
 																<td class="no-left-bottom-border table-pad">
 																	<input type="checkbox" class="check <%= project.getId() %>" name="selectedAppInfo" value='<%= gson.toJson(appInfo) %>'
-																		onclick="checkboxEvent($('.<%= project.getId() %>'), $('#<%= project.getId() %>'), false);">
+																		onclick="checkboxEvent($('.<%= project.getId() %>'), $('#<%= project.getId() %>'));">
 																</td>
 																<td class="no-left-bottom-border table-pad">
 																	<a href="#" onclick="editApplication('<%= project.getId() %>', '<%= appInfo.getId() %>');" name="edit">
@@ -218,15 +218,6 @@
 			deleteButtonStatus();
 		});
    	});
-	
-	function deleteButtonStatus() {
-		if ($('.table_div').find("input[type='checkbox']:checked").length < 1) {
-			$("input[id=deleteBtn]").attr("disabled", "disabled");
-		} else {
-			$("input[id=deleteBtn]").attr("disabled", false);
-			$("#deleteBtn").addClass("btn-primary");
-		}
-	};
 	
     function editApplication(projectId, appId) {
     	showLoadingIcon();
