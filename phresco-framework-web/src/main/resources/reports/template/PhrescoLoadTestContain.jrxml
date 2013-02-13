@@ -63,35 +63,35 @@
 				<staticText>
 					<reportElement style="PLTCTitleLabel" x="176" y="9" width="112" height="20"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="12" isBold="true"/>
+						<font fontName="Times New Roman" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Project Name :]]></text>
 				</staticText>
 				<staticText>
 					<reportElement style="PLTCTitleLabel" x="176" y="29" width="112" height="20"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="12" isBold="true"/>
+						<font fontName="Times New Roman" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Application Name :]]></text>
 				</staticText>
 				<staticText>
 					<reportElement style="PLTCTitleLabel" x="176" y="49" width="112" height="20"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="12" isBold="true"/>
+						<font fontName="Times New Roman" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Technology :]]></text>
 				</staticText>
 				<staticText>
 					<reportElement style="PLTCTitleLabel" x="176" y="69" width="112" height="20"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="12" isBold="true"/>
+						<font fontName="Times New Roman" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Version :]]></text>
 				</staticText>
 				<staticText>
 					<reportElement style="PLTCTitleLabel" x="176" y="89" width="112" height="20"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="12" isBold="true"/>
+						<font fontName="Times New Roman" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Date :]]></text>
 				</staticText>
