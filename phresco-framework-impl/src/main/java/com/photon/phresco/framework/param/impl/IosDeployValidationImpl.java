@@ -49,8 +49,12 @@ public class IosDeployValidationImpl implements DynamicParameter {
             	if (!createIpa && !deviceDeploy) { // if it is simulator, show popup for following dependency
             		Value value = new Value();
                     value.setValue("simulator");
-                    value.setDependency("sdkVersion,family,logs,buildNumber");
+//                    value.setDependency("sdkVersion,family,logs,buildNumber");
                     possibleValues.getValue().add(value);
+                    setShowPropValue(paramsMap, "sdkVersion", true);
+                    setShowPropValue(paramsMap, "family", true);
+                    setShowPropValue(paramsMap, "logs", true);
+                    setShowPropValue(paramsMap, "buildNumber", true);
                     // set trigger simulator value
                     setTriggerSimulatorValue(paramsMap, TRUE);
                     return possibleValues;
@@ -58,6 +62,10 @@ public class IosDeployValidationImpl implements DynamicParameter {
             		Value value = new Value();
                     value.setValue("device");
                     possibleValues.getValue().add(value);
+                    setShowPropValue(paramsMap, "sdkVersion", false);
+                    setShowPropValue(paramsMap, "family", false);
+                    setShowPropValue(paramsMap, "logs", false);
+                    setShowPropValue(paramsMap, "buildNumber", false);
                     // set trigger simulator value
                     setTriggerSimulatorValue(paramsMap, FALSE);
             		return possibleValues;
@@ -75,6 +83,14 @@ public class IosDeployValidationImpl implements DynamicParameter {
     	String goal = (String) paramsMap.get(KEY_GOAL);
     	Parameter parameter = mojo.getParameter(goal, KEY_TRIGGER_SIMULATOR);
 		parameter.setValue(triggerSimulator);
+    	mojo.save();
+	}
+	
+	private void setShowPropValue(Map<String, Object> paramsMap, String key, boolean isShow) throws PhrescoException {
+    	MojoProcessor mojo = (MojoProcessor) paramsMap.get(KEY_MOJO);
+    	String goal = (String) paramsMap.get(KEY_GOAL);
+    	Parameter parameter = mojo.getParameter(goal, key);
+		parameter.setShow(isShow);
     	mojo.save();
 	}
 	
