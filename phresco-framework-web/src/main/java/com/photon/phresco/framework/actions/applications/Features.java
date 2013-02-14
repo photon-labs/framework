@@ -128,6 +128,7 @@ public class Features extends DynamicParameterModule {
 	private String databaseError = "";
 	private String serverName = "";
 	private String databaseName = "";
+	private String featureType = "";
 	
 	private String configTemplateType = "";
 	
@@ -209,7 +210,8 @@ public class Features extends DynamicParameterModule {
 							selectFeature.setDispValue(artifactInfo.getVersion());
 							selectFeature.setVersionID(artifactInfo.getId());
 							selectFeature.setModuleId(artifactInfo.getArtifactGroupId());
-							selectFeature.setDispName(artifactGroup.getName());
+							selectFeature.setDispName(artifactGroup.getDisplayName());
+							selectFeature.setName(artifactGroup.getName());
 							selectFeature.setType(artifactGroup.getType().name());
 							selectFeature.setArtifactGroupId(artifactGroup.getId());
 							selectFeature.setDefaultModule(true);
@@ -238,7 +240,8 @@ public class Features extends DynamicParameterModule {
 							dependntFeature.setDispValue(artifatInfo.getVersion());
 							dependntFeature.setVersionID(artifatInfo.getId());
 							dependntFeature.setModuleId(artifatInfo.getArtifactGroupId());
-							dependntFeature.setDispName(artifatGroup.getName());
+							dependntFeature.setName(artifatGroup.getName());
+							dependntFeature.setDispName(artifatGroup.getDisplayName());
 							dependntFeature.setType(artifatGroup.getType().name());
 							dependntFeature.setArtifactGroupId(artifatGroup.getId());
 							dependntFeature.setDefaultModule(true);
@@ -295,7 +298,8 @@ public class Features extends DynamicParameterModule {
 		
 		String artifactGroupId = artifactInfo.getArtifactGroupId();
 		ArtifactGroup artifactGroupInfo = getServiceManager().getArtifactGroupInfo(artifactGroupId);
-		slctFeature.setDispName(artifactGroupInfo.getName());
+		slctFeature.setName(artifactGroupInfo.getName());
+		slctFeature.setDispName(artifactGroupInfo.getDisplayName());
 		slctFeature.setType(artifactGroupInfo.getType().name());
 		slctFeature.setArtifactGroupId(artifactGroupInfo.getId());
 		List<CoreOption> appliesTo = artifactGroupInfo.getAppliesTo();
@@ -475,6 +479,7 @@ public class Features extends DynamicParameterModule {
 	    	boolean returnStatus = populateFeatureConfigPopup();
 	    	if(!returnStatus) {
 		        setConfigTemplateType(CONFIG_FEATURES);
+		        setReqAttribute(REQ_TYPE, featureType);
 		        setReqAttribute(REQ_FEATURE_NAME, getFeatureName());
 		        List<PropertyTemplate> propertyTemplates = getTemplateConfigFile();
 		        setReqAttribute(REQ_PROPERTIES, propertyTemplates);
@@ -563,6 +568,7 @@ public class Features extends DynamicParameterModule {
 	        	}
 	        }
             configuration.setProperties(properties);
+            configuration.setType(getFeatureType());
             List<Configuration> configs = new ArrayList<Configuration>();
             configs.add(configuration);
             getApplicationProcessor().postFeatureConfiguration(getApplicationInfo(), configs, getFeatureName());
@@ -663,7 +669,7 @@ public class Features extends DynamicParameterModule {
 	    } catch (PhrescoException e) {
 	        throw e;
 	    }
-
+	    
 	    return propertyTemplates;
 	}
 	
@@ -1287,5 +1293,13 @@ public class Features extends DynamicParameterModule {
 
 	public String getWebServiceError() {
 		return webServiceError;
+	}
+	
+	public String getFeatureType() {
+		return featureType;
+	}
+
+	public void setFeatureType(String featureType) {
+		this.featureType = featureType;
 	}
 }

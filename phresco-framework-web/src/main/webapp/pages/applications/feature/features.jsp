@@ -131,7 +131,7 @@
 		        showImage = true;
 		    }
 %>
-			constructFeaturesDiv('<%= feature.getDispName() %>', '<%= feature.getDispValue() %>', '<%= feature.getType() %>', '<%= feature.getVersionID() %>', '<%= feature.getModuleId() %>', <%= feature.isCanConfigure() %>, <%= showImage %>, <%= feature.isDefaultModule()%>, '<%= feature.getArtifactGroupId()%>'); 
+			constructFeaturesDiv('<%= feature.getName() %>', '<%= feature.getDispName() %>', '<%= feature.getDispValue() %>', '<%= feature.getType() %>', '<%= feature.getVersionID() %>', '<%= feature.getModuleId() %>', <%= feature.isCanConfigure() %>, <%= showImage %>, <%= feature.isDefaultModule()%>, '<%= feature.getArtifactGroupId()%>'); 
 <%		
 	 	}
 	}
@@ -145,7 +145,7 @@ if (CollectionUtils.isNotEmpty(defaultfeatures)) {
 	        showImage = true;
 	    }
 %>
-		constructFeaturesDiv('<%= feature.getDispName() %>', '<%= feature.getDispValue() %>', '<%= feature.getType() %>', '<%= feature.getVersionID() %>', '<%= feature.getModuleId() %>', <%= feature.isCanConfigure() %>, <%= showImage %>, <%= feature.isDefaultModule()%>, '<%= feature.getArtifactGroupId()%>'); 
+		constructFeaturesDiv('<%= feature.getName() %>', '<%= feature.getDispName() %>', '<%= feature.getDispValue() %>', '<%= feature.getType() %>', '<%= feature.getVersionID() %>', '<%= feature.getModuleId() %>', <%= feature.isCanConfigure() %>, <%= showImage %>, <%= feature.isDefaultModule()%>, '<%= feature.getArtifactGroupId()%>'); 
 <%		
  	}
 }
@@ -194,8 +194,9 @@ if (CollectionUtils.isNotEmpty(defaultfeatures)) {
     //Function to add the features to the right tab
     function clickToAdd() {
         $('#accordianchange input:checked').each(function () {
-        	var dispName = $(this).val();
-        	var id = removeSpaces(dispName);
+        	var name = $(this).val();
+        	var dispName = $(this).attr("dispName");
+        	var id = removeSpaces(name);
         	var hiddenFieldVersion = $('#'+id).val();
         	var artifactGroupId = $('#'+id).attr('artifactGroupId');
         	var moduleId = $('#'+id).attr('moduleId');
@@ -203,13 +204,14 @@ if (CollectionUtils.isNotEmpty(defaultfeatures)) {
         	var canConfigure = Boolean($(this).attr("canConfigure"));
         	var defaultModule =$(this).attr("defaultModule");
         	var isDefault = defaultModule.toLowerCase()=="true"?true:false;
-        	constructFeaturesDiv(dispName, dispValue, selectedType, hiddenFieldVersion, moduleId, canConfigure,'', isDefault, artifactGroupId);
+        	constructFeaturesDiv(name, dispName, dispValue, selectedType, hiddenFieldVersion, moduleId, canConfigure,'', isDefault, artifactGroupId);
         });
     }
     
     // Function to construct the hidden fields for selected features
-    function constructFeaturesDiv(dispName, dispValue, hiddenFieldname, hiddenFieldVersion, moduleId, canConfigure, showImage, isDefault, artifactGroupId) {
+    function constructFeaturesDiv(name, dispName, dispValue, hiddenFieldname, hiddenFieldVersion, moduleId, canConfigure, showImage, isDefault, artifactGroupId) {
 		var jsonParamObj = {};
+		jsonParamObj.name = name;
 		jsonParamObj.dispName = dispName;
 		jsonParamObj.moduleId = moduleId;
 		jsonParamObj.dispValue = dispValue;
@@ -235,14 +237,14 @@ if (CollectionUtils.isNotEmpty(defaultfeatures)) {
 				$("#result").append('<div id="'+ctrlClass+'Div" class="'+divName+'">'+dispName+' - '+dispValue+
 						'<a href="#" onclick="removed(this);">'+ removeImg +'</a>'+
 						'<input type="hidden" class="'+ctrlClass+'" name="jsonData">' +
-						<%
-							if (optionIds != null && optionIds.contains(FrameworkConstants.FEATURES_KEY) || optionIds.contains(FrameworkConstants.COMPONENT_CONFIG)) {
-						%>
-							'<a href="#" id="'+dispName+'" onclick="showFeatureConfigPopup(this);">'+ 
+<%-- 						<% --%>
+// 							if (optionIds != null && optionIds.contains(FrameworkConstants.FEATURES_KEY) || optionIds.contains(FrameworkConstants.COMPONENT_CONFIG)) {
+// 						%>
+							'<a href="#" id="'+name+'" onclick="showFeatureConfigPopup(this);">'+ 
 							'<img src="images/icons/gear.png" title="Configure"/></a>' +
-						<% 
-							}
-						%>
+<%-- 						<%  --%>
+// 							}
+// 						%>
 						'</div>');
 			} else {
 				$("#result").append('<div id="'+ctrlClass+'Div" class="'+divName+'">'+dispName+' - '+dispValue+
@@ -276,8 +278,17 @@ if (CollectionUtils.isNotEmpty(defaultfeatures)) {
   	//To show the configuration popup
   	function showFeatureConfigPopup(obj) {
   		var featureName = $(obj).attr("id");
+  		var featureData = $.parseJSON($(obj).parent().find('input[name="jsonData"]').val());
+  		var type = featureData.type;
   		var params = "&featureName=";
   		params = params.concat(featureName);
+  		params = params.concat("&featureType=");
+  		if (type == "FEATURE") {
+  			type = "Features";
+  		} else if (type == "COMPONENT") {
+  			type = "Component";
+  		}
+  		params = params.concat(type);
   		yesnoPopup('showFeatureConfigPopup', '<s:text name="lbl.configure"/>', 'configureFeature', '<s:text name="lbl.configure"/>', '', params);
   	}
   	

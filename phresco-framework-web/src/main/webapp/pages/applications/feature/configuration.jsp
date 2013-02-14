@@ -40,6 +40,7 @@
 <form id="formConfigTempProp" class="form-horizontal">
 <% 
 	String featureName = (String) request.getAttribute(FrameworkConstants.REQ_FEATURE_NAME);
+	String featureType = (String) request.getAttribute(FrameworkConstants.REQ_TYPE);
 	boolean hasCustomProperty = (Boolean) request.getAttribute(FrameworkConstants.REQ_HAS_CUSTOM_PROPERTY);
 	String selectedType = (String) request.getAttribute(FrameworkConstants.REQ_SELECTED_TYPE);
 	List<PropertyTemplate> properties = (List<PropertyTemplate>)request.getAttribute(FrameworkConstants.REQ_PROPERTIES);
@@ -114,6 +115,8 @@
 			showLoadingIcon();
 			$('#popupPage').modal('hide');//To hide the popup
 			var params = getBasicParams();
+			params = params.concat("&featureType=");
+	  		params = params.concat("<%= featureType %>");
 			loadContent(url, $('#formConfigTempProp'), $("#subcontainer"), params, true);
 		}
 	}
