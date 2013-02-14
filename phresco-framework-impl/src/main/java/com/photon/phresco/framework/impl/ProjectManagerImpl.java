@@ -272,7 +272,9 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 					e.printStackTrace();
 					throw new PhrescoException(e);
 				} finally {
-					FileUtil.delete(backUpProjectInfoFile);
+					if(backUpProjectInfoFile!= null && backUpProjectInfoFile.exists()) {
+						FileUtil.delete(backUpProjectInfoFile);
+					}
 				}
 			} else if (response.getStatus() == 401) {
 				throw new PhrescoException("Session expired");
@@ -284,12 +286,21 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 	}
 	
 	private File backUpProjectInfoFile(String oldDirPath) throws PhrescoException {
+		if(StringUtils.isNotEmpty(oldDirPath)) {
+			return null;
+		}
 		StringBuilder oldDotPhrescoPathSb = new StringBuilder(oldDirPath);
 		oldDotPhrescoPathSb.append(File.separator);
 		oldDotPhrescoPathSb.append(DOT_PHRESCO_FOLDER);
 		oldDotPhrescoPathSb.append(File.separator);
 		File projectInfoFile = new File(oldDotPhrescoPathSb.toString() + PROJECT_INFO_FILE);
+		if(!projectInfoFile.exists()) {
+			return null;
+		}
 		File backUpInfoFile = new File(oldDotPhrescoPathSb.toString() + PROJECT_INFO_BACKUP_FILE);
+		if(!backUpInfoFile.exists()) {
+			return null;
+		}
 		try {
 			FileUtils.copyFile(projectInfoFile, backUpInfoFile);
 			return backUpInfoFile;
@@ -300,6 +311,9 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 	
 	private void updateProjectPom(ProjectInfo projectInfo, String newAppDirSb) throws PhrescoException {
 		File pomFile = new File(newAppDirSb, "pom.xml");
+		if(!pomFile.exists()) {
+			return;
+		}
 		PomProcessor pomProcessor;
 		try {
 			pomProcessor = new PomProcessor(pomFile);

@@ -382,7 +382,7 @@
 		}
 		
 		<% if (FrameworkConstants.ADD_CONFIG.equals(fromPage) || FrameworkConstants.EDIT_CONFIG.equals(fromPage)) {
-				if (CollectionUtils.isNotEmpty(options) && !options.contains(FrameworkConstants.REMOTE_DEPLOYMENT)) { 
+				if (CollectionUtils.isNotEmpty(options) && !options.contains(FrameworkConstants.REMOTE_DEPLOYMENT_OPTION)) { 
 		%>
 				hideRemoteDeply();
 		<%	
@@ -395,13 +395,6 @@
 		}
 		 
 		$("#type").change(function() {
-			if ($(this).val() == "Apache Tomcat" || $(this).val() == "Jboss" || $(this).val() == "WebLogic"){
-				$('#remoteDeploymentControl').show();	 
-				remoteDeplyChecked();
-			} else {
-			 	 hideRemoteDeply(); 
-			}
-			
 			if ($(this).val() == "IIS") {
 				hideContext();
 				$('#iisDiv').css("display", "block");
@@ -411,9 +404,6 @@
 			}
 			
 			remoteDeplyChecked();
-			if ($(this).val() != "Apache Tomcat" || $(this).val() != "JBoss" || $(this).val() != "WebLogic") {
-				remoteDeplyChecked();
-			}
 			if ($(this).val() == "IIS" || $(this).val() == "NodeJs") {
 				$("input[name='remoteDeployment']").attr("checked",false);
 			}

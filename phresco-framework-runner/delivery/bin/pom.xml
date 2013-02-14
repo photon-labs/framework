@@ -4,17 +4,18 @@
 	<groupId>com.photon.phresco.framework</groupId>
 	<artifactId>PhrescoFrameworkRuntime</artifactId>
 	<packaging>pom</packaging>
-	<version>2.0.0.37001-SNAPSHOT</version>
+	<version>2.0.0.37002-SNAPSHOT</version>
 	<name>Phresco Framework Web Application</name>
 
     <properties>
-		<phresco.framework.version>2.0.0.37001-SNAPSHOT</phresco.framework.version>		
+		<phresco.framework.version>2.0.0.37002-SNAPSHOT</phresco.framework.version>		
 		<tomcat.version>7.0.21</tomcat.version>
 		<sonar.version>3.3.1</sonar.version>
 		<jmeter.version>2.5.1</jmeter.version>
 		<checker.version>0.1</checker.version>
 		<device.deploy.version>1.0</device.deploy.version>
 		<phantomjs.version>1.5.0</phantomjs.version>
+		<ios-sim.version>1.0</ios-sim.version>
 	</properties>
 
 	<dependencies>
@@ -279,7 +280,7 @@
                                 
                                 <artifactItem>
 									<groupId>softwares.iphone.files</groupId>
-                                    <artifactId>checker-271</artifactId>
+                                    <artifactId>checker-269</artifactId>
                                     <version>${checker.version}</version>
                                     <classifier>${checkers.classifier}</classifier>
                                     <type>zip</type>
@@ -341,7 +342,16 @@
 									<overWrite>false</overWrite>
 									<outputDirectory>../workspace/tools</outputDirectory>
 								</artifactItem>
-								
+								<!--extracting ios-sim zip file-->
+								<artifactItem>
+									  <groupId>softwares.iphone.files</groupId>
+									  <artifactId>ios-sim</artifactId>
+									  <version>${ios-sim.version}</version>
+									  <classifier>${ios-sim.classifier}</classifier>
+									  <type>zip</type>
+									  <overWrite>false</overWrite>
+									  <outputDirectory>../workspace/tools</outputDirectory>
+									</artifactItem>
 							</artifactItems>
 						</configuration>
 					</execution>
@@ -443,6 +453,7 @@
                     <waxsim.classifier>windows</waxsim.classifier>
                     <chief.classifier>windows</chief.classifier>
                     <checkers.classifier>windows</checkers.classifier>
+					<ios-sim.classifier>windows</ios-sim.classifier>
                     <ocunit2junit.classifier>windows</ocunit2junit.classifier>
                 </properties>
             </profile>
@@ -460,6 +471,7 @@
                     <waxsim.classifier>windows</waxsim.classifier>
                     <chief.classifier>windows</chief.classifier>
                     <checkers.classifier>windows</checkers.classifier>
+					<ios-sim.classifier>windows</ios-sim.classifier>
                     <ocunit2junit.classifier>windows</ocunit2junit.classifier>
                 </properties>
             </profile>
@@ -477,6 +489,7 @@
                     <waxsim.classifier>windows</waxsim.classifier>
                     <chief.classifier>windows</chief.classifier>
                     <checkers.classifier>windows</checkers.classifier>
+					<ios-sim.classifier>windows</ios-sim.classifier>
                     <ocunit2junit.classifier>windows</ocunit2junit.classifier>
                 </properties>
             </profile>
@@ -491,6 +504,7 @@
                     <phantomjs.classifier>mac</phantomjs.classifier>
                     <waxsim.classifier>mac</waxsim.classifier>
                     <chief.classifier>mac</chief.classifier>
+					<ios-sim.classifier>mac</ios-sim.classifier>
                     <checkers.classifier>mac</checkers.classifier>
                     <ocunit2junit.classifier>mac</ocunit2junit.classifier>
                 </properties>

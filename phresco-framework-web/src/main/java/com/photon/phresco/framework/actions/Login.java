@@ -53,11 +53,10 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.photon.phresco.commons.model.Customer;
 import com.photon.phresco.commons.model.User;
 import com.photon.phresco.exception.PhrescoException;
@@ -138,34 +137,44 @@ public class Login extends FrameworkBaseAction {
         
         User user = null;
         try {
-            Credentials credentials = new Credentials(getUsername(), getPassword());
-            user = doLogin(credentials);
-            if (user == null) {
-                setReqAttribute(REQ_LOGIN_ERROR, getText(ERROR_LOGIN));
-                
-                return LOGIN_FAILURE;
-            }
-            if (!user.isPhrescoEnabled()) {
-                setReqAttribute(REQ_LOGIN_ERROR, getText(ERROR_LOGIN_ACCESS_DENIED));
-                
-                return LOGIN_FAILURE;
-            }
-            setSessionAttribute(SESSION_USER_INFO, user);
-            
-            //encode the password
-            byte[] encodedPwd = Base64.encodeBase64(getPassword().getBytes());
-            String encodedString = new String(encodedPwd);
-            
-            setSessionAttribute(SESSION_USER_PASSWORD, encodedString);
-            
-            File tempPath = new File(Utility.getProjectHome() + File.separator + "temp.json");
-            if (tempPath.exists()) {
-	            JsonParser parser = new JsonParser();
-	            JsonObject customerObj = parser.parse(new FileReader(tempPath)).getAsJsonObject();
-	            String customerId = customerObj.get(REQ_CUSTOMER_ID).getAsString();
-	            setReqAttribute(REQ_CUSTOMER_ID, customerId);
-            }
-            
+        	Credentials credentials = new Credentials(getUsername(), getPassword());
+        	user = doLogin(credentials);
+        	if (user == null) {
+        		setReqAttribute(REQ_LOGIN_ERROR, getText(ERROR_LOGIN));
+
+        		return LOGIN_FAILURE;
+        	}
+        	if (!user.isPhrescoEnabled()) {
+        		setReqAttribute(REQ_LOGIN_ERROR, getText(ERROR_LOGIN_ACCESS_DENIED));
+
+        		return LOGIN_FAILURE;
+        	}
+        	setSessionAttribute(SESSION_USER_INFO, user);
+
+        	//encode the password
+        	byte[] encodedPwd = Base64.encodeBase64(getPassword().getBytes());
+        	String encodedString = new String(encodedPwd);
+
+        	setSessionAttribute(SESSION_USER_PASSWORD, encodedString);
+
+        	File tempPath = new File(Utility.getPhrescoTemp() + File.separator + USER_JSON);
+        	String userId = user.getId();
+        	JSONObject userjson = new JSONObject();
+        	JSONParser parser = new JSONParser();
+        	String customerId = PHOTON;
+        	if (tempPath.exists()) {
+        		FileReader reader = new FileReader(tempPath);
+        		userjson = (JSONObject)parser.parse(reader);
+        		customerId = (String) userjson.get(userId);
+        		reader.close();
+        	} 
+        	userjson.put(userId, customerId);
+        
+        	setReqAttribute(userId, customerId);
+        	FileWriter  writer = new FileWriter(tempPath);
+        	writer.write(userjson.toString());
+        	writer.close();
+
         } catch (PhrescoWebServiceException e) {
         	if(e.getResponse().getStatus() == 204) {
 				setReqAttribute(REQ_LOGIN_ERROR, getText(ERROR_LOGIN_INVALID_USER));
@@ -176,6 +185,8 @@ public class Login extends FrameworkBaseAction {
 			}
         } catch (IOException e) {
         	return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_FRAMEWORKSTREAM));
+		} catch (ParseException e) {
+			return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_FRAMEWORKSTREAM));
 		} 
         return SUCCESS;
     }
@@ -244,18 +255,31 @@ public class Login extends FrameworkBaseAction {
     	return SUCCESS;
     }
     
-    
-    public String fetchCustomerId() {
+    @SuppressWarnings("unchecked")
+	public String fetchCustomerId() {
     	try {
-			File tempPath = new File(Utility.getProjectHome() + File.separator + "temp.json");
-			FileWriter  writer = new FileWriter(tempPath);
-			JsonObject customerObj = new JsonObject();
+			File tempPath = new File(Utility.getPhrescoTemp() + File.separator + USER_JSON);
+			User user = (User) getSessionAttribute(SESSION_USER_INFO);
+			JSONObject userjson = null;
+			JSONParser parser = new JSONParser();
+			String userId = user.getId();
 			String customerId = getCustomerId();
-			customerObj.addProperty(REQ_CUSTOMER_ID, customerId);
-			String Id = customerObj.toString();
-			writer.write(Id);
+			if (tempPath.exists()) {
+				FileReader reader = new FileReader(tempPath);
+				userjson = (JSONObject)parser.parse(reader);
+				reader.close();
+			} else {
+				userjson = new JSONObject();
+			}
+			
+			userjson.put(userId, customerId);
+			FileWriter  writer = new FileWriter(tempPath);
+			writer.write(userjson.toString());
 			writer.close();
+			
 		} catch (IOException e) {
+			return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_FRAMEWORKSTREAM));
+		} catch (ParseException e) {
 			return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_FRAMEWORKSTREAM));
 		}
     	return SUCCESS;

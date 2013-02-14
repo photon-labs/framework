@@ -6,6 +6,7 @@
 	<property name="jenkins.home" value="${phresco.home}/workspace/tools/jenkins"/>
 	<property name="checkers.home" value="${phresco.home}/workspace/tools/checker"/>
 	<property name="chief.home" value="${phresco.home}/workspace/tools/chief"/>
+	<property name="ios-sim.home" value="${phresco.home}/workspace/tools/ios-sim"/>
 	<property name="phresco.war.dir" value="${phresco.home}/workspace/tools/war/phresco.war"/>
 	<property name="sonar.war.dir" value="${phresco.home}/workspace/tools/war/sonar.war"/>
 	<property name="phresco.upgrade.file" value="${phresco.home}/workspace/temp/upgrade.properties"/>
@@ -26,6 +27,10 @@
 		  </fileset>
 		  
 		  <fileset dir="${chief.home}">
+		    <include name="**/*"/>
+		  </fileset>
+		  
+		  <fileset dir="${ios-sim.home}">
 		    <include name="**/*"/>
 		  </fileset>
 		</chmod>
