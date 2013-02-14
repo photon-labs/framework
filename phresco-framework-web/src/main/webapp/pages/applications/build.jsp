@@ -310,23 +310,8 @@
     		successEnvValidation(data);
     	} else if(pageUrl == "checkForConfigType") {
     		successEnvValidation(data);
-    	} else if(pageUrl == "fetchBuildInfoEnvs") {
-    		fillVersions("environments", data.buildInfoEnvs);
     	} else if (pageUrl == "createProfile") {
 			successProfileCreation(data);
-		} else if (pageUrl == "getSqlDatabases") {
-			if (isBlank(data.databases)) {
-				$("#errMsg").html('<%= FrameworkConstants.CONFIGURATION_UNAVAILABLE %>'); 
-				//hideLoadingIcon();
-			} else {
-				fillVersions("databases", data.databases , "");
-				//getting sql files to be executed
-				getSQLFiles();
-			}
-		} else if (pageUrl == "fetchSQLFiles") {
-			fillVersions("avaliableSourceScript", data.sqlFiles , "getSQLFiles");
-			// after sql files are loaded, already selected value should be hidden in available list
-			hideDbWithVersions();
 		} else if (pageUrl == "jsToMinify") {
 			updateHiddenField(data.jsFinalName, data.selectedJs, data.browseLocation);
     	} else if (pageUrl == "filesToMinify") {

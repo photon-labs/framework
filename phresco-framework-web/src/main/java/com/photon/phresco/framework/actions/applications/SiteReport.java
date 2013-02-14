@@ -79,7 +79,9 @@ public class SiteReport extends FrameworkBaseAction {
 		try {
 			String appDirName =getApplicationInfo().getAppDirName();
 			Properties sysProps = System.getProperties();
-	        S_LOGGER.debug( "Phresco FileServer Value of " + PHRESCO_FILE_SERVER_PORT_NO + " is " + sysProps.getProperty(PHRESCO_FILE_SERVER_PORT_NO) );
+			if (s_debugEnabled) {
+				S_LOGGER.debug( "Phresco FileServer Value of " + PHRESCO_FILE_SERVER_PORT_NO + " is " + sysProps.getProperty(PHRESCO_FILE_SERVER_PORT_NO) );
+			}	
 	        String phrescoFileServerNumber = sysProps.getProperty(PHRESCO_FILE_SERVER_PORT_NO);
         	StringBuilder siteReportPath = new StringBuilder(Utility.getProjectHome());
         	siteReportPath.append(appDirName);
@@ -101,7 +103,9 @@ public class SiteReport extends FrameworkBaseAction {
          		setReqAttribute(REQ_ERROR, false);
          	}
 		} catch (PhrescoException e) {
-			S_LOGGER.error("Entered into catch block of SiteReport.checkForSiteReport()" + FrameworkUtil.getStackTraceAsString(e));
+			if (s_debugEnabled) {
+				S_LOGGER.error("Entered into catch block of SiteReport.checkForSiteReport()" + FrameworkUtil.getStackTraceAsString(e));
+			}	
 			return showErrorPopup(e,  getText(EXCEPTION_REPORT_VIEW_SITE));
 		}
 		
@@ -126,8 +130,10 @@ public class SiteReport extends FrameworkBaseAction {
 			setReqAttribute(REQ_APP_ID, getAppId());
 			setReqAttribute(REQ_ACTION_TYPE, REQ_SITE_REPORT);
 		} catch (PhrescoException e) {
-			S_LOGGER.error("Entered into catch block of SiteReport.generateSiteReport()"
+			if (s_debugEnabled) {
+				S_LOGGER.error("Entered into catch block of SiteReport.generateSiteReport()"
 					+ FrameworkUtil.getStackTraceAsString(e));
+			}	
 			return showErrorPopup(e,  getText(EXCEPTION_REPORT_GENERATE_SITE_REPORT));
 		}
 		
@@ -148,8 +154,10 @@ public class SiteReport extends FrameworkBaseAction {
 			setReqAttribute(REQ_SITE_REPORTS, reports);
 			setReqAttribute(REQ_SITE_SLECTD_REPORTS, selectedReports);
 		} catch (PhrescoException e) {
-			S_LOGGER.error("Entered into catch block of SiteReport.configure()"
+			if (s_debugEnabled) {
+				S_LOGGER.error("Entered into catch block of SiteReport.configure()"
 					+ FrameworkUtil.getStackTraceAsString(e));
+			}	
 			return showErrorPopup(e,  getText(EXCEPTION_REPORT_CONFIGURE));
 		}
 		
@@ -190,8 +198,10 @@ public class SiteReport extends FrameworkBaseAction {
 			updateRptPluginInPOM(getApplicationInfo(), reportsToBeAdded, selectedReportCategories);
 			addActionMessage(getText(SUCCESS_SITE_CONFIGURE));
 		} catch (PhrescoException e) {
-			S_LOGGER.error("Entered into catch block of SiteReport.createReportConfig()"
+			if (s_debugEnabled) {
+				S_LOGGER.error("Entered into catch block of SiteReport.createReportConfig()"
 					+ FrameworkUtil.getStackTraceAsString(e));
+			}	
 			return showErrorPopup(e,  getText(EXCEPTION_REPORT_CREATE_REPORT_CONFIG));
 		}
 		

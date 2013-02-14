@@ -259,8 +259,6 @@ function successEvent(pageUrl, data) {
    		successEnvValidation(data);
    	} else if (pageUrl == "checkForConfigType") {
    		successEnvValidation(data);
-   	} else if (pageUrl == "fetchBuildInfoEnvs") {
-   		fillVersions("environments", data.buildInfoEnvs);
    	} else if (pageUrl === "checkForHub") { 
 		if (data.connectionAlive) {
 			progressPopup('showStartedHubLog', '<%= appId %>', '<%= FrameworkConstants.START_HUB %>', '', '', getBasicParams(), 'stopHub');

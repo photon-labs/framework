@@ -132,29 +132,6 @@
 		//$("#subTabcontainer").css("display","block");
 	}
 	
-	function getConfigNames() {
-        var envName = $('#environments').val();
-        var type = $('input:radio[name=jmeterTestAgainst]:checked').val();
-        $.ajax({
-            url : "getConfigNames",
-            data: {
-                'envName': envName,
-                'type': type,
-                'projectCode' : '<%= projectCode %>',
-            },
-            type: "POST",
-            success : function(data) {
-                if(data.configName != "") {
-                    fillSelectData(type, data.configName);
-                } else {
-                    $('#' + type).find('option').remove();
-                    $('#' + type).val("");
-                }
-            },
-            async:false
-        }); 
-    }
-    
     /** This method is to fill data in the appropriate controls **/
     function fillSelectData(type, data) {
     	if(type == "Server") {

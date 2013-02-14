@@ -17,17 +17,16 @@
   limitations under the License.
   ###
   --%>
-<%@page import="org.xhtmlrenderer.css.parser.property.PrimitivePropertyBuilders.Width"%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.io.File"%>
+
+<%@ page import="org.apache.commons.lang.StringUtils"%>
 
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 <%@ page import="com.photon.phresco.util.TechnologyTypes" %>
 <%@ page import="com.photon.phresco.util.Constants"%>
-
-<%@include file="../progress.jsp" %>
 
 <%
 	ApplicationInfo appInfo = (ApplicationInfo)request.getAttribute(FrameworkConstants.REQ_APPINFO);
@@ -341,8 +340,6 @@
 			successPerfTestResultsFiles(data);
 		} else if (pageUrl == "getDevices") {
 			successGetDeviceName(data);
-		} else if (pageUrl == "tstResultFiles") {
-			successLoadTestFiles(data);
 		} else if (pageUrl == "checkForConfigType") {
 			successEnvValidation(data);
 		} else if (pageUrl == "getPerfTestJSONData") {

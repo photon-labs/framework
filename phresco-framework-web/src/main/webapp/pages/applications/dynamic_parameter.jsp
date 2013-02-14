@@ -44,7 +44,6 @@
 <%@ page import="com.photon.phresco.framework.commons.BasicParameterModel"%>
 
 <script src="js/reader.js" ></script>
-<script src="js/select-envs.js"></script>
 
 <%
    	String from = (String) request.getAttribute(FrameworkConstants.REQ_BUILD_FROM);

@@ -235,6 +235,12 @@
 			<version>${itext.version}</version>
 		</dependency>
 		
+		 <dependency>
+			<groupId>com.googlecode.json-simple</groupId>
+			<artifactId>json-simple</artifactId>
+			<version>${json-simple}</version>
+		</dependency>
+		
 		<dependency>
 		    <groupId>org.codehaus.mojo</groupId>
 		    <artifactId>jasperreports-maven-plugin</artifactId>
@@ -351,7 +357,7 @@
                         <artifactId>log4j</artifactId>
                         <version>${log4j.version}</version>
                     </dependency>
-        
+			    	
                 </dependencies>
             </plugin>
             

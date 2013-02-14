@@ -48,7 +48,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Element;
 
-import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.ArtifactInfo;
@@ -58,7 +57,6 @@ import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.FrameworkConfiguration;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
-import com.photon.phresco.framework.api.ProjectAdministrator;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
 import com.photon.phresco.util.Constants;
@@ -540,13 +538,6 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     public String getFuncitonalAdaptDir(String technologyId) {
         String key = funcationAdaptMap.get(technologyId);
         return qualityReportsProp.getProperty(key);
-    }
-    
-    public static void setAppInfoDependents(HttpServletRequest request, String customerId) throws PhrescoException {
-        FrameworkConfiguration configuration = PhrescoFrameworkFactory.getFrameworkConfig();
-        ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-        request.setAttribute(REQ_APPLICATION_TYPES, administrator.getApplicationTypes(customerId));
-        request.setAttribute(REQ_CODE_PREFIX, configuration.getCodePrefix());
     }
     
     public static String getStackTraceAsString(Exception exception) {
