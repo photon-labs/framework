@@ -36,7 +36,6 @@
 	<![endif]-->
 	
 <script src="js/reader.js" ></script>
-<script src="js/select-envs.js"></script>
 
 <%
 	String projectLocation = (String) request.getAttribute(FrameworkConstants.REQ_PROJECT_LOCATION);
