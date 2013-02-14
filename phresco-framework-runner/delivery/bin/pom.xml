@@ -227,6 +227,12 @@
            <version>0.2</version>
         </dependency>
         
+        <dependency>
+            <groupId>org.codehaus.sonar-plugins</groupId>
+            <artifactId>sonar-security-rules-plugin</artifactId>
+            <version>0.3.2</version>
+        </dependency>
+        
 	</dependencies>
 	    
 	<build>	
