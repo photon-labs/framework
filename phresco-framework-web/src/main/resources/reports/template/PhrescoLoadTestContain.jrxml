@@ -98,35 +98,35 @@
 				<textField>
 					<reportElement style="PLTCTitleLabelValue" x="290" y="9" width="257" height="20"/>
 					<textElement verticalAlignment="Middle">
-						<font fontName="Tahoma" size="11" isBold="true"/>
+						<font fontName="Times New Roman" size="11" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{projectName}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement style="PLTCTitleLabelValue" x="290" y="29" width="257" height="20"/>
 					<textElement verticalAlignment="Middle">
-						<font fontName="Tahoma" size="11" isBold="true"/>
+						<font fontName="Times New Roman" size="11" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{projectCode}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement style="PLTCTitleLabelValue" x="290" y="49" width="257" height="20"/>
 					<textElement verticalAlignment="Middle">
-						<font fontName="Tahoma" size="11" isBold="true"/>
+						<font fontName="Times New Roman" size="11" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{techName}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement style="PLTCTitleLabelValue" x="290" y="89" width="257" height="20"/>
 					<textElement verticalAlignment="Middle">
-						<font fontName="Tahoma" size="11" isBold="true"/>
+						<font fontName="Times New Roman" size="11" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement style="PLTCTitleLabelValue" x="290" y="69" width="100" height="20"/>
 					<textElement verticalAlignment="Middle">
-						<font fontName="Tahoma" size="11" isBold="true"/>
+						<font fontName="Times New Roman" size="11" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{version}]]></textFieldExpression>
 				</textField>
