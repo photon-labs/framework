@@ -160,9 +160,14 @@
 													    				Matcher matcher = pattern.matcher(configName);
 													    				boolean check = matcher.find();
 													    				String configNameForId = matcher.replaceAll("");
-													    				urls.put(configNameForId, protocol +","+ host + "," + port);
-																	%> 
-																		<img src="images/icons/inprogress.png" alt="status-up" title="Loading" id="isAlive<%= configNameForId %>">
+													    				if (StringUtils.isNotEmpty(port) && StringUtils.isNotEmpty(host)) {
+													    					urls.put(configNameForId, protocol +","+ host + "," + port);
+													    			%>
+																			<img src="images/icons/inprogress.png" alt="status-up" title="Loading" id="isAlive<%= configNameForId %>">													    			
+													    					
+												    				<%	} else { %> 
+																	 		<div title="<s:text name='title.not.applicable'/>"><s:text name='lbl.not.applicable'/></div>
+																	<% } %>	
 																</td>
 																<td class="no-left-bottom-border table-pad">
 																	<a href="#" title="<%= configuration.getName() %>" id="cloneEnvId" onclick="cloneConfiguration(
