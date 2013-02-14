@@ -97,6 +97,7 @@
 		<script type="text/javascript" src="js/jquery-tojson.js" ></script>
 		
 		<script type="text/javascript" src="js/ddslick.js"></script>
+		<script type="text/javascript" src="js/jquery.activity-indicator-1.0.0.js"></script>
 		
 		<!-- File upload -->
 		<script type="text/javascript" src="js/fileuploader.js"></script>
@@ -128,7 +129,7 @@
 		
 		<!-- Loding icon div starts -->
 		<div id="loadingIconDiv" class="hideContent"> 
-			<img class="loadingIcon" id="loadingIconImg" src="" />
+			
 		</div>
 		<!-- Loding icon div ends -->
 		
@@ -328,7 +329,7 @@
 				<input type="button" class="btn btn-primary popupOk" id="" onClick="popupOnOk(this);" value="<s:text name='lbl.btn.ok'/>" href="#"/>
 <%-- 				<a href="#" class="btn btn-primary popupClose" data-dismiss="modal" id="" onClick="popupOnClose(this);"><s:text name='lbl.btn.close'/></a> --%>
 				<input type="button" class="btn btn-primary popupClose" id="" onClick="popupOnClose(this);" value="<s:text name='lbl.btn.close'/>" data-dismiss="modal" href="#"/>
-				<img class="popuploadingIcon" id="popuploadingIcon" src="" />
+				<div class="popuploadingIcon" id="popuploadingIcon"></div>
 				<div id="errMsg" class="envErrMsg yesNoPopupErr"></div>
 				<div id="successMsg" class="envSuccessMsg"></div>
 				<div id="updateMsg" class="updateMsg"></div>
@@ -349,7 +350,7 @@
 			<div class="modal-footer">
 				<a href="#" class="btn btn-primary progressPopupClose" data-dismiss="modal" id="" onClick="popupOnClose(this);"><s:text name='lbl.btn.close'/></a>
 				<a href="#" class="btn btn-primary popupStop hideContent" id="" onClick="popupOnStop(this);"><s:text name='lbl.btn.stop'/></a>
-				<img class="popuploadingIcon" id="popuploadingIcon" src="" />
+				<div class="popuploadingIcon" id="popuploadingIcon"></div>
 			</div>
 		</div>
 	    <!-- Progress Popup Ends-->
@@ -372,7 +373,7 @@
 				<a href="#" class="btn btn-primary" data-dismiss="modal" id="add_popupCancel" onclick="add_popupCancel();"><s:text name='lbl.btn.cancel'/></a>
 				<a href="#" class="btn btn-primary add_popupOk" id="" onClick="add_popupOnOk(this);" ><s:text name='lbl.btn.ok'/></a>
 				<div id="errMsg" class="envErrMsg add_errorMsg"></div>
-				<img class="popuploadingIcon" id="popuploadingIcon" src="" />
+				<div class="popuploadingIcon" id="popuploadingIcon"></div>
 			</div>
 		</div>
 	    <!-- Additional Popup Ends-->

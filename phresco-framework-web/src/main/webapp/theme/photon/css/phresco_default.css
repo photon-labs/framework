@@ -5262,6 +5262,15 @@ ul#display-inline-block-example li {
     text-align: center;
     top: 46%;
     z-index: 1041;
+	left: 47%;
+}
+
+#loadingIconDiv > div {
+	margin-left: 0px !important;
+}
+
+.popuploadingIcon {
+	margin: 12px 0 0 20px;
 }
 
 .alert-message.warning.sonar {
@@ -6455,4 +6464,12 @@ color: #313131;
 
 .jobBuildsList  tr td a{
 	color: black;
+}
+
+.builds-list-table table thead tr th:nth-child(3) .th-inner {
+	margin-left: 32px !important;
+}
+
+.builds-list-table table thead tr th:nth-child(4) .th-inner {
+	margin-left: -30px !important;
 }
