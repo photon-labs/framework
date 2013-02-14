@@ -218,6 +218,7 @@ public final class DocumentUtil {
 			    List<ArtifactGroup> coreModules = new ArrayList<ArtifactGroup>();
 			    List<ArtifactGroup> externalModules = new ArrayList<ArtifactGroup>();
 			    List<ArtifactGroup> jsLibraries = new ArrayList<ArtifactGroup>();
+			    List<ArtifactGroup> components = new ArrayList<ArtifactGroup>();
 			    for (ArtifactGroup artifactGroup : modules) {
 					if(artifactGroup.getType().name().equals(Type.FEATURE.name())) {
 						if(artifactGroup.getAppliesTo().get(0).isCore() == true) {
@@ -227,6 +228,8 @@ public final class DocumentUtil {
 						}
 					} else if(artifactGroup.getType().name().equals(Type.JAVASCRIPT.name())) {
 						jsLibraries.add(artifactGroup);
+					} else if(artifactGroup.getType().name().equals(Type.COMPONENT.name())) {
+						components.add(artifactGroup);
 					}
 				}
 			    
@@ -238,6 +241,9 @@ public final class DocumentUtil {
 				}
 				if (CollectionUtils.isNotEmpty(jsLibraries)) {
 					updateDoc(jsLibraries, docu, writer, "JsLibraries");
+				}
+				if (CollectionUtils.isNotEmpty(components)) {
+					updateDoc(components, docu, writer, "Components");
 				}
 			    docu.close();
 
