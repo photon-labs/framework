@@ -1879,6 +1879,7 @@ public interface FrameworkConstants {
 	    String MENU_BACKGROUND_COLOR = "MenuBackGround";
 	    String COPYRIGHT = "CopyRight";
 	    String DISABLED_LABEL_COLOR = "DisabledLabelColor";
+		String USER_JSON = "user.json";
 		
 		
 }
