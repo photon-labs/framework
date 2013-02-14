@@ -31,8 +31,6 @@
 <%@ page import="com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter"%>
 <%@ page import="com.photon.phresco.util.Constants"%>
 
-<%@include file="../progress.jsp" %>
-
 <%
 	ApplicationInfo appInfo = (ApplicationInfo)request.getAttribute(FrameworkConstants.REQ_APP_INFO);
 	String appId = appInfo.getId();
@@ -69,20 +67,20 @@
 			<a href="#" id="copyPath"><img src="images/icons/copy-path.png" title="Copy path"/></a>
 		</div>
 		 
-		<strong id="lblType" class="noTestAvail"><s:text name="label.types"/></strong>&nbsp;
-    	<select class="noTestAvail" id="testResultsType" name="testResultsType" style="width :100px;"> 
+		<strong id="lblType" class="hideContent noTestAvail"><s:text name="label.types"/></strong>&nbsp;
+    	<select class="hideContent noTestAvail" id="testResultsType" name="testResultsType" style="width :100px;"> 
 			<option value="server" ><s:text name="label.application.server"/></option>
 			<option value="webservice" ><s:text name="label.webservices"/></option>
 		</select>&nbsp; 
 		
-		<strong class="noTestAvail" id="testResultFileTitle"><s:text name="label.test.results"/></strong> 
-        <select  class="noTestAvail" id="testResultFile" name="testResultFile">
+		<strong class="hideContent noTestAvail" id="testResultFileTitle"><s:text name="label.test.results"/></strong> 
+        <select  class="hideContent noTestAvail" id="testResultFile" name="testResultFile">
         </select>
         
         
-        <div class="noTestAvail perTabularView" id="loadDropdownDiv">
+        <div class="hideContent noTestAvail perTabularView" id="loadDropdownDiv">
 			<div class="resultView" style="float: left;" >
-				<strong class="noTestAvail" id="dropdownDiv"><s:text name="lbl.test.result.view"/></strong> 
+				<strong class="noTestAvail viewTitle" id="dropdownDiv"><s:text name="lbl.test.result.view"/></strong> 
 				<select id="loadResultView" name="resultView232"> 
 					<option value="tabular" ><s:text name="lbl.test.view.tabular"/></option>
 					<option value="graphical" ><s:text name="lbl.test.view.graphical"/></option>
@@ -174,8 +172,13 @@
 	    function successLoadTestResultsFiles(data) {
 	    	var resultFiles = data.testResultFiles;
 			if (resultFiles != null && !isBlank(resultFiles)) {
+				$('#lblType').show();
+				$('#testResultsType').show();
+				$('#testResultFileTitle').show();
 	       		$('#testResultFile').show();
 	       		$('.perTabularView').show();
+	       		$('.viewTitle').show();
+	       		$('#loadResultView').show();
 	       		$('#testResultFile').empty();
 				for (i in resultFiles) {
 	            	$('#testResultFile').append($("<option></option>").attr("value",resultFiles[i]).text(resultFiles[i]));
@@ -184,12 +187,14 @@
 	            $("#testResultDisplay").show();
 	            loadTestResults();
 	       	} else {
-	       		$("#noFiles").show();    
+	       		$("#noFiles").show();
+	       		$('.viewTitle').hide();
 	       		$("#testResultFile").hide();
 		    	$("#testResultFileTitle").hide();
 	       		$("#testResultDisplay").empty(); 
 	    		$("#testResultDisplay").hide();
 	       		$('#loadError').empty();
+	       		$('#loadResultView').hide();
 	       		$('.perTabularView').hide();
 	       		$('#loadError').html("Load test not yet executed for " + testResultsType);
 	       		testResultAvailShowList();
@@ -247,7 +252,7 @@
 		function popupOnClose(obj) {
 			//var closeUrl = $(obj).attr("id");
 			//console.info("closeUrl::::"+closeUrl);
-			loadTestSuites();
+			isLoadResultFileAvailbale();
 		}
 		
 		//To get the testsuites

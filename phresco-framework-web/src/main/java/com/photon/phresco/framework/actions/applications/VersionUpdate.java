@@ -19,8 +19,6 @@
  */
 package com.photon.phresco.framework.actions.applications;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.log4j.Logger;
 
 import com.photon.phresco.commons.model.VersionInfo;
@@ -28,7 +26,6 @@ import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
 import com.photon.phresco.framework.api.UpgradeManager;
 import com.photon.phresco.framework.commons.FrameworkUtil;
-import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.ServiceConstants;
 
 public class VersionUpdate extends FrameworkBaseAction {

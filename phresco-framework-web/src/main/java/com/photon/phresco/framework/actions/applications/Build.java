@@ -38,7 +38,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,20 +64,15 @@ import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.api.ActionType;
 import com.photon.phresco.framework.api.ApplicationManager;
-import com.photon.phresco.framework.api.Project;
-import com.photon.phresco.framework.api.ProjectAdministrator;
 import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.commons.LogErrorReport;
 import com.photon.phresco.framework.model.DependantParameters;
-import com.photon.phresco.framework.model.PluginProperties;
-import com.photon.phresco.framework.model.SettingsInfo;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
 import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.plugins.util.MojoUtil;
 import com.photon.phresco.util.Constants;
-import com.photon.phresco.util.TechnologyTypes;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.android.AndroidProfile;
 import com.phresco.pom.exception.PhrescoPomException;
@@ -159,9 +153,6 @@ public class Build extends DynamicParameterAction implements Constants {
 
 	// DbWithSqlFiles
 	private String fetchSql = null;
-	static {
-		initDbPathMap();
-	}
 	
 	//Dynamic parameter related
 	private String from = "";
@@ -249,7 +240,6 @@ public class Build extends DynamicParameterAction implements Constants {
             removeSessionAttribute(appInfo.getId() + PHASE_PACKAGE + SESSION_WATCHER_MAP);
             setProjModulesInReq();
             Map<String, DependantParameters> watcherMap = new HashMap<String, DependantParameters>(8);
-//            List<Parameter> parameters = getDynamicParameters(appInfo, PHASE_PACKAGE);
             
             MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_PACKAGE)));
             List<Parameter> parameters = getMojoParameters(mojo, PHASE_PACKAGE);
@@ -311,7 +301,6 @@ public class Build extends DynamicParameterAction implements Constants {
             removeSessionAttribute(appInfo.getId() + PHASE_DEPLOY + SESSION_WATCHER_MAP);
             setProjModulesInReq();
             Map<String, DependantParameters> watcherMap = new HashMap<String, DependantParameters>(8);
-//            List<Parameter> parameters = getDynamicParameters(appInfo, PHASE_DEPLOY);
 
             MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_DEPLOY)));
             List<Parameter> parameters = getMojoParameters(mojo, PHASE_DEPLOY);
@@ -444,103 +433,6 @@ public class Build extends DynamicParameterAction implements Constants {
 		}
 
 		return APP_ENVIRONMENT_READER;
-	}
-
-	private File isFileExists(Project project) throws IOException {
-		StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-		builder.append(project.getApplicationInfo().getCode());
-		builder.append(File.separator);
-		builder.append("do_not_checkin");
-		builder.append(File.separator);
-		builder.append("temp");
-		File tempFolder = new File(builder.toString());
-		if (!tempFolder.exists()) {
-			tempFolder.mkdir();
-		}
-		builder.append(File.separator);
-		builder.append("importsql.property");
-		File configFile = new File(builder.toString());
-		if (!configFile.exists()) {
-			configFile.createNewFile();
-		}
-		return configFile;
-	}
-
-	private void updateImportSqlConfig(Project project) throws PhrescoException {
-
-		if (debugEnabled) {
-			S_LOGGER.debug("Entering Method Build.checkImportsqlConfig(Project project)");
-		}
-		if (debugEnabled) {
-			S_LOGGER.debug("adaptImportsqlConfig ProjectInfo = " + project.getApplicationInfo());
-		}
-		InputStream is = null;
-		FileWriter fw = null;
-
-		try {
-			File configFile = isFileExists(project);
-
-			is = new FileInputStream(configFile);
-			PluginProperties configProps = new PluginProperties();
-			configProps.load(is);
-			fw = new FileWriter(configFile);
-			fw.write("build.import.sql.first.time=" + importSql);
-			fw.flush();
-		} catch (FileNotFoundException e) {
-			throw new PhrescoException(e);
-		} catch (IOException e) {
-			throw new PhrescoException(e);
-		} finally {
-			try {
-				if (fw != null) {
-					fw.close();
-				}
-				if (is != null) {
-					is.close();
-				}
-			} catch (IOException e) {
-			}
-		}
-	}
-
-	private void importSqlFlag(Project project) throws PhrescoException {
-		String technology = project.getApplicationInfo().getTechInfo().getVersion();
-		InputStream is = null;
-		String importSqlElement;
-		try {
-
-			StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-			builder.append(project.getApplicationInfo().getCode());
-			builder.append(File.separator);
-			builder.append(DO_NOT_CHECKIN_DIR);
-			builder.append(File.separator);
-			builder.append(TEMP_FOLDER);
-			builder.append(File.separator);
-			builder.append(IMPORT_PROPERTY);
-			File configFile = new File(builder.toString());
-			if (!configFile.exists() && !TechnologyTypes.IPHONES.contains(technology)
-					|| !TechnologyTypes.ANDROIDS.contains(technology)) {
-				getHttpRequest().setAttribute(REQ_IMPORT_SQL, Boolean.TRUE.toString());
-			}
-
-			if (configFile.exists()) {
-				is = new FileInputStream(configFile);
-				PluginProperties configProps = new PluginProperties();
-				configProps.load(is);
-				@SuppressWarnings("rawtypes")
-				Enumeration enumProps = configProps.keys();
-
-				while (enumProps.hasMoreElements()) {
-					importSqlElement = (String) enumProps.nextElement();
-					String importSqlProps = (String) configProps.get(importSqlElement);
-					getHttpRequest().setAttribute(REQ_IMPORT_SQL, importSqlProps);
-				}
-			}
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
 	}
 
 	public String delete() throws PhrescoException {
@@ -1131,10 +1023,11 @@ public class Build extends DynamicParameterAction implements Constants {
 			setReqAttribute(REQ_APP_ID, getAppId());
 			setReqAttribute(REQ_ACTION_TYPE, REQ_MINIFY);
 		} catch (Exception e) {
+			if (debugEnabled) {
 				S_LOGGER.error("Entered into catch block of Build.minification()"
 						+ FrameworkUtil.getStackTraceAsString(e));
-				new LogErrorReport(e, "Building ");
-			}
+			}	
+		}
 		
 		return SUCCESS;
 	}
@@ -1208,30 +1101,6 @@ public class Build extends DynamicParameterAction implements Constants {
 	}
 	/* minification ends */
 	
-	public String advancedBuildSettings() {
-		S_LOGGER.debug("Entering Method Build.advancedBuildSettings()");
-		AndroidProfile androidProfile = null;
-		try {
-			StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-			builder.append(projectCode);
-			builder.append(File.separatorChar);
-			builder.append(POM_XML);
-			File pomPath = new File(builder.toString());
-			AndroidPomProcessor processor = new AndroidPomProcessor(pomPath);
-			if (pomPath.exists() && processor.hasSigning()) {
-				String signingProfileid = processor.getSigningProfile();
-				androidProfile = processor.getProfileElement(signingProfileid);
-			}
-		} catch (Exception e) {
-			S_LOGGER.error("Entered into catch block of  Build.advancedBuildSettings()"
-					+ FrameworkUtil.getStackTraceAsString(e));
-		}
-		getHttpRequest().setAttribute("projectCode", projectCode);
-		getHttpRequest().setAttribute(REQ_ANDROID_PROFILE_DET, androidProfile);
-		getHttpRequest().setAttribute(REQ_FROM_TAB, REQ_FROM_TAB_DEPLOY);
-		return SUCCESS;
-	}
-
 	public String createAndroidProfile() throws IOException {
 		S_LOGGER.debug("Entering Method Build.createAndroidProfile()");
 		boolean hasSigning = false;
@@ -1319,84 +1188,12 @@ public class Build extends DynamicParameterAction implements Constants {
 		return SUCCESS;
 	}
 
-	public String getSqlDatabases() {
-		String dbtype = "";
-		try {
-			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-			databases = new ArrayList<String>();
-			List<SettingsInfo> databaseDetails = administrator.getSettingsInfos(Constants.SETTINGS_TEMPLATE_DB,
-					projectCode, environments);
-			if (CollectionUtils.isNotEmpty(databaseDetails)) {
-				for (SettingsInfo databasedetail : databaseDetails) {
-					dbtype = databasedetail.getPropertyInfo(Constants.DB_TYPE).getValue();
-					if (!databases.contains(dbtype)) {
-						databases.add(dbtype);
-					}
-				}
-			}
-		} catch (PhrescoException e) {
-			S_LOGGER.error("Entered into catch block of  Build.configSQL()" + FrameworkUtil.getStackTraceAsString(e));
-		}
-		return SUCCESS;
-	}
-	
-	public String fetchSQLFiles() {
-		String dbtype = null;
-		String dbversion = null;
-		String path = null;
-		String sqlFileName = null;
-		try {
-			ProjectAdministrator administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-			Project project = administrator.getProject(projectCode);
-			sqlFiles = new ArrayList<String>();
-			String techId = project.getApplicationInfo().getTechInfo().getVersion();
-			String selectedDb = getHttpRequest().getParameter("selectedDb");
-			String sqlPath = sqlFolderPathMap.get(techId);
-			List<SettingsInfo> databaseDetails = administrator.getSettingsInfos( Constants.SETTINGS_TEMPLATE_DB,
-					projectCode, environments);
-			for (SettingsInfo databasedetail : databaseDetails) {
-				dbtype = databasedetail.getPropertyInfo(Constants.DB_TYPE).getValue();
-				if (selectedDb.equals(dbtype)) { 
-					dbversion = databasedetail.getPropertyInfo(Constants.DB_VERSION).getValue();
-					File[] dbSqlFiles = new File(Utility.getProjectHome() + projectCode + sqlPath + selectedDb
-							+ File.separator + dbversion).listFiles(new DumpFileNameFilter());
-					for (int i = 0; i < dbSqlFiles.length; i++) {
-						if (!dbSqlFiles[i].isDirectory()) {
-						 sqlFileName = dbSqlFiles[i].getName();
-						path = sqlPath + selectedDb + FILE_SEPARATOR +  dbversion + "#SEP#" +  sqlFileName ;
-						sqlFiles.add(path);
-					}
-				  }
-				}
-			}
-			
-		} catch (PhrescoException e) {
-			S_LOGGER.error("Entered into catch block of  Build.getSQLFiles()" + FrameworkUtil.getStackTraceAsString(e));
-		}
-		return SUCCESS;
-	}
-	
 	class DumpFileNameFilter implements FilenameFilter {
 
 		public boolean accept(File dir, String name) {
 			return !(name.startsWith("."));
 		}
 	}
-	
-	
-
-	private static void initDbPathMap() {
-		sqlFolderPathMap.put(TechnologyTypes.PHP, "/source/sql/");
-		sqlFolderPathMap.put(TechnologyTypes.PHP_DRUPAL6, "/source/sql/");
-		sqlFolderPathMap.put(TechnologyTypes.PHP_DRUPAL7, "/source/sql/");
-		sqlFolderPathMap.put(TechnologyTypes.NODE_JS_WEBSERVICE, "/source/sql/");
-		sqlFolderPathMap.put(TechnologyTypes.HTML5_MULTICHANNEL_JQUERY_WIDGET, "/src/sql/");
-		sqlFolderPathMap.put(TechnologyTypes.HTML5_MOBILE_WIDGET, "/src/sql/");
-		sqlFolderPathMap.put(TechnologyTypes.HTML5_WIDGET, "/src/sql/");
-		sqlFolderPathMap.put(TechnologyTypes.JAVA_WEBSERVICE, "/src/sql/");
-		sqlFolderPathMap.put(TechnologyTypes.WORDPRESS, "/source/sql/");
-	}
-
 
 	public InputStream getFileInputStream() {
 		return fileInputStream;

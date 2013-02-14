@@ -19,9 +19,6 @@
   --%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
-<%@ include file="../progress.jsp" %>
-<%-- <%@ include file="../../userInfoDetails.jsp" %> --%>
-
 <%@ page import="java.util.List"%>
 <%@ page import="java.util.Map"%>
 <%@ page import="java.util.ArrayList"%>

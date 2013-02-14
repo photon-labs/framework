@@ -62,7 +62,6 @@ import com.photon.phresco.exception.PhrescoWebServiceException;
 import com.photon.phresco.framework.FrameworkConfiguration;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.api.ApplicationManager;
-import com.photon.phresco.framework.api.ProjectAdministrator;
 import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.framework.commons.FrameworkActions;
 import com.photon.phresco.framework.commons.FrameworkUtil;
@@ -86,7 +85,6 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
 	private static Boolean debugEnabled = S_LOGGER.isDebugEnabled();
 
     private static final long serialVersionUID = 1L;
-    private ProjectAdministrator projectAdministrator = null;
     private String path = null;
     private String copyToClipboard = null;
     private String customerId = "";
@@ -101,14 +99,6 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
     protected ServiceManager getServiceManager() {
 		return serviceManager;
 	}
-    
-    public ProjectAdministrator getProjectAdministrator() throws PhrescoException {
-        if(projectAdministrator == null) {
-            projectAdministrator = PhrescoFrameworkFactory.getProjectAdministrator();
-        }
-        
-        return projectAdministrator;
-    }
     
     public ActionContext getActionContext() {
         return ActionContext.getContext();
@@ -160,7 +150,6 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
     	S_LOGGER.debug("Entered FrameworkBaseAction.copyToClipboard");
     	Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
     	clipboard.setContents(new StringSelection(copyToClipboard.replaceAll("(?m)^[ \t]*\r?\n", "")), null);
-    	//replaceAll(" ", "")
     }
     
     protected List<String> getProjectModules(String appDirName) throws PhrescoException {
@@ -177,12 +166,14 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
     	} catch (PhrescoPomException e) {
     		 throw new PhrescoException(e);
     	}
+    	
     	return null;
     }
 
 	private StringBuilder getProjectHome(String appDirName) {
 		StringBuilder builder = new StringBuilder(Utility.getProjectHome());
 		builder.append(appDirName);
+		
 		return builder;
 	}
     
@@ -232,7 +223,7 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
             pw = new PrintWriter(sw);
             e.printStackTrace(pw);
             String stacktrace = sw.toString();
-            User userInfo = (User) getHttpSession().getAttribute(SESSION_USER_INFO);
+            User userInfo = (User) getSessionAttribute(SESSION_USER_INFO);
             LogInfo log = new LogInfo();
             log.setMessage(e.getLocalizedMessage());
             log.setTrace(stacktrace);
@@ -405,7 +396,6 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
         ArtifactGroup artifactGroup = new ArtifactGroup();
         artifactGroup.setGroupId(applicationHandler.getGroupId());
         artifactGroup.setArtifactId(applicationHandler.getArtifactId());
-        //artifactGroup.setType(Type.FEATURE); to set version
         List<ArtifactInfo> artifactInfos = new ArrayList<ArtifactInfo>();
         ArtifactInfo artifactInfo = new ArtifactInfo();
         artifactInfo.setVersion(applicationHandler.getVersion());

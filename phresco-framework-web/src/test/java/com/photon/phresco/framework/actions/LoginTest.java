@@ -1,45 +1,15 @@
 package com.photon.phresco.framework.actions;
 
-import static org.junit.Assert.fail;
-
 import java.io.File;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.User;
-import com.photon.phresco.framework.PhrescoFrameworkFactory;
-import com.photon.phresco.framework.api.ProjectAdministrator;
-import com.photon.phresco.framework.api.ProjectRuntimeManager;
-import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.util.Credentials;
 
 public class LoginTest implements FrameworkConstants{
 
-	private ProjectAdministrator administrator = null;
-	private ProjectRuntimeManager runtimeManager = null;
-	
-	@Before
-	public void setUp() throws Exception {
-		administrator = PhrescoFrameworkFactory.getProjectAdministrator();
-		runtimeManager = PhrescoFrameworkFactory.getProjectRuntimeManager();
-	}
-
-	@After
-	public void tearDown() throws Exception {
-	    if (administrator != null) {
-	        administrator = null;
-	    }
-	    
-	    if (runtimeManager != null) {
-	    	runtimeManager = null;
-	    }
-	}
-	
-	
 	//@Test
 	public void test() {
         try {

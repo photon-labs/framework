@@ -125,7 +125,9 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 	private String projectModule = "";
 	
 	public String ci() {
-		S_LOGGER.debug("Entering Method CI.ci()");
+		if (debugEnabled) {
+			S_LOGGER.debug("Entering Method CI.ci()");
+		}	
 		try {
 		    removeSessionAttribute(getAppId() + SESSION_APPINFO);//To remove the appInfo from the session
 			boolean jenkinsAlive = false;
@@ -933,7 +935,6 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 				S_LOGGER.error("Entered into catch block of CI.cronValidation()"
 						+ FrameworkUtil.getStackTraceAsString(e));
 			}
-			// addActionError(getText("Cron Expression failed to validate"));
 		}
 		return CRON_VALIDATION;
 	}
