@@ -112,7 +112,7 @@
 	<body>
         <%
             User user = (User) session.getAttribute(FrameworkConstants.SESSION_USER_INFO);
-        	String customerIds = (String)request.getAttribute(FrameworkConstants.REQ_CUSTOMER_ID);
+        	String customerIds = (String)request.getAttribute(user.getId());
             String displayName = user.getDisplayName();
         %>
 		<div class="modal-backdrop fade in popupalign"></div>
