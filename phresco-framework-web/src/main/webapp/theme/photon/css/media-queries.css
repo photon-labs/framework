@@ -450,7 +450,7 @@ Width <= 1024
 	 #warningmsg {
      	display: none;
      	width: auto; 
-     	left: 54.7%; 
+     	left: 47.7%; 
      	position: absolute; 
      	text-align: center;
      	padding: 4px 6px;
@@ -1228,7 +1228,7 @@ Width >= 1152 and < 1280
 	#warningmsg {
      	display: none;
      	width: auto; 
-     	left : 25.7%; 
+     	left : 41.7%; 
      	position: absolute; 
      	text-align: center;
      	padding: 4px 6px;
@@ -1649,7 +1649,7 @@ Width <= 1280 and height <= 800
 	#warningmsg {
      	display: none;
      	width: auto; 
-     	left : 29.7%; 
+     	left : 51.7%; 
      	position: absolute; 
      	text-align: center;
      	padding: 4px 6px;
