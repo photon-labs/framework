@@ -5329,6 +5329,15 @@ ul#display-inline-block-example li {
     text-align: center;
     top: 46%;
     z-index: 1041;
+	left: 47%;
+}
+
+#loadingIconDiv > div {
+	margin-left: 0px !important;
+}
+
+.popuploadingIcon {
+	margin: 12px 0 0 20px;
 }
 
 #config_warning_icon {
