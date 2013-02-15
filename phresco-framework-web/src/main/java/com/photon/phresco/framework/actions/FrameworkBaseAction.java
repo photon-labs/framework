@@ -186,13 +186,13 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
 		return builder;
 	}
     
-    protected List<String> getWarProjectModules(String projectCode) throws PhrescoException {
+    protected List<String> getWarProjectModules(String appDirName) throws PhrescoException {
     	try {
-			List<String> projectModules = getProjectModules(projectCode);
+			List<String> projectModules = getProjectModules(appDirName);
 			List<String> warModules = new ArrayList<String>(5);
 			if (CollectionUtils.isNotEmpty(projectModules)) {
 				for (String projectModule : projectModules) {
-					StringBuilder pathBuilder = getProjectHome(projectCode);
+					StringBuilder pathBuilder = getProjectHome(appDirName);
 					pathBuilder.append(File.separatorChar);
 					pathBuilder.append(projectModule);
 					pathBuilder.append(File.separatorChar);

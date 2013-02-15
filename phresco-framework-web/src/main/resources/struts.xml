@@ -657,7 +657,7 @@
 		</action>
 		
 		<action name="showLoadTestPopup" method="showLoadTestPopup" class="com.photon.phresco.framework.actions.applications.Quality">
-        	<result name="Success">/pages/applications/dynamic_parameter.jsp</result>
+        	<result name="success">/pages/applications/dynamic_parameter.jsp</result>
 		</action>
 		
 		<action name="runLoadTest" method="runLoadTest" class="com.photon.phresco.framework.actions.applications.Quality">
