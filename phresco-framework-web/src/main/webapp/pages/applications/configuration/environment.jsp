@@ -108,7 +108,7 @@
 	       			<li>
 						<input type="checkbox" name="envNames" onclick="checkboxClickEvent(this)" class="check techCheck" 
 							value='<%= envJson %>' title="<%= environment.getDesc() %>"  <%= environment.isDefaultEnv() ? "disabled" : "" %> envName='<%= environment.getName() %>'/>
-							<label class="envLabel" ><%= environment.getName() %></label>
+							<label class="envLabel" ><%= environment.getName() %><%= environment.isDefaultEnv() ? " (Default)" : "" %></label>
 					</li>
 				<% } %>
 				</ul>
