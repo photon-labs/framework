@@ -257,7 +257,7 @@ public class Build extends DynamicParameterAction implements Constants {
 	}
 	
 	private void setProjModulesInReq() throws PhrescoException {
-        List<String> projectModules = getProjectModules(getApplicationInfo().getAppDirName());
+        List<String> projectModules = getWarProjectModules(getApplicationInfo().getAppDirName());
         setReqAttribute(REQ_PROJECT_MODULES, projectModules);
     }
 	
@@ -299,7 +299,6 @@ public class Build extends DynamicParameterAction implements Constants {
 		try {
 		    ApplicationInfo appInfo = getApplicationInfo();
             removeSessionAttribute(appInfo.getId() + PHASE_DEPLOY + SESSION_WATCHER_MAP);
-            setProjModulesInReq();
             Map<String, DependantParameters> watcherMap = new HashMap<String, DependantParameters>(8);
 
             MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_DEPLOY)));
@@ -312,7 +311,6 @@ public class Build extends DynamicParameterAction implements Constants {
             setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
             setReqAttribute(REQ_GOAL, PHASE_DEPLOY);
             setReqAttribute(REQ_PHASE, PHASE_DEPLOY);
-            setProjModulesInReq();
             setReqAttribute(REQ_FROM, getFrom());
 		} catch (PhrescoException e) {
 			return showErrorPopup(e, getText(EXCEPTION_DEPLOY_POPUP));
