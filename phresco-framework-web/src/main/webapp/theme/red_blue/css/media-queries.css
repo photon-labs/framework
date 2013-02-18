@@ -64,7 +64,7 @@ Width <= 1024
      .featureImage {
 		float: right;
 	    position: absolute;
-	    right: 13%;
+	    right: 3%;
 	    top: 22%;
 	 }
      
@@ -1017,7 +1017,7 @@ Width >= 1152 and < 1280
 	.featureImage {
 		float: right;
 	    position: absolute;
-	    right: 13%;
+	    right: 4%;
 	    top: 19%;
 	}
 	
@@ -1602,8 +1602,8 @@ Width <= 1280 and height <= 800
 	.featureImage {
 		float: right;
 	    position: absolute;
-	    right: 13%;
-	    top: 22%;
+	    right: 4%;
+	    top: 19%;
 	}
 	
 	.actions {

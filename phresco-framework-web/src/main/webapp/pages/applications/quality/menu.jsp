@@ -19,6 +19,11 @@
   --%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
+<%@ page import="java.util.ArrayList"%>
+<%@ page import="java.util.List"%>
+
+<%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
+
 <script type="text/javascript">
     $(document).ready(function() {
     	var params = getBasicParams();
@@ -34,21 +39,44 @@
     </div>
 </s:if>
 
+<%
+	Object optionsObj = session.getAttribute(FrameworkConstants.REQ_OPTION_ID);
+	List<String> optionIds  = null;
+	if (optionsObj != null) {
+		optionIds  = (List<String>) optionsObj;
+	}
+%>
+
 <div id="subTabcontent">
 	<div id="navigation" class="qualitymenutabs">
 		<ul class="tabs">
+			<%
+				if(optionIds != null && optionIds.contains(FrameworkConstants.UNIT_TEST_KEY)) {
+			%>
 			<li>
 				<a href="#" class="active" name="qualityTab" id="unit"><s:label key="lbl.quality.menu.unit" theme="simple"/></a>
 			</li>
+			<%
+				} if(optionIds != null && optionIds.contains(FrameworkConstants.FUNCTIONAL_TEST_KEY)) {
+			%>
 			<li>
 				<a href="#" class="inactive" name="qualityTab" id="functional"><s:label key="lbl.quality.menu.funtional" theme="simple"/></a>
 			</li>
+			<%
+				} if(optionIds != null && optionIds.contains(FrameworkConstants.PERFORMANCE_TEST_KEY)) {
+			%>
 			<li>
 				<a href="#" class="inactive" name="qualityTab" id="performance"><s:label key="lbl.quality.menu.performance" theme="simple"/></a>
 			</li>
+			<%
+				} if(optionIds != null && optionIds.contains(FrameworkConstants.LOAD_TEST_KEY)) {
+			%>
 			<li>
 				<a href="#" class="inactive" name="qualityTab" id="load"><s:label key="lbl.quality.menu.load" theme="simple"/></a>
 			</li>
+			<%
+				}
+			%>
 		</ul>
 	</div>
 	<div id="subTabcontainer">
