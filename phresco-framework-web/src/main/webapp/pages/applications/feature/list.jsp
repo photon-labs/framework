@@ -185,9 +185,9 @@
 			}
 		}
 		checkboxEvent($('.feature_checkbox'), $('#checkAllAuto'));
-	 	if (from === "fetchDefaultFeatures") {
+		if (from === "defaultFeature" && from != "fetchSelectedFeatures") {
 			clickToAdd();
-		}  
+		} 
 	}
 	
 </script>

@@ -2151,7 +2151,7 @@ Width >= 1280 and height >= 800
 	#warningmsg {
      	display: none;
      	width: auto; 
-     	left : 33.6%; 
+     	left : 40.6% !important; 
      	position: absolute; 
      	text-align: center;
      	padding: 4px 6px;

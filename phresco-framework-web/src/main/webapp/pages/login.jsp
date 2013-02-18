@@ -126,7 +126,7 @@ $(document).ready(function() {
 		              
                 <!-- Remember me check starts  -->
 		        <div class="login_check">
-	                <input type="checkbox" name="rememberme">
+	                <input id="rememberMe" type="checkbox" name="rememberme">
 	                <labelrem>Remember me</labelrem>
                 </div>
                 <!-- Remember me check ends  -->
@@ -152,3 +152,49 @@ $(document).ready(function() {
 	
 </body>
 </html>
+<script type="text/javascript">
+//$(document).ready(function() {
+//});
+	ReadCookie();
+	function ReadCookie()
+	{
+	   var allcookies = document.cookie;
+
+	   // Get all the cookies pairs in an array
+	   cookiearray  = allcookies.split(';');
+
+	   // Now take key value pair out of this array
+	   for(var i=0; i<cookiearray.length; i++){
+	      name = cookiearray[i].split('=')[0];
+	      value = cookiearray[i].split('=')[1];
+	      var newName = removeSpaces(name); 
+	      if (newName === "username" && !isBlank(value)) {
+	    	  $('input[name="username"]').prop("value", value);
+	      }
+	      if (newName === "password" && !isBlank(value)) {
+	    	  $('input[name="password"]').prop("value", value);
+	    	  document.getElementById("rememberMe").checked=true
+	      }
+	   }
+	}
+	//IF CHECKBOX IS CHECKED, COOKIE WILL BE SET
+	$("input:checkbox").change(function() {
+		var status = $(this).attr("checked");
+		if (status) {
+			var un = $('input[name="username"]').val();
+			var pwd = $('input[name="password"]').val();
+			document.cookie = "username="+un;
+			document.cookie = "password="+pwd;
+		} else {
+			eraseCookie();
+		}
+	});	
+	
+	function eraseCookie() {
+		document.cookie = "username=";
+		document.cookie = "password=";
+		document.getElementById("rememberMe").checked=false;
+	}
+
+//}
+</script>
