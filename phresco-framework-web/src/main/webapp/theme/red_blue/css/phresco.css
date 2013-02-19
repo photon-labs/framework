@@ -6118,3 +6118,7 @@ ul#testmenu {
 .dd-select, .dd-options {
 	width: 260px !important;
 }
+
+.package-file-browse-tbl {
+	width: 84%;
+}

@@ -849,20 +849,21 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     
     private static String constructTable() {
         StringBuilder sb = new StringBuilder()
-        .append("<table align='center'>")
+        .append("<table align='center' class='package-file-browse-tbl'>")
         .append("<thead class='header-background'>")
         .append("<tr class='borderForLoad'>")
         .append("<th class='borderForLoad mapHeading'>Target Folder</th>")
         .append("<th class='borderForLoad mapHeading'>File/Folder</th>")
         .append("<th class='borderForLoad mapHeading'>$th3$</th>")
         .append("<th class='borderForLoad mapHeading'>$th4$</th>")
+        .append("<th class='borderForLoad mapHeading'>$th5$</th>")
         .append("</tr></thead>")
         .append("<tbody id='propTempTbodyForHeader'>")
         .append("<tr>")
-        .append("<td>$td1$</td>")
-        .append("<td>$td2$</td>")
-        .append("<td>$td3$</td>")
-        .append("<td>")
+        .append("<td class='popuptable'>$td1$</td>")
+        .append("<td class='popuptable'>$td2$</td>")
+        .append("<td class='popuptable'>$td3$</td>")
+        .append("<td class='popuptable'>")
         .append("<a><img class='add imagealign' src='images/icons/add_icon.png' onclick='addRow(this);'></a></td>")
         .append("</tr></tbody></table>");
 

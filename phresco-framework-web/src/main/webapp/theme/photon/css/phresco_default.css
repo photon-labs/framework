@@ -6473,3 +6473,7 @@ color: #313131;
 .builds-list-table table thead tr th:nth-child(4) .th-inner {
 	margin-left: -30px !important;
 }
+
+.package-file-browse-tbl {
+	width: 84%;
+}

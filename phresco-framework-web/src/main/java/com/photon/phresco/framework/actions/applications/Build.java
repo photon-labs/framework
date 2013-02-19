@@ -24,6 +24,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
@@ -41,15 +42,29 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.Commandline;
+import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -128,8 +143,6 @@ public class Build extends DynamicParameterAction implements Constants {
 	private String signing = null;
 	private List<String> databases = null;
 	private List<String> sqlFiles = null;
-	private static Map<String, List<String>> projectModuleMap = Collections
-			.synchronizedMap(new HashMap<String, List<String>>(8));
 	
 	/* minify */
 	private String minifyAll = "";
@@ -141,6 +154,8 @@ public class Build extends DynamicParameterAction implements Constants {
 	private String fileOrFolder = "";
 	private String browseLocation = "";
 	private String projectId = "";
+	
+	private String selectedFiles = "";
 	
 	//iphone family
 	private String family = ""; 
@@ -355,7 +370,7 @@ public class Build extends DynamicParameterAction implements Constants {
 			ApplicationInfo applicationInfo = getApplicationInfo();
 			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_PACKAGE)));
 			persistValuesToXml(mojo, PHASE_PACKAGE);
-			
+			createBuildConfigXml();//To create the build-config.xml
 			//To get maven build arguments
 			List<Parameter> parameters = getMojoParameters(mojo, PHASE_PACKAGE);
 			List<String> buildArgCmds = getMavenArgCommands(parameters);
@@ -374,6 +389,147 @@ public class Build extends DynamicParameterAction implements Constants {
 		}
 
 		return APP_ENVIRONMENT_READER;
+	}
+	
+	/**
+	 * To create the build-config.xml
+	 * @throws PhrescoException
+	 */
+	private void createBuildConfigXml() throws PhrescoException {
+	    try {
+	        String csvTargetFolder = getSelectedFiles();
+	        StringBuilder sb = new StringBuilder(getApplicationHome())
+	        .append(File.separator)
+	        .append(FOLDER_DOT_PHRESCO)
+	        .append(File.separator)
+	        .append(PHRESCO_HYPHEN_BUILD_XML);
+	        File configFile = new File(sb.toString());
+
+	        if (StringUtils.isNotEmpty(csvTargetFolder)) {
+	            Map<String, List<String>> directoriesMap = new HashMap<String, List<String>>();
+	            Map<String, List<String>> filesMap = new HashMap<String, List<String>>();
+	            getBuildConfigMap(csvTargetFolder, directoriesMap, filesMap);
+	            writeToBuildConfigXml(configFile, directoriesMap, filesMap);
+	        } else {
+	            configFile.delete();
+	        }
+	    } catch (PhrescoException e) {
+	        throw new PhrescoException(e);
+	    }
+	}
+	
+	/**
+	 * To get the file/folders map based on the selection
+	 * @param csvTargetFolder
+	 * @param directoriesMap
+	 * @param filesMap
+	 * @throws PhrescoException
+	 */
+	private void getBuildConfigMap(String csvTargetFolder, Map<String, List<String>> directoriesMap, 
+	        Map<String, List<String>> filesMap) throws PhrescoException {
+	    try {
+	        String[] sepSplits = csvTargetFolder.split(SEPARATOR_SEP);
+	        for (String sepSplit : sepSplits) {
+	            String[] fileSepSplits = sepSplit.split(SEPARATOR_FILESEP);
+	            String targetFolder = fileSepSplits[0];
+	            String fileOrFolder = fileSepSplits[1];
+	            if (new File(getApplicationHome() + fileOrFolder).isDirectory()) {
+	                if (directoriesMap.containsKey(targetFolder)) {
+	                    List<String> list = new ArrayList<String>();
+	                    list.addAll(directoriesMap.get(targetFolder));
+	                    list.add(fileOrFolder);
+	                    directoriesMap.put(targetFolder, list);
+	                } else {
+	                    directoriesMap.put(targetFolder, Collections.singletonList(fileOrFolder));
+	                }
+	            } else {
+	                List<String> list = new ArrayList<String>();
+	                if (filesMap.containsKey(targetFolder)) {
+	                    list.addAll(filesMap.get(targetFolder));
+	                }
+	                String[] split = fileOrFolder.split(",");
+	                list.addAll(Arrays.asList(split));
+	                filesMap.put(targetFolder, list);
+	            }
+	        }
+	    } catch (PhrescoException e) {
+	        throw new PhrescoException(e);
+	    }
+	}
+	
+	/**
+	 * To write the map values into build-config.xml
+	 * @param configFile
+	 * @param directoriesMap
+	 * @param filesMap
+	 * @throws PhrescoException
+	 */
+	private void writeToBuildConfigXml(File configFile, Map<String, List<String>> directoriesMap, Map<String, List<String>> filesMap) throws PhrescoException {
+	    try {
+	        DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
+	        domFactory.setNamespaceAware(false);
+	        DocumentBuilder builder = domFactory.newDocumentBuilder();
+	        Document document = builder.newDocument();
+	        Element rootElement = document.createElement(BUILD);
+	        Element directoriesElement = document.createElement(DIRECTORIES);
+	        if (MapUtils.isNotEmpty(directoriesMap)) {
+	            Set<String> keySet = directoriesMap.keySet();
+	            for (String key : keySet) {
+	                List<String> list = directoriesMap.get(key);
+	                for (String string : list) {
+	                    Element directoryElement = document.createElement(DIRECTORY);
+	                    if (StringUtils.isNotEmpty(key)) {
+	                        directoryElement.setAttribute(TO_DIRECTORY, key);
+	                    }
+	                    directoryElement.setTextContent(string);
+	                    directoriesElement.appendChild(directoryElement);
+	                }
+	            }
+	        }
+	        rootElement.appendChild(directoriesElement);
+
+	        Element filesElement = document.createElement(FILES);
+	        if (MapUtils.isNotEmpty(filesMap)) {
+	            Set<String> keySet = filesMap.keySet();
+	            for (String key : keySet) {
+	                List<String> list = filesMap.get(key);
+	                for (String string : list) {
+	                    Element fileElement = document.createElement(FILE);
+	                    if (StringUtils.isNotEmpty(key)) {
+	                        fileElement.setAttribute(TO_DIRECTORY, key);
+	                    }
+	                    fileElement.setTextContent(string);
+	                    filesElement.appendChild(fileElement);
+	                }
+	            }
+	        }
+	        rootElement.appendChild(filesElement);
+	        document.appendChild(rootElement);
+
+	        TransformerFactory tFactory = TransformerFactory.newInstance();
+	        Transformer transformer = tFactory.newTransformer();
+	        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+	        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+	        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+
+	        Source src = new DOMSource(document);
+	        Result res = new StreamResult(new FileOutputStream(configFile));
+	        transformer.transform(src, res);
+	    } catch (DOMException e) {
+	        throw new PhrescoException(e);
+	    } catch (TransformerConfigurationException e) {
+	        throw new PhrescoException(e);
+	    } catch (IllegalArgumentException e) {
+	        throw new PhrescoException(e);
+	    } catch (FileNotFoundException e) {
+	        throw new PhrescoException(e);
+	    } catch (ParserConfigurationException e) {
+	        throw new PhrescoException(e);
+	    } catch (TransformerFactoryConfigurationError e) {
+	        throw new PhrescoException(e);
+	    } catch (TransformerException e) {
+	        throw new PhrescoException(e);
+	    }
 	}
 	
 	public String processBuild() {
@@ -1620,6 +1776,14 @@ public class Build extends DynamicParameterAction implements Constants {
 	public void setProjectId(String projectId) {
 		this.projectId = projectId;
 	}
+
+    public void setSelectedFiles(String selectedFiles) {
+        this.selectedFiles = selectedFiles;
+    }
+
+    public String getSelectedFiles() {
+        return selectedFiles;
+    }
 }
 
 class BuildComparator implements Comparator<BuildInfo> {
