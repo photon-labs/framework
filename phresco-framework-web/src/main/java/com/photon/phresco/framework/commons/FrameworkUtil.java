@@ -836,10 +836,12 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
         StringTemplate tableElement = new StringTemplate(constructTable());
         StringTemplate targetFolder = new StringTemplate(constructInputElement());
         targetFolder.setAttribute("name", "targetFolder");
+        targetFolder.setAttribute("class", "input-small");
         tableElement.setAttribute("td1", targetFolder);
         StringTemplate fileOrFolder = new StringTemplate(constructInputElement());
         fileOrFolder.setAttribute("name", "selectedFileOrFolder");
         fileOrFolder.setAttribute("disabled", "disabled");
+        fileOrFolder.setAttribute("class", "input-medium");
         tableElement.setAttribute("td2", fileOrFolder);
         tableElement.setAttribute("td3", constructButtonElement());
         controlGroupElement.setAttribute("controls", tableElement);
@@ -871,7 +873,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     }
     
     private static String constructInputElement() {
-        StringBuilder sb = new StringBuilder("<input type='text' name='$name$' class='input-small' $disabled$ />");
+        StringBuilder sb = new StringBuilder("<input type='text' name='$name$' class='$class$' $disabled$ />");
         return sb.toString();
     }
     
