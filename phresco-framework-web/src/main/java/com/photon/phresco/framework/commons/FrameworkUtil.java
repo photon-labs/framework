@@ -29,16 +29,12 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.antlr.stringtemplate.StringTemplate;
 import org.apache.commons.codec.binary.Base64;
@@ -61,7 +57,6 @@ import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Para
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.PhrescoDynamicLoader;
-import com.photon.phresco.util.TechnologyTypes;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.exception.PhrescoPomException;
 import com.phresco.pom.model.Model;
@@ -75,375 +70,12 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 	private static FrameworkUtil frameworkUtil = null;
     private static final Logger S_LOGGER = Logger.getLogger(FrameworkUtil.class);
     
-    private Map<String, String> unitTestMap = new HashMap<String, String>(8);
-    private Map<String, String> unitReportMap = new HashMap<String, String>(8);
-    private Map<String, String> funcationTestMap = new HashMap<String, String>(8);
-    private Map<String, String> funcationAdaptMap = new HashMap<String, String>(8);
-    private Map<String, String> funcationReportMap = new HashMap<String, String>(8);
-    private Map<String, String> performanceTestMap = new HashMap<String, String>(8);
-    private Map<String, String> performanceReportMap = new HashMap<String, String>(8);
-    private Map<String, String> loadTestMap = new HashMap<String, String>(8);
-    private Map<String, String> loadReportMap = new HashMap<String, String>(8);
-    private Map<String, String> unitTestSuitePathMap = new HashMap<String, String>(8);
-    private Map<String, String> functionalTestSuitePathMap = new HashMap<String, String>(8);
-    private Map<String, String> testCasePathMap = new HashMap<String, String>(8);
-    private Properties qualityReportsProp;
-    private String fileName = "quality-report.properties";
-   
-    public FrameworkUtil() throws PhrescoException {
-        InputStream stream = null;
-        stream = this.getClass().getClassLoader().getResourceAsStream(fileName);
-        qualityReportsProp = new Properties();
-        try {
-            qualityReportsProp.load(stream);
-        } catch (IOException e) {
-            throw new PhrescoException(e);
-        }
-        initUnitTestMap();
-        initUnitReportMap();
-        initFunctionalTestMap();
-        initFunctionalAdaptMap();
-        initFunctionalReportMap();
-        initPerformanceTestMap();
-        initPerformanceReportMap();
-        initLoadTestMap();
-        initLoadReportMap();
-        initUnitTestSuitePathMap();
-        initFunctionalTestSuitePathMap();
-        initTestCasePathMap();
-    }
-    
 	public static FrameworkUtil getInstance() throws PhrescoException {
         if (frameworkUtil == null) {
             frameworkUtil = new FrameworkUtil();
         }
         return frameworkUtil;
     }
-    
-    private void initUnitTestMap() {
-        unitTestMap.put(TechnologyTypes.JAVA_WEBSERVICE, PATH_JAVA_UNIT_TEST);
-        unitTestMap.put(TechnologyTypes.HTML5_WIDGET, PATH_HTML5_UNIT_TEST);
-        unitTestMap.put(TechnologyTypes.HTML5_MOBILE_WIDGET, PATH_HTML5_UNIT_TEST);
-        unitTestMap.put(TechnologyTypes.HTML5, PATH_HTML5_UNIT_TEST);
-        unitTestMap.put(TechnologyTypes.HTML5_MULTICHANNEL_JQUERY_WIDGET, PATH_HTML5_UNIT_TEST);
-        unitTestMap.put(TechnologyTypes.HTML5_JQUERY_MOBILE_WIDGET, PATH_HTML5_UNIT_TEST);
-        unitTestMap.put(TechnologyTypes.SHAREPOINT, PATH_SHAREPOINT_UNIT_TEST);
-        unitTestMap.put(TechnologyTypes.PHP, PATH_PHP_UNIT_TEST);
-        unitTestMap.put(TechnologyTypes.PHP_DRUPAL6, PATH_DRUPAL_UNIT_TEST);
-        unitTestMap.put(TechnologyTypes.PHP_DRUPAL7, PATH_DRUPAL_UNIT_TEST);
-        unitTestMap.put(TechnologyTypes.PHP_WEBSERVICE, PATH_PHP_WEBSERVICE_UNIT_TEST);
-        unitTestMap.put(TechnologyTypes.NODE_JS_WEBSERVICE, PATH_NODEJS_WEBSERVICE_UNIT_TEST);
-        unitTestMap.put(TechnologyTypes.NODE_JS, PATH_NODEJS_UNIT_TEST);
-        unitTestMap.put(TechnologyTypes.ANDROID_HYBRID, PATH_ANDROID_UNIT_TEST);
-        unitTestMap.put(TechnologyTypes.ANDROID_NATIVE, PATH_ANDROID_UNIT_TEST);
-        unitTestMap.put(TechnologyTypes.ANDROID_WEB, PATH_ANDROID_UNIT_TEST);
-        unitTestMap.put(TechnologyTypes.IPHONE_HYBRID, PATH_IPHONE_UNIT_TEST);
-        unitTestMap.put(TechnologyTypes.IPHONE_NATIVE, PATH_IPHONE_UNIT_TEST);
-        unitTestMap.put(TechnologyTypes.IPHONE_WEB, PATH_IPHONE_UNIT_TEST);
-        unitTestMap.put(TechnologyTypes.BLACKBERRY_HYBRID, PATH_BLACKBERRY_UNIT_TEST);
-        unitTestMap.put(TechnologyTypes.JAVA_WEBSERVICE, PATH_JAVA_WEBSERVICE_UNIT_TEST);
-        unitTestMap.put(TechnologyTypes.DOT_NET, PATH_SHAREPOINT_UNIT_TEST);
-        unitTestMap.put(TechnologyTypes.WORDPRESS, PATH_DRUPAL_UNIT_TEST);
-        unitTestMap.put(TechnologyTypes.JAVA_STANDALONE, PATH_JAVA_UNIT_TEST);
-    }
-
-    private void initUnitReportMap() {
-        unitReportMap.put(TechnologyTypes.JAVA_WEBSERVICE, PATH_JAVA_WEBSERVICE_UNIT_TEST_REPORT);
-        unitReportMap.put(TechnologyTypes.HTML5_WIDGET, PATH_HTML5_UNIT_TEST_REPORT);
-        unitReportMap.put(TechnologyTypes.HTML5_MOBILE_WIDGET, PATH_HTML5_UNIT_TEST_REPORT);
-        unitReportMap.put(TechnologyTypes.HTML5, PATH_HTML5_UNIT_TEST_REPORT);
-        unitReportMap.put(TechnologyTypes.HTML5_MULTICHANNEL_JQUERY_WIDGET, PATH_HTML5_UNIT_TEST_REPORT);
-        unitReportMap.put(TechnologyTypes.HTML5_JQUERY_MOBILE_WIDGET, PATH_HTML5_UNIT_TEST_REPORT);
-        unitReportMap.put(TechnologyTypes.SHAREPOINT, PATH_SHAREPOINT_UNIT_TEST_REPORT);
-        unitReportMap.put(TechnologyTypes.PHP, PATH_PHP_UNIT_TEST_REPORT);
-        unitReportMap.put(TechnologyTypes.PHP_DRUPAL6, PATH_DRUPAL_UNIT_TEST_REPORT);
-        unitReportMap.put(TechnologyTypes.PHP_DRUPAL7, PATH_DRUPAL_UNIT_TEST_REPORT);
-        unitReportMap.put(TechnologyTypes.PHP_WEBSERVICE, PATH_PHP_WEBSERVICE_UNIT_TEST_REPORT);
-        unitReportMap.put(TechnologyTypes.NODE_JS_WEBSERVICE, PATH_NODEJS_WEBSERVICE_UNIT_TEST_REPORT);
-        unitReportMap.put(TechnologyTypes.NODE_JS, PATH_NODEJS_UNIT_TEST_REPORT);
-        unitReportMap.put(TechnologyTypes.ANDROID_HYBRID, PATH_ANDROID_UNIT_TEST_REPORT);
-        unitReportMap.put(TechnologyTypes.ANDROID_NATIVE, PATH_ANDROID_UNIT_TEST_REPORT);
-        unitReportMap.put(TechnologyTypes.ANDROID_WEB, PATH_ANDROID_UNIT_TEST_REPORT);
-        unitReportMap.put(TechnologyTypes.IPHONE_HYBRID, PATH_IPHONE_UNIT_TEST_REPORT);
-        unitReportMap.put(TechnologyTypes.IPHONE_NATIVE, PATH_IPHONE_UNIT_TEST_REPORT);
-        unitReportMap.put(TechnologyTypes.IPHONE_WEB, PATH_IPHONE_UNIT_TEST_REPORT);
-        unitReportMap.put(TechnologyTypes.BLACKBERRY_HYBRID, PATH_BLACKBERRY_UNIT_TEST_REPORT);
-        unitReportMap.put(TechnologyTypes.JAVA_WEBSERVICE, PATH_JAVA_WEBSERVICE_UNIT_TEST_REPORT);
-        unitReportMap.put(TechnologyTypes.DOT_NET, PATH_SHAREPOINT_UNIT_TEST_REPORT);
-        unitReportMap.put(TechnologyTypes.WORDPRESS, PATH_DRUPAL_UNIT_TEST_REPORT);
-        unitReportMap.put(TechnologyTypes.JAVA_STANDALONE, PATH_JAVA_UNIT_TEST_REPORT);
-    }
-
-    private void initFunctionalTestMap() {
-        funcationTestMap.put(TechnologyTypes.JAVA_WEBSERVICE, PATH_JAVA_FUNCTIONAL_TEST);
-        funcationTestMap.put(TechnologyTypes.HTML5_MOBILE_WIDGET, PATH_HTML5_FUNCTIONAL_TEST);
-        funcationTestMap.put(TechnologyTypes.HTML5_WIDGET, PATH_HTML5_FUNCTIONAL_TEST);
-        funcationTestMap.put(TechnologyTypes.HTML5, PATH_HTML5_FUNCTIONAL_TEST);
-        funcationTestMap.put(TechnologyTypes.HTML5_MULTICHANNEL_JQUERY_WIDGET, PATH_HTML5_FUNCTIONAL_TEST);
-        funcationTestMap.put(TechnologyTypes.HTML5_JQUERY_MOBILE_WIDGET, PATH_HTML5_FUNCTIONAL_TEST);
-        funcationTestMap.put(TechnologyTypes.SHAREPOINT, PATH_SHAREPOINT_FUNCTIONAL_TEST);
-        funcationTestMap.put(TechnologyTypes.PHP, PATH_PHP_FUNCTIONAL_TEST);
-        funcationTestMap.put(TechnologyTypes.PHP_DRUPAL6, PATH_DRUPAL_FUNCTIONAL_TEST);
-        funcationTestMap.put(TechnologyTypes.PHP_DRUPAL7, PATH_DRUPAL_FUNCTIONAL_TEST);
-        funcationTestMap.put(TechnologyTypes.PHP_WEBSERVICE, PATH_PHP_WEBSERVICE_FUNCTIONAL_TEST);
-        funcationTestMap.put(TechnologyTypes.NODE_JS_WEBSERVICE, PATH_NODEJS_WEBSERVICE_FUNCTIONAL_TEST);
-        funcationTestMap.put(TechnologyTypes.NODE_JS, PATH_NODEJS_FUNCTIONAL_TEST);
-        funcationTestMap.put(TechnologyTypes.ANDROID_HYBRID, PATH_ANDROID_FUNCTIONAL_TEST);
-        funcationTestMap.put(TechnologyTypes.ANDROID_NATIVE, PATH_ANDROID_FUNCTIONAL_TEST);
-        funcationTestMap.put(TechnologyTypes.ANDROID_WEB, PATH_ANDROID_FUNCTIONAL_TEST);
-        funcationTestMap.put(TechnologyTypes.IPHONE_HYBRID, PATH_IPHONE_HYBRID_FUNCTIONAL_TEST);
-        funcationTestMap.put(TechnologyTypes.IPHONE_NATIVE, PATH_IPHONE_FUNCTIONAL_TEST);
-        funcationTestMap.put(TechnologyTypes.IPHONE_WEB, PATH_IPHONE_FUNCTIONAL_TEST);
-        funcationTestMap.put(TechnologyTypes.BLACKBERRY_HYBRID, PATH_BLACKBERRY_FUNCTIONAL_TEST);
-        funcationTestMap.put(TechnologyTypes.JAVA_WEBSERVICE, PATH_JAVA_WEBSERVICE_FUNCTIONAL_TEST);
-        funcationTestMap.put(TechnologyTypes.DOT_NET, PATH_SHAREPOINT_FUNCTIONAL_TEST);
-        funcationTestMap.put(TechnologyTypes.WORDPRESS, PATH_DRUPAL_FUNCTIONAL_TEST);
-        funcationTestMap.put(TechnologyTypes.JAVA_STANDALONE, PATH_JAVA_WEBSERVICE_FUNCTIONAL_TEST);
-    }
-    
-    private void initFunctionalAdaptMap() {
-        funcationAdaptMap.put(TechnologyTypes.JAVA_WEBSERVICE, PATH_JAVA_FUNCTIONAL_ADAPT);
-        funcationAdaptMap.put(TechnologyTypes.HTML5_MOBILE_WIDGET, PATH_HTML5_FUNCTIONAL_ADAPT);
-        funcationAdaptMap.put(TechnologyTypes.HTML5_WIDGET, PATH_HTML5_FUNCTIONAL_ADAPT);
-        funcationAdaptMap.put(TechnologyTypes.HTML5, PATH_HTML5_FUNCTIONAL_ADAPT);
-        funcationAdaptMap.put(TechnologyTypes.HTML5_MULTICHANNEL_JQUERY_WIDGET, PATH_HTML5_FUNCTIONAL_ADAPT);
-        funcationAdaptMap.put(TechnologyTypes.HTML5_JQUERY_MOBILE_WIDGET, PATH_HTML5_FUNCTIONAL_ADAPT);
-        funcationAdaptMap.put(TechnologyTypes.SHAREPOINT, PATH_SHAREPOINT_FUNCTIONAL_ADAPT);
-        funcationAdaptMap.put(TechnologyTypes.PHP, PATH_PHP_FUNCTIONAL_ADAPT);
-        funcationAdaptMap.put(TechnologyTypes.PHP_DRUPAL6, PATH_DRUPAL_FUNCTIONAL_ADAPT);
-        funcationAdaptMap.put(TechnologyTypes.PHP_DRUPAL7, PATH_DRUPAL_FUNCTIONAL_ADAPT);
-        funcationAdaptMap.put(TechnologyTypes.PHP_WEBSERVICE, PATH_PHP_WEBSERVICE_FUNCTIONAL_ADAPT);
-        funcationAdaptMap.put(TechnologyTypes.NODE_JS_WEBSERVICE, PATH_NODEJS_WEBSERVICE_FUNCTIONAL_ADAPT);
-        funcationAdaptMap.put(TechnologyTypes.NODE_JS, PATH_NODEJS_FUNCTIONAL_ADAPT);
-        funcationAdaptMap.put(TechnologyTypes.ANDROID_HYBRID, PATH_ANDROID_FUNCTIONAL_ADAPT);
-        funcationAdaptMap.put(TechnologyTypes.ANDROID_NATIVE, PATH_ANDROID_FUNCTIONAL_ADAPT);
-        funcationAdaptMap.put(TechnologyTypes.ANDROID_WEB, PATH_ANDROID_FUNCTIONAL_ADAPT);
-        funcationAdaptMap.put(TechnologyTypes.IPHONE_HYBRID, PATH_IPHONE_FUNCTIONAL_ADAPT);
-        funcationAdaptMap.put(TechnologyTypes.IPHONE_NATIVE, PATH_IPHONE_FUNCTIONAL_ADAPT);
-        funcationAdaptMap.put(TechnologyTypes.IPHONE_WEB, PATH_IPHONE_FUNCTIONAL_ADAPT);
-        funcationAdaptMap.put(TechnologyTypes.BLACKBERRY_HYBRID, PATH_BLACKBERRY_FUNCTIONAL_ADAPT);
-        funcationAdaptMap.put(TechnologyTypes.JAVA_WEBSERVICE, PATH_JAVA_WEBSERVICE_FUNCTIONAL_ADAPT);
-        funcationAdaptMap.put(TechnologyTypes.DOT_NET, PATH_SHAREPOINT_FUNCTIONAL_ADAPT);
-        funcationAdaptMap.put(TechnologyTypes.WORDPRESS, PATH_DRUPAL_FUNCTIONAL_ADAPT);
-        funcationAdaptMap.put(TechnologyTypes.JAVA_STANDALONE, PATH_JAVA_WEBSERVICE_FUNCTIONAL_ADAPT);
-    } 
-
-    private void initFunctionalReportMap() {
-        funcationReportMap.put(TechnologyTypes.JAVA_WEBSERVICE, PATH_JAVA_FUNCTIONAL_TEST_REPORT);
-        funcationReportMap.put(TechnologyTypes.HTML5_MOBILE_WIDGET, PATH_HTML5_FUNCTIONAL_TEST_REPORT);
-        funcationReportMap.put(TechnologyTypes.HTML5_WIDGET, PATH_HTML5_FUNCTIONAL_TEST_REPORT);
-        funcationReportMap.put(TechnologyTypes.HTML5, PATH_HTML5_FUNCTIONAL_TEST_REPORT);
-        funcationReportMap.put(TechnologyTypes.HTML5_MULTICHANNEL_JQUERY_WIDGET, PATH_HTML5_FUNCTIONAL_TEST_REPORT);
-        funcationReportMap.put(TechnologyTypes.HTML5_JQUERY_MOBILE_WIDGET, PATH_HTML5_FUNCTIONAL_TEST_REPORT);
-        funcationReportMap.put(TechnologyTypes.SHAREPOINT, PATH_SHAREPOINT_FUNCTIONAL_TEST_REPORT);
-        funcationReportMap.put(TechnologyTypes.PHP, PATH_PHP_FUNCTIONAL_TEST_REPORT);
-        funcationReportMap.put(TechnologyTypes.PHP_DRUPAL6, PATH_DRUPAL_FUNCTIONAL_TEST_REPORT);
-        funcationReportMap.put(TechnologyTypes.PHP_DRUPAL7, PATH_DRUPAL_FUNCTIONAL_TEST_REPORT);
-        funcationReportMap.put(TechnologyTypes.PHP_WEBSERVICE, PATH_PHP_WEBSERVICE_FUNCTIONAL_TEST_REPORT);
-        funcationReportMap.put(TechnologyTypes.NODE_JS_WEBSERVICE, PATH_NODEJS_WEBSERVICE_FUNCTIONAL_TEST_REPORT);
-        funcationReportMap.put(TechnologyTypes.NODE_JS, PATH_NODEJS_FUNCTIONAL_TEST_REPORT);
-        funcationReportMap.put(TechnologyTypes.ANDROID_HYBRID, PATH_ANDROID_FUNCTIONAL_TEST_REPORT);
-        funcationReportMap.put(TechnologyTypes.ANDROID_NATIVE, PATH_ANDROID_FUNCTIONAL_TEST_REPORT);
-        funcationReportMap.put(TechnologyTypes.ANDROID_WEB, PATH_ANDROID_FUNCTIONAL_TEST_REPORT);
-        funcationReportMap.put(TechnologyTypes.IPHONE_HYBRID, PATH_IPHONE_HYBRID_FUNCTIONAL_TEST_REPORT);
-        funcationReportMap.put(TechnologyTypes.IPHONE_NATIVE, PATH_IPHONE_FUNCTIONAL_TEST_REPORT);
-        funcationReportMap.put(TechnologyTypes.IPHONE_WEB, PATH_IPHONE_FUNCTIONAL_TEST_REPORT);
-        funcationReportMap.put(TechnologyTypes.BLACKBERRY_HYBRID, PATH_BLACKBERRY_FUNCTIONAL_TEST_REPORT);
-        funcationReportMap.put(TechnologyTypes.JAVA_WEBSERVICE, PATH_JAVA_WEBSERVICE_FUNCTIONAL_TEST_REPORT);
-        funcationReportMap.put(TechnologyTypes.DOT_NET, PATH_SHAREPOINT_FUNCTIONAL_TEST_REPORT);
-        funcationReportMap.put(TechnologyTypes.WORDPRESS, PATH_DRUPAL_FUNCTIONAL_TEST_REPORT);
-        funcationReportMap.put(TechnologyTypes.JAVA_STANDALONE, PATH_JAVA_WEBSERVICE_FUNCTIONAL_TEST_REPORT);
-    }
-    
-    private void initPerformanceTestMap() {
-        performanceTestMap.put(TechnologyTypes.JAVA_WEBSERVICE, PATH_JAVA_PERFORMANCE_TEST);
-        performanceTestMap.put(TechnologyTypes.HTML5_WIDGET, PATH_HTML5_PERFORMANCE_TEST);
-        performanceTestMap.put(TechnologyTypes.HTML5_MOBILE_WIDGET, PATH_HTML5_PERFORMANCE_TEST);
-        performanceTestMap.put(TechnologyTypes.HTML5, PATH_HTML5_PERFORMANCE_TEST);
-        performanceTestMap.put(TechnologyTypes.HTML5_MULTICHANNEL_JQUERY_WIDGET, PATH_HTML5_PERFORMANCE_TEST);
-        performanceTestMap.put(TechnologyTypes.HTML5_JQUERY_MOBILE_WIDGET, PATH_HTML5_PERFORMANCE_TEST);
-        performanceTestMap.put(TechnologyTypes.SHAREPOINT, PATH_SHAREPOINT_PERFORMANCE_TEST);
-        performanceTestMap.put(TechnologyTypes.PHP, PATH_PHP_PERFORMANCE_TEST);
-        performanceTestMap.put(TechnologyTypes.PHP_DRUPAL6, PATH_DRUPAL_PERFORMANCE_TEST);
-        performanceTestMap.put(TechnologyTypes.PHP_DRUPAL7, PATH_DRUPAL_PERFORMANCE_TEST);
-        performanceTestMap.put(TechnologyTypes.PHP_WEBSERVICE, PATH_PHP_WEBSERVICE_PERFORMANCE_TEST);
-        performanceTestMap.put(TechnologyTypes.NODE_JS_WEBSERVICE, PATH_NODEJS_WEBSERVICE_PERFORMANCE_TEST);
-        performanceTestMap.put(TechnologyTypes.NODE_JS, PATH_NODEJS_PERFORMANCE_TEST);
-        performanceTestMap.put(TechnologyTypes.ANDROID_HYBRID, PATH_ANDROID_PERFORMANCE_TEST);
-        performanceTestMap.put(TechnologyTypes.ANDROID_NATIVE, PATH_ANDROID_PERFORMANCE_TEST);
-        performanceTestMap.put(TechnologyTypes.ANDROID_WEB, PATH_ANDROID_PERFORMANCE_TEST);
-        performanceTestMap.put(TechnologyTypes.IPHONE_HYBRID, PATH_IPHONE_PERFORMANCE_TEST);
-        performanceTestMap.put(TechnologyTypes.IPHONE_NATIVE, PATH_IPHONE_PERFORMANCE_TEST);
-        performanceTestMap.put(TechnologyTypes.IPHONE_WEB, PATH_IPHONE_PERFORMANCE_TEST);
-        performanceTestMap.put(TechnologyTypes.BLACKBERRY_HYBRID, PATH_BLACKBERRY_PERFORMANCE_TEST);
-        performanceTestMap.put(TechnologyTypes.JAVA_WEBSERVICE, PATH_JAVA_WEBSERVICE_PERFORMANCE_TEST);
-        performanceTestMap.put(TechnologyTypes.DOT_NET, PATH_SHAREPOINT_PERFORMANCE_TEST);
-        performanceTestMap.put(TechnologyTypes.WORDPRESS, PATH_DRUPAL_PERFORMANCE_TEST);
-        performanceTestMap.put(TechnologyTypes.JAVA_STANDALONE, PATH_JAVA_WEBSERVICE_PERFORMANCE_TEST);
-    }
-
-    private void initPerformanceReportMap() {
-        performanceReportMap.put(TechnologyTypes.JAVA_WEBSERVICE, PATH_JAVA_PERFORMANCE_TEST_REPORT);
-        performanceReportMap.put(TechnologyTypes.HTML5_WIDGET, PATH_HTML5_PERFORMANCE_TEST_REPORT);
-        performanceReportMap.put(TechnologyTypes.HTML5_MOBILE_WIDGET, PATH_HTML5_PERFORMANCE_TEST_REPORT);
-        performanceReportMap.put(TechnologyTypes.HTML5, PATH_HTML5_PERFORMANCE_TEST_REPORT);
-        performanceReportMap.put(TechnologyTypes.HTML5_MULTICHANNEL_JQUERY_WIDGET, PATH_HTML5_PERFORMANCE_TEST_REPORT);
-        performanceReportMap.put(TechnologyTypes.HTML5_JQUERY_MOBILE_WIDGET, PATH_HTML5_PERFORMANCE_TEST_REPORT);
-        performanceReportMap.put(TechnologyTypes.SHAREPOINT, PATH_SHAREPOINT_PERFORMANCE_TEST_REPORT);
-        performanceReportMap.put(TechnologyTypes.PHP, PATH_PHP_PERFORMANCE_TEST_REPORT);
-        performanceReportMap.put(TechnologyTypes.PHP_DRUPAL6, PATH_DRUPAL_PERFORMANCE_TEST_REPORT);
-        performanceReportMap.put(TechnologyTypes.PHP_DRUPAL7, PATH_DRUPAL_PERFORMANCE_TEST_REPORT);
-        performanceReportMap.put(TechnologyTypes.PHP_WEBSERVICE, PATH_PHP_WEBSERVICE_PERFORMANCE_TEST_REPORT);
-        performanceReportMap.put(TechnologyTypes.NODE_JS_WEBSERVICE, PATH_NODEJS_WEBSERVICE_PERFORMANCE_TEST_REPORT);
-        performanceReportMap.put(TechnologyTypes.NODE_JS, PATH_NODEJS_PERFORMANCE_TEST_REPORT);
-        performanceReportMap.put(TechnologyTypes.ANDROID_HYBRID, PATH_ANDROID_PERFORMANCE_TEST_REPORT);
-        performanceReportMap.put(TechnologyTypes.ANDROID_NATIVE, PATH_ANDROID_PERFORMANCE_TEST_REPORT);
-        performanceReportMap.put(TechnologyTypes.ANDROID_WEB, PATH_ANDROID_PERFORMANCE_TEST_REPORT);
-        performanceReportMap.put(TechnologyTypes.IPHONE_HYBRID, PATH_IPHONE_PERFORMANCE_TEST_REPORT);
-        performanceReportMap.put(TechnologyTypes.IPHONE_NATIVE, PATH_IPHONE_PERFORMANCE_TEST_REPORT);
-        performanceReportMap.put(TechnologyTypes.IPHONE_WEB, PATH_IPHONE_PERFORMANCE_TEST_REPORT);
-        performanceReportMap.put(TechnologyTypes.BLACKBERRY_HYBRID, PATH_BLACKBERRY_PERFORMANCE_TEST_REPORT);
-        performanceReportMap.put(TechnologyTypes.JAVA_WEBSERVICE, PATH_JAVA_WEBSERVICE_PERFORMANCE_TEST_REPORT);
-        performanceReportMap.put(TechnologyTypes.DOT_NET, PATH_SHAREPOINT_PERFORMANCE_TEST_REPORT);
-        performanceReportMap.put(TechnologyTypes.WORDPRESS, PATH_DRUPAL_PERFORMANCE_TEST_REPORT);
-        performanceReportMap.put(TechnologyTypes.JAVA_STANDALONE, PATH_JAVA_WEBSERVICE_PERFORMANCE_TEST_REPORT);
-    }
-    
-    private void initLoadTestMap() {
-        loadTestMap.put(TechnologyTypes.JAVA_WEBSERVICE, PATH_JAVA_LOAD_TEST);
-        loadTestMap.put(TechnologyTypes.HTML5_WIDGET, PATH_HTML5_LOAD_TEST);
-        loadTestMap.put(TechnologyTypes.HTML5_MOBILE_WIDGET, PATH_HTML5_LOAD_TEST);
-        loadTestMap.put(TechnologyTypes.HTML5, PATH_HTML5_LOAD_TEST);
-        loadTestMap.put(TechnologyTypes.HTML5_MULTICHANNEL_JQUERY_WIDGET, PATH_HTML5_LOAD_TEST);
-        loadTestMap.put(TechnologyTypes.HTML5_JQUERY_MOBILE_WIDGET, PATH_HTML5_LOAD_TEST);
-        loadTestMap.put(TechnologyTypes.SHAREPOINT, PATH_SHAREPOINT_LOAD_TEST);
-        loadTestMap.put(TechnologyTypes.PHP, PATH_PHP_LOAD_TEST);
-        loadTestMap.put(TechnologyTypes.PHP_DRUPAL6, PATH_DRUPAL_LOAD_TEST);
-        loadTestMap.put(TechnologyTypes.PHP_DRUPAL7, PATH_DRUPAL_LOAD_TEST);
-        loadTestMap.put(TechnologyTypes.PHP_WEBSERVICE, PATH_PHP_WEBSERVICE_LOAD_TEST);
-        loadTestMap.put(TechnologyTypes.NODE_JS_WEBSERVICE, PATH_NODEJS_WEBSERVICE_LOAD_TEST);
-        loadTestMap.put(TechnologyTypes.NODE_JS, PATH_NODEJS_LOAD_TEST);
-        loadTestMap.put(TechnologyTypes.ANDROID_HYBRID, PATH_ANDROID_LOAD_TEST);
-        loadTestMap.put(TechnologyTypes.ANDROID_NATIVE, PATH_ANDROID_LOAD_TEST);
-        loadTestMap.put(TechnologyTypes.ANDROID_WEB, PATH_ANDROID_LOAD_TEST);
-        loadTestMap.put(TechnologyTypes.IPHONE_HYBRID, PATH_IPHONE_LOAD_TEST);
-        loadTestMap.put(TechnologyTypes.IPHONE_NATIVE, PATH_IPHONE_LOAD_TEST);
-        loadTestMap.put(TechnologyTypes.IPHONE_WEB, PATH_IPHONE_LOAD_TEST);
-        loadTestMap.put(TechnologyTypes.BLACKBERRY_HYBRID, PATH_BLACKBERRY_LOAD_TEST);
-        loadTestMap.put(TechnologyTypes.JAVA_WEBSERVICE, PATH_JAVA_WEBSERVICE_LOAD_TEST);
-        loadTestMap.put(TechnologyTypes.DOT_NET, PATH_SHAREPOINT_LOAD_TEST);
-        loadTestMap.put(TechnologyTypes.WORDPRESS, PATH_DRUPAL_LOAD_TEST);
-        loadTestMap.put(TechnologyTypes.JAVA_STANDALONE, PATH_JAVA_WEBSERVICE_LOAD_TEST);
-    }
-
-    private void initLoadReportMap() {
-        loadReportMap.put(TechnologyTypes.JAVA_WEBSERVICE, PATH_JAVA_LOAD_TEST_REPORT);
-        loadReportMap.put(TechnologyTypes.HTML5_WIDGET, PATH_HTML5_LOAD_TEST_REPORT);
-        loadReportMap.put(TechnologyTypes.HTML5_MOBILE_WIDGET, PATH_HTML5_LOAD_TEST_REPORT);
-        loadReportMap.put(TechnologyTypes.HTML5, PATH_HTML5_LOAD_TEST_REPORT);
-        loadReportMap.put(TechnologyTypes.HTML5_MULTICHANNEL_JQUERY_WIDGET, PATH_HTML5_LOAD_TEST_REPORT);
-        loadReportMap.put(TechnologyTypes.HTML5_JQUERY_MOBILE_WIDGET, PATH_HTML5_LOAD_TEST_REPORT);
-        loadReportMap.put(TechnologyTypes.SHAREPOINT, PATH_SHAREPOINT_LOAD_TEST_REPORT);
-        loadReportMap.put(TechnologyTypes.PHP, PATH_PHP_LOAD_TEST_REPORT);
-        loadReportMap.put(TechnologyTypes.PHP_DRUPAL6, PATH_DRUPAL_LOAD_TEST_REPORT);
-        loadReportMap.put(TechnologyTypes.PHP_DRUPAL7, PATH_DRUPAL_LOAD_TEST_REPORT);
-        loadReportMap.put(TechnologyTypes.PHP_WEBSERVICE, PATH_PHP_LOAD_TEST_REPORT);
-        loadReportMap.put(TechnologyTypes.NODE_JS_WEBSERVICE, PATH_NODEJS_WEBSERVICE_LOAD_TEST_REPORT);
-        loadReportMap.put(TechnologyTypes.NODE_JS, PATH_NODEJS_LOAD_TEST_REPORT);
-        loadReportMap.put(TechnologyTypes.ANDROID_HYBRID, PATH_ANDROID_LOAD_TEST_REPORT);
-        loadReportMap.put(TechnologyTypes.ANDROID_NATIVE, PATH_ANDROID_LOAD_TEST_REPORT);
-        loadReportMap.put(TechnologyTypes.ANDROID_WEB, PATH_ANDROID_LOAD_TEST_REPORT);
-        loadReportMap.put(TechnologyTypes.IPHONE_HYBRID, PATH_IPHONE_LOAD_TEST_REPORT);
-        loadReportMap.put(TechnologyTypes.IPHONE_NATIVE, PATH_IPHONE_LOAD_TEST_REPORT);
-        loadReportMap.put(TechnologyTypes.IPHONE_WEB, PATH_IPHONE_LOAD_TEST_REPORT);
-        loadReportMap.put(TechnologyTypes.BLACKBERRY_HYBRID, PATH_BLACKBERRY_LOAD_TEST_REPORT);
-        loadReportMap.put(TechnologyTypes.JAVA_WEBSERVICE, PATH_JAVA_WEBSERVICE_LOAD_TEST_REPORT);
-        loadReportMap.put(TechnologyTypes.DOT_NET, PATH_SHAREPOINT_LOAD_TEST_REPORT);
-        loadReportMap.put(TechnologyTypes.WORDPRESS, PATH_DRUPAL_LOAD_TEST_REPORT);
-        loadReportMap.put(TechnologyTypes.JAVA_STANDALONE, PATH_JAVA_WEBSERVICE_LOAD_TEST_REPORT);
-        
-    }
-
-    private void initUnitTestSuitePathMap() {
-    	unitTestSuitePathMap.put(TechnologyTypes.JAVA, XPATH_JAVA_UNIT_TESTSUITE);
-    	unitTestSuitePathMap.put(TechnologyTypes.HTML5_WIDGET, XPATH_HTML5_WIDGET_UNIT_TESTSUITE);
-    	unitTestSuitePathMap.put(TechnologyTypes.HTML5_MOBILE_WIDGET, XPATH_HTML5_WIDGET_UNIT_TESTSUITE);
-    	unitTestSuitePathMap.put(TechnologyTypes.HTML5, XPATH_HTML5_UNIT_TESTSUITE);
-    	unitTestSuitePathMap.put(TechnologyTypes.HTML5_MULTICHANNEL_JQUERY_WIDGET, PATH_HTML5_MULTICHANNEL_JQUERY_UNIT_TEST_TESTSUITE);
-    	unitTestSuitePathMap.put(TechnologyTypes.HTML5_JQUERY_MOBILE_WIDGET, PATH_HTML5_JQUERY_MOBILE_WIDGET_UNIT_TEST_TESTSUITE);
-    	unitTestSuitePathMap.put(TechnologyTypes.SHAREPOINT, XPATH_SHAREPOINT_UNIT_TESTSUITE);
-    	unitTestSuitePathMap.put(TechnologyTypes.PHP, XPATH_PHP_UNIT_TESTSUITE);
-    	unitTestSuitePathMap.put(TechnologyTypes.PHP_DRUPAL6, XPATH_PHP_DRUPAL6_UNIT_TESTSUITE);
-    	unitTestSuitePathMap.put(TechnologyTypes.PHP_DRUPAL7, XPATH_PHP_DRUPAL7_UNIT_TESTSUITE);
-    	unitTestSuitePathMap.put(TechnologyTypes.PHP_WEBSERVICE, XPATH_PHP_WEBSERVICE_UNIT_TESTSUITE);
-    	unitTestSuitePathMap.put(TechnologyTypes.NODE_JS_WEBSERVICE, XPATH_NODE_JS_WEBSERVICE_UNIT_TESTSUITE);
-    	unitTestSuitePathMap.put(TechnologyTypes.NODE_JS, XPATH_NODE_JS_UNIT_TESTSUITE);
-    	unitTestSuitePathMap.put(TechnologyTypes.ANDROID_HYBRID, XPATH_ANDROID_HYBRID_UNIT_TESTSUITE);
-    	unitTestSuitePathMap.put(TechnologyTypes.ANDROID_NATIVE, XPATH_ANDROID_NATIVE_UNIT_TESTSUITE);
-    	unitTestSuitePathMap.put(TechnologyTypes.ANDROID_WEB, XPATH_ANDROID_WEB_UNIT_TESTSUITE);
-    	unitTestSuitePathMap.put(TechnologyTypes.IPHONE_HYBRID, XPATH_IPHONE_HYBRID_UNIT_TESTSUITE);
-    	unitTestSuitePathMap.put(TechnologyTypes.IPHONE_NATIVE, XPATH_IPHONE_NATIVE_UNIT_TESTSUITE);
-    	unitTestSuitePathMap.put(TechnologyTypes.IPHONE_WEB, XPATH_IPHONE_WEB_UNIT_TESTSUITE);
-    	unitTestSuitePathMap.put(TechnologyTypes.BLACKBERRY_HYBRID, XPATH_BLACKBERRY_UNIT_TESTSUITE);
-    	unitTestSuitePathMap.put(TechnologyTypes.JAVA_WEBSERVICE, XPATH_JAVA_WEBSERVICE_UNIT_TESTSUITE);
-    	unitTestSuitePathMap.put(TechnologyTypes.DOT_NET, XPATH_SHAREPOINT_UNIT_TESTSUITE);
-    	unitTestSuitePathMap.put(TechnologyTypes.WORDPRESS, XPATH_PHP_WORDPRESS_UNIT_TESTSUITE);
-    	unitTestSuitePathMap.put(TechnologyTypes.JAVA_STANDALONE, XPATH_JAVA_WEBSERVICE_UNIT_TESTSUITE);
-	}
-    
-    private void initFunctionalTestSuitePathMap() {
-    	functionalTestSuitePathMap.put(TechnologyTypes.JAVA, XPATH_JAVA_FUNCTIONAL_TESTSUITE);
-    	functionalTestSuitePathMap.put(TechnologyTypes.HTML5_WIDGET, XPATH_HTML5_WIDGET_FUNCTIONAL_TESTSUITE);
-    	functionalTestSuitePathMap.put(TechnologyTypes.HTML5_MOBILE_WIDGET, XPATH_HTML5_WIDGET_FUNCTIONAL_TESTSUITE);
-    	functionalTestSuitePathMap.put(TechnologyTypes.HTML5, XPATH_HTML5_FUNCTIONAL_TESTSUITE);
-    	functionalTestSuitePathMap.put(TechnologyTypes.HTML5_MULTICHANNEL_JQUERY_WIDGET, PATH_HTML5_MULTICHANNEL_JQUERY_FUNCTIONAL_TEST_TESTSUITE);
-    	functionalTestSuitePathMap.put(TechnologyTypes.HTML5_JQUERY_MOBILE_WIDGET, PATH_HTML5_JQUERY_MOBILE_WIDGET_FUNCTIONAL_TEST_TESTSUITE);
-    	functionalTestSuitePathMap.put(TechnologyTypes.SHAREPOINT, XPATH_SHAREPOINT_FUNCTIONAL_TESTSUITE);
-    	functionalTestSuitePathMap.put(TechnologyTypes.PHP, XPATH_PHP_FUNCTIONAL_TESTSUITE);
-    	functionalTestSuitePathMap.put(TechnologyTypes.PHP_DRUPAL6, XPATH_PHP_DRUPAL6_FUNCTIONAL_TESTSUITE);
-    	functionalTestSuitePathMap.put(TechnologyTypes.PHP_DRUPAL7, XPATH_PHP_DRUPAL7_FUNCTIONAL_TESTSUITE);
-    	functionalTestSuitePathMap.put(TechnologyTypes.PHP_WEBSERVICE, XPATH_PHP_WEBSERVICE_FUNCTIONAL_TESTSUITE);
-    	functionalTestSuitePathMap.put(TechnologyTypes.NODE_JS_WEBSERVICE, XPATH_NODE_JS_WEBSERVICE_FUNCTIONAL_TESTSUITE);
-    	functionalTestSuitePathMap.put(TechnologyTypes.NODE_JS, XPATH_NODE_JS_FUNCTIONAL_TESTSUITE);
-    	functionalTestSuitePathMap.put(TechnologyTypes.ANDROID_HYBRID, XPATH_ANDROID_HYBRID_FUNCTIONAL_TESTSUITE);
-    	functionalTestSuitePathMap.put(TechnologyTypes.ANDROID_NATIVE, XPATH_ANDROID_NATIVE_FUNCTIONAL_TESTSUITE);
-    	functionalTestSuitePathMap.put(TechnologyTypes.ANDROID_WEB, XPATH_ANDROID_WEB_FUNCTIONAL_TESTSUITE);
-    	functionalTestSuitePathMap.put(TechnologyTypes.IPHONE_HYBRID, XPATH_IPHONE_HYBRID_FUNCTIONAL_TESTSUITE);
-    	functionalTestSuitePathMap.put(TechnologyTypes.IPHONE_NATIVE, XPATH_IPHONE_NATIVE_FUNCTIONAL_TESTSUITE);
-    	functionalTestSuitePathMap.put(TechnologyTypes.IPHONE_WEB, XPATH_IPHONE_WEB_FUNCTIONAL_TESTSUITE);
-    	functionalTestSuitePathMap.put(TechnologyTypes.BLACKBERRY_HYBRID, XPATH_BLACKBERRY_FUNCTIONAL_TESTSUITE);
-    	functionalTestSuitePathMap.put(TechnologyTypes.JAVA_WEBSERVICE, XPATH_JAVA_WEBSERVICE_FUNCTIONAL_TESTSUITE);
-    	functionalTestSuitePathMap.put(TechnologyTypes.DOT_NET, XPATH_SHAREPOINT_FUNCTIONAL_TESTSUITE);
-    	functionalTestSuitePathMap.put(TechnologyTypes.WORDPRESS, XPATH_PHP_WORDPRESS_FUNCTIONAL_TESTSUITE);
-    	functionalTestSuitePathMap.put(TechnologyTypes.JAVA_STANDALONE, XPATH_JAVA_WEBSERVICE_FUNCTIONAL_TESTSUITE);
-	}
-    
-	private void initTestCasePathMap() {
-		testCasePathMap.put(TechnologyTypes.JAVA, XPATH_JAVA_TESTCASE);
-		testCasePathMap.put(TechnologyTypes.HTML5_WIDGET, XPATH_HTML5_WIDGET_TESTCASE);
-		testCasePathMap.put(TechnologyTypes.HTML5_MOBILE_WIDGET, XPATH_HTML5_WIDGET_TESTCASE);
-        testCasePathMap.put(TechnologyTypes.HTML5, XPATH_HTML5_TESTCASE);
-        testCasePathMap.put(TechnologyTypes.HTML5_MULTICHANNEL_JQUERY_WIDGET, XPATH_HTML5_MULTICHANNEL_JQUERY_TESTCASE);
-        testCasePathMap.put(TechnologyTypes.HTML5_JQUERY_MOBILE_WIDGET, XPATH_HTML5_JQUERY_MOBILE_WIDGET_TESTCASE);
-		testCasePathMap.put(TechnologyTypes.SHAREPOINT, XPATH_SHAREPOINT_TESTCASE);
-		testCasePathMap.put(TechnologyTypes.PHP, XPATH_PHP_TESTCASE);
-		testCasePathMap.put(TechnologyTypes.PHP_DRUPAL6, XPATH_PHP_DRUPAL7_TESTCASE);
-		testCasePathMap.put(TechnologyTypes.PHP_DRUPAL7, XPATH_PHP_DRUPAL7_TESTCASE);
-		testCasePathMap.put(TechnologyTypes.PHP_WEBSERVICE, XPATH_PHP_WEBSERVICE_TESTCASE);
-		testCasePathMap.put(TechnologyTypes.NODE_JS_WEBSERVICE, XPATH_NODE_JS_WEBSERVICE_TESTCASE);
-		testCasePathMap.put(TechnologyTypes.NODE_JS, XPATH_NODE_JS_TESTCASE);
-		testCasePathMap.put(TechnologyTypes.ANDROID_HYBRID, XPATH_ANDROID_HYBRID_TESTCASE);
-		testCasePathMap.put(TechnologyTypes.ANDROID_NATIVE, XPATH_ANDROID_NATIVE_TESTCASE);
-		testCasePathMap.put(TechnologyTypes.ANDROID_WEB, XPATH_ANDROID_WEB_TESTCASE);
-		testCasePathMap.put(TechnologyTypes.IPHONE_HYBRID, XPATH_IPHONE_HYBRID_TESTCASE);
-		testCasePathMap.put(TechnologyTypes.IPHONE_NATIVE, XPATH_IPHONE_NATIVE_TESTCASE);
-		testCasePathMap.put(TechnologyTypes.IPHONE_WEB, XPATH_IPHONE_WEB_TESTCASE);
-		testCasePathMap.put(TechnologyTypes.BLACKBERRY_HYBRID, XPATH_BLACKBERRY_TESTCASE);
-		testCasePathMap.put(TechnologyTypes.JAVA_WEBSERVICE, XPATH_JAVA_WEBSERVICE_TESTCASE);
-		testCasePathMap.put(TechnologyTypes.DOT_NET, XPATH_SHAREPOINT_TESTCASE);
-		testCasePathMap.put(TechnologyTypes.WORDPRESS, XPATH_PHP_DRUPAL7_TESTCASE);
-		testCasePathMap.put(TechnologyTypes.JAVA_STANDALONE, XPATH_JAVA_WEBSERVICE_TESTCASE);
-	}
 	
 	public String getSqlFilePath(String oldAppDirName) throws PhrescoException, PhrescoPomException {
 		return getPomProcessor(oldAppDirName).getProperty("phresco.sql.path");
@@ -535,11 +167,6 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
         return sb.toString();
     }
 
-    public String getFuncitonalAdaptDir(String technologyId) {
-        String key = funcationAdaptMap.get(technologyId);
-        return qualityReportsProp.getProperty(key);
-    }
-    
     public static String getStackTraceAsString(Exception exception) {
 	    StringWriter sw = new StringWriter();
 	    PrintWriter pw = new PrintWriter(sw);
@@ -1201,6 +828,55 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	controlGroupElement.setAttribute("controls", inputElement);
     	
 		return controlGroupElement;
+    }
+    
+    public static StringTemplate constructFileBrowseForPackage(ParameterModel pm) {
+        StringTemplate controlGroupElement = new StringTemplate(getControlGroupTemplate());
+        controlGroupElement.setAttribute("ctrlGrpId", pm.getControlGroupId());
+        StringTemplate tableElement = new StringTemplate(constructTable());
+        StringTemplate targetFolder = new StringTemplate(constructInputElement());
+        targetFolder.setAttribute("name", "targetFolder");
+        tableElement.setAttribute("td1", targetFolder);
+        StringTemplate fileOrFolder = new StringTemplate(constructInputElement());
+        fileOrFolder.setAttribute("name", "selectedFileOrFolder");
+        fileOrFolder.setAttribute("disabled", "disabled");
+        tableElement.setAttribute("td2", fileOrFolder);
+        tableElement.setAttribute("td3", constructButtonElement());
+        controlGroupElement.setAttribute("controls", tableElement);
+        
+        return controlGroupElement;
+    }
+    
+    private static String constructTable() {
+        StringBuilder sb = new StringBuilder()
+        .append("<table align='center'>")
+        .append("<thead class='header-background'>")
+        .append("<tr class='borderForLoad'>")
+        .append("<th class='borderForLoad mapHeading'>Target Folder</th>")
+        .append("<th class='borderForLoad mapHeading'>File/Folder</th>")
+        .append("<th class='borderForLoad mapHeading'>$th3$</th>")
+        .append("<th class='borderForLoad mapHeading'>$th4$</th>")
+        .append("</tr></thead>")
+        .append("<tbody id='propTempTbodyForHeader'>")
+        .append("<tr>")
+        .append("<td>$td1$</td>")
+        .append("<td>$td2$</td>")
+        .append("<td>$td3$</td>")
+        .append("<td>")
+        .append("<a><img class='add imagealign' src='images/icons/add_icon.png' onclick='addRow(this);'></a></td>")
+        .append("</tr></tbody></table>");
+
+        return sb.toString();
+    }
+    
+    private static String constructInputElement() {
+        StringBuilder sb = new StringBuilder("<input type='text' name='$name$' class='input-small' $disabled$ />");
+        return sb.toString();
+    }
+    
+    private static String constructButtonElement() {
+        StringBuilder sb = new StringBuilder("<input type='button' value='Browse' class='btn btn-primary' fromPage='package' onclick='browseFiles(this)'/>");
+        return sb.toString();
     }
     
     public StringTemplate constructDynamicTemplate(String CustomerId, Parameter parameter,ParameterModel parameterModel, List<? extends Object> obj, String className) throws IOException {

@@ -53,7 +53,7 @@
 	List<CertificateInfo> certificates = (List<CertificateInfo>)request.getAttribute("certificates");
 %>
 
-<form action="build" method="post" autocomplete="off" class="build_form" id="browseLocation">
+<form autocomplete="off" class="build_form" id="browseLocation">
 <div class="" id="generateBuild_Modal">
 
 	<div class="fileTreeBrowseOverflow">
@@ -139,7 +139,8 @@
 	}
 	
 	function add_popupOnOk(obj) {
-		if ($(obj).attr("id") === "filesToMinify") {
+		var okUrl = $(obj).attr("id")
+		if (okUrl === "filesToMinify") {
 			if ($("input[name=filesToMinify]:checked").size() !== 0 && $("#compressName").val() != "") {
 				$("#add_errorMsg").empty();
 				$('#additionalPopup').modal('hide');
@@ -162,6 +163,25 @@
 				} 
 				
 			}	
+		} else if (okUrl === "package") {
+			$('#additionalPopup').modal('hide');
+			showParentPopupPage();
+			
+			var selectedValues = [];
+			//To get the selected files
+			$("input[name=filesToMinify]:checked").each(function() {
+				selectedValues.push($(this).val());
+			});
+			
+			//To get the currently selected dir if no files is selected
+			if (selectedValues.length == 0) {
+				var currentDir = $('.selectedFolder').attr("directory");
+				selectedValues.push(currentDir);
+			}
+			var csvSelectedFiles = selectedValues.join(",");
+			$('.currentTextBox').val(csvSelectedFiles);
+			$('.currentTextBox').attr("title", csvSelectedFiles);
+			$('.currentTextBox').removeClass("currentTextBox");
 		} else {
 			$('#additionalPopup').modal('hide');
 			showParentPopupPage();

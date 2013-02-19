@@ -17,10 +17,15 @@
   limitations under the License.
   ###
   --%>
-<%@ page import="org.apache.commons.lang.ArrayUtils"%>
+
+
+<%@ page import="java.io.FilenameFilter"%>
+<%@ page import="java.io.File"%>
+<%@ page import="java.util.Arrays"%>
+<%@ page import="java.util.List"%>
+
 <%@ page import="org.apache.commons.lang.StringUtils" %>
-<%@ page import="java.io.File,java.io.FilenameFilter,java.util.Arrays,java.util.List"%>
-<%@ page import="com.photon.phresco.util.TechnologyTypes"%>
+
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 
 <%
@@ -31,12 +36,13 @@
   * 21 April 2008
 */	
     String dir = request.getParameter("dir");
+	String rootDir = request.getParameter("rootDir");
     String fileTypes = request.getParameter("restrictFileTypes");
     String filesOrFolders = request.getParameter("filesOrFolders");
-    String fromPage = request.getParameter("fromPage");
+    String fromPage = request.getParameter(FrameworkConstants.REQ_FROM_PAGE);
     String minifiedFiles = request.getParameter("minifiedFilesList");
 	
-    if (dir == null) {
+    if (StringUtils.isEmpty(dir)) {
     	return;
     }
 	
@@ -48,7 +54,8 @@
     	} 
     }
 	
- 	dir = java.net.URLDecoder.decode(dir, "UTF-8");	
+ 	dir = java.net.URLDecoder.decode(dir, "UTF-8");
+ 	
  	fileTypes = java.net.URLDecoder.decode(fileTypes, "UTF-8");	
  	filesOrFolders = java.net.URLDecoder.decode(filesOrFolders, "UTF-8");	
  	minifiedFiles = java.net.URLDecoder.decode(minifiedFiles, "UTF-8");
@@ -56,73 +63,130 @@
  	
 	final String[] includeFileTypes = fileTypes.split(",");
 	
-   if( !new File(dir).exists()) {
-		 File[] roots = File.listRoots();
-		 for (int i=0; i < roots.length; i++) {
-		out.print("<ul class=\"jqueryFileTree\" style=\"display: none;\">");
-		out.print("<li class=\"directory collapsed\"><a href=\"#\" rel=\"" + dir + roots[i].toString() + "/\">"
-				+ roots[i].toString() + "</a></li>");
-		out.print("</ul>");
-		 }
+	if(!new File(dir).exists()) {
+		File[] roots = File.listRoots();
+		for (int i=0; i < roots.length; i++) {
+			out.print("<ul class=\"jqueryFileTree\" style=\"display: none;\">");
+			out.print("<li class=\"directory collapsed\"><a href=\"#\" rel=\"" + dir + roots[i].toString() + "/\">"
+					+ roots[i].toString() + "</a></li>");
+			out.print("</ul>");
+		}
 	}
-	 
-     if (new File(dir).exists()) {
-		String[] files = new File(dir).list(new FilenameFilter() {
-		    public boolean accept(File dir, String name) {
-				return name.charAt(0) != '.';
-		    }
-		});
-		Arrays.sort(files, String.CASE_INSENSITIVE_ORDER);
-		out.print("<ul class=\"jqueryFileTree\" style=\"display: none;\">");
-		// All dirs
-		//if(filesOrFolders.equals("Folder") || filesOrFolders.equals("All")) {
+	
+	if (FrameworkConstants.PACKAGE.equals(fromPage)) {
+		if (new File(dir).exists()) {
+		    File rootFile = new File(dir);
+		    File[] files = rootFile.listFiles();
+		    out.print("<ul class=\"jqueryFileTree\" style=\"display: none;\">");
+		    
+		    //To list all the directories
+		    for (File file : files) {
+			    if (file.isDirectory()) {
+			        String directory = file.getPath();
+			        directory = directory.replace("\\", "/");
+			        directory = directory.replace(rootDir, "");
+					out.print("<li class=\"directory collapsed\"><a href=\"#\" directory=\"" + directory + "\"  rel=\"" + file.getPath() + "/\">"
+						+ file.getName() + "</a></li>");
+			    }
+			}
+		    
+		    //To list the files
+		    for (File file : files) {
+			    if (!file.isDirectory()) {
+			        int dotIndex = file.getName().lastIndexOf('.');
+					String ext = dotIndex > 0 ? file.getName().substring(dotIndex + 1) : "";
+					if(!fileTypes.equals("")) {
+						if (!Arrays.asList(includeFileTypes).contains(ext)) {
+				    		continue;
+				    	}
+					}
+					String filePath = file.getPath();
+				    filePath = filePath.replace("\\", "/");
+					filePath = filePath.replace(rootDir, "");
+					out.print("<li class=\"file ext_" + ext + "\"><input type=checkbox name=filesToMinify id=\""+file.getName()+"\" value=\""+ filePath +"\" onclick=\"uncheckOthrDirFiles();\"><span class=jsmin-span >"
+							+ file.getName() + "</li>"); 
+			    }
+			}
+		    
+		    out.print("</ul>");
+		}
+	} else {
+	    if (new File(dir).exists()) {
+			String[] files = new File(dir).list(new FilenameFilter() {
+			    public boolean accept(File dir, String name) {
+					return name.charAt(0) != '.';
+			    }
+			});
+			Arrays.sort(files, String.CASE_INSENSITIVE_ORDER);
+			out.print("<ul class=\"jqueryFileTree\" style=\"display: none;\">");
+			// All dirs
 			for (String file : files) {
 			    if (new File(dir, file).isDirectory()) {
 					out.print("<li class=\"directory collapsed\"><a href=\"#\" rel=\"" + dir + file + "/\">"
 						+ file + "</a></li>");
 			    }
 			}
-		//}
-		// All files
-		if(filesOrFolders.equals("File") || filesOrFolders.equals("All")) {
-			for (String file : files) {
-			    if (!new File(dir, file).isDirectory()) {
-					int dotIndex = file.lastIndexOf('.');
-					String ext = dotIndex > 0 ? file.substring(dotIndex + 1) : "";
+			// All files
+			if (filesOrFolders.equals("File") || filesOrFolders.equals("All")) {
+				for (String file : files) {
+				    if (!new File(dir, file).isDirectory()) {
+						int dotIndex = file.lastIndexOf('.');
+						String ext = dotIndex > 0 ? file.substring(dotIndex + 1) : "";
 
-					if(!fileTypes.equals("")) {
-						if (!Arrays.asList(includeFileTypes).contains(ext)) {
-				    		continue;
-				    	}
-					}
-					if (StringUtils.isNotEmpty(fromPage) && FrameworkConstants.REQ_MINIFICATION.equals(fromPage)) {
-						String checkedStr = "";
-						if (minifiedFilesList.contains(file)) {
-							checkedStr = "checked";
-						} else {
-							checkedStr = "";
+						if (!fileTypes.equals("")) {
+							if (!Arrays.asList(includeFileTypes).contains(ext)) {
+					    		continue;
+					    	}
 						}
-						out.print("<li><input type=checkbox name=filesToMinify id=\""+file+"\" value=\""+file+"\" "+checkedStr+"><span class=jsmin-span >"
-								+ file + "</li>"); 
-					} else {
-						out.print("<li class=\"file ext_" + ext + "\"><a href=\"#\" rel=\"" + dir + file + "\">"
-								+ file + "</a></li>");
-					}
-			    }
+						if (StringUtils.isNotEmpty(fromPage) && FrameworkConstants.REQ_MINIFICATION.equals(fromPage)) {
+							String checkedStr = "";
+							if (minifiedFilesList.contains(file)) {
+								checkedStr = "checked";
+							} else {
+								checkedStr = "";
+							}
+							out.print("<li><input type=checkbox name=filesToMinify id=\""+file+"\" value=\""+file+"\" "+checkedStr+"><span class=jsmin-span >"
+									+ file + "</li>"); 
+						} else {
+							out.print("<li class=\"file ext_" + ext + "\"><a href=\"#\" rel=\"" + dir + file + "\">"
+									+ file + "</a></li>");
+						}
+				    }
+				}
 			}
-		}
-		out.print("</ul>");
-    }
+			out.print("</ul>");
+	    }
+	}
+     
 %>
 <script type="text/javascript">
 	$(document).ready(function() {
-		<% if (FrameworkConstants.REQ_MINIFICATION.equals(fromPage)) {%>
+		<% if (FrameworkConstants.REQ_MINIFICATION.equals(fromPage)) { %>
 			$('#browseSelectedLocation').hide();
 			$('#compressName').show();
 			$('#compressNameLbl').show();
 		<% } else { %>
-		$('#compressName').hide();
-		$('#compressNameLbl').hide();
+			$('#compressName').hide();
+			$('#compressNameLbl').hide();
+		<% } %>
+		
+		<% if ("package".equals(fromPage)) { %>
+			$('#browseSelectedLocation').hide();
 		<% } %>
 	});
+	
+	//To uncheck the files that are selected in the directories other than the current directory
+	function uncheckOthrDirFiles() {
+		var selectedDir = $(".selectedFolder").attr("directory");
+		$("input[name=filesToMinify]:checked").each(function() {
+			var selectedVal = $(this).val();
+			if (selectedDir != undefined && !isBlank(selectedDir)) {
+				var lwrSelectedVal = selectedVal.toLowerCase();
+				var lwrSelectedDir = selectedDir.toLowerCase();
+				if (!lwrSelectedVal.startsWith(lwrSelectedDir)) {
+					$(this).attr("checked", false);
+				}
+			}
+		});
+	}
 </script>

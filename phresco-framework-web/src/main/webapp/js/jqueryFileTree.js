@@ -68,13 +68,14 @@ if(jQuery) (function($){
 			if( o.fileOrFolder == undefined ) o.fileOrFolder = 'all';
 			if( o.minifiedFiles == undefined ) o.minifiedFiles = '';
 			if( o.from == undefined ) o.from = '';
+			var rootDirectory = o.root;
 			$(this).each( function() {
 				
 				function showTree(c, t, fileTypes, fileOrFolder, from, minifiedFiles) {
 					$(c).addClass('wait');
 					$(".jqueryFileTree.start").remove();
 					// posting values to jqueryFileTree.jsp
-					$.post(o.script, { dir: t , restrictFileTypes: fileTypes, filesOrFolders: fileOrFolder, fromPage: from, minifiedFilesList : minifiedFiles}, function(data) {
+					$.post(o.script, { dir: t , restrictFileTypes: fileTypes, filesOrFolders: fileOrFolder, rootDir: rootDirectory, fromPage: from, minifiedFilesList : minifiedFiles}, function(data) {
 						$(c).find('.start').html('');
 						$(c).removeClass('wait').append(data);
 						if( o.root == t ) $(c).find('UL:hidden').show(); else $(c).find('UL:hidden').slideDown({ duration: o.expandSpeed, easing: o.expandEasing });
@@ -84,7 +85,9 @@ if(jQuery) (function($){
 				
 				function bindTree(t, fileOrFolder) {
 					$(t).find('LI A').bind(o.folderEvent, function() {
+						$('LI A').removeClass("selectedFolder");//To remove the background of the previously selected folder
 						if( $(this).parent().hasClass('directory') ) {
+							$(this).addClass("selectedFolder");//To set the background of the currently selected folder
 							if( $(this).parent().hasClass('collapsed') ) {
 								// Expand
 								if( !o.multiFolder ) {

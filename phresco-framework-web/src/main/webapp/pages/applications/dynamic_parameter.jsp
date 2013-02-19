@@ -317,6 +317,11 @@
 	%>
 					<%= dynamicPageTemplate %>
 	<% 
+				} else if (FrameworkConstants.TYPE_PACKAGE_FILE_BROWSE.equalsIgnoreCase(parameter.getType())) {
+				    StringTemplate template = frameworkUtil.constructFileBrowseForPackage(parameterModel);
+    %>
+    				<%= template %>
+    <%
 				}
 	%>
 			<script type="text/javascript">
@@ -372,35 +377,47 @@
 	function buildValidateSuccess(lclURL, lclReaderSession) {
 		url = lclURL;
 		readerSession = lclReaderSession;
-		checkForConfig();
-	}
-	
-	function checkForConfig() {
-		loadContent('checkForConfiguration', $("#generateBuildForm"), '', getBasicParams(), true, true);
+		successEnvValidation();
 	}
 	
 	function successEnvValidation(data) {
-		if(data.hasError == true) {
-			showError(data);
-		} else {
-			$('.build_cmd_div').css("display", "block");
-			$("#console_div").empty();
-			//showParentPage();
-			if(url == "build") {
-				$("#popupPage").modal('hide');
-				$("#warningmsg").show();
-				$("#console_div").html("Generating build...");
-			} else if(url == "deploy") {
-				$("#popupPage").modal('hide');
-				$("#console_div").html("Deploying project...");
+		$('.build_cmd_div').css("display", "block");
+		$("#console_div").empty();
+		var params = getBasicParams();
+		if(url == "build") {
+			var fileOrFolders = [];
+			var targetFolders = [];
+			$('input[name=selectedFileOrFolder]').each(function(i) {
+				fileOrFolders.push($(this).val());
+			});
+			
+			$('input[name=targetFolder]').each(function(i) {
+				targetFolders.push($(this).val());
+			});
+			
+			var selectedFiles = [];
+			for (i in targetFolders) {
+				if ((!isBlank(targetFolders[i]) && isBlank(fileOrFolders[i])) || 
+						(!isBlank(fileOrFolders[i]) && isBlank(targetFolders[i]))
+						|| (!isBlank(targetFolders[i]) && !isBlank(fileOrFolders[i]))) {
+					selectedFiles.push(targetFolders[i] + "#FILESEP#" + fileOrFolders[i]);
+				}
 			}
-			performUrlActions(url, readerSession);
+			params = params.concat("&selectedFiles=");
+			params = params.concat(selectedFiles.join("#SEP#"));
+			
+			enableDivCtrls($('#packageFileBrowseControl :input'));
+			$("#popupPage").modal('hide');
+			$("#warningmsg").show();
+			$("#console_div").html("Generating build...");
+		} else if(url == "deploy") {
+			$("#popupPage").modal('hide');
+			$("#console_div").html("Deploying project...");
 		}
+		readerHandlerSubmit(url, '<%= appId %>', readerSession, $("#generateBuildForm"), true, params, $("#console_div"));
 	}
 	
-	function performUrlActions(url, actionType) {
-		readerHandlerSubmit(url, '<%= appId %>', actionType, $("#generateBuildForm"), true, getBasicParams(), $("#console_div"));
-	}
+	
 	
 	function dependancyChckBoxEvent(obj, currentParamKey, showHideFlag) {
 		selectBoxOnChangeEvent(obj, currentParamKey, showHideFlag);
@@ -567,11 +584,24 @@
 	function browseFiles(obj) {
 		$('#popupPage').modal('hide');
 		var fileTypes = $(obj).attr("fileTypes");
-		var params = "";
-		params = params.concat("&fileType=");
-		params = params.concat(fileTypes);
-		params = params.concat("&fileOrFolder=All");
-		additionalPopup('openBrowseFileTree', 'Browse', 'jstd', '', '', params, true);
+		var params = "fileOrFolder=All";
+		if (fileTypes != undefined && !isBlank(fileTypes)) {
+			params = params.concat("&fileType=");
+			params = params.concat(fileTypes);
+		}
+		var okUrl = "jstd";
+		var fromPage = $(obj).attr("fromPage");
+		if (fromPage != undefined && !isBlank(fromPage) && fromPage == "package") {
+			params = params.concat("&fromPage=");
+			params = params.concat(fromPage);
+			okUrl = fromPage;
+			$('input[name=selectedFileOrFolder]').each(function() {
+				$(this).removeClass('currentTextBox');
+			});
+			$(obj).closest('td').prev('td').find('input').addClass('currentTextBox');
+		}
+		
+		additionalPopup('openBrowseFileTree', 'Browse', okUrl, '', '', params, true);
 	}
 
 	//To add the contexts and the details in the performance test

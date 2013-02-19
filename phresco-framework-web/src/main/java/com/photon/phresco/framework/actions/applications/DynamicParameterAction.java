@@ -850,6 +850,7 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 		} else {
 			setReqAttribute(REQ_PROJECT_LOCATION, getAppDirectoryPath(applicationInfo).replace(File.separator, FORWARD_SLASH));
 		}
+		setReqAttribute(REQ_FROM, getReqParameter(REQ_FROM_PAGE));
 		
 		return SUCCESS;
 	}
