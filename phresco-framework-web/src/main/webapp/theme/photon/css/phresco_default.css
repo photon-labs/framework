@@ -6421,10 +6421,15 @@ color: #313131;
 
 .customer_select_div .dd-selected-text {
 	padding-left: 0px !important;
+	color: #000000;
 }
 
 .customer_select_div .dd-option-text {
 	padding-left: 7px !important;
+}
+
+.customer_select_div .dd-option-selected .dd-option-text {
+	color: #000000;
 }
 
 .mapHeading {
@@ -6477,4 +6482,34 @@ color: #313131;
 
 .package-file-browse-tbl {
 	width: 84%;
+	margin-left: 16%;
+}
+
+#packageFileBrowseControl .headerDiv {
+	width: 92%;
+}
+
+.bldBrowseFileLeftDiv {
+   float: left;
+   width: 92%;
+}
+
+.bldBrowseFileRightDiv {
+  float: right;
+    margin-top: 9px;
+    width: 8%;
+    left: 10px;
+    position: relative;
+}
+
+.bldBrowseFileRightDiv img:nth-child(2) {
+	margin-left: 5px;
+}
+
+#packageFileBrowseControl .headerDiv .header-background tr th {
+	padding: 8px 18px;
+}
+
+#packageFileBrowseControl .headerDiv .header-background tr th:first-child {
+	width: 122px;
 }

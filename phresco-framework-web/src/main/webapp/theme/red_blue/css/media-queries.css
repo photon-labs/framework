@@ -25,9 +25,10 @@ Width <= 1024
 		margin: -10px 0px !important;
 	}
 	div.site_report {
-		height: 70%;
-	    position: absolute;
-	    width: 74%;
+		height: 65%;
+		position: absolute;
+		width: 93%;
+		margin-left: 6px;
 	}
 	
 	.content_adder {
@@ -989,9 +990,10 @@ Width >= 1152 and < 1280
 @media screen and (min-width : 1152px) and (max-width : 1279px) {
 	
 	div.site_report {
-	    height: 80%;
-	    position: absolute;
-	    width: 78%;
+	    height: 70%;
+		position: absolute;
+		width: 92%;
+		margin-left: 6px;
 	}
 	
 	.content_adder {
@@ -1341,9 +1343,10 @@ Width <= 1280 and height <= 800
 @media screen and (min-width : 1280px) and (max-height : 800px) {
 	
 	div.site_report {
-	    height: 78%;
-	    position: absolute;
-	    width: 80%;
+	    height: 66%;
+		position: absolute;
+		width: 93%;
+		margin-left: 6px;
 	}
 	
 	.formClass {
@@ -1805,9 +1808,10 @@ Width >= 1280 and height >= 800
 @media screen and (min-width : 1280px) and (min-height : 801px) {
 	
 	div.site_report {
-	    height: 83%;
-	    position: absolute;
-	    width: 80%;
+	    height: 74%;
+		position: absolute;
+		width: 92%;
+		margin-left: 6px;
 	}
 	
 	.formClass {
@@ -2212,9 +2216,10 @@ Width > 1280 and <= 1360
 @media screen and (min-width : 1281px) and (max-width : 1360px) {
 	
 	div.site_report {
-		height: 77%;
+		height: 65%;
 		position: absolute;
-		width: 78%;
+		width: 93%;
+		margin-left: 6px;
 	}
 	
 	#container {
@@ -2671,9 +2676,10 @@ Width > 1360 and <= 1440
 @media only screen and (min-width : 1361px) and (max-width : 1440px) {
 	
 	div.site_report {
-		height: 79%;
+		height: 70%;
 		position: absolute;
-		width: 81%;
+		width: 92%;
+		margin-left: 6px;
 	}
 	
 	#container {
@@ -3047,9 +3053,10 @@ Width > 1441 and <= 1600
 *************************************************************************************/
 @media only screen and (min-width : 1441px) and (max-width : 1600px) {
 	div.site_report {
-		height: 81%;
+		height: 70%;
 		position: absolute;
-		width: 83.5%;
+		width: 92%;
+		margin-left: 6px;
 	}
 	
 	/* header starts */
