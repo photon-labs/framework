@@ -6121,6 +6121,36 @@ ul#testmenu {
 
 .package-file-browse-tbl {
 	width: 84%;
+	margin-left: 16%;
+}
+
+#packageFileBrowseControl .headerDiv {
+	width: 92%;
+}
+
+.bldBrowseFileLeftDiv {
+   float: left;
+   width: 92%;
+}
+
+.bldBrowseFileRightDiv {
+  float: right;
+    margin-top: 9px;
+    width: 8%;
+    left: 10px;
+    position: relative;
+}
+
+.bldBrowseFileRightDiv img:nth-child(2) {
+	margin-left: 5px;
+}
+
+#packageFileBrowseControl .headerDiv .header-background tr th {
+	padding: 8px 18px;
+}
+
+#packageFileBrowseControl .headerDiv .header-background tr th:first-child {
+	width: 122px;
 }
 
 .scrollpanel_inner img {

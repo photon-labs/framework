@@ -851,28 +851,33 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     
     private static String constructTable() {
         StringBuilder sb = new StringBuilder()
+        .append("<div class='headerDiv'>")
         .append("<table align='center' class='package-file-browse-tbl'>")
         .append("<thead class='header-background'>")
         .append("<tr class='borderForLoad'>")
         .append("<th class='borderForLoad mapHeading'>Target Folder</th>")
         .append("<th class='borderForLoad mapHeading'>File/Folder</th>")
-        .append("<th class='borderForLoad mapHeading'>$th3$</th>")
-        .append("<th class='borderForLoad mapHeading'>$th4$</th>")
-        .append("<th class='borderForLoad mapHeading'>$th5$</th>")
-        .append("</tr></thead>")
+        .append("</tr></thead></table>")
+        .append("</div>")
+        .append("<div class='bldBrowseFilePrntDiv'>")
+        .append("<div class='bldBrowseFileDiv'>")
+        .append("<div class='bldBrowseFileLeftDiv'>")
+        .append("<table align='center' class='package-file-browse-tbl'>")
         .append("<tbody id='propTempTbodyForHeader'>")
         .append("<tr>")
         .append("<td class='popuptable'>$td1$</td>")
         .append("<td class='popuptable'>$td2$</td>")
         .append("<td class='popuptable'>$td3$</td>")
-        .append("<td class='popuptable'>")
-        .append("<a><img class='add imagealign' src='images/icons/add_icon.png' onclick='addRow(this);'></a></td>")
-        .append("</tr></tbody></table>");
+        .append("</tr></tbody></table></div>")
+        .append("<div class='bldBrowseFileRightDiv'>")
+        .append("<img class='imagealign add_icon' src='images/icons/add_icon.png' onclick='addRowInPackageBrowse(this);'>")
+        .append("<img class='imagealign hideContent minus_icon' src='images/icons/minus_icon.png' onclick='removeRowInPackageBrowse(this);'>")
+        .append("</div><div style='clear:both;'></div></div></div>");
 
         return sb.toString();
     }
     
-    private static String constructInputElement() {
+	private static String constructInputElement() {
         StringBuilder sb = new StringBuilder("<input type='text' name='$name$' class='$class$' $disabled$ />");
         return sb.toString();
     }

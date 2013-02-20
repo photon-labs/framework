@@ -32,6 +32,7 @@
 
 	<!-- commons.js -->
 	<script type="text/javascript" src="js/common.js"></script>
+	<script type="text/javascript" src="js/jquery.activity-indicator-1.0.0.js"></script>
 
 	<link rel="stylesheet" href="css/bootstrap.css">
 	<link type="text/css" rel="stylesheet" href="theme/photon/css/phresco_default.css" id="phresco">
