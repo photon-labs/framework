@@ -42,6 +42,8 @@ public interface FrameworkConstants {
     
     String JAVASCRIPT = "javascript";
     String APP_INFO = "appInfo";
+    String APP_SEPERATOR = "#APPSEP#";
+    String VERSION_SEPERATOR = "#VSEP#";
 
     String LBL = "lbl.";
     String LBL_BTN = "lbl.btn";
@@ -110,6 +112,7 @@ public interface FrameworkConstants {
     String REQ_PROJECT_LAYERS = "layers";
     String REQ_PARAM_NAME_TECH_GROUP = "TechGroup";
     String REQ_PARAM_NAME_TECHNOLOGY = "Technology";
+    String REQ_APP_LAYER_INFOS = "appLayerInfos";
     String REQ_PARAM_NAME_TECH__ID = "techId";
     String REQ_PARAM_NAME_VERSION = "Version";
     String REQ_PARAM_NAME_PHONE = "Phone";
@@ -126,6 +129,7 @@ public interface FrameworkConstants {
     String TECH_DATABASE_ID = "config_Database";
     String TECH_WEBSERVICE_ID = "config_WebService";
     String REQ_HUB_STATUS = "hubStatus";
+    String REQ_TEST_AGAINST_VALUES = "testAgainstParameter";
     
     String REQ_KEY = "key";
     String REQ_VALUE = "value";

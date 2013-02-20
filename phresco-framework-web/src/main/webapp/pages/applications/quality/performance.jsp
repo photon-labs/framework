@@ -17,22 +17,29 @@
   limitations under the License.
   ###
   --%>
+
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.io.File"%>
+<%@ page import="java.util.List"%>
 
 <%@ page import="org.apache.commons.lang.StringUtils"%>
+<%@ page import="org.apache.commons.collections.CollectionUtils"%>
 
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 <%@ page import="com.photon.phresco.util.TechnologyTypes" %>
 <%@ page import="com.photon.phresco.util.Constants"%>
+<%@ page import="com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter"%>
+<%@ page import="com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues"%>
+<%@ page import="com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value"%>
 
 <%
 	ApplicationInfo appInfo = (ApplicationInfo)request.getAttribute(FrameworkConstants.REQ_APPINFO);
 	String appId = appInfo.getId();
 	String appDirName = appInfo.getAppDirName();
 	String techId = appInfo.getTechInfo().getId();
+	List<Value>  testAgainstPsblVals= (List<Value>) request.getAttribute(FrameworkConstants.REQ_TEST_AGAINST_VALUES);
 	String showDevice = (String) request.getAttribute(FrameworkConstants.SHOW_ANDROID_DEVICE);
 	String path = (String) request.getAttribute(FrameworkConstants.PATH);
 %>
@@ -72,12 +79,14 @@
 			<a href="#" id="copyPath"><img src="images/icons/copy-path.png" title="Copy path"/></a>
 		</div>&nbsp;
 		
-	    <strong id="lblType" class="noTestAvail"><s:text name="label.types"/></strong>&nbsp;
-    	<select class="noTestAvail" id="testResultsType" name="testResultsType" style="width :100px;"> 
-			<option value="server" ><s:text name="label.application.server"/></option>
-			<option value="database" ><s:text name="label.database"/></option>
-			<option value="webservice" ><s:text name="label.webservices"/></option>
-		</select>&nbsp;
+		<% if (CollectionUtils.isNotEmpty(testAgainstPsblVals)) { %>
+		    <strong id="lblType" class="noTestAvail"><s:text name="label.types"/></strong>&nbsp;
+	    	<select class="noTestAvail" id="testResultsType" name="testResultsType" style="width :100px;"> 
+				<% for (Value testAgainstPsblVal : testAgainstPsblVals) { %>
+					<option value='<%= testAgainstPsblVal.getKey() %>'><%= testAgainstPsblVal.getValue() %></option>
+				<% } %>	    	
+			</select>&nbsp;
+		<% } %>
 		
     	<strong class="noTestAvail" id="testResultFileTitle"><s:text name="label.test.results"/></strong> 
         <select  class="noTestAvail" id="testResultFile" name="testResultFile">
@@ -130,17 +139,6 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-			<%
-    		boolean isAndroid = false;
-			if (StringUtils.isNotEmpty(showDevice) && Boolean.parseBoolean(showDevice)) {
-				isAndroid = true;	
-			}	
-			%>
-			var themeselected = localStorage["color"];
-				if(<%= isAndroid %> && $(window).width() <= 1024) {
-				    $('.perTabularView').css("margin","40px 50px -15px 0"); 
-				}
-				
     	showLoadingIcon();
     	isResultFileAvailbale();//Check for the performance test result
     	
@@ -180,10 +178,6 @@
 			performanceTestResults($("#testResultsType").val());
 		});
 		
-        <%-- $('#testbtn').click(function() {
-			generateJmeter('<%= testType %>');
-        }); --%>
-        
         $('#openFolder').click(function() {
             openFolder('<%= appDirName %><%= path %>');
         });
@@ -199,13 +193,6 @@
             params = params.concat('<%= FrameworkConstants.PERFORMACE %>');
     		yesnoPopup('showGeneratePdfPopup', '<s:text name="lbl.app.generatereport"/>', 'printAsPdf','<s:text name="lbl.app.generate"/>', '', params);
 	    });
-        
-        <%-- $('#closeGenerateTest, #closeGenTest').click(function() {
-        	changeTesting('<%= testType %>');
-        	$(".wel_come").show().css("display","none");
-        	$('#popup_div').css("display","none");
-    		$('#popup_div').empty();
-    	}); --%>
         
     });
    

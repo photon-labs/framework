@@ -50,6 +50,7 @@ import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
 import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.framework.commons.FrameworkUtil;
+import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.Utility;
 
 /**
@@ -159,6 +160,7 @@ public class Projects extends FrameworkBaseAction {
 					break;
 				}
 			}
+        	setReqAttribute(REQ_FROM, FROM_PAGE_ADD);
         } catch (Exception e) {
             if (s_debugEnabled) {
                 S_LOGGER.error("Entered into catch block of Projects.addProject()" + FrameworkUtil.getStackTraceAsString(e));
@@ -284,6 +286,7 @@ public class Projects extends FrameworkBaseAction {
 					break;
 				}
 			}
+        	setReqAttribute(REQ_FROM, FROM_PAGE_EDIT);
 			setReqAttribute(REQ_PROJECT, projectInfo);
 		} catch (PhrescoException e) {
 			// TODO Auto-generated catch block
@@ -370,8 +373,10 @@ public class Projects extends FrameworkBaseAction {
             for (String layerId : getLayer()) {
                 if (LAYER_MOB_ID.equals(layerId)) {
                     getMobileLayerAppInfos(appInfos, layerId);
+                } else if (LAYER_APP_ID.equals(layerId)) { 
+                    getAppLayerAppInfos(appInfos, layerId);
                 } else {
-                    getOtherLayerAppInfos(appInfos, layerId);
+                	getWebLayerAppInfos(appInfos, layerId);
                 }
             }
         }
@@ -414,15 +419,36 @@ public class Projects extends FrameworkBaseAction {
      * @return
      * @throws PhrescoException
      */
-    private List<ApplicationInfo> getOtherLayerAppInfos(List<ApplicationInfo> appInfos, String layerId) throws PhrescoException {
-        String techId = getReqParameter(layerId + REQ_PARAM_NAME_TECHNOLOGY);
+    private List<ApplicationInfo> getAppLayerAppInfos(List<ApplicationInfo> appInfos, String layerId) throws PhrescoException {
+    	String applnLayerInfo = getReqParameter(REQ_APP_LAYER_INFOS);
+    	if (StringUtils.isNotEmpty(applnLayerInfo)) {
+    		String[] split = applnLayerInfo.split(Constants.STR_COMMA);//Split multiple app layer app infos by comma
+         	for (String string : split) {//iterate 
+     			String[] techInfos = string.split(APP_SEPERATOR);
+     			String[] techIdVersion = techInfos[1].split(VERSION_SEPERATOR);
+     			String applnCode = techInfos[0];//app code
+     			String techId = techIdVersion[0];//tech id
+     			String techVersion = techIdVersion[1];//tech version
+     			Technology technology = getServiceManager().getTechnology(techId);
+     	        String techName = technology.getName().replaceAll("\\s", "").toLowerCase();
+     	        String dirName = applnCode + HYPHEN + techName;
+     	        String projectName = getProjectName() + HYPHEN + techName;
+     	        appInfos.add(getAppInfo(projectName, dirName, techId, techVersion, false, false, technology.getAppTypeId()));
+     		}
+    	}
+
+     	return appInfos;
+    }
+    
+    private List<ApplicationInfo> getWebLayerAppInfos(List<ApplicationInfo> appInfos, String layerId) throws PhrescoException {
+    	String techId = getReqParameter(layerId + REQ_PARAM_NAME_TECHNOLOGY);
         String version = getReqParameter(layerId + REQ_PARAM_NAME_VERSION);
         Technology technology = getServiceManager().getTechnology(techId);
         String techName = technology.getName().replaceAll("\\s", "").toLowerCase();
         String dirName = getProjectCode() + HYPHEN + techName;
         String projectName = getProjectName() + HYPHEN + techName;
         appInfos.add(getAppInfo(projectName, dirName, techId, version, false, false, technology.getAppTypeId()));
-
+		
         return appInfos;
     }
 
@@ -513,7 +539,7 @@ public class Projects extends FrameworkBaseAction {
         if (s_debugEnabled) {
             S_LOGGER.debug("Entering Method  Applications.validateForm()");
         }
-
+        
         boolean hasError = false;
         if (FROM_PAGE_ADD.equals(getFromTab())) {
   	       	//check project name is already exists or not
@@ -550,12 +576,6 @@ public class Projects extends FrameworkBaseAction {
   	        if (CollectionUtils.isNotEmpty(getLayer())) {
   	            for (String layerId : getLayer()) {
   	                String techId = getReqParameter(layerId + REQ_PARAM_NAME_TECHNOLOGY);
-  	                if (LAYER_APP_ID.equals(layerId)) {//for application layer
-  	                    if (StringUtils.isEmpty(techId)) {
-  	                        setAppTechError(getText(ERROR_TECHNOLOGY));
-  	                        hasError = true;
-  	                    }
-  	                }
   	                if (LAYER_WEB_ID.equals(layerId)) {//for web layer
   	                    if (StringUtils.isEmpty(techId)) {
   	                        setWebTechError(getText(ERROR_TECHNOLOGY));

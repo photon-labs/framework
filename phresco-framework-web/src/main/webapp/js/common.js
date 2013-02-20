@@ -193,7 +193,15 @@ function validate(pageUrl, form, tag, additionalParams, progressText, disabledDi
 			if (data.errorFound != undefined && data.errorFound) {
 				findError(data);
 			} else {
-				clickSave(pageUrl, params, tag, progressText);
+				if (pageUrl == "createProject" || pageUrl == "updateProject") {
+					var redirect = validateProjLayers();
+					if (redirect) {
+						clickSave(pageUrl, params, tag, progressText);
+					}
+				} else {
+					clickSave(pageUrl, params, tag, progressText);
+				}
+				
 			}
 		}
 	});

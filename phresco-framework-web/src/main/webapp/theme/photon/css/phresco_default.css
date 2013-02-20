@@ -6019,6 +6019,7 @@ ul#display-inline-block-example li:nth-child(4) select, ul#display-inline-block-
 	width:99.6% !important;
 }
 .scrollpanel_inner img {
+	cursor: pointer;
 	margin-right:6px;
 	margin-bottom:6px;
 }

@@ -1774,3 +1774,12 @@ background-color: #ffffff;
 .updateMsg {
 	float: left !important;
 }
+
+.appLayerAdd {
+	margin-left:8px !important; 
+	margin-top:4px !important;
+}
+
+.appLayerProjName {
+	width: 150px !important;
+}

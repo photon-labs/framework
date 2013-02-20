@@ -6122,3 +6122,7 @@ ul#testmenu {
 .package-file-browse-tbl {
 	width: 84%;
 }
+
+.scrollpanel_inner img {
+	cursor: pointer;
+}	

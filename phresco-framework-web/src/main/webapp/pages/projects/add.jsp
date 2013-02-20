@@ -33,7 +33,8 @@
 <%@ page import="com.photon.phresco.commons.model.ProjectInfo"%>
 
 <%
-	ProjectInfo projectInfo = (ProjectInfo)request.getAttribute(FrameworkConstants.REQ_PROJECT);
+	ProjectInfo projectInfo = (ProjectInfo) request.getAttribute(FrameworkConstants.REQ_PROJECT);
+	String fromPage = (String) request.getAttribute(FrameworkConstants.REQ_FROM);
 	List<ApplicationType> layers = (List<ApplicationType>) request.getAttribute(FrameworkConstants.REQ_PROJECT_LAYERS);
 	List<TechnologyGroup> appLayerTechGroups = null;
 	List<TechnologyGroup> webLayerTechGroups = null;
@@ -53,6 +54,7 @@
 		        appLayerId = layer.getId();
 		        appLayerName = layer.getName();
 		        appLayerTechGroups = layer.getTechGroups();
+		        
 		        hasAppLayer = true;
 		    }
 			if (FrameworkConstants.LAYER_WEB_ID.equals(layer.getId())) {
@@ -195,90 +197,184 @@
 				}
 		 	}
 		%>
-		<% if (hasAppLayer) { %>
-			<div class="theme_accordion_container">
-				<section class="accordion_panel_wid">
-					<div class="accordion_panel_inner">
-						<section class="lft_menus_container" id="appSec">
-							<span class="siteaccordion closereg" id="appLayerControl" onclick="accordionClick(this, $('input[value=<%= appLayerId %>]'));">
-								<span class="mandatory">
-									<% if (layers.size() == 1) { %>
-										*&nbsp;
-									<% } %>
-									<input type="checkbox" id="checkAll1" class="accordianChkBox" name="layer" value="<%= appLayerId %>" <%= chckdStr%> <%= disblStr%>/>
-									<a id="appLayerHeading" class="vAlignSub"><%= appLayerName %></a>
-									<p id="appLayerError" class="accordion-error-txt"></p>
+		<% if (hasAppLayer) {
+			if (FrameworkConstants.ADD.equalsIgnoreCase(fromPage)) {//for add page		
+		%>
+				<div class="theme_accordion_container">
+					<section class="accordion_panel_wid">
+						<div class="accordion_panel_inner">
+							<section class="lft_menus_container" id="appSec">
+								<span class="siteaccordion closereg" id="appLayerControl" onclick="accordionClick(this, $('input[value=<%= appLayerId %>]'));">
+									<span class="mandatory">
+										<% if (layers.size() == 1) { %>
+											*&nbsp;
+										<% } %>
+										<input type="checkbox" id="checkAll1" class="accordianChkBox appLayerChkBox" name="layer" value="<%= appLayerId %>" <%= chckdStr%> <%= disblStr%>/>
+										<a id="appLayerHeading" class="vAlignSub"><%= appLayerName %></a>
+										<p id="appLayerError" class="accordion-error-txt"></p>
+									</span>
 								</span>
-							</span>
-							<div class="mfbox siteinnertooltiptxt hideContent">
-								<div class="scrollpanel">
-									<section class="scrollpanel_inner">
-										<div class="control-group">
-											<label class="accordion-control-label labelbold"><s:text name='lbl.technology'/></label>
-											<div class="controls">
-												<select class="input-medium" name="<%= appLayerId + FrameworkConstants.REQ_PARAM_NAME_TECHNOLOGY %>" <%= disblStr %> onchange="getAppLayerTechVersions('<%= appLayerId %>', this);">
-													<option value="" selected disabled><s:text name='lbl.default.opt.select.tech'/></option>
-													<% String techIdVersion = "";
-														String singleTechVersion = "";
-														if (CollectionUtils.isNotEmpty(appLayerTechGroups)) {
-															for (TechnologyGroup appLayerTechGroup : appLayerTechGroups) {
-															    List<TechnologyInfo> techInfos = appLayerTechGroup.getTechInfos();
-															    if (CollectionUtils.isNotEmpty(techInfos)) {
-															        for (TechnologyInfo techInfo : techInfos) {
-															        	String slctStr = "";
-															        	List<String> techVersions = techInfo.getTechVersions();
-															        	//If Layer contains single technology and version ,it should be selected as default
-													        			if (appLayerTechGroups.size() == 1 && techInfos.size() == 1 && techVersions.size() == 1 && layers.size() == 1) {
-																    		slctStr = "selected";
-																    		singleTechVersion = techVersions.get(0);
-													        			}
-															        	if (CollectionUtils.isNotEmpty(appInfos)) {
-																        	for (ApplicationInfo appInfo: appInfos) {
-																        		if (techInfo.getId().equals(appInfo.getTechInfo().getId())){
-																        			slctStr = "selected";
-																        			techIdVersion = appInfo.getTechInfo().getVersion();
-																        		}
-																        	}
-															        	}
-													%>
-																		<option additionalParam="<%= appLayerTechGroup.getId() %>" value="<%= techInfo.getId()%>" <%= slctStr%>><%= techInfo.getName() %></option>
-													<%
-															        }
-													%>
-																<script type="text/javascript">
-																	<% if (appLayerTechGroups.size() == 1 && techInfos.size() == 1 && StringUtils.isNotEmpty(singleTechVersion) && layers.size() == 1) { %>
-																		$('input[name="layer"]').attr("checked", true);
-																	<% } %>
-																</script>
-													<%															        
-															    }
-															}
-														}
-													%>
-												</select>
-											<%if (CollectionUtils.isNotEmpty(appInfos)) { %>
-												<select class="input-medium" name="<%= appLayerId %>Version" <%= disblStr %> >
-													<option value="" selected disabled><%= techIdVersion %></option>
-												</select>
-								        	<%	} else { %>
-												<select class="input-medium" name="<%= appLayerId %>Version" <%= disblStr %> >
-													<% if(StringUtils.isNotEmpty(singleTechVersion) ) { %>		    	
-															<option value="" selected disabled><%= singleTechVersion %></option>
-													<% } else { %>
-															<option value="" selected disabled><s:text name='lbl.default.opt.select.version'/></option>
-												<% } %>
-												</select>
-											<% } %>
+								<div class="mfbox siteinnertooltiptxt hideContent">
+									<div class="scrollpanel">
+										<section class="scrollpanel_inner" id="appLayerContent">
+										<div class="appLayerContents" style="height:33px;">
+											<div class="align-div-center">
+												<div class="align-in-row">
+													<label class="control-label autoWidth">
+														<s:text name='lbl.app.code' />
+													</label>
+													<input type="text" class="appLayerProjName" name="appLayerProjName" onblur="checkForApplnDuplicate(this);" temp="1" style="float:left">
+												</div>
+												<div class="align-in-row">
+													<label class="control-label autoWidth"><s:text name='lbl.technology'/></label>
+														<select class="input-medium" temp="1" id="1_App_Technology"  layer="<%= appLayerId %>" name="<%= appLayerId + FrameworkConstants.REQ_PARAM_NAME_TECHNOLOGY %>" <%= disblStr %> onchange="getAppLayerTechVersions(this);">
+															<option value="" selected disabled><s:text name='lbl.default.opt.select.tech'/></option>
+															<% String techIdVersion = "";
+																String singleTechVersion = "";
+																if (CollectionUtils.isNotEmpty(appLayerTechGroups)) {
+																	for (TechnologyGroup appLayerTechGroup : appLayerTechGroups) {
+																	    List<TechnologyInfo> techInfos = appLayerTechGroup.getTechInfos();
+																	    if (CollectionUtils.isNotEmpty(techInfos)) {
+																	        for (TechnologyInfo techInfo : techInfos) {
+																	        	String slctStr = "";
+																	        	List<String> techVersions = techInfo.getTechVersions();
+																	        	//If Layer contains single technology and version ,it should be selected as default
+															        			if (appLayerTechGroups.size() == 1 && techInfos.size() == 1 && techVersions.size() == 1 && layers.size() == 1) {
+																		    		slctStr = "selected";
+																		    		singleTechVersion = techVersions.get(0);
+															        			}
+																	        	if (CollectionUtils.isNotEmpty(appInfos)) {
+																		        	for (ApplicationInfo appInfo: appInfos) {
+																		        		if (techInfo.getId().equals(appInfo.getTechInfo().getId())){
+																		        			slctStr = "selected";
+																		        			techIdVersion = appInfo.getTechInfo().getVersion();
+																		        		}
+																		        	}
+																	        	}
+															%>
+																				<option additionalParam="<%= appLayerTechGroup.getId() %>" value="<%= techInfo.getId()%>" <%= slctStr%>><%= techInfo.getName() %></option>
+															<%
+																	        }
+															%>
+																		<script type="text/javascript">
+																			<% if (appLayerTechGroups.size() == 1 && techInfos.size() == 1 && StringUtils.isNotEmpty(singleTechVersion) && layers.size() == 1) { %>
+																				$('input[name="layer"]').attr("checked", true);
+																			<% } %>
+																		</script>
+															<%															        
+																	    }
+																	}
+																}
+															%>
+														</select>
+													</div>
+													<div class="float-left">
+														<label class="control-label autoWidth"><s:text name='lbl.version'/></label>
+														<%if (CollectionUtils.isNotEmpty(appInfos)) { %>
+															<select class="input-medium" id="1_App_Version" name="<%= appLayerId %>Version" <%= disblStr %> >
+																<option value="" selected disabled><%= techIdVersion %></option>
+															</select>
+											        	<%	} else { %>
+															<select class="input-medium" id="1_App_Version" name="<%= appLayerId %>Version" <%= disblStr %> >
+																<% if(StringUtils.isNotEmpty(singleTechVersion) ) { %>		    	
+																		<option value="" selected disabled><%= singleTechVersion %></option>
+																<% } else { %>
+																		<option value="" selected disabled><s:text name='lbl.default.opt.select.version'/></option>
+															<% } %>
+															</select>
+														<% } %>
+													</div>
+													<div class="float-left">
+														<img class="appLayerAdd imagealign" src="images/icons/add_icon.png" onclick="addAppLayer(this)">
+														<img id="deleteIcon" class="hideContent appLayerMinus imagealign" src="images/icons/minus_icon.png" onclick="removeAppLayer(this);">
+													</div>
+												</div>
 											</div>
-										</div>
-									</section>
+										</section>
+									</div>
 								</div>
-							</div>
-						</section>  
-					</div>
-				</section>
-			</div>
-		<% } %>
+							</section>  
+						</div>
+					</section>
+				</div>
+		<% 		} else {// for edit page
+						//used row count to update each row by its id
+		%>	
+					<div class="theme_accordion_container">
+					<section class="accordion_panel_wid">
+						<div class="accordion_panel_inner">
+							<section class="lft_menus_container" id="appSec">
+								<span class="siteaccordion closereg" id="appLayerControl" onclick="accordionClick(this, $('input[value=<%= appLayerId %>]'));">
+									<span class="mandatory">
+										<input type="checkbox" id="checkAll1" class="accordianChkBox appLayerChkBox" name="layer" value="<%= appLayerId %>" <%= chckdStr%> <%= disblStr%>/>
+										<a id="appLayerHeading" class="vAlignSub"><%= appLayerName %></a>
+										<p id="appLayerError" class="accordion-error-txt"></p>
+									</span>
+								</span>
+								<div class="mfbox siteinnertooltiptxt hideContent">
+									<div class="scrollpanel">
+										<section class="scrollpanel_inner" id="appLayerContent">
+											<%
+												if (CollectionUtils.isNotEmpty(appLayerTechGroups)) {
+													for (TechnologyGroup appLayerTechGroup : appLayerTechGroups) {
+													    List<TechnologyInfo> techInfos = appLayerTechGroup.getTechInfos();
+													    int rowCount = 1;
+													    for (ApplicationInfo appInfo : appInfos) {
+													    	String[] appCode = null;
+													    	String appTechId = "";
+													    	String appTechVersion = "";
+													    	String techName = "";
+															for (TechnologyInfo techInfo : techInfos) {
+																if (appInfo.getTechInfo().getId().equals(techInfo.getId())) {
+																	appTechId = appInfo.getTechInfo().getId();
+																	appCode = appInfo.getCode().split("-");
+																	appTechVersion = appInfo.getTechInfo().getVersion();
+																	techName = techInfo.getName();
+											%>
+																	<div class="appLayerContents" style="height:33px;">
+																		<div class="align-div-center">
+																			<div class="align-in-row">
+																				<label class="control-label autoWidth">
+																					<s:text name='lbl.app.code' />
+																				</label>
+																				<input type="text" class="appLayerProjName" name="appLayerProjName" onblur="checkForApplnDuplicate(this);" temp="<%= rowCount %>" value="<%= appCode[0] %>" style="float:left" disabled>
+																			</div>
+																			<div class="align-in-row">
+																				<label class="control-label autoWidth"><s:text name='lbl.technology'/></label>
+																				<select class="input-medium" temp="<%= rowCount %>" id="<%= rowCount %>_App_Technology"  layer="<%= appLayerId %>" name="<%= appLayerId + FrameworkConstants.REQ_PARAM_NAME_TECHNOLOGY %>" disabled selected onchange="getAppLayerTechVersions(this);">
+																					<option additionalParam="<%= appLayerTechGroup.getId() %>" value="<%= appTechId %>"><%= techName %></option>
+																				</select>
+																			</div>
+																			<div class="float-left">
+																				<label class="control-label autoWidth"><s:text name='lbl.version'/></label>
+																				<select class="input-medium" id="<%= rowCount %>_App_Version" name="<%= appLayerId %>Version" disabled selected>
+																					<option value="" selected disabled><%= appTechVersion %></option>
+																				</select>
+																			</div>
+																			<div class="float-left">
+																				<img class="appLayerAdd imagealign" src="images/icons/add_icon.png" onclick="addAppLayer(this)">
+																			</div>
+																		</div>
+																	</div>
+																	
+											<%						
+																	rowCount++;
+																}
+														    }
+													    }
+													}
+												}	
+											%>
+										</section>
+									</div>
+								</div>
+							</section>  
+						</div>
+					</section>
+				</div>	
+		<%		}
+			}
+		%>
 		<!-- Application layer accordion ends -->
 		
 		<!-- Web layer accordion starts -->
@@ -648,15 +744,58 @@
         	$(this).val(str);
 		});
 		
+		//To restrict the user in typing the special charaters in App code
+		$('input[name=appLayerProjName]').live('input propertychange', function(e) {
+			var str = $(this).val();
+			str = checkForSplChrExceptDot(str);
+			str = removeSpaces(str);
+        	$(this).val(str);
+		});	
+		
 		//Will be triggered when the create project button is clicked
 		$('#createProject').click(function() {
 			var params = $('#formCustomers').serialize();
+			
+			//To construct user selected app layer infos 
+			//Iterate each row and construct app layer infos 
+			var appLayerInfos = new Array();
+			if ($('input[value=app-layer]').is(':checked')) {//if applayer checkbox is checked
+				$('input[name=appLayerProjName]').each(function() {//iterate each row and construct params
+					var hold = $(this).attr("temp");
+					var appCode = $(this).val();
+					var techId = $('#'+hold+'_App_Technology').val();
+					var techVersion = $('#'+hold+'_App_Version').val();
+					appLayerInfos.push(appCode + "#APPSEP#" + techId + "#VSEP#" + techVersion);
+				});
+				params = params.concat("&appLayerInfos=");
+				params = params.concat(appLayerInfos);
+			}	
+			
 			validate('createProject', $('#formCreateProject'), $("#container"), params, '<s:text name='progress.txt.add.proj'/>');
 		});
 		
 		//Will be triggered when the update project button is clicked
 		$('#updateProject').click(function() {
 			var params = $('#formCustomers').serialize();
+			
+			//To construct user selected app layer infos 
+			//Iterate each row and construct app layer infos 
+			var appLayerInfos = new Array();
+			if ($('input[value=app-layer]').is(':checked')) {
+				$('input[name=appLayerProjName]').each(function() {
+					if (!$(this).prop('disabled')) {//To check for newly added app layer row
+						$('input[value=app-layer]').prop("disabled", false);//To enable applayer accordion check box if new row is added
+						var hold = $(this).attr("temp");
+						var appCode = $(this).val();
+						var techId = $('#'+hold+'_App_Technology').val();
+						var techVersion = $('#'+hold+'_App_Version').val();
+						appLayerInfos.push(appCode + "#APPSEP#" + techId + "#VSEP#" + techVersion);
+					}
+				});
+				params = params.concat("&appLayerInfos=");
+				params = params.concat(appLayerInfos);
+			}	
+			
 			validate('updateProject', $('#formCreateProject'), $("#container"), params, '<s:text name='progress.txt.update.proj'/>');
 		});
 			
@@ -766,11 +905,21 @@
 			params = params.concat("&" + techGroupId + "<%= FrameworkConstants.REQ_PARAM_NAME_TECHNOLOGY %>" + "=");
 			params = params.concat(techId);
 		}
-		loadContent("fetchTechVersions", $('#formCreateProject'), '', params, true, true);
+		
+		var pageUrl = "";
+		if (layerId == 'app-layer') {
+			//url for loading versions in app layer
+			pageUrl = "fetchTechVersions";
+		} else {
+			//url for loading versions in mobile layer
+			pageUrl = "fetchMobTechVersions";
+		}
+		loadContent(pageUrl, $('#formCreateProject'), '', params, true, true);
 	}
 	
-	function getAppLayerTechVersions(layerId, obj) {
-		var toBeFilledCtrlName = layerId + "Version";
+	function getAppLayerTechVersions(obj) {
+		var layerId = $(obj).attr("layer");
+		var toBeFilledCtrlName = $(obj).attr("temp") + "_App_Version";
 		var techGroupId = $('option:selected', obj).attr('additionalParam');
 		var techId = $(obj).val();
 		getTechVersions(layerId, techGroupId, toBeFilledCtrlName, techId);
@@ -790,8 +939,13 @@
 	//Success event functions
 	function successEvent(pageUrl, data) {
 		hideLoadingIcon();
-		//To fill the versions for the selected mobile technology
+		//To fill the versions for the selected app technology --- used select control's ID to update corresponding row
 		if (pageUrl == "fetchTechVersions") {
+			fillSelectbox($("select[id='"+ objName +"']"), data.versions, "No Versions available");
+		}
+		
+		//To fill the versions for the selected mobile technology
+		if (pageUrl == "fetchMobTechVersions") {
 			fillSelectbox($("select[name='"+ objName +"']"), data.versions, "No Versions available");
 		}
 		
@@ -808,5 +962,117 @@
 	function getWidgetVersions(obj, objectName) {
 		var id = $(obj).val();
 		fillSelectbox($("select[name='"+ objectName +"']"), map[id], "No Versions available");
+	}
+	
+	//Creats app layer row
+	var count = 1;
+	function addAppLayer(obj) {
+		var rowCount = "";
+		<% if (FrameworkConstants.ADD.equalsIgnoreCase(fromPage)) { %>
+			rowCount = count + 1;
+		<% } else { %>
+			rowCount = $(".appLayerProjName").size() + 1;
+		<% } %>
+		var applayer = '<%= appLayerId %>';
+		var newAppLayerRow = $(document.createElement('div')).attr("class", "appLayerContents").css("height","33px");
+		newAppLayerRow.html("<div class='align-div-center'><div class='align-in-row'><label class='control-label autoWidth'><s:text name='lbl.app.code' /></label>" + 
+							"<input type='text' class='appLayerProjName' onblur='checkForApplnDuplicate(this);' name='appLayerProjName' temp='"+rowCount+"' style='float:left'></div>" +
+							"<div class='align-in-row'><label class='control-label autoWidth'><s:text name='lbl.technology'/></label>" +
+							"<select class='input-medium' name='' temp='"+ rowCount +"' id='" + rowCount + "_App_Technology' layer='" + applayer + "' onchange='getAppLayerTechVersions(this);'>" +
+							"<option value='' selected disabled>Select Technology</option></select></div>" +
+							"<div class='float-left'><label class='control-label autoWidth'><s:text name='lbl.version'/></label>" +
+							"<select class='input-medium' name='Version' id='"+rowCount+"_App_Version'> <option value='' selected disabled>Select Version</option></select></div>" + 
+							"<div class='float-left'><img class='appLayerAdd imagealign'src='images/icons/add_icon.png' onclick='addAppLayer(this)'>" +
+							"<img id='deleteIcon' class='hideContent appLayerMinus imagealign' src='images/icons/minus_icon.png' style='margin-left: 5px;' onclick='removeAppLayer(this);'></div></div>");
+		newAppLayerRow.appendTo("#appLayerContent");
+		loadTechnology(rowCount);
+		enableDisableMinusBtn('appLayerAdd', 'appLayerMinus');
+		count++;
+	}
+	
+	function enableDisableMinusBtn(imgClass, minuImg) {
+		if ($('.'+imgClass).size() > 1) {
+			$('.' + minuImg).show();
+		} else {
+			$('.' + minuImg).hide();
+		}
+	}
+	
+	//load technology for new added app layer row
+	function loadTechnology(rowCount) {
+		<%
+		if (CollectionUtils.isNotEmpty(appLayerTechGroups)) {
+			for (TechnologyGroup appLayerTechGroup : appLayerTechGroups) {
+			    List<TechnologyInfo> techInfos = appLayerTechGroup.getTechInfos();
+			    if (CollectionUtils.isNotEmpty(techInfos)) {
+			    	for (TechnologyInfo techInfo : techInfos) {
+		%>
+						var techGrpId = '<%= appLayerTechGroup.getId() %>';
+						var techId = '<%= techInfo.getId() %>';
+						var techName = '<%= techInfo.getName() %>'; 
+						$("#" + rowCount +"_App_Technology").append('<option additionalParam="'+techGrpId+'" value="'+ techId +'">'+techName+'</option>');
+		<%
+			    	}
+			    }
+			}   
+		}
+		%>
+	}
+	
+	//removes app layer row
+	function removeAppLayer(obj) {
+		$(obj).parent().parent().parent().remove();
+		enableDisableMinusBtn('appLayerAdd', 'appLayerMinus');
+	}
+	
+	function validateProjLayers() {
+		var redirect = true;
+		//To hide project name, code, version error msg
+		hideError($("#projectNameControl"), $("#projectNameError"));
+		hideError($("#projectCodeControl"), $("#projectCodeError"));
+		hideError($("#projectVersionControl"), $("#projectVersionError"));
+		
+		//Check for app layer details empty validation 
+		if ($('input[value=app-layer]').is(':checked')) {
+			//To hide moblayer, web layer accordian error msg
+			hideErrorInAccordion($("#webLayerControl"), $('#webLayerHeading'), $("#webLayerError"));
+			hideErrorInAccordion($("#mobileLayerControl"), $('#mobileLayerHeading'), $("#mobileLayerError"));
+			$('.appLayerProjName').each(function() {
+				var tempAtr = $(this).attr("temp");
+				if (isBlank($(this).val())) {//app code empty validation 
+					$(this).focus();
+					showErrorInAccordion($("#appLayerControl"), $('#appLayerHeading'), $("#appLayerError"), '<s:text name='err.msg.app.code.missing'/>');
+					redirect = false;
+					return false;
+				}
+				if (isBlank($("#"+ tempAtr +"_App_Technology").val())) {// technology validation
+					$("#"+ tempAtr +"_App_Technology").focus();
+					showErrorInAccordion($("#appLayerControl"), $('#appLayerHeading'), $("#appLayerError"), '<s:text name='err.msg.select.technology'/>');
+					redirect = false;
+					return false;
+				}
+			});
+		}
+			
+		return redirect;
+	}
+	
+	//Check for App Layer - app code duplication
+	function checkForApplnDuplicate(obj) {
+		var inputClass = $(obj).attr("class");
+		var currentVal = $(obj).val();
+		$('.'+inputClass).each(function() {
+			if (currentVal != "" && !isBlank(currentVal)) {
+				//To match app code with current row with other rows, and check for duplication
+				if ($(obj).attr("temp") !== $(this).attr("temp") && currentVal === $(this).val()) {
+					$(obj).val("");
+					$(obj).focus();
+					showErrorInAccordion($("#appLayerControl"), $('#appLayerHeading'), $("#appLayerError"), '<s:text name='err.msg.app.code.unique'/>');
+					return false;
+				} else {
+					hideErrorInAccordion($("#appLayerControl"), $('#appLayerHeading'), $("#appLayerError"));
+				}
+			} 
+		});
 	}
 </script>

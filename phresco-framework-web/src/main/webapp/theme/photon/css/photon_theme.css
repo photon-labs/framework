@@ -1510,3 +1510,12 @@ label {
 .sonar_report {
 	box-shadow : 0 0 2px 2px #ccc;
 }
+
+.appLayerAdd {
+	margin-left:8px !important; 
+	margin-top:4px !important;
+}
+
+.appLayerProjName {
+	width: 150px !important;
+}	

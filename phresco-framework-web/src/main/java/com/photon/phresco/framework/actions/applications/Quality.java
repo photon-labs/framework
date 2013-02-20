@@ -96,6 +96,8 @@ import com.photon.phresco.framework.model.TestCaseFailure;
 import com.photon.phresco.framework.model.TestResult;
 import com.photon.phresco.framework.model.TestSuite;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
+import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues;
+import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
 import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.HubConfiguration;
@@ -844,6 +846,11 @@ public class Quality extends DynamicParameterAction implements Constants {
         try {
             ApplicationInfo appInfo = getApplicationInfo();
             FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+            MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_PERFORMANCE_TEST)));
+            Parameter testAgainstParameter = mojo.getParameter(PHASE_PERFORMANCE_TEST, REQ_TEST_AGAINST);
+            if (testAgainstParameter != null && TYPE_LIST.equalsIgnoreCase(testAgainstParameter.getType())) {
+            	setReqAttribute(REQ_TEST_AGAINST_VALUES, testAgainstParameter.getPossibleValues().getValue());
+            }
             String performanceTestShowDevice = frameworkUtil.getPerformanceTestShowDevice(appInfo);
             setReqAttribute(SHOW_ANDROID_DEVICE, performanceTestShowDevice);
             setReqAttribute(PATH, frameworkUtil.getPerformanceTestDir(appInfo));
@@ -1614,17 +1621,25 @@ public class Quality extends DynamicParameterAction implements Constants {
             if (s_debugEnabled) {
                 S_LOGGER.debug("test type performance test Report directory " + performanceReportDir);
             }
-
+            
+          //test type will be available 
             if (StringUtils.isNotEmpty(performanceReportDir) && StringUtils.isNotEmpty(getTestResultsType())) {
                 Pattern p = Pattern.compile(TEST_DIRECTORY);
                 Matcher matcher = p.matcher(performanceReportDir);
                 performanceReportDir = matcher.replaceAll(getTestResultsType());
                 sb.append(performanceReportDir);
             }
-
+            
+            //for android - test type will not be available --- to get device id from result xml
+            String performanceTestShowDevice = frameworkUtil.getPerformanceTestShowDevice(getApplicationInfo());
+            if (StringUtils.isNotEmpty(performanceTestShowDevice) && Boolean.parseBoolean(performanceTestShowDevice)) {
+            	sb.append(performanceReportDir);
+            }
+            
             if (s_debugEnabled) {
                 S_LOGGER.debug("test type performance test Report directory & Type " + sb.toString() + " Type " + getTestResultsType());
             }
+            
 
             File file = new File(sb.toString());
             File[] resultFiles = file.listFiles(new XmlNameFileFilter(FILE_EXTENSION_XML));
