@@ -160,7 +160,6 @@ public class Projects extends FrameworkBaseAction {
 					break;
 				}
 			}
-        	setReqAttribute(REQ_FROM, FROM_PAGE_ADD);
         } catch (Exception e) {
             if (s_debugEnabled) {
                 S_LOGGER.error("Entered into catch block of Projects.addProject()" + FrameworkUtil.getStackTraceAsString(e));
@@ -286,7 +285,6 @@ public class Projects extends FrameworkBaseAction {
 					break;
 				}
 			}
-        	setReqAttribute(REQ_FROM, FROM_PAGE_EDIT);
 			setReqAttribute(REQ_PROJECT, projectInfo);
 		} catch (PhrescoException e) {
 			// TODO Auto-generated catch block
