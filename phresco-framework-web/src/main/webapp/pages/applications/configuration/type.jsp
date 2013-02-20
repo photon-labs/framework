@@ -566,7 +566,7 @@
 	function callCron(obj) {
 		var param = "schedulerKey="
 		param = param.concat($(obj).attr("connector"));
-		yesnoPopup('calcCron', 'Cron Expression', 'Copy', 'Copy', '', param);
+		yesnoPopup('calcCron', 'Cron Expression', 'Copy', 'Ok', '', param);
 	}
 	
 	function popupOnOk(self) {
