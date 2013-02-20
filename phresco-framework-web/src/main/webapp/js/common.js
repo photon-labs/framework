@@ -121,10 +121,10 @@ function loadContent(pageUrl, form, tag, additionalParams, callSuccessEvent, aja
 		data : params,
 		type : "POST",
 		cache : false,
+		async: ajaxCallType,
 		success : function(data) {
 			loadData(data, tag, pageUrl, callSuccessEvent, callbackFunction);
 		},
-		async: ajaxCallType
 	});
 }
 
@@ -224,9 +224,9 @@ function validateDynamicParam(successUrl, title, okUrl, okLabel, form, goal, nee
 			hidePopuploadingIcon();
 			if (data.paramaterAvailable != undefined && data.paramaterAvailable) {
 				if (successUrl === "showStartHubPopUp") {
-					loadContent("checkForHub", '', '', getBasicParams(), true, '', '');
+					loadContent("checkForHub", '', '', getBasicParams(), true, true, '');
 				} else if (successUrl === "showStartNodePopUp") {
-					loadContent("checkForNode", '', '', params, true, '', '');
+					loadContent("checkForNode", '', '', params, true, true, '');
 				} else {
 					//showPopuploadingIcon();
 					yesnoPopup(successUrl, title, okUrl, okLabel, form, additionalParam);
