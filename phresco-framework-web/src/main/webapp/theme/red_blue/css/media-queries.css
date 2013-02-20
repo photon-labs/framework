@@ -454,7 +454,7 @@ Width <= 1024
 	}
 	
 	.align-div-center {
-		width: 85%;
+		width: 88%;
 	}
 }
 
@@ -1331,7 +1331,7 @@ Width >= 1152 and < 1280
 	}
 	
 	.align-div-center {
-		width: 70%;
+		width: 80%;
 	}
 }
 
@@ -1795,7 +1795,7 @@ Width <= 1280 and height <= 800
 	}
 	
 	.align-div-center {
-		width: 63%;
+		width: 71%;
 	}
 }
 
@@ -2202,7 +2202,7 @@ Width >= 1280 and height >= 800
 	}
 	
 	.align-div-center {
-		width: 70%;
+		width: 75%;
 	}
 }
 
@@ -2661,7 +2661,7 @@ Width > 1280 and <= 1360
 	}
 	
 	.align-div-center {
-		width: 59%;
+		width: 68%;
 	}
 }
 
@@ -3409,6 +3409,6 @@ Width > 1441 and <= 1600
 	}
 	
 	.align-div-center {
-		width: 51%;
+		width: 57%;
 	}
 }

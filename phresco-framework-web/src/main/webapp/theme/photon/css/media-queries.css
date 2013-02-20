@@ -468,7 +468,7 @@ Width <= 1024
 	}
 	
 	.align-div-center {
-		width: 78%;
+		width: 88%;
 	}
 
 	.tabs li label {
@@ -1549,7 +1549,7 @@ Width >= 1152 and < 1280
 	}
 	
 	.align-div-center {
-		width: 70%;
+		width: 74%;
 	}
 	#subcontainer {
 		width: 80%;
@@ -2075,7 +2075,7 @@ Width <= 1280 and height <= 800
 	}
 	
 	.align-div-center {
-		width: 63%;
+		width: 69%;
 	}
 
 	#subcontainer {
@@ -2976,7 +2976,7 @@ Width > 1280 and <= 1360
 	}
 	
 	.align-div-center {
-		width: 59%;
+		width: 67%;
 	}
 
 	@-moz-document url-prefix() {
@@ -3817,7 +3817,7 @@ Width > 1441 and <= 1600
 	}
 	
 	.align-div-center {
-		width: 51%;
+		width: 56%;
 	}
 	.customer_name {
 		right: 1.5% !important;
