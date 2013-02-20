@@ -87,7 +87,10 @@ $myObject:{ obj |
 	function dbContextUrls() {
 		var dbContextUrls = [];
 		jQuery('.perDBContextUrlFieldset').each(function() {
-			var jsonObject = jQuery(this).toJSON();
+			var jsonObject = {};
+			jsonObject.name = jQuery(this).find(jQuery("input[name=name]")).val();
+			jsonObject.queryType = jQuery(this).find(jQuery("select[name=queryType]")).val();
+			jsonObject.query = jQuery(this).find(jQuery("textarea[name=query]")).val(); 
 			var dbContexts = JSON.stringify(jsonObject);
 			dbContextUrls.push(dbContexts);
 		});

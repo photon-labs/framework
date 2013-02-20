@@ -115,7 +115,12 @@ $myObject:{ obj |
 		var contexts = "";
 		jQuery('.perContextUrlFieldset').each(function() {
 			var headers = [];
-			var jsonObject = jQuery(this).toJSON();
+			var jsonObject = {};
+			jsonObject.name = jQuery(this).find(jQuery("input[name=name]")).val();
+			jsonObject.context = jQuery(this).find(jQuery("input[name=context]")).val();
+			jsonObject.contextType = jQuery(this).find(jQuery("select[name=contextType]")).val();
+			jsonObject.encodingType = jQuery(this).find(jQuery("select[name=encodingType]")).val();
+			jsonObject.contextPostData = jQuery(this).find(jQuery("textarea[name=contextPostData]")).val(); 
 			jQuery(this).find(jQuery('.headers')).each(function() {
 				var key = jQuery(this).find(jQuery("input[name=headerKey]")).val();
 				var value = jQuery(this).find(jQuery("input[name=headerValue]")).val();
