@@ -277,7 +277,7 @@
 											        	<%	} else { %>
 															<select class="input-medium" id="1_App_Version" name="<%= appLayerId %>Version" <%= disblStr %> >
 																<% if(StringUtils.isNotEmpty(singleTechVersion) ) { %>		    	
-																		<option value="" selected disabled><%= singleTechVersion %></option>
+																		<option value="<%= singleTechVersion %>" selected><%= singleTechVersion %></option>
 																<% } else { %>
 																		<option value="" selected disabled><s:text name='lbl.default.opt.select.version'/></option>
 															<% } %>
@@ -679,7 +679,7 @@
 				params = params.concat("&appLayerInfos=");
 				params = params.concat(appLayerInfos);
 			}	
-			
+
 			validate('createProject', $('#formCreateProject'), $("#container"), params, '<s:text name='progress.txt.add.proj'/>');
 		});
 	});
