@@ -149,7 +149,7 @@
 									<%
  										if (optionIds != null && optionIds.contains(FrameworkConstants.PROCESS_BUILD)) {
 									%>
-												<a class="processBuild" href="#" additionalParam=buildNumber=<%= buildInfo.getBuildNo() %>&appDirectory=<%= appDirectory %>><img src="images/icons/commit_icon.png" title="process build"/>
+												<a class="processBuild" href="#" additionalParam=buildNumber=<%= buildInfo.getBuildNo() %>&appDirectory=<%= appDirectory %>><img src="images/icons/commit_icon.png" title="Check-in build"/>
 		                                    	</a>
 									<% 
  			                            }
