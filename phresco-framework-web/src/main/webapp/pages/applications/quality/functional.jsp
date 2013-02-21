@@ -37,6 +37,9 @@
 	String path = (String) request.getAttribute(FrameworkConstants.PATH);
 	String functioanlTestTool = (String) request.getAttribute(FrameworkConstants.REQ_FUNCTEST_SELENIUM_TOOL);
 	List<String> projectModules = (List<String>) request.getAttribute(FrameworkConstants.REQ_PROJECT_MODULES);
+	boolean hasFunctionalLogFile = (Boolean) request.getAttribute(FrameworkConstants.REQ_HAS_FUNCTIONAL_LOG_FILE);
+	String customerId = (String) request.getAttribute(FrameworkConstants.REQ_CUSTOMER_ID);
+	String projectId = (String) request.getAttribute(FrameworkConstants.REQ_PROJECT_ID);
 %>
 
 <form autocomplete="off" class="marginBottomZero" id="form_test">
@@ -48,6 +51,14 @@
 		<% } %> --%>
 		
 		<div class="icon_fun_div printAsPdf">
+			<% if (hasFunctionalLogFile) { %>
+				<a href="<s:url action='downloadFunctionalLogFile'>
+					<s:param name="appId"><%= appId %></s:param>
+					<s:param name="customerId"><%= customerId %></s:param>
+					<s:param name="projectId"><%= projectId %></s:param>
+					</s:url>"><img src="images/icons/download.png" title="Download Log File" />
+				</a>
+			<% } %>
 			<a href="#" id="pdfPopup" style="display: none;"><img id="pdfCreation" src="images/icons/print_pdf.png" title="generate pdf" style="height: 20px; width: 20px;"/></a>
 			<a href="#" id="openFolder"><img id="folderIcon" src="images/icons/open-folder.png" title="Open folder" /></a>
 			<a href="#" id="copyPath"><img src="images/icons/copy-path.png" title="Copy path" /></a>

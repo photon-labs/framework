@@ -17,7 +17,6 @@
   limitations under the License.
   ###
   --%>
-<%@page import="java.util.Collections"%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.util.List"%>

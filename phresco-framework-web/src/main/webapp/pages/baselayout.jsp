@@ -323,11 +323,8 @@
 			
 			</div>
 			<div class="modal-footer">
-<%-- 				<a href="#" class="btn btn-primary" data-dismiss="modal" id="popupCancel"><s:text name='lbl.btn.cancel'/></a> --%>
 				<input type="button" class="btn btn-primary" id="popupCancel" value="<s:text name='lbl.btn.cancel'/>" data-dismiss="modal" href="#"/>
-<%-- 				<a href="#" class="btn btn-primary popupOk" id="" onClick="popupOnOk(this);" ><s:text name='lbl.btn.ok'/></a> --%>
 				<input type="button" class="btn btn-primary popupOk" id="" onClick="popupOnOk(this);" value="<s:text name='lbl.btn.ok'/>" href="#"/>
-<%-- 				<a href="#" class="btn btn-primary popupClose" data-dismiss="modal" id="" onClick="popupOnClose(this);"><s:text name='lbl.btn.close'/></a> --%>
 				<input type="button" class="btn btn-primary popupClose" id="" onClick="popupOnClose(this);" value="<s:text name='lbl.btn.close'/>" data-dismiss="modal" href="#"/>
 				<div class="popuploadingIcon" id="popuploadingIcon"></div>
 				<div id="errMsg" class="envErrMsg yesNoPopupErr"></div>
@@ -410,7 +407,6 @@
 		
 		showLoadingIcon();
 		clickMenu($("a[name='headerMenu']"), $("#container"), $('#formCustomers'));
-// 		loadContent("home", '', $("#container"), '', '', true);
 		activateMenu($("#home"));
 				
 		$('select[name=customerSelect]').ddslick({
@@ -424,7 +420,7 @@
 			copyToClipboard($('#popup_progress_div').text().replace("%", ""));
 		});
 		
-		 function copyToClipboard(data) {
+		function copyToClipboard(data) {
 	        var params = "copyToClipboard=";
 	        params = params.concat(data);
 	        loadContent('copyToClipboard', '', '', params, '', true, '');
@@ -438,11 +434,7 @@
        				doPageLoad($(this), $('a[name="headerMenu"]'));
        			}
        		});
-       			
-       		/* $("a[name='headerMenu']").click(function() {
-       			doPageLoad($(this), $('a[name="headerMenu"]'));
-       		}); */
-        }
+       	}
         
         function doPageLoad(currentObj, allObjects) {
         	showLoadingIcon();
@@ -450,7 +442,7 @@
     		inActivateAllMenu(allObjects);
     		activateMenu(currentObj);
     		loadContent(currentObj.attr('id'), $('#formCustomers'), $("#container"), '', '', true);
-   			if(selectedId == "<%= ServiceConstants.DEFAULT_CUSTOMER_NAME %>") {
+   			if (selectedId == "<%= ServiceConstants.DEFAULT_CUSTOMER_NAME %>") {
    				applyTheme();
    			} else {
    				getLogoImgUrl();

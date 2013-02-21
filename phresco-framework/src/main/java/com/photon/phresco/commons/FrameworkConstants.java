@@ -847,6 +847,7 @@ public interface FrameworkConstants {
     String REQ_FEATURE_NAME = "featureName";
     String REQ_FEATURE_NAMES = "featureNames";
     String REQ_HAS_CUSTOM_PROPERTY = "hasCustomProperty";
+    String REQ_HAS_FUNCTIONAL_LOG_FILE = "hasFunctionalLogFile";
     
     String CONFIG_FEATURES = "config_Features";
     String CONFIG_COMPONENTS = "config_Components";
@@ -1581,6 +1582,7 @@ public interface FrameworkConstants {
 		String EXCEPTION_FEATURE_MANIFEST_NOT_AVAILABLE = "excep.hdr.feature.manifest.not.available";
 		String EXCEPTION_FEATURE_CONFIGURATION = "excep.hdr.feature.configuration";
 		String EXCEPTION_MANDAOTRY_MSG = "except.mandatory.msg";
+		String EXCEPTION_LOG_FILE_DOWNLOAD_NOT_AVAILABLE = "excep.hdr.func.log.download.not.available";
 		
 		/*****************************
 	     * Success Action Messages

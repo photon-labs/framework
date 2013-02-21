@@ -610,6 +610,15 @@
         	<result name="functional">/pages/applications/quality/functional.jsp</result>
 		</action>
 		
+		<action name="downloadFunctionalLogFile" method="downloadFunctionalLogFile" class="com.photon.phresco.framework.actions.applications.Quality">
+            <result name="success" type="stream">
+                <param name="contentType">application/octet-stream</param>
+                <param name="inputName">fileInputStream</param>
+                <param name="contentDisposition">attachment;filename="${fileName}"</param>
+                <param name="bufferSize">1024</param>
+            </result>
+        </action>
+		
 		<action name="fetchFunctionalTestSuites" method="fetchFunctionalTestSuites" class="com.photon.phresco.framework.actions.applications.Quality">
         	<result type="json" />
         </action>

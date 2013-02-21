@@ -96,8 +96,6 @@ import com.photon.phresco.framework.model.TestCaseFailure;
 import com.photon.phresco.framework.model.TestResult;
 import com.photon.phresco.framework.model.TestSuite;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
-import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues;
-import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
 import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.HubConfiguration;
@@ -373,6 +371,14 @@ public class Quality extends DynamicParameterAction implements Constants {
                     setReqAttribute(REQ_HUB_STATUS, isConnectionAlive);
                 }
             }
+            
+            boolean hasFunctionalLogFile = false;
+            if (new File(getFunctionalLogFilePath()).exists()) {
+                hasFunctionalLogFile = true;
+            }
+            setReqAttribute(REQ_HAS_FUNCTIONAL_LOG_FILE, hasFunctionalLogFile);
+            setReqAttribute(REQ_PROJECT_ID, getProjectId());
+            setReqAttribute(REQ_CUSTOMER_ID, getCustomerId());
         } catch (PhrescoException e) {
             if (s_debugEnabled) {
                 S_LOGGER.error("Entered into catch block of Quality.functional()" + FrameworkUtil.getStackTraceAsString(e));
@@ -387,6 +393,40 @@ public class Quality extends DynamicParameterAction implements Constants {
 
         return APP_FUNCTIONAL_TEST;
     }
+	
+	public String downloadFunctionalLogFile() throws PhrescoException {
+        if (s_debugEnabled) {
+            S_LOGGER.debug("Entering Method Quality.downloadFuncLogFile()");
+        }
+        
+        try {
+            String logFilePath = getFunctionalLogFilePath();
+            fileInputStream = new FileInputStream(new File(logFilePath));
+            fileName = logFilePath.substring(logFilePath.lastIndexOf("/") + 1, logFilePath.length());
+        } catch (Exception e) {
+            if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Quality.downloadFunctionalLogFile()"+ FrameworkUtil.getStackTraceAsString(e));
+            }
+            return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_LOG_FILE_DOWNLOAD_NOT_AVAILABLE));
+        }
+        
+        return SUCCESS;
+    }
+	
+	private String getFunctionalLogFilePath() throws PhrescoException {
+	    StringBuilder builder = new StringBuilder();
+	    try {
+	        FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+	        String logFilePath = frameworkUtil.getLogFilePath(getApplicationInfo());
+	        builder.append(getApplicationHome());
+	        builder.append(logFilePath);
+	    } catch (PhrescoException e) {
+	        throw new PhrescoException(e);
+	    } catch (PhrescoPomException e) {
+	        throw new PhrescoException(e);
+	    }
+	    return builder.toString();
+	}
 	
 	public String fetchFunctionalTestSuites() {
         if (s_debugEnabled) {
