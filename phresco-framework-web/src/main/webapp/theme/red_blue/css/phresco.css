@@ -3349,10 +3349,6 @@ fieldset {
 div.lgnBtnLabel {
     margin-left: 0;
 }
-div.lgnError{
-    margin-top: 7px;
-    width: 185px;
-}
 
 /*** login ends ***/
 
@@ -6156,3 +6152,167 @@ ul#testmenu {
 .scrollpanel_inner img {
 	cursor: pointer;
 }	
+
+
+/* New Login Page CSS */
+
+
+.lgnBg {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    background: #f6f6f6; /* Old browsers */
+    background-attachment: fixed;
+}
+
+.clear {
+    clear: both;
+}
+
+.logincontainer {
+  position: absolute;
+  top: 46%;
+  left: 0px;
+  width: 100%;
+  height: 1px;
+  overflow: visible;
+}
+
+.logindiv {
+  width: 460px;
+  height: 220px;
+  margin-left: -200px;  /***  width / 2   ***/
+  position: absolute;
+  top: -100px;          /***  height / 2   ***/
+  left: 50%;
+  -webkit-box-shadow: 0px 0px 10px 5px #e1e1e1;
+  box-shadow: 0px 0px 10px 5px #e1e1e1; 
+  background: #ffffff;
+}
+
+.loginhead {
+	height: 56px;
+}
+
+.loginhead img {
+    float: left;
+    margin: 15px 0 15px 10px;
+}
+
+.loginhead .alert {
+    float: right;
+    color: #ff0808;
+    font-weight: bold;
+    font-size: 12px;
+    margin: 19px 10px 14px 0;
+    padding: 0 10px;
+    border-radius: 6px;
+}
+
+.loginhead .alert .close {
+    top: 0px;
+    right: -8px;
+    color: #ff0808;
+    opacity: 1;
+}
+
+.loginfoot label{
+    float: left;
+    margin-left: 20px;
+    width: 100px;
+    font-size: 12px;
+    color: #000000;
+}
+
+.loginfoot span{
+    float: right;
+    margin-right: 20px;
+}
+
+.loginuser {
+    width: 480px;
+    height: 35px;
+    margin-left: -11px;
+    margin-bottom: 30px;
+    border: 1px solid #e3e3e3;
+    background: #ffffff;
+}
+
+ .loginpassword {
+    width: 480px;
+    height: 35px;
+    margin-left: -11px;
+    margin-bottom: 15px;
+    border: 1px solid #e3e3e3;
+    background: #ffffff;
+ }
+
+.loginimg {
+    width: 55px;
+    height: 31px;
+    background: #ededed;
+    float: left;
+    margin: 2px;
+}
+
+.loginimg img {
+    margin: 9px 18px;
+}
+
+.logintext {
+    width: 420px;
+    height: 40px;
+    float: right;
+}
+
+.logintext input:-webkit-autofill {
+    background-color: #ffffff;
+}
+
+.logintext input {
+    width: 400px !important;
+    padding: 0px 10px !important;
+    height: 35px;
+    border: 0px !important;
+    border-radius: 0px;
+    box-shadow: none;
+    margin-top: -14px;
+}
+
+.loginbutton, .loginbutton:hover {
+    background: #777777; /* Old browsers */
+    background: -moz-linear-gradient(top, #777777 0%, #3a3a3a 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#777777), color-stop(100%,#3a3a3a)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top, #777777 0%,#3a3a3a 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top, #777777 0%,#3a3a3a 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top, #777777 0%,#3a3a3a 100%); /* IE10+ */
+    background: linear-gradient(to bottom, #777777 0%,#3a3a3a 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#777777', endColorstr='#3a3a3a',GradientType=0 ); /* IE6-9 */
+    color: #fff;
+    border: 1px solid #383838;
+    font-size: 12px;
+    font-weight: bold;
+    text-shadow: none !important;
+}
+
+.leftslideone {
+    position: absolute;
+    top: 93px;
+    left: -10px;
+}
+
+.leftslidetwo {
+    position: absolute;
+    top: 160px;
+    left: -10px;
+}
+
+.rightslideone {
+    position: absolute;
+    top: 93px;
+    right: -10px;
+}
+
+.rightslidetwo {
+    position: absolute;
+    top: 160px;
+    right: -10px;
+}

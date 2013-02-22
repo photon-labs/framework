@@ -933,13 +933,6 @@ img.phtaccinno {
     padding: 0 24% 0 0;
 }
 
-div.lgnError {
-    color: #000000;
-   /* margin-left: 70px;
-    margin-top: -20px;*/
-    
-}
-
 h1 small, h2 small, h3 small, h4 small, h5 small, h6 small {
     color: #FFFFFF;
 }
@@ -1535,15 +1528,6 @@ table tr {
 	color:red;
 }
 
-#logimErrMesg {
-	color: #1AA6DB;
-    float: left;
-    font-weight: bold;
-    padding-bottom: 9px;
-    width: 195%;
-    margin-top: -8px;
-}
-
 #reportMsg {
     color:green;
 }
@@ -1681,4 +1665,23 @@ table tr {
 
 .appLayerProjName {
 	width: 150px !important;
+}
+
+/* test table header fixes*/
+
+.table_div_unit  .header-background{
+	height: 0px !important;
+	background: none;
+}
+.table_div_unit  table thead tr{
+	height: 30px;
+	color: #000000;
+    background: #ffffff; /* Old browsers */
+    background: -moz-linear-gradient(top,  #ffffff 0%, #e0e0e0 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#e0e0e0)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #ffffff 0%,#e0e0e0 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #ffffff 0%,#e0e0e0 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #ffffff 0%,#e0e0e0 100%); /* IE10+ */
+    background: linear-gradient(top,  #ffffff 0%,#e0e0e0 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#e0e0e0',GradientType=0 ); /* IE6-9 */	
 }

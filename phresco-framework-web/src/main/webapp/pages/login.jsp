@@ -77,39 +77,41 @@ $(document).ready(function() {
 </script>
 </head>
 <body class="lgnBg">
-      <div class="logoimg">
-          <img class="logoimage" src="theme/photon/images/photon_phresco_logo.png">
-      </div>
-      <div class="innoimg">
-           <img class="phtaccinno" border="0" alt="" onClick="window.open('http://www.photon.in','_blank');" src="">
-      </div>
-	 
-      <div class="lgnintro_container lgnContainer">
-	        <div class="welcome" id="welcome">
-                  <img class="welcomeimg" src="theme/photon/images/welcome_photon.png">
-             </div> 
-	    <div class="lgnintro_container_left">
-	    	<h1 class="lp_align"></h1>    
-			<%
-			     String loginError = (String)request.getAttribute(FrameworkConstants.REQ_LOGIN_ERROR);
-			%>
-			&nbsp;&nbsp;&nbsp;
-			<div id="logimErrMesg" class="lgnError"><%= StringUtils.isEmpty(loginError) ? "" : loginError %></div>
-			
-            <form name="login" action="login" method="post" class="marginBottomZero">
-				<!--  UserName starts -->
-				<div class="clearfix" >
+    <div class="logincontainer">
+		<div class="logindiv">
+			<div class="loginhead">
+				<span><img src="theme/photon/images/userlogin.png"></img></span>
+				<div class="alert alert-error">
+					<%
+			     	String loginError = (String)request.getAttribute(FrameworkConstants.REQ_LOGIN_ERROR);
+					%>
+					<div id="logimErrMesg" class="lgnError"><%= StringUtils.isEmpty(loginError) ? "" : loginError %></div>
+				</div>
+				<div class="clear"></div>
+			</div>
+		<form name="login" action="login" method="post" class="marginBottomZero">
+			<img class="leftslideone" src="theme/photon/images/leftslide.png"></img>
+			<div class="loginuser">
+				<div class="loginimg">
+					<img src="theme/photon/images/user.png"></img>
+				</div>
+				<div class="logintext clearfix">	
 				     <label class="labellg" for="xlInput" class="lgnfieldLb1">Username:</label>
 						<%
 							String userName = (String)request.getAttribute(FrameworkConstants.REQ_USER_NAME);
 						%>
 				    <input class="xlarge settings_text lgnField" id="xlInput" id="username" name="username" type="text" 
 				     	autofocus maxlength="63" value="<%= StringUtils.isNotEmpty(userName) ? userName : "" %>" title="63 Characters only" placeholder="Enter the username" />
-			    </div>
-				<!--  UserName ends -->
-		              
-	            <!--  Password starts -->
-	            <div class="clearfix" >
+				</div>
+				<div class="clear"></div>
+			</div>
+			<img class="rightslideone" src="theme/photon/images/rightslide.png"></img>
+			<img class="leftslidetwo" src="theme/photon/images/leftslide.png"></img>
+			<div class="loginpassword">
+				<div class="loginimg">
+					<img src="theme/photon/images/password.png"></img>
+				</div>
+				<div class="logintext clearfix">	
 	                <label class="labellg" for="xlInput" class="lgnFieldLbl">Password:</label>
 		                <%
 							String password = (String)request.getAttribute(FrameworkConstants.REQ_PASSWORD);
@@ -122,40 +124,28 @@ $(document).ready(function() {
 								$('input[name="password"]').focus();
 						<% } %>	
 					</script>
-	            </div>
-	            <!--  Password ends -->
-		              
-                <!-- Remember me check starts  -->
-		        <div class="login_check">
+				</div>
+				<div class="clear"></div>
+			</div>
+			<img class="rightslidetwo" src="theme/photon/images/rightslide.png"></img>
+			<div class="loginfoot">
+				<label class="checkbox login_check">
 	                <input id="rememberMe" type="checkbox" name="rememberme">
 	                <labelrem>Remember me</labelrem>
-                </div>
-                <!-- Remember me check ends  -->
-                
-	        	<div class="clearfix">
+				</label>
+				<span class="clearfix ">
 	                <div class="input lgnBtnLabel">
-	                    <input type="submit" value="Login" class="btn btn-primary lgnBtn" id="Login">
+	                    <input type="submit" value="Login" class="btn loginbutton" id="Login">
 	            	</div>
-	            </div>
+	            </span>
 	            <input type="hidden" name="loginFirst" value="false"/>
-			</form>
-	    </div>
-</div>
-	
-	<div class="footer_div login">
-	   <footer>
-	      <div class="copyrit">
-	          &copy; 2013.Photon Infotech Pvt Ltd. |
-	       <a href="http://www.photon.in"> www.photon.in</a>
-	     </div>
-	   </footer>
-	</div>
-	
+			</div>	
+		</form>
+		</div>	
+	</div>	
 </body>
 </html>
 <script type="text/javascript">
-//$(document).ready(function() {
-//});
 	ReadCookie();
 	function ReadCookie()
 	{
