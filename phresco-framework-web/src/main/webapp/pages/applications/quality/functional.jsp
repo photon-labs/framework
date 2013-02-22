@@ -56,7 +56,7 @@
 					<s:param name="appId"><%= appId %></s:param>
 					<s:param name="customerId"><%= customerId %></s:param>
 					<s:param name="projectId"><%= projectId %></s:param>
-					</s:url>"><img src="images/icons/download.png" title="Download Log File" />
+					</s:url>"><img src="images/icons/download.png" title="<s:text name='title.download.log'/>"/>
 				</a>
 			<% } %>
 			<a href="#" id="pdfPopup" style="display: none;"><img id="pdfCreation" src="images/icons/print_pdf.png" title="generate pdf" style="height: 20px; width: 20px;"/></a>
