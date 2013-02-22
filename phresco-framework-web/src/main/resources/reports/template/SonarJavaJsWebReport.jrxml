@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PhrescoXmlReport" pageWidth="555" pageHeight="842" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="83"/>
 	<style name="SJJWRTitle"/>
 	<style name="SJJWRTitleRect"/>
 	<style name="SJJWRTitleRectLogo"/>
@@ -37,7 +37,6 @@
 	<field name="majorViolations" class="java.lang.String"/>
 	<field name="minorViolations" class="java.lang.String"/>
 	<field name="infoViolations" class="java.lang.String"/>
-	<field name="weightedViolations" class="java.lang.String"/>
 	<field name="statements" class="java.lang.String"/>
 	<field name="accessors" class="java.lang.String"/>
 	<field name="publicDocumentedApiDensity" class="java.lang.String"/>
@@ -56,6 +55,7 @@
 	<field name="commentBlankLines" class="java.lang.String"/>
 	<field name="coverage" class="java.lang.String"/>
 	<field name="uncoveredLines" class="java.lang.String"/>
+	<field name="violations" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -75,7 +75,7 @@
 					<textElement>
 						<font fontName="Times New Roman" size="12" isBold="true" isItalic="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{reportType}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{reportType}]]></textFieldExpression>
 				</textField>
 			</frame>
 		</band>
@@ -109,7 +109,7 @@
 					<textElement>
 						<font fontName="Times New Roman"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{nonCommentLinesOfCode}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{nonCommentLinesOfCode}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="15" y="48" width="140" height="20"/>
@@ -123,7 +123,7 @@
 					<textElement>
 						<font fontName="Times New Roman"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{lines}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{lines}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="15" y="68" width="140" height="20"/>
@@ -137,7 +137,7 @@
 					<textElement>
 						<font fontName="Times New Roman"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{files}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{files}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="15" y="88" width="140" height="19"/>
@@ -151,7 +151,7 @@
 					<textElement>
 						<font fontName="Times New Roman"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{commentLinesDensity}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{commentLinesDensity}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="15" y="108" width="140" height="19"/>
@@ -165,7 +165,7 @@
 					<textElement>
 						<font fontName="Times New Roman"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{commentLines}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{commentLines}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="283" y="30" width="150" height="19"/>
@@ -179,7 +179,7 @@
 					<textElement>
 						<font fontName="Times New Roman"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{duplicatedLinesDensity}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{duplicatedLinesDensity}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="283" y="50" width="150" height="20"/>
@@ -193,7 +193,7 @@
 					<textElement>
 						<font fontName="Times New Roman"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{duplicatedLines}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{duplicatedLines}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="283" y="70" width="150" height="19"/>
@@ -207,7 +207,7 @@
 					<textElement>
 						<font fontName="Times New Roman"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{duplicatedBlocks}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{duplicatedBlocks}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="283" y="10" width="100" height="18" forecolor="#000000"/>
@@ -228,7 +228,7 @@
 					<textElement>
 						<font fontName="Times New Roman"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{duplicatedFiles}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{duplicatedFiles}]]></textFieldExpression>
 				</textField>
 				<rectangle>
 					<reportElement x="0" y="134" width="555" height="70"/>
@@ -255,7 +255,7 @@
 					<textElement>
 						<font fontName="Times New Roman"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{functionComplexity}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{functionComplexity}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="15" y="180" width="140" height="19"/>
@@ -269,7 +269,7 @@
 					<textElement>
 						<font fontName="Times New Roman"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{fileComplexity}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{fileComplexity}]]></textFieldExpression>
 				</textField>
 				<rectangle>
 					<reportElement x="0" y="208" width="555" height="108"/>
@@ -285,18 +285,18 @@
 					<text><![CDATA[Violations]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="15" y="236" width="140" height="20"/>
+					<reportElement x="15" y="289" width="140" height="20"/>
 					<textElement>
 						<font fontName="Times New Roman" size="10"/>
 					</textElement>
 					<text><![CDATA[Violations Density]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="170" y="236" width="100" height="19"/>
+					<reportElement x="170" y="289" width="100" height="19"/>
 					<textElement>
 						<font fontName="Times New Roman"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{violationsDensity}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{violationsDensity}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="15" y="265" width="100" height="20" forecolor="#000000"/>
@@ -305,20 +305,6 @@
 					</textElement>
 					<text><![CDATA[Rules Compliance]]></text>
 				</staticText>
-				<staticText>
-					<reportElement x="15" y="290" width="140" height="19"/>
-					<textElement>
-						<font fontName="Times New Roman" size="10"/>
-					</textElement>
-					<text><![CDATA[Weighted Violations]]></text>
-				</staticText>
-				<textField>
-					<reportElement x="170" y="290" width="100" height="20"/>
-					<textElement>
-						<font fontName="Times New Roman"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{weightedViolations}]]></textFieldExpression>
-				</textField>
 				<staticText>
 					<reportElement x="289" y="216" width="150" height="19"/>
 					<textElement>
@@ -331,7 +317,7 @@
 					<textElement>
 						<font fontName="Times New Roman"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{blockerViolations}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{blockerViolations}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="289" y="236" width="150" height="19"/>
@@ -345,7 +331,7 @@
 					<textElement>
 						<font fontName="Times New Roman"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{criticalViolations}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{criticalViolations}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="289" y="254" width="150" height="19"/>
@@ -359,7 +345,7 @@
 					<textElement>
 						<font fontName="Times New Roman"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{majorViolations}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{majorViolations}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="289" y="273" width="150" height="19"/>
@@ -373,7 +359,7 @@
 					<textElement>
 						<font fontName="Times New Roman"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{minorViolations}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{minorViolations}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="289" y="293" width="150" height="19"/>
@@ -387,7 +373,21 @@
 					<textElement>
 						<font fontName="Times New Roman"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{infoViolations}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{infoViolations}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="15" y="236" width="100" height="20"/>
+					<textElement>
+						<font fontName="Times New Roman"/>
+					</textElement>
+					<text><![CDATA[violations]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="170" y="235" width="100" height="20"/>
+					<textElement>
+						<font fontName="Times New Roman"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{violations}]]></textFieldExpression>
 				</textField>
 			</frame>
 			<frame>
@@ -410,14 +410,14 @@
 					<textElement>
 						<font fontName="Times New Roman"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{responseForCode}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{responseForCode}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="441" y="5" width="100" height="19" isRemoveLineWhenBlank="true"/>
 					<textElement>
 						<font fontName="Times New Roman"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{lackOfCohesionMethods}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{lackOfCohesionMethods}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="289" y="5" width="150" height="19" isRemoveLineWhenBlank="true"/>
@@ -438,7 +438,7 @@
 					<textElement>
 						<font fontName="Times New Roman"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{packages}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{packages}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="15" y="25" width="140" height="19" isRemoveLineWhenBlank="true"/>
@@ -452,7 +452,7 @@
 					<textElement>
 						<font fontName="Times New Roman"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{packageTangleIndex}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{packageTangleIndex}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="15" y="45" width="140" height="20" isRemoveLineWhenBlank="true"/>
@@ -466,7 +466,7 @@
 					<textElement>
 						<font fontName="Times New Roman"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{packageCycles}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{packageCycles}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="15" y="63" width="140" height="19" isRemoveLineWhenBlank="true"/>
@@ -487,14 +487,14 @@
 					<textElement>
 						<font fontName="Times New Roman"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{packageTangles}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{packageTangles}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="170" y="63" width="100" height="20" isRemoveLineWhenBlank="true"/>
 					<textElement>
 						<font fontName="Times New Roman"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{packageFeedbackEdges}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{packageFeedbackEdges}]]></textFieldExpression>
 				</textField>
 			</frame>
 			<frame>
@@ -519,7 +519,7 @@
 					<textElement>
 						<font fontName="Times New Roman"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{directories}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{directories}]]></textFieldExpression>
 				</textField>
 			</frame>
 			<frame>
@@ -542,7 +542,7 @@
 					<textElement>
 						<font fontName="Times New Roman"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{classes}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{classes}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="15" y="28" width="100" height="19" isRemoveLineWhenBlank="true"/>
@@ -556,7 +556,7 @@
 					<textElement>
 						<font fontName="Times New Roman"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{functions}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{functions}]]></textFieldExpression>
 				</textField>
 			</frame>
 			<frame>
@@ -581,7 +581,7 @@
 					<textElement>
 						<font fontName="Times New Roman"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{commentBlankLines}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{commentBlankLines}]]></textFieldExpression>
 				</textField>
 			</frame>
 			<frame>
@@ -606,7 +606,7 @@
 					<textElement>
 						<font fontName="Times New Roman"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{statements}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{statements}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="15" y="29" width="150" height="19" isRemoveLineWhenBlank="true"/>
@@ -620,7 +620,7 @@
 					<textElement>
 						<font fontName="Times New Roman"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{accessors}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{accessors}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="15" y="49" width="150" height="19" isRemoveLineWhenBlank="true"/>
@@ -634,7 +634,7 @@
 					<textElement>
 						<font fontName="Times New Roman"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{publicDocumentedApiDensity}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{publicDocumentedApiDensity}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="15" y="69" width="150" height="20" isRemoveLineWhenBlank="true"/>
@@ -648,7 +648,7 @@
 					<textElement>
 						<font fontName="Times New Roman"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{publicUndocumentedApi}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{publicUndocumentedApi}]]></textFieldExpression>
 				</textField>
 			</frame>
 			<frame>
@@ -671,7 +671,7 @@
 					<textElement>
 						<font fontName="Times New Roman"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{coverage}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{coverage}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="15" y="28" width="100" height="20" isRemoveLineWhenBlank="true"/>
@@ -685,7 +685,7 @@
 					<textElement>
 						<font fontName="Times New Roman"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{uncoveredLines}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{uncoveredLines}]]></textFieldExpression>
 				</textField>
 			</frame>
 		</band>
