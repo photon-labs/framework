@@ -284,22 +284,15 @@
 					</textElement>
 					<text><![CDATA[Violations]]></text>
 				</staticText>
-				<staticText>
-					<reportElement x="15" y="289" width="140" height="20"/>
-					<textElement>
-						<font fontName="Times New Roman" size="10"/>
-					</textElement>
-					<text><![CDATA[Violations Density]]></text>
-				</staticText>
 				<textField>
-					<reportElement x="170" y="289" width="100" height="19"/>
+					<reportElement x="15" y="286" width="100" height="19"/>
 					<textElement>
 						<font fontName="Times New Roman"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA[$F{violationsDensity}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="15" y="265" width="100" height="20" forecolor="#000000"/>
+					<reportElement x="15" y="265" width="140" height="20" forecolor="#000000"/>
 					<textElement>
 						<font fontName="Times New Roman" size="14" isBold="true" isUnderline="true"/>
 					</textElement>
@@ -375,15 +368,8 @@
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA[$F{infoViolations}]]></textFieldExpression>
 				</textField>
-				<staticText>
-					<reportElement x="15" y="236" width="100" height="20"/>
-					<textElement>
-						<font fontName="Times New Roman"/>
-					</textElement>
-					<text><![CDATA[violations]]></text>
-				</staticText>
 				<textField>
-					<reportElement x="170" y="235" width="100" height="20"/>
+					<reportElement x="15" y="234" width="100" height="20"/>
 					<textElement>
 						<font fontName="Times New Roman"/>
 					</textElement>
