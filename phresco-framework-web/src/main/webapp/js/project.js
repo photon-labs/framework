@@ -97,10 +97,26 @@ function findError(data) {
 		hideError($("#projectVersionControl"), $("#projectVersionError"));
 	}
 	
+	var appLayerChecked = false;
 	if (!isBlank(data.appTechError)) {
 		showErrorInAccordion($("#appLayerControl"), $('#appLayerHeading'), $("#appLayerError"), data.appTechError);
 	} else {
+		appLayerChecked = true;
 		hideErrorInAccordion($("#appLayerControl"), $('#appLayerHeading'), $("#appLayerError"));
+	}
+	
+	if (appLayerChecked) {
+		if(!isBlank(data.appCodeError)) {
+			var row = data.appLayerRowCount;
+			if (data.fromTab == "edit") {
+				$('input[value=app-layer]').prop("disabled",true);
+				row = $("input[name=appLayerProjName]:disabled").size() + data.appLayerRowCount;
+			}
+			$('input[temp="'+row+'"]').focus();
+			showErrorInAccordion($("#appLayerControl"), $('#appLayerHeading'), $("#appLayerError"), data.appCodeError);
+		} else {
+			hideErrorInAccordion($("#appLayerControl"), $('#appLayerHeading'), $("#appLayerError"));
+		}
 	}
 	
 	if (!isBlank(data.webTechError)) {

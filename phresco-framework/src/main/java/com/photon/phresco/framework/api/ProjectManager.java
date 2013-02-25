@@ -19,6 +19,13 @@ public interface ProjectManager {
 	List<ProjectInfo> discover(String customerId) throws PhrescoException;
 	
 	/**
+	 * This method provides the list of projects of all customers available in the local phresco workspace 
+	 * @return Returns list of ProjectInfos
+	 * @throws PhrescoException
+	 */
+	List<ProjectInfo> discover() throws PhrescoException;
+	
+	/**
 	 * This method returns the Project for the given projectId
 	 * @param projectId
 	 * @return Returns the ProjectInfo with all the ApplicationInfos

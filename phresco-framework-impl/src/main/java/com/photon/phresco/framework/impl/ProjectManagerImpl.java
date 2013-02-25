@@ -100,6 +100,54 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 
         return projectInfos;
 	}
+	
+	public List<ProjectInfo> discover() throws PhrescoException {
+		if (isDebugEnabled) {
+			S_LOGGER.debug("Entering Method ProjectManagerImpl.discover()");
+		}
+
+		File projectsHome = new File(Utility.getProjectHome());
+		if (isDebugEnabled) {
+			S_LOGGER.debug("discover( )  projectHome = "+projectsHome);
+		}
+		if (!projectsHome.exists()) {
+			return null;
+		}
+		List<ProjectInfo> projectInfos = new ArrayList<ProjectInfo>();
+	    File[] appDirs = projectsHome.listFiles();
+	    for (File appDir : appDirs) {
+	        if (appDir.isDirectory()) { // Only check the folders not files
+	            File[] dotPhrescoFolders = appDir.listFiles(new PhrescoFileNameFilter(FOLDER_DOT_PHRESCO));
+	            if (ArrayUtils.isEmpty(dotPhrescoFolders)) {
+	            	continue;
+//	                throw new PhrescoException(".phresco folder not found in project " + appDir.getName());
+	            }
+	            File[] dotProjectFiles = dotPhrescoFolders[0].listFiles(new PhrescoFileNameFilter(PROJECT_INFO_FILE));
+	            if (ArrayUtils.isEmpty(dotProjectFiles)) {
+	                throw new PhrescoException("project.info file not found in .phresco of project " + dotPhrescoFolders[0].getParent());
+	            }
+	            fillProjects(dotProjectFiles[0], projectInfos);
+	        }
+	    }
+
+        return projectInfos;
+	}
+	
+    private void fillProjects(File dotProjectFile, List<ProjectInfo> projectInfos) throws PhrescoException {
+        S_LOGGER.debug("Entering Method ProjectManagerImpl.fillProjects(File[] dotProjectFiles, List<Project> projects)");
+
+        Gson gson = new Gson();
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new FileReader(dotProjectFile));
+            ProjectInfo projectInfo = gson.fromJson(reader, ProjectInfo.class);
+            projectInfos.add(projectInfo);
+        } catch (FileNotFoundException e) {
+            throw new PhrescoException(e);
+        } finally {
+            Utility.closeStream(reader);
+        }
+    }
 
 	public ProjectInfo getProject(String projectId, String customerId) throws PhrescoException {
 		List<ProjectInfo> discover = discover(customerId);

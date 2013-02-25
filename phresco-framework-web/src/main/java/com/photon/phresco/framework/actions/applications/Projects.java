@@ -83,6 +83,7 @@ public class Projects extends FrameworkBaseAction {
     private boolean errorFound = false;
     private String projectNameError = "";
     private String projectCodeError = "";
+    private String appCodeError = "";
     private String projectVersionError = "";
     private String layerError = "";
     private String mobTechError = "";
@@ -91,6 +92,7 @@ public class Projects extends FrameworkBaseAction {
     private String statusFlag = "" ;
     private String id = "";
     private String fromTab = "";
+    private int appLayerRowCount;
     
     public void clearMap() {
     	s_layerMap.clear();
@@ -160,6 +162,7 @@ public class Projects extends FrameworkBaseAction {
 					break;
 				}
 			}
+        	setReqAttribute(REQ_FROM_PAGE, FROM_PAGE_ADD);
         } catch (Exception e) {
             if (s_debugEnabled) {
                 S_LOGGER.error("Entered into catch block of Projects.addProject()" + FrameworkUtil.getStackTraceAsString(e));
@@ -286,6 +289,7 @@ public class Projects extends FrameworkBaseAction {
 				}
 			}
 			setReqAttribute(REQ_PROJECT, projectInfo);
+			setReqAttribute(REQ_FROM_PAGE, FROM_PAGE_EDIT);
 		} catch (PhrescoException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -538,11 +542,13 @@ public class Projects extends FrameworkBaseAction {
             S_LOGGER.debug("Entering Method  Applications.validateForm()");
         }
         
+        ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
+	    List<ProjectInfo> projects = projectManager.discover();
+	        
         boolean hasError = false;
         if (FROM_PAGE_ADD.equals(getFromTab())) {
   	       	//check project name is already exists or not
-  	        ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
-  	        List<ProjectInfo> projects = projectManager.discover(getCustomerId());
+  	        
   	        if(StringUtils.isNotEmpty(getProjectName())) {
   	        	for(ProjectInfo project : projects) {
   	        		if(project.getName().equals(getProjectName())) {
@@ -556,13 +562,14 @@ public class Projects extends FrameworkBaseAction {
   	        //check project code is already exists or not
   	        if(StringUtils.isNotEmpty(getProjectCode())) {
   	        	for(ProjectInfo project : projects) {
-  	        		if(project.getProjectCode().equals(getProjectCode())) {
+  	        		if(project.getProjectCode().toLowerCase().equals(getProjectCode().toLowerCase())) {
   	    	        	setProjectCodeError(getText(ERROR_CODE_EXISTS));
   	    	            hasError = true;
   	    	            break;
   	        		}
   	        	}
   	        }	
+  	        
   	      //validate if none of the layer is selected
   	        if (CollectionUtils.isEmpty(getLayer())) {
   	            setAppTechError(getText(ERROR_TECHNOLOGY));
@@ -600,7 +607,44 @@ public class Projects extends FrameworkBaseAction {
   	        }
           }
          
-        
+      //validate for app code duplication
+	        String applnLayerInfos = getReqParameter(REQ_APP_LAYER_INFOS);
+      	if (StringUtils.isNotEmpty(applnLayerInfos)) {
+      		int rowCount = 0;
+      		boolean skipLoop = false;
+      		String[] splittedAppInfos = applnLayerInfos.split(Constants.STR_COMMA);//Split multiple app layer app infos by comma
+           	for (String applnLayerInfo : splittedAppInfos) {//iterate 
+       			String[] techInfos = applnLayerInfo.split(APP_SEPERATOR);
+       			if (!ArrayUtils.isEmpty(techInfos) && StringUtils.isNotEmpty(techInfos[0]) && StringUtils.isNotEmpty(techInfos[1])) {
+	       			String applnCode = techInfos[0];//app code
+       				String[] techIdVersion = techInfos[1].split(VERSION_SEPERATOR);
+	       			if (!ArrayUtils.isEmpty(techIdVersion) && StringUtils.isNotEmpty(techIdVersion[0])) {
+	       				String techId = techIdVersion[0];//tech id
+	       				rowCount++;
+		       			Technology technology = getServiceManager().getTechnology(techId);
+		       	        String techName = technology.getName().replaceAll("\\s", "").toLowerCase();
+		       	        String currentAppCode = applnCode + HYPHEN + techName;
+			       	     for(ProjectInfo project : projects) {//iterate all project  infos
+		       	    	 	List<ApplicationInfo> appInfos = project.getAppInfos();
+		       	    	 	for (ApplicationInfo appInfo : appInfos) {//iterate all app infos
+								if (appInfo.getCode().toLowerCase().equals(currentAppCode.toLowerCase())) {// match with existing appcode with current appcode
+									hasError = true;
+									skipLoop = true;
+									setFromTab(getFromTab());
+									setAppCodeError(getText(ERROR_APP_CODE_EXISTS));
+									setAppLayerRowCount(rowCount);
+									break;
+								}
+							}
+		       	    	 	if (skipLoop) {
+		       	    	 		break;
+		       	    	 	}
+		  	        	}
+	       			}
+       			}
+       		}
+      	}
+      	
         //empty validation for name
         if (StringUtils.isEmpty(getProjectName().trim())) {
             setProjectNameError(getText(ERROR_NAME));
@@ -799,5 +843,21 @@ public class Projects extends FrameworkBaseAction {
 
 	public void setFromTab(String fromTab) {
 		this.fromTab = fromTab;
+	}
+
+	public void setAppCodeError(String appCodeError) {
+		this.appCodeError = appCodeError;
+	}
+
+	public String getAppCodeError() {
+		return appCodeError;
+	}
+
+	public void setAppLayerRowCount(int appLayerRowCount) {
+		this.appLayerRowCount = appLayerRowCount;
+	}
+
+	public int getAppLayerRowCount() {
+		return appLayerRowCount;
 	}
 }

@@ -40,6 +40,7 @@
 		$('.popupOk, #popupCancel').show(); // show ok & cancel button
 		$('.modal-body').html($('#trace').html());
 		$('#popupPage').modal('show');
+		hidePopuploadingIcon();
 	});
 	
 	function popupOnOk(obj) {

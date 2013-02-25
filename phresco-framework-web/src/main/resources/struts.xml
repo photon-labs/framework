@@ -93,7 +93,7 @@
         </action>
         
 		<action name="editProject" method="editProject" class="com.photon.phresco.framework.actions.applications.Projects">
-            <result name="projectDetails">/pages/projects/edit.jsp</result>
+            <result name="projectDetails">/pages/projects/add.jsp</result>
         </action>
 
         <action name="fetchTechVersions" method="fetchTechVersions" class="com.photon.phresco.framework.actions.applications.Projects">

@@ -1163,6 +1163,7 @@ public interface FrameworkConstants {
     String ERROR_APP_DIR_EXISTS = "err.msg.app.dir.exists";
     String ERROR_NAME_EXISTS = "err.msg.project.name.exists";
     String ERROR_CODE_EXISTS = "err.msg.project.code.exists";
+    String ERROR_APP_CODE_EXISTS = "err.msg.app.code.exists";
     String ERROR_CODE = "err.msg.empty.code";
     String ERROR_EMAIL_ID = "err.msg.invalid.email";
     String ERROR_EMAIL_ID_EMPTY = "err.msg.empty.email";
