@@ -846,11 +846,12 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 		ApplicationInfo applicationInfo = getApplicationInfo();
 		if (REQ_JAR.equalsIgnoreCase(getFileType())) {
 			setReqAttribute(REQ_PROJECT_LOCATION, "");
-			setReqAttribute(REQ_FROM, "funcTestAgaistJar");
+			setReqAttribute(REQ_FROM, REQ_AGAINST_JAR);
 		} else {
 			setReqAttribute(REQ_PROJECT_LOCATION, getAppDirectoryPath(applicationInfo).replace(File.separator, FORWARD_SLASH));
+			setReqAttribute(REQ_FROM, getReqParameter(REQ_FROM_PAGE));
 		}
-		setReqAttribute(REQ_FROM, getReqParameter(REQ_FROM_PAGE));
+		
 		
 		return SUCCESS;
 	}

@@ -655,6 +655,7 @@ public interface FrameworkConstants {
     String REQ_SETTINGS_NAME = "settingName";
     String REQ_CODE_PREFIX = "codePrefix";
     String REQ_FROM_PAGE = "fromPage";
+    String REQ_AGAINST_JAR = "funcTestAgaistJar";
     String REQ_SETTINGS_PATH = "settingsPath";
     String REQ_CONFIG_PATH = "configPath";
     String REQ_APPLICATION_TYPE = "applicationType";

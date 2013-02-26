@@ -42,10 +42,6 @@
     String fromPage = request.getParameter(FrameworkConstants.REQ_FROM_PAGE);
     String minifiedFiles = request.getParameter("minifiedFilesList");
 	
-    if (StringUtils.isEmpty(dir)) {
-    	return;
-    }
-	
     if (!"funcTestAgaistJar".equals(fromPage)) {
     	if (dir != "" && dir.charAt(dir.length()-1) == '\\') {
         	dir = dir.substring(0, dir.length()-1) + "/";
@@ -63,6 +59,7 @@
  	
 	final String[] includeFileTypes = fileTypes.split(",");
 	
+	//If dir is empty , file browse popup wil lists all root directories
 	if(!new File(dir).exists()) {
 		File[] roots = File.listRoots();
 		for (int i=0; i < roots.length; i++) {
