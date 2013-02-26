@@ -44,6 +44,7 @@ public interface FrameworkConstants {
     String APP_INFO = "appInfo";
     String APP_SEPERATOR = "#APPSEP#";
     String VERSION_SEPERATOR = "#VSEP#";
+    String ROW_SEPERATOR = "#ROWSEP#";
 
     String LBL = "lbl.";
     String LBL_BTN = "lbl.btn";

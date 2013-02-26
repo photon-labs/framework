@@ -756,16 +756,16 @@
 			var appLayerInfos = new Array();
 			if ($('input[value=app-layer]').is(':checked')) {//if applayer checkbox is checked
 				$('input[name=appLayerProjName]').each(function() {//iterate each row and construct params
-					var hold = $(this).attr("temp");
+					var count = $(this).attr("temp");
 					var appCode = $(this).val();
-					var techId = $('#'+hold+'_App_Technology').val();
-					var techVersion = $('#'+hold+'_App_Version').val();
-					appLayerInfos.push(appCode + "#APPSEP#" + techId + "#VSEP#" + techVersion);
+					var techId = $('#'+count+'_App_Technology').val();
+					var techVersion = $('#'+count+'_App_Version').val();
+					appLayerInfos.push(appCode + "#APPSEP#" + techId + "#VSEP#" + techVersion + "#ROWSEP#" + count);
 				});
 				params = params.concat("&appLayerInfos=");
 				params = params.concat(appLayerInfos);
 			}	
-
+			
 			validate('createProject', $('#formCreateProject'), $("#container"), params, '<s:text name='progress.txt.add.proj'/>');
 		});
 		
@@ -783,11 +783,11 @@
 					if (!$(this).prop('disabled')) {//To check for newly added app layer row
 						$('input[value=app-layer]').prop("disabled", false);//To enable applayer accordion check box if new row is added
 						appLayerChckBoxEnabled = true;
-						var hold = $(this).attr("temp");
+						var count = $(this).attr("temp");
 						var appCode = $(this).val();
-						var techId = $('#'+hold+'_App_Technology').val();
-						var techVersion = $('#'+hold+'_App_Version').val();
-						appLayerInfos.push(appCode + "#APPSEP#" + techId + "#VSEP#" + techVersion);
+						var techId = $('#'+count+'_App_Technology').val();
+						var techVersion = $('#'+count+'_App_Version').val();
+						appLayerInfos.push(appCode + "#APPSEP#" + techId + "#VSEP#" + techVersion + "#ROWSEP#" + count);
 					}
 				});
 				params = params.concat("&appLayerInfos=");

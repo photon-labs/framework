@@ -107,12 +107,10 @@ function findError(data) {
 	
 	if (appLayerChecked) {
 		if(!isBlank(data.appCodeError)) {
-			var row = data.appLayerRowCount;
 			if (data.fromTab == "edit") {
 				$('input[value=app-layer]').prop("disabled",true);
-				row = $("input[name=appLayerProjName]:disabled").size() + data.appLayerRowCount;
 			}
-			$('input[temp="'+row+'"]').focus();
+			$('input[temp="'+data.appLayerRowCount+'"]').focus();
 			showErrorInAccordion($("#appLayerControl"), $('#appLayerHeading'), $("#appLayerError"), data.appCodeError);
 		} else {
 			hideErrorInAccordion($("#appLayerControl"), $('#appLayerHeading'), $("#appLayerError"));

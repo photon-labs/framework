@@ -430,7 +430,8 @@ public class Projects extends FrameworkBaseAction {
      			String[] techIdVersion = techInfos[1].split(VERSION_SEPERATOR);
      			String applnCode = techInfos[0];//app code
      			String techId = techIdVersion[0];//tech id
-     			String techVersion = techIdVersion[1];//tech version
+     			String[] versionStr = techIdVersion[1].split(ROW_SEPERATOR);
+     			String techVersion = versionStr[0];//tech version
      			Technology technology = getServiceManager().getTechnology(techId);
      	        String techName = technology.getName().replaceAll("\\s", "").toLowerCase();
      	        String dirName = applnCode + HYPHEN + techName;
@@ -531,7 +532,7 @@ public class Projects extends FrameworkBaseAction {
     	
     	return list();
     }
-   
+    
     /**
      * To validate the form fields
      * @return
@@ -608,9 +609,8 @@ public class Projects extends FrameworkBaseAction {
           }
          
       //validate for app code duplication
-	        String applnLayerInfos = getReqParameter(REQ_APP_LAYER_INFOS);
+        String applnLayerInfos = getReqParameter(REQ_APP_LAYER_INFOS);
       	if (StringUtils.isNotEmpty(applnLayerInfos)) {
-      		int rowCount = 0;
       		boolean skipLoop = false;
       		String[] splittedAppInfos = applnLayerInfos.split(Constants.STR_COMMA);//Split multiple app layer app infos by comma
            	for (String applnLayerInfo : splittedAppInfos) {//iterate 
@@ -620,7 +620,7 @@ public class Projects extends FrameworkBaseAction {
        				String[] techIdVersion = techInfos[1].split(VERSION_SEPERATOR);
 	       			if (!ArrayUtils.isEmpty(techIdVersion) && StringUtils.isNotEmpty(techIdVersion[0])) {
 	       				String techId = techIdVersion[0];//tech id
-	       				rowCount++;
+	       				String[] rowCount = techIdVersion[1].split(ROW_SEPERATOR);
 		       			Technology technology = getServiceManager().getTechnology(techId);
 		       	        String techName = technology.getName().replaceAll("\\s", "").toLowerCase();
 		       	        String currentAppCode = applnCode + HYPHEN + techName;
@@ -632,7 +632,7 @@ public class Projects extends FrameworkBaseAction {
 									skipLoop = true;
 									setFromTab(getFromTab());
 									setAppCodeError(getText(ERROR_APP_CODE_EXISTS));
-									setAppLayerRowCount(rowCount);
+									setAppLayerRowCount(Integer.parseInt(rowCount[1]));
 									break;
 								}
 							}
