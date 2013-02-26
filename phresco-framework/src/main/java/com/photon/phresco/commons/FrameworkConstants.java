@@ -106,6 +106,7 @@ public interface FrameworkConstants {
     String REQ_SELECTED_FEATURES = "selectedFeatures";
     String REQ_SELECTED_DOWNLOADINFO = "selectedDownloadInfo";
     String REQ_DEFAULT_FEATURES = "defaultFeatures";
+    String REQ_SCOPE = "scope";
     String REQ_SELECTED_DOWNLOADINFO_VERSION = "selectedDownloadInfoVersion";
     String REQ_CURRENT_SELECTBOX_ID = "selectBoxId";
     String REQ_DEFAULT_OPTION = "defaultOptTxt";

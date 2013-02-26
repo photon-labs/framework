@@ -372,6 +372,7 @@ public class Applications extends FrameworkBaseAction {
 					String artifactGroupId = obj.getModuleId();
 					ArtifactGroup artifactGroup = getServiceManager().getArtifactGroupInfo(artifactGroupId);
 					ArtifactInfo artifactInfo = getServiceManager().getArtifactInfo(obj.getVersionID());
+					artifactInfo.setScope(obj.getScope());
 					if(artifactInfo != null) {
 						artifactGroup.setVersions(Collections.singletonList(artifactInfo));
 					}

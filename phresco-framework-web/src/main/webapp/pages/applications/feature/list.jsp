@@ -62,7 +62,7 @@
 				<span class="siteaccordion">
 					<span>
 						<input class="feature_checkbox" type="checkbox" defaultModule="<%= defaultModule %>" canConfigure="<%= canConfigure %>" 
-							value="<%= artifactGroup.getName() %>" dispName="<%= artifactGroup.getDisplayName() %>" onclick="checkboxEvent($('.feature_checkbox'), $('#checkAllAuto'));"/>
+							value="<%= artifactGroup.getName() %>" dispName="<%= artifactGroup.getDisplayName() %>" scope="compile" packaging="<%= artifactGroup.getPackaging() %>" onclick="checkboxEvent($('.feature_checkbox'), $('#checkAllAuto'));"/>
 						<a style="float: left; margin-left:2%;" href="#"><%= artifactGroup.getDisplayName() %></a>
 						
 						<select class="input-mini features_ver_sel" id="<%= artifactGrpName %>" artifactGroupId="<%= artifactGroup.getId() %>" moduleId="<%= artifactGroup.getId() %>" name="<%=artifactGroup.getName() %>" >

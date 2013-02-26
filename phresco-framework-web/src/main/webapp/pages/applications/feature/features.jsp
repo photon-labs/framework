@@ -35,10 +35,10 @@
 
 <%
 	List<SelectedFeature> features = (List<SelectedFeature>)session.getAttribute(FrameworkConstants.REQ_SELECTED_FEATURES);
-	
 	List<SelectedFeature> defaultfeatures = (List<SelectedFeature>)request.getAttribute(FrameworkConstants.REQ_DEFAULT_FEATURES);
 	String oldAppDirName = (String) request.getAttribute(FrameworkConstants.REQ_OLD_APPDIR);
 	String appId = (String) request.getAttribute(FrameworkConstants.REQ_APP_ID);
+	List<String> scopeList= (List<String>) request.getAttribute(FrameworkConstants.REQ_SCOPE);
 	List<ArtifactGroup> selectedFeatures = (List<ArtifactGroup>) request.getAttribute(FrameworkConstants.REQ_PROJECT_FEATURES);
 	ProjectInfo projectInfo = (ProjectInfo)session.getAttribute(appId + FrameworkConstants.SESSION_APPINFO);
 	String technologyId = "";
@@ -131,7 +131,7 @@
 		        showImage = true;
 		    }
 %>
-			constructFeaturesDiv('<%= feature.getName() %>', '<%= feature.getDispName() %>', '<%= feature.getDispValue() %>', '<%= feature.getType() %>', '<%= feature.getVersionID() %>', '<%= feature.getModuleId() %>', <%= feature.isCanConfigure() %>, <%= showImage %>, <%= feature.isDefaultModule()%>, '<%= feature.getArtifactGroupId()%>'); 
+			constructFeaturesDiv('<%= feature.getName() %>', '<%= feature.getDispName() %>', '<%= feature.getDispValue() %>', '<%= feature.getType() %>', '<%= feature.getVersionID() %>', '<%= feature.getModuleId() %>', <%= feature.isCanConfigure() %>, <%= showImage %>, <%= feature.isDefaultModule()%>, '<%= feature.getArtifactGroupId()%>', '<%= feature.getPackaging()%>', '<%= feature.getScope()%>'); 
 <%		
 	 	}
 	}
@@ -145,7 +145,7 @@ if (CollectionUtils.isNotEmpty(defaultfeatures)) {
 	        showImage = true;
 	    }
 %>
-		constructFeaturesDiv('<%= feature.getName() %>', '<%= feature.getDispName() %>', '<%= feature.getDispValue() %>', '<%= feature.getType() %>', '<%= feature.getVersionID() %>', '<%= feature.getModuleId() %>', <%= feature.isCanConfigure() %>, <%= showImage %>, <%= feature.isDefaultModule()%>, '<%= feature.getArtifactGroupId()%>'); 
+		constructFeaturesDiv('<%= feature.getName() %>', '<%= feature.getDispName() %>', '<%= feature.getDispValue() %>', '<%= feature.getType() %>', '<%= feature.getVersionID() %>', '<%= feature.getModuleId() %>', <%= feature.isCanConfigure() %>, <%= showImage %>, <%= feature.isDefaultModule()%>, '<%= feature.getArtifactGroupId()%>', '<%= feature.getPackaging()%>', '<%= feature.getScope()%>'); 
 <%		
  	}
 }
@@ -196,6 +196,8 @@ if (CollectionUtils.isNotEmpty(defaultfeatures)) {
         $('#accordianchange input:checked').each(function () {
         	var name = $(this).val();
         	var dispName = $(this).attr("dispName");
+        	var packaging = $(this).attr('packaging');
+        	var scope = $(this).attr('scope');
         	var id = removeSpaces(name);
         	var hiddenFieldVersion = $('#'+id).val();
         	var artifactGroupId = $('#'+id).attr('artifactGroupId');
@@ -204,15 +206,16 @@ if (CollectionUtils.isNotEmpty(defaultfeatures)) {
         	var canConfigure = Boolean($(this).attr("canConfigure"));
         	var defaultModule =$(this).attr("defaultModule");
         	var isDefault = defaultModule.toLowerCase()=="true"?true:false;
-        	constructFeaturesDiv(name, dispName, dispValue, selectedType, hiddenFieldVersion, moduleId, canConfigure,'', isDefault, artifactGroupId);
+        	constructFeaturesDiv(name, dispName, dispValue, selectedType, hiddenFieldVersion, moduleId, canConfigure,'', isDefault, artifactGroupId, packaging, scope);
         });
     }
     
     // Function to construct the hidden fields for selected features
-    function constructFeaturesDiv(name, dispName, dispValue, hiddenFieldname, hiddenFieldVersion, moduleId, canConfigure, showImage, isDefault, artifactGroupId) {
+    function constructFeaturesDiv(name, dispName, dispValue, hiddenFieldname, hiddenFieldVersion, moduleId, canConfigure, showImage, isDefault, artifactGroupId, packaging, scope) {
 		var jsonParamObj = {};
 		jsonParamObj.name = name;
 		jsonParamObj.dispName = dispName;
+		jsonParamObj.packaging = packaging;
 		jsonParamObj.moduleId = moduleId;
 		jsonParamObj.dispValue = dispValue;
 		jsonParamObj.versionID = hiddenFieldVersion;
@@ -220,10 +223,11 @@ if (CollectionUtils.isNotEmpty(defaultfeatures)) {
 		jsonParamObj.artifactGroupId = artifactGroupId;
 		jsonParamObj.canConfigure = canConfigure;
 		jsonParamObj.defaultModule = isDefault;
+		jsonParamObj.scope = scope;
 		var jsonParam = JSON.stringify(jsonParamObj);
 		var ctrlClass = removeSpaces(artifactGroupId);
 		var elementsSize = $("#" + ctrlClass + "Div").size();
-		var divName = hiddenFieldname.toLowerCase();;
+		var divName = hiddenFieldname.toLowerCase();
 // 		$("div[id='"+ ctrlClass +"Div']").remove();
 		if (elementsSize === 0) {
 			var removeImg = "";
@@ -233,28 +237,71 @@ if (CollectionUtils.isNotEmpty(defaultfeatures)) {
 				removeImg = "";
 			}
 			
-			if (showImage) {
+			if(!showImage && packaging == "jar") {
+				$("#result").append('<div id="'+ctrlClass+'Div" class="'+divName+'">'+dispName+' - '+dispValue+
+						'<select id="'+ctrlClass+'Select" temp="'+ctrlClass+'" onchange="selectBoxChangeEvent(this);" >'+
+						
+						'</select>'+
+						'<a href="#" onclick="removed(this);">'+ removeImg +'</a>'+
+						'<input type="hidden" class="'+ctrlClass+'" name="jsonData">'+
+						'</div>');
+				getScopeVal(ctrlClass, scope);
+			} else if (showImage && packaging != "jar") {
 				$("#result").append('<div id="'+ctrlClass+'Div" class="'+divName+'">'+dispName+' - '+dispValue+
 						'<a href="#" onclick="removed(this);">'+ removeImg +'</a>'+
 						'<input type="hidden" class="'+ctrlClass+'" name="jsonData">' +
 <%-- 						<% --%>
-// 							if (optionIds != null && optionIds.contains(FrameworkConstants.FEATURES_KEY) || optionIds.contains(FrameworkConstants.COMPONENT_CONFIG)) {
+//						if (optionIds != null && optionIds.contains(FrameworkConstants.FEATURES_KEY) || optionIds.contains(FrameworkConstants.COMPONENT_CONFIG)) {
 // 						%>
-							'<a href="#" id="'+name+'" onclick="showFeatureConfigPopup(this);">'+ 
-							'<img src="images/icons/gear.png" title="Configure"/></a>' +
+						'<a href="#" id="'+name+'" onclick="showFeatureConfigPopup(this);">'+ 
+						'<img src="images/icons/gear.png" title="Configure"/></a>' +
 <%-- 						<%  --%>
 // 							}
 // 						%>
 						'</div>');
-			} else {
+			} else if (showImage && packaging == "jar") {
+				$("#result").append('<div id="'+ctrlClass+'Div" class="'+divName+'">'+dispName+' - '+dispValue+
+						'<select id="'+ctrlClass+'Select" temp="'+ctrlClass+'" onchange="selectBoxChangeEvent(this);" >'+
+						
+						'</select>'+
+						'<a href="#" onclick="removed(this);">'+ removeImg +'</a>'+
+						'<input type="hidden" class="'+ctrlClass+'" name="jsonData">' +
+						'<a href="#" id="'+name+'" onclick="showFeatureConfigPopup(this);">'+ 
+						'<img src="images/icons/gear.png" title="Configure"/></a>' +
+						'</div>');
+				getScopeVal(ctrlClass, scope);
+			} else if(!showImage && packaging != "jar") {
 				$("#result").append('<div id="'+ctrlClass+'Div" class="'+divName+'">'+dispName+' - '+dispValue+
 						'<a href="#" onclick="removed(this);">'+ removeImg +'</a>'+
 						'<input type="hidden" class="'+ctrlClass+'" name="jsonData"></div>');
 			}
+			
 			$("."+ctrlClass).val(jsonParam);
 			//featureNotification();
 			updateFeatureNotification();
 		}
+    }
+    
+    function getScopeVal(ctrlClass, scope) {
+    	if (scope !== undefined && !isBlank(scope)) {
+    		<% 	for (String scope : scopeList) { %>
+	    			if(scope == "<%= scope %>") {
+	    				$("#"+ctrlClass+"Select").append($("<option></option>").attr("value", scope).text(scope).attr("selected","selected"));
+	    			} else {
+	    				$("#"+ctrlClass+"Select").append($("<option></option>").attr("value", "<%= scope %>").text("<%= scope %>"));
+	    			}
+	    	<%
+				} 
+			%>	
+    	}
+    }
+    
+    function selectBoxChangeEvent(thisObj) {
+    	var jsonObj = $.parseJSON($(thisObj).siblings('input[name=jsonData]').val());
+    	jsonObj.scope = $(thisObj).val();
+    	var ctrlClass = $(thisObj).attr("temp");
+    	var jsonParam = JSON.stringify(jsonObj);
+    	$("."+ctrlClass).val(jsonParam);
     }
     
     // Function to remove the final features in right tab  
@@ -338,7 +385,7 @@ if (CollectionUtils.isNotEmpty(defaultfeatures)) {
     featureNotification();
     
     function featureNotification() {
-	    var total = $(".feature:visible").length + $(".javascript:visible").length+ $(".component:visible").length;
+	    var total = $(".feature:visible").length + $(".javascript:visible").length + $(".component:visible").length;
 	    var counterValue = parseInt(total); 
 		$('.bubbleAll').html(counterValue); 
 	

@@ -191,6 +191,11 @@ div.lgnBtnLabel {
 	margin: 9px 5px !important;
 }
 
+.feature select {
+	margin-left: 15px;
+    margin-top: 4px;
+}
+
 /*** page header ends***/
 /* .table_div {
 	border-radius: 6px 6px 6px 6px;

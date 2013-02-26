@@ -20,6 +20,7 @@
 package com.photon.phresco.framework.actions.applications;
 
 import java.io.File;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -42,6 +43,7 @@ import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.ArtifactGroupInfo;
 import com.photon.phresco.commons.model.ArtifactInfo;
+import com.photon.phresco.commons.model.ArtifactInfo.Scope;
 import com.photon.phresco.commons.model.CoreOption;
 import com.photon.phresco.commons.model.DownloadInfo;
 import com.photon.phresco.commons.model.Element;
@@ -58,7 +60,9 @@ import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.framework.model.DependantParameters;
 import com.photon.phresco.plugins.model.Module.Configurations.Configuration.Parameter;
+import com.photon.phresco.plugins.model.Mojos.ApplicationHandler;
 import com.photon.phresco.plugins.util.ModulesProcessor;
+import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.exception.PhrescoPomException;
@@ -158,6 +162,18 @@ public class Features extends DynamicParameterModule {
 				appInfo = new ApplicationInfo();
 			}
 			
+			appInfo.getAppDirName();
+			String compile = Scope.COMPILE.name().toLowerCase();
+			String runtime = Scope.RUNTIME.name().toLowerCase();
+			String provided = Scope.PROVIDED.name().toLowerCase();
+			String test = Scope.TEST.name().toLowerCase();
+			List<String> scopeList = new ArrayList<String>();
+			scopeList.add(compile);
+			scopeList.add(runtime);
+			scopeList.add(provided);
+			scopeList.add(test);
+			setReqAttribute(REQ_SCOPE, scopeList);
+			
 			List<SelectedFeature> listFeatures = new ArrayList<SelectedFeature>();
 			setFeatures(appInfo, listFeatures);
 			if (StringUtils.isNotEmpty(getPilotProject())) {
@@ -172,17 +188,17 @@ public class Features extends DynamicParameterModule {
 			List<SelectedFeature> defaultFeatures = new ArrayList<SelectedFeature>();
 			List<ArtifactGroup> moduleGroups = getServiceManager().getFeatures(getCustomerId(), getTechnology(), ArtifactGroup.Type.FEATURE.name());
 			if (CollectionUtils.isNotEmpty(moduleGroups)) {
-				createArtifactInfoForDefault(moduleGroups, defaultFeatures);
+				createArtifactInfoForDefault(moduleGroups, defaultFeatures, appInfo);
 			}
 			
 			List<ArtifactGroup> jsLibsGroups = getServiceManager().getFeatures(getCustomerId(), getTechnology(), ArtifactGroup.Type.JAVASCRIPT.name());
 			if (CollectionUtils.isNotEmpty(jsLibsGroups)) {
-				createArtifactInfoForDefault(jsLibsGroups, defaultFeatures);
+				createArtifactInfoForDefault(jsLibsGroups, defaultFeatures, appInfo);
 			}
 			
 			List<ArtifactGroup> componentGroups = getServiceManager().getFeatures(getCustomerId(), getTechnology(), ArtifactGroup.Type.COMPONENT.name());
 			if (CollectionUtils.isNotEmpty(componentGroups)) {
-				createArtifactInfoForDefault(componentGroups, defaultFeatures);
+				createArtifactInfoForDefault(componentGroups, defaultFeatures, appInfo);
 			}
 			setReqAttribute(REQ_DEFAULT_FEATURES, defaultFeatures);
 			setSessionAttribute(REQ_SELECTED_FEATURES, listFeatures);
@@ -198,7 +214,7 @@ public class Features extends DynamicParameterModule {
 	    return APP_FEATURES;
 	}
 
-	private void createArtifactInfoForDefault(List<ArtifactGroup> moduleGroups, List<SelectedFeature> defaultFeatures) {
+	private void createArtifactInfoForDefault(List<ArtifactGroup> moduleGroups, List<SelectedFeature> defaultFeatures, ApplicationInfo appInfo) throws PhrescoException {
 		for (ArtifactGroup artifactGroup : moduleGroups) {
 			List<ArtifactInfo> versions = artifactGroup.getVersions();
 			for (ArtifactInfo artifactInfo : versions) {
@@ -215,6 +231,8 @@ public class Features extends DynamicParameterModule {
 							selectFeature.setType(artifactGroup.getType().name());
 							selectFeature.setArtifactGroupId(artifactGroup.getId());
 							selectFeature.setDefaultModule(true);
+							selectFeature.setPackaging(artifactGroup.getPackaging());
+							//getScope(appInfo, artifactInfo.getId(), selectFeature);
 							getDefaultDependentFeatures(moduleGroups, defaultFeatures, artifactInfo);
 						    defaultFeatures.add(selectFeature);
 						}
@@ -223,7 +241,7 @@ public class Features extends DynamicParameterModule {
 			}
 		}
 	}
-
+	
 	private void getDefaultDependentFeatures(List<ArtifactGroup> moduleGroups, List<SelectedFeature> defaultFeatures, ArtifactInfo artifactInfo) {
 		dependencyIds = artifactInfo.getDependencyIds();
 		if (CollectionUtils.isNotEmpty(artifactInfo.getDependencyIds())) {
@@ -262,7 +280,7 @@ public class Features extends DynamicParameterModule {
 			List<String> selectedModules = appInfo.getSelectedModules();
 			if (CollectionUtils.isNotEmpty(selectedModules)) {
 				for (String selectedModule : selectedModules) {
-					SelectedFeature selectFeature = createArtifactInformation(selectedModule, techId);
+					SelectedFeature selectFeature = createArtifactInformation(selectedModule, techId, appInfo);
 					listFeatures.add(selectFeature);
 				}
 			}
@@ -270,7 +288,7 @@ public class Features extends DynamicParameterModule {
 			List<String> selectedJSLibs = appInfo.getSelectedJSLibs();
 			if (CollectionUtils.isNotEmpty(selectedJSLibs)) {
 				for (String selectedJSLib : selectedJSLibs) {
-					SelectedFeature selectFeature = createArtifactInformation(selectedJSLib, techId);
+					SelectedFeature selectFeature = createArtifactInformation(selectedJSLib, techId, appInfo);
 					listFeatures.add(selectFeature);
 				}
 			}
@@ -278,7 +296,7 @@ public class Features extends DynamicParameterModule {
 			List<String> selectedComponents = appInfo.getSelectedComponents();
 			if (CollectionUtils.isNotEmpty(selectedComponents))	{
 				for (String selectedComponent : selectedComponents) {
-					SelectedFeature selectFeature = createArtifactInformation(selectedComponent, techId);
+					SelectedFeature selectFeature = createArtifactInformation(selectedComponent, techId, appInfo);
 					listFeatures.add(selectFeature);
 				}
 			}
@@ -287,7 +305,7 @@ public class Features extends DynamicParameterModule {
 		}
 	}
 	
-	private SelectedFeature createArtifactInformation(String selectedModule, String techId) throws PhrescoException {
+	private SelectedFeature createArtifactInformation(String selectedModule, String techId, ApplicationInfo appInfo) throws PhrescoException {
 		
 		SelectedFeature slctFeature = new SelectedFeature();
 		ArtifactInfo artifactInfo = getServiceManager().getArtifactInfo(selectedModule);
@@ -302,6 +320,9 @@ public class Features extends DynamicParameterModule {
 		slctFeature.setDispName(artifactGroupInfo.getDisplayName());
 		slctFeature.setType(artifactGroupInfo.getType().name());
 		slctFeature.setArtifactGroupId(artifactGroupInfo.getId());
+		slctFeature.setPackaging(artifactGroupInfo.getPackaging());
+		getScope(appInfo, artifactInfo.getId(), slctFeature);
+		
 		List<CoreOption> appliesTo = artifactGroupInfo.getAppliesTo();
 		for (CoreOption coreOption : appliesTo) {
 		    if (coreOption.getTechId().equals(techId) && !coreOption.isCore()) {
@@ -319,6 +340,30 @@ public class Features extends DynamicParameterModule {
 		
 		return slctFeature;
 		
+	}
+	
+	private void getScope(ApplicationInfo appInfo, String id, SelectedFeature selectFeature) throws PhrescoException {
+		StringBuilder dotPhrescoPathSb = new StringBuilder(Utility.getProjectHome());
+		dotPhrescoPathSb.append(appInfo.getAppDirName());
+		dotPhrescoPathSb.append(File.separator);
+		dotPhrescoPathSb.append(DOT_PHRESCO_FOLDER);
+		dotPhrescoPathSb.append(File.separator);
+		String pluginInfoFile = dotPhrescoPathSb.toString() + APPLICATION_HANDLER_INFO_FILE;
+		MojoProcessor mojoProcessor = new MojoProcessor(new File(pluginInfoFile));
+		ApplicationHandler applicationHandler = mojoProcessor.getApplicationHandler();
+		String selectedFeatures = applicationHandler.getSelectedFeatures();
+		if(StringUtils.isNotEmpty(selectedFeatures)) {
+			Gson gson = new Gson();
+			Type jsonType = new TypeToken<Collection<ArtifactGroup>>(){}.getType();
+			List<ArtifactGroup> artifactGroups = gson.fromJson(selectedFeatures, jsonType);
+			for (ArtifactGroup artifactGroup : artifactGroups) {
+				for (ArtifactInfo artifactInfo : artifactGroup.getVersions()) {
+					if (artifactInfo.getId().equals(id)) {
+						selectFeature.setScope(artifactInfo.getScope());
+					}
+				}
+			}
+		}
 	}
 
 	/**

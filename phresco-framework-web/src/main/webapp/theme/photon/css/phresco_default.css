@@ -189,6 +189,11 @@ input[type="password"] {
 	margin: 13px 5px !important;
 }
 
+.feature select {
+	margin-left: 15px;
+    margin-top: 4px;
+}
+
 .featureImage {
 	float: right;
     margin: -30px -6px -21px;
