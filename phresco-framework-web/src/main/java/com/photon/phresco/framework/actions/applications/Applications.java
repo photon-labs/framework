@@ -431,40 +431,68 @@ public class Applications extends FrameworkBaseAction {
 			List<ArtifactGroupInfo> selectedDatabases = appInfo.getSelectedDatabases();
 			if (CollectionUtils.isNotEmpty(selectedDatabases)) {
 				for (ArtifactGroupInfo selectedDatabase : selectedDatabases) {
-					DownloadInfo downloadInfo = getServiceManager().getDownloadInfo(
-							selectedDatabase.getArtifactGroupId());
-					selectedDatabaseGroup.add(downloadInfo);
-					if (CollectionUtils.isNotEmpty(selectedDatabaseGroup)) {
-						String databaseGroup = gson.toJson(selectedDatabaseGroup);
-						applicationHandler.setSelectedDatabase(databaseGroup);
+					DownloadInfo downloadInfo = getServiceManager().getDownloadInfo(selectedDatabase.getArtifactGroupId());
+					String id = downloadInfo.getArtifactGroup().getId();
+					ArtifactGroup artifactGroupInfo = getServiceManager().getArtifactGroupInfo(id);
+					List<ArtifactInfo> dbVersionInfos = artifactGroupInfo.getVersions();//version infos from downloadInfo
+					List<ArtifactInfo> selectedDBVersionInfos = new ArrayList<ArtifactInfo>();//for selected version infos from ui
+					for (ArtifactInfo versionInfo : dbVersionInfos) {
+						String versionId = versionInfo.getId();
+						if (selectedDatabase.getArtifactInfoIds().contains(versionId)) {
+							selectedDBVersionInfos.add(versionInfo);//Add selected version infos to list
+						}
 					}
+					downloadInfo.getArtifactGroup().setVersions(selectedDBVersionInfos);
+					selectedDatabaseGroup.add(downloadInfo);
 				}
+				if (CollectionUtils.isNotEmpty(selectedDatabaseGroup)) {
+					String databaseGroup = gson.toJson(selectedDatabaseGroup);
+					applicationHandler.setSelectedDatabase(databaseGroup);
+				}
+			} else {//To remove selectedDatabse tag from application-handler.xml
+				applicationHandler.setSelectedDatabase(null);
 			}
 			
 			//To write selected Servers into phresco-application-Handler-info.xml
 			List<ArtifactGroupInfo> selectedServers = appInfo.getSelectedServers();
 			if (CollectionUtils.isNotEmpty(selectedServers)) {
-				for (ArtifactGroupInfo selectedservers : selectedServers) {
-					DownloadInfo downloadInfo = getServiceManager().getDownloadInfo(
-							selectedservers.getArtifactGroupId());
-					selectedServerGroup.add(downloadInfo);
-					if (CollectionUtils.isNotEmpty(selectedServerGroup)) {
-						String serverGroup = gson.toJson(selectedServerGroup);
-						applicationHandler.setSelectedServer(serverGroup);
+				for (ArtifactGroupInfo selectedServer : selectedServers) {
+					DownloadInfo downloadInfo = getServiceManager().getDownloadInfo(selectedServer.getArtifactGroupId());
+					String id = downloadInfo.getArtifactGroup().getId();
+					ArtifactGroup artifactGroupInfo = getServiceManager().getArtifactGroupInfo(id);
+					List<ArtifactInfo> serverVersionInfos = artifactGroupInfo.getVersions();//version infos from downloadInfo
+					List<ArtifactInfo> selectedServerVersionInfos = new ArrayList<ArtifactInfo>();//for selected version infos from ui
+					for (ArtifactInfo versionInfo : serverVersionInfos) {
+						String versionId = versionInfo.getId();
+						if (selectedServer.getArtifactInfoIds().contains(versionId)) {
+							selectedServerVersionInfos.add(versionInfo);//Add selected version infos to list
+						}
 					}
+					downloadInfo.getArtifactGroup().setVersions(selectedServerVersionInfos);//set only selected version infos to current download info
+					selectedServerGroup.add(downloadInfo);
 				}
+				if (CollectionUtils.isNotEmpty(selectedServerGroup)) {
+					String serverGroup = gson.toJson(selectedServerGroup);
+					applicationHandler.setSelectedServer(serverGroup);
+				}
+			} else {//To remove selectedServer tag from application-handler.xml
+				applicationHandler.setSelectedServer(null);
 			}
 			
 			//To write selected WebServices info to phresco-plugin-info.xml
 			List<String> selectedWebservices = appInfo.getSelectedWebservices();
+			List<WebService> webServiceList = new ArrayList<WebService>();
 			if (CollectionUtils.isNotEmpty(selectedWebservices)) {
 				for (String selectedWebService : selectedWebservices) {
 					WebService webservice = getServiceManager().getWebService(selectedWebService);
-					if (webservice != null) {
-						String serverGroup = gson.toJson(webservice);
-						applicationHandler.setSelectedWebService(serverGroup);
-					}
+					webServiceList.add(webservice);//add selected webservice infos to list
 				}
+				if (CollectionUtils.isNotEmpty(webServiceList)) {
+					String serverGroup = gson.toJson(webServiceList);
+					applicationHandler.setSelectedWebService(serverGroup);
+				}
+			} else {//To remove selectedWebService tag from application-handler.xml
+				applicationHandler.setSelectedWebService(null);
 			}
 
         	mojo.save();
@@ -496,13 +524,13 @@ public class Applications extends FrameworkBaseAction {
             removeSessionAttribute(getAppId() + SESSION_APPINFO);
             removeSessionAttribute(REQ_SELECTED_FEATURES);
             removeSessionAttribute(REQ_PILOT_PROJECTS);
-		} catch (PhrescoException e) {
-			return showErrorPopup(e, EXCEPTION_PROJECT_UPDATE);
-		} catch (FileNotFoundException e) {
-			return showErrorPopup(new PhrescoException(e), EXCEPTION_PROJECT_UPDATE);
-		} finally {
-			 Utility.closeReader(bufferedReader);
-		 }
+    	} catch (PhrescoException e) {
+    		return showErrorPopup(e, EXCEPTION_PROJECT_UPDATE);
+    	} catch (FileNotFoundException e) {
+    		return showErrorPopup(new PhrescoException(e), EXCEPTION_PROJECT_UPDATE);
+    	} finally {
+    		Utility.closeReader(bufferedReader);
+    	}
         
     	return APP_UPDATE;
     }
