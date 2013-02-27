@@ -225,12 +225,8 @@
 					                <%
 				                    	List<Customer> customers = user.getCustomers();
 				                    	for (Customer customer: customers) {
-				                    		String selectedStr= "";
-						            		 if (customer.getName().equalsIgnoreCase(ServiceConstants.DEFAULT_CUSTOMER_NAME)) {
-						            			 selectedStr = "selected";
-						            	 	}
 								    %>
-					                       <option value="<%= customer.getId() %>"  <%= selectedStr %>><%= customer.getName()%></option>
+					                       <option value="<%= customer.getId() %>"><%= customer.getName()%></option>
 									<% 
 							            }
 								    %>

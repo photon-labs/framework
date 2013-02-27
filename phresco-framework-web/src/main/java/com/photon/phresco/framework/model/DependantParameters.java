@@ -19,15 +19,18 @@
  */
 package com.photon.phresco.framework.model;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
-public class DependantParameters {
+public class DependantParameters implements Serializable {
     
-    private Map<String, String> parentMap; 
+	private static final long serialVersionUID = 1L;
+
+	private Map<String, String> parentMap; 
     private String value;
     
     public DependantParameters() {

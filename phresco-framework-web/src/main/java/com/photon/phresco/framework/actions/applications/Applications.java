@@ -50,6 +50,7 @@ import com.photon.phresco.commons.model.ArtifactGroupInfo;
 import com.photon.phresco.commons.model.ArtifactInfo;
 import com.photon.phresco.commons.model.CoreOption;
 import com.photon.phresco.commons.model.DownloadInfo;
+import com.photon.phresco.commons.model.DownloadInfo.Category;
 import com.photon.phresco.commons.model.Element;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.SelectedFeature;
@@ -240,26 +241,20 @@ public class Applications extends FrameworkBaseAction {
         	technologyId = projectInfo.getAppInfos().get(0).getTechInfo().getId();
         	//To check whether the selected technology has servers
         	
-        	SettingsTemplate serverConfigTemplate = getServiceManager().getConfigTemplate(FrameworkConstants.TECH_SERVER_ID);
-        	List<Element> serverAppliesToTechs = serverConfigTemplate.getAppliesToTechs();
+        	List<DownloadInfo> applicableServers = getServiceManager().getDownloads(getCustomerId(), 
+        			technologyId, Category.SERVER.name(), FrameworkUtil.findPlatform());
         	boolean hasServer = false;
-        	for (Element serverAppliesToTech : serverAppliesToTechs) {
-        		if(serverAppliesToTech.getId().equals(technologyId)) {
-        			hasServer = true;
-        			break;
-        		}
+        	if(CollectionUtils.isNotEmpty(applicableServers)) {
+        		hasServer = true;
 			}
         	setReqAttribute(REQ_TECH_HAS_SERVER, hasServer);
 
         	//To check whether the selected technology has databases
         	boolean hasDb = false;
-        	SettingsTemplate dbConfigTemplate = getServiceManager().getConfigTemplate(FrameworkConstants.TECH_DATABASE_ID);
-        	List<Element> dbAppliesToTechs = dbConfigTemplate.getAppliesToTechs();
-        	for (Element dbAppliesToTech : dbAppliesToTechs) {
-        		if(dbAppliesToTech.getId().equals(technologyId)) {
-        			hasDb = true;
-        			break;
-        		}
+        	List<DownloadInfo> applicableDbs = getServiceManager().getDownloads(getCustomerId(), 
+        			technologyId, Category.DATABASE.name(), FrameworkUtil.findPlatform());
+        	if(CollectionUtils.isNotEmpty(applicableDbs)) {
+        		hasDb = true;
 			}
         	setReqAttribute(REQ_TECH_HAS_DB, hasDb);
         	
