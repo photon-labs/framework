@@ -1417,3 +1417,14 @@ function getFormAsJson(obj) {
 	});
 	return o;
 }
+
+function printPdfPreActions() {
+	//To hide download,delete icons
+	$('.pdfDelete').hide();
+	$('.pdfDownload').hide();
+	// show popup loading icon
+	showPopuploadingIcon();
+	//To disable genetare button
+	$('#printAsPdf').attr("disabled", "disabled");
+	$('#printAsPdf').removeClass("btn-primary");
+}

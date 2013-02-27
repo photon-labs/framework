@@ -241,8 +241,7 @@
 		function popupOnOk(obj) {
 			var okUrl = $(obj).attr("id");
 			if (okUrl === "printAsPdf") {
-				// show popup loading icon
-				showPopuploadingIcon();
+				printPdfPreActions();
 				loadContent('printAsPdf', $('#generatePdf'), $('#popup_div'), '', false, true);
 			} else {
 				mandatoryValidation(okUrl, $("#generateBuildForm"), '', 'load-test', 'load-test', '<%= FrameworkConstants.LOAD %>', '<%= appId %>');

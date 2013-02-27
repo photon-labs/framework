@@ -338,8 +338,7 @@
 	function popupOnOk(obj) {
 		var okUrl = $(obj).attr("id");
 		if (okUrl === "printAsPdf") {
-			// show popup loading icon
-			showPopuploadingIcon();
+			printPdfPreActions();
 			loadContent('printAsPdf', $('#generatePdf'), $('#popup_div'), '', false, true);
 		} else if (okUrl === "runPerformanceTest") {
 			mandatoryValidation(okUrl, $("#generateBuildForm"), '', 'performance-test', 'performance-test');

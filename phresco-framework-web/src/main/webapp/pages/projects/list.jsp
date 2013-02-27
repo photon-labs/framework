@@ -243,10 +243,7 @@
  				importUpdateApp();
  			}
  		} else if (okUrl === "printAsPdf") {
-			// show popup loading icon
-			showPopuploadingIcon();
-			$('#printAsPdf').attr("disabled", "disabled");
-			$('#printAsPdf').removeClass("btn-primary");
+ 			printPdfPreActions();
 			loadContent('printAsPdf', $('#generatePdf'), $('#popup_div'), '', false, true);
 		} else if (okUrl === "deleteProject") {
 			$("#popupPage").modal('hide');

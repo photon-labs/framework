@@ -392,7 +392,7 @@ function popupOnOk(obj) {
 		var goal = 'functional-test-' + '<%= functioanlTestTool %>';
 		mandatoryValidation(okUrl, $("#generateBuildForm"), '', 'functional-test', goal, '<%= FrameworkConstants.FUNCTIONAL %>', '<%= appId %>');
 	} else if (okUrl === "printAsPdf") {
-		showPopuploadingIcon();// show popup loading icon
+		printPdfPreActions();
 		loadContent('printAsPdf', $('#generatePdf'), $('#popup_div'), '', false, true);
 	}
 }

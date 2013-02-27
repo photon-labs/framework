@@ -6518,3 +6518,11 @@ color: #313131;
 #packageFileBrowseControl .headerDiv .header-background tr th:first-child {
 	width: 122px;
 }
+
+.pdfDownLoadImg {
+	width:100px;
+}
+
+.pdfDelImg {
+	width:60px;
+}

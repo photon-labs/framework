@@ -277,8 +277,7 @@ function changeView() {
 function popupOnOk(obj) {
 	var okUrl = $(obj).attr("id");
 	if (okUrl === "printAsPdf") {
-		// show popup loading icon
-		showPopuploadingIcon();
+		printPdfPreActions();
 		loadContent('printAsPdf', $('#generatePdf'), $('#popup_div'), '', false);
 	} else {
 		$("#popupPage").modal('hide');

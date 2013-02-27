@@ -45,10 +45,10 @@
 			              	<th class="second validate_tblHdr">
 			                	<div class="pdfth-inner">Type</div>
 			              	</th>
-			              	<th class="second validate_tblHdr">
+			              	<th class="second validate_tblHdr pdfDownLoadImg">
 			                	<div class="pdfth-inner">Download</div>
 			              	</th>
-			              	<th class="second validate_tblHdr">
+			              	<th class="second validate_tblHdr pdfDelImg">
 			                	<div class="pdfth-inner">Delete</div>
 			              	</th>
 			            </tr>
@@ -94,7 +94,7 @@
 					              				<s:param name="customerId"><%= customerId %></s:param>
 							          		    <s:param name="reportFileName"><%= reportFile %></s:param>
 							          		    </s:url>">
-							          		     <img src="images/icons/download.png" title="<%= reportFile %>.pdf"/>
+							          		     <img src="images/icons/download.png" class="pdfDownload" title="<%= reportFile %>.pdf"/>
 				                            </a>
 						   				</div>
 				              		</td>
@@ -140,13 +140,10 @@
 // 		$("#reportPopupTbl").scrollbars();
 	}
 	$(document).ready(function() {
-		
 		// when clicking on save button, popup should not hide
 		$('.backdrop > fade > in').attr('display', 'block');
 		$('.popupOk').attr("data-dismiss", "");
-		hidePopuploadingIcon();
-		$('#printAsPdf').removeAttr("disabled");
-	    $('#printAsPdf').addClass("btn-primary");
+		printPdfPostActions();
 		<%
 		    if (StringUtils.isNotEmpty(reportDeletionStat)) {
         %>
@@ -167,4 +164,14 @@
 		
 	});
 	
+	function printPdfPostActions() {
+		//To show delete,download icon 
+		$('.pdfDelete').show();
+		$('.pdfDownload').show();
+		//To hide loading icon
+		hidePopuploadingIcon();
+		//To enable generate button
+		$('#printAsPdf').removeAttr("disabled");
+	    $('#printAsPdf').addClass("btn-primary");
+	}
 </script>
