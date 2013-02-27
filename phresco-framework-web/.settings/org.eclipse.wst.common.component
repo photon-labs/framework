@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="phresco-framework-web">
+        <wb-resource deploy-path="/WEB-INF/web.xml" source-path="/do_not_checkin/target/jspweb.xml"/>
+        <wb-resource deploy-path="/" source-path="/src/main/webapp"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
+        <dependent-module archiveName="phresco-framework-2.1.0.1004-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/phresco-framework/phresco-framework">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="phresco-commons-2.1.0.1004-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/phresco-commons/phresco-commons">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="phresco-framework-impl-2.1.0.1004-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/phresco-framework-impl/phresco-framework-impl">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="phresco-service-client-2.1.0.1004-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/phresco-service-client/phresco-service-client">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="phresco-pom-2.1.0.1004-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/phresco-pom/phresco-pom">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <property name="context-root" value="framework"/>
+        <property name="java-output-path" value="/phresco-framework-web/do_not_checkin/target/classes"/>
+    </wb-module>
+</project-modules>

@@ -171,9 +171,9 @@
 	    
 	    function successLoadTestResultsFiles(data) {
 	    	var resultFiles = data.testResultFiles;
+	    	$('#lblType').show();
+			$('#testResultsType').show();
 			if (resultFiles != null && !isBlank(resultFiles)) {
-				$('#lblType').show();
-				$('#testResultsType').show();
 				$('#testResultFileTitle').show();
 	       		$('#testResultFile').show();
 	       		$('.perTabularView').show();
