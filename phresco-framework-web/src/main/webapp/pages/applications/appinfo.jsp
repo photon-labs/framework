@@ -766,10 +766,14 @@
 	 	newPropTempRow.appendTo("#propTempTbodyDatabase");	
 		if (pilotDb != undefined) {
 			var noOfDatabase = $('select[name=database]').size();
+			var value = $('select[name=database]').val();
 			var trId1 = (databaseCounter-1) + "_databasedynamicadd";
 			var selectVal = $('#'+trId1+' :selected').val();
 			if (selectVal == undefined || isBlank(selectVal)) {
 			 $('#'+trId1).closest('tr').remove();
+			}			
+			if (value == pilotDb) {
+				$('#'+trId1).closest('tr').remove();
 			}
 		}
 		databaseCounter++;
