@@ -37,6 +37,7 @@
 	<parameter name="isMultiModuleProject" class="java.lang.Boolean"/>
 	<parameter name="multiModuleUnitTestReports" class="java.util.List"/>
 	<parameter name="copyRights" class="java.lang.String"/>
+	<parameter name="hideClassColumn" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -179,6 +180,9 @@
 					<subreportParameter name="testType">
 						<subreportParameterExpression><![CDATA["unit"]]></subreportParameterExpression>
 					</subreportParameter>
+					<subreportParameter name="hideClassColumn">
+						<subreportParameterExpression><![CDATA[$P{hideClassColumn}]]></subreportParameterExpression>
+					</subreportParameter>
 					<subreportParameter name="reportsDataType">
 						<subreportParameterExpression><![CDATA[$P{reportsDataType}]]></subreportParameterExpression>
 					</subreportParameter>
@@ -199,6 +203,9 @@
 					</reportElement>
 					<subreportParameter name="testType">
 						<subreportParameterExpression><![CDATA["functional"]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="hideClassColumn">
+						<subreportParameterExpression><![CDATA[$P{hideClassColumn}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter name="reportsDataType">
 						<subreportParameterExpression><![CDATA[$P{reportsDataType}]]></subreportParameterExpression>

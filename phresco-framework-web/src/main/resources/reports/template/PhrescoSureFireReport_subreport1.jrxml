@@ -62,6 +62,7 @@
 		</variable>
 	</subDataset>
 	<parameter name="allTestSuites" class="java.util.List"/>
+	<parameter name="hideClassColumn" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
