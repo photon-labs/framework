@@ -181,6 +181,7 @@ public class Features extends DynamicParameterModule {
 				List<ApplicationInfo> pilotProjects = (List<ApplicationInfo>)getSessionAttribute(REQ_PILOT_PROJECTS);
 				for (ApplicationInfo applicationInfo : pilotProjects) {
 					if (applicationInfo.getId().equals(id)) {
+						applicationInfo.setAppDirName(appInfo.getAppDirName());
 						setFeatures(applicationInfo, listFeatures);
 					}
 				}
@@ -232,7 +233,7 @@ public class Features extends DynamicParameterModule {
 							selectFeature.setArtifactGroupId(artifactGroup.getId());
 							selectFeature.setDefaultModule(true);
 							selectFeature.setPackaging(artifactGroup.getPackaging());
-							//getScope(appInfo, artifactInfo.getId(), selectFeature);
+							getScope(appInfo, artifactInfo.getId(), selectFeature);
 							getDefaultDependentFeatures(moduleGroups, defaultFeatures, artifactInfo);
 						    defaultFeatures.add(selectFeature);
 						}
@@ -306,7 +307,6 @@ public class Features extends DynamicParameterModule {
 	}
 	
 	private SelectedFeature createArtifactInformation(String selectedModule, String techId, ApplicationInfo appInfo) throws PhrescoException {
-		
 		SelectedFeature slctFeature = new SelectedFeature();
 		ArtifactInfo artifactInfo = getServiceManager().getArtifactInfo(selectedModule);
 		

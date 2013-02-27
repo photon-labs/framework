@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.net.ssl.HttpsURLConnection;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.collections.MapUtils;
@@ -133,21 +134,33 @@ public class Code extends DynamicParameterAction implements Constants {
         }
 	}
 
-	private void setSonarServerStatus() throws PhrescoException {
-		String serverUrl;
-		FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-		serverUrl = frameworkUtil.getSonarURL();
+	private void setSonarServerStatus() throws PhrescoException {		
+		FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();		
 		if (s_debugEnabled) {
-			S_LOGGER.debug("sonar home url to check server status " + serverUrl);
+			S_LOGGER.debug("sonar home url to check server status " + frameworkUtil.getSonarURL());
 		}
+		
 		try {
-			URL sonarURL = new URL(serverUrl);
+			URL sonarURL = new URL(frameworkUtil.getSonarURL());
+			String protocol = sonarURL.getProtocol();
 			HttpURLConnection connection = null;
-			connection = (HttpURLConnection) sonarURL.openConnection();
-			int responseCode = connection.getResponseCode();
+			HttpsURLConnection connectionHttps = null; 
+			int responseCode;			
+			if(protocol.equals("http")) {				
+				connection = (HttpURLConnection) sonarURL.openConnection();
+				responseCode = connection.getResponseCode();				
+			} else {
+				try {
+					connectionHttps = (HttpsURLConnection) sonarURL.openConnection();
+					responseCode = connectionHttps.getResponseCode();
+				} catch (IOException e) {					
+					responseCode = 200;
+				}
+			}			
 			if (responseCode != 200) {
 				setReqAttribute(REQ_ERROR, getText(SONAR_NOT_STARTED));
 		    }
+			
 		} catch(Exception e) {
 			setReqAttribute(REQ_ERROR, getText(SONAR_NOT_STARTED));
 		}
@@ -241,7 +254,7 @@ public class Code extends DynamicParameterAction implements Constants {
 				
 	        	String serverUrl = "";
 	    		FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-	    		serverUrl = frameworkUtil.getSonarHomeURL();
+	    		serverUrl = frameworkUtil.getSonarURL();	    		
 				StringBuilder reportPath = new StringBuilder(getApplicationHome());
 				if (StringUtils.isNotEmpty(getSelectedModule())) {
 				    reportPath.append(File.separatorChar);
