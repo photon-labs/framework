@@ -14,6 +14,7 @@
 	<style name="FCRHeadingLabelValue"/>
 	<parameter name="reportsDataType" class="java.lang.String"/>
 	<parameter name="testType" class="java.lang.String"/>
+	<parameter name="hideClassColumn" class="java.lang.String"/>
 	<field name="testSuites" class="java.util.List"/>
 	<field name="allTestSuites" class="java.util.List"/>
 	<variable name="count" class="java.lang.Integer" calculation="Count">
@@ -68,6 +69,9 @@
 					<reportElement x="0" y="0" width="555" height="211" isRemoveLineWhenBlank="true">
 						<printWhenExpression><![CDATA[$P{reportsDataType}.equals("detail")]]></printWhenExpression>
 					</reportElement>
+					<subreportParameter name="hideClassColumn">
+						<subreportParameterExpression><![CDATA[$P{hideClassColumn}]]></subreportParameterExpression>
+					</subreportParameter>
 					<subreportParameter name="reportsDataType">
 						<subreportParameterExpression><![CDATA[$P{reportsDataType}]]></subreportParameterExpression>
 					</subreportParameter>
