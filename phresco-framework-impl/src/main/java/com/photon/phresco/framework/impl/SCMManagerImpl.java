@@ -125,7 +125,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 	}
 
 	public boolean updateProject(String type, String url, String username ,
-			String password, String branch, String revision, String projcode) throws Exception  {
+			String password, String branch, String revision, String appDirName) throws Exception  {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.updateproject()");
 		}
@@ -140,10 +140,10 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			if(debugEnabled){
 				S_LOGGER.debug("update SCM Connection " + url);
 			}
-			 updateSCMConnection(projcode, url);
+			 updateSCMConnection(appDirName, url);
 				// revision = HEAD_REVISION.equals(revision) ? revision
 				// : revisionVal;
-			File updateDir = new File(Utility.getProjectHome(), projcode);
+			File updateDir = new File(Utility.getProjectHome(), appDirName);
 			if(debugEnabled){
 				S_LOGGER.debug("updateDir SVN... " + updateDir);
 				S_LOGGER.debug("Updating...");
@@ -158,8 +158,8 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			if(debugEnabled){
 				S_LOGGER.debug("GIT type");
 			}
-			updateSCMConnection(projcode, url);
-			File updateDir = new File(Utility.getProjectHome(), projcode); 
+			updateSCMConnection(appDirName, url);
+			File updateDir = new File(Utility.getProjectHome(), appDirName); 
 			if(debugEnabled){
 				S_LOGGER.debug("updateDir GIT... " + updateDir);
 			}
@@ -169,10 +169,55 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				S_LOGGER.debug("Updated!");
 			}
 			return true;
+		} else if (BITKEEPER.equals(type)) {
+		    if (debugEnabled) {
+                S_LOGGER.debug("BITKEEPER type");
+            }
+		    StringBuilder sb = new StringBuilder(Utility.getProjectHome())
+		    .append(appDirName);
+		    updateFromBitKeeperRepo(url, sb.toString());
 		}
 
 		return false;
 	}
+	
+	private boolean updateFromBitKeeperRepo(String repoUrl, String appDir) throws PhrescoException {
+        BufferedReader reader = null;
+        File file = new File(Utility.getPhrescoTemp() + "bitkeeper.info");
+        boolean isUpdated = false;
+        try {
+            List<String> commands = new ArrayList<String>();
+            commands.add(BK_PARENT + SPACE + repoUrl);
+            commands.add(BK_PULL);
+            for (String command : commands) {
+                Utility.executeStreamconsumer(appDir, command, new FileOutputStream(file));
+            }
+            reader = new BufferedReader(new FileReader(file));
+            String strLine;
+            while ((strLine = reader.readLine()) != null) {
+                if (strLine.contains("Nothing to pull")) {
+                    throw new PhrescoException("Nothing to pull");
+                } else if (strLine.contains("[pull] 100%")) {
+                    isUpdated = true;
+                }
+            }
+        } catch (Exception e) {
+            throw new PhrescoException(e);
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    throw new PhrescoException(e);
+                }
+            }
+            if (file.exists()) {
+                file.delete();
+            }
+        }
+        
+        return isUpdated;
+    }
 
 	private void importToWorkspace(File gitImportTemp, String projectHome,String code) throws Exception {
 		try {
@@ -386,7 +431,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 	    File file = new File(Utility.getPhrescoTemp() + "bitkeeper.info");
 	    boolean isImported = false;
 	    try {
-	        String command = "bk clone bk://" + repoUrl;
+	        String command = BK_CLONE + SPACE + repoUrl;
 	        Utility.executeStreamconsumer(Utility.getProjectHome(), command, new FileOutputStream(file));
 	        reader = new BufferedReader(new FileReader(file));
 	        String strLine;
@@ -394,7 +439,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 	            if (strLine.contains("OK")) {
 	                isImported = true;
 	                break;
-	            } else if (strLine.contains("exists and is not empty")) {
+	            } else if (strLine.contains(ALREADY_EXISTS)) {
 	                throw new PhrescoException("Project already imported");
 	            } else if (strLine.contains("FAILED")) {
 	                throw new PhrescoException("Failed to import project");
@@ -614,8 +659,10 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				commitDirectoryContentToSubversion(url, dir.getPath(), username, password, commitMessage);
 			} else if (GIT.equals(type)) {
 				importToGITRepo();
+			} else if (BITKEEPER.equals(type)) {
+			    return commitToBitKeeperRepo(url, dir.getPath(), commitMessage);
 			}
-		} catch (Exception e) {
+		} catch (PhrescoException e) {
 			throw e;
 		}
 		return true;
@@ -634,6 +681,50 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		wcClient.doAdd(subVerDir, true, false, false, SVNDepth.INFINITY, false, false);
 		return cm.getCommitClient().doCommit(new File[]{subVerDir}, false, commitMessage, null, null, false, true, SVNDepth.INFINITY);
     }
+	
+	private boolean commitToBitKeeperRepo(String repoUrl, String appDir, String commitMsg) throws PhrescoException {
+	    BufferedReader reader = null;
+        File file = new File(Utility.getPhrescoTemp() + "bitkeeper.info");
+        boolean isCommitted = false;
+	    try {
+	        List<String> commands = new ArrayList<String>();
+	        commands.add(BK_PARENT + SPACE + repoUrl);
+	        commands.add(BK_PULL);
+	        commands.add(BK_CI + SPACE + BK_ADD_COMMENT + commitMsg + KEY_QUOTES);
+	        commands.add(BK_ADD_FILES + SPACE + BK_ADD_COMMENT + commitMsg + KEY_QUOTES);
+	        commands.add(BK_COMMIT + SPACE + BK_ADD_COMMENT + commitMsg + KEY_QUOTES);
+	        commands.add(BK_PUSH);
+	        for (String command : commands) {
+	            Utility.executeStreamconsumer(appDir, command, new FileOutputStream(file));
+            }
+	        reader = new BufferedReader(new FileReader(file));
+            String strLine;
+            while ((strLine = reader.readLine()) != null) {
+                if (strLine.contains("push") && strLine.contains("OK")) {
+                    isCommitted = true;
+                } else if (strLine.contains("Nothing to push")) {
+                    throw new PhrescoException("Nothing to push");
+                } else if (strLine.contains("Cannot resolve host")) {
+                    throw new PhrescoException("Failed to commit");
+                }
+            }
+        } catch (Exception e) {
+            throw new PhrescoException(e);
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    throw new PhrescoException(e);
+                }
+            }
+            if (file.exists()) {
+                file.delete();
+            }
+        }
+        
+        return isCommitted;
+	}
 	
 	public SVNCommitInfo deleteDirectoryInSubversion(String repositoryURL, String subVersionedDirectory, String userName, String password, String commitMessage) throws SVNException, IOException {
 		if(debugEnabled){

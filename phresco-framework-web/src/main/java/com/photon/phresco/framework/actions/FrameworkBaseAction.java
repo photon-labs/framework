@@ -298,16 +298,6 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
         return builder.toString();
     }
     
-    public String getAppHome() throws PhrescoException {
-        StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-        builder.append(getApplicationInfo().getAppDirName());
-        builder.append(File.separator);
-        builder.append(FOLDER_DOT_PHRESCO);
-        builder.append(File.separator);
-        builder.append(CONFIGURATION_INFO_FILE_NAME);
-        return builder.toString();
-    }
-    
     /**
      * To get path of the application
      * @param applicationInfo

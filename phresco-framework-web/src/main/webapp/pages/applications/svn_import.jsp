@@ -170,10 +170,10 @@
 	
 	<% if (FrameworkConstants.FROM_PAGE_ADD.equals(action) || FrameworkConstants.COMMIT.equals(action)) { %>
 		<div class="control-group">
-			<label  class="control-label labelbold popupLbl"><s:text name="lbl.commit.message"/></label> 
+			<label  class="control-label labelbold popupLbl"><span class="red hideContent" id="commitMsgSpan">*</span> <s:text name="lbl.commit.message"/></label> 
 			<div class="controls">
 				 <textarea class="appinfo-desc input-xlarge" maxlength="150" title="<s:text name="title.150.chars"/>" class="xlarge" 
-		        	id="textarea" name="commitMessage"></textarea> 
+		        	id="commitMessage" name="commitMessage"></textarea> 
 			</div>
 		</div>
 	<% } %>
@@ -215,21 +215,32 @@
 		  	extraInfoDisplay();
 		  	if ($("[name=repoType]").val() == 'svn') {
 		  		$(".mandatory").show();
-		  	} else if($("[name=repoType]").val() == 'git' || $("[name=repoType]").val() == 'bitkeeper') {
+		  		$("#commitMsgSpan").hide();
+		  	} else if($("[name=repoType]").val() == 'git') {
 		  		$(".mandatory").hide();
+		  		$("#commitMsgSpan").hide();
 		  	}
 		  	
 		  	if ($("[name=repoType]").val() == 'bitkeeper') {
+		  		$(".mandatory").hide();
 		  		$("#repoUrl").val('');
+		  		$("#commitMsgSpan").show();
 			}
 		});
 			  
 		<% if (StringUtils.isNotEmpty(repoUrl) && repoUrl.contains(FrameworkConstants.GIT)) {%>
 		  	$("[name=repoType] option[value='git']").attr('selected', 'selected');
 		  	$('#typeInfo').show();
+		  	$("#commitMsgSpan").hide();
+	  	<% } else if (StringUtils.isNotEmpty(repoUrl) && repoUrl.contains(FrameworkConstants.BITKEEPER)) {%>
+		  	$("[name=repoType] option[value='bitkeeper']").attr('selected', 'selected');
+		  	$('#typeInfo').show();
+		  	$(".mandatory").hide();
+		  	$("#commitMsgSpan").show();
 		<% } else if (StringUtils.isNotEmpty(repoUrl)) { %>
 		  	$("[name=repoType] option[value='svn']").attr('selected', 'selected');
 		 	$('#typeInfo').show();
+		 	$("#commitMsgSpan").hide();
 	    <% } %>
 				  	
 		extraInfoDisplay();
@@ -261,12 +272,13 @@
 	    });
 	    
 	    // by default for commit opeartion disable button
-	    <% if (FrameworkConstants.COMMIT.equals(action)) { %> 
+	    <% if (FrameworkConstants.COMMIT.equals(action) && StringUtils.isNotEmpty(repoUrl) && !repoUrl.contains(FrameworkConstants.BITKEEPER)) { %> 
 	    	disableButton($(".popupOk"));
 	    <% } %>
 	    
 		<%
-			if (FrameworkConstants.COMMIT.equals(action) && CollectionUtils.isEmpty(commitableFiles)) {
+			if (FrameworkConstants.COMMIT.equals(action) && CollectionUtils.isEmpty(commitableFiles) && 
+			        StringUtils.isNotEmpty(repoUrl) && !repoUrl.contains(FrameworkConstants.BITKEEPER)) {
 		%>
 				$("#errMsg").html("<s:text name='lbl.no.change'/>");
 		<% } %>
@@ -345,30 +357,37 @@
 		}
 		
 		if ($("[name=repoType]").val() == 'svn') {
-			if(isBlank($.trim($("input[name='username']").val()))){
+			if (isBlank($.trim($("input[name='username']").val()))) {
 				$("#errMsg").html("Username is missing");
 				$("#userName").focus();
 				$("#userName").val("");
 				return false;
-		}
+			}
 			
-		if (isBlank($.trim($("input[name='password']").val()))) {
+			if (isBlank($.trim($("input[name='password']").val()))) {
 				$("#errMsg").html("Password is missing");
 				$("#password").focus();
 				$("#password").val("");
 				return false;
-		}
+			}
 			
 // 			the revision have to be validated
-		if ($('input:radio[name=revision]:checked').val() == "revision" && (isBlank($.trim($('#revisionVal').val())))) {
+			if ($('input:radio[name=revision]:checked').val() == "revision" && (isBlank($.trim($('#revisionVal').val())))) {
 				$("#errMsg").html("Revision is missing");
 				$("#revisionVal").focus();
 				$("#revisionVal").val("");
 				return false;
-		}
+			}
 
 // 			before form submit enable textboxes
 // 			enableSvnFormDet();
+		}
+		
+		if ($("[name=repoType]").val() == 'bitkeeper' && isBlank($.trim($("#commitMessage").val()))) {
+			$("#errMsg").html("Commit message is missing");
+			$("#commitMessage").text("");
+			$("#commitMessage").focus();
+			return false;
 		}
 		return true;
 	}
@@ -388,7 +407,7 @@
 	
 	function successEvent(pageUrl, data) {
 		if(pageUrl == "importSVNProject" || pageUrl == "importGITProject" || pageUrl == "importBitKeeperProject" || pageUrl == "updateSVNProject" || pageUrl == "updateGITProject"
-			|| pageUrl == "addSVNProject" || pageUrl == "addGITProject" || pageUrl == "commitSVNProject" || pageUrl == "commitGITProject") {
+			|| pageUrl == "updateBitKeeperProject" || pageUrl == "addSVNProject" || pageUrl == "addGITProject" || pageUrl == "commitSVNProject" || pageUrl == "commitBitKeeperProject" || pageUrl == "commitGITProject") {
 			checkError(pageUrl, data);
 		}
 	}
@@ -400,13 +419,13 @@
 		if (!data.errorFlag) {
 			$("#errMsg").html(data.errorString);
 		} else if(data.errorFlag) {
-			if ((pageUrl == "importGITProject") || (pageUrl == "importSVNProject")) {
+			if (pageUrl == "importGITProject" || pageUrl == "importSVNProject" || pageUrl == "importBitKeeperProject") {
 				 statusFlag = "import";
-			} else if((pageUrl == "updateGITProject") || (pageUrl == "updateSVNProject")) {
+			} else if(pageUrl == "updateGITProject" || pageUrl == "updateSVNProject" || pageUrl == "updateBitKeeperProject") {
 				 statusFlag = "update";
-			} else if((pageUrl == "addGITProject") || (pageUrl == "addSVNProject")) {
+			} else if(pageUrl == "addGITProject" || pageUrl == "addSVNProject") {
 				 statusFlag = "add";
-			}  else if((pageUrl == "commitGITProject") || ( pageUrl == "commitSVNProject")) {
+			}  else if(pageUrl == "commitGITProject" || pageUrl == "commitSVNProject" || pageUrl == "commitBitKeeperProject") {
 				 statusFlag = "commit";
 			}
 			var params = getBasicParams();

@@ -78,57 +78,22 @@ public class Applications extends FrameworkBaseAction {
     private static final Logger S_LOGGER = Logger.getLogger(Applications.class);
     private static Boolean s_debugEnabled = S_LOGGER.isDebugEnabled();
 
-    private String fromPage = "";
-
-    private String globalValidationStatus = "";
-    private List<String> pilotModules = null;
-    private List<String> pilotJSLibs = null;
-    private String showSettings = "";
-    private List<String> settingsEnv = null;
-    private String selectedVersions = "";
-    private String selectedAttrType = "";
-    private String selectedParamName = "";
-    private String divTobeUpdated = "";
-    private List<String> techVersions = null;
     private List<DownloadInfo> downloadInfos = null;
-    private boolean hasConfiguration = false;
-    private String configServerNames = "";
-    private String configDbNames = "";
-    private String fromTab = "";
-    private List<String> feature= null;
-    private List<String> component= null;
-    private List<String> javascript= null;
     private String oldAppDirName = "";
 
     private String userName = "";
     private String password = "";
     private String revision = "";
     private String revisionVal = "";
-    private boolean svnImport = false;
-    private String svnImportMsg = "";
-
-    private String fileType = "";
-    private String fileorfolder = null;
-    //svn info
-    private String credential = "";
-    // import from git
     private String repoType = "";
     private String repoUrl = "";
-
-    private String applicationType = "";
-
-    boolean hasError = false;
-    private String envError = "";
+    private String commitMessage = "";
+    private List<String> commitableFiles = null;
 
     private List<DownloadInfo> servers = null;
 
-    private String projectCode = "";
     private String technology = "";
     
-    private List<String> versions = null;
-    private String techId = "";
-    private String type = "";
-    private String applicationId = "";
     public String errorString;
     public boolean errorFlag;
 
@@ -140,8 +105,6 @@ public class Applications extends FrameworkBaseAction {
     private String defaultOptTxt = "";
     private String action = "";
     private List<String> jsonData = null;
-    private String commitMessage = "";
-    private List<String> commitableFiles = null;
     
     private String actionType = "";
     
@@ -759,7 +722,7 @@ public class Applications extends FrameworkBaseAction {
 			}
 			
 			List<SVNStatus> commitableFiles = null;
-			if (COMMIT.equals(action)) {
+			if (COMMIT.equals(action) && !connectionUrl.contains(BITKEEPER)) {
 				commitableFiles = svnCommitableFiles();
 			}
 			setReqAttribute(REQ_COMMITABLE_FILES, commitableFiles);
@@ -906,6 +869,29 @@ public class Applications extends FrameworkBaseAction {
 		}
 		return SUCCESS;
 	}
+	
+	public String updateBitKeeperProject() {
+	    SCMManagerImpl scmi = new SCMManagerImpl();
+        try {
+            ApplicationInfo applicationInfo = getApplicationInfo();
+            String appDirName = applicationInfo.getAppDirName();
+            scmi.updateProject(BITKEEPER, getRepoUrl(), getUsername(), getPassword(), null, getRevision(), appDirName);
+            errorString = getText(SUCCESS_PROJECT_UPDATE);
+            errorFlag = true;
+        } catch (PhrescoException e) {
+            if (e.getLocalizedMessage().contains("Nothing to pull")) {
+                errorString = "No Files to update";
+            } else {
+                errorString = getText(UPDATE_PROJECT_FAIL);
+            }
+            errorFlag = false;
+        } catch (Exception e) {
+            errorString = getText(UPDATE_PROJECT_FAIL);
+            errorFlag = false;
+        }
+        
+        return SUCCESS;
+	}
 
 	public String addSVNProject() {
 		if(s_debugEnabled) {
@@ -980,6 +966,35 @@ public class Applications extends FrameworkBaseAction {
 	}
 	
 	/**
+	 * To commit the changes to the bitkeeper repo
+	 * @return 
+	 */
+	public String commitBitKeeperProject() {
+	    if (s_debugEnabled) {
+            S_LOGGER.debug("Entering Method  Applications.commitBitKeeperProject()");
+        }
+	    try {
+	        SCMManagerImpl scmi = new SCMManagerImpl();
+            File appDir = new File(getApplicationHome());
+            scmi.commitToRepo(BITKEEPER, getRepoUrl(), getUsername(), getPassword(),  null, null, appDir, getCommitMessage());
+            errorString = getText(COMMIT_PROJECT_SUCCESS);
+            errorFlag = true;
+        } catch (PhrescoException e) {
+            if (e.getLocalizedMessage().contains("Nothing to push")) {
+                errorString = "No Files to commit";
+            } else {
+                errorString = getText(COMMIT_PROJECT_FAIL);
+            }
+            errorFlag = false;
+        } catch (Exception e) {
+            errorString = getText(COMMIT_PROJECT_FAIL);
+            errorFlag = false;
+        }
+        
+        return SUCCESS;
+	}
+	
+	/**
 	 * To remove the reader from the session
 	 * @return
 	 */
@@ -987,22 +1002,6 @@ public class Applications extends FrameworkBaseAction {
         removeSessionAttribute(getAppId() + getActionType());
         
         return SUCCESS;
-    }
-
-    public String getProjectCode() {
-        return projectCode;
-    }
-
-    public void setProjectCode(String projectCode) {
-        this.projectCode = projectCode;
-    }
-
-    public String getFromPage() {
-        return fromPage;
-    }
-
-    public void setFromPage(String fromPage) {
-        this.fromPage = fromPage;
     }
 
     public String getUsername() {
@@ -1037,196 +1036,12 @@ public class Applications extends FrameworkBaseAction {
         this.revisionVal = revisionVal;
     }
 
-    public String getShowSettings() {
-        return showSettings;
-    }
-
-    public void setShowSettings(String showSettings) {
-        this.showSettings = showSettings;
-    }
-
-    public String getGlobalValidationStatus() {
-        return globalValidationStatus;
-    }
-
-    public void setGlobalValidationStatus(String globalValidationStatus) {
-        this.globalValidationStatus = globalValidationStatus;
-    }
-
-    public List<String> getPilotModules() {
-        return pilotModules;
-    }
-
-    public void setPilotModules(List<String> pilotModules) {
-        this.pilotModules = pilotModules;
-    }
-
-    public List<String> getPilotJSLibs() {
-        return pilotJSLibs;
-    }
-
-    public void setPilotJSLibs(List<String> pilotJSLibs) {
-        this.pilotJSLibs = pilotJSLibs;
-    }
-
-    public List<String> getVersions() {
-        return versions;
-    }
-
-    public void setVersions(List<String> versions) {
-        this.versions = versions;
-    }
-
-    public String getSelectedVersions() {
-        return selectedVersions;
-    }
-
-    public void setSelectedVersions(String selectedVersions) {
-        this.selectedVersions = selectedVersions;
-    }
-
-    public String getSelectedAttrType() {
-        return selectedAttrType;
-    }
-
-    public void setSelectedAttrType(String selectedAttrType) {
-        this.selectedAttrType = selectedAttrType;
-    }
-
-    public String getSelectedParamName() {
-        return selectedParamName;
-    }
-
-    public void setSelectedParamName(String selectedParamName) {
-        this.selectedParamName = selectedParamName;
-    }
-
-    public String getDivTobeUpdated() {
-        return divTobeUpdated;
-    }
-
-    public void setDivTobeUpdated(String divTobeUpdated) {
-        this.divTobeUpdated = divTobeUpdated;
-    }
-
-    public List<String> getSettingsEnv() {
-        return settingsEnv;
-    }
-
-    public void setSettingsEnv(List<String> settingsEnv) {
-        this.settingsEnv = settingsEnv;
-    }
-
-    public boolean isHasError() {
-        return hasError;
-    }
-
-    public void setHasError(boolean hasError) {
-        this.hasError = hasError;
-    }
-
-    public String getEnvError() {
-        return envError;
-    }
-
-    public void setEnvError(String envError) {
-        this.envError = envError;
-    }
-
-    public List<String> getTechVersions() {
-        return techVersions;
-    }
-
-    public void setTechVersions(List<String> techVersions) {
-        this.techVersions = techVersions;
-    }
-
-    public boolean isHasConfiguration() {
-        return hasConfiguration;
-    }
-
-    public void setHasConfiguration(boolean hasConfiguration) {
-        this.hasConfiguration = hasConfiguration;
-    }
-
-    public String getConfigServerNames() {
-        return configServerNames;
-    }
-
-    public void setConfigServerNames(String configServerNames) {
-        this.configServerNames = configServerNames;
-    }
-
-    public String getConfigDbNames() {
-        return configDbNames;
-    }
-
-    public void setConfigDbNames(String configDbNames) {
-        this.configDbNames = configDbNames;
-    }
-
-    public boolean isSvnImport() {
-        return svnImport;
-    }
-
-    public void setSvnImport(boolean svnImport) {
-        this.svnImport = svnImport;
-    }
-
-    public String getSvnImportMsg() {
-        return svnImportMsg;
-    }
-
-    public void setSvnImportMsg(String svnImportMsg) {
-        this.svnImportMsg = svnImportMsg;
-    }
-
-    public String getFromTab() {
-        return fromTab;
-    }
-
-    public void setFromTab(String fromTab) {
-        this.fromTab = fromTab;
-    }
-
-    public String getCredential() {
-        return credential;
-    }
-
-    public void setCredential(String credential) {
-        this.credential = credential;
-    }
-
-    public String getFileType() {
-        return fileType;
-    }
-
-    public void setFileType(String fileType) {
-        this.fileType = fileType;
-    }
-
-    public String getFileorfolder() {
-        return fileorfolder;
-    }
-
-    public void setFileorfolder(String fileorfolder) {
-        this.fileorfolder = fileorfolder;
-    }
-
     public String getRepoType() {
         return repoType;
     }
 
     public void setRepoType(String repoType) {
         this.repoType = repoType;
-    }
-
-    public String getApplicationType() {
-        return applicationType;
-    }
-
-    public void setApplicationType(String applicationType) {
-        this.applicationType = applicationType;
     }
 
     public String getTechnology() {
@@ -1252,43 +1067,7 @@ public class Applications extends FrameworkBaseAction {
 	public void setDownloadInfos(List<DownloadInfo> downloadInfos) {
 		this.downloadInfos = downloadInfos;
 	}
-	public List<String> getFeature() {
-		return feature;
-	}
-	public void setFeature(List<String> feature) {
-		this.feature = feature;
-	}
-	public List<String> getComponent() {
-		return component;
-	}
-	public void setComponent(List<String> component) {
-		this.component = component;
-	}
-	public List<String> getJavascript() {
-		return javascript;
-	}
-	public void setJavascript(List<String> javascript) {
-		this.javascript = javascript;
-	}
-	public String getTechId() {
-		return techId;
-	}
-	public void setTechId(String techId) {
-		this.techId = techId;
-	}
-	public String getType() {
-		return type;
-	}
-	public void setType(String type) {
-		this.type = type;
-	}
-	public String getApplicationId() {
-		return applicationId;
-	}
-	public void setApplicationId(String applicationId) {
-		this.applicationId = applicationId;
-	}
-
+	
 	public boolean isErrorFlag() {
 		return errorFlag;
 	}
@@ -1336,6 +1115,7 @@ public class Applications extends FrameworkBaseAction {
 	public void setRepoUrl(String repoUrl) {
 		this.repoUrl = repoUrl;
 	}
+	
 	public String getSelectedDownloadInfo() {
 		return selectedDownloadInfo;
 	}

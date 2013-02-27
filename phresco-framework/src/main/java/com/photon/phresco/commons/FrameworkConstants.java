@@ -1003,14 +1003,14 @@ public interface FrameworkConstants {
     /*
      * Project Import keys
      */
-    String IMPORT_PROJECT_FAIL ="import.project.fail";
-    String UPDATE_PROJECT_FAIL ="update.project.fail";
+    String IMPORT_PROJECT_FAIL = "import.project.fail";
+    String UPDATE_PROJECT_FAIL = "update.project.fail";
     String INVALID_CREDENTIALS = "import.invalid.credential";
     String INVALID_FOLDER = "import.invalid.folder";
     String PROJECT_ALREADY = "import.project.already";
-    String SVN_FAILED ="failed";
-    String SVN_INTERNAL ="Internal";
-    String SVN_IS_NOT_WORKING_COPY ="is not a working copy";
+    String SVN_FAILED = "failed";
+    String SVN_INTERNAL = "Internal";
+    String SVN_IS_NOT_WORKING_COPY = "is not a working copy";
     String INVALID_URL = "import.invalid.url";
     String INVALID_REVISION = "import.invalid.revision";
     String NOT_WORKING_COPY = "not.working.dir";
@@ -1020,10 +1020,10 @@ public interface FrameworkConstants {
     /*
      * Project add keys
      */
-    String ADD_PROJECT_SUCCESS ="add.project.success";
-    String ADD_PROJECT_FAIL ="add.project.fail";
-    String COMMIT_PROJECT_SUCCESS ="commit.project.success";
-    String COMMIT_PROJECT_FAIL ="commit.project.fail";
+    String ADD_PROJECT_SUCCESS = "add.project.success";
+    String ADD_PROJECT_FAIL = "add.project.fail";
+    String COMMIT_PROJECT_SUCCESS = "commit.project.success";
+    String COMMIT_PROJECT_FAIL = "commit.project.fail";
     
     /*
      * Delete Build keys
@@ -1691,4 +1691,18 @@ public interface FrameworkConstants {
 	    String TO_DIRECTORY = "toDirectory";
 	    String FILES = "files";
 	    String FILE = "file";
+	    
+	    /**
+	     * BitKeeper Commands
+	     */
+	    String BK_CLONE = "bk clone";
+	    String BK_PARENT = "bk parent";
+	    String BK_PULL = "bk pull";
+	    String BK_PUSH = "bk push";
+	    String BK_COMMIT = "bk commit";
+	    String BK_ADD_FILES = "bk -x -r ci -i";
+	    String BK_CI = "bk ci";
+	    String BK_ADD_COMMENT = "-y\"";
+	    
+	    String ALREADY_EXISTS = "exists and is not empty";
 }

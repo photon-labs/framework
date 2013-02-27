@@ -239,9 +239,9 @@
  		//$("#popupPage").modal('hide');
  		var okUrl = $(obj).attr("id");
  		if (okUrl == "importUpdateAppln") {
- 			if(validateImportAppl()) {
+ 			if (validateImportAppl()) {
  				importUpdateApp();
- 			} 			
+ 			}
  		} else if (okUrl === "printAsPdf") {
 			// show popup loading icon
 			showPopuploadingIcon();

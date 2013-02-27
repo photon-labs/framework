@@ -150,6 +150,10 @@
             <result type="json"/>
         </action>
         
+        <action name="updateBitKeeperProject" method="updateBitKeeperProject" class="com.photon.phresco.framework.actions.applications.Applications">
+            <result type="json"/>
+        </action>
+        
         <action name="addSVNProject" method="addSVNProject" class="com.photon.phresco.framework.actions.applications.Applications">
             <result type="json"/>
         </action>
@@ -163,6 +167,10 @@
         </action>
         
         <action name="commitGITProject" method="commitGitProject" class="com.photon.phresco.framework.actions.applications.Applications">
+            <result type="json"/>
+        </action>
+        
+        <action name="commitBitKeeperProject" method="commitBitKeeperProject" class="com.photon.phresco.framework.actions.applications.Applications">
             <result type="json"/>
         </action>
         
