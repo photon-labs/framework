@@ -192,6 +192,7 @@ input[type="password"] {
 .feature select {
 	margin-left: 15px;
     margin-top: 4px;
+	width: 100px;
 }
 
 .featureImage {
@@ -6525,4 +6526,8 @@ color: #313131;
 
 .pdfDelImg {
 	width:60px;
+}
+
+#popupPage .modal-body {
+	height: 300px !important;
 }

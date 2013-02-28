@@ -135,7 +135,7 @@ $(document).ready(function() {
 				</label>
 				<span class="clearfix ">
 	                <div class="input lgnBtnLabel">
-	                    <input type="submit" value="Login" class="btn loginbutton" id="Login">
+	                    <input type="submit" value="LOGIN" class="btn loginbutton" id="Login">
 	            	</div>
 	            </span>
 	            <input type="hidden" name="loginFirst" value="false"/>

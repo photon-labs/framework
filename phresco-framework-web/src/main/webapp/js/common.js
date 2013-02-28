@@ -688,21 +688,21 @@ function changeTheme(localstore) {
         $("link[id='media-query']").attr("href", "theme/red_blue/css/media-queries.css");
         $("script[id='windowResizer']").attr("src", "js/windowResizer.js");
         $('#loadingIconDiv').activity({segments: 10, color: '#ff424c', speed: 1.5});
-		$('#popuploadingIcon').activity({segments: 10, color: '#ff424c', speed: 1.8});
+		$('.popuploadingIcon').activity({segments: 10, color: '#ff424c', speed: 1.8});
     } else if (localstore == "theme/red_blue/css/blue.css") {
         $("link[title='phresco']").attr("href", localstore);
         $("link[id='phresco']").attr("href", "theme/red_blue/css/phresco.css");
         $("link[id='media-query']").attr("href", "theme/red_blue/css/media-queries.css");
         $("script[id='windowResizer']").attr("src", "js/windowResizer.js");
         $('#loadingIconDiv').activity({segments: 10, color: '#5dd0ff', speed: 1.5});
-		$('#popuploadingIcon').activity({segments: 10, color: '#5dd0ff', speed: 1.8});
+		$('.popuploadingIcon').activity({segments: 10, color: '#5dd0ff', speed: 1.8});
     } else if (localstore == "theme/photon/css/photon_theme.css") {
         $("link[title='phresco']").attr("href", localstore);
         $("link[id='phresco']").attr("href", "theme/photon/css/phresco_default.css");
         $("link[id='media-query']").attr("href", "theme/photon/css/media-queries.css");
         $("script[id='windowResizer']").attr("src", "js/windowResizer_default.js");
         $('#loadingIconDiv').activity({segments: 10, color: '#C2C2C2', speed: 1.5});
-		$('#popuploadingIcon').activity({segments: 10, color: '#3c3c3c', speed: 1.8});
+		$('.popuploadingIcon').activity({segments: 10, color: '#3c3c3c', speed: 1.8});
     } 
 }
 
