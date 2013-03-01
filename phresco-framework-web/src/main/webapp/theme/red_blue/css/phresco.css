@@ -6333,5 +6333,6 @@ ul#testmenu {
 }
 
 #popupPage .modal-body {
-	height: 300px !important;
+	height: auto !important;
+	max-height: 300px;
 }
