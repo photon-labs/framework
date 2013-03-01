@@ -254,7 +254,7 @@ public class Code extends DynamicParameterAction implements Constants {
 				
 	        	String serverUrl = "";
 	    		FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-	    		serverUrl = frameworkUtil.getSonarURL();	    		
+	    		serverUrl = frameworkUtil.getSonarHomeURL();	    		
 				StringBuilder reportPath = new StringBuilder(getApplicationHome());
 				if (StringUtils.isNotEmpty(getSelectedModule())) {
 				    reportPath.append(File.separatorChar);
