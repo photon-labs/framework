@@ -194,6 +194,7 @@ div.lgnBtnLabel {
 .feature select {
 	margin-left: 15px;
     margin-top: 4px;
+	width: 100px;
 }
 
 /*** page header ends***/
@@ -6210,6 +6211,7 @@ ul#testmenu {
     margin: 19px 10px 14px 0;
     padding: 0 10px;
     border-radius: 6px;
+	border: 0;
 }
 
 .loginhead .alert .close {
@@ -6328,4 +6330,9 @@ ul#testmenu {
 
 .pdfDelImg {
 	width:60px;
+}
+
+#popupPage .modal-body {
+	height: auto !important;
+	max-height: 300px;
 }

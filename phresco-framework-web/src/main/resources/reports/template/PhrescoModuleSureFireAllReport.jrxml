@@ -23,6 +23,7 @@
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
+	<parameter name="hideClassColumn" class="java.lang.String"/>
 	<field name="moduleOrTechName" class="java.lang.String"/>
 	<field name="moduleOrTechLabel" class="java.lang.String"/>
 	<field name="sureFireReport" class="java.util.List"/>
@@ -41,7 +42,7 @@
 					<textElement verticalAlignment="Middle">
 						<font fontName="Times New Roman" size="11" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{moduleOrTechLabel}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{moduleOrTechLabel} +" :"]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement style="PMSFRHeadingRowLabelValue" x="105" y="10" width="420" height="20"/>
@@ -54,6 +55,9 @@
 					<reportElement x="2" y="35" width="553" height="89"/>
 					<subreportParameter name="testType">
 						<subreportParameterExpression><![CDATA[$P{testType}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="hideClassColumn">
+						<subreportParameterExpression><![CDATA[$P{hideClassColumn}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter name="reportsDataType">
 						<subreportParameterExpression><![CDATA[$P{reportsDataType}]]></subreportParameterExpression>

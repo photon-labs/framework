@@ -89,7 +89,7 @@
 		                    			List<ArtifactInfo> infos = serverDownloadInfo.getArtifactGroup().getVersions();
 											if(CollectionUtils.isNotEmpty(infos)) {
 												for (ArtifactInfo info : infos) {
-													if (StringUtils.isNotEmpty(info.getDownloadURL())) {
+													if (StringUtils.isNotEmpty(info.getDownloadURL()) && info.getFileSize() != 0) {
 														fileSize = info.getFileSize();
 														String size = "";
 														if(fileSize > 1048576) {
@@ -158,7 +158,7 @@
 			                    		List<ArtifactInfo> infos = dbDownloadInfo.getArtifactGroup().getVersions();
 											if (CollectionUtils.isNotEmpty(infos)) {
 												for (ArtifactInfo info : infos) { 
-													if(StringUtils.isNotEmpty(info.getDownloadURL())) {
+													if(StringUtils.isNotEmpty(info.getDownloadURL()) && info.getFileSize() != 0) {
 														fileSize = info.getFileSize();
 														String size = "";
 														if(fileSize > 1048576) {
@@ -231,7 +231,7 @@
 											List<ArtifactInfo> infos = editorDownloadInfo.getArtifactGroup().getVersions();
 												if (CollectionUtils.isNotEmpty(infos)) {
 													for (ArtifactInfo info : infos) {
-														if(StringUtils.isNotEmpty(info.getDownloadURL())) {
+														if(StringUtils.isNotEmpty(info.getDownloadURL()) && info.getFileSize() != 0) {
 															fileSize = info.getFileSize();
 															String size = "";
 															if(fileSize > 1048576) {
@@ -303,7 +303,7 @@
 										List<ArtifactInfo> infos = toolsDownloadInfo.getArtifactGroup().getVersions();
 											if (CollectionUtils.isNotEmpty(infos)) {
 												for (ArtifactInfo info : infos) {
-													if(StringUtils.isNotEmpty(info.getDownloadURL())) {
+													if(StringUtils.isNotEmpty(info.getDownloadURL()) && info.getFileSize() != 0) {
 														fileSize = info.getFileSize();
 														String size = "";
 														if(fileSize > 1048576) {
@@ -375,7 +375,7 @@
 										List<ArtifactInfo> infos = otherDownloadInfo.getArtifactGroup().getVersions();
 											if (CollectionUtils.isNotEmpty(infos)) {
 												for (ArtifactInfo info : infos) {
-													if(StringUtils.isNotEmpty(info.getDownloadURL())) {
+													if(StringUtils.isNotEmpty(info.getDownloadURL()) && info.getFileSize() != 0) {
 														fileSize = info.getFileSize();
 														String size = "";
 														if(fileSize > 1048576) {

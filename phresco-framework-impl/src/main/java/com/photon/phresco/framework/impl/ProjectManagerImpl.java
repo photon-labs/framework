@@ -225,17 +225,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 			throw new PhrescoException("Project creation failed");
 		}
 
-		//TODO This needs to be moved to service
-		try {
-			List<ApplicationInfo> appInfos = projectInfo.getAppInfos();
-			Environment defaultEnv = getEnvFromService(serviceManager);
-			for (ApplicationInfo applicationInfo : appInfos) {
-				createConfigurationXml(applicationInfo.getAppDirName(), serviceManager, defaultEnv);	
-			}
-		} catch (PhrescoException e) {
-			S_LOGGER.error("Entered into the catch block of Configuration creation failed Exception" + e.getLocalizedMessage());
-			throw new PhrescoException("Configuration creation failed"+e);
-		}
+		createEnvConfigXml(projectInfo, serviceManager);
 		return projectInfo;
 	}
 
@@ -254,7 +244,6 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 				ProjectUtils.updateProjectInfo(projectInfo, new File(sb.toString()));// To update the project.info file
 			}
 		} else {
-			
 			ClientResponse response = serviceManager.updateProject(projectInfo);
 			if (response.getStatus() == 200) {
 				BufferedReader breader = null;
@@ -329,8 +318,22 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 			} else {
 				throw new PhrescoException("Project updation failed");
 			}
+			createEnvConfigXml(projectInfo, serviceManager);
 		}
 		return null;
+	}
+
+	private void createEnvConfigXml(ProjectInfo projectInfo, ServiceManager serviceManager) throws PhrescoException {
+		try {
+			List<ApplicationInfo> appInfos = projectInfo.getAppInfos();
+			Environment defaultEnv = getEnvFromService(serviceManager);
+			for (ApplicationInfo applicationInfo : appInfos) {
+				createConfigurationXml(applicationInfo.getAppDirName(), serviceManager, defaultEnv);	
+			}
+		} catch (PhrescoException e) {
+			S_LOGGER.error("Entered into the catch block of Configuration creation failed Exception" + e.getLocalizedMessage());
+			throw new PhrescoException("Configuration creation failed"+e);
+		}
 	}
 	
 	private File backUpProjectInfoFile(String oldDirPath) throws PhrescoException {
@@ -376,18 +379,18 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 	}
 
 	private List<ArtifactGroup> setArtifactGroup(ApplicationHandler applicationHandler) {
-			List<ArtifactGroup> plugins = new ArrayList<ArtifactGroup>();
-			ArtifactGroup artifactGroup = new ArtifactGroup();
-			artifactGroup.setGroupId(applicationHandler.getGroupId());
-			artifactGroup.setArtifactId(applicationHandler.getArtifactId());
-			//artifactGroup.setType(Type.FEATURE); to set version
-			List<ArtifactInfo> artifactInfos = new ArrayList<ArtifactInfo>();
-			ArtifactInfo artifactInfo = new ArtifactInfo();
-			artifactInfo.setVersion(applicationHandler.getVersion());
-			artifactInfos.add(artifactInfo);
-			artifactGroup.setVersions(artifactInfos);
-			plugins.add(artifactGroup);
-			return plugins;
+		List<ArtifactGroup> plugins = new ArrayList<ArtifactGroup>();
+		ArtifactGroup artifactGroup = new ArtifactGroup();
+		artifactGroup.setGroupId(applicationHandler.getGroupId());
+		artifactGroup.setArtifactId(applicationHandler.getArtifactId());
+		//artifactGroup.setType(Type.FEATURE); to set version
+		List<ArtifactInfo> artifactInfos = new ArrayList<ArtifactInfo>();
+		ArtifactInfo artifactInfo = new ArtifactInfo();
+		artifactInfo.setVersion(applicationHandler.getVersion());
+		artifactInfos.add(artifactInfo);
+		artifactGroup.setVersions(artifactInfos);
+		plugins.add(artifactGroup);
+		return plugins;
 	}
 
 	public boolean delete(List<ApplicationInfo> appInfos) throws PhrescoException {

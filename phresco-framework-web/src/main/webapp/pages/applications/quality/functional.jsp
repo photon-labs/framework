@@ -65,15 +65,7 @@
 		</div>
 		
 		<ul id="display-inline-block-example">
-			<%
-				if (FrameworkConstants.SELENIUM_WEBDRIVER.equalsIgnoreCase(functioanlTestTool) || 
-				        FrameworkConstants.SELENIUM_UIAUTOMATION.equalsIgnoreCase(functioanlTestTool)) {
-			%>
-					<li id="first" style="width: auto;">
-						<input type="button" id="functionalTest" class="btn btn-primary" value="<s:text name='lbl.test'/>">
-					</li>
-			<%
-				} else if (FrameworkConstants.SELENIUM_GRID.equalsIgnoreCase(functioanlTestTool)) {
+			<% if (FrameworkConstants.SELENIUM_GRID.equalsIgnoreCase(functioanlTestTool)) {
 					boolean hubStatus = (Boolean) request.getAttribute(FrameworkConstants.REQ_HUB_STATUS);
 					String disabledStr = "disabled";
 					if (hubStatus) {
@@ -89,6 +81,12 @@
 					</li>
 					<li id="first">
 						<input type="button" id="startNodeBtn" class="btn btn-primary" value="<s:text name='lbl.functional.start.node'/>">
+					</li>
+			<%
+				} else {
+			%>
+					<li id="first" style="width: auto;">
+						<input type="button" id="functionalTest" class="btn btn-primary" value="<s:text name='lbl.test'/>">
 					</li>
 			<%
 				}

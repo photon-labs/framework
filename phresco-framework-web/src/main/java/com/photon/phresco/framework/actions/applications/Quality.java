@@ -373,7 +373,8 @@ public class Quality extends DynamicParameterAction implements Constants {
             }
             
             boolean hasFunctionalLogFile = false;
-            if (new File(getFunctionalLogFilePath()).exists()) {
+	        String logFilePath = frameworkUtil.getLogFilePath(appInfo);
+            if (StringUtils.isNotEmpty(logFilePath) && new File(getFunctionalLogFilePath()).exists()) {
                 hasFunctionalLogFile = true;
             }
             setReqAttribute(REQ_HAS_FUNCTIONAL_LOG_FILE, hasFunctionalLogFile);
