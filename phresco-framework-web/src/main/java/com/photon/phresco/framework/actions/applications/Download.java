@@ -19,6 +19,10 @@
  */
 package com.photon.phresco.framework.actions.applications;
 
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 
 import com.photon.phresco.commons.model.ApplicationInfo;
@@ -47,14 +51,40 @@ public class Download extends FrameworkBaseAction {
 			ApplicationInfo appInfo = getApplicationInfo();
 			String techId = appInfo.getTechInfo().getId();
 			String platform = FrameworkUtil.findPlatform();
-			setReqAttribute(REQ_SERVER_DOWNLOAD_INFO, serviceManager.getDownloads(getCustomerId(), techId, DownloadInfo.Category.SERVER.name(), platform));
-			setReqAttribute(REQ_DB_DOWNLOAD_INFO, serviceManager.getDownloads(getCustomerId(), techId, DownloadInfo.Category.DATABASE.name(), platform));
-			setReqAttribute(REQ_EDITOR_DOWNLOAD_INFO, serviceManager.getDownloads(getCustomerId(), techId, DownloadInfo.Category.EDITOR.name(), platform));
-			setReqAttribute(REQ_TOOLS_DOWNLOAD_INFO, serviceManager.getDownloads(getCustomerId(), techId, DownloadInfo.Category.TOOLS.name(), platform));
-			setReqAttribute(REQ_OTHERS_DOWNLOAD_INFO, serviceManager.getDownloads(getCustomerId(), techId, DownloadInfo.Category.OTHERS.name(), platform));
+			
+			List<DownloadInfo> serverDownloadInfo = serviceManager.getDownloads(getCustomerId(), techId, DownloadInfo.Category.SERVER.name(), platform);
+			Collections.sort(serverDownloadInfo, sortDownloadsInAlphaOrder());
+			setReqAttribute(REQ_SERVER_DOWNLOAD_INFO, serverDownloadInfo);
+			
+			List<DownloadInfo> dbDownloadInfo = serviceManager.getDownloads(getCustomerId(), techId, DownloadInfo.Category.DATABASE.name(), platform);
+			Collections.sort(dbDownloadInfo, sortDownloadsInAlphaOrder());
+			setReqAttribute(REQ_DB_DOWNLOAD_INFO, dbDownloadInfo);
+			
+			List<DownloadInfo> editorDownloadInfo = serviceManager.getDownloads(getCustomerId(), techId, DownloadInfo.Category.EDITOR.name(), platform);
+			Collections.sort(editorDownloadInfo, sortDownloadsInAlphaOrder());
+			setReqAttribute(REQ_EDITOR_DOWNLOAD_INFO, editorDownloadInfo);
+			
+			List<DownloadInfo> toolsDownloadInfo = serviceManager.getDownloads(getCustomerId(), techId, DownloadInfo.Category.TOOLS.name(), platform);
+			Collections.sort(toolsDownloadInfo, sortDownloadsInAlphaOrder());
+			setReqAttribute(REQ_TOOLS_DOWNLOAD_INFO, toolsDownloadInfo);
+			
+			List<DownloadInfo> othersDownloadInfo = serviceManager.getDownloads(getCustomerId(), techId, DownloadInfo.Category.OTHERS.name(), platform);
+			Collections.sort(othersDownloadInfo, sortDownloadsInAlphaOrder());
+			setReqAttribute(REQ_OTHERS_DOWNLOAD_INFO, othersDownloadInfo);
+			
 		} catch (PhrescoException e) {
 			new LogErrorReport(e, "Listing downloads");
 		}
         return APP_DOWNLOAD;
     }
+    
+    private Comparator sortDownloadsInAlphaOrder() {
+		return new Comparator() {
+		    public int compare(Object firstObject, Object secondObject) {
+		    	DownloadInfo downloadInfo1 = (DownloadInfo) firstObject;
+		    	DownloadInfo downloadInfo2 = (DownloadInfo) secondObject;
+		       return downloadInfo1.getName().compareToIgnoreCase(downloadInfo2.getName());
+		    }
+		};
+	}
 }

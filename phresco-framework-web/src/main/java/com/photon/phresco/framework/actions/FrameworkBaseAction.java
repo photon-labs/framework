@@ -31,6 +31,7 @@ import java.io.StringWriter;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -455,6 +456,16 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
     	return themeJsonStr;
     }
     
+    public Comparator sortByNameInAlphaOrder() {
+		return new Comparator(){
+		    public int compare(Object firstObject, Object secondObject) {
+		    	ProjectInfo projectInfo1 = (ProjectInfo) firstObject;
+		    	ProjectInfo projectInfo2 = (ProjectInfo) secondObject;
+		       return projectInfo1.getName().compareToIgnoreCase(projectInfo2.getName());
+		    }
+		};
+	}
+
     public String getPath() {
     	return path;
     }
