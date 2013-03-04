@@ -127,6 +127,7 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
     // sonar CI integration
     private String sonar = "";
     private String skipTests = "";
+    private String src = "";
     
     // pdf report generation
     private String reportType = "";
@@ -134,6 +135,22 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
     private String theme = "";
     private String logo = "";
     private String sonarUrl = "";
+    
+    // Load Test CI integration
+    private String testAgainst = "";
+	private String showSettings = "";
+    private String headerKey = "";
+    private String headerValue = "";
+    private String addHeader = "";
+    
+    //Performance Test CI Integration
+    private String configurations = "";
+    private String testName = "";
+    private String noOfUsers = "";
+    private String rampUpPeriod = "";
+    private String loopCount = "";
+    private String contextUrls = "";
+    private String dbContextUrls = "";
     
 	public String ci() {
 		if (debugEnabled) {
@@ -562,11 +579,26 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 			// sonar code validation
 			existJob.setSonar(sonar);
 			existJob.setSkipTests(skipTests);
+			existJob.setSrc(src);
 			
 			// pdf report changes
 			existJob.setSonarUrl(sonarUrl);
 			existJob.setLogo(logo);
 			existJob.setTheme(theme);
+			
+			// Load and performace values
+			existJob.setTestAgainst(testAgainst);
+			existJob.setShowSettings(showSettings);
+			existJob.setConfigurations(configurations);
+			existJob.setTestName(testName);
+			existJob.setNoOfUsers(noOfUsers);
+			existJob.setRampUpPeriod(rampUpPeriod);
+			existJob.setLoopCount(loopCount);
+			existJob.setContextUrls(contextUrls);
+			existJob.setDbContextUrls(dbContextUrls);			
+		    existJob.setHeaderKey(headerKey);
+		    existJob.setHeaderValue(headerValue);
+		    existJob.setAddHeader(addHeader);
 			
 			// Build info
 			ApplicationInfo applicationInfo = getApplicationInfo();
@@ -1560,5 +1592,108 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 
 	public void setTestType(String testType) {
 		this.testType = testType;
+	}
+    public String getSrc() {
+		return src;
+	}
+
+	public void setSrc(String src) {
+		this.src = src;
+	}
+
+	public String getTestAgainst() {
+		return testAgainst;
+	}
+
+	public void setTestAgainst(String testAgainst) {
+		this.testAgainst = testAgainst;
+	}
+
+	public String getHeaderKey() {
+		return headerKey;
+	}
+
+	public void setHeaderKey(String headerKey) {
+		this.headerKey = headerKey;
+	}
+
+	public String getHeaderValue() {
+		return headerValue;
+	}
+
+	public void setHeaderValue(String headerValue) {
+		this.headerValue = headerValue;
+	}
+
+	public String getAddHeader() {
+		return addHeader;
+	}
+
+	public void setAddHeader(String addHeader) {
+		this.addHeader = addHeader;
+	}
+
+	public String getConfigurations() {
+		return configurations;
+	}
+
+	public void setConfigurations(String configurations) {
+		this.configurations = configurations;
+	}
+
+	public String getTestName() {
+		return testName;
+	}
+
+	public void setTestName(String testName) {
+		this.testName = testName;
+	}
+
+	public String getNoOfUsers() {
+		return noOfUsers;
+	}
+
+	public void setNoOfUsers(String noOfUsers) {
+		this.noOfUsers = noOfUsers;
+	}
+
+	public String getRampUpPeriod() {
+		return rampUpPeriod;
+	}
+
+	public void setRampUpPeriod(String rampUpPeriod) {
+		this.rampUpPeriod = rampUpPeriod;
+	}
+
+	public String getLoopCount() {
+		return loopCount;
+	}
+
+	public void setLoopCount(String loopCount) {
+		this.loopCount = loopCount;
+	}
+
+	public String getContextUrls() {
+		return contextUrls;
+	}
+
+	public void setContextUrls(String contextUrls) {
+		this.contextUrls = contextUrls;
+	}
+
+	public String getDbContextUrls() {
+		return dbContextUrls;
+	}
+
+	public void setDbContextUrls(String dbContextUrls) {
+		this.dbContextUrls = dbContextUrls;
+	}
+
+	public String getShowSettings() {
+		return showSettings;
+	}
+
+	public void setShowSettings(String showSettings) {
+		this.showSettings = showSettings;
 	}
 }
