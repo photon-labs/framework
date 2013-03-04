@@ -103,6 +103,7 @@ public interface FrameworkConstants {
     String REQ_APP_ID = "appId";
     String REQ_PILOT_PROJECTS = "pilotProjects";
     String REQ_CURRENT_APP_NAME = "currentAppName";
+    String REQ_DEFAULT_SCOPE = "compile";
     String REQ_SELECTED_FEATURES = "selectedFeatures";
     String REQ_SELECTED_DOWNLOADINFO = "selectedDownloadInfo";
     String REQ_DEFAULT_FEATURES = "defaultFeatures";
@@ -557,6 +558,7 @@ public interface FrameworkConstants {
      * Request Constants
      * Ex: REQ_XXX
      */
+    String REQ_CUSTOMERS_LIST = "listOfCustomers";
     String REQ_APPINFO	= "appInfo";
     String REQ_APPINFO_SERVERS = "appinfoServers";
     String REQ_APPINFO_DBASES = "appinfoDbs";
