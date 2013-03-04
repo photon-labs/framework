@@ -247,6 +247,12 @@ public interface FrameworkConstants {
     String FAILURE_EMAILS = "failureEmails";
     String TRIGGER_SUCCESS__EMAIL_RECIPIENT_LIST = "publishers//hudson.plugins.emailext.ExtendedEmailPublisher//configuredTriggers//hudson.plugins.emailext.plugins.trigger.SuccessTrigger//email//recipientList";
     String TRIGGER_FAILURE_EMAIL_RECIPIENT_LIST = "publishers//hudson.plugins.emailext.ExtendedEmailPublisher//configuredTriggers//hudson.plugins.emailext.plugins.trigger.FailureTrigger//email//recipientList";
+    String ARTIFACT_ARCHIVER_ROOT_NODE = "publishers//hudson.tasks.ArtifactArchiver";
+    String ARTIFACT_ARCHIVER_VALUE_NODE = "publishers//hudson.tasks.ArtifactArchiver//artifacts";
+    String EMAIL_PUBLISHER = "publishers//hudson.plugins.emailext.ExtendedEmailPublisher";
+    String HUDSON_TASKS_ARTIFACT_ARCHIVER_NODE = "hudson.tasks.ArtifactArchiver";
+    String EXTENDED_EMAIL_PUBLISHER_NODE = "hudson.plugins.emailext.ExtendedEmailPublisher";
+    String ATTACHEMENT_PATTERN = "publishers//hudson.plugins.emailext.ExtendedEmailPublisher//attachmentsPattern";
 	String CRON_VALIDATION = "cronValidation";
 	String CI_TOMCAT_HTTP_PORT = "/project/build/plugins/plugin/configuration/tomcatHttpPort";
 	String CI_ERROR = "error.";
@@ -321,6 +327,8 @@ public interface FrameworkConstants {
     String SHOW_DEBUG = "showdebug";
     String SKIP_TEST = "skiptest";
 	String FUNCTIONAL_TEST = "functionalTest";
+	String CODE_VALIDATION = "codeValidation";
+	String PDF_REPORT = "pdfReport";
 	String REQ_FUNCTEST_SELENIUM_TOOL = "functionalTestSeleniumTool";
 	String SELENIUM_GRID = "grid";
 	String SELENIUM_WEBDRIVER = "webdriver";

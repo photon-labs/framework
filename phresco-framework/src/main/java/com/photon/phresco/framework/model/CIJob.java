@@ -66,6 +66,11 @@ public class CIJob {
     private List<String> prebuildStepCommands;
     private List<String> postbuildStepCommands;
     
+    // when report job is created need to specify the attachment pattern
+    private String attachmentsPattern = "";
+    // For build job alone do_not_checkin need to be archived
+    private boolean enableArtifactArchiver;
+    
     // all the job info
     // build job info
     private String buildName ="";
@@ -120,6 +125,16 @@ public class CIJob {
     private String type = "";
     private String platform = "";
     private String projectModule = "";
+    
+    // sonar CI integration
+    private String sonar = "";
+    private String skipTests = "";
+    
+    // pdf report generation
+    private String reportType = "";
+    private String testType = "";
+    private String logo = "";
+    private String sonarUrl = "";
     
     public CIJob() {
         super();
@@ -740,5 +755,69 @@ public class CIJob {
 
 	public void setProjectModule(String projectModule) {
 		this.projectModule = projectModule;
+	}
+
+	public String getSonar() {
+		return sonar;
+	}
+
+	public void setSonar(String sonar) {
+		this.sonar = sonar;
+	}
+
+	public String getSkipTests() {
+		return skipTests;
+	}
+
+	public void setSkipTests(String skipTests) {
+		this.skipTests = skipTests;
+	}
+
+	public String getLogo() {
+		return logo;
+	}
+
+	public void setLogo(String logo) {
+		this.logo = logo;
+	}
+
+	public String getSonarUrl() {
+		return sonarUrl;
+	}
+
+	public void setSonarUrl(String sonarUrl) {
+		this.sonarUrl = sonarUrl;
+	}
+
+	public String getReportType() {
+		return reportType;
+	}
+
+	public void setReportType(String reportType) {
+		this.reportType = reportType;
+	}
+
+	public String getTestType() {
+		return testType;
+	}
+
+	public void setTestType(String testType) {
+		this.testType = testType;
+	}
+
+	public String getAttachmentsPattern() {
+		return attachmentsPattern;
+	}
+
+	public void setAttachmentsPattern(String attachmentsPattern) {
+		this.attachmentsPattern = attachmentsPattern;
+	}
+
+	public boolean isEnableArtifactArchiver() {
+		return enableArtifactArchiver;
+	}
+
+	public void setEnableArtifactArchiver(boolean enableArtifactArchiver) {
+		this.enableArtifactArchiver = enableArtifactArchiver;
 	}
 }

@@ -20,6 +20,7 @@
 package com.photon.phresco.framework.impl;
 
 import java.io.*;
+import java.net.*;
 import java.security.*;
 import java.util.*;
 
@@ -227,14 +228,39 @@ public class ConfigProcessor implements FrameworkConstants {
 		}
     }
     
-    public void deleteElement(String xpathRootNode, String xpathDeleteNode) throws PhrescoException {
-    	S_LOGGER.debug("Entering Method ConfigProcessor.deleteElement()");
+    public void setArtifactArchiver(boolean enableArtifactArchiver, String artifactArchiverLocation) throws PhrescoException {
+    	S_LOGGER.debug("Entering Method ConfigProcessor.enableArtifactArchiver");
     	try {
-        	XPath xpath = XPath.newInstance(XPATH_ROOT_NODE);
-            xpath.addNamespace(root_.getNamespace());
-            Element triggerNode = (Element) xpath.selectSingleNode(root_); // if it is null then element is not present
-            triggerNode.removeChild(xpathDeleteNode);
-		} catch (Exception e) {
+    		if (enableArtifactArchiver) {
+    			changeNodeValue(ARTIFACT_ARCHIVER_VALUE_NODE, artifactArchiverLocation);
+    			// empty the artifact archiver when it is not enabled
+    		} else {
+    			deleteElement(CI_FILE_RELEASE_PUBLISHER_NODE, HUDSON_TASKS_ARTIFACT_ARCHIVER_NODE);
+    		}
+    	} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+    }
+    
+    public void setEmailPublisher(Map<String, String> emails, String attachmentsPattern) throws PhrescoException {
+    	S_LOGGER.debug("Entering Method ConfigProcessor.enableEmailPublisher");
+    	try {
+    		String failureEmails = (String)emails.get(FAILURE_EMAILS);
+    		String successEmails = (String)emails.get(SUCCESS_EMAILS);
+    		if (StringUtils.isEmpty(failureEmails) && StringUtils.isEmpty(successEmails)) {
+    			deleteElement(CI_FILE_RELEASE_PUBLISHER_NODE, EXTENDED_EMAIL_PUBLISHER_NODE);
+    		} else {
+    			//Failure Reception list
+    	        changeNodeValue(TRIGGER_FAILURE_EMAIL_RECIPIENT_LIST, failureEmails);
+    	        //Success Reception list
+    	        changeNodeValue(TRIGGER_SUCCESS__EMAIL_RECIPIENT_LIST, successEmails);
+    	        
+    	        // when atleast on mailids is available and attachmentsPattern is specified
+    	        if (StringUtils.isNotEmpty(attachmentsPattern)) {
+    	        	changeNodeValue(ATTACHEMENT_PATTERN, attachmentsPattern);
+    	        }
+    		}
+    	} catch (Exception e) {
 			throw new PhrescoException(e);
 		}
     }
@@ -279,13 +305,53 @@ public class ConfigProcessor implements FrameworkConstants {
             throw new Error(e);
         }
     }
+	
+    public void deleteElement(String xpathRootNodePath, String xpathDeleteNode) throws PhrescoException {
+    	S_LOGGER.debug("Entering Method ConfigProcessor.deleteElement()");
+    	try {
+        	XPath xpath = XPath.newInstance(xpathRootNodePath);
+            xpath.addNamespace(root_.getNamespace());
+            Element xpathRootNode = (Element) xpath.selectSingleNode(root_); // if it is null then element is not present
+            if (StringUtils.isNotEmpty(xpathDeleteNode)) {
+            	xpathRootNode.removeChild(xpathDeleteNode);
+            } else {
+            	xpathRootNode.removeContent();
+            }
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+    }
+    
+    public void saveStreamAsFile(File destFile) throws PhrescoException {
+    	try {
+            InputStream configAsStream = getConfigAsStream();
+            CIManagerImpl cmi = new CIManagerImpl();
+            cmi.streamToFile(destFile, configAsStream) ;
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+    }
+    
 //    public static void main(String[] args) {
 //        try {
-//            ConfigProcessor processor = new ConfigProcessor(new URL(CONFIG_PATH));
-//        } catch (JDOMException e) {
-//            // TODO Auto-generated catch block
-//            e.printStackTrace();
-//        } catch (IOException e) {
+//            File configFile = new File("/Users/kaleeswaran/Tried/POC/JenkinsConfigXml/template/svn-config.xml");
+//			ConfigProcessor processor = new ConfigProcessor(configFile);
+//			// 1) enable artifactArchiver with this value(do_not_checkin)
+//			// 2) enable email publisher When success and failure emails are empty empty the tag
+//			// 3) enable Attachement pattern (this method should be inside enable email publisher) for report mailing
+//			
+//			// Delete element check
+////            processor.deleteElement("publishers//hudson.tasks.ArtifactArchiver", "");
+////			processor.changeNodeValue("publishers//hudson.tasks.ArtifactArchiver//artifacts", "do_not_checkin/archives/cumulativeReports/*.pdf");
+//			
+//            // Attachement pattern value insert and empty (When the value is not empty, we have to insert the text in that node)
+////            processor.changeNodeValue("publishers//hudson.plugins.emailext.ExtendedEmailPublisher//attachmentsPattern", "do_not_checkin/archives/cumulativeReports/*.pdf");
+//			
+//			// Delete email tags
+////			processor.deleteElement("publishers//hudson.plugins.emailext.ExtendedEmailPublisher", "");
+//			processor.deleteElement("publishers", "hudson.plugins.emailext.ExtendedEmailPublisher");
+//            processor.saveStreamAsFile(configFile);
+//        } catch (Exception e) {
 //            // TODO Auto-generated catch block
 //            e.printStackTrace();
 //        }

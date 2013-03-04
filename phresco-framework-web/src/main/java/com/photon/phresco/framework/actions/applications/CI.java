@@ -124,6 +124,17 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 	private boolean cloneWorkspace = false;
 	private String projectModule = "";
 	
+    // sonar CI integration
+    private String sonar = "";
+    private String skipTests = "";
+    
+    // pdf report generation
+    private String reportType = "";
+    private String testType = "";
+    private String theme = "";
+    private String logo = "";
+    private String sonarUrl = "";
+    
 	public String ci() {
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method CI.ci()");
@@ -291,6 +302,15 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 	        } else if (DEPLOY.equals(operation)) { 
 	        	phase = PHASE_DEPLOY;
 	        	restoreValuesToXml(mojo, phase, ciJob);
+	        } else if (PDF_REPORT.equals(operation)) { 
+	        	phase = PHASE_PDF_REPORT;
+	        	restoreValuesToXml(mojo, phase, ciJob);
+	        } else if (CODE_VALIDATION.equals(operation)) { 
+	        	phase = PHASE_VALIDATE_CODE;
+	        	restoreValuesToXml(mojo, phase, ciJob);
+	        } else if (UNIT_TEST.equals(operation)) { 
+	        	phase = PHASE_UNIT_TEST;
+	        	restoreValuesToXml(mojo, phase, ciJob);
 	        } else if (FUNCTIONAL_TEST.equals(operation)) {
 				FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
 				String seleniumToolType = frameworkUtil.getSeleniumToolType(appInfo);
@@ -341,18 +361,34 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
                 goal = PHASE_PACKAGE;
                 setReqAttribute(REQ_PHASE, PHASE_CI);
                 setReqAttribute(REQ_GOAL, goal);
-            } else if (DEPLOY.equals(operation)) { 
+            } else if (DEPLOY.equals(operation)) {
                 parameters = getMojoParameters(mojo, PHASE_DEPLOY);
                 setReqAttribute(REQ_PHASE, PHASE_CI);
                 goal = PHASE_DEPLOY;
+                setReqAttribute(REQ_GOAL, goal);
+            } else if (PDF_REPORT.equals(operation)) {
+                parameters = getMojoParameters(mojo, PHASE_PDF_REPORT);
+                setReqAttribute(REQ_PHASE, PHASE_CI);
+                goal = PHASE_PDF_REPORT;
+                setReqAttribute(REQ_GOAL, goal);
+            } else if (CODE_VALIDATION.equals(operation)) {
+                parameters = getMojoParameters(mojo, PHASE_VALIDATE_CODE);
+                setReqAttribute(REQ_PHASE, PHASE_CI);
+                goal = PHASE_VALIDATE_CODE;
+                setReqAttribute(REQ_GOAL, goal);
+            } else if (UNIT_TEST.equals(operation)) {
+            	setProjModulesInReq();
+                parameters = getMojoParameters(mojo, PHASE_UNIT_TEST);
+                setReqAttribute(REQ_PHASE, PHASE_CI);
+                goal = PHASE_UNIT_TEST;
                 setReqAttribute(REQ_GOAL, goal);
             } else if (FUNCTIONAL_TEST.equals(operation)) {
                 FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
                 String seleniumToolType = frameworkUtil.getSeleniumToolType(appInfo);
                 parameters = getMojoParameters(mojo, PHASE_FUNCTIONAL_TEST + HYPHEN + seleniumToolType);
-                 setReqAttribute(REQ_PHASE, PHASE_CI);
-                 goal = PHASE_FUNCTIONAL_TEST + HYPHEN + seleniumToolType;
-                 setReqAttribute(REQ_GOAL, goal);
+	            setReqAttribute(REQ_PHASE, PHASE_CI);
+	            goal = PHASE_FUNCTIONAL_TEST + HYPHEN + seleniumToolType;
+	            setReqAttribute(REQ_GOAL, goal);
             }
             
             setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap, goal);
@@ -372,7 +408,6 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 		}
 	    try {
 	    	BeanUtils bu = new BeanUtils();
-	    	
 	        List<Parameter> parameters = getMojoParameters(mojo, goal);
 	        StringBuilder csParamVal = new StringBuilder();
 	        String sep = "";
@@ -405,9 +440,18 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 	                    properties.store(writer, "");
 	                    String value = writer.getBuffer().toString();
 	                    bu.setProperty(cijob, parameter.getKey(), value);
+	                } else if (PDF_REPORT.equals(operation) && "sonarUrl".equals(key)) {
+	                	// for pdf report operation we have to assign our own values for few parameters
+	    				bu.setProperty(cijob, parameter.getKey(), sonarUrl);
+	                } else if (PDF_REPORT.equals(operation) && "logo".equals(key)) {
+	                	// for pdf report operation we have to assign our own values for few parameters
+	    				bu.setProperty(cijob, parameter.getKey(), logo);
+	                } else if (PDF_REPORT.equals(operation) && "theme".equals(key)) {
+	                	// for pdf report operation we have to assign our own values for few parameters
+	    				bu.setProperty(cijob, parameter.getKey(), theme);
 	                } else {
 	                    bu.setProperty(cijob, parameter.getKey(), getReqParameter(parameter.getKey()));
-	                }
+                	}
 	            }
 	        }
 	    } catch (Exception e) {
@@ -514,7 +558,16 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 			existJob.setDownStreamProject(downstreamProject);
 			existJob.setOperation(operation);
 			existJob.setProjectModule(projectModule);
-
+			
+			// sonar code validation
+			existJob.setSonar(sonar);
+			existJob.setSkipTests(skipTests);
+			
+			// pdf report changes
+			existJob.setSonarUrl(sonarUrl);
+			existJob.setLogo(logo);
+			existJob.setTheme(theme);
+			
 			// Build info
 			ApplicationInfo applicationInfo = getApplicationInfo();
 			List<String> preBuildStepCmds = new ArrayList<String>();
@@ -529,6 +582,8 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 				if (debugEnabled) {
 					S_LOGGER.debug("Build operation!!!!!!");
 				}
+				// enable archiving
+				existJob.setEnableArtifactArchiver(true);
 				
 				MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(Constants.PHASE_CI)));
 				persistValuesToXml(mojo, Constants.PHASE_PACKAGE);
@@ -560,6 +615,89 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 				// To handle multi module project
 				deployPreBuildCmd = deployPreBuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
 				preBuildStepCmds.add(deployPreBuildCmd);
+			} else if (PDF_REPORT.equals(operation)) {
+				if (debugEnabled) {
+					S_LOGGER.debug("PDF report operation!!!!!!");
+				}
+				// for pdf report attachment patterns
+				// based on test report type, it should be specified
+				String testTypeParam = getReqParameter("testType");
+				String attacheMentPattern = "";
+				if ("All".equals(testTypeParam)) {
+					attacheMentPattern = "cumulativeReports";
+				} else {
+					attacheMentPattern = testTypeParam;
+				}
+				existJob.setAttachmentsPattern("do_not_checkin/archives/" + attacheMentPattern + "/*.pdf"); //do_not_checkin/archives/cumulativeReports/*.pdf
+				
+				// here we can set necessary values in request and we can change object value as well...
+				// getting sonar url
+				String usingSonarUrl = "";
+				FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+				usingSonarUrl = frameworkUtil.getSonarURL();
+				// logo and theme
+				String logoImageString = getLogoImageString();
+				String themeColorJson = getThemeColorJson();
+				
+				// object change
+				existJob.setSonarUrl(usingSonarUrl);
+				existJob.setLogo(logoImageString);
+				existJob.setTheme(themeColorJson);
+				
+				// set values in request
+				sonarUrl = usingSonarUrl;
+				logo = logoImageString;
+				theme = themeColorJson;
+				
+				MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(Constants.PHASE_CI)));
+				persistValuesToXml(mojo, Constants.PHASE_PDF_REPORT);
+				constructCiJobObj(mojo, Constants.PHASE_PDF_REPORT, existJob);
+				
+				//To get maven build arguments
+				parameters = getMojoParameters(mojo, Constants.PHASE_PDF_REPORT);
+				ActionType actionType = ActionType.PDF_REPORT;
+				mvncmd =  actionType.getActionType().toString();
+				
+				String deployPreBuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_PDF_REPORT;
+				// To handle multi module project
+				deployPreBuildCmd = deployPreBuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
+				preBuildStepCmds.add(deployPreBuildCmd);
+			} else if (CODE_VALIDATION.equals(operation)) {
+				if (debugEnabled) {
+					S_LOGGER.debug("CodeValidation operation!!!!!!");
+				}
+				
+				MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(Constants.PHASE_CI)));
+				persistValuesToXml(mojo, Constants.PHASE_VALIDATE_CODE);
+				constructCiJobObj(mojo, Constants.PHASE_VALIDATE_CODE, existJob);
+				
+				//To get maven build arguments
+				parameters = getMojoParameters(mojo, Constants.PHASE_VALIDATE_CODE);
+				ActionType actionType = ActionType.CODE_VALIDATE;
+				mvncmd =  actionType.getActionType().toString();
+				
+				String deployPreBuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_VALIDATE_CODE;
+				// To handle multi module project
+				deployPreBuildCmd = deployPreBuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
+				preBuildStepCmds.add(deployPreBuildCmd);
+			} else if (UNIT_TEST.equals(operation)) {
+				if (debugEnabled) {
+					S_LOGGER.debug("Unit test operation!!!!!!");
+				}
+				
+				MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(Constants.PHASE_CI)));
+				persistValuesToXml(mojo, Constants.PHASE_UNIT_TEST);
+				constructCiJobObj(mojo, Constants.PHASE_UNIT_TEST, existJob);
+				
+				//To get maven build arguments
+				parameters = getMojoParameters(mojo, Constants.PHASE_UNIT_TEST);
+				ActionType actionType = ActionType.UNIT_TEST;
+				mvncmd =  actionType.getActionType().toString();
+				
+				String unitTestPreBuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_UNIT_TEST;
+				// To handle multi module project
+				unitTestPreBuildCmd = unitTestPreBuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
+				preBuildStepCmds.add(unitTestPreBuildCmd);
 			} else if (FUNCTIONAL_TEST.equals(operation)) {
 				if (debugEnabled) {
 					S_LOGGER.debug("Functional test operation!!!!!");
@@ -591,9 +729,13 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 					mvncmd = mvncmd + FrameworkConstants.SPACE + buildArgCmd;
 				}
 			}
-			if (!"clonedWorkspace".equals(svnType) && BUILD.equals(operation)) {
+			
+			// for build job alone existing do_not_checkin need to be cleared
+			// For pdf report, it should clear existing pdf reports in do_not_checkin folder
+			if ((!"clonedWorkspace".equals(svnType) && BUILD.equals(operation)) || PDF_REPORT.equals(operation)) {
 				mvncmd = CI_PROFILE + mvncmd;
 			}
+			
 			if (debugEnabled) {
 				S_LOGGER.debug("mvn command" + mvncmd);
 			}
@@ -1362,5 +1504,61 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 
 	public void setProjectModule(String projectModule) {
 		this.projectModule = projectModule;
+	}
+	
+	public String getSonar() {
+		return sonar;
+	}
+
+	public void setSonar(String sonar) {
+		this.sonar = sonar;
+	}
+
+	public String getSkipTests() {
+		return skipTests;
+	}
+
+	public void setSkipTests(String skipTests) {
+		this.skipTests = skipTests;
+	}
+
+	public String getTheme() {
+		return theme;
+	}
+
+	public void setTheme(String theme) {
+		this.theme = theme;
+	}
+
+	public String getLogo() {
+		return logo;
+	}
+
+	public void setLogo(String logo) {
+		this.logo = logo;
+	}
+
+	public String getSonarUrl() {
+		return sonarUrl;
+	}
+
+	public void setSonarUrl(String sonarUrl) {
+		this.sonarUrl = sonarUrl;
+	}
+
+	public String getReportType() {
+		return reportType;
+	}
+
+	public void setReportType(String reportType) {
+		this.reportType = reportType;
+	}
+
+	public String getTestType() {
+		return testType;
+	}
+
+	public void setTestType(String testType) {
+		this.testType = testType;
 	}
 }

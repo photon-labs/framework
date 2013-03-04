@@ -2254,43 +2254,6 @@ public class Quality extends DynamicParameterAction implements Constants {
         return showGeneratePdfPopup();
     }
 
-    private String getLogoImageString() throws PhrescoException {
-    	String encodeImg = "";
-    	try {
-        	InputStream fileInputStream = null;
-    		fileInputStream = getServiceManager().getIcon(getCustomerId());
-    		if (fileInputStream != null) {
-        		byte[] imgByte = null;
-        		imgByte = IOUtils.toByteArray(fileInputStream);
-        	    byte[] encodedImage = Base64.encodeBase64(imgByte);
-                encodeImg = new String(encodedImage);
-    		}
-		} catch (Exception e) {
-			throw new PhrescoException(e);
-		}
-    	return encodeImg;
-    }
-    
-    private String getThemeColorJson() throws PhrescoException {
-    	String themeJsonStr = "";
-    	try {
-    		User user = (User) getSessionAttribute(SESSION_USER_INFO);
-    		List<Customer> customers = user.getCustomers();
-    		for (Customer customer : customers) {
-				if (customer.getId().equals(getCustomerId())) {
-					Map<String, String> frameworkTheme = customer.getFrameworkTheme();
-					if (frameworkTheme != null) {
-						Gson gson = new Gson();
-						themeJsonStr = gson.toJson(frameworkTheme);
-					}
-				}
-			}
-		} catch (Exception e) {
-			throw new PhrescoException(e);
-		}
-    	return themeJsonStr;
-    }
-    
     public String downloadReport() {
     	if (s_debugEnabled) {
     		S_LOGGER.debug("Entering Method Quality.downloadReport()");

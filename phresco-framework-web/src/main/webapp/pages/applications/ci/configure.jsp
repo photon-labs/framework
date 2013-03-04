@@ -489,6 +489,9 @@
 									       if (optionIds.contains(FrameworkConstants.CI_FUNCTIONAL_TEST)) {%>
 									        <option value="functionalTest">Functional Test</option>
 									    <% } %>
+									    <option value="unittest">Unit Test</option>
+									    <option value="codeValidation">Code Validate</option>
+									    <option value="pdfReport">PDF Report</option>
 										</select>
 									</div>
 								</div>
@@ -675,7 +678,6 @@
 				// when the job is not null, have to make selection in radio buttons of collabnet plugin
 				$('input:radio[name=enableBuildRelease]').filter("[value='"+<%= existingJob.isEnableBuildRelease() %>+"']").attr("checked", true);
 				$('input:radio[name=overwriteFiles]').filter("[value='"+<%= existingJob.isCollabNetoverWriteFiles() %>+"']").attr("checked", true);
-				
 				$("#usedClonnedWorkspace option[value='<%= existingJob.getUsedClonnedWorkspace() %>']").attr('selected', 'selected');
 				$("#downstreamProject option[value='<%= existingJob.getDownStreamProject() %>']").attr('selected', 'selected');
 				$("#operation option[value='<%= existingJob.getOperation() %>']").attr('selected', 'selected');

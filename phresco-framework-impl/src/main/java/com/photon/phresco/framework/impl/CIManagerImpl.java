@@ -475,14 +475,17 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
             processor.changeNodeValue(GOALS, job.getMvnCommand());
         }
         
+        // Artifact archiver - archive do_not_checkin
+        processor.setArtifactArchiver(job.isEnableArtifactArchiver(), CI_BUILD_EXT);
+        
         //Recipients customization
-        Map<String, String> email = job.getEmail();
-        
-        //Failure Reception list
-        processor.changeNodeValue(TRIGGER_FAILURE_EMAIL_RECIPIENT_LIST, (String)email.get(FAILURE_EMAILS));
-        
-        //Success Reception list
-        processor.changeNodeValue(TRIGGER_SUCCESS__EMAIL_RECIPIENT_LIST, (String)email.get(SUCCESS_EMAILS));
+        Map<String, String> emails = job.getEmail();
+        processor.setEmailPublisher(emails, job.getAttachmentsPattern());
+//        //Failure Reception list
+//        processor.changeNodeValue(TRIGGER_FAILURE_EMAIL_RECIPIENT_LIST, (String)email.get(FAILURE_EMAILS));
+//        
+//        //Success Reception list
+//        processor.changeNodeValue(TRIGGER_SUCCESS__EMAIL_RECIPIENT_LIST, (String)email.get(SUCCESS_EMAILS));
         
         //enable collabnet file release plugin integration
         if (job.isEnableBuildRelease()) {
@@ -884,4 +887,21 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 			throw new PhrescoException(ex);
 		}
 	}
+	
+    public void streamToFile(File dest, InputStream ip) throws PhrescoException {
+		try {
+			OutputStream out;
+			out = new FileOutputStream(dest);
+			byte buf[] = new byte[5024];
+			int len;
+			while ((len = ip.read(buf)) > 0) {
+				out.write(buf, 0, len);
+			}
+			out.close();
+			ip.close();
+		} catch (Exception e) {
+       		S_LOGGER.error("Entered into the catch block of CIManagerImpl.streamToFile" + e.getLocalizedMessage());
+       		throw new PhrescoException(e);
+		}
+    }
 }

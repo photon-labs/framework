@@ -38,12 +38,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.codec.binary.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 
+import com.google.gson.*;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
 import com.photon.phresco.api.ApplicationProcessor;
@@ -416,6 +418,43 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
         return byteArray;
     }
 
+    protected String getLogoImageString() throws PhrescoException {
+    	String encodeImg = "";
+    	try {
+        	InputStream fileInputStream = null;
+    		fileInputStream = getServiceManager().getIcon(getCustomerId());
+    		if (fileInputStream != null) {
+        		byte[] imgByte = null;
+        		imgByte = IOUtils.toByteArray(fileInputStream);
+        	    byte[] encodedImage = Base64.encodeBase64(imgByte);
+                encodeImg = new String(encodedImage);
+    		}
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+    	return encodeImg;
+    }
+    
+    protected String getThemeColorJson() throws PhrescoException {
+    	String themeJsonStr = "";
+    	try {
+    		User user = (User) getSessionAttribute(SESSION_USER_INFO);
+    		List<Customer> customers = user.getCustomers();
+    		for (Customer customer : customers) {
+				if (customer.getId().equals(getCustomerId())) {
+					Map<String, String> frameworkTheme = customer.getFrameworkTheme();
+					if (frameworkTheme != null) {
+						Gson gson = new Gson();
+						themeJsonStr = gson.toJson(frameworkTheme);
+					}
+				}
+			}
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+    	return themeJsonStr;
+    }
+    
     public String getPath() {
     	return path;
     }
