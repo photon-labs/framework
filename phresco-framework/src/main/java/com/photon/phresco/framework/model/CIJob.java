@@ -79,6 +79,7 @@ public class CIJob {
     private String buildEnvironmentName = "";
     private String logs = "";
     private String showSettings = "";
+    private String packageFileBrowse = "";
     
     private String sdk = "";
     private String target = "";
@@ -924,5 +925,13 @@ public class CIJob {
 
 	public void setDbContextUrls(String dbContextUrls) {
 		this.dbContextUrls = dbContextUrls;
+	}
+
+	public String getPackageFileBrowse() {
+		return packageFileBrowse;
+	}
+
+	public void setPackageFileBrowse(String packageFileBrowse) {
+		this.packageFileBrowse = packageFileBrowse;
 	}
 }
