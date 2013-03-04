@@ -23,6 +23,7 @@
 <%@ page import="java.util.List"%>
 
 <%@ page import="org.apache.commons.collections.CollectionUtils"%>
+<%@ page import="org.apache.commons.lang.StringUtils"%>
 
 <%@ page import="com.google.gson.Gson" %>
 
@@ -126,12 +127,15 @@
 <%	
 	if (CollectionUtils.isNotEmpty(features)) {
 		for (SelectedFeature feature : features) {
+			if(StringUtils.isEmpty(feature.getScope())) {
+				feature.setScope(FrameworkConstants.REQ_DEFAULT_SCOPE);
+			}
 		    boolean showImage = false;
 		    if (feature.isCanConfigure()) {
 		        showImage = true;
 		    }
 %>
-			constructFeaturesDiv('<%= feature.getName() %>', '<%= feature.getDispName() %>', '<%= feature.getDispValue() %>', '<%= feature.getType() %>', '<%= feature.getVersionID() %>', '<%= feature.getModuleId() %>', <%= feature.isCanConfigure() %>, <%= showImage %>, <%= feature.isDefaultModule()%>, '<%= feature.getArtifactGroupId()%>', '<%= feature.getPackaging()%>', '<%= feature.getScope()%>'); 
+			constructFeaturesDiv('<%= feature.getName() %>', '<%= feature.getDispName() %>', '<%= feature.getDispValue() %>', '<%= feature.getType() %>', '<%= feature.getVersionID() %>', '<%= feature.getModuleId() %>', <%= feature.isCanConfigure() %>, <%= showImage %>, <%= feature.isDefaultModule() %>, '<%= feature.getArtifactGroupId() %>', '<%= feature.getPackaging() %>', '<%= feature.getScope() %>'); 
 <%		
 	 	}
 	}
@@ -140,12 +144,15 @@
 <%	
 if (CollectionUtils.isNotEmpty(defaultfeatures)) {
 	for (SelectedFeature feature : defaultfeatures) {
+		if(StringUtils.isEmpty(feature.getScope())) {
+			feature.setScope(FrameworkConstants.REQ_DEFAULT_SCOPE);
+		}
 	    boolean showImage = false;
 	    if (feature.isCanConfigure()) {
 	        showImage = true;
 	    }
 %>
-		constructFeaturesDiv('<%= feature.getName() %>', '<%= feature.getDispName() %>', '<%= feature.getDispValue() %>', '<%= feature.getType() %>', '<%= feature.getVersionID() %>', '<%= feature.getModuleId() %>', <%= feature.isCanConfigure() %>, <%= showImage %>, <%= feature.isDefaultModule()%>, '<%= feature.getArtifactGroupId()%>', '<%= feature.getPackaging()%>', '<%= feature.getScope()%>'); 
+		constructFeaturesDiv('<%= feature.getName() %>', '<%= feature.getDispName() %>', '<%= feature.getDispValue() %>', '<%= feature.getType() %>', '<%= feature.getVersionID() %>', '<%= feature.getModuleId() %>', <%= feature.isCanConfigure() %>, <%= showImage %>, <%= feature.isDefaultModule() %>, '<%= feature.getArtifactGroupId() %>', '<%= feature.getPackaging() %>', '<%= feature.getScope() %>'); 
 <%		
  	}
 }
