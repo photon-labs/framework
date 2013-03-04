@@ -28,6 +28,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -265,6 +266,7 @@ public class Applications extends FrameworkBaseAction {
             setSelectedDownloadInfoVersion(selectedDbVer);
             setSelectBoxId(selectBoxId);
             List<DownloadInfo> downloadInfos = getServiceManager().getDownloads(getCustomerId(), techId, type, FrameworkUtil.findPlatform());
+            Collections.sort(downloadInfos, sortdownloadInfoInAlphaOrder());
 			setDownloadInfos(downloadInfos);
         } catch (PhrescoException e) {
             return showErrorPopup(e, getText(EXCEPTION_DOWNLOADINFOS));
@@ -272,6 +274,16 @@ public class Applications extends FrameworkBaseAction {
 
         return SUCCESS;
     }
+    
+    private Comparator sortdownloadInfoInAlphaOrder() {
+		return new Comparator() {
+		    public int compare(Object firstObject, Object secondObject) {
+		    	DownloadInfo downloadInfo1 = (DownloadInfo) firstObject;
+		    	DownloadInfo downloadInfo2 = (DownloadInfo) secondObject;
+		       return downloadInfo1.getName().compareToIgnoreCase(downloadInfo2.getName());
+		    }
+		};
+	}
     
     private List<ArtifactGroup> getRemovedModules(ApplicationInfo appInfo, List<String> jsonData) throws PhrescoException {
     	List<String> selectedFeaturesId = appInfo.getSelectedModules();
@@ -479,6 +491,7 @@ public class Applications extends FrameworkBaseAction {
     		ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
     		projectManager.update(projectInfo, getServiceManager(), getOldAppDirName());
             List<ProjectInfo> projects = projectManager.discover(getCustomerId());
+            Collections.sort(projects, sortByNameInAlphaOrder());
             setReqAttribute(REQ_PROJECTS, projects);
             removeSessionAttribute(getAppId() + SESSION_APPINFO);
             removeSessionAttribute(REQ_SELECTED_FEATURES);
@@ -493,7 +506,7 @@ public class Applications extends FrameworkBaseAction {
         
     	return APP_UPDATE;
     }
-
+    
     public void checkForVersions(String newArtifactid, String oldArtifactGroupId) throws PhrescoException {
     	try {
     		FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();

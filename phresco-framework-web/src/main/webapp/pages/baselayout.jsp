@@ -223,8 +223,8 @@
 							<div class="controls customer_select_div">
 								<select id="customerSelect" name="customerSelect" class="customer_listbox">
 					                <%
-				                    	List<Customer> customers = user.getCustomers();
-				                    	for (Customer customer: customers) {
+					                	List<Customer> listOfCustomers  = (List<Customer>) request.getAttribute(FrameworkConstants.REQ_CUSTOMERS_LIST);
+				                    	for (Customer customer: listOfCustomers) {
 								    %>
 					                       <option value="<%= customer.getId() %>"><%= customer.getName()%></option>
 									<% 

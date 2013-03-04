@@ -24,6 +24,8 @@ import java.io.File;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Properties;
 
@@ -34,6 +36,7 @@ import org.apache.log4j.Logger;
 
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
+import com.photon.phresco.commons.model.SettingsTemplate;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
@@ -149,7 +152,7 @@ public class SiteReport extends FrameworkBaseAction {
 			String techId = getTechId();
 			ApplicationInfo appInfo = getApplicationInfo();
 			List<Reports> reports = getServiceManager().getReports(techId);
-			setReqAttribute(REQ_SITE_REPORTS, reports);
+			Collections.sort(reports, sortReportByNameInAlphaOrder());
 			List<Reports> selectedReports = getPomReports(appInfo);
 			setReqAttribute(REQ_SITE_REPORTS, reports);
 			setReqAttribute(REQ_SITE_SLECTD_REPORTS, selectedReports);
@@ -162,6 +165,16 @@ public class SiteReport extends FrameworkBaseAction {
 		}
 		
 		return APP_SITE_REPORT_CONFIGURE;
+	}
+	
+	private Comparator sortReportByNameInAlphaOrder() {
+		return new Comparator() {
+		    public int compare(Object firstObject, Object secondObject) {
+		    	Reports report1 = (Reports) firstObject;
+		    	Reports report2 = (Reports) secondObject;
+		       return report1.getDisplayName().compareToIgnoreCase(report2.getDisplayName());
+		    }
+		};
 	}
 	
 	public String createReportConfig() {

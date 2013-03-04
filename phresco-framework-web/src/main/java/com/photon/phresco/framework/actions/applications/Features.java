@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -720,12 +721,23 @@ public class Features extends DynamicParameterModule {
 	
 	public String listFeatures() throws PhrescoException {
 		List<ArtifactGroup> moduleGroups = getServiceManager().getFeatures(getCustomerId(), getTechnologyId(), getType());
+		Collections.sort(moduleGroups, sortFeaturesNameInAlphaOrder());
 		setReqAttribute(REQ_FEATURES_MOD_GRP, moduleGroups);
 		setReqAttribute(REQ_FEATURES_TYPE, getType());
 		setReqAttribute(REQ_APP_ID, getAppId());
 		setReqAttribute(REQ_TECHNOLOGY, getTechnologyId());
 		
 		return APP_FEATURES_LIST;
+	}
+	
+	private Comparator sortFeaturesNameInAlphaOrder() {
+		return new Comparator() {
+		    public int compare(Object firstObject, Object secondObject) {
+		    	ArtifactGroup feature1 = (ArtifactGroup) firstObject;
+		    	ArtifactGroup feature2 = (ArtifactGroup) secondObject;
+		       return feature1.getName().compareToIgnoreCase(feature2.getName());
+		    }
+		};
 	}
 	
 	public String fetchDefaultFeatures() {

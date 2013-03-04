@@ -46,6 +46,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -58,6 +60,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import com.photon.phresco.commons.model.Customer;
+import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.User;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.exception.PhrescoWebServiceException;
@@ -139,6 +142,11 @@ public class Login extends FrameworkBaseAction {
         try {
         	Credentials credentials = new Credentials(getUsername(), getPassword());
         	user = doLogin(credentials);
+        	List<Customer> listOfCustomers = user.getCustomers();
+        	Collections.sort(listOfCustomers, sortCusNameInAlphaOrder());
+        	
+        	setReqAttribute(REQ_CUSTOMERS_LIST, listOfCustomers);
+        	
         	if (user == null) {
         		setReqAttribute(REQ_LOGIN_ERROR, getText(ERROR_LOGIN));
 
@@ -190,6 +198,16 @@ public class Login extends FrameworkBaseAction {
 		} 
         return SUCCESS;
     }
+    
+    private Comparator sortCusNameInAlphaOrder() {
+		return new Comparator(){
+		    public int compare(Object firstObject, Object secondObject) {
+		    	Customer customerName1 = (Customer) firstObject;
+		    	Customer customerName2 = (Customer) secondObject;
+		       return customerName1.getName().compareToIgnoreCase(customerName2.getName());
+		    }
+		};
+	}
 
     private boolean validateLogin() {
         if (isDebugEnabled) {

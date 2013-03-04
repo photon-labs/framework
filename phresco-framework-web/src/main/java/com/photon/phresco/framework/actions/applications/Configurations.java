@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -272,6 +273,7 @@ public class Configurations extends FrameworkBaseAction {
             }
             List<Environment> environments = getAllEnvironments();
             List<SettingsTemplate> configTemplates = getServiceManager().getConfigTemplates(getCustomerId(), techId);
+            Collections.sort(configTemplates, sortTypeByNameInAlphaOrder());
             setReqAttribute(REQ_SETTINGS_TEMPLATES, configTemplates);
             setReqAttribute(REQ_ENVIRONMENTS, environments);
             setReqAttribute(REQ_FROM_PAGE, getFromPage());
@@ -287,6 +289,16 @@ public class Configurations extends FrameworkBaseAction {
 
         return APP_CONFIG_ADD;
     }
+    
+    private Comparator sortTypeByNameInAlphaOrder() {
+		return new Comparator() {
+		    public int compare(Object firstObject, Object secondObject) {
+		    	SettingsTemplate configTemplate1 = (SettingsTemplate) firstObject;
+		    	SettingsTemplate configTemplate2 = (SettingsTemplate) secondObject;
+		       return configTemplate1.getName().compareToIgnoreCase(configTemplate2.getName());
+		    }
+		};
+	}
     
     public String saveConfiguration() {
     	if (s_debugEnabled) {

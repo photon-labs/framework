@@ -32,6 +32,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -194,6 +196,8 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 				S_LOGGER.debug("get jobs called in CI ");
 			}
 			List<CIJob> existingJobs = ciManager.getJobs(appInfo);
+			Collections.sort(existingJobs, sortJobsInAlphaOrder());
+			
 			if (debugEnabled) {
 				S_LOGGER.debug("Return jobs got in CI ");
 			}
@@ -242,6 +246,16 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 			return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_CI_JOB_LIST));
 		}
 		return APP_CI;
+	}
+	
+	private Comparator sortJobsInAlphaOrder() {
+		return new Comparator() {
+		    public int compare(Object firstObject, Object secondObject) {
+		    	CIJob job1 = (CIJob) firstObject;
+		    	CIJob job2 = (CIJob) secondObject;
+		       return job1.getName().compareToIgnoreCase(job2.getName());
+		    }
+		};
 	}
 
 	public String configure() {
