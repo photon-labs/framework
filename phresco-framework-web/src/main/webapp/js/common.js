@@ -55,11 +55,15 @@ function getBasicParamsAsJsonObj() {
 	return jsonObject; 
 }
 
-function progressPopup(pageUrl, appId, actionType, form, callSuccessEvent, additionalParams, stopUrl) {
+function progressPopup(pageUrl, appId, actionType, form, callSuccessEvent, additionalParams, stopUrl, title) {
 	$('#progressPopup').modal('show');//To show the progress popup
 	$('#popup_progress_div').empty();
 	$(".progressPopupClose").attr('id', pageUrl); // popup close action mapped to id
 	
+	if (title === undefined || isBlank(title)) {
+		$('#progressPopupTitle').html('Progress');
+	}
+	$('#progressPopupTitle').html(title);
 	if (stopUrl != undefined && !isBlank(stopUrl)) {
 		$(".popupStop").show();
 		$(".popupStop").attr('id', stopUrl); // popup stop action mapped to id
@@ -69,12 +73,16 @@ function progressPopup(pageUrl, appId, actionType, form, callSuccessEvent, addit
 	readerHandlerSubmit(pageUrl, appId, actionType, form, callSuccessEvent, additionalParams, $("#popup_progress_div"));
 }
 
-function progressPopupAsSecPopup(url, appId, actionType, form, additionalParams, stopUrl) {
+function progressPopupAsSecPopup(url, appId, actionType, form, additionalParams, stopUrl, title) {
 	setTimeout(function () {
 		$('#progressPopup').modal('show');
     }, 600);
 	$('#popup_progress_div').empty();
 	$(".progressPopupClose").show();
+	if (title === undefined || isBlank(title)) {
+		$('#progressPopupTitle').html('Progress');
+	}
+	$('#progressPopupTitle').html(title); // Title for the popup
 	$(".progressPopupClose").attr('id', url); // popup close action mapped to id
 	if (stopUrl != undefined && !isBlank(stopUrl)) {
 		$(".popupStop").show();
