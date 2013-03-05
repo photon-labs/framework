@@ -702,6 +702,8 @@
 			}
 		%>
 	    
+		// show hide downstream project based on the criteria
+		
 		credentialsDisp();
 		
 		$('input:radio[name=enableBuildRelease]').click(function() {
