@@ -3462,6 +3462,7 @@ div.submit_input {
     font-size: 20px;
     line-height: 14px;
     text-decoration: none;
+    opacity: 1;
 }
 .modal-header h3 {
     font-size: 15px;

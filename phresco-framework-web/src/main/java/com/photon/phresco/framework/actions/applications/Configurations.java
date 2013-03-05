@@ -1138,7 +1138,7 @@ public class Configurations extends FrameworkBaseAction {
         	if (getTargetDir() != null) {
         		StringBuilder sb = getTargetDir()
                 .append(File.separator)
-                .append(FilenameUtils.removeExtension(getFileName()));
+                .append(getFileName());
                 FileUtil.delete(new File(sb.toString()));
         	}
         } catch (Exception e) {
