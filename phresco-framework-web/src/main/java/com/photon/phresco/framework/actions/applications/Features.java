@@ -721,7 +721,9 @@ public class Features extends DynamicParameterModule {
 	
 	public String listFeatures() throws PhrescoException {
 		List<ArtifactGroup> moduleGroups = getServiceManager().getFeatures(getCustomerId(), getTechnologyId(), getType());
-		Collections.sort(moduleGroups, sortFeaturesNameInAlphaOrder());
+		if (CollectionUtils.isNotEmpty(moduleGroups)) {
+			Collections.sort(moduleGroups, sortFeaturesNameInAlphaOrder());
+		}
 		setReqAttribute(REQ_FEATURES_MOD_GRP, moduleGroups);
 		setReqAttribute(REQ_FEATURES_TYPE, getType());
 		setReqAttribute(REQ_APP_ID, getAppId());

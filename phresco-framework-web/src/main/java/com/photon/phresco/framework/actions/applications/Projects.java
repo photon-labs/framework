@@ -111,8 +111,9 @@ public class Projects extends FrameworkBaseAction {
         try {
             ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
             List<ProjectInfo> projects = projectManager.discover(getCustomerId());
-            Collections.sort(projects, sortByNameInAlphaOrder());
-            
+            if (CollectionUtils.isNotEmpty(projects)) {
+            	Collections.sort(projects, sortByNameInAlphaOrder());
+            }
             setReqAttribute(REQ_PROJECTS, projects);
             setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
             removeSessionAttribute(projectCode);

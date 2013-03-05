@@ -62,9 +62,6 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 	private String errorMsg = "";
     
     private String availableParams = "";
-    private final String PHASE_FUNCTIONAL_TEST_WEBDRIVER = "functional-test-webdriver";
-    private final String PHASE_FUNCTIONAL_TEST_GRID = "functional-test-grid";
-    private final String PHASE_FUNCTIONAL_UIAUTOMATION_TEST = "functional-test-UIAutomation";
     private final String PHASE_FUNCTIONAL_TEST = "functional-test";
     private final String PHASE_RUNAGAINST_SOURCE = "run-against-source";
     
@@ -84,7 +81,7 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 		sb.append(FOLDER_DOT_PHRESCO);
 		sb.append(File.separator);
 		sb.append(PHRESCO_HYPEN);
-		if (PHASE_FUNCTIONAL_TEST_WEBDRIVER.equals(goal) || PHASE_FUNCTIONAL_TEST_GRID.equals(goal) || PHASE_FUNCTIONAL_UIAUTOMATION_TEST.equals(goal)) {
+		if (StringUtils.isNotEmpty(goal) && goal.contains(FUNCTIONAL)) {
 			sb.append(PHASE_FUNCTIONAL_TEST);
 		} else if (PHASE_RUNGAINST_SRC_START.equals(goal)|| PHASE_RUNGAINST_SRC_STOP.equals(goal) ) {
 			sb.append(PHASE_RUNAGAINST_SOURCE);
@@ -92,6 +89,7 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 			sb.append(goal);
 		}
 		sb.append(INFO_XML);
+
 		return sb.toString();
 	}
     
@@ -102,7 +100,7 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 		sb.append(FOLDER_DOT_PHRESCO);
 		sb.append(File.separator);
 		sb.append(PHRESCO_HYPEN);
-		if (PHASE_FUNCTIONAL_TEST_WEBDRIVER.equals(goal) || PHASE_FUNCTIONAL_TEST_GRID.equals(goal) || PHASE_FUNCTIONAL_UIAUTOMATION_TEST.equals(goal)) {
+		if (StringUtils.isNotEmpty(goal) && goal.contains(FUNCTIONAL)) {
 			sb.append(PHASE_FUNCTIONAL_TEST);
 		}else if (PHASE_RUNGAINST_SRC_START.equals(goal)|| PHASE_RUNGAINST_SRC_STOP.equals(goal) ) {
 			sb.append(PHASE_RUNAGAINST_SOURCE);

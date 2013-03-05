@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 
 import com.photon.phresco.commons.model.ApplicationInfo;
@@ -53,23 +54,34 @@ public class Download extends FrameworkBaseAction {
 			String platform = FrameworkUtil.findPlatform();
 			
 			List<DownloadInfo> serverDownloadInfo = serviceManager.getDownloads(getCustomerId(), techId, DownloadInfo.Category.SERVER.name(), platform);
-			Collections.sort(serverDownloadInfo, sortDownloadsInAlphaOrder());
+			if (CollectionUtils.isNotEmpty(serverDownloadInfo)) {
+				Collections.sort(serverDownloadInfo, sortDownloadsInAlphaOrder());
+			}
 			setReqAttribute(REQ_SERVER_DOWNLOAD_INFO, serverDownloadInfo);
 			
 			List<DownloadInfo> dbDownloadInfo = serviceManager.getDownloads(getCustomerId(), techId, DownloadInfo.Category.DATABASE.name(), platform);
-			Collections.sort(dbDownloadInfo, sortDownloadsInAlphaOrder());
+			if (CollectionUtils.isNotEmpty(dbDownloadInfo)) {
+				Collections.sort(dbDownloadInfo, sortDownloadsInAlphaOrder());
+			}
+			
 			setReqAttribute(REQ_DB_DOWNLOAD_INFO, dbDownloadInfo);
 			
 			List<DownloadInfo> editorDownloadInfo = serviceManager.getDownloads(getCustomerId(), techId, DownloadInfo.Category.EDITOR.name(), platform);
-			Collections.sort(editorDownloadInfo, sortDownloadsInAlphaOrder());
+			if (CollectionUtils.isNotEmpty(editorDownloadInfo)) {
+				Collections.sort(editorDownloadInfo, sortDownloadsInAlphaOrder());
+			}
 			setReqAttribute(REQ_EDITOR_DOWNLOAD_INFO, editorDownloadInfo);
 			
 			List<DownloadInfo> toolsDownloadInfo = serviceManager.getDownloads(getCustomerId(), techId, DownloadInfo.Category.TOOLS.name(), platform);
-			Collections.sort(toolsDownloadInfo, sortDownloadsInAlphaOrder());
+			if (CollectionUtils.isNotEmpty(toolsDownloadInfo)) {
+				Collections.sort(toolsDownloadInfo, sortDownloadsInAlphaOrder());
+			}
 			setReqAttribute(REQ_TOOLS_DOWNLOAD_INFO, toolsDownloadInfo);
 			
 			List<DownloadInfo> othersDownloadInfo = serviceManager.getDownloads(getCustomerId(), techId, DownloadInfo.Category.OTHERS.name(), platform);
-			Collections.sort(othersDownloadInfo, sortDownloadsInAlphaOrder());
+			if (CollectionUtils.isNotEmpty(othersDownloadInfo)) {
+				Collections.sort(othersDownloadInfo, sortDownloadsInAlphaOrder());
+			}
 			setReqAttribute(REQ_OTHERS_DOWNLOAD_INFO, othersDownloadInfo);
 			
 		} catch (PhrescoException e) {
