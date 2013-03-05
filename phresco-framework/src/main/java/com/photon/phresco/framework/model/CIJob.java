@@ -103,6 +103,10 @@ public class CIJob {
     private String keyPassword = "";
     private String packMinifiedFiles = "";
     
+    // iphone unit test
+    private String unitTestType = "";
+    private String unittest = "";
+    
     // deploy job info
     private String deviceType = "";
     private String sdkVersion = "";
@@ -933,5 +937,21 @@ public class CIJob {
 
 	public void setPackageFileBrowse(String packageFileBrowse) {
 		this.packageFileBrowse = packageFileBrowse;
+	}
+
+	public String getUnitTestType() {
+		return unitTestType;
+	}
+
+	public void setUnitTestType(String unitTestType) {
+		this.unitTestType = unitTestType;
+	}
+
+	public String getUnittest() {
+		return unittest;
+	}
+
+	public void setUnittest(String unittest) {
+		this.unittest = unittest;
 	}
 }
