@@ -335,7 +335,7 @@
 			<div class="modal-header">
 				<a class="close" data-dismiss="modal" >&times;</a>
 				<img id="copyToClipBrd" class="copyToClipboard" title="<s:text name="title.copy.to.clipBoard"/>" src="images/icons/clipboard-copy.png">
-				<h3 id="popupTitle"><s:text name='lbl.progress'/></h3>
+				<h3 id="progressPopupTitle"></h3>
 			</div>
 			<div class="modal-body" id="popup_progress_div">
 			

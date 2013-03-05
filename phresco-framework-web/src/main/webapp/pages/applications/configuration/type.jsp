@@ -549,7 +549,13 @@
 	function performBtnEvent(obj) {
 		var url = $(obj).attr("id");
 		var params = getBasicParams();
-		progressPopupAsSecPopup(url, '<%= appId %>', url, $("#generateBuildForm"), params);
+		if (url == 'validateContent') {
+			progressPopupAsSecPopup(url, '<%= appId %>', url, $("#generateBuildForm"), params, '', '<s:text name="label.validate.content"/>');
+		} else if (url == 'validateTheme') {
+			progressPopupAsSecPopup(url, '<%= appId %>', url, $("#generateBuildForm"), params, '', '<s:text name="label.validate.theme"/>');
+		} else {
+			progressPopupAsSecPopup(url, '<%= appId %>', url, $("#generateBuildForm"), params, '');
+		}
 	}
 	
 	//To update the hidden field for the config property whose type is multiple
