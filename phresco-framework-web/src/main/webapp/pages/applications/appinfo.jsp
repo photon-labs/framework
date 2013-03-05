@@ -193,7 +193,7 @@
 		                    %>
 	                   					<option value = "<%= appInfo.getId() %>" <%= selectedStr %>><%= appInfo.getName() %></option>
 							<% 	 
-									}
+								}
 							%> 
 					</select>
 				</div>

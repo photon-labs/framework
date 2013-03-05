@@ -343,9 +343,9 @@ public class Build extends DynamicParameterAction implements Constants {
 			ApplicationInfo applicationInfo = getApplicationInfo();
 			
 			List<BuildInfo> builds = applicationManager.getBuildInfos(new File(getBuildInfosFilePath(applicationInfo)));
-			
-			Collections.sort(builds, new BuildComparator());
-
+			if (CollectionUtils.isNotEmpty(builds)) {
+				Collections.sort(builds, new BuildComparator());
+			}
 			setReqAttribute(REQ_CUSTOMER_ID, getCustomerId());
 			setReqAttribute(REQ_PROJECT_ID, getProjectId());
 			setReqAttribute(REQ_BUILD, builds);

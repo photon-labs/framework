@@ -152,7 +152,9 @@ public class SiteReport extends FrameworkBaseAction {
 			String techId = getTechId();
 			ApplicationInfo appInfo = getApplicationInfo();
 			List<Reports> reports = getServiceManager().getReports(techId);
-			Collections.sort(reports, sortReportByNameInAlphaOrder());
+			if (CollectionUtils.isNotEmpty(reports)) {
+				Collections.sort(reports, sortReportByNameInAlphaOrder());
+			}
 			List<Reports> selectedReports = getPomReports(appInfo);
 			setReqAttribute(REQ_SITE_REPORTS, reports);
 			setReqAttribute(REQ_SITE_SLECTD_REPORTS, selectedReports);

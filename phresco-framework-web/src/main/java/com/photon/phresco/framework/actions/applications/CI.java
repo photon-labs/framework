@@ -196,7 +196,9 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 				S_LOGGER.debug("get jobs called in CI ");
 			}
 			List<CIJob> existingJobs = ciManager.getJobs(appInfo);
-			Collections.sort(existingJobs, sortJobsInAlphaOrder());
+			if (CollectionUtils.isNotEmpty(existingJobs)) {
+				Collections.sort(existingJobs, sortJobsInAlphaOrder());
+			}
 			
 			if (debugEnabled) {
 				S_LOGGER.debug("Return jobs got in CI ");

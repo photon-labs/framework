@@ -52,6 +52,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -143,8 +144,9 @@ public class Login extends FrameworkBaseAction {
         	Credentials credentials = new Credentials(getUsername(), getPassword());
         	user = doLogin(credentials);
         	List<Customer> listOfCustomers = user.getCustomers();
-        	Collections.sort(listOfCustomers, sortCusNameInAlphaOrder());
-        	
+        	if (CollectionUtils.isNotEmpty(listOfCustomers)) {
+        		Collections.sort(listOfCustomers, sortCusNameInAlphaOrder());
+        	}
         	setReqAttribute(REQ_CUSTOMERS_LIST, listOfCustomers);
         	
         	if (user == null) {

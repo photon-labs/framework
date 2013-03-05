@@ -266,7 +266,9 @@ public class Applications extends FrameworkBaseAction {
             setSelectedDownloadInfoVersion(selectedDbVer);
             setSelectBoxId(selectBoxId);
             List<DownloadInfo> downloadInfos = getServiceManager().getDownloads(getCustomerId(), techId, type, FrameworkUtil.findPlatform());
-            Collections.sort(downloadInfos, sortdownloadInfoInAlphaOrder());
+            if (CollectionUtils.isNotEmpty(downloadInfos)) {
+            	Collections.sort(downloadInfos, sortdownloadInfoInAlphaOrder());
+            }
 			setDownloadInfos(downloadInfos);
         } catch (PhrescoException e) {
             return showErrorPopup(e, getText(EXCEPTION_DOWNLOADINFOS));
@@ -491,7 +493,9 @@ public class Applications extends FrameworkBaseAction {
     		ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
     		projectManager.update(projectInfo, getServiceManager(), getOldAppDirName());
             List<ProjectInfo> projects = projectManager.discover(getCustomerId());
-            Collections.sort(projects, sortByNameInAlphaOrder());
+            if (CollectionUtils.isNotEmpty(projects)) {
+            	Collections.sort(projects, sortByNameInAlphaOrder());
+            }
             setReqAttribute(REQ_PROJECTS, projects);
             removeSessionAttribute(getAppId() + SESSION_APPINFO);
             removeSessionAttribute(REQ_SELECTED_FEATURES);
