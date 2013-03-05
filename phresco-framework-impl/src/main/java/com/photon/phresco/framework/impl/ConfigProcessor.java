@@ -160,7 +160,7 @@ public class ConfigProcessor implements FrameworkConstants {
 		}
     }
     
-    public void buildOtherProjects(String childProjects)  throws PhrescoException {
+    public void buildOtherProjects(String childProjects, String name, String ordinal, String color)  throws PhrescoException {
     	S_LOGGER.debug("Entering Method ConfigProcessor.buildOtherProjects()");
     	try {
         	XPath xpath = XPath.newInstance(PUBLISHERS_NODE);
@@ -168,7 +168,7 @@ public class ConfigProcessor implements FrameworkConstants {
             Element publisherNode = (Element) xpath.selectSingleNode(root_);
             org.jdom.Element element = new Element(HUDSON_TASKS_BUILD_TRIGGER_NODE);
             element.addContent(createElement(CHILD_PROJECTS, childProjects));
-            element.addContent(createElement(THRESHOLD, null).addContent(createElement(NAME, CI_SUCCESS_FLAG)).addContent(createElement(ORDINAL, ZERO)).addContent(createElement(COLOR, BLUE)));
+            element.addContent(createElement(THRESHOLD, null).addContent(createElement(NAME, name)).addContent(createElement(ORDINAL, ordinal)).addContent(createElement(COLOR, color)));
             publisherNode.addContent(element);
 		} catch (Exception e) {
 			throw new PhrescoException(e);

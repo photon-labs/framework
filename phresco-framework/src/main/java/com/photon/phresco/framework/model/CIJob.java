@@ -51,8 +51,10 @@ public class CIJob {
     //  CI  automation
     // whether to clone the current jobs workspace for further reference
     private boolean cloneWorkspace = false;
-    //when to call is optional - can be added Down stream projects
+    // when to call is optional - can be added Down stream projects
     private String downStreamProject = "";
+    // When to trigger down stream project
+    private String downStreamCriteria = "";
     // Whether this job is used cloned workspace or normal svn
     private String usedClonnedWorkspace = "";
     private String operation = "";// Operation like(Build, deploy, test)
@@ -953,5 +955,13 @@ public class CIJob {
 
 	public void setUnittest(String unittest) {
 		this.unittest = unittest;
+	}
+
+	public String getDownStreamCriteria() {
+		return downStreamCriteria;
+	}
+
+	public void setDownStreamCriteria(String downStreamCriteria) {
+		this.downStreamCriteria = downStreamCriteria;
 	}
 }

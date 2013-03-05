@@ -199,6 +199,8 @@ public interface FrameworkConstants {
 	String PARENT_JOB_NAME = "parentJobName";
 	String CI_CRITERIA = "criteria";
 	String ZERO = "0";
+	String ONE = "1";
+	String TWO = "2";
 	String PUBLISHERS_NODE = "publishers";
 	String ALL_FILES = "**/*";
 	String SUCCESSFUL = "Successful";
@@ -206,9 +208,16 @@ public interface FrameworkConstants {
 	String WORKSPACE_GLOB = "workspaceGlob";
 	String ARCHIVE_METHOD = "archiveMethod";
 	String BLUE = "BLUE";
+	String YELLOW = "YELLOW";
+	String RED = "RED";
 	String COLOR = "color";
 	String ORDINAL = "ordinal";
 	String CI_SUCCESS_FLAG = "SUCCESS";
+	String CI_UNSTABLE_FLAG = "UNSTABLE";
+	String CI_FAILURE_FLAG = "FAILURE";
+	String CRITERIA_ANY = "Any";
+	String CRITERIA_NOT_FAILED = "Not Failed";
+	String CRITERIA_SUCCESSFUL = "Successful";
 	String INPROGRESS = "INPROGRESS";
 	String RESTARTED = "restarted";
 	String NAME = "name";

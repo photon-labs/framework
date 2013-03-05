@@ -443,6 +443,20 @@
 									</div>
 								</div>
 								
+								<!-- Criteria to run the down stream projects -->
+								<div class="control-group">
+									<label class="control-label labelbold popupLbl">
+										<s:text name='lbl.downstream.criteria' />
+									</label>
+									<div class="controls">
+										<select id="downstreamCriteria" name="downstreamCriteria" class="input-xlarge">
+											<option value="SUCCESS">Trigger only if build succeeds</option>
+											<option value="UNSTABLE">Trigger even if the build is unstable</option>
+											<option value="FAILURE">Trigger even if the build fails</option>
+										</select>
+									</div>
+								</div>
+								
 								<!-- clone this workspace -->
 								<div class="control-group">
 									<label class="control-label labelbold popupLbl">
@@ -680,6 +694,7 @@
 				$('input:radio[name=overwriteFiles]').filter("[value='"+<%= existingJob.isCollabNetoverWriteFiles() %>+"']").attr("checked", true);
 				$("#usedClonnedWorkspace option[value='<%= existingJob.getUsedClonnedWorkspace() %>']").attr('selected', 'selected');
 				$("#downstreamProject option[value='<%= existingJob.getDownStreamProject() %>']").attr('selected', 'selected');
+				$("#downstreamCriteria option[value='<%= existingJob.getDownStreamCriteria() %>']").attr('selected', 'selected');
 				$("#operation option[value='<%= existingJob.getOperation() %>']").attr('selected', 'selected');
 				//clone the workspace
 				$("input:radio[name=cloneWorkspace][value=<%= existingJob.isCloneWorkspace() %>]").prop("checked", true);

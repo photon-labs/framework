@@ -122,6 +122,7 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 	private String operation = "";
 	private String upstreamProject = "";
 	private String downstreamProject = "";
+	private String downstreamCriteria = "";
 	// whether we want to clone this workspace
 	private boolean cloneWorkspace = false;
 	private String projectModule = "";
@@ -568,6 +569,7 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 			existJob.setCloneWorkspace(cloneWorkspace);
 			existJob.setUsedClonnedWorkspace(usedClonnedWorkspace);
 			existJob.setDownStreamProject(downstreamProject);
+			existJob.setDownStreamCriteria(downstreamCriteria);
 			existJob.setOperation(operation);
 			existJob.setProjectModule(projectModule);
 			
@@ -1552,5 +1554,13 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 
 	public void setTestType(String testType) {
 		this.testType = testType;
+	}
+
+	public String getDownstreamCriteria() {
+		return downstreamCriteria;
+	}
+
+	public void setDownstreamCriteria(String downstreamCriteria) {
+		this.downstreamCriteria = downstreamCriteria;
 	}
 }

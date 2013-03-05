@@ -167,7 +167,7 @@
 								                            %>
 								                                <img src="images/icons/inprogress.png" title="In progress"/>
 										              		<% 
-								                                } else if(build.getStatus().equals(FrameworkConstants.CI_SUCCESS_FLAG)) {
+								                                } else if(build.getStatus().equals(FrameworkConstants.CI_SUCCESS_FLAG) && StringUtils.isNotEmpty(build.getDownload())) {
 								                                	String downloadUrl = build.getUrl()+ FrameworkConstants.CI_JOB_BUILD_ARTIFACT;
 								                                	if (StringUtils.isNotEmpty(build.getDownload())) {
 								                                		downloadUrl = downloadUrl + FrameworkConstants.FORWARD_SLASH + build.getDownload().replaceAll("\"","");								                                		

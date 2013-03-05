@@ -379,7 +379,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
         
         if(jsonObject.get(FrameworkConstants.CI_JOB_BUILD_RESULT).toString().equals(STRING_NULL)) { // when build is result is not known
         	ciBuild.setStatus(INPROGRESS);
-        } else if(resultJson.getAsString().equals(CI_SUCCESS_FLAG) && asJsonArray.size() < 1) { // when build is success and zip relative path is not added in json
+        } else if(BUILD.equals(job.getOperation()) && resultJson.getAsString().equals(CI_SUCCESS_FLAG) && asJsonArray.size() < 1) { // when build is success and zip relative path is not added in json
             ciBuild.setStatus(INPROGRESS);
         } else {
         	ciBuild.setStatus(resultJson.getAsString());
@@ -496,19 +496,36 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
         // use clonned scm
         if(CLONED_WORKSPACE.equals(job.getRepoType())) {
         	S_LOGGER.debug("using cloned workspace ");
-        	processor.useClonedScm(job.getUsedClonnedWorkspace(), SUCCESSFUL);
+        	processor.useClonedScm(job.getUsedClonnedWorkspace(), CRITERIA_ANY);
         }
         
         // clone workspace for future use
         if (job.isCloneWorkspace()) { 
         	S_LOGGER.debug("Clonning the workspace ");
-            processor.cloneWorkspace(ALL_FILES, SUCCESSFUL, TAR);
+            processor.cloneWorkspace(ALL_FILES, CRITERIA_ANY, TAR);
         }
         
         // Build Other projects
         if (StringUtils.isNotEmpty(job.getDownStreamProject())) {
         	S_LOGGER.debug("Enabling downstream project!!!!!!");
-            processor.buildOtherProjects(job.getDownStreamProject());
+        	String name = "";
+        	String ordinal = "";
+        	String color = "";
+        	if (CI_SUCCESS_FLAG.equals(job.getDownStreamCriteria())) {
+        		name = CI_SUCCESS_FLAG;
+        		ordinal = ZERO;
+        		color = BLUE;
+        	} else if (CI_UNSTABLE_FLAG.equals(job.getDownStreamCriteria())) {
+        		name = CI_UNSTABLE_FLAG;
+        		ordinal = ONE;
+        		color = YELLOW;
+        	// failure
+        	} else {
+        		name = CI_FAILURE_FLAG;
+        		ordinal = TWO;
+        		color = RED;
+        	}
+            processor.buildOtherProjects(job.getDownStreamProject(), name, ordinal, color);
         }
         
         // pom location specifier 
