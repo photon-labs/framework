@@ -160,6 +160,9 @@ public class CIJob {
 	private String contextUrls = "";
 	private String dbContextUrls = "";
   
+	// Android functional test
+	private String deviceList = "";
+	
     public CIJob() {
         super();
     }
@@ -963,5 +966,13 @@ public class CIJob {
 
 	public void setDownStreamCriteria(String downStreamCriteria) {
 		this.downStreamCriteria = downStreamCriteria;
+	}
+
+	public String getDeviceList() {
+		return deviceList;
+	}
+
+	public void setDeviceList(String deviceList) {
+		this.deviceList = deviceList;
 	}
 }
