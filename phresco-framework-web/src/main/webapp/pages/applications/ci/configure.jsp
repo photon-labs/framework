@@ -607,8 +607,8 @@
 												<s:text name='lbl.build.release.overwrite' />
 											</label>
 											<div class="controls" style="padding-top: 5px;">
-												<input type="radio" name="overwriteFiles" value="true" checked />&nbsp; <s:text name="lbl.yes"/>
-												<input type="radio" name="overwriteFiles" value="false" />&nbsp; <s:text name="lbl.no"/>
+												<input type="radio" name="collabNetoverWriteFiles" value="true" checked />&nbsp; <s:text name="lbl.yes"/>
+												<input type="radio" name="collabNetoverWriteFiles" value="false" />&nbsp; <s:text name="lbl.no"/>
 											</div>
 										</div>
 								
@@ -691,7 +691,7 @@
 				
 				// when the job is not null, have to make selection in radio buttons of collabnet plugin
 				$('input:radio[name=enableBuildRelease]').filter("[value='"+<%= existingJob.isEnableBuildRelease() %>+"']").attr("checked", true);
-				$('input:radio[name=overwriteFiles]').filter("[value='"+<%= existingJob.isCollabNetoverWriteFiles() %>+"']").attr("checked", true);
+				$('input:radio[name=collabNetoverWriteFiles]').filter("[value='"+<%= existingJob.isCollabNetoverWriteFiles() %>+"']").attr("checked", true);
 				$("select[name=usedClonnedWorkspace] option[value='<%= existingJob.getUsedClonnedWorkspace() %>']").attr('selected', 'selected');
 				$("#downstreamProject option[value='<%= existingJob.getDownStreamProject() %>']").attr('selected', 'selected');
 				$("#downstreamCriteria option[value='<%= existingJob.getDownStreamCriteria() %>']").attr('selected', 'selected');
