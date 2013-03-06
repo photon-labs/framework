@@ -444,7 +444,7 @@
 								</div>
 								
 								<!-- Criteria to run the down stream projects -->
-								<div class="control-group">
+								<div class="control-group" id="downstreamControlGroup">
 									<label class="control-label labelbold popupLbl">
 										<s:text name='lbl.downstream.criteria' />
 									</label>
@@ -524,7 +524,7 @@
 	<!-- CI basic settings ends -->
 		
 	<!-- build release plugin changes starts -->
-	<div class="theme_accordion_container clearfix" style="float: none;">
+	<div class="theme_accordion_container clearfix" style="float: none;" id="collabnetContainer">
 	    <section class="accordion_panel_wid">
 	        <div class="accordion_panel_inner adv-settings-accoridan-inner">
 	            <section class="lft_menus_container adv-settings-width">
@@ -710,17 +710,48 @@
 			enableDisableCollabNet();
 			ciConfigureError('errMsg', "");
 		});
-		// while editing a job , based on value show hide it (CollabNet build release)
-		enableDisableCollabNet();
 		
 		// Automation implementation - ci config - based on technology show hide information
 		$('#operation').change(function() {
 			showConfigBasedOnTech();
 		});
+		
+		//to hide/show collabnet based on operation
+		showHideCollabnetAccordion();
+		
+		$('#operation').change(function() {
+			showHideCollabnetAccordion();
+		});
+		
+		//hide downstream criteria if nothin is selected
+		showHideDownStreamCriteria();
+		
+		$('#downstreamProject').change(function() {
+			showHideDownStreamCriteria();
+		});
+		
 		showConfigBasedOnTech();
 		
 	});
 	
+	function showHideDownStreamCriteria() {
+		if ($('#downstreamProject').val() == "") {
+			$('#downstreamControlGroup').hide();
+		} else {
+			$('#downstreamControlGroup').show();
+		}
+	}
+	
+	function showHideCollabnetAccordion() {
+		if ($("#operation").val() == 'build') {
+			$("#collabnetContainer").show();
+		} else {
+			$("#collabnetContainer").hide();
+			$('input:radio[name=enableBuildRelease]').filter("[value='false']").attr("checked", true);
+		}
+		enableDisableCollabNet();
+	}
+
 	function showConfigBasedOnTech() {
 		var params = getBasicParams();
 		params = params.concat("&");
