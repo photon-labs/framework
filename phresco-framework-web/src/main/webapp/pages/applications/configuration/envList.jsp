@@ -96,7 +96,7 @@
 								    			if (CollectionUtils.isEmpty(configurations)) {
 								    		%> 
 								    			 <div class="alert alert-block">
-													<%= actionSupport.getText("lbl.err.msg.list.config")%>
+													<%= actionSupport.getText("err.msg.list.config")%>
 												</div> 
 											<% } else { %>
 								    	

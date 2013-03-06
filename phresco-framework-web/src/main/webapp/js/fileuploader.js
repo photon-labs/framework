@@ -276,8 +276,10 @@ qq.FileUploaderBasic = function(o){
         	if (!responseJSON.success) {
         		fileError();
         		enableUploadButton($(o.element));
+        		disableButton($("#validateContent, #validateTheme"));
         	} else if (responseJSON.success) {
         		disableUploadButton($(o.element));
+        		enableButton($("#validateContent, #validateTheme"));
         	}
     	},
         onCancel: function(id, fileName){},

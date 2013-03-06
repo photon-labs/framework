@@ -141,7 +141,7 @@
 	            	
 	            	function constructBtnElement(btnVal, btnId) {
 	   					var ctrlGroup = "<div class='control-group'><label for='xlInput' class='control-label labelbold'></label>" +
-	   									"<div class='controls'><input type='button' class='btn btn-primary' onclick='performBtnEvent(this)'" + 
+	   									"<div class='controls'><input type='button' class='btn' disabled onclick='performBtnEvent(this)'" + 
 	   									"id='"+ btnId +"' value='"+ btnVal +"'/></div></div>";
 	   					$('#configProperties').append(ctrlGroup);
 	   				}
@@ -508,6 +508,7 @@
 		} else if (pageUrl == "listUploadedFiles") {
 			if (data.uploadedFiles != undefined && !isBlank(data.uploadedFiles)) {
 				disableUploadButton($("#file-uploader"));
+				enableButton($("#validateContent, #validateTheme"));
 				for (i in data.uploadedFiles) {
 					var fileName = data.uploadedFiles[i];
 					var ul = '<ul class="qq-upload-list"><li>' +
@@ -524,9 +525,8 @@
 	function removeUploadedFile(obj) {
 		var eleAttr = $(obj).attr("eleAttr");
 		enableUploadButton($("#" + eleAttr));
-		
+		disableButton($("#validateContent, #validateTheme"));
 		$(obj).parent().remove();
-		
 		var params = "fileName=";
 		params = params.concat($(obj).attr("filename"));
 		params = params.concat("&");
