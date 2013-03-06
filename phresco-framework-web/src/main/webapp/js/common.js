@@ -188,6 +188,28 @@ function mandatoryValidation(pageUrl, form, additionalParams, phase, goal, actio
 	});
 }
 
+function targetFolderCreator() {
+	var fileOrFolders = [];
+	var targetFolders = [];
+	$('input[name=selectedFileOrFolder]').each(function(i) {
+		fileOrFolders.push($(this).val());
+	});
+	
+	$('input[name=targetFolder]').each(function(i) {
+		targetFolders.push($(this).val());
+	});
+	
+	var selectedFiles = [];
+	for (i in targetFolders) {
+		if ((!isBlank(targetFolders[i]) && isBlank(fileOrFolders[i])) || 
+				(!isBlank(fileOrFolders[i]) && isBlank(targetFolders[i]))
+				|| (!isBlank(targetFolders[i]) && !isBlank(fileOrFolders[i]))) {
+			selectedFiles.push(targetFolders[i] + "#FILESEP#" + fileOrFolders[i]);
+		}
+	}
+	return selectedFiles;
+}
+
 function validate(pageUrl, form, tag, additionalParams, progressText, disabledDiv) {
 	if (disabledDiv != undefined && disabledDiv != "") {
 		enableDivCtrls(disabledDiv);
