@@ -188,6 +188,16 @@ function mandatoryValidation(pageUrl, form, additionalParams, phase, goal, actio
 	});
 }
 
+//trim the long content
+function featuresTextTrim(val) {
+   var len = val.length;
+   if(len > 25) {
+       val = val.substr(0, 25) + "...";
+       return val;
+   }
+   return val;
+}
+
 function targetFolderCreator() {
 	var fileOrFolders = [];
 	var targetFolders = [];
