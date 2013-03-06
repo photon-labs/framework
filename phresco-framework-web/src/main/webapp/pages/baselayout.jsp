@@ -363,7 +363,7 @@
 					<span class="red">*</span>&nbsp;<s:text name="lbl.compress.name"/>
 				</label>
 				<input type="text" class="hideContent compressNameTextBox" id="compressName" name="compressName"/>
-				<a href="#" class="btn btn-primary" data-dismiss="modal" id="add_popupCancel" onclick="add_popupCancel();"><s:text name='lbl.btn.cancel'/></a>
+				<a href="#" class="btn btn-primary" data-dismiss="modal" id="add_popupCancel" onclick="add_popupCancel(this);"><s:text name='lbl.btn.cancel'/></a>
 				<a href="#" class="btn btn-primary add_popupOk" id="" onClick="add_popupOnOk(this);" ><s:text name='lbl.btn.ok'/></a>
 				<div id="errMsg" class="envErrMsg add_errorMsg"></div>
 				<div class="popuploadingIcon" id="popuploadingIcon"></div>

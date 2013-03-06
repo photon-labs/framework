@@ -166,7 +166,8 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 	        if (appDir.isDirectory()) { // Only check the folders not files
 	            File[] dotPhrescoFolders = appDir.listFiles(new PhrescoFileNameFilter(FOLDER_DOT_PHRESCO));
 	            if (ArrayUtils.isEmpty(dotPhrescoFolders)) {
-	                throw new PhrescoException(".phresco folder not found in project " + appDir.getName());
+//	                throw new PhrescoException(".phresco folder not found in project " + appDir.getName());
+	            	continue;
 	            }
 	            File[] dotProjectFiles = dotPhrescoFolders[0].listFiles(new PhrescoFileNameFilter(PROJECT_INFO_FILE));
 	            ProjectInfo projectInfo = getProjectInfo(dotProjectFiles[0], projectId, customerId, appId);

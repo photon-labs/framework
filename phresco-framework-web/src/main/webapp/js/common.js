@@ -293,7 +293,7 @@ function additionalPopup(url, title, okUrl, okLabel, form, additionalParam, show
 	$('#additional_popupTitle').html(title); // Title for the popup
 	$('.add_popupClose').hide(); //no need close button since yesno popup
 	$('.add_popupOk, #add_popupCancel').show(); // show ok & cancel button
-
+	$("#add_popupCancel").attr('okurl', okUrl);
 	$(".add_popupOk").attr('id', okUrl); // popup action mapped to id
 	
 	if (showLocationBox !== undefined && showLocationBox) {//To show selected files location in text box in modal footer(for browse file tree)
@@ -323,10 +323,15 @@ function additionalPopup(url, title, okUrl, okLabel, form, additionalParam, show
 	$('#additional_popup_body').load(url, data); //url to render the body content for the popup
 }
 
-function add_popupCancel() {
-	setTimeout(function () {
-		$('#popupPage').modal('show');
-	}, 600);	
+function add_popupCancel(obj) {
+	var closeUrl = $(obj).attr("okurl");
+	if (closeUrl == "addCertificate") {
+		$('#additionalPopup').modal('hide');
+	} else {
+		setTimeout(function () {
+			$('#popupPage').modal('show');
+		}, 600);
+	}
 }
 
 function validateJson(url, form, containerTag, jsonParam, progressText, disabledDiv) {

@@ -46,6 +46,7 @@ import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.ArtifactGroupInfo;
 import com.photon.phresco.commons.model.ArtifactInfo;
+import com.photon.phresco.commons.model.CertificateInfo;
 import com.photon.phresco.commons.model.CoreOption;
 import com.photon.phresco.commons.model.Customer;
 import com.photon.phresco.commons.model.DownloadInfo;
@@ -64,6 +65,7 @@ import com.photon.phresco.framework.actions.FrameworkBaseAction;
 import com.photon.phresco.framework.api.ActionType;
 import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.commons.FrameworkUtil;
+import com.photon.phresco.impl.ConfigManagerImpl;
 import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.util.ArchiveUtil;
 import com.photon.phresco.util.ArchiveUtil.ArchiveType;
@@ -308,7 +310,7 @@ public class Configurations extends FrameworkBaseAction {
 		}
     	
     	try {
-			save(getAppConfigPath());
+			save(getAppConfigPath(), CONFIGURATION);
 			String pluginInfoFile = getPluginInfoPath();
 			MojoProcessor mojoProcessor = new MojoProcessor(new File(pluginInfoFile));
 			String className = mojoProcessor.getApplicationHandler().getClazz();
@@ -328,7 +330,7 @@ public class Configurations extends FrameworkBaseAction {
 			artifactGroups.add(artifactGroup);
 			PhrescoDynamicLoader dynamicLoader = new PhrescoDynamicLoader(repoInfo, artifactGroups);
 			ApplicationProcessor applicationProcessor = dynamicLoader.getApplicationProcessor(className);
-			applicationProcessor.postConfiguration(getApplicationInfo(), Collections.singletonList(getConfigInstance()));
+			applicationProcessor.postConfiguration(getApplicationInfo(), Collections.singletonList(getConfigInstance(getAppConfigPath(), CONFIGURATION)));
 			addActionMessage(getText(ACT_SUCC_CONFIG_ADD, Collections.singletonList(getConfigName())));
 		} catch (PhrescoException e) {
 			if (s_debugEnabled) {
@@ -357,7 +359,7 @@ public class Configurations extends FrameworkBaseAction {
     		S_LOGGER.debug("Entering Method Configurations.saveSettings()");
 		}
     	try {
-    		save(getGlobalSettingsPath());
+    		save(getGlobalSettingsPath(), SETTINGS);
     		addActionMessage(getText(ACT_SUCC_SETTINGS_ADD, Collections.singletonList(getConfigName())));
 		} catch (PhrescoException e) {
 			if (s_debugEnabled) {
@@ -371,12 +373,12 @@ public class Configurations extends FrameworkBaseAction {
     	return settingsList();
     }
     
-    private void save(String configPath) throws ConfigurationException, PhrescoException {
+    private void save(String configPath, String fromPage) throws ConfigurationException, PhrescoException {
     	if (s_debugEnabled) {
     		S_LOGGER.debug("Entering Method Configurations.save()");
     	}
 
-    	Configuration config = getConfigInstance();
+    	Configuration config = getConfigInstance(configPath, fromPage);
     	Environment environment = getEnvironment();
     	List<Configuration> configurations = environment.getConfigurations();
     	configurations.add(config);
@@ -384,7 +386,7 @@ public class Configurations extends FrameworkBaseAction {
     	configManager.createConfiguration(environment.getName(), config);
     }
 
-	private Configuration getConfigInstance() throws PhrescoException {
+	private Configuration getConfigInstance(String configPath, String fromPage) throws PhrescoException {
 			boolean isIISServer = false;
 			Properties properties = new Properties();
 			List<PropertyTemplate> propertyTemplates = new ArrayList<PropertyTemplate>();
@@ -403,22 +405,32 @@ public class Configurations extends FrameworkBaseAction {
 						String key = propertyTemplate.getKey();
 						String value = getActionContextParam(key);
 						if (TYPE_FILE.equals(propertyTemplate.getType())) {
-							value = FilenameUtils.removeExtension(getActionContextParam("fileName"));
+							value = FilenameUtils.removeExtension(getActionContextParam(REQ_FILE_NAME));
 						}
 						if (REMOTE_DEPLOYMENT.equals(key) && StringUtils.isEmpty(value)) {
 							value = "false";
 						}
 						
-						if (StringUtils.isNotEmpty(key)) {
+						if (StringUtils.isNotEmpty(key) && !KEY_CERTIFICATE.equals(key)) {
+							properties.setProperty(key, value);
+						} else {
+							value = getActionContextParam(key);
+							if (StringUtils.isNotEmpty(value)) {
+								File file = new File(value);
+								if(fromPage.equals(CONFIGURATION)) {
+									value = configCertificateSave(configPath, value, file);
+								} else if (fromPage.equals(SETTINGS)){
+									value = settingsCertificateSave(configPath, file);
+								}
 							properties.setProperty(key, value);
 						}
-						
+					}
 						if (CONFIG_TYPE.equals(key) && IIS_SERVER.equals(value)) {
 							isIISServer = true;
 						}
 
 						if (CONFIG_TYPE.equals(key)) {
-							properties.put(TYPE_VERSION, getVersion());
+							properties.setProperty(TYPE_VERSION, getVersion());
 						}
 					}
 				}
@@ -435,12 +447,12 @@ public class Configurations extends FrameworkBaseAction {
 			
 			ApplicationInfo applicationInfo = getApplicationInfo();
 			if (applicationInfo != null && applicationInfo.getTechInfo().getId().equals(FrameworkConstants.TECH_SITE_CORE) && SERVER.equals(getConfigType())) {
-				properties.put(SETTINGS_TEMP_SITECORE_INST_PATH, getSiteCoreInstPath());
+				properties.setProperty(SETTINGS_TEMP_SITECORE_INST_PATH, getSiteCoreInstPath());
 			}
 			
 			if (isIISServer) {
-				properties.put(SETTINGS_TEMP_KEY_APP_NAME, getAppName());
-				properties.put(SETTINGS_TEMP_KEY_SITE_NAME, getSiteName());
+				properties.setProperty(SETTINGS_TEMP_KEY_APP_NAME, getAppName());
+				properties.setProperty(SETTINGS_TEMP_KEY_SITE_NAME, getSiteName());
 			}
 			
 			Configuration config = new Configuration(getConfigName(), getConfigType());
@@ -449,7 +461,66 @@ public class Configurations extends FrameworkBaseAction {
 			config.setProperties(properties);
 			return config;
 	}
+
+	private String settingsCertificateSave(String configPath, File file) throws PhrescoException {
+		String value = "";
+		StringBuilder sb = new StringBuilder(CERTIFICATES)
+		.append(File.separator)
+		.append(getEnvironment().getName())
+		.append(HYPHEN)
+		.append(getConfigName())
+		.append(DOT)
+		.append(FILE_TYPE_CRT);
+		value = sb.toString();					
+		if (file.exists()) {
+		File dstFile = new File(Utility.getProjectHome() + value);
+		FrameworkUtil.copyFile(file, dstFile);
+		} else {
+		saveCertificateFile(configPath, value);
+		}
+		return value;
+	}
+
+	private String configCertificateSave(String configPath, String value, File file) throws PhrescoException {
+		if (file.exists()) {
+			String path = Utility.getProjectHome().replace("\\", "/");
+			value = value.replace(path + getApplicationInfo().getAppDirName() + "/", "");
+		} else {
+			StringBuilder sb = new StringBuilder(FOLDER_DOT_PHRESCO)
+			.append(File.separator)
+			.append(CERTIFICATES)
+			.append(File.separator)
+			.append(getEnvironment().getName())
+			.append(HYPHEN)
+			.append(getConfigName())
+			.append(DOT)
+			.append(FILE_TYPE_CRT);
+			value = sb.toString();
+			saveCertificateFile(configPath, value);
+		}
+		return value;
+	}
 	
+	private void saveCertificateFile(String configPath, String certificatePath) throws PhrescoException {
+		try {
+			String host = getActionContextParam(SERVER_HOST);
+			int port = Integer.parseInt(getActionContextParam(SERVER_PORT));
+			String certificateName = getActionContextParam(KEY_CERTIFICATE);
+			ConfigManagerImpl configmanager = new ConfigManagerImpl(new File(configPath));
+			List<CertificateInfo> certificates = configmanager.getCertificate(host, port);
+			if (CollectionUtils.isNotEmpty(certificates)) {
+				for (CertificateInfo certificate : certificates) {
+					if (certificate.getDisplayName().equals(certificateName)) {
+						File file = new File(Utility.getProjectHome()+ getApplicationInfo().getAppDirName() + "/" + certificatePath);
+						configmanager.addCertificate(certificate, file);
+					}
+				}
+			}
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+	}
+	    
 	/**
      * To validate the Environment Name
      * @return
@@ -777,13 +848,13 @@ public class Configurations extends FrameworkBaseAction {
         return APP_CONFIG_EDIT;
     }
 	
-	public String updateConfiguration(){
+	public String updateConfiguration() {
 		if (s_debugEnabled) {
     		S_LOGGER.debug("Entering Method Configurations.updateConfiguration()");
 		}  
 		
 		try {
-			update(getAppConfigPath());
+			update(getAppConfigPath(), CONFIGURATION);
 			addActionMessage(getText(ACT_SUCC_CONFIG_UPDATE, Collections.singletonList(getConfigName())));
 		} catch (PhrescoException e) {
 			if (s_debugEnabled) {
@@ -795,13 +866,13 @@ public class Configurations extends FrameworkBaseAction {
 		return configList();
 	}
 	
-	public String updateSettings(){
+	public String updateSettings() {
 		if (s_debugEnabled) {
     		S_LOGGER.debug("Entering Method Configurations.updateSettings()");
 		}  
 		
 	    try {
-	        update(getGlobalSettingsPath());
+	        update(getGlobalSettingsPath(),SETTINGS);
 	        addActionMessage(getText(ACT_SUCC_SETTINGS_UPDATE, Collections.singletonList(getConfigName())));
 	    } catch (PhrescoException e) {
 	    	if (s_debugEnabled) {
@@ -813,7 +884,7 @@ public class Configurations extends FrameworkBaseAction {
 	    return settingsList();
 	}
     
-    private void update(String configPath) {
+    private void update(String configPath, String fromPage) {
     	if (s_debugEnabled) {
     		S_LOGGER.debug("Entering Method Configurations.update()");
 		}
@@ -821,7 +892,7 @@ public class Configurations extends FrameworkBaseAction {
         try {
         	Environment env = getEnvironment();
         	ConfigManager configManager = getConfigManager(configPath);
-        	Configuration config = getConfigInstance();
+        	Configuration config = getConfigInstance(configPath, fromPage);
         	configManager.updateConfiguration(env.getName(), oldName, config);
         	
         } catch (PhrescoException e) {
@@ -1437,6 +1508,38 @@ public class Configurations extends FrameworkBaseAction {
     	builder.append(File.separator);
     	builder.append(CONFIGURATION_INFO_FILE_NAME);
     	return builder.toString();
+    }
+    
+    public String authenticateServer() throws PhrescoException {
+    	try {
+    		String host = (String)getHttpRequest().getParameter(SERVER_HOST);
+    		int port = Integer.parseInt(getHttpRequest().getParameter(SERVER_PORT));
+    		boolean connectionAlive = Utility.isConnectionAlive("https", host, port);
+    		boolean isCertificateAvailable = false;	
+    		if (connectionAlive) {
+    			ConfigManagerImpl configmanager = new ConfigManagerImpl(null);
+    			List<CertificateInfo> certificates = configmanager.getCertificate(host, port);
+    			if (CollectionUtils.isNotEmpty(certificates)) {
+    				isCertificateAvailable = true;
+    				setReqAttribute(CERTIFICATES, certificates);
+    			}
+    		}
+    		setReqAttribute(FILE_TYPES, FILE_TYPE_CRT);
+    		setReqAttribute(FILE_BROWSE, FILE_BROWSE);
+    		String projectLocation = "";
+			if (StringUtils.isNotEmpty(getProjectId())) {
+    			projectLocation = Utility.getProjectHome() + getApplicationInfo().getAppDirName();
+    		} else {
+    			projectLocation = Utility.getProjectHome();
+    		}
+    		setReqAttribute(REQ_PROJECT_LOCATION, projectLocation.replace(File.separator, FORWARD_SLASH));
+    		setReqAttribute(REQ_RMT_DEP_IS_CERT_AVAIL, isCertificateAvailable);
+    		setReqAttribute(REQ_RMT_DEP_FILE_BROWSE_FROM, CONFIGURATION);
+    	} catch(Exception e) {
+    		throw new PhrescoException(e);
+    	}
+
+    	return SUCCESS;
     }
 
 	public String cronExpression() {

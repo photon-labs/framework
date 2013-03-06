@@ -223,6 +223,7 @@
 		var name = $('#configName').val();
 		var desc = $('#configDesc').val();
 		var env = $('#environment').val();
+		$("#certificate").prop("disabled", false); // enable certificate text box before serializing form inorder to pass it value
 		// convert form to json, toJson function is not passing filed names with dot.
 		var jsonObject = getFormAsJson($('#configProperties'));
 		var typeData = $.parseJSON($('#templateType').val());
@@ -298,7 +299,9 @@
 	
 	//To show the validation error messages
 	function findError(data) {
+		var isError = false;
 		if (!isBlank(data.configNameError)) {
+			isError = true;
 			showError($("#configNameControl"), $("#configNameError"), data.configNameError);
 		} else {
 			hideError($("#configNameControl"), $("#configNameError"));
@@ -309,6 +312,7 @@
 	    	for (var i = 0; i < dynamicErrors.length; i++) {
     		var dynErr = dynamicErrors[i].split(":");
 	    		if (!isBlank(dynErr[1])) {
+	    			isError = true;
 		    		showError($("#" + dynErr[0] + "Control"), $("#" + dynErr[0]+ "Error"), dynErr[1]);
 		    	} else {
 					hideError($("#" + dynErr[0] + "Control"), $("#" + dynErr[0]+ "Error"));
@@ -317,45 +321,57 @@
 		} 
 		
 		if (!isBlank(data.configEnvError)) {
+			isError = true;
 			showError($("#configEnvControl"), $("#configEnvError"), data.configEnvError);
 		} else {
 			hideError($("#configEnvControl"), $("#configEnvError"));
 		}
 		
 		if (!isBlank(data.configTypeError)) {
+			isError = true;
 			showError($("#configTypeControl"), $("#configTypeError"), data.configTypeError);
 		} else {
 			hideError($("#configTypeControl"), $("#configTypeError"));
 		}
 		
 		if (!isBlank(data.siteNameError)) {
+			isError = true;
 			showError($("#siteControl"), $("#siteNameError"), data.siteNameError);
 		} else {
 			hideError($("#siteControl"), $("#siteNameError"));
 		}
 		
 		if (!isBlank(data.appNameError)) {
+			isError = true;
 			showError($("#appControl"), $("#appNameError"), data.appNameError);
 		} else {
 			hideError($("#appControl"), $("#appNameError"));
 		}
 		
 		if (!isBlank(data.siteCoreInstPathError)) {
+			isError = true;
 			showError($("#siteCoreControl"), $("#siteCoreInstPathError"), data.siteCoreInstPathError);
 		} else {
 			hideError($("#siteCoreControl"), $("#siteCoreInstPathError"));
 		}
 		
 		if (!isBlank(data.versionError)) {
+			isError = true;
 			showError($("#versionControl"), $("#versionError"), data.versionError);
 		} else {
 			hideError($("#versionControl"), $("#versionError"));
 		}
 		
 		if (!isBlank(data.emailError)) {
+			isError = true;
 			showError($("#emailidControl"), $("#emailidError"), data.emailError);
 		} else {
 			hideError($("#emailidControl"), $("#emailidError"));
+		}
+		
+		// To disable certificate text box if any error occurs on validation
+		if (isError) {
+			$("#certificate").prop("disabled", true);
 		}
 	}
 </script>

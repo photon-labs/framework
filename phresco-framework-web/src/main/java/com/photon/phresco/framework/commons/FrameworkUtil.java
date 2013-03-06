@@ -627,6 +627,28 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	return controlGroupElement;
     }
     
+    public static StringTemplate constructTextBxWitBtn(ParameterModel pm) {
+    	StringTemplate controlGroupElement = new StringTemplate(getControlGroupTemplate());
+    	controlGroupElement.setAttribute("ctrlGrpId", pm.getControlGroupId());
+    	
+    	StringTemplate lableElmnt = constructLabelElement(pm.isMandatory(), pm.getLableClass(), pm.getLableText());
+    	StringTemplate inputElement = new StringTemplate(getInputTemplate());
+    	inputElement.setAttribute("type", getInputType(pm.getInputType()));
+    	inputElement.setAttribute("class", pm.getCssClass());
+    	inputElement.setAttribute("id", pm.getId());
+    	inputElement.setAttribute("name", pm.getName());
+    	inputElement.setAttribute("placeholder", pm.getPlaceHolder());
+    	inputElement.setAttribute("value", pm.getValue());
+    	inputElement.setAttribute("ctrlsId", pm.getControlId());
+    	String btn = "&nbsp;&nbsp;<input type='button' class='btn btn-primary' value='Authenticate' onclick='authenticateServer();'/>"; 
+    	inputElement.setAttribute("btnElement", new StringTemplate(btn));
+    	
+    	controlGroupElement.setAttribute("lable", lableElmnt);
+    	controlGroupElement.setAttribute("controls", inputElement);
+    	
+    	return controlGroupElement;
+    }
+    
     private static StringTemplate constructMultiSelectElement(ParameterModel pm) {
     	StringTemplate controlGroupElement = new StringTemplate(getControlGroupTemplate());
     	controlGroupElement.setAttribute("ctrlGrpId", pm.getControlGroupId());
@@ -985,7 +1007,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	StringBuilder sb = new StringBuilder();
     	sb.append("<div class='controls'>")
     	.append("<input type=\"$type$\" class=\"input-xlarge $class$\" id=\"$id$\" ")
-    	.append("name=\"$name$\" placeholder=\"$placeholder$\" value=\"$value$\">")
+    	.append("name=\"$name$\" placeholder=\"$placeholder$\" value=\"$value$\">$btnElement$")
     	.append("<span class='help-inline' id=\"$ctrlsId$\"></span></div>");
     	
     	return sb.toString();

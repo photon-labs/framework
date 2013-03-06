@@ -319,6 +319,8 @@ public interface FrameworkConstants {
     String TEMP_FOLDER ="temp";
     String NODEJS_RUN_AGAINST = "nodeJS_runAgnSrc";
     String JAVA_RUN_AGAINST = "runAgnSrc";
+    String CERTIFICATES = "certificates";
+    String KEY_CERTIFICATE = "certificate";
 	
     String JAVA_STAND_ALONE = "tech-java-standalone";
     String MAINCLASSNAME = "mainClassName";
@@ -870,6 +872,7 @@ public interface FrameworkConstants {
     String REQ_FEATURE_NAMES = "featureNames";
     String REQ_HAS_CUSTOM_PROPERTY = "hasCustomProperty";
     String REQ_HAS_FUNCTIONAL_LOG_FILE = "hasFunctionalLogFile";
+    String REQ_FILE_NAME = "fileName";
     
     String CONFIG_FEATURES = "config_Features";
     String CONFIG_COMPONENTS = "config_Components";

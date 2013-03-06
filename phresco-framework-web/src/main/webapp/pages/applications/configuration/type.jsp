@@ -196,7 +196,13 @@
 	        	pm.setObjectValue(possibleValues);
 	        	StringTemplate multiSelectBox = FrameworkUtil.constructConfigMultiSelectBox(pm);
 	        	sb.append(multiSelectBox);
-	        }  else {
+	        } else if (FrameworkConstants.KEY_CERTIFICATE.equals(propertyTemplate.getKey())) {
+	        	pm.setInputType(propertyTemplate.getType());
+	        	pm.setPlaceHolder(propertyTemplate.getHelpText());
+	        	pm.setValue(value);
+	        	StringTemplate inputControl = FrameworkUtil.constructTextBxWitBtn(pm);
+	        	sb.append(inputControl); 
+	        } else {
 	        	pm.setInputType(propertyTemplate.getType());
 	        	pm.setPlaceHolder(propertyTemplate.getHelpText());
 	        	pm.setValue(value);
@@ -361,7 +367,7 @@
 		var selectedType = typeData.name;
 		var customPropStatus = typeData.customProp;
 		var serverType = $('#type').val();
-		
+		$("#certificate").prop("disabled", true);
 		<% if (FrameworkConstants.ADD_CONFIG.equals(fromPage) || FrameworkConstants.EDIT_CONFIG.equals(fromPage)) { %>
 				getVersions();
 		<% } else { %>
@@ -419,7 +425,18 @@
 		 
 		// hide deploy dir if remote Deployment selected
 		$("input[name='remoteDeployment']").change(function() {
-			remoteDeplyChecked(); 
+			remoteDeplyChecked();
+			enableAddCertificateBtn();
+		});
+		
+		enableAddCertificateBtn();
+		
+		$("#protocol").change(function() {
+			enableAddCertificateBtn();
+		});
+		
+		$("#host, #port").live("input", function() {
+			enableAddCertificateBtn();
 		});
 	});
 
@@ -499,6 +516,16 @@
 		loadContent("fetchSettingProjectInfoVersions", $('#configProperties'), '', params, true, true);
 	}
 	
+	function authenticateServer() {
+		var host = $('#host').val();
+		var port = $('#port').val();
+		var params = "host=";
+		params = params.concat(host);
+		params = params.concat("&port=");
+		params = params.concat(port);
+		additionalPopup('authenticateServer','Add Certificate', 'addCertificate', 'Add', '', params, true);
+ 	}
+	
 	function successEvent(pageUrl, data) {
 		//To fill the versions 
 		if (pageUrl == "fetchProjectInfoVersions") {
@@ -575,7 +602,19 @@
 		yesnoPopup('calcCron', 'Cron Expression', 'Copy', 'Ok', '', param);
 	}
 	
-	function popupOnOk(self) {
-		$('#'+schedulerKey).val($('#cronExpression').val());
+	function popupOnOk(obj) {
+			$('#'+schedulerKey).val($('#cronExpression').val());
+	}
+	
+	function enableAddCertificateBtn() {
+		var isRemoteChecked = $("input[name='remoteDeployment']").is(":checked");
+		var protocol = $('#protocol').val();
+		var host = $('#host').val();
+		var port = $('#port').val();
+		if (isRemoteChecked && protocol === "https" && !isBlank(host) && !isBlank(port)) {
+			$("#certificateControl").show();	
+		} else {
+			$("#certificateControl").hide();
+		}
 	}
 </script>

@@ -551,8 +551,12 @@
         </action>
         
         <action name="createEnvironmentValidate" method="validateEnvironment" class="com.photon.phresco.framework.actions.applications.Configurations">
-        <interceptor-ref name="json" />
+        	<interceptor-ref name="json" />
             <result type="json" />
+        </action>
+        
+        <action name="authenticateServer" method="authenticateServer" class="com.photon.phresco.framework.actions.applications.Configurations">
+            <result name="success">/pages/fileBrowse.jsp</result>
         </action>
         
          <action name="checkForRemove" method="checkForRemove" class="com.photon.phresco.framework.actions.applications.Configurations">
