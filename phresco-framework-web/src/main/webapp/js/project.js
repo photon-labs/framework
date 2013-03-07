@@ -27,6 +27,15 @@ $('#projectCode, #projVersion').bind('input propertychange', function (e) {
 	$(this).val(str);
 });
 
+// project code is autofilled while giving project name in project creation
+$('#projectName').bind('input propertychange', function (e) {
+	var str = $(this).val();
+	str = checkForSplChrExceptDot(str);
+	str = removeSpaces(str);
+	$('#projectCode').val(str);
+	$('input[name=projectCode]').val(str);
+});
+
 //To restrict the user in typing the special charaters in App code
 $('input[name=appLayerProjName]').live('input propertychange', function(e) {
 	var str = $(this).val();
