@@ -104,7 +104,8 @@ import com.phresco.pom.util.PomProcessor;
 
 public class Quality extends DynamicParameterAction implements Constants {
 
-    private static final long serialVersionUID = -2040671011555139339L;
+    private static final String IS_CLASS_EMPTY = "isClassEmpty";
+	private static final long serialVersionUID = -2040671011555139339L;
     private static final Logger S_LOGGER = Logger.getLogger(Quality.class);
     private static Boolean s_debugEnabled  =S_LOGGER.isDebugEnabled();
     
