@@ -577,7 +577,7 @@ public interface FrameworkConstants {
      * Request Constants
      * Ex: REQ_XXX
      */
-    String REQ_CUSTOMERS_LIST = "listOfCustomers";
+    String SESSION_CUSTOMERS = "listOfCustomers";
     String REQ_APPINFO	= "appInfo";
     String REQ_APPINFO_SERVERS = "appinfoServers";
     String REQ_APPINFO_DBASES = "appinfoDbs";

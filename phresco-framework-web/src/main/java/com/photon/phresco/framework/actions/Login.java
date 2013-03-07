@@ -121,6 +121,7 @@ public class Login extends FrameworkBaseAction {
         }
         
         removeSessionAttribute(SESSION_USER_INFO);
+        removeSessionAttribute(SESSION_CUSTOMERS);
         String errorTxt = (String) getSessionAttribute(REQ_LOGIN_ERROR);
         if (StringUtils.isNotEmpty(errorTxt)) {
             setReqAttribute(REQ_LOGIN_ERROR, getText(errorTxt));
@@ -143,11 +144,6 @@ public class Login extends FrameworkBaseAction {
         try {
         	Credentials credentials = new Credentials(getUsername(), getPassword());
         	user = doLogin(credentials);
-        	List<Customer> listOfCustomers = user.getCustomers();
-        	if (CollectionUtils.isNotEmpty(listOfCustomers)) {
-        		Collections.sort(listOfCustomers, sortCusNameInAlphaOrder());
-        	}
-        	setReqAttribute(REQ_CUSTOMERS_LIST, listOfCustomers);
         	
         	if (user == null) {
         		setReqAttribute(REQ_LOGIN_ERROR, getText(ERROR_LOGIN));
@@ -159,6 +155,9 @@ public class Login extends FrameworkBaseAction {
 
         		return LOGIN_FAILURE;
         	}
+        	List<Customer> customers = user.getCustomers();
+    		Collections.sort(customers, sortCusNameInAlphaOrder());
+        	setSessionAttribute(SESSION_CUSTOMERS, customers);
         	setSessionAttribute(SESSION_USER_INFO, user);
 
         	//encode the password

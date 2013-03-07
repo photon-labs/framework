@@ -113,7 +113,7 @@
 	<body>
         <%
             User user = (User) session.getAttribute(FrameworkConstants.SESSION_USER_INFO);
-        	String customerIds = (String)request.getAttribute(user.getId());
+        	String customerId = (String)request.getAttribute(user.getId());
             String displayName = user.getDisplayName();
         %>
 		<div class="modal-backdrop fade in popupalign"></div>
@@ -223,8 +223,8 @@
 							<div class="controls customer_select_div">
 								<select id="customerSelect" name="customerSelect" class="customer_listbox">
 					                <%
-					                	List<Customer> listOfCustomers  = (List<Customer>) request.getAttribute(FrameworkConstants.REQ_CUSTOMERS_LIST);
-				                    	for (Customer customer: listOfCustomers) {
+					                	List<Customer> customers  = (List<Customer>) session.getAttribute(FrameworkConstants.SESSION_CUSTOMERS);
+				                    	for (Customer customer: customers) {
 								    %>
 					                       <option value="<%= customer.getId() %>"><%= customer.getName()%></option>
 									<% 
@@ -378,7 +378,7 @@
 		//getLogoImgUrl();
 		showHideTheme();
 		var selectedId = "";
-		$("#customerSelect").val('<%= customerIds %>');
+		$("#customerSelect").val('<%= customerId %>');
 		
 		$(".styles").click(function() {
 			localStorage.clear();
