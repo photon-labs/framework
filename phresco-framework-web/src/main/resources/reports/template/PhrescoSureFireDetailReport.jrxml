@@ -18,7 +18,7 @@
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["/Users/kaleeswaran/work/master-plugin/report-phresco-plugin/src/main/resources/"]]></defaultValueExpression>
 	</parameter>
-	<parameter name="hideClassColumn" class="java.lang.String"/>
+	<parameter name="isClassEmpty" class="java.lang.Boolean"/>
 	<field name="name" class="java.lang.String"/>
 	<field name="file" class="java.lang.String"/>
 	<field name="assertions" class="java.lang.String"/>
@@ -69,11 +69,11 @@
 				<reportElement x="0" y="50" width="555" height="272"/>
 				<subreport>
 					<reportElement x="0" y="0" width="555" height="272"/>
-					<subreportParameter name="hideClassColumn">
-						<subreportParameterExpression><![CDATA[$P{hideClassColumn}]]></subreportParameterExpression>
-					</subreportParameter>
 					<subreportParameter name="testCases">
 						<subreportParameterExpression><![CDATA[$F{testCases}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="isClassEmpty">
+						<subreportParameterExpression><![CDATA[$P{isClassEmpty}]]></subreportParameterExpression>
 					</subreportParameter>
 					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource()]]></dataSourceExpression>
 					<subreportExpression><![CDATA["PhrescoSureFireDetailReport_subreport1.jasper"]]></subreportExpression>

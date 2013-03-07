@@ -58,10 +58,8 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -76,9 +74,7 @@ import com.google.gson.JsonIOException;
 import com.photon.phresco.commons.FileListFilter;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
-import com.photon.phresco.commons.model.Customer;
 import com.photon.phresco.commons.model.ProjectInfo;
-import com.photon.phresco.commons.model.User;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.FrameworkConfiguration;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
@@ -713,9 +709,7 @@ public class Quality extends DynamicParameterAction implements Constants {
             ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
             ProjectInfo projectInfo = getProjectInfo();
             String workingDirectory = getAppDirectoryPath(appInfo);
-            MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_STOP_HUB)));
-            List<Parameter> parameters = getMojoParameters(mojo, PHASE_STOP_HUB);
-            List<String> buildArgCmds = getMavenArgCommands(parameters);
+            List<String> buildArgCmds = new ArrayList<String>();
             buildArgCmds.add(HYPHEN_N);
             BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.STOP_HUB, buildArgCmds, workingDirectory);
             setSessionAttribute(getAppId() + STOP_HUB, reader);
@@ -861,9 +855,7 @@ public class Quality extends DynamicParameterAction implements Constants {
             ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
             ProjectInfo projectInfo = getProjectInfo();
             String workingDirectory = getAppDirectoryPath(appInfo);
-            MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_STOP_NODE)));
-            List<Parameter> parameters = getMojoParameters(mojo, PHASE_STOP_NODE);
-            List<String> buildArgCmds = getMavenArgCommands(parameters);
+            List<String> buildArgCmds = new ArrayList<String>();
             buildArgCmds.add(HYPHEN_N);
             BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.STOP_NODE, buildArgCmds, workingDirectory);
             setSessionAttribute(getAppId() + STOP_NODE, reader);
@@ -1942,6 +1934,14 @@ public class Quality extends DynamicParameterAction implements Constants {
 	            	if (CollectionUtils.isEmpty(testCases)) {
 	            		setReqAttribute(REQ_ERROR_TESTSUITE, ERROR_TEST_CASE);
 	            	} else {
+	            		boolean isClassEmpty = false;
+	            		//to check whether class attribute is there or not
+	            		for (TestCase testCase : testCases) {
+							if (testCase.getTestClass() == null) {
+								isClassEmpty = true;
+							}
+						}
+	            		setReqAttribute(IS_CLASS_EMPTY, isClassEmpty);
 	            		setReqAttribute(REQ_TESTCASES, testCases);
 	            	}
 	            }

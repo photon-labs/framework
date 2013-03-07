@@ -61,7 +61,9 @@
 	float errors  = Float.parseFloat((String) request.getAttribute(FrameworkConstants.REQ_TESTSUITE_ERRORS));
 	float tests  = Float.parseFloat((String) request.getAttribute(FrameworkConstants.REQ_TESTSUITE_TESTS)); 
 	String testError = (String) request.getAttribute(FrameworkConstants.REQ_ERROR_TESTSUITE);
-	String testType = (String) request.getAttribute(FrameworkConstants.REQ_TEST_TYPE); 
+	String testType = (String) request.getAttribute(FrameworkConstants.REQ_TEST_TYPE);
+	boolean hideClassColumn = (Boolean) request.getAttribute("isClassEmpty");
+    
 	if (testError != null) {
 %>
 		<div class="alert-message block-message warning" >
@@ -146,9 +148,11 @@
 									<th class="first">
 					                	<div id="th-first" class="th-inner-test"><s:text name="lbl.name"/></div>
 					              	</th>
+					              	<%if (hideClassColumn != true) { %>
 					              	<th class="second">
 					                	<div id="th-second" class="th-inner-test"><s:text name="lbl.class"/></div>
 					              	</th>
+					              	<% } %>
 					              	<th class="third">
 					                	<div id="th-third" class="th-inner-test"><s:text name="lbl.time"/></div>
 					              	</th>
@@ -174,7 +178,9 @@
 							%>
 					            	<tr>
 					              		<td id="tstRst_td1" class="width-twenty-five-percent"><%= testCase.getName() %></td>
+					              		<%if (hideClassColumn != true) { %>
 					              		<td id="tstRst_td2" class="width-twenty-five-percent"><%= testCase.getTestClass() == null ? "" : testCase.getTestClass() %></td>
+					              		<% } %>
 					              		<td class="width-fifteen-percent"><%= testCase.getTime() == null ? "" : testCase.getTime() %></td>
 					              		<td class="width-fifteen-percent">
 					              			<% if (failure != null) { %>

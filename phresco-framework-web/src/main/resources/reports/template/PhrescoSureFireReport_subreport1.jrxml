@@ -62,7 +62,6 @@
 		</variable>
 	</subDataset>
 	<parameter name="allTestSuites" class="java.util.List"/>
-	<parameter name="hideClassColumn" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -92,7 +91,7 @@
 								<staticText>
 									<reportElement style="table_CH_Label" x="0" y="0" width="193" height="30"/>
 									<textElement verticalAlignment="Middle">
-										<font fontName="Times New Roman" isBold="true"/>
+										<font fontName="Times New Roman" size="12" isBold="true"/>
 										<paragraph leftIndent="3"/>
 									</textElement>
 									<text><![CDATA[Total]]></text>
@@ -100,7 +99,7 @@
 							</jr:tableFooter>
 							<jr:columnHeader style="table_CH" height="30" rowSpan="1">
 								<staticText>
-									<reportElement style="table_CH_Label" x="0" y="0" width="193" height="30"/>
+									<reportElement style="table_CH_Label" x="3" y="0" width="190" height="30"/>
 									<textElement verticalAlignment="Middle">
 										<font fontName="Times New Roman" size="12" isBold="true"/>
 										<paragraph leftIndent="2"/>
@@ -110,7 +109,7 @@
 							</jr:columnHeader>
 							<jr:detailCell style="table_TD" height="23" rowSpan="1">
 								<textField isStretchWithOverflow="true">
-									<reportElement style="table_TD_Label" stretchType="RelativeToBandHeight" x="0" y="0" width="193" height="20"/>
+									<reportElement style="table_TD_Label" stretchType="RelativeToBandHeight" x="3" y="0" width="190" height="20"/>
 									<textElement verticalAlignment="Middle">
 										<font fontName="Times New Roman" size="12"/>
 										<paragraph leftIndent="3"/>
@@ -124,7 +123,7 @@
 								<textField isStretchWithOverflow="true">
 									<reportElement style="table_CH_Label" x="0" y="0" width="90" height="30"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Times New Roman" isBold="true"/>
+										<font fontName="Times New Roman" size="12" isBold="true"/>
 										<paragraph leftIndent="2"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$V{totalTestSuites}]]></textFieldExpression>
@@ -155,7 +154,7 @@
 								<textField isStretchWithOverflow="true">
 									<reportElement style="table_CH_Label" x="0" y="0" width="90" height="30"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Times New Roman" isBold="true"/>
+										<font fontName="Times New Roman" size="12" isBold="true"/>
 										<paragraph leftIndent="2"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$V{noOfSuccess}]]></textFieldExpression>
@@ -186,7 +185,7 @@
 								<textField isStretchWithOverflow="true">
 									<reportElement style="table_CH_Label" x="0" y="0" width="90" height="30"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Times New Roman" isBold="true"/>
+										<font fontName="Times New Roman" size="12" isBold="true"/>
 										<paragraph leftIndent="2"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$V{noOfFailure}]]></textFieldExpression>
@@ -217,7 +216,7 @@
 								<textField isStretchWithOverflow="true">
 									<reportElement style="table_CH_Label" x="0" y="0" width="91" height="30"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Times New Roman" isBold="true"/>
+										<font fontName="Times New Roman" size="12" isBold="true"/>
 										<paragraph leftIndent="2"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$V{noOfError}]]></textFieldExpression>
