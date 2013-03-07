@@ -1934,6 +1934,14 @@ public class Quality extends DynamicParameterAction implements Constants {
 	            	if (CollectionUtils.isEmpty(testCases)) {
 	            		setReqAttribute(REQ_ERROR_TESTSUITE, ERROR_TEST_CASE);
 	            	} else {
+	            		boolean isClassEmpty = false;
+	            		//to check whether class attribute is there or not
+	            		for (TestCase testCase : testCases) {
+							if (testCase.getTestClass() == null) {
+								isClassEmpty = true;
+							}
+						}
+	            		setReqAttribute(IS_CLASS_EMPTY, isClassEmpty);
 	            		setReqAttribute(REQ_TESTCASES, testCases);
 	            	}
 	            }
