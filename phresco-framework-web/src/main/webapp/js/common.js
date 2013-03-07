@@ -948,47 +948,53 @@ function constructElements(data, pushToElement, isMultiple, controlType) {
 }
 
 function constructFieldsetOptions(dependentValues, pushToElement) {
-	var fileName, filePath;
-	$("#avaliableSourceScript").empty();
-	for(i in dependentValues) {
-		fileName = dependentValues[i].value.substring(dependentValues[i].value.lastIndexOf('#') + 1);
-		filePath = dependentValues[i].value.replace('#SEP#','/');
-		
-		var optionElement = "<option value='"+ filePath +"'>"+fileName+"</option>";
-		$("#avaliableSourceScript").append(optionElement);
+	if (dependentValues != undefined && !isBlank(dependentValues)) {
+		var fileName, filePath;
+		$("#avaliableSourceScript").empty();
+		for(i in dependentValues) {
+			fileName = dependentValues[i].value.substring(dependentValues[i].value.lastIndexOf('#') + 1);
+			filePath = dependentValues[i].value.replace('#SEP#','/');
+			
+			var optionElement = "<option value='"+ filePath +"'>"+fileName+"</option>";
+			$("#avaliableSourceScript").append(optionElement);
+		}
 	}
 }
 
 function constructSingleSelectOptions(dependentValues, pushToElement) {
-	var control = $('#'+ pushToElement + ' option:selected');
-	var selected = control.val();
-	var additionalParam = control.attr('additionalParam'); 
-	var editbleComboClass = $('#'+ pushToElement + ' option').attr('class');
-	$("#" + pushToElement).empty();
-	var selectedStr = "";
-	var dynamicFirstValue = dependentValues[0].value;
-	var isEditableCombo = false;
-	if (editbleComboClass == "jecEditableOption") {//convert to editable combobox
-		var optionElement = "<option class='jecEditableOption'>Type or Select from list</option>";
-		$("#" + pushToElement).append(optionElement);
-		isEditableCombo = true;
-	}
-	for(i in dependentValues) {
-		if(dependentValues[i].value == selected) {
-			selectedStr = "selected";
-		} else {
-			selectedStr = "";
+	if (dependentValues != undefined && !isBlank(dependentValues)) {
+		var control = $('#'+ pushToElement + ' option:selected');
+		var selected = control.val();
+		var additionalParam = control.attr('additionalParam'); 
+		var editbleComboClass = $('#'+ pushToElement + ' option').attr('class');
+		$("#" + pushToElement).empty();
+		var selectedStr = "";
+		var dynamicFirstValue = dependentValues[0].value;
+		var isEditableCombo = false;
+		if (editbleComboClass == "jecEditableOption") {//convert to editable combobox
+			var optionElement = "<option class='jecEditableOption'>Type or Select from list</option>";
+			$("#" + pushToElement).append(optionElement);
+			isEditableCombo = true;
 		}
-		if (dependentValues[i].dependency != undefined && !isBlank(dependentValues[i].dependency)) {
-			var dynamicDependency = "dependency=" + dependentValues[i].dependency;
-			$("<option></option>", {value: dependentValues[i].value, text: dependentValues[i].value, additionalParam: dynamicDependency}).appendTo("#" + pushToElement);	
-		} else {
-			$("<option></option>", {value: dependentValues[i].value, text: dependentValues[i].value, additionalParam: additionalParam}).appendTo("#" + pushToElement);			
+		for(i in dependentValues) {
+			if(dependentValues[i].value == selected) {
+				selectedStr = "selected";
+			} else {
+				selectedStr = "";
+			}
+			if (dependentValues[i].dependency != undefined && !isBlank(dependentValues[i].dependency)) {
+				var dynamicDependency = "dependency=" + dependentValues[i].dependency;
+				$("<option></option>", {value: dependentValues[i].value, text: dependentValues[i].value, additionalParam: dynamicDependency}).appendTo("#" + pushToElement);	
+			} else {
+				$("<option></option>", {value: dependentValues[i].value, text: dependentValues[i].value, additionalParam: additionalParam}).appendTo("#" + pushToElement);			
+			}
 		}
-	}
-	
-	if (isEditableCombo && !isBlank(dynamicFirstValue)) {// execute only for jec combo box
-		$('#'+ pushToElement + ' option[value="'+ dynamicFirstValue +'"]').prop("selected","selected");//To preselect select first value
+		
+		if (isEditableCombo && !isBlank(dynamicFirstValue)) {// execute only for jec combo box
+			$('#'+ pushToElement + ' option[value="'+ dynamicFirstValue +'"]').prop("selected","selected");//To preselect select first value
+		}
+	} else {
+		$("#" + pushToElement).empty();
 	}
 }
 
@@ -1005,30 +1011,32 @@ function constructSingleSelectOptions(dependentValues, pushToElement) {
  * 
  */
 function constructMultiSelectOptions(dependentValues, pushToElement) {
-	//See step 1
-	var selected = new Array();
-	$('#'+pushToElement+' input:checked').each(function() {
-	    selected.push($(this).val());
-	});
-	//See step 2
-	$("#" + pushToElement).empty();
-	//See step 3
-	var ulElement =$(document.createElement('ul'));
-	var checkedStr = "";
-	//See step 4
-	for (i in dependentValues) {
-		//See step 5
-		if($.inArray(dependentValues[i].value, selected) > -1){
-			checkedStr = "checked";
-		} else {
-			checkedStr = "";
+	if (dependentValues != undefined && !isBlank(dependentValues)) {
+		//See step 1
+		var selected = new Array();
+		$('#'+pushToElement+' input:checked').each(function() {
+		    selected.push($(this).val());
+		});
+		//See step 2
+		$("#" + pushToElement).empty();
+		//See step 3
+		var ulElement =$(document.createElement('ul'));
+		var checkedStr = "";
+		//See step 4
+		for (i in dependentValues) {
+			//See step 5
+			if($.inArray(dependentValues[i].value, selected) > -1){
+				checkedStr = "checked";
+			} else {
+				checkedStr = "";
+			}
+			//See step 6
+			var liElement = "<li><input type='checkbox' name='"+ pushToElement +"' value='" + dependentValues[i].value + "' class='popUpChckBox'"+checkedStr+">"+dependentValues[i].value+"</li>";
+			ulElement.append(liElement);
 		}
-		//See step 6
-		var liElement = "<li><input type='checkbox' name='"+ pushToElement +"' value='" + dependentValues[i].value + "' class='popUpChckBox'"+checkedStr+">"+dependentValues[i].value+"</li>";
-		ulElement.append(liElement);
+		//See step 7
+		$("#"+pushToElement).append(ulElement);
 	}
-	//See step 7
-	$("#"+pushToElement).append(ulElement);
 }
 
 //To check whether the url is valid or not
