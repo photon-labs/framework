@@ -846,10 +846,23 @@
 			selectedData = data.selectedDownloadInfo;
 			selectedDataVersion = data.selectedDownloadInfoVersion;
 			
-			for (i in data.downloadInfos) {
-				fillOptions(selectBoxobj, data.downloadInfos[i].id, data.downloadInfos[i].name);
-				var versions = data.downloadInfos[i].artifactGroup.versions;
-				map[data.downloadInfos[i].id] = versions;
+			//To make server as selected if it is single
+			if ($(data.downloadInfos).size() == 1) {
+				selectBoxobj.append($("<option></option>").attr("value", data.downloadInfos[0].id).text(data.downloadInfos[0].name).attr("selected", "selected"));
+				var versions = data.downloadInfos[0].artifactGroup.versions;
+				map[data.downloadInfos[0].id] = versions;
+				if (downloadInfoType === "DATABASE") {
+					getDatabaseVersions(selectBoxobj);
+				}
+				if (downloadInfoType === "SERVER") {
+					getServerVersions(selectBoxobj);
+				}
+			} else {
+				for (i in data.downloadInfos) {
+					fillOptions(selectBoxobj, data.downloadInfos[i].id, data.downloadInfos[i].name);
+					var versions = data.downloadInfos[i].artifactGroup.versions;
+					map[data.downloadInfos[i].id] = versions;
+				}
 			}
 			if (selectedData != undefined && downloadInfoType==="DATABASE") {
 				selectBoxobj.find('option').each(function() {
@@ -889,8 +902,13 @@
 		toBeFilledCtrlObj.empty();
 		var id = obj.val();
 		var versions = map[id];
-		for (i in versions) {
-			fillVersions(toBeFilledCtrlObj, versions[i].id, versions[i].version, id, selectedDataVersion);
+		//To make version as selected if it is single
+		if ($(versions).size() == 1) { 
+			fillVersions(toBeFilledCtrlObj, versions[0].id, versions[0].version, id, versions[0].id);
+		} else {
+			for (i in versions) {
+				fillVersions(toBeFilledCtrlObj, versions[i].id, versions[i].version, id, selectedDataVersion);
+			}
 		}
 	}
 	
@@ -914,7 +932,6 @@
 					checkedStr = "checked";
 				}
 			}
-			
 		}
 		$('<div style="color: #000000;"><input class="check techCheck" type="checkbox" name="'+parentValue+'" value="' + value + '" '+checkedStr+' style="margin-right:5%;">'+ text +'</div>').appendTo(obj);
 	}
