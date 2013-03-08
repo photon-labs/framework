@@ -848,6 +848,9 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 		if (REQ_JAR.equalsIgnoreCase(getFileType())) {
 			setReqAttribute(REQ_PROJECT_LOCATION, "");
 			setReqAttribute(REQ_FROM, REQ_AGAINST_JAR);
+//		} else if(REQ_XLSX.equalsIgnoreCase(getFileType())) {
+//			setReqAttribute(REQ_PROJECT_LOCATION, "");
+//			setReqAttribute(REQ_FROM, REQ_MANUAL_XLSX);
 		} else {
 			setReqAttribute(REQ_PROJECT_LOCATION, getAppDirectoryPath(applicationInfo).replace(File.separator, FORWARD_SLASH));
 			setReqAttribute(REQ_FROM, getReqParameter(REQ_FROM_PAGE));

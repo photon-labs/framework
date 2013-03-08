@@ -184,6 +184,11 @@
 			$('.currentTextBox').val(csvSelectedFiles);
 			$('.currentTextBox').attr("title", csvSelectedFiles);
 			$('.currentTextBox').removeClass("currentTextBox");
+		/* } else if (okUrl === "manualTestFilePath") {
+			$('#additionalPopup').modal('hide');
+			showParentPopupPage();
+			var path = $("#browseSelectedLocation").val();
+			$('.filePath').val(path); */
 		} else 	if (okUrl === "addCertificate") {
 			var availableCertificate = $('#certificates').val();
 			var certicate = "";

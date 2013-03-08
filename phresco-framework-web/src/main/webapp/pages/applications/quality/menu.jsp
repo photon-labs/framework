@@ -77,6 +77,9 @@
 			<%
 				}
 			%>
+			<li>
+				<a href="#" class="inactive" name="qualityTab" id="manual"><s:label key="lbl.quality.menu.manual" theme="simple"/></a>
+			</li>
 		</ul>
 	</div>
 	<div id="subTabcontainer">

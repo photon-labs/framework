@@ -363,6 +363,7 @@ public interface FrameworkConstants {
     String DEVICE_TO_USE = "family";
     String IPHONE_SCHEMA_PARAM = "scheme";
     String DEPLOY_LOCATION = "deployLocation";
+    String MANUAL = "manual";
     String DEPLOY_CONTEXT = "context";
     String DEPLOY_SERVERNAME="serverName";
     String DEPLOY_ANDROID_DEVICE_MODE = "android.device";
@@ -652,6 +653,7 @@ public interface FrameworkConstants {
     String REQ_DEPLOY_READER = "DeployReader";
     String REQ_READER = "Reader";
     String REQ_SONAR_PATH = "SonarPath";
+    String REQ_XLSX = "xlsx";
     String REQ_CONFIG_INFO = "configInfo";
     String REQ_PROPERTIES_INFO = "propertiesInfo";
     String REQ_SELECTED_TYPE = "selectedType";
@@ -661,6 +663,7 @@ public interface FrameworkConstants {
     String REQ_OLD_NAME = "oldName";
     String REQ_ERROR = "error";
     String REQ_SELECTED_ITEMS = "check";
+    String REQ_MANUAL_XLSX = "manualTest";
     String REQ_SELECTED_BUILDS = "selectedBuilds";
     String REQ_SELECTED_BUILDS_LIST = "builds";
     String REQ_SELECTED_JOBS_LIST = "Jobs";

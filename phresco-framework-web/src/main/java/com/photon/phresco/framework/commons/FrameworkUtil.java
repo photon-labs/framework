@@ -22,6 +22,7 @@ package com.photon.phresco.framework.commons;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -29,11 +30,13 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.net.UnknownHostException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Matcher;
+import java.util.Vector;
 import java.util.regex.Pattern;
 
 import org.antlr.stringtemplate.StringTemplate;
@@ -43,6 +46,11 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Element;
+import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
@@ -50,6 +58,8 @@ import com.photon.phresco.commons.model.ArtifactInfo;
 import com.photon.phresco.commons.model.Customer;
 import com.photon.phresco.commons.model.RepoInfo;
 import com.photon.phresco.exception.PhrescoException;
+import com.photon.phresco.commons.model.TestCase;
+import com.photon.phresco.framework.model.TestSuite;
 import com.photon.phresco.framework.FrameworkConfiguration;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
@@ -111,6 +121,10 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     
     public  String getUnitTestCasePath(ApplicationInfo appInfo, String option) throws PhrescoException, PhrescoPomException {
         return getPomProcessor(appInfo.getAppDirName()).getProperty(POM_PROP_KEY_UNITTEST_TESTCASE_PATH_START + option + POM_PROP_KEY_UNITTEST_TESTCASE_PATH_END);
+    }
+    
+    public String getManualTestDir(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
+        return getPomProcessor(appinfo.getAppDirName()).getProperty(POM_PROP_KEY_MANUALTEST_DIR);
     }
     
     public String getSeleniumToolType(ApplicationInfo appInfo) throws PhrescoException, PhrescoPomException {
@@ -1227,6 +1241,190 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
         return csvString;
     }
     
+
+	public List<TestSuite> readManualTestSuiteFile(String filePath) {
+		List<TestSuite> testSuites = readTestSuites(filePath);
+		return testSuites;
+	}
+
+    public  List<TestSuite> readTestSuites(String filePath)  {
+            List<TestSuite> excels = new ArrayList<TestSuite>();
+
+            try {
+                    FileInputStream myInput = new FileInputStream(filePath);
+
+                    OPCPackage opc=OPCPackage.open(myInput); 
+
+                    XSSFWorkbook myWorkBook = new XSSFWorkbook(opc);
+
+                    XSSFSheet mySheet = myWorkBook.getSheetAt(0);
+                    Iterator<Row> rowIterator = mySheet.rowIterator();
+                    for (int i = 0; i <=2; i++) {
+						rowIterator.next();
+					}
+                    while (rowIterator.hasNext()) {
+                    		Row next = rowIterator.next();
+                    		if (StringUtils.isNotEmpty(getValue(next.getCell(1)))) {
+                    			TestSuite createObject = createObject(next);
+                            	excels.add(createObject);
+                    		}
+                    }
+                    
+            } catch (Exception e) {
+                    e.printStackTrace();
+            }
+            return excels;
+    }
+    
+    private TestSuite createObject(Row next) throws UnknownHostException, PhrescoException{
+    	TestSuite testSuite = new TestSuite();
+    	if(next.getCell(2) != null) {
+    		Cell cell = next.getCell(2);
+    		String value = getValue(cell);
+    		if(StringUtils.isNotEmpty(value)) {
+    			testSuite.setName(value);
+    		}
+    	}
+    	if(next.getCell(3)!=null){
+    		Cell cell = next.getCell(3);
+    		String value=getValue(cell);
+    		if(StringUtils.isNotEmpty(value)) {
+	    		float pass=Float.parseFloat(value);
+	    		testSuite.setTests(pass);
+    		}
+    	}
+    	if(next.getCell(4)!=null){
+    		Cell cell = next.getCell(4);
+    		String value=getValue(cell);
+    		if(StringUtils.isNotEmpty(value)) {
+	    		float fail=Float.parseFloat(value);
+	    		testSuite.setFailures(fail);
+    		}
+    	}
+    	if(next.getCell(8)!=null){
+    		Cell cell = next.getCell(8);
+    		String value=getValue(cell);
+    		if(StringUtils.isNotEmpty(value)) {
+	    		float total=Float.parseFloat(value);
+	    		testSuite.setTotal(total);
+    		}
+    	}
+    	if(next.getCell(9)!=null){
+    		Cell cell=next.getCell(9);
+    		String value=getValue(cell);
+    		if(StringUtils.isNotEmpty(value)) {
+	    		float testCoverage=Float.parseFloat(value);
+	    		testSuite.setTestCoverage(testCoverage);
+    		}
+    	}
+    	return testSuite;
+	}
+    
+    public List<TestCase> readManualTestCaseFile(String filePath, String fileName) throws PhrescoException {
+		List<TestCase> testCases = readTestCase(filePath, fileName);
+		return testCases;
+	}
+    
+    private List<TestCase> readTestCase(String filePath,String fileName) throws PhrescoException {
+    	 List<TestCase> testCases = new ArrayList<TestCase>();
+    	 try {
+	    	 FileInputStream myInput = new FileInputStream(filePath);
+	
+	         OPCPackage opc=OPCPackage.open(myInput); 
+	
+	         XSSFWorkbook myWorkBook = new XSSFWorkbook(opc);
+	         int numberOfSheets = myWorkBook.getNumberOfSheets();
+	         for (int j = 0; j < numberOfSheets; j++) {
+	        	 XSSFSheet mySheet = myWorkBook.getSheetAt(j);
+	        	 if(mySheet.getSheetName().equals(fileName)) {
+	        		 Iterator<Row> rowIterator = mySheet.rowIterator();
+	    	         for (int i = 0; i <=23; i++) {
+	    					rowIterator.next();
+	    				}
+	    	         while (rowIterator.hasNext()) {
+	    	         		Row next = rowIterator.next();
+	    	         		if (StringUtils.isNotEmpty(getValue(next.getCell(1)))) {
+	    	         			TestCase createObject = readTest(next);
+	    	         			testCases.add(createObject);
+	    	         		}
+	    	         }
+	        	 }
+			}
+	         
+    	 } catch (Exception e) {
+    		   //throw new PhrescoException();
+	     }
+         return testCases;
+    }
+    
+    private TestCase readTest(Row next){
+    	TestCase testcase = new TestCase();
+    	if(next.getCell(1) != null) {
+    		Cell cell = next.getCell(1);
+    		String value = getValue(cell);
+    		if(StringUtils.isNotEmpty(value)) {
+    			testcase.setFeatureId(value);
+    		}
+    	}
+    	if(next.getCell(3)!=null){
+    		Cell cell = next.getCell(3);
+    		String value=getValue(cell);
+    		if(StringUtils.isNotEmpty(value)) {
+    			testcase.setTestCaseId(value);
+    		}
+    	}
+    	if(next.getCell(5)!=null){
+    		Cell cell=next.getCell(5);
+    		String value=getValue(cell);
+    		if(StringUtils.isNotEmpty(value)) {
+    			testcase.setSteps(value);
+    		}
+    	}
+    	if(next.getCell(8)!=null){
+    		Cell cell=next.getCell(8);
+    		String value=getValue(cell);
+    		if(StringUtils.isNotEmpty(value)) {
+    			testcase.setExpectedResult(value);
+    		}
+    	}
+    	if(next.getCell(9)!=null){
+    		Cell cell=next.getCell(9);
+    		String value=getValue(cell);
+    		if(StringUtils.isNotEmpty(value)) {
+    			testcase.setActualResult(value);
+    		}
+    	}
+    	if(next.getCell(10)!=null){
+    		Cell cell=next.getCell(10);
+    		String value=getValue(cell);
+    		if(StringUtils.isNotEmpty(value)) {
+    			testcase.setStatus(value);
+    		}
+    	}
+    	if(next.getCell(13)!=null){
+    		Cell cell=next.getCell(13);
+    		String value=getValue(cell);
+    		if(StringUtils.isNotEmpty(value)) {
+    			testcase.setBugComment(value);
+    		}
+    	}
+    	return testcase;
+	}
+    
+    private static String getValue(Cell cell) {
+    	if (cell != null) {
+    		if (Cell.CELL_TYPE_STRING == cell.getCellType()) {
+    			return cell.getStringCellValue();
+    		}
+
+    		if (Cell.CELL_TYPE_NUMERIC == cell.getCellType()) {
+    			return String.valueOf(cell.getNumericCellValue());
+    		}
+    	}
+    	
+		return null;
+	}
+	
 	public static String findPlatform() {
 		String osName = System.getProperty(OS_NAME);
 		String osBit = System.getProperty(OS_ARCH);

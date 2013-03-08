@@ -112,6 +112,9 @@ if(jQuery) (function($){
 						} else if( $(this).parent().hasClass('ext_jar') ) { 
 							$(this).addClass("selectedFolder");//To highlight selected jar file 
 							h($(this).attr('rel'));//To add its path in attribute - rel   
+//						} else if( $(this).parent().hasClass('ext_xlsx') ) { 
+//							$(this).addClass("selectedFolder");//To highlight selected jar file 
+//							h($(this).attr('rel'));//To add its path in attribute - rel 
 						} else if( $(this).parent().hasClass('ext_crt') ) { 
 							$(this).addClass("selectedFolder");//To highlight selected crt file 
 							h($(this).attr('rel'));//To add its path in attribute - rel   

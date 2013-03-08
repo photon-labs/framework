@@ -39,6 +39,7 @@
 	<style name="table_CH_Label"/>
 	<style name="table_TD_Label"/>
 	<subDataset name="Table Dataset 1">
+		<parameter name="manualId" class="java.lang.String"/>
 		<field name="name" class="java.lang.String"/>
 		<field name="testClass" class="java.lang.String"/>
 		<field name="file" class="java.lang.String"/>
@@ -47,6 +48,11 @@
 		<field name="time" class="java.lang.String"/>
 		<field name="testCaseFailure" class="java.lang.Object"/>
 		<field name="testCaseError" class="java.lang.Object"/>
+		<field name="featureId" class="java.lang.String"/>
+		<field name="testCaseId" class="java.lang.String"/>
+		<field name="expectedResult" class="java.lang.String"/>
+		<field name="actualResult" class="java.lang.String"/>
+		<field name="status" class="java.lang.String"/>
 		<variable name="NoOfSuccess" class="java.lang.Integer" calculation="Count">
 			<variableExpression><![CDATA[((($F{testCaseFailure} == null) && ($F{testCaseError} == null))? "" : null )]]></variableExpression>
 		</variable>
@@ -69,11 +75,12 @@
 	<parameter name="testCases" class="java.util.List"/>
 	<parameter name="isClassEmpty" class="java.lang.Boolean"/>
 	<parameter name="techName" class="java.lang.String"/>
+	<parameter name="manualId" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
 	<detail>
-		<band height="111" splitType="Stretch">
+		<band height="166" splitType="Stretch">
 			<frame>
 				<reportElement x="0" y="0" width="555" height="55" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[$P{isClassEmpty}.equals(false)]]></printWhenExpression>
@@ -240,12 +247,131 @@
 					</jr:table>
 				</componentElement>
 			</frame>
+			<frame>
+				<reportElement x="0" y="111" width="555" height="55" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$P{manualId}.equals("manual")]]></printWhenExpression>
+				</reportElement>
+				<componentElement>
+					<reportElement key="table 1" style="table 1" x="0" y="0" width="555" height="53"/>
+					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+						<datasetRun subDataset="Table Dataset 1">
+							<datasetParameter name="manualId">
+								<datasetParameterExpression><![CDATA[$P{manualId}]]></datasetParameterExpression>
+							</datasetParameter>
+							<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{testCases})]]></dataSourceExpression>
+						</datasetRun>
+						<jr:column width="95">
+							<jr:columnHeader style="table_CH" height="30" rowSpan="1">
+								<staticText>
+									<reportElement style="table_CH_Label" x="3" y="0" width="92" height="30"/>
+									<textElement verticalAlignment="Middle">
+										<font fontName="Times New Roman" size="12" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Feature Id]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table 1_TD" height="21" rowSpan="1">
+								<textField isStretchWithOverflow="true">
+									<reportElement style="table_TD_Label" x="3" y="0" width="92" height="20"/>
+									<textElement>
+										<font fontName="Times New Roman" size="12"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{featureId}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="84">
+							<jr:columnHeader style="table_CH" height="30" rowSpan="1">
+								<staticText>
+									<reportElement style="table_CH_Label" x="3" y="0" width="81" height="30"/>
+									<textElement verticalAlignment="Middle">
+										<font fontName="Times New Roman" size="12" isBold="true"/>
+									</textElement>
+									<text><![CDATA[TestCase Id]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table 1_TD" height="21" rowSpan="1">
+								<textField isStretchWithOverflow="true">
+									<reportElement style="table_TD_Label" x="3" y="0" width="81" height="20"/>
+									<textElement>
+										<font fontName="Times New Roman" size="12"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{testCaseId}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="135">
+							<jr:columnHeader style="table_CH" height="30" rowSpan="1">
+								<staticText>
+									<reportElement style="table_CH_Label" x="3" y="0" width="132" height="30"/>
+									<textElement verticalAlignment="Middle">
+										<font fontName="Times New Roman" size="12" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Expected Result]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table 1_TD" height="21" rowSpan="1">
+								<textField isStretchWithOverflow="true">
+									<reportElement style="table_TD_Label" x="3" y="0" width="132" height="20"/>
+									<textElement>
+										<font fontName="Times New Roman" size="12"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{expectedResult}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="169">
+							<jr:columnHeader style="table_CH" height="30" rowSpan="1">
+								<staticText>
+									<reportElement style="table_CH_Label" x="3" y="0" width="166" height="30"/>
+									<textElement verticalAlignment="Middle">
+										<font fontName="Times New Roman" size="12" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Actual Result]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table 1_TD" height="21" rowSpan="1">
+								<textField isStretchWithOverflow="true">
+									<reportElement style="table_TD_Label" x="3" y="0" width="166" height="20"/>
+									<textElement>
+										<font fontName="Times New Roman" size="12"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{actualResult}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="73">
+							<jr:columnHeader style="table_CH" height="30" rowSpan="1">
+								<staticText>
+									<reportElement style="table_CH_Label" x="3" y="0" width="68" height="30"/>
+									<textElement verticalAlignment="Middle">
+										<font fontName="Times New Roman" size="12" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Status]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table 1_TD" height="21" rowSpan="1">
+								<textField isStretchWithOverflow="true">
+									<reportElement style="table_TD_Label" x="3" y="0" width="68" height="20"/>
+									<textElement>
+										<font fontName="Times New Roman" size="12"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{status}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+					</jr:table>
+				</componentElement>
+			</frame>
 		</band>
 	</detail>
 	<summary>
 		<band height="194">
 			<subreport>
 				<reportElement x="0" y="3" width="555" height="191"/>
+				<subreportParameter name="manualId">
+					<subreportParameterExpression><![CDATA[$P{manualId}]]></subreportParameterExpression>
+				</subreportParameter>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{testCases})]]></dataSourceExpression>
 				<subreportExpression><![CDATA["PhrescoSureFireTestCaseReport.jasper"]]></subreportExpression>
 			</subreport>

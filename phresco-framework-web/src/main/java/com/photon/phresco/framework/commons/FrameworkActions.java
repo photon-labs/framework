@@ -69,6 +69,7 @@ public interface FrameworkActions {
     String APP_PERFORMANCE_TEST = "performance";
 	String APP_LOAD_TEST = "load";
 	String APP_GENERATE_TEST = "generateTest";
+	String APP_MANUAL_TEST = "manual";
 	String APP_GENERATE_UNIT_TEST = "generateUnitTest";
     String APP_TEST_REPORT = "testReport";
     String APP_ALL_TEST_REPORT = "allTestReport";

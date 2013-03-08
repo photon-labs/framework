@@ -26,7 +26,7 @@
 		<defaultValueExpression><![CDATA["/Users/kaleeswaran/work/master-plugin/report-phresco-plugin/src/main/resources/"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="copyRights" class="java.lang.String"/>
-	<parameter name="isClassEmpty" class="java.lang.Boolean"/>
+	<parameter name="hideClassColumn" class="java.lang.String"/>
 	<parameter name="manualId" class="java.lang.String"/>
 	<field name="testSuites" class="java.util.List"/>
 	<field name="allTestSuites" class="java.util.List"/>
@@ -175,11 +175,11 @@
 					<reportElement x="0" y="0" width="555" height="209">
 						<printWhenExpression><![CDATA[$P{reportsDataType}.equals("detail")]]></printWhenExpression>
 					</reportElement>
+					<subreportParameter name="hideClassColumn">
+						<subreportParameterExpression><![CDATA[$P{hideClassColumn}]]></subreportParameterExpression>
+					</subreportParameter>
 					<subreportParameter name="manualId">
 						<subreportParameterExpression><![CDATA[$P{manualId}]]></subreportParameterExpression>
-					</subreportParameter>
-					<subreportParameter name="isClassEmpty">
-						<subreportParameterExpression><![CDATA[$P{isClassEmpty}]]></subreportParameterExpression>
 					</subreportParameter>
 					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{testSuites})]]></dataSourceExpression>
 					<subreportExpression><![CDATA["PhrescoSureFireDetailReport.jasper"]]></subreportExpression>
