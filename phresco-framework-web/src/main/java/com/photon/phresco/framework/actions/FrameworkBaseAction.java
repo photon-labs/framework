@@ -96,6 +96,9 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
     private Map<String, Object> map = null;
     private String fileName = "";
     private String configTempType = "";
+    private String envName = "";
+    private String configName = "";
+    private String fromConfig = "";
     
     private static ServiceManager serviceManager = null;
     
@@ -409,6 +412,9 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
             setProjectId(getHttpRequest().getHeader(REQ_PROJECT_ID));
             setAppId(getHttpRequest().getHeader(REQ_APP_ID));
             setCustomerId(getHttpRequest().getHeader(REQ_CUSTOMER_ID));
+            setEnvName(getHttpRequest().getHeader("envName"));
+            setConfigName(getHttpRequest().getHeader("configName"));
+            setFromConfig(getHttpRequest().getHeader("from"));
             InputStream is = getHttpRequest().getInputStream();
             byteArray = IOUtils.toByteArray(is);
         } catch (Exception e) {
@@ -520,5 +526,29 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
 
     public void setConfigTempType(String configTempType) {
         this.configTempType = configTempType;
+    }
+    
+    public String getEnvName() {
+        return envName;
+    }
+
+    public void setEnvName(String envName) {
+        this.envName = envName;
+    }
+    
+    public String getConfigName() {
+        return configName;
+    }
+
+    public void setConfigName(String configName) {
+        this.configName = configName;
+    }
+
+    public void setFromConfig(String fromConfig) {
+        this.fromConfig = fromConfig;
+    }
+
+    public String getFromConfig() {
+        return fromConfig;
     }
 }

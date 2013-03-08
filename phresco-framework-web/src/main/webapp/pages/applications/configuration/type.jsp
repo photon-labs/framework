@@ -106,31 +106,42 @@
 				if (propertyTemplate.isRequired()) {
 					mandatoryStr = "<span class=mandatory>*</span>&nbsp;";
 				}
-				
 	    %>
+	    		<div class="control-group hideContent" id="<%= propertyTemplate.getKey() %>fileControl" style="margin-bottom: -19px;">
+					<label class="control-label labelbold" id="<%= propertyTemplate.getKey() %>fileControlLabel"> 
+					 	
+					</label>
+					<div class="controls">
+						<div id="<%= propertyTemplate.getKey() %>file-uploader" class="file-uploader" propTempName="<%= propertyTemplate.getName() %>">
+							<noscript>
+								<p>Please enable JavaScript to use file uploader.</p>
+								<!-- or put a simple form for upload here -->
+							</noscript>
+						</div>
+					</div>
+					<span class="help-inline fileError" id="<%= propertyTemplate.getKey() %>fileError"></span>
+				</div>
+				
 	   			<script type="text/javascript">
 	   				createFileUploader('<%= mandatoryStr %>', '<%= propertyTemplate.getName() %>');
 	   				
 	   				function createFileUploader(mandatory, controlLabel) {
-	   					$('#fileControlLabel').html(mandatory + controlLabel);
-	   					$('#fileControl').show();
+	   					$('#<%= propertyTemplate.getKey() %>fileControlLabel').html(mandatory + controlLabel);
+	   					$('#<%= propertyTemplate.getKey() %>fileControl').show();
 	   					var imgUploader = new qq.FileUploader ({
-	   			            element : document.getElementById('file-uploader'),
+	   			            element : document.getElementById('<%= propertyTemplate.getKey() %>file-uploader'),
 	   			            action : 'uploadFile',
 	   			            multiple : false,
-	   			            allowedExtensions : ["zip"],
+	   			         	allowedExtensions : ["jar","zip","gz"],
 	   			            buttonLabel : '<s:text name="lbl.upload" />',
 	   			            typeError : '<s:text name="err.invalid.file.type" />',
+	   			            propName : '<%= propertyTemplate.getName() %>',
+   			        		params : {
+   			        			propName : '<%= propertyTemplate.getName() %>',
+   			        			from : '<%= fromPage %>'
+		   					},
 	   			            debug: true
 	   			        });
-	   					listUploadedFiles();
-	   				}
-	   				
-	   				function listUploadedFiles() {
-	   					var params = getBasicParams();
-	   					params = params.concat("&configTempType=");
-	   					params = params.concat($("#templateType option:selected").text());
-	   					loadContent("listUploadedFiles", '', '', params, true, true);
 	   				}
 	   			</script>
 		<%
@@ -295,21 +306,6 @@
 <% 	
 	}
 %>
-
-	<div class="control-group hideContent" id="fileControl" style="margin-bottom: -19px;">
-		<label class="control-label labelbold" id="fileControlLabel"> 
-		 	
-		</label>
-		<div class="controls">
-			<div id="file-uploader" class="file-uploader">
-				<noscript>
-					<p>Please enable JavaScript to use file uploader.</p>
-					<!-- or put a simple form for upload here -->
-				</noscript>
-			</div>
-		</div>
-		<span class="help-inline fileError" id="fileError"></span>
-	</div>
 	
 	<%
 		List<String> propKeys = new ArrayList<String>();
@@ -360,9 +356,11 @@
 	$("div#certificateControl").hide();
 	
 	$(document).ready(function() {
+		enableOrDisableUpldBtn();
 		remoteDeplyChecked();
 		hideLoadingIcon();//To hide the loading icon
 		technologyBasedRemoteDeploy();
+		listUploadedFiles();
 		var typeData= $.parseJSON($('#templateType').val());
 		var selectedType = typeData.name;
 		var customPropStatus = typeData.customProp;
@@ -437,6 +435,13 @@
 		
 		$("#host, #port").live("input", function() {
 			enableAddCertificateBtn();
+		});
+
+		$("#configName, #environment").focus(function() {
+			var configName = $("#configName").val();
+			var envName = $("#environment option:selected").text();
+			$("#hiddenConfigName").val(configName);
+			$("#hiddenEnvName").val(envName);
 		});
 	});
 
@@ -534,16 +539,20 @@
 			fillSelectbox($("select[name='version']"), data.versions);
 		} else if (pageUrl == "listUploadedFiles") {
 			if (data.uploadedFiles != undefined && !isBlank(data.uploadedFiles)) {
-				disableUploadButton($("#file-uploader"));
 				enableButton($("#validateContent, #validateTheme"));
 				for (i in data.uploadedFiles) {
-					var fileName = data.uploadedFiles[i];
-					var ul = '<ul class="qq-upload-list"><li>' +
-				                '<span class="qq-upload-file">' + fileName + '</span>' +
-				                '<img class="qq-upload-remove" src="images/icons/delete.png" style="cursor:pointer;" alt="Remove" '+
-				                'eleAttr="file-uploader" fileName="'+ fileName +'" onclick="removeUploadedFile(this);"/>' +
-			            		'</li></ul>';
-					$('#file-uploader').append(ul);
+					var split = data.uploadedFiles[i].split('\\');
+					$(".file-uploader").each(function() {
+						var propTempName = $(this).attr("propTempName");
+						var fileName = split[1];
+						if (propTempName === split[0]) {
+							var li = '<li><span class="qq-upload-file">' + fileName + '</span>' +
+						                '<img class="qq-upload-remove" src="images/icons/delete.png" style="cursor:pointer;" alt="Remove" '+
+						                'eleAttr="file-uploader" fileName="'+ fileName +'" onclick="removeUploadedFile(this);"/>' + 
+						                '<input type="hidden" value="' + fileName + '" class="hidden-fileName" propName="' + propTempName + '" \></li>';
+							$(this).children().children(".qq-upload-list").append(li);;
+						}
+					});
 				}
 			}
 		}
@@ -552,14 +561,23 @@
 	function removeUploadedFile(obj) {
 		var eleAttr = $(obj).attr("eleAttr");
 		enableUploadButton($("#" + eleAttr));
-		disableButton($("#validateContent, #validateTheme"));
+		var propTempName = $(obj).closest('div .file-uploader').attr("propTempName");
 		$(obj).parent().remove();
-		var params = "fileName=";
+		var configName = $("#configName").val();
+		var envName = $("#environment option:selected").text();
+		var typeData= $.parseJSON($('#templateType').val());
+		var selectedType = typeData.name;
+		var params = getBasicParams();
+		params = params.concat("&fileName=");
 		params = params.concat($(obj).attr("filename"));
-		params = params.concat("&");
-		params = params.concat(getBasicParams());
+		params = params.concat("&configName=");
+		params = params.concat(configName);
+		params = params.concat("&envName=");
+		params = params.concat(envName);
+		params = params.concat("&propName=");
+		params = params.concat(propTempName);
 		params = params.concat("&configTempType=");
-		params = params.concat($("#templateType option:selected").text());
+		params = params.concat(selectedType);
 		$.ajax({
 			url : "removeConfigFile",
 			data : params,
@@ -567,10 +585,6 @@
 			success : function(data) {
 			}
 		});
-	}
-	
-	function fileError(data, type) {
-		
 	}
 	
 	function performBtnEvent(obj) {
@@ -602,8 +616,34 @@
 		yesnoPopup('calcCron', 'Cron Expression', 'Copy', 'Ok', '', param);
 	}
 	
-	function popupOnOk(obj) {
-			$('#'+schedulerKey).val($('#cronExpression').val());
+	function popupOnOk(self) {
+		$('#'+schedulerKey).val($('#cronExpression').val());
+	}
+	
+	function renameUploadedFilesDir(from) {
+		var configName = $("#configName").val();
+		var oldConfigName = $("#hiddenConfigName").val();
+		var envName = $("#environment option:selected").text();
+		var oldEnvName = $("#hiddenEnvName").val();
+		var typeData= $.parseJSON($('#templateType').val());
+		var selectedType = typeData.name;
+		var url = "rename" + from + "Dir";
+		if (!isBlank(configName) && (configName != oldConfigName || envName != oldEnvName) ) {
+			var params = getBasicParams();
+			params = params.concat("&configName=");
+			params = params.concat(configName);
+			params = params.concat("&oldName=");
+			params = params.concat(oldConfigName);
+			params = params.concat("&envName=");
+			params = params.concat(envName);
+			params = params.concat("&oldEnvName=");
+			params = params.concat(oldEnvName);
+			params = params.concat("&currentConfigType=");
+			params = params.concat(selectedType);
+			params = params.concat("&fromPage=");
+			params = params.concat('<%= fromPage %>');
+			loadContent(url, '', '', params, true, true);
+		}
 	}
 	
 	function enableAddCertificateBtn() {
@@ -615,6 +655,23 @@
 			$("#certificateControl").show();	
 		} else {
 			$("#certificateControl").hide();
+		}
+	}
+
+	function listUploadedFiles() {
+		if (<%= fromPage.equals(FrameworkConstants.EDIT_CONFIG) %>) {
+			var configName = $("#configName").val();
+			var envName = $("#environment option:selected").text();
+			var typeData= $.parseJSON($('#templateType').val());
+			var selectedType = typeData.name;
+			var params = getBasicParams();
+			params = params.concat("&envName=");
+			params = params.concat(envName);
+			params = params.concat("&configName=");
+			params = params.concat(configName);
+			params = params.concat("&currentConfigType=");
+			params = params.concat(selectedType);
+			loadContent("listUploadedFiles", '', '', params, true, true);
 		}
 	}
 </script>

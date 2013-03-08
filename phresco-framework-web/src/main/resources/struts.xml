@@ -444,6 +444,14 @@
             <result type="json" />
         </action>
         
+        <action name="renameConfigNameDir" class="com.photon.phresco.framework.actions.applications.Configurations" method="renameConfigNameDir">
+            <result type="json" />
+        </action>
+        
+        <action name="renameEnvDir" class="com.photon.phresco.framework.actions.applications.Configurations" method="renameEnvDir">
+            <result type="json" />
+        </action>
+        
         <action name="removeConfigFile" class="com.photon.phresco.framework.actions.applications.Configurations" method="removeConfigFile">
             <result type="json" />
         </action>

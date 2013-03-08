@@ -94,7 +94,7 @@
 			</label>
 			<div class="controls">
 				<input id="configName" placeholder="<s:text name='place.hldr.config.name'/>" value="<%= name %>" 
-					maxlength="30" title="<s:text name='title.30.chars'/>" class="input-xlarge" type="text" name="configName">
+					maxlength="30" title="<s:text name='title.30.chars'/>" class="input-xlarge" type="text" name="configName" onblur="renameUploadedFilesDir('ConfigName');">
 				<span class="help-inline" id="configNameError"></span>
 			</div>
 		</div> <!-- Name -->
@@ -114,7 +114,7 @@
 				<span class="mandatory">*</span>&nbsp;<s:text name='lbl.environment'/>
 			</label>	
 			<div class="controls">
-				<select id="environment" name="environment">
+				<select id="environment" name="environment" onchange="renameUploadedFilesDir('Env');">
 				<% for (Environment env : environments) {
 						if (env.getName().equals(envName)) {
 							selectedStr = "selected";
@@ -175,6 +175,8 @@
     <input type="hidden" name="fromPage" value="<%= fromPage %>"/>
     <input type="hidden" name="oldName" value="<%= name %>"/>
     <input type="hidden" name="oldConfigType" value="<%= selectedType %>"/>
+    <input type="hidden" id="hiddenConfigName" />
+    <input type="hidden" id="hiddenEnvName" />
 </form>
 
 <script type="text/javascript">
@@ -183,107 +185,124 @@
 		if (!isiPad()) {
 			$(".content_adder").scrollbars(); //JQuery scroll bar
 		}
-	});
-	
-	$('#cancel').click(function() {
-		var fromPage = "<%= fromPage%>";
-		var configPath = "<%= configPath%>";
-		var params = '{ ' + getBasicParamsAsJson() + ', "fromPage": "' + fromPage + '", "configPath": "' + configPath + '" }';
-		<% if (FrameworkConstants.ADD_CONFIG.equals(fromPage) || FrameworkConstants.EDIT_CONFIG.equals(fromPage)) { %>
-			loadJsonContent('configuration', params,  $('#subcontainer'));
-		<% } else { %>
-			loadJsonContent('settings', params,  $('#container'));
-		<%	} %>
-	});
-	
-	$('#templateType option[value="Other"]').each(function() {
-		var otherJson = {};
-		otherJson["name"] = $(this).val();
-	    var finalJsonVal = JSON.stringify(otherJson);
-	    $(this).val(finalJsonVal);
-	});
-	
-	$('#templateType').change(function() {
-		showLoadingIcon();//To hide the loading icon
-		var selectedConfigname = $('#configName').val();
-		var envData = $.parseJSON($('#environment').val());
-		var selectedEnv = envData.name;
-		var typeData = $.parseJSON($('#templateType').val());
-		var selectedType = typeData.name;
-		var selectedConfigId = typeData.id;
-		var fromPage = "<%= fromPage%>";
-		var configPath = "<%= configPath %>";
 		
-		var params = '{ ' + getBasicParamsAsJson() + ', "settingTemplate": ' + $('#templateType').val() + ' , "selectedConfigId": "' + selectedConfigId 
-			+ '" , "selectedEnv": "' + selectedEnv + '" , "selectedType": "' + selectedType + '", "fromPage": "' + fromPage + '", "configPath": "' + configPath + '", "selectedConfigname": "' + selectedConfigname + '"}';
-		loadJsonContent('configType', params,  $('#typeContainer'));
-	}).triggerHandler("change");
-	
-	$('#<%= pageUrl %>').click(function() {
-		var name = $('#configName').val();
-		var desc = $('#configDesc').val();
-		var env = $('#environment').val();
-		$("#certificate").prop("disabled", false); // enable certificate text box before serializing form inorder to pass it value
-		// convert form to json, toJson function is not passing filed names with dot.
-		var jsonObject = getFormAsJson($('#configProperties'));
-		var typeData = $.parseJSON($('#templateType').val());
-		var customPropStatus = typeData.customProp;
-		var selectedType = typeData.name;
-		if(selectedType == "Other" || customPropStatus) {
-			var keys = [];
-			$('#configProperties').find('input[name="key"]').each(function() {
-				keys.push(this.value);
+		$('#configName').bind('input propertychange', function (e) {
+            var configName = $(this).val();
+            configName = checkForSplChrExceptDot(configName);
+            $(this).val(configName);
+            enableOrDisableUpldBtn();
+        });
+		
+		$('#cancel').click(function() {
+			var fromPage = "<%= fromPage%>";
+			var configPath = "<%= configPath%>";
+			var params = '{ ' + getBasicParamsAsJson() + ', "fromPage": "' + fromPage + '", "configPath": "' + configPath + '" }';
+			<% if (FrameworkConstants.ADD_CONFIG.equals(fromPage) || FrameworkConstants.EDIT_CONFIG.equals(fromPage)) { %>
+				loadJsonContent('configuration', params,  $('#subcontainer'));
+			<% } else { %>
+				loadJsonContent('settings', params,  $('#container'));
+			<% } %>
+		});
+		
+		$('#templateType option[value="Other"]').each(function() {
+			var otherJson = {};
+			otherJson["name"] = $(this).val();
+		    var finalJsonVal = JSON.stringify(otherJson);
+		    $(this).val(finalJsonVal);
+		});
+		
+		$('#templateType').change(function() {
+			showLoadingIcon();//To hide the loading icon
+			var selectedConfigname = $('#configName').val();
+			var envData = $.parseJSON($('#environment').val());
+			var selectedEnv = envData.name;
+			var typeData = $.parseJSON($('#templateType').val());
+			var selectedType = typeData.name;
+			var selectedConfigId = typeData.id;
+			var fromPage = "<%= fromPage%>";
+			var configPath = "<%= configPath %>";
+			
+			var params = '{ ' + getBasicParamsAsJson() + ', "settingTemplate": ' + $('#templateType').val() + ' , "selectedConfigId": "' + selectedConfigId 
+				+ '" , "selectedEnv": "' + selectedEnv + '" , "selectedType": "' + selectedType + '", "fromPage": "' + fromPage + '", "configPath": "' + configPath + '", "selectedConfigname": "' + selectedConfigname + '"}';
+			loadJsonContent('configType', params,  $('#typeContainer'));
+		}).triggerHandler("change");
+		
+		$('#<%= pageUrl %>').click(function() {
+			var name = $('#configName').val();
+			var desc = $('#configDesc').val();
+			var env = $('#environment').val();
+			$("#certificate").prop("disabled", false); // enable certificate text box before serializing form inorder to pass it value
+			// convert form to json, toJson function is not passing filed names with dot.
+			var jsonObject = getFormAsJson($('#configProperties'));
+			var typeData = $.parseJSON($('#templateType').val());
+			var customPropStatus = typeData.customProp;
+			var selectedType = typeData.name;
+			if(selectedType == "Other" || customPropStatus) {
+				var keys = [];
+				$('#configProperties').find('input[name="key"]').each(function() {
+					keys.push(this.value);
+				});
+				var values = [];
+				$('#configProperties').find('input[name="value"]').each(function() {
+					values.push(this.value);
+				});
+				jsonObject.key = keys;
+				jsonObject.value = values;
+			}
+			
+			if ($.isEmptyObject(jsonObject)) {//It will be used for getting the features template values
+				var $formType = $("#formConfigTempProp");
+				jsonObject = getFormData($formType);
+				var keys = [];
+				$('#formConfigTempProp').find('input[name="key"]').each(function() {
+					keys.push(this.value);
+				});
+				var values = [];
+				$('#formConfigTempProp').find('input[name="value"]').each(function() {
+					values.push(this.value);
+				});
+				jsonObject.key = keys;
+				jsonObject.value = values;
+			}
+			
+			var template = $.parseJSON($('#templateType').val());
+			var type = template.name;
+			var oldName = "<%= name %>";
+			var configId = template.id;
+			var fromPage = "<%= fromPage%>";
+			var configPath = "<%= configPath%>";
+			var oldConfigType = "<%= selectedType%>";
+			
+			var featureName = $('#featureName').val();
+			//var fileName = $('.qq-upload-file').text();//To get the uploaded file name
+			var csvFiles = "";
+			$('.hidden-fileName').each(function() {
+				var propName = $(this).attr("propName");
+				var fileName = $(this).val();
+				csvFiles = csvFiles.concat(propName);
+				csvFiles = csvFiles.concat("#SEP#");
+				csvFiles = csvFiles.concat(fileName);
+				csvFiles = csvFiles.concat(",");
 			});
-			var values = [];
-			$('#configProperties').find('input[name="value"]').each(function() {
-				values.push(this.value);
-			});
-			jsonObject.key = keys;
-			jsonObject.value = values;
-		}
-		
-		if ($.isEmptyObject(jsonObject)) {//It will be used for getting the features template values
-			var $formType = $("#formConfigTempProp");
-			jsonObject = getFormData($formType);
-			var keys = [];
-			$('#formConfigTempProp').find('input[name="key"]').each(function() {
-				keys.push(this.value);
-			});
-			var values = [];
-			$('#formConfigTempProp').find('input[name="value"]').each(function() {
-				values.push(this.value);
-			});
-			jsonObject.key = keys;
-			jsonObject.value = values;
-		}
-		
-		var template = $.parseJSON($('#templateType').val());
-		var type = template.name;
-		var oldName = "<%= name %>";
-		var configId = template.id;
-		var fromPage = "<%= fromPage%>";
-		var configPath = "<%= configPath%>";
-		var oldConfigType = "<%= selectedType%>";
-		
-		var featureName = $('#featureName').val();
-		var fileName = $('.qq-upload-file').text();//To get the uploaded file name
-		
-		var jsonParamObj = getBasicParamsAsJsonObj();
-		jsonParamObj.configName = name;
-		jsonParamObj.description = desc;
-		jsonParamObj.configType = type;
-		jsonParamObj.configId = configId;
-		jsonParamObj.featureName = featureName;
-		jsonParamObj.oldName = oldName;
-		jsonParamObj.oldConfigType = oldConfigType;
-		jsonParamObj.configPath = configPath;
-		jsonParamObj.fromPage = fromPage;
-		env = jQuery.parseJSON(env);
-		jsonParamObj.environment = env;
-		jsonParamObj = $.extend(jsonParamObj, jsonObject);
-		jsonParamObj.fileName = fileName;
-		var jsonParam = JSON.stringify(jsonParamObj);
-		validateJson('<%= pageUrl %>', '', $('#<%= container %>'), jsonParam, '<%= progessTxt %>');
+			csvFiles = csvFiles.substring(0, csvFiles.length - 1);
+			
+			var jsonParamObj = getBasicParamsAsJsonObj();
+			jsonParamObj.configName = name;
+			jsonParamObj.description = desc;
+			jsonParamObj.configType = type;
+			jsonParamObj.configId = configId;
+			jsonParamObj.featureName = featureName;
+			jsonParamObj.oldName = oldName;
+			jsonParamObj.oldConfigType = oldConfigType;
+			jsonParamObj.configPath = configPath;
+			jsonParamObj.fromPage = fromPage;
+			env = jQuery.parseJSON(env);
+			jsonParamObj.environment = env;
+			jsonParamObj = $.extend(jsonParamObj, jsonObject);
+			jsonParamObj.csvFiles = csvFiles;
+			var jsonParam = JSON.stringify(jsonParamObj);
+			validateJson('<%= pageUrl %>', '', $('#<%= container %>'), jsonParam, '<%= progessTxt %>');
+		});
 	});
 	
 	function getFormData($form) {
@@ -373,5 +392,14 @@
 		if (isError) {
 			$("#certificate").prop("disabled", true);
 		}
+	}
+	
+	function enableOrDisableUpldBtn() {
+		var configName = $('#configName').val();
+		if (configName != undefined && !isBlank(configName)) {
+        	enableUploadButton($(".file-uploader"));
+        } else {
+        	disableUploadButton($(".file-uploader"));
+        }
 	}
 </script>

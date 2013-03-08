@@ -65,6 +65,8 @@ public interface FrameworkConstants {
     String CONFIG_TEMP_TYPE = "Config-Temp-Type";
     String SUCCESS_FALSE = "{\"success\": false}";
     String SUCCESS_TRUE = "{\"success\": true}";
+    String SUCCESS_TRUE_NAME_ERR = "{\"success\": true,\"configNameError\":\"\"}";
+    String SUCCESS_FALSE_NAME_ERR = "{\"success\": false,\"configNameError\":\"Name already exists\"}";
     
     String VALIDATE_THEME = "validateTheme";
     String VALIDATE_CONTENT = "validateContent";
@@ -1104,10 +1106,10 @@ public interface FrameworkConstants {
 	String CLONE_FROM_ENV_NAME = "cloneFromEnvName";
 	String CLONE_FROM_CONFIG_NAME = "cloneFromConfigName";
 	String TECH_SITE_CORE = "tech-sitecore";
-	String ADD_SETTINGS ="addsettings";
-	String EDIT_SETTINGS ="editsettings";
-	String ADD_CONFIG ="addconfig";
-	String EDIT_CONFIG="editconfig";
+	String ADD_SETTINGS = "addsettings";
+	String EDIT_SETTINGS = "editsettings";
+	String ADD_CONFIG = "addconfig";
+	String EDIT_CONFIG = "editconfig";
     
     /*
      * Create Environment keys

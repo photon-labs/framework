@@ -27,14 +27,17 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -67,8 +70,6 @@ import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.impl.ConfigManagerImpl;
 import com.photon.phresco.plugins.util.MojoProcessor;
-import com.photon.phresco.util.ArchiveUtil;
-import com.photon.phresco.util.ArchiveUtil.ArchiveType;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.FileUtil;
 import com.photon.phresco.util.PhrescoDynamicLoader;
@@ -144,6 +145,9 @@ public class Configurations extends FrameworkBaseAction {
     private List<String> uploadedFiles = new ArrayList<String>();
     
     private String configTemplateType = "";
+    private String propName = "";
+    private String oldEnvName = "";
+    private String csvFiles = "";
     
 	public String configList() {
 		if (s_debugEnabled) {
@@ -268,6 +272,7 @@ public class Configurations extends FrameworkBaseAction {
     	}
     	
         try {
+            removeDonotCheckInDir();
             String techId = "";
             ApplicationInfo applicationInfo = getApplicationInfo();
             if (applicationInfo != null) {
@@ -310,6 +315,7 @@ public class Configurations extends FrameworkBaseAction {
 		}
     	
     	try {
+			copyUploadedFilesToProj();
 			save(getAppConfigPath(), CONFIGURATION);
 			String pluginInfoFile = getPluginInfoPath();
 			MojoProcessor mojoProcessor = new MojoProcessor(new File(pluginInfoFile));
@@ -338,10 +344,55 @@ public class Configurations extends FrameworkBaseAction {
             }
 			return showErrorPopup(e, getText(EXCEPTION_CONFIGURATION_SAVE_CONFIG));
 		} catch (ConfigurationException e) {
+		    if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Configurations.saveConfiguration()" + FrameworkUtil.getStackTraceAsString(e));
+            }
 			return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_CONFIGURATION_UPDATE_FAILS));
 		}
     	
     	return configList();
+    }
+    
+    private void copyUploadedFilesToProj() {
+        StringBuilder srcSb = new StringBuilder(Utility.getPhrescoTemp())
+        .append(File.separator)
+        .append(DO_NOT_CHECKIN_DIR);
+        File srcDir = new File(srcSb.toString());
+        try {
+            if (srcDir.exists()) {
+                StringBuilder destSb = new StringBuilder(getApplicationHome())
+                .append(File.separator)
+                .append(DO_NOT_CHECKIN_DIR);
+                File destDir = new File(destSb.toString());
+                if (destDir.exists()) {
+                    File[] destFiles = destDir.listFiles();
+                    File[] srcFiles = srcDir.listFiles();
+                    for (File srcFile : srcFiles) {
+                        for (File destFile : destFiles) {
+                            if (srcFile.getName().equalsIgnoreCase(destFile.getName())) {
+                                srcSb.append(File.separator)
+                                .append(srcFile.getName())
+                                .append(File.separator);
+                                srcDir = new File(srcSb.toString());
+
+                                destSb.append(File.separator)
+                                .append(destFile.getName());
+                                destDir = new File(destSb.toString());
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                }
+                FileUtils.copyDirectory(srcDir, destDir);
+            }
+        } catch (Exception e) {
+            // TODO: handle exception
+        } finally {
+            if (srcDir.exists()) {
+                FileUtil.delete(srcDir);
+            }
+        }
     }
     
     private String getPluginInfoPath() throws PhrescoException {
@@ -405,13 +456,43 @@ public class Configurations extends FrameworkBaseAction {
 						String key = propertyTemplate.getKey();
 						String value = getActionContextParam(key);
 						if (TYPE_FILE.equals(propertyTemplate.getType())) {
-							value = FilenameUtils.removeExtension(getActionContextParam(REQ_FILE_NAME));
+						    if (StringUtils.isNotEmpty(getCsvFiles())) {
+						        Map<String, List<String>> fileNamesMap = new HashMap<String, List<String>>();
+						        String[] csvSplits = getCsvFiles().split(Constants.STR_COMMA);
+						        for (String csvSplit : csvSplits) {
+						            String[] splits = csvSplit.split(SEPARATOR_SEP);
+						            String propName = splits[0];
+						            String fileName = splits[1];
+						            if (fileNamesMap.containsKey(propName)) {
+						                List<String> list = fileNamesMap.get(propName);
+						                list.add(fileName);
+						                fileNamesMap.put(propName, list);
+						            } else {
+						                fileNamesMap.put(propName, Collections.singletonList(fileName));
+						            }
+                                }
+						        StringBuilder sb =  new StringBuilder();
+						        if (MapUtils.isNotEmpty(fileNamesMap)) {
+						            Set<String> keySet = fileNamesMap.keySet();
+						            for (String mapKey : keySet) {
+                                        List<String> fileNames = fileNamesMap.get(mapKey);
+                                        for (String fileName : fileNames) {
+                                            sb.append(mapKey)
+                                            .append(File.separator)
+                                            .append(fileName)
+                                            .append(Constants.STR_COMMA);
+                                        }
+                                    }
+						        }
+						        key = FILES;
+						        value = sb.toString().substring(0, sb.toString().length() - 1);
+						    }
 						}
 						if (REMOTE_DEPLOYMENT.equals(key) && StringUtils.isEmpty(value)) {
 							value = "false";
 						}
 						
-						if (StringUtils.isNotEmpty(key) && !KEY_CERTIFICATE.equals(key)) {
+						if (StringUtils.isNotEmpty(key) && !KEY_CERTIFICATE.equals(key) && StringUtils.isNotEmpty(value)) {
 							properties.setProperty(key, value);
 						} else {
 							value = getActionContextParam(key);
@@ -424,7 +505,7 @@ public class Configurations extends FrameworkBaseAction {
 								}
 							properties.setProperty(key, value);
 						}
-					}
+						
 						if (CONFIG_TYPE.equals(key) && IIS_SERVER.equals(value)) {
 							isIISServer = true;
 						}
@@ -435,31 +516,31 @@ public class Configurations extends FrameworkBaseAction {
 					}
 				}
 			}
+		}
 			
-			//To get the custom properties
-	        if (CollectionUtils.isNotEmpty(getKey()) && CollectionUtils.isNotEmpty(getValue())) {
-	            for (int i = 0; i < getKey().size(); i++) {
-	                if (StringUtils.isNotEmpty(getKey().get(i)) && StringUtils.isNotEmpty(getValue().get(i))) {
-	            		properties.setProperty(getKey().get(i), getValue().get(i));
-	                }
-	            }
-	        }
-			
-			ApplicationInfo applicationInfo = getApplicationInfo();
-			if (applicationInfo != null && applicationInfo.getTechInfo().getId().equals(FrameworkConstants.TECH_SITE_CORE) && SERVER.equals(getConfigType())) {
-				properties.setProperty(SETTINGS_TEMP_SITECORE_INST_PATH, getSiteCoreInstPath());
-			}
-			
-			if (isIISServer) {
-				properties.setProperty(SETTINGS_TEMP_KEY_APP_NAME, getAppName());
-				properties.setProperty(SETTINGS_TEMP_KEY_SITE_NAME, getSiteName());
-			}
-			
-			Configuration config = new Configuration(getConfigName(), getConfigType());
-			config.setDesc(getDescription());
-			config.setEnvName(getEnvironment().getName());
-			config.setProperties(properties);
-			return config;
+		//To get the custom properties
+        if (CollectionUtils.isNotEmpty(getKey()) && CollectionUtils.isNotEmpty(getValue())) {
+            for (int i = 0; i < getKey().size(); i++) {
+                if (StringUtils.isNotEmpty(getKey().get(i)) && StringUtils.isNotEmpty(getValue().get(i))) {
+            		properties.setProperty(getKey().get(i), getValue().get(i));
+                }
+            }
+        }
+		
+		ApplicationInfo applicationInfo = getApplicationInfo();
+		if (applicationInfo != null && applicationInfo.getTechInfo().getId().equals(FrameworkConstants.TECH_SITE_CORE) && SERVER.equals(getConfigType())) {
+			properties.setProperty(SETTINGS_TEMP_SITECORE_INST_PATH, getSiteCoreInstPath());
+		}
+		
+		if (isIISServer) {
+			properties.setProperty(SETTINGS_TEMP_KEY_APP_NAME, getAppName());
+			properties.setProperty(SETTINGS_TEMP_KEY_SITE_NAME, getSiteName());
+		}
+		Configuration config = new Configuration(getConfigName(), getConfigType());
+		config.setDesc(getDescription());
+		config.setEnvName(getEnvironment().getName());
+		config.setProperties(properties);
+		return config;
 	}
 
 	private String settingsCertificateSave(String configPath, File file) throws PhrescoException {
@@ -821,6 +902,7 @@ public class Configurations extends FrameworkBaseAction {
     	}
     	
         try {
+            removeDonotCheckInDir();
         	List<Environment> environments = getAllEnvironments();
         	setReqAttribute(REQ_ENVIRONMENTS, environments);
         	ConfigManager configManager = getConfigManager(getConfigPath());
@@ -848,12 +930,13 @@ public class Configurations extends FrameworkBaseAction {
         return APP_CONFIG_EDIT;
     }
 	
-	public String updateConfiguration() {
+	public String updateConfiguration(){
 		if (s_debugEnabled) {
     		S_LOGGER.debug("Entering Method Configurations.updateConfiguration()");
 		}  
 		
 		try {
+			copyUploadedFilesToProj();
 			update(getAppConfigPath(), CONFIGURATION);
 			addActionMessage(getText(ACT_SUCC_CONFIG_UPDATE, Collections.singletonList(getConfigName())));
 		} catch (PhrescoException e) {
@@ -1107,81 +1190,103 @@ public class Configurations extends FrameworkBaseAction {
         try {
             byte[] byteArray = getByteArray();
             if (getTargetDir() == null) {
-            	getHttpResponse().setStatus(getHttpResponse().SC_INTERNAL_SERVER_ERROR);
-            	writer = getHttpResponse().getWriter();
-                writer.print(SUCCESS_FALSE);
-                return SUCCESS;
-            }
-            StringBuilder sb = getTargetDir();
-            File file = new File(sb.toString());
-            if (!file.exists()) {
-                file.mkdirs();
-            }
-            sb.append(File.separator);
-            
-            FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-            String dynamicType = getConfigTempType().toLowerCase().replaceAll("\\s", "");
-            String appDirName = getApplicationInfo().getAppDirName();
-            boolean needToExtract = Boolean.valueOf(frameworkUtil.getPomProcessor(appDirName).getProperty(PHRESCO_DOT_EXTRACT_DOT + dynamicType + ARCHIVE_FORMAT));
-            //Check for the property in the pom.xml and then upload as said in the pom.xml
-            if (needToExtract) {
-                extractTheZip(byteArray, sb.toString());
+                ConfigManager configManager = getConfigManager(getAppConfigPath());
+                List<Configuration> configurations = configManager.getConfigurations(getEnvName(), getConfigTempType());
+                boolean isNameExists = false;
+                boolean needNameValidation = true;
+                if (StringUtils.isEmpty(getOldName()) && FrameworkConstants.EDIT_CONFIG.equals(getFromConfig())) {
+                    oldName = getConfigName();
+                }
+                if (getConfigName().equalsIgnoreCase(getOldName())) {
+                    needNameValidation = false;
+                }
+                if (CollectionUtils.isNotEmpty(configurations) && needNameValidation) {
+                    for (Configuration configuration : configurations) {
+                        if (getConfigName().trim().equalsIgnoreCase(configuration.getName())) {
+                            isNameExists = true;
+                            break;
+                        }
+                    }
+                }
+                if (!isNameExists) {
+                    StringBuilder sb = new StringBuilder(Utility.getPhrescoTemp())
+                    .append(File.separator)
+                    .append(DO_NOT_CHECKIN_DIR)
+                    .append(File.separator)
+                    .append(getEnvName())
+                    .append(File.separator)
+                    .append(getConfigName())
+                    .append(File.separator)
+                    .append(getPropName());
+                    File file = new File(sb.toString());
+                    if (!file.exists()) {
+                        file.mkdirs();
+                    }
+                    uploadAsZip(byteArray, sb.toString());
+
+                    writer = getHttpResponse().getWriter();
+                    writer.print(SUCCESS_TRUE_NAME_ERR);
+                    writer.flush();
+                } else {
+                    writer = getHttpResponse().getWriter();
+                    writer.print(SUCCESS_FALSE_NAME_ERR);
+                }
             } else {
+                StringBuilder sb = getTargetDir();
+                File file = new File(sb.toString());
+                if (!file.exists()) {
+                    file.mkdirs();
+                }
+                sb.append(File.separator);
+
                 uploadAsZip(byteArray, sb.toString());
+                writer = getHttpResponse().getWriter();
+                writer.print(SUCCESS_TRUE);
+                writer.flush();
             }
-            
-            writer = getHttpResponse().getWriter();
-            writer.print(SUCCESS_TRUE);
-            writer.flush();
         } catch (Exception e) { //If upload fails it will be shown in UI, so no need to throw error popup
             getHttpResponse().setStatus(getHttpResponse().SC_INTERNAL_SERVER_ERROR);
             writer.print(SUCCESS_FALSE);
         } finally {
-        	writer.close();
+            if (writer != null) {
+                writer.close();
+            }
         }
 
         return SUCCESS;
     }
     
-    /**
-     * To list the uploaded files
-     * @return
-     */
-    public String listUploadedFiles() {
+    private StringBuilder getTargetDir() {
+        StringBuilder sb = null;
         try {
-        	if (getTargetDir() != null) {
-        		File uploadedFile = new File(getTargetDir().toString());
-        		String[] dirs = uploadedFile.list();
-        		if (!ArrayUtils.isEmpty(dirs)) {
-        			for (String file : dirs) {
-        				uploadedFiles.add(file);
-        			}
-        		}
-        	}
-        } catch (Exception e) {
-        	
+            String appDirName = getApplicationInfo().getAppDirName();
+            FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+            String dynamicType = getConfigTempType().toLowerCase().replaceAll("\\s", "");
+            String targetDir = frameworkUtil.getPomProcessor(appDirName).getProperty(PHRESCO_DOT + dynamicType + DOT_TARGET_DIR);
+            if (StringUtils.isEmpty(targetDir)) {
+                return null;
+            }
+            sb = new StringBuilder(Utility.getProjectHome())
+            .append(getApplicationInfo().getAppDirName())
+            .append(File.separator)
+            .append(targetDir);
+        } catch (PhrescoException e) {
+            // TODO: handle exception
+        } catch (PhrescoPomException e) {
+            // TODO Auto-generated catch block
         }
-
-        return SUCCESS;
+        
+        return sb;
     }
     
-    private void extractTheZip(byte[] byteArray, String targetDir) throws IOException, PhrescoException {
-        StringBuilder tempPath = null;
-        FileOutputStream fos = null;
+    private void removeDonotCheckInDir() {
         try {
-          //To write the zip file inputstream in phresco temp location
-            tempPath = new StringBuilder(Utility.getPhrescoTemp())
-            .append(getFileName());
-            fos = new FileOutputStream(tempPath.toString());
-            fos.write(byteArray);
-            
-            //To extract the zip file from the temp location to the specified location
-            ArchiveUtil.extractArchive(tempPath.toString(), targetDir, ArchiveType.ZIP);
+            File file = new File(Utility.getPhrescoTemp() + DO_NOT_CHECKIN_DIR);
+            if (file.exists()) {
+                FileUtils.deleteDirectory(file);
+            }
         } catch (Exception e) {
-            throw new PhrescoException(e);
-        } finally {
-            fos.close();
-            FileUtil.delete(new File(tempPath.toString()));
+            // TODO: handle exception
         }
     }
     
@@ -1199,19 +1304,113 @@ public class Configurations extends FrameworkBaseAction {
             fos.close();
         }
     }
-
-    public String removeConfigFile() {
+    
+    /**
+     * To rename the environment directory of the uploaded files 
+     * @return
+     */
+    public String renameEnvDir() {
         if (s_debugEnabled) {
-            S_LOGGER.debug("Entering Method Configurations.removeConfigFile()");
+            S_LOGGER.debug("Entering Method Configurations.renameEnvDir()");
         }
-
         try {
-        	if (getTargetDir() != null) {
-        		StringBuilder sb = getTargetDir()
+            ConfigManager configManager = getConfigManager(getAppConfigPath());
+            List<Configuration> configurations = configManager.getConfigurations(getEnvName(), getConfigTempType());
+            boolean isNameExists = false;
+            if (CollectionUtils.isNotEmpty(configurations) && !getConfigName().equals(getOldName())) {
+                for (Configuration configuration : configurations) {
+                    if (getConfigName().trim().equalsIgnoreCase(configuration.getName())) {
+                        isNameExists = true;
+                        break;
+                    }
+                }
+            }
+            
+            if (!isNameExists) {//Move the uploaded files to the newly created environment
+                StringBuilder oldEnvSb = new StringBuilder(Utility.getPhrescoTemp())
                 .append(File.separator)
-                .append(getFileName());
-                FileUtil.delete(new File(sb.toString()));
-        	}
+                .append(DO_NOT_CHECKIN_DIR)
+                .append(File.separator)
+                .append(getOldEnvName());
+                File oldEnvDir = new File(oldEnvSb.toString());
+                
+                StringBuilder newEnvSb = new StringBuilder(Utility.getPhrescoTemp())
+                .append(File.separator)
+                .append(DO_NOT_CHECKIN_DIR)
+                .append(File.separator)
+                .append(getEnvName());
+                File newEnvDir = new File(newEnvSb.toString());
+                oldEnvDir.renameTo(newEnvDir);
+            }
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+        return SUCCESS;
+    }
+    
+    public String renameConfigNameDir() {
+        if (s_debugEnabled) {
+            S_LOGGER.debug("Entering Method Configurations.renameConfigNameDir()");
+        }
+        try {
+            ConfigManager configManager = getConfigManager(getAppConfigPath());
+            List<Configuration> configurations = configManager.getConfigurations(getEnvName(), getConfigTempType());
+            boolean isNameExists = false;
+            if (CollectionUtils.isNotEmpty(configurations)) {
+                for (Configuration configuration : configurations) {
+                    if (getConfigName().trim().equalsIgnoreCase(configuration.getName())) {
+                        isNameExists = true;
+                        break;
+                    }
+                }
+            }
+            if (!isNameExists) {
+                List<String> paths = new ArrayList<String>();
+                paths.add(Utility.getPhrescoTemp());
+                paths.add(getApplicationHome());
+                for (String path : paths) {
+                    StringBuilder oldConfigSb = new StringBuilder(path)
+                    .append(File.separator)
+                    .append(DO_NOT_CHECKIN_DIR)
+                    .append(File.separator)
+                    .append(getEnvName())
+                    .append(File.separator)
+                    .append(getOldName());
+                    File oldConfigDir = new File(oldConfigSb.toString());
+                    StringBuilder newConfigSb = new StringBuilder(path)
+                    .append(File.separator)
+                    .append(DO_NOT_CHECKIN_DIR)
+                    .append(File.separator)
+                    .append(getEnvName())
+                    .append(File.separator)
+                    .append(getConfigName());
+                    File newConfigDir = new File(newConfigSb.toString());
+                    oldConfigDir.renameTo(newConfigDir);
+                }
+            }
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+        
+        return SUCCESS;
+    }
+    
+    /**
+     * To list the uploaded files
+     * @return
+     */
+    public String listUploadedFiles() {
+        try {
+            ConfigManager configManager = getConfigManager(getAppConfigPath());
+            Configuration configuration = configManager.getConfiguration(getEnvName(), getCurrentConfigType(), getConfigName());
+            Properties properties = configuration.getProperties();
+            String property = properties.getProperty(FILES);
+            if (StringUtils.isNotEmpty(property)) {
+                String[] splits = property.split(Constants.STR_COMMA);
+                for (String split : splits) {
+                    uploadedFiles.add(split);
+                }
+            }
         } catch (Exception e) {
             // TODO: handle exception
         }
@@ -1219,19 +1418,49 @@ public class Configurations extends FrameworkBaseAction {
         return SUCCESS;
     }
     
-    private StringBuilder getTargetDir() throws PhrescoException, PhrescoPomException {
-        String appDirName = getApplicationInfo().getAppDirName();
-        FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-        String dynamicType = getConfigTempType().toLowerCase().replaceAll("\\s", "");
-        String targetDir = frameworkUtil.getPomProcessor(appDirName).getProperty(PHRESCO_DOT + dynamicType + DOT_TARGET_DIR);
-        if (StringUtils.isEmpty(targetDir)) {
-        	return null;
+    public String removeConfigFile() {
+        if (s_debugEnabled) {
+            S_LOGGER.debug("Entering Method Configurations.removeConfigFile()");
         }
-        StringBuilder sb = new StringBuilder(Utility.getProjectHome())
-        .append(getApplicationInfo().getAppDirName())
-        .append(File.separator)
-        .append(targetDir);
-        return sb;
+
+        try {
+            if (getTargetDir() != null) {
+                StringBuilder sb = getTargetDir()
+                .append(File.separator)
+                .append(getFileName());
+                FileUtil.delete(new File(sb.toString()));
+            } else {
+                StringBuilder sb = new StringBuilder(getApplicationHome())
+                .append(File.separator)
+                .append(DO_NOT_CHECKIN_DIR)
+                .append(File.separator)
+                .append(getEnvName());
+                File envNameDir = new File(sb.toString());
+                sb.append(File.separator)
+                .append(getConfigName());
+                File configNameDir = new File(sb.toString());
+                sb.append(File.separator)
+                .append(getPropName());
+                File propNameDir = new File(sb.toString());
+                sb.append(File.separator)
+                .append(getFileName());
+                File file = new File(sb.toString());
+                FileUtil.delete(file);
+                if (ArrayUtils.isEmpty(propNameDir.listFiles())) {
+                    FileUtil.delete(propNameDir);
+                }
+                if (ArrayUtils.isEmpty(configNameDir.listFiles())) {
+                    FileUtil.delete(configNameDir);
+                }
+                if (ArrayUtils.isEmpty(envNameDir.listFiles())) {
+                    FileUtil.delete(envNameDir);
+                }
+            }
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+
+        return SUCCESS;
     }
     
     public String validateTheme() {
@@ -1547,17 +1776,8 @@ public class Configurations extends FrameworkBaseAction {
 		return SUCCESS;
 	}
     
-    public String getConfigName() {
-		return configName;
-	}
-
-	public void setConfigName(String configName) {
-		this.configName = configName;
-	}
-
 	public String getDescription() {
    		return description;
-     
     }
 
     public void setDescription(String description) {
@@ -1596,14 +1816,6 @@ public class Configurations extends FrameworkBaseAction {
 		this.dynamicError = dynamicError;
 	}
 
-	public String getEnvName() {
-        return envName;
-    }
-
-    public void setEnvName(String envName) {
-        this.envName = envName;
-    }
-    
     public String getConfigType() {
 		return configType;
 	}
@@ -1952,7 +2164,6 @@ public class Configurations extends FrameworkBaseAction {
 		return remoteDeployment;
 	}
 
-
 	public void setRemoteDeployment(boolean remoteDeployment) {
 		this.remoteDeployment = remoteDeployment;
 	}
@@ -1996,4 +2207,28 @@ public class Configurations extends FrameworkBaseAction {
 	public void setSchedulerKey(String schedulerKey) {
 		this.schedulerKey = schedulerKey;
 	}
+	
+	public void setPropName(String propName) {
+        this.propName = propName;
+    }
+
+    public String getPropName() {
+        return propName;
+    }
+
+    public void setOldEnvName(String oldEnvName) {
+        this.oldEnvName = oldEnvName;
+    }
+
+    public String getOldEnvName() {
+        return oldEnvName;
+    }
+
+    public void setCsvFiles(String csvFiles) {
+        this.csvFiles = csvFiles;
+    }
+
+    public String getCsvFiles() {
+        return csvFiles;
+    }
 }

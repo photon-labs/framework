@@ -63,7 +63,6 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.commons.io.FileUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -80,7 +79,6 @@ import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.FrameworkConfiguration;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.api.ActionType;
-import com.photon.phresco.commons.model.Technology;
 import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.commons.QualityUtil;
@@ -95,14 +93,13 @@ import com.photon.phresco.framework.model.TestResult;
 import com.photon.phresco.framework.model.TestSuite;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
 import com.photon.phresco.plugins.util.MojoProcessor;
+import com.photon.phresco.service.client.impl.CacheKey;
+import com.photon.phresco.service.client.impl.EhCacheManager;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.HubConfiguration;
 import com.photon.phresco.util.NodeConfig;
 import com.photon.phresco.util.NodeConfiguration;
 import com.photon.phresco.util.TechnologyTypes;
-import com.photon.phresco.service.client.impl.CacheKey;
-import com.photon.phresco.service.client.impl.EhCacheManager;
-
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.exception.PhrescoPomException;
 import com.phresco.pom.util.PomProcessor;
@@ -133,7 +130,6 @@ public class Quality extends DynamicParameterAction implements Constants {
     private String resolution = ""; 
     private String filePath = "";
     
-	private List<String> configName = null;
 	private List<String> buildInfoEnvs = null;
     
 	private String settingType = "";
@@ -2608,14 +2604,6 @@ public class Quality extends DynamicParameterAction implements Constants {
 
 	public void setSerialNumber(String serialNumber) {
 		this.serialNumber = serialNumber;
-	}
-
-	public List<String> getConfigName() {
-		return configName;
-	}
-
-	public void setConfigName(List<String> configName) {
-		this.configName = configName;
 	}
 
 	public String getTarget() {
