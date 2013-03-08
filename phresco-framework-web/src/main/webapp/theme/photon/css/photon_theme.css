@@ -1134,7 +1134,7 @@ label {
 }
 
 #progressbar {
-  	border:1px solid #2e9d55;
+  	border:1px solid #DE522F;
   	color: #FFFFFF;
 }
 /*** loading image ends ***/
@@ -1482,7 +1482,7 @@ label {
 } */
 
 #indicator {
-	background: #969696; /* Old browsers */
+	background: #DE522F; /* Old browsers */
 }
 
 .table_border {
