@@ -263,6 +263,16 @@
             <result name="configure">/pages/applications/ci/configure.jsp</result>
         </action>
         
+<!--         Show email configuration on CI -->
+        <action name="showEmailConfiguration" method="showEmailConfiguration" class="com.photon.phresco.framework.actions.applications.CI">
+            <result name="success">/pages/applications/ci/emailConfiguration.jsp</result>
+        </action>
+        
+<!--         Save email configuration on CI -->
+        <action name="*EmailConfiguration" method="saveEmailConfiguration" class="com.photon.phresco.framework.actions.applications.CI">
+            <result name="ci">/pages/applications/ci/ci.jsp</result>
+        </action>
+        
         <action name="showSettings" method="showSettings" class="com.photon.phresco.framework.actions.applications.Applications">
         	<result type="json" />
         </action>

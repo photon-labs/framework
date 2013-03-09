@@ -31,8 +31,6 @@ public class CIJob {
     private String scheduleType;
     private String scheduleExpression;
     private String mvnCommand;
-    private String senderEmailId;
-    private String senderEmailPassword;
     private String jenkinsUrl;
     private String jenkinsPort;
     private List<String> triggers;
@@ -230,22 +228,6 @@ public class CIJob {
 
 	public void setMvnCommand(String mvnCommand) {
 		this.mvnCommand = mvnCommand;
-	}
-
-	public String getSenderEmailId() {
-		return senderEmailId;
-	}
-
-	public void setSenderEmailId(String senderEmailId) {
-		this.senderEmailId = senderEmailId;
-	}
-
-	public String getSenderEmailPassword() {
-		return senderEmailPassword;
-	}
-
-	public void setSenderEmailPassword(String senderEmailPassword) {
-		this.senderEmailPassword = senderEmailPassword;
 	}
 
 	public String getJenkinsUrl() {

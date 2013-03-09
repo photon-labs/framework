@@ -81,6 +81,17 @@ public class SvnProcessor {
         scmNode.setText(nodeValue);
     }
     
+    public String getNodeValue(String nodePath) throws JDOMException {
+        if (debugEnabled) {
+           S_LOGGER.debug("Entering Method ConfigProcessor.getNodeValue: " + nodePath);
+        }
+        
+        XPath xpath = XPath.newInstance(nodePath);
+        xpath.addNamespace(root_.getNamespace());
+        Element element = (Element) xpath.selectSingleNode(root_);
+        return element.getText();
+    }
+    
     public InputStream getConfigAsStream() throws IOException {
         XMLOutputter xmlOutput = new XMLOutputter();
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -95,16 +106,16 @@ public class SvnProcessor {
         xmlOutput.output(document_, writer);
     }
     
-    public static void main(String[] args) {
-        try {
-            SvnProcessor processor = new SvnProcessor(new URL(SVN_CONFIG));
-            processor.changeNodeValue("credentials/entry//userName", "Bharat");
-            processor.changeNodeValue("credentials/entry//password", "dummy");
-            processor.writeStream(new File(FINAL_PATH + File.separator + "hudson.scm.SubversionSCM.xml"));
-        } catch (JDOMException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+//    public static void main(String[] args) {
+//        try {
+//            SvnProcessor processor = new SvnProcessor(new URL(SVN_CONFIG));
+//            processor.changeNodeValue("credentials/entry//userName", "****");
+//            processor.changeNodeValue("credentials/entry//password", "****");
+//            processor.writeStream(new File(FINAL_PATH + File.separator + "hudson.scm.SubversionSCM.xml"));
+//        } catch (JDOMException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 }
