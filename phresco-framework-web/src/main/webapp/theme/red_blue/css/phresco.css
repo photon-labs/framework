@@ -3728,6 +3728,7 @@ div.submit_input {
     top: -3px;
     width: auto;
     padding: 4px 6px;
+	cursor: pointer;
 }
 .username {
 	cursor: pointer;
@@ -6335,4 +6336,8 @@ ul#testmenu {
 #popupPage .modal-body {
 	height: auto !important;
 	max-height: 300px;
+}
+
+.menuarrow {
+	display: none;
 }

@@ -25,6 +25,17 @@ html,body {
 	min-height: 100%;
 	overflow: hidden;
 }
+@font-face {
+    font-family: 'luxi_sansregular';
+    src: url('fonts/luxisr.eot');
+    src: url('fonts/luxisr.eot?#iefix') format('embedded-opentype'),
+         url('fonts/luxisr.woff') format('woff'),
+         url('fonts/luxisr.ttf') format('truetype'),
+         url('fonts/luxisr.svg#luxi_sansregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
 
 /* .mandatory {
 	margin:2px;
@@ -32,7 +43,8 @@ html,body {
 body {
 	padding: 0px;
 	margin: 0px;
-	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	/*font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;*/
+	font-family: 'luxi_sansregular' !important;
 	font-size: 13px;
 	font-weight: normal;
 	line-height: 18px;
@@ -124,18 +136,6 @@ input[type="password"] {
 /** login end **/
 
 /*** page header starts ***/
-.page-header {
-	border-bottom: medium none;
-	height: 23px;
-	margin: 0;
-	width: 100%;
-	padding: 3px 0 3px 3px;
-}
-
-.page-header h1 {
-	font-size: 14px;
-	margin: 3px;
-}
 
 .bottom_button {
 	margin-right: 23px;
@@ -143,8 +143,12 @@ input[type="password"] {
 	text-align: right;
 }
 
-.operation {
+.projectList .operation {
 	margin: 5px 5px 5px 0px;
+}
+
+.operation {
+	margin: 10px 5px 5px 0px;
 }
 
 .operation strong {
@@ -202,10 +206,10 @@ input[type="password"] {
 }
 
 .bubbleAll {
-	background: none repeat scroll 0 0 #39BC67;
+	background: none repeat scroll 0 0 #969696;
 	border-radius: 3px 3px 3px 3px;
 	color: #FFFFFF;
-	font: bold 0.6em Tahoma,Arial,Helvetica;
+	/*font: bold 0.6em Tahoma,Arial,Helvetica;*/
 	padding: 1px 2px;
 	position: relative;
 	right: 8px;
@@ -213,10 +217,10 @@ input[type="password"] {
 }
 
 .bubbleModule {
-	background: none repeat scroll 0 0 #39BC67;
+	background: none repeat scroll 0 0 #969696;
 	border-radius: 3px 3px 3px 3px;
 	color: #FFFFFF;
-	font: bold 0.6em Tahoma,Arial,Helvetica;
+	/*font: bold 0.6em Tahoma,Arial,Helvetica;*/
 	padding: 1px 2px;
 	position: relative;
 	right: 8px;
@@ -224,10 +228,10 @@ input[type="password"] {
 }
 
 .bubbleJsLibs {
-	background: none repeat scroll 0 0 #39BC67;
+	background: none repeat scroll 0 0 #969696;
 	border-radius: 3px 3px 3px 3px;
 	color: #FFFFFF;
-	font: bold 0.6em Tahoma,Arial,Helvetica;
+	/*font: bold 0.6em Tahoma,Arial,Helvetica;*/
 	padding: 1px 2px;
 	position: relative;
 	right: 8px;
@@ -235,10 +239,10 @@ input[type="password"] {
 }
 
 .bubbleComponenet {
-	background: none repeat scroll 0 0 #39BC67;
+	background: none repeat scroll 0 0 #969696;
 	border-radius: 3px 3px 3px 3px;
 	color: #FFFFFF;
-	font: bold 0.6em Tahoma,Arial,Helvetica;
+	/*font: bold 0.6em Tahoma,Arial,Helvetica;*/
 	padding: 1px 2px;
 	position: relative;
 	right: 8px;
@@ -414,8 +418,7 @@ a {
 	bottom: 48px;
 	position: absolute;
 	top: 40px !important;
-	width: 98.3% !important;
-	left:1%;
+	width:100% !important;
 }
 
 .wrapper {
@@ -737,12 +740,12 @@ a {
 	clear:right;
 	float:right;
 	margin:0;
-	margin-right:2%;
+	margin-right:1%;
 	text-align:right;
-	width:475px;
+	width:540px;
 	margin-top:45px;
 	position:absolute;
-	right:0%;
+	right:0 !important;
 }
 
 .headerInnerTop li a label {
@@ -752,6 +755,7 @@ a {
 	font-weight: bold;
 	text-transform: uppercase;
 	cursor: pointer;
+	color:#4d4d4d !important;
 }
 .close_links, .quick_lnk { display:none; }
 .quick_links_outer label {
@@ -836,12 +840,12 @@ a {
 .headerInnerTop li {
 	float: left;
 	list-style: none outside none;
-	margin-left:6%;
+	margin-left:10%;
 	padding: 4px 0 0;
 	font-weight: bold;
 }
 .headerInnerTop li:last-child {
-	margin-left:9%;
+	/*margin-left:9%;*/
 }
 
 .wid_home {
@@ -888,7 +892,7 @@ a {
 	padding: 3px 5px;
 }
 .headerInnerTop li a.active label {
-	color:#37b764 !important;
+	color:#de522f !important;
 }
 
 .headerInnerbottom {
@@ -918,8 +922,8 @@ a {
 
 .Logo {
 	float: left;
-	margin-top:18px;
-	margin-left: 2%;
+	margin-top:23px;
+	margin-left: 1%;
 }
 
 .arrow {
@@ -929,7 +933,6 @@ a {
 }
 
 .usersettings {
-	border-radius: 0 0 4px 4px;
 	float: right;
 	font-size: 12px;
 	font-weight: bold;
@@ -965,7 +968,6 @@ a {
 }
 
 .userInfo ul li.theme_change {
-    margin-bottom:3px;
     padding-bottom:3px;
 }
 
@@ -998,15 +1000,16 @@ a {
 }
 
 .tabs,.pills {
-	margin: 0 0 1px 2px;
+	
 	padding-top: 3px;
-	width:210px;
 	float:left;
+	margin:10px 0 0 1%;
 }
 
 .tabs,.pills {
 	list-style: none outside none;
 	height: 24px;
+	width: 210px;
 }
 
 .tabs>li>a {
@@ -1048,7 +1051,7 @@ a {
 	float: none;
 	padding:0px;
 	margin:0px;
-	border-bottom:1px solid #656565;
+	border-bottom:1px solid #c8c8c8;
 }
 .tabs  li a,.pills>li {
 	margin:0;
@@ -1156,7 +1159,7 @@ a {
     float:left;
     padding:0px 0px 0px 0px;
     margin:0px;
-    font-family:Arial, Helvetica, sans-serif;
+    /*font-family:Arial, Helvetica, sans-serif;*/
     font-size:20px;
     width:100%;
 }
@@ -1169,7 +1172,7 @@ a {
     float:left;
     padding:8px 0px 0px 20px;
     margin:0px;
-    font-family:Arial, Helvetica, sans-serif;
+    /*font-family:Arial, Helvetica, sans-serif;*/
     font-size:11.4px;
     width:80%;
 }
@@ -1178,7 +1181,7 @@ a {
     float:left;
     padding:0px 0px 0px 0px;
     margin:0px;
-    font-family:Arial, Helvetica, sans-serif;
+    /*font-family:Arial, Helvetica, sans-serif;*/
     font-size:11px;
     width:80%;
 }
@@ -1212,7 +1215,7 @@ a {
     float:left;
     padding:0px 0px 0px 0px;
     margin:0px;
-    font-family:Arial, Helvetica, sans-serif;
+    /*font-family:Arial, Helvetica, sans-serif;*/
     font-size:20px;
     width:356px;
 }
@@ -1221,7 +1224,7 @@ a {
     float:left;
     padding:16px 0px 0px 0px;
     margin:0px;
-    font-family:Arial, Helvetica, sans-serif;
+    /*font-family:Arial, Helvetica, sans-serif;*/
     font-size:11px;
     width:388px;
     text-align: justify;
@@ -1255,7 +1258,7 @@ a {
 
 .intro_container_left p {
     float: left;
-    font-family: Arial,Helvetica,sans-serif;
+    /*font-family: Arial,Helvetica,sans-serif;*/
     font-size: 11px;
     margin: 0;
     padding: 8px 0 0;
@@ -1571,7 +1574,7 @@ video.video-js {
     font-size: 10px; 
     line-height: 1; 
     font-weight: normal; 
-    font-family: Helvetica, Arial, sans-serif; 
+    /*font-family: Helvetica, Arial, sans-serif; */
 }
 
 .vjs-controls .vjs-time-control span { 
@@ -1932,16 +1935,7 @@ div.vjs-big-play-button span {
     text-align: right;
     width: 130px;
 }*/
-.page-header {
-    border-bottom: medium none;
-    margin-bottom: 0;
-    width: 99.3%;
-}
 
-.page-header h1 {
-    font-size:14px;
-	margin-left:1%;
-}
 
 .right_action {
 	float: right;
@@ -1965,7 +1959,7 @@ h1 {
 }
 
 .btn.primary {
-    font-family: arial,serif;
+    /*font-family: arial,serif;*/
     font-size: 12px;
     /* margin: 0 -4px 0 10px; */
     padding:5px 10px 5px 10px;
@@ -1976,7 +1970,7 @@ h1 {
 }
 
 .btn.disabled {
-    font-family: arial,serif;
+    /*font-family: arial,serif;*/
     font-size: 12px;
     /* margin: 0 -4px 0 6px; */
     padding:5px 10px 5px 10px;
@@ -1986,7 +1980,7 @@ h1 {
 }
 
 .nodejs_startbtn {
-    font-family: arial,serif;
+    /*font-family: arial,serif;*/
     font-size: 12px;
     margin: 6px -4px 0 6px;
     padding:5px 10px 5px 10px;
@@ -1996,7 +1990,7 @@ h1 {
 }
 
 .btn.nodejs_stopbtn {
-    font-family: arial,serif;
+    /*font-family: arial,serif;*/
     font-size: 12px;
    /*  margin: 6px -4px 0 6px; */
     padding:5px 10px 5px 10px;
@@ -2036,6 +2030,8 @@ h1 {
 .projectList {
 	height: 94%;
     padding-top: 6px;
+	width:99% !important;
+	margin:auto !important;
 }
 
 .projectList .theme_accordion_container{
@@ -2080,6 +2076,15 @@ h1 {
     margin-left: 6px;
     margin-right: 6px;
     border-radius: 6px;
+}
+.settingsList .page-header h1 {
+	margin-top:0 !important;
+	line-height:27px;
+}
+
+.settingsList .operation {
+	width:99%;
+	margin:5px auto;
 }
 
 .jmtable_data_div {
@@ -2133,7 +2138,7 @@ input, select, textarea {
     vertical-align: middle;
     font-weight: bold;
     font-size: 13px;
-    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    /*font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;*/
 }
 
 #resultView{
@@ -3299,8 +3304,8 @@ div.lgnBtnLabel {
 	margin-top:-20px;
 }
 div.lgnError{
-    margin-top: 7px;
-    width: 185px;
+    margin-top: 2px;
+    /*width: 185px;*/
 }
 
 /*** login ends ***/
@@ -3653,7 +3658,6 @@ div.submit_input {
 }
 
 .usersettings {
-    border-radius: 0 0 7px 7px;
     float: right;
     font-size: 12px;
     left: 3px;
@@ -3663,7 +3667,7 @@ div.submit_input {
     text-decoration: none;
     text-transform: capitalize;
     width: auto;
-    padding: 5px;
+    padding: 2px;
 	color:#FFFFFF;
 }
 .username {
@@ -4019,9 +4023,8 @@ div.submit_input {
 /** Download starts **/
 
 .theme_accordion_container{
-    float: left;
-    margin: 1px 5px;
-    width: 99.6%;
+    width: 99%;
+	margin:auto;
 }
 
 .accordion_head{
@@ -4032,7 +4035,7 @@ div.submit_input {
 .accordion_head h2{
     float:left;
     padding:8px 0px 8px 10px;
-    font-family:Arial, Helvetica, sans-serif;
+    /*font-family:Arial, Helvetica, sans-serif;*/
     font-size:16px;
     font-weight:bold;
 }
@@ -4045,7 +4048,7 @@ div.submit_input {
 }
 
 .accordion_panel_inner {
-    width:99.5%;
+    width:100%;
     float:left;
     /*padding: 2px;*/
     overflow-x: hidden;
@@ -4069,7 +4072,7 @@ div.submit_input {
     float:left;
     line-height: 25px;
     width:100%;
-    font-family:Arial, Helvetica, sans-serif;
+    /*font-family:Arial, Helvetica, sans-serif;*/
     font-size:12px;
 }
 
@@ -4079,7 +4082,7 @@ div.submit_input {
     float:left;
     line-height: 25px;
     width:100%;
-    font-family:Arial, Helvetica, sans-serif;
+    /*font-family:Arial, Helvetica, sans-serif;*/
     font-size:12px;
 }
 
@@ -4097,7 +4100,7 @@ div.submit_input {
     margin:0px;
     padding:0px;
     width:99.80%;
-	border:1px solid #39bc67;
+	border:1px solid #969696;
 }
 
 .scrollpanel{
@@ -4114,7 +4117,7 @@ div.submit_input {
 .scrollpanel_inner h3{
     width:100%;
     float:left;
-    font-family:Arial, Helvetica, sans-serif;
+    /*font-family:Arial, Helvetica, sans-serif;*/
     font-size:12px;
     font-weight:bold;
     padding-bottom:10px;
@@ -4170,6 +4173,9 @@ div.submit_input {
     padding-left:2.3%;
     width:92%;
     line-height: 25px;
+}
+.closereg span a:hover {
+	text-decoration:none !important;
 }
 
 #reportList {
@@ -4276,7 +4282,7 @@ div.submit_input {
 .appInfoScrollDiv {
 	overflow-y: auto; 
 	overflow-x: hidden; 
-	height: 87%;
+	height: 87% !important;
 }
 
 .featuresScrollDiv {
@@ -5406,6 +5412,7 @@ a[id='androidSigning']:hover {
 .ciOperationDiv {
 	display:table-row; 
 	height:5%;
+	margin-top:8px;
 }
 
 .ciOperationEleme {
@@ -5646,12 +5653,12 @@ a[id='androidSigning']:hover {
     float: right;
     margin-bottom: 0;
     position: absolute;
-    top: 45px;
+    top: 46px;
     width: auto;
 	right:0.7%;
 }
 .customer_name label {
-	color: #ccc;
+	color: #fff;
 }
 
 .customer_listbox {
@@ -5903,14 +5910,14 @@ input[class*='chckBxAlign'] {
 	overflow: auto;
 	height: 300px;
 }
-#subcontainer { width:85%; float:right; margin-top:0px !important; }
+#subcontainer { width:98%; float:right; margin-top:0px !important; position: relative; }
 
 
 
 
 .custom_features {
 	min-height: 72% !important;
-	border: solid 1px #323232 !important;
+	border: solid 1px #de522f !important;
 	border-radius: 12px 12px 0 0 !important;
 }
 .feature_heading {
@@ -5954,12 +5961,12 @@ ul#display-inline-block-example li:nth-child(4) select, ul#display-inline-block-
 }
 .qtyTable_view table thead tr {
 	height: 30px;
-	background: #323232;
+	background: #de522f;
 	color: white;	
 }
 .qtyTable_view table {
-	border-left: 1px solid #323232;
-	border-right: 1px solid #323232;
+	border-left: 1px solid #de522f;
+	border-right: 1px solid #de522f;
 }
 /*.qtyTable_view table thead tr th:first-child {
 	border-radius: 11px 0px 0px 0px;
@@ -5981,13 +5988,13 @@ ul#display-inline-block-example li:nth-child(4) select, ul#display-inline-block-
 	background: none;
 }
 .table_for_downloadInfos .header-background {
-	background: #323232;
+	background: #de522f;
 }
 .table_for_downloadInfos .header-background tr th {
 	color: white !important;
 }
 .navTopBorder .mfbox {
-	border:1px solid #39bc67;
+	border:1px solid #969696;
 }
 .featureTypeWidth {
 	margin-bottom:10px;
@@ -6045,7 +6052,7 @@ margin-left: 11%;
 color: #313131;
 }
 .custom_features_wrapper_right {
-	border:1px solid #323232;
+	border:1px solid #de522f;
 }
 .custom_features_wrapper_right label {
 	margin-bottom:0 !important;
@@ -6056,7 +6063,7 @@ color: #313131;
 .custom_features_wrapper_right .theme_accordion_container div div{
 	line-height:30px;
 	padding:0 1%;
-	border-bottom:1px solid #39bc67;	
+	border-bottom:1px solid #969696;	
 }
 .custom_features_wrapper_right .theme_accordion_container div div:last-child{
 	border:none;
@@ -6113,7 +6120,7 @@ color: #313131;
 }
 #formPerformance table thead tr {
 	height: 30px;
-	background: #323232;
+	background: #de522f;
 	color: white;	
 }
 /*#formPerformance table thead tr th:first-child {
@@ -6225,7 +6232,7 @@ color: #313131;
 	border: solid 1px #dcdcdc;
 }
 .dd-selected, .dd-option {
-	padding: 7px !important;
+	padding: 2px 7px !important;
 }
 .dd-selected-image .dd-option-image {
 	margin: 10px 10px 10px 0px !important;
@@ -6314,7 +6321,7 @@ color: #313131;
 	margin-top: 3%;
 	padding-top: 1%;
 	padding-left: 2%;
-	border: 1px solid #38B865;
+	border: 1px solid #969696;
 	border-radius: 3px;
 	overflow-y: auto;
 	width: 114px;
@@ -6345,8 +6352,10 @@ color: #313131;
 }
 
 #testmenu li a.active, #testmenu li a:hover {
-	background: #39BC67;
+	background: #a0a0a0;
+	color:#fff !important;
 }
+
 
 #testmenu li a {
 	text-decoration: none;
@@ -6362,11 +6371,11 @@ color: #313131;
 /*CSS related to Load Test*/
 
 .columns .fixed-table-container {
-	border: 1px solid #323232;
+	border: 1px solid #de522f;
 }
 .testSuiteDisplay table thead tr {
 	height: 30px;
-	background: #323232;
+	background: #de522f;
 	color: white;
 }
 .testSuiteList {
@@ -6391,7 +6400,7 @@ color: #313131;
     padding-right: 10px;
 }
 .dd-selected-text {
-	margin-top: -2px;
+	margin-top: 2px;
 }
 
 .dd-selected-description {
@@ -6405,11 +6414,11 @@ color: #313131;
 	border-radius: 0px !important;
 	float: right;
 	height: auto !important;
-	margin-top: 2px;
+	margin-top: 0px;
 }
 .customer_select_div  .dd-options {
 	width: 196px !important;
-	background: #323232 !important;
+	background: #de522f !important;
 	padding: 0px 0px;
 	border: 0px !important;
 	height: auto;
@@ -6456,7 +6465,7 @@ color: #313131;
 } 
 
 #formPerformance .table_div_unit table {
-	border: 1px solid #323232;
+	border: 1px solid #de522f;
 }
 
 #subcontainer .theme_accordion_container {
@@ -6532,4 +6541,35 @@ color: #313131;
 #popupPage .modal-body {
 	height: auto !important;
 	max-height: 300px;
+}
+
+.userInfo ul li:nth-child(2):hover,.userInfo ul li:nth-child(3):hover,.userInfo ul li:nth-child(4):hover  {
+	background: #f7dbd4;
+}
+
+.userInfo ul li {
+	border-bottom: 1px solid #de522f;
+	font-weight: normal;
+	line-height:27px;
+}
+.userInfo ul li ul li {
+	line-height:20px;
+}
+
+.userInfo ul li:last-child {
+	border-bottom: none;
+}
+
+.userInfo ul ul li{
+	background: #ffffff !important;
+	border: 0px;
+}
+
+.loginnamehead span{
+	float: left;
+	width: 15px;
+}
+
+.loginnamehead {
+	padding: 2px 6px;
 }

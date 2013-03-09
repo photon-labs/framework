@@ -534,12 +534,9 @@
 		}
 		
 		if (data.dependency != undefined && !isBlank(data.dependency)) {
-			
-			if (data.dependentValues != undefined && !isBlank(data.dependentValues)) {
-				var isMultiple = $('#' + data.dependency).attr("isMultiple");
-				var controlType = $('#' + data.dependency).attr('type');
-				constructElements(data.dependentValues, data.dependency, isMultiple, controlType);
-			}
+			var isMultiple = $('#' + data.dependency).attr("isMultiple");
+			var controlType = $('#' + data.dependency).attr('type');
+			constructElements(data.dependentValues, data.dependency, isMultiple, controlType);
 		}
 	}
 	

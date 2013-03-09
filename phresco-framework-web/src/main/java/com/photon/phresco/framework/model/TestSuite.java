@@ -29,8 +29,11 @@ public class TestSuite {
 	private float tests;
 	private float failures;
 	private float errors;
+	private float total;
+	private float testCoverage;
 	private String time;
 	private List<TestCase> testCases;
+	private List<com.photon.phresco.commons.model.TestCase> testSteps;
 
 	public TestSuite() {
 	}
@@ -108,6 +111,31 @@ public class TestSuite {
 
 	public void setTestCases(List<TestCase> testCases) {
 		this.testCases = testCases;
+	}
+
+	public float getTotal() {
+		return total;
+	}
+
+	public void setTotal(float total) {
+		this.total = total;
+	}
+
+	public float getTestCoverage() {
+		return testCoverage;
+	}
+
+	public void setTestCoverage(float testCoverage) {
+		this.testCoverage = testCoverage;
+	}
+
+	public List<com.photon.phresco.commons.model.TestCase> getTestSteps() {
+		return testSteps;
+	}
+
+	public void setTestSteps(
+			List<com.photon.phresco.commons.model.TestCase> testSteps) {
+		this.testSteps = testSteps;
 	}
 
 }

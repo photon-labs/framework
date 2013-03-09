@@ -58,10 +58,8 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -76,9 +74,7 @@ import com.google.gson.JsonIOException;
 import com.photon.phresco.commons.FileListFilter;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
-import com.photon.phresco.commons.model.Customer;
 import com.photon.phresco.commons.model.ProjectInfo;
-import com.photon.phresco.commons.model.User;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.FrameworkConfiguration;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
@@ -97,6 +93,8 @@ import com.photon.phresco.framework.model.TestResult;
 import com.photon.phresco.framework.model.TestSuite;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
 import com.photon.phresco.plugins.util.MojoProcessor;
+import com.photon.phresco.service.client.impl.CacheKey;
+import com.photon.phresco.service.client.impl.EhCacheManager;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.HubConfiguration;
 import com.photon.phresco.util.NodeConfig;
@@ -108,7 +106,8 @@ import com.phresco.pom.util.PomProcessor;
 
 public class Quality extends DynamicParameterAction implements Constants {
 
-    private static final long serialVersionUID = -2040671011555139339L;
+    private static final String IS_CLASS_EMPTY = "isClassEmpty";
+	private static final long serialVersionUID = -2040671011555139339L;
     private static final Logger S_LOGGER = Logger.getLogger(Quality.class);
     private static Boolean s_debugEnabled  =S_LOGGER.isDebugEnabled();
     
@@ -129,8 +128,8 @@ public class Quality extends DynamicParameterAction implements Constants {
     private String jarLocation = "";
     private String testAgainst = "";
     private String resolution = ""; 
+    private String filePath = "";
     
-	private List<String> configName = null;
 	private List<String> buildInfoEnvs = null;
     
 	private String settingType = "";
@@ -141,7 +140,9 @@ public class Quality extends DynamicParameterAction implements Constants {
     private List<String> testSuiteNames = null;
     private boolean validated = false;
 	private String testResultsType = "";
-
+	private List<TestSuite> allTestSuite = null;
+	private List<com.photon.phresco.commons.model.TestCase> allTestCases = null;
+	
 	//Below variables gets the value of performance test Url, Context and TestName
 	private String resultJson = "";
 	private PerformanceDetails performanceDetails = null;
@@ -174,6 +175,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 	
 	//ios test type iosTestType
 	private String iosTestType = "";
+	private String testSuitName = "";
 	
 	private String projectModule = "";
 	
@@ -181,6 +183,8 @@ public class Quality extends DynamicParameterAction implements Constants {
     boolean updateCache;
 	
 	private static Map<String, Map<String, NodeList>> testSuiteMap = Collections.synchronizedMap(new HashMap<String, Map<String, NodeList>>(8));
+	
+	private EhCacheManager cacheManager = new EhCacheManager();
 	
 	public String unit() {
 	    if (s_debugEnabled) {
@@ -713,9 +717,7 @@ public class Quality extends DynamicParameterAction implements Constants {
             ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
             ProjectInfo projectInfo = getProjectInfo();
             String workingDirectory = getAppDirectoryPath(appInfo);
-            MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_STOP_HUB)));
-            List<Parameter> parameters = getMojoParameters(mojo, PHASE_STOP_HUB);
-            List<String> buildArgCmds = getMavenArgCommands(parameters);
+            List<String> buildArgCmds = new ArrayList<String>();
             buildArgCmds.add(HYPHEN_N);
             BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.STOP_HUB, buildArgCmds, workingDirectory);
             setSessionAttribute(getAppId() + STOP_HUB, reader);
@@ -861,9 +863,7 @@ public class Quality extends DynamicParameterAction implements Constants {
             ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
             ProjectInfo projectInfo = getProjectInfo();
             String workingDirectory = getAppDirectoryPath(appInfo);
-            MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_STOP_NODE)));
-            List<Parameter> parameters = getMojoParameters(mojo, PHASE_STOP_NODE);
-            List<String> buildArgCmds = getMavenArgCommands(parameters);
+            List<String> buildArgCmds = new ArrayList<String>();
             buildArgCmds.add(HYPHEN_N);
             BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.STOP_NODE, buildArgCmds, workingDirectory);
             setSessionAttribute(getAppId() + STOP_NODE, reader);
@@ -1857,7 +1857,7 @@ public class Quality extends DynamicParameterAction implements Constants {
     
     public String fetchFunctionalTestReport() throws TransformerException, PhrescoPomException {
         try {
-            ApplicationInfo appInfo = getApplicationInfo();
+        	ApplicationInfo appInfo = getApplicationInfo();
             FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
             String testSuitePath = frameworkUtil.getFunctionalTestSuitePath(appInfo);
             String testCasePath = frameworkUtil.getFunctionalTestCasePath(appInfo);
@@ -1942,6 +1942,14 @@ public class Quality extends DynamicParameterAction implements Constants {
 	            	if (CollectionUtils.isEmpty(testCases)) {
 	            		setReqAttribute(REQ_ERROR_TESTSUITE, ERROR_TEST_CASE);
 	            	} else {
+	            		boolean isClassEmpty = false;
+	            		//to check whether class attribute is there or not
+	            		for (TestCase testCase : testCases) {
+							if (testCase.getTestClass() == null) {
+								isClassEmpty = true;
+							}
+						}
+	            		setReqAttribute(IS_CLASS_EMPTY, isClassEmpty);
 	            		setReqAttribute(REQ_TESTCASES, testCases);
 	            	}
 	            }
@@ -1953,6 +1961,121 @@ public class Quality extends DynamicParameterAction implements Constants {
 		return APP_TEST_REPORT;
     }
     
+	public String manualTestCase () throws PhrescoException, PhrescoPomException{
+	 if (s_debugEnabled) {
+	        S_LOGGER.debug("Entering Method Quality.manualTestCase()");
+		    }
+		ApplicationInfo appInfo = getApplicationInfo();
+		setReqAttribute(REQ_APPINFO, appInfo);
+		FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+		setReqAttribute(PATH, frameworkUtil.getManualTestDir(appInfo));
+		
+		return APP_MANUAL_TEST;
+	   }
+	 
+	public String fetchManualTestSuites() throws PhrescoException, PhrescoPomException  {
+		if (s_debugEnabled) {
+			S_LOGGER.debug("Entering Method Quality.manualTestCase()");
+		}
+
+		Thread t = null;
+		try {
+			ApplicationInfo appInfo = getApplicationInfo();
+			final FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+			String manualTestDir = frameworkUtil.getManualTestDir(appInfo);
+			final StringBuilder sb = new StringBuilder(Utility.getProjectHome())
+			.append(appInfo.getAppDirName())
+			.append(manualTestDir);
+			if (new File(sb.toString()).exists()) {
+				sb.append(File.separator)
+				.append(Constants.MANUALTEST_XLSX_FILE);
+				final List<TestSuite> readManualTestSuiteFile = frameworkUtil.readManualTestSuiteFile(sb.toString());
+				if (CollectionUtils.isNotEmpty(readManualTestSuiteFile)) {
+					setAllTestSuite(readManualTestSuiteFile);
+				}
+				Runnable runnable = new Runnable() {
+					public void run() {
+						try {
+							for (TestSuite testSuite : readManualTestSuiteFile) {
+								String testSuiteName = testSuite.getName();
+								CacheKey key = new CacheKey(testSuiteName);
+								List<com.photon.phresco.commons.model.TestCase> readManualTestCaseFile = frameworkUtil.readManualTestCaseFile(sb.toString(), testSuiteName);
+								if (CollectionUtils.isNotEmpty(readManualTestCaseFile)) {
+									cacheManager.add(key, readManualTestCaseFile);
+								}
+							}
+
+						} catch (PhrescoException e) {
+							S_LOGGER.error("Entered into catch block of Quality.getManualTestSuites()"+ e);
+						}
+					}
+				};
+
+				t = new Thread(runnable);
+				t.start();
+			}
+		} catch (Exception e) {
+			S_LOGGER.error("Entered into catch block of Quality.fetchManualTestSuites()"+ e);
+		} 
+		
+		return SUCCESS;
+	}
+  
+	public String showManualTestPopUp () throws PhrescoException {
+		if (s_debugEnabled) {
+			S_LOGGER.debug("Entering Method Quality.showManualTestPopUp()");
+		}
+
+		return SUCCESS;
+	}
+	
+ /*
+	public String runManualTest () throws PhrescoException, PhrescoPomException, IOException {
+		if (s_debugEnabled) {
+			S_LOGGER.debug("Entering Method Quality.runManualTest()");
+		}
+		
+		try {
+			ApplicationInfo appInfo = getApplicationInfo();
+			FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+			File filePath = new File(getFilePath());
+			String manualTestDir = frameworkUtil.getManualTestDir(appInfo);
+			StringBuilder destinationFile = new StringBuilder(Utility.getProjectHome())
+			.append(appInfo.getAppDirName())
+			.append(manualTestDir);
+
+			if (!new File(destinationFile.toString()).exists()) {
+				new File(destinationFile.toString()).mkdir();
+			}
+			destinationFile.append(File.separator)
+			.append(Constants.MANUALTEST_XLSX_FILE);
+
+			File destination = new File(destinationFile.toString());
+			FileUtils.copyFile(filePath, destination);
+			List<TestSuite> readManualTestSuiteFile = frameworkUtil.readManualTestSuiteFile(destination.toString());
+			setAllTestSuite(readManualTestSuiteFile);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return SUCCESS;
+	}*/
+ 
+	public String readManualTestCases () {
+		if (s_debugEnabled) {
+			S_LOGGER.debug("Entering Method Quality.readManualTestCasesFromSheet()");
+		}
+		try {
+			CacheKey key = new CacheKey(getTestSuitName());
+			List<com.photon.phresco.commons.model.TestCase> readManualTestCaseFile = (List<com.photon.phresco.commons.model.TestCase>) cacheManager.get(key);
+			setAllTestCases(readManualTestCaseFile);
+		} catch (Exception e) {
+			S_LOGGER.error("Entered into catch block of Quality.readManualTestCases()"+ e);
+		}
+
+		return SUCCESS;
+	}
+ 
+ 
     public class XmlNameFileFilter implements FilenameFilter {
         private String filter_;
         public XmlNameFileFilter(String filter) {
@@ -2483,14 +2606,6 @@ public class Quality extends DynamicParameterAction implements Constants {
 		this.serialNumber = serialNumber;
 	}
 
-	public List<String> getConfigName() {
-		return configName;
-	}
-
-	public void setConfigName(List<String> configName) {
-		this.configName = configName;
-	}
-
 	public String getTarget() {
 		return target;
 	}
@@ -2705,5 +2820,38 @@ public class Quality extends DynamicParameterAction implements Constants {
 
 	public String getResultJson() {
 		return resultJson;
+	}
+	
+	public String getFilePath() {
+		return filePath;
+	}
+
+	public void setFilePath(String filePath) {
+		this.filePath = filePath;
+	}
+
+	public List<TestSuite> getAllTestSuite() {
+		return allTestSuite;
+	}
+
+	public void setAllTestSuite(List<TestSuite> allTestSuite) {
+		this.allTestSuite = allTestSuite;
+	}
+
+	public String getTestSuitName() {
+		return testSuitName;
+	}
+
+	public void setTestSuitName(String testSuitName) {
+		this.testSuitName = testSuitName;
+	}
+
+	public List<com.photon.phresco.commons.model.TestCase> getAllTestCases() {
+		return allTestCases;
+	}
+
+	public void setAllTestCases(
+			List<com.photon.phresco.commons.model.TestCase> allTestCases) {
+		this.allTestCases = allTestCases;
 	}
 }

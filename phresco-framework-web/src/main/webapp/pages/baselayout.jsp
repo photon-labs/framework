@@ -113,7 +113,7 @@
 	<body>
         <%
             User user = (User) session.getAttribute(FrameworkConstants.SESSION_USER_INFO);
-        	String customerIds = (String)request.getAttribute(user.getId());
+        	String customerId = (String)request.getAttribute(user.getId());
             String displayName = user.getDisplayName();
         %>
 		<div class="modal-backdrop fade in popupalign"></div>
@@ -141,26 +141,29 @@
 				</div>
 				
 				<div id="signOut" class="signOut">
-					<aside class="usersettings">
-						<%= displayName %>
-						<img src="images/downarrow.png" class="arrow">
-                        <div class="userInfo" >
-                            <ul>
-                            	<li id="themeContainer" class="theme_change"><a href="#">Themes</a>
-                                	<ul>
-                                    	<li>Photon&nbsp;<a href="#" class="styles" href="#" rel="theme/photon/css/photon_theme.css"><img src="images/photon_theme.png"></a></li>
-                                        <li>Red-Blue&nbsp;
-                                            <a class="styles" href="#" rel="theme/red_blue/css/blue.css"><img src="images/blue_themer.jpg" class="skinImage"></a>
-											<a class="styles" href="#" rel="theme/red_blue/css/red.css"><img src="images/red_themer.jpg"></a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li><a href="#" id="forum" ><s:text name="lbl.hdr.help"/></a></li>
-                                <li><a href="#" id="about" ><s:text name="lbl.abt.phresco"/></a></li>
-                                <li><a href="<s:url action='logout'/>"><s:text name="lbl.signout"/></a></li>
-                            </ul>
-                        </div>
-					</aside>
+						<div class="usersettings" dataflag="false">
+							<div class="loginnamehead">
+								<span><img class="loginarrow" src="images/arrow_user.png"></span>
+								<%= displayName %>
+							</div>
+							<div class="userInfo">
+								<ul>
+		                         	<li id="themeContainer" class="theme_change"><a href="#">Themes</a>
+		                             	<ul>
+		                                 	<li><a class="styles" href="#" rel="theme/photon/css/photon_theme.css"><img src="images/photon_theme.png"></a> Helios </li>
+		                                    <li>
+                                            	<a class="styles" href="#" rel="theme/red_blue/css/blue.css"><img src="images/blue_themer.jpg" class="skinImage"></a>
+												<a class="styles" href="#" rel="theme/red_blue/css/red.css"><img src="images/red_themer.jpg"></a>
+	                                            Red-Blue
+		                                     </li>
+		                                 </ul>
+		                             </li>
+		                             <li><a href="#" id="forum" ><s:text name="lbl.hdr.help"/></a></li>
+		                             <li><a href="#" id="about" ><s:text name="lbl.abt.phresco"/></a></li>
+		                             <li><a href="<s:url action='logout'/>"><s:text name="lbl.signout"/></a></li>
+		                         </ul>	
+							</div>
+						</div>	
 				</div>
                 
                 <div class="headerInner">
@@ -223,8 +226,8 @@
 							<div class="controls customer_select_div">
 								<select id="customerSelect" name="customerSelect" class="customer_listbox">
 					                <%
-					                	List<Customer> listOfCustomers  = (List<Customer>) request.getAttribute(FrameworkConstants.REQ_CUSTOMERS_LIST);
-				                    	for (Customer customer: listOfCustomers) {
+					                	List<Customer> customers  = (List<Customer>) session.getAttribute(FrameworkConstants.SESSION_CUSTOMERS);
+				                    	for (Customer customer: customers) {
 								    %>
 					                       <option value="<%= customer.getId() %>"><%= customer.getName()%></option>
 									<% 
@@ -363,7 +366,7 @@
 					<span class="red">*</span>&nbsp;<s:text name="lbl.compress.name"/>
 				</label>
 				<input type="text" class="hideContent compressNameTextBox" id="compressName" name="compressName"/>
-				<a href="#" class="btn btn-primary" data-dismiss="modal" id="add_popupCancel" onclick="add_popupCancel();"><s:text name='lbl.btn.cancel'/></a>
+				<a href="#" class="btn btn-primary" data-dismiss="modal" id="add_popupCancel" onclick="add_popupCancel(this);"><s:text name='lbl.btn.cancel'/></a>
 				<a href="#" class="btn btn-primary add_popupOk" id="" onClick="add_popupOnOk(this);" ><s:text name='lbl.btn.ok'/></a>
 				<div id="errMsg" class="envErrMsg add_errorMsg"></div>
 				<div class="popuploadingIcon" id="popuploadingIcon"></div>
@@ -374,11 +377,40 @@
 	
 	<script type="text/javascript">
 	 $(document).ready(function() {
+		//script related to loginuser 
+		 $("body").click
+		 (
+		   function(e)
+		   {
+		     if(e.target.className !== "usersettings")
+		     {
+		       $(".userInfo").hide();
+		       $(".loginarrow").attr("src", "images/arrow_user.png");
+		       $(".usersettings").attr("dataflag", "false");
+		     }
+		   }
+		 );
+		 $(".userInfo").hide();
+	      $(".usersettings").click(function(e) {
+	      	clickedobj=e.currentTarget;
+				if ($(clickedobj).attr("dataflag") == "true") {
+					$(".loginarrow").attr("src", "images/arrow_user.png");
+					$(clickedobj).attr("dataflag", "false");
+				}
+				else{
+					$(".loginarrow").attr("src", "images/arrow_user_down.png");
+					$(clickedobj).attr("dataflag", "true");
+				}
+
+	      	$(".userInfo").toggle();
+	      	e.stopPropagation();
+	      });
+	      
 		applyTheme();
 		//getLogoImgUrl();
 		showHideTheme();
 		var selectedId = "";
-		$("#customerSelect").val('<%= customerIds %>');
+		$("#customerSelect").val('<%= customerId %>');
 		
 		$(".styles").click(function() {
 			localStorage.clear();

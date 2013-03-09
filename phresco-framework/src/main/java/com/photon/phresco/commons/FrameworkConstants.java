@@ -65,6 +65,8 @@ public interface FrameworkConstants {
     String CONFIG_TEMP_TYPE = "Config-Temp-Type";
     String SUCCESS_FALSE = "{\"success\": false}";
     String SUCCESS_TRUE = "{\"success\": true}";
+    String SUCCESS_TRUE_NAME_ERR = "{\"success\": true,\"configNameError\":\"\"}";
+    String SUCCESS_FALSE_NAME_ERR = "{\"success\": false,\"configNameError\":\"Name already exists\"}";
     
     String VALIDATE_THEME = "validateTheme";
     String VALIDATE_CONTENT = "validateContent";
@@ -321,6 +323,8 @@ public interface FrameworkConstants {
     String TEMP_FOLDER ="temp";
     String NODEJS_RUN_AGAINST = "nodeJS_runAgnSrc";
     String JAVA_RUN_AGAINST = "runAgnSrc";
+    String CERTIFICATES = "certificates";
+    String KEY_CERTIFICATE = "certificate";
 	
     String JAVA_STAND_ALONE = "tech-java-standalone";
     String MAINCLASSNAME = "mainClassName";
@@ -363,6 +367,7 @@ public interface FrameworkConstants {
     String DEVICE_TO_USE = "family";
     String IPHONE_SCHEMA_PARAM = "scheme";
     String DEPLOY_LOCATION = "deployLocation";
+    String MANUAL = "manual";
     String DEPLOY_CONTEXT = "context";
     String DEPLOY_SERVERNAME="serverName";
     String DEPLOY_ANDROID_DEVICE_MODE = "android.device";
@@ -577,7 +582,7 @@ public interface FrameworkConstants {
      * Request Constants
      * Ex: REQ_XXX
      */
-    String REQ_CUSTOMERS_LIST = "listOfCustomers";
+    String SESSION_CUSTOMERS = "listOfCustomers";
     String REQ_APPINFO	= "appInfo";
     String REQ_APPINFO_SERVERS = "appinfoServers";
     String REQ_APPINFO_DBASES = "appinfoDbs";
@@ -652,6 +657,7 @@ public interface FrameworkConstants {
     String REQ_DEPLOY_READER = "DeployReader";
     String REQ_READER = "Reader";
     String REQ_SONAR_PATH = "SonarPath";
+    String REQ_XLSX = "xlsx";
     String REQ_CONFIG_INFO = "configInfo";
     String REQ_PROPERTIES_INFO = "propertiesInfo";
     String REQ_SELECTED_TYPE = "selectedType";
@@ -661,6 +667,7 @@ public interface FrameworkConstants {
     String REQ_OLD_NAME = "oldName";
     String REQ_ERROR = "error";
     String REQ_SELECTED_ITEMS = "check";
+    String REQ_MANUAL_XLSX = "manualTest";
     String REQ_SELECTED_BUILDS = "selectedBuilds";
     String REQ_SELECTED_BUILDS_LIST = "builds";
     String REQ_SELECTED_JOBS_LIST = "Jobs";
@@ -874,6 +881,7 @@ public interface FrameworkConstants {
     String REQ_FEATURE_NAMES = "featureNames";
     String REQ_HAS_CUSTOM_PROPERTY = "hasCustomProperty";
     String REQ_HAS_FUNCTIONAL_LOG_FILE = "hasFunctionalLogFile";
+    String REQ_FILE_NAME = "fileName";
     
     String CONFIG_FEATURES = "config_Features";
     String CONFIG_COMPONENTS = "config_Components";
@@ -1103,10 +1111,10 @@ public interface FrameworkConstants {
 	String CLONE_FROM_ENV_NAME = "cloneFromEnvName";
 	String CLONE_FROM_CONFIG_NAME = "cloneFromConfigName";
 	String TECH_SITE_CORE = "tech-sitecore";
-	String ADD_SETTINGS ="addsettings";
-	String EDIT_SETTINGS ="editsettings";
-	String ADD_CONFIG ="addconfig";
-	String EDIT_CONFIG="editconfig";
+	String ADD_SETTINGS = "addsettings";
+	String EDIT_SETTINGS = "editsettings";
+	String ADD_CONFIG = "addconfig";
+	String EDIT_CONFIG = "editconfig";
     
     /*
      * Create Environment keys

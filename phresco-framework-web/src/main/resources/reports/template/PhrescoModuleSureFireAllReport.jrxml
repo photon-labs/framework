@@ -23,7 +23,7 @@
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
-	<parameter name="hideClassColumn" class="java.lang.String"/>
+	<parameter name="isClassEmpty" class="java.lang.Boolean"/>
 	<field name="moduleOrTechName" class="java.lang.String"/>
 	<field name="moduleOrTechLabel" class="java.lang.String"/>
 	<field name="sureFireReport" class="java.util.List"/>
@@ -56,11 +56,11 @@
 					<subreportParameter name="testType">
 						<subreportParameterExpression><![CDATA[$P{testType}]]></subreportParameterExpression>
 					</subreportParameter>
-					<subreportParameter name="hideClassColumn">
-						<subreportParameterExpression><![CDATA[$P{hideClassColumn}]]></subreportParameterExpression>
-					</subreportParameter>
 					<subreportParameter name="reportsDataType">
 						<subreportParameterExpression><![CDATA[$P{reportsDataType}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="isClassEmpty">
+						<subreportParameterExpression><![CDATA[$P{isClassEmpty}]]></subreportParameterExpression>
 					</subreportParameter>
 					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{sureFireReport})]]></dataSourceExpression>
 					<subreportExpression><![CDATA["PhrescoModuleUnitCumulativeReport.jasper"]]></subreportExpression>

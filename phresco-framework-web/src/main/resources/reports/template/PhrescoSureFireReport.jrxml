@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PhrescoXmlReport" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="101"/>
+	<property name="ireport.y" value="0"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<style name="PSFRTitle"/>
 	<style name="PSFRTitleRect"/>
@@ -26,7 +26,8 @@
 		<defaultValueExpression><![CDATA["/Users/kaleeswaran/work/master-plugin/report-phresco-plugin/src/main/resources/"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="copyRights" class="java.lang.String"/>
-	<parameter name="hideClassColumn" class="java.lang.String"/>
+	<parameter name="isClassEmpty" class="java.lang.Boolean"/>
+	<parameter name="manualId" class="java.lang.String"/>
 	<field name="testSuites" class="java.util.List"/>
 	<field name="allTestSuites" class="java.util.List"/>
 	<background>
@@ -141,8 +142,8 @@
 			</rectangle>
 			<textField>
 				<reportElement x="4" y="128" width="241" height="20"/>
-				<textElement>
-					<font fontName="Times New Roman" size="16" isBold="true"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="14" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{testType} + " TEST REPORT"]]></textFieldExpression>
 			</textField>
@@ -174,8 +175,11 @@
 					<reportElement x="0" y="0" width="555" height="209">
 						<printWhenExpression><![CDATA[$P{reportsDataType}.equals("detail")]]></printWhenExpression>
 					</reportElement>
-					<subreportParameter name="hideClassColumn">
-						<subreportParameterExpression><![CDATA[$P{hideClassColumn}]]></subreportParameterExpression>
+					<subreportParameter name="manualId">
+						<subreportParameterExpression><![CDATA[$P{manualId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="isClassEmpty">
+						<subreportParameterExpression><![CDATA[$P{isClassEmpty}]]></subreportParameterExpression>
 					</subreportParameter>
 					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{testSuites})]]></dataSourceExpression>
 					<subreportExpression><![CDATA["PhrescoSureFireDetailReport.jasper"]]></subreportExpression>

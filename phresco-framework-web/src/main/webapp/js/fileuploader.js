@@ -148,6 +148,9 @@ qq.setId = function(element, name){
 qq.setFileName = function(element, name){
 	element.setAttribute("fileName", name);
 };
+qq.setValue = function(element, name){
+	element.setAttribute("value", name);
+};
 //
 // Selecting elements
 
@@ -274,10 +277,13 @@ qq.FileUploaderBasic = function(o){
         },
         onComplete: function(id, fileName, responseJSON){
         	if (!responseJSON.success) {
-        		fileError();
+        		findError(responseJSON);
         		enableUploadButton($(o.element));
+        		disableButton($("#validateContent, #validateTheme"));
         	} else if (responseJSON.success) {
+        		findError(responseJSON);
         		disableUploadButton($(o.element));
+        		enableButton($("#validateContent, #validateTheme"));
         	}
     	},
         onCancel: function(id, fileName){},
@@ -290,7 +296,7 @@ qq.FileUploaderBasic = function(o){
             onLeave: "The files are being uploaded, if you leave now the upload will be cancelled."            
         },
         showMessage: function(message){
-    		fileError(message, o.type);
+//    		fileError(message, o.type);
         }
     };
     qq.extend(this._options, o);
@@ -490,9 +496,13 @@ var configTempType = "";
 var projectId = "";
 var appId = "";
 var customerId = "";
+var environment = "";
+var configName = "";
+
 qq.FileUploader = function(o){
 	var type = o.type || o.fileType;
 	var btnId = o.element.getAttribute('id');
+	var propName = o.propName;
 	// call parent constructor
     qq.FileUploaderBasic.apply(this, arguments);
     // additional options    
@@ -515,6 +525,7 @@ qq.FileUploader = function(o){
                 '<a class="qq-upload-cancel" href="#">Cancel</a>' +
                 '<span class="qq-upload-failed-text">Failed</span>' +
                 '<img class="qq-upload-remove" src="images/icons/delete.png" style="cursor:pointer;" alt="Remove" eleAttr="'+ btnId +'" tempAttr="'+ type +'"  onclick="removeUploadedFile(this);"/>' +
+                '<input type="hidden" class="hidden-fileName" propName="' + propName + '" \>' +
             '</li>',        
         
         classes: {
@@ -533,7 +544,8 @@ qq.FileUploader = function(o){
             // added to list item when upload completes
             // used in css to hide progress spinner
             success: 'qq-upload-success',
-            fail: 'qq-upload-fail'
+            fail: 'qq-upload-fail',
+            hidden: 'hidden-fileName'
         }
     });
     // overwrite options with user supplied    
@@ -550,7 +562,6 @@ qq.FileUploader = function(o){
     this._bindCancelEvent();
     this._setupDragDrop();
     urlAction = this._options.action;//This will assign the url passed from the JSP
-
 };
 
 // inherit from Basic Uploader
@@ -614,6 +625,8 @@ qq.extend(qq.FileUploader.prototype, {
     	projectId = $('input[name=projectId]').val();
     	appId = $('input[name=appId]').val();
     	customerId = $('input[name=customerId]').val();
+    	environment = $('select[name=environment] option:selected').text();
+    	configName = $('input[name=configName]').val();
         qq.FileUploaderBasic.prototype._onSubmit.apply(this, arguments);
         this._addToList(id, fileName);  
     },
@@ -651,6 +664,8 @@ qq.extend(qq.FileUploader.prototype, {
         var item = qq.toElement(this._options.fileTemplate);                
         item.qqFileId = id;
         var fileElement = this._find(item, 'file');
+        var hiddenElement = this._find(item, 'hidden');
+        qq.setValue(hiddenElement, fileName);
         qq.setText(fileElement, fileName);
         var removeElement = this._find(item, 'remove');
         //qq.setId(removeElement, this._formatFileName(fileName));
@@ -820,7 +835,7 @@ qq.UploadButton.prototype = {
         qq.removeClass(this._element, this._options.focusClass);
         this._input = this._createInput();
     },    
-    _createInput: function(){   
+    _createInput: function(){
         var input = document.createElement("input");
         if (this._options.multiple){
             input.setAttribute("multiple", "multiple");
@@ -1186,7 +1201,7 @@ qq.extend(qq.UploadHandlerXhr.prototype, {
     getSize: function(id){
         var file = this._files[id];
         return file.fileSize != null ? file.fileSize : file.size;
-    },    
+    },
     /**
      * Returns uploaded bytes for file identified by id 
      */    
@@ -1201,7 +1216,6 @@ qq.extend(qq.UploadHandlerXhr.prototype, {
         var file = this._files[id],
             name = this.getName(id),
             size = this.getSize(id);
-                
         this._loaded[id] = 0;
                                 
         var xhr = this._xhrs[id] = new XMLHttpRequest();
@@ -1233,6 +1247,8 @@ qq.extend(qq.UploadHandlerXhr.prototype, {
         xhr.setRequestHeader("projectId", projectId);
         xhr.setRequestHeader("appId", appId);
         xhr.setRequestHeader("customerId", customerId);
+        xhr.setRequestHeader("envName", environment);
+        xhr.setRequestHeader("configName", configName);
         xhr.send(file);
     },
     _onComplete: function(id, xhr){

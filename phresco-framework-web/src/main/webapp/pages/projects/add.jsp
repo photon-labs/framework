@@ -132,7 +132,7 @@
 			<div class="controls">
 				<input placeholder="<s:text name="place.hldr.proj.add.name"/>" class="input-xlarge" type="text" 
 					value="<%= StringUtils.isNotEmpty(name) ? name : "" %>"<%= disablStr %> name="projectName" maxlength="30" 
-					title="<s:text name="title.30.chars"/>">
+					id="projectName" title="<s:text name="title.30.chars"/>">
 				<span class="help-inline" id="projectNameError"></span>
 			</div>
 		</div>
@@ -145,8 +145,7 @@
 			</label>
 			<div class="controls">
 				<input placeholder='<s:text name="place.hldr.proj.add.code"/>' class="input-xlarge" type="text" id="projectCode"
-					value="<%= StringUtils.isNotEmpty(projectCode) ? projectCode : "" %>"<%= disablStr %>  name="projectCode" maxlength="12" 
-					title="<s:text name="title.12.chars"/>">
+					value="<%= StringUtils.isNotEmpty(projectCode) ? projectCode : "" %>" disabled />
 				<span class="help-inline" id="projectCodeError"></span>
 			</div>
 		</div>
@@ -699,14 +698,14 @@
 	</div>	
 		<!-- hidden fields start-->
 		<% if (projectInfo != null) {%>
-			<input type="hidden" name=id value="<%= id %>"/>
-			<input type="hidden" name=projectName value="<%= name %>"/>
-			<input type="hidden" name=projectCode value="<%= projectCode %>"/>
-			<input type="hidden" name=projectVersion value="<%= version %>"/>
+			<input type="hidden" name="id" value="<%= id %>"/>
+			<input type="hidden" name="projectName" value="<%= name %>"/>
+			<input type="hidden" name="projectVersion" value="<%= version %>"/>
 			<input type="hidden" name="fromTab" value="edit">
 		<% } else {%>
 			<input type="hidden" name="fromTab" value="add">
 		<% } %>
+		<input type="hidden" name="projectCode" value="<%= projectCode %>"/>
 		<!-- hidden fields end -->
 	</form>
 	<!--  Form Ends -->

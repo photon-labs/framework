@@ -158,6 +158,8 @@
 %>
 <script type="text/javascript">
 	$(document).ready(function() {
+		hidePopuploadingIcon();
+		
 		<% if (FrameworkConstants.REQ_MINIFICATION.equals(fromPage)) { %>
 			$('#browseSelectedLocation').hide();
 			$('#compressName').show();
@@ -165,6 +167,7 @@
 		<% } else { %>
 			$('#compressName').hide();
 			$('#compressNameLbl').hide();
+			$('#browseSelectedLocation').show();
 		<% } %>
 		
 		<% if ("package".equals(fromPage)) { %>

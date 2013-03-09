@@ -55,7 +55,31 @@
 			$("#testmenu").slideUp();
 		}
     });
-  	
+	
+  	// Script related to menu left slide
+	
+	var tabwidth = $(".tabs").width();
+	var tabwidthwindow = tabwidth + 15;
+	$('.tabs').css("left",-tabwidthwindow);
+	$('#subcontainer').css("width",'97.3%');
+  	$(".menuarrow").click(function(e) {
+		clickedobj=e.currentTarget;
+			if ($(clickedobj).attr("dataflag") == "true") {
+				$(".menuarrow img").attr("src","images/menu_arrow_open.gif");
+				$('#subcontainer').animate({width: '97.3%'},350);
+				$('.tabs').animate({left:-tabwidthwindow},350);
+				$(clickedobj).animate({left:'2px'},350);
+				$(clickedobj).attr("dataflag", "false");
+			}
+			else{
+				$(".menuarrow img").attr("src","images/menu_arrow_close.gif");
+				$('#subcontainer').animate({width: '83%'},350);
+				$('.tabs').animate({left:'0px'},350);
+				$(clickedobj).animate({left:tabwidthwindow},350);
+				$(clickedobj).attr("dataflag", "true");
+			}
+  	});	
+
   	var isCiRefresh = false; // for ci page use - this should be global
   	
 </script>
@@ -142,6 +166,9 @@
 				<%
 					}
 				%>
+				<li>
+					<a href="#" class="inactive" name="qualityTab" id="manual"><s:label key="lbl.quality.menu.manual" theme="simple"/></a>
+				</li>
 			</ul>
 		</li>
 		
@@ -161,8 +188,10 @@
 			<a href="#" class="inactive" name="appTab" id="download"><s:label key="lbl.app.menu.download"  theme="simple"/></a>
 		</li>
 	</ul>
+	<div class="menuarrow" dataflag="false" style= "position: absolute; top: 87px; cursor: pointer;">
+		<img src="images/menu_arrow_open.gif">
+	</div>
 </nav>			
-
 <section id="subcontainer" class="navTopBorder">
-
+	
 </section>

@@ -17,6 +17,7 @@
   limitations under the License.
   ###
   --%>
+
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.util.List"%>
@@ -29,7 +30,7 @@
 <%@ page import="com.photon.phresco.framework.commons.ApplicationsUtil"%>
 <%@ page import="org.apache.commons.lang.StringUtils" %>
 <%@ page import="org.apache.commons.collections.CollectionUtils" %>
-<%@ page import="com.photon.phresco.framework.model.CertificateInfo"%>
+<%@ page import="com.photon.phresco.commons.model.CertificateInfo"%>
 	
 	<!--[if IE]>
 	<script src="js/html5.js"></script>
@@ -50,7 +51,7 @@
 		isCertAvailable = (Boolean) request.getAttribute(FrameworkConstants.REQ_RMT_DEP_IS_CERT_AVAIL);
 	}
 	String fileBrowseFrom = (String)request.getAttribute(FrameworkConstants.REQ_RMT_DEP_FILE_BROWSE_FROM);
-	List<CertificateInfo> certificates = (List<CertificateInfo>)request.getAttribute("certificates");
+	List<CertificateInfo> certificates = (List<CertificateInfo>)request.getAttribute(FrameworkConstants.CERTIFICATES);
 %>
 
 <form autocomplete="off" class="build_form" id="browseLocation">
@@ -64,7 +65,7 @@
 			<div class="clearfix">
 				<label for="xlInput" class="xlInput popup-label"><s:text name="label.certificates"/></label>
 				<div class="input">
-					<select id="certificates" name="certificates" class="xlarge">
+					<select id="certificates" name="availableCertificates" class="xlarge">
 					<%
 						if (CollectionUtils.isNotEmpty(certificates)) {
 							for (CertificateInfo certificate : certificates) {
@@ -92,7 +93,7 @@
 	$(document).ready(function() {
 		<% 
 			if (!isCertAvailable) {
-		%>
+		%>	
 			$('#crtFileDiv').hide();
 			var location = "<%= projectLocation %>";
 			$('#JQueryFTD').fileTree({
@@ -111,6 +112,7 @@
 		<%
 			} else {
 		%>
+			hidePopuploadingIcon();
 			$('#JQueryFTD').hide();
 			$('#browseSelectedLocation').hide();
 			$('#crtFileDiv').show()
@@ -182,6 +184,22 @@
 			$('.currentTextBox').val(csvSelectedFiles);
 			$('.currentTextBox').attr("title", csvSelectedFiles);
 			$('.currentTextBox').removeClass("currentTextBox");
+		/* } else if (okUrl === "manualTestFilePath") {
+			$('#additionalPopup').modal('hide');
+			showParentPopupPage();
+			var path = $("#browseSelectedLocation").val();
+			$('.filePath').val(path); */
+		} else 	if (okUrl === "addCertificate") {
+			var availableCertificate = $('#certificates').val();
+			var certicate = "";
+			if (availableCertificate != undefined || !isBlank(availableCertificate)) {
+				certicate = availableCertificate;
+			} else {
+				certicate = $('#browseSelectedLocation').val();
+			}
+			$('#additionalPopup').modal('hide');
+			$("div#certificateControl").show();
+			$('#certificate').val(certicate);
 		} else {
 			$('#additionalPopup').modal('hide');
 			showParentPopupPage();

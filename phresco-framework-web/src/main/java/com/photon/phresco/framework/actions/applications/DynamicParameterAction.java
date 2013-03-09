@@ -64,6 +64,7 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
     private String availableParams = "";
     private final String PHASE_FUNCTIONAL_TEST = "functional-test";
     private final String PHASE_RUNAGAINST_SOURCE = "run-against-source";
+    private String selectedFiles = "";
     
     
     private static Map<String, PhrescoDynamicLoader> pdlMap = new HashMap<String, PhrescoDynamicLoader>();
@@ -459,6 +460,8 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 	                    properties.store(writer, "");
 	                    String value = writer.getBuffer().toString();
 	                    parameter.setValue(value);
+	                } else if (parameter.getType().equalsIgnoreCase(TYPE_PACKAGE_FILE_BROWSE)) {
+	                	parameter.setValue(getSelectedFiles());
 	                } else {
 	                    parameter.setValue(StringUtils.isNotEmpty(getReqParameter(parameter.getKey())) ? (String)getReqParameter(parameter.getKey()) : "");
 	                }
@@ -845,6 +848,9 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 		if (REQ_JAR.equalsIgnoreCase(getFileType())) {
 			setReqAttribute(REQ_PROJECT_LOCATION, "");
 			setReqAttribute(REQ_FROM, REQ_AGAINST_JAR);
+//		} else if(REQ_XLSX.equalsIgnoreCase(getFileType())) {
+//			setReqAttribute(REQ_PROJECT_LOCATION, "");
+//			setReqAttribute(REQ_FROM, REQ_MANUAL_XLSX);
 		} else {
 			setReqAttribute(REQ_PROJECT_LOCATION, getAppDirectoryPath(applicationInfo).replace(File.separator, FORWARD_SLASH));
 			setReqAttribute(REQ_FROM, getReqParameter(REQ_FROM_PAGE));
@@ -956,5 +962,13 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 
 	public String getPhase() {
 		return phase;
+	}
+
+	public String getSelectedFiles() {
+		return selectedFiles;
+	}
+
+	public void setSelectedFiles(String selectedFiles) {
+		this.selectedFiles = selectedFiles;
 	}
 }

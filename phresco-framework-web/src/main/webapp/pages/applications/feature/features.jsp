@@ -183,7 +183,6 @@ if (CollectionUtils.isNotEmpty(defaultfeatures)) {
         $('#clipboard').click(function() {
     		copyToClipboard($('#popup_div').text());
     	});
-        
     });
     
     // Function for the feature list selection
@@ -238,23 +237,35 @@ if (CollectionUtils.isNotEmpty(defaultfeatures)) {
 // 		$("div[id='"+ ctrlClass +"Div']").remove();
 		if (elementsSize === 0) {
 			var removeImg = "";
-			if(isDefault=== false) {
+			var selectClass = "";
+			var gearClass = "";
+			var featureName = dispName + '-' + dispValue;
+			if(!isDefault) {
 				removeImg = "&nbsp;&times;";
+				selectClass = "scopeGearCrossList";
+				gearClass = "gearWithCross";
 			} else {
 				removeImg = "";
+				selectClass = "scopeList";
+				gearClass = "gear";
 			}
-			
 			if(!showImage && packaging == "jar") {
-				$("#result").append('<div id="'+ctrlClass+'Div" class="'+divName+'">'+dispName+' - '+dispValue+
-						'<select id="'+ctrlClass+'Select" temp="'+ctrlClass+'" onchange="selectBoxChangeEvent(this);" >'+
-						
-						'</select>'+
-						'<a href="#" onclick="removed(this);">'+ removeImg +'</a>'+
+				if (isBlank(removeImg)) {
+					selectClass = "defaultScope";
+				} else {
+					selectClass = "scopeGearCrossList";
+				}
+				var displayName = featuresTextTrim(featureName);
+				$("#result").append('<div id="'+ctrlClass+'Div" title="'+ featureName +'" class="'+divName+'">'+displayName+
+						'<a href="#" class="crossImg" onclick="removed(this);">'+ removeImg +'</a>'+
 						'<input type="hidden" class="'+ctrlClass+'" name="jsonData">'+
+						'<select id="'+ctrlClass+'Select" temp="'+ctrlClass+'" class="'+ selectClass +'" onchange="selectBoxChangeEvent(this);" >'+
+						'</select>'+
 						'</div>');
 				getScopeVal(ctrlClass, scope);
 			} else if (showImage && packaging != "jar") {
-				$("#result").append('<div id="'+ctrlClass+'Div" class="'+divName+'">'+dispName+' - '+dispValue+
+				var displayName = featuresTextTrim(featureName);
+				$("#result").append('<div id="'+ctrlClass+'Div" title="'+ featureName +'" class="'+divName+'">'+displayName+
 						'<a href="#" onclick="removed(this);">'+ removeImg +'</a>'+
 						'<input type="hidden" class="'+ctrlClass+'" name="jsonData">' +
 <%-- 						<% --%>
@@ -267,18 +278,19 @@ if (CollectionUtils.isNotEmpty(defaultfeatures)) {
 // 						%>
 						'</div>');
 			} else if (showImage && packaging == "jar") {
-				$("#result").append('<div id="'+ctrlClass+'Div" class="'+divName+'">'+dispName+' - '+dispValue+
-						'<select id="'+ctrlClass+'Select" temp="'+ctrlClass+'" onchange="selectBoxChangeEvent(this);" >'+
-						
-						'</select>'+
-						'<a href="#" onclick="removed(this);">'+ removeImg +'</a>'+
+				var displayName = featuresTextTrim(featureName);
+				$("#result").append('<div id="'+ctrlClass+'Div" title="'+ featureName +'" class="'+divName+'">'+displayName+
+						'<a href="#" class="crossImg" onclick="removed(this);">'+ removeImg +'</a>'+
 						'<input type="hidden" class="'+ctrlClass+'" name="jsonData">' +
-						'<a href="#" id="'+name+'" onclick="showFeatureConfigPopup(this);">'+ 
+						'<a href="#" class="'+ gearClass +'" id="'+name+'" onclick="showFeatureConfigPopup(this);">'+ 
 						'<img src="images/icons/gear.png" title="Configure"/></a>' +
+						'<select id="'+ctrlClass+'Select" class="scopeGearList" temp="'+ctrlClass+'" onchange="selectBoxChangeEvent(this);" >'+
+						'</select>'+
 						'</div>');
 				getScopeVal(ctrlClass, scope);
 			} else if(!showImage && packaging != "jar") {
-				$("#result").append('<div id="'+ctrlClass+'Div" class="'+divName+'">'+dispName+' - '+dispValue+
+				var displayName = featuresTextTrim(featureName);
+				$("#result").append('<div id="'+ctrlClass+'Div" title="'+ featureName +'" class="'+divName+'">'+displayName+
 						'<a href="#" onclick="removed(this);">'+ removeImg +'</a>'+
 						'<input type="hidden" class="'+ctrlClass+'" name="jsonData"></div>');
 			}

@@ -493,6 +493,8 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 	                    properties.store(writer, "");
 	                    String value = writer.getBuffer().toString();
 	                    bu.setProperty(cijob, parameter.getKey(), value);
+	                } else if (parameter.getType().equalsIgnoreCase(TYPE_PACKAGE_FILE_BROWSE)) {
+	                	bu.setProperty(cijob, parameter.getKey(), getSelectedFiles());
 	                } else if (PDF_REPORT.equals(operation) && "sonarUrl".equals(key)) {
 	                	// for pdf report operation we have to assign our own values for few parameters
 	    				bu.setProperty(cijob, parameter.getKey(), sonarUrl);
@@ -508,7 +510,7 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 	            }
 	        }
 	    } catch (Exception e) {
-	        throw new PhrescoException(e);
+	    	throw new PhrescoException(e);
 	    }
 	}
 	

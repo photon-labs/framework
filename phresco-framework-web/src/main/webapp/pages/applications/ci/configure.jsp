@@ -424,7 +424,7 @@
 								</div>
 								
 								<!-- Criteria to run the down stream projects -->
-								<div class="control-group">
+								<div class="control-group" id="downstreamControlGroup">
 									<label class="control-label labelbold popupLbl">
 										<s:text name='lbl.downstream.criteria' />
 									</label>
@@ -504,7 +504,7 @@
 	<!-- CI basic settings ends -->
 		
 	<!-- build release plugin changes starts -->
-	<div class="theme_accordion_container clearfix" style="float: none;">
+	<div class="theme_accordion_container clearfix" style="float: none;" id="collabnetContainer">
 	    <section class="accordion_panel_wid">
 	        <div class="accordion_panel_inner adv-settings-accoridan-inner">
 	            <section class="lft_menus_container adv-settings-width">
@@ -587,8 +587,8 @@
 												<s:text name='lbl.build.release.overwrite' />
 											</label>
 											<div class="controls" style="padding-top: 5px;">
-												<input type="radio" name="overwriteFiles" value="true" checked />&nbsp; <s:text name="lbl.yes"/>
-												<input type="radio" name="overwriteFiles" value="false" />&nbsp; <s:text name="lbl.no"/>
+												<input type="radio" name="collabNetoverWriteFiles" value="true" checked />&nbsp; <s:text name="lbl.yes"/>
+												<input type="radio" name="collabNetoverWriteFiles" value="false" />&nbsp; <s:text name="lbl.no"/>
 											</div>
 										</div>
 								
@@ -671,7 +671,7 @@
 				
 				// when the job is not null, have to make selection in radio buttons of collabnet plugin
 				$('input:radio[name=enableBuildRelease]').filter("[value='"+<%= existingJob.isEnableBuildRelease() %>+"']").attr("checked", true);
-				$('input:radio[name=overwriteFiles]').filter("[value='"+<%= existingJob.isCollabNetoverWriteFiles() %>+"']").attr("checked", true);
+				$('input:radio[name=collabNetoverWriteFiles]').filter("[value='"+<%= existingJob.isCollabNetoverWriteFiles() %>+"']").attr("checked", true);
 				$("select[name=usedClonnedWorkspace] option[value='<%= existingJob.getUsedClonnedWorkspace() %>']").attr('selected', 'selected');
 				$("#downstreamProject option[value='<%= existingJob.getDownStreamProject() %>']").attr('selected', 'selected');
 				$("#downstreamCriteria option[value='<%= existingJob.getDownStreamCriteria() %>']").attr('selected', 'selected');
@@ -690,17 +690,48 @@
 			enableDisableCollabNet();
 			ciConfigureError('errMsg', "");
 		});
-		// while editing a job , based on value show hide it (CollabNet build release)
-		enableDisableCollabNet();
 		
 		// Automation implementation - ci config - based on technology show hide information
 		$('#operation').change(function() {
 			showConfigBasedOnTech();
 		});
+		
+		//to hide/show collabnet based on operation
+		showHideCollabnetAccordion();
+		
+		$('#operation').change(function() {
+			showHideCollabnetAccordion();
+		});
+		
+		//hide downstream criteria if nothin is selected
+		showHideDownStreamCriteria();
+		
+		$('#downstreamProject').change(function() {
+			showHideDownStreamCriteria();
+		});
+		
 		showConfigBasedOnTech();
 		
 	});
 	
+	function showHideDownStreamCriteria() {
+		if ($('#downstreamProject').val() == "") {
+			$('#downstreamControlGroup').hide();
+		} else {
+			$('#downstreamControlGroup').show();
+		}
+	}
+	
+	function showHideCollabnetAccordion() {
+		if ($("#operation").val() == 'build') {
+			$("#collabnetContainer").show();
+		} else {
+			$("#collabnetContainer").hide();
+			$('input:radio[name=enableBuildRelease]').filter("[value='false']").attr("checked", true);
+		}
+		enableDisableCollabNet();
+	}
+
 	function showConfigBasedOnTech() {
 		var params = getBasicParams();
 		params = params.concat("&");

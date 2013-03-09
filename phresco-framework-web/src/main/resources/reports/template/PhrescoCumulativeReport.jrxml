@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PhrescoXmlReport" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.100000000000001"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="61"/>
+	<property name="ireport.y" value="0"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<style name="PCRTitle"/>
 	<style name="PCRTitleRect"/>
@@ -37,7 +37,9 @@
 	<parameter name="isMultiModuleProject" class="java.lang.Boolean"/>
 	<parameter name="multiModuleUnitTestReports" class="java.util.List"/>
 	<parameter name="copyRights" class="java.lang.String"/>
-	<parameter name="hideClassColumn" class="java.lang.String"/>
+	<parameter name="isClassEmpty" class="java.lang.Boolean"/>
+	<parameter name="manualId" class="java.lang.String"/>
+	<parameter name="manualSureFireReports" class="java.util.List"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -156,14 +158,14 @@
 				</reportElement>
 				<subreport>
 					<reportElement x="0" y="0" width="555" height="50" isRemoveLineWhenBlank="true"/>
-					<subreportParameter name="hideClassColumn">
-						<subreportParameterExpression><![CDATA[$P{hideClassColumn}]]></subreportParameterExpression>
-					</subreportParameter>
 					<subreportParameter name="multiModuleUnitTestReports">
 						<subreportParameterExpression><![CDATA[$P{multiModuleUnitTestReports}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter name="reportsDataType">
 						<subreportParameterExpression><![CDATA[$P{reportsDataType}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="isClassEmpty">
+						<subreportParameterExpression><![CDATA[$P{isClassEmpty}]]></subreportParameterExpression>
 					</subreportParameter>
 					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{multiModuleUnitTestReports})]]></dataSourceExpression>
 					<subreportExpression><![CDATA["PhrescoModuleSureFireAllReport.jasper"]]></subreportExpression>
@@ -183,11 +185,11 @@
 					<subreportParameter name="testType">
 						<subreportParameterExpression><![CDATA["unit"]]></subreportParameterExpression>
 					</subreportParameter>
-					<subreportParameter name="hideClassColumn">
-						<subreportParameterExpression><![CDATA[$P{hideClassColumn}]]></subreportParameterExpression>
-					</subreportParameter>
 					<subreportParameter name="reportsDataType">
 						<subreportParameterExpression><![CDATA[$P{reportsDataType}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="isClassEmpty">
+						<subreportParameterExpression><![CDATA[$P{isClassEmpty}]]></subreportParameterExpression>
 					</subreportParameter>
 					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{unitTestReports})]]></dataSourceExpression>
 					<subreportExpression><![CDATA["UnitCumulativeReport.jasper"]]></subreportExpression>
@@ -207,11 +209,11 @@
 					<subreportParameter name="testType">
 						<subreportParameterExpression><![CDATA["functional"]]></subreportParameterExpression>
 					</subreportParameter>
-					<subreportParameter name="hideClassColumn">
-						<subreportParameterExpression><![CDATA[$P{hideClassColumn}]]></subreportParameterExpression>
-					</subreportParameter>
 					<subreportParameter name="reportsDataType">
 						<subreportParameterExpression><![CDATA[$P{reportsDataType}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="isClassEmpty">
+						<subreportParameterExpression><![CDATA[$P{isClassEmpty}]]></subreportParameterExpression>
 					</subreportParameter>
 					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{functionalTestReports})]]></dataSourceExpression>
 					<subreportExpression><![CDATA["FunctionalCumulativeReport.jasper"]]></subreportExpression>
@@ -271,6 +273,30 @@
 					</subreportParameter>
 					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{sonarReport})]]></dataSourceExpression>
 					<subreportExpression><![CDATA["SonarJavaJsWebReport.jasper"]]></subreportExpression>
+				</subreport>
+			</frame>
+		</band>
+		<band height="50">
+			<frame>
+				<reportElement x="0" y="0" width="555" height="50" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[!$P{unitTestReports}.isEmpty()]]></printWhenExpression>
+				</reportElement>
+				<subreport>
+					<reportElement x="0" y="0" width="555" height="50" isRemoveLineWhenBlank="true"/>
+					<subreportParameter name="testType">
+						<subreportParameterExpression><![CDATA["manual"]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="manualId">
+						<subreportParameterExpression><![CDATA[$P{manualId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="reportsDataType">
+						<subreportParameterExpression><![CDATA[$P{reportsDataType}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="isClassEmpty">
+						<subreportParameterExpression><![CDATA[$P{isClassEmpty}]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{manualSureFireReports})]]></dataSourceExpression>
+					<subreportExpression><![CDATA["PhrescoManualReport.jasper"]]></subreportExpression>
 				</subreport>
 			</frame>
 		</band>

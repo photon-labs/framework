@@ -454,6 +454,14 @@
             <result type="json" />
         </action>
         
+        <action name="renameConfigNameDir" class="com.photon.phresco.framework.actions.applications.Configurations" method="renameConfigNameDir">
+            <result type="json" />
+        </action>
+        
+        <action name="renameEnvDir" class="com.photon.phresco.framework.actions.applications.Configurations" method="renameEnvDir">
+            <result type="json" />
+        </action>
+        
         <action name="removeConfigFile" class="com.photon.phresco.framework.actions.applications.Configurations" method="removeConfigFile">
             <result type="json" />
         </action>
@@ -561,8 +569,12 @@
         </action>
         
         <action name="createEnvironmentValidate" method="validateEnvironment" class="com.photon.phresco.framework.actions.applications.Configurations">
-        <interceptor-ref name="json" />
+        	<interceptor-ref name="json" />
             <result type="json" />
+        </action>
+        
+        <action name="authenticateServer" method="authenticateServer" class="com.photon.phresco.framework.actions.applications.Configurations">
+            <result name="success">/pages/fileBrowse.jsp</result>
         </action>
         
          <action name="checkForRemove" method="checkForRemove" class="com.photon.phresco.framework.actions.applications.Configurations">
@@ -612,6 +624,10 @@
         	<result name="reader">/pages/applications/reader.jsp</result>
         </action>
         
+		<action name="manualTestCases" method="fetchManualTestSuites" class="com.photon.phresco.framework.actions.applications.Quality">
+        	<result type="json" />
+		</action>
+		
 		<action name="load" method="load" class="com.photon.phresco.framework.actions.applications.Quality">
         	<result name="load">/pages/applications/quality/load.jsp</result>
 		</action>
@@ -623,6 +639,22 @@
 		<action name="runLoadTest" method="runLoadTest" class="com.photon.phresco.framework.actions.applications.Quality">
         	<result name="reader">/pages/applications/reader.jsp</result>
 		</action> 
+		
+		<action name="manual" method="manualTestCase" class="com.photon.phresco.framework.actions.applications.Quality">
+        	<result name="manual">/pages/applications/quality/manualTestCase.jsp</result>
+		</action>
+		
+		<action name="showManualTestPopUp" method="showManualTestPopUp" class="com.photon.phresco.framework.actions.applications.Quality">
+        	<result name="success">/pages/applications/quality/manualPopup.jsp</result>
+		</action>
+		
+		<action name="runManualTest" method="runManualTest" class="com.photon.phresco.framework.actions.applications.Quality">
+        	<result type="json" />
+		</action>
+		
+		<action name="readManualTestCases" method="readManualTestCases" class="com.photon.phresco.framework.actions.applications.Quality">
+        	<result type="json" />
+		</action>
 		
         <action name="functional" method="functional" class="com.photon.phresco.framework.actions.applications.Quality">
         	<result name="functional">/pages/applications/quality/functional.jsp</result>
