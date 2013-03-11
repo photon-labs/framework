@@ -610,10 +610,11 @@ function popupOnOk(obj) {
 		}  else if (okUrl == "deleteJob" ) {
 			deleteCIJob();
 		} else if (okUrl == "saveEmailConfiguration" || okUrl == "updateEmailConfiguration" ) {
-			emailConfigureValidation();
-			configureEmail(okUrl);
-			// show popup loading icon
-			showPopuploadingIcon();
+			if(emailConfigureValidation()) {
+				configureEmail(okUrl);
+				// show popup loading icon
+	 			showPopuploadingIcon();
+			}
 		}
 }
 
