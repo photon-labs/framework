@@ -106,7 +106,7 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 	private String svnType = null;
 	private String branch = null;
 	private String localJenkinsAlive = "";
-
+    
 	// collabNet implementation
 	private boolean enableBuildRelease = false;
 	private String collabNetURL = "";
@@ -303,6 +303,46 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 		return APP_CI_CONFIGURE;
 	}
 
+	public String showEmailConfiguration() {
+		if (debugEnabled) {
+			S_LOGGER.debug("Entering Method  CI.showEmailConfiguration()");
+		}
+		try {
+			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
+			ApplicationInfo appInfo = getApplicationInfo();
+			setReqAttribute(REQ_APPINFO, appInfo);
+			String smtpAuthUsername = ciManager.getMailConfiguration(SMTP_AUTH_USERNAME);
+			String smtpAuthPassword = ciManager.getMailConfiguration(SMTP_AUTH_PASSWORD);
+			setReqAttribute(REQ_SENDER_EMAILID, smtpAuthUsername);
+			setReqAttribute(REQ_SENDER_EMAIL_PASSWORD, smtpAuthPassword);
+		} catch (PhrescoException e) {
+			if (debugEnabled) {
+				S_LOGGER.error("Entered into catch block of CI.showEmailConfiguration()" + FrameworkUtil.getStackTraceAsString(e));
+			}
+			return showErrorPopup(e, getText(EXCEPTION_CI_MAIL_CONFIGURE_POPUP));
+		}
+		return SUCCESS;
+	}
+	
+	public String saveEmailConfiguration() {
+		if (debugEnabled) {
+			S_LOGGER.debug("Entering Method  CI.saveEmailConfiguration()");
+		}
+		try {
+			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
+			ApplicationInfo appInfo = getApplicationInfo();
+			setReqAttribute(REQ_APPINFO, appInfo);
+			String jenkinsPort = getPortNo(Utility.getJenkinsHome());
+			ciManager.saveMailConfiguration(jenkinsPort, senderEmailId, senderEmailPassword);
+			restartJenkins(); // reload config
+			addActionMessage(getText(CI_MAIL_CONFIGURE_SUCCESS));
+		} catch (PhrescoException e) {
+			S_LOGGER.error("Entered into catch block of CI.doUpdateSave()" + FrameworkUtil.getStackTraceAsString(e));
+			addActionMessage(getText(CI_EMAIL_SAVE_UPDATE_FAILED, e.getLocalizedMessage()));
+		}
+		return ci();
+	}
+	
 	private void restoreValues(CIJob ciJob, ApplicationInfo appInfo) throws PhrescoException {
 		try {
 			// restore values
@@ -552,8 +592,6 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 			existJob.setEmail(emails);
 			existJob.setScheduleType(schedule);
 			existJob.setScheduleExpression(cronExpression);
-			existJob.setSenderEmailId(senderEmailId);
-			existJob.setSenderEmailPassword(senderEmailPassword);
 			existJob.setBranch(branch);
 			existJob.setRepoType(svnType);
 			

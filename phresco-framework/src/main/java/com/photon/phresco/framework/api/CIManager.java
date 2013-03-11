@@ -145,4 +145,24 @@ public interface CIManager {
 	 * @throws PhrescoException
 	 */
 	int getTotalBuilds(ApplicationInfo appInfo) throws PhrescoException;
+	
+	/**
+	 * Configure email configuration on jenkins
+	 * @param jenkinsPort
+	 * @param senderEmailId
+	 * @param senderEmailPassword
+	 * @return
+	 * @throws PhrescoException
+	 */
+	void saveMailConfiguration(String jenkinsPort, String senderEmailId, String senderEmailPassword) throws PhrescoException;
+	
+	/**
+	 * Get Configured email configuration
+	 * @param jenkinsPort
+	 * @param senderEmailId
+	 * @param senderEmailPassword
+	 * @return
+	 * @throws PhrescoException
+	 */
+	String getMailConfiguration(String tag) throws PhrescoException;
 }

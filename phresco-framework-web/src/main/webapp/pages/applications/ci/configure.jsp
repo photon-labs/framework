@@ -30,8 +30,6 @@
 <%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 
-<script src="js/select-envs.js"></script>
-
 <%
 	String showSettings = (String) request.getAttribute(FrameworkConstants.REQ_SHOW_SETTINGS);
 	if(showSettings != null && Boolean.valueOf(showSettings)){
@@ -144,24 +142,6 @@
 									</label>
 									<div class="controls">
 										<input type="password" id="password" name="password" class="input-xlarge" maxlength="63" title="63 Characters only" value="">
-									</div>
-								</div>
-								
-								<div class="control-group">
-									<label class="control-label labelbold popupLbl">
-										<s:text name='lbl.sender.mail' />
-									</label>
-									<div class="controls">
-										<input type="text" name="senderEmailId" id="senderEmailId" class="input-xlarge" value="<%= existingJob == null ? "" : existingJob.getSenderEmailId()%>">
-									</div>
-								</div>
-								
-								<div class="control-group">
-									<label class="control-label labelbold popupLbl">
-										<s:text name='lbl.sender.pwd' />
-									</label>
-									<div class="controls">
-										<input type="password" name="senderEmailPassword" class="input-xlarge" value="<%= existingJob == null ? "" : existingJob.getSenderEmailPassword()%>">
 									</div>
 								</div>
 								
