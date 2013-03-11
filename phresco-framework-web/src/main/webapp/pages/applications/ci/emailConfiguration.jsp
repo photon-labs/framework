@@ -38,14 +38,14 @@
     String actionStr = "saveEmailConfiguration";
 %>
 <form id="configureEmailForm" name="ciDetails" action="<%= actionStr %>" method="post" class="ci_form form-horizontal">
-	<div class="theme_accordion_container clearfix" style="float: none;">
-	    <section class="accordion_panel_wid">
-	        <div class="accordion_panel_inner adv-settings-accoridan-inner">
-	            <section class="lft_menus_container adv-settings-width">
-	                <span class="siteaccordion" id="siteaccordion_active"><span><s:text name="lbl.ci.mail.config"/></span></span>
-	                <div class="mfbox siteinnertooltiptxt" id="build_adv_sett">
-	                    <div class="scrollpanel adv_setting_accordian_bottom">
-	                        <section class="scrollpanel_inner">
+<!-- 	<div class="theme_accordion_container clearfix" style="float: none;"> -->
+<%-- 	    <section class="accordion_panel_wid"> --%>
+<!-- 	        <div class="accordion_panel_inner adv-settings-accoridan-inner"> -->
+<%-- 	            <section class="lft_menus_container adv-settings-width"> --%>
+<%-- 	                <span class="siteaccordion" id="siteaccordion_active"><span><s:text name="lbl.ci.mail.config"/></span></span> --%>
+<!-- 	                <div class="mfbox siteinnertooltiptxt" id="build_adv_sett"> -->
+<!-- 	                    <div class="scrollpanel adv_setting_accordian_bottom"> -->
+<%-- 	                        <section class="scrollpanel_inner"> --%>
 				
 								<div class="control-group">
 									<label class="control-label labelbold popupLbl">
@@ -61,23 +61,23 @@
 										<s:text name='lbl.sender.pwd' />
 									</label>
 									<div class="controls">
-										<input type="password" name="senderEmailPassword" class="input-xlarge" value="<%= senderEmailPassword == null ? "" : senderEmailPassword %>">
+										<input type="password" name="senderEmailPassword" id="senderEmailPassword" class="input-xlarge" value="<%= senderEmailPassword == null ? "" : senderEmailPassword %>">
 									</div>
 								</div>
 								
-				            </section>
-	                    </div>
-	                </div>
-	            </section>  
-	        </div>
-	    </section>
-	</div>
+<%-- 				            </section> --%>
+<!-- 	                    </div> -->
+<!-- 	                </div> -->
+<%-- 	            </section>   --%>
+<!-- 	        </div> -->
+<%-- 	    </section> --%>
+<!-- 	</div> -->
 </form>
 
 <script type="text/javascript">
 	$(document).ready(function() {
-		$('.siteaccordion').unbind('click');
-		accordion();
+// 		$('.siteaccordion').unbind('click');
+// 		accordion();
 		
 		hidePopuploadingIcon();
 	});
@@ -86,6 +86,14 @@
 	function emailConfigureValidation() {
 		var senderEmailId = $("#senderEmailId").val();
 		var senderEmailPassword = $("#senderEmailPassword").val();
+		
+		if (isBlank(senderEmailId)) {
+			$("#errMsg").html("Email is empty ");
+			$("#senderEmailId").focus();
+			console.log("Email is empty ");
+			return false;
+		} 
+		
 		if(!isBlank(senderEmailId)) {
 			if(isValidEmail(senderEmailId)) {
 				$("#errMsg").html("Enter Valid Email");
@@ -93,12 +101,9 @@
 				console.log("Email is not valid ");
 				return false;
 			}
-		} else if (isBlank(senderEmailId)) {
-			$("#errMsg").html("Email is empty ");
-			$("#senderEmailId").focus();
-			console.log("Email is empty ");
-			return false;
-		} else if (isBlank(senderEmailPassword)) {
+		} 
+		
+		if (isBlank(senderEmailPassword)) {
 			$("#errMsg").html("Email Password is empty ");
 			$("#senderEmailPassword").focus();
 			console.log("Email Password is empty ");
