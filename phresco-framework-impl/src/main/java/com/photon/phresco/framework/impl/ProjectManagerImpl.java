@@ -214,6 +214,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 						ApplicationProcessor applicationProcessor = dynamicLoader.getApplicationProcessor(applicationHandler.getClazz());
 						applicationProcessor.postCreate(appInfo);
 					}
+					Utility.executeStreamconsumer(MVN_COMMAND + STR_BLANK_SPACE + MVN_GOAL_ECLIPSE, Utility.getProjectHome() + File.separator + appInfo.getAppDirName());
 				}
 			} catch (FileNotFoundException e) {
 				throw new PhrescoException(e); 
@@ -402,7 +403,6 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 			File application = new File(projectsPath + appDirName);
 			deletionSuccess = FileUtil.delete(application);
 		}
-		
 		return deletionSuccess;
 	}
 	
