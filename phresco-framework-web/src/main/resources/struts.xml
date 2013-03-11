@@ -269,7 +269,11 @@
         </action>
         
 <!--         Save email configuration on CI -->
-        <action name="*EmailConfiguration" method="saveEmailConfiguration" class="com.photon.phresco.framework.actions.applications.CI">
+        <action name="saveEmailConfiguration" method="saveEmailConfiguration" class="com.photon.phresco.framework.actions.applications.CI">
+            <result name="ci">/pages/applications/ci/ci.jsp</result>
+        </action>
+        
+        <action name="updateEmailConfiguration" method="saveEmailConfiguration" class="com.photon.phresco.framework.actions.applications.CI">
             <result name="ci">/pages/applications/ci/ci.jsp</result>
         </action>
         
