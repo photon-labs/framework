@@ -504,6 +504,7 @@ public class Configurations extends FrameworkBaseAction {
 									value = settingsCertificateSave(configPath, file);
 								}
 							properties.setProperty(key, value);
+							}
 						}
 						
 						if (CONFIG_TYPE.equals(key) && IIS_SERVER.equals(value)) {
@@ -516,7 +517,6 @@ public class Configurations extends FrameworkBaseAction {
 					}
 				}
 			}
-		}
 			
 		//To get the custom properties
         if (CollectionUtils.isNotEmpty(getKey()) && CollectionUtils.isNotEmpty(getValue())) {
