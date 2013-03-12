@@ -80,11 +80,11 @@
 	
 	<WebService desc="" name="webservice">
             <protocol>http</protocol>
-            <host>172.16.18.178</host>
-            <port>2020</port>
+            <host>localhost</host>
+            <port>3030</port>
             <username/>
             <password/>
-            <context>service-testing</context>
+            <context>service</context>
 	    <additional_context>/rest/api</additional_context>
         </WebService>
         
