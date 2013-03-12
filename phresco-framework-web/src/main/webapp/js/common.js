@@ -753,12 +753,12 @@ function changeTheme(localstore) {
 
 function showWelcomeImage(localstore) {
 	if (localstore == "theme/red_blue/css/blue.css") {
-		$('.headerlogoimg').attr("src","theme/red_blue/images/phresco_header_blue.png");
+		$('.headerlogoimg').attr("src","theme/photon/images/photon_phresco_logo.png");
 		$('.phtaccinno').attr("src","theme/red_blue/images/acc_inov_blue.png");
 		$('.welcomeimg').attr("src","theme/red_blue/images/welcome_photon_blue.png");
 		$('.logoimage').attr("src","theme/red_blue/images/phresco_header_blue.png");
 	} else if (localstore == "theme/red_blue/css/red.css") {
-		$('.headerlogoimg').attr("src","theme/red_blue/images/phresco_header_red.png");
+		$('.headerlogoimg').attr("src","theme/photon/images/photon_phresco_logo.png");
 		$('.phtaccinno').attr("src","theme/red_blue/images/acc_inov_red.png");
 		$('.welcomeimg').attr("src","theme/red_blue/images/welcome_photon_red.png");
 		$('.logoimage').attr("src","theme/red_blue/images/phresco_header_red.png");

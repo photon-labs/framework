@@ -159,7 +159,7 @@
 		                                 </ul>
 		                             </li>
 		                             <li><a href="#" id="forum" ><s:text name="lbl.hdr.help"/></a></li>
-		                             <li><a href="#" id="about" ><s:text name="lbl.abt.phresco"/></a></li>
+		                             <li><a href="#" id="about" ><s:text name="lbl.abt.helios"/></a></li>
 		                             <li><a href="<s:url action='logout'/>"><s:text name="lbl.signout"/></a></li>
 		                         </ul>	
 							</div>
@@ -407,7 +407,6 @@
 	      });
 	      
 		applyTheme();
-		//getLogoImgUrl();
 		showHideTheme();
 		var selectedId = "";
 		$("#customerSelect").val('<%= customerId %>');
@@ -482,7 +481,7 @@
 		});
 		
 		$("#about, #abtPopUp").click(function() {
-			yesnoPopup('about', 'About Phresco', 'updateAvailable', 'Update Available');
+			yesnoPopup('about', 'Helios', 'updateAvailable', 'Update Available');
 		});
 		
 		$("#goToHome").click(function() {
