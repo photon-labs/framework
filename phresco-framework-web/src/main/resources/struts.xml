@@ -592,11 +592,7 @@
         <action name="checkForConfigType" method="checkForConfigType" class="com.photon.phresco.framework.actions.applications.Applications">
             <result type="json" />
         </action>
-        
-        <action name="authenticateServer" method="authenticateServer" class="com.photon.phresco.framework.actions.applications.Applications">
-            <result name="success">/pages/fileBrowse.jsp</result>
-        </action>
-        
+              
 		<action name="configType" method="showProperties" class="com.photon.phresco.framework.actions.applications.Configurations">
 			<interceptor-ref name="json" />
         	<result name="type">/pages/applications/configuration/type.jsp</result>

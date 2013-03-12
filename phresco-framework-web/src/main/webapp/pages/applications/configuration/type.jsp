@@ -655,6 +655,7 @@
 			$("#certificateControl").show();	
 		} else {
 			$("#certificateControl").hide();
+			$("input[name=certificate]").val("");
 		}
 	}
 
