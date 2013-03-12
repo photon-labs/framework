@@ -14,7 +14,7 @@
 	<style name="UCRHeadingLabelValue"/>
 	<parameter name="reportsDataType" class="java.lang.String"/>
 	<parameter name="testType" class="java.lang.String"/>
-	<parameter name="isClassEmpty" class="java.lang.String"/>
+	<parameter name="isClassEmpty" class="java.lang.Boolean"/>
 	<field name="testSuites" class="java.util.List"/>
 	<field name="allTestSuites" class="java.util.List"/>
 	<variable name="count" class="java.lang.Integer" calculation="Count">
@@ -70,6 +70,9 @@
 					<reportElement x="0" y="0" width="555" height="211" isRemoveLineWhenBlank="true">
 						<printWhenExpression><![CDATA[$P{reportsDataType}.equals("detail")]]></printWhenExpression>
 					</reportElement>
+					<subreportParameter name="testType">
+						<subreportParameterExpression><![CDATA[$P{testType}]]></subreportParameterExpression>
+					</subreportParameter>
 					<subreportParameter name="reportsDataType">
 						<subreportParameterExpression><![CDATA[$P{reportsDataType}]]></subreportParameterExpression>
 					</subreportParameter>
