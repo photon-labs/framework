@@ -1503,6 +1503,9 @@ label {
 .table_border a {
 	color:#323232 !important;
 }
+.table_border td.table-pad:last-child a {
+    color:#fff !important;
+}
 
 .no-left-bottom-border {
 	border-top: 1px solid #de522f !important;
