@@ -88,7 +88,7 @@
 	<div class="table_div_unit qtyTable_view" id="tabularViewForManual" style="width:100%;">
            	<div class="fixed-table-container responsiveFixedTableContainer qtyFixedTblContainer">
       			<div class="header-background"> </div>
-	      		<div class="" style="height: 589px !important;">
+	      		<div class="table-container-manualInner" style="height: 589px !important;">
 			        <div style="overflow: auto;">
 				        <table cellspacing="0" class="zebra-striped">
 				          	<thead>
@@ -124,7 +124,7 @@
 		<div class="table_div_unit qtyTable_view" id="testCaseTable" style="width:100%;">
            	<div class="fixed-table-container responsiveFixedTableContainer qtyFixedTblContainer">
       			<div class="header-background"> </div>
-	      		<div class="" style="height: 589px !important;">
+	      		<div class="table-container-manualInner" style="height: 589px !important;">
 			        <div style="overflow: auto;">
 				        <table id="testCaseTable" class="zebra-striped" cellspacing="0">
 							<thead>
@@ -135,14 +135,15 @@
 								<th class="second" style="width:13%">
 									<div id="thName" class="th-inner-test"><s:text name="label.testcase.Id"/></div>
 								</th>
-								<th class="third" style="width:09%">
-									<div id="thName" class="th-inner-test"><s:text name="label.testcase.status"/></div>
-								</th>
-								<th class="fourth" style="width:21%">
+								
+								<th class="third" style="width:21%">
 									<div id="thName" class="th-inner-test"><s:text name="label.testcase.expected.result"/></div>
 								</th>
-								<th class="fifth" style="width:23%">
+								<th class="fourth" style="width:23%">
 									<div id="thName" class="th-inner-test"><s:text name="label.testcase.Actual.result"/></div>
+								</th>
+								<th class="fifth" style="width:09%">
+									<div id="thName" class="th-inner-test"><s:text name="label.testcase.status"/></div>
 								</th>
 								<th class="sixth">
 									<div id="thName" class="th-inner-test"><s:text name="label.testcase.comment"/></div>
@@ -305,9 +306,9 @@ $(document).ready(function() {
 					var newTestCaseRow = $(document.createElement('tr')).attr("id", data.allTestCases[i].testCaseId);
 					newTestCaseRow.html("<td class='firstVal'>"+data.allTestCases[i].featureId+"</td>"+
 							"<td class='secondVal'>"+data.allTestCases[i].testCaseId+"</td>"+
-							"<td class='thirdVal'>"+data.allTestCases[i].status+"</td>"+
-							"<td class='fourthVal'>"+data.allTestCases[i].expectedResult+"</td>"+ 
-							"<td class='fifthVal'>"+data.allTestCases[i].actualResult+"</td>"+
+							"<td class='thirdVal'>"+data.allTestCases[i].expectedResult+"</td>"+ 
+							"<td class='fourthVal'>"+data.allTestCases[i].actualResult+"</td>"+
+							"<td class='fifthVal'>"+data.allTestCases[i].status+"</td>"+
 							"<td class='sixthVal'>"+data.allTestCases[i].bugComment+"</td>")
 				 	newTestCaseRow.appendTo("#testCasesList");	
 				}
