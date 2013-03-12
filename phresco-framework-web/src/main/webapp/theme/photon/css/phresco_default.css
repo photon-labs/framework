@@ -6573,3 +6573,100 @@ color: #313131;
 .loginnamehead {
 	padding: 2px 6px;
 }
+
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+/* Safari 3.0 and Opera 9 rules here */
+	.feature select {
+		margin-left: 15px;
+	    margin-top: 4px;
+		width: 73px !important;
+	}
+
+	.scopeList {
+		float: right !important;
+		line-height : 20px !important;
+		padding: 0 !important;
+		margin: 2px 20px 0 0 !important;
+	}
+
+	.defaultScope {
+		float: right !important;
+		line-height : 20px !important;
+		padding: 0 !important;
+		margin: 2px 36px 0 0 !important;
+	}	
+	.scopeGearCrossList {
+		float: right !important;
+		line-height : 20px !important;
+		padding: 0 !important;
+		margin: 2px 20px 0 0 !important;
+	}
+
+	.scopeGearList {
+		float: right !important;
+		line-height : 20px !important;
+		padding: 0 !important;
+		margin: 2px 5px 0 0 !important;
+	}
+
+	.gear {
+		margin-right: 15px !important;
+		float: right !important;
+	}	
+
+	.gearWithCross {
+		float: right !important;
+	}
+
+	.crossImg {
+		float: right !important;
+	}	
+
+}
+
+
+.feature select {
+	margin-left: 15px;
+    margin-top: 4px;
+	width: 73px !important;
+}
+
+.scopeList {
+	float: right !important;
+	height: 25px !important;
+	padding: 0 !important;
+	margin: 2px 20px 0 0 !important;
+}
+
+.defaultScope {
+	float: right !important;
+	height: 25px !important;
+	padding: 0 !important;
+	margin: 2px 36px 0 0 !important;
+}	
+.scopeGearCrossList {
+	float: right !important;
+	height: 25px !important;
+	padding: 0 !important;
+	margin: 2px 20px 0 0 !important;
+}
+
+.scopeGearList {
+	float: right !important;
+	height: 25px !important;
+	padding: 0 !important;
+	margin: 2px 5px 0 0 !important;
+}
+
+.gear {
+	margin-right: 15px !important;
+	float: right !important;
+}	
+
+.gearWithCross {
+	float: right !important;
+}
+
+.crossImg {
+	float: right !important;
+}	
