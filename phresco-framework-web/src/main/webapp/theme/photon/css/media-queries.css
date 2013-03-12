@@ -484,7 +484,7 @@ Width <= 1024
 	}
 
 	.builds-list-table .th-inner {
-		top: 145px;
+		top: 153px;
 	}	
 
 	#subcontainer {width: 77.5%; float:right; }
@@ -3892,4 +3892,8 @@ Width > 1441 and <= 1600
 	.tabs {
 		width: 190px;
 	}
+	.builds-list-table .th-inner {
+		top: 162px !important;
+	}	
+	
 }

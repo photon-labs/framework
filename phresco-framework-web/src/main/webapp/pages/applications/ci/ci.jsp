@@ -92,6 +92,7 @@
 	        <input id="build" type="button" value="<s:text name="lbl.build"/>" class="btn" disabled="disabled" onclick="buildCI();">
 	        <input id="deleteBuild" type="button" value="<s:text name="lbl.deletebuild"/>" class="btn" disabled="disabled">
 	        <input id="deleteJob" type="button" value="<s:text name="lbl.deletejob"/>" class="btn" disabled="disabled">
+	        <input id="emailConfiguration" type="button" value="<s:text name="lbl.email.configuration"/>" class="btn btn-primary">
         </div>
     </div>
     
@@ -296,6 +297,10 @@ $(document).ready(function() {
 			yesnoPopup('configure', '<s:text name="lbl.configure"/>', 'saveJob','<s:text name="lbl.save"/>', $('#deleteObjects'));	
 		}
 	});
+	
+	$('#emailConfiguration').click(function() {
+		yesnoPopup('showEmailConfiguration', '<s:text name="lbl.email.configuration"/>', 'saveEmailConfiguration','<s:text name="lbl.save"/>', $('#deleteObjects'));
+	});
     
     $('#setup').click(function() {
     	progressPopup('setup', '<%= appId %>', '<%= FrameworkConstants.CI_SETUP %>', '', '', getBasicParams());
@@ -324,11 +329,13 @@ $(document).ready(function() {
     	console.log("jenkins alive , enable configure button ");
     	enableStart();
     	enableButton($("#configure"));
+    	enableButton($("#emailConfiguration"));
     	disableButton($("#setup"));
     } else {
     	console.log("Jenkins down , disabled configure button ");
     	enableStop();
     	disableButton($("#configure"));
+    	disableButton($("#emailConfiguration"));
     }
     
 	// when checking on more than one job, configure button should be disabled. it can not show already created job info for more than one job
@@ -602,6 +609,12 @@ function popupOnOk(obj) {
 			deleteCIBuild();
 		}  else if (okUrl == "deleteJob" ) {
 			deleteCIJob();
+		} else if (okUrl == "saveEmailConfiguration" || okUrl == "updateEmailConfiguration" ) {
+			if(emailConfigureValidation()) {
+				configureEmail(okUrl);
+				// show popup loading icon
+	 			showPopuploadingIcon();
+			}
 		}
 }
 

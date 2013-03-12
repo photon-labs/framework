@@ -227,6 +227,8 @@ public interface FrameworkConstants {
 	String THRESHOLD = "threshold";
 	String ROOT_POM = "rootPOM";
 	String XPATH_ROOT_NODE = "xpathRootNode";
+	String SMTP_AUTH_USERNAME = "smtpAuthUsername";
+	String SMTP_AUTH_PASSWORD = "smtpAuthPassword";
 	String ANY = "Any";
     String GIT = "git";
     String BITKEEPER = "bitkeeper";
@@ -825,6 +827,8 @@ public interface FrameworkConstants {
     String REQ_SERVER_STATUS_URL = "url";
     String REQ_VERSION_INFO = "version";
     String REQ_CI_BUILD_PROGRESS = "buildInProgress";
+    String REQ_SENDER_EMAILID = "senderEmailId";
+    String REQ_SENDER_EMAIL_PASSWORD = "senderEmailPassword";
     
     String REQ_CURRENT_VERSION = "currentVersion";
     String REQ_LATEST_VERSION = "latestVersion";
@@ -1007,6 +1011,7 @@ public interface FrameworkConstants {
     String CI_BUILD_STARTING_ERROR = "Error while starting build in jenkins";
     
     String CI_SAVE_UPDATE_FAILED = "Save Or Updation failed.";
+    String CI_EMAIL_SAVE_UPDATE_FAILED = "Email configuration failed.";
     String CI_BUILD_FAILED = "Build triggered failed.";
     String CI_ONE_JOB_REQUIRED = "Select only one job at a time for configuration";
     String CI_BUILD_LOADED_SHORTLY = "Builds will be loaded shortly";
@@ -1301,6 +1306,7 @@ public interface FrameworkConstants {
     String FAILURE_BUILD = "ci.build.failure";
     String SUCCESS_UPDATE = "ci.update.success";
     String FAILURE_UPDATE = "ci.update.failure";
+    String CI_MAIL_CONFIGURE_SUCCESS = "ci.mail.configure.success";
     
     /* About Keys */
     String ABOUT_SUCCESS_UPDATE = "abt.update.success";
@@ -1606,6 +1612,7 @@ public interface FrameworkConstants {
 		String EXCEPTION_RUNAGNSRC_SERVER_RESTART = "excep.hdr.proj.runagssrc.restart";
 		String EXCEPTION_CI_JOB_LIST = "excep.hdr.ci.job.list.failed";
 		String EXCEPTION_CI_CONFIGURE_POPUP = "excep.hdr.ci.configure.popup.failed";
+		String EXCEPTION_CI_MAIL_CONFIGURE_POPUP = "excep.hdr.ci.mail.configure.popup.failed";
 		String EXCEPTION_CI_JOB_DELETION = "excep.hdr.ci.job.deletion.failed";
 		String EXCEPTION_CI_BUILD_DELETION = "excep.hdr.ci.build.deletion.failed";
 		String EXCEPTION_CI_BUILD_DOWNLOAD_NOT_AVAILABLE = "excep.hdr.ci.build.download.not.available";

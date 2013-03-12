@@ -184,7 +184,6 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
             	setSvnCredential(job);
             }
             
-            setMailCredential(job);
             return new CIJobStatus(result, message);
         } catch (IOException e) {
             throw new PhrescoException(e);
@@ -219,12 +218,6 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
             
             SvnProcessor processor = new SvnProcessor(credentialFile);
             
-//			DataInputStream in = new DataInputStream(new FileInputStream(credentialFile));
-//			while (in.available() != 0) {
-//				System.out.println(in.readLine());
-//			}
-//			in.close();
-			
             processor.changeNodeValue("credentials/entry//userName", job.getUserName());
             processor.changeNodeValue("credentials/entry//password", job.getPassword());
             processor.writeStream(new File(Utility.getJenkinsHome() + File.separator + job.getName()));
@@ -240,9 +233,9 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		}
     }
     
-    private void setMailCredential(CIJob job) {
+    public void saveMailConfiguration(String jenkinsPort, String senderEmailId, String senderEmailPassword) throws PhrescoException {
         if (debugEnabled) {
-        	S_LOGGER.debug("Entering Method CIManagerImpl.setMailCredential");
+        	S_LOGGER.debug("Entering Method CIManagerImpl.saveMailConfiguration");
         }
         try {
             String jenkinsTemplateDir = Utility.getJenkinsTemplateDir();
@@ -254,18 +247,12 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
             
             SvnProcessor processor = new SvnProcessor(mailFile);
             
-//			DataInputStream in = new DataInputStream(new FileInputStream(mailFile));
-//			while (in.available() != 0) {
-//				System.out.println(in.readLine());
-//			}
-//			in.close();
-			
 			// Mail have to go with jenkins running email address
 			InetAddress ownIP = InetAddress.getLocalHost();
-			processor.changeNodeValue(CI_HUDSONURL, HTTP_PROTOCOL + PROTOCOL_POSTFIX + ownIP.getHostAddress() + COLON + job.getJenkinsPort() + FORWARD_SLASH + CI + FORWARD_SLASH);
-            processor.changeNodeValue("smtpAuthUsername", job.getSenderEmailId());
-            processor.changeNodeValue("smtpAuthPassword", job.getSenderEmailPassword());
-            processor.changeNodeValue("adminAddress", job.getSenderEmailId());
+			processor.changeNodeValue(CI_HUDSONURL, HTTP_PROTOCOL + PROTOCOL_POSTFIX + ownIP.getHostAddress() + COLON + jenkinsPort + FORWARD_SLASH + CI + FORWARD_SLASH);
+            processor.changeNodeValue("smtpAuthUsername", senderEmailId);
+            processor.changeNodeValue("smtpAuthPassword", senderEmailPassword);
+            processor.changeNodeValue("adminAddress", senderEmailId);
             
             //jenkins home location
 			String jenkinsJobHome = System.getenv(JENKINS_HOME);
@@ -274,8 +261,34 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
             
             processor.writeStream(new File(builder.toString() + CI_MAILER_XML));
 		} catch (Exception e) {
-       		S_LOGGER.error("Entered into the catch block of CIManagerImpl.setMailCredential " + e.getLocalizedMessage());
+       		S_LOGGER.error("Entered into the catch block of CIManagerImpl.saveMailConfiguration " + e.getLocalizedMessage());
 		}
+    }
+    
+    public String getMailConfiguration(String tag) throws PhrescoException {
+        if (debugEnabled) {
+        	S_LOGGER.debug("Entering Method CIManagerImpl.getMailConfiguration");
+        }
+        try {
+            String jenkinsTemplateDir = Utility.getJenkinsTemplateDir();
+            String mailFilePath = jenkinsTemplateDir + MAIL + HYPHEN + CREDENTIAL_XML;
+            
+            File ciMailerXml = new File(Utility.getJenkinsHome() + File.separator + CI_MAILER_XML);
+            File mailFile = null;
+            if (ciMailerXml.exists()) {
+            	mailFile = ciMailerXml;
+            } else {
+            	mailFile = new File(mailFilePath);
+            }
+            if (debugEnabled) {
+            	S_LOGGER.debug("configFilePath ... " + mailFilePath);
+            }
+            SvnProcessor processor = new SvnProcessor(mailFile);
+			return processor.getNodeValue(tag);
+		} catch (Exception e) {
+       		S_LOGGER.error("Entered into the catch block of CIManagerImpl.saveMailConfiguration " + e.getLocalizedMessage());
+		}
+		return null;
     }
     
     private CIJobStatus buildJob(CIJob job) throws PhrescoException {
