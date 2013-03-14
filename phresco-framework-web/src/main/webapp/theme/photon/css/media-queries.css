@@ -331,6 +331,17 @@ Width <= 1024
 	    /* width: 500px; */
 	}
 	
+	.table_div_manual {
+	    border-radius: 6px 6px 6px 6px;
+	    -webkit-border-top-left-radius: 11px 11px;
+	    -webkit-border-top-right-radius: 11px 11px;
+	    height: 85%;
+	    margin-left: 6px;
+	    margin-right: 6px;
+	    float: left;
+	    /* width: 500px; */
+	}
+	
 	.canvasDiv {
 		width: auto;
 	}
@@ -904,6 +915,18 @@ Width size <= 1024
 	    overflow-x:hidden;
 	}
 	
+	.table_div_manual {
+	    border-radius: 6px 6px 6px 6px;
+	    -webkit-border-top-left-radius: 11px 11px;
+	    -webkit-border-top-right-radius: 11px 11px;
+	    float: left;
+	    height: 97%;
+	    margin-left: 6px;
+	    margin-right: 6px;
+	    /* width: 390px; */
+	    overflow-x:hidden;
+	}
+	
 	.nodeJS_div {
 	    float: left;
 	    left: 13%;
@@ -1416,6 +1439,17 @@ Width >= 1152 and < 1280
 	    /* width: 518px; */
 	}
 	
+	.table_div_manual {
+	    border-radius: 6px 6px 6px 6px;
+	    -webkit-border-top-left-radius: 11px 11px;
+	    -webkit-border-top-right-radius: 11px 11px;
+	    height: 88%;
+	    margin-left: 6px;
+	    margin-right: 6px;
+	    float: left;
+	    /* width: 518px; */
+	}
+	
 	.settings_add_form {
 		 height: 94%;
 		 margin-bottom: 0px;
@@ -1843,6 +1877,17 @@ Width <= 1280 and height <= 800
 		position: relative;
 	}
 	
+	.table_div_manual {
+		border-radius: 6px 6px 6px 6px;
+		-webkit-border-top-left-radius: 11px 11px;
+	    -webkit-border-top-right-radius: 11px 11px;
+		height: 93%;
+		margin-left: 6px;
+		margin-right: 6px;
+		/* width: 650px; */
+		float: left;
+	}
+	
 	/* .table_div {
 		border-radius: 6px 6px 6px 6px;
 		height: 93%;
@@ -1964,6 +2009,17 @@ Width <= 1280 and height <= 800
 	    -webkit-border-top-left-radius: 11px 11px;
 	    -webkit-border-top-right-radius: 11px 11px;
 	    height: 98%;
+	    margin-left: 6px;
+	    margin-right: 6px;
+	  /*   width: 518px; */
+	    float: left;
+	}
+	
+	.table_div_manual {
+	    border-radius: 6px 6px 6px 6px;
+	    -webkit-border-top-left-radius: 11px 11px;
+	    -webkit-border-top-right-radius: 11px 11px;
+	    height: 87%;
 	    margin-left: 6px;
 	    margin-right: 6px;
 	  /*   width: 518px; */
@@ -2341,6 +2397,17 @@ Width >= 1280 and height >= 800
 		overflow-y: auto;
 		overflow-x:hidden;
 		position: relative;
+	}
+	
+	.table_div_manual {
+		border-radius: 6px 6px 6px 6px;
+		-webkit-border-top-left-radius: 11px 11px;
+	    -webkit-border-top-right-radius: 11px 11px;
+		height: 88%;
+		margin-left: 6px;
+		margin-right: 6px;
+		float: left;
+		/* width: 650px; */
 	}
 	
 	/* .table_div {
@@ -2730,6 +2797,17 @@ Width > 1280 and <= 1360
 		overflow-y: auto;
 		overflow-x:hidden;
 		position: relative;
+	}
+	
+	.table_div_manual {
+	    border-radius: 6px 6px 6px 6px;
+	    -webkit-border-top-left-radius: 11px 11px;
+	    -webkit-border-top-right-radius: 11px 11px;
+	    height: 98%;
+	    margin-left: 6px;
+	    margin-right: 6px;
+	    float: left;
+	  /*   width: 550px; */
 	}
 	
 	/* .table_div {
@@ -3294,6 +3372,17 @@ Width > 1360 and <= 1440
 	   /*  width: 650px; */
 	}
 	
+	.table_div_manual {
+	    border-radius: 6px 6px 6px 6px;
+	    -webkit-border-top-left-radius: 11px 11px;
+	    -webkit-border-top-right-radius: 11px 11px;
+	    height: 89%;
+	    margin-left: 6px;
+	    margin-right: 6px;
+	    float: left; 
+	   /*  width: 650px; */
+	}
+	
 	.build_progress_div {
 	    float: left;
 	    height: 92% !important;
@@ -3715,6 +3804,17 @@ Width > 1441 and <= 1600
 	} */
 	
 	.table_div_unit {
+	    border-radius: 6px 6px 6px 6px;
+	    -webkit-border-top-left-radius: 11px 11px;
+	    -webkit-border-top-right-radius: 11px 11px;
+	    height: 89%;
+	    margin-left: 6px;
+	    margin-right: 6px;
+	    float: left; 
+	   /*  width: 650px; */
+	}
+	
+	.table_div_manual {
 	    border-radius: 6px 6px 6px 6px;
 	    -webkit-border-top-left-radius: 11px 11px;
 	    -webkit-border-top-right-radius: 11px 11px;

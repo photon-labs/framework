@@ -21,6 +21,7 @@ package com.photon.phresco.framework.commons;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -46,6 +47,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Element;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -1248,28 +1251,56 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 	}
 
     public  List<TestSuite> readTestSuites(String filePath)  {
-            List<TestSuite> excels = new ArrayList<TestSuite>();
+    	List<TestSuite> excels = new ArrayList<TestSuite>();
+        Iterator<Row> rowIterator = null;
+        try {
+        	File testDir = new File(filePath);
+      		StringBuilder sb = new StringBuilder(filePath);
+   	        if(testDir.isDirectory()) {
+       	        	FilenameFilter filter = new PhrescoFileFilter("", "xlsx");
+       	        	File[] listFiles = testDir.listFiles(filter);
+       	        	if (listFiles.length != 0) {
+						for (File file1 : listFiles) {
+							 if (file1.isFile()) {
+								sb.append(File.separator);
+						    	sb.append(file1.getName());
+						    }
+						}
+						FileInputStream myInput = new FileInputStream(sb.toString());
+						    
+						OPCPackage opc=OPCPackage.open(myInput); 
+						
+						XSSFWorkbook myWorkBook = new XSSFWorkbook(opc);
+						XSSFSheet mySheet = myWorkBook.getSheetAt(0);
+						rowIterator = mySheet.rowIterator();
+       	        	} else {
+   	                	FilenameFilter filter1 = new PhrescoFileFilter("", "xls");
+   	     	            File[] listFiles1 = testDir.listFiles(filter1);
+   	     	            for(File file2 : listFiles1) {
+   	     	            	if (file2.isFile()) {
+   	     	            		sb.append(File.separator);
+   	    	                	sb.append(file2.getName());
+   	     	            	}
+   	     	            }
+   	     	            FileInputStream myInput = new FileInputStream(sb.toString());
+   	     	            HSSFWorkbook myWorkBook = new HSSFWorkbook(myInput);
 
-            try {
-                    FileInputStream myInput = new FileInputStream(filePath);
-
-                    OPCPackage opc=OPCPackage.open(myInput); 
-
-                    XSSFWorkbook myWorkBook = new XSSFWorkbook(opc);
-
-                    XSSFSheet mySheet = myWorkBook.getSheetAt(0);
-                    Iterator<Row> rowIterator = mySheet.rowIterator();
-                    for (int i = 0; i <=2; i++) {
-						rowIterator.next();
-					}
-                    while (rowIterator.hasNext()) {
-                    		Row next = rowIterator.next();
-                    		if (StringUtils.isNotEmpty(getValue(next.getCell(1)))) {
-                    			TestSuite createObject = createObject(next);
-                            	excels.add(createObject);
-                    		}
-                    }
-                    
+	                    HSSFSheet mySheet = myWorkBook.getSheetAt(0);
+	                    rowIterator = mySheet.rowIterator();
+   	                }
+       	        	
+   	        	}
+                for (int i = 0; i <=2; i++) {
+					rowIterator.next();
+				}
+                while (rowIterator.hasNext()) {
+            		Row next = rowIterator.next();
+            		if (StringUtils.isNotEmpty(getValue(next.getCell(1)))) {
+            			TestSuite createObject = createObject(next);
+                    	excels.add(createObject);
+            		}
+                }
+                
             } catch (Exception e) {
                     e.printStackTrace();
             }
@@ -1328,29 +1359,70 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     private List<TestCase> readTestCase(String filePath,String fileName) throws PhrescoException {
     	 List<TestCase> testCases = new ArrayList<TestCase>();
     	 try {
-	    	 FileInputStream myInput = new FileInputStream(filePath);
-	
-	         OPCPackage opc=OPCPackage.open(myInput); 
-	
-	         XSSFWorkbook myWorkBook = new XSSFWorkbook(opc);
-	         int numberOfSheets = myWorkBook.getNumberOfSheets();
-	         for (int j = 0; j < numberOfSheets; j++) {
-	        	 XSSFSheet mySheet = myWorkBook.getSheetAt(j);
-	        	 if(mySheet.getSheetName().equals(fileName)) {
-	        		 Iterator<Row> rowIterator = mySheet.rowIterator();
-	    	         for (int i = 0; i <=23; i++) {
-	    					rowIterator.next();
-	    				}
-	    	         while (rowIterator.hasNext()) {
-	    	         		Row next = rowIterator.next();
-	    	         		if (StringUtils.isNotEmpty(getValue(next.getCell(1)))) {
-	    	         			TestCase createObject = readTest(next);
-	    	         			testCases.add(createObject);
-	    	         		}
-	    	         }
-	        	 }
-			}
-	         
+    		 File testDir = new File(filePath);
+       		StringBuilder sb = new StringBuilder(filePath);
+	        if(testDir.isDirectory()) {
+       	        	FilenameFilter filter = new PhrescoFileFilter("", "xlsx");
+       	        	File[] listFiles = testDir.listFiles(filter);
+       	        	if (listFiles.length != 0) {
+						for (File file1 : listFiles) {
+							 if (file1.isFile()) {
+								sb.append(File.separator);
+						    	sb.append(file1.getName());
+						    }
+						}
+						FileInputStream myInput = new FileInputStream(sb.toString());
+						    
+						OPCPackage opc=OPCPackage.open(myInput); 
+						
+						XSSFWorkbook myWorkBook = new XSSFWorkbook(opc);
+						int numberOfSheets = myWorkBook.getNumberOfSheets();
+				         for (int j = 0; j < numberOfSheets; j++) {
+				        	 XSSFSheet mySheet = myWorkBook.getSheetAt(j);
+				        	 if(mySheet.getSheetName().equals(fileName)) {
+				        		 Iterator<Row> rowIterator = mySheet.rowIterator();
+				    	         for (int i = 0; i <=23; i++) {
+				    					rowIterator.next();
+				    				}
+				    	         while (rowIterator.hasNext()) {
+			    	         		Row next = rowIterator.next();
+			    	         		if (StringUtils.isNotEmpty(getValue(next.getCell(1)))) {
+			    	         			TestCase createObject = readTest(next);
+			    	         			testCases.add(createObject);
+			    	         		}
+				    	         }
+				        	 }
+						}
+       	        	} else {
+   	                	FilenameFilter filter1 = new PhrescoFileFilter("", "xls");
+   	     	            File[] listFiles1 = testDir.listFiles(filter1);
+   	     	            for(File file2 : listFiles1) {
+   	     	            	if (file2.isFile()) {
+   	     	            		sb.append(File.separator);
+   	    	                	sb.append(file2.getName());
+   	     	            	}
+   	     	            }
+   	     	            FileInputStream myInput = new FileInputStream(sb.toString());
+   	     	            HSSFWorkbook myWorkBook = new HSSFWorkbook(myInput);
+	   	     	        int numberOfSheets = myWorkBook.getNumberOfSheets();
+				         for (int j = 0; j < numberOfSheets; j++) {
+				        	 HSSFSheet mySheet = myWorkBook.getSheetAt(j);
+				        	 if(mySheet.getSheetName().equals(fileName)) {
+				        		 Iterator<Row> rowIterator = mySheet.rowIterator();
+				    	         for (int i = 0; i <=23; i++) {
+				    					rowIterator.next();
+				    				}
+				    	         while (rowIterator.hasNext()) {
+			    	         		Row next = rowIterator.next();
+			    	         		if (StringUtils.isNotEmpty(getValue(next.getCell(1)))) {
+			    	         			TestCase createObject = readTest(next);
+			    	         			testCases.add(createObject);
+			    	         		}
+				    	         }
+				        	 }
+				         }
+   	                }
+    	        }
     	 } catch (Exception e) {
     		   //throw new PhrescoException();
 	     }
@@ -1445,5 +1517,28 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 			osBit = OS_BIT86;
 		}
 		return osName.concat(osBit);
+	}
+}
+
+class PhrescoFileFilter implements FilenameFilter {
+	private String name;
+	private String extension;
+
+	public PhrescoFileFilter(String name, String extension) {
+		this.name = name;
+		this.extension = extension;
+	}
+
+	public boolean accept(File directory, String filename) {
+		boolean fileOK = true;
+
+		if (name != null) {
+			fileOK &= filename.startsWith(name);
+		}
+
+		if (extension != null) {
+			fileOK &= filename.endsWith('.' + extension);
+		}
+		return fileOK;
 	}
 }
