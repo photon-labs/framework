@@ -177,11 +177,18 @@ public class Projects extends FrameworkBaseAction {
         try {
             List<TechnologyGroup> techGroups = filterLayer(getLayerId()).getTechGroups();            
             TechnologyGroup technologyGroup = filterTechnologyGroup(techGroups, getTechGroupId());            
-            String techId = getReqParameter(technologyGroup.getId() + REQ_PARAM_NAME_TECHNOLOGY);            
+            String techId = getReqParameter(technologyGroup.getId() + REQ_PARAM_NAME_TECHNOLOGY);  
             List<TechnologyInfo> techInfos = technologyGroup.getTechInfos();
             if (CollectionUtils.isNotEmpty(techInfos)) {
                 for (TechnologyInfo techInfo : techInfos) {
                     if (techInfo.getId().equals(techId)) {
+                    	String findPlatform = FrameworkUtil.findPlatform();
+                    	if (techInfo.getId().equals("tech-win-phone") && findPlatform.equals("Windows86") || findPlatform.equals("Windows32")) {
+                    		List<String> techVersions = techInfo.getTechVersions();
+                    		if (techVersions.contains("8.0")) {
+                    			techInfo.getTechVersions().remove("8.0");
+                    		}
+                    	}
                         setVersions(techInfo.getTechVersions());
                         break;
                     }

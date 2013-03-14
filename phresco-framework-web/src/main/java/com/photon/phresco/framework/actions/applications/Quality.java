@@ -1987,19 +1987,16 @@ public class Quality extends DynamicParameterAction implements Constants {
 			.append(appInfo.getAppDirName())
 			.append(manualTestDir);
 			if (new File(sb.toString()).exists()) {
-				//sb.append(File.separator)
-				//.append(Constants.MANUALTEST_XLSX_FILE);
-				
-				CacheKey key = new CacheKey("testSuites");
-				List<TestSuite> testSuites = (List<TestSuite>) cacheManager.get(key);
-				if (CollectionUtils.isNotEmpty(testSuites)) {
-					setAllTestSuite(testSuites);
-				} else {
-					final List<TestSuite> readManualTestSuiteFile = frameworkUtil.readManualTestSuiteFile(getTestManualResultFiles(sb.toString()));
+				//CacheKey key = new CacheKey("testSuites");
+				//List<TestSuite> testSuitesList = (List<TestSuite>) cacheManager.get(key);
+				//if (CollectionUtils.isNotEmpty(testSuitesList)) {
+				//	setAllTestSuite(testSuitesList);
+				//} else {
+					final List<TestSuite> readManualTestSuiteFile = frameworkUtil.readManualTestSuiteFile(sb.toString());
 					if (CollectionUtils.isNotEmpty(readManualTestSuiteFile)) {
 						
 						setAllTestSuite(readManualTestSuiteFile);
-						cacheManager.add(key, readManualTestSuiteFile);
+						//cacheManager.add(key, readManualTestSuiteFile);
 					}
 				
 					Runnable runnable = new Runnable() {
@@ -2008,7 +2005,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 								for (TestSuite testSuite : readManualTestSuiteFile) {
 									String testSuiteName = testSuite.getName();
 									CacheKey key = new CacheKey(testSuiteName);
-									List<com.photon.phresco.commons.model.TestCase> readManualTestCaseFile = frameworkUtil.readManualTestCaseFile(getTestManualResultFiles(sb.toString()), testSuiteName);
+									List<com.photon.phresco.commons.model.TestCase> readManualTestCaseFile = frameworkUtil.readManualTestCaseFile(sb.toString(), testSuiteName);
 									if (CollectionUtils.isNotEmpty(readManualTestCaseFile)) {
 										cacheManager.add(key, readManualTestCaseFile);
 									}
@@ -2023,7 +2020,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 					t = new Thread(runnable);
 					t.start();
 				}
-			}
+			//}
 		} catch (Exception e) {
 			S_LOGGER.error("Entered into catch block of Quality.fetchManualTestSuites()"+ e);
 		} 
@@ -2039,37 +2036,6 @@ public class Quality extends DynamicParameterAction implements Constants {
 		return SUCCESS;
 	}
 	
- /*
-	public String runManualTest () throws PhrescoException, PhrescoPomException, IOException {
-		if (s_debugEnabled) {
-			S_LOGGER.debug("Entering Method Quality.runManualTest()");
-		}
-		
-		try {
-			ApplicationInfo appInfo = getApplicationInfo();
-			FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-			File filePath = new File(getFilePath());
-			String manualTestDir = frameworkUtil.getManualTestDir(appInfo);
-			StringBuilder destinationFile = new StringBuilder(Utility.getProjectHome())
-			.append(appInfo.getAppDirName())
-			.append(manualTestDir);
-
-			if (!new File(destinationFile.toString()).exists()) {
-				new File(destinationFile.toString()).mkdir();
-			}
-			destinationFile.append(File.separator)
-			.append(Constants.MANUALTEST_XLSX_FILE);
-
-			File destination = new File(destinationFile.toString());
-			FileUtils.copyFile(filePath, destination);
-			List<TestSuite> readManualTestSuiteFile = frameworkUtil.readManualTestSuiteFile(destination.toString());
-			setAllTestSuite(readManualTestSuiteFile);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return SUCCESS;
-	}*/
- 
 	public String readManualTestCases () {
 		if (s_debugEnabled) {
 			S_LOGGER.debug("Entering Method Quality.readManualTestCasesFromSheet()");
@@ -2086,11 +2052,8 @@ public class Quality extends DynamicParameterAction implements Constants {
 				StringBuilder sb = new StringBuilder(Utility.getProjectHome())
 				.append(appInfo.getAppDirName())
 				.append(manualTestDir);
-				//if (new File(sb.toString()).exists()) {
-				//	sb.append(File.separator)
-				//	.append(Constants.MANUALTEST_XLSX_FILE);
 				CacheKey testSuitekey = new CacheKey(getTestSuitName());
-				List<com.photon.phresco.commons.model.TestCase> readTestCase = frameworkUtil.readManualTestCaseFile(getTestManualResultFiles(sb.toString()), getTestSuitName());
+				List<com.photon.phresco.commons.model.TestCase> readTestCase = frameworkUtil.readManualTestCaseFile(sb.toString(), getTestSuitName());
 				if (CollectionUtils.isNotEmpty(readTestCase)) {
 					cacheManager.add(testSuitekey, readTestCase);
 					setAllTestCases(readTestCase);

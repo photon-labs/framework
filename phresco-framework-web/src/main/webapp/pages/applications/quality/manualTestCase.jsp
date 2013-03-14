@@ -85,10 +85,10 @@
 		<canvas id="pie2" width="620" height="335">[No canvas support]</canvas>
 	</div>
 	
-	<div class="table_div_unit qtyTable_view" id="tabularViewForManual" style="width:100%;">
+	<div class="table_div_manual qtyTable_view" id="tabularViewForManual" style="width:99%; overflow: auto;">
            	<div class="fixed-table-container responsiveFixedTableContainer qtyFixedTblContainer">
       			<div class="header-background"> </div>
-	      		<div class="table-container-manualInner" style="height: 589px !important;">
+	      		<div class="table-container-manualInner" style="height: 587px !important;">
 			        <div style="overflow: auto;">
 				        <table cellspacing="0" class="zebra-striped">
 				          	<thead>
@@ -121,7 +121,7 @@
    				</div>
 			</div>
 		</div>
-		<div class="table_div_unit qtyTable_view" id="testCaseTable" style="width:100%;">
+		<div class="table_div_manual qtyTable_view" id="testCaseTable" style="width:99%; overflow: auto;">
            	<div class="fixed-table-container responsiveFixedTableContainer qtyFixedTblContainer">
       			<div class="header-background"> </div>
 	      		<div class="table-container-manualInner" style="height: 589px !important;">
