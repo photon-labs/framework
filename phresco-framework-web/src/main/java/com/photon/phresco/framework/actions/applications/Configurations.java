@@ -443,7 +443,8 @@ public class Configurations extends FrameworkBaseAction {
     		boolean isIISServer = false;
     		Properties properties = new Properties();
     		List<PropertyTemplate> propertyTemplates = new ArrayList<PropertyTemplate>();
-    		if (CONFIG_FEATURES.equals(getConfigId()) || CONFIG_COMPONENTS.equals(getConfigId())) {
+    		
+    		if (FrameworkConstants.ADD_CONFIG.equals(getFromPage()) && (CONFIG_FEATURES.equals(getConfigId()) || CONFIG_COMPONENTS.equals(getConfigId()))) {
     			setEnvName(getEnvironment().getName());
     			propertyTemplates = getPropTemplateFromConfigFile();
     			properties.setProperty(REQ_FEATURE_NAME, getActionContextParam(REQ_FEATURE_NAME));
@@ -1543,10 +1544,10 @@ public class Configurations extends FrameworkBaseAction {
     	try {
     		List<Environment> environments = getAllEnvironments();
     		setReqAttribute(REQ_ENVIRONMENTS, environments);
-    		setReqAttribute(CLONE_FROM_CONFIG_NAME, configName);
-    		setReqAttribute(CLONE_FROM_ENV_NAME, envName);
-    		setReqAttribute(CLONE_FROM_CONFIG_TYPE, configType);
-    		setReqAttribute(CLONE_FROM_CONFIG_DESC, currentConfigDesc);
+    		setReqAttribute(CLONE_FROM_CONFIG_NAME, getConfigName());
+    		setReqAttribute(CLONE_FROM_ENV_NAME, getEnvName());
+    		setReqAttribute(CLONE_FROM_CONFIG_TYPE, getConfigType());
+    		setReqAttribute(CLONE_FROM_CONFIG_DESC, getCurrentConfigDesc());
 		} catch (Exception e) {
 			if (s_debugEnabled) {
 				S_LOGGER.error("Entered into catch block of Configurations.cloneConfigPopup()" + FrameworkUtil.getStackTraceAsString(e));
@@ -2235,6 +2236,24 @@ public class Configurations extends FrameworkBaseAction {
     public String getOldEnvName() {
         return oldEnvName;
     }
+    
+    public String getEnvName() {
+ 		return envName;
+ 	}
+	
+	public void setEnvName(String envName) {
+ 		this.envName = envName;
+ 	} 
+
+ 	public String getConfigName() {
+		return configName;
+	}
+
+	public void setConfigName(String configName) {
+		this.configName = configName;
+	}
+
+	
 
     public void setCsvFiles(String csvFiles) {
         this.csvFiles = csvFiles;
