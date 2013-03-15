@@ -176,6 +176,7 @@ public class Features extends DynamicParameterModule {
 			setReqAttribute(REQ_SCOPE, scopeList);
 			
 			List<SelectedFeature> listFeatures = new ArrayList<SelectedFeature>();
+			List<SelectedFeature> defaultFeatures = new ArrayList<SelectedFeature>();
 			setFeatures(appInfo, listFeatures);
 			if (StringUtils.isNotEmpty(getPilotProject())) {
 				String id = getPilotProject();
@@ -183,11 +184,43 @@ public class Features extends DynamicParameterModule {
 				for (ApplicationInfo applicationInfo : pilotProjects) {
 					if (applicationInfo.getId().equals(id)) {
 						applicationInfo.setAppDirName(appInfo.getAppDirName());
-						setFeatures(applicationInfo, listFeatures);
+						List<String> selectedModules = applicationInfo.getSelectedModules();
+						List<ArtifactGroup> moduleGroups = new ArrayList<ArtifactGroup>();
+						if (CollectionUtils.isNotEmpty(selectedModules)) {
+							for (String selectedModule : selectedModules) {
+								ArtifactInfo moduleArtifactInfo = getServiceManager().getArtifactInfo(selectedModule);
+								String moduleArtifactGroupId = moduleArtifactInfo.getArtifactGroupId();
+								ArtifactGroup moduleArtifactGroupInfo = getServiceManager().getArtifactGroupInfo(moduleArtifactGroupId);
+								moduleGroups.add(moduleArtifactGroupInfo);
+							}
+							createArtifactInfoForDefault(moduleGroups, defaultFeatures, applicationInfo);
+						}
+						List<String> selectedJSLibs = applicationInfo.getSelectedJSLibs();
+						List<ArtifactGroup> jsLibs = new ArrayList<ArtifactGroup>();
+						if (CollectionUtils.isNotEmpty(selectedJSLibs)) {
+							for (String selectedJSLib : selectedJSLibs) {
+								ArtifactInfo jsLibArtifactInfo = getServiceManager().getArtifactInfo(selectedJSLib);
+								String jsLibArtifactGroupId = jsLibArtifactInfo.getArtifactGroupId();
+								ArtifactGroup jsLibArtifactGroupInfo = getServiceManager().getArtifactGroupInfo(jsLibArtifactGroupId);
+								jsLibs.add(jsLibArtifactGroupInfo);
+							}
+							createArtifactInfoForDefault(jsLibs, defaultFeatures, applicationInfo);
+						}
+						List<String> selectedComponents = applicationInfo.getSelectedComponents();
+						List<ArtifactGroup> components = new ArrayList<ArtifactGroup>();
+						if (CollectionUtils.isNotEmpty(selectedComponents)) {
+							for (String selectedComponent : selectedComponents) {
+								ArtifactInfo componentArtifactInfo = getServiceManager().getArtifactInfo(selectedComponent);
+								String componentArtifactGroupId = componentArtifactInfo.getArtifactGroupId();
+								ArtifactGroup componentArtifactGroupInfo = getServiceManager().getArtifactGroupInfo(componentArtifactGroupId);
+								components.add(componentArtifactGroupInfo);
+							}
+							createArtifactInfoForDefault(components, defaultFeatures, applicationInfo);
+						}
 					}
 				}
 			}
-			List<SelectedFeature> defaultFeatures = new ArrayList<SelectedFeature>();
+			
 			List<ArtifactGroup> moduleGroups = getServiceManager().getFeatures(getCustomerId(), getTechnology(), ArtifactGroup.Type.FEATURE.name());
 			if (CollectionUtils.isNotEmpty(moduleGroups)) {
 				createArtifactInfoForDefault(moduleGroups, defaultFeatures, appInfo);
@@ -207,7 +240,11 @@ public class Features extends DynamicParameterModule {
 			if (APP_INFO.equals(getFromTab())) {
 				projectInfo.setAppInfos(Collections.singletonList(createApplicationInfo(appInfo)));
 			}
-			setReqAttribute(REQ_OLD_APPDIR, getOldAppDirName());
+			if (StringUtils.isNotEmpty(getOldAppDirName())) {
+				setReqAttribute(REQ_OLD_APPDIR, getOldAppDirName());
+			} else {
+				setReqAttribute(REQ_OLD_APPDIR, appInfo.getAppDirName());
+			}
 			setSessionAttribute(getAppId() + SESSION_APPINFO, projectInfo);
 		} catch (Exception e) {
 			return showErrorPopup(new PhrescoException(e), getText("Feature Not Available"));
@@ -793,13 +830,15 @@ public class Features extends DynamicParameterModule {
 	}
 	
 	private void getSelectedFeatures(List<SelectedFeature> selectedFeatues, List<ArtifactGroup> artifactGroups) {
-		for (SelectedFeature selectedModule : selectedFeatues) {
-			for (ArtifactGroup artifactGroup : artifactGroups) {
-				List<ArtifactInfo> versions = artifactGroup.getVersions();
-				for (ArtifactInfo artifactInfo : versions) {
-					if(artifactInfo.getId().equals(selectedModule.getVersionID())) {
-						selArtifactGroupNames.add(artifactGroup.getName());
-						selArtifactInfoIds.add(artifactInfo.getId());
+		if (CollectionUtils.isNotEmpty(selectedFeatues)) {
+			for (SelectedFeature selectedModule : selectedFeatues) {
+				for (ArtifactGroup artifactGroup : artifactGroups) {
+					List<ArtifactInfo> versions = artifactGroup.getVersions();
+					for (ArtifactInfo artifactInfo : versions) {
+						if (artifactInfo.getId().equals(selectedModule.getVersionID())) {
+							selArtifactGroupNames.add(artifactGroup.getName());
+							selArtifactInfoIds.add(artifactInfo.getId());
+						}
 					}
 				}
 			}

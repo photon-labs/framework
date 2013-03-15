@@ -507,8 +507,7 @@ public class Applications extends FrameworkBaseAction {
     	} finally {
     		Utility.closeReader(bufferedReader);
     	}
-        
-    	return APP_UPDATE;
+    	return SUCCESS;
     }
     
     public void checkForVersions(String newArtifactid, String oldArtifactGroupId) throws PhrescoException {
@@ -523,7 +522,7 @@ public class Applications extends FrameworkBaseAction {
 				for (ArtifactInfo newartifactInfo : newVersions) {
 					if(!newartifactInfo.getVersion().equals(artifactInfo.getVersion())) {
 						String deleteVersion = "/" + oldDownloadInfo.getName() + "/" + artifactInfo.getVersion();
-						 FileUtils.deleteDirectory(new File(sqlPath,deleteVersion));
+						FileUtils.deleteDirectory(new File(sqlPath, deleteVersion));
 					}
 				}
 			}

@@ -131,7 +131,12 @@ function loadContent(pageUrl, form, tag, additionalParams, callSuccessEvent, aja
 		cache : false,
 		async: ajaxCallType,
 		success : function(data) {
-			loadData(data, tag, pageUrl, callSuccessEvent, callbackFunction);
+			if (pageUrl != "finish") {
+				loadData(data, tag, pageUrl, callSuccessEvent, callbackFunction);
+			} else {
+				var params = getBasicParams();
+				validate('featuresUpdate', $('#formAppInfo'), $('#subcontainer'), params);
+			}	
 		},
 	});
 }
@@ -146,7 +151,7 @@ function clickSave(pageUrl, params, tag, progressText) {
 		type : "POST",
 		success : function(data) {
 			hideProgressBar();
-			loadData(data, tag);
+			loadData(data, tag, pageUrl);
 		}
 	});
 }
@@ -408,6 +413,11 @@ function loadData(data, tag, pageUrl, callSuccessEvent, callbackFunction) {
 			}
 			setTimeOut();
 		}
+	}
+	if (pageUrl == "featuresUpdate") {
+		hideLoadingIcon();
+		$("#envSuccessmsg").show();
+		setTimeOut();
 	}
 }
 

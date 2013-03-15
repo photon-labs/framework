@@ -179,11 +179,14 @@
 				<a href="#" class="inactive" name="appTab" id="ci"><s:label key="lbl.app.menu.ci"  theme="simple"/></a>
 			</li>
 		<%
+			} if(optionIds != null && optionIds.contains(FrameworkConstants.REPORT_KEY)) {
+		%>
+			<li>
+				<a href="#" class="inactive" name="appTab" id="veiwSiteReport"><s:label key="lbl.app.menu.report"  theme="simple"/></a>
+			</li>
+		<%
 			}
 		%>
-		<li>
-			<a href="#" class="inactive" name="appTab" id="veiwSiteReport"><s:label key="lbl.app.menu.report"  theme="simple"/></a>
-		</li>
 		<li>
 			<a href="#" class="inactive" name="appTab" id="download"><s:label key="lbl.app.menu.download"  theme="simple"/></a>
 		</li>

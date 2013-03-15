@@ -97,6 +97,7 @@ public interface FrameworkConstants {
     String CONFIG_TYPE = "type";
     String EXE_DOWNLOAD = "Exe_Download";
     String PROCESS_BUILD = "Process_Build";
+    String EMBED_APPLICATION = "Embed_Application";
     String IMPORT = "import";
     String FEATURE_CONFIG = "FeatureConfig"; 
     
@@ -484,8 +485,10 @@ public interface FrameworkConstants {
 	String FUNCTIONAL_TEST_KEY = "Functional_Test";
 	String PERFORMANCE_TEST_KEY = "Performance_Test";
 	String LOAD_TEST_KEY = "Load_Test";
+	String REPORT_KEY = "Reports";
 	String CI_KEY = "CI";
 	String MINIFICATION_KEY = "Minification";
+	String REMOTE_DEPLOYMENT_OPTION = "Remote_Deployment";
 	String RUN_AGAINST_KEY = "Run_Against_Source";
 	String DEPLOY_KEY = "Deploy";
 	String EXE_DOWNLOAD_KEY = "Exe_Download";
@@ -1032,6 +1035,7 @@ public interface FrameworkConstants {
     String SUCCESS_PROJECT_ADD = "add.project.success";
     String SUCCESS_PROJECT_COMMIT = "commit.project.success";
     String FAILURE_PROJECT_DELETE = "Projects deletion failed";
+    String SUCCESS_APPLICATION_UPDATE = "update.application.success";
     /*
      * Project Import keys
      */
@@ -1520,7 +1524,6 @@ public interface FrameworkConstants {
 		  String ADMIN_USERNAME = "admin_username";
 		  String ADMIN_PASSWORD = "admin_password";
 		  String REMOTE_DEPLOYMENT = "remoteDeployment";
-		  String REMOTE_DEPLOYMENT_OPTION = "Remote_Deployment";
 		  String TYPE_VERSION = "version";
 		  
 		  //SettingsTemplate values 

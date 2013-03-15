@@ -48,6 +48,11 @@
 	boolean hasServer = (Boolean) request.getAttribute(FrameworkConstants.REQ_TECH_HAS_SERVER);
 	boolean hasDb = (Boolean) request.getAttribute(FrameworkConstants.REQ_TECH_HAS_DB);
 	boolean hasWebservice = (Boolean) request.getAttribute(FrameworkConstants.REQ_TECH_HAS_WEBSERVICE);
+	Object optionsObj = session.getAttribute(FrameworkConstants.REQ_OPTION_ID);
+	List<String> optionIds  = null;
+	if (optionsObj != null) {
+		optionIds  = (List<String>) optionsObj;
+	}
 	
 	String id = "";
 	String name = "";
@@ -206,19 +211,23 @@
 		<!-- Technology version start -->
 		<%
 			if (webLayerAppInfo != null) {
-			    String checkedStr = "";
-			    if (webLayerAppInfo.getId().equals(embedAppId)) {
+			   String checkedStr = "";
+			   if (webLayerAppInfo.getId().equals(embedAppId)) {
 			        checkedStr = "checked";
-			    }
+			   }
+			   if (optionIds != null && optionIds.contains(FrameworkConstants.EMBED_APPLICATION)) {     
 		%>
-			<div class="control-group">
-				<label class="accordion-control-label labelbold"><s:text name='lbl.embed'/></label>
-				<div class="controls">
-					<input type="checkbox" name="embedAppId" value="<%= webLayerAppInfo.getId() %>" <%= checkedStr %>/>
-					<%= webLayerAppInfo.getName() %>
-				</div>
-			</div>
-		<% } %>
+					<div class="control-group">
+						<label class="accordion-control-label labelbold"><s:text name='lbl.embed'/></label>
+						<div class="controls">
+							<input type="checkbox" name="embedAppId" value="<%= webLayerAppInfo.getId() %>" <%= checkedStr %>/>
+							<%= webLayerAppInfo.getName() %>
+						</div>
+					</div>
+		<% 
+			   }
+			} 
+		%>
 		<!-- Technology version ends -->
 		
 		<!-- servers start -->
@@ -511,7 +520,9 @@
  		if (isBlank(piltProject)) {
  			deletePilots();
  		} else {
-    <% 			for (ApplicationInfo appInfo : pilotProjects) {
+    <% 			
+    		if (CollectionUtils.isNotEmpty(pilotProjects)) {	
+    			for (ApplicationInfo appInfo : pilotProjects) {
    	%>
 					if (piltProject == '<%= appInfo.getId()%>') {
     <% 					pilotServers = appInfo.getSelectedServers();
@@ -522,6 +533,7 @@
 					}
 	<%
 				}
+ 			}
     %>
  		}
     }
