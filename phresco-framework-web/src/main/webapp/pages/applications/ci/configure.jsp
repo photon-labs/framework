@@ -51,6 +51,15 @@
     List<String> existingJobsNames = (List<String>) request.getAttribute(FrameworkConstants.REQ_EXISTING_JOBS_NAMES);
     Object optionsObj = session.getAttribute(FrameworkConstants.REQ_OPTION_ID);
 	List<String> optionIds  = null;
+	String successEmails = "";
+	String failureEmails = "";
+	if (existingJob != null) {
+		successEmails = existingJob.getEmail().get("successEmails");
+		failureEmails = existingJob.getEmail().get("failureEmails");
+		successEmails = StringUtils.isEmpty(successEmails)? "" : "checked";
+		failureEmails = StringUtils.isEmpty(failureEmails)? "" : "checked";
+	}
+	
 	if (optionsObj != null) {
 		optionIds  = (List<String>) optionsObj;
 	}
@@ -152,7 +161,7 @@
 									<div class="controls">
 										<div class="input">
 											<div class="multipleFields emaillsFieldsWidth">
-												<div><input id="successEmail" type="checkbox" name="emails"  value="success"/>&nbsp; <s:text name="lbl.when.success"/></div>
+												<div><input id="successEmail" type="checkbox" name="emails" <%= successEmails %> value="success"/>&nbsp; <s:text name="lbl.when.success"/></div>
 											</div>
 											<div class="multipleFields">
 												<div><input id="successEmailId" type="text" name="successEmailIds"  value="<%= existingJob == null ? "" : (String)existingJob.getEmail().get("successEmails")%>" disabled></div>
@@ -161,10 +170,10 @@
 										
 										<div class="input">
 											<div class="multipleFields emaillsFieldsWidth">
-												<div><input id="failureEmail" type="checkbox" name="emails" value="failure"/> &nbsp;<s:text name="lbl.when.fail"/></div>
+												<div><input id="failureEmail" type="checkbox" name="emails"  <%= failureEmails %> value="failure"/> &nbsp;<s:text name="lbl.when.fail"/></div>
 											</div>
 											<div class="multipleFields">
-												<div><input id="failureEmailId" type="text" name="failureEmailIds" value="<%= existingJob == null ? "" : (String)existingJob.getEmail().get("failureEmails")%>" disabled></div>
+												<div><input id="failureEmailId" type="text" name="failureEmailIds"  value="<%= existingJob == null ? "" : (String)existingJob.getEmail().get("failureEmails")%>" disabled></div>
 											</div>
 										</div>
 									</div>
@@ -710,9 +719,24 @@
 			showHideDownStreamCriteria();
 		});
 		
+		enableDisableMailId();
 		showConfigBasedOnTech();
 		
 	});
+	
+	function enableDisableMailId() {
+		if ($("#successEmail").is(":checked")) {
+			$("#successEmailId").attr("disabled", false);
+		} else {
+			$("#successEmailId").attr("disabled", true);
+		}
+		
+		if ($("#failureEmail").is(":checked")) {
+			$("#failureEmailId").attr("disabled", false);
+		} else {
+			$("#failureEmailId").attr("disabled", true);
+		}
+	}
 	
 	function showHideDownStreamCriteria() {
 		if ($('#downstreamProject').val() == "") {
