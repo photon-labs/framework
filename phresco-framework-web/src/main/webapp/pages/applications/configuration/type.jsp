@@ -539,6 +539,7 @@
 			fillSelectbox($("select[name='version']"), data.versions);
 		} else if (pageUrl == "listUploadedFiles") {
 			if (data.uploadedFiles != undefined && !isBlank(data.uploadedFiles)) {
+				disableUploadButton($(".file-uploader"));
 				enableButton($("#validateContent, #validateTheme"));
 				for (i in data.uploadedFiles) {
 					var split = data.uploadedFiles[i].split('\\');
@@ -546,11 +547,11 @@
 						var propTempName = $(this).attr("propTempName");
 						var fileName = split[1];
 						if (propTempName === split[0]) {
-							var li = '<li><span class="qq-upload-file">' + fileName + '</span>' +
+							var li = '<li class="qq-upload-success"><span class="qq-upload-file">' + fileName + '</span>' +
 						                '<img class="qq-upload-remove" src="images/icons/delete.png" style="cursor:pointer;" alt="Remove" '+
 						                'eleAttr="file-uploader" fileName="'+ fileName +'" onclick="removeUploadedFile(this);"/>' + 
 						                '<input type="hidden" value="' + fileName + '" class="hidden-fileName" propName="' + propTempName + '" \></li>';
-							$(this).children().children(".qq-upload-list").append(li);;
+							$(this).children().children(".qq-upload-list").append(li);
 						}
 					});
 				}
@@ -561,6 +562,7 @@
 	function removeUploadedFile(obj) {
 		var eleAttr = $(obj).attr("eleAttr");
 		enableUploadButton($("#" + eleAttr));
+		disableButton($("#validateContent, #validateTheme"));
 		var propTempName = $(obj).closest('div .file-uploader').attr("propTempName");
 		$(obj).parent().remove();
 		var configName = $("#configName").val();
@@ -585,6 +587,7 @@
 			success : function(data) {
 			}
 		});
+		enableOrDisableUpldBtn();
 	}
 	
 	function performBtnEvent(obj) {
