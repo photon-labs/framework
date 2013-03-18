@@ -479,12 +479,15 @@ public interface FrameworkConstants {
 	/*
 	 * Technology based Key
 	 */
+	String HELP_KEY = "Help";
+	String SETTINGS_KEY = "Settings";
 	String CODE_KEY = "Code";
 	String BUILD_KEY = "Build";
 	String UNIT_TEST_KEY = "Unit_Test";
 	String FUNCTIONAL_TEST_KEY = "Functional_Test";
 	String PERFORMANCE_TEST_KEY = "Performance_Test";
 	String LOAD_TEST_KEY = "Load_Test";
+	String MANUAL_TEST_KEY = "Manual_Test";
 	String REPORT_KEY = "Reports";
 	String CI_KEY = "CI";
 	String MINIFICATION_KEY = "Minification";

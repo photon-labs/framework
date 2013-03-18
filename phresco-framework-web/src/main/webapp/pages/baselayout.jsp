@@ -115,6 +115,11 @@
             User user = (User) session.getAttribute(FrameworkConstants.SESSION_USER_INFO);
         	String customerId = (String)request.getAttribute(user.getId());
             String displayName = user.getDisplayName();
+            Object optionsObj = session.getAttribute(FrameworkConstants.REQ_OPTION_ID);
+        	List<String> optionIds  = null;
+        	if (optionsObj != null) {
+        		optionIds  = (List<String>) optionsObj;
+        	}
         %>
 		<div class="modal-backdrop fade in popupalign"></div>
 	    
@@ -158,8 +163,17 @@
 		                                     </li>
 		                                 </ul>
 		                             </li>
+		                             <%
+		                             	if (optionIds != null && optionIds.contains(FrameworkConstants.HELP_KEY)) {
+		                             %>
 		                             <li><a href="#" id="forum" ><s:text name="lbl.hdr.help"/></a></li>
+		                             <%
+		                             	} if (optionIds != null && optionIds.contains(FrameworkConstants.SETTINGS_KEY)) {
+		                             %>
 		                             <li><a href="#" id="about" ><s:text name="lbl.abt.helios"/></a></li>
+		                             <%
+		                             	}
+		                             %>
 		                             <li><a href="<s:url action='logout'/>"><s:text name="lbl.signout"/></a></li>
 		                         </ul>	
 							</div>
@@ -176,12 +190,21 @@
 								<li class="wid_app"><a href="#" class="inactive" name="headerMenu" id="applications">
 								    <s:label key="lbl.hdr.projects" theme="simple"/></a>
 								</li>
+								<%
+	                             	if (optionIds != null && optionIds.contains(FrameworkConstants.SETTINGS_KEY)) {
+	                            %>
 								<li class="wid_set"><a href="#" class="inactive" name="headerMenu" id="settings" additionalParam="fromPage=settings">
 								    <s:label key="lbl.hdr.settings"  theme="simple"/></a>
 								</li>
+								<%
+	                             	} if (optionIds != null && optionIds.contains(FrameworkConstants.HELP_KEY)) {
+	                            %>
 								<li class="wid_help"><a href="#" class="inactive" name="headerMenu" id="forum">
 								    <s:label key="lbl.hdr.help"  theme="simple"/></a>
 								</li>
+								<%
+									}
+								%>
 							</ul>
 							<div class="close_links" id="close_links">
 								<a href="JavaScript:void(0);">
