@@ -46,6 +46,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -119,7 +120,8 @@ public class Login extends FrameworkBaseAction {
         if (debugEnabled) {
             S_LOGGER.debug("Entering Method  Login.logout()");
         }
-        
+        User user = (User) getSessionAttribute(SESSION_USER_INFO);
+        removeSessionAttribute(user.getId());
         removeSessionAttribute(SESSION_USER_INFO);
         removeSessionAttribute(SESSION_CUSTOMERS);
         String errorTxt = (String) getSessionAttribute(REQ_LOGIN_ERROR);
@@ -178,8 +180,18 @@ public class Login extends FrameworkBaseAction {
         		reader.close();
         	} 
         	userjson.put(userId, customerId);
-        
-        	setReqAttribute(userId, customerId);
+        	
+        	List<String> customerList = new ArrayList<String>();
+        	for (Customer c : customers) {
+				customerList.add(c.getId());
+			}
+        	//If photon is present in customer list , then ui should load with photon customer
+        	if ((StringUtils.isEmpty(customerId) || PHOTON.equals(customerId)) && customerList.contains(PHOTON)) {
+        		customerId = PHOTON;
+        	}
+        	
+        	
+        	setSessionAttribute(userId, customerId);
         	FileWriter  writer = new FileWriter(tempPath);
         	writer.write(userjson.toString());
         	writer.close();
@@ -295,7 +307,7 @@ public class Login extends FrameworkBaseAction {
 			FileWriter  writer = new FileWriter(tempPath);
 			writer.write(userjson.toString());
 			writer.close();
-			
+			setSessionAttribute(userId, customerId);
 		} catch (IOException e) {
 			return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_FRAMEWORKSTREAM));
 		} catch (ParseException e) {

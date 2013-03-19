@@ -113,7 +113,7 @@
 	<body>
         <%
             User user = (User) session.getAttribute(FrameworkConstants.SESSION_USER_INFO);
-        	String customerId = (String)request.getAttribute(user.getId());
+        	String customerId = (String)session.getAttribute(user.getId());
             String displayName = user.getDisplayName();
             Object optionsObj = session.getAttribute(FrameworkConstants.REQ_OPTION_ID);
         	List<String> optionIds  = null;
