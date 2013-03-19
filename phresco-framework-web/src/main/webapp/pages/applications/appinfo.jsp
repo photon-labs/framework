@@ -796,18 +796,18 @@
     
     function chkForServerCount() {
     	var noOfRows = $('select[name=server]').size();
-		if(noOfRows > 1){
+		if (noOfRows > 1) {
 			$("#deleteIcon").show();
-		}else{
+		} else {
 			$("#deleteIcon").hide();
 		}
     }  
     
     function chkForDBCount() {
 		var noOfRows = $('select[name=database]').size();
-		if(noOfRows > 1){
+		if (noOfRows > 1) {
 			$("#deleteImgIcon").show();
-		}else{
+		} else {
 			$("#deleteImgIcon").hide();
 		}
     }
@@ -863,11 +863,20 @@
 				selectBoxobj.append($("<option></option>").attr("value", data.downloadInfos[0].id).text(data.downloadInfos[0].name).attr("selected", "selected"));
 				var versions = data.downloadInfos[0].artifactGroup.versions;
 				map[data.downloadInfos[0].id] = versions;
+				
+				if ($(versions).size() == 1 && downloadInfoType === "SERVER") {
+					$('#serverControl').find(".imagealign").hide();
+				}
+				
+				if ($(versions).size() == 1 && downloadInfoType === "DATABASE") {
+					$('#databaseControl').find(".imagealign").hide();
+				}
+				
 				if (downloadInfoType === "DATABASE") {
-					getDatabaseVersions(selectBoxobj);
+					getDatabaseVersions(selectBoxobj, '', '#databaseLayerControl', $('input[value=databaseLayer]'), 'checkAll2');
 				}
 				if (downloadInfoType === "SERVER") {
-					getServerVersions(selectBoxobj);
+					getServerVersions(selectBoxobj, '', '#serverLayerControl', $('input[value=serverLayer]'), 'checkAll1');
 				}
 			} else {
 				for (i in data.downloadInfos) {
@@ -897,26 +906,30 @@
 		}
 	}
 	
-	function getServerVersions(obj, selectedDataVersion) {
+	function getServerVersions(obj, selectedDataVersion, layerControlObj, inputValueObj, checkboxId) {
 		var id = $(obj).attr("tempId");
 		var toObj = $("#" + id + "_serverVersion");
-		getVersions($(obj), toObj, selectedDataVersion);
+		getVersions($(obj), toObj, selectedDataVersion, layerControlObj, inputValueObj, checkboxId);
 	}
 	
-	function getDatabaseVersions(obj, selectedDataVersion) {
+	function getDatabaseVersions(obj, selectedDataVersion, layerControlObj, inputValueObj, checkboxId) {
 		var id = $(obj).attr("tempId");
 		var toObj = $("#" + id + "_databaseVersion");
-		getVersions($(obj), toObj, selectedDataVersion);
+		getVersions($(obj), toObj, selectedDataVersion, layerControlObj, inputValueObj, checkboxId);
 	}
 	
 	//To get the versions of the selected server/Db
-	function getVersions(obj, toBeFilledCtrlObj, selectedDataVersion) {
+	function getVersions(obj, toBeFilledCtrlObj, selectedDataVersion, layerControlObj, inputValueObj, checkboxId) {
 		toBeFilledCtrlObj.empty();
 		var id = obj.val();
 		var versions = map[id];
 		//To make version as selected if it is single
 		if ($(versions).size() == 1) { 
 			fillVersions(toBeFilledCtrlObj, versions[0].id, versions[0].version, id, versions[0].id);
+			accordionOpen(layerControlObj, inputValueObj);
+			if (checkboxId != null) {
+				document.getElementById(checkboxId).checked=true;
+			}
 		} else {
 			for (i in versions) {
 				fillVersions(toBeFilledCtrlObj, versions[i].id, versions[i].version, id, selectedDataVersion);
