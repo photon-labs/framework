@@ -46,13 +46,13 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -61,7 +61,6 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import com.photon.phresco.commons.model.Customer;
-import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.User;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.exception.PhrescoWebServiceException;
@@ -119,7 +118,8 @@ public class Login extends FrameworkBaseAction {
         if (debugEnabled) {
             S_LOGGER.debug("Entering Method  Login.logout()");
         }
-        
+        User user = (User) getSessionAttribute(SESSION_USER_INFO);
+        removeSessionAttribute(user.getId());
         removeSessionAttribute(SESSION_USER_INFO);
         removeSessionAttribute(SESSION_CUSTOMERS);
         String errorTxt = (String) getSessionAttribute(REQ_LOGIN_ERROR);
@@ -178,12 +178,21 @@ public class Login extends FrameworkBaseAction {
         		reader.close();
         	} 
         	userjson.put(userId, customerId);
-        
-        	setReqAttribute(userId, customerId);
+        	
+        	List<String> customerList = new ArrayList<String>();
+        	for (Customer c : customers) {
+				customerList.add(c.getId());
+			}
+        	
+        	if ((StringUtils.isEmpty(customerId) || PHOTON.equals(customerId)) && customerList.contains(PHOTON)) {
+        		customerId = PHOTON;
+        	}
+        	
+        	
+        	setSessionAttribute(userId, customerId);
         	FileWriter  writer = new FileWriter(tempPath);
         	writer.write(userjson.toString());
         	writer.close();
-
         } catch (PhrescoWebServiceException e) {
         	if(e.getResponse().getStatus() == 204) {
 				setReqAttribute(REQ_LOGIN_ERROR, getText(ERROR_LOGIN_INVALID_USER));
@@ -295,7 +304,7 @@ public class Login extends FrameworkBaseAction {
 			FileWriter  writer = new FileWriter(tempPath);
 			writer.write(userjson.toString());
 			writer.close();
-			
+			setSessionAttribute(userId, customerId);
 		} catch (IOException e) {
 			return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_FRAMEWORKSTREAM));
 		} catch (ParseException e) {
