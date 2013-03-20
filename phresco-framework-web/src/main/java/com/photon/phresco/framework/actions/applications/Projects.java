@@ -35,6 +35,9 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Element;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import com.google.gson.Gson;
 import com.photon.phresco.commons.model.ApplicationInfo;
@@ -123,6 +126,7 @@ public class Projects extends FrameworkBaseAction {
             setReqAttribute(REQ_PROJECTS, projects);
             setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
             removeSessionAttribute(projectCode);
+            setRecentProjectIdInReq();
             if (IMPORT.equals(getStatusFlag())) {
             	addActionMessage(getText(IMPORT_SUCCESS_PROJECT));
             } else if (UPDATE.equals(getStatusFlag())) {
@@ -140,6 +144,40 @@ public class Projects extends FrameworkBaseAction {
         }
 
         return APP_LIST;
+    }
+    
+    private void setRecentProjectIdInReq() throws PhrescoException {
+        FileReader reader = null;
+        try {
+            File tempPath = new File(Utility.getPhrescoTemp() + File.separator + USER_PROJECT_JSON);
+            User user = (User) getSessionAttribute(SESSION_USER_INFO);
+            JSONObject userProjJson = null;
+            JSONParser parser = new JSONParser();
+            String recentProjectId = "";
+            String recentAppId = "";
+            if (tempPath.exists()) {
+                reader = new FileReader(tempPath);
+                userProjJson = (JSONObject)parser.parse(reader);
+                String csv = (String) userProjJson.get(user.getId());
+                String[] split = csv.split(Constants.STR_COMMA);
+                recentProjectId = split[0];
+                recentAppId = split[1];
+            }
+            setReqAttribute(REQ_RECENT_PROJECT_ID, recentProjectId);
+            setReqAttribute(REQ_RECENT_APP_ID, recentAppId);
+        } catch (IOException e) {
+            throw new PhrescoException(e);
+        } catch (ParseException e) {
+            throw new PhrescoException(e);
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    throw new PhrescoException(e);
+                }
+            }
+        }
     }
 
     /**
@@ -525,7 +563,6 @@ public class Projects extends FrameworkBaseAction {
 	    	if(connectionAlive) {
 	    		deleteSonarProject();
 	    	}
-	    	System.out.println("deleted............");
 	    	projectManager.delete(getSelectedAppInfos());
 	    	addActionMessage(getText(ACT_SUCC_PROJECT_DELETE, Collections.singletonList(getProjectName())));
     	} catch (PhrescoException e) {

@@ -73,6 +73,10 @@
     	<action name="fetchCustomerId" method="fetchCustomerId" class="com.photon.phresco.framework.actions.Login">
 			<result type="json"/>
         </action>
+        
+        <action name="fetchCustomerOptions" method="fetchCustomerOptions" class="com.photon.phresco.framework.actions.Login">
+			<result type="json"/>
+        </action>
     	
         <!--  Home Actions -->
         <action name="home" method="view" class="com.photon.phresco.framework.actions.home.Home">
