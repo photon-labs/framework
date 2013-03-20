@@ -1584,6 +1584,7 @@ public interface FrameworkConstants {
 		String EXCEPTION_QUALITY_LOAD_PARAMS = "excep.hdr.quality.load.params";
 		String EXCEPTION_QUALITY_LOAD_RUN = "excep.hdr.quality.load.run";
 		String EXCEPTION_BUILD_POPUP = "excep.hdr.build.popup";
+		String EXCEPTION_PROCESS_BUILD_POPUP = "excep.hdr.processBuild.popup";
 		String EXCEPTION_DEPLOY_POPUP = "excep.hdr.deploy.popup";
 		String EXCEPTION_BUILD_GENERATE = "excep.hdr.build.generate";
 		String EXCEPTION_DEPLOY_GENERATE = "excep.hdr.deploy.generate";

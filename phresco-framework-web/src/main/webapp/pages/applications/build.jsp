@@ -261,6 +261,8 @@
 			mandatoryValidation("build", $("#generateBuildForm"), '', 'package', 'package', '<%= FrameworkConstants.REQ_BUILD %>');
 		} else if (okUrl === "deploy") {
 			mandatoryValidation("deploy", $("#generateBuildForm"), '', 'deploy', 'deploy', '<%= FrameworkConstants.REQ_FROM_TAB_DEPLOY %>');
+		} else if (okUrl === "processBuild") {
+			mandatoryValidation("processBuild", $("#generateBuildForm"), '', 'process-build', 'process-build', '<%= FrameworkConstants.REQ_PROCESS_BUILD %>', '<%= appId %>');
 		} else if (okUrl === "startServer") {
 			$("#console_div").html("Server is starting...");
 			disableButton($("#runAgainstSourceStart"));
