@@ -23,9 +23,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +34,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.w3c.dom.Element;
 
 import com.google.gson.Gson;
 import com.photon.phresco.commons.model.ApplicationInfo;
@@ -52,6 +53,11 @@ import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.Utility;
+import com.phresco.pom.exception.PhrescoPomException;
+import com.phresco.pom.model.Model;
+import com.phresco.pom.model.Model.Profiles;
+import com.phresco.pom.model.Profile;
+import com.phresco.pom.util.PomProcessor;
 
 /**
  * Struts Action class for Handling Project related operations 
@@ -515,6 +521,11 @@ public class Projects extends FrameworkBaseAction {
 	    	        }
 	    	    }
 	    	}
+	    	boolean connectionAlive = Utility.isConnectionAlive(HTTP_PROTOCOL, LOCALHOST, 9000);
+	    	if(connectionAlive) {
+	    		deleteSonarProject();
+	    	}
+	    	System.out.println("deleted............");
 	    	projectManager.delete(getSelectedAppInfos());
 	    	addActionMessage(getText(ACT_SUCC_PROJECT_DELETE, Collections.singletonList(getProjectName())));
     	} catch (PhrescoException e) {
@@ -527,9 +538,78 @@ public class Projects extends FrameworkBaseAction {
                 S_LOGGER.error("Entered into catch block of Projects.delete()" + FrameworkUtil.getStackTraceAsString(e));
             }
             return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_PROJECT_DELETE));
-        }
+        } catch (PhrescoPomException e) {
+        	S_LOGGER.error("Entered into catch block of Projects.delete()" + FrameworkUtil.getStackTraceAsString(e));
+		} catch (IOException e) {
+			S_LOGGER.error("Entered into catch block of Projects.delete()" + FrameworkUtil.getStackTraceAsString(e));
+		}
     	
     	return list();
+    }
+    
+    private void deleteSonarProject() throws PhrescoException,
+    PhrescoPomException, IOException {
+    	List<ApplicationInfo> selectedAppInfos = getSelectedAppInfos();
+    	for (ApplicationInfo appInfo : selectedAppInfos) {
+    		List<String> sonarProfiles = getSonarProfile(appInfo);
+    		for (String sonarProfile : sonarProfiles) {
+    			FrameworkUtil util = new FrameworkUtil();
+    			PomProcessor pomProcessor = util.getPomProcessor(appInfo.getAppDirName());
+    			String projectName = pomProcessor.getGroupId() + COLON + pomProcessor.getArtifactId() + COLON + sonarProfile;
+    			if(sonarProfile.equals(SONAR_SOURCE)) {
+    				projectName = pomProcessor.getGroupId() + COLON + pomProcessor.getArtifactId();
+    			} if(sonarProfile.equals(FUNCTIONAL)) {
+    				String funTestDir = pomProcessor.getProperty(Constants.POM_PROP_KEY_FUNCTEST_DIR);
+    				String pompath = Utility.getProjectHome() + appInfo.getAppDirName() + File.separator + funTestDir + File.separator + POM_XML;
+    				PomProcessor funPom = new PomProcessor(new File(pompath));
+    				if(funPom.isPomValid()) { 
+    					projectName = funPom.getGroupId() + COLON + funPom.getArtifactId() + COLON + sonarProfile;
+    				}
+    			}
+    			Runtime.getRuntime().exec("curl -u admin:admin -X DELETE " + util.getSonarHomeURL() + "/api/projects/" + projectName);
+    		}
+    	}
+    }
+
+    private List<String> getSonarProfile(ApplicationInfo appInfo) throws PhrescoException {
+    	List<String> sonarTechReports = new ArrayList<String>(6);
+    	StringBuilder builder = new StringBuilder();
+    	builder.append(Utility.getProjectHome())
+    	.append(appInfo.getAppDirName())
+    	.append(File.separator)
+    	.append(POM_XML);
+    	try {
+    		File pomPath = new File(builder.toString());
+    		PomProcessor pomProcessor = new PomProcessor(pomPath);
+    		Model model = pomProcessor.getModel();
+    		S_LOGGER.debug("model... " + model);
+    		Profiles modelProfiles = model.getProfiles();
+    		if (modelProfiles != null && modelProfiles.getProfile() != null) {
+    			S_LOGGER.debug("model Profiles... " + modelProfiles);
+    			List<Profile> profiles = modelProfiles.getProfile();
+    			S_LOGGER.debug("profiles... " + profiles);
+    			for (Profile profile : profiles) {
+    				S_LOGGER.debug("profile...  " + profile);
+    				if (profile.getProperties() != null) {
+    					List<Element> any = profile.getProperties().getAny();
+    					int size = any.size();
+    					for (int i = 0; i < size; ++i) {
+    						boolean tagExist = 	any.get(i).getTagName().equals(SONAR_LANGUAGE);
+    						if (tagExist){
+    							S_LOGGER.debug("profile.getId()... " + profile.getId());
+    							sonarTechReports.add(profile.getId());
+    						}
+    					}
+    				}
+    			}
+    		} if (CollectionUtils.isEmpty(sonarTechReports)) {
+    			sonarTechReports.add(SONAR_SOURCE);
+    		} 
+    		sonarTechReports.add(FUNCTIONAL);
+    	} catch(PhrescoPomException e) {
+    		throw new PhrescoException(e);
+    	}
+    	return sonarTechReports;
     }
     
     /**
