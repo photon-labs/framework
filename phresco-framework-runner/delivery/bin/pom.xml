@@ -271,7 +271,7 @@
 									<version>${phresco.framework.version}</version>
 									<type>war</type>
 									<overWrite>false</overWrite>
-									<outputDirectory>../workspace/tools/war/phresco.war</outputDirectory>
+									<outputDirectory>../workspace/tools/war/helios.war</outputDirectory>
 								</artifactItem>
 
 								<!-- extracting sonar zip file -->
