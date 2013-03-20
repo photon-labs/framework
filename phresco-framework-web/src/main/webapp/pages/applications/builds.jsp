@@ -146,14 +146,10 @@
 			                            }
 									%>
 									
-									<%
- 										if (optionIds != null && optionIds.contains(FrameworkConstants.PROCESS_BUILD)) {
-									%>
-												<a class="processBuild" href="#" additionalParam=buildNumber=<%= buildInfo.getBuildNo() %>&appDirectory=<%= appDirectory %>><img src="images/icons/commit_icon.png" title="Check-in build"/>
+									
+												<a class="processBuild" href="#" additionalParam="buildNumber=<%= buildInfo.getBuildNo() %>&appDirectory=<%= appDirectory %>&from=processBuild"><img src="images/icons/commit_icon.png" title="Check-in build"/>
 		                                    	</a>
-									<% 
- 			                            }
-									%>
+									
 									
 			              		</td>
 			              		<%
@@ -254,7 +250,7 @@
 			var params = getBasicParams();
 			params = params.concat("&");
 			params = params.concat(additionalParam);
-			readerHandlerSubmit('processBuild', '<%= appId %>', '<%= FrameworkConstants.REQ_PROCESS_BUILD %>', '', false, params, $("#console_div"));
+			validateDynamicParam('showProcessBuild', '<s:text name="label.process.build"/>', 'processBuild','<s:text name="label.process.build"/>', '', '<%= Constants.PHASE_PROCESS_BUILD %>', true, additionalParam);
     	});
 	});
 	

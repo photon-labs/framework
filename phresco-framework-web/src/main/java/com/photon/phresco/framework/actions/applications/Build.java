@@ -388,6 +388,37 @@ public class Build extends DynamicParameterAction implements Constants {
 		return APP_ENVIRONMENT_READER;
 	}
 	
+	/*
+	 * To show processBuild popup with loaded dynamic parameters
+	 */
+	public String showProcessBuildPopup() throws PhrescoException {
+		if (debugEnabled) {
+			S_LOGGER.debug("Entering Method  Build.showProcessBuildPopup()");
+		}
+		try {
+		    ApplicationInfo appInfo = getApplicationInfo();
+            removeSessionAttribute(appInfo.getId() + PHASE_PROCESS_BUILD + SESSION_WATCHER_MAP);
+            Map<String, DependantParameters> watcherMap = new HashMap<String, DependantParameters>(8);
+
+            MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_PROCESS_BUILD)));
+            List<Parameter> parameters = getMojoParameters(mojo, PHASE_PROCESS_BUILD);
+
+            setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap, PHASE_PROCESS_BUILD);
+            
+            setSessionAttribute(appInfo.getId() + PHASE_PROCESS_BUILD + SESSION_WATCHER_MAP, watcherMap);
+            setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
+            System.out.println("Build No-----"+getReqParameter(BUILD_NUMBER));
+            setReqAttribute(REQ_DEPLOY_BUILD_NUMBER, getReqParameter(BUILD_NUMBER));
+            setReqAttribute(REQ_GOAL, PHASE_PROCESS_BUILD);
+            setReqAttribute(REQ_PHASE, PHASE_PROCESS_BUILD);
+            setReqAttribute(REQ_FROM, getFrom());
+		} catch (PhrescoException e) {
+			return showErrorPopup(e, getText(EXCEPTION_PROCESS_BUILD_POPUP));
+		} 
+
+		return REQ_PROCESS_BUILD;
+	}
+	
 	public String processBuild() {
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method  processBuild()");

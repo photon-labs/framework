@@ -214,7 +214,9 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 						ApplicationProcessor applicationProcessor = dynamicLoader.getApplicationProcessor(applicationHandler.getClazz());
 						applicationProcessor.postCreate(appInfo);
 					}
-					Utility.executeStreamconsumer(MVN_COMMAND + STR_BLANK_SPACE + MVN_GOAL_ECLIPSE, Utility.getProjectHome() + File.separator + appInfo.getAppDirName());
+					if(isCallEclipsePlugin(appInfo)) {
+						Utility.executeStreamconsumer(MVN_COMMAND + STR_BLANK_SPACE + MVN_GOAL_ECLIPSE, Utility.getProjectHome() + File.separator + appInfo.getAppDirName());
+					}
 				}
 			} catch (FileNotFoundException e) {
 				throw new PhrescoException(e); 
@@ -229,6 +231,20 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 
 		createEnvConfigXml(projectInfo, serviceManager);
 		return projectInfo;
+	}
+	
+	private boolean isCallEclipsePlugin(ApplicationInfo appInfo) throws PhrescoException {
+		String pomFile = Utility.getProjectHome() + File.separator + appInfo.getAppDirName() + File.separator + POM_NAME;
+		try {
+			PomProcessor processor = new PomProcessor(new File(pomFile));
+			String eclipsePlugin = processor.getProperty(POM_PROP_KEY_PHRESCO_ECLIPSE);
+			if(StringUtils.isNotEmpty(eclipsePlugin) && TRUE.equals(eclipsePlugin)) {
+				return true;
+			}
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
+		}
+		return false;
 	}
 
 	public ProjectInfo update(ProjectInfo projectInfo, ServiceManager serviceManager, String oldAppDirName) throws PhrescoException {

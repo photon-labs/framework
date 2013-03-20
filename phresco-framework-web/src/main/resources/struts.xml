@@ -73,6 +73,10 @@
     	<action name="fetchCustomerId" method="fetchCustomerId" class="com.photon.phresco.framework.actions.Login">
 			<result type="json"/>
         </action>
+        
+        <action name="fetchCustomerOptions" method="fetchCustomerOptions" class="com.photon.phresco.framework.actions.Login">
+			<result type="json"/>
+        </action>
     	
         <!--  Home Actions -->
         <action name="home" method="view" class="com.photon.phresco.framework.actions.home.Home">
@@ -364,6 +368,10 @@
         
         <action name="showDeploy" method="showDeployPopup" class="com.photon.phresco.framework.actions.applications.Build">
             <result name="generateBuild">/pages/applications/dynamic_parameter.jsp</result>
+        </action>
+        
+        <action name="showProcessBuild" method="showProcessBuildPopup" class="com.photon.phresco.framework.actions.applications.Build">
+            <result name="processBuild">/pages/applications/dynamic_parameter.jsp</result>
         </action>
         
  		<action name="showRunAgainstSourcePopup" method="showrunAgainstSourcePopup" class="com.photon.phresco.framework.actions.applications.Build">

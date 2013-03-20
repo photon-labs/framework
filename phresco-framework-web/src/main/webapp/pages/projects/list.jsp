@@ -17,12 +17,14 @@
   limitations under the License.
   ###
   --%>
+
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.util.ArrayList"%>
 <%@ page import="java.util.List"%>
 
 <%@ page import="org.apache.commons.collections.CollectionUtils"%>
+<%@ page import="org.apache.commons.lang.StringUtils"%>
 <%@ page import="com.google.gson.Gson"%>
 <%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
 <%@ page import="com.photon.phresco.util.Constants"%>
@@ -33,6 +35,8 @@
 <%
     Projects projectsObj = new Projects(); 
 	List<ProjectInfo> projects = (List<ProjectInfo>) request.getAttribute(FrameworkConstants.REQ_PROJECTS);
+	String recentProjectId = (String) request.getAttribute(FrameworkConstants.REQ_RECENT_PROJECT_ID);
+	String recentAppId = (String) request.getAttribute(FrameworkConstants.REQ_RECENT_APP_ID);
 	Gson gson = new Gson();
 %>
 
@@ -68,98 +72,112 @@
 		</div>
     <% } else { %>	
 		<div class="table_div">
-		<% for (ProjectInfo project : projects) { %>
-			<div class="theme_accordion_container">
-				<section class="accordion_panel_wid">
-					<div class="accordion_panel_inner">
-						<section class="lft_menus_container">
-							<span class="siteaccordion closereg">
-								<span>
-									<input type="checkbox" id="<%= project.getId() %>" class="accordianChkBox" onclick="checkAllEvent(this, $('.<%= project.getId() %>'), false);"/>
-									<a class="vAlignSub" onclick="editProject('<%= project.getId() %>');"><%= project.getName() %></a>
+		<%
+			String checkedStr = "";
+			for (ProjectInfo project : projects) {
+			    if (StringUtils.isNotEmpty(recentProjectId) && project.getId().equals(recentProjectId)) {
+			        checkedStr = "checked";
+			    } else {
+			        checkedStr = "";
+			    }
+		%>
+				<div class="theme_accordion_container">
+					<section class="accordion_panel_wid">
+						<div class="accordion_panel_inner">
+							<section class="lft_menus_container">
+								<span class="siteaccordion closereg">
+									<span>
+										<input type="checkbox" <%= checkedStr %> id="<%= project.getId() %>" class="accordianChkBox" 
+											onclick="checkAllEvent(this, $('.<%= project.getId() %>'), false);"/>
+										<a class="vAlignSub" onclick="editProject('<%= project.getId() %>');"><%= project.getName() %></a>
+									</span>
 								</span>
-							</span>
-							<div class="mfbox siteinnertooltiptxt hideContent">
-								<div class="scrollpanel">
-									<section class="scrollpanel_inner">
-								    	<table class="table table-bordered table_border">
-								    		<thead>
-								    			<tr class="header-background">
-								    				<th class="no-left-bottom-border table-pad table-chkbx">
-								    				</th>
-								    				<th class="no-left-bottom-border table-pad">
-								    					<s:label key="lbl.name" cssClass="labelbold"/>
-								    				</th>
-								    				<th class="no-left-bottom-border table-pad">
-								    					<s:label key="lbl.desc" cssClass="labelbold"/>
-								    				</th>
-								    				<th class="no-left-bottom-border table-pad">
-								    					<s:label key="lbl.technolgoy" cssClass="labelbold"/>
-								    				</th>
-								    				<th class="no-left-bottom-border table-pad">
-								    					<s:label key="lbl.print" cssClass="labelbold"/>
-								    				</th>
-								    				<th class="no-left-bottom-border table-pad">
-								    					<s:label key="lbl.repository" cssClass="labelbold"/>
-								    				</th>
-								    			</tr>
-								    		</thead>
-								    		<tbody>
-								    			<%
-													List<ApplicationInfo> appInfos = project.getAppInfos();
-													if (CollectionUtils.isNotEmpty(appInfos)) {
-														for (ApplicationInfo appInfo : appInfos) {
-												%>
-															<tr>
-																<td class="no-left-bottom-border table-pad">
-																	<input type="checkbox" class="check <%= project.getId() %>" name="selectedAppInfo" value='<%= gson.toJson(appInfo) %>'
-																		onclick="checkboxEvent($('.<%= project.getId() %>'), $('#<%= project.getId() %>'));">
-																</td>
-																<td class="no-left-bottom-border table-pad">
-																	<a href="#" onclick="editApplication('<%= project.getId() %>', '<%= appInfo.getId() %>');" name="edit">
-																		<%= appInfo.getCode() %>
-																	</a>
-																</td>
-																<td class="no-left-bottom-border table-pad">
-																	<%= project.getDescription() %>
-																</td>
-																<td class="no-left-bottom-border table-pad">
-																	<%= projectsObj.getTechNamefromTechId(appInfo.getTechInfo().getId()) %>
-																</td>
-																<td class="no-left-bottom-border table-pad">
-																	<a href="#" id="pdfPopup">
-																		<img id="<%= appInfo.getCode() %>" class="pdfCreation" src="images/icons/print_pdf.png" additionalParam="projectId=<%= project.getId() %>&appId=<%= appInfo.getId() %>&fromPage=All" 
-																			title="Generate Report" class="iconSizeinList"/>
-																	</a>
-																</td>
-																<td class="no-left-bottom-border table-pad">
-																	<a href="#" id="repoImport">
-																		<img id="<%= appInfo.getCode() %>" class="addProject" src="images/icons/add_icon.png"
-																			 additionalParam="projectId=<%= project.getId() %>&appId=<%= appInfo.getId() %>&action=add" title="Add to repo" class="iconSizeinList"/>
-																	</a>
-																	<a href="#" id="repoImport">
-																		<img id="<%= appInfo.getCode() %>" class="commitProject" src="images/icons/commit_icon.png"
-																			 additionalParam="projectId=<%= project.getId() %>&appId=<%= appInfo.getId() %>&action=commit" title="Commit" class="iconSizeinList"/>
-																	</a>
-																	<a href="#" id="projectUpdate">
-																		<img id="<%= appInfo.getCode() %>" class="projectUpdate" src="images/icons/refresh.png"
-																			 additionalParam="projectId=<%= project.getId() %>&appId=<%= appInfo.getId() %>&action=update" title="Update" class="iconSizeinList"/>
-																	</a>
-																</td>
-															</tr>
-													<%
-															}
-														}
+								<div class="mfbox siteinnertooltiptxt hideContent">
+									<div class="scrollpanel">
+										<section class="scrollpanel_inner">
+									    	<table class="table table-bordered table_border">
+									    		<thead>
+									    			<tr class="header-background">
+									    				<th class="no-left-bottom-border table-pad table-chkbx">
+									    				</th>
+									    				<th class="no-left-bottom-border table-pad">
+									    					<s:label key="lbl.name" cssClass="labelbold"/>
+									    				</th>
+									    				<th class="no-left-bottom-border table-pad">
+									    					<s:label key="lbl.desc" cssClass="labelbold"/>
+									    				</th>
+									    				<th class="no-left-bottom-border table-pad">
+									    					<s:label key="lbl.technolgoy" cssClass="labelbold"/>
+									    				</th>
+									    				<th class="no-left-bottom-border table-pad">
+									    					<s:label key="lbl.print" cssClass="labelbold"/>
+									    				</th>
+									    				<th class="no-left-bottom-border table-pad">
+									    					<s:label key="lbl.repository" cssClass="labelbold"/>
+									    				</th>
+									    			</tr>
+									    		</thead>
+									    		<tbody>
+									    			<%
+														List<ApplicationInfo> appInfos = project.getAppInfos();
+														if (CollectionUtils.isNotEmpty(appInfos)) {
+															for (ApplicationInfo appInfo : appInfos) {
+															    if (StringUtils.isNotEmpty(recentAppId) && appInfo.getId().equals(recentAppId)) {
+															        checkedStr = "checked";
+															    } else {
+															        checkedStr = "";
+															    }
 													%>
-								    		</tbody>
-										</table>
-									</section>
+																<tr>
+																	<td class="no-left-bottom-border table-pad">
+																		<input type="checkbox" class="check <%= project.getId() %>" name="selectedAppInfo" value='<%= gson.toJson(appInfo) %>'
+																			<%= checkedStr %> onclick="checkboxEvent($('.<%= project.getId() %>'), $('#<%= project.getId() %>'));">
+																	</td>
+																	<td class="no-left-bottom-border table-pad">
+																		<a href="#" onclick="editApplication('<%= project.getId() %>', '<%= appInfo.getId() %>');" name="edit">
+																			<%= appInfo.getCode() %>
+																		</a>
+																	</td>
+																	<td class="no-left-bottom-border table-pad">
+																		<%= project.getDescription() %>
+																	</td>
+																	<td class="no-left-bottom-border table-pad">
+																		<%= projectsObj.getTechNamefromTechId(appInfo.getTechInfo().getId()) %>
+																	</td>
+																	<td class="no-left-bottom-border table-pad">
+																		<a href="#" id="pdfPopup">
+																			<img id="<%= appInfo.getCode() %>" class="pdfCreation" src="images/icons/print_pdf.png" additionalParam="projectId=<%= project.getId() %>&appId=<%= appInfo.getId() %>&fromPage=All" 
+																				title="Generate Report" class="iconSizeinList"/>
+																		</a>
+																	</td>
+																	<td class="no-left-bottom-border table-pad">
+																		<a href="#" id="repoImport">
+																			<img id="<%= appInfo.getCode() %>" class="addProject" src="images/icons/add_icon.png"
+																				 additionalParam="projectId=<%= project.getId() %>&appId=<%= appInfo.getId() %>&action=add" title="Add to repo" class="iconSizeinList"/>
+																		</a>
+																		<a href="#" id="repoImport">
+																			<img id="<%= appInfo.getCode() %>" class="commitProject" src="images/icons/commit_icon.png"
+																				 additionalParam="projectId=<%= project.getId() %>&appId=<%= appInfo.getId() %>&action=commit" title="Commit" class="iconSizeinList"/>
+																		</a>
+																		<a href="#" id="projectUpdate">
+																			<img id="<%= appInfo.getCode() %>" class="projectUpdate" src="images/icons/refresh.png"
+																				 additionalParam="projectId=<%= project.getId() %>&appId=<%= appInfo.getId() %>&action=update" title="Update" class="iconSizeinList"/>
+																		</a>
+																	</td>
+																</tr>
+														<%
+																}
+															}
+														%>
+									    		</tbody>
+											</table>
+										</section>
+									</div>
 								</div>
-							</div>
-						</section>  
-					</div>
-				</section>
-			</div>
+							</section>  
+						</div>
+					</section>
+				</div>
 			<% } %>
 		</div>
 	<% } %>
@@ -169,6 +187,10 @@
 	accordion();//To create the accordion
 	
 	confirmDialog($("#deleteBtn"), '<s:text name="lbl.hdr.confirm.dialog"/>', '<s:text name="modal.body.text.del.project"/>', 'deleteProject','<s:text name="lbl.btn.ok"/>');
+	
+	//To open the recently opened project's accordion
+	$(".accordianChkBox:checked").parent().parent().removeClass('closereg').addClass('openreg');
+	$(".accordianChkBox:checked").parent().parent().next('.mfbox').show();
 	
 	//To check whether the device is ipad or not and then apply jquery scrollbar
 	if (!isiPad()) {
