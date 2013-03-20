@@ -48,7 +48,7 @@
 <%
    	String from = (String) request.getAttribute(FrameworkConstants.REQ_BUILD_FROM);
    	String buildNumber = "";
-   	if (FrameworkConstants.REQ_DEPLOY.equals(from)) {
+   	if (FrameworkConstants.REQ_DEPLOY.equals(from) || FrameworkConstants.REQ_PROCESS_BUILD.equals(from)) {
     	buildNumber = (String) request.getAttribute(FrameworkConstants.REQ_DEPLOY_BUILD_NUMBER);
     }
    	
@@ -366,7 +366,7 @@
 	<% } %>
 	
 	//to update build number in hidden field for deploy popup
-	<% if (FrameworkConstants.REQ_DEPLOY.equals(from)) { %>
+	<% if (FrameworkConstants.REQ_DEPLOY.equals(from) || FrameworkConstants.REQ_PROCESS_BUILD.equals(from)) { %>
 		$("input[name=buildNumber]").val('<%= buildNumber %>');
 	<% } %>
 	

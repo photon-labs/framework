@@ -366,6 +366,10 @@
             <result name="generateBuild">/pages/applications/dynamic_parameter.jsp</result>
         </action>
         
+        <action name="showProcessBuild" method="showProcessBuildPopup" class="com.photon.phresco.framework.actions.applications.Build">
+            <result name="processBuild">/pages/applications/dynamic_parameter.jsp</result>
+        </action>
+        
  		<action name="showRunAgainstSourcePopup" method="showrunAgainstSourcePopup" class="com.photon.phresco.framework.actions.applications.Build">
             <result name="generateBuild">/pages/applications/dynamic_parameter.jsp</result>
         </action>

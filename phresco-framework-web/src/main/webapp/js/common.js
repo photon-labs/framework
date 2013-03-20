@@ -187,6 +187,9 @@ function mandatoryValidation(pageUrl, form, additionalParams, phase, goal, actio
 					templateMandatoryVal();
 				} else if (pageUrl == "saveJob" || pageUrl == "updateJob") {
 					redirectCiConfigure();
+				} else if(pageUrl == "processBuild") {
+					$("#popupPage").modal('hide');
+					 readerHandlerSubmit('processBuild', appId , actionType, '', false, params, $("#console_div"));
 				}
 			}
 		}
@@ -260,7 +263,7 @@ function validateDynamicParam(successUrl, title, okUrl, okLabel, form, goal, nee
 		params = params.concat("&");
 		params = params.concat(additionalParam);
 	}
-	
+
 	$.ajax({
 		url : "validateDynamicParam",
 		data : params,
