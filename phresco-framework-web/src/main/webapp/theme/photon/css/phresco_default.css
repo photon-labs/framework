@@ -6402,6 +6402,7 @@ color: #313131;
 }
 .dd-selected-text {
 	margin-top: 2px;
+	cursor: pointer;
 }
 
 .dd-selected-description {
