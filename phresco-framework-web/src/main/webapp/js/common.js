@@ -584,18 +584,18 @@ function setTimeOut() {
 		$('#successmsg, #envSuccessmsg').fadeOut("slow", function () {
 			$('#successmsg').hide();
 		});
-	}, 2000);
+	}, 5000);
 	
 	setTimeout(function() {
 		$('#errormsg').fadeOut("slow", function () {
 			$('#errormsg').hide();
 		});
-	}, 2000);
+	}, 5000);
 
 	setTimeout(function() {
 		$('.yesNoPopupErr').empty("slow", function () {
 		});
-	}, 2000);
+	}, 5000);
 }
 
 function openFolder(path) {
