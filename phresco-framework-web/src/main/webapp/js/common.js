@@ -131,7 +131,12 @@ function loadContent(pageUrl, form, tag, additionalParams, callSuccessEvent, aja
 		cache : false,
 		async: ajaxCallType,
 		success : function(data) {
-			loadData(data, tag, pageUrl, callSuccessEvent, callbackFunction);
+			if (pageUrl != "finish") {
+				loadData(data, tag, pageUrl, callSuccessEvent, callbackFunction);
+			} else {
+				var params = getBasicParams();
+				validate('featuresUpdate', $('#formAppInfo'), $('#subcontainer'), params);
+			}	
 		},
 	});
 }
@@ -146,7 +151,7 @@ function clickSave(pageUrl, params, tag, progressText) {
 		type : "POST",
 		success : function(data) {
 			hideProgressBar();
-			loadData(data, tag);
+			loadData(data, tag, pageUrl);
 		}
 	});
 }
@@ -182,6 +187,9 @@ function mandatoryValidation(pageUrl, form, additionalParams, phase, goal, actio
 					templateMandatoryVal();
 				} else if (pageUrl == "saveJob" || pageUrl == "updateJob") {
 					redirectCiConfigure();
+				} else if(pageUrl == "processBuild") {
+					$("#popupPage").modal('hide');
+					 readerHandlerSubmit('processBuild', appId , actionType, '', false, params, $("#console_div"));
 				}
 			}
 		}
@@ -408,6 +416,11 @@ function loadData(data, tag, pageUrl, callSuccessEvent, callbackFunction) {
 			}
 			setTimeOut();
 		}
+	}
+	if (pageUrl == "featuresUpdate") {
+		hideLoadingIcon();
+		$("#envSuccessmsg").show();
+		setTimeOut();
 	}
 }
 
@@ -753,12 +766,12 @@ function changeTheme(localstore) {
 
 function showWelcomeImage(localstore) {
 	if (localstore == "theme/red_blue/css/blue.css") {
-		$('.headerlogoimg').attr("src","theme/red_blue/images/phresco_header_blue.png");
+		$('.headerlogoimg').attr("src","theme/photon/images/photon_phresco_logo.png");
 		$('.phtaccinno').attr("src","theme/red_blue/images/acc_inov_blue.png");
 		$('.welcomeimg').attr("src","theme/red_blue/images/welcome_photon_blue.png");
 		$('.logoimage').attr("src","theme/red_blue/images/phresco_header_blue.png");
 	} else if (localstore == "theme/red_blue/css/red.css") {
-		$('.headerlogoimg').attr("src","theme/red_blue/images/phresco_header_red.png");
+		$('.headerlogoimg').attr("src","theme/photon/images/photon_phresco_logo.png");
 		$('.phtaccinno').attr("src","theme/red_blue/images/acc_inov_red.png");
 		$('.welcomeimg').attr("src","theme/red_blue/images/welcome_photon_red.png");
 		$('.logoimage').attr("src","theme/red_blue/images/phresco_header_red.png");

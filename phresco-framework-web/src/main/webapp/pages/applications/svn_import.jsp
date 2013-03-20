@@ -383,7 +383,7 @@
 // 			enableSvnFormDet();
 		}
 		
-		if ($("[name=repoType]").val() == 'bitkeeper' && isBlank($.trim($("#commitMessage").val()))) {
+		if (<%= FrameworkConstants.COMMIT.equals(action) %> && $("[name=repoType]").val() == 'bitkeeper' && isBlank($.trim($("#commitMessage").val()))) {
 			$("#errMsg").html("Commit message is missing");
 			$("#commitMessage").text("");
 			$("#commitMessage").focus();

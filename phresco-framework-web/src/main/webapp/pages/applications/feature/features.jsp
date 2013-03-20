@@ -71,6 +71,9 @@
 	    <div class="alert alert-success alert-message hideContent" id="successmsg">
 			<s:text name="succ.feature.configure"/>
 		</div>
+		<div class="alert alert-success alert-message hideContent" id="envSuccessmsg" style= "margin-left: 360px; width: 44%;" >
+			<s:text name="update.application.success"/>
+		</div>
 		<div class="featureImage">
 			<img id="allFeatures" title="<s:text name="title.selected.modules"/>" src="images/all.png">
 			<span class="bubbleAll"></span>
@@ -303,14 +306,16 @@ if (CollectionUtils.isNotEmpty(defaultfeatures)) {
     
     function getScopeVal(ctrlClass, scope) {
     	if (scope !== undefined && !isBlank(scope)) {
-    		<% 	for (String scope : scopeList) { %>
-	    			if(scope == "<%= scope %>") {
-	    				$("#"+ctrlClass+"Select").append($("<option></option>").attr("value", scope).text(scope).attr("selected","selected"));
-	    			} else {
-	    				$("#"+ctrlClass+"Select").append($("<option></option>").attr("value", "<%= scope %>").text("<%= scope %>"));
-	    			}
+    		<% 	if (CollectionUtils.isNotEmpty(scopeList)) {
+    				for (String scope : scopeList) { %>
+		    			if (scope == "<%= scope %>") {
+		    				$("#"+ctrlClass+"Select").append($("<option></option>").attr("value", scope).text(scope).attr("selected","selected"));
+		    			} else {
+		    				$("#"+ctrlClass+"Select").append($("<option></option>").attr("value", "<%= scope %>").text("<%= scope %>"));
+		    			}
 	    	<%
-				} 
+					} 
+    			}
 			%>	
     	}
     }
@@ -338,7 +343,7 @@ if (CollectionUtils.isNotEmpty(defaultfeatures)) {
     function updateApplication() {
     	var params = getBasicParams();
     	showProgressBar('<s:text name='progress.txt.update.app'/>');
-    	loadContent('finish', $('#formFeatures'), $('#container'), params, false, true);
+    	loadContent('finish', $('#formFeatures'), $('#subcontainer'), params, false, true);
     }
   	
   	//To show the configuration popup

@@ -239,6 +239,12 @@ div.lgnBtnLabel {
 	overflow-y: auto;
 }
 
+.table-container-manualInner {
+	height: 100%;
+	overflow-x: visible;
+	overflow-y: auto;
+}
+
 .zebra-striped {
 	width: 100%;
 }

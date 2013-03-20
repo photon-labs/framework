@@ -782,7 +782,7 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 			
 			// for build job alone existing do_not_checkin need to be cleared
 			// For pdf report, it should clear existing pdf reports in do_not_checkin folder
-			if ((!"clonedWorkspace".equals(svnType) && BUILD.equals(operation)) || PDF_REPORT.equals(operation)) {
+			if ((!CLONED_WORKSPACE.equals(svnType) && BUILD.equals(operation)) || PDF_REPORT.equals(operation)) {
 				mvncmd = CI_PROFILE + mvncmd;
 			}
 			
@@ -806,8 +806,10 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 				ciManager.updateJob(appInfo, existJob);
 				addActionMessage(getText(SUCCESS_UPDATE));
 			}
-
+			
+			if(!CLONED_WORKSPACE.equals(svnType)) {
 			restartJenkins(); // reload config
+			}
 
 			setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
 		} catch (Exception e) {

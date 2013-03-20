@@ -73,6 +73,10 @@
     	<action name="fetchCustomerId" method="fetchCustomerId" class="com.photon.phresco.framework.actions.Login">
 			<result type="json"/>
         </action>
+        
+        <action name="fetchCustomerOptions" method="fetchCustomerOptions" class="com.photon.phresco.framework.actions.Login">
+			<result type="json"/>
+        </action>
     	
         <!--  Home Actions -->
         <action name="home" method="view" class="com.photon.phresco.framework.actions.home.Home">
@@ -203,7 +207,7 @@
         </action>
         
         <action name="finish" method="update" class="com.photon.phresco.framework.actions.applications.Applications">
-          	<result name="updateApplication">/pages/projects/list.jsp</result>
+          	<result type="json" />
         </action>
         
         <action name="featuresValidate" method="validateForm" class="com.photon.phresco.framework.actions.applications.Features">
@@ -211,6 +215,14 @@
         </action>
         
         <action name="features" method="features" class="com.photon.phresco.framework.actions.applications.Features">
+            <result name="features">/pages/applications/feature/features.jsp</result>
+        </action>
+        
+        <action name="featuresUpdateValidate" method="validateForm" class="com.photon.phresco.framework.actions.applications.Features">
+            <result type="json" />
+        </action>
+        
+        <action name="featuresUpdate" method="features" class="com.photon.phresco.framework.actions.applications.Features">
             <result name="features">/pages/applications/feature/features.jsp</result>
         </action>
         
@@ -356,6 +368,10 @@
         
         <action name="showDeploy" method="showDeployPopup" class="com.photon.phresco.framework.actions.applications.Build">
             <result name="generateBuild">/pages/applications/dynamic_parameter.jsp</result>
+        </action>
+        
+        <action name="showProcessBuild" method="showProcessBuildPopup" class="com.photon.phresco.framework.actions.applications.Build">
+            <result name="processBuild">/pages/applications/dynamic_parameter.jsp</result>
         </action>
         
  		<action name="showRunAgainstSourcePopup" method="showrunAgainstSourcePopup" class="com.photon.phresco.framework.actions.applications.Build">
@@ -592,11 +608,7 @@
         <action name="checkForConfigType" method="checkForConfigType" class="com.photon.phresco.framework.actions.applications.Applications">
             <result type="json" />
         </action>
-        
-        <action name="authenticateServer" method="authenticateServer" class="com.photon.phresco.framework.actions.applications.Applications">
-            <result name="success">/pages/fileBrowse.jsp</result>
-        </action>
-        
+              
 		<action name="configType" method="showProperties" class="com.photon.phresco.framework.actions.applications.Configurations">
 			<interceptor-ref name="json" />
         	<result name="type">/pages/applications/configuration/type.jsp</result>

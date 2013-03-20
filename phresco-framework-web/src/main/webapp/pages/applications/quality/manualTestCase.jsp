@@ -81,11 +81,14 @@
 			<canvas id="bar" width="620" height="400">[No canvas support]</canvas>               
 	</div>
 	
+	<div class="canvas_div canvasDiv" id="graphicalPieView">
+		<canvas id="pie2" width="620" height="335">[No canvas support]</canvas>
+	</div>
 	
-	<div class="table_div_unit qtyTable_view" id="tabularViewForManual" style="width:100%;">
+	<div class="table_div_manual qtyTable_view" id="tabularViewForManual" style="width:99%; overflow: auto;">
            	<div class="fixed-table-container responsiveFixedTableContainer qtyFixedTblContainer">
       			<div class="header-background"> </div>
-	      		<div class="fixed-table-container-inner">
+	      		<div class="table-container-manualInner" style="height: 587px !important;">
 			        <div style="overflow: auto;">
 				        <table cellspacing="0" class="zebra-striped">
 				          	<thead>
@@ -118,10 +121,10 @@
    				</div>
 			</div>
 		</div>
-		<div class="table_div_unit qtyTable_view" id="testCaseTable" style="width:100%;">
+		<div class="table_div_manual qtyTable_view" id="testCaseTable" style="width:99%; overflow: auto;">
            	<div class="fixed-table-container responsiveFixedTableContainer qtyFixedTblContainer">
       			<div class="header-background"> </div>
-	      		<div class="fixed-table-container-inner">
+	      		<div class="table-container-manualInner" style="height: 589px !important;">
 			        <div style="overflow: auto;">
 				        <table id="testCaseTable" class="zebra-striped" cellspacing="0">
 							<thead>
@@ -132,14 +135,15 @@
 								<th class="second" style="width:13%">
 									<div id="thName" class="th-inner-test"><s:text name="label.testcase.Id"/></div>
 								</th>
-								<th class="third" style="width:09%">
-									<div id="thName" class="th-inner-test"><s:text name="label.testcase.status"/></div>
-								</th>
-								<th class="fourth" style="width:21%">
+								
+								<th class="third" style="width:21%">
 									<div id="thName" class="th-inner-test"><s:text name="label.testcase.expected.result"/></div>
 								</th>
-								<th class="fifth" style="width:23%">
+								<th class="fourth" style="width:23%">
 									<div id="thName" class="th-inner-test"><s:text name="label.testcase.Actual.result"/></div>
+								</th>
+								<th class="fifth" style="width:09%">
+									<div id="thName" class="th-inner-test"><s:text name="label.testcase.status"/></div>
 								</th>
 								<th class="sixth">
 									<div id="thName" class="th-inner-test"><s:text name="label.testcase.comment"/></div>
@@ -156,6 +160,10 @@
 		</div>
 </form>		
 <script>
+
+var allValues = "";
+var allTestCases = "";
+
 $(document).ready(function() {
 	if(!isiPad()){
 		/* JQuery scroll bar */
@@ -165,6 +173,7 @@ $(document).ready(function() {
 	$('#tabularViewForManual').hide();
 	$('#testCaseTable').hide();
 	$("#graphicalView").hide();
+	$("#graphicalPieView").hide();
 	readManualTestCases();
 	/* $('#manualTest').click(function() {
 		yesnoPopup('showManualTestPopUp', '<s:text name="lbl.manual.test"/>', 'runManualTest','<s:text name="lbl.test"/>');
@@ -188,6 +197,7 @@ $(document).ready(function() {
 	$('#resultView').change(function() {
 		changeView();
 		canvasInit();
+		canvasInitPie();
 	});
 		
 });
@@ -196,23 +206,64 @@ $(document).ready(function() {
 	function changeView() {
 		var resultView = $('#resultView').val();
 		if (resultView == 'graphical') {
-			$("#graphicalView").show();
-			$("#tabularViewForManual").hide();
-			$('#testCaseTable').hide();
+			var value = $("#testSuite").val();
+			if (value === "All") {
+				$("#graphicalView").show();
+				$("#tabularViewForManual").hide();
+				$('#testCaseTable').hide();
+				$("#graphicalPieView").hide();
+			} else {
+				$("#graphicalView").hide();
+				$("#tabularViewForManual").hide();
+				$('#testCaseTable').hide();
+				showPieView();
+			}
+			
 		} else  {
-			$("#graphicalView").hide();
-			$("#tabularViewForManual").show();
+			var value = $("#testSuite").val();
+			if (value === "All") {
+				$("#graphicalView").hide();
+				$("#graphicalPieView").hide();
+				$("#tabularViewForManual").show();
+				$('#testCaseTable').hide();
+			} else {
+				$("#graphicalView").hide();
+				$("#graphicalPieView").hide();
+				$("#tabularViewForManual").hide();
+				$('#testCaseTable').show();
+				getReport('',value);
+			}
 		}
 	}
-
+	
+	var failurePercent;
+	var successPercent;
+	var name;
+	var total;
+	function showPieView() {
+		$("#graphicalPieView").show();
+		var testSuiteName = $("#testSuite").val();
+		failurePercent = "";
+		successPercent = "";
+		name = "";
+		total = "";
+		name = testSuiteName;
+		for (i in allValues.allTestSuite) {
+			if (allValues.allTestSuite[i].name === testSuiteName) {
+				failurePercent = allValues.allTestSuite[i].failures;
+				successPercent = allValues.allTestSuite[i].tests;
+				total = allValues.allTestSuite[i].total;
+				canvasInitPie();
+			}
+		}
+		
+	}
 	function readManualTestCases() {
 		showLoadingIcon();
 		var params = getBasicParams();
 		loadContent("manualTestCases", $('#manualTestCases'),'', params, true, true);
 	}
 	
-	var allValues = "";
-	var allTestCases = "";
 	function popupOnOk(obj) {
 			var okUrl = $(obj).attr("id");
 			if (okUrl === "runManualTest") {
@@ -255,9 +306,9 @@ $(document).ready(function() {
 					var newTestCaseRow = $(document.createElement('tr')).attr("id", data.allTestCases[i].testCaseId);
 					newTestCaseRow.html("<td class='firstVal'>"+data.allTestCases[i].featureId+"</td>"+
 							"<td class='secondVal'>"+data.allTestCases[i].testCaseId+"</td>"+
-							"<td class='thirdVal'>"+data.allTestCases[i].status+"</td>"+
-							"<td class='fourthVal'>"+data.allTestCases[i].expectedResult+"</td>"+ 
-							"<td class='fifthVal'>"+data.allTestCases[i].actualResult+"</td>"+
+							"<td class='thirdVal'>"+data.allTestCases[i].expectedResult+"</td>"+ 
+							"<td class='fourthVal'>"+data.allTestCases[i].actualResult+"</td>"+
+							"<td class='fifthVal'>"+data.allTestCases[i].status+"</td>"+
 							"<td class='sixthVal'>"+data.allTestCases[i].bugComment+"</td>")
 				 	newTestCaseRow.appendTo("#testCasesList");	
 				}
@@ -325,11 +376,17 @@ $(document).ready(function() {
 	}
 	
 	function reportList(obj) {
-		var val = $(obj).val();
-		if(val === "All") {
-			allReports();
+		var resultView = $('#resultView').val();
+		if (resultView === "tabular") {
+			var val = $(obj).val();
+			if(val === "All") {
+				allReports();
+			} else {
+				getReport('',val);
+			}
 		} else {
-			getReport('',val);
+			changeView();
+			
 		}
 	}
 	
@@ -387,4 +444,29 @@ $(document).ready(function() {
 		bar1.Draw();
 	}
 	
+	function canvasInitPie() {
+	
+		var pie2 = new RGraph.Pie('pie2', [ failurePercent, '', successPercent]); // Create the pie object
+		pie2.Set('chart.gutter.left', 45);
+		pie2.Set('chart.colors', ['orange', 'red', '#6f6']);
+		pie2.Set('chart.key', ['Failures ('+failurePercent+')', '', 'Success ('+successPercent+')', 'Total ::'+total+ 'Tests)']);
+		pie2.Set('chart.key.background', 'white');
+		pie2.Set('chart.strokestyle', 'white');
+		pie2.Set('chart.linewidth', 3);
+		pie2.Set('chart.title', ''+name+' Report');
+		pie2.Set('chart.title.size',10);
+		pie2.Set('chart.title.color', '#8A8A8A');
+		pie2.Set('chart.exploded', [5,5,0]);
+		pie2.Set('chart.shadow', true);
+		pie2.Set('chart.shadow.offsetx', 0);
+		pie2.Set('chart.shadow.offsety', 0);
+		pie2.Set('chart.shadow.blur', 25);
+		pie2.Set('chart.radius', 100);
+		pie2.Set('chart.background.grid.autofit',true);
+		if (RGraph.isIE8()) {
+	    	pie2.Draw();
+		} else {
+	    	RGraph.Effects.Pie.RoundRobin(pie2);
+		}
+	}
 </script>

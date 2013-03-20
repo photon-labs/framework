@@ -111,7 +111,7 @@ public class Configurations extends FrameworkBaseAction {
     private String portError = null;
     private String dynamicError = "";
     private String envName = null;
-    private String configType = null;
+	private String configType = null;
     private String oldConfigType = null;
 	private String envError = null;
 	private String emailError = null;
@@ -437,147 +437,161 @@ public class Configurations extends FrameworkBaseAction {
     	configManager.createConfiguration(environment.getName(), config);
     }
 
-	private Configuration getConfigInstance(String configPath, String fromPage) throws PhrescoException {
-			boolean isIISServer = false;
-			Properties properties = new Properties();
-			List<PropertyTemplate> propertyTemplates = new ArrayList<PropertyTemplate>();
-			if (CONFIG_FEATURES.equals(getConfigId()) || CONFIG_COMPONENTS.equals(getConfigId())) {
-			    setEnvName(getEnvironment().getName());
-			    propertyTemplates = getPropTemplateFromConfigFile();
-			    properties.setProperty(REQ_FEATURE_NAME, getActionContextParam(REQ_FEATURE_NAME));
-			} else if(!REQ_CONFIG_TYPE_OTHER.equals(getConfigType())) {
-				SettingsTemplate configTemplate = getServiceManager().getConfigTemplate(getConfigId(), getCustomerId());
-				propertyTemplates = configTemplate.getProperties();
-			}
-			
-			if (CollectionUtils.isNotEmpty(propertyTemplates)) {
-				for (PropertyTemplate propertyTemplate : propertyTemplates) {
-					if (!TYPE_ACTIONS.equals(propertyTemplate.getType())) {
-						String key = propertyTemplate.getKey();
-						String value = getActionContextParam(key);
-						if (TYPE_FILE.equals(propertyTemplate.getType())) {
-						    if (StringUtils.isNotEmpty(getCsvFiles())) {
-						        Map<String, List<String>> fileNamesMap = new HashMap<String, List<String>>();
-						        String[] csvSplits = getCsvFiles().split(Constants.STR_COMMA);
-						        for (String csvSplit : csvSplits) {
-						            String[] splits = csvSplit.split(SEPARATOR_SEP);
-						            String propName = splits[0];
-						            String fileName = splits[1];
-						            if (fileNamesMap.containsKey(propName)) {
-						                List<String> list = fileNamesMap.get(propName);
-						                list.add(fileName);
-						                fileNamesMap.put(propName, list);
-						            } else {
-						                fileNamesMap.put(propName, Collections.singletonList(fileName));
-						            }
-                                }
-						        StringBuilder sb =  new StringBuilder();
-						        if (MapUtils.isNotEmpty(fileNamesMap)) {
-						            Set<String> keySet = fileNamesMap.keySet();
-						            for (String mapKey : keySet) {
-                                        List<String> fileNames = fileNamesMap.get(mapKey);
-                                        for (String fileName : fileNames) {
-                                            sb.append(mapKey)
-                                            .append(File.separator)
-                                            .append(fileName)
-                                            .append(Constants.STR_COMMA);
-                                        }
-                                    }
-						        }
-						        key = FILES;
-						        value = sb.toString().substring(0, sb.toString().length() - 1);
-						    }
-						}
-						if (REMOTE_DEPLOYMENT.equals(key) && StringUtils.isEmpty(value)) {
-							value = "false";
-						}
-						
-						if (StringUtils.isNotEmpty(key) && !KEY_CERTIFICATE.equals(key) && StringUtils.isNotEmpty(value)) {
-							properties.setProperty(key, value);
-						} else {
-							value = getActionContextParam(key);
-							if (StringUtils.isNotEmpty(value)) {
-								File file = new File(value);
-								if(fromPage.equals(CONFIGURATION)) {
-									value = configCertificateSave(configPath, value, file);
-								} else if (fromPage.equals(SETTINGS)){
-									value = settingsCertificateSave(configPath, file);
-								}
-							properties.setProperty(key, value);
-						}
-						
-						if (CONFIG_TYPE.equals(key) && IIS_SERVER.equals(value)) {
-							isIISServer = true;
-						}
+    private Configuration getConfigInstance(String configPath, String fromPage) throws PhrescoException {
+    	Configuration config = null; 
+    	try {
+    		boolean isIISServer = false;
+    		Properties properties = new Properties();
+    		List<PropertyTemplate> propertyTemplates = new ArrayList<PropertyTemplate>();
+    		
+    		if (FrameworkConstants.ADD_CONFIG.equals(getFromPage()) && (CONFIG_FEATURES.equals(getConfigId()) || CONFIG_COMPONENTS.equals(getConfigId()))) {
+    			setEnvName(getEnvironment().getName());
+    			propertyTemplates = getPropTemplateFromConfigFile();
+    			properties.setProperty(REQ_FEATURE_NAME, getActionContextParam(REQ_FEATURE_NAME));
+    		} else if(!REQ_CONFIG_TYPE_OTHER.equals(getConfigType())) {
+    			SettingsTemplate configTemplate = getServiceManager().getConfigTemplate(getConfigId(), getCustomerId());
+    			propertyTemplates = configTemplate.getProperties();
+    		}
 
-						if (CONFIG_TYPE.equals(key)) {
-							properties.setProperty(TYPE_VERSION, getVersion());
-						}
-					}
-				}
-			}
-		}
-			
-		//To get the custom properties
-        if (CollectionUtils.isNotEmpty(getKey()) && CollectionUtils.isNotEmpty(getValue())) {
-            for (int i = 0; i < getKey().size(); i++) {
-                if (StringUtils.isNotEmpty(getKey().get(i)) && StringUtils.isNotEmpty(getValue().get(i))) {
-            		properties.setProperty(getKey().get(i), getValue().get(i));
-                }
-            }
-        }
-		
-		ApplicationInfo applicationInfo = getApplicationInfo();
-		if (applicationInfo != null && applicationInfo.getTechInfo().getId().equals(FrameworkConstants.TECH_SITE_CORE) && SERVER.equals(getConfigType())) {
-			properties.setProperty(SETTINGS_TEMP_SITECORE_INST_PATH, getSiteCoreInstPath());
-		}
-		
-		if (isIISServer) {
-			properties.setProperty(SETTINGS_TEMP_KEY_APP_NAME, getAppName());
-			properties.setProperty(SETTINGS_TEMP_KEY_SITE_NAME, getSiteName());
-		}
-		Configuration config = new Configuration(getConfigName(), getConfigType());
-		config.setDesc(getDescription());
-		config.setEnvName(getEnvironment().getName());
-		config.setProperties(properties);
-		return config;
-	}
+    		if (CollectionUtils.isNotEmpty(propertyTemplates)) {
+    			for (PropertyTemplate propertyTemplate : propertyTemplates) {
+    				if (!TYPE_ACTIONS.equals(propertyTemplate.getType())) {
+    					String key = propertyTemplate.getKey();
+    					String value = getActionContextParam(key);
+    					if (TYPE_FILE.equals(propertyTemplate.getType())) {
+    						if (StringUtils.isNotEmpty(getCsvFiles())) {
+    							Map<String, List<String>> fileNamesMap = new HashMap<String, List<String>>();
+    							String[] csvSplits = getCsvFiles().split(Constants.STR_COMMA);
+    							for (String csvSplit : csvSplits) {
+    								String[] splits = csvSplit.split(SEPARATOR_SEP);
+    								String propName = splits[0];
+    								String fileName = splits[1];
+    								if (fileNamesMap.containsKey(propName)) {
+    									List<String> list = fileNamesMap.get(propName);
+    									list.add(fileName);
+    									fileNamesMap.put(propName, list);
+    								} else {
+    									fileNamesMap.put(propName, Collections.singletonList(fileName));
+    								}
+    							}
+    							StringBuilder sb =  new StringBuilder();
+    							if (MapUtils.isNotEmpty(fileNamesMap)) {
+    								Set<String> keySet = fileNamesMap.keySet();
+    								for (String mapKey : keySet) {
+    									List<String> fileNames = fileNamesMap.get(mapKey);
+    									for (String fileName : fileNames) {
+    										sb.append(mapKey)
+    										.append(File.separator)
+    										.append(fileName)
+    										.append(Constants.STR_COMMA);
+    									}
+    								}
+    							}
+    							key = FILES;
+    							value = sb.toString().substring(0, sb.toString().length() - 1);
+    						}
+    					}
+    					if (REMOTE_DEPLOYMENT.equals(key) && StringUtils.isEmpty(value)) {
+    						value = "false";
+    					}
+
+    					if (StringUtils.isNotEmpty(key) && !KEY_CERTIFICATE.equals(key)) {
+    						properties.setProperty(key, value);
+    					} else {
+    						value = getActionContextParam(key);
+    						if (StringUtils.isNotEmpty(value)) {
+    							File file = new File(value);
+    							if(fromPage.equals(CONFIGURATION)) {
+    								value = configCertificateSave(configPath, value, file);
+    							} else if (fromPage.equals(SETTINGS)){
+    								value = settingsCertificateSave(configPath, file);
+    							}
+    							properties.setProperty(key, value);
+    						}
+    					}
+
+    					if (CONFIG_TYPE.equals(key) && IIS_SERVER.equals(value)) {
+    						isIISServer = true;
+    					}
+
+    					if (CONFIG_TYPE.equals(key)) {
+    						properties.setProperty(TYPE_VERSION, getVersion());
+    					}
+    				}
+    			}
+    		}
+
+    		//To get the custom properties
+    		if (CollectionUtils.isNotEmpty(getKey()) && CollectionUtils.isNotEmpty(getValue())) {
+    			for (int i = 0; i < getKey().size(); i++) {
+    				if (StringUtils.isNotEmpty(getKey().get(i)) && StringUtils.isNotEmpty(getValue().get(i))) {
+    					properties.setProperty(getKey().get(i), getValue().get(i));
+    				}
+    			}
+    		}
+
+    		ApplicationInfo applicationInfo = getApplicationInfo();
+    		if (applicationInfo != null && applicationInfo.getTechInfo().getId().equals(FrameworkConstants.TECH_SITE_CORE) && SERVER.equals(getConfigType())) {
+    			properties.setProperty(SETTINGS_TEMP_SITECORE_INST_PATH, getSiteCoreInstPath());
+    		}
+
+    		if (isIISServer) {
+    			properties.setProperty(SETTINGS_TEMP_KEY_APP_NAME, getAppName());
+    			properties.setProperty(SETTINGS_TEMP_KEY_SITE_NAME, getSiteName());
+    		}
+    		config = new Configuration(getConfigName(), getConfigType());
+    		config.setDesc(getDescription());
+    		config.setEnvName(getEnvironment().getName());
+    		config.setProperties(properties);
+    	} catch (PhrescoException e) {
+    		throw new PhrescoException(e);
+    	}
+    	return config;
+    }
 
 	private String settingsCertificateSave(String configPath, File file) throws PhrescoException {
 		String value = "";
-		StringBuilder sb = new StringBuilder(CERTIFICATES)
-		.append(File.separator)
-		.append(getEnvironment().getName())
-		.append(HYPHEN)
-		.append(getConfigName())
-		.append(DOT)
-		.append(FILE_TYPE_CRT);
-		value = sb.toString();					
-		if (file.exists()) {
-		File dstFile = new File(Utility.getProjectHome() + value);
-		FrameworkUtil.copyFile(file, dstFile);
-		} else {
-		saveCertificateFile(configPath, value);
-		}
-		return value;
-	}
-
-	private String configCertificateSave(String configPath, String value, File file) throws PhrescoException {
-		if (file.exists()) {
-			String path = Utility.getProjectHome().replace("\\", "/");
-			value = value.replace(path + getApplicationInfo().getAppDirName() + "/", "");
-		} else {
-			StringBuilder sb = new StringBuilder(FOLDER_DOT_PHRESCO)
-			.append(File.separator)
-			.append(CERTIFICATES)
+		try {
+			StringBuilder sb = new StringBuilder(CERTIFICATES)
 			.append(File.separator)
 			.append(getEnvironment().getName())
 			.append(HYPHEN)
 			.append(getConfigName())
 			.append(DOT)
 			.append(FILE_TYPE_CRT);
-			value = sb.toString();
-			saveCertificateFile(configPath, value);
+			value = sb.toString();					
+			if (file.exists()) {
+				File dstFile = new File(Utility.getProjectHome() + value);
+				FrameworkUtil.copyFile(file, dstFile);
+			} else {
+				saveCertificateFile(configPath, value);
+			}
+		} catch (PhrescoException e) {
+			throw new PhrescoException(e); 
+		}
+		return value;
+	}
+
+	private String configCertificateSave(String configPath, String value, File file) throws PhrescoException {
+		try {
+			if (file.exists()) {
+				String path = Utility.getProjectHome().replace("\\", "/");
+				value = value.replace(path + getApplicationInfo().getAppDirName() + "/", "");
+			} else {
+				StringBuilder sb = new StringBuilder(FOLDER_DOT_PHRESCO)
+				.append(File.separator)
+				.append(CERTIFICATES)
+				.append(File.separator)
+				.append(getEnvironment().getName())
+				.append(HYPHEN)
+				.append(getConfigName())
+				.append(DOT)
+				.append(FILE_TYPE_CRT);
+				value = sb.toString();
+				saveCertificateFile(configPath, value);
+			}
+		} catch (Exception e) {
+			throw new PhrescoException(e);
 		}
 		return value;
 	}
@@ -610,7 +624,6 @@ public class Configurations extends FrameworkBaseAction {
      */
 	
 	public String validateEnvironment() throws PhrescoException, ConfigurationException {
-		
 		boolean hasError = false;
 		
 		List<Environment> envs = getEnvironments();
@@ -967,7 +980,7 @@ public class Configurations extends FrameworkBaseAction {
 	    return settingsList();
 	}
     
-    private void update(String configPath, String fromPage) {
+    private void update(String configPath, String fromPage) throws PhrescoException {
     	if (s_debugEnabled) {
     		S_LOGGER.debug("Entering Method Configurations.update()");
 		}
@@ -977,13 +990,13 @@ public class Configurations extends FrameworkBaseAction {
         	ConfigManager configManager = getConfigManager(configPath);
         	Configuration config = getConfigInstance(configPath, fromPage);
         	configManager.updateConfiguration(env.getName(), oldName, config);
-        	
         } catch (PhrescoException e) {
         	if (s_debugEnabled) {
                 S_LOGGER.error("Entered into catch block of Configurations.update()" + FrameworkUtil.getStackTraceAsString(e));
             }
+        	throw new PhrescoException(e);
         } catch (ConfigurationException e) {
-
+        	throw new PhrescoException(e);
         }
     }
     
@@ -1531,10 +1544,10 @@ public class Configurations extends FrameworkBaseAction {
     	try {
     		List<Environment> environments = getAllEnvironments();
     		setReqAttribute(REQ_ENVIRONMENTS, environments);
-    		setReqAttribute(CLONE_FROM_CONFIG_NAME, configName);
-    		setReqAttribute(CLONE_FROM_ENV_NAME, envName);
-    		setReqAttribute(CLONE_FROM_CONFIG_TYPE, configType);
-    		setReqAttribute(CLONE_FROM_CONFIG_DESC, currentConfigDesc);
+    		setReqAttribute(CLONE_FROM_CONFIG_NAME, getConfigName());
+    		setReqAttribute(CLONE_FROM_ENV_NAME, getEnvName());
+    		setReqAttribute(CLONE_FROM_CONFIG_TYPE, getConfigType());
+    		setReqAttribute(CLONE_FROM_CONFIG_DESC, getCurrentConfigDesc());
 		} catch (Exception e) {
 			if (s_debugEnabled) {
 				S_LOGGER.error("Entered into catch block of Configurations.cloneConfigPopup()" + FrameworkUtil.getStackTraceAsString(e));
@@ -1746,7 +1759,7 @@ public class Configurations extends FrameworkBaseAction {
     		boolean connectionAlive = Utility.isConnectionAlive("https", host, port);
     		boolean isCertificateAvailable = false;	
     		if (connectionAlive) {
-    			ConfigManagerImpl configmanager = new ConfigManagerImpl(null);
+    			ConfigManagerImpl configmanager = new ConfigManagerImpl(new File(getAppConfigPath()));
     			List<CertificateInfo> certificates = configmanager.getCertificate(host, port);
     			if (CollectionUtils.isNotEmpty(certificates)) {
     				isCertificateAvailable = true;
@@ -2223,6 +2236,22 @@ public class Configurations extends FrameworkBaseAction {
     public String getOldEnvName() {
         return oldEnvName;
     }
+    
+    public String getEnvName() {
+ 		return envName;
+ 	}
+
+	public void setEnvName(String envName) {
+ 		this.envName = envName;
+ 	}
+
+ 	public String getConfigName() {
+		return configName;
+	}
+
+	public void setConfigName(String configName) {
+		this.configName = configName;
+	}
 
     public void setCsvFiles(String csvFiles) {
         this.csvFiles = csvFiles;

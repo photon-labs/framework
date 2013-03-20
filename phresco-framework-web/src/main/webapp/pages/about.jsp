@@ -21,11 +21,12 @@
 
 <div id="versionInfo">
 	 <div class="abt_logo">
-		<img src="images/phresco.png" alt="logo" class="abt_logo_img">
+		<img src="theme/photon/images/photon_phresco_logo.png" alt="logo" class="abt_logo_img">
 	</div>	
 
 	<div class="abt_content">
-		Phresco is a next-generation development framework of frameworks.It is a platform for creating next generation web,mobile and multi channel presences leveraging existing investments combined with accepted industry best practices		
+		Helios is a next-generation development framework of frameworks.It is a platform for creating next generation web, mobile 
+		and multi channel presences leveraging existing investments combined with accepted industry best practices.		
 	</div>
 </div>
 
@@ -80,7 +81,7 @@
      		$('#LatestVersion').html(data.latestVersion);
 			$('input[name=latestVersion]').val(data.latestVersion);
      		$('#updateAvailableInfo').html(data.message);
-  		 	$("#popupTitle").html("Phresco " + data.currentVersion);
+  		 	$("#popupTitle").html("Helios " + data.currentVersion);
   		 	if (data.updateAvail) {
 				enableButton($("#updateAvailable"));
 			} else {

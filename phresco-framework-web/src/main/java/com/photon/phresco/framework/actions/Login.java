@@ -46,6 +46,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -61,7 +62,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import com.photon.phresco.commons.model.Customer;
-import com.photon.phresco.commons.model.ProjectInfo;
+import com.photon.phresco.commons.model.TechnologyOptions;
 import com.photon.phresco.commons.model.User;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.exception.PhrescoWebServiceException;
@@ -94,6 +95,9 @@ public class Login extends FrameworkBaseAction {
 	private String copyRight = "";
 	private String disabledLabelColor = "";
 	private String customerId = "";
+	
+	private List<String> customerOptions = null;
+	private List<String> customerAllOptions = null;
     
     public String login() throws IOException {
         if (isDebugEnabled) {
@@ -119,7 +123,8 @@ public class Login extends FrameworkBaseAction {
         if (debugEnabled) {
             S_LOGGER.debug("Entering Method  Login.logout()");
         }
-        
+        User user = (User) getSessionAttribute(SESSION_USER_INFO);
+        removeSessionAttribute(user.getId());
         removeSessionAttribute(SESSION_USER_INFO);
         removeSessionAttribute(SESSION_CUSTOMERS);
         String errorTxt = (String) getSessionAttribute(REQ_LOGIN_ERROR);
@@ -178,12 +183,20 @@ public class Login extends FrameworkBaseAction {
         		reader.close();
         	} 
         	userjson.put(userId, customerId);
-        
-        	setReqAttribute(userId, customerId);
+        	
+        	List<String> customerList = new ArrayList<String>();
+        	for (Customer c : customers) {
+				customerList.add(c.getId());
+			}
+        	
+        	if ((StringUtils.isEmpty(customerId) || PHOTON.equals(customerId)) && customerList.contains(PHOTON)) {
+        		customerId = PHOTON;
+        	}
+        	
+        	setSessionAttribute(userId, customerId);
         	FileWriter  writer = new FileWriter(tempPath);
         	writer.write(userjson.toString());
         	writer.close();
-
         } catch (PhrescoWebServiceException e) {
         	if(e.getResponse().getStatus() == 204) {
 				setReqAttribute(REQ_LOGIN_ERROR, getText(ERROR_LOGIN_INVALID_USER));
@@ -196,7 +209,7 @@ public class Login extends FrameworkBaseAction {
         	return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_FRAMEWORKSTREAM));
 		} catch (ParseException e) {
 			return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_FRAMEWORKSTREAM));
-		} 
+		}
         return SUCCESS;
     }
     
@@ -295,13 +308,41 @@ public class Login extends FrameworkBaseAction {
 			FileWriter  writer = new FileWriter(tempPath);
 			writer.write(userjson.toString());
 			writer.close();
-			
+			setSessionAttribute(userId, customerId);
 		} catch (IOException e) {
 			return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_FRAMEWORKSTREAM));
 		} catch (ParseException e) {
 			return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_FRAMEWORKSTREAM));
 		}
     	return SUCCESS;
+    }
+    
+    public String fetchCustomerOptions() {
+        try {
+            User user = (User) getSessionAttribute(SESSION_USER_INFO);
+            List<String> customerOptions = new ArrayList<String>();
+            for (Customer customer : user.getCustomers()) {
+                if (customer.getId().equals(getCustomerId())) {
+                    customerOptions = customer.getOptions();
+                    break;
+                }
+            }
+            setCustomerOptions(customerOptions);
+            if (CollectionUtils.isEmpty(customerOptions)) {
+                List<TechnologyOptions> technologyOptions = getServiceManager().getCustomerOptions();
+                List<String> customerAllOptions = new ArrayList<String>();
+                if (CollectionUtils.isNotEmpty(technologyOptions)) {
+                    for (TechnologyOptions technologyOption : technologyOptions) {
+                        customerAllOptions.add(technologyOption.getId());
+                    }
+                }
+                setCustomerAllOptions(customerAllOptions);
+            }
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+        
+        return SUCCESS;
     }
     
     public String getUsername() {
@@ -439,5 +480,21 @@ public class Login extends FrameworkBaseAction {
 	public void setPageHeaderColor(String pageHeaderColor) {
 		this.pageHeaderColor = pageHeaderColor;
 	}
+
+    public void setCustomerOptions(List<String> customerOptions) {
+        this.customerOptions = customerOptions;
+    }
+
+    public List<String> getCustomerOptions() {
+        return customerOptions;
+    }
+
+    public void setCustomerAllOptions(List<String> customerAllOptions) {
+        this.customerAllOptions = customerAllOptions;
+    }
+
+    public List<String> getCustomerAllOptions() {
+        return customerAllOptions;
+    }
 
 }

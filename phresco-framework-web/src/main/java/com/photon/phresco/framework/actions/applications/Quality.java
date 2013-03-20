@@ -1987,33 +1987,40 @@ public class Quality extends DynamicParameterAction implements Constants {
 			.append(appInfo.getAppDirName())
 			.append(manualTestDir);
 			if (new File(sb.toString()).exists()) {
-				sb.append(File.separator)
-				.append(Constants.MANUALTEST_XLSX_FILE);
-				final List<TestSuite> readManualTestSuiteFile = frameworkUtil.readManualTestSuiteFile(sb.toString());
-				if (CollectionUtils.isNotEmpty(readManualTestSuiteFile)) {
-					setAllTestSuite(readManualTestSuiteFile);
-				}
-				Runnable runnable = new Runnable() {
-					public void run() {
-						try {
-							for (TestSuite testSuite : readManualTestSuiteFile) {
-								String testSuiteName = testSuite.getName();
-								CacheKey key = new CacheKey(testSuiteName);
-								List<com.photon.phresco.commons.model.TestCase> readManualTestCaseFile = frameworkUtil.readManualTestCaseFile(sb.toString(), testSuiteName);
-								if (CollectionUtils.isNotEmpty(readManualTestCaseFile)) {
-									cacheManager.add(key, readManualTestCaseFile);
-								}
-							}
-
-						} catch (PhrescoException e) {
-							S_LOGGER.error("Entered into catch block of Quality.getManualTestSuites()"+ e);
-						}
+				//CacheKey key = new CacheKey("testSuites");
+				//List<TestSuite> testSuitesList = (List<TestSuite>) cacheManager.get(key);
+				//if (CollectionUtils.isNotEmpty(testSuitesList)) {
+				//	setAllTestSuite(testSuitesList);
+				//} else {
+					final List<TestSuite> readManualTestSuiteFile = frameworkUtil.readManualTestSuiteFile(sb.toString());
+					if (CollectionUtils.isNotEmpty(readManualTestSuiteFile)) {
+						
+						setAllTestSuite(readManualTestSuiteFile);
+						//cacheManager.add(key, readManualTestSuiteFile);
 					}
-				};
+				
+					Runnable runnable = new Runnable() {
+						public void run() {
+							try {
+								for (TestSuite testSuite : readManualTestSuiteFile) {
+									String testSuiteName = testSuite.getName();
+									CacheKey key = new CacheKey(testSuiteName);
+									List<com.photon.phresco.commons.model.TestCase> readManualTestCaseFile = frameworkUtil.readManualTestCaseFile(sb.toString(), testSuiteName);
+									if (CollectionUtils.isNotEmpty(readManualTestCaseFile)) {
+										cacheManager.add(key, readManualTestCaseFile);
+									}
+								}
+	
+							} catch (PhrescoException e) {
+								S_LOGGER.error("Entered into catch block of Quality.getManualTestSuites()"+ e);
+							}
+						}
+					};
 
-				t = new Thread(runnable);
-				t.start();
-			}
+					t = new Thread(runnable);
+					t.start();
+				}
+			//}
 		} catch (Exception e) {
 			S_LOGGER.error("Entered into catch block of Quality.fetchManualTestSuites()"+ e);
 		} 
@@ -2029,37 +2036,6 @@ public class Quality extends DynamicParameterAction implements Constants {
 		return SUCCESS;
 	}
 	
- /*
-	public String runManualTest () throws PhrescoException, PhrescoPomException, IOException {
-		if (s_debugEnabled) {
-			S_LOGGER.debug("Entering Method Quality.runManualTest()");
-		}
-		
-		try {
-			ApplicationInfo appInfo = getApplicationInfo();
-			FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-			File filePath = new File(getFilePath());
-			String manualTestDir = frameworkUtil.getManualTestDir(appInfo);
-			StringBuilder destinationFile = new StringBuilder(Utility.getProjectHome())
-			.append(appInfo.getAppDirName())
-			.append(manualTestDir);
-
-			if (!new File(destinationFile.toString()).exists()) {
-				new File(destinationFile.toString()).mkdir();
-			}
-			destinationFile.append(File.separator)
-			.append(Constants.MANUALTEST_XLSX_FILE);
-
-			File destination = new File(destinationFile.toString());
-			FileUtils.copyFile(filePath, destination);
-			List<TestSuite> readManualTestSuiteFile = frameworkUtil.readManualTestSuiteFile(destination.toString());
-			setAllTestSuite(readManualTestSuiteFile);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return SUCCESS;
-	}*/
- 
 	public String readManualTestCases () {
 		if (s_debugEnabled) {
 			S_LOGGER.debug("Entering Method Quality.readManualTestCasesFromSheet()");
@@ -2067,7 +2043,23 @@ public class Quality extends DynamicParameterAction implements Constants {
 		try {
 			CacheKey key = new CacheKey(getTestSuitName());
 			List<com.photon.phresco.commons.model.TestCase> readManualTestCaseFile = (List<com.photon.phresco.commons.model.TestCase>) cacheManager.get(key);
-			setAllTestCases(readManualTestCaseFile);
+			if (CollectionUtils.isNotEmpty(readManualTestCaseFile)) {
+				setAllTestCases(readManualTestCaseFile);
+			} else {
+				ApplicationInfo appInfo = getApplicationInfo();
+				FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+				String manualTestDir = frameworkUtil.getManualTestDir(appInfo);
+				StringBuilder sb = new StringBuilder(Utility.getProjectHome())
+				.append(appInfo.getAppDirName())
+				.append(manualTestDir);
+				CacheKey testSuitekey = new CacheKey(getTestSuitName());
+				List<com.photon.phresco.commons.model.TestCase> readTestCase = frameworkUtil.readManualTestCaseFile(sb.toString(), getTestSuitName());
+				if (CollectionUtils.isNotEmpty(readTestCase)) {
+					cacheManager.add(testSuitekey, readTestCase);
+					setAllTestCases(readTestCase);
+				}
+			}
+			
 		} catch (Exception e) {
 			S_LOGGER.error("Entered into catch block of Quality.readManualTestCases()"+ e);
 		}
@@ -2075,7 +2067,22 @@ public class Quality extends DynamicParameterAction implements Constants {
 		return SUCCESS;
 	}
  
- 
+	 private String getTestManualResultFiles(String path) {
+	        File testDir = new File(path);
+	        StringBuilder sb = new StringBuilder(path);
+	        if(testDir.isDirectory()){
+	            FilenameFilter filter = new PhrescoFileFilter("", "xlsx");
+	            File[] listFiles = testDir.listFiles(filter);
+	            for (File file : listFiles) {
+	                if (file.isFile()) {
+	                	sb.append(File.separator);
+	                	sb.append(file.getName());
+	                }
+	            }
+	        }
+	        return sb.toString();
+	    }
+	 
     public class XmlNameFileFilter implements FilenameFilter {
         private String filter_;
         public XmlNameFileFilter(String filter) {
@@ -2853,5 +2860,27 @@ public class Quality extends DynamicParameterAction implements Constants {
 	public void setAllTestCases(
 			List<com.photon.phresco.commons.model.TestCase> allTestCases) {
 		this.allTestCases = allTestCases;
+	}
+}
+class PhrescoFileFilter implements FilenameFilter {
+	private String name;
+	private String extension;
+
+	public PhrescoFileFilter(String name, String extension) {
+		this.name = name;
+		this.extension = extension;
+	}
+
+	public boolean accept(File directory, String filename) {
+		boolean fileOK = true;
+
+		if (name != null) {
+			fileOK &= filename.startsWith(name);
+		}
+
+		if (extension != null) {
+			fileOK &= filename.endsWith('.' + extension);
+		}
+		return fileOK;
 	}
 }

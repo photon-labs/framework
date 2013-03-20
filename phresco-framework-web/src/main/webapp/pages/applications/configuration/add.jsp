@@ -396,7 +396,8 @@
 	
 	function enableOrDisableUpldBtn() {
 		var configName = $('#configName').val();
-		if (configName != undefined && !isBlank(configName)) {
+		var len = $('#contentFilefile-uploader').find('.qq-upload-success').length;
+		if (configName != undefined && !isBlank(configName) && len <= 0) {
         	enableUploadButton($(".file-uploader"));
         } else {
         	disableUploadButton($(".file-uploader"));

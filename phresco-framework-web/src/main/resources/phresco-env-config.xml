@@ -84,7 +84,7 @@
             <port>3030</port>
             <username/>
             <password/>
-            <context>database-dump</context>
+            <context>service</context>
 	    <additional_context>/rest/api</additional_context>
         </WebService>
         

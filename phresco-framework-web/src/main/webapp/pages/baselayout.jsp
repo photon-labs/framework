@@ -113,7 +113,7 @@
 	<body>
         <%
             User user = (User) session.getAttribute(FrameworkConstants.SESSION_USER_INFO);
-        	String customerId = (String)request.getAttribute(user.getId());
+        	String customerId = (String)session.getAttribute(user.getId());
             String displayName = user.getDisplayName();
         %>
 		<div class="modal-backdrop fade in popupalign"></div>
@@ -158,8 +158,8 @@
 		                                     </li>
 		                                 </ul>
 		                             </li>
-		                             <li><a href="#" id="forum" ><s:text name="lbl.hdr.help"/></a></li>
-		                             <li><a href="#" id="about" ><s:text name="lbl.abt.phresco"/></a></li>
+		                             <li><a href="#" id="forum" class="<%= FrameworkConstants.HELP_KEY %>"><s:text name="lbl.hdr.help"/></a></li>
+		                             <li><a href="#" id="about" ><s:text name="lbl.abt.helios"/></a></li>
 		                             <li><a href="<s:url action='logout'/>"><s:text name="lbl.signout"/></a></li>
 		                         </ul>	
 							</div>
@@ -176,10 +176,10 @@
 								<li class="wid_app"><a href="#" class="inactive" name="headerMenu" id="applications">
 								    <s:label key="lbl.hdr.projects" theme="simple"/></a>
 								</li>
-								<li class="wid_set"><a href="#" class="inactive" name="headerMenu" id="settings" additionalParam="fromPage=settings">
+								<li class="hideContent wid_set <%= FrameworkConstants.SETTINGS_KEY %>"><a href="#" class="inactive" name="headerMenu" id="settings" additionalParam="fromPage=settings">
 								    <s:label key="lbl.hdr.settings"  theme="simple"/></a>
 								</li>
-								<li class="wid_help"><a href="#" class="inactive" name="headerMenu" id="forum">
+								<li class="hideContent wid_help <%= FrameworkConstants.HELP_KEY %>"><a href="#" class="inactive " name="headerMenu" id="forum">
 								    <s:label key="lbl.hdr.help"  theme="simple"/></a>
 								</li>
 							</ul>
@@ -203,7 +203,6 @@
 			</div>
 		</header>
 		<!-- Header Ends Here -->
-		
 		
 		<!-- Content Starts Here -->
 		<section class="main_wrapper">
@@ -376,40 +375,36 @@
 	</body>
 	
 	<script type="text/javascript">
-	 $(document).ready(function() {
+	var selectedId = "";
+	$(document).ready(function() {
 		//script related to loginuser 
-		 $("body").click
-		 (
-		   function(e)
-		   {
-		     if(e.target.className !== "usersettings")
-		     {
-		       $(".userInfo").hide();
-		       $(".loginarrow").attr("src", "images/arrow_user.png");
-		       $(".usersettings").attr("dataflag", "false");
-		     }
-		   }
-		 );
-		 $(".userInfo").hide();
-	      $(".usersettings").click(function(e) {
-	      	clickedobj=e.currentTarget;
-				if ($(clickedobj).attr("dataflag") == "true") {
-					$(".loginarrow").attr("src", "images/arrow_user.png");
-					$(clickedobj).attr("dataflag", "false");
-				}
-				else{
-					$(".loginarrow").attr("src", "images/arrow_user_down.png");
-					$(clickedobj).attr("dataflag", "true");
-				}
+		$("body").click(function(e) {
+			if (e.target.className !== "usersettings") {
+				$(".userInfo").hide();
+		       	$(".loginarrow").attr("src", "images/arrow_user.png");
+		       	$(".usersettings").attr("dataflag", "false");
+			}
+		});
+
+		$(".userInfo").hide();
+
+		$(".usersettings").click(function(e) {
+			clickedobj=e.currentTarget;
+			if ($(clickedobj).attr("dataflag") == "true") {
+				$(".loginarrow").attr("src", "images/arrow_user.png");
+				$(clickedobj).attr("dataflag", "false");
+			} else {
+				$(".loginarrow").attr("src", "images/arrow_user_down.png");
+				$(clickedobj).attr("dataflag", "true");
+			}
 
 	      	$(".userInfo").toggle();
 	      	e.stopPropagation();
-	      });
+		});
 	      
 		applyTheme();
-		//getLogoImgUrl();
 		showHideTheme();
-		var selectedId = "";
+		
 		$("#customerSelect").val('<%= customerId %>');
 		
 		$(".styles").click(function() {
@@ -448,41 +443,12 @@
 			copyToClipboard($('#popup_progress_div').text().replace("%", ""));
 		});
 		
-		function copyToClipboard(data) {
-	        var params = "copyToClipboard=";
-	        params = params.concat(data);
-	        loadContent('copyToClipboard', '', '', params, '', true, '');
-		}
-		 
-        function onSelectCustomer(selectedId) {
-        	$('#customerId').val(selectedId);
-    		 loadContent("fetchCustomerId", $('#formCustomers'), '', '', false, true, '');
-       		$('a[name="headerMenu"]').each(function() {
-       			if ($(this).hasClass('active')) {
-       				doPageLoad($(this), $('a[name="headerMenu"]'));
-       			}
-       		});
-       	}
-        
-        function doPageLoad(currentObj, allObjects) {
-        	showLoadingIcon();
-        	showHideTheme();
-    		inActivateAllMenu(allObjects);
-    		activateMenu(currentObj);
-    		loadContent(currentObj.attr('id'), $('#formCustomers'), $("#container"), '', '', true);
-   			if (selectedId == "<%= ServiceConstants.DEFAULT_CUSTOMER_NAME %>") {
-   				applyTheme();
-   			} else {
-   				getLogoImgUrl();
-   			}
-        }
-
 		$("#forum").click(function() {
 			loadContent("forum", $('#formCustomers'), $("#container"), '', '', true);
 		});
 		
 		$("#about, #abtPopUp").click(function() {
-			yesnoPopup('about', 'About Phresco', 'updateAvailable', 'Update Available');
+			yesnoPopup('about', 'Helios', 'updateAvailable', 'Update Available');
 		});
 		
 		$("#goToHome").click(function() {
@@ -511,6 +477,65 @@
 	function changeLogo(data) {
 		$('#logoImg').attr("src",  "data:image/png;base64," + data.logoImgUrl);
 		changeColorScheme(data);
+	}
+	
+	function copyToClipboard(data) {
+        var params = "copyToClipboard=";
+        params = params.concat(data);
+        loadContent('copyToClipboard', '', '', params, '', true, '');
+	}
+	 
+    function onSelectCustomer(selectedId) {
+    	$('#customerId').val(selectedId);
+    	loadContent("fetchCustomerOptions", $('#formCustomers'), '', '', true, true, 'showHideCustomerOptions');
+		loadContent("fetchCustomerId", $('#formCustomers'), '', '', false, true, '');
+   	}
+    
+    function doPageLoad(currentObj, allObjects) {
+    	showLoadingIcon();
+    	showHideTheme();
+		inActivateAllMenu(allObjects);
+		activateMenu(currentObj);
+		var isHidden = currentObj.is(':hidden');
+		var id = currentObj.attr('id')
+		var url = "";
+		if (isHidden) {
+			allObjects.each(function() {
+				if (!$(this).hasClass('active')) {
+					url = $(this).attr("id");
+					activateMenu($(this));
+					return false;					
+				}
+			});
+		} else {
+			url = currentObj.attr('id')
+		}
+		loadContent(url, $('#formCustomers'), $("#container"), '', '', true);
+		if (selectedId == "<%= ServiceConstants.DEFAULT_CUSTOMER_NAME %>") {
+			applyTheme();
+		} else {
+			getLogoImgUrl();
+		}
+    }
+	
+	function showHideCustomerOptions(data) {
+		var customerOptions = data.customerOptions;
+		var customerAllOptions = data.customerAllOptions;
+		if (customerOptions != undefined) {
+			for (i in customerOptions) {
+				$("." + customerOptions[i]).show()
+			}
+		} else if (customerAllOptions != undefined) {
+			for (i in customerAllOptions) {
+				$("." + customerAllOptions[i]).hide()
+			}
+		}
+		$('a[name="headerMenu"]').each(function() {
+   			if ($(this).hasClass('active')) {
+   				doPageLoad($(this), $('a[name="headerMenu"]'));
+   				return false;
+   			}
+   		});
 	}
 	
 	function changeColorScheme(data) {

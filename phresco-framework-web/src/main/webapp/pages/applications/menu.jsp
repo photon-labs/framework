@@ -40,6 +40,7 @@
 	
   	//To get the features page when the features tab and next btn in appInfo jsp is clicked
   	function showFeaturesPage() {
+  		showLoadingIcon();
 		var params = getBasicParams();
 		validate('features', $('#formAppInfo'), $('#subcontainer'), params);
 	}
@@ -140,50 +141,56 @@
 			<a href="#" class="inactive" name="appTab" id="quality"><s:label key="lbl.app.menu.quality" theme="simple"/></a>
 			<ul id="testmenu">
 				<%
-					if(optionIds != null && optionIds.contains(FrameworkConstants.UNIT_TEST_KEY)) {
+					if (optionIds != null && optionIds.contains(FrameworkConstants.UNIT_TEST_KEY)) {
 				%>
 				<li>
 					<a href="#" class="active" name="qualityTab" id="unit"><s:label key="lbl.quality.menu.unit" theme="simple"/></a>
 				</li>
 				<%
-					} if(optionIds != null && optionIds.contains(FrameworkConstants.FUNCTIONAL_TEST_KEY)) {
+					} if (optionIds != null && optionIds.contains(FrameworkConstants.FUNCTIONAL_TEST_KEY)) {
 				%>
 				<li>
 					<a href="#" class="inactive" name="qualityTab" id="functional"><s:label key="lbl.quality.menu.funtional" theme="simple"/></a>
 				</li>
 				<%
-					} if(optionIds != null && optionIds.contains(FrameworkConstants.PERFORMANCE_TEST_KEY)) {
+					} if (optionIds != null && optionIds.contains(FrameworkConstants.PERFORMANCE_TEST_KEY)) {
 				%>
 				<li>
 					<a href="#" class="inactive" name="qualityTab" id="performance"><s:label key="lbl.quality.menu.performance" theme="simple"/></a>
 				</li>
 				<%
-					} if(optionIds != null && optionIds.contains(FrameworkConstants.LOAD_TEST_KEY)) {
+					} if (optionIds != null && optionIds.contains(FrameworkConstants.LOAD_TEST_KEY)) {
 				%>
 				<li>
 					<a href="#" class="inactive" name="qualityTab" id="load"><s:label key="lbl.quality.menu.load" theme="simple"/></a>
 				</li>
 				<%
-					}
+					} if (optionIds != null && optionIds.contains(FrameworkConstants.MANUAL_TEST_KEY)) {
 				%>
 				<li>
 					<a href="#" class="inactive" name="qualityTab" id="manual"><s:label key="lbl.quality.menu.manual" theme="simple"/></a>
 				</li>
+				<%
+					}
+				%>
 			</ul>
 		</li>
 		
 		<%
-			if(optionIds != null && optionIds.contains(FrameworkConstants.CI_KEY)) {
+			if (optionIds != null && optionIds.contains(FrameworkConstants.CI_KEY)) {
 		%>
 			<li>
 				<a href="#" class="inactive" name="appTab" id="ci"><s:label key="lbl.app.menu.ci"  theme="simple"/></a>
 			</li>
 		<%
+			} if(optionIds != null && optionIds.contains(FrameworkConstants.REPORT_KEY)) {
+		%>
+			<li>
+				<a href="#" class="inactive" name="appTab" id="veiwSiteReport"><s:label key="lbl.app.menu.report"  theme="simple"/></a>
+			</li>
+		<%
 			}
 		%>
-		<li>
-			<a href="#" class="inactive" name="appTab" id="veiwSiteReport"><s:label key="lbl.app.menu.report"  theme="simple"/></a>
-		</li>
 		<li>
 			<a href="#" class="inactive" name="appTab" id="download"><s:label key="lbl.app.menu.download"  theme="simple"/></a>
 		</li>

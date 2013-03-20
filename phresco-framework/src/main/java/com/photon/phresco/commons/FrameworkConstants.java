@@ -97,11 +97,14 @@ public interface FrameworkConstants {
     String CONFIG_TYPE = "type";
     String EXE_DOWNLOAD = "Exe_Download";
     String PROCESS_BUILD = "Process_Build";
+    String EMBED_APPLICATION = "Embed_Application";
     String IMPORT = "import";
     String FEATURE_CONFIG = "FeatureConfig"; 
     
     String REQ_CUSTOMER_ID = "customerId";
     String REQ_PROJECT_ID = "projectId";
+    String REQ_RECENT_PROJECT_ID = "recentProjectId";
+    String REQ_RECENT_APP_ID = "recentAppId";
     String REQ_APP_ID = "appId";
     String REQ_PILOT_PROJECTS = "pilotProjects";
     String REQ_CURRENT_APP_NAME = "currentAppName";
@@ -478,14 +481,19 @@ public interface FrameworkConstants {
 	/*
 	 * Technology based Key
 	 */
+	String HELP_KEY = "Help";
+	String SETTINGS_KEY = "Settings";
 	String CODE_KEY = "Code";
 	String BUILD_KEY = "Build";
 	String UNIT_TEST_KEY = "Unit_Test";
 	String FUNCTIONAL_TEST_KEY = "Functional_Test";
 	String PERFORMANCE_TEST_KEY = "Performance_Test";
 	String LOAD_TEST_KEY = "Load_Test";
+	String MANUAL_TEST_KEY = "Manual_Test";
+	String REPORT_KEY = "Reports";
 	String CI_KEY = "CI";
 	String MINIFICATION_KEY = "Minification";
+	String REMOTE_DEPLOYMENT_OPTION = "Remote_Deployment";
 	String RUN_AGAINST_KEY = "Run_Against_Source";
 	String DEPLOY_KEY = "Deploy";
 	String EXE_DOWNLOAD_KEY = "Exe_Download";
@@ -1032,6 +1040,7 @@ public interface FrameworkConstants {
     String SUCCESS_PROJECT_ADD = "add.project.success";
     String SUCCESS_PROJECT_COMMIT = "commit.project.success";
     String FAILURE_PROJECT_DELETE = "Projects deletion failed";
+    String SUCCESS_APPLICATION_UPDATE = "update.application.success";
     /*
      * Project Import keys
      */
@@ -1520,7 +1529,6 @@ public interface FrameworkConstants {
 		  String ADMIN_USERNAME = "admin_username";
 		  String ADMIN_PASSWORD = "admin_password";
 		  String REMOTE_DEPLOYMENT = "remoteDeployment";
-		  String REMOTE_DEPLOYMENT_OPTION = "Remote_Deployment";
 		  String TYPE_VERSION = "version";
 		  
 		  //SettingsTemplate values 
@@ -1577,6 +1585,7 @@ public interface FrameworkConstants {
 		String EXCEPTION_QUALITY_LOAD_PARAMS = "excep.hdr.quality.load.params";
 		String EXCEPTION_QUALITY_LOAD_RUN = "excep.hdr.quality.load.run";
 		String EXCEPTION_BUILD_POPUP = "excep.hdr.build.popup";
+		String EXCEPTION_PROCESS_BUILD_POPUP = "excep.hdr.processBuild.popup";
 		String EXCEPTION_DEPLOY_POPUP = "excep.hdr.deploy.popup";
 		String EXCEPTION_BUILD_GENERATE = "excep.hdr.build.generate";
 		String EXCEPTION_DEPLOY_GENERATE = "excep.hdr.deploy.generate";
@@ -1715,6 +1724,7 @@ public interface FrameworkConstants {
 	    String COPYRIGHT = "CopyRight";
 	    String DISABLED_LABEL_COLOR = "DisabledLabelColor";
 	    String USER_JSON = "user.json";
+	    String USER_PROJECT_JSON = "user-project.json";
 	    
 	    String PACKAGE = "package";
 	    String PHRESCO_HYPHEN_BUILD_XML = "phresco-build.xml";
