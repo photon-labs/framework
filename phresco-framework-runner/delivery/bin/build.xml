@@ -7,7 +7,7 @@
 	<property name="checkers.home" value="${phresco.home}/workspace/tools/checker"/>
 	<property name="chief.home" value="${phresco.home}/workspace/tools/chief"/>
 	<property name="ios-sim.home" value="${phresco.home}/workspace/tools/ios-sim"/>
-	<property name="phresco.war.dir" value="${phresco.home}/workspace/tools/war/phresco.war"/>
+	<property name="phresco.war.dir" value="${phresco.home}/workspace/tools/war/helios.war"/>
 	<property name="sonar.war.dir" value="${phresco.home}/workspace/tools/war/sonar.war"/>
 	<property name="phresco.upgrade.file" value="${phresco.home}/workspace/temp/upgrade.properties"/>
 	<property name="phresco.file.server.home" value="${phresco.home}/workspace/projects"/>
@@ -52,7 +52,7 @@
 
 	<target name="copy-phresco">
 		<echo message="copying phresco war into tomcat"/>
-		<copy todir="${tomcat.home}/webapps/phresco">
+		<copy todir="${tomcat.home}/webapps/helios">
 			<fileset dir="${phresco.war.dir}"/>
 		</copy>
 	</target>
@@ -89,7 +89,7 @@
 		<echo message="*******************************************************************"/>
 		<echo message="*******************************************************************"/>
 		<echo message="      							          "/> 
-		<echo message="    PHRESCO started successfully (${phresco.url})   "/>
+		<echo message="    HELIOS started successfully (${phresco.url})   "/>
 		<echo message="      							          "/> 
 		<echo message="*******************************************************************"/>
 		<echo message="*******************************************************************"/>
