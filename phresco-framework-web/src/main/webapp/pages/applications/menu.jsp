@@ -40,6 +40,7 @@
 	
   	//To get the features page when the features tab and next btn in appInfo jsp is clicked
   	function showFeaturesPage() {
+  		showLoadingIcon();
 		var params = getBasicParams();
 		validate('features', $('#formAppInfo'), $('#subcontainer'), params);
 	}

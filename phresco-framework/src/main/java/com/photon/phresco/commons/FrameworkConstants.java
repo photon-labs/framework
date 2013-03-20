@@ -103,6 +103,8 @@ public interface FrameworkConstants {
     
     String REQ_CUSTOMER_ID = "customerId";
     String REQ_PROJECT_ID = "projectId";
+    String REQ_RECENT_PROJECT_ID = "recentProjectId";
+    String REQ_RECENT_APP_ID = "recentAppId";
     String REQ_APP_ID = "appId";
     String REQ_PILOT_PROJECTS = "pilotProjects";
     String REQ_CURRENT_APP_NAME = "currentAppName";
@@ -1722,6 +1724,7 @@ public interface FrameworkConstants {
 	    String COPYRIGHT = "CopyRight";
 	    String DISABLED_LABEL_COLOR = "DisabledLabelColor";
 	    String USER_JSON = "user.json";
+	    String USER_PROJECT_JSON = "user-project.json";
 	    
 	    String PACKAGE = "package";
 	    String PHRESCO_HYPHEN_BUILD_XML = "phresco-build.xml";

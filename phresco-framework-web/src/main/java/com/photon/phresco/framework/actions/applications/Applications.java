@@ -23,6 +23,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -38,6 +39,9 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.jgit.api.errors.InvalidRemoteException;
 import org.eclipse.jgit.api.errors.TransportException;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.tmatesoft.svn.core.SVNAuthenticationException;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.wc.SVNStatus;
@@ -51,6 +55,7 @@ import com.photon.phresco.commons.model.ArtifactGroupInfo;
 import com.photon.phresco.commons.model.ArtifactInfo;
 import com.photon.phresco.commons.model.CoreOption;
 import com.photon.phresco.commons.model.DownloadInfo;
+import com.photon.phresco.commons.model.User;
 import com.photon.phresco.commons.model.DownloadInfo.Category;
 import com.photon.phresco.commons.model.Element;
 import com.photon.phresco.commons.model.ProjectInfo;
@@ -136,9 +141,39 @@ public class Applications extends FrameworkBaseAction {
             S_LOGGER.debug("Entering Method  Applications.editApplication()");
         }
         
-        removeSessionAttribute(getAppId() + SESSION_APPINFO);
+        try {
+            removeSessionAttribute(getAppId() + SESSION_APPINFO);
+            updateLatestProject();
+        } catch (PhrescoException e) {
+            // TODO: handle exception
+        } 
         
         return appInfo();
+    }
+    
+    private void updateLatestProject() throws PhrescoException {
+        try {
+            File tempPath = new File(Utility.getPhrescoTemp() + File.separator + USER_PROJECT_JSON);
+            User user = (User) getSessionAttribute(SESSION_USER_INFO);
+            JSONObject userProjJson = null;
+            JSONParser parser = new JSONParser();
+            if (tempPath.exists()) {
+                FileReader reader = new FileReader(tempPath);
+                userProjJson = (JSONObject)parser.parse(reader);
+                reader.close();
+            } else {
+                userProjJson = new JSONObject();
+            }
+            
+            userProjJson.put(user.getId(), getProjectId() + Constants.STR_COMMA + getAppId());
+            FileWriter  writer = new FileWriter(tempPath);
+            writer.write(userProjJson.toString());
+            writer.close();
+        } catch (IOException e) {
+            throw new PhrescoException(e);
+        } catch (ParseException e) {
+            throw new PhrescoException(e);
+        }
     }
 
     public String appInfo() {
