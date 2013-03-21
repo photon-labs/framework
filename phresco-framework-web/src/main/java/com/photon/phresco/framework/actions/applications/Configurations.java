@@ -241,6 +241,7 @@ public class Configurations extends FrameworkBaseAction {
 		
         try {
         	List<Technology> archeTypes = getServiceManager().getArcheTypes(getCustomerId());
+        	Collections.sort(archeTypes, sortTechInAlphaOrder());
     		setReqAttribute(REQ_ALL_TECHNOLOGIES, archeTypes);
             setReqAttribute(REQ_ENVIRONMENTS, getAllEnvironments());
             setReqAttribute(REQ_FROM_PAGE,  getFromPage());
@@ -255,7 +256,16 @@ public class Configurations extends FrameworkBaseAction {
         }
         return APP_ENVIRONMENT;
     }
-    
+	
+	private Comparator sortTechInAlphaOrder() {
+		return new Comparator(){
+		    public int compare(Object firstObject, Object secondObject) {
+		    	Technology tech1 = (Technology) firstObject;
+		    	Technology tech2 = (Technology) secondObject;
+		       return tech1.getName().compareToIgnoreCase(tech2.getName());
+		    }
+		};
+	}
 
     /**
      * @return
@@ -627,48 +637,48 @@ public class Configurations extends FrameworkBaseAction {
 		boolean hasError = false;
 		
 		List<Environment> envs = getEnvironments();
-		String envName = null;
-		for (Environment env : envs) {
-			envName= env.getName();
-		}
 		
 		if (FrameworkConstants.CONFIG.equals(getFromPage())) {
 			setConfigPath(getGlobalSettingsPath().replace(File.separator, FORWARD_SLASH));
 			List<Environment> allEnvironments = getAllEnvironments();
 			for (Environment environment : allEnvironments) {
-				if(environment.getName().equalsIgnoreCase(envName)) {
-					setConfigNameError(getText(ERROR_DUPLICATE_NAME_IN_SETTINGS));
-					hasError = true;
+				for (Environment env : envs) {
+					if(environment.getName().equalsIgnoreCase(env.getName())) {
+						setConfigNameError(getText(ERROR_DUPLICATE_NAME_IN_SETTINGS));
+						hasError = true;
+					}
 				}
 			}
 		} else {
 			List<ProjectInfo> projectInfo = PhrescoFrameworkFactory.getProjectManager().discover(getCustomerId());
-			if (CollectionUtils.isNotEmpty(projectInfo)) {
-				for (ProjectInfo project : projectInfo) {
-					List<ApplicationInfo> appInfos = project.getAppInfos();
-					for (ApplicationInfo applicationInfo : appInfos) {
-						StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-				    	builder.append(applicationInfo.getAppDirName());
-				    	builder.append(FORWARD_SLASH);
-				    	builder.append(FOLDER_DOT_PHRESCO);
-				    	builder.append(FORWARD_SLASH);
-				    	builder.append(CONFIGURATION_INFO_FILE_NAME);
-				    	setConfigPath(builder.toString());
-				    	List<Environment> allEnvironments = getAllEnvironments();
-						for (Environment environment : allEnvironments) {
-							if(environment.getName().equalsIgnoreCase(envName)) {
-								setConfigNameError(getText(ERROR_DUPLICATE_NAME_IN_CONFIGURATIONS, Collections.singletonList(project.getName())));
-								hasError = true;
+			for (Environment env : envs) {
+				if (CollectionUtils.isNotEmpty(projectInfo)) {
+					for (ProjectInfo project : projectInfo) {
+						List<ApplicationInfo> appInfos = project.getAppInfos();
+						for (ApplicationInfo applicationInfo : appInfos) {
+							StringBuilder builder = new StringBuilder(Utility.getProjectHome());
+					    	builder.append(applicationInfo.getAppDirName());
+					    	builder.append(FORWARD_SLASH);
+					    	builder.append(FOLDER_DOT_PHRESCO);
+					    	builder.append(FORWARD_SLASH);
+					    	builder.append(CONFIGURATION_INFO_FILE_NAME);
+					    	setConfigPath(builder.toString());
+					    	List<Environment> allEnvironments = getAllEnvironments();
+							for (Environment environment : allEnvironments) {
+								if(environment.getName().equalsIgnoreCase(env.getName())) {
+									setConfigNameError(getText(ERROR_DUPLICATE_NAME_IN_CONFIGURATIONS, Collections.singletonList(project.getName())));
+									hasError = true;
+								}
 							}
 						}
 					}
+				} 
+				
+				Environment defaultEnvFromServer = getServiceManager().getDefaultEnvFromServer();
+				if (defaultEnvFromServer.getName().equalsIgnoreCase(env.getName())) {
+					setConfigNameError(getText(ERROR_PRODUCTION_EXISTS_IN_CONFIGURATIONS));
+					hasError = true;
 				}
-			} 
-			
-			Environment defaultEnvFromServer = getServiceManager().getDefaultEnvFromServer();
-			if (defaultEnvFromServer.getName().equalsIgnoreCase(envName)) {
-				setConfigNameError(getText(ERROR_PRODUCTION_EXISTS_IN_CONFIGURATIONS));
-				hasError = true;
 			}
 		}
 		
