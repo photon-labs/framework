@@ -23,8 +23,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.codehaus.plexus.util.cli.CommandLineException;
-import org.codehaus.plexus.util.cli.Commandline;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -324,10 +322,8 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 	
 					}
 				} catch (FileNotFoundException e) {
-					e.printStackTrace();
 					throw new PhrescoException(e);
 				} catch (IOException e) {
-					e.printStackTrace();
 					throw new PhrescoException(e);
 				} finally {
 					if(backUpProjectInfoFile!= null && backUpProjectInfoFile.exists()) {

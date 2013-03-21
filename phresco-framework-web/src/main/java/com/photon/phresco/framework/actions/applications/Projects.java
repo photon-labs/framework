@@ -34,10 +34,10 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.w3c.dom.Element;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.w3c.dom.Element;
 
 import com.google.gson.Gson;
 import com.photon.phresco.commons.model.ApplicationInfo;
@@ -154,17 +154,16 @@ public class Projects extends FrameworkBaseAction {
             JSONObject userProjJson = null;
             JSONParser parser = new JSONParser();
             String recentProjectId = "";
-            String recentAppId = "";
             if (tempPath.exists()) {
                 reader = new FileReader(tempPath);
                 userProjJson = (JSONObject)parser.parse(reader);
                 String csv = (String) userProjJson.get(user.getId());
-                String[] split = csv.split(Constants.STR_COMMA);
-                recentProjectId = split[0];
-                recentAppId = split[1];
+                if (StringUtils.isNotEmpty(csv)) {
+                    String[] split = csv.split(Constants.STR_COMMA);
+                    recentProjectId = split[0];
+                }
             }
             setReqAttribute(REQ_RECENT_PROJECT_ID, recentProjectId);
-            setReqAttribute(REQ_RECENT_APP_ID, recentAppId);
         } catch (IOException e) {
             throw new PhrescoException(e);
         } catch (ParseException e) {
@@ -351,8 +350,10 @@ public class Projects extends FrameworkBaseAction {
         }
 
         try {
-            PhrescoFrameworkFactory.getProjectManager().create(createProjectInfo(), getServiceManager());
+            ProjectInfo projectInfo = PhrescoFrameworkFactory.getProjectManager().create(createProjectInfo(), getServiceManager());
             addActionMessage(getText(ACT_SUCC_PROJECT_CREATE, Collections.singletonList(getProjectName())));
+            setProjectId(projectInfo.getId());
+            updateLatestProject();
         } catch (PhrescoException e) {
             if (s_debugEnabled) {
                 S_LOGGER.error("Entered into catch block of Projects.createProject()" + FrameworkUtil.getStackTraceAsString(e));
