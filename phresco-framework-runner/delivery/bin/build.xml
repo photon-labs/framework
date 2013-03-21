@@ -13,7 +13,7 @@
 	<property name="phresco.file.server.home" value="${phresco.home}/workspace/projects"/>
 	<property name="phresco.file.server" value="PhrescoFileServer"/>
     <property file = "${phresco.home}/conf/service.properties"/>
-	<property name="phresco.url" value="http://localhost:2468/phresco"/>
+	<property name="phresco.url" value="http://localhost:2468/helios"/>
 	
 	<target name="init">
 		<available property="phresco.upgraded" file="${phresco.upgrade.file}"/>
