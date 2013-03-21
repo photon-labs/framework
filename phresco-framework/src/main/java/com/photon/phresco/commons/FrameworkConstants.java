@@ -1231,6 +1231,7 @@ public interface FrameworkConstants {
     String ERROR_ENVS_REMOVE = "Environment(s) {0} are already in use";
     String ERROR_DUPLICATE_NAME = "Name already exists";
     String ERROR_DUPLICATE_NAME_IN_SETTINGS = "Name already exists in global settings";
+    String ERROR_PRODUCTION_EXISTS_IN_CONFIGURATIONS= "Production is application specific environment";
     String ERROR_DUPLICATE_NAME_IN_CONFIGURATIONS = "Name already exists in configurations of the {0} project";
     String ERROR_INVALID_NAME = "Invalid Name";
     String ERROR_SELECT = "Select database and server";

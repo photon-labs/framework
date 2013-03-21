@@ -407,7 +407,6 @@ public class Build extends DynamicParameterAction implements Constants {
             
             setSessionAttribute(appInfo.getId() + PHASE_PROCESS_BUILD + SESSION_WATCHER_MAP, watcherMap);
             setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
-            System.out.println("Build No-----"+getReqParameter(BUILD_NUMBER));
             setReqAttribute(REQ_DEPLOY_BUILD_NUMBER, getReqParameter(BUILD_NUMBER));
             setReqAttribute(REQ_GOAL, PHASE_PROCESS_BUILD);
             setReqAttribute(REQ_PHASE, PHASE_PROCESS_BUILD);

@@ -12,6 +12,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.antlr.stringtemplate.StringTemplate;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
@@ -462,6 +463,10 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 	                    parameter.setValue(value);
 	                } else if (parameter.getType().equalsIgnoreCase(TYPE_PACKAGE_FILE_BROWSE)) {
 	                	parameter.setValue(getSelectedFiles());
+	                } else if(parameter.getType().equalsIgnoreCase(TYPE_PASSWORD)) {
+	                	byte[] encodedPwd = Base64.encodeBase64(getReqParameter(parameter.getKey()).getBytes());
+	                	String encodedString = new String(encodedPwd);
+	                	parameter.setValue(encodedString);
 	                } else {
 	                    parameter.setValue(StringUtils.isNotEmpty(getReqParameter(parameter.getKey())) ? (String)getReqParameter(parameter.getKey()) : "");
 	                }
