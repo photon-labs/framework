@@ -948,19 +948,19 @@ function confirmDialog(obj, title, bodyText, okUrl, okLabel) {
 }
 
 //to dynamically update dependancy data into controls 
-function constructElements(data, pushToElement, isMultiple, controlType) {
+function constructElements(data, pushToElement, isMultiple, controlType, parameterType) {
 	if ($("#"+pushToElement+"Control").prop('tagName') == 'FIELDSET') {
 		constructFieldsetOptions(data, pushToElement+"Control");
 	} else if (isMultiple === undefined && controlType === undefined) {
 		constructMultiSelectOptions(data, pushToElement);
 	} else if (isMultiple === "false") {
-		constructSingleSelectOptions(data, pushToElement);
+		constructSingleSelectOptions(data, pushToElement, parameterType);
 	} else if (controlType !== undefined ) {
 		//other controls ( text box)
 	}
 }
 
-function constructFieldsetOptions(dependentValues, pushToElement) {
+function constructFieldsetOptions(dependentValues, pushToElement, parameterType) {
 	if (dependentValues != undefined && !isBlank(dependentValues)) {
 		var fileName, filePath;
 		$("#avaliableSourceScript").empty();
@@ -1006,7 +1006,7 @@ function constructSingleSelectOptions(dependentValues, pushToElement) {
 		if (isEditableCombo && !isBlank(dynamicFirstValue)) {// execute only for jec combo box
 			$('#'+ pushToElement + ' option[value="'+ dynamicFirstValue +'"]').prop("selected","selected");//To preselect select first value
 		}
-	} else {
+	} else if (parameterType.toLowerCase() != "list".toLowerCase()) {
 		$("#" + pushToElement).empty();
 	}
 }
