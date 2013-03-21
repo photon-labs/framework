@@ -129,10 +129,19 @@
 				
 				// load input text box
 				if (FrameworkConstants.TYPE_STRING.equalsIgnoreCase(parameter.getType()) || FrameworkConstants.TYPE_NUMBER.equalsIgnoreCase(parameter.getType()) || 
-					FrameworkConstants.TYPE_PASSWORD.equalsIgnoreCase(parameter.getType()) || FrameworkConstants.TYPE_HIDDEN.equalsIgnoreCase(parameter.getType())) {
+					FrameworkConstants.TYPE_HIDDEN.equalsIgnoreCase(parameter.getType())) {
 					
 					parameterModel.setInputType(parameter.getType());
 					parameterModel.setValue(StringUtils.isNotEmpty(parameter.getValue()) ? parameter.getValue():"");
+					
+					StringTemplate txtInputElement = FrameworkUtil.constructInputElement(parameterModel);
+	%> 	
+					<%= txtInputElement %>
+	<%
+				} else if (FrameworkConstants.TYPE_PASSWORD.equalsIgnoreCase(parameter.getType())) {
+					
+					parameterModel.setInputType(parameter.getType());
+					parameterModel.setValue("");
 					
 					StringTemplate txtInputElement = FrameworkUtil.constructInputElement(parameterModel);
 	%> 	
