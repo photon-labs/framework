@@ -151,31 +151,6 @@ public class Applications extends FrameworkBaseAction {
         return appInfo();
     }
     
-    private void updateLatestProject() throws PhrescoException {
-        try {
-            File tempPath = new File(Utility.getPhrescoTemp() + File.separator + USER_PROJECT_JSON);
-            User user = (User) getSessionAttribute(SESSION_USER_INFO);
-            JSONObject userProjJson = null;
-            JSONParser parser = new JSONParser();
-            if (tempPath.exists()) {
-                FileReader reader = new FileReader(tempPath);
-                userProjJson = (JSONObject)parser.parse(reader);
-                reader.close();
-            } else {
-                userProjJson = new JSONObject();
-            }
-            
-            userProjJson.put(user.getId(), getProjectId() + Constants.STR_COMMA + getAppId());
-            FileWriter  writer = new FileWriter(tempPath);
-            writer.write(userProjJson.toString());
-            writer.close();
-        } catch (IOException e) {
-            throw new PhrescoException(e);
-        } catch (ParseException e) {
-            throw new PhrescoException(e);
-        }
-    }
-
     public String appInfo() {
         if (s_debugEnabled) {
             S_LOGGER.debug("Entering Method  Applications.appInfo()");
@@ -955,6 +930,7 @@ public class Applications extends FrameworkBaseAction {
 			scmi.importToRepo(SVN, repoUrl, userName, password, null, null, appDir, commitMessage);
 			errorString = getText(ADD_PROJECT_SUCCESS);
 			errorFlag = true;
+			updateLatestProject();
 		} catch (Exception e) {
 			errorString = e.getLocalizedMessage();
 			errorFlag = false;

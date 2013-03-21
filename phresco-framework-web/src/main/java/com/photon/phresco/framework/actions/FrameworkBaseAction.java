@@ -24,6 +24,8 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -45,6 +47,9 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import com.google.gson.*;
 import com.opensymphony.xwork2.ActionContext;
@@ -471,6 +476,31 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
 		    }
 		};
 	}
+    
+    public void updateLatestProject() throws PhrescoException {
+        try {
+            File tempPath = new File(Utility.getPhrescoTemp() + File.separator + USER_PROJECT_JSON);
+            User user = (User) getSessionAttribute(SESSION_USER_INFO);
+            JSONObject userProjJson = null;
+            JSONParser parser = new JSONParser();
+            if (tempPath.exists()) {
+                FileReader reader = new FileReader(tempPath);
+                userProjJson = (JSONObject)parser.parse(reader);
+                reader.close();
+            } else {
+                userProjJson = new JSONObject();
+            }
+            
+            userProjJson.put(user.getId(), getProjectId());
+            FileWriter  writer = new FileWriter(tempPath);
+            writer.write(userProjJson.toString());
+            writer.close();
+        } catch (IOException e) {
+            throw new PhrescoException(e);
+        } catch (ParseException e) {
+            throw new PhrescoException(e);
+        }
+    }
 
     public String getPath() {
     	return path;

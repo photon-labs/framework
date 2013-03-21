@@ -36,7 +36,6 @@
     Projects projectsObj = new Projects(); 
 	List<ProjectInfo> projects = (List<ProjectInfo>) request.getAttribute(FrameworkConstants.REQ_PROJECTS);
 	String recentProjectId = (String) request.getAttribute(FrameworkConstants.REQ_RECENT_PROJECT_ID);
-	String recentAppId = (String) request.getAttribute(FrameworkConstants.REQ_RECENT_APP_ID);
 	Gson gson = new Gson();
 %>
 
@@ -75,11 +74,6 @@
 		<%
 			String checkedStr = "";
 			for (ProjectInfo project : projects) {
-			    if (StringUtils.isNotEmpty(recentProjectId) && project.getId().equals(recentProjectId)) {
-			        checkedStr = "checked";
-			    } else {
-			        checkedStr = "";
-			    }
 		%>
 				<div class="theme_accordion_container">
 					<section class="accordion_panel_wid">
@@ -122,11 +116,7 @@
 														List<ApplicationInfo> appInfos = project.getAppInfos();
 														if (CollectionUtils.isNotEmpty(appInfos)) {
 															for (ApplicationInfo appInfo : appInfos) {
-															    if (StringUtils.isNotEmpty(recentAppId) && appInfo.getId().equals(recentAppId)) {
-															        checkedStr = "checked";
-															    } else {
-															        checkedStr = "";
-															    }
+															    
 													%>
 																<tr>
 																	<td class="no-left-bottom-border table-pad">
@@ -189,8 +179,14 @@
 	confirmDialog($("#deleteBtn"), '<s:text name="lbl.hdr.confirm.dialog"/>', '<s:text name="modal.body.text.del.project"/>', 'deleteProject','<s:text name="lbl.btn.ok"/>');
 	
 	//To open the recently opened project's accordion
-	$(".accordianChkBox:checked").parent().parent().removeClass('closereg').addClass('openreg');
-	$(".accordianChkBox:checked").parent().parent().next('.mfbox').show();
+	var recentProjectId = '<%= recentProjectId %>';
+	$(".accordianChkBox").each(function() {
+		if ($(this).attr("id") === recentProjectId) {
+			$(this).parent().parent().removeClass('closereg').addClass('openreg');
+			$(this).parent().parent().next('.mfbox').show();
+			return false;
+		}
+	});
 	
 	//To check whether the device is ipad or not and then apply jquery scrollbar
 	if (!isiPad()) {
