@@ -50,6 +50,7 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
     //Dynamic parameter
     private List<Value> dependentValues = null; 
     private String dynamicPageParameterDesign = "";
+    private String parameterType = "";
     private String currentParamKey = ""; 
     private String goal = "";
     private String selectedOption = "";
@@ -750,6 +751,7 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
             if (StringUtils.isNotEmpty(getDependency())) {
                 // Get the values from the dynamic parameter class
                 Parameter dependentParameter = mojo.getParameter(getGoal(), getDependency());
+                setParameterType(dependentParameter.getType());
                 if (dependentParameter.getDynamicParameter() != null) {
                 	ApplicationInfo applicationInfo2 = getApplicationInfo();
                     Map<String, Object> constructMapForDynVals = constructMapForDynVals(applicationInfo, watcherMap, getDependency());
@@ -960,5 +962,13 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 
 	public void setSelectedFiles(String selectedFiles) {
 		this.selectedFiles = selectedFiles;
+	}
+
+	public void setParameterType(String parameterType) {
+		this.parameterType = parameterType;
+	}
+
+	public String getParameterType() {
+		return parameterType;
 	}
 }

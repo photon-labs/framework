@@ -545,7 +545,7 @@
 		if (data.dependency != undefined && !isBlank(data.dependency)) {
 			var isMultiple = $('#' + data.dependency).attr("isMultiple");
 			var controlType = $('#' + data.dependency).attr('type');
-			constructElements(data.dependentValues, data.dependency, isMultiple, controlType);
+			constructElements(data.dependentValues, data.dependency, isMultiple, controlType, data.parameterType);
 		}
 	}
 	
