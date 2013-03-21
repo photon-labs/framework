@@ -47,12 +47,6 @@ public class ItemGroupUpdater implements FrameworkConstants, Constants {
 			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 			Document doc = docBuilder.parse(path);
 			boolean referenceCheck = referenceCheck(doc);
-			if (referenceCheck) {
-			    //TODO: Need to handle the way of getting the modules
-//				updateItemGroups(doc,modules);
-			} else {
-//				createNewItemGroup(doc,modules);
-			}
 			TransformerFactory transformerFactory = TransformerFactory.newInstance();
 			Transformer transformer = transformerFactory.newTransformer();
 			DOMSource source = new DOMSource(doc);
@@ -137,11 +131,11 @@ public class ItemGroupUpdater implements FrameworkConstants, Constants {
 		NodeList project = doc.getElementsByTagName(PROJECT);
 		Boolean flag = false;
 		for (int i = 0; i < project.getLength(); i++) {
-			Element PROEJCT = (Element) project.item(i);
-			NodeList ITEMGROUPs = PROEJCT.getElementsByTagName(ITEMGROUP);
+			Element element = (Element) project.item(i);
+			NodeList ITEMGROUPs = element.getElementsByTagName(ITEMGROUP);
 			for (int j = 0; j < ITEMGROUPs.getLength(); j++) {
-				Element ITEMGROUP = (Element) ITEMGROUPs.item(j);
-				NodeList references = ITEMGROUP.getElementsByTagName(REFERENCE);
+				Element itemGroup = (Element) ITEMGROUPs.item(j);
+				NodeList references = itemGroup.getElementsByTagName(REFERENCE);
 				for (int k = 0; k < references.getLength(); k++) {
 					Element reference = (Element) references.item(k);
 					if (reference.getTagName().equalsIgnoreCase(REFERENCE)) {

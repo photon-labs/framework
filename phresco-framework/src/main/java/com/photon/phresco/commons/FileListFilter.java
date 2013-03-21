@@ -44,7 +44,7 @@ public class FileListFilter implements FilenameFilter {
 		if (extension != null) {
 		    int mid = filename.lastIndexOf(".");
 		    String ext = filename.substring(mid + 1, filename.length());
-			fileOK &= extension.contains(ext);  // ext.endsWith('.' + extension);
+			fileOK &= extension.contains(ext);  
 		}
 		return fileOK;
 	}

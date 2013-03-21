@@ -224,7 +224,7 @@ public class DynamicParameterModule extends FrameworkBaseAction implements Const
                         if (CollectionUtils.isNotEmpty(dynParamPossibleValues)) {
                             paramBuilder.append(dynParamPossibleValues.get(0).getValue());
                         }
-                    } else if (parameter.getPossibleValues() != null) { //Possible values
+                    } else if (parameter.getPossibleValues() != null) { 
                         List<Value> values = parameter.getPossibleValues().getValue();
                         
                         if (watcherMap.containsKey(parameterKey)) {

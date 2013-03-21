@@ -61,10 +61,10 @@ import com.photon.phresco.util.TechnologyTypes;
 
 public class QualityUtil {
 
-	static String host = null;
-	static String port = null;
-	static String protocol = null;
-	static String serverContext = null;
+	private static String host = null;
+	private static String port = null;
+	private static String protocol = null;
+	private static String serverContext = null;
 
 	private static String configFileName = "/tests/phresco-env-config.csv";
 	private static String buildFileName = "/build.xml";
@@ -274,7 +274,7 @@ public class QualityUtil {
 		NamedNodeMap attributes = httpSamplerProxy.getAttributes();
 		attributes.setNamedItem(createAttribute(document, "guiclass", "HttpTestSampleGui"));
 		attributes.setNamedItem(createAttribute(document, "testclass", "HTTPSamplerProxy"));
-		attributes.setNamedItem(createAttribute(document, "testname", name)); //url name
+		attributes.setNamedItem(createAttribute(document, "testname", name)); 
 		attributes.setNamedItem(createAttribute(document, "enabled", "true"));
 
 		appendElementProp(document, httpSamplerProxy, contextType, contextPostData);
@@ -285,7 +285,7 @@ public class QualityUtil {
 		appendTypeProp(document, httpSamplerProxy, "stringProp", "HTTPSampler.response_timeout", null);
 		appendTypeProp(document, httpSamplerProxy, "stringProp", "HTTPSampler.protocol", null);
 		appendTypeProp(document, httpSamplerProxy, "stringProp", "HTTPSampler.contentEncoding", contentEncoding);
-		appendTypeProp(document, httpSamplerProxy, "stringProp", "HTTPSampler.path", context); // server url
+		appendTypeProp(document, httpSamplerProxy, "stringProp", "HTTPSampler.path", context); 
 		appendTypeProp(document, httpSamplerProxy, "stringProp", "HTTPSampler.method", contextType);
 
 		appendTypeProp(document, httpSamplerProxy, "boolProp", "HTTPSampler.follow_redirects", "false");
@@ -306,7 +306,7 @@ public class QualityUtil {
 		NamedNodeMap attributes = jdbcSampler.getAttributes();
 		attributes.setNamedItem(createAttribute(document, "guiclass", "TestBeanGUI"));
 		attributes.setNamedItem(createAttribute(document, "testclass", "JDBCSampler"));
-		attributes.setNamedItem(createAttribute(document, "testname", name)); //url name
+		attributes.setNamedItem(createAttribute(document, "testname", name)); 
 		attributes.setNamedItem(createAttribute(document, "enabled", "true"));
 
 		appendTypeProp(document, jdbcSampler, "stringProp", "dataSource", dataSource);
@@ -353,7 +353,7 @@ public class QualityUtil {
 		}
 	}
 	
-	private static void appendElementProp(Document document, Node parentNode, String contextType, String contextPostData) { // eleme prop
+	private static void appendElementProp(Document document, Node parentNode, String contextType, String contextPostData) { 
 		Node elementProp = document.createElement("elementProp");
 		NamedNodeMap attributes = elementProp.getAttributes();
 
@@ -365,11 +365,10 @@ public class QualityUtil {
 		attributes.setNamedItem(createAttribute(document, "enabled", "true"));
 		appendCollectionProp(document, elementProp, contextType, contextPostData);
 
-		//parentNode.setTextContent(null);
 		parentNode.appendChild(elementProp);
 	}
 	
-	private static void appendCollectionProp(Document document, Node elementProp, String contextType, String contextPostData) { // collection append in prop
+	private static void appendCollectionProp(Document document, Node elementProp, String contextType, String contextPostData) { 
 		String argumentValue = null;
 		if(contextType.equals(FrameworkConstants.POST)) {
 			argumentValue = contextPostData;
@@ -441,7 +440,7 @@ public class QualityUtil {
 	}
 
 	public static Map<String, PerformanceTestResult> getPerformanceReport(Document document, HttpServletRequest request, String techId, String deviceId) throws Exception {  // deviceid is the tag name for android
-		String xpath = "/*/*";	// For other technologies
+		String xpath = "/*/*";	
 		String device = "*";
 		if(StringUtils.isNotEmpty(deviceId)) {
 			device = "deviceInfo[@id='" + deviceId + "']";
@@ -537,7 +536,7 @@ public class QualityUtil {
 
 	private static void setStdDevToResults(Map<String, PerformanceTestResult> results,  HttpServletRequest request) {
 		Set<String> keySet = results.keySet();
-		long xBar = 0;  		//XBar Calculation
+		long xBar = 0;  		
 		long sumOfTime = 0;
 		int totalSamples = 0;
 		double sumMean = 0;

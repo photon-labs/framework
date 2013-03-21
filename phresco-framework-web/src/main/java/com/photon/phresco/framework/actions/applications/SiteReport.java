@@ -36,7 +36,6 @@ import org.apache.log4j.Logger;
 
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
-import com.photon.phresco.commons.model.SettingsTemplate;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
@@ -64,7 +63,7 @@ public class SiteReport extends FrameworkBaseAction {
 		}
 		
 		try {
-		    removeSessionAttribute(getAppId() + SESSION_APPINFO);//To remove the appInfo from the session
+		    removeSessionAttribute(getAppId() + SESSION_APPINFO);
 		    List<Reports> selectedReports = getPomReports(getApplicationInfo());
 		    setReqAttribute(REQ_SITE_SLECTD_REPORTS, selectedReports);
 		} catch (PhrescoException e) {
@@ -151,12 +150,12 @@ public class SiteReport extends FrameworkBaseAction {
 		try {
 			String techId = getTechId();
 			ApplicationInfo appInfo = getApplicationInfo();
-			List<Reports> reports = getServiceManager().getReports(techId);
-			if (CollectionUtils.isNotEmpty(reports)) {
-				Collections.sort(reports, sortReportByNameInAlphaOrder());
+			List<Reports> siteReports = getServiceManager().getReports(techId);
+			if (CollectionUtils.isNotEmpty(siteReports)) {
+				Collections.sort(siteReports, sortReportByNameInAlphaOrder());
 			}
 			List<Reports> selectedReports = getPomReports(appInfo);
-			setReqAttribute(REQ_SITE_REPORTS, reports);
+			setReqAttribute(REQ_SITE_REPORTS, siteReports);
 			setReqAttribute(REQ_SITE_SLECTD_REPORTS, selectedReports);
 		} catch (PhrescoException e) {
 			if (s_debugEnabled) {
@@ -237,9 +236,9 @@ public class SiteReport extends FrameworkBaseAction {
 		try {
 			SiteConfigurator configurator = new SiteConfigurator();
 			File file = new File(getAppPom());
-			List<Reports> reports = configurator.getReports(file);
+			List<Reports> pomReport = configurator.getReports(file);
 			
-			return reports;
+			return pomReport;
 		} catch (PhrescoException ex) {
 			throw new PhrescoException(ex);
 		}

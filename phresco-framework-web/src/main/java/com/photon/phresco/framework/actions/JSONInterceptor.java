@@ -84,11 +84,12 @@ public class JSONInterceptor extends AbstractInterceptor {
     public String intercept(ActionInvocation invocation) throws Exception {
         HttpServletRequest request = ServletActionContext.getRequest();
         HttpServletResponse response = ServletActionContext.getResponse();
-        String contentType = request.getHeader("content-type");
-        if (contentType != null) {
+        String headerContentType = request.getHeader("content-type");
+        if (headerContentType != null) {
             int iSemicolonIdx;
-            if ((iSemicolonIdx = contentType.indexOf(";")) != -1)
-                contentType = contentType.substring(0, iSemicolonIdx);
+            if ((iSemicolonIdx = headerContentType.indexOf(";")) != -1) {
+                headerContentType = headerContentType.substring(0, iSemicolonIdx);
+            }
         }
 
         Object rootObject = null;
@@ -101,7 +102,7 @@ public class JSONInterceptor extends AbstractInterceptor {
             }
         }
 
-        if ((contentType != null) && contentType.equalsIgnoreCase("application/json")) {
+        if ((headerContentType != null) && headerContentType.equalsIgnoreCase("application/json")) {
             // load JSON object
             Object obj = JSONUtil.deserialize(request.getReader());
 
@@ -109,12 +110,12 @@ public class JSONInterceptor extends AbstractInterceptor {
                 Map json = (Map) obj;
 
                 // clean up the values
-                if (dataCleaner != null)
+                if (dataCleaner != null) {
                     dataCleaner.clean("", json);
-
-                if (rootObject == null) // model overrides action
+                }
+                if (rootObject == null) {
                     rootObject = invocation.getStack().peek();
-
+                }
                 ActionContext invocationContext = invocation.getInvocationContext();
                 Map<String, Object> parameters  = invocationContext.getParameters();
                 parameters.putAll(json);
@@ -126,7 +127,7 @@ public class JSONInterceptor extends AbstractInterceptor {
                 LOG.error("Unable to deserialize JSON object from request");
                 throw new JSONException("Unable to deserialize JSON object from request");
             }
-        } else if ((contentType != null) && contentType.equalsIgnoreCase("application/json-rpc")) {
+        } else if ((headerContentType != null) && headerContentType.equalsIgnoreCase("application/json-rpc")) {
             Object result;
             if (this.enableSMD) {
                 // load JSON object
@@ -135,9 +136,9 @@ public class JSONInterceptor extends AbstractInterceptor {
                 if (obj instanceof Map) {
                     Map smd = (Map) obj;
 
-                    if (rootObject == null) // model makes no sense when using RPC
+                    if (rootObject == null) {
                         rootObject = invocation.getAction();
-
+                    }
                     // invoke method
                     try {
                         result = this.invoke(rootObject, smd);
@@ -175,7 +176,7 @@ public class JSONInterceptor extends AbstractInterceptor {
         } else {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Content type must be 'application/json' or 'application/json-rpc'. " +
-                          "Ignoring request with content type " + contentType);
+                          "Ignoring request with content type " + headerContentType);
             }
         }
 
@@ -246,9 +247,9 @@ public class JSONInterceptor extends AbstractInterceptor {
                 Type genericType = genericTypes[i];
 
                 // clean up the values
-                if (dataCleaner != null)
+                if (dataCleaner != null) {
                     parameter = dataCleaner.clean("[" + i + "]", parameter);
-
+                }
                 Object converted = populator.convert(paramType, genericType, parameter, method);
                 invocationParameters.add(converted);
             }
@@ -297,8 +298,9 @@ public class JSONInterceptor extends AbstractInterceptor {
     protected String addCallbackIfApplicable(HttpServletRequest request, String json) {
         if ((callbackParameter != null) && (callbackParameter.length() > 0)) {
             String callbackName = request.getParameter(callbackParameter);
-            if ((callbackName != null) && (callbackName.length() > 0))
+            if ((callbackName != null) && (callbackName.length() > 0)) {
                 json = callbackName + "(" + json + ")";
+            }
         }
         return json;
     }

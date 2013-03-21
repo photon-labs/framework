@@ -140,12 +140,12 @@ public class Features extends DynamicParameterModule {
 	private String featureName = "";
 	
 	private List<ArtifactGroup> artifactGroups = new ArrayList<ArtifactGroup>();
-	List<String> depArtifactGroupNames = new ArrayList<String>();
-	List<String> depArtifactInfoIds = new ArrayList<String>();
-	List<String> selArtifactGroupNames = new ArrayList<String>();
-	List<String> selArtifactInfoIds = new ArrayList<String>();
-	List<String> dependencyIds = new ArrayList<String>();
-	boolean dependency = false;
+	private List<String> depArtifactGroupNames = new ArrayList<String>();
+	private List<String> depArtifactInfoIds = new ArrayList<String>();
+	private List<String> selArtifactGroupNames = new ArrayList<String>();
+	private List<String> selArtifactInfoIds = new ArrayList<String>();
+	private List<String> dependencyIds = new ArrayList<String>();
+	private boolean dependency = false;
 	
 	public String features() {
 		try {
@@ -178,8 +178,14 @@ public class Features extends DynamicParameterModule {
 			List<SelectedFeature> listFeatures = new ArrayList<SelectedFeature>();
 			List<SelectedFeature> defaultFeatures = new ArrayList<SelectedFeature>();
 			setFeatures(appInfo, listFeatures);
-			if (StringUtils.isNotEmpty(getPilotProject())) {
-				String id = getPilotProject();
+			if (StringUtils.isNotEmpty(getPilotProject()) || appInfo.getPilotInfo() != null) {
+				String id = null;
+				if (StringUtils.isNotEmpty(getPilotProject())) {
+					id = getPilotProject();
+				} else {
+					Element pilotInfo = appInfo.getPilotInfo();
+					id = pilotInfo.getId();
+				}
 				List<ApplicationInfo> pilotProjects = (List<ApplicationInfo>)getSessionAttribute(REQ_PILOT_PROJECTS);
 				for (ApplicationInfo applicationInfo : pilotProjects) {
 					if (applicationInfo.getId().equals(id)) {
@@ -193,7 +199,7 @@ public class Features extends DynamicParameterModule {
 								ArtifactGroup moduleArtifactGroupInfo = getServiceManager().getArtifactGroupInfo(moduleArtifactGroupId);
 								moduleGroups.add(moduleArtifactGroupInfo);
 							}
-							createArtifactInfoForDefault(moduleGroups, defaultFeatures, applicationInfo);
+							createArtifactInfoForPilotProject(moduleGroups, defaultFeatures, applicationInfo);
 						}
 						List<String> selectedJSLibs = applicationInfo.getSelectedJSLibs();
 						List<ArtifactGroup> jsLibs = new ArrayList<ArtifactGroup>();
@@ -204,7 +210,7 @@ public class Features extends DynamicParameterModule {
 								ArtifactGroup jsLibArtifactGroupInfo = getServiceManager().getArtifactGroupInfo(jsLibArtifactGroupId);
 								jsLibs.add(jsLibArtifactGroupInfo);
 							}
-							createArtifactInfoForDefault(jsLibs, defaultFeatures, applicationInfo);
+							createArtifactInfoForPilotProject(jsLibs, defaultFeatures, applicationInfo);
 						}
 						List<String> selectedComponents = applicationInfo.getSelectedComponents();
 						List<ArtifactGroup> components = new ArrayList<ArtifactGroup>();
@@ -215,7 +221,7 @@ public class Features extends DynamicParameterModule {
 								ArtifactGroup componentArtifactGroupInfo = getServiceManager().getArtifactGroupInfo(componentArtifactGroupId);
 								components.add(componentArtifactGroupInfo);
 							}
-							createArtifactInfoForDefault(components, defaultFeatures, applicationInfo);
+							createArtifactInfoForPilotProject(components, defaultFeatures, applicationInfo);
 						}
 					}
 				}
@@ -281,6 +287,27 @@ public class Features extends DynamicParameterModule {
 		}
 	}
 	
+	private void createArtifactInfoForPilotProject(List<ArtifactGroup> moduleGroups, List<SelectedFeature> defaultFeatures, ApplicationInfo appInfo) throws PhrescoException {
+		for (ArtifactGroup artifactGroup : moduleGroups) {
+			List<ArtifactInfo> versions = artifactGroup.getVersions();
+			for (ArtifactInfo artifactInfo : versions) {
+				SelectedFeature selectFeature = new SelectedFeature();
+				selectFeature.setDispValue(artifactInfo.getVersion());
+				selectFeature.setVersionID(artifactInfo.getId());
+				selectFeature.setModuleId(artifactInfo.getArtifactGroupId());
+				selectFeature.setDispName(artifactGroup.getDisplayName());
+				selectFeature.setName(artifactGroup.getName());
+				selectFeature.setType(artifactGroup.getType().name());
+				selectFeature.setArtifactGroupId(artifactGroup.getId());
+				selectFeature.setDefaultModule(true);
+				selectFeature.setPackaging(artifactGroup.getPackaging());
+				getScope(appInfo, artifactInfo.getId(), selectFeature);
+				getDefaultDependentFeatures(moduleGroups, defaultFeatures, artifactInfo);
+			    defaultFeatures.add(selectFeature);
+			}
+		}
+	}
+	
 	private void getDefaultDependentFeatures(List<ArtifactGroup> moduleGroups, List<SelectedFeature> defaultFeatures, ArtifactInfo artifactInfo) {
 		dependencyIds = artifactInfo.getDependencyIds();
 		if (CollectionUtils.isNotEmpty(artifactInfo.getDependencyIds())) {
@@ -315,11 +342,11 @@ public class Features extends DynamicParameterModule {
 	
 	private void setFeatures(ApplicationInfo appInfo, List<SelectedFeature> listFeatures) throws PhrescoException {
 		try {
-		    String techId = appInfo.getTechInfo().getId();
+		    String selectedTechId = appInfo.getTechInfo().getId();
 			List<String> selectedModules = appInfo.getSelectedModules();
 			if (CollectionUtils.isNotEmpty(selectedModules)) {
 				for (String selectedModule : selectedModules) {
-					SelectedFeature selectFeature = createArtifactInformation(selectedModule, techId, appInfo);
+					SelectedFeature selectFeature = createArtifactInformation(selectedModule, selectedTechId, appInfo);
 					listFeatures.add(selectFeature);
 				}
 			}
@@ -327,7 +354,7 @@ public class Features extends DynamicParameterModule {
 			List<String> selectedJSLibs = appInfo.getSelectedJSLibs();
 			if (CollectionUtils.isNotEmpty(selectedJSLibs)) {
 				for (String selectedJSLib : selectedJSLibs) {
-					SelectedFeature selectFeature = createArtifactInformation(selectedJSLib, techId, appInfo);
+					SelectedFeature selectFeature = createArtifactInformation(selectedJSLib, selectedTechId, appInfo);
 					listFeatures.add(selectFeature);
 				}
 			}
@@ -335,7 +362,7 @@ public class Features extends DynamicParameterModule {
 			List<String> selectedComponents = appInfo.getSelectedComponents();
 			if (CollectionUtils.isNotEmpty(selectedComponents))	{
 				for (String selectedComponent : selectedComponents) {
-					SelectedFeature selectFeature = createArtifactInformation(selectedComponent, techId, appInfo);
+					SelectedFeature selectFeature = createArtifactInformation(selectedComponent, selectedTechId, appInfo);
 					listFeatures.add(selectFeature);
 				}
 			}
@@ -393,8 +420,8 @@ public class Features extends DynamicParameterModule {
 		if(StringUtils.isNotEmpty(selectedFeatures)) {
 			Gson gson = new Gson();
 			Type jsonType = new TypeToken<Collection<ArtifactGroup>>(){}.getType();
-			List<ArtifactGroup> artifactGroups = gson.fromJson(selectedFeatures, jsonType);
-			for (ArtifactGroup artifactGroup : artifactGroups) {
+			List<ArtifactGroup> selectedArtifactGroups = gson.fromJson(selectedFeatures, jsonType);
+			for (ArtifactGroup artifactGroup : selectedArtifactGroups) {
 				for (ArtifactInfo artifactInfo : artifactGroup.getVersions()) {
 					if (artifactInfo.getId().equals(id)) {
 						selectFeature.setScope(artifactInfo.getScope());
@@ -463,26 +490,22 @@ public class Features extends DynamicParameterModule {
 	    	
 	    	if (StringUtils.isNotEmpty(getServerLayer()) && CollectionUtils.isNotEmpty(getServer())) {
 				for (String serverId : getServer()) {
-					if (StringUtils.isNotEmpty(serverId)) {
-						if (ArrayUtils.isEmpty(getReqParameterValues(serverId))) {
-							DownloadInfo downloadInfo = getServiceManager().getDownloadInfo(serverId);
-							setServerName(downloadInfo.getName());
-							setServerError(getText(ERROR_SERV_VER_MISSING, downloadInfo.getName()));
-							hasError = true;
-						}
+					if (StringUtils.isNotEmpty(serverId) && ArrayUtils.isEmpty(getReqParameterValues(serverId))) {
+						DownloadInfo downloadInfo = getServiceManager().getDownloadInfo(serverId);
+						setServerName(downloadInfo.getName());
+						setServerError(getText(ERROR_SERV_VER_MISSING, downloadInfo.getName()));
+						hasError = true;
 					}
 				}
 			}
 	    	
 	    	if (StringUtils.isNotEmpty(getDbLayer()) && CollectionUtils.isNotEmpty(getDatabase())) {
 				for (String databaeId : getDatabase()) {
-					if (StringUtils.isNotEmpty(databaeId)) {
-						if (ArrayUtils.isEmpty(getReqParameterValues(databaeId))) {
-							DownloadInfo downloadInfo = getServiceManager().getDownloadInfo(databaeId);
-							setDatabaseName(downloadInfo.getName());
-							setDatabaseError(getText(ERROR_DB_VER_MISSING, downloadInfo.getName()));
-							hasError = true;
-						}
+					if (StringUtils.isNotEmpty(databaeId) && ArrayUtils.isEmpty(getReqParameterValues(databaeId))) {
+						DownloadInfo downloadInfo = getServiceManager().getDownloadInfo(databaeId);
+						setDatabaseName(downloadInfo.getName());
+						setDatabaseError(getText(ERROR_DB_VER_MISSING, downloadInfo.getName()));
+						hasError = true;
 					}
 				}
 			}
@@ -672,11 +695,11 @@ public class Features extends DynamicParameterModule {
 	        List<Parameter> parameters = module.getParameters();
 	        Properties properties = new Properties();
 	        for(Parameter parameter : parameters) {
-	        	String type = parameter.getType();
+	        	String paramType = parameter.getType();
 	        	String paramName = parameter.getName().getValue().getValue();
 		    	String key  = parameter.getKey();
 		        String value = getReqParameter(key);
-		        if(TYPE_BOOLEAN.equalsIgnoreCase(type)) {
+		        if(TYPE_BOOLEAN.equalsIgnoreCase(paramType)) {
 		        	value = (StringUtils.isNotEmpty(value) ? value : FALSE);
 		        } else {
 		        	value = (StringUtils.isNotEmpty(value)? value : " ");
@@ -724,8 +747,8 @@ public class Features extends DynamicParameterModule {
 	}
 	
 	private ConfigManager getConfigManager(String configPath) throws PhrescoException {
-	        File appDir = new File(configPath);
-	        return PhrescoFrameworkFactory.getConfigManager(appDir);
+	        File appDirectory = new File(configPath);
+	        return PhrescoFrameworkFactory.getConfigManager(appDirectory);
     }
 	
 	private List<PropertyTemplate> getTemplateConfigFile() throws PhrescoException {
@@ -782,8 +805,8 @@ public class Features extends DynamicParameterModule {
 	public String fetchDefaultFeatures() {
 		Gson gson = new Gson();
 		String json = gson.toJson(getArtifactGroups());
-		List<ArtifactGroup> ArtifactGroups = gson.fromJson(json, new TypeToken<List<ArtifactGroup>>(){}.getType());
-		for (ArtifactGroup artifactGroup : ArtifactGroups) {
+		List<ArtifactGroup> artifactGroups = gson.fromJson(json, new TypeToken<List<ArtifactGroup>>(){}.getType());
+		for (ArtifactGroup artifactGroup : artifactGroups) {
 			List<ArtifactInfo> versions = artifactGroup.getVersions();
 			for (ArtifactInfo artifactInfo : versions) {
 				List<RequiredOption> appliesTo = artifactInfo.getAppliesTo();
@@ -793,7 +816,7 @@ public class Features extends DynamicParameterModule {
 							depArtifactGroupNames.add(artifactGroup.getName());
 							depArtifactInfoIds.add(artifactInfo.getId());
 							if(CollectionUtils.isNotEmpty(artifactInfo.getDependencyIds())) {
-								getDependentForDefaultFeatures(ArtifactGroups, artifactInfo);
+								getDependentForDefaultFeatures(artifactGroups, artifactInfo);
 							}
 						}
 					}
@@ -823,8 +846,8 @@ public class Features extends DynamicParameterModule {
 	
 	public String fetchSelectedFeatures() throws PhrescoException {
 		List<SelectedFeature> allFeatures = (List<SelectedFeature>)getSessionAttribute(REQ_SELECTED_FEATURES);
-		List<ArtifactGroup> artifactGroups = getServiceManager().getFeatures(getCustomerId(), getTechId(), getType());
-		getSelectedFeatures(allFeatures, artifactGroups);
+		List<ArtifactGroup> selectedArtifactGroups = getServiceManager().getFeatures(getCustomerId(), getTechId(), getType());
+		getSelectedFeatures(allFeatures, selectedArtifactGroups);
 		
 		return SUCCESS;
 	}
@@ -848,8 +871,8 @@ public class Features extends DynamicParameterModule {
 	public String fetchDependentFeatures() {
 		Gson gson = new Gson();
 		String json = gson.toJson(getArtifactGroups());
-		List<ArtifactGroup> artifactGroups = gson.fromJson(json, new TypeToken<List<ArtifactGroup>>(){}.getType());
-		for (ArtifactGroup artifactGroup : artifactGroups) {
+		List<ArtifactGroup> dependentArtifactGroups = gson.fromJson(json, new TypeToken<List<ArtifactGroup>>(){}.getType());
+		for (ArtifactGroup artifactGroup : dependentArtifactGroups) {
 			List<ArtifactInfo> versions = artifactGroup.getVersions();
 			for (ArtifactInfo artifactInfo : versions) {
 				if (artifactInfo.getId().equals(getModuleId())) {
@@ -863,13 +886,13 @@ public class Features extends DynamicParameterModule {
 		//To get the artifactgroup name for the dependent artifactInfo ids
 		if (CollectionUtils.isNotEmpty(getDependencyIds())) {
     		for (String dependencyId : getDependencyIds()) {
-    			for (ArtifactGroup artifactGroup : artifactGroups) {
+    			for (ArtifactGroup artifactGroup : dependentArtifactGroups) {
     				List<ArtifactInfo> versions = artifactGroup.getVersions();
     				for (ArtifactInfo artifactInfo : versions) {
     					if (artifactInfo.getId().equals(dependencyId)) {
     						depArtifactGroupNames.add(artifactGroup.getName());
     						if(CollectionUtils.isNotEmpty(artifactInfo.getDependencyIds())) {
-    							getDependentForDefaultFeatures(artifactGroups, artifactInfo);
+    							getDependentForDefaultFeatures(dependentArtifactGroups, artifactInfo);
     						}
     					}
     				}

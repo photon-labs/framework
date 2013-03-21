@@ -32,7 +32,7 @@ import java.util.List;
 
 public class XcodeprojParser {
 
-    File xcodprojJsonFile;
+    private File xcodprojJsonFile;
 
     public XcodeprojParser(File xcodeprojJsonFile) {
         this.xcodprojJsonFile = xcodeprojJsonFile;
@@ -76,23 +76,21 @@ public class XcodeprojParser {
 
         for (String id : targetRefs) {
             JSONObject targetObject = json.getJSONObject(id);
-            if (targetObject.has("isa")) {
-                if (targetObject.getString("isa").equalsIgnoreCase("PBXNativeTarget")) {
-                    String name = targetObject.getString("name");
-                    String productName = targetObject.getString("productName");
-                    String type = targetObject.getString("productType");
-                    String productReference = targetObject.getString("productReference");
-                    String buildConfigurationList = targetObject.getString("buildConfigurationList");
+            if (targetObject.has("isa") && targetObject.getString("isa").equalsIgnoreCase("PBXNativeTarget")) {
+                String name = targetObject.getString("name");
+                String productName = targetObject.getString("productName");
+                String type = targetObject.getString("productType");
+                String productReference = targetObject.getString("productReference");
+                String buildConfigurationList = targetObject.getString("buildConfigurationList");
 
-                    List<XCBuildConfiguration> xcBuildConfigurations = getBuildConfigurations(json, buildConfigurationList);
+                List<XCBuildConfiguration> xcBuildConfigurations = getBuildConfigurations(json, buildConfigurationList);
 
-                    JSONObject productReferenceObject = json.getJSONObject(productReference);
-                    String appName = productReferenceObject.getString("path");
+                JSONObject productReferenceObject = json.getJSONObject(productReference);
+                String appName = productReferenceObject.getString("path");
 
-                    PBXNativeTarget target = new PBXNativeTarget(name,productName,appName,type,xcBuildConfigurations);
+                PBXNativeTarget target = new PBXNativeTarget(name,productName,appName,type,xcBuildConfigurations);
 
-                    pbxNativeTargets.add(target);
-                }
+                pbxNativeTargets.add(target);
             }
         }
         return pbxNativeTargets;

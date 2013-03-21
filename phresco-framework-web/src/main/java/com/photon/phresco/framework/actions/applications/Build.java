@@ -24,7 +24,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
@@ -42,29 +41,15 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.TransformerFactoryConfigurationError;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.Commandline;
-import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -169,19 +154,20 @@ public class Build extends DynamicParameterAction implements Constants {
 	
 	//Dynamic parameter related
 	private String from = "";
-	private List<Value> dependentValues = null; //Value for dependancy parameters
+	private List<Value> dependentValues = null; 
 	private String dependantKey = ""; 
 	private String dependantValue = "";
 	private String goal = "";
 	
 	public String view() throws PhrescoException {
-		if (debugEnabled)
+		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method  Build.view()");
+		}
 		try {
-		    removeSessionAttribute(getAppId() + SESSION_APPINFO);//To remove the appInfo from the session
-		   	ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-		   	ApplicationInfo applicationInfo = applicationManager.getApplicationInfo(getCustomerId(), getProjectId(), getAppId());
-		   	setReqAttribute(REQ_APPINFO, applicationInfo);
+			removeSessionAttribute(getAppId() + SESSION_APPINFO);
+			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+			ApplicationInfo applicationInfo = applicationManager.getApplicationInfo(getCustomerId(), getProjectId(), getAppId());
+			setReqAttribute(REQ_APPINFO, applicationInfo);
 			String readLogFile = "";
 			boolean tempConnectionAlive = false;
 			int serverPort = 0;
@@ -333,9 +319,9 @@ public class Build extends DynamicParameterAction implements Constants {
 	}
 	
 	public String builds() throws PhrescoException {
-		if (debugEnabled)
+		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method  Build.builds()");
-
+		}
 		try {
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			ApplicationInfo applicationInfo = getApplicationInfo();
@@ -713,8 +699,8 @@ public class Build extends DynamicParameterAction implements Constants {
 					.getConfigManager(new File(Utility.getProjectHome() + getApplicationInfo().getAppDirName()
 							+ File.separator + Constants.DOT_PHRESCO_FOLDER + File.separator
 							+ Constants.CONFIGURATION_INFO_FILE));
-			com.photon.phresco.plugins.model.Mojos.Mojo.Configuration configuration = mojo.getConfiguration(PHASE_RUNGAINST_SRC_START);
-			Map<String, String> configs = MojoUtil.getAllValues(configuration);
+			com.photon.phresco.plugins.model.Mojos.Mojo.Configuration config = mojo.getConfiguration(PHASE_RUNGAINST_SRC_START);
+			Map<String, String> configs = MojoUtil.getAllValues(config);
 			String environmentName = configs.get(ENVIRONMENT_NAME);
 			List<com.photon.phresco.configuration.Configuration> configurations = configManager.getConfigurations(
 					environmentName, Constants.SETTINGS_TEMPLATE_SERVER);
@@ -735,8 +721,8 @@ public class Build extends DynamicParameterAction implements Constants {
 			ProjectInfo projectInfo = getProjectInfo();
 			String workingDirectory = getAppDirectoryPath(applicationInfo);
 			reader = applicationManager.performAction(projectInfo, ActionType.RUNAGAINSTSOURCE, null, workingDirectory);
-			boolean connectionAlive = Utility.isConnectionAlive(serverProtocol, serverHost, serverPort);
-			setSessionAttribute(getAppId() + SESSION_SERVER_STATUS, connectionAlive);
+			boolean connectionStatus = Utility.isConnectionAlive(serverProtocol, serverHost, serverPort);
+			setSessionAttribute(getAppId() + SESSION_SERVER_STATUS, connectionStatus);
 			setSessionAttribute(getAppId() + SESSION_SERVER_PROTOCOL_VALUE, serverProtocol);
 			setSessionAttribute(getAppId() + SESSION_SERVER_HOST_VALUE, serverHost);
 			setSessionAttribute(getAppId() + SESSION_SERVER_PORT_VALUE, new Integer(serverPort).toString());
@@ -948,7 +934,7 @@ public class Build extends DynamicParameterAction implements Constants {
 			List<Element> elements = pluginConfig.getAny();
 			if (elements != null) {
 				for (Element element : elements) {
-					includesFiles(element, applicationInfo);//To read already minified details from pom
+					includesFiles(element, applicationInfo);
 				}
 			}
 		}
@@ -968,7 +954,7 @@ public class Build extends DynamicParameterAction implements Constants {
 					NodeList includeList = childNode.getElementsByTagName(POM_INCLUDES).item(0).getChildNodes();
 					StringBuilder csvFileNames = new StringBuilder(); 
 					String sep = "";
-					for (int j = 0; j < includeList.getLength()-1; j++) {//To convert select files to Comma seperated value
+					for (int j = 0; j < includeList.getLength()-1; j++) {
 						Element include = (Element) includeList.item(j);
 						String file = include.getTextContent().substring(include.getTextContent().lastIndexOf(FILE_SEPARATOR)+1);
 						csvFileNames.append(sep);
@@ -978,19 +964,23 @@ public class Build extends DynamicParameterAction implements Constants {
 					Element outputElement = (Element) childNode.getElementsByTagName(POM_OUTPUT).item(0);
 					//To get compressed name with extension
 					String opFileName = outputElement.getTextContent().substring(outputElement.getTextContent().lastIndexOf(FILE_SEPARATOR)+1);
-					String compressName = opFileName.substring(0, opFileName.indexOf("."));//To get only the compressed name without extension
-					String compressedExtension = opFileName.substring(opFileName.lastIndexOf(DOT)+1);//To get extension of compressed file
+					//To get only the compressed name without extension
+					String compresedName = opFileName.substring(0, opFileName.indexOf("."));
+					//To get extension of compressed file
+					String compressedExtension = opFileName.substring(opFileName.lastIndexOf(DOT)+1);
 					opFileLoc = outputElement.getTextContent().substring(0, outputElement.getTextContent().lastIndexOf(FILE_SEPARATOR)+1);
 					opFileLoc = opFileLoc.replace(MINIFY_OUTPUT_DIRECTORY, getAppDirectoryPath(applicationInfo).replace(File.separator, FORWARD_SLASH));
-					
-					if (JS.equals(compressedExtension)) {//if extension is js , add minified details to jsMap
+
+					//if extension is js , add minified details to jsMap
+					if (JS.equals(compressedExtension)) {
 						Map<String, String> jsValuesMap = new HashMap<String, String>();
-						jsValuesMap.put(csvFileNames.toString().replace(HYPHEN_MIN, ""), opFileLoc);//add minifed files list and its location details to jsValuesMap
-						jsMap.put(compressName, jsValuesMap);	
-					} else {//if extension is CSS , add minified details to cssMap
+						//add minifed files list and its location details to jsValuesMap
+						jsValuesMap.put(csvFileNames.toString().replace(HYPHEN_MIN, ""), opFileLoc);
+						jsMap.put(compresedName, jsValuesMap);	
+					} else {
 						Map<String, String> cssValuesMap = new HashMap<String, String>();
-						cssValuesMap.put(csvFileNames.toString().replace(HYPHEN_MIN, ""), opFileLoc);//add minifed files list and its location to cssValuesMap
-						cssMap.put(compressName, cssValuesMap);
+						cssValuesMap.put(csvFileNames.toString().replace(HYPHEN_MIN, ""), opFileLoc);
+						cssMap.put(compresedName, cssValuesMap);
 					}
 				}
 			}
@@ -1040,14 +1030,14 @@ public class Build extends DynamicParameterAction implements Constants {
 			List<Element> configList = new ArrayList<Element>();
 			List<String> files = getMinifyFileNames();
 			createExcludesTagInPom(doc, configList);
-			if (Boolean.parseBoolean(getMinifyAll()) && CollectionUtils.isEmpty(files)) { // Only Minify all is selected
+			if (Boolean.parseBoolean(getMinifyAll()) && CollectionUtils.isEmpty(files)) { 
 				configList.add(createElement(doc, POM_OUTPUTDIR, POM_SOURCE_DIRECTORY));
 			} else if (CollectionUtils.isNotEmpty(files)) {
 				String dynamicIncludeDir = "";
-				if (Boolean.parseBoolean(getMinifyAll())) {//if Minify all is selected
+				if (Boolean.parseBoolean(getMinifyAll())) {
 					dynamicIncludeDir = POM_SOURCE_DIRECTORY;
 					configList.add(createElement(doc, POM_OUTPUTDIR, POM_SOURCE_DIRECTORY));
-				} else {//if Minify all not is selected
+				} else {
 					dynamicIncludeDir = POM_OUTPUT_DIRECTORY;
 					configList.add(createElement(doc, POM_OUTPUTDIR, POM_OUTPUT_DIRECTORY));
 				}
@@ -1162,9 +1152,9 @@ public class Build extends DynamicParameterAction implements Constants {
 
 			PluginExecution execution = new PluginExecution();
 			execution.setId(ANDROID_EXECUTION_ID);
-			Goals goal = new Goals();
-			goal.getGoal().add(GOAL_SIGN);
-			execution.setGoals(goal);
+			Goals goals = new Goals();
+			goals.getGoal().add(GOAL_SIGN);
+			execution.setGoals(goals);
 			execution.setPhase(PHASE_PACKAGE);
 			execution.setInherited(TRUE);
 

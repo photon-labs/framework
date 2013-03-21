@@ -55,7 +55,8 @@ public class CIJob {
     private String downStreamCriteria = "";
     // Whether this job is used cloned workspace or normal svn
     private String usedClonnedWorkspace = "";
-    private String operation = "";// Operation like(Build, deploy, test)
+    // Operation like(Build, deploy, test)
+    private String operation = "";
     
     // for functional test
     private String pomLocation = "";
@@ -143,8 +144,6 @@ public class CIJob {
     private String sonarUrl = "";
     
 	// Load Test CI integration
-	//  private String testAgainst = "";
-	//  private String showSettings = "";
 	private String headerKey = "";
 	private String headerValue = "";
 	private String addHeader = "";

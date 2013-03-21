@@ -73,8 +73,8 @@ public class FrameworkConfiguration implements FrameworkConstants {
 			String host = configuration.getProperties().getProperty("host");
 			String port = configuration.getProperties().getProperty("port");
 			String context = configuration.getProperties().getProperty("context");
-			String additional_context = configuration.getProperties().getProperty("additional_context");
-			serverUrl = protocol + "://" + host + ":" +  port + "/" + context+ additional_context;
+			String additionalContext = configuration.getProperties().getProperty("additional_context");
+			serverUrl = protocol + "://" + host + ":" +  port + "/" + context+ additionalContext;
 		}
 		return serverUrl;
 	}

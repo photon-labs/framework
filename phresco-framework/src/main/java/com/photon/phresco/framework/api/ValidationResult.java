@@ -36,8 +36,8 @@ public class ValidationResult implements Serializable {
 		INFO, WARNING, ERROR
 	};
 
-	Status status;
-	String message;
+	private Status status;
+	private String message;
 
 	public ValidationResult(Status status, String message) {
 		super();

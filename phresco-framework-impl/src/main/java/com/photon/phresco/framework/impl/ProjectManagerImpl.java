@@ -79,11 +79,10 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		List<ProjectInfo> projectInfos = new ArrayList<ProjectInfo>();
 	    File[] appDirs = projectsHome.listFiles();
 	    for (File appDir : appDirs) {
-	        if (appDir.isDirectory()) { // Only check the folders not files
+	        if (appDir.isDirectory()) { 
 	            File[] dotPhrescoFolders = appDir.listFiles(new PhrescoFileNameFilter(FOLDER_DOT_PHRESCO));
 	            if (ArrayUtils.isEmpty(dotPhrescoFolders)) {
 	            	continue;
-//	                throw new PhrescoException(".phresco folder not found in project " + appDir.getName());
 	            }
 	            File[] dotProjectFiles = dotPhrescoFolders[0].listFiles(new PhrescoFileNameFilter(PROJECT_INFO_FILE));
 	            if (ArrayUtils.isEmpty(dotProjectFiles)) {
@@ -116,11 +115,10 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		List<ProjectInfo> projectInfos = new ArrayList<ProjectInfo>();
 	    File[] appDirs = projectsHome.listFiles();
 	    for (File appDir : appDirs) {
-	        if (appDir.isDirectory()) { // Only check the folders not files
+	        if (appDir.isDirectory()) { 
 	            File[] dotPhrescoFolders = appDir.listFiles(new PhrescoFileNameFilter(FOLDER_DOT_PHRESCO));
 	            if (ArrayUtils.isEmpty(dotPhrescoFolders)) {
 	            	continue;
-//	                throw new PhrescoException(".phresco folder not found in project " + appDir.getName());
 	            }
 	            File[] dotProjectFiles = dotPhrescoFolders[0].listFiles(new PhrescoFileNameFilter(PROJECT_INFO_FILE));
 	            if (ArrayUtils.isEmpty(dotProjectFiles)) {
@@ -163,10 +161,9 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 	public ProjectInfo getProject(String projectId, String customerId, String appId) throws PhrescoException {
 		File[] appDirs = new File(Utility.getProjectHome()).listFiles();
 	    for (File appDir : appDirs) {
-	        if (appDir.isDirectory()) { // Only check the folders not files
+	        if (appDir.isDirectory()) { 
 	            File[] dotPhrescoFolders = appDir.listFiles(new PhrescoFileNameFilter(FOLDER_DOT_PHRESCO));
 	            if (ArrayUtils.isEmpty(dotPhrescoFolders)) {
-//	                throw new PhrescoException(".phresco folder not found in project " + appDir.getName());
 	            	continue;
 	            }
 	            File[] dotProjectFiles = dotPhrescoFolders[0].listFiles(new PhrescoFileNameFilter(PROJECT_INFO_FILE));
@@ -260,7 +257,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 				.append(DOT_PHRESCO_FOLDER)
 				.append(File.separator)
 				.append(PROJECT_INFO_FILE);
-				ProjectUtils.updateProjectInfo(projectInfo, new File(sb.toString()));// To update the project.info file
+				ProjectUtils.updateProjectInfo(projectInfo, new File(sb.toString()));
 			}
 		} else {
 			ClientResponse response = serviceManager.updateProject(projectInfo);

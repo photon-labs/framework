@@ -95,11 +95,11 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 	private String senderEmailId = null;
 	private String senderEmailPassword = null;
 	private int totalBuildSize;
-	boolean buildInProgress = false;
+	private boolean buildInProgress = false;
 
 	private List<String> triggers = null;
 	private String buildNumber = null;
-	CIJob job = null;
+	private CIJob job = null;
 	private String oldJobName = null;
 	private int numberOfJobsInProgress = 0;
 	private String downloadJobName = null;
@@ -139,7 +139,7 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 			S_LOGGER.debug("Entering Method CI.ci()");
 		}	
 		try {
-		    removeSessionAttribute(getAppId() + SESSION_APPINFO);//To remove the appInfo from the session
+		    removeSessionAttribute(getAppId() + SESSION_APPINFO);
 			boolean jenkinsAlive = false;
 			// Other methods like build() will call this after triggered build,
 			// it will set trigger_from_ui=true, we need to set value when this
@@ -334,7 +334,7 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 			setReqAttribute(REQ_APPINFO, appInfo);
 			String jenkinsPort = getPortNo(Utility.getJenkinsHome());
 			ciManager.saveMailConfiguration(jenkinsPort, senderEmailId, senderEmailPassword);
-			restartJenkins(); // reload config
+			restartJenkins(); 
 			addActionMessage(getText(CI_MAIL_CONFIGURE_SUCCESS));
 		} catch (PhrescoException e) {
 			S_LOGGER.error("Entered into catch block of CI.doUpdateSave()" + FrameworkUtil.getStackTraceAsString(e));
@@ -348,23 +348,23 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 			// restore values
 			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(Constants.PHASE_CI)));
 			String phase = "";
-			String operation = ciJob.getOperation();
-			if (BUILD.equals(operation)) {
+			String selectedOperation = ciJob.getOperation();
+			if (BUILD.equals(selectedOperation)) {
 				phase = PHASE_PACKAGE;
 	        	restoreValuesToXml(mojo, phase, ciJob);
-	        } else if (DEPLOY.equals(operation)) { 
+	        } else if (DEPLOY.equals(selectedOperation)) { 
 	        	phase = PHASE_DEPLOY;
 	        	restoreValuesToXml(mojo, phase, ciJob);
-	        } else if (PDF_REPORT.equals(operation)) { 
+	        } else if (PDF_REPORT.equals(selectedOperation)) { 
 	        	phase = PHASE_PDF_REPORT;
 	        	restoreValuesToXml(mojo, phase, ciJob);
-	        } else if (CODE_VALIDATION.equals(operation)) { 
+	        } else if (CODE_VALIDATION.equals(selectedOperation)) { 
 	        	phase = PHASE_VALIDATE_CODE;
 	        	restoreValuesToXml(mojo, phase, ciJob);
-	        } else if (UNIT_TEST.equals(operation)) { 
+	        } else if (UNIT_TEST.equals(selectedOperation)) { 
 	        	phase = PHASE_UNIT_TEST;
 	        	restoreValuesToXml(mojo, phase, ciJob);
-	        } else if (FUNCTIONAL_TEST.equals(operation)) {
+	        } else if (FUNCTIONAL_TEST.equals(selectedOperation)) {
 				FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
 				String seleniumToolType = frameworkUtil.getSeleniumToolType(appInfo);
 				phase =  PHASE_FUNCTIONAL_TEST + HYPHEN + seleniumToolType;
@@ -586,10 +586,10 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 			existJob.setJenkinsUrl(thisIp.getHostAddress());
 			existJob.setJenkinsPort(getPortNo(Utility.getJenkinsHome()));
 			existJob.setTriggers(triggers);
-			Map<String, String> emails = new HashMap<String, String>(2);
-			emails.put(REQ_KEY_SUCCESS_EMAILS, successEmailIds);
-			emails.put(REQ_KEY_FAILURE_EMAILS, failureEmailIds);
-			existJob.setEmail(emails);
+			Map<String, String> emailMesage = new HashMap<String, String>(2);
+			emailMesage.put(REQ_KEY_SUCCESS_EMAILS, successEmailIds);
+			emailMesage.put(REQ_KEY_FAILURE_EMAILS, failureEmailIds);
+			existJob.setEmail(emailMesage);
 			existJob.setScheduleType(schedule);
 			existJob.setScheduleExpression(cronExpression);
 			existJob.setBranch(branch);
@@ -678,7 +678,7 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 				} else {
 					attacheMentPattern = testTypeParam;
 				}
-				existJob.setAttachmentsPattern("do_not_checkin/archives/" + attacheMentPattern + "/*.pdf"); //do_not_checkin/archives/cumulativeReports/*.pdf
+				existJob.setAttachmentsPattern("do_not_checkin/archives/" + attacheMentPattern + "/*.pdf"); 
 				
 				// here we can set necessary values in request and we can change object value as well...
 				// getting sonar url
@@ -808,7 +808,7 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 			}
 			
 			if(!CLONED_WORKSPACE.equals(svnType)) {
-			restartJenkins(); // reload config
+			restartJenkins(); 
 			}
 
 			setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
@@ -1061,7 +1061,7 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 			HttpServletRequest request = getHttpRequest();
 			String cronBy = request.getParameter(REQ_CRON_BY);
 			String jobName = "Job Name";
-			String cronExpression = "";
+			String cronExpresion = "";
 			Date[] dates = null;
 
 			if (REQ_CRON_BY_DAILY.equals(cronBy)) {
@@ -1071,28 +1071,28 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 
 				if ("false".equals(every)) {
 					if ("*".equals(hours) && "*".equals(minutes)) {
-						cronExpression = "0 * * * * ?";
+						cronExpresion = "0 * * * * ?";
 					} else if ("*".equals(hours) && !"*".equals(minutes)) {
-						cronExpression = "0 " + minutes + " 0 * * ?";
+						cronExpresion = "0 " + minutes + " 0 * * ?";
 					} else if (!"*".equals(hours) && "*".equals(minutes)) {
-						cronExpression = "0 0 " + hours + " * * ?";
+						cronExpresion = "0 0 " + hours + " * * ?";
 					} else if (!"*".equals(hours) && !"*".equals(minutes)) {
-						cronExpression = "0 " + minutes + " " + hours
+						cronExpresion = "0 " + minutes + " " + hours
 								+ " * * ?";
 					}
 				} else {
 					if ("*".equals(hours) && "*".equals(minutes)) {
-						cronExpression = "0 * * * * ?";
+						cronExpresion = "0 * * * * ?";
 					} else if ("*".equals(hours) && !"*".equals(minutes)) {
-						cronExpression = "0 " + "*/" + minutes + " * * * ?"; // 0 replace with *
+						cronExpresion = "0 " + "*/" + minutes + " * * * ?"; 
 					} else if (!"*".equals(hours) && "*".equals(minutes)) {
-						cronExpression = "0 0 " + "*/" + hours + " * * ?"; // 0 replace with *
+						cronExpresion = "0 0 " + "*/" + hours + " * * ?"; 
 					} else if (!"*".equals(hours) && !"*".equals(minutes)) {
-						cronExpression = "0 " + minutes + " */" + hours
-								+ " * * ?"; // 0 replace with *
+						cronExpresion = "0 " + minutes + " */" + hours
+								+ " * * ?"; 
 					}
 				}
-				dates = testCronExpression(cronExpression);
+				dates = testCronExpression(cronExpresion);
 
 			} else if (REQ_CRON_BY_WEEKLY.equals(cronBy)) {
 				String hours = request.getParameter(REQ_HOURS);
@@ -1100,8 +1100,8 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 				String week = request.getParameter(REQ_CRON_BY_WEEK);
 				hours = ("*".equals(hours)) ? "0" : hours;
 				minutes = ("*".equals(minutes)) ? "0" : minutes;
-				cronExpression = "0 " + minutes + " " + hours + " ? * " + week;
-				dates = testCronExpression(cronExpression);
+				cronExpresion = "0 " + minutes + " " + hours + " ? * " + week;
+				dates = testCronExpression(cronExpresion);
 
 			} else if (REQ_CRON_BY_MONTHLY.equals(cronBy)) {
 				String hours = request.getParameter(REQ_HOURS);
@@ -1110,15 +1110,15 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 				String day = request.getParameter(REQ_DAY);
 				hours = ("*".equals(hours)) ? "0" : hours;
 				minutes = ("*".equals(minutes)) ? "0" : minutes;
-				cronExpression = "0 " + minutes + " " + hours + " " + day + " "
+				cronExpresion = "0 " + minutes + " " + hours + " " + day + " "
 						+ month + " ?";
-				dates = testCronExpression(cronExpression);
+				dates = testCronExpression(cronExpresion);
 			}
 
 			if (dates != null) {
-				cronExpression = cronExpression.replace('?', '*');
-				cronExpression = cronExpression.substring(2);
-				setReqAttribute(REQ_CRON_EXPRESSION, cronExpression);
+				cronExpresion = cronExpresion.replace('?', '*');
+				cronExpresion = cronExpresion.substring(2);
+				setReqAttribute(REQ_CRON_EXPRESSION, cronExpresion);
 				setReqAttribute(REQ_CRON_DATES, dates);
 				setReqAttribute(REQ_JOB_NAME, jobName);
 				return CRON_VALIDATION;
@@ -1140,11 +1140,11 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 				S_LOGGER.debug("Entering Method  CI.testCronExpression(String expression)");
 				S_LOGGER.debug("testCronExpression() Expression = " + expression);
 			}
-			final CronExpression cronExpression = new CronExpression(expression);
-			final Date nextValidDate1 = cronExpression.getNextValidTimeAfter(new Date());
-			final Date nextValidDate2 = cronExpression.getNextValidTimeAfter(nextValidDate1);
-			final Date nextValidDate3 = cronExpression.getNextValidTimeAfter(nextValidDate2);
-			final Date nextValidDate4 = cronExpression.getNextValidTimeAfter(nextValidDate3);
+			final CronExpression cronExpresion = new CronExpression(expression);
+			final Date nextValidDate1 = cronExpresion.getNextValidTimeAfter(new Date());
+			final Date nextValidDate2 = cronExpresion.getNextValidTimeAfter(nextValidDate1);
+			final Date nextValidDate3 = cronExpresion.getNextValidTimeAfter(nextValidDate2);
+			final Date nextValidDate4 = cronExpresion.getNextValidTimeAfter(nextValidDate3);
 			dates = new Date[] { nextValidDate1, nextValidDate2, nextValidDate3, nextValidDate4 };
 		} catch (Exception e) {
 			if (debugEnabled) {
@@ -1283,7 +1283,11 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 	}
 
 	public void setEmails(String[] email) {
-		this.emails = email;
+		if(email == null) {
+			this.emails = new String[0];
+		} else {
+			this.emails = Arrays.copyOf(email, email.length);
+		}
 	}
 
 	public String getSuccessEmailIds() {

@@ -135,7 +135,6 @@ public final class DocConvertor {
 
 	private static PdfInput convertRtfToPdf(String fileUrl) throws FileNotFoundException {
 		BufferedInputStream bis = new BufferedInputStream(new FileInputStream(fileUrl));
-//		RrtfParser rtfParser = new RtfParser();
 
 		//TODO: convert the rtf to pdf and return pdf
 		return null;

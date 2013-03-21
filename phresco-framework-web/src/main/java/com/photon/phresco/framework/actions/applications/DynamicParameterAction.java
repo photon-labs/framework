@@ -48,14 +48,14 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
     private static Boolean s_debugEnabled  =S_LOGGER.isDebugEnabled();
     
     //Dynamic parameter
-    private List<Value> dependentValues = null; //Value for dependancy parameters
+    private List<Value> dependentValues = null; 
     private String dynamicPageParameterDesign = "";
     private String currentParamKey = ""; 
     private String goal = "";
     private String selectedOption = "";
     private String dependency = "";
-    private String fileType = ""; //for file browse 
-    private String fileOrFolder = ""; //for file browse
+    private String fileType = ""; 
+    private String fileOrFolder = ""; 
     	
 	private boolean paramaterAvailable;
 	private boolean errorFound;
@@ -200,7 +200,7 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
                         if (CollectionUtils.isNotEmpty(dynParamPossibleValues)) {
                             paramBuilder.append(dynParamPossibleValues.get(0).getValue());
                         }
-                    } else if (parameter.getPossibleValues() != null) { //Possible values
+                    } else if (parameter.getPossibleValues() != null) { 
                         List<Value> values = parameter.getPossibleValues().getValue();
                         
                         if (watcherMap.containsKey(parameterKey)) {
@@ -320,21 +320,6 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
         }
         return paramMap;
     }
-
-   /* protected void setDependencyToWatcher(Map<String, DependantParameters> watcherMap, List<String> dependencyKeys,  
-            String parentParamKey, String parentParamValue) {
-        for (String dependentKey : dependencyKeys) {
-            DependantParameters dependantParameters;
-            if (watcherMap.containsKey(dependentKey)) {
-                dependantParameters = (DependantParameters) watcherMap.get(dependentKey);
-            } else {
-                dependantParameters = new DependantParameters();
-            }
-            dependantParameters.getParentMap().put(parentParamKey, parentParamValue);
-            System.out.println("adding watcher " + dependentKey);
-            watcherMap.put(dependentKey, dependantParameters);
-        }
-    }*/
 
     /**
      * To set List of Possible values as Dynamic parameter in request
@@ -491,9 +476,9 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 					if (TYPE_BOOLEAN.equalsIgnoreCase(parameter.getType()) && StringUtils.isNotEmpty(parameter.getDependency())) {
 						//To validate check box dependency controls
 						eventDependencies = Arrays.asList(parameter.getDependency().split(CSV_PATTERN));
-						validateMap.put(parameter.getKey(), eventDependencies);//add checkbox dependency keys to map
+						validateMap.put(parameter.getKey(), eventDependencies);
 						if (getReqParameter(parameter.getKey()) != null && dependentParamMandatoryChk(mojo, eventDependencies)) {
-							break;//break from loop if error exists
+							break;
 						}
 					} else if (TYPE_LIST.equalsIgnoreCase(parameter.getType()) &&  !Boolean.parseBoolean(parameter.getMultiple())
 							&& parameter.getPossibleValues() != null) {
@@ -502,7 +487,8 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 							List<Value> values = parameter.getPossibleValues().getValue();
 							String allPossibleValueDependencies = fetchAllPossibleValueDependencies(values);
 							eventDependencies = Arrays.asList(allPossibleValueDependencies.toString().split(CSV_PATTERN));
-							validateMap.put(parameter.getKey(), eventDependencies);//add psbl value dependency keys to map
+							//add psbl value dependency keys to map
+							validateMap.put(parameter.getKey(), eventDependencies);
 							for (Value value : values) {
 								dropDownDependencies = new ArrayList<String>();
 								if (value.getKey().equalsIgnoreCase(getReqParameter(parameter.getKey())) 
@@ -599,17 +585,19 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 				|| TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(parameter.getType()) && !Boolean.parseBoolean(parameter.getMultiple())
 				|| (TYPE_LIST.equalsIgnoreCase(parameter.getType()) && !Boolean.parseBoolean(parameter.getMultiple()))
 				|| (TYPE_FILE_BROWSE.equalsIgnoreCase(parameter.getType()))) {
-			if (FROM_PAGE_EDIT.equalsIgnoreCase(parameter.getEditable())) {//For editable combo box
+			if (FROM_PAGE_EDIT.equalsIgnoreCase(parameter.getEditable())) {
 				returnFlag = editableComboValidate(parameter, returnFlag,lableTxt);
-			} else {//for text box,non editable single select list box,file browse
+			} else {
+				//for text box,non editable single select list box,file browse
 				returnFlag = textSingleSelectValidate(parameter, returnFlag,lableTxt);
 			}
 		} else if (TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(parameter.getType()) && Boolean.parseBoolean(parameter.getMultiple()) || 
 				(TYPE_LIST.equalsIgnoreCase(parameter.getType()) && Boolean.parseBoolean(parameter.getMultiple()))) {
 			
-			returnFlag = multiSelectValidate(parameter, returnFlag, lableTxt);//for multi select list box
+			//for multi select list box
+			returnFlag = multiSelectValidate(parameter, returnFlag, lableTxt);
 		} else if (parameter.getType().equalsIgnoreCase(TYPE_MAP)) {
-			returnFlag = mapControlValidate(parameter, returnFlag);//for type map
+			returnFlag = mapControlValidate(parameter, returnFlag);
 		}
 		
 		return returnFlag;
@@ -653,7 +641,7 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 	 */
 	private boolean multiSelectValidate(Parameter parameter,
 			boolean returnFlag, String lableTxt) {
-		if (getReqParameterValues(parameter.getKey()) == null) {//for multi select list box
+		if (getReqParameterValues(parameter.getKey()) == null) {
 			setErrorFound(true);
 			setErrorMsg(lableTxt + " " +getText(EXCEPTION_MANDAOTRY_MSG));
 			returnFlag = true;
@@ -702,7 +690,7 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 		String lableTxt = "";
 		List<com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.Name.Value> labels = parameter.getName().getValue();
 		for (com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.Name.Value label : labels) {
-			if (label.getLang().equals("en")) {	//to get label of parameter
+			if (label.getLang().equals("en")) {	
 				lableTxt = label.getValue();
 			    break;
 			}
@@ -853,9 +841,6 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 		if (REQ_JAR.equalsIgnoreCase(getFileType())) {
 			setReqAttribute(REQ_PROJECT_LOCATION, "");
 			setReqAttribute(REQ_FROM, REQ_AGAINST_JAR);
-//		} else if(REQ_XLSX.equalsIgnoreCase(getFileType())) {
-//			setReqAttribute(REQ_PROJECT_LOCATION, "");
-//			setReqAttribute(REQ_FROM, REQ_MANUAL_XLSX);
 		} else {
 			setReqAttribute(REQ_PROJECT_LOCATION, getAppDirectoryPath(applicationInfo).replace(File.separator, FORWARD_SLASH));
 			setReqAttribute(REQ_FROM, getReqParameter(REQ_FROM_PAGE));

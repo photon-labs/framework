@@ -257,9 +257,9 @@ public class Projects extends FrameworkBaseAction {
         }
 
         try {
-            String techGroupId = getReqParameter(getLayerId() + REQ_PARAM_NAME_TECH_GROUP);
+            String techGroup = getReqParameter(getLayerId() + REQ_PARAM_NAME_TECH_GROUP);
             List<TechnologyGroup> techGroups = filterLayer(getLayerId()).getTechGroups();            
-            TechnologyGroup technologyGroup = filterTechnologyGroup(techGroups, techGroupId);
+            TechnologyGroup technologyGroup = filterTechnologyGroup(techGroups, techGroup);
             setWidgets(technologyGroup.getTechInfos());
         } catch (PhrescoException e) {
             if (s_debugEnabled) {
@@ -284,9 +284,9 @@ public class Projects extends FrameworkBaseAction {
     		List<Customer> customers = user.getCustomers();
     		for (Customer customer : customers) {
     			if (customer.getId().equals(getCustomerId())) {
-    				List<ApplicationType> layers = customer.getApplicableAppTypes();
-    				if (CollectionUtils.isNotEmpty(layers)) {
-    					for (ApplicationType layer : layers) {    						
+    				List<ApplicationType> appLayers = customer.getApplicableAppTypes();
+    				if (CollectionUtils.isNotEmpty(appLayers)) {
+    					for (ApplicationType layer : appLayers) {    						
     						s_layerMap.put(layer.getId(), layer);
     					}
     				}
@@ -305,11 +305,9 @@ public class Projects extends FrameworkBaseAction {
      * @return
      */
     private TechnologyGroup filterTechnologyGroup(List<TechnologyGroup> technologyGroups, String id) {    
-        if (CollectionUtils.isNotEmpty(technologyGroups)) {
-            if (s_technologyGroupMap.get(id) == null) {
-                for (TechnologyGroup technologyGroup : technologyGroups) {                
-                    s_technologyGroupMap.put(technologyGroup.getId(), technologyGroup);
-                }
+        if (CollectionUtils.isNotEmpty(technologyGroups) && s_technologyGroupMap.get(id) == null) {
+            for (TechnologyGroup technologyGroup : technologyGroups) {                
+                s_technologyGroupMap.put(technologyGroup.getId(), technologyGroup);
             }
         }
 
@@ -416,13 +414,13 @@ public class Projects extends FrameworkBaseAction {
         projectInfo.setCustomerIds(Collections.singletonList(getCustomerId()));
         List<ApplicationInfo> appInfos = new ArrayList<ApplicationInfo>();
         if (CollectionUtils.isNotEmpty(getLayer())) {
-            for (String layerId : getLayer()) {
-                if (LAYER_MOB_ID.equals(layerId)) {
-                    getMobileLayerAppInfos(appInfos, layerId);
-                } else if (LAYER_APP_ID.equals(layerId)) { 
-                    getAppLayerAppInfos(appInfos, layerId);
+            for (String layerTypeId : getLayer()) {
+                if (LAYER_MOB_ID.equals(layerTypeId)) {
+                    getMobileLayerAppInfos(appInfos, layerTypeId);
+                } else if (LAYER_APP_ID.equals(layerTypeId)) { 
+                    getAppLayerAppInfos(appInfos, layerTypeId);
                 } else {
-                	getWebLayerAppInfos(appInfos, layerId);
+                	getWebLayerAppInfos(appInfos, layerTypeId);
                 }
             }
         }
@@ -442,16 +440,16 @@ public class Projects extends FrameworkBaseAction {
     private List<ApplicationInfo> getMobileLayerAppInfos(List<ApplicationInfo> appInfos, String layerId) throws PhrescoException {
         String[] techGroupIds = getReqParameterValues(layerId + REQ_PARAM_NAME_TECH_GROUP);
         if (!ArrayUtils.isEmpty(techGroupIds)) {
-            for (String techGroupId : techGroupIds) {
-                String techId = getReqParameter(techGroupId + REQ_PARAM_NAME_TECHNOLOGY);
-                String version = getReqParameter(techGroupId + REQ_PARAM_NAME_VERSION);
-                boolean phoneEnabled = Boolean.parseBoolean(getReqParameter(techGroupId + REQ_PARAM_NAME_PHONE));
-                boolean tabletEnabled = Boolean.parseBoolean(getReqParameter(techGroupId + REQ_PARAM_NAME_TABLET));
+            for (String technologyGroupId : techGroupIds) {
+                String techId = getReqParameter(technologyGroupId + REQ_PARAM_NAME_TECHNOLOGY);
+                String version = getReqParameter(technologyGroupId + REQ_PARAM_NAME_VERSION);
+                boolean phoneEnabled = Boolean.parseBoolean(getReqParameter(technologyGroupId + REQ_PARAM_NAME_PHONE));
+                boolean tabletEnabled = Boolean.parseBoolean(getReqParameter(technologyGroupId + REQ_PARAM_NAME_TABLET));
                 Technology technology = getServiceManager().getTechnology(techId);
-                String techName = technology.getName().replaceAll("\\s", "").toLowerCase();
+                String techName = replaceAndConvert(technology);
                 String dirName = getProjectCode() + HYPHEN + techName;
-                String projectName = getProjectName() + HYPHEN + techName;
-                appInfos.add(getAppInfo(projectName, dirName, techId, version, phoneEnabled, tabletEnabled, technology.getAppTypeId()));
+                String newProjectName = getProjectName() + HYPHEN + techName;
+                appInfos.add(getAppInfo(newProjectName, dirName, techId, version, phoneEnabled, tabletEnabled, technology.getAppTypeId()));
             }
         }
 
@@ -468,19 +466,19 @@ public class Projects extends FrameworkBaseAction {
     private List<ApplicationInfo> getAppLayerAppInfos(List<ApplicationInfo> appInfos, String layerId) throws PhrescoException {
     	String applnLayerInfo = getReqParameter(REQ_APP_LAYER_INFOS);
     	if (StringUtils.isNotEmpty(applnLayerInfo)) {
-    		String[] split = applnLayerInfo.split(Constants.STR_COMMA);//Split multiple app layer app infos by comma
-         	for (String string : split) {//iterate 
+    		String[] split = applnLayerInfo.split(Constants.STR_COMMA);
+         	for (String string : split) {
      			String[] techInfos = string.split(APP_SEPERATOR);
      			String[] techIdVersion = techInfos[1].split(VERSION_SEPERATOR);
-     			String applnCode = techInfos[0];//app code
-     			String techId = techIdVersion[0];//tech id
+     			String applnCode = techInfos[0];
+     			String techId = techIdVersion[0];
      			String[] versionStr = techIdVersion[1].split(ROW_SEPERATOR);
-     			String techVersion = versionStr[0];//tech version
+     			String techVersion = versionStr[0];
      			Technology technology = getServiceManager().getTechnology(techId);
-     	        String techName = technology.getName().replaceAll("\\s", "").toLowerCase();
+     	        String techName = replaceAndConvert(technology);
      	        String dirName = applnCode + HYPHEN + techName;
-     	        String projectName = getProjectName() + HYPHEN + techName;
-     	        appInfos.add(getAppInfo(projectName, dirName, techId, techVersion, false, false, technology.getAppTypeId()));
+     	        String newProjectName = getProjectName() + HYPHEN + techName;
+     	        appInfos.add(getAppInfo(newProjectName, dirName, techId, techVersion, false, false, technology.getAppTypeId()));
      		}
     	}
 
@@ -491,10 +489,10 @@ public class Projects extends FrameworkBaseAction {
     	String techId = getReqParameter(layerId + REQ_PARAM_NAME_TECHNOLOGY);
         String version = getReqParameter(layerId + REQ_PARAM_NAME_VERSION);
         Technology technology = getServiceManager().getTechnology(techId);
-        String techName = technology.getName().replaceAll("\\s", "").toLowerCase();
+        String techName = replaceAndConvert(technology);
         String dirName = getProjectCode() + HYPHEN + techName;
-        String projectName = getProjectName() + HYPHEN + techName;
-        appInfos.add(getAppInfo(projectName, dirName, techId, version, false, false, technology.getAppTypeId()));
+        String newProjectName = getProjectName() + HYPHEN + techName;
+        appInfos.add(getAppInfo(newProjectName, dirName, techId, version, false, false, technology.getAppTypeId()));
 		
         return appInfos;
     }
@@ -697,22 +695,20 @@ public class Projects extends FrameworkBaseAction {
   	        }
   	        //empty validation for technology in the selected layer
   	        if (CollectionUtils.isNotEmpty(getLayer())) {
-  	            for (String layerId : getLayer()) {
-  	                String techId = getReqParameter(layerId + REQ_PARAM_NAME_TECHNOLOGY);
-  	                if (LAYER_WEB_ID.equals(layerId)) {//for web layer
-  	                    if (StringUtils.isEmpty(techId)) {
-  	                        setWebTechError(getText(ERROR_TECHNOLOGY));
-  	                        hasError = true;
-  	                    }
+  	            for (String layerTypeId : getLayer()) {
+  	                String techId = getReqParameter(layerTypeId + REQ_PARAM_NAME_TECHNOLOGY);
+  	                if (LAYER_WEB_ID.equals(layerTypeId) && StringUtils.isEmpty(techId)) {
+                        setWebTechError(getText(ERROR_TECHNOLOGY));
+                        hasError = true;
   	                }
-  	                if (LAYER_MOB_ID.equals(layerId)) {//for mobile layer
-  	                    String[] techGroupIds = getReqParameterValues(layerId + REQ_PARAM_NAME_TECH_GROUP);
-  	                    if (ArrayUtils.isEmpty(techGroupIds)) {//empty validation for technology group
+  	                if (LAYER_MOB_ID.equals(layerTypeId)) {
+  	                    String[] techGroupIds = getReqParameterValues(layerTypeId + REQ_PARAM_NAME_TECH_GROUP);
+  	                    if (ArrayUtils.isEmpty(techGroupIds)) {
   	                        setMobTechError(getText(ERROR_TECHNOLOGY));
   	                        hasError = true;
   	                    } else {
-  	                        for (String techGroupId : techGroupIds) {//empty validation for technology in the selected technology group
-  	                            techId = getReqParameter(techGroupId + REQ_PARAM_NAME_TECHNOLOGY);
+  	                        for (String technologyGroupId : techGroupIds) {
+  	                            techId = getReqParameter(technologyGroupId + REQ_PARAM_NAME_TECHNOLOGY);
   	                            if (StringUtils.isEmpty(techId)) {
   	                                setMobTechError(getText(ERROR_LAYER));
   	                                hasError = true;
@@ -729,22 +725,22 @@ public class Projects extends FrameworkBaseAction {
         String applnLayerInfos = getReqParameter(REQ_APP_LAYER_INFOS);
       	if (StringUtils.isNotEmpty(applnLayerInfos)) {
       		boolean skipLoop = false;
-      		String[] splittedAppInfos = applnLayerInfos.split(Constants.STR_COMMA);//Split multiple app layer app infos by comma
-           	for (String applnLayerInfo : splittedAppInfos) {//iterate 
+      		String[] splittedAppInfos = applnLayerInfos.split(Constants.STR_COMMA);
+           	for (String applnLayerInfo : splittedAppInfos) { 
        			String[] techInfos = applnLayerInfo.split(APP_SEPERATOR);
        			if (!ArrayUtils.isEmpty(techInfos) && StringUtils.isNotEmpty(techInfos[0]) && StringUtils.isNotEmpty(techInfos[1])) {
-	       			String applnCode = techInfos[0];//app code
+	       			String applnCode = techInfos[0];
        				String[] techIdVersion = techInfos[1].split(VERSION_SEPERATOR);
 	       			if (!ArrayUtils.isEmpty(techIdVersion) && StringUtils.isNotEmpty(techIdVersion[0])) {
-	       				String techId = techIdVersion[0];//tech id
+	       				String techId = techIdVersion[0];
 	       				String[] rowCount = techIdVersion[1].split(ROW_SEPERATOR);
 		       			Technology technology = getServiceManager().getTechnology(techId);
-		       	        String techName = technology.getName().replaceAll("\\s", "").toLowerCase();
+		       	        String techName = replaceAndConvert(technology);
 		       	        String currentAppCode = applnCode + HYPHEN + techName;
-			       	     for(ProjectInfo project : projects) {//iterate all project  infos
+			       	     for(ProjectInfo project : projects) {
 		       	    	 	List<ApplicationInfo> appInfos = project.getAppInfos();
-		       	    	 	for (ApplicationInfo appInfo : appInfos) {//iterate all app infos
-								if (appInfo.getCode().toLowerCase().equals(currentAppCode.toLowerCase())) {// match with existing appcode with current appcode
+		       	    	 	for (ApplicationInfo appInfo : appInfos) {
+								if (appInfo.getCode().toLowerCase().equals(currentAppCode.toLowerCase())) {
 									hasError = true;
 									skipLoop = true;
 									setFromTab(getFromTab());
@@ -785,6 +781,10 @@ public class Projects extends FrameworkBaseAction {
 
         return SUCCESS;
     }
+
+	private String replaceAndConvert(Technology technology) {
+		return technology.getName().replaceAll("\\s", "").toLowerCase();
+	}
 
     public String getProjectName() {
         return projectName;

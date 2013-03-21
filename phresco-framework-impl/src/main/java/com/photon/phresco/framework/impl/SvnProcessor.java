@@ -105,17 +105,4 @@ public class SvnProcessor {
         BufferedWriter writer = new BufferedWriter(new FileWriter(path));
         xmlOutput.output(document_, writer);
     }
-    
-//    public static void main(String[] args) {
-//        try {
-//            SvnProcessor processor = new SvnProcessor(new URL(SVN_CONFIG));
-//            processor.changeNodeValue("credentials/entry//userName", "****");
-//            processor.changeNodeValue("credentials/entry//password", "****");
-//            processor.writeStream(new File(FINAL_PATH + File.separator + "hudson.scm.SubversionSCM.xml"));
-//        } catch (JDOMException e) {
-//            e.printStackTrace();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
 }

@@ -42,7 +42,7 @@
 	<div>
 		<ul id="display-inline-block-example">
 			 <li id="first">
-				<%-- <a id="manualTest" class="btn btn-primary"><s:text name='lbl.test'/></a> --%>
+				<%-- <a id="addTest" class="btn btn-primary"><s:text name='lbl.btn.add'/></a>  --%>
 			</li> 
 		
 			<!-- <div class="alert alert-block hideContent" id="errorDiv" style="margin-left: 0; margin-top: 5px;"> -->
@@ -50,7 +50,8 @@
 		</div>
 		</ul>
 		<ul id="display-inline-block-example">
-			<li id="first"></li>
+			<li id="first">
+			<a id="addTest" class="btn btn-primary" style="margin-left: 8%;"><s:text name='lbl.btn.add'/></a> </li>
 			<li id="label">
 				&nbsp;<strong class="hideCtrl" id="testResultLbl"><s:text name="lbl.test.suite"/></strong> 
 			</li>
@@ -200,6 +201,22 @@ $(document).ready(function() {
 		canvasInitPie();
 	});
 		
+	$('#addTest').click(function() {
+		var value = $("#testSuite").val();
+		if (value === "All") {
+			showLoadingIcon();
+			var params = getBasicParams();
+			params = params.concat("&type=");
+			params = params.concat(value);
+			loadContent("addTestSuites", $('#manualTestCases'), $('#subcontainer'), params);
+		} else {
+			showLoadingIcon();
+			var params = getBasicParams();
+			params = params.concat("&type=");
+			params = params.concat(value);
+			loadContent("addTestCases", $('#manualTestCases'), $('#subcontainer'), params);
+		}
+	});
 });
 
 	//changeView();
@@ -304,7 +321,7 @@ $(document).ready(function() {
 				$('#testCasesList').empty();
 				for (i in data.allTestCases) {
 					var newTestCaseRow = $(document.createElement('tr')).attr("id", data.allTestCases[i].testCaseId);
-					newTestCaseRow.html("<td class='firstVal'>"+data.allTestCases[i].featureId+"</td>"+
+					newTestCaseRow.html("<td class='firstVal'><a href='#' onclick='getTestCaseReport(this);' name="+data.allTestCases[i].featureId+">"+data.allTestCases[i].featureId+"</td>"+
 							"<td class='secondVal'>"+data.allTestCases[i].testCaseId+"</td>"+
 							"<td class='thirdVal'>"+data.allTestCases[i].expectedResult+"</td>"+ 
 							"<td class='fourthVal'>"+data.allTestCases[i].actualResult+"</td>"+
@@ -348,7 +365,7 @@ $(document).ready(function() {
 				"<td class='width-ten-percent loadTestPopupBold'>"+totalPass+"</td>"+
 				"<td class='width-ten-percent loadTestPopupBold'>"+totalFail+"</td>"+
 				"<td class='width-ten-percent loadTestPopupBold'>"+totalTestCases+"</td>"+ 
-				"<td class='width-ten-percent loadTestPopupBold'>"+totalCoverage+"</td>")
+				"<td class='width-ten-percent loadTestPopupBold'></td>")
 	 	totalRow.appendTo("#total");	
 	}
 	
@@ -375,6 +392,17 @@ $(document).ready(function() {
 		loadContent("readManualTestCases", $('#manualTestCases'),'', params, true, true);
 	}
 	
+	function getTestCaseReport(obj) {
+		var id = $(obj).text();
+		var testSuite = $("#testSuite").val();
+		showLoadingIcon();
+		var params = getBasicParams();
+		params = params.concat("&testId=");
+		params = params.concat(id);
+		params = params.concat("&type=");
+		params = params.concat(testSuite);
+		loadContent("addTestCases", $('#manualTestCases'), $('#subcontainer'), params);
+	}
 	function reportList(obj) {
 		var resultView = $('#resultView').val();
 		if (resultView === "tabular") {

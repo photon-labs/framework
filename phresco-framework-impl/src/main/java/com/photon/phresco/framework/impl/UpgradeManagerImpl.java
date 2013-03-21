@@ -42,7 +42,7 @@ import com.phresco.pom.exception.PhrescoPomException;
 import com.phresco.pom.util.PomProcessor;
 
 public class UpgradeManagerImpl implements UpgradeManager, FrameworkConstants   {
-	VersionInfo version = null;
+	private VersionInfo version = null;
 	private static final Logger S_LOGGER = Logger.getLogger(UpgradeManagerImpl.class);
 	private static Boolean DebugEnabled = S_LOGGER.isDebugEnabled();
 

@@ -2,8 +2,6 @@ package com.photon.phresco.framework.commons;
 
 import java.util.List;
 
-import com.photon.phresco.framework.model.TestSuite;
-
 public class JmeterTypeReport {
 	private String type;
 	private List<JmeterReport> fileReport;
