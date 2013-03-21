@@ -4342,6 +4342,13 @@ div.submit_input {
 	height: 95.5%;
 }
 
+.manualScrollDiv {
+	overflow-y: auto; 
+	overflow-x: hidden; 
+	height: 87%;
+	margin-top: 5%;
+}
+
 .download_tbl {
 	border-radius: 6px; 
 	width: 100%;

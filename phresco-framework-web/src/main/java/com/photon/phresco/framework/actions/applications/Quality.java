@@ -129,6 +129,9 @@ public class Quality extends DynamicParameterAction implements Constants {
     private String testAgainst = "";
     private String resolution = ""; 
     private String filePath = "";
+    private String type = "";
+    private String testId = "";
+    private String fromTab = "";
     
 	private List<String> buildInfoEnvs = null;
     
@@ -178,6 +181,20 @@ public class Quality extends DynamicParameterAction implements Constants {
 	private String testSuitName = "";
 	
 	private String projectModule = "";
+	private String testScenarioName = "";
+	private String totalSuccess = "";
+	private String totalFailures = "";
+	private String totalTestCases = "";
+	private String testCoverage = "";
+	
+	private String featureId = "";
+	private String testCaseId = "";
+	private String testDescription = "";
+	private String testSteps = "";
+	private String expectedResult = "";
+	private String actualResult = "";
+	private String status = "";
+	private String bugComment = "";
 	
     boolean connectionAlive = false;
     boolean updateCache;
@@ -1987,40 +2004,33 @@ public class Quality extends DynamicParameterAction implements Constants {
 			.append(appInfo.getAppDirName())
 			.append(manualTestDir);
 			if (new File(sb.toString()).exists()) {
-				//CacheKey key = new CacheKey("testSuites");
-				//List<TestSuite> testSuitesList = (List<TestSuite>) cacheManager.get(key);
-				//if (CollectionUtils.isNotEmpty(testSuitesList)) {
-				//	setAllTestSuite(testSuitesList);
-				//} else {
-					final List<TestSuite> readManualTestSuiteFile = frameworkUtil.readManualTestSuiteFile(sb.toString());
-					if (CollectionUtils.isNotEmpty(readManualTestSuiteFile)) {
-						
-						setAllTestSuite(readManualTestSuiteFile);
-						//cacheManager.add(key, readManualTestSuiteFile);
-					}
-				
-					Runnable runnable = new Runnable() {
-						public void run() {
-							try {
-								for (TestSuite testSuite : readManualTestSuiteFile) {
-									String testSuiteName = testSuite.getName();
-									CacheKey key = new CacheKey(testSuiteName);
-									List<com.photon.phresco.commons.model.TestCase> readManualTestCaseFile = frameworkUtil.readManualTestCaseFile(sb.toString(), testSuiteName);
-									if (CollectionUtils.isNotEmpty(readManualTestCaseFile)) {
-										cacheManager.add(key, readManualTestCaseFile);
-									}
-								}
-	
-							} catch (PhrescoException e) {
-								S_LOGGER.error("Entered into catch block of Quality.getManualTestSuites()"+ e);
-							}
-						}
-					};
-
-					t = new Thread(runnable);
-					t.start();
+				final List<TestSuite> readManualTestSuiteFile = frameworkUtil.readManualTestSuiteFile(sb.toString());
+				if (CollectionUtils.isNotEmpty(readManualTestSuiteFile)) {
+					
+					setAllTestSuite(readManualTestSuiteFile);
 				}
-			//}
+			
+				Runnable runnable = new Runnable() {
+					public void run() {
+						try {
+							for (TestSuite tstSuite : readManualTestSuiteFile) {
+								String testSuiteName = tstSuite.getName();
+								CacheKey key = new CacheKey(testSuiteName);
+								List<com.photon.phresco.commons.model.TestCase> readManualTestCaseFile = frameworkUtil.readManualTestCaseFile(sb.toString(), testSuiteName, null, null);
+								if (CollectionUtils.isNotEmpty(readManualTestCaseFile)) {
+									cacheManager.add(key, readManualTestCaseFile);
+								}
+							}
+
+						} catch (PhrescoException e) {
+							S_LOGGER.error("Entered into catch block of Quality.getManualTestSuites()"+ e);
+						}
+					}
+				};
+
+				t = new Thread(runnable);
+				t.start();
+			}
 		} catch (Exception e) {
 			S_LOGGER.error("Entered into catch block of Quality.fetchManualTestSuites()"+ e);
 		} 
@@ -2028,12 +2038,78 @@ public class Quality extends DynamicParameterAction implements Constants {
 		return SUCCESS;
 	}
   
+	public String addManualTestSuite () throws PhrescoException {
+		if (s_debugEnabled) {
+			S_LOGGER.debug("Entering Method Quality.addManualTestSuite()");
+		}
+		
+		return SUCCESS;
+	}
+	
+	public String addManualTestCase () throws PhrescoException, PhrescoPomException {
+		if (s_debugEnabled) {
+			S_LOGGER.debug("Entering Method Quality.addManualTestCase()");
+		}
+		String testScenario = getType();
+		String testScenarioId = getTestId();
+		if (StringUtils.isNotEmpty(testScenarioId)) {
+			CacheKey testSuitekey = new CacheKey(testScenario);
+			List<com.photon.phresco.commons.model.TestCase> readManualTestCaseFile = (List<com.photon.phresco.commons.model.TestCase>) cacheManager.get(testSuitekey);
+			if (CollectionUtils.isNotEmpty(readManualTestCaseFile)) {
+				for (com.photon.phresco.commons.model.TestCase testCase : readManualTestCaseFile) {
+					if (testCase.getFeatureId().equals(testScenarioId)) {
+						setReqAttribute(REQ_TESTCASE, testCase);
+					}
+				}
+			} 
+		}
+		setReqAttribute(REQ_TESTSUITE, testScenario);
+		return SUCCESS;
+	}
+	
 	public String showManualTestPopUp () throws PhrescoException {
 		if (s_debugEnabled) {
 			S_LOGGER.debug("Entering Method Quality.showManualTestPopUp()");
 		}
 
 		return SUCCESS;
+	}
+	
+	public String saveTestSuites () throws PhrescoException, PhrescoPomException {
+		if (s_debugEnabled) {
+			S_LOGGER.debug("Entering Method Quality.saveTestSuites()");
+		}
+		ApplicationInfo appInfo = getApplicationInfo();
+		setReqAttribute(REQ_APPINFO, appInfo);
+		FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+		String path = frameworkUtil.getManualTestDir(appInfo);
+		setReqAttribute(PATH, path);
+		StringBuilder sb = new StringBuilder(Utility.getProjectHome())
+		.append(appInfo.getAppDirName())
+		.append(path);
+		FrameworkUtil.addNew(sb.toString(), getTestScenarioName(), getTotalSuccess(), getTotalFailures(), getTotalTestCases(), getTestCoverage());
+		return MANUAL;
+	}
+	
+	public String saveTestCases () throws PhrescoException, PhrescoPomException {
+		if (s_debugEnabled) {
+			S_LOGGER.debug("Entering Method Quality.saveTestCases()");
+		}
+		ApplicationInfo appInfo = getApplicationInfo();
+		setReqAttribute(REQ_APPINFO, appInfo);
+		FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+		String path = frameworkUtil.getManualTestDir(appInfo);
+		setReqAttribute(PATH, path);
+		StringBuilder sb = new StringBuilder(Utility.getProjectHome())
+		.append(appInfo.getAppDirName())
+		.append(path);
+		if (!getFromTab().equals(EDIT)) {
+			FrameworkUtil.addNewTestCase(sb.toString(),getTestScenarioName(),getFeatureId(),getTestCaseId(),getTestDescription(),
+					getTestSteps(),"","",getExpectedResult(),getActualResult(),getStatus(),getBugComment());
+		} else {
+			frameworkUtil.readManualTestCaseFile(sb.toString(), getTestScenarioName(), getFeatureId(), getBugComment());
+		}
+		return MANUAL;
 	}
 	
 	public String readManualTestCases () {
@@ -2053,7 +2129,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 				.append(appInfo.getAppDirName())
 				.append(manualTestDir);
 				CacheKey testSuitekey = new CacheKey(getTestSuitName());
-				List<com.photon.phresco.commons.model.TestCase> readTestCase = frameworkUtil.readManualTestCaseFile(sb.toString(), getTestSuitName());
+				List<com.photon.phresco.commons.model.TestCase> readTestCase = frameworkUtil.readManualTestCaseFile(sb.toString(), getTestSuitName(), null, null);
 				if (CollectionUtils.isNotEmpty(readTestCase)) {
 					cacheManager.add(testSuitekey, readTestCase);
 					setAllTestCases(readTestCase);
@@ -2067,23 +2143,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 		return SUCCESS;
 	}
  
-	 private String getTestManualResultFiles(String path) {
-	        File testDir = new File(path);
-	        StringBuilder sb = new StringBuilder(path);
-	        if(testDir.isDirectory()){
-	            FilenameFilter filter = new PhrescoFileFilter("", "xlsx");
-	            File[] listFiles = testDir.listFiles(filter);
-	            for (File file : listFiles) {
-	                if (file.isFile()) {
-	                	sb.append(File.separator);
-	                	sb.append(file.getName());
-	                }
-	            }
-	        }
-	        return sb.toString();
-	    }
-	 
-    public class XmlNameFileFilter implements FilenameFilter {
+	 public class XmlNameFileFilter implements FilenameFilter {
         private String filter_;
         public XmlNameFileFilter(String filter) {
             filter_ = filter;
@@ -2861,26 +2921,132 @@ public class Quality extends DynamicParameterAction implements Constants {
 			List<com.photon.phresco.commons.model.TestCase> allTestCases) {
 		this.allTestCases = allTestCases;
 	}
-}
-class PhrescoFileFilter implements FilenameFilter {
-	private String name;
-	private String extension;
 
-	public PhrescoFileFilter(String name, String extension) {
-		this.name = name;
-		this.extension = extension;
+	public String getType() {
+		return type;
 	}
 
-	public boolean accept(File directory, String filename) {
-		boolean fileOK = true;
+	public void setType(String type) {
+		this.type = type;
+	}
 
-		if (name != null) {
-			fileOK &= filename.startsWith(name);
-		}
+	public String getTestScenarioName() {
+		return testScenarioName;
+	}
 
-		if (extension != null) {
-			fileOK &= filename.endsWith('.' + extension);
-		}
-		return fileOK;
+	public void setTestScenarioName(String testScenarioName) {
+		this.testScenarioName = testScenarioName;
+	}
+
+	public String getTotalSuccess() {
+		return totalSuccess;
+	}
+
+	public void setTotalSuccess(String totalSuccess) {
+		this.totalSuccess = totalSuccess;
+	}
+
+	public String getTotalFailures() {
+		return totalFailures;
+	}
+
+	public void setTotalFailures(String totalFailures) {
+		this.totalFailures = totalFailures;
+	}
+
+	public String getTotalTestCases() {
+		return totalTestCases;
+	}
+
+	public void setTotalTestCases(String totalTestCases) {
+		this.totalTestCases = totalTestCases;
+	}
+
+	public String getTestCoverage() {
+		return testCoverage;
+	}
+
+	public void setTestCoverage(String testCoverage) {
+		this.testCoverage = testCoverage;
+	}
+
+	public String getFeatureId() {
+		return featureId;
+	}
+
+	public void setFeatureId(String featureId) {
+		this.featureId = featureId;
+	}
+
+	public String getTestCaseId() {
+		return testCaseId;
+	}
+
+	public void setTestCaseId(String testCaseId) {
+		this.testCaseId = testCaseId;
+	}
+
+	public String getTestDescription() {
+		return testDescription;
+	}
+
+	public void setTestDescription(String testDescription) {
+		this.testDescription = testDescription;
+	}
+
+	public String getTestSteps() {
+		return testSteps;
+	}
+
+	public void setTestSteps(String testSteps) {
+		this.testSteps = testSteps;
+	}
+
+	public String getExpectedResult() {
+		return expectedResult;
+	}
+
+	public void setExpectedResult(String expectedResult) {
+		this.expectedResult = expectedResult;
+	}
+
+	public String getActualResult() {
+		return actualResult;
+	}
+
+	public void setActualResult(String actualResult) {
+		this.actualResult = actualResult;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getBugComment() {
+		return bugComment;
+	}
+
+	public void setBugComment(String bugComment) {
+		this.bugComment = bugComment;
+	}
+
+	public String getTestId() {
+		return testId;
+	}
+
+	public void setTestId(String testId) {
+		this.testId = testId;
+	}
+
+	public String getFromTab() {
+		return fromTab;
+	}
+
+	public void setFromTab(String fromTab) {
+		this.fromTab = fromTab;
 	}
 }

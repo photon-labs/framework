@@ -178,8 +178,14 @@ public class Features extends DynamicParameterModule {
 			List<SelectedFeature> listFeatures = new ArrayList<SelectedFeature>();
 			List<SelectedFeature> defaultFeatures = new ArrayList<SelectedFeature>();
 			setFeatures(appInfo, listFeatures);
-			if (StringUtils.isNotEmpty(getPilotProject())) {
-				String id = getPilotProject();
+			if (StringUtils.isNotEmpty(getPilotProject()) || appInfo.getPilotInfo() != null) {
+				String id = null;
+				if (StringUtils.isNotEmpty(getPilotProject())) {
+					id = getPilotProject();
+				} else {
+					Element pilotInfo = appInfo.getPilotInfo();
+					id = pilotInfo.getId();
+				}
 				List<ApplicationInfo> pilotProjects = (List<ApplicationInfo>)getSessionAttribute(REQ_PILOT_PROJECTS);
 				for (ApplicationInfo applicationInfo : pilotProjects) {
 					if (applicationInfo.getId().equals(id)) {
@@ -193,7 +199,7 @@ public class Features extends DynamicParameterModule {
 								ArtifactGroup moduleArtifactGroupInfo = getServiceManager().getArtifactGroupInfo(moduleArtifactGroupId);
 								moduleGroups.add(moduleArtifactGroupInfo);
 							}
-							createArtifactInfoForDefault(moduleGroups, defaultFeatures, applicationInfo);
+							createArtifactInfoForPilotProject(moduleGroups, defaultFeatures, applicationInfo);
 						}
 						List<String> selectedJSLibs = applicationInfo.getSelectedJSLibs();
 						List<ArtifactGroup> jsLibs = new ArrayList<ArtifactGroup>();
@@ -204,7 +210,7 @@ public class Features extends DynamicParameterModule {
 								ArtifactGroup jsLibArtifactGroupInfo = getServiceManager().getArtifactGroupInfo(jsLibArtifactGroupId);
 								jsLibs.add(jsLibArtifactGroupInfo);
 							}
-							createArtifactInfoForDefault(jsLibs, defaultFeatures, applicationInfo);
+							createArtifactInfoForPilotProject(jsLibs, defaultFeatures, applicationInfo);
 						}
 						List<String> selectedComponents = applicationInfo.getSelectedComponents();
 						List<ArtifactGroup> components = new ArrayList<ArtifactGroup>();
@@ -215,7 +221,7 @@ public class Features extends DynamicParameterModule {
 								ArtifactGroup componentArtifactGroupInfo = getServiceManager().getArtifactGroupInfo(componentArtifactGroupId);
 								components.add(componentArtifactGroupInfo);
 							}
-							createArtifactInfoForDefault(components, defaultFeatures, applicationInfo);
+							createArtifactInfoForPilotProject(components, defaultFeatures, applicationInfo);
 						}
 					}
 				}
@@ -277,6 +283,27 @@ public class Features extends DynamicParameterModule {
 						}
 					}
 				}
+			}
+		}
+	}
+	
+	private void createArtifactInfoForPilotProject(List<ArtifactGroup> moduleGroups, List<SelectedFeature> defaultFeatures, ApplicationInfo appInfo) throws PhrescoException {
+		for (ArtifactGroup artifactGroup : moduleGroups) {
+			List<ArtifactInfo> versions = artifactGroup.getVersions();
+			for (ArtifactInfo artifactInfo : versions) {
+				SelectedFeature selectFeature = new SelectedFeature();
+				selectFeature.setDispValue(artifactInfo.getVersion());
+				selectFeature.setVersionID(artifactInfo.getId());
+				selectFeature.setModuleId(artifactInfo.getArtifactGroupId());
+				selectFeature.setDispName(artifactGroup.getDisplayName());
+				selectFeature.setName(artifactGroup.getName());
+				selectFeature.setType(artifactGroup.getType().name());
+				selectFeature.setArtifactGroupId(artifactGroup.getId());
+				selectFeature.setDefaultModule(true);
+				selectFeature.setPackaging(artifactGroup.getPackaging());
+				getScope(appInfo, artifactInfo.getId(), selectFeature);
+				getDefaultDependentFeatures(moduleGroups, defaultFeatures, artifactInfo);
+			    defaultFeatures.add(selectFeature);
 			}
 		}
 	}

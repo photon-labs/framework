@@ -112,12 +112,32 @@
 	function popupOnOk(obj) {
 		var url = $(obj).attr("id");
 		if (url === "configureFeature") {
-			showLoadingIcon();
-			$('#popupPage').modal('hide');//To hide the popup
-			var params = getBasicParams();
-			params = params.concat("&featureType=");
-	  		params = params.concat("<%= featureType %>");
-			loadContent(url, $('#formConfigTempProp'), $("#subcontainer"), params, true);
+			var form = $('#formConfigTempProp').serializeArray();
+			var key = form[0].value;
+			var value = form[1].value;
+			if (!isBlank(key) && !isBlank(value)) {
+				showLoadingIcon();
+				$('#popupPage').modal('hide');//To hide the popup
+				var params = getBasicParams();
+				params = params.concat("&featureType=");
+		  		params = params.concat("<%= featureType %>");
+				loadContent(url, $('#formConfigTempProp'), $("#subcontainer"), params, true);
+			} else {
+				if(isBlank(key)) {
+					$("#errMsg").html("key is missing");
+					setTimeOut();
+				} else {
+					$("#errMsg").html("value is missing");
+					setTimeOut();
+				}
+			}
 		}
+	}
+	
+	function setTimeOut() { 
+		setTimeout(function() {
+			$('#errMsg').empty("slow", function () {
+			});
+		}, 5000);
 	}
 </script>
