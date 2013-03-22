@@ -33,7 +33,7 @@ $myObject:{ obj |
 					<tbody>
 						<tr>
 							<td class="noBorder">
-								<input type="text" name="name" class="input-small" title="Name" maxlength="20" value="$dbContextUrlsObj.name$" class="screenName">
+								<input type="text" name="dbName" class="input-small" title="Name" maxlength="20" value="$dbContextUrlsObj.name$" class="screenName">
 							</td>
 							<td class="noBorder">
 								<select name="queryType" id="queryType$dbContextUrlsObj.name$" class="input-small" style="width:140px;">
@@ -60,7 +60,7 @@ $myObject:{ obj |
 		var newTextBoxDiv = jQuery(document.createElement('div')).attr('id', 'dbContextDiv').attr('class','dbContextDivClass').css('margin-bottom','5px');
 		newTextBoxDiv.html("<fieldset class='popup-fieldset fieldsetBottom perFieldSet perDBContextUrlFieldset' id='context'>" +
 			"<legend class='fieldSetLegend'><input type='checkbox' class='dbCheck' onclick='enableDelBtn('dbCheck');'>" +
-			"</legend><table style='line-height: 0px;'><thead><tr><td class='noBorder' style='color: #333333; font-weight: bold;'><span class='red'>*</span>&nbsp;Name</td><td class='noBorder' style='color: #333333; font-weight: bold;'><span class='red'>*</span>&nbsp;QueryType</td><td class='noBorder' style='color: #333333; font-weight: bold;'><span class='red'>*</span>&nbsp;Query</td></tr></thead><tbody><tr><td class='noBorder'><input type='text' name='name' class='input-small' title='Name' maxlength='20' value='' class='screenName'></td><td class='noBorder'>
+			"</legend><table style='line-height: 0px;'><thead><tr><td class='noBorder' style='color: #333333; font-weight: bold;'><span class='red'>*</span>&nbsp;Name</td><td class='noBorder' style='color: #333333; font-weight: bold;'><span class='red'>*</span>&nbsp;QueryType</td><td class='noBorder' style='color: #333333; font-weight: bold;'><span class='red'>*</span>&nbsp;Query</td></tr></thead><tbody><tr><td class='noBorder'><input type='text' name='dbName' class='input-small' title='Name' maxlength='20' value='' class='screenName'></td><td class='noBorder'>
 			<select name='queryType' id='queryType' class='input-small' style='width:140px;'><option value='Select Statement'>Select Statement</option><option value='Update Statement'>Update Statement</option></select></td><td class='noBorder'><textarea placeholder='' title='JSON data' name='query' id='query' class='' style='margin: 2px 5px 0 0; width: 140%; float: left;'></textarea></td></tr></tbody></table></div>");
 		newTextBoxDiv.appendTo("#dbContextDivParent");	
 	}
@@ -68,11 +68,11 @@ $myObject:{ obj |
 	function dbContextUrlsMandatoryVal() {
 		var redirect = true;
 		jQuery('.perDBContextUrlFieldset').each(function() {
-			if (jQuery(this).find(jQuery('input[name=name]')).val() == "" || isBlank(jQuery(this).find(jQuery('input[name=name]')).val())) {
+			if (jQuery(this).find(jQuery('input[name=dbName]')).val() == "" || isBlank(jQuery(this).find(jQuery('input[name=dbName]')).val())) {
 				redirect = false;
 				jQuery('.yesNoPopupErr').text('Name is missing');
-				jQuery(this).find(jQuery('input[name=name]')).val('');
-				jQuery(this).find(jQuery('input[name=name]')).focus();
+				jQuery(this).find(jQuery('input[name=dbName]')).val('');
+				jQuery(this).find(jQuery('input[name=dbName]')).focus();
 			} else if (jQuery(this).find(jQuery('textarea[name=query]')).val() == "" || isBlank(jQuery(this).find(jQuery('textarea[name=query]')).val())) {
 				redirect = false;
 				jQuery('.yesNoPopupErr').text('Query is missing');
@@ -88,7 +88,7 @@ $myObject:{ obj |
 		var dbContextUrls = [];
 		jQuery('.perDBContextUrlFieldset').each(function() {
 			var jsonObject = {};
-			jsonObject.name = jQuery(this).find(jQuery("input[name=name]")).val();
+			jsonObject.name = jQuery(this).find(jQuery("input[name=dbName]")).val();
 			jsonObject.queryType = jQuery(this).find(jQuery("select[name=queryType]")).val();
 			jsonObject.query = jQuery(this).find(jQuery("textarea[name=query]")).val(); 
 			var dbContexts = JSON.stringify(jsonObject);

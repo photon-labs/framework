@@ -689,4 +689,53 @@
 			$("#" + txtBoxId).val(removeSpaces(checkForNumber(value)));
 		}
 	}
+	
+	function templateMandatoryVal() {		
+		var testAgainst = $("#testAgainst").val();
+		var redirect = false;		
+		if (testAgainst != undefined && (testAgainst == "server" || testAgainst == "webservice")) {
+			redirect = contextUrlsMandatoryVal();
+		} else if (testAgainst != undefined && testAgainst == "database") {
+			redirect = dbContextUrlsMandatoryVal();
+		} else if (testAgainst == undefined) {
+			$('.yesNoPopupErr').empty();
+			runPerformanceTest();
+		}
+	
+		if (redirect) {
+			$('.yesNoPopupErr').empty();
+			runPerformanceTest();
+		}
+	} 
+	
+	function runPerformanceTest() {		
+		var formJsonObject = $('#generateBuildForm').toJSON();
+		var formJsonStr = JSON.stringify(formJsonObject);
+		var templateFunction = new Array();
+		var templateCsvFn = $("#stFileFunction").val();
+		var jsonStr = "";
+		var templJsonStr = "";
+		var params = getBasicParams();
+		var sep = "";		
+		if (templateCsvFn != undefined && !isBlank(templateCsvFn)) {
+			templateFunction = templateCsvFn.split(",");
+			for (i = 0; i < templateFunction.length; ++i) {
+				jsonStr = window[templateFunction[i]]();	
+				templJsonStr = templJsonStr + sep + jsonStr;
+				sep = ",";
+			}
+		}		
+		formJsonStr = formJsonStr.slice(0,formJsonStr.length-1);
+		formJsonStr = formJsonStr + ',' + templJsonStr + '}';
+		$("#resultJson").val(formJsonStr);
+		var fromCi = $('#isFromCI').val();		
+		if (fromCi) {		
+			// write json for performance			
+			loadContent('performanceJsonWriter', $('#generateBuildForm'), '', getBasicParams(), false, true);
+		} else {
+			$('#popupPage').modal('hide');
+			progressPopupAsSecPopup('runPerformanceTest', '<%= appId %>', "performance-test", $('#generateBuildForm'), params, '');	
+		}
+	}
+	
 </script>

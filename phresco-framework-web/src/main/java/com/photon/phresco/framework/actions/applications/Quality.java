@@ -20,12 +20,14 @@
 package com.photon.phresco.framework.actions.applications;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -60,6 +62,7 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -198,6 +201,8 @@ public class Quality extends DynamicParameterAction implements Constants {
 	
     boolean connectionAlive = false;
     boolean updateCache;
+    
+    private String isFromCI = "";
 	
 	private static Map<String, Map<String, NodeList>> testSuiteMap = Collections.synchronizedMap(new HashMap<String, Map<String, NodeList>>(8));
 	
@@ -1372,51 +1377,113 @@ public class Quality extends DynamicParameterAction implements Constants {
     		List<Parameter> parameters = getMojoParameters(mojo, PHASE_PERFORMANCE_TEST);
     		List<String> buildArgCmds = getMavenArgCommands(parameters);
     		buildArgCmds.add(HYPHEN_N);
-    		String workingDirectory = getAppDirectoryPath(applicationInfo);
+    		String workingDirectory = getAppDirectoryPath(applicationInfo);  
     		
-    		PomProcessor processor = new PomProcessor(getPOMFile(applicationInfo.getAppDirName()));
-            String performTestDir = processor.getProperty(POM_PROP_KEY_PERFORMANCETEST_DIR);
-            
-    		
-            StringBuilder filepath = new StringBuilder(Utility.getProjectHome())
-    		.append(applicationInfo.getAppDirName())
-    		.append(performTestDir)
-    		.append(File.separator)
-    		.append(getTestAgainst())
-    		.append(File.separator)
-    		.append(Constants.FOLDER_JSON);
-    		if (new File(filepath.toString()).exists()) {
-    			filepath.append(File.separator)
-        		.append(getTestName())
-        		.append(DOT_JSON);
-        		File file = new File(filepath.toString());
-    			fop = new FileOutputStream(file);
-    			if (!file.exists()) {
-    				file.createNewFile();
-    			}
-    			byte[] contentInBytes = getResultJson().getBytes();
-    			 
-    			fop.write(contentInBytes);
-    			fop.flush();
-    			fop.close();
-    		}
-    			
+    		//
+            performanceJsonWriter();    			
     		BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.PERFORMANCE_TEST, buildArgCmds, workingDirectory);
     		setSessionAttribute(getAppId() + PERFORMANCE_TEST, reader);
     		setReqAttribute(REQ_APP_ID, getAppId());
     		setReqAttribute(REQ_ACTION_TYPE, PERFORMANCE_TEST);
-    	} catch (JsonIOException e) {
+    	} catch (PhrescoException e) {
     		throw new PhrescoException(e);
-    	} catch (FileNotFoundException e) {
-    		throw new PhrescoException(e);
-    	} catch (IOException e) {
-    		throw new PhrescoException(e); 
-    	} catch (PhrescoPomException e) {
-    		throw new PhrescoException(e); 
     	}
 
     	return SUCCESS;
     }
+
+	public String performanceJsonWriter() throws PhrescoException {
+		
+		FileWriter fw = null;
+		
+		try {
+			if(StringUtils.isNotEmpty(getTestAgainst())) {
+				ApplicationInfo applicationInfo = getApplicationInfo();
+				PomProcessor processor = new PomProcessor(getPOMFile(applicationInfo.getAppDirName()));					
+		        String performTestDir = processor.getProperty(POM_PROP_KEY_PERFORMANCETEST_DIR);	        
+				FileOutputStream fop;
+				boolean success = false;
+				if(getIsFromCI().equalsIgnoreCase("true")) {					
+					StringBuilder filepath = new StringBuilder(Utility.getProjectHome())
+					.append(applicationInfo.getAppDirName())
+					.append(performTestDir)
+					.append(File.separator)
+					.append(getTestAgainst())
+					.append(File.separator)
+					.append(Constants.FOLDER_JSON)
+					.append(File.separator)
+					.append("CITemp");					
+					success = new File(filepath.toString()).mkdirs();
+					
+					filepath.append(File.separator)
+					.append(getTestName())
+					.append(DOT_JSON);				
+					File file = new File(filepath.toString());
+					fop = new FileOutputStream(file);
+					if (!file.exists()) {
+						file.createNewFile();
+					}
+					byte[] contentInBytes = getResultJson().getBytes();				 
+					fop.write(contentInBytes);
+					fop.flush();
+					fop.close();				
+										
+					StringBuilder infofilepath = new StringBuilder(Utility.getProjectHome())
+					.append(applicationInfo.getAppDirName())
+					.append(performTestDir)
+					.append(File.separator)
+					.append(getTestAgainst())
+					.append(File.separator)
+					.append(Constants.FOLDER_JSON)				
+					.append(File.separator)
+					.append("CITemp")
+					.append(File.separator)
+					.append("ci")
+					.append(".info");					
+					file = new File(infofilepath.toString());					
+					if (!file.exists()) {
+						file.createNewFile();
+						fw = new FileWriter(file);
+						fw.write(getTestName()+DOT_JSON);
+					} else {
+						fw = new FileWriter(infofilepath.toString(),true);
+						StringBuilder jsonFileName = new StringBuilder()
+						.append(",")
+						.append(getTestName());
+						fw.write(jsonFileName.toString()+DOT_JSON);						
+					}
+					
+				} else {					
+					StringBuilder filepath = new StringBuilder(Utility.getProjectHome())
+					.append(applicationInfo.getAppDirName())
+					.append(performTestDir)
+					.append(File.separator)
+					.append(getTestAgainst())
+					.append(File.separator)
+					.append(Constants.FOLDER_JSON);			
+					if (new File(filepath.toString()).exists()) {
+						filepath.append(File.separator)
+						.append(getTestName())
+						.append(DOT_JSON);				
+						File file = new File(filepath.toString());
+						fop = new FileOutputStream(file);
+						if (!file.exists()) {
+							file.createNewFile();
+						}
+						byte[] contentInBytes = getResultJson().getBytes();				 
+						fop.write(contentInBytes);
+						fop.flush();
+						fop.close();				
+					}
+				}				
+			}			
+		} catch (Exception e) {			
+			throw new PhrescoException(e);
+		} finally {
+			Utility.closeStream(fw);
+		}
+		return SUCCESS;
+	}
     
     private File getPOMFile(String appDirName) {
         StringBuilder builder = new StringBuilder(Utility.getProjectHome())
@@ -2940,6 +3007,13 @@ public class Quality extends DynamicParameterAction implements Constants {
 
 	public String getTotalSuccess() {
 		return totalSuccess;
+	}
+	public void setIsFromCI(String isFromCI) {
+		this.isFromCI = isFromCI;
+	}
+
+	public String getIsFromCI() {
+		return isFromCI;
 	}
 
 	public void setTotalSuccess(String totalSuccess) {

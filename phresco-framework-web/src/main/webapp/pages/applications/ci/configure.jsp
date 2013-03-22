@@ -495,6 +495,8 @@
 									    <option value="unittest">Unit Test</option>
 									    <option value="codeValidation">Code Validate</option>
 									    <option value="pdfReport">PDF Report</option>
+									    <option value="loadTest">Load Test</option>
+									    <option value="performanceTest">Performance Test</option>								    
 										</select>
 									</div>
 								</div>
@@ -613,6 +615,7 @@
 	</div>
     <!-- build release plugin changes ends -->
 	<input type="hidden" name="oldJobName" value="<%= existingJob == null ? "" : existingJob.getName()%>" >
+	<input type="hidden" name="isFromCi" value="isFromCi">
 </form>
 
 <script type="text/javascript">
@@ -767,10 +770,15 @@
 	// after validation success, show loading icon and creates job
 	function configureJob(url) {
 		isCiRefresh = true;
-// 		getCurrentCSS();
+		var isFromCi = $('#isFromCI').val();		
+// 		getCurrentCSS();	
 // 		$('.popupLoadingIcon').css("display","block");
 // 		var url = $("#configureForm").attr("action");
 		$('#configureForm :input').attr('disabled', false);
+		if (isFromCi) {	
+			// ci specification need to be specified
+			mandatoryValidation('runPerformanceTest', $("#generateBuildForm"), '', 'performance-test', 'performance-test');
+		}		
 		loadContent(url, $('#configureForm, #generateBuildForm'), $('#subcontainer'), getBasicParams(), false, true);
 	}
 	

@@ -369,6 +369,12 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 				String seleniumToolType = frameworkUtil.getSeleniumToolType(appInfo);
 				phase =  PHASE_FUNCTIONAL_TEST + HYPHEN + seleniumToolType;
 	        	restoreValuesToXml(mojo, phase, ciJob);
+	        } else if (LOAD_TEST.equals(operation)) {
+	        	phase = PHASE_LOAD_TEST;
+	        	restoreValuesToXml(mojo, phase, ciJob);
+	        } else if (PERFORMANCE_TEST_CI.equals(operation)) {
+	        	phase = PHASE_PERFORMANCE_TEST;
+	        	restoreValuesToXml(mojo, phase, ciJob);
 	        }
 		} catch (Exception e) {
 			throw new PhrescoException(e);
@@ -442,6 +448,16 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 	            setReqAttribute(REQ_PHASE, PHASE_CI);
 	            goal = PHASE_FUNCTIONAL_TEST + HYPHEN + seleniumToolType;
 	            setReqAttribute(REQ_GOAL, goal);
+            } else if (LOAD_TEST.equals(operation)) {
+            	parameters = getMojoParameters(mojo, PHASE_LOAD_TEST);
+            	setReqAttribute(REQ_PHASE, PHASE_CI);
+            	goal = PHASE_LOAD_TEST;
+            	setReqAttribute(REQ_GOAL, goal);
+            } else if (PERFORMANCE_TEST_CI.equals(operation)) {
+            	parameters = getMojoParameters(mojo, PHASE_PERFORMANCE_TEST);
+            	setReqAttribute(REQ_PHASE, PHASE_CI);
+            	goal = PHASE_PERFORMANCE_TEST;
+            	setReqAttribute(REQ_GOAL, goal);
             }
             
             setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap, goal);
@@ -770,6 +786,41 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 				// To handle multi module project
 				functionalTestPrebuildCmd = functionalTestPrebuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
 				preBuildStepCmds.add(functionalTestPrebuildCmd);
+			} else if (LOAD_TEST.equals(operation)) {
+				if (debugEnabled) {
+					S_LOGGER.debug("Load test operation!!!!!!");
+				}
+				
+				MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(Constants.PHASE_CI)));
+				persistValuesToXml(mojo, Constants.PHASE_LOAD_TEST);
+				constructCiJobObj(mojo, Constants.PHASE_LOAD_TEST, existJob);
+				
+				//To get maven build arguments
+				parameters = getMojoParameters(mojo, Constants.PHASE_LOAD_TEST);
+				ActionType actionType = ActionType.LOAD_TEST;
+				mvncmd =  actionType.getActionType().toString();
+				
+				String loadTestPreBuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_LOAD_TEST;
+				// To handle multi module project
+				loadTestPreBuildCmd = loadTestPreBuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
+				preBuildStepCmds.add(loadTestPreBuildCmd);
+			} else if (PERFORMANCE_TEST_CI.equals(operation)) {
+				if (debugEnabled) {
+					S_LOGGER.debug("Performance test operation!!!!!!");
+				}				
+				MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(Constants.PHASE_CI)));
+				persistValuesToXml(mojo, Constants.PHASE_PERFORMANCE_TEST);
+				constructCiJobObj(mojo, Constants.PHASE_PERFORMANCE_TEST, existJob);
+				
+				//To get maven build arguments
+				parameters = getMojoParameters(mojo, Constants.PHASE_PERFORMANCE_TEST);
+				ActionType actionType = ActionType.PERFORMANCE_TEST;
+				mvncmd =  actionType.getActionType().toString();
+				
+				String performanceTestPreBuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_PERFORMANCE_TEST;
+				// To handle multi module project
+				performanceTestPreBuildCmd = performanceTestPreBuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
+				preBuildStepCmds.add(performanceTestPreBuildCmd);
 			}
 			
 			List<String> buildArgCmds = getMavenArgCommands(parameters);
