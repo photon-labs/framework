@@ -35,8 +35,8 @@
 	<head>
 		<meta name="viewport" content="width=device-width, height=device-height, minimum-scale=0.25, maximum-scale=1.6">
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<title>Phresco</title>
-		<link rel="SHORTCUT ICON" href="images/favicon.ico">
+		<title>Helios</title>
+		<!-- <link rel="SHORTCUT ICON" href="images/favicon.ico"> -->
 		<link rel="stylesheet" href="css/bootstrap.css">
 
 		<!-- <link type="text/css" rel="stylesheet" href="theme/red_blue/css/phresco.css" id="phresco"> -->
