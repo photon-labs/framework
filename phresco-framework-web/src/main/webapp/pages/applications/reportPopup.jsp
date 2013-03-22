@@ -121,8 +121,8 @@
 		</label>
 		<div class="controls">
 			<select name="reportDataType" id="reportDataType" class="input-xlarge ">
+			    <option value="detail"><s:text name="label.report.detail"/></option>
 				<option value="crisp"><s:text name="label.report.overall"/></option>
-				<option value="detail"><s:text name="label.report.detail"/></option>
 			</select>
 		</div>
 	</div>
