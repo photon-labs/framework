@@ -145,7 +145,8 @@ function getAppLayerTechVersions(obj) {
 	var toBeFilledCtrlName = $(obj).attr("temp") + "_App_Version";
 	var techGroupId = $('option:selected', obj).attr('additionalParam');
 	var techId = $(obj).val();
-	getTechVersions(layerId, techGroupId, toBeFilledCtrlName, techId);
+	var appCodeObj = $(obj).parent().parent().find('input[name=appLayerProjName]');
+	getTechVersions(layerId, techGroupId, toBeFilledCtrlName, techId, appCodeObj); 
 }
 
 //To get the widgets of the selected web layer and load in the widget select box 
