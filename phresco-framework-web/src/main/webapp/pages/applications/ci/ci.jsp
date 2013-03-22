@@ -426,7 +426,7 @@ function successRefreshBuild(data) {
 	if (data.numberOfJobsInProgress < <%= noOfJobsIsinProgress %> || data.numberOfJobsInProgress > <%= noOfJobsIsinProgress %>) { // When build is increased or decreased on a job refresh the page , refresh the page
     	console.log("build succeeded going to load builds.....");
     	if ($("a[name='appTab'][class='active']").attr("id") == "ci" && $("#popupPage").css("display") == "block") {
-    		console.log("Build trugger completed in jenkins , but UI is blocking ");
+    		console.log("Build trigger completed in jenkins , but UI is blocking ");
 //     		refreshCi = false;
     	} else {
     		loadContent('ci', $('#deleteObjects'), $('#subcontainer'), getBasicParams(), false, true);
@@ -602,6 +602,8 @@ function popupOnOk(obj) {
 					ciGoal = "deploy";
 				} else if (operation == "functionalTest") {
 					ciGoal = "functional-"+'<%= functioanlTestTool%>';
+				} else if (operation == "performanceTest") {
+					ciGoal = "performance-test";
 				}
 				mandatoryValidation(okUrl, $("#generateBuildForm"), '', 'ci', ciGoal);
 			}

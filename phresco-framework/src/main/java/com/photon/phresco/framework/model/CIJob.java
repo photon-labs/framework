@@ -144,6 +144,8 @@ public class CIJob {
     private String sonarUrl = "";
     
 	// Load Test CI integration
+	//  private String testAgainst = "";
+	//  private String showSettings = "";
 	private String headerKey = "";
 	private String headerValue = "";
 	private String addHeader = "";
@@ -156,6 +158,7 @@ public class CIJob {
 	private String loopCount = "";
 	private String contextUrls = "";
 	private String dbContextUrls = "";
+	private String isFromCI = ""; 
   
 	// Android functional test
 	private String deviceList = "";
@@ -955,5 +958,13 @@ public class CIJob {
 
 	public void setDeviceList(String deviceList) {
 		this.deviceList = deviceList;
+	}
+
+	public void setIsFromCI(String isFromCI) {
+		this.isFromCI = isFromCI;
+	}
+
+	public String getIsFromCI() {
+		return isFromCI;
 	}
 }

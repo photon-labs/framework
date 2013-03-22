@@ -785,6 +785,10 @@
             <result name="success">/pages/applications/reader.jsp</result>
         </action>
         
+        <action name="performanceJsonWriter" method="performanceJsonWriter" class="com.photon.phresco.framework.actions.applications.Quality">
+        	<result type="json" />  	
+        </action>
+        
         <action name="perTest" method="performanceTest" class="com.photon.phresco.framework.actions.applications.Quality">
         	<result name="reader">/pages/applications/reader.jsp</result>
         </action>
