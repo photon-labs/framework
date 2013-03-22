@@ -239,7 +239,9 @@ public class Configurations extends FrameworkBaseAction {
 		
         try {
         	List<Technology> archeTypes = getServiceManager().getArcheTypes(getCustomerId());
-        	Collections.sort(archeTypes, sortTechInAlphaOrder());
+        	if (CollectionUtils.isNotEmpty(archeTypes)) {
+        		Collections.sort(archeTypes, sortTechInAlphaOrder());
+        	}
     		setReqAttribute(REQ_ALL_TECHNOLOGIES, archeTypes);
             setReqAttribute(REQ_ENVIRONMENTS, getAllEnvironments());
             setReqAttribute(REQ_FROM_PAGE,  getFromPage());
@@ -473,6 +475,10 @@ public class Configurations extends FrameworkBaseAction {
     								String[] splits = csvSplit.split(SEPARATOR_SEP);
     								String propName = splits[0];
     								String fileName = splits[1];
+    								String targetDirFromPom = getTargetDirFromPom(getConfigType());
+    								if (StringUtils.isNotEmpty(targetDirFromPom)) {
+    									propName = targetDirFromPom;
+    								}
     								if (fileNamesMap.containsKey(propName)) {
     									List<String> list = fileNamesMap.get(propName);
     									list.add(fileName);
@@ -494,15 +500,17 @@ public class Configurations extends FrameworkBaseAction {
     									}
     								}
     							}
-    							propKey = FILES;
     							propValue = sb.toString().substring(0, sb.toString().length() - 1);
     						}
+    						propKey = FILES;
     					}
     					if (REMOTE_DEPLOYMENT.equals(propKey) && StringUtils.isEmpty(propValue)) {
     						propValue = "false";
     					}
-
     					if (StringUtils.isNotEmpty(propKey) && !KEY_CERTIFICATE.equals(propKey)) {
+    						if (propValue == null) {
+    							propValue = "";
+    						}
     						properties.setProperty(propKey, propValue);
     					} else {
     						propValue = getActionContextParam(propKey);
@@ -922,6 +930,9 @@ public class Configurations extends FrameworkBaseAction {
                 techId = applicationInfo.getTechInfo().getId();
             }
         	List<SettingsTemplate> configTemplates = getServiceManager().getConfigTemplates(getCustomerId(), techId);
+        	if (CollectionUtils.isNotEmpty(configTemplates)) {
+            	Collections.sort(configTemplates, sortTypeByNameInAlphaOrder());
+            }
             setReqAttribute(REQ_SETTINGS_TEMPLATES, configTemplates);
         	setReqAttribute(REQ_CONFIG_INFO, selectedConfigInfo);
         	setReqAttribute(REQ_FROM_PAGE, getFromPage());
@@ -1010,6 +1021,9 @@ public class Configurations extends FrameworkBaseAction {
 					String serverArtifactGroupId = selectedServerInfo.getArtifactGroupId();
 					ArtifactGroup serverArtifactGroup = getServiceManager().getArtifactGroupInfo(serverArtifactGroupId);
 					appinfoServers.add(serverArtifactGroup.getName());
+					if (CollectionUtils.isNotEmpty(appinfoServers)) {
+						Collections.sort(appinfoServers,sortValuesInAlphaOrder());
+					}
 				}
 				setReqAttribute(REQ_APPINFO_SERVERS, appinfoServers);
 			}
@@ -1021,6 +1035,9 @@ public class Configurations extends FrameworkBaseAction {
 					String dbArtifactGroupId = selectedDbInfo.getArtifactGroupId();
 					ArtifactGroup dbArtifactGroup = getServiceManager().getArtifactGroupInfo(dbArtifactGroupId);
 					appinfoDbs.add(dbArtifactGroup.getName());
+					if (CollectionUtils.isNotEmpty(appinfoDbs)) {
+						Collections.sort(appinfoDbs,sortValuesInAlphaOrder());
+					}
 				}
 				setReqAttribute(REQ_APPINFO_DBASES, appinfoDbs);
 			}
@@ -1264,13 +1281,10 @@ public class Configurations extends FrameworkBaseAction {
         return SUCCESS;
     }
     
-    private StringBuilder getTargetDir() {
+    private StringBuilder getTargetDir() throws PhrescoException {
         StringBuilder sb = null;
         try {
-            String appDirName = getApplicationInfo().getAppDirName();
-            FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-            String dynamicType = getConfigTempType().toLowerCase().replaceAll("\\s", "");
-            String targetDir = frameworkUtil.getPomProcessor(appDirName).getProperty(PHRESCO_DOT + dynamicType + DOT_TARGET_DIR);
+            String targetDir = getTargetDirFromPom(getConfigTempType());
             if (StringUtils.isEmpty(targetDir)) {
                 return null;
             }
@@ -1279,12 +1293,31 @@ public class Configurations extends FrameworkBaseAction {
             .append(File.separator)
             .append(targetDir);
         } catch (PhrescoException e) {
-            // TODO: handle exception
-        } catch (PhrescoPomException e) {
-            // TODO Auto-generated catch block
+            throw new PhrescoException(e);
         }
         
         return sb;
+    }
+
+    /**
+     * To get the target directory from pom.xml file
+     * @return
+     * @throws PhrescoException
+     */
+    private String getTargetDirFromPom(String configTempType) throws PhrescoException {
+    	String targetDir = "";
+    	try {
+    		String appDirName = getApplicationInfo().getAppDirName();
+    		FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+    		String dynamicType = configTempType.toLowerCase().replaceAll("\\s", "");
+    		targetDir = frameworkUtil.getPomProcessor(appDirName).getProperty(PHRESCO_DOT + dynamicType + DOT_TARGET_DIR);
+    	} catch (PhrescoException e) {
+    		throw new PhrescoException(e);
+    	} catch (PhrescoPomException e) {
+    		throw new PhrescoException(e);
+    	}
+    	
+    	return targetDir;
     }
     
     private void removeDonotCheckInDir() {
@@ -1416,7 +1449,14 @@ public class Configurations extends FrameworkBaseAction {
             if (StringUtils.isNotEmpty(property)) {
                 String[] splits = property.split(Constants.STR_COMMA);
                 for (String split : splits) {
-                    uploadedFiles.add(split);
+                	StringBuilder sb = new StringBuilder(getApplicationHome());
+            		if (!(split.startsWith("/") || split.startsWith("\\"))) {
+                    	sb.append(File.separator);
+                    }
+                	sb.append(split);
+                	if (new File(sb.toString()).exists()) {
+                		uploadedFiles.add("" + split);
+                	}
                 }
             }
         } catch (Exception e) {

@@ -542,18 +542,30 @@
 				disableUploadButton($(".file-uploader"));
 				enableButton($("#validateContent, #validateTheme"));
 				for (i in data.uploadedFiles) {
-					var split = data.uploadedFiles[i].split('\\');
-					$(".file-uploader").each(function() {
-						var propTempName = $(this).attr("propTempName");
-						var fileName = split[1];
-						if (propTempName === split[0]) {
-							var li = '<li class="qq-upload-success"><span class="qq-upload-file">' + fileName + '</span>' +
-						                '<img class="qq-upload-remove" src="images/icons/delete.png" style="cursor:pointer;" alt="Remove" '+
-						                'eleAttr="file-uploader" fileName="'+ fileName +'" onclick="removeUploadedFile(this);"/>' + 
-						                '<input type="hidden" value="' + fileName + '" class="hidden-fileName" propName="' + propTempName + '" \></li>';
-							$(this).children().children(".qq-upload-list").append(li);
-						}
-					});
+					var file = data.uploadedFiles[i];
+					var frontSlashSplit = file.split("/");
+					var length = 0;
+					if (frontSlashSplit != undefined) {
+						length = frontSlashSplit.length;						
+					}
+					
+					if (length > 2) {
+						var split = data.uploadedFiles[i].split('\\');
+						$(".file-uploader").each(function() {
+							var propTempName = $(this).attr("propTempName");
+							var fileName = split[1];
+							addedFileList(fileName, propTempName);
+						});
+					} else {
+						var split = data.uploadedFiles[i].split('\\');
+						$(".file-uploader").each(function() {
+							var propTempName = $(this).attr("propTempName");
+							var fileName = split[1];
+							if (propTempName === split[0]) {
+								addedFileList(fileName, propTempName);
+							}
+						});
+					}
 				}
 			}
 		}
@@ -677,5 +689,13 @@
 			params = params.concat(selectedType);
 			loadContent("listUploadedFiles", '', '', params, true, true);
 		}
+	}
+	
+	function addedFileList(fileName, propTempName) {
+		var li = '<li class="qq-upload-success"><span class="qq-upload-file">' + fileName + '</span>' +
+	        '<img class="qq-upload-remove" src="images/icons/delete.png" style="cursor:pointer;" alt="Remove" '+
+	        'eleAttr="file-uploader" fileName="'+ fileName +'" onclick="removeUploadedFile(this);"/>' + 
+	        '<input type="hidden" value="' + fileName + '" class="hidden-fileName" propName="' + propTempName + '" \></li>';
+		$(".file-uploader").children().children(".qq-upload-list").append(li);
 	}
 </script>
