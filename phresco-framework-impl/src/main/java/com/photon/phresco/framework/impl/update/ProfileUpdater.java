@@ -25,9 +25,9 @@ public class ProfileUpdater implements FrameworkConstants {
 	public void updateSonarProfile(File pomPath, String techId) throws PhrescoException {
 		try {
 			PomProcessor pomProcessor = new PomProcessor(pomPath);
-			boolean updateJavaProfile = updateJavaProfile(pomProcessor, pomPath, JAVA);
-			boolean updateWebProfile = updateWebProfile(pomProcessor, pomPath, WEB);
-			boolean updateJsProfile = updateJsProfile(pomProcessor, pomPath, JS, techId);
+			boolean updateJavaProfile = updateJavaProfile(pomProcessor, JAVA);
+			boolean updateWebProfile = updateWebProfile(pomProcessor, WEB);
+			boolean updateJsProfile = updateJsProfile(pomProcessor, JS, techId);
 			if (updateJavaProfile || updateWebProfile || updateJsProfile) {
 				pomProcessor.save();
 			}
@@ -36,18 +36,18 @@ public class ProfileUpdater implements FrameworkConstants {
 		}
 	}
 	
-	private boolean updateJavaProfile(PomProcessor pomProcessor, File pomPath, String profileId) throws PhrescoException {
+	private boolean updateJavaProfile(PomProcessor pomProcessor, String profileId) throws PhrescoException {
 		return addProfile(pomProcessor, profileId, JAVA_PATH, new ArrayList<Element>(5), Boolean.TRUE);
 	}
 	
-	private boolean updateWebProfile(PomProcessor pomProcessor, File pomPath, String profileId) throws PhrescoException {
+	private boolean updateWebProfile(PomProcessor pomProcessor, String profileId) throws PhrescoException {
 		Element dynamicAnalysisElement = createElement(SONAR_DYNAMIC_ANALYSIS_PROFILE, FALSE);
 		List<Element> elements = new ArrayList<Element>();
 		elements.add(dynamicAnalysisElement);
 		return addProfile(pomProcessor, profileId, WEBAPP_PATH, elements, Boolean.FALSE);
 	}
 	
-	private boolean updateJsProfile(PomProcessor pomProcessor, File pomPath, String profileId, String techId) throws PhrescoException {
+	private boolean updateJsProfile(PomProcessor pomProcessor, String profileId, String techId) throws PhrescoException {
 		List<Element> elements = new ArrayList<Element>();
 		Element sonarExclusionElement = createElement(Constants.SONAR_EXCLUSION, LIB);
 		elements.add(sonarExclusionElement);
@@ -66,13 +66,12 @@ public class ProfileUpdater implements FrameworkConstants {
         elements.add(createElement(SONAR_BRANCH, profileId));
         elements.add(createElement(PHRESCO_SOURCE_DIRECTORY, srcPath));
         //TODO:Need to handle
-//			addProfile = pomProcessor.addProfile(profileId, elements, activation);
 		return addProfile;
 	}
 
 	private Element createElement(String elementName, String textContent) throws PhrescoException {
-		Document doc = getDocument();
-		Element element = doc.createElement(elementName);
+		Document document = getDocument();
+		Element element = document.createElement(elementName);
 		element.setTextContent(textContent);
 		return element;
 	}
@@ -99,7 +98,6 @@ public class ProfileUpdater implements FrameworkConstants {
 			Element skip = createElement(SKIP, TRUE);
 			skipTrue.add(skip);
 			//TODO:Need to handle
-//			pomProcessor.addPlugin(GROUPID, ARTIFACTID, PLUGIN_VERSION, EXECUTIONID, GOAL, skipTrue);
 			pomProcessor.save();
 		} catch (PhrescoException e) {
 			throw new PhrescoException(e);

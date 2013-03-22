@@ -38,7 +38,9 @@ public class Forum extends FrameworkBaseAction {
 	private static Boolean debugEnabled  = S_LOGGER.isDebugEnabled();
 	
 	public String forum() {
-		if (S_LOGGER.isDebugEnabled())S_LOGGER.debug("entered forumIndex()");
+		if (S_LOGGER.isDebugEnabled()) {
+			S_LOGGER.debug("entered forumIndex()");
+		}
 		
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method Forum.forum()");

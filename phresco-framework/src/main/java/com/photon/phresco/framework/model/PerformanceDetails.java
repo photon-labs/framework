@@ -124,10 +124,5 @@ public class PerformanceDetails
 		this.dbContextUrls = dbContextUrls;
 	}
 
-	/*public String toString() {
-		return String.format("testAgainst:%s,showSettings:%s,setting:%s,testName:%s,name:%s,context:%s,contextType:%s,contextPostData:%s,encodingType:%s,noOfUsers:%d,rampUpPeriod:%d,loopCount:%d",testAgainst,showSettings,setting,testName,noOfUsers,rampUpPeriod,loopCount);
-	}*/
-	
-	
 }
 

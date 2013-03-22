@@ -49,19 +49,14 @@ public class ApplicationManagerImpl implements ApplicationManager {
 		}
 		ClientResponse response = serviceManager.updateProject(projectInfo);
 		if (response.getStatus() == 200) {
-				//TODO Define post update object and execute the corresponding technology implementation
-//				updateProjectPOM(projectInfo);
-//				if (TechnologyTypes.WIN_METRO.equalsIgnoreCase(techId)) {
-//					ItemGroupUpdater.update(projectInfo, projectPath);
-//				}
-			
+			return projectInfo;
 		} else if(response.getStatus() == 401){
 			throw new PhrescoException("Session expired");
 		} else {
 			throw new PhrescoException("Project updation failed");
 		}
 		
-		return projectInfo;
+		
 	}
 
 	@Override
@@ -176,7 +171,6 @@ public class ApplicationManagerImpl implements ApplicationManager {
 
 		 List<BuildInfo> buildInfos = gson.fromJson(bufferedReader, type);
 		 //TODO:Need to handle
-		 //Collections.sort(buildInfos, new BuildInfoComparator());
 		 bufferedReader.close();
 
 		 return buildInfos;

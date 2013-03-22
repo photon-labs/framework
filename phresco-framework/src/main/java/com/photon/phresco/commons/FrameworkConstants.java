@@ -316,6 +316,7 @@ public interface FrameworkConstants {
     String READ_LOG_VIEW = "view";
     String READ_ERROR_LOG_VIEW = "errorLogView";
     String PATH = "path";
+    String EDIT = "edit";
     String SHOW_ANDROID_DEVICE = "showDevice"; 
     String IMPORT_SQL = "importSql";
     String ADDITIONAL_CONTEXT_PATH = "additional_context";
@@ -348,6 +349,8 @@ public interface FrameworkConstants {
 	String FUNCTIONAL_TEST = "functionalTest";
 	String CODE_VALIDATION = "codeValidation";
 	String PDF_REPORT = "pdfReport";
+	String LOAD_TEST = "loadTest";
+	String PERFORMANCE_TEST_CI = "performanceTest";
 	String REQ_FUNCTEST_SELENIUM_TOOL = "functionalTestSeleniumTool";
 	String SELENIUM_GRID = "grid";
 	String SELENIUM_WEBDRIVER = "webdriver";
@@ -592,6 +595,8 @@ public interface FrameworkConstants {
      */
     String SESSION_CUSTOMERS = "listOfCustomers";
     String REQ_APPINFO	= "appInfo";
+    String REQ_TESTCASE = "testCase";
+    String REQ_TESTSUITE = "testSuite";
     String REQ_APPINFO_SERVERS = "appinfoServers";
     String REQ_APPINFO_DBASES = "appinfoDbs";
     String REQ_APP_DIR_NAME  = "appDirName";

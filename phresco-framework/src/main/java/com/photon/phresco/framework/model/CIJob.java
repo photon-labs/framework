@@ -55,7 +55,8 @@ public class CIJob {
     private String downStreamCriteria = "";
     // Whether this job is used cloned workspace or normal svn
     private String usedClonnedWorkspace = "";
-    private String operation = "";// Operation like(Build, deploy, test)
+    // Operation like(Build, deploy, test)
+    private String operation = "";
     
     // for functional test
     private String pomLocation = "";
@@ -157,6 +158,7 @@ public class CIJob {
 	private String loopCount = "";
 	private String contextUrls = "";
 	private String dbContextUrls = "";
+	private String isFromCI = ""; 
   
 	// Android functional test
 	private String deviceList = "";
@@ -956,5 +958,13 @@ public class CIJob {
 
 	public void setDeviceList(String deviceList) {
 		this.deviceList = deviceList;
+	}
+
+	public void setIsFromCI(String isFromCI) {
+		this.isFromCI = isFromCI;
+	}
+
+	public String getIsFromCI() {
+		return isFromCI;
 	}
 }

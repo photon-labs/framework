@@ -100,8 +100,8 @@ public class Applications extends FrameworkBaseAction {
 
     private String technology = "";
     
-    public String errorString;
-    public boolean errorFlag;
+    private String errorString;
+    private boolean errorFlag;
 
     private SelectedFeature selectFeature;
     private String selectedDownloadInfo = "";
@@ -122,8 +122,8 @@ public class Applications extends FrameworkBaseAction {
         try {
         	ApplicationInfo applicationInfo = getApplicationInfo();
 			String techId = applicationInfo.getTechInfo().getId();
-			Technology technology = getServiceManager().getArcheType(techId, getCustomerId());
-			List<String> optionIds = technology.getOptions();
+			Technology techInfo = getServiceManager().getArcheType(techId, getCustomerId());
+			List<String> optionIds = techInfo.getOptions();
 			
 			setSessionAttribute(REQ_OPTION_ID, optionIds);
             setReqAttribute(REQ_CURRENT_APP_NAME, getApplicationInfo().getName());
@@ -151,31 +151,6 @@ public class Applications extends FrameworkBaseAction {
         return appInfo();
     }
     
-    private void updateLatestProject() throws PhrescoException {
-        try {
-            File tempPath = new File(Utility.getPhrescoTemp() + File.separator + USER_PROJECT_JSON);
-            User user = (User) getSessionAttribute(SESSION_USER_INFO);
-            JSONObject userProjJson = null;
-            JSONParser parser = new JSONParser();
-            if (tempPath.exists()) {
-                FileReader reader = new FileReader(tempPath);
-                userProjJson = (JSONObject)parser.parse(reader);
-                reader.close();
-            } else {
-                userProjJson = new JSONObject();
-            }
-            
-            userProjJson.put(user.getId(), getProjectId() + Constants.STR_COMMA + getAppId());
-            FileWriter  writer = new FileWriter(tempPath);
-            writer.write(userProjJson.toString());
-            writer.close();
-        } catch (IOException e) {
-            throw new PhrescoException(e);
-        } catch (ParseException e) {
-            throw new PhrescoException(e);
-        }
-    }
-
     public String appInfo() {
         if (s_debugEnabled) {
             S_LOGGER.debug("Entering Method  Applications.appInfo()");
@@ -210,12 +185,12 @@ public class Applications extends FrameworkBaseAction {
         		projectInfo = (ProjectInfo)getSessionAttribute(getAppId() + SESSION_APPINFO);
             	ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
             
-            	List<String> jsonData = getJsonData();
+            	List<String> allJsonData = getJsonData();
             	List<String> selectedFeatures = new ArrayList<String>();
             	List<String> selectedJsLibs = new ArrayList<String>();
             	List<String> selectedComponents = new ArrayList<String>();
-            	if (CollectionUtils.isNotEmpty(jsonData)) {
-                	for (String string : jsonData) {
+            	if (CollectionUtils.isNotEmpty(allJsonData)) {
+                	for (String string : allJsonData) {
     					Gson gson = new Gson();
     					SelectedFeature obj = gson.fromJson(string, SelectedFeature.class);
     					if (obj.getType().equals(ArtifactGroup.Type.FEATURE.name())) {
@@ -293,18 +268,18 @@ public class Applications extends FrameworkBaseAction {
             String techId = getReqParameter(REQ_PARAM_NAME_TECH__ID);
             String selectedDb = getReqParameter(REQ_SELECTED_DOWNLOADINFO);
             String selectedDbVer = getReqParameter(REQ_SELECTED_DOWNLOADINFO_VERSION);
-            String selectBoxId = getReqParameter(REQ_CURRENT_SELECTBOX_ID);
-            String defaultOptTxt = getReqParameter(REQ_DEFAULT_OPTION);
-            setDefaultOptTxt(defaultOptTxt);
+            String selectedBoxId = getReqParameter(REQ_CURRENT_SELECTBOX_ID);
+            String defaultOption = getReqParameter(REQ_DEFAULT_OPTION);
+            setDefaultOptTxt(defaultOption);
             setDownloadInfoType(type);
             setSelectedDownloadInfo(selectedDb);
             setSelectedDownloadInfoVersion(selectedDbVer);
-            setSelectBoxId(selectBoxId);
-            List<DownloadInfo> downloadInfos = getServiceManager().getDownloads(getCustomerId(), techId, type, FrameworkUtil.findPlatform());
-            if (CollectionUtils.isNotEmpty(downloadInfos)) {
-            	Collections.sort(downloadInfos, sortdownloadInfoInAlphaOrder());
+            setSelectBoxId(selectedBoxId);
+            List<DownloadInfo> selectedDownloadInfos = getServiceManager().getDownloads(getCustomerId(), techId, type, FrameworkUtil.findPlatform());
+            if (CollectionUtils.isNotEmpty(selectedDownloadInfos)) {
+            	Collections.sort(selectedDownloadInfos, sortdownloadInfoInAlphaOrder());
             }
-			setDownloadInfos(downloadInfos);
+			setDownloadInfos(selectedDownloadInfos);
         } catch (PhrescoException e) {
             return showErrorPopup(e, getText(EXCEPTION_DOWNLOADINFOS));
         }
@@ -365,15 +340,15 @@ public class Applications extends FrameworkBaseAction {
     		ProjectInfo projectInfo = (ProjectInfo)getSessionAttribute(getAppId() + SESSION_APPINFO);
         	ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
         	
-        	List<String> jsonData = getJsonData();
+        	List<String> allJsonData = getJsonData();
         	List<String> selectedFeatures = new ArrayList<String>();
         	List<String> selectedJsLibs = new ArrayList<String>();
         	List<String> selectedComponents = new ArrayList<String>();
         	List<ArtifactGroup> listArtifactGroup = new ArrayList<ArtifactGroup>();
         	List<DownloadInfo> selectedServerGroup = new ArrayList<DownloadInfo>();
         	List<DownloadInfo> selectedDatabaseGroup = new ArrayList<DownloadInfo>();
-        	if (CollectionUtils.isNotEmpty(jsonData)) {
-            	for (String string : jsonData) {
+        	if (CollectionUtils.isNotEmpty(allJsonData)) {
+            	for (String string : allJsonData) {
 					Gson gson = new Gson();
 					SelectedFeature obj = gson.fromJson(string, SelectedFeature.class);
 					String artifactGroupId = obj.getModuleId();
@@ -430,7 +405,7 @@ public class Applications extends FrameworkBaseAction {
 			applicationHandler.setSelectedFeatures(artifactGroup);
 
 			//To write Deleted Features into phresco-application-Handler-info.xml
-			List<ArtifactGroup> removedModules = getRemovedModules(appInfo, jsonData);
+			List<ArtifactGroup> removedModules = getRemovedModules(appInfo, allJsonData);
 			Type jsonType = new TypeToken<Collection<ArtifactGroup>>(){}.getType();
 			String deletedFeatures = gson.toJson(removedModules, jsonType);
 			applicationHandler.setDeletedFeatures(deletedFeatures);
@@ -442,12 +417,14 @@ public class Applications extends FrameworkBaseAction {
 					DownloadInfo downloadInfo = getServiceManager().getDownloadInfo(selectedDatabase.getArtifactGroupId());
 					String id = downloadInfo.getArtifactGroup().getId();
 					ArtifactGroup artifactGroupInfo = getServiceManager().getArtifactGroupInfo(id);
-					List<ArtifactInfo> dbVersionInfos = artifactGroupInfo.getVersions();//version infos from downloadInfo
-					List<ArtifactInfo> selectedDBVersionInfos = new ArrayList<ArtifactInfo>();//for selected version infos from ui
+					List<ArtifactInfo> dbVersionInfos = artifactGroupInfo.getVersions();
+					//for selected version infos from ui
+					List<ArtifactInfo> selectedDBVersionInfos = new ArrayList<ArtifactInfo>();
 					for (ArtifactInfo versionInfo : dbVersionInfos) {
 						String versionId = versionInfo.getId();
 						if (selectedDatabase.getArtifactInfoIds().contains(versionId)) {
-							selectedDBVersionInfos.add(versionInfo);//Add selected version infos to list
+							//Add selected version infos to list
+							selectedDBVersionInfos.add(versionInfo);
 						}
 					}
 					downloadInfo.getArtifactGroup().setVersions(selectedDBVersionInfos);
@@ -457,7 +434,7 @@ public class Applications extends FrameworkBaseAction {
 					String databaseGroup = gson.toJson(selectedDatabaseGroup);
 					applicationHandler.setSelectedDatabase(databaseGroup);
 				}
-			} else {//To remove selectedDatabse tag from application-handler.xml
+			} else {
 				applicationHandler.setSelectedDatabase(null);
 			}
 			
@@ -468,22 +445,22 @@ public class Applications extends FrameworkBaseAction {
 					DownloadInfo downloadInfo = getServiceManager().getDownloadInfo(selectedServer.getArtifactGroupId());
 					String id = downloadInfo.getArtifactGroup().getId();
 					ArtifactGroup artifactGroupInfo = getServiceManager().getArtifactGroupInfo(id);
-					List<ArtifactInfo> serverVersionInfos = artifactGroupInfo.getVersions();//version infos from downloadInfo
-					List<ArtifactInfo> selectedServerVersionInfos = new ArrayList<ArtifactInfo>();//for selected version infos from ui
+					List<ArtifactInfo> serverVersionInfos = artifactGroupInfo.getVersions();
+					List<ArtifactInfo> selectedServerVersionInfos = new ArrayList<ArtifactInfo>();
 					for (ArtifactInfo versionInfo : serverVersionInfos) {
 						String versionId = versionInfo.getId();
 						if (selectedServer.getArtifactInfoIds().contains(versionId)) {
-							selectedServerVersionInfos.add(versionInfo);//Add selected version infos to list
+							selectedServerVersionInfos.add(versionInfo);
 						}
 					}
-					downloadInfo.getArtifactGroup().setVersions(selectedServerVersionInfos);//set only selected version infos to current download info
+					downloadInfo.getArtifactGroup().setVersions(selectedServerVersionInfos);
 					selectedServerGroup.add(downloadInfo);
 				}
 				if (CollectionUtils.isNotEmpty(selectedServerGroup)) {
 					String serverGroup = gson.toJson(selectedServerGroup);
 					applicationHandler.setSelectedServer(serverGroup);
 				}
-			} else {//To remove selectedServer tag from application-handler.xml
+			} else {
 				applicationHandler.setSelectedServer(null);
 			}
 			
@@ -493,13 +470,13 @@ public class Applications extends FrameworkBaseAction {
 			if (CollectionUtils.isNotEmpty(selectedWebservices)) {
 				for (String selectedWebService : selectedWebservices) {
 					WebService webservice = getServiceManager().getWebService(selectedWebService);
-					webServiceList.add(webservice);//add selected webservice infos to list
+					webServiceList.add(webservice);
 				}
 				if (CollectionUtils.isNotEmpty(webServiceList)) {
 					String serverGroup = gson.toJson(webServiceList);
 					applicationHandler.setSelectedWebService(serverGroup);
 				}
-			} else {//To remove selectedWebService tag from application-handler.xml
+			} else {
 				applicationHandler.setSelectedWebService(null);
 			}
 
@@ -534,7 +511,6 @@ public class Applications extends FrameworkBaseAction {
             setReqAttribute(REQ_PROJECTS, projects);
             removeSessionAttribute(getAppId() + SESSION_APPINFO);
             removeSessionAttribute(REQ_SELECTED_FEATURES);
-            removeSessionAttribute(REQ_PILOT_PROJECTS);
     	} catch (PhrescoException e) {
     		return showErrorPopup(e, EXCEPTION_PROJECT_UPDATE);
     	} catch (FileNotFoundException e) {
@@ -678,13 +654,13 @@ public class Applications extends FrameworkBaseAction {
 				errorString = getText(INVALID_FOLDER);
 				errorFlag = false;
 			}
-		} catch (SVNAuthenticationException e) {	//Will not occur for GIT
+		} catch (SVNAuthenticationException e) {	
 			if(s_debugEnabled){
 				S_LOGGER.error(e.getLocalizedMessage());
 			}
 			errorFlag = false;
 			errorString = getText(INVALID_CREDENTIALS);
-		} catch (SVNException e) {	//Will not occur for GIT
+		} catch (SVNException e) {	
 			if(s_debugEnabled){
 				S_LOGGER.error(e.getLocalizedMessage());
 			}
@@ -772,11 +748,11 @@ public class Applications extends FrameworkBaseAction {
 				connectionUrl = scm.getConnection();
 			}
 			
-			List<SVNStatus> commitableFiles = null;
+			List<SVNStatus> commitFiles = null;
 			if (COMMIT.equals(action) && !connectionUrl.contains(BITKEEPER)) {
-				commitableFiles = svnCommitableFiles();
+				commitFiles = svnCommitableFiles();
 			}
-			setReqAttribute(REQ_COMMITABLE_FILES, commitableFiles);
+			setReqAttribute(REQ_COMMITABLE_FILES, commitFiles);
 			setReqAttribute(REQ_APP_ID, getAppId());
 			setReqAttribute(REQ_PROJECT_ID, getProjectId());
 			setReqAttribute(REQ_CUSTOMER_ID, getCustomerId());
@@ -815,13 +791,13 @@ public class Applications extends FrameworkBaseAction {
 			}
 			errorString = getText(INVALID_URL);
 			errorFlag = false;
-		} catch (SVNAuthenticationException e) {	//Will not occur for GIT
+		} catch (SVNAuthenticationException e) {	
 			if(s_debugEnabled){
 				S_LOGGER.error(e.getLocalizedMessage());
 			}
 			errorFlag = false;
 			errorString = getText(INVALID_CREDENTIALS);
-		} catch (SVNException e) {	//Will not occur for GIT
+		} catch (SVNException e) {	
 			if(s_debugEnabled){
 				S_LOGGER.error(e.getLocalizedMessage());
 			}
@@ -955,6 +931,7 @@ public class Applications extends FrameworkBaseAction {
 			scmi.importToRepo(SVN, repoUrl, userName, password, null, null, appDir, commitMessage);
 			errorString = getText(ADD_PROJECT_SUCCESS);
 			errorFlag = true;
+			updateLatestProject();
 		} catch (Exception e) {
 			errorString = e.getLocalizedMessage();
 			errorFlag = false;
@@ -978,17 +955,17 @@ public class Applications extends FrameworkBaseAction {
 		if(s_debugEnabled) {
 			S_LOGGER.debug("Entering Method  Applications.getCommitableFiles()");
 		}
-		List<SVNStatus> commitableFiles = null;
+		List<SVNStatus> commitFiles = null;
 		try {
 			SCMManagerImpl scmi = new SCMManagerImpl();
 			String applicationHome = getApplicationHome();
 			File appDir = new File(applicationHome);
 			revision = HEAD_REVISION;
-			commitableFiles = scmi.getCommitableFiles(appDir, revision);
+			commitFiles = scmi.getCommitableFiles(appDir, revision);
 		} catch (Exception e) {
 			throw new PhrescoException(e);
 		}
-		return commitableFiles;
+		return commitFiles;
 	}
 	
 	public String commitSVNProject() {
@@ -1004,7 +981,6 @@ public class Applications extends FrameworkBaseAction {
 				SCMManagerImpl scmi = new SCMManagerImpl();
 				String applicationHome = getApplicationHome();
 				File appDir = new File(applicationHome);
-//				scmi.commitToRepo(SVN, repoUrl, userName, password,  null, null, appDir, commitMessage);
 				scmi.commitSpecifiedFiles(listModifiedFiles, userName, password, commitMessage);
 			}
 			errorString = getText(COMMIT_PROJECT_SUCCESS);

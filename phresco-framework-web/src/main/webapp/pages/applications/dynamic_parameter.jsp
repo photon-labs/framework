@@ -129,10 +129,19 @@
 				
 				// load input text box
 				if (FrameworkConstants.TYPE_STRING.equalsIgnoreCase(parameter.getType()) || FrameworkConstants.TYPE_NUMBER.equalsIgnoreCase(parameter.getType()) || 
-					FrameworkConstants.TYPE_PASSWORD.equalsIgnoreCase(parameter.getType()) || FrameworkConstants.TYPE_HIDDEN.equalsIgnoreCase(parameter.getType())) {
+					FrameworkConstants.TYPE_HIDDEN.equalsIgnoreCase(parameter.getType())) {
 					
 					parameterModel.setInputType(parameter.getType());
 					parameterModel.setValue(StringUtils.isNotEmpty(parameter.getValue()) ? parameter.getValue():"");
+					
+					StringTemplate txtInputElement = FrameworkUtil.constructInputElement(parameterModel);
+	%> 	
+					<%= txtInputElement %>
+	<%
+				} else if (FrameworkConstants.TYPE_PASSWORD.equalsIgnoreCase(parameter.getType())) {
+					
+					parameterModel.setInputType(parameter.getType());
+					parameterModel.setValue("");
 					
 					StringTemplate txtInputElement = FrameworkUtil.constructInputElement(parameterModel);
 	%> 	
@@ -536,7 +545,7 @@
 		if (data.dependency != undefined && !isBlank(data.dependency)) {
 			var isMultiple = $('#' + data.dependency).attr("isMultiple");
 			var controlType = $('#' + data.dependency).attr('type');
-			constructElements(data.dependentValues, data.dependency, isMultiple, controlType);
+			constructElements(data.dependentValues, data.dependency, isMultiple, controlType, data.parameterType);
 		}
 	}
 	
@@ -686,4 +695,53 @@
 			$("#" + txtBoxId).val(removeSpaces(checkForNumber(value)));
 		}
 	}
+	
+	function templateMandatoryVal() {		
+		var testAgainst = $("#testAgainst").val();
+		var redirect = false;		
+		if (testAgainst != undefined && (testAgainst == "server" || testAgainst == "webservice")) {
+			redirect = contextUrlsMandatoryVal();
+		} else if (testAgainst != undefined && testAgainst == "database") {
+			redirect = dbContextUrlsMandatoryVal();
+		} else if (testAgainst == undefined) {
+			$('.yesNoPopupErr').empty();
+			runPerformanceTest();
+		}
+	
+		if (redirect) {
+			$('.yesNoPopupErr').empty();
+			runPerformanceTest();
+		}
+	} 
+	
+	function runPerformanceTest() {		
+		var formJsonObject = $('#generateBuildForm').toJSON();
+		var formJsonStr = JSON.stringify(formJsonObject);
+		var templateFunction = new Array();
+		var templateCsvFn = $("#stFileFunction").val();
+		var jsonStr = "";
+		var templJsonStr = "";
+		var params = getBasicParams();
+		var sep = "";		
+		if (templateCsvFn != undefined && !isBlank(templateCsvFn)) {
+			templateFunction = templateCsvFn.split(",");
+			for (i = 0; i < templateFunction.length; ++i) {
+				jsonStr = window[templateFunction[i]]();	
+				templJsonStr = templJsonStr + sep + jsonStr;
+				sep = ",";
+			}
+		}		
+		formJsonStr = formJsonStr.slice(0,formJsonStr.length-1);
+		formJsonStr = formJsonStr + ',' + templJsonStr + '}';
+		$("#resultJson").val(formJsonStr);
+		var fromCi = $('#isFromCI').val();		
+		if (fromCi) {		
+			// write json for performance			
+			loadContent('performanceJsonWriter', $('#generateBuildForm'), '', getBasicParams(), false, true);
+		} else {
+			$('#popupPage').modal('hide');
+			progressPopupAsSecPopup('runPerformanceTest', '<%= appId %>', "performance-test", $('#generateBuildForm'), params, '');	
+		}
+	}
+	
 </script>

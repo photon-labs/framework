@@ -672,6 +672,22 @@
         	<result type="json" />
 		</action>
 		
+		<action name="addTestSuites" method="addManualTestSuite" class="com.photon.phresco.framework.actions.applications.Quality">
+        	<result name="success">/pages/applications/quality/addTestSuite.jsp</result>
+		</action>
+		
+		<action name="addTestCases" method="addManualTestCase" class="com.photon.phresco.framework.actions.applications.Quality">
+        	<result name="success">/pages/applications/quality/addTestCase.jsp</result>
+		</action>
+		
+		<action name="saveTestSuites" method="saveTestSuites" class="com.photon.phresco.framework.actions.applications.Quality">
+        	<result name="manual">/pages/applications/quality/manualTestCase.jsp</result>
+		</action>
+		
+		<action name="saveTestCases" method="saveTestCases" class="com.photon.phresco.framework.actions.applications.Quality">
+        	<result name="manual">/pages/applications/quality/manualTestCase.jsp</result>
+		</action>
+		
         <action name="functional" method="functional" class="com.photon.phresco.framework.actions.applications.Quality">
         	<result name="functional">/pages/applications/quality/functional.jsp</result>
 		</action>
@@ -767,6 +783,10 @@
         
         <action name="runPerformanceTest" method="performanceTest" class="com.photon.phresco.framework.actions.applications.Quality">
             <result name="success">/pages/applications/reader.jsp</result>
+        </action>
+        
+        <action name="performanceJsonWriter" method="performanceJsonWriter" class="com.photon.phresco.framework.actions.applications.Quality">
+        	<result type="json" />  	
         </action>
         
         <action name="perTest" method="performanceTest" class="com.photon.phresco.framework.actions.applications.Quality">

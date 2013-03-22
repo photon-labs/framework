@@ -362,7 +362,8 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
                 setBuildStatus(ciBuild, job);
         		String buildUrl = ciBuild.getUrl();
         		String jenkinUrl = job.getJenkinsUrl() + ":" + job.getJenkinsPort();
-        		buildUrl = buildUrl.replaceAll("localhost:" + job.getJenkinsPort(), jenkinUrl); // when displaying url it should display setup machine ip
+        		// when displaying url it should display setup machine ip
+        		buildUrl = buildUrl.replaceAll("localhost:" + job.getJenkinsPort(), jenkinUrl); 
         		ciBuild.setUrl(buildUrl);
                 ciBuilds.add(ciBuild);
             }
@@ -379,7 +380,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
    		S_LOGGER.debug("setBuildStatus()  url = "+ ciBuild.getUrl());
 		String buildUrl = ciBuild.getUrl();
 		String jenkinsUrl = job.getJenkinsUrl() + ":" + job.getJenkinsPort();
-		buildUrl = buildUrl.replaceAll("localhost:" + job.getJenkinsPort(), jenkinsUrl); // display the jenkins running url in ci list
+		buildUrl = buildUrl.replaceAll("localhost:" + job.getJenkinsPort(), jenkinsUrl); 
     	String response = getJsonResponse(buildUrl + API_JSON);
         JsonParser parser = new JsonParser();
         JsonElement jsonElement = parser.parse(response);
@@ -390,9 +391,9 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
         JsonElement timeJson = jsonObject.get(FrameworkConstants.CI_JOB_BUILD_TIME_STAMP);
         JsonArray asJsonArray = jsonObject.getAsJsonArray(FrameworkConstants.CI_JOB_BUILD_ARTIFACTS);
         
-        if(jsonObject.get(FrameworkConstants.CI_JOB_BUILD_RESULT).toString().equals(STRING_NULL)) { // when build is result is not known
+        if(jsonObject.get(FrameworkConstants.CI_JOB_BUILD_RESULT).toString().equals(STRING_NULL)) { 
         	ciBuild.setStatus(INPROGRESS);
-        } else if(BUILD.equals(job.getOperation()) && resultJson.getAsString().equals(CI_SUCCESS_FLAG) && asJsonArray.size() < 1) { // when build is success and zip relative path is not added in json
+        } else if(BUILD.equals(job.getOperation()) && resultJson.getAsString().equals(CI_SUCCESS_FLAG) && asJsonArray.size() < 1) { 
             ciBuild.setStatus(INPROGRESS);
         } else {
         	ciBuild.setStatus(resultJson.getAsString());
@@ -494,11 +495,6 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
         //Recipients customization
         Map<String, String> emails = job.getEmail();
         processor.setEmailPublisher(emails, job.getAttachmentsPattern());
-//        //Failure Reception list
-//        processor.changeNodeValue(TRIGGER_FAILURE_EMAIL_RECIPIENT_LIST, (String)email.get(FAILURE_EMAILS));
-//        
-//        //Success Reception list
-//        processor.changeNodeValue(TRIGGER_SUCCESS__EMAIL_RECIPIENT_LIST, (String)email.get(SUCCESS_EMAILS));
         
         //enable collabnet file release plugin integration
         if (job.isEnableBuildRelease()) {
@@ -549,7 +545,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
         
         if (job.isEnablePostBuildStep()) {
         	String mvnCommand = job.getMvnCommand();
-			String[] ciAdapted = mvnCommand.split(CI_FUNCTIONAL_ADAPT); // java stanalone functional test alone
+			String[] ciAdapted = mvnCommand.split(CI_FUNCTIONAL_ADAPT); 
 			for (String ciCommand : ciAdapted) {
 				S_LOGGER.debug("ciCommand...." + ciCommand);
 			}
@@ -575,13 +571,13 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
         List<String> argList = new ArrayList<String>();
         S_LOGGER.debug("job name " + job.getName());
         S_LOGGER.debug("Builds " + builds);
-        if(CollectionUtils.isEmpty(builds)) {	// delete job
+        if(CollectionUtils.isEmpty(builds)) {	
         	S_LOGGER.debug("Job deletion started");
         	S_LOGGER.debug("Command " + FrameworkConstants.CI_JOB_DELETE_COMMAND);
         	deleteType = DELETE_TYPE_JOB;
         	argList.add(FrameworkConstants.CI_JOB_DELETE_COMMAND);
             argList.add(job.getName());
-        } else {								// delete Build
+        } else {								
         	S_LOGGER.debug("Build deletion started");
         	deleteType = DELETE_TYPE_BUILD;
         	argList.add(FrameworkConstants.CI_BUILD_DELETE_COMMAND);
@@ -648,7 +644,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 			 S_LOGGER.debug("Going to get existing jobs to relocate!!!!!");
 			 if(existJob != null) {
 				 S_LOGGER.debug("Existing job found " + existJob.getName());
-				 boolean deleteExistJob = deleteCIJobFile(appInfo);
+				 deleteCIJobFile(appInfo);
 				 Gson gson = new Gson();
 				 List<CIJob> existingJobs = new ArrayList<CIJob>();
 				 existingJobs.addAll(Arrays.asList(existJob));
@@ -738,7 +734,6 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 			 if (CollectionUtils.isEmpty(selectedJobs)) {
 				 return;
 			 }
-			 Gson gson = new Gson();
 			 List<CIJob> jobs = getJobs(appInfo);
 			 if (CollectionUtils.isEmpty(jobs)) {
 				 return;
@@ -910,7 +905,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 					return jsonArray.size();
 				}
 			} else {
-				return -1; // When the project is build first time,
+				return -1; 
 			}
 		} catch (ClientHandlerException ex) {
 			S_LOGGER.error(ex.getLocalizedMessage());

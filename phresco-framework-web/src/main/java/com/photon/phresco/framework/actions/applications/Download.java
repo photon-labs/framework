@@ -47,7 +47,7 @@ public class Download extends FrameworkBaseAction {
     	}
     	
     	try {
-    	    removeSessionAttribute(getAppId() + SESSION_APPINFO);//To remove the appInfo from the session
+    	    removeSessionAttribute(getAppId() + SESSION_APPINFO);
 			ServiceManager serviceManager = getServiceManager();
 			ApplicationInfo appInfo = getApplicationInfo();
 			String techId = appInfo.getTechInfo().getId();

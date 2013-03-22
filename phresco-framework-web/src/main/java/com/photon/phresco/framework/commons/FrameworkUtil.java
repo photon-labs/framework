@@ -20,24 +20,26 @@
 package com.photon.phresco.framework.commons;
 
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+import java.util.UUID;
 import java.util.regex.Matcher;
-import java.util.Vector;
 import java.util.regex.Pattern;
 
 import org.antlr.stringtemplate.StringTemplate;
@@ -46,26 +48,28 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.w3c.dom.Element;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.w3c.dom.Element;
 
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.ArtifactInfo;
 import com.photon.phresco.commons.model.Customer;
 import com.photon.phresco.commons.model.RepoInfo;
-import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.commons.model.TestCase;
-import com.photon.phresco.framework.model.TestSuite;
+import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.FrameworkConfiguration;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
+import com.photon.phresco.framework.model.TestSuite;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
 import com.photon.phresco.util.Constants;
@@ -1213,10 +1217,10 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
             if (value == null) {
                 break;
             }
-            if (value.endsWith(",")) {  // trim trailing ,
+            if (value.endsWith(",")) {  
                 value = value.substring(0, value.length() - 1);
             }
-            if (value.startsWith("\"")) { // assume also ends with
+            if (value.startsWith("\"")) { 
                 value = value.substring(1, value.length() - 1);
             }
             if (value.length() == 0) {
@@ -1294,14 +1298,14 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 					}
                     while (rowIterator.hasNext()) {
                 		Row next = rowIterator.next();
-                		if (StringUtils.isNotEmpty(getValue(next.getCell(1)))) {
+                		if (StringUtils.isNotEmpty(getValue(next.getCell(2)))) {
                 			TestSuite createObject = createObject(next);
                         	excels.add(createObject);
                 		}
                     }
                     
             } catch (Exception e) {
-                    e.printStackTrace();
+                    //e.printStackTrace();
             }
             return excels;
     }
@@ -1350,12 +1354,12 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	return testSuite;
 	}
     
-    public List<TestCase> readManualTestCaseFile(String filePath, String fileName) throws PhrescoException {
-		List<TestCase> testCases = readTestCase(filePath, fileName);
+    public List<TestCase> readManualTestCaseFile(String filePath, String fileName, String testId, String bugComment) throws PhrescoException {
+		List<TestCase> testCases = readTestCase(filePath, fileName, testId, bugComment);
 		return testCases;
 	}
     
-    private List<TestCase> readTestCase(String filePath,String fileName) throws PhrescoException {
+    private List<TestCase> readTestCase(String filePath,String fileName, String testId, String bugComment) throws PhrescoException {
     	 List<TestCase> testCases = new ArrayList<TestCase>();
     	 try {
     		 File testDir = new File(filePath);
@@ -1388,7 +1392,18 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 			    	         		if (StringUtils.isNotEmpty(getValue(next.getCell(1)))) {
 			    	         			TestCase createObject = readTest(next);
 			    	         			testCases.add(createObject);
+			    	         			if (StringUtils.isNotEmpty(testId) && createObject.getFeatureId().equals(testId)) {
+			    	         				Cell cell=next.getCell(13);
+			    	         				cell.setCellValue(bugComment);
+			    	         			   
+			    	         			}
 			    	         		}
+				    	         }
+				    	         if (StringUtils.isNotEmpty(testId)) {
+				    	         	myInput.close();
+	    	         			    FileOutputStream outFile =new FileOutputStream(sb.toString());
+	    	         			    myWorkBook.write(outFile);
+	    	         			    outFile.close();
 				    	         }
 				        	 }
 						}
@@ -1416,7 +1431,18 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 			    	         		if (StringUtils.isNotEmpty(getValue(next.getCell(1)))) {
 			    	         			TestCase createObject = readTest(next);
 			    	         			testCases.add(createObject);
+			    	         			if (StringUtils.isNotEmpty(testId) && createObject.getFeatureId().equals(testId)) {
+			    	         				Cell cell=next.getCell(13);
+			    	         				cell.setCellValue(bugComment);
+			    	         			   
+			    	         			}
 			    	         		}
+				    	         }
+				    	         if (StringUtils.isNotEmpty(testId)) {
+					    	         	myInput.close();
+		    	         			    FileOutputStream outFile =new FileOutputStream(sb.toString());
+		    	         			    myWorkBook.write(outFile);
+		    	         			    outFile.close();
 				    	         }
 				        	 }
 				         }
@@ -1443,6 +1469,14 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     			testcase.setTestCaseId(value);
     		}
     	}
+    	if(next.getCell(4)!=null){
+    		Cell cell = next.getCell(4);
+    		String value=getValue(cell);
+    		if(StringUtils.isNotEmpty(value)) {
+    			testcase.setDescription(value);
+    		}
+    	}
+    	
     	if(next.getCell(5)!=null){
     		Cell cell=next.getCell(5);
     		String value=getValue(cell);
@@ -1515,6 +1549,340 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 			osBit = OS_BIT86;
 		}
 		return osName.concat(osBit);
+	}
+	
+	public static void addNew(String filePath, String testName,String success, String fail, String total, String testCoverage) {
+		try {
+			//FileInputStream myInput = new FileInputStream(filePath);
+
+			int numCol;
+			int cellno = 0;
+			CellStyle tryStyle[] = new CellStyle[20];
+			String sheetName = testName;
+			String cellValue[] = {"","",testName,success, fail,"","","",total,testCoverage,"","",""};
+			Iterator<Row> rowIterator;
+			File testDir = new File(filePath);
+      		StringBuilder sb = new StringBuilder(filePath);
+   	        if(testDir.isDirectory()) {
+       	        	FilenameFilter filter = new PhrescoFileFilter("", "xlsx");
+       	        	File[] listFiles = testDir.listFiles(filter);
+       	        	if (listFiles.length != 0) {
+						for (File file1 : listFiles) {
+							 if (file1.isFile()) {
+								sb.append(File.separator);
+						    	sb.append(file1.getName());
+						    }
+						}
+						FileInputStream myInput = new FileInputStream(sb.toString());
+						OPCPackage opc=OPCPackage.open(myInput); 
+						
+						XSSFWorkbook myWorkBook = new XSSFWorkbook(opc);
+						XSSFSheet mySheet = myWorkBook.getSheetAt(0);
+						rowIterator = mySheet.rowIterator();
+						numCol = 13;
+						Row next;
+						for (Cell cell : mySheet.getRow((mySheet.getLastRowNum()) - 2)) {
+							tryStyle[cellno] = cell.getCellStyle();
+							cellno = cellno + 1;
+						}
+						do {
+
+							int flag = 0;
+							next = rowIterator.next();
+							if (mySheet.getSheetName().equalsIgnoreCase("Index")
+									&& ((mySheet.getLastRowNum() - next.getRowNum()) < 3)) {
+								for (Cell cell : next) {
+									cell.setCellType(1);
+									if (cell.getStringCellValue().equalsIgnoreCase("total")) {
+										mySheet.shiftRows((mySheet.getLastRowNum() - 1),
+												(mySheet.getPhysicalNumberOfRows() - 1), 1);
+										flag = 1;
+									}
+									if (flag == 1)
+										break;
+								}
+								if (flag == 1)
+									break;
+							}
+						} while (rowIterator.hasNext());
+
+						Row r = null;
+						if (mySheet.getSheetName().equalsIgnoreCase("Index")) {
+							r = mySheet.createRow(next.getRowNum() - 1);
+
+						} else {
+							r = mySheet.createRow(next.getRowNum() + 1);
+						}
+						for (int i = 0; i < numCol; i++) {
+							Cell cell = r.createCell(i);
+							cell.setCellValue(cellValue[i]);
+							// used only when sheet is 'index'
+							if (i == 2)
+								sheetName = cellValue[i];
+
+							cell.setCellStyle(tryStyle[i]);
+						}
+						if (mySheet.getSheetName().equalsIgnoreCase("Index")) {
+							Sheet fromSheet = myWorkBook.getSheetAt((myWorkBook
+									.getNumberOfSheets() - 1));
+							Sheet toSheet = myWorkBook.createSheet(sheetName);
+							int i = 0;
+							Iterator<Row> copyFrom = fromSheet.rowIterator();
+							Row fromRow, toRow;
+							CellStyle newSheetStyle[] = new CellStyle[20];
+							Integer newSheetType[] = new Integer[100];
+							String newSheetValue[] = new String[100];
+							do {
+								fromRow = copyFrom.next();
+								if (fromRow.getRowNum() == 24) {
+									break;
+								}
+								toRow = toSheet.createRow(i);
+								int numCell = 0;
+								for (Cell cell : fromRow) {
+									Cell newCell = toRow.createCell(numCell);
+
+									cell.setCellType(1);
+
+									newSheetStyle[numCell] = cell.getCellStyle();
+									newCell.setCellStyle(newSheetStyle[numCell]);
+
+									newSheetType[numCell] = cell.getCellType();
+									newCell.setCellType(newSheetType[numCell]);
+									if (fromRow.getCell(0).getStringCellValue().length() != 1
+											&& fromRow.getCell(0).getStringCellValue()
+													.length() != 2
+											&& fromRow.getCell(0).getStringCellValue()
+													.length() != 3) {
+										newSheetValue[numCell] = cell.getStringCellValue();
+										newCell.setCellValue(newSheetValue[numCell]);
+									}
+
+									numCell = numCell + 1;
+								}
+								i = i + 1;
+							} while (copyFrom.hasNext());
+						}
+						// write to file
+						FileOutputStream fileOut = new FileOutputStream(sb.toString());
+						myWorkBook.write(fileOut);
+						myInput.close();
+						fileOut.close();
+       	        	} else {
+   	                	FilenameFilter filter1 = new PhrescoFileFilter("", "xls");
+   	     	            File[] listFiles1 = testDir.listFiles(filter1);
+   	     	            for(File file2 : listFiles1) {
+   	     	            	if (file2.isFile()) {
+   	     	            		sb.append(File.separator);
+   	    	                	sb.append(file2.getName());
+   	     	            	}
+   	     	            }
+   	     	            FileInputStream myInput = new FileInputStream(sb.toString());
+   	     	            HSSFWorkbook myWorkBook = new HSSFWorkbook(myInput);
+
+	                    HSSFSheet mySheet = myWorkBook.getSheetAt(0);
+	                    rowIterator = mySheet.rowIterator();
+	                	numCol = 13;
+	        			Row next;
+	        			for (Cell cell : mySheet.getRow((mySheet.getLastRowNum()) - 2)) {
+	        				tryStyle[cellno] = cell.getCellStyle();
+	        				cellno = cellno + 1;
+	        			}
+	        			do {
+
+	        				int flag = 0;
+	        				next = rowIterator.next();
+	        				if (mySheet.getSheetName().equalsIgnoreCase("Index")
+	        						&& ((mySheet.getLastRowNum() - next.getRowNum()) < 3)) {
+
+	        					for (Cell cell : next) {
+	        						cell.setCellType(1);
+	        						if (cell.getStringCellValue().equalsIgnoreCase("total")) {
+	        							mySheet.shiftRows((mySheet.getLastRowNum() - 1),
+	        									(mySheet.getPhysicalNumberOfRows() - 1), 1);
+	        							flag = 1;
+	        						}
+	        						if (flag == 1)
+	        							break;
+	        					}
+	        					if (flag == 1)
+	        						break;
+	        				}
+	        			} while (rowIterator.hasNext());
+	        			Row r = null;
+	        			if (mySheet.getSheetName().equalsIgnoreCase("Index")) {
+	        				r = mySheet.createRow(next.getRowNum() - 1);
+	        			} else {
+	        				r = mySheet.createRow(next.getRowNum() + 1);
+	        			}
+        				for (int i = 0; i < numCol; i++) {
+        					Cell cell = r.createCell(i);
+        					cell.setCellValue(cellValue[i]);
+        					// used only when sheet is 'index'
+        					if (i == 2)
+        						sheetName = cellValue[i];
+
+        					cell.setCellStyle(tryStyle[i]);
+        				}
+	        						
+	        			if (mySheet.getSheetName().equalsIgnoreCase("Index")) {
+	        				Sheet fromSheet = myWorkBook.getSheetAt((myWorkBook
+	        						.getNumberOfSheets() - 1));
+	        				Sheet toSheet = myWorkBook.createSheet(sheetName);
+	        				int i = 0;
+	        				Iterator<Row> copyFrom = fromSheet.rowIterator();
+	        				Row fromRow, toRow;
+	        				CellStyle newSheetStyle[] = new CellStyle[20];
+	        				Integer newSheetType[] = new Integer[100];
+	        				String newSheetValue[] = new String[100];
+	        				do {
+	        					fromRow = copyFrom.next();
+	        					toRow = toSheet.createRow(i);
+	        					int numCell = 0;
+	        					for (Cell cell : fromRow) {
+	        						Cell newCell = toRow.createCell(numCell);
+
+	        						cell.setCellType(1);
+
+	        						newSheetStyle[numCell] = cell.getCellStyle();
+	        						newCell.setCellStyle(newSheetStyle[numCell]);
+
+	        						newSheetType[numCell] = cell.getCellType();
+	        						newCell.setCellType(newSheetType[numCell]);
+	        						if (fromRow.getCell(0).getStringCellValue().length() != 1
+	        								&& fromRow.getCell(0).getStringCellValue()
+	        										.length() != 2
+	        								&& fromRow.getCell(0).getStringCellValue()
+	        										.length() != 3) {
+	        							newSheetValue[numCell] = cell.getStringCellValue();
+	        							newCell.setCellValue(newSheetValue[numCell]);
+	        						}
+
+	        						numCell = numCell + 1;
+	        					}
+	        					i = i + 1;
+	        				} while (copyFrom.hasNext());
+	        			}
+	        			FileOutputStream fileOut = new FileOutputStream(sb.toString());
+	        			myWorkBook.write(fileOut);
+	        			myInput.close();
+	        			fileOut.close();
+   	                }
+       	        	
+   	        	}
+
+		} catch (Exception e) {
+			//e.printStackTrace();
+		}
+	}
+	
+	public static void addNewTestCase(String filePath, String testSuiteName,String featureId, String testCaseId, String testDesc, 
+			String testSteps, String testCaseType, String priority, String expectedResult, String actualResult, String status, String bugComment) {
+		try {
+			String uuid = UUID.randomUUID().toString();
+			int numCol = 14;
+			int cellno = 0;
+			CellStyle tryStyle[] = new CellStyle[20];
+			String cellValue[] = {"",featureId,"",testCaseId,testDesc,testSteps,testCaseType,priority,expectedResult,actualResult,status,"","",bugComment};
+			Iterator<Row> rowIterator = null;
+			File testDir = new File(filePath);
+      		StringBuilder sb = new StringBuilder(filePath);
+   	        if(testDir.isDirectory()) {
+       	        	FilenameFilter filter = new PhrescoFileFilter("", "xlsx");
+       	        	File[] listFiles = testDir.listFiles(filter);
+       	        	if (listFiles.length != 0) {
+						for (File file1 : listFiles) {
+							 if (file1.isFile()) {
+								sb.append(File.separator);
+						    	sb.append(file1.getName());
+						    }
+						}
+						FileInputStream myInput = new FileInputStream(sb.toString());
+						OPCPackage opc=OPCPackage.open(myInput); 
+						XSSFWorkbook myWorkBook = new XSSFWorkbook(opc);
+						int numberOfSheets = myWorkBook.getNumberOfSheets();
+						for (int j = 0; j < numberOfSheets; j++) {
+							XSSFSheet mySheet = myWorkBook.getSheetAt(j);
+							if(mySheet.getSheetName().equals(testSuiteName)) {
+								rowIterator = mySheet.rowIterator();
+								Row next;
+								for (Cell cell : mySheet.getRow((mySheet.getLastRowNum()) - 2)) {
+									tryStyle[cellno] = cell.getCellStyle();
+									cellno = cellno + 1;
+								}
+								do {
+									next = rowIterator.next();
+								} while (rowIterator.hasNext());
+								Row r = null;
+								if (mySheet.getSheetName().equalsIgnoreCase("Index")) {
+									r = mySheet.createRow(next.getRowNum() - 1);
+								
+								} else {
+									r = mySheet.createRow(next.getRowNum() + 1);
+								}
+								for (int i = 0; i < numCol; i++) {
+									Cell cell = r.createCell(i);
+									cell.setCellValue(cellValue[i]);
+								
+									cell.setCellStyle(tryStyle[i]);
+								}
+								FileOutputStream fileOut = new FileOutputStream(sb.toString());
+								myWorkBook.write(fileOut);
+								myInput.close();
+								fileOut.close();
+							}
+				        	 	
+						}
+						
+   	        	} else {
+   	        		FilenameFilter filter1 = new PhrescoFileFilter("", "xls");
+     	            File[] listFiles1 = testDir.listFiles(filter1);
+     	            for(File file2 : listFiles1) {
+     	            	if (file2.isFile()) {
+     	            		sb.append(File.separator);
+    	                	sb.append(file2.getName());
+     	            	}
+     	            }
+     	            FileInputStream myInput = new FileInputStream(sb.toString());
+     	            HSSFWorkbook myWorkBook = new HSSFWorkbook(myInput);
+     	            HSSFSheet mySheet;
+   	     	        int numberOfSheets = myWorkBook.getNumberOfSheets();
+			         for (int j = 0; j < numberOfSheets; j++) {
+			        	 mySheet = myWorkBook.getSheetAt(j);
+			        	 if(mySheet.getSheetName().equals(testSuiteName)) {
+							rowIterator = mySheet.rowIterator();
+							Row next;
+							for (Cell cell : mySheet.getRow((mySheet.getLastRowNum()) - 2)) {
+								tryStyle[cellno] = cell.getCellStyle();
+								cellno = cellno + 1;
+							}
+							do {
+								next = rowIterator.next();
+							} while (rowIterator.hasNext());
+							Row r = null;
+							if (mySheet.getSheetName().equalsIgnoreCase("Index")) {
+								r = mySheet.createRow(next.getRowNum() - 1);
+							
+							} else {
+								r = mySheet.createRow(next.getRowNum() + 1);
+							}
+							for (int i = 0; i < numCol; i++) {
+								Cell cell = r.createCell(i);
+								cell.setCellValue(cellValue[i]);
+							
+								cell.setCellStyle(tryStyle[i]);
+							}
+							FileOutputStream fileOut = new FileOutputStream(sb.toString());
+							myWorkBook.write(fileOut);
+							myInput.close();
+							fileOut.close();
+						}
+        			}
+                }
+   	        }
+		} catch (Exception e) {
+			//e.printStackTrace();
+		}
 	}
 }
 

@@ -78,7 +78,7 @@ public class Code extends DynamicParameterAction implements Constants {
 		}
 		
 		try {
-		    removeSessionAttribute(getAppId() + SESSION_APPINFO);//To remove the appInfo from the session
+		    removeSessionAttribute(getAppId() + SESSION_APPINFO);
         	ApplicationInfo appInfo = getApplicationInfo();
         	setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
         	setReqAttribute(REQ_APP_INFO, appInfo);
@@ -207,7 +207,7 @@ public class Code extends DynamicParameterAction implements Constants {
             
         	File pomPath = getPOMFile();
             PomProcessor processor = new PomProcessor(pomPath);
-            String validateAgainst = getReqParameter(REQ_VALIDATE_AGAINST); //getHttpRequest().getParameter("validateAgainst");
+            String validateAgainst = getReqParameter(REQ_VALIDATE_AGAINST); 
             String validateReportUrl = processor.getProperty(POM_PROP_KEY_VALIDATE_REPORT);
             
             //Check whether iphone Technology or not

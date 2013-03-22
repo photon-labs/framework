@@ -59,8 +59,8 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 
 	private static final Logger S_LOGGER = Logger.getLogger(SCMManagerImpl.class);
 	private static Boolean debugEnabled = S_LOGGER.isDebugEnabled();
-	boolean dotphresco ;
-	SVNClientManager cm = null;
+	private boolean dotphresco ;
+	private SVNClientManager cm = null;
 
 	public boolean importProject(String type, String url, String username,
 			String password, String branch, String revision) throws Exception {
@@ -105,7 +105,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			if(debugEnabled){
 				S_LOGGER.debug("Validating Phresco Definition");
 			}
-			boolean valid = cloneFilter(gitImportTemp, url, true);
+			boolean valid = cloneFilter(gitImportTemp, url);
 			if (gitImportTemp.exists()) {
 				if(debugEnabled){
 					S_LOGGER.debug("Deleting ~Temp");
@@ -141,8 +141,6 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				S_LOGGER.debug("update SCM Connection " + url);
 			}
 			 updateSCMConnection(appDirName, url);
-				// revision = HEAD_REVISION.equals(revision) ? revision
-				// : revisionVal;
 			File updateDir = new File(Utility.getProjectHome(), appDirName);
 			if(debugEnabled){
 				S_LOGGER.debug("updateDir SVN... " + updateDir);
@@ -163,8 +161,8 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			if(debugEnabled){
 				S_LOGGER.debug("updateDir GIT... " + updateDir);
 			}
-			Git git = Git.open(updateDir); // checkout is the folder with .git
-			git.pull().call(); // succeeds
+			Git git = Git.open(updateDir); 
+			git.pull().call();
 			if(debugEnabled){
 				S_LOGGER.debug("Updated!");
 			}
@@ -463,7 +461,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 	    return isImported;
 	}
 
-	private boolean cloneFilter(File appDir, String url, boolean recursive)throws Exception {
+	private boolean cloneFilter(File appDir, String url)throws Exception {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.cloneFilter()");
 		}
@@ -619,8 +617,8 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.importDirectoryContentToSubversion()");
 		}
 		setupLibrary();
-        final SVNClientManager cm = SVNClientManager.newInstance(new DefaultSVNOptions(), userName, hashedPassword);
-        return cm.getCommitClient().doImport(new File(subVersionedDirectory), SVNURL.parseURIEncoded(repositoryURL), commitMessage, null, true, true, SVNDepth.fromRecurse(true));
+        final SVNClientManager svnClintManagr = SVNClientManager.newInstance(new DefaultSVNOptions(), userName, hashedPassword);
+        return svnClintManagr.getCommitClient().doImport(new File(subVersionedDirectory), SVNURL.parseURIEncoded(repositoryURL), commitMessage, null, true, true, SVNDepth.fromRecurse(true));
     }
 	
 	private void checkoutImportedApp(String repositoryURL, String subVersionedDirectory, String userName, String password) throws Exception {
@@ -628,8 +626,8 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.checkoutImportedApp()");
 		}
 		DefaultSVNOptions options = new DefaultSVNOptions();
-		SVNClientManager cm = SVNClientManager.newInstance(options, userName, password);
-		SVNUpdateClient uc = cm.getUpdateClient();
+		SVNClientManager svnClientManger = SVNClientManager.newInstance(options, userName, password);
+		SVNUpdateClient uc = svnClientManger.getUpdateClient();
 		SVNURL svnURL = SVNURL.parseURIEncoded(repositoryURL);
 		if(debugEnabled){
 			S_LOGGER.debug("Checking out...");
@@ -656,7 +654,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		}
 		try {
 			if (SVN.equals(type)) {
-				commitDirectoryContentToSubversion(url, dir.getPath(), username, password, commitMessage);
+				commitDirectoryContentToSubversion(dir.getPath(), username, password, commitMessage);
 			} else if (GIT.equals(type)) {
 				importToGITRepo();
 			} else if (BITKEEPER.equals(type)) {
@@ -668,18 +666,18 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		return true;
 	}
 	
-	private SVNCommitInfo commitDirectoryContentToSubversion(String repositoryURL, String subVersionedDirectory, String userName, String hashedPassword, String commitMessage) throws SVNException {
+	private SVNCommitInfo commitDirectoryContentToSubversion(String subVersionedDirectory, String userName, String hashedPassword, String commitMessage) throws SVNException {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.commitDirectoryContentToSubversion()");
 		}
 		setupLibrary();
 		
-		final SVNClientManager cm = SVNClientManager.newInstance(new DefaultSVNOptions(), userName, hashedPassword);
-		SVNWCClient wcClient = cm.getWCClient();
+		final SVNClientManager svnClientManger = SVNClientManager.newInstance(new DefaultSVNOptions(), userName, hashedPassword);
+		SVNWCClient wcClient = svnClientManger.getWCClient();
 		File subVerDir = new File(subVersionedDirectory);
 		// This one recursively adds an existing local item under version control (schedules for addition)
 		wcClient.doAdd(subVerDir, true, false, false, SVNDepth.INFINITY, false, false);
-		return cm.getCommitClient().doCommit(new File[]{subVerDir}, false, commitMessage, null, null, false, true, SVNDepth.INFINITY);
+		return svnClientManger.getCommitClient().doCommit(new File[]{subVerDir}, false, commitMessage, null, null, false, true, SVNDepth.INFINITY);
     }
 	
 	private boolean commitToBitKeeperRepo(String repoUrl, String appDir, String commitMsg) throws PhrescoException {
@@ -733,10 +731,9 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		setupLibrary();
 		
 		File subVerDir = new File(subVersionedDirectory);		
-		final SVNClientManager cm = SVNClientManager.newInstance(new DefaultSVNOptions(), userName, password);
+		final SVNClientManager svnClientManagr = SVNClientManager.newInstance(new DefaultSVNOptions(), userName, password);
 		
-		SVNWCClient wcClient = cm.getWCClient();
-		//wcClient.doDelete(subVerDir, true, false);
+		SVNWCClient wcClient = svnClientManagr.getWCClient();
 		FileUtils.listFiles(subVerDir, TrueFileFilter.TRUE, FileFilterUtils.makeSVNAware(null));
 		for (File child : subVerDir.listFiles()) {
 			if (!(DOT+SVN).equals(child.getName())) {
@@ -744,7 +741,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			}
 		}
 		
-		return cm.getCommitClient().doCommit(new File[]{subVerDir}, false, commitMessage, null, null, false, true, SVNDepth.INFINITY);
+		return svnClientManagr.getCommitClient().doCommit(new File[]{subVerDir}, false, commitMessage, null, null, false, true, SVNDepth.INFINITY);
     }
 	
 	public List<SVNStatus> getCommitableFiles(File path, String revision) throws SVNException {
@@ -768,12 +765,12 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		SVNRepositoryFactoryImpl.setup();
 		FSRepositoryFactory.setup();
 		
-		final SVNClientManager cm = SVNClientManager.newInstance(new DefaultSVNOptions(), username, password);
-		SVNWCClient wcClient = cm.getWCClient();
+		final SVNClientManager svnClientManagr = SVNClientManager.newInstance(new DefaultSVNOptions(), username, password);
+		SVNWCClient wcClient = svnClientManagr.getWCClient();
 		File[] comittableFiles = listModifiedFiles.toArray(new File[listModifiedFiles.size()]);
 		
 		wcClient.doAdd(comittableFiles, true, false, false, SVNDepth.INFINITY, false, false, false);
-		SVNCommitInfo commitInfo = cm.getCommitClient().doCommit(comittableFiles, false, commitMessage, null, null, false, true, SVNDepth.INFINITY);
+		SVNCommitInfo commitInfo = svnClientManagr.getCommitClient().doCommit(comittableFiles, false, commitMessage, null, null, false, true, SVNDepth.INFINITY);
 		return commitInfo;
 	}
 }

@@ -4336,6 +4336,13 @@ div.submit_input {
 	height: 87%;
 }
 
+.manualScrollDiv {
+	overflow-y: auto; 
+	overflow-x: hidden; 
+	height: 87%;
+	margin-top: 5%;
+}
+
 .featuresScrollDiv {
 	overflow-y: auto; 
 	overflow-x: hidden; 

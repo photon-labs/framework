@@ -311,7 +311,7 @@ public class ConfigProcessor implements FrameworkConstants {
     	try {
         	XPath xpath = XPath.newInstance(xpathRootNodePath);
             xpath.addNamespace(root_.getNamespace());
-            Element xpathRootNode = (Element) xpath.selectSingleNode(root_); // if it is null then element is not present
+            Element xpathRootNode = (Element) xpath.selectSingleNode(root_); 
             if (StringUtils.isNotEmpty(xpathDeleteNode)) {
             	xpathRootNode.removeChild(xpathDeleteNode);
             } else {
@@ -331,29 +331,4 @@ public class ConfigProcessor implements FrameworkConstants {
 			throw new PhrescoException(e);
 		}
     }
-    
-//    public static void main(String[] args) {
-//        try {
-//            File configFile = new File("/Users/kaleeswaran/Tried/POC/JenkinsConfigXml/template/svn-config.xml");
-//			ConfigProcessor processor = new ConfigProcessor(configFile);
-//			// 1) enable artifactArchiver with this value(do_not_checkin)
-//			// 2) enable email publisher When success and failure emails are empty empty the tag
-//			// 3) enable Attachement pattern (this method should be inside enable email publisher) for report mailing
-//			
-//			// Delete element check
-////            processor.deleteElement("publishers//hudson.tasks.ArtifactArchiver", "");
-////			processor.changeNodeValue("publishers//hudson.tasks.ArtifactArchiver//artifacts", "do_not_checkin/archives/cumulativeReports/*.pdf");
-//			
-//            // Attachement pattern value insert and empty (When the value is not empty, we have to insert the text in that node)
-////            processor.changeNodeValue("publishers//hudson.plugins.emailext.ExtendedEmailPublisher//attachmentsPattern", "do_not_checkin/archives/cumulativeReports/*.pdf");
-//			
-//			// Delete email tags
-////			processor.deleteElement("publishers//hudson.plugins.emailext.ExtendedEmailPublisher", "");
-//			processor.deleteElement("publishers", "hudson.plugins.emailext.ExtendedEmailPublisher");
-//            processor.saveStreamAsFile(configFile);
-//        } catch (Exception e) {
-//            // TODO Auto-generated catch block
-//            e.printStackTrace();
-//        }
-//    }
 }

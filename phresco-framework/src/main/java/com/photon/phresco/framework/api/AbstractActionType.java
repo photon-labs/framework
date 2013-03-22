@@ -19,15 +19,14 @@
  */
 package com.photon.phresco.framework.api;
 
-import org.apache.commons.lang.StringUtils;
 
 public abstract class AbstractActionType  {
-    public String workingDirectory = null;
-    public boolean hideLog = false;
-    public boolean showError = false;
-    public boolean skipTest = false;
-    public boolean showDebug = false;
-    public String profileId = "";
+    private String workingDirectory = null;
+    private boolean hideLog = false;
+    private boolean showError = false;
+    private boolean skipTest = false;
+    private boolean showDebug = false;
+    private String profileId = "";
     
     public String getWorkingDirectory() {
         return workingDirectory;

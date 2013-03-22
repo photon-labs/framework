@@ -43,8 +43,8 @@ public class SVNAccessor {
     private static final String SVN_CHECKOUT_TEMP = "svn-checkout-temp";
     private static final String PHRESCO = "/.phresco";
 
-    SVNURL svnURL = null;
-    SVNClientManager cm = null;
+    private SVNURL svnURL = null;
+    private SVNClientManager cm = null;
 
     public SVNAccessor(String url, String username, String password) throws Exception {
         DAVRepositoryFactory.setup();
@@ -107,14 +107,7 @@ public class SVNAccessor {
             String password = "Suresh@123";
             String revision = "HEAD";
             
-//            SVNAccessor svnAccess = new SVNAccessor(svnURL, null, null);
-//            svnAccess.checkout(checkOutDir, "HEAD", true);
-//            System.out.println("Successfully checked out");
-            
     		SVNAccessor svnAccessor = new SVNAccessor(svnURL, username, password);
-//    		String projCode = svnAccessor.getProjectInfo(revision).getCode();
-//    		revision = !"HEAD".equals(revision) ? revisionVal : revision;
-//    		svnAccessor.checkout(checkOutDir, revision, true, projCode);
     		svnAccessor.update(checkOutDir, revision, true);
     		System.out.println("Completed!!!!");
 		} catch (Exception e) {

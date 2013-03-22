@@ -20,13 +20,11 @@
 package com.photon.phresco.framework.model;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
 import com.photon.phresco.configuration.Configuration;
-import com.photon.phresco.framework.model.PropertyInfo;
 
 public class SettingsInfo {
 

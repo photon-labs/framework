@@ -82,12 +82,12 @@ public class IosTargetParameterImpl implements DynamicParameter {
             boolean isTarget = false;
             
             while ((line = reader.readLine()) != null) {   
-                if (line.trim().equals(XCODE_PROJECT_TARGETS) || line.trim().equals(XCODE_WORKSPACE_TARGETS)) { // getting only target
+                if (line.trim().equals(XCODE_PROJECT_TARGETS) || line.trim().equals(XCODE_WORKSPACE_TARGETS)) {
                 	// For iphone projects both targets and Schemes will be displayed, If target is avilable, take target alone else schemes
                 	if (CollectionUtils.isEmpty(possibleValues.getValue())) {
                 		isTarget = true;
                 	}
-                } else if (line.trim().contains(":")) { // omitt all other configurations
+                } else if (line.trim().contains(":")) { 
                     isTarget = false;
                 }
                     
