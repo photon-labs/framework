@@ -800,7 +800,7 @@
 	
 	var objName; //select box object name
 	//To get the versions of the selected mobile technologies
-	function getTechVersions(layerId, techGroupId, toBeFilledCtrlName, techId) {
+	function getTechVersions(layerId, techGroupId, toBeFilledCtrlName, techId, obj) {
 		showLoadingIcon();
 		$("#"+techGroupId+"<%= FrameworkConstants.REQ_PARAM_NAME_PHONE %>").show();
 		$("#"+techGroupId+"<%= FrameworkConstants.REQ_PARAM_NAME_TABLET %>").show();
@@ -831,6 +831,10 @@
 			pageUrl = "fetchMobTechVersions";
 		}
 		loadContent(pageUrl, $('#formCreateProject'), '', params, true, true);
+		
+		if (obj != undefined && !isBlank(obj)) {
+			checkForApplnDuplicate(obj);			
+		}
 	}
 	
 	//Creats app layer row
@@ -845,7 +849,7 @@
 							"<input type='text' class='appLayerProjName' onblur='checkForApplnDuplicate(this);' name='appLayerProjName' temp='"+count+"' "+
 							" maxlength='12' title='12 Characters only' style='float:left'></div>" +
 							"<div class='align-in-row'><label class='control-label autoWidth'><s:text name='lbl.technology'/></label>" +
-							"<select class='input-medium' name='' temp='"+ count +"' id='" + count + "_App_Technology' layer='" + applayer + "' onchange='getAppLayerTechVersions(this);'>" +
+							"<select class='input-medium' name='app-layerTechnology' temp='"+ count +"' id='" + count + "_App_Technology' layer='" + applayer + "' onchange='getAppLayerTechVersions(this);'>" +
 							"<option value='' selected disabled>Select Technology</option></select></div>" +
 							"<div class='float-left'><label class='control-label autoWidth'><s:text name='lbl.version'/></label>" +
 							"<select class='input-medium' name='Version' id='"+count+"_App_Version'> <option value='' selected disabled>Select Version</option></select></div>" + 
@@ -918,11 +922,13 @@
 	//Check for App Layer - app code duplication
 	function checkForApplnDuplicate(obj) {
 		var inputClass = $(obj).attr("class");
-		var currentVal = $(obj).val();
+		var tech = $(obj).parent().parent().find('select[name=app-layerTechnology]').val();
+		var currentVal = $(obj).val() + tech;
 		$('.'+inputClass).each(function() {
 			if (currentVal != "" && !isBlank(currentVal)) {
+				var existingVal = $(this).val() + $(this).parent().parent().find('select[name=app-layerTechnology]').val();
 				//To match app code with current row with other rows, and check for duplication
-				if ($(obj).attr("temp") !== $(this).attr("temp") && currentVal.toLowerCase() === $(this).val().toLowerCase()) {
+				if ($(obj).attr("temp") !== $(this).attr("temp") && currentVal.toLowerCase() === existingVal.toLowerCase()) {
 					$(obj).val("");
 					$(obj).focus();
 					showErrorInAccordion($("#appLayerControl"), $('#appLayerHeading'), $("#appLayerError"), '<s:text name='err.msg.app.code.unique'/>');
