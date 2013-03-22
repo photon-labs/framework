@@ -468,11 +468,21 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
     }
     
     public Comparator sortByNameInAlphaOrder() {
-		return new Comparator(){
+		return new Comparator() {
 		    public int compare(Object firstObject, Object secondObject) {
 		    	ProjectInfo projectInfo1 = (ProjectInfo) firstObject;
 		    	ProjectInfo projectInfo2 = (ProjectInfo) secondObject;
 		       return projectInfo1.getName().compareToIgnoreCase(projectInfo2.getName());
+		    }
+		};
+	}
+    
+    public Comparator sortValuesInAlphaOrder() {
+		return new Comparator() {
+		    public int compare(Object firstObject, Object secondObject) {
+		    	String val1 = (String) firstObject;
+		    	String val2 = (String) secondObject;
+		       return val1.compareToIgnoreCase(val2);
 		    }
 		};
 	}
