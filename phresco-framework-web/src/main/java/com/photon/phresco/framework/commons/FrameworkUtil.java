@@ -377,7 +377,10 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	inputElement.setAttribute("placeholder", pm.getPlaceHolder());
     	inputElement.setAttribute("value", pm.getValue());
     	inputElement.setAttribute("ctrlsId", pm.getControlId());
-    	
+    	if (DEPLOY_DIR.equals(pm.getId())) {
+	    	String btn = "&nbsp;&nbsp;<input type='button' class='btn btn-primary' value='Browse' onclick='browseDeployDir();'/>"; 
+	    	inputElement.setAttribute("btnElement", new StringTemplate(btn));
+    	}
     	controlGroupElement.setAttribute("lable", lableElmnt);
     	controlGroupElement.setAttribute("controls", inputElement);
     	

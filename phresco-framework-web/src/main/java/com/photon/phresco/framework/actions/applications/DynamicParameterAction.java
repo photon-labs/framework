@@ -57,6 +57,7 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
     private String dependency = "";
     private String fileType = ""; 
     private String fileOrFolder = ""; 
+    private String fromDeployDir = "";
     	
 	private boolean paramaterAvailable;
 	private boolean errorFound;
@@ -840,15 +841,13 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 		setReqAttribute(FILE_TYPES, getFileType());
 		setReqAttribute(FILE_BROWSE, getFileOrFolder());
 		ApplicationInfo applicationInfo = getApplicationInfo();
-		if (REQ_JAR.equalsIgnoreCase(getFileType())) {
+		if (REQ_JAR.equalsIgnoreCase(getFileType()) || DEPLOY_DIR.equals(getFromDeployDir())) {
 			setReqAttribute(REQ_PROJECT_LOCATION, "");
 			setReqAttribute(REQ_FROM, REQ_AGAINST_JAR);
 		} else {
 			setReqAttribute(REQ_PROJECT_LOCATION, getAppDirectoryPath(applicationInfo).replace(File.separator, FORWARD_SLASH));
 			setReqAttribute(REQ_FROM, getReqParameter(REQ_FROM_PAGE));
 		}
-		
-		
 		return SUCCESS;
 	}
     
@@ -958,6 +957,14 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 
 	public String getSelectedFiles() {
 		return selectedFiles;
+	}
+
+	public String getFromDeployDir() {
+		return fromDeployDir;
+	}
+
+	public void setFromDeployDir(String fromDeployDir) {
+		this.fromDeployDir = fromDeployDir;
 	}
 
 	public void setSelectedFiles(String selectedFiles) {

@@ -365,7 +365,7 @@ function additionalPopup(url, title, okUrl, okLabel, form, additionalParam, show
 
 function add_popupCancel(obj) {
 	var closeUrl = $(obj).attr("okurl");
-	if (closeUrl == "addCertificate") {
+	if (closeUrl == "addCertificate" || closeUrl == "addDeployDir") {
 		$('#additionalPopup').modal('hide');
 	} else {
 		setTimeout(function () {
