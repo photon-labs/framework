@@ -613,23 +613,29 @@
 		$(':input:not(:button)', $("#"+contextUrlsRowId)).val('');//to clear already inputed value
 		$("#"+contextUrlsRowId).find('div[id=headerkeyId]').remove();//to clear header key value design
 		i++;
+		
+		// when adding, if the checkbox is checked on first Context URLs checkbox, enable delete button
+		enableDelBtn($('.ctxUrlCheck'));
+		enableDelBtn($('.dbCheck'));
 	}
 	
 	//To enable the delete btn when any context url check box is checked
-	function enableDelBtn(checkBoxClass) {
+	function enableDelBtn(checkBoxObj) {
+		var delChkBoxClass = $(checkBoxObj).attr("class");
 		var hasChecked = false;
-		$('.'+checkBoxClass).each(function() {
+		$('.'+delChkBoxClass).each(function() {
 			if ($(this).is(':checked')) {
 				hasChecked = true;
 				return false;
 			}
 		});
-		if (hasChecked && $('.'+checkBoxClass).size() != 1) {
-			$('#'+checkBoxClass+'Del').addClass("btn-primary");
-			$('#'+checkBoxClass+'Del').removeAttr("disabled");
+		
+		if (hasChecked && $('.'+delChkBoxClass).size() != 1 && $('.'+delChkBoxClass).size() > $('.'+delChkBoxClass+':checked').length) {
+			$('#'+delChkBoxClass+'Del').addClass("btn-primary");
+			$('#'+delChkBoxClass+'Del').removeAttr("disabled");
 		} else {
-			$('#'+checkBoxClass+'Del').removeClass("btn-primary");
-			$('#'+checkBoxClass+'Del').attr("disabled", true);
+			$('#'+delChkBoxClass+'Del').removeClass("btn-primary");
+			$('#'+delChkBoxClass+'Del').attr("disabled", true);
 		}
 	}
 	
@@ -639,9 +645,9 @@
 			var size = $('.'+checkBoxClass).size();
 			if (size > 1 && $(this).is(':checked')) {
 				$(this).closest('fieldset').parent().remove();
-			} 
+			}
 		});
-		enableDelBtn(checkBoxClass);
+		enableDelBtn($('.'+checkBoxClass));
 	}
 
 	function addHeader(obj) {
