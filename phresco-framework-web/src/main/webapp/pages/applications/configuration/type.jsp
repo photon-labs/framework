@@ -531,6 +531,13 @@
 		additionalPopup('authenticateServer','Add Certificate', 'addCertificate', 'Add', '', params, true);
  	}
 	
+	function browseDeployDir() {
+		var params = "fromDeployDir=";
+		params = params.concat("deploy_dir");
+		params = params.concat("&fileOrFolder=All");
+		additionalPopup('openBrowseFileTree','Browse', 'addDeployDir', 'Add', '', params, true);
+	}
+	
 	function successEvent(pageUrl, data) {
 		//To fill the versions 
 		if (pageUrl == "fetchProjectInfoVersions") {

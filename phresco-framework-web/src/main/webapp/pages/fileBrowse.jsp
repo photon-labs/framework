@@ -200,6 +200,10 @@
 			$('#additionalPopup').modal('hide');
 			$("div#certificateControl").show();
 			$('#certificate').val(certicate);
+		} else 	if (okUrl === "addDeployDir") {
+			var deployDir = $('#browseSelectedLocation').val();
+			$('#additionalPopup').modal('hide');
+			$('#deploy_dir').val(deployDir);
 		} else {
 			$('#additionalPopup').modal('hide');
 			showParentPopupPage();
