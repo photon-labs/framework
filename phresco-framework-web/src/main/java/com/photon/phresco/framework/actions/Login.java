@@ -124,9 +124,12 @@ public class Login extends FrameworkBaseAction {
             S_LOGGER.debug("Entering Method  Login.logout()");
         }
         User user = (User) getSessionAttribute(SESSION_USER_INFO);
-        removeSessionAttribute(user.getId());
-        removeSessionAttribute(SESSION_USER_INFO);
-        removeSessionAttribute(SESSION_CUSTOMERS);
+        if (user != null) {
+            removeSessionAttribute(user.getId());
+            removeSessionAttribute(SESSION_USER_INFO);
+            removeSessionAttribute(SESSION_CUSTOMERS);
+        }
+
         String errorTxt = (String) getSessionAttribute(REQ_LOGIN_ERROR);
         if (StringUtils.isNotEmpty(errorTxt)) {
             setReqAttribute(REQ_LOGIN_ERROR, getText(errorTxt));
