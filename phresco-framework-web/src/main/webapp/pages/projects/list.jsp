@@ -217,6 +217,7 @@
     	});
 		
 		$('.commitProject').click(function() {
+			showLoadingIcon();
 			var params = $(this).attr("additionalParam");
 			loadContent('repoExistCheck', $('#formCustomers'), '', params, true);		
     	});
@@ -292,8 +293,10 @@
 				params = params.concat(data.appId);
 				params = params.concat("&action=");
 				params = params.concat(data.action);
+				hideLoadingIcon();
 				yesnoPopup('updateProjectPopup', '<s:text name="lbl.app.commit"/>', 'importUpdateAppln','<s:text name="lbl.app.commit"/>', '', params);
 			} else {  //warning message if not exist
+				hideLoadingIcon();
 				$('#popupPage').modal('show');
 				$('#errMsg').html("");
 				$('#successMsg').html("");
