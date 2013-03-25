@@ -405,13 +405,6 @@
 		loadContent(getAction(), $('#repoDetails'), '', params, true, true);
 	}
 	
-	function successEvent(pageUrl, data) {
-		if(pageUrl == "importSVNProject" || pageUrl == "importGITProject" || pageUrl == "importBitKeeperProject" || pageUrl == "updateSVNProject" || pageUrl == "updateGITProject"
-			|| pageUrl == "updateBitKeeperProject" || pageUrl == "addSVNProject" || pageUrl == "addGITProject" || pageUrl == "commitSVNProject" || pageUrl == "commitBitKeeperProject" || pageUrl == "commitGITProject") {
-			checkError(pageUrl, data);
-		}
-	}
-	
 	function checkError(pageUrl, data) {
 		var statusFlag = " ";
 		// hide loading icon

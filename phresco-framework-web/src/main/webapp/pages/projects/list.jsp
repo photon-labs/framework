@@ -218,7 +218,7 @@
 		
 		$('.commitProject').click(function() {
 			var params = $(this).attr("additionalParam");
-			yesnoPopup('updateProjectPopup', '<s:text name="lbl.app.commit"/>', 'importUpdateAppln','<s:text name="lbl.app.commit"/>', '', params);
+			loadContent('repoExistCheck', $('#formCustomers'), '', params, true);		
     	});
 		
     	$('.pdfCreation').click(function() {
@@ -282,6 +282,34 @@
 	}
 	
 	function successEvent(pageUrl, data) {
+		//to check for project already checked-in for commit
+		if (pageUrl == 'repoExistCheck') {
+			//if already exists
+			if (data.repoExist) {
+				var params = "projectId=";
+				params = params.concat(data.projectId);
+				params = params.concat("&appId=");
+				params = params.concat(data.appId);
+				params = params.concat("&action=");
+				params = params.concat(data.action);
+				yesnoPopup('updateProjectPopup', '<s:text name="lbl.app.commit"/>', 'importUpdateAppln','<s:text name="lbl.app.commit"/>', '', params);
+			} else {  //warning message if not exist
+				$('#popupPage').modal('show');
+				$('#errMsg').html("");
+				$('#successMsg').html("");
+				$('#updateMsg').html("");
+				$('#popupTitle').html('<s:text name="lbl.app.warnin.title"/>');
+				$('#popup_div').empty();
+				$('#popup_div').html('<s:text name="lbl.app.warnin.message"/>');
+				$('.popupOk').hide();
+				$('#popupCancel').hide();
+				$('.popupClose').show();
+				hidePopuploadingIcon();
+			}
+		} else if(pageUrl == "importSVNProject" || pageUrl == "importGITProject" || pageUrl == "importBitKeeperProject" || pageUrl == "updateSVNProject" || pageUrl == "updateGITProject"
+			|| pageUrl == "updateBitKeeperProject" || pageUrl == "addSVNProject" || pageUrl == "addGITProject" || pageUrl == "commitSVNProject" || pageUrl == "commitBitKeeperProject" || pageUrl == "commitGITProject") {
+			checkError(pageUrl, data);
+		}
 		console.log("success event called !!! ");
 	}
 </script>

@@ -182,6 +182,10 @@
             <result name="updateApplication">/pages/applications/svn_import.jsp</result>
         </action>
         
+        <action name="repoExistCheck" method="repoExistCheck" class="com.photon.phresco.framework.actions.applications.Applications">
+            <result type="json"/>
+        </action>
+        
         <action name="importSVNProject" method="importSVNApplication" class="com.photon.phresco.framework.actions.applications.Applications">
             <result type="json"/>
         </action>
@@ -315,6 +319,10 @@
         
         <action name="CIJobDelete" method="deleteCIJob" class="com.photon.phresco.framework.actions.applications.CI">
             <result name="ci">/pages/applications/ci/ci.jsp</result>
+        </action>
+        
+        <action name="CIJobDownStreamCheck" method="downStreamCheck" class="com.photon.phresco.framework.actions.applications.CI">
+             <result type="json"/>
         </action>
         
         <action name="CIBuildDownload" method="CIBuildDownload" class="com.photon.phresco.framework.actions.applications.CI">
