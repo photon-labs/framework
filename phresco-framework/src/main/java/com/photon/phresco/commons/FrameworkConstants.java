@@ -112,6 +112,9 @@ public interface FrameworkConstants {
     String REQ_SELECTED_FEATURES = "selectedFeatures";
     String REQ_SELECTED_DOWNLOADINFO = "selectedDownloadInfo";
     String REQ_DEFAULT_FEATURES = "defaultFeatures";
+    String REQ_HAS_MODULES = "hasModules";
+    String REQ_HAS_JSLIBS = "hasJsLibs";
+    String REQ_HAS_COMPONENTS = "hasComponents";
     String REQ_SCOPE = "scope";
     String REQ_SELECTED_DOWNLOADINFO_VERSION = "selectedDownloadInfoVersion";
     String REQ_CURRENT_SELECTBOX_ID = "selectBoxId";
