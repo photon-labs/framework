@@ -555,16 +555,14 @@
 					if (frontSlashSplit != undefined) {
 						length = frontSlashSplit.length;						
 					}
-					
 					if (length > 2) {
-						var split = data.uploadedFiles[i].split('\\');
+						var fileName = file.substring(file.lastIndexOf ("/") + 1, file.length);
 						$(".file-uploader").each(function() {
 							var propTempName = $(this).attr("propTempName");
-							var fileName = split[1];
 							addedFileList(fileName, propTempName);
 						});
 					} else {
-						var split = data.uploadedFiles[i].split('\\');
+						var split = file.split('/');
 						$(".file-uploader").each(function() {
 							var propTempName = $(this).attr("propTempName");
 							var fileName = split[1];

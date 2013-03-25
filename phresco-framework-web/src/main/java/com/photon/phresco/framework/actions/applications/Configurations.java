@@ -1444,23 +1444,28 @@ public class Configurations extends FrameworkBaseAction {
         try {
             ConfigManager configManager = getConfigManager(getAppConfigPath());
             Configuration configuration = configManager.getConfiguration(getEnvName(), getCurrentConfigType(), getConfigName());
-            Properties properties = configuration.getProperties();
-            String property = properties.getProperty(FILES);
-            if (StringUtils.isNotEmpty(property)) {
-                String[] splits = property.split(Constants.STR_COMMA);
-                for (String split : splits) {
-                	StringBuilder sb = new StringBuilder(getApplicationHome());
-            		if (!(split.startsWith("/") || split.startsWith("\\"))) {
-                    	sb.append(File.separator);
+            if (configuration != null) {
+                Properties properties = configuration.getProperties();
+                String property = properties.getProperty(FILES);
+                if (StringUtils.isNotEmpty(property)) {
+                    String[] splits = property.split(Constants.STR_COMMA);
+                    for (String split : splits) {
+                        split = split.replace("\\", "/");
+                        StringBuilder sb = new StringBuilder(getApplicationHome());
+                        if (!split.startsWith("/")) {
+                            sb.append(File.separator);
+                        }
+                        sb.append(split);
+                        if (new File(sb.toString()).exists()) {
+                            uploadedFiles.add("" + split);
+                        }
                     }
-                	sb.append(split);
-                	if (new File(sb.toString()).exists()) {
-                		uploadedFiles.add("" + split);
-                	}
                 }
             }
-        } catch (Exception e) {
+        } catch (PhrescoException e) {
             // TODO: handle exception
+        } catch (ConfigurationException e) {
+            // TODO Auto-generated catch block
         }
 
         return SUCCESS;
