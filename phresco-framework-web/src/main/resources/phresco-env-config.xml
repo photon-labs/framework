@@ -81,10 +81,10 @@
 	<WebService desc="" name="webservice">
             <protocol>http</protocol>
             <host>localhost</host>
-            <port>3030</port>
+            <port>8080</port>
             <username/>
             <password/>
-            <context>database-dump</context>
+            <context>service</context>
 	    <additional_context>/rest/api</additional_context>
         </WebService>
         
