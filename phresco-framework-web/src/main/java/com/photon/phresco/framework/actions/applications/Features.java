@@ -226,21 +226,32 @@ public class Features extends DynamicParameterModule {
 					}
 				}
 			}
-			
+			if (StringUtils.isEmpty(getTechnology()) && appInfo != null) {
+			    setTechnology(appInfo.getTechInfo().getId());
+			}
 			List<ArtifactGroup> moduleGroups = getServiceManager().getFeatures(getCustomerId(), getTechnology(), ArtifactGroup.Type.FEATURE.name());
+			boolean hasModules = false;
 			if (CollectionUtils.isNotEmpty(moduleGroups)) {
+			    hasModules = true;
 				createArtifactInfoForDefault(moduleGroups, defaultFeatures, appInfo);
 			}
+			setReqAttribute(REQ_HAS_MODULES, hasModules);
 			
 			List<ArtifactGroup> jsLibsGroups = getServiceManager().getFeatures(getCustomerId(), getTechnology(), ArtifactGroup.Type.JAVASCRIPT.name());
+			boolean hasJsLibs = false;
 			if (CollectionUtils.isNotEmpty(jsLibsGroups)) {
+			    hasJsLibs = true;
 				createArtifactInfoForDefault(jsLibsGroups, defaultFeatures, appInfo);
 			}
+			setReqAttribute(REQ_HAS_JSLIBS, hasJsLibs);
 			
 			List<ArtifactGroup> componentGroups = getServiceManager().getFeatures(getCustomerId(), getTechnology(), ArtifactGroup.Type.COMPONENT.name());
+			boolean hasComponents = false;
 			if (CollectionUtils.isNotEmpty(componentGroups)) {
+			    hasComponents = true;
 				createArtifactInfoForDefault(componentGroups, defaultFeatures, appInfo);
 			}
+			setReqAttribute(REQ_HAS_COMPONENTS, hasComponents);
 			setReqAttribute(REQ_DEFAULT_FEATURES, defaultFeatures);
 			setSessionAttribute(REQ_SELECTED_FEATURES, listFeatures);
 			if (APP_INFO.equals(getFromTab())) {

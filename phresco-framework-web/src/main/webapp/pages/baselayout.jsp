@@ -518,16 +518,22 @@
 		}
     }
 	
+    //To show/hide the menus based on the selected customer options
 	function showHideCustomerOptions(data) {
 		var customerOptions = data.customerOptions;
 		var customerAllOptions = data.customerAllOptions;
 		if (customerOptions != undefined) {
+			$(".headerInnerTop ul").css("width", "540");
 			for (i in customerOptions) {
-				$("." + customerOptions[i]).show()
+				$("." + customerOptions[i]).show();
 			}
 		} else if (customerAllOptions != undefined) {
+			if (customerAllOptions.length === 2) {
+				var newWidth = 540/2;
+				$(".headerInnerTop ul").css("width", newWidth - 40);
+			}
 			for (i in customerAllOptions) {
-				$("." + customerAllOptions[i]).hide()
+				$("." + customerAllOptions[i]).hide();
 			}
 		}
 		$('a[name="headerMenu"]').each(function() {
