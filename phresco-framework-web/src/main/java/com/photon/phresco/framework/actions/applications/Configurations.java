@@ -1442,7 +1442,13 @@ public class Configurations extends FrameworkBaseAction {
      */
     public String listUploadedFiles() {
         try {
-            ConfigManager configManager = getConfigManager(getAppConfigPath());
+            StringBuilder builder = new StringBuilder(Utility.getProjectHome());
+            builder.append(getApplicationInfo().getAppDirName());
+            builder.append(File.separator);
+            builder.append(FOLDER_DOT_PHRESCO);
+            builder.append(File.separator);
+            builder.append(CONFIGURATION_INFO_FILE_NAME);
+            ConfigManager configManager = getConfigManager(builder.toString());
             Configuration configuration = configManager.getConfiguration(getEnvName(), getCurrentConfigType(), getConfigName());
             if (configuration != null) {
                 Properties properties = configuration.getProperties();
