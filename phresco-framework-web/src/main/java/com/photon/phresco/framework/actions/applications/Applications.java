@@ -111,8 +111,11 @@ public class Applications extends FrameworkBaseAction {
     private String defaultOptTxt = "";
     private String action = "";
     private List<String> jsonData = null;
-    
+    private boolean isRepoExist;
     private String actionType = "";
+    private String customerId = "";
+    private String projectId = "";
+    private String appId = "";
     
     public String loadMenu() {
         if (s_debugEnabled) {
@@ -734,10 +737,17 @@ public class Applications extends FrameworkBaseAction {
 		}
 		return APP_IMPORT;
 	}
+	
+	public String repoExistCheck() {
+		updateProjectPopup();
+
+		return SUCCESS;
+	}
 
 	public String updateProjectPopup() {
 		S_LOGGER.debug("Entering Method  Applications.updateProjectPopup()");
 		try {
+			isRepoExist = true;
 			String connectionUrl = "";
 			ApplicationInfo applicationInfo = getApplicationInfo();
 			String appDirName = applicationInfo.getAppDirName();
@@ -763,6 +773,9 @@ public class Applications extends FrameworkBaseAction {
 		} catch (PhrescoException e) {
 			if(s_debugEnabled){
 				S_LOGGER.error(e.getLocalizedMessage());
+			}
+			if (e.getLocalizedMessage().contains(IS_NOT_WORKING_COPY)) {
+				setRepoExist(false);
 			}
 			return showErrorPopup(e, "Update Application");
 		}
@@ -1210,4 +1223,36 @@ public class Applications extends FrameworkBaseAction {
     public String getActionType() {
         return actionType;
     }
+
+	public boolean isRepoExist() {
+		return isRepoExist;
+	}
+
+	public void setRepoExist(boolean isRepoExist) {
+		this.isRepoExist = isRepoExist;
+	}
+
+	public String getCustomerId() {
+		return customerId;
+	}
+
+	public void setCustomerId(String customerId) {
+		this.customerId = customerId;
+	}
+
+	public String getProjectId() {
+		return projectId;
+	}
+
+	public void setProjectId(String projectId) {
+		this.projectId = projectId;
+	}
+
+	public String getAppId() {
+		return appId;
+	}
+
+	public void setAppId(String appId) {
+		this.appId = appId;
+	}
 }

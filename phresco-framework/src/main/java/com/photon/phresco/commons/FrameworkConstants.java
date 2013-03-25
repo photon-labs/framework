@@ -236,6 +236,7 @@ public interface FrameworkConstants {
     String GIT = "git";
     String BITKEEPER = "bitkeeper";
     String REPO_TYPE = "repoType";
+    String IS_NOT_WORKING_COPY = "is not a working copy";
     String UPDATE_SVN_PROJECT = "updateProject";
     String SVN_TYPE = "svnType";
     String SVN_CHECKOUT_TEMP = "svn-checkout-temp";
