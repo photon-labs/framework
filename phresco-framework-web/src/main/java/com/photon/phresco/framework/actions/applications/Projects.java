@@ -154,6 +154,7 @@ public class Projects extends FrameworkBaseAction {
             JSONObject userProjJson = null;
             JSONParser parser = new JSONParser();
             String recentProjectId = "";
+            String recentAppId = "";
             if (tempPath.exists()) {
                 reader = new FileReader(tempPath);
                 userProjJson = (JSONObject)parser.parse(reader);
@@ -161,9 +162,13 @@ public class Projects extends FrameworkBaseAction {
                 if (StringUtils.isNotEmpty(csv)) {
                     String[] split = csv.split(Constants.STR_COMMA);
                     recentProjectId = split[0];
+                    if (split.length > 1) {
+                        recentAppId = split[1];
+                    }
                 }
             }
             setReqAttribute(REQ_RECENT_PROJECT_ID, recentProjectId);
+            setReqAttribute(REQ_RECENT_APP_ID, recentAppId);
         } catch (IOException e) {
             throw new PhrescoException(e);
         } catch (ParseException e) {

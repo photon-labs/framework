@@ -501,7 +501,7 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
                 userProjJson = new JSONObject();
             }
             
-            userProjJson.put(user.getId(), getProjectId());
+            userProjJson.put(user.getId(), getProjectId() + Constants.STR_COMMA + getAppId());
             FileWriter  writer = new FileWriter(tempPath);
             writer.write(userProjJson.toString());
             writer.close();

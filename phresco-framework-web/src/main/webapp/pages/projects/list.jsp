@@ -36,6 +36,7 @@
     Projects projectsObj = new Projects(); 
 	List<ProjectInfo> projects = (List<ProjectInfo>) request.getAttribute(FrameworkConstants.REQ_PROJECTS);
 	String recentProjectId = (String) request.getAttribute(FrameworkConstants.REQ_RECENT_PROJECT_ID);
+	String recentAppId = (String) request.getAttribute(FrameworkConstants.REQ_RECENT_APP_ID);
 	Gson gson = new Gson();
 %>
 
@@ -116,11 +117,10 @@
 														List<ApplicationInfo> appInfos = project.getAppInfos();
 														if (CollectionUtils.isNotEmpty(appInfos)) {
 															for (ApplicationInfo appInfo : appInfos) {
-															    
 													%>
 																<tr>
 																	<td class="no-left-bottom-border table-pad">
-																		<input type="checkbox" class="check <%= project.getId() %>" name="selectedAppInfo" value='<%= gson.toJson(appInfo) %>'
+																		<input type="checkbox" class="check <%= project.getId() %>" appId="<%= appInfo.getId() %>" name="selectedAppInfo" value='<%= gson.toJson(appInfo) %>'
 																			<%= checkedStr %> onclick="checkboxEvent($('.<%= project.getId() %>'), $('#<%= project.getId() %>'));">
 																	</td>
 																	<td class="no-left-bottom-border table-pad">
@@ -178,15 +178,24 @@
 	
 	confirmDialog($("#deleteBtn"), '<s:text name="lbl.hdr.confirm.dialog"/>', '<s:text name="modal.body.text.del.project"/>', 'deleteProject','<s:text name="lbl.btn.ok"/>');
 	
-	//To open the recently opened project's accordion
+	//To open the recently opened project's accordion and check the check boxes accordingly
 	var recentProjectId = '<%= recentProjectId %>';
-	$(".accordianChkBox").each(function() {
-		if ($(this).attr("id") === recentProjectId) {
-			$(this).parent().parent().removeClass('closereg').addClass('openreg');
-			$(this).parent().parent().next('.mfbox').show();
-			return false;
-		}
-	});
+	var recentAppId = '<%= recentAppId %>';
+	if (recentProjectId != undefined && !isBlank(recentProjectId)) {
+		$("#" + recentProjectId).parent().parent().removeClass('closereg').addClass('openreg');
+		$("#" + recentProjectId).parent().parent().next('.mfbox').show();
+		$("." + recentProjectId).each(function () {
+			if ($(this).attr("appId") === recentAppId) {
+				$(this).attr("checked", true);
+				checkboxEvent($('.' + recentProjectId), $('#' + recentProjectId));
+				return false;
+			}
+		});
+	}
+	if (recentProjectId != undefined && !isBlank(recentProjectId) && isBlank(recentAppId)) {
+		$("#" + recentProjectId).attr("checked", true);
+		$("." + recentProjectId).attr("checked", true);
+	}
 	
 	//To check whether the device is ipad or not and then apply jquery scrollbar
 	if (!isiPad()) {
