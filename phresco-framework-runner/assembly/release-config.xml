@@ -28,6 +28,14 @@ xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assemb
 				<include>*.xml</include>
 			</includes>
 		</fileSet>
+        
+        <fileSet>
+			<directory>${project.basedir}/delivery/docs</directory>
+			<outputDirectory>docs</outputDirectory>
+			<includes>
+				<include>*.*</include>
+			</includes>
+		</fileSet>
 		
 		<fileSet>
 			<directory>${project.basedir}/delivery/workspace/tools/jenkins</directory>
@@ -36,6 +44,9 @@ xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assemb
 			<includes>
 				<include>pom.xml</include>
                 <include>template/*.xml</include>
+                <include>*.xml</include>
+				<include>*.hpi</include>
+				<include>*.key</include>
 			</includes>
 		</fileSet>
         

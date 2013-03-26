@@ -39,6 +39,7 @@ xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assemb
 			    <include>README.txt</include>
 			    <include>workspace/tools/jenkins/*.xml</include>
 				<include>workspace/tools/jenkins/*.hpi</include>
+                <include>workspace/tools/jenkins/*.key</include>
 			</includes>
 		</fileSet>
 		
