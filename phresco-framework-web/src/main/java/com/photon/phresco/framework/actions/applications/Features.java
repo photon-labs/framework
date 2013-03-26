@@ -19,7 +19,10 @@
  */
 package com.photon.phresco.framework.actions.applications;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -270,7 +273,7 @@ public class Features extends DynamicParameterModule {
 	    return APP_FEATURES;
 	}
 
-	private void createArtifactInfoForDefault(List<ArtifactGroup> moduleGroups, List<SelectedFeature> defaultFeatures, ApplicationInfo appInfo) throws PhrescoException {
+	private void createArtifactInfoForDefault(List<ArtifactGroup> moduleGroups, List<SelectedFeature> defaultFeatures, ApplicationInfo appInfo) throws PhrescoException, FileNotFoundException {
 		for (ArtifactGroup artifactGroup : moduleGroups) {
 			List<ArtifactInfo> versions = artifactGroup.getVersions();
 			for (ArtifactInfo artifactInfo : versions) {
@@ -290,6 +293,7 @@ public class Features extends DynamicParameterModule {
 							selectFeature.setPackaging(artifactGroup.getPackaging());
 							getScope(appInfo, artifactInfo.getId(), selectFeature);
 							getDefaultDependentFeatures(moduleGroups, defaultFeatures, artifactInfo);
+							getModulesFromProjectInfo(appInfo, artifactGroup, selectFeature);
 						    defaultFeatures.add(selectFeature);
 						}
 					}
@@ -298,7 +302,7 @@ public class Features extends DynamicParameterModule {
 		}
 	}
 	
-	private void createArtifactInfoForPilotProject(List<ArtifactGroup> moduleGroups, List<SelectedFeature> defaultFeatures, ApplicationInfo appInfo) throws PhrescoException {
+	private void createArtifactInfoForPilotProject(List<ArtifactGroup> moduleGroups, List<SelectedFeature> defaultFeatures, ApplicationInfo appInfo) throws PhrescoException, FileNotFoundException {
 		for (ArtifactGroup artifactGroup : moduleGroups) {
 			List<ArtifactInfo> versions = artifactGroup.getVersions();
 			for (ArtifactInfo artifactInfo : versions) {
@@ -314,7 +318,56 @@ public class Features extends DynamicParameterModule {
 				selectFeature.setPackaging(artifactGroup.getPackaging());
 				getScope(appInfo, artifactInfo.getId(), selectFeature);
 				getDefaultDependentFeatures(moduleGroups, defaultFeatures, artifactInfo);
+				getModulesFromProjectInfo(appInfo, artifactGroup, selectFeature);
 			    defaultFeatures.add(selectFeature);
+			}
+		}
+	}
+
+	private void getModulesFromProjectInfo(ApplicationInfo appInfo, ArtifactGroup artifactGroup, SelectedFeature selectFeature) throws FileNotFoundException {
+		StringBuilder dotPhrescoPathSb = new StringBuilder(Utility.getProjectHome());
+		dotPhrescoPathSb.append(appInfo.getAppDirName());
+		dotPhrescoPathSb.append(File.separator);
+		dotPhrescoPathSb.append(DOT_PHRESCO_FOLDER);
+		dotPhrescoPathSb.append(File.separator);
+		String pluginInfoFile1 = dotPhrescoPathSb.toString() + "project.info";
+		BufferedReader bufferedReader = new BufferedReader(new FileReader(pluginInfoFile1));
+		Type type = new TypeToken<ProjectInfo>() {}.getType();
+		Gson gson = new Gson();
+		ProjectInfo projectinfo = gson.fromJson(bufferedReader, type);
+		ApplicationInfo applicationInfo = projectinfo.getAppInfos().get(0);
+		if (CollectionUtils.isNotEmpty(applicationInfo.getSelectedComponents())) {
+			List<String> selectedComponents = applicationInfo.getSelectedComponents();
+			if (selectedComponents.contains(selectFeature.getVersionID())) {
+				List<CoreOption> appliesTo1 = artifactGroup.getAppliesTo();
+				for (CoreOption coreOption : appliesTo1) {
+				    if (coreOption.getTechId().equals(appInfo.getTechInfo().getId()) && !coreOption.isCore()) {
+				    	selectFeature.setCanConfigure(true);
+				    }
+				}
+			}
+		}
+		
+		if (CollectionUtils.isNotEmpty(applicationInfo.getSelectedModules())) {
+			List<String> selectedModules = applicationInfo.getSelectedModules();
+			if (selectedModules.contains(selectFeature.getVersionID())) {
+				List<CoreOption> appliesTo1 = artifactGroup.getAppliesTo();
+				for (CoreOption coreOption : appliesTo1) {
+				    if (coreOption.getTechId().equals(appInfo.getTechInfo().getId()) && !coreOption.isCore()) {
+				    	selectFeature.setCanConfigure(true);
+				    }
+				}
+			}
+		}
+		if (CollectionUtils.isNotEmpty(applicationInfo.getSelectedJSLibs())) {
+			List<String> selectedJsLibs = applicationInfo.getSelectedJSLibs();
+			if (selectedJsLibs.contains(selectFeature.getVersionID())) {
+				List<CoreOption> appliesTo1 = artifactGroup.getAppliesTo();
+				for (CoreOption coreOption : appliesTo1) {
+				    if (coreOption.getTechId().equals(appInfo.getTechInfo().getId()) && !coreOption.isCore()) {
+				    	selectFeature.setCanConfigure(true);
+				    }
+				}
 			}
 		}
 	}
