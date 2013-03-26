@@ -1410,7 +1410,7 @@ label {
 	color:red;
 }
 
-#errMsg, #advSettingsErrMsg, #jsErrMsg {
+#errMsg, #advSettingsErrMsg, #jsErrMsg, .themeBuilderErr {
 	color:red;
 }
 

@@ -507,6 +507,7 @@ public interface FrameworkConstants {
 	String EXE_DOWNLOAD_KEY = "Exe_Download";
 	String FEATURES_KEY = "Feature_Config";
 	String COMPONENT_CONFIG = "Component_Config";
+	String THEME_BUILDER_KEY = "Theme_Builder";
     
 	/*
 	 * Dynamic parameters
@@ -702,6 +703,8 @@ public interface FrameworkConstants {
     String REQ_SETTINGS_NAME = "settingName";
     String REQ_CODE_PREFIX = "codePrefix";
     String REQ_FROM_PAGE = "fromPage";
+    String REQ_THEME_FILES = "themeList";
+    String REQ_CSS_JSON = "cssJson";
     String REQ_AGAINST_JAR = "funcTestAgaistJar";
     String REQ_SETTINGS_PATH = "settingsPath";
     String REQ_CONFIG_PATH = "configPath";
@@ -1760,4 +1763,9 @@ public interface FrameworkConstants {
 	    String BK_ADD_COMMENT = "-y\"";
 	    
 	    String ALREADY_EXISTS = "exists and is not empty";
+	    
+	   /**
+	    * Theme builder keys
+	    */
+	    String SUCCESS_THEME_BUILDER_CREATE = "Theme Builder Created Successfully";
 }

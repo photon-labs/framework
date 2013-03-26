@@ -28,6 +28,7 @@
 	$(document).ready(function() {
 		showLoadingIcon();
 		clickMenu($("a[name='appTab']"), $("#subcontainer"), $('#formAppMenu, #formCustomers'));
+		clickMenu($("a[name='themeTab']"), $("#subcontainer"), $('#formAppMenu, #formCustomers'));
 		loadContent("editApplication", $('#formAppMenu, #formCustomers'), $("#subcontainer"), '', '', true);
 		activateMenu($("#appinfo"));
 	});
@@ -46,14 +47,22 @@
 	}
   	
   	$('#testmenu').hide();
+  	$('#thememenu').hide();
   	
   	$(".tabs li a").click(function() {
 		if($(this).attr("id")=="quality") {
+			$("#thememenu").slideUp();
 			$("#testmenu").slideDown();
 			$("#testmenu .active").removeClass("active").addClass("inactive");
 			$("#testmenu li:first-child a").addClass("active");	
+		} else if($(this).attr("id")=="configuration") {
+			$("#testmenu").slideUp();
+			$("#thememenu").slideDown();	
 		} else if($(this).attr("name")=="appTab") {
 			$("#testmenu").slideUp();
+			$("#thememenu").slideUp();
+		}else if($(this).attr("id")=="themeBuilderList") {
+			$("#thememenu").slideDown();
 		}
     });
 	
@@ -126,6 +135,17 @@
 		%>
 		<li>
 			<a href="#" class="inactive" name="appTab" id="configuration" additionalParam="fromPage=config"><s:label key="lbl.app.menu.config" theme="simple"/></a>
+			<ul id="thememenu">
+			<%
+				if(optionIds != null && optionIds.contains(FrameworkConstants.THEME_BUILDER_KEY)) {
+			%>
+				<li>
+					<a href="#" class="inactive" name="themeTab" id="themeBuilderList"><s:label key="lbl.app.menu.theme.builder" theme="simple"/></a>
+				</li>
+			<% 
+				}
+			%>	
+			</ul>
 		</li>
 		<%
 			if(optionIds != null && optionIds.contains(FrameworkConstants.BUILD_KEY)) {

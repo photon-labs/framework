@@ -3049,6 +3049,12 @@ fieldset {
 	text-align:left;
 }
 
+.themeBuilderErr {
+	height: 15px;
+	width: 90%;
+	margin-left: 11px;
+}
+
 .updateMsg {
 	float:left;
 	padding-top:7px;
@@ -4453,6 +4459,35 @@ form div.error {
     margin-left: 14px;
     text-align: left;
 }
+
+.themeBuilderfieldSetLegend {
+    font-size: 13px;
+    font-weight: bold;
+    margin-left: 14px;
+    text-align: left;
+    height: 30px !important;
+}
+
+.cssRule {
+	float:left !important;
+	top:5px !important;
+	position:relative !important;
+}
+
+.themeBuilderLbl {
+	float:left !important;
+	width:80px !important;
+}
+
+.themeBuilderTxt {
+	float:right !important;
+	position:absolute !important;
+}
+
+.cssParserFieldset {
+	width:99%;
+	margin-left:4px
+}	
 
 legend {
 	border-style: none;
@@ -6159,10 +6194,10 @@ color: #313131;
 }
 
 .minifyLabel {
-	 margin-left: 29px;
+	margin-left: 29px;
     margin-right: 22px;
 }	
-.del, .cssDel {
+.del, .cssDel, .add  {
 	cursor: pointer;
 }
 
@@ -6338,27 +6373,27 @@ color: #313131;
 	display: none !important;
 }
 
-#testmenu {
+#testmenu, #thememenu{
 	margin: 0px !important;
 	padding: 0;
 	list-style: none;
 }
 
-#testmenu li:last-child {
+#testmenu li:last-child, #thememenu li:last-child {
 	border-bottom: none;
 }
 
-#testmenu li:first-child {
+#testmenu li:first-child, #thememenu li:first-child {
 	border-top : 1px solid #656565;
 }
 
-#testmenu li a.active, #testmenu li a:hover {
+#testmenu li a.active, #testmenu li a:hover, #thememenu li a.active, #thememenu li a:hover {
 	background: #a0a0a0;
 	color:#fff !important;
 }
 
 
-#testmenu li a {
+#testmenu li a, #thememenu li a {
 	text-decoration: none;
 	background: #545454;
 	display: block;
