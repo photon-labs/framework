@@ -394,8 +394,7 @@ function deleteCIBuild() {
 }
 	
 function deleteCIJob(){
-	showProgressBar("Deleting job (s)");
-	loadContent('CIJobDelete',$('#deleteObjects'), $('#subcontainer'), getBasicParams(), false, true);
+	loadContent('CIJobDownStreamCheck',$('#deleteObjects'), $('#subcontainer'), getBasicParams(), true, true);
 }
 
 function enableStart() {
@@ -514,6 +513,25 @@ function successEvent(pageUrl, data) {
 		hideLoadingIcon();
 		console.log("success jenkins alive check called ");
 		successLocalJenkinsAliveCheck(data);
+	} else if (pageUrl == "CIJobDownStreamCheck") {
+		if (data.downStreamAvailable) {
+			$('#popupPage').modal('show');
+			$('#errMsg').html("");
+			$('#successMsg').html("");
+			$('#updateMsg').html("");
+			$('#popupTitle').html('<s:text name="lbl.app.warnin.title"/>');
+			$('#popup_div').empty();
+			$('#popup_div').html('<s:text name="lbl.app.downstream.warnin"/>');
+			$('.popupOk').val('Yes');
+			$('#popupCancel').val('No');
+			$('.popupClose').hide();
+			$('.popupOk').show();
+			$('#popupCancel').show();
+			hidePopuploadingIcon();
+		} else {
+			showProgressBar("Deleting job (s)");	
+	 	 	loadContent('CIJobDelete',$('#deleteObjects'), $('#subcontainer'), getBasicParams(), false, true);
+		}
 	}
 }
 
@@ -610,7 +628,9 @@ function popupOnOk(obj) {
 		} else if (okUrl == "deleteBuild" ) {
 			deleteCIBuild();
 		}  else if (okUrl == "deleteJob" ) {
-			deleteCIJob();
+			$('#popupPage').modal('hide');
+			showProgressBar("Deleting job (s)");	
+	 	 	loadContent('CIJobDelete',$('#deleteObjects'), $('#subcontainer'), getBasicParams(), false, true);
 		} else if (okUrl == "saveEmailConfiguration" || okUrl == "updateEmailConfiguration" ) {
 			if(emailConfigureValidation()) {
 				configureEmail(okUrl);
