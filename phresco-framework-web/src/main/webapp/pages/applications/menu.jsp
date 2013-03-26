@@ -191,9 +191,6 @@
 		<%
 			}
 		%>
-		<li>
-			<a href="#" class="inactive" name="appTab" id="download"><s:label key="lbl.app.menu.download"  theme="simple"/></a>
-		</li>
 	</ul>
 	<div class="menuarrow" dataflag="false" style= "position: absolute; top: 87px; cursor: pointer;">
 		<img src="images/menu_arrow_open.gif">

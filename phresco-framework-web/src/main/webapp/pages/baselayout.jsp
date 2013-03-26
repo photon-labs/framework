@@ -179,6 +179,9 @@
 								<li class="hideContent wid_set <%= FrameworkConstants.SETTINGS_KEY %>"><a href="#" class="inactive" name="headerMenu" id="settings" additionalParam="fromPage=settings">
 								    <s:label key="lbl.hdr.settings"  theme="simple"/></a>
 								</li>
+								<li class="hideContent wid_set <%= FrameworkConstants.DOWNLOAD_KEY %>"><a href="#" class="inactive " name="headerMenu" id="download">
+								    <s:label key="lbl.hdr.download"  theme="simple"/></a>
+								</li>
 								<li class="hideContent wid_help <%= FrameworkConstants.HELP_KEY %>"><a href="#" class="inactive " name="headerMenu" id="forum">
 								    <s:label key="lbl.hdr.help"  theme="simple"/></a>
 								</li>
@@ -522,19 +525,24 @@
 	function showHideCustomerOptions(data) {
 		var customerOptions = data.customerOptions;
 		var customerAllOptions = data.customerAllOptions;
-		if (customerOptions != undefined) {
-			$(".headerInnerTop ul").css("width", "540");
-			for (i in customerOptions) {
-				$("." + customerOptions[i]).show();
-			}
-		} else if (customerAllOptions != undefined) {
-			if (customerAllOptions.length === 2) {
-				var newWidth = 540/2;
-				$(".headerInnerTop ul").css("width", newWidth - 40);
-			}
+		if (customerAllOptions != undefined) {
 			for (i in customerAllOptions) {
 				$("." + customerAllOptions[i]).hide();
 			}
+		}
+		if (customerOptions != undefined) {
+			for (i in customerOptions) {
+				$("." + customerOptions[i]).show();
+			}
+		} 
+		var noOfChildrens = $(".headerInnerTop ul li").size();
+		var noOfVisibleChildrens = $(".headerInnerTop ul li:visible").size();
+		if (noOfVisibleChildrens < noOfChildrens) {
+			var individualWidth = 575/5;
+			var newWidth = individualWidth * noOfVisibleChildrens
+			$(".headerInnerTop ul").css("width", newWidth);
+		} else {
+			$(".headerInnerTop ul").css("width", "575");
 		}
 		$('a[name="headerMenu"]').each(function() {
    			if ($(this).hasClass('active')) {
