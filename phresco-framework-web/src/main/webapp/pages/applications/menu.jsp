@@ -153,6 +153,12 @@
 					<a href="#" class="inactive" name="qualityTab" id="functional"><s:label key="lbl.quality.menu.funtional" theme="simple"/></a>
 				</li>
 				<%
+					} if (optionIds != null && optionIds.contains(FrameworkConstants.MANUAL_TEST_KEY)) {
+				%>
+				<li>
+					<a href="#" class="inactive" name="qualityTab" id="manual"><s:label key="lbl.quality.menu.manual" theme="simple"/></a>
+				</li>
+				<%
 					} if (optionIds != null && optionIds.contains(FrameworkConstants.PERFORMANCE_TEST_KEY)) {
 				%>
 				<li>
@@ -163,12 +169,6 @@
 				%>
 				<li>
 					<a href="#" class="inactive" name="qualityTab" id="load"><s:label key="lbl.quality.menu.load" theme="simple"/></a>
-				</li>
-				<%
-					} if (optionIds != null && optionIds.contains(FrameworkConstants.MANUAL_TEST_KEY)) {
-				%>
-				<li>
-					<a href="#" class="inactive" name="qualityTab" id="manual"><s:label key="lbl.quality.menu.manual" theme="simple"/></a>
 				</li>
 				<%
 					}

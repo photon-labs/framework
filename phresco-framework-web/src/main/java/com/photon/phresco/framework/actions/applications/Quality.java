@@ -2071,19 +2071,17 @@ public class Quality extends DynamicParameterAction implements Constants {
 			.append(appInfo.getAppDirName())
 			.append(manualTestDir);
 			if (new File(sb.toString()).exists()) {
-				final List<TestSuite> readManualTestSuiteFile = frameworkUtil.readManualTestSuiteFile(sb.toString());
+				final List<TestSuite> readManualTestSuiteFile = frameworkUtil.readManualTestSuiteFile(sb.toString(), null,0,0,0,0);
 				if (CollectionUtils.isNotEmpty(readManualTestSuiteFile)) {
-					
 					setAllTestSuite(readManualTestSuiteFile);
 				}
-			
 				Runnable runnable = new Runnable() {
 					public void run() {
 						try {
 							for (TestSuite tstSuite : readManualTestSuiteFile) {
 								String testSuiteName = tstSuite.getName();
 								CacheKey key = new CacheKey(testSuiteName);
-								List<com.photon.phresco.commons.model.TestCase> readManualTestCaseFile = frameworkUtil.readManualTestCaseFile(sb.toString(), testSuiteName, null, null);
+								List<com.photon.phresco.commons.model.TestCase> readManualTestCaseFile = frameworkUtil.readManualTestCaseFile(sb.toString(), testSuiteName, null, null, null, null, null, null);
 								if (CollectionUtils.isNotEmpty(readManualTestCaseFile)) {
 									cacheManager.add(key, readManualTestCaseFile);
 								}
@@ -2174,7 +2172,8 @@ public class Quality extends DynamicParameterAction implements Constants {
 			FrameworkUtil.addNewTestCase(sb.toString(),getTestScenarioName(),getFeatureId(),getTestCaseId(),getTestDescription(),
 					getTestSteps(),"","",getExpectedResult(),getActualResult(),getStatus(),getBugComment());
 		} else {
-			frameworkUtil.readManualTestCaseFile(sb.toString(), getTestScenarioName(), getFeatureId(), getBugComment());
+			frameworkUtil.readManualTestCaseFile(sb.toString(), getTestScenarioName(), getFeatureId(), 
+					getTestSteps(), getExpectedResult(), getActualResult(), getStatus(), getBugComment());
 		}
 		return MANUAL;
 	}
@@ -2196,7 +2195,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 				.append(appInfo.getAppDirName())
 				.append(manualTestDir);
 				CacheKey testSuitekey = new CacheKey(getTestSuitName());
-				List<com.photon.phresco.commons.model.TestCase> readTestCase = frameworkUtil.readManualTestCaseFile(sb.toString(), getTestSuitName(), null, null);
+				List<com.photon.phresco.commons.model.TestCase> readTestCase = frameworkUtil.readManualTestCaseFile(sb.toString(), getTestSuitName(), null, null, null, null, null, null);
 				if (CollectionUtils.isNotEmpty(readTestCase)) {
 					cacheManager.add(testSuitekey, readTestCase);
 					setAllTestCases(readTestCase);
