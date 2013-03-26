@@ -490,6 +490,7 @@ public interface FrameworkConstants {
 	 */
 	String HELP_KEY = "Help";
 	String SETTINGS_KEY = "Settings";
+	String DOWNLOAD_KEY = "Download";
 	String CODE_KEY = "Code";
 	String BUILD_KEY = "Build";
 	String UNIT_TEST_KEY = "Unit_Test";

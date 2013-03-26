@@ -331,20 +331,18 @@ public class Login extends FrameworkBaseAction {
                 }
             }
             setCustomerOptions(customerOptions);
-            if (CollectionUtils.isEmpty(customerOptions)) {
-                List<TechnologyOptions> technologyOptions = getServiceManager().getCustomerOptions();
-                List<String> customerAllOptions = new ArrayList<String>();
-                if (CollectionUtils.isNotEmpty(technologyOptions)) {
-                    for (TechnologyOptions technologyOption : technologyOptions) {
-                        customerAllOptions.add(technologyOption.getId());
-                    }
+            List<TechnologyOptions> technologyOptions = getServiceManager().getCustomerOptions();
+            List<String> customerAllOptions = new ArrayList<String>();
+            if (CollectionUtils.isNotEmpty(technologyOptions)) {
+                for (TechnologyOptions technologyOption : technologyOptions) {
+                    customerAllOptions.add(technologyOption.getId());
                 }
-                setCustomerAllOptions(customerAllOptions);
             }
+            setCustomerAllOptions(customerAllOptions);
         } catch (Exception e) {
             // TODO: handle exception
         }
-        
+
         return SUCCESS;
     }
     

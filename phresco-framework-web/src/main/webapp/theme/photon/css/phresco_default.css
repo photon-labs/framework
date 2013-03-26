@@ -742,7 +742,7 @@ a {
 	margin:0;
 	margin-right:1%;
 	text-align:right;
-	width:540px;
+	width:575px;
 	margin-top:45px;
 	position:absolute;
 	right:0 !important;
@@ -840,7 +840,7 @@ a {
 .headerInnerTop li {
 	float: left;
 	list-style: none outside none;
-	margin-left:8%;
+	margin-left:4%;
 	padding: 4px 0 0;
 	font-weight: bold;
 }
