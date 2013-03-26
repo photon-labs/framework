@@ -68,7 +68,7 @@
     <target name="copy-framework-config">
 		<echo message="copying framework.config into conf"/>
 		<copy file="${phresco.home}/conf/service.properties" 
-			tofile="${tomcat.home}/webapps/phresco/WEB-INF/classes/framework.config" 
+			tofile="${tomcat.home}/webapps/helios/WEB-INF/classes/framework.config" 
 			overwrite="true"
 		/>
 	</target>
@@ -127,8 +127,8 @@
 	
 	<target name="clean-phresco" depends="init" if="phresco.upgraded">
 		<echo message="removing older version of phresco war from tomcat"/>
-		<delete dir="${tomcat.home}/webapps/phresco"/>
-		<delete dir="${tomcat.home}/work/Catalina/localhost/phresco"/>
+		<delete dir="${tomcat.home}/webapps/helios"/>
+		<delete dir="${tomcat.home}/work/Catalina/localhost/helios"/>
 		<delete dir="${phresco.war.dir}"/>
 		<delete file="${phresco.upgrade.file}"/>
 	</target>
