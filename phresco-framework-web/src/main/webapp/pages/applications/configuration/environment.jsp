@@ -374,6 +374,14 @@ $(document).ready(function() {
 		$("#envName").val("");
 		$("#envDesc").val("");
 		
+		if ($('input[name="envNames"]:checkbox').is(':checked')) {
+			$('input[name="envNames"]:checked').prop('checked', false);
+			$('input[name="addBtn"]').val("<s:text name='lbl.btn.add'/>");
+		}
+		if ($('#multiselectAppliesTo :checkbox').is(':checked')) {
+			$('#multiselectAppliesTo :checked').prop('checked', false);
+		}
+		
 		<% if (FrameworkConstants.CONFIG.equals(fromPage)) { %>
 			setAsDefaultBtnStatus();
 		<% } %>
