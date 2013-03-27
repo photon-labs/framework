@@ -45,6 +45,7 @@ public class CIJob {
     private String collabNetPackage = "";
     private String collabNetRelease = "";
     private boolean collabNetoverWriteFiles = false;
+    private String collabNetFileReleasePattern = "";
     
     //  CI  automation
     // whether to clone the current jobs workspace for further reference
@@ -965,5 +966,13 @@ public class CIJob {
 
 	public String getIsFromCI() {
 		return isFromCI;
+	}
+
+	public String getCollabNetFileReleasePattern() {
+		return collabNetFileReleasePattern;
+	}
+
+	public void setCollabNetFileReleasePattern(String collabNetFileReleasePattern) {
+		this.collabNetFileReleasePattern = collabNetFileReleasePattern;
 	}
 }

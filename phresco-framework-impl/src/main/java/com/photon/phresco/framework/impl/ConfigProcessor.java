@@ -106,7 +106,7 @@ public class ConfigProcessor implements FrameworkConstants {
 			element.addContent(createElement(CI_FILE_RELEASE_PACKAGE, job.getCollabNetPackage()));
 			element.addContent(createElement(CI_FILE_RELEASE_RELEASE, job.getCollabNetRelease()));
 			element.addContent(createElement(CI_FILE_RELEASE_OVERWRITE, job.isCollabNetoverWriteFiles()+""));
-			element.addContent(createElement(CI_FILE_RELEASE_FILE_PATTERN, null).addContent(createElement(CI_FILE_RELEASE_FILE_PATTERN_NODE, CI_BUILD_EXT)));
+			element.addContent(createElement(CI_FILE_RELEASE_FILE_PATTERN, null).addContent(createElement(CI_FILE_RELEASE_FILE_PATTERN_NODE, job.getCollabNetFileReleasePattern())));
 			
 	    	XPath xpath = XPath.newInstance(CI_FILE_RELEASE_PUBLISHER_NODE);
 	        xpath.addNamespace(root_.getNamespace());
