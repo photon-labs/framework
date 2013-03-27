@@ -124,6 +124,10 @@
 			<result name="list">/pages/projects/list.jsp</result>
         </action>
         
+        <action name="killProcess" method="killProcess" class="com.photon.phresco.framework.actions.applications.Projects">
+           	<result type="json"/>
+        </action>
+        
 		<action name="updateProject" method="updateProject" class="com.photon.phresco.framework.actions.applications.Projects">
 			<result name="list">/pages/projects/list.jsp</result>
         </action>
@@ -270,7 +274,7 @@
         <action name="quality" method="quality" class="com.photon.phresco.framework.actions.applications.Quality">
             <result name="quality">/pages/applications/quality/menu.jsp</result>
         </action>
-        
+		
 		<action name="ci" method="ci" class="com.photon.phresco.framework.actions.applications.CI">
             <result name="ci">/pages/applications/ci/ci.jsp</result>
         </action>

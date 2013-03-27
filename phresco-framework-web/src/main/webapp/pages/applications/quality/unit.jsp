@@ -296,24 +296,12 @@ function popupOnClose(obj) {
 function runUnitTest() {
 	progressPopup('runUnitTest', '<%= appId %>', '<%= FrameworkConstants.UNIT %>', '', '', getBasicParams());
 }
-	    
-/* function openAndroidPopup() {
-	showPopup();
-	var params = "testType=";
-	params = params.concat("unit");
-	popup('testAndroid', params, $('#popup_div'));
+
+//To handle the cancel btn events
+function popupOnCancel(obj) {
+	var params = getBasicParams();
+	params = params.concat("&actionType=");
+	params = params.concat("unitPdfReport");
+	loadContent("killProcess", '', '', params);
 }
-	    
-function openIphoneNativeUnitTestPopup() {
-	var params = "testType=";
-	params = params.concat("unit");
-	popup('testIphone', params, $('#popup_div'));
-}
-		
-function openUnitTestPopup() {
-	showPopup();
-	var params = "testType=";
-	params = params.concat("unit");
-	popup('generateUnitTest', params, $('#popup_div'));
-} */
 </script>

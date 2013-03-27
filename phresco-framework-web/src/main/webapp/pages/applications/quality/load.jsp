@@ -142,7 +142,10 @@
 	    });
     	var testResultsType = "";
 	    function isLoadResultFileAvailbale() {
-	    	loadContent('loadTestResultAvail', '', '', getBasicParams(), true, true);
+	    	var params = getBasicParams();
+	    	params = params.concat("&testType=");
+	    	params = params.concat('<%= FrameworkConstants.LOAD %>');
+	    	loadContent('loadTestResultAvail', '', '', params, true, true);
 	    }
 	    
 	    function successEvent(pageUrl, data) {
@@ -260,5 +263,12 @@
 			params = params.concat("&testType=");
 			params = params.concat('<%= FrameworkConstants.LOAD%>');
 			loadContent('testType', $('#testResultDisplay'), $("#subTabcontainer"), params, '', true);
+		}
+		
+		function popupOnCancel(obj) {
+			var params = getBasicParams();
+			params = params.concat("&actionType=");
+			params = params.concat("loadPdfReport");
+			loadContent("killProcess", '', '', params);
 		}
     </script>

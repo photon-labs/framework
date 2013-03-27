@@ -218,7 +218,10 @@
        
 	//To check for the performance test result 
     function isResultFileAvailbale() {
-    	loadContent('performanceTestResultAvail', '', '', getBasicParams(), true, true);
+    	var params = getBasicParams();
+    	params = params.concat("&testType=");
+    	params = params.concat('<%= FrameworkConstants.PERFORMACE %>');
+    	loadContent('performanceTestResultAvail', '', '', params, true, true);
     }
     
 	//To get the test result files
@@ -346,5 +349,12 @@
 	
 	function popupOnClose(obj) {
 		isResultFileAvailbale();
+	}
+	
+	function popupOnCancel(obj) {
+		var params = getBasicParams();
+		params = params.concat("&actionType=");
+		params = params.concat("performancePdfReport");
+		loadContent("killProcess", '', '', params);
 	}
 </script>

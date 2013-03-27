@@ -230,7 +230,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 					}
 //					Runtime.getRuntime().exec(MVN_COMMAND + STR_BLANK_SPACE + MVN_GOAL_ECLIPSE);
 					if(isCallEclipsePlugin(appInfo)) {
-						Utility.executeStreamconsumer(MVN_COMMAND + STR_BLANK_SPACE + MVN_GOAL_ECLIPSE, Utility.getProjectHome() + File.separator + appInfo.getAppDirName());
+						Utility.executeStreamconsumer(MVN_COMMAND + STR_BLANK_SPACE + MVN_GOAL_ECLIPSE, Utility.getProjectHome() + File.separator + appInfo.getAppDirName(), "", "");
 					}
 				}
 			} catch (FileNotFoundException e) {
