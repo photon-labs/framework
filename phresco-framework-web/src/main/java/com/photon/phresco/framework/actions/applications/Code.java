@@ -54,6 +54,7 @@ import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Para
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
 import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.util.Constants;
+import com.photon.phresco.util.Utility;
 import com.phresco.pom.exception.PhrescoPomException;
 import com.phresco.pom.util.PomProcessor;
 
@@ -65,6 +66,7 @@ public class Code extends DynamicParameterAction implements Constants {
     private static Boolean s_debugEnabled = S_LOGGER.isDebugEnabled();
     
     private String selectedModule = "";
+    private String actionType = "";
     
 	/**
 	 * populate drop down with targets or list of code validation(js, web)
@@ -78,6 +80,11 @@ public class Code extends DynamicParameterAction implements Constants {
 		try {
 		    removeSessionAttribute(getAppId() + SESSION_APPINFO);//To remove the appInfo from the session
         	ApplicationInfo appInfo = getApplicationInfo();
+        	
+        	// TO kill the Process
+        	String baseDir = Utility.getProjectHome()+ appInfo.getAppDirName();
+        	Utility.killProcess(baseDir, getActionType());
+        	
         	setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
         	setReqAttribute(REQ_APP_INFO, appInfo);
         	
@@ -399,4 +406,12 @@ public class Code extends DynamicParameterAction implements Constants {
     public String getSelectedModule() {
         return selectedModule;
     }
+
+	public String getActionType() {
+		return actionType;
+	}
+
+	public void setActionType(String actionType) {
+		this.actionType = actionType;
+	}
 }

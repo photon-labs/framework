@@ -410,4 +410,11 @@ function reloadFunctionalPage() {
 	var params = getBasicParams();
 	loadContent("functional", '', $("#subTabcontainer"), params, '', true);
 }
+
+function popupOnCancel(obj) {
+	var params = getBasicParams();
+	params = params.concat("&actionType=");
+	params = params.concat("functionalPdfReport");
+	loadContent("killProcess", '', '', params);
+}
 </script> 

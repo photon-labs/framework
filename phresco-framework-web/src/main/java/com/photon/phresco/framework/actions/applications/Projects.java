@@ -100,6 +100,7 @@ public class Projects extends FrameworkBaseAction {
     private String id = "";
     private String fromTab = "";
     private int appLayerRowCount;
+    private String actionType = "";
     
     public void clearMap() {
     	s_layerMap.clear();
@@ -653,6 +654,15 @@ public class Projects extends FrameworkBaseAction {
     	return sonarTechReports;
     }
     
+    public String killProcess() throws PhrescoException {
+    	 ApplicationInfo appInfo = getApplicationInfo();
+         
+         // TO kill the Process
+         String baseDir = Utility.getProjectHome()+ appInfo.getAppDirName();
+         Utility.killProcess(baseDir, getActionType());
+    	
+		return SUCCESS;
+    }
     /**
      * To validate the form fields
      * @return
@@ -979,5 +989,13 @@ public class Projects extends FrameworkBaseAction {
 
 	public int getAppLayerRowCount() {
 		return appLayerRowCount;
+	}
+
+	public String getActionType() {
+		return actionType;
+	}
+
+	public void setActionType(String actionType) {
+		this.actionType = actionType;
 	}
 }

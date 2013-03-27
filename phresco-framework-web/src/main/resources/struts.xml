@@ -123,6 +123,10 @@
         <action name="createProject" method="createProject" class="com.photon.phresco.framework.actions.applications.Projects">
 			<result name="list">/pages/projects/list.jsp</result>
         </action>
+		
+		<action name="killProcess" method="killProcess" class="com.photon.phresco.framework.actions.applications.Projects">
+           	<result type="json"/>
+        </action>
         
 		<action name="updateProject" method="updateProject" class="com.photon.phresco.framework.actions.applications.Projects">
 			<result name="list">/pages/projects/list.jsp</result>
