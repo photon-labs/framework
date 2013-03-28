@@ -1,20 +1,19 @@
-/*
- * ###
- * %%
- * Copyright (C) 1999 - 2012 Photon Infotech Inc.
- * %%
+/**
+ * Phresco Framework
+ *
+ * Copyright (C) 1999-2013 Photon Infotech Inc.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ###
  */
 package com.photon.phresco.commons;
 
@@ -490,6 +489,7 @@ public interface FrameworkConstants {
 	 */
 	String HELP_KEY = "Help";
 	String SETTINGS_KEY = "Settings";
+	String DOWNLOAD_KEY = "Download";
 	String CODE_KEY = "Code";
 	String BUILD_KEY = "Build";
 	String UNIT_TEST_KEY = "Unit_Test";
@@ -506,6 +506,7 @@ public interface FrameworkConstants {
 	String EXE_DOWNLOAD_KEY = "Exe_Download";
 	String FEATURES_KEY = "Feature_Config";
 	String COMPONENT_CONFIG = "Component_Config";
+	String THEME_BUILDER_KEY = "Theme_Builder";
     
 	/*
 	 * Dynamic parameters
@@ -701,6 +702,8 @@ public interface FrameworkConstants {
     String REQ_SETTINGS_NAME = "settingName";
     String REQ_CODE_PREFIX = "codePrefix";
     String REQ_FROM_PAGE = "fromPage";
+    String REQ_THEME_FILES = "themeList";
+    String REQ_CSS_JSON = "cssJson";
     String REQ_AGAINST_JAR = "funcTestAgaistJar";
     String REQ_SETTINGS_PATH = "settingsPath";
     String REQ_CONFIG_PATH = "configPath";
@@ -1759,4 +1762,9 @@ public interface FrameworkConstants {
 	    String BK_ADD_COMMENT = "-y\"";
 	    
 	    String ALREADY_EXISTS = "exists and is not empty";
+	    
+	   /**
+	    * Theme builder keys
+	    */
+	    String SUCCESS_THEME_BUILDER_CREATE = "Theme Builder Created Successfully";
 }

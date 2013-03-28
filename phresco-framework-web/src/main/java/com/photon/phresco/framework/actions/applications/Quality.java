@@ -1,21 +1,19 @@
-/*
- * ###
+/**
  * Framework Web Archive
- * 
- * Copyright (C) 1999 - 2012 Photon Infotech Inc.
- * 
+ *
+ * Copyright (C) 1999-2013 Photon Infotech Inc.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ###
  */
 package com.photon.phresco.framework.actions.applications;
 
@@ -135,6 +133,7 @@ public class Quality extends DynamicParameterAction implements Constants {
     private String type = "";
     private String testId = "";
     private String fromTab = "";
+    private String actionType = "";
     
 	private List<String> buildInfoEnvs = null;
     
@@ -258,6 +257,9 @@ public class Quality extends DynamicParameterAction implements Constants {
         
         try {
             ApplicationInfo appInfo = getApplicationInfo();
+         // TO kill the Process
+            String baseDir = Utility.getProjectHome()+ appInfo.getAppDirName();
+            Utility.killProcess(baseDir, getTestType());
             String testResultPath = getUnitTestResultPath(appInfo, null);
             FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
             String testSuitePath = "";
@@ -462,6 +464,9 @@ public class Quality extends DynamicParameterAction implements Constants {
         
         try {
             ApplicationInfo appInfo = getApplicationInfo();
+         // TO kill the Process
+            String baseDir = Utility.getProjectHome()+ appInfo.getAppDirName();
+            Utility.killProcess(baseDir, getTestType());
             String testResultPath = getFunctionalTestResultPath(appInfo, null);
             FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
             String testSuitePath = frameworkUtil.getFunctionalTestSuitePath(appInfo);
@@ -1515,6 +1520,10 @@ public class Quality extends DynamicParameterAction implements Constants {
         }
 
         try {
+        	ApplicationInfo appInfo = getApplicationInfo();
+	       	 // TO kill the Process
+        	String baseDir = Utility.getProjectHome()+ appInfo.getAppDirName();
+        	Utility.killProcess(baseDir, getTestType());
             FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
             List<String> testResultsTypes = new ArrayList<String>();
             testResultsTypes.add("server");
@@ -1703,6 +1712,10 @@ public class Quality extends DynamicParameterAction implements Constants {
         }
 
         try {
+        	ApplicationInfo appInfo = getApplicationInfo();
+       	 	// TO kill the Process
+            String baseDir = Utility.getProjectHome()+ appInfo.getAppDirName();
+            Utility.killProcess(baseDir, getTestType());
             FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
             List<String> testResultsTypes = new ArrayList<String>();
             testResultsTypes.add("server");
@@ -2071,19 +2084,17 @@ public class Quality extends DynamicParameterAction implements Constants {
 			.append(appInfo.getAppDirName())
 			.append(manualTestDir);
 			if (new File(sb.toString()).exists()) {
-				final List<TestSuite> readManualTestSuiteFile = frameworkUtil.readManualTestSuiteFile(sb.toString());
+				final List<TestSuite> readManualTestSuiteFile = frameworkUtil.readManualTestSuiteFile(sb.toString(), null,0,0,0,0);
 				if (CollectionUtils.isNotEmpty(readManualTestSuiteFile)) {
-					
 					setAllTestSuite(readManualTestSuiteFile);
 				}
-			
 				Runnable runnable = new Runnable() {
 					public void run() {
 						try {
 							for (TestSuite tstSuite : readManualTestSuiteFile) {
 								String testSuiteName = tstSuite.getName();
 								CacheKey key = new CacheKey(testSuiteName);
-								List<com.photon.phresco.commons.model.TestCase> readManualTestCaseFile = frameworkUtil.readManualTestCaseFile(sb.toString(), testSuiteName, null, null);
+								List<com.photon.phresco.commons.model.TestCase> readManualTestCaseFile = frameworkUtil.readManualTestCaseFile(sb.toString(), testSuiteName, null, null, null, null, null, null);
 								if (CollectionUtils.isNotEmpty(readManualTestCaseFile)) {
 									cacheManager.add(key, readManualTestCaseFile);
 								}
@@ -2174,7 +2185,8 @@ public class Quality extends DynamicParameterAction implements Constants {
 			FrameworkUtil.addNewTestCase(sb.toString(),getTestScenarioName(),getFeatureId(),getTestCaseId(),getTestDescription(),
 					getTestSteps(),"","",getExpectedResult(),getActualResult(),getStatus(),getBugComment());
 		} else {
-			frameworkUtil.readManualTestCaseFile(sb.toString(), getTestScenarioName(), getFeatureId(), getBugComment());
+			frameworkUtil.readManualTestCaseFile(sb.toString(), getTestScenarioName(), getFeatureId(), 
+					getTestSteps(), getExpectedResult(), getActualResult(), getStatus(), getBugComment());
 		}
 		return MANUAL;
 	}
@@ -2196,7 +2208,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 				.append(appInfo.getAppDirName())
 				.append(manualTestDir);
 				CacheKey testSuitekey = new CacheKey(getTestSuitName());
-				List<com.photon.phresco.commons.model.TestCase> readTestCase = frameworkUtil.readManualTestCaseFile(sb.toString(), getTestSuitName(), null, null);
+				List<com.photon.phresco.commons.model.TestCase> readTestCase = frameworkUtil.readManualTestCaseFile(sb.toString(), getTestSuitName(), null, null, null, null, null, null);
 				if (CollectionUtils.isNotEmpty(readTestCase)) {
 					cacheManager.add(testSuitekey, readTestCase);
 					setAllTestCases(readTestCase);
@@ -3122,5 +3134,13 @@ public class Quality extends DynamicParameterAction implements Constants {
 
 	public void setFromTab(String fromTab) {
 		this.fromTab = fromTab;
+	}
+	
+	public String getActionType() {
+		return actionType;
+	}
+
+	public void setActionType(String actionType) {
+		this.actionType = actionType;
 	}
 }

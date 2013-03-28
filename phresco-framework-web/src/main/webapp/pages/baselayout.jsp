@@ -1,22 +1,22 @@
 <%--
-  ###
-  Framework Web Archive
-  
-  Copyright (C) 1999 - 2013 Photon Infotech Inc.
-  
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-  
-       http://www.apache.org/licenses/LICENSE-2.0
-  
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
-  ###
-  --%>
+
+    Framework Web Archive
+
+    Copyright (C) 1999-2013 Photon Infotech Inc.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+--%>
 <!doctype html>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
@@ -109,6 +109,11 @@
 		<!-- jquery editable combobox -->
 		<script src="js/jquery.editable.combobox.js"></script>
 		<script src="js/jss.min.js"></script>
+		
+		<!-- Color picker -->
+		<script type="text/javascript" src="js/bootstrap-colorpicker.js"></script>
+		<link type="text/css" rel="stylesheet" href="css/bootstrap-colorpicker.css"/>
+		
 	</head>
 	<body>
         <%
@@ -178,6 +183,9 @@
 								</li>
 								<li class="hideContent wid_set <%= FrameworkConstants.SETTINGS_KEY %>"><a href="#" class="inactive" name="headerMenu" id="settings" additionalParam="fromPage=settings">
 								    <s:label key="lbl.hdr.settings"  theme="simple"/></a>
+								</li>
+								<li class="hideContent wid_set <%= FrameworkConstants.DOWNLOAD_KEY %>"><a href="#" class="inactive " name="headerMenu" id="download">
+								    <s:label key="lbl.hdr.download"  theme="simple"/></a>
 								</li>
 								<li class="hideContent wid_help <%= FrameworkConstants.HELP_KEY %>"><a href="#" class="inactive " name="headerMenu" id="forum">
 								    <s:label key="lbl.hdr.help"  theme="simple"/></a>
@@ -321,7 +329,7 @@
 			
 			</div>
 			<div class="modal-footer">
-				<input type="button" class="btn btn-primary" id="popupCancel" value="<s:text name='lbl.btn.cancel'/>" data-dismiss="modal" href="#"/>
+				<input type="button" class="btn btn-primary" id="popupCancel" onClick="popupOnCancel(this);" value="<s:text name='lbl.btn.cancel'/>" data-dismiss="modal" href="#"/>
 				<input type="button" class="btn btn-primary popupOk" id="" onClick="popupOnOk(this);" value="<s:text name='lbl.btn.ok'/>" href="#"/>
 				<input type="button" class="btn btn-primary popupClose" id="" onClick="popupOnClose(this);" value="<s:text name='lbl.btn.close'/>" data-dismiss="modal" href="#"/>
 				<div class="popuploadingIcon" id="popuploadingIcon"></div>
@@ -522,19 +530,24 @@
 	function showHideCustomerOptions(data) {
 		var customerOptions = data.customerOptions;
 		var customerAllOptions = data.customerAllOptions;
-		if (customerOptions != undefined) {
-			$(".headerInnerTop ul").css("width", "540");
-			for (i in customerOptions) {
-				$("." + customerOptions[i]).show();
-			}
-		} else if (customerAllOptions != undefined) {
-			if (customerAllOptions.length === 2) {
-				var newWidth = 540/2;
-				$(".headerInnerTop ul").css("width", newWidth - 40);
-			}
+		if (customerAllOptions != undefined) {
 			for (i in customerAllOptions) {
 				$("." + customerAllOptions[i]).hide();
 			}
+		}
+		if (customerOptions != undefined) {
+			for (i in customerOptions) {
+				$("." + customerOptions[i]).show();
+			}
+		} 
+		var noOfChildrens = $(".headerInnerTop ul li").size();
+		var noOfVisibleChildrens = $(".headerInnerTop ul li:visible").size();
+		if (noOfVisibleChildrens < noOfChildrens) {
+			var individualWidth = 575/5;
+			var newWidth = individualWidth * noOfVisibleChildrens
+			$(".headerInnerTop ul").css("width", newWidth);
+		} else {
+			$(".headerInnerTop ul").css("width", "575");
 		}
 		$('a[name="headerMenu"]').each(function() {
    			if ($(this).hasClass('active')) {

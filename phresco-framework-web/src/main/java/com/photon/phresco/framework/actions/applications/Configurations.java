@@ -1,21 +1,19 @@
-/*
- * ###
+/**
  * Framework Web Archive
- * %%
- * Copyright (C) 1999 - 2012 Photon Infotech Inc.
- * %%
+ *
+ * Copyright (C) 1999-2013 Photon Infotech Inc.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ###
  */
 package com.photon.phresco.framework.actions.applications;
 
@@ -148,6 +146,9 @@ public class Configurations extends FrameworkBaseAction {
     private String propName = "";
     private String oldEnvName = "";
     private String csvFiles = "";
+    
+    private String css = "";
+    private String themeBuilderFile = "";
     
 	public String configList() {
 		if (s_debugEnabled) {
@@ -1833,7 +1834,57 @@ public class Configurations extends FrameworkBaseAction {
 		setReqAttribute(REQ_SCHEDULER_KEY, schedulerKey);
 		return SUCCESS;
 	}
-    
+	
+	public String themeBuilderList() throws PhrescoException {
+		try {
+			ApplicationProcessor applicationProcessor = getApplicationProcessor();
+			List<String> themeBuilderList = applicationProcessor.themeBuilderList(getApplicationInfo());
+
+			if (CollectionUtils.isNotEmpty(themeBuilderList)) {
+				Collections.sort(themeBuilderList, sortValuesInAlphaOrder());
+			}
+
+			setReqAttribute(REQ_THEME_FILES, themeBuilderList);
+		} catch (PhrescoException e) {
+			//TODO: throw error
+		}
+
+		return SUCCESS;
+	}
+
+
+	public String themeBuilderAdd() throws PhrescoException {
+		setReqAttribute(REQ_FROM_PAGE, FROM_PAGE_ADD);
+
+		return SUCCESS;
+	}
+
+	public String themeBuilderEdit() throws PhrescoException {
+		try {
+			ApplicationProcessor applicationProcessor = getApplicationProcessor();
+			org.codehaus.jettison.json.JSONObject jsonObj = applicationProcessor.themeBuilderEdit(getApplicationInfo(), getThemeBuilderFile());
+			setReqAttribute(REQ_FROM_PAGE, FROM_PAGE_EDIT);
+			setReqAttribute(REQ_CSS_JSON, jsonObj);
+		} catch (PhrescoException e) {
+			//TODO: throw error
+		}
+		return SUCCESS;
+	}
+
+	public String themeBuilderSave() throws PhrescoException {
+		try {
+			ApplicationProcessor applicationProcessor = getApplicationProcessor();
+			boolean themeBuilderSaveSuccess = applicationProcessor.themeBuilderSave(getApplicationInfo(), getCss());
+			if (themeBuilderSaveSuccess) {
+				addActionMessage(getText(SUCCESS_THEME_BUILDER_CREATE));
+			}
+		} catch (Exception e) {
+			//TODO: throw error
+		}
+
+		return themeBuilderList();
+	}
+
 	public String getDescription() {
    		return description;
     }
@@ -2305,4 +2356,20 @@ public class Configurations extends FrameworkBaseAction {
     public String getCsvFiles() {
         return csvFiles;
     }
+    
+    public String getCss() {
+		return css;
+	}
+
+	public void setCss(String css) {
+		this.css = css;
+	}
+
+	public String getThemeBuilderFile() {
+		return themeBuilderFile;
+	}
+
+	public void setThemeBuilderFile(String themeBuilderFile) {
+		this.themeBuilderFile = themeBuilderFile;
+	}
 }

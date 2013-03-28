@@ -1,21 +1,19 @@
-/*
- * ###
+/**
  * Framework Web Archive
- * 
- * Copyright (C) 1999 - 2012 Photon Infotech Inc.
- * 
+ *
+ * Copyright (C) 1999-2013 Photon Infotech Inc.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ###
  */
 package com.photon.phresco.framework.actions.applications;
 
@@ -23,7 +21,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -39,9 +36,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.jgit.api.errors.InvalidRemoteException;
 import org.eclipse.jgit.api.errors.TransportException;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.tmatesoft.svn.core.SVNAuthenticationException;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.wc.SVNStatus;
@@ -55,7 +49,6 @@ import com.photon.phresco.commons.model.ArtifactGroupInfo;
 import com.photon.phresco.commons.model.ArtifactInfo;
 import com.photon.phresco.commons.model.CoreOption;
 import com.photon.phresco.commons.model.DownloadInfo;
-import com.photon.phresco.commons.model.User;
 import com.photon.phresco.commons.model.DownloadInfo.Category;
 import com.photon.phresco.commons.model.Element;
 import com.photon.phresco.commons.model.ProjectInfo;
@@ -76,6 +69,7 @@ import com.photon.phresco.util.Utility;
 import com.phresco.pom.exception.PhrescoPomException;
 import com.phresco.pom.model.Scm;
 import com.phresco.pom.util.PomProcessor;
+
 
 public class Applications extends FrameworkBaseAction {
 
@@ -116,7 +110,7 @@ public class Applications extends FrameworkBaseAction {
     private String customerId = "";
     private String projectId = "";
     private String appId = "";
-    
+
     public String loadMenu() {
         if (s_debugEnabled) {
             S_LOGGER.debug("Entering Method  Applications.loadMenu()");
@@ -1042,7 +1036,7 @@ public class Applications extends FrameworkBaseAction {
         
         return SUCCESS;
     }
-
+    
     public String getUsername() {
         return userName;
     }

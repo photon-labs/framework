@@ -1,23 +1,22 @@
 <%--
-  ###
-  Framework Web Archive
-  
-  Copyright (C) 1999 - 2012 Photon Infotech Inc.
-  
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-  
-       http://www.apache.org/licenses/LICENSE-2.0
-  
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
-  ###
-  --%>
-<%@page import="com.opensymphony.xwork2.ActionSupport"%>
+
+    Framework Web Archive
+
+    Copyright (C) 1999-2013 Photon Infotech Inc.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+--%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.util.Arrays"%>
@@ -37,7 +36,6 @@
 	List<DownloadInfo> editorDownloadInfos = (List<DownloadInfo>) request.getAttribute(FrameworkConstants.REQ_EDITOR_DOWNLOAD_INFO);
 	List<DownloadInfo> toolsDownloadInfos = (List<DownloadInfo>) request.getAttribute(FrameworkConstants.REQ_TOOLS_DOWNLOAD_INFO);
 	List<DownloadInfo> othersDownloadInfos = (List<DownloadInfo>) request.getAttribute(FrameworkConstants.REQ_OTHERS_DOWNLOAD_INFO);
-	ActionSupport actionSupport = new ActionSupport();
 	boolean serverDownloadUrl = false;
 	boolean dbDownloadUrl = false;
 	boolean editorDownloadUrl = false;
@@ -45,6 +43,12 @@
 	boolean othersDownloadUrl = false;
 	Long fileSize = null;
 %>
+
+<div class="page-header">
+	<h1 style="float: left;">
+		<s:text name="lbl.hdr.download"/>
+	</h1>
+</div>
 
 <div class="theme_accordion_container">
     <section class="accordion_panel_wid">
@@ -87,12 +91,12 @@
 			                    	<%
 										for (DownloadInfo serverDownloadInfo : serverDownloadInfos) {
 		                    			List<ArtifactInfo> infos = serverDownloadInfo.getArtifactGroup().getVersions();
-											if(CollectionUtils.isNotEmpty(infos)) {
+											if (CollectionUtils.isNotEmpty(infos)) {
 												for (ArtifactInfo info : infos) {
 													if (StringUtils.isNotEmpty(info.getDownloadURL()) && info.getFileSize() != 0) {
 														fileSize = info.getFileSize();
 														String size = "";
-														if(fileSize > 1048576) {
+														if (fileSize > 1048576) {
 															size = Long.toString(fileSize/1048576) + FrameworkConstants.MEGABYTE;
 														} else {
 															size = Long.toString(fileSize/1024) + FrameworkConstants.KILOBYTE;
@@ -158,10 +162,10 @@
 			                    		List<ArtifactInfo> infos = dbDownloadInfo.getArtifactGroup().getVersions();
 											if (CollectionUtils.isNotEmpty(infos)) {
 												for (ArtifactInfo info : infos) { 
-													if(StringUtils.isNotEmpty(info.getDownloadURL()) && info.getFileSize() != 0) {
+													if (StringUtils.isNotEmpty(info.getDownloadURL()) && info.getFileSize() != 0) {
 														fileSize = info.getFileSize();
 														String size = "";
-														if(fileSize > 1048576) {
+														if (fileSize > 1048576) {
 															size = Long.toString(fileSize/1048576) + FrameworkConstants.MEGABYTE;
 														} else {
 															size = Long.toString(fileSize/1024) + FrameworkConstants.KILOBYTE;
@@ -231,10 +235,10 @@
 											List<ArtifactInfo> infos = editorDownloadInfo.getArtifactGroup().getVersions();
 												if (CollectionUtils.isNotEmpty(infos)) {
 													for (ArtifactInfo info : infos) {
-														if(StringUtils.isNotEmpty(info.getDownloadURL()) && info.getFileSize() != 0) {
+														if (StringUtils.isNotEmpty(info.getDownloadURL()) && info.getFileSize() != 0) {
 															fileSize = info.getFileSize();
 															String size = "";
-															if(fileSize > 1048576) {
+															if (fileSize > 1048576) {
 																size = Long.toString(fileSize/1048576) + FrameworkConstants.MEGABYTE;
 															} else {
 																size = Long.toString(fileSize/1024) + FrameworkConstants.KILOBYTE;
@@ -303,10 +307,10 @@
 										List<ArtifactInfo> infos = toolsDownloadInfo.getArtifactGroup().getVersions();
 											if (CollectionUtils.isNotEmpty(infos)) {
 												for (ArtifactInfo info : infos) {
-													if(StringUtils.isNotEmpty(info.getDownloadURL()) && info.getFileSize() != 0) {
+													if (StringUtils.isNotEmpty(info.getDownloadURL()) && info.getFileSize() != 0) {
 														fileSize = info.getFileSize();
 														String size = "";
-														if(fileSize > 1048576) {
+														if (fileSize > 1048576) {
 															size = Long.toString(fileSize/1048576) + FrameworkConstants.MEGABYTE;
 														} else {
 															size = Long.toString(fileSize/1024) + FrameworkConstants.KILOBYTE;
@@ -375,10 +379,10 @@
 										List<ArtifactInfo> infos = otherDownloadInfo.getArtifactGroup().getVersions();
 											if (CollectionUtils.isNotEmpty(infos)) {
 												for (ArtifactInfo info : infos) {
-													if(StringUtils.isNotEmpty(info.getDownloadURL()) && info.getFileSize() != 0) {
+													if (StringUtils.isNotEmpty(info.getDownloadURL()) && info.getFileSize() != 0) {
 														fileSize = info.getFileSize();
 														String size = "";
-														if(fileSize > 1048576) {
+														if (fileSize > 1048576) {
 															size = Long.toString(fileSize/1048576) + FrameworkConstants.MEGABYTE;
 														} else {
 															size = Long.toString(fileSize/1024) + FrameworkConstants.KILOBYTE;
@@ -411,9 +415,9 @@
 					}
                 %>
             </section>  
-			<% if (serverDownloadUrl == false && dbDownloadUrl == false && editorDownloadUrl == false && toolsDownloadUrl == false && othersDownloadUrl == false) {%>
+			<% if (serverDownloadUrl == false && dbDownloadUrl == false && editorDownloadUrl == false && toolsDownloadUrl == false && othersDownloadUrl == false) { %>
 					<div class="alert alert-block">
-						<%= actionSupport.getText("lbl.err.msg.list.downloads") %>
+						<s:text name="lbl.err.msg.list.downloads"/>
 					</div> 
 			<% } %>
         </div>

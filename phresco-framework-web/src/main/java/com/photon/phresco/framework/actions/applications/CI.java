@@ -1,21 +1,19 @@
-/*
- * ###
+/**
  * Framework Web Archive
- * 
- * Copyright (C) 1999 - 2012 Photon Infotech Inc.
- * 
+ *
+ * Copyright (C) 1999-2013 Photon Infotech Inc.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ###
  */
 package com.photon.phresco.framework.actions.applications;
 
@@ -133,6 +131,7 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
     private String theme = "";
     private String logo = "";
     private String sonarUrl = "";
+    private boolean isDownStreamAvailable;
     
 	public String ci() {
 		if (debugEnabled) {
@@ -238,6 +237,44 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 		       return job1.getName().compareToIgnoreCase(job2.getName());
 		    }
 		};
+	}
+	
+	public String downStreamCheck() {
+		try {
+			isDownStreamAvailable = false;
+			boolean streamCheck = false;
+			String[] selectedJobs = getHttpRequest().getParameterValues(REQ_SELECTED_JOBS_LIST);
+			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
+			ApplicationInfo appInfo = getApplicationInfo();
+			//get all the jobs
+			List<CIJob> existJobs = ciManager.getJobs(appInfo);
+			//get the name of all the jobs
+			List<String> allJobNames = getJobNames(existJobs);
+			List<String> asList = Arrays.asList(selectedJobs);
+			for (String job : asList) {
+				CIJob existJob = ciManager.getJob(appInfo, job);
+				String existDownStream = existJob.getDownStreamProject();
+				boolean contains = allJobNames.contains(existDownStream);
+				if (StringUtils.isNotEmpty(existDownStream) && contains) {
+					streamCheck = true;
+				}
+				if (streamCheck) {
+					isDownStreamAvailable = true;
+				}
+			}
+		} catch (PhrescoException e) {
+			return showErrorPopup(e, "Error Popup");
+		}
+		
+		return SUCCESS;
+	}
+	
+	private List<String> getJobNames(List<CIJob> existJobs) {
+		List<String> names = new ArrayList<String>();
+		for (CIJob job : existJobs) {
+			names.add(job.getName());
+		}
+		return names;
 	}
 
 	public String configure() {
@@ -1661,5 +1698,13 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 
 	public void setDownstreamCriteria(String downstreamCriteria) {
 		this.downstreamCriteria = downstreamCriteria;
+	}
+
+	public boolean isDownStreamAvailable() {
+		return isDownStreamAvailable;
+	}
+
+	public void setDownStreamAvailable(boolean isDownStreamAvailable) {
+		this.isDownStreamAvailable = isDownStreamAvailable;
 	}
 }

@@ -1,22 +1,22 @@
 <!--
-  ###
-  Framework Web Archive
-  
-  Copyright (C) 1999 - 2012 Photon Infotech Inc.
-  
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-  
-       http://www.apache.org/licenses/LICENSE-2.0
-  
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
-  ###
-  -->
+
+    Framework Web Archive
+
+    Copyright (C) 1999-2013 Photon Infotech Inc.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
 <!DOCTYPE struts PUBLIC
 "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
 "http://struts.apache.org/dtds/struts-2.0.dtd">
@@ -122,6 +122,10 @@
 
         <action name="createProject" method="createProject" class="com.photon.phresco.framework.actions.applications.Projects">
 			<result name="list">/pages/projects/list.jsp</result>
+        </action>
+		
+		<action name="killProcess" method="killProcess" class="com.photon.phresco.framework.actions.applications.Projects">
+           	<result type="json"/>
         </action>
         
 		<action name="updateProject" method="updateProject" class="com.photon.phresco.framework.actions.applications.Projects">
@@ -952,5 +956,23 @@
         <action name="removeReaderFromSession" method="removeReaderFromSession" class="com.photon.phresco.framework.actions.applications.Applications">
             <result type="json" />
         </action>
+        
+        <!-- Theme builder starts -->
+        <action name="themeBuilderList" method="themeBuilderList" class="com.photon.phresco.framework.actions.applications.Configurations">
+        	<result name="success">/pages/applications/themeBuilderList.jsp</result>
+        </action> 
+        
+         <action name="themeBuilderEdit" method="themeBuilderEdit" class="com.photon.phresco.framework.actions.applications.Configurations">
+        	<result name="success">/pages/applications/themeBuilder.jsp</result>
+        </action>  
+        
+         <action name="themeBuilderAdd" method="themeBuilderAdd" class="com.photon.phresco.framework.actions.applications.Configurations">
+        	<result name="success">/pages/applications/themeBuilder.jsp</result>
+        </action> 
+
+        <action name="themeBuilderSave" method="themeBuilderSave" class="com.photon.phresco.framework.actions.applications.Configurations">
+        	<result name="success">/pages/applications/themeBuilderList.jsp</result>
+        </action>
+        <!-- Theme builder ends -->
     </package>
 </struts>

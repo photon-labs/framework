@@ -1,21 +1,19 @@
-/*
- * ###
+/**
  * Framework Web Archive
- * 
- * Copyright (C) 1999 - 2012 Photon Infotech Inc.
- * 
+ *
+ * Copyright (C) 1999-2013 Photon Infotech Inc.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ###
  */
 package com.photon.phresco.framework.actions.applications;
 
@@ -26,7 +24,6 @@ import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 
-import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.DownloadInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
@@ -47,38 +44,35 @@ public class Download extends FrameworkBaseAction {
     	}
     	
     	try {
-    	    removeSessionAttribute(getAppId() + SESSION_APPINFO);//To remove the appInfo from the session
-			ServiceManager serviceManager = getServiceManager();
-			ApplicationInfo appInfo = getApplicationInfo();
-			String techId = appInfo.getTechInfo().getId();
+    	    ServiceManager serviceManager = getServiceManager();
 			String platform = FrameworkUtil.findPlatform();
 			
-			List<DownloadInfo> serverDownloadInfo = serviceManager.getDownloads(getCustomerId(), techId, DownloadInfo.Category.SERVER.name(), platform);
+			List<DownloadInfo> serverDownloadInfo = serviceManager.getDownloads(getCustomerId(), "", DownloadInfo.Category.SERVER.name(), platform);
 			if (CollectionUtils.isNotEmpty(serverDownloadInfo)) {
 				Collections.sort(serverDownloadInfo, sortDownloadsInAlphaOrder());
 			}
 			setReqAttribute(REQ_SERVER_DOWNLOAD_INFO, serverDownloadInfo);
 			
-			List<DownloadInfo> dbDownloadInfo = serviceManager.getDownloads(getCustomerId(), techId, DownloadInfo.Category.DATABASE.name(), platform);
+			List<DownloadInfo> dbDownloadInfo = serviceManager.getDownloads(getCustomerId(), "", DownloadInfo.Category.DATABASE.name(), platform);
 			if (CollectionUtils.isNotEmpty(dbDownloadInfo)) {
 				Collections.sort(dbDownloadInfo, sortDownloadsInAlphaOrder());
 			}
 			
 			setReqAttribute(REQ_DB_DOWNLOAD_INFO, dbDownloadInfo);
 			
-			List<DownloadInfo> editorDownloadInfo = serviceManager.getDownloads(getCustomerId(), techId, DownloadInfo.Category.EDITOR.name(), platform);
+			List<DownloadInfo> editorDownloadInfo = serviceManager.getDownloads(getCustomerId(), "", DownloadInfo.Category.EDITOR.name(), platform);
 			if (CollectionUtils.isNotEmpty(editorDownloadInfo)) {
 				Collections.sort(editorDownloadInfo, sortDownloadsInAlphaOrder());
 			}
 			setReqAttribute(REQ_EDITOR_DOWNLOAD_INFO, editorDownloadInfo);
 			
-			List<DownloadInfo> toolsDownloadInfo = serviceManager.getDownloads(getCustomerId(), techId, DownloadInfo.Category.TOOLS.name(), platform);
+			List<DownloadInfo> toolsDownloadInfo = serviceManager.getDownloads(getCustomerId(), "", DownloadInfo.Category.TOOLS.name(), platform);
 			if (CollectionUtils.isNotEmpty(toolsDownloadInfo)) {
 				Collections.sort(toolsDownloadInfo, sortDownloadsInAlphaOrder());
 			}
 			setReqAttribute(REQ_TOOLS_DOWNLOAD_INFO, toolsDownloadInfo);
 			
-			List<DownloadInfo> othersDownloadInfo = serviceManager.getDownloads(getCustomerId(), techId, DownloadInfo.Category.OTHERS.name(), platform);
+			List<DownloadInfo> othersDownloadInfo = serviceManager.getDownloads(getCustomerId(), "", DownloadInfo.Category.OTHERS.name(), platform);
 			if (CollectionUtils.isNotEmpty(othersDownloadInfo)) {
 				Collections.sort(othersDownloadInfo, sortDownloadsInAlphaOrder());
 			}

@@ -1,43 +1,20 @@
-/*
- * ###
+/**
  * Framework Web Archive
- * 
- * Copyright (C) 1999 - 2012 Photon Infotech Inc.
- * 
+ *
+ * Copyright (C) 1999-2013 Photon Infotech Inc.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ###
  */
-/*
- * $Id: Login.java 471756 2006-11-06 15:01:43Z husted $
- *
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-
 package com.photon.phresco.framework.actions;
 
 import java.io.File;
@@ -62,7 +39,6 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import com.photon.phresco.commons.model.Customer;
-import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.TechnologyOptions;
 import com.photon.phresco.commons.model.User;
 import com.photon.phresco.exception.PhrescoException;
@@ -331,20 +307,18 @@ public class Login extends FrameworkBaseAction {
                 }
             }
             setCustomerOptions(customerOptions);
-            if (CollectionUtils.isEmpty(customerOptions)) {
-                List<TechnologyOptions> technologyOptions = getServiceManager().getCustomerOptions();
-                List<String> customerAllOptions = new ArrayList<String>();
-                if (CollectionUtils.isNotEmpty(technologyOptions)) {
-                    for (TechnologyOptions technologyOption : technologyOptions) {
-                        customerAllOptions.add(technologyOption.getId());
-                    }
+            List<TechnologyOptions> technologyOptions = getServiceManager().getCustomerOptions();
+            List<String> customerAllOptions = new ArrayList<String>();
+            if (CollectionUtils.isNotEmpty(technologyOptions)) {
+                for (TechnologyOptions technologyOption : technologyOptions) {
+                    customerAllOptions.add(technologyOption.getId());
                 }
-                setCustomerAllOptions(customerAllOptions);
             }
+            setCustomerAllOptions(customerAllOptions);
         } catch (Exception e) {
             // TODO: handle exception
         }
-        
+
         return SUCCESS;
     }
     

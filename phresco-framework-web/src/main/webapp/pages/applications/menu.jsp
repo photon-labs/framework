@@ -1,22 +1,22 @@
 <%--
-  ###
-  Framework Web Archive
-  
-  Copyright (C) 1999 - 2012 Photon Infotech Inc.
-  
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-  
-       http://www.apache.org/licenses/LICENSE-2.0
-  
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
-  ###
-  --%>
+
+    Framework Web Archive
+
+    Copyright (C) 1999-2013 Photon Infotech Inc.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+--%>
 <%@ taglib uri="/struts-tags" prefix="s" %>
 
 <%@ page import="java.util.ArrayList"%>
@@ -28,6 +28,7 @@
 	$(document).ready(function() {
 		showLoadingIcon();
 		clickMenu($("a[name='appTab']"), $("#subcontainer"), $('#formAppMenu, #formCustomers'));
+		clickMenu($("a[name='themeTab']"), $("#subcontainer"), $('#formAppMenu, #formCustomers'));
 		loadContent("editApplication", $('#formAppMenu, #formCustomers'), $("#subcontainer"), '', '', true);
 		activateMenu($("#appinfo"));
 	});
@@ -46,14 +47,22 @@
 	}
   	
   	$('#testmenu').hide();
+  	$('#thememenu').hide();
   	
   	$(".tabs li a").click(function() {
 		if($(this).attr("id")=="quality") {
+			$("#thememenu").slideUp();
 			$("#testmenu").slideDown();
 			$("#testmenu .active").removeClass("active").addClass("inactive");
 			$("#testmenu li:first-child a").addClass("active");	
+		} else if($(this).attr("id")=="configuration") {
+			$("#testmenu").slideUp();
+			$("#thememenu").slideDown();	
 		} else if($(this).attr("name")=="appTab") {
 			$("#testmenu").slideUp();
+			$("#thememenu").slideUp();
+		}else if($(this).attr("id")=="themeBuilderList") {
+			$("#thememenu").slideDown();
 		}
     });
 	
@@ -126,6 +135,17 @@
 		%>
 		<li>
 			<a href="#" class="inactive" name="appTab" id="configuration" additionalParam="fromPage=config"><s:label key="lbl.app.menu.config" theme="simple"/></a>
+			<ul id="thememenu">
+			<%
+				if(optionIds != null && optionIds.contains(FrameworkConstants.THEME_BUILDER_KEY)) {
+			%>
+				<li>
+					<a href="#" class="inactive" name="themeTab" id="themeBuilderList"><s:label key="lbl.app.menu.theme.builder" theme="simple"/></a>
+				</li>
+			<% 
+				}
+			%>	
+			</ul>
 		</li>
 		<%
 			if(optionIds != null && optionIds.contains(FrameworkConstants.BUILD_KEY)) {
@@ -153,6 +173,12 @@
 					<a href="#" class="inactive" name="qualityTab" id="functional"><s:label key="lbl.quality.menu.funtional" theme="simple"/></a>
 				</li>
 				<%
+					} if (optionIds != null && optionIds.contains(FrameworkConstants.MANUAL_TEST_KEY)) {
+				%>
+				<li>
+					<a href="#" class="inactive" name="qualityTab" id="manual"><s:label key="lbl.quality.menu.manual" theme="simple"/></a>
+				</li>
+				<%
 					} if (optionIds != null && optionIds.contains(FrameworkConstants.PERFORMANCE_TEST_KEY)) {
 				%>
 				<li>
@@ -163,12 +189,6 @@
 				%>
 				<li>
 					<a href="#" class="inactive" name="qualityTab" id="load"><s:label key="lbl.quality.menu.load" theme="simple"/></a>
-				</li>
-				<%
-					} if (optionIds != null && optionIds.contains(FrameworkConstants.MANUAL_TEST_KEY)) {
-				%>
-				<li>
-					<a href="#" class="inactive" name="qualityTab" id="manual"><s:label key="lbl.quality.menu.manual" theme="simple"/></a>
 				</li>
 				<%
 					}
@@ -191,9 +211,6 @@
 		<%
 			}
 		%>
-		<li>
-			<a href="#" class="inactive" name="appTab" id="download"><s:label key="lbl.app.menu.download"  theme="simple"/></a>
-		</li>
 	</ul>
 	<div class="menuarrow" dataflag="false" style= "position: absolute; top: 87px; cursor: pointer;">
 		<img src="images/menu_arrow_open.gif">

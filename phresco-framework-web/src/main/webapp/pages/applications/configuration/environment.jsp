@@ -1,22 +1,22 @@
 <%--
-  ###
-  Framework Web Archive
-  
-  Copyright (C) 1999 - 2012 Photon Infotech Inc.
-  
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-  
-       http://www.apache.org/licenses/LICENSE-2.0
-  
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
-  ###
-  --%>
+
+    Framework Web Archive
+
+    Copyright (C) 1999-2013 Photon Infotech Inc.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+--%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.util.List"%>
@@ -373,6 +373,14 @@ $(document).ready(function() {
 		
 		$("#envName").val("");
 		$("#envDesc").val("");
+		
+		if ($('input[name="envNames"]:checkbox').is(':checked')) {
+			$('input[name="envNames"]:checked').prop('checked', false);
+			$('input[name="addBtn"]').val("<s:text name='lbl.btn.add'/>");
+		}
+		if ($('#multiselectAppliesTo :checkbox').is(':checked')) {
+			$('#multiselectAppliesTo :checked').prop('checked', false);
+		}
 		
 		<% if (FrameworkConstants.CONFIG.equals(fromPage)) { %>
 			setAsDefaultBtnStatus();

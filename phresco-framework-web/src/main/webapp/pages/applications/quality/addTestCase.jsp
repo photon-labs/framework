@@ -1,22 +1,22 @@
 <%--
-  ###
-  Framework Web Archive
-  
-  Copyright (C) 1999 - 2012 Photon Infotech Inc.
-  
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-  
-       http://www.apache.org/licenses/LICENSE-2.0
-  
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
-  ###
-  --%>
+
+    Framework Web Archive
+
+    Copyright (C) 1999-2013 Photon Infotech Inc.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+--%>
 <%@page import="com.photon.phresco.commons.model.TestCase"%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
@@ -105,7 +105,7 @@
 		    <div class="controls">
 		        <textarea class="appinfo-desc input-xlarge" class="xlarge" 
 		        	id="testSteps" placeholder="<s:text name="label.testcase.steps.placeholder"/>"
-		        	name="testSteps" <%= strDisable %>><%= StringUtils.isNotEmpty(testSteps) ? testSteps : "" %></textarea>
+		        	name="testSteps"><%= StringUtils.isNotEmpty(testSteps) ? testSteps : "" %></textarea>
 		    </div>
 		</div>
 		<!-- TestCase Steps ends -->
@@ -116,7 +116,7 @@
 		    <div class="controls">
 		        <textarea class="appinfo-desc input-xlarge" class="xlarge" 
 		        	id="expectedResult" placeholder="<s:text name="label.expected.placeholder"/>"
-		        	name="expectedResult" <%= strDisable %>><%= StringUtils.isNotEmpty(expectedResult) ? expectedResult : "" %></textarea>
+		        	name="expectedResult"><%= StringUtils.isNotEmpty(expectedResult) ? expectedResult : "" %></textarea>
 		    </div>
 		</div>
 		<!-- Expected Result ends -->
@@ -127,18 +127,38 @@
 		    <div class="controls">
 		        <textarea class="appinfo-desc input-xlarge" class="xlarge" 
 		        	id="actualResult" placeholder="<s:text name="label.actual.placeholder"/>"
-		        	name="actualResult" <%= strDisable %>><%= StringUtils.isNotEmpty(actualResult) ? actualResult : "" %></textarea>
+		        	name="actualResult"><%= StringUtils.isNotEmpty(actualResult) ? actualResult : "" %></textarea>
 		    </div>
 		</div>
 		<!-- Actual Result ends -->
 		
+		<%	String passStr = "";
+			String failStr = "";
+			if (StringUtils.isNotEmpty(status)) { 
+		   		if (status.equals("pass")) {
+		        	passStr = "checked";
+		        } else {
+		        	failStr = "checked";
+	        	}
+	        }
+	    %>
 		<!-- Status start -->
 		<div class="control-group" id="status">
 			 <label class="accordion-control-label labelbold"><s:text name="label.testcase.status"/></label>
-			<div class="controls">
-				<input id="status" class="input-xlarge" type="text" value="<%= StringUtils.isNotEmpty(status) ? status : "" %>" <%= strDisable %>
+			<%-- <div class="controls">
+				<input id="status" class="input-xlarge" type="text" value="<%= StringUtils.isNotEmpty(status) ? status : "" %>"
 					name="status" placeholder='<s:text name="label.testcase.status.placeholder"/>'>
-			</div>
+			</div> --%>
+			<ul class="inputs-list">
+					<li> 
+						<input type="radio" name="status" value="pass"  <%=passStr %>/> 
+						<span class="vAlignMiddle buildTypeSpan"><s:text name="label.testcase.success"/></span>
+					</li>
+					<li> 
+						<input type="radio" name="status" value="fail" <%=failStr %>/> 
+						<span class="vAlignMiddle buildTypeSpan"><s:text name="label.testcase.failure"/></span>
+					</li>
+				</ul>
 		</div>
 		<!-- Status ends -->
 		
@@ -157,10 +177,6 @@
 			<input type="hidden" name="featureId" value="<%= featureId %>"/>
 			<input type="hidden" name="testCaseId" value="<%= testCaseId %>"/>
 			<input type="hidden" name="testDescription" value="<%= testDesc %>"/>
-			<input type="hidden" name="testSteps" value="<%= testSteps %>"/>
-			<input type="hidden" name="expectedResult" value="<%= expectedResult %>"/>
-			<input type="hidden" name="actualResult" value="<%= actualResult %>"/>
-			<input type="hidden" name="status" value="<%= status %>"/>
 			<input type="hidden" name="fromTab" value="edit"/>
 		<% } %>
 		

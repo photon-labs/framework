@@ -1,22 +1,22 @@
 <%--
-  ###
-  Framework Web Archive
-  
-  Copyright (C) 1999 - 2012 Photon Infotech Inc.
-  
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-  
-       http://www.apache.org/licenses/LICENSE-2.0
-  
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
-  ###
-  --%>
+
+    Framework Web Archive
+
+    Copyright (C) 1999-2013 Photon Infotech Inc.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+--%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.util.List"%>
@@ -394,8 +394,7 @@ function deleteCIBuild() {
 }
 	
 function deleteCIJob(){
-	showProgressBar("Deleting job (s)");
-	loadContent('CIJobDelete',$('#deleteObjects'), $('#subcontainer'), getBasicParams(), false, true);
+	loadContent('CIJobDownStreamCheck',$('#deleteObjects'), $('#subcontainer'), getBasicParams(), true, true);
 }
 
 function enableStart() {
@@ -514,6 +513,25 @@ function successEvent(pageUrl, data) {
 		hideLoadingIcon();
 		console.log("success jenkins alive check called ");
 		successLocalJenkinsAliveCheck(data);
+	} else if (pageUrl == "CIJobDownStreamCheck") {
+		if (data.downStreamAvailable) {
+			$('#popupPage').modal('show');
+			$('#errMsg').html("");
+			$('#successMsg').html("");
+			$('#updateMsg').html("");
+			$('#popupTitle').html('<s:text name="lbl.app.warnin.title"/>');
+			$('#popup_div').empty();
+			$('#popup_div').html('<s:text name="lbl.app.downstream.warnin"/>');
+			$('.popupOk').val('Yes');
+			$('#popupCancel').val('No');
+			$('.popupClose').hide();
+			$('.popupOk').show();
+			$('#popupCancel').show();
+			hidePopuploadingIcon();
+		} else {
+			showProgressBar("Deleting job (s)");	
+	 	 	loadContent('CIJobDelete',$('#deleteObjects'), $('#subcontainer'), getBasicParams(), false, true);
+		}
 	}
 }
 
@@ -610,7 +628,9 @@ function popupOnOk(obj) {
 		} else if (okUrl == "deleteBuild" ) {
 			deleteCIBuild();
 		}  else if (okUrl == "deleteJob" ) {
-			deleteCIJob();
+			$('#popupPage').modal('hide');
+			showProgressBar("Deleting job (s)");	
+	 	 	loadContent('CIJobDelete',$('#deleteObjects'), $('#subcontainer'), getBasicParams(), false, true);
 		} else if (okUrl == "saveEmailConfiguration" || okUrl == "updateEmailConfiguration" ) {
 			if(emailConfigureValidation()) {
 				configureEmail(okUrl);
