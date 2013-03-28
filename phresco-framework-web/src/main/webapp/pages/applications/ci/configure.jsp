@@ -750,7 +750,7 @@
 	}
 	
 	function showHideCollabnetAccordion() {
-		if ($("#operation").val() == 'build') {
+		if ($("#operation").val() == 'build' || $("#operation").val() == 'pdfReport') {
 			$("#collabnetContainer").show();
 		} else {
 			$("#collabnetContainer").hide();

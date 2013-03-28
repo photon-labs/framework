@@ -44,6 +44,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.plexus.util.cli.CommandLineException;
@@ -527,7 +528,7 @@ public class Build extends DynamicParameterAction implements Constants {
 				if (status) {
 					fileName = fileName.substring(0, fileName.lastIndexOf(".")) + ARCHIVE_FORMAT ;
 				} else {
-					fileName = fileName.split(SPLIT_DOT)[0] + ARCHIVE_FORMAT;
+					fileName = FilenameUtils.removeExtension(fileName) + ARCHIVE_FORMAT;
 				}
 			}
 			if (debugEnabled) {

@@ -687,6 +687,8 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 				}
 				// enable archiving
 				existJob.setEnableArtifactArchiver(true);
+				// if the enable build release option is choosed in UI, the file pattenr value will be used
+				existJob.setCollabNetFileReleasePattern(CI_BUILD_EXT);
 				
 				MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(Constants.PHASE_CI)));
 				persistValuesToXml(mojo, Constants.PHASE_PACKAGE);
@@ -731,7 +733,11 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 				} else {
 					attacheMentPattern = testTypeParam;
 				}
-				existJob.setAttachmentsPattern("do_not_checkin/archives/" + attacheMentPattern + "/*.pdf"); 
+				
+				String attachPattern = "do_not_checkin/archives/" + attacheMentPattern + "/*.pdf";
+				existJob.setAttachmentsPattern(attachPattern); //do_not_checkin/archives/cumulativeReports/*.pdf
+				// if the enable build release option is choosed in UI, the file pattenr value will be used
+				existJob.setCollabNetFileReleasePattern(attachPattern); 
 				
 				// here we can set necessary values in request and we can change object value as well...
 				// getting sonar url
