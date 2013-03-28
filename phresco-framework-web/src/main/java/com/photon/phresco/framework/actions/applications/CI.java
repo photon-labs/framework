@@ -1,21 +1,19 @@
-/*
- * ###
+/**
  * Framework Web Archive
- * 
- * Copyright (C) 1999 - 2012 Photon Infotech Inc.
- * 
+ *
+ * Copyright (C) 1999-2013 Photon Infotech Inc.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ###
  */
 package com.photon.phresco.framework.actions.applications;
 
@@ -689,6 +687,8 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 				}
 				// enable archiving
 				existJob.setEnableArtifactArchiver(true);
+				// if the enable build release option is choosed in UI, the file pattenr value will be used
+				existJob.setCollabNetFileReleasePattern(CI_BUILD_EXT);
 				
 				MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(Constants.PHASE_CI)));
 				persistValuesToXml(mojo, Constants.PHASE_PACKAGE);
@@ -733,7 +733,11 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 				} else {
 					attacheMentPattern = testTypeParam;
 				}
-				existJob.setAttachmentsPattern("do_not_checkin/archives/" + attacheMentPattern + "/*.pdf"); 
+				
+				String attachPattern = "do_not_checkin/archives/" + attacheMentPattern + "/*.pdf";
+				existJob.setAttachmentsPattern(attachPattern); //do_not_checkin/archives/cumulativeReports/*.pdf
+				// if the enable build release option is choosed in UI, the file pattenr value will be used
+				existJob.setCollabNetFileReleasePattern(attachPattern); 
 				
 				// here we can set necessary values in request and we can change object value as well...
 				// getting sonar url

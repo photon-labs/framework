@@ -1,21 +1,19 @@
-/*
- * ###
+/**
  * Framework Web Archive
- * 
- * Copyright (C) 1999 - 2012 Photon Infotech Inc.
- * 
+ *
+ * Copyright (C) 1999-2013 Photon Infotech Inc.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ###
  */
 package com.photon.phresco.framework.actions.applications;
 
@@ -102,6 +100,7 @@ public class Projects extends FrameworkBaseAction {
     private String id = "";
     private String fromTab = "";
     private int appLayerRowCount;
+    private String actionType = "";
     
     public void clearMap() {
     	s_layerMap.clear();
@@ -653,6 +652,15 @@ public class Projects extends FrameworkBaseAction {
     	return sonarTechReports;
     }
     
+    public String killProcess() throws PhrescoException {
+    	 ApplicationInfo appInfo = getApplicationInfo();
+         
+         // TO kill the Process
+         String baseDir = Utility.getProjectHome()+ appInfo.getAppDirName();
+         Utility.killProcess(baseDir, getActionType());
+    	
+		return SUCCESS;
+    }
     /**
      * To validate the form fields
      * @return
@@ -981,5 +989,13 @@ public class Projects extends FrameworkBaseAction {
 
 	public int getAppLayerRowCount() {
 		return appLayerRowCount;
+	}
+
+	public String getActionType() {
+		return actionType;
+	}
+
+	public void setActionType(String actionType) {
+		this.actionType = actionType;
 	}
 }

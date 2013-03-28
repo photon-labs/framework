@@ -1,21 +1,19 @@
-/*
- * ###
+/**
  * Framework Web Archive
- * 
- * Copyright (C) 1999 - 2012 Photon Infotech Inc.
- * 
+ *
+ * Copyright (C) 1999-2013 Photon Infotech Inc.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ###
  */
 package com.photon.phresco.framework.actions.applications;
 
@@ -135,6 +133,7 @@ public class Quality extends DynamicParameterAction implements Constants {
     private String type = "";
     private String testId = "";
     private String fromTab = "";
+    private String actionType = "";
     
 	private List<String> buildInfoEnvs = null;
     
@@ -257,7 +256,13 @@ public class Quality extends DynamicParameterAction implements Constants {
         }
         
         try {
+        	
             ApplicationInfo appInfo = getApplicationInfo();
+            
+            // TO kill the Process
+            String baseDir = Utility.getProjectHome()+ appInfo.getAppDirName();
+            Utility.killProcess(baseDir, getTestType());
+            
             String testResultPath = getUnitTestResultPath(appInfo);
             FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
             String testSuitePath = "";
@@ -462,6 +467,10 @@ public class Quality extends DynamicParameterAction implements Constants {
         
         try {
             ApplicationInfo appInfo = getApplicationInfo();
+            // TO kill the Process
+            String baseDir = Utility.getProjectHome()+ appInfo.getAppDirName();
+            Utility.killProcess(baseDir, getTestType());
+            
             String testResultPath = getFunctionalTestResultPath(appInfo);
             FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
             String testSuitePath = frameworkUtil.getFunctionalTestSuitePath(appInfo);
@@ -1521,6 +1530,11 @@ public class Quality extends DynamicParameterAction implements Constants {
         }
 
         try {
+        	ApplicationInfo appInfo = getApplicationInfo();
+	       	 // TO kill the Process
+        	String baseDir = Utility.getProjectHome()+ appInfo.getAppDirName();
+        	Utility.killProcess(baseDir, getTestType());
+           
             FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
             List<String> testResultsTypes = new ArrayList<String>();
             testResultsTypes.add("server");
@@ -1708,6 +1722,11 @@ public class Quality extends DynamicParameterAction implements Constants {
         }
 
         try {
+        	ApplicationInfo appInfo = getApplicationInfo();
+        	 // TO kill the Process
+            String baseDir = Utility.getProjectHome()+ appInfo.getAppDirName();
+            Utility.killProcess(baseDir, getTestType());
+            
             FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
             List<String> testResultsTypes = new ArrayList<String>();
             testResultsTypes.add("server");
@@ -3101,5 +3120,13 @@ public class Quality extends DynamicParameterAction implements Constants {
 
 	public void setFromTab(String fromTab) {
 		this.fromTab = fromTab;
+	}
+
+	public String getActionType() {
+		return actionType;
+	}
+
+	public void setActionType(String actionType) {
+		this.actionType = actionType;
 	}
 }

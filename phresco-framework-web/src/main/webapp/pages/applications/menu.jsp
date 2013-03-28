@@ -136,7 +136,7 @@
 		<li>
 			<a href="#" class="inactive" name="appTab" id="configuration" additionalParam="fromPage=config"><s:label key="lbl.app.menu.config" theme="simple"/></a>
 			<ul id="thememenu">
-			<%-- <%
+			<%
 				if(optionIds != null && optionIds.contains(FrameworkConstants.THEME_BUILDER_KEY)) {
 			%>
 				<li>
@@ -144,7 +144,7 @@
 				</li>
 			<% 
 				}
-			%> --%>
+			%>	
 			</ul>
 		</li>
 		<%
