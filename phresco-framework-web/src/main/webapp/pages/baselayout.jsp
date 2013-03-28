@@ -109,6 +109,11 @@
 		<!-- jquery editable combobox -->
 		<script src="js/jquery.editable.combobox.js"></script>
 		<script src="js/jss.min.js"></script>
+		
+		<!-- Color picker -->
+		<script type="text/javascript" src="js/bootstrap-colorpicker.js"></script>
+		<link type="text/css" rel="stylesheet" href="css/bootstrap-colorpicker.css"/>
+		
 	</head>
 	<body>
         <%

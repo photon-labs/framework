@@ -149,6 +149,9 @@ public class Configurations extends FrameworkBaseAction {
     private String oldEnvName = "";
     private String csvFiles = "";
     
+    private String css = "";
+    private String themeBuilderFile = "";
+    
 	public String configList() {
 		if (s_debugEnabled) {
 			S_LOGGER.debug("Entering Method Configurations.configList()");
@@ -1833,7 +1836,57 @@ public class Configurations extends FrameworkBaseAction {
 		setReqAttribute(REQ_SCHEDULER_KEY, schedulerKey);
 		return SUCCESS;
 	}
-    
+	
+	public String themeBuilderList() throws PhrescoException {
+		try {
+			ApplicationProcessor applicationProcessor = getApplicationProcessor();
+			List<String> themeBuilderList = applicationProcessor.themeBuilderList(getApplicationInfo());
+
+			if (CollectionUtils.isNotEmpty(themeBuilderList)) {
+				Collections.sort(themeBuilderList, sortValuesInAlphaOrder());
+			}
+
+			setReqAttribute(REQ_THEME_FILES, themeBuilderList);
+		} catch (PhrescoException e) {
+			//TODO: throw error
+		}
+
+		return SUCCESS;
+	}
+
+
+	public String themeBuilderAdd() throws PhrescoException {
+		setReqAttribute(REQ_FROM_PAGE, FROM_PAGE_ADD);
+
+		return SUCCESS;
+	}
+
+	public String themeBuilderEdit() throws PhrescoException {
+		try {
+			ApplicationProcessor applicationProcessor = getApplicationProcessor();
+			org.codehaus.jettison.json.JSONObject jsonObj = applicationProcessor.themeBuilderEdit(getApplicationInfo(), getThemeBuilderFile());
+			setReqAttribute(REQ_FROM_PAGE, FROM_PAGE_EDIT);
+			setReqAttribute(REQ_CSS_JSON, jsonObj);
+		} catch (PhrescoException e) {
+			//TODO: throw error
+		}
+		return SUCCESS;
+	}
+
+	public String themeBuilderSave() throws PhrescoException {
+		try {
+			ApplicationProcessor applicationProcessor = getApplicationProcessor();
+			boolean themeBuilderSaveSuccess = applicationProcessor.themeBuilderSave(getApplicationInfo(), getCss());
+			if (themeBuilderSaveSuccess) {
+				addActionMessage(getText(SUCCESS_THEME_BUILDER_CREATE));
+			}
+		} catch (Exception e) {
+			//TODO: throw error
+		}
+
+		return themeBuilderList();
+	}
+
 	public String getDescription() {
    		return description;
     }
@@ -2305,4 +2358,20 @@ public class Configurations extends FrameworkBaseAction {
     public String getCsvFiles() {
         return csvFiles;
     }
+    
+    public String getCss() {
+		return css;
+	}
+
+	public void setCss(String css) {
+		this.css = css;
+	}
+
+	public String getThemeBuilderFile() {
+		return themeBuilderFile;
+	}
+
+	public void setThemeBuilderFile(String themeBuilderFile) {
+		this.themeBuilderFile = themeBuilderFile;
+	}
 }
