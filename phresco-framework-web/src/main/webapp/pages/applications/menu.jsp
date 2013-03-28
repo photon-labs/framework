@@ -17,6 +17,7 @@
   limitations under the License.
   ###
   --%>
+<%@page import="org.apache.commons.collections.CollectionUtils"%>
 <%@ taglib uri="/struts-tags" prefix="s" %>
 
 <%@ page import="java.util.ArrayList"%>
@@ -157,6 +158,13 @@
 			}
 		%>
 		
+		<%
+			if(CollectionUtils.isNotEmpty(optionIds)) {
+				if(optionIds.contains(FrameworkConstants.UNIT_TEST_KEY) || optionIds.contains(FrameworkConstants.FUNCTIONAL_TEST_KEY)
+				    	|| optionIds.contains(FrameworkConstants.MANUAL_TEST_KEY) || optionIds.contains(FrameworkConstants.PERFORMANCE_TEST_KEY)
+				    	|| optionIds.contains(FrameworkConstants.LOAD_TEST_KEY) ) {
+		%>   		
+		
 		<li>
 			<a href="#" class="inactive" name="appTab" id="quality"><s:label key="lbl.app.menu.quality" theme="simple"/></a>
 			<ul id="testmenu">
@@ -195,6 +203,10 @@
 				%>
 			</ul>
 		</li>
+		<%
+		    		}
+			}
+		%>
 		
 		<%
 			if (optionIds != null && optionIds.contains(FrameworkConstants.CI_KEY)) {
