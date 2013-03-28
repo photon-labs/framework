@@ -619,7 +619,7 @@ function popupOnOk(obj) {
 				} else if (operation == "deploy" ) {
 					ciGoal = "deploy";
 				} else if (operation == "functionalTest") {
-					ciGoal = "functional-"+'<%= functioanlTestTool%>';
+					ciGoal = "functional-test-"+'<%= functioanlTestTool %>';
 				} else if (operation == "performanceTest") {
 					ciGoal = "performance-test";
 				}
