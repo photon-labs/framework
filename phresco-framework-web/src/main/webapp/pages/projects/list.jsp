@@ -232,7 +232,9 @@
 		
     	$('.pdfCreation').click(function() {
     		var params = $(this).attr("additionalParam");
-    		yesnoPopup('showGeneratePdfPopup', '<s:text name="lbl.app.generatereport"/>', 'printAsPdf','<s:text name="lbl.app.generate"/>', '', params);
+    		params = params.concat("&actionType=");
+    		params = params.concat("AllPdfReport");
+    		yesnoPopup('showGeneratePdfPopup', '<s:text name="lbl.app.generatereport"/>', 'printAsPdf','<s:text name="lbl.app.generate"/>', '', params,"pdfReport");
     	});
     	
     	//Trigerred when add btn is clicked
@@ -322,5 +324,11 @@
 			checkError(pageUrl, data);
 		}
 		console.log("success event called !!! ");
+	}
+	
+	//To handle the cancel btn events
+	function popupOnCancel(obj) {
+		var params = $(obj).attr("params");
+		loadContent("killProcess", '', '', params);
 	}
 </script>

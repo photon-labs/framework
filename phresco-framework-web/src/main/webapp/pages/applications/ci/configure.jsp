@@ -593,6 +593,15 @@
 											</div>
 										</div>
 										
+<!-- 										<div class="control-group"> -->
+<!-- 											<label class="control-label labelbold popupLbl"> -->
+<%-- 												<span class="red">* </span> <s:text name='lbl.build.release.file.pattern' /> --%>
+<!-- 											</label> -->
+<!-- 											<div class="controls"> -->
+<%-- 												<input type="text" id="collabNetFileReleasePattern" name="collabNetFileReleasePattern" class="input-xlarge" maxlength="63" title="63 Characters only" value="<%= existingJob == null ? "do_not_checkin/build/*.zip" : existingJob.getCollabNetFileReleasePattern() %>"> --%>
+<!-- 											</div> -->
+<!-- 										</div> -->
+										
 										<div class="control-group">
 											<label class="control-label labelbold popupLbl">
 												<s:text name='lbl.build.release.overwrite' />
@@ -708,6 +717,7 @@
 			showConfigBasedOnTech();
 		});
 		
+// 		enableDisableCollabNet();
 		//to hide/show collabnet based on operation
 		showHideCollabnetAccordion();
 		
@@ -750,7 +760,7 @@
 	}
 	
 	function showHideCollabnetAccordion() {
-		if ($("#operation").val() == 'build') {
+		if ($("#operation").val() == 'build' || $("#operation").val() == 'pdfReport') {
 			$("#collabnetContainer").show();
 		} else {
 			$("#collabnetContainer").hide();
@@ -778,7 +788,7 @@
 		if (isFromCi) {	
 			// ci specification need to be specified
 			mandatoryValidation('runPerformanceTest', $("#generateBuildForm"), '', 'performance-test', 'performance-test');
-		}		
+		}
 		loadContent(url, $('#configureForm, #generateBuildForm'), $('#subcontainer'), getBasicParams(), false, true);
 	}
 	

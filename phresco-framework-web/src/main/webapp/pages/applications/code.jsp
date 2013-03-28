@@ -157,6 +157,9 @@ $('.control-group').addClass("valReportLbl");
 	
 	function popupOnClose(obj) {
 		var closeUrl = $(obj).attr("id");
-		loadContent("code", '', $("#subcontainer"), getBasicParams(), '', true);
+		var params = getBasicParams();
+		params = params.concat("&actionType=");
+		params = params.concat(closeUrl);
+		loadContent("code", '', $("#subcontainer"), params, '', true);
 	}
 </script>
