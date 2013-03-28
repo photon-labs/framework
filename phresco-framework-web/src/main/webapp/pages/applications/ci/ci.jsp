@@ -399,11 +399,13 @@ function deleteCIJob(){
 
 function enableStart() {
     disableButton($("#startJenkins"));
+    disableButton($("#setup"));
     enableButton($("#stopJenkins"));
 }
 
 function enableStop() {
     enableButton($("#startJenkins"));
+    enableButton($("#setup"));
     disableButton($("#stopJenkins"));
 }
 
