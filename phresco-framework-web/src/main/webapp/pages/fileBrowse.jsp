@@ -106,7 +106,7 @@
 				from: '<%= from %>',
 				minifiedFiles: '<%= minifiedFiles %>'
 			}, function(file) {
-				$('#browseSelectedLocation').val(file);
+				$('#browseSelectedLocation').val(removeBackSlash(file));
 			});
 		<%
 			} else {

@@ -314,6 +314,7 @@ function additionalPopup(url, title, okUrl, okLabel, form, additionalParam, show
 	$('.add_popupClose').hide(); //no need close button since yesno popup
 	$('.add_popupOk, #add_popupCancel').show(); // show ok & cancel button
 	$("#add_popupCancel").attr('okurl', okUrl);
+	$("#add_popupClose").attr('okurl', okUrl);
 	$(".add_popupOk").attr('id', okUrl); // popup action mapped to id
 	
 	if (showLocationBox !== undefined && showLocationBox) {//To show selected files location in text box in modal footer(for browse file tree)
@@ -711,6 +712,11 @@ function checkForNumber(inputStr) {
 //It removes all empty spaces
 function removeSpaces(str) {
 	return str.replace(/\s+/g, '');
+}
+
+//To remove Backslash
+function removeBackSlash(str) {
+	return str.replace(/\\/g, '');
 }
 
 function applyTheme() {
