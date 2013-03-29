@@ -243,7 +243,8 @@ if (CollectionUtils.isNotEmpty(defaultfeatures)) {
         	var artifactGroupId = $('#'+id).attr('artifactGroupId');
         	var moduleId = $('#'+id).attr('moduleId');
         	var dispValue = $("#" + id + " option:selected").text();
-        	var canConfigure = Boolean($(this).attr("canConfigure"));
+        	//var canConfigure = Boolean($(this).attr("canConfigure"));
+        	var canConfigure = $(this).attr("canConfigure");
         	var defaultModule =$(this).attr("defaultModule");
         	var isDefault = defaultModule.toLowerCase()=="true"?true:false;
         	constructFeaturesDiv(name, dispName, dispValue, selectedType, hiddenFieldVersion, moduleId, canConfigure,'', isDefault, artifactGroupId, packaging, scope);

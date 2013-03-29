@@ -507,6 +507,20 @@
 				}
 			}
 		});
+		
+		<% 
+			if (FrameworkConstants.REQ_DEPLOY.equals(from)) {
+		%>
+				if($('#executeSql').is(":checked")) {
+					$('#dataBaseControl').show();
+					$('#fetchSqlControl').show();
+				} else {
+					$('#dataBaseControl').hide();
+					$('#fetchSqlControl').hide();
+				}
+		<%
+			}
+		%>
 	}
 	
 	function changeEveDependancyListener(selectedOption, currentParamKey) {
