@@ -452,8 +452,10 @@ public class Features extends DynamicParameterModule {
 		
 		List<CoreOption> appliesTo = artifactGroupInfo.getAppliesTo();
 		for (CoreOption coreOption : appliesTo) {
-		    if (coreOption.getTechId().equals(techId) && !coreOption.isCore()) {
+		    if (coreOption.getTechId().equals(techId) && !coreOption.isCore() && !slctFeature.getType().equals(REQ_JAVASCRIPT_TYPE_MODULE)) {
 		        slctFeature.setCanConfigure(true);
+		    } else {
+		        slctFeature.setCanConfigure(false);
 		    }
 		}
 		List<RequiredOption> appliesToReqird = artifactInfo.getAppliesTo();

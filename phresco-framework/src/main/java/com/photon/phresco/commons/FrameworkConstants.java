@@ -129,6 +129,7 @@ public interface FrameworkConstants {
     String REQ_PARAM_NAME_TABLET = "Tablet";
     String REQ_PARAM_NAME_LAYER_ID = "layerId";
     String REQ_PARAM_NAME_TECH_GROUP_ID = "techGroupId";
+    String REQ_JAVASCRIPT_TYPE_MODULE = "JAVASCRIPT";    
     String REQ_FEATURES_TYPE_MODULE = "FEATURE";
     String REQ_FEATURES_TYPE = "type";
     String REQ_FEATURES_MOD_GRP = "moduleGroup";
@@ -715,6 +716,7 @@ public interface FrameworkConstants {
 	String REQ_REPORT_TYPE = "reportType";
     String REQ_ACTION_TYPE = "actionType";
     String REQ_TEST_EXE = "testExecuted";
+    String CHECK_REPORT_AVAILABILITY = "checkReportAvailability";
     String REQ_REPORT_STATUS = "reportStatus";
     String REQ_REPORT_DELETE_STATUS = "reportDeleteStatus";
     String REQ_SELECTEDPROJECTS = "selectedProjects";

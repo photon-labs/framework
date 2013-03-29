@@ -148,13 +148,12 @@
 									<%
  										if (optionIds != null && optionIds.contains(FrameworkConstants.PROCESS_BUILD)) {
 									%>
-
-												<a class="processBuild" href="#" additionalParam="buildNumber=<%= buildInfo.getBuildNo() %>&appDirectory=<%= appDirectory %>&from=processBuild"><img src="images/icons/commit_icon.png" title="Check-in build"/>
-		                                    	</a>
+											<a class="processBuild" href="#" additionalParam="buildNumber=<%= buildInfo.getBuildNo() %>&appDirectory=<%= appDirectory %>&from=processBuild">
+												<img src="images/icons/commit_icon.png" title="Check-in build"/>
+	                                    	</a>
 									<% 
  			                            }
 									%>
-									
 			              		</td>
 			              		<%
 									if (optionIds != null && optionIds.contains(FrameworkConstants.DEPLOY_KEY)) {
@@ -171,59 +170,6 @@
 									}
 				              	%>
 			              	</tr>	
-			              		<%-- <td style="width: 40%;">
-			              				<% if (TechnologyTypes.JAVA_STANDALONE.contains(technology)) { %>
-			              					<label class="bldLable"><%= buildInfo.getTimeStamp() %></label>
-			              				<% } else { %>
-			              					<label class="bldLable" title="Configured with <%= buildInfo.getEnvironments() %>"><%= buildInfo.getTimeStamp() %></label>
-			              				<% } %>	
-			              		</td>
-			              		<td>
-			              			<a href="<s:url action='downloadBuild'>
-					          		     <s:param name="buildNumber"><%= buildInfo.getBuildNo() %></s:param>
-					          		     <s:param name="projectCode"><%= projectCode %></s:param>
-					          		     </s:url>"><img src="images/icons/download.png" title="<%= buildInfo.getBuildName()%>"/>
-		                            </a>
-		                            
-		                            <% 
-		                            	boolean createIpa = false;
-		                            	boolean deviceDeploy = false;
-		                            	if (TechnologyTypes.IPHONES.contains(technology)) {
-		                            		createIpa = MapUtils.getBooleanValue(buildInfo.getOptions(), "canCreateIpa");
-		                            		deviceDeploy = MapUtils.getBooleanValue(buildInfo.getOptions(), "deviceDeploy");
-		                            		if (createIpa && deviceDeploy)  {
-		                            %>
-		                                <a href="<s:url action='downloadBuildIpa'> 
-		                                  <s:param name="buildNumber"><%= buildInfo.getBuildNo() %></s:param>
-                                          <s:param name="projectCode"><%= projectCode %></s:param>
-                                          </s:url>"><img src="images/icons/downloadipa.jpg" title="ipa Download"/>
-                                    </a>
-                                    <% 		} 
-		                            	}
-		                            %>     
-			              		</td>
-			              		<td>
-			              			<% if (TechnologyTypes.NODE_JS_WEBSERVICE.equals(technology)) { %>
-										<!-- By default disable all Run buttons under builds -->
-				       	  				<!-- <input type="button" value="Run" id="<%= buildInfo.getBuildNo() %>" name="<%= buildInfo.getBuildNo() %>" class="btn disabled" disabled="disabled" onClick="startNodeJS(this);"> -->
-				       	  			<% } else if (TechnologyTypes.ANDROIDS.contains(technology)) { %>
-		                                <a id="buildNumberHref#<%= buildInfo.getBuildNo() %>" href="#" value="<%= buildInfo.getBuildNo() %>" onClick="deployAndroid(this);">
-		                                    <img src="images/icons/deploy.png" />
-		                                </a>
-		                            <% } else if (TechnologyTypes.IPHONES.contains(technology) && createIpa && deviceDeploy) { %>
-		                                <a id="buildNumberHref#<%= buildInfo.getBuildNo() %>" href="#" value="<%= buildInfo.getBuildNo() %>" onClick="deploy(this);">
-		                                 <img src="images/icons/deploy.png" />  
-		                                </a>    
-		                            <% } else if (TechnologyTypes.IPHONES.contains(technology)) { %>
-		                                <a id="buildNumberHref#<%= buildInfo.getBuildNo() %>" href="#" value="<%= buildInfo.getBuildNo() %>" onClick="deployIphone(this);">
-		                                 <img src="images/icons/deploy.png" />  
-		                                </a>   
-		                            <% } else if (!TechnologyTypes.JAVA_STANDALONE.contains(technology)) { %>
-				       	  				<a id="buildNumberHref#<%= buildInfo.getBuildNo() %>" buildName="<%=buildInfo.getBuildName() %>" href="#" value="<%= buildInfo.getBuildNo() %>" onClick="generateBuild('<%= projectCode %>', 'deploy', this);">			       	  				
-				       	  					<img src="images/icons/deploy.png" />
-				       	  				</a>
-				       	  			<% } %>
-			              		</td> --%>
 			            <%
 							}
 						%>	
