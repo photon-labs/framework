@@ -23,11 +23,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.net.ConnectException;
-import java.net.HttpURLConnection;
-import java.net.InetAddress;
-import java.net.URL;
-import java.net.URLConnection;
+import java.net.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -94,6 +90,8 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 	private String senderEmailPassword = null;
 	private int totalBuildSize;
 	boolean buildInProgress = false;
+	private String contentType = null;
+	private String fileType = null;
 
 	private List<String> triggers = null;
 	private String buildNumber = null;
@@ -734,6 +732,8 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 					attacheMentPattern = testTypeParam;
 				}
 				
+				// enable archiving
+				existJob.setEnableArtifactArchiver(true);
 				String attachPattern = "do_not_checkin/archives/" + attacheMentPattern + "/*.pdf";
 				existJob.setAttachmentsPattern(attachPattern); //do_not_checkin/archives/cumulativeReports/*.pdf
 				// if the enable build release option is choosed in UI, the file pattenr value will be used
@@ -1277,17 +1277,25 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 			ApplicationInfo appInfo = getApplicationInfo();
 			CIJob existJob = ciManager.getJob(appInfo, downloadJobName);
 			// Get it from web path
+			buildDownloadUrl = buildDownloadUrl.replace(" ", "%20");
 			URL url = new URL(buildDownloadUrl);
 			if (debugEnabled) {
 				S_LOGGER.debug("Entering Method CI.CIBuildDownload() buildDownloadUrl " + buildDownloadUrl);
 			}
 			fileInputStream = url.openStream();
 			fileName = existJob.getName();
-			return SUCCESS;
+			if (BUILD.equals(existJob.getOperation())) {
+    			setContentType("application/octet-stream");
+    			setFileType("zip");
+    		} else if (PDF_REPORT.equals(existJob.getOperation())) {
+    			setContentType("application/octet-stream");
+    			setFileType("pdf");
+    		}
 		} catch (Exception e) {
 			S_LOGGER.error("Entered into catch block of CI.CIBuildDownload()" + FrameworkUtil.getStackTraceAsString(e));
 			return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_CI_BUILD_DOWNLOAD_NOT_AVAILABLE));
 		}
+		return SUCCESS;
 	}
 
 	public String numberOfJobsIsInProgress() {
@@ -1706,5 +1714,21 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 
 	public void setDownStreamAvailable(boolean isDownStreamAvailable) {
 		this.isDownStreamAvailable = isDownStreamAvailable;
+	}
+
+	public String getContentType() {
+		return contentType;
+	}
+
+	public void setContentType(String contentType) {
+		this.contentType = contentType;
+	}
+
+	public String getFileType() {
+		return fileType;
+	}
+
+	public void setFileType(String fileType) {
+		this.fileType = fileType;
 	}
 }
