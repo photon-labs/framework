@@ -119,6 +119,7 @@
         <%
             User user = (User) session.getAttribute(FrameworkConstants.SESSION_USER_INFO);
         	String customerId = (String)session.getAttribute(user.getId());
+        	List<Customer> customers  = (List<Customer>) session.getAttribute(FrameworkConstants.SESSION_CUSTOMERS);
             String displayName = user.getDisplayName();
         %>
 		<div class="modal-backdrop fade in popupalign"></div>
@@ -227,13 +228,12 @@
 						</a>
 					</div>
 					
-					<form id="formCustomers" class="form">
+					<form id="formCustomers" class="form <%= customers.size() > 1 ? "" : "hideContent" %>">
 						<div id="customerList" class="control-group customer_name">
 							<s:label key="lbl.customer" cssClass="control-label custom_label labelbold" theme="simple"/>
 							<div class="controls customer_select_div">
 								<select id="customerSelect" name="customerSelect" class="customer_listbox">
 					                <%
-					                	List<Customer> customers  = (List<Customer>) session.getAttribute(FrameworkConstants.SESSION_CUSTOMERS);
 				                    	for (Customer customer: customers) {
 								    %>
 					                       <option value="<%= customer.getId() %>"><%= customer.getName()%></option>
