@@ -54,6 +54,11 @@
 		    if (Type.COMPONENT.equals(artifactGroup.getType())) {
 		        canConfigure = true;
 		    }
+		    
+		    if (Type.JAVASCRIPT.equals(artifactGroup.getType())) {
+		        canConfigure = false;
+		    }
+		    
 		    String artifactGrpName = artifactGroup.getName().replaceAll("\\s","");
 %>
 		<div  class="accordion_panel_inner">
