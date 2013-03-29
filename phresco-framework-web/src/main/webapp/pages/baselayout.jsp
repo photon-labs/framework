@@ -329,7 +329,7 @@
 			
 			</div>
 			<div class="modal-footer">
-				<input type="button" class="btn btn-primary" id="popupCancel" onClick="popupOnCancel(this);" value="<s:text name='lbl.btn.cancel'/>" data-dismiss="modal" href="#"/>
+				<input type="button" class="btn btn-primary popupCancel" id="" onClick="popupOnCancel(this);" value="<s:text name='lbl.btn.cancel'/>" data-dismiss="modal" href="#"/>
 				<input type="button" class="btn btn-primary popupOk" id="" onClick="popupOnOk(this);" value="<s:text name='lbl.btn.ok'/>" href="#"/>
 				<input type="button" class="btn btn-primary popupClose" id="" onClick="popupOnClose(this);" value="<s:text name='lbl.btn.close'/>" data-dismiss="modal" href="#"/>
 				<div class="popuploadingIcon" id="popuploadingIcon"></div>

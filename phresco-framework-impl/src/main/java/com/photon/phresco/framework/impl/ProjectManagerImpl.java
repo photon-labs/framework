@@ -231,9 +231,10 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 						ApplicationProcessor applicationProcessor = dynamicLoader.getApplicationProcessor(applicationHandler.getClazz());
 						applicationProcessor.postCreate(appInfo);
 					}
-					if(isCallEclipsePlugin(appInfo)) {
-						Utility.executeStreamconsumer(MVN_COMMAND + STR_BLANK_SPACE + MVN_GOAL_ECLIPSE, Utility.getProjectHome() + File.separator + appInfo.getAppDirName(), "", "");
+					if (isCallEclipsePlugin(appInfo)) {
+					    Utility.executeCommand(MVN_COMMAND + STR_BLANK_SPACE + MVN_GOAL_ECLIPSE, Utility.getProjectHome() + File.separator + appInfo.getAppDirName());
 					}
+
 				}
 			} catch (FileNotFoundException e) {
 				throw new PhrescoException(e); 
@@ -335,13 +336,13 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 	
 						File projectInfoPath = new File(dotPhrescoPathSb.toString() + PROJECT_INFO_FILE);
 						ProjectUtils.updateProjectInfo(projectInfo, projectInfoPath);// To update the project.info file
-	
 					}
+					if (isCallEclipsePlugin(appInfo)) {
+                        Utility.executeCommand(MVN_COMMAND + STR_BLANK_SPACE + MVN_GOAL_ECLIPSE, Utility.getProjectHome() + File.separator + appInfo.getAppDirName());
+                    }
 				} catch (FileNotFoundException e) {
-					e.printStackTrace();
 					throw new PhrescoException(e);
 				} catch (IOException e) {
-					e.printStackTrace();
 					throw new PhrescoException(e);
 				} finally {
 					if(backUpProjectInfoFile!= null && backUpProjectInfoFile.exists()) {

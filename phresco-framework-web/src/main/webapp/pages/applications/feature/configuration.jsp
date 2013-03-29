@@ -111,24 +111,31 @@
 	function popupOnOk(obj) {
 		var url = $(obj).attr("id");
 		if (url === "configureFeature") {
-			var form = $('#formConfigTempProp').serializeArray();
-			var key = form[0].value;
-			var value = form[1].value;
-			if (!isBlank(key) && !isBlank(value)) {
-				showLoadingIcon();
+			var hasError = false;
+			$("input[name=key]").each(function(i) {
+				var key = $(this).val();
+				var value = $("input[name=value]:eq(" + i + ")").val();
+				if (!isBlank(key) && isBlank(value)) {
+					$("input[name=value]:eq(" + i + ")").focus();
+					$("#errMsg").html("value is missing");
+					setTimeOut();
+					hasError = true;
+					return false;
+				} else if (!isBlank(value) && isBlank(key)) {
+					$(this).focus();
+					$("#errMsg").html("key is missing");
+					setTimeOut();
+					hasError = true;
+					return false;
+				}
+			});
+			if (!hasError) {
 				$('#popupPage').modal('hide');//To hide the popup
+				showLoadingIcon();
 				var params = getBasicParams();
 				params = params.concat("&featureType=");
 		  		params = params.concat("<%= featureType %>");
 				loadContent(url, $('#formConfigTempProp'), $("#subcontainer"), params, true);
-			} else {
-				if(isBlank(key)) {
-					$("#errMsg").html("key is missing");
-					setTimeOut();
-				} else {
-					$("#errMsg").html("value is missing");
-					setTimeOut();
-				}
 			}
 		}
 	}
