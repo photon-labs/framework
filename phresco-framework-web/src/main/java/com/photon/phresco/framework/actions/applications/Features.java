@@ -328,8 +328,8 @@ public class Features extends DynamicParameterModule {
 		dotPhrescoPathSb.append(File.separator);
 		dotPhrescoPathSb.append(DOT_PHRESCO_FOLDER);
 		dotPhrescoPathSb.append(File.separator);
-		String pluginInfoFile1 = dotPhrescoPathSb.toString() + "project.info";
-		BufferedReader bufferedReader = new BufferedReader(new FileReader(pluginInfoFile1));
+		String projectInfoFile = dotPhrescoPathSb.toString() + PROJECT_INFO;
+		BufferedReader bufferedReader = new BufferedReader(new FileReader(projectInfoFile));
 		Type type = new TypeToken<ProjectInfo>() {}.getType();
 		Gson gson = new Gson();
 		ProjectInfo projectinfo = gson.fromJson(bufferedReader, type);

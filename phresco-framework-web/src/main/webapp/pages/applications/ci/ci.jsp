@@ -399,11 +399,13 @@ function deleteCIJob(){
 
 function enableStart() {
     disableButton($("#startJenkins"));
+    disableButton($("#setup"));
     enableButton($("#stopJenkins"));
 }
 
 function enableStop() {
     enableButton($("#startJenkins"));
+    enableButton($("#setup"));
     disableButton($("#stopJenkins"));
 }
 
@@ -619,7 +621,7 @@ function popupOnOk(obj) {
 				} else if (operation == "deploy" ) {
 					ciGoal = "deploy";
 				} else if (operation == "functionalTest") {
-					ciGoal = "functional-"+'<%= functioanlTestTool%>';
+					ciGoal = "functional-test-"+'<%= functioanlTestTool %>';
 				} else if (operation == "performanceTest") {
 					ciGoal = "performance-test";
 				}
