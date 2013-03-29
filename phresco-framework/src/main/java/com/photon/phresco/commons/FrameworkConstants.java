@@ -191,6 +191,7 @@ public interface FrameworkConstants {
     String CI_PROFILE = "-Pci clean ";
     String CI_FUNCTIONAL_ADAPT = "-Pci ci:adapt ";
     String CI_ZIP = ".zip\"";
+    String CI_PDF = ".pdf\"";
     String TIMER_TRIGGER = "TimerTrigger";
     String CLASS = "class";
     String SCM = "scm";
