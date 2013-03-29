@@ -36,9 +36,10 @@
 		$('.hideClipBoardImage').show();
 		$('.popupClose').hide(); //no need close button since yesno popup
 		$(".popupOk").attr("value", "<s:text name="label.sent.report"/>");
-		$('.popupOk, #popupCancel').show(); // show ok & cancel button
+		$('.popupOk, .popupCancel').show(); // show ok & cancel button
 		$('.modal-body').html($('#trace').html());
 		$('#popupPage').modal('show');
+		$('.popupCancel').attr('id', "errorReport"); 
 		hidePopuploadingIcon();
 	});
 	
@@ -69,13 +70,25 @@
 		copyToClipboard($('#popup_div').text());
 	});
 	
-	$("#popupCancel, .close").click(function() {
+	/* $("#popupCancel, .close").click(function() {
 		var params = getBasicParams(); 
 		loadContent('applications','', $('#container'), params);
 		$("#successMsg").empty();
 		$(".popupOk").attr("disabled", false);
 		$(".popupOk").addClass("btn-primary");
 		$('.hideClipBoardImage').hide();
-    });
+    }); */
+	
+	function popupOnCancel(obj) {
+    	var url = $(obj).attr("id");
+    	if (url === "errorReport") {
+			var params = getBasicParams(); 
+			loadContent('applications','', $('#container'), params);
+			$("#successMsg").empty();
+			$(".popupOk").attr("disabled", false);
+			$(".popupOk").addClass("btn-primary");
+			$('.hideClipBoardImage').hide();
+    	}
+	}
 	
 </script>
