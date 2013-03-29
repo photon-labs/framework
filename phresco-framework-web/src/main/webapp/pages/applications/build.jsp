@@ -345,4 +345,9 @@
 			$(".minus_icon").hide();
 		}
 	}
+	
+	
+	function popupOnCancel(obj) {
+		$("#popupPage").modal('hide');
+	}
 </script>

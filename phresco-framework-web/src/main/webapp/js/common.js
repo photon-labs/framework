@@ -296,7 +296,7 @@ function yesnoPopup(url, title, okUrl, okLabel, form, additionalParam) {
 		data = data.concat("&");
 		data = data.concat(additionalParam);
 	}
-	$('#popupCancel').attr('params', data);//To set the params in the temp attr of the cancel btn
+	$('.popupCancel').attr('params', data);//To set the params in the temp attr of the cancel btn
 	$("#updateMsg").empty();
 	$("#errMsg").empty();
 	$('#successMsg').empty();
