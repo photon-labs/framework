@@ -93,12 +93,26 @@
 		<div class="featureImage">
 			<img id="allFeatures" title="<s:text name="title.selected.modules"/>" src="images/all.png">
 			<span class="bubbleAll"></span>
+			<%
+		 		if (hasModules) {
+	 		%>
 			<img id="selectModules" title="<s:text name="title.selected.modules"/>" src="images/features.png">
 			<span class="bubbleModule"></span>
+			<%
+		 		}
+		 		if (hasJsLibs) {
+            %>
 			<img id="selectJsLibs" title="<s:text name="title.selected.jsLibs"/>" src="images/libraries.png">
 			<span class="bubbleJsLibs"></span>
+			  <%
+		 		}
+		 		if (hasComponents) {
+            %>
 			<img id="selectComponents" title="<s:text name="title.selected.components"/>" src="images/components.png">
 			<span class="bubbleComponenet"></span>
+			 <%
+		 		}
+            %>
 		</div>
 	</div>
 	<div class="custom_features">

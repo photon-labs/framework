@@ -229,13 +229,6 @@ public class Projects extends FrameworkBaseAction {
             if (CollectionUtils.isNotEmpty(techInfos)) {
                 for (TechnologyInfo techInfo : techInfos) {
                     if (techInfo.getId().equals(techId)) {
-                    	String findPlatform = FrameworkUtil.findPlatform();
-                    	if (techInfo.getId().equals("tech-win-phone") && findPlatform.equals("Windows86") || findPlatform.equals("Windows32")) {
-                    		List<String> techVersions = techInfo.getTechVersions();
-                    		if (techVersions.contains("8.0")) {
-                    			techInfo.getTechVersions().remove("8.0");
-                    		}
-                    	}
                         setVersions(techInfo.getTechVersions());
                         break;
                     }

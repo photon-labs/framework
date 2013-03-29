@@ -423,4 +423,8 @@ $(document).ready(function() {
 			$(".yesNoPopupErr").empty();
 		}
 	}	
+	
+	function popupOnCancel(obj) {
+		$("#popupPage").modal('hide');
+	}
 </script>

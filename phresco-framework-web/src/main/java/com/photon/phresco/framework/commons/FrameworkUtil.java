@@ -1876,7 +1876,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 	                    rowIterator = mySheet.rowIterator();
 	                	numCol = 13;
 	        			Row next;
-	        			for (Cell cell : mySheet.getRow((mySheet.getLastRowNum()) - 2)) {
+	        			for (Cell cell : mySheet.getRow((mySheet.getLastRowNum()) - 4)) {
 	        				tryStyle[cellno] = cell.getCellStyle();
 	        				cellno = cellno + 1;
 	        			}
@@ -1886,7 +1886,6 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 	        				next = rowIterator.next();
 	        				if (mySheet.getSheetName().equalsIgnoreCase("Index")
 	        						&& ((mySheet.getLastRowNum() - next.getRowNum()) < 3)) {
-
 	        					for (Cell cell : next) {
 	        						cell.setCellType(1);
 	        						if (cell.getStringCellValue().equalsIgnoreCase("total")) {
@@ -1909,14 +1908,17 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 	        			}
         				for (int i = 0; i < numCol; i++) {
         					Cell cell = r.createCell(i);
-        					cell.setCellValue(cellValue[i]);
-        					// used only when sheet is 'index'
-        					if (i == 2)
-        						sheetName = cellValue[i];
-
-        					cell.setCellStyle(tryStyle[i]);
+        					if(StringUtils.isNotEmpty(cellValue[i])) {
+	        					cell.setCellValue(cellValue[i]);
+	        					// used only when sheet is 'index'
+	        					if (i == 2) {
+	        						sheetName = cellValue[i];
+	        					}
+	        					if (tryStyle[i] != null) {
+	        						cell.setCellStyle(tryStyle[i]);
+	        					}
+        					}
         				}
-	        						
 	        			if (mySheet.getSheetName().equalsIgnoreCase("Index")) {
 	        				Sheet fromSheet = myWorkBook.getSheetAt((myWorkBook
 	        						.getNumberOfSheets() - 1));
@@ -1929,6 +1931,9 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 	        				String newSheetValue[] = new String[100];
 	        				do {
 	        					fromRow = copyFrom.next();
+	        					if (fromRow.getRowNum() == 24) {
+									break;
+								}
 	        					toRow = toSheet.createRow(i);
 	        					int numCell = 0;
 	        					for (Cell cell : fromRow) {
@@ -1964,7 +1969,6 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
    	        	}
 
 		} catch (Exception e) {
-			//e.printStackTrace();
 		}
 	}
 	
@@ -2094,92 +2098,93 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
      	            HSSFSheet mySheet;
    	     	        int numberOfSheets = myWorkBook.getNumberOfSheets();
 			         for (int j = 0; j < numberOfSheets; j++) {
-			        	 mySheet = myWorkBook.getSheetAt(j);
-			        	 if(mySheet.getSheetName().equals(testSuiteName)) {
-							rowIterator = mySheet.rowIterator();
-							Row next;
-							for (Cell cell : mySheet.getRow((mySheet.getLastRowNum()) - 2)) {
-								tryStyle[cellno] = cell.getCellStyle();
-								cellno = cellno + 1;
-							}
-							float totalPass = 0;
-	    					float totalFail = 0;
-	    					float notExecuted = 0;
-	    					float totalTestCases = 0;
-	    					
-							do {
-								next = rowIterator.next();
-								if (StringUtils.isNotEmpty(getValue(next.getCell(1))) && !getValue(next.getCell(0)).equalsIgnoreCase("S.NO")) {
-									String value = getValue(next.getCell(10));
-									if (StringUtils.isNotEmpty(value)) {
-										if (value.equalsIgnoreCase("pass") || value.equalsIgnoreCase("success")) {
-											totalPass = totalPass + 1;
-										} else if(value.equalsIgnoreCase("fail") || value.equalsIgnoreCase("failure")) {
-											totalFail = totalFail + 1;
-										} 
-									}else {
-										notExecuted = notExecuted + 1;
+							HSSFSheet myHssfSheet = myWorkBook.getSheetAt(j);
+							if(myHssfSheet.getSheetName().equals(testSuiteName)) {
+								rowIterator = myHssfSheet.rowIterator();
+								Row next;
+								for (Cell cell : myHssfSheet.getRow((myHssfSheet.getLastRowNum()) - 2)) {
+									tryStyle[cellno] = cell.getCellStyle();
+									cellno = cellno + 1;
+								}
+								float totalPass = 0;
+		    					float totalFail = 0;
+		    					float notExecuted = 0;
+		    					float totalTestCases = 0;
+								do {
+									next = rowIterator.next();
+									if (StringUtils.isNotEmpty(getValue(next.getCell(1))) && !getValue(next.getCell(0)).equalsIgnoreCase("S.NO")) {
+										String value = getValue(next.getCell(10));
+										if (StringUtils.isNotEmpty(value)) {
+											if (value.equalsIgnoreCase("pass") || value.equalsIgnoreCase("success")) {
+												totalPass = totalPass + 1;
+											} else if(value.equalsIgnoreCase("fail") || value.equalsIgnoreCase("failure")) {
+												totalFail = totalFail + 1;
+											} 
+										}else {
+											notExecuted = notExecuted + 1;
+										}
+									}
+								} while (rowIterator.hasNext());
+								//to update the status in the index page 
+								if (status.equalsIgnoreCase("pass") || status.equalsIgnoreCase("success")) {
+									totalPass = totalPass + 1;
+								} else if (status.equalsIgnoreCase("fail") || status.equalsIgnoreCase("failure")) {
+									totalFail = totalFail + 1;
+								} else {
+									notExecuted = notExecuted + 1;
+								}
+								totalTestCases = totalPass + totalFail + notExecuted;
+								HSSFSheet mySheetHssf = myWorkBook.getSheetAt(0);
+								rowIterator = mySheetHssf.rowIterator();
+								 for (int i = 0; i <=2; i++) {
+										rowIterator.next();
+									}
+				                    while (rowIterator.hasNext()) {
+				                		Row next1 = rowIterator.next();
+				                		if (StringUtils.isNotEmpty(getValue(next1.getCell(2))) && !getValue(next1.getCell(2)).equalsIgnoreCase("Total")) {
+				                			TestSuite createObject = createObject(next1);
+				                        	if (createObject.getName().equals(testSuiteName)) {
+				    	         				Cell successCell=next1.getCell(3);
+				    	         				int pass = (int)totalPass;
+				    	         				successCell.setCellValue(pass);
+				    	         				
+				    	         				Cell failureCell=next1.getCell(4);
+				    	         				int fail = (int)totalFail;
+				    	         				failureCell.setCellValue(fail);
+				    	         				
+				    	         				Cell notExeCell=next1.getCell(6);
+				    	         				int notExe = (int)notExecuted;
+				    	         				notExeCell.setCellValue(notExe);
+				    	         				
+				    	         				Cell totalCell=next1.getCell(8);
+				    	         				int totalTests = (int)totalTestCases;
+				    	         				totalCell.setCellValue(totalTests);
+				    	         			   
+				    	         			}
+				                		}
+				                    }
+								
+								Row r = null;
+								if (myHssfSheet.getSheetName().equalsIgnoreCase("Index")) {
+									r = myHssfSheet.createRow(next.getRowNum() - 1);
+								
+								} else {
+									r = myHssfSheet.createRow(next.getRowNum() + 1);
+								}
+								for (int i = 0; i < numCol; i++) {
+									Cell cell = r.createCell(i);
+									cell.setCellValue(cellValue[i]);
+									if (tryStyle[i] != null) {
+										cell.setCellStyle(tryStyle[i]);
 									}
 								}
-							} while (rowIterator.hasNext());
-							//to update the status in the index page
-							if (status.equalsIgnoreCase("pass") || status.equalsIgnoreCase("success")) {
-								totalPass = totalPass + 1;
-							} else if (status.equalsIgnoreCase("fail") || status.equalsIgnoreCase("failure")) {
-								totalFail = totalFail + 1;
-							} else {
-								notExecuted = notExecuted + 1;
+								FileOutputStream fileOut = new FileOutputStream(sb.toString());
+								myWorkBook.write(fileOut);
+								myInput.close();
+								fileOut.close();
 							}
-							totalTestCases = totalPass + totalFail + notExecuted;
-							HSSFSheet mySheet1 = myWorkBook.getSheetAt(j);
-							rowIterator = mySheet1.rowIterator();
-							 for (int i = 0; i <=2; i++) {
-									rowIterator.next();
-								}
-		                    while (rowIterator.hasNext()) {
-		                		Row next1 = rowIterator.next();
-		                		if (StringUtils.isNotEmpty(getValue(next1.getCell(2))) && !getValue(next1.getCell(2)).equalsIgnoreCase("Total")) {
-		                			TestSuite createObject = createObject(next1);
-		                        	if (createObject.getName().equals(testSuiteName)) {
-		    	         				Cell successCell=next1.getCell(3);
-		    	         				int pass = (int)totalPass;
-		    	         				successCell.setCellValue(pass);
-		    	         				
-		    	         				Cell failureCell=next1.getCell(4);
-		    	         				int fail = (int)totalFail;
-		    	         				failureCell.setCellValue(fail);
-		    	         				
-		    	         				Cell notExeCell=next1.getCell(6);
-		    	         				int notExe = (int)notExecuted;
-		    	         				notExeCell.setCellValue(notExe);
-		    	         				
-		    	         				Cell totalCell=next1.getCell(8);
-		    	         				int totalTests = (int)totalTestCases;
-		    	         				totalCell.setCellValue(totalTests);
-		    	         			   
-		    	         			}
-		                		}
-		                    }
-			                    
-							Row r = null;
-							if (mySheet.getSheetName().equalsIgnoreCase("Index")) {
-								r = mySheet.createRow(next.getRowNum() - 1);
-							
-							} else {
-								r = mySheet.createRow(next.getRowNum() + 1);
-							}
-							for (int i = 0; i < numCol; i++) {
-								Cell cell = r.createCell(i);
-								cell.setCellValue(cellValue[i]);
-							
-								cell.setCellStyle(tryStyle[i]);
-							}
-							FileOutputStream fileOut = new FileOutputStream(sb.toString());
-							myWorkBook.write(fileOut);
-							myInput.close();
-							fileOut.close();
+				        	 	
 						}
-        			}
                 }
    	        }
 		} catch (Exception e) {
