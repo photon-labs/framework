@@ -1,23 +1,22 @@
 <%--
-  ###
-  Framework Web Archive
-  
-  Copyright (C) 1999 - 2012 Photon Infotech Inc.
-  
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-  
-       http://www.apache.org/licenses/LICENSE-2.0
-  
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
-  ###
-  --%>
-  
+
+    Framework Web Archive
+
+    Copyright (C) 1999-2013 Photon Infotech Inc.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+--%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.util.ArrayList"%>
@@ -531,6 +530,13 @@
 		additionalPopup('authenticateServer','Add Certificate', 'addCertificate', 'Add', '', params, true);
  	}
 	
+	function browseDeployDir() {
+		var params = "fromDeployDir=";
+		params = params.concat("deploy_dir");
+		params = params.concat("&fileOrFolder=All");
+		additionalPopup('openBrowseFileTree','Browse', 'addDeployDir', 'Add', '', params, true);
+	}
+	
 	function successEvent(pageUrl, data) {
 		//To fill the versions 
 		if (pageUrl == "fetchProjectInfoVersions") {
@@ -542,18 +548,28 @@
 				disableUploadButton($(".file-uploader"));
 				enableButton($("#validateContent, #validateTheme"));
 				for (i in data.uploadedFiles) {
-					var split = data.uploadedFiles[i].split('\\');
-					$(".file-uploader").each(function() {
-						var propTempName = $(this).attr("propTempName");
-						var fileName = split[1];
-						if (propTempName === split[0]) {
-							var li = '<li class="qq-upload-success"><span class="qq-upload-file">' + fileName + '</span>' +
-						                '<img class="qq-upload-remove" src="images/icons/delete.png" style="cursor:pointer;" alt="Remove" '+
-						                'eleAttr="file-uploader" fileName="'+ fileName +'" onclick="removeUploadedFile(this);"/>' + 
-						                '<input type="hidden" value="' + fileName + '" class="hidden-fileName" propName="' + propTempName + '" \></li>';
-							$(this).children().children(".qq-upload-list").append(li);
-						}
-					});
+					var file = data.uploadedFiles[i];
+					var frontSlashSplit = file.split("/");
+					var length = 0;
+					if (frontSlashSplit != undefined) {
+						length = frontSlashSplit.length;						
+					}
+					if (length > 2) {
+						var fileName = file.substring(file.lastIndexOf ("/") + 1, file.length);
+						$(".file-uploader").each(function() {
+							var propTempName = $(this).attr("propTempName");
+							addedFileList(fileName, propTempName);
+						});
+					} else {
+						var split = file.split('/');
+						$(".file-uploader").each(function() {
+							var propTempName = $(this).attr("propTempName");
+							var fileName = split[1];
+							if (propTempName === split[0]) {
+								addedFileList(fileName, propTempName);
+							}
+						});
+					}
 				}
 			}
 		}
@@ -677,5 +693,13 @@
 			params = params.concat(selectedType);
 			loadContent("listUploadedFiles", '', '', params, true, true);
 		}
+	}
+	
+	function addedFileList(fileName, propTempName) {
+		var li = '<li class="qq-upload-success"><span class="qq-upload-file">' + fileName + '</span>' +
+	        '<img class="qq-upload-remove" src="images/icons/delete.png" style="cursor:pointer;" alt="Remove" '+
+	        'eleAttr="file-uploader" fileName="'+ fileName +'" onclick="removeUploadedFile(this);"/>' + 
+	        '<input type="hidden" value="' + fileName + '" class="hidden-fileName" propName="' + propTempName + '" \></li>';
+		$(".file-uploader").children().children(".qq-upload-list").append(li);
 	}
 </script>

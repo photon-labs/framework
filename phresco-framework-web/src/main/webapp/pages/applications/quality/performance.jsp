@@ -1,23 +1,22 @@
 <%--
-  ###
-  Framework Web Archive
-  
-  Copyright (C) 1999 - 2012 Photon Infotech Inc.
-  
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-  
-       http://www.apache.org/licenses/LICENSE-2.0
-  
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
-  ###
-  --%>
 
+    Framework Web Archive
+
+    Copyright (C) 1999-2013 Photon Infotech Inc.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+--%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.io.File"%>
@@ -219,7 +218,10 @@
        
 	//To check for the performance test result 
     function isResultFileAvailbale() {
-    	loadContent('performanceTestResultAvail', '', '', getBasicParams(), true, true);
+    	var params = getBasicParams();
+    	params = params.concat("&testType=");
+    	params = params.concat('<%= FrameworkConstants.PERFORMACE %>');
+    	loadContent('performanceTestResultAvail', '', '', params, true, true);
     }
     
 	//To get the test result files
@@ -343,52 +345,16 @@
 		} else if (okUrl === "runPerformanceTest") {
 			mandatoryValidation(okUrl, $("#generateBuildForm"), '', 'performance-test', 'performance-test');
 		}
-	}
-	
-	 function templateMandatoryVal() {
-		var testAgainst = $("#testAgainst").val();
-		var redirect = false;
-		
-		if (testAgainst != undefined && (testAgainst == "server" || testAgainst == "webservice")) {
-			redirect = contextUrlsMandatoryVal();
-		} else if (testAgainst != undefined && testAgainst == "database") {
-			redirect = dbContextUrlsMandatoryVal();
-		} else if (testAgainst == undefined) {
-			$('.yesNoPopupErr').empty();
-			runPerformanceTest();
-		}
-	
-		if (redirect) {
-			$('.yesNoPopupErr').empty();
-			runPerformanceTest();
-		}
-	} 
-	
-	function runPerformanceTest() {
-		var formJsonObject = $('#generateBuildForm').toJSON();
-		var formJsonStr = JSON.stringify(formJsonObject);
-		var templateFunction = new Array();
-		var templateCsvFn = $("#stFileFunction").val();
-		var jsonStr = "";
-		var templJsonStr = "";
-		var sep = "";
-		if (templateCsvFn != undefined && !isBlank(templateCsvFn)) {
-			templateFunction = templateCsvFn.split(",");
-			for (i = 0; i < templateFunction.length; ++i) {
-				jsonStr = window[templateFunction[i]]();
-				templJsonStr = templJsonStr + sep + jsonStr;
-				sep = ",";
-			}
-		}
-		formJsonStr = formJsonStr.slice(0,formJsonStr.length-1);
-		formJsonStr = formJsonStr + ',' + templJsonStr + '}';
-		$("#resultJson").val(formJsonStr);
-		$('#popupPage').modal('hide');
-		var params = getBasicParams();
-		progressPopupAsSecPopup('runPerformanceTest', '<%= appId %>', "performance-test", $('#generateBuildForm'), params, '');
-	}
+	}	 
 	
 	function popupOnClose(obj) {
 		isResultFileAvailbale();
+	}
+	
+	function popupOnCancel(obj) {
+		var params = getBasicParams();
+		params = params.concat("&actionType=");
+		params = params.concat("performancePdfReport");
+		loadContent("killProcess", '', '', params);
 	}
 </script>

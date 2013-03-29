@@ -1,21 +1,19 @@
-/*
- * ###
+/**
  * Framework Web Archive
- * 
- * Copyright (C) 1999 - 2012 Photon Infotech Inc.
- * 
+ *
+ * Copyright (C) 1999-2013 Photon Infotech Inc.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ###
  */
 package com.photon.phresco.framework.actions.applications;
 
@@ -72,6 +70,7 @@ import com.phresco.pom.exception.PhrescoPomException;
 import com.phresco.pom.model.Scm;
 import com.phresco.pom.util.PomProcessor;
 
+
 public class Applications extends FrameworkBaseAction {
 
     private static final long serialVersionUID = -4282767788002019870L;
@@ -106,9 +105,12 @@ public class Applications extends FrameworkBaseAction {
     private String defaultOptTxt = "";
     private String action = "";
     private List<String> jsonData = null;
-    
+    private boolean isRepoExist;
     private String actionType = "";
-    
+    private String customerId = "";
+    private String projectId = "";
+    private String appId = "";
+
     public String loadMenu() {
         if (s_debugEnabled) {
             S_LOGGER.debug("Entering Method  Applications.loadMenu()");
@@ -136,11 +138,16 @@ public class Applications extends FrameworkBaseAction {
             S_LOGGER.debug("Entering Method  Applications.editApplication()");
         }
         
-        removeSessionAttribute(getAppId() + SESSION_APPINFO);
+        try {
+            removeSessionAttribute(getAppId() + SESSION_APPINFO);
+            updateLatestProject();
+        } catch (PhrescoException e) {
+            // TODO: handle exception
+        } 
         
         return appInfo();
     }
-
+    
     public String appInfo() {
         if (s_debugEnabled) {
             S_LOGGER.debug("Entering Method  Applications.appInfo()");
@@ -499,7 +506,6 @@ public class Applications extends FrameworkBaseAction {
             setReqAttribute(REQ_PROJECTS, projects);
             removeSessionAttribute(getAppId() + SESSION_APPINFO);
             removeSessionAttribute(REQ_SELECTED_FEATURES);
-            removeSessionAttribute(REQ_PILOT_PROJECTS);
     	} catch (PhrescoException e) {
     		return showErrorPopup(e, EXCEPTION_PROJECT_UPDATE);
     	} catch (FileNotFoundException e) {
@@ -723,10 +729,17 @@ public class Applications extends FrameworkBaseAction {
 		}
 		return APP_IMPORT;
 	}
+	
+	public String repoExistCheck() {
+		updateProjectPopup();
+
+		return SUCCESS;
+	}
 
 	public String updateProjectPopup() {
 		S_LOGGER.debug("Entering Method  Applications.updateProjectPopup()");
 		try {
+			isRepoExist = true;
 			String connectionUrl = "";
 			ApplicationInfo applicationInfo = getApplicationInfo();
 			String appDirName = applicationInfo.getAppDirName();
@@ -752,6 +765,9 @@ public class Applications extends FrameworkBaseAction {
 		} catch (PhrescoException e) {
 			if(s_debugEnabled){
 				S_LOGGER.error(e.getLocalizedMessage());
+			}
+			if (e.getLocalizedMessage().contains(IS_NOT_WORKING_COPY)) {
+				setRepoExist(false);
 			}
 			return showErrorPopup(e, "Update Application");
 		}
@@ -920,6 +936,7 @@ public class Applications extends FrameworkBaseAction {
 			scmi.importToRepo(SVN, repoUrl, userName, password, null, null, appDir, commitMessage);
 			errorString = getText(ADD_PROJECT_SUCCESS);
 			errorFlag = true;
+			updateLatestProject();
 		} catch (Exception e) {
 			errorString = e.getLocalizedMessage();
 			errorFlag = false;
@@ -1019,7 +1036,7 @@ public class Applications extends FrameworkBaseAction {
         
         return SUCCESS;
     }
-
+    
     public String getUsername() {
         return userName;
     }
@@ -1199,4 +1216,36 @@ public class Applications extends FrameworkBaseAction {
     public String getActionType() {
         return actionType;
     }
+
+	public boolean isRepoExist() {
+		return isRepoExist;
+	}
+
+	public void setRepoExist(boolean isRepoExist) {
+		this.isRepoExist = isRepoExist;
+	}
+
+	public String getCustomerId() {
+		return customerId;
+	}
+
+	public void setCustomerId(String customerId) {
+		this.customerId = customerId;
+	}
+
+	public String getProjectId() {
+		return projectId;
+	}
+
+	public void setProjectId(String projectId) {
+		this.projectId = projectId;
+	}
+
+	public String getAppId() {
+		return appId;
+	}
+
+	public void setAppId(String appId) {
+		this.appId = appId;
+	}
 }

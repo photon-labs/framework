@@ -1,23 +1,22 @@
 <%--
-  ###
-  Framework Web Archive
-  
-  Copyright (C) 1999 - 2012 Photon Infotech Inc.
-  
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-  
-       http://www.apache.org/licenses/LICENSE-2.0
-  
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
-  ###
-  --%>
 
+    Framework Web Archive
+
+    Copyright (C) 1999-2013 Photon Infotech Inc.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+--%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="com.photon.phresco.commons.model.LogInfo" %>
@@ -37,9 +36,10 @@
 		$('.hideClipBoardImage').show();
 		$('.popupClose').hide(); //no need close button since yesno popup
 		$(".popupOk").attr("value", "<s:text name="label.sent.report"/>");
-		$('.popupOk, #popupCancel').show(); // show ok & cancel button
+		$('.popupOk, .popupCancel').show(); // show ok & cancel button
 		$('.modal-body').html($('#trace').html());
 		$('#popupPage').modal('show');
+		$('.popupCancel').attr('id', "errorReport"); 
 		hidePopuploadingIcon();
 	});
 	
@@ -70,13 +70,25 @@
 		copyToClipboard($('#popup_div').text());
 	});
 	
-	$("#popupCancel, .close").click(function() {
+	/* $("#popupCancel, .close").click(function() {
 		var params = getBasicParams(); 
 		loadContent('applications','', $('#container'), params);
 		$("#successMsg").empty();
 		$(".popupOk").attr("disabled", false);
 		$(".popupOk").addClass("btn-primary");
 		$('.hideClipBoardImage').hide();
-    });
+    }); */
+	
+	function popupOnCancel(obj) {
+    	var url = $(obj).attr("id");
+    	if (url === "errorReport") {
+			var params = getBasicParams(); 
+			loadContent('applications','', $('#container'), params);
+			$("#successMsg").empty();
+			$(".popupOk").attr("disabled", false);
+			$(".popupOk").addClass("btn-primary");
+			$('.hideClipBoardImage').hide();
+    	}
+	}
 	
 </script>

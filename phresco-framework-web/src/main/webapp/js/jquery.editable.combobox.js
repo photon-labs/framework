@@ -1,17 +1,3 @@
-/**
- * jQuery jEC (jQuery Editable Combobox) 1.3.1
- * http://code.google.com/p/jquery-jec
- *
- * Copyright (c) 2008-2009 Lukasz Rajchel (lukasz@rajchel.pl | http://rajchel.pl)
- * Dual licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
- * and GPL (http://www.opensource.org/licenses/gpl-license.php) licenses.
- *
- * Documentation :  http://code.google.com/p/jquery-jec/wiki/Documentation
- * Changelog     :  http://code.google.com/p/jquery-jec/wiki/Changelog
- *
- * Contributors  :  Lukasz Rajchel, Artem Orlov
- */
-
 /*jslint white: true, onevar: true, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, 
 regexp: true, strict: true, newcap: true, immed: true, maxerr: 50, indent: 4, maxlen: 120*/
 /*global Array, Math, String, clearInterval, document, jQuery, setInterval*/

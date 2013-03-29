@@ -1,21 +1,19 @@
-/*
- * ###
+/**
  * Framework Web Archive
- * 
- * Copyright (C) 1999 - 2012 Photon Infotech Inc.
- * 
+ *
+ * Copyright (C) 1999-2013 Photon Infotech Inc.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ###
  */
 package com.photon.phresco.framework.actions;
 
@@ -24,6 +22,8 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -45,6 +45,9 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import com.google.gson.*;
 import com.opensymphony.xwork2.ActionContext;
@@ -463,7 +466,7 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
     }
     
     public Comparator sortByNameInAlphaOrder() {
-		return new Comparator(){
+		return new Comparator() {
 		    public int compare(Object firstObject, Object secondObject) {
 		    	ProjectInfo projectInfo1 = (ProjectInfo) firstObject;
 		    	ProjectInfo projectInfo2 = (ProjectInfo) secondObject;
@@ -471,6 +474,41 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
 		    }
 		};
 	}
+    
+    public Comparator sortValuesInAlphaOrder() {
+		return new Comparator() {
+		    public int compare(Object firstObject, Object secondObject) {
+		    	String val1 = (String) firstObject;
+		    	String val2 = (String) secondObject;
+		       return val1.compareToIgnoreCase(val2);
+		    }
+		};
+	}
+    
+    public void updateLatestProject() throws PhrescoException {
+        try {
+            File tempPath = new File(Utility.getPhrescoTemp() + File.separator + USER_PROJECT_JSON);
+            User user = (User) getSessionAttribute(SESSION_USER_INFO);
+            JSONObject userProjJson = null;
+            JSONParser parser = new JSONParser();
+            if (tempPath.exists()) {
+                FileReader reader = new FileReader(tempPath);
+                userProjJson = (JSONObject)parser.parse(reader);
+                reader.close();
+            } else {
+                userProjJson = new JSONObject();
+            }
+            
+            userProjJson.put(user.getId(), getProjectId() + Constants.STR_COMMA + getAppId());
+            FileWriter  writer = new FileWriter(tempPath);
+            writer.write(userProjJson.toString());
+            writer.close();
+        } catch (IOException e) {
+            throw new PhrescoException(e);
+        } catch (ParseException e) {
+            throw new PhrescoException(e);
+        }
+    }
 
     public String getPath() {
     	return path;

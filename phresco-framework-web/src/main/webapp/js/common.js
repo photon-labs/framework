@@ -1,23 +1,3 @@
-/*
- * ###
- * Framework Web Archive
- * 
- * Copyright (C) 1999 - 2012 Photon Infotech Inc.
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ###
- */
-
 function loadJsonContent(url, jsonParam, containerTag, progressText, callSuccessEvent) {
 	if (progressText !== undefined && !isBlank(progressText)) {
 		showProgressBar(progressText);
@@ -187,6 +167,9 @@ function mandatoryValidation(pageUrl, form, additionalParams, phase, goal, actio
 					templateMandatoryVal();
 				} else if (pageUrl == "saveJob" || pageUrl == "updateJob") {
 					redirectCiConfigure();
+				} else if(pageUrl == "processBuild") {
+					$("#popupPage").modal('hide');
+					 readerHandlerSubmit('processBuild', appId , actionType, '', false, params, $("#console_div"));
 				}
 			}
 		}
@@ -260,7 +243,7 @@ function validateDynamicParam(successUrl, title, okUrl, okLabel, form, goal, nee
 		params = params.concat("&");
 		params = params.concat(additionalParam);
 	}
-	
+
 	$.ajax({
 		url : "validateDynamicParam",
 		data : params,
@@ -313,7 +296,7 @@ function yesnoPopup(url, title, okUrl, okLabel, form, additionalParam) {
 		data = data.concat("&");
 		data = data.concat(additionalParam);
 	}
-	
+	$('.popupCancel').attr('params', data);//To set the params in the temp attr of the cancel btn
 	$("#updateMsg").empty();
 	$("#errMsg").empty();
 	$('#successMsg').empty();
@@ -331,6 +314,7 @@ function additionalPopup(url, title, okUrl, okLabel, form, additionalParam, show
 	$('.add_popupClose').hide(); //no need close button since yesno popup
 	$('.add_popupOk, #add_popupCancel').show(); // show ok & cancel button
 	$("#add_popupCancel").attr('okurl', okUrl);
+	$("#add_popupClose").attr('okurl', okUrl);
 	$(".add_popupOk").attr('id', okUrl); // popup action mapped to id
 	
 	if (showLocationBox !== undefined && showLocationBox) {//To show selected files location in text box in modal footer(for browse file tree)
@@ -362,7 +346,7 @@ function additionalPopup(url, title, okUrl, okLabel, form, additionalParam, show
 
 function add_popupCancel(obj) {
 	var closeUrl = $(obj).attr("okurl");
-	if (closeUrl == "addCertificate") {
+	if (closeUrl == "addCertificate" || closeUrl == "addDeployDir") {
 		$('#additionalPopup').modal('hide');
 	} else {
 		setTimeout(function () {
@@ -370,7 +354,14 @@ function add_popupCancel(obj) {
 		}, 600);
 	}
 }
-
+function stopProcess(obj) {
+	var url = $(obj).attr("id");
+	var params = getBasicParams();
+	params = params.concat("&actionType=");
+	params = params.concat(url);
+	loadContent("killProcess", '', '', params);
+	
+}
 function validateJson(url, form, containerTag, jsonParam, progressText, disabledDiv) {
 	if (disabledDiv != undefined && disabledDiv != "") {
 		enableDivCtrls(disabledDiv);
@@ -581,18 +572,18 @@ function setTimeOut() {
 		$('#successmsg, #envSuccessmsg').fadeOut("slow", function () {
 			$('#successmsg').hide();
 		});
-	}, 2000);
+	}, 5000);
 	
 	setTimeout(function() {
 		$('#errormsg').fadeOut("slow", function () {
 			$('#errormsg').hide();
 		});
-	}, 2000);
+	}, 5000);
 
 	setTimeout(function() {
 		$('.yesNoPopupErr').empty("slow", function () {
 		});
-	}, 2000);
+	}, 5000);
 }
 
 function openFolder(path) {
@@ -721,6 +712,11 @@ function checkForNumber(inputStr) {
 //It removes all empty spaces
 function removeSpaces(str) {
 	return str.replace(/\s+/g, '');
+}
+
+//To remove Backslash
+function removeBackSlash(str) {
+	return str.replace(/\\/g, '');
 }
 
 function applyTheme() {
@@ -945,19 +941,19 @@ function confirmDialog(obj, title, bodyText, okUrl, okLabel) {
 }
 
 //to dynamically update dependancy data into controls 
-function constructElements(data, pushToElement, isMultiple, controlType) {
+function constructElements(data, pushToElement, isMultiple, controlType, parameterType) {
 	if ($("#"+pushToElement+"Control").prop('tagName') == 'FIELDSET') {
 		constructFieldsetOptions(data, pushToElement+"Control");
 	} else if (isMultiple === undefined && controlType === undefined) {
 		constructMultiSelectOptions(data, pushToElement);
 	} else if (isMultiple === "false") {
-		constructSingleSelectOptions(data, pushToElement);
+		constructSingleSelectOptions(data, pushToElement, parameterType);
 	} else if (controlType !== undefined ) {
 		//other controls ( text box)
 	}
 }
 
-function constructFieldsetOptions(dependentValues, pushToElement) {
+function constructFieldsetOptions(dependentValues, pushToElement, parameterType) {
 	if (dependentValues != undefined && !isBlank(dependentValues)) {
 		var fileName, filePath;
 		$("#avaliableSourceScript").empty();
@@ -1003,7 +999,7 @@ function constructSingleSelectOptions(dependentValues, pushToElement) {
 		if (isEditableCombo && !isBlank(dynamicFirstValue)) {// execute only for jec combo box
 			$('#'+ pushToElement + ' option[value="'+ dynamicFirstValue +'"]').prop("selected","selected");//To preselect select first value
 		}
-	} else {
+	} else if (parameterType.toLowerCase() != "list".toLowerCase()) {
 		$("#" + pushToElement).empty();
 	}
 }

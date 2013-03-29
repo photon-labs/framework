@@ -1,25 +1,26 @@
-/*
- * ###
+/**
  * Framework Web Archive
- * 
- * Copyright (C) 1999 - 2012 Photon Infotech Inc.
- * 
+ *
+ * Copyright (C) 1999-2013 Photon Infotech Inc.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ###
  */
 package com.photon.phresco.framework.actions.applications;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -178,8 +179,14 @@ public class Features extends DynamicParameterModule {
 			List<SelectedFeature> listFeatures = new ArrayList<SelectedFeature>();
 			List<SelectedFeature> defaultFeatures = new ArrayList<SelectedFeature>();
 			setFeatures(appInfo, listFeatures);
-			if (StringUtils.isNotEmpty(getPilotProject())) {
-				String id = getPilotProject();
+			if (StringUtils.isNotEmpty(getPilotProject()) || appInfo.getPilotInfo() != null) {
+				String id = null;
+				if (StringUtils.isNotEmpty(getPilotProject())) {
+					id = getPilotProject();
+				} else {
+					Element pilotInfo = appInfo.getPilotInfo();
+					id = pilotInfo.getId();
+				}
 				List<ApplicationInfo> pilotProjects = (List<ApplicationInfo>)getSessionAttribute(REQ_PILOT_PROJECTS);
 				for (ApplicationInfo applicationInfo : pilotProjects) {
 					if (applicationInfo.getId().equals(id)) {
@@ -193,7 +200,7 @@ public class Features extends DynamicParameterModule {
 								ArtifactGroup moduleArtifactGroupInfo = getServiceManager().getArtifactGroupInfo(moduleArtifactGroupId);
 								moduleGroups.add(moduleArtifactGroupInfo);
 							}
-							createArtifactInfoForDefault(moduleGroups, defaultFeatures, applicationInfo);
+							createArtifactInfoForPilotProject(moduleGroups, defaultFeatures, applicationInfo);
 						}
 						List<String> selectedJSLibs = applicationInfo.getSelectedJSLibs();
 						List<ArtifactGroup> jsLibs = new ArrayList<ArtifactGroup>();
@@ -204,7 +211,7 @@ public class Features extends DynamicParameterModule {
 								ArtifactGroup jsLibArtifactGroupInfo = getServiceManager().getArtifactGroupInfo(jsLibArtifactGroupId);
 								jsLibs.add(jsLibArtifactGroupInfo);
 							}
-							createArtifactInfoForDefault(jsLibs, defaultFeatures, applicationInfo);
+							createArtifactInfoForPilotProject(jsLibs, defaultFeatures, applicationInfo);
 						}
 						List<String> selectedComponents = applicationInfo.getSelectedComponents();
 						List<ArtifactGroup> components = new ArrayList<ArtifactGroup>();
@@ -215,26 +222,37 @@ public class Features extends DynamicParameterModule {
 								ArtifactGroup componentArtifactGroupInfo = getServiceManager().getArtifactGroupInfo(componentArtifactGroupId);
 								components.add(componentArtifactGroupInfo);
 							}
-							createArtifactInfoForDefault(components, defaultFeatures, applicationInfo);
+							createArtifactInfoForPilotProject(components, defaultFeatures, applicationInfo);
 						}
 					}
 				}
 			}
-			
+			if (StringUtils.isEmpty(getTechnology()) && appInfo != null) {
+			    setTechnology(appInfo.getTechInfo().getId());
+			}
 			List<ArtifactGroup> moduleGroups = getServiceManager().getFeatures(getCustomerId(), getTechnology(), ArtifactGroup.Type.FEATURE.name());
+			boolean hasModules = false;
 			if (CollectionUtils.isNotEmpty(moduleGroups)) {
+			    hasModules = true;
 				createArtifactInfoForDefault(moduleGroups, defaultFeatures, appInfo);
 			}
+			setReqAttribute(REQ_HAS_MODULES, hasModules);
 			
 			List<ArtifactGroup> jsLibsGroups = getServiceManager().getFeatures(getCustomerId(), getTechnology(), ArtifactGroup.Type.JAVASCRIPT.name());
+			boolean hasJsLibs = false;
 			if (CollectionUtils.isNotEmpty(jsLibsGroups)) {
+			    hasJsLibs = true;
 				createArtifactInfoForDefault(jsLibsGroups, defaultFeatures, appInfo);
 			}
+			setReqAttribute(REQ_HAS_JSLIBS, hasJsLibs);
 			
 			List<ArtifactGroup> componentGroups = getServiceManager().getFeatures(getCustomerId(), getTechnology(), ArtifactGroup.Type.COMPONENT.name());
+			boolean hasComponents = false;
 			if (CollectionUtils.isNotEmpty(componentGroups)) {
+			    hasComponents = true;
 				createArtifactInfoForDefault(componentGroups, defaultFeatures, appInfo);
 			}
+			setReqAttribute(REQ_HAS_COMPONENTS, hasComponents);
 			setReqAttribute(REQ_DEFAULT_FEATURES, defaultFeatures);
 			setSessionAttribute(REQ_SELECTED_FEATURES, listFeatures);
 			if (APP_INFO.equals(getFromTab())) {
@@ -253,7 +271,7 @@ public class Features extends DynamicParameterModule {
 	    return APP_FEATURES;
 	}
 
-	private void createArtifactInfoForDefault(List<ArtifactGroup> moduleGroups, List<SelectedFeature> defaultFeatures, ApplicationInfo appInfo) throws PhrescoException {
+	private void createArtifactInfoForDefault(List<ArtifactGroup> moduleGroups, List<SelectedFeature> defaultFeatures, ApplicationInfo appInfo) throws PhrescoException, FileNotFoundException {
 		for (ArtifactGroup artifactGroup : moduleGroups) {
 			List<ArtifactInfo> versions = artifactGroup.getVersions();
 			for (ArtifactInfo artifactInfo : versions) {
@@ -273,9 +291,80 @@ public class Features extends DynamicParameterModule {
 							selectFeature.setPackaging(artifactGroup.getPackaging());
 							getScope(appInfo, artifactInfo.getId(), selectFeature);
 							getDefaultDependentFeatures(moduleGroups, defaultFeatures, artifactInfo);
+							getModulesFromProjectInfo(appInfo, artifactGroup, selectFeature);
 						    defaultFeatures.add(selectFeature);
 						}
 					}
+				}
+			}
+		}
+	}
+	
+	private void createArtifactInfoForPilotProject(List<ArtifactGroup> moduleGroups, List<SelectedFeature> defaultFeatures, ApplicationInfo appInfo) throws PhrescoException, FileNotFoundException {
+		for (ArtifactGroup artifactGroup : moduleGroups) {
+			List<ArtifactInfo> versions = artifactGroup.getVersions();
+			for (ArtifactInfo artifactInfo : versions) {
+				SelectedFeature selectFeature = new SelectedFeature();
+				selectFeature.setDispValue(artifactInfo.getVersion());
+				selectFeature.setVersionID(artifactInfo.getId());
+				selectFeature.setModuleId(artifactInfo.getArtifactGroupId());
+				selectFeature.setDispName(artifactGroup.getDisplayName());
+				selectFeature.setName(artifactGroup.getName());
+				selectFeature.setType(artifactGroup.getType().name());
+				selectFeature.setArtifactGroupId(artifactGroup.getId());
+				selectFeature.setDefaultModule(true);
+				selectFeature.setPackaging(artifactGroup.getPackaging());
+				getScope(appInfo, artifactInfo.getId(), selectFeature);
+				getDefaultDependentFeatures(moduleGroups, defaultFeatures, artifactInfo);
+				getModulesFromProjectInfo(appInfo, artifactGroup, selectFeature);
+			    defaultFeatures.add(selectFeature);
+			}
+		}
+	}
+
+	private void getModulesFromProjectInfo(ApplicationInfo appInfo, ArtifactGroup artifactGroup, SelectedFeature selectFeature) throws FileNotFoundException {
+		StringBuilder dotPhrescoPathSb = new StringBuilder(Utility.getProjectHome());
+		dotPhrescoPathSb.append(appInfo.getAppDirName());
+		dotPhrescoPathSb.append(File.separator);
+		dotPhrescoPathSb.append(DOT_PHRESCO_FOLDER);
+		dotPhrescoPathSb.append(File.separator);
+		String projectInfoFile = dotPhrescoPathSb.toString() + PROJECT_INFO;
+		BufferedReader bufferedReader = new BufferedReader(new FileReader(projectInfoFile));
+		Type type = new TypeToken<ProjectInfo>() {}.getType();
+		Gson gson = new Gson();
+		ProjectInfo projectinfo = gson.fromJson(bufferedReader, type);
+		ApplicationInfo applicationInfo = projectinfo.getAppInfos().get(0);
+		if (CollectionUtils.isNotEmpty(applicationInfo.getSelectedComponents())) {
+			List<String> selectedComponents = applicationInfo.getSelectedComponents();
+			if (selectedComponents.contains(selectFeature.getVersionID())) {
+				List<CoreOption> appliesTo1 = artifactGroup.getAppliesTo();
+				for (CoreOption coreOption : appliesTo1) {
+				    if (coreOption.getTechId().equals(appInfo.getTechInfo().getId()) && !coreOption.isCore()) {
+				    	selectFeature.setCanConfigure(true);
+				    }
+				}
+			}
+		}
+		
+		if (CollectionUtils.isNotEmpty(applicationInfo.getSelectedModules())) {
+			List<String> selectedModules = applicationInfo.getSelectedModules();
+			if (selectedModules.contains(selectFeature.getVersionID())) {
+				List<CoreOption> appliesTo1 = artifactGroup.getAppliesTo();
+				for (CoreOption coreOption : appliesTo1) {
+				    if (coreOption.getTechId().equals(appInfo.getTechInfo().getId()) && !coreOption.isCore()) {
+				    	selectFeature.setCanConfigure(true);
+				    }
+				}
+			}
+		}
+		if (CollectionUtils.isNotEmpty(applicationInfo.getSelectedJSLibs())) {
+			List<String> selectedJsLibs = applicationInfo.getSelectedJSLibs();
+			if (selectedJsLibs.contains(selectFeature.getVersionID())) {
+				List<CoreOption> appliesTo1 = artifactGroup.getAppliesTo();
+				for (CoreOption coreOption : appliesTo1) {
+				    if (coreOption.getTechId().equals(appInfo.getTechInfo().getId()) && !coreOption.isCore()) {
+				    	selectFeature.setCanConfigure(true);
+				    }
 				}
 			}
 		}
@@ -363,8 +452,10 @@ public class Features extends DynamicParameterModule {
 		
 		List<CoreOption> appliesTo = artifactGroupInfo.getAppliesTo();
 		for (CoreOption coreOption : appliesTo) {
-		    if (coreOption.getTechId().equals(techId) && !coreOption.isCore()) {
+		    if (coreOption.getTechId().equals(techId) && !coreOption.isCore() && !slctFeature.getType().equals(REQ_JAVASCRIPT_TYPE_MODULE)) {
 		        slctFeature.setCanConfigure(true);
+		    } else {
+		        slctFeature.setCanConfigure(false);
 		    }
 		}
 		List<RequiredOption> appliesToReqird = artifactInfo.getAppliesTo();

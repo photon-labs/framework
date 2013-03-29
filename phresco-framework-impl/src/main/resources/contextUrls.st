@@ -19,7 +19,7 @@ $myObject:{ obj |
 	<div id="contextDiv" class="contextDivClass" style="margin-bottom:5px;">
 		<fieldset class="popup-fieldset fieldsetBottom perFieldSet perContextUrlFieldset" id="context">
 			<legend class="fieldSetLegend">
-				<input type="checkbox" class="check ctxUrlCheck" onclick="enableDelBtn('ctxUrlCheck');">
+				<input type="checkbox" class="check ctxUrlCheck" onclick="enableDelBtn(this);">
 			</legend>
 			
 			<table style="line-height: 0px;">
@@ -34,7 +34,7 @@ $myObject:{ obj |
 				<tbody>
 					<tr>
 						<td class="noBorder">
-							<input type="text" name="name" class="input-small" title="Name" maxlength="20" value="$contextUrlsObj.name$" class="screenName">
+							<input type="text" name="contextName" class="input-small" title="Name" maxlength="20" value="$contextUrlsObj.name$" class="screenName">
 						</td>
 						<td class="noBorder">
 							<input type="text" name="context" title="Context" value="$contextUrlsObj.context$" class="input-medium">
@@ -86,7 +86,7 @@ $myObject:{ obj |
 	if (jsonFlag) {
 		var newTextBoxDiv = jQuery(document.createElement('div')).attr('id', 'contextDiv').attr('class','contextDivClass').css('margin-bottom','5px');
 		newTextBoxDiv.html("<fieldset class='popup-fieldset fieldsetBottom perFieldSet perContextUrlFieldset' id='context'>
-			<legend class='fieldSetLegend'><input type='checkbox' class='ctxUrlCheck' onclick='enableDelBtn('ctxUrlCheck');'></legend><table style='line-height: 0px;'><thead><tr><td class='noBorder' style='color: #333333; font-weight: bold;'><span class='red'>*</span>&nbsp;Name</td><td class='noBorder' style='color: #333333; font-weight: bold;'><span class='red'>*</span>&nbsp;Context</td><td class='noBorder' style='color: #333333; font-weight: bold;'>Type</td><td class='noBorder' style='color: #333333; font-weight: bold;'>Encoding</td></tr></thead><tbody><tr><td class='noBorder'><input type='text' name='name' class='input-small' title='Name' maxlength='20' value='' class='screenName'></td><td class='noBorder'><input type='text' name='context' title='Context' value='' class='input-medium'></td><td class='noBorder'><select name='contextType' id='contextType' class='input-small'><option value='GET'>GET</option><option value='POST'>POST</option><option value='PUT'>PUT</option><option value='DELETE'>DELETE</option></select></td><td class='noBorder'><select name='encodingType' id='encodingType' class='input-small'><option value='UTF-8'>UTF-8</option><option value='UTF-16'>UTF-16</option></select></td></tr></tbody>
+			<legend class='fieldSetLegend'><input type='checkbox' class='ctxUrlCheck' onclick='enableDelBtn(this);'></legend><table style='line-height: 0px;'><thead><tr><td class='noBorder' style='color: #333333; font-weight: bold;'><span class='red'>*</span>&nbsp;Name</td><td class='noBorder' style='color: #333333; font-weight: bold;'><span class='red'>*</span>&nbsp;Context</td><td class='noBorder' style='color: #333333; font-weight: bold;'>Type</td><td class='noBorder' style='color: #333333; font-weight: bold;'>Encoding</td></tr></thead><tbody><tr><td class='noBorder'><input type='text' name='name' class='input-small' title='Name' maxlength='20' value='' class='screenName'></td><td class='noBorder'><input type='text' name='context' title='Context' value='' class='input-medium'></td><td class='noBorder'><select name='contextType' id='contextType' class='input-small'><option value='GET'>GET</option><option value='POST'>POST</option><option value='PUT'>PUT</option><option value='DELETE'>DELETE</option></select></td><td class='noBorder'><select name='encodingType' id='encodingType' class='input-small'><option value='UTF-8'>UTF-8</option><option value='UTF-16'>UTF-16</option></select></td></tr></tbody>
 			</table><fieldset class='popup-fieldset perContentFieldsetDiv' style='padding: 0; margin-bottom: 0; width: 55%; float: left;' id='headerLegend'><legend class='fieldSetLegend'>Headers</legend><table><tr><td class='noBorder' style='color: #333333; font-weight: bold;'>Key</td><td class='noBorder'><input type='text' class='input-mini key'/></td><td class='noBorder' style='color: #333333; font-weight: bold;''>Value</td><td class='noBorder'><input type='text' class='input-mini value'/></td><td class='noBorder'><input type='button' class='btn btn-primary' value='Add' onclick='addHeader(this);'/></td></tr></table></fieldset><textarea placeholder='Request body' name='contextPostData' id='contextPostData' title='JSON data' class='' style='margin: 14px 5px 0 0; width: 40%; float: right;'></textarea></fieldset></div>");
 		newTextBoxDiv.appendTo("#contextDivParent");	
 	}
@@ -94,11 +94,11 @@ $myObject:{ obj |
 	function contextUrlsMandatoryVal() {
 		var redirect = true;
 		jQuery('.perContextUrlFieldset').each(function() {
-			if (jQuery(this).find(jQuery('input[name=name]')).val() == "" || isBlank(jQuery(this).find(jQuery('input[name=name]')).val())) {
+			if (jQuery(this).find(jQuery('input[name=contextName]')).val() == "" || isBlank(jQuery(this).find(jQuery('input[name=contextName]')).val())) {
 				redirect = false;
 				jQuery('.yesNoPopupErr').text('Name is missing');
-				jQuery(this).find(jQuery('input[name=name]')).val('');
-				jQuery(this).find(jQuery('input[name=name]')).focus();
+				jQuery(this).find(jQuery('input[name=contextName]')).val('');
+				jQuery(this).find(jQuery('input[name=contextName]')).focus();
 			} else if (jQuery(this).find(jQuery('input[name=context]')).val() == "" || isBlank(jQuery(this).find(jQuery('input[name=context]')).val())) {
 				redirect = false;
 				jQuery('.yesNoPopupErr').text('Context is missing');
@@ -116,7 +116,7 @@ $myObject:{ obj |
 		jQuery('.perContextUrlFieldset').each(function() {
 			var headers = [];
 			var jsonObject = {};
-			jsonObject.name = jQuery(this).find(jQuery("input[name=name]")).val();
+			jsonObject.name = jQuery(this).find(jQuery("input[name=contextName]")).val();
 			jsonObject.context = jQuery(this).find(jQuery("input[name=context]")).val();
 			jsonObject.contextType = jQuery(this).find(jQuery("select[name=contextType]")).val();
 			jsonObject.encodingType = jQuery(this).find(jQuery("select[name=encodingType]")).val();

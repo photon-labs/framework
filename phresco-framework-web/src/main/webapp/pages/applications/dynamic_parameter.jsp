@@ -1,23 +1,22 @@
 <%--
-  ###
-  Framework Web Archive
-  
-  Copyright (C) 1999 - 2012 Photon Infotech Inc.
-  
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-  
-       http://www.apache.org/licenses/LICENSE-2.0
-  
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
-  ###
-  --%>
 
+    Framework Web Archive
+
+    Copyright (C) 1999-2013 Photon Infotech Inc.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+--%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.util.List"%>
@@ -48,7 +47,7 @@
 <%
    	String from = (String) request.getAttribute(FrameworkConstants.REQ_BUILD_FROM);
    	String buildNumber = "";
-   	if (FrameworkConstants.REQ_DEPLOY.equals(from)) {
+   	if (FrameworkConstants.REQ_DEPLOY.equals(from) || FrameworkConstants.REQ_PROCESS_BUILD.equals(from)) {
     	buildNumber = (String) request.getAttribute(FrameworkConstants.REQ_DEPLOY_BUILD_NUMBER);
     }
    	
@@ -129,10 +128,19 @@
 				
 				// load input text box
 				if (FrameworkConstants.TYPE_STRING.equalsIgnoreCase(parameter.getType()) || FrameworkConstants.TYPE_NUMBER.equalsIgnoreCase(parameter.getType()) || 
-					FrameworkConstants.TYPE_PASSWORD.equalsIgnoreCase(parameter.getType()) || FrameworkConstants.TYPE_HIDDEN.equalsIgnoreCase(parameter.getType())) {
+					FrameworkConstants.TYPE_HIDDEN.equalsIgnoreCase(parameter.getType())) {
 					
 					parameterModel.setInputType(parameter.getType());
 					parameterModel.setValue(StringUtils.isNotEmpty(parameter.getValue()) ? parameter.getValue():"");
+					
+					StringTemplate txtInputElement = FrameworkUtil.constructInputElement(parameterModel);
+	%> 	
+					<%= txtInputElement %>
+	<%
+				} else if (FrameworkConstants.TYPE_PASSWORD.equalsIgnoreCase(parameter.getType())) {
+					
+					parameterModel.setInputType(parameter.getType());
+					parameterModel.setValue("");
 					
 					StringTemplate txtInputElement = FrameworkUtil.constructInputElement(parameterModel);
 	%> 	
@@ -366,7 +374,7 @@
 	<% } %>
 	
 	//to update build number in hidden field for deploy popup
-	<% if (FrameworkConstants.REQ_DEPLOY.equals(from)) { %>
+	<% if (FrameworkConstants.REQ_DEPLOY.equals(from) || FrameworkConstants.REQ_PROCESS_BUILD.equals(from)) { %>
 		$("input[name=buildNumber]").val('<%= buildNumber %>');
 	<% } %>
 	
@@ -499,6 +507,20 @@
 				}
 			}
 		});
+		
+		<% 
+			if (FrameworkConstants.REQ_DEPLOY.equals(from)) {
+		%>
+				if($('#executeSql').is(":checked")) {
+					$('#dataBaseControl').show();
+					$('#fetchSqlControl').show();
+				} else {
+					$('#dataBaseControl').hide();
+					$('#fetchSqlControl').hide();
+				}
+		<%
+			}
+		%>
 	}
 	
 	function changeEveDependancyListener(selectedOption, currentParamKey) {
@@ -536,7 +558,7 @@
 		if (data.dependency != undefined && !isBlank(data.dependency)) {
 			var isMultiple = $('#' + data.dependency).attr("isMultiple");
 			var controlType = $('#' + data.dependency).attr('type');
-			constructElements(data.dependentValues, data.dependency, isMultiple, controlType);
+			constructElements(data.dependentValues, data.dependency, isMultiple, controlType, data.parameterType);
 		}
 	}
 	
@@ -613,23 +635,30 @@
 		$(':input:not(:button)', $("#"+contextUrlsRowId)).val('');//to clear already inputed value
 		$("#"+contextUrlsRowId).find('div[id=headerkeyId]').remove();//to clear header key value design
 		i++;
+		
+		
+		// when adding, if the checkbox is checked on first Context URLs checkbox, enable delete button
+		enableDelBtn($('.ctxUrlCheck'));
+		enableDelBtn($('.dbCheck'));
 	}
 	
 	//To enable the delete btn when any context url check box is checked
-	function enableDelBtn(checkBoxClass) {
+	function enableDelBtn(checkBoxObj) {
+		var delChkBoxClass = $(checkBoxObj).attr("class");
 		var hasChecked = false;
-		$('.'+checkBoxClass).each(function() {
+		$('.'+delChkBoxClass).each(function() {
 			if ($(this).is(':checked')) {
 				hasChecked = true;
 				return false;
 			}
 		});
-		if (hasChecked && $('.'+checkBoxClass).size() != 1) {
-			$('#'+checkBoxClass+'Del').addClass("btn-primary");
-			$('#'+checkBoxClass+'Del').removeAttr("disabled");
+		
+		if (hasChecked && $('.'+delChkBoxClass).size() != 1 && $('.'+delChkBoxClass).size() > $('.'+delChkBoxClass+':checked').length) {
+			$('#'+delChkBoxClass+'Del').addClass("btn-primary");
+			$('#'+delChkBoxClass+'Del').removeAttr("disabled");
 		} else {
-			$('#'+checkBoxClass+'Del').removeClass("btn-primary");
-			$('#'+checkBoxClass+'Del').attr("disabled", true);
+			$('#'+delChkBoxClass+'Del').removeClass("btn-primary");
+			$('#'+delChkBoxClass+'Del').attr("disabled", true);
 		}
 	}
 	
@@ -641,7 +670,7 @@
 				$(this).closest('fieldset').parent().remove();
 			} 
 		});
-		enableDelBtn(checkBoxClass);
+		enableDelBtn($('.'+checkBoxClass));
 	}
 
 	function addHeader(obj) {
@@ -680,4 +709,53 @@
 			$("#" + txtBoxId).val(removeSpaces(checkForNumber(value)));
 		}
 	}
+	
+	function templateMandatoryVal() {		
+		var testAgainst = $("#testAgainst").val();
+		var redirect = false;		
+		if (testAgainst != undefined && (testAgainst == "server" || testAgainst == "webservice")) {
+			redirect = contextUrlsMandatoryVal();
+		} else if (testAgainst != undefined && testAgainst == "database") {
+			redirect = dbContextUrlsMandatoryVal();
+		} else if (testAgainst == undefined) {
+			$('.yesNoPopupErr').empty();
+			runPerformanceTest();
+		}
+	
+		if (redirect) {
+			$('.yesNoPopupErr').empty();
+			runPerformanceTest();
+		}
+	} 
+	
+	function runPerformanceTest() {		
+		var formJsonObject = $('#generateBuildForm').toJSON();
+		var formJsonStr = JSON.stringify(formJsonObject);
+		var templateFunction = new Array();
+		var templateCsvFn = $("#stFileFunction").val();
+		var jsonStr = "";
+		var templJsonStr = "";
+		var params = getBasicParams();
+		var sep = "";		
+		if (templateCsvFn != undefined && !isBlank(templateCsvFn)) {
+			templateFunction = templateCsvFn.split(",");
+			for (i = 0; i < templateFunction.length; ++i) {
+				jsonStr = window[templateFunction[i]]();	
+				templJsonStr = templJsonStr + sep + jsonStr;
+				sep = ",";
+			}
+		}		
+		formJsonStr = formJsonStr.slice(0,formJsonStr.length-1);
+		formJsonStr = formJsonStr + ',' + templJsonStr + '}';
+		$("#resultJson").val(formJsonStr);
+		var fromCi = $('#isFromCI').val();		
+		if (fromCi) {		
+			// write json for performance			
+			loadContent('performanceJsonWriter', $('#generateBuildForm'), '', getBasicParams(), false, true);
+		} else {
+			$('#popupPage').modal('hide');
+			progressPopupAsSecPopup('runPerformanceTest', '<%= appId %>', "performance-test", $('#generateBuildForm'), params, '');	
+		}
+	}
+	
 </script>

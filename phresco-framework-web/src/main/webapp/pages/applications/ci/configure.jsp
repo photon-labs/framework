@@ -1,22 +1,22 @@
 <%--
-  ###
-  Framework Web Archive
-  %%
-  Copyright (C) 1999 - 2012 Photon Infotech Inc.
-  %%
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-  
-       http://www.apache.org/licenses/LICENSE-2.0
-  
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
-  ###
-  --%>
+
+    Framework Web Archive
+
+    Copyright (C) 1999-2013 Photon Infotech Inc.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+--%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.util.List"%>
@@ -495,6 +495,8 @@
 									    <option value="unittest">Unit Test</option>
 									    <option value="codeValidation">Code Validate</option>
 									    <option value="pdfReport">PDF Report</option>
+									    <option value="loadTest">Load Test</option>
+									    <option value="performanceTest">Performance Test</option>								    
 										</select>
 									</div>
 								</div>
@@ -591,6 +593,15 @@
 											</div>
 										</div>
 										
+<!-- 										<div class="control-group"> -->
+<!-- 											<label class="control-label labelbold popupLbl"> -->
+<%-- 												<span class="red">* </span> <s:text name='lbl.build.release.file.pattern' /> --%>
+<!-- 											</label> -->
+<!-- 											<div class="controls"> -->
+<%-- 												<input type="text" id="collabNetFileReleasePattern" name="collabNetFileReleasePattern" class="input-xlarge" maxlength="63" title="63 Characters only" value="<%= existingJob == null ? "do_not_checkin/build/*.zip" : existingJob.getCollabNetFileReleasePattern() %>"> --%>
+<!-- 											</div> -->
+<!-- 										</div> -->
+										
 										<div class="control-group">
 											<label class="control-label labelbold popupLbl">
 												<s:text name='lbl.build.release.overwrite' />
@@ -613,6 +624,7 @@
 	</div>
     <!-- build release plugin changes ends -->
 	<input type="hidden" name="oldJobName" value="<%= existingJob == null ? "" : existingJob.getName()%>" >
+	<input type="hidden" name="isFromCi" value="isFromCi">
 </form>
 
 <script type="text/javascript">
@@ -705,6 +717,7 @@
 			showConfigBasedOnTech();
 		});
 		
+// 		enableDisableCollabNet();
 		//to hide/show collabnet based on operation
 		showHideCollabnetAccordion();
 		
@@ -747,7 +760,7 @@
 	}
 	
 	function showHideCollabnetAccordion() {
-		if ($("#operation").val() == 'build') {
+		if ($("#operation").val() == 'build' || $("#operation").val() == 'pdfReport') {
 			$("#collabnetContainer").show();
 		} else {
 			$("#collabnetContainer").hide();
@@ -767,10 +780,15 @@
 	// after validation success, show loading icon and creates job
 	function configureJob(url) {
 		isCiRefresh = true;
-// 		getCurrentCSS();
+		var isFromCi = $('#isFromCI').val();		
+// 		getCurrentCSS();	
 // 		$('.popupLoadingIcon').css("display","block");
 // 		var url = $("#configureForm").attr("action");
 		$('#configureForm :input').attr('disabled', false);
+		if (isFromCi) {	
+			// ci specification need to be specified
+			mandatoryValidation('runPerformanceTest', $("#generateBuildForm"), '', 'performance-test', 'performance-test');
+		}
 		loadContent(url, $('#configureForm, #generateBuildForm'), $('#subcontainer'), getBasicParams(), false, true);
 	}
 	

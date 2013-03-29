@@ -1,22 +1,22 @@
 <%--
-  ###
-  Framework Web Archive
-  
-  Copyright (C) 1999 - 2012 Photon Infotech Inc.
-  
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-  
-       http://www.apache.org/licenses/LICENSE-2.0
-  
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
-  ###
-  --%>
+
+    Framework Web Archive
+
+    Copyright (C) 1999-2013 Photon Infotech Inc.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+--%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.io.File"%>
@@ -108,7 +108,7 @@
 	    	isLoadResultFileAvailbale(); //check for load result files;
 	    	hideLoadingIcon();
 	    	$('#loadTestBtn').click(function() {
-	    		validateDynamicParam('showLoadTestPopup', '<s:text name="label.load.test"/>', 'runLoadTest','<s:text name="label.test"/>', '', '<%= Constants.PHASE_LOAD_TEST %>');
+	    		validateDynamicParam('showLoadTestPopup', '<s:text name="label.load.test"/>', 'runLoadTest','<s:text name="label.test"/>', '', '<%= Constants.PHASE_LOAD_TEST %>', true);
 	    	});
 	    	
 	    	//Disable test button for load
@@ -142,7 +142,10 @@
 	    });
     	var testResultsType = "";
 	    function isLoadResultFileAvailbale() {
-	    	loadContent('loadTestResultAvail', '', '', getBasicParams(), true, true);
+	    	var params = getBasicParams();
+	    	params = params.concat("&testType=");
+	    	params = params.concat('<%= FrameworkConstants.LOAD %>');
+	    	loadContent('loadTestResultAvail', '', '', params, true, true);
 	    }
 	    
 	    function successEvent(pageUrl, data) {
@@ -250,7 +253,6 @@
 		
 		function popupOnClose(obj) {
 			//var closeUrl = $(obj).attr("id");
-			//console.info("closeUrl::::"+closeUrl);
 			isLoadResultFileAvailbale();
 		}
 		
@@ -260,5 +262,16 @@
 			params = params.concat("&testType=");
 			params = params.concat('<%= FrameworkConstants.LOAD%>');
 			loadContent('testType', $('#testResultDisplay'), $("#subTabcontainer"), params, '', true);
+		}
+		
+		function popupOnCancel(obj) {
+			var params = getBasicParams();
+			params = params.concat("&actionType=");
+			params = params.concat("loadPdfReport");
+			loadContent("killProcess", '', '', params);
+		}
+		
+		function runLoadTest() {
+			progressPopup('runLoadTest', '<%= appId %>', '<%= FrameworkConstants.LOAD %>', '', '', getBasicParams());
 		}
     </script>

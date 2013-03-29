@@ -1,22 +1,22 @@
 <%--
-  ###
-  Framework Web Archive
-  
-  Copyright (C) 1999 - 2012 Photon Infotech Inc.
-  
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-  
-       http://www.apache.org/licenses/LICENSE-2.0
-  
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
-  ###
-  --%>
+
+    Framework Web Archive
+
+    Copyright (C) 1999-2013 Photon Infotech Inc.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+--%>
 <%@page import="com.photon.phresco.commons.model.TestCase"%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
@@ -42,7 +42,7 @@
 	<div>
 		<ul id="display-inline-block-example">
 			 <li id="first">
-				<%-- <a id="manualTest" class="btn btn-primary"><s:text name='lbl.test'/></a> --%>
+				<%-- <a id="addTest" class="btn btn-primary"><s:text name='lbl.btn.add'/></a>  --%>
 			</li> 
 		
 			<!-- <div class="alert alert-block hideContent" id="errorDiv" style="margin-left: 0; margin-top: 5px;"> -->
@@ -50,7 +50,8 @@
 		</div>
 		</ul>
 		<ul id="display-inline-block-example">
-			<li id="first"></li>
+			<li id="first">
+			<a id="addTest" class="btn btn-primary" style="margin-left: 8%;"><s:text name='lbl.btn.add'/></a> </li>
 			<li id="label">
 				&nbsp;<strong class="hideCtrl" id="testResultLbl"><s:text name="lbl.test.suite"/></strong> 
 			</li>
@@ -93,19 +94,22 @@
 				        <table cellspacing="0" class="zebra-striped">
 				          	<thead>
 					            <tr>
-									<th class="firstDiv" style="width:33%">
+									<th class="firstDiv" style="width:27%">
 										<div id="thName" class="th-inner-test"><s:text name="label.testsuite.name"/></div>
 									</th>
-					              	<th class="secondDiv" style="width:16%">
+					              	<th class="secondDiv" style="width:15%">
 					              		<div id="thPass" class="th-inner-test"><s:text name="label.testsuite.success"/></div>
 				              		</th>
-					              	<th class="thirdDiv" style="width:17%">
+					              	<th class="thirdDiv" style="width:15%">
 					              		<div id="thFail" class="th-inner-test"><s:text name="label.testsuite.failure"/></div>
 				              		</th>
-					              	<th class="fourthDiv" style="width:20%">
+				              		<th class="fourthDiv" style="width:15%">
+					              		<div id="thNotExceuted" class="th-inner-test"><s:text name="label.testsuite.notexecuted"/></div>
+				              		</th>
+					              	<th class="fifthDiv" style="width:14%">
 					              		<div id="thTotal" class="th-inner-test"><s:text name="label.testsuite.total"/></div>
 				              		</th>
-					              	<th class="fifthDiv">
+					              	<th class="sixthDiv">
 					              		<div id="thCovarage" class="th-inner-test"><s:text name="label.testsuite.testCoverage"/></div>
 				              		</th>
 					            </tr>
@@ -200,6 +204,22 @@ $(document).ready(function() {
 		canvasInitPie();
 	});
 		
+	$('#addTest').click(function() {
+		var value = $("#testSuite").val();
+		if (value === "All") {
+			showLoadingIcon();
+			var params = getBasicParams();
+			params = params.concat("&type=");
+			params = params.concat(value);
+			loadContent("addTestSuites", $('#manualTestCases'), $('#subcontainer'), params);
+		} else {
+			showLoadingIcon();
+			var params = getBasicParams();
+			params = params.concat("&type=");
+			params = params.concat(value);
+			loadContent("addTestCases", $('#manualTestCases'), $('#subcontainer'), params);
+		}
+	});
 });
 
 	//changeView();
@@ -304,7 +324,7 @@ $(document).ready(function() {
 				$('#testCasesList').empty();
 				for (i in data.allTestCases) {
 					var newTestCaseRow = $(document.createElement('tr')).attr("id", data.allTestCases[i].testCaseId);
-					newTestCaseRow.html("<td class='firstVal'>"+data.allTestCases[i].featureId+"</td>"+
+					newTestCaseRow.html("<td class='firstVal'><a href='#' onclick='getTestCaseReport(this);' name="+data.allTestCases[i].featureId+">"+data.allTestCases[i].featureId+"</td>"+
 							"<td class='secondVal'>"+data.allTestCases[i].testCaseId+"</td>"+
 							"<td class='thirdVal'>"+data.allTestCases[i].expectedResult+"</td>"+ 
 							"<td class='fourthVal'>"+data.allTestCases[i].actualResult+"</td>"+
@@ -319,6 +339,7 @@ $(document).ready(function() {
 	
 	var totalPass;
 	var totalFail;
+	var notExecuted;
 	var totalTestCases;
 	var totalCoverage;
 	function allReports() {
@@ -326,20 +347,28 @@ $(document).ready(function() {
 		$('#testSuiteList').empty();
 		totalPass = 0;
 		totalFail = 0;
+		notExecuted = 0;
 		totalTestCases = 0;
 		totalCoverage = 0;
 		for (i in allValues.allTestSuite) {
 			$('#tabularViewForManual').show();
 			totalPass += parseFloat(allValues.allTestSuite[i].tests);
 			totalFail += parseFloat(allValues.allTestSuite[i].failures);
+			notExecuted += parseFloat(allValues.allTestSuite[i].errors);
+			var notexe = allValues.allTestSuite[i].errors;
+			if (notexe === 0) {
+				notexe = allValues.allTestSuite[i].total - (allValues.allTestSuite[i].tests + allValues.allTestSuite[i].failures);
+				notExecuted += notexe;
+			}
 			totalTestCases += parseFloat(allValues.allTestSuite[i].total);
 			totalCoverage += parseFloat(allValues.allTestSuite[i].testCoverage);
 		var newPropTempRow = $(document.createElement('tr')).attr("id", allValues.allTestSuite[i].name);
 		newPropTempRow.html("<td class='firstVal'><a href='#' onclick='getReport(this);' name="+allValues.allTestSuite[i].name+">"+allValues.allTestSuite[i].name+"</a></td>"+
 				"<td class='secondVal'>"+allValues.allTestSuite[i].tests+"</td>"+
 				"<td class='thirdVal'>"+allValues.allTestSuite[i].failures+"</td>"+
-				"<td class='fourthVal'>"+allValues.allTestSuite[i].total+"</td>"+ 
-				"<td class='fifthVal'>"+allValues.allTestSuite[i].testCoverage+"</td>")
+				"<td class='fourthVal'>"+notexe+"</td>"+
+				"<td class='fifthVal'>"+allValues.allTestSuite[i].total+"</td>"+ 
+				"<td class='sixthVal'>"+allValues.allTestSuite[i].testCoverage+"</td>")
 	 	newPropTempRow.appendTo("#testSuiteList");	
 		}
 		$('#total').empty();
@@ -347,8 +376,9 @@ $(document).ready(function() {
 		totalRow.html("<td class='width-ten-percent loadTestPopupBold'>Total</td>"+
 				"<td class='width-ten-percent loadTestPopupBold'>"+totalPass+"</td>"+
 				"<td class='width-ten-percent loadTestPopupBold'>"+totalFail+"</td>"+
+				"<td class='width-ten-percent loadTestPopupBold'>"+notExecuted+"</td>"+
 				"<td class='width-ten-percent loadTestPopupBold'>"+totalTestCases+"</td>"+ 
-				"<td class='width-ten-percent loadTestPopupBold'>"+totalCoverage+"</td>")
+				"<td class='width-ten-percent loadTestPopupBold'></td>")
 	 	totalRow.appendTo("#total");	
 	}
 	
@@ -375,6 +405,17 @@ $(document).ready(function() {
 		loadContent("readManualTestCases", $('#manualTestCases'),'', params, true, true);
 	}
 	
+	function getTestCaseReport(obj) {
+		var id = $(obj).text();
+		var testSuite = $("#testSuite").val();
+		showLoadingIcon();
+		var params = getBasicParams();
+		params = params.concat("&testId=");
+		params = params.concat(id);
+		params = params.concat("&type=");
+		params = params.concat(testSuite);
+		loadContent("addTestCases", $('#manualTestCases'), $('#subcontainer'), params);
+	}
 	function reportList(obj) {
 		var resultView = $('#resultView').val();
 		if (resultView === "tabular") {

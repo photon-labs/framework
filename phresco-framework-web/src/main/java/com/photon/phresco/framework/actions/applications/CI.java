@@ -1,21 +1,19 @@
-/*
- * ###
+/**
  * Framework Web Archive
- * 
- * Copyright (C) 1999 - 2012 Photon Infotech Inc.
- * 
+ *
+ * Copyright (C) 1999-2013 Photon Infotech Inc.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ###
  */
 package com.photon.phresco.framework.actions.applications;
 
@@ -133,6 +131,7 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
     private String theme = "";
     private String logo = "";
     private String sonarUrl = "";
+    private boolean isDownStreamAvailable;
     
 	public String ci() {
 		if (debugEnabled) {
@@ -238,6 +237,44 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 		       return job1.getName().compareToIgnoreCase(job2.getName());
 		    }
 		};
+	}
+	
+	public String downStreamCheck() {
+		try {
+			isDownStreamAvailable = false;
+			boolean streamCheck = false;
+			String[] selectedJobs = getHttpRequest().getParameterValues(REQ_SELECTED_JOBS_LIST);
+			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
+			ApplicationInfo appInfo = getApplicationInfo();
+			//get all the jobs
+			List<CIJob> existJobs = ciManager.getJobs(appInfo);
+			//get the name of all the jobs
+			List<String> allJobNames = getJobNames(existJobs);
+			List<String> asList = Arrays.asList(selectedJobs);
+			for (String job : asList) {
+				CIJob existJob = ciManager.getJob(appInfo, job);
+				String existDownStream = existJob.getDownStreamProject();
+				boolean contains = allJobNames.contains(existDownStream);
+				if (StringUtils.isNotEmpty(existDownStream) && contains) {
+					streamCheck = true;
+				}
+				if (streamCheck) {
+					isDownStreamAvailable = true;
+				}
+			}
+		} catch (PhrescoException e) {
+			return showErrorPopup(e, "Error Popup");
+		}
+		
+		return SUCCESS;
+	}
+	
+	private List<String> getJobNames(List<CIJob> existJobs) {
+		List<String> names = new ArrayList<String>();
+		for (CIJob job : existJobs) {
+			names.add(job.getName());
+		}
+		return names;
 	}
 
 	public String configure() {
@@ -369,6 +406,12 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 				String seleniumToolType = frameworkUtil.getSeleniumToolType(appInfo);
 				phase =  PHASE_FUNCTIONAL_TEST + HYPHEN + seleniumToolType;
 	        	restoreValuesToXml(mojo, phase, ciJob);
+	        } else if (LOAD_TEST.equals(operation)) {
+	        	phase = PHASE_LOAD_TEST;
+	        	restoreValuesToXml(mojo, phase, ciJob);
+	        } else if (PERFORMANCE_TEST_CI.equals(operation)) {
+	        	phase = PHASE_PERFORMANCE_TEST;
+	        	restoreValuesToXml(mojo, phase, ciJob);
 	        }
 		} catch (Exception e) {
 			throw new PhrescoException(e);
@@ -402,7 +445,6 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 		}
 		try {
 		    ApplicationInfo appInfo = getApplicationInfo();
-            removeSessionAttribute(appInfo.getId() + PHASE_CI + SESSION_WATCHER_MAP);
             Map<String, DependantParameters> watcherMap = new HashMap<String, DependantParameters>(8);
             List<Parameter> parameters = null;
             MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_CI)));
@@ -442,10 +484,21 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 	            setReqAttribute(REQ_PHASE, PHASE_CI);
 	            goal = PHASE_FUNCTIONAL_TEST + HYPHEN + seleniumToolType;
 	            setReqAttribute(REQ_GOAL, goal);
+            } else if (LOAD_TEST.equals(operation)) {
+            	parameters = getMojoParameters(mojo, PHASE_LOAD_TEST);
+            	setReqAttribute(REQ_PHASE, PHASE_CI);
+            	goal = PHASE_LOAD_TEST;
+            	setReqAttribute(REQ_GOAL, goal);
+            } else if (PERFORMANCE_TEST_CI.equals(operation)) {
+            	parameters = getMojoParameters(mojo, PHASE_PERFORMANCE_TEST);
+            	setReqAttribute(REQ_PHASE, PHASE_CI);
+            	goal = PHASE_PERFORMANCE_TEST;
+            	setReqAttribute(REQ_GOAL, goal);
             }
             
+            removeSessionAttribute(appInfo.getId() + goal + SESSION_WATCHER_MAP);
             setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap, goal);
-            setSessionAttribute(appInfo.getId() + PHASE_CI + SESSION_WATCHER_MAP, watcherMap);
+            setSessionAttribute(appInfo.getId() + goal + SESSION_WATCHER_MAP, watcherMap);
             setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
             setReqAttribute(REQ_APP_INFO, appInfo);
 		} catch (Exception e) {
@@ -634,6 +687,8 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 				}
 				// enable archiving
 				existJob.setEnableArtifactArchiver(true);
+				// if the enable build release option is choosed in UI, the file pattenr value will be used
+				existJob.setCollabNetFileReleasePattern(CI_BUILD_EXT);
 				
 				MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(Constants.PHASE_CI)));
 				persistValuesToXml(mojo, Constants.PHASE_PACKAGE);
@@ -678,7 +733,11 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 				} else {
 					attacheMentPattern = testTypeParam;
 				}
-				existJob.setAttachmentsPattern("do_not_checkin/archives/" + attacheMentPattern + "/*.pdf"); //do_not_checkin/archives/cumulativeReports/*.pdf
+				
+				String attachPattern = "do_not_checkin/archives/" + attacheMentPattern + "/*.pdf";
+				existJob.setAttachmentsPattern(attachPattern); //do_not_checkin/archives/cumulativeReports/*.pdf
+				// if the enable build release option is choosed in UI, the file pattenr value will be used
+				existJob.setCollabNetFileReleasePattern(attachPattern);
 				
 				// here we can set necessary values in request and we can change object value as well...
 				// getting sonar url
@@ -770,6 +829,41 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 				// To handle multi module project
 				functionalTestPrebuildCmd = functionalTestPrebuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
 				preBuildStepCmds.add(functionalTestPrebuildCmd);
+			} else if (LOAD_TEST.equals(operation)) {
+				if (debugEnabled) {
+					S_LOGGER.debug("Load test operation!!!!!!");
+				}
+				
+				MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(Constants.PHASE_CI)));
+				persistValuesToXml(mojo, Constants.PHASE_LOAD_TEST);
+				constructCiJobObj(mojo, Constants.PHASE_LOAD_TEST, existJob);
+				
+				//To get maven build arguments
+				parameters = getMojoParameters(mojo, Constants.PHASE_LOAD_TEST);
+				ActionType actionType = ActionType.LOAD_TEST;
+				mvncmd =  actionType.getActionType().toString();
+				
+				String loadTestPreBuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_LOAD_TEST;
+				// To handle multi module project
+				loadTestPreBuildCmd = loadTestPreBuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
+				preBuildStepCmds.add(loadTestPreBuildCmd);
+			} else if (PERFORMANCE_TEST_CI.equals(operation)) {
+				if (debugEnabled) {
+					S_LOGGER.debug("Performance test operation!!!!!!");
+				}				
+				MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(Constants.PHASE_CI)));
+				persistValuesToXml(mojo, Constants.PHASE_PERFORMANCE_TEST);
+				constructCiJobObj(mojo, Constants.PHASE_PERFORMANCE_TEST, existJob);
+				
+				//To get maven build arguments
+				parameters = getMojoParameters(mojo, Constants.PHASE_PERFORMANCE_TEST);
+				ActionType actionType = ActionType.PERFORMANCE_TEST;
+				mvncmd =  actionType.getActionType().toString();
+				
+				String performanceTestPreBuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_PERFORMANCE_TEST;
+				// To handle multi module project
+				performanceTestPreBuildCmd = performanceTestPreBuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
+				preBuildStepCmds.add(performanceTestPreBuildCmd);
 			}
 			
 			List<String> buildArgCmds = getMavenArgCommands(parameters);
@@ -1604,5 +1698,13 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 
 	public void setDownstreamCriteria(String downstreamCriteria) {
 		this.downstreamCriteria = downstreamCriteria;
+	}
+
+	public boolean isDownStreamAvailable() {
+		return isDownStreamAvailable;
+	}
+
+	public void setDownStreamAvailable(boolean isDownStreamAvailable) {
+		this.isDownStreamAvailable = isDownStreamAvailable;
 	}
 }

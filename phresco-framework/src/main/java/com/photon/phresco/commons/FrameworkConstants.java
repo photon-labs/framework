@@ -1,20 +1,19 @@
-/*
- * ###
- * %%
- * Copyright (C) 1999 - 2012 Photon Infotech Inc.
- * %%
+/**
+ * Phresco Framework
+ *
+ * Copyright (C) 1999-2013 Photon Infotech Inc.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ###
  */
 package com.photon.phresco.commons;
 
@@ -103,6 +102,8 @@ public interface FrameworkConstants {
     
     String REQ_CUSTOMER_ID = "customerId";
     String REQ_PROJECT_ID = "projectId";
+    String REQ_RECENT_PROJECT_ID = "recentProjectId";
+    String REQ_RECENT_APP_ID = "recentAppId";
     String REQ_APP_ID = "appId";
     String REQ_PILOT_PROJECTS = "pilotProjects";
     String REQ_CURRENT_APP_NAME = "currentAppName";
@@ -110,6 +111,9 @@ public interface FrameworkConstants {
     String REQ_SELECTED_FEATURES = "selectedFeatures";
     String REQ_SELECTED_DOWNLOADINFO = "selectedDownloadInfo";
     String REQ_DEFAULT_FEATURES = "defaultFeatures";
+    String REQ_HAS_MODULES = "hasModules";
+    String REQ_HAS_JSLIBS = "hasJsLibs";
+    String REQ_HAS_COMPONENTS = "hasComponents";
     String REQ_SCOPE = "scope";
     String REQ_SELECTED_DOWNLOADINFO_VERSION = "selectedDownloadInfoVersion";
     String REQ_CURRENT_SELECTBOX_ID = "selectBoxId";
@@ -125,6 +129,7 @@ public interface FrameworkConstants {
     String REQ_PARAM_NAME_TABLET = "Tablet";
     String REQ_PARAM_NAME_LAYER_ID = "layerId";
     String REQ_PARAM_NAME_TECH_GROUP_ID = "techGroupId";
+    String REQ_JAVASCRIPT_TYPE_MODULE = "JAVASCRIPT";    
     String REQ_FEATURES_TYPE_MODULE = "FEATURE";
     String REQ_FEATURES_TYPE = "type";
     String REQ_FEATURES_MOD_GRP = "moduleGroup";
@@ -234,6 +239,7 @@ public interface FrameworkConstants {
     String GIT = "git";
     String BITKEEPER = "bitkeeper";
     String REPO_TYPE = "repoType";
+    String IS_NOT_WORKING_COPY = "is not a working copy";
     String UPDATE_SVN_PROJECT = "updateProject";
     String SVN_TYPE = "svnType";
     String SVN_CHECKOUT_TEMP = "svn-checkout-temp";
@@ -314,6 +320,7 @@ public interface FrameworkConstants {
     String READ_LOG_VIEW = "view";
     String READ_ERROR_LOG_VIEW = "errorLogView";
     String PATH = "path";
+    String EDIT = "edit";
     String SHOW_ANDROID_DEVICE = "showDevice"; 
     String IMPORT_SQL = "importSql";
     String ADDITIONAL_CONTEXT_PATH = "additional_context";
@@ -346,6 +353,8 @@ public interface FrameworkConstants {
 	String FUNCTIONAL_TEST = "functionalTest";
 	String CODE_VALIDATION = "codeValidation";
 	String PDF_REPORT = "pdfReport";
+	String LOAD_TEST = "loadTest";
+	String PERFORMANCE_TEST_CI = "performanceTest";
 	String REQ_FUNCTEST_SELENIUM_TOOL = "functionalTestSeleniumTool";
 	String SELENIUM_GRID = "grid";
 	String SELENIUM_WEBDRIVER = "webdriver";
@@ -481,6 +490,7 @@ public interface FrameworkConstants {
 	 */
 	String HELP_KEY = "Help";
 	String SETTINGS_KEY = "Settings";
+	String DOWNLOAD_KEY = "Download";
 	String CODE_KEY = "Code";
 	String BUILD_KEY = "Build";
 	String UNIT_TEST_KEY = "Unit_Test";
@@ -497,6 +507,7 @@ public interface FrameworkConstants {
 	String EXE_DOWNLOAD_KEY = "Exe_Download";
 	String FEATURES_KEY = "Feature_Config";
 	String COMPONENT_CONFIG = "Component_Config";
+	String THEME_BUILDER_KEY = "Theme_Builder";
     
 	/*
 	 * Dynamic parameters
@@ -590,6 +601,8 @@ public interface FrameworkConstants {
      */
     String SESSION_CUSTOMERS = "listOfCustomers";
     String REQ_APPINFO	= "appInfo";
+    String REQ_TESTCASE = "testCase";
+    String REQ_TESTSUITE = "testSuite";
     String REQ_APPINFO_SERVERS = "appinfoServers";
     String REQ_APPINFO_DBASES = "appinfoDbs";
     String REQ_APP_DIR_NAME  = "appDirName";
@@ -690,6 +703,8 @@ public interface FrameworkConstants {
     String REQ_SETTINGS_NAME = "settingName";
     String REQ_CODE_PREFIX = "codePrefix";
     String REQ_FROM_PAGE = "fromPage";
+    String REQ_THEME_FILES = "themeList";
+    String REQ_CSS_JSON = "cssJson";
     String REQ_AGAINST_JAR = "funcTestAgaistJar";
     String REQ_SETTINGS_PATH = "settingsPath";
     String REQ_CONFIG_PATH = "configPath";
@@ -1230,6 +1245,7 @@ public interface FrameworkConstants {
     String ERROR_ENVS_REMOVE = "Environment(s) {0} are already in use";
     String ERROR_DUPLICATE_NAME = "Name already exists";
     String ERROR_DUPLICATE_NAME_IN_SETTINGS = "Name already exists in global settings";
+    String ERROR_PRODUCTION_EXISTS_IN_CONFIGURATIONS= "Production is application specific environment";
     String ERROR_DUPLICATE_NAME_IN_CONFIGURATIONS = "Name already exists in configurations of the {0} project";
     String ERROR_INVALID_NAME = "Invalid Name";
     String ERROR_SELECT = "Select database and server";
@@ -1584,6 +1600,7 @@ public interface FrameworkConstants {
 		String EXCEPTION_QUALITY_LOAD_PARAMS = "excep.hdr.quality.load.params";
 		String EXCEPTION_QUALITY_LOAD_RUN = "excep.hdr.quality.load.run";
 		String EXCEPTION_BUILD_POPUP = "excep.hdr.build.popup";
+		String EXCEPTION_PROCESS_BUILD_POPUP = "excep.hdr.processBuild.popup";
 		String EXCEPTION_DEPLOY_POPUP = "excep.hdr.deploy.popup";
 		String EXCEPTION_BUILD_GENERATE = "excep.hdr.build.generate";
 		String EXCEPTION_DEPLOY_GENERATE = "excep.hdr.deploy.generate";
@@ -1722,6 +1739,7 @@ public interface FrameworkConstants {
 	    String COPYRIGHT = "CopyRight";
 	    String DISABLED_LABEL_COLOR = "DisabledLabelColor";
 	    String USER_JSON = "user.json";
+	    String USER_PROJECT_JSON = "user-project.json";
 	    
 	    String PACKAGE = "package";
 	    String PHRESCO_HYPHEN_BUILD_XML = "phresco-build.xml";
@@ -1746,4 +1764,9 @@ public interface FrameworkConstants {
 	    String BK_ADD_COMMENT = "-y\"";
 	    
 	    String ALREADY_EXISTS = "exists and is not empty";
+	    
+	   /**
+	    * Theme builder keys
+	    */
+	    String SUCCESS_THEME_BUILDER_CREATE = "Theme Builder Created Successfully";
 }

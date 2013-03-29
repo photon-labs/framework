@@ -1,22 +1,22 @@
 <%--
-  ###
-  Framework Web Archive
-  
-  Copyright (C) 1999 - 2013 Photon Infotech Inc.
-  
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-  
-       http://www.apache.org/licenses/LICENSE-2.0
-  
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
-  ###
-  --%>
+
+    Framework Web Archive
+
+    Copyright (C) 1999-2013 Photon Infotech Inc.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+--%>
 <!doctype html>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
@@ -35,8 +35,8 @@
 	<head>
 		<meta name="viewport" content="width=device-width, height=device-height, minimum-scale=0.25, maximum-scale=1.6">
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<title>Phresco</title>
-		<link rel="SHORTCUT ICON" href="images/favicon.ico">
+		<title>Helios</title>
+		<!-- <link rel="SHORTCUT ICON" href="images/favicon.ico"> -->
 		<link rel="stylesheet" href="css/bootstrap.css">
 
 		<!-- <link type="text/css" rel="stylesheet" href="theme/red_blue/css/phresco.css" id="phresco"> -->
@@ -109,17 +109,18 @@
 		<!-- jquery editable combobox -->
 		<script src="js/jquery.editable.combobox.js"></script>
 		<script src="js/jss.min.js"></script>
+		
+		<!-- Color picker -->
+		<script type="text/javascript" src="js/bootstrap-colorpicker.js"></script>
+		<link type="text/css" rel="stylesheet" href="css/bootstrap-colorpicker.css"/>
+		
 	</head>
 	<body>
         <%
             User user = (User) session.getAttribute(FrameworkConstants.SESSION_USER_INFO);
         	String customerId = (String)session.getAttribute(user.getId());
+        	List<Customer> customers  = (List<Customer>) session.getAttribute(FrameworkConstants.SESSION_CUSTOMERS);
             String displayName = user.getDisplayName();
-            Object optionsObj = session.getAttribute(FrameworkConstants.REQ_OPTION_ID);
-        	List<String> optionIds  = null;
-        	if (optionsObj != null) {
-        		optionIds  = (List<String>) optionsObj;
-        	}
         %>
 		<div class="modal-backdrop fade in popupalign"></div>
 	    
@@ -163,7 +164,7 @@
 		                                     </li>
 		                                 </ul>
 		                             </li>
-		                             <li><a href="#" id="forum" ><s:text name="lbl.hdr.help"/></a></li>
+		                             <li><a href="#" id="forum" class="<%= FrameworkConstants.HELP_KEY %>"><s:text name="lbl.hdr.help"/></a></li>
 		                             <li><a href="#" id="about" ><s:text name="lbl.abt.helios"/></a></li>
 		                             <li><a href="<s:url action='logout'/>"><s:text name="lbl.signout"/></a></li>
 		                         </ul>	
@@ -181,10 +182,13 @@
 								<li class="wid_app"><a href="#" class="inactive" name="headerMenu" id="applications">
 								    <s:label key="lbl.hdr.projects" theme="simple"/></a>
 								</li>
-								<li class="wid_set"><a href="#" class="inactive" name="headerMenu" id="settings" additionalParam="fromPage=settings">
+								<li class="hideContent wid_set <%= FrameworkConstants.SETTINGS_KEY %>"><a href="#" class="inactive" name="headerMenu" id="settings" additionalParam="fromPage=settings">
 								    <s:label key="lbl.hdr.settings"  theme="simple"/></a>
 								</li>
-								<li class="wid_help"><a href="#" class="inactive" name="headerMenu" id="forum">
+								<li class="hideContent wid_set <%= FrameworkConstants.DOWNLOAD_KEY %>"><a href="#" class="inactive " name="headerMenu" id="download">
+								    <s:label key="lbl.hdr.download"  theme="simple"/></a>
+								</li>
+								<li class="hideContent wid_help <%= FrameworkConstants.HELP_KEY %>"><a href="#" class="inactive " name="headerMenu" id="forum">
 								    <s:label key="lbl.hdr.help"  theme="simple"/></a>
 								</li>
 							</ul>
@@ -209,7 +213,6 @@
 		</header>
 		<!-- Header Ends Here -->
 		
-		
 		<!-- Content Starts Here -->
 		<section class="main_wrapper">
 			<section class="wrapper">
@@ -225,13 +228,12 @@
 						</a>
 					</div>
 					
-					<form id="formCustomers" class="form">
+					<form id="formCustomers" class="form <%= customers.size() > 1 ? "" : "hideContent" %>">
 						<div id="customerList" class="control-group customer_name">
 							<s:label key="lbl.customer" cssClass="control-label custom_label labelbold" theme="simple"/>
 							<div class="controls customer_select_div">
 								<select id="customerSelect" name="customerSelect" class="customer_listbox">
 					                <%
-					                	List<Customer> customers  = (List<Customer>) session.getAttribute(FrameworkConstants.SESSION_CUSTOMERS);
 				                    	for (Customer customer: customers) {
 								    %>
 					                       <option value="<%= customer.getId() %>"><%= customer.getName()%></option>
@@ -327,7 +329,7 @@
 			
 			</div>
 			<div class="modal-footer">
-				<input type="button" class="btn btn-primary" id="popupCancel" value="<s:text name='lbl.btn.cancel'/>" data-dismiss="modal" href="#"/>
+				<input type="button" class="btn btn-primary popupCancel" id="" onClick="popupOnCancel(this);" value="<s:text name='lbl.btn.cancel'/>" data-dismiss="modal" href="#"/>
 				<input type="button" class="btn btn-primary popupOk" id="" onClick="popupOnOk(this);" value="<s:text name='lbl.btn.ok'/>" href="#"/>
 				<input type="button" class="btn btn-primary popupClose" id="" onClick="popupOnClose(this);" value="<s:text name='lbl.btn.close'/>" data-dismiss="modal" href="#"/>
 				<div class="popuploadingIcon" id="popuploadingIcon"></div>
@@ -359,7 +361,7 @@
 	    <!-- Additional popup Starts-->
 	    <div id="additionalPopup" class="modal hide fade">
 			<div class="modal-header">
-				<a class="close" data-dismiss="modal" onclick="add_popupCancel();">&times;</a>
+				<a class="close" data-dismiss="modal" id="add_popupClose" onclick="add_popupCancel(this);">&times;</a>
 				<h3 id="additional_popupTitle"></h3>
 			</div>
 			<div class="modal-body" id="additional_popup_body">
@@ -381,39 +383,36 @@
 	</body>
 	
 	<script type="text/javascript">
-	 $(document).ready(function() {
+	var selectedId = "";
+	$(document).ready(function() {
 		//script related to loginuser 
-		 $("body").click
-		 (
-		   function(e)
-		   {
-		     if(e.target.className !== "usersettings")
-		     {
-		       $(".userInfo").hide();
-		       $(".loginarrow").attr("src", "images/arrow_user.png");
-		       $(".usersettings").attr("dataflag", "false");
-		     }
-		   }
-		 );
-		 $(".userInfo").hide();
-	      $(".usersettings").click(function(e) {
-	      	clickedobj=e.currentTarget;
-				if ($(clickedobj).attr("dataflag") == "true") {
-					$(".loginarrow").attr("src", "images/arrow_user.png");
-					$(clickedobj).attr("dataflag", "false");
-				}
-				else{
-					$(".loginarrow").attr("src", "images/arrow_user_down.png");
-					$(clickedobj).attr("dataflag", "true");
-				}
+		$("body").click(function(e) {
+			if (e.target.className !== "usersettings") {
+				$(".userInfo").hide();
+		       	$(".loginarrow").attr("src", "images/arrow_user.png");
+		       	$(".usersettings").attr("dataflag", "false");
+			}
+		});
+
+		$(".userInfo").hide();
+
+		$(".usersettings").click(function(e) {
+			clickedobj=e.currentTarget;
+			if ($(clickedobj).attr("dataflag") == "true") {
+				$(".loginarrow").attr("src", "images/arrow_user.png");
+				$(clickedobj).attr("dataflag", "false");
+			} else {
+				$(".loginarrow").attr("src", "images/arrow_user_down.png");
+				$(clickedobj).attr("dataflag", "true");
+			}
 
 	      	$(".userInfo").toggle();
 	      	e.stopPropagation();
-	      });
+		});
 	      
 		applyTheme();
 		showHideTheme();
-		var selectedId = "";
+		
 		$("#customerSelect").val('<%= customerId %>');
 		
 		$(".styles").click(function() {
@@ -452,35 +451,6 @@
 			copyToClipboard($('#popup_progress_div').text().replace("%", ""));
 		});
 		
-		function copyToClipboard(data) {
-	        var params = "copyToClipboard=";
-	        params = params.concat(data);
-	        loadContent('copyToClipboard', '', '', params, '', true, '');
-		}
-		 
-        function onSelectCustomer(selectedId) {
-        	$('#customerId').val(selectedId);
-    		 loadContent("fetchCustomerId", $('#formCustomers'), '', '', false, true, '');
-       		$('a[name="headerMenu"]').each(function() {
-       			if ($(this).hasClass('active')) {
-       				doPageLoad($(this), $('a[name="headerMenu"]'));
-       			}
-       		});
-       	}
-        
-        function doPageLoad(currentObj, allObjects) {
-        	showLoadingIcon();
-        	showHideTheme();
-    		inActivateAllMenu(allObjects);
-    		activateMenu(currentObj);
-    		loadContent(currentObj.attr('id'), $('#formCustomers'), $("#container"), '', '', true);
-   			if (selectedId == "<%= ServiceConstants.DEFAULT_CUSTOMER_NAME %>") {
-   				applyTheme();
-   			} else {
-   				getLogoImgUrl();
-   			}
-        }
-
 		$("#forum").click(function() {
 			loadContent("forum", $('#formCustomers'), $("#container"), '', '', true);
 		});
@@ -515,6 +485,76 @@
 	function changeLogo(data) {
 		$('#logoImg').attr("src",  "data:image/png;base64," + data.logoImgUrl);
 		changeColorScheme(data);
+	}
+	
+	function copyToClipboard(data) {
+        var params = "copyToClipboard=";
+        params = params.concat(data);
+        loadContent('copyToClipboard', '', '', params, '', true, '');
+	}
+	 
+    function onSelectCustomer(selectedId) {
+    	$('#customerId').val(selectedId);
+    	loadContent("fetchCustomerOptions", $('#formCustomers'), '', '', true, true, 'showHideCustomerOptions');
+		loadContent("fetchCustomerId", $('#formCustomers'), '', '', false, true, '');
+   	}
+    
+    function doPageLoad(currentObj, allObjects) {
+    	showLoadingIcon();
+    	showHideTheme();
+		inActivateAllMenu(allObjects);
+		activateMenu(currentObj);
+		var isHidden = currentObj.is(':hidden');
+		var id = currentObj.attr('id')
+		var url = "";
+		if (isHidden) {
+			allObjects.each(function() {
+				if (!$(this).hasClass('active')) {
+					url = $(this).attr("id");
+					activateMenu($(this));
+					return false;					
+				}
+			});
+		} else {
+			url = currentObj.attr('id')
+		}
+		loadContent(url, $('#formCustomers'), $("#container"), '', '', true);
+		if (selectedId == "<%= ServiceConstants.DEFAULT_CUSTOMER_NAME %>") {
+			applyTheme();
+		} else {
+			getLogoImgUrl();
+		}
+    }
+	
+    //To show/hide the menus based on the selected customer options
+	function showHideCustomerOptions(data) {
+		var customerOptions = data.customerOptions;
+		var customerAllOptions = data.customerAllOptions;
+		if (customerAllOptions != undefined) {
+			for (i in customerAllOptions) {
+				$("." + customerAllOptions[i]).hide();
+			}
+		}
+		if (customerOptions != undefined) {
+			for (i in customerOptions) {
+				$("." + customerOptions[i]).show();
+			}
+		} 
+		var noOfChildrens = $(".headerInnerTop ul li").size();
+		var noOfVisibleChildrens = $(".headerInnerTop ul li:visible").size();
+		if (noOfVisibleChildrens < noOfChildrens) {
+			var individualWidth = 575/5;
+			var newWidth = individualWidth * noOfVisibleChildrens
+			$(".headerInnerTop ul").css("width", newWidth);
+		} else {
+			$(".headerInnerTop ul").css("width", "575");
+		}
+		$('a[name="headerMenu"]').each(function() {
+   			if ($(this).hasClass('active')) {
+   				doPageLoad($(this), $('a[name="headerMenu"]'));
+   				return false;
+   			}
+   		});
 	}
 	
 	function changeColorScheme(data) {

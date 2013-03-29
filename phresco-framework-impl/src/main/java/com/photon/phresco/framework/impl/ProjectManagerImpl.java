@@ -1,3 +1,20 @@
+/**
+ * Phresco Framework Implementation
+ *
+ * Copyright (C) 1999-2013 Photon Infotech Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.photon.phresco.framework.impl;
 
 import java.io.BufferedReader;
@@ -214,9 +231,10 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 						ApplicationProcessor applicationProcessor = dynamicLoader.getApplicationProcessor(applicationHandler.getClazz());
 						applicationProcessor.postCreate(appInfo);
 					}
-					if(isCallEclipsePlugin(appInfo)) {
-						Utility.executeStreamconsumer(MVN_COMMAND + STR_BLANK_SPACE + MVN_GOAL_ECLIPSE, Utility.getProjectHome() + File.separator + appInfo.getAppDirName());
+					if (isCallEclipsePlugin(appInfo)) {
+					    Utility.executeCommand(MVN_COMMAND + STR_BLANK_SPACE + MVN_GOAL_ECLIPSE, Utility.getProjectHome() + File.separator + appInfo.getAppDirName());
 					}
+
 				}
 			} catch (FileNotFoundException e) {
 				throw new PhrescoException(e); 
@@ -318,13 +336,13 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 	
 						File projectInfoPath = new File(dotPhrescoPathSb.toString() + PROJECT_INFO_FILE);
 						ProjectUtils.updateProjectInfo(projectInfo, projectInfoPath);// To update the project.info file
-	
 					}
+					if (isCallEclipsePlugin(appInfo)) {
+                        Utility.executeCommand(MVN_COMMAND + STR_BLANK_SPACE + MVN_GOAL_ECLIPSE, Utility.getProjectHome() + File.separator + appInfo.getAppDirName());
+                    }
 				} catch (FileNotFoundException e) {
-					e.printStackTrace();
 					throw new PhrescoException(e);
 				} catch (IOException e) {
-					e.printStackTrace();
 					throw new PhrescoException(e);
 				} finally {
 					if(backUpProjectInfoFile!= null && backUpProjectInfoFile.exists()) {

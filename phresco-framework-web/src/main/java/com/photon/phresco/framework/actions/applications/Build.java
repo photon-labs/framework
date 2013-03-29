@@ -1,21 +1,19 @@
-/*
- * ###
+/**
  * Framework Web Archive
- * 
- * Copyright (C) 1999 - 2012 Photon Infotech Inc.
- * 
+ *
+ * Copyright (C) 1999-2013 Photon Infotech Inc.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ###
  */
 package com.photon.phresco.framework.actions.applications;
 
@@ -60,6 +58,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.io.*;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.plexus.util.cli.CommandLineException;
@@ -388,6 +387,36 @@ public class Build extends DynamicParameterAction implements Constants {
 		return APP_ENVIRONMENT_READER;
 	}
 	
+	/*
+	 * To show processBuild popup with loaded dynamic parameters
+	 */
+	public String showProcessBuildPopup() throws PhrescoException {
+		if (debugEnabled) {
+			S_LOGGER.debug("Entering Method  Build.showProcessBuildPopup()");
+		}
+		try {
+		    ApplicationInfo appInfo = getApplicationInfo();
+            removeSessionAttribute(appInfo.getId() + PHASE_PROCESS_BUILD + SESSION_WATCHER_MAP);
+            Map<String, DependantParameters> watcherMap = new HashMap<String, DependantParameters>(8);
+
+            MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_PROCESS_BUILD)));
+            List<Parameter> parameters = getMojoParameters(mojo, PHASE_PROCESS_BUILD);
+
+            setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap, PHASE_PROCESS_BUILD);
+            
+            setSessionAttribute(appInfo.getId() + PHASE_PROCESS_BUILD + SESSION_WATCHER_MAP, watcherMap);
+            setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
+            setReqAttribute(REQ_DEPLOY_BUILD_NUMBER, getReqParameter(BUILD_NUMBER));
+            setReqAttribute(REQ_GOAL, PHASE_PROCESS_BUILD);
+            setReqAttribute(REQ_PHASE, PHASE_PROCESS_BUILD);
+            setReqAttribute(REQ_FROM, getFrom());
+		} catch (PhrescoException e) {
+			return showErrorPopup(e, getText(EXCEPTION_PROCESS_BUILD_POPUP));
+		} 
+
+		return REQ_PROCESS_BUILD;
+	}
+	
 	public String processBuild() {
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method  processBuild()");
@@ -513,7 +542,7 @@ public class Build extends DynamicParameterAction implements Constants {
 				if (status) {
 					fileName = fileName.substring(0, fileName.lastIndexOf(".")) + ARCHIVE_FORMAT ;
 				} else {
-					fileName = fileName.split(SPLIT_DOT)[0] + ARCHIVE_FORMAT;
+					fileName = FilenameUtils.removeExtension(fileName) + ARCHIVE_FORMAT;
 				}
 			}
 			if (debugEnabled) {

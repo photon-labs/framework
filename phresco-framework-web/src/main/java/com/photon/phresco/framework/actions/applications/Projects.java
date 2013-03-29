@@ -1,21 +1,19 @@
-/*
- * ###
+/**
  * Framework Web Archive
- * 
- * Copyright (C) 1999 - 2012 Photon Infotech Inc.
- * 
+ *
+ * Copyright (C) 1999-2013 Photon Infotech Inc.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ###
  */
 package com.photon.phresco.framework.actions.applications;
 
@@ -34,6 +32,9 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.w3c.dom.Element;
 
 import com.google.gson.Gson;
@@ -99,6 +100,7 @@ public class Projects extends FrameworkBaseAction {
     private String id = "";
     private String fromTab = "";
     private int appLayerRowCount;
+    private String actionType = "";
     
     public void clearMap() {
     	s_layerMap.clear();
@@ -123,6 +125,7 @@ public class Projects extends FrameworkBaseAction {
             setReqAttribute(REQ_PROJECTS, projects);
             setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
             removeSessionAttribute(projectCode);
+            setRecentProjectIdInReq();
             if (IMPORT.equals(getStatusFlag())) {
             	addActionMessage(getText(IMPORT_SUCCESS_PROJECT));
             } else if (UPDATE.equals(getStatusFlag())) {
@@ -140,6 +143,44 @@ public class Projects extends FrameworkBaseAction {
         }
 
         return APP_LIST;
+    }
+    
+    private void setRecentProjectIdInReq() throws PhrescoException {
+        FileReader reader = null;
+        try {
+            File tempPath = new File(Utility.getPhrescoTemp() + File.separator + USER_PROJECT_JSON);
+            User user = (User) getSessionAttribute(SESSION_USER_INFO);
+            JSONObject userProjJson = null;
+            JSONParser parser = new JSONParser();
+            String recentProjectId = "";
+            String recentAppId = "";
+            if (tempPath.exists()) {
+                reader = new FileReader(tempPath);
+                userProjJson = (JSONObject)parser.parse(reader);
+                String csv = (String) userProjJson.get(user.getId());
+                if (StringUtils.isNotEmpty(csv)) {
+                    String[] split = csv.split(Constants.STR_COMMA);
+                    recentProjectId = split[0];
+                    if (split.length > 1) {
+                        recentAppId = split[1];
+                    }
+                }
+            }
+            setReqAttribute(REQ_RECENT_PROJECT_ID, recentProjectId);
+            setReqAttribute(REQ_RECENT_APP_ID, recentAppId);
+        } catch (IOException e) {
+            throw new PhrescoException(e);
+        } catch (ParseException e) {
+            throw new PhrescoException(e);
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    throw new PhrescoException(e);
+                }
+            }
+        }
     }
 
     /**
@@ -188,13 +229,6 @@ public class Projects extends FrameworkBaseAction {
             if (CollectionUtils.isNotEmpty(techInfos)) {
                 for (TechnologyInfo techInfo : techInfos) {
                     if (techInfo.getId().equals(techId)) {
-                    	String findPlatform = FrameworkUtil.findPlatform();
-                    	if (techInfo.getId().equals("tech-win-phone") && findPlatform.equals("Windows86") || findPlatform.equals("Windows32")) {
-                    		List<String> techVersions = techInfo.getTechVersions();
-                    		if (techVersions.contains("8.0")) {
-                    			techInfo.getTechVersions().remove("8.0");
-                    		}
-                    	}
                         setVersions(techInfo.getTechVersions());
                         break;
                     }
@@ -313,8 +347,10 @@ public class Projects extends FrameworkBaseAction {
         }
 
         try {
-            PhrescoFrameworkFactory.getProjectManager().create(createProjectInfo(), getServiceManager());
+            ProjectInfo projectInfo = PhrescoFrameworkFactory.getProjectManager().create(createProjectInfo(), getServiceManager());
             addActionMessage(getText(ACT_SUCC_PROJECT_CREATE, Collections.singletonList(getProjectName())));
+            setProjectId(projectInfo.getId());
+            updateLatestProject();
         } catch (PhrescoException e) {
             if (s_debugEnabled) {
                 S_LOGGER.error("Entered into catch block of Projects.createProject()" + FrameworkUtil.getStackTraceAsString(e));
@@ -610,8 +646,16 @@ public class Projects extends FrameworkBaseAction {
     	}
     	return sonarTechReports;
     }
- 
     
+    public String killProcess() throws PhrescoException {
+    	 ApplicationInfo appInfo = getApplicationInfo();
+         
+         // TO kill the Process
+         String baseDir = Utility.getProjectHome()+ appInfo.getAppDirName();
+         Utility.killProcess(baseDir, getActionType());
+    	
+		return SUCCESS;
+    }
     /**
      * To validate the form fields
      * @return
@@ -938,5 +982,13 @@ public class Projects extends FrameworkBaseAction {
 
 	public int getAppLayerRowCount() {
 		return appLayerRowCount;
+	}
+
+	public String getActionType() {
+		return actionType;
+	}
+
+	public void setActionType(String actionType) {
+		this.actionType = actionType;
 	}
 }

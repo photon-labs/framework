@@ -1,3 +1,20 @@
+/**
+ * Framework Web Archive
+ *
+ * Copyright (C) 1999-2013 Photon Infotech Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.photon.phresco.framework.actions.applications;
 
 import java.io.File;
@@ -12,6 +29,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.antlr.stringtemplate.StringTemplate;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
@@ -55,6 +73,7 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
     private String dependency = "";
     private String fileType = ""; //for file browse 
     private String fileOrFolder = ""; //for file browse
+	private String fromDeployDir = "";
     	
 	private boolean paramaterAvailable;
 	private boolean errorFound;
@@ -65,6 +84,7 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
     private final String PHASE_FUNCTIONAL_TEST = "functional-test";
     private final String PHASE_RUNAGAINST_SOURCE = "run-against-source";
     private String selectedFiles = "";
+    private String parameterType = "";
     
     
     private static Map<String, PhrescoDynamicLoader> pdlMap = new HashMap<String, PhrescoDynamicLoader>();
@@ -82,7 +102,10 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 		sb.append(FOLDER_DOT_PHRESCO);
 		sb.append(File.separator);
 		sb.append(PHRESCO_HYPEN);
-		if (StringUtils.isNotEmpty(goal) && goal.contains(FUNCTIONAL)) {
+		// when phase is CI, it have to take ci info file for update dependency
+		if (PHASE_CI.equals(getPhase())) {
+			sb.append(getPhase());
+		} else if (StringUtils.isNotEmpty(goal) && goal.contains(FUNCTIONAL)) {
 			sb.append(PHASE_FUNCTIONAL_TEST);
 		} else if (PHASE_RUNGAINST_SRC_START.equals(goal)|| PHASE_RUNGAINST_SRC_STOP.equals(goal) ) {
 			sb.append(PHASE_RUNAGAINST_SOURCE);
@@ -462,6 +485,10 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 	                    parameter.setValue(value);
 	                } else if (parameter.getType().equalsIgnoreCase(TYPE_PACKAGE_FILE_BROWSE)) {
 	                	parameter.setValue(getSelectedFiles());
+	                } else if(parameter.getType().equalsIgnoreCase(TYPE_PASSWORD)) {
+	                	byte[] encodedPwd = Base64.encodeBase64(getReqParameter(parameter.getKey()).getBytes());
+	                	String encodedString = new String(encodedPwd);
+	                	parameter.setValue(encodedString);
 	                } else {
 	                    parameter.setValue(StringUtils.isNotEmpty(getReqParameter(parameter.getKey())) ? (String)getReqParameter(parameter.getKey()) : "");
 	                }
@@ -733,8 +760,7 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
             S_LOGGER.debug("Entering Method Quality.changeEveDependancyListener()");
         }
         
-        Map<String, DependantParameters> watcherMap = (Map<String, DependantParameters>) 
-                getSessionAttribute(getAppId() + getGoal() + SESSION_WATCHER_MAP);
+        Map<String, DependantParameters> watcherMap = (Map<String, DependantParameters>) getSessionAttribute(getAppId() + getGoal() + SESSION_WATCHER_MAP);
         DependantParameters currentParameters = watcherMap.get(getCurrentParamKey());
         if (currentParameters == null) {
             currentParameters = new DependantParameters();
@@ -757,6 +783,7 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
             if (StringUtils.isNotEmpty(getDependency())) {
                 // Get the values from the dynamic parameter class
                 Parameter dependentParameter = mojo.getParameter(getGoal(), getDependency());
+                setParameterType(dependentParameter.getType());
                 if (dependentParameter.getDynamicParameter() != null) {
                 	ApplicationInfo applicationInfo2 = getApplicationInfo();
                     Map<String, Object> constructMapForDynVals = constructMapForDynVals(applicationInfo, watcherMap, getDependency());
@@ -845,7 +872,7 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 		setReqAttribute(FILE_TYPES, getFileType());
 		setReqAttribute(FILE_BROWSE, getFileOrFolder());
 		ApplicationInfo applicationInfo = getApplicationInfo();
-		if (REQ_JAR.equalsIgnoreCase(getFileType())) {
+		if (REQ_JAR.equalsIgnoreCase(getFileType()) || DEPLOY_DIR.equals(getFromDeployDir())) {
 			setReqAttribute(REQ_PROJECT_LOCATION, "");
 			setReqAttribute(REQ_FROM, REQ_AGAINST_JAR);
 //		} else if(REQ_XLSX.equalsIgnoreCase(getFileType())) {
@@ -968,7 +995,23 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 		return selectedFiles;
 	}
 
+	public String getFromDeployDir() {
+		return fromDeployDir;
+	}
+
+	public void setFromDeployDir(String fromDeployDir) {
+		this.fromDeployDir = fromDeployDir;
+	}
+
 	public void setSelectedFiles(String selectedFiles) {
 		this.selectedFiles = selectedFiles;
+	}
+
+	public String getParameterType() {
+		return parameterType;
+	}
+
+	public void setParameterType(String parameterType) {
+		this.parameterType = parameterType;
 	}
 }

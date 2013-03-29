@@ -1,13 +1,3 @@
-/*!
- * NETEYE Activity Indicator jQuery Plugin
- *
- * Copyright (c) 2010 NETEYE GmbH
- * Licensed under the MIT license
- *
- * Author: Felix Gnass [fgnass at neteye dot de]
- * Version: 1.0.0
- */
- 
 /**
  * Plugin that renders a customisable activity indicator (spinner) using SVG or VML.
  */

@@ -1,23 +1,22 @@
 <%--
-  ###
-  Framework Web Archive
-  
-  Copyright (C) 1999 - 2012 Photon Infotech Inc.
-  
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-  
-       http://www.apache.org/licenses/LICENSE-2.0
-  
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
-  ###
-  --%>
 
+    Framework Web Archive
+
+    Copyright (C) 1999-2013 Photon Infotech Inc.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+--%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.util.List"%>
@@ -56,17 +55,34 @@
 	if (optionsObj != null) {
 		optionIds  = (List<String>) optionsObj;
 	}
+	boolean hasModules = (Boolean) request.getAttribute(FrameworkConstants.REQ_HAS_MODULES);
+	boolean hasComponents = (Boolean) request.getAttribute(FrameworkConstants.REQ_HAS_COMPONENTS);
+	boolean hasJsLibs = (Boolean) request.getAttribute(FrameworkConstants.REQ_HAS_JSLIBS);
 %> 
 <form id="formFeatures" class="featureForm">
 	<div class="form-horizontal featureTypeWidth">
 		<label for="myselect" class="control-label features_cl">Type&nbsp;:</label>
 		 <select id="featureselect" name="type" onchange="featuretype()">
-	        <option value="<%= ArtifactGroup.Type.FEATURE.name() %>" selected="selected" data-imagesrc="images/features.png"
-	            data-description="An independent self-contained unit of a spacecraft"><s:text name="lbl.options.modules"/></option>
-	        <option value="<%= ArtifactGroup.Type.JAVASCRIPT.name() %>" data-imagesrc="images/libraries.png"
-	            data-description="Library of pre-written JavaScript to develop JavaScript-based applications"><s:text name="lbl.options.js.libs"/></option>
-	        <option value="<%= ArtifactGroup.Type.COMPONENT.name() %>" data-imagesrc="images/components.png"
-	            data-description="Single piece which forms part of a larger unit"><s:text name="lbl.options.components"/></option>
+		 	<%
+		 		if (hasModules) {
+	 		%>
+		        <option value="<%= ArtifactGroup.Type.FEATURE.name() %>" selected="selected" data-imagesrc="images/features.png"
+		            data-description="An independent self-contained unit of a spacecraft"><s:text name="lbl.options.modules"/></option>
+            <%
+		 		}
+		 		if (hasJsLibs) {
+            %>
+		        <option value="<%= ArtifactGroup.Type.JAVASCRIPT.name() %>" data-imagesrc="images/libraries.png"
+		            data-description="Library of pre-written JavaScript to develop JavaScript-based applications"><s:text name="lbl.options.js.libs"/></option>
+            <%
+		 		}
+		 		if (hasComponents) {
+            %>
+		        <option value="<%= ArtifactGroup.Type.COMPONENT.name() %>" data-imagesrc="images/components.png"
+		            data-description="Single piece which forms part of a larger unit"><s:text name="lbl.options.components"/></option>
+            <%
+		 		}
+            %>
 	    </select>
 	    <div class="alert alert-success alert-message hideContent" id="successmsg">
 			<s:text name="succ.feature.configure"/>
@@ -77,12 +93,26 @@
 		<div class="featureImage">
 			<img id="allFeatures" title="<s:text name="title.selected.modules"/>" src="images/all.png">
 			<span class="bubbleAll"></span>
+			<%
+		 		if (hasModules) {
+	 		%>
 			<img id="selectModules" title="<s:text name="title.selected.modules"/>" src="images/features.png">
 			<span class="bubbleModule"></span>
+			<%
+		 		}
+		 		if (hasJsLibs) {
+            %>
 			<img id="selectJsLibs" title="<s:text name="title.selected.jsLibs"/>" src="images/libraries.png">
 			<span class="bubbleJsLibs"></span>
+			  <%
+		 		}
+		 		if (hasComponents) {
+            %>
 			<img id="selectComponents" title="<s:text name="title.selected.components"/>" src="images/components.png">
 			<span class="bubbleComponenet"></span>
+			 <%
+		 		}
+            %>
 		</div>
 	</div>
 	<div class="custom_features">
@@ -128,6 +158,23 @@
 
 <script type="text/javascript">
 <%	
+if (CollectionUtils.isNotEmpty(defaultfeatures)) {
+	for (SelectedFeature feature : defaultfeatures) {
+		if(StringUtils.isEmpty(feature.getScope())) {
+			feature.setScope(FrameworkConstants.REQ_DEFAULT_SCOPE);
+		}
+	    boolean showImage = false;
+	    if (feature.isCanConfigure()) {
+	        showImage = true;
+	    }
+%>
+		constructFeaturesDiv('<%= feature.getName() %>', '<%= feature.getDispName() %>', '<%= feature.getDispValue() %>', '<%= feature.getType() %>', '<%= feature.getVersionID() %>', '<%= feature.getModuleId() %>', <%= feature.isCanConfigure() %>, <%= showImage %>, <%= feature.isDefaultModule() %>, '<%= feature.getArtifactGroupId() %>', '<%= feature.getPackaging() %>', '<%= feature.getScope() %>'); 
+<%		
+ 	}
+}
+%>
+
+<%	
 	if (CollectionUtils.isNotEmpty(features)) {
 		for (SelectedFeature feature : features) {
 			if(StringUtils.isEmpty(feature.getScope())) {
@@ -144,22 +191,6 @@
 	}
 %>
 
-<%	
-if (CollectionUtils.isNotEmpty(defaultfeatures)) {
-	for (SelectedFeature feature : defaultfeatures) {
-		if(StringUtils.isEmpty(feature.getScope())) {
-			feature.setScope(FrameworkConstants.REQ_DEFAULT_SCOPE);
-		}
-	    boolean showImage = false;
-	    if (feature.isCanConfigure()) {
-	        showImage = true;
-	    }
-%>
-		constructFeaturesDiv('<%= feature.getName() %>', '<%= feature.getDispName() %>', '<%= feature.getDispValue() %>', '<%= feature.getType() %>', '<%= feature.getVersionID() %>', '<%= feature.getModuleId() %>', <%= feature.isCanConfigure() %>, <%= showImage %>, <%= feature.isDefaultModule() %>, '<%= feature.getArtifactGroupId() %>', '<%= feature.getPackaging() %>', '<%= feature.getScope() %>'); 
-<%		
- 	}
-}
-%>
 
 	inActivateAllMenu($("a[name='appTab']"));
 	activateMenu($('#features'));
@@ -212,7 +243,8 @@ if (CollectionUtils.isNotEmpty(defaultfeatures)) {
         	var artifactGroupId = $('#'+id).attr('artifactGroupId');
         	var moduleId = $('#'+id).attr('moduleId');
         	var dispValue = $("#" + id + " option:selected").text();
-        	var canConfigure = Boolean($(this).attr("canConfigure"));
+        	//var canConfigure = Boolean($(this).attr("canConfigure"));
+        	var canConfigure = $(this).attr("canConfigure");
         	var defaultModule =$(this).attr("defaultModule");
         	var isDefault = defaultModule.toLowerCase()=="true"?true:false;
         	constructFeaturesDiv(name, dispName, dispValue, selectedType, hiddenFieldVersion, moduleId, canConfigure,'', isDefault, artifactGroupId, packaging, scope);

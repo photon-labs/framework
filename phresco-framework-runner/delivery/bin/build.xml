@@ -1,3 +1,22 @@
+<!--
+
+    Framework Runner
+
+    Copyright (C) 1999-2013 Photon Infotech Inc.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
 <project name="Phresco Deployment Script" basedir="." default="run-phresco">
 
 	<property name="phresco.home" value="${basedir}/.."/>
@@ -7,13 +26,13 @@
 	<property name="checkers.home" value="${phresco.home}/workspace/tools/checker"/>
 	<property name="chief.home" value="${phresco.home}/workspace/tools/chief"/>
 	<property name="ios-sim.home" value="${phresco.home}/workspace/tools/ios-sim"/>
-	<property name="phresco.war.dir" value="${phresco.home}/workspace/tools/war/phresco.war"/>
+	<property name="phresco.war.dir" value="${phresco.home}/workspace/tools/war/helios.war"/>
 	<property name="sonar.war.dir" value="${phresco.home}/workspace/tools/war/sonar.war"/>
 	<property name="phresco.upgrade.file" value="${phresco.home}/workspace/temp/upgrade.properties"/>
 	<property name="phresco.file.server.home" value="${phresco.home}/workspace/projects"/>
 	<property name="phresco.file.server" value="PhrescoFileServer"/>
     <property file = "${phresco.home}/conf/service.properties"/>
-	<property name="phresco.url" value="http://localhost:2468/phresco"/>
+	<property name="phresco.url" value="http://localhost:2468/helios"/>
 	
 	<target name="init">
 		<available property="phresco.upgraded" file="${phresco.upgrade.file}"/>
@@ -37,7 +56,7 @@
 	</target>
 
 	<target name="run-phresco">
-		<echo message="starting phresco deployment from ${phresco.home}"/>
+		<echo message="starting helios deployment from ${phresco.home}"/>
 		<antcall target="set-execute-permissions"/>
 		<antcall target="clean-sonar"/>
 		<antcall target="copy-phresco"/>
@@ -51,8 +70,8 @@
 	</target>
 
 	<target name="copy-phresco">
-		<echo message="copying phresco war into tomcat"/>
-		<copy todir="${tomcat.home}/webapps/phresco">
+		<echo message="copying helios war into tomcat"/>
+		<copy todir="${tomcat.home}/webapps/helios">
 			<fileset dir="${phresco.war.dir}"/>
 		</copy>
 	</target>
@@ -68,7 +87,7 @@
     <target name="copy-framework-config">
 		<echo message="copying framework.config into conf"/>
 		<copy file="${phresco.home}/conf/service.properties" 
-			tofile="${tomcat.home}/webapps/phresco/WEB-INF/classes/framework.config" 
+			tofile="${tomcat.home}/webapps/helios/WEB-INF/classes/framework.config" 
 			overwrite="true"
 		/>
 	</target>
@@ -89,7 +108,7 @@
 		<echo message="*******************************************************************"/>
 		<echo message="*******************************************************************"/>
 		<echo message="      							          "/> 
-		<echo message="    PHRESCO started successfully (${phresco.url})   "/>
+		<echo message="    HELIOS started successfully (${phresco.url})   "/>
 		<echo message="      							          "/> 
 		<echo message="*******************************************************************"/>
 		<echo message="*******************************************************************"/>
@@ -105,7 +124,7 @@
 	</target>
 	
 	<target name="open-browser">
-		<echo message="Opening  Phresco URL ${phresco.url}"/>
+		<echo message="Opening  Helios URL ${phresco.url}"/>
         <exec executable="cmd" osfamily="windows">
             <arg line="/C start ${phresco.url}" />
         </exec>
@@ -126,9 +145,9 @@
 	</target>
 	
 	<target name="clean-phresco" depends="init" if="phresco.upgraded">
-		<echo message="removing older version of phresco war from tomcat"/>
-		<delete dir="${tomcat.home}/webapps/phresco"/>
-		<delete dir="${tomcat.home}/work/Catalina/localhost/phresco"/>
+		<echo message="removing older version of helios war from tomcat"/>
+		<delete dir="${tomcat.home}/webapps/helios"/>
+		<delete dir="${tomcat.home}/work/Catalina/localhost/helios"/>
 		<delete dir="${phresco.war.dir}"/>
 		<delete file="${phresco.upgrade.file}"/>
 	</target>
@@ -162,7 +181,7 @@
 	</target>
 
 	<target name="file-server-start">
-		<echo message="Starting phresco file server on port"/>
+		<echo message="Starting Helios file server on port"/>
 		<echo message="${phresco.file.server.port.num}"/>
 		<echo message="Starting phresco file server "/>
 		<echo message="${phresco.file.server.home}"/>

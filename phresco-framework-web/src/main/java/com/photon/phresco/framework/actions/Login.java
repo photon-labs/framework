@@ -1,43 +1,20 @@
-/*
- * ###
+/**
  * Framework Web Archive
- * 
- * Copyright (C) 1999 - 2012 Photon Infotech Inc.
- * 
+ *
+ * Copyright (C) 1999-2013 Photon Infotech Inc.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ###
  */
-/*
- * $Id: Login.java 471756 2006-11-06 15:01:43Z husted $
- *
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-
 package com.photon.phresco.framework.actions;
 
 import java.io.File;
@@ -62,7 +39,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import com.photon.phresco.commons.model.Customer;
-import com.photon.phresco.commons.model.ProjectInfo;
+import com.photon.phresco.commons.model.TechnologyOptions;
 import com.photon.phresco.commons.model.User;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.exception.PhrescoWebServiceException;
@@ -95,6 +72,9 @@ public class Login extends FrameworkBaseAction {
 	private String copyRight = "";
 	private String disabledLabelColor = "";
 	private String customerId = "";
+	
+	private List<String> customerOptions = null;
+	private List<String> customerAllOptions = null;
     
     public String login() throws IOException {
         if (isDebugEnabled) {
@@ -121,9 +101,11 @@ public class Login extends FrameworkBaseAction {
             S_LOGGER.debug("Entering Method  Login.logout()");
         }
         User user = (User) getSessionAttribute(SESSION_USER_INFO);
-        removeSessionAttribute(user.getId());
-        removeSessionAttribute(SESSION_USER_INFO);
-        removeSessionAttribute(SESSION_CUSTOMERS);
+        if (user != null) {
+        	removeSessionAttribute(user.getId());
+        	removeSessionAttribute(SESSION_USER_INFO);
+        	removeSessionAttribute(SESSION_CUSTOMERS);
+        }
         String errorTxt = (String) getSessionAttribute(REQ_LOGIN_ERROR);
         if (StringUtils.isNotEmpty(errorTxt)) {
             setReqAttribute(REQ_LOGIN_ERROR, getText(errorTxt));
@@ -190,12 +172,10 @@ public class Login extends FrameworkBaseAction {
         		customerId = PHOTON;
         	}
         	
-        	
         	setSessionAttribute(userId, customerId);
         	FileWriter  writer = new FileWriter(tempPath);
         	writer.write(userjson.toString());
         	writer.close();
-
         } catch (PhrescoWebServiceException e) {
         	if(e.getResponse().getStatus() == 204) {
 				setReqAttribute(REQ_LOGIN_ERROR, getText(ERROR_LOGIN_INVALID_USER));
@@ -208,7 +188,7 @@ public class Login extends FrameworkBaseAction {
         	return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_FRAMEWORKSTREAM));
 		} catch (ParseException e) {
 			return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_FRAMEWORKSTREAM));
-		} 
+		}
         return SUCCESS;
     }
     
@@ -314,6 +294,32 @@ public class Login extends FrameworkBaseAction {
 			return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_FRAMEWORKSTREAM));
 		}
     	return SUCCESS;
+    }
+    
+    public String fetchCustomerOptions() {
+        try {
+            User user = (User) getSessionAttribute(SESSION_USER_INFO);
+            List<String> customerOptions = new ArrayList<String>();
+            for (Customer customer : user.getCustomers()) {
+                if (customer.getId().equals(getCustomerId())) {
+                    customerOptions = customer.getOptions();
+                    break;
+                }
+            }
+            setCustomerOptions(customerOptions);
+            List<TechnologyOptions> technologyOptions = getServiceManager().getCustomerOptions();
+            List<String> customerAllOptions = new ArrayList<String>();
+            if (CollectionUtils.isNotEmpty(technologyOptions)) {
+                for (TechnologyOptions technologyOption : technologyOptions) {
+                    customerAllOptions.add(technologyOption.getId());
+                }
+            }
+            setCustomerAllOptions(customerAllOptions);
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+
+        return SUCCESS;
     }
     
     public String getUsername() {
@@ -451,5 +457,21 @@ public class Login extends FrameworkBaseAction {
 	public void setPageHeaderColor(String pageHeaderColor) {
 		this.pageHeaderColor = pageHeaderColor;
 	}
+
+    public void setCustomerOptions(List<String> customerOptions) {
+        this.customerOptions = customerOptions;
+    }
+
+    public List<String> getCustomerOptions() {
+        return customerOptions;
+    }
+
+    public void setCustomerAllOptions(List<String> customerAllOptions) {
+        this.customerAllOptions = customerAllOptions;
+    }
+
+    public List<String> getCustomerAllOptions() {
+        return customerAllOptions;
+    }
 
 }

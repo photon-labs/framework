@@ -1,22 +1,22 @@
 <%--
-  ###
-  Framework Web Archive
-  
-  Copyright (C) 1999 - 2012 Photon Infotech Inc.
-  
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-  
-       http://www.apache.org/licenses/LICENSE-2.0
-  
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
-  ###
-  --%>
+
+    Framework Web Archive
+
+    Copyright (C) 1999-2013 Photon Infotech Inc.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+--%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.util.List"%>
@@ -145,16 +145,15 @@
 			                            	}
 			                            }
 									%>
-									
 									<%
  										if (optionIds != null && optionIds.contains(FrameworkConstants.PROCESS_BUILD)) {
 									%>
-												<a class="processBuild" href="#" additionalParam=buildNumber=<%= buildInfo.getBuildNo() %>&appDirectory=<%= appDirectory %>><img src="images/icons/commit_icon.png" title="Check-in build"/>
-		                                    	</a>
+											<a class="processBuild" href="#" additionalParam="buildNumber=<%= buildInfo.getBuildNo() %>&appDirectory=<%= appDirectory %>&from=processBuild">
+												<img src="images/icons/commit_icon.png" title="Check-in build"/>
+	                                    	</a>
 									<% 
  			                            }
 									%>
-									
 			              		</td>
 			              		<%
 									if (optionIds != null && optionIds.contains(FrameworkConstants.DEPLOY_KEY)) {
@@ -171,59 +170,6 @@
 									}
 				              	%>
 			              	</tr>	
-			              		<%-- <td style="width: 40%;">
-			              				<% if (TechnologyTypes.JAVA_STANDALONE.contains(technology)) { %>
-			              					<label class="bldLable"><%= buildInfo.getTimeStamp() %></label>
-			              				<% } else { %>
-			              					<label class="bldLable" title="Configured with <%= buildInfo.getEnvironments() %>"><%= buildInfo.getTimeStamp() %></label>
-			              				<% } %>	
-			              		</td>
-			              		<td>
-			              			<a href="<s:url action='downloadBuild'>
-					          		     <s:param name="buildNumber"><%= buildInfo.getBuildNo() %></s:param>
-					          		     <s:param name="projectCode"><%= projectCode %></s:param>
-					          		     </s:url>"><img src="images/icons/download.png" title="<%= buildInfo.getBuildName()%>"/>
-		                            </a>
-		                            
-		                            <% 
-		                            	boolean createIpa = false;
-		                            	boolean deviceDeploy = false;
-		                            	if (TechnologyTypes.IPHONES.contains(technology)) {
-		                            		createIpa = MapUtils.getBooleanValue(buildInfo.getOptions(), "canCreateIpa");
-		                            		deviceDeploy = MapUtils.getBooleanValue(buildInfo.getOptions(), "deviceDeploy");
-		                            		if (createIpa && deviceDeploy)  {
-		                            %>
-		                                <a href="<s:url action='downloadBuildIpa'> 
-		                                  <s:param name="buildNumber"><%= buildInfo.getBuildNo() %></s:param>
-                                          <s:param name="projectCode"><%= projectCode %></s:param>
-                                          </s:url>"><img src="images/icons/downloadipa.jpg" title="ipa Download"/>
-                                    </a>
-                                    <% 		} 
-		                            	}
-		                            %>     
-			              		</td>
-			              		<td>
-			              			<% if (TechnologyTypes.NODE_JS_WEBSERVICE.equals(technology)) { %>
-										<!-- By default disable all Run buttons under builds -->
-				       	  				<!-- <input type="button" value="Run" id="<%= buildInfo.getBuildNo() %>" name="<%= buildInfo.getBuildNo() %>" class="btn disabled" disabled="disabled" onClick="startNodeJS(this);"> -->
-				       	  			<% } else if (TechnologyTypes.ANDROIDS.contains(technology)) { %>
-		                                <a id="buildNumberHref#<%= buildInfo.getBuildNo() %>" href="#" value="<%= buildInfo.getBuildNo() %>" onClick="deployAndroid(this);">
-		                                    <img src="images/icons/deploy.png" />
-		                                </a>
-		                            <% } else if (TechnologyTypes.IPHONES.contains(technology) && createIpa && deviceDeploy) { %>
-		                                <a id="buildNumberHref#<%= buildInfo.getBuildNo() %>" href="#" value="<%= buildInfo.getBuildNo() %>" onClick="deploy(this);">
-		                                 <img src="images/icons/deploy.png" />  
-		                                </a>    
-		                            <% } else if (TechnologyTypes.IPHONES.contains(technology)) { %>
-		                                <a id="buildNumberHref#<%= buildInfo.getBuildNo() %>" href="#" value="<%= buildInfo.getBuildNo() %>" onClick="deployIphone(this);">
-		                                 <img src="images/icons/deploy.png" />  
-		                                </a>   
-		                            <% } else if (!TechnologyTypes.JAVA_STANDALONE.contains(technology)) { %>
-				       	  				<a id="buildNumberHref#<%= buildInfo.getBuildNo() %>" buildName="<%=buildInfo.getBuildName() %>" href="#" value="<%= buildInfo.getBuildNo() %>" onClick="generateBuild('<%= projectCode %>', 'deploy', this);">			       	  				
-				       	  					<img src="images/icons/deploy.png" />
-				       	  				</a>
-				       	  			<% } %>
-			              		</td> --%>
 			            <%
 							}
 						%>	
@@ -254,7 +200,7 @@
 			var params = getBasicParams();
 			params = params.concat("&");
 			params = params.concat(additionalParam);
-			readerHandlerSubmit('processBuild', '<%= appId %>', '<%= FrameworkConstants.REQ_PROCESS_BUILD %>', '', false, params, $("#console_div"));
+			validateDynamicParam('showProcessBuild', '<s:text name="label.process.build"/>', 'processBuild','<s:text name="label.process.build"/>', '', '<%= Constants.PHASE_PROCESS_BUILD %>', true, additionalParam);
     	});
 	});
 	

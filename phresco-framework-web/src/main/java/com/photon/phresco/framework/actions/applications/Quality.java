@@ -1,31 +1,31 @@
-/*
- * ###
+/**
  * Framework Web Archive
- * 
- * Copyright (C) 1999 - 2012 Photon Infotech Inc.
- * 
+ *
+ * Copyright (C) 1999-2013 Photon Infotech Inc.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ###
  */
 package com.photon.phresco.framework.actions.applications;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -60,6 +60,7 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -129,6 +130,10 @@ public class Quality extends DynamicParameterAction implements Constants {
     private String testAgainst = "";
     private String resolution = ""; 
     private String filePath = "";
+    private String type = "";
+    private String testId = "";
+    private String fromTab = "";
+    private String actionType = "";
     
 	private List<String> buildInfoEnvs = null;
     
@@ -178,9 +183,25 @@ public class Quality extends DynamicParameterAction implements Constants {
 	private String testSuitName = "";
 	
 	private String projectModule = "";
+	private String testScenarioName = "";
+	private String totalSuccess = "";
+	private String totalFailures = "";
+	private String totalTestCases = "";
+	private String testCoverage = "";
+	
+	private String featureId = "";
+	private String testCaseId = "";
+	private String testDescription = "";
+	private String testSteps = "";
+	private String expectedResult = "";
+	private String actualResult = "";
+	private String status = "";
+	private String bugComment = "";
 	
     boolean connectionAlive = false;
     boolean updateCache;
+    
+    private String isFromCI = "";
 	
 	private static Map<String, Map<String, NodeList>> testSuiteMap = Collections.synchronizedMap(new HashMap<String, Map<String, NodeList>>(8));
 	
@@ -236,6 +257,9 @@ public class Quality extends DynamicParameterAction implements Constants {
         
         try {
             ApplicationInfo appInfo = getApplicationInfo();
+         // TO kill the Process
+            String baseDir = Utility.getProjectHome()+ appInfo.getAppDirName();
+            Utility.killProcess(baseDir, getTestType());
             String testResultPath = getUnitTestResultPath(appInfo, null);
             FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
             String testSuitePath = "";
@@ -440,6 +464,9 @@ public class Quality extends DynamicParameterAction implements Constants {
         
         try {
             ApplicationInfo appInfo = getApplicationInfo();
+         // TO kill the Process
+            String baseDir = Utility.getProjectHome()+ appInfo.getAppDirName();
+            Utility.killProcess(baseDir, getTestType());
             String testResultPath = getFunctionalTestResultPath(appInfo, null);
             FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
             String testSuitePath = frameworkUtil.getFunctionalTestSuitePath(appInfo);
@@ -1355,51 +1382,113 @@ public class Quality extends DynamicParameterAction implements Constants {
     		List<Parameter> parameters = getMojoParameters(mojo, PHASE_PERFORMANCE_TEST);
     		List<String> buildArgCmds = getMavenArgCommands(parameters);
     		buildArgCmds.add(HYPHEN_N);
-    		String workingDirectory = getAppDirectoryPath(applicationInfo);
+    		String workingDirectory = getAppDirectoryPath(applicationInfo);  
     		
-    		PomProcessor processor = new PomProcessor(getPOMFile(applicationInfo.getAppDirName()));
-            String performTestDir = processor.getProperty(POM_PROP_KEY_PERFORMANCETEST_DIR);
-            
-    		
-            StringBuilder filepath = new StringBuilder(Utility.getProjectHome())
-    		.append(applicationInfo.getAppDirName())
-    		.append(performTestDir)
-    		.append(File.separator)
-    		.append(getTestAgainst())
-    		.append(File.separator)
-    		.append(Constants.FOLDER_JSON);
-    		if (new File(filepath.toString()).exists()) {
-    			filepath.append(File.separator)
-        		.append(getTestName())
-        		.append(DOT_JSON);
-        		File file = new File(filepath.toString());
-    			fop = new FileOutputStream(file);
-    			if (!file.exists()) {
-    				file.createNewFile();
-    			}
-    			byte[] contentInBytes = getResultJson().getBytes();
-    			 
-    			fop.write(contentInBytes);
-    			fop.flush();
-    			fop.close();
-    		}
-    			
+    		//
+            performanceJsonWriter();    			
     		BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.PERFORMANCE_TEST, buildArgCmds, workingDirectory);
     		setSessionAttribute(getAppId() + PERFORMANCE_TEST, reader);
     		setReqAttribute(REQ_APP_ID, getAppId());
     		setReqAttribute(REQ_ACTION_TYPE, PERFORMANCE_TEST);
-    	} catch (JsonIOException e) {
+    	} catch (PhrescoException e) {
     		throw new PhrescoException(e);
-    	} catch (FileNotFoundException e) {
-    		throw new PhrescoException(e);
-    	} catch (IOException e) {
-    		throw new PhrescoException(e); 
-    	} catch (PhrescoPomException e) {
-    		throw new PhrescoException(e); 
     	}
 
     	return SUCCESS;
     }
+
+	public String performanceJsonWriter() throws PhrescoException {
+		
+		FileWriter fw = null;
+		
+		try {
+			if(StringUtils.isNotEmpty(getTestAgainst())) {
+				ApplicationInfo applicationInfo = getApplicationInfo();
+				PomProcessor processor = new PomProcessor(getPOMFile(applicationInfo.getAppDirName()));					
+		        String performTestDir = processor.getProperty(POM_PROP_KEY_PERFORMANCETEST_DIR);	        
+				FileOutputStream fop;
+				boolean success = false;
+				if(getIsFromCI().equalsIgnoreCase("true")) {					
+					StringBuilder filepath = new StringBuilder(Utility.getProjectHome())
+					.append(applicationInfo.getAppDirName())
+					.append(performTestDir)
+					.append(File.separator)
+					.append(getTestAgainst())
+					.append(File.separator)
+					.append(Constants.FOLDER_JSON)
+					.append(File.separator)
+					.append("CITemp");					
+					success = new File(filepath.toString()).mkdirs();
+					
+					filepath.append(File.separator)
+					.append(getTestName())
+					.append(DOT_JSON);				
+					File file = new File(filepath.toString());
+					fop = new FileOutputStream(file);
+					if (!file.exists()) {
+						file.createNewFile();
+					}
+					byte[] contentInBytes = getResultJson().getBytes();				 
+					fop.write(contentInBytes);
+					fop.flush();
+					fop.close();				
+										
+					StringBuilder infofilepath = new StringBuilder(Utility.getProjectHome())
+					.append(applicationInfo.getAppDirName())
+					.append(performTestDir)
+					.append(File.separator)
+					.append(getTestAgainst())
+					.append(File.separator)
+					.append(Constants.FOLDER_JSON)				
+					.append(File.separator)
+					.append("CITemp")
+					.append(File.separator)
+					.append("ci")
+					.append(".info");					
+					file = new File(infofilepath.toString());					
+					if (!file.exists()) {
+						file.createNewFile();
+						fw = new FileWriter(file);
+						fw.write(getTestName()+DOT_JSON);
+					} else {
+						fw = new FileWriter(infofilepath.toString(),true);
+						StringBuilder jsonFileName = new StringBuilder()
+						.append(",")
+						.append(getTestName());
+						fw.write(jsonFileName.toString()+DOT_JSON);						
+					}
+					
+				} else {					
+					StringBuilder filepath = new StringBuilder(Utility.getProjectHome())
+					.append(applicationInfo.getAppDirName())
+					.append(performTestDir)
+					.append(File.separator)
+					.append(getTestAgainst())
+					.append(File.separator)
+					.append(Constants.FOLDER_JSON);			
+					if (new File(filepath.toString()).exists()) {
+						filepath.append(File.separator)
+						.append(getTestName())
+						.append(DOT_JSON);				
+						File file = new File(filepath.toString());
+						fop = new FileOutputStream(file);
+						if (!file.exists()) {
+							file.createNewFile();
+						}
+						byte[] contentInBytes = getResultJson().getBytes();				 
+						fop.write(contentInBytes);
+						fop.flush();
+						fop.close();				
+					}
+				}				
+			}			
+		} catch (Exception e) {			
+			throw new PhrescoException(e);
+		} finally {
+			Utility.closeStream(fw);
+		}
+		return SUCCESS;
+	}
     
     private File getPOMFile(String appDirName) {
         StringBuilder builder = new StringBuilder(Utility.getProjectHome())
@@ -1431,6 +1520,10 @@ public class Quality extends DynamicParameterAction implements Constants {
         }
 
         try {
+        	ApplicationInfo appInfo = getApplicationInfo();
+	       	 // TO kill the Process
+        	String baseDir = Utility.getProjectHome()+ appInfo.getAppDirName();
+        	Utility.killProcess(baseDir, getTestType());
             FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
             List<String> testResultsTypes = new ArrayList<String>();
             testResultsTypes.add("server");
@@ -1619,6 +1712,10 @@ public class Quality extends DynamicParameterAction implements Constants {
         }
 
         try {
+        	ApplicationInfo appInfo = getApplicationInfo();
+       	 	// TO kill the Process
+            String baseDir = Utility.getProjectHome()+ appInfo.getAppDirName();
+            Utility.killProcess(baseDir, getTestType());
             FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
             List<String> testResultsTypes = new ArrayList<String>();
             testResultsTypes.add("server");
@@ -1987,40 +2084,31 @@ public class Quality extends DynamicParameterAction implements Constants {
 			.append(appInfo.getAppDirName())
 			.append(manualTestDir);
 			if (new File(sb.toString()).exists()) {
-				//CacheKey key = new CacheKey("testSuites");
-				//List<TestSuite> testSuitesList = (List<TestSuite>) cacheManager.get(key);
-				//if (CollectionUtils.isNotEmpty(testSuitesList)) {
-				//	setAllTestSuite(testSuitesList);
-				//} else {
-					final List<TestSuite> readManualTestSuiteFile = frameworkUtil.readManualTestSuiteFile(sb.toString());
-					if (CollectionUtils.isNotEmpty(readManualTestSuiteFile)) {
-						
-						setAllTestSuite(readManualTestSuiteFile);
-						//cacheManager.add(key, readManualTestSuiteFile);
-					}
-				
-					Runnable runnable = new Runnable() {
-						public void run() {
-							try {
-								for (TestSuite testSuite : readManualTestSuiteFile) {
-									String testSuiteName = testSuite.getName();
-									CacheKey key = new CacheKey(testSuiteName);
-									List<com.photon.phresco.commons.model.TestCase> readManualTestCaseFile = frameworkUtil.readManualTestCaseFile(sb.toString(), testSuiteName);
-									if (CollectionUtils.isNotEmpty(readManualTestCaseFile)) {
-										cacheManager.add(key, readManualTestCaseFile);
-									}
-								}
-	
-							} catch (PhrescoException e) {
-								S_LOGGER.error("Entered into catch block of Quality.getManualTestSuites()"+ e);
-							}
-						}
-					};
-
-					t = new Thread(runnable);
-					t.start();
+				final List<TestSuite> readManualTestSuiteFile = frameworkUtil.readManualTestSuiteFile(sb.toString(), null,0,0,0,0);
+				if (CollectionUtils.isNotEmpty(readManualTestSuiteFile)) {
+					setAllTestSuite(readManualTestSuiteFile);
 				}
-			//}
+				Runnable runnable = new Runnable() {
+					public void run() {
+						try {
+							for (TestSuite tstSuite : readManualTestSuiteFile) {
+								String testSuiteName = tstSuite.getName();
+								CacheKey key = new CacheKey(testSuiteName);
+								List<com.photon.phresco.commons.model.TestCase> readManualTestCaseFile = frameworkUtil.readManualTestCaseFile(sb.toString(), testSuiteName, null, null, null, null, null, null);
+								if (CollectionUtils.isNotEmpty(readManualTestCaseFile)) {
+									cacheManager.add(key, readManualTestCaseFile);
+								}
+							}
+
+						} catch (PhrescoException e) {
+							S_LOGGER.error("Entered into catch block of Quality.getManualTestSuites()"+ e);
+						}
+					}
+				};
+
+				t = new Thread(runnable);
+				t.start();
+			}
 		} catch (Exception e) {
 			S_LOGGER.error("Entered into catch block of Quality.fetchManualTestSuites()"+ e);
 		} 
@@ -2028,12 +2116,79 @@ public class Quality extends DynamicParameterAction implements Constants {
 		return SUCCESS;
 	}
   
+	public String addManualTestSuite () throws PhrescoException {
+		if (s_debugEnabled) {
+			S_LOGGER.debug("Entering Method Quality.addManualTestSuite()");
+		}
+		
+		return SUCCESS;
+	}
+	
+	public String addManualTestCase () throws PhrescoException, PhrescoPomException {
+		if (s_debugEnabled) {
+			S_LOGGER.debug("Entering Method Quality.addManualTestCase()");
+		}
+		String testScenario = getType();
+		String testScenarioId = getTestId();
+		if (StringUtils.isNotEmpty(testScenarioId)) {
+			CacheKey testSuitekey = new CacheKey(testScenario);
+			List<com.photon.phresco.commons.model.TestCase> readManualTestCaseFile = (List<com.photon.phresco.commons.model.TestCase>) cacheManager.get(testSuitekey);
+			if (CollectionUtils.isNotEmpty(readManualTestCaseFile)) {
+				for (com.photon.phresco.commons.model.TestCase testCase : readManualTestCaseFile) {
+					if (testCase.getFeatureId().equals(testScenarioId)) {
+						setReqAttribute(REQ_TESTCASE, testCase);
+					}
+				}
+			} 
+		}
+		setReqAttribute(REQ_TESTSUITE, testScenario);
+		return SUCCESS;
+	}
+	
 	public String showManualTestPopUp () throws PhrescoException {
 		if (s_debugEnabled) {
 			S_LOGGER.debug("Entering Method Quality.showManualTestPopUp()");
 		}
 
 		return SUCCESS;
+	}
+	
+	public String saveTestSuites () throws PhrescoException, PhrescoPomException {
+		if (s_debugEnabled) {
+			S_LOGGER.debug("Entering Method Quality.saveTestSuites()");
+		}
+		ApplicationInfo appInfo = getApplicationInfo();
+		setReqAttribute(REQ_APPINFO, appInfo);
+		FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+		String path = frameworkUtil.getManualTestDir(appInfo);
+		setReqAttribute(PATH, path);
+		StringBuilder sb = new StringBuilder(Utility.getProjectHome())
+		.append(appInfo.getAppDirName())
+		.append(path);
+		FrameworkUtil.addNew(sb.toString(), getTestScenarioName(), getTotalSuccess(), getTotalFailures(), getTotalTestCases(), getTestCoverage());
+		return MANUAL;
+	}
+	
+	public String saveTestCases () throws PhrescoException, PhrescoPomException {
+		if (s_debugEnabled) {
+			S_LOGGER.debug("Entering Method Quality.saveTestCases()");
+		}
+		ApplicationInfo appInfo = getApplicationInfo();
+		setReqAttribute(REQ_APPINFO, appInfo);
+		FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+		String path = frameworkUtil.getManualTestDir(appInfo);
+		setReqAttribute(PATH, path);
+		StringBuilder sb = new StringBuilder(Utility.getProjectHome())
+		.append(appInfo.getAppDirName())
+		.append(path);
+		if (!getFromTab().equals(EDIT)) {
+			FrameworkUtil.addNewTestCase(sb.toString(),getTestScenarioName(),getFeatureId(),getTestCaseId(),getTestDescription(),
+					getTestSteps(),"","",getExpectedResult(),getActualResult(),getStatus(),getBugComment());
+		} else {
+			frameworkUtil.readManualTestCaseFile(sb.toString(), getTestScenarioName(), getFeatureId(), 
+					getTestSteps(), getExpectedResult(), getActualResult(), getStatus(), getBugComment());
+		}
+		return MANUAL;
 	}
 	
 	public String readManualTestCases () {
@@ -2053,7 +2208,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 				.append(appInfo.getAppDirName())
 				.append(manualTestDir);
 				CacheKey testSuitekey = new CacheKey(getTestSuitName());
-				List<com.photon.phresco.commons.model.TestCase> readTestCase = frameworkUtil.readManualTestCaseFile(sb.toString(), getTestSuitName());
+				List<com.photon.phresco.commons.model.TestCase> readTestCase = frameworkUtil.readManualTestCaseFile(sb.toString(), getTestSuitName(), null, null, null, null, null, null);
 				if (CollectionUtils.isNotEmpty(readTestCase)) {
 					cacheManager.add(testSuitekey, readTestCase);
 					setAllTestCases(readTestCase);
@@ -2067,23 +2222,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 		return SUCCESS;
 	}
  
-	 private String getTestManualResultFiles(String path) {
-	        File testDir = new File(path);
-	        StringBuilder sb = new StringBuilder(path);
-	        if(testDir.isDirectory()){
-	            FilenameFilter filter = new PhrescoFileFilter("", "xlsx");
-	            File[] listFiles = testDir.listFiles(filter);
-	            for (File file : listFiles) {
-	                if (file.isFile()) {
-	                	sb.append(File.separator);
-	                	sb.append(file.getName());
-	                }
-	            }
-	        }
-	        return sb.toString();
-	    }
-	 
-    public class XmlNameFileFilter implements FilenameFilter {
+	 public class XmlNameFileFilter implements FilenameFilter {
         private String filter_;
         public XmlNameFileFilter(String filter) {
             filter_ = filter;
@@ -2996,26 +3135,147 @@ public class Quality extends DynamicParameterAction implements Constants {
 			List<com.photon.phresco.commons.model.TestCase> allTestCases) {
 		this.allTestCases = allTestCases;
 	}
-}
-class PhrescoFileFilter implements FilenameFilter {
-	private String name;
-	private String extension;
 
-	public PhrescoFileFilter(String name, String extension) {
-		this.name = name;
-		this.extension = extension;
+	public String getType() {
+		return type;
 	}
 
-	public boolean accept(File directory, String filename) {
-		boolean fileOK = true;
+	public void setType(String type) {
+		this.type = type;
+	}
 
-		if (name != null) {
-			fileOK &= filename.startsWith(name);
-		}
+	public String getTestScenarioName() {
+		return testScenarioName;
+	}
 
-		if (extension != null) {
-			fileOK &= filename.endsWith('.' + extension);
-		}
-		return fileOK;
+	public void setTestScenarioName(String testScenarioName) {
+		this.testScenarioName = testScenarioName;
+	}
+
+	public String getTotalSuccess() {
+		return totalSuccess;
+	}
+	public void setIsFromCI(String isFromCI) {
+		this.isFromCI = isFromCI;
+	}
+
+	public String getIsFromCI() {
+		return isFromCI;
+	}
+
+	public void setTotalSuccess(String totalSuccess) {
+		this.totalSuccess = totalSuccess;
+	}
+
+	public String getTotalFailures() {
+		return totalFailures;
+	}
+
+	public void setTotalFailures(String totalFailures) {
+		this.totalFailures = totalFailures;
+	}
+
+	public String getTotalTestCases() {
+		return totalTestCases;
+	}
+
+	public void setTotalTestCases(String totalTestCases) {
+		this.totalTestCases = totalTestCases;
+	}
+
+	public String getTestCoverage() {
+		return testCoverage;
+	}
+
+	public void setTestCoverage(String testCoverage) {
+		this.testCoverage = testCoverage;
+	}
+
+	public String getFeatureId() {
+		return featureId;
+	}
+
+	public void setFeatureId(String featureId) {
+		this.featureId = featureId;
+	}
+
+	public String getTestCaseId() {
+		return testCaseId;
+	}
+
+	public void setTestCaseId(String testCaseId) {
+		this.testCaseId = testCaseId;
+	}
+
+	public String getTestDescription() {
+		return testDescription;
+	}
+
+	public void setTestDescription(String testDescription) {
+		this.testDescription = testDescription;
+	}
+
+	public String getTestSteps() {
+		return testSteps;
+	}
+
+	public void setTestSteps(String testSteps) {
+		this.testSteps = testSteps;
+	}
+
+	public String getExpectedResult() {
+		return expectedResult;
+	}
+
+	public void setExpectedResult(String expectedResult) {
+		this.expectedResult = expectedResult;
+	}
+
+	public String getActualResult() {
+		return actualResult;
+	}
+
+	public void setActualResult(String actualResult) {
+		this.actualResult = actualResult;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getBugComment() {
+		return bugComment;
+	}
+
+	public void setBugComment(String bugComment) {
+		this.bugComment = bugComment;
+	}
+
+	public String getTestId() {
+		return testId;
+	}
+
+	public void setTestId(String testId) {
+		this.testId = testId;
+	}
+
+	public String getFromTab() {
+		return fromTab;
+	}
+
+	public void setFromTab(String fromTab) {
+		this.fromTab = fromTab;
+	}
+	
+	public String getActionType() {
+		return actionType;
+	}
+
+	public void setActionType(String actionType) {
+		this.actionType = actionType;
 	}
 }
