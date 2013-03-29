@@ -108,7 +108,7 @@
 	    	isLoadResultFileAvailbale(); //check for load result files;
 	    	hideLoadingIcon();
 	    	$('#loadTestBtn').click(function() {
-	    		validateDynamicParam('showLoadTestPopup', '<s:text name="label.load.test"/>', 'runLoadTest','<s:text name="label.test"/>', '', '<%= Constants.PHASE_LOAD_TEST %>');
+	    		validateDynamicParam('showLoadTestPopup', '<s:text name="label.load.test"/>', 'runLoadTest','<s:text name="label.test"/>', '', '<%= Constants.PHASE_LOAD_TEST %>', true);
 	    	});
 	    	
 	    	//Disable test button for load
@@ -253,7 +253,6 @@
 		
 		function popupOnClose(obj) {
 			//var closeUrl = $(obj).attr("id");
-			//console.info("closeUrl::::"+closeUrl);
 			isLoadResultFileAvailbale();
 		}
 		
@@ -270,5 +269,9 @@
 			params = params.concat("&actionType=");
 			params = params.concat("loadPdfReport");
 			loadContent("killProcess", '', '', params);
+		}
+		
+		function runLoadTest() {
+			progressPopup('runLoadTest', '<%= appId %>', '<%= FrameworkConstants.LOAD %>', '', '', getBasicParams());
 		}
     </script>
