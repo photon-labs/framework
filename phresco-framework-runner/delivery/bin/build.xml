@@ -56,7 +56,7 @@
 	</target>
 
 	<target name="run-phresco">
-		<echo message="starting phresco deployment from ${phresco.home}"/>
+		<echo message="starting helios deployment from ${phresco.home}"/>
 		<antcall target="set-execute-permissions"/>
 		<antcall target="clean-sonar"/>
 		<antcall target="copy-phresco"/>
@@ -70,7 +70,7 @@
 	</target>
 
 	<target name="copy-phresco">
-		<echo message="copying phresco war into tomcat"/>
+		<echo message="copying helios war into tomcat"/>
 		<copy todir="${tomcat.home}/webapps/helios">
 			<fileset dir="${phresco.war.dir}"/>
 		</copy>
@@ -124,7 +124,7 @@
 	</target>
 	
 	<target name="open-browser">
-		<echo message="Opening  Phresco URL ${phresco.url}"/>
+		<echo message="Opening  Helios URL ${phresco.url}"/>
         <exec executable="cmd" osfamily="windows">
             <arg line="/C start ${phresco.url}" />
         </exec>
@@ -145,7 +145,7 @@
 	</target>
 	
 	<target name="clean-phresco" depends="init" if="phresco.upgraded">
-		<echo message="removing older version of phresco war from tomcat"/>
+		<echo message="removing older version of helios war from tomcat"/>
 		<delete dir="${tomcat.home}/webapps/helios"/>
 		<delete dir="${tomcat.home}/work/Catalina/localhost/helios"/>
 		<delete dir="${phresco.war.dir}"/>
@@ -181,7 +181,7 @@
 	</target>
 
 	<target name="file-server-start">
-		<echo message="Starting phresco file server on port"/>
+		<echo message="Starting Helios file server on port"/>
 		<echo message="${phresco.file.server.port.num}"/>
 		<echo message="Starting phresco file server "/>
 		<echo message="${phresco.file.server.home}"/>
