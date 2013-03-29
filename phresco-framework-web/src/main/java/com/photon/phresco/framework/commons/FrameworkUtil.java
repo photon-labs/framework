@@ -79,6 +79,9 @@ import com.phresco.pom.util.PomProcessor;
 
 public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 
+	private static final String PHRESCO_SQL_PATH = "phresco.sql.path";
+	private static final String PHRESCO_UNIT_TEST = "phresco.unitTest";
+	private static final String PHRESCO_CODE_VALIDATE_REPORT = "phresco.code.validate.report";
 	private static final long serialVersionUID = 1L;
 	private static FrameworkUtil frameworkUtil = null;
     private static final Logger S_LOGGER = Logger.getLogger(FrameworkUtil.class);
@@ -91,11 +94,11 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     }
 	
 	public String getSqlFilePath(String oldAppDirName) throws PhrescoException, PhrescoPomException {
-		return getPomProcessor(oldAppDirName).getProperty("phresco.sql.path");
+		return getPomProcessor(oldAppDirName).getProperty(PHRESCO_SQL_PATH);
 	}
 	
 	public String getUnitTestReportOptions(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
-		return getPomProcessor(appinfo.getAppDirName()).getProperty("phresco.unitTest");
+		return getPomProcessor(appinfo.getAppDirName()).getProperty(PHRESCO_UNIT_TEST);
 	}
 	
     public String getUnitTestDir(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
@@ -176,6 +179,10 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     
     public String getLogFilePath(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
         return getPomProcessor(appinfo.getAppDirName()).getProperty(POM_PROP_KEY_LOG_FILE_PATH);
+    }
+    
+    public String isIphoneTagExists(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
+        return getPomProcessor(appinfo.getAppDirName()).getProperty(PHRESCO_CODE_VALIDATE_REPORT);
     }
 
 	public String getHubConfigFile(ApplicationInfo appInfo) throws PhrescoException, PhrescoPomException {
@@ -284,10 +291,12 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 	    return serverUrl;
     }
     
-	public List<String> getSonarProfiles() throws PhrescoException {
+	public List<String> getSonarProfiles(ApplicationInfo appInfo) throws PhrescoException {
 		List<String> sonarTechReports = new ArrayList<String>(6);
 		try {
-			StringBuilder pomBuilder = new StringBuilder(getApplicationHome());
+			StringBuilder pomBuilder = new StringBuilder(Utility.getProjectHome());
+			pomBuilder.append(File.separator);
+			pomBuilder.append(appInfo.getAppDirName());
 			pomBuilder.append(File.separator);
 			pomBuilder.append(POM_XML);
 			File pomPath = new File(pomBuilder.toString());
