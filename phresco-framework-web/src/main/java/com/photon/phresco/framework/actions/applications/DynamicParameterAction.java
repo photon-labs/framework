@@ -102,7 +102,9 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 		sb.append(FOLDER_DOT_PHRESCO);
 		sb.append(File.separator);
 		sb.append(PHRESCO_HYPEN);
-		if (StringUtils.isNotEmpty(goal) && goal.contains(FUNCTIONAL)) {
+		if (PHASE_CI.equals(getPhase())) {
+			sb.append(getPhase());
+		} else if (StringUtils.isNotEmpty(goal) && goal.contains(FUNCTIONAL)) {
 			sb.append(PHASE_FUNCTIONAL_TEST);
 		} else if (PHASE_RUNGAINST_SRC_START.equals(goal)|| PHASE_RUNGAINST_SRC_STOP.equals(goal) ) {
 			sb.append(PHASE_RUNAGAINST_SOURCE);
