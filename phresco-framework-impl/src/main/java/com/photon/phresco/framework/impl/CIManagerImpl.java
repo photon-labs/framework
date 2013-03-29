@@ -398,7 +398,14 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
         	//download path
         	for (JsonElement jsonArtElement : asJsonArray) {
         		String buildDownloadZip = jsonArtElement.getAsJsonObject().get(FrameworkConstants.CI_JOB_BUILD_DOWNLOAD_PATH).toString();
-        		if (buildDownloadZip.endsWith(CI_ZIP)) {
+        		if (BUILD.equals(job.getOperation()) && buildDownloadZip.endsWith(CI_ZIP)) {
+        			System.out.println("Zip archiving " + job.getOperation());
+        			if (debugEnabled) {
+        				S_LOGGER.debug("download artifact " + buildDownloadZip);
+        			}
+        			ciBuild.setDownload(buildDownloadZip);
+        		} else if (PDF_REPORT.equals(job.getOperation()) && buildDownloadZip.endsWith(CI_PDF)) {
+        			System.out.println("Pdf archiving " + job.getOperation());
         			if (debugEnabled) {
         				S_LOGGER.debug("download artifact " + buildDownloadZip);
         			}
@@ -488,7 +495,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
         }
         
         // Artifact archiver - archive do_not_checkin
-        processor.setArtifactArchiver(job.isEnableArtifactArchiver(), CI_BUILD_EXT);
+        processor.setArtifactArchiver(job.isEnableArtifactArchiver(), job.getCollabNetFileReleasePattern());
         
         //Recipients customization
         Map<String, String> emails = job.getEmail();
