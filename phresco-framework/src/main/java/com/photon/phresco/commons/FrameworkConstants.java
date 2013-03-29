@@ -714,6 +714,7 @@ public interface FrameworkConstants {
 	String REQ_REPORT_TYPE = "reportType";
     String REQ_ACTION_TYPE = "actionType";
     String REQ_TEST_EXE = "testExecuted";
+    String CHECK_REPORT_AVAILABILITY = "checkReportAvailability";
     String REQ_REPORT_STATUS = "reportStatus";
     String REQ_REPORT_DELETE_STATUS = "reportDeleteStatus";
     String REQ_SELECTEDPROJECTS = "selectedProjects";
