@@ -399,13 +399,11 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
         	for (JsonElement jsonArtElement : asJsonArray) {
         		String buildDownloadZip = jsonArtElement.getAsJsonObject().get(FrameworkConstants.CI_JOB_BUILD_DOWNLOAD_PATH).toString();
         		if (BUILD.equals(job.getOperation()) && buildDownloadZip.endsWith(CI_ZIP)) {
-        			System.out.println("Zip archiving " + job.getOperation());
         			if (debugEnabled) {
         				S_LOGGER.debug("download artifact " + buildDownloadZip);
         			}
         			ciBuild.setDownload(buildDownloadZip);
         		} else if (PDF_REPORT.equals(job.getOperation()) && buildDownloadZip.endsWith(CI_PDF)) {
-        			System.out.println("Pdf archiving " + job.getOperation());
         			if (debugEnabled) {
         				S_LOGGER.debug("download artifact " + buildDownloadZip);
         			}
