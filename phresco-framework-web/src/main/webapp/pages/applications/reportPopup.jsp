@@ -30,16 +30,17 @@
 <script src="js/reader.js" ></script>
 
 <%
-   	String projectCode = (String)request.getAttribute(FrameworkConstants.REQ_PROJECT_CODE);
-	String testType = (String) request.getAttribute(FrameworkConstants.REQ_TEST_TYPE);
-	List<String> reportFiles = (List<String>)request.getAttribute(FrameworkConstants.REQ_PDF_REPORT_FILES);
-	String reportGenerationStat = (String)request.getAttribute(FrameworkConstants.REQ_REPORT_STATUS);
-	String reportDeletionStat = (String)request.getAttribute(FrameworkConstants.REQ_REPORT_DELETE_STATUS);
-	String applicationId = (String)request.getAttribute(FrameworkConstants.REQ_APP_ID);
-	String projectId = (String)request.getAttribute(FrameworkConstants.REQ_PROJECT_ID);
-	String customerId = (String)request.getAttribute(FrameworkConstants.REQ_CUSTOMER_ID);
-	String fromPage = (String)request.getAttribute(FrameworkConstants.REQ_FROM_PAGE);
-	String sonarUrl = (String)request.getAttribute(FrameworkConstants.REQ_SONAR_URL);
+    String testType = (String) request.getAttribute(FrameworkConstants.REQ_TEST_TYPE);
+    List<String> reportFiles = (List<String>)request.getAttribute(FrameworkConstants.REQ_PDF_REPORT_FILES);
+    String reportGenerationStat = (String)request.getAttribute(FrameworkConstants.REQ_REPORT_STATUS);
+    String reportDeletionStat = (String)request.getAttribute(FrameworkConstants.REQ_REPORT_DELETE_STATUS);
+    String applicationId = (String)request.getAttribute(FrameworkConstants.REQ_APP_ID);
+    String projectId = (String)request.getAttribute(FrameworkConstants.REQ_PROJECT_ID);
+    String customerId = (String)request.getAttribute(FrameworkConstants.REQ_CUSTOMER_ID);
+    String fromPage = (String)request.getAttribute(FrameworkConstants.REQ_FROM_PAGE);
+    String sonarUrl = (String)request.getAttribute(FrameworkConstants.REQ_SONAR_URL);
+    boolean isReportAvailable = false;
+    isReportAvailable = (Boolean)request.getAttribute(FrameworkConstants.CHECK_REPORT_AVAILABILITY);
 %>
 
 	<style>
@@ -151,20 +152,32 @@
 	<input type="hidden" name="projectId" value="<%= projectId %>">
 	<input type="hidden" name="customerId" value="<%= customerId %>">
     <input type="hidden" name="sonarUrl" value="<%= sonarUrl %>">
+    <input type="hidden" name="isReportAvailable" value="<%= isReportAvailable %>">
 </form>
 
 <script type="text/javascript">
-	if(!isiPad()){
-		/* JQuery scroll bar */
-// 		$("#reportPopupTbl").scrollbars();
-	}
-	$(document).ready(function() {
-		// when clicking on save button, popup should not hide
-		$('.backdrop > fade > in').attr('display', 'block');
-		$('.popupOk').attr("data-dismiss", "");
-		printPdfPostActions();
-		<%
-		    if (StringUtils.isNotEmpty(reportDeletionStat)) {
+    if(!isiPad()){
+        /* JQuery scroll bar */
+//      $("#reportPopupTbl").scrollbars();
+    }
+    
+    $(document).ready(function() {
+       if (!<%= isReportAvailable %>) {
+            hidePopuploadingIcon();
+            $('#printAsPdf').attr("disabled", "disabled");
+            $('#printAsPdf').removeClass("btn-primary");
+            $("#errMsg").css("display", "block");
+            $("#errMsg").html("<s:text name='label.pdf.report.notification'/>");
+        } else {
+            printPdfPostActions();
+        }
+       
+        // when clicking on save button, popup should not hide
+        $('.backdrop > fade > in').attr('display', 'block');
+        $('.popupOk').attr("data-dismiss", "");
+
+        <%
+            if (StringUtils.isNotEmpty(reportDeletionStat)) {
         %>
                $("#successMsg").css("display", "block");
                $("#successMsg").html("<s:text name='label.report.delete.success'/>").fadeOut(5000);
