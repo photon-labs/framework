@@ -445,7 +445,6 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 		}
 		try {
 		    ApplicationInfo appInfo = getApplicationInfo();
-            removeSessionAttribute(appInfo.getId() + PHASE_CI + SESSION_WATCHER_MAP);
             Map<String, DependantParameters> watcherMap = new HashMap<String, DependantParameters>(8);
             List<Parameter> parameters = null;
             MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_CI)));
@@ -497,8 +496,9 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
             	setReqAttribute(REQ_GOAL, goal);
             }
             
+            removeSessionAttribute(appInfo.getId() + goal + SESSION_WATCHER_MAP);
             setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap, goal);
-            setSessionAttribute(appInfo.getId() + PHASE_CI + SESSION_WATCHER_MAP, watcherMap);
+            setSessionAttribute(appInfo.getId() + goal + SESSION_WATCHER_MAP, watcherMap);
             setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
             setReqAttribute(REQ_APP_INFO, appInfo);
 		} catch (Exception e) {

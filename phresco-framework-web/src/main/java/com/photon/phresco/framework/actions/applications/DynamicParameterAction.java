@@ -102,7 +102,10 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 		sb.append(FOLDER_DOT_PHRESCO);
 		sb.append(File.separator);
 		sb.append(PHRESCO_HYPEN);
-		if (StringUtils.isNotEmpty(goal) && goal.contains(FUNCTIONAL)) {
+		// when phase is CI, it have to take ci info file for update dependency
+		if (PHASE_CI.equals(getPhase())) {
+			sb.append(getPhase());
+		} else if (StringUtils.isNotEmpty(goal) && goal.contains(FUNCTIONAL)) {
 			sb.append(PHASE_FUNCTIONAL_TEST);
 		} else if (PHASE_RUNGAINST_SRC_START.equals(goal)|| PHASE_RUNGAINST_SRC_STOP.equals(goal) ) {
 			sb.append(PHASE_RUNAGAINST_SOURCE);
@@ -757,8 +760,7 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
             S_LOGGER.debug("Entering Method Quality.changeEveDependancyListener()");
         }
         
-        Map<String, DependantParameters> watcherMap = (Map<String, DependantParameters>) 
-                getSessionAttribute(getAppId() + getGoal() + SESSION_WATCHER_MAP);
+        Map<String, DependantParameters> watcherMap = (Map<String, DependantParameters>) getSessionAttribute(getAppId() + getGoal() + SESSION_WATCHER_MAP);
         DependantParameters currentParameters = watcherMap.get(getCurrentParamKey());
         if (currentParameters == null) {
             currentParameters = new DependantParameters();
