@@ -196,6 +196,7 @@ public interface FrameworkConstants {
     String CLASS = "class";
     String SCM = "scm";
     String SVN = "svn";
+    String ZIP_FILE = "zip";
     String MASTER = "master";
     String UPDATE = "update";
     String ADD = "add";
@@ -815,6 +816,7 @@ public interface FrameworkConstants {
     String REQ_HEADER_TYPE = "headerType";
     String REQ_FROM	= "from";
     String REQ_GOAL = "goal";
+    String REQ_SERVICE_MANAGER = "serviceManager";
     String REQ_PHASE = "phase";
     String REQ_MOJO = "mojo";
     String REQ_ATTRNAME	= "attrName";
