@@ -706,6 +706,7 @@ public interface FrameworkConstants {
     String REQ_CODE_PREFIX = "codePrefix";
     String REQ_FROM_PAGE = "fromPage";
     String REQ_THEME_FILES = "themeList";
+    String REQ_THEME_FILES_MAP = "themeListMap";
     String REQ_CSS_JSON = "cssJson";
     String REQ_AGAINST_JAR = "funcTestAgaistJar";
     String REQ_SETTINGS_PATH = "settingsPath";
@@ -1220,6 +1221,8 @@ public interface FrameworkConstants {
     String ERROR_DUPLICATE_ENV_IN_SETTINGS = "Environment {0} already exists in global settings";
     String ERROR_NO_CONFIG = "environment.config.not.available";
     String ERROR_NAME = "err.msg.empty.name";
+    String ERROR_THEME_PATH_MISSING = "err.msg.empty.path";
+    String ERROR_THEME_EXISTS = "err.msg.theme.name.exists";
     String PROP_TEMP_MISSING = " is missing";
     String ERROR_APP_DIR_EXISTS = "err.msg.app.dir.exists";
     String ERROR_NAME_EXISTS = "err.msg.project.name.exists";
@@ -1772,4 +1775,7 @@ public interface FrameworkConstants {
 	    * Theme builder keys
 	    */
 	    String SUCCESS_THEME_BUILDER_CREATE = "Theme Builder Created Successfully";
+	    String FAILURE_THEME_BUILDER_CREATE = "Theme Builder Creation Failed";
+	    String SUCCESS_THEME_BUILDER_DELETE = "Theme(s) Deleted Successfully";
+	    String REQ_BROWSE_THEME_IMAGE = "themeBuilderImage";
 }

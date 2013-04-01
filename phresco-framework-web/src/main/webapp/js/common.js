@@ -305,7 +305,7 @@ function yesnoPopup(url, title, okUrl, okLabel, form, additionalParam) {
 	$('#popup_div').load(url, data); //url to render the body content for the popup
 }
 
-function additionalPopup(url, title, okUrl, okLabel, form, additionalParam, showLocationBox) {
+function additionalPopup(url, title, okUrl, okLabel, form, additionalParam, showLocationBox, browseBtnId) {
 	setTimeout(function () {
 		$('#additionalPopup').modal('show');//To show the popup
     }, 600);
@@ -316,7 +316,7 @@ function additionalPopup(url, title, okUrl, okLabel, form, additionalParam, show
 	$("#add_popupCancel").attr('okurl', okUrl);
 	$("#add_popupClose").attr('okurl', okUrl);
 	$(".add_popupOk").attr('id', okUrl); // popup action mapped to id
-	
+	$("#themeBuilderImageFile").val("");//To empty theme builder hidden field
 	if (showLocationBox !== undefined && showLocationBox) {//To show selected files location in text box in modal footer(for browse file tree)
 		$('#browseSelectedLocation').show();
 		$('#browseSelectedLocation').val('');
@@ -339,6 +339,13 @@ function additionalPopup(url, title, okUrl, okLabel, form, additionalParam, show
 		data = data.concat(additionalParam);
 	}
 	
+	//for theme builder image
+	if (browseBtnId != undefined && !isBlank(browseBtnId)) {
+		$(".add_popupOk").attr("browseBtnId", browseBtnId);
+	} else {
+		$(".add_popupOk").removeAttr("browseBtnId");
+	}
+	
 	$(".add_errorMsg").empty();//To clear error msg
 	$('#additional_popup_body').empty();
 	$('#additional_popup_body').load(url, data); //url to render the body content for the popup
@@ -346,7 +353,8 @@ function additionalPopup(url, title, okUrl, okLabel, form, additionalParam, show
 
 function add_popupCancel(obj) {
 	var closeUrl = $(obj).attr("okurl");
-	if (closeUrl == "addCertificate" || closeUrl == "addDeployDir") {
+	if (closeUrl == "addCertificate" || closeUrl == "addDeployDir" 
+			|| closeUrl == "themeBuilderPath" || closeUrl == "themeBuilderImage") {
 		$('#additionalPopup').modal('hide');
 	} else {
 		setTimeout(function () {
@@ -953,7 +961,7 @@ function constructElements(data, pushToElement, isMultiple, controlType, paramet
 	}
 }
 
-function constructFieldsetOptions(dependentValues, pushToElement, parameterType) {
+function constructFieldsetOptions(dependentValues, pushToElement) {
 	if (dependentValues != undefined && !isBlank(dependentValues)) {
 		var fileName, filePath;
 		$("#avaliableSourceScript").empty();
@@ -967,7 +975,7 @@ function constructFieldsetOptions(dependentValues, pushToElement, parameterType)
 	}
 }
 
-function constructSingleSelectOptions(dependentValues, pushToElement) {
+function constructSingleSelectOptions(dependentValues, pushToElement, parameterType) {
 	if (dependentValues != undefined && !isBlank(dependentValues)) {
 		var control = $('#'+ pushToElement + ' option:selected');
 		var selected = control.val();

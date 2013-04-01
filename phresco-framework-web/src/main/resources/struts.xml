@@ -958,6 +958,10 @@
         </action>
         
         <!-- Theme builder starts -->
+        <action name="themeBuilderValidate" method="themeBuilderValidate" class="com.photon.phresco.framework.actions.applications.Configurations">
+        	 <result type="json" />
+        </action> 
+        
         <action name="themeBuilderList" method="themeBuilderList" class="com.photon.phresco.framework.actions.applications.Configurations">
         	<result name="success">/pages/applications/themeBuilderList.jsp</result>
         </action> 
@@ -971,6 +975,10 @@
         </action> 
 
         <action name="themeBuilderSave" method="themeBuilderSave" class="com.photon.phresco.framework.actions.applications.Configurations">
+        	<result name="success">/pages/applications/themeBuilderList.jsp</result>
+        </action> 
+        
+        <action name="deleteThemes" method="deleteThemes" class="com.photon.phresco.framework.actions.applications.Configurations">
         	<result name="success">/pages/applications/themeBuilderList.jsp</result>
         </action>
         <!-- Theme builder ends -->

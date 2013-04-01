@@ -377,6 +377,7 @@
 				<a href="#" class="btn btn-primary add_popupOk" id="" onClick="add_popupOnOk(this);" ><s:text name='lbl.btn.ok'/></a>
 				<div id="errMsg" class="envErrMsg add_errorMsg"></div>
 				<div class="popuploadingIcon" id="popuploadingIcon"></div>
+				<input type="hidden" id="themeBuilderImageFile" value="">
 			</div>
 		</div>
 	    <!-- Additional Popup Ends-->

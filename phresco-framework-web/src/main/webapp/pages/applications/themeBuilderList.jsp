@@ -20,15 +20,18 @@
 <%@ taglib uri="/struts-tags" prefix="s"%>
   
 <%@ page import="java.util.List"%>
+<%@ page import="java.util.Map"%>
+
 <%@ page import="org.apache.commons.collections.CollectionUtils"%>
 <%@ page import="org.apache.commons.lang.StringUtils"%>
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 
 <%
 	List<String> files = (List<String>)request.getAttribute(FrameworkConstants.REQ_THEME_FILES);
+	Map<String, String> map = (Map<String, String>) request.getAttribute(FrameworkConstants.REQ_THEME_FILES_MAP);
 %>
   
-  <form id="themeBuilderList" class="marginBottomZero" style="height: 114%;overflow-x: hidden;overflow-y: hidden	;margin-top: 1px;">
+  <form id="themeBuilderListForm" class="marginBottomZero" style="height: 114%;overflow-x: hidden;overflow-y: hidden	;margin-top: 1px;">
 	<div class="operation">
 		<input type="button" class="btn btn-primary" name="themeBuilderAdd" id="themeBuilderAdd" value="Create"/>
 
@@ -39,6 +42,11 @@
 			<s:actionmessage />
 		</div>
 	</s:if>
+	<s:if test="hasActionErrors()">
+		<div class="alert alert-error"  id="errormsg">
+			<s:actionerror />
+		</div>
+	</s:if>
 	<% if (CollectionUtils.isEmpty(files)) { %>
 		<div class="alert alert-block">
 			<s:text name='lbl.err.msg.theme.builder.empty'/>
@@ -46,7 +54,7 @@
 	<% } else {
 	%>
 	
-	<div class="table_div_manual qtyTable_view" id="themeBuilderList" style="width:99%; overflow: auto;">
+	<div class="table_div qtyTable_view" id="themeBuilderList" style="width:99%; overflow: auto;">
            	<div class="fixed-table-container responsiveFixedTableContainer qtyFixedTblContainer">
       			<div class="header-background"> </div>
 	      		<div class="table-container-themeBuilderList" style="height: auto !important;">
@@ -55,10 +63,9 @@
 				          	<thead>
 					            <tr>
 					           		<th class="firstDiv" style="width:1%">
-										<input type="checkbox" value="" id="checkAllAuto" name="checkAllAuto">
+										<input type="checkbox" value="" id="checkAllTheme" onclick="checkAllEvent($('#checkAllTheme'), $('.checkBoxTheme'), false);">
 									</th>
 									<th class="firstDiv" style="width:33%">
-										<!-- <input type="checkbox" value="" id="checkAllAuto" name="checkAllAuto"> -->
 										<div id="thName" class="th-inner-test">Files</div>
 									</th>
 					            </tr>
@@ -67,10 +74,10 @@
 							<% for (String file : files) {	 %>			          	
 				          		<tr>
 				          			<td class="checkbox_list">
-				          				<input type="checkbox" class="check" name="" value="">
+				          				<input type="checkbox" class="checkBoxTheme" name="checkedThemes" value="<%= map.get(file) %>" onclick="checkboxEvent($('.checkBoxTheme'), $('#checkAllTheme'));" value="">
 				          			</td>
 				          			<td class="">
-				          				<a href="#" name="edit">
+				          				<a href="#" path="<%= map.get(file) %>"  file="<%= file %>">
 											<%= file %>
 										</a>
 				          			</td>
@@ -90,14 +97,26 @@
 <script type="text/javascript">
 $(document).ready(function() {
 	hideLoadingIcon();
+	confirmDialog($("#deleteBtn"), '<s:text name="lbl.hdr.confirm.dialog"/>', '<s:text name="modal.body.text.del.themes"/>', 'deleteThemes','<s:text name="lbl.btn.ok"/>');
 });	
 
-function editThemeBuilder(file) {
+function editThemeBuilder(obj) {
 	showLoadingIcon();
 	var params = getBasicParams();
 	params = params.concat("&themeBuilderFile=");
-	params = params.concat(file);
+	params = params.concat($(obj).attr("file"));
+	params = params.concat("&themeFilePath=");
+	params = params.concat($(obj).attr("path"));
 	loadContent("themeBuilderEdit", $("#themeBuilderList"), $("#subcontainer"), params, false, true);
+}
+
+function popupOnOk(obj) {
+	var okUrl = $(obj).attr("id");
+	if (okUrl == "deleteThemes") {
+		$("#popupPage").modal('hide');
+		var params = getBasicParams();
+		loadContent("deleteThemes", $("#themeBuilderListForm"), $("#subcontainer"), params, false, true);
+	}
 }
 
 $("#themeBuilderAdd").click(function() {

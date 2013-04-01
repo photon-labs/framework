@@ -187,6 +187,10 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     public String isIphoneTagExists(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
         return getPomProcessor(appinfo.getAppDirName()).getProperty(PHRESCO_CODE_VALIDATE_REPORT);
     }
+	
+	public String getThemeFileExtension(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
+        return getPomProcessor(appinfo.getAppDirName()).getProperty(POM_PROP_KEY_THEME_EXT);
+    }
 
 	public String getHubConfigFile(ApplicationInfo appInfo) throws PhrescoException, PhrescoPomException {
         StringBuilder sb = new StringBuilder(Utility.getProjectHome());

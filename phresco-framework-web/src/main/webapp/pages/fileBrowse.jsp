@@ -141,6 +141,7 @@
 	
 	function add_popupOnOk(obj) {
 		var okUrl = $(obj).attr("id")
+		var fileLocation = $('#browseSelectedLocation').val(); 
 		if (okUrl === "filesToMinify") {
 			if ($("input[name=filesToMinify]:checked").size() !== 0 && $("#compressName").val() != "") {
 				$("#add_errorMsg").empty();
@@ -203,6 +204,25 @@
 			var deployDir = $('#browseSelectedLocation').val();
 			$('#additionalPopup').modal('hide');
 			$('#deploy_dir').val(deployDir);
+		} else if (okUrl === "themeBuilderPath") {
+			if (fileLocation == undefined || isBlank(fileLocation)) {
+				$(".add_errorMsg").html("Select Any Directory");
+			} else {
+				$(".add_errorMsg").empty();
+				$('#additionalPopup').modal('hide');
+				$("#themePath").val(fileLocation);
+			}	
+		} else if (okUrl === "themeBuilderImage") {
+			var browseBtnId = $(obj).attr("browseBtnId");
+			var imageName = $("#themeBuilderImageFile").val();
+			var imagePath = fileLocation;
+			if (imageName == undefined || isBlank(imageName)) {
+				$(".add_errorMsg").html("Select Any Image File");
+			}  else {
+				$(".add_errorMsg").empty();
+				updateImageDetails(imagePath, imageName, browseBtnId);
+				$('#additionalPopup').modal('hide');	
+			}
 		} else {
 			$('#additionalPopup').modal('hide');
 			showParentPopupPage();

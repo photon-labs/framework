@@ -75,6 +75,7 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
     private String fileType = ""; //for file browse 
     private String fileOrFolder = ""; //for file browse
 	private String fromDeployDir = "";
+	private String from = "";
     	
 	private boolean paramaterAvailable;
 	private boolean errorFound;
@@ -881,6 +882,9 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 //		} else if(REQ_XLSX.equalsIgnoreCase(getFileType())) {
 //			setReqAttribute(REQ_PROJECT_LOCATION, "");
 //			setReqAttribute(REQ_FROM, REQ_MANUAL_XLSX);
+		} else if (REQ_BROWSE_THEME_IMAGE.equals(getFrom())) {
+			setReqAttribute(REQ_PROJECT_LOCATION, "");
+			setReqAttribute(REQ_FROM, getFrom());
 		} else {
 			setReqAttribute(REQ_PROJECT_LOCATION, getAppDirectoryPath(applicationInfo).replace(File.separator, FORWARD_SLASH));
 			setReqAttribute(REQ_FROM, getReqParameter(REQ_FROM_PAGE));
@@ -1016,5 +1020,13 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 
 	public void setParameterType(String parameterType) {
 		this.parameterType = parameterType;
+	}
+
+	public void setFrom(String from) {
+		this.from = from;
+	}
+
+	public String getFrom() {
+		return from;
 	}
 }

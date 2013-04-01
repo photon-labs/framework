@@ -4479,7 +4479,7 @@ form div.error {
 
 .themeBuilderTxt {
 	float:right !important;
-	position:absolute !important;
+	position:relative !important;
 }
 
 .cssParserFieldset {
@@ -6195,7 +6195,7 @@ color: #313131;
 	margin-left: 29px;
     margin-right: 22px;
 }	
-.del, .cssDel, .add  {
+.del, .cssDel, .add {
 	cursor: pointer;
 }
 
@@ -6704,4 +6704,20 @@ color: #313131;
 
 .crossImg {
 	float: right !important;
+}	
+
+.removeThemeImg {
+	height: 12px;
+	width: 12px;
+	vertical-align: middle;
+	margin-left: 4px;
+}
+
+.themeImageName {
+	margin-left: 5px;
+}
+
+.themePathBrowse {
+	float: left;
+	margin-left: 5px;
 }	

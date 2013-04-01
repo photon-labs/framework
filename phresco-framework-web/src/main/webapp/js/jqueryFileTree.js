@@ -60,11 +60,11 @@ if(jQuery) (function($){
 						$(c).find('.start').html('');
 						$(c).removeClass('wait').append(data);
 						if( o.root == t ) $(c).find('UL:hidden').show(); else $(c).find('UL:hidden').slideDown({ duration: o.expandSpeed, easing: o.expandEasing });
-						bindTree(c, fileOrFolder);
+						bindTree(c, fileOrFolder, from);
 					});
 				}
 				
-				function bindTree(t, fileOrFolder) {
+				function bindTree(t, fileOrFolder, from) {
 					$(t).find('LI A').bind(o.folderEvent, function() {
 						$('LI A').removeClass("selectedFolder");//To remove the background of the previously selected folder
 						if( $(this).parent().hasClass('directory') ) {
@@ -99,6 +99,11 @@ if(jQuery) (function($){
 						} else if( $(this).parent().hasClass('ext_crt') ) { 
 							$(this).addClass("selectedFolder");//To highlight selected crt file 
 							h($(this).attr('rel'));//To add its path in attribute - rel   
+						} else if (($(this).parent().hasClass('ext_jpg') || $(this).parent().hasClass('ext_png')) 
+								&& from != undefined && from == "themeBuilderImage") {
+							$(this).addClass("selectedFolder");
+							$("#browseSelectedLocation").val(removeBackSlash($(this).attr('rel')));
+							$("#themeBuilderImageFile").val($(this).text());
 						} else {
 							if(fileOrFolder == 'All') {
 								h($(this).attr('rel'));	
