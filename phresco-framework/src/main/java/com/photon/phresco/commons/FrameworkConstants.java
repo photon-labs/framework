@@ -195,6 +195,7 @@ public interface FrameworkConstants {
     String TIMER_TRIGGER = "TimerTrigger";
     String CLASS = "class";
     String SCM = "scm";
+	String ZIP_FILE = "zip";
     String SVN = "svn";
     String MASTER = "master";
     String UPDATE = "update";
@@ -816,6 +817,7 @@ public interface FrameworkConstants {
     String REQ_FROM	= "from";
     String REQ_GOAL = "goal";
     String REQ_PHASE = "phase";
+	String REQ_SERVICE_MANAGER = "serviceManager";
     String REQ_MOJO = "mojo";
     String REQ_ATTRNAME	= "attrName";
     String SETTINGS_PARAMS = "SETTINGS_PARAMS";

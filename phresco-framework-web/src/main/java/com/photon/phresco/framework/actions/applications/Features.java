@@ -339,7 +339,7 @@ public class Features extends DynamicParameterModule {
 			if (selectedComponents.contains(selectFeature.getVersionID())) {
 				List<CoreOption> appliesTo1 = artifactGroup.getAppliesTo();
 				for (CoreOption coreOption : appliesTo1) {
-				    if (coreOption.getTechId().equals(appInfo.getTechInfo().getId()) && !coreOption.isCore()) {
+				    if (coreOption.getTechId().equals(appInfo.getTechInfo().getId()) && !coreOption.isCore() && artifactGroup.getPackaging().equalsIgnoreCase(ZIP_FILE)) {
 				    	selectFeature.setCanConfigure(true);
 				    }
 				}
@@ -351,7 +351,7 @@ public class Features extends DynamicParameterModule {
 			if (selectedModules.contains(selectFeature.getVersionID())) {
 				List<CoreOption> appliesTo1 = artifactGroup.getAppliesTo();
 				for (CoreOption coreOption : appliesTo1) {
-				    if (coreOption.getTechId().equals(appInfo.getTechInfo().getId()) && !coreOption.isCore()) {
+				    if (coreOption.getTechId().equals(appInfo.getTechInfo().getId()) && !coreOption.isCore() && artifactGroup.getPackaging().equalsIgnoreCase(ZIP_FILE)) {
 				    	selectFeature.setCanConfigure(true);
 				    }
 				}
@@ -362,7 +362,7 @@ public class Features extends DynamicParameterModule {
 			if (selectedJsLibs.contains(selectFeature.getVersionID())) {
 				List<CoreOption> appliesTo1 = artifactGroup.getAppliesTo();
 				for (CoreOption coreOption : appliesTo1) {
-				    if (coreOption.getTechId().equals(appInfo.getTechInfo().getId()) && !coreOption.isCore()) {
+				    if (coreOption.getTechId().equals(appInfo.getTechInfo().getId()) && !coreOption.isCore() && artifactGroup.getPackaging().equalsIgnoreCase(ZIP_FILE)) {
 				    	selectFeature.setCanConfigure(true);
 				    }
 				}
@@ -452,7 +452,7 @@ public class Features extends DynamicParameterModule {
 		
 		List<CoreOption> appliesTo = artifactGroupInfo.getAppliesTo();
 		for (CoreOption coreOption : appliesTo) {
-		    if (coreOption.getTechId().equals(techId) && !coreOption.isCore() && !slctFeature.getType().equals(REQ_JAVASCRIPT_TYPE_MODULE)) {
+		    if (coreOption.getTechId().equals(techId) && !coreOption.isCore() && !slctFeature.getType().equals(REQ_JAVASCRIPT_TYPE_MODULE) && artifactGroupInfo.getPackaging().equalsIgnoreCase(ZIP_FILE)) {
 		        slctFeature.setCanConfigure(true);
 		    } else {
 		        slctFeature.setCanConfigure(false);
