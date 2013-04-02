@@ -51,11 +51,7 @@ public interface FrameworkConstants {
     String LBL_PROG_TXT = "progress.txt.";
     String FROM_PAGE_EDIT = "edit";
     String FROM_PAGE_ADD = "add";
-    String COMMIT = "commit";
-    String CI_BUILD = "Build";
-    String CI_DEPLOY = "Deploy";
-    String CI_FUNCTIONAL_TEST = "Functional_Test";
-    
+    String COMMIT = "commit";    
     String CONFIG = "config";
     String FEATURE = "feature";
     String EMAIL_ID = "emailid";

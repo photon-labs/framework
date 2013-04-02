@@ -476,6 +476,17 @@
 			var dependencyArr = new Array();
 			dependencyArr = csvDependencies.split(',');
 			for (var i = 0; i < dependencyArr.length; i+=1) {
+				
+				// Multiple dependent checkbox value enabling and disabling 
+				if ($('#'+ $.trim(dependencyArr[i])).attr("type") === 'checkbox') {
+					if (selectedOption) {
+						$('#'+ $.trim(dependencyArr[i])).prop('checked', true);	
+						$('#'+ $.trim(dependencyArr[i])).val('true');						
+					} else {
+						$('#'+ $.trim(dependencyArr[i])).prop('checked', false);
+						$('#'+ $.trim(dependencyArr[i])).val('false');						
+					}
+				}												
 				$('#' + $.trim(dependencyArr[i]) + 'Control').show();
 				$('.' + $.trim(dependencyArr[i]) + 'PerformanceDivClass').show();//for performance context urls
 				updateDependancy(dependencyArr[i]);
@@ -505,8 +516,31 @@
 					dependencyArr = csvDependencies.split(',');
 					showControl(dependencyArr);					
 				}
-			}
-				
+			} else if (currentObjType === "INPUT" && $(this).attr("type") === 'checkbox' && $(this).attr('additionalParam')!== null)  {
+				// Iterates all the additional parameters of the current page elements in the build form and show the dependency elements
+				var dependencyParam = $(this).attr('additionalParam');				
+				 if (dependencyParam !== null && dependencyParam !== undefined) {
+					if (dependencyParam.indexOf('=') < dependencyParam.length) {
+						var splitDependencies = dependencyParam.substring(dependencyParam.indexOf('=') + 1);						
+						if (!isBlank(splitDependencies)) {							
+							splitDependencies = getAllDependencies(splitDependencies);											 					 	 
+						 	 var paramArray = new Array();
+						     paramArray = splitDependencies.split(',');	
+						     for (var i = 0; i < paramArray.length; i+=1) {
+						    	 var dependencyControl = $('#' + $.trim(paramArray[i]) + 'Control');						    	 
+								 var hasHideContent = dependencyControl.hasClass('hideContent');
+								 if (hasHideContent) {
+									if ($(this).is(':checked')) {
+										dependencyControl.show();	
+									} else {
+										dependencyControl.hide();
+								 	}
+								 } 
+						     }
+						}
+					} 
+			     } 
+			 }
 		});
 		
 		<% 
@@ -543,7 +577,7 @@
 		params = params.concat("&goal=");
 		params = params.concat('<%= goal%>');
 		params = params.concat("&phase=");
-		params = params.concat('<%= phase%>');
+		params = params.concat('<%= phase %>');
 		params = params.concat("&dependency=");
 		params = params.concat(dependency);
 		
@@ -725,7 +759,8 @@
 		if (redirect) {
 			$('.yesNoPopupErr').empty();
 			runPerformanceTest();
-		}
+		}		
+		return redirect;
 	} 
 	
 	function runPerformanceTest() {		

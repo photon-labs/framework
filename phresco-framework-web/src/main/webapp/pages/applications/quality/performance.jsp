@@ -342,8 +342,8 @@
 		if (okUrl === "printAsPdf") {
 			printPdfPreActions();
 			loadContent('printAsPdf', $('#generatePdf'), $('#popup_div'), '', false, true);
-		} else if (okUrl === "runPerformanceTest") {
-			mandatoryValidation(okUrl, $("#generateBuildForm"), '', 'performance-test', 'performance-test');
+		} else if (okUrl === "runPerformanceTest") {			
+			var redirct = mandatoryValidation(okUrl, $("#generateBuildForm"), '', 'performance-test', 'performance-test');
 		}
 	}	 
 	
