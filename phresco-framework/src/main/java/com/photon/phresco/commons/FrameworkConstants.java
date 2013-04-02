@@ -473,6 +473,7 @@ public interface FrameworkConstants {
     String ELEMENT_VERBOS = "verbose";
     String ELEMENT_VERIFY = "verify";
     String HEAD_REVISION = "HEAD";
+    String UNVERSIONED = "unversioned";
     String REPORTS_JASPER = "reports/jasper/";
     String PLATFORM = "platform";
     String POM_LINE_BREAK = "linebreakpos";

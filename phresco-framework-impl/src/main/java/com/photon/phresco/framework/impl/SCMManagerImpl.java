@@ -52,8 +52,10 @@ import org.tmatesoft.svn.core.internal.io.svn.SVNRepositoryFactoryImpl;
 import org.tmatesoft.svn.core.internal.wc.DefaultSVNOptions;
 import org.tmatesoft.svn.core.io.SVNRepository;
 import org.tmatesoft.svn.core.io.SVNRepositoryFactory;
+import org.tmatesoft.svn.core.wc.ISVNCommitParameters;
 import org.tmatesoft.svn.core.wc.ISVNStatusHandler;
 import org.tmatesoft.svn.core.wc.SVNClientManager;
+import org.tmatesoft.svn.core.wc.SVNCommitClient;
 import org.tmatesoft.svn.core.wc.SVNRevision;
 import org.tmatesoft.svn.core.wc.SVNStatus;
 import org.tmatesoft.svn.core.wc.SVNStatusType;
@@ -788,9 +790,49 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		final SVNClientManager cm = SVNClientManager.newInstance(new DefaultSVNOptions(), username, password);
 		SVNWCClient wcClient = cm.getWCClient();
 		File[] comittableFiles = listModifiedFiles.toArray(new File[listModifiedFiles.size()]);
+
+		SVNCommitClient cc = SVNClientManager.newInstance().getCommitClient(); 
+		cc.setCommitParameters(new ISVNCommitParameters() { 
+
+			// delete even those files 
+			// that are not scheduled for deletion. 
+			public Action onMissingFile(File file) { 
+				return DELETE; 
+			} 
+			public Action onMissingDirectory(File file) { 
+				return DELETE; 
+			} 
+
+			// delete files from disk after committing deletion. 
+			public boolean onDirectoryDeletion(File directory) { 
+				return true; 
+			} 
+			public boolean onFileDeletion(File file) { 
+				return true; 
+			} 
+		}); 
 		
-		wcClient.doAdd(comittableFiles, true, false, false, SVNDepth.INFINITY, false, false, false);
-		SVNCommitInfo commitInfo = cm.getCommitClient().doCommit(comittableFiles, false, commitMessage, null, null, false, true, SVNDepth.INFINITY);
+		//to List Unversioned Files 
+		List<File> unversionedFiles = new ArrayList<File>();
+		for (File file : comittableFiles) {
+			List<SVNStatus> status = getCommitableFiles(new File(file.getPath()), HEAD_REVISION);
+			if (CollectionUtils.isNotEmpty(status)) {
+				SVNStatus svnStatus = status.get(0);
+				SVNStatusType contentsStatus = svnStatus.getContentsStatus();
+				if(UNVERSIONED.equalsIgnoreCase(contentsStatus.toString())) {
+					unversionedFiles.add(file);
+				} 
+			}
+		}
+		
+		//Add only Unversioned Files
+		if (CollectionUtils.isNotEmpty(unversionedFiles)) {
+			File[] newlyAddedFiles = unversionedFiles.toArray(new File[unversionedFiles.size()]);
+			wcClient.doAdd(newlyAddedFiles, true, false, false, SVNDepth.INFINITY, false, false, false);
+		}
+
+		SVNCommitInfo commitInfo = cc.doCommit(comittableFiles, false, commitMessage, null, null, false, true, SVNDepth.INFINITY);
+
 		return commitInfo;
 	}
 }
