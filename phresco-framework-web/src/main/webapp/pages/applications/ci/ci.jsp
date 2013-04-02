@@ -621,7 +621,16 @@ function popupOnOk(obj) {
 				} else if (operation == "deploy" ) {
 					ciGoal = "deploy";
 				} else if (operation == "functionalTest") {
+					ciGoal = "functional-"+'<%= functioanlTestTool%>';
 					ciGoal = "functional-test-"+'<%= functioanlTestTool %>';
+				} else if (operation == "unittest") {
+					ciGoal = "unit-test";
+				} else if (operation == "codeValidation") {
+					ciGoal = "validate-code";
+				} else if (operation == "pdfReport") {
+					ciGoal = "pdf-report";
+				} else if (operation == "loadTest") {
+					ciGoal = "load-test";
 				} else if (operation == "performanceTest") {
 					ciGoal = "performance-test";
 				}
@@ -646,15 +655,11 @@ function redirectCiConfigure() {
 	if (validation && $("input:radio[name=enableBuildRelease][value='true']").is(':checked')) {
 		if(collabNetValidation()) {
 			console.log("create job with collabnet plugin ");
-				configureJob(okUrl);
-			// show popup loading icon
-			showPopuploadingIcon();
+			configureJob(okUrl);			
 		}
 	} else if (validation) {
 		console.log("create job with out collabnet plugin ");
-			configureJob(okUrl);
-		// show popup loading icon
-		showPopuploadingIcon();
+		configureJob(okUrl);
 	}
 }
 </script>

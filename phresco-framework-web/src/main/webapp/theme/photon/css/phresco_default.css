@@ -6704,4 +6704,9 @@ color: #313131;
 
 .crossImg {
 	float: right !important;
-}	
+}
+
+.showPermanent {
+	display:block;
+	height:94%;
+}
