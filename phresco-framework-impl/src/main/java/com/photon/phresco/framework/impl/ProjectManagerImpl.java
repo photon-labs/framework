@@ -296,7 +296,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 					oldDir.renameTo(projectInfoFile);
 					
 					extractArchive(response, projectInfo);
-					updateProjectPom(projectInfo, newAppDirSb.toString());
+					updateProjectPom(projectInfo, newAppDirSb.toString());// To update project pom.xml
 					StringBuilder dotPhrescoPathSb = new StringBuilder(projectInfoFile.getPath());
 					dotPhrescoPathSb.append(File.separator);
 					dotPhrescoPathSb.append(DOT_PHRESCO_FOLDER);
@@ -404,7 +404,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
 			pomProcessor.setArtifactId(applicationInfo.getCode());
 			pomProcessor.setName(applicationInfo.getName());
-			pomProcessor.setVersion(projectInfo.getVersion());
+			pomProcessor.setVersion(applicationInfo.getVersion());
 			pomProcessor.save();
 		} catch (PhrescoPomException e) {
 			throw new PhrescoException(e);
