@@ -66,16 +66,16 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
     private static Boolean s_debugEnabled  =S_LOGGER.isDebugEnabled();
     
     //Dynamic parameter
-    private List<Value> dependentValues = null; 
+    private List<Value> dependentValues = null; //Value for dependancy parameters
     private String dynamicPageParameterDesign = "";
-    private String parameterType = "";
     private String currentParamKey = ""; 
     private String goal = "";
     private String selectedOption = "";
     private String dependency = "";
-    private String fileType = ""; 
-    private String fileOrFolder = ""; 
-    private String fromDeployDir = "";
+    private String fileType = ""; //for file browse 
+    private String fileOrFolder = ""; //for file browse
+	private String fromDeployDir = "";
+	private String from = "";
     	
 	private boolean paramaterAvailable;
 	private boolean errorFound;
@@ -86,6 +86,7 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
     private final String PHASE_FUNCTIONAL_TEST = "functional-test";
     private final String PHASE_RUNAGAINST_SOURCE = "run-against-source";
     private String selectedFiles = "";
+    private String parameterType = "";
     
     
     private static Map<String, PhrescoDynamicLoader> pdlMap = new HashMap<String, PhrescoDynamicLoader>();
@@ -103,6 +104,7 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 		sb.append(FOLDER_DOT_PHRESCO);
 		sb.append(File.separator);
 		sb.append(PHRESCO_HYPEN);
+		// when phase is CI, it have to take ci info file for update dependency
 		if (PHASE_CI.equals(getPhase())) {
 			sb.append(getPhase());
 		} else if (StringUtils.isNotEmpty(goal) && goal.contains(FUNCTIONAL)) {
@@ -224,7 +226,7 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
                         if (CollectionUtils.isNotEmpty(dynParamPossibleValues)) {
                             paramBuilder.append(dynParamPossibleValues.get(0).getValue());
                         }
-                    } else if (parameter.getPossibleValues() != null) { 
+                    } else if (parameter.getPossibleValues() != null) { //Possible values
                         List<Value> values = parameter.getPossibleValues().getValue();
                         
                         if (watcherMap.containsKey(parameterKey)) {
@@ -500,9 +502,9 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 					if (TYPE_BOOLEAN.equalsIgnoreCase(parameter.getType()) && StringUtils.isNotEmpty(parameter.getDependency())) {
 						//To validate check box dependency controls
 						eventDependencies = Arrays.asList(parameter.getDependency().split(CSV_PATTERN));
-						validateMap.put(parameter.getKey(), eventDependencies);
+						validateMap.put(parameter.getKey(), eventDependencies);//add checkbox dependency keys to map
 						if (getReqParameter(parameter.getKey()) != null && dependentParamMandatoryChk(mojo, eventDependencies)) {
-							break;
+							break;//break from loop if error exists
 						}
 					} else if (TYPE_LIST.equalsIgnoreCase(parameter.getType()) &&  !Boolean.parseBoolean(parameter.getMultiple())
 							&& parameter.getPossibleValues() != null) {
@@ -609,19 +611,17 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 				|| TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(parameter.getType()) && !Boolean.parseBoolean(parameter.getMultiple())
 				|| (TYPE_LIST.equalsIgnoreCase(parameter.getType()) && !Boolean.parseBoolean(parameter.getMultiple()))
 				|| (TYPE_FILE_BROWSE.equalsIgnoreCase(parameter.getType()))) {
-			if (FROM_PAGE_EDIT.equalsIgnoreCase(parameter.getEditable())) {
+			if (FROM_PAGE_EDIT.equalsIgnoreCase(parameter.getEditable())) {//For editable combo box
 				returnFlag = editableComboValidate(parameter, returnFlag,lableTxt);
-			} else {
-				//for text box,non editable single select list box,file browse
+			} else {//for text box,non editable single select list box,file browse
 				returnFlag = textSingleSelectValidate(parameter, returnFlag,lableTxt);
 			}
 		} else if (TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(parameter.getType()) && Boolean.parseBoolean(parameter.getMultiple()) || 
 				(TYPE_LIST.equalsIgnoreCase(parameter.getType()) && Boolean.parseBoolean(parameter.getMultiple()))) {
 			
-			//for multi select list box
-			returnFlag = multiSelectValidate(parameter, returnFlag, lableTxt);
+			returnFlag = multiSelectValidate(parameter, returnFlag, lableTxt);//for multi select list box
 		} else if (parameter.getType().equalsIgnoreCase(TYPE_MAP)) {
-			returnFlag = mapControlValidate(parameter, returnFlag);
+			returnFlag = mapControlValidate(parameter, returnFlag);//for type map
 		}
 		
 		return returnFlag;
@@ -665,7 +665,7 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 	 */
 	private boolean multiSelectValidate(Parameter parameter,
 			boolean returnFlag, String lableTxt) {
-		if (getReqParameterValues(parameter.getKey()) == null) {
+		if (getReqParameterValues(parameter.getKey()) == null) {//for multi select list box
 			setErrorFound(true);
 			setErrorMsg(lableTxt + " " +getText(EXCEPTION_MANDAOTRY_MSG));
 			returnFlag = true;
@@ -714,7 +714,7 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 		String lableTxt = "";
 		List<com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.Name.Value> labels = parameter.getName().getValue();
 		for (com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.Name.Value label : labels) {
-			if (label.getLang().equals("en")) {	
+			if (label.getLang().equals("en")) {	//to get label of parameter
 				lableTxt = label.getValue();
 			    break;
 			}
@@ -866,6 +866,12 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 		if (REQ_JAR.equalsIgnoreCase(getFileType()) || DEPLOY_DIR.equals(getFromDeployDir())) {
 			setReqAttribute(REQ_PROJECT_LOCATION, "");
 			setReqAttribute(REQ_FROM, REQ_AGAINST_JAR);
+//		} else if(REQ_XLSX.equalsIgnoreCase(getFileType())) {
+//			setReqAttribute(REQ_PROJECT_LOCATION, "");
+//			setReqAttribute(REQ_FROM, REQ_MANUAL_XLSX);
+		} else if (REQ_BROWSE_THEME_IMAGE.equals(getFrom())) {
+			setReqAttribute(REQ_PROJECT_LOCATION, "");
+			setReqAttribute(REQ_FROM, getFrom());
 		} else {
 			setReqAttribute(REQ_PROJECT_LOCATION, getAppDirectoryPath(applicationInfo).replace(File.separator, FORWARD_SLASH));
 			setReqAttribute(REQ_FROM, getReqParameter(REQ_FROM_PAGE));
@@ -993,11 +999,19 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 		this.selectedFiles = selectedFiles;
 	}
 
+	public String getParameterType() {
+		return parameterType;
+	}
+
 	public void setParameterType(String parameterType) {
 		this.parameterType = parameterType;
 	}
 
-	public String getParameterType() {
-		return parameterType;
+	public void setFrom(String from) {
+		this.from = from;
+	}
+
+	public String getFrom() {
+		return from;
 	}
 }

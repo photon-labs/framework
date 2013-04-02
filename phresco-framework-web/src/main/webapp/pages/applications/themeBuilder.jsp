@@ -45,7 +45,7 @@
 				</li>
 			</ul>
 		</div>
-		<div class="parserWholeDiv">
+		<div class="parserWholeDiv"  style="height:90%; overflow:auto;">
 		<% if (FrameworkConstants.EDIT.equals(from) && json != null) { //For edit 
 			JSONArray jsonArray = json.getJSONArray("css");
 			for (int i=0; i < jsonArray.length(); i++) {
@@ -78,10 +78,26 @@
 					<tbody id="propertiesDiv">
 	    <%	    
 	    	    JSONArray propertiesArray = item.getJSONArray("properties");
+	    		String showMinus = "";
+	    		int isSingleRow = propertiesArray.length(); 
+	    		if (isSingleRow == 1) {
+    	    		showMinus = "hideContent";
+    	    	} else {
+    	    		showMinus = "";
+    	    	}
 	    	    for (int j=0; j < propertiesArray.length() ; j++) {
 	    	    	JSONObject properties = propertiesArray.getJSONObject(j);
 	    	    	String property = properties.getString("property");
 	    	    	String value = properties.getString("value");
+	    	    	String selectColor = "";
+	    	    	String selectString = "";
+	    	    	if (value.startsWith("#")) {
+	    	    		selectColor = "selected";
+	    	    		selectString = "";
+	    	    	} else {
+	    	    		selectColor = "";
+	    	    		selectString = "selected";
+	    	    	} 
 	    %>
 						<tr class="propertiesTR">
 							<td class="noBorder propertyTD">
@@ -89,13 +105,22 @@
 							</td>
 							<td class="noBorder">
 								<select name="cssType" id="cssType" class="input-small" onchange="changeElements(this)">
-									<option value="string"><s:text name="lbl.string"/></option>
+									<option value="string" <%= selectString %>><s:text name="lbl.string"/></option>
 									<!-- <option value="image">Image</option> -->
-									<option value="color"><s:text name="lbl.color"/></option>
+									<option value="color" <%= selectColor %>><s:text name="lbl.color"/></option>
 								</select>
 							</td>
 							<td class="noBorder valueTD">
-								<input type="text" name="value" title="" value="<%= value %>" class="input-medium">
+								<% if (selectColor == "selected") { %>
+									<input type="text" class="input-medium colorPicker" name="colorPicker" value="<%= value %>" id="colorPicker">
+									<script type="text/javascript">
+										$('.colorPicker').colorpicker({
+											format: 'hex'
+										}); 
+									</script>
+								<% } else { %>
+									<input type="text" name="value" title="" value="<%= value %>" class="input-medium">
+								<% } %>	
 							</td>
 							<td class="noBorder">
 								<a>
@@ -104,7 +129,7 @@
 							</td>
 							<td class="noBorder">
 								<a>
-									<img id="deleteIcon" class="del imagealign hideContent" src="images/icons/minus_icon.png" 
+									<img id="deleteIcon" class="del imagealign <%= showMinus %>" src="images/icons/minus_icon.png" 
 										onclick="removeCssProperty(this);">
 								</a>
 							</td>
@@ -120,6 +145,27 @@
 	    <%	    
 			}
 		 } else { //For add %>
+		 	<div class="control-group" id="themeNameControl">
+				<label class="control-label labelbold">
+					<span class="mandatory">*</span>&nbsp;<s:text name='lbl.name' />
+				</label>
+				<div class="controls">
+					<input placeholder="<s:text name="place.hldr.theme.name"/>" class="input-xlarge" type="text" 
+						value="" name="themeName" maxlength="30" 
+						id="themeName" title="<s:text name="title.30.chars"/>">
+					<span class="help-inline" id="themeNameError"></span>
+				</div>
+			</div>
+			<div class="control-group" id="themePathControl">
+				<label class="control-label labelbold">
+					<span class="mandatory">*</span>&nbsp;<s:text name='lbl.theme.path' />
+				</label>
+				<div class="controls">
+					<input type="text" name="themePath" class="input-xlarge" id="themePath" disabled="" style="float:left;">
+					<input type="button" id="" class="btn btn-primary themePathBrowse"  value="Browse" onclick="browseThemePath(this);">
+						<span class="help-inline" id="themePathError"></span>
+				</div>
+			</div>
 			<fieldset class="popup-fieldset cssParserFieldset">			
 				<legend class="themeBuilderfieldSetLegend">
 					<input type="checkbox" class="cssRule" onclick="enableDisableDeleteRule(this);" >
@@ -153,7 +199,7 @@
 							<td class="noBorder">
 								<select name="cssType" id="cssType" class="input-small" onchange="changeElements(this)">
 									<option value="string"><s:text name="lbl.string"/></option>
-									<!-- <option value="image">Image</option> -->
+									<option value="image"><s:text name="lbl.image"/></option>
 									<option value="color"><s:text name="lbl.color"/></option>
 								</select>
 							</td>
@@ -180,19 +226,19 @@
 	</div>
 </form>
 <div class="actions">
-	<input type="button" id="" value="Save" class="btn btn-primary" onclick="validateEntries();">
+	<input type="button" id="" value="Save" class="btn btn-primary" onclick="themeBuilderValidate();">
 	<input type="button" id="" value="Cancel" class="btn btn-primary" onclick="themeBuilderCancel();">
 </div>	  
 <script type="text/javascript">
 	$(document).ready(function() {
 		hideLoadingIcon();
 	});	
-	
+	var count = 1;
 	//To add property row
 	function addCssProperty(obj) {
 		$(obj).closest("#propertiesDiv").append('<tr class="propertiesTR"><td class="noBorder propertyTD"><input type="text" name="property" class="input-medium" title="" maxlength="20" value=""></td>'+
 			'<td class="noBorder"><select name="cssType" id="cssType" class="input-small" onchange="changeElements(this)">'+
-			'<option value="string"><s:text name="lbl.string"/></option><option value="color"><s:text name="lbl.color"/></option></select></td>'+
+			'<option value="string"><s:text name="lbl.string"/></option><option value="image"><s:text name="lbl.image"/></option><option value="color"><s:text name="lbl.color"/></option></select></td>'+
 			'<td class="noBorder valueTD"><input type="text" name="value" title="" value="" class="input-medium"></td><td class="noBorder">'+
 			'<a><img class="add imagealign" src="images/icons/add_icon.png" onclick="addCssProperty(this);"></a></td><td class="noBorder">'+
 			'<a><img id="deleteIcon" class="del imagealign" src="images/icons/minus_icon.png" onclick="removeCssProperty(this);"></a></td></tr>');
@@ -219,6 +265,7 @@
 	
 	//To change value as color picker control if the type is color
 	function changeElements(obj) {
+		var imgId = "img_"+count;
 		var selectedVal = $(obj).val();
 		$(obj).closest("tr").find(".valueTD").empty();
 		if (selectedVal == "string") {
@@ -228,7 +275,15 @@
 			$(obj).closest("tr").find(".valueTD")
 			.append('<input type="text" class="input-medium colorPicker" name="colorPicker" value="" id="colorPicker">');
 			triggerColorPicker($(obj).closest("tr").find(".colorPicker"));
-		} 
+		} else if (selectedVal == "image") {
+			$(obj).closest("tr").find(".valueTD")
+			.append('<input type="button" id="'+imgId +'" name="browseThemeImage" class="btn btn-primary" style="float:left;"' + 
+				'fileType="png,jpg" from="themeBuilderImage" value="Browse" onclick="browseImage(this);">' +
+				'<input type="text" name="themeImageName" disabled id="themeImageName" title="" value="" class="input-medium themeImageName">' + 
+				'<input type="hidden" name="themeImagePath" id="themeImagePath" title="" value="" class="input-medium">'+
+				'<a><img class="removeThemeImg del" onclick="clearImageDetails(this);" src="images/smalldelete.png"></a>');
+			count++;
+		}
 	}
 	
 	//triggers color picker event
@@ -248,7 +303,7 @@
 		'<td class="noBorder" style="color: #333333; font-weight: bold;"><s:text name="lbl.type"/></td><td class="noBorder"' + 
 		'style="color: #333333; font-weight: bold;"><span class="red">*</span>&nbsp;<s:text name="lbl.value"/></td></tr></thead><tbody id="propertiesDiv"><tr class="propertiesTR">'+
 		'<td class="noBorder propertyTD"><input type="text" name="property" class="input-medium" title="" maxlength="20" value=""><td class="noBorder">'+
-		'<select name="cssType" id="cssType" class="input-small" onchange="changeElements(this)"><option value="string"><s:text name="lbl.string"/></option><option value="color">' +
+		'<select name="cssType" id="cssType" class="input-small" onchange="changeElements(this)"><option value="string"><s:text name="lbl.string"/></option><option value="image"><s:text name="lbl.image"/></option><option value="color">' +
 		'<s:text name="lbl.color"/></option></select></td></td><td class="noBorder valueTD">' +
 		'<input type="text" name="value" title="" value="" class="input-medium"></td><td class="noBorder"><a>' +
 		'<img class="add imagealign" src="images/icons/add_icon.png" onclick="addCssProperty(this);"></a></td><td class="noBorder"><a>' +
@@ -282,6 +337,38 @@
 		}
 	}
 	
+	function themeBuilderValidate() {
+		var params = "";
+		params = params.concat(getBasicParams());
+		params = params.concat("&themeName=");
+		params = params.concat($("#themeName").val());
+		params = params.concat("&themePath=");
+		params = params.concat($("#themePath").val());
+		$(".themeBuilderErr").empty();
+		
+		loadContent("themeBuilderValidate", '', '', params, true, true, "showThemeBuilderErrors"); 
+	}
+	
+	function showThemeBuilderErrors(data) {
+		if (data.errorFound != undefined && data.errorFound) {
+			if (data.themeNameError != undefined && !isBlank(data.themeNameError)) {
+				showError($("#themeNameControl"), $("#themeNameError"), data.themeNameError);
+			} else {
+				hideError($("#themeNameControl"), $("#themeNameError"));
+			}
+			
+			if (data.themePathError != undefined && !isBlank(data.themePathError)) {
+				showError($("#themePathControl"), $("#themePathError"), data.themePathError);
+			} else {
+				hideError($("#themePathControl"), $("#themePathError"));
+			}
+		} else {
+			hideError($("#themeNameControl"), $("#themeNameError"));
+			hideError($("#themePathControl"), $("#themePathError"));
+			validateEntries();
+		}
+	}
+	
 	//Empty validation for mandatory fields
 	function validateEntries() {
 		var redirect = true;//flag to redirect next method
@@ -290,7 +377,7 @@
 			var selector = $(this).closest('fieldset').find('input[name=cssSelector]').val();
 			if (isBlank(selector)) {//validates selector text box and skip out of loop
 				$(this).closest('fieldset').find('input[name=cssSelector]').focus();
-				$(this).find(".themeBuilderErr").text("Enter Selector");
+				$(this).find(".themeBuilderErr").text('<s:text name="err.msg.theme.selector.missing"/>');
 				redirect = false;
 				return false;
 			} else {
@@ -299,7 +386,7 @@
 					var property = $(this).find('input[name=property]').val();
 					if (isBlank(property)) {//validates property text box and skip out of loop
 						$(this).find('input[name=property]').focus();
-						$(this).closest('fieldset').find(".themeBuilderErr").text("Enter property");
+						$(this).closest('fieldset').find(".themeBuilderErr").text('<s:text name="err.msg.theme.property.missing"/>');
 						loop = false;
 						redirect = false;
 						return false;
@@ -310,17 +397,25 @@
 							value = $(this).find('input[name=value]').val();
 						} else if (selectedValue == "color") {
 							value = $(this).find('input[name=colorPicker]').val();
+						} else if (selectedValue == "image") {
+							value = $(this).find('input[name=themeImagePath]').val();
 						}
 						//validates value field and skip out of loop
 						if (isBlank(value) && selectedValue  == "string") {
 							$(this).find('input[name=value]').focus();
-							$(this).closest('fieldset').find(".themeBuilderErr").text("Enter value");
+							$(this).closest('fieldset').find(".themeBuilderErr").text('<s:text name="err.msg.theme.value.missing"/>');
 							loop = false;
 							redirect = false;
 							return false;
 						} else if (isBlank(value) && selectedValue  == "color") {
 							$(this).find('input[name=colorPicker]').focus();
-							$(this).closest('fieldset').find(".themeBuilderErr").text("Choose color");
+							$(this).closest('fieldset').find(".themeBuilderErr").text('<s:text name="err.msg.theme.color.missing"/>');
+							loop = false;
+							redirect = false;
+							return false;
+						} else if (isBlank(value) && selectedValue  == "image") {
+							value = $(this).find('input[name=browseThemeImage]').focus();
+							$(this).closest('fieldset').find(".themeBuilderErr").text('<s:text name="err.msg.theme.image.missing"/>');
 							loop = false;
 							redirect = false;
 							return false;
@@ -357,28 +452,67 @@
 					value = $(this).find('input[name=value]').val();
 				} else if (selectedValue == "color") {
 					value = $(this).find('input[name=colorPicker]').val();
+				} else if (selectedValue == "image") {
+					value = $(this).find('input[name=themeImagePath]').val();
+					var imageName = $(this).find('input[name=themeImageName]').val();
+					propertyValues.image = imageName;
 				}
 				propertyValues.property = property;
 				propertyValues.value = value;
+				propertyValues.type = selectedValue;
 				properties.push(propertyValues);
 			});
 			jsonObj.properties = properties;
 			cssJson.push(jsonObj);
 		});
-		var css = '{"css":'+ JSON.stringify(cssJson) +'}';
+		var css = '{"themeName": "' + $("#themeName").val() + '", "themePath": "' + $("#themePath").val() + '", "css":'+ JSON.stringify(cssJson) +'}';
 		cssParser(css);
 	}
 	
 	function cssParser(value) {
 		var css = escape(value);
 		var params = "";
-		params = params.concat("&css=");
+		params = params.concat("&themeBuilderJson=");
 		params = params.concat(css);
+		params = params.concat("&themeName=");
+		params = params.concat($("#themeName").val());
+		params = params.concat("&themePath=");
+		params = params.concat($("#themePath").val());
+		
 		loadContent('themeBuilderSave', $('#formAppMenu, #formCustomers'), $("#subcontainer"), params, false, true);
 	}
 	
 	function themeBuilderCancel() {
 		showLoadingIcon();
 		loadContent("themeBuilderList", $('#formAppMenu, #formCustomers'), $("#subcontainer"), '', false, true); 
+	}
+	
+	function browseThemePath(obj) {
+		var params = "";
+		params = params.concat("themeBuilder");
+		params = params.concat("&fileOrFolder=Folder");
+		
+		additionalPopup('openBrowseFileTree','Browse', 'themeBuilderPath', 'Browse', '', params, true);
+	}
+	
+	function browseImage(obj) {
+		var browseBtnId = $(obj).attr("id");
+		var params = "from=";
+		params = params.concat($(obj).attr("from"));
+		params = params.concat("&fileOrFolder=All");
+		params = params.concat("&fileType=");
+		params = params.concat($(obj).attr("fileType"));
+		
+		additionalPopup('openBrowseFileTree','Browse', 'themeBuilderImage', 'Browse', '', params, true, browseBtnId);
+	}
+	
+	function updateImageDetails(imagePath, imageName, browseBtnId) {
+		$("#" + browseBtnId).parent().find("#themeImageName").val(imageName);
+		$("#" + browseBtnId).parent().find("#themeImagePath").val(imagePath);
+	}
+	
+	function clearImageDetails(obj) {
+		$(obj).parent().parent().find("#themeImageName").val("");
+		$(obj).parent().parent().find("#themeImagePath").val("");
 	}
 </script>

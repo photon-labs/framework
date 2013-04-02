@@ -20,6 +20,7 @@ package com.photon.phresco.framework.actions.applications;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -147,8 +148,15 @@ public class Configurations extends FrameworkBaseAction {
     private String oldEnvName = "";
     private String csvFiles = "";
     
-    private String css = "";
+    /*Theme builder*/
+    private String themeBuilderJson = "";
     private String themeBuilderFile = "";
+    private String themeFilePath = "";
+    private String themeName = "";
+    private String themePath = "";
+    private String themeNameError = "";
+    private String themePathError = "";
+    private List<String> checkedThemes = null;
     
 	public String configList() {
 		if (s_debugEnabled) {
@@ -1838,12 +1846,17 @@ public class Configurations extends FrameworkBaseAction {
 	public String themeBuilderList() throws PhrescoException {
 		try {
 			ApplicationProcessor applicationProcessor = getApplicationProcessor();
-			List<String> themeBuilderList = applicationProcessor.themeBuilderList(getApplicationInfo());
-
-			if (CollectionUtils.isNotEmpty(themeBuilderList)) {
+			Map<String, String> cssFilesMap = applicationProcessor.themeBuilderList(getApplicationInfo());
+			List<String> themeBuilderList = new ArrayList<String>();
+			if (MapUtils.isNotEmpty(cssFilesMap)) {
+				Set<String> keySet = cssFilesMap.keySet();
+				for (String key : keySet) {
+					themeBuilderList.add(key);
+				}
 				Collections.sort(themeBuilderList, sortValuesInAlphaOrder());
 			}
 
+			setReqAttribute(REQ_THEME_FILES_MAP, cssFilesMap);
 			setReqAttribute(REQ_THEME_FILES, themeBuilderList);
 		} catch (PhrescoException e) {
 			//TODO: throw error
@@ -1862,7 +1875,7 @@ public class Configurations extends FrameworkBaseAction {
 	public String themeBuilderEdit() throws PhrescoException {
 		try {
 			ApplicationProcessor applicationProcessor = getApplicationProcessor();
-			org.codehaus.jettison.json.JSONObject jsonObj = applicationProcessor.themeBuilderEdit(getApplicationInfo(), getThemeBuilderFile());
+			org.codehaus.jettison.json.JSONObject jsonObj = applicationProcessor.themeBuilderEdit(getApplicationInfo(), getThemeFilePath());
 			setReqAttribute(REQ_FROM_PAGE, FROM_PAGE_EDIT);
 			setReqAttribute(REQ_CSS_JSON, jsonObj);
 		} catch (PhrescoException e) {
@@ -1870,13 +1883,64 @@ public class Configurations extends FrameworkBaseAction {
 		}
 		return SUCCESS;
 	}
+	
+	public String themeBuilderValidate() throws PhrescoException {
+		if(StringUtils.isEmpty(getThemeName())) {
+			setErrorFound(true);
+			setThemeNameError(getText(ERROR_NAME));
+		}
+		if (StringUtils.isEmpty(getThemePath())) {
+			setErrorFound(true);
+			setThemePathError(getText(ERROR_THEME_PATH_MISSING));
+		}
+		
+		if (StringUtils.isNotEmpty(getThemeName()) && StringUtils.isNotEmpty(getThemePath())) {
+			validateThemeNameDuplication(getApplicationInfo());
+		}
+		return SUCCESS;
+	}
+	
+	private void validateThemeNameDuplication(ApplicationInfo appInfo) throws PhrescoException {
+		try {
+			File destinationDir = new File(getThemePath());
+			String themeFileExtension = FrameworkUtil.getInstance().getThemeFileExtension(appInfo);
+			List<String> existingFiles = new ArrayList<String>();
+			if (destinationDir.exists() && destinationDir.isDirectory()) {
+				File[] childs = destinationDir.listFiles(new CSSFileFilter(themeFileExtension));
+				if (childs != null && childs.length > 0) {
+					for (File child : childs) {
+						existingFiles.add(child.getName().toLowerCase());
+					}
+				}
+				if (CollectionUtils.isNotEmpty(existingFiles) && existingFiles.contains((getThemeName()+themeFileExtension).toLowerCase())) {
+					setErrorFound(true);
+					setThemeNameError(getText(ERROR_THEME_EXISTS));
+				}
+			}
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
+		} 
+	}
+	
+	public class CSSFileFilter implements FilenameFilter {
+        private String filter_;
+        public CSSFileFilter(String filter) {
+            filter_ = filter;
+        }
 
+        public boolean accept(File dir, String name) {
+            return name.endsWith(filter_);
+        }
+    }
+	
 	public String themeBuilderSave() throws PhrescoException {
 		try {
 			ApplicationProcessor applicationProcessor = getApplicationProcessor();
-			boolean themeBuilderSaveSuccess = applicationProcessor.themeBuilderSave(getApplicationInfo(), getCss());
+			boolean themeBuilderSaveSuccess = applicationProcessor.themeBuilderSave(getApplicationInfo(), getThemeBuilderJson());
 			if (themeBuilderSaveSuccess) {
 				addActionMessage(getText(SUCCESS_THEME_BUILDER_CREATE));
+			} else {
+				addActionError(getText(FAILURE_THEME_BUILDER_CREATE));
 			}
 		} catch (Exception e) {
 			//TODO: throw error
@@ -1885,6 +1949,24 @@ public class Configurations extends FrameworkBaseAction {
 		return themeBuilderList();
 	}
 
+	public String deleteThemes() throws PhrescoException {
+		try {
+			if (CollectionUtils.isNotEmpty(getCheckedThemes())) {
+				for (String theme : getCheckedThemes()) {
+					File fileToDelete = new File(theme);
+					if (fileToDelete.exists()) {
+						FileUtil.delete(fileToDelete);
+					}
+				}
+				addActionMessage(getText(SUCCESS_THEME_BUILDER_DELETE));
+			}
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+		
+		return themeBuilderList();
+	}
+ 	
 	public String getDescription() {
    		return description;
     }
@@ -2357,19 +2439,67 @@ public class Configurations extends FrameworkBaseAction {
         return csvFiles;
     }
     
-    public String getCss() {
-		return css;
-	}
-
-	public void setCss(String css) {
-		this.css = css;
-	}
-
 	public String getThemeBuilderFile() {
 		return themeBuilderFile;
 	}
 
 	public void setThemeBuilderFile(String themeBuilderFile) {
 		this.themeBuilderFile = themeBuilderFile;
+	}
+
+	public String getThemeFilePath() {
+		return themeFilePath;
+	}
+
+	public void setThemeFilePath(String themeFilePath) {
+		this.themeFilePath = themeFilePath;
+	}
+
+	public void setThemeBuilderJson(String themeBuilderJson) {
+		this.themeBuilderJson = themeBuilderJson;
+	}
+
+	public String getThemeBuilderJson() {
+		return themeBuilderJson;
+	}
+
+	public String getThemeName() {
+		return themeName;
+	}
+
+	public void setThemeName(String themeName) {
+		this.themeName = themeName;
+	}
+
+	public String getThemePath() {
+		return themePath;
+	}
+
+	public void setThemePath(String themePath) {
+		this.themePath = themePath;
+	}
+
+	public String getThemeNameError() {
+		return themeNameError;
+	}
+
+	public void setThemeNameError(String themeNameError) {
+		this.themeNameError = themeNameError;
+	}
+
+	public String getThemePathError() {
+		return themePathError;
+	}
+
+	public void setThemePathError(String themePathError) {
+		this.themePathError = themePathError;
+	}
+
+	public List<String> getCheckedThemes() {
+		return checkedThemes;
+	}
+
+	public void setCheckedThemes(List<String> checkedThemes) {
+		this.checkedThemes = checkedThemes;
 	}
 }
