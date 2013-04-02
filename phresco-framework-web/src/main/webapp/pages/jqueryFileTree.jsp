@@ -98,7 +98,7 @@
 					String filePath = file.getPath();
 				    filePath = filePath.replace("\\", "/");
 					filePath = filePath.replace(rootDir, "");
-					out.print("<li class=\"file ext_" + ext + "\"><input type=checkbox name=filesToMinify id=\""+file.getName()+"\" value=\""+ filePath +"\" onclick=\"uncheckOthrDirFiles();\"><span class=jsmin-span >"
+					out.print("<li class=\"file ext_" + ext + "\"><input type=checkbox name=filesToMinify id=\""+file.getName()+"\" value=\""+ filePath +"\" onclick=\"uncheckOthrDirFiles(this);\"><span class=jsmin-span >"
 							+ file.getName() + "</li>"); 
 			    }
 			}
@@ -174,17 +174,29 @@
 	});
 	
 	//To uncheck the files that are selected in the directories other than the current directory
-	function uncheckOthrDirFiles() {
-		var selectedDir = $(".selectedFolder").attr("directory");
-		$("input[name=filesToMinify]:checked").each(function() {
-			var selectedVal = $(this).val();
-			if (selectedDir != undefined && !isBlank(selectedDir)) {
-				var lwrSelectedVal = selectedVal.toLowerCase();
-				var lwrSelectedDir = selectedDir.toLowerCase();
-				if (!lwrSelectedVal.startsWith(lwrSelectedDir)) {
+	function uncheckOthrDirFiles(obj) {
+		var currentVal = $(obj).val();
+		currentVal = currentVal.replace("\\", "/");
+		var split = currentVal.split("/");
+		if (split.length === 2) {
+			$(".selectedFolder").removeClass("selectedFolder");
+			$("input[name=filesToMinify]:checked").each(function() {
+				if ($(this).val() != $(obj).val()) {
 					$(this).attr("checked", false);
 				}
-			}
-		});
+			});
+		} else {
+			var selectedDir = $(".selectedFolder").attr("directory");
+			$("input[name=filesToMinify]:checked").each(function() {
+				var selectedVal = $(this).val();
+				if (selectedDir != undefined && !isBlank(selectedDir)) {
+					var lwrSelectedVal = selectedVal.toLowerCase();
+					var lwrSelectedDir = selectedDir.toLowerCase();
+					if (!lwrSelectedVal.startsWith(lwrSelectedDir)) {
+						$(this).attr("checked", false);
+					}
+				}
+			});
+		}
 	}
 </script>
