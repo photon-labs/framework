@@ -336,6 +336,10 @@ public class Applications extends FrameworkBaseAction {
     }
     
     public String update() throws IOException {
+    	if (s_debugEnabled) {
+    		S_LOGGER.debug("Entering Method Applications.update()");
+		}  
+    	
     	BufferedReader bufferedReader = null;
     	try {
     		ProjectInfo projectInfo = (ProjectInfo)getSessionAttribute(getAppId() + SESSION_APPINFO);
