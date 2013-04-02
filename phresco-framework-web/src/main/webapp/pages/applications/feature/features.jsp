@@ -17,6 +17,7 @@
     limitations under the License.
 
 --%>
+<%@page import="org.apache.commons.lang.BooleanUtils"%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.util.List"%>
@@ -55,12 +56,27 @@
 	if (optionsObj != null) {
 		optionIds  = (List<String>) optionsObj;
 	}
-	boolean hasModules = (Boolean) request.getAttribute(FrameworkConstants.REQ_HAS_MODULES);
-	boolean hasComponents = (Boolean) request.getAttribute(FrameworkConstants.REQ_HAS_COMPONENTS);
-	boolean hasJsLibs = (Boolean) request.getAttribute(FrameworkConstants.REQ_HAS_JSLIBS);
+	boolean hasModules = (Boolean) request.getAttribute(FrameworkConstants.REQ_HAS_MODULES);		
+	boolean hasComponents = (Boolean) request.getAttribute(FrameworkConstants.REQ_HAS_COMPONENTS);	
+	boolean hasJsLibs = (Boolean) request.getAttribute(FrameworkConstants.REQ_HAS_JSLIBS);	
+	String hideClass = "";
+	if(!hasModules && !hasJsLibs && !hasComponents) {		
+		hideClass = "hideContent";
+	}
 %> 
 <form id="formFeatures" class="featureForm">
-	<div class="form-horizontal featureTypeWidth">
+	<%
+		if (!hasModules && !hasJsLibs && !hasComponents) {
+	%>
+		<div class="alert alert-block">
+			<s:text name='Features Not Available'/>
+		</div>
+		<div id="emptyStablePanel" class="">		
+	<% 
+		} else {			
+	%>
+	
+	<div class="form-horizontal featureTypeWidth hideClass">
 		<label for="myselect" class="control-label features_cl">Type&nbsp;:</label>
 		 <select id="featureselect" name="type" onchange="featuretype()">
 		 	<%
@@ -115,7 +131,7 @@
             %>
 		</div>
 	</div>
-	<div class="custom_features">
+	<div class="custom_features hideClass">
 		<div class="tblheader">
 		   	<label>
 		   		<label>
@@ -131,8 +147,8 @@
         <div style="clear:both"></div>
 	</div>
 	      
-	<input type="button" class="btn btn-primary fea_add_but" onclick="clickToAdd()" value=">>"/>
-	<div class="custom_features_wrapper_right">
+	<input type="button" class="btn btn-primary fea_add_but hideClass" onclick="clickToAdd()" value=">>"/>
+	<div class="custom_features_wrapper_right hideClass">
 		<div class="tblheader">
 			<label class="feature_heading"><s:text name="lbl.selected.features"/></label>
 			
@@ -141,7 +157,10 @@
 			<div id="result"></div>
 	   </div>
 	</div>
-	    
+	<%
+		}
+	%> 
+	</div>  	
 	<div class="features_actions">
 		<input type="button" id="previous" value="<s:text name="label.previous"/>" class="btn btn-primary" 
 			onclick="showAppInfoPage();">
@@ -197,12 +216,20 @@ if (CollectionUtils.isNotEmpty(defaultfeatures)) {
 
 	var selectedType = "";
     $(document).ready(function () {
+    	
+    	showLoadingIcon();
+    	//hiding the div if features are empty
+    	 if (!<%= hasModules %> && !<%= hasComponents %> && !<%= hasJsLibs %>) { 
+    		// to hide Loading icon if features are empty
+    	    hideLoadingIcon();    
+    		$('#emptyStablePanel').addClass('showPermanent');    		
+    	}
+    	
     	//To check whether the device is ipad or not and then apply jquery scrollbar
     	if (!isiPad()) {
      		$("#accordianchange").scrollbars();  
     	}
-    	showLoadingIcon();
-        
+    	
         $('#featureselect').ddslick({
         	onSelected: function(data) {
         		selectedType = data.selectedData.value;

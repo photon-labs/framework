@@ -54,7 +54,8 @@ public class CIJob {
     private String downStreamCriteria = "";
     // Whether this job is used cloned workspace or normal svn
     private String usedClonnedWorkspace = "";
-    private String operation = "";// Operation like(Build, deploy, test)
+    // Operation like(Build, deploy, test)
+    private String operation = "";
     
     // for functional test
     private String pomLocation = "";
@@ -101,6 +102,7 @@ public class CIJob {
     private String configuration = "";
     private String keyPassword = "";
     private String packMinifiedFiles = "";
+    private String zipAlign = "";   
     
     // iphone unit test
     private String unitTestType = "";
@@ -972,5 +974,13 @@ public class CIJob {
 
 	public void setCollabNetFileReleasePattern(String collabNetFileReleasePattern) {
 		this.collabNetFileReleasePattern = collabNetFileReleasePattern;
+	}
+
+	public void setZipAlign(String zipAlign) {
+		this.zipAlign = zipAlign;
+	}
+
+	public String getZipAlign() {
+		return zipAlign;
 	}
 }

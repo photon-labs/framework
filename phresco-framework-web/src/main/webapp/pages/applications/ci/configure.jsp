@@ -483,20 +483,40 @@
 									</label>
 									<div class="controls">
 										<select id="operation" name="operation" class="input-xlarge">
-										<% if (optionIds.contains(FrameworkConstants.CI_BUILD)) { %>
-									        <option value="build">Build</option>
-									    <% }
-										   if (optionIds.contains(FrameworkConstants.CI_DEPLOY)) {%>
-									        <option value="deploy">Deploy</option>
-									    <% } 
-									       if (optionIds.contains(FrameworkConstants.CI_FUNCTIONAL_TEST)) {%>
-									        <option value="functionalTest">Functional Test</option>
-									    <% } %>
-									    <option value="unittest">Unit Test</option>
-									    <option value="codeValidation">Code Validate</option>
-									    <option value="pdfReport">PDF Report</option>
-									    <option value="loadTest">Load Test</option>
-									    <option value="performanceTest">Performance Test</option>								    
+										<%
+											if (optionIds.contains(FrameworkConstants.BUILD_KEY)) { %>
+									        	<option value="build">Build</option>
+									    <% 
+									    	}
+											if (optionIds.contains(FrameworkConstants.DEPLOY_KEY)) {%>
+									        	<option value="deploy">Deploy</option>
+									    <%
+									    	} 
+											if (optionIds.contains(FrameworkConstants.FUNCTIONAL_TEST_KEY)) {%>
+									        	<option value="functionalTest">Functional Test</option>
+									    <%
+									    	}
+								    		if (optionIds.contains(FrameworkConstants.UNIT_TEST_KEY)) {%>
+									        	<option value="unittest">Unit Test</option>
+									    <%
+									    	} 
+									    	if (optionIds.contains(FrameworkConstants.CODE_KEY)) {%>
+									        	<option value="codeValidation">Code Validate</option>
+									    <%
+									    	} 
+									    	if (optionIds.contains(FrameworkConstants.REPORT_KEY)) {%>
+									        	<option value="pdfReport">PDF Report</option>
+									    <%
+									    	} 
+									    	if (optionIds.contains(FrameworkConstants.LOAD_TEST_KEY)) {%>
+									        	<option value="loadTest">Load Test</option>
+									    <%
+									    	} 
+									    	if (optionIds.contains(FrameworkConstants.PERFORMANCE_TEST_KEY)) {%>
+									        	<option value="performanceTest">Performance Test</option>
+									    <%
+									    	}
+									    %>									    								    
 										</select>
 									</div>
 								</div>
@@ -785,11 +805,26 @@
 // 		$('.popupLoadingIcon').css("display","block");
 // 		var url = $("#configureForm").attr("action");
 		$('#configureForm :input').attr('disabled', false);
-		if (isFromCi) {	
+		var callLoadContent = true;
+		if (isFromCi) {			
 			// ci specification need to be specified
-			mandatoryValidation('runPerformanceTest', $("#generateBuildForm"), '', 'performance-test', 'performance-test');
+			var redirct = mandatoryValidation('runPerformanceTest', $("#generateBuildForm"), '', 'performance-test', 'performance-test');
+			
+			//validation of templates in performance test .
+			if(redirct == false) {
+				callLoadContent = false;
+			} else {
+				callLoadContent = true;
+			}						
 		}
-		loadContent(url, $('#configureForm, #generateBuildForm'), $('#subcontainer'), getBasicParams(), false, true);
+		
+		// Saving the Job
+		if(callLoadContent) { 			
+ 			// show popup loading icon
+ 			showPopuploadingIcon();
+ 			loadContent(url, $('#configureForm, #generateBuildForm'), $('#subcontainer'), getBasicParams(), false, true);
+ 		}
+						
 	}
 	
 	function enableDisableCollabNet() {

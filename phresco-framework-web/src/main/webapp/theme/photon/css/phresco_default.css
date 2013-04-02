@@ -6720,4 +6720,9 @@ color: #313131;
 .themePathBrowse {
 	float: left;
 	margin-left: 5px;
+}
+
+.showPermanent {
+	display:block;
+	height:94%;	
 }	

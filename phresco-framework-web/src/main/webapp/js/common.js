@@ -137,6 +137,7 @@ function clickSave(pageUrl, params, tag, progressText) {
 }
 
 function mandatoryValidation(pageUrl, form, additionalParams, phase, goal, actionType, appId, stopBtnAction) {
+	var flagValue = false;
 	var params = getBasicParams();
 	params = params.concat("&phase=");
 	params = params.concat(phase);
@@ -164,8 +165,8 @@ function mandatoryValidation(pageUrl, form, additionalParams, phase, goal, actio
 					$("#popupPage").modal('hide');
 					progressPopupAsSecPopup(pageUrl, appId, actionType, form, params);
 				} else if (pageUrl == "runPerformanceTest") {//performance test
-					templateMandatoryVal();
-				} else if (pageUrl == "saveJob" || pageUrl == "updateJob") {
+					flagValue = templateMandatoryVal();					
+				} else if (pageUrl == "saveJob" || pageUrl == "updateJob") {					
 					redirectCiConfigure();
 				} else if(pageUrl == "processBuild") {
 					$("#popupPage").modal('hide');
@@ -174,6 +175,7 @@ function mandatoryValidation(pageUrl, form, additionalParams, phase, goal, actio
 			}
 		}
 	});
+	return flagValue;
 }
 
 //trim the long content
@@ -1394,9 +1396,11 @@ function showSelectedDBWithVersions() {
 }
 
 function hideControl(controls) {
-	for (i in controls) {
-		$('#' + controls[i] + 'Control').hide();
-		$('.' + controls[i] + 'PerformanceDivClass').hide();
+	for (i in controls) {		
+		if($('#'+ $.trim(controls[i])).attr("type") !== 'checkbox') {
+			$('#' + controls[i] + 'Control').hide();
+			$('.' + controls[i] + 'PerformanceDivClass').hide();
+		}
 	}
 }
 
