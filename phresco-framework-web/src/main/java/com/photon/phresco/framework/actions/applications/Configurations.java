@@ -68,7 +68,6 @@ import com.photon.phresco.framework.api.ActionType;
 import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.impl.ConfigManagerImpl;
-import com.photon.phresco.impl.HtmlApplicationProcessor.CSSFileFilter;
 import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.FileUtil;

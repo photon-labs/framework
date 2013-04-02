@@ -376,7 +376,7 @@
 			var selector = $(this).closest('fieldset').find('input[name=cssSelector]').val();
 			if (isBlank(selector)) {//validates selector text box and skip out of loop
 				$(this).closest('fieldset').find('input[name=cssSelector]').focus();
-				$(this).find(".themeBuilderErr").text("Enter Selector");
+				$(this).find(".themeBuilderErr").text('<s:text name="err.msg.theme.selector.missing"/>');
 				redirect = false;
 				return false;
 			} else {
@@ -385,7 +385,7 @@
 					var property = $(this).find('input[name=property]').val();
 					if (isBlank(property)) {//validates property text box and skip out of loop
 						$(this).find('input[name=property]').focus();
-						$(this).closest('fieldset').find(".themeBuilderErr").text("Enter property");
+						$(this).closest('fieldset').find(".themeBuilderErr").text('<s:text name="err.msg.theme.property.missing"/>');
 						loop = false;
 						redirect = false;
 						return false;
@@ -402,19 +402,19 @@
 						//validates value field and skip out of loop
 						if (isBlank(value) && selectedValue  == "string") {
 							$(this).find('input[name=value]').focus();
-							$(this).closest('fieldset').find(".themeBuilderErr").text("Enter value");
+							$(this).closest('fieldset').find(".themeBuilderErr").text('<s:text name="err.msg.theme.value.missing"/>');
 							loop = false;
 							redirect = false;
 							return false;
 						} else if (isBlank(value) && selectedValue  == "color") {
 							$(this).find('input[name=colorPicker]').focus();
-							$(this).closest('fieldset').find(".themeBuilderErr").text("Choose color");
+							$(this).closest('fieldset').find(".themeBuilderErr").text('<s:text name="err.msg.theme.color.missing"/>');
 							loop = false;
 							redirect = false;
 							return false;
 						} else if (isBlank(value) && selectedValue  == "image") {
 							value = $(this).find('input[name=browseThemeImage]').focus();
-							$(this).closest('fieldset').find(".themeBuilderErr").text("Choose Image File");
+							$(this).closest('fieldset').find(".themeBuilderErr").text('<s:text name="err.msg.theme.image.missing"/>');
 							loop = false;
 							redirect = false;
 							return false;
