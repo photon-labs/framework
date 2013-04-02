@@ -114,8 +114,13 @@ function loadContent(pageUrl, form, tag, additionalParams, callSuccessEvent, aja
 			if (pageUrl != "finish") {
 				loadData(data, tag, pageUrl, callSuccessEvent, callbackFunction);
 			} else {
-				var params = getBasicParams();
-				validate('featuresUpdate', $('#formAppInfo'), $('#subcontainer'), params);
+				var trimData = $.trim(data);
+				if (trimData.startsWith('<div class="hideContent" id="trace">')) { // Need to change this
+					loadData(data, tag, pageUrl, callSuccessEvent, callbackFunction);
+				} else {
+					var params = getBasicParams();
+					validate('featuresUpdate', $('#formFeatures'), $('#subcontainer'), params);
+				}
 			}	
 		},
 	});
