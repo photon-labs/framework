@@ -270,7 +270,11 @@ qq.FileUploaderBasic = function(o){
         // events
         // return false to cancel submit
         onSubmit: function(id, fileName){
-        	
+        	//To remove the uploaded files (ul element) list for theme bundle
+        	if (o.type == "themeBundle") {
+        		showLoadingIcon();
+        		$(".theme-bundle-uploader").find(".qq-upload-list").remove();
+        	}
         },
         onProgress: function(id, fileName, loaded, total){
         	
@@ -280,10 +284,19 @@ qq.FileUploaderBasic = function(o){
         		findError(responseJSON);
         		enableUploadButton($(o.element));
         		disableButton($("#validateContent, #validateTheme"));
-        	} else if (responseJSON.success) {
+        	} else if (o.type != "themeBundle" && responseJSON.success) {
         		findError(responseJSON);
         		disableUploadButton($(o.element));
         		enableButton($("#validateContent, #validateTheme"));
+        	}
+        	
+        	//success and failure msg for theme bundle
+        	if (o.type == "themeBundle" && responseJSON.success) {
+        		hideLoadingIcon();
+        		showSuccessMsg(responseJSON.resultMsg);
+        	} else if (o.type == "themeBundle" && !responseJSON.success) {
+        		hideLoadingIcon();
+        		showThemeBundleError(responseJSON.resultMsg);
         	}
     	},
         onCancel: function(id, fileName){},
@@ -296,6 +309,9 @@ qq.FileUploaderBasic = function(o){
             onLeave: "The files are being uploaded, if you leave now the upload will be cancelled."            
         },
         showMessage: function(message){
+        	if (o.type == "themeBundle") {
+        		showThemeBundleError(message);
+        	}
 //    		fileError(message, o.type);
         }
     };

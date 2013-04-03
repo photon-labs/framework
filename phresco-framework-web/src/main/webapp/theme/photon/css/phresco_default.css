@@ -6725,4 +6725,10 @@ color: #313131;
 .showPermanent {
 	display:block;
 	height:94%;	
-}	
+}
+
+#theme_upload {
+	float: right;
+    margin-right: 12px;
+    margin-top: 5px;
+}
