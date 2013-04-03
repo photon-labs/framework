@@ -6721,3 +6721,9 @@ color: #313131;
 	float: left;
 	margin-left: 5px;
 }	
+
+#theme_upload {
+	float: right;
+    margin-right: 12px;
+    margin-top: 5px;
+}

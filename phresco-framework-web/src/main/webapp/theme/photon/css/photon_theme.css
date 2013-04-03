@@ -1408,11 +1408,11 @@ label {
 	color:red;
 }
 
-#errMsg, #advSettingsErrMsg, #jsErrMsg, .themeBuilderErr {
+#errMsg, #advSettingsErrMsg, #jsErrMsg, .themeBuilderErr, .bundle_upload_err {
 	color:red;
 }
 
-#successMsg {
+#successMsg, .bundle_upload_success  {
 	color:green;
 }
 

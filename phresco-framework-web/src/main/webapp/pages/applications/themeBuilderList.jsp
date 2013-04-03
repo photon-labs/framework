@@ -38,6 +38,13 @@
 		<input type="button" class="btn btn-primary" name="themeBuilderAdd" id="themeBuilderAdd" value="Create"/>
 
 		<input type="button" class="btn" id="deleteBtn" disabled value="<s:text name='lbl.delete'/>" data-toggle="modal" href="#popupPage"/>
+		<div id="theme-bundle-uploader" class="theme-bundle-uploader" style="float:right" title = "<s:text name='title.file.size'/>">
+			<noscript>
+				<p>Please enable JavaScript to use file uploader.</p>
+				<!-- or put a simple form for upload here -->
+			</noscript>
+		</div>
+		<div class="bundle_upload_err" id="theme_upload"></div>
 	</div>
 	<s:if test="hasActionMessages()">
 		<div class="alert alert-success alert-message" id="successmsg" >
@@ -100,6 +107,7 @@
 $(document).ready(function() {
 	hideLoadingIcon();
 	confirmDialog($("#deleteBtn"), '<s:text name="lbl.hdr.confirm.dialog"/>', '<s:text name="modal.body.text.del.themes"/>', 'deleteThemes','<s:text name="lbl.btn.ok"/>');
+	createUploader();
 });	
 
 function editThemeBuilder(obj) {
@@ -121,8 +129,44 @@ function popupOnOk(obj) {
 	}
 }
 
+function createUploader() {
+	var fileUploader = new qq.FileUploader({
+		element: document.getElementById('theme-bundle-uploader'),
+		action: 'uploadThemeBundle',
+		multiple: false,
+		uploadId: 'themeBundle',
+		allowedExtensions : ["zip"],
+		type: 'themeBundle',
+		buttonLabel: 'Upload',
+		typeError : 'Choose only zip files',
+		params: {
+			type: 'themeBundle',
+		}, 
+		debug: true
+	});
+}
+
 $("#themeBuilderAdd").click(function() {
 	showLoadingIcon();
 	loadContent("themeBuilderAdd", $("#themeBuilderList"), $("#subcontainer"), '', false, true);	
 });
+
+function showThemeBundleError(err) {
+	$("#theme_upload").removeClass('bundle_upload_success').addClass('bundle_upload_err');
+	$("#theme_upload").html(err);
+	 fadeOutMsg();
+}
+
+function showSuccessMsg(successMsg) {
+	$("#theme_upload").removeClass('bundle_upload_err').addClass('bundle_upload_success');
+	$("#theme_upload").html(successMsg);
+	 fadeOutMsg();
+}
+
+function fadeOutMsg() {
+	setTimeout(function() {
+		$('#theme_upload').empty("slow", function () {
+		});
+	}, 3000);
+}
 </script>

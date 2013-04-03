@@ -981,6 +981,11 @@
         <action name="deleteThemes" method="deleteThemes" class="com.photon.phresco.framework.actions.applications.Configurations">
         	<result name="success">/pages/applications/themeBuilderList.jsp</result>
         </action>
+		
+		<action name="uploadThemeBundle" method="themeBundleUpload" class="com.photon.phresco.framework.actions.applications.Configurations">
+            <result type="json" />        
+        </action>
+        
         <!-- Theme builder ends -->
     </package>
 </struts>
