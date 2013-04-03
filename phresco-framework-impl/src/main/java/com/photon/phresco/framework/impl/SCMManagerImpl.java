@@ -636,8 +636,10 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.importDirectoryContentToSubversion()");
 		}
 		setupLibrary();
-        final SVNClientManager svnClintManagr = SVNClientManager.newInstance(new DefaultSVNOptions(), userName, hashedPassword);
-        return svnClintManagr.getCommitClient().doImport(new File(subVersionedDirectory), SVNURL.parseURIEncoded(repositoryURL), commitMessage, null, true, true, SVNDepth.fromRecurse(true));
+		DefaultSVNOptions defaultSVNOptions = new DefaultSVNOptions();
+        defaultSVNOptions.setIgnorePatterns(new String[] {DO_NOT_CHECKIN_DIR});
+        final SVNClientManager cm = SVNClientManager.newInstance(defaultSVNOptions, userName, hashedPassword);
+        return cm.getCommitClient().doImport(new File(subVersionedDirectory), SVNURL.parseURIEncoded(repositoryURL), commitMessage, null, true, true, SVNDepth.fromRecurse(true));
     }
 	
 	private void checkoutImportedApp(String repositoryURL, String subVersionedDirectory, String userName, String password) throws Exception {
