@@ -1967,6 +1967,31 @@ public class Configurations extends FrameworkBaseAction {
 		return themeBuilderList();
 	}
  	
+	public String themeBundleUpload() throws PhrescoException {
+		PrintWriter writer = null;
+		String msg = "";
+		try {
+			writer = getHttpResponse().getWriter();
+			byte[] byteArray = getByteArray();
+			ApplicationProcessor applicationProcessor = getApplicationProcessor();
+			Map<Boolean, String> uploadResultMap = applicationProcessor.themeBundleUpload(getApplicationInfo(), byteArray, getFileName());
+			Boolean resultflag = (Boolean) uploadResultMap.keySet().toArray()[0];
+			String resultMsg = uploadResultMap.get(resultflag);
+			msg = "{\"success\": "+ resultflag +",\"resultMsg\":\"" + resultMsg + "\"}";
+			if (resultflag) {
+				writer.print(msg);
+			} else {
+				writer.print(msg);
+			}
+			writer.flush();
+			writer.close();
+		} catch (Exception e) {
+			writer.print(msg);
+		}
+
+		return SUCCESS;
+	}
+	
 	public String getDescription() {
    		return description;
     }
