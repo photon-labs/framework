@@ -1,0 +1,50 @@
+	<div class="logincontainer">
+		<section class="login_panel">
+	    	<div class="login_left"><img src="../themes/default/images/helios/logo_login.png" width="180" height="32" alt="Helios" title="Helios" border="0"></div>
+	        <div class="login_right">
+	        	<div class="loginhead">
+					<span><img src="../themes/default/images/helios/user_login_title.png"></span>
+					<div class="clear"></div>
+				</div>
+	        	<form>
+	                <div class="control-group">
+	                <div class="controls">
+	               	 	<div class="loginuser">
+							<div class="loginimg">
+								<img src="../themes/default/images/helios/username_icon.png">
+							</div>
+							<div class="logintext">	
+								<input type="text" id="inputEmail" placeholder="Please Enter Username">
+							</div>
+							<div class="clear"></div>
+					 	</div>
+	                </div>
+	                </div>
+	                <div class="control-group">
+	                <div class="controls">
+	                	<div class="loginuser">
+							<div class="loginimg">
+								<img src="../themes/default/images/helios/password_icon.png">
+							</div>
+							<div class="logintext">	
+								<input type="password" id="inputPassword" placeholder="Please Enter Password">
+							</div>
+							<div class="clear"></div>
+					 	</div>
+	                </div>
+	                </div>
+				        
+	    		<div class="loginfoot">
+					<label class="checkbox">
+						<input type="checkbox">
+						Remember Me
+					</label>
+					<div class="flt_right"><a href="html/project_list.html"><input type="button" value="LOGIN" class="btn btn_style"></a></div>
+				</div>
+                </form>
+	    		<!--login_right div ends here -->
+	    	</div>
+	        <div class="clear"></div>
+	    </section>
+        <div class="loginshadow"><img src="../themes/default/images/helios/login_shadow.png"></div>
+	</div>  

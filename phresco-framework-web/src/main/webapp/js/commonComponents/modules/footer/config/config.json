@@ -1,0 +1,8 @@
+{
+    "info":{
+        "widgetId":"100",
+        "widgetName":"Footer"
+    },
+
+	"theme" : "default"
+}

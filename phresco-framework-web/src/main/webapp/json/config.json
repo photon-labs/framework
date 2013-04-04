@@ -1,0 +1,20 @@
+{
+	"environments" : {
+		"environment" : {
+			"name":"dev",
+			"default":"true"
+		}
+	},
+	
+	"navigation" : {
+		"transitionType" : 7,
+		"isNative" : false
+	},
+
+	"components" : {
+		"login" : {
+			"moduleName":"login",
+			"path" : "../components/login/js"
+		}
+	}
+}
