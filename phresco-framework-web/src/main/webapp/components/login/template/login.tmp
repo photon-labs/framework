@@ -39,7 +39,7 @@
 						<input type="checkbox">
 						<span data-i18n="login.label.txt.remember;"></span>
 					</label>
-					<div class="flt_right"><a href="html/project_list.html"><input type="button"  data-i18n="[value]login.label.btn.login;" class="btn btn_style"></a></div>
+					<div class="flt_right"><input type="button" id="login" data-i18n="[value]login.label.btn.login;" class="btn btn_style"></div>
 				</div>
                 </form>
 	    		<!--login_right div ends here -->

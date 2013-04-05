@@ -15,9 +15,10 @@ var commonVariables = {
 	deleted : "Delete",
 	
 	basePlaceholder : "basepage\\:widget",
-	headerPlaceholder : "header\\:widget",
-	contentPlaceholder : "content\\:widget",
-	footerPlaceholder : "footer\\:widget"
+	headerPlaceholder : $("<header\\:widget></header\\:widget>"),
+	navigationPlaceholder : $("<navigation\\:widget></navigation\\:widget>"),
+	contentPlaceholder : $("<content\\:widget></content\\:widget>"),
+	footerPlaceholder : $("<footer\\:widget></footer\\:widget>")
 };
 
 $(document).ready(function(){
