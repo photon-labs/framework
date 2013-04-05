@@ -19,7 +19,7 @@ $myObject:{ obj |
 	<div id="contextDiv" class="contextDivClass" style="margin-bottom:5px;">
 		<fieldset class="popup-fieldset fieldsetBottom perFieldSet perContextUrlFieldset" id="context">
 			<legend class="fieldSetLegend">
-				<input type="checkbox" class="check ctxUrlCheck" onclick="enableDelBtn(this);">
+				<input type="checkbox" class="ctxUrlCheck" onclick="enableDelBtn(this);">
 			</legend>
 			
 			<table style="line-height: 0px;">

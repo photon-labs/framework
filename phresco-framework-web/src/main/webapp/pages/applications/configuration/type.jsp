@@ -355,6 +355,7 @@
 	$("div#certificateControl").hide();
 	
 	$(document).ready(function() {
+		$("input[name='deploy_dir']").attr("disabled", "disabled");
 		enableOrDisableUpldBtn();
 		remoteDeplyChecked();
 		hideLoadingIcon();//To hide the loading icon
@@ -381,7 +382,6 @@
 				hideRemoteDeply();
 				$('#iisDiv').css("display", "block");
 			}
-			
 		}
 		
 		<% if (FrameworkConstants.ADD_CONFIG.equals(fromPage) || FrameworkConstants.EDIT_CONFIG.equals(fromPage)) {
@@ -393,11 +393,10 @@
 			}
 		%>
 		
-		if (serverType == "NodeJs" || serverType == "NodeJs Mac") {
-			hideDeployDir();
-		}
+		serverTypeSpecific();
 		 
 		$("#type").change(function() {
+			serverTypeSpecific();
 			if ($(this).val() == "IIS") {
 				hideContext();
 				$('#iisDiv').css("display", "block");
@@ -406,7 +405,6 @@
 				$('#iisDiv').css("display", "none");
 			}
 			
-			remoteDeplyChecked();
 			if ($(this).val() == "IIS" || $(this).val() == "NodeJs") {
 				$("input[name='remoteDeployment']").attr("checked",false);
 			}
@@ -452,7 +450,7 @@
 			$("#admin_passwordControl label").html('<span class="red">* </span>Admin Password'); 
 		} else {
 			$("#admin_usernameControl label").html('Admin Username');
-			$("#admin_passwordControl label").html('Admin Password'); 
+			$("#admin_passwordControl label").html('Admin Password');
 			$('#deploy_dirControl').show();
 		}
 	}
@@ -535,6 +533,17 @@
 		params = params.concat("deploy_dir");
 		params = params.concat("&fileOrFolder=All");
 		additionalPopup('openBrowseFileTree','Browse', 'addDeployDir', 'Add', '', params, true);
+	}
+	
+	function serverTypeSpecific() {
+		var servertype = $('#type').val();
+		if (servertype == "NodeJs" || servertype == "NodeJs Mac" || servertype == "Sharepoint Server") {
+			hideDeployDir();
+			hideRemoteDeply();
+		} else {
+			$('#remoteDeploymentControl').show();
+			remoteDeplyChecked();
+		}
 	}
 	
 	function successEvent(pageUrl, data) {

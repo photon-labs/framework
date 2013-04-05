@@ -212,6 +212,8 @@
 		});
 		
 		<% if (CollectionUtils.isEmpty(envs)) { %>
+			$("input[id=deleteBtn]").attr("disabled", "disabled");
+			$("#deleteBtn").removeClass("btn-primary");
 			$("input[name=configAdd]").attr("disabled", "disabled");
 			$("#configAdd").removeClass("btn-primary"); 
 	        $("#configAdd").addClass("btn-disabled");
