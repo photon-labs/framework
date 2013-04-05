@@ -411,7 +411,6 @@
 	      	e.stopPropagation();
 		});
 	      
-		applyTheme();
 		showHideTheme();
 		
 		$("#customerSelect").val('<%= customerId %>');
@@ -478,7 +477,6 @@
 			applyTheme();
 		} else {
 			localStorage["color"] = "theme/photon/css/photon_theme.css";
-			applyTheme();
 			loadContent("fetchLogoImgUrl", $('#formCustomers'), '', '', true, true, 'changeLogo');
 		}
 	}
@@ -823,7 +821,6 @@
 			'.customer_select_div  .dd-options li' : {
 				'border-bottom': "1px solid #000000 !important"   // Customer Selection border bottom color
 			}
-						
 		});
 	}
 	

@@ -153,6 +153,7 @@ public interface FrameworkConstants {
     String UNDERSCORE = "_";
     String PDF = "pdf";
     String XML = "xml";
+    String JSON = "json";
     String POM_XML = "pom.xml";
     String STATIC_ANALYSIS_REPORT = "static-analysis-report";
     String INDEX_HTML = "index.html";
@@ -1327,6 +1328,7 @@ public interface FrameworkConstants {
      */
     String TEST_SLASH_PERFORMANCE = "/test/performance/";
     String RESULTS_SLASH_JMETER = "/results/jmeter/";
+    String SLASH_JSON = "/json";
     
     /* CI Keys */
     String SUCCESS_JOB = "ci.create.success";
