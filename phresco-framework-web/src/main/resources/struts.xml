@@ -700,6 +700,10 @@
         	<result name="manual">/pages/applications/quality/manualTestCase.jsp</result>
 		</action>
 		
+		<action name="saveTestCasesValidate" method="validateform" class="com.photon.phresco.framework.actions.applications.Quality">
+        	<result type="json" />
+		</action>
+		
         <action name="functional" method="functional" class="com.photon.phresco.framework.actions.applications.Quality">
         	<result name="functional">/pages/applications/quality/functional.jsp</result>
 		</action>

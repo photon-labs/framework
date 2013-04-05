@@ -158,6 +158,8 @@ public class Configurations extends FrameworkBaseAction {
     private String themePathError = "";
     private List<String> checkedThemes = null;
     
+    private static Map<Boolean, String> uploadResultMap = new HashMap<Boolean, String>();
+    
 	public String configList() {
 		if (s_debugEnabled) {
 			S_LOGGER.debug("Entering Method Configurations.configList()");
@@ -1788,24 +1790,6 @@ public class Configurations extends FrameworkBaseAction {
 		return SUCCESS;
 	}
     
-    private String getGlobalSettingsPath() throws PhrescoException {
-    	StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-    	builder.append(getCustomerId());
-		builder.append("-");
-		builder.append(SETTINGS_INFO_FILE_NAME);
-		return builder.toString();
-    }
-    
-    private String getAppConfigPath() throws PhrescoException {
-    	StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-    	builder.append(getApplicationInfo().getAppDirName());
-    	builder.append(File.separator);
-    	builder.append(FOLDER_DOT_PHRESCO);
-    	builder.append(File.separator);
-    	builder.append(CONFIGURATION_INFO_FILE_NAME);
-    	return builder.toString();
-    }
-    
     public String authenticateServer() throws PhrescoException {
     	try {
     		String host = (String)getHttpRequest().getParameter(SERVER_HOST);
@@ -1855,9 +1839,13 @@ public class Configurations extends FrameworkBaseAction {
 				}
 				Collections.sort(themeBuilderList, sortValuesInAlphaOrder());
 			}
-
+			Map<Boolean, String> tempMap = new HashMap<Boolean, String>();
+			tempMap.putAll(uploadResultMap);
 			setReqAttribute(REQ_THEME_FILES_MAP, cssFilesMap);
 			setReqAttribute(REQ_THEME_FILES, themeBuilderList);
+			setReqAttribute(REQ_THEME_UPLOAD_RESULT, tempMap);
+			uploadResultMap.clear();
+			
 		} catch (PhrescoException e) {
 			//TODO: throw error
 		}
@@ -1969,26 +1957,18 @@ public class Configurations extends FrameworkBaseAction {
  	
 	public String themeBundleUpload() throws PhrescoException {
 		PrintWriter writer = null;
-		String msg = "";
 		try {
 			writer = getHttpResponse().getWriter();
 			byte[] byteArray = getByteArray();
 			ApplicationProcessor applicationProcessor = getApplicationProcessor();
-			Map<Boolean, String> uploadResultMap = applicationProcessor.themeBundleUpload(getApplicationInfo(), byteArray, getFileName());
-			Boolean resultflag = (Boolean) uploadResultMap.keySet().toArray()[0];
-			String resultMsg = uploadResultMap.get(resultflag);
-			msg = "{\"success\": "+ resultflag +",\"resultMsg\":\"" + resultMsg + "\"}";
-			if (resultflag) {
-				writer.print(msg);
-			} else {
-				writer.print(msg);
-			}
-			writer.flush();
-			writer.close();
+			uploadResultMap = applicationProcessor.themeBundleUpload(getApplicationInfo(), byteArray, getFileName());
+			writer.print(SUCCESS_TRUE);
 		} catch (Exception e) {
-			writer.print(msg);
+			writer.print(SUCCESS_FALSE);
 		}
-
+		writer.flush();
+		writer.close();
+		
 		return SUCCESS;
 	}
 	

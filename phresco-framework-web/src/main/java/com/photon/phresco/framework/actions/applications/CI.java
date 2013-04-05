@@ -454,6 +454,7 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
                 goal = PHASE_PACKAGE;
                 setReqAttribute(REQ_PHASE, PHASE_CI);
                 setReqAttribute(REQ_GOAL, goal);
+                setReqAttribute(REQ_FROM, goal);
             } else if (DEPLOY.equals(operation)) {
                 parameters = getMojoParameters(mojo, PHASE_DEPLOY);
                 setReqAttribute(REQ_PHASE, PHASE_CI);

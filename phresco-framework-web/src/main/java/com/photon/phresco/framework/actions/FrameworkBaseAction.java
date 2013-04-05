@@ -509,6 +509,24 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
             throw new PhrescoException(e);
         }
     }
+	
+	public String getGlobalSettingsPath() throws PhrescoException {
+    	StringBuilder builder = new StringBuilder(Utility.getProjectHome());
+    	builder.append(getCustomerId());
+		builder.append("-");
+		builder.append(SETTINGS_INFO_FILE_NAME);
+		return builder.toString();
+    }
+    
+    public String getAppConfigPath() throws PhrescoException {
+    	StringBuilder builder = new StringBuilder(Utility.getProjectHome());
+    	builder.append(getApplicationInfo().getAppDirName());
+    	builder.append(File.separator);
+    	builder.append(FOLDER_DOT_PHRESCO);
+    	builder.append(File.separator);
+    	builder.append(CONFIGURATION_INFO_FILE_NAME);
+    	return builder.toString();
+    }
 
     public String getPath() {
     	return path;

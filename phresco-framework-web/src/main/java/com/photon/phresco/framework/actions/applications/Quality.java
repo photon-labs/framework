@@ -197,6 +197,8 @@ public class Quality extends DynamicParameterAction implements Constants {
 	private String actualResult = "";
 	private String status = "";
 	private String bugComment = "";
+	private String featureIdError = "";
+	private boolean errorFound;
 	
     boolean connectionAlive = false;
     boolean updateCache;
@@ -2145,6 +2147,35 @@ public class Quality extends DynamicParameterAction implements Constants {
 		return SUCCESS;
 	}
 	
+	public String validateform() throws PhrescoException, PhrescoPomException {
+		if (s_debugEnabled) {
+			S_LOGGER.debug("Entering Method Quality.validateform()");
+		}
+		String testSuiteName = getTestScenarioName();
+		CacheKey testSuitekey = new CacheKey(testSuiteName);
+		List<com.photon.phresco.commons.model.TestCase> readManualTestCaseFile = (List<com.photon.phresco.commons.model.TestCase>) cacheManager.get(testSuitekey);
+		boolean hasError = false;
+		if (!getFromTab().equals(EDIT)) {
+			if(StringUtils.isNotEmpty(getFeatureId())) {
+				for(com.photon.phresco.commons.model.TestCase testCase : readManualTestCaseFile) {
+					if(testCase.getFeatureId().equalsIgnoreCase(getFeatureId())) {
+						setFeatureIdError(getText(ERROR_FEATURE_ID_EXISTS));
+						hasError = true;
+						break;
+					}
+				}
+			} else {
+				setFeatureIdError(getText(ERROR_FEATURE_ID_MISSING));
+				hasError = true;
+	        }
+		}
+		if (hasError) {
+            setErrorFound(true);
+        }
+		
+		return SUCCESS;
+	}
+	
 	public String showManualTestPopUp () throws PhrescoException {
 		if (s_debugEnabled) {
 			S_LOGGER.debug("Entering Method Quality.showManualTestPopUp()");
@@ -3277,5 +3308,21 @@ public class Quality extends DynamicParameterAction implements Constants {
 
 	public void setActionType(String actionType) {
 		this.actionType = actionType;
+	}
+
+	public String getFeatureIdError() {
+		return featureIdError;
+	}
+
+	public void setFeatureIdError(String featureIdError) {
+		this.featureIdError = featureIdError;
+	}
+
+	public boolean isErrorFound() {
+		return errorFound;
+	}
+
+	public void setErrorFound(boolean errorFound) {
+		this.errorFound = errorFound;
 	}
 }

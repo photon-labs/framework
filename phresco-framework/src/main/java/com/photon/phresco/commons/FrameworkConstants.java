@@ -1267,6 +1267,8 @@ public interface FrameworkConstants {
     String ERROR_PORT = "Invalid Port Number";
     String ERROR_EMAIL = "Enter Valid Email";
     String NO_SETTINGS_ENV = "settings.error.message";
+    String ERROR_FEATURE_ID_EXISTS = "err.msg.feature.id.exists";
+    String ERROR_FEATURE_ID_MISSING = "err.feature.id.missing";
     
     /*
      * Delete Environment keys
@@ -1777,4 +1779,5 @@ public interface FrameworkConstants {
 	    String FAILURE_THEME_BUILDER_CREATE = "Theme Builder Creation Failed";
 	    String SUCCESS_THEME_BUILDER_DELETE = "Theme(s) Deleted Successfully";
 	    String REQ_BROWSE_THEME_IMAGE = "themeBuilderImage";
+	    String REQ_THEME_UPLOAD_RESULT = "uploadResultMap";
 }

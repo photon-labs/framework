@@ -510,6 +510,7 @@ public class Applications extends FrameworkBaseAction {
             setReqAttribute(REQ_PROJECTS, projects);
             removeSessionAttribute(getAppId() + SESSION_APPINFO);
             removeSessionAttribute(REQ_SELECTED_FEATURES);
+            removeSessionAttribute(REQ_DEFAULT_FEATURES);
     	} catch (PhrescoException e) {
     		return showErrorPopup(e, EXCEPTION_PROJECT_UPDATE);
     	} catch (FileNotFoundException e) {

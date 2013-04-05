@@ -253,7 +253,7 @@ public class Features extends DynamicParameterModule {
 				createArtifactInfoForDefault(componentGroups, defaultFeatures, appInfo);
 			}
 			setReqAttribute(REQ_HAS_COMPONENTS, hasComponents);
-			setReqAttribute(REQ_DEFAULT_FEATURES, defaultFeatures);
+			setSessionAttribute(REQ_DEFAULT_FEATURES, defaultFeatures);
 			setSessionAttribute(REQ_SELECTED_FEATURES, listFeatures);
 			if (APP_INFO.equals(getFromTab())) {
 				projectInfo.setAppInfos(Collections.singletonList(createApplicationInfo(appInfo)));
@@ -892,6 +892,13 @@ public class Features extends DynamicParameterModule {
 			}
 		}
 		
+		List<SelectedFeature> pilotArtifacts = (List<SelectedFeature>)getSessionAttribute(REQ_DEFAULT_FEATURES);
+		if (CollectionUtils.isNotEmpty(pilotArtifacts)) {
+			for (SelectedFeature selectedFeature : pilotArtifacts) {
+				depArtifactGroupNames.add(selectedFeature.getDispName());
+				depArtifactInfoIds.add(selectedFeature.getVersionID());
+			}
+		}
 		return SUCCESS;
 	}
 

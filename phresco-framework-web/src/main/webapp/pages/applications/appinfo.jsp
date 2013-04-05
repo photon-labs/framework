@@ -158,7 +158,7 @@
 		    <div class="controls">
 				<input class="input-xlarge" id="applicationVersion" placeholder="<s:text name="place.hldr.app.edit.version"/>"
 					name="applicationVersion" maxlength="20" title="<s:text name="title.20.chars"/>"
-					type="text"  value ="<%= StringUtils.isNotEmpty(version) ? version : "" %>"/>
+					type="text"  value ="<%= StringUtils.isNotEmpty(version) ? version : "1.0" %>"/>
 					<span class="help-inline" id="applicationVersionError"></span>
 		    </div>
 		</div>

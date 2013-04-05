@@ -971,7 +971,10 @@ function constructElements(data, pushToElement, isMultiple, controlType, paramet
 function constructFieldsetOptions(dependentValues, pushToElement) {
 	if (dependentValues != undefined && !isBlank(dependentValues)) {
 		var fileName, filePath;
+		//to clear fielset values
 		$("#avaliableSourceScript").empty();
+		$("#selectedSourceScript").empty();
+		
 		for(i in dependentValues) {
 			fileName = dependentValues[i].value.substring(dependentValues[i].value.lastIndexOf('#') + 1);
 			filePath = dependentValues[i].value.replace('#SEP#','/');
@@ -1401,11 +1404,9 @@ function showSelectedDBWithVersions() {
 }
 
 function hideControl(controls) {
-	for (i in controls) {		
-		if($('#'+ $.trim(controls[i])).attr("type") !== 'checkbox') {
-			$('#' + controls[i] + 'Control').hide();
-			$('.' + controls[i] + 'PerformanceDivClass').hide();
-		}
+	for (i in controls) {
+		$('#' + controls[i] + 'Control').hide();
+		$('.' + controls[i] + 'PerformanceDivClass').hide();
 	}
 }
 
@@ -1503,4 +1504,34 @@ function printPdfPreActions() {
 	//To disable genetare button
 	$('#printAsPdf').attr("disabled", "disabled");
 	$('#printAsPdf').removeClass("btn-primary");
+}
+
+function zipAlignEvent() {
+	if($("#zipAlign").is(":checked")) {
+		var paramArray = 'keystore,storepass,keypass,alias,signing'.split(',');
+		showControl(paramArray);
+		$("#signing").prop("checked", true);
+		$("#signing").val(true);
+	} else {
+		var paramArray = 'keystore,storepass,keypass,alias'.split(',');
+		$("#signing").prop("checked", false);
+		$("#signing").val(false);
+		$("#signingControl").show();
+		hideControl(paramArray);
+		
+	}
+}
+
+function singingEvent() {
+	if($("#signing").is(":checked")) {
+		var paramArray = 'keystore,storepass,keypass,alias'.split(',');
+		showControl(paramArray);
+		$("#zipAlign").prop("checked", true);
+		$("#zipAlign").val(true);
+	} else {
+		var paramArray = 'keystore,storepass,keypass,alias'.split(',');
+		hideControl(paramArray);
+		$("#zipAlign").prop("checked", false);
+		$("#zipAlign").val(false);
+	}
 }

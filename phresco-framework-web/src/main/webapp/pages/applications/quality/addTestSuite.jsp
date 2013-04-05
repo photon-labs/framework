@@ -100,6 +100,10 @@
 <script type="text/javascript">
 $(document).ready(function() {
 	//$("#popupPage").modal('hide');
+	if(!isiPad()){
+		/* JQuery scroll bar */
+		$("#formTestSuite").scrollbars();
+	}
 	hideLoadingIcon();
 	
 	$('#cancel').click(function() {

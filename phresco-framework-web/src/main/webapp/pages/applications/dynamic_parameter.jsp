@@ -456,7 +456,7 @@
 			var previousDependencyAttr = $(obj).attr('additionalparam');//get the previvous dependency keys from additionalParam attr
 			var csvPreviousDependency = previousDependencyAttr.substring(previousDependencyAttr.indexOf('=') + 1);
 			dependencyAttr =  obj.options[obj.selectedIndex].getAttribute('additionalparam'); //$('option:selected', obj).attr('additionalParam'); 
-
+			
 			if (csvPreviousDependency !== undefined && !isBlank(csvPreviousDependency) && 
 					csvPreviousDependency !==  dependencyAttr) {//hide event of all the dependencies of the previuos dependencies
 				var csvDependencies = getAllDependencies(csvPreviousDependency);
@@ -469,29 +469,32 @@
 		}
 		var csvDependencies;
 		changeEveDependancyListener(selectedOption, currentParamKey); // update the watcher while changing the drop down
-		
 		if (dependencyAttr !== undefined && dependencyAttr != null) {
 			csvDependencies = dependencyAttr.substring(dependencyAttr.indexOf('=') + 1);
 			csvDependencies = getAllDependencies(csvDependencies);
 			var dependencyArr = new Array();
 			dependencyArr = csvDependencies.split(',');
 			for (var i = 0; i < dependencyArr.length; i+=1) {
-				
-				// Multiple dependent checkbox value enabling and disabling 
-				if ($('#'+ $.trim(dependencyArr[i])).attr("type") === 'checkbox') {
-					if (selectedOption) {
-						$('#'+ $.trim(dependencyArr[i])).prop('checked', true);	
-						$('#'+ $.trim(dependencyArr[i])).val('true');						
-					} else {
-						$('#'+ $.trim(dependencyArr[i])).prop('checked', false);
-						$('#'+ $.trim(dependencyArr[i])).val('false');						
-					}
-				}												
 				$('#' + $.trim(dependencyArr[i]) + 'Control').show();
 				$('.' + $.trim(dependencyArr[i]) + 'PerformanceDivClass').show();//for performance context urls
+					
 				updateDependancy(dependencyArr[i]);
 			}
-		}
+			
+			//If the dependent child is select box, hide controls based on selected options - for on change event
+			for (var i = 0; i < dependencyArr.length; i+=1) {
+				var curId = $.trim(dependencyArr[i]);
+				var dependentCtrl = $("#"+curId).prop('tagName');
+					if (dependentCtrl === 'SELECT') {
+						var hideOptionDependency = $('#'+curId).find(":selected").attr('hide');
+						if (hideOptionDependency !== undefined && !isBlank(hideOptionDependency)) {
+							var hideOptionDependencyArr = new Array();
+							hideOptionDependencyArr = hideOptionDependency.split(',');
+							hideControl(hideOptionDependencyArr);
+						}
+					}
+				}	
+			}
 		
 		if ($(obj).attr("type") === 'checkbox' && showHideFlag === "false") {
 			if (!selectedOption) {
@@ -516,31 +519,15 @@
 					dependencyArr = csvDependencies.split(',');
 					showControl(dependencyArr);					
 				}
-			} else if (currentObjType === "INPUT" && $(this).attr("type") === 'checkbox' && $(this).attr('additionalParam')!== null)  {
-				// Iterates all the additional parameters of the current page elements in the build form and show the dependency elements
-				var dependencyParam = $(this).attr('additionalParam');				
-				 if (dependencyParam !== null && dependencyParam !== undefined) {
-					if (dependencyParam.indexOf('=') < dependencyParam.length) {
-						var splitDependencies = dependencyParam.substring(dependencyParam.indexOf('=') + 1);						
-						if (!isBlank(splitDependencies)) {							
-							splitDependencies = getAllDependencies(splitDependencies);											 					 	 
-						 	 var paramArray = new Array();
-						     paramArray = splitDependencies.split(',');	
-						     for (var i = 0; i < paramArray.length; i+=1) {
-						    	 var dependencyControl = $('#' + $.trim(paramArray[i]) + 'Control');						    	 
-								 var hasHideContent = dependencyControl.hasClass('hideContent');
-								 if (hasHideContent) {
-									if ($(this).is(':checked')) {
-										dependencyControl.show();	
-									} else {
-										dependencyControl.hide();
-								 	}
-								 } 
-						     }
-						}
-					} 
-			     } 
-			 }
+				
+				//If the dependent child is select box, hide controls based on selected options - while popup loading
+				var hideOptionDependency = this.options[this.selectedIndex].getAttribute('hide');
+				if (hideOptionDependency !== undefined && !isBlank(hideOptionDependency)) {
+					var hideOptionDependencyArr = new Array();
+					hideOptionDependencyArr = hideOptionDependency.split(',');
+					hideControl(hideOptionDependencyArr);
+				}
+			} 
 		});
 		
 		<% 
@@ -556,7 +543,20 @@
 		<%
 			}
 		%>
+		
+		<% if (FrameworkConstants.PACKAGE.equals(from)) {%>
+			singingEvent();
+		<% } %>
 	}
+	
+	$("#zipAlign").bind('click', function() {
+		zipAlignEvent();
+	});
+	
+	
+	$("#signing").bind('click', function() {
+		singingEvent();
+	});
 	
 	function changeEveDependancyListener(selectedOption, currentParamKey) {
 		var params = getBasicParams();
