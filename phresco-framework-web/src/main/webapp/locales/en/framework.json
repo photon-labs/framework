@@ -1,0 +1,17 @@
+{
+	  "login": {
+			"title" : "USER LOGIN",
+			"placeholder": {
+				"username" : "Please Enter Username",
+				"password" : "Please Enter Password"
+			},
+			"label" : {
+				"txt" : {
+					"remember" : "Remember Me"
+				},
+				"btn" : {
+					"login" : "LOGIN"
+				}
+			}
+	  }
+}

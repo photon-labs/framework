@@ -2,12 +2,13 @@
 	"environments" : {
 		"environment" : {
 			"name":"dev",
-			"default":"true"
-		}
+			"default" :true
+		},
+		"locales" : "../locales/en/framework.json"
 	},
 	
 	"navigation" : {
-		"transitionType" : 7,
+		"transitionType" : 2,
 		"isNative" : false
 	},
 

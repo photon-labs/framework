@@ -31,7 +31,7 @@ define(["framework/widgetWithTemplate", "login/listener/loginListener"], functio
 		 * Called in once the login is success
 		 *
 		 */
-		loadPage :function(){
+		loadPage : function(){
 			var loginListener = new Clazz.com.components.login.js.listener.LoginListener();
 			this.onLoginEvent.add(loginListener.onLogin, loginListener);
 			Clazz.navigationController.push(this);
