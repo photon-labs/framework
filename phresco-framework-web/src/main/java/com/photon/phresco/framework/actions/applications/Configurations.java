@@ -768,11 +768,11 @@ public class Configurations extends FrameworkBaseAction {
 	            	isIISServer = true;
 	            }
 	            
-	            if (CONFIG_TYPE.equals(propKey) && NODEJS_SERVER.equals(propValue) || NODEJS_MAC_SERVER.equals(propValue)) { //If nodeJs server selected , there should not be validation for deploy dir.
+	            if (CONFIG_TYPE.equals(propKey) && NODEJS_SERVER.equals(propValue) || NODEJS_MAC_SERVER.equals(propValue) || SHAREPOINT_SERVER.equals(propValue)) { //If nodeJs and sharepoint server selected , there should not be validation for deploy dir.
 	            	serverTypeValidation = true;
 	            }
 	            
-	            if(isIISServer && DEPLOY_CONTEXT.equals(propKey)){
+	            if(isIISServer && DEPLOY_CONTEXT.equals(propKey)) {
 	            	propertyTemplate.setRequired(false);
 	            }
 	            
@@ -785,8 +785,8 @@ public class Configurations extends FrameworkBaseAction {
 		        		}
 		    		}
 	        	}
-	    		
-				if ((serverTypeValidation && DEPLOY_DIR.equals(propKey))) {
+	        	
+				if (serverTypeValidation && DEPLOY_DIR.equals(propKey)){
 					 propertyTemplate.setRequired(false);
 				}
 	    		 

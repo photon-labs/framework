@@ -65,6 +65,11 @@
 	}
 %> 
 <form id="formFeatures" class="featureForm">
+
+	<div class="alert alert-success alert-message hideContent" id="envSuccessmsg" style= "margin-top: -13px; margin-left: 360px; width: 44%;" >
+		<s:text name="update.application.success"/>
+	</div>
+
 	<%
 		if (!hasModules && !hasJsLibs && !hasComponents) {
 	%>
@@ -102,9 +107,6 @@
 	    </select>
 	    <div class="alert alert-success alert-message hideContent" id="successmsg">
 			<s:text name="succ.feature.configure"/>
-		</div>
-		<div class="alert alert-success alert-message hideContent" id="envSuccessmsg" style= "margin-left: 360px; width: 44%;" >
-			<s:text name="update.application.success"/>
 		</div>
 		<div class="featureImage">
 			<img id="allFeatures" title="<s:text name="title.selected.modules"/>" src="images/all.png">

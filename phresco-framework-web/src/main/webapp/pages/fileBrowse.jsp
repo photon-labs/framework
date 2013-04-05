@@ -139,6 +139,13 @@
 	    }, 600);
 	}
 	
+	$(document).keydown(function(e) {
+	    // ESCAPE key pressed
+		if (e.keyCode == 27) {
+			$("#additionalPopup").modal('hide');
+	    }
+	});
+	
 	function add_popupOnOk(obj) {
 		var okUrl = $(obj).attr("id")
 		var fileLocation = $('#browseSelectedLocation').val(); 

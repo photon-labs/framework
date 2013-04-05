@@ -228,6 +228,7 @@
 		}).triggerHandler("change");
 		
 		$('#<%= pageUrl %>').click(function() {
+			$("input[name='deploy_dir']").attr("disabled", false);
 			var name = $('#configName').val();
 			var desc = $('#configDesc').val();
 			var env = $('#environment').val();

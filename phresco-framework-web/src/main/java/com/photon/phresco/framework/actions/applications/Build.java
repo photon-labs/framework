@@ -571,11 +571,10 @@ public class Build extends DynamicParameterAction implements Constants {
 				throw new PhrescoException("Build Number is empty ");
 			}
 			String ipaFileName = applicationInfo.getName();
-			String buildName = applicationManager.getBuildInfo(Integer.parseInt(buildNumber), getBuildInfosFilePath(applicationInfo)).getBuildName();
+			String buildName = applicationManager.getBuildInfo(Integer.parseInt(buildNumber), getBuildInfosFilePath(applicationInfo)).getDeployLocation();
 			String workingDirectory = getAppDirectoryPath(applicationInfo);
 			String buildNameSubstring = buildName.substring(0, buildName.lastIndexOf(FILE_SEPARATOR));
 			String appBuildName = buildNameSubstring.substring(buildNameSubstring.lastIndexOf(FILE_SEPARATOR) + 1);
-			
 			List<String> buildArgCmds = new ArrayList<String>();
 			buildArgCmds.add("-Dapplication.name=" + ipaFileName);
 			buildArgCmds.add("-Dapp.path=" + buildName);
@@ -584,7 +583,7 @@ public class Build extends DynamicParameterAction implements Constants {
 			while (reader.readLine() != null) {
 				System.out.println(reader.readLine());
 			}
-			String ipaPath = applicationManager.getBuildInfo(Integer.parseInt(buildNumber), getBuildInfosFilePath(applicationInfo)).getBuildName();
+			String ipaPath = applicationManager.getBuildInfo(Integer.parseInt(buildNumber), getBuildInfosFilePath(applicationInfo)).getDeployLocation();
 			ipaPath = ipaPath.substring(0, ipaPath.lastIndexOf(FILE_SEPARATOR)) + FILE_SEPARATOR + ipaFileName + IPA_FORMAT;
 			fileInputStream = new FileInputStream(new File(ipaPath));
 			fileName = ipaFileName + IPA_FORMAT;
