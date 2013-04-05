@@ -31,7 +31,13 @@ import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.math.BigDecimal;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.Iterator;
 import java.util.List;
@@ -40,6 +46,13 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.Vector;
 import java.util.regex.Pattern;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import org.antlr.stringtemplate.StringTemplate;
 import org.apache.commons.codec.binary.Base64;
@@ -2224,6 +2237,61 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 			//e.printStackTrace();
 		}
 	}
+	
+	public static int getHttpsResponse(String url) throws PhrescoException {
+		URL httpsUrl;
+		try {
+			SSLContext ssl_ctx = SSLContext.getInstance("TLS");
+			TrustManager[] trust_mgr = get_trust_mgr();
+			ssl_ctx.init(null, trust_mgr, new SecureRandom());
+			HttpsURLConnection.setDefaultSSLSocketFactory(ssl_ctx.getSocketFactory());
+			httpsUrl = new URL(url);
+			HttpsURLConnection con = (HttpsURLConnection) httpsUrl.openConnection();
+			con.setHostnameVerifier(new HostnameVerifier() {
+				 // Guard against "bad hostname" errors during handshake.	
+				public boolean verify(String host, SSLSession sess) {
+					return true;
+				}
+			});
+			return con.getResponseCode();
+		} catch (MalformedURLException e) {
+			throw new PhrescoException(e);
+		} catch (IOException e) {
+			throw new PhrescoException(e);
+		} catch (NoSuchAlgorithmException e) {
+			throw new PhrescoException(e);
+		} catch (KeyManagementException e) {
+			throw new PhrescoException(e);
+		}
+	}
+	
+	private static TrustManager[ ] get_trust_mgr() {
+	     TrustManager[ ] certs = new TrustManager[ ] {
+	        new X509TrustManager() {
+			@Override
+			public void checkClientTrusted(
+					java.security.cert.X509Certificate[] chain, String authType)
+					throws CertificateException {
+				
+			}
+			@Override
+			public void checkServerTrusted(
+					java.security.cert.X509Certificate[] chain, String authType)
+					throws CertificateException {
+				// TODO Auto-generated method stub
+				
+			}
+			@Override
+			public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+	         }
+	      };
+	      return certs;
+	  }
+
+	
 }
 
 class PhrescoFileFilter implements FilenameFilter {
