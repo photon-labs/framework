@@ -3,7 +3,7 @@
 	    	<div class="login_left"><img src="../themes/default/images/helios/logo_login.png" width="180" height="32" alt="Helios" title="Helios" border="0"></div>
 	        <div class="login_right">
 	        	<div class="loginhead">
-					<span><img src="../themes/default/images/helios/user_login_title.png"></span>
+					<div class="user_login"  data-i18n="login.title;"></div>
 					<div class="clear"></div>
 				</div>
 	        	<form>
@@ -14,7 +14,7 @@
 								<img src="../themes/default/images/helios/username_icon.png">
 							</div>
 							<div class="logintext">	
-								<input type="text" id="inputEmail" placeholder="Please Enter Username">
+								<input type="text" id="inputEmail"  data-i18n="[placeholder]login.placeholder.username;" >
 							</div>
 							<div class="clear"></div>
 					 	</div>
@@ -27,7 +27,7 @@
 								<img src="../themes/default/images/helios/password_icon.png">
 							</div>
 							<div class="logintext">	
-								<input type="password" id="inputPassword" placeholder="Please Enter Password">
+								<input type="password" id="inputPassword"  data-i18n="[placeholder]login.placeholder.password;">
 							</div>
 							<div class="clear"></div>
 					 	</div>
@@ -37,9 +37,9 @@
 	    		<div class="loginfoot">
 					<label class="checkbox">
 						<input type="checkbox">
-						Remember Me
+						<span data-i18n="login.label.txt.remember;"></span>
 					</label>
-					<div class="flt_right"><a href="html/project_list.html"><input type="button" value="LOGIN" class="btn btn_style"></a></div>
+					<div class="flt_right"><input type="button" id="login" data-i18n="[value]login.label.btn.login;" class="btn btn_style"></div>
 				</div>
                 </form>
 	    		<!--login_right div ends here -->

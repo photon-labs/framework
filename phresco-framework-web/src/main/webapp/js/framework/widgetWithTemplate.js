@@ -80,6 +80,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 						$(whereToRender).html(element);
 						self.bindUI();
 						self.postRender(element);
+						self.renderlocales();
 						self.element = element;
 						self.doMore(element);
 					});
@@ -106,6 +107,21 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				this.bindUI();
 				this.postRender(element);
 				this.element = element;
+			},
+			
+			/**
+			*	Method to refresh to load the locale values
+			*/
+			renderlocales : function(){
+				$.i18n.init({
+					lng: 'en',
+					ns: { namespaces: ['framework'], defaultNs: 'framework'},
+					resGetPath: commonVariables.globalconfig.environments.locales,
+					useLocalStorage: false,
+					debug: false
+				}, function() {
+					 $('#main').i18n();
+				});
 			}
 			
 			/* renderTheme : function(module, localtheme) {

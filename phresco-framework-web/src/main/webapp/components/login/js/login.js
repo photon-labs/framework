@@ -31,9 +31,9 @@ define(["framework/widgetWithTemplate", "login/listener/loginListener"], functio
 		 * Called in once the login is success
 		 *
 		 */
-		loadPage :function(){
+		loadPage : function(){
 			var loginListener = new Clazz.com.components.login.js.listener.LoginListener();
-			this.onLoginEvent.add(loginListener.onLogin, loginListener);
+			this.onLoginEvent.add(loginListener.doLogin, loginListener);
 			Clazz.navigationController.push(this);
 		},
 		
@@ -51,6 +51,13 @@ define(["framework/widgetWithTemplate", "login/listener/loginListener"], functio
 		 *
 		 */
 		bindUI : function(){
+			var self = this;
+			$('#login').click(function(){
+				self.onLoginEvent.dispatch();
+			});
+		
+			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;
+			
 		}
 	});
 
