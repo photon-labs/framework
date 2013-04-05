@@ -1557,6 +1557,7 @@ public interface FrameworkConstants {
 		  String IIS_SERVER = "IIS";
 		  String NODEJS_SERVER = "NodeJs";
 		  String NODEJS_MAC_SERVER = "NodeJs Mac";
+		  String SHAREPOINT_SERVER= "Sharepoint Server";
 		  
 	  /* Resolutions */ 
 		String _1600_900 = "1600*900";

@@ -101,16 +101,29 @@
 		<div class="popupTypeFields" id="typefield">
             <div class="multilist-scroller multiselect" id='multiselect'>
                 <ul>
-                <% for (Environment environment : environments) {
+                <% 
+                	int i = 1;
+                	for (Environment environment : environments) {
                 	String envJson = gson.toJson(environment);
                 	
-                 %>
+				%>
 	       			<li>
 						<input type="checkbox" name="envNames" onclick="checkboxClickEvent(this)" class="check techCheck" 
 							value='<%= envJson %>' title="<%= environment.getDesc() %>"  <%= environment.isDefaultEnv() ? "disabled" : "" %> envName='<%= environment.getName() %>'/>
-							<label class="envLabel" ><%= environment.getName() %><%= environment.isDefaultEnv() ? " (Default)" : "" %></label>
+						<label id="envLabel<%= i %>" class="envLabel"><%= environment.getName() %><%= environment.isDefaultEnv() ? " (Default)" : "" %>
+							<script type="text/javascript">
+								var id = '<%= i %>';
+								<%  if (environment.isDefaultEnv()) { %>
+										$('#envLabel' + id).css('color','#1589FF');
+								<%	} else { %>
+										$("#envLabel" + id).css("color", '');
+								<% 	} %>					
+							</script>
+						</label>
 					</li>
-				<% } %>
+				<% 
+					i++;
+                } %>
 				</ul>
             </div>
 		</div>

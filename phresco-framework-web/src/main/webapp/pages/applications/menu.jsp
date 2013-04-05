@@ -43,9 +43,49 @@
 	
   	//To get the features page when the features tab and next btn in appInfo jsp is clicked
   	function showFeaturesPage() {
-  		showLoadingIcon();
-		var params = getBasicParams();
-		validate('features', $('#formAppInfo'), $('#subcontainer'), params);
+   		var isError = false;
+  		$('#serverError').html("");
+ 		$('#databaseError').html("");
+
+ 		$("select[name='server'] option").each(function() {
+ 			var val = $(this).val();	
+ 			if ($("select[name='server'] option:selected[value='"+ val +"']").length > 1) {	
+		 		if ($('#propTempTbody').find("tr").length > 1) {
+			 		$("#propTempTbody .versionDiv ").each(function() {
+			 		    var serverLen = $(this).find(":checkbox").length;
+			 		    var selectedServerLen = $(this).find(":checkbox:checked").length;
+			 		    if (serverLen > 0 && selectedServerLen == 0) {
+							$('#serverError').html("Server Version is Missing");
+							isError = true;
+			 		    }
+			 		});
+		 		}
+ 			}
+ 		});
+ 		
+ 		$("select[name='database'] option").each(function() {
+ 			var val = $(this).val();	
+ 			if ($("select[name='database'] option:selected[value='"+ val +"']").length > 1) {
+		 		if ($('#propTempTbodyDatabase').find("tr").length > 1) {
+			 		$("#propTempTbodyDatabase .versionDiv ").each(function() {
+			 		    var dbLen = $(this).find(":checkbox").length;
+			 		    var selectedDbLen = $(this).find(":checkbox:checked").length;
+			 		    if (dbLen > 0 && selectedDbLen == 0) {
+							$('#databaseError').html("Database Version is Missing");
+							isError = true;
+			 		    }
+			 		});
+		 		}
+ 			}
+ 		});
+  		
+    	if (!isError) {
+   			$('#serverError').html("");
+ 			$('#databaseError').html("");
+  			showLoadingIcon();
+  			var params = getBasicParams();
+  			validate('features', $('#formAppInfo'), $('#subcontainer'), params);
+   		}
 	}
   	
   	$('#testmenu').hide();
