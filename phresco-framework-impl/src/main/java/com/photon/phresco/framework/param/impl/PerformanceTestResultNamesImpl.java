@@ -53,7 +53,7 @@ public class PerformanceTestResultNamesImpl implements DynamicParameter, Constan
 			dependencyStr = "contextUrls";
 		}
 		File file = new File(testDirPath);
-		File[] testFiles = file.listFiles(new XmlNameFileFilter(FrameworkConstants.XML));
+		File[] testFiles = file.listFiles(new XmlNameFileFilter(FrameworkConstants.JSON));
 		if (testFiles.length != 0) {
 			for (File testFile : testFiles) {
 				int lastDot = testFile.getName().lastIndexOf(".");
@@ -83,7 +83,7 @@ public class PerformanceTestResultNamesImpl implements DynamicParameter, Constan
 			.append(performDir)
 			.append(File.separator)
 			.append(testAgainst.toString())
-			.append(FrameworkConstants.RESULTS_SLASH_JMETER);
+			.append(FrameworkConstants.SLASH_JSON);
 			return builder.toString();
 		} catch (PhrescoPomException e) {
     		throw new PhrescoException(e); 
