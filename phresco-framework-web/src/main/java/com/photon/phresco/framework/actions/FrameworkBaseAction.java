@@ -53,6 +53,7 @@ import com.google.gson.*;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
 import com.photon.phresco.api.ApplicationProcessor;
+import com.photon.phresco.api.ConfigManager;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
@@ -63,6 +64,7 @@ import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.RepoInfo;
 import com.photon.phresco.commons.model.TechnologyInfo;
 import com.photon.phresco.commons.model.User;
+import com.photon.phresco.exception.ConfigurationException;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.exception.PhrescoWebServiceException;
 import com.photon.phresco.framework.FrameworkConfiguration;
@@ -72,6 +74,7 @@ import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.framework.commons.FrameworkActions;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.commons.LogErrorReport;
+import com.photon.phresco.impl.ConfigManagerImpl;
 import com.photon.phresco.plugins.model.Mojos.ApplicationHandler;
 import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.service.client.api.ServiceClientConstant;
@@ -509,7 +512,25 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
             throw new PhrescoException(e);
         }
     }
-
+    
+    public String getGlobalSettingsPath() throws PhrescoException {
+    	StringBuilder builder = new StringBuilder(Utility.getProjectHome());
+    	builder.append(getCustomerId());
+		builder.append("-");
+		builder.append(SETTINGS_INFO_FILE_NAME);
+		return builder.toString();
+    }
+    
+    public String getAppConfigPath() throws PhrescoException {
+    	StringBuilder builder = new StringBuilder(Utility.getProjectHome());
+    	builder.append(getApplicationInfo().getAppDirName());
+    	builder.append(File.separator);
+    	builder.append(FOLDER_DOT_PHRESCO);
+    	builder.append(File.separator);
+    	builder.append(CONFIGURATION_INFO_FILE_NAME);
+    	return builder.toString();
+    }
+    
     public String getPath() {
     	return path;
     }

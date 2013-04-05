@@ -54,6 +54,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import com.google.gson.Gson;
+import com.photon.phresco.api.ConfigManager;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.BuildInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
@@ -67,6 +68,7 @@ import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.commons.LogErrorReport;
 import com.photon.phresco.framework.model.DependantParameters;
+import com.photon.phresco.impl.ConfigManagerImpl;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
 import com.photon.phresco.plugins.util.MojoProcessor;
@@ -176,11 +178,7 @@ public class Build extends DynamicParameterAction implements Constants {
 			if (StringUtils.isEmpty(serverProtocol) && StringUtils.isEmpty(serverHost) && StringUtils.isEmpty(serverPortStr)) {
 				String runAgainstInfoEnv = readRunAgainstInfo();
 				if (StringUtils.isNotEmpty(runAgainstInfoEnv)) {
-					com.photon.phresco.api.ConfigManager configManager = PhrescoFrameworkFactory
-							.getConfigManager(new File(Utility.getProjectHome() + getApplicationInfo().getAppDirName() + File.separator
-									+ Constants.DOT_PHRESCO_FOLDER + File.separator + Constants.CONFIGURATION_INFO_FILE));
-					List<com.photon.phresco.configuration.Configuration> configurations = configManager
-							.getConfigurations(runAgainstInfoEnv, Constants.SETTINGS_TEMPLATE_SERVER);
+					List<com.photon.phresco.configuration.Configuration> configurations = getConfiguration(runAgainstInfoEnv, Constants.SETTINGS_TEMPLATE_SERVER);
 					if (CollectionUtils.isNotEmpty(configurations)) {
 						for (com.photon.phresco.configuration.Configuration serverConfiguration : configurations) {
 							serverProtocol = serverConfiguration.getProperties().getProperty(Constants.SERVER_PROTOCOL);
@@ -190,29 +188,28 @@ public class Build extends DynamicParameterAction implements Constants {
 						}
 					}
 				}
-		 }
-				if (StringUtils.isNotEmpty(serverPortStr)) {
-					serverPort = Integer.parseInt(serverPortStr);
-				}
-				
-				if (StringUtils.isNotEmpty(serverProtocol) && StringUtils.isNotEmpty(serverHost) && serverPort != 0) {
-					tempConnectionAlive = Utility.isConnectionAlive(serverProtocol, serverHost, serverPort);
-					setSessionAttribute(getAppId() + SESSION_SERVER_STATUS, tempConnectionAlive);
-				}
-				if (tempConnectionAlive) {
-					readLogFile = readRunAgsSrcLogFile();
-					File runAgsLogfile = new File(getLogFolderPath() + File.separator + RUN_AGS_LOG_FILE) ;
-					if (runAgsLogfile.exists()) {
-						setReqAttribute(REQ_LOG_FILE_EXISTS, true);
-					}
-				} else {
-					deleteLogFile();
-					readLogFile = "";
-					setReqAttribute(REQ_LOG_FILE_EXISTS, false);
-				}
-				setReqAttribute(REQ_SERVER_LOG, readLogFile);
+			}
+			if (StringUtils.isNotEmpty(serverPortStr)) {
+				serverPort = Integer.parseInt(serverPortStr);
+			}
 
-		} catch (ConfigurationException e) {
+			if (StringUtils.isNotEmpty(serverProtocol) && StringUtils.isNotEmpty(serverHost) && serverPort != 0) {
+				tempConnectionAlive = Utility.isConnectionAlive(serverProtocol, serverHost, serverPort);
+				setSessionAttribute(getAppId() + SESSION_SERVER_STATUS, tempConnectionAlive);
+			}
+			if (tempConnectionAlive) {
+				readLogFile = readRunAgsSrcLogFile();
+				File runAgsLogfile = new File(getLogFolderPath() + File.separator + RUN_AGS_LOG_FILE) ;
+				if (runAgsLogfile.exists()) {
+					setReqAttribute(REQ_LOG_FILE_EXISTS, true);
+				}
+			} else {
+				deleteLogFile();
+				readLogFile = "";
+				setReqAttribute(REQ_LOG_FILE_EXISTS, false);
+			}
+			setReqAttribute(REQ_SERVER_LOG, readLogFile);
+		} catch (PhrescoException e) {
 			if (debugEnabled) {
 				S_LOGGER.error("Entered into catch block of Build.view()" + FrameworkUtil.getStackTraceAsString(e));
 			}
@@ -688,24 +685,18 @@ public class Build extends DynamicParameterAction implements Constants {
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method Build.startServer()");
 		}
-		
+		String serverHost = "";
+		String serverProtocol = "";
+		int serverPort = 0;
 		BufferedReader reader = null;
 		try {
 			ApplicationInfo applicationInfo = getApplicationInfo();
 			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_RUNGAINST_SRC_START)));
 			persistValuesToXml(mojo, PHASE_RUNGAINST_SRC_START);
-			com.photon.phresco.api.ConfigManager configManager = PhrescoFrameworkFactory
-					.getConfigManager(new File(Utility.getProjectHome() + getApplicationInfo().getAppDirName()
-							+ File.separator + Constants.DOT_PHRESCO_FOLDER + File.separator
-							+ Constants.CONFIGURATION_INFO_FILE));
 			com.photon.phresco.plugins.model.Mojos.Mojo.Configuration config = mojo.getConfiguration(PHASE_RUNGAINST_SRC_START);
 			Map<String, String> configs = MojoUtil.getAllValues(config);
 			String environmentName = configs.get(ENVIRONMENT_NAME);
-			List<com.photon.phresco.configuration.Configuration> configurations = configManager.getConfigurations(
-					environmentName, Constants.SETTINGS_TEMPLATE_SERVER);
-			String serverHost = "";
-			String serverProtocol = "";
-			int serverPort = 0;
+			List<com.photon.phresco.configuration.Configuration> configurations = getConfiguration(environmentName, Constants.SETTINGS_TEMPLATE_SERVER);
 			if (CollectionUtils.isNotEmpty(configurations)) {
 				for (com.photon.phresco.configuration.Configuration serverConfiguration : configurations) {
 					serverHost = serverConfiguration.getProperties().getProperty(Constants.SERVER_HOST);
@@ -725,7 +716,7 @@ public class Build extends DynamicParameterAction implements Constants {
 			setSessionAttribute(getAppId() + SESSION_SERVER_PROTOCOL_VALUE, serverProtocol);
 			setSessionAttribute(getAppId() + SESSION_SERVER_HOST_VALUE, serverHost);
 			setSessionAttribute(getAppId() + SESSION_SERVER_PORT_VALUE, new Integer(serverPort).toString());
-		} catch (ConfigurationException e) {
+		} catch (PhrescoException e) {
 			if (debugEnabled) {
 				S_LOGGER.error("Entered into catch block of Build.startServer()" + FrameworkUtil.getStackTraceAsString(e));
 			}
@@ -1216,7 +1207,33 @@ public class Build extends DynamicParameterAction implements Constants {
 		}
 		return SUCCESS;
 	}
+	
+	private List<com.photon.phresco.configuration.Configuration> getConfiguration(String environmentName,
+			String type) throws PhrescoException {
+		ConfigManager configManager = null;
+		try {
+			File settingsFile = new File(getGlobalSettingsPath());
+			if (settingsFile.exists()) {
+				configManager = new ConfigManagerImpl(settingsFile);
+				List<com.photon.phresco.configuration.Configuration> settingsconfig = configManager.getConfigurations(
+						environmentName, type);
+				if (CollectionUtils.isNotEmpty(settingsconfig)) {
+					return settingsconfig;
+				}
+			}
+			configManager = new ConfigManagerImpl(new File(getAppConfigPath()));
+			List<com.photon.phresco.configuration.Configuration> configurations = configManager.getConfigurations(
+					environmentName, type);
+			if (CollectionUtils.isNotEmpty(configurations)) {
+				return configurations;
+			}
 
+		} catch (ConfigurationException e) {
+			throw new PhrescoException(e);
+		}
+		return null;
+	}
+	
 	class DumpFileNameFilter implements FilenameFilter {
 
 		public boolean accept(File dir, String name) {
