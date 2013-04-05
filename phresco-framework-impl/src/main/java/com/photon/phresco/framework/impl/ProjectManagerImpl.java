@@ -435,8 +435,14 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		for (ApplicationInfo applicationInfo : appInfos) {
 			String appDirName = applicationInfo.getAppDirName();
 			File application = new File(projectsPath + appDirName);
-			deletionSuccess = FileUtil.delete(application);
+			try {
+				FileUtils.deleteDirectory(application);
+				deletionSuccess = true;
+			} catch (IOException e) {
+				deletionSuccess = false;
+			}
 		}
+		
 		return deletionSuccess;
 	}
 	

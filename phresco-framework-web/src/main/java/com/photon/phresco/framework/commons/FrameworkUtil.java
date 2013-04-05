@@ -742,6 +742,12 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
                     builder.append(additionalParam);
                     builder.append("' ");
                 }
+                String hideControls = getHideControls(values, value, dependency);
+                if (StringUtils.isNotEmpty(hideControls)) {
+                	builder.append("hide=");
+                    builder.append(hideControls);
+                }
+                builder.append(" ");
                 builder.append(selectedStr);
                 builder.append(" ");
                 builder.append("onclick='");
@@ -755,6 +761,19 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	return builder;
     }
     
+    private static String getHideControls(List<? extends Object> values, Object currentValue, String dep) {
+    	StringBuilder sb = new StringBuilder();
+    	String comma = "";
+    	for (Object value : values) {
+			if (value instanceof Value) {
+				if (StringUtils.isNotEmpty(((Value) value).getDependency()) && ((Value) value).getKey() != ((Value) currentValue).getKey()) {
+					sb.append(comma);
+					sb.append(((Value) value).getDependency());
+				}
+			}
+		}
+    	return sb.toString();
+    }
     private static String getAdditionalParam(Object value, String dependency) {
         StringBuilder builder = new StringBuilder();
         boolean appendComma = false;

@@ -24,19 +24,21 @@
 
 <%@ page import="org.apache.commons.collections.CollectionUtils"%>
 <%@ page import="org.apache.commons.lang.StringUtils"%>
+<%@ page import="org.apache.commons.collections.MapUtils"%>
+
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 
 <%
 	List<String> files = (List<String>)request.getAttribute(FrameworkConstants.REQ_THEME_FILES);
 	Map<String, String> map = (Map<String, String>) request.getAttribute(FrameworkConstants.REQ_THEME_FILES_MAP);
+	Map<String, String> uploadResult = (Map<String, String>) request.getAttribute(FrameworkConstants.REQ_THEME_UPLOAD_RESULT);
 %>
   
   <form id="themeBuilderListForm" class="marginBottomZero" style="height: 114%;overflow-x: hidden;overflow-y: hidden	;margin-top: 1px;">
 	<div class="operation">
 		<input type="button" class="btn btn-primary" name="themeBuilderAdd" id="themeBuilderAdd" value="Create"/>
-
 		<input type="button" class="btn" id="deleteBtn" disabled value="<s:text name='lbl.delete'/>" data-toggle="modal" href="#popupPage"/>
-		<div id="theme-bundle-uploader" class="theme-bundle-uploader" style="float:right" title = "<s:text name='title.file.size'/>">
+		<div id="theme-bundle-uploader" class="theme-bundle-uploader" style="float:right">
 			<noscript>
 				<p>Please enable JavaScript to use file uploader.</p>
 				<!-- or put a simple form for upload here -->
@@ -103,6 +105,16 @@
 
 <script type="text/javascript">
 $(document).ready(function() {
+	//To show success/failure after theme bundle upload
+	<% if (MapUtils.isNotEmpty(uploadResult)) { 
+		Boolean resultflag = (Boolean) uploadResult.keySet().toArray()[0];
+		String resultMsg = uploadResult.get(resultflag);
+	%>		
+		showUploadResultMsg('<%= resultflag %>', '<%= resultMsg %>');
+	<%
+	 	}
+	%>
+	
 	hideLoadingIcon();
 	confirmDialog($("#deleteBtn"), '<s:text name="lbl.hdr.confirm.dialog"/>', '<s:text name="modal.body.text.del.themes"/>', 'deleteThemes','<s:text name="lbl.btn.ok"/>');
 	createUploader();
@@ -135,8 +147,8 @@ function createUploader() {
 		uploadId: 'themeBundle',
 		allowedExtensions : ["zip"],
 		type: 'themeBundle',
-		buttonLabel: 'Upload',
-		typeError : 'Choose only zip files',
+		buttonLabel: '<s:text name="lbl.theme.bundle.upload"/>',
+		typeError : '<s:text name="err.msg.theme.upload.zip"/>',
 		params: {
 			type: 'themeBundle',
 		}, 
@@ -148,6 +160,14 @@ $("#themeBuilderAdd").click(function() {
 	showLoadingIcon();
 	loadContent("themeBuilderAdd", $("#themeBuilderList"), $("#subcontainer"), '', false, true);	
 });
+
+function showUploadResultMsg(flag, msg) {
+	if (flag == "true") {
+		showSuccessMsg(msg);
+	} else {
+		showThemeBundleError(msg);
+	}
+}
 
 function showThemeBundleError(err) {
 	$("#theme_upload").removeClass('bundle_upload_success').addClass('bundle_upload_err');

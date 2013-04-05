@@ -290,14 +290,11 @@ qq.FileUploaderBasic = function(o){
         		enableButton($("#validateContent, #validateTheme"));
         	}
         	
-        	//success and failure msg for theme bundle
-        	if (o.type == "themeBundle" && responseJSON.success) {
+        	//redirect to list page after uploading theme bundle
+        	if (o.type == "themeBundle") {
         		hideLoadingIcon();
-        		showSuccessMsg(responseJSON.resultMsg);
-        	} else if (o.type == "themeBundle" && !responseJSON.success) {
-        		hideLoadingIcon();
-        		showThemeBundleError(responseJSON.resultMsg);
-        	}
+        		loadContent("themeBuilderList", $('#formAppMenu, #formCustomers'), $("#subcontainer"), '', false, true);
+        	} 
     	},
         onCancel: function(id, fileName){},
         // messages                

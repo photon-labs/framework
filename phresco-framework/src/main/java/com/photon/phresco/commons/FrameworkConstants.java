@@ -1777,4 +1777,5 @@ public interface FrameworkConstants {
 	    String FAILURE_THEME_BUILDER_CREATE = "Theme Builder Creation Failed";
 	    String SUCCESS_THEME_BUILDER_DELETE = "Theme(s) Deleted Successfully";
 	    String REQ_BROWSE_THEME_IMAGE = "themeBuilderImage";
+	    String REQ_THEME_UPLOAD_RESULT = "uploadResultMap";
 }

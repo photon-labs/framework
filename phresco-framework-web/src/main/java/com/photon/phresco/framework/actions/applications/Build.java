@@ -259,6 +259,7 @@ public class Build extends DynamicParameterAction implements Constants {
             setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
             setReqAttribute(REQ_GOAL, PHASE_PACKAGE);
             setReqAttribute(REQ_PHASE, PHASE_PACKAGE);
+            setReqAttribute(REQ_FROM, PHASE_PACKAGE);
 		} catch (PhrescoException e) {
 			return showErrorPopup(e, getText(EXCEPTION_BUILD_POPUP));
 		}

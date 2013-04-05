@@ -577,6 +577,14 @@ public class Projects extends FrameworkBaseAction {
         	S_LOGGER.error("Entered into catch block of Projects.delete()" + FrameworkUtil.getStackTraceAsString(e));
 		} catch (IOException e) {
 			S_LOGGER.error("Entered into catch block of Projects.delete()" + FrameworkUtil.getStackTraceAsString(e));
+		} finally {
+			if (reader != null) {
+				try {
+					reader.close();
+				} catch (IOException e) {
+					S_LOGGER.error("Entered into catch block of Projects.delete()" + FrameworkUtil.getStackTraceAsString(e));
+				}
+			}
 		}
     	
     	return list();
