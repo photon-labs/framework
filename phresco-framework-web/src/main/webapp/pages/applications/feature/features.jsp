@@ -36,7 +36,7 @@
 
 <%
 	List<SelectedFeature> features = (List<SelectedFeature>)session.getAttribute(FrameworkConstants.REQ_SELECTED_FEATURES);
-	List<SelectedFeature> defaultfeatures = (List<SelectedFeature>)request.getAttribute(FrameworkConstants.REQ_DEFAULT_FEATURES);
+	List<SelectedFeature> defaultfeatures = (List<SelectedFeature>)session.getAttribute(FrameworkConstants.REQ_DEFAULT_FEATURES);
 	String oldAppDirName = (String) request.getAttribute(FrameworkConstants.REQ_OLD_APPDIR);
 	String appId = (String) request.getAttribute(FrameworkConstants.REQ_APP_ID);
 	List<String> scopeList= (List<String>) request.getAttribute(FrameworkConstants.REQ_SCOPE);

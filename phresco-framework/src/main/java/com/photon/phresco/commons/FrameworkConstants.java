@@ -1266,6 +1266,8 @@ public interface FrameworkConstants {
     String ERROR_PORT = "Invalid Port Number";
     String ERROR_EMAIL = "Enter Valid Email";
     String NO_SETTINGS_ENV = "settings.error.message";
+    String ERROR_FEATURE_ID_EXISTS = "err.msg.feature.id.exists";
+    String ERROR_FEATURE_ID_MISSING = "err.feature.id.missing";
     
     /*
      * Delete Environment keys

@@ -190,6 +190,10 @@
 <script type="text/javascript">
 $(document).ready(function() {
 	//$("#popupPage").modal('hide');
+	if(!isiPad()){
+		/* JQuery scroll bar */
+		$("#formTestCase").scrollbars();
+	}
 	hideLoadingIcon();
 	$('#cancel').click(function() {
 		var param = getBasicParams();
@@ -199,10 +203,18 @@ $(document).ready(function() {
 	$('#createTestCase').click(function() {
 		showLoadingIcon();
 		var param = getBasicParams();
-		loadContent('saveTestCases', $('#formTestCase'), $('#subcontainer'), param);
-		//validate('features', $('#formAppInfo'), $('#subcontainer'), params);
+		validate('saveTestCases', $('#formTestCase'), $("#subcontainer"), param, 'Creating TestCase');
+		//loadContent('saveTestCases', $('#formTestCase'), $('#subcontainer'), param);
 	});
 	
 });	
 	
+	function findError(data) {
+		hideLoadingIcon();
+		if (!isBlank(data.featureIdError)) {
+			showError($("#featureIdControl"), $("#featureIdError"), data.featureIdError);
+		} else {
+			hideError($("#featureIdControl"), $("#featureIdError"));
+		}
+	}
 </script> 

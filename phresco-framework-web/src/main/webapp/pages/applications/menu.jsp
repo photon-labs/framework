@@ -29,6 +29,7 @@
 	$(document).ready(function() {
 		showLoadingIcon();
 		clickMenu($("a[name='appTab']"), $("#subcontainer"), $('#formAppMenu, #formCustomers'));
+		clickMenu($("a[name='qualityTab']"), $("#subcontainer"), $('#formAppMenu, #formCustomers'));
 		clickMenu($("a[name='themeTab']"), $("#subcontainer"), $('#formAppMenu, #formCustomers'));
 		loadContent("editApplication", $('#formAppMenu, #formCustomers'), $("#subcontainer"), '', '', true);
 		activateMenu($("#appinfo"));
