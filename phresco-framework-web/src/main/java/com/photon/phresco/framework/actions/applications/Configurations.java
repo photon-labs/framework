@@ -1788,24 +1788,6 @@ public class Configurations extends FrameworkBaseAction {
 		return SUCCESS;
 	}
     
-    private String getGlobalSettingsPath() throws PhrescoException {
-    	StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-    	builder.append(getCustomerId());
-		builder.append("-");
-		builder.append(SETTINGS_INFO_FILE_NAME);
-		return builder.toString();
-    }
-    
-    private String getAppConfigPath() throws PhrescoException {
-    	StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-    	builder.append(getApplicationInfo().getAppDirName());
-    	builder.append(File.separator);
-    	builder.append(FOLDER_DOT_PHRESCO);
-    	builder.append(File.separator);
-    	builder.append(CONFIGURATION_INFO_FILE_NAME);
-    	return builder.toString();
-    }
-    
     public String authenticateServer() throws PhrescoException {
     	try {
     		String host = (String)getHttpRequest().getParameter(SERVER_HOST);
