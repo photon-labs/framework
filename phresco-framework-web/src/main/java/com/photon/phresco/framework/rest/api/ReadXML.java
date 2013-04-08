@@ -11,7 +11,6 @@ import java.util.Map;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -21,27 +20,21 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jettison.json.JSONObject;
 import org.xml.sax.SAXException;
 
+import com.google.gson.Gson;
 import com.photon.phresco.api.DynamicParameter;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.ArtifactInfo;
-import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.RepoInfo;
 import com.photon.phresco.exception.ConfigurationException;
 import com.photon.phresco.exception.PhrescoException;
-import com.photon.phresco.exception.PhrescoWebServiceException;
-import com.photon.phresco.framework.FrameworkConfiguration;
-import com.photon.phresco.framework.PhrescoFrameworkFactory;
-import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.DynamicParameter.Dependencies.Dependency;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues;
 import com.photon.phresco.plugins.util.MojoProcessor;
-import com.photon.phresco.service.client.api.ServiceContext;
-import com.photon.phresco.service.client.api.ServiceManager;
-import com.photon.phresco.service.client.factory.ServiceClientFactory;
 import com.photon.phresco.util.PhrescoDynamicLoader;
 import com.photon.phresco.util.Utility;
 
@@ -58,7 +51,11 @@ public class ReadXML {
 			File file = new File(filePath);
 			MojoProcessor mojo = new MojoProcessor(file);
 			parameter = mojo.getParameters("package");
-			return Response.ok(parameter).header("Access-Control-Allow-Origin", "*").build();
+			Gson gson = new Gson();
+			String json = gson.toJson(parameter);
+			json = "{"+"\"row\""+":"+json + "}";
+//			JSONObject finalOp = json.put("row", gson.toJson(parameter));
+			return Response.ok(json).header("Access-Control-Allow-Origin", "*").build();
 
 		} catch (Exception e) {
 			throw new PhrescoException(e);
@@ -93,7 +90,10 @@ public class ReadXML {
 		if (StringUtils.isNotEmpty(dependency)) {
 			possibleValues = getPossibleValues(processor, "package", dependency, appName, customerId);
 		}
-		return Response.ok(possibleValues).header("Access-Control-Allow-Origin", "*").build();
+		Gson gson = new Gson();
+		String json = gson.toJson(possibleValues);
+		json = "{"+"\"row\""+":"+json + "}";
+		return Response.ok(json).header("Access-Control-Allow-Origin", "*").build();
 	}
 
 	private static PossibleValues getPossibleValues(MojoProcessor processor, String goal, String dependencyName,
@@ -121,8 +121,6 @@ public class ReadXML {
 			map.put("customerId", customerId);
 			try {
 				PossibleValues values = dynamicParameter.getValues(map);
-				// Gson gson = new Gson();
-				// String json = gson.toJson(values, PossibleValues.class);
 				return values;
 
 			} catch (IOException e) {
@@ -136,51 +134,5 @@ public class ReadXML {
 			}
 		}
 		return null;
-	}
-
-	@GET
-	@Path("/list")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response list(@QueryParam("customer") String customer) throws PhrescoException {
-		try {
-			ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
-			List<ProjectInfo> projects = projectManager.discover(customer);
-			return Response.ok(projects).header("Access-Control-Allow-Origin", "*").build();
-		} catch (Exception e) {
-			throw new PhrescoException(e);
-		}
-	}
-
-	@POST
-	@Path("/create")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public void createProject(ProjectInfo projectinfo) throws PhrescoException {
-		try {
-			ProjectInfo projectInfo = PhrescoFrameworkFactory.getProjectManager().create(projectinfo,
-					getServiceManager1());
-			// updateLatestProject();
-		} catch (PhrescoException e) {
-			throw new PhrescoException(e);
-		}
-	}
-
-	private ServiceManager getServiceManager1() {
-		ServiceManager manager;
-		try {
-			ServiceContext context = new ServiceContext();
-			FrameworkConfiguration configuration = PhrescoFrameworkFactory.getFrameworkConfig();
-			context.put("phresco.service.url", "http://localhost:3030/service/rest/api");
-			context.put("phresco.service.username", "demouser");
-			context.put("phresco.service.password", "phresco");
-			context.put("phresco.service.api.key", configuration.apiKey());
-
-			manager = ServiceClientFactory.getServiceManager(context);
-		} catch (PhrescoWebServiceException ex) {
-			throw new PhrescoWebServiceException(ex.getResponse());
-		} catch (PhrescoException e) {
-			throw new PhrescoWebServiceException(e);
-		}
-		return manager;
 	}
 }
