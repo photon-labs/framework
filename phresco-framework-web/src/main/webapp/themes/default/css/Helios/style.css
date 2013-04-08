@@ -45,6 +45,7 @@ header, aside, figure, footer, ul, li {
 	padding:0;
 	margin:0;
 }
+
 #main { width:100%; height:100%; }
 .flt_left { float:left; }
 .flt_right { float:right; }
@@ -175,6 +176,7 @@ sup { color:#FF0000; }
 	float: left;
 	font-size: 13px;
 	color: #515151;
+	width: 88px;
 }
 
 .loginshadow {
@@ -182,11 +184,11 @@ sup { color:#FF0000; }
 	margin:2px auto auto auto;
 }
 
-.user_login {
-	font-size:18px;
-	text-transform:uppercase;
-	font-weight:bold;
-	padding-bottom:12px;
+.login_title {
+    font-size: 18px;
+    font-weight: bold;
+    padding-bottom: 12px;
+    text-transform: uppercase;
 }
 
 /* *************************************************************************** HACK FOR CROME BROWSER ************************************************************************** */
@@ -275,6 +277,11 @@ sup { color:#FF0000; }
 	padding-bottom:7px;
 }
 
+.user_login a, .user_login a:hover {
+	color:#ff844a;
+	text-decoration:none;	
+}
+
 .content_title {
 	width:98%;
 	height:46px;
@@ -322,6 +329,7 @@ sup { color:#FF0000; }
 	background: -ms-linear-gradient(top,  #3e3e3e 0%,#1b1b1b 100%); /* IE10+ */
 	background: linear-gradient(to bottom,  #3e3e3e 0%,#1b1b1b 100%); /* W3C */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3e3e3e', endColorstr='#1b1b1b',GradientType=0 ); /* IE6-9 */
+	z-index:1;
 }
 
 /* ********************************************** CSS related to Customer change Dropdown ************************************************************************************** */
@@ -537,8 +545,8 @@ ul.nav li.dropdown:hover > .test_options{
 }
 
 .table_border input {
-	margin-left:8px !important;
-	color:#939393 !important;
+	/*margin-left:8px !important;*/
+	/*color:#939393 !important;*/
 }
 
 .table_border td img {
@@ -791,6 +799,41 @@ ul.nav li.dropdown:hover > .test_options{
 	padding:0 !important;
 	line-height:38px;
 }
+.featureinfo {
+	z-index:1;
+	width: 300px;
+	padding:0 !important;
+}
+.featureinfo img {
+	width: 45px;
+	height: 45px;
+	float:left;
+	padding:0px 10px 10px 0px;
+	margin-top:5px;
+}
+
+.featureinfo h1 {
+	background:#f2f2f2;
+	line-height:27px !important;
+	padding:0 !important;
+	padding-left:8px !important;
+	margin:0;
+	font-size:14px;
+	font-weight:normal;
+	border-radius: 6px 6px 0 0;
+}
+
+.featureinfo .features_cont {
+	padding:8px;
+	font-size:12px;
+}
+
+.featureinfo .dyn_popup_close, .featureinfo .dyn_popup_close:hover {
+	float: right;
+	margin: -24px 10px;
+	color: #000000;
+	text-decoration:none;
+}
 
 /* *************************************************************************** CSS for Code validation ************************************************************************** */
 
@@ -1027,6 +1070,57 @@ ul.nav li.dropdown:hover > .test_options{
 	border-bottom-color: #ed7940;
 }
 
+.speakstyleleft:before,
+.speakstyleleft:after {
+	content: " ";
+	display:block;
+	position:absolute;
+	top:45%;
+	left:-13px;
+	z-index:2;
+	width: 0;
+	height: 0;
+	overflow:hidden;
+	border: solid 9px transparent;
+	border-top: 0;
+	border-bottom-color:#FFF;
+	-ms-transform: rotate(-90deg);
+	-webkit-transform: rotate(-90deg);
+	-o-transform: rotate(-90deg);
+	-moz-transform: rotate(-90deg);
+}
+.speakstyleleft:before {
+	top: 45%;
+	z-index: 1;
+	left:-14px;
+	border-bottom-color: #ed7940;
+}
+
+.speakstyleright:before,
+.speakstyleright:after {
+	content: " ";
+	display:block;
+	position:absolute;
+	top:45%;
+	right:-13px;
+	z-index:2;
+	width: 0;
+	height: 0;
+	overflow:hidden;
+	border: solid 9px transparent;
+	border-top: 0;
+	border-bottom-color:#FFF;
+	-ms-transform: rotate(90deg);
+	-webkit-transform: rotate(90deg);
+	-o-transform: rotate(90deg);
+	-moz-transform: rotate(90deg);
+}
+.speakstyleright:before {
+	top: 45%;
+	z-index: 1;
+	right:-14px;
+	border-bottom-color: #ed7940;
+}
 /* *************************************************************************** MEDIA QUARIES ************************************************************************** */
 
 @media screen and (min-width: 978px) and (max-width: 1280px) {
@@ -1146,7 +1240,7 @@ ul.nav li.dropdown:hover > .test_options{
 }
 
 .build_info table tbody tr td:nth-of-type(n+3) {
-	text-align: center;	
+	padding-left: 30px;
 }
 
 .build_progress table thead tr td:last-child {
@@ -1187,6 +1281,10 @@ ul.nav li.dropdown:hover > .test_options{
 
 #build_minifier table, #build_genbuild table {
 	margin-bottom: 10px;
+}
+
+.z_index {
+	z-index:1;
 }
 
 /* *************************************************************************** STYLES FOR CONFIGUARATION PAGE ************************************************************************** */
@@ -1261,12 +1359,28 @@ ul.nav li.dropdown:hover > .test_options{
 .clonetable tbody>tr:nth-child(odd)>td, .table-striped tbody>tr:nth-child(odd)>th {
 	background-color: #ffffff !important;
 }
-.clonetable th,.clonetable td {
+.clonetable th, .clonetable td {
 	border-top:0 !important;
+	padding-top:3px !important;
+	padding-bottom:0 !important;
 }
+
+.clonetable td div.env_border {
+	margin-top:5px !important;
+}
+
 .clonetable input[type="button"] {
 	color: #ffffff !important;
 }
 .clonetable input[type="radio"] {
 	margin: 3px 5px 0 0;
 }
+.clonetable select {
+	margin: 0!important;
+}
+
+.table_border table.deploy_pop td {
+	padding:3px 0 !important;
+}
+
+

@@ -3,7 +3,7 @@
 	    	<div class="login_left"><img src="../themes/default/images/helios/logo_login.png" width="180" height="32" alt="Helios" title="Helios" border="0"></div>
 	        <div class="login_right">
 	        	<div class="loginhead">
-					<div class="user_login"  data-i18n="login.title;"></div>
+					<div class="login_title"  data-i18n="login.title;"></div>
 					<div class="clear"></div>
 				</div>
 	        	<form>

@@ -1,11 +1,11 @@
-define(["framework/widget", "login/api/loginAPI", "common/loading"], function() {
+define(["framework/widget", "login/api/loginAPI", "common/loading", "header/header"], function() {
 
 	Clazz.createPackage("com.components.login.js.listener");
 
 	Clazz.com.components.login.js.listener.LoginListener = Clazz.extend(Clazz.Widget, {
 		localStorageAPI : null,
 		loadingScreen : null,
-		basePlaceholder : commonVariables.basePlaceholder,
+		headerContent : null,
 
 		/***
 		 * Called in initialization time of this class 
@@ -21,31 +21,36 @@ define(["framework/widget", "login/api/loginAPI", "common/loading"], function() 
 		 * 
 		 * @header: constructed header for each call
 		 */
-		doLogin : function(header) {
+		doLogin : function() {
 			var self = this;
 			//TODO: call login service here and call appendPlaceholder in the success function
 			self.appendPlaceholder();
+			self.renderHeader();
 			
 		},
 		
-		appendPlaceholder : function(){
-			$(this.basePlaceholder).empty();
-			$(this.basePlaceholder).append(commonVariables.headerPlaceholder);
-			$(this.basePlaceholder).append(commonVariables.navigationPlaceholder);
-			$(this.basePlaceholder).append(commonVariables.contentPlaceholder);
-			$(this.basePlaceholder).append(commonVariables.footerPlaceholder);
+		appendPlaceholder : function() {
+			$(commonVariables.basePlaceholder).empty();
+			$(commonVariables.basePlaceholder).append(commonVariables.headerPlaceholder);
+			$(commonVariables.basePlaceholder).append(commonVariables.navigationPlaceholder);
+			$(commonVariables.basePlaceholder).append(commonVariables.contentPlaceholder);
+			$(commonVariables.basePlaceholder).append(commonVariables.footerPlaceholder);
 		},
 		
-		renderHeader : function(){
+		renderHeader : function() {
+			var self = this;
+			Clazz.navigationController.jQueryContainer = commonVariables.headerPlaceholder;
+			self.headerContent = new Clazz.com.commonComponents.modules.header.js.Header();
+			Clazz.navigationController.push(self.headerContent);
 		},
 		
-		renderNavigation : function(){
+		renderNavigation : function() {
 		},
 		
-		renderContent : function(){
+		renderContent : function() {
 		},
 		
-		renderFooter : function(){
+		renderFooter : function() {
 		}
 	});
 

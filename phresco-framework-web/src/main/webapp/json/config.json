@@ -16,6 +16,11 @@
 		"login" : {
 			"moduleName":"login",
 			"path" : "../components/login/js"
+		},
+		
+		"header" :{
+			"moduleName":"header",
+			"path" : "commonComponents/modules/header/js"
 		}
 	}
 }
