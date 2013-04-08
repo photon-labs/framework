@@ -557,7 +557,10 @@ public class Projects extends FrameworkBaseAction {
 	    	        }
 	    	    }
 	    	}
-	    	boolean connectionAlive = Utility.isConnectionAlive(HTTP_PROTOCOL, LOCALHOST, 9000);
+	    	
+	    	FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+	    	String sonarHomeURL = frameworkUtil.getSonarHomeURL();	
+	    	boolean connectionAlive = FrameworkUtil.isConnectionAlive(sonarHomeURL);
 	    	if(connectionAlive) {
 	    		deleteSonarProject();
 	    	}

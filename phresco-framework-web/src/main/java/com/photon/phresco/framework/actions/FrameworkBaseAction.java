@@ -223,6 +223,18 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
 		}
 		return isAlive;
 	}
+	
+	public static boolean isConnectionAlive(String Url) {
+		boolean isAlive = true;
+		try {
+			URL url = new URL(Url);
+			URLConnection connection = url.openConnection();
+			connection.connect();
+		} catch (Exception e) {
+			isAlive = false;
+		}
+		return isAlive;
+	}
     
     protected String showErrorPopup(PhrescoException e, String action) {
         StringWriter sw = null;
