@@ -148,19 +148,13 @@ public class Code extends DynamicParameterAction implements Constants {
 		try {
 			URL sonarURL = new URL(frameworkUtil.getSonarURL());
 			String protocol = sonarURL.getProtocol();
-			HttpURLConnection connection = null;
-			HttpsURLConnection connectionHttps = null; 
+			HttpURLConnection connection = null;			
 			int responseCode;			
-			if(protocol.equals("http")) {				
+			if(protocol.equals("http")) {	
 				connection = (HttpURLConnection) sonarURL.openConnection();
-				responseCode = connection.getResponseCode();				
+				responseCode = connection.getResponseCode();	
 			} else {
-				try {
-					connectionHttps = (HttpsURLConnection) sonarURL.openConnection();
-					responseCode = connectionHttps.getResponseCode();
-				} catch (IOException e) {					
-					responseCode = 200;
-				}
+				responseCode = FrameworkUtil.getHttpsResponse(frameworkUtil.getSonarURL());
 			}			
 			if (responseCode != 200) {
 				setReqAttribute(REQ_ERROR, getText(SONAR_NOT_STARTED));
@@ -290,8 +284,15 @@ public class Code extends DynamicParameterAction implements Constants {
 	    				S_LOGGER.debug("Url to access API " + sb.toString());
 	    			}
 					URL sonarURL = new URL(sb.toString());
-					HttpURLConnection connection = (HttpURLConnection) sonarURL.openConnection();
-					int responseCode = connection.getResponseCode();
+					String protocol = sonarURL.getProtocol();
+					HttpURLConnection connection;
+					int responseCode;
+					if(protocol.equals("http")) {
+						connection = (HttpURLConnection) sonarURL.openConnection();
+						responseCode = connection.getResponseCode();
+					} else {
+						responseCode = FrameworkUtil.getHttpsResponse(sb.toString());						
+					} 
 					if (s_debugEnabled) {
 	    				S_LOGGER.debug("Response code value " + responseCode);
 		    		}

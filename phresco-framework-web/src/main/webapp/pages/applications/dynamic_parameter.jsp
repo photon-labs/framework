@@ -266,7 +266,7 @@
 						$("#" + '<%= parameter.getKey() %>').jec();
 						$('.jecEditableOption').text("Type or select from the list");
 						<%-- $("#"+'<%= parameter.getKey() %>'+" .jecEditableOption").prop("selected", true); --%>
-						$("#" + '<%= parameter.getKey() %>').click(function() {
+						$("#" + '<%= parameter.getKey() %>').focus(function() {
 							var optionClass = $("#"+'<%= parameter.getKey() %>'+" :selected").attr("class");
 							if (optionClass != undefined && optionClass == "jecEditableOption") {
 								 $('.jecEditableOption').text("");
