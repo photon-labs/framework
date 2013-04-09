@@ -229,7 +229,7 @@
 					</div>
 					
 					<form id="formCustomers" class="form <%= customers.size() > 1 ? "" : "hideContent" %>">
-						<div id="customerList" class="control-group customer_name">
+						<div id="customerList" class="control-group customer_name hideContent">
 							<s:label key="lbl.customer" cssClass="control-label custom_label labelbold" theme="simple"/>
 							<div class="controls customer_select_div">
 								<select id="customerSelect" name="customerSelect" class="customer_listbox">
@@ -822,6 +822,9 @@
 				'border-bottom': "1px solid #000000 !important"   // Customer Selection border bottom color
 			}
 		});
+		
+		$('#loadingIconDiv').activity({segments: 10, color: '#C2C2C2', speed: 1.5});
+		$('.popuploadingIcon').activity({segments: 10, color: '#3c3c3c', speed: 1.8});
 	}
 	
 	//To hide themes for customers other than photon
