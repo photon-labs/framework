@@ -560,6 +560,7 @@ public class Projects extends FrameworkBaseAction {
 	    	                return list();
 	    	            }
 	    	        }
+	    	        Utility.killProcess(Utility.getProjectHome() + appInfo.getAppDirName(), Constants.KEY_ECLIPSE);
 	    	    }
 	    	}
 	    	

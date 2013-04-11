@@ -56,6 +56,8 @@ import com.photon.phresco.commons.model.RepoInfo;
 import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
+import com.photon.phresco.framework.api.ActionType;
+import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.api.DocumentGenerator;
 import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.plugins.model.Mojos.ApplicationHandler;
@@ -232,7 +234,9 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 						applicationProcessor.postCreate(appInfo);
 					}
 					if (isCallEclipsePlugin(appInfo)) {
-					    Utility.executeCommand(MVN_COMMAND + STR_BLANK_SPACE + MVN_GOAL_ECLIPSE, Utility.getProjectHome() + File.separator + appInfo.getAppDirName());
+						ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+						String baseDir = Utility.getProjectHome() + File.separator + appInfo.getAppDirName();
+						applicationManager.performAction(projectInfo, ActionType.ECLIPSE, null, baseDir);
 					}
 
 				}
@@ -338,7 +342,9 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 						ProjectUtils.updateProjectInfo(projectInfo, projectInfoPath);// To update the project.info file
 					}
 					if (isCallEclipsePlugin(appInfo)) {
-                        Utility.executeCommand(MVN_COMMAND + STR_BLANK_SPACE + MVN_GOAL_ECLIPSE, Utility.getProjectHome() + File.separator + appInfo.getAppDirName());
+						ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+						String baseDir = Utility.getProjectHome() + File.separator + appInfo.getAppDirName();
+						applicationManager.performAction(projectInfo, ActionType.ECLIPSE, null, baseDir);
                     }
 				} catch (FileNotFoundException e) {
 					throw new PhrescoException(e);
