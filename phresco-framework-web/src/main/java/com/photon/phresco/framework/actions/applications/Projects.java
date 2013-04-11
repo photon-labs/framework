@@ -481,8 +481,8 @@ public class Projects extends FrameworkBaseAction {
      			Technology technology = getServiceManager().getTechnology(techId);
      	        String techName = technology.getName().replaceAll("\\s", "").toLowerCase();
      	        String dirName = applnCode + HYPHEN + techName;
-     	        String projectName = getProjectName() + HYPHEN + techName;
-     	        appInfos.add(getAppInfo(projectName, dirName, techId, techVersion, false, false, technology.getAppTypeId()));
+     	        String appName = getProjectName() + HYPHEN + applnCode + HYPHEN + techName;
+     	        appInfos.add(getAppInfo(appName, dirName, techId, techVersion, false, false, technology.getAppTypeId()));
      		}
     	}
 
