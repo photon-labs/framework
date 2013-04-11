@@ -811,8 +811,8 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 	                        DependantParameters dependantParameters = (DependantParameters) watcherMap.get(getDependency());
 	                        dependantParameters.setValue(dependentPossibleValues.get(0).getValue());
 	                    } else {
-	                    	 DependantParameters dependantParameters = (DependantParameters) watcherMap.get(getDependency());
-		                     dependantParameters.setValue("");
+	                    	DependantParameters dependantParameters = (DependantParameters) watcherMap.get(getDependency());
+		                    dependantParameters.setValue("");
 	                    }
 	                    if (CollectionUtils.isNotEmpty(dependentPossibleValues) && watcherMap.containsKey(dependentPossibleValues.get(0).getDependency())) {
 	                        addValueDependToWatcher(watcherMap, dependentParameter.getKey(), dependentPossibleValues, "");

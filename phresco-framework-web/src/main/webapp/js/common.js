@@ -602,13 +602,15 @@ function setTimeOut() {
 }
 
 function openFolder(path) {
-	var params = "path=";
+	var params = getBasicParams();
+	params = params.concat("&path=");
 	params = params.concat(path);
 	loadContent('openFolder', '', '', params, '', '', '');
 }
 
 function copyPath(path) {
-	var params = "path=";
+	var params = getBasicParams();
+	params = params.concat("&path=");
 	params = params.concat(path);
 	loadContent('copyPath', '', '', params, '', '', '');
 }

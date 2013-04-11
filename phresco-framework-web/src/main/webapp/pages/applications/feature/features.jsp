@@ -109,7 +109,7 @@
 			<s:text name="succ.feature.configure"/>
 		</div>
 		<div class="featureImage">
-			<img id="allFeatures" title="<s:text name="title.selected.modules"/>" src="images/all.png">
+			<img id="allFeatures" title="<s:text name="title.selected.feature"/>" src="images/all.png">
 			<span class="bubbleAll"></span>
 			<%
 		 		if (hasModules) {

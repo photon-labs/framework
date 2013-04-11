@@ -157,10 +157,6 @@ $(document).ready(function() {
 	$("#createEnvironment").removeClass("btn-primary");
 	$('#errMsg').empty();
 	
-	<% if (FrameworkConstants.CONFIG.equals(fromPage)) { %>
-		setAsDefaultBtnStatus();
-	<% } %>
-	
 	var update = false;
 	$('input[name="envNames"]').change(function() {
 		if ($(this).is(':checked')) {
@@ -173,10 +169,11 @@ $(document).ready(function() {
 					$(this).attr("checked", true);
 				}
 			});
-
+			toEnableSetAsDefault();
 			$("#envName").val(envData.name);
 			$("#envDesc").val(envData.desc);
 		} else {
+			toDisableSetAsDefault();
 			$('input[name="addBtn"]').val("<s:text name='lbl.btn.add'/>");
 			$("#envName").val("");
 			$("#envDesc").val("");
@@ -310,9 +307,6 @@ $(document).ready(function() {
 			document.getElementById('createEnvironment').disabled = false;
 			$("#createEnvironment").addClass("btn-primary");
         });
-        <% if (FrameworkConstants.CONFIG.equals(fromPage)) { %>
-        	setAsDefaultBtnStatus(); 
-        <% } %>
     });
 	
 	$('#up').click(function () {
@@ -394,10 +388,6 @@ $(document).ready(function() {
 		if ($('#multiselectAppliesTo :checkbox').is(':checked')) {
 			$('#multiselectAppliesTo :checked').prop('checked', false);
 		}
-		
-		<% if (FrameworkConstants.CONFIG.equals(fromPage)) { %>
-			setAsDefaultBtnStatus();
-		<% } %>
 	}
 
 	function selectEnv() {
@@ -417,16 +407,16 @@ $(document).ready(function() {
 		}
 	}
 	
-	function setAsDefaultBtnStatus() {
-		if ( $('#multiselect :checkbox').size() < 1) {
-			$("input[name=setAsDefault]").attr("disabled", "disabled");
-			$("#setAsDefault").removeClass("btn-primary"); 
-	        $("#setAsDefault").addClass("btn-disabled");
-		} else {
-			$("input[name=setAsDefault]").removeAttr("disabled");
-			$("#setAsDefault").addClass("btn-primary");
-			$("#setAsDefault").removeClass("btn-disabled");
-		}
+	function toEnableSetAsDefault() {
+		$("input[name=setAsDefault]").removeAttr("disabled");
+		$("#setAsDefault").addClass("btn-primary");
+		$("#setAsDefault").removeClass("btn-disabled");
+	}
+	
+	function toDisableSetAsDefault() {
+		$("input[name=setAsDefault]").attr("disabled", "disabled");
+		$("#setAsDefault").removeClass("btn-primary"); 
+        $("#setAsDefault").addClass("btn-disabled");
 	}
 	
 	function findError(data) {

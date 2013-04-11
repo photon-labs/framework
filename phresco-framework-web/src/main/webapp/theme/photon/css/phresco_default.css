@@ -2620,22 +2620,15 @@ fieldset {
 }
 
 .configurations_form {
-        height: 96%;
+	height: 96%;
 }
 
 .configurations_list_form {
     height: 90%;
     margin-bottom: 0px;
 }
+
 /*** configuration list ends ***/
-
-/***configuration add starts ***/
-
-/*** configuration add ends ***/
-
-/*** configuration edit starts ***/
-
-/*** configuration edit ends ***/
 
 /*** build starts ***/
 .buildDiv {
@@ -6283,6 +6276,10 @@ color: #313131;
 
 .deployPopup {
 	padding: 0;	
+}
+
+#commitMessage {
+	resize: none;
 }
 
 /* for field set*/

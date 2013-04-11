@@ -116,14 +116,19 @@
 			<div class="controls">
 				<select id="environment" name="environment" onchange="renameUploadedFilesDir('Env');">
 				<% for (Environment env : environments) {
-						if (env.getName().equals(envName)) {
-							selectedStr = "selected";
-						} else {
-							selectedStr = "";
-						}
+						if (FrameworkConstants.ADD_CONFIG.equals(fromPage) || FrameworkConstants.ADD_SETTINGS.equals(fromPage)) { 
 				%>
-						<option value='<%= gson.toJson(env) %>' <%= selectedStr %>><%= env.getName() %></option>
-                <% 		 
+							<option value='<%= gson.toJson(env) %>'><%= env.getName() %></option>
+							
+				<% 		} else if (FrameworkConstants.EDIT_CONFIG.equals(fromPage) || FrameworkConstants.EDIT_SETTINGS.equals(fromPage)) {
+							if (env.getName().equals(envName)) {
+									selectedStr = "selected";
+				%>	
+						
+							<option value='<%= gson.toJson(env) %>' <%= selectedStr %>><%= env.getName() %></option>
+                <% 	
+							}
+						}
                 	}
                 %>
 				</select>
