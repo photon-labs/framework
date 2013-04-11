@@ -982,6 +982,26 @@ function constructFieldsetOptions(dependentValues, pushToElement) {
 			var optionElement = "<option value='"+ filePath +"'>"+fileName+"</option>";
 			$("#avaliableSourceScript").append(optionElement);
 		}
+		addSelectedSourceScripts();
+	}
+}
+
+// When the selects the sql files foe deployment, the values need to be retained when the popup shows again
+function addSelectedSourceScripts() {
+	// selected source scripts
+	var db = $('#dataBase').val();
+	var hiddenValue = $('#fetchSql').val();
+	var allFiles = jQuery.parseJSON(hiddenValue);
+	if (allFiles != undefined && !isBlank(allFiles) && allFiles != null) {
+		var dbFiles = allFiles[db];
+		if (dbFiles != undefined ) {
+			$.each(dbFiles, function(i, dbFile) {
+				var tokens = dbFile.split("/");
+				var optionElement = "<option value='"+ dbFile +"'>"+tokens[tokens.length-1]+"</option>";
+				$("#selectedSourceScript").append(optionElement);
+				$("#avaliableSourceScript option[value='" + dbFile + "']").remove();
+			});
+		}
 	}
 }
 
@@ -1265,6 +1285,7 @@ function buttonAddAll() {
 		var selected = $(available).val();
 		var selectedText = $(available).text();
 		var alreadyExists = $("#selectedSourceScript option[value='"+ selected + "']").length > 0;
+		// if the available sql is already in selected sql, remove ir in available list
 		if (alreadyExists == true) {
 			$("#avaliableSourceScript > option").each(function(i, available) {
 				var select = $(available).val();
@@ -1273,24 +1294,31 @@ function buttonAddAll() {
 			return false;
 		}
 		
+		// Remove that selected sql from available and add it in selected list
 		$("#avaliableSourceScript option[value='"+ selected +"']").remove();
 		$('#selectedSourceScript').append("<option value="+ selected +">" + selectedText + "</option>");
 		
+		// get existing fetch sql hidden value
 		if (jsonValue === undefined || isBlank(jsonValue)) {
+			// construct new json
 			jsonValue = '{"' + dbType + '" : ["' + sqlFiles.join(',') + '"]}';
 		} else {
+			// alter existing json
 			var allFiles = jQuery.parseJSON(jsonValue);
 			var dbFiles = allFiles[dbType];
 			if (dbFiles !== undefined && !isBlank(dbFiles)) {
+				// getting values from js variable
 				sqlFiles = dbFiles.concat(sqlFiles);
 				allFiles[dbType] = sqlFiles;
 				jsonValue = JSON.stringify(allFiles);
 			} else {
+				// construct newly
 				jsonValue = jsonValue.substring(0, jsonValue.length - 1);
 				jsonValue = jsonValue + ', "' + dbType + '" : ["' + sqlFiles.join('","') + '"]}';
 			}
 		}
 	});
+	// save it
 	$('#fetchSql').val(jsonValue);
 	$('#avaliableSourceScript > option:selected').appendTo('#selectedSourceScript');
 }

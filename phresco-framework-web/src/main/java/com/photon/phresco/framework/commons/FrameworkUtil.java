@@ -18,27 +18,27 @@
 package com.photon.phresco.framework.commons;
 
 import java.io.BufferedReader;
-import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Matcher;
-import java.util.Vector;
 import java.util.regex.Pattern;
 
 import org.antlr.stringtemplate.StringTemplate;
@@ -47,7 +47,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.w3c.dom.Element;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -57,18 +56,21 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.w3c.dom.Element;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.ArtifactInfo;
 import com.photon.phresco.commons.model.Customer;
 import com.photon.phresco.commons.model.RepoInfo;
-import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.commons.model.TestCase;
-import com.photon.phresco.framework.model.TestSuite;
+import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.FrameworkConfiguration;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
+import com.photon.phresco.framework.model.TestSuite;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
 import com.photon.phresco.util.Constants;
@@ -875,6 +877,16 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	
     	List<? extends Object> objectValues = pm.getObjectValue();
     	StringBuilder builder = new StringBuilder();
+		
+		// existing selected scripts should be inserted in fetchsql hidden field
+    	if (StringUtils.isNotEmpty(pm.getValue())) {
+    		Gson gson = new Gson();
+			String json = gson.toJson(pm.getValue());
+			String jsonPath = json.replace("\\", "").replaceAll("^\"|\"$","");
+			st.setAttribute("selectedJsonData", jsonPath);
+    	} 
+    	
+    	// all the available scripts for corresponding db values need to be added
     	if (CollectionUtils.isNotEmpty(objectValues)) {
         	for (Object objectValue : objectValues) {
         		String filePath = getValue(objectValue);
@@ -1227,7 +1239,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	.append("<select class='fieldSetSelect' multiple='multiple' name='selectedSourceScript' id='selectedSourceScript'></select>")
     	.append("</td><td class='fldSetRightTd'><img  class='moveUp'  id='up' title='Move up' src='images/icons/top_arrow.png' onclick='moveUp();'><br>")
     	.append("<img class='moveDown' id='down' title='Move down' src='images/icons/btm_arrow.png' onclick='moveDown();'></td></tr></tbody></table>")
-    	.append("<input type='hidden' value='' name='fetchSql' id='fetchSql'></fieldset>");	
+    	.append("<input type='hidden' value='$selectedJsonData$' name='fetchSql' id='fetchSql'></fieldset>");	
 
     	return sb.toString();
     }

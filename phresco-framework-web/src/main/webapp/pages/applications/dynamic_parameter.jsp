@@ -278,9 +278,14 @@
 				} else if (FrameworkConstants.TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(parameter.getType()) && (parameter.isSort())) {
 					List<com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value> dynamicPsblValues = (List<com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value>) request.getAttribute(FrameworkConstants.REQ_DYNAMIC_POSSIBLE_VALUES + parameter.getKey());
 					parameterModel.setObjectValue(dynamicPsblValues);
+					parameterModel.setValue(parameter.getValue());
 					StringTemplate fieldSetElement = FrameworkUtil.constructFieldSetElement(parameterModel);
 	%>
 					<%= fieldSetElement %>
+					<script type="text/javascript">
+					// selected source scripts
+					addSelectedSourceScripts();
+					</script>
 	<%
 			    } else if (FrameworkConstants.TYPE_MAP.equalsIgnoreCase(parameter.getType())) {
 				    List<Child> paramChilds = parameter.getChilds().getChild();
