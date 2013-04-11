@@ -5880,6 +5880,10 @@ input[class*='chckBxAlign'] {
 	padding: 0 0 0 10px !important;
 }
 
+.repo-tab-width{
+	width: 100px;
+	}
+
 .table-chkbx {
 	width: 20px;
 }
@@ -6488,6 +6492,12 @@ color: #313131;
 }
 .controls #password {
 	width: 295px !important;
+}
+
+.controls #userName {
+	width: 295px !important;
+	border: 1px solid #ccc !important;
+	padding: 2px 0px 7px 4px !important;
 }
 
 .envLabel {

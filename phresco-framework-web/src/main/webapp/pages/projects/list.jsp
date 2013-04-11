@@ -139,7 +139,7 @@
 																				title="Generate Report" class="iconSizeinList"/>
 																		</a>
 																	</td>
-																	<td class="no-left-bottom-border table-pad">
+																	<td class="no-left-bottom-border table-pad repo-tab-width">
 																		<a href="#" id="repoImport">
 																			<img id="<%= appInfo.getCode() %>" class="addProject" src="images/icons/add_icon.png"
 																				 additionalParam="projectId=<%= project.getId() %>&appId=<%= appInfo.getId() %>&action=add" title="Add to repo" class="iconSizeinList"/>
