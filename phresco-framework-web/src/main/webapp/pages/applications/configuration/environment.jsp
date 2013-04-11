@@ -269,6 +269,7 @@ $(document).ready(function() {
 		}
    });
 	
+	
 	//To remove the added Environment value in UI
     $('#remove').click(function() {
     	$('#errMsg').empty();
@@ -307,6 +308,7 @@ $(document).ready(function() {
 			document.getElementById('createEnvironment').disabled = false;
 			$("#createEnvironment").addClass("btn-primary");
         });
+        disableOkBtn();
     });
 	
 	$('#up').click(function () {
@@ -429,5 +431,15 @@ $(document).ready(function() {
 	
 	function popupOnCancel(obj) {
 		$("#popupPage").modal('hide');
+	}
+	
+	
+	function disableOkBtn() {
+		var envlistSize = $('#multiselect :checkbox').size();
+		var btnValue = $('#add').val();
+		if (envlistSize < 1 && btnValue == 'Add') {
+			document.getElementById('createEnvironment').disabled = true;
+			$("#createEnvironment").removeClass("btn-primary");
+		}
 	}
 </script>
