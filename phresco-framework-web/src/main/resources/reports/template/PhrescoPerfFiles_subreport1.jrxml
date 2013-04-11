@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PhrescoPerfFiles_subreport1" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="19"/>
+	<property name="ireport.y" value="0"/>
 	<style name="PPFDTitle"/>
 	<style name="PPFDTitleRect"/>
 	<style name="PPFDTitleRectLogo"/>
@@ -23,7 +23,7 @@
 	<field name="max" class="java.lang.Integer"/>
 	<field name="stdDev" class="java.lang.Double"/>
 	<field name="err" class="java.lang.Integer"/>
-	<field name="throughtPut" class="java.lang.Double"/>
+	<field name="throughPut" class="java.lang.Double"/>
 	<field name="kbPerSec" class="java.lang.Double"/>
 	<field name="avgBytes" class="java.lang.Double"/>
 	<background>
@@ -54,9 +54,9 @@
 					</chart>
 					<categoryDataset>
 						<categorySeries>
-							<seriesExpression><![CDATA["Throughtput"]]></seriesExpression>
+							<seriesExpression><![CDATA["Throughput"]]></seriesExpression>
 							<categoryExpression><![CDATA[$F{label}]]></categoryExpression>
-							<valueExpression><![CDATA[$F{throughtPut}]]></valueExpression>
+							<valueExpression><![CDATA[$F{throughPut}]]></valueExpression>
 						</categorySeries>
 					</categoryDataset>
 					<bar3DPlot>

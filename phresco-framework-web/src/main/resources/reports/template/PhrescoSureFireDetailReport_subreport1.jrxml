@@ -168,7 +168,7 @@
 				</componentElement>
 			</frame>
 			<frame>
-				<reportElement x="0" y="55" width="555" height="55">
+				<reportElement x="0" y="55" width="555" height="55" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[$P{isClassEmpty}.equals( true )]]></printWhenExpression>
 				</reportElement>
 				<componentElement>

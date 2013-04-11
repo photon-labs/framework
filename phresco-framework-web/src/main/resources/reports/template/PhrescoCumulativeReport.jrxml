@@ -44,7 +44,7 @@
 	<title>
 		<band height="124" splitType="Stretch">
 			<frame>
-				<reportElement x="0" y="0" width="555" height="120"/>
+				<reportElement x="0" y="0" width="555" height="120" isRemoveLineWhenBlank="true"/>
 				<rectangle radius="3">
 					<reportElement style="PCRTitleRectLogo" x="0" y="2" width="555" height="115"/>
 				</rectangle>
@@ -173,13 +173,9 @@
 		<band height="50">
 			<printWhenExpression><![CDATA[!$P{unitTestReports}.isEmpty() && !$P{isMultiModuleProject}.booleanValue()]]></printWhenExpression>
 			<frame>
-				<reportElement x="0" y="0" width="555" height="50" isRemoveLineWhenBlank="true">
-					<printWhenExpression><![CDATA[!$P{unitTestReports}.isEmpty()]]></printWhenExpression>
-				</reportElement>
+				<reportElement x="0" y="0" width="555" height="50" isRemoveLineWhenBlank="true"/>
 				<subreport>
-					<reportElement x="0" y="0" width="555" height="50" isRemoveLineWhenBlank="true">
-						<printWhenExpression><![CDATA[!$P{unitTestReports}.isEmpty()]]></printWhenExpression>
-					</reportElement>
+					<reportElement x="0" y="0" width="555" height="50" isRemoveLineWhenBlank="true"/>
 					<subreportParameter name="testType">
 						<subreportParameterExpression><![CDATA["unit"]]></subreportParameterExpression>
 					</subreportParameter>
@@ -197,13 +193,9 @@
 		<band height="50">
 			<printWhenExpression><![CDATA[!$P{functionalTestReports}.isEmpty()]]></printWhenExpression>
 			<frame>
-				<reportElement x="0" y="0" width="555" height="50" isRemoveLineWhenBlank="true">
-					<printWhenExpression><![CDATA[!$P{functionalTestReports}.isEmpty()]]></printWhenExpression>
-				</reportElement>
+				<reportElement x="0" y="0" width="555" height="50" isRemoveLineWhenBlank="true"/>
 				<subreport>
-					<reportElement x="0" y="0" width="555" height="50" isRemoveLineWhenBlank="true">
-						<printWhenExpression><![CDATA[!$P{functionalTestReports}.isEmpty()]]></printWhenExpression>
-					</reportElement>
+					<reportElement x="0" y="0" width="555" height="50" isRemoveLineWhenBlank="true"/>
 					<subreportParameter name="testType">
 						<subreportParameterExpression><![CDATA["functional"]]></subreportParameterExpression>
 					</subreportParameter>
@@ -235,9 +227,9 @@
 		<band height="50">
 			<printWhenExpression><![CDATA[!$P{performanceSpecialHandle}.booleanValue()]]></printWhenExpression>
 			<frame>
-				<reportElement x="0" y="0" width="555" height="50"/>
+				<reportElement x="0" y="0" width="555" height="50" isRemoveLineWhenBlank="true"/>
 				<subreport>
-					<reportElement x="0" y="0" width="555" height="50"/>
+					<reportElement x="0" y="0" width="555" height="50" isRemoveLineWhenBlank="true"/>
 					<subreportParameter name="reportsDataType">
 						<subreportParameterExpression><![CDATA[$P{reportsDataType}]]></subreportParameterExpression>
 					</subreportParameter>
@@ -249,9 +241,9 @@
 		<band height="50">
 			<printWhenExpression><![CDATA[$P{performanceSpecialHandle}.booleanValue()]]></printWhenExpression>
 			<frame>
-				<reportElement x="0" y="0" width="555" height="50"/>
+				<reportElement x="0" y="0" width="555" height="50" isRemoveLineWhenBlank="true"/>
 				<subreport>
-					<reportElement x="0" y="0" width="555" height="50"/>
+					<reportElement x="0" y="0" width="555" height="50" isRemoveLineWhenBlank="true"/>
 					<subreportParameter name="reportsDataType">
 						<subreportParameterExpression><![CDATA[$P{reportsDataType}]]></subreportParameterExpression>
 					</subreportParameter>
@@ -280,19 +272,12 @@
 			<rectangle>
 				<reportElement style="PCRCopyRight" x="0" y="3" width="555" height="25"/>
 			</rectangle>
-			<textField evaluationTime="Report">
-				<reportElement style="PCRCopyRightPageNo" x="490" y="5" width="25" height="22"/>
-				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="11" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
-			</textField>
 			<textField>
-				<reportElement style="PCRCopyRightPageNo" x="428" y="5" width="64" height="22"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
+				<reportElement style="PCRCopyRightPageNo" x="428" y="5" width="119" height="22"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="11" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of "]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER} + " of " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="PCRCopyRight" x="4" y="5" width="414" height="22"/>
