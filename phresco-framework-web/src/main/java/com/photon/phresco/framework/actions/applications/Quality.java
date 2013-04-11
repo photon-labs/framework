@@ -2624,7 +2624,6 @@ public class Quality extends DynamicParameterAction implements Constants {
 			}
             
 			// load xml check
-			String isIphone = frameworkUtil.isIphoneTagExists(appInfo);
 			if (StringUtils.isEmpty(isIphone)) {
 				if(!xmlResultsAvailable) {
 	            	loadTestResultAvail();
