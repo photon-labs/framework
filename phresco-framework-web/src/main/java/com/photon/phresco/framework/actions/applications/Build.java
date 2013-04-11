@@ -22,7 +22,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
@@ -40,30 +39,16 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.TransformerFactoryConfigurationError;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.io.*;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.Commandline;
-import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -623,7 +608,12 @@ public class Build extends DynamicParameterAction implements Constants {
 			if (StringUtils.isNotEmpty(line) && line.startsWith("[INFO] BUILD FAILURE")) {
 				reader = new BufferedReader(new FileReader(getLogFilePath()));
 			} else {
-				reader = startServer();
+				MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_RUNGAINST_SRC_START)));
+				persistValuesToXml(mojo, PHASE_RUNGAINST_SRC_START);
+				com.photon.phresco.plugins.model.Mojos.Mojo.Configuration config = mojo.getConfiguration(PHASE_RUNGAINST_SRC_START);
+				Map<String, String> configs = MojoUtil.getAllValues(config);
+				String environmentName = configs.get(ENVIRONMENT_NAME);
+				reader = startServer(environmentName);
 			}
 			setSessionAttribute(getAppId() + REQ_START, reader);
 			setReqAttribute(REQ_APP_ID, getAppId());
@@ -684,11 +674,11 @@ public class Build extends DynamicParameterAction implements Constants {
 			if (line != null && line.startsWith("[INFO] BUILD FAILURE")) {
 				reader = new BufferedReader(new FileReader(getLogFilePath()));
 			} else {
-				reader = startServer();
+				reader = startServer(null);
 			}
-			setSessionAttribute(getAppId() + REQ_START, reader);
+			setSessionAttribute(getAppId() + REQ_RE_START, reader);
 			setReqAttribute(REQ_APP_ID, getAppId());
-			setReqAttribute(REQ_ACTION_TYPE, REQ_START);
+			setReqAttribute(REQ_ACTION_TYPE, REQ_RE_START);
 		} catch (PhrescoException e) {
 			return showErrorPopup(e, getText(EXCEPTION_RUNAGNSRC_SERVER_RESTART));
 		}
@@ -696,7 +686,7 @@ public class Build extends DynamicParameterAction implements Constants {
 		return APP_ENVIRONMENT_READER;
 	}
 
-	private BufferedReader startServer() throws PhrescoException {
+	private BufferedReader startServer(String environmentName) throws PhrescoException {
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method Build.startServer()");
 		}
@@ -706,11 +696,9 @@ public class Build extends DynamicParameterAction implements Constants {
 		BufferedReader reader = null;
 		try {
 			ApplicationInfo applicationInfo = getApplicationInfo();
-			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_RUNGAINST_SRC_START)));
-			persistValuesToXml(mojo, PHASE_RUNGAINST_SRC_START);
-			com.photon.phresco.plugins.model.Mojos.Mojo.Configuration config = mojo.getConfiguration(PHASE_RUNGAINST_SRC_START);
-			Map<String, String> configs = MojoUtil.getAllValues(config);
-			String environmentName = configs.get(ENVIRONMENT_NAME);
+			if(StringUtils.isEmpty(environmentName)) {
+				environmentName = readRunAgainstInfo();
+			}
 			List<com.photon.phresco.configuration.Configuration> configurations = getConfiguration(environmentName, Constants.SETTINGS_TEMPLATE_SERVER);
 			if (CollectionUtils.isNotEmpty(configurations)) {
 				for (com.photon.phresco.configuration.Configuration serverConfiguration : configurations) {
@@ -731,13 +719,13 @@ public class Build extends DynamicParameterAction implements Constants {
 			setSessionAttribute(getAppId() + SESSION_SERVER_PROTOCOL_VALUE, serverProtocol);
 			setSessionAttribute(getAppId() + SESSION_SERVER_HOST_VALUE, serverHost);
 			setSessionAttribute(getAppId() + SESSION_SERVER_PORT_VALUE, new Integer(serverPort).toString());
+
 		} catch (PhrescoException e) {
 			if (debugEnabled) {
 				S_LOGGER.error("Entered into catch block of Build.startServer()" + FrameworkUtil.getStackTraceAsString(e));
 			}
 			throw new PhrescoException(e);
 		}
-		
 		return reader;
 	}
 
@@ -783,9 +771,11 @@ public class Build extends DynamicParameterAction implements Constants {
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			String workingDirectory = getAppDirectoryPath(applicationInfo);
 			reader = applicationManager.performAction(getProjectInfo(), ActionType.STOPSERVER, null, workingDirectory);
+			removeSessionAttribute(getAppId() + REQ_START);
 			if (readData) {
 				while (StringUtils.isNotEmpty(reader.readLine())) {}
 			}
+			removeSessionAttribute(getAppId() + REQ_START);
 			deleteLogFile();
 		} catch (Exception e) {
 			if (debugEnabled) {

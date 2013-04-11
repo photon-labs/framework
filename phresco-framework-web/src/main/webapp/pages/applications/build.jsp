@@ -243,7 +243,7 @@
  		$("#console_div").html("Server is restarting...");
  		disableButton($("#runAgainstSourceStop"));
 		disableButton($("#runAgainstSourceRestart"));
-		readerHandlerSubmit('restartServer', '<%= appId %>', '<%= FrameworkConstants.REQ_START %>', '', false, getBasicParams(), $("#console_div"));
+		readerHandlerSubmit('restartServer', '<%= appId %>', '<%= FrameworkConstants.REQ_RE_START %>', '', false, getBasicParams(), $("#console_div"));
  	}
  	
  	// when server is stopped in run against source 

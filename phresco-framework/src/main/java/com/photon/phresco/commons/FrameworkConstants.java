@@ -879,6 +879,7 @@ public interface FrameworkConstants {
 	String REQ_JAVA_STOP = "javaStop";
 	String REQ_START = "Start";
 	String REQ_STOP = "Stop";
+	String REQ_RE_START = "reStart";
 	
 	String START_NODE = "startNode";
 	String START_HUB = "startHub";
