@@ -1,16 +1,18 @@
 function loadJsonContent(url, jsonParam, containerTag, progressText, callSuccessEvent) {
-	if (progressText !== undefined && !isBlank(progressText)) {
-		showProgressBar(progressText);
-	} 
-	$.ajax({
-		url : url,
-		data : jsonParam,
-		type : "POST",
-		contentType: "application/json; charset=utf-8",
-		success : function(data) {
-			loadData(data, containerTag, url, callSuccessEvent);
+	if (url != undefined && !isBlank(url)) {
+		if (progressText !== undefined && !isBlank(progressText)) {
+			showProgressBar(progressText);
 		}
-	});	
+		$.ajax({
+			url : url,
+			data : jsonParam,
+			type : "POST",
+			contentType: "application/json; charset=utf-8",
+			success : function(data) {
+				loadData(data, containerTag, url, callSuccessEvent);
+			}
+		});
+	}
 }
 
 function getBasicParams() {
@@ -951,10 +953,6 @@ function confirmDialog(obj, title, bodyText, okUrl, okLabel) {
 			$('#' + okUrl).val(okLabel); // label for the ok button
 		}
 	});
-	
-	$('#' + okUrl).click(function() {
-		popupOnOk(okUrl); // this function will be kept in where the yesnoPopup() called
-	});
 }
 
 //to dynamically update dependancy data into controls 
@@ -988,7 +986,7 @@ function constructFieldsetOptions(dependentValues, pushToElement) {
 	}
 }
 
-// When the selects the sql files foe deployment, the values need to be retained when the popup shows again
+// When the selects the sql files for deployment, the values need to be retained when the popup shows again
 function addSelectedSourceScripts() {
 	// selected source scripts
 	var db = $('#dataBase').val();
