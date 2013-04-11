@@ -74,8 +74,8 @@
 						<plot labelRotation="20.0">
 							<seriesColor seriesOrder="0" color="#0099FF"/>
 							<seriesColor seriesOrder="1" color="#66FF66"/>
-							<seriesColor seriesOrder="2" color="#FF0000"/>
-							<seriesColor seriesOrder="3" color="#FF9933"/>
+							<seriesColor seriesOrder="2" color="#FF9933"/>
+							<seriesColor seriesOrder="3" color="#FF0000"/>
 						</plot>
 						<itemLabel/>
 					</bar3DPlot>

@@ -28,11 +28,11 @@
 		<band height="27">
 			<printWhenExpression><![CDATA[$P{testType}.contains("unit")]]></printWhenExpression>
 			<frame>
-				<reportElement style="UCRHeading" mode="Opaque" x="0" y="0" width="555" height="24" isRemoveLineWhenBlank="true">
+				<reportElement style="UCRHeading" mode="Opaque" x="0" y="0" width="555" height="24">
 					<printWhenExpression><![CDATA[($P{testType}.equals("unit") && !$F{testSuites}.isEmpty()) || ($P{testType}.equals("unit") && !$F{allTestSuites}.isEmpty())]]></printWhenExpression>
 				</reportElement>
 				<staticText>
-					<reportElement x="5" y="4" width="110" height="15" forecolor="#FFFFFF" backcolor="#FFFFFF"/>
+					<reportElement x="5" y="4" width="283" height="18" forecolor="#FFFFFF" backcolor="#FFFFFF"/>
 					<textElement>
 						<font fontName="Times New Roman" size="12" isBold="true"/>
 					</textElement>

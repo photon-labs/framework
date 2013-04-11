@@ -31,7 +31,7 @@
 					<printWhenExpression><![CDATA[$P{testType}.contains("functional") && !$F{testSuites}.isEmpty() || $P{testType}.contains("functional") && !$F{allTestSuites}.isEmpty()]]></printWhenExpression>
 				</reportElement>
 				<staticText>
-					<reportElement x="5" y="4" width="158" height="20" forecolor="#FFFFFF" backcolor="#FFFFFF"/>
+					<reportElement x="5" y="4" width="286" height="20" forecolor="#FFFFFF" backcolor="#FFFFFF"/>
 					<textElement>
 						<font fontName="Times New Roman" size="14" isBold="true"/>
 					</textElement>

@@ -57,7 +57,7 @@
 		<field name="max" class="java.lang.Integer"/>
 		<field name="stdDev" class="java.lang.Double"/>
 		<field name="err" class="java.lang.Integer"/>
-		<field name="throughtPut" class="java.lang.Double"/>
+		<field name="throughPut" class="java.lang.Double"/>
 		<field name="kbPerSec" class="java.lang.Double"/>
 		<field name="avgBytes" class="java.lang.Double"/>
 	</subDataset>
@@ -364,7 +364,7 @@
 										<font fontName="Times New Roman" size="12"/>
 										<paragraph leftIndent="3"/>
 									</textElement>
-									<textFieldExpression><![CDATA[$F{throughtPut}]]></textFieldExpression>
+									<textFieldExpression><![CDATA[$F{throughPut}]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>

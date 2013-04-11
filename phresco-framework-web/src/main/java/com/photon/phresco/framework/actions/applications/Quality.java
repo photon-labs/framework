@@ -2562,6 +2562,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 		StringBuilder sb = new StringBuilder(Utility.getProjectHome());
 		sb.append(appInfo.getAppDirName());
 		try {
+			String isIphone = frameworkUtil.isIphoneTagExists(appInfo);
 			// unit xml check
 			if(!xmlResultsAvailable) {
 				List<String> moduleNames = new ArrayList<String>();
@@ -2582,16 +2583,20 @@ public class Quality extends DynamicParameterAction implements Constants {
 						xmlResultsAvailable = xmlFileSearch(file, xmlResultsAvailable);
 					}
 				} else {
-					String unitTechReports = frameworkUtil.getUnitTestReportOptions(appInfo);
-					if (StringUtils.isEmpty(unitTechReports)) {
-						file = new File(sb.toString() + frameworkUtil.getUnitTestReportDir(appInfo));
+					if (StringUtils.isNotEmpty(isIphone)) {
+						String unitIphoneTechReportDir = frameworkUtil.getUnitTestReportDir(appInfo);
+						file = new File(sb.toString() + unitIphoneTechReportDir);
 					} else {
-						
-						List<String> unitTestTechs = Arrays.asList(unitTechReports.split(","));
-						for (String unitTestTech : unitTestTechs) {
-							unitTechReports = frameworkUtil.getUnitTestReportDir(appInfo, unitTestTech);
-							if (StringUtils.isNotEmpty(unitTechReports)) {
-								file = new File(sb.toString() + unitTechReports);
+						String unitTechReports = frameworkUtil.getUnitTestReportOptions(appInfo);
+						if (StringUtils.isEmpty(unitTechReports)) {
+							file = new File(sb.toString() + frameworkUtil.getUnitTestReportDir(appInfo));
+						} else {
+							List<String> unitTestTechs = Arrays.asList(unitTechReports.split(","));
+							for (String unitTestTech : unitTestTechs) {
+								unitTechReports = frameworkUtil.getUnitTestReportDir(appInfo, unitTestTech);
+								if (StringUtils.isNotEmpty(unitTechReports)) {
+									file = new File(sb.toString() + unitTechReports);
+								}
 							}
 						}
 					}
@@ -2608,13 +2613,15 @@ public class Quality extends DynamicParameterAction implements Constants {
 			}
 			
 			// performance xml check
-			if(!xmlResultsAvailable) {
-	            performanceTestResultAvail();
-	        	if(isResultFileAvailable()) {
-	        		xmlResultsAvailable = true;
-	        	}
-	        	S_LOGGER.debug("check performance Test xml Availablity ==>" + xmlResultsAvailable);
-            }
+			if (StringUtils.isEmpty(isIphone)) {
+				if(!xmlResultsAvailable) {
+		            performanceTestResultAvail();
+		        	if(isResultFileAvailable()) {
+		        		xmlResultsAvailable = true;
+		        	}
+		        	S_LOGGER.debug("check performance Test xml Availablity ==>" + xmlResultsAvailable);
+	            }
+			}
             
 			// load xml check
 			String isIphone = frameworkUtil.isIphoneTagExists(appInfo);

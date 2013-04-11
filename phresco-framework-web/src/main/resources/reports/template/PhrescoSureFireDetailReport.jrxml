@@ -68,7 +68,7 @@
 			<frame>
 				<reportElement x="0" y="50" width="555" height="272"/>
 				<subreport>
-					<reportElement x="0" y="0" width="555" height="272"/>
+					<reportElement x="0" y="0" width="555" height="272" isRemoveLineWhenBlank="true"/>
 					<subreportParameter name="testCases">
 						<subreportParameterExpression><![CDATA[$F{testCases}]]></subreportParameterExpression>
 					</subreportParameter>
