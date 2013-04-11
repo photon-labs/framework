@@ -771,11 +771,9 @@ public class Build extends DynamicParameterAction implements Constants {
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			String workingDirectory = getAppDirectoryPath(applicationInfo);
 			reader = applicationManager.performAction(getProjectInfo(), ActionType.STOPSERVER, null, workingDirectory);
-			removeSessionAttribute(getAppId() + REQ_START);
 			if (readData) {
 				while (StringUtils.isNotEmpty(reader.readLine())) {}
 			}
-			removeSessionAttribute(getAppId() + REQ_START);
 			deleteLogFile();
 		} catch (Exception e) {
 			if (debugEnabled) {
