@@ -402,7 +402,7 @@
 	
 	function enableOrDisableUpldBtn() {
 		var configName = $('#configName').val();
-		var len = $('#contentFilefile-uploader').find('.qq-upload-success').length;
+		var len = $('#contentFilefile-uploader, #themeFilefile-uploader').find('.qq-upload-success').length;
 		if (configName != undefined && !isBlank(configName) && len <= 0) {
         	enableUploadButton($(".file-uploader"));
         } else {
