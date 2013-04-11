@@ -62,7 +62,7 @@ public class DynamicFetchSqlImpl implements DynamicParameter, Constants {
 			configManager = new ConfigManagerImpl(new File(configPath));
 			List<Configuration> configurations = configManager.getConfigurations(envName, SETTINGS_TEMPLATE_DB);
 			if(CollectionUtils.isNotEmpty(configurations)) {
-			fetchSqlFilePath(possibleValues, applicationInfo, sqlFilePath, dbname, configurations);
+				fetchSqlFilePath(possibleValues, applicationInfo, sqlFilePath, dbname, configurations);
 			}
 			return possibleValues;
 

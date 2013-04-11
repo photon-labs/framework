@@ -168,7 +168,7 @@
 				<span class="mandatory">*</span>&nbsp;<s:text name='lbl.version' />
 			</label>
 			<div class="controls">
-				<input id="projVersion" class="input-xlarge" type="text" value="<%= StringUtils.isNotEmpty(version) ? version : "" %>"<%= disablStr %> 
+				<input id="projVersion" class="input-xlarge" type="text" value="<%= StringUtils.isNotEmpty(version) ? version : "1.0" %>"<%= disablStr %> 
 					name="projectVersion" placeholder='<s:text name="place.hldr.proj.add.version"/>' maxlength="20" 
 					title="<s:text name="title.20.chars"/>">
 				<span class="help-inline" id="projectVersionError"></span>
@@ -260,7 +260,8 @@
 																			<label class="control-label autoWidth">
 																				<s:text name='lbl.app.code' />
 																			</label>
-																			<input type="text" class="appLayerProjName" name="appLayerProjName" onblur="checkForApplnDuplicate(this);" temp="<%= rowCount %>" value="<%= appCode[0] %>" style="float:left" disabled>
+																			<input type="text" class="appLayerProjName" name="appLayerProjName" onblur="checkForApplnDuplicate(this);" temp="<%= rowCount %>" value="<%= appCode[0] %>" 
+																				placeholder='<s:text name="place.hldr.proj.app.code"/>' style="float:left" disabled>
 																		</div>
 																		<div class="align-in-row">
 																			<label class="control-label autoWidth"><s:text name='lbl.technology'/></label>
@@ -301,7 +302,7 @@
 															<s:text name='lbl.app.code' />
 														</label>
 														<input type="text" class="appLayerProjName" name="appLayerProjName" onblur="checkForApplnDuplicate(this);" temp="1" style="float:left"
-														maxlength="12" title="<s:text name="title.12.chars"/>">
+															placeholder='<s:text name="place.hldr.proj.app.code"/>' maxlength="12" title="<s:text name="title.12.chars"/>">
 													</div>
 													<div class="align-in-row">
 														<label class="control-label autoWidth"><s:text name='lbl.technology'/></label>
@@ -764,6 +765,15 @@
 				params = params.concat(appLayerInfos);
 			}	
 			
+
+			if(($("input[class='appLayerProjName']").val().length > 0)) {
+				params = params.concat("&appId=");
+				params = params.concat("true"); 
+			} else {
+				params = params.concat("&appId=");
+				params = params.concat("false"); 
+			}
+			
 			validate('createProject', $('#formCreateProject'), $("#container"), params, '<s:text name='progress.txt.add.proj'/>');
 		});
 		
@@ -790,8 +800,15 @@
 				});
 				params = params.concat("&appLayerInfos=");
 				params = params.concat(appLayerInfos);
+				
+				if(($("input[class='appLayerProjName']").val().length > 0)) {
+					params = params.concat("&appId=");
+					params = params.concat("true"); 	
+				} else {
+					params = params.concat("&appId=");
+					params = params.concat("false"); 
+				}
 			}	
-			
 			validate('updateProject', $('#formCreateProject'), $("#container"), params, '<s:text name='progress.txt.update.proj'/>');
 		});
 		
@@ -846,7 +863,7 @@
 		var newAppLayerRow = $(document.createElement('div')).attr("class", "appLayerContents").css("height","33px");
 		newAppLayerRow.html("<div class='align-div-center'><div class='align-in-row'><label class='control-label autoWidth'><s:text name='lbl.app.code' /></label>" + 
 							"<input type='text' class='appLayerProjName' onblur='checkForApplnDuplicate(this);' name='appLayerProjName' temp='"+count+"' "+
-							" maxlength='12' title='12 Characters only' style='float:left'></div>" +
+							" maxlength='12' title='12 Characters only' style='float:left' placeholder='<s:text name='place.hldr.proj.app.code'/>'></div>" +
 							"<div class='align-in-row'><label class='control-label autoWidth'><s:text name='lbl.technology'/></label>" +
 							"<select class='input-medium' name='app-layerTechnology' temp='"+ count +"' id='" + count + "_App_Technology' layer='" + applayer + "' onchange='getAppLayerTechVersions(this);'>" +
 							"<option value='' selected disabled>Select Technology</option></select></div>" +

@@ -628,13 +628,14 @@ public class Features extends DynamicParameterModule {
     	List<ArtifactGroupInfo> selectedDatabases = new ArrayList<ArtifactGroupInfo>();
     	if (StringUtils.isNotEmpty(getDbLayer()) && CollectionUtils.isNotEmpty(getDatabase())) {
 			for (String databaseId : getDatabase()) {
-				ArtifactGroupInfo artifactGroupInfo = new ArtifactGroupInfo();
-				artifactGroupInfo.setArtifactGroupId(databaseId);
-				artifactGroupInfo.setArtifactInfoIds(Arrays.asList(getReqParameterValues(databaseId)));
-				selectedDatabases.add(artifactGroupInfo);
-				appInfo.setSelectedDatabases(selectedDatabases);
+				if(StringUtils.isNotEmpty(databaseId)) {
+					ArtifactGroupInfo artifactGroupInfo = new ArtifactGroupInfo();
+					artifactGroupInfo.setArtifactGroupId(databaseId);
+					artifactGroupInfo.setArtifactInfoIds(Arrays.asList(getReqParameterValues(databaseId)));
+					selectedDatabases.add(artifactGroupInfo);
+					appInfo.setSelectedDatabases(selectedDatabases);
+				}
 			}
-			
 		}
     	
     	if (CollectionUtils.isNotEmpty(appInfo.getSelectedWebservices())) {

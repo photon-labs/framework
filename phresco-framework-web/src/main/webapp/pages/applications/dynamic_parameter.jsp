@@ -266,7 +266,7 @@
 						$("#" + '<%= parameter.getKey() %>').jec();
 						$('.jecEditableOption').text("Type or select from the list");
 						<%-- $("#"+'<%= parameter.getKey() %>'+" .jecEditableOption").prop("selected", true); --%>
-						$("#" + '<%= parameter.getKey() %>').click(function() {
+						$("#" + '<%= parameter.getKey() %>').focus(function() {
 							var optionClass = $("#"+'<%= parameter.getKey() %>'+" :selected").attr("class");
 							if (optionClass != undefined && optionClass == "jecEditableOption") {
 								 $('.jecEditableOption').text("");
@@ -756,9 +756,8 @@
 			redirect = contextUrlsMandatoryVal();
 		} else if (testAgainst != undefined && testAgainst == "database") {
 			redirect = dbContextUrlsMandatoryVal();
-		} else if (testAgainst == undefined) {
-			$('.yesNoPopupErr').empty();
-			runPerformanceTest();
+		} else if (testAgainst == undefined) { 			
+			redirect = true; // added for CI android performance return			
 		}
 	
 		if (redirect) {
@@ -776,7 +775,8 @@
 		var jsonStr = "";
 		var templJsonStr = "";
 		var params = getBasicParams();
-		var sep = "";		
+		var sep = "";
+		var testAgainst = $("#testAgainst").val();
 		if (templateCsvFn != undefined && !isBlank(templateCsvFn)) {
 			templateFunction = templateCsvFn.split(",");
 			for (i = 0; i < templateFunction.length; ++i) {
@@ -788,14 +788,19 @@
 		formJsonStr = formJsonStr.slice(0,formJsonStr.length-1);
 		formJsonStr = formJsonStr + ',' + templJsonStr + '}';
 		$("#resultJson").val(formJsonStr);
-		var fromCi = $('#isFromCI').val();		
-		if (fromCi) {		
-			// write json for performance			
-			loadContent('performanceJsonWriter', $('#generateBuildForm'), '', getBasicParams(), false, true);
-		} else {
-			$('#popupPage').modal('hide');
-			progressPopupAsSecPopup('runPerformanceTest', '<%= appId %>', "performance-test", $('#generateBuildForm'), params, '');	
-		}
+		var fromCi = $('#isFromCI').val();
+		var ciOperation = $('#operation').val();		
+		
+ 		if (fromCi && testAgainst != undefined) {	
+ 			//write json for performance in ci			
+ 			loadContent('performanceJsonWriter', $('#generateBuildForm'), '', getBasicParams(), false, true);
+ 		} else if (fromCi && testAgainst == undefined) {
+ 			// ci performance for android technology
+ 		} else {
+ 			//performance test
+ 			$('#popupPage').modal('hide');
+			progressPopupAsSecPopup('runPerformanceTest', '<%= appId %>', "performance-test", $('#generateBuildForm'), params, '');
+ 		}
 	}
 	
 </script>

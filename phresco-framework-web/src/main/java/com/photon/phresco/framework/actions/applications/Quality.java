@@ -1410,21 +1410,21 @@ public class Quality extends DynamicParameterAction implements Constants {
 		        String performTestDir = processor.getProperty(POM_PROP_KEY_PERFORMANCETEST_DIR);	        
 				FileOutputStream fop;
 				boolean success = false;
-				if(getIsFromCI().equalsIgnoreCase("true")) {					
+				if(getIsFromCI().equalsIgnoreCase("true")) {				
 					StringBuilder filepath = new StringBuilder(Utility.getProjectHome())
 					.append(applicationInfo.getAppDirName())
 					.append(performTestDir)
 					.append(File.separator)
 					.append(getTestAgainst())
 					.append(File.separator)
-					.append(Constants.FOLDER_JSON)
-					.append(File.separator)
-					.append("CITemp");					
+					.append(Constants.FOLDER_JSON);
+//					.append(File.separator)
+//					.append("CITemp");					
 					success = new File(filepath.toString()).mkdirs();
 					
 					filepath.append(File.separator)
 					.append(getTestName())
-					.append(DOT_JSON);				
+					.append(DOT_JSON);
 					File file = new File(filepath.toString());
 					fop = new FileOutputStream(file);
 					if (!file.exists()) {
@@ -1442,8 +1442,8 @@ public class Quality extends DynamicParameterAction implements Constants {
 					.append(getTestAgainst())
 					.append(File.separator)
 					.append(Constants.FOLDER_JSON)				
-					.append(File.separator)
-					.append("CITemp")
+//					.append(File.separator)
+//					.append("CITemp")
 					.append(File.separator)
 					.append("ci")
 					.append(".info");					

@@ -557,7 +557,10 @@ public class Projects extends FrameworkBaseAction {
 	    	        }
 	    	    }
 	    	}
-	    	boolean connectionAlive = Utility.isConnectionAlive(HTTP_PROTOCOL, LOCALHOST, 9000);
+	    	
+	    	FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+	    	String sonarHomeURL = frameworkUtil.getSonarHomeURL();	
+	    	boolean connectionAlive = FrameworkUtil.isConnectionAlive(sonarHomeURL);
 	    	if(connectionAlive) {
 	    		deleteSonarProject();
 	    	}
@@ -678,52 +681,75 @@ public class Projects extends FrameworkBaseAction {
 	    List<ProjectInfo> projects = projectManager.discover();
 	        
         boolean hasError = false;
-        if (FROM_PAGE_ADD.equals(getFromTab())) {
+        boolean hasMobLayer=false;
+    	
+        if (FROM_PAGE_EDIT.equals(getFromTab())||FROM_PAGE_ADD.equals(getFromTab())) {
   	       	//check project name is already exists or not
-  	        
-  	        if(StringUtils.isNotEmpty(getProjectName())) {
-  	        	for(ProjectInfo project : projects) {
-  	        		if(project.getName().equals(getProjectName())) {
-  	    	       	 	setProjectNameError(getText(ERROR_NAME_EXISTS));
-  	    	            hasError = true;
-  	    	            break;
-  	        		}
-  	        	}
-  	        }
-  	        
-  	        //check project code is already exists or not
-  	        if(StringUtils.isNotEmpty(getProjectCode())) {
-  	        	for(ProjectInfo project : projects) {
-  	        		if(project.getProjectCode().toLowerCase().equals(getProjectCode().toLowerCase())) {
-  	    	        	setProjectCodeError(getText(ERROR_CODE_EXISTS));
-  	    	            hasError = true;
-  	    	            break;
-  	        		}
-  	        	}
-  	        }	
-  	        
+        	if (FROM_PAGE_ADD.equals(getFromTab())) {
+	        	if(StringUtils.isNotEmpty(getProjectName())) {
+	  	        	for(ProjectInfo project : projects) {
+	  	        		
+	  	        		if(project.getName().equals(getProjectName())) {
+	  	    	       	 	setProjectNameError(getText(ERROR_NAME_EXISTS));
+	  	    	            hasError = true;
+	  	    	            break;
+	  	        		}
+	  	        	}
+	  	        }
+	  	        //check project code is already exists or not
+	  	        if(StringUtils.isNotEmpty(getProjectCode())) {
+	  	        	for(ProjectInfo project : projects) {
+	  	        		if(project.getProjectCode().toLowerCase().equals(getProjectCode().toLowerCase())) {
+	  	    	        	setProjectCodeError(getText(ERROR_CODE_EXISTS));
+	  	    	            hasError = true;
+	  	    	            break;
+	  	        		}
+	  	        	}
+	  	        }	
+        	}
   	      //validate if none of the layer is selected
-  	        if (CollectionUtils.isEmpty(getLayer())) {
-  	            setAppTechError(getText(ERROR_TECHNOLOGY));
-  	            setWebTechError(getText(ERROR_TECHNOLOGY));
-  	            setMobTechError(getText(ERROR_TECHNOLOGY));
-  	            hasError = true;
-  	        }
+  	        if(FROM_PAGE_ADD.equals(getFromTab())){
+	        	if (CollectionUtils.isEmpty(getLayer())) {
+	  	            setAppTechError(getText(ERROR_TECHNOLOGY));
+	  	            setWebTechError(getText(ERROR_TECHNOLOGY));
+	  	            setMobTechError(getText(ERROR_TECHNOLOGY));
+	  	            hasError = true;
+	  	        }
+        	}
   	        //empty validation for technology in the selected layer
   	        if (CollectionUtils.isNotEmpty(getLayer())) {
-  	            for (String layerId : getLayer()) {
-  	                String techId = getReqParameter(layerId + REQ_PARAM_NAME_TECHNOLOGY);
-  	                if (LAYER_WEB_ID.equals(layerId)) {//for web layer
-  	                    if (StringUtils.isEmpty(techId)) {
-  	                        setWebTechError(getText(ERROR_TECHNOLOGY));
-  	                        hasError = true;
-  	                    }
+  	            for (String layerTypeId : getLayer()) {
+  	                String techId = getReqParameter(layerTypeId + REQ_PARAM_NAME_TECHNOLOGY);
+  	                if (LAYER_APP_ID.equals(layerTypeId) && StringUtils.isEmpty(techId)) {
+						if (getReqParameter("appId").equals("false")) {
+							setAppTechError(getText(ERROR_APP_CODE_MISSING));
+						} else {
+							setAppTechError(getText(ERROR_SELECT_TECHNOLOGY));
+						}
+	                }
+  	                
+  	                if (LAYER_WEB_ID.equals(layerTypeId) && StringUtils.isEmpty(techId)) {
+                        setWebTechError(getText(ERROR_TECHNOLOGY));
+                        hasError = true;
   	                }
-  	                if (LAYER_MOB_ID.equals(layerId)) {//for mobile layer
-  	                    String[] techGroupIds = getReqParameterValues(layerId + REQ_PARAM_NAME_TECH_GROUP);
-  	                    if (ArrayUtils.isEmpty(techGroupIds)) {//empty validation for technology group
-  	                        setMobTechError(getText(ERROR_TECHNOLOGY));
-  	                        hasError = true;
+  	                
+					if (FROM_PAGE_EDIT.equals(getFromTab())) {
+						ProjectInfo project = projectManager.getProject(getId(), getCustomerId());
+						List<ApplicationInfo> appInfos = project.getAppInfos();
+						for (ApplicationInfo appInfo : appInfos) {
+							if (appInfo.getTechInfo().getAppTypeId().equals(LAYER_MOB_ID)) {
+								hasMobLayer=true;
+							}
+						}
+					}
+					
+  	                if (LAYER_MOB_ID.equals(layerTypeId)) {
+  	                    String[] techGroupIds = getReqParameterValues(layerTypeId + REQ_PARAM_NAME_TECH_GROUP);
+  	                    if (ArrayUtils.isEmpty(techGroupIds)) {
+  	                    	if(!hasMobLayer) {
+	  	                        setMobTechError(getText(ERROR_TECHNOLOGY));
+	  	                        hasError = true;
+  	                    	}
   	                    } else {
   	                        for (String techGroupId : techGroupIds) {//empty validation for technology in the selected technology group
   	                            techId = getReqParameter(techGroupId + REQ_PARAM_NAME_TECHNOLOGY);
@@ -737,9 +763,8 @@ public class Projects extends FrameworkBaseAction {
   	                }
   	            }
   	        }
-          }
-         
-      //validate for app code duplication
+        }
+        //validate for app code duplication
         String applnLayerInfos = getReqParameter(REQ_APP_LAYER_INFOS);
       	if (StringUtils.isNotEmpty(applnLayerInfos)) {
       		boolean skipLoop = false;

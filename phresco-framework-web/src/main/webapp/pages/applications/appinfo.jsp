@@ -158,7 +158,7 @@
 		    <div class="controls">
 				<input class="input-xlarge" id="applicationVersion" placeholder="<s:text name="place.hldr.app.edit.version"/>"
 					name="applicationVersion" maxlength="20" title="<s:text name="title.20.chars"/>"
-					type="text"  value ="<%= StringUtils.isNotEmpty(version) ? version : "" %>"/>
+					type="text"  value ="<%= StringUtils.isNotEmpty(version) ? version : "1.0" %>"/>
 					<span class="help-inline" id="applicationVersionError"></span>
 		    </div>
 		</div>
@@ -353,7 +353,7 @@
 								                    %>
 									                   			<li>
 																	<input type="checkbox" name="webservice" value="<%= webservice.getId() %>" <%= selectedStr%>
-																		class="check techCheck"><%= webservice.getName() %>
+																		class="check techCheck versionsChk"><%= webservice.getName() %>
 																</li>
 													<% 	 
 															}
@@ -738,7 +738,7 @@
 		
 		var newPropTempRow = $(document.createElement('tr')).attr("id", trId).attr("class", "noBorder");
 		newPropTempRow.html("<td class='noBorder'><select class='input-medium' tempId='"+ serverCounter +"' id='"+ servrName +"'  name='server' onchange='getServerVersions(this);'><option>Select Server</option></select></td>" +
-				"<td class='noBorder'><div class=' multilistVersion-scroller ' id='"+ servrVerson +"'></div>"+
+				"<td class='noBorder'><div class=' multilistVersion-scroller versionDiv' id='"+ servrVerson +"'></div>"+
 				"<td class='noBorder'><a ><img class='add imagealign' " + 
 		 			" temp='"+ servrName +"' src='images/icons/add_icon.png' onclick='addServer(this);'></a></td><td class='noBorder'><img id='deleteIcon' class = 'del imagealign'" + 
 		 			"src='images/icons/minus_icon.png' onclick='removeTag(this);'></td>")
@@ -769,7 +769,7 @@
 		
 		var newPropTempRow = $(document.createElement('tr')).attr("id", trId).attr("class", "noBorder");
 		newPropTempRow.html("<td class='noBorder'><select class='input-medium' tempId='"+databaseCounter+"' id='"+ databaseName +"'  name='database' onchange='getDatabaseVersions(this);'><option>Select Database</option></select></td>" +
-				"<td class='noBorder'><div class='multilistVersion-scroller ' id='"+ databaseVerson +"'></div>"+
+				"<td class='noBorder'><div class='multilistVersion-scroller versionDiv' id='"+ databaseVerson +"'></div>"+
 				"<td class='noBorder'><a ><img class='add imagealign' " + 
 		 			" temp='"+ databaseName +"' src='images/icons/add_icon.png' onclick='addDatabase(this);'></a></td><td class='noBorder'><img id='deleteImgIcon' class = 'del imagealign'" + 
 		 			"src='images/icons/minus_icon.png' onclick='removeTag(this);'></td>")
@@ -956,7 +956,7 @@
 				}
 			}
 		}
-		$('<div style="color: #000000;"><input class="check techCheck" type="checkbox" name="'+parentValue+'" value="' + value + '" '+checkedStr+' style="margin-right:5%;">'+ text +'</div>').appendTo(obj);
+		$('<div style="color: #000000;"><input class="check techCheck versionsChk" type="checkbox" name="'+parentValue+'" value="' + value + '" '+checkedStr+' style="margin-right:5%;">'+ text +'</div>').appendTo(obj);
 	}
 
 	function trim(stringToTrim) {
