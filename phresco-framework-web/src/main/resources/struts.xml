@@ -186,7 +186,15 @@
             <result name="updateApplication">/pages/applications/svn_import.jsp</result>
         </action>
         
-        <action name="repoExistCheck" method="repoExistCheck" class="com.photon.phresco.framework.actions.applications.Applications">
+         <action name="fetchLogMessages" method="fetchLogMessages" class="com.photon.phresco.framework.actions.applications.Applications">
+           <result type="json"/>
+        </action>
+        
+        <action name="repoExistCheckForCommit" method="repoExistCheckForCommit" class="com.photon.phresco.framework.actions.applications.Applications">
+            <result type="json"/>
+        </action>
+        
+        <action name="repoExistCheckForUpdate" method="repoExistCheckForUpdate" class="com.photon.phresco.framework.actions.applications.Applications">
             <result type="json"/>
         </action>
         
@@ -701,6 +709,10 @@
 		</action>
 		
 		<action name="saveTestCasesValidate" method="validateform" class="com.photon.phresco.framework.actions.applications.Quality">
+        	<result type="json" />
+		</action>
+		
+		<action name="saveTestSuitesValidate" method="validateTestSuite" class="com.photon.phresco.framework.actions.applications.Quality">
         	<result type="json" />
 		</action>
 		

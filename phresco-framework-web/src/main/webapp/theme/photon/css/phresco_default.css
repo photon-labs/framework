@@ -279,7 +279,7 @@ input[type="password"] {
 }
 
 .header-background {
-	border-radius: 6px 6px 0 0;
+	border-radius: 10px 10px 0 0;
 	height: 30px;
 }
 
@@ -2620,22 +2620,15 @@ fieldset {
 }
 
 .configurations_form {
-        height: 96%;
+	height: 96%;
 }
 
 .configurations_list_form {
     height: 90%;
     margin-bottom: 0px;
 }
+
 /*** configuration list ends ***/
-
-/***configuration add starts ***/
-
-/*** configuration add ends ***/
-
-/*** configuration edit starts ***/
-
-/*** configuration edit ends ***/
 
 /*** build starts ***/
 .buildDiv {
@@ -3610,7 +3603,7 @@ div.submit_input {
 
 /*** List Table ***/ 
 .tblheader {
-    border-radius: 6px 6px 0 0;
+    border-radius: 10px 10px 0 0;
     -webkit-border-top-left-radius: 10px 10px;
 	-webkit-border-top-right-radius: 10px 10px;
 }
@@ -4067,7 +4060,7 @@ div.submit_input {
 }
 
  .downloadContent {
-	height: 200px;
+	height: 250px;
 	overflow-y: hidden;
 } 
 
@@ -5887,6 +5880,10 @@ input[class*='chckBxAlign'] {
 	padding: 0 0 0 10px !important;
 }
 
+.repo-tab-width{
+	width: 100px;
+	}
+
 .table-chkbx {
 	width: 20px;
 }
@@ -6285,6 +6282,10 @@ color: #313131;
 	padding: 0;	
 }
 
+#commitMessage {
+	resize: none;
+}
+
 /* for field set*/
 .fieldSetClass {
 	padding: 10px; 
@@ -6491,6 +6492,12 @@ color: #313131;
 }
 .controls #password {
 	width: 295px !important;
+}
+
+.controls #userName {
+	width: 295px !important;
+	border: 1px solid #ccc !important;
+	padding: 2px 0px 7px 4px !important;
 }
 
 .envLabel {
@@ -6731,4 +6738,9 @@ color: #313131;
 	float: right;
     margin-right: 12px;
     margin-top: 5px;
+}
+
+#formTestCase {
+	height: 101%; 
+	overflow: auto;
 }

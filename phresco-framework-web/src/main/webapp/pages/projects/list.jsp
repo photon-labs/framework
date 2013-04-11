@@ -139,7 +139,7 @@
 																				title="Generate Report" class="iconSizeinList"/>
 																		</a>
 																	</td>
-																	<td class="no-left-bottom-border table-pad">
+																	<td class="no-left-bottom-border table-pad repo-tab-width">
 																		<a href="#" id="repoImport">
 																			<img id="<%= appInfo.getCode() %>" class="addProject" src="images/icons/add_icon.png"
 																				 additionalParam="projectId=<%= project.getId() %>&appId=<%= appInfo.getId() %>&action=add" title="Add to repo" class="iconSizeinList"/>
@@ -215,8 +215,9 @@
     	});
 		
 		$('.projectUpdate').click(function() {
+			showLoadingIcon();
 			var params = $(this).attr("additionalParam");
-			yesnoPopup('updateProjectPopup', '<s:text name="lbl.app.update"/>', 'importUpdateAppln','<s:text name="lbl.app.update"/>', '', params);
+			loadContent('repoExistCheckForUpdate', $('#formCustomers'), '', params, true);	
     	});
 		
 		$('.addProject').click(function() {
@@ -227,7 +228,7 @@
 		$('.commitProject').click(function() {
 			showLoadingIcon();
 			var params = $(this).attr("additionalParam");
-			loadContent('repoExistCheck', $('#formCustomers'), '', params, true);		
+			loadContent('repoExistCheckForCommit', $('#formCustomers'), '', params, true);		
     	});
 		
     	$('.pdfCreation').click(function() {
@@ -294,9 +295,9 @@
 	
 	function successEvent(pageUrl, data) {
 		//to check for project already checked-in for commit
-		if (pageUrl == 'repoExistCheck') {
+		if (pageUrl == 'repoExistCheckForCommit' || pageUrl == 'repoExistCheckForUpdate') {
 			//if already exists
-			if (data.repoExist) {
+			if (data.repoExistForCommit) {
 				var params = "projectId=";
 				params = params.concat(data.projectId);
 				params = params.concat("&appId=");
@@ -305,7 +306,16 @@
 				params = params.concat(data.action);
 				hideLoadingIcon();
 				yesnoPopup('updateProjectPopup', '<s:text name="lbl.app.commit"/>', 'importUpdateAppln','<s:text name="lbl.app.commit"/>', '', params);
-			} else {  //warning message if not exist
+			} else if (data.repoExistForUpdate) {
+				var params = "projectId=";
+				params = params.concat(data.projectId);
+				params = params.concat("&appId=");
+				params = params.concat(data.appId);
+				params = params.concat("&action=");
+				params = params.concat(data.action);
+				hideLoadingIcon();
+				yesnoPopup('updateProjectPopup', '<s:text name="lbl.app.update"/>', 'importUpdateAppln','<s:text name="lbl.app.update"/>', '', params);
+			} else {//warning message if not exist
 				hideLoadingIcon();
 				$('#popupPage').modal('show');
 				$('#errMsg').html("");
@@ -313,16 +323,22 @@
 				$('#updateMsg').html("");
 				$('#popupTitle').html('<s:text name="lbl.app.warnin.title"/>');
 				$('#popup_div').empty();
-				$('#popup_div').html('<s:text name="lbl.app.warnin.message"/>');
+				if (pageUrl == 'repoExistCheckForCommit') {
+					$('#popup_div').html('<s:text name="lbl.app.warnin.message.for.commit"/>');
+				} else if(pageUrl == 'repoExistCheckForUpdate') {
+					$('#popup_div').html('<s:text name="lbl.app.warnin.message.for.update"/>');
+				}
 				$('.popupOk').hide();
-				$('#popupCancel').hide();
+				$('.popupCancel').hide();
 				$('.popupClose').show();
 				hidePopuploadingIcon();
 			}
 		} else if(pageUrl == "importSVNProject" || pageUrl == "importGITProject" || pageUrl == "importBitKeeperProject" || pageUrl == "updateSVNProject" || pageUrl == "updateGITProject"
 			|| pageUrl == "updateBitKeeperProject" || pageUrl == "addSVNProject" || pageUrl == "addGITProject" || pageUrl == "commitSVNProject" || pageUrl == "commitBitKeeperProject" || pageUrl == "commitGITProject") {
 			checkError(pageUrl, data);
-		}
+		} else if(pageUrl == 'fetchLogMessages') {
+			selectList(data);
+		} 
 		console.log("success event called !!! ");
 	}
 	

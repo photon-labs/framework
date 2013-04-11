@@ -257,8 +257,8 @@
 																<div class="appLayerContents" style="height:33px;">
 																	<div class="align-div-center">
 																		<div class="align-in-row">
-																			<label class="control-label autoWidth">
-																				<s:text name='lbl.app.code' />
+																			<label class="control-label autoWidth">																				
+																				<span class="mandatory">*</span>&nbsp;<s:text name='lbl.app.code' />
 																			</label>
 																			<input type="text" class="appLayerProjName" name="appLayerProjName" onblur="checkForApplnDuplicate(this);" temp="<%= rowCount %>" value="<%= appCode[0] %>" 
 																				placeholder='<s:text name="place.hldr.proj.app.code"/>' style="float:left" disabled>
@@ -299,7 +299,7 @@
 												<div class="align-div-center">
 													<div class="align-in-row">
 														<label class="control-label autoWidth">
-															<s:text name='lbl.app.code' />
+															<span class="mandatory">*</span>&nbsp;<s:text name='lbl.app.code' />
 														</label>
 														<input type="text" class="appLayerProjName" name="appLayerProjName" onblur="checkForApplnDuplicate(this);" temp="1" style="float:left"
 															placeholder='<s:text name="place.hldr.proj.app.code"/>' maxlength="12" title="<s:text name="title.12.chars"/>">

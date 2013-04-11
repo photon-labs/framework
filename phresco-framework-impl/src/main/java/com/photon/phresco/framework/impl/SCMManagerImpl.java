@@ -43,6 +43,7 @@ import org.tmatesoft.svn.core.SVNCommitInfo;
 import org.tmatesoft.svn.core.SVNDepth;
 import org.tmatesoft.svn.core.SVNDirEntry;
 import org.tmatesoft.svn.core.SVNException;
+import org.tmatesoft.svn.core.SVNLogEntry;
 import org.tmatesoft.svn.core.SVNNodeKind;
 import org.tmatesoft.svn.core.SVNURL;
 import org.tmatesoft.svn.core.auth.ISVNAuthenticationManager;
@@ -784,10 +785,32 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 	    return allSVNStatus;
 	}
 	
+	public List<String> getSvnLogMessages(String Url, String userName, String Password) throws PhrescoException {
+		setupLibrary();
+		long startRevision = 0;
+		long endRevision = -1; //HEAD (the latest) revision
+		SVNRepository repository = null;
+		List<String> logMessages = new ArrayList<String>();
+		try {
+			repository = SVNRepositoryFactory.create( SVNURL.parseURIEncoded(Url));
+			ISVNAuthenticationManager authManager = SVNWCUtil.createDefaultAuthenticationManager(userName, Password);
+			repository.setAuthenticationManager( authManager );
+			Collection logEntries = null;
+
+			logEntries = repository.log( new String[] { "" } , null , startRevision , endRevision , true , true );
+			for (Iterator entries = logEntries.iterator(); entries.hasNext();) {
+				SVNLogEntry logEntry = (SVNLogEntry) entries.next( );
+				logMessages.add(logEntry.getMessage());
+			}
+		} catch (SVNException e) {
+			throw new PhrescoException(e);
+		}
+
+		return logMessages;
+	}
+	
 	public SVNCommitInfo commitSpecifiedFiles(List<File> listModifiedFiles, String username, String password, String commitMessage) throws Exception {
-		DAVRepositoryFactory.setup();
-		SVNRepositoryFactoryImpl.setup();
-		FSRepositoryFactory.setup();
+		setupLibrary();
 		
 		final SVNClientManager cm = SVNClientManager.newInstance(new DefaultSVNOptions(), username, password);
 		SVNWCClient wcClient = cm.getWCClient();

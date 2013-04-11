@@ -84,7 +84,7 @@
 							<span class="siteaccordion closereg">
 								<span>
 									<input type="checkbox" value='<%= envJson %>' id="<%=env.getName() %>" <%= checkedStr %> class="accordianChkBox" name="checkEnv" onclick="checkAllEvent(this,$('.<%=env.getName() %>'), false);"/>
-									<a class="vAlignSub"><%=env.getName() %></a>
+									<a class="vAlignSub"><%= env.getName() %></a>
 								</span>
 							</span>
 							<div class="mfbox siteinnertooltiptxt hideContent">

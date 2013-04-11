@@ -128,10 +128,12 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
 		try {
 			if (Desktop.isDesktopSupported()) {
 				File dir = new File(Utility.getProjectHome() + path);
-				if(dir.exists()){
-	    		Desktop.getDesktop().open(new File(Utility.getProjectHome() + path));
-				}else{
-					Desktop.getDesktop().open(new File(Utility.getProjectHome()));
+				if (dir.exists()) {
+					Desktop.getDesktop().open(new File(Utility.getProjectHome() + path));
+				} else {
+					StringBuilder sbOpenPath = new StringBuilder(Utility.getProjectHome());
+					sbOpenPath.append(getApplicationInfo().getAppDirName());
+					Desktop.getDesktop().open(new File(sbOpenPath.toString()));
 				}
 	    	}
 		} catch (Exception e) {
@@ -146,16 +148,25 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
     	if (debugEnabled) {
     		S_LOGGER.debug("Entered FrameworkBaseAction.copyPath");
     	}
-    	File dir = new File(Utility.getProjectHome() + path);
-    	if(dir.exists()){
-    		copyToClipboard = Utility.getProjectHome() + path;
-    	}else{
-    		copyToClipboard = Utility.getProjectHome();
-    	}
-    	copyToClipboard ();
+    	try {
+	    	File dir = new File(Utility.getProjectHome() + path);
+	    	if (dir.exists()) {
+	    		copyToClipboard = Utility.getProjectHome() + path;
+	    	} else {
+	    		StringBuilder sbCopyPath = new StringBuilder(Utility.getProjectHome());
+	    		sbCopyPath.append(getApplicationInfo().getAppDirName());
+	    		copyToClipboard = sbCopyPath.toString();
+	    	}
+	    	copyToClipboard();
+    	} catch (PhrescoException e) {
+    		if (debugEnabled) {
+				S_LOGGER.error("Unable to Copy the Path, " + FrameworkUtil.getStackTraceAsString(e));
+				new LogErrorReport(e, "Copy Path");
+			}
+		}
     }
     
-    public void copyToClipboard () {
+    public void copyToClipboard() {
     	S_LOGGER.debug("Entered FrameworkBaseAction.copyToClipboard");
     	Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
     	clipboard.setContents(new StringSelection(copyToClipboard.replaceAll("(?m)^[ \t]*\r?\n", "")), null);

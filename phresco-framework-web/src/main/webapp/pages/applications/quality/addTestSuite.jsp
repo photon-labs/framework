@@ -34,7 +34,7 @@
 	<div class="manualScrollDiv" style="margin-top:5%;">
 		<!-- Test-Scenario Name starts -->
 		<div class="control-group" id="nameControl">
-		    <label class="accordion-control-label labelbold"><s:text name="label.testsuite.name"/></label>
+		    <label class="accordion-control-label labelbold"><span class="red">*</span>&nbsp;<s:text name="label.testsuite.name"/></label>
 		    <div class="controls">
 		       <input id="testSuiteName" placeholder="<s:text name='label.name.placeholder'/>" class="input-xlarge" name="testScenarioName" type="text" 
 				    value="" maxlength="30" title="30 Characters only">
@@ -112,11 +112,20 @@ $(document).ready(function() {
 	});
 	
 	$('#createTestSuite').click(function() {
-		showLoadingIcon();
+		//showLoadingIcon();
 		var param = getBasicParams();
-		loadContent('saveTestSuites', $('#formTestSuite'), $('#subcontainer'), param);
-		//validate('features', $('#formAppInfo'), $('#subcontainer'), params);
+		//loadContent('saveTestSuites', $('#formTestSuite'), $('#subcontainer'), param);
+		validate('saveTestSuites', $('#formTestSuite'), $("#subcontainer"), param, 'Creating TestSuite');
 	});
 });	
+
+	function findError(data) {
+		hideLoadingIcon();
+		if (!isBlank(data.nameError)) {
+			showError($("#nameControl"), $("#nameError"), data.nameError);
+		} else {
+			hideError($("#nameControl"), $("#nameError"));
+		}
+	}
 	
 </script> 

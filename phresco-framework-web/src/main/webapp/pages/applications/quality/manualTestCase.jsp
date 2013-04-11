@@ -94,22 +94,28 @@
 				        <table cellspacing="0" class="zebra-striped">
 				          	<thead>
 					            <tr>
-									<th class="firstDiv" style="width:27%">
+									<th class="firstDiv" style="width:23%">
 										<div id="thName" class="th-inner-test"><s:text name="label.testsuite.name"/></div>
 									</th>
-					              	<th class="secondDiv" style="width:15%">
+					              	<th class="secondDiv" style="width:11%">
 					              		<div id="thPass" class="th-inner-test"><s:text name="label.testsuite.success"/></div>
 				              		</th>
-					              	<th class="thirdDiv" style="width:15%">
+					              	<th class="thirdDiv" style="width:11%">
 					              		<div id="thFail" class="th-inner-test"><s:text name="label.testsuite.failure"/></div>
 				              		</th>
-				              		<th class="fourthDiv" style="width:15%">
+				              		<th class="fourthDiv" style="width:11%">
+					              		<div id="thNotApp" class="th-inner-test"><s:text name="label.testcase.not.applicable"/></div>
+				              		</th>
+					              	<th class="fifthDiv" style="width:11%">
+					              		<div id="thBlocked" class="th-inner-test"><s:text name="label.testcase.blocked"/></div>
+				              		</th>
+				              		<th class="sixthDiv" style="width:11%">
 					              		<div id="thNotExceuted" class="th-inner-test"><s:text name="label.testsuite.notexecuted"/></div>
 				              		</th>
-					              	<th class="fifthDiv" style="width:14%">
+					              	<th class="seventhDiv" style="width:11%">
 					              		<div id="thTotal" class="th-inner-test"><s:text name="label.testsuite.total"/></div>
 				              		</th>
-					              	<th class="sixthDiv">
+					              	<th class="eightthDiv">
 					              		<div id="thCovarage" class="th-inner-test"><s:text name="label.testsuite.testCoverage"/></div>
 				              		</th>
 					            </tr>
@@ -340,6 +346,8 @@ $(document).ready(function() {
 	var totalPass;
 	var totalFail;
 	var notExecuted;
+	var notApplicable;
+	var blocked;
 	var totalTestCases;
 	var totalCoverage;
 	function allReports() {
@@ -347,6 +355,8 @@ $(document).ready(function() {
 		$('#testSuiteList').empty();
 		totalPass = 0;
 		totalFail = 0;
+		blocked = 0;
+		notApplicable = 0;
 		notExecuted = 0;
 		totalTestCases = 0;
 		totalCoverage = 0;
@@ -354,31 +364,47 @@ $(document).ready(function() {
 			$('#tabularViewForManual').show();
 			totalPass += parseFloat(allValues.allTestSuite[i].tests);
 			totalFail += parseFloat(allValues.allTestSuite[i].failures);
+			notApplicable += parseFloat(allValues.allTestSuite[i].notApplicable);
+			blocked += parseFloat(allValues.allTestSuite[i].blocked);
 			notExecuted += parseFloat(allValues.allTestSuite[i].errors);
 			var notexe = allValues.allTestSuite[i].errors;
 			if (notexe === 0) {
-				notexe = allValues.allTestSuite[i].total - (allValues.allTestSuite[i].tests + allValues.allTestSuite[i].failures);
+				notexe = allValues.allTestSuite[i].total - (allValues.allTestSuite[i].tests + allValues.allTestSuite[i].failures +
+						allValues.allTestSuite[i].notApplicable + allValues.allTestSuite[i].blocked);
 				notExecuted += notexe;
 			}
 			totalTestCases += parseFloat(allValues.allTestSuite[i].total);
-			totalCoverage += parseFloat(allValues.allTestSuite[i].testCoverage);
+			var coverage = allValues.allTestSuite[i].testCoverage;
+			if (coverage === 0) {
+				var total = parseFloat(allValues.allTestSuite[i].total);
+				var notExecutd = parseFloat(allValues.allTestSuite[i].errors);
+				if (notExecutd !=0) {
+					coverage = ((total-notExecutd)/total)*100;
+				}
+				totalCoverage += coverage;
+			}
 		var newPropTempRow = $(document.createElement('tr')).attr("id", allValues.allTestSuite[i].name);
 		newPropTempRow.html("<td class='firstVal'><a href='#' onclick='getReport(this);' name="+allValues.allTestSuite[i].name+">"+allValues.allTestSuite[i].name+"</a></td>"+
 				"<td class='secondVal'>"+allValues.allTestSuite[i].tests+"</td>"+
 				"<td class='thirdVal'>"+allValues.allTestSuite[i].failures+"</td>"+
-				"<td class='fourthVal'>"+notexe+"</td>"+
-				"<td class='fifthVal'>"+allValues.allTestSuite[i].total+"</td>"+ 
-				"<td class='sixthVal'>"+allValues.allTestSuite[i].testCoverage+"</td>")
+				"<td class='fourthVal'>"+allValues.allTestSuite[i].notApplicable+"</td>"+
+				"<td class='fifthVal'>"+allValues.allTestSuite[i].blocked+"</td>"+
+				"<td class='sixthVal'>"+notexe+"</td>"+
+				"<td class='seventhVal'>"+allValues.allTestSuite[i].total+"</td>"+ 
+				"<td class='eightthVal'>"+Math.round(coverage)+"</td>")
 	 	newPropTempRow.appendTo("#testSuiteList");	
 		}
+		var totalCovrge = ((totalTestCases-notExecuted)/totalTestCases)*100;
 		$('#total').empty();
 		 var totalRow = $(document.createElement('tr')).attr("id", "total");
 		totalRow.html("<td class='width-ten-percent loadTestPopupBold'>Total</td>"+
 				"<td class='width-ten-percent loadTestPopupBold'>"+totalPass+"</td>"+
 				"<td class='width-ten-percent loadTestPopupBold'>"+totalFail+"</td>"+
+				"<td class='width-ten-percent loadTestPopupBold'>"+notApplicable+"</td>"+
+				"<td class='width-ten-percent loadTestPopupBold'>"+blocked+"</td>"+
 				"<td class='width-ten-percent loadTestPopupBold'>"+notExecuted+"</td>"+
 				"<td class='width-ten-percent loadTestPopupBold'>"+totalTestCases+"</td>"+ 
-				"<td class='width-ten-percent loadTestPopupBold'></td>")
+				"<td class='width-ten-percent loadTestPopupBold'>"+Math.round(totalCovrge)+"</td>")
 	 	totalRow.appendTo("#total");	
 	}
 	
