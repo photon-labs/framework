@@ -327,7 +327,6 @@
 	       	}
 		} else if (pageUrl == "fetchPerformanceTestResultFiles") {
 			successPerfTestResultsFiles(data);
-			hideLoadingIcon();
 		} else if (pageUrl == "getDevices") {
 			successGetDeviceName(data);
 		} else if (pageUrl == "checkForConfigType") {
