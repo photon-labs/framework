@@ -32,6 +32,7 @@ import org.antlr.stringtemplate.StringTemplate;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -40,10 +41,13 @@ import com.photon.phresco.api.DynamicParameter;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.ArtifactInfo;
+import com.photon.phresco.commons.model.BuildInfo;
 import com.photon.phresco.commons.model.Customer;
 import com.photon.phresco.commons.model.RepoInfo;
 import com.photon.phresco.exception.PhrescoException;
+import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
+import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.commons.ParameterModel;
 import com.photon.phresco.framework.model.DependantParameters;
@@ -504,8 +508,10 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 	    }
 	}
 
-	public String mandatoryValidation() {
+	public String mandatoryValidation() throws PhrescoException {
 		try {
+			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+			List<BuildInfo> builds = applicationManager.getBuildInfos(new File(getBuildInfosFilePath(getApplicationInfo())));
 			File infoFile = new File(getPhrescoPluginInfoFilePath(getPhase()));
 			MojoProcessor mojo = new MojoProcessor(infoFile);
 			List<Parameter> parameters = getMojoParameters(mojo, getGoal());
@@ -549,11 +555,31 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 						if ((parameter.isShow() || !alreadyValidated) && paramsMandatoryCheck(parameter)) {
 							break;
 						}
-					}
+					} else if(TYPE_STRING.equalsIgnoreCase(parameter.getType()) && BUILD_NAME.equalsIgnoreCase(parameter.getKey())) {
+						String buildName = getReqParameter(parameter.getKey());
+						if(!buildName.isEmpty()) {
+							for (BuildInfo build : builds) {
+								if(buildName.equalsIgnoreCase(FilenameUtils.removeExtension(build.getBuildName()))) {
+									setErrorFound(true);
+									setErrorMsg(getText(BUILDNAME_ALREADY_EXIST));
+								}
+							}
+						}
+					} else if(TYPE_NUMBER.equalsIgnoreCase(parameter.getType()) && BUILD_NUMBER.equalsIgnoreCase(parameter.getKey())) {
+						String buildNumber = getReqParameter(parameter.getKey());
+						if(!buildNumber.isEmpty()) {
+							for (BuildInfo build : builds) {
+								if(Integer.parseInt(buildNumber) == build.getBuildNo()) {
+									setErrorFound(true);
+									setErrorMsg(getText(BUILDNUMBER_ALREADY_EXIST));
+								}
+							}
+						}
+					} 
 				}
 			}
 		} catch (Exception e) {
-			// TODO: handle exception
+			throw new PhrescoException(e);
 		}
 
 		return SUCCESS;

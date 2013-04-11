@@ -408,7 +408,12 @@ function popupOnClose(obj) {
 
 function reloadFunctionalPage() {
 	var params = getBasicParams();
-	loadContent("functional", '', $("#subTabcontainer"), params, '', true);
+	var theme = localStorage["color"];
+	if (theme == undefined || theme == "theme/photon/css/photon_theme.css") {
+		loadContent("functional", '', $("#subcontainer"), params, '', true);
+	} else if (theme == "themes/photon/css/red.css" || theme == "theme/red_blue/css/blue.css"){
+		loadContent("functional", '', $("#subTabcontainer"), params, '', true);	
+	}
 }
 
 function popupOnCancel(obj) {

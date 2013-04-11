@@ -369,6 +369,14 @@
 		$('.jecEditableOption').click(function() {
 	       $('.jecEditableOption').text("");
 	    });
+		
+		$('#buildName').live('input propertychange', function(e) {
+			var str = $(this).val();
+			str = checkForSplChrExceptDot(str);
+			str = removeSpaces(str);
+			$(this).val(str);
+		});	
+
 	});
 	
 	//To focus first control in popup
@@ -532,7 +540,23 @@
 					hideOptionDependencyArr = hideOptionDependency.split(',');
 					hideControl(hideOptionDependencyArr);
 				}
-			} 
+			} else if(currentObjType === "SELECT" && multipleAttr === undefined && $(this).attr('dependencyAttr') != undefined) {
+				var dependencyAttr =  $(this).attr('dependencyAttr');
+				if (dependencyAttr !== null) {
+					var csvDependencies = getAllDependencies(dependencyAttr);
+					var dependencyArr = new Array();
+					dependencyArr = csvDependencies.split(',');
+					showControl(dependencyArr);					
+				}
+				
+				/* //If the dependent child is select box, hide controls based on selected options - while popup loading
+				var hideOptionDependency = $(this).getAttribute('hide');
+				if (hideOptionDependency !== undefined && !isBlank(hideOptionDependency)) {
+					var hideOptionDependencyArr = new Array();
+					hideOptionDependencyArr = hideOptionDependency.split(',');
+					hideControl(hideOptionDependencyArr);
+				} */
+			}
 		});
 		
 		<% 
@@ -611,6 +635,9 @@
 			var additionalParam;
 			if (controlType === 'SELECT') {
 				additionalParam = $('#' + $.trim(keyArr[i]) + ' option:selected').attr('additionalParam');
+				if (additionalParam === undefined) {
+					additionalParam = $('#' + $.trim(keyArr[i])).attr('dependencyAttr');
+				}
 			} else if (controlType === 'INPUT') {
 				additionalParam = $('#' + $.trim(keyArr[i])).attr('additionalParam');
 			}

@@ -1469,11 +1469,20 @@ public class Configurations extends FrameworkBaseAction {
                     for (String split : splits) {
                         split = split.replace("\\", "/");
                         StringBuilder sb = new StringBuilder(getApplicationHome());
-                        if (!split.startsWith("/")) {
+                        setConfigTempType(getCurrentConfigType());
+                        StringBuilder targetDir = getTargetDir();
+                        if (targetDir == null) {
+                        	sb.append(File.separator);
+                            sb.append(DO_NOT_CHECKIN_DIR);
                             sb.append(File.separator);
-                        }
+                            sb.append(getEnvName());
+                            sb.append(File.separator);
+                            sb.append(getConfigName());
+                            sb.append(File.separator);
+                        } 
                         sb.append(split);
-                        if (new File(sb.toString()).exists()) {
+                        File file = new File(sb.toString());
+                        if (file.exists() && !file.isDirectory()) {
                             uploadedFiles.add("" + split);
                         }
                     }

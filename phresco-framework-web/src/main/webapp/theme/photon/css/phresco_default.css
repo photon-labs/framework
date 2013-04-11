@@ -279,7 +279,7 @@ input[type="password"] {
 }
 
 .header-background {
-	border-radius: 6px 6px 0 0;
+	border-radius: 10px 10px 0 0;
 	height: 30px;
 }
 
@@ -3603,7 +3603,7 @@ div.submit_input {
 
 /*** List Table ***/ 
 .tblheader {
-    border-radius: 6px 6px 0 0;
+    border-radius: 10px 10px 0 0;
     -webkit-border-top-left-radius: 10px 10px;
 	-webkit-border-top-right-radius: 10px 10px;
 }
@@ -4060,7 +4060,7 @@ div.submit_input {
 }
 
  .downloadContent {
-	height: 200px;
+	height: 250px;
 	overflow-y: hidden;
 } 
 
@@ -5880,6 +5880,10 @@ input[class*='chckBxAlign'] {
 	padding: 0 0 0 10px !important;
 }
 
+.repo-tab-width{
+	width: 100px;
+	}
+
 .table-chkbx {
 	width: 20px;
 }
@@ -6490,6 +6494,12 @@ color: #313131;
 	width: 295px !important;
 }
 
+.controls #userName {
+	width: 295px !important;
+	border: 1px solid #ccc !important;
+	padding: 2px 0px 7px 4px !important;
+}
+
 .envLabel {
 	margin-left: 20px;
     margin-top: -22px;
@@ -6728,4 +6738,9 @@ color: #313131;
 	float: right;
     margin-right: 12px;
     margin-top: 5px;
+}
+
+#formTestCase {
+	height: 101%; 
+	overflow: auto;
 }

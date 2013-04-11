@@ -79,7 +79,7 @@
 		
 		<!-- TestCaseId start -->
 		<div class="control-group" id="testCaseIdControl">
-			 <label class="accordion-control-label labelbold"><s:text name="label.testcase.Id"/></label>
+			 <label class="accordion-control-label labelbold"><span class="red">*</span>&nbsp;<s:text name="label.testcase.Id"/></label>
 			<div class="controls">
 				<input id="testCaseId" class="input-xlarge" type="text" value="<%= StringUtils.isNotEmpty(testCaseId) ? testCaseId : "" %>" <%= strDisable %>
 					name="testCaseId" placeholder='<s:text name="label.testCaseId.placeholder"/>'>
@@ -134,11 +134,17 @@
 		
 		<%	String passStr = "";
 			String failStr = "";
+			String blockedStr = "";
+			String notAppStr = "";
 			if (StringUtils.isNotEmpty(status)) { 
 		   		if (status.equals("pass")) {
 		        	passStr = "checked";
-		        } else {
+		        } else if (status.equals("fail")){
 		        	failStr = "checked";
+	        	} else if (status.equals("blocked")) {
+	        		blockedStr = "checked";
+	        	} else if (status.equals("notApplicable")){
+	        		notAppStr = "checked";
 	        	}
 	        }
 	    %>
@@ -149,16 +155,25 @@
 				<input id="status" class="input-xlarge" type="text" value="<%= StringUtils.isNotEmpty(status) ? status : "" %>"
 					name="status" placeholder='<s:text name="label.testcase.status.placeholder"/>'>
 			</div> --%>
-			<ul class="inputs-list">
+			<ul class="inputs-list" style="width: 21%; float: left;">
 					<li> 
-						<input type="radio" name="status" value="pass"  <%=passStr %>/> 
+						<input type="radio" name="status" value="pass" <%=passStr %>/> 
 						<span class="vAlignMiddle buildTypeSpan"><s:text name="label.testcase.success"/></span>
 					</li>
 					<li> 
 						<input type="radio" name="status" value="fail" <%=failStr %>/> 
 						<span class="vAlignMiddle buildTypeSpan"><s:text name="label.testcase.failure"/></span>
 					</li>
-				</ul>
+					<li> 
+						<input type="radio" name="status" value="notApplicable" <%=notAppStr %>/> 
+						<span class="vAlignMiddle buildTypeSpan"><s:text name="label.testcase.not.applicable"/></span>
+					</li>
+					<li> 
+						<input type="radio" name="status" value="blocked" <%=blockedStr %>/> 
+						<span class="vAlignMiddle buildTypeSpan"><s:text name="label.testcase.blocked"/></span>
+					</li>
+			</ul>
+			<div class="clear"></div>
 		</div>
 		<!-- Status ends -->
 		
@@ -192,7 +207,7 @@ $(document).ready(function() {
 	//$("#popupPage").modal('hide');
 	if(!isiPad()){
 		/* JQuery scroll bar */
-		$("#formTestCase").scrollbars();
+		//$("#formTestCase").scrollbars();
 	}
 	hideLoadingIcon();
 	$('#cancel').click(function() {
@@ -201,20 +216,23 @@ $(document).ready(function() {
 	});
 	
 	$('#createTestCase').click(function() {
-		showLoadingIcon();
+		//showLoadingIcon();
 		var param = getBasicParams();
-		validate('saveTestCases', $('#formTestCase'), $("#subcontainer"), param, 'Creating TestCase');
-		//loadContent('saveTestCases', $('#formTestCase'), $('#subcontainer'), param);
+		<% if(testCase == null) { %>
+			validate('saveTestCases', $('#formTestCase'), $("#subcontainer"), param, 'Creating TestCase');
+		<% } else { %>
+			validate('saveTestCases', $('#formTestCase'), $("#subcontainer"), param, 'Updating TestCase');
+		<% } %>
 	});
 	
 });	
 	
 	function findError(data) {
 		hideLoadingIcon();
-		if (!isBlank(data.featureIdError)) {
-			showError($("#featureIdControl"), $("#featureIdError"), data.featureIdError);
+		if (!isBlank(data.testCaseIdError)) {
+			showError($("#testCaseIdControl"), $("#testCaseIdError"), data.testCaseIdError);
 		} else {
-			hideError($("#featureIdControl"), $("#featureIdError"));
+			hideError($("#testCaseIdControl"), $("#testCaseIdError"));
 		}
 	}
 </script> 
