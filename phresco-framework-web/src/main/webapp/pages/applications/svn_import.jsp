@@ -322,7 +322,7 @@
 			$("#userName").val("<%= LoginId %>");
 			<%
 				String encodedpassword = (String) session.getAttribute(FrameworkConstants.SESSION_USER_PASSWORD);
-				String decryptedPass = new String(Base64.decodeBase64(encodedpassword));
+				String decryptedPass = new String(Base64.decodeBase64(encodedpassword.getBytes()));
 			%>
 			$("#password").val("<%= decryptedPass %>");
 			disableSvnFormDet();

@@ -35,6 +35,10 @@ import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.sonar.wsclient.Sonar;
+import org.sonar.wsclient.services.ProjectDeleteQuery;
+import org.sonar.wsclient.services.Resource;
+import org.sonar.wsclient.services.ResourceQuery;
 import org.w3c.dom.Element;
 
 import com.google.gson.Gson;
@@ -48,6 +52,7 @@ import com.photon.phresco.commons.model.TechnologyInfo;
 import com.photon.phresco.commons.model.User;
 import com.photon.phresco.configuration.ConfigurationInfo;
 import com.photon.phresco.exception.PhrescoException;
+import com.photon.phresco.framework.FrameworkConfiguration;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
 import com.photon.phresco.framework.api.ProjectManager;
@@ -612,11 +617,32 @@ public class Projects extends FrameworkBaseAction {
     					projectName = funPom.getGroupId() + COLON + funPom.getArtifactId() + COLON + sonarProfile;
     				}
     			}
-    			Runtime.getRuntime().exec("curl -u admin:admin -X DELETE " + util.getSonarHomeURL() + "/api/projects/" + projectName);
+    			String sonarUrl = util.getSonarHomeURL();
+    			if(StringUtils.isNotEmpty(getSonarContext())) {
+    				sonarUrl = util.getSonarHomeURL() + "/" + getSonarContext();
+    			}
+    			Sonar sonar = Sonar.create(sonarUrl, "admin", "admin");
+				Resource resource = sonar.find(ResourceQuery.create(projectName));
+				if(resource != null) {
+	    			ProjectDeleteQuery create = ProjectDeleteQuery.create(projectName);
+	    			sonar.delete(create);
+				}
     		}
     	}
     }
-
+    
+    private String getSonarContext() throws PhrescoException {
+    	FrameworkConfiguration frameworkConfig = PhrescoFrameworkFactory.getFrameworkConfig();
+	    String[] splittedString = frameworkConfig.getSonarReportPath().split("/");
+	    if(splittedString != null && splittedString.length != 0) {
+	    	if(splittedString[1].equals("dashboard")) {
+	    		return null;
+	    	}
+	    	return splittedString[1];
+	    }
+	    return null;
+    }
+    
     private List<String> getSonarProfile(ApplicationInfo appInfo) throws PhrescoException {
     	List<String> sonarTechReports = new ArrayList<String>(6);
     	StringBuilder builder = new StringBuilder();

@@ -377,7 +377,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 	 * @return
 	 */
 	public static String decryptString(String inputString) {
-        byte[] decodedBytes = Base64.decodeBase64(inputString);
+        byte[] decodedBytes = org.apache.commons.codec.binary.Base64.decodeBase64(inputString.getBytes());
         String decodedString = new String(decodedBytes);
 
         return decodedString;
