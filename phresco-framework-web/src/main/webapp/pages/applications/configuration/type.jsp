@@ -379,13 +379,13 @@
 		if(selectedType == "Server") {
 			if (serverType == "IIS") {
 				hideContext();
-				hideRemoteDeply();
+				hideDeployDir();
 				$('#iisDiv').css("display", "block");
 			}
 		}
 		
 		<% if (FrameworkConstants.ADD_CONFIG.equals(fromPage) || FrameworkConstants.EDIT_CONFIG.equals(fromPage)) {
-				if (CollectionUtils.isNotEmpty(options) && !options.contains(FrameworkConstants.REMOTE_DEPLOYMENT_OPTION)) { 
+				if (CollectionUtils.isNotEmpty(options) && !options.contains(FrameworkConstants.REMOTE_DEPLOYMENT_OPTION)) {
 		%>
 				hideRemoteDeply();
 		<%	
@@ -393,20 +393,22 @@
 			}
 		%>
 		
-		serverTypeSpecific();
+		<% if (FrameworkConstants.ADD_SETTINGS.equals(fromPage) || FrameworkConstants.EDIT_SETTINGS.equals(fromPage)) { %>
+			serverTypeSpecific();
+		<% } %>
 		 
 		$("#type").change(function() {
-			serverTypeSpecific();
+			<% if (FrameworkConstants.ADD_SETTINGS.equals(fromPage) || FrameworkConstants.EDIT_SETTINGS.equals(fromPage)) { %>
+				serverTypeSpecific();
+			<% } %>
+			
 			if ($(this).val() == "IIS") {
 				hideContext();
+				hideDeployDir();
 				$('#iisDiv').css("display", "block");
 			} else {
 				showContext();
 				$('#iisDiv').css("display", "none");
-			}
-			
-			if ($(this).val() == "IIS" || $(this).val() == "NodeJs") {
-				$("input[name='remoteDeployment']").attr("checked",false);
 			}
 			
 			technologyBasedRemoteDeploy();
@@ -537,7 +539,7 @@
 	
 	function serverTypeSpecific() {
 		var servertype = $('#type').val();
-		if (servertype == "NodeJs" || servertype == "NodeJs Mac" || servertype == "Sharepoint Server") {
+		if (servertype == "NodeJs" || servertype == "NodeJs Mac" || servertype == "Sharepoint Server" || servertype == "IIS") {
 			hideDeployDir();
 			hideRemoteDeply();
 		} else {

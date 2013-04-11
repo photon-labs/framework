@@ -19,7 +19,7 @@
 
 .qq-upload-button {
     display:block; /* or inline-block */
-    width: auto !important; padding: 3px 0; text-align:center;    
+	width: 128px; padding: 3px 0; text-align:center;
     /* background:#880000; border-bottom:1px solid #ddd;color:#fff; */
 }
 /* .qq-upload-button-hover {background:#cc0000;} */

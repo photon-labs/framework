@@ -1337,40 +1337,40 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 							XSSFWorkbook myWorkBook = new XSSFWorkbook(opc);
 							XSSFSheet mySheet = myWorkBook.getSheetAt(0);
 							rowIterator = mySheet.rowIterator();
-							 for (int i = 0; i <=2; i++) {
+							for (int i = 0; i <= 2; i++) {
 									rowIterator.next();
-								}
-			                    while (rowIterator.hasNext()) {
-			                		Row next = rowIterator.next();
-			                		if (StringUtils.isNotEmpty(getValue(next.getCell(2))) && !getValue(next.getCell(2)).equalsIgnoreCase("Total")) {
-			                			TestSuite createObject = createObject(next);
-			                        	excels.add(createObject);
-			                        	if (StringUtils.isNotEmpty(testSuiteName) && createObject.getName().equals(testSuiteName)) {
-			    	         				Cell successCell=next.getCell(3);
-			    	         				int pass = (int)success;
-			    	         				successCell.setCellValue(pass);
-			    	         				
-			    	         				Cell failureCell=next.getCell(4);
-			    	         				int fail = (int)failures;
-			    	         				failureCell.setCellValue(fail);
-			    	         				
-			    	         				Cell notExeCell=next.getCell(6);
-			    	         				int notExe = (int)notExecuted;
-			    	         				notExeCell.setCellValue(notExe);
-			    	         				
-			    	         				Cell totalCell=next.getCell(8);
-			    	         				int totalTestCases = (int)total;
-			    	         				totalCell.setCellValue(totalTestCases);
-			    	         			   
-			    	         			}
-			                		}
-			                    }
-			                    if (StringUtils.isNotEmpty(testSuiteName)) {
-				    	         	myInput.close();
-			         			    FileOutputStream outFile =new FileOutputStream(sb.toString());
-			         			    myWorkBook.write(outFile);
-			         			    outFile.close();
-			    	         }
+							}
+		                    while (rowIterator.hasNext()) {
+		                		Row next = rowIterator.next();
+		                		if (StringUtils.isNotEmpty(getValue(next.getCell(2))) && !getValue(next.getCell(2)).equalsIgnoreCase("Total")) {
+		                			TestSuite createObject = createObject(next);
+		                        	excels.add(createObject);
+		                        	if (StringUtils.isNotEmpty(testSuiteName) && createObject.getName().equals(testSuiteName)) {
+		    	         				Cell successCell=next.getCell(3);
+		    	         				int pass = (int)success;
+		    	         				successCell.setCellValue(pass);
+		    	         				
+		    	         				Cell failureCell=next.getCell(4);
+		    	         				int fail = (int)failures;
+		    	         				failureCell.setCellValue(fail);
+		    	         				
+		    	         				Cell notExeCell=next.getCell(6);
+		    	         				int notExe = (int)notExecuted;
+		    	         				notExeCell.setCellValue(notExe);
+		    	         				
+		    	         				Cell totalCell=next.getCell(8);
+		    	         				int totalTestCases = (int)total;
+		    	         				totalCell.setCellValue(totalTestCases);
+		    	         			   
+		    	         			}
+		                		}
+		                    }
+		                    if (StringUtils.isNotEmpty(testSuiteName)) {
+			    	         	myInput.close();
+		         			    FileOutputStream outFile =new FileOutputStream(sb.toString());
+		         			    myWorkBook.write(outFile);
+		         			    outFile.close();
+		                    }
 	       	        	} else {
 	   	                	FilenameFilter filter1 = new PhrescoFileFilter("", "xls");
 	   	     	            File[] listFiles1 = testDir.listFiles(filter1);
@@ -1430,14 +1430,14 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     
     private static TestSuite createObject(Row next) throws UnknownHostException, PhrescoException{
     	TestSuite testSuite = new TestSuite();
-    	if(next.getCell(2) != null) {
+    	if (next.getCell(2) != null) {
     		Cell cell = next.getCell(2);
     		String value = getValue(cell);
     		if(StringUtils.isNotEmpty(value)) {
     			testSuite.setName(value);
     		}
     	}
-    	if(next.getCell(3)!=null){
+    	if (next.getCell(3)!=null) {
     		Cell cell = next.getCell(3);
     		String value=getValue(cell);
     		if(StringUtils.isNotEmpty(value)) {
@@ -1445,7 +1445,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 	    		testSuite.setTests(pass);
     		}
     	}
-    	if(next.getCell(4)!=null){
+    	if (next.getCell(4)!=null) {
     		Cell cell = next.getCell(4);
     		String value=getValue(cell);
     		if(StringUtils.isNotEmpty(value)) {
@@ -1453,7 +1453,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 	    		testSuite.setFailures(fail);
     		}
     	}
-    	if(next.getCell(6)!=null){
+    	if (next.getCell(6)!=null) {
     		Cell cell = next.getCell(6);
     		String value=getValue(cell);
     		if(StringUtils.isNotEmpty(value)) {
@@ -1462,7 +1462,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     		}
     	}
     	
-    	if(next.getCell(8)!=null){
+    	if (next.getCell(8)!=null) {
     		Cell cell = next.getCell(8);
     		String value=getValue(cell);
     		if(StringUtils.isNotEmpty(value)) {
@@ -1470,7 +1470,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 	    		testSuite.setTotal(total);
     		}
     	}
-    	if(next.getCell(9)!=null){
+    	if (next.getCell(9)!=null) {
     		Cell cell=next.getCell(9);
     		String value=getValue(cell);
     		if(StringUtils.isNotEmpty(value)) {
