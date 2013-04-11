@@ -369,6 +369,14 @@
 		$('.jecEditableOption').click(function() {
 	       $('.jecEditableOption').text("");
 	    });
+		
+		$('#buildName').live('input propertychange', function(e) {
+			var str = $(this).val();
+			str = checkForSplChrExceptDot(str);
+			str = removeSpaces(str);
+			$(this).val(str);
+		});	
+
 	});
 	
 	//To focus first control in popup

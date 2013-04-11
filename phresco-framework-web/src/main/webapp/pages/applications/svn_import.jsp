@@ -40,6 +40,8 @@
 	String customerId = (String)request.getAttribute(FrameworkConstants.REQ_CUSTOMER_ID);
 	User userInfo = (User)session.getAttribute(FrameworkConstants.SESSION_USER_INFO);
 	Object commitableFilesObj = request.getAttribute(FrameworkConstants.REQ_COMMITABLE_FILES);
+	List<String> Messages = (List<String>)request.getAttribute(FrameworkConstants.REQ_LOG_MESSAGES);
+	
 	List<SVNStatus> commitableFiles = null;
 	if (commitableFilesObj != null) {
 		commitableFiles = (List<SVNStatus>) commitableFilesObj;
@@ -173,7 +175,17 @@
 			<label  class="control-label labelbold popupLbl"><span class="red hideContent" id="commitMsgSpan">*</span> <s:text name="lbl.commit.message"/></label> 
 			<div class="controls">
 				 <textarea class="appinfo-desc input-xlarge" maxlength="150" title="<s:text name="title.150.chars"/>" class="xlarge" 
-		        	id="commitMessage" name="commitMessage"></textarea> 
+		        	id="commitMessage" name="commitMessage"></textarea>
+	        	<a href="#" id="logMessagesAnchor"> <img id="img" class="logHistory" src="images/search_icontop.png"
+				class="iconSizeinList" title="Log History" /> </a>
+			</div>
+		</div>
+		<div id = "logDiv" class="control-group">
+			<label  class="control-label labelbold popupLbl"><s:text name="lbl.select.log"/></label> 
+			<div class="controls">
+				<select id="logMessages" name="logMessages">
+					<option value="Select">---Select---</option>
+				</select> 
 			</div>
 		</div>
 	<% } %>
@@ -183,6 +195,7 @@
 	$(document).ready(function() {
 		hidePopuploadingIcon();
 		$("#repoUrl").focus();
+		$('#logDiv').hide();
 		 // when clicking on save button, popup should not hide
         $('.popupOk').attr("data-dismiss", "");
 		 
@@ -193,6 +206,14 @@
 		} else {
 			svnCredentialMark();
 		}
+		
+		$('.logHistory').click(function() {
+			fetchMessages();
+    	});
+		
+		$('#logMessages').blur(function() {
+			$('#logDiv').hide();
+		});
 
 		$("#repoUrl").blur(function(event) {
 	       var repoUrl = $("input[name='repoUrl']").val();
@@ -210,7 +231,12 @@
 	  	$('#credentials').click(function() {
 		  	svnCredentialMark();
 		});
-			 
+	  	
+	  	$('#logMessages').bind('change', function() {
+	  		 $('#commitMessage').val($('#logMessages').val());
+	  		$('#logDiv').hide();
+		});
+	  	
 	  	$('[name=repoType]').change(function() {
 		  	extraInfoDisplay();
 		  	if ($("[name=repoType]").val() == 'svn') {
@@ -283,6 +309,44 @@
 				$("#errMsg").html("<s:text name='lbl.no.change'/>");
 		<% } %>
 	});
+	
+	function showSelect() {
+		var selectList = document.getElementById("logMessages");
+		if (selectList.options.length > 1) { 
+			hidePopuploadingIcon();
+			$('#logDiv').show();
+			$('#logMessages').focus();
+	    } else {
+	    	$('#logDiv').hide();
+	    }
+	}
+	
+	function fetchMessages() {
+		$("#errMsg").html(" ");
+  		if ($("#userName").val() != '' && $("#password").val() != '' && !isValidUrl($("input[name='repoUrl']").val())) {
+		var params = "username=";
+	    params = params.concat($("#userName").val());
+	    params = params.concat("&password=")
+	    params = params.concat($("#password").val());
+	    showPopuploadingIcon();
+		loadContent('fetchLogMessages', $('#repoDetails'), '', params, true);
+  		} else {
+  			$("#errMsg").html("<s:text name='lbl.enter.valid.credentials.or.url'/>");
+  		}
+	}
+	
+	function selectList(data) {
+  		var logs = data.restrictedLogs;
+  		var selectList = document.getElementById("logMessages");
+  		selectList.options.length = 1;
+		for (i in logs) {
+			$('#logMessages').append($('<option>', { 
+		        value: logs[i],
+		        text : logs[i] 
+		    }));
+		}
+		showSelect();
+  	}
 
 	//base on the repo type credential info need to be displayed
 	function extraInfoDisplay() {

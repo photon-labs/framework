@@ -105,6 +105,7 @@ public interface FrameworkConstants {
     String REQ_CURRENT_APP_NAME = "currentAppName";
     String REQ_DEFAULT_SCOPE = "compile";
     String REQ_SELECTED_FEATURES = "selectedFeatures";
+    String REQ_LOG_MESSAGES = "logMessages";
     String REQ_SELECTED_DOWNLOADINFO = "selectedDownloadInfo";
     String REQ_DEFAULT_FEATURES = "defaultFeatures";
     String REQ_HAS_MODULES = "hasModules";
@@ -142,6 +143,7 @@ public interface FrameworkConstants {
     String REQ_VALUE = "value";
     
     String DO_NOT_CHECKIN_DIR = "do_not_checkin";
+    String FETCH_LOG_MESSAGES = "fetchLogMessages";
     String SETTINGS_XML = "-settings.xml";
     String ARCHIVES = "archives";
     String CUMULATIVE = "cumulativeReports";
@@ -1657,6 +1659,8 @@ public interface FrameworkConstants {
 		String EXCEPTION_FEATURE_CONFIGURATION = "excep.hdr.feature.configuration";
 		String EXCEPTION_MANDAOTRY_MSG = "except.mandatory.msg";
 		String EXCEPTION_LOG_FILE_DOWNLOAD_NOT_AVAILABLE = "excep.hdr.func.log.download.not.available";
+		String BUILDNAME_ALREADY_EXIST = "excep.build.name.exist";
+		String BUILDNUMBER_ALREADY_EXIST = "excep.build.number.exist";
 		
 		/*****************************
 	     * Success Action Messages

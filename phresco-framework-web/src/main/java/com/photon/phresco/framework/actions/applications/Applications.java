@@ -89,8 +89,8 @@ public class Applications extends FrameworkBaseAction {
     private String repoUrl = "";
     private String commitMessage = "";
     private List<String> commitableFiles = null;
-
     private List<DownloadInfo> servers = null;
+    List<String> restrictedLogs =  null;
 
     private String technology = "";
     
@@ -105,7 +105,8 @@ public class Applications extends FrameworkBaseAction {
     private String defaultOptTxt = "";
     private String action = "";
     private List<String> jsonData = null;
-    private boolean isRepoExist;
+    private boolean isRepoExistForCommit;
+    private boolean isRepoExistForUpdate;
     private String actionType = "";
     private String customerId = "";
     private String projectId = "";
@@ -735,44 +736,64 @@ public class Applications extends FrameworkBaseAction {
 		return APP_IMPORT;
 	}
 	
-	public String repoExistCheck() {
+	public String repoExistCheckForCommit() {
 		updateProjectPopup();
 
 		return SUCCESS;
 	}
-
-	public String updateProjectPopup() {
-		S_LOGGER.debug("Entering Method  Applications.updateProjectPopup()");
+	
+	private String getConnectionUrl() {
 		try {
-			isRepoExist = true;
-			String connectionUrl = "";
 			ApplicationInfo applicationInfo = getApplicationInfo();
+			setReqAttribute(REQ_APP_INFO, applicationInfo);
 			String appDirName = applicationInfo.getAppDirName();
 			FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
 			PomProcessor processor = frameworkUtil.getPomProcessor(appDirName);
 			Scm scm = processor.getSCM();
-			if (scm != null) {
-				connectionUrl = scm.getConnection();
+			if (scm != null && !scm.getConnection().isEmpty()) {
+					return scm.getConnection();
 			}
-			
+		} catch (PhrescoException e) {
+			if(s_debugEnabled){
+				S_LOGGER.error(e.getLocalizedMessage());
+			}
+		}
+
+		return "";
+	}
+	
+	public String repoExistCheckForUpdate() {
+		isRepoExistForUpdate = true;
+		if(getConnectionUrl().isEmpty()) {
+			setRepoExistForUpdate(false);
+		}
+		
+		return SUCCESS;
+	}
+
+	public String updateProjectPopup() {
+		if (s_debugEnabled) {
+			S_LOGGER.debug("Entering Method  Applications.updateProjectPopup()");
+		}
+		try {
+			isRepoExistForCommit = true;
 			List<SVNStatus> commitableFiles = null;
-			if (COMMIT.equals(action) && !connectionUrl.contains(BITKEEPER)) {
+			if (COMMIT.equals(action) && !getConnectionUrl().contains(BITKEEPER)) {
 				commitableFiles = svnCommitableFiles();
 			}
 			setReqAttribute(REQ_COMMITABLE_FILES, commitableFiles);
 			setReqAttribute(REQ_APP_ID, getAppId());
 			setReqAttribute(REQ_PROJECT_ID, getProjectId());
 			setReqAttribute(REQ_CUSTOMER_ID, getCustomerId());
-			setReqAttribute(REPO_URL, connectionUrl);
+			setReqAttribute(REPO_URL, getConnectionUrl());
 			setReqAttribute(REQ_FROM_TAB, UPDATE);
 			setReqAttribute(REQ_ACTION, action);
-			setReqAttribute(REQ_APP_INFO, applicationInfo);
 		} catch (PhrescoException e) {
-			if(s_debugEnabled){
+			if (s_debugEnabled){
 				S_LOGGER.error(e.getLocalizedMessage());
 			}
 			if (e.getLocalizedMessage().contains(IS_NOT_WORKING_COPY)) {
-				setRepoExist(false);
+				setRepoExistForCommit(false);
 			}
 			return showErrorPopup(e, "Update Application");
 		}
@@ -781,7 +802,9 @@ public class Applications extends FrameworkBaseAction {
 	}
 
 	public String updateGitProject() {
-		S_LOGGER.debug("Entering Method  Applications.updateGitProject()");
+		if (s_debugEnabled) {
+			S_LOGGER.debug("Entering Method  Applications.updateGitProject()");
+		}
 		SCMManagerImpl scmi = new SCMManagerImpl();
 		try {
 			ApplicationInfo applicationInfo = getApplicationInfo();
@@ -843,7 +866,9 @@ public class Applications extends FrameworkBaseAction {
 	}
 
 	public String updateSVNProject() {
-		S_LOGGER.debug("Entering Method  Applications.updateGitProject()");
+		if (s_debugEnabled) {
+			S_LOGGER.debug("Entering Method  Applications.updateGitProject()");
+		}
 		SCMManagerImpl scmi = new SCMManagerImpl();
 		revision = !HEAD_REVISION.equals(revision) ? revisionVal : revision;
 		try {
@@ -1030,6 +1055,30 @@ public class Applications extends FrameworkBaseAction {
         }
         
         return SUCCESS;
+	}
+	public String fetchLogMessages() throws PhrescoException {
+		try {
+			SCMManagerImpl scmi = new SCMManagerImpl();
+			List<String> svnLogMessages = scmi.getSvnLogMessages(getRepoUrl(), getUsername(), getPassword());
+			restrictedLogs = restrictLogs(svnLogMessages);
+		} catch (PhrescoException e) {
+			throw e;
+		}
+		return SUCCESS;
+	}
+	
+	private List<String> restrictLogs(List<String> svnLogMessages) {
+		List<String> Messages = new ArrayList<String>();
+		if (svnLogMessages.size() > 5) {
+			for(int i = svnLogMessages.size()-5; i<= svnLogMessages.size()-1; i++) {
+				Messages.add(svnLogMessages.get(i));
+			} 
+		} else {
+			for(int i = 0; i<= svnLogMessages.size()-1; i++) {
+				Messages.add(svnLogMessages.get(i));
+			} 
+		}
+		return Messages;
 	}
 	
 	/**
@@ -1222,14 +1271,6 @@ public class Applications extends FrameworkBaseAction {
         return actionType;
     }
 
-	public boolean isRepoExist() {
-		return isRepoExist;
-	}
-
-	public void setRepoExist(boolean isRepoExist) {
-		this.isRepoExist = isRepoExist;
-	}
-
 	public String getCustomerId() {
 		return customerId;
 	}
@@ -1252,5 +1293,29 @@ public class Applications extends FrameworkBaseAction {
 
 	public void setAppId(String appId) {
 		this.appId = appId;
+	}
+
+	public List<String> getRestrictedLogs() {
+		return restrictedLogs;
+	}
+
+	public void setRestrictedLogs(List<String> restrictedLogs) {
+		this.restrictedLogs = restrictedLogs;
+	}
+
+	public boolean isRepoExistForUpdate() {
+		return isRepoExistForUpdate;
+	}
+
+	public void setRepoExistForUpdate(boolean isRepoExistForUpdate) {
+		this.isRepoExistForUpdate = isRepoExistForUpdate;
+	}
+
+	public boolean isRepoExistForCommit() {
+		return isRepoExistForCommit;
+	}
+
+	public void setRepoExistForCommit(boolean isRepoExistForCommit) {
+		this.isRepoExistForCommit = isRepoExistForCommit;
 	}
 }
