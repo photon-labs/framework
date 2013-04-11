@@ -6729,3 +6729,8 @@ color: #313131;
     margin-right: 12px;
     margin-top: 5px;
 }
+
+#formTestCase {
+	height: 101%; 
+	overflow: auto;
+}

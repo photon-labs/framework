@@ -1706,3 +1706,8 @@ label {
     top: 160px;
     right: -10px;
 }
+
+#formTestCase {
+	height: 101% !important; 
+	overflow: auto;
+}

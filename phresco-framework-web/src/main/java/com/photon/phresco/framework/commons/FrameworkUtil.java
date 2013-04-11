@@ -18,11 +18,13 @@
 package com.photon.phresco.framework.commons;
 
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -670,6 +672,9 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	selectElement.setAttribute("cssClass", pm.getCssClass());
     	selectElement.setAttribute("options", options);
     	selectElement.setAttribute("id", pm.getId());
+    	if (CollectionUtils.isEmpty(pm.getObjectValue())) {
+    		selectElement.setAttribute("dependency", pm.getDependency()	);
+    	}
     	selectElement.setAttribute("isMultiple", pm.isMultiple());
     	selectElement.setAttribute("ctrlsId", pm.getControlId());
     	selectElement.setAttribute("onChangeFunction", pm.getOnChangeFunction());
@@ -1074,7 +1079,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	StringBuilder sb = new StringBuilder();
     	sb.append("<div class='controls'>")
     	.append("<select class=\"input-xlarge $cssClass$\" ")
-    	.append("id=\"$id$\" name=\"$name$\" isMultiple=\"$isMultiple$\" ")
+    	.append("id=\"$id$\" name=\"$name$\" dependencyAttr=\"$dependency$\" isMultiple=\"$isMultiple$\" ")
     	.append("additionalParam=\"\" ")
     	.append("onfocus=\"setPreviousDependent(this);\" ")
     	.append("onchange=\"$onChangeFunction$\">")
@@ -1309,12 +1314,12 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     }
     
 
-	public List<TestSuite> readManualTestSuiteFile(String filePath, String testSuiteName, float success, float failures, float notExecuted, float total) {
-		List<TestSuite> testSuites = readTestSuites(filePath, testSuiteName, success, failures, notExecuted, total);
+	public List<TestSuite> readManualTestSuiteFile(String filePath) {
+		List<TestSuite> testSuites = readTestSuites(filePath);
 		return testSuites;
 	}
 
-    public  List<TestSuite> readTestSuites(String filePath, String testSuiteName, float success, float failures, float notExecuted, float total)  {
+    public  List<TestSuite> readTestSuites(String filePath)  {
             List<TestSuite> excels = new ArrayList<TestSuite>();
             Iterator<Row> rowIterator = null;
             try {
@@ -1337,40 +1342,16 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 							XSSFWorkbook myWorkBook = new XSSFWorkbook(opc);
 							XSSFSheet mySheet = myWorkBook.getSheetAt(0);
 							rowIterator = mySheet.rowIterator();
-							for (int i = 0; i <= 2; i++) {
+							 for (int i = 0; i <=2; i++) {
 									rowIterator.next();
-							}
-		                    while (rowIterator.hasNext()) {
-		                		Row next = rowIterator.next();
-		                		if (StringUtils.isNotEmpty(getValue(next.getCell(2))) && !getValue(next.getCell(2)).equalsIgnoreCase("Total")) {
-		                			TestSuite createObject = createObject(next);
-		                        	excels.add(createObject);
-		                        	if (StringUtils.isNotEmpty(testSuiteName) && createObject.getName().equals(testSuiteName)) {
-		    	         				Cell successCell=next.getCell(3);
-		    	         				int pass = (int)success;
-		    	         				successCell.setCellValue(pass);
-		    	         				
-		    	         				Cell failureCell=next.getCell(4);
-		    	         				int fail = (int)failures;
-		    	         				failureCell.setCellValue(fail);
-		    	         				
-		    	         				Cell notExeCell=next.getCell(6);
-		    	         				int notExe = (int)notExecuted;
-		    	         				notExeCell.setCellValue(notExe);
-		    	         				
-		    	         				Cell totalCell=next.getCell(8);
-		    	         				int totalTestCases = (int)total;
-		    	         				totalCell.setCellValue(totalTestCases);
-		    	         			   
-		    	         			}
-		                		}
-		                    }
-		                    if (StringUtils.isNotEmpty(testSuiteName)) {
-			    	         	myInput.close();
-		         			    FileOutputStream outFile =new FileOutputStream(sb.toString());
-		         			    myWorkBook.write(outFile);
-		         			    outFile.close();
-		                    }
+								}
+			                    while (rowIterator.hasNext()) {
+			                		Row next = rowIterator.next();
+			                		if (StringUtils.isNotEmpty(getValue(next.getCell(2))) && !getValue(next.getCell(2)).equalsIgnoreCase("Total")) {
+			                			TestSuite createObject = createObject(next);
+			                        	excels.add(createObject);
+			                		}
+			                    }
 	       	        	} else {
 	   	                	FilenameFilter filter1 = new PhrescoFileFilter("", "xls");
 	   	     	            File[] listFiles1 = testDir.listFiles(filter1);
@@ -1393,31 +1374,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 		                		if (StringUtils.isNotEmpty(getValue(next.getCell(2))) && !getValue(next.getCell(2)).equalsIgnoreCase("Total")) {
 		                			TestSuite createObject = createObject(next);
 		                        	excels.add(createObject);
-		                        	if (StringUtils.isNotEmpty(testSuiteName) && createObject.getName().equals(testSuiteName)) {
-		    	         				Cell successCell=next.getCell(3);
-		    	         				int pass = (int)success;
-		    	         				successCell.setCellValue(pass);
-		    	         				
-		    	         				Cell failureCell=next.getCell(4);
-		    	         				int fail = (int)failures;
-		    	         				failureCell.setCellValue(fail);
-		    	         				
-		    	         				Cell notExeCell=next.getCell(6);
-		    	         				int notExe = (int)notExecuted;
-		    	         				notExeCell.setCellValue(notExe);
-		    	         				
-		    	         				Cell totalCell=next.getCell(8);
-		    	         				int totalTestCases = (int)total;
-		    	         				totalCell.setCellValue(totalTestCases);
-		    	         			   
-		    	         			}
 		                		}
-		                    }
-		                    if (StringUtils.isNotEmpty(testSuiteName)) {
-			    	         	myInput.close();
-		         			    FileOutputStream outFile =new FileOutputStream(sb.toString());
-		         			    myWorkBook.write(outFile);
-		         			    outFile.close();
 		                    }
 	   	                }
        	        	}
@@ -1430,14 +1387,14 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     
     private static TestSuite createObject(Row next) throws UnknownHostException, PhrescoException{
     	TestSuite testSuite = new TestSuite();
-    	if (next.getCell(2) != null) {
+    	if(next.getCell(2) != null) {
     		Cell cell = next.getCell(2);
     		String value = getValue(cell);
     		if(StringUtils.isNotEmpty(value)) {
     			testSuite.setName(value);
     		}
     	}
-    	if (next.getCell(3)!=null) {
+    	if(next.getCell(3)!=null){
     		Cell cell = next.getCell(3);
     		String value=getValue(cell);
     		if(StringUtils.isNotEmpty(value)) {
@@ -1445,7 +1402,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 	    		testSuite.setTests(pass);
     		}
     	}
-    	if (next.getCell(4)!=null) {
+    	if(next.getCell(4)!=null){
     		Cell cell = next.getCell(4);
     		String value=getValue(cell);
     		if(StringUtils.isNotEmpty(value)) {
@@ -1453,7 +1410,15 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 	    		testSuite.setFailures(fail);
     		}
     	}
-    	if (next.getCell(6)!=null) {
+    	if(next.getCell(5)!=null){
+    		Cell cell = next.getCell(5);
+    		String value=getValue(cell);
+    		if(StringUtils.isNotEmpty(value)) {
+	    		float notApp=Float.parseFloat(value);
+	    		testSuite.setNotApplicable(notApp);
+    		}
+    	}
+    	if(next.getCell(6)!=null){
     		Cell cell = next.getCell(6);
     		String value=getValue(cell);
     		if(StringUtils.isNotEmpty(value)) {
@@ -1461,8 +1426,15 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 	    		testSuite.setErrors(notExecuted);
     		}
     	}
-    	
-    	if (next.getCell(8)!=null) {
+    	if(next.getCell(7)!=null){
+    		Cell cell = next.getCell(7);
+    		String value=getValue(cell);
+    		if(StringUtils.isNotEmpty(value)) {
+	    		float blocked=Float.parseFloat(value);
+	    		testSuite.setBlocked(blocked);
+    		}
+    	}
+    	if(next.getCell(8)!=null){
     		Cell cell = next.getCell(8);
     		String value=getValue(cell);
     		if(StringUtils.isNotEmpty(value)) {
@@ -1470,7 +1442,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 	    		testSuite.setTotal(total);
     		}
     	}
-    	if (next.getCell(9)!=null) {
+    	if(next.getCell(9)!=null){
     		Cell cell=next.getCell(9);
     		String value=getValue(cell);
     		if(StringUtils.isNotEmpty(value)) {
@@ -1481,12 +1453,12 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	return testSuite;
 	}
     
-    public List<TestCase> readManualTestCaseFile(String filePath, String fileName, String testId, String testSteps, String expected, String actual, String status,String bugComment) throws PhrescoException {
-		List<TestCase> testCases = readTestCase(filePath, fileName, testId, testSteps, expected, actual, status, bugComment);
+    public List<TestCase> readManualTestCaseFile(String filePath, String fileName, com.photon.phresco.commons.model.TestCase testCase) throws PhrescoException {
+		List<TestCase> testCases = readTestCase(filePath, fileName, testCase);
 		return testCases;
 	}
     
-    private List<TestCase> readTestCase(String filePath,String fileName, String testId, String testSteps, String expected, String actual, String status, String bugComment) throws PhrescoException {
+    private List<TestCase> readTestCase(String filePath,String fileName,com.photon.phresco.commons.model.TestCase tstCase) throws PhrescoException {
     	 List<TestCase> testCases = new ArrayList<TestCase>();
     	 try {
     		 File testDir = new File(filePath);
@@ -1519,49 +1491,63 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 			    	         		if (StringUtils.isNotEmpty(getValue(next.getCell(1)))) {
 			    	         			TestCase createObject = readTest(next);
 			    	         			testCases.add(createObject);
-			    	         			if (StringUtils.isNotEmpty(testId) && createObject.getFeatureId().equals(testId)) {
+			    	         			if (tstCase != null && createObject.getTestCaseId().equals(tstCase.getTestCaseId())) {
 			    	         				Cell stepsCell=next.getCell(5);
-			    	         				stepsCell.setCellValue(testSteps);
+			    	         				stepsCell.setCellValue(tstCase.getSteps());
 			    	         				
 			    	         				Cell expectedCell=next.getCell(8);
-			    	         				expectedCell.setCellValue(expected);
+			    	         				expectedCell.setCellValue(tstCase.getExpectedResult());
 			    	         				
 			    	         				Cell actualCell=next.getCell(9);
-			    	         				actualCell.setCellValue(actual);
+			    	         				actualCell.setCellValue(tstCase.getActualResult());
 			    	         				
 			    	         				Cell statusCell=next.getCell(10);
-			    	         				statusCell.setCellValue(status);
+			    	         				statusCell.setCellValue(tstCase.getStatus());
 			    	         				
 			    	         				Cell commentCell=next.getCell(13);
-			    	         				commentCell.setCellValue(bugComment);
+			    	         				commentCell.setCellValue(tstCase.getBugComment());
 			    	         			   
 			    	         			}
 			    	         		}
 			    	         		
 				    	         }
-				    	         if (StringUtils.isNotEmpty(testId)) {
+				    	         if (StringUtils.isNotEmpty(tstCase.getTestCaseId())) {
 			    	         		float totalPass = 0;
 			    					float totalFail = 0;
+			    					float totalNotApplicable = 0;
+			    					float totalBlocked = 0;
 			    					float notExecuted = 0;
 			    					float totalTestCases = 0;
 			    	         		for (TestCase testCase: testCases) {
 			    	         			String testCaseStatus = testCase.getStatus();
 										if(testCaseStatus.equalsIgnoreCase("Pass") || testCaseStatus.equalsIgnoreCase("Success")) {
 											totalPass = totalPass + 1;
-										} else if(testCaseStatus.equalsIgnoreCase("Fail") || testCaseStatus.equalsIgnoreCase("Failure")) {
+										} else if (testCaseStatus.equalsIgnoreCase("Fail") || testCaseStatus.equalsIgnoreCase("Failure")) {
 											totalFail = totalFail + 1;
-										} 
+										} else if (testCaseStatus.equalsIgnoreCase("notApplicable")) {
+											totalNotApplicable = totalNotApplicable + 1;
+										} else if (testCaseStatus.equalsIgnoreCase("blocked")) {
+											totalBlocked = totalBlocked + 1;
+										}
 										
-										if (testCase.getFeatureId().equals(testId) && !testCase.getStatus().equalsIgnoreCase("Pass") 
+										String testId = tstCase.getTestCaseId();
+										String status = tstCase.getStatus();
+										if (testCase.getTestCaseId().equals(testId) && !testCase.getStatus().equalsIgnoreCase("Pass") 
 												&& !testCase.getStatus().equalsIgnoreCase("success")
 												&& status.equalsIgnoreCase("Pass") || status.equalsIgnoreCase("success")) {
 											totalPass = totalPass +1;
-										} else if (testCase.getFeatureId().equals(testId)&& !testCase.getStatus().equalsIgnoreCase("Fail") 
+										} else if (testCase.getTestCaseId().equals(testId)&& !testCase.getStatus().equalsIgnoreCase("Fail") 
 												&& !testCase.getStatus().equalsIgnoreCase("failure")
 												&& status.equalsIgnoreCase("Fail") || status.equalsIgnoreCase("failure")) {
 											totalFail = totalFail + 1;
+										}  else if (testCase.getTestCaseId().equals(testId)&& !testCase.getStatus().equalsIgnoreCase("notApplicable") 
+												&& status.equalsIgnoreCase("notApplicable")) {
+											totalNotApplicable = totalNotApplicable + 1;
+										} else if (testCase.getTestCaseId().equals(testId)&& !testCase.getStatus().equalsIgnoreCase("blocked") 
+												&& status.equalsIgnoreCase("blocked")) {
+											totalBlocked = totalBlocked + 1;
 										}
-										totalTestCases = totalPass + totalFail + notExecuted;
+										totalTestCases = totalPass + totalFail + notExecuted + totalNotApplicable + totalBlocked;
 										XSSFSheet mySheet1 = myWorkBook.getSheetAt(0);
 										rowIterator = mySheet1.rowIterator();
 										 for (int i = 0; i <=2; i++) {
@@ -1572,25 +1558,16 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 					                		if (StringUtils.isNotEmpty(getValue(next1.getCell(2))) && !getValue(next1.getCell(2)).equalsIgnoreCase("Total")) {
 					                			TestSuite createObject = createObject(next1);
 					                        	if (StringUtils.isNotEmpty(testId) && createObject.getName().equals(fileName)) {
-					    	         				Cell successCell=next1.getCell(3);
-					    	         				int pass = (int)totalPass;
-					    	         				successCell.setCellValue(pass);
-					    	         				
-					    	         				Cell failureCell=next1.getCell(4);
-					    	         				int fail = (int)totalFail;
-					    	         				failureCell.setCellValue(fail);
-					    	         				Cell cell = next1.getCell(8);
-					    	         				double numericCellValue = cell.getNumericCellValue();
-					    	         				
-					    	         				Cell notExeCell=next1.getCell(6);
-					    	         				int notExe = (int) (numericCellValue - (pass + fail));
-					    	         				notExeCell.setCellValue(notExe);
+					    	         				updateIndex(totalPass,
+															totalFail,
+															totalNotApplicable,
+															totalBlocked, next1);
 					    	         			}
 					                		}
 					                    }
 			    	         		}
 				    	         }
-				    	         if (StringUtils.isNotEmpty(testId)) {
+				    	         if (StringUtils.isNotEmpty(tstCase.getTestCaseId())) {
 				    	         	myInput.close();
 	    	         			    FileOutputStream outFile =new FileOutputStream(sb.toString());
 	    	         			    myWorkBook.write(outFile);
@@ -1613,55 +1590,44 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 				         for (int j = 0; j < numberOfSheets; j++) {
 				        	 HSSFSheet mySheet = myWorkBook.getSheetAt(j);
 				        	 if(mySheet.getSheetName().equals(fileName)) {
-				        		 Iterator<Row> rowIterator = mySheet.rowIterator();
-				    	         for (int i = 0; i <=23; i++) {
-				    					rowIterator.next();
-				    				}
-				    	         while (rowIterator.hasNext()) {
-			    	         		Row next = rowIterator.next();
-			    	         		if (StringUtils.isNotEmpty(getValue(next.getCell(1)))) {
-			    	         			TestCase createObject = readTest(next);
-			    	         			testCases.add(createObject);
-			    	         			if (StringUtils.isNotEmpty(testId) && createObject.getFeatureId().equals(testId)) {
-			    	         				Cell stepsCell=next.getCell(5);
-			    	         				stepsCell.setCellValue(testSteps);
-			    	         				
-			    	         				Cell expectedCell=next.getCell(8);
-			    	         				expectedCell.setCellValue(expected);
-			    	         				
-			    	         				Cell actualCell=next.getCell(9);
-			    	         				actualCell.setCellValue(actual);
-			    	         				
-			    	         				Cell statusCell=next.getCell(10);
-			    	         				statusCell.setCellValue(status);
-			    	         				
-			    	         				Cell commentCell=next.getCell(13);
-			    	         				commentCell.setCellValue(bugComment);
-			    	         			   
-			    	         			}
-			    	         		}
-				    	         }
-				    	         if (StringUtils.isNotEmpty(testId)) {
-				    	         		float totalPass = 0;
+				        		 Iterator<Row> rowIterator;
+				        		 readTestFromSheet(tstCase, testCases, mySheet);
+				    	         if (StringUtils.isNotEmpty(tstCase.getTestCaseId())) {
+				    	        	 float totalPass = 0;
 				    					float totalFail = 0;
+				    					float totalNotApplicable = 0;
+				    					float totalBlocked = 0;
 				    					float notExecuted = 0;
+				    					float totalTestCases = 0;
 				    	         		for (TestCase testCase: testCases) {
 				    	         			String testCaseStatus = testCase.getStatus();
 											if(testCaseStatus.equalsIgnoreCase("Pass") || testCaseStatus.equalsIgnoreCase("Success")) {
 												totalPass = totalPass + 1;
-											} else if(testCaseStatus.equalsIgnoreCase("Fail") || testCaseStatus.equalsIgnoreCase("Failure")) {
+											} else if (testCaseStatus.equalsIgnoreCase("Fail") || testCaseStatus.equalsIgnoreCase("Failure")) {
 												totalFail = totalFail + 1;
-											} 
-											
-											if (testCase.getFeatureId().equals(testId) && !testCase.getStatus().equalsIgnoreCase("Pass") 
+											} else if (testCaseStatus.equalsIgnoreCase("notApplicable")) {
+												totalNotApplicable = totalNotApplicable + 1;
+											} else if (testCaseStatus.equalsIgnoreCase("blocked")) {
+												totalBlocked = totalBlocked + 1;
+											}
+											String testId = tstCase.getTestCaseId();
+											String status = tstCase.getStatus();
+											if (testCase.getTestCaseId().equals(testId) && !testCase.getStatus().equalsIgnoreCase("Pass") 
 													&& !testCase.getStatus().equalsIgnoreCase("success")
 													&& status.equalsIgnoreCase("Pass") || status.equalsIgnoreCase("success")) {
 												totalPass = totalPass +1;
-											} else if (testCase.getFeatureId().equals(testId)&& !testCase.getStatus().equalsIgnoreCase("Fail") 
+											} else if (testCase.getTestCaseId().equals(testId)&& !testCase.getStatus().equalsIgnoreCase("Fail") 
 													&& !testCase.getStatus().equalsIgnoreCase("failure")
 													&& status.equalsIgnoreCase("Fail") || status.equalsIgnoreCase("failure")) {
 												totalFail = totalFail + 1;
+											}  else if (testCase.getTestCaseId().equals(testId)&& !testCase.getStatus().equalsIgnoreCase("notApplicable") 
+													&& status.equalsIgnoreCase("notApplicable")) {
+												totalNotApplicable = totalNotApplicable + 1;
+											} else if (testCase.getTestCaseId().equals(testId)&& !testCase.getStatus().equalsIgnoreCase("blocked") 
+													&& status.equalsIgnoreCase("blocked")) {
+												totalBlocked = totalBlocked + 1;
 											}
+											totalTestCases = totalPass + totalFail + notExecuted + totalNotApplicable + totalBlocked;
 											HSSFSheet mySheet1 = myWorkBook.getSheetAt(0);
 											rowIterator = mySheet1.rowIterator();
 											 for (int i = 0; i <=2; i++) {
@@ -1672,25 +1638,18 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 						                		if (StringUtils.isNotEmpty(getValue(next1.getCell(2))) && !getValue(next1.getCell(2)).equalsIgnoreCase("Total")) {
 						                			TestSuite createObject = createObject(next1);
 						                        	if (StringUtils.isNotEmpty(testId) && createObject.getName().equals(fileName)) {
-						    	         				Cell successCell=next1.getCell(3);
-						    	         				int pass = (int)totalPass;
-						    	         				successCell.setCellValue(pass);
-						    	         				
-						    	         				Cell failureCell=next1.getCell(4);
-						    	         				int fail = (int)totalFail;
-						    	         				failureCell.setCellValue(fail);
-						    	         				Cell cell = next1.getCell(8);
-						    	         				double numericCellValue = cell.getNumericCellValue();
-						    	         				
-						    	         				Cell notExeCell=next1.getCell(6);
-						    	         				int notExe = (int) (numericCellValue - (pass + fail));
-						    	         				notExeCell.setCellValue(notExe);
+						    	         				updateIndex(
+																totalPass,
+																totalFail,
+																totalNotApplicable,
+																totalBlocked,
+																next1);
 						    	         			}
 						                		}
 						                    }
 				    	         		}
 					    	         }
-				    	         if (StringUtils.isNotEmpty(testId)) {
+				    	         if (StringUtils.isNotEmpty(tstCase.getTestCaseId())) {
 					    	         	myInput.close();
 		    	         			    FileOutputStream outFile =new FileOutputStream(sb.toString());
 		    	         			    myWorkBook.write(outFile);
@@ -1704,6 +1663,70 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 	     }
          return testCases;
     }
+
+	private void updateIndex(float totalPass, float totalFail,
+			float totalNotApplicable, float totalBlocked, Row next1) {
+		Cell successCell=next1.getCell(3);
+		int pass = (int)totalPass;
+		successCell.setCellValue(pass);
+		
+		Cell failureCell=next1.getCell(4);
+		int fail = (int)totalFail;
+		failureCell.setCellValue(fail);
+		
+		Cell notAppCell=next1.getCell(5);
+		int notApp = (int)totalNotApplicable;
+		notAppCell.setCellValue(notApp);
+		
+		Cell blockedCell=next1.getCell(7);
+		int blocked = (int)totalBlocked;
+		blockedCell.setCellValue(blocked);
+		
+		Cell cell = next1.getCell(8);
+		double numericCellValue = cell.getNumericCellValue();
+		
+		Cell notExeCell=next1.getCell(6);
+		int notExe = (int) (numericCellValue - (pass + fail + notApp + blocked));
+		notExeCell.setCellValue(notExe);
+		
+		Cell testCovrgeCell=next1.getCell(9);
+		int total = (int) cell.getNumericCellValue();
+		float notExetd= notExe;
+		float testCovrge = (float)((total-notExetd)/total)*100;
+		testCovrgeCell.setCellValue(Math.round(testCovrge));
+	}
+
+	private void readTestFromSheet(com.photon.phresco.commons.model.TestCase tstCase,
+			List<TestCase> testCases, HSSFSheet mySheet) {
+		Iterator<Row> rowIterator = mySheet.rowIterator();
+		 for (int i = 0; i <=23; i++) {
+				rowIterator.next();
+			}
+		 while (rowIterator.hasNext()) {
+			Row next = rowIterator.next();
+			if (StringUtils.isNotEmpty(getValue(next.getCell(1)))) {
+				TestCase createObject = readTest(next);
+				testCases.add(createObject);
+				if (tstCase != null && createObject.getTestCaseId().equals(tstCase.getTestCaseId())) {
+					Cell stepsCell=next.getCell(5);
+					stepsCell.setCellValue(tstCase.getSteps());
+					
+					Cell expectedCell=next.getCell(8);
+					expectedCell.setCellValue(tstCase.getExpectedResult());
+					
+					Cell actualCell=next.getCell(9);
+					actualCell.setCellValue(tstCase.getActualResult());
+					
+					Cell statusCell=next.getCell(10);
+					statusCell.setCellValue(tstCase.getStatus());
+					
+					Cell commentCell=next.getCell(13);
+					commentCell.setCellValue(tstCase.getBugComment());
+				   
+				}
+			}
+		 }
+	}
     
     private TestCase readTest(Row next){
     	TestCase testcase = new TestCase();
@@ -1803,7 +1826,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 		return osName.concat(osBit);
 	}
 	
-	public static void addNew(String filePath, String testName,String success, String fail, String total, String testCoverage) {
+	public static void addNew(String filePath, String testName,String cellValue[]) {
 		try {
 			//FileInputStream myInput = new FileInputStream(filePath);
 
@@ -1811,7 +1834,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 			int cellno = 0;
 			CellStyle tryStyle[] = new CellStyle[20];
 			String sheetName = testName;
-			String cellValue[] = {"","",testName,success, fail,"","","",total,testCoverage,"","",""};
+			//String cellValue[] = {"","",testName,success, fail,"","","",total,testCoverage,"","",""};
 			Iterator<Row> rowIterator;
 			File testDir = new File(filePath);
       		StringBuilder sb = new StringBuilder(filePath);
@@ -2032,13 +2055,12 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 		}
 	}
 	
-	public static void addNewTestCase(String filePath, String testSuiteName,String featureId, String testCaseId, String testDesc, 
-			String testSteps, String testCaseType, String priority, String expectedResult, String actualResult, String status, String bugComment) {
+	public static void addNewTestCase(String filePath, String testSuiteName,String cellValue[], String status) {
 		try {
 			int numCol = 14;
 			int cellno = 0;
 			CellStyle tryStyle[] = new CellStyle[20];
-			String cellValue[] = {"",featureId,"",testCaseId,testDesc,testSteps,testCaseType,priority,expectedResult,actualResult,status,"","",bugComment};
+			//String cellValue[] = {"",featureId,"",testCaseId,testDesc,testSteps,testCaseType,priority,expectedResult,actualResult,status,"","",bugComment};
 			Iterator<Row> rowIterator = null;
 			File testDir = new File(filePath);
       		StringBuilder sb = new StringBuilder(filePath);
@@ -2067,6 +2089,8 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 								}
 								float totalPass = 0;
 		    					float totalFail = 0;
+		    					float totalNotApp = 0;
+		    					float totalBlocked = 0;
 		    					float notExecuted = 0;
 		    					float totalTestCases = 0;
 								do {
@@ -2078,6 +2102,10 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 												totalPass = totalPass + 1;
 											} else if(value.equalsIgnoreCase("fail") || value.equalsIgnoreCase("failure")) {
 												totalFail = totalFail + 1;
+											} else if(value.equalsIgnoreCase("notApplicable")) {
+												totalNotApp = totalNotApp + 1;
+											} else if(value.equalsIgnoreCase("blocked")) {
+												totalBlocked = totalBlocked + 1;
 											} 
 										}else {
 											notExecuted = notExecuted + 1;
@@ -2089,10 +2117,14 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 									totalPass = totalPass + 1;
 								} else if (status.equalsIgnoreCase("fail") || status.equalsIgnoreCase("failure")) {
 									totalFail = totalFail + 1;
+								} else if (status.equalsIgnoreCase("notApplicable")) {
+									totalNotApp = totalNotApp + 1;
+								} else if (status.equalsIgnoreCase("blocked")) {
+									totalBlocked = totalBlocked + 1;
 								} else {
 									notExecuted = notExecuted + 1;
 								}
-								totalTestCases = totalPass + totalFail + notExecuted;
+								totalTestCases = totalPass + totalFail + totalNotApp + totalBlocked + notExecuted;
 								XSSFSheet mySheet1 = myWorkBook.getSheetAt(0);
 								rowIterator = mySheet1.rowIterator();
 								 for (int i = 0; i <=2; i++) {
@@ -2103,22 +2135,12 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 				                		if (StringUtils.isNotEmpty(getValue(next1.getCell(2))) && !getValue(next1.getCell(2)).equalsIgnoreCase("Total")) {
 				                			TestSuite createObject = createObject(next1);
 				                        	if (createObject.getName().equals(testSuiteName)) {
-				    	         				Cell successCell=next1.getCell(3);
-				    	         				int pass = (int)totalPass;
-				    	         				successCell.setCellValue(pass);
-				    	         				
-				    	         				Cell failureCell=next1.getCell(4);
-				    	         				int fail = (int)totalFail;
-				    	         				failureCell.setCellValue(fail);
-				    	         				
-				    	         				Cell notExeCell=next1.getCell(6);
-				    	         				int notExe = (int)notExecuted;
-				    	         				notExeCell.setCellValue(notExe);
-				    	         				
-				    	         				Cell totalCell=next1.getCell(8);
-				    	         				int totalTests = (int)totalTestCases;
-				    	         				totalCell.setCellValue(totalTests);
-				    	         			   
+				    	         				addCalculationsToIndex(
+														totalPass, totalFail,
+														totalNotApp,
+														totalBlocked,
+														notExecuted,
+														totalTestCases, next1);
 				    	         			}
 				                		}
 				                    }
@@ -2168,6 +2190,8 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 								}
 								float totalPass = 0;
 		    					float totalFail = 0;
+		    					float totalNotApp = 0;
+		    					float totalBlocked = 0;
 		    					float notExecuted = 0;
 		    					float totalTestCases = 0;
 								do {
@@ -2179,6 +2203,10 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 												totalPass = totalPass + 1;
 											} else if(value.equalsIgnoreCase("fail") || value.equalsIgnoreCase("failure")) {
 												totalFail = totalFail + 1;
+											}  else if(value.equalsIgnoreCase("notApplicable")) {
+												totalNotApp = totalNotApp + 1;
+											}  else if(value.equalsIgnoreCase("blocked")) {
+												totalBlocked = totalBlocked + 1;
 											} 
 										}else {
 											notExecuted = notExecuted + 1;
@@ -2190,10 +2218,14 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 									totalPass = totalPass + 1;
 								} else if (status.equalsIgnoreCase("fail") || status.equalsIgnoreCase("failure")) {
 									totalFail = totalFail + 1;
+								} else if (status.equalsIgnoreCase("notApplicable")) {
+									totalNotApp = totalNotApp + 1;
+								} else if (status.equalsIgnoreCase("blocked")) {
+									totalBlocked = totalBlocked + 1;
 								} else {
 									notExecuted = notExecuted + 1;
 								}
-								totalTestCases = totalPass + totalFail + notExecuted;
+								totalTestCases = totalPass + totalFail + totalNotApp + totalBlocked + notExecuted;
 								HSSFSheet mySheetHssf = myWorkBook.getSheetAt(0);
 								rowIterator = mySheetHssf.rowIterator();
 								 for (int i = 0; i <=2; i++) {
@@ -2204,22 +2236,12 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 				                		if (StringUtils.isNotEmpty(getValue(next1.getCell(2))) && !getValue(next1.getCell(2)).equalsIgnoreCase("Total")) {
 				                			TestSuite createObject = createObject(next1);
 				                        	if (createObject.getName().equals(testSuiteName)) {
-				    	         				Cell successCell=next1.getCell(3);
-				    	         				int pass = (int)totalPass;
-				    	         				successCell.setCellValue(pass);
-				    	         				
-				    	         				Cell failureCell=next1.getCell(4);
-				    	         				int fail = (int)totalFail;
-				    	         				failureCell.setCellValue(fail);
-				    	         				
-				    	         				Cell notExeCell=next1.getCell(6);
-				    	         				int notExe = (int)notExecuted;
-				    	         				notExeCell.setCellValue(notExe);
-				    	         				
-				    	         				Cell totalCell=next1.getCell(8);
-				    	         				int totalTests = (int)totalTestCases;
-				    	         				totalCell.setCellValue(totalTests);
-				    	         			   
+				    	         				addCalculationsToIndex(
+														totalPass, totalFail,
+														totalNotApp,
+														totalBlocked,
+														notExecuted,
+														totalTestCases, next1);
 				    	         			}
 				                		}
 				                    }
@@ -2250,6 +2272,39 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 		} catch (Exception e) {
 			//e.printStackTrace();
 		}
+	}
+
+	private static void addCalculationsToIndex(float totalPass,
+			float totalFail, float totalNotApp, float totalBlocked,
+			float notExecuted, float totalTestCases, Row next1) {
+		Cell successCell=next1.getCell(3);
+		int pass = (int)totalPass;
+		successCell.setCellValue(pass);
+		
+		Cell failureCell=next1.getCell(4);
+		int fail = (int)totalFail;
+		failureCell.setCellValue(fail);
+		
+		Cell notAppCell=next1.getCell(5);
+		int notApp = (int)totalNotApp;
+		notAppCell.setCellValue(notApp);
+		
+		Cell notExeCell=next1.getCell(6);
+		int notExe = (int)notExecuted;
+		notExeCell.setCellValue(notExe);
+		
+		Cell blockedCell=next1.getCell(7);
+		int blocked = (int)totalBlocked;
+		blockedCell.setCellValue(blocked);
+		
+		Cell totalCell=next1.getCell(8);
+		int totalTests = (int)totalTestCases;
+		totalCell.setCellValue(totalTests);
+       			   
+		Cell testCovrgeCell=next1.getCell(9);
+		float notExetd= notExe;
+		float testCovrge = (float)((totalTests-notExetd)/totalTests)*100;
+		testCovrgeCell.setCellValue(Math.round(testCovrge));
 	}
 	
 	public static int getHttpsResponse(String url) throws PhrescoException {

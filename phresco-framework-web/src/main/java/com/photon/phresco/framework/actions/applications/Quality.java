@@ -197,7 +197,8 @@ public class Quality extends DynamicParameterAction implements Constants {
 	private String actualResult = "";
 	private String status = "";
 	private String bugComment = "";
-	private String featureIdError = "";
+	private String testCaseIdError = "";
+	private String nameError = "";
 	private boolean errorFound;
 	
     boolean connectionAlive = false;
@@ -2064,6 +2065,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 	 if (s_debugEnabled) {
 	        S_LOGGER.debug("Entering Method Quality.manualTestCase()");
 		    }
+	 	cacheManager.resetCache();
 		ApplicationInfo appInfo = getApplicationInfo();
 		setReqAttribute(REQ_APPINFO, appInfo);
 		FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
@@ -2086,9 +2088,11 @@ public class Quality extends DynamicParameterAction implements Constants {
 			.append(appInfo.getAppDirName())
 			.append(manualTestDir);
 			if (new File(sb.toString()).exists()) {
-				final List<TestSuite> readManualTestSuiteFile = frameworkUtil.readManualTestSuiteFile(sb.toString(), null,0,0,0,0);
+				final List<TestSuite> readManualTestSuiteFile = frameworkUtil.readManualTestSuiteFile(sb.toString());
 				if (CollectionUtils.isNotEmpty(readManualTestSuiteFile)) {
 					setAllTestSuite(readManualTestSuiteFile);
+					CacheKey key = new CacheKey(appInfo.getTechInfo().getId());
+					cacheManager.add(key, readManualTestSuiteFile);
 				}
 				Runnable runnable = new Runnable() {
 					public void run() {
@@ -2096,7 +2100,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 							for (TestSuite tstSuite : readManualTestSuiteFile) {
 								String testSuiteName = tstSuite.getName();
 								CacheKey key = new CacheKey(testSuiteName);
-								List<com.photon.phresco.commons.model.TestCase> readManualTestCaseFile = frameworkUtil.readManualTestCaseFile(sb.toString(), testSuiteName, null, null, null, null, null, null);
+								List<com.photon.phresco.commons.model.TestCase> readManualTestCaseFile = frameworkUtil.readManualTestCaseFile(sb.toString(), testSuiteName, null);
 								if (CollectionUtils.isNotEmpty(readManualTestCaseFile)) {
 									cacheManager.add(key, readManualTestCaseFile);
 								}
@@ -2152,20 +2156,21 @@ public class Quality extends DynamicParameterAction implements Constants {
 			S_LOGGER.debug("Entering Method Quality.validateform()");
 		}
 		String testSuiteName = getTestScenarioName();
+		
 		CacheKey testSuitekey = new CacheKey(testSuiteName);
 		List<com.photon.phresco.commons.model.TestCase> readManualTestCaseFile = (List<com.photon.phresco.commons.model.TestCase>) cacheManager.get(testSuitekey);
 		boolean hasError = false;
 		if (!getFromTab().equals(EDIT)) {
-			if(StringUtils.isNotEmpty(getFeatureId())) {
+			if(StringUtils.isNotEmpty(getTestCaseId()) && CollectionUtils.isNotEmpty(readManualTestCaseFile)) {
 				for(com.photon.phresco.commons.model.TestCase testCase : readManualTestCaseFile) {
-					if(testCase.getFeatureId().equalsIgnoreCase(getFeatureId())) {
-						setFeatureIdError(getText(ERROR_FEATURE_ID_EXISTS));
+					if(testCase.getTestCaseId().equalsIgnoreCase(getTestCaseId())) {
+						setTestCaseIdError(getText(ERROR_TESTCASE_ID_EXISTS));
 						hasError = true;
 						break;
 					}
 				}
-			} else {
-				setFeatureIdError(getText(ERROR_FEATURE_ID_MISSING));
+			} else if(StringUtils.isEmpty(getTestCaseId())) {
+				setTestCaseIdError(getText(ERROR_TESTCASE_ID_MISSING));
 				hasError = true;
 	        }
 		}
@@ -2176,6 +2181,30 @@ public class Quality extends DynamicParameterAction implements Constants {
 		return SUCCESS;
 	}
 	
+	public String validateTestSuite() throws PhrescoException {
+		ApplicationInfo appInfo = getApplicationInfo();
+		CacheKey key = new CacheKey(appInfo.getTechInfo().getId());
+		List<TestSuite> readManualTestCaseFile = (List<TestSuite>) cacheManager.get(key);
+		boolean hasError = false;
+		if(StringUtils.isNotEmpty(getTestScenarioName())) {
+			for (TestSuite testSuite : readManualTestCaseFile) {
+				if(testSuite.getName().equalsIgnoreCase(getTestScenarioName())) {
+					setNameError(getText(ERROR_TEST_SCENARIO_NAME_EXISTS));
+					hasError = true;
+					break;
+				}
+			}
+		} else {
+			setNameError(getText(ERROR_TEST_SCENARIO_NAME_MISSING));
+			hasError = true;
+		}
+		
+		if (hasError) {
+            setErrorFound(true);
+        }
+		
+		return SUCCESS;
+	}
 	public String showManualTestPopUp () throws PhrescoException {
 		if (s_debugEnabled) {
 			S_LOGGER.debug("Entering Method Quality.showManualTestPopUp()");
@@ -2196,7 +2225,8 @@ public class Quality extends DynamicParameterAction implements Constants {
 		StringBuilder sb = new StringBuilder(Utility.getProjectHome())
 		.append(appInfo.getAppDirName())
 		.append(path);
-		FrameworkUtil.addNew(sb.toString(), getTestScenarioName(), getTotalSuccess(), getTotalFailures(), getTotalTestCases(), getTestCoverage());
+		String cellValue[] = {"","",getTestScenarioName(),getTotalSuccess(), getTotalFailures(),"","","",getTotalTestCases(),getTestCoverage(),"","",""};
+		FrameworkUtil.addNew(sb.toString(), getTestScenarioName(), cellValue);
 		return MANUAL;
 	}
 	
@@ -2213,11 +2243,17 @@ public class Quality extends DynamicParameterAction implements Constants {
 		.append(appInfo.getAppDirName())
 		.append(path);
 		if (!getFromTab().equals(EDIT)) {
-			FrameworkUtil.addNewTestCase(sb.toString(),getTestScenarioName(),getFeatureId(),getTestCaseId(),getTestDescription(),
-					getTestSteps(),"","",getExpectedResult(),getActualResult(),getStatus(),getBugComment());
+			String cellValue[] = {"",getFeatureId(),"",getTestCaseId(),getTestDescription(),getTestSteps(),"","",getExpectedResult(),getActualResult(),getStatus(),"","",getBugComment()};
+			FrameworkUtil.addNewTestCase(sb.toString(),getTestScenarioName(),cellValue, getStatus());
 		} else {
-			frameworkUtil.readManualTestCaseFile(sb.toString(), getTestScenarioName(), getFeatureId(), 
-					getTestSteps(), getExpectedResult(), getActualResult(), getStatus(), getBugComment());
+			com.photon.phresco.commons.model.TestCase testCase =  new com.photon.phresco.commons.model.TestCase();
+			testCase.setTestCaseId(getTestCaseId());
+			testCase.setSteps(getTestSteps());
+			testCase.setExpectedResult(getExpectedResult());
+			testCase.setActualResult(getActualResult());
+			testCase.setStatus(getStatus());
+			testCase.setBugComment(getBugComment());
+			frameworkUtil.readManualTestCaseFile(sb.toString(), getTestScenarioName(), testCase);
 		}
 		return MANUAL;
 	}
@@ -2239,7 +2275,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 				.append(appInfo.getAppDirName())
 				.append(manualTestDir);
 				CacheKey testSuitekey = new CacheKey(getTestSuitName());
-				List<com.photon.phresco.commons.model.TestCase> readTestCase = frameworkUtil.readManualTestCaseFile(sb.toString(), getTestSuitName(), null, null, null, null, null, null);
+				List<com.photon.phresco.commons.model.TestCase> readTestCase = frameworkUtil.readManualTestCaseFile(sb.toString(), getTestSuitName(), null);
 				if (CollectionUtils.isNotEmpty(readTestCase)) {
 					cacheManager.add(testSuitekey, readTestCase);
 					setAllTestCases(readTestCase);
@@ -3310,19 +3346,27 @@ public class Quality extends DynamicParameterAction implements Constants {
 		this.actionType = actionType;
 	}
 
-	public String getFeatureIdError() {
-		return featureIdError;
-	}
-
-	public void setFeatureIdError(String featureIdError) {
-		this.featureIdError = featureIdError;
-	}
-
 	public boolean isErrorFound() {
 		return errorFound;
 	}
 
 	public void setErrorFound(boolean errorFound) {
 		this.errorFound = errorFound;
+	}
+
+	public String getNameError() {
+		return nameError;
+	}
+
+	public void setNameError(String nameError) {
+		this.nameError = nameError;
+	}
+
+	public String getTestCaseIdError() {
+		return testCaseIdError;
+	}
+
+	public void setTestCaseIdError(String testCaseIdError) {
+		this.testCaseIdError = testCaseIdError;
 	}
 }
