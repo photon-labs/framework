@@ -332,6 +332,10 @@ sup { color:#FF0000; }
 	z-index:1;
 }
 
+.footer_section label {
+	font-size:10px; color:#FFF;
+}
+
 /* ********************************************** CSS related to Customer change Dropdown ************************************************************************************** */
 
 

@@ -24,7 +24,7 @@ define(["framework/base", "framework/animationProvider"], function() {
 			
 			jQueryContainer : null,
 			transitionType : null,
-			
+
 			initialize : function(config) {
 				
 				this.mainContainer = config.mainContainer;
@@ -113,7 +113,7 @@ define(["framework/base", "framework/animationProvider"], function() {
 				}
 			},
 			
-			push : function(view) {
+			push : function(view, bCheck) {
 				var self = this;
 				
 				// create top element for pushing
@@ -123,52 +123,55 @@ define(["framework/base", "framework/animationProvider"], function() {
 				newDiv.addClass("widget-maincontent-div");
 				
 				self.jQueryContainer.append(newDiv);
-			
-				view.doMore = function(element) {
-					var animationProviderMain = new Clazz.AnimationProvider( {
-						isNative: self.isNative,
-						container: newDiv
-					});
-					
-					animationProviderMain.animate(self.pushAnimationTypeForGoingIn, function(container) {
-						container.show();
-						container.css("z-index", 4);
-					});
+				
+				if(bCheck) {
 
-					if(self.stack.length > 0) {
-						var topPage = self.stack[self.stack.length-1];
+					view.doMore = function(element) {
+						var animationProviderMain = new Clazz.AnimationProvider( {
+							isNative: self.isNative,
+							container: newDiv
+						});
 						
-						// call onPause to save the state of this page
-						if(topPage.view.onPause) {
-							topPage.view.onPause();
+						animationProviderMain.animate(self.pushAnimationTypeForGoingIn, function(container) {
+							container.show();
+							container.css("z-index", 4);
+						});
+
+						if(self.stack.length > 0) {
+							var topPage = self.stack[self.stack.length-1];
+							
+							// call onPause to save the state of this page
+							if(topPage.view.onPause) {
+								topPage.view.onPause();
+							}
+							
+							var animationProviderSub = new Clazz.AnimationProvider( {
+								isNative: self.isNative,
+								container: topPage.element
+							});
+						
+							animationProviderSub.animate(self.pushAnimationTypeForGoingOut, function(container) {
+								container.hide();
+								container.css("z-index", 3);
+							});
 						}
 						
-						var animationProviderSub = new Clazz.AnimationProvider( {
-							isNative: self.isNative,
-							container: topPage.element
-						});
-					
-						animationProviderSub.animate(self.pushAnimationTypeForGoingOut, function(container) {
-							container.hide();
-							container.css("z-index", 3);
-						});
-					}
-					
-					// update browser history
-					var title = "#page" + self.stack.length;
-					var name = view.name ? "#"  + view.name : title;
-					
-					// push into the stack
-					var data = {
-						view : view,
-						element : newDiv
+						// update browser history
+						var title = "#page" + self.stack.length;
+						var name = view.name ? "#"  + view.name : title;
+						
+						// push into the stack
+						var data = {
+							view : view,
+							element : newDiv
+						};
+						
+						self.stack.push(data);
+						self.currentIndex = self.stack.length - 1;
+						self.indexMapping[name] = self.stack.length - 1;
+						//history.pushState({}, name, name);
 					};
-					
-					self.stack.push(data);
-					self.currentIndex = self.stack.length - 1;
-					self.indexMapping[name] = self.stack.length - 1;
-					//history.pushState({}, name, name);
-				};
+				}
 				
 				// render in its default container
 				view.render(newDiv);

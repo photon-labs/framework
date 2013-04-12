@@ -18,13 +18,14 @@ define(["framework/base"], function(){
 		// callbackFunction is the method sent to handle the response.
 		// errorHandler is used to handle the error happened.
 		ajaxRequest : function(header, callbackFunction, errorHandler){
+			$.support.cors = true;
 			$.ajax({
 				url: header.webserviceurl,
 				type : header.requestMethod,
 				dataType : header.dataType,
 				header : "Access-Control-Allow-Headers: x-requested-with",
-				contentType : header.contentType,
-				data : header.requestPostBody,
+				//contentType : header.contentType,
+				//data : header.requestPostBody,
 				timeout: 90000,
 				//crossDomain: true,
 				cache: true,
@@ -35,11 +36,12 @@ define(["framework/base"], function(){
 						callbackFunction(response);
 					}
 				},
+				
 				error : function(jqXHR, textStatus, errorThrown) {
-					location.reload();
-					/* if (errorHandler) {
+					/* location.reload(); */
+					if (errorHandler) {
 						errorHandler(textStatus);
-					} */
+					}
 				}
 			});
 		}

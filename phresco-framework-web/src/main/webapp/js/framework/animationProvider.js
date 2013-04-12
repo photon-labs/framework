@@ -145,7 +145,7 @@ require(["framework/base"], function() {
 					container.css({ opacity: 1 });
 					
 					container.animate({
-						opacity: 0.0
+						opacity: 1
 					}, {
 						duration : 0, 
 						complete: function() {

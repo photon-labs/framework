@@ -13,5 +13,51 @@
 					"login" : "LOGIN"
 				}
 			}
+	  },
+	   "header": {
+			"menu": {
+				"dashboard" : "Dashboard",
+				"projects" : "Projects",
+				"settings" : "Settings",
+				"downloads" : "Downloads",
+				"admin" : "Admin"
+			},
+
+			"userinfo": {
+				"user":"Welcome Admin User",
+				"logout":"Logout",
+				"help":"Help",
+				"about":"About",
+				"photon":"Photon"
+			},
+
+			"customer": {
+				"bestbuy":"Best Buy",
+				"esteelauder":"Estee Lauder",
+				"jandj":"Johnson and Johnson",
+				"loreal":"Loreal",
+				"macys":"Macy's",
+				"metlife":"Metlife",
+				"photon":"Photon",
+				"touchtunes":"Touchtunes",
+				"walgreens":"Walgreens"
+			}
+		},
+
+	  "footer": {
+			"label" : {
+				"copyrights":"2013.Photon Infotech Pvt Ltd. | www.photon.in"
+			}
+	  },
+	  
+	  "projectlist" : {
+	       "label" : {
+				"name":"Name",
+				"description":"Description",
+				"technology":"Technology",
+				"report":"Report",
+				"repository":"Repository"
+		   }
 	  }
+	  
 }

@@ -73,14 +73,12 @@ define(["framework/widget", "framework/templateProvider"], function() {
 			renderTemplate: function(data, whereToRender) {
 				if(this.templateUrl != null) {
 					var self = this;
-										
 					var templateProvider = new Clazz.TemplateProvider({ templateEngine : this.templateProvider});
-					
 					templateProvider.merge(this.templateUrl, data, function(element) {
 						$(whereToRender).html(element);
 						self.bindUI();
 						self.postRender(element);
-						self.renderlocales();
+						self.renderlocales(whereToRender);
 						self.element = element;
 						self.doMore(element);
 					});
@@ -112,15 +110,17 @@ define(["framework/widget", "framework/templateProvider"], function() {
 			/**
 			*	Method to refresh to load the locale values
 			*/
-			renderlocales : function(){
+			renderlocales : function(whereToRender){
+				var self=this;
 				$.i18n.init({
 					lng: 'en',
+					fallbackLng: 'en',
 					ns: { namespaces: ['framework'], defaultNs: 'framework'},
 					resGetPath: commonVariables.globalconfig.environments.locales,
 					useLocalStorage: false,
 					debug: false
 				}, function() {
-					 $('#main').i18n();
+					$(whereToRender).i18n();
 				});
 			}
 			

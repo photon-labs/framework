@@ -21,6 +21,21 @@
 		"header" :{
 			"moduleName":"header",
 			"path" : "commonComponents/modules/header/js"
+		},
+		
+		"navigation" :{
+			"moduleName":"navigation",
+			"path" : "../components/navigation/js"
+		},
+		
+		"footer" :{
+			"moduleName":"footer",
+			"path" : "commonComponents/modules/footer/js"
+		},
+		
+		"projectlist" : {
+			"moduleName":"projectlist",
+			"path" : "../components/projectlist/js"
 		}
 	}
 }

@@ -6,7 +6,7 @@ define(["framework/widgetWithTemplate", "header/listener/headerListener"] , func
 		headerEvent : null,
 		
 		// template URL, used to indicate where to get the template
-		templateUrl: "../js/commonComponents/modules/header/template/header.tmp",
+		templateUrl: commonVariables.contexturl + "/js/commonComponents/modules/header/template/header.tmp",
 		configUrl: "../../js/commonComponents/modules/header/config/config.json",
 		name : "header",
 		//Events, to fire a function

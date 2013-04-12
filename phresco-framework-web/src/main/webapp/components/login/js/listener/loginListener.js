@@ -1,4 +1,4 @@
-define(["framework/widget", "login/api/loginAPI", "common/loading", "header/header"], function() {
+define(["framework/widget", "login/api/loginAPI", "common/loading", "footer/footer", "header/header", "projectlist/projectList", "navigation/navigation"], function() {
 
 	Clazz.createPackage("com.components.login.js.listener");
 
@@ -6,7 +6,9 @@ define(["framework/widget", "login/api/loginAPI", "common/loading", "header/head
 		localStorageAPI : null,
 		loadingScreen : null,
 		headerContent : null,
-
+		footerContent : null,
+		navigationContent : null,
+		
 		/***
 		 * Called in initialization time of this class 
 		 *
@@ -26,7 +28,9 @@ define(["framework/widget", "login/api/loginAPI", "common/loading", "header/head
 			//TODO: call login service here and call appendPlaceholder in the success function
 			self.appendPlaceholder();
 			self.renderHeader();
-			
+			self.renderFooter();
+			self.renderContent();
+			self.renderNavigation();
 		},
 		
 		appendPlaceholder : function() {
@@ -41,16 +45,28 @@ define(["framework/widget", "login/api/loginAPI", "common/loading", "header/head
 			var self = this;
 			Clazz.navigationController.jQueryContainer = commonVariables.headerPlaceholder;
 			self.headerContent = new Clazz.com.commonComponents.modules.header.js.Header();
-			Clazz.navigationController.push(self.headerContent);
+			Clazz.navigationController.push(self.headerContent, false);
 		},
 		
 		renderNavigation : function() {
+			var self = this;
+			Clazz.navigationController.jQueryContainer = commonVariables.navigationPlaceholder;
+			self.navigationContent = new Clazz.com.components.navigation.js.navigation();
+			Clazz.navigationController.push(self.navigationContent, false);
 		},
 		
-		renderContent : function() {
+		renderContent : function(){
+			var self = this;
+			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
+			self.projectlistContent = new Clazz.com.components.projectlist.js.ProjectList();
+			Clazz.navigationController.push(self.projectlistContent, false);
 		},
 		
-		renderFooter : function() {
+		renderFooter : function(){
+			var self = this;
+			Clazz.navigationController.jQueryContainer = commonVariables.footerPlaceholder;
+			self.footerContent = new Clazz.com.commonComponents.modules.footer.js.Footer();
+			Clazz.navigationController.push(self.footerContent, false);
 		}
 	});
 

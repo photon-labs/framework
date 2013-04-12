@@ -1,0 +1,68 @@
+{
+	"environments" : {
+		"environment" : {
+			"name":"dev",
+			"default":"true"
+		},
+		
+		"locales" : "src/locales/en/framework.json"
+	},
+	
+	"navigation" : {
+		"transitionType" : 7,
+		"isNative" : false
+	},
+
+	"components" : {
+		"login" : {
+			"moduleName":"login",
+			"path" : "components/login/js"
+		},
+		
+		"loginTest" : {
+			"moduleName":"synonyms",
+			"path" : "components/login/test/loginTest"
+		},
+		
+		"header" :{
+			"moduleName":"header",
+			"path" : "js/commonComponents/modules/header/js"
+		},
+
+		"headerTest" :{
+			"moduleName":"header",
+			"path" : "js/commonComponents/modules/header/test/headerTest"
+		},
+
+		"footer" :{
+			"moduleName":"footer",
+			"path" : "js/commonComponents/modules/footer/js"
+		},
+		
+		"footerTest" : {
+			"moduleName":"footerTest",
+			"path" : "js/commonComponents/modules/footer/test/footerTest"
+		},
+		
+		"projectlist" : {
+			"moduleName":"projectlist",
+			"path" : "components/projectlist/js"
+		},
+		
+		"projectlistTest" : {
+			"moduleName":"projectlist",
+			"path" : "components/projectlist/test/projectlistTest"
+		},
+		
+		"navigation" : {
+			"moduleName":"navigation",
+			"path" : "components/navigation/js"
+		},
+		
+		"navigationTest" : {
+			"moduleName":"navigationTest",
+			"path" : "components/navigation/test/navigationTest"
+		}
+		
+	}
+}
