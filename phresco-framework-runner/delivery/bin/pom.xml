@@ -43,7 +43,7 @@
 	  
 	  <dependency>
 		<groupId>org.apache.jmeter</groupId>
-		<artifactId>apache-jmeter</artifactId>
+		<artifactId>apache-jmeter2</artifactId>
 		<version>${jmeter.version}</version>
 		<type>zip</type>
 	  </dependency>
@@ -331,7 +331,7 @@
 								<!-- extracting JMeter zip file -->
 								<artifactItem>
 									<groupId>org.apache.jmeter</groupId>
-									<artifactId>apache-jmeter</artifactId>
+									<artifactId>apache-jmeter2</artifactId>
 									<version>${jmeter.version}</version>
 									<type>zip</type>
 									<overWrite>false</overWrite>
