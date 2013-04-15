@@ -107,6 +107,7 @@ public class Applications extends FrameworkBaseAction {
     private List<String> jsonData = null;
     private boolean isRepoExistForCommit;
     private boolean isRepoExistForUpdate;
+    private String logMessage = "";
     private String actionType = "";
     private String customerId = "";
     private String projectId = "";
@@ -1062,7 +1063,15 @@ public class Applications extends FrameworkBaseAction {
 			List<String> svnLogMessages = scmi.getSvnLogMessages(getRepoUrl(), getUsername(), getPassword());
 			restrictedLogs = restrictLogs(svnLogMessages);
 		} catch (PhrescoException e) {
-			throw e;
+			if (e.getLocalizedMessage().contains("Authorization Realm")) {
+				setLogMessage("Invalid Credentials");
+			} else if (e.getLocalizedMessage().contains("OPTIONS request failed on") || 
+					(e.getLocalizedMessage().contains("PROPFIND") && e.getLocalizedMessage().contains("405 Method Not Allowed")) 
+					|| e.getLocalizedMessage().contains("Repository moved temporarily to") ) {
+				setLogMessage("Invalid Url or Repository moved temproarily!!!");
+			} else {
+				setLogMessage(e.getLocalizedMessage());
+			}
 		}
 		return SUCCESS;
 	}
@@ -1318,4 +1327,13 @@ public class Applications extends FrameworkBaseAction {
 	public void setRepoExistForCommit(boolean isRepoExistForCommit) {
 		this.isRepoExistForCommit = isRepoExistForCommit;
 	}
+
+	public void setLogMessage(String logMessage) {
+		this.logMessage = logMessage;
+	}
+
+	public String getLogMessage() {
+		return logMessage;
+	}
+
 }

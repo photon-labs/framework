@@ -408,6 +408,10 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	inputElement.setAttribute("placeholder", pm.getPlaceHolder());
     	inputElement.setAttribute("value", pm.getValue());
     	inputElement.setAttribute("ctrlsId", pm.getControlId());
+    	
+    	if (TYPE_NUMBER.equalsIgnoreCase(pm.getInputType()) && BUILD_NUMBER.equals(pm.getId())) {
+    		inputElement.setAttribute("maxlength", 8);
+    	}
     	if (DEPLOY_DIR.equals(pm.getId())) {
 	    	String btn = "&nbsp;&nbsp;<input type='button' class='btn btn-primary' value='Browse' onclick='browseDeployDir();'/>"; 
 	    	inputElement.setAttribute("btnElement", new StringTemplate(btn));
@@ -1092,7 +1096,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     private static String getInputTemplate() {
     	StringBuilder sb = new StringBuilder();
     	sb.append("<div class='controls'>")
-    	.append("<input type=\"$type$\" class=\"input-xlarge $class$\" id=\"$id$\" ")
+    	.append("<input type=\"$type$\" class=\"input-xlarge $class$\" id=\"$id$\" maxlength=\"$maxlength$\" ")
     	.append("name=\"$name$\" placeholder=\"$placeholder$\" value=\"$value$\">$btnElement$")
     	.append("<span class='help-inline' id=\"$ctrlsId$\"></span></div>");
     	
