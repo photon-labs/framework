@@ -1006,11 +1006,12 @@ function addSelectedSourceScripts() {
 }
 
 function constructSingleSelectOptions(dependentValues, pushToElement, parameterType) {
+	var editbleComboClass = $('#'+ pushToElement + ' option').attr('class');
 	if (dependentValues != undefined && !isBlank(dependentValues)) {
 		var control = $('#'+ pushToElement + ' option:selected');
 		var selected = control.val();
 		var additionalParam = control.attr('additionalParam'); 
-		var editbleComboClass = $('#'+ pushToElement + ' option').attr('class');
+		
 		$("#" + pushToElement).empty();
 		var selectedStr = "";
 		var dynamicFirstValue = dependentValues[0].value;
@@ -1039,7 +1040,11 @@ function constructSingleSelectOptions(dependentValues, pushToElement, parameterT
 		}
 	} else if (parameterType.toLowerCase() != "list".toLowerCase()) {
 		$("#" + pushToElement).empty();
-	}
+		if (editbleComboClass == "jecEditableOption") {//convert to editable combobox
+			var optionElement = "<option class='jecEditableOption'>Type or Select from list</option>";
+			$("#" + pushToElement).append(optionElement);
+		}
+	} 
 }
 
 /**
