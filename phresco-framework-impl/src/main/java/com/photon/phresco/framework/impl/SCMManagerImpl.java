@@ -792,9 +792,9 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		SVNRepository repository = null;
 		List<String> logMessages = new ArrayList<String>();
 		try {
-			repository = SVNRepositoryFactory.create( SVNURL.parseURIEncoded(Url));
+			repository = SVNRepositoryFactory.create(SVNURL.parseURIEncoded(Url));
 			ISVNAuthenticationManager authManager = SVNWCUtil.createDefaultAuthenticationManager(userName, Password);
-			repository.setAuthenticationManager( authManager );
+			repository.setAuthenticationManager(authManager);
 			Collection logEntries = null;
 
 			logEntries = repository.log( new String[] { "" } , null , startRevision , endRevision , true , true );

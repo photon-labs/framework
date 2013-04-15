@@ -337,7 +337,13 @@
 			|| pageUrl == "updateBitKeeperProject" || pageUrl == "addSVNProject" || pageUrl == "addGITProject" || pageUrl == "commitSVNProject" || pageUrl == "commitBitKeeperProject" || pageUrl == "commitGITProject") {
 			checkError(pageUrl, data);
 		} else if(pageUrl == 'fetchLogMessages') {
-			selectList(data);
+			if (data.logMessage != "") {
+				hidePopuploadingIcon();
+				$('#errMsg').html(data.logMessage);
+			} else if (data.logMessage == "") {
+				$('#errMsg').html("");
+				selectList(data);
+			}
 		} 
 		console.log("success event called !!! ");
 	}

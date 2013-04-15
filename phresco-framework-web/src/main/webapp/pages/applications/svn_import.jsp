@@ -115,7 +115,7 @@
 				<select name="repoType" class="medium" >
 					<option value="<s:text name="lbl.repo.type.svn"/>" selected ><s:text name="lbl.repo.type.svn"/></option>
 <%-- 					<% if (!FrameworkConstants.FROM_PAGE_ADD.equals(action)) { %> --%>
-						<option value="<s:text name="lbl.repo.type.git"/>"><s:text name="lbl.repo.type.git"/></option>
+					<option value="<s:text name="lbl.repo.type.git"/>"><s:text name="lbl.repo.type.git"/></option>
 <%-- 					<% } %> --%>
 					<option value="<s:text name="lbl.repo.type.bitkeeper"/>"><s:text name="lbl.repo.type.bitkeeper"/></option>
 			    </select>
@@ -324,10 +324,13 @@
 	function fetchMessages() {
 		$("#errMsg").html(" ");
   		if ($("#userName").val() != '' && $("#password").val() != '' && !isValidUrl($("input[name='repoUrl']").val())) {
-		var params = "username=";
-	    params = params.concat($("#userName").val());
-	    params = params.concat("&password=")
-	    params = params.concat($("#password").val());
+		var params;
+		if (!($('#credentials').is(':checked'))) {
+			params = "username=";
+		    params = params.concat($("#userName").val());
+		    params = params.concat("&password=")
+		    params = params.concat($("#password").val());
+		}
 	    showPopuploadingIcon();
 		loadContent('fetchLogMessages', $('#repoDetails'), '', params, true);
   		} else {
