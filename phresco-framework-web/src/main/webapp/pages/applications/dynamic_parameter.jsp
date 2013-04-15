@@ -542,20 +542,12 @@
 				}
 			} else if(currentObjType === "SELECT" && multipleAttr === undefined && $(this).attr('dependencyAttr') != undefined) {
 				var dependencyAttr =  $(this).attr('dependencyAttr');
-				if (dependencyAttr !== null) {
+				if (dependencyAttr != null && !isBlank(dependencyAttr)) {
 					var csvDependencies = getAllDependencies(dependencyAttr);
 					var dependencyArr = new Array();
 					dependencyArr = csvDependencies.split(',');
 					showControl(dependencyArr);					
 				}
-				
-				/* //If the dependent child is select box, hide controls based on selected options - while popup loading
-				var hideOptionDependency = $(this).getAttribute('hide');
-				if (hideOptionDependency !== undefined && !isBlank(hideOptionDependency)) {
-					var hideOptionDependencyArr = new Array();
-					hideOptionDependencyArr = hideOptionDependency.split(',');
-					hideControl(hideOptionDependencyArr);
-				} */
 			}
 		});
 		

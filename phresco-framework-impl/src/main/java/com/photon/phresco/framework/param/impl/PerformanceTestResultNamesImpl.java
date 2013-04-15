@@ -64,12 +64,12 @@ public class PerformanceTestResultNamesImpl implements DynamicParameter, Constan
 				value.setDependency(dependencyStr);
 				possibleValues.getValue().add(value);
 			}
-		} else {
+		} /*else {
 			Value value = new Value();
 			value.setKey("");
 			value.setValue("");
 			possibleValues.getValue().add(value);
-		}
+		}*/
 
 		return possibleValues;
 	}
