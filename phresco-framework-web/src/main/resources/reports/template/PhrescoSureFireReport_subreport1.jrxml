@@ -62,7 +62,6 @@
 		</variable>
 	</subDataset>
 	<parameter name="allTestSuites" class="java.util.List"/>
-	<parameter name="hideClassColumn" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -105,7 +104,7 @@
 										<font fontName="Times New Roman" size="12" isBold="true"/>
 										<paragraph leftIndent="2"/>
 									</textElement>
-									<text><![CDATA[Testsuite Scenarios]]></text>
+									<text><![CDATA[Test-Scenarios]]></text>
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell style="table_TD" height="23" rowSpan="1">
