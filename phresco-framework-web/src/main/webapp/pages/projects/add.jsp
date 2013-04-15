@@ -861,7 +861,7 @@
 		<% } %>
 		var applayer = '<%= appLayerId %>';
 		var newAppLayerRow = $(document.createElement('div')).attr("class", "appLayerContents").css("height","33px");
-		newAppLayerRow.html("<div class='align-div-center'><div class='align-in-row'><label class='control-label autoWidth'><s:text name='lbl.app.code' /></label>" + 
+		newAppLayerRow.html("<div class='align-div-center'><div class='align-in-row'><label class='control-label autoWidth'><span class='mandatory'>*</span>&nbsp;<s:text name='lbl.app.code' /></label>" + 
 							"<input type='text' class='appLayerProjName' onblur='checkForApplnDuplicate(this);' name='appLayerProjName' temp='"+count+"' "+
 							" maxlength='12' title='12 Characters only' style='float:left' placeholder='<s:text name='place.hldr.proj.app.code'/>'></div>" +
 							"<div class='align-in-row'><label class='control-label autoWidth'><s:text name='lbl.technology'/></label>" +

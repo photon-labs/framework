@@ -26,10 +26,11 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
+    	//enabling the page of the first quality tab
     	var params = getBasicParams();
-    	//clickMenu($("a[name='qualityTab']"), $("#subTabcontainer"), $('#formAppMenu, #formCustomers'));//handles the click event of the quality sub tabs
-		loadContent("unit", '', $("#subTabcontainer"), params, '', true);
-		activateMenu($("#unit"));
+  		var getTabId = $("#testmenu li:first-child a").attr('id');
+		loadContent(getTabId, '', $("#subTabcontainer"), params, '', true);
+		activateMenu($("#" +getTabId));
 	});
 </script>
 
