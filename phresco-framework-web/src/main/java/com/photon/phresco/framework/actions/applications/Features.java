@@ -21,6 +21,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,6 +40,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.photon.phresco.api.ConfigManager;
 import com.photon.phresco.commons.model.ApplicationInfo;
@@ -322,52 +325,64 @@ public class Features extends DynamicParameterModule {
 		}
 	}
 
-	private void getModulesFromProjectInfo(ApplicationInfo appInfo, ArtifactGroup artifactGroup, SelectedFeature selectFeature) throws FileNotFoundException {
-		StringBuilder dotPhrescoPathSb = new StringBuilder(Utility.getProjectHome());
-		dotPhrescoPathSb.append(appInfo.getAppDirName());
-		dotPhrescoPathSb.append(File.separator);
-		dotPhrescoPathSb.append(DOT_PHRESCO_FOLDER);
-		dotPhrescoPathSb.append(File.separator);
-		String projectInfoFile = dotPhrescoPathSb.toString() + PROJECT_INFO;
-		BufferedReader bufferedReader = new BufferedReader(new FileReader(projectInfoFile));
-		Type type = new TypeToken<ProjectInfo>() {}.getType();
-		Gson gson = new Gson();
-		ProjectInfo projectinfo = gson.fromJson(bufferedReader, type);
-		ApplicationInfo applicationInfo = projectinfo.getAppInfos().get(0);
-		if (CollectionUtils.isNotEmpty(applicationInfo.getSelectedComponents())) {
-			List<String> selectedComponents = applicationInfo.getSelectedComponents();
-			if (selectedComponents.contains(selectFeature.getVersionID())) {
-				List<CoreOption> appliesTo1 = artifactGroup.getAppliesTo();
-				for (CoreOption coreOption : appliesTo1) {
-				    if (coreOption.getTechId().equals(appInfo.getTechInfo().getId()) && !coreOption.isCore() && artifactGroup.getPackaging().equalsIgnoreCase(ZIP_FILE)) {
-				    	selectFeature.setCanConfigure(true);
-				    }
+	private void getModulesFromProjectInfo(ApplicationInfo appInfo, ArtifactGroup artifactGroup, SelectedFeature selectFeature) throws PhrescoException {
+		BufferedReader bufferedReader = null;
+		try {
+			StringBuilder dotPhrescoPathSb = new StringBuilder(Utility.getProjectHome());
+			dotPhrescoPathSb.append(appInfo.getAppDirName());
+			dotPhrescoPathSb.append(File.separator);
+			dotPhrescoPathSb.append(DOT_PHRESCO_FOLDER);
+			dotPhrescoPathSb.append(File.separator);
+			String projectInfoFile = dotPhrescoPathSb.toString() + PROJECT_INFO;
+			bufferedReader = new BufferedReader(new FileReader(projectInfoFile));
+			Type type = new TypeToken<ProjectInfo>() {}.getType();
+			Gson gson = new Gson();
+			ProjectInfo projectinfo = gson.fromJson(bufferedReader, type);
+			ApplicationInfo applicationInfo = projectinfo.getAppInfos().get(0);
+			if (CollectionUtils.isNotEmpty(applicationInfo.getSelectedComponents())) {
+				List<String> selectedComponents = applicationInfo.getSelectedComponents();
+				if (selectedComponents.contains(selectFeature.getVersionID())) {
+					List<CoreOption> appliesTo1 = artifactGroup.getAppliesTo();
+					for (CoreOption coreOption : appliesTo1) {
+					    if (coreOption.getTechId().equals(appInfo.getTechInfo().getId()) && !coreOption.isCore() && artifactGroup.getPackaging().equalsIgnoreCase(ZIP_FILE)) {
+					    	selectFeature.setCanConfigure(true);
+					    }
+					}
 				}
 			}
-		}
-		
-		if (CollectionUtils.isNotEmpty(applicationInfo.getSelectedModules())) {
-			List<String> selectedModules = applicationInfo.getSelectedModules();
-			if (selectedModules.contains(selectFeature.getVersionID())) {
-				List<CoreOption> appliesTo1 = artifactGroup.getAppliesTo();
-				for (CoreOption coreOption : appliesTo1) {
-				    if (coreOption.getTechId().equals(appInfo.getTechInfo().getId()) && !coreOption.isCore() && artifactGroup.getPackaging().equalsIgnoreCase(ZIP_FILE)) {
-				    	selectFeature.setCanConfigure(true);
-				    }
+			
+			if (CollectionUtils.isNotEmpty(applicationInfo.getSelectedModules())) {
+				List<String> selectedModules = applicationInfo.getSelectedModules();
+				if (selectedModules.contains(selectFeature.getVersionID())) {
+					List<CoreOption> appliesTo1 = artifactGroup.getAppliesTo();
+					for (CoreOption coreOption : appliesTo1) {
+					    if (coreOption.getTechId().equals(appInfo.getTechInfo().getId()) && !coreOption.isCore() && artifactGroup.getPackaging().equalsIgnoreCase(ZIP_FILE)) {
+					    	selectFeature.setCanConfigure(true);
+					    }
+					}
 				}
 			}
-		}
-		if (CollectionUtils.isNotEmpty(applicationInfo.getSelectedJSLibs())) {
-			List<String> selectedJsLibs = applicationInfo.getSelectedJSLibs();
-			if (selectedJsLibs.contains(selectFeature.getVersionID())) {
-				List<CoreOption> appliesTo1 = artifactGroup.getAppliesTo();
-				for (CoreOption coreOption : appliesTo1) {
-				    if (coreOption.getTechId().equals(appInfo.getTechInfo().getId()) && !coreOption.isCore() && artifactGroup.getPackaging().equalsIgnoreCase(ZIP_FILE)) {
-				    	selectFeature.setCanConfigure(true);
-				    }
+			if (CollectionUtils.isNotEmpty(applicationInfo.getSelectedJSLibs())) {
+				List<String> selectedJsLibs = applicationInfo.getSelectedJSLibs();
+				if (selectedJsLibs.contains(selectFeature.getVersionID())) {
+					List<CoreOption> appliesTo1 = artifactGroup.getAppliesTo();
+					for (CoreOption coreOption : appliesTo1) {
+					    if (coreOption.getTechId().equals(appInfo.getTechInfo().getId()) && !coreOption.isCore() && artifactGroup.getPackaging().equalsIgnoreCase(ZIP_FILE)) {
+					    	selectFeature.setCanConfigure(true);
+					    }
+					}
 				}
 			}
-		}
+		bufferedReader.close();
+		} catch (JsonIOException e) {
+			throw new PhrescoException(e);
+		} catch (JsonSyntaxException e) {
+			throw new PhrescoException(e);
+		} catch (IOException e) {
+			throw new PhrescoException(e);
+		} finally {
+    		Utility.closeReader(bufferedReader);
+    	}
 	}
 	
 	private void getDefaultDependentFeatures(List<ArtifactGroup> moduleGroups, List<SelectedFeature> defaultFeatures, ArtifactInfo artifactInfo) {

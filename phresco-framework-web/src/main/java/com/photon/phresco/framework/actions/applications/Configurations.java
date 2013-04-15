@@ -109,7 +109,8 @@ public class Configurations extends FrameworkBaseAction {
     private String typeError = null;
     private String portError = null;
     private String dynamicError = "";
-    private String envName = null;
+    private String dynamicField = "";
+	private String envName = null;
 	private String configType = null;
     private String oldConfigType = null;
 	private String envError = null;
@@ -716,6 +717,7 @@ public class Configurations extends FrameworkBaseAction {
     	boolean isIISServer = false;
     	boolean serverTypeValidation = false;
     	String techId = "";
+    	String comma = "";
     	
     	if (StringUtils.isEmpty(getConfigName().trim())) {
     		setConfigNameError(getText(ERROR_NAME));
@@ -805,7 +807,14 @@ public class Configurations extends FrameworkBaseAction {
 	             	String field = propertyTemplate.getName();
 	             	dynamicError += propKey + Constants.STR_COLON + field + PROP_TEMP_MISSING + Constants.STR_COMMA;
 	            }
-	             
+				
+				StringBuilder sb = new StringBuilder();
+				sb.append(comma);
+				sb.append(propKey);
+				comma = ",";
+				dynamicField += sb.toString();
+				setDynamicField(dynamicField);
+				
 	            if (CONFIG_TYPE.equals(propKey)) {
 	             	if (StringUtils.isEmpty(getVersion())) {
 	             		setVersionError(getText(ERROR_CONFIG_VERSION));
@@ -2515,5 +2524,13 @@ public class Configurations extends FrameworkBaseAction {
 
 	public void setCheckedThemes(List<String> checkedThemes) {
 		this.checkedThemes = checkedThemes;
+	}
+	
+	public String getDynamicField() {
+		return dynamicField;
+	}
+
+	public void setDynamicField(String dynamicField) {
+		this.dynamicField = dynamicField;
 	}
 }
