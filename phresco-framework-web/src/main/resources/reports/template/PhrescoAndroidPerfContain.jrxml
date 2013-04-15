@@ -136,11 +136,11 @@
 				<reportElement style="PAPCTitleRectLogo" x="0" y="128" width="554" height="23"/>
 			</rectangle>
 			<textField>
-				<reportElement x="4" y="128" width="100" height="23"/>
+				<reportElement x="4" y="128" width="360" height="23"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="15" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{testType}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{testType} + " TEST REPORT"]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>

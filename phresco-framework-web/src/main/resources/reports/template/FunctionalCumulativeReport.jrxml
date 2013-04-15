@@ -45,7 +45,7 @@
 			<printWhenExpression><![CDATA[$P{testType}.equals( "functional" )]]></printWhenExpression>
 			<frame>
 				<reportElement x="0" y="0" width="555" height="211" isRemoveLineWhenBlank="true">
-					<printWhenExpression><![CDATA[$P{testType}.contains("functional") && !$F{allTestSuites}.isEmpty()]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$P{testType}.contains("functional") && !$F{allTestSuites}.isEmpty() || $P{testType}.contains("functional") && !$F{testSuites}.isEmpty()]]></printWhenExpression>
 				</reportElement>
 				<subreport>
 					<reportElement x="0" y="0" width="555" height="211" isRemoveLineWhenBlank="true"/>
