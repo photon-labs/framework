@@ -18,7 +18,6 @@
 package com.photon.phresco.framework.actions.applications;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -60,7 +59,6 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -71,7 +69,6 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonIOException;
 import com.photon.phresco.commons.FileListFilter;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
@@ -1956,18 +1953,20 @@ public class Quality extends DynamicParameterAction implements Constants {
     }
     
     public String fetchFunctionalTestReport() throws TransformerException, PhrescoPomException {
-        try {
-        	ApplicationInfo appInfo = getApplicationInfo();
-            FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-            String testSuitePath = frameworkUtil.getFunctionalTestSuitePath(appInfo);
-            String testCasePath = frameworkUtil.getFunctionalTestCasePath(appInfo);
-            
-            return testReport(testSuitePath, testCasePath);
-        } catch (PhrescoException e) {
-            // TODO: handle exception
-        }
-        
-        return null;
+    	try {
+    		ProjectInfo projectInfo = getProjectInfo();
+    		ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
+    		FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+    		String testSuitePath = frameworkUtil.getFunctionalTestSuitePath(appInfo);
+    		String testCasePath = frameworkUtil.getFunctionalTestCasePath(appInfo);
+    		setReqAttribute(REQ_PROJECT_INFO, projectInfo);
+
+    		return testReport(testSuitePath, testCasePath);
+    	} catch (PhrescoException e) {
+    		// TODO: handle exception
+    	}
+
+    	return null;
     }
 
     private String testReport(String testSuitePath, String testCasePath) throws TransformerException, PhrescoPomException {
