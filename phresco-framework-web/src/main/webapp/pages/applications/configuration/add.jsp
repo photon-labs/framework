@@ -332,6 +332,14 @@
 			hideError($("#configNameControl"), $("#configNameError"));
 		}
 		
+		if (!isBlank(data.dynamicField)) {
+			var dynamicFields = data.dynamicField.split(",");
+			for (var i = 0; i < dynamicFields.length; i++) {
+	    		var dynField = dynamicFields[i];
+	    		hideError($("#" + dynField + "Control"), $("#" + dynField + "Error"));
+	    	}
+		}
+		
 		if (!isBlank(data.dynamicError)) {
 	    	var dynamicErrors = data.dynamicError.split(",");
 	    	for (var i = 0; i < dynamicErrors.length; i++) {
@@ -339,11 +347,9 @@
 	    		if (!isBlank(dynErr[1])) {
 	    			isError = true;
 		    		showError($("#" + dynErr[0] + "Control"), $("#" + dynErr[0]+ "Error"), dynErr[1]);
-		    	} else {
-					hideError($("#" + dynErr[0] + "Control"), $("#" + dynErr[0]+ "Error"));
-				}
+		    	}
     		}
-		} 
+		}
 		
 		if (!isBlank(data.configEnvError)) {
 			isError = true;
