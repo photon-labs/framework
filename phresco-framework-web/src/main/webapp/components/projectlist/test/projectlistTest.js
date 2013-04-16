@@ -18,7 +18,6 @@ define(["projectlist/projectList", "framework/navigationController", "framework/
 				
 				projectlist = new projectList();
 				Clazz.navigationController.jQueryContainer = $("<div id='projectsTest' style='display:none;'></div>");
-				/* $("body").append(Clazz.navigationController.jQueryContainer); */
 				Clazz.navigationController.push(projectlist, false);
 					
 				setTimeout(function() {

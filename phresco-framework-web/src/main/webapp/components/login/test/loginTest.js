@@ -19,16 +19,10 @@ define(["jquery"], function($) {
 						equal(sucessdata.indexOf('basepage:widget'), "2200", "Success case for Login");
 						start();					
 						
-						//$('<basepage:widget config="src/components/login/test/config.json"></basepage:widget>').appendTo(document.body);
-						//$('<script src="src/lib/fastclick.js" type="text/javascript"></script>').appendTo(document.head);
 						$('<script src="src/lib/bootstrap.min.js" type="text/javascript"></script>').appendTo(document.head);
-						
-						//$('<script src="src/components/login/test/BootstrapTest.js" type="text/javascript"></script>').appendTo(document.head);
 						
 						require(["synonymsTest"], function(synonymsTest) {
 							
-							synonymsTest.runTests(configData);
-							//keywordsTest.runTests(configData);						   
 						});
 					}
 				});

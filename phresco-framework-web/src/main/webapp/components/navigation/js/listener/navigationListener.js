@@ -1,4 +1,4 @@
-define(["framework/widget", "navigation/api/navigationAPI", "common/loading", "header/header"], function() {
+define(["framework/widget", "navigation/api/navigationAPI", "projects/addproject"], function() {
 
 	Clazz.createPackage("com.components.navigation.js.listener");
 
@@ -6,21 +6,26 @@ define(["framework/widget", "navigation/api/navigationAPI", "common/loading", "h
 		localStorageAPI : null,
 		loadingScreen : null,
 		headerContent : null,
-
+		addproject : null,
+		
 		/***
 		 * Called in initialization time of this class 
 		 *
 		 * @config: configurations for this listener
 		 */
 		initialize : function(config) {
-			this.loadingScreen = new Clazz.com.js.widget.common.Loading();
+			var self = this;
+			self.addproject = new Clazz.com.components.projects.js.AddProject();
 		},
 		
-		/***
-		 * Verify the navigation and navigate to dashboard page if the navigation is successful
-		 * 
-		 * @header: constructed header for each call
-		 */
+		onAddProject : function() {
+			var self = this;
+			if(self.addproject === null) {
+				self.addproject = new Clazz.com.components.projects.js.AddProject();
+			}
+			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
+			Clazz.navigationController.push(self.addproject, true);
+		}
 		
 	});
 

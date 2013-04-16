@@ -1,4 +1,4 @@
-define(["framework/widget", "common/loading", "header/api/headerAPI",], function() {
+define(["framework/widget", "common/loading", "header/api/headerAPI"], function() {
 
 	Clazz.createPackage("com.commonComponents.modules.header.js.listener");
 

@@ -1,4 +1,4 @@
-define(["framework/widget", "projectlist/api/projectListAPI"], function() {
+define(["framework/widget", "projectlist/api/projectListAPI", "projects/editproject"], function() {
 
 	Clazz.createPackage("com.components.projectlist.js.listener");
 
@@ -6,27 +6,38 @@ define(["framework/widget", "projectlist/api/projectListAPI"], function() {
 		
 		basePlaceholder :  window.commonVariables.basePlaceholder,
 		projectListAPI : null,
-
+		editproject : null,
+		
 		/***
 		 * Called in initialization time of this class 
 		 *
 		 * @config: configurations for this listener
 		 */
 		initialize : function(config) {
-				this.projectListAPI = new Clazz.com.components.projectlist.js.api.ProjectsListAPI();
+			var self = this;
+			self.projectListAPI = new Clazz.com.components.projectlist.js.api.ProjectsListAPI();
+			self.editproject = new Clazz.com.components.projects.js.EditProject();
 		},
 		
 		onProjects : function() {
 		
 		},
+		
+		onEditProject : function() {
+			var self = this;
+			if(self.editproject === null) {
+				self.editproject = new Clazz.com.components.projects.js.EditProject();
+			}
+			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
+			Clazz.navigationController.push(self.editproject, true);
+		},
 
 		getProjectList : function(header, callback) {
 			var self = this;
 			try {
-				//this.loadingScreen.showLoading();
 				self.projectListAPI.projectslist(header,
 					function(response) {
-						if (response != null) {
+						if (response !== null) {
 							callback(response);
 						} else {
 							callback({ "status" : "service failure"});
@@ -54,10 +65,8 @@ define(["framework/widget", "projectlist/api/projectListAPI"], function() {
 				contentType: "application/json",
 				requestMethod: "GET",
 				dataType: "json",
-				//requestPostBody: projectRequestBody,
-				//webserviceurl: commonVariables.webserviceurl + commonVariables.synonymsContext + "/loadSynonyms"
 				webserviceurl: "http://localhost:8080/framework/rest/api/project/list?customer=photon"
-			}
+			};
 
 			return header;
 		}

@@ -1,1 +1,1 @@
-<footer class="footer_section">&copy;<font data-i18n="footer.label.copyrights"></font></footer>
+<footer class="footer_section" id="footer">&copy;<font data-i18n="footer.label.copyrights"></font></footer>

@@ -59,7 +59,7 @@ define(["framework/widget", "login/api/loginAPI", "common/loading", "footer/foot
 			var self = this;
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 			self.projectlistContent = new Clazz.com.components.projectlist.js.ProjectList();
-			Clazz.navigationController.push(self.projectlistContent, false);
+			Clazz.navigationController.push(self.projectlistContent, true);
 		},
 		
 		renderFooter : function(){

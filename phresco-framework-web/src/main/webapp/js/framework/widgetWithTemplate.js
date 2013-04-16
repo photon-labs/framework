@@ -1,13 +1,12 @@
 define(["framework/widget", "framework/templateProvider"], function() {
 
-	Clazz.WidgetWithTemplate = Clazz.extend(
-		Clazz.Widget, {
+	Clazz.WidgetWithTemplate = Clazz.extend(Clazz.Widget, {
 			// the url of the template
 			templateUrl: null,
 			localConfig: null,
 			
 			// default the provider to handlebar
-			templateProvider: TemplateProvider != undefined ? TemplateProvider.HANDLE_BAR : '',
+			templateProvider: TemplateProvider !== undefined ? TemplateProvider.HANDLE_BAR : '',
 			
 			// data for data binding process. If you don't override preRender(), this is the default
 			// data that it will use
@@ -32,7 +31,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 			 */
 			postRender : function(element) {
 			
-			if (commonVariables.userInfo.role.name == "ROLE_ADMIN"){
+			if (commonVariables.userInfo.role.name === "ROLE_ADMIN"){
 			$('.userpermissions').addclass('show'); 
 			}
 			},
@@ -57,7 +56,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 			 * @whereToRender The node where we are going to render the UI
 			 */
 			render : function(whereToRender) {
-				if(whereToRender == null) {
+				if(whereToRender === null) {
 					whereToRender = $(this.defaultContainer);
 				}
 				
@@ -71,7 +70,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 			 * @whereToRender The node where we are going to render the UI
 			 */
 			renderTemplate: function(data, whereToRender) {
-				if(this.templateUrl != null) {
+				if(this.templateUrl !== null) {
 					var self = this;
 					var templateProvider = new Clazz.TemplateProvider({ templateEngine : this.templateProvider});
 					templateProvider.merge(this.templateUrl, data, function(element) {
@@ -92,7 +91,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 			 *  @return The HTML string from the result of data binding with the template
 			 */
 			getHtmlString: function() {
-				if(this.element != null) {
+				if(this.element !== null) {
 					return $(this.element)[0].outerHTML;
 				}
 			},
@@ -124,33 +123,6 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				});
 			}
 			
-			/* renderTheme : function(module, localtheme) {
-				if(Clazz.config.theme !== undefined && Clazz.config.theme !== null && Clazz.config.theme !== '' &&
-				  module !== undefined && module !== null && module !== '') {
-					$('head').append('<link rel="stylesheet" href="../components/'+ module +'/themes/'+ Clazz.config.theme +'/css/' + Clazz.config.theme + '.css">');
-				} else {
-					if(localtheme !== undefined && localtheme !== null && localtheme !== '' &&
-					module !== undefined && module !== null && module !== '') {
-						$('head').append('<link rel="stylesheet" href="../components/'+ module +'/themes/'+ localtheme +'/css/' + localtheme + '.css">');
-					}
-				}
-			},
-			
-			disableActionStyle : function() {
-				$(".block_sym").die('mouseover');
-				$(".block_sym").live('mouseover', function() {
-					$(".block_sym").css('cursor', 'auto');
-				});
-			},
-
-			escapePopup : function(id) {
-				var self = this;
-				$(id).on( 'keydown', function ( e ) {
-					if ( e.keyCode === 27 && !self.showingDatePicker) { // ESC
-						$(id).modal('hide');
-					}
-				});
-			} */
 		}
 	);
 

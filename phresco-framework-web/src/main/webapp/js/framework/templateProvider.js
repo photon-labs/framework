@@ -6,7 +6,7 @@ define(["framework/class"], function() {
 
 			merge : function(templateUrl, data, callbackFunction) {
 				var self = this;
-				if(this.compiledCache[templateUrl] != null) {
+				if(this.compiledCache[templateUrl] !== null) {
 					var compiledTemplate = this.compiledCache[templateUrl].compiledTemplate;
 					var scope =  this.compiledCache[templateUrl].scope;
 					scope.data = data;
@@ -61,7 +61,7 @@ define(["framework/class"], function() {
 			merge : function(templateUrl, data, callbackFunction) {
 				$.get(templateUrl).success(function(template, status, response) {
 					require(["lib/handlebars-1.0.0"], function() {
-						var compiledTemplate = Handlebars.compile(typeof template == "object" ? response.responseText : template);
+						var compiledTemplate = Handlebars.compile(typeof template === "object" ? response.responseText : template);
 						var element = compiledTemplate(data);
 						callbackFunction(element);
 					});
@@ -148,7 +148,7 @@ define(["framework/class"], function() {
 				templateEngine : null, 
 
 				initialize : function(config) {
-					if(config.templateEngine != null) {
+					if(config.templateEngine !== null) {
 						this.templateEngine = config.templateEngine;
 					} else {
 						this.templateEngine = TemplateProvider.DUST;
@@ -158,11 +158,6 @@ define(["framework/class"], function() {
 				merge : function(templateUrl, data, callbackFunction) {
 					var self = this;
 					self.templateEngine.merge(templateUrl, data, callbackFunction);
-					/* $.get(templateUrl).success(function(template, status, response) {
-						self.templateEngine.merge(templateUrl, data, callbackFunction);
-					}).error(function(error) {
-						console.log("error "+ error.status +": "+ error.statusText);
-					}); */ 
 				}
 			}
 	);

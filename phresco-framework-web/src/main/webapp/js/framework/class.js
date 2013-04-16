@@ -12,21 +12,24 @@ var Clazz = {
 		var self = this;
 		
         var baseClass = function(config) {
-			//this.config = config;
             // call initialize
 			if(this.initialize !== undefined){
-				if(config !== undefined){this.initialize(config);}
-				else {this.initialize(self.config);}
+				if(config !== undefined){
+					this.initialize(config);
+				}
+				else {
+					this.initialize(self.config);
+				}
 			}
         };
         
         baseClass.prototype.superClass = {};
-        if (superClass != undefined) {
+        if (superClass !== undefined) {
             // get all property from super class and give it to this class
             for(var property in superClass.prototype) {
                 // copy original method to superClass keyword, exclude the superclass property
                 // because it is specific to each class
-                if(property != "superClass") {
+                if(property !== "superClass") {
                     baseClass.prototype.superClass[property] = superClass.prototype[property];
                     baseClass.prototype[property] = superClass.prototype[property];
                 }

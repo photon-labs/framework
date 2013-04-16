@@ -38,7 +38,6 @@ define(["framework/base"], function(){
 				},
 				
 				error : function(jqXHR, textStatus, errorThrown) {
-					/* location.reload(); */
 					if (errorHandler) {
 						errorHandler(textStatus);
 					}

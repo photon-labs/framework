@@ -7,7 +7,7 @@ define(["framework/widgetWithTemplate", "login/listener/loginListener"], functio
 		// template URL, used to indicate where to get the template
 		templateUrl: "../components/login/template/login.tmp",
 		configUrl: "../components/login/config/config.json",
-		name : window.commonVariables.login,
+		name : commonVariables.login,
 		localConfig: null,
 		header: {
 			contentType: null,

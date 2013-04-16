@@ -3,7 +3,7 @@ define(["api/api"], function(){
 
 	Clazz.com.js.api.LocalStorageAPI = Clazz.extend(Clazz.com.js.api.API, {
 		emptyString : "",
-		emptyArray : [],
+		emptyArray : []
 	});
 	
 	return Clazz.com.js.api.LocalStorageAPI;
