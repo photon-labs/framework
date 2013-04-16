@@ -66,6 +66,7 @@ public class Login extends FrameworkBaseAction {
     private String bodyBackGroundColor = "";
 	private String accordionBackGroundColor = "";
 	private String menuBackGround = "";
+	private String subMenuBackGround = "";
 	private String menufontColor = "";
 	private String buttonColor = "";
 	private String pageHeaderColor = "";
@@ -263,6 +264,7 @@ public class Login extends FrameworkBaseAction {
 			setCopyRightColor(themeMap.get(COPYRIGHT_COLOR));
 			setLabelColor(themeMap.get(LABEL_COLOR));
 			setMenuBackGround(themeMap.get(MENU_BACKGROUND_COLOR));
+			setSubMenuBackGround(themeMap.get(SUB_MENU_BACKGROUND_COLOR));
 			setMenufontColor(themeMap.get(MENU_FONT_COLOR));
 			setDisabledLabelColor(themeMap.get(DISABLED_LABEL_COLOR));
 			setCopyRight(themeMap.get(COPYRIGHT));
@@ -502,5 +504,13 @@ public class Login extends FrameworkBaseAction {
     public List<String> getCustomerAllOptions() {
         return customerAllOptions;
     }
+
+	public void setSubMenuBackGround(String subMenuBackGround) {
+		this.subMenuBackGround = subMenuBackGround;
+	}
+
+	public String getSubMenuBackGround() {
+		return subMenuBackGround;
+	}
 
 }
