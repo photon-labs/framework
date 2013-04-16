@@ -581,7 +581,7 @@
 		var buttonGradientColor = buttonColor;
 		var inActiveLabelColor = data.disabledLabelColor;
 		var copyright = data.copyRight;
-		
+		var subMenuBackGround = data.subMenuBackGround;
 		JSS.css({
 
 			'.page-header': {
@@ -794,8 +794,8 @@
 				'background': "none repeat scroll 0 0" + menuBackGround      // menu background color
 			},
 			
-			'#testmenu li a': {
-				'background': "none repeat scroll 0 0" +  menuBackGround // change the Left side menu background color in Quality tab selection ex: click unit ,functional , performance
+			'#testmenu li a, #thememenu li a': {
+				'background': "none repeat scroll 0 0" +  subMenuBackGround // change the Left side menu background color in Quality tab selection ex: click unit ,functional , performance
 			},
 			
 			'.tabs li a.inactive label' : {
