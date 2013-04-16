@@ -56,13 +56,14 @@ define(["jquery"], function($) {
 			// setup require.js
 			var requireConfig = requirejs.config(configJson);
 			
-			require(["lib/Signal-1.0.0", "lib/SignalBinding-1.0.0", "lib/i18next-1.6.0", "projectlistTest", "headerTest", "footerTest", "navigationTest", "addprojectTest", "editprojectTest"],	function (Signal, SignalBinding, next, projectlistTest, headerTest, footerTest, navigationTest, addprojectTest, editprojectTest){
+			require(["lib/Signal-1.0.0", "lib/SignalBinding-1.0.0", "lib/i18next-1.6.0", "projectlistTest", "headerTest", "footerTest", "navigationTest", "addprojectTest", "editprojectTest", "applicationTest"],	function (Signal, SignalBinding, next, projectlistTest, headerTest, footerTest, navigationTest, addprojectTest, editprojectTest, applicationTest){
 				headerTest.runTests(data);
 				footerTest.runTests(data);
 				projectlistTest.runTests(data);
 				navigationTest.runTests(data);
 				addprojectTest.runTests(data);
-				editprojectTest.runTests(data);	
+				editprojectTest.runTests(data);
+				applicationTest.runTests(data);	
 			});
 		}, "json");
 	});

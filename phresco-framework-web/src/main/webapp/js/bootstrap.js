@@ -10,6 +10,8 @@ var commonVariables = {
 	addproject : "addproject",
 	editproject : "editproject",
 	
+	projectlist : "projectlist",
+	
 	requestBody : {
 	},
 	

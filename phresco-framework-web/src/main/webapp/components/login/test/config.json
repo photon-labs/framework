@@ -77,6 +77,15 @@
 		"editprojectTest": {
 			"moduleName":"editprojectTest",
 			"path" : "components/projects/test/editprojectTest"
+			
+		"application" : {
+			"moduleName":"application",
+			"path" : "components/application/js"
+		},
+		
+		"applicationTest" : {
+			"moduleName":"applicationTest",
+			"path" : "components/application/test/applicationTest"
 		}
 		
 	}

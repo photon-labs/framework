@@ -39,8 +39,8 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 			var self = this;
 			self.onProjectsEvent = new signals.Signal();
 			self.onProjectEditEvent = new signals.Signal();
-			self.onProjectsEvent.add(projectslistListener.onProjects, projectslistListener);
 			self.onProjectEditEvent.add(projectslistListener.onEditProject, projectslistListener);			
+			self.onProjectsEvent.add(projectslistListener.editApplication, projectslistListener); 
 		},
 		
 		/***
@@ -69,6 +69,11 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 			
 			$("#editproject").click(function(){
 				self.onProjectEditEvent.dispatch();
+			});	
+
+			$('td[name=editApplication]').click(function(){
+				var value = $('td[name=editApplication]').text();
+				self.onProjectsEvent.dispatch(value);
 			});
 		}
 	});

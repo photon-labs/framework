@@ -1,4 +1,4 @@
-define(["framework/widget", "projectlist/api/projectListAPI", "projects/editproject"], function() {
+define(["framework/widget", "projectlist/api/projectListAPI", "projects/editproject", "application/application"], function() {
 
 	Clazz.createPackage("com.components.projectlist.js.listener");
 
@@ -7,7 +7,7 @@ define(["framework/widget", "projectlist/api/projectListAPI", "projects/editproj
 		basePlaceholder :  window.commonVariables.basePlaceholder,
 		projectListAPI : null,
 		editproject : null,
-		
+		editAplnContent : null,
 		/***
 		 * Called in initialization time of this class 
 		 *
@@ -17,10 +17,6 @@ define(["framework/widget", "projectlist/api/projectListAPI", "projects/editproj
 			var self = this;
 			self.projectListAPI = new Clazz.com.components.projectlist.js.api.ProjectsListAPI();
 			self.editproject = new Clazz.com.components.projects.js.EditProject();
-		},
-		
-		onProjects : function() {
-		
 		},
 		
 		onEditProject : function() {
@@ -69,9 +65,18 @@ define(["framework/widget", "projectlist/api/projectListAPI", "projects/editproj
 			};
 
 			return header;
+		},
+		
+		editApplication : function(value) {
+			var self = this;
+			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
+			self.editAplnContent = new Clazz.com.components.application.js.Application();
+			Clazz.navigationController.push(self.editAplnContent, true);
+			$("#navigation").css("display", "none");
+			$("#applicationedit").css("display", "block");
+			$("#aplntitle").html("Edit - "+value);
 		}
 
-		
 	});
 
 	return Clazz.com.components.projectlist.js.listener.ProjectsListListener;
