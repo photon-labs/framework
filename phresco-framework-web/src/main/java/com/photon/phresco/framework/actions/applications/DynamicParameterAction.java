@@ -382,8 +382,13 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 	private PossibleValues getDynamicValues(Map<String, Object> watcherMap, Parameter parameter) throws PhrescoException {
 		try {
 			String className = parameter.getDynamicParameter().getClazz();
+			String grpId = parameter.getDynamicParameter().getDependencies().getDependency().getGroupId();
+			String artfId = parameter.getDynamicParameter().getDependencies().getDependency().getArtifactId();
+			String jarVersion = parameter.getDynamicParameter().getDependencies().getDependency().getVersion();
+			
 			DynamicParameter dynamicParameter;
-			PhrescoDynamicLoader phrescoDynamicLoader = pdlMap.get(getCustomerId());
+			PhrescoDynamicLoader phrescoDynamicLoader = pdlMap.get(getCustomerId() + grpId + artfId + jarVersion);
+			
 			if (MapUtils.isNotEmpty(pdlMap) && phrescoDynamicLoader != null) {
 				dynamicParameter = phrescoDynamicLoader.getDynamicParameter(className);
 			} else {
@@ -393,13 +398,13 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 				//To set groupid,artfid,type infos to List<ArtifactGroup>
 				List<ArtifactGroup> artifactGroups = new ArrayList<ArtifactGroup>();
 				ArtifactGroup artifactGroup = new ArtifactGroup();
-				artifactGroup.setGroupId(parameter.getDynamicParameter().getDependencies().getDependency().getGroupId());
-				artifactGroup.setArtifactId(parameter.getDynamicParameter().getDependencies().getDependency().getArtifactId());
+				artifactGroup.setGroupId(grpId);
+				artifactGroup.setArtifactId(artfId);
 				artifactGroup.setPackaging(parameter.getDynamicParameter().getDependencies().getDependency().getType());
 				//to set version
 				List<ArtifactInfo> artifactInfos = new ArrayList<ArtifactInfo>();
 		        ArtifactInfo artifactInfo = new ArtifactInfo();
-		        artifactInfo.setVersion(parameter.getDynamicParameter().getDependencies().getDependency().getVersion());
+		        artifactInfo.setVersion(jarVersion);
 				artifactInfos.add(artifactInfo);
 		        artifactGroup.setVersions(artifactInfos);
 				artifactGroups.add(artifactGroup);
@@ -407,7 +412,7 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 				//dynamically loads specified Class
 				phrescoDynamicLoader = new PhrescoDynamicLoader(repoInfo, artifactGroups);
 				dynamicParameter = phrescoDynamicLoader.getDynamicParameter(className);
-				pdlMap.put(getCustomerId(), phrescoDynamicLoader);
+				pdlMap.put(getCustomerId() + grpId + artfId + jarVersion, phrescoDynamicLoader);
 			}
 			
 			return dynamicParameter.getValues(watcherMap);

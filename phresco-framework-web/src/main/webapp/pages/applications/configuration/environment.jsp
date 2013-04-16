@@ -36,6 +36,7 @@
 	List<Technology> allTechnologies  = (List<Technology>) request.getAttribute(FrameworkConstants.REQ_ALL_TECHNOLOGIES);
 	String fromPage = (String) request.getAttribute(FrameworkConstants.REQ_FROM_PAGE);
 	String configPath = (String) request.getAttribute(FrameworkConstants.REQ_CONFIG_PATH);
+	boolean isEnvSpecific = (Boolean) request.getAttribute(FrameworkConstants.REQ_ENV_SPECIFIC);
 	Gson gson = new Gson();
 	List<String> selectedappliesToTechs = null;
 %>

@@ -17,124 +17,15 @@
   limitations under the License.
   ###
   --%>
-<%@page import="org.apache.commons.collections.CollectionUtils"%>
 <%@ taglib uri="/struts-tags" prefix="s" %>
 
 <%@ page import="java.util.ArrayList"%>
 <%@ page import="java.util.List"%>
 
+<%@ page import="org.apache.commons.collections.CollectionUtils"%>
+
+<%@ page import="com.photon.phresco.commons.model.SettingsTemplate"%>
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
-
-<script type="text/javascript">
-	$(document).ready(function() {
-		showLoadingIcon();
-		clickMenu($("a[name='appTab']"), $("#subcontainer"), $('#formAppMenu, #formCustomers'));
-		clickMenu($("a[name='qualityTab']"), $("#subcontainer"), $('#formAppMenu, #formCustomers'));
-		clickMenu($("a[name='themeTab']"), $("#subcontainer"), $('#formAppMenu, #formCustomers'));
-		loadContent("editApplication", $('#formAppMenu, #formCustomers'), $("#subcontainer"), '', '', true);
-		activateMenu($("#appinfo"));
-	});
-	
-	//To get the appInfo page when the appInfo tab and previous btn in features jsp is clicked
-  	function showAppInfoPage() {
-  		var params = getBasicParams();
-  		loadContent('appInfo', $('#formFeatures'), $('#subcontainer'), params, '', true);
-  	}
-	
-  	//To get the features page when the features tab and next btn in appInfo jsp is clicked
-  	function showFeaturesPage() {
-   		var isError = false;
-  		$('#serverError').html("");
- 		$('#databaseError').html("");
-
- 		$("select[name='server'] option").each(function() {
- 			var val = $(this).val();	
- 			if ($("select[name='server'] option:selected[value='"+ val +"']").length > 1) {	
-		 		if ($('#propTempTbody').find("tr").length > 1) {
-			 		$("#propTempTbody .versionDiv ").each(function() {
-			 		    var serverLen = $(this).find(":checkbox").length;
-			 		    var selectedServerLen = $(this).find(":checkbox:checked").length;
-			 		    if (serverLen > 0 && selectedServerLen == 0) {
-							$('#serverError').html("Server Version is Missing");
-							isError = true;
-			 		    }
-			 		});
-		 		}
- 			}
- 		});
- 		
- 		$("select[name='database'] option").each(function() {
- 			var val = $(this).val();	
- 			if ($("select[name='database'] option:selected[value='"+ val +"']").length > 1) {
-		 		if ($('#propTempTbodyDatabase').find("tr").length > 1) {
-			 		$("#propTempTbodyDatabase .versionDiv ").each(function() {
-			 		    var dbLen = $(this).find(":checkbox").length;
-			 		    var selectedDbLen = $(this).find(":checkbox:checked").length;
-			 		    if (dbLen > 0 && selectedDbLen == 0) {
-							$('#databaseError').html("Database Version is Missing");
-							isError = true;
-			 		    }
-			 		});
-		 		}
- 			}
- 		});
-  		
-    	if (!isError) {
-   			$('#serverError').html("");
- 			$('#databaseError').html("");
-  			showLoadingIcon();
-  			var params = getBasicParams();
-  			validate('features', $('#formAppInfo'), $('#subcontainer'), params);
-   		}
-	}
-  	
-  	$('#testmenu').hide();
-  	$('#thememenu').hide();
-  	
-  	$(".tabs li a").click(function() {
-		if($(this).attr("id")=="quality") {
-			$("#thememenu").slideUp();
-			$("#testmenu").slideDown();
-			$("#testmenu .active").removeClass("active").addClass("inactive");
-			$("#testmenu li:first-child a").addClass("active");	
-		} else if($(this).attr("id")=="configuration") {
-			$("#testmenu").slideUp();
-			$("#thememenu").slideDown();	
-		} else if($(this).attr("name")=="appTab") {
-			$("#testmenu").slideUp();
-			$("#thememenu").slideUp();
-		}else if($(this).attr("id")=="themeBuilderList") {
-			$("#thememenu").slideDown();
-		}
-    });
-	
-  	// Script related to menu left slide
-	
-	var tabwidth = $(".tabs").width();
-	var tabwidthwindow = tabwidth + 15;
-	$('.tabs').css("left",-tabwidthwindow);
-	$('#subcontainer').css("width",'97.3%');
-  	$(".menuarrow").click(function(e) {
-		clickedobj=e.currentTarget;
-			if ($(clickedobj).attr("dataflag") == "true") {
-				$(".menuarrow img").attr("src","images/menu_arrow_open.gif");
-				$('#subcontainer').animate({width: '97.3%'},350);
-				$('.tabs').animate({left:-tabwidthwindow},350);
-				$(clickedobj).animate({left:'2px'},350);
-				$(clickedobj).attr("dataflag", "false");
-			}
-			else{
-				$(".menuarrow img").attr("src","images/menu_arrow_close.gif");
-				$('#subcontainer').animate({width: '83%'},350);
-				$('.tabs').animate({left:'0px'},350);
-				$(clickedobj).animate({left:tabwidthwindow},350);
-				$(clickedobj).attr("dataflag", "true");
-			}
-  	});	
-
-  	var isCiRefresh = false; // for ci page use - this should be global
-  	
-</script>
 
 <%
 	String projectId = (String) request.getAttribute(FrameworkConstants.REQ_PROJECT_ID);
@@ -145,6 +36,7 @@
 	if (optionsObj != null) {
 		optionIds  = (List<String>) optionsObj;
 	}
+	List<SettingsTemplate> favouriteConfigs = (List<SettingsTemplate>) request.getAttribute(FrameworkConstants.REQ_FAVOURITE_CONFIGS);
 %>
 <form id="formAppMenu">
 	<!-- Hidden Fields -->
@@ -186,7 +78,16 @@
 				</li>
 			<% 
 				}
-			%>	
+				if (CollectionUtils.isNotEmpty(favouriteConfigs)) {
+					for (SettingsTemplate favouriteConfig : favouriteConfigs) {
+			%>
+						<li>
+							<a href="#" class="favConfigTab inactive" name="favConfigTab" id="<%= favouriteConfig.getId() %>"><label><%= favouriteConfig.getName() %></label></a>
+						</li>
+			<%
+					}
+				}
+			%>
 			</ul>
 		</li>
 		<%
@@ -272,3 +173,128 @@
 <section id="subcontainer" class="navTopBorder">
 	
 </section>
+
+<script type="text/javascript">
+	$('#testmenu').hide();
+	$('#thememenu').hide();
+	
+	$(document).ready(function() {
+		showLoadingIcon();
+		clickMenu($("a[name='appTab']"), $("#subcontainer"), $('#formAppMenu, #formCustomers'));
+		clickMenu($("a[name='qualityTab']"), $("#subcontainer"), $('#formAppMenu, #formCustomers'));
+		clickMenu($("a[name='themeTab']"), $("#subcontainer"), $('#formAppMenu, #formCustomers'));
+		loadContent("editApplication", $('#formAppMenu, #formCustomers'), $("#subcontainer"), '', '', true);
+		activateMenu($("#appinfo"));
+		
+		$(".tabs li a").click(function() {
+			if ($(this).attr("id")=="quality") {
+				$("#thememenu").slideUp();
+				$("#testmenu").slideDown();
+				$("#testmenu .active").removeClass("active").addClass("inactive");
+				$("#testmenu li:first-child a").addClass("active");	
+			} else if($(this).attr("id")=="configuration") {
+				$("#testmenu").slideUp();
+				$("#thememenu").slideDown();
+				$("#testmenu .active").removeClass("active").addClass("inactive");
+				$("#testmenu li:first-child a").addClass("active");
+			} else if($(this).attr("name")=="appTab") {
+				$("#testmenu").slideUp();
+				$("#thememenu").slideUp();
+			} else if($(this).attr("id")=="themeBuilderList") {
+				$("#thememenu").slideDown();
+			}
+	    });
+		
+	  	// Script related to menu left slide
+		
+		var tabwidth = $(".tabs").width();
+		var tabwidthwindow = tabwidth + 15;
+		$('.tabs').css("left",-tabwidthwindow);
+		$('#subcontainer').css("width",'97.3%');
+	  	$(".menuarrow").click(function(e) {
+			clickedobj = e.currentTarget;
+				if ($(clickedobj).attr("dataflag") == "true") {
+					$(".menuarrow img").attr("src","images/menu_arrow_open.gif");
+					$('#subcontainer').animate({width: '97.3%'},350);
+					$('.tabs').animate({left:-tabwidthwindow},350);
+					$(clickedobj).animate({left:'2px'},350);
+					$(clickedobj).attr("dataflag", "false");
+				} else {
+					$(".menuarrow img").attr("src","images/menu_arrow_close.gif");
+					$('#subcontainer').animate({width: '83%'},350);
+					$('.tabs').animate({left:'0px'},350);
+					$(clickedobj).animate({left:tabwidthwindow},350);
+					$(clickedobj).attr("dataflag", "true");
+				}
+	  	});
+	  	
+	  	//To handle the favourite config tabs
+	  	$("a[name='favConfigTab']").click(function() {
+	  		var configId = $(this).attr("id");
+	  		var params = getBasicParams();
+	  		params = params.concat("&configId=");
+	  		params = params.concat(configId);
+	  		params = params.concat("&fromFavouriteConfig=");
+	  		params = params.concat(true);
+	  		$("a[name='favConfigTab']").removeClass("active").addClass("inactive");
+	  		$("#"+$(this).attr("id")).removeClass("inactive").addClass("active");
+	  		//$(".favConfigTab").removeClass("active").addClass("inactive");
+	  		loadContent("configuration", '', $("#subcontainer"), params, '', true);
+	  	});
+	});
+	
+	//To get the appInfo page when the appInfo tab and previous btn in features jsp is clicked
+  	function showAppInfoPage() {
+  		var params = getBasicParams();
+  		loadContent('appInfo', $('#formFeatures'), $('#subcontainer'), params, '', true);
+  	}
+	
+  	//To get the features page when the features tab and next btn in appInfo jsp is clicked
+  	function showFeaturesPage() {
+   		var isError = false;
+  		$('#serverError').html("");
+ 		$('#databaseError').html("");
+
+ 		$("select[name='server'] option").each(function() {
+ 			var val = $(this).val();	
+ 			if ($("select[name='server'] option:selected[value='"+ val +"']").length > 1) {	
+		 		if ($('#propTempTbody').find("tr").length > 1) {
+			 		$("#propTempTbody .versionDiv ").each(function() {
+			 		    var serverLen = $(this).find(":checkbox").length;
+			 		    var selectedServerLen = $(this).find(":checkbox:checked").length;
+			 		    if (serverLen > 0 && selectedServerLen == 0) {
+							$('#serverError').html("Server Version is Missing");
+							isError = true;
+			 		    }
+			 		});
+		 		}
+ 			}
+ 		});
+ 		
+ 		$("select[name='database'] option").each(function() {
+ 			var val = $(this).val();	
+ 			if ($("select[name='database'] option:selected[value='"+ val +"']").length > 1) {
+		 		if ($('#propTempTbodyDatabase').find("tr").length > 1) {
+			 		$("#propTempTbodyDatabase .versionDiv ").each(function() {
+			 		    var dbLen = $(this).find(":checkbox").length;
+			 		    var selectedDbLen = $(this).find(":checkbox:checked").length;
+			 		    if (dbLen > 0 && selectedDbLen == 0) {
+							$('#databaseError').html("Database Version is Missing");
+							isError = true;
+			 		    }
+			 		});
+		 		}
+ 			}
+ 		});
+  		
+    	if (!isError) {
+   			$('#serverError').html("");
+ 			$('#databaseError').html("");
+  			showLoadingIcon();
+  			var params = getBasicParams();
+  			validate('features', $('#formAppInfo'), $('#subcontainer'), params);
+   		}
+	}
+  	
+  	var isCiRefresh = false; // for ci page use - this should be global
+</script>

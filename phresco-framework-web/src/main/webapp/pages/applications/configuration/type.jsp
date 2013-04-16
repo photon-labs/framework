@@ -54,8 +54,12 @@
 	List<String> appinfoDbases  = (List<String>) request.getAttribute(FrameworkConstants.REQ_APPINFO_DBASES);
 	List<PropertyTemplate> properties = (List<PropertyTemplate>) request.getAttribute(FrameworkConstants.REQ_PROPERTIES);
 	List<String> options = (List<String>) request.getAttribute(FrameworkConstants.REQ_TECH_OPTIONS);
+	String uiType = (String) request.getAttribute(FrameworkConstants.REQ_UI_TYPE);
+	boolean isSimpleUI = true;
+	if (FrameworkConstants.ADVANCE_UI.equals(uiType)) {
+		isSimpleUI = false;
+	}
 	Gson gson = new Gson(); 
-	
  %>
    <form id="configProperties">
 <% 
@@ -68,14 +72,39 @@
 	    	pm.setId(propertyTemplate.getKey());
 	    	pm.setName(propertyTemplate.getKey());
 	    	pm.setControlGroupId(propertyTemplate.getKey() + "Control");
+	    	pm.setControlGroupClass("");
 	    	pm.setControlId(propertyTemplate.getKey() + "Error");
 	    	pm.setShow(true);
 	
 	    	String value = "";
 	    	
 	    	if (!FrameworkConstants.REQ_CONFIG_TYPE_OTHER.equals(propertyTemplate.getType())) {
+	    		boolean hasDefaultValue = false;
 		    	if (propertiesInfo != null) {
 		    		value = propertiesInfo.getProperty(propertyTemplate.getKey());
+		    		if (StringUtils.isNotEmpty(propertyTemplate.getDefaultValue())) {
+		    			hasDefaultValue = true;
+		    		}
+		    	} else if (propertyTemplate.getType().equalsIgnoreCase(FrameworkConstants.TYPE_STRING) || propertyTemplate.getType().equalsIgnoreCase(FrameworkConstants.TYPE_NUMBER) ||
+		    			propertyTemplate.getType().equalsIgnoreCase(FrameworkConstants.TYPE_PASSWORD)) {
+		    		value = propertyTemplate.getDefaultValue();
+		    		if ((StringUtils.isNotEmpty(value) && propertyTemplate.isRequired()) || !propertyTemplate.isRequired()) {
+		    			pm.setControlGroupClass("simpleUiCtrls");
+		    			if (isSimpleUI) {
+		    				pm.setShow(false);
+		    			}
+		    		}
+		    	} else if (propertyTemplate.getType().equalsIgnoreCase(FrameworkConstants.TYPE_BOOLEAN) && !propertyTemplate.isRequired()) {
+		    		pm.setControlGroupClass("simpleUiCtrls");
+	    			if (isSimpleUI) {
+	    				pm.setShow(false);
+	    			}
+		    	}
+		    	if (hasDefaultValue || !propertyTemplate.isRequired()) {
+		    		pm.setControlGroupClass("simpleUiCtrls");
+	    			if (isSimpleUI) {
+	    				pm.setShow(false);
+	    			}
 		    	}
 	    	}
 	    	
@@ -92,7 +121,7 @@
 	    		if (FrameworkConstants.ADD_SETTINGS.equals(fromPage) || FrameworkConstants.EDIT_SETTINGS.equals(fromPage)) {
 					possibleValues = typeValues;
 				} else {
-		    		if(appInfo != null && CollectionUtils.isNotEmpty(appInfo.getSelectedDatabases())) {
+		    		if (appInfo != null && CollectionUtils.isNotEmpty(appInfo.getSelectedDatabases())) {
 		    			possibleValues = appinfoDbases; 
 		    		}
 				}
@@ -191,6 +220,10 @@
 	        	alreadySelectedValue.add(value);
 	        	pm.setSelectedValues(alreadySelectedValue);
 	        	pm.setMultiple(false);
+	        	pm.setControlGroupClass("simpleUiCtrls");
+	        	if (isSimpleUI) {
+	            	pm.setShow(false);
+	            }
 	            StringTemplate dropDownControl = FrameworkUtil.constructSelectElement(pm);
 	            sb.append(dropDownControl);
 	        } else if ("Boolean".equals(propertyTemplate.getType())) {
@@ -232,13 +265,20 @@
 		<%
 			}
 	        if (FrameworkConstants.CONFIG_TYPE.equals(propertyTemplate.getKey())) {
+	        	if (isSimpleUI && CollectionUtils.isNotEmpty(possibleValues)) {
+	        		pm.setControlGroupClass("simpleUiCtrls");
+	        		pm.setShow(false);
+	        	} else if (!isSimpleUI && CollectionUtils.isNotEmpty(possibleValues) ) {
+	        		pm.setControlGroupClass("simpleUiCtrls");
+	        	} else {
+	        		pm.setShow(true);	        		
+	        	}
 	        	pm.setMandatory(true);
 	        	pm.setLableText("Version");
 	        	pm.setId("version");
 	        	pm.setName("version");
 	        	pm.setControlGroupId("versionControl");
 	        	pm.setControlId("versionError");
-	        	pm.setShow(true);
 	        	pm.setObjectValue(null);
 	        	StringTemplate dropDownControl = FrameworkUtil.constructSelectElement(pm);
 	        	sb.append(dropDownControl);
@@ -453,7 +493,9 @@
 		} else {
 			$("#admin_usernameControl label").html('Admin Username');
 			$("#admin_passwordControl label").html('Admin Password');
-			$('#deploy_dirControl').show();
+			<% if (!isSimpleUI) { %>
+				$('#deploy_dirControl').show();
+			<% } %>
 		}
 	}
 	
@@ -543,7 +585,9 @@
 			hideDeployDir();
 			hideRemoteDeply();
 		} else {
-			$('#remoteDeploymentControl').show();
+			if (FrameworkConstants.ADVANCE_UI.equals(uiType)) {
+				$('#remoteDeploymentControl').show();
+			}
 			remoteDeplyChecked();
 		}
 	}
@@ -555,6 +599,7 @@
 		} else if (pageUrl == "fetchSettingProjectInfoVersions") {
 			fillSelectbox($("select[name='version']"), data.versions);
 		} else if (pageUrl == "listUploadedFiles") {
+			hideLoadingIcon();
 			if (data.uploadedFiles != undefined && !isBlank(data.uploadedFiles)) {
 				disableUploadButton($(".file-uploader"));
 				enableButton($("#validateContent, #validateTheme"));
@@ -689,23 +734,6 @@
 		}
 	}
 
-	function listUploadedFiles() {
-		if (<%= fromPage.equals(FrameworkConstants.EDIT_CONFIG) %>) {
-			var configName = $("#configName").val();
-			var envName = $("#environment option:selected").text();
-			var typeData= $.parseJSON($('#templateType').val());
-			var selectedType = typeData.name;
-			var params = getBasicParams();
-			params = params.concat("&envName=");
-			params = params.concat(envName);
-			params = params.concat("&configName=");
-			params = params.concat(configName);
-			params = params.concat("&currentConfigType=");
-			params = params.concat(selectedType);
-			loadContent("listUploadedFiles", '', '', params, true, true);
-		}
-	}
-	
 	function addedFileList(fileName, propTempName) {
 		var li = '<li class="qq-upload-success"><span class="qq-upload-file">' + fileName + '</span>' +
 	        '<img class="qq-upload-remove" src="images/icons/delete.png" style="cursor:pointer;" alt="Remove" '+

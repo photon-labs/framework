@@ -17,7 +17,6 @@
     limitations under the License.
 
 --%>
-<%@page import="com.opensymphony.xwork2.ActionSupport"%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.util.List"%>
@@ -28,6 +27,8 @@
 <%@ page import="java.util.Map"%>
 <%@ page import="java.util.Iterator"%>
 <%@ page import="java.util.regex.*"%>
+
+<%@ page import="com.opensymphony.xwork2.ActionSupport"%>
 
 <%@ page import="org.apache.commons.collections.CollectionUtils"%>
 
@@ -48,6 +49,9 @@
 	String fromPage = (String) request.getAttribute(FrameworkConstants.REQ_FROM_PAGE);
 	String configPath = (String) request.getAttribute(FrameworkConstants.REQ_CONFIG_PATH);
 	ActionSupport actionSupport = new ActionSupport();
+	boolean isEnvSpecific = (Boolean) request.getAttribute(FrameworkConstants.REQ_ENV_SPECIFIC);
+	boolean fromFavouriteConfig = (Boolean) request.getAttribute(FrameworkConstants.REQ_FROM_FAVOURITE_CONFIG);
+	String favouriteConfigId = (String) request.getAttribute(FrameworkConstants.REQ_FAVOURITE_CONFIG_ID);
 %>
 
 <form id="formConfigList" class="configList">
@@ -58,9 +62,11 @@
 
 		<!-- Delete Configuration Button -->	
 		<input type="button" class="btn" name="deleteBtn" id="deleteBtn" disabled value="<s:text name='lbl.delete'/>" data-toggle="modal" href="#popupPage"/>
-
-		<!-- Environment Buttton -->
-	    <a id="addEnvironments" class="btn btn-primary"><s:text name='lbl.app.config.environments'/></a>
+		
+		<% if (isEnvSpecific) { %>
+			<!-- Environment Buttton -->
+		    <a id="addEnvironments" class="btn btn-primary"><s:text name='lbl.app.config.environments'/></a>
+	    <% } %>
 		         
 		<s:if test="hasActionMessages()">
 			<div class="alert alert-success alert-message" id="successmsg">
@@ -78,30 +84,48 @@
 </form>
 
 <script type="text/javascript">
-	$('#addEnvironments').click(function() {
-		yesnoPopup('openEnvironmentPopup', '<s:text name="lbl.environment"/>', 'createEnvironment', '<s:text name="label.ok"/>', '', 'fromPage=<%=fromPage%>&configPath=<%=configPath%>');
-	});
-
-	confirmDialog($("#deleteBtn"), '<s:text name="lbl.hdr.confirm.dialog"/>', '<s:text name="modal.body.text.del.configuration"/>', 'delete','<s:text name="lbl.btn.ok"/>');
+	var fromPage = "<%= fromPage %>";
+	var configPath = "<%= configPath %>";
+	var isEnvSpecific = "<%= isEnvSpecific %>";
+	var fromFavouriteConfig = "<%= fromFavouriteConfig %>";
+	var favouriteConfigId = "<%= favouriteConfigId %>";
 	
 	$(document).ready(function() {
 		var basicParams = getBasicParamsAsJson();
-		var fromPage = "<%= fromPage %>";
-		var configPath = "<%= configPath %>";
-		var params = '{' + basicParams + ', "fromPage" : "' + fromPage + '", "configPath" : "' + configPath + '"}';
+		var params = '{' + basicParams + ', "fromPage" : "' + fromPage + '", "configPath" : "' + configPath + '", "envSpecific" : ' + isEnvSpecific + ', "fromFavouriteConfig" : ' + fromFavouriteConfig + ', "configId" : "' + favouriteConfigId + '"}';
 		loadJsonContent('envList', params,  $('#loadEnv'));
+		
+		
+		$('#addEnvironments').click(function() {
+			var params = "envSpecific=";
+			params = params.concat(isEnvSpecific);
+			params = params.concat("&fromPage=");
+			params = params.concat('<%= fromPage %>');
+			params = params.concat("&configPath=");
+			params = params.concat('<%= configPath %>');
+			yesnoPopup('openEnvironmentPopup', '<s:text name="lbl.environment"/>', 'createEnvironment', '<s:text name="label.ok"/>', '', params);
+		});
 		
 		//Trigerred when add btn is clicked
 		$('#configAdd').click(function() {
 			showLoadingIcon();
-			loadContent('addConfiguration', $('#formCustomers, #formAppMenu'), $('#subcontainer'), 'fromPage=add<%=fromPage%>&configPath=<%=configPath%>', '', true);
+			var params = ("fromPage=");
+			params = params.concat("add" + "<%=fromPage%>");
+			params = params.concat("&configPath=");
+			params = params.concat(configPath);
+			params = params.concat("&envSpecific=");
+			params = params.concat(isEnvSpecific);
+			params = params.concat("&fromFavouriteConfig=");
+			params = params.concat(fromFavouriteConfig);
+			params = params.concat("&configId=");
+			params = params.concat(favouriteConfigId);
+			loadContent('addConfiguration', $('#formCustomers, #formAppMenu'), $('#subcontainer'), params, '', true);
 		});
 	});
 	
 	function editConfiguration(currentEnvName, currentConfigType, currentConfigName) {
 		var params = getBasicParams();
 		var fromPage = "edit<%= fromPage%>";
-		var configPath = "<%= configPath%>";
 		params = params.concat("&currentEnvName=");
 		params = params.concat(currentEnvName);
 		params = params.concat("&currentConfigType=");
@@ -112,6 +136,10 @@
 		params = params.concat(fromPage);
 		params = params.concat("&configPath=");
 		params = params.concat(configPath);
+		params = params.concat("&envSpecific=");
+		params = params.concat(isEnvSpecific);
+		params = params.concat("&fromFavouriteConfig=");
+		params = params.concat(fromFavouriteConfig);
 		showLoadingIcon();
 		loadContent("editConfiguration", $("#formConfigAdd"), $('#subcontainer'), params, '', true);
 	}
@@ -119,8 +147,6 @@
 	 
 	function cloneConfiguration(configName, envName, configType, currentConfigDesc) {
 		var params = getBasicParams();
-		var fromPage = "<%= fromPage%>";
-		var configPath = "<%= configPath%>";
 		params = params.concat("&configName=");
 		params = params.concat(configName);
 		params = params.concat("&envName=");
@@ -139,24 +165,22 @@
 	function popupOnOk(self) {
 		var url = $(self).attr('id');
 		var returnVal = true;
-		if(url == "cloneConfiguration"){
+		if (url == "cloneConfiguration") {
 			var EnvSelection = $("#configEnv").val();
 			if (EnvSelection == null ) {
 				$("#errMsg").html("<s:text name='popup.err.msg.add.env'/>");
 				returnVal = false;
 			}
 			var cloneConfigName = $('#configurationName').val();
-			if(cloneConfigName== "") {
+			if (cloneConfigName== "") {
 				$("#errMsg").html("<s:text name='popup.err.msg.empty.config.name'/>");
 				$("#configurationName").focus();
 				$("#configurationName").val("");
 				returnVal = false;
 			}
 			
-			if(returnVal) {
+			if (returnVal) {
 				var params = getBasicParams();
-				var fromPage = "<%= fromPage%>";
-				var configPath = "<%= configPath%>";
 				var copyFromEnvName = $('[name=cloneFromEnvName]').val();
 				var configType = $('[name=cloneFromConfigType]').val();
 				var configName = $('[name=cloneFromConfigName]').val();
@@ -172,48 +196,68 @@
 				params = params.concat("&fromPage=");
 				params = params.concat(fromPage);
 				params = params.concat("&configPath=");
-				params = params.concat(configPath);
+				params = params.concat('<%= configPath %>');
 				params = params.concat("&currentConfigName=");
 		        params = params.concat(currentConfigName);
 				params = params.concat("&currentConfigDesc=");
 				params = params.concat(currentConfigDesc);
 				params = params.concat("&currentEnvName=");
 				params = params.concat(currentEnvName);
+				params = params.concat("&envSpecific=");
+				params = params.concat(isEnvSpecific);
+				params = params.concat("&fromFavouriteConfig=");
+				params = params.concat(fromFavouriteConfig);
+				params = params.concat("&configId=");
+				params = params.concat(favouriteConfigId);
 				$("#popupPage").modal('hide');//To hide popup
 				showLoadingIcon();
 				loadContent("cloneConfiguration", $("#formClonePopup"), $('#loadEnv'), params, '', true);
 			 }
 		} else {
-			var envs = [];
-			var envInfo = [];
-			var selectedEnvs = new Array();
-			var selectedConfigData = [];
-			$('[name="envNames"]').each(function() {
-				envs.push($(this).val());
-			});
-			
-			$('input[name="checkEnv"]:checked').each(function() {
-				envInfo.push($(this).val());
-				var selectedEnvData = $.parseJSON($(this).val());
-				selectedEnvs.push(selectedEnvData.name);
-			});
-			
-			$('[name="checkedConfig"]:checked').each(function() {
-				selectedConfigData.push($(this).val());
-			}); 
-			
-			var basicParams = getBasicParamsAsJson();
-			var fromPage = "<%= fromPage%>";
-			var configPath = "<%= configPath%>";
-			var params = '{' + basicParams + ', "configPath" : "' + configPath + '", "fromPage" : "' + fromPage + '", "environmentsInfo": [' + envInfo.join(',') + '], "environments": [' + envs.join(',') + '], "selectedEnvirment" : "' + selectedEnvs + '", "selectedConfigurations": [' + selectedConfigData.join(',') + ']}';
-			var url = $(self).attr('id');
-			if(url == 'createEnvironment') {
-				validateJson(url, '', $('#loadEnv'), params, '');
-			} else {
-				$("#popupPage").modal('hide');
-				loadJsonContent(url, params, $('#loadEnv'));
-			}
+			<% if (!isEnvSpecific) { %>
+				$("#popupPage").modal("hide");
+				showLoadingIcon();
+				var params = getBasicParams();
+				params = params.concat("&configPath=");
+				params = params.concat(configPath);
+				params = params.concat("&envSpecific=");
+				params = params.concat(isEnvSpecific);
+				params = params.concat("&fromFavouriteConfig=");
+				params = params.concat(fromFavouriteConfig);
+				params = params.concat("&configId=");
+				params = params.concat(favouriteConfigId);
+				loadContent("deleteNonEnvConfigurations", $("#configListForm"), $('#loadEnv'), params, false, true);
+			<% } else { %>
+				var envs = [];
+				var envInfo = [];
+				var selectedEnvs = new Array();
+				var selectedConfigData = [];
+				$('[name="envNames"]').each(function() {
+					envs.push($(this).val());
+				});
+				
+				$('input[name="checkEnv"]:checked').each(function() {
+					envInfo.push($(this).val());
+					var selectedEnvData = $.parseJSON($(this).val());
+					selectedEnvs.push(selectedEnvData.name);
+				});
+				
+				$('[name="checkedConfig"]:checked').each(function() {
+					selectedConfigData.push($(this).val());
+				}); 
+				
+				var basicParams = getBasicParamsAsJson();
+				var fromPage = "<%= fromPage%>";
+				var configPath = "<%= configPath%>";
+				var params = '{' + basicParams + ', "configPath" : "' + configPath + '", "envSpecific" : ' + isEnvSpecific + ', "fromPage" : "' + fromPage + '", "environmentsInfo": [' + envInfo.join(',') + '], "environments": [' + envs.join(',') + '], "selectedEnvirment" : "' + selectedEnvs + '", "selectedConfigurations": [' + selectedConfigData.join(',') + ']}';
+				var url = $(self).attr('id');
+				if(url == 'createEnvironment') {
+					validateJson(url, '', $('#loadEnv'), params, '');
+				} else {
+					$("#popupPage").modal('hide');
+					loadJsonContent(url, params, $('#loadEnv'));
+				}
+			<% } %>
 		}
 	}
-	
 </script>

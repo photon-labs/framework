@@ -32,6 +32,7 @@ public class BasicParameterModel {
     private String name = "";
     private String placeHolder = "";
     private String controlGroupId = "";
+    private String controlGroupClass = "";
     private String controlId = "";
     private boolean mandatory;
     private boolean showMinusIcon;
@@ -112,6 +113,14 @@ public class BasicParameterModel {
         return controlGroupId;
     }
     
+    public void setControlGroupClass(String controlGroupClass) {
+		this.controlGroupClass = controlGroupClass;
+	}
+
+	public String getControlGroupClass() {
+		return controlGroupClass;
+	}
+    
     public void setObjectValue(List<? extends Object> objectValue) {
         this.objectValue = objectValue;
     }
@@ -147,6 +156,7 @@ public class BasicParameterModel {
                 .append("placeHolder", getPlaceHolder())
                 .append("inputType", getInputType())
                 .append("controlGroupId", getControlGroupId())
+                .append("controlGroupClass", getControlGroupClass())
                 .append("controlId", getControlId())
                 .append("objectValue", getObjectValue())
                 .append("mandatory", isMandatory())

@@ -52,6 +52,12 @@
 		optionIds  = (List<String>) optionsObj;
 	}
 	
+	String uiType = (String) request.getAttribute(FrameworkConstants.REQ_UI_TYPE);
+	String uiTypeClass = "";
+	if (FrameworkConstants.SIMPLE_UI.equals(uiType)) {
+		uiTypeClass = "hideContent";
+	}
+	
 	String id = "";
 	String name = "";
 	String code = "";
@@ -117,7 +123,7 @@
 		<!--  Name Ends -->
 	
 		<!--  Code Starts -->
-		<div class="control-group" id="codeControl">
+		<div class="control-group <%= uiTypeClass %>" id="codeControl">
 		    <label class="accordion-control-label labelbold"><span class="red">*</span>&nbsp;<s:text name='lbl.code'/></label>
 		    <div class="controls">
 				<input class="input-xlarge" id="code" name="code"
@@ -129,7 +135,7 @@
 		<!--  Code Ends -->
 	         
 		<!--  AppDirectory Starts -->
-		<div class="control-group" id="appDirControl">
+		<div class="control-group <%= uiTypeClass %>" id="appDirControl">
 		    <label class="accordion-control-label labelbold"><s:text name='lbl.AppDir'/></label>
 		    <div class="controls">
 				 <input class="input-xlarge" id="appDir" name="appDir" maxlength="30" title="<s:text name="title.30.chars"/>"
@@ -153,7 +159,7 @@
 		<!--  Description Ends -->
 		
 		<!--  Version Starts -->
-		<div class="control-group" id="versionControl">
+		<div class="control-group <%= uiTypeClass %>" id="appVersionControl">
 		    <label class="accordion-control-label labelbold"><span class="red">*</span>&nbsp;<s:text name='lbl.version'/></label>
 		    <div class="controls">
 				<input class="input-xlarge" id="applicationVersion" placeholder="<s:text name="place.hldr.app.edit.version"/>"
@@ -165,7 +171,7 @@
 		<!--  Version Ends -->
 		
 		<!-- Technology version start -->
-		<div class="control-group">
+		<div class="control-group <%= uiTypeClass %>" id="technologyControl">
 			<label class="accordion-control-label labelbold"><s:text name='lbl.technology'/></label>
 			<div class="controls">
 				<input type="text" class="input-xlarge" value="<%= technology.getName() %>" disabled="disabled"/>
@@ -182,7 +188,7 @@
 		<% 
 		  	if (CollectionUtils.isNotEmpty(pilotProjects)) {
 		%>
-			<div class="control-group">
+			<div class="control-group <%= uiTypeClass %>" id="pilotProjectControl">
 				<label class="accordion-control-label labelbold"><s:text name='lbl.pilot.project'/></label>
 				<div class="controls">
 					<select class="input-xlarge appinfoTech" name="pilotProject" onchange="showPilotProjectInfo(this);">
@@ -443,6 +449,26 @@
 			str = checkForSplChrExceptDot(str);
         	$(this).val(str);
 		});
+		
+		//To select the simpleUI/advanceUI option
+		$("#simpleUI, #advanceUI").unbind();
+		$("#simpleUI, #advanceUI").click(function() {
+			var ancId = $(this).attr("id");
+			$(".selectedIcn").hide();
+			$("#" + ancId + "Img").show();
+			$("#uiType").val(ancId);
+			var displayProp = "";
+			if ('<%= FrameworkConstants.SIMPLE_UI %>' === ancId) {
+				displayProp = "none";
+			} else if ('<%= FrameworkConstants.ADVANCE_UI %>' === ancId) {
+				displayProp = "block";
+			}
+			$("#codeControl").css("display", displayProp);
+			$("#appDirControl").css("display", displayProp);
+			$("#appVersionControl").css("display", displayProp);
+			$("#technologyControl").css("display", displayProp);
+			$("#pilotProjectControl").css("display", displayProp);
+		});
         
 		<% if (projectInfo != null) { %>
 			$("input[value='serverLayer']:checked").each(function() {
@@ -477,9 +503,9 @@
 		}
 		
 		if (!isBlank(data.applicationVersionError)) {
-			showError($("#versionControl"), $("#applicationVersionError"), data.applicationVersionError);
+			showError($("#appVersionControl"), $("#applicationVersionError"), data.applicationVersionError);
 		} else {
-			hideError($("#versionControl"), $("#applicationVersionError"));
+			hideError($("#appVersionControl"), $("#applicationVersionError"));
 		}
 		
 		if (!isBlank(data.appDirError)) {

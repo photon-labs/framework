@@ -124,6 +124,20 @@ public class Applications extends FrameworkBaseAction {
 			Technology technology = getServiceManager().getArcheType(techId, getCustomerId());
 			List<String> optionIds = technology.getOptions();
 			
+			ApplicationInfo appInfo = getApplicationInfo();
+            if (appInfo != null) {
+                techId = appInfo.getTechInfo().getId();
+            }
+            List<SettingsTemplate> settingsTemplates = getServiceManager().getConfigTemplates(getCustomerId(), techId);
+            if (CollectionUtils.isNotEmpty(settingsTemplates)) {
+            	List<SettingsTemplate> favouriteConfigs = new ArrayList<SettingsTemplate>();
+            	for (SettingsTemplate settingsTemplate : settingsTemplates) {
+            		if (settingsTemplate.isFavourite()) {
+            			favouriteConfigs.add(settingsTemplate);
+            		}
+            	}
+            	setReqAttribute(REQ_FAVOURITE_CONFIGS, favouriteConfigs);
+            }
 			setSessionAttribute(REQ_OPTION_ID, optionIds);
             setReqAttribute(REQ_CURRENT_APP_NAME, getApplicationInfo().getName());
             setReqAttribute(REQ_PROJECT_ID, getProjectId());
@@ -156,6 +170,7 @@ public class Applications extends FrameworkBaseAction {
         }
 
         try {
+        	setReqAttribute(REQ_UI_TYPE, getUiType());
         	ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
         	ProjectInfo projectInfo = null;
         	String technologyId = "";

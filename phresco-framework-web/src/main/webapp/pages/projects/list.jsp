@@ -36,6 +36,11 @@
 	List<ProjectInfo> projects = (List<ProjectInfo>) request.getAttribute(FrameworkConstants.REQ_PROJECTS);
 	String recentProjectId = (String) request.getAttribute(FrameworkConstants.REQ_RECENT_PROJECT_ID);
 	String recentAppId = (String) request.getAttribute(FrameworkConstants.REQ_RECENT_APP_ID);
+	String uiType = (String) request.getAttribute(FrameworkConstants.REQ_UI_TYPE);
+	String uiTypeClass = "";
+	if (FrameworkConstants.SIMPLE_UI.equals(uiType)) {
+		uiTypeClass = "hideContent";
+	}
 	Gson gson = new Gson();
 %>
 
@@ -106,7 +111,7 @@
 									    				<th class="no-left-bottom-border table-pad">
 									    					<s:label key="lbl.print" cssClass="labelbold"/>
 									    				</th>
-									    				<th class="no-left-bottom-border table-pad">
+									    				<th class="no-left-bottom-border table-pad repoTh <%= uiTypeClass %>">
 									    					<s:label key="lbl.repository" cssClass="labelbold"/>
 									    				</th>
 									    			</tr>
@@ -139,7 +144,7 @@
 																				title="Generate Report" class="iconSizeinList"/>
 																		</a>
 																	</td>
-																	<td class="no-left-bottom-border table-pad repo-tab-width">
+																	<td class="no-left-bottom-border table-pad repo-tab-width repoTd <%= uiTypeClass %>">
 																		<a href="#" id="repoImport">
 																			<img id="<%= appInfo.getCode() %>" class="addProject" src="images/icons/add_icon.png"
 																				 additionalParam="projectId=<%= project.getId() %>&appId=<%= appInfo.getId() %>&action=add" title="Add to repo" class="iconSizeinList"/>
@@ -246,6 +251,23 @@
     	
     	$('.table_div').find("input[type='checkbox']").change(function() {
 			deleteButtonStatus();
+		});
+    	
+    	//To select the simpleUI/advanceUI option
+		$("#simpleUI, #advanceUI").unbind();
+		$("#simpleUI, #advanceUI").click(function() {
+			var ancId = $(this).attr("id");
+			$(".selectedIcn").hide();
+			$("#" + ancId + "Img").show();
+			$("#uiType").val(ancId);
+			var displayProp = "";
+			if ('<%= FrameworkConstants.SIMPLE_UI %>' === ancId) {
+				$(".repoTh").hide();
+				$(".repoTd").hide();
+			} else if ('<%= FrameworkConstants.ADVANCE_UI %>' === ancId) {
+				$(".repoTh").show();
+				$(".repoTd").show();
+			}
 		});
    	});
 	

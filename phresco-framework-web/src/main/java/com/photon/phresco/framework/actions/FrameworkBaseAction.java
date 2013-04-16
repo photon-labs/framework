@@ -39,7 +39,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.codec.binary.*;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -49,7 +49,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import com.google.gson.*;
+import com.google.gson.Gson;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
 import com.photon.phresco.api.ApplicationProcessor;
@@ -102,6 +102,7 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
     private String envName = "";
     private String configName = "";
     private String fromConfig = "";
+    private String uiType = "";
     
     private static ServiceManager serviceManager = null;
     
@@ -547,7 +548,17 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
     	builder.append(File.separator);
     	builder.append(FOLDER_DOT_PHRESCO);
     	builder.append(File.separator);
-    	builder.append(CONFIGURATION_INFO_FILE_NAME);
+    	builder.append(PHRESCO_ENV_CONFIG_FILE_NAME);
+    	return builder.toString();
+    }
+    
+    public String getNonEnvConfigPath() throws PhrescoException {
+    	StringBuilder builder = new StringBuilder(Utility.getProjectHome());
+    	builder.append(getApplicationInfo().getAppDirName());
+    	builder.append(File.separator);
+    	builder.append(FOLDER_DOT_PHRESCO);
+    	builder.append(File.separator);
+    	builder.append(PHRESCO_CONFIG_FILE_NAME);
     	return builder.toString();
     }
 
@@ -630,4 +641,12 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
     public String getFromConfig() {
         return fromConfig;
     }
+
+	public void setUiType(String uiType) {
+		this.uiType = uiType;
+	}
+
+	public String getUiType() {
+		return uiType;
+	}
 }

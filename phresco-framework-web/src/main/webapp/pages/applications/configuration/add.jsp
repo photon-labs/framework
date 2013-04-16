@@ -58,7 +58,10 @@
 	
 	List<Environment> environments = (List<Environment>) request.getAttribute(FrameworkConstants.REQ_ENVIRONMENTS);
 	List<SettingsTemplate> settingsTemplates = (List<SettingsTemplate>) request.getAttribute(FrameworkConstants.REQ_SETTINGS_TEMPLATES);
-	String fromPage = request.getParameter(FrameworkConstants.REQ_FROM_PAGE);
+	String fromPage = (String) request.getAttribute(FrameworkConstants.REQ_FROM_PAGE);
+	String favouriteConfigId = (String) request.getAttribute(FrameworkConstants.REQ_FAVOURITE_CONFIG_ID);
+	boolean fromFavouriteConfig = (Boolean) request.getAttribute(FrameworkConstants.REQ_FROM_FAVOURITE_CONFIG);
+	boolean isEnvSpecific = (Boolean) request.getAttribute(FrameworkConstants.REQ_ENV_SPECIFIC);
 	
 	String title = FrameworkActionUtil.getTitle(FrameworkConstants.CONFIG, fromPage);
 	String buttonLbl = FrameworkActionUtil.getButtonLabel(fromPage);
@@ -109,63 +112,116 @@
 			</div>
 		</div> <!-- Desc -->
 		
-		<div class="control-group" id="configEnvControl">
-			<label class="control-label labelbold">
-				<span class="mandatory">*</span>&nbsp;<s:text name='lbl.environment'/>
-			</label>	
-			<div class="controls">
-				<select id="environment" name="environment" onchange="renameUploadedFilesDir('Env');">
-				<% for (Environment env : environments) {
-						if (FrameworkConstants.ADD_CONFIG.equals(fromPage) || FrameworkConstants.ADD_SETTINGS.equals(fromPage)) { 
-				%>
-							<option value='<%= gson.toJson(env) %>'><%= env.getName() %></option>
-							
-				<% 		} else if (FrameworkConstants.EDIT_CONFIG.equals(fromPage) || FrameworkConstants.EDIT_SETTINGS.equals(fromPage)) {
-							if (env.getName().equals(envName)) {
-									selectedStr = "selected";
-				%>	
-						
-							<option value='<%= gson.toJson(env) %>' <%= selectedStr %>><%= env.getName() %></option>
-                <% 	
+		<%
+			if (CollectionUtils.isNotEmpty(environments)) {
+				String envClass = "";
+				if (FrameworkConstants.EDIT_CONFIG.equals(fromPage) || FrameworkConstants.EDIT_SETTINGS.equals(fromPage)) {
+					envClass = "hideContent";
+				}
+		%>
+			<div class="control-group <%= envClass %>" id="configEnvControl">
+				<label class="control-label labelbold">
+					<span class="mandatory">*</span>&nbsp;<s:text name='lbl.environment'/>
+				</label>	
+				<div class="controls">
+					<select id="environment" name="environment" onchange="renameUploadedFilesDir('Env');">
+					<%
+						for (Environment env : environments) {
+							if (FrameworkConstants.ADD_CONFIG.equals(fromPage) || FrameworkConstants.ADD_SETTINGS.equals(fromPage)) { 
+					%>
+								<option value='<%= gson.toJson(env) %>'><%= env.getName() %></option>
+								
+					<% 		} else if (FrameworkConstants.EDIT_CONFIG.equals(fromPage) || FrameworkConstants.EDIT_SETTINGS.equals(fromPage)) {
+								if (env.getName().equals(envName)) {
+										selectedStr = "selected";
+					%>
+								<option value='<%= gson.toJson(env) %>' <%= selectedStr %>><%= env.getName() %></option>
+	                <% 	
+								}
 							}
-						}
-                	}
-                %>
-				</select>
-				<span class="help-inline" id="configEnvError"></span>
-			</div>
-		</div> <!-- Environment -->
+	                	}
+	                %>
+					</select>
+					<span class="help-inline" id="configEnvError"></span>
+				</div>
+			</div> <!-- Environment -->
+		<% } %>
 		
-		<div class="control-group" id="configTypeControl">
+		<div class="control-group <%= fromFavouriteConfig ? "hideContent" : "" %>" id="configTypeControl">
 			<label class="control-label labelbold">
 				<span class="mandatory">*</span>&nbsp;<s:text name='lbl.type'/>
-			</label>	
-			<div class="controls">
-				<select id="templateType" name="templateType">
-				<%
-					if (CollectionUtils.isNotEmpty(settingsTemplates)) {
-						for (SettingsTemplate settingsTemplate : settingsTemplates) {
-							if (settingsTemplate.getName().equals(selectedType)) {
-								selectedStr = "selected";
-							} else {
-								selectedStr = "";
-							}	
-				%>	
-							<option value='<%= gson.toJson(settingsTemplate) %>' <%= selectedStr %>><%= StringUtils.isEmpty(settingsTemplate.getDisplayName()) ? settingsTemplate.getName() : settingsTemplate.getDisplayName() %></option>
-						
-                <% 
-                		}
-					}
-					if (FrameworkConstants.REQ_CONFIG_TYPE_OTHER.equals(selectedType)) {
-						selectedStr = "selected";
-					} else {
-						selectedStr = "";
-					}
-				%>
-						<option value="Other" <%= selectedStr %>><%= FrameworkConstants.REQ_CONFIG_TYPE_OTHER %></option>
-				</select>
-				<span class="help-inline" id="configTypeError"></span>
-			</div>
+			</label>
+			<% if (isEnvSpecific) { %>	
+				<div class="controls">
+					<select id="templateType" name="templateType">
+					<%
+						if (CollectionUtils.isNotEmpty(settingsTemplates)) {
+							for (SettingsTemplate settingsTemplate : settingsTemplates) {
+								if (settingsTemplate.isEnvSpecific()) {
+									if (settingsTemplate.getName().equals(selectedType)) {
+										selectedStr = "selected";
+									} else {
+										selectedStr = "";
+									}
+									if (FrameworkConstants.ADD_CONFIG.equals(fromPage)) {
+										if (StringUtils.isNotEmpty(favouriteConfigId) && favouriteConfigId.equals(settingsTemplate.getId())) {
+											selectedStr = "selected";
+										} else {
+											selectedStr = "";
+										}
+									}
+					%>	
+									<option value='<%= gson.toJson(settingsTemplate) %>' <%= selectedStr %>><%= StringUtils.isEmpty(settingsTemplate.getDisplayName()) ? settingsTemplate.getName() : settingsTemplate.getDisplayName() %></option>
+	                <% 
+								}
+							}
+						}
+						if (FrameworkConstants.REQ_CONFIG_TYPE_OTHER.equals(selectedType)) {
+							selectedStr = "selected";
+						} else {
+							selectedStr = "";
+						}
+					%>
+							<option value="Other" <%= selectedStr %>><%= FrameworkConstants.REQ_CONFIG_TYPE_OTHER %></option>
+					</select>
+					<span class="help-inline" id="configTypeError"></span>
+				</div>
+			<% } else { %>
+				<div class="controls">
+					<select id="templateType" name="templateType">
+					<%
+						if (CollectionUtils.isNotEmpty(settingsTemplates)) {
+							for (SettingsTemplate settingsTemplate : settingsTemplates) {
+								if (!settingsTemplate.isEnvSpecific()) {
+									if (settingsTemplate.getName().equals(selectedType)) {
+										selectedStr = "selected";
+									} else {
+										selectedStr = "";
+									}
+									if (FrameworkConstants.ADD_CONFIG.equals(fromPage)) {
+										if (StringUtils.isNotEmpty(favouriteConfigId) && favouriteConfigId.equals(settingsTemplate.getId())) {
+											selectedStr = "selected";
+										} else {
+											selectedStr = "";
+										}
+									}
+					%>	
+									<option value='<%= gson.toJson(settingsTemplate) %>' <%= selectedStr %>><%= StringUtils.isEmpty(settingsTemplate.getDisplayName()) ? settingsTemplate.getName() : settingsTemplate.getDisplayName() %></option>
+	                <% 
+								}
+							}
+						}
+						if (FrameworkConstants.REQ_CONFIG_TYPE_OTHER.equals(selectedType)) {
+							selectedStr = "selected";
+						} else {
+							selectedStr = "";
+						}
+					%>
+							<option value="Other" <%= selectedStr %>><%= FrameworkConstants.REQ_CONFIG_TYPE_OTHER %></option>
+					</select>
+					<span class="help-inline" id="configTypeError"></span>
+				</div>			
+			<% } %>
 		</div> <!-- Type -->
 		<div id="featureListContainer"></div>
 		<div id="typeContainer"></div>
@@ -185,6 +241,10 @@
 </form>
 
 <script type="text/javascript">
+	var isEnvSpecific = "<%= isEnvSpecific %>";
+	var fromFavouriteConfig = "<%= fromFavouriteConfig %>";
+	var favouriteConfigId = "<%= favouriteConfigId %>";
+
 	/* To check whether the device is ipad or not */
 	$(document).ready(function() {
 		if (!isiPad()) {
@@ -217,19 +277,7 @@
 		});
 		
 		$('#templateType').change(function() {
-			showLoadingIcon();//To hide the loading icon
-			var selectedConfigname = $('#configName').val();
-			var envData = $.parseJSON($('#environment').val());
-			var selectedEnv = envData.name;
-			var typeData = $.parseJSON($('#templateType').val());
-			var selectedType = typeData.name;
-			var selectedConfigId = typeData.id;
-			var fromPage = "<%= fromPage%>";
-			var configPath = "<%= configPath %>";
-			
-			var params = '{ ' + getBasicParamsAsJson() + ', "settingTemplate": ' + $('#templateType').val() + ' , "selectedConfigId": "' + selectedConfigId 
-				+ '" , "selectedEnv": "' + selectedEnv + '" , "selectedType": "' + selectedType + '", "fromPage": "' + fromPage + '", "configPath": "' + configPath + '", "selectedConfigname": "' + selectedConfigname + '"}';
-			loadJsonContent('configType', params,  $('#typeContainer'));
+			getPropertyTemplate();
 		}).triggerHandler("change");
 		
 		$('#<%= pageUrl %>').click(function() {
@@ -275,9 +323,9 @@
 			var type = template.name;
 			var oldName = "<%= name %>";
 			var configId = template.id;
-			var fromPage = "<%= fromPage%>";
-			var configPath = "<%= configPath%>";
-			var oldConfigType = "<%= selectedType%>";
+			var fromPage = "<%= fromPage %>";
+			var configPath = "<%= configPath %>";
+			var oldConfigType = "<%= selectedType %>";
 			
 			var featureName = $('#featureName').val();
 			//var fileName = $('.qq-upload-file').text();//To get the uploaded file name
@@ -302,12 +350,30 @@
 			jsonParamObj.oldConfigType = oldConfigType;
 			jsonParamObj.configPath = configPath;
 			jsonParamObj.fromPage = fromPage;
+			jsonParamObj.envSpecific = isEnvSpecific;
+			jsonParamObj.fromFavouriteConfig = fromFavouriteConfig;
 			env = jQuery.parseJSON(env);
 			jsonParamObj.environment = env;
 			jsonParamObj = $.extend(jsonParamObj, jsonObject);
 			jsonParamObj.csvFiles = csvFiles;
 			var jsonParam = JSON.stringify(jsonParamObj);
 			validateJson('<%= pageUrl %>', '', $('#<%= container %>'), jsonParam, '<%= progessTxt %>');
+		});
+		
+		//To select the simpleUI/advanceUI option
+		$("#simpleUI, #advanceUI").unbind();
+		$("#simpleUI, #advanceUI").click(function() {
+			var ancId = $(this).attr("id");
+			$(".selectedIcn").hide();
+			$("#" + ancId + "Img").show();
+			$("#uiType").val(ancId);
+			if ('<%= FrameworkConstants.SIMPLE_UI %>' === ancId) {
+				displayProp = "none";
+			} else if ('<%= FrameworkConstants.ADVANCE_UI %>' === ancId) {
+				displayProp = "block";
+			}
+			$(".simpleUiCtrls").css("display", displayProp);
+// 			getPropertyTemplate();
 		});
 	});
 	
@@ -414,5 +480,46 @@
         } else {
         	disableUploadButton($(".file-uploader"));
         }
+	}
+	
+	function getPropertyTemplate() {
+		showLoadingIcon();//To hide the loading icon
+		var selectedConfigname = $('#configName').val();
+		var envData;
+		var selectedEnv = "";
+		<% if (CollectionUtils.isNotEmpty(environments)) { %>
+			envData = $.parseJSON($('#environment').val());
+			selectedEnv = envData.name;
+		<% } %>
+		var typeData = $.parseJSON($('#templateType').val());
+		var selectedType = typeData.name;
+		var selectedConfigId = typeData.id;
+		var fromPage = "<%= fromPage%>";
+		var configPath = "<%= configPath %>";
+		
+		var params = '{ ' + getBasicParamsAsJson() + ', "settingTemplate": ' + $('#templateType').val() + ' , "selectedConfigId": "' + selectedConfigId 
+			+ '" , "selectedEnv": "' + selectedEnv + '" , "selectedType": "' + selectedType + '", "fromPage": "' + fromPage + '", "configPath": "' + configPath + '", "selectedConfigname": "' + selectedConfigname + '"}';
+		loadJsonContent('configType', params,  $('#typeContainer'));
+	}
+	
+	function listUploadedFiles() {
+		if (<%= fromPage.equals(FrameworkConstants.EDIT_CONFIG) %>) {
+			showLoadingIcon();
+			var configName = $("#configName").val();
+			var envName = $("#environment option:selected").text();
+			var typeData= $.parseJSON($('#templateType').val());
+			var selectedType = typeData.name;
+			var params = getBasicParams();
+			params = params.concat("&envName=");
+			params = params.concat(envName);
+			params = params.concat("&configName=");
+			params = params.concat(configName);
+			params = params.concat("&currentConfigType=");
+			params = params.concat(selectedType);
+			params = params.concat("&envSpecific=");
+			params = params.concat(isEnvSpecific);
+			
+			loadContent("listUploadedFiles", '', '', params, true, true);
+		}
 	}
 </script>

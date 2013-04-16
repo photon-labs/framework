@@ -27,7 +27,7 @@ function getBasicParamsAsJson() {
 	var customersJson = $('#formCustomers').toJSON();
 	var appMenuJson = $('#formAppMenu').toJSON();
 	var jsonObject = $.extend(customersJson, appMenuJson);
-	return '"customerId": "' + jsonObject.customerId + '", "projectId": "' + jsonObject.projectId + '", "appId": "' + jsonObject.appId + '"'; 
+	return '"customerId": "' + jsonObject.customerId + '", "projectId": "' + jsonObject.projectId + '", "appId": "' + jsonObject.appId + '", "uiType": "' + jsonObject.uiType + '"'; 
 }
 
 function getBasicParamsAsJsonObj() {
@@ -80,10 +80,13 @@ function progressPopupAsSecPopup(url, appId, actionType, form, additionalParams,
 
 function clickMenu(menu, tag, form, params) {
 	menu.click(function() {
+		var selectedMenu = $(this).attr("id");
 		showLoadingIcon();
+		if (selectedMenu === "configuration") {
+			inActivateAllMenu($("a[name='favConfigTab']"));
+		}
 		inActivateAllMenu(menu);
 		activateMenu($(this));
-		var selectedMenu = $(this).attr("id");
 		if (selectedMenu != "appInfo" && selectedMenu != "features") {
 			if (params === undefined || isBlank(params)) {
 				params = "";
@@ -280,6 +283,7 @@ function validateDynamicParam(successUrl, title, okUrl, okLabel, form, goal, nee
 }
 
 function yesnoPopup(url, title, okUrl, okLabel, form, additionalParam) {
+	$("#popupPage").css("width", "560");
 	$('#popupPage').modal('show');//To show the popup
 	showPopuploadingIcon();
 	$('.popupClose').hide();
@@ -366,6 +370,7 @@ function add_popupCancel(obj) {
 			|| closeUrl == "themeBuilderPath" || closeUrl == "themeBuilderImage") {
 		$('#additionalPopup').modal('hide');
 	} else {
+		$("#popupPage").css("width", "560");
 		setTimeout(function () {
 			$('#popupPage').modal('show');
 		}, 600);
@@ -736,6 +741,14 @@ function removeSpaces(str) {
 //To remove Backslash
 function removeBackSlash(str) {
 	return str.replace(/\\/g, '');
+}
+
+function hasAlphaNumChar(str) {
+	var rx = /^.*[a-zA-Z0-9].*$/;
+	if (rx.test(str)) {
+		return true;
+	}
+	return false;
 }
 
 function applyTheme() {

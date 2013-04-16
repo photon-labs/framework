@@ -129,6 +129,7 @@ public class Projects extends FrameworkBaseAction {
             }
             setReqAttribute(REQ_PROJECTS, projects);
             setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
+            setReqAttribute(REQ_UI_TYPE, getUiType());
             removeSessionAttribute(projectCode);
             setRecentProjectIdInReq();
             if (IMPORT.equals(getStatusFlag())) {
@@ -207,6 +208,7 @@ public class Projects extends FrameworkBaseAction {
 				}
 			}
         	setReqAttribute(REQ_FROM_PAGE, FROM_PAGE_ADD);
+        	setReqAttribute(REQ_UI_TYPE, getUiType());
         } catch (Exception e) {
             if (s_debugEnabled) {
                 S_LOGGER.error("Entered into catch block of Projects.addProject()" + FrameworkUtil.getStackTraceAsString(e));
@@ -334,9 +336,9 @@ public class Projects extends FrameworkBaseAction {
 			}
 			setReqAttribute(REQ_PROJECT, projectInfo);
 			setReqAttribute(REQ_FROM_PAGE, FROM_PAGE_EDIT);
+			setReqAttribute(REQ_UI_TYPE, getUiType());
 		} catch (PhrescoException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		return "projectDetails";
     	
@@ -412,7 +414,11 @@ public class Projects extends FrameworkBaseAction {
     private ProjectInfo createProjectInfo() throws PhrescoException {
         ProjectInfo projectInfo = new ProjectInfo();
         projectInfo.setName(getProjectName());
-        projectInfo.setVersion(getProjectVersion());
+        String version = getProjectVersion();
+        if (StringUtils.isEmpty(version)) {
+        	version = "1.0";
+        }
+        projectInfo.setVersion(version);
         projectInfo.setDescription(getProjectDesc());
         projectInfo.setProjectCode(getProjectCode());
         projectInfo.setCustomerIds(Collections.singletonList(getCustomerId()));
@@ -833,13 +839,22 @@ public class Projects extends FrameworkBaseAction {
             setProjectNameError(getText(ERROR_NAME));
             hasError = true;
         }
+        
+        //Checking for valid name
+        if (StringUtils.isNotEmpty(getProjectName().trim())) {
+        	if (!FrameworkUtil.isCharacterExists(getProjectName().trim())) {
+        		setProjectNameError(getText(ERROR_INVALID_NAME));
+        		hasError = true;
+        	}
+        }
+        
         //empty validation for projectCode
         if (StringUtils.isEmpty(getProjectCode().trim())) {
             setProjectCodeError(getText(ERROR_CODE));
             hasError = true;
         }
         //empty validation for projectVersion
-        if (StringUtils.isEmpty(getProjectVersion().trim())) {
+        if (ADVANCE_UI.equals(getUiType()) && StringUtils.isEmpty(getProjectVersion().trim())) {
             setProjectVersionError(getText(ERROR_VERSION));
             hasError = true;
         }

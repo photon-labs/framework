@@ -82,7 +82,8 @@ public interface FrameworkConstants {
     String ANDROID_FORMAT = ".apk";
     String IPA_FORMAT = ".ipa";
     String SETTINGS_INFO_FILE_NAME = "settings.xml";
-    String CONFIGURATION_INFO_FILE_NAME = "phresco-env-config.xml";
+    String PHRESCO_ENV_CONFIG_FILE_NAME = "phresco-env-config.xml";
+    String PHRESCO_CONFIG_FILE_NAME = "phresco-fav-config.xml";
     String BUILD_INFO_FILE_NAME = "build.info";
     String PROJECT_INFO = "project.info";
     String GIT_IMPORT_TEMP_DIR = "gitImportTemp";
@@ -490,9 +491,10 @@ public interface FrameworkConstants {
 	/*
 	 * Technology based Key
 	 */
-	String HELP_KEY = "Help";
+	String HOME_KEY = "Home";
 	String SETTINGS_KEY = "Settings";
 	String DOWNLOAD_KEY = "Download";
+	String HELP_KEY = "Help";
 	String CODE_KEY = "Code";
 	String BUILD_KEY = "Build";
 	String UNIT_TEST_KEY = "Unit_Test";
@@ -510,6 +512,9 @@ public interface FrameworkConstants {
 	String FEATURES_KEY = "Feature_Config";
 	String COMPONENT_CONFIG = "Component_Config";
 	String THEME_BUILDER_KEY = "Theme_Builder";
+	
+	String SIMPLE_UI = "simpleUI";
+	String ADVANCE_UI = "advanceUI";
     
 	/*
 	 * Dynamic parameters
@@ -602,6 +607,11 @@ public interface FrameworkConstants {
      * Ex: REQ_XXX
      */
     String SESSION_CUSTOMERS = "listOfCustomers";
+    String REQ_UI_TYPE	= "uiType";
+    String REQ_FAVOURITE_CONFIGS = "favouriteConfigs";
+    String REQ_FAVOURITE_CONFIG_ID = "favouriteConfigId";
+    String REQ_FROM_FAVOURITE_CONFIG = "fromFavouriteConfig";
+    String REQ_ENV_SPECIFIC = "envSpecific";
     String REQ_APPINFO	= "appInfo";
     String REQ_TESTCASE = "testCase";
     String REQ_TESTSUITE = "testSuite";
@@ -1222,6 +1232,7 @@ public interface FrameworkConstants {
     String ERROR_DUPLICATE_ENV_IN_SETTINGS = "Environment {0} already exists in global settings";
     String ERROR_NO_CONFIG = "environment.config.not.available";
     String ERROR_NAME = "err.msg.empty.name";
+    String ERROR_INVALID_NAME = "err.msg.invalid.name";
     String ERROR_THEME_PATH_MISSING = "err.msg.empty.path";
     String ERROR_THEME_EXISTS = "err.msg.theme.name.exists";
     String PROP_TEMP_MISSING = " is missing";
@@ -1256,7 +1267,6 @@ public interface FrameworkConstants {
     String ERROR_DUPLICATE_NAME_IN_SETTINGS = "Name already exists in global settings";
     String ERROR_PRODUCTION_EXISTS_IN_CONFIGURATIONS= "Production is application specific environment";
     String ERROR_DUPLICATE_NAME_IN_CONFIGURATIONS = "Name already exists in configurations of the {0} project";
-    String ERROR_INVALID_NAME = "Invalid Name";
     String ERROR_SELECT = "Select database and server";
     String ERROR_TEST_SUITE = "Test result is not available for this project";
     String ERROR_PARSE_EXCEPTION = "quality.xml.parse.error";

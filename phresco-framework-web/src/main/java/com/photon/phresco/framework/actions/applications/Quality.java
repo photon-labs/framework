@@ -1957,10 +1957,12 @@ public class Quality extends DynamicParameterAction implements Constants {
     
     public String fetchFunctionalTestReport() throws TransformerException, PhrescoPomException {
         try {
-        	ApplicationInfo appInfo = getApplicationInfo();
+        	ProjectInfo projectInfo = getProjectInfo();
+        	ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
             FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
             String testSuitePath = frameworkUtil.getFunctionalTestSuitePath(appInfo);
             String testCasePath = frameworkUtil.getFunctionalTestCasePath(appInfo);
+            setReqAttribute(REQ_PROJECT_INFO, projectInfo);
             
             return testReport(testSuitePath, testCasePath);
         } catch (PhrescoException e) {

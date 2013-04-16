@@ -104,8 +104,11 @@
 			hidePopuploadingIcon();
 		<% } %>
 		$(".popupLbl").text(function(index) {
-	        return textTrim($(this), 18);
+	        return textTrim($(this), 35);
 	    });
+		
+		$(".form-horizontal .control-label").css("width", "42%");
+		$("#popupPage").css("width", "600");
 	});
 	
 	function popupOnOk(obj) {

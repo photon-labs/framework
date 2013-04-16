@@ -37,6 +37,11 @@
 	ProjectInfo projectInfo = (ProjectInfo) request.getAttribute(FrameworkConstants.REQ_PROJECT);
 	List<ApplicationType> layers = (List<ApplicationType>) request.getAttribute(FrameworkConstants.REQ_PROJECT_LAYERS);
 	String fromPage = (String) request.getAttribute(FrameworkConstants.REQ_FROM_PAGE);
+	String uiType = (String) request.getAttribute(FrameworkConstants.REQ_UI_TYPE);
+	String uiTypeClass = "";
+	if (FrameworkConstants.SIMPLE_UI.equals(uiType)) {
+		uiTypeClass = "hideContent";
+	}
 	List<TechnologyGroup> appLayerTechGroups = null;
 	List<TechnologyGroup> webLayerTechGroups = null;
 	List<TechnologyGroup> mobileLayerTechGroups = null;
@@ -138,7 +143,7 @@
 		<!-- Name Ends -->
 		
 		<!-- Code Starts -->
-		<div class="control-group" id="projectCodeControl">
+		<div class="control-group <%= uiTypeClass %>" id="projectCodeControl">
 			<label class="control-label labelbold">
 				<span class="mandatory">*</span>&nbsp;<s:text name='label.code' />
 			</label>
@@ -163,7 +168,7 @@
 		<!-- Description Ends -->
 		
 		<!-- Version Starts -->
-		<div class="control-group" id="projectVersionControl">
+		<div class="control-group <%= uiTypeClass %>" id="projectVersionControl">
 			<label class="control-label labelbold">
 				<span class="mandatory">*</span>&nbsp;<s:text name='lbl.version' />
 			</label>
@@ -256,8 +261,8 @@
 															
 																<div class="appLayerContents" style="height:33px;">
 																	<div class="align-div-center">
-																		<div class="align-in-row">
-																			<label class="control-label autoWidth">																				
+																		<div class="align-in-row appCodeCotrol <%= uiTypeClass %>">
+																			<label class="control-label autoWidth">
 																				<span class="mandatory">*</span>&nbsp;<s:text name='lbl.app.code' />
 																			</label>
 																			<input type="text" class="appLayerProjName" name="appLayerProjName" onblur="checkForApplnDuplicate(this);" temp="<%= rowCount %>" value="<%= appCode[0] %>" 
@@ -297,7 +302,7 @@
 										<section class="scrollpanel_inner" id="appLayerContent">
 											<div class="appLayerContents" style="height:33px;">
 												<div class="align-div-center">
-													<div class="align-in-row">
+													<div class="align-in-row appCodeCotrol <%= uiTypeClass %>">
 														<label class="control-label autoWidth">
 															<span class="mandatory">*</span>&nbsp;<s:text name='lbl.app.code' />
 														</label>
@@ -812,6 +817,23 @@
 			validate('updateProject', $('#formCreateProject'), $("#container"), params, '<s:text name='progress.txt.update.proj'/>');
 		});
 		
+		//To select the simpleUI/advanceUI option
+		$("#simpleUI, #advanceUI").unbind();
+		$("#simpleUI, #advanceUI").click(function() {
+			var ancId = $(this).attr("id");
+			$(".selectedIcn").hide();
+			$("#" + ancId + "Img").show();
+			$("#uiType").val(ancId);
+			var displayProp = "";
+			if ('<%= FrameworkConstants.SIMPLE_UI %>' === ancId) {
+				displayProp = "none";
+			} else if ('<%= FrameworkConstants.ADVANCE_UI %>' === ancId) {
+				displayProp = "block";
+			}
+			$("#projectCodeControl").css("display", displayProp);
+			$("#projectVersionControl").css("display", displayProp);
+			$(".appCodeCotrol").css("display", displayProp);
+		});
 	});
 	
 	var objName; //select box object name
@@ -856,13 +878,23 @@
 	//Creats app layer row
 	var count = 2;
 	function addAppLayer(obj) {
+		var uiType = $("#uiType").val();
+		var uiTypeClass = "";
+		var appCode = "";
+		if ('<%= FrameworkConstants.SIMPLE_UI %>' === uiType) {
+			uiTypeClass = "hideContent";
+			var projectCode = $("input[name=projectCode]").val();
+			if (!isBlank(projectCode)) {
+				appCode = projectCode + count;
+			}
+		}
 		<% if (FrameworkConstants.FROM_PAGE_EDIT.equals(fromPage)) { %>
 			count = $(".appLayerProjName").size() + 1;
 		<% } %>
 		var applayer = '<%= appLayerId %>';
 		var newAppLayerRow = $(document.createElement('div')).attr("class", "appLayerContents").css("height","33px");
-		newAppLayerRow.html("<div class='align-div-center'><div class='align-in-row'><label class='control-label autoWidth'><span class='mandatory'>*</span>&nbsp;<s:text name='lbl.app.code' /></label>" + 
-							"<input type='text' class='appLayerProjName' onblur='checkForApplnDuplicate(this);' name='appLayerProjName' temp='"+count+"' "+
+		newAppLayerRow.html("<div class='align-div-center'><div class='align-in-row appCodeCotrol "+ uiTypeClass +"'><label class='control-label autoWidth'><span class='mandatory'>*</span>&nbsp;<s:text name='lbl.app.code' /></label>" + 
+							"<input type='text' class='appLayerProjName' onblur='checkForApplnDuplicate(this);' value='"+appCode+"' name='appLayerProjName' temp='"+count+"' "+
 							" maxlength='12' title='12 Characters only' style='float:left' placeholder='<s:text name='place.hldr.proj.app.code'/>'></div>" +
 							"<div class='align-in-row'><label class='control-label autoWidth'><s:text name='lbl.technology'/></label>" +
 							"<select class='input-medium' name='app-layerTechnology' temp='"+ count +"' id='" + count + "_App_Technology' layer='" + applayer + "' onchange='getAppLayerTechVersions(this);'>" +
@@ -938,21 +970,32 @@
 	//Check for App Layer - app code duplication
 	function checkForApplnDuplicate(obj) {
 		var inputClass = $(obj).attr("class");
-		var tech = $(obj).parent().parent().find('select[name=app-layerTechnology]').val();
-		var currentVal = $(obj).val() + tech;
-		$('.'+inputClass).each(function() {
-			if (currentVal != "" && !isBlank(currentVal)) {
-				var existingVal = $(this).val() + $(this).parent().parent().find('select[name=app-layerTechnology]').val();
-				//To match app code with current row with other rows, and check for duplication
-				if ($(obj).attr("temp") !== $(this).attr("temp") && currentVal.toLowerCase() === existingVal.toLowerCase()) {
-					$(obj).val("");
-					$(obj).focus();
-					showErrorInAccordion($("#appLayerControl"), $('#appLayerHeading'), $("#appLayerError"), '<s:text name='err.msg.app.code.unique'/>');
-					return false;
-				} else {
-					hideErrorInAccordion($("#appLayerControl"), $('#appLayerHeading'), $("#appLayerError"));
+		var currentAppCode = $(obj).val()
+		if (!isBlank(currentAppCode) && !hasAlphaNumChar(currentAppCode)) {
+			//$(obj).val("");
+			$(obj).focus();
+			$(obj).css("border-color", "#B94A48");
+			showErrorInAccordion($("#appLayerControl"), $('#appLayerHeading'), $("#appLayerError"), '<s:text name='err.msg.app.code.invalid'/>');
+		} else {
+			var tech = $(obj).parent().parent().find('select[name=app-layerTechnology]').val();
+			var currentVal = currentAppCode + tech;
+			$('.'+inputClass).each(function() {
+				if (currentVal != "" && !isBlank(currentVal)) {
+					var existingVal = $(this).val() + $(this).parent().parent().find('select[name=app-layerTechnology]').val();
+					//To match app code with current row with other rows, and check for duplication
+					if ($(obj).attr("temp") !== $(this).attr("temp") && currentVal.toLowerCase() === existingVal.toLowerCase()) {
+						// $(obj).val("");
+						$(obj).focus();
+						$(obj).css("border-color", "#B94A48");
+						$(obj).prev().css("color", "#B94A48");
+						showErrorInAccordion($("#appLayerControl"), $('#appLayerHeading'), $("#appLayerError"), '<s:text name='err.msg.app.code.unique'/>');
+						return false;
+					} else {
+						$(obj).css("border-color", "");
+						hideErrorInAccordion($("#appLayerControl"), $('#appLayerHeading'), $("#appLayerError"));
+					}
 				}
-			} 
-		});
+			});
+		}
 	}
 </script>

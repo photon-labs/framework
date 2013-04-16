@@ -119,4 +119,8 @@
 			loadContent("updateVersion", '', '', params, true, false,'');
 		}
 	}
+	
+	function popupOnCancel(obj) {
+
+	}
 </script>

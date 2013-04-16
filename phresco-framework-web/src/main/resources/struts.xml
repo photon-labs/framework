@@ -475,11 +475,16 @@
         </action>
         
         <action name="envList" method="envList" class="com.photon.phresco.framework.actions.applications.Configurations">
+        	<result name="configList">/pages/applications/configuration/configList.jsp</result>
             <result name="envList">/pages/applications/configuration/envList.jsp</result>
         </action>
         
         <action name="deleteConfigurations" method="delete" class="com.photon.phresco.framework.actions.applications.Configurations">
         	<result name="envList">/pages/applications/configuration/envList.jsp</result>
+        </action>
+        
+        <action name="deleteNonEnvConfigurations" method="deleteNonEnvConfigurations" class="com.photon.phresco.framework.actions.applications.Configurations">
+        	<result name="configList">/pages/applications/configuration/configList.jsp</result>
         </action>
         
         <action name="addConfiguration" method="add" class="com.photon.phresco.framework.actions.applications.Configurations">

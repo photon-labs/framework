@@ -612,7 +612,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		 builder.append(File.separator);
 		 builder.append(FOLDER_DOT_PHRESCO);
 		 builder.append(File.separator);
-		 builder.append(CONFIGURATION_INFO_FILE_NAME);
+		 builder.append(PHRESCO_ENV_CONFIG_FILE_NAME);
 
 		 return builder;
 	 }

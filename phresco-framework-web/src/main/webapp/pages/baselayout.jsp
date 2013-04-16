@@ -166,6 +166,8 @@
 		                             </li>
 		                             <li><a href="#" id="forum" class="<%= FrameworkConstants.HELP_KEY %>"><s:text name="lbl.hdr.help"/></a></li>
 		                             <li><a href="#" id="about" ><s:text name="lbl.abt.helios"/></a></li>
+		                             <li><a href="#" id="simpleUI"><s:text name="lbl.hdr.simple.ui"/><img id="simpleUIImg" class="selectedIcn" src="images/icons/success.png"/></a></li>
+		                             <li><a href="#" id="advanceUI"><s:text name="lbl.hdr.advance.ui"/><img id="advanceUIImg" class="selectedIcn hideContent" src="images/icons/success.png"/></a></li>
 		                             <li><a href="<s:url action='logout'/>"><s:text name="lbl.signout"/></a></li>
 		                         </ul>	
 							</div>
@@ -176,7 +178,7 @@
 					<div class="nav_slider">
 						<nav class="headerInnerTop">
 							<ul>
-								<li class="wid_home"><a href="#" class="inactive" name="headerMenu" id="home">
+								<li class="hideContent wid_home <%= FrameworkConstants.HOME_KEY %>"><a href="#" class="inactive" name="headerMenu" id="home">
 								    <s:label key="lbl.hdr.home"  theme="simple"/></a>
                                 </li>
 								<li class="wid_app"><a href="#" class="inactive" name="headerMenu" id="applications">
@@ -242,6 +244,7 @@
 								    %>
 								</select>
 								<input type="hidden" id="customerId" name="customerId" value=""/>
+								<input type="hidden" id="uiType" name="uiType" value="simpleUI"/>
 							</div>
 						</div>
 					</form>
@@ -465,6 +468,15 @@
     			window.open("http://www.photon.in", '_blank');
     		}
     	});
+		
+		//To select the simpleUI/advanceUI option
+		$("#simpleUI, #advanceUI").unbind();
+		$("#simpleUI, #advanceUI").click(function() {
+			var ancId = $(this).attr("id");
+			$(".selectedIcn").hide();
+			$("#" + ancId + "Img").show();
+			$("#uiType").val(ancId);
+		});
 	});
 	
 	if ($.browser.safari && $.browser.version == 530.17) {
@@ -508,7 +520,7 @@
 		var url = "";
 		if (isHidden) {
 			allObjects.each(function() {
-				if (!$(this).hasClass('active')) {
+				if (!$(this).is(':hidden')) {
 					url = $(this).attr("id");
 					activateMenu($(this));
 					return false;					
@@ -543,8 +555,8 @@
 		var noOfVisibleChildrens = $(".headerInnerTop ul li:visible").size();
 		if (noOfVisibleChildrens < noOfChildrens) {
 			var individualWidth = 575/5;
-			var newWidth = individualWidth * noOfVisibleChildrens
-			$(".headerInnerTop ul").css("width", newWidth);
+			var newWidth = individualWidth * noOfVisibleChildrens;
+			$(".headerInnerTop ul").css("width", newWidth + 25);
 		} else {
 			$(".headerInnerTop ul").css("width", "575");
 		}

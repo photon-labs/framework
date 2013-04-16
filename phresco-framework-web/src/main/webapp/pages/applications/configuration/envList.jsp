@@ -17,7 +17,6 @@
     limitations under the License.
 
 --%>
-<%@page import="com.opensymphony.xwork2.ActionSupport"%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 
@@ -33,6 +32,8 @@
 
 <%@ page import="org.apache.commons.lang.StringUtils" %>
 <%@ page import="org.apache.commons.collections.CollectionUtils"%>
+
+<%@ page import="com.opensymphony.xwork2.ActionSupport"%>
 
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.util.Constants"%>
@@ -196,6 +197,8 @@
 <script type="text/javascript">
 
 	$(document).ready(function() {
+		confirmDialog($("#deleteBtn"), '<s:text name="lbl.hdr.confirm.dialog"/>', '<s:text name="modal.body.text.del.envs"/>', 'delete','<s:text name="lbl.btn.ok"/>');
+		
 		hideLoadingIcon();//To hide the loading icon
 		hideProgressBar();
 		accordion();

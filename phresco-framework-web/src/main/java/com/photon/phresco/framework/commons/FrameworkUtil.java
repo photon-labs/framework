@@ -389,9 +389,11 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	StringTemplate controlGroupElement = new StringTemplate(getControlGroupTemplate());
     	controlGroupElement.setAttribute("ctrlGrpId", pm.getControlGroupId());
     	
+    	String ctrlGrpClass = pm.getControlGroupClass();
     	if (!pm.isShow()) {
-    	    controlGroupElement.setAttribute("ctrlGrpClass", "hideContent");
+    		ctrlGrpClass = ctrlGrpClass + " hideContent";
     	}
+    	controlGroupElement.setAttribute("ctrlGrpClass", ctrlGrpClass);
     	
     	StringTemplate lableElmnt = constructLabelElement(pm.isMandatory(), pm.getLableClass(), pm.getLableText());
     	String type = getInputType(pm.getInputType());
@@ -449,9 +451,12 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 		properties.load(reader);
 		Set<Object> keySet = properties.keySet();
     	
+		String ctrlGrpClass = pm.getControlGroupClass();
     	if (!pm.isShow()) {
-    	    controlGroupElement.setAttribute("ctrlGrpClass", "hideContent");
+    		ctrlGrpClass = ctrlGrpClass + " hideContent";
     	}
+    	controlGroupElement.setAttribute("ctrlGrpClass", ctrlGrpClass);
+    	
     	if (pm.getValue().isEmpty()) {
 	    	StringTemplate mapElement = new StringTemplate(getMapTemplate());
 	    	if (pm.isMandatory()) {
@@ -579,9 +584,12 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     public static StringTemplate constructCheckBoxElement(ParameterModel pm) {
     	StringTemplate controlGroupElement = new StringTemplate(getControlGroupTemplate());
     	controlGroupElement.setAttribute("ctrlGrpId", pm.getControlGroupId());
+    	
+    	String ctrlGrpClass = pm.getControlGroupClass();
     	if (!pm.isShow()) {
-            controlGroupElement.setAttribute("ctrlGrpClass", "hideContent");
-        }
+    		ctrlGrpClass = ctrlGrpClass + " hideContent";
+    	}
+    	controlGroupElement.setAttribute("ctrlGrpClass", ctrlGrpClass);
     	
     	StringTemplate lableElmnt = constructLabelElement(pm.isMandatory(), pm.getLableClass(), pm.getLableText());
     	
@@ -664,9 +672,12 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     public static StringTemplate constructSingleSelectElement(ParameterModel pm) {
     	StringTemplate controlGroupElement = new StringTemplate(getControlGroupTemplate());
     	controlGroupElement.setAttribute("ctrlGrpId", pm.getControlGroupId());
+    	
+    	String ctrlGrpClass = pm.getControlGroupClass();
     	if (!pm.isShow()) {
-            controlGroupElement.setAttribute("ctrlGrpClass", "hideContent");
-        }
+    		ctrlGrpClass = ctrlGrpClass + " hideContent";
+    	}
+    	controlGroupElement.setAttribute("ctrlGrpClass", ctrlGrpClass);
     	
     	StringTemplate lableElmnt = constructLabelElement(pm.isMandatory(), pm.getLableClass(), pm.getLableText());
     	
@@ -714,9 +725,12 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     private static StringTemplate constructMultiSelectElement(ParameterModel pm) {
     	StringTemplate controlGroupElement = new StringTemplate(getControlGroupTemplate());
     	controlGroupElement.setAttribute("ctrlGrpId", pm.getControlGroupId());
+    	
+    	String ctrlGrpClass = pm.getControlGroupClass();
     	if (!pm.isShow()) {
-            controlGroupElement.setAttribute("ctrlGrpClass", "hideContent");
-        }
+    		ctrlGrpClass = ctrlGrpClass + " hideContent";
+    	}
+    	controlGroupElement.setAttribute("ctrlGrpClass", ctrlGrpClass);
     	
     	StringTemplate lableElmnt = constructLabelElement(pm.isMandatory(), pm.getLableClass(), pm.getLableText());
     	
@@ -930,9 +944,11 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	StringTemplate controlGroupElement = new StringTemplate(getControlGroupTemplate());
     	controlGroupElement.setAttribute("ctrlGrpId", pm.getControlGroupId());
     	
+    	String ctrlGrpClass = pm.getControlGroupClass();
     	if (!pm.isShow()) {
-    	    controlGroupElement.setAttribute("ctrlGrpClass", "hideContent");
+    		ctrlGrpClass = ctrlGrpClass + " hideContent";
     	}
+    	controlGroupElement.setAttribute("ctrlGrpClass", ctrlGrpClass);
     	
     	StringTemplate lableElmnt = constructLabelElement(pm.isMandatory(), pm.getLableClass(), pm.getLableText());
     	StringTemplate inputElement = new StringTemplate(getBrowseFileTreeTemplate(pm.getFileType()));
@@ -2364,7 +2380,12 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 	      return certs;
 	  }
 
-	
+	public static boolean isCharacterExists(String string) {
+		if (string.matches(".*[a-zA-Z0-9]+.*")) {
+			return true;
+		}
+		return false;
+	}
 }
 
 class PhrescoFileFilter implements FilenameFilter {

@@ -509,4 +509,7 @@
 		return actionUrl;
 	}
 	
+	function popupOnCancel(obj) {
+
+	}
 </script>

@@ -529,7 +529,7 @@ public class Features extends DynamicParameterModule {
 	             hasError = true;
 	    	}
 	    	
-	    	if (StringUtils.isEmpty(getCode().trim())) {
+	    	if (ADVANCE_UI.equals(getUiType()) && StringUtils.isEmpty(getCode().trim())) {
 	    		setCodeError(getText(ERROR_CODE));
 	            hasError = true;
 	    	}
@@ -547,7 +547,7 @@ public class Features extends DynamicParameterModule {
 		    	}
 			}
 	    	
-	    	if (StringUtils.isEmpty(getApplicationVersion())) {
+	    	if (ADVANCE_UI.equals(getUiType()) && StringUtils.isEmpty(getApplicationVersion())) {
 	    		setApplicationVersionError(getText(ERROR_VERSION));
 	            hasError = true;
 	    	}
@@ -604,9 +604,17 @@ public class Features extends DynamicParameterModule {
     	appInfo.setId(getAppId());
     	appInfo.setName(getName());
     	appInfo.setAppDirName(getAppDir());
-    	appInfo.setCode(getCode());
+    	String appCode = getCode();
+    	if (StringUtils.isEmpty(appCode)) {
+    		appCode = getName().replaceAll("[^a-zA-Z 0-9\\.\\-\\_]", "");
+    	}
+    	appInfo.setCode(appCode);
     	appInfo.setDescription(getDescription());
-    	appInfo.setVersion(getApplicationVersion());
+    	String version = getApplicationVersion();
+        if (StringUtils.isEmpty(version)) {
+        	version = "1.0";
+        }
+    	appInfo.setVersion(version);
     	appInfo.setEmbedAppId(getEmbedAppId());
     	TechnologyInfo techInfo = new TechnologyInfo();
     	techInfo.setId(getTechnology());
@@ -825,7 +833,7 @@ public class Features extends DynamicParameterModule {
 	}
 	
 	private List<Environment> getAllEnvironments(ApplicationInfo appInfo) throws PhrescoException, ConfigurationException {
-		String configPath = Utility.getProjectHome() + appInfo.getAppDirName() + File.separator + FOLDER_DOT_PHRESCO + File.separator + CONFIGURATION_INFO_FILE_NAME ;
+		String configPath = Utility.getProjectHome() + appInfo.getAppDirName() + File.separator + FOLDER_DOT_PHRESCO + File.separator + PHRESCO_ENV_CONFIG_FILE_NAME ;
 		ConfigManager configManager = getConfigManager(configPath);
 		return configManager.getEnvironments();
 	}
