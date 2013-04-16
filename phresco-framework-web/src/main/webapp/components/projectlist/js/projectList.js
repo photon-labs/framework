@@ -22,7 +22,7 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 		initialize : function(globalConfig){
 			var self = this;
 			self.projectslistListener = new Clazz.com.components.projectlist.js.listener.ProjectsListListener;
-			//self.registerEvents(self.projectslistListener);
+			self.registerEvents(self.projectslistListener);
 			//self.registerHandlebars();
 		},
 
@@ -36,9 +36,9 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 		},
 		
 		registerEvents : function(projectslistListener) {
-			//var self = this;
-			//self.onProjectsEvent = new signals.Signal();
-			//this.onProjectsEvent.add(projectslistListener.onProjects, projectslistListener); 
+			var self = this;
+			self.onProjectsEvent = new signals.Signal();
+			this.onProjectsEvent.add(projectslistListener.editApplication, projectslistListener); 
 		},
 		
 		/***
@@ -63,7 +63,11 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 		 *
 		 */
 		bindUI : function(){
-
+			var self = this;
+			$('td[name=editApplication]').click(function(){
+				var value = $('td[name=editApplication]').text();
+				self.onProjectsEvent.dispatch(value);
+			});
 		}
 	});
 

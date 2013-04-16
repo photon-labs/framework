@@ -62,6 +62,16 @@
 		"navigationTest" : {
 			"moduleName":"navigationTest",
 			"path" : "components/navigation/test/navigationTest"
+		},
+			
+		"application" : {
+			"moduleName":"application",
+			"path" : "components/application/js"
+		},
+		
+		"applicationTest" : {
+			"moduleName":"applicationTest",
+			"path" : "components/application/test/applicationTest"
 		}
 		
 	}

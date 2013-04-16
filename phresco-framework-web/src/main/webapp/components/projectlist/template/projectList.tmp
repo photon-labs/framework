@@ -19,7 +19,7 @@
                       </tr>
                       {{#each appInfos}}
                       <tr>
-                        <td>{{name}}</td>
+                        <td name="editApplication" href="#">{{name}}</td>
                         <td>{{description}}</td>
                         <td>{{techInfo.id}}</td>
                         <td><a class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="PDF Report"><img src="../themes/default/images/helios/pdf_icon.png" width="14" height="16" border="0" alt=""></a></td>

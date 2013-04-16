@@ -7,6 +7,8 @@ var commonVariables = {
 	login : "login",
 	loginContext : "login",
 	
+	projectlist : "projectlist",
+	
 	requestBody : {
 	},
 	
