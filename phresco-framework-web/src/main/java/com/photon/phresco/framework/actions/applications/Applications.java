@@ -120,6 +120,7 @@ public class Applications extends FrameworkBaseAction {
 
         try {
         	ApplicationInfo applicationInfo = getApplicationInfo();
+        	getApplicationProcessor().adoptApplication(applicationInfo);
 			String techId = applicationInfo.getTechInfo().getId();
 			Technology technology = getServiceManager().getArcheType(techId, getCustomerId());
 			List<String> optionIds = technology.getOptions();

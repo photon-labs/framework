@@ -851,6 +851,14 @@ public class Features extends DynamicParameterModule {
 	        if (CollectionUtils.isNotEmpty(featureConfigurations)) {
 	            for (Configuration featureConfiguration : featureConfigurations) {
 	                properties = featureConfiguration.getProperties();
+	                String expandableProp = properties.getProperty("expandable");
+	                boolean hasCustomProperty = false;
+	                if (StringUtils.isEmpty(expandableProp)) {
+	                	hasCustomProperty = true;
+	                } else {
+	                	hasCustomProperty = Boolean.valueOf(expandableProp);
+	                }
+                	setReqAttribute(REQ_HAS_CUSTOM_PROPERTY, hasCustomProperty);
 	                Set<Object> keySet = properties.keySet();
 	                for (Object key : keySet) {
 	                    String keyStr = (String) key;
@@ -863,7 +871,7 @@ public class Features extends DynamicParameterModule {
 	            }
 	        }
 	        setReqAttribute(REQ_PROPERTIES_INFO, properties);
-	        setReqAttribute(REQ_HAS_CUSTOM_PROPERTY, true);
+	        
 	    } catch (PhrescoException e) {
 	        throw e;
 	    }

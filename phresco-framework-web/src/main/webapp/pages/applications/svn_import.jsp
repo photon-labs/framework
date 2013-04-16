@@ -113,11 +113,11 @@
 			<span class="red">* </span> <s:text name='lbl.svn.type' /></label>
 			<div class="controls">
 				<select name="repoType" class="medium" >
-					<option value="<s:text name="lbl.repo.type.svn"/>" selected ><s:text name="lbl.repo.type.svn"/></option>
+					<option value="<s:text name="lbl.repo.type.bitkeeper"/>" selected><s:text name="lbl.repo.type.bitkeeper"/></option>
 <%-- 					<% if (!FrameworkConstants.FROM_PAGE_ADD.equals(action)) { %> --%>
 					<option value="<s:text name="lbl.repo.type.git"/>"><s:text name="lbl.repo.type.git"/></option>
 <%-- 					<% } %> --%>
-					<option value="<s:text name="lbl.repo.type.bitkeeper"/>"><s:text name="lbl.repo.type.bitkeeper"/></option>
+					<option value="<s:text name="lbl.repo.type.svn"/>"><s:text name="lbl.repo.type.svn"/></option>
 			    </select>
 			</div>
 		</div>
