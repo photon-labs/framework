@@ -178,13 +178,13 @@
 						</jr:column>
 						<jr:column width="48">
 							<jr:tableFooter style="table_CH" height="30" rowSpan="1">
-								<textField>
+								<textField pattern="">
 									<reportElement style="table_CH_Label" x="0" y="0" width="48" height="30"/>
 									<textElement verticalAlignment="Middle">
 										<font fontName="Times New Roman"/>
 										<paragraph leftIndent="3"/>
 									</textElement>
-									<textFieldExpression><![CDATA[$P{min}]]></textFieldExpression>
+									<textFieldExpression><![CDATA[""+Math.round((Double.valueOf($P{totalAvg})))]]></textFieldExpression>
 								</textField>
 							</jr:tableFooter>
 							<jr:columnHeader style="table_CH" height="30" rowSpan="1">
@@ -216,7 +216,7 @@
 										<font fontName="Times New Roman"/>
 										<paragraph leftIndent="3"/>
 									</textElement>
-									<textFieldExpression><![CDATA[$P{max}]]></textFieldExpression>
+									<textFieldExpression><![CDATA[$P{min}]]></textFieldExpression>
 								</textField>
 							</jr:tableFooter>
 							<jr:columnHeader style="table_CH" height="30" rowSpan="1">
@@ -248,7 +248,7 @@
 										<font fontName="Times New Roman"/>
 										<paragraph leftIndent="3"/>
 									</textElement>
-									<textFieldExpression><![CDATA[$P{totalStdDev}]]></textFieldExpression>
+									<textFieldExpression><![CDATA[$P{max}]]></textFieldExpression>
 								</textField>
 							</jr:tableFooter>
 							<jr:columnHeader style="table_CH" height="30" rowSpan="1">
@@ -280,7 +280,7 @@
 										<font fontName="Times New Roman"/>
 										<paragraph leftIndent="3"/>
 									</textElement>
-									<textFieldExpression><![CDATA[$P{totalErr}]]></textFieldExpression>
+									<textFieldExpression><![CDATA[$P{totalStdDev}]]></textFieldExpression>
 								</textField>
 							</jr:tableFooter>
 							<jr:columnHeader style="table_CH" height="30" rowSpan="1">
@@ -306,13 +306,13 @@
 						</jr:column>
 						<jr:column width="49">
 							<jr:tableFooter style="table_CH" height="30" rowSpan="1">
-								<textField pattern="">
+								<textField>
 									<reportElement style="table_CH_Label" x="0" y="0" width="49" height="30"/>
 									<textElement verticalAlignment="Middle">
 										<font fontName="Times New Roman"/>
 										<paragraph leftIndent="3"/>
 									</textElement>
-									<textFieldExpression><![CDATA[""+Math.round((Double.valueOf($P{totalAvg})))]]></textFieldExpression>
+									<textFieldExpression><![CDATA[$P{totalErr}]]></textFieldExpression>
 								</textField>
 							</jr:tableFooter>
 							<jr:columnHeader style="table_CH" height="30" rowSpan="1">
@@ -338,13 +338,13 @@
 						</jr:column>
 						<jr:column width="50">
 							<jr:tableFooter style="table_CH" height="30" rowSpan="1">
-								<textField pattern="">
+								<textField>
 									<reportElement style="table_CH_Label" x="0" y="0" width="50" height="30"/>
 									<textElement verticalAlignment="Middle">
 										<font fontName="Times New Roman"/>
 										<paragraph leftIndent="3"/>
 									</textElement>
-									<textFieldExpression><![CDATA[""+Math.round((Double.valueOf($P{totalAvgBytes})))]]></textFieldExpression>
+									<textFieldExpression><![CDATA[$P{totalThroughput}]]></textFieldExpression>
 								</textField>
 							</jr:tableFooter>
 							<jr:columnHeader style="table_CH" height="30" rowSpan="1">
@@ -358,7 +358,7 @@
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell style="table_TD" height="23" rowSpan="1">
-								<textField isStretchWithOverflow="true" pattern="###0.00">
+								<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="false">
 									<reportElement style="table_TD_Label" x="0" y="0" width="48" height="20"/>
 									<textElement verticalAlignment="Middle">
 										<font fontName="Times New Roman" size="12"/>
@@ -376,7 +376,7 @@
 										<font fontName="Times New Roman"/>
 										<paragraph leftIndent="3"/>
 									</textElement>
-									<textFieldExpression><![CDATA[$P{totalThroughput}]]></textFieldExpression>
+									<textFieldExpression><![CDATA[$P{totalKbPerSec}]]></textFieldExpression>
 								</textField>
 							</jr:tableFooter>
 							<jr:columnHeader style="table_CH" height="30" rowSpan="1">
@@ -402,13 +402,13 @@
 						</jr:column>
 						<jr:column width="58">
 							<jr:tableFooter style="table_CH" height="30" rowSpan="1">
-								<textField>
+								<textField pattern="">
 									<reportElement style="table_CH_Label" x="0" y="0" width="58" height="30"/>
 									<textElement verticalAlignment="Middle">
 										<font fontName="Times New Roman"/>
 										<paragraph leftIndent="3"/>
 									</textElement>
-									<textFieldExpression><![CDATA[$P{totalKbPerSec}]]></textFieldExpression>
+									<textFieldExpression><![CDATA[""+Math.round((Double.valueOf($P{totalAvgBytes})))]]></textFieldExpression>
 								</textField>
 							</jr:tableFooter>
 							<jr:columnHeader style="table_CH" height="30" rowSpan="1">
