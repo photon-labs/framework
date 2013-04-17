@@ -38,14 +38,14 @@
 					<reportElement style="PPFTHeadingRow" x="0" y="0" width="554" height="20"/>
 				</rectangle>
 				<staticText>
-					<reportElement style="PPFTHeadingRowLabel" x="13" y="3" width="65" height="15"/>
+					<reportElement style="PPFTHeadingRowLabel" x="13" y="3" width="65" height="15" forecolor="#FFFFFF"/>
 					<textElement>
 						<font fontName="Times New Roman" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[File Name :]]></text>
 				</staticText>
 				<textField>
-					<reportElement style="PPFTHeadingRowLabelValue" x="78" y="3" width="462" height="15"/>
+					<reportElement style="PPFTHeadingRowLabelValue" x="78" y="3" width="462" height="15" forecolor="#FFFFFF"/>
 					<textElement>
 						<font fontName="Times New Roman" size="12" isBold="true"/>
 					</textElement>

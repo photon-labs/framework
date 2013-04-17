@@ -47,7 +47,7 @@
 					</graphicElement>
 				</rectangle>
 				<staticText>
-					<reportElement style="PPCRHeadingRowLabel" x="15" y="5" width="68" height="15"/>
+					<reportElement style="PPCRHeadingRowLabelValue" x="15" y="5" width="68" height="15" forecolor="#000000"/>
 					<textElement>
 						<font fontName="Times New Roman" size="12" isBold="true"/>
 					</textElement>
@@ -64,7 +64,7 @@
 					<subreportExpression><![CDATA["PhrescoPerfFiles.jasper"]]></subreportExpression>
 				</subreport>
 				<textField>
-					<reportElement style="PPCRHeadingRowLabelValue" x="84" y="5" width="466" height="15"/>
+					<reportElement style="PPCRHeadingRowLabelValue" x="84" y="5" width="466" height="15" forecolor="#000000"/>
 					<textElement>
 						<font fontName="Times New Roman" size="12" isBold="true"/>
 					</textElement>
