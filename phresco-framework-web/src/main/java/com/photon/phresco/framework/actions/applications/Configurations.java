@@ -822,7 +822,7 @@ public class Configurations extends FrameworkBaseAction {
     		}
     	}
     	
-    	if (!isEnvSpecific() && StringUtils.isNotEmpty(getConfigName())) {
+    	if (!isEnvSpecific() && StringUtils.isNotEmpty(getConfigName()) && !getConfigName().equals(getOldName())) {
     		NonEnvConfigManager configManager = new NonEnvConfigManagerImpl(new File(getConfigPath()));
     		List<Configuration> configurations = configManager.getConfigurations();
     		if (CollectionUtils.isNotEmpty(configurations)) {
@@ -1035,10 +1035,12 @@ public class Configurations extends FrameworkBaseAction {
     public String deleteNonEnvConfigurations() {
     	try {
 			if (CollectionUtils.isNotEmpty(getNonEnvConfigNames())) {
+				SettingsTemplate configTemplate = getServiceManager().getConfigTemplate(getConfigId());
 				NonEnvConfigManager configManager = getNonEnvConfigManager(getConfigPath());
 				for (String nonEnvConfigName : getNonEnvConfigNames()) {
 					configManager.deleteConfiguration(nonEnvConfigName);
 				}
+				addActionMessage(configTemplate.getName() + SPACE + getText(ACT_SUCC_NON_CONFIG_DEL));
 			}
 		} catch (Exception e) {
 			// TODO: handle exception

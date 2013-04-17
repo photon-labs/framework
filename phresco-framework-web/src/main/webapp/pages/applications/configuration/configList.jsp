@@ -32,6 +32,11 @@
 %>
 
 <form id="configListForm" style="height: 97%;">
+	<s:if test="hasActionMessages()">
+		<div class="alert alert-success alert-message" id="envSuccessmsg">
+			<s:actionmessage />
+		</div>
+	</s:if>
 	<% if (CollectionUtils.isEmpty(configurations)) { %>
 		<div class="alert alert-block">
 			<s:text name="configuration.error.message"/>

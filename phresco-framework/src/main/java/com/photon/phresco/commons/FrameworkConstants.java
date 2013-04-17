@@ -1686,6 +1686,7 @@ public interface FrameworkConstants {
 		String ACT_SUCC_SETTINGS_ADD = "succ.setting.create";
 		String ACT_SUCC_SETTINGS_UPDATE = "succ.setting.update";
 		String ACT_SUCC_ENV_ADD = "succ.env.create";
+		String ACT_SUCC_NON_CONFIG_DEL = "succ.non.config.delete";
 		String ACT_SUCC_ENV_DELETE = "succ.env.delete";
 		String ACT_SUCC_FEATURE_CONFIGURE = "succ.feature.configure";
 		String ACT_SUCC_CONFIG_CLONE = "succ.config.clone";
