@@ -822,6 +822,19 @@ public class Configurations extends FrameworkBaseAction {
     		}
     	}
     	
+    	if (!isEnvSpecific() && StringUtils.isNotEmpty(getConfigName())) {
+    		NonEnvConfigManager configManager = new NonEnvConfigManagerImpl(new File(getConfigPath()));
+    		List<Configuration> configurations = configManager.getConfigurations();
+    		if (CollectionUtils.isNotEmpty(configurations)) {
+    			for (Configuration configuration : configurations) {
+        			if (getConfigName().equalsIgnoreCase(configuration.getName())) {
+        				setConfigNameError(getText(ERROR_DUPLICATE_NAME));
+        	            hasError = true;
+        			}
+        		}
+    		}
+    	}
+    	
     	if (isEnvSpecific()) {
     		ConfigManager configManager = getConfigManager(getConfigPath());
     		if (StringUtils.isNotEmpty(getConfigName()) && !getConfigName().equals(getOldName())) {
