@@ -498,12 +498,6 @@
 		changeColorScheme(data);
 	}
 	
-	function copyToClipboard(data) {
-        var params = "copyToClipboard=";
-        params = params.concat(data);
-        loadContent('copyToClipboard', '', '', params, '', true, '');
-	}
-	 
     function onSelectCustomer(selectedId) {
     	$('#customerId').val(selectedId);
     	loadContent("fetchCustomerOptions", $('#formCustomers'), '', '', true, true, 'showHideCustomerOptions');
@@ -614,7 +608,7 @@
 					'background': "none repeat scroll 0 0 " + brandingColor  // Left Menus color Active color ** 
 			},
 			
-			'#testmenu li a.active, #testmenu li a:hover': {
+			'#testmenu li a.active, #testmenu li a:hover, #thememenu li a.active, #thememenu li a:hover': {
 				'background': "none repeat scroll 0 0" +  brandingColor // change the Left side menu background color in Quality tab selection ex: click unit ,functional , performance
 			},
 			

@@ -878,14 +878,8 @@ function showDeleteConfirmation(confirmMsg) {
 
 function copyToClipboard(data) {
     var params = "copyToClipboard=";
-    params = params.concat(data);
-    $.ajax({
-		url : "copyToClipboard",
-		data : params,
-		type : "POST",
-		success : function() {
-		}
-	});
+    params = params.concat(escape(data));
+    loadContent('copyToClipboard', '', '', params, '', true, '');
 }
 
 //trim the long content

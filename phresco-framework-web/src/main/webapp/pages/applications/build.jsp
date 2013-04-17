@@ -217,12 +217,6 @@
 		copyToClipboard($('#console_div').text());
 	});
     
-    function copyToClipboard(data) {
-        var params = "copyToClipboard=";
-        params = params.concat(data);
-        loadContent('copyToClipboard', '', '', params, '', true, '');
-	}
-    
     // When  server is  running disable run against source button
     function runAgainstSrcServerRunning() {
     	disableButton($("#runAgainstSourceStart"));

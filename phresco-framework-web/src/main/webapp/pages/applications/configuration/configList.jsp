@@ -40,7 +40,7 @@
 		<div class="build_table_div table_div">
 			<div class="fixed-table-container">
 				<div class="header-background header-backgroundTheme"> </div>
-				<div class="fixed-table-container-inner">
+				<div class="fixed-table-container-inner config_subTab">
 		        	<table cellspacing="0" class="zebra-striped">
 		          		<thead>
 			            	<tr>

@@ -6744,3 +6744,7 @@ color: #313131;
 	height: 101%; 
 	overflow: auto;
 }
+
+.config_subTab .th-inner {
+	top: 155px !important;
+}

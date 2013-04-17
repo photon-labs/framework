@@ -859,6 +859,9 @@ public class Features extends DynamicParameterModule {
 	                	hasCustomProperty = Boolean.valueOf(expandableProp);
 	                }
                 	setReqAttribute(REQ_HAS_CUSTOM_PROPERTY, hasCustomProperty);
+                	if (properties.containsKey("expandable")) {
+                		properties.remove("expandable");
+                	}
 	                Set<Object> keySet = properties.keySet();
 	                for (Object key : keySet) {
 	                    String keyStr = (String) key;

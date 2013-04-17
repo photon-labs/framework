@@ -514,8 +514,11 @@ Width <= 1024
 	
 	.configList,.build_form,#subTabcontent,.ciFormJob,.reportList {
 		width: 98.5%;
+		padding-left: 0.5%;
 	}
-	
+	#configListForm {
+		height: 95% !important;
+	}
 	.qq-upload-list {
 		margin-left: 16% !important;
 	}
@@ -1605,6 +1608,7 @@ Width >= 1152 and < 1280
 
 	 .configList,.build_form,#subTabcontent,.ciFormJob,.reportList {
 		width: 99%;
+		padding-left: 0.5%;
 	}
 	
 	.qq-upload-list {
@@ -2155,8 +2159,13 @@ Width <= 1280 and height <= 800
 
 	 .configList,.build_form,#subTabcontent,.ciFormJob,.reportList {
 		width: 99%;
+		padding-left: 1%;
 	}
-
+	
+	#configListForm {
+		height: 95% !important;
+	}
+	
 	.qq-upload-list {
 		margin-left: 20.3% !important;
 	}
@@ -2362,6 +2371,14 @@ Width >= 1280 and height >= 800
 	
 	.build_form {
 	    height: 99%;
+	}
+	
+	#loadEnv {
+    	height: 100% !important;
+	}
+	
+	#formConfigList {
+		height: 100%;
 	}
 	
 	.app_add_form {
@@ -2593,6 +2610,7 @@ Width >= 1280 and height >= 800
 	
 	 .configList,.build_form,#subTabcontent,.ciFormJob,.reportList {
 		width: 99%;
+		padding-left: 1%;
 	}
 
 	 .graph_div {
@@ -3957,7 +3975,10 @@ Width > 1441 and <= 1600
 	.configList,.build_form,#subTabcontent,.ciFormJob,.reportList {
 		width: 99%;
 	}
-
+	
+	.config_subTab .th-inner {
+		top: 166px !important;
+	}
 	.qq-upload-list {
 		margin-left: 23% !important;
 	}
