@@ -1198,6 +1198,7 @@ public class Configurations extends FrameworkBaseAction {
             List<String> typeValues = new ArrayList<String>();
             for (Element possibleType : possibleTypes) {
             	typeValues.add(possibleType.getName());
+            	Collections.sort(typeValues, sortValuesInAlphaOrder());
 			}
             
             ConfigManager configManager = getConfigManager(getConfigPath());

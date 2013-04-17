@@ -128,12 +128,14 @@
 																			<%= checkedStr %> onclick="checkboxEvent($('.<%= project.getId() %>'), $('#<%= project.getId() %>'));">
 																	</td>
 																	<td class="no-left-bottom-border table-pad">
-																		<a href="#" onclick="editApplication('<%= project.getId() %>', '<%= appInfo.getId() %>');" name="edit">
+																		<a href="#" id="appNameInHover" onclick="editApplication('<%= project.getId() %>', '<%= appInfo.getId() %>');" name="edit">
 																			<%= appInfo.getName() %>
 																		</a>
 																	</td>
 																	<td class="no-left-bottom-border table-pad">
-																		<%= project.getDescription() %>
+																		<a id="descriptionInHover">
+																			<%= project.getDescription() %>
+																		</a>
 																	</td>
 																	<td class="no-left-bottom-border table-pad">
 																		<%= projectsObj.getTechNamefromTechId(appInfo.getTechInfo().getId()) %>
@@ -211,6 +213,14 @@
 		hideProgressBar();
 		toDisableCheckAll();
 		deleteButtonStatus();
+		
+		$("td a[id ='appNameInHover']").text(function(index) {
+	        return textTrim($(this), 45);
+	    });
+		
+		$("td [id ='descriptionInHover']").text(function(index) {
+	        return textTrim($(this), 25);
+	    });
 		
 		$('#customerList').show();
 		

@@ -139,15 +139,8 @@
 	    }, 600);
 	}
 	
-	$(document).keydown(function(e) {
-	    // ESCAPE key pressed
-		if (e.keyCode == 27) {
-			$("#additionalPopup").modal('hide');
-	    }
-	});
-	
 	function add_popupOnOk(obj) {
-		var okUrl = $(obj).attr("id")
+		var okUrl = $(obj).attr("id");
 		var fileLocation = $('#browseSelectedLocation').val(); 
 		if (okUrl === "filesToMinify") {
 			if ($("input[name=filesToMinify]:checked").size() !== 0 && $("#compressName").val() != "") {

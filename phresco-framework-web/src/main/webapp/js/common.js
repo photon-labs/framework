@@ -1474,6 +1474,7 @@ function changeChckBoxValue(obj) {
 //trim the long content
 function textTrim(obj, maxLength) {
     var val = $(obj).text();
+    val = val.trim();
     $(obj).attr("title", val);
     var len = val.length;
     if(len > maxLength) {
