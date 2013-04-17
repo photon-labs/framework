@@ -765,15 +765,15 @@
 				params = params.concat(appLayerInfos);
 			}	
 			
-
-			if(($("input[class='appLayerProjName']").val().length > 0)) {
-				params = params.concat("&appId=");
-				params = params.concat("true"); 
-			} else {
-				params = params.concat("&appId=");
-				params = params.concat("false"); 
-			}
-			
+			<% if (hasAppLayer) { %>	
+				if (($("input[class='appLayerProjName']").val().length > 0)) {
+					params = params.concat("&appId=");
+					params = params.concat("true"); 
+				} else {
+					params = params.concat("&appId=");
+					params = params.concat("false"); 
+				}
+			<% } %>
 			validate('createProject', $('#formCreateProject'), $("#container"), params, '<s:text name='progress.txt.add.proj'/>');
 		});
 		
