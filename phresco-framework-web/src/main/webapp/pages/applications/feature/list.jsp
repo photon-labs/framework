@@ -174,18 +174,20 @@
 			});
 		}
 		if(unCheck) {
-			for (i in defaultModules) {  //To check the default feature
-				$("input:checkbox[value='" + defaultModules[i] + "']").attr('checked', false);
-			}
-			for (i in defaultModules) {  //To select the default version
-				var featureName = defaultModules[i];
-				$("select[name='"+ featureName + "'] option").each(function() {
-					var currentVal = $(this).val();
-					if (($.inArray(currentVal, depArtifactInfoIds)) > -1) {
-						$(this).attr("selected", false);
-						return false;
-					}
-				});
+			if (from === "fetchDependentFeatures") {
+				for (i in defaultModules) {  //To check the default feature
+					$("input:checkbox[value='" + defaultModules[i] + "']").attr('checked', false);
+				}
+				for (i in defaultModules) {  //To select the default version
+					var featureName = defaultModules[i];
+					$("select[name='"+ featureName + "'] option").each(function() {
+						var currentVal = $(this).val();
+						if (($.inArray(currentVal, depArtifactInfoIds)) > -1) {
+							$(this).attr("selected", false);
+							return false;
+						}
+					});
+				}
 			}
 		}
 		checkboxEvent($('.feature_checkbox'), $('#checkAllAuto'));
