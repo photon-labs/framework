@@ -1679,6 +1679,7 @@ public interface FrameworkConstants {
 	     * String ACT_SUCC_XXX
 	     *****************************/
 		String ACT_SUCC_PROJECT_CREATE = "succ.project.create";
+		String ACT_SUCC_PROJECT_UPDATE = "succ.project.update";
 		String ACT_SUCC_PROJECT_DELETE = "succ.project.delete";
 		String ACT_SUCC_CONFIG_ADD = "succ.config.create";
 		String ACT_SUCC_CONFIG_UPDATE = "succ.config.update";

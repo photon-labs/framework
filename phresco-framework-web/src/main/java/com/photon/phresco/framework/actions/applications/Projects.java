@@ -381,6 +381,7 @@ public class Projects extends FrameworkBaseAction {
         	ProjectInfo projectInfo = createProjectInfo();
         	projectInfo.setId(getId());
             PhrescoFrameworkFactory.getProjectManager().update(projectInfo, getServiceManager(), null);
+            addActionMessage(getText(ACT_SUCC_PROJECT_UPDATE, Collections.singletonList(getProjectName())));
         } catch (PhrescoException e) {
             if (s_debugEnabled) {
                 S_LOGGER.error("Entered into catch block of Projects.updateProject()" + FrameworkUtil.getStackTraceAsString(e));

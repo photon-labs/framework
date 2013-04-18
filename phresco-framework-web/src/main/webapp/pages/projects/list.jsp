@@ -133,9 +133,9 @@
 																		</a>
 																	</td>
 																	<td class="no-left-bottom-border table-pad">
-																		<a id="descriptionInHover">
+																		<span id="descriptionInHover">
 																			<%= project.getDescription() %>
-																		</a>
+																		</span>
 																	</td>
 																	<td class="no-left-bottom-border table-pad">
 																		<%= projectsObj.getTechNamefromTechId(appInfo.getTechInfo().getId()) %>
@@ -314,7 +314,7 @@
  			var basicParams = getBasicParamsAsJson();
  			appInfos = [];
  			$('input[name="selectedAppInfo"]:checked').each(function() {
- 				appInfos.push($(this).val());	
+ 				appInfos.push($(this).val());
  			});
  			var params = '{' + basicParams + ', "selectedAppInfos": [' + appInfos.join(',') + ']}';
  			loadJsonContent("deleteProject", params, $('#container'));
