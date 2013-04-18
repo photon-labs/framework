@@ -883,10 +883,10 @@
 		var appCode = "";
 		if ('<%= FrameworkConstants.SIMPLE_UI %>' === uiType) {
 			uiTypeClass = "hideContent";
-			var projectCode = $("input[name=projectCode]").val();
-			if (!isBlank(projectCode)) {
-				appCode = projectCode + count;
-			}
+		}
+		var projectCode = $("input[name=projectCode]").val();
+		if (!isBlank(projectCode)) {
+			appCode = projectCode + count;
 		}
 		<% if (FrameworkConstants.FROM_PAGE_EDIT.equals(fromPage)) { %>
 			count = $(".appLayerProjName").size() + 1;
@@ -984,7 +984,7 @@
 					var existingVal = $(this).val() + $(this).parent().parent().find('select[name=app-layerTechnology]').val();
 					//To match app code with current row with other rows, and check for duplication
 					if ($(obj).attr("temp") !== $(this).attr("temp") && currentVal.toLowerCase() === existingVal.toLowerCase()) {
-						// $(obj).val("");
+						$(obj).val("");
 						$(obj).focus();
 						$(obj).css("border-color", "#B94A48");
 						$(obj).prev().css("color", "#B94A48");

@@ -77,8 +77,13 @@
 				sb.append(inputControl);
 	        }
 	    }
-	}
-	if (hasCustomProperty) {
+	} if (CollectionUtils.isEmpty(properties)) {
+%>
+		<div class="alert alert-block">
+			<s:text name='configuration.error.message'/>
+		</div>
+<%
+	} else if (hasCustomProperty) {
 		pm = new ParameterModel();
 		pm.setValue("");
 		List<Object> values = new ArrayList<Object>();
@@ -143,10 +148,10 @@
 		}
 	}
 	
-	function setTimeOut() { 
-		setTimeout(function() {
-			$('#errMsg').empty("slow", function () {
-			});
-		}, 5000);
-	}
+// 	function setTimeOut() { 
+// 		setTimeout(function() {
+// 			$('#errMsg').empty("slow", function () {
+// 			});
+// 		}, 5000);
+// 	}
 </script>

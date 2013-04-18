@@ -14,7 +14,7 @@ $('#projectName').bind('input propertychange', function (e) {
 	$('#projectCode').val(str);
 	$('input[name=projectCode]').val(str);
 	var uiType = $("#uiType").val();
-	if ('simpleUI' === uiType) {
+//	if ('simpleUI' === uiType) {
 		$("input[name=appLayerProjName]").each(function(i) {
 			if (isBlank(str)) {
 				$(this).val("");
@@ -22,7 +22,7 @@ $('#projectName').bind('input propertychange', function (e) {
 				$(this).val(str + (i+1));
 			}
 		});
-	}
+//	}
 });
 
 //To restrict the user in typing the special charaters in App code

@@ -230,6 +230,7 @@
 	  	
 	  	//To handle the favourite config tabs
 	  	$("a[name='favConfigTab']").click(function() {
+	  		showLoadingIcon();
 	  		var configId = $(this).attr("id");
 	  		var params = getBasicParams();
 	  		params = params.concat("&configId=");

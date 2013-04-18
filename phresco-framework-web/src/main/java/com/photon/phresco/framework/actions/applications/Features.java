@@ -743,10 +743,12 @@ public class Features extends DynamicParameterModule {
 	    	ApplicationInfo appInfo = getApplicationInfo();
             List<PropertyTemplate> propertyTemplates = getTemplateConfigFile();
             Properties properties = new Properties();
-            for (PropertyTemplate propertyTemplate : propertyTemplates) {
-                String key  = propertyTemplate.getKey();
-                String value = getReqParameter(key);
-                properties.setProperty(key, value);
+            if (CollectionUtils.isNotEmpty(propertyTemplates)) {
+            	for (PropertyTemplate propertyTemplate : propertyTemplates) {
+            		String key  = propertyTemplate.getKey();
+            		String value = getReqParameter(key);
+            		properties.setProperty(key, value);
+            	}
             }
             String[] keys = getReqParameterValues(REQ_KEY);
             String[] values = getReqParameterValues(REQ_VALUE);
@@ -848,17 +850,16 @@ public class Features extends DynamicParameterModule {
 	    try {
 	        List<Configuration> featureConfigurations = getApplicationProcessor().preFeatureConfiguration(getApplicationInfo(), getFeatureName());
 	        Properties properties = null;
+	        boolean hasCustomProperty = false;
 	        if (CollectionUtils.isNotEmpty(featureConfigurations)) {
 	            for (Configuration featureConfiguration : featureConfigurations) {
 	                properties = featureConfiguration.getProperties();
 	                String expandableProp = properties.getProperty("expandable");
-	                boolean hasCustomProperty = false;
 	                if (StringUtils.isEmpty(expandableProp)) {
 	                	hasCustomProperty = true;
 	                } else {
 	                	hasCustomProperty = Boolean.valueOf(expandableProp);
 	                }
-                	setReqAttribute(REQ_HAS_CUSTOM_PROPERTY, hasCustomProperty);
                 	if (properties.containsKey("expandable")) {
                 		properties.remove("expandable");
                 	}
@@ -873,8 +874,8 @@ public class Features extends DynamicParameterModule {
 	                }
 	            }
 	        }
+	        setReqAttribute(REQ_HAS_CUSTOM_PROPERTY, hasCustomProperty);
 	        setReqAttribute(REQ_PROPERTIES_INFO, properties);
-	        
 	    } catch (PhrescoException e) {
 	        throw e;
 	    }
