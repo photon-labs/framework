@@ -9,6 +9,8 @@ define(["framework/widgetWithTemplate", "navigation/listener/navigationListener"
 		templateUrl: commonVariables.contexturl + "/components/navigation/template/navigation.tmp",
 		configUrl: "../components/navigation/config/config.json",
 		name : window.commonVariables.navigation,
+		navigationListener : null,
+		onAddNewProjectEvent : null,
 	
 		/***
 		 * Called in initialization time of this class 
@@ -17,7 +19,8 @@ define(["framework/widgetWithTemplate", "navigation/listener/navigationListener"
 		 */
 		initialize : function(globalConfig){
 			var self = this;
-			/* this.onnavigationEvent = new signals.Signal(); */
+			self.navigationListener = new Clazz.com.components.navigation.js.listener.navigationListener();
+			self.registerEvents(self.navigationListener);
 		},
 
 		/***
@@ -25,7 +28,13 @@ define(["framework/widgetWithTemplate", "navigation/listener/navigationListener"
 		 *
 		 */
 		loadPage : function(){
-			var navigationListener = new Clazz.com.components.navigation.js.listener.navigationListener();
+			self.navigationListener = new Clazz.com.components.navigation.js.listener.navigationListener();
+		},
+		
+		registerEvents : function(navigationListener) {
+			var self = this;
+			self.onAddNewProjectEvent = new signals.Signal();
+			self.onAddNewProjectEvent.add(navigationListener.onAddProject, navigationListener); 
 		},
 		
 		/***
@@ -43,10 +52,11 @@ define(["framework/widgetWithTemplate", "navigation/listener/navigationListener"
 		 */
 		bindUI : function(){
 			var self = this;
-			/* $('#navigation').click(function(){
-				self.onnavigationEvent.dispatch();
-			}); */
-		
+			
+			$('#addproject').click(function(){
+				self.onAddNewProjectEvent.dispatch();
+			}); 
+			
 			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;
 			
 		}

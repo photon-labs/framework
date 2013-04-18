@@ -7,7 +7,7 @@
                   <th data-i18n="projectlist.label.technology">Technology</th>
                   <th data-i18n="projectlist.label.report">Report</th>
                   <th data-i18n="projectlist.label.repository">Repository</th>
-                  <th>Delete ( All <a class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Delete All"><img src="../themes/default/images/helios/delete_row.png" width="14" height="18" border="0" alt=""></a> )</th>                  
+                  <th>Delete ( All <a class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Delete All"><img src="../themes/default/images/helios/delete_row.png" width="14" height="18" border="0" alt=""></a>)</th>                  
                   <th>&nbsp;</th>
                 </tr>
               </thead>
@@ -15,21 +15,262 @@
                   {{#each row}}
                       <tr class="proj_title">
                         <td colspan="4">{{name}}</td> 
-                        <td colspan="3" align="right"><a class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="edit_project.html" data-original-title="Edit Project"><img src="../themes/default/images/helios/edit_row_icon.png" width="29" height="23" border="0" alt=""></a> <a class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Delete Project"><img src="../themes/default/images/helios/delete_row_icon.png" width="29" height="23" border="0" alt="0"></a></td>
+                        <td colspan="3" align="right"><a class="tooltiptop" title="" data-placement="top" data-toggle="tooltip"  data-original-title="Edit Project"><img id="editproject" src="../themes/default/images/helios/edit_row_icon.png" width="29" height="23" border="0" alt=""></a> <a class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Delete Project"><img src="../themes/default/images/helios/delete_row_icon.png" width="29" height="23" border="0" alt="0"></a></td>
                       </tr>
                       {{#each appInfos}}
                       <tr>
-                        <td>{{name}}</td>
+                        <td name="editApplication" href="#">{{name}}</td>
                         <td>{{description}}</td>
                         <td>{{techInfo.id}}</td>
-                        <td><a class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="PDF Report"><img src="../themes/default/images/helios/pdf_icon.png" width="14" height="16" border="0" alt=""></a></td>
-                        <td><a class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Add Repo"><img src="../themes/default/images/helios/add_repo_icon.png" width="18" height="15" border="0" alt=""></a> <a class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Commit"><img src="../themes/default/images/helios/commit_icon.png" width="16" height="15" border="0" alt=""></a> <a class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="SVN Update"><img src="../themes/default/images/helios/update_svn_icon.png" width="22" height="15" border="0" alt=""></a></td>
-                         <td><a class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Delete Row"><img src="../themes/default/images/helios/delete_row.png" width="14" height="18" border="0" alt=""></a></td>
+                       <td><a onClick="opencc(this,'pdf_report');" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="PDF Report"><img src="../themes/default/images/helios/pdf_icon.png" width="14" height="16" border="0" alt=""></a>
+                  
+              <div id="pdf_report" class="dyn_popup">
+                <table width="100%" border="0" cellspacing="0" cellpadding="5">
+                  <thead>
+                        <tr>
+                            <th>Existing Reports</th>
+                            <th>Type</th>
+                            <th>Download</th>
+                            <th>Delete</th>
+                        </tr>    
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Apr 17 2013 12:51</td>
+                            <td>Detailed</td>
+                            <td><img src="../themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt="0"></td>
+                            <td><img src="../themes/default/images/helios/delete_row.png" width="14" height="18" border="0" alt="0"></td>
+                        </tr>
+                    </tbody>    
+                </table>
+                   <table class="report_type">
+                    <tbody>
+                        <tr>
+                            <td>Report Type</td>
+                            <td>
+                                <select>
+                                    <option>Detailed Report</option>
+                                    <option>Overall Report</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </tbody>
+                   </table>
+               <div class="flt_right">
+                 <input type="button" value="Generate" class="btn btn_style">
+                 <input type="button" value="Close" class="btn btn_style dyn_popup_close">
+               </div>
+                <!--pdf_report div ends here -->  
+             </div> 
+                  </td>
+                        <td>
+                        <a onClick="opencc(this,'add_repo');" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Add Repo"><img src="../themes/default/images/helios/add_repo_icon.png" width="18" height="15" border="0" alt=""></a> 
+
+                        <a onClick="opencc(this,'commit');" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Commit"><img src="../themes/default/images/helios/commit_icon.png" width="16" height="15" border="0" alt=""></a> 
+
+                        <a onClick="opencc(this,'svn_update');" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="SVN Update"><img src="../themes/default/images/helios/update_svn_icon.png" width="22" height="15" border="0" alt=""></a>
+                  
+                  
+                  <div id="add_repo" class="dyn_popup">
+                      <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                        <tbody>
+                            <tr>
+                                <td><sup>*</sup>Type</td>
+                                <td>
+                                  <select>
+                                      <option>svn</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><sup>*</sup>Repository URL</td>
+                                <td>
+                                  <input type="text">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Other Credential</td>
+                                <td>
+                                  <input type="checkbox" checked="true">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><sup>*</sup>Username</td>
+                                <td>
+                                  <input type="text">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><sup>*</sup>Password</td>
+                                <td>
+                                  <input type="text">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Message</td>
+                                <td>
+                                  <textarea></textarea>
+                                </td>
+                            </tr>
+                        </tbody>
+                     </table>               
+                     <!--add_repo div ends here --> 
+                     <div class="flt_right">
+                        <input type="button" value="Add To Repo" class="btn btn_style">
+                        <input type="button" value="Cancel" class="btn btn_style dyn_popup_close">
+                     </div> 
+                  </div>
+                  
+                  <div id="commit" class="dyn_popup popup_bg">
+                      <div class="commit_data">
+                            <table width="100%" border="0" cellspacing="0" cellpadding="5">
+                                <thead>
+                                    <tr>
+                                        <th><input type="checkbox"></th>
+                                        <th>File</th>
+                                        <th>Status</th>
+                                    </tr>    
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><input type="checkbox"></td>
+                                        <td>C:\Documents and Settings\santhosh_ja\workspace\projects\TestProj-php\do_not_checkin</td>
+                                        <td>?</td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="checkbox"></td>
+                                        <td>C:\Documents and Settings\santhosh_ja\workspace\projects\TestProj-php\do_not_checkin</td>
+                                        <td>?</td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="checkbox"></td>
+                                        <td>C:\Documents and Settings\santhosh_ja\workspace\projects\TestProj-php\do_not_checkin</td>
+                                        <td>?</td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="checkbox"></td>
+                                        <td>C:\Documents and Settings\santhosh_ja\workspace\projects\TestProj-php\do_not_checkin</td>
+                                        <td>?</td>
+                                    </tr>
+                                </tbody>    
+                            </table>   
+                            <br>
+                            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                <tbody>
+                                    <tr>
+                                        <td><sup>*</sup>Type</td>
+                                        <td>
+                                            <select>
+                                                <option>svn</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><sup>*</sup>Repository URL</td>
+                                        <td>
+                                            <input type="text">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Other Credential</td>
+                                        <td>
+                                            <input type="checkbox" checked="true">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><sup>*</sup>Username</td>
+                                        <td>
+                                            <input type="text">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><sup>*</sup>Password</td>
+                                        <td>
+                                            <input type="text">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Message</td>
+                                        <td>
+                                            <textarea></textarea>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                             </table> 
+                         </div>       
+                         <div class="flt_right roll_data">
+                          <input type="button" value="Commit" class="btn btn_style">
+                            <input type="button" value="Cancel" class="btn btn_style dyn_popup_close">
+                         </div>
+                    <!--commit div ends here -->  
+                  </div>
+                  
+                  <div id="svn_update" class="dyn_popup popup_bg">
+                  <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                        <tbody>
+                            <tr>
+                                <td><sup>*</sup>Type</td>
+                                <td>
+                                  <select>
+                                      <option>svn</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><sup>*</sup>Repository URL</td>
+                                <td>
+                                  <input type="text">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Other Credential</td>
+                                <td>
+                                  <input type="checkbox" checked="true">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><sup>*</sup>Username</td>
+                                <td>
+                                  <input type="text">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><sup>*</sup>Password</td>
+                                <td>
+                                  <input type="text">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Revision</td>
+                                <td><input type="radio"> HEAD Revision</td>
+                            </tr>
+                            <tr>
+                              <td></td>
+                                <td><input type="radio"> Revision &nbsp; <input type="text"></td>
+                            </tr>
+                        </tbody>
+                     </table> 
+                     <div class="flt_right">
+                         <input type="button" value="Update Application" class="btn btn_style">
+                         <input type="button" value="Cancel" class="btn btn_style dyn_popup_close">
+                     </div>                
+                    <!--svn_update div ends here -->  
+                  </div>
+                  </td>
+                  <td><a onClick="opencc(this,'delete_msg');" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Delete Row"><img src="../themes/default/images/helios/delete_row.png" width="14" height="18" border="0" alt=""></a>
+                    <div id="delete_msg" class="dyn_popup">
+                      Are you sure to delete this ?
+                        <div>
+                            <input type="button" value="Delete" class="btn btn_style">
+                            <input type="button" value="No" class="btn btn_style dyn_popup_close">
+                        </div>
+                    </div>
+                  </td>
                         <td>&nbsp;</td>
                       </tr>
                     {{/each}}
                   {{/each}}
               </tbody>
-
-
             </table>
+            </section>
+          

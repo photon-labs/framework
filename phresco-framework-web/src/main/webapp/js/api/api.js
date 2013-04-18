@@ -47,7 +47,6 @@ define(["framework/base", "api/localStorageAPI"], function(){
 				},
 				
 				error : function(jqXHR, textStatus, errorThrown) {
-					/* location.reload(); */
 					if (errorHandler) {
 						errorHandler(textStatus);
 					}

@@ -45,8 +45,8 @@ define(["framework/class"], function(){
 		showLoading: function(isPartialLoading) {
 			var maskMain = $('div.widget-mask-main');
 
-			if (maskMain.length == 0) {
-				if (isPartialLoading != null) {
+			if (maskMain.length === 0) {
+				if (isPartialLoading !== null) {
 					var maskMain = $('<div class="widget-mask-mid-content"></div>');
 					maskMain.append(this.getPartialLoading());
 					$(isPartialLoading).append(maskMain);

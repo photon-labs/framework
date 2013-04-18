@@ -1,0 +1,15 @@
+{
+    "info":{
+        "widgetId":"101",
+        "widgetName":"Projects"
+    },
+    "components":{
+        "projects":{
+            "moduleName":"projects",
+            "host":"http://localhost",
+            "port":"3030"
+        }
+    },
+	
+	"theme" : "default"
+}

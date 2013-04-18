@@ -36,6 +36,16 @@
 		"projectlist" : {
 			"moduleName":"projectlist",
 			"path" : "../components/projectlist/js"
+		},
+		
+		"projects" : {
+			"moduleName":"projects",
+			"path": "../components/projects/js"
+		},
+		
+		"application" : {
+			"moduleName":"application",
+			"path" : "../components/application/js"
 		}
 	}
 }

@@ -22,6 +22,65 @@
 		<script type="text/javascript" src="../lib/i18next-1.6.0.js"></script>
 		<script type="text/javascript" src="../lib/jquery_mCustomScrollbar_concat_min-2.8.1.js"></script>
 	</head>
+	<script type="text/javascript">  
+	 $(document).ready(function () {
+		 $(function () {
+			$(".tooltiptop").tooltip();
+		});
+	});
+	    
+ 
+	
+   function opencc(ee,placeId) {
+	$(".dyn_popup").hide();
+	
+	$('.features_content_main').removeClass('z_index');
+	
+	var clicked = $(ee);
+	var target = $("#" + placeId);
+	var t= clicked.offset().top + 33;
+	var halfheight= window.innerHeight/2;
+	var halfwidth= window.innerWidth/2;
+	
+		if (clicked.offset().top < halfheight && clicked.offset().left < halfwidth) {
+			$(target).css({"left":clicked.offset().left ,"margin-top":10,"right": "auto"});
+			$(target).toggle();
+			$(target).removeClass('speakstyletopright').removeClass('speakstylebottomright').removeClass('speakstylebottomleft').addClass('speakstyletopleft').addClass('dyn_popup');
+		} else if (clicked.offset().top < halfheight && clicked.offset().left > halfwidth){
+			var d= ($(window).width() - (clicked.offset().left + clicked.outerWidth()));
+			$(target).css({"right":d ,"margin-top":10,"left": "auto"});
+			$(target).toggle();
+			$(target).removeClass('speakstyletopleft').removeClass('speakstylebottomright').removeClass('speakstylebottomleft').addClass('speakstyletopright').addClass('dyn_popup');
+		} else if (clicked.offset().top > halfheight && clicked.offset().left < halfwidth){
+			var BottomHeight =$('.features_content_main').height() - (clicked.position().top  - 38 )  ;
+			$(target).css({"left": clicked.offset().left,"bottom": BottomHeight + target.innerHeight,"right": "auto"});
+			$(target).toggle();
+			$(target).removeClass('speakstyletopleft').removeClass('speakstylebottomright').removeClass('speakstyletopright').addClass('speakstylebottomleft').addClass('dyn_popup');	
+		} else if (clicked.offset().top > halfheight && clicked.offset().left > halfwidth){
+			var d= ($(window).width() - (clicked.offset().left + clicked.outerWidth()));
+			var BottomHeight =$('.features_content_main').height() - (clicked.position().top  - 38 )  ;
+			$(target).css({"right":d ,"bottom": BottomHeight + target.innerHeight,"left": "auto"});
+			$(target).toggle();
+			$(target).removeClass('speakstyletopleft').removeClass('speakstyletopright').removeClass('speakstylebottomleft').addClass('speakstylebottomright').addClass('dyn_popup');	
+		} 
+
+		closeAll(placeId);
+  }
+  
+  function closeAll(placeId) {
+		$(document).keyup(function(e) {
+			if(e.which == 27){
+				$("#" + placeId).hide();
+			}
+		});
+		
+		$('.dyn_popup_close').click( function() {
+			$("#" + placeId).hide();
+		});
+			
+	}
+
+</script>
 	<body>
 		<!--main container div starts here -->
 		<div id="main">

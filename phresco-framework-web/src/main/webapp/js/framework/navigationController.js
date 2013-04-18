@@ -37,19 +37,19 @@ define(["framework/base", "framework/animationProvider"], function() {
 					this.isNative = config.isNative;
 				}
 
-				if(this.transitionType == Clazz.NAVIGATION_ANIMATION.SLIDE_LEFT_RIGHT) {
+				if(this.transitionType === Clazz.NAVIGATION_ANIMATION.SLIDE_LEFT_RIGHT) {
 					this.pushAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.FADE_IN;
 					this.pushAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.SLIDE_LEFT;
 					
 					this.popAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.SLIDE_RIGHT;
 					this.popAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.FADE_OUT;
-				} else if(this.transitionType == Clazz.NAVIGATION_ANIMATION.SLIDE_UP_DOWN) {
+				} else if(this.transitionType === Clazz.NAVIGATION_ANIMATION.SLIDE_UP_DOWN) {
 					this.pushAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.FADE_IN;
 					this.pushAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.SLIDE_UP;
 					
 					this.popAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.SLIDE_DOWN;
 					this.popAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.FADE_OUT;
-				} else  if(this.transitionType == Clazz.NAVIGATION_ANIMATION.FADE_IN_FADE_OUT) {
+				} else  if(this.transitionType === Clazz.NAVIGATION_ANIMATION.FADE_IN_FADE_OUT) {
 					this.pushAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.FADE_IN;
 					this.pushAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.FADE_OUT;
 					
@@ -57,63 +57,64 @@ define(["framework/base", "framework/animationProvider"], function() {
 					this.popAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.FADE_OUT;
 				
 				}
-				else  if(this.transitionType == Clazz.NAVIGATION_ANIMATION.FADE_OUT_QUICK) {
-					//this.pushAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.FADE_IN;
+				else  if(this.transitionType === Clazz.NAVIGATION_ANIMATION.FADE_OUT_QUICK) {
 					this.pushAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.FADE_OUT_QUICK;
 					
-					//this.popAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.FADE_IN;
 					this.popAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.FADE_OUT_QUICK;
 				
 				}
 			},
 			
 			pop : function(goBack) {
-				if(goBack == null) {
+				var self = this;
+				var page = this.stack.pop();
+				
+				if(goBack === null) {
 					goBack = true;
 				}
 				
-				var self = this;
-				var page = this.stack.pop();
-			
-				var animationProviderMain = new Clazz.AnimationProvider( {
-					isNative: self.isNative,
-					container: page.element
-				});
-				
-				if(!self.isNative){
-					animationProviderMain.animate(this.popAnimationTypeForGoingOut, function(container) {
-						container.remove();
+				if(page !== undefined && page !== null){
+					var animationProviderMain = new Clazz.AnimationProvider( {
+						isNative: self.isNative,
+						container: page.element
+					});
+					
+					if(!self.isNative){
+						animationProviderMain.animate(this.popAnimationTypeForGoingOut, function(container) {
+							container.remove();
+							page = null;
+							delete page;
+						});
+					} else {
+						page.element.remove();
 						page = null;
 						delete page;
-					});
-				} else {
-					page.element.remove();
-					page = null;
-					delete page;
-				}
-				
-				if(this.stack.length > 0) {
-					var topPage = this.stack[this.stack.length-1];
-					topPage.element.show();
+					}
 					
-					var animationProviderSub = new Clazz.AnimationProvider( {
-						isNative: self.isNative,
-						container: topPage.element
-					});
+					if(this.stack.length > 0) {
+						var topPage = this.stack[this.stack.length-1];
+						topPage.element.show();
 						
-					// call in transition on sub
-					animationProviderSub.animate(this.popAnimationTypeForGoingIn, function(container) {
-						container.css("z-index", 4);
-						
-						if(goBack) {
-							//history.back();
-						}
-						self.currentIndex = self.stack.length - 1;
-					});
+						var animationProviderSub = new Clazz.AnimationProvider( {
+							isNative: self.isNative,
+							container: topPage.element
+						});
+							
+						// call in transition on sub
+						animationProviderSub.animate(this.popAnimationTypeForGoingIn, function(container) {
+							container.css("z-index", 4);
+							
+							if(goBack) {
+								history.back();
+							}
+							self.currentIndex = self.stack.length - 1;
+						});
+					}
 				}
 			},
 			
 			push : function(view, bCheck) {
+			
 				var self = this;
 				
 				// create top element for pushing
@@ -159,7 +160,6 @@ define(["framework/base", "framework/animationProvider"], function() {
 						// update browser history
 						var title = "#page" + self.stack.length;
 						var name = view.name ? "#"  + view.name : title;
-						
 						// push into the stack
 						var data = {
 							view : view,
@@ -169,7 +169,7 @@ define(["framework/base", "framework/animationProvider"], function() {
 						self.stack.push(data);
 						self.currentIndex = self.stack.length - 1;
 						self.indexMapping[name] = self.stack.length - 1;
-						//history.pushState({}, name, name);
+						history.pushState({}, name, name);
 					};
 				}
 				
@@ -178,22 +178,25 @@ define(["framework/base", "framework/animationProvider"], function() {
 			},
 			
 			getView: function(locationHash) {
+				
 				var index = this.indexMapping[locationHash];
 					
-				if(index != null) {
+				if(index !== null) {
 					var page = this.stack[index];
 					
 					if(this.currentIndex > index) {
 						for(var i = this.currentIndex; i > index; i--) {
 							var current = this.stack[i];
-							
-							// delete the mapping
-							// update browser history
-							var title = "#page" + i;
-							var name = current.view.name ? "#"  + current.view.name : title;
-							delete this.indexMapping[name];
-							this.pop(false);
+							if(current !== undefined && current !== null){
+								// delete the mapping
+								// update browser history
+								var title = "#page" + i;
+								var name = current.view.name ? "#"  + current.view.name : title;
+								delete this.indexMapping[name];
+								this.pop(false);
+							}
 						}
+						this.currentIndex = index;
 					} 
 					
 					if(page.view.onResume) {

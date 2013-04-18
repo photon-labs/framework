@@ -62,6 +62,30 @@
 		"navigationTest" : {
 			"moduleName":"navigationTest",
 			"path" : "components/navigation/test/navigationTest"
+		},
+		
+		"projects" : {
+			"moduleName":"projects",
+			"path": "components/projects/js"
+		},
+		
+		"addprojectTest": {
+			"moduleName":"addprojectTest",
+			"path" : "components/projects/test/addprojectTest"
+		},
+		
+		"editprojectTest": {
+			"moduleName":"editprojectTest",
+			"path" : "components/projects/test/editprojectTest"
+			
+		"application" : {
+			"moduleName":"application",
+			"path" : "components/application/js"
+		},
+		
+		"applicationTest" : {
+			"moduleName":"applicationTest",
+			"path" : "components/application/test/applicationTest"
 		}
 		
 	}

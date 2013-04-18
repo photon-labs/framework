@@ -16,12 +16,12 @@ define(["footer/footer",  "framework/navigationController", "framework/widgetWit
 			});
 			
 			footer = new Footer();
-			Clazz.navigationController.jQueryContainer = $("<div id='footerTest'style='display:none;'></div>");
+			Clazz.navigationController.jQueryContainer = $("<div id='footerTest' style='display:none;'></div>");
 			Clazz.navigationController.push(footer, false);
 			
 			setTimeout(function() {
-				var copyrightlength = $(Clazz.navigationController.jQueryContainer).text().length;
-				equal(copyrightlength, 47, "Footer Successfully Rendered");
+				var footerid = $(Clazz.navigationController.jQueryContainer).find("#footer").attr('id');
+				equal(footerid, "footer", "Footer Successfully Rendered");
 				start();
 			}, 500);
 			

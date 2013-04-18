@@ -7,6 +7,10 @@ var commonVariables = {
 	login : "login",
 	loginContext : "login",
 
+	projectlist : "projectlist",
+	addproject : "addproject",
+	editproject : "editproject",
+	
 	edit : "Edit",
 	create : "Create",
 	deleted : "Delete",
@@ -57,6 +61,13 @@ $(document).ready(function(){
 			
 			var loginView = new Clazz.com.components.login.js.Login();
 			loginView.loadPage();
+			
+			//Register hashChange function for History back
+			/* $(window).on("hashChange", function(e){
+				Clazz.navigationController.pop();
+			});
+				
+			$(window).hashChange(); */
 		});
 	}, "json");
 });

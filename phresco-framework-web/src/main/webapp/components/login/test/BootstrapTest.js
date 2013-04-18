@@ -19,7 +19,7 @@ var commonVariables = {
 	basePlaceholder : "basepage\\:widget",
 	headerPlaceholder : "header\\:widget",
 	contentPlaceholder : "content\\:widget",
-	footerPlaceholder : "footer\\:widget",
+	footerPlaceholder : "footer\\:widget"
 };
 
 define(["jquery"], function($) {
@@ -45,7 +45,7 @@ define(["jquery"], function($) {
 					modules: "js/commonComponents/modules",
 					Clazz : "js/framework/class",
 					components: "components",
-					configData: data,
+					configData: data
 				}
 			};
 
@@ -56,11 +56,14 @@ define(["jquery"], function($) {
 			// setup require.js
 			var requireConfig = requirejs.config(configJson);
 			
-			require(["lib/i18next-1.6.0", "projectlistTest", "headerTest", "footerTest", "navigationTest"],	function (next, projectlistTest, headerTest, footerTest, navigationTest){
+			require(["lib/Signal-1.0.0", "lib/SignalBinding-1.0.0", "lib/i18next-1.6.0", "projectlistTest", "headerTest", "footerTest", "navigationTest", "addprojectTest", "editprojectTest", "applicationTest"],	function (Signal, SignalBinding, next, projectlistTest, headerTest, footerTest, navigationTest, addprojectTest, editprojectTest, applicationTest){
 				headerTest.runTests(data);
 				footerTest.runTests(data);
 				projectlistTest.runTests(data);
-				navigationTest.runTests(data); 
+				navigationTest.runTests(data);
+				addprojectTest.runTests(data);
+				editprojectTest.runTests(data);
+				applicationTest.runTests(data);	
 			});
 		}, "json");
 	});
