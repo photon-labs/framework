@@ -62,6 +62,13 @@
               <version>0.4</version>
               <type>hpi</type>
 		</dependency>
+		
+		<dependency>
+		  <groupId>git.plugin</groupId>
+		  <artifactId>build-pipeline</artifactId>
+		  <version>1.0</version>
+		  <type>hpi</type>
+		</dependency>
 
 	</dependencies>
 	
