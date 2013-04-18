@@ -139,11 +139,11 @@
 				<reportElement style="PLTCTitleRectLogo" x="0" y="128" width="555" height="23"/>
 			</rectangle>
 			<textField>
-				<reportElement x="4" y="130" width="337" height="20"/>
+				<reportElement x="4" y="130" width="337" height="20" forecolor="#FFFFFF"/>
 				<textElement verticalAlignment="Top">
 					<font fontName="Times New Roman" size="15" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{testType}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{testType} + " TEST REPORT"]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
@@ -155,7 +155,7 @@
 					<reportElement style="PLTCHeadingRow" x="2" y="3" width="545" height="20"/>
 				</rectangle>
 				<staticText>
-					<reportElement style="PLTCHeadingRowLabel" x="18" y="5" width="77" height="20" forecolor="#000000"/>
+					<reportElement x="18" y="5" width="77" height="20" forecolor="#FFFFFF"/>
 					<textElement>
 						<font fontName="Times New Roman" size="14" isBold="true"/>
 					</textElement>
