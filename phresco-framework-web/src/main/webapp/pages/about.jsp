@@ -90,10 +90,11 @@
 			$('.popupLoadingIcon').hide();
 			hidePopuploadingIcon();	
 		} else if (pageUrl == "updateVersion") {
+			hidePopuploadingIcon();	
 			$(".latestVersionContent").hide();
 			$(".updatedInfoContent").show();
 			$("#updatePhresco").hide();
-			$('#popupCancel').val("ok");
+			$('.popupCancel').val("Ok");
 			$('#updateMsg').empty();
 			if (data.updateVersionStatus != undefined && !isBlank(data.updateVersionStatus) && data.updateVersionStatus) {
 				$("#updatedVersionInfo").html(data.updateVersionMessage);
@@ -113,6 +114,8 @@
 			$('#popupCancel').val("No");
 			$('#updateMsg').html('Do u want to update ?');
 		} else if (okUrl === "updatePhresco") {
+			$("#updateMsg").empty();
+			showPopuploadingIcon();	
 			var latestVersion = $('input[name=latestVersion]').val();
 			var params = "latestVersion="
 			params = params.concat(latestVersion);

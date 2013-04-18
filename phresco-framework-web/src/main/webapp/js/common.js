@@ -291,6 +291,7 @@ function yesnoPopup(url, title, okUrl, okLabel, form, additionalParam) {
 	$('.popupClose').hide(); //no need close button since yesno popup
 	$('.popupOk, #popupCancel').show(); // show ok & cancel button
 	enableButton($(".popupOk")); // enable button
+	$('.popupCancel').val("Cancel");
 
 	$(".popupOk").attr('id', okUrl); // popup action mapped to id
 	if (okLabel !== undefined && !isBlank(okLabel)) {
@@ -945,6 +946,7 @@ function fillOptions(obj, value, text, selectTxt) {
 function confirmDialog(obj, title, bodyText, okUrl, okLabel) {
 	obj.click(function() {
 		$("#errMsg").empty();
+		$("#updateMsg").empty();
 		$('#popupTitle').html(title); // Title for the popup
 		$('.popupClose').hide();
 		hidePopuploadingIcon();

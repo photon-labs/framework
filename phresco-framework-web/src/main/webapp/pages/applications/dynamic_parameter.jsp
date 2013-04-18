@@ -316,6 +316,7 @@
 	<%
 				} else if (FrameworkConstants.TYPE_FILE_BROWSE.equalsIgnoreCase(parameter.getType())) {
 					parameterModel.setFileType(parameter.getFileType());
+					parameterModel.setValue(parameter.getValue());
 					StringTemplate browseFileElement = FrameworkUtil.constructBrowseFileTreeElement(parameterModel);
 	%>
 					<%= browseFileElement %>

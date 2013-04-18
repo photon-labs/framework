@@ -505,11 +505,17 @@ Width <= 1024
 	.featureForm {
 		height: 83%;
 		width: 98.5%;
+		padding-left: 0.5%;
 	}
 
 	.sonar_report {
 		height: 81.5%;
-   		width: 98.5%;		
+   		margin-left: 0.5%;	
+   		width:98%;	
+	}
+	
+	.codeList {
+		padding-left: 0.5%;	
 	}
 	
 	.configList,.build_form,#subTabcontent,.ciFormJob,.reportList {
@@ -1598,7 +1604,8 @@ Width >= 1152 and < 1280
 
 	.sonar_report {
 		height: 85.5%;
-   		width: 98.5%;		
+   		width: 98.5%;
+   		margin-left:0.5%;		
 	}
 
 	.featureForm {
@@ -1606,7 +1613,7 @@ Width >= 1152 and < 1280
 		width: 99%;
 	 }
 
-	 .configList,.build_form,#subTabcontent,.ciFormJob,.reportList {
+	 .configList,.build_form,.ciFormJob,.reportList,.codeList, #form_test, #formPerformance, #form_load {
 		width: 99%;
 		padding-left: 0.5%;
 	}
@@ -2154,11 +2161,13 @@ Width <= 1280 and height <= 800
 
 	.sonar_report {
 		height: 82.4%;
-   		width: 99%;		
+   		width: 98%;
+   		margin-left: 1%;		
 	}
 
-	 .configList,.build_form,#subTabcontent,.ciFormJob,.reportList {
-		width: 99%;
+	 .configList,.build_form,#subTabcontent,.ciFormJob,.reportList, .featureForm, 
+	 		.codeList, #form_test, #formPerformance, #form_load {
+		width: 98%;
 		padding-left: 1%;
 	}
 	
@@ -2605,11 +2614,13 @@ Width >= 1280 and height >= 800
 
 	.sonar_report {
 		height: 89%;
-   		width: 99%;		
+   		width: 98%;
+   		margin-left: 1%;		
 	}
 	
-	 .configList,.build_form,#subTabcontent,.ciFormJob,.reportList {
-		width: 99%;
+	 .configList,.build_form, .ciFormJob,.reportList, .featureForm, 
+	 		.codeList, #form_test, #formPerformance, #form_load {
+		width: 98%;
 		padding-left: 1%;
 	}
 
@@ -3104,7 +3115,7 @@ Width > 1280 and <= 1360
 
 	.sonar_report {
 		height: 81.2%;
-   		width: 99%;		
+   		width: 98.5%;		
 	}
 	
 	.configList,.build_form,#subTabcontent,.ciFormJob,.reportList {
@@ -3969,7 +3980,7 @@ Width > 1441 and <= 1600
 
 	.sonar_report {
 		 height: 86.3%;
-   		 width: 99%;		
+   		 width: 98.5%;		
 	}
 	
 	.configList,.build_form,#subTabcontent,.ciFormJob,.reportList {

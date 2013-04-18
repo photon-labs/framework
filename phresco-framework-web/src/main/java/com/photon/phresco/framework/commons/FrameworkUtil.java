@@ -951,11 +951,17 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	controlGroupElement.setAttribute("ctrlGrpClass", ctrlGrpClass);
     	
     	StringTemplate lableElmnt = constructLabelElement(pm.isMandatory(), pm.getLableClass(), pm.getLableText());
-    	StringTemplate inputElement = new StringTemplate(getBrowseFileTreeTemplate(pm.getFileType()));
+    	StringTemplate inputElement = new StringTemplate(getBrowseFileTreeTemplate());
     	inputElement.setAttribute("class", pm.getCssClass());
     	inputElement.setAttribute("id", pm.getId());
     	inputElement.setAttribute("name", pm.getName());
     	inputElement.setAttribute("ctrlsId", pm.getControlId());
+    	inputElement.setAttribute("fileTypes", pm.getFileType());
+    	if (StringUtils.isNotEmpty(pm.getValue())) {
+    		inputElement.setAttribute("path", pm.getValue());
+    	} else {
+    		inputElement.setAttribute("path", "");
+    	}
     	
     	controlGroupElement.setAttribute("lable", lableElmnt);
     	controlGroupElement.setAttribute("controls", inputElement);
@@ -1130,13 +1136,13 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	return sb.toString();
     }
     
-    private static String getBrowseFileTreeTemplate(String fileTypes) {
+    private static String getBrowseFileTreeTemplate() {
     	StringBuilder sb = new StringBuilder();
     	sb.append("<div class='controls'>")
-    	.append("<input type='text' class=\"$class$\" id='fileLocation' style='margin-right:5px;'")
+    	.append("<input type='text' class=\"$class$\" value=\"$path$\" id='fileLocation' style='margin-right:5px;'")
     	.append("name=\"$name$\" >")
     	.append("<input id='browseButton' class='btn-primary btn_browse browseFileLocation'")
-    	.append("value='Browse' type='button' fileTypes="+fileTypes+" onclick='browseFiles(this);'></div>");
+    	.append("value='Browse' type='button' fileTypes=\"$fileTypes$\" onclick='browseFiles(this);'></div>");
     	
     	return sb.toString();
     }
