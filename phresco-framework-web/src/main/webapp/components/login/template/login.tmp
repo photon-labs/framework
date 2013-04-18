@@ -3,18 +3,19 @@
 	    	<div class="login_left"><img src="../themes/default/images/helios/logo_login.png" width="180" height="32" alt="Helios" title="Helios" border="0"></div>
 	        <div class="login_right">
 	        	<div class="loginhead">
-					<div class="login_title"  data-i18n="login.title;"></div>
+					<div class="login_title" data-i18n="login.title;"></div>
+					<div class="login_error_msg"></div>
 					<div class="clear"></div>
 				</div>
 	        	<form>
 	                <div class="control-group">
 	                <div class="controls">
-	               	 	<div class="loginuser">
+	               	 	<div id="usernameDiv" class="loginuser">
 							<div class="loginimg">
 								<img src="../themes/default/images/helios/username_icon.png">
 							</div>
 							<div class="logintext">	
-								<input type="text" id="inputEmail"  data-i18n="[placeholder]login.placeholder.username;" >
+								<input type="text" id="username"  data-i18n="[placeholder]login.placeholder.username;" >
 							</div>
 							<div class="clear"></div>
 					 	</div>
@@ -22,25 +23,25 @@
 	                </div>
 	                <div class="control-group">
 	                <div class="controls">
-	                	<div class="loginuser">
+	                	<div id="passwordDiv" class="loginuser">
 							<div class="loginimg">
 								<img src="../themes/default/images/helios/password_icon.png">
 							</div>
 							<div class="logintext">	
-								<input type="password" id="inputPassword"  data-i18n="[placeholder]login.placeholder.password;">
+								<input type="password" id="password"  data-i18n="[placeholder]login.placeholder.password;">
 							</div>
 							<div class="clear"></div>
 					 	</div>
 	                </div>
 	                </div>
 				        
-	    		<div class="loginfoot">
-					<label class="checkbox">
-						<input type="checkbox">
-						<span data-i18n="login.label.txt.remember;"></span>
-					</label>
-					<div class="flt_right"><input type="button" id="login" data-i18n="[value]login.label.btn.login;" class="btn btn_style"></div>
-				</div>
+					<div class="loginfoot">
+						<label class="checkbox">
+							<input type="checkbox" id="rememberMe">
+							<span data-i18n="login.label.txt.remember;"></span>
+						</label>
+						<div class="flt_right"><input type="button" id="login" data-i18n="[value]login.label.btn.login;" class="btn btn_style"></div>
+					</div>
                 </form>
 	    		<!--login_right div ends here -->
 	    	</div>

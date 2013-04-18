@@ -1,8 +1,17 @@
-define(["framework/base"], function(){	
+define(["framework/base", "api/localStorageAPI"], function(){	
 	
 	Clazz.createPackage("com.js.api");
 
 	Clazz.com.js.api.API = Clazz.extend(Clazz.Base, {
+		localVal : null,
+		/***
+		 * Called in initialization time of this class 
+		 *
+		 * @globalConfig: global configurations for this class
+		 */
+		initialize : function(){
+			this.localVal = new Clazz.com.js.api.LocalStorageAPI();
+		},
 
 		//to solve caching issue for iOS 6
 		//always send current time to differ every request.
@@ -24,8 +33,8 @@ define(["framework/base"], function(){
 				type : header.requestMethod,
 				dataType : header.dataType,
 				header : "Access-Control-Allow-Headers: x-requested-with",
-				//contentType : header.contentType,
-				//data : header.requestPostBody,
+				contentType : header.contentType,
+				data : header.requestPostBody,
 				timeout: 90000,
 				//crossDomain: true,
 				cache: true,

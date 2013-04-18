@@ -77,6 +77,98 @@ header, aside, figure, footer, ul, li {
 
 sup { color:#FF0000; }
 
+
+/*=== Loading ===*/
+.widget-mask-main,.widget-mask-mid-content{
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: none;
+    background-color: rgba(0, 0, 0, .35);
+    z-index: 1000 !important;
+}
+.widget-mask-main {
+	  position: fixed;
+}
+
+.widget-loading-main,.widget-loading-partial{
+    display: block;
+    top: 0;
+    position: absolute;
+    height: 100%;
+	background-color: rgba(0, 0, 0, .35);
+    /*background-color: rgba(0, 0, 0, .5);*/
+}
+
+.widget-loading-main {
+	  width: 100%;
+}
+
+.widget-loading-partial {
+	width: 100%;
+}
+
+.widget-loading-image,.widget-loading-image-account-activity {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: -50px 0 0 -50px;
+    height: 100px;
+    width: 100px;
+    white-space: nowrap;
+    overflow: hidden;
+    -webkit-mask-image: url(../../images/helios/spinner.png);
+	background-image : url(../../images/helios/spinner.png);
+  /*  background-color: #fff; */
+    -webkit-animation-name: spinnerRotate;
+    -webkit-animation-duration: 2s;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-timing-function: linear;
+	-moz-animation-name: spinnerRotate;
+    -moz-animation-duration: 2s;
+    -moz-animation-iteration-count: infinite;
+    -moz-animation-timing-function: linear;
+}
+
+@-webkit-keyframes spinnerRotate {from { -webkit-transform:rotate(0deg);
+}
+to {
+    -webkit-transform: rotate(360deg);
+}
+}
+
+@-moz-keyframes spinnerRotate {from { -moz-transform:rotate(0deg);
+}
+to {
+    -moz-transform: rotate(360deg);
+}
+}
+.error_text {
+	color: #ffffff !important;
+	background-color: #FC8986 !important;
+}
+
+.facet_bdate {
+	right: 673px !important;
+}
+.startdate {
+    margin-top: 5px;
+    position: absolute;
+    left: 298px;
+}
+.btnClsshow{
+	display: block !important;
+}
+.btnClshide{
+	display: none !important;
+}
+
+/*=== End of Loading ===*/
+
+
 /* *************************************************************************** LOGIN PAGE STYLES ************************************************************************** */
 
 .logincontainer {
@@ -140,6 +232,18 @@ sup { color:#FF0000; }
 	border: 1px solid #e3e3e3;
 	background: #ffffff;
 }
+
+.loginuser_error {
+	color: red;
+	border: 1px solid red;
+	background: #ffffff;
+}
+
+.loginuser_error .logintext input {
+	background: #FC8986;
+	color: #ffffff !important;
+}
+
 .loginimg {
 	width: 55px;
 	height: 40px;
@@ -189,6 +293,15 @@ sup { color:#FF0000; }
     font-weight: bold;
     padding-bottom: 12px;
     text-transform: uppercase;
+	float: left;
+	width: 125px;
+}
+
+.login_error_msg {
+	float: right;
+	color: red;
+	font-size: 14px;
+	font-weight: bold;
 }
 
 /* *************************************************************************** HACK FOR CROME BROWSER ************************************************************************** */

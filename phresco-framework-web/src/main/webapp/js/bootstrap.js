@@ -1,15 +1,12 @@
 
 var commonVariables = {
 	globalconfig : "",
-	webserviceurl : "",
+	webserviceurl : "../rest/api/",
 	contexturl : "..",
 	
 	login : "login",
 	loginContext : "login",
-	
-	requestBody : {
-	},
-	
+
 	edit : "Edit",
 	create : "Create",
 	deleted : "Delete",
@@ -24,7 +21,6 @@ var commonVariables = {
 $(document).ready(function(){
 	$.get($("basepage\\:widget").attr("config"), function(data) {
 		commonVariables.globalconfig = data;
-		commonVariables.webserviceurl = "../";
 		configJson = {
 			// comment out the below line for production, this one is so require doesn't cache the result
 			urlArgs: "time=" +  (new Date()).getTime(),

@@ -2,29 +2,21 @@ define(["framework/widgetWithTemplate", "login/listener/loginListener"], functio
 	Clazz.createPackage("com.components.login.js");
 
 	Clazz.com.components.login.js.Login = Clazz.extend(Clazz.WidgetWithTemplate, {
-		loginEvent : null,
-		loginHeader : null,
+		onLoginEvent : null,
+		loginListener : null,
 		// template URL, used to indicate where to get the template
 		templateUrl: "../components/login/template/login.tmp",
 		configUrl: "../components/login/config/config.json",
 		name : window.commonVariables.login,
 		localConfig: null,
-		header: {
-			contentType: null,
-			requestMethod: null,
-			dataType: null,
-			requestPostBody: null,
-			webserviceurl: null
-		},
-	
+
 		/***
 		 * Called in initialization time of this class 
-		 *
-		 * @globalConfig: global configurations for this class
 		 */
-		initialize : function(globalConfig){
+		initialize : function(){
 			var self = this;
-			this.onLoginEvent = new signals.Signal();
+			self.onLoginEvent = new signals.Signal();
+			self.loginListener = new Clazz.com.components.login.js.listener.LoginListener();
 		},
 
 		/***
@@ -32,8 +24,7 @@ define(["framework/widgetWithTemplate", "login/listener/loginListener"], functio
 		 *
 		 */
 		loadPage : function(){
-			var loginListener = new Clazz.com.components.login.js.listener.LoginListener();
-			this.onLoginEvent.add(loginListener.doLogin, loginListener);
+			this.onLoginEvent.add(this.loginListener.doLogin, this.loginListener);
 			Clazz.navigationController.push(this);
 		},
 		
@@ -52,12 +43,36 @@ define(["framework/widgetWithTemplate", "login/listener/loginListener"], functio
 		 */
 		bindUI : function(){
 			var self = this;
+			
+			//Login btn click Event
 			$('#login').click(function(){
 				self.onLoginEvent.dispatch();
 			});
-		
-			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;
 			
+			//Key press Event
+			$('#username, #password, #login, #rememberMe').keypress(function(e){
+				if(e.keyCode == 13)
+					self.onLoginEvent.dispatch();
+			});
+			
+			// Control validation Event
+			$('#username').focusout(function(){
+				self.loginListener.userNameValidation();
+			});
+			
+			// Control validation Event
+			$('#password').focusout(function(){
+				self.loginListener.passwordValidation();
+			});
+			
+			//Set rememberMe chk box val
+			if(self.loginListener.loginAPI.localVal.getSession('rememberMe') == "true"){
+				$('#rememberMe').prop('checked', true);
+				$('#username').val(self.loginListener.loginAPI.localVal.getSession('username'));
+				$('#password').val(self.loginListener.loginAPI.localVal.getSession('password'));
+			}
+			$('#username').focus();
+			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;
 		}
 	});
 

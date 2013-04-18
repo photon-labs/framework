@@ -3,7 +3,6 @@ define(["framework/base", "api/api"], function() {
 	Clazz.createPackage("com.components.login.js.api");
 
 	Clazz.com.components.login.js.api.LoginAPI = Clazz.extend(Clazz.com.js.api.API, {
-
         /***
          * Called in for doLogin ajax call 
          *
@@ -14,7 +13,6 @@ define(["framework/base", "api/api"], function() {
 		doLogin : function(header, callbackFunction, errorHandler) {
 			this.ajaxRequest(header, callbackFunction, errorHandler);
 		}
-		
 	});
 
 	return Clazz.com.components.login.js.api.LoginAPI;
