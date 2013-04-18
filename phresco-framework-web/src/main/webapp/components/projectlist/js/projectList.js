@@ -1,4 +1,4 @@
-define(["framework/widgetWithTemplate", "projectlist/listener/projectListListener"], function() {
+define(["framework/widgetWithTemplate", "projectlist/listener/projectListListener", "repository/listener/repositoryListener"], function() {
 	
 	Clazz.createPackage("com.components.projectlist.js");
 
@@ -14,6 +14,8 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 		projectRequestBody: {},
 		data : null,
 		onProjectEditEvent : null,
+		registerEvents : null,
+		repositoryEvent : null,
 		
 		/***
 		 * Called in initialization time of this class 
@@ -23,7 +25,11 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 		initialize : function(globalConfig){
 			var self = this;
 			self.projectslistListener = new Clazz.com.components.projectlist.js.listener.ProjectsListListener;
-			self.registerEvents(self.projectslistListener);
+			self.repositoryListener = new Clazz.com.components.repository.js.listener.RepositoryListener;
+			self.registerEvents(self.projectslistListener, self.repositoryListener);
+
+			//self.repositoryListener = new Clazz.com.components.repository.js.listener.repositoryListener;
+			//self.registerEvents(self.repositoryListener);
 		},
 
 		/***
@@ -35,12 +41,15 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 			Clazz.navigationController.push(this);
 		},
 		
-		registerEvents : function(projectslistListener) {
+		registerEvents : function(projectslistListener,repositoryListener) {
 			var self = this;
 			self.onProjectsEvent = new signals.Signal();
 			self.onProjectEditEvent = new signals.Signal();
 			self.onProjectEditEvent.add(projectslistListener.onEditProject, projectslistListener);			
 			self.onProjectsEvent.add(projectslistListener.editApplication, projectslistListener); 
+
+			self.repositoryEvent = new signals.Signal();
+			self.repositoryEvent.add(repositoryListener.getRepository, repositoryListener);
 		},
 		
 		/***
@@ -66,14 +75,25 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 		 */
 		bindUI : function(){
 			var self = this;
-			
+			console.info("test response1");
+			$(".dyn_popup").hide();
 			$("#editproject").click(function(){
 				self.onProjectEditEvent.dispatch();
 			});	
 
 			$('td[name=editApplication]').click(function(){
-				var value = $('td[name=editApplication]').text();
+				var value = $(this).text();
 				self.onProjectsEvent.dispatch(value);
+			});
+
+
+			$("a[name = 'updatesvn']").unbind("click");
+			$("a[name = 'updatesvn']").bind("click",function(){
+				console.info("test response2");
+				//self.repositoryEvent.dispatch();
+				//$(this).attr("href", "#svn_update");
+				$("#svn_update").show();
+
 			});
 		}
 	});
