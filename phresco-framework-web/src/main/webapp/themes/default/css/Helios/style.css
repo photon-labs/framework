@@ -950,6 +950,7 @@ ul.nav li.dropdown:hover > .test_options{
 
 .features_box .box_div ul li span {
 	margin-right:12px;
+	margin-top: 14px;
 }
 
 .features_box h1 {
@@ -963,7 +964,7 @@ ul.nav li.dropdown:hover > .test_options{
 }
 .settings_icon {
 	float:right;
-	margin:0px !important;	
+	margin:14px 0 0 0 !important;	
 	padding:0 !important;
 	line-height:38px;
 }
