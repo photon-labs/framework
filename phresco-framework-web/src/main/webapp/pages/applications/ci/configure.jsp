@@ -824,7 +824,15 @@
  			showPopuploadingIcon();
  			loadContent(url, $('#configureForm, #generateBuildForm'), $('#subcontainer'), getBasicParams(), false, true);
  		}
-						
+		disableCiFormControls();
+	}
+	
+	function disableCiFormControls() {
+		//To disable controls in ci configure popup
+		$("#configureForm :input").attr("disabled", true);
+		$("#showPattern").removeAttr("onclick");
+		$("#configureForm :input[type=button]").removeClass("btn-primary");
+		$("#configureForm").find("img").removeAttr("onclick");
 	}
 	
 	function enableDisableCollabNet() {

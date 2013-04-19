@@ -24,7 +24,7 @@
 <%@ page import="com.photon.phresco.framework.model.CIJob" %>
 
 <input type="text" id="cronExpression" name="cronExpression" value="<%= (String)request.getAttribute(FrameworkConstants.REQ_CRON_EXPRESSION)%>">&nbsp; 
-<a id="showPattern" href="#">
+<a id="showPattern" href="#" onclick="patternPopUp('block');">
 	<img src="images/icons/Help.png" />
 </a>
 
@@ -78,16 +78,8 @@
 	    $('#SelectedSchedule').html(selectedSchedule + "&nbsp;Schedule");
 	    var jobName = $("input:text[name=name]").val();
 	    $('.jobName').html(jobName);
-	   	$('#closeDialog').click(function() {
-	//    		$(".wel_come").show().css("display", "none");
-	   		patternPopUp('none');
-	   	});
-	   	
-		$("#showPattern").click(function(){
-			patternPopUp('block');
-		});
 		
-		$('#closePatternPopup').click(function() {
+		$('#closePatternPopup, #closeDialog').click(function() {
 			patternPopUp('none');
 		});
 	   	
