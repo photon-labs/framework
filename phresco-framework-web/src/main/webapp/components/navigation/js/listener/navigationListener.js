@@ -1,4 +1,4 @@
-define(["framework/widget", "navigation/api/navigationAPI", "projects/addproject", "application/application", "features/features", "codequality/codequality"], function() {
+define(["framework/widget", "navigation/api/navigationAPI", "projects/addproject", "application/application", "features/features", "codequality/codequality", "configuration/configuration", "build/build"], function() {
 
 	Clazz.createPackage("com.components.navigation.js.listener");
 
@@ -9,6 +9,8 @@ define(["framework/widget", "navigation/api/navigationAPI", "projects/addproject
 		addproject : null,
 		applications : null,
 		featurelist : null,
+		configuration : null, 
+		build : null,
 		
 		/***
 		 * Called in initialization time of this class 
@@ -21,6 +23,8 @@ define(["framework/widget", "navigation/api/navigationAPI", "projects/addproject
 			self.applications = Clazz.com.components.application.js.Application();
 			self.featurelist = new Clazz.com.components.features.js.Features();
 			self.codequality = new Clazz.com.components.codequality.js.CodeQuality();
+			self.configuration = new Clazz.com.components.configuration.js.Configuration();
+			self.build = new Clazz.com.components.build.js.Build();
 		},
 		
 		onAddProject : function() {
@@ -57,6 +61,22 @@ define(["framework/widget", "navigation/api/navigationAPI", "projects/addproject
 				}
 				Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 				Clazz.navigationController.push(self.codequality, true);
+			}
+			
+			if (keyword === commonVariables.configuration) {
+				if (self.configuration === null || self.configuration === undefined) {
+					self.configuration = new Clazz.com.components.configuration.js.Configuration();
+				}
+				Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
+				Clazz.navigationController.push(self.configuration, true);
+			}
+			
+			if (keyword === commonVariables.build) {
+				if (self.build === null || self.build === undefined) {
+					self.build = new Clazz.com.components.build.js.Build();
+				}
+				Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
+				Clazz.navigationController.push(self.build, true);
 			}
 		}
 		

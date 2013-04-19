@@ -11,15 +11,20 @@ define(["framework/widget", "common/loading", "header/api/headerAPI", "login/log
 		},
 		
 		doLogout : function(){
-			this.headerAPI.localVal.clearSession();
+			this.clearSession();
 			Clazz.navigationController.jQueryContainer = commonVariables.basePlaceholder;
 			
 			var loginView = new Clazz.com.components.login.js.Login();
 			loginView.loadPage();
 		},
 		
-		
-		
+		clearSession : function(){
+			if(this.headerAPI.localVal.getSession('rememberMe') == "true"){
+				this.headerAPI.localVal.deleteSession('userInfo');
+			}else{
+				this.headerAPI.localVal.clearSession();
+			}
+		}
 	});
 
 	return Clazz.com.commonComponents.modules.header.js.listener.HeaderListener;

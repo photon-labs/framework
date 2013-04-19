@@ -14,6 +14,8 @@ var commonVariables = {
 	editApplication : "appinfo",
 	featurelist : "featurelist",
 	codequality : "codequality",
+	configuration : "configuration",
+	build : "build",
 	
 	edit : "Edit",
 	create : "Create",
