@@ -353,7 +353,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 			}
 			createEnvConfigXml(projectInfo, serviceManager);
 		}
-		return null;
+		return projectInfo;
 	}
 
 	private void createEnvConfigXml(ProjectInfo projectInfo, ServiceManager serviceManager) throws PhrescoException {
