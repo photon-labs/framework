@@ -866,11 +866,13 @@ public class Features extends DynamicParameterModule {
 	                Set<Object> keySet = properties.keySet();
 	                for (Object key : keySet) {
 	                    String keyStr = (String) key;
-	                    String dispName = keyStr.replace(".", " ");
-	                    PropertyTemplate propertyTemplate = new PropertyTemplate();
-	                    propertyTemplate.setKey(keyStr);
-	                    propertyTemplate.setName(dispName);
-	                    propertyTemplates.add(propertyTemplate);
+	                    if (!"expandable".equalsIgnoreCase(keyStr)) {
+	                    	String dispName = keyStr.replace(".", " ");
+	                    	PropertyTemplate propertyTemplate = new PropertyTemplate();
+	                    	propertyTemplate.setKey(keyStr);
+	                    	propertyTemplate.setName(dispName);
+	                    	propertyTemplates.add(propertyTemplate);
+	                    }
 	                }
 	            }
 	        }
