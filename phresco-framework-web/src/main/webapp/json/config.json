@@ -56,6 +56,16 @@
 		"codequality" : {
 			"moduleName":"codequality",
 			"path" : "../components/codequality/js"
+		},
+
+		"configuration" : {
+			"moduleName":"configuration",
+			"path" : "../components/configuration/js"
+		},
+		
+		"build" : {
+			"moduleName":"build",
+			"path" : "../components/build/js"
 		}
 	}
 }
