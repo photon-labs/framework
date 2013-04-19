@@ -21,6 +21,10 @@ define(["api/api"], function(){
 			if(key !== '') {
 				localStorage.removeItem(key);
 			}
+		},
+		
+		clearSession : function(){
+			localStorage.clear();
 		}
 	});
 	

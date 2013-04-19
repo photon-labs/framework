@@ -36,12 +36,21 @@ define(["framework/widgetWithTemplate", "header/listener/headerListener"] , func
          */
         registerEvents : function (headerListener) {
             var self = this;
+			self.onLogoutEvent = new signals.Signal();
+			self.onLogoutEvent.add(headerListener.doLogout, headerListener);
         },
 		
 		/***
 		 * Bind the action listeners. The bindUI() is called automatically after the render is complete 
 		 */
 		bindUI : function(){
+			var self = this;
+			
+			//Logout event
+			$('#logout').click(function(){
+				self.onLogoutEvent.dispatch();
+			});
+		
 		}
 	});
 

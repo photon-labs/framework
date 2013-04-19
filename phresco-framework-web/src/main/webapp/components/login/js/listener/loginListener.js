@@ -63,7 +63,6 @@ define(["framework/widget", "login/api/loginAPI", "common/loading", "footer/foot
 		
 		setUserInfo : function(data){
 			var self = this, userInfo = JSON.stringify(data);
-			
 			self.loginAPI.localVal.setSession("username",$("#username").val());
 			self.loginAPI.localVal.setSession("password",$("#password").val());
 			self.loginAPI.localVal.setSession("rememberMe",$("#rememberMe").is(":checked"));
@@ -131,6 +130,7 @@ define(["framework/widget", "login/api/loginAPI", "common/loading", "footer/foot
 			var self = this;
 			Clazz.navigationController.jQueryContainer = commonVariables.headerPlaceholder;
 			self.headerContent = new Clazz.com.commonComponents.modules.header.js.Header();
+			self.headerContent.data = JSON.parse(self.loginAPI.localVal.getSession('userInfo'));
 			Clazz.navigationController.push(self.headerContent, false);
 		},
 		

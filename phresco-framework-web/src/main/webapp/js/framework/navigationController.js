@@ -123,8 +123,8 @@ define(["framework/base", "framework/animationProvider"], function() {
 				// add absolute positioning
 				newDiv.addClass("widget-maincontent-div");
 				
-				self.jQueryContainer.children().remove();
-				self.jQueryContainer.append(newDiv);
+				$(self.jQueryContainer).children().remove();
+				$(self.jQueryContainer).append(newDiv);
 				
 				if(bCheck) {
 

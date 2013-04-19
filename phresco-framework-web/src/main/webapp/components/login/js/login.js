@@ -71,6 +71,7 @@ define(["framework/widgetWithTemplate", "login/listener/loginListener"], functio
 				$('#username').val(self.loginListener.loginAPI.localVal.getSession('username'));
 				$('#password').val(self.loginListener.loginAPI.localVal.getSession('password'));
 			}
+			
 			$('#username').focus();
 			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;
 		}
