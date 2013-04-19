@@ -1,4 +1,4 @@
-define(["framework/widgetWithTemplate", "projectlist/listener/projectListListener", "repository/listener/repositoryListener"], function() {
+define(["framework/widgetWithTemplate", "projectlist/listener/projectListListener"], function() {
 	
 	Clazz.createPackage("com.components.projectlist.js");
 
@@ -25,11 +25,10 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 		initialize : function(globalConfig){
 			var self = this;
 			self.projectslistListener = new Clazz.com.components.projectlist.js.listener.ProjectsListListener;
-			self.repositoryListener = new Clazz.com.components.repository.js.listener.RepositoryListener;
-			self.registerEvents(self.projectslistListener, self.repositoryListener);
+			//self.registerEvents(self.projectslistListener, self.repositoryListener);
 
 			//self.repositoryListener = new Clazz.com.components.repository.js.listener.repositoryListener;
-			//self.registerEvents(self.repositoryListener);
+			self.registerEvents(self.projectslistListener);
 		},
 
 		/***
@@ -48,8 +47,6 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 			self.onProjectEditEvent.add(projectslistListener.onEditProject, projectslistListener);			
 			self.onProjectsEvent.add(projectslistListener.editApplication, projectslistListener); 
 
-			self.repositoryEvent = new signals.Signal();
-			self.repositoryEvent.add(repositoryListener.getRepository, repositoryListener);
 		},
 		
 		/***
@@ -75,7 +72,6 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 		 */
 		bindUI : function(){
 			var self = this;
-			console.info("test response1");
 			$(".dyn_popup").hide();
 			$("#editproject").click(function(){
 				self.onProjectEditEvent.dispatch();

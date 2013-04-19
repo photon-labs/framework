@@ -20,7 +20,7 @@
 		},
 		
 		"loginTest" : {
-			"moduleName":"synonyms",
+			"moduleName":"loginTest",
 			"path" : "components/login/test/loginTest"
 		},
 		
@@ -77,7 +77,8 @@
 		"editprojectTest": {
 			"moduleName":"editprojectTest",
 			"path" : "components/projects/test/editprojectTest"
-			
+		},
+		
 		"application" : {
 			"moduleName":"application",
 			"path" : "components/application/js"
@@ -86,6 +87,26 @@
 		"applicationTest" : {
 			"moduleName":"applicationTest",
 			"path" : "components/application/test/applicationTest"
+		},
+		
+		"features" : {
+			"moduleName":"features",
+			"path" : "components/features/js"
+		},
+		
+		"featuresTest" : {
+			"moduleName":"applicationTest",
+			"path" : "components/features/test/featuresTest"
+		},
+		
+		"codequality" : {
+			"moduleName":"codequality",
+			"path" : "components/codequality/js"
+		},
+		
+		"codequalityTest" : {
+			"moduleName":"applicationTest",
+			"path" : "components/codequality/test/codequalityTest"
 		}
 		
 	}

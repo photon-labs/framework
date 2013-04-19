@@ -11,6 +11,7 @@ define(["framework/widgetWithTemplate", "navigation/listener/navigationListener"
 		name : window.commonVariables.navigation,
 		navigationListener : null,
 		onAddNewProjectEvent : null,
+		onMytabEvent : null,
 	
 		/***
 		 * Called in initialization time of this class 
@@ -34,7 +35,9 @@ define(["framework/widgetWithTemplate", "navigation/listener/navigationListener"
 		registerEvents : function(navigationListener) {
 			var self = this;
 			self.onAddNewProjectEvent = new signals.Signal();
+			self.onMytabEvent = new signals.Signal();
 			self.onAddNewProjectEvent.add(navigationListener.onAddProject, navigationListener); 
+			self.onMytabEvent.add(navigationListener.onMytabEvent, navigationListener); 
 		},
 		
 		/***
@@ -56,6 +59,12 @@ define(["framework/widgetWithTemplate", "navigation/listener/navigationListener"
 			$('#addproject').click(function(){
 				self.onAddNewProjectEvent.dispatch();
 			}); 
+			
+			$("#myTab li").click(function() {
+				$("#myTab li a").removeClass("act");
+				$(this).children().addClass("act");
+				self.onMytabEvent.dispatch(this.id);
+			});
 			
 			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;
 			

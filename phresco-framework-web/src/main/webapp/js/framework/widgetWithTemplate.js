@@ -121,8 +121,58 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				}, function() {
 					$(whereToRender).i18n();
 				});
-			}
+			},
 			
+			opencc : function(ee,placeId) {
+				var self=this;
+				$(".dyn_popup").hide();
+				
+				$('.features_content_main').removeClass('z_index');
+				
+				var clicked = $(ee);
+				var target = $("#" + placeId);
+				var t= clicked.offset().top + 33;
+				var halfheight= window.innerHeight/2;
+				var halfwidth= window.innerWidth/2;
+			
+				if (clicked.offset().top < halfheight && clicked.offset().left < halfwidth) {
+					$(target).css({"left":clicked.offset().left ,"margin-top":10,"right": "auto"});
+					$(target).toggle();
+					$(target).removeClass('speakstyletopright').removeClass('speakstylebottomright').removeClass('speakstylebottomleft').addClass('speakstyletopleft').addClass('dyn_popup');
+				} else if (clicked.offset().top < halfheight && clicked.offset().left > halfwidth){
+					var d= ($(window).width() - (clicked.offset().left + clicked.outerWidth()));
+					$(target).css({"right":d ,"margin-top":10,"left": "auto","top": "auto"});
+					$(target).toggle();
+					$(target).removeClass('speakstyletopleft').removeClass('speakstylebottomright').removeClass('speakstylebottomleft').addClass('speakstyletopright').addClass('dyn_popup');
+				} else if (clicked.offset().top > halfheight && clicked.offset().left < halfwidth){
+					var BottomHeight = clicked.position().top - (target.height() + 33 );
+					$(target).css({"left": clicked.offset().left,"top": BottomHeight ,"right": "auto"});
+					$(target).toggle();
+					$(target).removeClass('speakstyletopleft').removeClass('speakstylebottomright').removeClass('speakstyletopright').addClass('speakstylebottomleft').addClass('dyn_popup');	
+				} else if (clicked.offset().top > halfheight && clicked.offset().left > halfwidth){
+					var d= ($(window).width() - (clicked.offset().left + clicked.outerWidth()));
+					var BottomHeight = clicked.position().top - (target.height() + 33 );
+					$(target).css({"right":d ,"top":BottomHeight,"left": "auto"});
+					$(target).toggle();
+					$(target).removeClass('speakstyletopleft').removeClass('speakstyletopright').removeClass('speakstylebottomleft').addClass('speakstylebottomright').addClass('dyn_popup');	
+				} 
+
+				self.closeAll(placeId);
+			},
+			
+			closeAll : function(placeId) {
+				$(document).keyup(function(e) {
+					if(e.which == 27){
+						$("#" + placeId).hide();
+					}
+				});
+				
+				$('.dyn_popup_close').click( function() {
+					$("#" + placeId).hide();
+				});
+					
+			}	
+					
 		}
 	);
 

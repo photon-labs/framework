@@ -1,4 +1,4 @@
-	<div class="logincontainer">
+	<div class="logincontainer" id="loginContent">
 		<section class="login_panel">
 	    	<div class="login_left"><img src="../themes/default/images/helios/logo_login.png" width="180" height="32" alt="Helios" title="Helios" border="0"></div>
 	        <div class="login_right">

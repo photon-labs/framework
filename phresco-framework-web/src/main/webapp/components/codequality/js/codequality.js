@@ -1,12 +1,12 @@
-define(["framework/widgetWithTemplate", "application/listener/applicationListener"], function() {
-	Clazz.createPackage("com.components.application.js");
+define(["framework/widgetWithTemplate", "codequality/listener/codequalityListener"], function() {
+	Clazz.createPackage("com.components.codequality.js");
 
-	Clazz.com.components.application.js.Application = Clazz.extend(Clazz.WidgetWithTemplate, {
+	Clazz.com.components.codequality.js.CodeQuality = Clazz.extend(Clazz.WidgetWithTemplate, {
 		// template URL, used to indicate where to get the template
-		templateUrl: commonVariables.contexturl + "/components/application/template/application.tmp",
+		templateUrl: commonVariables.contexturl + "/components/codequality/template/codequality.tmp",
 		configUrl: "../components/projects/config/config.json",
-		editApplicationListener: null,
-		name : commonVariables.editApplication,
+		name : commonVariables.codequality,
+		codequalityListener: null,
 		header: {
 			contentType: null,
 			requestMethod: null,
@@ -22,15 +22,11 @@ define(["framework/widgetWithTemplate", "application/listener/applicationListene
 		 */
 		initialize : function(globalConfig){
 			var self = this;
-			self.editApplicationListener = new Clazz.com.components.application.js.listener.ApplicationListener(globalConfig);
-			self.registerEvents();
+			self.codequalityListener = new Clazz.com.components.codequality.js.listener.CodequalityListener(globalConfig);
 		},
 		
 		
 		registerEvents : function () {
-			var self = this;
-			self.onFeaturesEvent = new signals.Signal();
-			self.onFeaturesEvent.add(self.editApplicationListener.onFeature, self.editApplicationListener);
 		},
 		/***
 		 * Called in once the login is success
@@ -56,11 +52,13 @@ define(["framework/widgetWithTemplate", "application/listener/applicationListene
 		 */
 		bindUI : function(){
 			var self = this;
-			$("#nextbutton").click(function(){
-				self.onFeaturesEvent.dispatch();
+			$(".dyn_popup").hide();
+			$("#codeAnalysis").click(function() {
+				self.opencc(this,'code_popup');
 			});
+			
 		}
 	});
 
-	return Clazz.com.components.application.js.Application;
+	return Clazz.com.components.codequality.js.CodeQuality;
 });

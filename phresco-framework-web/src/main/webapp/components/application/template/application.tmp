@@ -14,7 +14,7 @@
                 	<td data-i18n="application.edit.appdirectory"></td>
                     <td><input type="text" placeholder="1.0"/></td>
                     <td data-i18n="application.edit.version"><sup>*</sup></td>
-                    <td><input type="text" placeholder="2.0"/></td>
+                    <td><input type="text" placeholder="2.0" readonly/></td>
                 </tr>
                 <tr>
                     <td data-i18n="application.edit.technology"></td>
@@ -86,7 +86,7 @@
     </section>
     <section class="content_end">
         <div class="flt_right">
-        	<input type="submit" data-i18n="[value]application.edit.btn.next;" class="btn btn_style next_icon_btn">
+        	<input type="submit" data-i18n="[value]application.edit.btn.next;" id="nextbutton" class="btn btn_style next_icon_btn">
             <input type="submit" data-i18n="[value]application.edit.btn.cancel;" class="btn btn_style cancel_icon_btn">
         </div>
     	<!--content_title ends here -->

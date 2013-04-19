@@ -229,6 +229,19 @@ to {
 	border: 1px solid #e3e3e3;
 	background: #ffffff;
 }
+
+.loginuser_error {
+	color: red;
+	border: 1px solid red;
+	background: #ffffff;
+}
+
+.loginuser_error .logintext input {
+	background: #FC8986;
+	color: #ffffff !important;
+}
+
+
 .loginimg {
 	width: 55px;
 	height: 40px;
@@ -271,6 +284,22 @@ to {
 .loginshadow {
 	width:534px;
 	margin:2px auto auto auto;
+}
+
+.login_title {
+    font-size: 18px;
+    font-weight: bold;
+    padding-bottom: 12px;
+    text-transform: uppercase;
+	float: left;
+	width: 125px;
+}
+
+.login_error_msg {
+	float: right;
+	color: red;
+	font-size: 14px;
+	font-weight: bold;
 }
 
 /* *************************************************************************** HACK FOR CROME BROWSER ************************************************************************** */

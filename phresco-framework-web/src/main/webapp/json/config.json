@@ -46,6 +46,16 @@
 		"application" : {
 			"moduleName":"application",
 			"path" : "../components/application/js"
+		},
+		
+		"features" : {
+			"moduleName":"features",
+			"path" : "../components/features/js"
+		},
+		
+		"codequality" : {
+			"moduleName":"codequality",
+			"path" : "../components/codequality/js"
 		}
 	}
 }

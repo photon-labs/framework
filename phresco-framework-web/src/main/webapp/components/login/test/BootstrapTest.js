@@ -24,7 +24,6 @@ var commonVariables = {
 
 define(["jquery"], function($) {
 	$(document).ready(function(){
-		
 
 		$.get('src/components/login/test/config.json', function(data) {
 			commonVariables.globalconfig = data;
@@ -52,18 +51,20 @@ define(["jquery"], function($) {
 			$.each(commonVariables.globalconfig.components, function(index, value){
 				configJson.paths[index] = value.path;
 			});
-
 			// setup require.js
 			var requireConfig = requirejs.config(configJson);
 			
-			require(["lib/Signal-1.0.0", "lib/SignalBinding-1.0.0", "lib/i18next-1.6.0", "projectlistTest", "headerTest", "footerTest", "navigationTest", "addprojectTest", "editprojectTest", "applicationTest"],	function (Signal, SignalBinding, next, projectlistTest, headerTest, footerTest, navigationTest, addprojectTest, editprojectTest, applicationTest){
-				headerTest.runTests(data);
-				footerTest.runTests(data);
-				projectlistTest.runTests(data);
+			require(["lib/Signal-1.0.0", "lib/SignalBinding-1.0.0", "lib/i18next-1.6.0", "jquery_mCustomScrollbar_concat_min-2.8.1", "loginTest", "projectlistTest", "headerTest", "footerTest", "navigationTest", "addprojectTest", "editprojectTest", "applicationTest", "featuresTest", "codequalityTest"],	function (Signal, SignalBinding, next, mCustomScrollbar, loginTest, projectlistTest, headerTest, footerTest, navigationTest, addprojectTest, editprojectTest, applicationTest, featuresTest, codequalityTest){
+				loginTest.runTests(data);
 				navigationTest.runTests(data);
+				headerTest.runTests(data);
+				applicationTest.runTests(data);		
+				footerTest.runTests(data);
+				featuresTest.runTests(data);
+				projectlistTest.runTests(data);
 				addprojectTest.runTests(data);
 				editprojectTest.runTests(data);
-				applicationTest.runTests(data);	
+				codequalityTest.runTests(data);	
 			});
 		}, "json");
 	});

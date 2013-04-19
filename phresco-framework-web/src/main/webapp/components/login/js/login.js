@@ -5,7 +5,7 @@ define(["framework/widgetWithTemplate", "login/listener/loginListener"], functio
 		onLoginEvent : null,
 		loginListener : null,
 		// template URL, used to indicate where to get the template
-		templateUrl: "../components/login/template/login.tmp",
+		templateUrl: commonVariables.contexturl + "/components/login/template/login.tmp",
 		configUrl: "../components/login/config/config.json",
 		name : commonVariables.login,
 		localConfig: null,
