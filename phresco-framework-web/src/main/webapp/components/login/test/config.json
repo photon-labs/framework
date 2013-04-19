@@ -93,10 +93,20 @@
 			"moduleName":"features",
 			"path" : "components/features/js"
 		},
-		
+
 		"featuresTest" : {
 			"moduleName":"applicationTest",
 			"path" : "components/features/test/featuresTest"
+		},
+
+		"configuration" : {
+			"moduleName":"configuration",
+			"path" : "components/configuration/js"
+		},
+		
+		"configurationTest" : {
+			"moduleName":"configurationTest",
+			"path" : "components/configuration/test/configurationTest"
 		},
 		
 		"codequality" : {
@@ -107,6 +117,16 @@
 		"codequalityTest" : {
 			"moduleName":"applicationTest",
 			"path" : "components/codequality/test/codequalityTest"
+		},
+
+		"build" : {
+			"moduleName":"build",
+			"path" : "components/build/js"
+		},
+		
+		"buildTest" : {
+			"moduleName":"buildTest",
+			"path" : "components/build/test/buildTest"
 		}
 		
 	}
