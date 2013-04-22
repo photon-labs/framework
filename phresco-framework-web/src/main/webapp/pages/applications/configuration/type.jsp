@@ -395,7 +395,6 @@
 	$("div#certificateControl").hide();
 	
 	$(document).ready(function() {
-		$("input[name='deploy_dir']").attr('readonly', 'readonly');
 		enableOrDisableUpldBtn();
 		remoteDeplyChecked();
 		hideLoadingIcon();//To hide the loading icon

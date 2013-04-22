@@ -39,19 +39,18 @@
 
 %>
 <form id="manualTestCases" class="marginBottomZero" style="height: 114%;overflow-x: hidden;overflow-y: hidden	;margin-top: 1px;">
-	<div>
-		<ul id="display-inline-block-example">
-			 <li id="first">
-				<%-- <a id="addTest" class="btn btn-primary"><s:text name='lbl.btn.add'/></a>  --%>
-			</li> 
-		
-			<!-- <div class="alert alert-block hideContent" id="errorDiv" style="margin-left: 0; margin-top: 5px;"> -->
-			
+		<div>
+			<ul id="display-inline-block-example">
+				 <li id="first">
+					<%-- <a id="addTest" class="btn btn-primary"><s:text name='lbl.btn.add'/></a>  --%>
+				</li> 
+				<!-- <div class="alert alert-block hideContent" id="errorDiv" style="margin-left: 0; margin-top: 5px;"> -->
+			</ul>	
 		</div>
-		</ul>
+		
 		<ul id="display-inline-block-example">
 			<li id="first">
-			<a id="addTest" class="btn btn-primary" style="margin-left: 8%;"><s:text name='lbl.btn.add'/></a> </li>
+				<a id="addTest" class="btn btn-primary" style="margin-left: 8%;"><s:text name='lbl.btn.add'/></a> </li>
 			<li id="label">
 				&nbsp;<strong class="hideCtrl" id="testResultLbl"><s:text name="lbl.test.suite"/></strong> 
 			</li>
@@ -59,7 +58,7 @@
 				<select id="testSuite" name="testSuite" onchange='reportList(this);' class="hideContent"></select>
 			</li>
 			<li id="label">
-						&nbsp;<strong class="hideCtrl" id="testResultLbl"><s:text name="lbl.test.result.view"/></strong> 
+				&nbsp;<strong class="hideCtrl" id="testResultLbl"><s:text name="lbl.test.result.view"/></strong> 
 			</li>
 			<li>
 				<select id="resultView" name="resultView" class="input-medium hideContent"> 
@@ -70,16 +69,16 @@
 		</ul>
 	</div>
 	<div class="icon_fun_div printAsPdf" style="margin-top: -35px;">
-			<a href="#" id="pdfPopup" >
-				<img id="pdfCreation" src="images/icons/print_pdf.png" title="Generate pdf" style="height: 20px; width: 20px;"/>
-			</a>
-			<a href="#" id="openFolder">
-				<img id="folderIcon" src="images/icons/open-folder.png" title="Open folder"/>
-			</a>
-			<a href="#" id="copyPath"><img src="images/icons/copy-path.png" title="Copy path"/></a>
-		</div>
+		<a href="#" id="pdfPopup" >
+			<img id="pdfCreation" src="images/icons/print_pdf.png" title="Generate pdf" style="height: 20px; width: 20px;"/>
+		</a>
+		<a href="#" id="openFolder">
+			<img id="folderIcon" src="images/icons/open-folder.png" title="Open folder"/>
+		</a>
+		<a href="#" id="copyPath"><img src="images/icons/copy-path.png" title="Copy path"/></a>
+	</div>
 	<div class="" id="graphicalView" style="padding-left: 15px; display:none; text-align: center;">
-			<canvas id="bar" width="620" height="400">[No canvas support]</canvas>               
+		<canvas id="bar" width="620" height="400">[No canvas support]</canvas>               
 	</div>
 	
 	<div class="canvas_div canvasDiv" id="graphicalPieView">
@@ -189,7 +188,7 @@ $(document).ready(function() {
 		yesnoPopup('showManualTestPopUp', '<s:text name="lbl.manual.test"/>', 'runManualTest','<s:text name="lbl.test"/>');
 	}); */
 	
-	 $('#openFolder').click(function() {
+	$('#openFolder').click(function() {
 		 openFolder('<%= appDirName %><%= path %>');
 	});
 	       

@@ -689,14 +689,14 @@ a {
 	float: left;
 	height: 30px;
 	position: absolute;
-	width: 350px;
+	width: 366px;
 	z-index: 5;
 	top: 0px;
 }
 
 .headerInnerTop ul {
 	list-style: none outside none;
-	margin: 0 35px;
+	margin: 0 22px;
 	position: absolute;
 	width: 350px;
 	z-index: 3;
@@ -824,7 +824,7 @@ a {
 .headerInnerTop li a {
 	float: left;
 	font-size: 12px;
-	padding: 3px 5px;
+	padding: 3px 4px;
 	text-decoration: none;
 	text-transform: uppercase;
 }
@@ -857,7 +857,7 @@ a {
 	height: 22px;
 	position: absolute;
 	top: 30px;
-	left: 128px;
+	left: 139px;
 	width: 86px;
 	font-size: larger;
 	cursor: pointer;
