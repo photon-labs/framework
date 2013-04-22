@@ -12,7 +12,7 @@
                 </tr>
               </thead>
               <tbody>
-                  {{#each row}}
+                  {{#each projectlist}}
                       <tr class="proj_title">
                         <td colspan="4">{{name}}</td> 
                         <td colspan="3" align="right"><a class="tooltiptop" title="" data-placement="top" data-toggle="tooltip"  data-original-title="Edit Project"><img id="editproject" src="../themes/default/images/helios/edit_row_icon.png" width="29" height="23" border="0" alt=""></a> <a class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Delete Project"><img src="../themes/default/images/helios/delete_row_icon.png" width="29" height="23" border="0" alt="0"></a></td>
