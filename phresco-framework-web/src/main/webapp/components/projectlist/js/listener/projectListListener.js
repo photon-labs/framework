@@ -61,7 +61,7 @@ define(["framework/widget", "projectlist/api/projectListAPI", "projects/editproj
 				contentType: "application/json",
 				requestMethod: "GET",
 				dataType: "json",
-				webserviceurl: "http://localhost:8080/framework/rest/api/project/list?customer=photon"
+				webserviceurl: commonVariables.webserviceurl+commonVariables.projectlistContext+"/list?customerId=photon"
 			};
 
 			return header;

@@ -10,7 +10,10 @@ var commonVariables = {
 	projectlist : "projectlist",
 	addproject : "addproject",
 	editproject : "editproject",
+
 	projectlist : "projectlist",
+	projectlistContext : "project",
+
 	editApplication : "appinfo",
 	featurelist : "featurelist",
 	codequality : "codequality",
