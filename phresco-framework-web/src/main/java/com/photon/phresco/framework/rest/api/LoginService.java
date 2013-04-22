@@ -32,7 +32,7 @@ import com.photon.phresco.util.Utility;
 
 @Path ("/login")
 public class LoginService extends RestBase {
-	protected static final Map<String, ServiceManager> CONTEXT_MANAGER_MAP = new HashMap<String, ServiceManager>();
+//	protected static final Map<String, ServiceManager> CONTEXT_MANAGER_MAP = new HashMap<String, ServiceManager>();
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -98,7 +98,7 @@ public class LoginService extends RestBase {
 		ServiceManager serviceManager = null;
         try {
         	serviceManager = getServiceManager(credentials.getUsername(), credentials.getPassword());
-        	CONTEXT_MANAGER_MAP.put(credentials.getUsername(), serviceManager);
+        	ServiceManagerMap.CONTEXT_MANAGER_MAP.put(credentials.getUsername(), serviceManager);
         } catch (PhrescoWebServiceException ex) {
             throw new PhrescoWebServiceException(ex.getResponse());
         } 

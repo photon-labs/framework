@@ -32,7 +32,7 @@ import com.photon.phresco.util.Utility;
 import com.sun.jersey.api.client.ClientResponse.Status;
 
 @Path("/project")
-public class ProjectService extends LoginService implements FrameworkConstants {
+public class ProjectService implements FrameworkConstants {
 
 	@GET
 	@Path("/list")
@@ -53,7 +53,7 @@ public class ProjectService extends LoginService implements FrameworkConstants {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createProject(ProjectInfo projectinfo, @QueryParam("userId") String userId) throws PhrescoException {
 		try {
-			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
+			ServiceManager serviceManager = ServiceManagerMap.CONTEXT_MANAGER_MAP.get(userId);
 			ProjectInfo projectInfo = PhrescoFrameworkFactory.getProjectManager().create(projectinfo,
 					serviceManager);
 			return Response.status(Status.OK).entity(projectInfo).header("Access-Control-Allow-Origin", "*").build();
@@ -84,7 +84,7 @@ public class ProjectService extends LoginService implements FrameworkConstants {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateProject(@QueryParam("oldAppDirName") String oldAppDirName , ProjectInfo projectinfo, @QueryParam("userId") String userId) throws PhrescoException {
 		try {
-			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
+			ServiceManager serviceManager = ServiceManagerMap.CONTEXT_MANAGER_MAP.get(userId);
 			ProjectInfo projectInfo = PhrescoFrameworkFactory.getProjectManager().update(projectinfo, serviceManager, oldAppDirName);
 			return Response.status(Status.OK).entity(projectInfo).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
