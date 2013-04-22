@@ -77,8 +77,12 @@
                 	}
 			%>
 					</optgroup>
-					<option value="<%= validateAgainstValues.get(1).getKey() %>"><%= validateAgainstValues.get(1).getValue() %></option>
 			<%
+					if (validateAgainstValues.size() > 1) {
+			%>
+					
+							<option value="<%= validateAgainstValues.get(1).getKey() %>"><%= validateAgainstValues.get(1).getValue() %></option>
+			<%		}
                 } else if (CollectionUtils.isNotEmpty(validateAgainstValues)) {
                     for (Value value : validateAgainstValues) {
             %>

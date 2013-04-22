@@ -36,7 +36,7 @@
 		<meta name="viewport" content="width=device-width, height=device-height, minimum-scale=0.25, maximum-scale=1.6">
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>Helios</title>
-		<!-- <link rel="SHORTCUT ICON" href="images/favicon.ico"> -->
+		<link rel="shortcut icon" href="images/favicon.ico">
 		<link rel="stylesheet" href="css/bootstrap.css">
 
 		<!-- <link type="text/css" rel="stylesheet" href="theme/red_blue/css/phresco.css" id="phresco"> -->
@@ -477,6 +477,7 @@
 			applyTheme();
 		} else {
 			localStorage["color"] = "theme/photon/css/photon_theme.css";
+			applyTheme(); // when photon is in blue theme, when go to best buy from blue theme. BestBuy should be changed to it is own theme.
 			loadContent("fetchLogoImgUrl", $('#formCustomers'), '', '', true, true, 'changeLogo');
 		}
 	}
@@ -571,7 +572,32 @@
 		var copyright = data.copyRight;
 		
 		JSS.css({
+			
+			'.usersettings' : {
+				'background' : "none repeat scroll 0 0 " + brandingColor + "!important" // user settings background color
+			},
+			
+			'.qtyTable_view table thead tr' :{
+				'background' : "none repeat scroll 0 0 " + brandingColor + "!important" // quality tab all border color
+			},
+			
+			'.qtyTable_view table' : {
+				'border-left': "1px solid" + brandingColor,  // border left and right color in appinfo page
+				'border-right': "1px solid" + brandingColor
+			},
 
+			'.testSuiteDisplay table thead tr' : {
+				'background' : "none repeat scroll 0 0 " + brandingColor + "!important"
+			},
+			
+			'.no-left-bottom-border' : {
+				'border-top' : "1px solid" + brandingColor + "!important"
+			},
+			
+			'.build_table_div' : {
+				'border': "1px solid" + brandingColor + "!important" // build tab border color
+			},
+			
 			'.page-header': {
 				'background' : pageHeaderColor  + "! important"    // Page Header in appinfo page 
 			},
@@ -582,6 +608,10 @@
 			
 			'.mfbox .header-background': {
 				'background' :  pageHeaderColor      // background color for server, database, webservice * (accordionBackGroundColor)
+			},
+			
+			'.header-background' : {
+				'background' :  "none repeat scroll 0 0 " +  brandingColor + "!important" // header background color iin Genreat build tab
 			},
 			
 			'.tblheader, .header-backgroundTheme' : {
@@ -680,11 +710,19 @@
 			},
 			
 			'.table_borderForDownloadInfos' : {
-				'border' : "1px solid" + brandingColor
+				'border' : "1px solid" + brandingColor + "! important"
 			},
 			
 			'.custom_features_wrapper_right .theme_accordion_container div div': {    // Feature border color when more than omne feature selected * (accordionBackGroundColor)
-				'border-bottom' : "1px solid" + brandingColor
+				'border-bottom' : "1px solid" + brandingColor + "! important"
+			},
+			
+			'.custom_features_wrapper_right' : {
+				'border' : "1px solid "+ brandingColor+ "! important"   
+			},
+			
+			'.custom_features' : {
+				'border' : "1px solid "+ brandingColor+ "! important"   
 			},
 			
 			'.table_border' : {
@@ -740,7 +778,7 @@
 			},
 			
 			'.custom_features_wrapper_right .theme_accordion_container div div a' : {   // Feature Deletion cross mark color
-				'color': buttonColor
+				'color': buttonColor + "! important"
 			},
 			
 			'.btn-primary': {                                        // button Color                         
