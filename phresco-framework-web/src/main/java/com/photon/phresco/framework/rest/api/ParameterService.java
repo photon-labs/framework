@@ -20,10 +20,8 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.jettison.json.JSONObject;
 import org.xml.sax.SAXException;
 
-import com.google.gson.Gson;
 import com.photon.phresco.api.DynamicParameter;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
@@ -38,24 +36,20 @@ import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.util.PhrescoDynamicLoader;
 import com.photon.phresco.util.Utility;
 
-@Path("/read")
-public class ReadXML {
+@Path("/parameter")
+public class ParameterService {
 
 	@GET
-	@Path("/params")
-	@Produces({ MediaType.APPLICATION_JSON })
-	public Response getJson(@QueryParam("appName") String appName) throws PhrescoException {
+	@Path("/dynamic")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getParameter(@QueryParam("appName") String appName, @QueryParam("goal") String goal) throws PhrescoException {
 		try {
 			List<Parameter> parameter = null;
-			String filePath = Utility.getProjectHome() + appName + "/.phresco/phresco-package-info.xml";
+			String filePath = Utility.getProjectHome() + appName + "/.phresco/phresco-"+ goal +"-info.xml";
 			File file = new File(filePath);
 			MojoProcessor mojo = new MojoProcessor(file);
-			parameter = mojo.getParameters("package");
-			Gson gson = new Gson();
-			String json = gson.toJson(parameter);
-			json = "{"+"\"row\""+":"+json + "}";
-//			JSONObject finalOp = json.put("row", gson.toJson(parameter));
-			return Response.ok(json).header("Access-Control-Allow-Origin", "*").build();
+			parameter = mojo.getParameters(goal);
+			return Response.ok(parameter).header("Access-Control-Allow-Origin", "*").build();
 
 		} catch (Exception e) {
 			throw new PhrescoException(e);
@@ -76,24 +70,22 @@ public class ReadXML {
 		}
 	}
 
-	@Path("/possibleValues")
+	@Path("/dependency")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response getPossibleValue(@QueryParam("appName") String appName, @QueryParam("customerId") String customerId)
+	public Response getPossibleValue(@QueryParam("appName") String appName, @QueryParam("customerId") String customerId, @QueryParam("goal") String goal, 
+			@QueryParam("key") String key)
 	throws PhrescoException {
 		PossibleValues possibleValues = null;
-		String filePath = Utility.getProjectHome() + appName + "/.phresco/phresco-package-info.xml";
+		String filePath = Utility.getProjectHome() + appName + "/.phresco/phresco-"+ goal +"-info.xml";
 		MojoProcessor processor = new MojoProcessor(new File(filePath));
-		Parameter parameter = processor.getParameter("package", "showSettings");
+		Parameter parameter = processor.getParameter(goal, key);
 		String dependency = parameter.getDependency();
 		if (StringUtils.isNotEmpty(dependency)) {
-			possibleValues = getPossibleValues(processor, "package", dependency, appName, customerId);
+			possibleValues = getPossibleValues(processor, goal, dependency, appName, customerId);
 		}
-		Gson gson = new Gson();
-		String json = gson.toJson(possibleValues);
-		json = "{"+"\"row\""+":"+json + "}";
-		return Response.ok(json).header("Access-Control-Allow-Origin", "*").build();
+		return Response.ok(possibleValues).header("Access-Control-Allow-Origin", "*").build();
 	}
 
 	private static PossibleValues getPossibleValues(MojoProcessor processor, String goal, String dependencyName,
@@ -116,9 +108,9 @@ public class ReadXML {
 			Map<String, Object> map = new HashMap<String, Object>();
 			ApplicationInfo appInfo = new ApplicationInfo();
 			appInfo.setAppDirName(appName);
-			map.put("applicationInfo", appInfo);
-			map.put("mojo", processor);
-			map.put("customerId", customerId);
+			map.put(DynamicParameter.KEY_APP_INFO, appInfo);
+			map.put(DynamicParameter.KEY_MOJO, processor);
+			map.put(DynamicParameter.KEY_CUSTOMER_ID, customerId);
 			try {
 				PossibleValues values = dynamicParameter.getValues(map);
 				return values;
