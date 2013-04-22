@@ -4,14 +4,13 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -23,25 +22,17 @@ import org.apache.commons.collections.CollectionUtils;
 import com.google.gson.Gson;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
-import com.photon.phresco.commons.model.ArtifactGroup;
-import com.photon.phresco.commons.model.DownloadInfo;
-import com.photon.phresco.commons.model.Element;
 import com.photon.phresco.commons.model.ProjectInfo;
-import com.photon.phresco.commons.model.SelectedFeature;
-import com.photon.phresco.commons.model.SettingsTemplate;
-import com.photon.phresco.commons.model.Technology;
-import com.photon.phresco.commons.model.WebService;
-import com.photon.phresco.commons.model.DownloadInfo.Category;
 import com.photon.phresco.configuration.ConfigurationInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.api.ProjectManager;
-import com.photon.phresco.framework.commons.FrameworkUtil;
+import com.photon.phresco.service.client.api.ServiceManager;
 import com.photon.phresco.util.Utility;
 import com.sun.jersey.api.client.ClientResponse.Status;
 
 @Path("/project")
-public class ProjectService extends RestBase implements FrameworkConstants {
+public class ProjectService extends LoginService implements FrameworkConstants {
 
 	@GET
 	@Path("/list")
@@ -60,10 +51,11 @@ public class ProjectService extends RestBase implements FrameworkConstants {
 	@Path("/create")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response createProject(ProjectInfo projectinfo) throws PhrescoException {
+	public Response createProject(ProjectInfo projectinfo, @QueryParam("userId") String userId) throws PhrescoException {
 		try {
+			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
 			ProjectInfo projectInfo = PhrescoFrameworkFactory.getProjectManager().create(projectinfo,
-					getServiceManager());
+					serviceManager);
 			return Response.status(Status.OK).entity(projectInfo).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
 			throw new PhrescoException(e);
@@ -86,17 +78,40 @@ public class ProjectService extends RestBase implements FrameworkConstants {
 		}
 	}
 	
-	@POST
+	@PUT
 	@Path("/update")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateProject(@QueryParam("oldAppDirName") String oldAppDirName , ProjectInfo projectinfo) throws PhrescoException {
+	public Response updateProject(@QueryParam("oldAppDirName") String oldAppDirName , ProjectInfo projectinfo, @QueryParam("userId") String userId) throws PhrescoException {
 		try {
-			ProjectInfo projectInfo = PhrescoFrameworkFactory.getProjectManager().update(projectinfo, getServiceManager(), oldAppDirName);
+			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
+			ProjectInfo projectInfo = PhrescoFrameworkFactory.getProjectManager().update(projectinfo, serviceManager, oldAppDirName);
 			return Response.status(Status.OK).entity(projectInfo).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
 			throw new PhrescoException(e);
 		}
+	}
+	
+	@GET
+	@Path("/editApplication")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response editApplication(@QueryParam("appDirName") String appDirName) throws PhrescoException {
+		File projectInfoFile = new File(Utility.getProjectHome() + appDirName + 
+				File.separator + ".phresco" + File.separator + "project.info");
+		BufferedReader reader;
+		try {
+			reader = new BufferedReader(new FileReader(projectInfoFile));
+			ProjectInfo projectInfo = (ProjectInfo) new Gson().fromJson(reader, ProjectInfo.class);
+			List<ApplicationInfo> appInfos = projectInfo.getAppInfos();
+			for (ApplicationInfo applicationInfo : appInfos) {
+				if(applicationInfo.getAppDirName().equals(appDirName)) {
+					return Response.status(Status.OK).entity(applicationInfo).header("Access-Control-Allow-Origin", "*").build();
+				}
+			}
+		} catch (FileNotFoundException e) {
+			throw new PhrescoException(e);
+		}
+		return Response.status(Status.NOT_FOUND).header("Access-Control-Allow-Origin", "*").build();
 	}
 	
 	@DELETE
@@ -123,7 +138,7 @@ public class ProjectService extends RestBase implements FrameworkConstants {
 	    	            int port = Integer.parseInt(configInfo.getServerPort());
 	    	            boolean connectionAlive = Utility.isConnectionAlive(HTTP_PROTOCOL, LOCALHOST, port);
 	    	            if(connectionAlive) {
-	    	            	return Response.status(Status.BAD_REQUEST).entity("Unable To Delete").build();
+	    	            	return Response.status(Status.BAD_REQUEST).entity("Unable To Delete").header("Access-Control-Allow-Origin", "*").build();
 	    	            }
 	    	        }
 	    	    }

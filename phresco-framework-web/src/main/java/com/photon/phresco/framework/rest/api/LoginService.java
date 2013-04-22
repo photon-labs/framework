@@ -5,7 +5,9 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -14,7 +16,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -31,7 +32,7 @@ import com.photon.phresco.util.Utility;
 
 @Path ("/login")
 public class LoginService extends RestBase {
-	
+	protected static final Map<String, ServiceManager> CONTEXT_MANAGER_MAP = new HashMap<String, ServiceManager>();
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -90,7 +91,6 @@ public class LoginService extends RestBase {
 			}
 			Gson gson = new Gson();
 			String json = gson.toJson(user);
-			json = "{"+"\"row\""+":"+json + "}";
 	       return Response.ok(json).header("Access-Control-Allow-Origin", "*").build();
 	    }
 	
@@ -98,6 +98,7 @@ public class LoginService extends RestBase {
 		ServiceManager serviceManager = null;
         try {
         	serviceManager = getServiceManager(credentials.getUsername(), credentials.getPassword());
+        	CONTEXT_MANAGER_MAP.put(credentials.getUsername(), serviceManager);
         } catch (PhrescoWebServiceException ex) {
             throw new PhrescoWebServiceException(ex.getResponse());
         } 

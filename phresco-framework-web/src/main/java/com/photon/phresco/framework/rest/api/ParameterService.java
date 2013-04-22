@@ -59,9 +59,9 @@ public class ParameterService {
 	@GET
 	@Path("/file")
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response getFileAsString(@QueryParam("appName") String appName) throws PhrescoException {
+	public Response getFileAsString(@QueryParam("appName") String appName, @QueryParam("goal") String goal) throws PhrescoException {
 		try {
-			String filePath = Utility.getProjectHome() + appName + "/.phresco/phresco-package-info.xml";
+			String filePath = Utility.getProjectHome() + appName + "/.phresco/phresco-"+ goal +"-info.xml";
 			File file = new File(filePath);
 			String xml = IOUtils.toString(new FileInputStream(file));
 			return Response.status(200).entity(xml).header("Access-Control-Allow-Origin", "*").build();
