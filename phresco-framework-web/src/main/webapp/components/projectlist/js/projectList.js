@@ -62,7 +62,9 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 		preRender: function(whereToRender, renderFunction){
 			var self = this;
 			self.projectslistListener.getProjectList(self.projectslistListener.getRequestHeader(self.projectRequestBody), function(response) {
-				renderFunction(response, whereToRender);
+				var projectlist = {};
+				projectlist.projectlist = response;				
+				renderFunction(projectlist, whereToRender);
 			});
 		},
 
@@ -85,11 +87,7 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 
 			$("a[name = 'updatesvn']").unbind("click");
 			$("a[name = 'updatesvn']").bind("click",function(){
-				console.info("test response2");
-				//self.repositoryEvent.dispatch();
-				//$(this).attr("href", "#svn_update");
 				$("#svn_update").show();
-
 			});
 		}
 	});
