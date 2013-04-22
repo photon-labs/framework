@@ -1,4 +1,4 @@
-define(["framework/widgetWithTemplate", "projectlist/listener/projectListListener"], function() {
+define(["framework/widgetWithTemplate", "projectlist/listener/projectListListener"], function() { 
 	
 	Clazz.createPackage("com.components.projectlist.js");
 
