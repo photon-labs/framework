@@ -134,7 +134,7 @@
 																	</td>
 																	<td class="no-left-bottom-border table-pad">
 																		<span id="descriptionInHover">
-																			<%= project.getDescription() %>
+																			<%= StringUtils.isNotEmpty(appInfo.getDescription()) ? appInfo.getDescription() : "" %>
 																		</span>
 																	</td>
 																	<td class="no-left-bottom-border table-pad">
