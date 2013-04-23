@@ -121,6 +121,7 @@ public interface FrameworkConstants {
     String REQ_PARAM_NAME_TECH_GROUP = "TechGroup";
     String REQ_PARAM_NAME_TECHNOLOGY = "Technology";
     String REQ_APP_LAYER_INFOS = "appLayerInfos";
+    String REQ_APP_CODE_ID = "hasAppCodeId";
     String REQ_PARAM_NAME_TECH__ID = "techId";
     String REQ_PARAM_NAME_VERSION = "Version";
     String REQ_PARAM_NAME_PHONE = "Phone";
