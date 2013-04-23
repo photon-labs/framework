@@ -851,7 +851,8 @@
 	// when the configure popup is clicked on save button, it should validate mandatory fields before submitting form
 	function configureJobValidation() {
 		var name= $("#name").val();
-		var svnurl= $("#svnurl").val();
+		var svnurl= $("#svnurl").val().trim();
+		$("#svnurl").val(svnurl);
 		var username= $("#username").val();
 		var password= $("#password").val();
 		var senderEmailId = $("#senderEmailId").val();
@@ -873,11 +874,20 @@
 		}
 		
 		if($("input:radio[name=svnType][value='svn']").is(':checked')) {
-			if(isValidUrl(svnurl)){
+			
+			if (isBlank(svnurl)) {
 				$("#errMsg").html("Enter the URL");
 				$("#svnurl").focus();
 				$("#svnurl").val("");
-				console.log("url is not specified ");
+				console.log("url is missing");
+				return false;
+			} 
+			
+			if(!isBlank(svnurl) && isValidUrl(svnurl)){
+				$("#errMsg").html("Enter valid URL");
+				$("#svnurl").focus();
+				$("#svnurl").val("");
+				console.log("url is invalid");
 				return false;
 			}
 			
@@ -927,8 +937,14 @@
 	}
 	
 	function collabNetValidation() {
-		if(isValidUrl($('input:text[name=collabNetURL]').val())) {
+		var collabNetUrl = $('input:text[name=collabNetURL]').val().trim();
+		$('#collabNetURL').val(collabNetUrl);
+		if (isBlank(collabNetUrl)) {
 			ciConfigureError('errMsg', "URL is missing");
+			$('input:text[name=collabNetURL]').focus();
+			return false;
+		} else if(isValidUrl(collabNetUrl)) {
+			ciConfigureError('errMsg', "URL is invalid");
 			$('input:text[name=collabNetURL]').focus();
 			return false;
 		} else if (isBlank($('input:text[name=collabNetusername]').val())) {

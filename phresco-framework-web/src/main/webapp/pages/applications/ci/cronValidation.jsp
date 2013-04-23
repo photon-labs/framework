@@ -29,12 +29,9 @@
 </a>
 
 <!-- Cron Expression Pattern starts -->	
-<div id="Pattern" class="modal abtDialog">
-	<div class="modal-header">
-		<div class="TestType"><s:text name="lbl.cronvalidate.title"/></div><a id="closePatternPopup" href="#" class="close" style="top: 5px;">&times;</a>
-	</div>
+<div id="Pattern" class="abtDialog">
 	<div class="abt_div">
-		<div id="testCaseDesc" class="testCaseDesc">
+		<div id="testCaseDesc" class="">
                <table border="0" cellpadding="0" cellspacing="0" class="tbl" width="100%">
                	   <tr>
                        <td width="1%" nowrap><b id="SelectedSchedule" class="popup-label"></b></td>
@@ -62,13 +59,6 @@
                </table>
 		</div>
 	</div>
-	
-	<div class="modal-footer">
-		<div class="action abt_action">
-			<input id="closeDialog" type="button" value="<s:text name="label.close"/>" class="btn btn-primary">
-		</div>
-	</div>
-		
 </div>
 <!-- Cron Expression Pattern ends -->
 
@@ -85,8 +75,30 @@
 	   	
    });
    
-   function patternPopUp(enableProp) {
-	   	//$(".wel_come").show().css("display", enableProp);
-	   	$("#Pattern").show().css("display", enableProp);
-   }
+	function patternPopUp(enableProp) {
+		//to hide configure popup
+		$("#popupPage").modal('hide');
+
+		//to show cron validation popup
+		setTimeout(function() {
+			$("#additionalPopup").modal('show');
+		}, 600);
+
+		//to hide unwanted controls & fill appropriate label
+		makeCronValidationPopUp();
+
+		//to fill cron validation popup body content
+		$('#additional_popup_body').html($("#Pattern").find(".abt_div").html());
+	}
+
+	function makeCronValidationPopUp() {
+		$("#compressNameLbl").hide();
+		$("#compressName").hide();
+		$(".add_errorMsg").empty();
+		$(".add_popupOk").hide();
+		$("#browseSelectedLocation").hide();
+		$("#add_popupCancel").html('Ok');
+		$("#add_popupCancel").attr('okurl', '');
+		$("#additional_popupTitle").text('<s:text name="lbl.cronvalidate.title"/>');
+	}
 </script>

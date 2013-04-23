@@ -328,6 +328,7 @@ function additionalPopup(url, title, okUrl, okLabel, form, additionalParam, show
 	$('.add_popupClose').hide(); //no need close button since yesno popup
 	$('.add_popupOk, #add_popupCancel').show(); // show ok & cancel button
 	$("#add_popupCancel").attr('okurl', okUrl);
+	$("#add_popupCancel").html('Cancel');
 	$("#add_popupClose").attr('okurl', okUrl);
 	$(".add_popupOk").attr('id', okUrl); // popup action mapped to id
 	$("#themeBuilderImageFile").val("");//To empty theme builder hidden field

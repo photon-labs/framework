@@ -112,7 +112,7 @@ $('.control-group').addClass("valReportLbl");
     	showLoadingIcon();
     	
     	$('#codeValidatePopup').click(function() {
-    		validateDynamicParam('showCodeValidatePopup', '<s:text name="popup.hdr.code.validate"/>', 'codeValidate','<s:text name="lbl.validate"/>', '', '<%= Constants.PHASE_VALIDATE_CODE %>');
+    		validateDynamicParam('showCodeValidatePopup', '<s:text name="popup.hdr.code.validate"/>', 'codeValidate','<s:text name="lbl.btn.ok"/>', '', '<%= Constants.PHASE_VALIDATE_CODE %>');
     	});
 
     	// To enable/disable the validate button based on the sonar startup

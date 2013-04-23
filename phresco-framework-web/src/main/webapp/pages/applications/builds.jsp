@@ -192,7 +192,7 @@
 		
 		$('.deploy').click(function() {
 			var additionalParam = $(this).attr('additionalParam'); //additional params if any
-    		validateDynamicParam('showDeploy', '<s:text name="label.deploy"/>', 'deploy','<s:text name="label.deploy"/>', '', '<%= Constants.PHASE_DEPLOY %>', true, additionalParam);
+    		validateDynamicParam('showDeploy', '<s:text name="label.deploy"/>', 'deploy','<s:text name="lbl.btn.ok"/>', '', '<%= Constants.PHASE_DEPLOY %>', true, additionalParam);
     	});
 		
 		$('.processBuild').click(function() {

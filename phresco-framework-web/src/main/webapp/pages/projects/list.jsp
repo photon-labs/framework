@@ -226,7 +226,7 @@
 		
 		$('#importAppln').click(function() {
 			var params = "action=import";
-			yesnoPopup('importAppln', '<s:text name="lbl.app.import"/>', 'importUpdateAppln','<s:text name="lbl.app.import"/>', '', params);
+			yesnoPopup('importAppln', '<s:text name="lbl.app.import"/>', 'importUpdateAppln','<s:text name="lbl.btn.ok"/>', '', params);
     	});
 		
 		$('.projectUpdate').click(function() {

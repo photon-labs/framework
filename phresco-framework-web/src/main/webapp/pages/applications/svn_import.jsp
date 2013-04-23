@@ -113,11 +113,11 @@
 			<span class="red">* </span> <s:text name='lbl.svn.type' /></label>
 			<div class="controls">
 				<select name="repoType" class="medium" >
-					<option value="<s:text name="lbl.repo.type.bitkeeper"/>" selected><s:text name="lbl.repo.type.bitkeeper"/></option>
+					<option value="bitkeeper" selected><s:text name="lbl.repo.type.bitkeeper"/></option>
 <%-- 					<% if (!FrameworkConstants.FROM_PAGE_ADD.equals(action)) { %> --%>
-					<option value="<s:text name="lbl.repo.type.git"/>"><s:text name="lbl.repo.type.git"/></option>
+					<option value="<s:text name="git"/>"><s:text name="lbl.repo.type.git"/></option>
 <%-- 					<% } %> --%>
-					<option value="<s:text name="lbl.repo.type.svn"/>"><s:text name="lbl.repo.type.svn"/></option>
+					<option value="<s:text name="svn"/>"><s:text name="lbl.repo.type.svn"/></option>
 			    </select>
 			</div>
 		</div>
@@ -469,13 +469,28 @@
 		enableSvnFormDet();
 		// show popup loading icon
 		showPopuploadingIcon();
-		loadContent(getAction(), $('#repoDetails'), '', params, true, true);
+		var pageUrl = getAction();
+		if ($("[name=repoType]").val() == 'svn'&& pageUrl == 'addSVNProject') {
+			$(".yesNoPopupErr").css("width", "58%");
+			$(".yesNoPopupErr").css("margin-left", "28px");
+			$(".yesNoPopupErr").text('do_not_checkin folder will be ignored, if it exists');
+			setTimeout(function() {
+				$(".yesNoPopupErr").empty();
+			}, 1400);
+		}	
+		
+		loadContent(pageUrl, $('#repoDetails'), '', params, true, true);
 	}
 	
 	function checkError(pageUrl, data) {
 		var statusFlag = " ";
+		
+		$(".yesNoPopupErr").css("width", "61%");
+		$(".yesNoPopupErr").css("margin-left", "");
+
 		// hide loading icon
 		hidePopuploadingIcon();
+		
 		if (!data.errorFlag) {
 			$("#errMsg").html(data.errorString);
 		} else if(data.errorFlag) {
@@ -506,6 +521,7 @@
 		} else if ($("[name=repoType]").val() == 'bitkeeper') {
 			actionUrl = action + "BitKeeperProject";
 		}
+
 		return actionUrl;
 	}
 	

@@ -6192,7 +6192,7 @@ color: #313131;
 	margin-left: 29px;
     margin-right: 22px;
 }	
-.del, .cssDel, .add {
+.del, .cssDel, .add, .imagealign {
 	cursor: pointer;
 }
 
@@ -6748,3 +6748,7 @@ color: #313131;
 .config_subTab .th-inner {
 	top: 155px !important;
 }
+
+input, button, select, textarea, label {
+	font-family: 'luxi_sansregular' !important;
+}	

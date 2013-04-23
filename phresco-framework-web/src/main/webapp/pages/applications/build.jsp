@@ -161,7 +161,7 @@
     	confirmDialog($("#deleteButton"), '<s:text name="lbl.hdr.confirm.dialog"/>', '<s:text name="modal.body.text.del.builds"/>', 'deleteBuild','<s:text name="lbl.btn.ok"/>');
     	
     	$('#generateBuild').click(function() {
-    		validateDynamicParam('generateBuild', '<s:text name="label.generatebuild"/>', 'build','<s:text name="lbl.build"/>', '', '<%= Constants.PHASE_PACKAGE %>');
+    		validateDynamicParam('generateBuild', '<s:text name="label.generatebuild"/>', 'build','<s:text name="lbl.btn.ok"/>', '', '<%= Constants.PHASE_PACKAGE %>');
     	});
     	
     	$('#runAgainstSourceStart').click(function() {
@@ -321,25 +321,6 @@
 		params = params.concat(additionalParam);
 		readerHandlerSubmit('deploy', '<%= appId %>', '<%= FrameworkConstants.REQ_FROM_TAB_DEPLOY %>', '', false, params, $("#console_div"));
     }
-	
-	function addRowInPackageBrowse(obj) {
-		var newDiv = $(document.createElement('div')).attr("class", "bldBrowseFileDiv");
-		var existingDiv = $(obj).parent().parent().html();
-		newDiv.append(existingDiv);
-		$('.bldBrowseFilePrntDiv').append(newDiv);
-		$(".minus_icon").show();
-	}
-
-	function removeRowInPackageBrowse(obj) {
-		$(obj).parent().parent().remove();
-		var noOfRows = $('div .bldBrowseFileDiv').size();
-		if (noOfRows > 1) {
-			$(".minus_icon").show();
-		} else {
-			$(".minus_icon").hide();
-		}
-	}
-	
 	
 	function popupOnCancel(obj) {
 		$("#popupPage").modal('hide');
