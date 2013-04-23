@@ -25,7 +25,7 @@
 	<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
 	<meta content="width=device-width" name="viewport">
 	<title>Helios</title>
-	<!-- <link REL="SHORTCUT ICON" HREF="images/favicon.ico"> -->
+	<link REL="SHORTCUT ICON" HREF="images/favicon.ico">
 
 	<!-- basic js -->
 	<script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
