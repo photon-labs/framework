@@ -1524,18 +1524,18 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 			    					float totalTestCases = 0;
 			    	         		for (TestCase testCase: testCases) {
 			    	         			String testCaseStatus = testCase.getStatus();
-										if(testCaseStatus.equalsIgnoreCase("Pass") || testCaseStatus.equalsIgnoreCase("Success")) {
+			    	         			String testId = tstCase.getTestCaseId();
+										String status = tstCase.getStatus();
+			    	         			if(testCaseStatus.equalsIgnoreCase("Pass") && !testCase.getTestCaseId().equalsIgnoreCase(testId)) {
 											totalPass = totalPass + 1;
-										} else if (testCaseStatus.equalsIgnoreCase("Fail") || testCaseStatus.equalsIgnoreCase("Failure")) {
+										} else if (testCaseStatus.equalsIgnoreCase("Fail") && !testCase.getTestCaseId().equalsIgnoreCase(testId)) {
 											totalFail = totalFail + 1;
-										} else if (testCaseStatus.equalsIgnoreCase("notApplicable")) {
+										} else if (testCaseStatus.equalsIgnoreCase("notApplicable") && !testCase.getTestCaseId().equalsIgnoreCase(testId)) {
 											totalNotApplicable = totalNotApplicable + 1;
-										} else if (testCaseStatus.equalsIgnoreCase("blocked")) {
+										} else if (testCaseStatus.equalsIgnoreCase("blocked") && !testCase.getTestCaseId().equalsIgnoreCase(testId)) {
 											totalBlocked = totalBlocked + 1;
 										}
 										
-										String testId = tstCase.getTestCaseId();
-										String status = tstCase.getStatus();
 										if (testCase.getTestCaseId().equals(testId) && !testCase.getStatus().equalsIgnoreCase("Pass") 
 												&& !testCase.getStatus().equalsIgnoreCase("success")
 												&& status.equalsIgnoreCase("Pass") || status.equalsIgnoreCase("success")) {
@@ -1605,17 +1605,18 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 				    					float totalTestCases = 0;
 				    	         		for (TestCase testCase: testCases) {
 				    	         			String testCaseStatus = testCase.getStatus();
-											if(testCaseStatus.equalsIgnoreCase("Pass") || testCaseStatus.equalsIgnoreCase("Success")) {
+				    	         			String testId = tstCase.getTestCaseId();
+											String status = tstCase.getStatus();
+				    	         			if(testCaseStatus.equalsIgnoreCase("Pass") && !testCase.getTestCaseId().equalsIgnoreCase(testId)) {
 												totalPass = totalPass + 1;
-											} else if (testCaseStatus.equalsIgnoreCase("Fail") || testCaseStatus.equalsIgnoreCase("Failure")) {
+											} else if (testCaseStatus.equalsIgnoreCase("Fail") && !testCase.getTestCaseId().equalsIgnoreCase(testId)) {
 												totalFail = totalFail + 1;
-											} else if (testCaseStatus.equalsIgnoreCase("notApplicable")) {
+											} else if (testCaseStatus.equalsIgnoreCase("notApplicable") && !testCase.getTestCaseId().equalsIgnoreCase(testId)) {
 												totalNotApplicable = totalNotApplicable + 1;
-											} else if (testCaseStatus.equalsIgnoreCase("blocked")) {
+											} else if (testCaseStatus.equalsIgnoreCase("blocked") && !testCase.getTestCaseId().equalsIgnoreCase(testId)) {
 												totalBlocked = totalBlocked + 1;
 											}
-											String testId = tstCase.getTestCaseId();
-											String status = tstCase.getStatus();
+											
 											if (testCase.getTestCaseId().equals(testId) && !testCase.getStatus().equalsIgnoreCase("Pass") 
 													&& !testCase.getStatus().equalsIgnoreCase("success")
 													&& status.equalsIgnoreCase("Pass") || status.equalsIgnoreCase("success")) {

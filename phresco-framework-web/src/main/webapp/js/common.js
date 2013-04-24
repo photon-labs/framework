@@ -1568,3 +1568,23 @@ function singingEvent() {
 		$("#zipAlign").val(false);
 	}
 }
+
+function accordionOperation() {
+	/** Accordian starts **/
+	var showContent = 0;	
+    $('.siteaccordion').removeClass('openreg').addClass('closereg');
+    $('.mfbox').css('display','none');
+}
+
+function accordionClickOperation(thisObj) {
+	var _tempIndex = $('.accImg').index(thisObj)
+	$('.mfbox').eq(_tempIndex).slideToggle(300,function() {
+		var image = $(thisObj).attr("src");
+		if (image != "images/r_arrowopen.png") {
+		  	$(thisObj).attr("src","images/r_arrowopen.png");
+		} else {
+			$(thisObj).attr("src","images/r_arrowclose.png");
+		}
+		  
+	});	
+}

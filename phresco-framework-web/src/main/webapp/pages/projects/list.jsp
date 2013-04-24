@@ -80,11 +80,12 @@
 						<div class="accordion_panel_inner">
 							<section class="lft_menus_container">
 								<span class="siteaccordion closereg">
-									<span>
+									<div>
+										<img src="images/r_arrowclose.png" class ="accImg" id="<%= project.getId() %>" onclick="accordionClickOperation(this);">
 										<input type="checkbox" <%= checkedStr %> id="<%= project.getId() %>" class="accordianChkBox" 
 											onclick="checkAllEvent(this, $('.<%= project.getId() %>'), false);"/>
 										<a class="vAlignSub" onclick="editProject('<%= project.getId() %>');"><%= project.getName() %></a>
-									</span>
+									</div>
 								</span>
 								<div class="mfbox siteinnertooltiptxt hideContent">
 									<div class="scrollpanel">
@@ -173,7 +174,7 @@
 </form>
 
 <script type="text/javascript">
-	accordion();//To create the accordion
+	accordionOperation();//To create the accordion
 	
 	confirmDialog($("#deleteBtn"), '<s:text name="lbl.hdr.confirm.dialog"/>', '<s:text name="modal.body.text.del.project"/>', 'deleteProject','<s:text name="lbl.btn.ok"/>');
 	
@@ -182,6 +183,7 @@
 	var recentAppId = '<%= recentAppId %>';
 	if (recentProjectId != undefined && !isBlank(recentProjectId)) {
 		$("#" + recentProjectId).parent().parent().removeClass('closereg').addClass('openreg');
+		$("#" + recentProjectId).attr("src","images/r_arrowopen.png");
 		$("#" + recentProjectId).parent().parent().next('.mfbox').show();
 		$("." + recentProjectId).each(function () {
 			if ($(this).attr("appId") === recentAppId) {

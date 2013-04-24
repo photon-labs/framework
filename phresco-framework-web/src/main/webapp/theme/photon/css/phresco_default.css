@@ -368,6 +368,9 @@ input[type="checkbox"],input[type="radio"] {
 	cursor: pointer;
 }
 
+.feature_checkbox {
+	float: left !important;
+}
 input,select,textarea {
 	-moz-transition: none 0s ease 0s;
 	box-shadow: none;
@@ -4065,7 +4068,6 @@ div.submit_input {
 } 
 
 .siteaccordion {
-    cursor: pointer;
     margin:0px;
     float:left;
     line-height: 25px;
@@ -4174,6 +4176,10 @@ div.submit_input {
 }
 .closereg span a:hover {
 	text-decoration:none !important;
+}
+
+.accImg {
+	 margin: 4px 0 !important;
 }
 
 #reportList {
