@@ -573,6 +573,15 @@
 		
 		JSS.css({
 			
+			'userInfo ul li:nth-child(2):hover, .userInfo ul li:nth-child(3):hover, .userInfo ul li:nth-child(4):hover' : {
+			'background' : "none repeat scroll 0 0 " + menuBackGround + "!important" // user settings background color
+			},
+			
+			'.userInfo ul li' : {
+				'border-bottom' : "1px solid" + brandingColor + "!important",
+				'background' : "none repeat scroll 0 0 " + menufontColor + "!important"
+			},	
+			
 			'.usersettings' : {
 				'background' : "none repeat scroll 0 0 " + brandingColor + "!important" // user settings background color
 			},
@@ -781,20 +790,13 @@
 				'color': buttonColor + "! important"
 			},
 			
-			'.btn-primary': {                                        // button Color                         
-				'background': buttonColor , /* Old browsers */
-				'background': "-moz-linear-gradient(top, "+buttonColor +" 0%, "+buttonGradientColor+" 100%)" ,/* FF3.6+ */
-				'background': "-webkit-gradient(linear, left top, left bottom, color-stop(0%,"+buttonColor +"), color-stop(100%,"+buttonGradientColor+"))", /* Chrome,Safari4+ */
-				'background': "-webkit-linear-gradient(top, "+buttonColor +" 0%,"+buttonGradientColor+" 100%)", /* Chrome10+,Safari5.1+ */
-				'background': "-o-linear-gradient(top, "+buttonColor +" 0%,"+buttonGradientColor+" 100%)", /* Opera 11.10+ */
-				'background': "-ms-linear-gradient(top, "+buttonColor +" 0%,"+buttonGradientColor+" 100%)", /* IE10+ */
-				'background': "linear-gradient(to bottom, "+buttonColor +" 0%,"+buttonGradientColor+" 100%)", /* W3C */
-				'filter': "progid:DXImageTransform.Microsoft.gradient( startColorstr='"+buttonColor +"', endColorstr='"+buttonGradientColor+"',GradientType=0 )" /* IE6-9 */
+			'.btn-primary' : {
+				'background': "none repeat scroll 0 0" +   buttonColor + "! important"
 			},
 			
 			'.btn-primary:hover': {
-				'background': "none repeat scroll 0 0" + buttonColor          // button color when mouse over
-			},
+				'background': "none repeat scroll 0 0" + brandingColor + "! important" // button color when mouse over
+			}, 
 
 			'label': {
 				'color': labelColor + "! important"         // label color 
