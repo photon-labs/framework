@@ -75,6 +75,7 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 		bindUI : function(){
 			var self = this;
 			$(".dyn_popup").hide();
+			$("#applicationedit").css("display", "none");
 			$("#editproject").click(function(){
 				self.onProjectEditEvent.dispatch();
 			});	
@@ -84,7 +85,11 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 				self.onProjectsEvent.dispatch(value);
 			});
 
-
+			$(".tooltiptop").unbind("click");
+			$(".tooltiptop").click(function() {
+				self.opencc(this, $(this).attr('name'));
+			});
+			
 			$("a[name = 'updatesvn']").unbind("click");
 			$("a[name = 'updatesvn']").bind("click",function(){
 				$("#svn_update").show();

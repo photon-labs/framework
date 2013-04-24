@@ -50,6 +50,17 @@ define(["framework/widgetWithTemplate", "configuration/listener/configurationLis
 		 */
 		bindUI : function() {
 			var self = this;
+			
+			$("a[name=clone_pop]").unbind("click");
+			$("a[name=clone_pop]").click(function() {
+				self.opencc(this, $(this).attr('name'));
+			});
+			
+			$("input[name=env_pop]").unbind("click");
+			$("input[name=env_pop]").click(function() {
+				self.opencc(this, $(this).attr('name'));
+			});
+			
 			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;
 		}
 	});

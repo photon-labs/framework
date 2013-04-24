@@ -22,7 +22,7 @@
                         <td name="editApplication" href="#">{{name}}</td>
                         <td>{{description}}</td>
                         <td>{{techInfo.id}}</td>
-                       <td><a onClick="opencc(this,'pdf_report');" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="PDF Report"><img src="../themes/default/images/helios/pdf_icon.png" width="14" height="16" border="0" alt=""></a>
+                       <td><a name="pdf_report" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="PDF Report"><img src="../themes/default/images/helios/pdf_icon.png" width="14" height="16" border="0" alt=""></a>
                   
               <div id="pdf_report" class="dyn_popup">
                 <table width="100%" border="0" cellspacing="0" cellpadding="5">
@@ -64,11 +64,11 @@
              </div> 
                   </td>
                         <td>
-                        <a onClick="opencc(this,'add_repo');" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Add Repo"><img src="../themes/default/images/helios/add_repo_icon.png" width="18" height="15" border="0" alt=""></a> 
+                        <a name="add_repo" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Add Repo"><img src="../themes/default/images/helios/add_repo_icon.png" width="18" height="15" border="0" alt=""></a> 
 
-                        <a onClick="opencc(this,'commit');" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Commit"><img src="../themes/default/images/helios/commit_icon.png" width="16" height="15" border="0" alt=""></a> 
+                        <a name="commit" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Commit"><img src="../themes/default/images/helios/commit_icon.png" width="16" height="15" border="0" alt=""></a> 
 
-                        <a onClick="opencc(this,'svn_update');" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="SVN Update"><img src="../themes/default/images/helios/update_svn_icon.png" width="22" height="15" border="0" alt=""></a>
+                        <a name="svn_update" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="SVN Update"><img src="../themes/default/images/helios/update_svn_icon.png" width="22" height="15" border="0" alt=""></a>
                   
                   
                   <div id="add_repo" class="dyn_popup">
@@ -257,7 +257,7 @@
                     <!--svn_update div ends here -->  
                   </div>
                   </td>
-                  <td><a onClick="opencc(this,'delete_msg');" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Delete Row"><img src="../themes/default/images/helios/delete_row.png" width="14" height="18" border="0" alt=""></a>
+                  <td><a name="delete_msg" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Delete Row"><img src="../themes/default/images/helios/delete_row.png" width="14" height="18" border="0" alt=""></a>
                     <div id="delete_msg" class="dyn_popup">
                       Are you sure to delete this ?
                         <div>

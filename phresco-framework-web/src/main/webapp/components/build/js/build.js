@@ -44,6 +44,22 @@ define(["framework/widgetWithTemplate", "build/listener/buildListener"], functio
 		 */
 		bindUI : function() {
 			var self = this;
+			
+			$("input[name=build_runagsource]").unbind("click");
+			$("input[name=build_runagsource]").click(function() {
+				self.opencc(this, $(this).attr('name'));
+			});
+			
+			$("input[name=build_genbuild]").unbind("click");
+			$("input[name=build_genbuild]").click(function() {
+				self.opencc(this, $(this).attr('name'));
+			});
+			
+			$("input[name=build_minifier]").unbind("click");
+			$("input[name=build_minifier]").click(function() {
+				self.opencc(this, $(this).attr('name'));
+			});
+			
 			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;
 		}
 	});
