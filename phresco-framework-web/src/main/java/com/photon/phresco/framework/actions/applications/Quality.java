@@ -2090,8 +2090,9 @@ public class Quality extends DynamicParameterAction implements Constants {
 			final StringBuilder sb = new StringBuilder(Utility.getProjectHome())
 			.append(appInfo.getAppDirName())
 			.append(manualTestDir);
+			final List<TestSuite> readManualTestSuiteFile; 
 			if (new File(sb.toString()).exists()) {
-				final List<TestSuite> readManualTestSuiteFile = frameworkUtil.readManualTestSuiteFile(sb.toString());
+				readManualTestSuiteFile = frameworkUtil.readManualTestSuiteFile(sb.toString());
 				if (CollectionUtils.isNotEmpty(readManualTestSuiteFile)) {
 					setAllTestSuite(readManualTestSuiteFile);
 					CacheKey key = new CacheKey(appInfo.getTechInfo().getId());
@@ -2117,6 +2118,9 @@ public class Quality extends DynamicParameterAction implements Constants {
 
 				t = new Thread(runnable);
 				t.start();
+			} else {
+				readManualTestSuiteFile = null;
+				setAllTestSuite(readManualTestSuiteFile);
 			}
 		} catch (Exception e) {
 			S_LOGGER.error("Entered into catch block of Quality.fetchManualTestSuites()"+ e);

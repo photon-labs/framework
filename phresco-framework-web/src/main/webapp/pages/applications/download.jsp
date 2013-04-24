@@ -73,7 +73,12 @@
             			}
             		if (serverDownloadUrl) { 
             	%>
-	                <span class="siteaccordion closereg"><span><s:text name="lbl.servers"/></span></span>
+	                <span class="siteaccordion closereg">
+		                <div>
+			                <img src="images/r_arrowclose.png" class ="accImg" id="" onclick="accordionClickOperation(this);">
+			                <s:text name="lbl.servers"/>
+			            </div>
+			        </span>
 	                <div class="mfbox siteinnertooltiptxt downloadContent">
 	                    <div class="scrollpanel">
 	                        <section class="scrollpanel_inner">
@@ -142,7 +147,12 @@
 	        			}
 	        		if (dbDownloadUrl) { 
                 %>
-	                <span class="siteaccordion closereg"><span><s:text name="lbl.database"/></span></span>
+	                <span class="siteaccordion closereg">
+	                	<div>
+	                		<s:text name="lbl.database"/>
+	                		<img src="images/r_arrowclose.png" class ="accImg" id="" onclick="accordionClickOperation(this);">
+	                	</div>
+	                </span>
 	                <div class="mfbox siteinnertooltiptxt downloadContent">
 	                    <div class="scrollpanel">
 	                        <section class="scrollpanel_inner">
@@ -215,7 +225,12 @@
 	        			}
 					if (editorDownloadUrl) {
                 %>
-		                <span class="siteaccordion closereg"><span><s:text name="lbl.editors"/></span></span>
+		                <span class="siteaccordion closereg">
+			                <div>
+		                		<s:text name="lbl.editors"/>
+		                		<img src="images/r_arrowclose.png" class ="accImg" id="" onclick="accordionClickOperation(this);">
+		                	</div>
+		                </span>
 		                <div class="mfbox siteinnertooltiptxt downloadContent">
 		                    <div class="scrollpanel">
 		                        <section class="scrollpanel_inner">
@@ -287,7 +302,12 @@
 							}
 					if (toolsDownloadUrl) {
                 %>
-	                <span class="siteaccordion closereg"><span><s:text name="lbl.tools"/></span></span>
+	                <span class="siteaccordion closereg">
+	                 	<div>
+	                		<s:text name="lbl.tools"/>
+	                		<img src="images/r_arrowclose.png" class ="accImg" id="" onclick="accordionClickOperation(this);">
+	                	</div>
+	                </span>
 	                <div class="mfbox siteinnertooltiptxt downloadContent">
 	                    <div class="scrollpanel">
 	                        <section class="scrollpanel_inner">
@@ -359,7 +379,12 @@
 						}
 				if (othersDownloadUrl) {
                 %>
-	                <span class="siteaccordion closereg"><span><s:text name="lbl.others"/></span></span>
+	                <span class="siteaccordion closereg">
+	                	<div>
+	                		<s:text name="lbl.others"/>
+	                		<img src="images/r_arrowclose.png" class ="accImg" id="" onclick="accordionClickOperation(this);">
+	                	</div>
+	                </span>
 	                <div class="mfbox siteinnertooltiptxt downloadContent">
 	                    <div class="scrollpanel">
 	                        <section class="scrollpanel_inner">
@@ -425,7 +450,7 @@
 </div>
 
 <script type="text/javascript">
-	accordion();//To create the accordion
+	accordionOperation();//To create the accordion
 	
 	//To check whether the device is ipad or not and then apply jquery scrollbar
 	if(!isiPad()) {
@@ -435,4 +460,5 @@
 	$(document).ready(function(){
 		hideLoadingIcon();
 	});
+	
 </script>

@@ -43,7 +43,7 @@
 		</div>
 		<!-- Test-Scenario Name ends -->
 		
-		<!-- Total success starts -->
+		<%-- <!-- Total success starts -->
 		<div class="control-group" id="successControl">
 			 <label class="accordion-control-label labelbold"><s:text name="label.testsuite.success"/></label>
 			<div class="controls">
@@ -88,7 +88,7 @@
 					title="<s:text name="title.20.chars"/>">
 				<span class="help-inline" id="testCoverageError"></span>
 			</div>
-		</div>
+		</div> --%>
 		<!--  Total Coverage ends -->
 		<div class="actions">
 			<input type="button" id="createTestSuite" value="<s:text name="lbl.save"/>" class="btn btn-primary">

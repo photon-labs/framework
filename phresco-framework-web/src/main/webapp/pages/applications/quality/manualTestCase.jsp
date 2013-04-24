@@ -69,14 +69,14 @@
 		</ul>
 	</div>
 	<div class="icon_fun_div printAsPdf" style="margin-top: -35px;">
-		<!-- <a href="#" id="pdfPopup" >
-			<img id="pdfCreation" src="images/icons/print_pdf.png" title="Generate pdf" style="height: 20px; width: 20px;"/>
-		</a> -->
-		<a href="#" id="openFolder">
-			<img id="folderIcon" src="images/icons/open-folder.png" title="Open folder"/>
-		</a>
-		<a href="#" id="copyPath"><img src="images/icons/copy-path.png" title="Copy path"/></a>
-	</div>
+			<!-- <a href="#" id="pdfPopup" >
+				<img id="pdfCreation" src="images/icons/print_pdf.png" title="Generate pdf" style="height: 20px; width: 20px;"/>
+			</a> -->
+			<a href="#" id="openFolder">
+				<img id="folderIcon" src="images/icons/open-folder.png" title="Open folder"/>
+			</a>
+			<a href="#" id="copyPath"><img src="images/icons/copy-path.png" title="Copy path"/></a>
+		</div>
 	<div class="" id="graphicalView" style="padding-left: 15px; display:none; text-align: center;">
 		<canvas id="bar" width="620" height="400">[No canvas support]</canvas>               
 	</div>
@@ -130,6 +130,9 @@
    				</div>
 			</div>
 		</div>
+		<div id ="errorDiv" class="alert alert-message block-message warning hideContent">
+			<center class="noData"><s:text name="lbl.no.manual.testsuites"/></center>
+		</div>
 		<div class="table_div_manual qtyTable_view" id="testCaseTable" style="width:99%; overflow: auto;">
            	<div class="fixed-table-container responsiveFixedTableContainer qtyFixedTblContainer">
       			<div class="header-background"> </div>
@@ -166,6 +169,9 @@
 					</div>
    				</div>
 			</div>
+		</div>
+		<div id ="errorDivForTestCase" class="alert alert-message block-message warning hideContent">
+			<center class="noData"><s:text name="lbl.no.manual.testcases"/></center>
 		</div>
 </form>		
 <script>
@@ -311,7 +317,7 @@ $(document).ready(function() {
 	function successEvent(pageUrl, data) {
 		if (pageUrl == "runManualTest" || pageUrl == "manualTestCases") {
 			hideLoadingIcon();
-			if ((data != undefined || !isBlank(data))) {
+			if ((data.allTestSuite != undefined || !isBlank(data.allTestSuite))) {
 				allValues = data;
 				$('#testSuite').empty();
 				$('#testSuite').append($("<option></option>").attr("value", "All").text("All"));
@@ -320,10 +326,13 @@ $(document).ready(function() {
 					fillOptions($('#testSuite'),data.allTestSuite[i].name, data.allTestSuite[i].name);
 				}
 				allReports();
+			} else {
+				$('#errorDiv').removeClass('hideContent');
+				$('#addTest').hide();
 			}		
 		} else if(pageUrl == "readManualTestCases") {
 			hideLoadingIcon();
-			if ((data != undefined || !isBlank(data))) {
+			if ((data.allTestCases != undefined || !isBlank(data.allTestCases))) {
 				allTestCases = data;
 				$('#testCaseTable').show();
 				$('#testCasesList').empty();
@@ -337,6 +346,9 @@ $(document).ready(function() {
 							"<td class='sixthVal'>"+data.allTestCases[i].bugComment+"</td>")
 				 	newTestCaseRow.appendTo("#testCasesList");	
 				}
+			} else {
+				$('#testCaseTable').hide();
+				$('#errorDivForTestCase').removeClass('hideContent');
 			}
 		}
 		

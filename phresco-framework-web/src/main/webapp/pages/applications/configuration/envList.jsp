@@ -82,11 +82,12 @@
 				<section class="accordion_panel_wid">
 					<div class="accordion_panel_inner">
 						<section class="lft_menus_container">
-							<span class="siteaccordion closereg">
-								<span>
+							<span class="siteaccordion">
+								<div>
+									<img src="images/r_arrowclose.png" class ="accImg" id="<%=env.getName() %>" onclick="accordionClickOperation(this);">
 									<input type="checkbox" value='<%= envJson %>' id="<%=env.getName() %>" <%= checkedStr %> class="accordianChkBox" name="checkEnv" onclick="checkAllEvent(this,$('.<%=env.getName() %>'), false);"/>
 									<a class="vAlignSub"><%= env.getName() %></a>
-								</span>
+								</div>
 							</span>
 							<div class="mfbox siteinnertooltiptxt hideContent">
 								<div class="scrollpanel">
@@ -201,7 +202,7 @@
 		
 		hideLoadingIcon();//To hide the loading icon
 		hideProgressBar();
-		accordion();
+		accordionOperation();
 		deleteButtonStatus();
 		
 		$('.mfbox').find("input[type='checkbox']").change(function() {
