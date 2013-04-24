@@ -112,6 +112,7 @@ public class Applications extends FrameworkBaseAction {
     private String customerId = "";
     private String projectId = "";
     private String appId = "";
+    private String pomVersion ="";
 
     public String loadMenu() {
         if (s_debugEnabled) {
@@ -246,6 +247,10 @@ public class Applications extends FrameworkBaseAction {
             List<WebService> webServices = getServiceManager().getWebServices();
             setReqAttribute(REQ_WEBSERVICES, webServices);
             setReqAttribute(REQ_APP_ID, getAppId());
+            FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+            PomProcessor processor = frameworkUtil.getPomProcessor(getApplicationInfo().getAppDirName());
+            setPomVersion(processor.getModel().getVersion());
+            setReqAttribute(REQ_POM_VERSION, getPomVersion());
         } catch (PhrescoException e) {
         	return showErrorPopup(e, EXCEPTION_APPLICATION_EDIT);
         }
@@ -1334,6 +1339,14 @@ public class Applications extends FrameworkBaseAction {
 
 	public String getLogMessage() {
 		return logMessage;
+	}
+	
+	public String getPomVersion() {
+		return pomVersion;
+	}
+
+	public void setPomVersion(String pomVersion) {
+		this.pomVersion = pomVersion;
 	}
 
 }

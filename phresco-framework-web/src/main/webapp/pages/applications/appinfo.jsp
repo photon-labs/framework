@@ -42,6 +42,7 @@
 	ProjectInfo projectInfo = (ProjectInfo) session.getAttribute(appId + FrameworkConstants.SESSION_APPINFO);
 	List<WebService> webservices = (List<WebService>)request.getAttribute(FrameworkConstants.REQ_WEBSERVICES);
 	String appDir = (String) request.getAttribute(FrameworkConstants.REQ_OLD_APPDIR);
+	String pomVersion = (String) request.getAttribute(FrameworkConstants.REQ_POM_VERSION);
 	ApplicationInfo webLayerAppInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_WEB_LAYER_APPINFO);
 	boolean hasServer = (Boolean) request.getAttribute(FrameworkConstants.REQ_TECH_HAS_SERVER);
 	boolean hasDb = (Boolean) request.getAttribute(FrameworkConstants.REQ_TECH_HAS_DB);
@@ -158,7 +159,7 @@
 		    <div class="controls">
 				<input class="input-xlarge" id="applicationVersion" placeholder="<s:text name="place.hldr.app.edit.version"/>"
 					name="applicationVersion" maxlength="20" title="<s:text name="title.20.chars"/>"
-					type="text"  value ="<%= StringUtils.isNotEmpty(version) ? version : "1.0" %>"/>
+					type="text"  value ="<%= pomVersion %>"/>
 					<span class="help-inline" id="applicationVersionError"></span>
 		    </div>
 		</div>
