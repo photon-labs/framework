@@ -41,6 +41,8 @@
 	List<Value>  testAgainstPsblVals= (List<Value>) request.getAttribute(FrameworkConstants.REQ_TEST_AGAINST_VALUES);
 	String showDevice = (String) request.getAttribute(FrameworkConstants.SHOW_ANDROID_DEVICE);
 	String path = (String) request.getAttribute(FrameworkConstants.PATH);
+	String requestIp = (String) request.getAttribute(FrameworkConstants.REQ_REQUEST_IP);
+    String showOpenFolderIcon = (String) session.getAttribute(requestIp);
 %>
 
 <style>
@@ -74,7 +76,9 @@
 	    <input id="performanceTest" type="button" value="<s:text name='lbl.test'/>" class="btn btn-primary">
 	    <div class="perOpenAndCopyPath">
 	    	<a href="#" id="pdfPopup" style="display: none;"><img id="pdfCreation" src="images/icons/print_pdf.png" title="generate pdf" style="height: 20px; width: 20px;"/></a>
-			<a href="#" id="openFolder"><img id="folderIcon" src="images/icons/open-folder.png" title="Open folder"/></a>
+	    	<% if (Boolean.parseBoolean(showOpenFolderIcon))  {%>
+				<a href="#" id="openFolder"><img id="folderIcon" src="images/icons/open-folder.png" title="Open folder"/></a>
+			<% } %>	
 			<a href="#" id="copyPath"><img src="images/icons/copy-path.png" title="Copy path"/></a>
 		</div>&nbsp;
 		

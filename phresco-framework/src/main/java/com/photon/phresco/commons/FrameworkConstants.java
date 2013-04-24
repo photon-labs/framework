@@ -826,6 +826,7 @@ public interface FrameworkConstants {
     String REQ_KEY_SUCCESS_EMAILS = "successEmails";
     String REQ_KEY_FAILURE_EMAILS = "failureEmails";
     String REQ_SERVER_LOG = "serverLog";
+    String REQ_REQUEST_IP = "requestIp";
     String REQ_LOG_FILE_EXISTS = "logFilexists";
     String REQ_REPORT_CRISP="crisp";
     String REQ_REPORT_DETAILED="detail";

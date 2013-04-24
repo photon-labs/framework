@@ -40,6 +40,8 @@
 	//Must be Removed
 	Boolean popup = Boolean.FALSE;
 	String path = (String) request.getAttribute(FrameworkConstants.PATH); 
+	String requestIp = (String) request.getAttribute(FrameworkConstants.REQ_REQUEST_IP);
+    String showOpenFolderIcon = (String) session.getAttribute(requestIp);
 %>
 
 
@@ -63,7 +65,9 @@
 		<input id="loadTestBtn" type="button" value="<s:text name="label.test"/>" class="btn btn-primary env_btn" additionalParam="from=load">
         <div class="icon_fun_div printAsPdf">
         	<a href="#" id="pdfPopup" style="display: none;"><img id="pdfCreation" src="images/icons/print_pdf.png" title="generate pdf" style="height: 20px; width: 20px;"/></a>
-			<a href="#" id="openFolder"><img id="folderIcon" src="images/icons/open-folder.png" title="Open folder" /></a>
+        	<% if (Boolean.parseBoolean(showOpenFolderIcon))  {%>
+				<a href="#" id="openFolder"><img id="folderIcon" src="images/icons/open-folder.png" title="Open folder" /></a>
+			<% } %>	
 			<a href="#" id="copyPath"><img src="images/icons/copy-path.png" title="Copy path"/></a>
 		</div>
 		 

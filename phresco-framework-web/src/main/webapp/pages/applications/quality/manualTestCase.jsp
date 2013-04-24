@@ -36,7 +36,9 @@
 	ApplicationInfo appInfo = (ApplicationInfo)request.getAttribute(FrameworkConstants.REQ_APPINFO);
 	String appDirName = appInfo.getAppDirName();
 	String path = (String) request.getAttribute(FrameworkConstants.PATH);
-
+	String requestIp = (String) request.getAttribute(FrameworkConstants.REQ_REQUEST_IP);
+    String showOpenFolderIcon = (String) session.getAttribute(requestIp);
+	
 %>
 <form id="manualTestCases" class="marginBottomZero" style="height: 114%;overflow-x: hidden;overflow-y: hidden	;margin-top: 1px;">
 	<div>
@@ -73,9 +75,11 @@
 			<!-- <a href="#" id="pdfPopup" >
 				<img id="pdfCreation" src="images/icons/print_pdf.png" title="Generate pdf" style="height: 20px; width: 20px;"/>
 			</a> -->
-			<a href="#" id="openFolder">
-				<img id="folderIcon" src="images/icons/open-folder.png" title="Open folder"/>
-			</a>
+			<% if (Boolean.parseBoolean(showOpenFolderIcon))  {%>
+				<a href="#" id="openFolder">
+					<img id="folderIcon" src="images/icons/open-folder.png" title="Open folder"/>
+				</a>
+			<% } %>	
 			<a href="#" id="copyPath"><img src="images/icons/copy-path.png" title="Copy path"/></a>
 		</div>
 	<div class="" id="graphicalView" style="padding-left: 15px; display:none; text-align: center;">

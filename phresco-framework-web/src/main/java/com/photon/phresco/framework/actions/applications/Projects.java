@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -122,6 +123,7 @@ public class Projects extends FrameworkBaseAction {
         }
         
         try {
+        	showOpenFolderIcon();//method to determince whether to show/hide open folder icon
             ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
             List<ProjectInfo> projects = projectManager.discover(getCustomerId());
             if (CollectionUtils.isNotEmpty(projects)) {
@@ -149,6 +151,23 @@ public class Projects extends FrameworkBaseAction {
 
         return APP_LIST;
     }
+    
+    private void showOpenFolderIcon() throws PhrescoException {
+		try {
+			String requestIp = getHttpRequest().getRemoteAddr();
+			InetAddress byName = InetAddress.getByName(requestIp);
+			String nameFromRequest = byName.getHostName();
+
+			String localmachine = "false";
+			if (LOCALHOST.equalsIgnoreCase(nameFromRequest)) {
+				localmachine = "true";
+			}
+
+			setSessionAttribute(requestIp, localmachine);
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+	}
     
     private void setRecentProjectIdInReq() throws PhrescoException {
         FileReader reader = null;
