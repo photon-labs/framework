@@ -764,16 +764,7 @@
 				params = params.concat("&appLayerInfos=");
 				params = params.concat(appLayerInfos);
 			}	
-			
-			<% if (hasAppLayer) { %>	
-				if (($("input[class='appLayerProjName']").val().length > 0)) {
-					params = params.concat("&appId=");
-					params = params.concat("true"); 
-				} else {
-					params = params.concat("&appId=");
-					params = params.concat("false"); 
-				}
-			<% } %>
+				params = checkForAppCodeId(params);
 			validate('createProject', $('#formCreateProject'), $("#container"), params, '<s:text name='progress.txt.add.proj'/>');
 		});
 		
@@ -800,14 +791,7 @@
 				});
 				params = params.concat("&appLayerInfos=");
 				params = params.concat(appLayerInfos);
-				
-				if(($("input[class='appLayerProjName']").val().length > 0)) {
-					params = params.concat("&appId=");
-					params = params.concat("true"); 	
-				} else {
-					params = params.concat("&appId=");
-					params = params.concat("false"); 
-				}
+				params = checkForAppCodeId(params);
 			}	
 			validate('updateProject', $('#formCreateProject'), $("#container"), params, '<s:text name='progress.txt.update.proj'/>');
 		});
@@ -955,4 +939,20 @@
 			} 
 		});
 	}
+	
+	//Check for App Code Id
+	 function checkForAppCodeId(params) {
+		var hasAppCodeId;
+		 if(($("input[class='appLayerProjName']").val().length > 0)) {
+			 	hasAppCodeId = true;
+				params = params.concat("&hasAppCodeId=");
+				params = params.concat(hasAppCodeId); 
+
+		} else {
+				hasAppCodeId = false;
+				params = params.concat("&hasAppCodeId=");
+				params = params.concat(hasAppCodeId); 
+		}
+		 return params;
+	 }
 </script>

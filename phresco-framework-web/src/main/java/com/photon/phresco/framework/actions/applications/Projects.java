@@ -728,7 +728,8 @@ public class Projects extends FrameworkBaseAction {
 	        
         boolean hasError = false;
         boolean hasMobLayer=false;
-    	
+        boolean hasAppCodeId = Boolean.valueOf(getReqParameter(REQ_APP_CODE_ID));
+        
         if (FROM_PAGE_EDIT.equals(getFromTab())||FROM_PAGE_ADD.equals(getFromTab())) {
   	       	//check project name is already exists or not
         	if (FROM_PAGE_ADD.equals(getFromTab())) {
@@ -767,12 +768,13 @@ public class Projects extends FrameworkBaseAction {
   	            for (String layerTypeId : getLayer()) {
   	                String techId = getReqParameter(layerTypeId + REQ_PARAM_NAME_TECHNOLOGY);
   	                if (LAYER_APP_ID.equals(layerTypeId) && StringUtils.isEmpty(techId)) {
-						if (getReqParameter("appId").equals("false")) {
-							setAppTechError(getText(ERROR_APP_CODE_MISSING));
-						} else {
+						if (hasAppCodeId) {
 							setAppTechError(getText(ERROR_SELECT_TECHNOLOGY));
+						} else {
+							setAppTechError(getText(ERROR_APP_CODE_MISSING));
 						}
 	                }
+  	               
   	                
   	                if (LAYER_WEB_ID.equals(layerTypeId) && StringUtils.isEmpty(techId)) {
                         setWebTechError(getText(ERROR_TECHNOLOGY));
@@ -800,7 +802,7 @@ public class Projects extends FrameworkBaseAction {
   	                        for (String techGroupId : techGroupIds) {//empty validation for technology in the selected technology group
   	                            techId = getReqParameter(techGroupId + REQ_PARAM_NAME_TECHNOLOGY);
   	                            if (StringUtils.isEmpty(techId)) {
-  	                                setMobTechError(getText(ERROR_LAYER));
+  	                                setMobTechError(getText(ERROR_TYPE));
   	                                hasError = true;
   	                                break;
   	                            }

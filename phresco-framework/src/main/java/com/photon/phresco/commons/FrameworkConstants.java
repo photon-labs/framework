@@ -121,6 +121,7 @@ public interface FrameworkConstants {
     String REQ_PARAM_NAME_TECH_GROUP = "TechGroup";
     String REQ_PARAM_NAME_TECHNOLOGY = "Technology";
     String REQ_APP_LAYER_INFOS = "appLayerInfos";
+    String REQ_APP_CODE_ID = "hasAppCodeId";
     String REQ_PARAM_NAME_TECH__ID = "techId";
     String REQ_PARAM_NAME_VERSION = "Version";
     String REQ_PARAM_NAME_PHONE = "Phone";
@@ -1242,6 +1243,7 @@ public interface FrameworkConstants {
     String ERROR_DB_MISSING = "err.db.missing";
     String ERROR_WS_MISSING = "err.ws.missing";
     String ERROR_LAYER = "err.msg.empty.layer";
+    String ERROR_TYPE = "err.msg.empty.type";
     String ERROR_TECHNOLOGY = "err.msg.empty.technology";
     String ERROR_SELECT_TECHNOLOGY ="err.msg.select.technology";
     String ERROR_ENV = "err.msg.empty.environment";
