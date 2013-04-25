@@ -14,6 +14,7 @@ define(["framework/widget", "common/loading", "header/api/headerAPI", "login/log
 		doLogout : function(){
 			this.clearSession();
 			Clazz.navigationController.jQueryContainer = commonVariables.basePlaceholder;
+			$(Clazz.navigationController.jQueryContainer).children().remove();
 			
 			var loginView = new Clazz.com.components.login.js.Login();
 			loginView.loadPage();

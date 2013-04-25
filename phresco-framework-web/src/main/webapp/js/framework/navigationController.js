@@ -114,7 +114,6 @@ define(["framework/base", "framework/animationProvider"], function() {
 			},
 			
 			push : function(view, bCheck) {
-			
 				var self = this;
 				
 				// create top element for pushing
@@ -124,9 +123,8 @@ define(["framework/base", "framework/animationProvider"], function() {
 				newDiv.addClass("widget-maincontent-div");
 				
 				$(self.jQueryContainer).append(newDiv);
-				
-				if(bCheck) {
 
+				if(bCheck) {
 					view.doMore = function(element) {
 						var animationProviderMain = new Clazz.AnimationProvider( {
 							isNative: self.isNative,
