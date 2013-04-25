@@ -129,7 +129,7 @@
 																		</a>
 																	</td>
 																	<td class="no-left-bottom-border table-pad">
-																		<%= project.getDescription() %>
+																		<%= StringUtils.isNotEmpty(appInfo.getDescription()) ? appInfo.getDescription() : "" %>
 																	</td>
 																	<td class="no-left-bottom-border table-pad">
 																		<%= projectsObj.getTechNamefromTechId(appInfo.getTechInfo().getId()) %>

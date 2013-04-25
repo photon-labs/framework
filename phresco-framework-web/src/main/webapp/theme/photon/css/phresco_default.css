@@ -6750,3 +6750,7 @@ color: #313131;
 	height: 101%; 
 	overflow: auto;
 }
+
+#updateMsg a {
+	color : #000000;
+}
