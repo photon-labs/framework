@@ -555,9 +555,17 @@
 		if (noOfVisibleChildrens < noOfChildrens) {
 			var individualWidth = 575/5;
 			var newWidth = individualWidth * noOfVisibleChildrens;
-			$(".headerInnerTop ul").css("width", newWidth + 25);
+			if ($.browser.safari) {
+				$(".headerInnerTop ul").css("width", newWidth + 40);
+	    	} else {
+	    		$(".headerInnerTop ul").css("width", newWidth + 15);
+	    	}
 		} else {
-			$(".headerInnerTop ul").css("width", "575");
+			if ($.browser.safari) {
+				$(".headerInnerTop ul").css("width", "600");
+	    	} else {
+	    		$(".headerInnerTop ul").css("width", "575");
+	    	}
 		}
 		$('a[name="headerMenu"]').each(function() {
    			if ($(this).hasClass('active')) {
