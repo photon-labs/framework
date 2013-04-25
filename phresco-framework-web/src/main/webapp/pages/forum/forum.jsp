@@ -110,7 +110,6 @@
 		
 		var sourceUrl = '<%= jForumUrl %>';
 		sourceUrl = sourceUrl.concat("&" + cssTheme);
-		console.info("sourceurl = " + sourceUrl);
 		$("iframe").attr({
             src: sourceUrl
         });
