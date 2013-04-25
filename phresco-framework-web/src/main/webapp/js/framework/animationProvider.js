@@ -37,7 +37,7 @@ require(["framework/base"], function() {
 					container.animate({
 						  left: "-=1250px"
 					}, {
-						duration : 1000, 
+						duration : 500, 
 						complete: function() {
 							callback(container);
 						}		
@@ -102,12 +102,12 @@ require(["framework/base"], function() {
 			fadeIn : function(callback) {
 				var container =  $(this.container);
 				if(!this.isNative) {
-					container.css({ opacity: 0.3 });
+					container.css({ opacity: 0 });
 					
 					container.animate({
 						  opacity: 1
 					}, {
-						duration : 900, 
+						duration : 2400, 
 						complete: function() {
 							callback(container);
 						}		
@@ -125,7 +125,7 @@ require(["framework/base"], function() {
 					container.css({ opacity: 1 });
 					
 					container.animate({
-						opacity: 0.0
+						opacity: 0
 					}, {
 						duration : 900, 
 						complete: function() {

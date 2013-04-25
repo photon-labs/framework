@@ -1,0 +1,15 @@
+{
+    "info":{
+        "widgetId":"201",
+        "widgetName":"dynamicPage"
+    },
+    "components":{
+        "login":{
+            "moduleName":"dynamicPage",
+            "host":"http://localhost",
+            "port":"2020"
+        }
+    },
+	
+	"theme" : "default"
+}

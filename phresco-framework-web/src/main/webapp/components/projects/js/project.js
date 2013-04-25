@@ -72,6 +72,9 @@ define(["framework/widgetWithTemplate", "projects/listener/projectsListener"], f
 			$(".content_end input").bind('click', function(){
 				self.onAddLayerEvent.dispatch($(this));
 			});
+			
+			self.projectsListener.addLayersEvent();
+			self.projectsListener.removeLayersEvent();
 		}
 	});
 

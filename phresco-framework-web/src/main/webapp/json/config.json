@@ -8,7 +8,7 @@
 	},
 	
 	"navigation" : {
-		"transitionType" : 7,
+		"transitionType" : 1,
 		"isNative" : false
 	},
 
@@ -61,6 +61,11 @@
 		"configuration" : {
 			"moduleName":"configuration",
 			"path" : "../components/configuration/js"
+		},
+		
+		"dynamicPage" : {
+			"moduleName":"dynamicPage",
+			"path" : "../components/dynamicPage/js"
 		},
 		
 		"build" : {

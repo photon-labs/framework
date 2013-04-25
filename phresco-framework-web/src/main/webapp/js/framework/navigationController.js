@@ -123,7 +123,6 @@ define(["framework/base", "framework/animationProvider"], function() {
 				// add absolute positioning
 				newDiv.addClass("widget-maincontent-div");
 				
-				$(self.jQueryContainer).children().remove();
 				$(self.jQueryContainer).append(newDiv);
 				
 				if(bCheck) {
@@ -155,6 +154,7 @@ define(["framework/base", "framework/animationProvider"], function() {
 							animationProviderSub.animate(self.pushAnimationTypeForGoingOut, function(container) {
 								container.hide();
 								container.css("z-index", 3);
+								$(container).remove();
 							});
 						}
 						
