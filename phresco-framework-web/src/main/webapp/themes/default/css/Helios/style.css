@@ -49,7 +49,7 @@ header, aside, figure, footer, ul, li {
 .flt_left { float:left; }
 .flt_right { float:right; }
 .clear { clear:both; line-height:0; height:0; }
-
+.widget-maincontent-div{position: absolute; display: block; left: 0; width: 100%;}
 .btn_style {
 	padding: 6px 12px !important;
 	background: #ef7b43 !important;
@@ -76,95 +76,7 @@ header, aside, figure, footer, ul, li {
 
 sup { color:#FF0000; }
 
-/*=== Loading ===*/
-.widget-mask-main,.widget-mask-mid-content{
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    display: none;
-    background-color: rgba(0, 0, 0, .35);
-    z-index: 1000 !important;
-}
-.widget-mask-main {
-	  position: fixed;
-}
-
-.widget-loading-main,.widget-loading-partial{
-    display: block;
-    top: 0;
-    position: absolute;
-    height: 100%;
-	background-color: rgba(0, 0, 0, .35);
-    /*background-color: rgba(0, 0, 0, .5);*/
-}
-
-.widget-loading-main {
-	  width: 100%;
-}
-
-.widget-loading-partial {
-	width: 100%;
-}
-
-.widget-loading-image,.widget-loading-image-account-activity {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin: -50px 0 0 -50px;
-    height: 100px;
-    width: 100px;
-    white-space: nowrap;
-    overflow: hidden;
-    -webkit-mask-image: url(../../images/helios/spinner.png);
-	background-image : url(../../images/helios/spinner.png);
-  /*  background-color: #fff; */
-    -webkit-animation-name: spinnerRotate;
-    -webkit-animation-duration: 2s;
-    -webkit-animation-iteration-count: infinite;
-    -webkit-animation-timing-function: linear;
-	-moz-animation-name: spinnerRotate;
-    -moz-animation-duration: 2s;
-    -moz-animation-iteration-count: infinite;
-    -moz-animation-timing-function: linear;
-}
-
-@-webkit-keyframes spinnerRotate {from { -webkit-transform:rotate(0deg);
-}
-to {
-    -webkit-transform: rotate(360deg);
-}
-}
-
-@-moz-keyframes spinnerRotate {from { -moz-transform:rotate(0deg);
-}
-to {
-    -moz-transform: rotate(360deg);
-}
-}
-.error_text {
-	color: #ffffff !important;
-	background-color: #FC8986 !important;
-}
-
-.facet_bdate {
-	right: 673px !important;
-}
-.startdate {
-    margin-top: 5px;
-    position: absolute;
-    left: 298px;
-}
-.btnClsshow{
-	display: block !important;
-}
-.btnClshide{
-	display: none !important;
-}
-
-/*=== End of Loading ===*/
+div, button, img { outline:none; }
 
 /* *************************************************************************** LOGIN PAGE STYLES ************************************************************************** */
 
@@ -229,19 +141,6 @@ to {
 	border: 1px solid #e3e3e3;
 	background: #ffffff;
 }
-
-.loginuser_error {
-	color: red;
-	border: 1px solid red;
-	background: #ffffff;
-}
-
-.loginuser_error .logintext input {
-	background: #FC8986;
-	color: #ffffff !important;
-}
-
-
 .loginimg {
 	width: 55px;
 	height: 40px;
@@ -284,22 +183,6 @@ to {
 .loginshadow {
 	width:534px;
 	margin:2px auto auto auto;
-}
-
-.login_title {
-    font-size: 18px;
-    font-weight: bold;
-    padding-bottom: 12px;
-    text-transform: uppercase;
-	float: left;
-	width: 125px;
-}
-
-.login_error_msg {
-	float: right;
-	color: red;
-	font-size: 14px;
-	font-weight: bold;
 }
 
 /* *************************************************************************** HACK FOR CROME BROWSER ************************************************************************** */
@@ -645,6 +528,8 @@ ul.nav li.dropdown:hover > .test_options{
 	color:#e15432;
 	font-size:15px;
 	font-weight:bold;
+	border-top:1px solid #DDD;
+	border-bottom:1px solid #DDD;
 }
 
 .table_border tr.proj_title td img {
@@ -691,6 +576,21 @@ ul.nav li.dropdown:hover > .test_options{
 	word-wrap: break-word; word-break: break-all; white-space: -moz-pre-wrap !important; white-space: -o-pre-wrap;
 }
 
+#add_repo input[type="checkbox"] {
+	margin: -2px 0 0 20px !important;
+	width: 20px;
+}
+
+#add_repo input[type="text"], #add_repo textarea  {
+	width: 150px;
+	margin-left: 20px;
+}
+
+#add_repo select {
+	width: 164px;
+	margin-left: 20px;
+}
+
 .commit_data {
 	height: 400px;
 	overflow-y: auto;
@@ -720,8 +620,18 @@ ul.nav li.dropdown:hover > .test_options{
 .commit_data table:last-child tr td, #svn_update table tr td, #add_repo table tr td {
 	padding: 2px !important;
 }
+.ui_switch {
+	height:18px !important;
+}
+.adv_ui {
+	color: #ffffff;
+}
 
 /* ******************************************************************* CSS related to create project page ********************************************************************** */
+
+.create_proj {
+	padding-bottom:62px !important;
+}
 
 .create_proj table tr td input[type=text], .create_proj select {
 	margin-bottom:0px;
@@ -740,6 +650,7 @@ ul.nav li.dropdown:hover > .test_options{
 	vertical-align:middle;	
 	color: #747474;
 	text-align:left;
+	border:none;
 }
 
 .create_proj table tbody tr:nth-child(-n+3) td {
@@ -819,6 +730,10 @@ ul.nav li.dropdown:hover > .test_options{
 	vertical-align: top !important;	
 }
 
+.text_right {
+	text-align:right !important;
+}
+
 /* *************************************************************************** CSS for Quality selection dropdown ************************************************************************** */
 
 .title_nav .cust_sel ul li a {
@@ -895,7 +810,7 @@ ul.nav li.dropdown:hover > .test_options{
 }
 
 .features_box {
-	width:32%;
+	width:98%;
 	margin-right:1.8%;
 }
 
@@ -950,7 +865,6 @@ ul.nav li.dropdown:hover > .test_options{
 
 .features_box .box_div ul li span {
 	margin-right:12px;
-	margin-top: 14px;
 }
 
 .features_box h1 {
@@ -964,7 +878,7 @@ ul.nav li.dropdown:hover > .test_options{
 }
 .settings_icon {
 	float:right;
-	margin:14px 0 0 0 !important;	
+	margin:0px !important;	
 	padding:0 !important;
 	line-height:38px;
 }
@@ -1121,6 +1035,7 @@ ul.nav li.dropdown:hover > .test_options{
 	background: #ffffff;
 	border-radius: 6px;
 	padding: 10px;
+	font-size:12px;
 }
 
 
@@ -1384,11 +1299,9 @@ ul.nav li.dropdown:hover > .test_options{
 	margin:0 8px;
 	color:#c09853;
 	font-size:13px;
-	overflow-y:auto;
 }
 
 .build_info {
-	width:40.2%;
 	height:100%;
 	float:left;
 	border: 1px solid #ddd;
@@ -1398,12 +1311,16 @@ ul.nav li.dropdown:hover > .test_options{
 }
 
 .build_progress {
-	width:59%;
+	width: 56%;
+	position:fixed;
+	right: 10px;
 	height:100%;
 	float:right;
+	top: auto !important;
 	border: 1px solid #ddd;
 	border-radius: 6px;
 	background:#f7f7f7;
+	z-index: -1;
 }
 
 .build_info table,.build_progress table {
@@ -1421,6 +1338,10 @@ ul.nav li.dropdown:hover > .test_options{
 #build_genbuild .table:first-child input[type="text"], #build_runagsource .table:first-child input[type="text"]{
 	width:178px;
 	margin:0;
+}
+
+#build_runagsource .table:first-child tr td {
+	padding: 2px !important;
 }
 
 #build_genbuild .table:first-child th, #build_genbuild .table:first-child td, #build_runagsource .table:first-child th, #build_genbuild .table:first-child td{
@@ -1486,6 +1407,16 @@ ul.nav li.dropdown:hover > .test_options{
 	cursor:move;
 }
 
+.build_close {
+	position: fixed;
+	margin: 38px 0 0 5px;
+	z-index:-1;
+}
+
+.dyn_popup  input[value="Browse"] {
+	margin-left: 10px !important;	
+}
+
 /* *************************************************************************** STYLES FOR CONFIGUARATION PAGE ************************************************************************** */
 
 .env_border {
@@ -1509,6 +1440,7 @@ ul.nav li.dropdown:hover > .test_options{
 .env_border ul li {
 	border-bottom:1px solid #d8d8d8;
 	padding:5px 0 5px 10px;
+	font-size:12px;
 }
 .env_border ul li:last-child {
 	border-bottom:none;
@@ -1577,9 +1509,21 @@ ul.nav li.dropdown:hover > .test_options{
 .clonetable select {
 	margin: 0!important;
 }
-
+.clonetable {
+	margin-bottom: 6px;
+}
 .table_border table.deploy_pop td {
 	padding:3px 0 !important;
+}
+
+.def_pop {
+	width:49.7%;
+	border-right:1px solid #d8d8d8;
+	float:left;
+}
+.environ_pop {
+	width:50%;
+	float:right;
 }
 
 
@@ -1591,4 +1535,9 @@ ul.nav li.dropdown:hover > .test_options{
 
 .settings_add {
 	margin-top: -2px !important;
+}
+
+.fix_height {
+	max-height: 150px;
+	overflow-y: auto;
 }
