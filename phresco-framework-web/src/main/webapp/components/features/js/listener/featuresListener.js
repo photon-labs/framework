@@ -41,7 +41,7 @@ define(["framework/widget", "features/api/featuresAPI", "application/application
 				});					
 			}
 			else {
-				$("#"+divId+" ul").show();
+				$("#"+divId+" li").show();
 			}
        	}
 		
