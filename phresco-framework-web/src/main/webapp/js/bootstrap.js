@@ -8,9 +8,7 @@ var commonVariables = {
 	loginContext : "login",
 
 	projectlist : "projectlist",
-	addproject : "addproject",
-	editproject : "editproject",
-
+	project : "project",
 	projectlist : "projectlist",
 	projectlistContext : "project",
 
