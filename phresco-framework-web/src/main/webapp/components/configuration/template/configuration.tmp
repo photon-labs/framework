@@ -1,7 +1,7 @@
 <div id="configurationPage">
 	<div class="second_title">
 		<div class="code_anal">
-			<input type="submit" data-i18n="[value]configuration.label.addenvironment"  class="btn btn_style">
+			<input type="submit" name="env_pop" data-i18n="[value]configuration.label.addenvironment"  class="btn btn_style">
 			<div id="env_pop" class="dyn_popup popup_bg" style="display:none;">
 				<table width="100%" border="0" cellspacing="0" cellpadding="5">
 				<tr>
@@ -80,7 +80,7 @@
 				<td>Lorem Ipsum Dummy Text</td>
 				<td><a><img src="../themes/default/images/helios/configure_icon.png" width="15" height="16" border="0" alt=""></a></td>
 				<td>
-					<a href="javascript:;"><img src="../themes/default/images/helios/clone_icon.png" width="20" height="18" border="0" alt=""></a>
+					<a href="#" name="clone_pop"><img src="../themes/default/images/helios/clone_icon.png" width="20" height="18" border="0" alt=""></a>
 					<div id="clone_pop" class="dyn_popup popup_bg" style="display:none;">
 						<table class="clonetable" width="100%" border="0" cellspacing="0" cellpadding="5">
 						<tr>
@@ -144,21 +144,21 @@
 				<td>Testing</td>  
 				<td>Lorem Ipsum Dummy Text</td>
 				<td><a><img src="../themes/default/images/helios/configure_icon.png" width="15" height="16" border="0" alt=""></a></td>
-				<td><a href="#"><img src="../themes/default/images/helios/clone_icon.png" width="20" height="18" border="0" alt=""></a></td>
+				<td><a name="clone_pop" href="#"><img src="../themes/default/images/helios/clone_icon.png" width="20" height="18" border="0" alt=""></a></td>
 				<td><a class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Delete Row"><img src="../themes/default/images/helios/delete_row_icon.png" width="29" height="23" border="0" alt=""></a></td>
 			  </tr>
 			  <tr>
 				<td>Staging</td>  
 				<td>Lorem Ipsum Dummy Text</td>
 				<td><a><img src="../themes/default/images/helios/configure_icon.png" width="15" height="16" border="0" alt=""></a></td>
-				<td><a href="#"><img src="../themes/default/images/helios/clone_icon.png" width="20" height="18" border="0" alt=""></a></td>
+				<td><a name="clone_pop" href="#"><img src="../themes/default/images/helios/clone_icon.png" width="20" height="18" border="0" alt=""></a></td>
 				<td><a class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Delete Row"><img src="../themes/default/images/helios/delete_row_icon.png" width="29" height="23" border="0" alt=""></a></td>
 			  </tr>
 			  <tr>
 				<td>Test</td>  
 				<td>Lorem Ipsum Dummy Text</td>
 				<td><a><img src="../themes/default/images/helios/configure_icon.png" width="15" height="16" border="0" alt=""></a></td>
-				<td><a href="#"><img src="../themes/default/images/helios/clone_icon.png" width="20" height="18" border="0" alt=""></a></td>
+				<td><a name="clone_pop" href="#"><img src="../themes/default/images/helios/clone_icon.png" width="20" height="18" border="0" alt=""></a></td>
 				<td><a class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Delete Row"><img src="../themes/default/images/helios/delete_row_icon.png" width="29" height="23" border="0" alt=""></a></td>
 			  </tr>
 		   

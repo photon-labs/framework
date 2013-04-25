@@ -11,6 +11,7 @@ define(["framework/widgetWithTemplate", "header/listener/headerListener"] , func
 		name : "header",
 		//Events, to fire a function
 		onButtonClick: null,
+		onProjectlistEvent: null,
 		
 		initialize : function(globalConfig){
 			var self = this;
@@ -37,7 +38,9 @@ define(["framework/widgetWithTemplate", "header/listener/headerListener"] , func
         registerEvents : function (headerListener) {
             var self = this;
 			self.onLogoutEvent = new signals.Signal();
+			self.onProjectlistEvent = new signals.Signal();
 			self.onLogoutEvent.add(headerListener.doLogout, headerListener);
+			self.onProjectlistEvent.add(headerListener.projectList, headerListener);
         },
 		
 		/***
@@ -50,7 +53,10 @@ define(["framework/widgetWithTemplate", "header/listener/headerListener"] , func
 			$('#logout').click(function(){
 				self.onLogoutEvent.dispatch();
 			});
-		
+			
+			$('#pojectList').click(function(){
+				self.onProjectlistEvent.dispatch();
+			});
 		}
 	});
 

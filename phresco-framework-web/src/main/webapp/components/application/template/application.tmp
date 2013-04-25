@@ -30,7 +30,7 @@
                       <td colspan="3" data-i18n="application.edit.servers"></td>
                       <td colspan="3"><img src="../themes/default/images/helios/close_icon.png"  width="25" height="20" border="0" alt=""></td>
                     </tr>
-                    <tr>
+                    <tr class="servers">
                       <td data-i18n="application.edit.servers"></td>
                       <td><select>
                             <option>Select Servers</option>
@@ -40,7 +40,7 @@
                       <td colspan="3"><select>
                             <option>Select Version</option>
                           </select>
-                          <img src="../themes/default/images/helios/plus_icon.png" width="25" height="20" border="0" alt=""> <img src="../themes/default/images/helios/minus_icon.png"  width="25" height="20" border="0" alt="">
+                          <img name="addServer" src="../themes/default/images/helios/plus_icon.png" width="25" height="20" border="0" alt=""> <img name="removeServer" width="25" height="20" border="0" alt="">
                       </td>
                     </tr>
                     
@@ -48,7 +48,7 @@
                       <td colspan="3" data-i18n="application.edit.database"></td>
                       <td colspan="3"><img src="../themes/default/images/helios/close_icon.png"  width="25" height="20" border="0" alt=""></td>
                      </tr>
-                      <tr>
+                      <tr class="database">
                       <td data-i18n="application.edit.database"></td>
                       <td><select>
                             <option>Select Database</option>
@@ -58,7 +58,7 @@
                       <td colspan="3"><select>
                             <option>Select Version</option>
                           </select>
-                          <img src="../themes/default/images/helios/plus_icon.png" width="25" height="20" border="0" alt=""> <img src="../themes/default/images/helios/minus_icon.png"  width="25" height="20" border="0" alt="">
+                          <img src="../themes/default/images/helios/plus_icon.png" name="addDatabase" width="25" height="20" border="0" alt=""> <img name="removeDatabase" width="25" height="20" border="0" alt="">
                       </td>
                     </tr>
     

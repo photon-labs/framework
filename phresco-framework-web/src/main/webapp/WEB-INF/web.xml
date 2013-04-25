@@ -50,6 +50,10 @@
         <servlet-name>cometd</servlet-name>
         <servlet-class>org.cometd.annotation.AnnotationCometdServlet</servlet-class>
         <init-param>
+            <param-name>logLevel</param-name>
+            <param-value>0</param-value>
+        </init-param>
+        <init-param>
             <param-name>transports</param-name>
             <param-value>org.cometd.websocket.server.WebSocketTransport</param-value>
         </init-param>

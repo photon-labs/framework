@@ -43,6 +43,7 @@ import com.photon.phresco.framework.api.ActionType;
 import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.framework.impl.ProjectManagerImpl;
+import com.photon.phresco.framework.rest.api.util.BuildServiceConstants;
 import com.photon.phresco.plugins.model.Mojos.ApplicationHandler;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.Childs.Child;
@@ -59,7 +60,7 @@ import com.photon.phresco.util.Utility;
 
 
 @Service
-public class BuildService implements Constants ,FrameworkConstants {
+public class BuildService implements Constants ,FrameworkConstants,BuildServiceConstants {
 	
 
 	@Inject
@@ -74,11 +75,8 @@ public class BuildService implements Constants ,FrameworkConstants {
     public static final java.lang.String SERVICE_API_KEY = "phresco.service.api.key";
     
 	private static final Logger S_LOGGER= Logger.getLogger(BuildService.class);
-	private static boolean isDebugEnabled = S_LOGGER.isDebugEnabled();
+	private static boolean isInfoEnabled = S_LOGGER.isInfoEnabled();
 	
-	private String connect_ack_channel="/service/connect";
-	private String dicconnect_ack_channel="/service/disconnect";
-	private String error_channel="/service/error";
     
 	Map data;
 	String appId="";
@@ -86,10 +84,18 @@ public class BuildService implements Constants ,FrameworkConstants {
 	String customerId="";
 	String selectedFiles="";
 	String phase="";
+	String username="";
+	private ServiceManager serviceManager = null;
 	
 	
 	
 	
+	public String getUsername() {
+		return username;
+	}
+	public void setUsername(String username) {
+		this.username = username;
+	}
 	public String getPhase() {
 		return phase;
 	}
@@ -129,54 +135,61 @@ public class BuildService implements Constants ,FrameworkConstants {
 	
 	public void prePopulateModelData(Map info) throws PhrescoException {
 		
-		if( !("".equalsIgnoreCase(data.get("appId").toString())) && (data.get("appId").toString() != null) && !("null".equalsIgnoreCase(data.get("appId").toString())) )
-		{
-			setAppId(data.get("appId").toString());	
+		try {
+			if( !("".equalsIgnoreCase(data.get(APP_ID).toString())) && (data.get(APP_ID).toString() != null) && !("null".equalsIgnoreCase(data.get(APP_ID).toString())) )
+			{
+				setAppId(data.get(APP_ID).toString());	
+			}
+			else
+			{
+				throw new PhrescoException("no valid app id passed");
+			}
+			
+			if( !("".equalsIgnoreCase(data.get(PROJECT_ID).toString())) && (data.get(PROJECT_ID).toString() != null) && !("null".equalsIgnoreCase(data.get(PROJECT_ID).toString())) )
+			{
+				setProjectId(data.get(PROJECT_ID).toString());
+			}
+			else
+			{
+				throw new PhrescoException("no valid project id passed");
+			}
+			
+			if( !("".equalsIgnoreCase(data.get(CUSTOMER_ID).toString())) && (data.get(CUSTOMER_ID).toString() != null) && !("null".equalsIgnoreCase(data.get(CUSTOMER_ID).toString())) )
+			{
+				setCustomerId(data.get(CUSTOMER_ID).toString());
+			}
+			else
+			{
+				throw new PhrescoException("no valid customer id passed");
+			}
+			if( !("".equalsIgnoreCase(data.get(USERNAME).toString())) && (data.get(USERNAME).toString() != null) && !("null".equalsIgnoreCase(data.get(USERNAME).toString())) )
+			{
+				setUsername(data.get(USERNAME).toString());
+			}
+			else
+			{
+				throw new PhrescoException("no user id passed");
+			}
+			
+			setSelectedFiles(data.get(SELECTED_FILES).toString());
+			
+		} catch (Exception e) {
+			throw new PhrescoException("no valid required parameters is passed");
 		}
-		else
-		{
-			throw new PhrescoException("no valid app id passed");
-		}
-		
-		if( !("".equalsIgnoreCase(data.get("projectId").toString())) && (data.get("projectId").toString() != null) && !("null".equalsIgnoreCase(data.get("projectId").toString())) )
-		{
-			setProjectId(data.get("projectId").toString());
-		}
-		else
-		{
-			throw new PhrescoException("no valid project id passed");
-		}
-		
-		if( !("".equalsIgnoreCase(data.get("customerId").toString())) && (data.get("customerId").toString() != null) && !("null".equalsIgnoreCase(data.get("customerId").toString())) )
-		{
-			setCustomerId(data.get("customerId").toString());
-		}
-		else
-		{
-			throw new PhrescoException("no valid customer id passed");
-		}
-		
-		setSelectedFiles(data.get("selectedFiles").toString());
 	}
 	
 	
-	@Listener("/service/phresco")
+	@Listener(DATA_CHANNEL)
     public void processBuildRequest(final ServerSession session, final ServerMessage message){
 		
 		boolean continue_status = true;
 		
-		if (isDebugEnabled) {
-			S_LOGGER.debug("Entering Method processBuildRequest of BuildService ");
+		if (isInfoEnabled) {
+			S_LOGGER.info("Entering Method processBuildRequest of BuildService");
+			S_LOGGER.info("Received the input :"+message.getData()+"From remote client "+ session.getId());	
 		}
 		
-		S_LOGGER.info("Received the input :"+message.getData()+"From remote client "+ session.getId());
-		
-		String connect_ack_msg = "Server received your request and started processing... Pls wait!";
-		final String disconnect_ack_msg ="Data transfer done hence Disconnecting";
-		
-		session.deliver(sender, connect_ack_channel, connect_ack_msg , null);
-		
-		
+		session.deliver(sender, CONNECT_ACK_CHANNEL, CONNECT_ACK_MSG , null);
 		
 		Map data=null;
 		
@@ -189,7 +202,7 @@ public class BuildService implements Constants ,FrameworkConstants {
 			
 			S_LOGGER.error(e.getMessage());
 			continue_status = false;
-			session.deliver(sender, error_channel, "Error in the input json parameters" , null);
+			session.deliver(sender, ERROR_CHANNEL, "Error in the input json parameters" , null);
 			
 		}
 		
@@ -201,62 +214,75 @@ public class BuildService implements Constants ,FrameworkConstants {
 
 			S_LOGGER.error(e.getMessage());
 			continue_status = false;
-			session.deliver(sender, error_channel, e.getMessage() , null);
+			session.deliver(sender, ERROR_CHANNEL, e.getMessage() , null);
 		}
 		
 		
 		if(continue_status)
 		{
-		
 				
-				if (isDebugEnabled) {
-					S_LOGGER.debug("appId received :"+data.get("appId"));
-					S_LOGGER.debug("ProjectId received :"+data.get("projectId"));
-					S_LOGGER.debug("CustomerId received :"+data.get("customerId"));
-				}
+			try {
 				
-				bayeuxServer.addExtension(new org.cometd.server.ext.AcknowledgedMessagesExtension());
-				
-				Date d = new Date();
-				SimpleDateFormat ft = new SimpleDateFormat ("hh:mm:ss");
-				String name = ft.format(d);
-				System.out.println("Starting The Thread With name -->"+name);
-				
-		        
-		        new Thread(name)
-		        {
-		            public void run()
-		            {
-		            	try {
-						     BufferedReader temp = 	build();
-						     String line="";
-				                while((line=temp.readLine())!=null)
-				                {
-				                    System.out.println("data to be sent : "+line);
-				                	session.deliver(sender, message.getChannel(), line, null);
-				                }
-						} catch (PhrescoException e) {
-							e.printStackTrace();
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-		            	
-		            	
-		            	System.out.println("Reached the end of thread process");
-		            	session.deliver(sender, dicconnect_ack_channel, disconnect_ack_msg, null);
-		            	
-		            }
-		        }.start();
+					bayeuxServer.addExtension(new org.cometd.server.ext.AcknowledgedMessagesExtension());
+					
+					Date d = new Date();
+					SimpleDateFormat ft = new SimpleDateFormat (DATA_FORMAT);
+					String thread_name = ft.format(d);
+					
+					if (isInfoEnabled) {
+						S_LOGGER.info("APPP ID received :"+data.get(APP_ID));
+						S_LOGGER.info("PROJECT ID received :"+data.get(PROJECT_ID));
+						S_LOGGER.info("CUSTOMER ID received :"+data.get(CUSTOMER_ID));
+						S_LOGGER.info("USERNAME  received :"+data.get(USERNAME));
+						S_LOGGER.info("Starting The Thread With name -->"+thread_name);
+					}
+					
+					
+			        
+			        new Thread(thread_name) {
+			        	
+			            public void run() {
+			            	
+			            	try {
+			            		
+							     BufferedReader server_logs = build(getUsername());
+							     String line="";
+					                while((line=server_logs.readLine())!=null) {
+					                	
+					                	if (isInfoEnabled) {
+					    					S_LOGGER.info(this.getName()+" : "+line);
+					    				}
+					                	
+					                	session.deliver(sender, message.getChannel(), line, null);
+					                	
+					                }
+							} catch (PhrescoException e) {
+								session.deliver(sender, ERROR_CHANNEL, "Error occured in build thread" , null);
+								e.printStackTrace();
+							} catch (Exception e) {
+								session.deliver(sender, ERROR_CHANNEL, "Error occured in build thread" , null);
+								e.printStackTrace();
+							}
+			            	
+			            	session.deliver(sender, DISCONNECT_ACK_CHANNEL, DISCONNECT_ACK_MSG, null);
+			            	
+			            }
+			        }.start();
         
+			}catch(Exception e){
+				e.printStackTrace();
+				session.deliver(sender, ERROR_CHANNEL, "Error occured in build " , null);
+			}
 		}
     }
 	
 
 	
-	public BufferedReader build() throws PhrescoException, IOException {
+	public BufferedReader build(String username) throws PhrescoException, IOException {
 
 		BufferedReader reader=null;
 		try {
+			
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			ProjectInfo projectInfo = getProjectInfo();
 			ApplicationInfo applicationInfo = getApplicationInfo();
@@ -267,11 +293,18 @@ public class BuildService implements Constants ,FrameworkConstants {
 			List<String> buildArgCmds = getMavenArgCommands(parameters);
 			buildArgCmds.add(HYPHEN_N);
 			String workingDirectory = getAppDirectoryPath(applicationInfo);
-			getApplicationProcessor().preBuild(getApplicationInfo());
+			getApplicationProcessor(username).preBuild(getApplicationInfo());
 			reader = applicationManager.performAction(projectInfo, ActionType.BUILD, buildArgCmds, workingDirectory);
-		} catch (PhrescoException e) {
 			
+		} catch (PhrescoException e) {
+			e.printStackTrace();
+			throw new PhrescoException("Exception occured in the build process");
 		}
+		 catch (Exception e) {
+			e.printStackTrace();
+			throw new PhrescoException("Exception occured in the build process");
+			}
+
 		return reader;
 	}
 	
@@ -314,8 +347,7 @@ public class BuildService implements Constants ,FrameworkConstants {
 	    }
 	 
 	 
-	 String[] getReqParameterValues(String name)
-	 {
+	 String[] getReqParameterValues (String name) throws PhrescoException {
 		 
 		 Object multiparam = data.get(name);
 			Object[] temp = multiparam instanceof List ? ((List)multiparam).toArray() : (Object[])multiparam;
@@ -328,8 +360,8 @@ public class BuildService implements Constants ,FrameworkConstants {
 		 return multiparamvalue;
 	 }
 	 
-	 String getReqParameter(String name)
-	 {
+	 String getReqParameter(String name) throws PhrescoException {
+		 
 		 String value = (String)getData().get(name); 
 		 return value;
 		 
@@ -382,9 +414,13 @@ public class BuildService implements Constants ,FrameworkConstants {
 		            }
 		        }
 		        mojo.save();
+		        
 		    } catch (IOException e) {
 		        throw new PhrescoException(e);
+		    }  catch (Exception e) {
+		        throw new PhrescoException(e);
 		    }
+		    
 		}
 
 	 
@@ -397,7 +433,7 @@ public class BuildService implements Constants ,FrameworkConstants {
 			return null;
 		}
 	 
-	 protected List<String> getMavenArgCommands(List<Parameter> parameters) {
+	 protected List<String> getMavenArgCommands(List<Parameter> parameters) throws PhrescoException {
 			List<String> buildArgCmds = new ArrayList<String>();	
 			if(CollectionUtils.isEmpty(parameters)) {
 				return buildArgCmds;
@@ -415,15 +451,15 @@ public class BuildService implements Constants ,FrameworkConstants {
 			return buildArgCmds;
 		}
 	 
-	 protected String getAppDirectoryPath(ApplicationInfo applicationInfo) {
+	 protected String getAppDirectoryPath(ApplicationInfo applicationInfo) throws PhrescoException {
 	    	return Utility.getProjectHome() + applicationInfo.getAppDirName();
 	    }
 	 
-	 protected ApplicationProcessor getApplicationProcessor() throws PhrescoException {
+	 protected ApplicationProcessor getApplicationProcessor(String username) throws PhrescoException {
 	        ApplicationProcessor applicationProcessor = null;
 	        try {
-	        	doLogin();
-	            Customer customer = getServiceManager().getCustomer(getCustomerId());
+	        	//doLogin();
+	            Customer customer = getServiceManager(username).getCustomer(getCustomerId());
 	            RepoInfo repoInfo = customer.getRepoInfo();
 	            StringBuilder sb = new StringBuilder(getApplicationHome())
 	            .append(File.separator)
@@ -438,13 +474,17 @@ public class BuildService implements Constants ,FrameworkConstants {
 	                applicationProcessor = dynamicLoader.getApplicationProcessor(applicationHandler.getClazz());
 	            }
 	        } catch (PhrescoException e) {
-	           throw new PhrescoException(e);
-	        }
+	        	e.printStackTrace();
+	            throw new PhrescoException(e);
+	        }catch (Exception e) {
+	        	e.printStackTrace();
+		        throw new PhrescoException(e);
+		    }
 
 	        return applicationProcessor;
 	    }
 	 
-	 protected List<ArtifactGroup> setArtifactGroup(ApplicationHandler applicationHandler) {
+	 protected List<ArtifactGroup> setArtifactGroup(ApplicationHandler applicationHandler) throws PhrescoException {
 	        List<ArtifactGroup> plugins = new ArrayList<ArtifactGroup>();
 	        ArtifactGroup artifactGroup = new ArtifactGroup();
 	        artifactGroup.setGroupId(applicationHandler.getGroupId());
@@ -459,9 +499,15 @@ public class BuildService implements Constants ,FrameworkConstants {
 	    }
 	 
 	 
+	 protected ServiceManager getServiceManager(String username) {
+		this.serviceManager = ServiceManagerMap.CONTEXT_MANAGER_MAP.get(username);
+		return serviceManager;
+		}
+	 
 	 //------------ Will be replaced by reusing the login service coding .
 	 
-	 private static ServiceManager serviceManager = null;
+	 
+	 /*private static ServiceManager serviceManager = null;
 	    
 	    protected ServiceManager getServiceManager() {
 			return serviceManager;
@@ -490,7 +536,7 @@ public class BuildService implements Constants ,FrameworkConstants {
 	        	throw new PhrescoWebServiceException(e);
 			}
 	        return serviceManager.getUserInfo();
-	    }
+	    }*/
 	    
 	    
 	    

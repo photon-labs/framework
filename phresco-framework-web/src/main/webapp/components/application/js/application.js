@@ -7,6 +7,7 @@ define(["framework/widgetWithTemplate", "application/listener/applicationListene
 		configUrl: "../components/projects/config/config.json",
 		editApplicationListener: null,
 		name : commonVariables.editApplication,
+		addServerEvent : null,
 		header: {
 			contentType: null,
 			requestMethod: null,
@@ -49,7 +50,7 @@ define(["framework/widgetWithTemplate", "application/listener/applicationListene
 		 */
 		postRender : function(element) {			
 		},
-
+		
 		/***
 		 * Bind the action listeners. The bindUI() is called automatically after the render is complete 
 		 *
@@ -59,6 +60,9 @@ define(["framework/widgetWithTemplate", "application/listener/applicationListene
 			$("#nextbutton").click(function(){
 				self.onFeaturesEvent.dispatch();
 			});
+			
+			self.editApplicationListener.addServerDatabaseEvent();
+			self.editApplicationListener.removeServerDatabaseEvent();
 		}
 	});
 

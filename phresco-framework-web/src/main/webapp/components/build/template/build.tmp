@@ -10,7 +10,7 @@
 		
 		<div class="flt_right">
 			<div class="build_genbuild">
-			<input type="submit" data-i18n="[value]build.label.runagainstsource" class="btn btn_style">
+			<input type="submit" data-i18n="[value]build.label.runagainstsource" name="build_runagsource" class="btn btn_style">
 					  <div id="build_runagsource" class="dyn_popup" style="display:none;">
 						<table class="table" cellpadding="0" cellspacing="0" border="0">
 							<tbody>
@@ -66,7 +66,7 @@
 			<input type="submit" data-i18n="[value]build.label.stop" class="btn btn_style_off">
 			<input type="submit" data-i18n="[value]build.label.restart" class="btn btn_style_off">
 			<div class="build_genbuild">
-				<input type="submit" data-i18n="[value]build.label.generatebuild" class="btn btn_style">
+				<input type="submit" data-i18n="[value]build.label.generatebuild" name="build_genbuild" class="btn btn_style">
 					  <div id="build_genbuild" class="dyn_popup" style="display:none;">
 						<table class="table" cellpadding="0" cellspacing="0" border="0">
 							<tbody>
@@ -123,7 +123,7 @@
 					  </div>
 			 </div>
 			 <div class="build_minifier">
-				<input type="submit" data-i18n="[value]build.label.minifer"  class="btn btn_style">
+				<input type="submit" data-i18n="[value]build.label.minifer"  name="build_minifier" class="btn btn_style">
 					  <div id="build_minifier" class="dyn_popup" style="display:none;">
 						<table class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">
 							<thead>
@@ -178,7 +178,7 @@
 						<td>1001</td>
 						<td>18/Mar/2013 10:56:43</td>
 						<td><img src="../themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt=""></td>
-						<td><a href="javascript:;"><img src="../themes/default/images/helios/deploy_icon.png" width="16" height="20" border="0" alt=""></a>
+						<td><a onClick="openccmini(this,'builddeploy');" href="javascript:;"><img src="../themes/default/images/helios/deploy_icon.png" width="16" height="20" border="0" alt=""></a>
 							<div id="builddeploy" class="dyn_popup popup_bg" style="display:none;">
 								<table class="clonetable deploy_pop" width="100%" border="0" cellspacing="0" cellpadding="0">
 									<tbody>

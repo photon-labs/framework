@@ -72,7 +72,6 @@ define(["framework/widget", "projectlist/api/projectListAPI", "projects/project"
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 			self.editAplnContent = new Clazz.com.components.application.js.Application();
 			Clazz.navigationController.push(self.editAplnContent, true);
-			$("#navigation").css("display", "none");
 			$("#applicationedit").css("display", "block");
 			$("#aplntitle").html("Edit - "+value);
 		}
