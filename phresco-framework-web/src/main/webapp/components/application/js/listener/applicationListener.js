@@ -24,16 +24,15 @@ define(["framework/widget", "framework/widgetWithTemplate", "application/api/app
 			Clazz.navigationController.push(self.featureContent, true);
 		},
 		
-		addServerDatabase : function(appType) {
-			var self = this, server = '<tr class="servers"> <td data-i18n="application.edit.servers"></td><td><select><option>Select Servers</option></select></td><td data-i18n="application.edit.versions"></td><td colspan="3"><select><option>Select Version</option></select> <img name="addServer" src="../themes/default/images/helios/plus_icon.png" width="25" height="20" border="0" alt=""> <img name="removeServer" src="../themes/default/images/helios/minus_icon.png"  width="25" height="20" border="0" alt=""></td></tr>',
+		addServerDatabase : function(appType, whereToAppend) {
+			var self = this, dynamicValue, server = '<tr class="servers"> <td data-i18n="application.edit.servers"></td><td><select><option>Select Servers</option></select></td><td data-i18n="application.edit.versions"></td><td colspan="3"><select><option>Select Version</option></select> <div class="flt_right"><a href="javascript:;"><img name="addServer" src="../themes/default/images/helios/plus_icon.png" width="25" height="20" border="0" alt=""></a> <a href="javascript:;"><img name="removeServer" src="../themes/default/images/helios/minus_icon.png"  width="25" height="20" border="0" alt=""></a></div></td></tr>',
 			
-			database ='<tr class="database"><td data-i18n="application.edit.database"></td><td><select><option>Select Database</option></select></td><td data-i18n="application.edit.versions"></td> <td colspan="3"><select> <option>Select Version</option></select><img src="../themes/default/images/helios/plus_icon.png" name="addDatabase" width="25" height="20" border="0" alt=""> <img src="../themes/default/images/helios/minus_icon.png" name="removeDatabase" width="25" height="20" border="0" alt=""></td></tr>';
+			database ='<tr class="database"><td data-i18n="application.edit.database"></td><td><select><option>Select Database</option></select></td><td data-i18n="application.edit.versions"></td> <td colspan="3"><select> <option>Select Version</option></select><div class="flt_right"><a href="javascript:;"><img src="../themes/default/images/helios/plus_icon.png" name="addDatabase" width="25" height="20" border="0" alt=""></a> <a href="javascript:;"><img src="../themes/default/images/helios/minus_icon.png" name="removeDatabase" width="25" height="20" border="0" alt=""></a></div></td></tr>';
 			if (appType === "addServer") {
-				$(server).insertAfter($("img[name=addServer]").parents('tr.servers:last'));
+				dynamicValue = $(server).insertAfter(whereToAppend);
 			} else {
-				$(database).insertAfter($("img[name=addDatabase]").parents('tr.database:last'));
+				dynamicValue = $(database).insertAfter(whereToAppend);
 			}
-			
 			$("img[name=addServer]").unbind("click");
 			$("img[name=addDatabase]").unbind("click");
 			self.addServerDatabaseEvent();
@@ -44,26 +43,28 @@ define(["framework/widget", "framework/widgetWithTemplate", "application/api/app
 		},
 
 		addServerDatabaseEvent : function(){
-			var self=this;
+			var self=this, whereToAppend = '';
 			$("img[name=addServer]").click(function(){
+				whereToAppend = $("img[name=addServer]").parents('tr.servers:last');
 				self.dynamicRenderLocales(commonVariables.contentPlaceholder);
-				self.addServerDatabase($(this).attr('name'));
+				self.addServerDatabase($(this).attr('name'), whereToAppend);
 			});
 			
 			$("img[name=addDatabase]").click(function(){
+				whereToAppend = $("img[name=addDatabase]").parents('tr.database:last');
 				self.dynamicRenderLocales(commonVariables.contentPlaceholder);
-				self.addServerDatabase($(this).attr('name'));
+				self.addServerDatabase($(this).attr('name'), whereToAppend);
 			});
 		},
 		
 		removeServerDatabaseEvent : function() {
 			var self=this;
 			$("img[name=removeServer]").click(function(){
-				$(this).parent().parent().remove();;
+				$(this).parent().parent().parent().parent().remove();
 			});
 			
 			$("img[name=removeDatabase]").click(function(){
-				$(this).parent().parent().remove();;
+				$(this).parent().parent().parent().parent().remove();
 			});
 		},
 		
