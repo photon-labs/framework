@@ -44,6 +44,13 @@
 	if (StringUtils.isEmpty(clangReport) && StringUtils.isNotEmpty(sonarError)) {
         disabledStr = "disabled";
     }
+	
+	String requestIp = (String) request.getAttribute(FrameworkConstants.REQ_REQUEST_IP);
+	String showIcons = (String) session.getAttribute(requestIp);
+    String iconClass = "";
+	if (!Boolean.parseBoolean(showIcons))  {
+		iconClass = "hideIcons";
+	}
 %>  
 
 <form id="code" class="codeList">
@@ -134,7 +141,7 @@ $('.control-group').addClass("valReportLbl");
     function popupOnOk(obj) {
     	var okUrl = $(obj).attr("id");
         var params = getBasicParams();
-    	mandatoryValidation(okUrl, $("#generateBuildForm"), '', 'validate-code', 'validate-code', '<%= FrameworkConstants.REQ_CODE %>', '<%= appId %>');
+    	mandatoryValidation(okUrl, $("#generateBuildForm"), '', 'validate-code', 'validate-code', '<%= FrameworkConstants.REQ_CODE %>', '<%= appId %>', '', '<%= showIcons %>');
     }
     
     function sonarReport() {

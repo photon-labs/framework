@@ -448,7 +448,7 @@
 		});
 		
 		$('#copyToClipBrd').click(function() {
-			copyToClipboard($('#popup_progress_div').text().replace("%", ""));
+			copyToClipboard($('#popup_progress_div').text());
 		});
 		
 		$("#forum").click(function() {
@@ -488,12 +488,6 @@
 		changeColorScheme(data);
 	}
 	
-	function copyToClipboard(data) {
-        var params = "copyToClipboard=";
-        params = params.concat(data);
-        loadContent('copyToClipboard', '', '', params, '', true, '');
-	}
-	 
     function onSelectCustomer(selectedId) {
     	$('#customerId').val(selectedId);
     	if (selectedId == "photon") {

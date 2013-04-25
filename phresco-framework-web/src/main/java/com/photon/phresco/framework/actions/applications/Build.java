@@ -166,6 +166,7 @@ public class Build extends DynamicParameterAction implements Constants {
 		if (debugEnabled)
 			S_LOGGER.debug("Entering Method  Build.view()");
 		try {
+        	//To get ip of request machine
 			String requestIp = getHttpRequest().getRemoteAddr();
 			setReqAttribute(REQ_REQUEST_IP, requestIp);
 			

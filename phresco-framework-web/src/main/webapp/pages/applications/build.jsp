@@ -54,8 +54,6 @@
   	sbBuildPath.append("/");
   	sbBuildPath.append(FrameworkConstants.BUILD_PATH);
     
-  	String requestIp = (String) request.getAttribute(FrameworkConstants.REQ_REQUEST_IP);
-    String showOpenFolderIcon = (String) session.getAttribute(requestIp);
   	boolean serverStatus = false;
 	boolean logFileExists = false;
  	if (session.getAttribute(appId + FrameworkConstants.SESSION_SERVER_STATUS) == null) {
@@ -76,6 +74,13 @@
 	if (optionsObj != null) {
 		optionIds  = (List<String>) optionsObj;
 	}
+	
+	String requestIp = (String) request.getAttribute(FrameworkConstants.REQ_REQUEST_IP);
+    String showIcons = (String) session.getAttribute(requestIp);
+	String iconClass = "";
+	if (!Boolean.parseBoolean(showIcons))  {
+		iconClass = "hideIcons";
+	}	
 %>
 
 <s:if test="hasActionMessages()">
@@ -115,10 +120,8 @@
 				}
 			%>
 		    <div class="icon_div">
-		    <% if (Boolean.parseBoolean(showOpenFolderIcon))  {%>
-				<a href="#" id="openFolder"><img id="folderIcon" src="images/icons/open-folder.png" title="Open folder" /></a>
-			<% } %>	
-				<a href="#" id="copyPath"><img src="images/icons/copy-path.png" title="Copy path"/></a>
+				<a href="#" class="<%= iconClass %>" id="openFolder"><img id="folderIcon" src="images/icons/open-folder.png" title="Open folder" /></a>
+				<a href="#"  class="<%= iconClass %>"id="copyPath"><img src="images/icons/copy-path.png" title="Copy path"/></a>
 			</div>
 		</div>
 		<div class="clear"></div>
@@ -138,7 +141,7 @@
 					<table class="zebra-striped deployPopup" style="height: 29px;"> 
 						<tr class="tr_color">
 		    				<th><s:text name="label.progress"/></th>
-		    				<th><img src="images/icons/clipboard-copy.png" alt="clipboard" id="clipboard" title="Copy to clipboard"/></th>
+		    				<th class="<%= iconClass %>"><img src="images/icons/clipboard-copy.png" alt="clipboard" id="clipboard" title="Copy to clipboard"/></th>
 						</tr>
 		           </table>
           		</div>
@@ -221,12 +224,6 @@
 		copyToClipboard($('#console_div').text());
 	});
     
-    function copyToClipboard(data) {
-        var params = "copyToClipboard=";
-        params = params.concat(data);
-        loadContent('copyToClipboard', '', '', params, '', true, '');
-	}
-    
     // When  server is  running disable run against source button
     function runAgainstSrcServerRunning() {
     	disableButton($("#runAgainstSourceStart"));
@@ -298,7 +295,7 @@
 				});
 				
 				$('#popupPage').modal('hide');
-				progressPopupAsSecPopup('minification', '<%= appId %>', 'minify', $("#minificationForm"), getBasicParams());
+				progressPopupAsSecPopup('minification', '<%= appId %>', 'minify', $("#minificationForm"), getBasicParams(), '', '', '<%= showIcons %>');
 			}	
 		} else if(okUrl === "deleteBuild") {
 			$("#popupPage").modal('hide');

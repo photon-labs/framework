@@ -213,8 +213,10 @@ public class Quality extends DynamicParameterAction implements Constants {
 	    }
 	    
 	    try {
+        	//To get ip of request machine
 	    	String requestIp = getHttpRequest().getRemoteAddr();
 			setReqAttribute(REQ_REQUEST_IP, requestIp);
+			
 	        ApplicationInfo appInfo = getApplicationInfo();
 	        FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
 	        setReqAttribute(PATH, frameworkUtil.getUnitTestDir(appInfo));
@@ -386,8 +388,10 @@ public class Quality extends DynamicParameterAction implements Constants {
         }
         
         try {
+        	//To get ip of request machine
         	String requestIp = getHttpRequest().getRemoteAddr();
 			setReqAttribute(REQ_REQUEST_IP, requestIp);
+			
             ApplicationInfo appInfo = getApplicationInfo();
             FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
             String seleniumToolType = frameworkUtil.getSeleniumToolType(appInfo);
@@ -916,8 +920,10 @@ public class Quality extends DynamicParameterAction implements Constants {
         }
 
         try {
+        	//To get ip of request machine
         	String requestIp = getHttpRequest().getRemoteAddr();
 			setReqAttribute(REQ_REQUEST_IP, requestIp);
+			
             ApplicationInfo appInfo = getApplicationInfo();
             FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
             MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_PERFORMANCE_TEST)));
@@ -1510,8 +1516,10 @@ public class Quality extends DynamicParameterAction implements Constants {
 	    } 
 	    
     	try {
+        	//To get ip of request machine
     		String requestIp = getHttpRequest().getRemoteAddr();
     		setReqAttribute(REQ_REQUEST_IP, requestIp);
+    		
     		ApplicationInfo appInfo = getApplicationInfo();	
     		FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
     		setReqAttribute(PATH, frameworkUtil.getLoadTestDir(appInfo));
@@ -2073,8 +2081,10 @@ public class Quality extends DynamicParameterAction implements Constants {
 	        S_LOGGER.debug("Entering Method Quality.manualTestCase()");
 		    }
 	 	cacheManager.resetCache();
+    	//To get ip of request machine
 	 	String requestIp = getHttpRequest().getRemoteAddr();
 		setReqAttribute(REQ_REQUEST_IP, requestIp);
+		
 		ApplicationInfo appInfo = getApplicationInfo();
 		setReqAttribute(REQ_APPINFO, appInfo);
 		FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();

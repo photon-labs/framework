@@ -37,25 +37,33 @@ function getBasicParamsAsJsonObj() {
 	return jsonObject; 
 }
 
-function progressPopup(pageUrl, appId, actionType, form, callSuccessEvent, additionalParams, stopUrl, title) {
+function progressPopup(pageUrl, appId, actionType, form, callSuccessEvent, additionalParams, stopUrl, title, showIcon) {
 	$('#progressPopup').modal('show');//To show the progress popup
 	$('#popup_progress_div').empty();
 	$(".progressPopupClose").attr('id', pageUrl); // popup close action mapped to id
 	
 	if (title === undefined || isBlank(title)) {
 		$('#progressPopupTitle').html('Progress');
-	}
-	$('#progressPopupTitle').html(title);
+	} else {
+		$('#progressPopupTitle').html(title); // Title for the popup
+	}	
 	if (stopUrl != undefined && !isBlank(stopUrl)) {
 		$(".popupStop").show();
 		$(".popupStop").attr('id', stopUrl); // popup stop action mapped to id
 	}
+	
+	if (showIcon != undefined && !isBlank(showIcon) && showIcon == "true") {
+		$("#progressPopup").find(".copyToClipboard").show();
+	} else {
+		$("#progressPopup").find(".copyToClipboard").hide();
+	}
+	
 	$("#popup_progress_div").empty();
 	showPopuploadingIcon();
 	readerHandlerSubmit(pageUrl, appId, actionType, form, callSuccessEvent, additionalParams, $("#popup_progress_div"));
 }
 
-function progressPopupAsSecPopup(url, appId, actionType, form, additionalParams, stopUrl, title) {
+function progressPopupAsSecPopup(url, appId, actionType, form, additionalParams, stopUrl, title, showIcon) {
 	setTimeout(function () {
 		$('#progressPopup').modal('show');
     }, 600);
@@ -63,8 +71,10 @@ function progressPopupAsSecPopup(url, appId, actionType, form, additionalParams,
 	$(".progressPopupClose").show();
 	if (title === undefined || isBlank(title)) {
 		$('#progressPopupTitle').html('Progress');
-	}
-	$('#progressPopupTitle').html(title); // Title for the popup
+	} else {
+		$('#progressPopupTitle').html(title); // Title for the popup
+	}	
+	
 	$(".progressPopupClose").attr('id', url); // popup close action mapped to id
 	if (stopUrl != undefined && !isBlank(stopUrl)) {
 		$(".popupStop").show();
@@ -73,6 +83,13 @@ function progressPopupAsSecPopup(url, appId, actionType, form, additionalParams,
 		$(".popupStop").hide();
 		$(".popupStop").attr('id', "");
 	}
+	
+	if (showIcon != undefined && !isBlank(showIcon) && showIcon == "true") {
+		$("#progressPopup").find(".copyToClipboard").show();
+	} else {
+		$("#progressPopup").find(".copyToClipboard").hide();
+	}
+	
 	$("#popup_progress_div").empty();
 	showPopuploadingIcon();
 	readerHandlerSubmit(url, appId, actionType, form, '', additionalParams, $("#popup_progress_div"));
@@ -143,7 +160,7 @@ function clickSave(pageUrl, params, tag, progressText) {
 	});
 }
 
-function mandatoryValidation(pageUrl, form, additionalParams, phase, goal, actionType, appId, stopBtnAction) {
+function mandatoryValidation(pageUrl, form, additionalParams, phase, goal, actionType, appId, stopBtnAction, showIcon) {
 	var flagValue = false;
 	var params = getBasicParams();
 	params = params.concat("&phase=");
@@ -167,12 +184,12 @@ function mandatoryValidation(pageUrl, form, additionalParams, phase, goal, actio
 					buildValidateSuccess(pageUrl, actionType);
 				} else if (pageUrl == "startNode" || pageUrl == "startHub") {//start-hub, start-node
 					$("#popupPage").modal('hide');
-					progressPopupAsSecPopup(pageUrl, appId, actionType, form, params, stopBtnAction);
+					progressPopupAsSecPopup(pageUrl, appId, actionType, form, params, stopBtnAction, '', showIcon);
 				} else if (pageUrl == "codeValidate" || pageUrl == "runLoadTest" || pageUrl == "runFunctionalTest") {//codevalidate, loadtest,functional test
 					$("#popupPage").modal('hide');
-					progressPopupAsSecPopup(pageUrl, appId, actionType, form, params);
+					progressPopupAsSecPopup(pageUrl, appId, actionType, form, params, '', '', showIcon);
 				} else if (pageUrl == "runPerformanceTest") {//performance test
-					flagValue = templateMandatoryVal();					
+					flagValue = templateMandatoryVal(showIcon);					
 				} else if (pageUrl == "saveJob" || pageUrl == "updateJob") {					
 					redirectCiConfigure();
 				} else if(pageUrl == "processBuild") {
@@ -324,6 +341,7 @@ function additionalPopup(url, title, okUrl, okLabel, form, additionalParam, show
 	$('.add_popupOk, #add_popupCancel').show(); // show ok & cancel button
 	$("#add_popupCancel").attr('okurl', okUrl);
 	$("#add_popupClose").attr('okurl', okUrl);
+	$("#add_popupCancel").html('Cancel');
 	$(".add_popupOk").attr('id', okUrl); // popup action mapped to id
 	$("#themeBuilderImageFile").val("");//To empty theme builder hidden field
 	if (showLocationBox !== undefined && showLocationBox) {//To show selected files location in text box in modal footer(for browse file tree)
@@ -865,14 +883,8 @@ function showDeleteConfirmation(confirmMsg) {
 
 function copyToClipboard(data) {
     var params = "copyToClipboard=";
-    params = params.concat(data);
-    $.ajax({
-		url : "copyToClipboard",
-		data : params,
-		type : "POST",
-		success : function() {
-		}
-	});
+    params = params.concat(escape(data));
+    loadContent('copyToClipboard', '', '', params, '', true, '');
 }
 
 //trim the long content

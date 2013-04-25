@@ -768,7 +768,7 @@
 		}
 	}
 	
-	function templateMandatoryVal() {		
+	function templateMandatoryVal(showIcon) {		
 		var testAgainst = $("#testAgainst").val();
 		var redirect = false;		
 		if (testAgainst != undefined && (testAgainst == "server" || testAgainst == "webservice")) {
@@ -781,12 +781,12 @@
 	
 		if (redirect) {
 			$('.yesNoPopupErr').empty();
-			runPerformanceTest();
+			runPerformanceTest(showIcon);
 		}		
 		return redirect;
 	} 
 	
-	function runPerformanceTest() {		
+	function runPerformanceTest(showIcon) {		
 		var formJsonObject = $('#generateBuildForm').toJSON();
 		var formJsonStr = JSON.stringify(formJsonObject);
 		var templateFunction = new Array();
@@ -818,7 +818,7 @@
  		} else {
  			//performance test
  			$('#popupPage').modal('hide');
-			progressPopupAsSecPopup('runPerformanceTest', '<%= appId %>', "performance-test", $('#generateBuildForm'), params, '');
+			progressPopupAsSecPopup('runPerformanceTest', '<%= appId %>', "performance-test", $('#generateBuildForm'), params, '', '', showIcon);
  		}
 	}
 	

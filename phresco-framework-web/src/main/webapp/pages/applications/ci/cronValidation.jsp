@@ -23,26 +23,31 @@
 <%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
 <%@ page import="com.photon.phresco.framework.model.CIJob" %>
 
+<%
+	String from = (String) request.getAttribute(FrameworkConstants.REQ_FROM);
+%>
+
 <input type="text" id="cronExpression" name="cronExpression" value="<%= (String)request.getAttribute(FrameworkConstants.REQ_CRON_EXPRESSION)%>">&nbsp; 
-<a id="showPattern" href="#">
+<a id="showPattern" href="#" onclick="patternPopUp('block');">
 	<img src="images/icons/Help.png" />
 </a>
 
 <!-- Cron Expression Pattern starts -->	
-<div id="Pattern" class="modal abtDialog">
-	<div class="modal-header">
-		<div class="TestType"><s:text name="lbl.cronvalidate.title"/></div><a id="closePatternPopup" href="#" class="close" style="top: 5px;">&times;</a>
-	</div>
+<div id="Pattern" class="abtDialog">
 	<div class="abt_div">
-		<div id="testCaseDesc" class="testCaseDesc">
+		<div id="testCaseDesc" class="">
                <table border="0" cellpadding="0" cellspacing="0" class="tbl" width="100%">
                	   <tr>
                        <td width="1%" nowrap><b id="SelectedSchedule" class="popup-label"></b></td>
-                       <td><b></b></td>
+                      <% if ("ci".equals(from)) { %>
+                       		<td><b></b></td>
+                       <% } %>	
                    </tr>
                    <tr class="popup-label">
-                       <td width="1%" nowrap class="popup-label"><b><s:text name="lbl.name"/></b></td>
-                       <td class="popup-label"><b><s:text name="label.date"/></b></td>
+              			<% if ("ci".equals(from)) { %>
+                       		<td nowrap class="popup-label"><b><s:text name="lbl.name"/></b></td>
+						<% } %>
+                       <td  style="width: 100%;"  class="popup-label"><b><s:text name="label.date"/></b></td>
                    </tr>
                 <% 	
                    	Date[] dates = (Date[])request.getAttribute(FrameworkConstants.REQ_CRON_DATES);
@@ -52,7 +57,9 @@
 	                        Date date = dates[i]; 
                 %>
                         <tr class="popup-label">
-                            <td class="jobName popup-label" nowrap></td>
+                        	<% if ("ci".equals(from)) { %>
+                            	<td class="jobName popup-label" nowrap></td>
+                            <% } %>	
                             <td class="popup-label"><%= date %><%= ((i + 1) == dates.length) ? "    .....</b>" : "" %></td>
                         </tr>
                	<%
@@ -62,13 +69,6 @@
                </table>
 		</div>
 	</div>
-	
-	<div class="modal-footer">
-		<div class="action abt_action">
-			<input id="closeDialog" type="button" value="<s:text name="label.close"/>" class="btn btn-primary">
-		</div>
-	</div>
-		
 </div>
 <!-- Cron Expression Pattern ends -->
 
@@ -78,23 +78,37 @@
 	    $('#SelectedSchedule').html(selectedSchedule + "&nbsp;Schedule");
 	    var jobName = $("input:text[name=name]").val();
 	    $('.jobName').html(jobName);
-	   	$('#closeDialog').click(function() {
-	//    		$(".wel_come").show().css("display", "none");
-	   		patternPopUp('none');
-	   	});
-	   	
-		$("#showPattern").click(function(){
-			patternPopUp('block');
-		});
 		
-		$('#closePatternPopup').click(function() {
+		$('#closePatternPopup, #closeDialog').click(function() {
 			patternPopUp('none');
 		});
 	   	
    });
    
-   function patternPopUp(enableProp) {
-	   	//$(".wel_come").show().css("display", enableProp);
-	   	$("#Pattern").show().css("display", enableProp);
-   }
+	function patternPopUp(enableProp) {
+		//to hide configure popup
+		$("#popupPage").modal('hide');
+
+		//to show cron validation popup
+		setTimeout(function() {
+			$("#additionalPopup").modal('show');
+		}, 600);
+
+		//to hide unwanted controls & fill appropriate label
+		makeCronValidationPopUp();
+
+		//to fill cron validation popup body content
+		$('#additional_popup_body').html($("#Pattern").find(".abt_div").html());
+	}
+
+	function makeCronValidationPopUp() {
+		$("#compressNameLbl").hide();
+		$("#compressName").hide();
+		$(".add_errorMsg").empty();
+		$(".add_popupOk").hide();
+		$("#browseSelectedLocation").hide();
+		$("#add_popupCancel").html('Ok');
+		$("#add_popupCancel").attr('okurl', '');
+		$("#additional_popupTitle").text('<s:text name="lbl.cronvalidate.title"/>');
+	}
 </script>

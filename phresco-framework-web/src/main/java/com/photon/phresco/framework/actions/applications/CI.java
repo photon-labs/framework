@@ -92,6 +92,7 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 	boolean buildInProgress = false;
 	private String contentType = null;
 	private String fileType = null;
+	private String from = "";
 
 	private List<String> triggers = null;
 	private String buildNumber = null;
@@ -1219,12 +1220,14 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 				return CRON_VALIDATION;
 			}
 
+			setReqAttribute(REQ_FROM, getFrom());
 		} catch (PhrescoException e) {
 			if (debugEnabled) {
 				S_LOGGER.error("Entered into catch block of CI.cronValidation()"
 						+ FrameworkUtil.getStackTraceAsString(e));
 			}
 		}
+		
 		return CRON_VALIDATION;
 	}
 
@@ -1731,5 +1734,13 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 
 	public void setFileType(String fileType) {
 		this.fileType = fileType;
+	}
+
+	public String getFrom() {
+		return from;
+	}
+
+	public void setFrom(String from) {
+		this.from = from;
 	}
 }

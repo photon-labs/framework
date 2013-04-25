@@ -44,7 +44,11 @@
 	List<String> unitTestReportOptions = (List<String>) request.getAttribute(FrameworkConstants.REQ_UNIT_TEST_REPORT_OPTIONS);
 	List<Parameter> parameters = (List<Parameter>) request.getAttribute(FrameworkConstants.REQ_DYNAMIC_PARAMETERS);
 	String requestIp = (String) request.getAttribute(FrameworkConstants.REQ_REQUEST_IP);
-    String showOpenFolderIcon = (String) session.getAttribute(requestIp);
+    String showIcons = (String) session.getAttribute(requestIp);
+    String iconClass = "";
+	if (!Boolean.parseBoolean(showIcons))  {
+		iconClass = "hideIcons";
+	}
 %>
 
 <form autocomplete="off" class="marginBottomZero" id="form_test">
@@ -63,12 +67,10 @@
 			<a href="#" id="pdfPopup" style="display: none;">
 				<img id="pdfCreation" src="images/icons/print_pdf.png" title="Generate pdf" style="height: 20px; width: 20px;"/>
 			</a>
-		 <% if (Boolean.parseBoolean(showOpenFolderIcon))  {%>
-			<a href="#" id="openFolder">
+			<a href="#" class="<%= iconClass %>" id="openFolder">
 				<img id="folderIcon" src="images/icons/open-folder.png" title="Open folder"/>
 			</a>
-		 <% } %>	
-			<a href="#" id="copyPath"><img src="images/icons/copy-path.png" title="Copy path"/></a>
+			<a href="#" class="<%= iconClass %>" id="copyPath"><img src="images/icons/copy-path.png" title="Copy path"/></a>
 		</div>
 		
 		<ul id="display-inline-block-example">
@@ -286,7 +288,7 @@ function popupOnOk(obj) {
 	} else {
 		$("#popupPage").modal('hide');
 		var params = getBasicParams();
-		progressPopupAsSecPopup(okUrl, '<%= appId %>', '<%= FrameworkConstants.UNIT %>', $("#generateBuildForm"), params);
+		progressPopupAsSecPopup(okUrl, '<%= appId %>', '<%= FrameworkConstants.UNIT %>', $("#generateBuildForm"), params, '', '', '<%= showIcons %>');
 	}
 }
 
@@ -298,7 +300,7 @@ function popupOnClose(obj) {
 
 //This method will be called when there is no dynamic param
 function runUnitTest() {
-	progressPopup('runUnitTest', '<%= appId %>', '<%= FrameworkConstants.UNIT %>', '', '', getBasicParams());
+ 	progressPopup('runUnitTest', '<%= appId %>', '<%= FrameworkConstants.UNIT %>', '', '', getBasicParams(), '', '', '<%= showIcons %>');
 }
 
 //To handle the cancel btn events

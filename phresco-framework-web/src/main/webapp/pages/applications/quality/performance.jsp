@@ -42,7 +42,11 @@
 	String showDevice = (String) request.getAttribute(FrameworkConstants.SHOW_ANDROID_DEVICE);
 	String path = (String) request.getAttribute(FrameworkConstants.PATH);
 	String requestIp = (String) request.getAttribute(FrameworkConstants.REQ_REQUEST_IP);
-    String showOpenFolderIcon = (String) session.getAttribute(requestIp);
+	String showIcons = (String) session.getAttribute(requestIp);
+    String iconClass = "";
+	if (!Boolean.parseBoolean(showIcons))  {
+		iconClass = "hideIcons";
+	}
 %>
 
 <style>
@@ -76,10 +80,8 @@
 	    <input id="performanceTest" type="button" value="<s:text name='lbl.test'/>" class="btn btn-primary">
 	    <div class="perOpenAndCopyPath">
 	    	<a href="#" id="pdfPopup" style="display: none;"><img id="pdfCreation" src="images/icons/print_pdf.png" title="generate pdf" style="height: 20px; width: 20px;"/></a>
-	    	<% if (Boolean.parseBoolean(showOpenFolderIcon))  {%>
-				<a href="#" id="openFolder"><img id="folderIcon" src="images/icons/open-folder.png" title="Open folder"/></a>
-			<% } %>	
-			<a href="#" id="copyPath"><img src="images/icons/copy-path.png" title="Copy path"/></a>
+			<a href="#" class="<%= iconClass %>" id="openFolder"><img id="folderIcon" src="images/icons/open-folder.png" title="Open folder"/></a>
+			<a href="#" class="<%= iconClass %>" id="copyPath"><img src="images/icons/copy-path.png" title="Copy path"/></a>
 		</div>&nbsp;
 		
 		<% if (CollectionUtils.isNotEmpty(testAgainstPsblVals)) { %>
@@ -346,8 +348,8 @@
 		if (okUrl === "printAsPdf") {
 			printPdfPreActions();
 			loadContent('printAsPdf', $('#generatePdf'), $('#popup_div'), '', false, true);
-		} else if (okUrl === "runPerformanceTest") {			
-			var redirct = mandatoryValidation(okUrl, $("#generateBuildForm"), '', 'performance-test', 'performance-test');
+		} else if (okUrl === "runPerformanceTest") {	
+			var redirct = mandatoryValidation(okUrl, $("#generateBuildForm"), '', 'performance-test', 'performance-test', '', '', '', '<%= showIcons %>');
 		}
 	}	 
 	

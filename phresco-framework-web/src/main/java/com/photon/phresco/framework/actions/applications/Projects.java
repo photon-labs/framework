@@ -158,9 +158,9 @@ public class Projects extends FrameworkBaseAction {
 			InetAddress byName = InetAddress.getByName(requestIp);
 			String nameFromRequest = byName.getHostName();
 
-			String localmachine = "false";
+			String localmachine = FALSE;
 			if (LOCALHOST.equalsIgnoreCase(nameFromRequest)) {
-				localmachine = "true";
+				localmachine = TRUE;
 			}
 
 			setSessionAttribute(requestIp, localmachine);
