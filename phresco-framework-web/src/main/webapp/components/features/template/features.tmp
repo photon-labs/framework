@@ -5,7 +5,7 @@
                 <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
                 <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
             </fieldset>
-    	</div>
+    	</div> 
     	<!--second_title div ends here -->
     </div>
     
