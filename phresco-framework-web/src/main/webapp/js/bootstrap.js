@@ -8,14 +8,19 @@ var commonVariables = {
 	loginContext : "login",
 
 	projectlist : "projectlist",
-	project : "project",
-	projectlist : "projectlist",
 	projectlistContext : "project",
 
+	dynamicPage : "dynamicPage",
+	dynamicPageContext : "dynamicPage",
+	
 	editApplication : "appinfo",
+	
 	featurelist : "featurelist",
+	
 	codequality : "codequality",
+	
 	configuration : "configuration",
+	
 	build : "build",
 	
 	edit : "Edit",

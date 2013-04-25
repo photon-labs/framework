@@ -63,6 +63,11 @@
 			"path" : "../components/configuration/js"
 		},
 		
+		"dynamicPage" : {
+			"moduleName":"dynamicPage",
+			"path" : "../components/dynamicPage/js"
+		},
+		
 		"build" : {
 			"moduleName":"build",
 			"path" : "../components/build/js"
