@@ -7,7 +7,7 @@
                   <th data-i18n="projectlist.label.technology">Technology</th>
                   <th data-i18n="projectlist.label.report">Report</th>
                   <th data-i18n="projectlist.label.repository">Repository</th>
-                  <th>Delete ( All <a class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Delete All"><img src="../themes/default/images/helios/delete_row.png" width="14" height="18" border="0" alt=""></a>)</th>                  
+                  <th>Delete</th>                  
                   <th>&nbsp;</th>
                 </tr>
               </thead>
@@ -19,7 +19,7 @@
                       </tr>
                       {{#each appInfos}}
                       <tr>
-                        <td name="editApplication" href="#">{{name}}</td>
+                        <td name="editApplication"><a href="javascript:;">{{name}}</a></td>
                         <td>{{description}}</td>
                         <td>{{techInfo.id}}</td>
                        <td><a name="pdf_report" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="PDF Report"><img src="../themes/default/images/helios/pdf_icon.png" width="14" height="16" border="0" alt=""></a>
