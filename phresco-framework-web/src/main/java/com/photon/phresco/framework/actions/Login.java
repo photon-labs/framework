@@ -169,7 +169,9 @@ public class Login extends FrameworkBaseAction {
         	if (tempPath.exists()) {
         		FileReader reader = new FileReader(tempPath);
         		userjson = (JSONObject)parser.parse(reader);
-        		customerId = (String) userjson.get(userId);
+				if (userjson.get(userId) != null) {
+        			customerId = (String) userjson.get(userId);
+        		}
         		reader.close();
         	} 
         	userjson.put(userId, customerId);
