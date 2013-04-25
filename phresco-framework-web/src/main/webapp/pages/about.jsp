@@ -63,7 +63,8 @@
 
 <script type="text/javascript">
 	$(document).ready(function() {
-		$('#updateMsg').html('&copy; 2013.Photon Infotech Pvt Ltd');
+// 		$('#updateMsg').html('&copy; 2013.Photon Infotech Pvt Ltd');
+		$('#updateMsg').html($(".copyrit").html());
 		$("#versionInfo").show();
 		$(".latestVersionContent").hide();
 		$(".updatedInfoContent").hide();

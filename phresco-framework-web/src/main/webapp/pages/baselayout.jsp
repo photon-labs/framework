@@ -487,6 +487,7 @@
 		var currentCustomerId = $('input[name=customerId]').val();
 		if (currentCustomerId === "<%= ServiceConstants.DEFAULT_CUSTOMER_NAME %>") {
 			applyTheme();
+			$(".copyrit").html("&copy; 2013.Photon Infotech Pvt Ltd. |<a href='http://www.photon.in'> www.photon.in</a>");
 		} else {
 			localStorage["color"] = "theme/photon/css/photon_theme.css";
 			applyTheme(); // when photon is in blue theme, when go to best buy from blue theme. BestBuy should be changed to it is own theme.
@@ -501,6 +502,9 @@
 	
     function onSelectCustomer(selectedId) {
     	$('#customerId').val(selectedId);
+    	if (selectedId == "photon") {
+    		$(".copyrit").html("&copy; 2013.Photon Infotech Pvt Ltd. |<a href='http://www.photon.in'> www.photon.in</a>");    		
+    	}
     	loadContent("fetchCustomerOptions", $('#formCustomers'), '', '', true, true, 'showHideCustomerOptions');
 		loadContent("fetchCustomerId", $('#formCustomers'), '', '', false, true, '');
    	}
@@ -577,6 +581,11 @@
 		var inActiveLabelColor = data.disabledLabelColor;
 		var copyright = data.copyRight;
 		var subMenuBackGround = data.subMenuBackGround;
+		if (!isBlank(copyright)) {
+			$(".copyrit").html(copyright);
+		} else {
+			$(".copyrit").html("&copy; 2013.Photon Infotech Pvt Ltd. |<a href='http://www.photon.in'> www.photon.in</a>");
+		}
 		JSS.css({
 			
 			'.usersettings' : {

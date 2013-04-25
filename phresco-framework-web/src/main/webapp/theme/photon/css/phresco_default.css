@@ -6751,6 +6751,10 @@ color: #313131;
 	overflow: auto;
 }
 
+#updateMsg a {
+	color : #000000;
+}
+
 .config_subTab .th-inner {
 	top: 155px !important;
 }
