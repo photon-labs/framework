@@ -1,63 +1,223 @@
 {
-	  "login": {
-			"title" : "USER LOGIN",
-			"placeholder": {
-				"username" : "Please Enter Username",
-				"password" : "Please Enter Password"
-			},
+	"navigation" : {
+		"application" : {
+			"qa" : "Quality Assurance",
+			"load" : "Load",
+			"appinfo" : "App Info",
+			"build" : "Build",
+			"features" : "Features",
+			"ci" : "Continuous Integration",
+			"configuration" : "Configuration",
+			"functional" : "Functional",
+			"codequality" : "Code Quality",
+			"report" : "Report",
+			"performance" : "Performance",
+			"unit" : "Unit"
+		}
+	},
+	"codequality" : {
+		"report" : "Report",
+		"menu" : {
+			"clouds" : "Clouds",
+			"reviews" : "Reviews",
+			"design" : "Design",
+			"drilldown" : "Violations Drilldown",
+			"hotspots" : "Hotspots",
+			"timemachine" : "Time Machine",
+			"dashboards" : "Dashboards",
+			"libraries" : "Libraries",
+			"motionchart" : "Motion Chart",
+			"components" : "Components"
+		},
+		"functionaltest" : "Functional Test",
+		"codeanalysis" : {
+			"against" : "Against",
+			"skipunittest" : "Skip Unit Test",
+			"technology" : "Technology",
+			"codeanalysis" : "Code Analysis"
+		},
+		"btn" : {
+			"close" : "Close",
+			"validate" : "Validate"
+		},
+		"sonarreport" : "Sonar Report will appear here"
+	},
+	"project" : {
+		"create" : {
 			"label" : {
-				"txt" : {
-					"remember" : "Remember Me"
-				},
-				"btn" : {
-					"login" : "LOGIN"
+				"name" : "Name",
+				"applicationversion" : "Version",
+				"mobile" : "Mobile",
+				"types" : "Types",
+				"mobileversion" : "Version",
+				"weblayer" : "Web Layer",
+				"custom" : "Custom",
+				"tablet" : "Tablet",
+				"prebuilt" : "Pre Built",
+				"widgetversion" : "Version",
+				"enddate" : "End Date",
+				"code" : "Code",
+				"pilotprojects" : "Pilot Projects",
+				"startdate" : "Start Date",
+				"widget" : "Widget",
+				"technology" : "Technology",
+				"version" : "Version",
+				"description" : "Description",
+				"appcode" : "App Code"
+			},
+			"title" : {
+				"label" : {
+					"applicationlayer" : "Application Layer",
+					"weblayer" : "Web Layer",
+					"mobilelayer" : "Mobile Layer",
+					"createproject" : "Create Project"
 				}
 			}
-	  },
-	   "header": {
-			"menu": {
-				"dashboard" : "Dashboard",
-				"projects" : "Projects",
-				"settings" : "Settings",
-				"downloads" : "Downloads",
-				"admin" : "Admin"
+		}
+	},
+	"projectlist" : {
+		"label" : {
+			"technology" : "Technology",
+			"name" : "Name",
+			"report" : "Report",
+			"repository" : "Repository",
+			"description" : "Description"
+		}
+	},
+	"configuration" : {
+		"label" : {
+			"addenvironment" : "Add Environment",
+			"configure" : "Configure",
+			"description" : "Description",
+			"name" : "Name",
+			"clone" : "Clone"
+		}
+	},
+	"login" : {
+		"label" : {
+			"btn" : {
+				"login" : "LOGIN"
 			},
-
-			"userinfo": {
-				"user":"Welcome Admin User",
-				"logout":"Logout",
-				"help":"Help",
-				"about":"About",
-				"photon":"Photon"
-			},
-
-			"customer": {
-				"bestbuy":"Best Buy",
-				"esteelauder":"Estee Lauder",
-				"jandj":"Johnson and Johnson",
-				"loreal":"Loreal",
-				"macys":"Macy's",
-				"metlife":"Metlife",
-				"photon":"Photon",
-				"touchtunes":"Touchtunes",
-				"walgreens":"Walgreens"
+			"txt" : {
+				"remember" : "Remember Me"
 			}
 		},
-
-	  "footer": {
+		"placeholder" : {
+			"password" : "Password",
+			"username" : "Username"
+		},
+		"title" : "USER LOGIN"
+	},
+	"build" : {
+		"label" : {
+			"stop" : "Stop",
+			"minifer" : "Minifer",
+			"runagainstsource" : "Run Against Source",
+			"copypath" : "Copy Path",
+			"date" : "Date",
+			"delete" : "Delete",
+			"buildno" : "Build No",
+			"progress" : "Progress",
+			"openfolder" : "Open Folder",
+			"download" : "Download",
+			"deploy" : "Deploy",
+			"generatebuild" : "Generate Build",
+			"restart" : "Restart"
+		}
+	},
+	"application" : {
+		"edit" : {
+			"database" : "Database",
+			"version" : "Version",
+			"technology" : "Technology",
+			"versions" : "Versions",
+			"code" : "Code",
+			"name" : "Name",
+			"servers" : "Servers",
+			"description" : "Description",
+			"pilotproject" : "Pilot Project",
+			"appdirectory" : "App Directory",
+			"webservice" : "Webservice"
+		},
+		"btn" : {
+			"cancel" : "Cancel",
+			"next" : "Next"
+		}
+	},
+	"features" : {
+		"show" : "Show Selected Features",
+		"btn" : {
+			"update" : "Update",
+			"cancel" : "Cancel",
+			"prev" : "Prev"
+		},
+		"list" : {
+			"modules" : "Modules",
+			"jslibraries" : "JS Libraries",
+			"components" : "Components"
+		},
+		"placeholder" : "Enter here to Search"
+	},
+	"edit" : {
+		"label" : {
+			"mobile" : "Mobile",
+			"widgetversion" : "Version",
+			"types" : "Types",
+			"code" : "Code",
+			"startdate" : "Start Date",
+			"custom" : "Custom",
+			"tablet" : "Tablet",
+			"pilotprojects" : "Pilot Projects",
+			"enddate" : "End Date",
+			"weblayer" : "Web Layer",
+			"prebuilt" : "Pre Built",
+			"description" : "Description",
+			"widget" : "Widget",
+			"applicationversion" : "Version",
+			"version" : "Version",
+			"appcode" : "App Code",
+			"mobileversion" : "Version",
+			"technology" : "Technology"
+		},
+		"title" : {
 			"label" : {
-				"copyrights":"2013.Photon Infotech Pvt Ltd. | www.photon.in"
+				"editproject" : "Edit Project",
+				"mobilelayer" : "Mobile Layer",
+				"weblayer" : "Web Layer",
+				"applicationlayer" : "Application Layer"
 			}
-	  },
-	  
-	  "projectlist" : {
-	       "label" : {
-				"name":"Name",
-				"description":"Description",
-				"technology":"Technology",
-				"report":"Report",
-				"repository":"Repository"
-		   }
-	  }
-	  
+		}
+	},
+	"header" : {
+		"customer" : {
+			"esteelauder" : "Estee Lauder",
+			"bestbuy" : "Best Buy",
+			"walgreens" : "Walgreens",
+			"macys" : "Macy's",
+			"jandj" : "Johnson and Johnson",
+			"photon" : "Photon",
+			"loreal" : "Loreal",
+			"metlife" : "Metlife",
+			"touchtunes" : "Touchtunes"
+		},
+		"menu" : {
+			"admin" : "Admin",
+			"projects" : "Projects",
+			"dashboard" : "Dashboard",
+			"downloads" : "Downloads",
+			"settings" : "Settings"
+		},
+		"userinfo" : {
+			"about" : "About",
+			"photon" : "Photon",
+			"user" : "Welcome Admin User",
+			"logout" : "Logout",
+			"help" : "Help"
+		}
+	},
+	"footer" : {
+		"label" : {
+			"copyrights" : "2013.Photon Infotech Pvt Ltd. | www.photon.in"
+		}
+	}
 }
