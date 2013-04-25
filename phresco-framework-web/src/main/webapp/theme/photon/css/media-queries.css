@@ -465,7 +465,7 @@ Width <= 1024
 	 #warningmsg {
      	display: none;
      	width: auto; 
-     	left: 47.7%; 
+     	left: 14.7%; 
      	position: absolute; 
      	text-align: center;
      	padding: 4px 6px;
@@ -1232,6 +1232,9 @@ Width >= 1025 and < 1151
 	.otherCustParamTable {
 		margin-left: 12.5% !important;
 	}
+	.tabs {
+		width: 145px;
+    }
 }
 
 /************************************************************************************
@@ -1263,7 +1266,7 @@ Width >= 1152 and < 1280
 	#warningmsg {
      	display: none;
      	width: auto; 
-     	left : 41.7%; 
+     	left: 18.7%;
      	position: absolute; 
      	text-align: center;
      	padding: 4px 6px;
@@ -1699,7 +1702,7 @@ Width <= 1280 and height <= 800
 	#warningmsg {
      	display: none;
      	width: auto; 
-     	left : 51.7%; 
+     	left: 25.7%;
      	position: absolute; 
      	text-align: center;
      	padding: 4px 6px;
@@ -2231,7 +2234,7 @@ Width >= 1280 and height >= 800
 	#warningmsg {
      	display: none;
      	width: auto; 
-     	left : 40.6% !important; 
+     	left: 25.6% !important; 
      	position: absolute; 
      	text-align: center;
      	padding: 4px 6px;
