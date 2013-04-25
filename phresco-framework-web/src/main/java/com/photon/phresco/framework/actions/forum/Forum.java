@@ -20,10 +20,13 @@ package com.photon.phresco.framework.actions.forum;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.collections.MapUtils;
 import org.apache.log4j.Logger;
 
+import com.photon.phresco.commons.model.Customer;
 import com.photon.phresco.commons.model.Property;
 import com.photon.phresco.commons.model.User;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
@@ -76,6 +79,21 @@ public class Forum extends FrameworkBaseAction {
 			sb.append(JFORUM_PASSWORD);
 			sb.append(encodedPwd);
 			setReqAttribute(REQ_JFORUM_URL, sb.toString());
+			
+			Customer customer = getServiceManager().getCustomer(getCustomerId());
+			Map<String, String> theme = customer.getFrameworkTheme();
+			if (MapUtils.isNotEmpty(theme)) {
+				setReqAttribute(CUST_BODY_BACK_GROUND_COLOR, theme.get("bodyBackGroundColor"));
+				setReqAttribute(CUST_BRANDING_COLOR, theme.get("brandingColor"));
+				setReqAttribute(CUST_MENU_BACK_GROUND, theme.get("MenuBackGround"));
+				setReqAttribute(CUST_MENUFONT_COLOR, theme.get("MenufontColor"));
+				setReqAttribute(CUST_LABEL_COLOR, theme.get("LabelColor"));
+				setReqAttribute(CUST_DISABLED_LABEL_COLOR, theme.get("DisabledLabelColor"));
+				setReqAttribute(REQ_CUSTOMER_ID, getCustomerId());
+				S_LOGGER.debug("Framework theme for customer==> " + getCustomerId());
+			} else {
+				setReqAttribute(REQ_CUSTOMER_ID, PHOTON);
+			}
 			
 		} catch (Exception e) {
         	if (debugEnabled) {

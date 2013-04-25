@@ -31,6 +31,13 @@
 <%	
 	String error = (String) request.getAttribute(FrameworkConstants.REQ_ERROR);
 	String jForumUrl = ""; 
+	String bodyBackGroundColor = (String) request.getAttribute(FrameworkConstants.CUST_BODY_BACK_GROUND_COLOR);
+	String brandingColor = (String) request.getAttribute(FrameworkConstants.CUST_BRANDING_COLOR);
+	String menuBackGround = (String) request.getAttribute(FrameworkConstants.CUST_MENU_BACK_GROUND);
+	String menufontColor = (String) request.getAttribute(FrameworkConstants.CUST_MENUFONT_COLOR);
+	String labelColor = (String) request.getAttribute(FrameworkConstants.CUST_LABEL_COLOR);
+	String disabledLabelColor = (String) request.getAttribute(FrameworkConstants.CUST_DISABLED_LABEL_COLOR);
+	String customerId = (String) request.getAttribute(FrameworkConstants.REQ_CUSTOMER_ID);
 %>
 <div class="page-header"><h1><s:text name="label.phresco.forum"/></h1></div>
 <%
@@ -62,17 +69,50 @@
 		var theme = localStorage['color'];
 		if (theme != null) {
             if (theme == "themes/red_blue/css/red.css") {
-                theme == "themes/red_blue/css/red.css"
-            } else {
-                theme == "themes/red_blue/css/blue.css"
+                theme == "themes/red_blue/css/red.css";
+            } else if(theme == "themes/red_blue/css/blue.css")  {
+                theme == "themes/red_blue/css/blue.css";
+            } else if(theme == "theme/photon/css/photon_theme.css")  {
+                theme == "theme/photon/css/photon_theme.css";
             }
         } else {
             theme = "theme/photon/css/photon_theme.css";
         }
-		var source = "<%= jForumUrl %>&css=" + theme;
 		
+		var cssTheme = "css=";
+		if ('<%=customerId%>' == '<%=FrameworkConstants.PHOTON%>') {
+			cssTheme = cssTheme.concat(theme);
+			cssTheme = cssTheme.concat("&customerStyle=");
+			cssTheme = cssTheme.concat("#FFF");
+			cssTheme = cssTheme.concat("&customerId=");
+			cssTheme = cssTheme.concat('<%=FrameworkConstants.PHOTON%>');
+		} else {
+			cssTheme = cssTheme.concat(theme);
+			cssTheme = cssTheme.concat("&brandingColor=");
+			cssTheme = cssTheme.concat('<%= brandingColor %>');
+			cssTheme = cssTheme.concat("&bodyBackGroundColor=");
+			cssTheme = cssTheme.concat('<%= bodyBackGroundColor %>');
+			cssTheme = cssTheme.concat("&menuBackGround=");
+			cssTheme = cssTheme.concat('<%= menuBackGround %>');
+			cssTheme = cssTheme.concat("&menufontColor=");
+			cssTheme = cssTheme.concat('<%= menufontColor %>');
+			cssTheme = cssTheme.concat("&labelColor=");
+			cssTheme = cssTheme.concat('<%= labelColor %>');
+			cssTheme = cssTheme.concat("&disabledLabelColor=");
+			cssTheme = cssTheme.concat('<%= disabledLabelColor %>');
+			cssTheme = cssTheme.concat("&brandingColor=");
+			cssTheme = cssTheme.concat('<%= brandingColor %>');
+			cssTheme = cssTheme.concat("&customerId=");
+			cssTheme = cssTheme.concat("customer");
+			cssTheme = cssTheme.concat("&customerStyle=");
+			cssTheme = cssTheme.concat("customerStyle.css");
+		}
+		
+		var sourceUrl = '<%= jForumUrl %>';
+		sourceUrl = sourceUrl.concat("&" + cssTheme);
+		console.info("sourceurl = " + sourceUrl);
 		$("iframe").attr({
-            src: source
+            src: sourceUrl
         });
 	}
 
