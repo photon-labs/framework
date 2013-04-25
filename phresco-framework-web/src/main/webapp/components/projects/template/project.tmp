@@ -45,7 +45,7 @@
                       <td data-i18n="project.create.title.label.applicationlayer" colspan="3"></td>
                       <td colspan="3"><img name="close" id="applicationlayer" src="../themes/default/images/helios/close_icon.png"  width="25" height="20" border="0" alt=""></td>
                     </tr>
-                    <tr>
+                    <tr class="applnLayer">
                       <td data-i18n="project.create.label.appcode"></td>	
                       <td><input type="text"></td>
                       <td data-i18n="project.create.label.technology"></td>
@@ -60,7 +60,10 @@
                             <option>Select Version</option>
                             <option>Select Version</option>
                           </select>
-                          <img src="../themes/default/images/helios/plus_icon.png" width="25" height="20" border="0" alt=""> <img src="../themes/default/images/helios/minus_icon.png"  width="25" height="20" border="0" alt="">
+                          <div class="flt_right">
+							  <a href="javascript:;"><img name="addApplnLayer" src="../themes/default/images/helios/plus_icon.png" width="25" height="20" border="0" alt=""></a>
+							  <a href="javascript:;"><img name="removeApplnLayer" width="25" height="20" border="0" alt=""></a>
+						  </div>
                           </td>
                     </tr>
                     
@@ -68,7 +71,7 @@
                       <td data-i18n="project.create.title.label.weblayer" colspan="3"></td>
                       <td colspan="3"><img name="close" id="weblayer" src="../themes/default/images/helios/close_icon.png"  width="25" height="20" border="0" alt=""></td>
                      </tr>
-                     <tr>
+                     <tr class="webLayer">
                       <td data-i18n="project.create.label.weblayer"></td>	
                       <td>
                       	  <select>
@@ -92,6 +95,10 @@
                             <option>Select Version</option>
                             <option>Select Version</option>
                         </select>
+						<div class="flt_right">
+							<a href="javascript:;"><img name="addWebLayer" src="../themes/default/images/helios/plus_icon.png" width="25" height="20" border="0" alt=""> </a>
+							<a href="javascript:;"><img name="removeWebLayer" width="25" height="20" border="0" alt=""></a>
+						</div>
                        </td>
                       </tr>
     
@@ -102,7 +109,7 @@
                      <tr>
                       <td colspan="6">
                           <table width="100%" cellpadding="0" cellspacing="0" border="0">
-                          <tr>
+                          <tr class="mobileLayer">
                           		<td data-i18n="project.create.label.mobile"></td>		
                                 <td>
                                 	<select>
@@ -122,7 +129,11 @@
                                     </select>
 		                        </td>
                                 <td>
-                                	  <input type="checkbox">&nbsp;<font data-i18n="project.create.label.mobile"></font>&nbsp;&nbsp;<input type="checkbox">&nbsp;<font data-i18n="project.create.label.tablet"></font>&nbsp;&nbsp;<img src="../themes/default/images/helios/plus_icon.png"  width="25" height="20" border="0" alt=""> <img src="../themes/default/images/helios/minus_icon.png"  width="25" height="20" border="0" alt="">
+									<input type="checkbox">&nbsp;<font data-i18n="project.create.label.mobile"></font>&nbsp;&nbsp;<input type="checkbox">&nbsp;<font data-i18n="project.create.label.tablet"></font>&nbsp;&nbsp;
+									<div class="flt_right">
+										<a href="javascript:;"><img name="addMobileLayer" src="../themes/default/images/helios/plus_icon.png"  width="25" height="20" border="0" alt=""></a> 
+										<a href="javascript:;"><img name="removeMobileLayer" width="25" height="20" border="0" alt=""></a>
+									</div>
                                 </td>
                           </tr>
                           </table>

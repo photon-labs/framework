@@ -12,6 +12,7 @@ define(["framework/widgetWithTemplate", "header/listener/headerListener"] , func
 		//Events, to fire a function
 		onButtonClick: null,
 		onProjectlistEvent: null,
+		onSelectCustomerEvent: null,
 		
 		initialize : function(globalConfig){
 			var self = this;
@@ -39,8 +40,10 @@ define(["framework/widgetWithTemplate", "header/listener/headerListener"] , func
             var self = this;
 			self.onLogoutEvent = new signals.Signal();
 			self.onProjectlistEvent = new signals.Signal();
+			self.onSelectCustomerEvent = new signals.Signal();
 			self.onLogoutEvent.add(headerListener.doLogout, headerListener);
 			self.onProjectlistEvent.add(headerListener.projectList, headerListener);
+			self.onSelectCustomerEvent.add(headerListener.selectCoustomer, headerListener);
         },
 		
 		/***
@@ -56,6 +59,10 @@ define(["framework/widgetWithTemplate", "header/listener/headerListener"] , func
 			
 			$('#pojectList').click(function(){
 				self.onProjectlistEvent.dispatch();
+			});
+			
+			$('a[name=customers]').click(function(){
+				self.onSelectCustomerEvent.dispatch($(this).text());
 			});
 		}
 	});
