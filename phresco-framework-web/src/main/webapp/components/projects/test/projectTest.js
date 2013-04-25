@@ -1,8 +1,8 @@
-define(["projects/addproject",  "framework/navigationController", "framework/widgetWithTemplate", "projects/listener/projectsListener"], function(AddProject, navigation, WidgetWithTemplate, projectsListener) {
+define(["projects/project",  "framework/navigationController", "framework/widgetWithTemplate", "projects/listener/projectsListener"], function(AddProject, navigation, WidgetWithTemplate, projectsListener) {
 
 	return { runTests: function (configData) {
 		
-		module("addproject.js;AddProject");
+		module("project.js;Project");
 		
 		asyncTest("Test - AddProject design", function() {
 		

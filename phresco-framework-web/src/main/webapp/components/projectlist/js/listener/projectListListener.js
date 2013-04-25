@@ -1,4 +1,4 @@
-define(["framework/widget", "projectlist/api/projectListAPI", "projects/editproject", "application/application"], function() {
+define(["framework/widget", "projectlist/api/projectListAPI", "projects/project", "application/application"], function() {
 
 	Clazz.createPackage("com.components.projectlist.js.listener");
 
@@ -16,13 +16,13 @@ define(["framework/widget", "projectlist/api/projectListAPI", "projects/editproj
 		initialize : function(config) {
 			var self = this;
 			self.projectListAPI = new Clazz.com.components.projectlist.js.api.ProjectsListAPI();
-			self.editproject = new Clazz.com.components.projects.js.EditProject();
+			self.editproject = new Clazz.com.components.projects.js.Project();
 		},
 		
 		onEditProject : function() {
 			var self = this;
 			if(self.editproject === null) {
-				self.editproject = new Clazz.com.components.projects.js.EditProject();
+				self.editproject = new Clazz.com.components.projects.js.Project();
 			}
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 			Clazz.navigationController.push(self.editproject, true);

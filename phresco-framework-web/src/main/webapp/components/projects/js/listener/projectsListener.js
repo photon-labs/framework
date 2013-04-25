@@ -12,7 +12,23 @@ define(["framework/widget", "projects/api/projectsAPI"], function() {
 		 * @config: configurations for this listener
 		 */
 		initialize : function(config) {
-		}
+		},
+		
+		removelayer : function(object) {
+			var layerId = object.attr('id');
+			object.closest('tr').next().attr('name', layerId + "content");
+			object.closest('tr').next().hide();
+			object.closest('tr').attr('name', layerId);
+			object.closest('tr').hide();
+			$("input[name="+layerId+"]").attr('disabled', false);
+		},
+		
+		addlayer : function(object) {
+			var layerType = object.attr('name');
+			$("input[name="+layerType+"]").attr('disabled', true);
+			$("tr[name="+ layerType +"]").show();
+			$("tr[name="+ layerType+"content]").show();
+		}	
 		
 	});
 

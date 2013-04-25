@@ -2,13 +2,15 @@ define(["framework/widgetWithTemplate", "projects/listener/projectsListener"], f
 
 	Clazz.createPackage("com.components.projects.js");
 
-	Clazz.com.components.projects.js.EditProject = Clazz.extend(Clazz.WidgetWithTemplate, {
+	Clazz.com.components.projects.js.Project = Clazz.extend(Clazz.WidgetWithTemplate, {
 		projectsEvent : null,
-		templateUrl: commonVariables.contexturl + "/components/projects/template/editproject.tmp",
+		templateUrl: commonVariables.contexturl + "/components/projects/template/project.tmp",
 		configUrl: "../components/projects/config/config.json",
-		name : commonVariables.editproject,
+		name : commonVariables.project,
 		projectsListener : null,
 		onProjectsEvent : null,
+		onRemoveLayerEvent : null,
+		onAddLayerEvent : null,
 			
 		/***
 		 * Called in initialization time of this class 
@@ -29,6 +31,10 @@ define(["framework/widgetWithTemplate", "projects/listener/projectsListener"], f
 		registerEvents : function (projectsListener) {
 			var self = this;
 			self.onProjectsEvent = new signals.Signal();
+			self.onRemoveLayerEvent = new signals.Signal();
+			self.onAddLayerEvent = new signals.Signal();
+			self.onRemoveLayerEvent.add(projectsListener.removelayer, projectsListener);
+			self.onAddLayerEvent.add(projectsListener.addlayer, projectsListener);
 		},
 		
 		/***
@@ -55,8 +61,19 @@ define(["framework/widgetWithTemplate", "projects/listener/projectsListener"], f
 		 *
 		 */
 		bindUI : function(){
+		
+			var self=this;
+			$("img[name='close']").unbind('click');
+			$("img[name='close']").bind('click', function(){
+				self.onRemoveLayerEvent.dispatch($(this));
+			});
+			
+			$(".content_end input").unbind('click');
+			$(".content_end input").bind('click', function(){
+				self.onAddLayerEvent.dispatch($(this));
+			});
 		}
 	});
 
-	return Clazz.com.components.projects.js.EditProject;
+	return Clazz.com.components.projects.js.Project;
 });

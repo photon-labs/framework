@@ -1,4 +1,4 @@
-define(["framework/widget", "navigation/api/navigationAPI", "projects/addproject", "application/application", "features/features", "codequality/codequality", "configuration/configuration", "build/build"], function() {
+define(["framework/widget", "navigation/api/navigationAPI", "projects/project", "application/application", "features/features", "codequality/codequality", "configuration/configuration", "build/build"], function() {
 
 	Clazz.createPackage("com.components.navigation.js.listener");
 
@@ -6,7 +6,7 @@ define(["framework/widget", "navigation/api/navigationAPI", "projects/addproject
 		localStorageAPI : null,
 		loadingScreen : null,
 		headerContent : null,
-		addproject : null,
+		project : null,
 		applications : null,
 		featurelist : null,
 		configuration : null, 
@@ -19,7 +19,7 @@ define(["framework/widget", "navigation/api/navigationAPI", "projects/addproject
 		 */
 		initialize : function(config) {
 			var self = this;
-			self.addproject = new Clazz.com.components.projects.js.AddProject();
+			self.project = new Clazz.com.components.projects.js.Project();
 			self.applications = Clazz.com.components.application.js.Application();
 			self.featurelist = new Clazz.com.components.features.js.Features();
 			self.codequality = new Clazz.com.components.codequality.js.CodeQuality();
@@ -29,11 +29,11 @@ define(["framework/widget", "navigation/api/navigationAPI", "projects/addproject
 		
 		onAddProject : function() {
 			var self = this;
-			if(self.addproject === null) {
-				self.addproject = new Clazz.com.components.projects.js.AddProject();
+			if(self.project === null) {
+				self.project = new Clazz.com.components.projects.js.Project();
 			}
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
-			Clazz.navigationController.push(self.addproject, true);
+			Clazz.navigationController.push(self.project, true);
 		},
 		
 		onMytabEvent : function(keyword) {
