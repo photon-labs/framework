@@ -12,10 +12,10 @@
     <section class="features_content_main z_index" id="featureContent">
     	<div class="features_box flt_left">
         	<h1 data-i18n="features.list.modules"></h1>
-        	<input type="text" class="flt_right" data-i18n="[placeholder]features.placeholder">
+        	<input type="text" class="flt_right" data-i18n="[placeholder]features.placeholder" id="module">
             <div class="clear"></div>
         	<div class="box_div" id="content_1">
-            	<ul>
+            	<ul id="moduleContent">
                 	<li>
                     	<span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
                          
@@ -220,10 +220,10 @@
         
         <div class="features_box flt_left">
         	<h1 data-i18n="features.list.jslibraries"></h1>
-        	<input type="text" class="flt_right" data-i18n="[placeholder]features.placeholder">
+        	<input type="text" class="flt_right" data-i18n="[placeholder]features.placeholder" id="jsibraries">
             <div class="clear"></div>
         	<div class="box_div" id="content_2">
-            	<ul>
+            	<ul id="jsibrariesContent">
                 	<li>
                     	<span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
                     	<fieldset class="switch">
@@ -422,11 +422,11 @@
         </div>
         
         <div class="features_box flt_right">
-        	<h1 data-i18n="features.list.modules"></h1>
-        	<input type="text" class="flt_right" data-i18n="[placeholder]features.placeholder">
+        	<h1 data-i18n="features.list.components"></h1>
+        	<input type="text" class="flt_right" data-i18n="[placeholder]features.placeholder" id="components">
             <div class="clear"></div>
         	<div class="box_div" id="content_3">
-            	<ul>
+            	<ul id="componentsContent">
                 	<li>
                     	<span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
                     	<fieldset class="switch">

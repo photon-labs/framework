@@ -8,6 +8,7 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
 		name : commonVariables.featurelist,
 		featuresListener: null,
 		onPreviousEvent: null,
+		onSearchEvent: null,
 		header: {
 			contentType: null,
 			requestMethod: null,
@@ -31,7 +32,10 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
 		registerEvents : function () {
 			var self = this;
 			self.onPreviousEvent = new signals.Signal();
-			self.onPreviousEvent.add(self.featuresListener.onPrevious, self.featuresListener); 
+			self.onPreviousEvent.add(self.featuresListener.onPrevious, self.featuresListener);
+
+			self.onSearchEvent = new signals.Signal();
+			self.onSearchEvent.add(self.featuresListener.search, self.featuresListener); 
 		},
 		/***
 		 * Called in once the login is success
@@ -85,6 +89,29 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
 			$("#prev").click(function() {
 				self.onPreviousEvent.dispatch();
 			});
+
+			$('#module').keyup(function(event) {
+				var txtSearch = $('#module').val();
+				var divId = "moduleContent";
+				//search(txtSearch, divId);
+				self.onSearchEvent.dispatch(txtSearch, divId);
+           	});
+
+           	$('#jsibraries').keyup(function(event) {
+				var txtSearch = $('#jsibraries').val();
+				var divId = "jsibrariesContent";
+				//search(txtSearch, divId);
+				self.onSearchEvent.dispatch(txtSearch, divId);
+           	});
+
+           	$('#components').keyup(function(event) {
+				var txtSearch = $('#components').val();
+				var divId = "componentsContent";
+				//search(txtSearch, divId);
+				self.onSearchEvent.dispatch(txtSearch, divId);
+           	});
+
+           
 		}
 	});
 
