@@ -2494,12 +2494,13 @@ public class Quality extends DynamicParameterAction implements Constants {
 		        		sbuild.append(COLON);
 		        		sbuild.append(sonarProfile);
 		        	}
-	        	}
-				S_LOGGER.debug("serverUrl with report path " + serverUrl);
-	        	String artifact = sbuild.toString();
-	        	String url = serverUrl + artifact;
-	        	if (isSonarAlive(url)) {
-	        		isSonarReportAvailable = true;
+	        	
+					S_LOGGER.debug("serverUrl with report path " + serverUrl);
+		        	String artifact = sbuild.toString();
+		        	String url = serverUrl + artifact;
+		        	if (isSonarAlive(url)) {
+		        		isSonarReportAvailable = true;
+		        	}
 	        	}
 			}
 		} catch (PhrescoException e) {
@@ -2531,17 +2532,20 @@ public class Quality extends DynamicParameterAction implements Constants {
 	            builder.append(File.separatorChar);
 	        	builder.append(POM_XML);
 	        	File pomPath = new File(builder.toString());
-	        	PomProcessor pomProcessor = new PomProcessor(pomPath);
-	        	String groupId = pomProcessor.getModel().getGroupId();
-	        	String artifactId = pomProcessor.getModel().getArtifactId();
 	        	StringBuilder sbuild = new StringBuilder();
-	        	sbuild.append(groupId);
-	        	sbuild.append(COLON);
-	        	sbuild.append(artifactId);
-	        	
-	        	if (!SOURCE_DIR.equals(sonarProfile)) {
-	        		sbuild.append(COLON);
-	        		sbuild.append(sonarProfile);
+	        	if (pomPath.exists()) {
+		        	PomProcessor pomProcessor = new PomProcessor(pomPath);
+		        	String groupId = pomProcessor.getModel().getGroupId();
+		        	String artifactId = pomProcessor.getModel().getArtifactId();
+		        	
+		        	sbuild.append(groupId);
+		        	sbuild.append(COLON);
+		        	sbuild.append(artifactId);
+		        	
+		        	if (!SOURCE_DIR.equals(sonarProfile)) {
+		        		sbuild.append(COLON);
+		        		sbuild.append(sonarProfile);
+		        	}
 	        	}
 	        	
 	        	String artifact = sbuild.toString();
