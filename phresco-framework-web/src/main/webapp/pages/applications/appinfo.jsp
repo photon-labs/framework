@@ -465,6 +465,8 @@
   //To show the validation error messages
 	function findError(data) {
 		hideLoadingIcon();
+		var isError = false;
+		
 		if (!isBlank(data.nameError)) {
 			showError($("#nameControl"), $("#nameError"), data.nameError);
 		} else {
@@ -491,22 +493,29 @@
         
         if(!isBlank(data.serverError)) {
 			showError($("#" + $(this).attr("id")), $("#serverError"), data.serverError + " " + data.serverName);
+			isError = true;
 		} else {
 			hideError($("#serverLayerControl") , $("#serverError"));
 		}
 		
 		if(!isBlank(data.databaseError)) {
 			showError($("#" + $(this).attr("id")), $("#databaseError"), data.databaseError + " " + data.databaseName);
+			isError = true;
 		} else {
 			hideError($("#databaseLayerControl") , $("#databaseError"));
 		}
 		
 		if(!isBlank(data.webServiceError)) {
 			showError($("#" + $(this).attr("id")), $("#webserviceError"), data.webServiceError);
+			isError = true;
 		} else {
 			hideError($("#webserviceLayerControl") , $("#webserviceError"));
 		}
-       
+		
+		if (isError) {
+			inActivateAllMenu($("a[name='appTab']"));
+			activateMenu($('#appInfo'));
+   		} 
 	}
 	
 	/* function getPilotProject(obj) {
