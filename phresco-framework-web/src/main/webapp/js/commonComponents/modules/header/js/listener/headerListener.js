@@ -14,7 +14,9 @@ define(["framework/widget", "common/loading", "header/api/headerAPI", "login/log
 		doLogout : function(){
 			this.clearSession();
 			Clazz.navigationController.jQueryContainer = commonVariables.basePlaceholder;
-			$(Clazz.navigationController.jQueryContainer).children().remove();
+			
+			//$(Clazz.navigationController.jQueryContainer).children().remove();
+			this.removePlaceholder();
 			
 			var loginView = new Clazz.com.components.login.js.Login();
 			loginView.loadPage();
@@ -33,6 +35,20 @@ define(["framework/widget", "common/loading", "header/api/headerAPI", "login/log
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 			self.projectListContent = new Clazz.com.components.projectlist.js.ProjectList();
 			Clazz.navigationController.push(self.projectListContent, true);
+		},
+		
+		removePlaceholder : function() {
+			$(commonVariables.headerPlaceholder).remove();
+			$(commonVariables.headerPlaceholder).empty();
+			
+			$(commonVariables.navigationPlaceholder).remove();
+			$(commonVariables.navigationPlaceholder).empty();
+			
+			$(commonVariables.contentPlaceholder).remove();
+			$(commonVariables.contentPlaceholder).empty();
+			
+			$(commonVariables.footerPlaceholder).remove();
+			$(commonVariables.footerPlaceholder).empty();
 		},
 		
 		selectCoustomer : function(customerValue) {

@@ -80,7 +80,7 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 				self.onProjectEditEvent.dispatch();
 			});	
 
-			$('td[name=editApplication]').click(function(){
+			$('a[name=editApplication]').click(function(){
 				var value = $(this).text();
 				self.onProjectsEvent.dispatch(value);
 			});
