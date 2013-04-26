@@ -12,6 +12,9 @@ var commonVariables = {
 
 	dynamicPage : "dynamicPage",
 	dynamicPageContext : "dynamicPage",
+
+	featurePage : "features",
+	featurePageContext : "features",
 	
 	editApplication : "appinfo",
 	

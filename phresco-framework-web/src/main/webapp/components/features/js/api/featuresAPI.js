@@ -6,7 +6,7 @@ define(["framework/base", "api/api"], function() {
 
 		features : function(header, callbackFunction, errorHandler) {
 			this.ajaxRequest(header, callbackFunction, errorHandler);
-		}
+		}	
 		
 	});
 
