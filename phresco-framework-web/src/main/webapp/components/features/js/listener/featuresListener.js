@@ -1,4 +1,4 @@
-define(["framework/widget", "features/api/featuresAPI", "application/application"], function() {
+define(["framework/widget", "features/api/featuresAPI"], function() {
 
 	Clazz.createPackage("com.components.features.js.listener");
 
@@ -6,7 +6,6 @@ define(["framework/widget", "features/api/featuresAPI", "application/application
 		
 		basePlaceholder :  window.commonVariables.basePlaceholder,
 		featuresAPI : null,
-		appinfoContent : null,
 
 		/***
 		 * Called in initialization time of this class 
@@ -18,13 +17,6 @@ define(["framework/widget", "features/api/featuresAPI", "application/application
 			self.featuresAPI = new Clazz.com.components.features.js.api.FeaturesAPI();
 		},
 		
-		onPrevious : function() {
-			var self = this;
-			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
-			self.appinfoContent = new Clazz.com.components.application.js.Application();
-			Clazz.navigationController.push(self.appinfoContent, true);
-		},
-
 		search : function (txtSearch, divId){
        		var txtSearch = txtSearch.toLowerCase();           		
 			if (txtSearch != "") {

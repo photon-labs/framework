@@ -655,8 +655,7 @@
     </div>
     <section class="content_end">
         <div class="flt_right">
-        	<input type="submit" data-i18n="[value]features.btn.prev" id="prev" class="btn btn_style prev_icon_btn">
-            <input type="submit" data-i18n="[value]features.btn.update" class="btn btn_style update_btn">
+        	<input type="submit" data-i18n="[value]features.btn.update" class="btn btn_style update_btn">
             <input type="submit" data-i18n="[value]features.btn.cancel" class="btn btn_style cancel_icon_btn">
         </div>
     	<!--content_title ends here -->

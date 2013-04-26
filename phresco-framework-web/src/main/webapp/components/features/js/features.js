@@ -31,8 +31,6 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
 		
 		registerEvents : function () {
 			var self = this;
-			self.onPreviousEvent = new signals.Signal();
-			self.onPreviousEvent.add(self.featuresListener.onPrevious, self.featuresListener);
 
 			self.onSearchEvent = new signals.Signal();
 			self.onSearchEvent.add(self.featuresListener.search, self.featuresListener); 
@@ -86,10 +84,6 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
 				theme:"light-thin"
 			});
 			
-			$("#prev").click(function() {
-				self.onPreviousEvent.dispatch();
-			});
-
 			$('#module').keyup(function(event) {
 				var txtSearch = $('#module').val();
 				var divId = "moduleContent";
