@@ -326,7 +326,7 @@ to {
 	color:#FFFFFF;
 	position:fixed;
 	top:0;
-	z-index:6;
+	z-index:3;
 }
 
 .header_left {
@@ -982,7 +982,8 @@ ul.nav li.dropdown:hover > .test_options{
 }
 
 .features_box .box_div ul li span {
-	margin-right:12px;
+   margin-right:12px;
+   margin-top:12px;
 }
 
 .features_box h1 {
