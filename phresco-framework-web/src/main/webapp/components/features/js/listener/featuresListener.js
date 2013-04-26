@@ -1,4 +1,4 @@
-define(["framework/widget", "features/api/featuresAPI", "application/application"], function() {
+define(["framework/widget", "features/api/featuresAPI", "features/features",  "application/application"], function() {
 
 	Clazz.createPackage("com.components.features.js.listener");
 
@@ -16,15 +16,9 @@ define(["framework/widget", "features/api/featuresAPI", "application/application
 		initialize : function(config) {
 			self = this;	
 			self.featuresAPI = new Clazz.com.components.features.js.api.FeaturesAPI();
+			this.loadingScreen = new Clazz.com.js.widget.common.Loading();
 		},
 		
-		onPrevious : function() {
-			var self = this;
-			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
-			self.appinfoContent = new Clazz.com.components.application.js.Application();
-			Clazz.navigationController.push(self.appinfoContent, true);
-		},
-
 		search : function (txtSearch, divId){
        		var txtSearch = txtSearch.toLowerCase();           		
 			if (txtSearch != "") {
@@ -44,7 +38,67 @@ define(["framework/widget", "features/api/featuresAPI", "application/application
 				
 				$("#"+divId+" li").show();
 			}
-       	}
+       	},
+
+       	getFeaturesList : function(header, callback) {
+			var self = this;
+			try {
+
+				self.featuresAPI.features(header,
+					function(response) {
+						if (response !== null) {
+							callback(response);
+						} else {
+							callback({ "status" : "service failure"});
+						}
+
+					},
+
+					function(textStatus) {
+
+					}
+				);
+			} catch(exception) {
+				
+			}
+
+		},
+
+		showLoad : function(){
+			var self = this;
+			self.loadingScreen.showLoading();
+		},
+
+		hideLoad : function(){
+			var self = this;
+			self.loadingScreen.removeLoading();
+		},
+
+		/***
+		 * provides the request header
+		 *
+		 * @synonymRequestBody: request body of synonym
+		 * @return: returns the contructed header
+		 */
+		getRequestHeader : function(projectRequestBody, type) {
+			if(type == "features"){
+				var type = "FEATURE";
+			}
+			if(type == "jsibraries"){
+				var type = "JSLIBRARIES";
+			}
+			if(type == "components"){
+				var type = "COMPONENTS";
+			}
+			var header = {
+				contentType: "application/json",
+				requestMethod: "GET",
+				dataType: "json",
+				webserviceurl: commonVariables.webserviceurl+commonVariables.featurePageContext+"/list?customerId=photon&techId=tech-java-webservice&type="+type+"&userId=demouser"
+			};
+
+			return header;
+		}
 		
 	});
 

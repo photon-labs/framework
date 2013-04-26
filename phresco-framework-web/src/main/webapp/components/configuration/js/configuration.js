@@ -50,7 +50,7 @@ define(["framework/widgetWithTemplate", "configuration/listener/configurationLis
 		 */
 		bindUI : function() {
 			var self = this;
-			
+			$(".tooltiptop").tooltip();
 			$("a[name=clone_pop]").unbind("click");
 			$("a[name=clone_pop]").click(function() {
 				self.opencc(this, $(this).attr('name'));

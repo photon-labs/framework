@@ -9,6 +9,7 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
 		featuresListener: null,
 		onPreviousEvent: null,
 		onSearchEvent: null,
+		featureRequestBody: {},
 		header: {
 			contentType: null,
 			requestMethod: null,
@@ -31,11 +32,9 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
 		
 		registerEvents : function () {
 			var self = this;
-			self.onPreviousEvent = new signals.Signal();
-			self.onPreviousEvent.add(self.featuresListener.onPrevious, self.featuresListener);
 
 			self.onSearchEvent = new signals.Signal();
-			self.onSearchEvent.add(self.featuresListener.search, self.featuresListener); 
+			self.onSearchEvent.add(self.featuresListener.search, self.featuresListener);
 		},
 		/***
 		 * Called in once the login is success
@@ -54,6 +53,45 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
 		 */
 		postRender : function(element) {			
 		},
+
+		preRender: function(whereToRender, renderFunction){
+			var self = this;
+			var collection = {};
+			self.featuresListener.showLoad();
+			self.getFeatures(collection, function(responseData){
+				renderFunction(responseData, whereToRender);
+				self.featuresListener.hideLoad();
+
+			});
+		},
+
+
+		getFeatures : function(collection, callback){
+			var self = this;
+
+			self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(self.featureRequestBody, "features"), function(response) {
+				collection.featureslist = response;	
+				self.getLibraries(collection, callback);
+			});
+
+		},
+
+		getLibraries : function(collection, callback){
+			var self = this;
+			self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(self.featureRequestBody, "jsibraries"), function(response) {
+				collection.jsibrarielist = response;	
+				self.getComponents(collection, callback);
+			});
+		},
+
+		getComponents : function(collection, callback){
+			var self = this;
+			self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(self.featureRequestBody, "components"), function(response) {
+				collection.componentList = response;	
+				callback(collection);
+			});
+		},
+
 
 		/***
 		 * Bind the action listeners. The bindUI() is called automatically after the render is complete 
@@ -86,10 +124,6 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
 				theme:"light-thin"
 			});
 			
-			$("#prev").click(function() {
-				self.onPreviousEvent.dispatch();
-			});
-
 			$('#module').keyup(function(event) {
 				var txtSearch = $('#module').val();
 				var divId = "moduleContent";

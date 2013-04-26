@@ -24,15 +24,8 @@ define(["framework/widgetWithTemplate", "application/listener/applicationListene
 		initialize : function(globalConfig){
 			var self = this;
 			self.editApplicationListener = new Clazz.com.components.application.js.listener.ApplicationListener(globalConfig);
-			self.registerEvents();
 		},
 		
-		
-		registerEvents : function () {
-			var self = this;
-			self.onFeaturesEvent = new signals.Signal();
-			self.onFeaturesEvent.add(self.editApplicationListener.onFeature, self.editApplicationListener);
-		},
 		/***
 		 * Called in once the login is success
 		 *
@@ -57,9 +50,6 @@ define(["framework/widgetWithTemplate", "application/listener/applicationListene
 		 */
 		bindUI : function(){
 			var self = this;
-			$("#nextbutton").click(function(){
-				self.onFeaturesEvent.dispatch();
-			});
 			
 			self.editApplicationListener.addServerDatabaseEvent();
 			self.editApplicationListener.removeServerDatabaseEvent();

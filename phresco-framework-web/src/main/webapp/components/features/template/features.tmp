@@ -20,203 +20,35 @@
                 <div class="clear"></div>
                 <div class="box_div" id="content_1">
                     <ul id="moduleContent">
+                    {{#each featureslist}}
                         <li>
                             <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
                             <fieldset class="switch">
                                 <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
                                 <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
                             </fieldset>
-                            Cordova Windows
-                        </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'repgen_info');" href="javascript:;"><img src="../themes/default/images/helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            Report Generator
-                         </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            Commenting System
-                        </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            Weather
-                        </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
                             <div class="flt_right">
                                 <select class="input-mini">
-                                    <option>Ver 2.2</option>
-                                    <option>Ver 2.1</option>    
+                                    {{#each versions}}
+                                        <option>{{version}}</option>
+                                    {{/each}}
                                 </select>
                             </div>
-                            Bootstrap
+                             {{#if displayName}}
+                                {{displayName}}
+                            {{else}}
+                                {{name}}
+                            {{/if}}
                             <div class="clear"></div>
                         </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            List Files
-                        </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            Auto Complete Search
-                        </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            Cordova Windows
-                        </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            Report Generator
-                         </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            Commenting System
-                        </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            Weather
-                        </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            List Files
-                        </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            Auto Complete Search
-                        </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            Cordova Windows
-                        </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            Report Generator
-                         </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            Commenting System
-                        </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            Weather
-                        </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            List Files
-                        </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            Auto Complete Search
-                        </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            Cordova Windows
-                        </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            Report Generator
-                         </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            Commenting System
-                        </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            Weather
-                        </li>
+                  {{/each}}
                     </ul>   
                 
                 </div>
                 <!--modules div ends here -->
             </div>  
             </td>
+            {{#if jsibrarielist}}
             <td>
                 <div class="features_box">
                 <h1 data-i18n="features.list.jslibraries"></h1>
@@ -224,203 +56,38 @@
                 <div class="clear"></div>
                 <div class="box_div" id="content_2">
                     <ul id="jsibrariesContent">
+                    {{#each featureslist}}
+                         {{#each versions}}
                         <li>
                             <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
                             <fieldset class="switch">
                                 <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
                                 <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
                             </fieldset>
-                            Cordova Windows
-                        </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            Report Generator
-                         </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            Commenting System
-                        </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            Weather
-                        </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
                             <div class="flt_right">
                                 <select class="input-mini">
-                                    <option>Ver 2.2</option>
-                                    <option>Ver 2.1</option>    
+                                     {{#each versions}}
+                                        <option>{{version}}</option>
+                                    {{/each}}  
                                 </select>
                             </div>
-                            Bootstrap
+                             {{#if displayName}}
+                                {{displayName}}
+                            {{else}}
+                                {{name}}
+                            {{/if}}
                             <div class="clear"></div>
                         </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            List Files
-                        </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            Auto Complete Search
-                        </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            Cordova Windows
-                        </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            Report Generator
-                         </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            Commenting System
-                        </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            Weather
-                        </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            List Files
-                        </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            Auto Complete Search
-                        </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            Cordova Windows
-                        </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            Report Generator
-                         </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            Commenting System
-                        </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            Weather
-                        </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            List Files
-                        </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            Auto Complete Search
-                        </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            Cordova Windows
-                        </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            Report Generator
-                         </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            Commenting System
-                        </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            Weather
-                        </li>
+                    {{/each}}
                     </ul>   
                 
                 </div>
                 <!--Js Libraries div ends here -->
             </div>
             </td>
+            {{/if}}
+
+            {{#if componentList}}
             <td>
                 <div class="features_box">
                 <h1 data-i18n="features.list.components"></h1>
@@ -428,214 +95,38 @@
                 <div class="clear"></div>
                 <div class="box_div" id="content_3">
                     <ul id="componentsContent">
+                        {{#each featureslist}}
+                         {{#each versions}}
                         <li>
                             <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
                             <fieldset class="switch">
                                 <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
                                 <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
                             </fieldset>
-                            Cordova Windows
-                        </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            <span class="settings_icon"><img src="../themes/default/images/helios/settings_icon.png" width="23" height="22" border="0" alt=""></span>
-                            Report Generator
-                         </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            Commenting System
-                        </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            Weather
-                        </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
                             <div class="flt_right">
                                 <select class="input-mini">
-                                    <option>Ver 2.2</option>
-                                    <option>Ver 2.1</option>    
+                                     {{#each versions}}
+                                        <option>{{version}}</option>
+                                    {{/each}} 
                                 </select>
                             </div>
-                            Bootstrap
+                             {{#if displayName}}
+                                {{displayName}}
+                            {{else}}
+                                {{name}}
+                            {{/if}}
                             <div class="clear"></div>
                         </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            <span class="settings_icon"><img src="../themes/default/images/helios/settings_icon.png" width="23" height="22" border="0" alt=""></span>
-                            List Files
-                        </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            <span class="settings_icon"><img src="../themes/default/images/helios/settings_icon.png" width="23" height="22" border="0" alt=""></span>
-                            Auto Complete Search
-                        </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            Cordova Windows
-                        </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            Report Generator
-                         </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            Commenting System
-                        </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            Weather
-                        </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            <span class="settings_icon"><img src="../themes/default/images/helios/settings_icon.png" width="23" height="22" border="0" alt=""></span>
-                            List Files
-                        </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            <span class="settings_icon"><img src="../themes/default/images/helios/settings_icon.png" width="23" height="22" border="0" alt=""></span>
-                            Auto Complete Search
-                        </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            Cordova Windows
-                        </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            Report Generator
-                         </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            Commenting System
-                        </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            Weather
-                        </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            <span class="settings_icon"><img src="../themes/default/images/helios/settings_icon.png" width="23" height="22" border="0" alt=""></span>
-                            List Files
-                        </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            <span class="settings_icon"><img src="../themes/default/images/helios/settings_icon.png" width="23" height="22" border="0" alt=""></span>
-                            Auto Complete Search
-                        </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            Cordova Windows
-                        </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            Report Generator
-                         </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            Commenting System
-                        </li>
-                        <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/Helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            Weather
-                        </li>
+                    {{/each}}
                     </ul>   
                 
                 </div>
                 <!--Components div ends here -->
             </div>
             </td>
+            {{/if}}
         </tr>
         </table>
-        
-        
         
         <!--features_content_main div ends here -->
     </section>
@@ -655,8 +146,7 @@
     </div>
     <section class="content_end">
         <div class="flt_right">
-        	<input type="submit" data-i18n="[value]features.btn.prev" id="prev" class="btn btn_style prev_icon_btn">
-            <input type="submit" data-i18n="[value]features.btn.update" class="btn btn_style update_btn">
+        	<input type="submit" data-i18n="[value]features.btn.update" class="btn btn_style update_btn">
             <input type="submit" data-i18n="[value]features.btn.cancel" class="btn btn_style cancel_icon_btn">
         </div>
     	<!--content_title ends here -->
