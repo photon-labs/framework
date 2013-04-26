@@ -7,6 +7,8 @@ define(["framework/widgetWithTemplate", "build/listener/buildListener"], functio
 		templateUrl: commonVariables.contexturl + "/components/build/template/build.tmp",
 		configUrl: "../components/build/config/config.json",
 		name : commonVariables.build,
+		buildListener : null,
+		onProgressEvent : null,
 		
 		/***
 		 * Called in initialization time of this class 
@@ -15,8 +17,16 @@ define(["framework/widgetWithTemplate", "build/listener/buildListener"], functio
 		 */
 		initialize : function(globalConfig){
 			var self = this;
+			self.buildListener = new Clazz.com.components.build.js.listener.BuildListener(globalConfig);
+			self.registerEvents();
 		},
-
+		
+		registerEvents : function () {
+			var self = this;
+			//self.onProgressEvent = new signals.Signal();
+			//self.onProgressEvent.add(self.buildListener.onPrgoress, self.buildListener);
+		},
+		
 		/***
 		 * Called in once the login is success
 		 *
@@ -58,6 +68,33 @@ define(["framework/widgetWithTemplate", "build/listener/buildListener"], functio
 			$("input[name=build_minifier]").unbind("click");
 			$("input[name=build_minifier]").click(function() {
 				self.opencc(this, $(this).attr('name'));
+			});
+			
+			$("#buildclose").click(function() {
+				self.buildListener.onPrgoress(this);
+			});
+			
+			$(window).resize(function() {
+				$(".dyn_popup").hide();
+				var height = $(this).height();
+				$('.features_content_main').height(height - 230);
+				$('.build_progress').height(height - 230);
+			});
+	  
+			$(window).resize();
+
+			$(window).resize(function() {
+				var twowidth = window.innerWidth/2.5;
+				var onewidth = window.innerWidth - (twowidth+70);
+				$('.build_info').css("width",twowidth);
+				$('.build_progress').css("width",onewidth);
+				$('.build_close').css("right",onewidth+10);
+				
+			});
+		
+			$("#content_div").mCustomScrollbar({
+				autoHideScrollbar:true,
+				theme:"light-thin"
 			});
 			
 			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;

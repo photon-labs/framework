@@ -11,6 +11,7 @@ define(["framework/widget", "navigation/api/navigationAPI", "projects/project", 
 		featurelist : null,
 		configuration : null, 
 		build : null,
+		currentTab : null,
 		
 		/***
 		 * Called in initialization time of this class 
@@ -38,45 +39,60 @@ define(["framework/widget", "navigation/api/navigationAPI", "projects/project", 
 		
 		onMytabEvent : function(keyword) {
 			var self=this;
-
-			if (keyword === commonVariables.editApplication) {
-				if (self.applications === null || self.applications === undefined) {
-					self.applications = new Clazz.com.components.application.js.Application();
+			
+			if (self.currentTab !== commonVariables.editApplication) {
+				if (keyword === commonVariables.editApplication) {
+					self.currentTab = keyword;
+					if (self.applications === null || self.applications === undefined) {
+						self.applications = new Clazz.com.components.application.js.Application();
+					}
+					Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
+					Clazz.navigationController.push(self.applications, true);
 				}
-				Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
-				Clazz.navigationController.push(self.applications, true);
 			}
 			
-			if (keyword === commonVariables.featurelist) {
-				if (self.featurelist === null || self.featurelist === undefined) {
-					self.featurelist = new Clazz.com.components.features.js.Features();
+			if (self.currentTab !== commonVariables.featurelist) {
+				if (keyword === commonVariables.featurelist) {
+					self.currentTab = keyword;
+					if (self.featurelist === null || self.featurelist === undefined) {
+						self.featurelist = new Clazz.com.components.features.js.Features();
+					}
+					Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
+					Clazz.navigationController.push(self.featurelist, true);
 				}
-				Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
-				Clazz.navigationController.push(self.featurelist, true);
 			}
 			
-			if (keyword === commonVariables.codequality) {
-				if (self.codequality === null || self.codequality === undefined) {
-					self.codequality = new Clazz.com.components.codequality.js.CodeQuality();
+			if (self.currentTab !== commonVariables.codequality) {
+				if (keyword === commonVariables.codequality) {
+					self.currentTab = keyword;
+					if (self.codequality === null || self.codequality === undefined) {
+						self.codequality = new Clazz.com.components.codequality.js.CodeQuality();
+					}
+					Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
+					Clazz.navigationController.push(self.codequality, true);
 				}
-				Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
-				Clazz.navigationController.push(self.codequality, true);
 			}
 			
-			if (keyword === commonVariables.configuration) {
-				if (self.configuration === null || self.configuration === undefined) {
-					self.configuration = new Clazz.com.components.configuration.js.Configuration();
+			if (self.currentTab !== commonVariables.configuration) {
+				if (keyword === commonVariables.configuration) {
+					self.currentTab = keyword;
+					if (self.configuration === null || self.configuration === undefined) {
+						self.configuration = new Clazz.com.components.configuration.js.Configuration();
+					}
+					Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
+					Clazz.navigationController.push(self.configuration, true);
 				}
-				Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
-				Clazz.navigationController.push(self.configuration, true);
 			}
 			
-			if (keyword === commonVariables.build) {
-				if (self.build === null || self.build === undefined) {
-					self.build = new Clazz.com.components.build.js.Build();
+			if (self.currentTab !== commonVariables.build) {
+				if (keyword === commonVariables.build) {
+					self.currentTab = keyword;
+					if (self.build === null || self.build === undefined) {
+						self.build = new Clazz.com.components.build.js.Build();
+					}
+					Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
+					Clazz.navigationController.push(self.build, true);
 				}
-				Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
-				Clazz.navigationController.push(self.build, true);
 			}
 		}
 		

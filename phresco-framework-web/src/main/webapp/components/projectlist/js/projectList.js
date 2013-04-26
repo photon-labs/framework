@@ -74,14 +74,17 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 		 */
 		bindUI : function(){
 			var self = this;
+			$(".tooltiptop").tooltip();
 			$(".dyn_popup").hide();
 			$("#applicationedit").css("display", "none");
 			$("#editproject").click(function(){
 				self.onProjectEditEvent.dispatch();
 			});	
-
+			
+			$("#myTab li a").removeClass("act");
 			$('a[name=editApplication]').click(function(){
 				var value = $(this).text();
+				$("#myTab li#appinfo a").addClass("act");
 				self.onProjectsEvent.dispatch(value);
 			});
 

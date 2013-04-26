@@ -52,6 +52,7 @@ define(["framework/widgetWithTemplate", "codequality/listener/codequalityListene
 		 */
 		bindUI : function(){
 			var self = this;
+			$(".tooltiptop").tooltip();
 			$(".dyn_popup").hide();
 			$("#codeAnalysis").click(function() {
 				self.opencc(this,'code_popup');

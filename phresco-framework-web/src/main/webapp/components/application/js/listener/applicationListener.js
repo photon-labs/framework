@@ -1,4 +1,4 @@
-define(["framework/widget", "framework/widgetWithTemplate", "application/api/applicationAPI", "features/features"], function() {
+define(["framework/widget", "framework/widgetWithTemplate", "application/api/applicationAPI"], function() {
 
 	Clazz.createPackage("com.components.application.js.listener");
 
@@ -6,7 +6,6 @@ define(["framework/widget", "framework/widgetWithTemplate", "application/api/app
 		
 		basePlaceholder :  window.commonVariables.basePlaceholder,
 		applicationAPI : null,
-		featureContent : null,
 
 		/***
 		 * Called in initialization time of this class 
@@ -15,13 +14,6 @@ define(["framework/widget", "framework/widgetWithTemplate", "application/api/app
 		 */
 		initialize : function(config) {
 				this.applicationAPI = new Clazz.com.components.application.js.api.ApplicationAPI();
-				this.featureContent = new Clazz.com.components.features.js.Features();
-		},
-		
-		onFeature : function() {
-			var self = this;
-			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
-			Clazz.navigationController.push(self.featureContent, true);
 		},
 		
 		addServerDatabase : function(appType, whereToAppend) {
