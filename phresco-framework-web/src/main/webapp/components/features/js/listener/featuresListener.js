@@ -90,11 +90,12 @@ define(["framework/widget", "features/api/featuresAPI", "features/features",  "a
 			if(type == "components"){
 				var type = "COMPONENTS";
 			}
+			var userId = JSON.parse(self.featuresAPI.localVal.getSession("userInfo"));
 			var header = {
 				contentType: "application/json",
 				requestMethod: "GET",
 				dataType: "json",
-				webserviceurl: commonVariables.webserviceurl+commonVariables.featurePageContext+"/list?customerId=photon&techId=tech-java-webservice&type="+type+"&userId=demouser"
+				webserviceurl: commonVariables.webserviceurl+commonVariables.featurePageContext+"/list?customerId=photon&techId=tech-java-webservice&type="+type+"&userId="+userId.id
 			};
 
 			return header;

@@ -55,9 +55,8 @@
                 <input type="text" class="flt_right" data-i18n="[placeholder]features.placeholder" id="jsibraries">
                 <div class="clear"></div>
                 <div class="box_div" id="content_2">
-                    <ul id="jsibrariesContent">
-                    {{#each featureslist}}
-                         {{#each versions}}
+                   <ul id="jsibrariesContent">
+                    {{#each featureslist}}                         
                         <li>
                             <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
                             <fieldset class="switch">
@@ -66,9 +65,9 @@
                             </fieldset>
                             <div class="flt_right">
                                 <select class="input-mini">
-                                     {{#each versions}}
-                                        <option>{{version}}</option>
-                                    {{/each}}  
+                                    {{#each versions}}
+                                        <option>{{version}}</option>  
+                                    {{/each}} 
                                 </select>
                             </div>
                              {{#if displayName}}
@@ -78,6 +77,7 @@
                             {{/if}}
                             <div class="clear"></div>
                         </li>
+                        
                     {{/each}}
                     </ul>   
                 
@@ -94,9 +94,9 @@
                 <input type="text" class="flt_right" data-i18n="[placeholder]features.placeholder" id="components">
                 <div class="clear"></div>
                 <div class="box_div" id="content_3">
-                    <ul id="componentsContent">
-                        {{#each featureslist}}
-                         {{#each versions}}
+                    <ul id="jsibrariesContent">
+                    {{#each featureslist}}
+                         
                         <li>
                             <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
                             <fieldset class="switch">
@@ -105,9 +105,9 @@
                             </fieldset>
                             <div class="flt_right">
                                 <select class="input-mini">
-                                     {{#each versions}}
+                                    {{#each versions}}
                                         <option>{{version}}</option>
-                                    {{/each}} 
+                                    {{/each}}  
                                 </select>
                             </div>
                              {{#if displayName}}
@@ -117,6 +117,7 @@
                             {{/if}}
                             <div class="clear"></div>
                         </li>
+                        
                     {{/each}}
                     </ul>   
                 
