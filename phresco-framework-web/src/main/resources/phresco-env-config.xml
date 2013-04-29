@@ -80,8 +80,8 @@
 	
 	<WebService desc="" name="webservice">
             <protocol>http</protocol>
-            <host>23.23.120.124</host>
-            <port>80</port>
+            <host>localhost</host>
+            <port>8080</port>
             <username/>
             <password/>
             <context>service-testing</context>
