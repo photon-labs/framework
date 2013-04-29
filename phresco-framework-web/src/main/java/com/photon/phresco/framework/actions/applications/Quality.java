@@ -195,6 +195,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 	private String status = "";
 	private String bugComment = "";
 	private String testCaseIdError = "";
+	private String featureIdError = "";
 	private String nameError = "";
 	private boolean errorFound;
 	
@@ -2332,6 +2333,11 @@ public class Quality extends DynamicParameterAction implements Constants {
 				setTestCaseIdError(getText(ERROR_TESTCASE_ID_MISSING));
 				hasError = true;
 	        }
+			
+			if (StringUtils.isEmpty(getFeatureId())) {
+				setFeatureIdError(getText(ERROR_FEATURE_ID_MISSING));
+				hasError = true;
+			}
 		}
 		if (hasError) {
             setErrorFound(true);
@@ -3537,5 +3543,13 @@ public class Quality extends DynamicParameterAction implements Constants {
 
 	public void setTestCaseIdError(String testCaseIdError) {
 		this.testCaseIdError = testCaseIdError;
+	}
+
+	public String getFeatureIdError() {
+		return featureIdError;
+	}
+
+	public void setFeatureIdError(String featureIdError) {
+		this.featureIdError = featureIdError;
 	}
 }

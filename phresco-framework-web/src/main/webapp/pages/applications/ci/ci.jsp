@@ -127,10 +127,11 @@
 			        	%>
 			            <section class="lft_menus_container">
 			                <span class="siteaccordion" id="siteaccordion_active">
-			                	<span>
+			                	<div>
+			                		<img src="images/r_arrowclose.png" class ="accImg" id="" onclick="accordionClickOperation(this);">
 	                				<input type="checkbox" class="<%= jobName %>Job" name="Jobs" id="checkBox" value="<%= jobName %>" <%= new Boolean(request.getAttribute(FrameworkConstants.CI_BUILD_JENKINS_ALIVE + jobName).toString()).booleanValue() ? "" : "disabled" %>>
 			                		&nbsp;&nbsp;<%= jobName %> &nbsp;&nbsp;
-								</span>
+								</div>
 			                </span>
 			                <div class="mfbox siteinnertooltiptxt">
 			                    <div class="scrollpanel">
@@ -263,7 +264,7 @@ var isJenkinsReady = false;
 $(document).ready(function() {
 	
 	$('.siteaccordion').unbind('click');
-	accordion();
+	accordionOperation();
 	// hide popup
 	$('#popupPage').modal('hide');
 

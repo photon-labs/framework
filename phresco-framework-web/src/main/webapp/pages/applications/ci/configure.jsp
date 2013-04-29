@@ -69,7 +69,12 @@
 	    <section class="accordion_panel_wid">
 	        <div class="accordion_panel_inner adv-settings-accoridan-inner">
 	            <section class="lft_menus_container adv-settings-width">
-	                <span class="siteaccordion" id="siteaccordion_active"><span><s:text name="lbl.build.basic.config"/></span></span>
+	                <span class="siteaccordion" id="siteaccordion_active">
+	                	<div>
+		                	<img src="images/r_arrowclose.png" class ="accImg" id="" onclick="accordionClickOperation(this);">
+		                	<s:text name="lbl.build.basic.config"/>
+	                	</div>
+                	</span>
 	                <div class="mfbox siteinnertooltiptxt" id="build_adv_sett">
 	                    <div class="scrollpanel adv_setting_accordian_bottom">
 	                        <section class="scrollpanel_inner">
@@ -470,7 +475,12 @@
 	    <section class="accordion_panel_wid">
 	        <div class="accordion_panel_inner adv-settings-accoridan-inner">
 	            <section class="lft_menus_container adv-settings-width">
-	                <span class="siteaccordion" id="siteaccordion_active"><span><s:text name="lbl.build.config"/></span></span>
+	                <span class="siteaccordion" id="siteaccordion_active">
+	                	<div>
+		                	<img src="images/r_arrowclose.png" class ="accImg" id="" onclick="accordionClickOperation(this);">
+		                	<s:text name="lbl.build.config"/>
+	                	</div>
+	                </span>
 	                <div class="mfbox siteinnertooltiptxt" id="build_adv_sett">
 	                    <div class="scrollpanel adv_setting_accordian_bottom">
 	                        <section class="scrollpanel_inner">
@@ -539,7 +549,12 @@
 	    <section class="accordion_panel_wid">
 	        <div class="accordion_panel_inner adv-settings-accoridan-inner">
 	            <section class="lft_menus_container adv-settings-width">
-	                <span class="siteaccordion" id="siteaccordion_active"><span><s:text name="lbl.build.uploader.config"/></span></span>
+	                <span class="siteaccordion" id="siteaccordion_active">
+	                	<div>
+		                	<img src="images/r_arrowclose.png" class ="accImg" id="" onclick="accordionClickOperation(this);">
+		                	<s:text name="lbl.build.uploader.config"/>
+	                	</div>
+	                </span>
 	                <div class="mfbox siteinnertooltiptxt" id="build_adv_sett">
 	                    <div class="scrollpanel adv_setting_accordian_bottom">
 	                        <section class="scrollpanel_inner">
@@ -653,7 +668,7 @@
 	
 	$(document).ready(function() {
 		$('.siteaccordion').unbind('click');
-		accordion();
+		accordionOperation();
 		
 		credentialsDisp();
 		$("#name").focus();

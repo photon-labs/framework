@@ -68,7 +68,7 @@
 		
 	    <!-- FeatureId starts -->
 		<div class="control-group" id="featureIdControl">
-		    <label class="accordion-control-label labelbold"><s:text name="label.testcase.featureId"/></label>
+		    <label class="accordion-control-label labelbold"><span class="red">*</span>&nbsp;<s:text name="label.testcase.featureId"/></label>
 		    <div class="controls">
 		       <input id="featureId" placeholder="<s:text name='label.featureId.placeholder'/>" class="input-xlarge" name="featureId" type="text" 
 				    value="<%= StringUtils.isNotEmpty(featureId) ? featureId : "" %>" <%= strDisable %>>
@@ -233,6 +233,12 @@ $(document).ready(function() {
 			showError($("#testCaseIdControl"), $("#testCaseIdError"), data.testCaseIdError);
 		} else {
 			hideError($("#testCaseIdControl"), $("#testCaseIdError"));
+		}
+		
+		if (!isBlank(data.featureIdError)) {
+			showError($("#featureIdControl"), $("#featureIdError"), data.featureIdError);
+		} else {
+			hideError($("#featureIdControl"), $("#featureIdError"));
 		}
 	}
 </script> 

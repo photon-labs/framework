@@ -1285,6 +1285,7 @@ public interface FrameworkConstants {
     String ERROR_TEST_SCENARIO_NAME_EXISTS = "err.msg.test.suite.name.exists";
     String ERROR_TESTCASE_ID_MISSING = "err.testCase.id.missing";
     String ERROR_TEST_SCENARIO_NAME_MISSING = "err.test.suite.name.missing";
+	String ERROR_FEATURE_ID_MISSING = "err.feature.id.missing";
     
     /*
      * Delete Environment keys
