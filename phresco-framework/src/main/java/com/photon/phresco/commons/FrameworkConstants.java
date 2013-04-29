@@ -203,6 +203,7 @@ public interface FrameworkConstants {
     String UPDATE = "update";
     String ADD = "add";
     String REPO_URL = "repoUrl";
+    String TEST_REPO_URL = "testRepoUrl";
     String PROJECT_UPDATE_POPUP = "projectUpdatePopup";
     String CLONED_WORKSPACE = "clonedWorkspace";
 	String CI_SCM = "scm";
