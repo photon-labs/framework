@@ -87,6 +87,12 @@ public class Applications extends FrameworkBaseAction {
     private String revisionVal = "";
     private String repoType = "";
     private String repoUrl = "";
+    private String testUserName = "";
+    private String testPassword = "";
+    private String testRevision = "";
+    private String testRevisionVal = "";
+    private String testRepoUrl = "";
+    private boolean testClone;
     private String commitMessage = "";
     private List<String> commitableFiles = null;
     private List<DownloadInfo> servers = null;
@@ -599,10 +605,25 @@ public class Applications extends FrameworkBaseAction {
 		try {
 			revision = !HEAD_REVISION.equals(revision) ? revisionVal : revision;
 			SCMManagerImpl scmi = new SCMManagerImpl();
-			boolean importProject = scmi.importProject(SVN, repoUrl, userName, password, null, revision);
-			if (importProject) {
-				errorString = getText(IMPORT_SUCCESS_PROJECT);
-				errorFlag = true;
+			
+			ApplicationInfo importProject = scmi.importProject(SVN, repoUrl, userName, password, null, revision);
+			if (importProject != null) {
+				String importTest = "";
+				if (testClone) {
+					String path = Utility.getProjectHome() + File.separator + importProject.getAppDirName() + File.separator + TEST;
+					org.apache.commons.io.FileUtils.cleanDirectory(new File(path));
+					importTest = scmi.svnCheckout(testUserName, testPassword, testRepoUrl, path);
+					if (SUCCESSFUL.equalsIgnoreCase(importTest)) {
+						errorString = getText(IMPORT_SUCCESS_PROJECT);
+						errorFlag = true;
+					} else {
+						errorString = importTest;
+						errorFlag = false;
+					}
+				} else {
+					errorString = getText(IMPORT_SUCCESS_PROJECT);
+					errorFlag = true;
+				}
 			} else {
 				errorString = getText(INVALID_FOLDER);
 				errorFlag = false;
@@ -653,8 +674,8 @@ public class Applications extends FrameworkBaseAction {
 		}
 		SCMManagerImpl scmi = new SCMManagerImpl();
 		try {
-			boolean importProject = scmi.importProject(GIT, repoUrl, userName, password, MASTER ,revision);
-			if (importProject) {
+			ApplicationInfo importProject = scmi.importProject(GIT, repoUrl, userName, password, MASTER ,revision);
+			if (importProject != null) {
 				errorString = getText(IMPORT_SUCCESS_PROJECT);
 				errorFlag = true;
 			} else {
@@ -698,6 +719,7 @@ public class Applications extends FrameworkBaseAction {
 			errorString = getText(IMPORT_PROJECT_FAIL);
 			errorFlag = false;
 		}
+		
 		return SUCCESS;
 	}
 	
@@ -708,8 +730,8 @@ public class Applications extends FrameworkBaseAction {
         
         try {
             SCMManagerImpl scmi = new SCMManagerImpl();
-            boolean importProject = scmi.importProject(BITKEEPER, repoUrl, userName, password, null , null);
-            if (importProject) {
+            ApplicationInfo importProject = scmi.importProject(BITKEEPER, repoUrl, userName, password, null , null);
+            if (importProject != null) {
                 errorString = getText(IMPORT_SUCCESS_PROJECT);
                 errorFlag = true;
             }
@@ -1340,6 +1362,54 @@ public class Applications extends FrameworkBaseAction {
 	public String getLogMessage() {
 		return logMessage;
 	}
+
+	public String getTestUserName() {
+		return testUserName;
+	}
+
+	public void setTestUserName(String testUserName) {
+		this.testUserName = testUserName;
+	}
+
+	public String getTestPassword() {
+		return testPassword;
+	}
+
+	public void setTestPassword(String testPassword) {
+		this.testPassword = testPassword;
+	}
+
+	public String getTestRevision() {
+		return testRevision;
+	}
+
+	public void setTestRevision(String testRevision) {
+		this.testRevision = testRevision;
+	}
+
+	public String getTestRevisionVal() {
+		return testRevisionVal;
+	}
+
+	public void setTestRevisionVal(String testRevisionVal) {
+		this.testRevisionVal = testRevisionVal;
+	}
+
+	public String getTestRepoUrl() {
+		return testRepoUrl;
+	}
+
+	public void setTestRepoUrl(String testRepoUrl) {
+		this.testRepoUrl = testRepoUrl;
+	}
+
+	public void setTestClone(boolean testClone) {
+		this.testClone = testClone;
+	}
+
+	public boolean getTestClone() {
+		return testClone;
+	}
 	
 	public String getPomVersion() {
 		return pomVersion;
@@ -1348,5 +1418,4 @@ public class Applications extends FrameworkBaseAction {
 	public void setPomVersion(String pomVersion) {
 		this.pomVersion = pomVersion;
 	}
-
 }

@@ -33,6 +33,7 @@
 	User user = (User)session.getAttribute(FrameworkConstants.SESSION_USER_INFO);
 	String password = (String) session.getAttribute(FrameworkConstants.SESSION_USER_PASSWORD);
 	String repoUrl = (String)request.getAttribute(FrameworkConstants.REPO_URL);
+	String testRepoUrl = (String)request.getAttribute(FrameworkConstants.TEST_REPO_URL);
 	String fromTab = (String)request.getAttribute(FrameworkConstants.REQ_FROM_TAB);
 	String applicationId = (String)request.getAttribute(FrameworkConstants.REQ_APP_ID);
 	String projectId = (String)request.getAttribute(FrameworkConstants.REQ_PROJECT_ID);
@@ -41,7 +42,7 @@
 	User userInfo = (User)session.getAttribute(FrameworkConstants.SESSION_USER_INFO);
 	Object commitableFilesObj = request.getAttribute(FrameworkConstants.REQ_COMMITABLE_FILES);
 	List<String> Messages = (List<String>)request.getAttribute(FrameworkConstants.REQ_LOG_MESSAGES);
-	
+
 	List<SVNStatus> commitableFiles = null;
 	if (commitableFilesObj != null) {
 		commitableFiles = (List<SVNStatus>) commitableFilesObj;
@@ -106,7 +107,7 @@
     		</div>
 	    <% } %> 
  			
-	<!--   import from type -->
+	<!--   import src from type -->
 	<div id="typeInfo">
 		<div class="control-group" id="typeInfo">
 			<label class="control-label labelbold popupLbl">
@@ -170,6 +171,65 @@
 	</div>
 	<% } %>
 	
+	<% if (!FrameworkConstants.FROM_PAGE_ADD.equals(action) && !FrameworkConstants.COMMIT.equals(action) && !FrameworkConstants.UPDATE.equals(action)) { %>
+	<div class="control-group" id="testImportDivControl">
+		<label  class="control-label labelbold popupLbl"> <s:text name="label.test.clone"/></label>
+		<div class="controls">
+		 	<input type="checkbox" name = "testClone" class = "testClone" id="testClone" style="margin-top:8px;" />
+		</div>
+	</div>
+	
+	<!--   import test from type -->	
+	<div id = "testImportDiv">		
+		<div class="control-group">
+			<label class="control-label labelbold popupLbl">
+				<span class="red">*</span> <s:text name="label.test.repository.url"/>
+			</label>
+			<div class="controls">
+				<input type="text" name="testRepoUrl" class="input-xlarge" id="testRepoUrl" value="<%= StringUtils.isEmpty(testRepoUrl) ? "http://" : testRepoUrl %>">&nbsp;&nbsp;<span id="missingTestURL" class="missingTestData"></span>
+			</div>
+		</div>
+		
+		<div class="control-group" id="testOtherCredentialInfo">
+			<label  class="control-label labelbold popupLbl"> <s:text name="label.other.credential"/></label>
+			<div class="controls">
+			 	<input type="checkbox" name = "testCredential" class = "testCredentials" id="testCredentials" style="margin-top:8px;" />
+			</div>
+		</div>
+		
+		<div class="control-group">
+			<label  class="control-label labelbold popupLbl"><span class="red mandatory">*</span> <s:text name="lbl.username"/></label> 
+			<div class="controls">
+				<input type="text" name="testUserName" class="input-large" id="testUserName" maxlength="63" title="63 Characters only" >&nbsp;&nbsp;<span id="missingUsername" class="missingData"></span> 
+			</div>
+		</div>
+		
+		<div class="control-group">
+			<label  class="control-label labelbold popupLbl"><span class="red mandatory">*</span> <s:text name="lbl.password"/></label> 
+			<div class="controls">
+				<input type="Password" name="testPassword" class="input-large" id="testPassword" maxlength="63" title="63 Characters only">&nbsp;&nbsp;<span id="missingPassword" class="missingData"></span> 
+			</div>
+		</div>
+		
+		<% if (!FrameworkConstants.FROM_PAGE_ADD.equals(action) && !FrameworkConstants.COMMIT.equals(action)) { %>
+		<div id="testSvnRevisionInfo">
+			<div class="control-group">
+				<label  class="control-label labelbold popupLbl"><span class="red">*</span> <s:text name="label.revision"/></label> 
+				<div class="controls">
+					<input id="testRevisionHead" type="radio" name="testRevision" value="HEAD" checked/>&nbsp; HEAD Revision 
+				</div>
+				<div class="controls">
+					<input id="testRevision" type="radio" name="testRevision" value="revision"/> &nbsp;Revision &nbsp; &nbsp; &nbsp; &nbsp;<input id="testRevisionVal" type="text" name="testRevisionVal" maxLength="10" title="10 Characters only" disabled> 
+				</div>
+				<div class="controls">
+					<span id="missingTestRevision" class="missingTestData"></span> 
+				</div>
+			</div>
+		</div>
+		<% } %>
+	</div>
+	<% } %>
+	
 	<% if (FrameworkConstants.FROM_PAGE_ADD.equals(action) || FrameworkConstants.COMMIT.equals(action)) { %>
 		<div class="control-group">
 			<label  class="control-label labelbold popupLbl"><span class="red hideContent" id="commitMsgSpan">*</span> <s:text name="lbl.commit.message"/></label> 
@@ -194,6 +254,7 @@
 <script type="text/javascript">
 	$(document).ready(function() {
 		hidePopuploadingIcon();
+		hideShowTestCheckoutDiv();
 		$("#repoUrl").focus();
 		$('#logDiv').hide();
 		 // when clicking on save button, popup should not hide
@@ -205,6 +266,14 @@
 			svnCredentialMark();
 		} else {
 			svnCredentialMark();
+		}
+		
+		// svn import for already selected value display(Test)
+	  	if(localStorage["testSvnImport"] != null && !isBlank(localStorage["testSvnImport"])) {
+			$('#testCredentials').attr("checked", true);
+			svnCredentialTestMark();
+		} else {
+			svnCredentialTestMark();
 		}
 		
 		$('.logHistory').click(function() {
@@ -220,16 +289,33 @@
 	       urlBasedAction();
 		});
 		
+		$("#testRepoUrl").blur(function(event) {
+ 	   		testUrlBasedAction();
+		});
+		
 		$('#revision').click(function() {
 			$("#revisionVal").removeAttr("disabled");
 		});
+		
+		$('#testRevision').click(function() {
+			$("#testRevisionVal").removeAttr("disabled");
+		});
+
 
 		$('#revisionHead').click(function() {
 			$('#revisionVal').attr("disabled", "disabled");
 		});
+		
+		$('#testRevisionHead').click(function() {
+			$('#testRevisionVal').attr("disabled", "disabled");
+		});
 
 	  	$('#credentials').click(function() {
 		  	svnCredentialMark();
+		});
+	  	
+	  	$('#testCredentials').click(function() {
+	  		svnCredentialTestMark();
 		});
 	  	
 	  	$('#logMessages').bind('change', function() {
@@ -237,20 +323,28 @@
 	  		$('#logDiv').hide();
 		});
 	  	
+	  	$('#testClone').click(function() {
+	  		hideShowTestCheckoutDiv();
+	  		changeChckBoxValue($('#testClone'));
+	  	});
+	  	
 	  	$('[name=repoType]').change(function() {
 		  	extraInfoDisplay();
 		  	if ($("[name=repoType]").val() == 'svn') {
 		  		$(".mandatory").show();
 		  		$("#commitMsgSpan").hide();
+		  		$('#testImportDivControl').show();
 		  	} else if($("[name=repoType]").val() == 'git') {
 		  		$(".mandatory").hide();
 		  		$("#commitMsgSpan").hide();
+		  		$('#testImportDivControl').hide();
 		  	}
 		  	
 		  	if ($("[name=repoType]").val() == 'bitkeeper') {
 		  		$(".mandatory").hide();
 		  		$("#repoUrl").val('');
 		  		$("#commitMsgSpan").show();
+		  		$('#testImportDivControl').hide();
 			}
 		});
 			  
@@ -310,6 +404,14 @@
 		<% } %>
 	});
 	
+	function hideShowTestCheckoutDiv() {
+		if ($('#testClone').is(':checked')) {
+  			$('#testImportDiv').show();
+  		} else {
+  			$('#testImportDiv').hide();
+  		}
+	}
+	
 	function showSelect() {
 		var selectList = document.getElementById("logMessages");
 		if (selectList.options.length > 1) { 
@@ -357,13 +459,17 @@
 		if($("[name=repoType]").val() == 'svn') {
 			$('.credentialDet').show();
 			$('#svnRevisionInfo').show();
+			$('#testSvnRevisionInfo').show();
 			  // hide other credential checkbox
 			$('#otherCredentialInfo').show();
+			$('#testOtherCredentialInfo').show();
 		} else if($("[name=repoType]").val() == 'git' || $("[name=repoType]").val() == 'bitkeeper') {
 			$('.credentialDet').hide();
 			$('#svnRevisionInfo').hide();
+			$('#testSvnRevisionInfo').hide();
 			  // hide other credential checkbox
 			$('#otherCredentialInfo').hide();
+			$('#testOtherCredentialInfo').hide();
 			enableSvnFormDet();
 		}
 	}
@@ -373,9 +479,20 @@
     	if (repoUrl.indexOf('insight.photoninfotech.com') != -1) {
 			$('#credentials').attr("checked", false);
 	        svnCredentialMark();
-       	} else if(!isBlank(repoUrl)) {
+       	} else if(!isBlank(repoUrl) && (repoUrl != "http://")) {
 			$('#credentials').attr("checked", true);
 	        svnCredentialMark();
+        }
+	}
+	
+	function testUrlBasedAction() {
+        var repoUrl = $("input[name='testRepoUrl']").val();
+    	if (repoUrl.indexOf('insight.photoninfotech.com') != -1) {
+			$('#testCredentials').attr("checked", false);
+			svnCredentialTestMark();
+       	} else if(!isBlank(repoUrl) && (repoUrl != "http://")) {
+			$('#testCredentials').attr("checked", true);
+			svnCredentialTestMark();
         }
 	}
 
@@ -396,6 +513,24 @@
 			localStorage["svnImport"] = "";
 		}
 	}
+	
+	function svnCredentialTestMark() {
+		if($('#testCredentials').is(':checked')) {
+			enableTestSvnFormDet();
+			$("#testUserName").val('');
+			$("#testPassword").val('');
+			localStorage["testSvnImport"] = "testCredentials";
+		} else {
+			$("#testUserName").val("<%= LoginId %>");
+			<%
+				String testEncodedpassword = (String) session.getAttribute(FrameworkConstants.SESSION_USER_PASSWORD);
+				String testDecryptedPass = new String(Base64.decodeBase64(encodedpassword.getBytes()));
+			%>
+			$("#testPassword").val("<%= testDecryptedPass %>");
+			disableTestSvnFormDet();
+			localStorage["testSvnImport"] = "";
+		}
+	}
 
 	function enableSvnFormDet() {
 		enableCtrl($("input[name='password']"));
@@ -405,6 +540,17 @@
 	function disableSvnFormDet() {
  		disableCtrl($("input[name='password']"));
  		disableCtrl($("input[name='username']"));
+	}
+	
+	function enableTestSvnFormDet() {
+		$("input[name='testPassword']").removeAttr("readonly");
+		$("input[name='testUserName']").removeAttr("readonly");
+	}
+
+	function disableTestSvnFormDet() {
+		
+ 		$("input[name='testPassword']").attr("readonly","readonly");
+ 		$("input[name='testUserName']").attr("readonly","readonly");
 	}
 	
 	function validateImportAppl() {
@@ -456,6 +602,50 @@
 			$("#commitMessage").focus();
 			return false;
 		}
+		
+		if ($('#testClone').is(':checked')) {
+			var testRepoUrl = $("input[name='testRepoUrl']").val();
+			
+			if (isBlank(testRepoUrl)) {
+				$("#errMsg").html("URL(TestClone) is missing");
+				$("#testRepoUrl").focus();
+				return false;
+			}
+			
+			if ($("[name=repoType]").val() != 'bitkeeper' && isValidUrl(testRepoUrl)) {
+				$("#errMsg").html("Invalid URL(TestClone)");
+				$("#testRepoUrl").focus();
+				return false;
+			}
+			
+			if ($("[name=repoType]").val() == 'svn') {
+				if (isBlank($.trim($("input[name='testUserName']").val()))) {
+					$("#errMsg").html("Username(TestClone) is missing");
+					$("#testUserName").focus();
+					$("#testUserName").val("");
+					return false;
+				}
+				
+				if (isBlank($.trim($("input[name='testPassword']").val()))) {
+					$("#errMsg").html("Password(TestClone) is missing");
+					$("#testPassword").focus();
+					$("#testPassword").val("");
+					return false;
+				}
+				
+//	 			the revision have to be validated
+				if ($('input:radio[name=testRevision]:checked').val() == "revision" && (isBlank($.trim($('#testRevisionVal').val())))) {
+					$("#errMsg").html("Revision(TestClone) is missing");
+					$("#testRevisionVal").focus();
+					$("#testRevisionVal").val("");
+					return false;
+				}
+
+//	 			before form submit enable textboxes
+//	 			enableSvnFormDet();
+			}
+		}
+		
 		return true;
 	}
 	

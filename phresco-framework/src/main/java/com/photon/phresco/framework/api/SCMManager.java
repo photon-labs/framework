@@ -17,7 +17,9 @@
  */
 package com.photon.phresco.framework.api;
 
-import java.io.*;
+import java.io.File;
+
+import com.photon.phresco.commons.model.ApplicationInfo;
 
 public interface SCMManager {
 
@@ -31,7 +33,7 @@ public interface SCMManager {
 	 * @throws Exception 
 	 
 	 */
-	boolean importProject(String type, String url, String username,
+	ApplicationInfo importProject(String type, String url, String username,
 			String password, String branch, String revision) throws Exception ;
 
 	/**

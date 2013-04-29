@@ -46,6 +46,7 @@ import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNLogEntry;
 import org.tmatesoft.svn.core.SVNNodeKind;
 import org.tmatesoft.svn.core.SVNURL;
+import org.tmatesoft.svn.core.auth.BasicAuthenticationManager;
 import org.tmatesoft.svn.core.auth.ISVNAuthenticationManager;
 import org.tmatesoft.svn.core.internal.io.dav.DAVRepositoryFactory;
 import org.tmatesoft.svn.core.internal.io.fs.FSRepositoryFactory;
@@ -82,7 +83,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 	boolean dotphresco ;
 	SVNClientManager cm = null;
 
-	public boolean importProject(String type, String url, String username,
+	public ApplicationInfo importProject(String type, String url, String username,
 			String password, String branch, String revision) throws Exception {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.importProject()");
@@ -92,17 +93,23 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			if(debugEnabled){
 				S_LOGGER.debug("SVN type");
 			}
-			
+
 			SVNURL svnURL = SVNURL.parseURIEncoded(url);
-	        DAVRepositoryFactory.setup();
-	        DefaultSVNOptions options = new DefaultSVNOptions();
-	        cm = SVNClientManager.newInstance(options, username, password);
+			DAVRepositoryFactory.setup();
+			DefaultSVNOptions options = new DefaultSVNOptions();
+			cm = SVNClientManager.newInstance(options, username, password);
 			boolean valid = checkOutFilter(url, username, password, revision, svnURL);
 			if(debugEnabled){
 				S_LOGGER.debug("Completed");
 			}
-			
-			return valid;
+
+			if (valid) {
+				ProjectInfo projectInfo = getSvnAppInfo(revision, svnURL);
+				if (projectInfo != null) {
+					return returnAppInfo(projectInfo);
+				}
+			} 
+			return null;
 		} else if (GIT.equals(type)) {
 			if(debugEnabled){
 				S_LOGGER.debug("GIT type");
@@ -125,7 +132,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			if(debugEnabled){
 				S_LOGGER.debug("Validating Phresco Definition");
 			}
-			boolean valid = cloneFilter(gitImportTemp, url, true);
+			ApplicationInfo applicationInfo = cloneFilter(gitImportTemp, url, true);
 			if (gitImportTemp.exists()) {
 				if(debugEnabled){
 					S_LOGGER.debug("Deleting ~Temp");
@@ -135,13 +142,29 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			if(debugEnabled){
 				S_LOGGER.debug("Completed");
 			}
-			
-			return valid;
+			if (applicationInfo != null) {
+				return applicationInfo;
+			} 
 		} else if (BITKEEPER.equals(type)) {
 		    return importFromBitKeeper(url);
 		}
 		
-		return false;
+		return null;
+	}
+	
+	private ApplicationInfo returnAppInfo(ProjectInfo projectInfo) {
+		List<ApplicationInfo> appInfos = null;
+		ApplicationInfo applicationInfo = null;
+		if (projectInfo != null) {
+		appInfos = projectInfo.getAppInfos();
+		}
+		if (appInfos != null) {
+		applicationInfo = appInfos.get(0);
+		}
+		if (applicationInfo != null) {
+			return applicationInfo;
+		}
+		return null;
 	}
 
 	public boolean updateProject(String type, String url, String username ,
@@ -331,7 +354,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		}
 		setupLibrary();
 		SVNRepository repository = null;
-			repository = SVNRepositoryFactory.create(SVNURL.parseURIEncoded(url));
+		repository = SVNRepositoryFactory.create(SVNURL.parseURIEncoded(url));
 		ISVNAuthenticationManager authManager = SVNWCUtil.createDefaultAuthenticationManager(name, password);
 		repository.setAuthenticationManager(authManager);
 			SVNNodeKind nodeKind = repository.checkPath("", -1);
@@ -395,6 +418,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 						if (file.exists()) {
 							throw new PhrescoException(PROJECT_ALREADY);
 			            }
+						
 						if(debugEnabled){
 							S_LOGGER.debug("Checking out...");
 						}
@@ -411,13 +435,13 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 						return dotphresco;
 					} else if (entry.getKind() == SVNNodeKind.DIR && recursive) {
 						// second level check (only one iteration)
-						SVNURL svnnewURL = svnURL.appendPath("/" + entry.getName(), true);
+						SVNURL svnnewURL = svnURL.appendPath(FORWARD_SLASH + entry.getName(), true);
 						if(debugEnabled){
 							S_LOGGER.debug("Appended SVNURL for subdir " + svnURL);
 							S_LOGGER.debug("checking subdirectories");
 						}
 						validateDir(repository,(path.equals("")) ? entry.getName() : path
-										+ "/" + entry.getName(), revision,svnnewURL, false);
+										+ FORWARD_SLASH + entry.getName(), revision,svnnewURL, false);
 					}
 				}
 			}
@@ -446,13 +470,24 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		        repo.getRepository().close();
 	}
 	
-	private boolean importFromBitKeeper(String repoUrl) throws PhrescoException {
+	private ApplicationInfo importFromBitKeeper(String repoUrl) throws PhrescoException {
 	    BufferedReader reader = null;
 	    File file = new File(Utility.getPhrescoTemp() + "bitkeeper.info");
 	    boolean isImported = false;
 	    try {
 	        String command = BK_CLONE + SPACE + repoUrl;
-	        Utility.executeStreamconsumer(Utility.getProjectHome(), command, new FileOutputStream(file));
+	        String uuid = UUID.randomUUID().toString();
+			File bkImportTemp = new File(Utility.getPhrescoTemp(), uuid);
+			if(debugEnabled){
+				S_LOGGER.debug("bkImportTemp " + bkImportTemp);
+			}
+			if (bkImportTemp.exists()) {
+				if(debugEnabled){
+					S_LOGGER.debug("Empty Bk directory need to be removed before importing from BitKeeper ");
+				}
+				FileUtils.deleteDirectory(bkImportTemp);
+			}
+	        Utility.executeStreamconsumer(bkImportTemp.getPath(), command, new FileOutputStream(file));
 	        reader = new BufferedReader(new FileReader(file));
 	        String strLine;
 	        while ((strLine = reader.readLine()) != null) {
@@ -465,9 +500,22 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 	                throw new PhrescoException("Failed to import project");
 	            }
 	        }
+	        if (isImported) {
+	        	ProjectInfo projectInfo = getGitAppInfo(bkImportTemp);
+	        	if (projectInfo != null) {
+	        		ApplicationInfo appInfo = returnAppInfo(projectInfo);
+	        		if (appInfo != null) {
+	        			importToWorkspace(bkImportTemp, Utility.getProjectHome(), appInfo.getAppDirName());
+	        			return appInfo;
+	        		}
+	        	} 
+	        } 
+	        return null;
 	    } catch (IOException e) {
 	        throw new PhrescoException(e);
-	    } finally {
+	    } catch (Exception e) {
+			throw new PhrescoException(e);
+		} finally {
 	        if (reader != null) {
 	            try {
 	                reader.close();
@@ -479,11 +527,9 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 	            file.delete();
 	        }
 	    }
-
-	    return isImported;
 	}
 
-	private boolean cloneFilter(File appDir, String url, boolean recursive)throws Exception {
+	private ApplicationInfo cloneFilter(File appDir, String url, boolean recursive)throws Exception {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.cloneFilter()");
 		}
@@ -513,10 +559,10 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				}
 				// update connection in pom.xml
 				updateSCMConnection(appInfo.getAppDirName(), url);
-				return true;
+				return appInfo;
 			}
 		}
-		return false;
+		return null;
 	}
 
 	private ProjectInfo getGitAppInfo(File directory)throws PhrescoException {
@@ -859,5 +905,23 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		SVNCommitInfo commitInfo = cc.doCommit(comittableFiles, false, commitMessage, null, null, false, true, SVNDepth.INFINITY);
 
 		return commitInfo;
+	}
+	
+	public String svnCheckout(String userName, String Password, String repoUrl, String Path) {
+		DAVRepositoryFactory.setup();
+		SVNClientManager clientManager = SVNClientManager.newInstance();
+		ISVNAuthenticationManager authManager = new BasicAuthenticationManager(userName, Password);
+		clientManager.setAuthenticationManager(authManager);
+		SVNUpdateClient updateClient = clientManager.getUpdateClient();
+		try
+		{
+			File file = new File(Path);
+			SVNURL url = SVNURL.parseURIEncoded(repoUrl);
+			updateClient.doCheckout(url, file, SVNRevision.UNDEFINED, SVNRevision.HEAD, true);
+		}
+		catch (SVNException e) {
+			return e.getLocalizedMessage();
+		}
+		return SUCCESSFUL;
 	}
 }
