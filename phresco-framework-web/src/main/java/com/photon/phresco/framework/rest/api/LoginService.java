@@ -5,9 +5,9 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -21,41 +21,35 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import com.google.gson.Gson;
 import com.photon.phresco.commons.model.Customer;
 import com.photon.phresco.commons.model.User;
-import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.exception.PhrescoWebServiceException;
 import com.photon.phresco.service.client.api.ServiceManager;
 import com.photon.phresco.util.Credentials;
 import com.photon.phresco.util.Utility;
+import com.sun.jersey.api.client.ClientResponse.Status;
 
 @Path ("/login")
 public class LoginService extends RestBase {
-//	protected static final Map<String, ServiceManager> CONTEXT_MANAGER_MAP = new HashMap<String, ServiceManager>();
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	 public Response authenticate(Credentials credentials) throws PhrescoException  {
+	 public Response authenticate(Credentials credentials) {
 	        User user = null;
+	    	ResponseInfo responseData = new ResponseInfo();
 	        try {
 	        	user = doLogin(credentials);
-	        	
 	        	if (user == null) {
-
-	        		return null;
+	        		responseData.setMessage("Login failed");
+	        		return Response.ok(responseData).header("Access-Control-Allow-Origin", "*").build();
 	        	}
 	        	if (!user.isPhrescoEnabled()) {
-
-	        		return null;
+	        		responseData.setMessage("Login failed");
+	        		return Response.ok(responseData).header("Access-Control-Allow-Origin", "*").build();
 	        	}
+	        	
 	        	List<Customer> customers = user.getCustomers();
-//	    		Collections.sort(customers, sortCusNameInAlphaOrder());
-
-	        	//encode the password
-//	        	byte[] encodedPwd = Base64.encodeBase64(credentials.getPassword().getBytes());
-//	        	String encodedString = new String(encodedPwd);
-
+	    		Collections.sort(customers, sortCusNameInAlphaOrder());
 
 	        	File tempPath = new File(Utility.getPhrescoTemp() + File.separator + "user.json");
 	        	String userId = user.getId();
@@ -82,26 +76,41 @@ public class LoginService extends RestBase {
 	        	FileWriter  writer = new FileWriter(tempPath);
 	        	writer.write(userjson.toString());
 	        	writer.close();
+	        	
+			responseData.setData(user);
+			responseData.setMessage("Login Successfull");
+			
+			return Response.ok(responseData).header("Access-Control-Allow-Origin", "*").build();
+			
 	        } catch (PhrescoWebServiceException e) {
-	        	throw new PhrescoException(e);
+	        	ServiceManagerMap.responseDataEvalution(responseData, e, "Login failed", null);
+	        	return Response.status(Status.EXPECTATION_FAILED).entity(responseData).header("Access-Control-Allow-Origin", "*").build();
 	        } catch (IOException e) {
-	        	throw new PhrescoException(e);
+	        	ServiceManagerMap.responseDataEvalution(responseData, e, "", null);
+	        	return Response.status(Status.INTERNAL_SERVER_ERROR).entity(responseData).header("Access-Control-Allow-Origin", "*").build();
 			} catch (ParseException e) {
-				throw new PhrescoException(e);
+				ServiceManagerMap.responseDataEvalution(responseData, e, "", null);
+				return Response.status(Status.INTERNAL_SERVER_ERROR).entity(responseData).header("Access-Control-Allow-Origin", "*").build();
 			}
-			Gson gson = new Gson();
-			String json = gson.toJson(user);
-	       return Response.ok(json).header("Access-Control-Allow-Origin", "*").build();
 	    }
-	
+
 	private User doLogin(Credentials credentials) {
 		ServiceManager serviceManager = null;
         try {
         	serviceManager = getServiceManager(credentials.getUsername(), credentials.getPassword());
-        	ServiceManagerMap.CONTEXT_MANAGER_MAP.put(credentials.getUsername(), serviceManager);
         } catch (PhrescoWebServiceException ex) {
             throw new PhrescoWebServiceException(ex.getResponse());
         } 
         return serviceManager.getUserInfo();
     }
+	
+	  private Comparator sortCusNameInAlphaOrder() {
+			return new Comparator(){
+			    public int compare(Object firstObject, Object secondObject) {
+			    	Customer customerName1 = (Customer) firstObject;
+			    	Customer customerName2 = (Customer) secondObject;
+			       return customerName1.getName().compareToIgnoreCase(customerName2.getName());
+			    }
+			};
+		}
 }

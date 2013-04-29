@@ -20,9 +20,20 @@ public class FeatureService {
 	@Path("/list")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response list(@QueryParam("customerId") String customer, @QueryParam("techId") String techId,
-			@QueryParam("type") String type, @QueryParam("userId") String userId ) throws PhrescoException {
-		ServiceManager serviceManager = ServiceManagerMap.CONTEXT_MANAGER_MAP.get(userId);
-		List<ArtifactGroup> features = serviceManager.getFeatures(customer, techId, type);
-		return Response.status(Status.OK).entity(features).header("Access-Control-Allow-Origin", "*").build();
+			@QueryParam("type") String type, @QueryParam("userId") String userId ) {
+		ResponseInfo responseData = new ResponseInfo();
+		try {
+			ServiceManager serviceManager = ServiceManagerMap.CONTEXT_MANAGER_MAP.get(userId);
+			if(serviceManager == null) {
+				ResponseInfo finalOutput = ServiceManagerMap.responseDataEvalution(responseData, null, "UnAuthorized User", null);
+	        	return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			}
+			List<ArtifactGroup> features = serviceManager.getFeatures(customer, techId, type);
+			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvalution(responseData, null, "Application Features listed successfully", features);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		} catch (PhrescoException e) {
+			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvalution(responseData, e, "Application Features not fetched", null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		}
 	}
 }

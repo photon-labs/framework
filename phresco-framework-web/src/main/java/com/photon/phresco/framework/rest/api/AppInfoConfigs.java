@@ -14,6 +14,7 @@ import com.photon.phresco.commons.model.WebService;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.service.client.api.ServiceManager;
 import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.ClientResponse.Status;
 
 @Path("/appConfig")
 public class AppInfoConfigs {
@@ -22,18 +23,32 @@ public class AppInfoConfigs {
 	@Path("/list")
 	@Produces (MediaType.APPLICATION_JSON)
 	public Response getDownloadInfos(@QueryParam("customerId") String customerId, @QueryParam("tech-id") String techId,
-			@QueryParam("type") String type, @QueryParam("platform") String platform, @QueryParam("userId") String userId) throws PhrescoException {
-		ServiceManager serviceManager = ServiceManagerMap.CONTEXT_MANAGER_MAP.get(userId);
-		List<DownloadInfo> downloadInfos = serviceManager.getDownloads(customerId, techId, type, platform);
-		return Response.status(ClientResponse.Status.OK).entity(downloadInfos).header("Access-Control-Allow-Origin", "*").build();
+			@QueryParam("type") String type, @QueryParam("platform") String platform, @QueryParam("userId") String userId) {
+		ResponseInfo responseData = new ResponseInfo();
+		try {
+			ServiceManager serviceManager = ServiceManagerMap.CONTEXT_MANAGER_MAP.get(userId);
+			List<DownloadInfo> downloadInfos = serviceManager.getDownloads(customerId, techId, type, platform);
+			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvalution(responseData, null, " Configuration listed successfully", downloadInfos);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		} catch (PhrescoException e) {
+			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvalution(responseData, e, "Configuration not fetched", null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		}
 	}
 	
 	@GET
 	@Path("/webservices")
 	@Produces (MediaType.APPLICATION_JSON)
-	public Response getWebServices(@QueryParam("userId") String userId) throws PhrescoException {
-		ServiceManager serviceManager = ServiceManagerMap.CONTEXT_MANAGER_MAP.get(userId);
-		List<WebService> webServices = serviceManager.getWebServices();
-		return Response.status(ClientResponse.Status.OK).entity(webServices).header("Access-Control-Allow-Origin", "*").build();
+	public Response getWebServices(@QueryParam("userId") String userId) {
+		ResponseInfo responseData = new ResponseInfo();
+		try {
+			ServiceManager serviceManager = ServiceManagerMap.CONTEXT_MANAGER_MAP.get(userId);
+			List<WebService> webServices = serviceManager.getWebServices();
+			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvalution(responseData, null, " Configuration listed successfully", webServices);
+			return Response.status(ClientResponse.Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		} catch (PhrescoException e) {
+			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvalution(responseData, e, "Webservice configuration not fetched", null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		}
 	}
 }
