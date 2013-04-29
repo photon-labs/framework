@@ -8,6 +8,7 @@ define(["framework/widget", "projectlist/api/projectListAPI", "projects/project"
 		projectListAPI : null,
 		editproject : null,
 		editAplnContent : null,
+		projectRequestBody : {},
 		/***
 		 * Called in initialization time of this class 
 		 *
@@ -19,11 +20,15 @@ define(["framework/widget", "projectlist/api/projectListAPI", "projects/project"
 			self.editproject = new Clazz.com.components.projects.js.Project();
 		},
 		
-		onEditProject : function() {
+		onEditProject : function(projectId) {
 			var self = this;
+
 			if(self.editproject === null) {
 				self.editproject = new Clazz.com.components.projects.js.Project();
 			}
+			self.getProjectList(self.getRequestHeader(self.projectRequestBody, projectId), function(response) {
+				self.editproject.projectEdit = response.data;
+			});
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 			Clazz.navigationController.push(self.editproject, true);
 		},
@@ -56,14 +61,23 @@ define(["framework/widget", "projectlist/api/projectListAPI", "projects/project"
 		 * @synonymRequestBody: request body of synonym
 		 * @return: returns the contructed header
 		 */
-		getRequestHeader : function(projectRequestBody) {
-			var header = {
+		getRequestHeader : function(projectRequestBody, id) {
+			var self=this, header, data = {}, userId;
+			
+			data = JSON.parse(self.projectListAPI.localVal.getSession('userInfo'));
+			userId = data.id;
+			
+			header = {
 				contentType: "application/json",
 				requestMethod: "GET",
 				dataType: "json",
-				webserviceurl: commonVariables.webserviceurl+commonVariables.projectlistContext+"/list?customerId=photon"
-			};
-
+				webserviceurl: ''
+			}
+			if (id == '') {
+				header.webserviceurl = commonVariables.webserviceurl+commonVariables.projectlistContext+"/list?customerId=photon";
+			} else {
+				header.webserviceurl = commonVariables.webserviceurl+"project/edit?userId="+userId+"&customerId=photon&projectId="+id;
+			}
 			return header;
 		},
 		

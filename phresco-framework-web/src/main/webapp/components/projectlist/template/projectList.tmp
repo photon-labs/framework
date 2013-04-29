@@ -13,11 +13,11 @@
               </thead>
               <tbody>
                   {{#each projectlist}}
-                      <tr class="proj_title">
-                        <td colspan="4">{{name}}</td> 
-                        <td colspan="3" align="right"><a class="tooltiptop" title="" data-placement="top" data-toggle="tooltip"  data-original-title="Edit Project"><img id="editproject" src="../themes/default/images/helios/edit_row_icon.png" width="29" height="23" border="0" alt=""></a> <a class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Delete Project"><img src="../themes/default/images/helios/delete_row_icon.png" width="29" height="23" border="0" alt="0"></a></td>
+                      <tr class="proj_title"> 
+                        <td colspan="4">{{name}}</td>  
+                        <td colspan="3" align="right"><a class="tooltiptop" title="" data-placement="top" data-toggle="tooltip"  data-original-title="Edit Project"><img name="editproject" key="{{id}}" src="../themes/default/images/helios/edit_row_icon.png" width="29" height="23" border="0" alt=""></a> <a class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Delete Project"><img src="../themes/default/images/helios/delete_row_icon.png" width="29" height="23" border="0" alt="0"></a></td>
                       </tr>
-                      {{#each appInfos}}
+					{{#each appInfos}}
                       <tr>
                         <td><a name="editApplication" href="javascript:;">{{name}}</a></td>
                         <td>{{description}}</td>

@@ -5,15 +5,17 @@ define(["framework/widget", "framework/widgetWithTemplate", "projects/api/projec
 	Clazz.com.components.projects.js.listener.projectsListener = Clazz.extend(Clazz.WidgetWithTemplate, {
 		
 		basePlaceholder :  window.commonVariables.basePlaceholder,
-
+		projectsAPI : null,
 		/***
 		 * Called in initialization time of this class 
 		 *
 		 * @config: configurations for this listener
 		 */
 		initialize : function(config) {
+			var self = this;
+			self.projectsAPI = new Clazz.com.components.projects.js.api.ProjectsAPI();
 		},
-		
+	
 		removelayer : function(object) {
 			var layerId = object.attr('id');
 			object.closest('tr').next().attr('name', layerId + "content");

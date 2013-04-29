@@ -61,9 +61,9 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 
 		preRender: function(whereToRender, renderFunction){
 			var self = this;
-			self.projectslistListener.getProjectList(self.projectslistListener.getRequestHeader(self.projectRequestBody), function(response) {
+			self.projectslistListener.getProjectList(self.projectslistListener.getRequestHeader(self.projectRequestBody, ''), function(response) {
 				var projectlist = {};
-				projectlist.projectlist = response;				
+				projectlist.projectlist = response.data;				
 				renderFunction(projectlist, whereToRender);
 			});
 		},
@@ -77,8 +77,9 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 			$(".tooltiptop").tooltip();
 			$(".dyn_popup").hide();
 			$("#applicationedit").css("display", "none");
-			$("#editproject").click(function(){
-				self.onProjectEditEvent.dispatch();
+			$("img[name=editproject]").unbind("click");
+			$("img[name=editproject]").click(function(){
+				self.onProjectEditEvent.dispatch($(this).attr('key'));
 			});	
 			
 			$("#myTab li a").removeClass("act");

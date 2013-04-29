@@ -35,8 +35,8 @@ define(["framework/widget", "login/api/loginAPI", "common/loading", "footer/foot
 					//TODO: call login service here and call appendPlaceholder in the success function
 					self.loginAPI.doLogin(header, 
 						function(response){
-							if(response != undefined && response != null && response.validLogin == true){
-								self.setUserInfo(response);
+							if(response != undefined && response != null && response.data.validLogin == true){
+								self.setUserInfo(response.data);
 								self.appendPlaceholder();
 								self.renderHeader();
 								self.renderFooter();

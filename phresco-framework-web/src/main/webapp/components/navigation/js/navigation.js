@@ -56,6 +56,7 @@ define(["framework/widgetWithTemplate", "navigation/listener/navigationListener"
 		bindUI : function(){
 			var self = this;
 			
+			$('#addproject').unbind('click');
 			$('#addproject').click(function(){
 				self.onAddNewProjectEvent.dispatch();
 			}); 
