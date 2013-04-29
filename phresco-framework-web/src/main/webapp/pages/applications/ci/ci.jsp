@@ -91,7 +91,7 @@
 	        <input id="configure" type="button" value="<s:text name="lbl.configure"/>" class="btn btn-primary">
 	        <input id="build" type="button" value="<s:text name="lbl.build"/>" class="btn" disabled="disabled" onclick="buildCI();">
 	        <input id="deleteBuild" type="button" value="<s:text name="lbl.deletebuild"/>" class="btn" disabled="disabled">
-	        <input id="deleteJob" type="button" value="<s:text name="lbl.deletejob"/>" class="btn" disabled="disabled">
+	        <input id="deleteJobBtn" type="button" value="<s:text name="lbl.deletejob"/>" class="btn"  disabled="disabled" data-toggle="modal" href="#popupPage"/>
 	        <input id="emailConfiguration" type="button" value="<s:text name="lbl.email.configuration"/>" class="btn btn-primary">
         </div>
     </div>
@@ -318,12 +318,12 @@ $(document).ready(function() {
 		deleteCIBuild();
 	});
 	
-	$('#deleteJob').click(function() {
-		deleteCIJob();
-	});
+//	$('#deleteJob').click(function() {
+//		deleteCIJob();
+//	});
 	
     confirmDialog($("#deleteBuild"), '<s:text name="lbl.hdr.confirm.dialog"/>', '<s:text name="modal.body.text.del.builds"/>', 'deleteBuild','<s:text name="lbl.btn.ok"/>');
-    confirmDialog($("#deleteJob"), '<s:text name="lbl.hdr.confirm.dialog"/>', '<s:text name="modal.body.text.del.jobs"/>', 'deleteJob','<s:text name="lbl.btn.ok"/>');
+    confirmDialog($("#deleteJobBtn"), '<s:text name="lbl.hdr.confirm.dialog"/>', '<s:text name="modal.body.text.del.jobs"/>', 'deleteJob','<s:text name="lbl.btn.ok"/>');
     
     if(<%= jenkinsAlive %>) {
     	console.log("jenkins alive , enable configure button ");
@@ -469,7 +469,7 @@ function refreshAfterServerUp() {
 function jenkinsGettingReady() {
    	disableButton($("#configure"));
    	disableButton($("#build"));
-   	disableButton($("#deleteJob"));
+   	disableButton($("#deleteJobBtn"));
    	disableButton($("#deleteBuild"));
 }
 
@@ -545,10 +545,10 @@ function enableDisableDeleteButton(atleastOneCheckBoxVal) {
 	}
 	
 	if ($("input[type=checkbox][name='Jobs']:checked").length > 0) {
-		enableButton($("#deleteJob"));
+		enableButton($("#deleteJobBtn"));
 		enableButton($("#build"));
 	} else {
-		disableButton($("#deleteJob"));
+		disableButton($("#deleteJobBtn"));
 		disableButton($("#build"));
 	}
 }
