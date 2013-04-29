@@ -115,6 +115,8 @@ public class Login extends FrameworkBaseAction {
         	s_optionsMap.clear();
         	s_encodeImgMap.clear();
         	s_themeMap.clear();
+        	String requestIp = getHttpRequest().getRemoteAddr();
+        	removeSessionAttribute(requestIp);
         }
         String errorTxt = (String) getSessionAttribute(REQ_LOGIN_ERROR);
         if (StringUtils.isNotEmpty(errorTxt)) {

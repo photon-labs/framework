@@ -292,6 +292,7 @@ String schedulerKey = (String) request.getAttribute(FrameworkConstants.REQ_SCHED
 		var params = getBasicParams();
 		params = params.concat("&");
 		params = params.concat(additionalParams);
+		params = params.concat("&from=configuration");
     	loadContent('cronValidation','', $('#cronValidation'), params, false, true);
     }
 </script>

@@ -243,9 +243,9 @@
 											<section class="scrollpanel_inner" id="appLayerContent">
 										<%	
 											if (CollectionUtils.isNotEmpty(appLayerTechGroups)) {
+												 int rowCount = 1;
 												for (TechnologyGroup appLayerTechGroup : appLayerTechGroups) {
 												    List<TechnologyInfo> techInfos = appLayerTechGroup.getTechInfos();
-												    int rowCount = 1;
 												    for (ApplicationInfo appInfo : appInfos) {
 												    	String[] appCode = null;
 												    	String appTechId = "";
@@ -869,12 +869,51 @@
 			uiTypeClass = "hideContent";
 		}
 		var projectCode = $("input[name=projectCode]").val();
-		if (!isBlank(projectCode)) {
-			appCode = projectCode + count;
-		}
-		<% if (FrameworkConstants.FROM_PAGE_EDIT.equals(fromPage)) { %>
-			count = $(".appLayerProjName").size() + 1;
+		
+		<% 
+		if (FrameworkConstants.FROM_PAGE_EDIT.equals(fromPage)) { %>
+			//count = $(".appLayerProjName").size() + 1;
+			var tempArray = new Array();
+			$('input[name=appLayerProjName]').each(function() {
+				tempArray.push($(this).attr("temp"));
+			});	
+			tempArray.sort(sortArray);
+			count = parseInt(tempArray.pop()) + 1;
 		<% } %>
+		
+		//To generate dynamic appcode number 
+		var dynamicAppCode = "";
+		if ($('input[value=app-layer]').is(':checked')) {
+			var projectName = $("input[name=projectName]").val();
+			var dynamicAppCodeCount = new Array();
+			var splitArray = new Array();
+			$('input[name=appLayerProjName]').each(function() {
+				var currentValue = $(this).val();
+				//check if project name is substring of current appcode
+				if (!isBlank(currentValue) && currentValue.search(projectName) == 0) {
+					//split character from appcode
+					splitArray = currentValue.split(projectName);
+					//check if splitted character is a number and add to a array
+					if ($.isNumeric(splitArray[1])) {
+						dynamicAppCodeCount.push(splitArray[1]);
+					}					
+				}
+			});
+			
+			//sort array in ascending order
+			dynamicAppCodeCount.sort(sortArray);
+			//get largest count from array
+			dynamicAppCode = parseInt(dynamicAppCodeCount.pop()) + 1;
+		}
+		
+		if (!isBlank(projectCode)) {
+			if (!isBlank(dynamicAppCode)) {
+				appCode = projectCode + dynamicAppCode;
+			} else {
+				appCode = projectCode + count;
+			}
+		}
+		
 		var applayer = '<%= appLayerId %>';
 		var newAppLayerRow = $(document.createElement('div')).attr("class", "appLayerContents").css("height","33px");
 		newAppLayerRow.html("<div class='align-div-center'><div class='align-in-row appCodeCotrol "+ uiTypeClass +"'><label class='control-label autoWidth'><span class='mandatory'>*</span>&nbsp;<s:text name='lbl.app.code' /></label>" + 
@@ -891,6 +930,10 @@
 		loadTechnology(count);
 		enableDisableMinusBtn('appLayerAdd', 'appLayerMinus');
 		count++;
+	}
+	
+	function sortArray(data_A, data_B) {
+	    return (data_A - data_B);
 	}
 	
 	//load technology for new added app layer row

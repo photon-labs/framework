@@ -6762,3 +6762,7 @@ color: #313131;
 input, button, select, textarea, label {
 	font-family: 'luxi_sansregular' !important;
 }	
+
+.hideIcons {
+	visibility: hidden;
+}

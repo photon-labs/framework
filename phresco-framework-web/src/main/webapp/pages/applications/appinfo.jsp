@@ -68,6 +68,7 @@
 	String technologyId = "";
 	String technologyVersion = "";
 	String oldAppDirName = "";
+	String oldAppName = "";
 	String embedAppId = "";
 	String appTypeId = "";
 	List<String> selectedWebservices = null;
@@ -84,6 +85,7 @@
 		name = selectedInfo.getName();
 		code = selectedInfo.getCode();
 		oldAppDirName = selectedInfo.getAppDirName();
+		oldAppName = selectedInfo.getName();
 		description = selectedInfo.getDescription();
 		version = selectedInfo.getVersion();
 		embedAppId = selectedInfo.getEmbedAppId();
@@ -398,6 +400,7 @@
 	<input type="hidden" name="appTypeId" value="<%= appTypeId %>"/>
 	<input type="hidden" name="techId" value="<%= technologyId %>"/>
 	<input type="hidden" name="oldAppDirName" value="<%= oldAppDirName %>"/>
+	<input type="hidden" name="oldAppName" value="<%= oldAppName %>"/>
 	<input type="hidden" name="fromTab" value="appInfo">
 	
 </form> 

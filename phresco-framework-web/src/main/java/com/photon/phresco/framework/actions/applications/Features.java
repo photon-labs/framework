@@ -110,6 +110,7 @@ public class Features extends DynamicParameterModule {
 	private String description = "";
 	private String appDir = "";
 	private String oldAppDirName = "";
+	private String oldAppName = "";
 	private String technology = "";
 	private String technologyVersion = "";
 	private String applicationVersion = "";
@@ -522,11 +523,21 @@ public class Features extends DynamicParameterModule {
     	
     	ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
     	List<ProjectInfo> projects = projectManager.discover(getCustomerId());
+    	ProjectInfo currentProject = projectManager.getProject(getProjectId(), getCustomerId());
     	boolean hasError = false;
     	if (APP_INFO.equals(getFromTab())) {
 	    	if (StringUtils.isEmpty(getName().trim())) {
 	    		 setNameError(getText(ERROR_NAME));
 	             hasError = true;
+	    	} else {
+	    		List<ApplicationInfo> appInfos = currentProject.getAppInfos();
+	    		for (ApplicationInfo appInfo : appInfos) {
+	    			if ((!getOldAppName().equals(getName())) && (getName().equalsIgnoreCase(appInfo.getName()))) {
+    					setNameError(getText(ERROR_DUPLICATE_NAME));
+    					hasError = true;
+    					break;
+	    			}
+				}
 	    	}
 	    	
 	    	if (ADVANCE_UI.equals(getUiType()) && StringUtils.isEmpty(getCode().trim())) {
@@ -1535,5 +1546,13 @@ public class Features extends DynamicParameterModule {
 
 	public void setFeatureType(String featureType) {
 		this.featureType = featureType;
+	}
+
+	public void setOldAppName(String oldAppName) {
+		this.oldAppName = oldAppName;
+	}
+
+	public String getOldAppName() {
+		return oldAppName;
 	}
 }

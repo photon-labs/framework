@@ -23,6 +23,10 @@
 <%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
 <%@ page import="com.photon.phresco.framework.model.CIJob" %>
 
+<%
+	String from = (String) request.getAttribute(FrameworkConstants.REQ_FROM);
+%>
+
 <input type="text" id="cronExpression" name="cronExpression" value="<%= (String)request.getAttribute(FrameworkConstants.REQ_CRON_EXPRESSION)%>">&nbsp; 
 <a id="showPattern" href="#" onclick="patternPopUp('block');">
 	<img src="images/icons/Help.png" />
@@ -35,11 +39,15 @@
                <table border="0" cellpadding="0" cellspacing="0" class="tbl" width="100%">
                	   <tr>
                        <td width="1%" nowrap><b id="SelectedSchedule" class="popup-label"></b></td>
-                       <td><b></b></td>
+                      <% if ("ci".equals(from)) { %>
+                       		<td><b></b></td>
+                       <% } %>	
                    </tr>
                    <tr class="popup-label">
-                       <td width="1%" nowrap class="popup-label"><b><s:text name="lbl.name"/></b></td>
-                       <td class="popup-label"><b><s:text name="label.date"/></b></td>
+              			<% if ("ci".equals(from)) { %>
+                       		<td nowrap class="popup-label"><b><s:text name="lbl.name"/></b></td>
+						<% } %>
+                       <td  style="width: 100%;"  class="popup-label"><b><s:text name="label.date"/></b></td>
                    </tr>
                 <% 	
                    	Date[] dates = (Date[])request.getAttribute(FrameworkConstants.REQ_CRON_DATES);
@@ -49,7 +57,9 @@
 	                        Date date = dates[i]; 
                 %>
                         <tr class="popup-label">
-                            <td class="jobName popup-label" nowrap></td>
+                        	<% if ("ci".equals(from)) { %>
+                            	<td class="jobName popup-label" nowrap></td>
+                            <% } %>	
                             <td class="popup-label"><%= date %><%= ((i + 1) == dates.length) ? "    .....</b>" : "" %></td>
                         </tr>
                	<%

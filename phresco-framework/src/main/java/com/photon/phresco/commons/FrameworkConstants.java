@@ -828,6 +828,7 @@ public interface FrameworkConstants {
     String REQ_HEADER = "header";
     String REQ_HEADER_TYPE = "headerType";
     String REQ_FROM	= "from";
+    String REQ_REQUEST_IP = "requestIp";
     String REQ_GOAL = "goal";
     String REQ_PHASE = "phase";
 	String REQ_SERVICE_MANAGER = "serviceManager";

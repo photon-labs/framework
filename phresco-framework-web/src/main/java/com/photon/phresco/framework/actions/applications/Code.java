@@ -80,7 +80,10 @@ public class Code extends DynamicParameterAction implements Constants {
 		try {
 		    removeSessionAttribute(getAppId() + SESSION_APPINFO);//To remove the appInfo from the session
         	ApplicationInfo appInfo = getApplicationInfo();
-        	
+        	//To get ip of request machine
+        	String requestIp = getHttpRequest().getRemoteAddr();
+			setReqAttribute(REQ_REQUEST_IP, requestIp);
+			
         	// TO kill the Process
         	String baseDir = Utility.getProjectHome()+ appInfo.getAppDirName();
         	Utility.killProcess(baseDir, getActionType());
