@@ -486,9 +486,9 @@
 	
 	function validateInput(value, type, txtBoxName) {
 		var newVal = "";
-		if(type == "String") {
-			newVal = checkForSplChrForString(value);
-		} else if(type == "Number") {
+		if (type == "String") {
+// 			newVal = checkForSplChrForString(value);
+		} else if (type == "Number") {
 			newVal = removeSpaces(allowNumHyphen(value));
 		} else {
 			newVal = removeSpaces(value);

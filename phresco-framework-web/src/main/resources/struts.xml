@@ -660,6 +660,22 @@
         	<result name="reader">/pages/applications/reader.jsp</result>
         </action>
         
+        <action name="component" method="component" class="com.photon.phresco.framework.actions.applications.Quality">
+        	<result name="component">/pages/applications/quality/component.jsp</result>
+		</action>
+		
+		<action name="fetchComponentTestSuites" method="fetchComponentTestSuites" class="com.photon.phresco.framework.actions.applications.Quality">
+        	<result type="json" />
+        </action>
+        
+		<action name="showComponentTestPopUp" method="showComponentTestPopUp" class="com.photon.phresco.framework.actions.applications.Quality">
+			<result name="success">/pages/applications/dynamic_parameter.jsp</result>
+        </action>
+		
+		<action name="runComponentTest" method="runComponentTest" class="com.photon.phresco.framework.actions.applications.Quality">
+        	<result name="reader">/pages/applications/reader.jsp</result>
+        </action>
+        
 		<action name="manualTestCases" method="fetchManualTestSuites" class="com.photon.phresco.framework.actions.applications.Quality">
         	<result type="json" />
 		</action>
@@ -822,6 +838,11 @@
         </action>
         
         <action name="fetchUnitTestReport" method="fetchUnitTestReport" class="com.photon.phresco.framework.actions.applications.Quality">
+        	<result name="testReport">/pages/applications/quality/testSuite.jsp</result>
+            <result name="allTestReport">/pages/applications/quality/allTestSuiteResult.jsp</result>
+        </action>
+        
+        <action name="fetchComponentTestReport" method="fetchComponentTestReport" class="com.photon.phresco.framework.actions.applications.Quality">
         	<result name="testReport">/pages/applications/quality/testSuite.jsp</result>
             <result name="allTestReport">/pages/applications/quality/allTestSuiteResult.jsp</result>
         </action>

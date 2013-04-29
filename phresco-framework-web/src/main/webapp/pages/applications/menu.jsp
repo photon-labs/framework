@@ -216,6 +216,12 @@
 					<a href="#" class="active" name="qualityTab" id="unit"><s:label key="lbl.quality.menu.unit" theme="simple"/></a>
 				</li>
 				<%
+					} if (optionIds != null && optionIds.contains(FrameworkConstants.COMPONENT_TEST_KEY)) {
+				%>
+				<li>
+					<a href="#" class="active" name="qualityTab" id="component"><s:label key="lbl.quality.menu.component" theme="simple"/></a>
+				</li>
+				<%
 					} if (optionIds != null && optionIds.contains(FrameworkConstants.FUNCTIONAL_TEST_KEY)) {
 				%>
 				<li>
