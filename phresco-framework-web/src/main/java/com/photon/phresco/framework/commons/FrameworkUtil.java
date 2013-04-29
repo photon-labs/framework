@@ -127,8 +127,16 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
         return getPomProcessor(appinfo.getAppDirName()).getProperty(POM_PROP_KEY_UNITTEST_DIR);
     }
     
+    public String getComponentTestDir(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
+        return getPomProcessor(appinfo.getAppDirName()).getProperty(POM_PROP_KEY_COMPONENTTEST_DIR);
+    }
+    
     public String getUnitTestReportDir(ApplicationInfo appInfo) throws PhrescoPomException, PhrescoException {
         return getPomProcessor(appInfo.getAppDirName()).getProperty(POM_PROP_KEY_UNITTEST_RPT_DIR);
+    }
+    
+    public String getComponentTestReportDir(ApplicationInfo appInfo) throws PhrescoPomException, PhrescoException {
+        return getPomProcessor(appInfo.getAppDirName()).getProperty(POM_PROP_KEY_COMPONENTTEST_RPT_DIR);
     }
     
     public String getUnitTestReportDir(ApplicationInfo appInfo, String option) throws PhrescoPomException, PhrescoException {
@@ -139,12 +147,20 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
         return getPomProcessor(appInfo.getAppDirName()).getProperty(POM_PROP_KEY_UNITTEST_TESTSUITE_XPATH);
     }
 	
+	public String getComponentTestSuitePath(ApplicationInfo appInfo) throws PhrescoException, PhrescoPomException {
+        return getPomProcessor(appInfo.getAppDirName()).getProperty(POM_PROP_KEY_COMPONENTTEST_TESTSUITE_XPATH);
+    }
+	
 	public String getUnitTestSuitePath(ApplicationInfo appInfo, String option) throws PhrescoException, PhrescoPomException {
         return getPomProcessor(appInfo.getAppDirName()).getProperty(POM_PROP_KEY_UNITTEST_TESTSUITE_XPATH_START + option + POM_PROP_KEY_UNITTEST_TESTSUITE_XPATH_END);
     }
     
     public  String getUnitTestCasePath(ApplicationInfo appInfo) throws PhrescoException, PhrescoPomException {
         return getPomProcessor(appInfo.getAppDirName()).getProperty(POM_PROP_KEY_UNITTEST_TESTCASE_PATH);
+    }
+    
+    public  String getComponentTestCasePath(ApplicationInfo appInfo) throws PhrescoException, PhrescoPomException {
+        return getPomProcessor(appInfo.getAppDirName()).getProperty(POM_PROP_KEY_COMPONENTTEST_TESTCASE_PATH);
     }
     
     public  String getUnitTestCasePath(ApplicationInfo appInfo, String option) throws PhrescoException, PhrescoPomException {

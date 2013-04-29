@@ -17,6 +17,8 @@
  */
 package com.photon.phresco.framework.actions.applications;
 
+import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -758,7 +760,7 @@ public class Features extends DynamicParameterModule {
             	for (PropertyTemplate propertyTemplate : propertyTemplates) {
             		String key  = propertyTemplate.getKey();
             		String value = getReqParameter(key);
-            		properties.setProperty(key, value);
+            		properties.setProperty(key, escapeHtml(value));
             	}
             }
             String[] keys = getReqParameterValues(REQ_KEY);
@@ -766,7 +768,7 @@ public class Features extends DynamicParameterModule {
             if (!ArrayUtils.isEmpty(keys) && !ArrayUtils.isEmpty(values)) {
                 for (int i = 0; i < keys.length; i++) {
                     if (StringUtils.isNotEmpty(keys[i]) && StringUtils.isNotEmpty(values[i])) {
-                        properties.setProperty(keys[i], values[i]);
+                        properties.setProperty(keys[i], escapeHtml(values[i]));
                     }
                 }
             }

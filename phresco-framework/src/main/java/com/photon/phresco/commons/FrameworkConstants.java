@@ -399,6 +399,7 @@ public interface FrameworkConstants {
     String JMETER_REPORTS = "jmeter-reports";
     String FUNCTIONAL = "functional";
     String UNIT = "unit";
+    String COMPONENT = "component";
     String LOAD = "load";
     String PERFORMACE = "performance";
     String WEBSERVICE = "WebService";
@@ -500,6 +501,7 @@ public interface FrameworkConstants {
 	String CODE_KEY = "Code";
 	String BUILD_KEY = "Build";
 	String UNIT_TEST_KEY = "Unit_Test";
+	String COMPONENT_TEST_KEY = "Component_Test";
 	String FUNCTIONAL_TEST_KEY = "Functional_Test";
 	String PERFORMANCE_TEST_KEY = "Performance_Test";
 	String LOAD_TEST_KEY = "Load_Test";
@@ -751,6 +753,7 @@ public interface FrameworkConstants {
     String REQ_TEST_UNIT = "unit";
     String REQ_PROJECT_MODULES = "projectModules";
     String REQ_UNIT_TEST_REPORT_OPTIONS = "unitTestReportOptions";
+    String REQ_COMPONENT_TEST_REPORT_OPTIONS = "comoponentTestReportOptions";
     String REQ_TEST_FUNCTIONAL = "functional";
     String REQ_TEST_PERFORMANCE = "performance";
     String PERFORMANCE_TEST_REPORTS = "performanceTestReports";
@@ -1278,6 +1281,7 @@ public interface FrameworkConstants {
     String ERROR_MANDATORY_FIELDS = "Some mandatory values are not filled";
     String ERROR_SETTINGS = "ERROR_SETTINGS";
     String ERROR_UNIT_TEST = "unittest.not.executed";
+    String ERROR_COMPONENT_TEST = "componenttest.not.executed";
     String ERROR_FUNCTIONAL_TEST = "functionaltest.not.executed";
     String ERROR_PERFORMANCE_TEST = "performancetest.not.executed";
     String ERROR_LOAD_TEST = "loadtest.not.executed";
@@ -1608,8 +1612,12 @@ public interface FrameworkConstants {
 		String EXCEPTION_TECHNOLOGY = "excep.hdr.tech";
 		String EXCEPTION_PROJECT_WEB_LAYER_WIDGETS = "excep.hdr.proj.web.layer.widgets";
 		String EXCEPTION_QUALITY_UNIT_LOAD = "excep.hdr.quality.unit.load";
+		String EXCEPTION_QUALITY_COMPONENT_LOAD = "excep.hdr.quality.component.load";
+		String EXCEPTION_QUALITY_COMPONENT_TESTSUITES = "excep.hdr.quality.component.load.testsuites";
+		String EXCEPTION_QUALITY_COMPONENT_PARAMS = "excep.hdr.quality.component.load.params";
 		String EXCEPTION_QUALITY_UNIT_TESTSUITES = "excep.hdr.quality.unit.load.testsuites";
 		String EXCEPTION_QUALITY_UNIT_RUN = "excep.hdr.quality.unit.run";
+		String EXCEPTION_QUALITY_COMPONENT_RUN = "excep.hdr.quality.component.run";
 		String EXCEPTION_QUALITY_UNIT_PARAMS = "excep.hdr.quality.unit.load.params";
 		String EXCEPTION_QUALITY_FUNCTIONAL_LOAD = "excep.hdr.quality.functional.load";
 		String EXCEPTION_QUALITY_FUNCTIONAL_TESTSUITES = "excep.hdr.quality.functional.load.testsuites";

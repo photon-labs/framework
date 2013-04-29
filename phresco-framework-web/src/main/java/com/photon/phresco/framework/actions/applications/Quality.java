@@ -238,6 +238,29 @@ public class Quality extends DynamicParameterAction implements Constants {
 	    return APP_UNIT_TEST;
 	}
 	
+	public String component() {
+	    if (s_debugEnabled) {
+	        S_LOGGER.debug("Entering Method Quality.component()");
+	    }
+	    
+	    try {
+	    	String requestIp = getHttpRequest().getRemoteAddr();
+			setReqAttribute(REQ_REQUEST_IP, requestIp);
+	        ApplicationInfo appInfo = getApplicationInfo();
+	        FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+	        setReqAttribute(PATH, frameworkUtil.getComponentTestDir(appInfo));
+            setReqAttribute(REQ_APPINFO, appInfo);
+            setProjModulesInReq();
+	    } catch (Exception e) {
+            if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Quality.component()" + FrameworkUtil.getStackTraceAsString(e));
+            }
+            return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_QUALITY_COMPONENT_LOAD));
+        }
+	    
+	    return APP_COMPONENT_TEST;
+	}
+	
 	private void setUnitReportOptions() throws PhrescoException {
         if (s_debugEnabled) {
             S_LOGGER.debug("Entering Method Quality.setUnitReportOptions");
@@ -265,7 +288,7 @@ public class Quality extends DynamicParameterAction implements Constants {
         
         try {
             ApplicationInfo appInfo = getApplicationInfo();
-         // TO kill the Process
+            // TO kill the Process
             String baseDir = Utility.getProjectHome()+ appInfo.getAppDirName();
             Utility.killProcess(baseDir, getTestType());
             String testResultPath = getUnitTestResultPath(appInfo, null);
@@ -288,6 +311,36 @@ public class Quality extends DynamicParameterAction implements Constants {
                 S_LOGGER.error("Entered into catch block of Quality.fetchUnitTestSuites()" + FrameworkUtil.getStackTraceAsString(e));
             }
             return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_QUALITY_UNIT_TESTSUITES));
+        }
+        
+        return SUCCESS;
+    }
+	
+	public String fetchComponentTestSuites() {
+        if (s_debugEnabled) {
+            S_LOGGER.debug("Entering Method Quality.fetchComponentTestSuites()");
+        }
+        
+        try {
+            ApplicationInfo appInfo = getApplicationInfo();
+            // TO kill the Process
+            String baseDir = Utility.getProjectHome()+ appInfo.getAppDirName();
+            Utility.killProcess(baseDir, getTestType());
+            String testResultPath = getComponentTestResultPath(appInfo, null);
+            FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+            String testSuitePath = frameworkUtil.getComponentTestSuitePath(appInfo);
+            List<String> resultTestSuiteNames = getTestSuiteNames(testResultPath, testSuitePath);
+            if (CollectionUtils.isEmpty(resultTestSuiteNames)) {
+                setValidated(true);
+                setShowError(getText(ERROR_COMPONENT_TEST));
+                return SUCCESS;
+            }
+            setTestSuiteNames(resultTestSuiteNames);
+        } catch (Exception e) {
+            if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Quality.fetchComponentTestSuites()" + FrameworkUtil.getStackTraceAsString(e));
+            }
+            return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_QUALITY_COMPONENT_TESTSUITES));
         }
         
         return SUCCESS;
@@ -323,6 +376,17 @@ public class Quality extends DynamicParameterAction implements Constants {
         }
         return sb.toString();
     }
+	
+	private String getComponentTestResultPath(ApplicationInfo appInfo, String testResultFile) throws PhrescoException, JAXBException, IOException, PhrescoPomException {
+        if (s_debugEnabled) {
+            S_LOGGER.debug("Entering Method Quality.getUnitTestResultPath()");
+        }
+        
+        StringBuilder sb = new StringBuilder(getApplicationHome());
+        FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+    	sb.append(frameworkUtil.getComponentTestReportDir(appInfo));
+        return sb.toString();
+    }
     
 	public String showUnitTestPopUp() {
 	    if (s_debugEnabled) {
@@ -348,6 +412,35 @@ public class Quality extends DynamicParameterAction implements Constants {
                 S_LOGGER.error("Entered into catch block of Quality.fetchUnitTestSuites()" + FrameworkUtil.getStackTraceAsString(e));
             }
             return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_QUALITY_UNIT_PARAMS));
+	    }
+	    
+	    return SUCCESS;
+	}
+	
+	public String showComponentTestPopUp() {
+	    if (s_debugEnabled) {
+            S_LOGGER.debug("Entering Method Quality.showComponentTestPopUp()");
+        }
+	    
+	    try {
+	    	ApplicationInfo appInfo = getApplicationInfo();
+            removeSessionAttribute(appInfo.getId() + PHASE_COMPONENT_TEST + SESSION_WATCHER_MAP);
+            Map<String, DependantParameters> watcherMap = new HashMap<String, DependantParameters>(8);
+
+            MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_COMPONENT_TEST)));
+            List<Parameter> parameters = getMojoParameters(mojo, PHASE_COMPONENT_TEST);
+
+            setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap, PHASE_COMPONENT_TEST);
+            setSessionAttribute(appInfo.getId() + PHASE_COMPONENT_TEST + SESSION_WATCHER_MAP, watcherMap);
+            setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
+            setReqAttribute(REQ_GOAL, PHASE_COMPONENT_TEST);
+            setReqAttribute(REQ_PHASE, PHASE_COMPONENT_TEST);
+    	    setProjModulesInReq();
+	    } catch (PhrescoException e) {
+	        if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Quality.showComponentTestPopUp()" + FrameworkUtil.getStackTraceAsString(e));
+            }
+            return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_QUALITY_COMPONENT_PARAMS));
 	    }
 	    
 	    return SUCCESS;
@@ -381,6 +474,34 @@ public class Quality extends DynamicParameterAction implements Constants {
                 S_LOGGER.error("Entered into catch block of Quality.runUnitTest()" + FrameworkUtil.getStackTraceAsString(e));
             }
             return showErrorPopup(e, getText(EXCEPTION_QUALITY_UNIT_RUN));
+        }
+        
+        return APP_ENVIRONMENT_READER;
+    }
+	
+	public String runComponentTest() {
+        if (s_debugEnabled) {
+            S_LOGGER.debug("Entering Method Quality.runComponentTest()");
+        }
+        
+        try {
+            ApplicationInfo appInfo = getApplicationInfo();
+            StringBuilder workingDirectory = new StringBuilder(getAppDirectoryPath(appInfo));
+            MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_COMPONENT_TEST)));
+            persistValuesToXml(mojo, PHASE_COMPONENT_TEST);
+            List<Parameter> parameters = getMojoParameters(mojo, PHASE_COMPONENT_TEST);
+            List<String> buildArgCmds = getMavenArgCommands(parameters);
+            buildArgCmds.add(HYPHEN_N);
+            ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+            BufferedReader reader = applicationManager.performAction(getProjectInfo(), ActionType.COMPONENT_TEST, buildArgCmds, workingDirectory.toString());
+            setSessionAttribute(getAppId() + COMPONENT, reader);
+            setReqAttribute(REQ_APP_ID, getAppId());
+            setReqAttribute(REQ_ACTION_TYPE, COMPONENT);
+        } catch (PhrescoException e) {
+            if (s_debugEnabled) {
+                S_LOGGER.error("Entered into catch block of Quality.runComponentTest()" + FrameworkUtil.getStackTraceAsString(e));
+            }
+            return showErrorPopup(e, getText(EXCEPTION_QUALITY_COMPONENT_RUN));
         }
         
         return APP_ENVIRONMENT_READER;
@@ -1970,6 +2091,21 @@ public class Quality extends DynamicParameterAction implements Constants {
         }
         
         return null;
+    }
+    
+    public String fetchComponentTestReport() throws TransformerException, PhrescoPomException {
+    	try {
+    		ApplicationInfo appInfo = getApplicationInfo();
+    		FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+    		String testSuitePath = frameworkUtil.getComponentTestSuitePath(appInfo);
+    		String testCasePath = frameworkUtil.getComponentTestCasePath(appInfo);
+
+    		return testReport(testSuitePath, testCasePath);
+    	} catch (PhrescoException e) {
+    		// TODO: handle exception
+    	}
+
+    	return null;
     }
     
     public String fetchFunctionalTestReport() throws TransformerException, PhrescoPomException {

@@ -1539,50 +1539,52 @@ public class Configurations extends FrameworkBaseAction {
     }
     
     public String renameConfigNameDir() {
-        if (s_debugEnabled) {
-            S_LOGGER.debug("Entering Method Configurations.renameConfigNameDir()");
-        }
-        try {
-            ConfigManager configManager = getConfigManager(getAppConfigPath());
-            List<Configuration> configurations = configManager.getConfigurations(getEnvName(), getConfigTempType());
-            boolean isNameExists = false;
-            if (CollectionUtils.isNotEmpty(configurations)) {
-                for (Configuration configuration : configurations) {
-                    if (getConfigName().trim().equalsIgnoreCase(configuration.getName())) {
-                        isNameExists = true;
-                        break;
-                    }
-                }
-            }
-            if (!isNameExists) {
-                List<String> paths = new ArrayList<String>();
-                paths.add(Utility.getPhrescoTemp());
-                paths.add(getApplicationHome());
-                for (String path : paths) {
-                    StringBuilder oldConfigSb = new StringBuilder(path)
-                    .append(File.separator)
-                    .append(DO_NOT_CHECKIN_DIR)
-                    .append(File.separator)
-                    .append(getEnvName())
-                    .append(File.separator)
-                    .append(getOldName());
-                    File oldConfigDir = new File(oldConfigSb.toString());
-                    StringBuilder newConfigSb = new StringBuilder(path)
-                    .append(File.separator)
-                    .append(DO_NOT_CHECKIN_DIR)
-                    .append(File.separator)
-                    .append(getEnvName())
-                    .append(File.separator)
-                    .append(getConfigName());
-                    File newConfigDir = new File(newConfigSb.toString());
-                    oldConfigDir.renameTo(newConfigDir);
-                }
-            }
-        } catch (Exception e) {
-            // TODO: handle exception
-        }
-        
-        return SUCCESS;
+    	if (s_debugEnabled) {
+    		S_LOGGER.debug("Entering Method Configurations.renameConfigNameDir()");
+    	}
+    	try {
+    		if (getTargetDir() == null) {
+    			ConfigManager configManager = getConfigManager(getAppConfigPath());
+    			List<Configuration> configurations = configManager.getConfigurations(getEnvName(), getConfigTempType());
+    			boolean isNameExists = false;
+    			if (CollectionUtils.isNotEmpty(configurations)) {
+    				for (Configuration configuration : configurations) {
+    					if (getConfigName().trim().equalsIgnoreCase(configuration.getName())) {
+    						isNameExists = true;
+    						break;
+    					}
+    				}
+    			}
+    			if (!isNameExists) {
+    				List<String> paths = new ArrayList<String>();
+    				paths.add(Utility.getPhrescoTemp());
+    				paths.add(getApplicationHome());
+    				for (String path : paths) {
+    					StringBuilder oldConfigSb = new StringBuilder(path)
+    					.append(File.separator)
+    					.append(DO_NOT_CHECKIN_DIR)
+    					.append(File.separator)
+    					.append(getEnvName())
+    					.append(File.separator)
+    					.append(getOldName());
+    					File oldConfigDir = new File(oldConfigSb.toString());
+    					StringBuilder newConfigSb = new StringBuilder(path)
+    					.append(File.separator)
+    					.append(DO_NOT_CHECKIN_DIR)
+    					.append(File.separator)
+    					.append(getEnvName())
+    					.append(File.separator)
+    					.append(getConfigName());
+    					File newConfigDir = new File(newConfigSb.toString());
+    					oldConfigDir.renameTo(newConfigDir);
+    				}
+    			}
+    		}
+    	} catch (Exception e) {
+    		// TODO: handle exception
+    	}
+
+    	return SUCCESS;
     }
     
     /**
