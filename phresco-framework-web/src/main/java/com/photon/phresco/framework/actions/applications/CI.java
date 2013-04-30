@@ -23,7 +23,11 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.net.*;
+import java.net.ConnectException;
+import java.net.HttpURLConnection;
+import java.net.InetAddress;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -311,7 +315,7 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 						if (debugEnabled) {
 							S_LOGGER.debug("Exist jobs size ... " + existJobs.size());
 						}
-						if (appInfo.getName().equals(appsInfo.getName()) && ciJob.isCloneWorkspace()) {
+						if (appInfo.getName().equalsIgnoreCase(appsInfo.getName()) && ciJob.isCloneWorkspace()) {
 							if (debugEnabled) {
 								S_LOGGER.debug("Cloned names .... " + ciJob.getName());
 							}
@@ -931,18 +935,20 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 			existJob.setEnablePreBuildStep(true);
 			
 			existJob.setPrebuildStepCommands(preBuildStepCmds);
-			
+			boolean isRestart = false;
 			// configure job here
 			if (CI_CREATE_JOB_COMMAND.equals(jobType)) {
-				ciManager.createJob(appInfo, existJob);
+				isRestart = ciManager.createJob(appInfo, existJob);
 				addActionMessage(getText(SUCCESS_JOB));
 			} else if (CI_UPDATE_JOB_COMMAND.equals(jobType)) {
-				ciManager.updateJob(appInfo, existJob);
+				isRestart = ciManager.updateJob(appInfo, existJob);
 				addActionMessage(getText(SUCCESS_UPDATE));
 			}
 			
 			if(!CLONED_WORKSPACE.equals(svnType)) {
-			restartJenkins(); // reload config
+				if (!isRestart) {
+					restartJenkins(); // reload config
+				}
 			}
 
 			setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);

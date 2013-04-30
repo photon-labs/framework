@@ -167,6 +167,9 @@ public interface FrameworkConstants {
 	String APKLIB  = "apklib";
 	String APK  = "apk";
     
+	 /*
+     * CI constants
+     */
     String JENKINS_HOME = "JENKINS_HOME";
     String CI_BUILD_NAME = "PHR_ci_build";
     String CI_JOB_INFO_NAME = "cijob.info";
@@ -338,7 +341,18 @@ public interface FrameworkConstants {
     String JAVA_RUN_AGAINST = "runAgnSrc";
     String CERTIFICATES = "certificates";
     String KEY_CERTIFICATE = "certificate";
-	
+    String WWW_AUTHENTICATE = "WWW-Authenticate";
+    String LT_HTTPS_COLON_BACKSLASH = "<https://";
+    String COLON_443_GT_SPACE = ":443> ";
+    String CREDENTIAL_ENTRY_STRING = "//credentials/entry/string";
+    String USERNAME = "userName";
+    String ENTRY_TAG = "entry";
+    String HYPEN_PASSWORDCREDENIAL_TAG = "hudson.scm.SubversionSCM_-DescriptorImpl_-PasswordCredential";
+    String STRING_TAG = "string";
+    String YES = "yes";
+    
+    
+
     String JAVA_STAND_ALONE = "tech-java-standalone";
     String MAINCLASSNAME = "mainClassName";
     String JARNAME = "jarName";

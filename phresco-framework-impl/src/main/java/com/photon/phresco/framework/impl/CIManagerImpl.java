@@ -17,37 +17,68 @@
  */
 package com.photon.phresco.framework.impl;
 
-import hudson.cli.*;
+import hudson.cli.CLI;
 
-import java.io.*;
-import java.lang.reflect.*;
-import java.net.*;
-import java.text.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.lang.reflect.Type;
+import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
-import org.apache.commons.collections.*;
-import org.apache.commons.lang.*;
-import org.apache.http.client.*;
-import org.apache.http.client.methods.*;
-import org.apache.http.impl.client.*;
-import org.apache.log4j.*;
-import org.jdom.*;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.log4j.Logger;
+import org.codehaus.plexus.util.FileUtils;
+import org.jdom.JDOMException;
 
-import com.google.gson.*;
-import com.google.gson.reflect.*;
-import com.photon.phresco.commons.*;
-import com.photon.phresco.commons.model.*;
-import com.photon.phresco.exception.*;
-import com.photon.phresco.framework.*;
-import com.photon.phresco.framework.api.*;
-import com.photon.phresco.framework.model.*;
-import com.photon.phresco.util.*;
-import com.sun.jersey.api.client.*;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
+import com.photon.phresco.commons.FrameworkConstants;
+import com.photon.phresco.commons.model.ApplicationInfo;
+import com.photon.phresco.commons.model.ProjectInfo;
+import com.photon.phresco.exception.PhrescoException;
+import com.photon.phresco.framework.PhrescoFrameworkFactory;
+import com.photon.phresco.framework.api.ActionType;
+import com.photon.phresco.framework.api.ApplicationManager;
+import com.photon.phresco.framework.api.CIManager;
+import com.photon.phresco.framework.model.CIBuild;
+import com.photon.phresco.framework.model.CIJob;
+import com.photon.phresco.framework.model.CIJobStatus;
+import com.photon.phresco.util.Utility;
+import com.sun.jersey.api.client.ClientHandlerException;
 
 public class CIManagerImpl implements CIManager, FrameworkConstants {
 
 	private static final Logger S_LOGGER = Logger.getLogger(CIManagerImpl.class);
 	private static Boolean debugEnabled = S_LOGGER.isDebugEnabled();
+	private static boolean credExist = false;
 	
     private CLI cli = null;
     
@@ -81,7 +112,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		}
 	} 
 	
-	 public void createJob(ApplicationInfo appInfo, CIJob job) throws PhrescoException {
+	 public boolean createJob(ApplicationInfo appInfo, CIJob job) throws PhrescoException {
 		 if (debugEnabled) {
 			 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.createJob(Project project, CIJob job)");
 		 }
@@ -109,9 +140,10 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 				 }
 			 }
 		 }
+		 return credExist;
 	 }
 
-	 public void updateJob(ApplicationInfo appInfo, CIJob job) throws PhrescoException {
+	 public boolean updateJob(ApplicationInfo appInfo, CIJob job) throws PhrescoException {
 		 if (debugEnabled) {
 			 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.updateJob(Project project, CIJob job)");
 		 }
@@ -141,6 +173,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 				 }
 			 }
 		 }
+		 return credExist;
 	 }
 	
     private CIJobStatus configureJob(CIJob job, String jobType) throws PhrescoException {
@@ -179,7 +212,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
             }
             //when svn is selected credential value has to set
             if(SVN.equals(job.getRepoType())) {
-            	setSvnCredential(job);
+            	credExist = setSvnCredential(job);
             }
             
             return new CIJobStatus(result, message);
@@ -204,31 +237,56 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
         }
     }
     
-    private void setSvnCredential(CIJob job) throws JDOMException, IOException {
-       	S_LOGGER.debug("Entering Method CIManagerImpl.setSvnCredential");
-        try {
-            String jenkinsTemplateDir = Utility.getJenkinsTemplateDir();
-            String credentialFilePath = jenkinsTemplateDir + job.getRepoType() + HYPHEN + CREDENTIAL_XML;
-            if (debugEnabled) {
-            	S_LOGGER.debug("credentialFilePath ... " + credentialFilePath);
-            }
-            File credentialFile = new File(credentialFilePath);
-            
-            SvnProcessor processor = new SvnProcessor(credentialFile);
-            
-            processor.changeNodeValue("credentials/entry//userName", job.getUserName());
-            processor.changeNodeValue("credentials/entry//password", job.getPassword());
-            processor.writeStream(new File(Utility.getJenkinsHome() + File.separator + job.getName()));
-            
-            //jenkins home location
-			String jenkinsJobHome = System.getenv(JENKINS_HOME);
-            StringBuilder builder = new StringBuilder(jenkinsJobHome);
-            builder.append(File.separator);
-            
-            processor.writeStream(new File(builder.toString() + CI_CREDENTIAL_XML));
-		} catch (Exception e) {
-       		S_LOGGER.error("Entered into the catch block of CIManagerImpl.setSvnCredential " + e.getLocalizedMessage());
-		}
+    public boolean setSvnCredential(CIJob job) throws JDOMException, IOException {
+    	S_LOGGER.debug("Entering Method CIManagerImpl.setSvnCredential");
+    	try {
+    		String jenkinsJobHome = System.getenv(JENKINS_HOME);
+    		StringBuilder jenkinsHome = new StringBuilder(jenkinsJobHome);
+    		jenkinsHome.append(File.separator);
+    		File file = new File(jenkinsHome.toString() + CI_CREDENTIAL_XML);
+    		if(!file.exists()) {
+    			String jenkinsTemplateDir = Utility.getJenkinsTemplateDir();
+    			String credentialFilePath = jenkinsTemplateDir + job.getRepoType() + HYPHEN + CREDENTIAL_XML;
+    			File credentialFile = new File(credentialFilePath);
+    			FileUtils.copyFile(credentialFile, file);
+    		}
+    		String svnUrl = job.getSvnUrl();
+    		String stringValue = getRealm(svnUrl);
+    		SvnProcessor svn = new SvnProcessor(file);
+    		return svn.writeXml(stringValue, job);
+    	} catch (Exception e) {
+    		S_LOGGER.error("Entered into the catch block of CIManagerImpl.setSvnCredential " + e.getLocalizedMessage());
+    		return false;
+    	}
+    }
+
+
+    private String getRealm(String repoUrl) throws PhrescoException {
+    	if (debugEnabled) {
+    		S_LOGGER.debug("Entering Method CIManagerImpl.getRealm(String repoUrl)");
+    	}
+    	URLConnection openedUrl;
+    	String stringValue = "";
+    	try {
+    		URL url = new URL(repoUrl);
+    		String host = url.getHost();
+    		openedUrl = url.openConnection();
+
+    		Map<String, List<String>> hf = openedUrl.getHeaderFields();
+    		for (String key : hf.keySet()) {
+    			if (WWW_AUTHENTICATE.equalsIgnoreCase(key)) {
+    				String headerField = openedUrl.getHeaderField(key);
+    				String[] split = headerField.split("\"");
+    				stringValue = LT_HTTPS_COLON_BACKSLASH+host+COLON_443_GT_SPACE+split[1];
+    			}
+    		}
+    	} catch (IOException e) {
+    		if (debugEnabled) {
+    			S_LOGGER.error("Entered into the catch block of CIManagerImpl.getRealm " + e.getLocalizedMessage());
+    		}
+    		throw new PhrescoException(e);
+    	}
+    	return stringValue;
     }
     
     public void saveMailConfiguration(String jenkinsPort, String senderEmailId, String senderEmailPassword) throws PhrescoException {
