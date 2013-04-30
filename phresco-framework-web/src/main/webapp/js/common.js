@@ -927,7 +927,7 @@ function enableDivCtrls(disabledDiv) {
 }
 
 /** To fill the data in the select box **/
-function fillSelectbox(obj, data, selectTxt, selectVal) {
+function fillSelectbox(obj, data, selectTxt, selectVal, selectedVersion) {
 	obj.empty();
 	if (!isBlank(selectTxt) && !isBlank(selectVal)) {
 		obj.append($("<option></option>").attr("value", selectVal).text(selectTxt));
@@ -937,7 +937,11 @@ function fillSelectbox(obj, data, selectTxt, selectVal) {
 	}
 	if (data != undefined && !isBlank(data)) {
 		for (i in data) {
-			obj.append($("<option></option>").attr("value", data[i]).text(data[i]));
+			if (!isBlank(selectedVersion) && data[i] == selectedVersion) {
+				obj.append($("<option></option>").attr("value", data[i]).text(data[i]).attr("selected", "selected"));
+			} else {
+				obj.append($("<option></option>").attr("value", data[i]).text(data[i]));
+			}
 		}
 	}
 }
@@ -1473,6 +1477,7 @@ function changeChckBoxValue(obj) {
 //trim the long content
 function textTrim(obj, maxLength) {
     var val = $(obj).text();
+    val = val.trim();
     $(obj).attr("title", val);
     var len = val.length;
     if(len > maxLength) {

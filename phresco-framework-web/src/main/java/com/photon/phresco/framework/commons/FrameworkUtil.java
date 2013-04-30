@@ -570,7 +570,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
         .append("</td>")
         .append("<td class=\"noBorder\">")
         .append("<input type=\"text\" class=\"input-medium\" ")
-        .append("name=\"value\" placeholder=\"Value\" value="+value.get(0)+">")
+        .append("name=\"value\" placeholder=\"Value\" value="+value.get(0).toString().trim().replace(" ", "&#32;")+">")
         .append("</td>")
         .append("<td class='borderForLoad noBorder'>")
         .append("<a><img class='add imagealign' src='images/icons/add_icon.png' onclick='addRow(this);'></a></td>");
