@@ -168,7 +168,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 	}
 
 	public boolean updateProject(String type, String url, String username ,
-			String password, String branch, String revision, String appDirName) throws Exception  {
+			String password, String branch, String revision, ApplicationInfo appInfo) throws Exception  {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.updateproject()");
 		}
@@ -183,10 +183,10 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			if(debugEnabled){
 				S_LOGGER.debug("update SCM Connection " + url);
 			}
-			 updateSCMConnection(appDirName, url);
+			 updateSCMConnection(appInfo, url);
 				// revision = HEAD_REVISION.equals(revision) ? revision
 				// : revisionVal;
-			File updateDir = new File(Utility.getProjectHome(), appDirName);
+			File updateDir = new File(Utility.getProjectHome(), appInfo.getAppDirName());
 			if(debugEnabled){
 				S_LOGGER.debug("updateDir SVN... " + updateDir);
 				S_LOGGER.debug("Updating...");
@@ -201,8 +201,8 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			if(debugEnabled){
 				S_LOGGER.debug("GIT type");
 			}
-			updateSCMConnection(appDirName, url);
-			File updateDir = new File(Utility.getProjectHome(), appDirName); 
+			updateSCMConnection(appInfo, url);
+			File updateDir = new File(Utility.getProjectHome(), appInfo.getAppDirName()); 
 			if(debugEnabled){
 				S_LOGGER.debug("updateDir GIT... " + updateDir);
 			}
@@ -217,7 +217,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
                 S_LOGGER.debug("BITKEEPER type");
             }
 		    StringBuilder sb = new StringBuilder(Utility.getProjectHome())
-		    .append(appDirName);
+		    .append(appInfo.getAppDirName());
 		    updateFromBitKeeperRepo(url, sb.toString());
 		}
 
@@ -295,12 +295,12 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		}
 	}
 
-	private void updateSCMConnection(String projCode, String repoUrl)throws Exception {
+	private void updateSCMConnection(ApplicationInfo appInfo, String repoUrl)throws Exception {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method SCMManagerImpl.updateSCMConnection()");
 		}
 		try {
-			PomProcessor processor = getPomProcessor(projCode);
+			PomProcessor processor = getPomProcessor(appInfo);
 				if(debugEnabled){
 					S_LOGGER.debug("processor.getSCM() exists and repo url "+ repoUrl);
 				}
@@ -314,15 +314,15 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		}
 	}
 
-	private PomProcessor getPomProcessor(String projCode)throws Exception {
+	private PomProcessor getPomProcessor(ApplicationInfo appInfo)throws Exception {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.getPomProcessor()");
 		}
 		try {
 			StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-			builder.append(projCode);
+			builder.append(appInfo.getAppDirName());
 			builder.append(File.separatorChar);
-			builder.append(POM_XML);
+			builder.append(Utility.getPomFileName(appInfo));
 			if(debugEnabled){
 				S_LOGGER.debug("builder.toString() " + builder.toString());
 			}
@@ -428,7 +428,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 							S_LOGGER.debug("updating pom.xml");
 						}
 						// update connection url in pom.xml
-						updateSCMConnection(appInfo.getAppDirName(),
+						updateSCMConnection(appInfo,
 								svnURL.toDecodedString());
 						dotphresco = true;
 						return dotphresco;
@@ -557,7 +557,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 					S_LOGGER.debug("updating pom.xml");
 				}
 				// update connection in pom.xml
-				updateSCMConnection(appInfo.getAppDirName(), url);
+				updateSCMConnection(appInfo, url);
 				return appInfo;
 			}
 		}
@@ -620,17 +620,18 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 	}
 
 	public boolean importToRepo(String type, String url, String username,
-			String password, String branch, String revision, File dir, String commitMessage) throws Exception {
+			String password, String branch, String revision, ApplicationInfo appInfo, String commitMessage) throws Exception {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.importToRepo()");
 		}
+		File dir = new File(Utility.getProjectHome() + appInfo.getAppDirName());
 		try {
 			if (SVN.equals(type)) {
 				String tail = addAppFolderToSVN(url, dir, username, password, commitMessage);
 				String appendedUrl = url + FORWARD_SLASH + tail;
 				importDirectoryContentToSubversion(appendedUrl, dir.getPath(), username, password, commitMessage);
 				// checkout to get .svn folder
-				checkoutImportedApp(appendedUrl, dir.getPath(), username, password);
+				checkoutImportedApp(appendedUrl, appInfo, username, password);
 			} else if (GIT.equals(type)) {
 				importToGITRepo();
 			}
@@ -690,7 +691,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
         return cm.getCommitClient().doImport(new File(subVersionedDirectory), SVNURL.parseURIEncoded(repositoryURL), commitMessage, null, true, true, SVNDepth.fromRecurse(true));
     }
 	
-	private void checkoutImportedApp(String repositoryURL, String subVersionedDirectory, String userName, String password) throws Exception {
+	private void checkoutImportedApp(String repositoryURL, ApplicationInfo appInfo, String userName, String password) throws Exception {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.checkoutImportedApp()");
 		}
@@ -701,13 +702,14 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		if(debugEnabled){
 			S_LOGGER.debug("Checking out...");
 		}
+		String subVersionedDirectory = Utility.getProjectHome() + appInfo.getAppDirName();
 		File subVersDir = new File(subVersionedDirectory);
 		uc.doCheckout(SVNURL.parseURIEncoded(repositoryURL), subVersDir, SVNRevision.UNDEFINED, SVNRevision.parse(HEAD_REVISION), SVNDepth.INFINITY, true);
 		if(debugEnabled){
 			S_LOGGER.debug("updating pom.xml");
 		}
 		// update connection url in pom.xml
-		updateSCMConnection(subVersDir.getName(), svnURL.toDecodedString());
+		updateSCMConnection(appInfo, svnURL.toDecodedString());
 	}
 	
 	private void importToGITRepo() throws Exception {

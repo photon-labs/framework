@@ -45,7 +45,7 @@ public class PerformanceTestResultNamesImpl implements DynamicParameter, Constan
 		PossibleValues possibleValues = new PossibleValues();
 		ApplicationInfo applicationInfo = (ApplicationInfo) paramMap.get(KEY_APP_INFO);
 		String testAgainst = (String) paramMap.get(KEY_TEST_AGAINST);
-		String testDirPath = getTestDirPath(applicationInfo.getAppDirName(), testAgainst);
+		String testDirPath = getTestDirPath(applicationInfo, testAgainst);
 		String dependencyStr = "";
 		if ("database".equalsIgnoreCase(testAgainst)) {
 			dependencyStr = "dbContextUrls";
@@ -74,12 +74,12 @@ public class PerformanceTestResultNamesImpl implements DynamicParameter, Constan
 		return possibleValues;
 	}
 	
-	private String getTestDirPath(String AppDirName, String testAgainst) throws PhrescoException {
+	private String getTestDirPath(ApplicationInfo appInfo, String testAgainst) throws PhrescoException {
 		StringBuilder builder = new StringBuilder(Utility.getProjectHome());
 		try {
-			PomProcessor processor = new PomProcessor(getPOMFile(AppDirName));
+			PomProcessor processor = new PomProcessor(getPOMFile(appInfo));
 			String performDir = processor.getProperty(POM_PROP_KEY_PERFORMANCETEST_DIR);
-			builder.append(AppDirName)
+			builder.append(appInfo.getAppDirName())
 			.append(performDir)
 			.append(File.separator)
 			.append(testAgainst.toString())
@@ -90,11 +90,11 @@ public class PerformanceTestResultNamesImpl implements DynamicParameter, Constan
     	}
 	}
 	
-	private File getPOMFile(String appDirName) {
+	private File getPOMFile(ApplicationInfo appInfo) {
         StringBuilder builder = new StringBuilder(Utility.getProjectHome())
-        .append(appDirName)
+        .append(appInfo.getAppDirName())
         .append(File.separatorChar)
-        .append(POM_NAME);
+        .append(Utility.getPomFileName(appInfo));
         return new File(builder.toString());
     }
 	

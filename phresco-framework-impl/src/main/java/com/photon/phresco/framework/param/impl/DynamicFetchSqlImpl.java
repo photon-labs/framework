@@ -116,7 +116,7 @@ public class DynamicFetchSqlImpl implements DynamicParameter, Constants {
 	 }
 	
 	private String getSqlFilePath(ApplicationInfo applicationInfo) throws PhrescoPomException {
-		PomProcessor pomPath = new PomProcessor(new File(Utility.getProjectHome() + applicationInfo.getAppDirName() + File.separator + "pom.xml"));
+		PomProcessor pomPath = new PomProcessor(new File(Utility.getProjectHome() + applicationInfo.getAppDirName() + File.separator + Utility.getPomFileName(applicationInfo)));
 		String sqlFilePath = pomPath.getProperty(POM_PROP_KEY_SQL_FILE_DIR);
 
 		return sqlFilePath;

@@ -34,7 +34,6 @@ import org.apache.log4j.Logger;
 
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
-import com.photon.phresco.commons.model.SettingsTemplate;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
@@ -42,6 +41,7 @@ import com.photon.phresco.framework.api.ActionType;
 import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.framework.commons.FrameworkUtil;
+import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.site.ReportCategories;
 import com.phresco.pom.site.Reports;
@@ -126,7 +126,13 @@ public class SiteReport extends FrameworkBaseAction {
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			ApplicationInfo applicationInfo = getApplicationInfo();
 			String appDirectoryPath = getAppDirectoryPath(applicationInfo);
-			BufferedReader reader = applicationManager.performAction(projectInfo, actionType, null, appDirectoryPath);
+			List<String> buildArgCmds = new ArrayList<String>();
+			String pomFileName = Utility.getPomFileName(applicationInfo);
+			if(!Constants.POM_NAME.equals(pomFileName)) {
+				buildArgCmds.add(Constants.HYPHEN_F);
+				buildArgCmds.add(pomFileName);
+			}
+			BufferedReader reader = applicationManager.performAction(projectInfo, actionType, buildArgCmds, appDirectoryPath);
 			setSessionAttribute(getAppId() + REQ_SITE_REPORT, reader);
 			setReqAttribute(REQ_APP_ID, getAppId());
 			setReqAttribute(REQ_ACTION_TYPE, REQ_SITE_REPORT);

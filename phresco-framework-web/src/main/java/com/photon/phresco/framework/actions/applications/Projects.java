@@ -591,10 +591,13 @@ public class Projects extends FrameworkBaseAction {
 	    	}
 	    	
 	    	FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-	    	String sonarHomeURL = frameworkUtil.getSonarHomeURL();	
-	    	boolean connectionAlive = FrameworkUtil.isConnectionAlive(sonarHomeURL);
+	    	String sonarUrl = frameworkUtil.getSonarHomeURL();
+			if(StringUtils.isNotEmpty(getSonarContext())) {
+				sonarUrl = frameworkUtil.getSonarHomeURL() + "/" + getSonarContext();
+			}
+	    	boolean connectionAlive = FrameworkUtil.isConnectionAlive(sonarUrl);
 	    	if(connectionAlive) {
-	    		deleteSonarProject();
+	    		deleteSonarProject(sonarUrl);
 	    	}
 	    	projectManager.delete(getSelectedAppInfos());
 	    	addActionMessage(getText(ACT_SUCC_PROJECT_DELETE, Collections.singletonList(getProjectName())));
@@ -625,35 +628,33 @@ public class Projects extends FrameworkBaseAction {
     	return list();
     }
     
-    private void deleteSonarProject() throws PhrescoException,
+    private void deleteSonarProject(String sonarUrl) throws PhrescoException,
     PhrescoPomException, IOException {
     	List<ApplicationInfo> selectedAppInfos = getSelectedAppInfos();
     	for (ApplicationInfo appInfo : selectedAppInfos) {
     		List<String> sonarProfiles = getSonarProfile(appInfo);
     		for (String sonarProfile : sonarProfiles) {
     			FrameworkUtil util = new FrameworkUtil();
-    			PomProcessor pomProcessor = util.getPomProcessor(appInfo.getAppDirName());
+    			PomProcessor pomProcessor = util.getPomProcessor(appInfo);
     			String projectName = pomProcessor.getGroupId() + COLON + pomProcessor.getArtifactId() + COLON + sonarProfile;
     			if(sonarProfile.equals(SONAR_SOURCE)) {
     				projectName = pomProcessor.getGroupId() + COLON + pomProcessor.getArtifactId();
     			} if(sonarProfile.equals(FUNCTIONAL)) {
     				String funTestDir = pomProcessor.getProperty(Constants.POM_PROP_KEY_FUNCTEST_DIR);
-    				String pompath = Utility.getProjectHome() + appInfo.getAppDirName() + File.separator + funTestDir + File.separator + POM_XML;
-    				PomProcessor funPom = new PomProcessor(new File(pompath));
-    				if(funPom.isPomValid()) { 
-    					projectName = funPom.getGroupId() + COLON + funPom.getArtifactId() + COLON + sonarProfile;
+    				File funPomFile = new File(Utility.getProjectHome() + appInfo.getAppDirName() + File.separator + funTestDir + File.separator + POM_XML);
+    				if(funPomFile.exists()) {
+    					PomProcessor funPom = new PomProcessor(funPomFile);
+    					if(funPom.isPomValid()) { 
+    						projectName = funPom.getGroupId() + COLON + funPom.getArtifactId() + COLON + sonarProfile;
+    					}
     				}
     			}
-    			String sonarUrl = util.getSonarHomeURL();
-    			if(StringUtils.isNotEmpty(getSonarContext())) {
-    				sonarUrl = util.getSonarHomeURL() + "/" + getSonarContext();
-    			}
     			Sonar sonar = Sonar.create(sonarUrl, "admin", "admin");
-				Resource resource = sonar.find(ResourceQuery.create(projectName));
-				if(resource != null) {
-	    			ProjectDeleteQuery create = ProjectDeleteQuery.create(projectName);
-	    			sonar.delete(create);
-				}
+    			Resource resource = sonar.find(ResourceQuery.create(projectName));
+    			if(resource != null) {
+    				ProjectDeleteQuery create = ProjectDeleteQuery.create(projectName);
+    				sonar.delete(create);
+    			}
     		}
     	}
     }

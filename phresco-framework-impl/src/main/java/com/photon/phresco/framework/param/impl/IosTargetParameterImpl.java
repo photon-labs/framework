@@ -52,8 +52,6 @@ public class IosTargetParameterImpl implements DynamicParameter {
     private static final String XCODE_PROJECT_TARGETS = "Targets:";
     private static final String XCODE_WORKSPACE_TARGETS = "Schemes:";
 
-    private static final String POM = "pom.xml";
-    
     @Override
     public PossibleValues getValues(Map<String, Object> paramMap) throws IOException, ParserConfigurationException, 
              SAXException, ConfigurationException, PhrescoException {
@@ -65,7 +63,7 @@ public class IosTargetParameterImpl implements DynamicParameter {
             builder.append(appDirName);
             builder.append(File.separatorChar);
             
-            File pomPath = new File(builder.toString(), POM);
+            File pomPath = new File(builder.toString(), Utility.getPomFileName(applicationInfo));
             PomProcessor pomProcessor = new PomProcessor(pomPath);
             File sourceDir = null;
             String sourceDirectory = pomProcessor.getSourceDirectory();

@@ -641,6 +641,8 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 			}
 			InetAddress thisIp = InetAddress.getLocalHost();
 			// basic information
+			String pomFileName = Utility.getPomFileName(appInfo);
+			existJob.setPomLocation(pomFileName);
 			existJob.setName(name);
 			existJob.setSvnUrl(svnurl);
 			existJob.setUserName(username);
@@ -708,6 +710,9 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 				ActionType actionType = ActionType.BUILD;
 				mvncmd =  actionType.getActionType().toString();
 				String buildPrebuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_PACKAGE;
+				if(!POM_NAME.equals(pomFileName)) {
+					buildPrebuildCmd = buildPrebuildCmd + " -f " + pomFileName; 
+				}
 				// To handle multi module project
 				buildPrebuildCmd = buildPrebuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
 				preBuildStepCmds.add(buildPrebuildCmd);
@@ -726,6 +731,9 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 				mvncmd =  actionType.getActionType().toString();
 				
 				String deployPreBuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_DEPLOY;
+				if(!POM_NAME.equals(pomFileName)) {
+					deployPreBuildCmd = deployPreBuildCmd + " -f " + pomFileName; 
+				}
 				// To handle multi module project
 				deployPreBuildCmd = deployPreBuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
 				preBuildStepCmds.add(deployPreBuildCmd);
@@ -779,6 +787,9 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 				mvncmd =  actionType.getActionType().toString();
 				
 				String deployPreBuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_PDF_REPORT;
+				if(!POM_NAME.equals(pomFileName)) {
+					deployPreBuildCmd = deployPreBuildCmd + " -f " + pomFileName; 
+				}
 				// To handle multi module project
 				deployPreBuildCmd = deployPreBuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
 				preBuildStepCmds.add(deployPreBuildCmd);
@@ -797,6 +808,9 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 				mvncmd =  actionType.getActionType().toString();
 				
 				String deployPreBuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_VALIDATE_CODE;
+				if(!POM_NAME.equals(pomFileName)) {
+					deployPreBuildCmd = deployPreBuildCmd + " -f " + pomFileName; 
+				}
 				// To handle multi module project
 				deployPreBuildCmd = deployPreBuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
 				preBuildStepCmds.add(deployPreBuildCmd);
@@ -815,6 +829,9 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 				mvncmd =  actionType.getActionType().toString();
 				
 				String unitTestPreBuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_UNIT_TEST;
+				if(!POM_NAME.equals(pomFileName)) {
+					unitTestPreBuildCmd = unitTestPreBuildCmd + " -f " + pomFileName; 
+				}
 				// To handle multi module project
 				unitTestPreBuildCmd = unitTestPreBuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
 				preBuildStepCmds.add(unitTestPreBuildCmd);
@@ -837,6 +854,9 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 				ActionType actionType = ActionType.FUNCTIONAL_TEST;
 				mvncmd =  actionType.getActionType().toString();
 				String functionalTestPrebuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_FUNCTIONAL_TEST;
+				if(!POM_NAME.equals(pomFileName)) {
+					functionalTestPrebuildCmd = functionalTestPrebuildCmd + " -f " + pomFileName; 
+				}
 				// To handle multi module project
 				functionalTestPrebuildCmd = functionalTestPrebuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
 				preBuildStepCmds.add(functionalTestPrebuildCmd);
@@ -855,6 +875,9 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 				mvncmd =  actionType.getActionType().toString();
 				
 				String loadTestPreBuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_LOAD_TEST;
+				if(!POM_NAME.equals(pomFileName)) {
+					loadTestPreBuildCmd = loadTestPreBuildCmd + " -f " + pomFileName; 
+				}
 				// To handle multi module project
 				loadTestPreBuildCmd = loadTestPreBuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
 				preBuildStepCmds.add(loadTestPreBuildCmd);
@@ -872,13 +895,19 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 				mvncmd =  actionType.getActionType().toString();
 				
 				String performanceTestPreBuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_PERFORMANCE_TEST;
+				if(!POM_NAME.equals(pomFileName)) {
+					performanceTestPreBuildCmd = performanceTestPreBuildCmd + " -f " + pomFileName; 
+				}
 				// To handle multi module project
 				performanceTestPreBuildCmd = performanceTestPreBuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
 				preBuildStepCmds.add(performanceTestPreBuildCmd);
 			}
 			
 			List<String> buildArgCmds = getMavenArgCommands(parameters);
-			
+			if(!POM_NAME.equals(pomFileName)) {
+				buildArgCmds.add(HYPHEN_F);
+				buildArgCmds.add(pomFileName);
+			}
 			if (!CollectionUtils.isEmpty(buildArgCmds)) {
 				for (String buildArgCmd : buildArgCmds) {
 					mvncmd = mvncmd + FrameworkConstants.SPACE + buildArgCmd;

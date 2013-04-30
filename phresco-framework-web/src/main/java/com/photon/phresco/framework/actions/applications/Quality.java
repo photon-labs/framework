@@ -465,6 +465,11 @@ public class Quality extends DynamicParameterAction implements Constants {
             List<Parameter> parameters = getMojoParameters(mojo, PHASE_UNIT_TEST);
             List<String> buildArgCmds = getMavenArgCommands(parameters);
             buildArgCmds.add(HYPHEN_N);
+            String pomFileName = Utility.getPomFileName(appInfo);
+            if(!Constants.POM_NAME.equals(pomFileName)) {
+				buildArgCmds.add(Constants.HYPHEN_F);
+				buildArgCmds.add(pomFileName);
+			}
             ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
             BufferedReader reader = applicationManager.performAction(getProjectInfo(), ActionType.UNIT_TEST, buildArgCmds, workingDirectory.toString());
             setSessionAttribute(getAppId() + UNIT, reader);
@@ -697,6 +702,11 @@ public class Quality extends DynamicParameterAction implements Constants {
 	        List<Parameter> parameters = getMojoParameters(mojo, PHASE_FUNCTIONAL_TEST + HYPHEN + seleniumToolType);
             List<String> buildArgCmds = getMavenArgCommands(parameters);
             buildArgCmds.add(HYPHEN_N);
+            String pomFileName = Utility.getPomFileName(appInfo);
+            if(!Constants.POM_NAME.equals(pomFileName)) {
+				buildArgCmds.add(Constants.HYPHEN_F);
+				buildArgCmds.add(pomFileName);
+			}
 	        ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 	        BufferedReader reader = applicationManager.performAction(getProjectInfo(), ActionType.FUNCTIONAL_TEST, buildArgCmds, workingDirectory.toString());
 	        setSessionAttribute(getAppId() + FUNCTIONAL, reader);
@@ -854,6 +864,11 @@ public class Quality extends DynamicParameterAction implements Constants {
 			List<Parameter> parameters = getMojoParameters(mojo, PHASE_START_HUB);
             List<String> buildArgCmds = getMavenArgCommands(parameters);
             buildArgCmds.add(HYPHEN_N);
+            String pomFileName = Utility.getPomFileName(appInfo);
+			if(!Constants.POM_NAME.equals(pomFileName)) {
+				buildArgCmds.add(Constants.HYPHEN_F);
+				buildArgCmds.add(pomFileName);
+			}
 			BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.START_HUB, buildArgCmds, workingDirectory);
 			setSessionAttribute(getAppId() + START_HUB, reader);
 			setReqAttribute(REQ_APP_ID, getAppId());
@@ -880,6 +895,11 @@ public class Quality extends DynamicParameterAction implements Constants {
             String workingDirectory = getAppDirectoryPath(appInfo);
             List<String> buildArgCmds = new ArrayList<String>();
             buildArgCmds.add(HYPHEN_N);
+            String pomFileName = Utility.getPomFileName(getApplicationInfo());
+			if(!Constants.POM_NAME.equals(pomFileName)) {
+				buildArgCmds.add(Constants.HYPHEN_F);
+				buildArgCmds.add(pomFileName);
+			}
             BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.STOP_HUB, buildArgCmds, workingDirectory);
             setSessionAttribute(getAppId() + STOP_HUB, reader);
             setReqAttribute(REQ_APP_ID, getAppId());
@@ -997,6 +1017,11 @@ public class Quality extends DynamicParameterAction implements Constants {
 			List<Parameter> parameters = getMojoParameters(mojo, PHASE_START_NODE);
             List<String> buildArgCmds = getMavenArgCommands(parameters);
             buildArgCmds.add(HYPHEN_N);
+            String pomFileName = Utility.getPomFileName(appInfo);
+			if(!Constants.POM_NAME.equals(pomFileName)) {
+				buildArgCmds.add(Constants.HYPHEN_F);
+				buildArgCmds.add(pomFileName);
+			}
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			ProjectInfo projectInfo = getProjectInfo();
 			String workingDirectory = getAppDirectoryPath(appInfo);
@@ -1026,6 +1051,11 @@ public class Quality extends DynamicParameterAction implements Constants {
             String workingDirectory = getAppDirectoryPath(appInfo);
             List<String> buildArgCmds = new ArrayList<String>();
             buildArgCmds.add(HYPHEN_N);
+            String pomFileName = Utility.getPomFileName(appInfo);
+			if(!Constants.POM_NAME.equals(pomFileName)) {
+				buildArgCmds.add(Constants.HYPHEN_F);
+				buildArgCmds.add(pomFileName);
+			}
             BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.STOP_NODE, buildArgCmds, workingDirectory);
             setSessionAttribute(getAppId() + STOP_NODE, reader);
             setReqAttribute(REQ_APP_ID, getAppId());
@@ -1520,6 +1550,11 @@ public class Quality extends DynamicParameterAction implements Constants {
     		List<Parameter> parameters = getMojoParameters(mojo, PHASE_PERFORMANCE_TEST);
     		List<String> buildArgCmds = getMavenArgCommands(parameters);
     		buildArgCmds.add(HYPHEN_N);
+    		String pomFileName = Utility.getPomFileName(applicationInfo);
+    		if(!Constants.POM_NAME.equals(pomFileName)) {
+				buildArgCmds.add(Constants.HYPHEN_F);
+				buildArgCmds.add(pomFileName);
+			}
     		String workingDirectory = getAppDirectoryPath(applicationInfo);  
     		
     		//
@@ -1542,7 +1577,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 		try {
 			if(StringUtils.isNotEmpty(getTestAgainst())) {
 				ApplicationInfo applicationInfo = getApplicationInfo();
-				PomProcessor processor = new PomProcessor(getPOMFile(applicationInfo.getAppDirName()));					
+				PomProcessor processor = new PomProcessor(getPOMFile(applicationInfo));					
 		        String performTestDir = processor.getProperty(POM_PROP_KEY_PERFORMANCETEST_DIR);	        
 				FileOutputStream fop;
 				boolean success = false;
@@ -1628,11 +1663,11 @@ public class Quality extends DynamicParameterAction implements Constants {
 		return SUCCESS;
 	}
     
-    private File getPOMFile(String appDirName) {
+    private File getPOMFile(ApplicationInfo appInfo) {
         StringBuilder builder = new StringBuilder(Utility.getProjectHome())
-        .append(appDirName)
+        .append(appInfo.getAppDirName())
         .append(File.separatorChar)
-        .append(POM_NAME);
+        .append(Utility.getPomFileName(appInfo));
         return new File(builder.toString());
     }
     
@@ -1780,6 +1815,11 @@ public class Quality extends DynamicParameterAction implements Constants {
             List<Parameter> parameters = getMojoParameters(mojo, PHASE_LOAD_TEST);
             List<String> buildArgCmds = getMavenArgCommands(parameters);
             buildArgCmds.add(HYPHEN_N);
+            String pomFileName = Utility.getPomFileName(appInfo);
+            if(!Constants.POM_NAME.equals(pomFileName)) {
+				buildArgCmds.add(Constants.HYPHEN_F);
+				buildArgCmds.add(pomFileName);
+			}
             ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
             BufferedReader reader = applicationManager.performAction(getProjectInfo(), ActionType.LOAD_TEST, buildArgCmds, workingDirectory.toString());
             setSessionAttribute(getAppId() + LOAD, reader);
@@ -2546,7 +2586,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 				String serverUrl = frameworkUtil.getSonarURL();
 				String sonarReportPath = frameworkConfig.getSonarReportPath().replace(FORWARD_SLASH + SONAR, "");
 				serverUrl = serverUrl + sonarReportPath;
-				PomProcessor processor = frameworkUtil.getPomProcessor(appInfo.getAppDirName());
+				PomProcessor processor = frameworkUtil.getPomProcessor(appInfo);
 				Modules pomModules = processor.getPomModule();
 				List<String> modules = null;
 				if (pomModules != null) {
@@ -2625,7 +2665,7 @@ public class Quality extends DynamicParameterAction implements Constants {
                 }
 				
 	            builder.append(File.separatorChar);
-	        	builder.append(POM_XML);
+	        	builder.append(Utility.getPomFileName(appInfo));
 	        	File pomPath = new File(builder.toString());
 	        	StringBuilder sbuild = new StringBuilder();
 	        	if (pomPath.exists()) {
@@ -2676,7 +2716,7 @@ public class Quality extends DynamicParameterAction implements Constants {
                 }
 				
 	            builder.append(File.separatorChar);
-	        	builder.append(POM_XML);
+	        	builder.append(Utility.getPomFileName(appInfo));
 	        	File pomPath = new File(builder.toString());
 	        	StringBuilder sbuild = new StringBuilder();
 	        	if (pomPath.exists()) {
@@ -2739,7 +2779,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 			// unit xml check
 			if(!xmlResultsAvailable) {
 				List<String> moduleNames = new ArrayList<String>();
-				PomProcessor processor = frameworkUtil.getPomProcessor(appInfo.getAppDirName());
+				PomProcessor processor = frameworkUtil.getPomProcessor(appInfo);
 				Modules pomModules = processor.getPomModule();
 				List<String> modules = null;
 				// check multimodule or not
@@ -2886,6 +2926,11 @@ public class Quality extends DynamicParameterAction implements Constants {
 	        
 			List<String> buildArgCmds = getMavenArgCommands(parameters);
 			buildArgCmds.add(HYPHEN_N);
+			String pomFileName = Utility.getPomFileName(applicationInfo);
+			if(!Constants.POM_NAME.equals(pomFileName)) {
+				buildArgCmds.add(Constants.HYPHEN_F);
+				buildArgCmds.add(pomFileName);
+			}
 			String workingDirectory = getAppDirectoryPath(applicationInfo);
 			BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.PDF_REPORT, buildArgCmds, workingDirectory);
 			String line;

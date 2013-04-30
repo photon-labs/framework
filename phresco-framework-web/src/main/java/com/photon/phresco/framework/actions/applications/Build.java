@@ -361,6 +361,11 @@ public class Build extends DynamicParameterAction implements Constants {
 			List<Parameter> parameters = getMojoParameters(mojo, PHASE_PACKAGE);
 			List<String> buildArgCmds = getMavenArgCommands(parameters);
 			buildArgCmds.add(HYPHEN_N);
+			String pomFileName = Utility.getPomFileName(applicationInfo);
+			if(!POM_NAME.equals(pomFileName)) {
+				buildArgCmds.add(HYPHEN_F);
+				buildArgCmds.add(pomFileName);
+			}
 			String workingDirectory = getAppDirectoryPath(applicationInfo);
 			getApplicationProcessor().preBuild(getApplicationInfo());
 			BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.BUILD, buildArgCmds, workingDirectory);
@@ -419,7 +424,13 @@ public class Build extends DynamicParameterAction implements Constants {
 			persistValuesToXml(mojo, PHASE_PROCESS_BUILD);
 			
 			String workingDirectory = getAppDirectoryPath(applicationInfo);
-			BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.PROCESS_BUILD, null, workingDirectory);
+			List<String> buildArgCmds = new ArrayList<String>();
+            String pomFileName = Utility.getPomFileName(applicationInfo);
+			if(!Constants.POM_NAME.equals(pomFileName)) {
+				buildArgCmds.add(Constants.HYPHEN_F);
+				buildArgCmds.add(pomFileName);
+			}
+			BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.PROCESS_BUILD, buildArgCmds, workingDirectory);
 			setSessionAttribute(getAppId() + REQ_PROCESS_BUILD, reader);
 			setReqAttribute(REQ_APP_ID, getAppId());
 			setReqAttribute(REQ_ACTION_TYPE, REQ_PROCESS_BUILD);
@@ -448,6 +459,11 @@ public class Build extends DynamicParameterAction implements Constants {
 			List<Parameter> parameters = getMojoParameters(mojo, PHASE_DEPLOY);
 			List<String> buildArgCmds = getMavenArgCommands(parameters);
 			buildArgCmds.add(HYPHEN_N);
+			String pomFileName = Utility.getPomFileName(applicationInfo);
+			if(!POM_NAME.equals(pomFileName)) {
+				buildArgCmds.add(HYPHEN_F);
+				buildArgCmds.add(pomFileName);
+			}
 			String workingDirectory = getAppDirectoryPath(applicationInfo);
 			BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.DEPLOY, buildArgCmds, workingDirectory);
 			setSessionAttribute(getAppId() + REQ_FROM_TAB_DEPLOY, reader);
@@ -719,7 +735,13 @@ public class Build extends DynamicParameterAction implements Constants {
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			ProjectInfo projectInfo = getProjectInfo();
 			String workingDirectory = getAppDirectoryPath(applicationInfo);
-			reader = applicationManager.performAction(projectInfo, ActionType.RUNAGAINSTSOURCE, null, workingDirectory);
+			List<String> buildArgCmds = new ArrayList<String>();
+            String pomFileName = Utility.getPomFileName(applicationInfo);
+			if(!Constants.POM_NAME.equals(pomFileName)) {
+				buildArgCmds.add(Constants.HYPHEN_F);
+				buildArgCmds.add(pomFileName);
+			}
+			reader = applicationManager.performAction(projectInfo, ActionType.RUNAGAINSTSOURCE, buildArgCmds, workingDirectory);
 			boolean connectionStatus = Utility.isConnectionAlive(serverProtocol, serverHost, serverPort);
 			setSessionAttribute(getAppId() + SESSION_SERVER_STATUS, connectionStatus);
 			setSessionAttribute(getAppId() + SESSION_SERVER_PROTOCOL_VALUE, serverProtocol);
@@ -776,7 +798,13 @@ public class Build extends DynamicParameterAction implements Constants {
 			ApplicationInfo applicationInfo = getApplicationInfo();
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			String workingDirectory = getAppDirectoryPath(applicationInfo);
-			reader = applicationManager.performAction(getProjectInfo(), ActionType.STOPSERVER, null, workingDirectory);
+			List<String> buildArgCmds = new ArrayList<String>();
+            String pomFileName = Utility.getPomFileName(getApplicationInfo());
+			if(!Constants.POM_NAME.equals(pomFileName)) {
+				buildArgCmds.add(Constants.HYPHEN_F);
+				buildArgCmds.add(pomFileName);
+			}
+			reader = applicationManager.performAction(getProjectInfo(), ActionType.STOPSERVER, buildArgCmds, workingDirectory);
 			if (readData) {
 				while (StringUtils.isNotEmpty(reader.readLine())) {}
 			}
@@ -925,7 +953,7 @@ public class Build extends DynamicParameterAction implements Constants {
 	/* minification starts */
 	public String minifyPopup() throws PhrescoException, PhrescoPomException {
 		ApplicationInfo applicationInfo = getApplicationInfo();
-		String pomPath = getAppDirectoryPath(applicationInfo) + File.separator + POM_FILE;
+		String pomPath = getAppDirectoryPath(applicationInfo) + File.separator + Utility.getPomFileName(applicationInfo);
 		PomProcessor pomProcessor = new PomProcessor(new File(pomPath));
 		com.phresco.pom.model.Plugin.Configuration pluginConfig = pomProcessor.getPlugin(MINIFY_PLUGIN_GROUPID,MINIFY_PLUGIN_ARTFACTID).getConfiguration();
 		//To check for availability of minification plugin in pom.xml
@@ -1017,7 +1045,7 @@ public class Build extends DynamicParameterAction implements Constants {
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			ApplicationInfo applicationInfo = getApplicationInfo();
 			ProjectInfo projectInfo = getProjectInfo();
-			String pomPath = Utility.getProjectHome() + File.separator + applicationInfo.getAppDirName() + File.separator + POM_FILE;
+			String pomPath = Utility.getProjectHome() + File.separator + applicationInfo.getAppDirName() + File.separator + Utility.getPomFileName(applicationInfo);
 			PomProcessor pomProcessor = new PomProcessor(new File(pomPath));
 			DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
 			DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
@@ -1042,8 +1070,13 @@ public class Build extends DynamicParameterAction implements Constants {
 			pomProcessor.save();
 			
 			String workingDirectory = getAppDirectoryPath(applicationInfo);
-			
-			BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.MINIFY, null, workingDirectory);
+			List<String> buildArgCmds = new ArrayList<String>();
+            String pomFileName = Utility.getPomFileName(getApplicationInfo());
+			if(!Constants.POM_NAME.equals(pomFileName)) {
+				buildArgCmds.add(Constants.HYPHEN_F);
+				buildArgCmds.add(pomFileName);
+			}
+			BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.MINIFY, buildArgCmds, workingDirectory);
 			setSessionAttribute(getAppId() + REQ_MINIFY, reader);
 			setReqAttribute(REQ_APP_ID, getAppId());
 			setReqAttribute(REQ_ACTION_TYPE, REQ_MINIFY);
@@ -1133,7 +1166,7 @@ public class Build extends DynamicParameterAction implements Constants {
 			StringBuilder builder = new StringBuilder(Utility.getProjectHome());
 			builder.append(projectCode);
 			builder.append(File.separatorChar);
-			builder.append(POM_XML);
+			builder.append(Utility.getPomFileName(getApplicationInfo()));
 			File pomPath = new File(builder.toString());
 
 			AndroidPomProcessor processor = new AndroidPomProcessor(pomPath);
