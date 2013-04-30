@@ -258,7 +258,9 @@
 						var type = '<%= propertyTemplate.getType() %>';
 						var txtBoxName = '<%= propertyTemplate.getKey() %>';
 						if(txtBoxName != '<%= FrameworkConstants.EMAIL_ID %>') {
-							validateInput(value, type, txtBoxName);
+							if (type !== "String") {
+								validateInput(value, type, txtBoxName);
+							}
 						}
 					});
 				</script>	
@@ -527,9 +529,7 @@
 	
 	function validateInput(value, type, txtBoxName) {
 		var newVal = "";
-		if (type == "String") {
-// 			newVal = checkForSplChrForString(value);
-		} else if (type == "Number") {
+		if (type == "Number") {
 			newVal = removeSpaces(allowNumHyphen(value));
 		} else {
 			newVal = removeSpaces(value);
@@ -594,9 +594,27 @@
 	function successEvent(pageUrl, data) {
 		//To fill the versions 
 		if (pageUrl == "fetchProjectInfoVersions") {
-			fillSelectbox($("select[name='version']"), data.versions);
+			<% if (propertiesInfo != null ) { %> 
+					var selectedVersion = "<%=propertiesInfo.getProperty("version") %>";
+					if ((data.versions).indexOf(selectedVersion) != -1) {
+						fillSelectbox($("select[name='version']"), data.versions, '', '', selectedVersion);
+					} else {
+						fillSelectbox($("select[name='version']"), data.versions);
+					} 
+			<% } else { %> 
+					fillSelectbox($("select[name='version']"), data.versions);
+			<% } %>
 		} else if (pageUrl == "fetchSettingProjectInfoVersions") {
-			fillSelectbox($("select[name='version']"), data.versions);
+			<% if (propertiesInfo != null ) { %> 
+					var selectedVersion = "<%=propertiesInfo.getProperty("version") %>";
+					if ((data.versions).indexOf(selectedVersion) != -1) {
+						fillSelectbox($("select[name='version']"), data.versions, '', '', selectedVersion);
+					} else {
+						fillSelectbox($("select[name='version']"), data.versions);
+					} 
+			<% } else { %> 
+					fillSelectbox($("select[name='version']"), data.versions);
+			<% } %>
 		} else if (pageUrl == "listUploadedFiles") {
 			hideLoadingIcon();
 			if (data.uploadedFiles != undefined && !isBlank(data.uploadedFiles)) {

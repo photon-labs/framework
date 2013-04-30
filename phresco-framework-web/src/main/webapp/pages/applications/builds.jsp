@@ -159,7 +159,7 @@
 									if (optionIds != null && optionIds.contains(FrameworkConstants.DEPLOY_KEY)) {
 								%>
 		              			<td>
-		              				<a class="deploy" additionalParam="from=deploy&buildNumber=<%= buildInfo.getBuildNo() %>">
+		              				<a class="deploy" title="Deploy" additionalParam="from=deploy&buildNumber=<%= buildInfo.getBuildNo() %>">
 		              				 	<img src="images/icons/deploy.png" />
 		              				</a>
 	                                <%-- <a id="buildNumberHref#<%= buildInfo.getBuildNo() %>" href="#" value="<%= buildInfo.getBuildNo() %>" onClick="deploy(this);">

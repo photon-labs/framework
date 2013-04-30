@@ -111,7 +111,7 @@
 	       			<li>
 						<input type="checkbox" name="envNames" onclick="checkboxClickEvent(this)" class="check techCheck" 
 							value='<%= envJson %>' title="<%= environment.getDesc() %>"  <%= environment.isDefaultEnv() ? "disabled" : "" %> envName='<%= environment.getName() %>'/>
-						<label id="envLabel<%= i %>" class="envLabel"><%= environment.getName() %><%= environment.isDefaultEnv() ? " (Default)" : "" %>
+						<span id="envLabel<%= i %>" class="envLabel"><%= environment.getName() %><%= environment.isDefaultEnv() ? " (Default)" : "" %>
 							<script type="text/javascript">
 								var id = '<%= i %>';
 								<%  if (environment.isDefaultEnv()) { %>
@@ -120,7 +120,7 @@
 										$("#envLabel" + id).css("color", '');
 								<% 	} %>					
 							</script>
-						</label>
+						</span>
 					</li>
 				<% 
 					i++;
@@ -372,7 +372,7 @@ $(document).ready(function() {
 					+ '", "appliesTo": [' + checkedAppliesTo +'], "defaultEnv": false}';
 					
 			var checkbox = '<input type="checkbox" name="envNames" onclick="checkboxClickEvent(this);" class="check techCheck" value=\'' + checkValue + '\' title="' + desc + '" />'
-					+ '<label class="envLabel">' + value + '</label>';
+					+ '<span class="envLabel">' + value + '</span>';
 	
 			if ($("#multiselect ul").has("li").length === 0) {
 				$("#multiselect ul").append('<li>' + checkbox + '</li>');

@@ -829,10 +829,6 @@
 				'color' : labelColor + "! important"           // label color in appinfo page and customer list option
 			},
 			
-			'.multilist-scroller ul li': {
-				'color': labelColor + " ! important"                     // Envirinoment (ex : production) color
-			},
-			
 			'label, input, button, select, textarea' : {
 				'font-weight': "bold"                        // label color weight in the Left side Menu options
 			},
