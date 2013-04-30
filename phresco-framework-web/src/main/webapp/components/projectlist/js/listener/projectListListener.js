@@ -1,8 +1,8 @@
-define(["framework/widget", "projectlist/api/projectListAPI", "projects/project", "application/application"], function() {
+define(["framework/widget", "framework/widgetWithTemplate", "projectlist/api/projectListAPI", "projects/project", "application/application"], function() {
 
 	Clazz.createPackage("com.components.projectlist.js.listener");
 
-	Clazz.com.components.projectlist.js.listener.ProjectsListListener = Clazz.extend(Clazz.Widget, {
+	Clazz.com.components.projectlist.js.listener.ProjectsListListener = Clazz.extend(Clazz.WidgetWithTemplate, {
 		
 		basePlaceholder :  window.commonVariables.basePlaceholder,
 		projectListAPI : null,
@@ -31,6 +31,7 @@ define(["framework/widget", "projectlist/api/projectListAPI", "projects/project"
 			});
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 			Clazz.navigationController.push(self.editproject, true);
+			self.dynamicrenderlocales(commonVariables.contentPlaceholder);
 		},
 
 		getProjectList : function(header, callback) {
@@ -88,6 +89,11 @@ define(["framework/widget", "projectlist/api/projectListAPI", "projects/project"
 			Clazz.navigationController.push(self.editAplnContent, true);
 			$("#applicationedit").css("display", "block");
 			$("#aplntitle").html("Edit - "+value);
+		},
+		
+		dynamicrenderlocales : function(contentPlaceholder) {
+			var self = this;
+			self.renderlocales(contentPlaceholder);
 		}
 
 	});

@@ -10,6 +10,9 @@ var commonVariables = {
 	projectlist : "projectlist",
 	projectlistContext : "project",
 
+	projects : "projects",
+	projectContext : "projects",
+	
 	dynamicPage : "dynamicPage",
 	dynamicPageContext : "dynamicPage",
 

@@ -25,6 +25,18 @@ define(["api/api"], function(){
 		
 		clearSession : function(){
 			localStorage.clear();
+		},
+		
+		getJson : function(key){
+			if (key !== '') {
+				return JSON.parse(localStorage.getItem(key));
+			}
+		},
+		
+		setJson : function(key, value){
+			if(key !== '' && value !== '' && value !== undefined) {
+				localStorage.setItem(key, JSON.stringify(value));
+			}
 		}
 	});
 	
