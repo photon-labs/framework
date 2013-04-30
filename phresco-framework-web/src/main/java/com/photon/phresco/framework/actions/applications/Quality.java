@@ -1197,6 +1197,7 @@ public class Quality extends DynamicParameterAction implements Constants {
         	}	
         	fis = new FileInputStream(resultFile);
             DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
+            domFactory.setValidating(false);
             domFactory.setNamespaceAware(false);
             builder = domFactory.newDocumentBuilder();
             Document doc = builder.parse(fis);
