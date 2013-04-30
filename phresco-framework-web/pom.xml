@@ -90,6 +90,20 @@
 			<type>js</type>
 		</dependency>
 		
+		<dependency>
+			<groupId>jslibraries.files</groupId>
+			<artifactId>jshamcrest</artifactId>
+			<version>0.5.2</version>
+			<type>js</type>
+		</dependency>
+
+		<dependency>
+			<groupId>jslibraries.files</groupId>
+			<artifactId>jsmockito</artifactId>
+			<version>1.0.3</version>
+			<type>js</type>
+		</dependency>
+		
 		<!-- CometD insertions start -->
 	    
 	    <dependency>

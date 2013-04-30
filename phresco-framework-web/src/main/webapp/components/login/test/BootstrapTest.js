@@ -44,7 +44,9 @@ define(["jquery"], function($) {
 					modules: "js/commonComponents/modules",
 					Clazz : "js/framework/class",
 					components: "components",
-					configData: data
+					configData: data,
+					jshamcrest: "lib/jshamcrest-0.5.2-min",
+					jsmockito: "lib/jsmockito-1.0.3-min"
 				}
 			};
 
@@ -54,7 +56,9 @@ define(["jquery"], function($) {
 			// setup require.js
 			var requireConfig = requirejs.config(configJson);
 			
-			require(["lib/Signal-1.0.0", "lib/SignalBinding-1.0.0", "lib/i18next-1.6.0", "jquery_mCustomScrollbar_concat_min-2.8.1", "loginTest", "projectlistTest", "headerTest", "footerTest", "navigationTest", "addprojectTest", "editprojectTest", "applicationTest", "featuresTest", "codequalityTest", "configurationTest", "buildTest"],	function (Signal, SignalBinding, next, mCustomScrollbar, loginTest, projectlistTest, headerTest, footerTest, navigationTest, addprojectTest, editprojectTest, applicationTest, featuresTest, codequalityTest, configurationTest, buildTest){
+			require(["lib/Signal-1.0.0", "lib/SignalBinding-1.0.0", "lib/i18next-1.6.0", "jquery_mCustomScrollbar_concat_min-2.8.1", "loginTest", "projectlistTest", "headerTest", "footerTest", "navigationTest", "projectTest", "applicationTest", "featuresTest", "codequalityTest", "configurationTest", "buildTest", "jshamcrest", "jsmockito"],	function (Signal, SignalBinding, next, mCustomScrollbar, loginTest, projectlistTest, headerTest, footerTest, navigationTest, projectTest,applicationTest, featuresTest, codequalityTest, configurationTest, buildTest){
+				JsHamcrest.Integration.JsTestDriver();
+				JsMockito.Integration.JsTestDriver();
 				loginTest.runTests(data);
 				navigationTest.runTests(data);
 				headerTest.runTests(data);
@@ -62,8 +66,7 @@ define(["jquery"], function($) {
 				footerTest.runTests(data);
 				featuresTest.runTests(data);
 				projectlistTest.runTests(data);
-				addprojectTest.runTests(data);
-				editprojectTest.runTests(data);
+				projectTest.runTests(data);
 				codequalityTest.runTests(data);	
 				configurationTest.runTests(data);
 				buildTest.runTests(data);

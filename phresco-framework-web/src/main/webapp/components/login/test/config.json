@@ -49,6 +49,11 @@
 			"path" : "components/projectlist/js"
 		},
 		
+		"MockProjectList" : {
+			"moduleName":"MockProjectList",
+			"path" : "components/projectlist/test/MockProjectList"
+		},
+		
 		"projectlistTest" : {
 			"moduleName":"projectlist",
 			"path" : "components/projectlist/test/projectlistTest"
@@ -69,14 +74,9 @@
 			"path": "components/projects/js"
 		},
 		
-		"addprojectTest": {
-			"moduleName":"addprojectTest",
-			"path" : "components/projects/test/addprojectTest"
-		},
-		
-		"editprojectTest": {
-			"moduleName":"editprojectTest",
-			"path" : "components/projects/test/editprojectTest"
+		"projectTest": {
+			"moduleName":"projectTest",
+			"path" : "components/projects/test/projectTest"
 		},
 		
 		"application" : {
