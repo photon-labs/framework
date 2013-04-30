@@ -498,6 +498,11 @@ public class Quality extends DynamicParameterAction implements Constants {
             List<Parameter> parameters = getMojoParameters(mojo, PHASE_COMPONENT_TEST);
             List<String> buildArgCmds = getMavenArgCommands(parameters);
             buildArgCmds.add(HYPHEN_N);
+			String pomFileName = Utility.getPomFileName(appInfo);
+            if(!Constants.POM_NAME.equals(pomFileName)) {
+				buildArgCmds.add(Constants.HYPHEN_F);
+				buildArgCmds.add(pomFileName);
+			}
             ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
             BufferedReader reader = applicationManager.performAction(getProjectInfo(), ActionType.COMPONENT_TEST, buildArgCmds, workingDirectory.toString());
             setSessionAttribute(getAppId() + COMPONENT, reader);
