@@ -785,7 +785,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
                     builder.append("' ");
                 }
                 String hideControls = getHideControls(values, value, dependency);
-                if (StringUtils.isNotEmpty(hideControls)) {
+                if (StringUtils.isNotEmpty(hideControls) && !hideControls.equals(additionalParam)) {
                 	builder.append("hide=");
                     builder.append(hideControls);
                 }
@@ -808,9 +808,11 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	String comma = "";
     	for (Object value : values) {
 			if (value instanceof Value) {
-				if (StringUtils.isNotEmpty(((Value) value).getDependency()) && ((Value) value).getKey() != ((Value) currentValue).getKey()) {
+				if (StringUtils.isNotEmpty(((Value) value).getDependency()) && !((Value) value).getKey().equals(((Value) currentValue).getKey()) 
+						&& !((Value) value).getDependency().equals(((Value) currentValue).getDependency())) {
 					sb.append(comma);
 					sb.append(((Value) value).getDependency());
+					comma = Constants.COMMA;
 				}
 			}
 		}
