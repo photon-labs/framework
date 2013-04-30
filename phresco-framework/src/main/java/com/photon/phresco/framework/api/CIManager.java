@@ -83,7 +83,7 @@ public interface CIManager {
 	 * @param job
 	 * @throws PhrescoException
 	 */
-	void createJob(ApplicationInfo appInfo, CIJob job) throws PhrescoException;
+	boolean createJob(ApplicationInfo appInfo, CIJob job) throws PhrescoException;
 
 	/**
 	 * Updates jobs in Jenkins.
@@ -91,7 +91,7 @@ public interface CIManager {
 	 * @param job
 	 * @throws PhrescoException
 	 */
-	void updateJob(ApplicationInfo appInfo, CIJob job) throws PhrescoException;
+	boolean updateJob(ApplicationInfo appInfo, CIJob job) throws PhrescoException;
 
 	/**
 	 * triggers build on jobs
