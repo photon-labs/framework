@@ -56,6 +56,7 @@ import com.photon.phresco.framework.api.ActionType;
 import com.photon.phresco.framework.api.CIManager;
 import com.photon.phresco.framework.commons.ApplicationsUtil;
 import com.photon.phresco.framework.commons.FrameworkUtil;
+import com.photon.phresco.framework.impl.ProjectManagerImpl;
 import com.photon.phresco.framework.model.CIBuild;
 import com.photon.phresco.framework.model.CIJob;
 import com.photon.phresco.framework.model.CIJobStatus;
@@ -291,32 +292,40 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 			}
 
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
+			ProjectManagerImpl pm = new ProjectManagerImpl();
 			ApplicationInfo appInfo = getApplicationInfo();
 			setReqAttribute(REQ_APPINFO, appInfo);
-			
-			List<String> clonedWorkspaces = null;
-			List<String> existingJobsNames = null;
+			ProjectInfo project = pm.getProject(getProjectId(), getCustomerId());
+			List<ApplicationInfo> appInfos = null;
+			List<String> clonedWorkspaces = new ArrayList<String>();
+			List<Properties> existingJobsNames = new ArrayList<Properties>();
+			if (project != null) {
+				appInfos = project.getAppInfos();
+			}
 			CIJob existJob = ciManager.getJob(appInfo, jobName);
-			List<CIJob> existJobs = ciManager.getJobs(appInfo);
-			if (CollectionUtils.isNotEmpty(existJobs)) {
-				clonedWorkspaces = new ArrayList<String>(existJobs.size());
-				existingJobsNames = new ArrayList<String>(existJobs.size());
-				for (CIJob ciJob : existJobs) {
-					if (debugEnabled) {
-						S_LOGGER.debug("Exist jobs size ... " + existJobs.size());
-					}
-					if (ciJob.isCloneWorkspace()) {
+			for (ApplicationInfo appsInfo : appInfos) {
+				List<CIJob> existJobs = ciManager.getJobs(appsInfo);
+				if (CollectionUtils.isNotEmpty(existJobs)) {
+					Properties properties = new Properties();
+					for (CIJob ciJob : existJobs) {
 						if (debugEnabled) {
-							S_LOGGER.debug("Cloned names .... " + ciJob.getName());
+							S_LOGGER.debug("Exist jobs size ... " + existJobs.size());
 						}
-						clonedWorkspaces.add(ciJob.getName());
+						if (appInfo.getName().equals(appsInfo.getName()) && ciJob.isCloneWorkspace()) {
+							if (debugEnabled) {
+								S_LOGGER.debug("Cloned names .... " + ciJob.getName());
+							}
+							clonedWorkspaces.add(ciJob.getName());
+						}
+						if (debugEnabled) {
+							S_LOGGER.debug("existJob names in code .... " + existJob);
+						}
+						properties.setProperty(ciJob.getName(), appsInfo.getName());
 					}
-					if (debugEnabled) {
-						S_LOGGER.debug("existJob names in code .... " + existJob);
-					}
-					existingJobsNames.add(ciJob.getName());
+					existingJobsNames.add(properties);
 				}
 			}
+
 			if (existJob != null && StringUtils.isNotEmpty(existJob.getCollabNetpassword())) {
 				existJob.setCollabNetpassword(CIPasswordScrambler.unmask(existJob.getCollabNetpassword()));
 			}

@@ -23,6 +23,8 @@
 <%@ page import="java.util.HashMap"%>
 <%@ page import="java.util.Iterator"%>
 <%@ page import="java.util.Map"%>
+<%@ page import="java.util.Properties"%>
+<%@ page import="java.util.Enumeration"%>
 <%@ page import="org.apache.commons.collections.CollectionUtils"%>
 <%@	page import="org.apache.commons.lang.StringUtils"%>
 
@@ -48,7 +50,7 @@
     actionStr = (existingJob == null || StringUtils.isEmpty(existingJob.getRepoType())) ? "saveJob" : "updateJob";
     existingJob = (existingJob == null || StringUtils.isEmpty(existingJob.getRepoType())) ? null : existingJob; // when we setup it ll have only jenkins url and port in that case we have to check svnUrl and make null
     List<String> existingClonedWorkspaces = (List<String>) request.getAttribute(FrameworkConstants.REQ_EXISTING_CLONNED_JOBS);
-    List<String> existingJobsNames = (List<String>) request.getAttribute(FrameworkConstants.REQ_EXISTING_JOBS_NAMES);
+    List<Properties> existingJobsNames = (List<Properties>) request.getAttribute(FrameworkConstants.REQ_EXISTING_JOBS_NAMES);
     Object optionsObj = session.getAttribute(FrameworkConstants.REQ_OPTION_ID);
 	List<String> optionIds  = null;
 	String successEmails = "";
@@ -420,18 +422,22 @@
 									</label>
 									<div class="controls">
 										<select id="downstreamProject" name="downstreamProject" class="input-xlarge">
-											<option value="">-</option>
-											<% 
-												if (existingJobsNames != null) {
-													for(String existJobName : existingJobsNames) {
-														if(existingJob != null && existingJob.getName().equals(existJobName)) {
-															continue;
-														}
-											%>
-												<option value="<%= existJobName %>"><%= existJobName %></option>
-											<% 
-													}
+											<option value="">-- Select DownStream --</option>
+											<%
+											if (CollectionUtils.isNotEmpty(existingJobsNames)) {
+												for (Properties existingJobsName : existingJobsNames) {
+													Enumeration em = existingJobsName.keys();
+													 while (em.hasMoreElements()) {
+														 String key = (String) em.nextElement();
+														 String appName = (String) existingJobsName.get(key);
+														 if(existingJob != null && existingJob.getName().equals(key)) { 
+ 															continue;
+														 }
+														 %>
+														 <option value="<%= key %>"><%= key %> - (<%= appName %>)</option> 
+													<% }
 												}
+											}
 											%>
 										</select>
 									</div>
