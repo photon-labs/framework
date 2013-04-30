@@ -47,7 +47,7 @@ public interface SCMManager {
 	
 	 */
 	boolean updateProject(String type, String url, String username,
-			String password, String branch,  String revision, String projcode) throws Exception ;
+			String password, String branch,  String revision, ApplicationInfo appInfo) throws Exception ;
 	
 	/**
 	 * 
@@ -62,7 +62,7 @@ public interface SCMManager {
 	 
 	 */
 	boolean importToRepo(String type, String url, String username,
-			String password, String branch, String revision, File dir, String commitMsg) throws Exception ;
+			String password, String branch, String revision, ApplicationInfo appInfo, String commitMsg) throws Exception ;
 	
 	/**
 	 * 

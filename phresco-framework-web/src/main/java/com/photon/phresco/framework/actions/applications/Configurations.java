@@ -1327,10 +1327,9 @@ public class Configurations extends FrameworkBaseAction {
     private String getTargetDirFromPom(String configTempType) throws PhrescoException {
     	String targetDir = "";
     	try {
-    		String appDirName = getApplicationInfo().getAppDirName();
     		FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
     		String dynamicType = configTempType.toLowerCase().replaceAll("\\s", "");
-    		targetDir = frameworkUtil.getPomProcessor(appDirName).getProperty(PHRESCO_DOT + dynamicType + DOT_TARGET_DIR);
+    		targetDir = frameworkUtil.getPomProcessor(getApplicationInfo()).getProperty(PHRESCO_DOT + dynamicType + DOT_TARGET_DIR);
     	} catch (PhrescoException e) {
     		throw new PhrescoException(e);
     	} catch (PhrescoPomException e) {
@@ -1555,7 +1554,13 @@ public class Configurations extends FrameworkBaseAction {
         try {
             StringBuilder workingDirectory = new StringBuilder(getAppDirectoryPath(getApplicationInfo()));
             ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-            BufferedReader reader = applicationManager.performAction(getProjectInfo(), ActionType.THEME_VALIDATOR, null, workingDirectory.toString());
+            List<String> buildArgCmds = new ArrayList<String>();
+            String pomFileName = Utility.getPomFileName(getApplicationInfo());
+			if(!Constants.POM_NAME.equals(pomFileName)) {
+				buildArgCmds.add(Constants.HYPHEN_F);
+				buildArgCmds.add(pomFileName);
+			}
+            BufferedReader reader = applicationManager.performAction(getProjectInfo(), ActionType.THEME_VALIDATOR, buildArgCmds, workingDirectory.toString());
             setSessionAttribute(getAppId() + VALIDATE_THEME, reader);
             setReqAttribute(REQ_APP_ID, getAppId());
             setReqAttribute(REQ_ACTION_TYPE, VALIDATE_THEME);
@@ -1570,7 +1575,13 @@ public class Configurations extends FrameworkBaseAction {
         try {
             StringBuilder workingDirectory = new StringBuilder(getAppDirectoryPath(getApplicationInfo()));
             ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-            BufferedReader reader = applicationManager.performAction(getProjectInfo(), ActionType.CONTENT_VALIDATOR, null, workingDirectory.toString());
+            List<String> buildArgCmds = new ArrayList<String>();
+            String pomFileName = Utility.getPomFileName(getApplicationInfo());
+			if(!Constants.POM_NAME.equals(pomFileName)) {
+				buildArgCmds.add(Constants.HYPHEN_F);
+				buildArgCmds.add(pomFileName);
+			}
+            BufferedReader reader = applicationManager.performAction(getProjectInfo(), ActionType.CONTENT_VALIDATOR, buildArgCmds, workingDirectory.toString());
             setSessionAttribute(getAppId() + VALIDATE_CONTENT, reader);
             setReqAttribute(REQ_APP_ID, getAppId());
             setReqAttribute(REQ_ACTION_TYPE, VALIDATE_CONTENT);
@@ -1585,7 +1596,13 @@ public class Configurations extends FrameworkBaseAction {
         try {
             StringBuilder workingDirectory = new StringBuilder(getAppDirectoryPath(getApplicationInfo()));
             ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-            BufferedReader reader = applicationManager.performAction(getProjectInfo(), ActionType.THEME_CONVERTOR, null, workingDirectory.toString());
+            List<String> buildArgCmds = new ArrayList<String>();
+            String pomFileName = Utility.getPomFileName(getApplicationInfo());
+			if(!Constants.POM_NAME.equals(pomFileName)) {
+				buildArgCmds.add(Constants.HYPHEN_F);
+				buildArgCmds.add(pomFileName);
+			}
+            BufferedReader reader = applicationManager.performAction(getProjectInfo(), ActionType.THEME_CONVERTOR, buildArgCmds, workingDirectory.toString());
             setSessionAttribute(getAppId() + CONVERT_THEME, reader);
             setReqAttribute(REQ_APP_ID, getAppId());
             setReqAttribute(REQ_ACTION_TYPE, CONVERT_THEME);
@@ -1600,7 +1617,13 @@ public class Configurations extends FrameworkBaseAction {
         try {
             StringBuilder workingDirectory = new StringBuilder(getAppDirectoryPath(getApplicationInfo()));
             ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-            BufferedReader reader = applicationManager.performAction(getProjectInfo(), ActionType.CONTENT_CONVERTOR, null, workingDirectory.toString());
+            List<String> buildArgCmds = new ArrayList<String>();
+            String pomFileName = Utility.getPomFileName(getApplicationInfo());
+			if(!Constants.POM_NAME.equals(pomFileName)) {
+				buildArgCmds.add(Constants.HYPHEN_F);
+				buildArgCmds.add(pomFileName);
+			}
+            BufferedReader reader = applicationManager.performAction(getProjectInfo(), ActionType.CONTENT_CONVERTOR, buildArgCmds, workingDirectory.toString());
             setSessionAttribute(getAppId() + CONVERT_CONTENT, reader);
             setReqAttribute(REQ_APP_ID, getAppId());
             setReqAttribute(REQ_ACTION_TYPE, CONVERT_CONTENT);

@@ -254,7 +254,7 @@ public class Applications extends FrameworkBaseAction {
             setReqAttribute(REQ_WEBSERVICES, webServices);
             setReqAttribute(REQ_APP_ID, getAppId());
             FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-            PomProcessor processor = frameworkUtil.getPomProcessor(getApplicationInfo().getAppDirName());
+            PomProcessor processor = frameworkUtil.getPomProcessor(getApplicationInfo());
             setPomVersion(processor.getModel().getVersion());
             setReqAttribute(REQ_POM_VERSION, getPomVersion());
         } catch (PhrescoException e) {
@@ -534,10 +534,10 @@ public class Applications extends FrameworkBaseAction {
     	return SUCCESS;
     }
     
-    public void checkForVersions(String newArtifactid, String oldArtifactGroupId) throws PhrescoException {
+    public void checkForVersions(String newArtifactid, String oldArtifactGroupId, ApplicationInfo applicationInfo) throws PhrescoException {
     	try {
     		FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-    		File sqlPath = new File(Utility.getProjectHome() + File.separator + oldAppDirName + frameworkUtil.getSqlFilePath(oldAppDirName));
+    		File sqlPath = new File(Utility.getProjectHome() + File.separator + applicationInfo.getAppDirName() + frameworkUtil.getSqlFilePath(applicationInfo));
 			DownloadInfo oldDownloadInfo = getServiceManager().getDownloadInfo(oldArtifactGroupId);
 			DownloadInfo newDownloadInfo = getServiceManager().getDownloadInfo(newArtifactid);
 			List<ArtifactInfo> oldVersions = oldDownloadInfo.getArtifactGroup().getVersions();
@@ -573,7 +573,7 @@ public class Applications extends FrameworkBaseAction {
 				for (ArtifactGroupInfo newArtifactGroupInfo : selectedDatabases) {
 					String newArtifactid = newArtifactGroupInfo.getArtifactGroupId();
 					if (newArtifactid.equals(oldArtifactGroupId)) {
-						checkForVersions(newArtifactid, oldArtifactGroupId);
+						checkForVersions(newArtifactid, oldArtifactGroupId, applicationInfo);
 						break;
 					} else {
 						DownloadInfo downloadInfo = getServiceManager().getDownloadInfo(oldArtifactGroupId);
@@ -582,12 +582,12 @@ public class Applications extends FrameworkBaseAction {
 				}
 			}
 			File sqlPath = null;
-			if (StringUtils.isNotEmpty(oldAppDirName)) {
-				sqlPath = new File(Utility.getProjectHome() + File.separator + oldAppDirName
-					+ frameworkUtil.getSqlFilePath(oldAppDirName));
+			if (StringUtils.isNotEmpty(applicationInfo.getAppDirName())) {
+				sqlPath = new File(Utility.getProjectHome() + File.separator + applicationInfo.getAppDirName()
+					+ frameworkUtil.getSqlFilePath(applicationInfo));
 			} else {
 				sqlPath = new File(Utility.getProjectHome() + File.separator + applicationInfo.getAppDirName()
-						+ frameworkUtil.getSqlFilePath(applicationInfo.getAppDirName()));
+						+ frameworkUtil.getSqlFilePath(applicationInfo));
 			}
 				for (String dbVersion : dbListToDelete) {
 					File dbVersionFolder = new File(sqlPath, dbVersion.toLowerCase());
@@ -774,9 +774,8 @@ public class Applications extends FrameworkBaseAction {
 		try {
 			ApplicationInfo applicationInfo = getApplicationInfo();
 			setReqAttribute(REQ_APP_INFO, applicationInfo);
-			String appDirName = applicationInfo.getAppDirName();
 			FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-			PomProcessor processor = frameworkUtil.getPomProcessor(appDirName);
+			PomProcessor processor = frameworkUtil.getPomProcessor(applicationInfo);
 			Scm scm = processor.getSCM();
 			if (scm != null && !scm.getConnection().isEmpty()) {
 					return scm.getConnection();
@@ -836,8 +835,7 @@ public class Applications extends FrameworkBaseAction {
 		SCMManagerImpl scmi = new SCMManagerImpl();
 		try {
 			ApplicationInfo applicationInfo = getApplicationInfo();
-			String appDirName = applicationInfo.getAppDirName();
-			scmi.updateProject(GIT, repoUrl, userName, password, MASTER , null, appDirName);
+			scmi.updateProject(GIT, repoUrl, userName, password, MASTER , null, applicationInfo);
 			errorString = getText(SUCCESS_PROJECT_UPDATE);
 			errorFlag = true;
 		} catch (InvalidRemoteException e) {
@@ -901,8 +899,7 @@ public class Applications extends FrameworkBaseAction {
 		revision = !HEAD_REVISION.equals(revision) ? revisionVal : revision;
 		try {
 			ApplicationInfo applicationInfo = getApplicationInfo();
-			String appDirName = applicationInfo.getAppDirName();
-			scmi.updateProject(SVN, repoUrl, userName, password, null, revision, appDirName);
+			scmi.updateProject(SVN, repoUrl, userName, password, null, revision, applicationInfo);
 			errorString = getText(SUCCESS_PROJECT_UPDATE);
 			errorFlag = true;
 		} catch (InvalidRemoteException e) {
@@ -964,8 +961,7 @@ public class Applications extends FrameworkBaseAction {
 	    SCMManagerImpl scmi = new SCMManagerImpl();
         try {
             ApplicationInfo applicationInfo = getApplicationInfo();
-            String appDirName = applicationInfo.getAppDirName();
-            scmi.updateProject(BITKEEPER, getRepoUrl(), getUsername(), getPassword(), null, getRevision(), appDirName);
+            scmi.updateProject(BITKEEPER, getRepoUrl(), getUsername(), getPassword(), null, getRevision(), applicationInfo);
             errorString = getText(SUCCESS_PROJECT_UPDATE);
             errorFlag = true;
         } catch (PhrescoException e) {
@@ -989,9 +985,7 @@ public class Applications extends FrameworkBaseAction {
 		}
 		try {
 			SCMManagerImpl scmi = new SCMManagerImpl();
-			String applicationHome = getApplicationHome();
-			File appDir = new File(applicationHome);
-			scmi.importToRepo(SVN, repoUrl, userName, password, null, null, appDir, commitMessage);
+			scmi.importToRepo(SVN, repoUrl, userName, password, null, null, getApplicationInfo(), commitMessage);
 			errorString = getText(ADD_PROJECT_SUCCESS);
 			errorFlag = true;
 			updateLatestProject();

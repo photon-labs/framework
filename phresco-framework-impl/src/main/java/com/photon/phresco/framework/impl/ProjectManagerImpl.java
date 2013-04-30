@@ -236,7 +236,13 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 					if (isCallEclipsePlugin(appInfo)) {
 						ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 						String baseDir = Utility.getProjectHome() + File.separator + appInfo.getAppDirName();
-						applicationManager.performAction(projectInfo, ActionType.ECLIPSE, null, baseDir);
+						List<String> buildArgCmds = new ArrayList<String>();
+			            String pomFileName = Utility.getPomFileName(appInfo);
+						if(!POM_NAME.equals(pomFileName)) {
+							buildArgCmds.add(HYPHEN_F);
+							buildArgCmds.add(pomFileName);
+						}
+						applicationManager.performAction(projectInfo, ActionType.ECLIPSE, buildArgCmds, baseDir);
 					}
 
 				}
@@ -256,7 +262,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 	}
 	
 	private boolean isCallEclipsePlugin(ApplicationInfo appInfo) throws PhrescoException {
-		String pomFile = Utility.getProjectHome() + File.separator + appInfo.getAppDirName() + File.separator + POM_NAME;
+		String pomFile = Utility.getProjectHome() + File.separator + appInfo.getAppDirName() + File.separator + Utility.getPomFileName(appInfo);
 		try {
 			PomProcessor processor = new PomProcessor(new File(pomFile));
 			String eclipsePlugin = processor.getProperty(POM_PROP_KEY_PHRESCO_ECLIPSE);
@@ -303,7 +309,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 					oldDir.renameTo(projectInfoFile);
 					
 					extractArchive(response, projectInfo);
-					updateProjectPom(projectInfo, newAppDirSb.toString());// To update project pom.xml
+					updateProjectPom(projectInfo);// To update project pom.xml
 					StringBuilder dotPhrescoPathSb = new StringBuilder(projectInfoFile.getPath());
 					dotPhrescoPathSb.append(File.separator);
 					dotPhrescoPathSb.append(DOT_PHRESCO_FOLDER);
@@ -344,7 +350,13 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 					if (isCallEclipsePlugin(appInfo)) {
 						ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 						String baseDir = Utility.getProjectHome() + File.separator + appInfo.getAppDirName();
-						applicationManager.performAction(projectInfo, ActionType.ECLIPSE, null, baseDir);
+						List<String> buildArgCmds = new ArrayList<String>();
+			            String pomFileName = Utility.getPomFileName(appInfo);
+						if(!POM_NAME.equals(pomFileName)) {
+							buildArgCmds.add(HYPHEN_F);
+							buildArgCmds.add(pomFileName);
+						}
+						applicationManager.performAction(projectInfo, ActionType.ECLIPSE, buildArgCmds, baseDir);
                     }
 				} catch (FileNotFoundException e) {
 					throw new PhrescoException(e);
@@ -402,15 +414,15 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		}
 	}
 	
-	private void updateProjectPom(ProjectInfo projectInfo, String newAppDirSb) throws PhrescoException {
-		File pomFile = new File(newAppDirSb, "pom.xml");
+	private void updateProjectPom(ProjectInfo projectInfo) throws PhrescoException {
+		ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
+		File pomFile = new File(Utility.getProjectHome() + applicationInfo.getAppDirName() + File.separatorChar + Utility.getPomFileName(applicationInfo));
 		if(!pomFile.exists()) {
 			return;
 		}
 		PomProcessor pomProcessor;
 		try {
 			pomProcessor = new PomProcessor(pomFile);
-			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
 			pomProcessor.setArtifactId(applicationInfo.getCode());
 			pomProcessor.setName(applicationInfo.getName());
 			pomProcessor.setVersion(applicationInfo.getVersion());
@@ -525,7 +537,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 	throws PhrescoException {
 		String dbName = "";
 		try {
-			File pomPath = new File(Utility.getProjectHome() + appInfo.getAppDirName() + File.separator + POM_FILE);
+			File pomPath = new File(Utility.getProjectHome() + appInfo.getAppDirName() + File.separator + Utility.getPomFileName(appInfo));
 			PomProcessor pompro = new PomProcessor(pomPath);
 			String sqlFolderPath = pompro.getProperty(POM_PROP_KEY_SQL_FILE_DIR);
 			File mysqlFolder = new File(path, sqlFolderPath + Constants.DB_MYSQL);

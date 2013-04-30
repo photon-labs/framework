@@ -134,7 +134,7 @@ public class Code extends DynamicParameterAction implements Constants {
 		try {
             StringBuilder builder = new StringBuilder(getApplicationHome());
             builder.append(File.separator);
-            builder.append(POM_XML);
+            builder.append(Utility.getPomFileName(getApplicationInfo()));
             File pomPath = new File(builder.toString());
             return pomPath;
         } catch (PhrescoException e) {
@@ -266,7 +266,12 @@ public class Code extends DynamicParameterAction implements Constants {
 					reportPath.append(frameworkUtil.getFunctionalTestDir(applicationInfo));
                 }
 				reportPath.append(File.separatorChar);
-				reportPath.append(POM_XML);
+				File pomFile = new File(reportPath.toString() + Utility.getPomFileName(applicationInfo));
+				if (pomFile.exists()) {
+					reportPath.append(Utility.getPomFileName(applicationInfo));
+				} else {
+					reportPath.append(POM_NAME);
+				}
 				File file = new File(reportPath.toString());
 				processor = new PomProcessor(file);
 				String groupId = processor.getModel().getGroupId();
@@ -386,6 +391,11 @@ public class Code extends DynamicParameterAction implements Constants {
 			List<Parameter> parameters = getMojoParameters(mojo, PHASE_VALIDATE_CODE);
 			List<String> buildArgCmds = getMavenArgCommands(parameters);
 			buildArgCmds.add(HYPHEN_N);
+			String pomFileName = Utility.getPomFileName(applicationInfo);
+			if(!POM_NAME.equals(pomFileName)) {
+				buildArgCmds.add(HYPHEN_F);
+				buildArgCmds.add(pomFileName);
+			}
 			String workingDirectory = getAppDirectoryPath(applicationInfo);
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			

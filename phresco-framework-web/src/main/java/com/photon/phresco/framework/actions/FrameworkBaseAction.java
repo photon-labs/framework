@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -176,7 +177,7 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
     	try {
             StringBuilder builder = getProjectHome(appDirName);
             builder.append(File.separatorChar);
-            builder.append(POM_XML);
+            builder.append(Utility.getPomFileName(getApplicationInfo()));
     		File pomPath = new File(builder.toString());
     		PomProcessor processor = new PomProcessor(pomPath);
     		Modules pomModule = processor.getPomModule();
@@ -207,7 +208,7 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
 					pathBuilder.append(File.separatorChar);
 					pathBuilder.append(projectModule);
 					pathBuilder.append(File.separatorChar);
-					pathBuilder.append(POM_XML);
+					pathBuilder.append(Utility.getPomFileName(getApplicationInfo()));
 					PomProcessor processor = new PomProcessor(new File(pathBuilder.toString()));
 					String packaging = processor.getModel().getPackaging();
 					if (StringUtils.isNotEmpty(packaging) && WAR.equalsIgnoreCase(packaging)) {
@@ -236,13 +237,24 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
 	}
 	
 	public static boolean isConnectionAlive(String Url) {
-		boolean isAlive = true;
+		boolean isAlive = false;
 		try {
-			URL url = new URL(Url);
-			URLConnection connection = url.openConnection();
-			connection.connect();
+			FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+			URL sonarURL = new URL(Url);
+			String protocol = sonarURL.getProtocol();
+			HttpURLConnection connection = null;			
+			int responseCode;			
+			if(protocol.equals("http")) {	
+				connection = (HttpURLConnection) sonarURL.openConnection();
+				responseCode = connection.getResponseCode();	
+			} else {
+				responseCode = FrameworkUtil.getHttpsResponse(frameworkUtil.getSonarURL());
+			}
+			if (responseCode == 200) {
+				isAlive = true;
+			}
 		} catch (Exception e) {
-			isAlive = false;
+			return isAlive;
 		}
 		return isAlive;
 	}
@@ -326,7 +338,7 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
     public String getAppPom() throws PhrescoException {
         StringBuilder builder = new StringBuilder(getApplicationHome());
         builder.append(File.separator);
-        builder.append(POM_FILE);
+        builder.append(Utility.getPomFileName(getApplicationInfo()));
         return builder.toString();
     }
     

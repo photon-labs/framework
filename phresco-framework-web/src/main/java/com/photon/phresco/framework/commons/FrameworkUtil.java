@@ -115,116 +115,116 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
         return frameworkUtil;
     }
 	
-	public String getSqlFilePath(String oldAppDirName) throws PhrescoException, PhrescoPomException {
-		return getPomProcessor(oldAppDirName).getProperty(PHRESCO_SQL_PATH);
+	public String getSqlFilePath(ApplicationInfo  appInfo) throws PhrescoException, PhrescoPomException {
+		return getPomProcessor(appInfo).getProperty(PHRESCO_SQL_PATH);
 	}
 	
 	public String getUnitTestReportOptions(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
-		return getPomProcessor(appinfo.getAppDirName()).getProperty(PHRESCO_UNIT_TEST);
+		return getPomProcessor(appinfo).getProperty(PHRESCO_UNIT_TEST);
 	}
 	
     public String getUnitTestDir(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
-        return getPomProcessor(appinfo.getAppDirName()).getProperty(POM_PROP_KEY_UNITTEST_DIR);
+        return getPomProcessor(appinfo).getProperty(POM_PROP_KEY_UNITTEST_DIR);
     }
     
     public String getComponentTestDir(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
-        return getPomProcessor(appinfo.getAppDirName()).getProperty(POM_PROP_KEY_COMPONENTTEST_DIR);
+        return getPomProcessor(appinfo).getProperty(POM_PROP_KEY_COMPONENTTEST_DIR);
     }
     
     public String getUnitTestReportDir(ApplicationInfo appInfo) throws PhrescoPomException, PhrescoException {
-        return getPomProcessor(appInfo.getAppDirName()).getProperty(POM_PROP_KEY_UNITTEST_RPT_DIR);
+        return getPomProcessor(appInfo).getProperty(POM_PROP_KEY_UNITTEST_RPT_DIR);
     }
     
     public String getComponentTestReportDir(ApplicationInfo appInfo) throws PhrescoPomException, PhrescoException {
-        return getPomProcessor(appInfo.getAppDirName()).getProperty(POM_PROP_KEY_COMPONENTTEST_RPT_DIR);
+        return getPomProcessor(appInfo).getProperty(POM_PROP_KEY_COMPONENTTEST_RPT_DIR);
     }
     
     public String getUnitTestReportDir(ApplicationInfo appInfo, String option) throws PhrescoPomException, PhrescoException {
-        return getPomProcessor(appInfo.getAppDirName()).getProperty(POM_PROP_KEY_UNITTEST_RPT_DIR_START + option + POM_PROP_KEY_UNITTEST_RPT_DIR_END);
+        return getPomProcessor(appInfo).getProperty(POM_PROP_KEY_UNITTEST_RPT_DIR_START + option + POM_PROP_KEY_UNITTEST_RPT_DIR_END);
     }
 
 	public String getUnitTestSuitePath(ApplicationInfo appInfo) throws PhrescoException, PhrescoPomException {
-        return getPomProcessor(appInfo.getAppDirName()).getProperty(POM_PROP_KEY_UNITTEST_TESTSUITE_XPATH);
+        return getPomProcessor(appInfo).getProperty(POM_PROP_KEY_UNITTEST_TESTSUITE_XPATH);
     }
 	
 	public String getComponentTestSuitePath(ApplicationInfo appInfo) throws PhrescoException, PhrescoPomException {
-        return getPomProcessor(appInfo.getAppDirName()).getProperty(POM_PROP_KEY_COMPONENTTEST_TESTSUITE_XPATH);
+        return getPomProcessor(appInfo).getProperty(POM_PROP_KEY_COMPONENTTEST_TESTSUITE_XPATH);
     }
 	
 	public String getUnitTestSuitePath(ApplicationInfo appInfo, String option) throws PhrescoException, PhrescoPomException {
-        return getPomProcessor(appInfo.getAppDirName()).getProperty(POM_PROP_KEY_UNITTEST_TESTSUITE_XPATH_START + option + POM_PROP_KEY_UNITTEST_TESTSUITE_XPATH_END);
+        return getPomProcessor(appInfo).getProperty(POM_PROP_KEY_UNITTEST_TESTSUITE_XPATH_START + option + POM_PROP_KEY_UNITTEST_TESTSUITE_XPATH_END);
     }
     
     public  String getUnitTestCasePath(ApplicationInfo appInfo) throws PhrescoException, PhrescoPomException {
-        return getPomProcessor(appInfo.getAppDirName()).getProperty(POM_PROP_KEY_UNITTEST_TESTCASE_PATH);
+        return getPomProcessor(appInfo).getProperty(POM_PROP_KEY_UNITTEST_TESTCASE_PATH);
     }
     
     public  String getComponentTestCasePath(ApplicationInfo appInfo) throws PhrescoException, PhrescoPomException {
-        return getPomProcessor(appInfo.getAppDirName()).getProperty(POM_PROP_KEY_COMPONENTTEST_TESTCASE_PATH);
+        return getPomProcessor(appInfo).getProperty(POM_PROP_KEY_COMPONENTTEST_TESTCASE_PATH);
     }
     
     public  String getUnitTestCasePath(ApplicationInfo appInfo, String option) throws PhrescoException, PhrescoPomException {
-        return getPomProcessor(appInfo.getAppDirName()).getProperty(POM_PROP_KEY_UNITTEST_TESTCASE_PATH_START + option + POM_PROP_KEY_UNITTEST_TESTCASE_PATH_END);
+        return getPomProcessor(appInfo).getProperty(POM_PROP_KEY_UNITTEST_TESTCASE_PATH_START + option + POM_PROP_KEY_UNITTEST_TESTCASE_PATH_END);
     }
     
     public String getManualTestDir(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
-        return getPomProcessor(appinfo.getAppDirName()).getProperty(POM_PROP_KEY_MANUALTEST_DIR);
+        return getPomProcessor(appinfo).getProperty(POM_PROP_KEY_MANUALTEST_DIR);
     }
     
     public String getSeleniumToolType(ApplicationInfo appInfo) throws PhrescoException, PhrescoPomException {
-        return getPomProcessor(appInfo.getAppDirName()).getProperty(POM_PROP_KEY_FUNCTEST_SELENIUM_TOOL);
+        return getPomProcessor(appInfo).getProperty(POM_PROP_KEY_FUNCTEST_SELENIUM_TOOL);
     }
     
     public String getFunctionalTestDir(ApplicationInfo appInfo) throws PhrescoException, PhrescoPomException {
-        return getPomProcessor(appInfo.getAppDirName()).getProperty(POM_PROP_KEY_FUNCTEST_DIR);
+        return getPomProcessor(appInfo).getProperty(POM_PROP_KEY_FUNCTEST_DIR);
     }
     
     public String getFunctionalTestReportDir(ApplicationInfo appInfo) throws PhrescoPomException, PhrescoException {
-        return getPomProcessor(appInfo.getAppDirName()).getProperty(POM_PROP_KEY_FUNCTEST_RPT_DIR);
+        return getPomProcessor(appInfo).getProperty(POM_PROP_KEY_FUNCTEST_RPT_DIR);
     }
 
     public String getFunctionalTestSuitePath(ApplicationInfo appInfo) throws PhrescoException, PhrescoPomException {
-        return getPomProcessor(appInfo.getAppDirName()).getProperty(POM_PROP_KEY_FUNCTEST_TESTSUITE_XPATH);
+        return getPomProcessor(appInfo).getProperty(POM_PROP_KEY_FUNCTEST_TESTSUITE_XPATH);
     }
     
     public  String getFunctionalTestCasePath(ApplicationInfo appInfo) throws PhrescoException, PhrescoPomException {
-        return getPomProcessor(appInfo.getAppDirName()).getProperty(POM_PROP_KEY_FUNCTEST_TESTCASE_PATH);
+        return getPomProcessor(appInfo).getProperty(POM_PROP_KEY_FUNCTEST_TESTCASE_PATH);
     }
     
     public String getLoadTestDir(ApplicationInfo appInfo) throws PhrescoException, PhrescoPomException {
-    	return getPomProcessor(appInfo.getAppDirName()).getProperty(POM_PROP_KEY_LOADTEST_DIR);
+    	return getPomProcessor(appInfo).getProperty(POM_PROP_KEY_LOADTEST_DIR);
     }
     
     public String getLoadTestReportDir(ApplicationInfo appinfo) throws PhrescoPomException, PhrescoException {
-    	return getPomProcessor(appinfo.getAppDirName()).getProperty(POM_PROP_KEY_LOADTEST_RPT_DIR);
+    	return getPomProcessor(appinfo).getProperty(POM_PROP_KEY_LOADTEST_RPT_DIR);
     }
     
     public String getPerformanceTestDir(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
-        return getPomProcessor(appinfo.getAppDirName()).getProperty(POM_PROP_KEY_PERFORMANCETEST_DIR);
+        return getPomProcessor(appinfo).getProperty(POM_PROP_KEY_PERFORMANCETEST_DIR);
     }
     
     public String getPerformanceTestShowDevice(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
-        return getPomProcessor(appinfo.getAppDirName()).getProperty(POM_PROP_KEY_PERF_SHOW_DEVICE);
+        return getPomProcessor(appinfo).getProperty(POM_PROP_KEY_PERF_SHOW_DEVICE);
     }
     
     public String getPerformanceTestReportDir(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
-        return getPomProcessor(appinfo.getAppDirName()).getProperty(POM_PROP_KEY_PERFORMANCETEST_RPT_DIR);
+        return getPomProcessor(appinfo).getProperty(POM_PROP_KEY_PERFORMANCETEST_RPT_DIR);
     }
     
     public String getEmbedAppTargetDir(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
-        return getPomProcessor(appinfo.getAppDirName()).getProperty(POM_PROP_KEY_EMBED_APP_TARGET_DIR);
+        return getPomProcessor(appinfo).getProperty(POM_PROP_KEY_EMBED_APP_TARGET_DIR);
     }
     
     public String getLogFilePath(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
-        return getPomProcessor(appinfo.getAppDirName()).getProperty(POM_PROP_KEY_LOG_FILE_PATH);
+        return getPomProcessor(appinfo).getProperty(POM_PROP_KEY_LOG_FILE_PATH);
     }
     
     public String isIphoneTagExists(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
-        return getPomProcessor(appinfo.getAppDirName()).getProperty(PHRESCO_CODE_VALIDATE_REPORT);
+        return getPomProcessor(appinfo).getProperty(PHRESCO_CODE_VALIDATE_REPORT);
     }
 	
 	public String getThemeFileExtension(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
-        return getPomProcessor(appinfo.getAppDirName()).getProperty(POM_PROP_KEY_THEME_EXT);
+        return getPomProcessor(appinfo).getProperty(POM_PROP_KEY_THEME_EXT);
     }
 
 	public String getHubConfigFile(ApplicationInfo appInfo) throws PhrescoException, PhrescoPomException {
@@ -282,12 +282,12 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 		}
     }
     
-    public PomProcessor getPomProcessor(String appDirName) throws PhrescoException {
+    public PomProcessor getPomProcessor(ApplicationInfo applicationInfo) throws PhrescoException {
     	try {
     		StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-    		builder.append(appDirName);
+    		builder.append(applicationInfo.getAppDirName());
     		builder.append(File.separatorChar);
-    		builder.append(POM_XML);
+    		builder.append(Utility.getPomFileName(applicationInfo));
     		S_LOGGER.debug("builder.toString() " + builder.toString());
     		File pomPath = new File(builder.toString());
     		S_LOGGER.debug("file exists " + pomPath.exists());
