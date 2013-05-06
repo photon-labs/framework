@@ -139,15 +139,15 @@ public class ProjectService implements FrameworkConstants {
 	@Path("/delete")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response deleteproject(List<ApplicationInfo> appInfos) {
+	public Response deleteproject(List<String> appDirnames) {
 		BufferedReader reader = null;
 		ResponseInfo responseData = new ResponseInfo();
     	try {
 	    	ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
-	    	if (CollectionUtils.isNotEmpty(appInfos)) {
-	    	    for (ApplicationInfo appInfo : appInfos) {
+	    	if (CollectionUtils.isNotEmpty(appDirnames)) {
+	    	    for (String appDirName : appDirnames) {
 	    	        StringBuilder sb = new StringBuilder(Utility.getProjectHome())
-	    	        .append(appInfo.getAppDirName())
+	    	        .append(appDirName)
 	    	        .append(File.separator)
 	    	        .append(FOLDER_DOT_PHRESCO)
 	    	        .append(File.separator)
@@ -166,7 +166,7 @@ public class ProjectService implements FrameworkConstants {
 	    	        }
 	    	    }
 	    	}
-	    	projectManager.delete(appInfos);
+	    	projectManager.delete(appDirnames);
     	}catch (PhrescoException e) {
     		ResponseInfo finalOutput = ServiceManagerMap.responseDataEvalution(responseData, e, "Application unable to delete", null);
     		return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();

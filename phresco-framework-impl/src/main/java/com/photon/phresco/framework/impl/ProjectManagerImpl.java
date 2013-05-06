@@ -426,11 +426,10 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		return plugins;
 	}
 
-	public boolean delete(List<ApplicationInfo> appInfos) throws PhrescoException {
+	public boolean delete(List<String> appDirNames) throws PhrescoException {
 		boolean deletionSuccess = false;
 		String projectsPath = Utility.getProjectHome();
-		for (ApplicationInfo applicationInfo : appInfos) {
-			String appDirName = applicationInfo.getAppDirName();
+		for (String appDirName : appDirNames) {
 			File application = new File(projectsPath + appDirName);
 			deletionSuccess = FileUtil.delete(application);
 		}

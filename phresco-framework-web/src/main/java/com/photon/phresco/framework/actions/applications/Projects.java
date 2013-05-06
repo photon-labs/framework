@@ -559,7 +559,7 @@ public class Projects extends FrameworkBaseAction {
 	    	if(connectionAlive) {
 	    		deleteSonarProject();
 	    	}
-	    	projectManager.delete(getSelectedAppInfos());
+//	    	projectManager.delete(getSelectedAppInfos());
 	    	addActionMessage(getText(ACT_SUCC_PROJECT_DELETE, Collections.singletonList(getProjectName())));
     	} catch (PhrescoException e) {
     		if (s_debugEnabled) {

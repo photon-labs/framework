@@ -8,7 +8,7 @@ import com.photon.phresco.service.client.api.ServiceManager;
 
 public class ServiceManagerMap {
 	
-	protected static final Map<String, ServiceManager> CONTEXT_MANAGER_MAP = new HashMap<String, ServiceManager>();
+	public static final Map<String, ServiceManager> CONTEXT_MANAGER_MAP = new HashMap<String, ServiceManager>();
 
 	protected static ResponseInfo responseDataEvalution(ResponseInfo responseData, Exception e, String msg, Object data ) {
 		responseData.setResponse(0);

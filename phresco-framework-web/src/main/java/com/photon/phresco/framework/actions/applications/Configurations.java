@@ -458,7 +458,6 @@ public class Configurations extends FrameworkBaseAction {
     private Configuration getConfigInstance(String configPath, String fromPage) throws PhrescoException {
     	Configuration config = null; 
     	try {
-    		boolean isIISServer = false;
     		Properties properties = new Properties();
     		List<PropertyTemplate> propertyTemplates = new ArrayList<PropertyTemplate>();
     		
@@ -534,10 +533,6 @@ public class Configurations extends FrameworkBaseAction {
     						}
     					}
 
-    					if (CONFIG_TYPE.equals(propKey) && IIS_SERVER.equals(propValue)) {
-    						isIISServer = true;
-    					}
-
     					if (CONFIG_TYPE.equals(propKey)) {
     						properties.setProperty(TYPE_VERSION, getVersion());
     					}
@@ -558,11 +553,7 @@ public class Configurations extends FrameworkBaseAction {
     		if (applicationInfo != null && applicationInfo.getTechInfo().getId().equals(FrameworkConstants.TECH_SITE_CORE) && SERVER.equals(getConfigType())) {
     			properties.setProperty(SETTINGS_TEMP_SITECORE_INST_PATH, getSiteCoreInstPath());
     		}
-
-    		if (isIISServer) {
-    			properties.setProperty(SETTINGS_TEMP_KEY_APP_NAME, getAppName());
-    			properties.setProperty(SETTINGS_TEMP_KEY_SITE_NAME, getSiteName());
-    		}
+    		
     		config = new Configuration(getConfigName(), getConfigType());
     		config.setDesc(getDescription());
     		config.setEnvName(getEnvironment().getName());
@@ -711,7 +702,6 @@ public class Configurations extends FrameworkBaseAction {
      */
     public String validateConfiguration() throws PhrescoException, ConfigurationException {
     	boolean hasError = false;
-    	boolean isIISServer = false;
     	boolean serverTypeValidation = false;
     	String techId = "";
     	
@@ -762,16 +752,8 @@ public class Configurations extends FrameworkBaseAction {
 	            String propKey = propertyTemplate.getKey();
 	            String propValue = getActionContextParam(propKey);
 	            
-	            if (CONFIG_TYPE.equals(propKey) && IIS_SERVER.equals(propValue)) {
-	            	isIISServer = true;
-	            }
-	            
 	            if (CONFIG_TYPE.equals(propKey) && NODEJS_SERVER.equals(propValue) || NODEJS_MAC_SERVER.equals(propValue)) { //If nodeJs server selected , there should not be validation for deploy dir.
 	            	serverTypeValidation = true;
-	            }
-	            
-	            if(isIISServer && DEPLOY_CONTEXT.equals(propKey)){
-	            	propertyTemplate.setRequired(false);
 	            }
 	            
 	        	if (FrameworkConstants.ADD_CONFIG.equals(getFromPage()) || FrameworkConstants.EDIT_CONFIG.equals(getFromPage())) {
@@ -819,16 +801,6 @@ public class Configurations extends FrameworkBaseAction {
 		    	}
 	        }
 	        
-	    	if (isIISServer) {
-	        	if (StringUtils.isEmpty(getAppName())) {
-	        		setAppNameError(getText(ERROR_CONFIG_APP_NAME ));
-	        		 hasError = true;
-	        	}
-	        	if (StringUtils.isEmpty(getSiteName())) {
-	        		setSiteNameError(getText(ERROR_CONFIG_SITE_NAME));
-	        		 hasError = true;
-	        	}
-	        }
     	}
 	        
         if (StringUtils.isNotEmpty(dynamicError)) {

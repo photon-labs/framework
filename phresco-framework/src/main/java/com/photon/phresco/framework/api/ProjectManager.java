@@ -71,7 +71,7 @@ public interface ProjectManager {
 	 * @return boolean - returns true if deletion is success and false if deletion fails.
 	 * @throws PhrescoException
 	 */
-	boolean delete(List<ApplicationInfo> appInfos) throws PhrescoException;
+	boolean delete(List<String> appDirNames) throws PhrescoException;
 	
 	/**
 	 * This method returns the ProjectInfo of the given appId
