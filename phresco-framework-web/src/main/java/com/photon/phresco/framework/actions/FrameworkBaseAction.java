@@ -182,13 +182,21 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
     		File pomPath = new File(builder.toString());
     		PomProcessor processor = new PomProcessor(pomPath);
     		Modules pomModule = processor.getPomModule();
+    		List<String> moduleList = new ArrayList<String>();
     		if (pomModule != null) {
-    			return pomModule.getModule();
+    			List<String> modules = pomModule.getModule();
+    			for (String module : modules) {
+					String[] split = module.split("/");
+					if(split != null) {
+						module = split[0];
+					}
+					moduleList.add(module);
+				}
+    			return moduleList;
     		}
     	} catch (PhrescoPomException e) {
     		 throw new PhrescoException(e);
     	}
-    	
     	return null;
     }
 

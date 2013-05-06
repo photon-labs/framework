@@ -2685,7 +2685,12 @@ public class Quality extends DynamicParameterAction implements Constants {
                 }
 				
 	            builder.append(File.separatorChar);
-	        	builder.append(Utility.getPomFileName(appInfo));
+	            File pomXml = new File(builder.toString() + File.separatorChar + Utility.getPomFileName(appInfo));
+	        	if(pomXml.exists()) {
+	        		 builder.append(Utility.getPomFileName(appInfo));
+	        	} else {
+	        		builder.append(Constants.POM_NAME);
+	        	}
 	        	File pomPath = new File(builder.toString());
 	        	StringBuilder sbuild = new StringBuilder();
 	        	if (pomPath.exists()) {
@@ -2804,7 +2809,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 				List<String> modules = null;
 				// check multimodule or not
 				if(pomModules != null) {
-					modules = pomModules.getModule();
+					modules = getProjectModules(appInfo.getAppDirName());
 					for (String module : modules) {
 						if (StringUtils.isNotEmpty(module)) {
 							moduleNames.add(module);
