@@ -6198,7 +6198,7 @@ color: #313131;
 	margin-left: 29px;
     margin-right: 22px;
 }	
-.del, .cssDel, .add, .imagealign {
+.del, .cssDel, .add, .parameterPlus {
 	cursor: pointer;
 }
 
@@ -6765,4 +6765,8 @@ input, button, select, textarea, label {
 
 .hideIcons {
 	visibility: hidden;
+}
+
+.parameterPlus {
+	margin-right:11px;
 }
