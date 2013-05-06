@@ -1,9 +1,9 @@
 <div class="second_title">
     	<div class="features_right">
             <font data-i18n="features.show"></font>
-            <fieldset class="switch">
-                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
+            <fieldset class="switch switchOff" value="false">
+            <label class="off" name="on_off" value="false" id="switchonbutton"></label>
+            <label class="on" name="on_off" value="true" id="switchoffbutton"></label>
             </fieldset>
     	</div> 
     	<!--second_title div ends here -->
@@ -13,6 +13,7 @@
         
         <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
+            {{#if featureslist}}
             <td>
                 <div class="features_box">
                 <h1 data-i18n="features.list.modules"></h1>
@@ -22,16 +23,13 @@
                     <ul id="moduleContent">
                     {{#each featureslist}}
                         <li>
-                            <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                            <fieldset class="switch">
-                                <label class="off"><input type="radio" class="on_off" name="on_off" value="off"/></label>
-                                <label class="on"><input type="radio" class="on_off" name="on_off" value="on"/></label>
-                            </fieldset>
-                            <div class="flt_right">
+                        <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
+                                {{{versiondata versions}}}                                
+                                <div class="flt_right">
                                 <select class="input-mini">
                                     {{#each versions}}
-                                        <option>{{version}}</option>
-                                    {{/each}}
+                                        <option>{{version}}</option>  
+                                    {{/each}} 
                                 </select>
                             </div>
                              {{#if displayName}}
@@ -48,6 +46,7 @@
                 <!--modules div ends here -->
             </div>  
             </td>
+            {{/if}}
             {{#if jsibrarielist}}
             <td>
                 <div class="features_box">
@@ -95,8 +94,7 @@
                 <div class="clear"></div>
                 <div class="box_div" id="content_3">
                     <ul id="jsibrariesContent">
-                    {{#each featureslist}}
-                         
+                    {{#each featureslist}}                         
                         <li>
                             <span class="flt_right"><a class="featureinfo_img" onClick="openccmini(this,'cordova_info');" href="javascript:;"><img src="../themes/default/images/helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
                             <fieldset class="switch">
@@ -148,7 +146,7 @@
     <section class="content_end">
         <div class="flt_right">
         	<input type="submit" data-i18n="[value]features.btn.update" class="btn btn_style update_btn">
-            <input type="submit" data-i18n="[value]features.btn.cancel" class="btn btn_style cancel_icon_btn">
+            <input type="submit" id="cancelUpdateFeature" data-i18n="[value]features.btn.cancel" class="btn btn_style cancel_icon_btn">
         </div>
     	<!--content_title ends here -->
     </section>
