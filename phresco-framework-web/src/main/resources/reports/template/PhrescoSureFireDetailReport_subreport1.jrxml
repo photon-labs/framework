@@ -69,11 +69,13 @@
 	<parameter name="testCases" class="java.util.List"/>
 	<parameter name="isClassEmpty" class="java.lang.Boolean"/>
 	<parameter name="techName" class="java.lang.String"/>
+	<parameter name="testType" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
 	<detail>
 		<band height="111" splitType="Stretch">
+			<printWhenExpression><![CDATA[$P{testType}.equals("functional")]]></printWhenExpression>
 			<frame>
 				<reportElement x="0" y="0" width="555" height="55" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[$P{isClassEmpty}.equals(false) || $P{isClassEmpty}.equals(null) || $P{isClassEmpty}.equals("null")]]></printWhenExpression>
@@ -230,6 +232,196 @@
 							<jr:detailCell style="table_TD" height="30" rowSpan="1">
 								<textField isStretchWithOverflow="true">
 									<reportElement style="table_TD_Label" x="4" y="0" width="110" height="20"/>
+									<textElement verticalAlignment="Middle">
+										<font fontName="Times New Roman" size="12"/>
+									</textElement>
+									<textFieldExpression><![CDATA[( $F{testCaseFailure} != null ? "Failure" : ($F{testCaseError} != null ? "Error" : "Success") )]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+					</jr:table>
+				</componentElement>
+			</frame>
+		</band>
+		<band height="55">
+			<printWhenExpression><![CDATA[$P{testType}.equals("unit")]]></printWhenExpression>
+			<frame>
+				<reportElement x="0" y="0" width="555" height="55" isRemoveLineWhenBlank="true"/>
+				<componentElement>
+					<reportElement key="table" style="table" x="0" y="0" width="555" height="55"/>
+					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+						<datasetRun subDataset="Table Dataset 1">
+							<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{testCases})]]></dataSourceExpression>
+						</datasetRun>
+						<jr:column width="216">
+							<jr:columnHeader style="table_CH" height="30" rowSpan="1">
+								<staticText>
+									<reportElement style="table_CH_Label" x="3" y="0" width="213" height="30"/>
+									<textElement verticalAlignment="Middle">
+										<font fontName="Times New Roman" size="12" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Name]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table_TD" height="23" rowSpan="1">
+								<textField isStretchWithOverflow="true">
+									<reportElement style="table_TD_Label" x="3" y="0" width="213" height="20"/>
+									<textElement verticalAlignment="Middle">
+										<font fontName="Times New Roman" size="12"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="157">
+							<jr:columnHeader style="table_CH" height="30" rowSpan="1">
+								<staticText>
+									<reportElement style="table_CH_Label" x="3" y="0" width="154" height="30"/>
+									<textElement verticalAlignment="Middle">
+										<font fontName="Times New Roman" size="12" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Class]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table_TD" height="23" rowSpan="1">
+								<textField isStretchWithOverflow="true">
+									<reportElement style="table_TD_Label" x="3" y="0" width="154" height="20"/>
+									<textElement verticalAlignment="Middle">
+										<font fontName="Times New Roman" size="12"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{testClass}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="90">
+							<jr:columnHeader style="table_CH" height="30" rowSpan="1">
+								<staticText>
+									<reportElement style="table_CH_Label" x="3" y="0" width="87" height="30"/>
+									<textElement verticalAlignment="Middle">
+										<font fontName="Times New Roman" size="12" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Time]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table_TD" height="23" rowSpan="1">
+								<textField isStretchWithOverflow="true">
+									<reportElement style="table_TD_Label" x="3" y="0" width="87" height="20"/>
+									<textElement verticalAlignment="Middle">
+										<font fontName="Times New Roman" size="12"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{time}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="91">
+							<jr:columnHeader style="table_CH" height="30" rowSpan="1">
+								<staticText>
+									<reportElement style="table_CH_Label" x="3" y="0" width="87" height="30"/>
+									<textElement verticalAlignment="Middle">
+										<font fontName="Times New Roman" size="12" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Status]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table_TD" height="23" rowSpan="1">
+								<textField isStretchWithOverflow="true">
+									<reportElement style="table_TD_Label" x="3" y="0" width="87" height="20"/>
+									<textElement verticalAlignment="Middle">
+										<font fontName="Times New Roman" size="12"/>
+									</textElement>
+									<textFieldExpression><![CDATA[( $F{testCaseFailure} != null ? "Failure" : ($F{testCaseError} != null ? "Error" : "Success") )]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+					</jr:table>
+				</componentElement>
+			</frame>
+		</band>
+		<band height="55">
+			<printWhenExpression><![CDATA[$P{testType}.equals("component")]]></printWhenExpression>
+			<frame>
+				<reportElement x="0" y="0" width="555" height="55" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$P{isClassEmpty}.equals(true)]]></printWhenExpression>
+				</reportElement>
+				<componentElement>
+					<reportElement key="table" style="table" x="0" y="0" width="555" height="55"/>
+					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+						<datasetRun subDataset="Table Dataset 1">
+							<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{testCases})]]></dataSourceExpression>
+						</datasetRun>
+						<jr:column width="216">
+							<jr:columnHeader style="table_CH" height="30" rowSpan="1">
+								<staticText>
+									<reportElement style="table_CH_Label" x="3" y="0" width="213" height="30"/>
+									<textElement verticalAlignment="Middle">
+										<font fontName="Times New Roman" size="12" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Name]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table_TD" height="23" rowSpan="1">
+								<textField isStretchWithOverflow="true">
+									<reportElement style="table_TD_Label" x="3" y="0" width="213" height="20"/>
+									<textElement verticalAlignment="Middle">
+										<font fontName="Times New Roman" size="12"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="157">
+							<jr:columnHeader style="table_CH" height="30" rowSpan="1">
+								<staticText>
+									<reportElement style="table_CH_Label" x="3" y="0" width="154" height="30"/>
+									<textElement verticalAlignment="Middle">
+										<font fontName="Times New Roman" size="12" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Class]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table_TD" height="23" rowSpan="1">
+								<textField isStretchWithOverflow="true">
+									<reportElement style="table_TD_Label" x="3" y="0" width="154" height="20"/>
+									<textElement verticalAlignment="Middle">
+										<font fontName="Times New Roman" size="12"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{testClass}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="90">
+							<jr:columnHeader style="table_CH" height="30" rowSpan="1">
+								<staticText>
+									<reportElement style="table_CH_Label" x="3" y="0" width="87" height="30"/>
+									<textElement verticalAlignment="Middle">
+										<font fontName="Times New Roman" size="12" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Time]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table_TD" height="23" rowSpan="1">
+								<textField isStretchWithOverflow="true">
+									<reportElement style="table_TD_Label" x="3" y="0" width="87" height="20"/>
+									<textElement verticalAlignment="Middle">
+										<font fontName="Times New Roman" size="12"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{time}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="91">
+							<jr:columnHeader style="table_CH" height="30" rowSpan="1">
+								<staticText>
+									<reportElement style="table_CH_Label" x="3" y="0" width="87" height="30"/>
+									<textElement verticalAlignment="Middle">
+										<font fontName="Times New Roman" size="12" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Status]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table_TD" height="23" rowSpan="1">
+								<textField isStretchWithOverflow="true">
+									<reportElement style="table_TD_Label" x="3" y="0" width="87" height="20"/>
 									<textElement verticalAlignment="Middle">
 										<font fontName="Times New Roman" size="12"/>
 									</textElement>

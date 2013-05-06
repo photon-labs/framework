@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PhrescoXmlReport" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="101"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<style name="PSFRTitle"/>
 	<style name="PSFRTitleRect"/>
@@ -144,19 +144,19 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="14" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{testType} + " TEST REPORT"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{testType}.toUpperCase() + " TEST REPORT"]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
-	<pageHeader>
-		<band splitType="Stretch"/>
-	</pageHeader>
 	<detail>
 		<band height="212">
 			<frame>
 				<reportElement x="0" y="0" width="555" height="212"/>
 				<subreport>
 					<reportElement x="0" y="0" width="555" height="211"/>
+					<subreportParameter name="testType">
+						<subreportParameterExpression><![CDATA[$P{testType}]]></subreportParameterExpression>
+					</subreportParameter>
 					<subreportParameter name="allTestSuites">
 						<subreportParameterExpression><![CDATA[$F{allTestSuites}]]></subreportParameterExpression>
 					</subreportParameter>
@@ -174,6 +174,9 @@
 					<reportElement x="0" y="0" width="555" height="209">
 						<printWhenExpression><![CDATA[$P{reportsDataType}.equals("detail")]]></printWhenExpression>
 					</reportElement>
+					<subreportParameter name="testType">
+						<subreportParameterExpression><![CDATA[$P{testType}]]></subreportParameterExpression>
+					</subreportParameter>
 					<subreportParameter name="isClassEmpty">
 						<subreportParameterExpression><![CDATA[$P{isClassEmpty}]]></subreportParameterExpression>
 					</subreportParameter>
