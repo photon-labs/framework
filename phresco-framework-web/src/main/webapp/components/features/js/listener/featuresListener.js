@@ -1,4 +1,4 @@
-define(["framework/widget", "features/api/featuresAPI", "features/features",  "application/application"], function() {
+define(["framework/widget", "features/api/featuresAPI", "features/features",  "application/application",  "projectlist/projectList"], function() {
 
 	Clazz.createPackage("com.components.features.js.listener");
 
@@ -7,6 +7,7 @@ define(["framework/widget", "features/api/featuresAPI", "features/features",  "a
 		basePlaceholder :  window.commonVariables.basePlaceholder,
 		featuresAPI : null,
 		appinfoContent : null,
+		projectListContent : null,
 
 		/***
 		 * Called in initialization time of this class 
@@ -19,6 +20,13 @@ define(["framework/widget", "features/api/featuresAPI", "features/features",  "a
 			this.loadingScreen = new Clazz.com.js.widget.common.Loading();
 		},
 		
+		cancelUpdate : function() {
+			var self = this;
+			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
+			self.projectListContent = new Clazz.com.components.projectlist.js.ProjectList();
+			Clazz.navigationController.push(self.projectListContent, true);
+		},
+
 		search : function (txtSearch, divId){
        		var txtSearch = txtSearch.toLowerCase();           		
 			if (txtSearch != "") {
