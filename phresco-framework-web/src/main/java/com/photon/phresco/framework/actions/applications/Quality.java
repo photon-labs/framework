@@ -30,6 +30,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -68,6 +69,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import com.google.gson.Gson;
@@ -1201,8 +1204,10 @@ public class Quality extends DynamicParameterAction implements Constants {
         	}	
         	fis = new FileInputStream(resultFile);
             DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
+            domFactory.setValidating(false);
             domFactory.setNamespaceAware(false);
             builder = domFactory.newDocumentBuilder();
+            disableDtdValidation(builder);
             Document doc = builder.parse(fis);
             return doc;
         } finally {
@@ -1217,6 +1222,16 @@ public class Quality extends DynamicParameterAction implements Constants {
             }
         }
 	}
+	
+	private static void disableDtdValidation(DocumentBuilder db) {
+		db.setEntityResolver(new EntityResolver() {
+			public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
+				S_LOGGER.error("Ignoring " + publicId + ", " + systemId);
+				return new InputSource(new StringReader(""));
+			}
+		});
+	}
+	
 	
 	private File[] getTestResultFiles(String path) {
 		File testDir = new File(path);
