@@ -289,7 +289,7 @@
 	}
 %>
 	
-<div id="iisDiv" class="hideContent">
+<%-- <div id="iisDiv" class="hideContent">
 	<div class="control-group" id="siteControl">
 		<label class="control-label labelbold">
 			<span class="mandatory">*</span>&nbsp;<s:text name='label.site.name'/>
@@ -323,7 +323,7 @@
 			<span class="help-inline" id="appNameError"></span>
 		</div>
     </div>
-</div>
+</div> --%>
 
 <% 
 	if (appInfo != null && FrameworkConstants.TECH_SITE_CORE.equals(appInfo.getTechInfo().getId()) && FrameworkConstants.SERVER.equals(selectedType)) { 
@@ -419,9 +419,8 @@
 			
 		if(selectedType == "Server") {
 			if (serverType == "IIS") {
-				hideContext();
+				hideDeployDir();
 				hideRemoteDeply();
-				$('#iisDiv').css("display", "block");
 			}
 		}
 		
@@ -444,12 +443,9 @@
 			<% } %>
 			
 			if ($(this).val() == "IIS") {
-				hideContext();
 				hideDeployDir();
-				$('#iisDiv').css("display", "block");
 			} else {
 				showContext();
-				$('#iisDiv').css("display", "none");
 			}
 			
 			technologyBasedRemoteDeploy();
