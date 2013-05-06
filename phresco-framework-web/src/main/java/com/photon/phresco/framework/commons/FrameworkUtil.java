@@ -340,7 +340,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 			pomBuilder.append(File.separator);
 			pomBuilder.append(appInfo.getAppDirName());
 			pomBuilder.append(File.separator);
-			pomBuilder.append(POM_XML);
+			pomBuilder.append(Utility.getPomFileName(appInfo));
 			File pomPath = new File(pomBuilder.toString());
 			PomProcessor pomProcessor = new PomProcessor(pomPath);
 			Model model = pomProcessor.getModel();
