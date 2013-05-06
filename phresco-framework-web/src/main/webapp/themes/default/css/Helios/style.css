@@ -936,6 +936,14 @@ ul.nav li.dropdown:hover > .test_options{
 	float:right;
 }
 
+.switchOn{
+	background-position:right !important;
+}
+
+.switchOff{
+	background-position:left !important;
+}
+
 .on, .off{
 	width: 39px;
 	height: 32px;
