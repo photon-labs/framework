@@ -694,7 +694,16 @@
 		$(':input:not(:button)', $("#"+contextUrlsRowId)).val('');//to clear already inputed value
 		$("#"+contextUrlsRowId).find('div[id=headerkeyId]').remove();//to clear header key value design
 		i++;
+
+		var j = 1;
+		$("#"+contextUrlsRowId).find('.parameterRow').each(function() {
+			if (j != 1) {
+				$(this).remove();
+			}	
+			j++;
+		});
 		
+		showHideMinusIcon($("#"+contextUrlsRowId).find('.parameterPlus'), 1);
 		// when adding, if the checkbox is checked on first Context URLs checkbox, enable delete button
 		enableDelBtn($('.ctxUrlCheck'));
 		enableDelBtn($('.dbCheck'));
@@ -747,6 +756,43 @@
 	
 	function removeHeader(obj) {
 		$(obj).parent('div').remove();
+	}
+	
+	function appendParameterRow(obj) {
+		$(obj).closest('tbody').append('<tr class="parameterRow"><td class="noBorder"><input type="text" class="input-medium parameterName" name="parameterName"></td>' + 
+		'<td class="noBorder"><input type="text" class="input-medium parameterValue" name="parameterValue"></td>' +
+		'<td class="noBorder"><input type="checkbox" class="input-medium parameterEncode" name="parameterEncode"></td>' + 
+		'<td class="noBorder"><a><img src="images/icons/add_icon.png" id="parameterPlus" class="parameterPlus" onclick="appendParameterRow(this);"></a>' + 
+		' <a><img class="del imagealign hide parameterMinus" src="images/icons/minus_icon.png" onclick="removeParameterRow(this);">' +
+		'</a></td></tr>');
+		
+		var size = $(obj).closest('tbody').find('.parameterPlus').size();
+		showHideMinusIcon(obj, size);
+	}
+	
+	function removeParameterRow(obj) {
+		var size = $(obj).closest('tbody').find('.parameterPlus').size() - 1;
+		showHideMinusIcon($(obj).closest('tbody').find('.parameterPlus'), size);
+		$(obj).closest('.parameterRow').remove();
+	}
+	
+	function showHideMinusIcon(obj, size) {
+		if (size > 1) {
+			$(obj).closest('tbody').find($(".parameterMinus")).show();	
+		} else if (size === 1) {
+			$(obj).closest('tbody').find($(".parameterMinus")).hide();	
+		}
+	}
+	
+	function checkUncheck(obj) {
+		var redirectAutomatically = $(obj).closest('tr').find($(".redirectAutomatically")).is(':checked');	  
+		var followRedirects = $(obj).closest('tr').find($(".followRedirects")).is(':checked');
+		var currentObjClass = $(obj).attr('class');
+		if (currentObjClass == 'redirectAutomatically' && redirectAutomatically) {
+			$(obj).closest('tr').find($(".followRedirects")).prop('checked', false);
+		} else if (followRedirects) {
+			$(obj).closest('tr').find($(".redirectAutomatically")).prop('checked', false);
+		}		
 	}
 	
 	function updateDepdForMultSelect(obj) {

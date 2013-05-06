@@ -6198,7 +6198,7 @@ color: #313131;
 	margin-left: 29px;
     margin-right: 22px;
 }	
-.del, .cssDel, .add {
+.del, .cssDel, .add, .parameterPlus {
 	cursor: pointer;
 }
 
@@ -6757,4 +6757,8 @@ color: #313131;
 
 .hideIcons {
 	visibility: hidden;
+}
+
+.parameterPlus {
+	margin-right:11px;
 }	
