@@ -56,6 +56,7 @@ $myObject:{ obj |
 }$
 </div>
 <script type="text/javascript">
+	console.info("db contexturl template created");
 	if (dbJsonFlag) {
 		var newTextBoxDiv = jQuery(document.createElement('div')).attr('id', 'dbContextDiv').attr('class','dbContextDivClass').css('margin-bottom','5px');
 		newTextBoxDiv.html("<fieldset class='popup-fieldset fieldsetBottom perFieldSet perDBContextUrlFieldset' id='context'>" +

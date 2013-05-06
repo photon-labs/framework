@@ -63,6 +63,7 @@
 
 <script type="text/javascript">
 	$(document).ready(function() {
+		disableButton($("#updateAvailable"));
 // 		$('#updateMsg').html('&copy; 2013.Photon Infotech Pvt Ltd');
 		$('#updateMsg').html($(".copyrit").html());
 		$("#versionInfo").show();
