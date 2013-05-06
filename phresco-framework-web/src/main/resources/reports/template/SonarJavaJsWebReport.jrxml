@@ -71,7 +71,7 @@
 					<textFieldExpression><![CDATA["Sonar Report -" + $F{reportType}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true">
-					<reportElement x="181" y="4" width="164" height="15" forecolor="#FFFFFF">
+					<reportElement x="181" y="4" width="360" height="15" forecolor="#FFFFFF">
 						<printWhenExpression><![CDATA[!$F{moduleName}.isEmpty()]]></printWhenExpression>
 					</reportElement>
 					<textElement>
