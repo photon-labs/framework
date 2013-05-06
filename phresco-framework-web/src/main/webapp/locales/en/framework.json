@@ -141,7 +141,7 @@
 		},
 		"btn" : {
 			"cancel" : "Cancel",
-			"next" : "Next"
+			"update" : "Update"
 		}
 	},
 	"features" : {

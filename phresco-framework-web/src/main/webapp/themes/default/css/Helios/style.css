@@ -49,7 +49,7 @@ header, aside, figure, footer, ul, li {
 .flt_left { float:left; }
 .flt_right { float:right; }
 .clear { clear:both; line-height:0; height:0; }
-/*.widget-maincontent-div{position: absolute; display: block; left: 0; width: 100%;}*/
+.widget-maincontent-div{position: absolute; display: block; left: 0; width: 100%;}
 .btn_style {
 	padding: 6px 12px !important;
 	background: #ef7b43 !important;
@@ -305,9 +305,13 @@ to {
 
 /* *************************************************************************** HACK FOR CROME BROWSER ************************************************************************** */
 
-@media screen and (-webkit-min-device-pixel-ratio:0) { 
+@media screen and (-webkit-min-device-pixel-ratio:0) {
 
 .btn_style { padding: 4px 12px !important; }  
+
+html, body {
+	font-family:Helvetica !important;
+}
 
 }
 
@@ -402,7 +406,7 @@ to {
 	padding-left:1%;
 	padding-right:1%;
 	position:fixed;
-	z-index:2;
+	z-index:6;
 }
 
 .content_title h1 {
@@ -612,6 +616,24 @@ ul.nav li.dropdown:hover > .test_options{
 .update_btn {
 	background:url(../../images/helios/update_icon.png) #ed7940 no-repeat 6px 8px !important;
 	padding-left:25px !important;
+	padding-right:8px !important;
+}
+
+.server_btn {
+	background:url(../../images/helios/server_icon.png) #ed7940 no-repeat 3px 5px !important;
+	padding-left:28px !important;
+	padding-right:8px !important;
+}
+
+.database_btn {
+	background:url(../../images/helios/database_icon.png) #ed7940 no-repeat 5px 4px !important;
+	padding-left:22px !important;
+	padding-right:8px !important;
+}
+
+.webservice_btn {
+	background:url(../../images/helios/webservice_icon.png) #ed7940 no-repeat 3px 3px !important;
+	padding-left:26px !important;
 	padding-right:8px !important;
 }
 
@@ -838,16 +860,12 @@ ul.nav li.dropdown:hover > .test_options{
 	text-decoration: none;
 }
 .custon_dropdown {
-	width:146px;
+	width:146px !important;
 }
 
-<<<<<<< HEAD
 .loading_bar {
 	margin-left:-50px;
 }	
-
-=======
->>>>>>> 814e51c43a4596f7d9f9e23ede08159b2ceb601c
 
 /* *************************************************************************** CSS for App Info Page ************************************************************************** */
 
@@ -861,6 +879,10 @@ ul.nav li.dropdown:hover > .test_options{
 
 .text_right {
 	text-align:right !important;
+}
+
+.table-striped tbody>tr:nth-child(even)>td {
+	background-color:#f9f9f9;
 }
 
 /* *************************************************************************** CSS for Quality selection dropdown ************************************************************************** */
@@ -1334,31 +1356,120 @@ ul.nav li.dropdown:hover > .test_options{
 	right:-13px;
 	border-bottom-color: #ed7940;
 }
-/* *************************************************************************** MEDIA QUARIES ************************************************************************** */
+/* *************************************************************************** MEDIA QUERIES ************************************************************************** */
 
-@media screen and (min-width: 978px) and (max-width: 1280px) {
+@media screen and (min-width: 978px) and (max-width: 1024px) {
 
 .startdate input, .enddate input {
-	width: 132px !important;
+	width: 85px !important;
 	margin-right: 4px;
 }
 
 .create_proj table tr td input[type=text] {
-	width: 160px;	
+	width: 85px;	
 }
 
  .create_proj table tr td select {
-	width: 174px; 
+	width: 99px; 
  }
+ 
+.custon_dropdown {
+	width:100px !important;
 }
 
-@media screen and (min-width: 1366px) and (max-width: 1440px) {
+.title_nav ul a {
+	padding: 12px 4px !important;
+	font-size: 12px;
+}
+}
+@media screen and (min-width: 1025px) and (max-width: 1152px) {
 
-.create_edit_table input, select {
-	width:150px !important;
+.startdate input, .enddate input {
+	width: 95px !important;
+	margin-right: 4px;
 }
 
+.create_proj table tr td input[type=text] {
+	width: 125px;	
+}
 
+ .create_proj table tr td select {
+	width: 138px; 
+ }
+ 
+ .custon_dropdown {
+	width:106px !important;
+}
+
+.title_nav ul a {
+	padding: 12px 5px !important;
+	font-size: 12px;
+}
+}
+
+@media screen and (min-width: 1153px) and (max-width: 1280px) {
+
+.startdate input, .enddate input {
+	width: 120px !important;
+	margin-right: 4px;
+}
+
+.create_proj table tr td input[type=text] {
+	width: 150px;	
+}
+
+ .create_proj table tr td select {
+	width: 163px; 
+ }
+ 
+.custon_dropdown {
+	width:117px !important;
+}
+
+.title_nav ul a {
+	padding: 12px 8px !important;
+	font-size: 14px;
+}
+}
+
+@media screen and (min-width: 1281px) and (max-width: 1360px) {
+
+.startdate input, .enddate input {
+	width: 140px !important;
+	margin-right: 4px;
+}
+
+.create_proj table tr td input[type=text] {
+	width: 170px;	
+}
+
+ .create_proj table tr td select {
+	width: 183px; 
+ }
+ 
+ .custon_dropdown {
+	width: 127px !important;
+}
+}
+
+@media screen and (min-width: 1361px) and (max-width: 1440px) {
+
+.startdate input, .enddate input {
+	width: 152px !important;
+	margin-right: 4px;
+}
+
+.create_proj table tr td input[type=text] {
+	width: 182px;	
+}
+
+ .create_proj table tr td select {
+	width: 195px; 
+ }
+ 
+ .custon_dropdown {
+	width: 133px !important;
+}
 }
 
 /* *************************************************************************** STYLES FOR DIV SCROLL ************************************************************************** */
@@ -1580,12 +1691,29 @@ ul.nav li.dropdown:hover > .test_options{
 	padding:5px 0 5px 10px;
 	font-size:12px;
 }
+.env_border ul:first-child li {
+	border-right: 1px solid #d8d8d8;
+}
 .env_border ul li:last-child {
 	border-bottom:none;
 }
 .env_border ul li label {
 	font-size:12px !important;
 	margin:0 !important;
+}
+
+.env_border .add_env {
+	margin-bottom: 0px;
+	border: 0px !important;
+}
+
+.env_border .add_env tr td {
+	padding: 0px !important;
+}
+
+.env_border .add_env tr td ul {
+	max-height: 185px;
+	overflow-y: auto;
 }
 
 .def_btn .btn_style {
